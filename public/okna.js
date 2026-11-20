@@ -71,12 +71,17 @@ function canFloat(name) {
 
 // Višina spodnje vrstice za liste (--tabbar-h). Pri branju se vrstica umakne (position: fixed, touch.css) in šteje
 // samo, ko je pokazana (body.tb-peek, app.js) ali se vrača po neuporabi (body.tb-vraca, noga.js).
+// Višina vrstice pride iz ResizeObserver (barH): offsetHeight ob vsaki menjavi pogleda je vsilil postavitev celega
+// novega pogleda sredi tapa (telefon, CPU 4×: do 100 ms INP); getComputedStyle sam preračuna le slog.
+let barH = null;
 export function syncTabbarH() {
   const bar = $("#tabbar");
   if (!bar) return;
   const cs = getComputedStyle(bar);
   const shown = cs.display !== "none" && (cs.position !== "fixed" || document.body.matches(".tb-peek, .tb-vraca"));
-  document.documentElement.style.setProperty("--tabbar-h", `${shown ? bar.offsetHeight : 0}px`);
+  const v = `${shown ? (barH ?? bar.offsetHeight) : 0}px`;
+  const root = document.documentElement.style;
+  if (root.getPropertyValue("--tabbar-h") !== v) root.setProperty("--tabbar-h", v);
 }
 
 // Vsebinski del zaslona: pod zgornjo vrstico, nad spodnjo vrstico zavihkov.
@@ -735,7 +740,12 @@ export function initOkna(opts) {
   makeRowSortable($("#tabbar"), "tabbar", { item: ".tab", idOf: (el) => (el.id === "competition-tab-m" ? "competition" : el.dataset.view) });
   // Spodnji list stoji nad spodnjo vrstico zavihkov, da navigacija ostane uporabna (okna.css, --tabbar-h).
   const tabbar = $("#tabbar");
-  if (tabbar && "ResizeObserver" in window) new ResizeObserver(syncTabbarH).observe(tabbar);
+  if (tabbar && "ResizeObserver" in window)
+    new ResizeObserver((e) => {
+      const b = e[0]?.borderBoxSize?.[0];
+      barH = b ? Math.round(b.blockSize) : null;
+      syncTabbarH();
+    }).observe(tabbar);
   makeRowSortable($("#modebar"), "modebar", { item: "button" });
   document.querySelectorAll(".calc-modes").forEach((row) => makeRowSortable(row, "calc-modes", { item: "button" }));
   mountSetting(document.getElementById("okna-card"));

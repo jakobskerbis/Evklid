@@ -90,10 +90,8 @@ function renderRows() {
       .join("")}`;
 }
 
-function place() {
-  const btn = $(".topbar .brand");
+function place(r = $(".topbar .brand").getBoundingClientRect()) {
   const pop = $("#quick-pop");
-  const r = btn.getBoundingClientRect();
   const rtl = document.documentElement.dir === "rtl";
   pop.style.top = `${Math.round(r.bottom + 8)}px`;
   pop.style.left = pop.style.right = "";
@@ -106,9 +104,10 @@ function open() {
   const usage = $("#usage-pop");
   if (usage) usage.hidden = true;
   const pop = $("#quick-pop");
+  const r = $(".topbar .brand").getBoundingClientRect(); // pred izrisom menija: brez vsiljene postavitve (kliki 20. 11. 2026)
   render();
   pop.hidden = false;
-  place();
+  place(r);
   $(".topbar .brand").setAttribute("aria-expanded", "true");
   D.overlayOpened(); // na Učni poti tipka Nazaj zapre meni, ne aplikacije
   pop.querySelector(".qs-row")?.focus({ preventScroll: true });

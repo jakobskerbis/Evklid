@@ -59,9 +59,10 @@ function open() {
   const btn = $("#profile-btn");
   const usage = $("#usage-pop");
   if (usage) usage.hidden = true;
+  // Mera gumba pred izrisom menija: po njem bi vsilila postavitev sredi tapa (kliki 20. 11. 2026).
+  const r = btn.getBoundingClientRect();
   render();
   const pop = $("#profile-pop");
-  const r = btn.getBoundingClientRect();
   pop.style.top = `${Math.round(r.bottom + 8)}px`;
   // Ob gumbu profila; v RTL je gumb levo, zato meni poravnamo z levim robom.
   const rtl = document.documentElement.dir === "rtl";

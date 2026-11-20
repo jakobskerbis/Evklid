@@ -67,7 +67,7 @@ test("prijavljen: skripta pozna del »prijavljen«, privzeto ga ne zažene", () 
   assert.notEqual(r.status, 0);
   assert.match(r.stderr, /možni: [^)]*prijavljen/);
   const src = fs.readFileSync("scripts/meritev-zmogljivosti.mjs", "utf8");
-  assert.match(src, /DELI\.filter\(\(d\) => d !== "obremenitev" && d !== "prijavljen"\)/, "privzeti deli brez »prijavljen« (potrebuje koren)");
+  assert.match(src, /DELI\.filter\(\(d\) => d !== "obremenitev" && d !== "prijavljen" && d !== "kliki"\)/, "privzeti deli brez »prijavljen« (potrebuje koren)");
   const glava = src.split("\n").slice(0, 40).join("\n");
   assert.match(glava, /prijavljen +[A-Z0-9]/, "del je opisan v glavi skripte");
 });

@@ -327,8 +327,10 @@ test("#747 splet: registracija → lasten profil brez potrditve → po rešeni n
     await page.locator("#practice .task .task-text").waitFor({ timeout: 15000 });
     await page.waitForTimeout(300);
     // Pravilen odgovor iz baze (kot scripts/preveri-aplikacijo.cjs answerTask), vpisan ali izbran v vmesniku.
+    let solved = null; // naloga, ki je bila nazadnje rešena (naslednjo aplikacija prenese že ob preverjanju)
     const solve = async () => {
       assert.ok(lastTask, "id naloge");
+      solved = lastTask;
       const db = new DatabaseSync(dbPath, { readOnly: true });
       const ans = JSON.parse(db.prepare("SELECT payload FROM tasks WHERE id = ?").get(Number(lastTask)).payload).answer;
       db.close();
@@ -355,11 +357,10 @@ test("#747 splet: registracija → lasten profil brez potrditve → po rešeni n
     assert.equal(await page.locator("#feedback .potrdi-kartica").count(), 0);
     assert.ok(await page.evaluate(() => Number(localStorage.getItem("evklid.potrdi_pozneje")) > 0));
     // Naslednja pravilno rešena naloga: po »Pozneje« kartice ni (en dan).
-    const prev = lastTask;
     await page.click("#fb-next");
     await page.locator("#practice .task .task-text").waitFor({ timeout: 15000 });
-    for (let i = 0; i < 50 && lastTask === prev; i++) await page.waitForTimeout(100);
-    assert.notEqual(lastTask, prev, "nova naloga");
+    for (let i = 0; i < 50 && lastTask === solved; i++) await page.waitForTimeout(100);
+    assert.notEqual(lastTask, solved, "nova naloga");
     await solve();
     await page.waitForTimeout(1200);
     assert.equal(await page.locator("#feedback .potrdi-kartica").count(), 0, "po »Pozneje« brez kartice");

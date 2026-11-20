@@ -681,6 +681,20 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .node.new .node-dot { background: var(--surface); color: var(--accent); border-color: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent-soft); }
 .node.current .node-dot { animation: pulse 1.8s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 50% { box-shadow: 0 0 0 10px transparent; } }
+/* Isti utrip kot zgoraj, a na GPU (kliki 20. 11. 2026): animirana senca je vsak okvir znova risala Učno pot na glavni niti in
+   zavlekla vsak tap na njej. Krog pod piko se z enako krivuljo poveča 27 → 37 px in zbledi z 45 % na 0 – na zaslonu enako kot
+   senca 0 → 10 px. Ob »manj gibanja« ostane prvotno pravilo (brez utripa, s senco pritiska). */
+@media (prefers-reduced-motion: no-preference) {
+  .node.current { position: relative; }
+  .node.current .node-dot { animation: none; box-shadow: none; }
+  .node.current::before {
+    content: ""; position: absolute; inset-inline-start: 0; top: 50%; width: 54px; height: 54px; margin-top: -27px; border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 45%, transparent); pointer-events: none;
+    animation: pulse-krog 1.8s ease-in-out infinite; transition: scale 0.15s;
+  }
+  .node.current:hover:not(:disabled)::before { scale: 1.06; }
+}
+@keyframes pulse-krog { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3703704); opacity: 0; } }
 .node-text { display: flex; flex-direction: column; min-width: 0; }
 .node-name { font-weight: 800; }
 .node-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; }

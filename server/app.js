@@ -58,7 +58,7 @@ import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competi
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic } from "./exams.js";
 import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
-import { startupFiles } from "./startup-files.js";
+import { startupFiles, moduleDeps } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
 import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pupilGender, IME_OZNAKA } from "./ime-oznaka.js";
@@ -89,6 +89,8 @@ import { landingPage } from "./pristajalna-takoj.js";
 import { zacetniPodatki } from "./zacetni-podatki.js";
 // Moduli drugih zaslonov, ki jih app.js naloži po prvem izrisu (public/app.js lenModul): stisnemo jih ob zagonu kot igre.
 // Tudi knjižnice za izris formul (public/rich.js naloziKnjiznice) in moduli Učbenika, oznak formul, preverjanja, cel slovar (i18n.js) in tipkovnica.
+// Leni moduli, ki jih odjemalec naloži z vsemi odvisnostmi hkrati (/lene-odvisnosti.js, public/kliki.js vzporedno).
+const LENI_MODULI = ["graph/sci.js", "graph/calc.js", "graph/tools.js", "games/index.js", "textbook.js", "scan/scan.js", "zbirke-view.js", "leagues.js"];
 const ZASLONI_POZNEJE = ["vendor/katex/katex.min.js", "vendor/marked/lib/marked.umd.js", "vendor/dompurify/purify.min.js", "formula-info.js", "sirina.js", "textbook.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "our-paper.js", "practice/check.js", "graph/math.js", "i18n.js", "tipkovnica.js", "tipkovnica-data.js"];
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
@@ -427,6 +429,14 @@ export function createApp(store, opts = {}) {
   app.use(["/3d/ikone-drevo/", "/3d/slicice/"], (req, res, next) => {
     if (/\.webp$/i.test(req.path)) res.set("Cache-Control", SLIKE_3D_CACHE);
     next();
+  });
+  // Odvisnosti lenih modulov (kalkulator, igre …): brskalnik jih naloži vse hkrati, ne raven za ravnijo uvozov (na Slow 4G
+  // ~0,6 s na raven; kalkulator in igre imata 4 ravni). Izračun ob prvi zahtevi za vsako različico datotek.
+  let odvisnosti = null;
+  app.get("/lene-odvisnosti.js", (_req, res) => {
+    const v = filesVersion();
+    if (odvisnosti?.v !== v) odvisnosti = { v, js: `export default ${JSON.stringify(Object.fromEntries(LENI_MODULI.map((m) => [m, moduleDeps(publicDir, m)])))};\n` };
+    res.type("text/javascript").set("Cache-Control", "no-cache").send(odvisnosti.js);
   });
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
@@ -1839,7 +1849,7 @@ export function createApp(store, opts = {}) {
   app.post("/api/students/:id/practice/next", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.nextPractice(s.id, req.body?.topic_id);
+    const out = progress.nextPractice(s.id, req.body?.topic_id, { vnaprej: req.body?.vnaprej === true });
     if (!out) return res.status(400).json({ error: "Za to temo še ni vaj." });
     res.json(out);
   });
