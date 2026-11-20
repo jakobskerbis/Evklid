@@ -3,7 +3,7 @@
 //     versionCode naloženega APK (/api/app-links, server/mobile/apk-info.js). Če je večji od te gradnje,
 //     ponudimo »Posodobi«: APK se prenese in odpre se sistemska namestitev (podatki ostanejo).
 //  2. JavaScript (večina sprememb): expo-updates prenese novo različico z EAS Update (kanal gradnje v
-//     eas.json, objava ob vsaki združitvi: .eas/workflows/posodobitev.yml) in jo sam uporabi ob
+//     eas.json, objava po zelenih testih: .github/workflows/ota.yml) in jo sam uporabi ob
 //     naslednjem zagonu. Ko je prenesena, ponudimo takojšen ponovni zagon.
 // »Pozneje« velja do naslednjega zagona aplikacije.
 import { useCallback, useEffect, useRef, useState } from "react";
