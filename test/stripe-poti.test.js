@@ -427,13 +427,21 @@ test("izbris računa: prekliče naročnino in nato izbriše stranko v Stripu; ob
       .run(b.parent.id, new Date().toISOString());
     assert.equal((await b.a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
 
+    // Zahtevek garancije, o katerem skrbnik še ni odločil: stranka ostane (vračilo morda še pride).
+    const g = await account(ctx, "garancija.odprta@poti.si");
+    store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_garancija' WHERE id = ?").run(g.parent.id);
+    store.db
+      .prepare("INSERT INTO guarantees (parent_id, email_hash, subject, grade_before, started_at, status, claimed_at) VALUES (?, 'h-garancija', 'mat', 2, ?, 'claimed', ?)")
+      .run(g.parent.id, new Date().toISOString(), new Date().toISOString());
+    assert.equal((await g.a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+
     // Stripe ne odgovori pravilno: izbris računa vseeno uspe.
     const c = await account(ctx, "stripe.ne.dela@poti.si");
     store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_napaka' WHERE id = ?").run(c.parent.id);
     stripe.state.customerDown = true;
     assert.equal((await c.a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
     await settle(2);
-    assert.deepEqual(customerDeletes(), [`/v1/customers/${customer}`, "/v1/customers/cus_napaka"], "brez cus_odstop");
+    assert.deepEqual(customerDeletes(), [`/v1/customers/${customer}`, "/v1/customers/cus_napaka"], "brez cus_odstop in cus_garancija");
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents WHERE id IN (?, ?)").get(b.parent.id, c.parent.id).n, 0);
   });
 });

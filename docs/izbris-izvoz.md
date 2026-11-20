@@ -71,8 +71,8 @@ Koda: `server/accounts/neaktivni.js`, test `test/neaktivni.test.js`. Teče enkra
   izbrisa računa ne ustavi, v dnevnik gresta samo koda napake in številka izbrisanega računa (brez e-naslova in id-ja
   stranke; stranko najdeš v Stripu po metapodatku `parent_id`). Plačila, vračila, spori in računi (invoices, z imenom
   in e-naslovom kupca ob izdaji, za davčno hrambo) ostanejo v Stripu, vezani na plačilo, ne na stranko, zato ročno
-  vračilo po izbrisu še gre. Stranka ostane, če ima račun odprt odstop od pogodbe (vračilo še ni končano; v dnevniku je
-  vrstica s številko odstopa, skrbnik stranko izbriše ročno po zaključku) ali jo uporablja še drug račun.
+  vračilo po izbrisu še gre. Stranka ostane, če ima račun odprt odstop od pogodbe ali zahtevek garancije brez odločitve (vračilo še ni končano; v dnevniku je
+  vrstica s številko odstopa ali zahtevka, skrbnik stranko izbriše ročno po zaključku) ali jo uporablja še drug račun.
 
 ## Izbris profila (`DELETE /api/students/:id`)
 
