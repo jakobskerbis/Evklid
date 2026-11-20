@@ -292,6 +292,8 @@ export default function Web() {
             sharedCookiesEnabled
             allowsBackForwardNavigationGestures
             allowsInlineMediaPlayback
+            // Ustno spraševanje bere vprašanja na glas z glasom strežnika (public/ustno/ustno.js) brez novega dotika.
+            mediaPlaybackRequiresUserAction={false}
             mediaCapturePermissionGrantType="grant"
             allowFileAccess={false}
             setSupportMultipleWindows={false}
