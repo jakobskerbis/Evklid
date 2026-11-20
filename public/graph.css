@@ -51,7 +51,7 @@
 .gc .gc-playall:hover:not(:disabled) { background: var(--accent-soft); filter: brightness(0.97); }
 .gc .gc-playall[hidden] { display: none; }
 /* ob gumbu »Predvajaj vse« je vrstica polna: »Moji grafi« ostane samo ikona */
-.gc-bar:has(.gc-playall:not([hidden])) [data-act="graphs"] span { display: none; }
+.gc-bar:has(.gc-playall:not([hidden])) [data-act="graphs"] .gc-lbl { display: none; }
 .gc-text-btn svg.i { color: var(--accent); }
 /* Ozek seznam izrazov (ločnica, razdelilnik.js, do 280 px): napis se raje skrajša s tropičjem, kot da bi segel
    čez sosednji gumb; pod 370 px ostaneta samo ikoni (napis ostane za bralnike zaslona, title za miško). */

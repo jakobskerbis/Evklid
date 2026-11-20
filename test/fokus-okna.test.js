@@ -16,15 +16,16 @@ const PUB = path.resolve("public");
 const src = (f) => fs.readFileSync(path.join(PUB, f), "utf8");
 
 test("okna čez zaslon uporabljajo zadrziFokus (kalkulator, vodič, poskus, pola, naša pola, oglasna deska)", () => {
-  const app = src("app.js");
+  const app = src("app.js") + src("kalkulator-zaslon.js"); // kalkulator čez cel zaslon je v kalkulator-zaslon.js
   assert.match(app, /calcFokus = zadrziFokus\(\$\("#graph-overlay"\)/);
   assert.match(src("uvodni-ogled.js"), /sprosti = zadrziFokus\(box, \{ zacetni: box\.querySelector\('\[data-tour="next"\]'\)/);
   for (const f of ["odpri.js", "paper-viewer.js", "our-paper.js", "corner.js"]) assert.match(src(f), /zadrziFokus\(/, f);
 });
 
 test("polje odgovora in vmesni koraki imata aria-label", () => {
-  assert.match(src("app.js"), /<input id="answer" aria-label="\$\{escapeHtml\(t\("games\.yourAnswer"\)\)\}"/);
-  assert.match(src("app.js"), /<textarea class="work-text"[^>]* aria-label="\$\{escapeHtml\(t\("task\.work"\)\)\}"/);
+  const vad = src("app.js") + src("vadnica.js"); // naloge vadnice so v vadnica.js
+  assert.match(vad, /<input id="answer" aria-label="\$\{escapeHtml\(t\("games\.yourAnswer"\)\)\}"/);
+  assert.match(vad, /<textarea class="work-text"[^>]* aria-label="\$\{escapeHtml\(t\("task\.work"\)\)\}"/);
 });
 
 test("lekcija: onemogočen gumb (zadnji korak, pravilen odgovor) fokusa ne odnese na začetek strani", () => {

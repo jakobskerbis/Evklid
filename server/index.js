@@ -8,6 +8,7 @@ import { zagonBrezKljuca } from "./crypto-polje.js";
 import { createApp } from "./app.js";
 import { isMockMode, MODEL } from "./claude.js";
 import { casCheck, casOn } from "./cas.js";
+import { ogrej as ogrejNujno } from "../public/nujno.js";
 
 // Produkcija brez EVKLID_DATA_KEY: osebni podatki bi šli v bazo nešifrirani, zato se strežnik ne zažene.
 const brezKljuca = zagonBrezKljuca();
@@ -47,6 +48,15 @@ const server = app.listen(port, () => {
   app.locals.warmStatic?.()
     .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
     .catch(() => {});
+  // Besedila zaslonov (/i18n/zasloni-sl.js): sestavljena takoj po zagonu, ne ob prvi zahtevi (prebere vse datoteke JS,
+  // ~75 ms zasedene niti, ki bi sicer zadržala prvi klik po vsakem ponovnem zagonu).
+  setImmediate(() => app.locals.pripraviZasloniSl?.().catch((e) => console.warn(`[evklid] besedila zaslonov: ${e?.message || e}`)));
+  // Seznam odvisnosti lenih modulov (/lene-odvisnosti.js) prav tako takoj po zagonu, ne ob prvi zahtevi.
+  setImmediate(() => app.locals.pripraviOdvisnosti?.().catch((e) => console.warn(`[evklid] odvisnosti modulov: ${e?.message || e}`)));
+  // Varnostni zaznavalnik (public/nujno.js) sestavi vzorce šele ob prvi uporabi: tu jih v ozadju pripravi po kosih
+  // (do 15 ms, vmes druge zahteve), da prvo sporočilo po zagonu ne čaka na sestavljanje in prevajanje.
+  const ogrejZaznavalnik = () => ogrejNujno(15) || setTimeout(ogrejZaznavalnik, 5).unref();
+  setTimeout(ogrejZaznavalnik, 1000).unref();
   // Učbenik za tisk: strani razredov v predpomnilnik v ozadju, 15 s po zagonu (ne upočasni zagona).
   setTimeout(() => {
     const t1 = Date.now();

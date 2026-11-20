@@ -623,8 +623,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
     grid-area: 1 / 1; justify-self: center; align-self: end; position: relative;
     width: var(--p-a); height: var(--p-a); border-radius: 22%; margin-bottom: calc(var(--p-h) * 0.229 - var(--p-a) / 2);
     box-shadow: 0 0 0 2px var(--t-door), 0 0 0 3.5px var(--t-line);
+    --ta-ic: 58%;
   }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big svg.i { width: 58%; height: 58%; }
   :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p.big { margin: 14px 0 4px; line-height: 1.25; }
   :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p:not(.big) { margin: 0; }
   :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .ideas { margin-top: 14px; gap: 8px; }
@@ -752,8 +752,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .empty .gr-chat .gr-text { font-size: 0.88rem; line-height: 1.4; }
 /* Nizek zaslon: prazen klepet brez drsnika (manjši pozdrav in razmiki, kartica ostane). */
 @media (max-height: 860px) {
-  .empty:has(.gr-chat) .tutor-avatar.big { width: 44px; height: 44px; border-radius: 14px; }
-  .empty:has(.gr-chat) .tutor-avatar.big svg.i { width: 22px; height: 22px; }
+  .empty:has(.gr-chat) .tutor-avatar.big { width: 44px; height: 44px; border-radius: 14px; --ta-ic: 22px; }
   .empty:has(.gr-chat) p.big { margin-top: 6px; font-size: 1.35rem; }
   .empty:has(.gr-chat) .ideas { margin-top: 8px; gap: 6px; }
   .empty .gr-chat { margin-top: 10px; padding-bottom: 10px; }

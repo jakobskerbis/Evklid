@@ -73,8 +73,7 @@ function afterSubject() {
     .then(() => {
       if (!isOpen()) return;
       render();
-      place();
-      $("#quick-pop .qs-row")?.focus({ preventScroll: true });
+      placeSoon();
     });
 }
 
@@ -90,10 +89,21 @@ function renderRows() {
       .join("")}`;
 }
 
-function place() {
-  const btn = $(".topbar .brand");
+// Mesto in fokus v naslednjem okvirju pred risanjem: merjenje menija sredi tapa je vsililo slog in postavitev vse strani
+// (telefon, CPU 4×: ~50 ms vsakič; kliki 20. 11. 2026). act: vrstica, ki dobi fokus (sicer prva).
+let placeRaf = 0;
+function placeSoon(act) {
+  cancelAnimationFrame(placeRaf);
+  placeRaf = requestAnimationFrame(() => {
+    if (!isOpen()) return;
+    place();
+    const pop = $("#quick-pop");
+    ((act && pop.querySelector(`.qs-row[data-act="${act}"]`)) || pop.querySelector(".qs-row"))?.focus({ preventScroll: true });
+  });
+}
+
+function place(r = $(".topbar .brand").getBoundingClientRect()) {
   const pop = $("#quick-pop");
-  const r = btn.getBoundingClientRect();
   const rtl = document.documentElement.dir === "rtl";
   pop.style.top = `${Math.round(r.bottom + 8)}px`;
   pop.style.left = pop.style.right = "";
@@ -108,10 +118,9 @@ function open() {
   const pop = $("#quick-pop");
   render();
   pop.hidden = false;
-  place();
+  placeSoon();
   $(".topbar .brand").setAttribute("aria-expanded", "true");
   D.overlayOpened(); // na Učni poti tipka Nazaj zapre meni, ne aplikacije
-  pop.querySelector(".qs-row")?.focus({ preventScroll: true });
   // Sveže stanje (npr. trening je bil medtem opravljen); ob napaki ostane zadnje znano.
   const sid = D.getState().student?.id;
   Promise.resolve(D.refresh())
@@ -120,8 +129,7 @@ function open() {
       if (!m || !isOpen() || D.getState().student?.id !== sid) return;
       const focused = document.activeElement?.closest?.(".qs-row")?.dataset.act;
       renderRows();
-      place();
-      (pop.querySelector(`.qs-row[data-act="${focused}"]`) || pop.querySelector(".qs-row"))?.focus({ preventScroll: true });
+      placeSoon(focused);
     });
 }
 

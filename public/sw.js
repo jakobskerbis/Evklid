@@ -106,7 +106,7 @@ self.addEventListener("message", (e) => {
   e.waitUntil(done);
 });
 
-// Stran ob prvem obisku pošlje seznam že naloženih datotek, da jih shranimo za brez povezave.
+// Stran ob prvem obisku pošlje seznam že naloženih datotek (po kosih), da jih shranimo za brez povezave; »ok« ob koncu kosa.
 self.addEventListener("message", (e) => {
   if (e.data?.type !== "precache" || !Array.isArray(e.data.urls)) return;
   const same = e.data.urls.filter((u) => {
@@ -127,7 +127,7 @@ self.addEventListener("message", (e) => {
         const res = await fetch(u).catch(() => null);
         if (res?.ok) await put(cache, u, res);
       }),
-    ),
+    ).finally(() => e.ports?.[0]?.postMessage("ok")), // stran pošilja seznam po kosih (public/app.js predpomni)
   );
 });
 

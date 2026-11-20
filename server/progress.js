@@ -233,9 +233,12 @@ export class Progress {
   }
 
   // Naslednja vaja pri temi. Prvič pri temi najprej pokažemo rešen zgled.
-  nextPractice(studentId, topicId) {
+  // vnaprej: odjemalec naslednjo nalogo pripravi pred klikom (public/kliki.js vadnica). Takrat brez zgleda in brez
+  // spremembe stanja teme: tema, ki bi pokazala zgled ali je še nova, vrne { vnaprej: false } (klik pozneje kot prej).
+  nextPractice(studentId, topicId, { vnaprej = false } = {}) {
     if (!hasGenerator(topicId)) return null;
     const s = this.state(studentId, topicId);
+    if (vnaprej && (!s.seen_example || s.status === "new")) return { vnaprej: false };
     if (!s.seen_example) {
       const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId), this.taskYear(studentId));
       s.seen_example = 1;
@@ -251,11 +254,23 @@ export class Progress {
     const pending = this.db
       .prepare("SELECT * FROM tasks WHERE student_id = ? AND topic_id = ? AND mode = 'practice' AND session_id IS NULL AND solved = 0 AND attempts < ? ORDER BY id DESC LIMIT 1")
       .get(studentId, topicId, RULES.maxAttempts);
+    const lang = this.taskLang(studentId);
+    const year = this.taskYear(studentId);
     if (pending) {
-      return { task: { id: pending.id, mode: "practice", ...publicTask(JSON.parse(pending.payload)) }, state: { level: s.level, streak: s.streak }, resumed: true };
+      const payload = JSON.parse(pending.payload);
+      // Nedotaknjena naloga (lahko pripravljena vnaprej, { vnaprej: true }): velja od zdaj, ko jo učenec dobi (tedensko
+      // poročilo staršem, server/rast.js štejeta po created_at), in samo, če stopnja, jezik in razred še veljajo.
+      // Starejše vrstice brez gen (pred to spremembo) štejejo kot veljavne.
+      const fresh = !pending.attempts && !pending.hint_used;
+      const stale = fresh && (pending.level !== s.level || (payload.gen && (payload.gen.lang !== lang || payload.gen.year !== year)));
+      if (!vnaprej && fresh && !stale) this.db.prepare("UPDATE tasks SET created_at = datetime('now') WHERE id = ?").run(pending.id);
+      if (!stale) return { task: { id: pending.id, mode: "practice", ...publicTask(payload) }, state: { level: s.level, streak: s.streak }, resumed: true };
+      if (vnaprej) return { vnaprej: false }; // nova naloga nastane šele ob kliku
     }
-    const task = generateTask(topicId, s.level, undefined, this.taskLang(studentId), this.taskYear(studentId));
+    const task = { ...generateTask(topicId, s.level, undefined, lang, year), gen: { lang, year } };
     const id = this.saveTask(studentId, task, "practice");
+    // Zastarela nedotaknjena naloga odide šele za novo: nova dobi drugo številko (odjemalec ima morda staro).
+    if (pending) this.db.prepare("DELETE FROM tasks WHERE id = ?").run(pending.id);
     return { task: { id, mode: "practice", ...publicTask(task) }, state: { level: s.level, streak: s.streak } };
   }
 

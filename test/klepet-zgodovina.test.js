@@ -23,7 +23,7 @@ test("odjemalec: openConversation ne meri po sporočilu, send meri v naslednji s
   const open = app.slice(app.indexOf("async function openConversation("), app.indexOf("// Telefon: seznam pogovorov"));
   assert.doesNotMatch(open, /for \(const m of conv\.messages\) addMessage/, "ne addMessage z meritvami za vsako sporočilo");
   assert.match(open, /addMessage\(m\.role, m\.text, m\.has_image, m, \{ meri: false \}\)/);
-  assert.equal(open.match(/prilagodiZdaj\(\)/g).length, 2, "enkrat ob odprtju in enkrat na kos starejših");
+  assert.equal(open.match(/prilagodiZdaj\(\)/g).length, 3, "enkrat ob odprtju, enkrat po prihodu knjižnic za formule (samo, če so še prihajale) in enkrat na kos starejših");
   const send = app.slice(app.indexOf("async function send(text"), app.indexOf("// --- varnostni odgovor"));
   assert.match(send, /userEl = addMessage\("user", text, !!image, null, \{ meri: false \}\);\n\s+naDnoRaf = requestAnimationFrame\(naDno\);/);
   assert.match(send, /bubble = addMessage\("assistant", "", false, null, \{ meri: false \}\);/);
@@ -51,7 +51,8 @@ test("zaznavalnik: ogrej() po kosih prevede vzorce, rezultati zaznavanja ostanej
   assert.equal(rezultati(m), brez);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /if \(name === "chat"\) \{[^}]*pripraviZaznavalnik\(\);/);
-  assert.match(app, /const kos = \(\) => whenIdle\(\(\) => ogrejNujno\(8\) \|\| kos\(\)\);/);
+  // Kos 8–20 ms v času mirovanja; ko čaka dotik ali tipka, ga izpusti (nikoli dolgo opravilo ob interakciji).
+  assert.match(app, /const kos = \(\) => whenIdle\(\(d\) => \(navigator\.scheduling\?\.isInputPending\?\.\(\) \? kos\(\) : ogrejNujno\(Math\.min\(20, Math\.max\(8, \(d\?\.timeRemaining\?\.\(\) \?\? 0\) - 2\)\)\) \|\| kos\(\)\)\);/);
   // Zaznavalnik je statično uvožen (pregled varnosti #888): na voljo takoj ob pošiljanju, brez povezave in ob zavrnitvi.
   assert.match(app, /^import \{ zaznajNujno,[^\n]*\} from "\.\/nujno\.js";$/m);
   assert.doesNotMatch(app, /lenModul\("\.\/nujno\.js"\)/);
@@ -93,7 +94,19 @@ test("dolg pogovor: zadnjih 20 takoj in na dnu, starejša ob drsenju navzgor bre
     await p.locator("#conversation-list li", { hasText: "Dolg pogovor" }).first().click();
     await p.waitForFunction(() => document.querySelectorAll("#messages .msg").length >= 20, null, { timeout: 30000 });
     await p.evaluate(() => document.fonts.ready); // pisave KaTeX: formule po nalaganju pisave spremenijo višino
-    await p.waitForTimeout(400);
+    // Izris se umiri: formule izrisane (KaTeX se pod obremenitvijo naloži pozneje in poveča višino) in višina seznama
+    // enaka 5 zaporednih okvirjev. Prej fiksnih 400 ms, kar je bilo pod obremenitvijo včasih premalo (»na dnu«).
+    await p.waitForFunction(() => document.querySelectorAll("#messages .msg .katex").length >= 20, null, { timeout: 30000 });
+    await p.evaluate(
+      () =>
+        new Promise((ok) => {
+          const b = document.querySelector("#messages");
+          let h = -1, n = 0;
+          const f = () => (b.scrollHeight === h ? ++n : ((h = b.scrollHeight), (n = 0)), n >= 5 ? ok() : requestAnimationFrame(f));
+          requestAnimationFrame(f);
+        }),
+    );
+    await p.waitForTimeout(100);
     const besedila = () => p.evaluate(() => [...document.querySelectorAll("#messages .msg")].map((m) => Number(/^(?:Vprašanje|Odgovor) (\d+)/.exec(m.textContent.trim())?.[1])));
     const stanje = () =>
       p.evaluate(() => {
