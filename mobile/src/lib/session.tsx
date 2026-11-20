@@ -76,6 +76,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [students, setStudents] = useState<Student[]>([]);
   const [studentId, setStudentId] = useState<number | null>(null);
   const loaded = useRef(false);
+  // Šteje konce seje: odgovor, ki je prišel po odjavi (tudi če je vmes že prijavljen drug račun), se zavrže.
+  const ends = useRef(0);
 
   const apply = useCallback(async (p: Parent | null, list: Student[]) => {
     loaded.current = true;
@@ -95,20 +97,24 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setStudents([]);
       return;
     }
+    const e = ends.current;
     try {
       const [status, list] = await Promise.all([api("/api/account/status"), api<Student[]>("/api/students")]);
-      // Seja se je med čakanjem končala (odjava): odgovor ne sme znova zapisati računa na telefon.
-      if (!hasSession()) return;
-      await Storage.setItem(CACHE_KEY, JSON.stringify({ parent: status.parent, students: list })).catch(() => {});
+      // Seja se je med čakanjem končala (odjava, morda že prijava drugega računa): odgovor ne sme znova zapisati
+      // starega računa na telefon. Zapis je sinhron, da ga brisanje ob odjavi (clearDevice) ne prehiti.
+      if (!hasSession() || e !== ends.current) return;
+      try {
+        Storage.setItemSync(CACHE_KEY, JSON.stringify({ parent: status.parent, students: list }));
+      } catch {}
       await apply(status.parent, list);
     } catch (err) {
       if (!(err instanceof ApiError) || !err.offline) throw err;
       // Brez povezave ostane zadnje znano stanje; ob zagonu brez povezave ga preberemo s telefona,
       // da učna pot in vaje brez povezave delujejo (sicer bi se odprl prazen zaslon s profili).
-      if (loaded.current || !hasSession()) return;
+      if (loaded.current || !hasSession() || e !== ends.current) return;
       const cached = await Storage.getItem(CACHE_KEY).catch(() => null);
       const c = cached ? (JSON.parse(cached) as { parent: Parent | null; students: Student[] }) : null;
-      if (c && hasSession()) await apply(c.parent, c.students || []);
+      if (c && hasSession() && e === ends.current) await apply(c.parent, c.students || []);
     }
   }, [apply]);
 
@@ -129,6 +135,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       if (hasSession() && reminderTime()) registerPush();
       if (!hasSession()) {
         // Odjava, izbris računa ali potekla seja: proč s podatki računa na telefonu.
+        ends.current++;
         loaded.current = false;
         setParent(null);
         setStudents([]);
