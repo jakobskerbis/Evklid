@@ -86,7 +86,7 @@ export function prune(dbFile, keepDaily, keepManual, now = new Date()) {
 /**
  * Rok hrambe kopij ne glede na EVKLID_BACKUPS (kliče se ob kopiji, ob zagonu in v dnevnem čiščenju, server/zasebnost.js):
  * ročne kopije starejše od MANUAL_MAX_DAYS (po datumu v imenu), shranjene baze pred obnovo ter potekle in pokvarjene
- * obnove starejše od SAVED_DAYS. Vrne število pobrisanih datotek.
+ * obnove starejše od SAVED_DAYS ter zapise seznama izbrisov, starejše od IZBRISI_DNI. Vrne število pobrisanih datotek.
  */
 export function pocistiStare(dbFile, now = new Date()) {
   if (!dbFile || dbFile === ":memory:") return 0;
@@ -105,6 +105,13 @@ export function pocistiStare(dbFile, now = new Date()) {
         fs.rmSync(path.join(dir, x), { force: true });
         n++;
       }
+  // Seznam izbrisov: zapisi, starejši od IZBRISI_DNI, se pobrišejo tudi brez novih izbrisov in brez R2. Pokvarjene
+  // datoteke ne prepišemo (napako javi ponovitevIzbrisov ob zagonu).
+  try {
+    if (fs.existsSync(izbrisiFile(dbFile))) dodajIzbrise(dbFile, [], now);
+  } catch {
+    // ostane do naslednjega čiščenja
+  }
   return n;
 }
 

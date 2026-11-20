@@ -9,7 +9,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { makeBackup, listBackups, restoreFile, applyPendingRestore, beriIzbrise, dodajIzbrise, izbrisiFile, IZBRISI_DNI } from "../server/kopije.js";
+import { makeBackup, listBackups, restoreFile, applyPendingRestore, beriIzbrise, dodajIzbrise, izbrisiFile, pocistiStare, IZBRISI_DNI } from "../server/kopije.js";
 import { eraseAccount, ponovitevIzbrisov } from "../server/accounts/izbris.js";
 import { uskladiIzbrise, startCloudBackups } from "../server/kopije-oblak.js";
 
@@ -116,7 +116,12 @@ test("seznam izbrisov: stari zapisi se pobrišejo, dvojniki se ne podvojijo, pok
   assert.equal(dodajIzbrise(file, [star, nov, nov, { at: 5 }], now).dodanih, 2);
   assert.deepEqual(beriIzbrise(file), [nov]);
   assert.equal(dodajIzbrise(file, [nov], now).dodanih, 0);
+  // Dnevno čiščenje po rokih hrambe pobriše stare zapise tudi brez novega izbrisa (in brez R2).
+  pocistiStare(file, new Date(now.getTime() + (IZBRISI_DNI + 2) * 864e5));
+  assert.deepEqual(beriIzbrise(file), []);
   fs.writeFileSync(izbrisiFile(file), "{pokvarjeno");
+  pocistiStare(file, now); // pokvarjenega seznama čiščenje ne prepiše
+  assert.equal(fs.readFileSync(izbrisiFile(file), "utf8"), "{pokvarjeno");
   const errors = [];
   const store = openDb(file);
   assert.deepEqual(ponovitevIzbrisov(store.db, file, { log: { error: (m) => errors.push(m), info() {} } }), { racuni: 0, profili: 0 });

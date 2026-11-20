@@ -68,9 +68,11 @@ Koda: `server/accounts/neaktivni.js`, test `test/neaktivni.test.js`. Teče enkra
 - **Kopije:** izbrisan račun ostane v varnostnih kopijah do njihovega poteka (spodaj, največ 30 dni); obnova iz
   kopije ga ne vrne (seznam izbrisov, spodaj »Varnostne kopije«).
 - **Stranka v Stripu** se po izbrisu računa (tudi neaktivnega) izbriše v ozadju (`DELETE /v1/customers/…`); napaka
-  izbrisa računa ne ustavi, v dnevnik gre samo koda napake. Plačila, vračila in spori ostanejo v Stripu (vezani so na
-  plačilo, ne na stranko), zato ročno vračilo po izbrisu še gre. Stranka ostane, če ima račun odprt odstop od pogodbe
-  (vračilo še ni končano) ali jo uporablja še drug račun: v dnevniku je vrstica, skrbnik jo izbriše ročno po zaključku.
+  izbrisa računa ne ustavi, v dnevnik gresta samo koda napake in številka izbrisanega računa (brez e-naslova in id-ja
+  stranke; stranko najdeš v Stripu po metapodatku `parent_id`). Plačila, vračila, spori in računi (invoices, z imenom
+  in e-naslovom kupca ob izdaji, za davčno hrambo) ostanejo v Stripu, vezani na plačilo, ne na stranko, zato ročno
+  vračilo po izbrisu še gre. Stranka ostane, če ima račun odprt odstop od pogodbe (vračilo še ni končano; v dnevniku je
+  vrstica s številko odstopa, skrbnik stranko izbriše ročno po zaključku) ali jo uporablja še drug račun.
 
 ## Izbris profila (`DELETE /api/students/:id`)
 
@@ -108,7 +110,8 @@ zahteve, se izbrisi ponovijo za vrstice, ki so spet v bazi (vse poti obnove: `ob
 iz R2, posnetek diska). Ujemati se morata id in `created_at`, zato nov račun ali profil s ponovno uporabljenim id-jem
 ostane (tudi z istim e-naslovom). Seznam gre šifriran tudi v R2 (`kopije/<ime>-izbrisi.json.enc`, v največ 1 uri po
 izbrisu) in se ob zagonu ter vsako uro združi z lokalnim, da velja tudi po izgubi diska. Hrani se 45 dni (najstarejša
-kopija 30 dni + rezerva). Gostje po 30 dneh se ne zapišejo: po obnovi jih isto dnevno čiščenje izbriše znova.
+kopija 30 dni + rezerva); starejše zapise pobriše dnevno čiščenje po rokih hrambe (`pocistiStare`). Gostje po 30 dneh
+se ne zapišejo: po obnovi jih isto dnevno čiščenje izbriše znova.
 
 ## Najdbe (zapisano 15. 11. 2026)
 
@@ -129,7 +132,9 @@ Popravljeno 16. 11. 2026 (j je izbral »vse v bazi«; test vsake je v oklepaju):
 Odprto:
 
 6. `public/zasebnost.html` §5 ne omenja, da po izbrisu ostanejo (brez povezave na račun) predpomnjeni odgovori,
-   nagrade za priporočilo, šola in naloge v razredu drugega učitelja. Besedilo je za drug profil; zapisano za j.
+   nagrade za priporočilo, šola in naloge v razredu drugega učitelja. Od 20. 11. 2026 ne omenja niti seznama izbrisov
+   (številki računa in profilov s časom nastanka in izbrisa, 45 dni) niti izbrisa stranke v Stripu ob izbrisu računa.
+   Besedilo je za drug profil; zapisano za j.
 
 Zunaj baze (pregled 3; test jih ne vidi):
 

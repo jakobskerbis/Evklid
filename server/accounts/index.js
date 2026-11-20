@@ -2274,10 +2274,11 @@ export function mountAccounts(app, store, opts = {}) {
     if (!stripe.enabled || !cus) return null;
     try {
       const odprt = db
-        .prepare("SELECT 1 FROM withdrawals WHERE parent_id = ? AND (status IN ('received', 'processing', 'failed') OR refunds LIKE '%\"pending\"%') LIMIT 1")
+        .prepare("SELECT id FROM withdrawals WHERE parent_id = ? AND (status IN ('received', 'processing', 'failed') OR refunds LIKE '%\"pending\"%') LIMIT 1")
         .get(p.id);
       if (odprt) {
-        log.error?.("[evklid] stranka v Stripu ni izbrisana: račun ima odprt odstop od pogodbe (izbriši jo ročno po zaključku)");
+        // Notranji številki (brez e-naslova in id-ja stranke): stranko skrbnik najde v Stripu po metapodatku parent_id.
+        log.error?.(`[evklid] stranka v Stripu za izbrisani račun ${p.id} ni izbrisana: odprt odstop od pogodbe ${odprt.id} (izbriši jo ročno po zaključku)`);
         return null;
       }
     } catch (err) {
@@ -2286,10 +2287,15 @@ export function mountAccounts(app, store, opts = {}) {
     return { cus, parentId: p.id };
   }
   function forgetStripeCustomer(x) {
-    if (!x || db.prepare("SELECT 1 FROM parents WHERE stripe_customer_id = ? AND id != ?").get(x.cus, x.parentId)) return;
+    if (!x) return;
+    if (db.prepare("SELECT 1 FROM parents WHERE stripe_customer_id = ? AND id != ?").get(x.cus, x.parentId)) {
+      log.info?.(`[evklid] stranka v Stripu za izbrisani račun ${x.parentId} ostane: uporablja jo še drug račun`);
+      return;
+    }
     stripe.request("DELETE", `/customers/${encodeURIComponent(x.cus)}`).catch((err) => {
-      // Brez id-ja stranke in besedila Stripa (lahko vsebuje e-naslov): samo koda.
-      log.error?.(`[evklid] stranke v Stripu ni bilo mogoče izbrisati (${err.status || "omrežje"}${err.stripe?.code ? ` ${err.stripe.code}` : ""}); izbriši jo ročno`);
+      // Brez id-ja stranke in besedila Stripa (lahko vsebuje e-naslov): koda in notranja številka izbrisanega računa
+      // (v Stripu metapodatek parent_id stranke).
+      log.error?.(`[evklid] stranke v Stripu za izbrisani račun ${x.parentId} ni bilo mogoče izbrisati (${err.status || "omrežje"}${err.stripe?.code ? ` ${err.stripe.code}` : ""}); izbriši jo ročno`);
     });
   }
 

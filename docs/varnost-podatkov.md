@@ -39,8 +39,8 @@ profilov), e-naslov starša (prijava), `answer_cache` (skupni preverjeni odgovor
 - **Prvi vklop:** ob naslednjem zagonu strežnik v ozadju zašifrira vse obstoječe vrstice (po paketih, aplikacija med tem deluje).
 - **Preverjanje:** v Render → Shell `node scripts/kljuc-podatkov.js --preveri` izpiše, koliko vrstic je šifriranih,
   nešifriranih in neberljivih.
-- **Brez ključa** (lokalno, testi) se podatki shranjujejo nešifrirani; na javnem strežniku (https ali `NODE_ENV=production`)
-  strežnik ob zagonu to zapiše kot opozorilo. Datoteka `povratne-informacije.json` se s ključem ne piše več
+- **Brez ključa** (lokalno, testi) se podatki shranjujejo nešifrirani; v produkciji (Render, https ali
+  `NODE_ENV=production`) se strežnik brez ključa ne zažene, razen z `EVKLID_ALLOW_PLAINTEXT=1` (spodaj »Spremenljivke okolja«). Datoteka `povratne-informacije.json` se s ključem ne piše več
   (mnenja so v bazi; `node scripts/povzetek-povratnih.js` jih prebere od tam).
 
 ### Menjava ključa
