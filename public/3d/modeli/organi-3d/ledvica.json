@@ -47,7 +47,8 @@
     "gostota": 60,
     "moc": 0.18,
     "barva": "#d2917a",
-    "visina": 0.15
+    "visina": 0.15,
+    "notranjaMoc": 0
    },
    "zile": 0.4,
    "zileSirina": 0.00022,
@@ -97,7 +98,7 @@
      ],
      [
       0.01596,
-      -4e-05,
+      -0.00004,
       0.00084,
       0.9988,
       -0.0499,
@@ -141,7 +142,7 @@
      ]
     ],
     "barva": "#7e2624",
-    "notranja": "#d49a86",
+    "notranja": "#b2665a",
     "proge": "#d9937e",
     "gostota": 58,
     "moc": 0.8,
@@ -191,7 +192,7 @@
      ]
     },
     "notranjaR0": 0.1,
-    "notranjaR1": 0.42,
+    "notranjaR1": 0.3,
     "locne": {
      "odmik": 0.00045,
      "razmik": 0.00045,
@@ -249,7 +250,8 @@
     "gostota": 60,
     "moc": 0.18,
     "barva": "#d2917a",
-    "visina": 0.15
+    "visina": 0.15,
+    "notranjaMoc": 0
    },
    "rezPresek": {
     "vrsta": 0,
@@ -295,7 +297,7 @@
      ],
      [
       0.01596,
-      -4e-05,
+      -0.00004,
       0.00084,
       0.9988,
       -0.0499,
@@ -378,13 +380,13 @@
   },
   "papila": {
    "hrap": 0.34,
-   "lak": 0.3,
+   "lak": 0.12,
    "lakHrap": 0.35,
-   "sijaj": 0.2,
+   "sijaj": 0.08,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
-   "barva": "#c48676",
+   "barva": "#a65a4c",
    "rez": "#c48676",
    "sijajBarva": "#ffd0c0",
    "mapa": false,
@@ -501,7 +503,7 @@
    "zrno": 0.06,
    "f": 110,
    "barva": "#c9a468",
-   "rez": "#6e3d2c",
+   "rez": "#5e3b32",
    "sijajBarva": "#ffe0a0",
    "lise": 0.15,
    "liseBarva": "#dcc08a",
@@ -510,8 +512,8 @@
    "rezPresek": {
     "vrsta": -2,
     "polno": true,
-    "rob": 0.0011,
-    "robBarva": "#d8ad3e"
+    "rob": 0.003,
+    "robBarva": "#d6a640"
    }
   },
   "meh": {
