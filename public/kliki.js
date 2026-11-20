@@ -84,21 +84,22 @@ export function zapomni(n = 20) {
 
 // Naslednja naloga vadnice vnaprej (po preverjenem odgovoru in ob odprti temi v učenju). Strežnik ob { vnaprej: true }
 // ne pokaže zgleda in ne spremeni stanja teme; naloga je enaka, kot bi jo dobil ob kliku. Velja za istega učenca in
-// temo in samo, če vmes ni bilo nobene druge spremembe (gen).
+// temo, največ 60 s in samo, če vmes ni bilo nobene druge spremembe (gen).
 export function vadnica({ api, ucenec, tema, gen, smem }) {
   let naprej = null; // { sid, topic, gen, p }
   return {
     prefetch(topicId) {
       const sid = ucenec();
       if (!sid || !topicId || !smem()) return;
-      const e = { sid, topic: topicId, gen: gen(), p: api(`/api/students/${sid}/practice/next`, { method: "POST", body: { topic_id: topicId, vnaprej: true }, ohrani: true, ozadje: true }) };
+      const e = { sid, topic: topicId, gen: gen(), t: Date.now(), p: api(`/api/students/${sid}/practice/next`, { method: "POST", body: { topic_id: topicId, vnaprej: true }, ohrani: true, ozadje: true }) };
       e.p.catch(() => naprej === e && (naprej = null));
       naprej = e;
     },
     take() {
       const e = naprej;
       naprej = null;
-      if (!e || e.sid !== ucenec() || e.topic !== tema() || e.gen !== gen()) return null;
+      // Največ 60 s kot topli: starejšo nalogo strežnik ob običajnem kliku osveži (created_at) ali ustvari znova.
+      if (!e || e.sid !== ucenec() || e.topic !== tema() || e.gen !== gen() || Date.now() - e.t > 60000) return null;
       return e.p.then((out) => (out?.task ? out : null), () => null);
     },
   };

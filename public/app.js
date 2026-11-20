@@ -1951,7 +1951,9 @@ $("#conversation-list").addEventListener(
 // Na računalniku je seznam lahko skrit s potegom ločnice do roba (public/razdelilnik.js): isti gumb ga vrne.
 let chatSplit = null;
 $("#toggle-sidebar").addEventListener("click", () => (chatSplit?.collapsed ? chatSplit.expand() : setSidebar(!$(".sidebar").classList.contains("open"))));
-$("#conversation-list").addEventListener("click", () => setSidebar(false));
+// V fazi zajema (pred klikom vrstice): seznam se zapre, preden se pogovor (morda že prenesen vnaprej) izriše in
+// pomakne na dno; sicer bi se glava klepeta na telefonu povečala šele po pomiku in zadnje sporočilo bi bilo pod poljem.
+$("#conversation-list").addEventListener("click", () => setSidebar(false), { capture: true });
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && $(".sidebar").classList.contains("open")) setSidebar(false);
 });

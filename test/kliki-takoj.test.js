@@ -468,3 +468,28 @@ test("Zbirke: ob nespremenjenih podatkih s strežnika se zaslon ne izriše drugi
   assert.equal(r.izrisi, 1, JSON.stringify(r));
   assert.deepEqual(napake, []);
 });
+
+test("pregled #902: naloga vnaprej največ 60 s, seznam pogovorov se zapre pred izrisom, manjkajoča naloga → naslednja", async () => {
+  const { vadnica } = await import("../public/kliki.js");
+  let now = 1_000_000;
+  const realNow = Date.now;
+  Date.now = () => now;
+  try {
+    const v = vadnica({ api: async () => ({ task: { id: 7 } }), ucenec: () => 1, tema: () => "T", gen: () => 0, smem: () => true });
+    v.prefetch("T");
+    now += 61_000;
+    assert.equal(v.take(), null, "starejša od 60 s se ne porabi");
+    v.prefetch("T");
+    now += 1_000;
+    assert.equal((await v.take())?.task.id, 7);
+  } finally {
+    Date.now = realNow;
+  }
+  const fs = await import("node:fs");
+  const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(app, /\$\("#conversation-list"\)\.addEventListener\("click", \(\) => setSidebar\(false\), \{ capture: true \}\);/);
+  const vad = fs.readFileSync(new URL("../public/vadnica.js", import.meta.url), "utf8");
+  assert.match(vad, /err\.message === "Naloga ne obstaja\." && state\.topic\) \{\n\s+nextPractice\(\);/);
+  const enote = fs.readFileSync(new URL("../public/enote-izbira.js", import.meta.url), "utf8");
+  assert.doesNotMatch(enote, /from "\.\/offline\.js"/, "aplikacija za telefon ne sme uvoziti offline.js");
+});

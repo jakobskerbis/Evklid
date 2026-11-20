@@ -560,6 +560,12 @@ async function checkTask(task, ctx, value) {
       stop(!!r);
     }
   } catch (err) {
+    // Naloge vadnice ni več (npr. vnaprej prenesena naloga, ki jo je strežnik ob kliku na drugi napravi ustvaril znova):
+    // namesto napake brez izhoda naložimo naslednjo nalogo iste teme.
+    if (ctx.mode === "practice" && err.status === 400 && err.message === "Naloga ne obstaja." && state.topic) {
+      nextPractice();
+      return true;
+    }
     // Učenec napako vidi, namesto da se ne zgodi nič. Z »Preveri povezavo« samo, ko strežnik ni odgovoril.
     const msg = escapeHtml(err.message);
     fb.innerHTML = `<div class="fb bad">${icon("circle-x")}<span>${err.status ? t("task.checkFailed", { msg }) : t("task.checkError", { msg })}</span></div>`;
