@@ -227,6 +227,7 @@ export const isStalePack = (pack) =>
 
 // Naloga iz paketa za prikaz: hasUnit ?? !!unit (stari paket); ponudbo enot izračuna odjemalec, kadar je ni;
 // prava enota (»unit«) ne gre naprej. check: checkAnswer (iste enote, kot jih sprejme preverjanje, ne ponudi).
+/** @param {((answer: any, input: string) => { kind?: string }) | null} [check] */
 export function offlineTask(task, answer, check = null) {
   if (!task) return task;
   const { unit, ...rest } = task;

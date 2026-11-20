@@ -4,23 +4,39 @@
 # 1:47/2:47 pozimi, 2:47/3:47 poleti) in urnik vsako uro (rezerva) objavo opravijo v oknu.
 # Pravila v scripts/render-objava.js: v oknu miren strežnik → takoj, zadnjih 30 min okna v vsakem primeru;
 # [nujno] na začetku naslova ali ročni zagon → takoj; med objavama vsaj 1 ura.
+# Nikoli pred zelenimi testi (j, 20. 11. 2026): objavi se samo commit, za katerega so vsi posli testi.yml
+# (testi, preveri, hrosci, tipi) uspeli. Ko se Testi za main končajo (workflow_run), se tek zažene znova,
+# zato [nujno] pride na Render nekaj minut po zelenih testih. Padli testi: ta commit se ne objavi.
 # Deluje, ko je v GitHubu nastavljena skrivnost RENDER_DEPLOY_HOOK (Render > evklid > Settings > Deploy Hook).
-# Ročni zagon (Actions > Render > Run workflow) objavi takoj. Navodila: docs/posodobitve.md
+# Ročni zagon (Actions > Render > Run workflow) objavi takoj, ko so testi zeleni; »brez_testov« (privzeto izklopljeno)
+# objavi tudi brez njih (samo v sili). Navodila: docs/posodobitve.md
 name: Render
 on:
   push:
+    branches: [main]
+  workflow_run:
+    workflows: [Testi]
+    types: [completed]
     branches: [main]
   schedule:
     - cron: "23 * * * *"
     - cron: "47 0,1 * * *"
   workflow_dispatch:
+    inputs:
+      brez_testov:
+        description: "Objavi tudi brez zelenih testov (samo v sili)"
+        type: boolean
+        default: false
 permissions:
   contents: read
-concurrency:
-  group: render-objava
-  cancel-in-progress: true
+  actions: read # stanje testov (testi.yml) za commit
 jobs:
   objavi:
+    # Konec Testov za PR ne sproži ničesar (preskočen posel tudi ne prekine čakajočega teka: concurrency je na poslu).
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.event == 'push'
+    concurrency:
+      group: render-objava
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 215
     steps:
@@ -48,6 +64,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           ROCNO: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
+          BREZ_TESTOV: ${{ github.event_name == 'workflow_dispatch' && inputs.brez_testov && '1' || '0' }}
           # Tudi urnik čaka: novi tek (cancel-in-progress) prekine čakajočega, zato mora čakati naprej sam.
           CAKAJ: ${{ github.event_name != 'workflow_dispatch' && '1' || '0' }}
         run: node scripts/render-objava.js
