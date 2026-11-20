@@ -25,10 +25,12 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
 - **Vaje brez povezave**: naloge učne poti se shranijo na telefon, odgovor preveri telefon (isto
   preverjanje kot strežnik, `server/practice/check.js`), ob povezavi strežnik odgovore preveri še
   enkrat in podeli XP. Paket in vrsta odgovorov sta vezana na račun in profil (id profila se po izbrisu lahko ponovi).
-- **Odjava, izbris računa, potekla seja**: neposlani odgovori gredo najprej na strežnik, nato s telefona izgine vse
-  od računa (izbrani profil, račun in profili, paketi vaj in odgovori, časi preverjanja, zavihek Uči, deljene slike),
+- **Odjava, izbris računa, potekla seja**: ob odjavi gredo neposlani odgovori najprej na strežnik (največ 6 s), nato
+  s telefona izgine vse od računa (izbrani profil, račun in profili, paketi vaj in odgovori, časi preverjanja, zavihek Uči, deljene slike in fotografije nalog),
   spletna stran v aplikaciji pa pobriše svoje osebne podatke kot ob odjavi na spletu. Ostanejo nastavitve naprave
   (tresljaji, ura opomnika, id naprave) — `mobile/src/lib/zasebnost.js`, `test/mobile-odjava-brisanje.test.js`.
+  Žeton potisnih obvestil se na strežniku odjavi samo ob odjavi (ob izbrisu računa ga pobriše strežnik); po potekli
+  seji ostane vezan na račun do naslednje prijave na tem telefonu.
 - **Lekcije** po korakih (kratke kartice z vprašanji »Preveri se« vmes, `public/lesson-steps.js`) ali vse
   naenkrat, »Razloži drugače«, formule in tabele kot na spletu.
   Vprašanja z vpisom števila in razvrščanjem (`public/preveri-se.js`) aplikacija dobi, ker pošlje glavo

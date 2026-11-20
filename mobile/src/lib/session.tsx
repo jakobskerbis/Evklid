@@ -51,15 +51,21 @@ const LEGACY_SLUGS = (brand.legacy || []).map((l: { slug?: string }) => l.slug |
 
 // Konec seje (odjava, izbris računa, potekla seja; ob zagonu brez seje še ostanki prejšnjih različic): s telefona
 // gre vse, kar je od računa (src/lib/zasebnost.js): izbrani profil, račun in profili, paketi vaj in neposlani
-// odgovori vseh profilov, časi preverjanja, zavihek Uči, slike za deljenje v predpomnilniku; spletna stran
+// odgovori vseh profilov, časi preverjanja, zavihek Uči, deljene slike in fotografije nalog v predpomnilniku; spletna stran
 // v aplikaciji pobriše svoje osebne podatke (web-state.ts requestWebClear). Nastavitve naprave ostanejo.
 function clearDevice() {
   forgetOffline();
   pocistiShrambo(Storage, brand.slug, LEGACY_SLUGS);
   requestWebClear();
   try {
-    // Slike, deljene s spletne strani (src/app/web.tsx shareImage: <ime>.png na vrhu predpomnilnika).
-    for (const f of new Directory(Paths.cache).list()) if (f instanceof File && /\.png$/i.test(f.name)) f.delete();
+    // Slike v predpomnilniku: deljene s spletne strani (src/app/web.tsx shareImage: <ime>.png na vrhu) in fotografije
+    // nalog (src/lib/images.ts: expo-image-picker in expo-image-manipulator pišeta v svoji mapi, iOS včasih na vrh).
+    for (const f of new Directory(Paths.cache).list()) {
+      const slika = f instanceof File ? /\.(png|jpe?g|heic)$/i.test(f.name) : /^Image(Picker|Manipulator)$/.test(f.name);
+      try {
+        if (slika) f.delete();
+      } catch {}
+    }
   } catch {}
 }
 

@@ -141,6 +141,12 @@ test("seznam osebnih ključev spletne strani je enak kot v public/offline.js", (
   const src = fs.readFileSync("public/offline.js", "utf8");
   const re = /const PRIVATE_KEYS = \/(.*)\/;/.exec(src)[1];
   assert.equal(new RegExp(z.spletVzorec(S)).source, re);
+  // Posamezni ključi (PRIVATE_EXACT z LINK_KEYS): isti nabor v obeh smereh, tudi ko splet doda nov ključ.
+  const lit = (name) => [...new RegExp(`const ${name} = new Set\\(\\[([^\\]]*)\\]`).exec(src)[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  const exact = [...lit("PRIVATE_EXACT"), ...lit("LINK_KEYS")];
+  assert.ok(exact.length >= 6, exact.join());
+  assert.deepEqual([...new Set(exact)].sort(), [...z.spletTocno(S)].sort());
+  for (const k of exact) assert.equal(web.isPrivateKey(k), true, k);
 });
 
 test("skript za WebView pobriše osebne ključe in predpomnilnik API, nastavitve ostanejo", async () => {
@@ -173,6 +179,9 @@ test("vsak konec seje pobriše telefon: odjava, izbris računa, potekla seja, za
   assert.match(fn, /forgetOffline\(\)/);
   assert.match(fn, /pocistiShrambo\(Storage, brand\.slug, LEGACY_SLUGS\)/);
   assert.match(fn, /requestWebClear\(\)/);
+  // Predpomnilnik: deljene slike in fotografije nalog (mape expo-image-picker in expo-image-manipulator).
+  assert.match(fn, /new Directory\(Paths\.cache\)\.list\(\)/);
+  assert.match(fn, /\^Image\(Picker\|Manipulator\)\$/);
   // Poslušalec seje: vsak setSession(null) (odjava, izbris, 401 z login, glava X-App-Session »-«).
   assert.match(session, /onSessionChange\(\(\) => \{[\s\S]*?if \(!hasSession\(\)\) \{[\s\S]*?clearDevice\(\);/);
   assert.match(session, /await loadSession\(\);\s*\/\/[^\n]*\n\s*if \(!hasSession\(\)\) clearDevice\(\);/);
