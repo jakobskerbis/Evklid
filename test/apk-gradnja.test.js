@@ -1,5 +1,5 @@
 // Gradnja APK na GitHubu (.github/workflows/apk.yml) mora ostati enaka gradnji EAS s profilom "direct",
-// sicer APK ne dobi posodobitev JavaScripta (.eas/workflows/posodobitev.yml) ali se ne namesti čez staro.
+// sicer APK ne dobi posodobitev JavaScripta (.github/workflows/ota.yml) ali se ne namesti čez staro.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
