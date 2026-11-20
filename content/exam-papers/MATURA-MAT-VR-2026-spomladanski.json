@@ -535,7 +535,7 @@
      "ways": [
       {
        "title": "Po korakih",
-       "text": "**Podatki:** $a_n = \\frac{3n + 11}{4}$, $b_1 = \\frac{1}{2}$, $d = \\frac{5}{6}$.\n\n**Iščemo:** $n$, za katerega je $a_n = b_n$, in vrednost tega člena.\n\nSplošni člen aritmetičnega zaporedja: $b_n = b_1 + (n - 1)d = \\frac{1}{2} + \\frac{5(n - 1)}{6} = \\frac{3 + 5n - 5}{6} = \\frac{5n - 2}{6}$.\n\nEnačba: $\\frac{3n + 11}{4} = \\frac{5n - 2}{6}$. Pomnožimo s $12$:\n\n$3(3n + 11) = 2(5n - 2)$\n\n$9n + 33 = 10n - 4$\n\n$n = 37$\n\nVrednost: $a_{37} = \\frac{3 \\cdot 37 + 11}{4} = \\frac{122}{4} = \\frac{61}{2}$, preizkus $b_{37} = \\frac{5 \\cdot 37 - 2}{6} = \\frac{183}{6} = \\frac{61}{2}$. ✓"
+       "text": "**Podatki:** $a_n = \\frac{3n + 11}{4}$, $b_1 = \\frac{1}{2}$, $d = \\frac{5}{6}$.\n\n**Iščemo:** $n$, za katerega je $a_n = b_n$, in vrednost tega člena.\n\nSplošni člen aritmetičnega zaporedja: $b_n = b_1 + (n - 1)d = \\frac{1}{2} + \\frac{5(n - 1)}{6} = \\frac{3 + 5n - 5}{6} = \\frac{5n - 2}{6}$.\n\nEnačba: $\\frac{3n + 11}{4} = \\frac{5n - 2}{6}$. Pomnožimo z $12$:\n\n$3(3n + 11) = 2(5n - 2)$\n\n$9n + 33 = 10n - 4$\n\n$n = 37$\n\nVrednost: $a_{37} = \\frac{3 \\cdot 37 + 11}{4} = \\frac{122}{4} = \\frac{61}{2}$, preizkus $b_{37} = \\frac{5 \\cdot 37 - 2}{6} = \\frac{183}{6} = \\frac{61}{2}$. ✓"
       },
       {
        "title": "Drugače: zaporedje razlik",

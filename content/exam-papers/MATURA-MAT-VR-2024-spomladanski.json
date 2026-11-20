@@ -45,7 +45,7 @@
       }
      ],
      "scoring": "- 1 t.: vstavljeno $x = -\\frac{7}{6}$ in $9\\cdot\\left(-\\frac{7}{6}\\right) = -\\frac{21}{2}$,\n- 1 t.: $f\\left(-\\frac{7}{6}\\right) = \\frac{9}{2}$,\n- 1 t.: nastavljena enačba $9x + 15 = -\\frac{3}{4}$,\n- 1 t.: $9x = -\\frac{63}{4}$ (ali $36x = -63$),\n- 1 t.: $x = -\\frac{7}{4}$,\n- 1 t.: nastavljena neenačba $9x + 15 < 0$,\n- 1 t.: $x < -\\frac{5}{3}$,\n- 1 t.: rešitev kot interval $\\left(-\\infty, -\\frac{5}{3}\\right)$.",
-     "mistake": "Neenačaj se obrne le pri množenju ali deljenju z **negativnim** številom. Tu delimo s $9 > 0$, zato ostane $x < -\\frac{5}{3}$. Kdor ga »za vsak primer« obrne, dobi $x > -\\frac{5}{3}$, to pa so ravno tisti $x$, pri katerih je $f$ pozitivna. Pri 2. delu pazi na predznak: $-\\frac{3}{4} - 15 = -\\frac{63}{4}$, ne $-\\frac{57}{4}$."
+     "mistake": "Neenačaj se obrne le pri množenju ali deljenju z **negativnim** številom. Tu delimo z $9 > 0$, zato ostane $x < -\\frac{5}{3}$. Kdor ga »za vsak primer« obrne, dobi $x > -\\frac{5}{3}$, to pa so ravno tisti $x$, pri katerih je $f$ pozitivna. Pri 2. delu pazi na predznak: $-\\frac{3}{4} - 15 = -\\frac{63}{4}$, ne $-\\frac{57}{4}$."
     }
    ]
   },
