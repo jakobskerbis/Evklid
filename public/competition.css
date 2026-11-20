@@ -92,6 +92,10 @@
 
 /* NPZ in matura: kartica Pripravljenost (dni do izpita, delež znane snovi, najšibkejše teme) */
 .exam-ready { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+/* NPZ in matura: izbira v Preteklih polah (raven, leto) zamenja vsebino izbirnika, ob drugi ravni pa se izriše cela stran.
+   Sidranje drsenja bi ohranilo mesto elementa pod izbirnikom in stran bi na telefonu skočila za višino seznama pol
+   (j, 20. 11.: po izbiri osnovne ravni je bil na zaslonu seznam tem). Stran ostane, kjer je bila. */
+#view-exams { overflow-anchor: none; }
 .er-top { display: flex; align-items: center; gap: 14px; }
 .er-ring { width: 72px; height: 72px; font-size: 1rem; }
 .er-ring::before { inset: 7px; }

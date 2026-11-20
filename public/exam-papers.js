@@ -81,7 +81,8 @@ function rowHtml(e, i, tutor, local, ours) {
 }
 
 // Namesti izbirnik v `box`. start: { track, exam, subject, level } (privzeto učenčeva raven).
-export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null, follow = false } = {}) {
+// onLevel(raven): učenec je izbral drugo raven (OR/VR) matematike na maturi.
+export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null, onLevel = null, follow = false } = {}) {
   const v = { ...start };
   // Neveljavna začetna izbira (npr. predmet, ki ga izpit nima) se izbriše od tam naprej.
   let cleared = null;
@@ -161,7 +162,9 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
       autofill(v, papers, subjectName);
       open = steps(v, papers, subjectName).find((s) => !s[3])?.[0] || null;
       all = false;
-      return render();
+      render();
+      if (key === "level") onLevel?.(val);
+      return;
     }
     if (e.target.closest("[data-pp-more]")) {
       all = true;
