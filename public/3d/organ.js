@@ -884,7 +884,18 @@ ${
  { vec3 sO = normalize( vec3( ${t.rezSnopi.os.map((x) => fl(+x.toFixed(4))).join(", ")} ) ); vec3 sP = normalize( cross( sO, orgNw ) );
  float sx = dot( orgQ, sP ) * ${dm2(1 / (t.rezSnopi.sirina ?? 0.00035))} + 1.2 * orgSum( orgQ * ${dm2(250)} ); float sw = fwidth( sx );
  float sl = smoothstep( 0.04, 0.2 + sw, abs( fract( sx ) - 0.5 ) );
- diffuseColor.rgb *= mix( 1.0, ${fl(1 - (t.rezSnopi.moc ?? 0.16))} + ${fl(t.rezSnopi.moc ?? 0.16)} * sl, clamp( 2.0 - sw * 2.0, 0.0, 1.0 ) ); }`
+ diffuseColor.rgb *= mix( 1.0, ${fl(1 - (t.rezSnopi.moc ?? 0.16))} + ${fl(t.rezSnopi.moc ?? 0.16)} * sl, clamp( 2.0 - sw * 2.0, 0.0, 1.0 ) ); }${
+              // r1 (oko): rezSnopi.crte [{ a, b (m), polmer (m), barva, moc }] – daljice na prerezu (osrednja arterija in vena
+              // mrežnice v osi živca, lamina cribrosa), antialiasirane; vse v metrih GLB
+              (t.rezSnopi.crte || [])
+                .map(
+                  (c) => `
+ { vec3 cA = vec3( ${tm(c.a)} ); vec3 cAB = vec3( ${tm(c.b)} ) - cA; float cH = clamp( dot( orgQ - cA, cAB ) / dot( cAB, cAB ), 0.0, 1.0 );
+ float cD = length( orgQ - cA - cAB * cH ) / ${fl(+(c.polmer * merilo).toPrecision(5))}; float cW = max( fwidth( cD ), 0.02 );
+ diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(c.barva || "#8a2a22")}, ${fl(c.moc ?? 0.9)} * ( 1.0 - smoothstep( 1.0 - cW, 1.0 + cW, cD ) ) ); }`,
+                )
+                .join("")
+            }`
             : ""
         }${
           vol && t.rezRavna

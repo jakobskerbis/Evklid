@@ -272,16 +272,16 @@
    "detajl": true,
    "konec": {
     "sredisce": [
-     -0.00789,
-     0.00893,
-     -0.01786
+     -0.00816,
+     0.00775,
+     -0.01749
     ],
     "os": [
-     -0.352,
-     0.2838,
-     -0.892
+     -0.7062,
+     0.2822,
+     -0.6493
     ],
-    "polmer": 0.00175
+    "polmer": 0.00145
    },
    "tekstura": false,
    "zile": 0.5,
@@ -290,15 +290,61 @@
    "zileSirina": 0.00006,
    "rezSnopi": {
     "os": [
-     -0.508,
-     0.287,
-     -0.814
+     -0.233,
+     0.2061,
+     -0.9504
     ],
     "sirina": 0.00035,
-    "moc": 0.18
+    "moc": 0.18,
+    "crte": [
+     {
+      "a": [
+       0.0067,
+       0.00036,
+       0.005
+      ],
+      "b": [
+       0.00442,
+       0.00238,
+       -0.00431
+      ],
+      "polmer": 0.0001,
+      "barva": "#9b2a22",
+      "moc": 0.9
+     },
+     {
+      "a": [
+       0.00656,
+       0.00058,
+       0.00508
+      ],
+      "b": [
+       0.00428,
+       0.0026,
+       -0.00423
+      ],
+      "polmer": 0.00012,
+      "barva": "#5c1f2c",
+      "moc": 0.9
+     },
+     {
+      "a": [
+       0.00582,
+       0.00158,
+       0.00429
+      ],
+      "b": [
+       0.00693,
+       -0.00019,
+       0.00363
+      ],
+      "polmer": 0.00011,
+      "barva": "#f3eee4",
+      "moc": 0.75
+     }
+    ]
    },
-   "rezZamik": -6,
-   "brezReza": true
+   "rezZamik": -6
   },
   "kita": {
    "barva": "#ece7dc",
@@ -478,7 +524,6 @@
    "opis": "Notranja plast s čutnicami (paličnicami in čepnicami), ki svetlobo spremenijo v živčne signale.",
    "opisStudij": "Deset plasti; okoli 120 milijonov paličnic in 6 milijonov čepnic; fovea centralis v makuli ima samo čepnice (najostrejši vid). Svetloba gre skozi vse plasti do čutnic, signal nazaj prek bipolarnih celic do ganglijskih, katerih aksoni tvorijo vidni živec (slepa pega).",
    "vozlisca": [
-    "optic_disc_L (HRA)",
     "ora_serrata_of_retina_L (HRA)",
     "retina_L (HRA)"
    ],
@@ -589,8 +634,8 @@
      -0.00136,
      0.01468
     ],
-    "polmer": 1,
-    "polmerTelefon": 0.95
+    "polmer": 1.2434,
+    "polmerTelefon": 1.1812
    },
    "skrijTkiva": [
     "leča",
@@ -641,8 +686,8 @@
      0.00221,
      0.01544
     ],
-    "polmer": 0.54,
-    "polmerTelefon": 0.52
+    "polmer": 0.6714,
+    "polmerTelefon": 0.6466
    },
    "skrijDele": [
     "misice"
@@ -700,8 +745,8 @@
  },
  "velikost": 0.082,
  "trikotniki": {
-  "racunalnik": 164989,
-  "telefon": 51996
+  "racunalnik": 149371,
+  "telefon": 46142
  },
  "luci": [
   {

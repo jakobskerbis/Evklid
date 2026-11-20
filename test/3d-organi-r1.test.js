@@ -29,3 +29,18 @@ test("r1: hrbtenjača – os navzdol, zožitev na 11 × 8,5 mm, zaprta cev", () 
   const m = json("mozgani");
   assert.ok(m.prerez.hrbtenjaca.os.length > 5 && m.prerez.slika.lo[1] < m.prerez.hrbtenjaca.os.at(-1)[1], "risba reza sega do konca hrbtenjače");
 });
+
+test("r1: oko – živec se reže, ovojnica votla in zaprta, črte osrednjih žil na prerezu", async () => {
+  const { votlaCev, osR1, R_ZIVEC } = await import("../scripts/atlas/oko-zivec.mjs");
+  const os = osR1([0, 0, 0], [0, 0, -1], [0.005, 0.004, -0.03], 20);
+  const zac = os[0], pravo = os.filter((p) => Math.abs(p[0]) < 1e-9 && Math.abs(p[1]) < 1e-9);
+  assert.ok(pravo.length > 6 && Math.abs(pravo.at(-1)[2] + 0.011) < 1e-6 && zac[2] === 0, "prvih 11 mm naravnost v smeri izstopa");
+  const c = votlaCev(os, () => 0.002, () => 0.0017, 10);
+  const kl = new Map(), id = c.P.map((p) => { const k = p.map((x) => Math.round(x * 1e7)).join(); if (!kl.has(k)) kl.set(k, kl.size); return kl.get(k); });
+  assert.ok(zaprtaUsmerjena(c.F.map((i) => id[i])), "ovojnica zaprta in enotno navita");
+  const o = json("oko");
+  const z = o.tkiva["živec"];
+  assert.ok(!z.brezReza && z.rezSnopi.crte.length >= 3 && z.konec.polmer === R_ZIVEC, "živec v prerezu z žilami in lamino");
+  for (const d of o.deli) assert.ok(!(d.vozlisca || []).some((v) => /^optic_disc/.test(v)), "čep papile odstranjen");
+  assert.ok(fs.readFileSync(path.join(import.meta.dirname, "..", "public", "3d", "organ.js"), "utf8").includes("rezSnopi.crte"));
+});
