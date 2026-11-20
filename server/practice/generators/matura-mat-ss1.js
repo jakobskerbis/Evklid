@@ -1738,7 +1738,7 @@ const LINEARNE = [
             hint: "Člene z $x$ zberi na levi, števila na desni, nato deli s koeficientom pred $x$.",
             data: { given: GIV(ax(a, b), ax(c, d)), find: ["x"] },
             formula: FE,
-            solution: `$${lin([a], ["x"])} ${tX(-c)} = ${tx(d)} ${sg(-b)}$\n$${lin([a - c], ["x"])} = ${d - b}$\n$x = ${x0}$\nPreizkus: obe strani sta enaki $${a * x0 + b}$.`,
+            solution: `$${lin([a], ["x"])} ${tX(-c)} = ${tx(d)} ${sg(-b)}$\n$${lin([a - c], ["x"])} = ${d - b}$${a - c === 1 ? "" : `\n$x = ${x0}$`}\nPreizkus: obe strani sta enaki $${a * x0 + b}$.`,
           };
         }
         if (t === 1) {
@@ -1763,7 +1763,7 @@ const LINEARNE = [
             hint: "Najprej odpravi oklepaja. Minus pred drugim oklepajem spremeni predznak obema členoma.",
             data: { given: GIV(`${p}(${xm(q)}) - ${s}(${ax(k, tt)})`, `${u}`), find: ["x"] },
             formula: FE,
-            solution: `$${p}x ${sg(-p * q)} ${tX(-s * k)} ${sg(-s * tt)} = ${u}$\n$${lin([A], ["x"])} = ${u} ${sg(p * q + s * tt)}$\n$${lin([A], ["x"])} = ${B}$\n$x = ${x0}$`,
+            solution: `$${p}x ${sg(-p * q)} ${tX(-s * k)} ${sg(-s * tt)} = ${u}$${p * q + s * tt === 0 ? "" : `\n$${lin([A], ["x"])} = ${u} ${sg(p * q + s * tt)}$`}\n$${lin([A], ["x"])} = ${B}$\n$x = ${x0}$`,
           };
         }
         if (t === 2) {
@@ -1806,11 +1806,11 @@ const LINEARNE = [
             return {
               text: `Vsota ${cntW} zaporednih ${kind} števil je $${S}$. Katero je ${askMax ? "največje" : "najmanjše"} od teh števil?`,
               answer: num(ans, null, [
-                { value: S / cnt, why: "To je povprečje števil, torej srednje število (pri sodem številu členov sploh ni celo)." },
+                { value: S / cnt, why: "To je povprečje števil (vsota, deljena s številom členov), ne iskano število." },
                 { value: askMax ? x0 : x0 + step * (cnt - 1), why: `Vprašanje sprašuje po ${askMax ? "največjem" : "najmanjšem"} številu.` },
                 { value: askMax ? x0 + cnt - 1 : null, why: step === 2 ? "Zaporedna soda (liha) števila se razlikujejo za 2." : "" },
               ]),
-              hint: `Najmanjše število označi z $x$. Naslednja so za ${step === 1 ? "1" : "2"} večja.`,
+              hint: `Najmanjše število označi z $x$. Vsako naslednje je za $${step}$ večje.`,
               data: { given: [`S = ${S}`], find: [askMax ? "\\text{največje število}" : "\\text{najmanjše število}"] },
               formula: `x + (x + ${step}) + \\ldots = S`,
               solution: `Števila so $${terms}$.\n$${cnt}x + ${add} = ${S}$\n$${cnt}x = ${S - add}$\n$x = ${x0}$${askMax ? `\nNajvečje število je $x + ${step * (cnt - 1)} = ${ans}$.` : ""}`,
@@ -1829,7 +1829,7 @@ const LINEARNE = [
             answer: num(x0, null, [
               { value: (A - k * S) / k, why: `Čez $x$ let bosta oba starejša za $x$: $${A} + x = ${k}(${S} + x)$.` },
               { value: A - k * S, why: `Po odpravi oklepaja ostane na desni $${k}x$; zberi člene z $x$ na eni strani.` },
-              { value: A / k - S, why: "Tudi starost starša se poveča za $x$." },
+              { value: A / k - S, why: `Tudi starost ${par === "Oče" ? "očeta" : "mame"} se poveča za $x$.` },
             ]),
             hint: `Čez $x$ let bo ${par.toLowerCase()} ${star} $${A} + x$, ${ch} pa $${S} + x$ let.`,
             data: { given: [`A = ${A}`, `S = ${S}`, `k = ${k}`], find: ["x"] },
@@ -1937,7 +1937,7 @@ const LINEARNE = [
           if (!Number.isInteger(pp) || pp <= p1 || pp >= p2) return null;
           const sub = r.pick(["soli", "sladkorja"]);
           return {
-            text: `V posodi je $${p1}$-odstotna raztopina ${sub}, in sicer $${V1}\\ \\mathrm{l}$. Koliko litrov $${p2}$-odstotne raztopine ${sub} moramo doliti, da dobimo $${pp}$-odstotno raztopino?`,
+            text: `V posodi imamo $${V1}\\ \\mathrm{l}$ $${p1}$-odstotne raztopine ${sub}. Koliko litrov $${p2}$-odstotne raztopine ${sub} moramo doliti, da dobimo $${pp}$-odstotno raztopino?`,
             answer: { ...num(x0, null, [
               { value: (V1 * (p2 - pp)) / (pp - p1), why: "Odstotka sta zamenjana: več močne raztopine pomeni višji odstotek mešanice." },
               { value: (V1 * (pp - p1)) / p2, why: "Na desni je tudi dolita raztopina: končna količina je $V_1 + x$." },
@@ -1964,12 +1964,12 @@ const LINEARNE = [
               answer: num(T, null, [
                 { value: (A + B) / 2, why: "Skupaj delata hitreje kot vsak zase: čas mora biti krajši od obeh." },
                 { value: A + B, why: "Skupaj delata hitreje kot vsak zase: čas mora biti krajši od obeh." },
-                { value: Math.abs(A - B), why: "V eni uri opravita skupaj $\\frac{1}{a} + \\frac{1}{b}$ dela." },
+                { value: Math.abs(A - B), why: `V eni uri opravita skupaj $\\frac{1}{${A}} + \\frac{1}{${B}}$ dela.` },
               ], "h"),
-              hint: "V eni uri prvi opravi $\\frac{1}{a}$ dela, drugi $\\frac{1}{b}$. V $x$ urah skupaj opravita celo delo.",
+              hint: `${s2 === "druga" ? "Prva" : "Prvi"} v eni uri opravi $\\frac{1}{${A}}$ dela, ${s2} $\\frac{1}{${B}}$. V $x$ urah skupaj opravita celo delo.`,
               data: { given: [`t_1 = ${A}\\ \\mathrm{h}`, `t_2 = ${B}\\ \\mathrm{h}`], find: ["t"] },
               formula: "\\dfrac{t}{t_1} + \\dfrac{t}{t_2} = 1",
-              solution: `$\\dfrac{x}{${A}} + \\dfrac{x}{${B}} = 1$\nPomnožimo z $${lcmI(A, B)}$: $${lcmI(A, B) / A}x + ${lcmI(A, B) / B}x = ${lcmI(A, B)}$\n$${lcmI(A, B) / A + lcmI(A, B) / B}x = ${lcmI(A, B)}$\n$x = ${tx(T)}\\ \\mathrm{h}$`,
+              solution: `$\\dfrac{x}{${A}} + \\dfrac{x}{${B}} = 1$\nPomnožimo z $${lcmI(A, B)}$: $${lin([lcmI(A, B) / A], ["x"])} + ${lin([lcmI(A, B) / B], ["x"])} = ${lcmI(A, B)}$\n$${lcmI(A, B) / A + lcmI(A, B) / B}x = ${lcmI(A, B)}$\n$x = ${tx(T)}\\ \\mathrm{h}$`,
             };
           }
           // srečanje
@@ -2113,10 +2113,10 @@ const LINEARNE = [
             { value: A + 2 * c !== 0 ? (s * q + k * p * q + c * p) / (s + k * p + c) : null, why: `Člen $${c}(${xm(p)})$ odpravi pravilno: $${c}x ${sg(-c * p)}$.` },
             { value: p, why: `Pri $x = ${p}$ je imenovalec $0$: to število ni v definicijskem območju.` },
           ]),
-          hint: "Zapiši definicijsko območje in enačbo pomnoži s $(x - p)(x - q)$. Člena z $x^2$ se odštejeta.",
+          hint: "Zapiši definicijsko območje in enačbo pomnoži s produktom imenovalcev. Člena z $x^2$ se odštejeta.",
           data: { given: GIV(`\\dfrac{${kxs}}{${xm(p)}}`, `${k} + \\dfrac{${c}}{${xm(q)}}`), find: ["x"] },
           formula: "\\text{pomnožimo s skupnim imenovalcem; preverimo definicijsko območje}",
-          solution: `Definicijsko območje: $x \\ne ${p}$ in $x \\ne ${q}$.\n$(${kxs})(${xm(q)}) = ${k}(${xm(p)})(${xm(q)}) + ${c}(${xm(p)})$\n$${k === 1 ? "" : k}x^2 ${tX(s - k * q)} ${sg(-s * q)} = ${k === 1 ? "" : k}x^2 ${tX(-k * (p + q) + c)} ${sg(k * p * q - c * p)}$`.replace(/ \+ 0x| - 0x/g, "").replace(/ \+ 0\$/g, "$").replace(/ \+ 0 =/g, " =") + `\n$${lin([A], ["x"])} = ${B}$\n$x = ${x0}$, ki je v definicijskem območju.`,
+          solution: `Definicijsko območje: $x \\ne ${p}$ in $x \\ne ${q}$.\n$(${kxs})(${xm(q)}) = ${k === 1 ? "" : k}(${xm(p)})(${xm(q)}) + ${c}(${xm(p)})$\n$${k === 1 ? "" : k}x^2 ${tX(s - k * q)} ${sg(-s * q)} = ${k === 1 ? "" : k}x^2 ${tX(-k * (p + q) + c)} ${sg(k * p * q - c * p)}$`.replace(/ \+ 0x| - 0x/g, "").replace(/ \+ 0\$/g, "$").replace(/ \+ 0 =/g, " =") + `\n$${lin([A], ["x"])} = ${B}$\n$x = ${x0}$, ki je v definicijskem območju.`,
         };
       }
       if (t === 2) {
@@ -2132,11 +2132,11 @@ const LINEARNE = [
         return {
           text: `${par} je zdaj $${k}$-krat ${older} od ${chG}. Čez $${n}$ ${let_(n)} bo le še $${m}$-krat ${older}. Koliko let ima ${ch} zdaj?`,
           answer: num(x0, null, [
-            { value: k * x0, why: `To je starost starša; vprašanje sprašuje po starosti ${chG}.` },
+            { value: k * x0, why: `To je starost ${par === "Oče" ? "očeta" : "mame"}; vprašanje sprašuje po starosti ${chG}.` },
             { value: x0 + n, why: `To je starost ${chG} čez $${n}$ ${let_(n)}.` },
             { value: (n * (m + 1)) / (k - m), why: `Desno stran pomnoži v celoti: $${m}(x + ${n}) = ${m}x + ${m * n}$.` },
           ]),
-          hint: `Zdajšnjo starost ${chG} označi z $x$. Zdaj je starš star $${k}x$, čez $${n}$ ${let_(n)} pa bosta stara $${k}x + ${n}$ in $x + ${n}$.`,
+          hint: `Zdajšnjo starost ${chG} označi z $x$. Zdaj je ${par === "Oče" ? "oče star" : "mama stara"} $${k}x$, čez $${n}$ ${let_(n)} pa bosta stara $${k}x + ${n}$ in $x + ${n}$.`,
           data: { given: [`k = ${k}`, `n = ${n}`, `m = ${m}`], find: ["x"] },
           formula: "kx + n = m\\,(x + n)",
           solution: `$${k}x + ${n} = ${m}(x + ${n})$\n$${k}x + ${n} = ${m}x + ${m * n}$\n$${lin([k - m], ["x"])} = ${m * n - n}$\n$x = ${x0}$\nPreizkus: zdaj $${k * x0}$ in $${x0}$, čez $${n}$ ${let_(n)} $${k * x0 + n} = ${m} \\cdot ${x0 + n}$.`,
@@ -2968,8 +2968,8 @@ const LINEARNE = [
       const E = `${p}(x ${sg(q)}) + ${lin([s], ["x"])} ${REL[rel]} ${ax(p + s, w)}`;
       const OPT = ["\\emptyset", "\\mathbb{R} = (-\\infty, \\infty)", ivT(rel, R, 1), ivT(FLIP[rel], R, 1)];
       const WHY = [
-        "Enakost brez $x$ je resnična, zato jo izpolni vsak $x$.",
-        "Enakost brez $x$ je neresnična, zato je ne izpolni noben $x$.",
+        "Trditev brez $x$ je resnična, zato jo izpolni vsak $x$.",
+        "Trditev brez $x$ je neresnična, zato je ne izpolni noben $x$.",
         "Člen z $x$ se odšteje: ostane trditev brez $x$, ki je resnična za vse ali za noben $x$.",
         "Člen z $x$ se odšteje: ostane trditev brez $x$, ki je resnična za vse ali za noben $x$.",
       ];
@@ -2987,4 +2987,22 @@ const LINEARNE = [
   },
 ];
 
-export const MATURA_MAT_SS1 = wrapGens([...GENS, ...LINEARNE]);
+// Deljenje z 1 ni korak rešitve: vrstico izpustimo, prav tako enako vrstico tik pred njo.
+const brezDeljenjaZ1 = (s) => {
+  const L = s.split("\n");
+  const i = L.indexOf(divLine(1));
+  if (i < 1) return s;
+  const dup = (L[i + 1] || "").startsWith(L[i - 1]);
+  L.splice(dup ? i - 1 : i, dup ? 2 : 1);
+  return L.join("\n");
+};
+const LINEARNE_CISTE = LINEARNE.map((g) => ({
+  ...g,
+  gen(level, r, topic) {
+    const t = g.gen(level, r, topic);
+    if (t && typeof t.solution === "string") t.solution = brezDeljenjaZ1(t.solution);
+    return t;
+  },
+}));
+
+export const MATURA_MAT_SS1 = wrapGens([...GENS, ...LINEARNE_CISTE]);

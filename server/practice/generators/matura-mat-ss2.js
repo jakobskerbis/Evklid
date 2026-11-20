@@ -1947,7 +1947,7 @@ const PODOBNOST = [
             { value: cl((Vm * M * M) / 1000), why: "$k^2$ velja za ploščine; za prostornino uporabi $k^3$." },
             { value: cl(Vm * M ** 3), why: "Rezultat je v $\\mathrm{dm^3}$; pretvori v $\\mathrm{m^3}$ ($1\\ \\mathrm{m^3} = 1000\\ \\mathrm{dm^3}$)." },
           ], "m³"),
-          hint: "Vse dolžine hiše so $k$-krat večje. Kolikokrat večja je prostornina? Na koncu pretvori enote.",
+          hint: "Vse dolžine pravega objekta so $k$-krat večje kot na maketi. Kolikokrat večja je prostornina? Na koncu pretvori enote.",
           data: { given: [`k = ${M}`, `V_{\\text{maketa}} = ${cmT(Vm, "dm^3")}`], find: ["V"] },
           formula: ["V = k^3 \\cdot V_{\\text{maketa}}", "1\\ \\mathrm{m^3} = 1000\\ \\mathrm{dm^3}"],
           solution: `$k^3 = ${M}^3 = ${big(M ** 3)}$\n$V = ${big(M ** 3)} \\cdot ${cmT(Vm, "dm^3")} = ${big(cl(Vm * M ** 3))}\\ \\mathrm{dm^3} = ${cmT(cl(Vr), "m^3")}$`,
