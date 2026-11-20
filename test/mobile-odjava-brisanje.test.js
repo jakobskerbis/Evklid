@@ -128,6 +128,18 @@ test("ključi prejšnje oblike: paket gre, odgovori ostanejo le za profil račun
   assert.equal(kv.getItemSync(`${S}.offline.queue.x`), "ni stara oblika");
 });
 
+test("ključi prejšnje oblike: zaklenjen profil (brez created_at) obdrži odgovore do odklepa, prenos je enkraten", () => {
+  const q = JSON.stringify([{ topic_id: "t", seed: 2, answer: "novo", at: "2026-11-20T09:30:00.000Z" }]);
+  const kv = new KvStore({ [`${S}.offline.queue.7`]: q });
+  z.preseliStare(kv, S, 3, [{ id: 7, name: "Ana", locked: true }]);
+  assert.equal(kv.getItemSync(`${S}.offline.queue.7`), q);
+  const nova = { id: 7, created_at: "2026-11-20 09:00:00" };
+  z.preseliStare(kv, S, 3, [nova]);
+  z.preseliStare(kv, S, 3, [nova]);
+  assert.equal(kv.getItemSync(`${S}.offline.queue.7`), null);
+  assert.deepEqual(JSON.parse(kv.getItemSync(z.offlineKljuc(S, "queue", 3, nova))).map((r) => r.answer), ["novo"]);
+});
+
 // --- Spletna stran v WebView ---
 const SAMPLE = [
   `${S}.offline.pack.7`, `${S}.offline.queue.7`, `${S}.offline.students`, `${S}.offline.owner`, `${S}.scan.7`, `${S}.work.12`,

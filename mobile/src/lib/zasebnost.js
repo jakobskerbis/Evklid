@@ -50,6 +50,7 @@ const nastal = (createdAt) => Date.parse(String(createdAt || "").replace(" ", "T
 // Prenos ključev iz prejšnje oblike (»<slug>.offline.pack.<sid>«, »….queue.<sid>«) ob prvem zagonu nove različice.
 // Paket se pobriše (ob povezavi se prenese znova). Neposlani odgovori se ohranijo samo za profil tega računa
 // in samo tisti, nastali po nastanku profila (starejši so od izbrisanega profila z istim id-jem); drugo se pobriše.
+// Ponovni klic ne naredi nič (stari ključi so že proč).
 export function preseliStare(storage, slug, parentId, students) {
   let keys = [];
   try {
@@ -64,7 +65,10 @@ export function preseliStare(storage, slug, parentId, students) {
     try {
       const s = m[1] === "queue" && parentId != null ? students.find((x) => String(x.id) === m[2]) : null;
       const od = s ? nastal(s.created_at) : NaN;
-      if (s && Number.isFinite(od)) {
+      // Profil računa brez časa nastanka (zaklenjen na tej napravi: /api/students vrne samo id in ime): ključ
+      // počaka do odklepa, ko je čas znan (odjava ga pobriše kot vse drugo).
+      if (s && !Number.isFinite(od)) continue;
+      if (s) {
         let stari = [];
         try {
           stari = JSON.parse(storage.getItemSync(k) || "[]");
