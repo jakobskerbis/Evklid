@@ -9,15 +9,18 @@ import { cardFor, configureCard, claimMarks, createMarkPage, releaseMarks } from
 import type { Theme } from "./theme";
 import type { Fx } from "./formula-ctx";
 import { API_URL } from "./api";
+import { izrisPovezave } from "./povezave.js";
 import { t, currentLanguage } from "./i18n";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 // Vsebina strežnika (lekcije, naloge, rešitve) sme imeti HTML (npr. <details> »Pokaži formulo«).
 const trustedMarked = new Marked();
-// Odgovori inštruktorja (AI): surov HTML se izpiše kot besedilo.
-const safeMarked = new Marked({ renderer: { html: ({ text }: { text: string }) => esc(text) } });
+// Odgovori inštruktorja (AI): surov HTML se izpiše kot besedilo, povezava (tudi <…:…> in www.…) je <a> samo
+// za http(s), mailto in tel, drugače ostane besedilo (src/lib/povezave.js, test/mobile-rich-povezave.test.js).
+const safeMarked = new Marked({ renderer: { html: ({ text }: { text: string }) => esc(text), link: izrisPovezave } });
 
-// sanitize: vsebina je že varna (zaupanja vredna ali z izpisanim HTML), DOMPurify v aplikaciji ni potreben.
+// sanitize: vsebina je že varna (zaupanja vredna ali z izpisanim HTML in preverjenimi povezavami), DOMPurify
+// v aplikaciji ni potreben. RichText v WebView besedila odpre samo http(s), mailto in tel.
 const make = createRenderer as (o: object) => { renderRich: (s: string) => string };
 const trusted = make({ marked: trustedMarked, katex, sanitize: (h: string) => h });
 const untrusted = make({ marked: safeMarked, katex, sanitize: (h: string) => h });

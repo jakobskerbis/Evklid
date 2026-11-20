@@ -1,11 +1,11 @@
 // Besedilo z Markdownom in formulami. Kratko besedilo brez formul je naravno besedilo; ostalo
-// izriše WebView brez drsenja, ki je visok toliko kot vsebina (povezave se odprejo v brskalniku).
+// izriše WebView brez drsenja, ki je visok toliko kot vsebina (povezave http(s) se odprejo v brskalniku).
 // html: že pripravljen HTML (npr. slika k nalogi). Ko se besedilo spreminja (odgovor inštruktorja
 // prihaja sproti), WebView ostane naložen in se zamenja le vsebina, brez utripanja.
 // onExplain (samo besedilo lekcije, ne klepet): v meniju označenega besedila je »Razloži«, kot na spletu
 // gumb ob izboru v public/textbook.js. Android ob lastnih postavkah skrije sistemske, zato tam še »Kopiraj«.
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { Clipboard, Modal, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
+import { Clipboard, Linking, Modal, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
@@ -14,6 +14,7 @@ import { FormulaCtx } from "@/lib/formula-ctx";
 import { API_URL } from "@/lib/api";
 import { font, useTheme } from "@/lib/theme";
 import { isRtl, t } from "@/lib/i18n";
+import { vrstaPovezave } from "@/lib/povezave.js";
 
 // noFx: brez klikljivih črk (izbire v nalogah in kvizu: dotik izbere odgovor, kartica bi izdala rešitev).
 // ownPage: besedilo je svoja stran za klikljive črke (sporočilo v klepetu), sicer si jih deli z zaslonom.
@@ -86,13 +87,13 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
           if (h > 0) setHeight(Math.max(minHeight, h));
         }}
         onShouldStartLoadWithRequest={(req: { url: string }) => {
-          // Sam dokument (baseUrl) se naloži v WebView, povezave v besedilu odpre brskalnik.
-          if (req.url === `${API_URL}/`) return true;
-          if (/^https?:/.test(req.url)) {
-            WebBrowser.openBrowserAsync(req.url).catch(() => {});
-            return false;
-          }
-          return true;
+          // V WebView se naloži samo sam dokument (baseUrl) in prazna stran. Povezave v besedilu: http(s) odpre
+          // vgrajeni brskalnik, mailto in tel sistem; vse drugo (javascript:, data:, intent:, file: …) nič.
+          if (req.url === `${API_URL}/` || req.url === "about:blank") return true;
+          const kind = vrstaPovezave(req.url);
+          if (kind === "splet") WebBrowser.openBrowserAsync(req.url).catch(() => {});
+          else if (kind === "sistem") Linking.openURL(req.url).catch(() => {});
+          return false;
         }}
         javaScriptEnabled
         allowsLinkPreview={false}
