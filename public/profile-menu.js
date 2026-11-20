@@ -59,18 +59,21 @@ function open() {
   const btn = $("#profile-btn");
   const usage = $("#usage-pop");
   if (usage) usage.hidden = true;
-  // Mera gumba pred izrisom menija: po njem bi vsilila postavitev sredi tapa (kliki 20. 11. 2026).
+  // Mere pred izrisom menija in fokus v naslednjem okvirju (pred risanjem): po izrisu bi vsak od njih vsilil slog in
+  // postavitev vse strani sredi tapa (telefon, CPU 4×: ~40 ms vsak; kliki 20. 11. 2026).
   const r = btn.getBoundingClientRect();
+  const vw = window.innerWidth;
   render();
   const pop = $("#profile-pop");
   pop.style.top = `${Math.round(r.bottom + 8)}px`;
   // Ob gumbu profila; v RTL je gumb levo, zato meni poravnamo z levim robom.
   const rtl = document.documentElement.dir === "rtl";
   pop.style.left = pop.style.right = "";
-  pop.style[rtl ? "left" : "right"] = `${Math.max(8, Math.round(rtl ? r.left : window.innerWidth - r.right))}px`;
+  pop.style[rtl ? "left" : "right"] = `${Math.max(8, Math.round(rtl ? r.left : vw - r.right))}px`;
   pop.hidden = false;
   btn.setAttribute("aria-expanded", "true");
-  (pop.querySelector('[aria-checked="false"]') || pop.querySelector(".pm-item"))?.focus({ preventScroll: true });
+  // .pm-item: drug profil, ne predmet iz (skritega) seznama predmetov, ki se medtem napolni (preveri-aplikacijo profil-zbirke)
+  requestAnimationFrame(() => isOpen() && (pop.querySelector('.pm-item[aria-checked="false"]') || pop.querySelector(".pm-item"))?.focus({ preventScroll: true }));
 }
 
 function close(refocus = false) {
@@ -78,7 +81,12 @@ function close(refocus = false) {
   if (pop.hidden) return;
   pop.hidden = true;
   $("#profile-btn").setAttribute("aria-expanded", "false");
-  if (refocus) $("#profile-btn").focus({ preventScroll: true });
+  // Fokus nazaj na gumb v naslednjem okvirju (ne sredi tapa), če ga ni medtem vzel kdo drug.
+  if (refocus)
+    requestAnimationFrame(() => {
+      const a = document.activeElement;
+      if (!a || a === document.body || pop.contains(a)) $("#profile-btn").focus({ preventScroll: true });
+    });
 }
 
 function render() {

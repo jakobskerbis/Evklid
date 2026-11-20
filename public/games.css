@@ -414,7 +414,7 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-dz-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 #view-games.gm-dz-open > .me-back { display: none !important; }
 .gm-dz-bar h1 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.4rem; font-family: var(--gm-font); line-height: 1.15; }
-.gm-dz-bar h1 > svg.i { width: 30px; height: 30px; flex: none; color: var(--accent); }
+.gm-dz-bar h1 > svg.i { width: var(--dz-ic, 30px); height: var(--dz-ic, 30px); flex: none; color: var(--accent); }
 .gm-dz-bar h1 > span { display: flex; flex-direction: column; }
 .gm-dz-back { display: inline-flex; align-items: center; gap: 6px; }
 .gm-dz-date { color: var(--muted); font: 700 0.9rem/1.3 var(--font); }
@@ -461,8 +461,7 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
   .gm-dz:has(.gm-dz-play) > .seg { width: auto; margin-inline-start: auto; }
   .gm-dz > .gm-dz-play { flex: 1 1 100%; }
   .gm-dz:has(.gm-dz-play) .gm-dz-bar { flex-direction: row; align-items: center; gap: 12px; }
-  .gm-dz:has(.gm-dz-play) .gm-dz-bar h1 { font-size: 1.1rem; }
-  .gm-dz:has(.gm-dz-play) .gm-dz-bar h1 > svg.i { width: 24px; height: 24px; }
+  .gm-dz:has(.gm-dz-play) .gm-dz-bar h1 { font-size: 1.1rem; --dz-ic: 24px; }
   .gm-dz > .gm-dz-play { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 40%); column-gap: 14px; align-items: start; padding: 10px 12px; }
   .gm-dz-play > * { grid-column: 1; }
   .gm-dz-play > .gm-dz-side { grid-column: 2; grid-row: 1 / span 6; align-self: center; display: flex; flex-direction: column-reverse; gap: 8px; }

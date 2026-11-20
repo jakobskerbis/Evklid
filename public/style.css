@@ -471,7 +471,9 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .idea:hover { border-color: var(--accent); }
 .tutor-avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); }
 .tutor-avatar.big { width: 64px; height: 64px; border-radius: 20px; box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 35%, transparent); }
-.tutor-avatar.big svg.i { width: 30px; height: 30px; }
+/* Pravila s :has() velikost ikone nastavijo na avatarju (--ta-ic), ne na svg.i: Chrome vse, kar stoji za :has(), združi
+   v en nabor in ob vsaki spremembi strani znova preračuna vsak tak element, pri svg.i in span so to vse ikone (test/has-invalidacija.test.js). */
+.tutor-avatar.big svg.i { width: var(--ta-ic, 30px); height: var(--ta-ic, 30px); }
 .msg { max-width: 85%; width: fit-content; padding: 12px 16px; border-radius: 20px; overflow-wrap: anywhere; line-height: 1.6; animation: msg-in 0.2s ease; }
 @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .msg.user { align-self: flex-end; background: var(--user-bubble); color: var(--user-text); border-end-end-radius: 6px; white-space: pre-wrap; font-weight: 600; }

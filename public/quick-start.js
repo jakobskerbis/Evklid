@@ -73,8 +73,7 @@ function afterSubject() {
     .then(() => {
       if (!isOpen()) return;
       render();
-      place();
-      $("#quick-pop .qs-row")?.focus({ preventScroll: true });
+      placeSoon();
     });
 }
 
@@ -88,6 +87,19 @@ function renderRows() {
           ${icon("chevron-right")}</button>`,
       )
       .join("")}`;
+}
+
+// Mesto in fokus v naslednjem okvirju pred risanjem: merjenje menija sredi tapa je vsililo slog in postavitev vse strani
+// (telefon, CPU 4×: ~50 ms vsakič; kliki 20. 11. 2026). act: vrstica, ki dobi fokus (sicer prva).
+let placeRaf = 0;
+function placeSoon(act) {
+  cancelAnimationFrame(placeRaf);
+  placeRaf = requestAnimationFrame(() => {
+    if (!isOpen()) return;
+    place();
+    const pop = $("#quick-pop");
+    ((act && pop.querySelector(`.qs-row[data-act="${act}"]`)) || pop.querySelector(".qs-row"))?.focus({ preventScroll: true });
+  });
 }
 
 function place(r = $(".topbar .brand").getBoundingClientRect()) {
@@ -104,13 +116,11 @@ function open() {
   const usage = $("#usage-pop");
   if (usage) usage.hidden = true;
   const pop = $("#quick-pop");
-  const r = $(".topbar .brand").getBoundingClientRect(); // pred izrisom menija: brez vsiljene postavitve (kliki 20. 11. 2026)
   render();
   pop.hidden = false;
-  place(r);
+  placeSoon();
   $(".topbar .brand").setAttribute("aria-expanded", "true");
   D.overlayOpened(); // na Učni poti tipka Nazaj zapre meni, ne aplikacije
-  pop.querySelector(".qs-row")?.focus({ preventScroll: true });
   // Sveže stanje (npr. trening je bil medtem opravljen); ob napaki ostane zadnje znano.
   const sid = D.getState().student?.id;
   Promise.resolve(D.refresh())
@@ -119,8 +129,7 @@ function open() {
       if (!m || !isOpen() || D.getState().student?.id !== sid) return;
       const focused = document.activeElement?.closest?.(".qs-row")?.dataset.act;
       renderRows();
-      place();
-      (pop.querySelector(`.qs-row[data-act="${focused}"]`) || pop.querySelector(".qs-row"))?.focus({ preventScroll: true });
+      placeSoon(focused);
     });
 }
 

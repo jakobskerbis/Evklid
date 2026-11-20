@@ -635,7 +635,10 @@ export function refreshBubble() {
     hidePreview();
     b.classList.remove("show-x");
   } else {
-    placeBubble();
+    // Mesto v naslednjem okvirju pred risanjem: merjenje sredi tapa (menjava pogleda ali profila) je vsililo slog in
+    // postavitev novega pogleda (telefon, CPU 4×: ~40 ms; kliki 20. 11. 2026).
+    cancelAnimationFrame(refreshBubble.raf);
+    refreshBubble.raf = requestAnimationFrame(() => !b.hidden && placeBubble());
     // Vsebina novega pogleda (npr. Nastavitve) se izriše šele za tem: mesto preverimo še enkrat.
     clearTimeout(refreshBubble.t);
     refreshBubble.t = setTimeout(() => !b.hidden && placeBubble(), 400);

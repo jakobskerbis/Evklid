@@ -1885,6 +1885,56 @@ async function drugiProfil(s, u) {
 // ime), odZdaj (brez tapa), samo (pogoj v strani: sicer korak izpuščen) }.
 const P_KROGA = Number(arg("--kroga")) || 1;
 const P_KLIKI = arg("--kliki") ? new Set(arg("--kliki").split(",")) : null; // samo ti koraki (za ponovitev ene meritve)
+// --sled korak,korak --sled-mapa M: sled zmogljivosti (CDP Tracing) teh korakov, povzetek v M/<korak>.txt: opravila glavne
+// niti po tapu, vsiljen slog/postavitev s skladom, dolgi okvirji (long-animation-frame) s skripti.
+const P_SLED = arg("--sled") ? new Set(arg("--sled").split(",")) : null;
+const P_SLED_MAPA = arg("--sled-mapa") || ".";
+async function sledZacni(page) {
+  const cdp = await page.context().newCDPSession(page);
+  const ev = [];
+  cdp.on("Tracing.dataCollected", (d) => ev.push(...d.value));
+  await cdp.send("Tracing.start", { categories: "devtools.timeline,disabled-by-default-devtools.timeline,disabled-by-default-devtools.timeline.stack,disabled-by-default-devtools.timeline.invalidationTracking", transferMode: "ReportEvents" });
+  await page.evaluate(() => {
+    window.__loafSled = [];
+    try {
+      window.__loafObs = new PerformanceObserver((l) => window.__loafSled.push(...l.getEntries().map((e) => ({ d: Math.round(e.duration), blk: Math.round(e.blockingDuration), rs: Math.round(e.renderStart - e.startTime), sl: Math.round(e.styleAndLayoutStart - e.startTime), s: e.scripts.map((x) => `${x.invokerType} ${x.invoker} ${Math.round(x.duration)}ms (vsiljeno ${Math.round(x.forcedStyleAndLayoutDuration)}) ${String(x.sourceURL).split("/").pop()}:${x.sourceFunctionName}`) }))));
+      window.__loafObs.observe({ type: "long-animation-frame" });
+    } catch {}
+  });
+  return { cdp, ev };
+}
+async function sledKoncaj(page, { cdp, ev }, ime) {
+  await pocakaj(800);
+  const done = new Promise((r) => cdp.once("Tracing.tracingComplete", r));
+  await cdp.send("Tracing.end");
+  await done;
+  const loaf = await page.evaluate(() => (window.__loafObs?.disconnect(), window.__loafSled)).catch(() => []);
+  const X = ev.filter((e) => e.ph === "X");
+  const t0 = Math.min(...X.filter((e) => e.name === "EventDispatch" && /pointerdown|touchstart|click/.test(e.args?.data?.type || "")).map((e) => e.ts));
+  const ms = (us) => (us / 1000).toFixed(1);
+  const opis = (x) => `${x.name}${x.args?.data?.type ? ":" + x.args.data.type : x.args?.data?.functionName ? ":" + x.args.data.functionName : x.args?.data?.url ? ":" + x.args.data.url.split("/").pop() + ":" + x.args.data.lineNumber : ""}${x.args?.elementCount != null ? ` el=${x.args.elementCount}` : ""}`;
+  const vrstice = [`sled ${ime}`];
+  const KAJ = ["EventDispatch", "FunctionCall", "TimerFire", "FireAnimationFrame", "UpdateLayoutTree", "Layout", "Paint", "PrePaint", "Commit", "Layerize", "HitTest", "ParseHTML", "RunMicrotasks"];
+  for (const e of X.filter((e) => e.name === "RunTask" && e.dur > 3000 && e.ts >= t0 - 30000 && e.ts < t0 + 1500000)) {
+    const v = X.filter((x) => x.tid === e.tid && x.ts >= e.ts && x.ts + x.dur <= e.ts + e.dur && x !== e && x.dur > 1500 && KAJ.includes(x.name));
+    vrstice.push(`opravilo +${ms(e.ts - t0)} ${ms(e.dur)} ms: ${v.map((x) => `${opis(x)} ${ms(x.dur)}`).join(", ")}`);
+  }
+  for (const e of X.filter((e) => ["UpdateLayoutTree", "Layout"].includes(e.name) && e.dur > 2000 && e.ts >= t0 && e.ts < t0 + 1500000)) {
+    const st = (e.args?.beginData?.stackTrace || e.args?.data?.stackTrace || []).slice(0, 3).map((f) => `${f.functionName}@${f.url.split("/").pop()}:${f.lineNumber}`).join(" < ");
+    if (st) vrstice.push(`vsiljeno +${ms(e.ts - t0)} ${e.name} ${ms(e.dur)} ms el=${e.args?.elementCount ?? ""}: ${st}`);
+  }
+  // Razlogi za preračun sloga (invalidationTracking): kaj je sprožilo slog in na koliko elementih.
+  const razlogi = {};
+  for (const e of ev.filter((e) => /InvalidationTracking/.test(e.name) && e.ts >= t0 && e.ts < t0 + 600000)) {
+    const d = e.args?.data || {};
+    const k = `${e.name.replace("InvalidationTracking", "")} ${d.reason || ""} ${d.changedClass || d.changedAttribute || d.changedPseudo || d.selectors?.[0]?.selector || ""}`.trim();
+    razlogi[k] = (razlogi[k] || 0) + 1;
+  }
+  vrstice.push("razlogi sloga: " + JSON.stringify(Object.entries(razlogi).sort((a, b) => b[1] - a[1]).slice(0, 25)));
+  for (const f of loaf) vrstice.push(`LoAF ${f.d} ms (blok ${f.blk}, risanje @${f.rs}, slog @${f.sl}): ${f.s.join(" | ")}`);
+  fs.mkdirSync(P_SLED_MAPA, { recursive: true });
+  fs.writeFileSync(path.join(P_SLED_MAPA, `${ime}.txt`), vrstice.join("\n") + "\n");
+}
 const vStrani = (page, sel) =>
   page.evaluate((s) => {
     const el = [...document.querySelectorAll(s)].find((x) => x.offsetParent || x.getClientRects().length) || document.querySelector(s);
@@ -2130,9 +2180,11 @@ async function klikiVBrskalniku(vhod, u, naprava) {
           const selZavihka = x.zavihek ? await zavihek(x.zavihek) : null;
           const ime = x.stanje.ime || (x.stanje.vse ? "vse" : "sel");
           const p = page.evaluate(([i, oo]) => window.__cakaj(i, oo), [ime, { ...x.stanje, rok: 30_000, odZdaj: !!x.odZdaj }]);
+          const sled = P_SLED?.has(x.ime) ? await sledZacni(page) : null;
           await pocakaj(50);
           await zRokom(selZavihka ? tapni(selZavihka) : x.tap(k), 40_000);
           const r = await zRokom(p, 45_000, { napaka: "merilnik ni odgovoril v 45 s" });
+          if (sled) await sledKoncaj(page, sled, kljuc).catch((e) => napake.push(`sled ${kljuc}: ${e.message}`));
           out.koraki[kljuc] = { opis: x.opis, vsebina: r.pripravljeno ?? null, interaktivno: r.interaktivno ?? null, inp: r.inp ?? null, rok: r.rok || undefined, napaka: r.napaka };
           if (P_SLIKE) await page.screenshot({ path: path.join(P_SLIKE, `${naprava}-${kljuc}.png`) }).catch(() => {});
           await zRokom(umiri(page), 25_000);
