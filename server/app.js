@@ -56,7 +56,7 @@ import { passwordGate, gateNeeded } from "./gate.js";
 import { levelUpSuggestion, nextLevel } from "./level-up.js";
 import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competition.js";
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
-import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic } from "./exams.js";
+import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic, examRaven } from "./exams.js";
 import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
@@ -1964,14 +1964,16 @@ export function createApp(store, opts = {}) {
     const key = isExamPath(req.query.key) ? String(req.query.key) : examKeyFor(s.settings, String(req.query.exam || "")) || defaultKey;
     if (!key) return res.json({ key: null });
     const lang = taskLanguage(s.settings.language);
+    const raven = examRaven(key, s.settings, String(req.query.raven || ""));
     res.json({
       ...examInfo(key, s.settings.school_system, lang),
-      ...localizeExamView(progress.pathView(s.id, key), lang),
+      ...localizeExamView(progress.pathView(s.id, key, null, raven), lang),
       defaultKey,
       defaultExam: examOf(defaultKey),
       history: progress.contestHistory(s.id, key),
       openContest: progress.openContest(s.id, key),
-      readiness: progress.examReadiness(s.id, key),
+      readiness: progress.examReadiness(s.id, key, raven),
+      raven,
     });
   });
   // Pretekle pole NPZ in mature: samo povezave na ric.si (server/exam-papers-si.js), brez besedila pol.
@@ -1991,14 +1993,16 @@ export function createApp(store, opts = {}) {
   app.post("/api/students/:id/competition-training", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startCompetition(s.id, String(req.body?.path || ""), schoolYear(s.settings));
+    const path = String(req.body?.path || "");
+    const out = progress.startCompetition(s.id, path, schoolYear(s.settings), examRaven(path, s.settings, req.body?.raven));
     if (!out) return res.status(400).json({ error: "Za to tekmovanje še ni nalog." });
     res.json(out);
   });
   app.post("/api/students/:id/contest", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startContest(s.id, String(req.body?.path || ""), schoolYear(s.settings));
+    const path = String(req.body?.path || "");
+    const out = progress.startContest(s.id, path, schoolYear(s.settings), examRaven(path, s.settings, req.body?.raven));
     if (!out) return res.status(400).json({ error: "Za to tekmovanje še ni nalog." });
     res.json(out);
   });

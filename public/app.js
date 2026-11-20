@@ -1271,6 +1271,7 @@ async function selectStudent(id) {
   if (!zagonIzbira && (!$("#view-path").hidden || !$("#view-topic").hidden)) showView("path");
   // Tekmovanja, Izpiti ter NPZ in matura: izbira in rezultati prejšnjega profila ne ostanejo na zaslonu.
   state.examKey = state.compKey = null;
+  state.examRaven = null;
   if (!$("#view-exams").hidden) showView(siExams() ? "exams" : "path");
   if (!$("#view-competition").hidden) showView(isUni(state.student.settings) ? "path" : "competition");
   // Drugi pogledi v premičnih oknih pokažejo podatke novega profila (zgornji so se že osvežili).
@@ -4458,13 +4459,15 @@ document.addEventListener("click", (e) => {
   // Iz razdelka »NPZ in matura« gre serija na izpitno pot in nazaj tja; regijski »Izpiti« so v zavihku Tekmovanja.
   const prep = e.target.closest("#view-exams") ? "exams" : "competition";
   const key = prep === "exams" || regionalExams() ? state.examKey : state.compKey;
+  // Matura iz matematike: Vadba in Poskusni izpit na ravni, izbrani na strani (examRaven).
+  const raven = prep === "exams" ? examRaven() : null;
   if (e.target.closest("[data-comp-train]")) {
     setBack(prep);
-    startSession("tek", { path: key });
+    startSession("tek", { path: key, ...(raven ? { raven } : {}) });
   }
   if (e.target.closest("[data-comp-contest]")) {
     setBack(prep);
-    startSession("contest", { path: key });
+    startSession("contest", { path: key, ...(raven ? { raven } : {}) });
   }
 });
 
@@ -4481,7 +4484,7 @@ function readinessHtml(c) {
   const d = new Date();
   const min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   // Raven mature iz matematike (izbrana ob profilu, »4. letnik VR«) se vidi ob imenu izpita (Geminijev pregled 17. 11.).
-  const raven = c.exam === "MATURA" && c.subject === "MAT" ? matLevel(s) : null;
+  const raven = c.exam === "MATURA" && c.subject === "MAT" ? c.raven || null : null;
   const name = siExamName(c.exam) + (raven ? ` · ${t(raven === "VR" ? "lp.vr" : "lp.or")}` : "");
   const dateForm = `<div class="er-form" ${date ? "hidden" : ""}>
       <label class="goal-date"><span>${t("ready.date")}</span><input type="date" id="er-date" value="${date}" min="${min}"></label>
@@ -4510,10 +4513,16 @@ function readinessHtml(c) {
   </section>`;
 }
 
+// Raven mature iz matematike na strani »NPZ in matura« (j, 20. 11.): izbira pri Preteklih polah velja za celo stran
+// (Pripravljenost, Najprej vadi, Teme, Vadba, Poskusni izpit). Velja, dokler se raven v profilu ne spremeni;
+// brez izbire raven iz profila (strežnik, exams.js examRaven).
+const examRaven = () => (state.examRaven && state.examRaven.cl === state.student?.settings?.curriculum_level ? state.examRaven.raven : null);
+
 async function loadExams(key = state.examKey, exam = null) {
   const si = siExams();
   const box = si ? $("#exams-content") : $("#competition-content");
-  const q = key ? `?key=${encodeURIComponent(key)}` : exam ? `?exam=${encodeURIComponent(exam)}` : "";
+  const raven = si ? examRaven() : null;
+  const q = (key ? `?key=${encodeURIComponent(key)}` : exam ? `?exam=${encodeURIComponent(exam)}` : "") + (raven ? `${key || exam ? "&" : "?"}raven=${raven}` : "");
   let c;
   try {
     c = await api(`/api/students/${state.student.id}/exams${q}`);
@@ -4610,10 +4619,16 @@ async function showPapers(c) {
   }
   if (!slot.isConnected) return;
   const s = state.student.settings;
-  const level = matLevel(s) || "OR";
+  const level = c.raven || matLevel(s) || "OR";
   mountPapers(slot, papers, { track: s.educational_track, exam: c.exam, subject: c.subject, level }, {
     subjectName: (k) => SUBJECT_NAMES[k] || k,
     follow: true,
+    // Druga raven pri polah: cela stran se izriše znova za to raven (pole ostanejo na izbrani ravni).
+    onLevel: (raven) => {
+      if (c.exam !== "MATURA" || c.subject !== "MAT" || raven === c.raven) return;
+      state.examRaven = { cl: s.curriculum_level, raven };
+      loadExams(state.examKey);
+    },
     onTutor: paperTutor,
     onOurs: openOurs,
     onLocal: (entry, file, subjectName) => openLocalPaper(entry, file, subjectName),

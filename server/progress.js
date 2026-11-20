@@ -9,7 +9,7 @@ import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/in
 import { checkAnswer } from "./practice/check.js";
 import * as MATH from "../public/graph/math.js";
 import { CONTEST, TRAINING_TASKS, isCompetitionPath, topicsForYear } from "./competition.js";
-import { isExamPath, mockPlan, scaledScore, examGrade } from "./exams.js";
+import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps } from "./exams.js";
 import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
@@ -141,11 +141,13 @@ export class Progress {
 
   // ---------- pregled učne poti ----------
   // year (leto šolanja, games.js schoolYear): pri tekmovalni poti samo teme za učenčev razred (competition.js MIN_YEAR).
-  pathView(studentId, pathKey, year = null) {
+  // raven: matura iz matematike na osnovni ravni (»OR«) brez tem samo za višjo raven (exams.js examRaven).
+  pathView(studentId, pathKey, year = null, raven = null) {
     const path = getPath(pathKey);
     if (!path) return null;
     const keep =
       year && isCompetitionPath(pathKey) ? new Set(topicsForYear(path.units.flatMap((u) => u.topics.map((t) => t.id)), year)) : null;
+    const forRaven = ravenKeeps(raven);
     const states = Object.fromEntries(
       this.db
         .prepare("SELECT * FROM topic_state WHERE student_id = ? AND topic_id LIKE ?")
@@ -155,7 +157,7 @@ export class Progress {
     const now = nowSql();
     const ui = this.uiLang(studentId);
     const units = path.units.flatMap((u) => {
-      const own = keep ? u.topics.filter((t) => keep.has(t.id)) : u.topics;
+      const own = (keep ? u.topics.filter((t) => keep.has(t.id)) : u.topics).filter(forRaven);
       if (!own.length) return [];
       const topics = own.map((t0) => {
         const t = localTopic(t0, ui);
@@ -509,12 +511,13 @@ export class Progress {
   // Tekmovalni trening: prepletene naloge iz vseh tem tekmovalne poti. Teme, ki se
   // jih učenec že uči, pridejo večkrat; težavnost se prilagaja kot pri vadnici.
   // year: leto šolanja učenca; teme samo do njegovega razreda (competition.js topicsForYear).
-  startCompetition(studentId, pathKey, year = null) {
+  startCompetition(studentId, pathKey, year = null, raven = null) {
     if (!isPrepPath(pathKey)) return null;
-    const view = this.pathView(studentId, pathKey, year);
+    const view = this.pathView(studentId, pathKey, year, raven);
     const topics = view?.units.flatMap((u) => u.topics).filter((t) => t.practice) || [];
     if (!topics.length) return null;
-    const open = this.openSession(studentId, "tek", (x) => x.params.path === pathKey);
+    // Odprt trening iste poti nadaljujemo, če je za isto raven mature (starejši brez ravni veljajo za vse).
+    const open = this.openSession(studentId, "tek", (x) => x.params.path === pathKey && (x.params.raven === undefined || x.params.raven === raven));
     if (open) return this.sessionNext(open.id);
     const learning = shuffle(topics.filter((t) => t.status === "learning"));
     const rest = shuffle(topics.filter((t) => t.status !== "learning"));
@@ -535,15 +538,15 @@ export class Progress {
       if (j > 0) [order[i], order[j]] = [order[j], order[i]];
     }
     const plan = order.map((topic) => ({ topic, mode: "practice" }));
-    return this.sessionNext(this.createSession(studentId, "tek", plan, { path: pathKey }));
+    return this.sessionNext(this.createSession(studentId, "tek", plan, { path: pathKey, raven }));
   }
 
   // Poskusno tekmovanje: 10 nalog iz različnih tem, od lažjih k težjim, na čas,
   // en poskus, brez namigov. Rezultat (točke) je viden šele na koncu.
-  startContest(studentId, pathKey, year = null) {
+  startContest(studentId, pathKey, year = null, raven = null) {
     if (!isPrepPath(pathKey)) return null;
     const path = getPath(pathKey);
-    const all = path.units.flatMap((u) => u.topics).filter((t) => hasGenerator(t.id)).map((t) => t.id);
+    const all = path.units.flatMap((u) => u.topics).filter((t) => ravenKeeps(raven)(t) && hasGenerator(t.id)).map((t) => t.id);
     // Tekmovanje: samo teme do učenčevega razreda (kot kategorije po razredih pri Kenguruju in Vegovem).
     const topics = isCompetitionPath(pathKey) ? topicsForYear(all, year) : all;
     if (!topics.length) return null;
@@ -553,7 +556,7 @@ export class Progress {
       this.finishContest(open);
     }
     // Izpit: vprašanja in čas po formatu izpita; tekmovanje: 10 nalog od lažjih k težjim.
-    const exam = isExamPath(pathKey) ? mockPlan(pathKey) : null;
+    const exam = isExamPath(pathKey) ? mockPlan(pathKey, raven) : null;
     const order = shuffle(topics);
     const plan = exam ? exam.plan : CONTEST.levels.map((level, i) => ({ topic: order[i % order.length], mode: "contest", level }));
     const minutes = exam ? exam.minutes : CONTEST.minutes;
@@ -630,9 +633,10 @@ export class Progress {
   // Tema izpita šteje kot njena osnovna tema na Učni poti (MAT-EX-NPZ9/… ↔ MAT-OS-8/…): velja boljše stanje.
   // Ocena teme: obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0.
   // Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
-  examReadiness(studentId, pathKey) {
+  examReadiness(studentId, pathKey, raven = null) {
     if (!isExamPath(pathKey)) return null;
     const path = getPath(pathKey);
+    const forRaven = ravenKeeps(raven);
     const now = nowSql();
     const stateOf = this.db.prepare("SELECT status, level, review_due FROM topic_state WHERE student_id = ? AND topic_id = ?");
     const tries = this.db.prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN first_try_correct = 0 THEN 1 ELSE 0 END) AS wrong FROM tasks WHERE student_id = ? AND topic_id = ? AND first_try_correct IS NOT NULL");
@@ -641,7 +645,7 @@ export class Progress {
     const topics = [];
     path.units.forEach((u, ui0) =>
       u.topics.forEach((t0, ti) => {
-        if (!hasGenerator(t0.id)) return;
+        if (!forRaven(t0) || !hasGenerator(t0.id)) return;
         const ids = [t0.id, ...(t0.base || [])];
         let score = 0;
         let n = 0;
