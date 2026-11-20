@@ -3,7 +3,7 @@
 // 1. skeniraj 10 nalog pod različnimi pogoji (ocena »Prebrano prav / narobe« na zaslonu Skeniraj),
 // 2. preizkusi 5 delov aplikacije, 3. kje je zastavica za prijavo napake, 4. kratka anketa, 5. preizkus znanja na začetku
 // in čez 14 dni (server/pilot-ucinek.js). Vse je prostovoljno. V Računu: vprašanje o plačilu za polnoletnega imetnika.
-import { t, locale, currentLang } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n-zasloni.js";
 import { SL_MONTH } from "./datum.js";
 import { icon, hydrateIcons } from "./icons.js";
 

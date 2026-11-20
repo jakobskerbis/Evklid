@@ -96,6 +96,15 @@ const lenModul = (url, ob) => {
     }));
   return { load, now: () => mod };
 };
+// Ko app.js teče, so vsi moduli prvega odprtja že preneseni, Učna pot pa se še izrisuje (procesor, ~0,5 s na telefonu):
+// povezava je ta čas prosta. Prijavljenemu učencu takrat začnemo prenašati (brez izvajanja) zaslone, ki jih najverjetneje
+// odpre takoj (tema in vadnica, Račun, Kartice, Kotiček, kalkulator, Urnik) z njihovim delom slovarja, da prvi klik ne
+// čaka omrežja. Pristajalna stran (obiskovalec brez seje) jih ne prenaša.
+const ZASLONI_VNAPREJ = ["./i18n-zasloni.js", "./i18n/zasloni-sl.js", "./vadnica.js", "./pad.js", "./enote-izbira.js", "./slike-nalog.js", "./povabi.js", "./check-progress.js", "./games/reward.js", "./racun.js", "./garancija-ui.js", "./pilot-naloge.js", "./prijave.js", "./odstop-ui.js", "./credit-card.js", "./flashcards.js", "./kartice-sklopi.js", "./corner.js", "./fokus-okna.js", "./interests.js", "./kalkulator-zaslon.js", "./schedule.js", "./pass-offer.js"];
+try {
+  if (!document.querySelector('meta[name="evklid-pristajalna"]') && localStorage.getItem("studentId"))
+    for (const u of ZASLONI_VNAPREJ) document.head.append(Object.assign(document.createElement("link"), { rel: "modulepreload", href: new URL(u, import.meta.url).href }));
+} catch {}
 const viewNote = (sel, key, force = false) => {
   const el = document.querySelector(sel);
   if (el && (force || !el.childElementCount)) el.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
@@ -247,20 +256,44 @@ const zasloniPozneje = () => {
   // Vzorci varnostnega zaznavalnika nastanejo šele ob prvi uporabi (public/nujno.js compile): pripravimo jih takoj po
   // prvem izrisu v kosih v času mirovanja, ne šele ob prvem odprtju Inštruktorja (prvi »Pošlji« bi sicer čakal nanje).
   pripraviZaznavalnik();
-  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 200));
-  idle(
-    () =>
-      // Najprej izris formul (rabi ga skoraj vsak drug zaslon), nato moduli zaslonov po verjetnosti uporabe.
-      // Najprej cel slovar (public/i18n.js): moduli, ki dobijo t() od app.js (kalkulator), ga rabijo takoj.
-      [{ load: naloziVse }, { load: naloziTipkovnico }, { load: pripraviIzris }, nastMod, prijMod, vadMod, calcMod, tbMod, scanMod, urnikMod, zbMod, cardsMod, openMod, labMod, cornerMod, pilotMod, { load: naloziRacun }, leagueMod, ourMod, { load: pripraviPreverjanje }]
-        .reduce((p, x) => p.then(() => x.load().catch(() => null)), Promise.resolve())
-        // Za delo brez povezave: service worker shrani tudi te module (ob prvem obisku je seznam »precache« že poslan).
-        .then(() => navigator.serviceWorker?.ready)
-        .then((reg) => reg?.active?.postMessage({ type: "precache", urls: performance.getEntriesByType("resource").map((e) => e.name).filter((u) => /\.js(\?|$)/.test(u)) }))
-        .catch(() => null),
-    { timeout: 1500 },
-  );
+  // Takoj po prvem izrisu (sličica s potjo, nato vrsta; ne šele v mirovanju): najprej zasloni, ki jih učenec najverjetneje odpre (že prenašajo se,
+  // ZASLONI_VNAPREJ; tu se izvedejo), nato cel slovar (moduli, ki dobijo t() od app.js, npr. orodja kalkulatorja),
+  // tipkovnica, izris formul in ostali zasloni. Med pošiljanjem sporočila inštruktorju vrsta počaka (poPosiljanju), da
+  // odgovor dobi vso povezavo. Tap ali lebdenje nad zavihkom modul tega zaslona naloži takoj (vnaprejObDotiku).
+  requestAnimationFrame(() => setTimeout(() =>
+    [vadMod, { load: naloziRacun }, cardsMod, cornerMod, calcMod, urnikMod, { load: naloziVse }, { load: naloziTipkovnico }, { load: pripraviIzris }, nastMod, prijMod, tbMod, scanMod, zbMod, openMod, labMod, pilotMod, leagueMod, ourMod, { load: pripraviPreverjanje }]
+      .reduce((p, x) => p.then(poPosiljanju).then(() => x.load().catch(() => null)), Promise.resolve())
+      // Za delo brez povezave: service worker shrani tudi te module (ob prvem obisku je seznam »precache« že poslan).
+      .then(() => navigator.serviceWorker?.ready)
+      .then((reg) => reg?.active && predpomni(reg.active, performance.getEntriesByType("resource").map((e) => e.name).filter((u) => /\.js(\?|$)/.test(u))))
+      .catch(() => null),
+  ));
 };
+// Med pošiljanjem in izpisom odgovora inštruktorja (state.sending) prenosi v ozadju počakajo.
+const poPosiljanju = () => (state.sending ? new Promise((r) => setTimeout(r, 250)).then(poPosiljanju) : Promise.resolve());
+// Seznam za service worker po kosih: naslednji kos šele, ko je prejšnji shranjen (odgovor »ok«; starejši service worker
+// ne odgovori, zato največ 5 s na kos) in ko ni pošiljanja. Prej ves seznam naenkrat (do ~0,6 MB hkrati ob prvem obisku).
+const predpomni = async (sw, urls) => {
+  for (let i = 0; i < urls.length; i += 8) {
+    await poPosiljanju();
+    await new Promise((ok) => {
+      const ch = new MessageChannel();
+      ch.port1.onmessage = ok;
+      setTimeout(ok, 5000);
+      sw.postMessage({ type: "precache", urls: urls.slice(i, i + 8) }, [ch.port2]);
+    });
+  }
+};
+// Dotik ali lebdenje nad zavihkom ali temo na Učni poti: modul tega zaslona se začne nalagati takoj, pred klikom.
+const modulPogleda = (v) => ({ competition: vadMod, exams: vadMod, account: { load: naloziRacun }, cards: cardsMod, corner: cornerMod, graph: calcMod, schedule: urnikMod, lab: labMod, textbook: tbMod })[v];
+const vnaprejObDotiku = (e) => {
+  const el = e.target.closest?.("[data-view], #modebar [data-mode], #view-path [data-open], [data-uci-tab]");
+  if (!el) return;
+  const m = el.matches("#view-path [data-open]") ? vadMod : modulPogleda(el.dataset.view || el.dataset.mode || el.dataset.uciTab);
+  m?.load().catch(() => null);
+};
+document.addEventListener("pointerdown", vnaprejObDotiku, { capture: true, passive: true });
+document.addEventListener("pointerover", (e) => e.pointerType === "mouse" && vnaprejObDotiku(e), { capture: true, passive: true });
 // Pregledovalnik prenesene pole (paper-viewer.js, paper-tasks.js) šele ob odprtju pole: ni del zagona.
 // Ob neuspehu (brez povezave, nova različica) se obljuba pozabi in naslednji poskus gre z drugim naslovom (?r=), kot loadGames.
 let paperViewer = null;
@@ -1743,9 +1776,10 @@ let zaznavalnikPripravljen = false;
 function pripraviZaznavalnik() {
   if (zaznavalnikPripravljen) return;
   zaznavalnikPripravljen = true;
-  // Kos traja, kolikor je v času mirovanja prostora (do 50 ms, requestIdleCallback), vsaj 8 ms: vzorci zdaj nastanejo šele
-  // tu (nujno.js), zato bi jih bilo po 8 ms na sličico za več sekund (telefon, CPU 4×).
-  const kos = () => whenIdle((d) => ogrejNujno(Math.max(8, (d?.timeRemaining?.() ?? 0) - 2)) || kos());
+  // Kos traja, kolikor je v času mirovanja prostora (requestIdleCallback), od 8 do 20 ms (vzorci zdaj nastanejo šele tu,
+  // nujno.js: po 8 ms na sličico bi to na telefonu trajalo več sekund); ko čaka dotik ali tipka (isInputPending), kos
+  // izpusti. Tako ni nikoli dolgo opravilo ob interakciji.
+  const kos = () => whenIdle((d) => (navigator.scheduling?.isInputPending?.() ? kos() : ogrejNujno(Math.min(20, Math.max(8, (d?.timeRemaining?.() ?? 0) - 2))) || kos()));
   kos();
 }
 function zgodovinaVidna() {

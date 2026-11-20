@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { startupFiles } from "../server/startup-files.js";
+import { kljuciJedra, kljuciZaslonov } from "../server/i18n-jedro.js";
 import SL from "../public/i18n/sl.js";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -33,10 +34,16 @@ test("prvo odprtje: moduli drugih zaslonov niso v statičnem grafu, varnostni za
   const list = startupFiles(PUB, "index.html");
   for (const u of LENI) assert.ok(!list.includes(u), `${u} je del prvega odprtja`);
   for (const u of ["/nujno.js", "/account.js", "/urnik-kartica.js", "/offline.js"]) assert.ok(list.includes(u), `${u} ni del prvega odprtja`);
-  // Leni moduli z besedili uvozijo cel slovar (i18n.js): njihovih ključev ni v jedru, ki ga strežnik vstavi v stran.
+  // Leni moduli z besedili uvozijo svoj del slovarja (i18n-zasloni.js), ne jedra (i18n-osnova.js) in ne celega (i18n.js):
+  // prvi klik ne čaka ~75 KB celega slovarja. Del je zunaj prvega odprtja; vsak ključ iz njih je v jedru ali v delu.
+  assert.ok(!list.includes("/i18n-zasloni.js"), "i18n-zasloni.js je del prvega odprtja");
+  const jedro = new Set(kljuciJedra(PUB, SL));
+  const del = new Set(kljuciZaslonov(PUB, SL));
+  assert.deepEqual([...del].filter((k) => jedro.has(k)), [], "ključ v delu in v jedru");
   for (const u of LENI) {
     const src = fs.readFileSync(path.join(PUB, u), "utf8");
-    if (/\bt\(/.test(src) && /from "\.\/i18n/.test(src)) assert.match(src, /from "\.\/i18n\.js"/, `${u}: uvozi i18n-osnova.js namesto i18n.js`);
+    if (/\bt\(/.test(src) && /from "\.\/i18n/.test(src)) assert.match(src, /from "\.\/i18n-zasloni\.js"/, `${u}: ne uvozi i18n-zasloni.js`);
+    for (const m of src.matchAll(/["'`]([A-Za-z][\w-]*(?:\.[\w-]+)+)["'`]/g)) if (SL[m[1]] !== undefined) assert.ok(jedro.has(m[1]) || del.has(m[1]), `${u}: ${m[1]} ni ne v jedru ne v delu`);
   }
   // Strežnik jih po zagonu vnaprej stisne (server/app.js ZASLONI_POZNEJE), kot datoteke prvega odprtja.
   const srv = fs.readFileSync(path.join(ROOT, "server", "app.js"), "utf8");
@@ -92,7 +99,8 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
     const { ctx, page, napake } = await stran(base, jar);
     try {
       // Vse lene module zadržimo; vsakega spustimo šele, ko je njegov zaslon že odprt.
-      const cakajo = new Map(LENI.map((u) => [u, Promise.withResolvers()]));
+      // Cel slovar (i18n.js, i18n/sl.js) zadržimo do konca: zasloni se morajo izrisati samo z jedrom in svojim delom.
+      const cakajo = new Map([...LENI, "/i18n.js", "/i18n/sl.js"].map((u) => [u, Promise.withResolvers()]));
       await page.route(
         (url) => cakajo.has(url.pathname),
         async (route) => {
@@ -134,12 +142,11 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
       assert.ok(await page.locator("#view-account .kolone").count(), "stolpci zavihka Račun");
       assert.deepEqual(kljuci(await page.locator("#view-account").innerText()), [], "ključ namesto besedila v zavihku Račun");
 
-      // Kartice, Urnik, Kotiček, Kalkulator: takoj »Nalagam …«, nato vsebina.
+      // Kartice, Urnik, Kotiček: takoj »Nalagam …«, nato vsebina.
       for (const [v, mod, sel, gotovo] of [
         ["cards", ["/flashcards.js"], "#view-cards", "#view-cards > :not(p.muted)"],
         ["schedule", ["/schedule.js", "/pass-offer.js"], "#view-schedule .sch-body", "#view-schedule .sch-body > :not(p.muted)"],
         ["corner", ["/corner.js", "/interests.js"], "#corner-content", "#corner-content > :not(p.muted)"],
-        ["graph", ["/kalkulator-zaslon.js"], "#graph-slot", "#graph-slot > :not([hidden]):not(p)"],
       ]) {
         await zavihek(v);
         await vidno(`#view-${v}`);
@@ -157,6 +164,14 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
       await page.waitForFunction(() => !/Nalagam/.test(document.querySelector("#lab-content").innerText), null, { timeout: 20000 });
 
       // Po prvem izrisu se vsi naložijo sami (kasnejši klik takoj, service worker jih shrani za delo brez povezave).
+      assert.equal(await page.evaluate(() => import("/i18n-osnova.js").then((m) => m.vseNalozeno())), false, "cel slovar je bil zadržan");
+      assert.deepEqual(await page.evaluate(() => import("/i18n-osnova.js").then((m) => m.manjkajoci())), [], "ključi, ki jih ni bilo ne v jedru ne v delu");
+      spusti("/i18n.js", "/i18n/sl.js");
+      // Kalkulator: orodja (graph/calc.js dobi t() od app.js) počakajo cel slovar, kot pred delitvijo.
+      await zavihek("graph");
+      await vidno("#view-graph");
+      await vidno("#graph-slot > :not([hidden]):not(p)");
+      assert.deepEqual(kljuci(await page.locator("#view-graph").innerText()), [], "graph: ključ namesto besedila");
       const sami = LENI.filter((u) => !["/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pass-offer.js"].includes(u));
       for (let i = 0; i < 120 && !sami.every((u) => preneseno.has(u)); i++) await page.waitForTimeout(500);
       assert.deepEqual(sami.filter((u) => !preneseno.has(u)), [], "moduli, ki se po prvem izrisu niso naložili sami");

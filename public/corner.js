@@ -1,7 +1,7 @@
 // Kotiček zanimanj: novice iz znanosti o temah, ki jih je učenec izbral, pripete novice,
 // celozaslonski pogled (časopis ali oglasna deska) in kratek vprašalnik ob prvem zagonu.
 // Novice da strežnik (server/corner.js), seznam področij je v public/interests.js.
-import { t, locale, currentLang } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n-zasloni.js";
 import { dateText } from "./datum.js";
 import { icon } from "./icons.js";
 import { zadrziFokus } from "./fokus-okna.js";

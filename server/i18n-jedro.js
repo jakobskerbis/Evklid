@@ -44,3 +44,48 @@ export async function slJedro(publicDir) {
   const SL = (await import(pathToFileURL(path.join(publicDir, "i18n", "sl.js")).href)).default;
   return varenJson(JSON.stringify(Object.fromEntries(kljuciJedra(publicDir, SL).map((k) => [k, SL[k]]))));
 }
+
+// Del slovarja za zaslone po prvem izrisu (vadnica, Račun, Kartice, Kotiček, kalkulator …): moduli, ki uvozijo
+// public/i18n-zasloni.js namesto i18n.js, ob prvem kliku ne čakajo celega slovarja (~75 KB stisnjeno), ampak samo
+// besedila, ki jih omenjajo oni in moduli, ki jih uvozijo statično (brez modulov prvega odprtja, ti so v jedru).
+// Brez ključev jedra. Strežnik ga pošlje kot modul /i18n/zasloni-sl.js (server/app.js); sestavi se iz kode, enkrat ob
+// zagonu (kot jedro). Ključ, sestavljen med izvajanjem, šteje s predpono (PREDPONA), kot pri jedru.
+const UVOZ = /(?:^|[;\n}])\s*(?:import\s+(?:[\w*{}\s,$]+?\s+from\s+)?|export\s+(?:\*(?:\s+as\s+\w+)?|\{[^}]*\})\s+from\s+)["'](\.{1,2}\/[^"'?#]+)["']/g;
+export const ZASLONI_UVOZ = /(?:from|import)\s+["'](?:\.{1,2}\/)+i18n-zasloni\.js["']/;
+function jsDatoteke(dir, out = []) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (e.name.startsWith(".") || e.name === "vendor" || e.name === "node_modules") continue;
+    const f = path.join(dir, e.name);
+    if (e.isDirectory()) jsDatoteke(f, out);
+    else if (e.name.endsWith(".js")) out.push(f);
+  }
+  return out;
+}
+export function kljuciZaslonov(publicDir, SL) {
+  const imena = new Set(Object.keys(SL));
+  const zagon = new Set(startupFiles(publicDir, "index.html").map((u) => path.join(publicDir, u)));
+  const vhodi = jsDatoteke(publicDir).filter((f) => ZASLONI_UVOZ.test(fs.readFileSync(f, "utf8")));
+  const videno = new Set();
+  const obisci = (f) => {
+    if (videno.has(f) || zagon.has(f) || /[\\/]i18n[^\\/]*\.js$/.test(f) || !f.startsWith(publicDir + path.sep) || !fs.existsSync(f)) return;
+    videno.add(f);
+    for (const m of fs.readFileSync(f, "utf8").matchAll(UVOZ)) obisci(path.resolve(path.dirname(f), m[1]));
+  };
+  for (const f of vhodi) obisci(f);
+  const kljuci = new Set();
+  const predpone = new Set();
+  for (const f of videno) {
+    const src = fs.readFileSync(f, "utf8");
+    for (const m of src.matchAll(KLJUC)) if (imena.has(m[1])) kljuci.add(m[1]);
+    for (const m of src.matchAll(PREDPONA)) predpone.add(m[1]);
+  }
+  for (const k of imena) for (const p of predpone) if (k.startsWith(p)) kljuci.add(k);
+  const jedro = new Set(kljuciJedra(publicDir, SL));
+  return [...kljuci].filter((k) => !jedro.has(k));
+}
+
+// Besedilo modula /i18n/zasloni-sl.js: export default { ključ: besedilo, … }.
+export async function slZasloni(publicDir) {
+  const SL = (await import(pathToFileURL(path.join(publicDir, "i18n", "sl.js")).href)).default;
+  return `export default ${JSON.stringify(Object.fromEntries(kljuciZaslonov(publicDir, SL).map((k) => [k, SL[k]])))};\n`;
+}
