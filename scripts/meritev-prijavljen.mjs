@@ -116,6 +116,15 @@ export function MERILNIK_PRIJAVLJEN() {
     vnos: () => vidno(document.querySelector("#view-chat #input")) && !document.querySelector("#input").disabled && !document.querySelector("#send")?.disabled,
     pogovor: (o) => odgovori().filter(vidno).length >= o.min,
     znak: (o) => odgovori().length > o.prej && besediloOdgovora(odgovori().at(-1)).length > 0,
+    // Meritev klikov (del »kliki«): vsaj o.min (1) vidnih elementov o.sel, vsaj eden z besedilom o.besedilo, in noben
+    // viden o.brez; o.vse: več takih pogojev hkrati. (Brez new Function: CSP strani ne dovoli eval.)
+    sel: (o) => {
+      const v = [...document.querySelectorAll(o.sel)].filter(vidno);
+      if (v.length < (o.min || 1)) return false;
+      if (o.besedilo && !v.some((el) => el.textContent.includes(o.besedilo))) return false;
+      return !o.brez || ![...document.querySelectorAll(o.brez)].some(vidno);
+    },
+    vse: (o) => o.vse.every((x) => STANJA.sel(x)),
   };
   window.__tPot = null;
   // Največji premiki postavitve z izvorom (kateri element se je premaknil), za iskanje vzroka CLS.
@@ -137,15 +146,23 @@ export function MERILNIK_PRIJAVLJEN() {
   window.__cakaj = (ime, o = {}) =>
     new Promise((resolve) => {
       const zacetek = performance.now();
+      // o.odZdaj: korak brez tapa (tipka Nazaj telefona, history.back()): čas teče od dogodka popstate.
       let t0 = null;
       const ob = (e) => {
-        if (t0 === null && e.isTrusted) t0 = e.timeStamp;
+        if (t0 === null && (e.isTrusted || (o.odZdaj && e.type === "popstate"))) t0 = e.timeStamp;
       };
-      for (const v of ["pointerdown", "click", "keydown"]) addEventListener(v, ob, true);
+      const VRSTE = o.odZdaj ? ["popstate"] : ["pointerdown", "click", "keydown"];
+      for (const v of VRSTE) addEventListener(v, ob, true);
       let tReady = null;
+      // INP tega klika: najdaljši dogodek interakcije (Event Timing, window.__vitali iz VITALI), ki se je začel ob tapu.
+      // Vnosi pridejo šele po naslednjem izrisu, zato ga preberemo ob koncu (po 300 ms brez dolgih nalog).
+      const inp = () => {
+        const x = (window.__vitali?.interakcije || []).filter((e) => t0 !== null && e[2] >= t0 - 2);
+        return x.length ? Math.max(...x.map((e) => e[1])) : null;
+      };
       const konec = (r) => {
-        for (const v of ["pointerdown", "click", "keydown"]) removeEventListener(v, ob, true);
-        resolve(r);
+        for (const v of VRSTE) removeEventListener(v, ob, true);
+        resolve({ ...r, inp: inp() });
       };
       const tick = () => {
         const zdaj = performance.now();

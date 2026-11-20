@@ -11,6 +11,7 @@ import { hideKeyboard } from "./tipkovnica-lena.js";
 import { refreshBubble } from "./okna.js";
 import { backgroundLoadOk } from "./games/stage.js";
 import { zadrziFokus } from "./fokus-okna.js";
+import { vzporedno, naloziOdvisnosti } from "./kliki.js";
 import { $, CALC_MODES, api, calcChapter, calcMode, nastaviCalcMode, calcOverlayOpen, calcSubject, currentView, fillInput, loadPaperViewer, overlayClosed, overlayOpened, renderRich, showScan, showView, splitOpts, state, toast, usageAdmin, whenQuiet, withFormulaSubject } from "./app.js";
 
 const calcTools = {};
@@ -27,6 +28,7 @@ function calcSlot() {
 
 function graphCalc() {
   // Kalkulator izriše formule s KaTeX (rich.js naloziKnjiznice), ki ni del prvega izrisa.
+  if (!calcP) vzporedno("graph/calc.js"); // vse odvisnosti hkrati, ne raven za ravnijo (kliki.js)
   calcP ||= Promise.all([import("./graph/calc.js"), naloziKnjiznice(), naloziVse()]).then(([m]) => m).catch((e) => {
     calcP = null; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
     throw e;
@@ -62,6 +64,7 @@ async function insertIntoCalc(text, o) {
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
+  if (!calcTools[mode]) vzporedno(mode === "sci" ? "graph/sci.js" : "graph/tools.js");
   calcTools[mode] ||= Promise.all([mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js"), naloziKnjiznice(), naloziVse()]).then(([m]) => m).catch((e) => {
     delete calcTools[mode]; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
     throw e;
@@ -128,12 +131,17 @@ async function setCalcMode(mode) {
   prebuildCalc();
   return tool;
 }
+// Dotik zavihka ali gumba kalkulatorja (app.js): datoteke zadnjega orodja hkrati že pred klikom.
+function vnaprejOrodje() {
+  if (!calcTools[calcMode] && !(calcMode === "graph" && calcP)) vzporedno(calcMode === "graph" ? "graph/calc.js" : calcMode === "sci" ? "graph/sci.js" : "graph/tools.js");
+}
 function prefetchNext() {
   if (navigator.connection?.saveData || document.documentElement.classList.contains("lite") || !state.student) return;
   // Lahki koraki (pregledovalnik prenesene pole, uvodni ogled) na vsaki povezavi, da delujejo tudi brez povezave;
   // težki (kalkulator, grafi, 3D, three.js) le na hitri povezavi brez omejitve podatkov (backgroundLoadOk, j 17. 11. 2026).
   const heavy = backgroundLoadOk(navigator.connection);
   const steps = [
+    () => naloziOdvisnosti(), // seznam odvisnosti lenih modulov (nekaj KB): kalkulator in igre ob tapu vzporedno
     ...(heavy
       ? [
           () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
@@ -219,4 +227,4 @@ function closeCalcOverlay({ fromBack = false } = {}) {
   if (!$("#view-graph").hidden) setCalcMode(calcMode);
 }
 
-export { closeCalcOverlay, showGraph, calcBack, setCalcMode, calcTools, openCalcOverlay, openGraphOverlay, calcTool, prefetchNext };
+export { closeCalcOverlay, showGraph, calcBack, setCalcMode, calcTools, openCalcOverlay, openGraphOverlay, calcTool, prefetchNext, vnaprejOrodje };

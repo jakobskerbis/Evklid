@@ -100,17 +100,25 @@ function pokukaj(el) {
   }, 450);
 }
 
+// Pregledamo le dele strani, ki so se spremenili (vrstica, v kateri ali pod katero je sprememba), ne vse strani:
+// iskanje vseh drsnih vrstic po strani ob vsaki spremembi (meni, tap, tipka Evklidove tipkovnice) je na telefonu
+// porabilo ~30–40 ms vsakega tapa (CPU 4×; kliki 20. 11. 2026). Vrstica, ki postane vidna ali spremeni velikost
+// (skrit pogled se pokaže, okno se zoži), sproži opazovalca velikosti (ro), ki jo izmeri sam.
 function preglej() {
   caka = false;
-  // Spremembe le v Evklidovi tipkovnici (pritisk tipke, povečana črka, predlogi): pregledamo samo njo,
-  // ne vse strani (getComputedStyle in scrollWidth za vsako vrstico sta ob vsakem pritisku zavirala tipkanje).
-  const o = obmocje || document;
-  const kje = o === document || o.isConnected ? o : null;
-  obmocje = null;
-  if (!kje) return;
+  const deli = vseStran || obmocja.size > 40 ? [document] : [...obmocja].filter((el) => el.isConnected);
+  vseStran = false;
+  obmocja = new Set();
+  if (!deli.length) return;
   sledeni.forEach((el) => el.isConnected || (ro.unobserve(el), io?.unobserve(el), sledeni.delete(el)));
+  const najdeni = new Set();
+  for (const kje of deli) {
+    const gor = kje !== document && kje.closest(SEL);
+    if (gor) najdeni.add(gor);
+    kje.querySelectorAll(SEL).forEach((el) => najdeni.add(el));
+  }
   const vrste = [];
-  kje.querySelectorAll(SEL).forEach((el) => {
+  najdeni.forEach((el) => {
     if (NI && el.matches(NI)) return;
     if (!sledeni.has(el)) {
       sledeni.add(el);
@@ -121,10 +129,12 @@ function preglej() {
   oznaciVse(vrste);
 }
 
-// Kaj pregledati v naslednjem okvirju: document (vse) ali le tipkovnico.
-let obmocje = null;
+// Kaj pregledati v naslednjem okvirju: vse (document) ali le spremenjene dele.
+let vseStran = false;
+let obmocja = new Set();
 const kmalu = (kje = document) => {
-  obmocje = !obmocje || obmocje === kje ? kje : document;
+  if (kje === document) vseStran = true;
+  else obmocja.add(kje);
   if (caka) return;
   caka = true;
   requestAnimationFrame(preglej);
@@ -155,7 +165,10 @@ export function initDrsniki() {
     if (!vse.length) return;
     const tk = document.getElementById("tipkovnica");
     // odpiranje ali zapiranje tipkovnice (hidden) spremeni prostor za stran, zato takrat pregledamo vse
-    kmalu(tk && vse.every((m) => tk.contains(m.target) && !(m.target === tk && m.type === "attributes")) ? tk : document);
+    for (const m of vse) {
+      if (tk && m.target === tk && m.type === "attributes") kmalu(document);
+      else kmalu(m.type === "characterData" ? m.target.parentElement || document : m.target);
+    }
   }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeOldValue: true, attributeFilter: ["style", "hidden", "open"] });
   document.fonts?.ready?.then(() => kmalu());
   kmalu();

@@ -21,10 +21,38 @@ import { levelLabel } from "./level-picker.js";
 import { fmtDate, countdown } from "./goal.js";
 import { partLabel, partKey } from "./our-paper-key.js";
 import { refreshBubble } from "./okna.js";
-import { $, COMP_LEVEL_NAMES, EXTRA_SESSIONS, NODE, api, calcMode, calcSubject, choiceHtml, diffBadge, escapeHtml, examMode, extraSession, fbText, fillInput, isCompTopic, keptPaper, loadConversations, localStorageGet, localStorageSet, markFirstTask, markTopic, mayPlot, meBackHtml, offTabbarViews, openCalcOverlay, openConversation, openLesson, openLocalPaper, ourMod, plotFromText, prepBack, pripraviIzris, refreshXp, regionalExams, renderGoal, renderMath, renderRich, send, setActiveMode, setBack, setTaskFx, showView, siExams, state, studentUpdated, toast, topicCache, topicRich, unlockedHtml, withFormulaSubject } from "./app.js";
+import { poSliki } from "./kliki.js";
+import { $, COMP_LEVEL_NAMES, EXTRA_SESSIONS, NODE, api, calcMode, calcSubject, choiceHtml, diffBadge, escapeHtml, examMode, extraSession, fbText, fillInput, isCompTopic, keptPaper, loadConversations, localStorageGet, localStorageSet, markFirstTask, markTopic, mayPlot, meBackHtml, offTabbarViews, openCalcOverlay, openConversation, openLesson, openLocalPaper, ourMod, plotFromText, prepBack, pripraviIzris, refreshXp, regionalExams, renderGoal, renderMath, renderRich, send, setActiveMode, setBack, setTaskFx, showView, siExams, state, studentUpdated, toast, topicCache, topicRich, unlockedHtml, withFormulaSubject, currentView, pathData, pathUnitsFor, prefetchPractice, takePractice, topicEntry, kopija } from "./app.js";
 
+// Tema iz pomnilnika takoj (po sliki tapa); sicer pogled takoj z »Nalagam …« in oba klica hkrati (kliki.js teme).
+let topicSeq = 0;
 async function openTopic(topicId) {
-  const tp = await api(`/api/topic?id=${encodeURIComponent(topicId)}&lang=${encodeURIComponent(state.student?.settings?.language || "")}`);
+  const n = ++topicSeq;
+  const entry = topicEntry(topicId);
+  // Stanje teme (sklop, vaje, status): zadnja Učna pot, če je tema v njej; sicer njena pot hkrati z vsebino (samo pot,
+  // ki ji tema pripada; sicer pot teme, tp.path, ko vsebina pride).
+  const known = pathUnitsFor(topicId);
+  const guess = !known && state.pathKey && topicId.startsWith(`${state.pathKey}/`) ? pathData(state.pathKey) : null;
+  guess?.catch(() => {});
+  let tp = entry.v ? kopija(entry.v) : null;
+  if (tp) {
+    await poSliki();
+    if (n !== topicSeq) return false;
+  } else {
+    // Vsebina še ni prišla: pogled teme takoj, z obvestilom »Nalagam …« (prejšnja tema ne ostane na zaslonu).
+    const prev = currentView;
+    state.topicFx = false;
+    showView("topic");
+    $("#topic-content").replaceChildren(Object.assign(document.createElement("p"), { className: "muted topic-loading", textContent: t("common.loading") }));
+    try {
+      tp = kopija(await entry.p);
+    } catch (err) {
+      // Tema ne obstaja ali ni povezave: nazaj, od koder je učenec prišel (prej se pogled sploh ni zamenjal).
+      if (n === topicSeq && currentView === "topic") showView(prev && prev !== "topic" ? prev : state.backTo || "path");
+      throw err;
+    }
+    if (n !== topicSeq) return false; // medtem odprta druga tema
+  }
   state.topic = tp;
   state.topicFx = true;
   showView("topic");
@@ -32,7 +60,10 @@ async function openTopic(topicId) {
   // Pogled teme se drsi sam in si zapomni mesto: nova tema se vedno odpre na vrhu (»Nova snov« drugič, #view-topic).
   const vt = $("#view-topic");
   if (vt) vt.scrollTop = 0;
-  const units = (await api(`/api/students/${state.student.id}/path?key=${encodeURIComponent(tp.path)}`)).units;
+  let units = known;
+  if (!units && guess) units = await guess.then((p) => (p?.key === tp.path ? p.units : null)).catch(() => null);
+  if (!units) units = (await pathData(tp.path)).units;
+  if (n !== topicSeq) return false;
   const unit = units.find((u) => u.topics.some((x) => x.id === tp.id));
   const hasPractice = unit?.topics.find((x) => x.id === tp.id);
   // Vse teme so odprte; če prejšnji sklop še ni osvojen, samo priporočimo, kje začeti.
@@ -74,6 +105,7 @@ async function openTopic(topicId) {
   });
   // Nova tema: najprej kratek test predznanja (tri naloge, od lažje do težje).
   if (canPractice && hasPractice.status === "new") return startPretest(tp);
+  if (canPractice) prefetchPractice(tp.id); // »Vadi naloge« brez čakanja strežnika
   return false;
 }
 
@@ -117,7 +149,10 @@ async function nextPractice(opts) {
   const box = $("#practice");
   let out;
   try {
-    out = await api(`/api/students/${state.student.id}/practice/next`, { method: "POST", body: { topic_id: state.topic.id } });
+    const pre = takePractice();
+    out = pre && (await pre);
+    if (out) await poSliki(); // pripravljena naloga: najprej slika tapa, nato izris
+    else out = await api(`/api/students/${state.student.id}/practice/next`, { method: "POST", body: { topic_id: state.topic.id } });
   } catch (err) {
     box.innerHTML = `<div class="card task"><div class="fb bad">${icon("circle-x")}<span>${t("task.loadError", { msg: escapeHtml(err.message) })}</span></div></div>`;
     return;
@@ -617,6 +652,7 @@ async function checkTask(task, ctx, value) {
   });
   $("#fb-back")?.addEventListener("click", () => showView(state.backTo || "path"));
   if (r.next?.finished) extraSession(ctx.mode)?.wire?.(fb, r.next);
+  if (ctx.mode === "practice" && $("#fb-next")) prefetchPractice(state.topic?.id); // »Naprej« brez čakanja strežnika
   $("#fb-next")?.addEventListener("click", () => {
     if (ctx.mode === "practice") return nextPractice();
     const n = r.next;

@@ -231,9 +231,12 @@ export class Progress {
   }
 
   // Naslednja vaja pri temi. Prvič pri temi najprej pokažemo rešen zgled.
-  nextPractice(studentId, topicId) {
+  // vnaprej: odjemalec naslednjo nalogo pripravi pred klikom (public/kliki.js vadnica). Takrat brez zgleda in brez
+  // spremembe stanja teme: tema, ki bi pokazala zgled ali je še nova, vrne { vnaprej: false } (klik pozneje kot prej).
+  nextPractice(studentId, topicId, { vnaprej = false } = {}) {
     if (!hasGenerator(topicId)) return null;
     const s = this.state(studentId, topicId);
+    if (vnaprej && (!s.seen_example || s.status === "new")) return { vnaprej: false };
     if (!s.seen_example) {
       const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId), this.taskYear(studentId));
       s.seen_example = 1;

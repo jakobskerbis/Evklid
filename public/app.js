@@ -35,13 +35,14 @@ import { initFeedback, showFeedback, renderFeedbackCard } from "./feedback.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 // Igre (games/, ~0,7 MB kode; naloge predmetov še ~0,1–0,4 MB na predmet, games/subjects/) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
 // zagonu: prvo odprtje Evklida mora prenesti in zagnati pol manj kode (j, 2026-11-04: »stran deluje počasi«).
+import { vzporedno, teme, zapomni, vadnica, topli, temeVnaprej, pathUrl } from "./kliki.js"; // kliki brez čakanja (pomnilniki, vnaprej)
 let gamesMod = null;
 let gamesCtx = null;
 let gamesP = null;
 let gamesTries = 0;
 // Brskalnik si neuspel modul zapomni do ponovnega nalaganja strani: nov poskus zato z drugim naslovom (?r=).
 const loadGames = () =>
-  (gamesP ||= (gamesTries++ ? import(`./games/index.js?r=${gamesTries}`) : import("./games/index.js")).then((m) => {
+  (gamesP ||= (gamesTries++ ? import(`./games/index.js?r=${gamesTries}`) : (vzporedno("games/index.js"), import("./games/index.js"))).then((m) => {
     gamesMod = m;
     if (gamesCtx) m.initGames(gamesCtx);
     m.prepareSubjects?.(); // naloge le za učenčev predmet (ostali predmeti ob izbiri v Igrah)
@@ -85,7 +86,8 @@ const lenModul = (url, ob) => {
   let n = 0;
   let mod = null;
   const load = () =>
-    (p ||= (n++ ? import(`${url}?r=${n}`) : import(url)).then((m) => {
+    // Prvo nalaganje: vse odvisnosti modula hkrati (kliki.js vzporedno, seznam server/app.js LENI_MODULI).
+    (p ||= (n++ ? import(`${url}?r=${n}`) : (vzporedno(url.replace(/^\.\//, "")), import(url))).then((m) => {
       if (mod !== m) {
         mod = m;
         ob?.(m);
@@ -153,12 +155,20 @@ const openMsgReport = prij("openMsgReport");
 const vadMod = lenModul("./vadnica.js");
 const vad = (fn) => (...a) => vadMod.load().then((m) => m[fn](...a));
 const vadPogled = (fn, sel) => (...a) => vadMod.load().then((m) => m[fn](...a), () => vadMod.now() || viewNote(sel, "off.noConnection", true));
-// Tema z Učne poti, preden je vadnica.js naložena (prvi obisk, klik takoj po izrisu): podatke teme in poti zahtevamo
-// hkrati z modulom, openTopic (vadnica.js) ju prevzame (apiVnaprej) namesto dveh krogov po omrežju za modulom.
+// Podatki zaslona hkrati z modulom, ki ga še ni (prvi obisk): zaslon jih ob prihodu modula prevzame (prefetchGet,
+// kliki.js topli: isti učenec, brez vmesne spremembe); če se modul ne naloži, se odgovor zavrže.
+const zModulom = (mod, url) => {
+  if (mod.now() || !state.student?.id) return;
+  prefetchGet(url);
+  mod.load().catch(() => apiWarm.drop(url));
+};
+// Tema z Učne poti, preden je vadnica.js naložena (prvi obisk, klik takoj po izrisu): vsebino teme (kliki.js teme) in,
+// če stanja teme ni v zadnji Učni poti, pot te teme zahtevamo hkrati z modulom, ne šele za njim. Pot samo za temo
+// iz trenutne poti (openTopic v vadnica.js sicer prebere pot teme, tp.path).
 const openTopic = (id, ...a) => {
   if (!vadMod.now() && state.student?.id) {
-    apiVnaprej(`/api/topic?id=${encodeURIComponent(id)}&lang=${encodeURIComponent(state.student.settings?.language || "")}`);
-    if (state.pathKey) apiVnaprej(`/api/students/${state.student.id}/path?key=${encodeURIComponent(state.pathKey)}`);
+    topicEntry(id);
+    if (!pathUnitsFor(id) && state.pathKey && id.startsWith(`${state.pathKey}/`)) zModulom(vadMod, pathUrl(state.student.id, state.pathKey));
   }
   return vad("openTopic")(id, ...a);
 };
@@ -167,7 +177,7 @@ const learnWithTutor = vad("learnWithTutor");
 const startSession = vad("startSession");
 const loadCompetition = (...a) => {
   const key = a.length ? a[0] : state.compKey; // kot loadCompetition v vadnica.js
-  if (!vadMod.now() && state.student?.id) apiVnaprej(`/api/students/${state.student.id}/competition${key ? `?key=${encodeURIComponent(key)}` : ""}`);
+  if (state.student?.id) zModulom(vadMod, `/api/students/${state.student.id}/competition${key ? `?key=${encodeURIComponent(key)}` : ""}`);
   return vadPogled("loadCompetition", "#competition-content")(...a);
 };
 const loadExams = vadPogled("loadExams", "#exams-content");
@@ -205,7 +215,7 @@ const cornerMod = lenModul("./corner.js", (m) => cornerDeps && m.initCorner(corn
 let cornerDeps = null;
 const initCorner = (d) => ((cornerDeps = d), cornerMod.now()?.initCorner(d));
 const showCorner = () => {
-  if (!cornerMod.now() && state.student?.id) apiVnaprej(`/api/students/${state.student.id}/corner`); // kot corner.js load()
+  if (state.student?.id) zModulom(cornerMod, `/api/students/${state.student.id}/corner`); // kot corner.js load()
   return cornerMod.load().then((m) => m.showCorner(), () => cornerMod.now() || viewNote("#corner-content", "off.noConnection", true));
 };
 const cornerBack = () => cornerMod.now()?.cornerBack() ?? false;
@@ -223,7 +233,7 @@ let cardsDeps = null;
 const initFlashcards = (d) => ((cardsDeps = d), cardsMod.now()?.initFlashcards(d));
 const showFlashcards = () => {
   if (!cardsMod.now()) viewNote("#view-cards", "common.loading");
-  if (!cardsMod.now() && state.student?.id) apiVnaprej(`/api/students/${state.student.id}/flashcards${state.pathKey ? `?path=${encodeURIComponent(state.pathKey)}` : ""}`); // kot flashcards.js
+  if (state.student?.id) zModulom(cardsMod, `/api/students/${state.student.id}/flashcards${state.pathKey ? `?path=${encodeURIComponent(state.pathKey)}` : ""}`); // kot flashcards.js
   return cardsMod.load().then((m) => m.showFlashcards(), () => cardsMod.now() || viewNote("#view-cards", "off.noConnection", true));
 };
 // Opomba o novih karticah pod odgovorom inštruktorja: ob prihodu modula, če še ni naložen.
@@ -252,7 +262,12 @@ const simOverlayOpen = () => openMod.now()?.simOverlayOpen() ?? false;
 const closeSimOverlay = () => openMod.now()?.closeSimOverlay();
 const leagueMod = lenModul("./leagues.js");
 const loadLeague = (id) => {
-  return leagueMod.load().then((m) => m.loadLeague(id)).catch(() => leagueMod.now() || viewNote("#league-content", "off.noConnection", true));
+  return leagueMod.load().then((m) => m.loadLeague(id, apiGen)).catch(() => leagueMod.now() || viewNote("#league-content", "off.noConnection", true));
+};
+// Liga vnaprej (odprt »Jaz«, dotik vrstice Lige).
+const prefetchLeague = () => {
+  const id = state.student?.id;
+  if (id) leagueMod.load().then((m) => m.prefetchLeague?.(id, apiGen)).catch(() => {});
 };
 let pozneje = false;
 // Delo, ki ni za prvi izris Učne poti (moduli, ki jih ta ne rabi): po njem (zasloniPozneje), sicer takoj.
@@ -406,24 +421,23 @@ const apiOpen = new Set();
 // prebere novo stanje (GET, ki je že v teku, se ne prekine; ostane le zunaj seznama za združevanje).
 const apiInFlight = new Map();
 const kopija = (v) => (v && typeof v === "object" ? structuredClone(v) : v);
-// Klic GET, začet pred nalaganjem modula, ki ga potrebuje (openTopic zgoraj): prvi enak klic v 15 s ga prevzame.
-const apiPrej = new Map();
-const apiVnaprej = (url) => {
-  if (apiPrej.has(url)) return;
-  const p = api(url);
-  p.catch(() => {});
-  apiPrej.set(url, p);
-  setTimeout(() => apiPrej.get(url) === p && apiPrej.delete(url), 15000);
+// Vnaprej prenesen GET (kliki.js topli: ob dotiku, v mirovanju ali hkrati z modulom zaslona, ki ga še ni): prvi enak
+// klic ga prevzame, če je za istega učenca, mlajši od 60 s in vmes ni bilo nobene spremembe. apiGen šteje spremembe
+// (klic, ki ni GET, ob začetku in koncu; sporočilo inštruktorju): vsaka pobriše vse vnaprej prenesene odgovore.
+let apiGen = 0;
+const apiWarm = topli({ get: (url) => api(url, { ozadje: true }), gen: () => apiGen, ucenec: () => state.student?.id });
+const prefetchGet = apiWarm.prefetch;
+const sprememba = () => {
+  apiWarm.clear();
+  apiGen++;
 };
 const api = (url, opts = {}) => {
   const get = !opts.method && !opts.body && !opts.headers && !opts.signal;
-  if (get && apiPrej.has(url)) {
-    const p = apiPrej.get(url);
-    apiPrej.delete(url);
-    return p;
-  }
   if (!get) apiInFlight.clear();
-  if (!get) apiPrej.clear(); // sprememba: vnaprej začeti klici (apiVnaprej) so lahko zastareli
+  // ohrani: klic, ki ne spremeni ničesar, kar je shranjeno (naloga vadnice vnaprej, prefetchPractice).
+  if (!get && !opts.ohrani) sprememba();
+  const w = get && apiWarm.take(url);
+  if (w) return w.catch(() => api(url));
   if (get && apiInFlight.has(url)) return apiInFlight.get(url).then(kopija);
   const p = (async () => {
     const id = ++apiSeq;
@@ -434,7 +448,10 @@ const api = (url, opts = {}) => {
       apiOpen.delete(id);
     }
   })();
-  if (!get) return p;
+  if (!get) {
+    if (!opts.ohrani) p.finally(sprememba).catch(() => {});
+    return p;
+  }
   apiInFlight.set(url, p);
   const pobrisi = () => apiInFlight.get(url) === p && apiInFlight.delete(url);
   p.then(pobrisi, pobrisi);
@@ -452,8 +469,9 @@ const apiCall = async (url, opts = {}) => {
     if (local !== undefined) return local;
     throw napaka();
   }
+  const { ozadje, ohrani, ...init } = opts;
   const res = await fetchThroughRestart(url, {
-    ...opts,
+    ...init,
     headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
     body: opts.body && typeof opts.body !== "string" ? JSON.stringify(opts.body) : opts.body,
   });
@@ -594,7 +612,14 @@ setFormulaSubject(
   () => (currentView === "topic" ? topicScope(state.topic) : taskFxNow()?.scope || ""),
 );
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
-const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols, topicScope(tp));
+// Izris razlage se zapomni (na telefonu ~150 ms Markdowna in KaTeX ob vsakem odprtju teme); verjetne naslednje teme
+// vnaprej v mirovanju (prefetchTopics). Samo dokončan izris, ključ so vsi vhodi.
+const richMemo = zapomni();
+const topicRich = (tp, text) => {
+  const subject = topicSubject(tp) || state.student?.settings?.subject || "MAT";
+  const k = izrisNared() ? JSON.stringify([currentLang(), subject, topicScope(tp), tp?.symbols ?? null, text]) : null;
+  return richMemo(k, () => withFormulaSubject(subject, () => renderRich(text), tp?.symbols, topicScope(tp)));
+};
 
 // Sporočilo učenca: besedilo ostane besedilo, $...$ in zapis s tipkovnice ((3)/(4), √(2), x^(2), ∑_(n=1)^∞ …,
 // public/vnos-formul.js) se izrišeta kot formula.
@@ -680,7 +705,7 @@ function showView(name) {
   if (name !== "topic") closePad();
   if (name !== "topic" && name !== "cards") setActiveMode(null);
   refreshBubble();
-  peekBar(false);
+  peekBar(false, true);
   window.scrollTo(0, 0);
   if (!startHold) startDone();
   rememberScreen();
@@ -829,8 +854,12 @@ function initView(name, notes = false) {
     freshChatIfStale();
     zgodovinaVidna();
     pripraviZaznavalnik();
+    prefetchConversations(); // računalnik: seznam pogovorov je ob klepetu
   }
-  if (name === "me") renderMe();
+  if (name === "me") {
+    renderMe();
+    whenIdle(prefetchLeague); // naslednji klik z »Jaz«: Lige rabijo strežnik, ostale vrstice ne
+  }
   if (name === "settings") {
     fillSettingsForm();
     $("#settings-account").hidden = $("#account-tab").hidden;
@@ -871,10 +900,14 @@ const tabbarEl = $("#tabbar");
 const barAuto = () => !!tabbarEl && !document.body.matches(".tb-mir, .tb-vraca") && getComputedStyle(tabbarEl).position === "fixed";
 const typing = () => !!document.activeElement?.matches?.('textarea, [contenteditable="true"], input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"])');
 const NO_SWIPE = "#tabbar, canvas, input[type=range], .pad, .graph-slot, .demo, .okno, .tour";
-function peekBar(on) {
+// soon (menjava pogleda): --tabbar-h v naslednjem okvirju pred risanjem; branje sloga sredi tapa je vsililo slog in
+// postavitev novega pogleda. Pokazana vrstica (drsenje) ga popravi takoj, da vrstica za pisanje ne ostane pod njo.
+let tabbarRaf = 0;
+function peekBar(on, soon = false) {
   if (on && typing()) on = false;
   if (document.body.classList.contains("tb-peek") !== on) document.body.classList.toggle("tb-peek", on);
-  syncTabbarH();
+  if (!soon) syncTabbarH();
+  else tabbarRaf ||= requestAnimationFrame(() => ((tabbarRaf = 0), syncTabbarH()));
 }
 // Odprta lekcija v Učbeniku (j 2026-11-04): vrstica ostane skrita med branjem in se pokaže šele ob robu, torej s
 // potegom navzgor, ko je lekcija že na dnu, ali s potegom navzdol, ko je že na vrhu. Rob šteje ob začetku potega,
@@ -1399,6 +1432,14 @@ async function selectStudent(id) {
   }
   sendOffline();
   state.conversationId = null;
+  // Učna pot novega profila takoj, hkrati s seznamom pogovorov (prej šele za njim: dva čakanja strežnika zapored).
+  state.pathKey = null;
+  state.modes = null; // »Nadaljuj z učenjem« in goNew ne smeta pokazati naslednje teme prejšnjega profila
+  clearLevelCard();
+  maybeTour.done = false; // vodič je za vsak profil posebej (settings.tour_version)
+  refreshProfileButton();
+  // Ob zagonu Učno pot pokaže start (showView takoj za izbiro profila): brez dvojnega izrisa poti pred prvim prikazom.
+  if (!zagonIzbira && (!$("#view-path").hidden || !$("#view-topic").hidden)) showView("path");
   await loadConversations();
   // Nov pogovor ob odprtju (j 2026-11-14): zadnji pogovor samo, če je bil učenec v inštruktorju pred manj kot 10 min.
   const keep = chatKeepId();
@@ -1410,12 +1451,6 @@ async function selectStudent(id) {
   if (!$("#view-league").hidden) loadLeague(state.student.id);
   if (!$("#view-scan").hidden) showScan(); // naloga prejšnjega profila ne ostane na zaslonu
   if (!$("#view-lab").closest("[hidden]")) showLab(); // zaklep in vrstni red poskusov sta po profilu
-  state.pathKey = null;
-  state.modes = null; // »Nadaljuj z učenjem« in goNew ne smeta pokazati naslednje teme prejšnjega profila
-  clearLevelCard();
-  maybeTour.done = false; // vodič je za vsak profil posebej (settings.tour_version)
-  // Ob zagonu Učno pot pokaže start (showView takoj za izbiro profila): brez dvojnega izrisa poti pred prvim prikazom.
-  if (!zagonIzbira && (!$("#view-path").hidden || !$("#view-topic").hidden)) showView("path");
   // Tekmovanja, Izpiti ter NPZ in matura: izbira in rezultati prejšnjega profila ne ostanejo na zaslonu.
   state.examKey = state.compKey = null;
   state.examRaven = null;
@@ -1465,6 +1500,7 @@ function renderConversationList() {
   for (const c of state.conversations) {
     const li = document.createElement("li");
     li.className = c.id === state.conversationId ? "active" : "";
+    li.dataset.id = c.id; // prenos vnaprej ob dotiku (prefetchConversations)
     li.innerHTML = `<span>${escapeHtml(c.title)}</span><button title="${t("chat.delete")}" aria-label="${t("chat.delete")}">${icon("trash-2")}</button>`;
     // Klik kjerkoli v vrstici (ne le na besedilu): dotik ob robu vrstice je prej samo zaprl seznam (j, 17. 11. 2026).
     li.addEventListener("click", () => openConversation(c.id));
@@ -1875,7 +1911,23 @@ $("#messages").addEventListener("scroll", dopolniKmalu, { passive: true });
 const setSidebar = (open) => {
   $(".sidebar").classList.toggle("open", open);
   $("#toggle-sidebar").setAttribute("aria-expanded", String(open));
+  if (open) prefetchConversations();
 };
+// Viden seznam pogovorov: zadnji pogovori vnaprej, dotik vrstice začne prenos ob pointerdown.
+function prefetchConversations() {
+  whenIdle(() => {
+    if (!$(".sidebar")?.getClientRects().length) return; // seznam ni viden (telefon z zaprtim seznamom)
+    for (const c of state.conversations.slice(0, 4)) if (c.id !== state.conversationId) prefetchGet(`/api/conversations/${c.id}`);
+  });
+}
+$("#conversation-list").addEventListener(
+  "pointerdown",
+  (e) => {
+    const li = e.target.closest("li[data-id]");
+    if (li && !e.target.closest("button") && Number(li.dataset.id) !== state.conversationId) prefetchGet(`/api/conversations/${li.dataset.id}`);
+  },
+  { passive: true },
+);
 // Na računalniku je seznam lahko skrit s potegom ločnice do roba (public/razdelilnik.js): isti gumb ga vrne.
 let chatSplit = null;
 $("#toggle-sidebar").addEventListener("click", () => (chatSplit?.collapsed ? chatSplit.expand() : setSidebar(!$(".sidebar").classList.contains("open"))));
@@ -2081,6 +2133,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     bubble.addEventListener("click", skip);
     bubble.title = t("chat.tapToSkip");
 
+    sprememba(); // sporočilo spremeni pogovor (mimo api())
     const res = await fetchThroughRestart(`/api/conversations/${state.conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2277,6 +2330,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     if (!err.limit && !deep) restoreDraft(draft ?? text, image);
   } finally {
     state.sending = false;
+    sprememba(); // odgovor je v pogovoru: kopije, prenesene vnaprej med pisanjem, niso več sveže
     $("#send").disabled = false;
     if (currentView === "chat" || isFloating("chat")) markChat(); // učenec je v pogovoru: 10 min teče od zdaj
   }
@@ -3661,8 +3715,9 @@ async function loadPath(key = state.pathKey) {
   // Učna pot, seznam poti in programi hkrati (prej drug za drugim: trije čakanji na strežnik ob vsakem odprtju
   // domačega zaslona); seznam poti je enak za vse in se v seji ne spremeni (j, 15. 11. 2026: »vse takoj«).
   const pathsUrl = uni ? `/api/paths?program=${encodeURIComponent(state.student.settings.study_program)}` : `/api/paths?subject=${state.student.settings.subject}&system=${encodeURIComponent(sys)}`;
+  const sid = state.student.id, gen = apiGen;
   const [p, , paths] = await Promise.all([
-    api(`/api/students/${state.student.id}/path${q}`),
+    api(`/api/students/${state.student.id}/path${q}`).then((x) => keepPath(x, sid, gen)),
     uni ? loadPrograms(api) : null,
     pathsCache.get(pathsUrl) || api(pathsUrl).then((list) => (Array.isArray(list) && pathsCache.set(pathsUrl, list), list)),
   ]);
@@ -3776,6 +3831,10 @@ async function loadPath(key = state.pathKey) {
       .join("") +
     greekFactHtml("gr-path");
   wireGreekFacts(content);
+  prefetchTopics(); // teme, ki jih učenec verjetno odpre: vsebina v miru vnaprej (odprtje brez čakanja strežnika)
+  // Kartice (gumb nad potjo): seznam kartic te poti vnaprej, enak naslov kot public/flashcards.js showFlashcards.
+  const sidNow = state.student.id;
+  whenIdle(() => state.student?.id === sidNow && state.pathKey && prefetchGet(`/api/students/${sidNow}/flashcards?path=${encodeURIComponent(state.pathKey)}`));
   renderFeedbackCard(); // nov dan med odprto aplikacijo: kartica se pokaže ob naslednjem izrisu poti
   if (!maybeTour.done) {
     maybeTour.done = true;
@@ -3892,6 +3951,29 @@ function syncCompetitionTab() {
   msub.textContent = t(msub.dataset.i18n);
   mc.querySelector(".ic").innerHTML = icon(regionalExams() ? "clipboard-check" : "medal");
 }
+// Vsebina teme in stanje iz zadnje Učne poti (kliki.js): tema z Učne poti ne čaka strežnika.
+const tm = teme({ api, kopija, jezik: () => state.student?.settings?.language || "", ucenec: () => state.student?.id, gen: () => apiGen });
+const topicEntry = tm.entry;
+const topicContent = tm.content;
+const keepPath = tm.keepPath;
+const pathData = tm.pathData;
+const pathUnitsFor = tm.unitsFor;
+// Verjetne naslednje teme v miru po izrisu Učne poti; dotik vozlišča ob pointerdown.
+const prefetchTopics = () => temeVnaprej($("#path-content"), { entry: topicEntry, whenIdle, izrisi: (tp) => izrisNared() && topicRich(kopija(tp), tp.explanation) });
+document.addEventListener(
+  "pointerdown",
+  (e) => {
+    const b = e.target.closest?.("[data-open]");
+    if (b && !b.disabled && state.student) topicContent(b.dataset.open).catch(() => {});
+  },
+  { passive: true, capture: true },
+);
+
+// Naslednja naloga vadnice vnaprej (kliki.js vadnica; vadnica.js jo prevzame ob »Vadi naloge« in »Naprej«).
+const vadi = vadnica({ api, ucenec: () => state.student?.id, tema: () => state.topic?.id, gen: () => apiGen, smem: () => navigator.onLine !== false && !serverIsDown && !serverUpdating });
+const prefetchPractice = vadi.prefetch;
+const takePractice = vadi.take;
+
 // Gumb »nazaj« na temi oziroma pri seriji nalog vodi tja, od koder je učenec prišel.
 function setBack(view) {
   state.backTo = view;
@@ -4418,6 +4500,16 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
   document.addEventListener("pointerdown", (e) => {
     if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
+    if (e.target.closest?.('[data-view="league"], [data-go="league"]')) prefetchLeague();
+    // Kalkulator: datoteke zadnjega orodja hkrati že ob dotiku.
+    if (e.target.closest?.('[data-view="graph"], [data-go="graph"], .calc-open, .task-calc')) {
+      if (calcMod.now()) calcMod.now().vnaprejOrodje();
+      else {
+        vzporedno("kalkulator-zaslon.js");
+        vzporedno(calcMode === "graph" ? "graph/calc.js" : calcMode === "sci" ? "graph/sci.js" : "graph/tools.js");
+        calcMod.load().catch(() => {});
+      }
+    }
   }, { passive: true, capture: true });
   initZbirke({ api, getStudent: () => state.student, currentLang, showView });
   initCorner({
@@ -4566,7 +4658,10 @@ async function bootFailed(err) {
       { passive: false },
     );
     new ResizeObserver(fit).observe(tabs);
-    new MutationObserver(fit).observe(tabs, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden", "class"] });
+    // Ob spremembi zavihkov (»active« ob vsakem tapu) merimo v naslednjem okvirju, ne sredi tapa.
+    let fitRaf = 0;
+    const fitSoon = () => (fitRaf ||= requestAnimationFrame(() => ((fitRaf = 0), fit())));
+    new MutationObserver(fitSoon).observe(tabs, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden", "class"] });
     document.fonts?.ready.then(fit);
   }
 }
@@ -4574,4 +4669,4 @@ async function bootFailed(err) {
 // Skupno stanje in pomožne funkcije za module zaslonov, ki se naložijo po prvem izrisu (public/vadnica.js).
 // Žive vezave ES modulov: modul vedno vidi trenutno vrednost (npr. calcMode, keptPaper).
 export { CALC_MODES, calcChapter, calcOverlayOpen, currentView, loadPaperViewer, nastaviCalcMode, overlayClosed, overlayOpened, showScan, splitOpts, usageAdmin, whenQuiet };
-export { $, COMP_LEVEL_NAMES, EXTRA_SESSIONS, NODE, api, calcMode, calcSubject, choiceHtml, diffBadge, escapeHtml, examMode, extraSession, fbText, fillInput, isCompTopic, keptPaper, loadConversations, localStorageGet, localStorageSet, markFirstTask, markTopic, mayPlot, meBackHtml, offTabbarViews, openCalcOverlay, openConversation, openLesson, openLocalPaper, ourMod, plotFromText, prepBack, pripraviIzris, refreshXp, regionalExams, renderGoal, renderMath, renderRich, send, setActiveMode, setBack, setTaskFx, showView, siExams, state, studentUpdated, toast, topicCache, topicRich, unlockedHtml, withFormulaSubject };
+export { $, api, calcMode, calcSubject, choiceHtml, COMP_LEVEL_NAMES, diffBadge, escapeHtml, examMode, EXTRA_SESSIONS, extraSession, fbText, fillInput, isCompTopic, keptPaper, kopija, loadConversations, localStorageGet, localStorageSet, markFirstTask, markTopic, mayPlot, meBackHtml, NODE, offTabbarViews, openCalcOverlay, openConversation, openLesson, openLocalPaper, ourMod, pathData, pathUnitsFor, plotFromText, prefetchPractice, prepBack, pripraviIzris, refreshXp, regionalExams, renderGoal, renderMath, renderRich, send, setActiveMode, setBack, setTaskFx, showView, siExams, state, studentUpdated, takePractice, toast, topicCache, topicEntry, topicRich, unlockedHtml, withFormulaSubject };

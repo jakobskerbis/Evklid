@@ -53,3 +53,28 @@ export function startupFiles(publicDir, entry = "index.html", later = []) {
   else visitModule(path.join(publicDir, m));
   return [...urls];
 }
+
+// Leni modul in vse njegove statične odvisnosti (poti URL, npr. "/graph/sci.js"), za vzporedno nalaganje v brskalniku
+// (public/kliki.js vzporedno: <link rel="modulepreload"> za vse naenkrat namesto ravni za ravnijo uvozov).
+export function moduleDeps(publicDir, entry) {
+  const out = [];
+  const seen = new Set();
+  const visit = (abs) => {
+    if (seen.has(abs) || !abs.startsWith(publicDir + path.sep)) return;
+    seen.add(abs);
+    let src;
+    try {
+      src = fs.readFileSync(abs, "utf8");
+    } catch {
+      return;
+    }
+    out.push("/" + path.relative(publicDir, abs).split(path.sep).join("/"));
+    for (const m of src.matchAll(IMPORT)) {
+      const spec = m[1];
+      if (spec.startsWith("/")) visit(path.join(publicDir, spec));
+      else if (spec.startsWith(".")) visit(path.resolve(path.dirname(abs), spec));
+    }
+  };
+  visit(path.join(publicDir, entry));
+  return out;
+}
