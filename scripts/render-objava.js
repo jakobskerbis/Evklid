@@ -181,8 +181,15 @@ async function main() {
       const hook = new URL(HOOK);
       hook.searchParams.set("ref", mainSha); // točno preverjeni commit, ne vrh veje ob sprožitvi
       let r = await fetch(hook, { method: "POST" });
-      // Če Render parametra ref ne sprejme, sproži brez njega (vrh je bil pravkar preverjen).
-      if (!r.ok && r.status >= 400 && r.status < 500) { console.log(`Render z ref: ${r.status}, sprožim brez ref.`); r = await fetch(HOOK, { method: "POST" }); }
+      // Če Render parametra ref ne sprejme (400; 404: commita še ne vidi), sproži brez njega, a samo, če je vrh main
+      // še vedno preverjeni commit (brez ref Render objavi vrh veje); napaka GitHub API ali nov vrh: preverim znova.
+      if (!r.ok && r.status >= 400 && r.status < 500) {
+        let vrh2 = null;
+        try { vrh2 = (await gh("commits/main")).sha; } catch {}
+        if (vrh2 !== mainSha) { console.log(`Render z ref: ${r.status}; vrh main ${vrh2?.slice(0, 12) || "ni znan"}, preverim znova.`); await pocakaj(); continue; }
+        console.log(`Render z ref: ${r.status}, sprožim brez ref.`);
+        r = await fetch(HOOK, { method: "POST" });
+      }
       if (!r.ok) throw new Error(`Render: ${r.status}`);
       fs.writeFileSync(file, JSON.stringify({ sha: mainSha, at: Date.now() }));
       if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, "sprozeno=1\n");

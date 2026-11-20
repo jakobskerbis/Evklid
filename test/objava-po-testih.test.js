@@ -90,6 +90,9 @@ test("Telefoni: posodobitev (EAS Update) samo po uspešnih Testih za push v main
   assert.match(on, /^\n  workflow_run:\n    workflows: \[Testi\]\n    types: \[completed\]\n    branches: \[main\]\n$/);
   for (const k of ["github.event.workflow_run.conclusion == 'success'", "github.event.workflow_run.event == 'push'", "github.event.workflow_run.head_branch == 'main'", "github.event.workflow_run.head_repository.full_name == github.repository"]) assert.ok(wf.includes(k), k);
   assert.match(wf, /ref: \$\{\{ github\.event\.workflow_run\.head_sha \}\}/);
+  // concurrency na poslu: preskočen tek (PR iz forka z vejo main) ne nadomesti čakajočega pravega teka.
+  assert.doesNotMatch(wf, /^concurrency:/m);
+  assert.match(wf, /^    concurrency:\n      group: ota\n      cancel-in-progress: false$/m);
   // Isti ukaz kot prej v EAS Workflow: kanal direct, Android, okolje preview, EXPO_PUBLIC_CHANNEL=direct (prstni odtis).
   assert.match(wf, /eas-cli@latest update --channel direct --platform android --environment preview --non-interactive/);
   assert.match(wf, /EXPO_PUBLIC_CHANNEL: direct/);
