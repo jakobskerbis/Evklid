@@ -143,7 +143,7 @@ test("Render: v nočnem oknu objava, ko je strežnik miren, ob koncu okna v vsak
   const sha = "abcdef1234567890";
   const ura = 3600000;
   const noc = Date.parse("2026-11-20T03:30:00+01:00");
-  const decide = (o) => decideOb({ now: noc, ...o });
+  const decide = (o) => decideOb({ now: noc, testi: { stanje: "uspeh" }, ...o }); // testi zeleni (objava-po-testih.test.js)
   const miren = { razlicica: "111111111111", aktivni: 0, mirujeMs: null, gorMs: 2 * ura };
   assert.equal(decide({ stanje: { ...miren, razlicica: sha.slice(0, 12) }, mainSha: sha, cakaMin: 500 }).objavi, false);
   assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 5 }).objavi, true);
@@ -174,7 +174,8 @@ test("Render: v nočnem oknu objava, ko je strežnik miren, ob koncu okna v vsak
 });
 
 test("Render: objave samo ponoči (3.–5. ura po ljubljanskem času), nujne in ročne takoj", async () => {
-  const { decide, ljubljanaMin, doNoci, NUJNO, nujnaSprememba } = await import("../scripts/render-objava.js");
+  const { decide: decideOb, ljubljanaMin, doNoci, NUJNO, nujnaSprememba } = await import("../scripts/render-objava.js");
+  const decide = (o) => decideOb({ testi: { stanje: "uspeh" }, ...o });
   const sha = "abcdef1234567890";
   const miren = { razlicica: "111111111111", aktivni: 0, mirujeMs: null, gorMs: 5 * 3600000 };
   const zaseden = { ...miren, mirujeMs: 60000 };

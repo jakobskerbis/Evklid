@@ -218,9 +218,10 @@ Vsakič:
    gradnje prilepi v **Račun → Aplikacija za Android (APK)** in tapni »Naloži APK«.
 
 **Posodobitve nameščene aplikacije** (`mobile/src/lib/updates.ts`):
-- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ob vsaki združitvi v `main`, ki spremeni
-  `mobile/` ali skupne datoteke s spletom, Expo (EAS Workflows, `mobile/.eas/workflows/posodobitev.yml`)
-  objavi posodobitev na kanal `direct`. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
+- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ko so testi za združitev v `main` zeleni
+  (vsi štirje posli v `testi.yml`, tudi `tipi`), GitHub (`.github/workflows/ota.yml`, skrivnost `EXPO_TOKEN`)
+  objavi posodobitev na kanal `direct`, če je kateri commit od zadnje objave spremenil `mobile/` ali skupne
+  datoteke s spletom (seznam `POTI` v `ota.yml`). Padli testi: nič ne gre na telefone. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
   ko je prenesena, aplikacija ponudi »Posodobi« (takojšen ponovni zagon). Dobijo jo samo gradnje z enako
   domorodno kodo (`runtimeVersion: fingerprint`). Brezplačni načrt Expo pokrije do 1.000 uporabnikov na mesec.
 - **Nova domorodna koda** (nov paket Expo, nova različica SDK, sprememba `app.config.ts`) potrebuje nov APK:
