@@ -16,7 +16,7 @@ import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID,
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
-import { Progress } from "./progress.js";
+import { Progress, RULES } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
 import { mountClassShowcase } from "./vitrina.js";
 import { mountGradiva } from "./gradiva.js";
@@ -1748,8 +1748,26 @@ export function createApp(store, opts = {}) {
     const key = req.query.key || pathKeyFor(s.settings);
     const view = key && progress.pathView(s.id, key);
     if (!view) return res.json({ key: null, message: "Za to raven še ni učne poti." });
-    res.json({ ...view, label: pathLabelFor(key, s.settings.school_system), defaultKey: pathKeyFor(s.settings), xp: progress.xpSummary(s.id) });
+    const danes = s.settings.goal === "matura" && key === pathKeyFor(s.settings) ? danesMatura(s, view) : null;
+    res.json({ ...view, label: pathLabelFor(key, s.settings.school_system), defaultKey: pathKeyFor(s.settings), xp: progress.xpSummary(s.id), ...(danes ? { danes } : {}) });
   });
+  // Kartica »Danes« na Učni poti za cilj matura (j, 20. 11. 2026, public/goal.js danesHtml): najprej ponavljanje, kar je
+  // na vrsti, nato prva tema iz »Najprej vadi« na strani NPZ in matura (ista examReadiness, zato se nikoli ne razlikujeta).
+  // Minute: 1,5 minute na nalogo (Današnji trening: 10 nalog ≈ 15 minut). odsoten: dni od zadnje naloge (0 = danes ali še nobene).
+  const danesMatura = (s, view) => {
+    const exKey = examKeyFor(s.settings);
+    const r = isExamPath(exKey) ? progress.examReadiness(s.id, exKey, examRaven(exKey, s.settings)) : null;
+    const w = r?.weakest?.[0];
+    const naloge = Math.min(view.dueCount * RULES.reviewPerTopic, RULES.reviewSessionMax);
+    const zadnji = store.db.prepare("SELECT CAST(julianday(date('now')) - julianday(MAX(date(created_at))) AS INTEGER) AS d FROM tasks WHERE student_id = ?").get(s.id)?.d;
+    return {
+      due: view.dueCount,
+      review: naloge,
+      next: w ? { id: w.id, name: w.name } : null,
+      minutes: Math.max(5, Math.round((naloge || RULES.dailyTasks) * 1.5)),
+      odsoten: zadnji ?? 0,
+    };
+  };
   app.get("/api/topic", (req, res) => {
     const t = getTopic(req.query.id);
     if (!t) return res.status(404).json({ error: "Tema ne obstaja." });

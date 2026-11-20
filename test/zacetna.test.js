@@ -51,6 +51,25 @@ test("uvrstiKartice premakne kartice pred izbiro načina, ostale pusti nad njimi
   assert.deepEqual(kids.map((k) => k.id).slice(-5), ["stage-card", "schedule-card", "xp-card", "goal-modes", "modebar"]);
 });
 
+test("uvrstiKartice: mnenje in namestitev tik pod današnjim treningom, nikoli nad njim", () => {
+  const kids = ["goal-line", "feedback-card", "install-card", "xp-card", "schedule-card", "stage-card", "modebar"].map((id) => ({ id }));
+  const side = {
+    querySelector: (sel) => kids.find((k) => `#${k.id}` === sel) || null,
+    insertBefore(el, anchor) {
+      kids.splice(kids.indexOf(el), 1);
+      kids.splice(anchor ? kids.indexOf(anchor) : kids.length, 0, el);
+    },
+  };
+  for (const k of kids) {
+    k.parentElement = side;
+    Object.defineProperty(k, "nextElementSibling", { get: () => kids[kids.indexOf(k) + 1] || null });
+  }
+  uvrstiKartice(side, VRSTNI_RED.SS);
+  assert.deepEqual(kids.map((k) => k.id), ["goal-line", "xp-card", "feedback-card", "install-card", "schedule-card", "stage-card", "modebar"]);
+  uvrstiKartice(side, VRSTNI_RED.SS_TEST);
+  assert.deepEqual(kids.map((k) => k.id), ["goal-line", "schedule-card", "stage-card", "xp-card", "feedback-card", "install-card", "modebar"]);
+});
+
 test("stageRows: kar odpre kartica stopnje, bližnjice cilja ne ponovijo", () => {
   assert.deepEqual(stageRows("OS", { games: true }), ["games"]);
   assert.deepEqual(stageRows("OS", { games: false }), []);

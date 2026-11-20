@@ -192,6 +192,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
 .zo-pot .zo-glava i:nth-child(2) { height: 22px; width: 62%; }
 .zo-pot .zo-glava i:nth-child(3) { width: 80%; }
 .zo-pot .card.zo-xp { min-height: 598px; }
+.zo-pot.zo-danes .card.zo-xp { min-height: 650px; } /* kartica »Danes« (cilj matura): ena vrstica več in Današnji trening v dveh */
 .zo-pot .card.zo-nacini { min-height: 124px; }
 .zo-pot .zo-vsebina { display: none; }
 .zo-pot .card.zo-sklop { min-height: 380px; }
@@ -199,6 +200,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
   .zagon-okostje.zo-pot { display: grid; grid-template-columns: var(--split-path, minmax(360px, 440px)) minmax(0, 1fr); gap: 0 28px; align-items: start; align-content: start; }
   .zo-pot .zo-vsebina { display: block; padding-top: 34px; }
   .zo-pot .card.zo-xp { min-height: 532px; }
+  .zo-pot.zo-danes .card.zo-xp { min-height: 558px; }
   .zo-pot .card.zo-nacini { min-height: 272px; }
 }
 @keyframes zagon-okostje { 50% { opacity: 0.55; } }
@@ -631,6 +633,7 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .hero p { margin: 2px 0 0; opacity: 0.9; font-weight: 600; }
 .hero-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: rgba(255, 255, 255, 0.18); }
 .hero-icon svg.i { width: 28px; height: 28px; color: #ffe27a; fill: #ffe27a; }
+.hero.danes .hero-icon svg.i { fill: none; } /* tarča (cilj matura) kot obris, ne polna pika */
 .hero button.primary { background: #fff; color: var(--hero-a); box-shadow: 0 var(--press) 0 rgba(0, 0, 0, 0.18); }
 .next-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 14px 20px; border: 0; border-bottom: 1px solid var(--border); background: var(--surface); text-align: start; color: var(--text); }
 .next-row:hover { background: var(--surface-2); }

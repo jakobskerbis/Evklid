@@ -186,7 +186,7 @@
     var bar0 = null;
     function napolni(p) {
       var pot = !p && okostjePot && v === "path";
-      m.className = p ? p.c : pot ? "view narrow zagon-okostje zo-pot" : "view narrow zagon-okostje";
+      m.className = p ? p.c : pot ? "view narrow zagon-okostje zo-pot" + (zp && zp.d["/api/students/" + zp.s + "/path"] && zp.d["/api/students/" + zp.s + "/path"].danes ? " zo-danes" : "") : "view narrow zagon-okostje";
       if (p) m.id = "view-" + v;
       if (p) {
         m.textContent = "";

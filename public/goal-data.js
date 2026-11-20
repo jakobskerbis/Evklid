@@ -25,6 +25,24 @@ export function daysUntil(date, today = null) {
   return Math.round((Date.parse(`${date}T00:00:00Z`) - t0) / 86400000);
 }
 
+// Začetek spomladanskega roka splošne in poklicne mature (pisni del) po okvirnem koledarju ministrstva za šolsko leto
+// (gov.si, »okvirni koledar splošne in poklicne mature«; 2026/27: sobota 29. 5. 2027). Vsako leto dopiši novi datum.
+export const MATURA_SPOMLADI = ["2027-05-29"];
+// Prvi rok mature od danes naprej ali "" (za tisto leto datuma še ni).
+export const maturaDatum = (today = null) => MATURA_SPOMLADI.find((d) => daysUntil(d, today) >= 0) || "";
+
+// Maturant (j, 20. 11. 2026): 4. letnik srednje šole v Sloveniji pri matematiki ima cilj matura z datumom spomladanskega
+// roka (raven ostane v curriculum_level: »4. letnik OR/VR«, »še ne vem« = »4. letnik«). Opomnika ob 12.00 (in e-pošte
+// staršu) samodejno ne vklopimo; vklopi ga učenec v Nastavitvah. Vrne popravek nastavitev ali {}.
+export function privzetiCilj(settings = {}, today = null) {
+  const s = settings || {};
+  if ((s.school_system || "SI") !== "SI" || !jeSs(s) || (s.subject || "MAT") !== "MAT" || !/^4\. letnik\b/.test(String(s.curriculum_level || ""))) return {};
+  return { goal: "matura", goal_date: maturaDatum(today), goal_reminder: false };
+}
+// Star profil maturanta s privzetim ciljem (sprotno, brez datuma), ki ponudbe še ni sprejel ali zavrnil: kartica na Učni poti.
+export const ponudiMaturo = (settings = {}) =>
+  !!privzetiCilj(settings).goal && (settings.goal || DEFAULT_GOAL) === DEFAULT_GOAL && !validDate(settings.goal_date) && !settings.matura_offer;
+
 // Slovenski zapis datuma: 1. 6. 2027
 export const fmtDateSl = (s) => (validDate(s) ? s.split("-").map(Number).reverse().join(". ") : "");
 

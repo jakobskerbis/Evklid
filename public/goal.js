@@ -162,3 +162,35 @@ export function reminderCardHtml(student, { preview = false } = {}) {
       ${preview ? "" : `<div class="actions"><button type="button" class="primary small" data-goal-start>${icon("play")}${esc(t("goal.remStart"))}</button><button type="button" class="ghost small" data-goal-later>${esc(t("goal.remLater"))}</button></div>`}
     </div>`;
 }
+
+// Kartica »Danes« na Učni poti za cilj matura (j, 20. 11. 2026): odštevanje do mature, korak za danes (najprej
+// ponavljanje, kar je na vrsti, nato tema iz »Najprej vadi« na strani NPZ in matura; podatki: /path → danes),
+// približne minute in en gumb. Po vsaj 3 dneh odsotnosti kratek pozdrav. Brez koraka "" (ostane Današnji trening).
+export function danesHtml(student, d) {
+  if (!d || (!d.due && !d.next)) return "";
+  const s = student?.settings || {};
+  const when = [goalName("matura"), countdown(s.goal_date)].filter(Boolean).join(" · ");
+  const min = esc(t("danes.min", { n: d.minutes }));
+  const back = d.odsoten >= 3 ? `<p class="danes-back">${esc(t(d.due ? "danes.back" : "danes.backHi"))}</p>` : "";
+  const step = d.due
+    ? `<p><b>${esc(t("mode.reviewBadge", { n: d.review }))}</b> · ${min}</p>${d.next ? `<p>${esc(t("danes.then", { topic: d.next.name }))}</p>` : ""}`
+    : `<p><b>${esc(t("danes.next", { topic: d.next.name }))}</b> · ${min}</p>`;
+  const btn = d.due
+    ? `<button class="primary big" data-danes-review>${esc(t("danes.review"))}</button>`
+    : `<button class="primary big" data-danes-topic="${esc(d.next.id)}">${esc(t("ready.practice"))}</button>`;
+  return `<div class="hero danes">
+      <div class="hero-icon">${icon("target")}</div>
+      <div class="hero-text"><h2>${esc(t("danes.title"))}</h2><p>${esc(when)}</p>${back}${step}</div>
+      ${btn}
+    </div>`;
+}
+
+// Ponudba za star profil maturanta s privzetim ciljem (goal-data.js ponudiMaturo): en dotik nastavi cilj matura.
+export function maturaPonudbaHtml() {
+  return `<span class="gr-ic" aria-hidden="true">${icon("target")}</span>
+    <div class="gr-body">
+      <b>${esc(t("danes.offerTitle"))}</b>
+      <span>${esc(t("danes.offerText"))}</span>
+      <div class="actions"><button type="button" class="primary small" data-matura-offer="yes">${esc(t("danes.offerYes"))}</button><button type="button" class="ghost small" data-matura-offer="no">${esc(t("danes.offerNo"))}</button></div>
+    </div>`;
+}

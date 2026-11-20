@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
+import { privzetiCilj } from "../public/goal-data.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
 
@@ -482,9 +483,15 @@ export class Store {
     return row ? parseStudent(row) : null;
   }
   createStudent(name, settings = DEFAULT_SETTINGS) {
+    // Maturant (4. letnik SŠ, matematika): brez izbranega cilja dobi cilj matura z datumom roka (public/goal-data.js);
+    // z izbranim ciljem je odločitev že sprejeta, zato mu Učna pot ponudbe ne pokaže.
+    const izbran = settings?.goal !== undefined;
+    let s = normalizeSettings(settings || {});
+    const matura = privzetiCilj(s);
+    if (matura.goal) s = izbran ? { ...s, matura_offer: 1 } : normalizeSettings({ ...s, ...matura });
     const r = this.db
       .prepare("INSERT INTO students (name, settings) VALUES (?, ?)")
-      .run(name, JSON.stringify(normalizeSettings(settings)));
+      .run(name, JSON.stringify(s));
     return this.getStudent(Number(r.lastInsertRowid));
   }
   updateStudent(id, { name, settings, manual_weaknesses }) {

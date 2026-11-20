@@ -6,7 +6,7 @@
 import { icon } from "./icons.js";
 
 // Kartice med glavo učne poti in izbiro načina (#modebar), od zgoraj navzdol. Kartice, ki jih ni na seznamu
-// (cilj, predlog prehoda, mnenje, namestitev), ostanejo nad njimi.
+// (cilj, predlog prehoda), ostanejo nad njimi; mnenje in namestitev gresta tik pod #xp-card (uvrstiKartice).
 export const VRSTNI_RED = {
   OS: ["xp-card", "stage-card", "schedule-card"],
   SS: ["xp-card", "schedule-card", "stage-card"],
@@ -41,6 +41,12 @@ export function uvrstiKartice(side, order) {
   for (const id of order) {
     const el = side.querySelector(`#${id}`);
     if (el && el.parentElement === side) side.insertBefore(el, anchor);
+  }
+  // Mnenje in namestitev nikoli nad glavnim dejanjem (j, 20. 11. 2026): tik pod današnjim treningom (#xp-card).
+  const xp = side.querySelector("#xp-card");
+  for (const id of ["install-card", "feedback-card"]) {
+    const el = side.querySelector(`#${id}`);
+    if (el && xp && el.parentElement === side) side.insertBefore(el, xp.nextElementSibling);
   }
 }
 

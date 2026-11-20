@@ -1455,7 +1455,8 @@ async function desktop(browser, app) {
   });
   // Drugi in tretji profil: »Dodaj profil« iz menija profila.
   for (const [name, levels, lbl, opts] of [
-    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { intro: true, tour: "esc", away: true }],
+    // SŠ (j, 20. 11. 2026): brez vprašalnika zanimanj in vodiča tudi po prvi nalogi; vodič iz Nastavitev se zapre z Esc.
+    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { intro: true, noIntro: true }],
     ["Cene", ["UNIVERZA", "UL", "UL-FMF", "UL-FMF-MAT", "1. letnik"], "UNI", {}],
   ]) {
     await step(p, `nov-profil-${lbl}`, async () => {
@@ -1470,7 +1471,15 @@ async function desktop(browser, app) {
           await fetch(`/api/students/${localStorage.getItem("studentId")}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { first_task: 1 } }) });
         });
         await p.reload();
-        await intro(p, name, opts);
+        if (opts.noIntro) {
+          await expectVisible(p, "#view-path #xp-card .hero", "učna pot", 8000);
+          await settle(p, 2500);
+          if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj v srednji šoli");
+          if (await p.locator("#tour").isVisible()) throw new Error("vodič v srednji šoli");
+          await tab(p, "settings");
+          await click(p, "#tour-again", { wait: 200 });
+          await closeTour(p, "esc");
+        } else await intro(p, name, opts);
       }
     });
     await step(p, `pot-${lbl}`, async () => {
