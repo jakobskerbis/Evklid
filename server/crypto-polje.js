@@ -155,12 +155,29 @@ export function auditSecret(db) {
 
 export const newKey = () => crypto.randomBytes(32).toString("base64");
 
+// Produkcija: Render (sam nastavi RENDER=true), NODE_ENV=production ali javni naslov s https.
+export const jeProdukcija = (env = process.env) => env.NODE_ENV === "production" || (!!env.RENDER && env.RENDER !== "false" && env.RENDER !== "0") || /^https:/i.test(env.EVKLID_BASE_URL || "");
+
+/**
+ * Ob zagonu (server/index.js): v produkciji brez EVKLID_DATA_KEY se strežnik ne zažene, ker bi pogovori in druga
+ * osebna polja šli v bazo nešifrirani. Izjema samo izrecno z EVKLID_ALLOW_PLAINTEXT=1. Vrne besedilo napake ali null.
+ * Razvoj, testi in preizkusni način (brez produkcijskih znakov) delajo brez ključa kot prej.
+ */
+export function zagonBrezKljuca(env = process.env) {
+  if (!jeProdukcija(env) || env.EVKLID_ALLOW_PLAINTEXT === "1") return null;
+  if (String(env.EVKLID_DATA_KEY || "").trim()) return null; // napačno obliko ključa javi keys() ob prvi uporabi
+  return (
+    "[evklid] Strežnik se ne zažene: v produkciji ni nastavljen EVKLID_DATA_KEY, zato bi se pogovori in drugi osebni " +
+    "podatki v bazi shranjevali nešifrirani. Nastavi EVKLID_DATA_KEY (isti ključ kot doslej, iz upravitelja gesel; nov ključ: " +
+    "node scripts/kljuc-podatkov.js). Samo če nešifrirano shranjevanje res želiš: EVKLID_ALLOW_PLAINTEXT=1. Več: docs/varnost-podatkov.md."
+  );
+}
+
 // Opozorilo ob zagonu v produkciji brez ključa (enkrat).
 let warned = false;
 export function warnIfNoKey(log = console) {
   if (warned || keys()) return;
-  const prod = process.env.NODE_ENV === "production" || /^https:/i.test(process.env.EVKLID_BASE_URL || "");
-  if (!prod) return;
+  if (!jeProdukcija()) return;
   warned = true;
   log.warn?.("[evklid] OPOZORILO: EVKLID_DATA_KEY ni nastavljen, pogovori se v bazi shranjujejo nešifrirani (docs/varnost-podatkov.md).");
 }

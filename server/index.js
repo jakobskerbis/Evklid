@@ -3,12 +3,31 @@ import path from "node:path";
 import { openDb } from "./db.js";
 import { BRAND } from "./brand.js";
 import { applyPendingRestore } from "./kopije.js";
+import { cloudConfig, uskladiIzbrise } from "./kopije-oblak.js";
+import { zagonBrezKljuca } from "./crypto-polje.js";
 import { createApp } from "./app.js";
 import { isMockMode, MODEL } from "./claude.js";
 import { casCheck, casOn } from "./cas.js";
 
+// Produkcija brez EVKLID_DATA_KEY: osebni podatki bi šli v bazo nešifrirani, zato se strežnik ne zažene.
+const brezKljuca = zagonBrezKljuca();
+if (brezKljuca) {
+  console.error(brezKljuca);
+  process.exit(1);
+}
+
 // Obnova iz varnostne kopije (scripts/obnovi-kopijo.js) samo ob zagonu strežnika, preden se baza odpre.
-applyPendingRestore(process.env.EVKLID_DB || `data/${BRAND.slug}.db`);
+const dbFile = process.env.EVKLID_DB || `data/${BRAND.slug}.db`;
+applyPendingRestore(dbFile);
+// Seznam izbrisov iz R2 (po izgubi diska ali obnovi posnetka diska je lokalni lahko starejši), preden se baza odpre;
+// izbrise nato ponovi createApp (server/accounts/izbris.js). Največ 10 s: nedosegljiva shramba zagona ne ustavi.
+const oblak = cloudConfig();
+if (oblak) {
+  const rok = new Promise((resolve) => setTimeout(() => resolve("rok"), 10_000).unref());
+  const r = await Promise.race([uskladiIzbrise(oblak, dbFile, { upload: false }), rok]).catch((e) => ({ napaka: e.message }));
+  if (r === "rok" || r?.napaka) console.error(`[evklid] seznama izbrisov iz shrambe zunaj strežnika ni bilo mogoče prebrati (${r?.napaka || "ni odgovora v 10 s"}); znova poskusi vsako uro`);
+  else if (r?.dodanih) console.log(`[evklid] seznam izbrisov iz shrambe zunaj strežnika: ${r.dodanih} novih`);
+}
 const store = openDb();
 // Povratne informacije testerjev se zapišejo tudi v datoteko ob bazi (data/povratne-informacije.json).
 const feedbackFile = path.resolve(path.dirname(process.env.EVKLID_DB || "data/evklid.db"), "povratne-informacije.json");

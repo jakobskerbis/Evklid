@@ -100,6 +100,8 @@ import { pogojiStran } from "./pogoji-stran.js";
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs, jeOs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
+import { posnetekIzbrisa, zapisiIzbris, ponovitevIzbrisov } from "./accounts/izbris.js";
+import { encryptionOn } from "./crypto-polje.js";
 import { nujnoPredZavrnitvijo, nujnoZa, lokalnaVrsta, pregledSPonovitvijo, vrstaPoznihOken, poznoOkno, odjemalecZeKazeOkno, stej as stejNujno, varnostStanje, varnostPorocilo, vsakoVklopljeno, vrstaIzOdgovora, ROK_MS as NUJNO_ROK_MS } from "./nujno.js";
 import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
@@ -311,7 +313,7 @@ export function createApp(store, opts = {}) {
   app.locals.pomnilnik = pomnilnik;
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage) });
+    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn() });
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -746,7 +748,11 @@ export function createApp(store, opts = {}) {
   });
   app.delete("/api/students/:id", (req, res) => {
     const s = loadStudent(req, res);
-    if (s) res.json({ ok: store.deleteStudent(s.id) });
+    if (!s) return;
+    const z = posnetekIzbrisa(store.db, { studentIds: [s.id] }); // seznam izbrisov: obnova iz kopije profila ne vrne
+    const ok = store.deleteStudent(s.id);
+    if (ok) zapisiIzbris(store.db, z);
+    res.json({ ok });
   });
 
   // --- napredek (analitika iz META) ---
@@ -2237,8 +2243,13 @@ export function createApp(store, opts = {}) {
   startPrivacyJobs(store.db, { scheduler: opts.scheduler !== false && opts.privacyJobs !== false });
   // Tečaji za mejo AI regijskih paketov (tedensko, server/tecaji.js).
   startFxJobs(store.db, { scheduler: opts.scheduler !== false && opts.fxJobs !== false, fetchFn: opts.fxFetchFn });
+  // Izbrisi iz seznama izbrisov, ki jih je obnova iz kopije vrnila v bazo, se ponovijo pred prvo zahtevo (server/accounts/izbris.js).
+  const ponoviIzbrise = () =>
+    store.db.isOpen !== false && ponovitevIzbrisov(store.db, store.file, { guests: accounts?.guests ?? null, before: accounts ? (id) => accounts.clearPilotLevels(id) : null, log: opts.log || console });
+  ponoviIzbrise();
   backups = startBackups(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
-  cloudBackups = startCloudBackups(store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
+  // Seznam izbrisov gre šifriran tudi v R2; izbrisi od tam (npr. po obnovi posnetka diska) se ponovijo v bazi.
+  cloudBackups = startCloudBackups(store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, poIzbrisih: ponoviIzbrise });
   // Vsako noč (4.30–8.00 po ljubljanskem času) v ločeni niti; ob napaki e-mail skrbnikom, največ enkrat na dan.
   backupChecks = startBackupChecks(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, isBusy: () => activity.active > 0 });
   // Vsakih 10 min: današnji strošek AI nad EVKLID_OPOZORILO_AI_USD → e-mail skrbnikom, največ enkrat na dan.

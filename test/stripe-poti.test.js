@@ -29,6 +29,8 @@ function fakeStripe() {
     if (u.host === "api.resend.com") return ok({ id: "email_" + ++n });
     const p = u.pathname.replace("/v1", "");
     if (p === "/customers") return ok({ id: "cus_" + ++n });
+    if (/^\/customers\/\w+$/.test(p) && init.method === "DELETE")
+      return state.customerDown ? { ok: false, status: 500, json: async () => ({ error: { message: "napaka" } }) } : ok({ id: p.split("/")[2], deleted: true });
     if (p === "/prices" && init.method === "GET") return ok({ data: [] });
     if (p === "/products") return ok({ id: "prod_1" });
     if (p === "/prices") return ok({ id: "price_" + body.lookup_key });
@@ -396,5 +398,50 @@ test("naročnina: preklic in nato nadaljevanje (pred koncem obdobja); neuspešni
     stripe.state.subs.sub_1 = sub({ status: "canceled", ended_at: now() });
     await hook("customer.subscription.deleted", stripe.state.subs.sub_1);
     assert.equal((await acct.acc()).access.tier, "free");
+  });
+});
+
+test("izbris računa: prekliče naročnino in nato izbriše stranko v Stripu; ob odprtem odstopu stranka ostane", async () => {
+  await withServer(async (ctx) => {
+    const { stripe, store } = ctx;
+    const customerDeletes = () => stripe.calls.filter((c) => c.method === "DELETE" && c.path.startsWith("/v1/customers/")).map((c) => c.path);
+    const settle = async (n) => {
+      for (let i = 0; i < 50 && customerDeletes().length < n; i++) await new Promise((r) => setTimeout(r, 10));
+    };
+
+    // Plačan račun: naročnina se prekliče, račun izbriše, stranka v Stripu se izbriše v ozadju.
+    const acct = await account(ctx, "izbris.stranke@poti.si");
+    const { customer } = await subscribe(ctx, acct);
+    assert.ok(customer);
+    assert.equal((await acct.a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+    await settle(1);
+    assert.ok(stripe.calls.some((c) => c.method === "DELETE" && c.path === "/v1/subscriptions/sub_1"));
+    assert.deepEqual(customerDeletes(), [`/v1/customers/${customer}`]);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents WHERE stripe_customer_id = ?").get(customer).n, 0);
+
+    // Odprt odstop od pogodbe (vračilo še ni končano): stranka ostane, skrbnik jo izbriše ročno po zaključku.
+    const b = await account(ctx, "odprt.odstop@poti.si");
+    store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_odstop' WHERE id = ?").run(b.parent.id);
+    store.db
+      .prepare("INSERT INTO withdrawals (parent_id, name, email, contract, contract_text, source, submitted_at) VALUES (?, 'B', 'odprt.odstop@poti.si', 'sub', 'naročnina', 'app', ?)")
+      .run(b.parent.id, new Date().toISOString());
+    assert.equal((await b.a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+
+    // Zahtevek garancije, o katerem skrbnik še ni odločil: stranka ostane (vračilo morda še pride).
+    const g = await account(ctx, "garancija.odprta@poti.si");
+    store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_garancija' WHERE id = ?").run(g.parent.id);
+    store.db
+      .prepare("INSERT INTO guarantees (parent_id, email_hash, subject, grade_before, started_at, status, claimed_at) VALUES (?, 'h-garancija', 'mat', 2, ?, 'claimed', ?)")
+      .run(g.parent.id, new Date().toISOString(), new Date().toISOString());
+    assert.equal((await g.a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+
+    // Stripe ne odgovori pravilno: izbris računa vseeno uspe.
+    const c = await account(ctx, "stripe.ne.dela@poti.si");
+    store.db.prepare("UPDATE parents SET stripe_customer_id = 'cus_napaka' WHERE id = ?").run(c.parent.id);
+    stripe.state.customerDown = true;
+    assert.equal((await c.a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+    await settle(2);
+    assert.deepEqual(customerDeletes(), [`/v1/customers/${customer}`, "/v1/customers/cus_napaka"], "brez cus_odstop in cus_garancija");
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents WHERE id IN (?, ?)").get(b.parent.id, c.parent.id).n, 0);
   });
 });
