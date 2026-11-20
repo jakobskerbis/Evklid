@@ -426,21 +426,28 @@ export function createApp(store, opts = {}) {
   const seja = accounts && process.env.EVKLID_ZACETNI_PODATKI !== "0" ? zacetniPodatki(app) : null;
   app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing, seja })); // =0: brez seznama (primerjava)
   // Besedila zaslonov po prvem izrisu (public/i18n-zasloni.js, server/i18n-jedro.js slZasloni): modul, sestavljen iz kode
-  // enkrat ob prvi zahtevi, stisnjen enkrat (brotli 11, ~45 KB surovo → ~15 KB). Kot datoteke aplikacije: no-cache + ETag.
+  // enkrat, stisnjen enkrat (brotli 11, ~45 KB surovo → ~15 KB). Kot datoteke aplikacije: no-cache + ETag.
+  // Sestavljanje prebere vse datoteke JS v public/ (~75 ms zasedene niti): server/index.js ga sproži takoj po zagonu
+  // (app.locals.pripraviZasloniSl), da ga ne čaka prva zahteva; tu le, če pride zahteva prej.
   let zasloniSl = null;
+  // Stiskanje (~60 ms za br 11) v niti zlib, da ne zadrži drugih zahtev (npr. prvega sporočila).
+  const stisni = (fn, raw, o) => new Promise((ok, ne) => fn(raw, o, (e, b) => (e ? ne(e) : ok(b))));
+  const pripraviZasloniSl = () =>
+    (zasloniSl ||= slZasloni(publicDir).then(async (txt) => {
+      const raw = Buffer.from(txt);
+      const [br, gzip] = await Promise.all([
+        stisni(zlib.brotliCompress, raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }),
+        stisni(zlib.gzip, raw, { level: 9 }),
+      ]);
+      return { raw, etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}`, br, gzip };
+    }).catch((e) => {
+      zasloniSl = null;
+      throw e;
+    }));
+  app.locals.pripraviZasloniSl = pripraviZasloniSl;
   app.get("/i18n/zasloni-sl.js", async (req, res, next) => {
     try {
-      // Stiskanje (~60 ms za br 11) v niti zlib, da ne zadrži drugih zahtev (npr. prvega sporočila).
-      const stisni = (fn, raw, o) => new Promise((ok, ne) => fn(raw, o, (e, b) => (e ? ne(e) : ok(b))));
-      zasloniSl ||= slZasloni(publicDir).then(async (txt) => {
-        const raw = Buffer.from(txt);
-        const [br, gzip] = await Promise.all([
-          stisni(zlib.brotliCompress, raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }),
-          stisni(zlib.gzip, raw, { level: 9 }),
-        ]);
-        return { raw, etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}`, br, gzip };
-      });
-      const z = await zasloniSl;
+      const z = await pripraviZasloniSl();
       const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
       const etag = `${z.etag}${enc ? `-${enc}` : ""}"`;
       res.setHeader("Content-Type", "text/javascript; charset=utf-8");
@@ -453,7 +460,6 @@ export function createApp(store, opts = {}) {
       res.setHeader("Content-Length", body.length);
       return res.end(body);
     } catch (e) {
-      zasloniSl = null;
       return next(e);
     }
   });

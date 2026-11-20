@@ -278,6 +278,39 @@ test("Pogovor s seznama: prenos se začne že ob dotiku (pointerdown), zadnji po
   assert.deepEqual(napake, []);
 });
 
+test("Vnaprej prenesen pogovor zastari s sporočilom inštruktorju: po pošiljanju gre klik znova na strežnik", opts, async (t) => {
+  // En sam mehanizem vnaprej (kliki.js topli): vsaka sprememba, tudi sporočilo (send gre mimo api()), pobriše vse
+  // vnaprej prenesene odgovore (pregled 2 hitrost-skupaj: prej je apiVnaprej po pošiljanju ostal 15 s).
+  const { p, u, napake } = await pripravi(t, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate(async (sid) => {
+    for (let i = 0; i < 3; i++) await fetch(`/api/students/${sid}/conversations`, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
+  }, u.id);
+  const pog = { zahteve: [], zamik: 0 };
+  await pocasi(p, "**/api/conversations/*", pog);
+  await p.goto(p.url().replace("/healthz", "/"));
+  await p.waitForSelector("#view-path .node");
+  await p.click('.topbar .tab[data-view="chat"]');
+  await p.waitForSelector("#conversation-list li[data-id]");
+  const get = (id) => pog.zahteve.filter((z) => z.url.endsWith(`/conversations/${id}`)).length;
+  const vrstice = () => p.evaluate(() => [...document.querySelectorAll("#conversation-list li[data-id]:not(.active)")].map((li) => li.dataset.id));
+  for (let i = 0; i < 100 && (await vrstice()).filter((id) => get(id) > 0).length < 2; i++) await p.waitForTimeout(50);
+  // Sporočilo v obstoječem pogovoru (brez novega pogovora, ki bi šel skozi api() kot sprememba): odpremo enega od
+  // prenesenih, drugi ostane prenesen vnaprej.
+  const [odprt, cilj] = (await vrstice()).filter((id) => get(id) > 0);
+  assert.ok(odprt && cilj, "dva pogovora, prenesena vnaprej");
+  await p.click(`#conversation-list li[data-id="${odprt}"] span`);
+  await p.waitForFunction((id) => document.querySelector(`#conversation-list li[data-id="${id}"]`)?.classList.contains("active"), odprt, { timeout: 5000 });
+  await p.waitForTimeout(300);
+  const prej = get(cilj);
+  await p.fill("#input", "Koliko je 2 + 3?");
+  await p.click("#send");
+  await p.waitForFunction(() => document.querySelector("#messages .msg.assistant") && !document.querySelector("#send").disabled, null, { timeout: 30000 });
+  await p.click(`#conversation-list li[data-id="${cilj}"] span`);
+  await p.waitForFunction((id) => document.querySelector(`#conversation-list li[data-id="${id}"]`)?.classList.contains("active"), cilj, { timeout: 5000 });
+  assert.equal(get(cilj), prej + 1, "po sporočilu odprtje ne vzame starega prenosa");
+  assert.deepEqual(napake, []);
+});
+
 test("Učna pot: utrip trenutne teme teče na GPU (samo transform/opacity), ob »manj gibanja« ostane senca pritiska", opts, async (t) => {
   const { p } = await pripravi(t);
   await p.goto(p.url().replace("/healthz", "/"));

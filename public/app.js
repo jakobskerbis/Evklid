@@ -286,7 +286,7 @@ const zasloniPozneje = () => {
   // odgovor dobi vso povezavo. Tap ali lebdenje nad zavihkom modul tega zaslona naloži takoj (vnaprejObDotiku).
   requestAnimationFrame(() => setTimeout(() =>
     [vadMod, { load: naloziRacun }, cardsMod, cornerMod, calcMod, urnikMod, { load: naloziVse }, { load: naloziTipkovnico }, { load: pripraviIzris }, nastMod, prijMod, tbMod, scanMod, zbMod, openMod, labMod, pilotMod, leagueMod, ourMod, { load: pripraviPreverjanje }]
-      .reduce((p, x) => p.then(poPosiljanju).then(() => x.load().catch(() => null)), Promise.resolve())
+      .reduce((p, x) => p.then(poPosiljanju).then(() => prednost).then(() => x.load().catch(() => null)), Promise.resolve())
       // Za delo brez povezave: service worker shrani tudi te module (ob prvem obisku je seznam »precache« že poslan).
       .then(() => navigator.serviceWorker?.ready)
       .then((reg) => reg?.active && predpomni(reg.active, performance.getEntriesByType("resource").map((e) => e.name).filter((u) => /\.js(\?|$)/.test(u))))
@@ -314,8 +314,11 @@ const vnaprejObDotiku = (e) => {
   const el = e.target.closest?.("[data-view], #modebar [data-mode], #view-path [data-open], [data-uci-tab]");
   if (!el) return;
   const m = el.matches("#view-path [data-open]") ? vadMod : modulPogleda(el.dataset.view || el.dataset.mode || el.dataset.uciTab);
-  m?.load().catch(() => null);
+  // Dotaknjen zaslon ima prednost pred vrsto v ozadju (zasloniPozneje): naslednji modul vrste počaka nanj, da si na
+  // počasni povezavi ne delita pasovne širine (prvi obisk: Laboratorij je bil 16. v vrsti, pregled 3 hitrost-skupaj).
+  if (m) prednost = m.load().catch(() => null);
 };
+let prednost = Promise.resolve();
 document.addEventListener("pointerdown", vnaprejObDotiku, { capture: true, passive: true });
 document.addEventListener("pointerover", (e) => e.pointerType === "mouse" && vnaprejObDotiku(e), { capture: true, passive: true });
 // Pregledovalnik prenesene pole (paper-viewer.js, paper-tasks.js) šele ob odprtju pole: ni del zagona.

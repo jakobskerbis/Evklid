@@ -12,7 +12,7 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { startupFiles } from "../server/startup-files.js";
+import { startupFiles, moduleDeps } from "../server/startup-files.js";
 import { kljuciJedra, kljuciZaslonov, ZASLONI_V_JEDRU } from "../server/i18n-jedro.js";
 import SL from "../public/i18n/sl.js";
 
@@ -39,6 +39,9 @@ test("prvo odprtje: moduli drugih zaslonov niso v statičnem grafu, varnostni za
   // svoj del slovarja (i18n-zasloni.js, zunaj prvega odprtja). Vsak ključ iz njih je v jedru ali v delu.
   assert.ok(!list.includes("/i18n-zasloni.js"), "i18n-zasloni.js je del prvega odprtja");
   for (const u of ZASLONI_V_JEDRU) assert.ok(!list.includes(`/${u}`), `${u} je del prvega odprtja`);
+  // Ves statični podgraf zaslonov v jedru (npr. vadnica.js → pad.js → enote-izbira.js) je brez i18n-zasloni.js: prvi
+  // dotik teme ne čaka 24 KB besedil zaslonov (pregled 2 hitrost-skupaj).
+  for (const u of ZASLONI_V_JEDRU) assert.ok(!moduleDeps(PUB, u).includes("/i18n-zasloni.js"), `${u}: statično uvozi i18n-zasloni.js`);
   for (const u of ["/racun.js", "/pilot-naloge.js", "/garancija-ui.js", "/odstop-ui.js", "/credit-card.js"]) assert.match(fs.readFileSync(path.join(PUB, u), "utf8"), /from "\.\/i18n-zasloni\.js"/, `${u}: ne uvozi i18n-zasloni.js`);
   const jedro = new Set(kljuciJedra(PUB, SL));
   const del = new Set(kljuciZaslonov(PUB, SL));

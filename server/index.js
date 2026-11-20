@@ -29,6 +29,9 @@ const server = app.listen(port, () => {
   app.locals.warmStatic?.()
     .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
     .catch(() => {});
+  // Besedila zaslonov (/i18n/zasloni-sl.js): sestavljena takoj po zagonu, ne ob prvi zahtevi (prebere vse datoteke JS,
+  // ~75 ms zasedene niti, ki bi sicer zadržala prvi klik po vsakem ponovnem zagonu).
+  setImmediate(() => app.locals.pripraviZasloniSl?.().catch((e) => console.warn(`[evklid] besedila zaslonov: ${e?.message || e}`)));
   // Varnostni zaznavalnik (public/nujno.js) sestavi vzorce šele ob prvi uporabi: tu jih v ozadju pripravi po kosih
   // (do 15 ms, vmes druge zahteve), da prvo sporočilo po zagonu ne čaka na sestavljanje in prevajanje.
   const ogrejZaznavalnik = () => ogrejNujno(15) || setTimeout(ogrejZaznavalnik, 5).unref();

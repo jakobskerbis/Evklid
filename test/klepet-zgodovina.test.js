@@ -94,7 +94,19 @@ test("dolg pogovor: zadnjih 20 takoj in na dnu, starejša ob drsenju navzgor bre
     await p.locator("#conversation-list li", { hasText: "Dolg pogovor" }).first().click();
     await p.waitForFunction(() => document.querySelectorAll("#messages .msg").length >= 20, null, { timeout: 30000 });
     await p.evaluate(() => document.fonts.ready); // pisave KaTeX: formule po nalaganju pisave spremenijo višino
-    await p.waitForTimeout(400);
+    // Izris se umiri: formule izrisane (KaTeX se pod obremenitvijo naloži pozneje in poveča višino) in višina seznama
+    // enaka 5 zaporednih okvirjev. Prej fiksnih 400 ms, kar je bilo pod obremenitvijo včasih premalo (»na dnu«).
+    await p.waitForFunction(() => document.querySelectorAll("#messages .msg .katex").length >= 20, null, { timeout: 30000 });
+    await p.evaluate(
+      () =>
+        new Promise((ok) => {
+          const b = document.querySelector("#messages");
+          let h = -1, n = 0;
+          const f = () => (b.scrollHeight === h ? ++n : ((h = b.scrollHeight), (n = 0)), n >= 5 ? ok() : requestAnimationFrame(f));
+          requestAnimationFrame(f);
+        }),
+    );
+    await p.waitForTimeout(100);
     const besedila = () => p.evaluate(() => [...document.querySelectorAll("#messages .msg")].map((m) => Number(/^(?:Vprašanje|Odgovor) (\d+)/.exec(m.textContent.trim())?.[1])));
     const stanje = () =>
       p.evaluate(() => {

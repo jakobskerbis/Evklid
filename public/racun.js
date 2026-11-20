@@ -1,7 +1,8 @@
 // Zavihek Račun (naročnina, paketi, darila, dokup, garancija, odstop, skrbniške kartice) in računi gostov: iz
 // public/account.js (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2). Ni del prvega odprtja Učne
 // poti: account.js ga naloži po prvem izrisu ali ob prvem odprtju zavihka Račun. Stanje računa (status, shownSig) ostane
-// v account.js (žive vezave ES modulov; spremembe prek setStatus, setShownSig); cel slovar (i18n.js).
+// v account.js (žive vezave ES modulov; spremembe prek setStatus, setShownSig); besedila iz jedra in dela za zaslone
+// (i18n-zasloni.js, /i18n/zasloni-sl.js), ne cel slovar.
 import { t, locale, currentLang, currentRegion, deviceRegion } from "./i18n-zasloni.js";
 import { guaranteeLine, guaranteeBox, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { consentFields, termsField, setTermsVersion, isStoreApp, consentsOk, consentMessage, consentBody, markCheckout, linkBox, bindLinkBox } from "./pay-ui.js";

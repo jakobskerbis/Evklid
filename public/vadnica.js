@@ -1,7 +1,7 @@
 // Vadnica (tema, naloge, serije, preizkus predznanja), tekmovanja, NPZ in matura ter pretekle pole: iz public/app.js
 // (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2). Ni del prvega odprtja Učne poti: app.js
 // ga naloži takoj po prvem izrisu (zasloniPozneje) ali ob prvi uporabi (vadMod). Skupno stanje in pomožne funkcije
-// dobi iz app.js (žive vezave ES modulov); cel slovar (i18n.js), ker njegovih besedil ni v jedru.
+// dobi iz app.js (žive vezave ES modulov); besedila iz jedra (i18n-osnova.js, server/i18n-jedro.js ZASLONI_V_JEDRU).
 import { icon } from "./icons.js";
 import { t, locale, currentLang } from "./i18n-osnova.js";
 import { figureSvg } from "./slike-nalog.js";
