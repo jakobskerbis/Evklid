@@ -34,6 +34,7 @@
     tapOn = false;
     gotovo = false;
     caka(null);
+    naslovi = []; // naslove od tu upravlja app.js
     // Učna pot s strežnika, ki jo je učenec pomaknil: prava (isti HTML) ostane na istem mestu (pregled #903).
     var odmiki = [];
     var srv = app === true ? document.querySelector("main[data-posnetek][data-streznik]") : null;
@@ -126,7 +127,12 @@
     if (!tapOn || (appTece && !e.isTrusted)) return;
     var el = e.target && e.target.closest ? e.target.closest(TAP) : null;
     if (!el || el.closest("a[href]") || !el.closest("main[data-streznik], .topbar, #tabbar, body > .banner")) return;
-    if (gotovo && !el.closest("main[data-streznik]")) return; // app.js pripravljen: zavihek takoj, kot brez strežnika
+    if (gotovo && !el.closest("main[data-streznik]")) {
+      // app.js pripravljen: zavihek takoj, kot brez strežnika; starejši zadržan dotik ne velja več (pregled #903).
+      tapZadnji = null;
+      caka(null);
+      return;
+    }
     e.preventDefault();
     e.stopImmediatePropagation();
     tapZadnji = tapOpis(el);
@@ -151,7 +157,7 @@
     } catch (e) {}
     var chip = potSrv ? document.querySelector("#xp-badge .stat.xp") : null;
     if (chip) chip.style.removeProperty("--lvl");
-    for (var t = 0; t < naslovi.length; t++) naslovi[t][0].title = naslovi[t][1];
+    for (var t = naslovi.length - 1; t >= 0; t--) naslovi[t][0].title = naslovi[t][1]; // obratno: prvi zapis je izvirnik
     naslovi = [];
     var pm = document.querySelector('meta[name="evklid-pot"]');
     if (pm) pm.remove();
