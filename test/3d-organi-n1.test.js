@@ -174,7 +174,11 @@ test("n6: možgani – parasagitalna ravnina reza, risba 2048 px brez šuma, pre
   assert.ok(m.prerez.slika.gladko && m.prerez.slika.sum === 0, "risba brez šuma");
   for (const d of ["hipotalamus", "krizisce", "zuljevo"]) assert.ok(m.pogledi.prerez.skrijMreze.includes(d) && !(m.pogledi.prerez.skrijDele || []).includes(d), d); // n7: deli ostanejo na seznamu
   const rez = beri("scripts", "atlas", "mozgani-rez-mri.py");
-  for (const n of ["REZ_SREDINA", "CETRTI_DELEZ", "zgornji_pas", "cisterne", "neozn", "REZ_PX", "sotor", "zrast"]) assert.ok(rez.includes(n), n);
+  // r1 (ocena 20. nov): 4. prekat in reža do velike cisterne kot likvor (sivo modra, ne črna), globoki pas samo iz sredinske
+  // ravnine, zaprte luknje ob deblu so cisterne, dno 3. prekata s križiščem, lijakom in mamilarnim telesom, hrbtenjača
+  for (const n of ["REZ_SREDINA", "cisterne", "neozn", "REZ_PX", "zrast", "globoko", "reza", "c_lik", "mam", "lijak", "hrbtenjaca"]) assert.ok(rez.includes(n), n);
+  assert.ok(m.pogledi.prerez.skrijMreze.includes("senceni") && m.prerez.brezPokrova.includes("deblo"), "r1: senčni reženj za rezom skrit, deblo brez pokrova");
+  assert.ok(m.prerez.hrbtenjaca?.os?.length > 5, "r1: os hrbtenjače za risbo");
   assert.ok(beri("public", "3d", "organ.js").includes("rezSlika?.gladko"));
 });
 
