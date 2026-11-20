@@ -1,7 +1,9 @@
-# Glasovni strežnik Evklida (glas/streznik.py): odprt slovenski glas Piper (MIT/GPL koda, glas artur CC BY 4.0).
+# Glasovni strežnik Evklida (glas/streznik.py). Motor izbere EVKLID_GLAS_MOTOR (glas/prenesi.py):
+# Supertonic 3 (OpenRAIL) ali Piper (MIT/GPL koda, glas artur CC BY 4.0).
+supertonic==1.3.1
 piper-tts==1.8.0
 soundfile==0.14.0
-# Pripete odvisnosti (preizkušeno 19. 11. 2026, Python 3.12, linux x86_64).
+# Pripete odvisnosti (preizkušeno 20. 11. 2026, linux x86_64).
 onnxruntime==1.32.0
 numpy==2.5.5
 cffi==2.1.1
@@ -11,3 +13,16 @@ protobuf==7.36.2
 packaging==26.3
 pathvalidate==3.3.1
 typing_extensions==4.16.0
+huggingface_hub==2.4.0
+hf-xet==1.8.0
+filelock==4.2.12
+fsspec==2026.9.0
+PyYAML==6.0.3
+tqdm==4.70.1
+anyio==4.16.0
+click==8.5.1
+h11==0.16.0
+httpcore2==2.16.2
+httpx2==2.16.2
+idna==3.20
+truststore==0.10.5

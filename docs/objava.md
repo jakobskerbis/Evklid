@@ -67,9 +67,10 @@ Vse lahko spremeniš v Render → Environment.
 
 ## Glas za ustno spraševanje (storitev evklid-glas)
 
-Evklid bere vprašanja ustnega spraševanja na glas z odprtim slovenskim glasom Piper (glas »artur«, CC BY 4.0), ker
-glas naprave slovenščino pozna skoraj samo v Edgu. Glas ustvari ločena zasebna storitev `evklid-glas` iz
-`render.yaml` (Python, `glas/streznik.py`, Starter ≈ 7 $ na mesec; j 19. 11. 2026). Nastane ob sinhronizaciji
+Evklid bere vprašanja ustnega spraševanja na glas z odprtim glasom Supertonic 3 (OpenRAIL; prej Piper »artur«, ki je
+bil j »preveč robotski«), ker glas naprave slovenščino pozna skoraj samo v Edgu. Glas ustvari ločena zasebna storitev
+`evklid-glas` iz `render.yaml` (Python, `glas/streznik.py`, plan Standard ≈ 25 $ na mesec zaradi ~520 MB pomnilnika;
+glas izbere `EVKLID_GLAS_GLAS`). Nastane ob sinhronizaciji
 Blueprinta (Render → Blueprints → evklid → **Manual Sync**, če se ne pojavi sama). Glavni strežnik jo najde prek
 `EVKLID_GLAS_URL` (`fromService`, ime:vrata). Brez nje Evklid uporabi glas naprave kot prej. Sinhronizacija
 Blueprinta, ki doda spremenljivko, lahko glavni strežnik takoj znova objavi, zato jo zaženi v nočnem oknu objav

@@ -101,17 +101,27 @@ services:
       - key: EVKLID_KOPIJE_S3_SECRET
         sync: false
 
-  # Glasovni strežnik (glas/streznik.py, j 19. 11. 2026 »Odprt glas na našem strežniku«): odprt slovenski glas Piper
-  # (sl_SI artur, CC BY 4.0) spremeni besedilo vprašanja v MP3. Zasebna storitev: dosegljiva samo iz strežnika evklid.
-  # Ločeno, ker model porabi ~220 MB, glavni strežnik pa ima 512 MB. Starter ≈ 7 $ na mesec.
+  # Glasovni strežnik (glas/streznik.py, j 19. 11. 2026 »Odprt glas na našem strežniku«): odprt glas spremeni besedilo
+  # vprašanja v MP3. Zasebna storitev: dosegljiva samo iz strežnika evklid. Motor Supertonic 3 (OpenRAIL; j 20. 11.:
+  # Piper je »preveč robotski«) porabi ~520 MB, zato plan standard (2 GB, 1 CPU, ≈ 25 $ na mesec). Za Piper (~220 MB,
+  # starter ≈ 7 $) nastavi EVKLID_GLAS_MOTOR na piper in plan na starter.
   - type: pserv
     name: evklid-glas
     runtime: python
     region: frankfurt
-    plan: starter
+    plan: standard
     buildCommand: pip install -r glas/requirements.txt && python glas/prenesi.py
     startCommand: python glas/streznik.py
-    autoDeploy: false
+    # Samo ob spremembi glas/ (glavni strežnik ima nočno okno; ta storitev nima podatkov, ob objavi do minute
+    # bere glas naprave).
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - glas/**
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.8"
+      - key: EVKLID_GLAS_MOTOR
+        value: supertonic
+      - key: EVKLID_GLAS_GLAS        # Supertonic: F1–F5 (ženski), M1–M5 (moški); izbral j
+        value: F1

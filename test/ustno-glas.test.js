@@ -139,5 +139,10 @@ test("glasovni strežnik (Python) se prevede, render.yaml ga poveže z Evklidom"
   const yaml = fs.readFileSync(path.join(root, "render.yaml"), "utf8");
   assert.match(yaml, /type: pserv\n\s+name: evklid-glas/);
   assert.match(yaml, /key: EVKLID_GLAS_URL\n\s+fromService:\n\s+type: pserv\n\s+name: evklid-glas\n\s+property: hostport/);
-  assert.match(fs.readFileSync(path.join(root, "glas", "prenesi.py"), "utf8"), /[0-9a-f]{64}/, "model preverjen z zgoščeno vrednostjo");
+  const prenesi = fs.readFileSync(path.join(root, "glas", "prenesi.py"), "utf8");
+  assert.match(prenesi, /[0-9a-f]{64}/, "model preverjen z zgoščeno vrednostjo");
+  // izbrani glas Supertonic se prenese ob gradnji
+  const glas = /key: EVKLID_GLAS_GLAS[^\n]*\n\s+value: (\S+)/.exec(yaml)?.[1];
+  assert.match(glas || "", /^[FM][1-5]$/);
+  assert.ok(prenesi.includes(`"voice_styles/${glas}.json"`));
 });

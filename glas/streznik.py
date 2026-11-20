@@ -1,4 +1,7 @@
-"""Glasovni strežnik Evklida: slovensko besedilo → MP3 z odprtim glasom Piper (sl_SI artur, CC BY 4.0).
+"""Glasovni strežnik Evklida: slovensko besedilo → MP3 z odprtim glasom.
+
+Motor (EVKLID_GLAS_MOTOR, glas/prenesi.py): »supertonic« (Supertonic 3, OpenRAIL, privzeto od 20. 11. 2026, ker je j
+Piper slišal »preveč robotski«; glas EVKLID_GLAS_GLAS, npr. F1) ali »piper« (sl_SI artur, CC BY 4.0, manjši).
 
 Zakaj: pri ustnem spraševanju Evklid bere vprašanja na glas. Glas naprave (speechSynthesis) slovenščino pozna skoraj
 samo v Edgu; Chrome, aplikacija za Android in iPhone slovenskega glasu nimajo (j, 19. 11. 2026: »glas inštruktorja
@@ -6,7 +9,8 @@ ne dela«). Zato glas ustvari ta strežnik, za vse naprave enako.
 
 - Teče kot zasebna storitev (Render pserv »evklid-glas«, render.yaml): dosegljiv je samo iz strežnika Evklida, ki
   pošlje samo besedilo vprašanja (nikoli učenčevega odgovora ali zvoka).
-- Ločen proces, ker model z onnxruntime porabi ~250 MB, glavni strežnik pa ima 512 MB (render.yaml »Pomnilnik«).
+- Ločen proces, ker model z onnxruntime porabi ~250 MB (Piper) oziroma ~530 MB (Supertonic), glavni strežnik pa ima
+  512 MB (render.yaml »Pomnilnik«).
 - POST /govor  telo: {"besedilo": "..."}  →  audio/mpeg. GET /healthz → ok.
 - Predpomnilnik na disku (ključ: SHA-256 besedila): vprašanja iz lekcij se ponavljajo, drugo branje je takojšnje.
 - En sam izris naenkrat (0,5 CPU); dolžina besedila je omejena.
@@ -23,11 +27,14 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 MAX_CHARS = 600
 MAX_BODY = 16_000
 DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.environ.get("EVKLID_GLAS_MODEL_DIR") or os.path.join(DIR, "model")
-MODEL = os.path.join(MODEL_DIR, "sl_SI-artur-medium.onnx")
+MOTOR = (os.environ.get("EVKLID_GLAS_MOTOR") or "supertonic").strip().lower()
+GLAS = (os.environ.get("EVKLID_GLAS_GLAS") or "F1").strip()  # Supertonic: F1–F5, M1–M5
+KORAKI = int(os.environ.get("EVKLID_GLAS_KORAKI") or 8)  # Supertonic: manj = hitreje, malo slabše
+MODEL_DIR = os.environ.get("EVKLID_GLAS_MODEL_DIR") or os.path.join(DIR, "model", MOTOR)
 CACHE = os.environ.get("EVKLID_GLAS_CACHE") or os.path.join(tempfile.gettempdir(), "evklid-glas")
 CACHE_MAX = int(os.environ.get("EVKLID_GLAS_CACHE_MAX") or 5000)  # datotek (~30 KB vsaka)
-VERSION = "artur-medium-1"  # ob spremembi glasu ali nastavitev stari posnetki ne veljajo več
+# ob spremembi motorja, glasu ali nastavitev stari posnetki ne veljajo več
+VERSION = "artur-medium-1" if MOTOR == "piper" else f"supertonic3-{GLAS}-{KORAKI}-1"
 
 _voice = None
 _lock = threading.Lock()
@@ -36,34 +43,53 @@ _lock = threading.Lock()
 def voice():
     global _voice
     if _voice is None:
-        from piper import PiperVoice
+        if MOTOR == "piper":
+            from piper import PiperVoice
 
-        _voice = PiperVoice.load(MODEL)
+            _voice = PiperVoice.load(os.path.join(MODEL_DIR, "sl_SI-artur-medium.onnx"))
+        else:
+            from supertonic import TTS
+
+            tts = TTS(model_dir=MODEL_DIR, auto_download=False, intra_op_num_threads=int(os.environ.get("EVKLID_GLAS_NITI") or 1))
+            _voice = (tts, tts.get_voice_style(voice_name=GLAS))
     return _voice
 
 
-def to_mp3(chunks):
-    import numpy as np
+def mp3(samples, rate):
     import soundfile as sf
 
-    rate = None
-    parts = []
-    for c in chunks:
-        rate = c.sample_rate
-        parts.append(c.audio_int16_array)
-        parts.append(np.zeros(int(c.sample_rate * 0.25), dtype=np.int16))  # premor med stavki
-    if not parts:
-        return b""
     out = io.BytesIO()
-    sf.write(out, np.concatenate(parts), rate, format="MP3", subtype="MPEG_LAYER_III")
+    sf.write(out, samples, rate, format="MP3", subtype="MPEG_LAYER_III")
     return out.getvalue()
+
+
+def render(text):
+    """Besedilo → MP3 (bytes) z izbranim motorjem; prazno, ko ni nič za brati."""
+    import numpy as np
+
+    if MOTOR == "piper":
+        from piper import SynthesisConfig
+
+        rate = None
+        parts = []
+        for c in voice().synthesize(text, SynthesisConfig(length_scale=1.05)):
+            rate = c.sample_rate
+            parts.append(c.audio_int16_array)
+            parts.append(np.zeros(int(c.sample_rate * 0.25), dtype=np.int16))  # premor med stavki
+        return mp3(np.concatenate(parts), rate) if parts else b""
+    tts, style = voice()
+    wav, _ = tts.synthesize(text, voice_style=style, lang="sl", total_steps=KORAKI, speed=1.0)
+    wav = np.asarray(wav, dtype=np.float32).reshape(-1)
+    if not wav.size:
+        return b""
+    return mp3(np.clip(wav, -1, 1), tts.sample_rate)
 
 
 class Busy(Exception):
     pass
 
 
-WAIT_S = 4  # v vrsti največ toliko: glavni strežnik po 11 s odneha, odjemalec po 12 s uporabi glas naprave
+WAIT_S = 5  # v vrsti največ toliko: glavni strežnik po 11 s odneha, odjemalec po 12 s uporabi glas naprave
 
 
 def synthesize(text, cache=True):
@@ -79,9 +105,7 @@ def synthesize(text, cache=True):
     if not _lock.acquire(timeout=WAIT_S):
         raise Busy()
     try:
-        from piper import SynthesisConfig
-
-        data = to_mp3(voice().synthesize(text, SynthesisConfig(length_scale=1.05)))
+        data = render(text)
     finally:
         _lock.release()
     if not data or not cache:
