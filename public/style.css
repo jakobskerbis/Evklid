@@ -172,6 +172,9 @@ html[data-zacetek]:not([data-zacetek-pot]) .tabs .tab.active { background: none;
 main[data-posnetek] { pointer-events: none; user-select: none; }
 /* Učna pot s strežnika (server/pot-takoj.js) se dotika: zacetek.js dotik shrani, app.js ga izvede, ko je pripravljen. */
 main[data-posnetek][data-streznik] { pointer-events: auto; user-select: auto; }
+/* Dotik pred zagonom (public/zacetek.js): gumb kot pritisnjen, dokler ga app.js ne izvede. */
+[data-caka] { opacity: 0.7; }
+html[data-zacetek-caka], html[data-zacetek-caka] * { cursor: progress; }
 /* Do konca razčlenjene lupine (spodnja vrstica, zacetek.js) se stran ne izriše po kosih: prej se je ob dolgi strani
    za trenutek pokazala brez spodnje vrstice (utrip ob odprtju, j 16. 11. 2026). Varovalo: DOMContentLoaded, 3 s. */
 html[data-zacetek-lupina] body { visibility: hidden; }

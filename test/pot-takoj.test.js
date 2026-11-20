@@ -124,7 +124,8 @@ test("stran z Učno potjo: osebna (no-store, Vary: Cookie, brez ETag), ime ubež
     assert.match(glava.n, /<\/template><script>/);
     const tpl = TPL.exec(res.html);
     assert.ok(tpl, "template evklid-pot");
-    assert.ok(res.html.indexOf('<main id="view-path"') < tpl.index, "za <main id=view-path>");
+    // Pred prvim <main>: zacetek.js vstavi Učno pot, ko vidi prvi <main>; predloga mora biti že razčlenjena (pregled #903).
+    assert.ok(tpl.index < res.html.search(/\n {2}<main /), "pred prvim <main> v <body>");
     for (const id of ["xp-card", "modebar", "path-content", "path-level", "schedule-card", "stage-card"]) assert.match(tpl[1], new RegExp(`id="${id}"`), id);
     assert.ok(!/<script/i.test(tpl[1]), "v Učni poti ni skript");
     // Brez navigacije (service worker): navadna stran brez Učne poti.
@@ -249,6 +250,7 @@ test("dotik pred zagonom: tema na Učni poti in zavihek spodnje vrstice se izved
         const id = await tema.getAttribute("data-open");
         await tema.click();
         assert.equal(await page.evaluate(() => document.getElementById("view-topic").hidden), true, "pred zagonom se nič ne odpre");
+        assert.equal(await tema.getAttribute("data-caka"), "", "dotik viden: gumb kot pritisnjen do zagona");
         spusti();
         await pripravljen();
         await page.waitForFunction(() => !document.getElementById("view-topic").hidden, null, { timeout: 30000 });
@@ -272,6 +274,32 @@ test("dotik pred zagonom: tema na Učni poti in zavihek spodnje vrstice se izved
       } finally {
         await ctx.close();
       }
+    }
+  });
+});
+
+test("pomaknjena Učna pot s strežnika ostane na istem mestu, ko app.js prevzame (pregled #903)", bopts, async () => {
+  await withServer(async ({ base, signup }) => {
+    const u = await signup("odmik@primer.si", [{ name: "Ota" }]);
+    const { ctx, page, napake, spusti, pripravljen } = await stran(base, u.c.jar);
+    try {
+      await page.waitForSelector("main[data-streznik] #path-content .node", { timeout: 30000 });
+      await page.waitForSelector("#tabbar", { state: "attached" });
+      // Na telefonu se pomika sam <main> Učne poti.
+      const cilj = await page.evaluate(() => {
+        const m = document.querySelector("main[data-streznik]");
+        m.scrollTop = Math.min(1200, m.scrollHeight - m.clientHeight);
+        return m.scrollTop;
+      });
+      assert.ok(cilj > 300, `Učna pot je dovolj dolga za pomik (${cilj})`);
+      spusti();
+      await pripravljen();
+      await page.waitForLoadState("networkidle");
+      const po = await page.evaluate(() => document.getElementById("view-path").scrollTop);
+      assert.ok(Math.abs(po - cilj) < 2, `pomik ostane (${cilj} → ${po})`);
+      assert.deepEqual(napake, []);
+    } finally {
+      await ctx.close();
     }
   });
 });

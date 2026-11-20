@@ -180,7 +180,8 @@ export function napisiLupine(html, t) {
 }
 
 // <meta name="evklid-pot"> v <head> (pred public/zacetek.js, ki se po njej odloči pred prvim izrisom) in
-// <template id="evklid-pot"> takoj za <main id="view-path"> (zacetek.js ga vstavi, ko je razčlenjena spodnja vrstica).
+// <template id="evklid-pot"> pred prvim <main> strani: ko zacetek.js vidi prvi <main>, je predloga že razčlenjena,
+// tudi če omrežje stran prekine vmes (pregled #903, sicer okostje namesto Učne poti).
 export function withPot(html, pot) {
   if (!pot || !html.includes('<meta charset="utf-8">')) return html;
   const at = html.indexOf('<main id="view-path" class="view narrow">');
@@ -188,8 +189,11 @@ export function withPot(html, pot) {
   if (end < 0) return html;
   const j = pot.jezik;
   const meta = `<meta name="evklid-pot" data-s="${pot.sid}" data-jezik="${attr(j.lang)}" data-smer="${j.rtl ? "rtl" : "ltr"}" data-oznaka="${attr(j.tag)}" data-zaznan="${attr(j.zaznan)}" data-dejstvo="${pot.dejstvo}" data-glava="${attr(JSON.stringify(pot.hd))}">`;
-  const pos = end + "\n  </main>".length;
-  const out = html.slice(0, pos) + `\n  <template id="evklid-pot">${pot.html}</template>` + html.slice(pos);
+  // Pred prvim <main> v <body> (#view-auth je pred #view-path): zacetek.js vstavi pred prvi <main>, ki ga vidi.
+  const body = html.indexOf("<body");
+  const prvi = body < 0 ? -1 : html.indexOf("\n  <main ", body);
+  const pred = prvi >= 0 && prvi < at ? prvi + 3 : at;
+  const out = html.slice(0, pred) + `<template id="evklid-pot">${pot.html}</template>\n  ` + html.slice(pred);
   return out.replace('<meta charset="utf-8">', () => `<meta charset="utf-8">\n  ${meta}`);
 }
 

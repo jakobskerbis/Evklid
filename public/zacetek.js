@@ -33,6 +33,15 @@
     tapZadnji = null;
     tapOn = false;
     gotovo = false;
+    caka(null);
+    // Učna pot s strežnika, ki jo je učenec pomaknil: prava (isti HTML) ostane na istem mestu (pregled #903).
+    var odmiki = [];
+    var srv = app === true ? document.querySelector("main[data-posnetek][data-streznik]") : null;
+    if (srv) {
+      if (srv.scrollTop) odmiki.push(["", srv.scrollTop]);
+      var zid = srv.querySelectorAll("[id]");
+      for (var z = 0; z < zid.length; z++) if (zid[z].scrollTop) odmiki.push([zid[z].id, zid[z].scrollTop]);
+    }
     var pm = document.querySelector('meta[name="evklid-pot"]');
     if (pm) pm.remove();
     if (slogiPoKoncu) {
@@ -46,10 +55,23 @@
     for (var i = 0; i < p.length; i++) p[i].remove();
     var tpl = document.getElementById("evklid-pot");
     if (tpl) tpl.remove(); // Učna pot s strežnika ni več potrebna (app.js izriše svojo)
+    var vp = odmiki.length ? document.getElementById("view-path") : null;
+    for (var o = 0; vp && !vp.hidden && o < odmiki.length; o++) {
+      var cel = odmiki[o][0] ? vp.querySelector("#" + CSS.escape(odmiki[o][0])) : vp;
+      if (cel) cel.scrollTop = odmiki[o][1];
+    }
     if (app === true && tap)
       setTimeout(function () {
         odigraj(tap);
       }, 0);
+  }
+  var cakaEl = null;
+  function caka(el) {
+    if (cakaEl) cakaEl.removeAttribute("data-caka");
+    cakaEl = el;
+    if (el) el.setAttribute("data-caka", "");
+    if (el) html.setAttribute("data-zacetek-caka", "");
+    else html.removeAttribute("data-zacetek-caka");
   }
   var tapOn = false;
   var gotovo = false;
@@ -83,7 +105,7 @@
     return r;
   }
   function odigraj(o) {
-    if (Date.now() - o.t > 8000 || document.getElementById("boot-down") || document.body.classList.contains("auth-mode")) return;
+    if (Date.now() - o.t > 20000 || document.getElementById("boot-down") || document.body.classList.contains("auth-mode")) return;
     if (document.querySelector("dialog[open], #lock-overlay, .tour:not([hidden])")) return;
     // Zavihek ali gumb lupine: kot klik nanj (app.js ga obdela kot prej, tudi skritega). Učna pot: isti element v
     // pravem pogledu, le če je viden (app.js ga je morda skril, ker se je stanje vmes spremenilo).
@@ -103,11 +125,12 @@
     // klik iz skripte pred app.js (dostopnost, testi) počakata na app.js.
     if (!tapOn || (appTece && !e.isTrusted)) return;
     var el = e.target && e.target.closest ? e.target.closest(TAP) : null;
-    if (!el || el.closest("a[href]") || !el.closest("main[data-streznik], .topbar, #tabbar")) return;
+    if (!el || el.closest("a[href]") || !el.closest("main[data-streznik], .topbar, #tabbar, body > .banner")) return;
     if (gotovo && !el.closest("main[data-streznik]")) return; // app.js pripravljen: zavihek takoj, kot brez strežnika
     e.preventDefault();
     e.stopImmediatePropagation();
     tapZadnji = tapOpis(el);
+    caka(el); // dotik je sprejet: gumb kot pritisnjen, dokler ga app.js ne izvede
   }
   var pozabljen = false;
   var zaprto = false;
@@ -122,6 +145,7 @@
     prej = [];
     tapOn = false;
     tapZadnji = null;
+    caka(null);
     try {
       localStorage.removeItem(POSNETEK);
     } catch (e) {}
