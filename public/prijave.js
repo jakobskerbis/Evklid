@@ -38,7 +38,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
  * Okvir s prijavo: vprašanje, razlogi (neobvezno), opomba, Pošlji / Prekliči.
  * onSend({ reason, note }) vrne obljubo; ob napaki ostane okvir odprt s sporočilom.
  */
-export function reportBox({ ask, reasons = [], notePh, needNote = false, sendLabel = t("rep.send"), onSend, onClose }) {
+export function reportBox({ ask, reasons = [], notePh, needNote = false, needNoteMsg = null, sendLabel = t("rep.send"), onSend, onClose }) {
   const box = document.createElement("div");
   box.className = "report-box";
   box.setAttribute("role", "group");
@@ -88,7 +88,7 @@ export function reportBox({ ask, reasons = [], notePh, needNote = false, sendLab
       return;
     }
     if (needNote && !note) {
-      err.textContent = t("bug.needNote");
+      err.textContent = needNoteMsg || t("bug.needNote");
       err.hidden = false;
       area.focus();
       return;
@@ -140,20 +140,27 @@ export function wireLessonReport(btn, { api, studentId, topic, step, toast }) {
   });
 }
 
-/** Skrbnik v klepetu: opis napake, zraven gredo zadnja sporočila pogovora. */
-export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose, thanks = null, ask = null }) {
+/**
+ * Skrbnik v klepetu: opis napake, zraven gredo zadnja sporočila pogovora. feature: zahteva za novo funkcijo
+ * (žarnica v glavi klepeta, samo skrbnik; server/reports.js kind = feature).
+ */
+export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose, thanks = null, ask = null, feature = false }) {
+  const k = feature ? "idea" : "bug";
   const box = reportBox({
-    ask: ask || t("bug.ask"),
-    notePh: t("bug.notePh"),
+    ask: ask || t(`${k}.ask`),
+    notePh: t(`${k}.notePh`),
     needNote: true,
+    needNoteMsg: t(`${k}.needNote`),
+    ...(feature ? { sendLabel: t("chat.send") } : {}),
     onSend: async ({ note }) => {
-      await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: (typeof conversationId === "function" ? conversationId() : conversationId) || undefined, view, ...deviceInfo() } });
-      toast(thanks || t("bug.thanks"), "check");
+      await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: (typeof conversationId === "function" ? conversationId() : conversationId) || undefined, view, ...(feature ? { kind: "feature" } : {}), ...deviceInfo() } });
+      toast(thanks || t(`${k}.thanks`), "check");
       onClose?.();
     },
     onClose,
   });
   box.classList.add("bug-box");
+  box.dataset.kind = k;
   anchor.after(box);
   box.focusFirst();
   return box;
@@ -161,15 +168,15 @@ export function openAdminBug(anchor, { api, studentId, conversationId, view, toa
 
 // ---------- seznam prijav za skrbnika ----------
 
-const KIND_ICON = { message: "message-circle", lesson: "book-open", app: "flag" };
+const KIND_ICON = { message: "message-circle", lesson: "book-open", app: "flag", feature: "lightbulb" };
 
 function reportTitle(r) {
   if (r.kind === "message") return `${t("adm.rep.message")} ${r.code}`;
   if (r.kind === "lesson") return `${t("adm.rep.lesson")}: ${r.topic_name || r.topic_id}${r.step ? ` · ${t("adm.rep.step", { n: r.step })}` : ""}`;
-  return t("adm.rep.app");
+  return t(r.kind === "feature" ? "adm.rep.feature" : "adm.rep.app");
 }
 function reasonText(r) {
-  if (r.kind === "app") return "";
+  if (r.kind === "app" || r.kind === "feature") return "";
   return r.kind === "lesson" ? lessonReason(r.reason) : t(`rep.${r.reason}`);
 }
 
