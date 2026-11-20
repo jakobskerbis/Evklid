@@ -1735,8 +1735,9 @@ function syncBugButton() {
 const openChatBug = (e, feature) => {
   const btn = e.currentTarget;
   const open = $("#view-chat .bug-box");
-  if (open?.dataset.kind === (feature ? "idea" : "bug")) return open.focusFirst();
-  open?.querySelector(".rep-cancel").click(); // odprt je drug obrazec (napaka ↔ nova funkcija)
+  // Odprt je isti obrazec ali drug obrazec z že napisanim besedilom (da se ne izgubi): samo fokus nanj.
+  if (open && (open.dataset.kind === (feature ? "idea" : "bug") || open.querySelector("textarea").value.trim())) return open.focusFirst();
+  open?.querySelector(".rep-cancel").click(); // odprt je prazen drug obrazec (napaka ↔ nova funkcija)
   btn.setAttribute("aria-expanded", "true");
   openAdminBug($("#view-chat .chat-head"), {
     api,
