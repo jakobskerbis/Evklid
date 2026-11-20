@@ -1682,7 +1682,8 @@ const decOf = (x) => (String(cl(x)).split(".")[1] || "").length;
 // Odgovor z enoto: točen, če ima največ dve decimalki, sicer zaokrožen na d decimalk (besedilo to pove z rnd()).
 const exactOr = (x, d) => (decOf(x) <= d ? null : d);
 const rnd = (x, d) => (decOf(x) <= d ? "" : ` Zaokroži na ${d === 1 ? "desetinko" : "stotinko"}.`);
-const res = (x, d, u) => `${decOf(x) <= d ? "=" : "\\approx"} ${cmT(decOf(x) <= d ? cl(x) : roundHalfUp(x, d), u)}`;
+// Zaokrožen rezultat ima vedno natanko d decimalk, kot zahteva besedilo.
+const res = (x, d, u) => (decOf(x) <= d ? `= ${cmT(cl(x), u)}` : `\\approx ${tx(roundHalfUp(x, d), d)}\\ \\mathrm{${u}}`);
 const KS = [1.5, 2.5, 0.4, 0.6, 0.75, 1.25, 3.5, 0.8, 1.2, 2.4];
 // Velika števila s presledkom med tisočicami in decimalno vejico: big(23437.5) → "23\,437{,}5".
 const big = (n) => {
@@ -1859,8 +1860,8 @@ const PODOBNOST = [
           if (h2 < 3 || h2 > 40) return null;
           const [obj, adj, stick] = r.pick([["Drevo", "visoko", "navpična palica, visoka"], ["Zvonik", "visok", "navpičen drog, visok"], ["Stavba", "visoka", "navpična palica, visoka"]]);
           return {
-            text: `${obj} meče senco, dolgo $${cmT(s2, "m")}$. Ob istem času ${stick} $${cmT(h1, "m")}$, meče senco, dolgo $${cmT(s1, "m")}$. Kako ${adj} je ${obj.toLowerCase()}? Zaokroži na desetinko metra.`,
-            answer: num(cl(h2), 1, [
+            text: `${obj} meče senco, dolgo $${cmT(s2, "m")}$. Ob istem času ${stick} $${cmT(h1, "m")}$, meče senco, dolgo $${cmT(s1, "m")}$. Kako ${adj} je ${obj.toLowerCase()}?${rnd(h2, 1).replace("desetinko.", "desetinko metra.")}`,
+            answer: num(cl(h2), exactOr(h2, 1), [
               { value: (s2 * s1) / h1, why: "Razmerje si obrnil: višina proti senci je pri obeh telesih enaka." },
               { value: h1 + s2 - s1, why: "Podobnost ohranja razmerja, ne razlik." },
               { value: (h1 * s1) / s2, why: "Višina predmeta je v razmerju s svojo senco: $\\frac{h}{s} = \\frac{h_1}{s_1}$." },

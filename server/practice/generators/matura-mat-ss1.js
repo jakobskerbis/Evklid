@@ -2529,6 +2529,8 @@ const LINEARNE = [
         const h2 = h0 - v * t2;
         const askT = r.next() < 0.6;
         const U = candle ? ["h", "ur", "cm"] : ["min", "minut", "l"];
+        // Oznaka količine: višina sveče h, prostornina vode V.
+        const H = candle ? "h" : "V";
         const lead = candle
           ? `Sveča enakomerno gori. Po $${t1}\\ \\mathrm{h}$ je visoka $${tx(h1)}\\ \\mathrm{cm}$, po $${t2}\\ \\mathrm{h}$ pa $${tx(h2)}\\ \\mathrm{cm}$.`
           : `Iz rezervoarja enakomerno odteka voda. Po $${t1}\\ \\mathrm{min}$ je v njem $${h1}\\ \\mathrm{l}$ vode, po $${t2}\\ \\mathrm{min}$ pa $${h2}\\ \\mathrm{l}$.`;
@@ -2541,17 +2543,17 @@ const LINEARNE = [
             ? num(T0, null, [
                 { value: h2 / v, why: `To je čas od trenutka $t_2$ naprej; prištej še $${t2}$.` },
                 { value: h1 / v, why: `To je čas od trenutka $t_1$ naprej; prištej še $${t1}$.` },
-                { value: (h1 * t2 - h2 * t1) / (h1 - h2) / v, why: "Ničlo izračunaj iz $h(t) = 0$." },
+                { value: (h1 * t2 - h2 * t1) / (h1 - h2) / v, why: `Ničlo izračunaj iz $${H}(t) = 0$.` },
               ], U[0])
             : num(h0, null, [
-                { value: h1 + v * t2, why: "Začetna vrednost je $h(0) = h_1 + v t_1$." },
+                { value: h1 + v * t2, why: `Začetna vrednost je $${H}(0) = ${H}_1 + v t_1$.` },
                 { value: h1 + h2, why: "Količina se zmanjšuje enakomerno; izračunaj, koliko se zmanjša na enoto časa." },
                 { value: h1, why: `To je vrednost po $${t1}$ ${candle ? "h" : "min"}, ne na začetku.` },
               ], U[2]),
           hint: "Količina je linearna funkcija časa. Iz dveh meritev izračunaj smerni koeficient (ta je negativen) in začetno vrednost.",
-          data: { given: [`t_1 = ${t1}\\ \\mathrm{${U[0]}}`, `h_1 = ${tx(h1)}\\ \\mathrm{${U[2]}}`, `t_2 = ${t2}\\ \\mathrm{${U[0]}}`, `h_2 = ${tx(h2)}\\ \\mathrm{${U[2]}}`], find: [askT ? "t" : "h(0)"] },
-          formula: ["h(t) = kt + n", "k = \\dfrac{h_2 - h_1}{t_2 - t_1}"],
-          solution: `$k = \\dfrac{${tx(h2)} - ${tx(h1)}}{${t2} - ${t1}} = ${tx(-v)}$\n$n = h_1 - k t_1 = ${tx(h1)} + ${tx(v)} \\cdot ${t1} = ${tx(h0)}$\n$h(t) = ${tx(-v)}t + ${tx(h0)}$${askT ? `\n$h(t) = 0 \\;\\Rightarrow\\; t = \\dfrac{${tx(h0)}}{${tx(v)}} = ${T0}\\ \\mathrm{${U[0]}}$` : `\nNa začetku: $h(0) = ${tx(h0)}\\ \\mathrm{${U[2]}}$`}`,
+          data: { given: [`t_1 = ${t1}\\ \\mathrm{${U[0]}}`, `${H}_1 = ${tx(h1)}\\ \\mathrm{${U[2]}}`, `t_2 = ${t2}\\ \\mathrm{${U[0]}}`, `${H}_2 = ${tx(h2)}\\ \\mathrm{${U[2]}}`], find: [askT ? "t" : `${H}(0)`] },
+          formula: [`${H}(t) = kt + n`, `k = \\dfrac{${H}_2 - ${H}_1}{t_2 - t_1}`],
+          solution: `$k = \\dfrac{${tx(h2)} - ${tx(h1)}}{${t2} - ${t1}} = ${tx(-v)}$\n$n = ${H}_1 - k t_1 = ${tx(h1)} + ${tx(v)} \\cdot ${t1} = ${tx(h0)}$\n$${H}(t) = ${tx(-v)}t + ${tx(h0)}$${askT ? `\n$${H}(t) = 0 \\;\\Rightarrow\\; t = \\dfrac{${tx(h0)}}{${tx(v)}} = ${T0}\\ \\mathrm{${U[0]}}$` : `\nNa začetku: $${H}(0) = ${tx(h0)}\\ \\mathrm{${U[2]}}$`}`,
         };
       }
       if (t === 3) {
@@ -2843,7 +2845,7 @@ const LINEARNE = [
           text: `${ctx} pri ponudniku A stane $${nA}\\ \\text{€}$ in $${kA}\\ \\text{€}$ za vsak${unit === "h" ? "o" : ""} ${uG}, pri ponudniku B pa ${nB ? `$${nB}\\ \\text{€}$ in ` : ""}$${kB}\\ \\text{€}$ za vsak${unit === "h" ? "o" : ""} ${uG}. Najmanj koliko celih ${uw} mora trajati najem, da je ponudnik A cenejši?`,
           answer: num(ans, null, [
             { value: Number.isInteger(lim) ? lim : Math.floor(lim), why: "Pri tej vrednosti A ni cenejši; vzemi prvo celo število, pri katerem je neenačba stroga in izpolnjena." },
-            { value: Math.ceil((nA + nB) / (kB - kA)), why: "Pri prenosu $n_B$ na drugo stran pazi na predznak." },
+            { value: nB ? Math.ceil((nA + nB) / (kB - kA)) : null, why: `Ko osnovno ceno ponudnika B ($${nB}\\ \\text{€}$) preneseš na drugo stran, ji spremeni predznak.` },
           ]),
           hint: "Zapiši ceni kot linearni funkciji časa in reši neenačbo $A(x) < B(x)$.",
           data: { given: [`n_A = ${nA}\\ \\text{€}`, `k_A = ${kA}\\ \\text{€}`, ...(nB ? [`n_B = ${nB}\\ \\text{€}`] : []), `k_B = ${kB}\\ \\text{€}`], find: ["x_{\\min}"] },

@@ -1825,12 +1825,12 @@ const NAS = [
   ["Naključno izbrani dijak šole nosi očala z verjetnostjo", "dijak nosi očala", "naključno izbrani dijak ne nosi očal"],
   ["Semafor na poti v šolo kaže rdečo luč z verjetnostjo", "semafor kaže rdečo luč", "semafor ne kaže rdeče luči"],
 ];
-// Dva dogodka pri naključno izbranem dijaku: [A, B, A in B, ne A in ne B, natanko eden].
+// Dva dogodka pri naključno izbranem dijaku: [A, B, A in B, ne A in ne B, natanko eden, A ali B].
 const VEN = [
-  ["trenira kakšen šport", "igra glasbilo", "trenira šport in igra glasbilo", "ne trenira nobenega športa in ne igra glasbila", "trenira šport ali igra glasbilo, ne pa obojega"],
-  ["ima doma psa", "ima doma mačko", "ima doma psa in mačko", "nima doma ne psa ne mačke", "ima doma psa ali mačko, ne pa obeh"],
-  ["govori nemško", "govori italijansko", "govori nemško in italijansko", "ne govori ne nemško ne italijansko", "govori nemško ali italijansko, ne pa obeh jezikov"],
-  ["bere knjige v prostem času", "igra računalniške igre", "bere knjige in igra računalniške igre", "ne bere knjig in ne igra računalniških iger", "bere knjige ali igra računalniške igre, ne pa obojega"],
+  ["trenira kakšen šport", "igra glasbilo", "trenira šport in igra glasbilo", "ne trenira nobenega športa in ne igra glasbila", "trenira šport ali igra glasbilo, ne pa obojega", "trenira šport ali igra glasbilo"],
+  ["ima doma psa", "ima doma mačko", "ima doma psa in mačko", "nima doma ne psa ne mačke", "ima doma psa ali mačko, ne pa obeh", "ima doma psa ali mačko"],
+  ["govori nemško", "govori italijansko", "govori nemško in italijansko", "ne govori ne nemško ne italijansko", "govori nemško ali italijansko, ne pa obeh jezikov", "govori nemško ali italijansko"],
+  ["bere knjige v prostem času", "igra računalniške igre", "bere knjige in igra računalniške igre", "ne bere knjig in ne igra računalniških iger", "bere knjige ali igra računalniške igre, ne pa obojega", "bere knjige ali igra računalniške igre"],
 ];
 // Hkratna izbira iz dveh skupin (a »ugodnih«, b drugih; a, b ≥ 5).
 const IZB = [
@@ -2048,7 +2048,7 @@ const VERJETNOST = [
           const intro = `Naključno izbrani dijak šole ${c[0]} (dogodek $A$) z verjetnostjo $${tx(pA)}$, ${c[1]} (dogodek $B$) pa z verjetnostjo $${tx(pB)}$.`;
           if (r.next() < 0.5) {
             return {
-              text: `${intro} Verjetnost, da ${c[2]}, je $${tx(pAB)}$. Kolikšna je verjetnost, da ${c[0]} ali ${c[1]}?`,
+              text: `${intro} Verjetnost, da ${c[2]}, je $${tx(pAB)}$. Kolikšna je verjetnost, da ${c[5]}?`,
               answer: num(pU, null, [
                 { value: cl(pA + pB), why: "Dijake, pri katerih se zgodita oba dogodka, si štel dvakrat: odštej $P(A \\cdot B)$." },
                 { value: cl(pA * pB), why: "Za verjetnost vsote ne množimo; uporabi formulo za verjetnost vsote." },
@@ -2061,7 +2061,7 @@ const VERJETNOST = [
             };
           }
           return {
-            text: `${intro} Verjetnost, da ${c[0]} ali ${c[1]}, je $${tx(pU)}$. Kolikšna je verjetnost, da ${c[2]}?`,
+            text: `${intro} Verjetnost, da ${c[5]}, je $${tx(pU)}$. Kolikšna je verjetnost, da ${c[2]}?`,
             answer: num(pAB, null, [
               { value: cl(pA * pB), why: "Ne vemo, ali sta dogodka neodvisna. Uporabi formulo za verjetnost vsote." },
               { value: cl(pU - pA), why: "Odšteti moraš obe verjetnosti: $P(A \\cdot B) = P(A) + P(B) - P(A + B)$." },
@@ -2316,16 +2316,18 @@ const VERJETNOST = [
         }
         if (t === 1) {
           // Pogojna verjetnost iz definicije.
-          const pB = r.pick([0.2, 0.25, 0.4, 0.5, 0.6, 0.8]);
-          const pc = r.pick([0.15, 0.2, 0.25, 0.3, 0.4, 0.45, 0.5, 0.6, 0.75, 0.8, 0.9]);
+          // Vsak kontekst ima svoje smiselne verjetnosti (npr. fiziko piše manjšina maturantov).
+          const ci = r.int(0, 3);
+          const pB = r.pick([[0.2, 0.25, 0.4, 0.5, 0.6, 0.8], [0.2, 0.25, 0.3, 0.4], [0.2, 0.25, 0.3, 0.4], [0.15, 0.2, 0.25, 0.3]][ci]);
+          const pc = r.pick(ci === 3 ? [0.15, 0.2, 0.25, 0.3, 0.4] : [0.15, 0.2, 0.25, 0.3, 0.4, 0.45, 0.5, 0.6, 0.75, 0.8, 0.9]);
           const pAB = cl(pB * pc);
           if (Math.abs(pAB * 1000 - Math.round(pAB * 1000)) > 1e-6) return null;
-          const c = r.pick([
+          const c = [
             [`bo v soboto sončno`, `bo v soboto sončno in bo ${X} ${g(X, "šel", "šla")} na izlet`, `bo ${X} ${g(X, "šel", "šla")} na izlet, če bo v soboto sončno`, "v soboto bo sončno", `v soboto bo sončno in ${X} bo ${g(X, "šel", "šla")} na izlet`],
             ["naključno izbrani obiskovalec spletne trgovine doda izdelek v košarico", "obiskovalec doda izdelek v košarico in ga tudi kupi", "obiskovalec izdelek kupi, če ga je dodal v košarico"],
             ["zjutraj dežuje", `zjutraj dežuje in ${X} zamudi pouk`, `${X} zamudi pouk, če zjutraj dežuje`],
             ["naključno izbrani maturant piše maturo iz fizike", "maturant piše fiziko in jo opravi z oceno odlično", "jo maturant, ki piše fiziko, opravi z oceno odlično"],
-          ]);
+          ][ci];
           return {
             text: `${VR}Verjetnost, da ${c[0]}, je $${tx(pB)}$. Verjetnost, da ${c[1]}, je $${tx(pAB)}$. Kolikšna je verjetnost, da ${c[2]}?`,
             answer: num(pc, null, [
@@ -2429,6 +2431,7 @@ const VERJETNOST = [
                   q1: "Naključno izberemo maturanta, ki piše višjo raven. Kolikšna je verjetnost, da je to dekle?",
                   q2: "Naključno izberemo fanta. Kolikšna je verjetnost, da piše matematiko na višji ravni?",
                   G1: "D", L: "V", G2: "F",
+                  def: "$D$: izbrani maturant je dekle, $F$: izbrani maturant je fant, $V$: izbrani maturant piše višjo raven.",
                   s1: `Višjo raven piše $${x} + ${y} = ${x + y}$ maturantov, od tega $${x}$ deklet.`,
                   s2: `Fantov je $${b}$, od tega jih višjo raven piše $${y}$.`,
                   share: "To je delež deklet med vsemi maturanti; upoštevaj pogoj.",
@@ -2437,7 +2440,8 @@ const VERJETNOST = [
                   intro: `V anketi je sodelovalo $${f}$ dijakov prvih letnikov in $${b}$ dijakov četrtih letnikov. S kolesom v šolo hodi $${x}$ dijakov prvih in $${y}$ dijakov četrtih letnikov.`,
                   q1: "Naključno izberemo dijaka, ki hodi v šolo s kolesom. Kolikšna je verjetnost, da je iz prvega letnika?",
                   q2: "Naključno izberemo dijaka četrtega letnika. Kolikšna je verjetnost, da hodi v šolo s kolesom?",
-                  G1: "P", L: "K", G2: "Č",
+                  G1: "L_1", L: "K", G2: "L_4",
+                  def: "$L_1$: izbrani dijak je iz prvega letnika, $L_4$: izbrani dijak je iz četrtega letnika, $K$: izbrani dijak hodi v šolo s kolesom.",
                   s1: `S kolesom hodi $${x} + ${y} = ${x + y}$ anketiranih, od tega $${x}$ iz prvega letnika.`,
                   s2: `Dijakov četrtega letnika je $${b}$, od tega jih s kolesom hodi $${y}$.`,
                   share: "To je delež dijakov prvega letnika med vsemi anketiranimi; upoštevaj pogoj.",
@@ -2460,7 +2464,7 @@ const VERJETNOST = [
             hint: "Kaj je pogoj? Izbiramo le med tistimi, ki ga izpolnjujejo. Med njimi preštej ugodne.",
             data: { given: [`n_{${G1}} = ${f}`, `n_{${G2}} = ${b}`, `n(${L} \\cdot ${G1}) = ${x}`, `n(${L} \\cdot ${G2}) = ${y}`], find: [first ? `P(${G1} \\mid ${L})` : `P(${L} \\mid ${G2})`] },
             formula: "P(A \\mid B) = \\dfrac{n(A \\cdot B)}{n(B)}",
-            solution: first ? `${c.s1}\n$P(${G1} \\mid ${L}) = ${fq(x, x + y)}$` : `${c.s2}\n$P(${L} \\mid ${G2}) = ${fq(y, b)}$`,
+            solution: first ? `${c.def}\n${c.s1}\n$P(${G1} \\mid ${L}) = ${fq(x, x + y)}$` : `${c.def}\n${c.s2}\n$P(${L} \\mid ${G2}) = ${fq(y, b)}$`,
           };
         }
         if (t === 1) {
@@ -2542,6 +2546,11 @@ const VERJETNOST = [
           const N = pn * r1 * n2 + (pd - pn) * r2 * n1;
           const D = pd * n1 * n2;
           if (r1 * n2 === r2 * n1) return null; // enaka deleža: drevo ni potrebno
+          // Verjetnosti obeh poti okrajšamo, nato ju seštejemo na skupni imenovalec.
+          const [a1, b1] = fr(pn * r1, pd * n1);
+          const [a2, b2] = fr((pd - pn) * r2, pd * n2);
+          const Lc = lcm(b1, b2);
+          const vsota = `${ft(a1, b1)} + ${ft(a2, b2)} = ${fq(a1 * (Lc / b1) + a2 * (Lc / b2), Lc)}`;
           return {
             text: `${VR}V prvi škatli je $${r1}$ rdečih in $${m1}$ modrih kroglic, v drugi pa $${r2}$ rdečih in $${m2}$ modrih. ${die ? "Vržemo kocko: če pade šestica, izvlečemo kroglico iz prve škatle, sicer iz druge." : "Vržemo kovanec: če pade grb, izvlečemo kroglico iz prve škatle, sicer iz druge."} Kolikšna je verjetnost, da izvlečemo rdečo kroglico? Vpiši okrajšan ulomek.`,
             answer: frA(N, D, [
@@ -2552,7 +2561,7 @@ const VERJETNOST = [
             hint: "Nariši drevo: prva veja je izbira škatle, druga barva kroglice. Vzdolž poti množi, poti do rdeče seštej.",
             data: { given: [`r_1 = ${r1}`, `m_1 = ${m1}`, `r_2 = ${r2}`, `m_2 = ${m2}`], find: ["P(R)"] },
             formula: "P(R) = P(S_1) \\cdot P(R \\mid S_1) + P(S_2) \\cdot P(R \\mid S_2)",
-            solution: `$P(S_1) = ${ft(pn, pd)}$, $P(S_2) = ${ft(pd - pn, pd)}$\n$P(R \\mid S_1) = \\dfrac{${r1}}{${n1}}$, $P(R \\mid S_2) = \\dfrac{${r2}}{${n2}}$\n$P(R) = ${ft(pn, pd)} \\cdot \\dfrac{${r1}}{${n1}} + ${ft(pd - pn, pd)} \\cdot \\dfrac{${r2}}{${n2}} = ${fq(N, D)}$`,
+            solution: `$S_1$: vlečemo iz prve škatle, $S_2$: vlečemo iz druge škatle, $R$: izvlečemo rdečo kroglico.\n$P(S_1) = ${ft(pn, pd)}$, $P(S_2) = ${ft(pd - pn, pd)}$\n$P(R \\mid S_1) = \\dfrac{${r1}}{${n1}}$, $P(R \\mid S_2) = \\dfrac{${r2}}{${n2}}$\n$P(R) = ${ft(pn, pd)} \\cdot \\dfrac{${r1}}{${n1}} + ${ft(pd - pn, pd)} \\cdot \\dfrac{${r2}}{${n2}}$\n$P(R) = ${vsota}$`,
           };
         }
         // Zaporedje neodvisnih poskusov: natanko k uspehov.

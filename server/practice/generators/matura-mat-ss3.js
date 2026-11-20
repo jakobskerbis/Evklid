@@ -1683,6 +1683,8 @@ const uT = (x, u) => `${tx(x)}\\ \\mathrm{${u}}`;
 const cl = (x) => Math.round(x * 1e9) / 1e9;
 // Rezultat, zaokrožen na d decimalk, z »=« ali »≈«.
 const rz = (x, u, d = 1) => `${ap(x, d)} ${uT(roundHalfUp(x, d), u)}`;
+// Končni rezultat: vedno natanko d decimalk, kot zahteva besedilo naloge.
+const rzK = (x, u, d = 1) => `${ap(x, d)} ${tx(roundHalfUp(x, d), d)}\\ \\mathrm{${u}}`;
 // Večkratnik π: kπ(12) → "12\pi", kπ(1) → "\pi", kπ(2.25) → "2{,}25\pi".
 const kpi = (k) => (k === 1 ? "\\pi" : `${tx(cl(k))}\\pi`);
 const S3 = Math.sqrt(3);
@@ -1724,7 +1726,7 @@ const TELESA = [
             hint: useD ? "Najprej iz premera izračunaj polmer." : askV ? "Prostornina valja je ploščina osnovne ploskve, pomnožena z višino." : "Površina valja: dve osnovni ploskvi in plašč (pravokotnik z dolžino $2\\pi r$).",
             data: { given: [useD ? `d = ${uT(2 * rr, u)}` : `r = ${uT(rr, u)}`, `v = ${uT(v, u)}`], find: [askV ? "V" : "P"] },
             formula: askV ? "V = \\pi r^2 v" : "P = 2\\pi r^2 + 2\\pi r v",
-            solution: `${useD ? `$r = \\dfrac{d}{2} = ${uT(rr, u)}$\n` : ""}${askV ? `$V = \\pi \\cdot ${tx(rr)}^2 \\cdot ${tx(v)} = ${kpi(rr * rr * v)} ${rz(V, `${u}^3`)}$` : `$P = 2\\pi \\cdot ${tx(rr)}^2 + 2\\pi \\cdot ${tx(rr)} \\cdot ${tx(v)} = ${kpi(2 * rr * (rr + v))} ${rz(Pv, `${u}^2`)}$`}`,
+            solution: `${useD ? `$r = \\dfrac{d}{2} = ${uT(rr, u)}$\n` : ""}${askV ? `$V = \\pi \\cdot ${tx(rr)}^2 \\cdot ${tx(v)} = ${kpi(rr * rr * v)} ${rzK(V, `${u}^3`)}$` : `$P = 2\\pi \\cdot ${tx(rr)}^2 + 2\\pi \\cdot ${tx(rr)} \\cdot ${tx(v)} = ${kpi(2 * rr * (rr + v))} ${rzK(Pv, `${u}^2`)}$`}`,
           };
         }
         if (t === 1) {
@@ -1756,7 +1758,7 @@ const TELESA = [
             hint: "Najprej iz premera izračunaj polmer.",
             data: { given: [`d = ${uT(d, u)}`], find: [askV ? "V" : "P"] },
             formula: askV ? "V = \\dfrac{4}{3}\\pi r^3" : "P = 4\\pi r^2",
-            solution: `$r = \\dfrac{d}{2} = ${uT(rr, u)}$\n${askV ? `$V = \\dfrac{4}{3}\\pi \\cdot ${tx(rr)}^3 ${rz(V, `${u}^3`)}$` : `$P = 4\\pi \\cdot ${tx(rr)}^2 = ${kpi(4 * rr * rr)} ${rz(Pk, `${u}^2`)}$`}`,
+            solution: `$r = \\dfrac{d}{2} = ${uT(rr, u)}$\n${askV ? `$V = \\dfrac{4}{3}\\pi \\cdot ${tx(rr)}^3 ${rzK(V, `${u}^3`)}$` : `$P = 4\\pi \\cdot ${tx(rr)}^2 = ${kpi(4 * rr * rr)} ${rzK(Pk, `${u}^2`)}$`}`,
           };
         }
         if (t === 2) {
@@ -1778,7 +1780,7 @@ const TELESA = [
             hint: "Prostornina stožca je tretjina zmnožka ploščine osnovne ploskve in višine.",
             data: { given: [`r = ${uT(rr, u)}`, `v = ${uT(v, u)}`], find: ["V"] },
             formula: "V = \\dfrac{\\pi r^2 v}{3}",
-            solution: `$O = \\pi r^2 = ${kpi(rr * rr)}\\ \\mathrm{${u}^2}$\n$V = \\dfrac{O \\cdot v}{3} = \\dfrac{${kpi(rr * rr)} \\cdot ${tx(v)}}{3} ${rz(V, `${u}^3`)}$`,
+            solution: `$O = \\pi r^2 = ${kpi(rr * rr)}\\ \\mathrm{${u}^2}$\n$V = \\dfrac{O \\cdot v}{3} = \\dfrac{${kpi(rr * rr)} \\cdot ${tx(v)}}{3} ${rzK(V, `${u}^3`)}$`,
           };
         }
         if (t === 3) {
@@ -1799,7 +1801,7 @@ const TELESA = [
             hint: "Osnovna ploskev je kvadrat. Prostornina piramide je tretjina zmnožka $O \\cdot v$.",
             data: { given: [`a = ${uT(a, u)}`, `v = ${uT(v, u)}`], find: ["V"] },
             formula: "V = \\dfrac{O \\cdot v}{3} = \\dfrac{a^2 v}{3}",
-            solution: `$O = a^2 = ${tx(a)}^2 = ${uT(cl(a * a), `${u}^2`)}$\n$V = \\dfrac{${tx(cl(a * a))} \\cdot ${tx(v)}}{3} ${rz(V, `${u}^3`)}$`,
+            solution: `$O = a^2 = ${tx(a)}^2 = ${uT(cl(a * a), `${u}^2`)}$\n$V = \\dfrac{${tx(cl(a * a))} \\cdot ${tx(v)}}{3} ${(Math.abs(V - roundHalfUp(V, 1)) > 1e-9 ? rzK : rz)(V, `${u}^3`)}$`,
           };
         }
         // Kvader: površina (koliko kartona, lepenke …).
@@ -1850,7 +1852,7 @@ const TELESA = [
             hint: "Najprej s Pitagorovim izrekom izračunaj stranico stožca $s$ (hipotenuza trikotnika z $r$ in $v$).",
             data: { given: [`r = ${uT(rr, "cm")}`, `v = ${uT(v, "cm")}`], find: [mantle ? "pl" : "P"] },
             formula: mantle ? ["s^2 = r^2 + v^2", "pl = \\pi r s"] : ["s^2 = r^2 + v^2", "P = \\pi r^2 + \\pi r s"],
-            solution: `$s = \\sqrt{${rr}^2 + ${v}^2} = \\sqrt{${rr * rr + v * v}} ${rz(s, "cm", 3)}$\n${mantle ? `$pl = \\pi \\cdot ${rr} \\cdot ${txr(s, 3)} ${rz(val, "cm^2")}$` : `$P = \\pi \\cdot ${rr}^2 + \\pi \\cdot ${rr} \\cdot ${txr(s, 3)} ${rz(val, "cm^2")}$`}`,
+            solution: `$s = \\sqrt{${rr}^2 + ${v}^2} = \\sqrt{${rr * rr + v * v}} ${rz(s, "cm", 3)}$\n${mantle ? `$pl = \\pi \\cdot ${rr} \\cdot ${txr(s, 3)} ${rzK(val, "cm^2")}$` : `$P = \\pi \\cdot ${rr}^2 + \\pi \\cdot ${rr} \\cdot ${txr(s, 3)} ${rzK(val, "cm^2")}$`}`,
           };
         }
         if (t === 1) {
@@ -1869,7 +1871,7 @@ const TELESA = [
             hint: "Višina piramide, polovica osnovnega roba in višina stranske ploskve tvorijo pravokotni trikotnik.",
             data: { given: [`a = ${uT(a, "cm")}`, `v = ${uT(v, "cm")}`], find: ["P"] },
             formula: ["v_a^2 = v^2 + \\left(\\dfrac{a}{2}\\right)^2", "P = a^2 + 4 \\cdot \\dfrac{a v_a}{2} = a^2 + 2 a v_a"],
-            solution: `$v_a = \\sqrt{${v}^2 + ${a / 2}^2} = \\sqrt{${v * v + (a * a) / 4}} ${rz(va, "cm", 3)}$\n$P = ${a}^2 + 2 \\cdot ${a} \\cdot ${txr(va, 3)} ${rz(Pp, "cm^2")}$`,
+            solution: `$v_a = \\sqrt{${v}^2 + ${a / 2}^2} = \\sqrt{${v * v + (a * a) / 4}} ${rz(va, "cm", 3)}$\n$P = ${a}^2 + 2 \\cdot ${a} \\cdot ${txr(va, 3)} ${rzK(Pp, "cm^2")}$`,
           };
         }
         if (t === 2) {
@@ -1892,7 +1894,7 @@ const TELESA = [
             hint: "Izračunaj prostornino v $\\mathrm{cm^3}$ in jo pretvori v litre.",
             data: { given: [`d = ${uT(d, "cm")}`, `v = ${uT(v, "cm")}`], find: ["V"] },
             formula: ["V = \\pi r^2 v", "1\\ \\mathrm{l} = 1\\ \\mathrm{dm^3} = 1000\\ \\mathrm{cm^3}"],
-            solution: `$r = \\dfrac{d}{2} = ${uT(rr, "cm")}$\n$V = \\pi \\cdot ${tx(rr)}^2 \\cdot ${v} ${rz(Math.PI * rr * rr * v, "cm^3")}$\n$V ${rz(L, "l")}$`,
+            solution: `$r = \\dfrac{d}{2} = ${uT(rr, "cm")}$\n$V = \\pi \\cdot ${tx(rr)}^2 \\cdot ${v} ${rz(Math.PI * rr * rr * v, "cm^3")}$\n$V ${rzK(L, "l")}$`,
           };
         }
         if (t === 3) {
@@ -1912,7 +1914,7 @@ const TELESA = [
             hint: six ? "Pravilni šestkotnik razdeli na šest enakostraničnih trikotnikov." : "Osnovna ploskev je enakostranični trikotnik.",
             data: { given: [`a = ${uT(a, "cm")}`, `v = ${uT(v, "cm")}`], find: ["V"] },
             formula: six ? ["O = 6 \\cdot \\dfrac{a^2\\sqrt{3}}{4}", "V = O \\cdot v"] : ["O = \\dfrac{a^2\\sqrt{3}}{4}", "V = O \\cdot v"],
-            solution: `$O = ${six ? "6 \\cdot " : ""}\\dfrac{${a}^2\\sqrt{3}}{4} ${rz(O, "cm^2", 3)}$\n$V = ${txr(O, 3)} \\cdot ${v} ${rz(V, "cm^3")}$`,
+            solution: `$O = ${six ? "6 \\cdot " : ""}\\dfrac{${a}^2\\sqrt{3}}{4} ${rz(O, "cm^2", 3)}$\n$V = ${txr(O, 3)} \\cdot ${v} ${rzK(V, "cm^3")}$`,
           };
         }
         // Krogla: iz prostornine polmer (obratna naloga).
@@ -1929,7 +1931,7 @@ const TELESA = [
           hint: "Iz obrazca za prostornino krogle izrazi $r^3$.",
           data: { given: [`V = ${uT(V, "cm^3")}`], find: ["r"] },
           formula: ["V = \\dfrac{4}{3}\\pi r^3", "r = \\sqrt[3]{\\dfrac{3V}{4\\pi}}"],
-          solution: `$r^3 = \\dfrac{3V}{4\\pi} = \\dfrac{3 \\cdot ${V}}{4\\pi} ${ap((3 * V) / (4 * Math.PI), 3)} ${txr((3 * V) / (4 * Math.PI), 3)}$\n$r = \\sqrt[3]{${txr((3 * V) / (4 * Math.PI), 3)}} ${rz(rc, "cm", 2)}$`,
+          solution: `$r^3 = \\dfrac{3V}{4\\pi} = \\dfrac{3 \\cdot ${V}}{4\\pi} ${ap((3 * V) / (4 * Math.PI), 3)} ${txr((3 * V) / (4 * Math.PI), 3)}$\n$r = \\sqrt[3]{${txr((3 * V) / (4 * Math.PI), 3)}} ${rzK(rc, "cm", 2)}$`,
         };
       }
       // raven 3
@@ -1949,7 +1951,7 @@ const TELESA = [
             hint: "Pri pretapljanju se prostornina ohrani: izenači prostornini krogle in valja.",
             data: { given: [`R = ${uT(R, "cm")}`, `r = ${uT(rr, "cm")}`], find: ["v"] },
             formula: ["\\dfrac{4}{3}\\pi R^3 = \\pi r^2 v", "v = \\dfrac{4R^3}{3r^2}"],
-            solution: `$\\dfrac{4}{3}\\pi \\cdot ${R}^3 = \\pi \\cdot ${rr}^2 \\cdot v$\n$v = \\dfrac{4 \\cdot ${R ** 3}}{3 \\cdot ${rr * rr}} ${rz(h, "cm")}$`,
+            solution: `$\\dfrac{4}{3}\\pi \\cdot ${R}^3 = \\pi \\cdot ${rr}^2 \\cdot v$\n$v = \\dfrac{4 \\cdot ${R ** 3}}{3 \\cdot ${rr * rr}} ${rzK(h, "cm")}$`,
           };
         }
         const rv = r.int(2, 5);
@@ -1989,7 +1991,7 @@ const TELESA = [
           hint: "Najprej pretvori litre v $\\mathrm{cm^3}$ in iz prostornine izračunaj višino. Nato izračunaj dno in plašč.",
           data: { given: [`r = ${uT(rr, "cm")}`, `V = ${uT(Lt, "l")}`], find: ["P"] },
           formula: ["V = \\pi r^2 v", "P = \\pi r^2 + 2\\pi r v"],
-          solution: `$V = ${uT(Lt * 1000, "cm^3")}$\n$v = \\dfrac{V}{\\pi r^2} = \\dfrac{${Lt * 1000}}{\\pi \\cdot ${rr}^2} ${rz(v, "cm", 3)}$\n$P = \\pi \\cdot ${rr}^2 + 2\\pi \\cdot ${rr} \\cdot ${txr(v, 3)} ${rz(Po, "cm^2", 0)}$`,
+          solution: `$V = ${uT(Lt * 1000, "cm^3")}$\n$v = \\dfrac{V}{\\pi r^2} = \\dfrac{${Lt * 1000}}{\\pi \\cdot ${rr}^2} ${rz(v, "cm", 3)}$\n$P = \\pi \\cdot ${rr}^2 + 2\\pi \\cdot ${rr} \\cdot ${txr(v, 3)} ${rzK(Po, "cm^2", 0)}$`,
         };
       }
       if (t === 2) {
@@ -2008,7 +2010,7 @@ const TELESA = [
             hint: "Stranica kvadrata je hkrati premer in višina valja.",
             data: { given: [`S = ${uT(S, "cm^2")}`], find: ["V"] },
             formula: ["S = (2r)^2", "V = \\pi r^2 \\cdot 2r"],
-            solution: `$2r = \\sqrt{${S}} = ${2 * rr}$, $r = ${uT(rr, "cm")}$, $v = ${uT(2 * rr, "cm")}$\n$V = \\pi \\cdot ${rr}^2 \\cdot ${2 * rr} = ${kpi(2 * rr ** 3)} ${rz(V, "cm^3")}$`,
+            solution: `$2r = \\sqrt{${S}} = ${2 * rr}$, $r = ${uT(rr, "cm")}$, $v = ${uT(2 * rr, "cm")}$\n$V = \\pi \\cdot ${rr}^2 \\cdot ${2 * rr} = ${kpi(2 * rr ** 3)} ${rzK(V, "cm^3")}$`,
           };
         }
         const V = (Math.PI * rr ** 3 * S3) / 3;
@@ -2022,7 +2024,7 @@ const TELESA = [
           hint: "Stranica osnega preseka je $s = 2r$. Iz ploščine enakostraničnega trikotnika izračunaj $r$, višina je $r\\sqrt{3}$.",
           data: { given: [`S = ${rr * rr}\\sqrt{3}\\ \\mathrm{cm^2}`], find: ["V"] },
           formula: ["S = \\dfrac{(2r)^2\\sqrt{3}}{4} = r^2\\sqrt{3}", "v = r\\sqrt{3}", "V = \\dfrac{\\pi r^2 v}{3}"],
-          solution: `$r^2\\sqrt{3} = ${rr * rr}\\sqrt{3}$, zato $r = ${uT(rr, "cm")}$ in $v = ${rr}\\sqrt{3}\\ \\mathrm{cm}$\n$V = \\dfrac{\\pi \\cdot ${rr}^2 \\cdot ${rr}\\sqrt{3}}{3} ${rz(V, "cm^3")}$`,
+          solution: `$r^2\\sqrt{3} = ${rr * rr}\\sqrt{3}$, zato $r = ${uT(rr, "cm")}$ in $v = ${rr}\\sqrt{3}\\ \\mathrm{cm}$\n$V = \\dfrac{\\pi \\cdot ${rr}^2 \\cdot ${rr}\\sqrt{3}}{3} ${rzK(V, "cm^3")}$`,
         };
       }
       if (t === 3) {
@@ -2043,7 +2045,7 @@ const TELESA = [
           hint: "Višina, polovica diagonale osnovne ploskve in stranski rob tvorijo pravokotni trikotnik.",
           data: { given: [`a = ${uT(a, "cm")}`, `s = ${uT(s, "cm")}`], find: ["V"] },
           formula: ["v^2 = s^2 - \\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2", "V = \\dfrac{a^2 v}{3}"],
-          solution: `$\\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2 = \\dfrac{a^2}{2} = ${tx(cl((a * a) / 2))}$\n$v = \\sqrt{${s}^2 - ${tx(cl((a * a) / 2))}} = \\sqrt{${tx(cl(v2))}} ${rz(v, "cm", 3)}$\n$V = \\dfrac{${a}^2 \\cdot ${txr(v, 3)}}{3} ${rz(V, "cm^3")}$`,
+          solution: `$\\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2 = \\dfrac{a^2}{2} = ${tx(cl((a * a) / 2))}$\n$v = \\sqrt{${s}^2 - ${tx(cl((a * a) / 2))}} = \\sqrt{${tx(cl(v2))}} ${rz(v, "cm", 3)}$\n$V = \\dfrac{${a}^2 \\cdot ${txr(v, 3)}}{3} ${rzK(V, "cm^3")}$`,
         };
       }
       // Odpadek pri struženju ali masa betonskega stebra.
@@ -2060,7 +2062,7 @@ const TELESA = [
           hint: "Največji valj ima premer in višino enaka robu kocke.",
           data: { given: [`a = ${uT(a, "cm")}`], find: ["V_{\\text{odpadek}}"] },
           formula: ["V_{\\text{odpadek}} = a^3 - \\pi r^2 v", "r = \\dfrac{a}{2},\\ v = a"],
-          solution: `$r = ${uT(cl(a / 2), "cm")}$, $v = ${uT(a, "cm")}$\n$V_{\\text{valj}} = \\pi \\cdot ${tx(cl(a / 2))}^2 \\cdot ${a} ${rz((Math.PI * a ** 3) / 4, "cm^3")}$\n$V_{\\text{odpadek}} = ${a ** 3} - ${txr((Math.PI * a ** 3) / 4, 1)} ${rz(W, "cm^3")}$`,
+          solution: `$r = ${uT(cl(a / 2), "cm")}$, $v = ${uT(a, "cm")}$\n$V_{\\text{valj}} = \\pi \\cdot ${tx(cl(a / 2))}^2 \\cdot ${a} ${rz((Math.PI * a ** 3) / 4, "cm^3")}$\n$V_{\\text{odpadek}} = ${a ** 3} - ${txr((Math.PI * a ** 3) / 4, 1)} ${rzK(W, "cm^3")}$`,
         };
       }
       const d = r.pick([30, 35, 40, 45, 50, 60]);
@@ -2078,7 +2080,7 @@ const TELESA = [
         hint: "Pretvori premer v metre, izračunaj prostornino valja v $\\mathrm{m^3}$ in jo pomnoži z gostoto.",
         data: { given: [`d = ${uT(d, "cm")}`, `v = ${uT(h, "m")}`, `\\rho = ${rho}\\ \\mathrm{kg/m^3}`], find: ["m"] },
         formula: ["V = \\pi r^2 v", "m = \\rho V"],
-        solution: `$r = \\dfrac{d}{2} = ${uT(d / 2, "cm")} = ${uT(d / 200, "m")}$\n$V = \\pi \\cdot ${tx(d / 200)}^2 \\cdot ${tx(h)} ${rz(Vm, "m^3", 4)}$\n$m = ${rho} \\cdot ${txr(Vm, 4)} ${rz(m, "kg", 0)}$`,
+        solution: `$r = \\dfrac{d}{2} = ${uT(d / 2, "cm")} = ${uT(d / 200, "m")}$\n$V = \\pi \\cdot ${tx(d / 200)}^2 \\cdot ${tx(h)} ${rz(Vm, "m^3", 4)}$\n$m = ${rho} \\cdot ${txr(Vm, 4)} ${rzK(m, "kg", 0)}$`,
       };
     },
   },
