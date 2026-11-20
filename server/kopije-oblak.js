@@ -177,13 +177,18 @@ export async function uskladiIzbrise(cfg, dbFile, { fetchFn, now = () => new Dat
   const client = makeClient(cfg, { fetchFn, now });
   const key = izbrisiKey(dbFile);
   let remote = [];
+  let starKljuc = false;
   try {
-    remote = JSON.parse(decryptBackup(await client.get(key)).toString("utf8"));
+    const buf = await client.get(key);
+    remote = JSON.parse(decryptBackup(buf).toString("utf8"));
+    // Šifriran s starim ključem (EVKLID_DATA_KEYS_OLD): naložimo znova s sedanjim, sicer bi po odstranitvi starega
+    // ključa seznama v shrambi ne bilo več mogoče prebrati, uskladitev pa bi vsako uro padla.
+    starKljuc = buf.subarray(4, 12).toString("ascii") !== backupKey().id;
   } catch (e) {
     if (e.status !== 404) throw e; // brez seznama v shrambi (prvič) je prazen; ostale napake: nič ne prepišemo
   }
   const { list, dodanih } = dodajIzbrise(dbFile, Array.isArray(remote) ? remote : [], now());
-  const enako = JSON.stringify(list) === JSON.stringify(remote); // v shrambi je vedno zadnja unija v isti obliki
+  const enako = !starKljuc && JSON.stringify(list) === JSON.stringify(remote); // v shrambi je vedno zadnja unija v isti obliki
   let nalozeno = false;
   if (upload && !enako && (list.length || remote.length)) {
     await client.put(key, encryptBackup(Buffer.from(JSON.stringify(list))));

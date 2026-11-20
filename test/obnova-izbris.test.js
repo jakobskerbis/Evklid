@@ -188,11 +188,25 @@ test("seznam izbrisov v R2: šifriran, po izgubi diska se vrne in izbrisi se pon
     assert.equal(cs.db.prepare("SELECT COUNT(*) AS n FROM parents WHERE id = ?").get(ana.id).n, 0);
     cs.db.close();
 
+    // Menjava ključa: seznam, šifriran s starim ključem, se naloži znova s sedanjim (nato stari ključ ni več potreben).
+    const star = process.env.EVKLID_DATA_KEY;
+    process.env.EVKLID_DATA_KEY = crypto.randomBytes(32).toString("base64");
+    process.env.EVKLID_DATA_KEYS_OLD = star;
+    assert.equal((await uskladiIzbrise(CFG, fileA, { fetchFn: s3.fetchFn })).nalozeno, true, "znova šifriran s sedanjim ključem");
+    delete process.env.EVKLID_DATA_KEYS_OLD;
+    assert.deepEqual(await uskladiIzbrise(CFG, fileA, { fetchFn: s3.fetchFn }), { dodanih: 0, nalozeno: false }, "berljiv brez starega ključa");
+
+    // Nov disk brez mape baze (zagon pred openDb): seznam iz R2 se vseeno zapiše.
+    const fileD = path.join(dirA, "nova-mapa", "evklid.db");
+    assert.deepEqual(await uskladiIzbrise(CFG, fileD, { fetchFn: s3.fetchFn, upload: false }), { dodanih: 1, nalozeno: false });
+    assert.equal(beriIzbrise(fileD).length, 1);
+
     // Brez ključa se seznam ne prenaša (nešifrirano ne gre ven).
     delete process.env.EVKLID_DATA_KEY;
     assert.equal(await uskladiIzbrise(CFG, fileA, { fetchFn: s3.fetchFn }), null);
     for (const d of [dirA, dirB, dirC]) fs.rmSync(d, { recursive: true, force: true });
   } finally {
+    delete process.env.EVKLID_DATA_KEYS_OLD;
     if (prej === undefined) delete process.env.EVKLID_DATA_KEY;
     else process.env.EVKLID_DATA_KEY = prej;
   }

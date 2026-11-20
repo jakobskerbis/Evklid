@@ -275,6 +275,7 @@ export function dodajIzbrise(dbFile, novi, now = new Date()) {
   const ostane = list.filter((z) => z.at >= meja).sort((a, b) => a.at.localeCompare(b.at));
   if (dodanih || ostane.length !== list.length) {
     const f = izbrisiFile(dbFile);
+    fs.mkdirSync(path.dirname(f), { recursive: true }); // ob zagonu po izgubi diska (prenos iz R2) mape baze še ni
     fs.writeFileSync(`${f}.tmp`, JSON.stringify(ostane));
     fs.renameSync(`${f}.tmp`, f);
   }
