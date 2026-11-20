@@ -118,10 +118,12 @@ export function readGoalFields(box) {
   };
 }
 
-// Vrstica na Učni poti / v Napredku: »Srednja šola · Matura · 1. 6. 2027 · še 215 dni · Spremeni«
-export function goalLineHtml(student, levelText = "") {
+// Vrstica na Učni poti / v Napredku: »Srednja šola · Matura · 1. 6. 2027 · še 215 dni · Spremeni«.
+// brezDni: brez »še N dni« (na Učni poti pri cilju matura odštevanje že kaže kartica »Danes«; j, 20. 11. 2026).
+export function goalLineHtml(student, levelText = "", brezDni = false) {
   const s = student?.settings || {};
-  const parts = [levelText, goalSummary(s)].filter(Boolean).join(" · ");
+  const sum = brezDni ? [goalName(s.goal), fmtDate(s.goal_date)].filter(Boolean).join(" · ") : goalSummary(s);
+  const parts = [levelText, sum].filter(Boolean).join(" · ");
   return `<span class="gl-ic" aria-hidden="true">${icon("target")}</span><span class="gl-text">${esc(parts)}</span>
     <button type="button" class="text-btn gl-edit" data-view="settings" data-goal-edit>${esc(t("goal.change"))}</button>`;
 }

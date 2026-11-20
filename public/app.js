@@ -2993,7 +2993,7 @@ function renderGoal() {
   const s = st.settings;
   const line = $("#goal-line");
   line.hidden = !hasGoal(s);
-  if (hasGoal(s)) line.innerHTML = goalLineHtml(st, goalLevelText(s));
+  if (hasGoal(s)) line.innerHTML = goalLineHtml(st, goalLevelText(s), s.goal == "matura");
   const chip = $("#goal-chip");
   chip.hidden = !hasGoal(s);
   if (hasGoal(s)) {

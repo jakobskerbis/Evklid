@@ -40,6 +40,11 @@ test("maturant: obrazec, kartica Danes, brez uvoda, ponudba za star profil", opt
     assert.match(hero, /Danes/);
     assert.match(hero, /Za maturo: /);
     assert.match(hero, /približno 15\s*min/);
+    // Odštevanje »še N dni« samo v kartici Danes, vrstica cilja ima le datum.
+    assert.match(hero, /še \d+ dni/);
+    const line = await p.innerText("#goal-line");
+    assert.match(line, /Matura/);
+    assert.doesNotMatch(line, /še \d+ dni/);
     // Prva rešena naloga je za njo: ob vrnitvi na Učno pot ni vprašalnika »Kaj te zanima?« ne vodiča.
     store.updateStudent(ana.id, { settings: { first_task: 1 } });
     await p.reload();
