@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { Progress } from "../server/progress.js";
-import { privzetiCilj, maturaDatum, ponudiMaturo, MATURA_SPOMLADI } from "../public/goal-data.js";
+import { privzetiCilj, maturaDatum, ponudiMaturo, ciljObrazca, MATURA_SPOMLADI } from "../public/goal-data.js";
 import { brezUvoda } from "../public/stopnja.js";
 
 const SS4 = (raven = " OR") => ({ educational_track: "SREDNJA_SOLA", curriculum_level: `4. letnik${raven}`, subject: "MAT" });
@@ -41,6 +41,17 @@ test("new profile: no goal chosen → matura with date and raven, reminder off; 
   assert.equal(own.matura_offer, 1, "izbral sam: brez ponudbe");
   assert.ok(!ponudiMaturo(own));
   assert.equal(store.createStudent("Cene", { ...SS4(), curriculum_level: "3. letnik OR" }).settings.goal, "sprotno");
+});
+
+test("onboarding form touched: the prefilled matura date still leaves the reminder off, a chosen date or goal does not", () => {
+  const today = "2026-11-20";
+  assert.deepEqual(ciljObrazca({ goal: "matura", goal_date: "2027-05-29" }, SS4(), today), { goal: "matura", goal_date: "2027-05-29", goal_reminder: false });
+  assert.deepEqual(ciljObrazca({ goal: "matura", goal_date: "2027-05-20" }, SS4(), today), { goal: "matura", goal_date: "2027-05-20" });
+  assert.deepEqual(ciljObrazca({ goal: "test", goal_date: "2027-05-29" }, SS4(), today), { goal: "test", goal_date: "2027-05-29" });
+  assert.deepEqual(ciljObrazca({ goal: "npz", goal_date: "2027-05-05" }, { educational_track: "OSNOVNA_SOLA", curriculum_level: "9. razred" }, today), { goal: "npz", goal_date: "2027-05-05" });
+  const store = openDb(":memory:");
+  const s = store.createStudent("Ana", { ...SS4(), ...ciljObrazca({ goal: "matura", goal_date: maturaDatum() }, SS4()) }).settings;
+  assert.deepEqual([s.goal, s.goal_reminder, s.matura_offer], ["matura", false, 1]);
 });
 
 test("old profile with the default goal gets the offer until accepted or declined", () => {

@@ -39,6 +39,12 @@ export function privzetiCilj(settings = {}, today = null) {
   if ((s.school_system || "SI") !== "SI" || !jeSs(s) || (s.subject || "MAT") !== "MAT" || !/^4\. letnik\b/.test(String(s.curriculum_level || ""))) return {};
   return { goal: "matura", goal_date: maturaDatum(today), goal_reminder: false };
 }
+// Obrazec ob prvem zagonu, ko se je učenec dotaknil cilja: datum mature, ki ga je vpisal obrazec sam (privzetiCilj),
+// tudi tedaj ne vklopi opomnika ob 12.00 in e-pošte staršu (enako kot nedotaknjen obrazec); vklopi ga v Nastavitvah.
+export function ciljObrazca(polja, where, today = null) {
+  const p = privzetiCilj(where, today);
+  return p.goal && polja.goal === p.goal && polja.goal_date === p.goal_date ? { ...polja, goal_reminder: false } : polja;
+}
 // Star profil maturanta s privzetim ciljem (sprotno, brez datuma), ki ponudbe še ni sprejel ali zavrnil: kartica na Učni poti.
 export const ponudiMaturo = (settings = {}) =>
   !!privzetiCilj(settings).goal && (settings.goal || DEFAULT_GOAL) === DEFAULT_GOAL && !validDate(settings.goal_date) && !settings.matura_offer;

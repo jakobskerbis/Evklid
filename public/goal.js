@@ -3,7 +3,7 @@
 // kartica v aplikaciji (ko jo odpreš po 12.00) in, z računom, e-pošta (server/accounts/goal-reminder.js).
 import { t, locale } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
-import { goalsFor, daysUntil, validDate, DEFAULT_GOAL } from "./goal-data.js";
+import { goalsFor, daysUntil, validDate, DEFAULT_GOAL, privzetiCilj, ciljObrazca, ponudiMaturo } from "./goal-data.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const goalName = (g) => t(`goal.${g || DEFAULT_GOAL}`);
@@ -163,11 +163,23 @@ export function reminderCardHtml(student, { preview = false } = {}) {
     </div>`;
 }
 
-// Kartica »Danes« na Učni poti za cilj matura (j, 20. 11. 2026): odštevanje do mature, korak za danes (najprej
-// ponavljanje, kar je na vrsti, nato tema iz »Najprej vadi« na strani NPZ in matura; podatki: /path → danes),
-// približne minute in en gumb. Po vsaj 3 dneh odsotnosti kratek pozdrav. Brez koraka "" (ostane Današnji trening).
-export function danesHtml(student, d) {
-  if (!d || (!d.due && !d.next)) return "";
+// Vrh Učne poti (#xp-card, p = /path): [kartica, vrstica pod njo]. Navadno Današnji trening in »Naslednja tema«.
+// Pri cilju matura kartica »Danes« (j, 20. 11. 2026): odštevanje do mature, korak za danes (najprej ponavljanje, kar je
+// na vrsti, nato tema iz »Najprej vadi« na strani NPZ in matura; podatki: /path → danes), približne minute in en gumb,
+// po vsaj 3 dneh odsotnosti kratek pozdrav; Današnji trening je tedaj vrstica pod njo.
+export function heroHtml(student, p, done = false) {
+  const d = p.danes;
+  if (!d || (!d.due && !d.next))
+    return [
+      `<div class="hero">
+      <div class="hero-icon">${icon("zap")}</div>
+      <div class="hero-text"><h2>${t("daily.title")}</h2><p>${done ? t("daily.doneText") : t("daily.text")}</p></div>
+      <button class="primary big" data-daily>${done ? t("daily.again") : t("daily.start")}</button>
+    </div>`,
+      p.next
+        ? `<button class="next-row" data-open="${esc(p.next.id)}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${esc(p.next.name)}</span>${icon("chevron-right")}</button>`
+        : `<div class="next-row done">${icon("trophy")}<span class="next-name">${t("path.allDone")}</span></div>`,
+    ];
   const s = student?.settings || {};
   const when = [goalName("matura"), countdown(s.goal_date)].filter(Boolean).join(" · ");
   const min = esc(t("danes.min", { n: d.minutes }));
@@ -178,19 +190,58 @@ export function danesHtml(student, d) {
   const btn = d.due
     ? `<button class="primary big" data-danes-review>${esc(t("danes.review"))}</button>`
     : `<button class="primary big" data-danes-topic="${esc(d.next.id)}">${esc(t("ready.practice"))}</button>`;
-  return `<div class="hero danes">
+  return [
+    `<div class="hero danes">
       <div class="hero-icon">${icon("target")}</div>
       <div class="hero-text"><h2>${esc(t("danes.title"))}</h2><p>${esc(when)}</p>${back}${step}</div>
       ${btn}
-    </div>`;
+    </div>`,
+    `<button type="button" class="next-row" data-daily><span class="eyebrow">${esc(t("daily.title"))}</span><span class="next-name">${esc(t(done ? "daily.doneTitle" : "daily.about"))}</span>${icon("zap")}</button>`,
+  ];
 }
 
 // Ponudba za star profil maturanta s privzetim ciljem (goal-data.js ponudiMaturo): en dotik nastavi cilj matura.
-export function maturaPonudbaHtml() {
+// Drugim profilom "".
+export function maturaPonudbaHtml(settings) {
+  if (!ponudiMaturo(settings)) return "";
   return `<span class="gr-ic" aria-hidden="true">${icon("target")}</span>
     <div class="gr-body">
       <b>${esc(t("danes.offerTitle"))}</b>
       <span>${esc(t("danes.offerText"))}</span>
       <div class="actions"><button type="button" class="primary small" data-matura-offer="yes">${esc(t("danes.offerYes"))}</button><button type="button" class="ghost small" data-matura-offer="no">${esc(t("danes.offerNo"))}</button></div>
     </div>`;
+}
+
+// Cilj v obrazcu ob prvem zagonu (app.js onboard). Dokler cilja ne izbere sam, velja privzeti cilj šole (4. letnik SŠ:
+// matura z datumom roka, goal-data.js privzetiCilj) in obrazec ga ne pošlje: strežnik ga določi po istem pravilu
+// (server/db.js createStudent). read() vrne polja za POST, draw() izriše znova ob spremembi šole ali letnika.
+export function onbGoal(box, f) {
+  let touched = false;
+  box.addEventListener("click", (e) => e.target.closest("[data-goal]") && (touched = true));
+  box.addEventListener("input", () => (touched = true));
+  const where = () => ({ school_system: f.school_system.value, educational_track: f.educational_track.value, curriculum_level: f.curriculum_level.value });
+  const draw = () => {
+    const w = where();
+    box.innerHTML = goalFieldsHtml({ ...(touched ? readGoalFields(box) : privzetiCilj(w)), ...w }, { idPrefix: "onb-goal" });
+  };
+  draw();
+  wireGoalFields(box);
+  return { draw, read: () => (touched ? ciljObrazca(readGoalFields(box), where()) : {}) };
+}
+
+// Gumbi kartice »Danes« in ponudbe »cilj matura« na Učni poti. o: state (state.student), start(mode) seja,
+// topic(id) odpre temo z vajo, save(student, settings, yes) shrani nastavitve.
+export function wireDanes(o) {
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-danes-review]")) o.start("review");
+    const dt = e.target.closest("[data-danes-topic]");
+    if (dt) o.topic(dt.dataset.danesTopic);
+    const mo = e.target.closest("[data-matura-offer]");
+    const st = o.state.student;
+    if (!mo || !st) return;
+    // Kartica izgine takoj, shrani se v ozadju (sprejeto ali zavrnjeno: ponudbe ni več).
+    document.getElementById("goal-reminder").hidden = true;
+    const yes = mo.dataset.maturaOffer === "yes";
+    o.save(st, { matura_offer: 1, ...(yes ? privzetiCilj(st.settings) : {}) }, yes);
+  });
 }
