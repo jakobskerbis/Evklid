@@ -24,7 +24,13 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   gumbom »Vprašaj inštruktorja«. Vibracija ob pravilnem in napačnem odgovoru.
 - **Vaje brez povezave**: naloge učne poti se shranijo na telefon, odgovor preveri telefon (isto
   preverjanje kot strežnik, `server/practice/check.js`), ob povezavi strežnik odgovore preveri še
-  enkrat in podeli XP.
+  enkrat in podeli XP. Paket in vrsta odgovorov sta vezana na račun in profil (id profila se po izbrisu lahko ponovi).
+- **Odjava, izbris računa, potekla seja**: ob odjavi gredo neposlani odgovori najprej na strežnik (največ 6 s), nato
+  s telefona izgine vse od računa (izbrani profil, račun in profili, paketi vaj in odgovori, časi preverjanja, zavihek Uči, deljene slike in fotografije nalog),
+  spletna stran v aplikaciji pa pobriše svoje osebne podatke kot ob odjavi na spletu. Ostanejo nastavitve naprave
+  (tresljaji, ura opomnika, id naprave) — `mobile/src/lib/zasebnost.js`, `test/mobile-odjava-brisanje.test.js`.
+  Žeton potisnih obvestil se na strežniku odjavi samo ob odjavi (ob izbrisu računa ga pobriše strežnik); po potekli
+  seji ostane vezan na račun do naslednje prijave na tem telefonu.
 - **Lekcije** po korakih (kratke kartice z vprašanji »Preveri se« vmes, `public/lesson-steps.js`) ali vse
   naenkrat, »Razloži drugače«, formule in tabele kot na spletu.
   Vprašanja z vpisom števila in razvrščanjem (`public/preveri-se.js`) aplikacija dobi, ker pošlje glavo
@@ -212,9 +218,10 @@ Vsakič:
    gradnje prilepi v **Račun → Aplikacija za Android (APK)** in tapni »Naloži APK«.
 
 **Posodobitve nameščene aplikacije** (`mobile/src/lib/updates.ts`):
-- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ob vsaki združitvi v `main`, ki spremeni
-  `mobile/` ali skupne datoteke s spletom, Expo (EAS Workflows, `mobile/.eas/workflows/posodobitev.yml`)
-  objavi posodobitev na kanal `direct`. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
+- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ko so testi za združitev v `main` zeleni
+  (vsi štirje posli v `testi.yml`, tudi `tipi`), GitHub (`.github/workflows/ota.yml`, skrivnost `EXPO_TOKEN`)
+  objavi posodobitev na kanal `direct`, če je kateri commit od zadnje objave spremenil `mobile/` ali skupne
+  datoteke s spletom (seznam `POTI` v `ota.yml`). Padli testi: nič ne gre na telefone. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
   ko je prenesena, aplikacija ponudi »Posodobi« (takojšen ponovni zagon). Dobijo jo samo gradnje z enako
   domorodno kodo (`runtimeVersion: fingerprint`). Brezplačni načrt Expo pokrije do 1.000 uporabnikov na mesec.
 - **Nova domorodna koda** (nov paket Expo, nova različica SDK, sprememba `app.config.ts`) potrebuje nov APK:

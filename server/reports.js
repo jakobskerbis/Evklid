@@ -1,6 +1,6 @@
 // Prijave napak: v odgovorih inštruktorja (gumb »Prijavi napako« pod vsakim odgovorom), v lekcijah
 // (gumb »Prijavi napako« v vsaki lekciji) in skrbnikove prijave iz klepeta (napaka v aplikaciji ali
-// inštruktorju). Skrbnik jih vidi v Računu (»Prijave napak«) in jih označi kot popravljene.
+// inštruktorju ter zahteve za nove funkcije, kind = feature; j, 20. 11. 2026). Skrbnik jih vidi v Računu (»Prijave napak«) in jih označi kot popravljene.
 // Prijava shrani odgovor, vprašanje pred njim in razlog, odgovor pa odstrani iz predpomnilnika
 // (answer_cache), da ga ne dobi noben drug učenec. Stikalo EVKLID_CHAT_OFF=1 izklopi klepet za vse.
 // Postopek ob neljubem dogodku: docs/krizni-nacrt.md. Samodejni pregled prijav (izvoz s ključem, stanje
@@ -45,7 +45,7 @@ export function ensureReportsTable(db) {
     CREATE TABLE IF NOT EXISTS bug_reports (
       id INTEGER PRIMARY KEY,
       student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
-      kind TEXT NOT NULL,            -- lesson | app
+      kind TEXT NOT NULL,            -- lesson | app | feature
       topic_id TEXT,                 -- lekcija
       step INTEGER,                  -- korak lekcije (po korakih), od 1
       conversation_id INTEGER,
@@ -72,6 +72,8 @@ export function ensureReportsTable(db) {
   if (!bugCols.has("pr")) db.exec("ALTER TABLE bug_reports ADD COLUMN pr INTEGER");
 }
 
+// Vrste v bug_reports (lekcija, napaka v aplikaciji, zahteva za novo funkcijo).
+const BUG_KINDS = ["lesson", "app", "feature"];
 // Stanja prijave: odprta, popravek čaka na pregled (PR), popravljena.
 export const REPORT_STATUSES = ["open", "in_review", "fixed"];
 export const prUrl = (n) => (Number.isInteger(n) && n > 0 ? `https://github.com/${BRAND.repo}/pull/${n}` : null);
@@ -184,7 +186,9 @@ export function reportsMarkdown({ reports }, topicName = () => null) {
         ? `## Odgovor inštruktorja ${r.code} · ${r.reason}`
         : r.kind === "lesson"
           ? `## Lekcija ${r.topic_id}${topicName(r.topic_id) ? ` (${topicName(r.topic_id)})` : ""}${r.step ? `, korak ${r.step}` : ""} · ${r.reason}`
-          : `## Aplikacija / inštruktor · skrbnik`;
+          : r.kind === "feature"
+            ? `## Zahteva za novo funkcijo · skrbnik`
+            : `## Aplikacija / inštruktor · skrbnik`;
     lines.push(head, `- čas: ${r.created_at} UTC${r.device ? ` · ${r.device}` : ""}`);
     if (r.note) lines.push(`- opomba: ${r.note}`);
     if (r.question) lines.push("", "Vprašanje:", "", "> " + r.question.replace(/\n/g, "\n> "));
@@ -324,15 +328,18 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
 
   // Skrbnik v klepetu: »Prijavi napako« (v aplikaciji ali pri inštruktorju) z zadnjimi sporočili pogovora.
   // Člani pilota (isPilot, server/pilot-naloge.js) tudi, z dnevno mejo prijav kot drugje.
+  // kind = "feature": skrbnikova zahteva za novo funkcijo (žarnica v glavi klepeta), samo skrbnik.
   app.post("/api/students/:id/bug", (req, res) => {
     const admin = isAdmin(req);
+    const feature = req.body?.kind === "feature";
+    if (feature && !admin) return res.status(403).json({ error: "Samo za skrbnika." });
     if (!admin && !isPilot) return res.status(403).json({ error: "Samo za skrbnika." });
     const s = loadStudent(req, res);
     if (!s) return;
     if (!admin && !isPilot(s.id)) return res.status(403).json({ error: "Samo za skrbnika." });
     if (!admin && perDay(s.id) >= MAX_PER_DAY) return res.status(429).json({ error: "Danes si poslal že veliko prijav. Hvala!" });
     const note = String(req.body?.note || "").trim().slice(0, 2000);
-    if (!note) return res.status(400).json({ error: "Opiši napako." });
+    if (!note) return res.status(400).json({ error: feature ? "Opiši, kaj želiš." : "Opiši napako." });
     let convId = null;
     let context = null;
     const cid = Number(req.body?.conversation_id);
@@ -346,9 +353,9 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     }
     const view = cleanText(req.body?.view, 30);
     const id = store.db
-      .prepare("INSERT INTO bug_reports (student_id, kind, conversation_id, reason, note, context, device) VALUES (?, 'app', ?, ?, ?, ?, ?)")
-      .run(s.id, convId, view || "chat", seal(note), context ? seal(context) : null, deviceOf(req.body)).lastInsertRowid;
-    console.warn(`[evklid] ${admin ? "skrbnik" : "član pilota"} je prijavil napako #${id}`);
+      .prepare("INSERT INTO bug_reports (student_id, kind, conversation_id, reason, note, context, device) VALUES (?, ?, ?, ?, ?, ?, ?)")
+      .run(s.id, feature ? "feature" : "app", convId, view || "chat", seal(note), context ? seal(context) : null, deviceOf(req.body)).lastInsertRowid;
+    console.warn(`[evklid] ${admin ? "skrbnik" : "član pilota"} je ${feature ? "poslal zahtevo za novo funkcijo" : "prijavil napako"} #${id}`);
     res.status(201).json({ ok: true, id: Number(id) });
   });
 
@@ -365,7 +372,7 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     res.send(reportsMarkdown(adminReports(store.db), topicName));
   });
   app.post("/api/admin/reports/:kind/:rid", adminOnly, (req, res) => {
-    const table = req.params.kind === "message" ? "message_reports" : ["lesson", "app"].includes(req.params.kind) ? "bug_reports" : null;
+    const table = req.params.kind === "message" ? "message_reports" : BUG_KINDS.includes(req.params.kind) ? "bug_reports" : null;
     const rid = /^\d+$/.test(req.params.rid) ? Number(req.params.rid) : NaN;
     const status = ["open", "fixed"].includes(req.body?.status) ? req.body.status : null;
     if (!table || !status) return res.status(400).json({ error: "Napačna zahteva." });
@@ -393,7 +400,7 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     res.set("Cache-Control", "no-store");
     if (!exportAllowed(req)) return res.status(404).json({ error: "Ne obstaja." });
     const kind = req.params.kind;
-    const table = kind === "message" ? "message_reports" : ["lesson", "app"].includes(kind) ? "bug_reports" : null;
+    const table = kind === "message" ? "message_reports" : BUG_KINDS.includes(kind) ? "bug_reports" : null;
     const rid = /^\d{1,12}$/.test(req.params.rid) ? Number(req.params.rid) : NaN;
     const status = REPORT_STATUSES.includes(req.body?.status) ? req.body.status : null;
     const pr = req.body?.pr == null ? null : Number.isInteger(req.body.pr) && req.body.pr > 0 && req.body.pr < 1e7 ? req.body.pr : NaN;

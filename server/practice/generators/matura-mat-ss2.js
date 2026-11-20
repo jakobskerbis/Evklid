@@ -1674,4 +1674,370 @@ const GENS = [
   },
 ];
 
-export const MATURA_MAT_SS2 = wrapGens(GENS);
+// ================= podobnost (MAT-SS-2/podobnost) =================
+// Zapisi kot v lekciji: koeficient podobnosti k, razmerje ploščin k², odseka hipotenuze c_a in c_b, višina v_c,
+// središčni razteg x' = x_S + k(x - x_S). Talesov izrek o sorazmerjih: kraka kota sekata vzporednici.
+const cmT = (x, u = "cm") => `${tx(x)}\\ \\mathrm{${u}}`;
+const decOf = (x) => (String(cl(x)).split(".")[1] || "").length;
+// Odgovor z enoto: točen, če ima največ dve decimalki, sicer zaokrožen na d decimalk (besedilo to pove z rnd()).
+const exactOr = (x, d) => (decOf(x) <= d ? null : d);
+const rnd = (x, d) => (decOf(x) <= d ? "" : ` Zaokroži na ${d === 1 ? "desetinko" : "stotinko"}.`);
+// Zaokrožen rezultat ima vedno natanko d decimalk, kot zahteva besedilo.
+const res = (x, d, u) => (decOf(x) <= d ? `= ${cmT(cl(x), u)}` : `\\approx ${tx(roundHalfUp(x, d), d)}\\ \\mathrm{${u}}`);
+const KS = [1.5, 2.5, 0.4, 0.6, 0.75, 1.25, 3.5, 0.8, 1.2, 2.4];
+// Velika števila s presledkom med tisočicami in decimalno vejico: big(23437.5) → "23\,437{,}5".
+const big = (n) => {
+  const [i, d] = String(n).split(".");
+  return i.replace(/\B(?=(\d{3})+(?!\d))/g, "\\,") + (d ? `{,}${d}` : "");
+};
+// Stranice trikotnika (trikotniška neenakost).
+function triSides(r) {
+  const a = r.int(4, 12);
+  const b = r.int(4, 12);
+  const c = r.int(Math.abs(a - b) + 1, a + b - 1);
+  return [a, b, c];
+}
+
+const PODOBNOST = [
+  {
+    id: P + "podobnost",
+    topics: [T("podobnost"), "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
+    gen(level, r) {
+      const t = r.int(0, 4);
+      if (level === 1) {
+        if (t === 0) {
+          // Istoležne stranice: k ni nujno celo število.
+          const [a, b, c] = triSides(r);
+          const k = r.pick(KS);
+          const a1 = cl(k * a);
+          const b1 = cl(k * b);
+          return {
+            text: `Trikotnik $A'B'C'$ je podoben trikotniku $ABC$ (stranica $a'$ je istoležna stranici $a$, $b'$ stranici $b$). Stranice trikotnika $ABC$ merijo $a = ${cmT(a)}$, $b = ${cmT(b)}$ in $c = ${cmT(c)}$, stranica $a'$ pa $${cmT(a1)}$. Koliko meri stranica $b'$?`,
+            answer: num(b1, null, [
+              { value: cl(b + a1 - a), why: "Pri podobnosti se dolžine ne povečajo za isto število, ampak za isti faktor $k$." },
+              { value: cl(b / k), why: "Razmerje si obrnil: $k = \\frac{a'}{a}$, zato je $b' = k \\cdot b$." },
+              { value: a1, why: "Stranica $b'$ je istoležna stranici $b$, ne $a$." },
+            ], "cm"),
+            hint: "Iz istoležnih stranic $a$ in $a'$ izračunaj koeficient podobnosti $k$.",
+            data: { given: [`a = ${cmT(a)}`, `b = ${cmT(b)}`, `c = ${cmT(c)}`, `a' = ${cmT(a1)}`], find: ["b'"] },
+            formula: ["k = \\dfrac{a'}{a}", "b' = k \\cdot b"],
+            solution: `$k = \\dfrac{a'}{a} = \\dfrac{${tx(a1)}}{${a}} = ${tx(k)}$\n$b' = k \\cdot b = ${tx(k)} \\cdot ${cmT(b)} = ${cmT(b1)}$`,
+          };
+        }
+        if (t === 1 || t === 2) {
+          // Obseg (k) ali ploščina (k²) podobnega lika.
+          const k = r.pick(KS);
+          const area = t === 2;
+          const x = area ? r.int(6, 60) : r.int(12, 48);
+          const val = area ? x * k * k : x * k;
+          const what = r.pick(area ? ["trikotnika", "pravokotnika", "petkotnika"] : ["trikotnika", "štirikotnika", "šestkotnika"]);
+          return {
+            text: `Lik $L'$ je podoben liku $L$ s koeficientom podobnosti $k = ${tx(k)}$ (vse dolžine lika $L'$ so $k$-kratnik dolžin lika $L$). ${area ? `Ploščina ${what} $L$ je $${cmT(x, "cm^2")}$. Kolikšna je ploščina ${what} $L'$?` : `Obseg ${what} $L$ je $${cmT(x)}$. Kolikšen je obseg ${what} $L'$?`}${rnd(val, 2)}`,
+            answer: num(cl(val), exactOr(val, 2), area
+              ? [
+                  { value: x * k, why: "Ploščina se ne spremeni s faktorjem $k$, ampak s $k^2$: lik se raztegne v dveh smereh." },
+                  { value: x / (k * k), why: "Lik $L'$ ima dolžine $k$-krat dolžine lika $L$: ploščino pomnoži s $k^2$, ne deli." },
+                  { value: 2 * k * x, why: "Kvadrat koeficienta je $k \\cdot k$, ne $2k$." },
+                ]
+              : [
+                  { value: x * k * k, why: "Obseg je dolžina, zato se spremeni s faktorjem $k$, ne s $k^2$." },
+                  { value: x / k, why: "Dolžine lika $L'$ so $k$-kratnik dolžin lika $L$: pomnoži s $k$." },
+                  { value: x + k, why: "Pri podobnosti dolžine množimo s $k$, ne prištevamo." },
+                ], area ? "cm²" : "cm"),
+            hint: area ? "Kako se spremeni ploščina, če vse dolžine pomnožiš s $k$?" : "Obseg je vsota stranic; vsaka stranica se pomnoži s $k$.",
+            data: { given: [`k = ${tx(k)}`, area ? `S = ${cmT(x, "cm^2")}` : `o = ${cmT(x)}`], find: [area ? "S'" : "o'"] },
+            formula: area ? "S' = k^2 \\cdot S" : "o' = k \\cdot o",
+            solution: area
+              ? `Ploščina se pomnoži s $k^2 = ${tx(k)}^2 = ${tx(cl(k * k))}$.\n$S' = ${tx(cl(k * k))} \\cdot ${cmT(x, "cm^2")} ${res(val, 2, "cm^2")}$`
+              : `Vsaka stranica se pomnoži s $k$, zato tudi obseg.\n$o' = ${tx(k)} \\cdot ${cmT(x)} = ${cmT(cl(val))}$`,
+          };
+        }
+        if (t === 3) {
+          // Višinski ali Evklidov izrek (en korak).
+          if (r.next() < 0.5) {
+            const v = r.int(3, 12);
+            const ds = [];
+            for (let d = 1; d < v; d++) if ((v * v) % d === 0) ds.push(d);
+            const ca = r.pick(ds);
+            const cb = (v * v) / ca;
+            return {
+              text: `Višina $v_c$ na hipotenuzo pravokotnega trikotnika razdeli hipotenuzo na odseka $c_a = ${cmT(ca)}$ in $c_b = ${cmT(cb)}$. Koliko meri višina $v_c$?`,
+              answer: num(v, null, [
+                { value: ca * cb, why: "Višinski izrek da $v_c^2$: na koncu še koreni." },
+                { value: (ca + cb) / 2, why: "Višina ni aritmetična sredina odsekov, ampak geometrijska: $v_c = \\sqrt{c_a c_b}$." },
+                { value: Math.sqrt(ca * ca + cb * cb), why: "To ni Pitagorov izrek: uporabi višinski izrek $v_c^2 = c_a \\cdot c_b$." },
+              ], "cm"),
+              hint: "Uporabi višinski izrek, ki povezuje višino na hipotenuzo z odsekoma hipotenuze.",
+              data: { given: [`c_a = ${cmT(ca)}`, `c_b = ${cmT(cb)}`], find: ["v_c"] },
+              formula: "v_c^2 = c_a \\cdot c_b",
+              solution: `$v_c^2 = c_a \\cdot c_b = ${ca} \\cdot ${cb} = ${v * v}$\n$v_c = \\sqrt{${v * v}} = ${cmT(v)}$`,
+            };
+          }
+          const ca = r.int(2, 16);
+          const cb = r.int(2, 20);
+          const c = ca + cb;
+          const a = Math.sqrt(c * ca);
+          return {
+            text: `Pravokotni trikotnik ima hipotenuzo $c = ${cmT(c)}$. Višina na hipotenuzo jo razdeli tako, da odsek ob kateti $a$ meri $c_a = ${cmT(ca)}$. Koliko meri kateta $a$?${rnd(a, 2)}`,
+            answer: num(cl(a), exactOr(a, 2), [
+              { value: Math.sqrt(c * cb), why: "Kateta $a$ je povezana z odsekom ob njej, $c_a$, ne z drugim odsekom." },
+              { value: c * ca, why: "Evklidov izrek da $a^2$: na koncu še koreni." },
+              { value: Math.sqrt(ca * cb), why: "To je višina $v_c$ (višinski izrek), ne kateta." },
+            ], "cm"),
+            hint: "Uporabi Evklidov izrek: kvadrat katete je zmnožek hipotenuze in odseka ob tej kateti.",
+            data: { given: [`c = ${cmT(c)}`, `c_a = ${cmT(ca)}`], find: ["a"] },
+            formula: "a^2 = c \\cdot c_a",
+            solution: `$a^2 = c \\cdot c_a = ${c} \\cdot ${ca} = ${c * ca}$\n$a = \\sqrt{${c * ca}} ${res(a, 2, "cm")}$`,
+          };
+        }
+        // Talesov izrek o sorazmerjih (odseki na krakih).
+        const sa = r.int(2, 9);
+        const aa = r.int(2, 9);
+        const sb = r.int(2, 12);
+        if (sa === sb) return null;
+        const bb = (sb * aa) / sa;
+        return {
+          text: `Kraka kota z vrhom $S$ sekata vzporednici $p$ in $p'$. Premica $p$ seka kraka v točkah $A$ in $B$, premica $p'$ pa v točkah $A'$ in $B'$ (dlje od $S$). Velja $|SA| = ${cmT(sa)}$, $|AA'| = ${cmT(aa)}$ in $|SB| = ${cmT(sb)}$. Koliko meri $|BB'|$?${rnd(bb, 2)}`,
+          answer: num(cl(bb), exactOr(bb, 2), [
+            { value: (sb * sa) / aa, why: "Razmerje si obrnil: velja $|SA| : |AA'| = |SB| : |BB'|$." },
+            { value: sb + aa - sa, why: "Talesov izrek govori o enakih razmerjih, ne o enakih razlikah." },
+            { value: (aa * sa) / sb, why: "Na drugem kraku je $|SB|$ v istem položaju kot $|SA|$ na prvem: $|BB'| = \\frac{|SB| \\cdot |AA'|}{|SA|}$." },
+          ], "cm"),
+          hint: "Po Talesovem izreku sta razmerji odsekov na obeh krakih enaki.",
+          data: { given: [`|SA| = ${cmT(sa)}`, `|AA'| = ${cmT(aa)}`, `|SB| = ${cmT(sb)}`], find: ["|BB'|"] },
+          formula: "|SA| : |AA'| = |SB| : |BB'|",
+          solution: `$${sa} : ${aa} = ${sb} : |BB'|$\n$|BB'| = \\dfrac{${sb} \\cdot ${aa}}{${sa}} ${res(bb, 2, "cm")}$`,
+        };
+      }
+      if (level === 2) {
+        if (t === 0) {
+          // Razmerje ploščin → razmerje dolžin.
+          const k = r.pick([1.5, 2, 2.5, 3, 1.2, 1.25, 4]);
+          const S = r.int(4, 30);
+          const S2 = cl(S * k * k);
+          // ploščina večjega trikotnika naj ima največ dve decimalki
+          if (Math.abs(S2 * 100 - Math.round(S2 * 100)) > 1e-6) return null;
+          const a = r.int(3, 15);
+          const a2 = cl(a * k);
+          return {
+            text: `Podobna trikotnika imata ploščini $${cmT(S, "cm^2")}$ in $${cmT(S2, "cm^2")}$. Stranica manjšega trikotnika meri $${cmT(a)}$. Koliko meri istoležna stranica večjega trikotnika?`,
+            answer: num(a2, null, [
+              { value: cl((a * S2) / S), why: "Ploščini sta v razmerju $k^2$, ne $k$: iz razmerja ploščin najprej koreni." },
+              { value: cl(a / k), why: "Večji trikotnik ima daljše stranice: pomnoži s $k$." },
+              { value: cl(a * k * k * k), why: "Razmerje ploščin je $k^2$; $k$ dobiš s korenjenjem, ne s potenciranjem." },
+            ], "cm"),
+            hint: "Razmerje ploščin podobnih likov je $k^2$. Kako iz njega dobiš $k$?",
+            data: { given: [`S = ${cmT(S, "cm^2")}`, `S' = ${cmT(S2, "cm^2")}`, `a = ${cmT(a)}`], find: ["a'"] },
+            formula: ["\\dfrac{S'}{S} = k^2", "a' = k \\cdot a"],
+            solution: `$k^2 = \\dfrac{S'}{S} = \\dfrac{${tx(S2)}}{${S}} = ${tx(cl(k * k))}$, $k = ${tx(k)}$\n$a' = k \\cdot a = ${tx(k)} \\cdot ${cmT(a)} = ${cmT(a2)}$`,
+          };
+        }
+        if (t === 1) {
+          // Merilo zemljevida in ploščina (k², pretvorba enot).
+          const M = r.pick([10000, 20000, 25000, 50000]);
+          const A = r.pick([2, 3, 4, 5, 6, 8, 10, 12, 1.5, 2.5, 4.5]);
+          const km2 = cl((A * M * M) / 1e10);
+          const what = r.pick(["gozd", "jezero", "park", "polje"]);
+          return {
+            text: `Na zemljevidu v merilu $1 : ${big(M)}$ ima ${what} ploščino $${cmT(A, "cm^2")}$. Kolikšna je dejanska ploščina v $\\mathrm{km^2}$?`,
+            answer: num(km2, null, [
+              { value: cl((A * M) / 1e10), why: "Ploščina se poveča s kvadratom merila: $k^2 = M^2$, ne $M$." },
+              { value: cl((A * M * M) / 1e8), why: "Preveri pretvorbo: $1\\ \\mathrm{km^2} = 10^{10}\\ \\mathrm{cm^2}$." },
+              { value: cl((A * M) / 1e5), why: "To je dolžina v km, ne ploščina: ploščino pomnoži s $k^2$." },
+            ], "km²"),
+            hint: "Dolžine v naravi so $k$-krat večje, ploščine $k^2$-krat. Na koncu pretvori $\\mathrm{cm^2}$ v $\\mathrm{km^2}$.",
+            data: { given: [`k = ${big(M)}`, `S_{\\text{zemljevid}} = ${cmT(A, "cm^2")}`], find: ["S"] },
+            formula: ["S = k^2 \\cdot S_{\\text{zemljevid}}", "1\\ \\mathrm{km^2} = 10^{10}\\ \\mathrm{cm^2}"],
+            solution: `$S = ${big(M)}^2 \\cdot ${cmT(A, "cm^2")} = ${tx(A)} \\cdot ${big(M * M)}\\ \\mathrm{cm^2}$\n$S = ${big(cl(A * M * M))}\\ \\mathrm{cm^2} = ${cmT(km2, "km^2")}$`,
+          };
+        }
+        if (t === 2) {
+          // Sence: podobna pravokotna trikotnika.
+          const h1 = r.pick([1.2, 1.5, 1.6, 1.8, 2]);
+          const s1 = r.pick([0.8, 0.9, 1.2, 1.5, 2.4, 2.5, 3]);
+          const s2 = r.int(30, 180) / 10;
+          const h2 = (h1 * s2) / s1;
+          if (h2 < 3 || h2 > 40) return null;
+          const [obj, adj, stick] = r.pick([["Drevo", "visoko", "navpična palica, visoka"], ["Zvonik", "visok", "navpičen drog, visok"], ["Stavba", "visoka", "navpična palica, visoka"]]);
+          return {
+            text: `${obj} meče senco, dolgo $${cmT(s2, "m")}$. Ob istem času ${stick} $${cmT(h1, "m")}$, meče senco, dolgo $${cmT(s1, "m")}$. Kako ${adj} je ${obj.toLowerCase()}?${rnd(h2, 1).replace("desetinko.", "desetinko metra.")}`,
+            answer: num(cl(h2), exactOr(h2, 1), [
+              { value: (s2 * s1) / h1, why: "Razmerje si obrnil: višina proti senci je pri obeh telesih enaka." },
+              { value: h1 + s2 - s1, why: "Podobnost ohranja razmerja, ne razlik." },
+              { value: (h1 * s1) / s2, why: "Višina predmeta je v razmerju s svojo senco: $\\frac{h}{s} = \\frac{h_1}{s_1}$." },
+            ], "m"),
+            hint: "Sončni žarki so vzporedni, zato sta trikotnika (predmet, senca, žarek) podobna.",
+            data: { given: [`h_1 = ${cmT(h1, "m")}`, `s_1 = ${cmT(s1, "m")}`, `s = ${cmT(s2, "m")}`], find: ["h"] },
+            formula: "\\dfrac{h}{s} = \\dfrac{h_1}{s_1}",
+            solution: `$\\dfrac{h}{${tx(s2)}} = \\dfrac{${tx(h1)}}{${tx(s1)}}$\n$h = \\dfrac{${tx(h1)} \\cdot ${tx(s2)}}{${tx(s1)}} ${res(h2, 1, "m")}$`,
+          };
+        }
+        if (t === 3) {
+          // Odseka hipotenuze → kateta ali višina (dva koraka).
+          const ca = r.int(2, 16);
+          const cb = r.int(2, 20);
+          const c = ca + cb;
+          const askB = r.next() < 0.5;
+          const v = askB ? Math.sqrt(c * cb) : Math.sqrt(ca * cb);
+          return {
+            text: `Višina na hipotenuzo pravokotnega trikotnika razdeli hipotenuzo na odseka $c_a = ${cmT(ca)}$ in $c_b = ${cmT(cb)}$. Koliko meri ${askB ? "kateta $b$" : "višina $v_c$"}?${rnd(v, 2)}`,
+            answer: num(cl(v), exactOr(v, 2), askB
+              ? [
+                  { value: Math.sqrt(c * ca), why: "Kateta $b$ je povezana z odsekom ob njej, $c_b$." },
+                  { value: Math.sqrt(ca * cb), why: "To je višina $v_c$, ne kateta." },
+                  { value: c * cb, why: "Evklidov izrek da $b^2$: na koncu še koreni." },
+                ]
+              : [
+                  { value: ca * cb, why: "Višinski izrek da $v_c^2$: na koncu še koreni." },
+                  { value: Math.sqrt(c * ca), why: "To je kateta $a$ (Evklidov izrek), ne višina." },
+                  { value: (ca + cb) / 2, why: "Višina ni aritmetična sredina odsekov." },
+                ], "cm"),
+            hint: askB ? "Najprej izračunaj hipotenuzo, nato uporabi Evklidov izrek za kateto $b$." : "Uporabi višinski izrek.",
+            data: { given: [`c_a = ${cmT(ca)}`, `c_b = ${cmT(cb)}`], find: [askB ? "b" : "v_c"] },
+            formula: askB ? ["c = c_a + c_b", "b^2 = c \\cdot c_b"] : "v_c^2 = c_a \\cdot c_b",
+            solution: askB
+              ? `$c = ${ca} + ${cb} = ${cmT(c)}$\n$b^2 = c \\cdot c_b = ${c} \\cdot ${cb} = ${c * cb}$\n$b = \\sqrt{${c * cb}} ${res(v, 2, "cm")}$`
+              : `$v_c^2 = c_a \\cdot c_b = ${ca} \\cdot ${cb} = ${ca * cb}$\n$v_c = \\sqrt{${ca * cb}} ${res(v, 2, "cm")}$`,
+          };
+        }
+        // Talesov izrek: vzporedni daljici.
+        const sa = r.int(2, 9);
+        const aa = r.int(2, 9);
+        const ab = r.int(2, 10);
+        const a2 = (ab * (sa + aa)) / sa;
+        return {
+          text: `Kraka kota z vrhom $S$ sekata vzporednici $AB$ in $A'B'$ ($A$ in $A'$ ležita na enem kraku, $B$ in $B'$ na drugem, $A'$ je dlje od $S$). Velja $|SA| = ${cmT(sa)}$, $|AA'| = ${cmT(aa)}$ in $|AB| = ${cmT(ab)}$. Koliko meri $|A'B'|$?${rnd(a2, 2)}`,
+          answer: num(cl(a2), exactOr(a2, 2), [
+            { value: (ab * aa) / sa, why: "V razmerje vzporednih daljic vstavi razdaljo od vrha: $|SA'| = |SA| + |AA'|$." },
+            { value: (ab * sa) / (sa + aa), why: "Razmerje si obrnil: daljša vzporednica je dlje od vrha." },
+            { value: ab + aa, why: "Talesov izrek govori o razmerjih, ne o razlikah dolžin." },
+          ], "cm"),
+          hint: "Najprej izračunaj $|SA'|$. Vzporedni daljici sta v enakem razmerju kot razdalji njunih krajišč od vrha $S$.",
+          data: { given: [`|SA| = ${cmT(sa)}`, `|AA'| = ${cmT(aa)}`, `|AB| = ${cmT(ab)}`], find: ["|A'B'|"] },
+          formula: "\\dfrac{|A'B'|}{|AB|} = \\dfrac{|SA'|}{|SA|}",
+          solution: `$|SA'| = ${sa} + ${aa} = ${cmT(sa + aa)}$\n$|A'B'| = |AB| \\cdot \\dfrac{|SA'|}{|SA|} = ${ab} \\cdot \\dfrac{${sa + aa}}{${sa}} ${res(a2, 2, "cm")}$`,
+        };
+      }
+      // raven 3
+      if (t === 0) {
+        // Prostornina podobnih teles: k³.
+        if (r.next() < 0.5) {
+          const [h1, h2] = r.pick([[8, 12], [10, 15], [6, 9], [8, 10], [10, 12], [12, 18], [6, 12], [10, 20]]);
+          const k = h2 / h1;
+          const V1 = r.pick([100, 120, 150, 160, 200, 240, 250]);
+          const V2 = V1 * k ** 3;
+          return {
+            text: `Dva kozarca imata podobno obliko. Manjši je visok $${cmT(h1)}$ in drži $${cmT(V1, "ml")}$, večji je visok $${cmT(h2)}$. Koliko drži večji kozarec? Zaokroži na cel mililiter.`,
+            answer: num(V2, 0, [
+              { value: V1 * k, why: "Prostornina se ne spremeni s $k$, ampak s $k^3$: telo se raztegne v treh smereh." },
+              { value: V1 * k * k, why: "$k^2$ velja za ploščine; za prostornino uporabi $k^3$." },
+            ], "ml"),
+            hint: "Izračunaj koeficient podobnosti iz višin. Kako se spremeni prostornina?",
+            data: { given: [`h_1 = ${cmT(h1)}`, `h_2 = ${cmT(h2)}`, `V_1 = ${cmT(V1, "ml")}`], find: ["V_2"] },
+            formula: ["k = \\dfrac{h_2}{h_1}", "V_2 = k^3 \\cdot V_1"],
+            solution: `$k = \\dfrac{${h2}}{${h1}} = ${tx(k)}$, $k^3 = ${tx(k ** 3)}$\n$V_2 = ${tx(k ** 3)} \\cdot ${cmT(V1, "ml")} ${res(V2, 0, "ml")}$`,
+          };
+        }
+        const [M, what] = r.pick([[20, "vrtne ute"], [25, "garaže"], [50, "hiše"]]);
+        const Vm = r.pick([0.4, 0.6, 0.8, 1.2, 1.5, 2, 2.4]);
+        const Vr = (Vm * M ** 3) / 1000; // dm³ → m³
+        return {
+          text: `Maketa ${what} v merilu $1 : ${M}$ ima prostornino $${cmT(Vm, "dm^3")}$. Kolikšna je prostornina prave ${what} v $\\mathrm{m^3}$?`,
+          answer: num(cl(Vr), null, [
+            { value: cl((Vm * M) / 1000), why: "Prostornina se poveča s $k^3$, ne s $k$." },
+            { value: cl((Vm * M * M) / 1000), why: "$k^2$ velja za ploščine; za prostornino uporabi $k^3$." },
+            { value: cl(Vm * M ** 3), why: "Rezultat je v $\\mathrm{dm^3}$; pretvori v $\\mathrm{m^3}$ ($1\\ \\mathrm{m^3} = 1000\\ \\mathrm{dm^3}$)." },
+          ], "m³"),
+          hint: "Vse dolžine pravega objekta so $k$-krat večje kot na maketi. Kolikokrat večja je prostornina? Na koncu pretvori enote.",
+          data: { given: [`k = ${M}`, `V_{\\text{maketa}} = ${cmT(Vm, "dm^3")}`], find: ["V"] },
+          formula: ["V = k^3 \\cdot V_{\\text{maketa}}", "1\\ \\mathrm{m^3} = 1000\\ \\mathrm{dm^3}"],
+          solution: `$k^3 = ${M}^3 = ${big(M ** 3)}$\n$V = ${big(M ** 3)} \\cdot ${cmT(Vm, "dm^3")} = ${big(cl(Vm * M ** 3))}\\ \\mathrm{dm^3} = ${cmT(cl(Vr), "m^3")}$`,
+        };
+      }
+      if (t === 1) {
+        // Razmerje prostornin → razmerje površin.
+        const [p, q] = r.pick([[1, 2], [2, 3], [3, 4], [2, 5], [3, 5], [1, 3]]);
+        const s = r.pick([2, 3, 4, 5]);
+        const V1 = s * p ** 3;
+        const V2 = s * q ** 3;
+        // Površina mora ustrezati prostornini (izoperimetrična neenakost; vzamemo vsaj površino kocke × 4/3).
+        const P1 = (Math.ceil(8 * s ** (2 / 3)) + r.int(0, 8)) * p * p;
+        const P2 = (P1 / (p * p)) * q * q;
+        const body = r.pick(["Dva podobna kipca", "Dve podobni vazi", "Dve podobni steklenici", "Dva podobna lesena modela"]);
+        return {
+          text: `${body} imata prostornini $${cmT(V1, "cm^3")}$ in $${cmT(V2, "cm^3")}$. Površina manjšega telesa je $${cmT(P1, "cm^2")}$. Kolikšna je površina večjega?`,
+          answer: num(P2, null, [
+            { value: (P1 * V2) / V1, why: "Površine so v razmerju $k^2$, prostornine pa $k^3$: iz razmerja prostornin najprej izračunaj $k$." },
+            { value: (P1 * q) / p, why: "Površina se spremeni s $k^2$, ne s $k$." },
+            { value: (P1 * q ** 3) / p ** 3, why: "To bi veljalo za prostornino; za površino uporabi $k^2$." },
+          ], "cm²"),
+          hint: "Iz razmerja prostornin s tretjim korenom izračunaj $k$, nato uporabi $k^2$ za površini.",
+          data: { given: [`V_1 = ${cmT(V1, "cm^3")}`, `V_2 = ${cmT(V2, "cm^3")}`, `P_1 = ${cmT(P1, "cm^2")}`], find: ["P_2"] },
+          formula: ["\\dfrac{V_2}{V_1} = k^3", "\\dfrac{P_2}{P_1} = k^2"],
+          solution: `$k^3 = \\dfrac{${V2}}{${V1}} = ${ft(q ** 3, p ** 3)}$, $k = ${ft(q, p)}$\n$P_2 = k^2 \\cdot P_1 = ${ft(q * q, p * p)} \\cdot ${P1} = ${cmT(P2, "cm^2")}$`,
+        };
+      }
+      if (t === 2) {
+        // Vzporednica, ki odreže trikotnik z deležem ploščine.
+        const v = r.int(6, 20);
+        const [fa, fb, word] = r.pick([[1, 2, "polovica"], [1, 4, "četrtina"], [4, 9, "$\\frac{4}{9}$"], [1, 3, "tretjina"], [9, 16, "$\\frac{9}{16}$"], [9, 25, "$\\frac{9}{25}$"]]);
+        const d = v * Math.sqrt(fa / fb);
+        const fromBase = r.next() < 0.4;
+        const ans = fromBase ? v - d : d;
+        return {
+          text: `Trikotnik ima višino $v_c = ${cmT(v)}$ na stranico $c$. Vzporednica s stranico $c$ odreže pri oglišču $C$ manjši trikotnik, katerega ploščina je ${word} ploščine celega trikotnika. Kako daleč od ${fromBase ? "stranice $c$" : "oglišča $C$"} poteka vzporednica?${rnd(ans, 1)}`,
+          answer: num(cl(ans), exactOr(ans, 1), [
+            { value: fromBase ? v - (v * fa) / fb : (v * fa) / fb, why: "Razmerje ploščin je $k^2$: koeficient $k$ dobiš s korenjenjem." },
+            { value: fromBase ? d : v - d, why: fromBase ? "To je razdalja od oglišča $C$; iščemo razdaljo od stranice $c$." : "To je razdalja od stranice $c$; iščemo razdaljo od oglišča $C$." },
+          ], "cm"),
+          hint: "Odrezani trikotnik je podoben celemu. Iz razmerja ploščin izračunaj $k$; višini sta v razmerju $k$.",
+          data: { given: [`v_c = ${cmT(v)}`, word.startsWith("$") ? `\\dfrac{S'}{S} = \\dfrac{${fa}}{${fb}}` : `S' = \\text{${word} od } S`], find: [fromBase ? "v_c - v'" : "v'"] },
+          formula: ["\\dfrac{S'}{S} = k^2", "v' = k \\cdot v_c"],
+          solution: `$k^2 = ${ft(fa, fb)}$, $k = \\sqrt{${ft(fa, fb)}} ${ap(Math.sqrt(fa / fb), 4)} ${txr(Math.sqrt(fa / fb), 4)}$\n$v' = k \\cdot v_c ${res(d, fromBase ? 3 : 1, "cm")}$${fromBase ? `\nRazdalja od stranice $c$: $${v} - ${txr(d, 3)} ${res(ans, 1, "cm")}$` : ""}`,
+        };
+      }
+      if (t === 3) {
+        // Trapez: trikotnika ob diagonalah sta podobna.
+        const a = r.int(6, 16);
+        const c = r.int(3, a - 2);
+        const S1 = r.pick([9, 12, 16, 18, 20, 24, 25, 32, 36]);
+        const S2 = (S1 * c * c) / (a * a);
+        return {
+          text: `V trapezu $ABCD$ z osnovnicama $a = |AB| = ${cmT(a)}$ in $c = |CD| = ${cmT(c)}$ se diagonali sekata v točki $S$. Ploščina trikotnika $ABS$ je $${cmT(S1, "cm^2")}$. Kolikšna je ploščina trikotnika $CDS$?${rnd(S2, 2)}`,
+          answer: num(cl(S2), exactOr(S2, 2), [
+            { value: (S1 * c) / a, why: "Ploščini podobnih trikotnikov sta v razmerju $k^2$, ne $k$." },
+            { value: (S1 * a * a) / (c * c), why: "Trikotnik $CDS$ leži ob krajši osnovnici, zato je manjši: $k = \\frac{c}{a}$." },
+          ], "cm²"),
+          hint: "Trikotnika $ABS$ in $CDS$ imata enake kote (vzporedni osnovnici, sovršna kota). Kolikšen je koeficient podobnosti?",
+          data: { given: [`a = ${cmT(a)}`, `c = ${cmT(c)}`, `S_{ABS} = ${cmT(S1, "cm^2")}`], find: ["S_{CDS}"] },
+          formula: ["k = \\dfrac{c}{a}", "S_{CDS} = k^2 \\cdot S_{ABS}"],
+          solution: `Trikotnika $ABS$ in $CDS$ sta podobna, $k = \\dfrac{c}{a} = ${ft(c, a)}$.\n$S_{CDS} = \\left(${ft(c, a)}\\right)^2 \\cdot ${S1} = ${ft(c * c * S1, a * a)} ${res(S2, 2, "cm^2")}$`,
+        };
+      }
+      // Središčni razteg v koordinatah: ploščina slike.
+      const xs = r.int(-3, 3);
+      const ys = r.int(-3, 3);
+      const x0 = r.int(-2, 4);
+      const y0 = r.int(-2, 4);
+      const u = r.int(2, 5);
+      const w = r.int(1, 4);
+      const k = r.pick([-2, -1.5, -0.5, 1.5, 2, 3, -3, 0.5]);
+      const S = (u * w) / 2;
+      const S2 = S * k * k;
+      return {
+        text: `Trikotnik z oglišči $A(${x0}, ${y0})$, $B(${x0 + u}, ${y0})$ in $C(${x0}, ${y0 + w})$ preslikamo s središčnim raztegom s središčem $S(${xs}, ${ys})$ in koeficientom $k = ${tx(k)}$. Kolikšna je ploščina slike $A'B'C'$?`,
+        answer: num(cl(S2), null, [
+          { value: cl(S * Math.abs(k)), why: "Ploščina se pomnoži s $k^2$, ne s $|k|$." },
+          { value: cl(S * k), why: "Ploščina ne more biti negativna: pomnoži s $k^2$." },
+          { value: S, why: "Središčni razteg s $|k| \\ne 1$ spremeni velikost lika." },
+        ]),
+        hint: "Najprej izračunaj ploščino trikotnika $ABC$ (pravokotni trikotnik). Središče raztega na ploščino slike ne vpliva.",
+        data: { given: [`A = (${x0}, ${y0})`, `B = (${x0 + u}, ${y0})`, `C = (${x0}, ${y0 + w})`, `k = ${tx(k)}`], find: ["S'"] },
+        formula: ["S = \\dfrac{|AB| \\cdot |AC|}{2}", "S' = k^2 \\cdot S"],
+        solution: `$|AB| = ${u}$, $|AC| = ${w}$, kot pri $A$ je pravi: $S = \\dfrac{${u} \\cdot ${w}}{2} = ${tx(S)}$\n$S' = k^2 \\cdot S = ${tx(k * k)} \\cdot ${tx(S)} = ${tx(cl(S2))}$`,
+      };
+    },
+  },
+];
+
+export const MATURA_MAT_SS2 = wrapGens([...GENS, ...PODOBNOST]);

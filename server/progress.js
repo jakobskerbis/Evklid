@@ -26,6 +26,7 @@ const ONE_SHOT = ["placement", "contest", "pretest"];
 
 export const RULES = {
   levelUpStreak: 3, // 3 pravilni zapored -> težje
+  levelDownStreak: 2, // 2 napačna zapored na isti ravni -> lažje (ena napaka ravni ne zniža, da učenec ne niha)
   masteryWindow: 10, // zadnjih 10 nalog
   masteryCorrect: 8, // vsaj 8 pravilnih v prvem poskusu
   masteryHard: 2, // od tega vsaj 2 na najvišji težavnosti
@@ -104,6 +105,7 @@ export class Progress {
         topic_id: topicId,
         level: 1,
         streak: 0,
+        wrong_streak: 0,
         status: "new",
         source: null,
         mastered_at: null,
@@ -116,13 +118,13 @@ export class Progress {
   saveState(s) {
     this.db
       .prepare(
-        `INSERT INTO topic_state (student_id, topic_id, level, streak, status, source, mastered_at, review_stage, review_due, seen_example, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-         ON CONFLICT(student_id, topic_id) DO UPDATE SET level = excluded.level, streak = excluded.streak, status = excluded.status,
+        `INSERT INTO topic_state (student_id, topic_id, level, streak, wrong_streak, status, source, mastered_at, review_stage, review_due, seen_example, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+         ON CONFLICT(student_id, topic_id) DO UPDATE SET level = excluded.level, streak = excluded.streak, wrong_streak = excluded.wrong_streak, status = excluded.status,
            source = excluded.source, mastered_at = excluded.mastered_at, review_stage = excluded.review_stage,
            review_due = excluded.review_due, seen_example = excluded.seen_example, updated_at = datetime('now')`,
       )
-      .run(s.student_id, s.topic_id, s.level, s.streak, s.status, s.source, s.mastered_at, s.review_stage, s.review_due, s.seen_example);
+      .run(s.student_id, s.topic_id, s.level, s.streak, s.wrong_streak || 0, s.status, s.source, s.mastered_at, s.review_stage, s.review_due, s.seen_example);
   }
   markMastered(studentId, topicId, source) {
     const s = this.state(studentId, topicId);
@@ -417,6 +419,7 @@ export class Progress {
       s.status = "learning";
       s.level = Math.max(1, Math.min(3, known));
       s.streak = 0;
+      s.wrong_streak = 0;
       this.saveState(s);
     }
     this.db.prepare("UPDATE topic_state SET pretest = ? WHERE student_id = ? AND topic_id = ?").run(known, studentId, topicId);
@@ -967,6 +970,7 @@ export class Progress {
 
       if (row.mode === "practice") {
         if (firstTry) {
+          s.wrong_streak = 0;
           s.streak += 1;
           if (s.streak >= RULES.levelUpStreak && s.level < 3) {
             s.level += 1;
@@ -996,11 +1000,17 @@ export class Progress {
 
     // Napačno
     out.correct = false;
+    // Šteje prvi poskus vsake naloge (kot pri streak): raven se zniža šele po RULES.levelDownStreak napačnih
+    // zapored na isti ravni; pravilen odgovor ali sprememba ravni števec ponastavi.
     if (row.mode === "practice" && firstTry) {
       s.streak = 0;
-      if (s.level > 1) {
-        s.level -= 1;
-        out.levelDown = s.level;
+      s.wrong_streak = (s.wrong_streak || 0) + 1;
+      if (s.wrong_streak >= RULES.levelDownStreak) {
+        s.wrong_streak = 0;
+        if (s.level > 1) {
+          s.level -= 1;
+          out.levelDown = s.level;
+        }
       }
       this.saveState(s);
     }

@@ -65,7 +65,14 @@ Koda: `server/accounts/neaktivni.js`, test `test/neaktivni.test.js`. Teče enkra
 - **Brez Resenda** (`RESEND_API_KEY`) ne gre nobeno obvestilo in ni nobenega izbrisa.
 - **Poročilo brez dejanj** (skrbnik): `GET /api/admin/neaktivni` → `{ vklopljeno, eposta, obvestilo,
   obvestiloMladoletnim, izbris, cakaRok }` (samo števila, brez e-naslovov).
-- **Kopije:** izbrisan račun ostane v varnostnih kopijah do njihovega poteka (spodaj, največ 30 dni).
+- **Kopije:** izbrisan račun ostane v varnostnih kopijah do njihovega poteka (spodaj, največ 30 dni); obnova iz
+  kopije ga ne vrne (seznam izbrisov, spodaj »Varnostne kopije«).
+- **Stranka v Stripu** se po izbrisu računa (tudi neaktivnega) izbriše v ozadju (`DELETE /v1/customers/…`); napaka
+  izbrisa računa ne ustavi, v dnevnik gresta samo koda napake in številka izbrisanega računa (brez e-naslova in id-ja
+  stranke; stranko najdeš v Stripu po metapodatku `parent_id`). Plačila, vračila, spori in računi (invoices, z imenom
+  in e-naslovom kupca ob izdaji, za davčno hrambo) ostanejo v Stripu, vezani na plačilo, ne na stranko, zato ročno
+  vračilo po izbrisu še gre. Stranka ostane, če ima račun odprt odstop od pogodbe ali zahtevek garancije brez odločitve (vračilo še ni končano; v dnevniku je
+  vrstica s številko odstopa ali zahtevka, skrbnik stranko izbriše ročno po zaključku) ali jo uporablja še drug račun.
 
 ## Izbris profila (`DELETE /api/students/:id`)
 
@@ -96,6 +103,16 @@ Izbrisani podatki ostanejo v kopijah, dokler kopije ne potečejo:
   dnevno čiščenje po rokih hrambe (tudi z `EVKLID_BACKUPS=0`);
 - **baza pred obnovo** (`<baza>.pred-obnovo-*`, za razveljavitev obnove): 14 dni (+ 7 dni posnetka diska).
 
+**Seznam izbrisov** (`<mapa baze>/<ime>-izbrisi.json`, `server/kopije.js`, `server/accounts/izbris.js`): vsak izbris
+računa ali profila (tudi samodejni) zapiše id in čas nastanka vrstice (`created_at`) ter čas izbrisa, brez e-naslova,
+imena ali vsebine. Datoteka je zunaj baze, zato je obnova baze ne vrne nazaj. Ob vsakem zagonu, preden strežnik sprejme
+zahteve, se izbrisi ponovijo za vrstice, ki so spet v bazi (vse poti obnove: `obnovi-kopijo.js`, `--razveljavi`, kopija
+iz R2, posnetek diska). Ujemati se morata id in `created_at`, zato nov račun ali profil s ponovno uporabljenim id-jem
+ostane (tudi z istim e-naslovom). Seznam gre šifriran tudi v R2 (`kopije/<ime>-izbrisi.json.enc`, v največ 1 uri po
+izbrisu) in se ob zagonu ter vsako uro združi z lokalnim, da velja tudi po izgubi diska. Hrani se 45 dni (najstarejša
+kopija 30 dni + rezerva); starejše zapise pobriše dnevno čiščenje po rokih hrambe (`pocistiStare`). Gostje po 30 dneh
+se ne zapišejo: po obnovi jih isto dnevno čiščenje izbriše znova.
+
 ## Najdbe (zapisano 15. 11. 2026)
 
 Popravljeno 16. 11. 2026 (j je izbral »vse v bazi«; test vsake je v oklepaju):
@@ -115,7 +132,9 @@ Popravljeno 16. 11. 2026 (j je izbral »vse v bazi«; test vsake je v oklepaju):
 Odprto:
 
 6. `public/zasebnost.html` §5 ne omenja, da po izbrisu ostanejo (brez povezave na račun) predpomnjeni odgovori,
-   nagrade za priporočilo, šola in naloge v razredu drugega učitelja. Besedilo je za drug profil; zapisano za j.
+   nagrade za priporočilo, šola in naloge v razredu drugega učitelja. Od 20. 11. 2026 ne omenja niti seznama izbrisov
+   (številki računa in profilov s časom nastanka in izbrisa, 45 dni) niti izbrisa stranke v Stripu ob izbrisu računa.
+   Besedilo je za drug profil; zapisano za j.
 
 Zunaj baze (pregled 3; test jih ne vidi):
 
@@ -123,11 +142,10 @@ Zunaj baze (pregled 3; test jih ne vidi):
    imeni in besedili mnenj; izbris ga ne prepiše. `data/povratne-informacije.json` se z nastavljenim `EVKLID_DATA_KEY`
    ne piše več; če je na disku nastal prej, ostane nešifriran. Na Renderju preveri, ali datoteki obstajata, in ju
    pobriši. Tudi samodejni čiščenji (gost po 30 dneh, nepotrjen račun) kopije mnenj ne prepišeta.
-8. **Obnova iz kopije vrne izbrisane račune.** Obnova kopije z dne D vrne vse račune, izbrisane po D, seznama za
-   ponoven izbris pa ni (dnevnik dostopov po izbrisu nima id-ja računa). Med pilotom: po obnovi ročno preveri zahteve
-   za izbris iz tega obdobja (e-pošta) in jih ponovi. Dopolniti `docs/obnova.md`.
-9. **Stranka v Stripu ostane.** Izbris računa prekliče naročnino, stranke (e-naslov, ime, id računa v metapodatkih) pa
-   ne izbriše, tudi po opuščenem nakupu. Za pilot opomba (nakupi pilotnih računov so zaprti).
+8. ~~Obnova iz kopije vrne izbrisane račune.~~ Zaprto 20. 11. 2026: seznam izbrisov zunaj baze (zgoraj »Varnostne
+   kopije«), ob zagonu se izbrisi ponovijo (`test/obnova-izbris.test.js`).
+9. ~~Stranka v Stripu ostane.~~ Zaprto 20. 11. 2026: po izbrisu računa se izbriše tudi stranka v Stripu, razen ob
+   odprtem odstopu od pogodbe (zgoraj »Izbris računa«; `test/stripe-poti.test.js`).
 10. **R2:** kopije, starejše od 30 dni, se brišejo samo ob uspešnem nalaganju; če nalaganje odpove, ostanejo. Kopija,
     prenesena iz R2 (`--oblak-prenesi`), je ročna kopija in spada pod točko 1 (ker ima datum izvirne kopije, se lahko
     pobriše že naslednji dan; pred obnovo jo po potrebi prenesi znova). Rok 30 dni nima rezerve: kopija se pobriše ob

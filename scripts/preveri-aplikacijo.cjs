@@ -96,6 +96,18 @@ function taskAnswer(dbPath, taskId) {
     db.close();
   }
 }
+// Id naloge, ki je zdaj prikazana (app.js renderTask: data-task-id na kartici naloge). Iz zaslona in ne iz odgovorov
+// strežnika: zahteva v ozadju ali odgovor, prebran za izrisom, bi sicer dal id druge naloge. Z »prev« počaka na novo
+// nalogo; vrne null, če je namesto nje prikazan konec (#practice .result).
+async function shownTaskId(p, prev = null) {
+  const h = await p.waitForFunction((old) => {
+    if (old && document.querySelector("#practice .result")) return { id: null };
+    const id = document.querySelector("#practice .card.task[data-task-id]")?.dataset.taskId;
+    return id && id !== old ? { id } : null;
+  }, prev, { timeout: 5000 }).catch(() => null);
+  if (!h) throw new Error(prev ? "nova naloga se ni prikazala" : "ne najdem id prikazane naloge");
+  return (await h.jsonValue()).id;
+}
 function answersFor(a) {
   const round = (v, d) => (d == null ? String(v) : (Math.round(v * 10 ** d + 1e-9) / 10 ** d).toFixed(d));
   let right = [];
@@ -209,19 +221,6 @@ function PAGE_HOOKS() {
   requestAnimationFrame(zagonTick);
   // Neobravnavane zavrnitve aplikacija pokaže le kot obvestilo; tukaj jih zabeležimo kot napako.
   addEventListener("unhandledrejection", (e) => console.error(`neobravnavana zavrnitev: ${e.reason?.message || e.reason}`));
-  const f = window.fetch;
-  window.fetch = async (...a) => {
-    const r = await f(...a);
-    try {
-      if (/\/(practice\/next|pretest|competition-training|contest|daily|review|unit-practice|placement|test-prep|answer|skip)$/.test(String(a[0])) && r.ok) {
-        r.clone().json().then((j) => {
-          const t = j.task || j.next?.task;
-          if (t?.id) window.__stmTask = t.id;
-        }).catch(() => {});
-      }
-    } catch {}
-    return r;
-  };
   const raf = window.requestAnimationFrame.bind(window);
   const caf = window.cancelAnimationFrame.bind(window);
   const pending = new Map();
@@ -518,8 +517,7 @@ async function practiceTopic(p, db) {
     await click(p, "#ex-next", { wait: 300 });
   }
   await expectVisible(p, "#practice .task .task-text", "naloga");
-  const taskId = await p.evaluate(() => window.__stmTask);
-  if (!taskId) throw new Error("ne najdem id naloge");
+  const taskId = await shownTaskId(p);
   // Lestev namigov do konca.
   let hints = 0;
   for (; hints < 5 && (await p.locator("#hint-btn").isVisible()); hints++) {
@@ -863,6 +861,16 @@ async function okna(p, label) {
   await screen(p, `klepet-prijava-${label}`);
   await click(p, "#view-chat .bug-box .rep-send", { wait: 400 });
   if (await p.locator("#view-chat .bug-box").count()) throw new Error("skrbnikova prijava napake se ni poslala");
+  // Skrbnik: »Predlagaj novo funkcijo« (žarnica) zamenja odprt obrazec za napako in pošlje zahtevo (kind = feature).
+  await click(p, "#chat-bug", { wait: 150 });
+  await click(p, "#chat-idea", { wait: 150 });
+  if ((await p.locator("#view-chat .bug-box").count()) !== 1 || !(await p.locator('#view-chat .bug-box[data-kind="idea"]').count())) throw new Error("žarnica ni zamenjala obrazca za napako z obrazcem za novo funkcijo");
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 100 });
+  await expectVisible(p, "#view-chat .bug-box .rep-err", "opozorilo, da je treba opisati novo funkcijo");
+  await p.fill("#view-chat .bug-box textarea", "Preizkus: zahteva za novo funkcijo");
+  await screen(p, `klepet-funkcija-${label}`);
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 400 });
+  if (await p.locator("#view-chat .bug-box").count()) throw new Error("skrbnikova zahteva za novo funkcijo se ni poslala");
   await p.fill("#input", "Pokaži periodni sistem");
   await click(p, "#send", { wait: 300 });
   await expectVisible(p, '.okno[data-view="graph"] #graph-slot .pse, .okno[data-view="graph"] #graph-slot > *', "kalkulator v oknu po ukazu inštruktorju", 8000);
@@ -993,9 +1001,11 @@ async function competition(p, label, view = "competition") {
   await click(p, `#${view}-content [data-comp-train]`, { wait: 400 });
   await expectVisible(p, "#practice .task", "naloga tekmovalnega treninga");
   // Trening do konca: »Ne vem« ni, zato odgovorimo pravilno ali narobe, dokler ni konec.
+  let id = null;
   for (let i = 0; i < 12; i++) {
     if (await p.locator("#practice .result").isVisible()) break;
-    const id = await p.evaluate(() => window.__stmTask);
+    id = await shownTaskId(p, id);
+    if (!id) break;
     const { right, wrong } = answersFor(taskAnswer(p.db, id));
     await answerTask(p, p.db, i % 2 ? wrong || right : right || wrong);
     if (await p.locator("#fb-retry").isVisible()) {

@@ -1,10 +1,10 @@
 // Generatorji za teme 4. letnika gimnazije, ki so prišle z maturitetno potjo (MAT-SS-4).
 // Merila: docs/kakovost.md §2. Vsi rezultati so izračunani v kodi iz istih (zaokroženih)
 // števil, ki jih vidi dijak. Izvirne naloge, ne prepisane maturitetne.
-import { g, nOf } from "../rng.js";
+import { g, nOf, verbOf, NAMES } from "../rng.js";
 import { roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
 
 const P = "mat-ss4-matura-";
 const T = (s) => `MAT-SS-4/${s}`;
@@ -1768,4 +1768,958 @@ const GENS = [
   },
 ];
 
-export const MATURA_MAT_SS4 = wrapGens(GENS, { dropZero: false });
+// ================= verjetnost (MAT-SS-4/verjetnost) =================
+// Zapisi kot v lekciji: vsota A + B, produkt A · B, nasprotni dogodek \overline{A}, pogojna verjetnost P(A | B).
+// »verjetnost« je snov obeh ravni. »pogojna-verjetnost« je po katalogu 2026 snov višje ravni (pogojna verjetnost,
+// verjetnost produkta, neodvisna dogodka, zaporedje neodvisnih poskusov), zato se njene naloge začnejo z
+// »(višja raven)« kot bloki v lekcijah.
+const VR = "(višja raven) ";
+const cl = (x) => Math.round(x * 1e9) / 1e9;
+const gcd2 = (a, b) => (b ? gcd2(b, a % b) : a);
+const lcm = (a, b) => (a * b) / gcd2(a, b);
+const D6 = [1, 2, 3, 4, 5, 6];
+const PARI = D6.flatMap((a) => D6.map((b) => [a, b]));
+// Vsak par v svojem $…$, da se dolg seznam na telefonu prelomi.
+const parT = (ps) => ps.map(([a, b]) => `$(${a}, ${b})$`).join(", ");
+const setT = (xs) => (xs.length ? `\\{${xs.join(", ")}\\}` : "\\emptyset");
+// Neokrajšan ulomek in okrajšan, če se razlikujeta: fq(6, 36) → "\dfrac{6}{36} = \frac{1}{6}".
+function fq(n, d) {
+  const [a, b] = fr(n, d);
+  return a === n && b === d ? ft(n, d) : `\\dfrac{${n}}{${d}} = ${ft(n, d)}`;
+}
+// Predlog pred številom po prvem glasu števnika: »deljivo s 3«, »deljivo z 2«, »s 24« (štiriindvajset).
+const PRVI = ["", "e", "d", "t", "š", "p", "š", "s", "o", "d"];
+function zs(n) {
+  const c = n === 100 ? "s" : n < 10 ? PRVI[n] : n < 20 ? (n === 10 || n === 12 ? "d" : n === 11 ? "e" : PRVI[n - 10]) : n % 10 ? PRVI[n % 10] : n === 20 ? "d" : PRVI[n / 10];
+  return "tšps".includes(c) ? "s" : "z";
+}
+const PKL = "P(A) = \\dfrac{\\text{število ugodnih izidov}}{\\text{število vseh izidov}}";
+const PVS = "P(A + B) = P(A) + P(B) - P(A \\cdot B)";
+const PNA = "P(\\overline{A}) = 1 - P(A)";
+const PPO = "P(A \\mid B) = \\dfrac{P(A \\cdot B)}{P(B)}";
+const PNE = "P(A \\cdot B) = P(A) \\cdot P(B) \\quad (A, B \\text{ neodvisna})";
+const KUP = "Iz dobro premešanega kupa $52$ igralnih kart (štiri barve po $13$ kart: od $2$ do $10$, fant, dama, kralj, as) naključno izvlečemo eno karto.";
+const KARTE = [["as", 4], ["kralj", 4], ["dama", 4], ["sedmica", 4], ["slika (fant, dama ali kralj)", 12], ["srce", 13]];
+const KARTE2 = [["as", 4, "kralj", 4], ["dama", 4, "fant", 4], ["sedmica", 4, "osmica", 4], ["as", 4, "slika (fant, dama ali kralj)", 12], ["srce", 13, "križ", 13], ["dvojka", 4, "trojka", 4]];
+// Dogodki pri metu ene kocke: [besedilo, zapis v podatkih, izidi].
+const DOG = [
+  ["sodo število", "\\text{sodo število}", [2, 4, 6]],
+  ["liho število", "\\text{liho število}", [1, 3, 5]],
+  ["število, večje od $3$", "\\text{število, večje od } 3", [4, 5, 6]],
+  ["število, manjše od $3$", "\\text{število, manjše od } 3", [1, 2]],
+  ["praštevilo", "\\text{praštevilo}", [2, 3, 5]],
+  ["število, deljivo s $3$", "\\text{število, deljivo s } 3", [3, 6]],
+  ["število, večje od $4$", "\\text{število, večje od } 4", [5, 6]],
+  ["število, manjše od $5$", "\\text{število, manjše od } 5", [1, 2, 3, 4]],
+];
+// Empirična verjetnost: besedilo s številoma poskusov n in uspehov k; dogodek in nasprotni dogodek.
+const EMP = [
+  { t: (n, k) => `Risalni žebljiček smo vrgli $${n}$-krat in $${k}$-krat je padel s konico navzgor.`, q: "žebljiček pade s konico navzgor", qn: "žebljiček pade na bok" },
+  { t: (n, k) => `Kontrolorka je pregledala $${n}$ naključno izbranih izdelkov in med njimi našla $${k}$ pokvarjenih.`, q: "je naključno izbrani izdelek pokvarjen", qn: "je naključno izbrani izdelek brezhiben", e: "naključno izbrani izdelek je pokvarjen", en: "naključno izbrani izdelek je brezhiben" },
+  { t: (n, k) => `Na križišču so prešteli $${n}$ avtomobilov in $${k}$ jih je zavilo levo.`, q: "naslednji avtomobil zavije levo", qn: "naslednji avtomobil ne zavije levo" },
+];
+// Nasprotni dogodek z dano verjetnostjo: [uvod, dogodek A, nasprotni dogodek].
+const NAS = [
+  ["Vremenska napoved pravi, da bo jutri deževalo z verjetnostjo", "jutri bo deževalo", "jutri ne bo deževalo"],
+  ["Jutranji avtobus zamudi z verjetnostjo", "avtobus zamudi", "jutranji avtobus ne zamudi"],
+  ["Naključno izbrani dijak šole nosi očala z verjetnostjo", "dijak nosi očala", "naključno izbrani dijak ne nosi očal"],
+  ["Semafor na poti v šolo kaže rdečo luč z verjetnostjo", "semafor kaže rdečo luč", "semafor ne kaže rdeče luči"],
+];
+// Dva dogodka pri naključno izbranem dijaku: [A, B, A in B, ne A in ne B, natanko eden, A ali B].
+const VEN = [
+  ["trenira kakšen šport", "igra glasbilo", "trenira šport in igra glasbilo", "ne trenira nobenega športa in ne igra glasbila", "trenira šport ali igra glasbilo, ne pa obojega", "trenira šport ali igra glasbilo"],
+  ["ima doma psa", "ima doma mačko", "ima doma psa in mačko", "nima doma ne psa ne mačke", "ima doma psa ali mačko, ne pa obeh", "ima doma psa ali mačko"],
+  ["govori nemško", "govori italijansko", "govori nemško in italijansko", "ne govori ne nemško ne italijansko", "govori nemško ali italijansko, ne pa obeh jezikov", "govori nemško ali italijansko"],
+  ["bere knjige v prostem času", "igra računalniške igre", "bere knjige in igra računalniške igre", "ne bere knjig in ne igra računalniških iger", "bere knjige ali igra računalniške igre, ne pa obojega", "bere knjige ali igra računalniške igre"],
+];
+// Hkratna izbira iz dveh skupin (a »ugodnih«, b drugih; a, b ≥ 5).
+const IZB = [
+  {
+    setup: (a, b, k) => `V škatli so rdeče in modre kroglice: rdečih je $${a}$, modrih $${b}$. Hkrati naključno izvlečemo ${nw(k, "kroglico", "kroglici", "kroglice", "kroglic")}.`,
+    j: (j) => `${verbOf(j, "je", "sta", "so")} med njimi natanko ${nw(j, "rdeča", "rdeči", "rdeče", "rdečih")}`,
+    atl: "je med njimi vsaj ena rdeča",
+    none: "vse izvlečene kroglice so modre",
+    data: (a, b, k) => [`n_{\\text{rdeče}} = ${a}`, `n_{\\text{modre}} = ${b}`, `k = ${k}`],
+  },
+  {
+    setup: (a, b, k) => `V razredu je $${a}$ deklet in $${b}$ fantov. Z žrebom izberejo $${k}$-člansko delegacijo.`,
+    j: (j) => `${verbOf(j, "je", "sta", "so")} v delegaciji natanko ${nw(j, "dekle", "dekleti", "dekleta", "deklet")}`,
+    atl: "je v delegaciji vsaj eno dekle",
+    none: "v delegaciji so sami fantje",
+    data: (a, b, k) => [`n_{\\text{dekleta}} = ${a}`, `n_{\\text{fantje}} = ${b}`, `k = ${k}`],
+  },
+  {
+    setup: (a, b, k) => `Med $${a + b}$ žarnicami v škatli je $${a}$ pokvarjenih. Naključno vzamemo ${nw(k, "žarnico", "žarnici", "žarnice", "žarnic")}.`,
+    j: (j) => `${verbOf(j, "je", "sta", "so")} med njimi natanko ${nw(j, "pokvarjena", "pokvarjeni", "pokvarjene", "pokvarjenih")}`,
+    atl: "je med njimi vsaj ena pokvarjena",
+    none: "vse vzete žarnice so brezhibne",
+    data: (a, b, k) => [`n = ${a + b}`, `n_{\\text{pokvarjene}} = ${a}`, `k = ${k}`],
+  },
+];
+// Dogodki pri metu dveh kock (L2): besedilo, zapis v podatkih, pogoj, tipične napake.
+function dog2(r) {
+  const c = r.int(0, 5);
+  if (c === 0)
+    return { t: "pade vsaj ena šestica", d: "\\text{vsaj ena šestica}", ok: ([a, b]) => a === 6 || b === 6, ms: [[12 / 36, "Izid $(6, 6)$ si štel dvakrat: verjetnosti $\\frac{1}{6} + \\frac{1}{6}$ ne smeš kar sešteti."], [25 / 36, "To je verjetnost, da šestica ne pade; odštej jo od $1$."], [1 / 36, "To je verjetnost, da padeta dve šestici."]] };
+  if (c === 1) {
+    const d = r.int(1, 4);
+    return { t: `je razlika med večjim in manjšim številom pik enaka $${d}$`, d: `\\text{razlika pik je } ${d}`, ok: ([a, b]) => Math.abs(a - b) === d, ms: [[(6 - d) / 36, "Izida $(1, 3)$ in $(3, 1)$ sta različna: šteti moraš oba vrstna reda."], [1 / 6, "Razlike niso enako verjetne: štej urejene pare pik."]] };
+  }
+  if (c === 2) return { t: "je produkt pik sod", d: "\\text{produkt pik je sod}", ok: ([a, b]) => (a * b) % 2 === 0, ms: [[1 / 2, "Produkt je sod, če je sodo število na vsaj eni kocki, ne le na eni določeni."], [9 / 36, "To je verjetnost, da je produkt lih (obe števili lihi)."]] };
+  if (c === 3) return { t: "je vsota pik praštevilo", d: "\\text{vsota pik je praštevilo}", ok: ([a, b]) => [2, 3, 5, 7, 11].includes(a + b), ms: [[5 / 11, "Vsote od $2$ do $12$ niso enako verjetne: štej urejene pare pik."], [8 / 21, "Kocki ločimo: vseh izidov je $36$, izid $(1, 2)$ ni isti kot $(2, 1)$."]] };
+  if (c === 4) return { t: "padeta različni števili pik", d: "\\text{različni števili pik}", ok: ([a, b]) => a !== b, ms: [[1 / 6, "To je verjetnost, da padeta enaki števili."], [15 / 36, "Izida $(1, 2)$ in $(2, 1)$ sta različna: šteti moraš oba vrstna reda."]] };
+  return { t: "je večje od obeh števil pik vsaj $5$", d: "\\text{večje število pik je vsaj } 5", ok: ([a, b]) => Math.max(a, b) >= 5, ms: [[16 / 36, "To je verjetnost nasprotnega dogodka (na obeh kockah največ $4$)."], [4 / 6, "Verjetnosti za posamezno kocko ne smeš kar sešteti ($\\frac{2}{6} + \\frac{2}{6}$): izide, kot je $(5, 6)$, bi štel dvakrat."]] };
+}
+
+const VERJETNOST = [
+  {
+    id: P + "verjetnost",
+    topics: [T("verjetnost"), "MAT-SS-4/vadbena-maturitetna-pola"],
+    gen(level, r) {
+      if (level === 1) {
+        const t = r.int(0, 4);
+        if (t === 0) {
+          // Dve kocki: klasična verjetnost z urejenimi pari.
+          const kind = r.int(0, 2);
+          const s = kind === 0 ? r.int(3, 11) : kind === 1 ? r.int(8, 11) : r.int(3, 6);
+          const word = ["enaka", "vsaj", "največ"][kind];
+          const ok = kind === 0 ? (p) => p[0] + p[1] === s : kind === 1 ? (p) => p[0] + p[1] >= s : (p) => p[0] + p[1] <= s;
+          const good = PARI.filter(ok);
+          const unord = good.filter(([a, b]) => a <= b).length;
+          const edge = PARI.filter((p) => p[0] + p[1] === s).length;
+          return {
+            text: `Hkrati vržemo dve pošteni igralni kocki. Kolikšna je verjetnost dogodka $A$: vsota pik je ${word} $${s}$? Vpiši okrajšan ulomek.`,
+            answer: frA(good.length, 36, [
+              kind === 0
+                ? { value: 1 / 11, why: "Vsote od $2$ do $12$ niso enako verjetne. Štej urejene pare pik: vseh je $6 \\cdot 6 = 36$." }
+                : { value: (good.length - edge) / 36, why: `»${kind === 1 ? "Vsaj" : "Največ"}« vključuje tudi vsoto $${s}$.` },
+              { value: unord / 36, why: "Izida $(1, 3)$ in $(3, 1)$ sta različna: kocki ločimo, zato par različnih števil štejemo dvakrat." },
+              good.length <= 12 ? { value: good.length / 12, why: "Vseh izidov je $6 \\cdot 6 = 36$, ne $6 + 6 = 12$." } : null,
+            ]),
+            hint: "Izide zapiši kot urejene pare (pike na prvi kocki, pike na drugi kocki) in preštej ugodne.",
+            data: { given: [`A = \\text{vsota pik je ${word} } ${s}`], find: ["P(A)"] },
+            formula: PKL,
+            solution: `Vseh izidov je $6 \\cdot 6 = 36$.\nUgodnih izidov je $${good.length}$: ${parT(good)}\n$P(A) = ${fq(good.length, 36)}$`,
+          };
+        }
+        if (t === 1) {
+          // Nasprotni dogodek.
+          if (r.next() < 0.5) {
+            const [what, k] = r.pick(KARTE);
+            return {
+              text: `${KUP} Kolikšna je verjetnost, da izvlečena karta ni ${what}? Vpiši okrajšan ulomek.`,
+              answer: frA(52 - k, 52, [
+                { value: k / 52, why: `To je verjetnost, da je karta ${what}. Iščemo nasprotni dogodek: $P(\\overline{A}) = 1 - P(A)$.` },
+                { value: 51 / 52, why: `Dogodek »karta je ${what}« zajema ${nw(k, "karto", "karti", "karte", "kart")}, ne ene same.` },
+              ]),
+              hint: `Najprej izračunaj verjetnost, da je karta ${what}, nato uporabi nasprotni dogodek.`,
+              data: { given: ["n = 52", `A = \\text{karta je ${what}}`], find: ["P(\\overline{A})"] },
+              formula: [PKL, PNA],
+              solution: `Karta je ${what} v $${k}$ primerih od $52$: $P(A) = ${fq(k, 52)}$\n$P(\\overline{A}) = 1 - ${ft(k, 52)} = ${ft(52 - k, 52)}$`,
+            };
+          }
+          const [intro, ev, nev] = r.pick(NAS);
+          const p = r.pick([0.08, 0.12, 0.15, 0.2, 0.35, 0.4, 0.45, 0.65, 0.7, 0.85]);
+          return {
+            text: `${intro} $${tx(p)}$. Kolikšna je verjetnost, da ${nev}?`,
+            answer: num(cl(1 - p), null, [
+              { value: p, why: "To je verjetnost dogodka samega. Iščemo nasprotni dogodek." },
+              { value: cl(100 * (1 - p)), why: "Verjetnost zapiši kot število med $0$ in $1$, ne v odstotkih." },
+            ]),
+            hint: "Dogodek in njegov nasprotni dogodek se ne moreta zgoditi hkrati, eden pa se zgodi gotovo.",
+            data: { given: [`P(A) = ${tx(p)}`], find: ["P(\\overline{A})"] },
+            formula: PNA,
+            solution: `$A$: ${ev}, $P(A) = ${tx(p)}$\n$P(\\overline{A}) = 1 - ${tx(p)} = ${tx(cl(1 - p))}$`,
+          };
+        }
+        if (t === 2) {
+          // Empirična verjetnost (relativna frekvenca).
+          const n = r.pick([200, 250, 400, 500, 1000]);
+          let k;
+          do k = r.int(Math.round(n * 0.15), Math.round(n * 0.85));
+          while (k % 100 >= 1 && k % 100 <= 4);
+          const c = r.pick(EMP);
+          const up = r.next() < 0.5;
+          const m = up ? k : n - k;
+          return {
+            text: `${c.t(n, k)} Oceni verjetnost, da ${up ? c.q : c.qn}. Zapiši kot decimalno število.`,
+            answer: num(cl(m / n), null, [
+              { value: cl((n - m) / n), why: "To je relativna frekvenca nasprotnega dogodka." },
+              { value: cl(m / (n - m)), why: "Deli s številom vseh poskusov, ne le neuspešnih." },
+            ]),
+            hint: up ? "Empirična verjetnost je relativna frekvenca: delež poskusov, v katerih se je dogodek zgodil." : "Najprej ugotovi, v koliko poskusih se je iskani dogodek zgodil, nato izračunaj relativno frekvenco.",
+            data: { given: [`n = ${n}`, `k = ${k}`], find: ["P(A)"] },
+            formula: "P(A) \\approx f(A) = \\dfrac{k_A}{n}",
+            solution: `Dogodek $A$: ${up ? c.e ?? c.q : c.en ?? c.qn}.\n${up ? `Zgodil se je v $${k}$ od $${n}$ poskusov.` : `Zgodil se je v $${n} - ${k} = ${m}$ od $${n}$ poskusov.`}\n$P(A) \\approx \\dfrac{${m}}{${n}} = ${tx(cl(m / n))}$`,
+          };
+        }
+        if (t === 3) {
+          // Vsota nezdružljivih dogodkov.
+          if (r.next() < 0.55) {
+            const [a, na, b, nb] = r.pick(KARTE2);
+            return {
+              text: `${KUP} Kolikšna je verjetnost, da je izvlečena karta ${a} ali ${b}? Vpiši okrajšan ulomek.`,
+              answer: frA(na + nb, 52, [
+                { value: (na * nb) / 52 ** 2, why: "Dogodka sta nezdružljiva (karta ne more biti oboje), zato verjetnosti seštejemo, ne zmnožimo." },
+                { value: na / 52, why: `Upoštevaj oba dogodka: karta je lahko ${a} ali ${b}.` },
+                { value: (na + nb - 1) / 52, why: "Dogodka nimata skupnih kart, zato ničesar ne odštevamo." },
+              ]),
+              hint: "Ali se lahko oba dogodka zgodita hkrati? Če ne, sta nezdružljiva in verjetnosti seštejemo.",
+              data: { given: ["n = 52", `A = \\text{${a}}`, `B = \\text{${b}}`], find: ["P(A + B)"] },
+              formula: ["P(A + B) = P(A) + P(B) \\quad (A \\cdot B = \\emptyset)", PKL],
+              solution: `Dogodka $A$ (${a}) in $B$ (${b}) sta nezdružljiva.\n$P(A) = \\dfrac{${na}}{52}$, $P(B) = \\dfrac{${nb}}{52}$\n$P(A + B) = \\dfrac{${na}}{52} + \\dfrac{${nb}}{52} = ${fq(na + nb, 52)}$`,
+            };
+          }
+          const R = r.int(5, 12);
+          const M = r.int(5, 12);
+          const Z = r.int(5, 12);
+          const n = R + M + Z;
+          return {
+            text: `V vrečki je $${R}$ rdečih, $${M}$ modrih in $${Z}$ zelenih kroglic. Na slepo izvlečemo eno. Kolikšna je verjetnost, da je rdeča ali zelena? Vpiši okrajšan ulomek.`,
+            answer: frA(R + Z, n, [
+              { value: (R * Z) / n ** 2, why: "Kroglica ne more biti hkrati rdeča in zelena: dogodka sta nezdružljiva, verjetnosti seštej." },
+              { value: R / n, why: "Upoštevaj tudi zelene kroglice." },
+            ]),
+            hint: "Izračunaj verjetnost za rdečo in za zeleno. Ali se lahko zgodita hkrati?",
+            data: { given: [`n_{\\text{rdeče}} = ${R}`, `n_{\\text{modre}} = ${M}`, `n_{\\text{zelene}} = ${Z}`], find: ["P(A + B)"] },
+            formula: "P(A + B) = P(A) + P(B) \\quad (A \\cdot B = \\emptyset)",
+            solution: `Vseh kroglic: $${R} + ${M} + ${Z} = ${n}$\n$P(A) = \\dfrac{${R}}{${n}}$ (rdeča), $P(B) = \\dfrac{${Z}}{${n}}$ (zelena); dogodka sta nezdružljiva.\n$P(A + B) = \\dfrac{${R} + ${Z}}{${n}} = ${fq(R + Z, n)}$`,
+          };
+        }
+        // Računanje z dogodki pri metu kocke (izbira).
+        const [A, B] = r.shuffle(DOG).slice(0, 2);
+        const inA = (x) => A[2].includes(x);
+        const inB = (x) => B[2].includes(x);
+        const S = { sum: D6.filter((x) => inA(x) || inB(x)), prod: D6.filter((x) => inA(x) && inB(x)), nA: D6.filter((x) => !inA(x)), nB: D6.filter((x) => !inB(x)) };
+        const nS = D6.filter((x) => !inA(x) && !inB(x));
+        const op = r.pick(["sum", "prod", "nA"]);
+        const nameOf = { sum: "A + B", prod: "A \\cdot B", nA: "\\overline{A}" };
+        const W = {
+          sum: [[S.prod, "To je produkt $A \\cdot B$ (izidi v obeh dogodkih). Vsota vsebuje izide, ki so v vsaj enem dogodku."], [A[2], "To je samo dogodek $A$; vsota vsebuje še izide dogodka $B$."], [B[2], "To je samo dogodek $B$; vsota vsebuje še izide dogodka $A$."], [nS, "To so izidi, ki niso v nobenem dogodku: nasprotni dogodek vsote."]],
+          prod: [[S.sum, "To je vsota $A + B$. Produkt vsebuje le izide, ki so v obeh dogodkih."], [A[2], "To je dogodek $A$; v produktu so le izidi, ki so tudi v $B$."], [B[2], "To je dogodek $B$; v produktu so le izidi, ki so tudi v $A$."], [nS, "To so izidi, ki niso v nobenem dogodku."]],
+          nA: [[A[2], "To je dogodek $A$ sam. Nasprotni dogodek vsebuje vse druge izide."], [S.nB, "To je nasprotni dogodek dogodka $B$."], [S.prod, "To je produkt $A \\cdot B$."], [nS, "To so izidi, ki niso ne v $A$ ne v $B$; nasprotni dogodek dogodka $A$ je lahko tudi v $B$."]],
+        };
+        const ans = pickAns(r, setT(S[op]), W[op].map(([s, w]) => [setT(s), w]));
+        if (ans.options.length < 3) return null;
+        const expl = { sum: "Vsota vsebuje izide, ki so v $A$ ali v $B$", prod: "Produkt vsebuje izide, ki so v $A$ in v $B$", nA: "Nasprotni dogodek vsebuje izide, ki niso v $A$" }[op];
+        return {
+          text: `Pošteno igralno kocko vržemo enkrat. Dogodek $A$: pade ${A[0]}. Dogodek $B$: pade ${B[0]}. Kateri izidi sestavljajo dogodek $${nameOf[op]}$?`,
+          answer: ans,
+          options_tex: true,
+          hint: "Najprej zapiši oba dogodka kot množici izidov iz $\\{1, 2, 3, 4, 5, 6\\}$.",
+          data: { given: [`A = ${A[1]}`, `B = ${B[1]}`], find: [nameOf[op]] },
+          formula: ["A + B: \\text{izid je v } A \\text{ ali v } B", "A \\cdot B: \\text{izid je v } A \\text{ in v } B", "\\overline{A}: \\text{izid ni v } A"],
+          solution: `$A = ${setT(A[2])}$, $B = ${setT(B[2])}$\n${expl}: $${nameOf[op]} = ${setT(S[op])}$`,
+        };
+      }
+      if (level === 2) {
+        const t = r.int(0, 4);
+        if (t === 0) {
+          // Vsota dogodkov, ki nista nezdružljiva: deljivost.
+          const N = r.pick([20, 24, 30, 36, 40, 50, 60, 100]);
+          const a = r.int(2, 6);
+          const b = r.int(a + 1, 7);
+          const L = lcm(a, b);
+          if (b % a === 0 || L > N) return null;
+          const na = Math.floor(N / a);
+          const nb = Math.floor(N / b);
+          const nab = Math.floor(N / L);
+          return {
+            text: `Iz števil od $1$ do $${N}$ naključno izberemo eno. Kolikšna je verjetnost, da je izbrano število deljivo ${zs(a)} $${a}$ ali ${zs(b)} $${b}$? Vpiši okrajšan ulomek.`,
+            answer: frA(na + nb - nab, N, [
+              { value: (na + nb) / N, why: `Števila, deljiva z obema (${zs(L)} $${L}$), si štel dvakrat: odštej $P(A \\cdot B)$.` },
+              { value: nab / N, why: "To je verjetnost produkta (deljivo z obema), ne vsote." },
+              { value: (na * nb) / N ** 2, why: "Verjetnosti vsote ne dobiš z množenjem; uporabi formulo za verjetnost vsote." },
+            ]),
+            hint: `Naj bo $A$: deljivo ${zs(a)} $${a}$, $B$: deljivo ${zs(b)} $${b}$. Katera števila so v obeh dogodkih?`,
+            data: { given: [`N = ${N}`, `A = \\text{deljivo ${zs(a)} } ${a}`, `B = \\text{deljivo ${zs(b)} } ${b}`], find: ["P(A + B)"] },
+            formula: PVS,
+            solution: `Deljivih ${zs(a)} $${a}$ je $${na}$, deljivih ${zs(b)} $${b}$ je $${nb}$.\nZ obema so deljivi natanko večkratniki števila $${L}$: takih je $${nab}$.\n$P(A + B) = \\dfrac{${na}}{${N}} + \\dfrac{${nb}}{${N}} - \\dfrac{${nab}}{${N}} = ${fq(na + nb - nab, N)}$`,
+          };
+        }
+        if (t === 1) {
+          // Formula za verjetnost vsote (decimalna števila).
+          const c = r.pick(VEN);
+          const pA = r.int(25, 65) / 100;
+          const pB = r.int(15, 55) / 100;
+          const pAB = r.int(5, Math.round(Math.min(pA, pB) * 100) - 3) / 100;
+          const pU = cl(pA + pB - pAB);
+          if (pU > 0.95) return null;
+          const intro = `Naključno izbrani dijak šole ${c[0]} (dogodek $A$) z verjetnostjo $${tx(pA)}$, ${c[1]} (dogodek $B$) pa z verjetnostjo $${tx(pB)}$.`;
+          if (r.next() < 0.5) {
+            return {
+              text: `${intro} Verjetnost, da ${c[2]}, je $${tx(pAB)}$. Kolikšna je verjetnost, da ${c[5]}?`,
+              answer: num(pU, null, [
+                { value: cl(pA + pB), why: "Dijake, pri katerih se zgodita oba dogodka, si štel dvakrat: odštej $P(A \\cdot B)$." },
+                { value: cl(pA * pB), why: "Za verjetnost vsote ne množimo; uporabi formulo za verjetnost vsote." },
+                { value: cl(pA + pB - 2 * pAB), why: "To je verjetnost, da se zgodi natanko eden od dogodkov. »Ali« vključuje tudi oba." },
+              ]),
+              hint: "Dogodka nista nezdružljiva (lahko se zgodita hkrati), zato verjetnosti ne smeš le sešteti.",
+              data: { given: [`P(A) = ${tx(pA)}`, `P(B) = ${tx(pB)}`, `P(A \\cdot B) = ${tx(pAB)}`], find: ["P(A + B)"] },
+              formula: PVS,
+              solution: `$P(A + B) = P(A) + P(B) - P(A \\cdot B)$\n$P(A + B) = ${tx(pA)} + ${tx(pB)} - ${tx(pAB)} = ${tx(pU)}$`,
+            };
+          }
+          return {
+            text: `${intro} Verjetnost, da ${c[5]}, je $${tx(pU)}$. Kolikšna je verjetnost, da ${c[2]}?`,
+            answer: num(pAB, null, [
+              { value: cl(pA * pB), why: "Ne vemo, ali sta dogodka neodvisna. Uporabi formulo za verjetnost vsote." },
+              { value: cl(pU - pA), why: "Odšteti moraš obe verjetnosti: $P(A \\cdot B) = P(A) + P(B) - P(A + B)$." },
+              { value: cl(1 - pU), why: "To je verjetnost, da se ne zgodi noben od dogodkov." },
+            ]),
+            hint: "Zapiši formulo za verjetnost vsote in iz nje izrazi $P(A \\cdot B)$.",
+            data: { given: [`P(A) = ${tx(pA)}`, `P(B) = ${tx(pB)}`, `P(A + B) = ${tx(pU)}`], find: ["P(A \\cdot B)"] },
+            formula: PVS,
+            solution: `Iz $P(A + B) = P(A) + P(B) - P(A \\cdot B)$ sledi $P(A \\cdot B) = P(A) + P(B) - P(A + B)$.\n$P(A \\cdot B) = ${tx(pA)} + ${tx(pB)} - ${tx(pU)} = ${tx(pAB)}$`,
+          };
+        }
+        if (t === 2 || t === 3) {
+          // Kombinatorika v verjetnosti: hkratna izbira (natanko j / vsaj eden).
+          const c = r.pick(IZB);
+          const a = r.int(5, 9);
+          const b = r.int(5, 9);
+          const n = a + b;
+          const k = r.int(2, 4);
+          const tot = C(n, k);
+          if (t === 2) {
+            const j = r.int(1, k);
+            const fav = C(a, j) * C(b, k - j);
+            return {
+              text: `${c.setup(a, b, k)} Kolikšna je verjetnost, da ${c.j(j)}? Vpiši okrajšan ulomek.`,
+              answer: frA(fav, tot, [
+                { value: C(a, j) / tot, why: `Izbrati moraš še preostale iz druge skupine: pomnoži še z $\\binom{${b}}{${k - j}}$.` },
+                { value: C(k, j) * (a / n) ** j * (b / n) ** (k - j), why: "Izbiramo hkrati (brez vračanja), zato poskusi niso neodvisni: preštej kombinacije." },
+                { value: (C(a, j) + C(b, k - j)) / tot, why: "Obe izbiri se zgodita hkrati, zato števili možnosti zmnožimo (osnovni izrek kombinatorike)." },
+              ]),
+              hint: "Izbiramo hkrati, zato vrstni red ni pomemben: preštej kombinacije. Ugodno izbiro sestavi iz dveh delov.",
+              data: { given: c.data(a, b, k), find: ["P(A)"] },
+              formula: "P(A) = \\dfrac{\\dbinom{a}{j}\\dbinom{b}{k - j}}{\\dbinom{n}{k}}",
+              solution: `Vseh izbir je $\\dbinom{${n}}{${k}} = ${tot}$.\nUgodne izbire: $\\dbinom{${a}}{${j}} \\cdot \\dbinom{${b}}{${k - j}} = ${C(a, j)} \\cdot ${C(b, k - j)} = ${fav}$\n$P(A) = ${fq(fav, tot)}$`,
+            };
+          }
+          const nf = C(b, k);
+          return {
+            text: `${c.setup(a, b, k)} Kolikšna je verjetnost, da ${c.atl}? Vpiši okrajšan ulomek.`,
+            answer: frA(tot - nf, tot, [
+              { value: nf / tot, why: "To je verjetnost nasprotnega dogodka; odštej jo od $1$." },
+              { value: (a * C(b, k - 1)) / tot, why: "»Vsaj ena« pomeni ena ali več, ne natanko ena." },
+              k * a < n ? { value: (k * a) / n, why: "Verjetnosti posameznih izbir ne smeš seštevati; uporabi nasprotni dogodek." } : null,
+            ]),
+            hint: "Nasprotni dogodek dogodka »vsaj ena« je »nobena«. Ga je lažje prešteti?",
+            data: { given: c.data(a, b, k), find: ["P(A)"] },
+            formula: ["P(A) = 1 - P(\\overline{A})", "P(\\overline{A}) = \\dfrac{\\dbinom{b}{k}}{\\dbinom{n}{k}}"],
+            solution: `Vseh izbir je $\\dbinom{${n}}{${k}} = ${tot}$.\nNasprotni dogodek: ${c.none}; takih izbir je $\\dbinom{${b}}{${k}} = ${nf}$.\n$P(\\overline{A}) = ${fq(nf, tot)}$\n$P(A) = 1 - ${ft(nf, tot)} = ${ft(tot - nf, tot)}$`,
+          };
+        }
+        // Dve kocki: dogodek, ki ga je lažje šteti z nasprotnim dogodkom ali s tabelo.
+        const ev = dog2(r);
+        const good = PARI.filter(ev.ok);
+        const bad = PARI.filter((p) => !ev.ok(p));
+        const list = good.length <= bad.length || bad.length > 12;
+        return {
+          text: `Hkrati vržemo dve pošteni igralni kocki. Kolikšna je verjetnost, da ${ev.t}? Vpiši okrajšan ulomek.`,
+          answer: frA(good.length, 36, ev.ms.map(([value, why]) => ({ value, why }))),
+          hint: "Nariši tabelo $6 \\times 6$ vseh izidov ali preštej nasprotni dogodek, če je ta krajši.",
+          data: { given: [`A = ${ev.d}`], find: ["P(A)"] },
+          formula: [PKL, PNA],
+          solution: list
+            ? `Vseh izidov je $6 \\cdot 6 = 36$.\nUgodnih izidov je $${good.length}$: ${parT(good)}\n$P(A) = ${fq(good.length, 36)}$`
+            : `Vseh izidov je $6 \\cdot 6 = 36$. Preštejemo nasprotni dogodek.\nNeugodnih izidov je $${bad.length}$: ${parT(bad)}\n$P(A) = 1 - \\dfrac{${bad.length}}{36} = ${ft(good.length, 36)}$`,
+        };
+      }
+      // raven 3
+      const t = r.int(0, 4);
+      if (t === 0) {
+        // Obratna naloga: neznano število modrih kroglic.
+        const R = r.int(2, 8);
+        const d = r.int(1, 6);
+        const x = r.int(2, 12);
+        const [qa, qb] = fr(R + d, R + d + x);
+        const tot = (R + d) * qb / qa;
+        return {
+          text: `V vrečki ${verbOf(R, "je", "sta", "so")} ${nw(R, "rdeča kroglica", "rdeči kroglici", "rdeče kroglice", "rdečih kroglic")} in nekaj modrih. Ko v vrečko dodamo še ${nw(d, "rdečo kroglico", "rdeči kroglici", "rdeče kroglice", "rdečih kroglic")}, je verjetnost, da na slepo izvlečemo rdečo, enaka $${ft(qa, qb)}$. Koliko modrih kroglic je v vrečki?`,
+          answer: num(x, null, [
+            { value: tot, why: "To je število vseh kroglic po dodajanju; odštej še rdeče." },
+            { value: tot - R, why: `Po dodajanju je rdečih $${R} + ${d}$; odštej vse rdeče.` },
+            { value: (R * (qb - qa)) / qa, why: `Po dodajanju je v vrečki $${R} + ${d}$ rdečih kroglic, ne $${R}$.` },
+          ]),
+          hint: "Število modrih kroglic označi z $m$ in zapiši verjetnost za rdečo po dodajanju. Dobiš enačbo za $m$.",
+          data: { given: [`n_{\\text{rdeče}} = ${R}`, `d = ${d}`, `P(R) = \\frac{${qa}}{${qb}}`], find: ["m"] },
+          formula: "P(R) = \\dfrac{n_{\\text{rdeče}} + d}{n_{\\text{rdeče}} + d + m}",
+          solution: `Po dodajanju je rdečih $${R} + ${d} = ${R + d}$, vseh pa $${R + d} + m$.\n$\\dfrac{${R + d}}{${R + d} + m} = ${ft(qa, qb)}$\n$${qa} \\cdot (${R + d} + m) = ${qb} \\cdot ${R + d}$\n$${qa === 1 ? "" : qa}m = ${(qb - qa) * (R + d)}$${qa === 1 ? "" : `\n$m = ${x}$`}`,
+        };
+      }
+      if (t === 1) {
+        // Izbira skupine z več primeri (nasprotni dogodek, vsota primerov).
+        const f = r.int(6, 14);
+        const b = r.int(5, 12);
+        const n = f + b;
+        const k = r.int(3, 5);
+        const tot = C(n, k);
+        const z0 = C(f, k); // brez fantov
+        const z1 = b * C(f, k - 1); // natanko en fant
+        const zb = C(b, k); // samo fantje
+        const v = r.int(0, 2);
+        const ev = ["sta med izbranimi vsaj dva fanta", "je med izbranimi največ en fant", "so med izbranimi tako dekleta kot fantje"][v];
+        const val = v === 0 ? 1 - (z0 + z1) / tot : v === 1 ? (z0 + z1) / tot : 1 - (z0 + zb) / tot;
+        if (val < 0.0005 || val > 0.9995) return null;
+        const ms =
+          v === 0
+            ? [
+                { value: 1 - z0 / tot, why: "To je verjetnost za vsaj enega fanta. Odštej še izbire z natanko enim fantom." },
+                { value: (C(b, 2) * C(f, k - 2)) / tot, why: "To je verjetnost za natanko dva fanta; »vsaj dva« vključuje tudi več." },
+                { value: 1 - z1 / tot, why: "Nasprotni dogodek je »nobeden ali en fant«: odštej tudi izbire brez fantov." },
+              ]
+            : v === 1
+              ? [
+                  { value: z1 / tot, why: "»Največ en« vključuje tudi izbiro brez fantov." },
+                  { value: z0 / tot, why: "Prištej še izbire z natanko enim fantom." },
+                  { value: 1 - (z0 + z1) / tot, why: "To je verjetnost nasprotnega dogodka (vsaj dva fanta)." },
+                ]
+              : [
+                  { value: 1 - z0 / tot, why: "Izključiti moraš tudi izbiro samih fantov." },
+                  { value: 1 - zb / tot, why: "Izključiti moraš tudi izbiro samih deklet." },
+                  { value: (z0 + zb) / tot, why: "To je verjetnost nasprotnega dogodka (vsi istega spola)." },
+                ];
+        const lines =
+          v === 2
+            ? `Nasprotni dogodek: sama dekleta ($\\dbinom{${f}}{${k}} = ${z0}$) ali sami fantje ($\\dbinom{${b}}{${k}} = ${zb}$).\n$P(A) = 1 - \\dfrac{${z0} + ${zb}}{${tot}} ${ap(val, 4)} ${tx(val, 4)}$`
+            : `Brez fantov: $\\dbinom{${f}}{${k}} = ${z0}$; natanko en fant: $${b} \\cdot \\dbinom{${f}}{${k - 1}} = ${z1}$.\n${v === 0 ? `$P(A) = 1 - \\dfrac{${z0} + ${z1}}{${tot}}` : `$P(A) = \\dfrac{${z0} + ${z1}}{${tot}}`} ${ap(val, 4)} ${tx(val, 4)}$`;
+        return {
+          text: `V razredu je $${f}$ deklet in $${b}$ fantov. Z žrebom izberejo ${nw(k, "dijaka", "dijaka", "dijake", "dijakov")} za šolsko tekmovanje. Kolikšna je verjetnost, da ${ev}? Zaokroži na štiri decimalke.`,
+          answer: num(val, 4, ms),
+          hint: v === 1 ? "Razdeli dogodek na dva nezdružljiva primera: nobenega fanta in natanko en fant." : "Preštej nasprotni dogodek in ga odštej od $1$. Pazi, iz katerih primerov je sestavljen.",
+          data: { given: [`n_{\\text{dekleta}} = ${f}`, `n_{\\text{fantje}} = ${b}`, `k = ${k}`], find: ["P(A)"] },
+          formula: ["P(A) = \\dfrac{\\text{število ugodnih izbir}}{\\dbinom{n}{k}}", PNA],
+          solution: `Vseh izbir je $\\dbinom{${n}}{${k}} = ${tot}$.\n${lines}`,
+        };
+      }
+      if (t === 2) {
+        // Naključna koda: variacije, kombinacije, nasprotni dogodek.
+        const k = r.int(3, 5);
+        const all = 10 ** k;
+        const v = r.int(0, 3);
+        const vk = V(10, k);
+        const [ev, fav, ms, line, fm] = [
+          ["so vse števke različne", vk, [{ value: C(10, k) / all, why: "Vrstni red števk je pomemben: uporabi variacije, ne kombinacij." }, { value: 1 - vk / all, why: "To je verjetnost, da se kakšna števka ponovi." }], `Ugodne kode imajo različne števke: $V_{10}^{${k}} = ${Array.from({ length: k }, (_, i) => 10 - i).join(" \\cdot ")} = ${vk}$`, "V_n^k = \\dfrac{n!}{(n - k)!}"],
+          ["je v kodi vsaj ena sedmica", all - 9 ** k, [{ value: k / 10, why: "Verjetnosti za posamezna mesta ne smeš seštevati; uporabi nasprotni dogodek." }, { value: 9 ** k / all, why: "To je verjetnost, da sedmice ni; odštej jo od $1$." }], `Nasprotni dogodek: v kodi ni sedmice, takih kod je $9^{${k}} = ${9 ** k}$.\nUgodnih kod je $${all} - ${9 ** k} = ${all - 9 ** k}$.`, PNA],
+          ["je v kodi natanko ena ničla", k * 9 ** (k - 1), [{ value: 9 ** (k - 1) / all, why: `Ničla je lahko na katerem koli od $${k}$ mest.` }, { value: k / 10, why: "Na ostalih mestih ničle ne sme biti: vsako ima $9$ možnosti." }], `Ničla je na enem od $${k}$ mest, na ostalih mestih je katera koli od $9$ drugih števk: $${k} \\cdot 9^{${k - 1}} = ${k * 9 ** (k - 1)}$`, PKL],
+          ["si števke sledijo v strogo naraščajočem vrstnem redu", C(10, k), [{ value: vk / all, why: "To so vse kode z različnimi števkami; naraščajoč je le en vrstni red vsake izbire števk." }, { value: 1 / fact(k), why: "Pri ponavljanju števk niso vse kode iz različnih števk: preštej ugodne kode neposredno." }], `Vsaka izbira $${k}$ različnih števk da natanko eno naraščajočo kodo: $\\dbinom{10}{${k}} = ${C(10, k)}$`, "C_n^k = \\dbinom{n}{k}"],
+        ][v];
+        const val = cl(fav / all);
+        return {
+          text: `Računalnik naključno sestavi $${k}$-mestno kodo iz števk od $0$ do $9$ (števke se lahko ponavljajo, koda se lahko začne z ničlo). Kolikšna je verjetnost, da ${ev}? Zapiši kot decimalno število.`,
+          answer: num(val, null, ms),
+          hint: v === 1 ? "Nasprotni dogodek dogodka »vsaj ena sedmica« je »nobene sedmice«." : "Preštej vse kode in ugodne kode. Vprašaj se, ali je vrstni red števk pomemben.",
+          data: { given: [`k = ${k}`, `\\text{števke} = 0, \\ldots, 9`], find: ["P(A)"] },
+          formula: ["{}^{(p)}V_{10}^k = 10^k", fm],
+          solution: `Vseh kod je $10^{${k}} = ${all}$.\n${line}\n$P(A) = \\dfrac{${fav}}{${all}} = ${tx(val)}$`,
+        };
+      }
+      if (t === 3) {
+        // Sedežni red: permutacije.
+        const [X, Y] = r.shuffle(NAMES).slice(0, 2);
+        const n = r.int(5, 8);
+        const v = r.int(0, 2);
+        const fn = fact(n);
+        const blok = 2 * fact(n - 1);
+        // dve dekleti: »druga ob drugi«, sicer »drug ob drugem«
+        const ob = g(X, 0, 1) + g(Y, 0, 1) === 2 ? "druga ob drugi" : "drug ob drugem";
+        const ev = [`${X} in ${Y} sedita ${ob}`, `${X} in ${Y} ne sedita ${ob}`, `${X} in ${Y} sedita na obeh krajih vrste`][v];
+        const fav = v === 0 ? blok : v === 1 ? fn - blok : 2 * fact(n - 2);
+        const ms =
+          v === 0
+            ? [{ value: 1 / n, why: `${X} in ${Y} lahko v bloku sedita v dveh vrstnih redih.` }, { value: 2 / (n * (n - 1)), why: "Blok dveh oseb ima več možnih položajev v vrsti, ne le enega." }]
+            : v === 1
+              ? [{ value: 2 / n, why: "To je verjetnost, da sedita skupaj; iščemo nasprotni dogodek." }, { value: 1 - 1 / n, why: "Pri razporeditvah skupaj sta v bloku dva vrstna reda." }]
+              : [{ value: 1 / (n * (n - 1)), why: "Na krajih vrste lahko sedita v dveh vrstnih redih." }, { value: 2 / n, why: "Oba morata sedeti na krajih: ostali sedijo na srednjih stolih." }];
+        return {
+          text: `V eni vrsti je $${n}$ stolov. Nanje se naključno posede $${n}$ prijateljev, med njimi ${X} in ${Y}. Kolikšna je verjetnost, da ${ev}? Vpiši okrajšan ulomek.`,
+          answer: frA(fav, fn, ms),
+          hint: v === 2 ? "Najprej posedi oba na kraja vrste, nato preostale na srednje stole." : "Osebi, ki sedita skupaj, obravnavaj kot en blok. Na koliko načinov lahko sedita v bloku?",
+          data: { given: [`n = ${n}`], find: ["P(A)"] },
+          formula: ["P_n = n!", PKL],
+          solution:
+            v === 2
+              ? `Vseh razporeditev je $${n}! = ${fn}$.\nNa kraja ju posedemo na $2$ načina, ostale na $${n - 2}! = ${fact(n - 2)}$ načinov: $2 \\cdot ${fact(n - 2)} = ${fav}$.\n$P(A) = ${fq(fav, fn)}$`
+              : `Vseh razporeditev je $${n}! = ${fn}$.\nBlok obeh in ostali: $${n - 1}! = ${fact(n - 1)}$ razporeditev, v bloku $2$ vrstna reda: $2 \\cdot ${fact(n - 1)} = ${blok}$.\n${v === 0 ? `$P(A) = ${fq(blok, fn)}$` : `$P(A) = 1 - ${ft(blok, fn)} = ${ft(fn - blok, fn)}$`}`,
+        };
+      }
+      // Vennov diagram: noben ali natanko eden od dveh dogodkov.
+      const c = r.pick(VEN);
+      const pA = r.int(25, 65) / 100;
+      const pB = r.int(15, 55) / 100;
+      const pAB = r.int(5, Math.round(Math.min(pA, pB) * 100) - 3) / 100;
+      const pU = cl(pA + pB - pAB);
+      if (pU > 0.95) return null;
+      const none = r.next() < 0.5;
+      const val = none ? cl(1 - pU) : cl(pU - pAB);
+      return {
+        text: `Naključno izbrani dijak šole ${c[0]} z verjetnostjo $${tx(pA)}$, ${c[1]} z verjetnostjo $${tx(pB)}$, verjetnost, da ${c[2]}, pa je $${tx(pAB)}$. Kolikšna je verjetnost, da ${none ? c[3] : c[4]}?`,
+        answer: num(val, null, none
+          ? [
+              { value: cl(1 - pA - pB), why: "Ko odšteješ $P(A)$ in $P(B)$, si presek odštel dvakrat: uporabi $1 - P(A + B)$." },
+              { value: pU, why: "To je verjetnost, da se zgodi vsaj eden od dogodkov; iščemo nasprotni dogodek." },
+              { value: cl((1 - pA) * (1 - pB)), why: "Dogodka nista nujno neodvisna; uporabi verjetnost vsote." },
+            ]
+          : [
+              { value: pU, why: "To je verjetnost za vsaj enega; odštej še primere, ko se zgodita oba." },
+              { value: cl(pA + pB), why: "Primere, ko se zgodita oba, moraš odšteti dvakrat (bili so v $P(A)$ in v $P(B)$)." },
+              { value: cl(pA - pAB), why: "To je verjetnost, da se zgodi le $A$; prištej še verjetnost, da se zgodi le $B$." },
+            ]),
+        hint: none ? "»Ne $A$ in ne $B$« je nasprotni dogodek dogodka $A + B$." : "Natanko eden: zgodi se $A$ ali $B$, ne pa oba. Pomagaj si z Vennovim diagramom.",
+        data: { given: [`P(A) = ${tx(pA)}`, `P(B) = ${tx(pB)}`, `P(A \\cdot B) = ${tx(pAB)}`], find: [none ? "P(\\overline{A + B})" : "P(\\text{natanko eden})"] },
+        formula: none ? [PVS, "P(\\overline{A + B}) = 1 - P(A + B)"] : [PVS, "P(\\text{natanko eden}) = P(A + B) - P(A \\cdot B)"],
+        solution: `$P(A + B) = ${tx(pA)} + ${tx(pB)} - ${tx(pAB)} = ${tx(pU)}$\n${none ? `$P(\\overline{A + B}) = 1 - ${tx(pU)} = ${tx(val)}$` : `$P(\\text{natanko eden}) = ${tx(pU)} - ${tx(pAB)} = ${tx(val)}$`}`,
+      };
+    },
+  },
+  // Višja raven: pogojna verjetnost, verjetnost produkta, neodvisna dogodka, zaporedje neodvisnih poskusov.
+  {
+    id: P + "pogojna-verjetnost",
+    topics: [T("verjetnost"), "MAT-SS-4/vadbena-maturitetna-pola"],
+    gen(level, r) {
+      const [X, Y] = r.shuffle(NAMES).slice(0, 2);
+      // obe dekleti: »obe«, »ena od njiju«; sicer moška oblika
+      const fem2 = g(X, 0, 1) + g(Y, 0, 1) === 2;
+      const oba = fem2 ? "obe" : "oba";
+      const eden = fem2 ? "ena" : "eden";
+      const t = r.int(0, 4);
+      if (level === 1) {
+        if (t === 0) {
+          // Neodvisna dogodka: verjetnost produkta.
+          const p = r.pick([0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9]);
+          const q = r.pick([0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+          const v = r.int(0, 2);
+          const p1 = cl(1 - p);
+          const q1 = cl(1 - q);
+          const val = cl(v === 0 ? p * q : v === 1 ? p1 * q1 : p * q1);
+          const ms = [
+            [p + q < 1 ? { value: cl(p + q), why: "Za neodvisna dogodka verjetnosti zmnožimo, ne seštejemo." } : null, { value: cl((p + q) / 2), why: "Povprečje verjetnosti ni verjetnost, da se zgodita oba dogodka." }, { value: cl(1 - p * q), why: "To je verjetnost, da vsaj eden zgreši." }],
+            [{ value: cl(1 - p * q), why: "To je verjetnost, da vsaj eden zgreši. Oba zgrešita le, če zgreši vsak." }, { value: cl(p1 + q1), why: "Za neodvisna dogodka verjetnosti zmnožimo, ne seštejemo." }],
+            [{ value: cl(p * q), why: `To je verjetnost, da zadeneta oba; ${Y} pa mora zgrešiti.` }, { value: p, why: `Upoštevaj še, da ${Y} zgreši.` }, { value: cl(p * q1 + p1 * q), why: "To je verjetnost, da zadene natanko eden od njiju (kdor koli)." }],
+          ][v];
+          return {
+            text: `${VR}${X} zadene tarčo z verjetnostjo $${tx(p)}$, ${Y} pa z verjetnostjo $${tx(q)}$. ${fem2 ? "Obe" : "Oba"} ustrelita enkrat, strela sta neodvisna. Kolikšna je verjetnost, da ${[`${oba} zadeneta`, `${oba} zgrešita`, `zadene samo ${X}`][v]}?`,
+            answer: num(val, null, ms),
+            hint: "Dogodka sta neodvisna: verjetnost, da se zgodita oba, dobiš z množenjem. Za zgrešen strel uporabi nasprotni dogodek.",
+            data: { given: [`P(A) = ${tx(p)}`, `P(B) = ${tx(q)}`], find: [["P(A \\cdot B)", "P(\\overline{A} \\cdot \\overline{B})", "P(A \\cdot \\overline{B})"][v]] },
+            formula: [PNE, PNA],
+            solution: `$A$: zadene ${X}, $B$: zadene ${Y}; dogodka sta neodvisna.\n${
+              v === 0
+                ? `$P(A \\cdot B) = ${tx(p)} \\cdot ${tx(q)} = ${tx(val)}$`
+                : v === 1
+                  ? `$P(\\overline{A}) = 1 - ${tx(p)} = ${tx(p1)}$, $P(\\overline{B}) = 1 - ${tx(q)} = ${tx(q1)}$\n$P(\\overline{A} \\cdot \\overline{B}) = ${tx(p1)} \\cdot ${tx(q1)} = ${tx(val)}$`
+                  : `$P(\\overline{B}) = 1 - ${tx(q)} = ${tx(q1)}$\n$P(A \\cdot \\overline{B}) = ${tx(p)} \\cdot ${tx(q1)} = ${tx(val)}$`
+            }`,
+          };
+        }
+        if (t === 1) {
+          // Pogojna verjetnost iz definicije.
+          // Vsak kontekst ima svoje smiselne verjetnosti (npr. fiziko piše manjšina maturantov).
+          const ci = r.int(0, 3);
+          const pB = r.pick([[0.2, 0.25, 0.4, 0.5, 0.6, 0.8], [0.2, 0.25, 0.3, 0.4], [0.2, 0.25, 0.3, 0.4], [0.15, 0.2, 0.25, 0.3]][ci]);
+          const pc = r.pick(ci === 3 ? [0.15, 0.2, 0.25, 0.3, 0.4] : [0.15, 0.2, 0.25, 0.3, 0.4, 0.45, 0.5, 0.6, 0.75, 0.8, 0.9]);
+          const pAB = cl(pB * pc);
+          if (Math.abs(pAB * 1000 - Math.round(pAB * 1000)) > 1e-6) return null;
+          const c = [
+            [`bo v soboto sončno`, `bo v soboto sončno in bo ${X} ${g(X, "šel", "šla")} na izlet`, `bo ${X} ${g(X, "šel", "šla")} na izlet, če bo v soboto sončno`, "v soboto bo sončno", `v soboto bo sončno in ${X} bo ${g(X, "šel", "šla")} na izlet`],
+            ["naključno izbrani obiskovalec spletne trgovine doda izdelek v košarico", "obiskovalec doda izdelek v košarico in ga tudi kupi", "obiskovalec izdelek kupi, če ga je dodal v košarico"],
+            ["zjutraj dežuje", `zjutraj dežuje in ${X} zamudi pouk`, `${X} zamudi pouk, če zjutraj dežuje`],
+            ["naključno izbrani maturant piše maturo iz fizike", "maturant piše fiziko in jo opravi z oceno odlično", "jo maturant, ki piše fiziko, opravi z oceno odlično"],
+          ][ci];
+          return {
+            text: `${VR}Verjetnost, da ${c[0]}, je $${tx(pB)}$. Verjetnost, da ${c[1]}, je $${tx(pAB)}$. Kolikšna je verjetnost, da ${c[2]}?`,
+            answer: num(pc, null, [
+              { value: pAB, why: "To je verjetnost, da se zgodita oba dogodka. Pogoj zoži vzorčni prostor: deli s $P(B)$." },
+              { value: cl(pAB * pB), why: "Verjetnost produkta deli s $P(B)$, ne množi." },
+              { value: cl(pB - pAB), why: "To je verjetnost, da se zgodi pogoj, iskani dogodek pa ne." },
+            ]),
+            hint: "Kateri dogodek je pogoj? Verjetnost, da se zgodita oba, deli z verjetnostjo pogoja.",
+            data: { given: [`P(B) = ${tx(pB)}`, `P(A \\cdot B) = ${tx(pAB)}`], find: ["P(A \\mid B)"] },
+            formula: PPO,
+            solution: `$B$: ${c[3] ?? c[0]}; $A \\cdot B$: ${c[4] ?? c[1]}.\n$P(A \\mid B) = \\dfrac{P(A \\cdot B)}{P(B)} = \\dfrac{${tx(pAB)}}{${tx(pB)}} = ${tx(pc)}$`,
+          };
+        }
+        if (t === 2) {
+          // Pogojna verjetnost z zoženim vzorčnim prostorom (dve kocki).
+          const s = r.int(4, 10);
+          const Bp = PARI.filter(([a, b]) => a + b === s);
+          const [et, ed, ok] = r.pick([
+            ["sta na obeh kockah enaki števili pik", "\\text{enaki števili pik}", ([a, b]) => a === b],
+            ["je na prvi kocki več pik kot na drugi", "\\text{na prvi kocki več pik}", ([a, b]) => a > b],
+            ["je padla vsaj ena šestica", "\\text{vsaj ena šestica}", ([a, b]) => a === 6 || b === 6],
+            ["je na prvi kocki sodo število pik", "\\text{na prvi kocki sodo število}", ([a]) => a % 2 === 0],
+            ["je padla vsaj ena enica", "\\text{vsaj ena enica}", ([a, b]) => a === 1 || b === 1],
+          ]);
+          const AB = Bp.filter(ok);
+          if (!AB.length || AB.length === Bp.length) return null;
+          return {
+            text: `${VR}Hkrati vržemo dve pošteni igralni kocki in izvemo, da je vsota pik enaka $${s}$. Kolikšna je verjetnost, da ${et}? Vpiši okrajšan ulomek.`,
+            answer: frA(AB.length, Bp.length, [
+              { value: AB.length / 36, why: "Pogoj zoži vzorčni prostor: ostanejo le izidi z dano vsoto pik." },
+              { value: PARI.filter(ok).length / 36, why: "To je verjetnost brez pogoja. Upoštevaj, da vsoto pik že poznamo." },
+              { value: Bp.length / 36, why: "To je verjetnost pogoja samega." },
+            ]),
+            hint: "Izpiši le izide, pri katerih je vsota pik enaka dani. Med njimi preštej ugodne.",
+            data: { given: [`B = \\text{vsota pik je } ${s}`, `A = ${ed}`], find: ["P(A \\mid B)"] },
+            formula: ["P(A \\mid B) = \\dfrac{\\text{število izidov v } A \\cdot B}{\\text{število izidov v } B}", PPO],
+            solution: `Pogoj $B$: vsota pik je $${s}$. Takih izidov je $${Bp.length}$: ${parT(Bp)}\nMed njimi so ugodni ${parT(AB)}.\n$P(A \\mid B) = ${fq(AB.length, Bp.length)}$`,
+          };
+        }
+        if (t === 3) {
+          // Bernoullijevo zaporedje: ugibanje pri testu.
+          const m = r.pick([3, 4, 5]);
+          const n = r.int(3, 6);
+          const k = r.int(1, Math.min(3, n - 1));
+          const nu = C(n, k) * (m - 1) ** (n - k);
+          const de = m ** n;
+          return {
+            text: `${VR}Test ima ${nw(n, "vprašanje", "vprašanji", "vprašanja", "vprašanj")}. Pri vsakem ${m === 5 ? "je $5$ ponujenih odgovorov" : `so $${m}$ ponujeni odgovori`}, pravilen je natanko eden. ${X} na vsa vprašanja odgovori na slepo. Kolikšna je verjetnost, da pravilno odgovori na natanko ${nw(k, "vprašanje", "vprašanji", "vprašanja", "vprašanj")}? Vpiši okrajšan ulomek.`,
+            answer: frA(nu, de, [
+              { value: C(n, k) / de, why: `Manjka verjetnost napačnih odgovorov: vsak ima verjetnost $\\frac{${m - 1}}{${m}}$.` },
+              { value: (m - 1) ** (n - k) / de, why: "To je verjetnost enega samega zaporedja odgovorov; pomnoži še z binomskim simbolom." },
+              k < m ? { value: k / m, why: "Verjetnosti ne seštevaj; uporabi Bernoullijevo formulo." } : null,
+            ]),
+            hint: "Odgovori so neodvisni poskusi z enako verjetnostjo uspeha. Zapiši $n$, $k$, $p$ in $q$.",
+            data: { given: [`n = ${n}`, `k = ${k}`, `m = ${m}`], find: [`P_{${n}}(${k})`] },
+            formula: ["P_n(k) = \\dbinom{n}{k} p^k q^{n-k}", "p = \\dfrac{1}{m},\\ q = 1 - p"],
+            solution: `$p = \\dfrac{1}{${m}}$, $q = \\dfrac{${m - 1}}{${m}}$\n$P_{${n}}(${k}) = \\dbinom{${n}}{${k}} \\left(\\dfrac{1}{${m}}\\right)^{${k}} \\left(\\dfrac{${m - 1}}{${m}}\\right)^{${n - k}} = \\dfrac{${C(n, k)} \\cdot ${(m - 1) ** (n - k)}}{${de}}$\n$P_{${n}}(${k}) = ${fq(nu, de)}$`,
+          };
+        }
+        // Verjetnost produkta pri vlečenju brez vračanja.
+        const R = r.int(5, 9);
+        const M = r.int(5, 9);
+        const n = R + M;
+        const v = r.int(0, 1);
+        const [a, b] = v === 0 ? [R * M, n * (n - 1)] : [M * (M - 1), n * (n - 1)];
+        return {
+          text: `${VR}V škatli so rdeče in modre kroglice: rdečih je $${R}$, modrih $${M}$. Zaporedoma izvlečemo dve kroglici, prve ne vrnemo. Kolikšna je verjetnost, da ${v === 0 ? "je prva rdeča, druga pa modra" : "sta obe modri"}? Vpiši okrajšan ulomek.`,
+          answer: frA(a, b, v === 0
+            ? [
+                { value: (R * M) / n ** 2, why: "Prve kroglice ne vrnemo: pri drugem vlečenju je v škatli ena kroglica manj." },
+                { value: (2 * R * M) / b, why: "To je verjetnost za različni barvi v katerem koli vrstnem redu; tu je vrstni red določen." },
+                R / n + M / (n - 1) < 1 ? { value: R / n + M / (n - 1), why: "Verjetnosti zaporednih korakov zmnožimo, ne seštejemo." } : null,
+              ]
+            : [
+                { value: (M / n) ** 2, why: "Prve kroglice ne vrnemo: pri drugem vlečenju je modrih in vseh kroglic za eno manj." },
+                { value: (M * (M - 1)) / n ** 2, why: "Po prvem vlečenju je v škatli le še $n - 1$ kroglic." },
+              ]),
+          hint: "Uporabi pravilo za verjetnost produkta: drugi faktor je pogojna verjetnost, ko je prva kroglica že izvlečena.",
+          data: { given: [`n_{\\text{rdeče}} = ${R}`, `n_{\\text{modre}} = ${M}`], find: ["P(A \\cdot B)"] },
+          formula: "P(A \\cdot B) = P(A) \\cdot P(B \\mid A)",
+          solution:
+            v === 0
+              ? `$A$: prva je rdeča, $P(A) = \\dfrac{${R}}{${n}}$\n$B$: druga je modra. Ostane še $${n - 1}$ kroglic, od tega $${M}$ modrih: $P(B \\mid A) = \\dfrac{${M}}{${n - 1}}$\n$P(A \\cdot B) = \\dfrac{${R}}{${n}} \\cdot \\dfrac{${M}}{${n - 1}} = ${fq(a, b)}$`
+              : `$A$: prva je modra, $P(A) = \\dfrac{${M}}{${n}}$\n$B$: tudi druga je modra. Ostane še $${n - 1}$ kroglic, od tega ${nw(M - 1, "modra", "modri", "modre", "modrih")}: $P(B \\mid A) = \\dfrac{${M - 1}}{${n - 1}}$\n$P(A \\cdot B) = \\dfrac{${M}}{${n}} \\cdot \\dfrac{${M - 1}}{${n - 1}} = ${fq(a, b)}$`,
+        };
+      }
+      if (level === 2) {
+        if (t === 0) {
+          // Pogojna verjetnost iz preglednice (dvosmerna razvrstitev).
+          const ok3 = (x) => x % 100 > 4 || x % 100 === 0;
+          const f = r.int(30, 80);
+          const b = r.int(30, 80);
+          const x = r.int(5, f - 5);
+          const y = r.int(5, b - 5);
+          if (![f, b, x, y].every(ok3)) return null;
+          // Črke: G1, G2 = skupini (dekleta/fantje, 1./4. letnik), L = lastnost (višja raven, kolo).
+          const c =
+            r.int(0, 1) === 0
+              ? {
+                  intro: `Med maturanti šole je $${f}$ deklet in $${b}$ fantov. Matematiko na višji ravni piše $${x}$ deklet in $${y}$ fantov.`,
+                  q1: "Naključno izberemo maturanta, ki piše višjo raven. Kolikšna je verjetnost, da je to dekle?",
+                  q2: "Naključno izberemo fanta. Kolikšna je verjetnost, da piše matematiko na višji ravni?",
+                  G1: "D", L: "V", G2: "F",
+                  def: "$D$: izbrani maturant je dekle, $F$: izbrani maturant je fant, $V$: izbrani maturant piše višjo raven.",
+                  s1: `Višjo raven piše $${x} + ${y} = ${x + y}$ maturantov, od tega $${x}$ deklet.`,
+                  s2: `Fantov je $${b}$, od tega jih višjo raven piše $${y}$.`,
+                  share: "To je delež deklet med vsemi maturanti; upoštevaj pogoj.",
+                }
+              : {
+                  intro: `V anketi je sodelovalo $${f}$ dijakov prvih letnikov in $${b}$ dijakov četrtih letnikov. S kolesom v šolo hodi $${x}$ dijakov prvih in $${y}$ dijakov četrtih letnikov.`,
+                  q1: "Naključno izberemo dijaka, ki hodi v šolo s kolesom. Kolikšna je verjetnost, da je iz prvega letnika?",
+                  q2: "Naključno izberemo dijaka četrtega letnika. Kolikšna je verjetnost, da hodi v šolo s kolesom?",
+                  G1: "L_1", L: "K", G2: "L_4",
+                  def: "$L_1$: izbrani dijak je iz prvega letnika, $L_4$: izbrani dijak je iz četrtega letnika, $K$: izbrani dijak hodi v šolo s kolesom.",
+                  s1: `S kolesom hodi $${x} + ${y} = ${x + y}$ anketiranih, od tega $${x}$ iz prvega letnika.`,
+                  s2: `Dijakov četrtega letnika je $${b}$, od tega jih s kolesom hodi $${y}$.`,
+                  share: "To je delež dijakov prvega letnika med vsemi anketiranimi; upoštevaj pogoj.",
+                };
+          const { G1, L, G2 } = c;
+          const first = r.next() < 0.5;
+          return {
+            text: `${VR}${c.intro} ${first ? c.q1 : c.q2} Vpiši okrajšan ulomek.`,
+            answer: first
+              ? frA(x, x + y, [
+                  { value: x / (f + b), why: "Pogoj zoži izbiro: deli s številom tistih, ki izpolnjujejo pogoj, ne z vsemi." },
+                  { value: x / f, why: `To je $P(${L} \\mid ${G1})$; zamenjal si pogoj in iskani dogodek.` },
+                  { value: f / (f + b), why: c.share },
+                ])
+              : frA(y, b, [
+                  { value: y / (f + b), why: "Pogoj zoži izbiro: deli s številom v izbrani skupini, ne z vsemi." },
+                  { value: y / (x + y), why: `To je $P(${G2} \\mid ${L})$; zamenjal si pogoj in iskani dogodek.` },
+                  { value: (x + y) / (f + b), why: "To je delež med vsemi, brez pogoja." },
+                ]),
+            hint: "Kaj je pogoj? Izbiramo le med tistimi, ki ga izpolnjujejo. Med njimi preštej ugodne.",
+            data: { given: [`n_{${G1}} = ${f}`, `n_{${G2}} = ${b}`, `n(${L} \\cdot ${G1}) = ${x}`, `n(${L} \\cdot ${G2}) = ${y}`], find: [first ? `P(${G1} \\mid ${L})` : `P(${L} \\mid ${G2})`] },
+            formula: "P(A \\mid B) = \\dfrac{n(A \\cdot B)}{n(B)}",
+            solution: first ? `${c.def}\n${c.s1}\n$P(${G1} \\mid ${L}) = ${fq(x, x + y)}$` : `${c.def}\n${c.s2}\n$P(${L} \\mid ${G2}) = ${fq(y, b)}$`,
+          };
+        }
+        if (t === 1) {
+          // Neodvisni dogodki: vsaj eden od treh ali natanko eden od dveh.
+          if (r.next() < 0.5) {
+            const ps = r.shuffle([0.6, 0.7, 0.8, 0.9, 0.95]).slice(0, 3);
+            const qs = ps.map((p) => cl(1 - p));
+            const none = cl(qs[0] * qs[1] * qs[2]);
+            const val = cl(1 - none);
+            return {
+              text: `${VR}Hišo varujejo trije alarmni senzorji, ki ob vlomu delujejo neodvisno drug od drugega. Vlom zaznajo z verjetnostmi $${tx(ps[0])}$, $${tx(ps[1])}$ in $${tx(ps[2])}$. Kolikšna je verjetnost, da vlom zazna vsaj eden od njih?`,
+              answer: num(val, null, [
+                { value: none, why: "To je verjetnost, da vloma ne zazna noben senzor; odštej jo od $1$." },
+                { value: cl(ps[0] * ps[1] * ps[2]), why: "To je verjetnost, da vlom zaznajo vsi trije." },
+                { value: cl(1 - qs[0] - qs[1] - qs[2]), why: "Za neodvisne dogodke verjetnosti zmnožimo, ne odštevamo zaporedoma." },
+              ]),
+              hint: "Nasprotni dogodek dogodka »vsaj eden« je »noben«. Ker so senzorji neodvisni, verjetnosti zmnožiš.",
+              data: { given: [`P(A_1) = ${tx(ps[0])}`, `P(A_2) = ${tx(ps[1])}`, `P(A_3) = ${tx(ps[2])}`], find: ["P(\\text{vsaj eden})"] },
+              formula: ["P(\\text{vsaj eden}) = 1 - P(\\overline{A_1}) \\cdot P(\\overline{A_2}) \\cdot P(\\overline{A_3})", PNA],
+              solution: `Noben senzor ne zazna vloma: $${tx(qs[0])} \\cdot ${tx(qs[1])} \\cdot ${tx(qs[2])} = ${tx(none)}$\n$P(\\text{vsaj eden}) = 1 - ${tx(none)} = ${tx(val)}$`,
+            };
+          }
+          const p = r.pick([0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+          const q = r.pick([0.3, 0.4, 0.5, 0.6, 0.7, 0.8]);
+          const val = cl(p * (1 - q) + (1 - p) * q);
+          return {
+            text: `${VR}${X} in ${Y} neodvisno rešujeta isto nalogo. ${X} jo reši z verjetnostjo $${tx(p)}$, ${Y} pa z verjetnostjo $${tx(q)}$. Kolikšna je verjetnost, da nalogo reši natanko ${eden} od njiju?`,
+            answer: num(val, null, [
+              { value: cl(p + q - p * q), why: "To je verjetnost, da jo reši vsaj eden; odštej še primer, ko jo rešita oba." },
+              { value: cl(p * (1 - q)), why: `Upoštevaj tudi primer, ko jo reši le ${Y}.` },
+              { value: cl(1 - p * q), why: "To je verjetnost, da je ne rešita oba hkrati." },
+            ]),
+            hint: "Natanko eden: reši jo prvi in drugi ne, ali reši jo drugi in prvi ne. Primera sta nezdružljiva.",
+            data: { given: [`P(A) = ${tx(p)}`, `P(B) = ${tx(q)}`], find: ["P(A \\cdot \\overline{B} + \\overline{A} \\cdot B)"] },
+            formula: [PNE, "P(A \\cdot \\overline{B} + \\overline{A} \\cdot B) = P(A)P(\\overline{B}) + P(\\overline{A})P(B)"],
+            solution: `$P(A \\cdot \\overline{B}) = ${tx(p)} \\cdot ${tx(cl(1 - q))} = ${tx(cl(p * (1 - q)))}$\n$P(\\overline{A} \\cdot B) = ${tx(cl(1 - p))} \\cdot ${tx(q)} = ${tx(cl((1 - p) * q))}$\nPrimera sta nezdružljiva: $P = ${tx(cl(p * (1 - q)))} + ${tx(cl((1 - p) * q))} = ${tx(val)}$`,
+          };
+        }
+        if (t === 2) {
+          // Neodvisna ali nezdružljiva? (izbira)
+          const cs = r.int(0, 2);
+          const pA = r.int(2, 8) / 10;
+          const pB = r.int(2, 8) / 10;
+          const prod = cl(pA * pB);
+          let pAB = cs === 0 ? prod : cs === 1 ? 0 : cl(prod + r.pick([-0.1, -0.05, 0.05, 0.1]));
+          if (cs === 1 && pA + pB > 1) return null;
+          if (cs === 2 && (pAB <= 0 || pAB >= Math.min(pA, pB) || pAB === prod)) return null;
+          // P(A + B) = P(A) + P(B) - P(A · B) ne sme preseči 1 (sicer podatki niso mogoči).
+          if (pA + pB - pAB > 1 + 1e-9) return null;
+          const O = ["Dogodka sta neodvisna.", "Dogodka sta nezdružljiva.", "Dogodka sta odvisna, a se lahko zgodita hkrati.", "Dogodka sta neodvisna in nezdružljiva."];
+          const both = "Dogodka s pozitivnima verjetnostma ne moreta biti hkrati neodvisna in nezdružljiva.";
+          const W = [
+            [[O[1], "Nezdružljiva bi bila le pri $P(A \\cdot B) = 0$."], [O[2], "Ker je $P(A \\cdot B) = P(A) \\cdot P(B)$, sta dogodka neodvisna."], [O[3], both]],
+            [[O[0], "Pri neodvisnih dogodkih bi bilo $P(A \\cdot B) = P(A) \\cdot P(B) > 0$."], [O[2], "Ker je $P(A \\cdot B) = 0$, se ne moreta zgoditi hkrati."], [O[3], both]],
+            [[O[0], "Za neodvisnost bi moralo veljati $P(A \\cdot B) = P(A) \\cdot P(B)$; izračunaj produkt."], [O[1], "Ker je $P(A \\cdot B) > 0$, se lahko zgodita hkrati."], [O[3], both]],
+          ][cs];
+          return {
+            text: `${VR}Za dogodka $A$ in $B$ velja $P(A) = ${tx(pA)}$, $P(B) = ${tx(pB)}$ in $P(A \\cdot B) = ${tx(pAB)}$. Katera trditev je pravilna?`,
+            answer: pickAns(r, O[cs], W),
+            hint: "Primerjaj $P(A \\cdot B)$ s produktom $P(A) \\cdot P(B)$ in z $0$.",
+            data: { given: [`P(A) = ${tx(pA)}`, `P(B) = ${tx(pB)}`, `P(A \\cdot B) = ${tx(pAB)}`], find: ["\\text{odnos med } A \\text{ in } B"] },
+            formula: [PNE, "A, B \\text{ nezdružljiva: } P(A \\cdot B) = 0"],
+            solution: `$P(A) \\cdot P(B) = ${tx(pA)} \\cdot ${tx(pB)} = ${tx(prod)}$\n${
+              cs === 0
+                ? "$P(A \\cdot B) = P(A) \\cdot P(B)$, zato sta dogodka neodvisna. Ker je $P(A \\cdot B) > 0$, nista nezdružljiva."
+                : cs === 1
+                  ? "$P(A \\cdot B) = 0$: dogodka se ne moreta zgoditi hkrati, sta nezdružljiva (in zato odvisna)."
+                  : `$P(A \\cdot B) = ${tx(pAB)} \\ne ${tx(prod)}$: dogodka sta odvisna. Ker je $P(A \\cdot B) > 0$, nista nezdružljiva.`
+            }`,
+          };
+        }
+        if (t === 3) {
+          // Verjetnostno drevo: izbira škatle, nato kroglice.
+          const [r1, m1, r2, m2] = [r.int(5, 9), r.int(5, 9), r.int(5, 9), r.int(5, 9)];
+          const n1 = r1 + m1;
+          const n2 = r2 + m2;
+          const die = r.next() < 0.5;
+          const [pn, pd] = die ? [1, 6] : [1, 2];
+          const N = pn * r1 * n2 + (pd - pn) * r2 * n1;
+          const D = pd * n1 * n2;
+          if (r1 * n2 === r2 * n1) return null; // enaka deleža: drevo ni potrebno
+          // Verjetnosti obeh poti okrajšamo, nato ju seštejemo na skupni imenovalec.
+          const [a1, b1] = fr(pn * r1, pd * n1);
+          const [a2, b2] = fr((pd - pn) * r2, pd * n2);
+          const Lc = lcm(b1, b2);
+          const vsota = `${ft(a1, b1)} + ${ft(a2, b2)} = ${fq(a1 * (Lc / b1) + a2 * (Lc / b2), Lc)}`;
+          return {
+            text: `${VR}V prvi škatli je $${r1}$ rdečih in $${m1}$ modrih kroglic, v drugi pa $${r2}$ rdečih in $${m2}$ modrih. ${die ? "Vržemo kocko: če pade šestica, izvlečemo kroglico iz prve škatle, sicer iz druge." : "Vržemo kovanec: če pade grb, izvlečemo kroglico iz prve škatle, sicer iz druge."} Kolikšna je verjetnost, da izvlečemo rdečo kroglico? Vpiši okrajšan ulomek.`,
+            answer: frA(N, D, [
+              { value: (r1 + r2) / (n1 + n2), why: "Kroglic iz obeh škatel ne smeš združiti: uporabi verjetnostno drevo." },
+              { value: (pn * r1) / (pd * n1), why: "Seštej obe poti do rdeče kroglice." },
+              die ? { value: (r1 / n1 + r2 / n2) / 2, why: "Škatli nista enako verjetni: prvo izberemo z verjetnostjo $\\frac{1}{6}$." } : { value: (r1 / n1) * (r2 / n2), why: "Vzdolž poti množimo, verjetnosti različnih poti pa seštejemo." },
+            ]),
+            hint: "Nariši drevo: prva veja je izbira škatle, druga barva kroglice. Vzdolž poti množi, poti do rdeče seštej.",
+            data: { given: [`r_1 = ${r1}`, `m_1 = ${m1}`, `r_2 = ${r2}`, `m_2 = ${m2}`], find: ["P(R)"] },
+            formula: "P(R) = P(S_1) \\cdot P(R \\mid S_1) + P(S_2) \\cdot P(R \\mid S_2)",
+            solution: `$S_1$: vlečemo iz prve škatle, $S_2$: vlečemo iz druge škatle, $R$: izvlečemo rdečo kroglico.\n$P(S_1) = ${ft(pn, pd)}$, $P(S_2) = ${ft(pd - pn, pd)}$\n$P(R \\mid S_1) = \\dfrac{${r1}}{${n1}}$, $P(R \\mid S_2) = \\dfrac{${r2}}{${n2}}$\n$P(R) = ${ft(pn, pd)} \\cdot \\dfrac{${r1}}{${n1}} + ${ft(pd - pn, pd)} \\cdot \\dfrac{${r2}}{${n2}}$\n$P(R) = ${vsota}$`,
+          };
+        }
+        // Zaporedje neodvisnih poskusov: natanko k uspehov.
+        const nm = name(r);
+        const n = r.int(3, 6);
+        const p = r.pick([0.2, 0.25, 0.3, 0.4, 0.6]);
+        const k = r.int(1, n - 1);
+        const q = cl(1 - p);
+        const val = Pn(n, k, p);
+        return {
+          text: `${VR}Na poti v šolo se ${nm} pelje mimo $${n}$ semaforjev. Na vsakem neodvisno od drugih ujame rdečo luč z verjetnostjo $${tx(p)}$. Kolikšna je verjetnost, da ujame rdečo luč na natanko $${k}$ ${k === 1 ? "semaforju" : "semaforjih"}? Zaokroži na štiri decimalke.`,
+          answer: num(val, 4, [
+            { value: p ** k * q ** (n - k), why: "To je verjetnost enega samega zaporedja; pomnoži še z binomskim simbolom." },
+            { value: C(n, k) * p ** k, why: "Manjka verjetnost, da na ostalih semaforjih ni rdeče: $q^{n-k}$." },
+            { value: C(n, k) * p ** (n - k) * q ** k, why: "Si zamenjal $p$ in $q$? Eksponent $k$ pripada verjetnosti uspeha." },
+          ]),
+          hint: "Semaforji so neodvisni poskusi z enako verjetnostjo uspeha: uporabi Bernoullijevo formulo.",
+          data: { given: [`n = ${n}`, `k = ${k}`, `p = ${tx(p)}`], find: [`P_{${n}}(${k})`] },
+          formula: "P_n(k) = \\dbinom{n}{k} p^k q^{n-k}",
+          solution: `$q = 1 - ${tx(p)} = ${tx(q)}$\n$P_{${n}}(${k}) = \\dbinom{${n}}{${k}} \\cdot ${tx(p)}^{${k}} \\cdot ${tx(q)}^{${n - k}} = ${C(n, k)} \\cdot ${txr(p ** k, 6)} \\cdot ${txr(q ** (n - k), 6)}$\n$P_{${n}}(${k}) ${ap(val, 4)} ${tx(val, 4)}$`,
+        };
+      }
+      // raven 3
+      if (t === 0) {
+        // Obratna pogojna verjetnost (drevo, nato pogojna verjetnost).
+        const a = r.pick([40, 50, 60, 70, 75, 80]);
+        const d1 = r.int(1, 6);
+        let d2 = r.int(1, 6);
+        if (d2 === d1) d2 = d1 === 6 ? 5 : d1 + 1;
+        const pAN = cl((a / 100) * (d1 / 100));
+        const pBN = cl(((100 - a) / 100) * (d2 / 100));
+        const pN = cl(pAN + pBN);
+        const val = pAN / pN;
+        const [who, item, ask] = r.pick([
+          ["Stroj A izdela", "izdelki stroja", "ga je izdelal stroj A"],
+          ["Dobavitelj A dobavi", "izdelki dobavitelja", "ga je dobavil dobavitelj A"],
+        ]);
+        const B = who.startsWith("Stroj") ? "stroj B" : "dobavitelj B";
+        return {
+          text: `${VR}${who} $${a}\\,\\%$ vseh izdelkov, ${B} pa preostale. Med ${item} A je $${d1}\\,\\%$ pokvarjenih, med ${item} B pa $${d2}\\,\\%$. Naključno izbrani izdelek je pokvarjen. Kolikšna je verjetnost, da ${ask}? Zaokroži na štiri decimalke.`,
+          answer: num(val, 4, [
+            { value: d1 / 100, why: "To je $P(N \\mid A)$; iščemo obratno pogojno verjetnost $P(A \\mid N)$." },
+            { value: pAN, why: "To je $P(A \\cdot N)$; deli jo še z verjetnostjo pogoja $P(N)$." },
+            { value: a / 100, why: "Podatek, da je izdelek pokvarjen, spremeni verjetnost." },
+          ]),
+          hint: "Nariši drevo: najprej izvor izdelka, nato pokvarjen ali ne. $P(N)$ dobiš kot vsoto obeh poti do pokvarjenega izdelka.",
+          data: { given: [`P(A) = ${a}\\,\\%`, `P(N \\mid A) = ${d1}\\,\\%`, `P(N \\mid B) = ${d2}\\,\\%`], find: ["P(A \\mid N)"] },
+          formula: ["P(N) = P(A) \\cdot P(N \\mid A) + P(B) \\cdot P(N \\mid B)", "P(A \\mid N) = \\dfrac{P(A \\cdot N)}{P(N)}"],
+          solution: `$P(A \\cdot N) = ${tx(a / 100)} \\cdot ${tx(d1 / 100)} = ${tx(pAN)}$\n$P(B \\cdot N) = ${tx(cl(1 - a / 100))} \\cdot ${tx(d2 / 100)} = ${tx(pBN)}$\n$P(N) = ${tx(pAN)} + ${tx(pBN)} = ${tx(pN)}$\n$P(A \\mid N) = \\dfrac{${tx(pAN)}}{${tx(pN)}} ${ap(val, 4)} ${tx(val, 4)}$`,
+        };
+      }
+      if (t === 1) {
+        // Dva dneva: popolna verjetnost ali obratna pogojna verjetnost.
+        const p = r.pick([0.3, 0.4, 0.5, 0.6, 0.7]);
+        const q1 = r.pick([0.6, 0.7, 0.8]);
+        const q2 = r.pick([0.2, 0.3, 0.4]);
+        const tot = cl(p * q1 + (1 - p) * q2);
+        const both = cl(p * q1);
+        const rev = r.next() < 0.5;
+        const val = rev ? both / tot : tot;
+        return {
+          text: `${VR}V ponedeljek dežuje z verjetnostjo $${tx(p)}$. Če v ponedeljek dežuje, v torek dežuje z verjetnostjo $${tx(q1)}$; če v ponedeljek ne dežuje, v torek dežuje z verjetnostjo $${tx(q2)}$. ${rev ? "V torek je deževalo. Kolikšna je verjetnost, da je deževalo tudi v ponedeljek? Zaokroži na štiri decimalke." : "Kolikšna je verjetnost, da v torek dežuje?"}`,
+          answer: rev
+            ? num(val, 4, [
+                { value: p, why: "Podatek, da je v torek deževalo, spremeni verjetnost za ponedeljek." },
+                { value: q1, why: "To je $P(D_2 \\mid D_1)$; iščemo obratno pogojno verjetnost $P(D_1 \\mid D_2)$." },
+                { value: both, why: "To je $P(D_1 \\cdot D_2)$; deli jo še s $P(D_2)$." },
+              ])
+            : num(val, null, [
+                { value: q1, why: "Upoštevaj tudi pot, ko v ponedeljek ne dežuje." },
+                { value: both, why: "To je le ena pot v drevesu; prištej še drugo." },
+                { value: cl((q1 + q2) / 2), why: "Poti nista enako verjetni: uteži ju z verjetnostma za ponedeljek." },
+              ]),
+          hint: "Nariši drevo za ponedeljek in torek. Vzdolž poti množi, poti do istega izida seštej.",
+          data: { given: [`P(D_1) = ${tx(p)}`, `P(D_2 \\mid D_1) = ${tx(q1)}`, `P(D_2 \\mid \\overline{D_1}) = ${tx(q2)}`], find: [rev ? "P(D_1 \\mid D_2)" : "P(D_2)"] },
+          formula: ["P(D_2) = P(D_1) \\cdot P(D_2 \\mid D_1) + P(\\overline{D_1}) \\cdot P(D_2 \\mid \\overline{D_1})", "P(D_1 \\mid D_2) = \\dfrac{P(D_1 \\cdot D_2)}{P(D_2)}"],
+          solution: `$P(D_1 \\cdot D_2) = ${tx(p)} \\cdot ${tx(q1)} = ${tx(both)}$\n$P(\\overline{D_1} \\cdot D_2) = ${tx(cl(1 - p))} \\cdot ${tx(q2)} = ${tx(cl((1 - p) * q2))}$\n$P(D_2) = ${tx(both)} + ${tx(cl((1 - p) * q2))} = ${tx(tot)}$${rev ? `\n$P(D_1 \\mid D_2) = \\dfrac{${tx(both)}}{${tx(tot)}} ${ap(val, 4)} ${tx(val, 4)}$` : ""}`,
+        };
+      }
+      if (t === 2) {
+        // Pogojna verjetnost pri vlečenju.
+        const R = r.int(5, 9);
+        const M = r.int(5, 9);
+        const n = R + M;
+        if (r.next() < 0.5) {
+          return {
+            text: `${VR}V škatli so rdeče in modre kroglice: rdečih je $${R}$, modrih $${M}$. Zaporedoma izvlečemo dve kroglici, prve ne vrnemo. Druga izvlečena kroglica je rdeča. Kolikšna je verjetnost, da je bila rdeča tudi prva? Vpiši okrajšan ulomek.`,
+            answer: frA(R - 1, n - 1, [
+              { value: R / n, why: "Podatek, da je druga rdeča, spremeni verjetnost za prvo kroglico." },
+              { value: (R - 1) / n, why: "Ker je ena rdeča (druga) že znana, preostane le še $n - 1$ kroglic." },
+              { value: (R * (R - 1)) / (n * (n - 1)), why: "To je verjetnost, da sta obe rdeči; deli jo še z verjetnostjo pogoja." },
+            ]),
+            hint: "Z drevesom izračunaj verjetnost, da je druga rdeča (dve poti), in verjetnost, da sta obe rdeči.",
+            data: { given: [`n_{\\text{rdeče}} = ${R}`, `n_{\\text{modre}} = ${M}`], find: ["P(R_1 \\mid R_2)"] },
+            formula: PPO,
+            solution: `$P(R_1 \\cdot R_2) = \\dfrac{${R}}{${n}} \\cdot \\dfrac{${R - 1}}{${n - 1}} = ${fq(R * (R - 1), n * (n - 1))}$\n$P(R_2) = \\dfrac{${R}}{${n}} \\cdot \\dfrac{${R - 1}}{${n - 1}} + \\dfrac{${M}}{${n}} \\cdot \\dfrac{${R}}{${n - 1}} = ${fq(R * (n - 1), n * (n - 1))}$\n$P(R_1 \\mid R_2) = \\dfrac{P(R_1 \\cdot R_2)}{P(R_2)} = ${ft(R - 1, n - 1)}$`,
+          };
+        }
+        const all = C(n, 2);
+        const some = all - C(M, 2);
+        return {
+          text: `${VR}V škatli so rdeče in modre kroglice: rdečih je $${R}$, modrih $${M}$. Hkrati izvlečemo dve kroglici. Vemo, da je med njima vsaj ena rdeča. Kolikšna je verjetnost, da sta obe rdeči? Vpiši okrajšan ulomek.`,
+          answer: frA(C(R, 2), some, [
+            { value: C(R, 2) / all, why: "Pogoj »vsaj ena rdeča« zoži vzorčni prostor: deli s številom izbir z vsaj eno rdečo." },
+            { value: (R - 1) / (n - 1), why: "Pogoj ni, da je rdeča določena kroglica, ampak da je rdeča vsaj ena." },
+            { value: some / all, why: "To je verjetnost pogoja samega." },
+          ]),
+          hint: "Preštej izbire z vsaj eno rdečo kroglico (pomagaj si z nasprotnim dogodkom) in med njimi tiste z dvema rdečima.",
+          data: { given: [`n_{\\text{rdeče}} = ${R}`, `n_{\\text{modre}} = ${M}`], find: ["P(A \\mid B)"] },
+          formula: "P(A \\mid B) = \\dfrac{n(A \\cdot B)}{n(B)}",
+          solution: `Vseh izbir je $\\dbinom{${n}}{2} = ${all}$, brez rdeče $\\dbinom{${M}}{2} = ${C(M, 2)}$.\n$B$ (vsaj ena rdeča): $${all} - ${C(M, 2)} = ${some}$ izbir; $A \\cdot B$ (obe rdeči): $\\dbinom{${R}}{2} = ${C(R, 2)}$\n$P(A \\mid B) = ${fq(C(R, 2), some)}$`,
+        };
+      }
+      if (t === 3) {
+        // Zaporedje neodvisnih poskusov: vsaj dva uspeha.
+        const dice = r.next() < 0.5;
+        const nm = name(r);
+        const n = dice ? r.int(4, 10) : r.int(4, 8);
+        const p = dice ? 1 / 6 : r.pick([0.2, 0.3, 0.4]);
+        const q = 1 - p;
+        const P0 = q ** n;
+        const P1 = n * p * q ** (n - 1);
+        const val = 1 - P0 - P1;
+        const pT = dice ? "\\frac{1}{6}" : tx(p);
+        const qT = dice ? "\\frac{5}{6}" : tx(cl(q));
+        return {
+          text: dice
+            ? `${VR}${nm} $${n}$-krat vrže pošteno igralno kocko. Verjetnost za šestico v enem metu je $\\frac{1}{6}$. Kolikšna je verjetnost, da šestica pade vsaj dvakrat? Zaokroži na štiri decimalke.`
+            : `${VR}Semensko zrno vzkali z verjetnostjo $${tx(p)}$. ${nm} posadi ${nw(n, "zrno", "zrni", "zrna", "zrn")}, ki kalijo neodvisno. Kolikšna je verjetnost, da vzkalita vsaj dve zrni? Zaokroži na štiri decimalke.`,
+          answer: num(val, 4, [
+            { value: 1 - P0, why: "To je verjetnost za vsaj en uspeh; odštej še verjetnost za natanko enega." },
+            { value: C(n, 2) * p ** 2 * q ** (n - 2), why: "To je verjetnost za natanko dva; »vsaj dva« vključuje tudi več." },
+            { value: 1 - P0 - p * q ** (n - 1), why: `Pri natanko enem uspehu pomnoži še z $\\binom{${n}}{1} = ${n}$.` },
+          ]),
+          hint: "Nasprotni dogodek dogodka »vsaj dva« je »nič ali en uspeh«. Izračunaj $P_n(0)$ in $P_n(1)$.",
+          data: { given: [`n = ${n}`, `p = ${pT}`], find: ["P(X \\ge 2)"] },
+          formula: ["P_n(k) = \\dbinom{n}{k} p^k q^{n-k}", "P(X \\ge 2) = 1 - P_n(0) - P_n(1)"],
+          solution: `$q = ${qT}$\n$P_{${n}}(0) = ${dice ? `\\left(${qT}\\right)` : qT}^{${n}} ${ap(P0, 6)} ${txr(P0, 6)}$, $P_{${n}}(1) = ${n} \\cdot ${pT} \\cdot ${dice ? `\\left(${qT}\\right)` : qT}^{${n - 1}} ${ap(P1, 6)} ${txr(P1, 6)}$\n$P(X \\ge 2) = 1 - ${txr(P0, 6)} - ${txr(P1, 6)} ${ap(val, 4)} ${tx(val, 4)}$`,
+        };
+      }
+      // Neodvisna dogodka: iz verjetnosti vsote izračunaj neznano verjetnost.
+      const pA = r.pick([0.4, 0.5, 0.6, 0.7, 0.8]);
+      const pB = r.pick([0.3, 0.4, 0.5, 0.6, 0.7]);
+      const pU = cl(pA + pB - pA * pB);
+      return {
+        text: `${VR}${X} in ${Y} neodvisno rešujeta težko nalogo. ${X} jo reši z verjetnostjo $${tx(pA)}$. Verjetnost, da nalogo reši vsaj ${eden} od njiju, je $${tx(pU)}$. S kolikšno verjetnostjo nalogo reši ${Y}?`,
+        answer: num(pB, null, [
+          { value: cl(pU - pA), why: "Dogodka sta neodvisna, ne nezdružljiva: $P(A \\cdot B) = P(A) \\cdot P(B)$, ne $0$." },
+          { value: cl(1 - pB), why: `To je verjetnost, da ${Y} naloge ne reši.` },
+          pU < pA * pA ? null : { value: cl(pU - pA * pA), why: "V produktu $P(A) \\cdot P(B)$ nastopa neznana $P(B)$, ne še enkrat $P(A)$." },
+        ]),
+        hint: "Uporabi nasprotni dogodek: nobeden ne reši naloge, $P = (1 - P(A))(1 - P(B))$.",
+        data: { given: [`P(A) = ${tx(pA)}`, `P(A + B) = ${tx(pU)}`], find: ["P(B)"] },
+        formula: [PVS, PNE],
+        solution: `$P(A + B) = P(A) + P(B) - P(A) \\cdot P(B)$\n$${tx(pU)} - ${tx(pA)} = (1 - ${tx(pA)}) \\cdot P(B)$\n$P(B) = \\dfrac{${tx(cl(pU - pA))}}{${tx(cl(1 - pA))}} = ${tx(pB)}$`,
+      };
+    },
+  },
+];
+
+export const MATURA_MAT_SS4 = wrapGens([...GENS, ...VERJETNOST], { dropZero: false });

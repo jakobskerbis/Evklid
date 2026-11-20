@@ -1960,11 +1960,14 @@ let bugAdmin = false;
 let usageAdmin = false; // /api/usage sme samo skrbnik ali računalnik s strežnikom (/api/config admin)
 function syncBugButton() {
   $("#chat-bug").hidden = !(bugAdmin || isPilotMember());
+  $("#chat-idea").hidden = !bugAdmin; // zahteva za novo funkcijo: samo skrbnik (j, 20. 11. 2026)
 }
-$("#chat-bug").addEventListener("click", (e) => {
+const openChatBug = (e, feature) => {
   const btn = e.currentTarget;
   const open = $("#view-chat .bug-box");
-  if (open) return open.focusFirst();
+  // Odprt je isti obrazec ali drug obrazec z že napisanim besedilom (da se ne izgubi): samo fokus nanj.
+  if (open && (open.dataset.kind === (feature ? "idea" : "bug") || open.querySelector("textarea").value.trim())) return open.focusFirst();
+  open?.querySelector(".rep-cancel").click(); // odprt je prazen drug obrazec (napaka ↔ nova funkcija)
   btn.setAttribute("aria-expanded", "true");
   openAdminBug($("#view-chat .chat-head"), {
     api,
@@ -1972,6 +1975,7 @@ $("#chat-bug").addEventListener("click", (e) => {
     conversationId: () => state.conversationId,
     view: "chat",
     toast,
+    feature,
     thanks: bugAdmin ? null : t("pn.bugThanks"), // »najdeš jo v Računu« velja samo za skrbnika
     ask: bugAdmin ? null : t("pn.bugAsk"), // član pilota: kdo vidi sporočila, ki gredo zraven
     onClose: () => {
@@ -1979,7 +1983,9 @@ $("#chat-bug").addEventListener("click", (e) => {
       btn.focus();
     },
   });
-});
+};
+$("#chat-bug").addEventListener("click", (e) => openChatBug(e, false));
+$("#chat-idea").addEventListener("click", (e) => openChatBug(e, true));
 
 $("#new-chat").addEventListener("click", () => {
   setSidebar(false);
