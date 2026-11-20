@@ -119,8 +119,8 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
       const preneseno = new Set();
       page.on("requestfinished", (r) => preneseno.add(new URL(r.url()).pathname));
       await page.goto(base + "/", { waitUntil: "commit" });
-      // Učna pot ne čaka nobenega od njih.
-      await page.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 });
+      // Učna pot ne čaka nobenega od njih (app.js zagnan: Učna pot s strežnika, server/pot-takoj.js, je pred tem posnetek).
+      await page.waitForSelector("html:not([data-zacetek]) main#view-path:not([data-posnetek]) #xp-card .hero", { timeout: 60000 });
       // Kartice so način na Učni poti (#modebar), drugo zavihki.
       const zavihek = (v) => page.evaluate((v) => document.querySelector(`#tabbar .tab[data-view="${v}"], .topbar .tab[data-view="${v}"], #modebar [data-mode="${v}"]`).click(), v);
       const vidno = (sel) => page.waitForSelector(sel, { state: "visible", timeout: 20000 });
@@ -129,7 +129,7 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
       // Tema z Učne poti (vadnica.js): klik počaka modul, nato se tema odpre.
       await page.evaluate(() => document.querySelector("#view-path [data-open]").click());
       await page.waitForTimeout(400);
-      assert.ok(await page.locator("#view-path").isVisible(), "tema se ne odpre brez modula");
+      assert.ok(await page.locator("main#view-path:not([data-posnetek])").isVisible(), "tema se ne odpre brez modula");
       spusti("/vadnica.js", "/pad.js", "/enote-izbira.js");
       await vidno("#view-topic #topic-content .topic-head h1");
 

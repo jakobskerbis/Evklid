@@ -27,16 +27,72 @@
   var html = document.documentElement;
   var prej = [];
   var slogiPoKoncu = false;
-  function konec() {
+  function konec(app) {
     prej = [];
+    var tap = tapZadnji;
+    tapZadnji = null;
+    tapOn = false;
     if (slogiPoKoncu) {
       slogiPoKoncu = false;
       slogi(false, true);
     }
     html.removeAttribute("data-zacetek");
+    html.removeAttribute("data-zacetek-pot");
     html.removeAttribute("data-zacetek-pod");
     var p = document.querySelectorAll("main[data-posnetek]");
     for (var i = 0; i < p.length; i++) p[i].remove();
+    var tpl = document.getElementById("evklid-pot");
+    if (tpl) tpl.remove(); // Učna pot s strežnika ni več potrebna (app.js izriše svojo)
+    if (app === true && tap)
+      setTimeout(function () {
+        odigraj(tap);
+      }, 0);
+  }
+  var tapOn = false;
+  var tapZadnji = null;
+  var TAP = "button, [role=button], [data-open], [data-view], [data-mode], [data-gm], [data-home-go], [data-go-schedule], [data-daily], [data-dnevna], [data-scan-home]";
+  function tapOpis(el) {
+    var m = el.closest("main[data-streznik]");
+    if (!m) return { el: el };
+    var sel = el.tagName.toLowerCase();
+    var at = el.attributes;
+    var ima = false;
+    for (var i = 0; i < at.length; i++) {
+      var n = at[i].name;
+      if (n === "id" || (/^data-/.test(n) && n !== "data-pogoj" && n !== "data-nastal" && n !== "data-wired")) {
+        sel += n === "id" ? "#" + CSS.escape(at[i].value) : "[" + n + '="' + CSS.escape(at[i].value) + '"]';
+        ima = true;
+      }
+    }
+    if (!ima) for (var c = 0; c < el.classList.length; c++) sel += "." + CSS.escape(el.classList[c]);
+    var vsi = m.querySelectorAll(sel);
+    var k = 0;
+    for (var j = 0; j < vsi.length; j++) if (vsi[j] === el) k = j;
+    return { sel: sel, k: k };
+  }
+  function odigraj(o) {
+    if (document.getElementById("boot-down")) return;
+    // Zavihek ali gumb lupine: kot klik nanj (app.js ga obdela kot prej, tudi skritega). Učna pot: isti element v
+    // pravem pogledu, le če je viden (app.js ga je morda skril, ker se je stanje vmes spremenilo).
+    var el = o.el;
+    if (el) {
+      if (el.isConnected && !el.disabled) el.click();
+      return;
+    }
+    var v = document.getElementById("view-path");
+    var vsi = v && !v.hidden ? v.querySelectorAll(o.sel) : [];
+    el = vsi[o.k] || null;
+    if (!el || el.disabled || !el.getClientRects().length) return;
+    el.click();
+  }
+  function tapZadrzi(e) {
+    // Tudi klik iz skripte (dostopnost, testi): pred zagonom app.js nima kdo drug klikati v lupino.
+    if (!tapOn) return;
+    var el = e.target && e.target.closest ? e.target.closest(TAP) : null;
+    if (!el || el.closest("a[href]") || !el.closest("main[data-streznik], .topbar, #tabbar")) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    tapZadnji = tapOpis(el);
   }
   var pozabljen = false;
   var zaprto = false;
@@ -49,11 +105,18 @@
       if (prej[i][2]) prej[i][2].hidden = prej[i][3];
     }
     prej = [];
+    tapOn = false;
+    tapZadnji = null;
     try {
       localStorage.removeItem(POSNETEK);
     } catch (e) {}
+    var chip = potSrv ? document.querySelector("#xp-badge .stat.xp") : null;
+    if (chip) chip.style.removeProperty("--lvl");
     var p = document.querySelector("main[data-posnetek]:not(.zagon-okostje)");
     if (p) {
+      p.removeAttribute("data-streznik");
+      p.setAttribute("aria-hidden", "true");
+      p.inert = true;
       p.removeAttribute("id");
       p.className = "view narrow zagon-okostje";
       p.innerHTML = OKOSTJE;
@@ -185,10 +248,24 @@
     var m = null;
     var bar0 = null;
     function napolni(p) {
+      var tpl = p && p.srv ? document.getElementById("evklid-pot") : null;
+      if (p && p.srv && !(tpl && tpl.content)) {
+        p = null;
+        okostjePot = true;
+        potSrv = false;
+      }
       var pot = !p && okostjePot && v === "path";
       m.className = p ? p.c : pot ? "view narrow zagon-okostje zo-pot" : "view narrow zagon-okostje";
       if (p) m.id = "view-" + v;
-      if (p) {
+      if (tpl) {
+        m.removeAttribute("aria-hidden");
+        m.inert = false;
+        m.setAttribute("data-streznik", "");
+        m.appendChild(document.importNode(tpl.content, true));
+        pogoji(m);
+        tapOn = true;
+        postavi(m);
+      } else if (p) {
         m.textContent = "";
         m.appendChild(ociscen(p.h));
       } else m.innerHTML = pot ? OKOSTJE_POT : OKOSTJE;
@@ -199,7 +276,7 @@
       if (!html.hasAttribute("data-zacetek")) return;
       if (!m) {
         var r = razlicica();
-        if (pos && !prenos && (pos.r || "") !== r) pos = null;
+        if (pos && !pos.srv && !prenos && (pos.r || "") !== r) pos = null;
         if (kasneje && !prenos && (kasneje.r || "") !== r) kasneje = null;
         m = document.createElement("main");
         m.setAttribute("data-posnetek", "");
@@ -216,6 +293,7 @@
     }
     var glavaZa = null;
     function oznaci(bar, p) {
+      if (p && p.srv && potSrv && p.hd) glavaStreznik(p.hd);
       var tb = p && typeof p.tb === "string" && IME.test(p.tb) ? p.tb : "";
       var tabs = bar ? bar.querySelectorAll(".tab") : [];
       for (var j = 0; tb && j < tabs.length; j++) tabs[j].classList.toggle("active", tabs[j].getAttribute("data-view") === tb);
@@ -265,6 +343,154 @@
       }
     );
   }
+  var potSrv = false;
+  var potDejstvo = null;
+  function shramba(k) {
+    try {
+      return localStorage.getItem(k);
+    } catch (e) {
+      return null;
+    }
+  }
+  function potStreznika(sid0) {
+    var pm = document.querySelector('meta[name="evklid-pot"]');
+    if (!pm || pm.getAttribute("data-s") !== String(sid0) || html.hasAttribute("data-era") || navigator.onLine === false) return null;
+    var jez = pm.getAttribute("data-jezik") || "";
+    var L = jezik();
+    if (!L) {
+      var nav = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+      var tz = "";
+      try {
+        tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      } catch (e) {}
+      var zaz = pm.getAttribute("data-zaznan") || "";
+      if (zaz && String(nav).toLowerCase() === String(pm.getAttribute("data-oznaka") || "").toLowerCase()) L = zaz === "en" && tz === "Europe/Ljubljana" ? "sl" : zaz;
+    }
+    if (!jez || L !== jez) return null;
+    try {
+      for (var i = 0; i < localStorage.length; i++) if (/^evklid\.vrsta\./.test(localStorage.key(i) || "")) return null;
+    } catch (e) {
+      return null;
+    }
+    var ok = function (k, re) {
+      var x = shramba(k);
+      return !x || !re.test(x);
+    };
+    if (!ok("evklid.razdelilnik", /"path"/) || !ok("evklid.okna", /"path"/) || !ok("evklid.offline.queue." + sid0, /\{/)) return null;
+    var hd = null;
+    try {
+      hd = JSON.parse(pm.getAttribute("data-glava") || "null");
+    } catch (e) {}
+    var d = Number(pm.getAttribute("data-dejstvo"));
+    potDejstvo = isFinite(d) ? d : null;
+    html.lang = jez;
+    html.dir = pm.getAttribute("data-smer") === "rtl" ? "rtl" : "ltr";
+    html.setAttribute("data-zacetek-pot", "");
+    return { srv: true, v: "path", c: "view narrow split-host", tb: "path", t: Date.now(), hd: hd && typeof hd === "object" ? hd : null };
+  }
+  function lokalniDan(d) {
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+  }
+  function pogoji(m) {
+    var el = m.querySelectorAll("[data-pogoj]");
+    for (var i = 0; i < el.length; i++) {
+      var k = el[i].getAttribute("data-pogoj");
+      var skrij = false;
+      if (k === "sch") skrij = shramba("evklid.scheduleCardHidden") === "1";
+      else if (k === "fb") {
+        var st = shramba("evklid.feedbackCard");
+        var born = new Date(String(el[i].getAttribute("data-nastal") || "").replace(" ", "T") + "Z");
+        skrij = st === "hidden" || st === "sent" || isNaN(born.getTime()) || !(born < new Date()) || lokalniDan(born) === lokalniDan(new Date());
+      } else if (k === "inst") {
+        var at = Number(shramba("evklid.install"));
+        var mm = ["standalone", "fullscreen", "minimal-ui", "window-controls-overlay"];
+        var sam = / EvklidApp\//.test(navigator.userAgent) || navigator.standalone === true;
+        for (var j = 0; !sam && j < mm.length; j++) sam = matchMedia("(display-mode: " + mm[j] + ")").matches;
+        skrij = sam || (at > 0 && Date.now() - at < 21 * 864e5);
+      }
+      if (skrij) el[i].hidden = true;
+    }
+  }
+  function glavaStreznik(hd) {
+    var chip = document.querySelector("#xp-badge .stat.xp");
+    if (chip && typeof hd.l === "number") {
+      chip.style.setProperty("--lvl", hd.l);
+      if (typeof hd.lt === "string") chip.title = hd.lt;
+    }
+    var pb = document.getElementById("profile-btn");
+    if (pb && typeof hd.pt === "string") pb.title = hd.pt;
+    // Napisi lupine v jeziku strani (server/pot-takoj.js napisiLupine), kot applyI18n; Učna pot je že prevedena.
+    var np = hd.np && typeof hd.np === "object" ? hd.np : null;
+    var el = np ? document.querySelectorAll("[data-i18n],[data-i18n-title],[data-i18n-aria]") : [];
+    for (var i = 0; i < el.length; i++) {
+      if (el[i].closest("main")) continue;
+      var k = el[i].getAttribute("data-i18n");
+      if (k && typeof np[k] === "string") el[i].textContent = np[k];
+      k = el[i].getAttribute("data-i18n-title");
+      if (k && typeof np[k] === "string") el[i].title = np[k];
+      k = el[i].getAttribute("data-i18n-aria");
+      if (k && typeof np[k] === "string") el[i].setAttribute("aria-label", np[k]);
+    }
+  }
+  function postavi(m) {
+    var go = function () {
+      if (!m.isConnected) return;
+      lomi();
+      locnica(m);
+    };
+    requestAnimationFrame(go);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(go);
+  }
+  function lomi() {
+    var bar = document.querySelector(".topbar");
+    var tabs = bar && bar.querySelector(".tabs");
+    if (!tabs) return;
+    var over = function () {
+      return tabs.scrollWidth > tabs.clientWidth + 1;
+    };
+    var STEPS = ["tabs-tight", "tabs-nobrand", "tabs-minor", "tabs-compact"];
+    for (var i = 0; i < STEPS.length; i++) bar.classList.remove(STEPS[i]);
+    for (var j = 0; j < STEPS.length && over(); j++) bar.classList.add(STEPS[j]);
+    var max = tabs.scrollWidth - tabs.clientWidth;
+    var at = Math.abs(tabs.scrollLeft);
+    tabs.classList.toggle("fade-start", max > 1 && at > 1);
+    tabs.classList.toggle("fade-end", max > 1 && at < max - 1);
+  }
+  function locnica(m) {
+    var old = m.querySelector(":scope > .split-handle");
+    if (old) old.remove();
+    if (shramba("evklid.windows") === "0" || matchMedia("(max-width: 760px), (max-height: 500px) and (pointer: coarse)").matches) return;
+    var cs = getComputedStyle(m);
+    if (!/grid/.test(cs.display)) return;
+    var px = function (v) {
+      return parseFloat(v) || 0;
+    };
+    var tr = function (v) {
+      return String(v || "").trim().split(/\s+/).map(px);
+    };
+    var cols = tr(cs.gridTemplateColumns);
+    if (cols.length < 2) return;
+    var at = px(cs.columnGap) / 2 + cols[0];
+    var pos = cs.direction === "rtl" ? m.clientWidth - px(cs.paddingRight) - at : px(cs.paddingLeft) + at;
+    var rows = tr(cs.gridTemplateRows);
+    var len = 0;
+    for (var i = 0; i < rows.length; i++) len += rows[i];
+    len += px(cs.rowGap) * (rows.length - 1);
+    var h = document.createElement("div");
+    h.className = "split-handle split-x";
+    h.setAttribute("aria-hidden", "true");
+    h.style.left = pos + "px";
+    h.style.top = px(cs.paddingTop) + "px";
+    h.style.height = Math.max(0, len) + "px";
+    h.innerHTML = '<span class="split-grip"></span>';
+    m.appendChild(h);
+  }
+  function dejstvo() {
+    var d = potSrv ? potDejstvo : null;
+    potDejstvo = null;
+    return d;
+  }
+  if (typeof window.addEventListener === "function") window.addEventListener("click", tapZadrzi, true);
   var pred = {};
   var predOd = Date.now();
   var seme = {};
@@ -340,7 +566,7 @@
       if (el) el.hidden = false;
     }
   }
-  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, pozabiVnaprej: pozabiVnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen, ucenec: !!(zp && zp.s != null) };
+  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, pozabiVnaprej: pozabiVnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen, dejstvo: dejstvo, ucenec: !!(zp && zp.s != null) };
   try {
     var z = beri();
     var sid = localStorage.getItem("studentId");
@@ -349,11 +575,14 @@
     var v = q || (moj ? izberi(z, Date.now()) : "path");
     var pos = !q && sid && v && IME.test(v) ? posnetekZa(v, moj ? z : null, sid, Date.now()) : null;
     var takoj = pos && !pos.z ? pos : null;
-    okostjePot = !!(zp && zp.s != null && v === "path" && !pos);
-    if (v && IME.test(v) && (v !== "path" || pos || okostjePot)) {
+    var srv = !pos && v === "path" && zp && zp.s != null ? potStreznika(zp.s) : null;
+    potSrv = !!srv;
+    if (srv) takoj = srv;
+    okostjePot = !!(zp && zp.s != null && v === "path" && !pos && !srv);
+    if (v && IME.test(v) && (v !== "path" || pos || okostjePot || srv)) {
       slogiPoKoncu = !!zp && v === "path";
       html.setAttribute("data-zacetek", v);
-      setTimeout(konec, okostjePot ? 20000 : 8000);
+      setTimeout(konec, okostjePot || srv ? 20000 : 8000);
       pokazi(v, takoj, pos && pos.z ? pos : null);
     }
     var cfg = zp && zp.d["/api/config"];

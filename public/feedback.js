@@ -3,6 +3,7 @@
 import { t } from "./i18n-osnova.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { createRenderer } from "./rich.js";
+import { feedbackCardHtml } from "./zacetna.js";
 
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -58,11 +59,7 @@ export function renderFeedbackCard() {
   box.hidden = !cfg.prompt || state === "hidden" || state === "sent" || !secondDay(ctx.getStudent());
   if (box.hidden) return;
   box.className = "card fb-card";
-  box.innerHTML = `
-    <span class="fb-card-ic">${icon("message-square-heart")}</span>
-    <div class="fb-card-text"><b>${esc(t("fb.cardTitle"))}</b><p class="muted">${esc(t("fb.cardText"))}</p></div>
-    <button type="button" class="ghost icon-only fb-card-x" aria-label="${esc(t("fb.dismiss"))}" title="${esc(t("fb.dismiss"))}">${icon("x")}</button>
-    <button type="button" class="primary fb-card-go">${esc(t("fb.cardBtn"))}</button>`;
+  box.innerHTML = feedbackCardHtml(t); // izris skupen s strežnikom (public/zacetna.js)
   box.querySelector(".fb-card-go").onclick = () => ctx.showView("feedback");
   box.querySelector(".fb-card-x").onclick = () => {
     store("hidden");

@@ -91,7 +91,7 @@ export function povzemiZahteve(zahteve) {
 // stanja »pripravljeno« in do interaktivnosti (zadnja dolga naloga ≥ 50 ms, nato 300 ms brez nove; window.__long iz
 // PAGE_MERI v scripts/meri-hitrost.cjs). Stanja: »pot« (Učna pot uporabna), »vnos« (polje inštruktorja vidno in
 // gumb Pošlji omogočen), »pogovor« (vsaj `min` odgovorov v pogovoru), »znak« (nov odgovor ima prvi znak besedila).
-// Ob nalaganju beleži še window.__tPot: ms od začetka navigacije do uporabne Učne poti.
+// Ob nalaganju beleži še window.__tPot: ms od začetka navigacije do uporabne Učne poti, in window.__tApp: do zagnanega app.js.
 export function MERILNIK_PRIJAVLJEN() {
   const vidno = (el) => {
     if (!el || !el.isConnected) return false;
@@ -137,9 +137,13 @@ export function MERILNIK_PRIJAVLJEN() {
         if (!e.hadRecentInput) window.__premiki.push({ t: Math.round(e.startTime), v: Math.round(e.value * 1000) / 1000, izvor: (e.sources || []).map((x) => oznaka(x.node)).filter(Boolean).slice(0, 3) });
     }).observe({ type: "layout-shift", buffered: true });
   } catch {}
+  // window.__tApp: app.js zagnan (ni več posnetka ali Učne poti s strežnika, server/pot-takoj.js; dotik se izvede takoj).
+  window.__tApp = null;
+  const appPot = () => !document.documentElement.hasAttribute("data-zacetek") && [...document.querySelectorAll("main#view-path:not([data-posnetek]) #xp-card .hero")].some(vidno);
   const nalaganje = () => {
     if (window.__tPot === null && document.body && STANJA.pot()) window.__tPot = performance.now();
-    if (window.__tPot === null) requestAnimationFrame(nalaganje);
+    if (window.__tApp === null && document.body && appPot()) window.__tApp = performance.now();
+    if (window.__tPot === null || window.__tApp === null) requestAnimationFrame(nalaganje);
   };
   requestAnimationFrame(nalaganje);
   window.__prijavljenStanje = (ime, o = {}) => STANJA[ime](o);
