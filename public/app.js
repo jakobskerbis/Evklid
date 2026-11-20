@@ -16,7 +16,7 @@ import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { nastaviNogo } from "./noga.js";
-import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH } from "./okna.js";
+import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH, setTabbarH } from "./okna.js";
 import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profile-menu.js";
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
 import { openPrintable, stopReading } from "./gradiva.js";
@@ -905,14 +905,29 @@ const tabbarEl = $("#tabbar");
 const barAuto = () => !!tabbarEl && !document.body.matches(".tb-mir, .tb-vraca") && getComputedStyle(tabbarEl).position === "fixed";
 const typing = () => !!document.activeElement?.matches?.('textarea, [contenteditable="true"], input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"])');
 const NO_SWIPE = "#tabbar, canvas, input[type=range], .pad, .graph-slot, .demo, .okno, .tour";
-// soon (menjava pogleda): --tabbar-h v naslednjem okvirju pred risanjem; branje sloga sredi tapa je vsililo slog in
-// postavitev novega pogleda. Pokazana vrstica (drsenje) ga popravi takoj, da vrstica za pisanje ne ostane pod njo.
+// soon (menjava pogleda): --tabbar-h preverimo v naslednjem okvirju pred risanjem; branje sloga sredi tapa je vsililo
+// slog in postavitev novega pogleda. Zapis šele tam pa je za tapom (ko je brskalnik slog novega pogleda že preračunal)
+// preračunal slog cele strani še enkrat (spremenljivka na :root; Nazaj iz teme, kliki 20. 11. 2026), zato v tapu takoj
+// zapišemo vrednost, ki jo je imel ta zaslon zadnjič (z istimi razredi na body); okvir jo le potrdi.
+// Pokazana vrstica (drsenje) ga popravi takoj, da vrstica za pisanje ne ostane pod njo.
 let tabbarRaf = 0;
+// Ob spremembi velikosti okna pozabimo vse (branje innerWidth bi sredi tapa vsililo slog in postavitev).
+const tabbarZadnja = new Map();
+addEventListener("resize", () => tabbarZadnja.clear());
+const tabbarKljuc = () => `${document.querySelector("body > main.view:not([hidden]):not(.in-okno)")?.id}|${document.body.className}`;
 function peekBar(on, soon = false) {
   if (on && typing()) on = false;
   if (document.body.classList.contains("tb-peek") !== on) document.body.classList.toggle("tb-peek", on);
-  if (!soon) syncTabbarH();
-  else tabbarRaf ||= requestAnimationFrame(() => ((tabbarRaf = 0), syncTabbarH()));
+  if (!soon) return void syncTabbarH();
+  const kTap = tabbarKljuc();
+  const prej = tabbarZadnja.get(kTap);
+  if (prej) setTabbarH(prej);
+  cancelAnimationFrame(tabbarRaf);
+  tabbarRaf = requestAnimationFrame(() => {
+    tabbarRaf = 0;
+    const v = syncTabbarH();
+    if (v) tabbarZadnja.set(kTap, v).set(tabbarKljuc(), v);
+  });
 }
 // Odprta lekcija v Učbeniku (j 2026-11-04): vrstica ostane skrita med branjem in se pokaže šele ob robu, torej s
 // potegom navzgor, ko je lekcija že na dnu, ali s potegom navzdol, ko je že na vrhu. Rob šteje ob začetku potega,
@@ -4662,10 +4677,12 @@ async function bootFailed(err) {
       },
       { passive: false },
     );
-    new ResizeObserver(fit).observe(tabs);
-    // Ob spremembi zavihkov (»active« ob vsakem tapu) merimo v naslednjem okvirju, ne sredi tapa.
-    let fitRaf = 0;
-    const fitSoon = () => (fitRaf ||= requestAnimationFrame(() => ((fitRaf = 0), fit())));
+    const ro = new ResizeObserver(fit);
+    ro.observe(tabs);
+    // Ob spremembi zavihkov (»active« ob vsakem tapu) merimo ne sredi tapa in ne v requestAnimationFrame (oboje je
+    // vsililo preračun sloga novega pogleda; Inštruktor, kliki 20. 11. 2026), ampak v opazovalcu velikosti po
+    // postavitvi in pred risanjem: ponovna prijava ga sproži za vidno vrstico (skrita, npr. na telefonu, ne potrebuje).
+    const fitSoon = () => (ro.unobserve(tabs), ro.observe(tabs));
     new MutationObserver(fitSoon).observe(tabs, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden", "class"] });
     document.fonts?.ready.then(fit);
   }

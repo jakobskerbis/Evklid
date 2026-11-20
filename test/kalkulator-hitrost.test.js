@@ -48,8 +48,11 @@ test("Formule: list se pripravi ob nedejavnosti in izriše po kosih (brez dolge 
 test("drsne vrstice: najprej vse mere, nato zapisi (brez ponavljanja postavitve strani za vsako vrstico)", () => {
   const d = src("drsniki.js");
   assert.match(d, /const oznaciVse = \(els\) => els\.map\(izmeri\)\.forEach\(uporabi\);/);
-  assert.match(d, /oznaciVse\(vrste\)/);
   assert.match(d, /new ResizeObserver\(\(vnosi\) => oznaciVse\(/);
+  // Pregled po spremembi ne meri (requestAnimationFrame je pred postavitvijo): vrstice znova prijavi opazovalcu velikosti.
+  const pregled = d.slice(d.indexOf("function preglej("), d.indexOf("const kmalu"));
+  assert.match(pregled, /ro\.unobserve\(el\);\s*ro\.observe\(el\);/);
+  assert.doesNotMatch(pregled, /izmeri|oznaci|getComputedStyle|checkVisibility/);
 });
 
 test("velik razdelek ob prvem prikazu: najprej slika z izbranim gumbom, razdelek v naslednji sliki", () => {

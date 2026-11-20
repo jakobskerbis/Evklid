@@ -80,6 +80,11 @@ export function syncTabbarH() {
   const cs = getComputedStyle(bar);
   const shown = cs.display !== "none" && (cs.position !== "fixed" || document.body.matches(".tb-peek, .tb-vraca"));
   const v = `${shown ? (barH ?? bar.offsetHeight) : 0}px`;
+  setTabbarH(v);
+  return v;
+}
+// Le ob spremembi: vsak zapis na :root preračuna slog cele strani.
+export function setTabbarH(v) {
   const root = document.documentElement.style;
   if (root.getPropertyValue("--tabbar-h") !== v) root.setProperty("--tabbar-h", v);
 }
@@ -745,8 +750,10 @@ export function initOkna(opts) {
   const tabbar = $("#tabbar");
   if (tabbar && "ResizeObserver" in window)
     new ResizeObserver((e) => {
+      // Skrita vrstica (display: none) meri 0: obdržimo zadnjo pravo višino, sicer bi ob vrnitvi (Nazaj iz teme)
+      // tap zapisal 0 in šele opazovalec pred risanjem pravo višino, kar na :root preračuna slog cele strani še enkrat.
       const b = e[0]?.borderBoxSize?.[0];
-      barH = b ? Math.round(b.blockSize) : null;
+      if (!b || b.blockSize > 0) barH = b ? Math.round(b.blockSize) : null;
       syncTabbarH();
     }).observe(tabbar);
   makeRowSortable($("#modebar"), "modebar", { item: "button" });

@@ -104,9 +104,13 @@ function pokukaj(el) {
 // iskanje vseh drsnih vrstic po strani ob vsaki spremembi (meni, tap, tipka Evklidove tipkovnice) je na telefonu
 // porabilo ~30–40 ms vsakega tapa (CPU 4×; kliki 20. 11. 2026). Vrstica, ki postane vidna ali spremeni velikost
 // (skrit pogled se pokaže, okno se zoži), sproži opazovalca velikosti (ro), ki jo izmeri sam.
+// Tu ničesar ne merimo: najdene vrstice znova prijavimo opazovalcu velikosti, ki jih v istem okvirju izmeri po
+// postavitvi in pred risanjem (ponovna prijava vedno sproži klic za vidno vrstico). Merjenje tu (requestAnimationFrame,
+// pred postavitvijo) je po tapu vsililo še en preračun sloga novega pogleda (Inštruktor, Nazaj; kliki 20. 11. 2026).
 function preglej() {
   caka = false;
-  const deli = vseStran || obmocja.size > 40 ? [document] : [...obmocja].filter((el) => el.isConnected);
+  // Del, ki je skrit (pogled, s katerega smo odšli), preskočimo: ko se pokaže, ga sprememba atributa hidden pripelje sem.
+  const deli = vseStran || obmocja.size > 40 ? [document] : [...obmocja].filter((el) => el.isConnected && !el.closest("[hidden]"));
   vseStran = false;
   obmocja = new Set();
   if (!deli.length) return;
@@ -117,16 +121,12 @@ function preglej() {
     if (gor) najdeni.add(gor);
     kje.querySelectorAll(SEL).forEach((el) => najdeni.add(el));
   }
-  const vrste = [];
   najdeni.forEach((el) => {
     if (NI && el.matches(NI)) return;
-    if (!sledeni.has(el)) {
-      sledeni.add(el);
-      ro.observe(el);
-    }
-    if (!neizrisano(el)) vrste.push(el); // daljni del lista formul: ko se izriše, ga pregledamo (dogodek spodaj)
+    sledeni.add(el);
+    ro.unobserve(el);
+    ro.observe(el);
   });
-  oznaciVse(vrste);
 }
 
 // Kaj pregledati v naslednjem okvirju: vse (document) ali le spremenjene dele.
@@ -171,5 +171,7 @@ export function initDrsniki() {
     }
   }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeOldValue: true, attributeFilter: ["style", "hidden", "open"] });
   document.fonts?.ready?.then(() => kmalu());
+  // Pisava, naložena pozneje (npr. pisave KaTeX ob prvi formuli), spremeni širino vsebine, ne pa vedno okvirja vrstice.
+  document.fonts?.addEventListener?.("loadingdone", () => kmalu());
   kmalu();
 }
