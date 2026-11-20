@@ -2265,7 +2265,7 @@ const VERJETNOST = [
           : [
               { value: pU, why: "To je verjetnost za vsaj enega; odštej še primere, ko se zgodita oba." },
               { value: cl(pA + pB), why: "Primere, ko se zgodita oba, moraš odšteti dvakrat (bili so v $P(A)$ in v $P(B)$)." },
-              { value: cl(pU - pAB / 2), why: "Presek odštej v celoti: iz vsote odstrani vse, ki počnejo oboje." },
+              { value: cl(pA - pAB), why: "To je verjetnost, da se zgodi le $A$; prištej še verjetnost, da se zgodi le $B$." },
             ]),
         hint: none ? "»Ne $A$ in ne $B$« je nasprotni dogodek dogodka $A + B$." : "Natanko eden: zgodi se $A$ ali $B$, ne pa oba. Pomagaj si z Vennovim diagramom.",
         data: { given: [`P(A) = ${tx(pA)}`, `P(B) = ${tx(pB)}`, `P(A \\cdot B) = ${tx(pAB)}`], find: [none ? "P(\\overline{A + B})" : "P(\\text{natanko eden})"] },

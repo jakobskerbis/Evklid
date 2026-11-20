@@ -2543,7 +2543,7 @@ const LINEARNE = [
             ? num(T0, null, [
                 { value: h2 / v, why: `To je čas od trenutka $t_2$ naprej; prištej še $${t2}$.` },
                 { value: h1 / v, why: `To je čas od trenutka $t_1$ naprej; prištej še $${t1}$.` },
-                { value: (h1 * t2 - h2 * t1) / (h1 - h2) / v, why: `Ničlo izračunaj iz $${H}(t) = 0$.` },
+                { value: h0 / (h1 - h2), why: "Smerni koeficient je sprememba na enoto časa: razliko deli še s $t_2 - t_1$." },
               ], U[0])
             : num(h0, null, [
                 { value: h1 + v * t2, why: `Začetna vrednost je $${H}(0) = ${H}_1 + v t_1$.` },
@@ -2896,7 +2896,7 @@ const LINEARNE = [
         return {
           text: `${who} je na ${k === 3 ? "treh" : k === 4 ? "štirih" : "petih"} testih ${g(who, "dosegel", "dosegla")} ${scT} točk (od $100$). Najmanj koliko točk mora doseči na naslednjem testu, da bo povprečje vseh testov vsaj $${goal}$ točk?`,
           answer: num(need, null, [
-            { value: goal * k - sum + goal, why: "Povprečje se računa iz vseh testov, tudi zadnjega." },
+            { value: Math.ceil(2 * goal - sum / k), why: "Dosedanjega povprečja in zadnjega testa ne smeš povprečiti kot dve števili: vsak test šteje enako." },
             { value: goal, why: "Zadnji test mora nadomestiti tudi primanjkljaj prejšnjih testov." },
             { value: goal * k - sum, why: `Testov je skupaj $${k + 1}$, ne $${k}$.` },
           ]),
