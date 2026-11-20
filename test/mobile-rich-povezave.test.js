@@ -75,6 +75,14 @@ test("http(s), mailto in tel ostanejo povezave", () => {
   assert.match(render("[*krepko*](https://evklid.app)"), /<a href="https:\/\/evklid\.app"><em>krepko<\/em><\/a>/);
 });
 
+test("parametri, ki so podobni znakovnim referencam (&tab=, &lt=, &nbsp=), ostanejo celi", () => {
+  assert.deepEqual(hrefs(render("[a](https://e.si/?id=1&tab=2)")), ["https://e.si/?id=1&amp;tab=2"]);
+  assert.deepEqual(hrefs(render("https://e.si/?q=1&lt=5&nbsp=3")), ["https://e.si/?q=1&amp;lt=5&amp;nbsp=3"]);
+  assert.deepEqual(hrefs(render("[a](https://e.si/?a=1&amp;b=2)")), ["https://e.si/?a=1&amp;b=2"]);
+  assert.equal(varnaPovezava("&#104;ttps://e.si/?x&tab=1"), "https://e.si/?x&tab=1");
+  assert.equal(varnaPovezava("\u200bhttps://e.si"), null);
+});
+
 test("naslov in title sta ubežana", () => {
   const html = render('[a](https://e.si/"onmouseover="x "t"<b>")');
   for (const tag of html.match(/<a\b[^>]*>/g) || []) assert.doesNotMatch(tag, /"\s*onmouseover=/, tag);
