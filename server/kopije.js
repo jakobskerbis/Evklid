@@ -226,6 +226,54 @@ export function applyPendingRestore(dbFile, { log = console, now = new Date() } 
   return { restored: true, saved };
 }
 
+// --- seznam izbrisov (docs/izbris-izvoz.md »Varnostne kopije«) ---
+// Obnova baze iz kopije ne sme vrniti izbrisanih računov in profilov. Zato vsak izbris zapiše vrstico v
+// <mapa baze>/<ime>-izbrisi.json, ZUNAJ datoteke baze, ki je obnova ne zamenja (server/accounts/izbris.js). Ob vsakem
+// zagonu se izbrisi ponovijo za vrstice, ki so spet v bazi. Vsebina brez osebnih podatkov: notranji id-ji, čas nastanka
+// vrstice (created_at, da nov račun s ponovno uporabljenim id-jem ostane) in čas izbrisa.
+// Zapis: [{ at: ISO, r: [id računa, created_at] | null, s: [[id profila, created_at], …] }].
+// Hrani se IZBRISI_DNI: najdlje živi kopija 30 dni (R2; ročna 22 + 7 dni posnetka diska + 1), +15 dni rezerve.
+export const IZBRISI_DNI = 45;
+export const izbrisiFile = (dbFile) => path.join(path.dirname(path.resolve(dbFile)), `${stem(dbFile)}-izbrisi.json`);
+
+const veljaven = (z) =>
+  z && typeof z.at === "string" && (z.r == null || (Array.isArray(z.r) && z.r.length === 2)) && (z.s == null || (Array.isArray(z.s) && z.s.every((x) => Array.isArray(x) && x.length === 2)));
+
+/** Seznam izbrisov (prazen, če ga ni). Pokvarjena datoteka vrže napako: tihi prazen seznam bi izbrise izgubil. */
+export function beriIzbrise(dbFile) {
+  if (!dbFile || dbFile === ":memory:") return [];
+  const f = izbrisiFile(dbFile);
+  if (!fs.existsSync(f)) return [];
+  const v = JSON.parse(fs.readFileSync(f, "utf8"));
+  if (!Array.isArray(v)) throw new Error(`${path.basename(f)} ni seznam`);
+  return v.filter(veljaven);
+}
+
+/**
+ * Doda izbrise k seznamu (brez dvojnikov), pobriše starejše od IZBRISI_DNI in zapiše atomarno (tmp + rename).
+ * Vrne { list, dodanih }. Uporabi ga zapis ob izbrisu in prenos seznama iz R2 (server/kopije-oblak.js).
+ */
+export function dodajIzbrise(dbFile, novi, now = new Date()) {
+  const meja = new Date(now.getTime() - IZBRISI_DNI * 864e5).toISOString();
+  const kljuc = (z) => JSON.stringify([z.at, z.r ?? null, z.s ?? []]);
+  const list = beriIzbrise(dbFile);
+  const znani = new Set(list.map(kljuc));
+  let dodanih = 0;
+  for (const z of novi.filter(veljaven))
+    if (!znani.has(kljuc(z))) {
+      znani.add(kljuc(z));
+      list.push({ at: z.at, r: z.r ?? null, s: z.s ?? [] });
+      dodanih++;
+    }
+  const ostane = list.filter((z) => z.at >= meja).sort((a, b) => a.at.localeCompare(b.at));
+  if (dodanih || ostane.length !== list.length) {
+    const f = izbrisiFile(dbFile);
+    fs.writeFileSync(`${f}.tmp`, JSON.stringify(ostane));
+    fs.renameSync(`${f}.tmp`, f);
+  }
+  return { list: ostane, dodanih };
+}
+
 /** Shranjene baze pred obnovo, najnovejša prva (za razveljavitev obnove). */
 export function savedBeforeRestore(dbFile) {
   const dir = path.dirname(path.resolve(dbFile));

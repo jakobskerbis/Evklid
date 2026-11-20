@@ -8,7 +8,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { listBackups, backupDir, checkFile } from "./kopije.js";
+import { listBackups, backupDir, checkFile, dodajIzbrise } from "./kopije.js";
 import { backupKey } from "./crypto-polje.js";
 
 const MAGIC = Buffer.from("BKP1");
@@ -92,7 +92,9 @@ export function makeClient(cfg, { fetchFn = globalThis.fetch, now = () => new Da
     if (!res.ok) {
       const text = await res.text().catch(() => "");
       const code = text.match(/<Code>([^<]+)<\/Code>/)?.[1];
-      throw new Error(`shramba je vrnila ${res.status}${code ? ` ${code}` : ""}`);
+      const err = new Error(`shramba je vrnila ${res.status}${code ? ` ${code}` : ""}`);
+      err.status = res.status;
+      throw err;
     }
     return res;
   };
@@ -160,11 +162,41 @@ export async function downloadBackup(cfg, dbFile, date, { fetchFn } = {}) {
   return { file, name: `${date}-0000` };
 }
 
+// Seznam izbrisov (server/kopije.js) zunaj strežnika: brez njega bi obnova iz R2 ali posnetka diska po izgubi diska
+// vrnila izbrisane račune. Šifriran kot kopija baze, en predmet, ki se prepiše (stari izbrisi se iz njega pobrišejo).
+// Pravilo vedra »izbriši po 30 dneh« ga pobriše le, če 30 dni ni bilo nobenega izbrisa; urna uskladitev ga naloži znova.
+const izbrisiKey = (dbFile) => `${PREFIX}${stemOf(dbFile)}-izbrisi.json.enc`;
+
+/**
+ * Združi seznam izbrisov v shrambi z lokalnim (unija; lokalni se zapiše) in, če upload, naloži unijo, kadar se
+ * razlikuje od shranjene. Brez EVKLID_DATA_KEY ne naredi nič (nešifrirano ne gre ven). Vrne { dodanih, nalozeno }
+ * (dodanih: novi izbrisi iz shrambe) ali null brez ključa.
+ */
+export async function uskladiIzbrise(cfg, dbFile, { fetchFn, now = () => new Date(), upload = true } = {}) {
+  if (!backupKey()) return null;
+  const client = makeClient(cfg, { fetchFn, now });
+  const key = izbrisiKey(dbFile);
+  let remote = [];
+  try {
+    remote = JSON.parse(decryptBackup(await client.get(key)).toString("utf8"));
+  } catch (e) {
+    if (e.status !== 404) throw e; // brez seznama v shrambi (prvič) je prazen; ostale napake: nič ne prepišemo
+  }
+  const { list, dodanih } = dodajIzbrise(dbFile, Array.isArray(remote) ? remote : [], now());
+  const enako = JSON.stringify(list) === JSON.stringify(remote); // v shrambi je vedno zadnja unija v isti obliki
+  let nalozeno = false;
+  if (upload && !enako && (list.length || remote.length)) {
+    await client.put(key, encryptBackup(Buffer.from(JSON.stringify(list))));
+    nalozeno = true;
+  }
+  return { dodanih, nalozeno };
+}
+
 /**
  * Vsako uro (prvič 10 min po zagonu, ko je lokalna kopija že narejena) naloži najnovejšo dnevno kopijo, če je še ni.
  * status() je za javni /healthz/stanje: brez poti in podrobnosti napake.
  */
-export function startCloudBackups(dbFile, { scheduler = true, log = console, fetchFn, now = () => new Date(), env = process.env } = {}) {
+export function startCloudBackups(dbFile, { scheduler = true, log = console, fetchFn, now = () => new Date(), env = process.env, poIzbrisih = null } = {}) {
   const cfg = cloudConfig(env);
   const off = !cfg || !dbFile || dbFile === ":memory:" || env.EVKLID_BACKUPS === "0";
   let uploaded = null;
@@ -176,11 +208,17 @@ export function startCloudBackups(dbFile, { scheduler = true, log = console, fet
     // Vse v try: run teče iz setTimeout/setInterval, zavrnjena obljuba bi ustavila strežnik.
     try {
       const latest = listBackups(dbFile).find((b) => !b.manual);
-      if (!latest || latest.date === uploaded) return;
-      const r = await uploadBackup(cfg, dbFile, latest.file, latest.date, { fetchFn, now });
-      uploaded = latest.date;
+      if (latest && latest.date !== uploaded) {
+        const r = await uploadBackup(cfg, dbFile, latest.file, latest.date, { fetchFn, now });
+        uploaded = latest.date;
+        log.info?.(`[evklid] kopija zunaj strežnika: ${latest.date} (${Math.round(r.bytes / 1024)} kB)${r.deleted.length ? `, pobrisane: ${r.deleted.join(", ")}` : ""}`);
+      }
+      // Seznam izbrisov: novi izbrisi gredo ven v največ 1 uri; izbrisi, ki so bili samo v shrambi (disk obnovljen
+      // iz posnetka), se ponovijo v bazi (poIzbrisih; poceni, zato vsakič, tudi če je prenos ob zagonu zamudil rok).
+      const iz = await uskladiIzbrise(cfg, dbFile, { fetchFn, now });
+      if (iz?.dodanih) log.info?.(`[evklid] seznam izbrisov iz shrambe zunaj strežnika: ${iz.dodanih} novih`);
+      if (iz) poIzbrisih?.();
       failed = false;
-      log.info?.(`[evklid] kopija zunaj strežnika: ${latest.date} (${Math.round(r.bytes / 1024)} kB)${r.deleted.length ? `, pobrisane: ${r.deleted.join(", ")}` : ""}`);
     } catch (e) {
       failed = true;
       log.error?.(`[evklid] kopija zunaj strežnika ni uspela: ${e.message}`);

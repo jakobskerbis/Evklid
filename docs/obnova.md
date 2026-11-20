@@ -56,7 +56,8 @@ V Render → evklid → **Shell**:
 6. Če je obnova slabša od prej: `node scripts/obnovi-kopijo.js --razveljavi` in še en Restart service (mogoče
    14 dni po obnovi).
 
-Izgubi se vse, kar se je zgodilo po izbrani kopiji.
+Izgubi se vse, kar se je zgodilo po izbrani kopiji. Računi in profili, izbrisani po kopiji, se ob zagonu izbrišejo
+znova (seznam izbrisov, `docs/izbris-izvoz.md`; Logs: »po obnovi znova izbrisano«); nič ni treba narediti ročno.
 
 ## Postopek B: izgubljen cel strežnik ali disk (nova namestitev)
 

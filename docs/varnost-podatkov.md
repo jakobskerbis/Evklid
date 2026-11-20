@@ -97,6 +97,8 @@ naslov. Ob izbrisu računa vrstice ostanejo brez povezave na račun. Branje: `no
 
 ## Spremenljivke okolja
 
-- `EVKLID_DATA_KEY` – ključ za šifriranje (obvezno na javnem strežniku).
+- `EVKLID_DATA_KEY` – ključ za šifriranje (obvezno na javnem strežniku: v produkciji, tj. `RENDER`, `NODE_ENV=production`
+  ali `EVKLID_BASE_URL` s https, se strežnik brez njega ne zažene; `/healthz/stanje` → `sifriranje`, Straža pade ob `false`).
+- `EVKLID_ALLOW_PLAINTEXT=1` – samo izrecna izjema: produkcija brez ključa se vseeno zažene (podatki nešifrirani).
 - `EVKLID_DATA_KEYS_OLD` – stari ključi med menjavo (`id:ključ,id:ključ`).
 - `EVKLID_IMAGE_DAYS` – koliko dni ostanejo fotografije nalog (privzeto 7).

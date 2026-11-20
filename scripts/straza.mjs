@@ -28,6 +28,8 @@ export function presojaStanja(j, now = Date.now()) {
   const sveze = (iso) => !iso || now - Date.parse(iso) < SVEZE_MS;
   if (!j.razlicica || !j.id) napake.push("manjka različica ali id");
   if (j.kopije?.napaka) napake.push("varnostna kopija baze javlja napako");
+  // Strežnik brez EVKLID_DATA_KEY (zažene se samo z EVKLID_ALLOW_PLAINTEXT=1) shranjuje osebne podatke nešifrirane.
+  if (j.sifriranje === false) napake.push("šifriranje osebnih podatkov v bazi je izklopljeno (EVKLID_DATA_KEY ni nastavljen)");
   // Točka D4: opozorilo, ko je bil pomnilnik v zadnjih 30 minutah nad 85 % meje (Render ob meji proces ubije).
   const pm = j.pomnilnik;
   if (pm && pm.najvecDelez > (pm.opozorilo ?? 85))
