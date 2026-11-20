@@ -84,7 +84,7 @@ import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from 
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
-import { loadPapers, mountPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
+import { loadPapers, mountPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS, matLevel } from "./exam-papers.js";
 // Zasloni, ki niso Učna pot (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2): skener z
 // reševalnikom (scan/, ~65 KB stisnjeno) ter zbirke, avatar in lige (~55 KB) niso več del zagona. Naložijo se takoj po
 // prvem izrisu zaslona (zasloniPozneje, ob koncu zagona) ali ob prvi uporabi, če je ta prej; prvi izris Učne poti na
@@ -4481,7 +4481,7 @@ function readinessHtml(c) {
   const d = new Date();
   const min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   // Raven mature iz matematike (izbrana ob profilu, »4. letnik VR«) se vidi ob imenu izpita (Geminijev pregled 17. 11.).
-  const raven = c.exam === "MATURA" && c.subject === "MAT" ? / (VR|OR)$/.exec(String(s.curriculum_level || ""))?.[1] : null;
+  const raven = c.exam === "MATURA" && c.subject === "MAT" ? matLevel(s) : null;
   const name = siExamName(c.exam) + (raven ? ` · ${t(raven === "VR" ? "lp.vr" : "lp.or")}` : "");
   const dateForm = `<div class="er-form" ${date ? "hidden" : ""}>
       <label class="goal-date"><span>${t("ready.date")}</span><input type="date" id="er-date" value="${date}" min="${min}"></label>
@@ -4610,7 +4610,7 @@ async function showPapers(c) {
   }
   if (!slot.isConnected) return;
   const s = state.student.settings;
-  const level = /VR/.test(String(s.curriculum_level || "")) ? "VR" : "OR";
+  const level = matLevel(s) || "OR";
   mountPapers(slot, papers, { track: s.educational_track, exam: c.exam, subject: c.subject, level }, {
     subjectName: (k) => SUBJECT_NAMES[k] || k,
     follow: true,
@@ -4770,17 +4770,26 @@ async function paperTask(entry, subjectName, task) {
   }
 }
 
+// Datum izpita: prazno polje na Androidu nima namiga, zato »Shrani« brez datuma (in »Spremeni datum«) odpre koledar;
+// sam fokus na telefonu ne naredi nič in je bil videti kot pokvarjen gumb. Klic je pred prvim await (dotik še velja).
+function openDatePicker(input) {
+  input.focus();
+  try {
+    input.showPicker?.();
+  } catch {}
+}
+
 document.addEventListener("click", async (e) => {
   if (!e.target.closest("#view-exams")) return;
   const edit = e.target.closest("[data-er-edit]");
   if (edit) {
     $("#view-exams .er-form").hidden = false;
     edit.closest(".er-when").hidden = true;
-    return $("#er-date").focus();
+    return openDatePicker($("#er-date"));
   }
   if (e.target.closest("[data-er-save]")) {
     const date = $("#er-date").value;
-    if (!validDate(date)) return $("#er-date").focus();
+    if (!validDate(date)) return openDatePicker($("#er-date"));
     try {
       const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings: { goal: siGoal(), goal_date: date } } });
       studentUpdated(updated);
