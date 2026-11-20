@@ -58,5 +58,5 @@ test("napake na poteh /api zavržejo telo (gradiva, lige, učitelj, števec pora
   assert.match(src("leagues.js"), /if \(!r\.ok\) return zavrzi\(r\), toast\(/);
   assert.match(src("ucitelj.js"), /if \(!r\.ok\) return zavrzi\(r\), toast\(/);
   assert.match(src("usage-meter.js"), /: \(zavrzi\(res\), null\)/);
-  assert.match(src("i18n.js"), /if \(!res\.ok\) return zavrzi\(res\), null;/);
+  assert.match(src("i18n-osnova.js"), /if \(!res\.ok\) return zavrzi\(res\), null;/);
 });

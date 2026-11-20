@@ -2,7 +2,7 @@
 // vrstica ravni se napolni, ob novi ravni pa se pokaže čestitka (dnevni cilj in mejniki: pasica na vrhu).
 // Vse velja za vse vire XP (naloge, igre, tekmovanja, sinhronizacija brez povezave), ker se sproži
 // iz primerjave prejšnjega in novega povzetka XP (app.js refreshXp).
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { levelProgress, crossedMilestone, reasonKey } from "./xp-levels.js";
 

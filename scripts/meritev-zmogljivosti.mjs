@@ -1,7 +1,7 @@
 // Faza 0 – izhodiščne meritve zmogljivosti (docs/meritve/zmogljivost-2026-11-13.md).
 // Ista skripta da številke »prej« in »potem« za vsak PR, ki spreminja hitrost ali pomnilnik.
 //
-// Deli (--samo zagon,poti,sql,prvo,instruktor,velika,obremenitev; privzeto vsi razen obremenitev):
+// Deli (--samo zagon,poti,sql,prvo,instruktor,velika,obremenitev,prijavljen; privzeto vsi razen obremenitev in prijavljen):
 //   zagon      0.1 čas do prvega /healthz 200 in RSS/kopica po uvozih, createApp, warmStatic, tiskPredgrej
 //   poti       0.2 p50/p95/p99 in zamik zanke dogodkov pri 1, 10 in 50 hkratnih uporabnikih
 //   sql        0.3 EXPLAIN QUERY PLAN za vsak stavek SQL na teh poteh (SCAN brez indeksa)
@@ -14,6 +14,12 @@
 //              Samo z --samo obremenitev (traja ~10 min, potrebuje koren za /sys/fs/cgroup; podrobnosti pri
 //              merjenjeObremenitve). Zastavice: --pomnilnik 512, --cpu 0.5, --trajanje 120, --premor 0 (ms med dejanji
 //              učenca), --mock-zamik 15 (EVKLID_MOCK_DELAY_MS), --stopnje 20,40,60,80; --hitro skrajša stopnjo na 20 s.
+//   prijavljen P1 prijavljen učenec (21 dni napredka, 40 pogovorov, zadnji s 120 sporočili) na strežniku z mejo kot
+//              Render starter (cgroup, --cpu/--pomnilnik) za posrednikom HTTP/2, Chromium CPU 4× + Slow 4G, telefon in
+//              računalnik, prvi in ponovni obisk (service worker): Učna pot uporabna, LCP, CLS, INP, prenos; Inštruktor:
+//              polje uporabno, dolgi pogovor, prvi znak odgovora (--mock-zamik, brez časa pravega modela). Zastavice:
+//              --naprave, --velika-baza, --brez-cgroup, --http1, --slike <mapa>. Potrebuje koren za cgroup (sicer samo
+//              taskset) in openssl. Podrobnosti pri merjenjePrijavljenega.
 // Zastavice: --json <datoteka> (vsi rezultati), --md <datoteka> (povzetek v Markdown), --brskalnik chromium,webkit,
 //   --stopnje 1,10,50, --uporabniki 50, --brez-taskset, --hitro (manj ponovitev, za preizkus skripte),
 //   --obdrzi (začasna mapa z bazami ostane, npr. za scripts/meritev-produkcija.mjs na sintetični bazi).
@@ -36,6 +42,7 @@ import { createRequire } from "node:module";
 import { performance } from "node:perf_hooks";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { DOLGI_POGOVOR, MERILNIK_PRIJAVLJEN, nacrtUcenca, povzemiZahteve, zazeniHttp2Posrednik } from "./meritev-prijavljen.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -44,9 +51,9 @@ const hitrost = require("./meri-hitrost.cjs"); // DEVICES, SLOW_4G, cdpSetup, fr
 
 const args = process.argv.slice(2);
 const arg = (n) => (args.indexOf(n) >= 0 ? args[args.indexOf(n) + 1] : null);
-const DELI = ["zagon", "poti", "sql", "prvo", "instruktor", "velika", "obremenitev"];
+const DELI = ["zagon", "poti", "sql", "prvo", "instruktor", "velika", "obremenitev", "prijavljen"];
 const SAMO = new Set(
-  (arg("--samo") || DELI.filter((d) => d !== "obremenitev").join(","))
+  (arg("--samo") || DELI.filter((d) => d !== "obremenitev" && d !== "prijavljen").join(","))
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
@@ -1511,6 +1518,391 @@ async function merjenjeObremenitve() {
   return out;
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// Prijavljen učenec na počasnem telefonu (--samo prijavljen): Učna pot in inštruktor za učenca z nekaj tedni napredka
+// in dolgo zgodovino klepeta, strežnik omejen kot Render starter (cgroup --cpu 0,5 / --pomnilnik 512 MB, pripet na
+// jedro 0), Chromium s CPU 4× in Slow 4G (CDP) na telefonu in računalniku. Za vsako napravo prvi obisk (prazen
+// predpomnilnik, service worker se šele namesti) in ponovni obisk (nova stran v istem profilu: predpomnilnik HTTP in
+// service workerja). Na vsakem obisku: Učna pot uporabna, LCP, CLS, INP, dolge naloge, prenos in zahteve; nato tap na
+// Inštruktor (polje uporabno), odpiranje zadnjega dolgega pogovora in eno sporočilo (prvi izpisani znak) v preizkusnem
+// načinu z EVKLID_MOCK_DELAY_MS = --mock-zamik: čas do prvega znaka NE vključuje časa pravega modela do prvega žetona.
+// Zastavice: --naprave telefon,racunalnik, --velika-baza (najprej sintetična baza iz dela »velika«), --brez-cgroup,
+//   --http1 (brez posrednika HTTP/2; privzeto HTTP/2 kot v produkciji),
+//   --slike <mapa> (posnetki zaslona po korakih).
+// Učenec se pripravi na strežniku brez omejitev (scrypt pri registraciji), meri se na omejenem.
+const P_NAPRAVE = (arg("--naprave") || "telefon,racunalnik").split(",").map((s) => s.trim());
+const P_SLIKE = arg("--slike"); // mapa za posnetke zaslona po korakih (za preverjanje poteka)
+const P_SPOROCILO = "Kako rešim enačbo 3(x − 2) = 2x + 5? Ne vem, kaj naredim z oklepajem.";
+
+// Učenec z napredkom (scripts/meritev-prijavljen.mjs nacrtUcenca): nastavitve (vprašalnik in ogled opravljena),
+// prave naloge iz generatorja (rešene), stanje tem (obvladane in v učenju), XP po dnevih, pogovori z dogodki.
+async function napolniUcenca(s, u) {
+  const r0 = await u.z(`/api/students/${u.sid}`, { method: "PUT", body: { settings: { interests: [], game_childhood: [], tour_version: 99 } } });
+  if (r0.status !== 200) throw new Error(`nastavitve ${r0.status}`);
+  // Tedenska anketa (server/anketa-teden.js) se po tednu uporabe enkrat odpre čez Učno pot: kot da jo je učenec že odložil.
+  await u.z(`/api/students/${u.sid}/anketa-teden/pozneje`, { method: "POST", body: {} });
+  const pot = (await u.z(`/api/students/${u.sid}/path`)).json();
+  const teme = pot.units.flatMap((x) => x.topics).filter((t) => t.practice);
+  const nacrt = nacrtUcenca();
+  const obvladanih = Math.min(10, Math.floor(teme.length / 3));
+  const vUcenju = teme.slice(obvladanih, obvladanih + 4);
+  // Prave naloge (payload iz generatorja): prvi klic pokaže zgled, naslednji ustvarijo naloge.
+  const nalogeTem = [...teme.slice(0, obvladanih), ...vUcenju];
+  for (let i = 0; i < nacrt.naloge.length; i++) {
+    const t = nalogeTem[i % nalogeTem.length];
+    let r = (await u.z(`/api/students/${u.sid}/practice/next`, { method: "POST", body: { topic_id: t.id } })).json();
+    if (r.example) r = (await u.z(`/api/students/${u.sid}/practice/next`, { method: "POST", body: { topic_id: t.id } })).json();
+    nacrt.naloge[i].id = r.task?.id;
+  }
+  const { seal, sealJson } = await import(pathToFileURL(path.join(ROOT, "server", "crypto-polje.js")).href);
+  const db = new DatabaseSync(s.dbFile);
+  db.exec("PRAGMA busy_timeout = 10000");
+  try {
+    db.exec("BEGIN");
+    const nal = db.prepare(`UPDATE tasks SET solved = 1, attempts = 1, first_try_correct = ?, created_at = datetime('now', ?) WHERE id = ? AND student_id = ?`);
+    for (const n of nacrt.naloge) if (n.id) nal.run(n.pravilno ? 1 : 0, `-${n.dniNazaj * 24 + 2} hours`, n.id, u.sid);
+    const st = db.prepare(
+      `INSERT INTO topic_state (student_id, topic_id, level, streak, status, source, mastered_at, review_stage, review_due, seen_example, updated_at)
+       VALUES (?, ?, ?, ?, ?, 'practice', ?, ?, ?, 1, datetime('now', ?))
+       ON CONFLICT (student_id, topic_id) DO UPDATE SET level = excluded.level, streak = excluded.streak, status = excluded.status,
+         mastered_at = excluded.mastered_at, review_stage = excluded.review_stage, review_due = excluded.review_due, updated_at = excluded.updated_at`,
+    );
+    teme.slice(0, obvladanih).forEach((t, i) => {
+      const d = Math.max(1, nacrt.dni - 2 * i);
+      st.run(u.sid, t.id, 3, 0, "mastered", `${new Date(Date.now() - d * 86400_000).toISOString().replace("T", " ").slice(0, 19)}`, 2, i % 3 ? null : new Date(Date.now() + (i - 4) * 86400_000).toISOString().replace("T", " ").slice(0, 19), `-${d} days`);
+    });
+    vUcenju.forEach((t, i) => st.run(u.sid, t.id, 1 + (i % 2), i, "learning", null, 0, null, `-${i} days`));
+    const xp = db.prepare(`INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, ?, ?, datetime('now', ?))`);
+    for (const x of nacrt.xp) xp.run(u.sid, x.amount, x.reason, `-${x.dniNazaj * 24 + 2} hours`);
+    const conv = db.prepare(`INSERT INTO conversations (student_id, title, created_at, updated_at) VALUES (?, ?, datetime('now', ?), datetime('now', ?))`);
+    const msg = db.prepare(`INSERT INTO messages (conversation_id, role, api_content, display_text, created_at) VALUES (?, ?, ?, ?, datetime('now', ?))`);
+    const ev = db.prepare(
+      `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, created_at, topic_id) VALUES (?, ?, ?, 'MAT', ?, ?, 'A', 'none', datetime('now', ?), ?)`,
+    );
+    let sporocil = 0;
+    for (const p of nacrt.pogovori) {
+      const kdaj = p.dniNazaj ? `-${p.dniNazaj * 24 + 3} hours` : "+0 seconds";
+      const id = Number(conv.run(u.sid, seal(p.naslov), kdaj, kdaj).lastInsertRowid);
+      if (p === nacrt.pogovori[0]) u.dolgi = { id, sporocil: p.sporocila.length, odgovorov: p.sporocila.length / 2 };
+      const tema = teme[sporocil % teme.length];
+      for (const m of p.sporocila) {
+        const api = m.role === "assistant" ? `${m.text}\n<<META subject=MAT topic="${tema.name}" error=0 mode=A flag=none>>` : m.text;
+        const mid = Number(msg.run(id, m.role, sealJson([{ type: "text", text: api }]), seal(m.text), kdaj).lastInsertRowid);
+        if (m.role === "assistant") ev.run(u.sid, id, mid, tema.name, sporocil % 5 === 0 ? 1 : 0, kdaj, tema.id);
+        sporocil++;
+      }
+    }
+    db.exec("COMMIT");
+    const xpSkupaj = db.prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ?").get(u.sid).s;
+    return {
+      pot: pot.key,
+      dni: nacrt.dni,
+      obvladanihTem: obvladanih,
+      temVUcenju: vUcenju.length,
+      resenihNalog: nacrt.naloge.filter((n) => n.id).length,
+      xp: xpSkupaj,
+      pogovorov: nacrt.pogovori.length + 10, // + 10 kratkih iz pripraviUporabnike
+      sporocil: sporocil + 200,
+      dolgiPogovor: u.dolgi.sporocil,
+    };
+  } finally {
+    db.close();
+  }
+}
+
+// Obljuba z rokom: CDP in Playwright lahko čakata v nedogled (cilj, ki je medtem izginil; telo toka, ki se ne konča).
+const zRokom = (p, ms, privzeto = null) => Promise.race([Promise.resolve(p).catch(() => privzeto), pocakaj(ms).then(() => privzeto)]);
+
+// Omejitev omrežja še za service workerje (CDP strani jih ne zajame: njihove zahteve bi šle mimo Slow 4G).
+// Prek seje brskalnika: vsak cilj »service_worker«, ki obstaja ali se pozneje zažene (worker se ustavi in ob naslednji
+// zahtevi znova zažene kot nov cilj), dobi isto omejitev kot stran. Vrne { omejenih, napaka, vsem() }.
+
+async function omejujServiceWorkerje(browser) {
+  const stanje = { omejenih: 0, napaka: null };
+  const bc = await browser.newBrowserCDPSession();
+  const omeji = async (t) => {
+    if (t.type !== "service_worker") return;
+    try {
+      const pripni = await zRokom(bc.send("Target.attachToTarget", { targetId: t.targetId, flatten: false }), 5000);
+      if (!pripni) return;
+      const { sessionId } = pripni;
+      let id = 0;
+      for (const [method, params] of [
+        ["Network.enable", {}],
+        ["Network.emulateNetworkConditions", hitrost.SLOW_4G],
+      ])
+        await zRokom(bc.send("Target.sendMessageToTarget", { sessionId, message: JSON.stringify({ id: ++id, method, params }) }), 5000);
+      stanje.omejenih++;
+    } catch (e) {
+      stanje.napaka = String(e.message).split("\n")[0].slice(0, 120);
+    }
+  };
+  bc.on("Target.targetCreated", ({ targetInfo }) => omeji(targetInfo));
+  await bc.send("Target.setDiscoverTargets", { discover: true });
+  // Pred vsakim obiskom še enkrat vsem obstoječim (omejitev, dana med namestitvijo, se ne obdrži).
+  stanje.vsem = async () => {
+    for (const t of (await zRokom(bc.send("Target.getTargets"), 5000, { targetInfos: [] })).targetInfos) await omeji(t);
+  };
+  await stanje.vsem();
+  return stanje;
+}
+
+async function prijavljenVBrskalniku(vhod, u, naprava) {
+  const pw = require("playwright");
+  // Posrednik HTTP/2: samopodpisanemu potrdilu brskalnik zaupa po odtisu ključa (service worker tako deluje).
+  const browser = await pw.chromium.launch({ args: vhod.spki ? [`--ignore-certificate-errors-spki-list=${vhod.spki}`] : [] });
+  const dev = { ...hitrost.DEVICES[naprava], cpu: 4, net: true }; // obe napravi s CPU 4× in Slow 4G (kot zahteva meritev)
+  const out = { naprava, razlicica: browser.version(), viewport: dev.viewport, omejitve: "CPU 4×, Slow 4G (CDP; tudi service worker)", protokol: vhod.spki ? "HTTP/2 (TLS)" : "HTTP/1.1", obiski: {} };
+  const ctx = await browser.newContext({
+    viewport: dev.viewport,
+    hasTouch: dev.hasTouch,
+    isMobile: dev.isMobile,
+    deviceScaleFactor: dev.isMobile ? 2 : 1,
+    locale: "sl-SI",
+    timezoneId: "Europe/Ljubljana",
+    serviceWorkers: "allow",
+  });
+  await ctx.addInitScript(VITALI);
+  await ctx.addInitScript(hitrost.PAGE_MERI); // window.__long (dolge naloge) za interaktivnost
+  await ctx.addInitScript(MERILNIK_PRIJAVLJEN);
+  await ctx.addInitScript((slug) => localStorage.setItem(`${slug}.tour`, "done"), BRAND.slug);
+  await ctx.addCookies(Object.entries(u.jar).map(([name, value]) => ({ name, value, url: vhod.base })));
+  let faza = null;
+  const zahteve = [];
+  ctx.on("requestfinished", (req) => {
+    const f = faza;
+    zahteve.push(
+      (async () => {
+        const sizes = await req.sizes().catch(() => null);
+        const res = await req.response().catch(() => null);
+        const body = res ? await res.body().catch(() => null) : null;
+        return {
+          faza: f,
+          url: req.url().replace(vhod.base, ""),
+          prenos: sizes ? sizes.responseBodySize + sizes.responseHeadersSize : null,
+          surovo: body ? body.length : null,
+          izSw: !!res?.fromServiceWorker(),
+          odSw: !!req.serviceWorker?.(),
+          ms: Math.round(req.timing().responseEnd), // za preverjanje omejitve: zahteve service workerja ≥ ~0,56 s
+        };
+      })(),
+    );
+  });
+  const sw = await omejujServiceWorkerje(browser);
+  const napake = [];
+  const tapni = async (page, sel) => {
+    await page
+      .locator(sel)
+      .first()
+      [dev.hasTouch ? "tap" : "click"]({ timeout: 30_000 })
+      .catch((e) => napake.push(`tap ${sel}: ${String(e.message).split("\n")[0]}`));
+  };
+  // Zavihek: na telefonu spodnja vrstica (#tabbar), ki se po 3 s mirovanja skrije pod rob (public/noga.js); učenec jo
+  // vrne z dotikom ob spodnjem robu (ta dotik se pogoltne), zato najprej ta dotik, nato tap na zavihek.
+  const zavihek = async (page, view) => {
+    const spodaj = await page.evaluate(() => getComputedStyle(document.querySelector("#tabbar")).display !== "none").catch(() => false);
+    if (!spodaj) return `.topbar .tab[data-view="${view}"]`;
+    if (await page.evaluate(() => document.body.classList.contains("tb-mir")).catch(() => false)) {
+      await page.touchscreen.tap(dev.viewport.width / 2, dev.viewport.height - 12);
+      await page.waitForTimeout(600);
+    }
+    // Premik kazalca je uporaba (noga.js): 3 s do skritja začnejo teči znova, zato vrstica med tapom ne zdrsne pod rob.
+    await page.mouse.move(2, 2 + Math.random() * 10);
+    return `#tabbar .tab[data-view="${view}"]`;
+  };
+  const slika = (page, ime) => (P_SLIKE ? page.screenshot({ path: path.join(P_SLIKE, `${ime}.png`) }).catch(() => {}) : null);
+  // Meritev enega koraka: merilnik v strani čaka na tap, nato tap.
+  const korak = async (page, ime, o, dejanje) => {
+    const p = page.evaluate(([i, oo]) => window.__cakaj(i, oo), [ime, o]);
+    await pocakaj(50);
+    await dejanje();
+    return p.catch((e) => ({ napaka: String(e.message).split("\n")[0] }));
+  };
+  try {
+    for (const obisk of ["prvi", "ponovni"]) {
+      faza = `${obisk}:odpiranje`;
+      const page = await ctx.newPage();
+      page.on("pageerror", (e) => napake.push(`${obisk}: ${String(e.stack || e.message).split("\n").slice(0, 3).join(" | ").replaceAll(vhod.base, "").slice(0, 300)}`));
+      page.on("requestfailed", (r) => napake.push(`${obisk}: zahteva ni uspela ${r.url().replace(vhod.base, "")} (${r.failure()?.errorText})`));
+      await hitrost.cdpSetup(page, dev);
+      await zRokom(sw.vsem(), 15_000);
+      await page.goto(vhod.base + "/", { waitUntil: "commit", timeout: 180_000 });
+      await page.waitForSelector("#view-path #xp-card .hero", { timeout: 180_000 }).catch(() => napake.push(`${obisk}: Učna pot ni uporabna v 180 s`));
+      const potMs = await page.evaluate(() => window.__tPot).catch(() => null);
+      // Datoteke, prenesene do uporabne Učne poti (za iskanje, kaj jo še zadržuje): pot, KB po omrežju, konec v ms.
+      const viri = await page
+        .evaluate(() =>
+          performance
+            .getEntriesByType("resource")
+            .filter((e) => e.responseEnd <= (window.__tPot ?? Infinity))
+            .map((e) => [new URL(e.name).pathname, Math.round(e.transferSize / 102.4) / 10, Math.round(e.responseEnd)]),
+        )
+        .catch(() => []);
+      const okno = await page.evaluate(() => document.querySelector("dialog[open]")?.id || document.querySelector("dialog[open] h2")?.textContent || null).catch(() => null);
+      if (okno) napake.push(`${obisk}: odprto okno čez Učno pot (${okno})`);
+      log(`prijavljen ${naprava} ${obisk}: Učna pot po ${r1(potMs)} ms`);
+      await page.waitForLoadState("load", { timeout: 120_000 }).catch(() => {});
+      const loadMs = await page.evaluate(() => performance.getEntriesByType("navigation")[0]?.loadEventEnd || null).catch(() => null);
+      // Interaktivno: 500 ms brez dolgih nalog po uporabni Učni poti.
+      const ttiMs = await page.evaluate(
+        (od) =>
+          new Promise((res) => {
+            const loop = () => {
+              const last = Math.max(od || 0, ...window.__long);
+              if (performance.now() - last > 500 || performance.now() > 120_000) return res(Math.round(last));
+              setTimeout(loop, 50);
+            };
+            loop();
+          }),
+        potMs,
+      );
+      await page.waitForLoadState("networkidle", { timeout: 60_000 }).catch(() => {});
+      await page.waitForTimeout(2000);
+      const v0 = await page.evaluate(() => JSON.parse(JSON.stringify(window.__vitali)));
+      const premiki = await page.evaluate(() => [...window.__premiki].sort((a, b) => b.v - a.v).slice(0, 5)).catch(() => []);
+      // Inštruktor: tap na zavihek, polje uporabno.
+      faza = `${obisk}:instruktor`;
+      await slika(page, `${naprava}-${obisk}-pot`);
+      const tabInstruktor = await zavihek(page, "chat"); // pred merilnikom: dotik ob robu ni tap na zavihek
+      const vnos = await korak(page, "vnos", { rok: 60_000 }, () => tapni(page, tabInstruktor));
+      await slika(page, `${naprava}-${obisk}-instruktor`);
+      // Zadnji (dolgi) pogovor s seznama pogovorov; na telefonu je seznam v stranskem meniju.
+      await page.waitForTimeout(1000);
+      if (!(await page.locator("#conversation-list li").first().isVisible().catch(() => false))) {
+        await tapni(page, "#toggle-sidebar");
+        await page.waitForTimeout(800);
+      }
+      const pogovor = await korak(page, "pogovor", { min: Math.min(10, u.dolgi.odgovorov), rok: 90_000 }, () =>
+        tapni(page, `#conversation-list li:has(span:text-is("${DOLGI_POGOVOR}"))`),
+      );
+      await page.waitForTimeout(1000);
+      // Eno sporočilo: prvi izpisani znak odgovora (preizkusni model, brez časa pravega modela).
+      await slika(page, `${naprava}-${obisk}-pogovor`);
+      await page.locator("#input").fill(P_SPOROCILO, { timeout: 30_000 }).catch((e) => napake.push(`vnos: ${String(e.message).split("\n")[0]}`));
+      const prej = await page.evaluate(() => document.querySelectorAll("#messages .msg.assistant").length);
+      const znak = await korak(page, "znak", { prej, rok: 60_000 }, () => tapni(page, "#send"));
+      await slika(page, `${naprava}-${obisk}-odgovor`);
+      await page.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 60_000 }).catch(() => {});
+      await page.waitForTimeout(1500);
+      const v = await page.evaluate(() => JSON.parse(JSON.stringify(window.__vitali)));
+      // Nazaj na Učno pot: ponovni obisk se začne na zadnjem zaslonu (public/zacetek.js), merimo pa Učno pot. Klik v strani
+      // (ni meritev): v klepetu je spodnja vrstica na telefonu umaknjena.
+      await page.evaluate(() => [...document.querySelectorAll('.tab[data-view="path"]')].find((b) => b.offsetParent)?.click() ?? document.querySelector('.tab[data-view="path"]')?.click());
+      await page.waitForTimeout(1500);
+      if (obisk === "prvi") {
+        // Service worker nameščen in predpomnjenje končano (število vnosov v predpomnilnikih 3 s enako).
+        out.swPredpomnilnik = await page
+          .evaluate(async () => {
+            await Promise.race([navigator.serviceWorker.ready, new Promise((r) => setTimeout(r, 30_000))]);
+            let prej = -1;
+            for (let i = 0; i < 60; i++) {
+              let n = 0;
+              for (const k of await caches.keys()) n += (await (await caches.open(k)).keys()).length;
+              if (n === prej && n > 0) return { vnosov: n, nadzor: !!navigator.serviceWorker.controller };
+              prej = n;
+              await new Promise((r) => setTimeout(r, 3000));
+            }
+            return { vnosov: prej, nadzor: !!navigator.serviceWorker.controller, rok: true };
+          })
+          .catch((e) => ({ napaka: String(e.message).slice(0, 120) }));
+      }
+      await page.close();
+      const z = (await Promise.all(zahteve.splice(0).map((x) => zRokom(x, 15_000)))).filter(Boolean);
+      const dolge = v.dolge;
+      const dolge0 = v0.dolge;
+      out.obiski[obisk] = {
+        potMs: r1(potMs),
+        viriDoPoti: viri,
+        loadMs: r1(loadMs),
+        ttiMs,
+        fcpMs: r1(v0.fcp),
+        lcpMs: r1(v0.lcp),
+        lcpElement: v0.lcpEl,
+        clsOdpiranje: Math.round(v0.cls * 1000) / 1000,
+        cls: Math.round(v.cls * 1000) / 1000,
+        dolgihOdpiranje: dolge0.length,
+        dolgeOdpiranjeMs: dolge0.reduce((a, x) => a + x[1], 0),
+        najdaljsaOdpiranjeMs: dolge0.length ? Math.max(...dolge0.map((x) => x[1])) : 0,
+        inpMs: v.interakcije.length ? Math.max(...v.interakcije.map((x) => x[1])) : null,
+        interakcije: v.interakcije,
+        dolgih: dolge.length,
+        najdaljsaMs: dolge.length ? Math.max(...dolge.map((x) => x[1])) : 0,
+        odpiranje: povzemiZahteve(z.filter((x) => x.faza === `${obisk}:odpiranje`)),
+        instruktorZahteve: povzemiZahteve(z.filter((x) => x.faza === `${obisk}:instruktor`)),
+        vnos,
+        pogovor,
+        znak,
+        premiki,
+        swZahteve: z.filter((x) => x.faza === `${obisk}:odpiranje` && x.odSw).slice(0, 5).map((x) => `${x.url.split("?")[0]} ${x.ms} ms`),
+        poZahtevah: z
+          .filter((x) => x.faza === `${obisk}:odpiranje` && !x.izSw && !x.odSw)
+          .map((x) => x.url.split("?")[0])
+          .filter((x) => x.startsWith("/api/"))
+          .slice(0, 40),
+      };
+      const o = out.obiski[obisk];
+      log(
+        `prijavljen ${naprava} ${obisk}: Učna pot ${o.potMs} ms, LCP ${o.lcpMs} (${o.lcpElement}), CLS ${o.clsOdpiranje}/${o.cls}, INP ${o.inpMs}, dolgih ${o.dolgihOdpiranje} (najd. ${o.najdaljsaOdpiranjeMs}), ${o.odpiranje.zahtev} zahtev (${o.odpiranje.mreznih} po omrežju, ${o.odpiranje.prenosKB} KB; service worker ${o.odpiranje.swZahtev} / ${o.odpiranje.swKB} KB); vnos ${JSON.stringify(vnos)}, pogovor ${JSON.stringify(pogovor)}, prvi znak ${JSON.stringify(znak)}`,
+      );
+    }
+  } finally {
+    out.napake = [...new Set(napake)].slice(0, 8);
+    out.serviceWorker = { omejenih: sw.omejenih, napaka: sw.napaka };
+    await ctx.close().catch(() => {});
+    await browser.close();
+  }
+  return out;
+}
+
+async function merjenjePrijavljenega() {
+  const dbFile = path.join(TMP, "prijavljen", `${BRAND.slug}.db`);
+  fs.mkdirSync(path.dirname(dbFile), { recursive: true });
+  const out = { nastavitve: { cpu: O_CPU, pomnilnikMB: O_POMNILNIK_MB, mockZamikMs: Number(O_MOCK_ZAMIK), taskset: TASKSET, naprave: P_NAPRAVE, sporocilo: P_SPOROCILO } };
+  if (args.includes("--velika-baza")) out.baza = await napolniVelikoBazo(dbFile);
+  const s0 = await zazeniStreznik(dbFile, { predlog: false });
+  let u;
+  try {
+    [u] = await pripraviUporabnike(s0, 1);
+    out.ucenec = await napolniUcenca(s0, u);
+  } finally {
+    await s0.ustavi();
+  }
+  log(`prijavljen: učenec ${JSON.stringify(out.ucenec)}`);
+  const cg = args.includes("--brez-cgroup") ? { napaka: "izklopljeno z --brez-cgroup" } : ustvariCgroup();
+  const omejitev = cg.napaka ? null : cg;
+  out.cgroup = omejitev ? { pomnilnikMB: O_POMNILNIK_MB, kvotaUs: Math.round(O_CPU * cg.perioda), periodaUs: cg.perioda, opombe: cg.opombe } : { napaka: cg.napaka };
+  if (!omejitev) log(`!!! prijavljen BREZ cgroup (${cg.napaka}): strežnik je samo pripet na eno jedro !!!`);
+  let s = null;
+  let posrednik = null;
+  try {
+    s = await zazeniStreznik(dbFile, { predlog: false, okolje: { EVKLID_MOCK_DELAY_MS: O_MOCK_ZAMIK }, cgroup: omejitev?.procs });
+    out.zagonMs = Math.round(s.tHealthz);
+    // Knjižnice (KaTeX, marked, DOMPurify, pisave) strežnik streže iz node_modules: brez njih bi stran naložila 404 in
+    // klepet ne bi izrisal nobenega odgovora (meritev bi bila napačna). Najprej npm ci.
+    const knj = await fetch(s.base + "/vendor/marked/lib/marked.umd.js").catch(() => null);
+    if (knj?.status !== 200) throw new Error(`/vendor/marked: ${knj?.status ?? "ni odgovora"} – ni node_modules? Najprej npm ci.`);
+    // Kot v produkciji: počakaj na predgretje stisnjenih datotek in učbenika za tisk (server/index.js).
+    const rok = performance.now() + 150_000;
+    while (performance.now() < rok && !s.vrstice.some((v) => /tisk: \d+ strani v predpomnilniku/.test(v.l))) await pocakaj(500);
+    if (omejitev) cgPisi(cg, "memory.max_usage_in_bytes", "0");
+    // Produkcija streže prek HTTP/2 (ena povezava za vse zahteve); --http1 meri neposredno (največ 6 povezav, kot 0.4).
+    if (!args.includes("--http1")) posrednik = await zazeniHttp2Posrednik({ cilj: s.base, mapa: path.dirname(dbFile) });
+    out.protokol = posrednik ? "HTTP/2 (TLS, posrednik pred strežnikom)" : "HTTP/1.1";
+    out.naprave = {};
+    for (const n of P_NAPRAVE) out.naprave[n] = await prijavljenVBrskalniku(posrednik || { base: s.base }, u, n);
+    out.rssKonecMB = MB(vmRss(s.pid));
+    if (omejitev) {
+      out.cgroup.maxPorabaMB = MB(Number(cgBeri(cg, "memory.max_usage_in_bytes")));
+      out.cgroup.dusenje = cgPolja(cgBeri(cg, "cpu.stat"));
+    }
+  } finally {
+    if (posrednik) await posrednik.ustavi();
+    if (s) await s.ustavi();
+    if (omejitev) odstraniCgroup(omejitev);
+  }
+  return out;
+}
+
 // Ena seja: strežnik z bazo, uporabniki, nato izbrani deli.
 async function seja(dbFile, { poti, sql, instruktor, prvo }) {
   const s = await zazeniStreznik(dbFile);
@@ -1694,6 +2086,26 @@ function povzetek(R) {
     const dn = o.stopnje.flatMap((r) => r.dnevnik.primeri.map((l) => `c=${r.c}: ${l}`));
     if (dn.length) L.push(`\nNapake v dnevniku strežnika:\n\n\`\`\`\n${dn.join("\n")}\n\`\`\``);
   }
+  if (R.prijavljen) {
+    const p = R.prijavljen;
+    const n = p.nastavitve;
+    L.push(`\n### P1 Prijavljen učenec na počasnem omrežju\n`);
+    L.push(
+      p.cgroup?.napaka
+        ? `**Brez cgroup** (${p.cgroup.napaka}); strežnik ${n.taskset ? "pripet na jedro 0" : "brez omejitev"}.`
+        : `Strežnik: cgroup ${p.cgroup.pomnilnikMB} MB, CPU ${p.cgroup.kvotaUs}/${p.cgroup.periodaUs} µs${n.taskset ? ", pripet na jedro 0" : ""}; največ ${p.cgroup.maxPorabaMB} MB, dušenje ${p.cgroup.dusenje?.nr_throttled ?? "–"}× (${Math.round((p.cgroup.dusenje?.throttled_time || 0) / 1e6)} ms).`,
+    );
+    L.push(`Protokol: ${p.protokol}.`);
+    L.push(`Učenec: ${JSON.stringify(p.ucenec)}${p.baza ? `; sintetična baza ${JSON.stringify(p.baza)}` : ""}. EVKLID_MOCK_DELAY_MS=${n.mockZamikMs} (prvi znak brez časa pravega modela).\n`);
+    L.push("| Naprava | obisk | Učna pot uporabna | interaktivno | FCP | LCP | CLS (odpiranje / skupaj) | INP | dolge naloge (najdaljša) | zahtev (po omrežju) | prenos KB (+ service worker) | Inštruktor: polje / interaktivno | dolgi pogovor / interaktivno | prvi znak |");
+    L.push("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
+    for (const [ime, x] of Object.entries(p.naprave || {}))
+      for (const [obisk, o] of Object.entries(x.obiski))
+        L.push(
+          `| ${ime} | ${obisk} | ${o.potMs} | ${o.ttiMs} | ${o.fcpMs} | ${o.lcpMs} (${o.lcpElement}) | ${o.clsOdpiranje} / ${o.cls} | ${o.inpMs ?? "–"} | ${o.dolgihOdpiranje} (${o.najdaljsaOdpiranjeMs}) | ${o.odpiranje.zahtev} (${o.odpiranje.mreznih}) | ${o.odpiranje.prenosKB} (+${o.odpiranje.swKB}) | ${o.vnos?.pripravljeno ?? "–"} / ${o.vnos?.interaktivno ?? "–"} | ${o.pogovor?.pripravljeno ?? "–"} / ${o.pogovor?.interaktivno ?? "–"} | ${o.znak?.pripravljeno ?? "–"} |`,
+        );
+    for (const [ime, x] of Object.entries(p.naprave || {})) if (x.napake?.length) L.push(`\n${ime}: ${x.napake.join("; ")}`);
+  }
   return L.join("\n");
 }
 
@@ -1718,6 +2130,7 @@ try {
     R.velika = { baza, ...(await seja(dbFile, { poti: true, sql: true })) };
   }
   if (SAMO.has("obremenitev")) R.obremenitev = await merjenjeObremenitve();
+  if (SAMO.has("prijavljen")) R.prijavljen = await merjenjePrijavljenega();
 } finally {
   if (args.includes("--obdrzi")) log(`začasna mapa ostane: ${TMP}`);
   else fs.rmSync(TMP, { recursive: true, force: true });

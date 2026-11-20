@@ -436,6 +436,7 @@
   "chat.waitDeep": "Daha ayrıntılı açıklama hazırlanıyor …",
   "chat.waitCheck": "Cevap kontrol ediliyor …",
   "chat.waitThink": "Düşünüyorum …",
+  "chat.waitQueue": "Aynı anda çok sayıda öğrenci var. Sıradasın ({n}. sıra) …",
   "chatMode.A": "Rehberli",
   "chatMode.B": "Tam çözüm",
   "subj.MAT": "Matematik",

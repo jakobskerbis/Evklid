@@ -5,7 +5,7 @@
 // - Telefon in tablica na dotik: okno (iz ukaza inštruktorju ali mehurčka) je spodnji list.
 // - Mehurček: ko pogovor z inštruktorjem ni na zaslonu, ostane okrogel gumb, ki ga premakneš,
 //   tapneš (odpre klepet v oknu) ali odstraniš (× ali poteg na × spodaj). Nov odgovor pokaže predogled.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { makeRowSortable, resetRows, uciLayout } from "./vrstice.js";
 import { resetSplits, refreshSplitters } from "./razdelilnik.js";

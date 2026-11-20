@@ -436,6 +436,7 @@
   "chat.waitDeep": "Készítem a részletesebb magyarázatot …",
   "chat.waitCheck": "Ellenőrzöm a választ …",
   "chat.waitThink": "Gondolkodom …",
+  "chat.waitQueue": "Sok tanuló egyszerre. Sorban állsz ({n}. hely) …",
   "chatMode.A": "Vezetés",
   "chatMode.B": "Teljes megoldás",
   "subj.MAT": "Matematika",

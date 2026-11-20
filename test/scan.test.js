@@ -473,3 +473,15 @@ test("sought is shown as plain text (breaks between words) and a plain expressio
   assert.equal(soughtNeedsAi(solve("x^2-4", { goal: "factor" }), { sought: "\\text{teme}", goal: "factor" }), false);
   assert.equal(soughtNeedsAi(solve("x^2-4=0", {}), { sought: "\\text{kot}" }), false);
 });
+
+test("konstantna naloga brez d/dx kot »derivative« z 0 ni preverjena (meritev skenerja s11), drugo ostane", () => {
+  const t = "∫_0^2 (3*x^2-2*x+1) dx";
+  assert.deepEqual(verifyAi(t, { kind: "derivative", value: "0" }), { verified: false, reason: "kind" });
+  assert.equal(verifyAi(t, { kind: "expression", value: "0" }).verified, false);
+  assert.equal(verifyAi(t, { kind: "integral", value: "0" }).verified, false);
+  assert.equal(verifyAi(t, { kind: "integral", value: "6" }).verified, true);
+  assert.equal(verifyAi("\\int_0^2 (3*x^2-2*x+1) dx", { kind: "integral", value: "6" }).verified, true);
+  assert.equal(verifyAi("∫_0^2 x dx", { kind: "expression", value: "2" }).verified, true);
+  assert.equal(verifyAi("d/dx 5", { kind: "derivative", value: "0" }).verified, true);
+  assert.equal(verifyAi("x^2*e^x", { kind: "derivative", value: "2*x*e^x+x^2*e^x" }).verified, true);
+});

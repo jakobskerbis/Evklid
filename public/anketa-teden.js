@@ -1,7 +1,7 @@
 // Točka B3 (pilot, j 14. 11.): kratka anketa s tremi vprašanji 7 dni po prvi uporabi (server/anketa-teden.js).
 // Pokaže se samo na Učni poti (ne v ligi ali med preizkusom), največ enkrat na nalaganje strani in ne čez drugo okno.
 // Ali je anketa odprta in kdaj sme biti prikazana (pouk po Urniku, šolski čas), odloči strežnik. Brez cene in brez XP.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 
 const $ = (sel, root = document) => root.querySelector(sel);

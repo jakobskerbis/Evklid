@@ -197,7 +197,12 @@ test("PR 786: star paket z enoto brez hasUnit se osveži; brez povezave naloga p
   // Brez povezave ostane stari paket; naloga ima hasUnit in enote, ne prave enote.
   ls.setItem("evklid.offline.pack.3", JSON.stringify(stale));
   online = false;
+  // check.js ni del prvega izrisa: prvi klic iz paketa ga počaka (obljuba), naslednji odgovorijo takoj.
+  const p0 = off.offlineApi(3, "/api/students/3/practice/next", { body: { topic_id: "t" } });
+  assert.equal(typeof p0?.then, "function", "brez naloženega check.js vrne obljubo");
+  await p0;
   const r = off.offlineApi(3, "/api/students/3/practice/next", { body: { topic_id: "t" } });
+  assert.equal(typeof r.then, "undefined", "z naloženim check.js odgovori takoj");
   assert.equal(r.task.hasUnit, true);
   assert.equal(r.task.unit, undefined);
   assert.ok(r.task.units.includes("kg"));

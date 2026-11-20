@@ -436,6 +436,7 @@
   "chat.waitDeep": "A preparar uma explicação mais detalhada …",
   "chat.waitCheck": "A verificar a resposta …",
   "chat.waitThink": "A pensar …",
+  "chat.waitQueue": "Muitos alunos ao mesmo tempo. Estás na fila (lugar {n}) …",
   "chatMode.A": "Orientação",
   "chatMode.B": "Solução completa",
   "subj.MAT": "Matemática",

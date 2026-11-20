@@ -4,7 +4,7 @@
 // Nameščena aplikacija (manifest display: standalone) je že brez naslovne vrstice, zato tam vstopa ne sprožimo.
 // Brskalnik ga dovoli šele po dejanju uporabnika, zato se vklopi ob prvem dotiku ali kliku.
 // Če ga uporabnik sam zapre (tipka Esc, poteg z roba), ga ne vsiljujemo znova, dokler se ne vrne v aplikacijo.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { isStandalone } from "./install.js";
 
 const KEY = "evklid.fullscreen";

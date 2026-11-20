@@ -62,14 +62,26 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   prva vsebina).
 - `public/zacetek.js` po delih (komentarji so tu, ker datoteka šteje v proračun prvega odprtja): `izberi` (zadnji
   pogled ≤ 12 ur, zapis iz prihodnosti ne velja), `konec` (oznaki `data-zacetek`, `data-zacetek-pod` in posnetek
-  izginejo v istem izrisu; varovalo 8 s), `pozabi` (posnetek → okostje, izbris ključa, `lahkoShrani()` false do
+  izginejo v istem izrisu; varovalo 8 s, ob okostju Učne poti 20 s), `pozabi` (posnetek → okostje, izbris ključa, `lahkoShrani()` false do
   `znova()`), `lokalnoOdklenjen`/`seznamOdklenjen` (isti lastnik naprave, profil na seznamu brez `locked` in
   `needs_password`), `ociscen` (drugo čiščenje v `<template>`: brez nevarnih elementov, `on…`, `srcdoc`, `srcset`,
   tujih naslovov in `url()` v slogu), `posnetekZa` (isti profil, pogled, lekcija, tema, jezik, ≤ 12 ur; klepet nikoli),
   `koLupina` (ko je razčlenjena spodnja vrstica; prej ob vsaki spremembi), `pokazi` (najprej pred prvi pogled, nato
   pred `#tabbar`; različica `r` se preveri ob vstavitvi, ker je `meta` na koncu `<head>`; `nadgradi` za profil z
-  geslom po `/api/students`), `vnaprejZacni`/`vnaprej` (GET, 15 s, enkrat, brez roka; neuspeh → `null`), na koncu
-  sporočilo »izris« za APK.
+  geslom po `/api/students`), `vnaprejZacni`/`vnaprej` (GET, 15 s, enkrat, brez roka; neuspeh → `null`; najprej
+  `seme`: začetni podatki strežnika, kopija za vsak klic, 60 s ali do prvega klica, ki ni GET), `zacetni` (prebere in
+  odstrani `#evklid-zacetni`), okostje Učne poti (`zo-pot`, iste višine kot pravi pogled), na koncu sporočilo »izris« za APK.
+- Začetni podatki za prijavljenega (j 19. 11. 2026, `docs/meritve/prijavljen-mobilno-2026-11-19.md`): ob navigaciji
+  brskalnika (`Sec-Fetch-Dest: document`, `Sec-Fetch-Mode: navigate`, piškotek `sm_session`, ne `X-App-Client`)
+  strežnik iste odgovore API, kot bi jih app.js zahteval ob odprtju Učne poti (račun, nastavitve, profili; pri enem
+  odklenjenem profilu še pogovori, pot, XP, načini, urnik …), dobi z notranjimi klici GET skozi celo aplikacijo
+  (`server/zacetni-podatki.js`, ista prijava in preverjanja, rok 1,5 s na klic) in jih vstavi v
+  `<script type="application/json" id="evklid-zacetni">` (`<>&` U+2028 U+2029 ubeženi). Taka stran ima
+  `Cache-Control: no-store`, `Vary: Cookie` in nima ETag (je ne shrani noben predpomnilnik, tudi service worker ne);
+  zahteva service workerja ob namestitvi dobi navadno stran. Slogi zaslonov, ki jih Učna pot ne uporablja
+  (`SEJA_POZNEJE`), so v `<template data-evklid-slogi>` do konca zagona (`withSessionStyles`); skener, zbirke in lige
+  (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
+  Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
 - Pristajalna stran takoj (j 19. 11. 2026, zunanji pregled »LCP ~18 s na počasnem 4G«): obiskovalec brez seje
   (brez piškotka `sm_session`, ne aplikacija `EvklidApp/`, računi vklopljeni) dobi pristajalno stran že v HTML
   (`server/pristajalna-takoj.js landingPage`, `server/vstopna-stran.js withLanding`): isti izris kot v brskalniku

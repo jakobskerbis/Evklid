@@ -7,7 +7,7 @@
 // gumba za plačilo, ne učencu iz šole) uveljavi strežnik: namig »block.hintParent« / »block.hintAdult« doda samo,
 // ko sme ponudba imeti ceno (server/accounts/index.js upsell → moreHintCode). Brez takega namiga kartica ne
 // pokaže ničesar o naročnini. Samo naročnina, brez paketa pred testom (j). Brez odštevanja, nujnosti in značk.
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { linkBox, bindLinkBox } from "./pay-ui.js";
 

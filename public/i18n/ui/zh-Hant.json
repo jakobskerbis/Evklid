@@ -430,6 +430,7 @@
   "chat.waitDeep": "正在準備更詳細的講解 …",
   "chat.waitCheck": "正在檢查答案 …",
   "chat.waitThink": "正在思考 …",
+  "chat.waitQueue": "同時使用的學生很多。你正在排隊（第 {n} 位）…",
   "chatMode.A": "引導式",
   "chatMode.B": "完整解答",
   "subj.MAT": "數學",

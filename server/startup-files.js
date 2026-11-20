@@ -48,6 +48,8 @@ export function startupFiles(publicDir, entry = "index.html", later = []) {
   // Moduli strani, ki jih zažene public/zagon.js (data-moduli="a.js b.js"), so del prvega nalaganja.
   for (const m of html.matchAll(/\bdata-moduli="([^"]*)"/g))
     for (const ref of m[1].split(/\s+/).filter(Boolean)) visitModule(path.join(publicDir, ref.replace(/^\.?\//, "")));
-  for (const m of later) visitModule(path.join(publicDir, m));
+  // Knjižnice (vendor/…), ki jih stran naloži pozneje (public/rich.js naloziKnjiznice), so navadne skripte: brez uvozov.
+  for (const m of later) if (m.startsWith("vendor/")) urls.add("/" + m);
+  else visitModule(path.join(publicDir, m));
   return [...urls];
 }

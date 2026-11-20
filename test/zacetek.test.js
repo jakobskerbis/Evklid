@@ -12,7 +12,7 @@ const H = 60 * 60 * 1000;
 
 // public/zacetek.js je navaden skript v <head>: zaženemo ga z lažnim oknom in majhno lažno stranjo (spodnja
 // vrstica, prvi pogled, pasici), da vidimo, kaj vstavi in katere klice začne.
-function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori = {}, brezVrstice = false, lastnik, profili, jezik, app, seja } = {}) {
+function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori = {}, brezVrstice = false, lastnik, profili, jezik, app, seja, zacetni, testna } = {}) {
   const store = new Map();
   if (jezik) store.set("evklid.lang", jezik);
   if (lastnik != null) store.set("evklid.offline.owner", JSON.stringify(lastnik));
@@ -21,6 +21,9 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
   if (raw != null) store.set("evklid.zadnji-zaslon", raw);
   if (posnetek) store.set("evklid.zadnji-posnetek", typeof posnetek === "string" ? posnetek : JSON.stringify(posnetek));
   if (studentId != null) store.set("studentId", studentId);
+  if (testna != null) store.set("evklid.testnaVerzija", testna);
+  // Začetni podatki s strežnika (server/zacetni-podatki.js): <script type="application/json" id="evklid-zacetni">.
+  const podatki = zacetni == null ? null : { textContent: typeof zacetni === "string" ? zacetni : JSON.stringify(zacetni), parentNode: { removeChild: (x) => (x.removed = true) } };
   const attrs = {};
   const timers = [];
   const window = {};
@@ -63,7 +66,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
   const sessionStorage = seja ? { getItem: (k) => seja.get(k) ?? null, removeItem: (k) => seja.delete(k) } : undefined;
   const document = {
     documentElement: { setAttribute: (k, v) => (attrs[k] = v), removeAttribute: (k) => delete attrs[k], hasAttribute: (k) => k in attrs },
-    getElementById: (id) => (id === "tabbar" ? (brezVrstice ? null : bar) : pasici[id] || null),
+    getElementById: (id) => (id === "tabbar" ? (brezVrstice ? null : bar) : id === "evklid-zacetni" ? (podatki && !podatki.removed ? podatki : null) : pasici[id] || null),
     createElement: el,
     importNode: (c) => ({ __h: c.__h }),
     querySelector: (q) => glava[q] || (q === 'meta[name="evklid-app"]' ? (app ? { getAttribute: () => app } : null) : q === "body > main" ? prvi : /data-posnetek/.test(q) ? (zadnji() && !zadnji().removed && !(q.includes(":not(.zagon-okostje)") && /zagon-okostje/.test(zadnji().className)) ? zadnji() : null) : null),
@@ -71,12 +74,13 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
     addEventListener: () => {},
     readyState: "loading",
   };
-  const fetch = (url) => {
-    klici.push(url);
+  const fetch = (url, o0) => {
+    klici.push(o0?.method ? `${o0.method} ${url}` : url);
     const o = odgovori[url];
     if (o === "visi") return new Promise(() => {});
     return Promise.resolve(o === undefined ? { ok: false } : { ok: true, json: () => Promise.resolve(o) });
   };
+  window.fetch = (...a) => fetch(...a);
   window.ReactNativeWebView = { postMessage: (m) => sporocila.push(JSON.parse(m)) };
   const ctx = {
     window,
@@ -92,7 +96,7 @@ function zacetek({ zapis, posnetek, studentId = "7", search = "", raw, odgovori 
     clearTimeout: (id) => id && (timers[id - 1].cleared = true),
   };
   vm.runInNewContext(read("public/zacetek.js"), ctx);
-  return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers, vstavljeno, zadnji, klici, sporocila, store, tabs, pasici, glava };
+  return { api: window.evklidZacetek, attr: attrs["data-zacetek"], attrs, timers, vstavljeno, zadnji, klici, sporocila, store, tabs, pasici, glava, podatki, window };
 }
 
 test("zadnji zaslon velja do 12 ur; pozneje, ob pokvarjenem zapisu ali uri iz prihodnosti se odpre Učna pot", () => {
@@ -124,7 +128,7 @@ test("odločitev pade pred prvim izrisom: html[data-zacetek] skrije Učno pot, d
   assert.ok(head.indexOf('<script src="zacetek.js"></script>') > 0 && head.indexOf('<script src="zacetek.js"></script>') < head.indexOf('rel="stylesheet"'));
   assert.match(read("public/style.css"), /html\[data-zacetek\]:not\(\[data-zacetek-pod\]\) #view-path:not\(\[data-posnetek\]\) \{ display: none; \}/);
   const app = read("public/app.js");
-  assert.match(app, /const startDone = \(\) => \{\n\s*if \(ZACETEK\?\.konec\) return ZACETEK\.konec\(\);/);
+  assert.match(app, /const startDone = \(\) => \{\n(?:\s*zasloniPozneje\(\);[^\n]*\n)?\s*if \(ZACETEK\?\.konec\) return ZACETEK\.konec\(\);/);
   assert.match(app, /let startRec = ZACETEK\?\.beri\(\) \?\? null;/, "zapis se prebere pred prvim showView");
   assert.match(app, /let startHold = true;/, "vmesni showView med zagonom Učne poti ne pokaže");
   assert.match(app, /startRec = null;\n\s*startHold = false;\n\s*startDone\(\);/, "po prijavi Učna pot, ne zaslon pred odjavo");
@@ -460,9 +464,59 @@ test("hiter zagon: klici zagona stečejo že v <head>, app.js jih prevzame enkra
   const web = read("mobile/src/app/web.tsx");
   assert.match(web, /m\?\.t === "izris" && !waitTimer\.current && \(e\.nativeEvent\.url === ORIGIN \|\| e\.nativeEvent\.url\?\.startsWith\(ORIGIN \+ "\/"\)\)\) setLoading\(false\);/);
   assert.match(web, /onLoadEnd=\{\(\) => !waitTimer\.current && setLoading\(false\)\}/, "rezerva brez sporočila");
-  // Vstopna stran čaka omrežje največ 1 s (j 10. 11. 2026); knjižnice ne ustavijo razčlenjevanja strani.
+  // Vstopna stran čaka omrežje največ 1 s (j 10. 11. 2026); knjižnice (KaTeX, marked, DOMPurify) niso več v strani:
+  // rich.js jih naloži po prvem izrisu ali ob prvi potrebi (naloziKnjiznice), zato ne zadržijo zagona modulov.
   assert.match(read("public/sw.js"), /const TIMEOUT = \{ entry: 1000, /);
-  assert.equal((read("public/index.html").match(/<script defer src="vendor\//g) || []).length, 3);
+  assert.equal((read("public/index.html").match(/<script[^>]*src="vendor\//g) || []).length, 0);
+});
+
+test("začetni podatki s strežnika (prijavljen, prvi obisk): app.js jih dobi brez klicev; okostje Učne poti in pasici takoj", async () => {
+  const d = {
+    "/api/account/status": { enabled: true, logged_in: true },
+    "/api/config": { mock: true, test_notice: ["tutor", "apps"] },
+    "/api/students": [{ id: 7, name: "Ana" }],
+    "/api/students/7/path": { key: "MAT-OS-8", units: [] },
+  };
+  const z = zacetek({ studentId: null, zacetni: { s: 7, d } });
+  assert.equal(z.podatki.removed, true, "element s podatki izgine iz strani");
+  assert.deepEqual(z.klici, [], "noben klic vnaprej: podatki so že v strani");
+  const kopija = async (p) => JSON.parse(JSON.stringify(await p));
+  assert.deepEqual(await kopija(z.api.vnaprej("/api/students/7/path")), d["/api/students/7/path"]);
+  // Dvakrat (selectStudent in start oba odpreta Učno pot): oba dobita iste podatke, vsak svojo kopijo.
+  const a = await z.api.vnaprej("/api/students");
+  a[0].name = "spremenjeno";
+  assert.deepEqual(await kopija(z.api.vnaprej("/api/students")), d["/api/students"]);
+  assert.equal(z.api.vnaprej("/api/students/7/xp"), null, "česar ni v strani, gre na strežnik");
+  // Prva sprememba (POST, PUT …) prek fetch: podatki ne veljajo več, naslednji GET gre na strežnik.
+  await z.window.fetch("/api/students/7/practice/next", { method: "POST" });
+  assert.equal(z.api.vnaprej("/api/students/7/path"), null);
+  assert.equal(z.api.vnaprej("/api/students"), null);
+  // Okostje Učne poti (iste višine kot pravi pogled) in pasici iz /api/config pred prvim izrisom.
+  assert.equal(z.attr, "path");
+  assert.match(z.zadnji().className, /zagon-okostje zo-pot/);
+  assert.match(z.zadnji().innerHTML, /zo-xp/);
+  assert.ok(z.timers.some((x) => x.fn === z.api.konec && x.ms === 20000), "varovalo 20 s: prvi obisk na počasni povezavi traja dlje kot 8 s");
+  assert.equal(z.pasici["mock-banner"].hidden, false);
+  assert.equal(z.pasici["test-notice"].hidden, false);
+  // Zaprto obvestilo »Testna različica« ostane zaprto (isti seznam), kot v public/testna-verzija.js.
+  assert.equal(zacetek({ studentId: null, testna: "tutor,apps", zacetni: { s: 7, d } }).pasici["test-notice"].hidden, true);
+  // Po 60 s podatki ne veljajo (app.js, ki se zažene tako pozno, vpraša strežnik).
+  const pozno = zacetek({ studentId: null, zacetni: { s: 7, d } });
+  const now = Date.now;
+  try {
+    Date.now = () => now() + 61_000;
+    assert.equal(pozno.api.vnaprej("/api/students"), null);
+  } finally {
+    Date.now = now;
+  }
+  // Pokvarjeni ali tuji podatki: prejšnje vedenje (klici vnaprej, brez okostja Učne poti).
+  const slabi = zacetek({ studentId: null, zacetni: "{nepravi" });
+  assert.deepEqual(slabi.klici, ["/api/account/status", "/api/config"]);
+  assert.equal(slabi.attr, undefined);
+  // Več profilov (s: null): podatki veljajo, okostja Učne poti pa ni (izbira profila je v brskalniku).
+  assert.equal(zacetek({ studentId: null, zacetni: { s: null, d: { "/api/config": {} } } }).attr, undefined);
+  // Posnetek zadnjega zaslona ima prednost pred okostjem.
+  assert.ok(!/zo-pot/.test(zacetek({ zapis: ZAS, zacetni: { s: 7, d } }).zadnji()?.className || ""));
 });
 
 // ---------- tipka Nazaj: del app.js z lažno zgodovino ----------
@@ -727,6 +781,7 @@ test("plasti v app.js: okno <dialog>, Evklidova tipkovnica (samo prek API) in pl
   assert.ok(at("isOpen3d()") < graphLayer && at("setSidebar(false)") < graphLayer && graphLayer < views);
   assert.ok(views < at("closeByEsc()") && at("closeByEsc()") < at('if (currentView === "path") return false;'));
   assert.match(step, /currentView === "topic" && \["competition", "exams"\]\.includes\(state\.backTo\) \? state\.backTo : "path"/);
-  // Tipkovnice se dotaknemo samo prek izvoženih funkcij (PR #543 spreminja public/tipkovnica.js).
-  assert.match(app, /import \{[^}]*\bhideKeyboard\b[^}]*\bkeyboardOpenFor\b[^}]*\} from "\.\/tipkovnica\.js";/);
+  // Tipkovnice se dotaknemo samo prek izvoženih funkcij (PR #543 spreminja public/tipkovnica.js), ob zagonu prek
+  // lene različice (tipkovnica-lena.js: tipkovnica ni del prvega izrisa Učne poti).
+  assert.match(app, /import \{[^}]*\bhideKeyboard\b[^}]*\bkeyboardOpenFor\b[^}]*\} from "\.\/tipkovnica-lena\.js";/);
 });

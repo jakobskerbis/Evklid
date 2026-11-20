@@ -430,6 +430,7 @@
   "chat.waitDeep": "더 자세한 설명을 준비하고 있어요 …",
   "chat.waitCheck": "답을 확인하고 있어요 …",
   "chat.waitThink": "생각하고 있어요 …",
+  "chat.waitQueue": "지금 동시에 쓰는 학생이 많아요. 대기 중이에요 ({n}번째) …",
   "chatMode.A": "안내형",
   "chatMode.B": "전체 풀이",
   "subj.MAT": "수학",

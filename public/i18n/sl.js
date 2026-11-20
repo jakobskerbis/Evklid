@@ -636,6 +636,7 @@ export default {
   "chat.waitDeep": "Pripravljam podrobnejšo razlago …",
   "chat.waitCheck": "Preverjam odgovor …",
   "chat.waitThink": "Razmišljam …",
+  "chat.waitQueue": "Veliko učencev hkrati. V vrsti si (mesto\u00a0{n}) …",
   "chat.full": "Pokaži celoten postopek",
   "chat.fullMsg": "Pokaži mi celoten postopek te naloge.",
   "chat.choices": "Hitri odgovori",

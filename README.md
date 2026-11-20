@@ -57,6 +57,8 @@ Brez ukazne vrstice: dvakrat klikni `zagon-windows.bat` (Windows) ali `zagon-mac
 | `EVKLID_OCR_MODEL` | = `EVKLID_MODEL` | Model za branje rokopisa. |
 | `EVKLID_HISTORY_TURNS` | `10` | Koliko izmenjav zgodovine gre v API (starejše se odrežejo po kosih, da predpomnilnik deluje). |
 | `EVKLID_ANSWER_CACHE` | `1` | Enaka prva vprašanja dobijo shranjen odgovor brez klica API. |
+| `EVKLID_AI_SOCASNO` | `24` | Največ hkratnih odgovorov inštruktorja z modelom; ostali čakajo v vrsti in vidijo svoje mesto (0 = brez meje, `server/vrsta-ai.js`). |
+| `EVKLID_AI_VRSTA_MS` | `90000` | Najdaljše čakanje v vrsti za AI; nato napaka kot ob preobremenjenem ponudniku (koda 529). |
 | `EVKLID_DAILY_QUESTIONS` | `0` | Vprašanj za inštruktorja na učenca na dan (0 = brez omejitve). Vadnica je vedno neomejena. |
 | `EVKLID_MONTHLY_BUDGET_USD` | `0` | Skupni mesečni proračun v $; pri 80 % opozorilo, pri 100 % se klepet ustavi. |
 | `EVKLID_STUDENT_SOFT_USD` | `1` | Nad to mesečno porabo na učenca (v $) podrobne razlage pripravi hitri model. |

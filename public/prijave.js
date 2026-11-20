@@ -2,9 +2,8 @@
 // prijav za skrbnika (Račun → Prijave napak). Okvir prijave ima isti videz kot prijava pod odgovorom
 // inštruktorja (style.css .report-box).
 import { icon, hydrateIcons } from "./icons.js";
-import { t } from "./i18n.js";
-import { createRenderer } from "./rich.js";
-import { annotateTex } from "./formula-info.js";
+import { t } from "./i18n-osnova.js";
+import { createRenderer, naloziKnjiznice } from "./rich.js";
 
 // Naprava ob prijavi (kot pri mnenjih, feedback.js): telefon / tablica / računalnik in velikost zaslona.
 export function deviceInfo() {
@@ -177,6 +176,7 @@ function reasonText(r) {
 // Odgovor, kot ga je videl učenec: izrisan HTML s spleta (očiščen) ali, pri prijavah iz aplikacije in starejših
 // prijavah, besedilo znova izrisano z istim izrisovalnikom kot v klepetu.
 let rich = null;
+let annotateTex = null; // formula-info.js: naloži renderAdminReports (ni del prvega izrisa)
 function shownBlock(r) {
   if (r.kind !== "message" || !(r.shown || r.answer)) return "";
   let html = "";
@@ -184,7 +184,7 @@ function shownBlock(r) {
   try {
     if (r.shown) html = safeShown(r.shown);
     else {
-      rich ||= createRenderer({ annotate: (tex, o) => annotateTex(tex, undefined, o) });
+      rich ||= createRenderer({ annotate: (tex, o) => (annotateTex ? annotateTex(tex, undefined, o) : tex) });
       html = rich.renderRich(r.answer);
       label = t("adm.rep.rerendered");
     }
@@ -201,6 +201,9 @@ function shownBlock(r) {
 export async function renderAdminReports(box, { api, toast, showAll = false }) {
   let data;
   try {
+    // Knjižnice in oznake formul (rich.js, formula-info.js) za izris odgovorov niso del prvega izrisa aplikacije.
+    const [fx] = await Promise.all([import("./formula-info.js"), naloziKnjiznice()]);
+    annotateTex = fx.annotateTex;
     data = await api(`/api/admin/reports${showAll ? "?status=all" : ""}`);
   } catch (e) {
     box.innerHTML = `<p class="muted">${esc(e.message)}</p>`;

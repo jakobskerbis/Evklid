@@ -65,7 +65,7 @@ test("»Razloži« in a lesson sends the original TeX, not the clickable-symbol 
   const tb = readFileSync(new URL("../public/textbook.js", import.meta.url), "utf8");
   assert.match(tb, /\$\$\{plainTex\(tex\)\.trim\(\)\}\$/);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /renderMath\(plainTex\(p\.slice\(1, -1\)\), false, false\)/, "tudi starejša sporočila");
+  assert.match(app, /renderMath\(fxMod\.now\(\)\.plainTex\(p\.slice\(1, -1\)\), false, false\)/, "tudi starejša sporočila (formula-info.js je naložen, preden se izriše)");
 });
 
 test("tutor: a dropped connection shows a clear message, not the browser's »network error«", () => {
