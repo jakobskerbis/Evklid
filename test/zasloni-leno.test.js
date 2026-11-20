@@ -27,7 +27,7 @@ test.after(() => chromium?.close());
 const quiet = { error() {}, warn() {}, info() {}, log() {} };
 
 // Moduli zaslonov, ki se naložijo po prvem izrisu Učne poti ali ob prvi uporabi.
-const LENI = ["/vadnica.js", "/racun.js", "/kalkulator-zaslon.js", "/schedule.js", "/flashcards.js", "/corner.js", "/laboratorij.js", "/pilot-naloge.js", "/odpri.js", "/pad.js", "/enote-izbira.js", "/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pass-offer.js"];
+const LENI = ["/vadnica.js", "/racun.js", "/kalkulator-zaslon.js", "/schedule.js", "/flashcards.js", "/corner.js", "/laboratorij.js", "/pilot-naloge.js", "/odpri.js", "/pad.js", "/enote-izbira.js", "/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pass-offer.js", "/chat-settings.js", "/settings-registry.js", "/interests.js", "/games/childhood.js", "/prijave.js"];
 
 test("prvo odprtje: moduli drugih zaslonov niso v statičnem grafu, varnostni zaznavalnik in kartica urnika sta", () => {
   const list = startupFiles(PUB, "index.html");
@@ -41,7 +41,7 @@ test("prvo odprtje: moduli drugih zaslonov niso v statičnem grafu, varnostni za
   // Strežnik jih po zagonu vnaprej stisne (server/app.js ZASLONI_POZNEJE), kot datoteke prvega odprtja.
   const srv = fs.readFileSync(path.join(ROOT, "server", "app.js"), "utf8");
   const pozneje = srv.match(/const ZASLONI_POZNEJE = \[([^\]]*)\]/)[1];
-  for (const u of ["vadnica.js", "racun.js", "kalkulator-zaslon.js", "schedule.js", "flashcards.js", "corner.js", "laboratorij.js", "pilot-naloge.js", "odpri.js"]) assert.ok(pozneje.includes(`"${u}"`), u);
+  for (const u of ["vadnica.js", "racun.js", "kalkulator-zaslon.js", "schedule.js", "flashcards.js", "corner.js", "laboratorij.js", "pilot-naloge.js", "odpri.js", "chat-settings.js", "prijave.js"]) assert.ok(pozneje.includes(`"${u}"`), u);
 });
 
 async function streznik(fn) {
@@ -125,7 +125,7 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
       await zavihek("account");
       await vidno("#view-account");
       await nalagam("#view-account");
-      spusti("/racun.js", "/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pilot-naloge.js");
+      spusti("/racun.js", "/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pilot-naloge.js", "/prijave.js");
       await vidno("#view-account h1");
       assert.equal((await page.locator("#view-account h1").innerText()).trim(), SL["nav.account"]);
       assert.ok(await page.locator("#view-account .kolone").count(), "stolpci zavihka Račun");
@@ -135,7 +135,7 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
       for (const [v, mod, sel, gotovo] of [
         ["cards", ["/flashcards.js"], "#view-cards", "#view-cards > :not(p.muted)"],
         ["schedule", ["/schedule.js", "/pass-offer.js"], "#view-schedule .sch-body", "#view-schedule .sch-body > :not(p.muted)"],
-        ["corner", ["/corner.js"], "#corner-content", "#corner-content > :not(p.muted)"],
+        ["corner", ["/corner.js", "/interests.js"], "#corner-content", "#corner-content > :not(p.muted)"],
         ["graph", ["/kalkulator-zaslon.js"], "#graph-slot", "#graph-slot > :not([hidden]):not(p)"],
       ]) {
         await zavihek(v);
@@ -185,6 +185,40 @@ test("po prvem izrisu: moduli zaslonov pridejo sami, klik na Račun, Kartice in 
         await page.keyboard.press("Escape");
         await page.waitForSelector("#graph-overlay[hidden]", { state: "attached", timeout: 10000 });
       }
+      assert.deepEqual(napake, []);
+    } finally {
+      await ctx.close();
+    }
+  }),
+);
+
+test("prvo sporočilo inštruktorju, medtem ko nastavitve naprave (chat-settings.js) še prihajajo: gre s posnetkom naprave", opts, () =>
+  streznik(async ({ base, jar }) => {
+    const { ctx, page, napake } = await stran(base, jar);
+    try {
+      let spusti;
+      const caka = new Promise((r) => (spusti = r));
+      await page.route((url) => url.pathname === "/chat-settings.js", async (route) => {
+        await caka;
+        await route.continue().catch(() => {});
+      });
+      const telesa = [];
+      page.on("request", (r) => /\/api\/conversations\/\d+\/messages$/.test(new URL(r.url()).pathname) && r.method() === "POST" && telesa.push(r.postDataJSON()));
+      await page.addInitScript(() => localStorage.setItem("evklid.pisava", "velika"));
+      await page.goto(base + "/", { waitUntil: "commit" });
+      await page.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 });
+      await page.evaluate(() => document.querySelector('#tabbar .tab[data-view="chat"], .topbar .tab[data-view="chat"]').click());
+      await page.waitForSelector("#view-chat #input", { state: "visible", timeout: 20000 });
+      await page.locator("#input").fill("Koliko je 2 + 3?");
+      await page.locator("#send").tap();
+      await page.waitForTimeout(600);
+      assert.equal(telesa.length, 0, "sporočilo je šlo brez posnetka naprave");
+      spusti();
+      await page.waitForFunction(() => performance.getEntriesByType("resource").some((e) => /\/messages$/.test(e.name)), null, { timeout: 20000 }).catch(() => null);
+      for (let i = 0; i < 40 && !telesa.length; i++) await page.waitForTimeout(250);
+      assert.equal(telesa.length, 1, "sporočilo ni šlo po prihodu modula");
+      assert.equal(typeof telesa[0].device, "object", JSON.stringify(telesa[0]));
+      assert.equal(telesa[0].text, "Koliko je 2 + 3?");
       assert.deepEqual(napake, []);
     } finally {
       await ctx.close();

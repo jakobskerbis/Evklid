@@ -2,7 +2,7 @@
 // prijav za skrbnika (Račun → Prijave napak). Okvir prijave ima isti videz kot prijava pod odgovorom
 // inštruktorja (style.css .report-box).
 import { icon, hydrateIcons } from "./icons.js";
-import { t } from "./i18n-osnova.js";
+import { t } from "./i18n.js";
 import { createRenderer, naloziKnjiznice } from "./rich.js";
 
 // Naprava ob prijavi (kot pri mnenjih, feedback.js): telefon / tablica / računalnik in velikost zaslona.

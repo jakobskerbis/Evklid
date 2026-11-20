@@ -71,8 +71,9 @@ test("app.js: igre in orodja v ozadju preverijo povezavo, igre pripravijo u훾en�
   assert.match(games, /!backgroundLoadOk\(navigator\.connection\)\) return;\s*loadGames\(\)/);
   // prefetchNext: te탑ki koraki le ob backgroundLoadOk; pregledovalnik pole in uvodni ogled na vsaki povezavi (razen
   // var훾evanja s podatki in lahkega na훾ina), ker delujeta tudi brez povezave (pregled 2 #816, to훾ka 1)
-  const start = src.indexOf("function prefetchNext()");
-  const next = src.slice(start, src.indexOf("\n}\n", start));
+  const kz = fs.readFileSync(path.join(PUB, "kalkulator-zaslon.js"), "utf8"); // prefetchNext je v kalkulator-zaslon.js
+  const start = kz.indexOf("function prefetchNext()");
+  const next = kz.slice(start, kz.indexOf("\n}\n", start));
   assert.match(next, /if \(navigator\.connection\?\.saveData \|\| document\.documentElement\.classList\.contains\("lite"\) \|\| !state\.student\) return;/);
   assert.match(next, /const heavy = backgroundLoadOk\(navigator\.connection\);/);
   const light = next.slice(next.indexOf(": []),"));

@@ -31,7 +31,6 @@ import { attachPrettify } from "./lepi-zapis.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, offlineBootApi, pripraviPreverjanje, saveStudents, saveConfig, clearProfile, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback, renderFeedbackCard } from "./feedback.js";
-import { openAdminBug, openMsgReport } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 // Igre (games/, ~0,7 MB kode; naloge predmetov še ~0,1–0,4 MB na predmet, games/subjects/) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
 // zagonu: prvo odprtje Evklida mora prenesti in zagnati pol manj kode (j, 2026-11-04: »stran deluje počasi«).
@@ -66,7 +65,6 @@ const leaveGames = () => gamesMod?.leaveGames();
 import { gamesOn, backgroundLoadOk } from "./games/stage.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
-import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
 import { initSchedule, renderScheduleCard, lastSchedule } from "./urnik-kartica.js";
 import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initAnketa, preveriAnketo } from "./anketa-teden.js";
@@ -138,6 +136,18 @@ const itemThumb = (id, size) => zbMod.now()?.itemThumb(id, size) ?? "";
 // Vadnica (tema, naloge, serije), tekmovanja, NPZ in matura ter pretekle pole (public/vadnica.js, ~20 KB stisnjeno s
 // tipkovnico za naloge pad.js) niso del prvega izrisa Učne poti: naložijo se takoj po njem (zasloniPozneje) ali ob prvi
 // uporabi. Klic pred prihodom modula ga počaka; pogleda Tekmovanja ter NPZ in matura do takrat kažeta »Nalagam …«.
+// Nastavitve naprave za inštruktorja (posnetek z vsakim sporočilom, predlog in sprememba iz odgovora) in obrazca
+// »Prijavi napako«: v vrsti po prvem izrisu takoj za izrisom formul (zasloniPozneje), ob prvem sporočilu skoraj vedno že tu.
+// Naložen modul se kliče takoj (isti vrstni red kot prej); posnetek sporočilo sicer počaka (brez modula gre brez njega).
+const nastMod = lenModul("./chat-settings.js");
+const nast = (fn) => (...a) => (nastMod.now() ? nastMod.now()[fn](...a) : nastMod.load().then((m) => m[fn](...a), () => {}));
+const applyDeviceSettings = nast("applyDeviceSettings");
+const addProposal = nast("addProposal");
+const deviceSnapshot = () => nastMod.now()?.deviceSnapshot() ?? nastMod.load().then((m) => m.deviceSnapshot(), () => undefined);
+const prijMod = lenModul("./prijave.js");
+const prij = (fn) => (...a) => prijMod.load().then((m) => m[fn](...a), () => (toast(t("off.noConnection")), a.at(-1)?.onClose?.()));
+const openAdminBug = prij("openAdminBug");
+const openMsgReport = prij("openMsgReport");
 const vadMod = lenModul("./vadnica.js");
 const vad = (fn) => (...a) => vadMod.load().then((m) => m[fn](...a));
 const vadPogled = (fn, sel) => (...a) => vadMod.load().then((m) => m[fn](...a), () => vadMod.now() || viewNote(sel, "off.noConnection", true));
@@ -234,12 +244,15 @@ const zasloniPozneje = () => {
   if (pozneje) return;
   pozneje = true;
   for (const fn of poZagonuVrsta.splice(0)) fn();
+  // Vzorci varnostnega zaznavalnika nastanejo šele ob prvi uporabi (public/nujno.js compile): pripravimo jih takoj po
+  // prvem izrisu v kosih v času mirovanja, ne šele ob prvem odprtju Inštruktorja (prvi »Pošlji« bi sicer čakal nanje).
+  pripraviZaznavalnik();
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 200));
   idle(
     () =>
       // Najprej izris formul (rabi ga skoraj vsak drug zaslon), nato moduli zaslonov po verjetnosti uporabe.
       // Najprej cel slovar (public/i18n.js): moduli, ki dobijo t() od app.js (kalkulator), ga rabijo takoj.
-      [{ load: naloziVse }, { load: naloziTipkovnico }, { load: pripraviIzris }, vadMod, calcMod, tbMod, scanMod, urnikMod, zbMod, cardsMod, openMod, labMod, cornerMod, pilotMod, { load: naloziRacun }, leagueMod, ourMod, { load: pripraviPreverjanje }]
+      [{ load: naloziVse }, { load: naloziTipkovnico }, { load: pripraviIzris }, nastMod, prijMod, vadMod, calcMod, tbMod, scanMod, urnikMod, zbMod, cardsMod, openMod, labMod, cornerMod, pilotMod, { load: naloziRacun }, leagueMod, ourMod, { load: pripraviPreverjanje }]
         .reduce((p, x) => p.then(() => x.load().catch(() => null)), Promise.resolve())
         // Za delo brez povezave: service worker shrani tudi te module (ob prvem obisku je seznam »precache« že poslan).
         .then(() => navigator.serviceWorker?.ready)
@@ -490,7 +503,7 @@ const openTextbookLower = () => {
   // Klicatelj takoj pokaže Učbenik (showView): ta čaka isti modul in pride za tem klicem.
   return tbReady().then((x) => x.openTextbookLower()).catch(() => {});
 };
-const { renderMath, renderRich, odlozi: odloziIzris } = createRenderer({
+const { renderMath, renderRich, odlozi: odloziIzris, nared: izrisNared } = createRenderer({
   annotate: (tex, o) => fxMod.now().annotateTex(tex, undefined, o),
   pripravljen: () => !!fxMod.now(),
   pripravi: pripraviIzris,
@@ -1687,6 +1700,13 @@ async function openConversation(id, { mark = true } = {}) {
   // če se učenec vmes ni premaknil.
   const st = box.scrollTop;
   oznaka.then(() => state.conversationId === conv.id && box.scrollTop === st && (box.scrollTop = box.scrollHeight));
+  // Pogovor, odprt takoj po zagonu, ko knjižnice za formule (rich.js) še prihajajo: nadomestke zamenja višji izris.
+  // Ko so zamenjani, še enkrat na dno, razen če se je učenec vmes pomaknil navzgor.
+  if (!izrisNared()) pripraviIzris().then(() => requestAnimationFrame(() => {
+    if (state.conversationId !== conv.id || !box.clientHeight || box.scrollTop < st - 2) return;
+    prilagodiZdaj();
+    box.scrollTop = box.scrollHeight;
+  }), () => {});
   zgodovina.naDno = !box.clientHeight; // skrit Inštruktor (zagon, menjava profila): na dno, ko se pokaže
   refreshBubble();
   dopolniKmalu(); // kratka zadnja sporočila ne napolnijo zaslona: starejša takoj za prvo sliko
@@ -2001,7 +2021,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     const res = await fetchThroughRestart(`/api/conversations/${state.conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, deep, nacin, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
+      body: JSON.stringify({ text, deep, nacin, lite: liteActive(), device: await deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
     });
     if (!res) {
       bubble.remove();
