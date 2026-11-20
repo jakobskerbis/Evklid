@@ -86,7 +86,7 @@ export function prune(dbFile, keepDaily, keepManual, now = new Date()) {
 /**
  * Rok hrambe kopij ne glede na EVKLID_BACKUPS (kliče se ob kopiji, ob zagonu in v dnevnem čiščenju, server/zasebnost.js):
  * ročne kopije starejše od MANUAL_MAX_DAYS (po datumu v imenu), shranjene baze pred obnovo ter potekle in pokvarjene
- * obnove starejše od SAVED_DAYS. Vrne število pobrisanih datotek.
+ * obnove starejše od SAVED_DAYS ter zapise seznama izbrisov, starejše od IZBRISI_DNI. Vrne število pobrisanih datotek.
  */
 export function pocistiStare(dbFile, now = new Date()) {
   if (!dbFile || dbFile === ":memory:") return 0;
@@ -105,6 +105,13 @@ export function pocistiStare(dbFile, now = new Date()) {
         fs.rmSync(path.join(dir, x), { force: true });
         n++;
       }
+  // Seznam izbrisov: zapisi, starejši od IZBRISI_DNI, se pobrišejo tudi brez novih izbrisov in brez R2. Pokvarjene
+  // datoteke ne prepišemo (napako javi ponovitevIzbrisov ob zagonu).
+  try {
+    if (fs.existsSync(izbrisiFile(dbFile))) dodajIzbrise(dbFile, [], now);
+  } catch {
+    // ostane do naslednjega čiščenja
+  }
   return n;
 }
 
@@ -224,6 +231,81 @@ export function applyPendingRestore(dbFile, { log = console, now = new Date() } 
   fs.renameSync(src, dbFile);
   log.info?.(`[evklid] baza obnovljena iz kopije; prejšnja je v ${path.basename(saved)}`);
   return { restored: true, saved };
+}
+
+// --- seznam izbrisov (docs/izbris-izvoz.md »Varnostne kopije«) ---
+// Obnova baze iz kopije ne sme vrniti izbrisanih računov in profilov. Zato vsak izbris zapiše vrstico v
+// <mapa baze>/<ime>-izbrisi.json, ZUNAJ datoteke baze, ki je obnova ne zamenja (server/accounts/izbris.js). Ob vsakem
+// zagonu se izbrisi ponovijo za vrstice, ki so spet v bazi. Vsebina brez osebnih podatkov: notranji id-ji, čas nastanka
+// vrstice (created_at, da nov račun s ponovno uporabljenim id-jem ostane) in čas izbrisa.
+// Zapis: [{ at: ISO, r: [id računa, created_at] | null, s: [[id profila, created_at], …] }].
+// Hrani se IZBRISI_DNI: najdlje živi kopija 30 dni (R2; ročna 22 + 7 dni posnetka diska + 1), +15 dni rezerve.
+export const IZBRISI_DNI = 45;
+export const izbrisiFile = (dbFile) => path.join(path.dirname(path.resolve(dbFile)), `${stem(dbFile)}-izbrisi.json`);
+
+const veljaven = (z) =>
+  z && typeof z.at === "string" && (z.r == null || (Array.isArray(z.r) && z.r.length === 2)) && (z.s == null || (Array.isArray(z.s) && z.s.every((x) => Array.isArray(x) && x.length === 2)));
+
+/** Seznam izbrisov (prazen, če ga ni). Pokvarjena datoteka vrže napako: tihi prazen seznam bi izbrise izgubil. */
+export function beriIzbrise(dbFile) {
+  if (!dbFile || dbFile === ":memory:") return [];
+  const f = izbrisiFile(dbFile);
+  if (!fs.existsSync(f)) return [];
+  const v = JSON.parse(fs.readFileSync(f, "utf8"));
+  if (!Array.isArray(v)) throw new Error(`${path.basename(f)} ni seznam`);
+  return v.filter(veljaven);
+}
+
+// EVKLID_IZBRISI_PREZRI (številke računov, z vejicami): za namerno obnovo po pomotnem izbrisu (docs/obnova.md). Zapisi
+// teh računov, nastali pred zagonom tega procesa, se ne ponovijo in se ob naslednjem zapisu odstranijo s seznama (tudi
+// iz R2), da se po odstranitvi nastavitve ne vrnejo. Izbris istega računa po zagonu se zapiše kot običajno.
+const ZAGON = new Date().toISOString();
+const javljeniPrezrti = new Set();
+export function brezPrezrtih(list, { env = process.env, log = console, zagon = ZAGON } = {}) {
+  const ids = new Set(
+    String(env.EVKLID_IZBRISI_PREZRI || "")
+      .split(",")
+      .map((x) => x.trim())
+      .filter((x) => /^\d+$/.test(x))
+      .map(Number),
+  );
+  if (!ids.size) return list;
+  return list.filter((z) => {
+    const id = z?.r ? Number(z.r[0]) : null;
+    if (id == null || !ids.has(id) || !(z.at < zagon)) return true;
+    if (!javljeniPrezrti.has(id)) {
+      javljeniPrezrti.add(id);
+      log.warn?.(`[evklid] izbris računa ${id} se ne ponovi in se odstrani s seznama izbrisov (EVKLID_IZBRISI_PREZRI)`);
+    }
+    return false;
+  });
+}
+
+/**
+ * Doda izbrise k seznamu (brez dvojnikov), pobriše starejše od IZBRISI_DNI in zapiše atomarno (tmp + rename).
+ * Vrne { list, dodanih }. Uporabi ga zapis ob izbrisu in prenos seznama iz R2 (server/kopije-oblak.js).
+ */
+export function dodajIzbrise(dbFile, novi, now = new Date()) {
+  const meja = new Date(now.getTime() - IZBRISI_DNI * 864e5).toISOString();
+  const kljuc = (z) => JSON.stringify([z.at, z.r ?? null, z.s ?? []]);
+  const vse = beriIzbrise(dbFile);
+  const list = brezPrezrtih(vse);
+  const znani = new Set(list.map(kljuc));
+  let dodanih = 0;
+  for (const z of brezPrezrtih(novi.filter(veljaven)))
+    if (!znani.has(kljuc(z))) {
+      znani.add(kljuc(z));
+      list.push({ at: z.at, r: z.r ?? null, s: z.s ?? [] });
+      dodanih++;
+    }
+  const ostane = list.filter((z) => z.at >= meja).sort((a, b) => a.at.localeCompare(b.at));
+  if (dodanih || ostane.length !== vse.length) {
+    const f = izbrisiFile(dbFile);
+    fs.mkdirSync(path.dirname(f), { recursive: true }); // ob zagonu po izgubi diska (prenos iz R2) mape baze še ni
+    fs.writeFileSync(`${f}.tmp`, JSON.stringify(ostane));
+    fs.renameSync(`${f}.tmp`, f);
+  }
+  return { list: ostane, dodanih };
 }
 
 /** Shranjene baze pred obnovo, najnovejša prva (za razveljavitev obnove). */
