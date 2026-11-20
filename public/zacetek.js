@@ -32,6 +32,9 @@
     var tap = tapZadnji;
     tapZadnji = null;
     tapOn = false;
+    gotovo = false;
+    var pm = document.querySelector('meta[name="evklid-pot"]');
+    if (pm) pm.remove();
     if (slogiPoKoncu) {
       slogiPoKoncu = false;
       slogi(false, true);
@@ -49,6 +52,8 @@
       }, 0);
   }
   var tapOn = false;
+  var gotovo = false;
+  var appTece = false;
   var tapZadnji = null;
   var TAP = "button, [role=button], [data-open], [data-view], [data-mode], [data-gm], [data-home-go], [data-go-schedule], [data-daily], [data-dnevna], [data-scan-home]";
   function tapOpis(el) {
@@ -65,13 +70,21 @@
       }
     }
     if (!ima) for (var c = 0; c < el.classList.length; c++) sel += "." + CSS.escape(el.classList[c]);
-    var vsi = m.querySelectorAll(sel);
+    var pr = el.parentElement && el.parentElement.closest("[id]");
+    if (pr && pr !== m && m.contains(pr)) sel = "#" + CSS.escape(pr.id) + " " + sel;
+    var vsi = vidni(m.querySelectorAll(sel));
     var k = 0;
     for (var j = 0; j < vsi.length; j++) if (vsi[j] === el) k = j;
-    return { sel: sel, k: k };
+    return { sel: sel, k: k, t: Date.now() };
+  }
+  function vidni(vsi) {
+    var r = [];
+    for (var i = 0; i < vsi.length; i++) if (vsi[i].getClientRects().length) r.push(vsi[i]);
+    return r;
   }
   function odigraj(o) {
-    if (document.getElementById("boot-down")) return;
+    if (Date.now() - o.t > 8000 || document.getElementById("boot-down") || document.body.classList.contains("auth-mode")) return;
+    if (document.querySelector("dialog[open], #lock-overlay, .tour:not([hidden])")) return;
     // Zavihek ali gumb lupine: kot klik nanj (app.js ga obdela kot prej, tudi skritega). Učna pot: isti element v
     // pravem pogledu, le če je viden (app.js ga je morda skril, ker se je stanje vmes spremenilo).
     var el = o.el;
@@ -80,16 +93,18 @@
       return;
     }
     var v = document.getElementById("view-path");
-    var vsi = v && !v.hidden ? v.querySelectorAll(o.sel) : [];
+    var vsi = v && !v.hidden ? vidni(v.querySelectorAll(o.sel)) : [];
     el = vsi[o.k] || null;
-    if (!el || el.disabled || !el.getClientRects().length) return;
+    if (!el || el.disabled) return;
     el.click();
   }
   function tapZadrzi(e) {
-    // Tudi klik iz skripte (dostopnost, testi): pred zagonom app.js nima kdo drug klikati v lupino.
-    if (!tapOn) return;
+    // Klik iz skripte, ko app.js že teče (npr. account.js po plačilu), gre naprej kot prej; dotik uporabnika in
+    // klik iz skripte pred app.js (dostopnost, testi) počakata na app.js.
+    if (!tapOn || (appTece && !e.isTrusted)) return;
     var el = e.target && e.target.closest ? e.target.closest(TAP) : null;
     if (!el || el.closest("a[href]") || !el.closest("main[data-streznik], .topbar, #tabbar")) return;
+    if (gotovo && !el.closest("main[data-streznik]")) return; // app.js pripravljen: zavihek takoj, kot brez strežnika
     e.preventDefault();
     e.stopImmediatePropagation();
     tapZadnji = tapOpis(el);
@@ -112,6 +127,10 @@
     } catch (e) {}
     var chip = potSrv ? document.querySelector("#xp-badge .stat.xp") : null;
     if (chip) chip.style.removeProperty("--lvl");
+    for (var t = 0; t < naslovi.length; t++) naslovi[t][0].title = naslovi[t][1];
+    naslovi = [];
+    var pm = document.querySelector('meta[name="evklid-pot"]');
+    if (pm) pm.remove();
     var p = document.querySelector("main[data-posnetek]:not(.zagon-okostje)");
     if (p) {
       p.removeAttribute("data-streznik");
@@ -411,16 +430,28 @@
       if (skrij) el[i].hidden = true;
     }
   }
+  var naslovi = [];
   function glavaStreznik(hd) {
     var chip = document.querySelector("#xp-badge .stat.xp");
     if (chip && typeof hd.l === "number") {
       chip.style.setProperty("--lvl", hd.l);
-      if (typeof hd.lt === "string") chip.title = hd.lt;
+      if (typeof hd.lt === "string") naslovi.push([chip, chip.title]), (chip.title = hd.lt);
     }
     var pb = document.getElementById("profile-btn");
-    if (pb && typeof hd.pt === "string") pb.title = hd.pt;
+    if (pb && typeof hd.pt === "string") naslovi.push([pb, pb.title]), (pb.title = hd.pt);
     // Napisi lupine v jeziku strani (server/pot-takoj.js napisiLupine), kot applyI18n; Učna pot je že prevedena.
     var np = hd.np && typeof hd.np === "object" ? hd.np : null;
+    // Spodnja vrstica je morda še razčlenjena le do pol: napisi še enkrat, ko je cela stran prebrana (pregled #903).
+    var tb = document.getElementById("tabbar");
+    if (np && !hd.znova && document.readyState === "loading" && typeof MutationObserver === "function" && !(tb && tb.nextElementSibling)) {
+      var mo = new MutationObserver(function () {
+        var b = document.getElementById("tabbar");
+        if (!(b && b.nextElementSibling) && document.readyState === "loading") return;
+        mo.disconnect();
+        if (!pozabljen && html.hasAttribute("data-zacetek")) glavaStreznik({ np: np, znova: true });
+      });
+      mo.observe(html, { childList: true, subtree: true });
+    }
     var el = np ? document.querySelectorAll("[data-i18n],[data-i18n-title],[data-i18n-aria]") : [];
     for (var i = 0; i < el.length; i++) {
       if (el[i].closest("main")) continue;
@@ -566,7 +597,11 @@
       if (el) el.hidden = false;
     }
   }
-  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, pozabiVnaprej: pozabiVnaprej, konec: konec, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen, dejstvo: dejstvo, ucenec: !!(zp && zp.s != null) };
+  window.evklidZacetek = { KEY: KEY, POSNETEK: POSNETEK, PRENOS: PRENOS, OWNER: OWNER, MAX: MAX, JEZIK: JEZIK, izberi: izberi, beri: beri, vnaprej: vnaprej, pozabiVnaprej: pozabiVnaprej, konec: konec, zacel: function () {
+      appTece = true;
+    }, gotov: function () {
+      gotovo = true;
+    }, pozabi: pozabi, lahkoShrani: lahkoShrani, znova: znova, ociscen: ociscen, dejstvo: dejstvo, ucenec: !!(zp && zp.s != null) };
   try {
     var z = beri();
     var sid = localStorage.getItem("studentId");

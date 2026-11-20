@@ -178,9 +178,9 @@ const ZAJEMI = (ids) => {
   out.vrstni = [...m.children].filter((c) => !c.classList.contains("split-handle")).map((c) => c.id || c.className).join(",");
   return out;
 };
-const IDS = ["path-head", "path-level", "path-lower", "path-note", "lang-note", "xp-card", "schedule-card", "stage-card", "modebar", "goal-modes", "path-content", "feedback-card", "install-mini"];
+const IDS = ["path-head", "path-level", "path-lower", "path-note", "lang-note", "xp-card", "schedule-card", "stage-card", "modebar", "goal-modes", "path-content", "feedback-card", "install-card", "goal-line", "level-card"];
 
-async function stran(base, jar, { locale = "sl-SI", tz = "Europe/Ljubljana", init = () => {}, mobile = true } = {}) {
+async function stran(base, jar, { locale = "sl-SI", tz = "Europe/Ljubljana", init = () => {}, mobile = true, pot = "/" } = {}) {
   const ctx = await chromium.newContext({ viewport: mobile ? { width: 390, height: 844 } : { width: 1280, height: 800 }, isMobile: mobile, hasTouch: mobile, locale, timezoneId: tz, serviceWorkers: "block", reducedMotion: "reduce" });
   await ctx.addCookies(Object.entries(jar).map(([name, value]) => ({ name, value, url: base })));
   await ctx.addInitScript(() => localStorage.setItem("evklid.tour", "done"));
@@ -195,7 +195,7 @@ async function stran(base, jar, { locale = "sl-SI", tz = "Europe/Ljubljana", ini
     await zadrzano;
     await r.continue().catch(() => {});
   });
-  await page.goto(base + "/", { waitUntil: "commit" });
+  await page.goto(base + pot, { waitUntil: "commit" });
   const pripravljen = () => page.waitForFunction(() => !document.querySelector("main[data-posnetek]") && !document.documentElement.hasAttribute("data-zacetek") && document.querySelector("#view-path #xp-card .hero"), null, { timeout: 60000 });
   return { ctx, page, napake, spusti, pripravljen };
 }
@@ -272,6 +272,25 @@ test("dotik pred zagonom: tema na Učni poti in zavihek spodnje vrstice se izved
       } finally {
         await ctx.close();
       }
+    }
+  });
+});
+
+test("klik iz skripte med zagonom ni dotik: vrnitev s plačila konča kot brez Učne poti s strežnika (pregled #903)", bopts, async () => {
+  await withServer(async ({ base, signup }) => {
+    const u = await signup("placilo@primer.si", [{ name: "Pia" }]);
+    const { ctx, page, napake, spusti, pripravljen } = await stran(base, u.c.jar, { pot: "/?billing=portal" });
+    try {
+      await page.waitForSelector("main[data-streznik] #xp-card .hero", { timeout: 30000 });
+      spusti();
+      await pripravljen();
+      await page.waitForLoadState("networkidle");
+      // Kot EVKLID_POT_STREZNIK=0: klik account.js na zavihek Račun ni shranjen kot dotik, ki bi se izvedel na koncu zagona.
+      assert.deepEqual(await page.evaluate(() => [document.getElementById("view-path").hidden, document.getElementById("view-account").hidden]), [false, true]);
+      assert.equal(await page.evaluate(() => !!document.querySelector('meta[name="evklid-pot"]')), false, "podatki glave s strežnika po zagonu niso več v strani");
+      assert.deepEqual(napake, []);
+    } finally {
+      await ctx.close();
     }
   });
 });

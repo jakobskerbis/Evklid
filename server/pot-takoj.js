@@ -194,11 +194,14 @@ export function withPot(html, pot) {
 }
 
 // Za server/vstopna-stran.js: (html, podatki, req) → html z Učno potjo ali brez nje (napaka: brez, stran je kot prej).
+let napakaZapisana = false;
 export function potTakoj({ publicDir }) {
   return (html, podatki, req) => {
     try {
       return withPot(html, potStrani(html, podatki, req, { publicDir }));
-    } catch {
+    } catch (err) {
+      if (!napakaZapisana) console.error("[pot-takoj] Učna pot s strežnika izklopljena za to stran:", err);
+      napakaZapisana = true;
       return html;
     }
   };

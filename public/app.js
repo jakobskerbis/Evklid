@@ -721,6 +721,7 @@ function showView(name) {
 // lekcijo Učbenika ali temo), če od zadnjega obiska ni minilo več kot 12 ur. Zapis se osveži ob vsaki menjavi
 // pogleda in ko stran izgine z zaslona (čas zadnjega obiska, lekcija, odprta med branjem kazala).
 const ZACETEK = window.evklidZacetek || null;
+ZACETEK?.zacel?.(); // od tu klik iz skripte ni dotik pred zagonom (public/zacetek.js tapZadrzi)
 let startRec = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
 let startHold = true; // do konca zagona (start) Učna pot ostane skrita: vmesni showView("path") ne sme utripniti
 // Konec zagona: oznaki na <html> in posnetek zadnjega zaslona izginejo skupaj, pravi pogled se pokaže v istem izrisu.
@@ -743,6 +744,7 @@ function pinSnapshot() {
 // mark: zadnji klic pred zadnjim zaslonom (Učne poti pod njim ne čakamo); null: čakamo vse.
 function finishStart(mark = null) {
   startHold = false;
+  ZACETEK?.gotov?.(); // dotik zavihka med čakanjem spodaj gre takoj naprej (Učna pot s strežnika ga še zadrži)
   // Modul posnetka vnaprej (v miru): ob pagehide se ne naloži več pravočasno.
   setTimeout(() => (window.requestIdleCallback || setTimeout)(loadShot), 1500);
   if (!startShot()) return startDone();
@@ -4555,6 +4557,7 @@ const serverReach = () =>
 async function bootFailed(err) {
   console.error(err);
   startHold = false;
+  ZACETEK?.konec?.(); // brez dotika iz zagona: zagon ni uspel
   startDone();
   if (document.getElementById("boot-down") || (await serverReach()) === "ok") return;
   const box = document.createElement("div");
