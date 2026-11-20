@@ -97,6 +97,7 @@ const lenModul = (url, ob) => {
     }));
   return { load, now: () => mod };
 };
+let oznakaZdaj = null; // aiOznaka: showView("chat") jo naloži takoj, ne šele po prenosu zaslonov
 const viewNote = (sel, key, force = false) => {
   const el = document.querySelector(sel);
   if (el && (force || !el.childElementCount)) el.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
@@ -615,6 +616,7 @@ function renderUserText(text) {
 // ---------- pogledi ----------
 
 function showView(name) {
+  if (name === "chat") oznakaZdaj?.();
   if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
   // »Moji zapiski« so del pogleda Kartice (nazaj po vaji iz testa, public/zapiski/vaja.js).
   const notes = name === "zapiski";
@@ -1519,7 +1521,8 @@ function renderEmptyChat() {
 function aiOznaka() {
   const go = () => import("./ai-oznaka/ai-oznaka.js").then((m) => m.oznaciKlepet(state.student)).catch(() => {});
   if (pozneje || currentView === "chat" || isFloating("chat")) return go();
-  return new Promise((ok) => poZagonu(() => vnaprejGotovo.then(go).then(ok)));
+  // Na Učni poti počaka, da so zasloni za prvi klik preneseni (zasloni-vnaprej.js), a ne dlje, kot je Inštruktor skrit.
+  return new Promise((ok) => poZagonu(() => Promise.race([vnaprejGotovo, new Promise((r) => (oznakaZdaj = r))]).then(go).then(ok)));
 }
 $("#messages").addEventListener("click", ideaClick); // enkrat: predlogi se ob osvežitvi zamenjajo
 function ideaClick(e) {
