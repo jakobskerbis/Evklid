@@ -82,8 +82,8 @@ import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3
 import { initTestNotice } from "./testna-verzija.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
-import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate, danesHtml, maturaPonudbaHtml } from "./goal.js";
-import { validDate, goalShortcuts, goalTabbarView, ponudiMaturo, privzetiCilj } from "./goal-data.js";
+import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate, heroHtml, maturaPonudbaHtml, onbGoal, wireDanes } from "./goal.js";
+import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS, matLevel } from "./exam-papers.js";
 // Zasloni, ki niso Učna pot (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2): skener z
 // reševalnikom (scan/, ~65 KB stisnjeno) ter zbirke, avatar in lige (~55 KB) niso več del zagona. Naložijo se takoj po
@@ -1150,23 +1150,11 @@ async function onboard(name = "") {
   const f = $("#onboard-form");
   mountLanguageCard(f.querySelector(".onb-lang"), { compact: true });
   // Cilj in datum: vprašamo samo tokrat (izbira ciljev je odvisna od šole).
-  const goalBox = f.querySelector(".goal-box");
-  // Dokler cilja ne izbere sam, velja privzeti cilj šole (4. letnik SŠ: matura z datumom roka, public/goal-data.js)
-  // in obrazec ga ne pošlje: strežnik ga določi po istem pravilu (server/db.js createStudent).
-  let goalTouched = false;
-  goalBox.addEventListener("click", (e) => e.target.closest("[data-goal]") && (goalTouched = true));
-  goalBox.addEventListener("input", () => (goalTouched = true));
-  const drawGoal = () => {
-    const where = { school_system: f.school_system.value, educational_track: f.educational_track.value, curriculum_level: f.curriculum_level.value };
-    const keep = goalTouched ? readGoalFields(goalBox) : privzetiCilj(where);
-    goalBox.innerHTML = goalFieldsHtml({ ...keep, ...where }, { idPrefix: "onb-goal" });
-  };
-  drawGoal();
-  wireGoalFields(goalBox);
-  const picker = mountLevelPicker(f.querySelector(".level-picker"), f, { programs, settings: { school_system: defaultSystem }, onChange: drawGoal });
+  const goal = onbGoal(f.querySelector(".goal-box"), f);
+  const picker = mountLevelPicker(f.querySelector(".level-picker"), f, { programs, settings: { school_system: defaultSystem }, onChange: goal.draw });
   f.school_system.addEventListener("change", () => {
     picker.setSystem(f.school_system.value);
-    drawGoal();
+    goal.draw();
   });
   showView("onboard");
   document.body.classList.add("onboarding");
@@ -1194,7 +1182,7 @@ async function onboard(name = "") {
         curriculum_level: f.curriculum_level.value,
         language: currentLang(),
         region: currentRegion(),
-        ...(goalTouched ? readGoalFields(goalBox) : {}),
+        ...goal.read(),
       };
       if (track === "UNIVERZA") settings.subject = programs.find((p) => p.id === settings.study_program)?.mainSubject || "MAT";
       const btn = f.querySelector('button[type="submit"]');
@@ -3014,12 +3002,8 @@ function renderGoal() {
     chip.title = t("goal.change");
   }
   const rem = $("#goal-reminder");
-  const due = reminderDue(st);
-  // Star profil maturanta s privzetim ciljem: na istem mestu ponudba »cilj matura« (en dotik; public/goal-data.js).
-  const offer = !due && ponudiMaturo(s);
-  rem.hidden = !due && !offer;
-  if (due) rem.innerHTML = reminderCardHtml(st);
-  else if (offer) rem.innerHTML = maturaPonudbaHtml();
+  rem.innerHTML = reminderDue(st) ? reminderCardHtml(st) : maturaPonudbaHtml(s);
+  rem.hidden = !rem.innerHTML;
   renderGoalModes();
 }
 
@@ -3094,19 +3078,15 @@ document.addEventListener("click", (e) => {
     $("#goal-reminder").hidden = true;
     if (e.target.closest("[data-goal-start]")) startSession("daily", { path: state.pathKey });
   }
-  const mo = e.target.closest("[data-matura-offer]");
-  if (mo && state.student) {
-    $("#goal-reminder").hidden = true; // takoj; shrani v ozadju (sprejeto ali zavrnjeno: ponudbe ni več)
-    $("#xp-card button")?.focus({ preventScroll: true }); // fokus s tipkovnico ne pade na začetek strani
-    const st = state.student;
-    const yes = mo.dataset.maturaOffer === "yes";
-    api(`/api/students/${st.id}`, { method: "PUT", body: { settings: { matura_offer: 1, ...(yes ? privzetiCilj(st.settings) : {}) } } })
-      .then((updated) => {
-        studentUpdated(updated);
-        if (yes && currentView === "path") loadPath();
-      })
-      .catch((err) => toast(err.message));
-  }
+});
+wireDanes({
+  state,
+  start: startSession,
+  topic: (id) => (setBack("path"), openTopic(id).then((x) => !x && $("#t-practice") && nextPractice())),
+  save: (st, settings, yes) =>
+    api(`/api/students/${st.id}`, { method: "PUT", body: { settings } })
+      .then((u) => (studentUpdated(u), yes && currentView === "path" && loadPath()))
+      .catch((e) => toast(e.message)),
 });
 // Opomnik ob 12.00, tudi če je aplikacija ves čas odprta.
 setInterval(() => {
@@ -3581,22 +3561,11 @@ async function loadPath(key = state.pathKey) {
   renderGoal();
   const x = p.xp;
   const done = state.modes?.daily?.done;
-  // Cilj matura: zgoraj kartica »Danes« (public/goal.js), Današnji trening je vrstica namesto »Naslednja tema«.
-  const danes = danesHtml(state.student, p.danes);
+  const hero = heroHtml(state.student, p, done);
   $("#xp-card").innerHTML = `
-    ${danes || `<div class="hero">
-      <div class="hero-icon">${icon("zap")}</div>
-      <div class="hero-text"><h2>${t("daily.title")}</h2><p>${done ? t("daily.doneText") : t("daily.text")}</p></div>
-      <button class="primary big" data-daily>${done ? t("daily.again") : t("daily.start")}</button>
-    </div>`}
+    ${hero[0]}
     ${document.getElementById("view-scan") ? `<button type="button" class="next-row scan-path-row" data-scan-home><span class="eyebrow">${t("scan.title")}</span><span class="next-name">${t("scan.meSub")}</span>${icon("camera")}</button>` : ""}
-    ${
-      danes
-        ? `<button type="button" class="next-row" data-daily><span class="eyebrow">${t("daily.title")}</span><span class="next-name">${done ? t("daily.doneTitle") : t("daily.about")}</span>${icon("zap")}</button>`
-        : p.next
-        ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
-        : `<div class="next-row done">${icon("trophy")}<span class="next-name">${t("path.allDone")}</span></div>`
-    }
+    ${hero[1]}
     ${gamesOn(state.student.settings) ? `<button type="button" class="next-row dz-path-row" data-dnevna><span class="eyebrow">${t("dz.title")}</span><span class="next-name">${t("dz.statusNew")}</span>${icon("puzzle")}</button>` : ""}
     <div class="xp-stats">${xpStatsHtml(x)}</div>`;
   // Dnevna uganka (public/games/daily.js): stanje v ozadju; rešena danes → niz dni.
@@ -3668,13 +3637,6 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
-  // Kartica »Danes« (cilj matura): ponavljanje, ki je na vrsti, ali vaja teme iz »Najprej vadi«.
-  if (e.target.closest("[data-danes-review]")) startSession("review");
-  const dt = e.target.closest("[data-danes-topic]");
-  if (dt) {
-    setBack("path");
-    openTopic(dt.dataset.danesTopic).then((pretest) => !pretest && $("#t-practice") && nextPractice());
-  }
   // Prvi zaslon: »Skeniraj nalogo« tik pod današnjim treningom (j, 18. 11. 2026: pristajalna stran obljublja pomoč pri domači nalogi).
   if (e.target.closest("[data-scan-home]")) showView("scan");
   if (e.target.closest("[data-dnevna]")) {
@@ -5098,7 +5060,7 @@ function markFirstTask(s = state.student) {
 }
 async function maybeIntro() {
   const s = state.student;
-  if (!s || brezUvoda(s) || (s.settings?.interests !== null && (s.settings?.tour_version || 0) >= TOUR_VERSION)) return; // SŠ, faks, 15+: brez uvoda
+  if (!s || brezUvoda(s) || (s.settings?.interests !== null && (s.settings?.tour_version || 0) >= TOUR_VERSION)) return;
   const done = await firstTaskDone(s);
   if (!done || state.student?.id !== s.id || currentView !== "path") {
     maybeTour.done = false; // poskusi znova ob naslednjem izrisu Učne poti
