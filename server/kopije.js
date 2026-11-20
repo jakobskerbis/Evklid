@@ -256,6 +256,31 @@ export function beriIzbrise(dbFile) {
   return v.filter(veljaven);
 }
 
+// EVKLID_IZBRISI_PREZRI (številke računov, z vejicami): za namerno obnovo po pomotnem izbrisu (docs/obnova.md). Zapisi
+// teh računov, nastali pred zagonom tega procesa, se ne ponovijo in se ob naslednjem zapisu odstranijo s seznama (tudi
+// iz R2), da se po odstranitvi nastavitve ne vrnejo. Izbris istega računa po zagonu se zapiše kot običajno.
+const ZAGON = new Date().toISOString();
+const javljeniPrezrti = new Set();
+export function brezPrezrtih(list, { env = process.env, log = console, zagon = ZAGON } = {}) {
+  const ids = new Set(
+    String(env.EVKLID_IZBRISI_PREZRI || "")
+      .split(",")
+      .map((x) => x.trim())
+      .filter((x) => /^\d+$/.test(x))
+      .map(Number),
+  );
+  if (!ids.size) return list;
+  return list.filter((z) => {
+    const id = z?.r ? Number(z.r[0]) : null;
+    if (id == null || !ids.has(id) || !(z.at < zagon)) return true;
+    if (!javljeniPrezrti.has(id)) {
+      javljeniPrezrti.add(id);
+      log.warn?.(`[evklid] izbris računa ${id} se ne ponovi in se odstrani s seznama izbrisov (EVKLID_IZBRISI_PREZRI)`);
+    }
+    return false;
+  });
+}
+
 /**
  * Doda izbrise k seznamu (brez dvojnikov), pobriše starejše od IZBRISI_DNI in zapiše atomarno (tmp + rename).
  * Vrne { list, dodanih }. Uporabi ga zapis ob izbrisu in prenos seznama iz R2 (server/kopije-oblak.js).
@@ -263,17 +288,18 @@ export function beriIzbrise(dbFile) {
 export function dodajIzbrise(dbFile, novi, now = new Date()) {
   const meja = new Date(now.getTime() - IZBRISI_DNI * 864e5).toISOString();
   const kljuc = (z) => JSON.stringify([z.at, z.r ?? null, z.s ?? []]);
-  const list = beriIzbrise(dbFile);
+  const vse = beriIzbrise(dbFile);
+  const list = brezPrezrtih(vse);
   const znani = new Set(list.map(kljuc));
   let dodanih = 0;
-  for (const z of novi.filter(veljaven))
+  for (const z of brezPrezrtih(novi.filter(veljaven)))
     if (!znani.has(kljuc(z))) {
       znani.add(kljuc(z));
       list.push({ at: z.at, r: z.r ?? null, s: z.s ?? [] });
       dodanih++;
     }
   const ostane = list.filter((z) => z.at >= meja).sort((a, b) => a.at.localeCompare(b.at));
-  if (dodanih || ostane.length !== list.length) {
+  if (dodanih || ostane.length !== vse.length) {
     const f = izbrisiFile(dbFile);
     fs.mkdirSync(path.dirname(f), { recursive: true }); // ob zagonu po izgubi diska (prenos iz R2) mape baze še ni
     fs.writeFileSync(`${f}.tmp`, JSON.stringify(ostane));

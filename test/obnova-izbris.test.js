@@ -211,3 +211,65 @@ test("seznam izbrisov v R2: šifriran, po izgubi diska se vrne in izbrisi se pon
     else process.env.EVKLID_DATA_KEY = prej;
   }
 });
+
+test("EVKLID_IZBRISI_PREZRI: namerna obnova vrne izbrana računa; zapisi se odstranijo lokalno in iz R2", async () => {
+  const prej = { key: process.env.EVKLID_DATA_KEY, prezri: process.env.EVKLID_IZBRISI_PREZRI };
+  process.env.EVKLID_DATA_KEY = crypto.randomBytes(32).toString("base64");
+  const warnPrej = console.warn;
+  const vrstice = [];
+  try {
+    const s3 = fakeS3();
+    const dir = tmp();
+    const file = path.join(dir, "evklid.db");
+    let store = openDb(file);
+    createApp(store, OPTS);
+    const ana = parent(store.db, "ana@example.com", "2026-11-01 10:00:00");
+    const bor = parent(store.db, "bor@example.com", "2026-11-02 10:00:00");
+    makeBackup(store.db, file, { manual: true, now: ura(2) });
+    eraseAccount(store.db, ana.id, { transaction: true });
+    eraseAccount(store.db, bor.id, { transaction: true });
+    store.db.close();
+    // Izbrisa sta bila pred zagonom procesa, ki ima nastavitev (zapis za uro nazaj).
+    const prestavi = (z) => ({ ...z, at: new Date(Date.parse(z.at) - 3600e3).toISOString() });
+    fs.writeFileSync(izbrisiFile(file), JSON.stringify(beriIzbrise(file).map(prestavi)));
+    assert.equal((await uskladiIzbrise(CFG, file, { fetchFn: s3.fetchFn })).nalozeno, true);
+
+    // Nastavitev za Ano, obnova kopije izpred izbrisa: Ana ostane, Bor se izbriše znova; ena vrstica v dnevniku za Ano.
+    process.env.EVKLID_IZBRISI_PREZRI = ` ${ana.id}, x `;
+    const zajemi = { ...quiet, warn: (m) => vrstice.push(String(m)) };
+    console.warn = zajemi.warn;
+    fs.copyFileSync(listBackups(file).find((b) => b.manual).file, restoreFile(file));
+    assert.equal(applyPendingRestore(file, { log: quiet }).restored, true);
+    store = openDb(file);
+    createApp(store, { ...OPTS, log: zajemi });
+    const q = (sql, ...a) => store.db.prepare(sql).all(...a);
+    assert.equal(q("SELECT id FROM parents WHERE id = ?", ana.id).length, 1, "Ana je vrnjena");
+    assert.equal(q("SELECT id FROM students WHERE id = ?", ana.sid).length, 1);
+    assert.deepEqual(q("SELECT id FROM parents WHERE id = ?", bor.id), [], "Bor ostane izbrisan");
+    assert.deepEqual(vrstice.filter((v) => v.includes(`računa ${ana.id} `)).length, 1);
+    assert.ok(vrstice.every((v) => !/ana@example/.test(v)), "brez e-naslova v dnevniku");
+
+    // Urna uskladitev: zapis Ane gre s seznama lokalno in iz R2.
+    assert.equal((await uskladiIzbrise(CFG, file, { fetchFn: s3.fetchFn })).nalozeno, true);
+    assert.deepEqual(beriIzbrise(file).map((z) => z.r[0]), [bor.id]);
+    const drug = path.join(tmp(), "evklid.db");
+    delete process.env.EVKLID_IZBRISI_PREZRI;
+    await uskladiIzbrise(CFG, drug, { fetchFn: s3.fetchFn, upload: false });
+    assert.deepEqual(beriIzbrise(drug).map((z) => z.r[0]), [bor.id], "v R2 ni več zapisa Ane");
+
+    // Brez nastavitve se Ana ob ponovnem zagonu ne izbriše več.
+    createApp(store, { ...OPTS, log: zajemi });
+    assert.equal(q("SELECT id FROM parents WHERE id = ?", ana.id).length, 1);
+
+    // Izbris istega računa po zagonu se zapiše kot običajno, tudi z nastavitvijo.
+    process.env.EVKLID_IZBRISI_PREZRI = String(ana.id);
+    eraseAccount(store.db, ana.id, { transaction: true });
+    assert.deepEqual(beriIzbrise(file).map((z) => z.r[0]).sort(), [ana.id, bor.id].sort());
+    store.db.close();
+  } finally {
+    console.warn = warnPrej;
+    for (const [k, v] of [["EVKLID_DATA_KEY", prej.key], ["EVKLID_IZBRISI_PREZRI", prej.prezri]])
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+  }
+});

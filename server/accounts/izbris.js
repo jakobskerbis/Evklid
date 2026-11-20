@@ -7,7 +7,7 @@
 // ob zagonu ponovi, če obnova iz kopije vrne izbrisane vrstice.
 import { detachAudit, audit } from "../dnevnik-dostopov.js";
 import { GuestQuota } from "./guest.js";
-import { dodajIzbrise, beriIzbrise } from "../kopije.js";
+import { dodajIzbrise, beriIzbrise, brezPrezrtih } from "../kopije.js";
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
 // Datoteka baze (prazno za :memory:); seznam izbrisov leži ob njej.
@@ -78,7 +78,7 @@ export function ponovitevIzbrisov(db, dbFile, { guests = null, before = null, lo
   const out = { racuni: 0, profili: 0 };
   let list;
   try {
-    list = beriIzbrise(dbFile);
+    list = brezPrezrtih(beriIzbrise(dbFile), { log });
   } catch (err) {
     log.error?.(`[evklid] NAPAKA: seznama izbrisov ni mogoče prebrati (${err.message}); izbrisi po obnovi niso ponovljeni`);
     return out;

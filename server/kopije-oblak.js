@@ -222,6 +222,7 @@ export function startCloudBackups(dbFile, { scheduler = true, log = console, fet
       // iz posnetka), se ponovijo v bazi (poIzbrisih; poceni, zato vsakič, tudi če je prenos ob zagonu zamudil rok).
       const iz = await uskladiIzbrise(cfg, dbFile, { fetchFn, now });
       if (iz?.dodanih) log.info?.(`[evklid] seznam izbrisov iz shrambe zunaj strežnika: ${iz.dodanih} novih`);
+      if (iz?.nalozeno) log.info?.("[evklid] seznam izbrisov naložen v shrambo zunaj strežnika");
       if (iz) poIzbrisih?.();
       failed = false;
     } catch (e) {

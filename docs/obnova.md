@@ -59,6 +59,25 @@ V Render → evklid → **Shell**:
 Izgubi se vse, kar se je zgodilo po izbrani kopiji. Računi in profili, izbrisani po kopiji, se ob zagonu izbrišejo
 znova (seznam izbrisov, `docs/izbris-izvoz.md`; Logs: »po obnovi znova izbrisano«); nič ni treba narediti ročno.
 
+### Namerna obnova pomotoma izbrisanih računov
+
+Če so bili računi izbrisani pomotoma (napaka v kodi ali skrbnika) in jih želiš vrniti iz kopije, jih seznam izbrisov
+po obnovi sicer izbriše znova. Za te račune ga izklopiš z nastavitvijo `EVKLID_IZBRISI_PREZRI`:
+
+1. Številke računov poišči v kopiji izpred izbrisa (Shell; pot kopije izpiše `node scripts/obnovi-kopijo.js`):
+   `node -e "const {DatabaseSync}=require('node:sqlite');console.log(new DatabaseSync(process.argv[1],{readOnly:true}).prepare('SELECT id, email FROM parents WHERE email = ?').all(process.argv[2]))" /var/data/kopije/<kopija>.db <e-naslov>`
+2. Render → evklid → Environment: `EVKLID_IZBRISI_PREZRI` = številke z vejicami (npr. `12,34`), Save (strežnik se
+   ponovno zažene).
+3. Obnova po postopku A (koraki 1–5). V Logs je za vsak račun vrstica »izbris računa 12 se ne ponovi in se odstrani
+   s seznama izbrisov«.
+4. Če je nastavljena kopija zunaj strežnika (R2): počakaj na vrstico »seznam izbrisov naložen v shrambo zunaj
+   strežnika« (najkasneje ~70 min po zagonu), sicer bi se zapisi od tam vrnili.
+5. Odstrani `EVKLID_IZBRISI_PREZRI` (Save). Zapisi teh računov so s seznama odstranjeni in se ne vrnejo; poznejši
+   izbris istega računa se zapiše kot običajno.
+
+Velja za račune skupaj s profili, ki so jih imeli ob izbrisu (profil, izbrisan posamič, se po obnovi izbriše znova).
+Stranka v Stripu in preklicana naročnina se z obnovo ne vrneta.
+
 ## Postopek B: izgubljen cel strežnik ali disk (nova namestitev)
 
 1. Render → New → Blueprint iz repozitorija (objava.md → Koraki) z **istimi** nastavitvami okolja, predvsem
