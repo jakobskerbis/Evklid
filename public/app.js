@@ -283,7 +283,7 @@ import { FREE_LIMIT_CODES, showLimitCard } from "./meja-placilo.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
-const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestIdleCallback(() => fn(), { timeout }) : setTimeout(fn, 200));
+const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestIdleCallback((d) => fn(d), { timeout }) : setTimeout(fn, 200));
 // Gradnja vnaprej (kalkulator, orodja) samo, ko se učenec ni dotaknil zaslona vsaj 0,8 s: dolga naloga ne zakasni tapa.
 const whenQuiet = (fn) => whenIdle(() => (Date.now() - lastInput < 800 ? setTimeout(() => whenQuiet(fn), 400) : fn()));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
@@ -1743,7 +1743,9 @@ let zaznavalnikPripravljen = false;
 function pripraviZaznavalnik() {
   if (zaznavalnikPripravljen) return;
   zaznavalnikPripravljen = true;
-  const kos = () => whenIdle(() => ogrejNujno(8) || kos());
+  // Kos traja, kolikor je v času mirovanja prostora (do 50 ms, requestIdleCallback), vsaj 8 ms: vzorci zdaj nastanejo šele
+  // tu (nujno.js), zato bi jih bilo po 8 ms na sličico za več sekund (telefon, CPU 4×).
+  const kos = () => whenIdle((d) => ogrejNujno(Math.max(8, (d?.timeRemaining?.() ?? 0) - 2)) || kos());
   kos();
 }
 function zgodovinaVidna() {

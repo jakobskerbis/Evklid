@@ -51,7 +51,7 @@ test("zaznavalnik: ogrej() po kosih prevede vzorce, rezultati zaznavanja ostanej
   assert.equal(rezultati(m), brez);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /if \(name === "chat"\) \{[^}]*pripraviZaznavalnik\(\);/);
-  assert.match(app, /const kos = \(\) => whenIdle\(\(\) => ogrejNujno\(8\) \|\| kos\(\)\);/);
+  assert.match(app, /const kos = \(\) => whenIdle\(\(d\) => ogrejNujno\(Math\.max\(8, \(d\?\.timeRemaining\?\.\(\) \?\? 0\) - 2\)\) \|\| kos\(\)\);/);
   // Zaznavalnik je statično uvožen (pregled varnosti #888): na voljo takoj ob pošiljanju, brez povezave in ob zavrnitvi.
   assert.match(app, /^import \{ zaznajNujno,[^\n]*\} from "\.\/nujno\.js";$/m);
   assert.doesNotMatch(app, /lenModul\("\.\/nujno\.js"\)/);

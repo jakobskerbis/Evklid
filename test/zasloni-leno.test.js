@@ -101,6 +101,9 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
         },
       );
       const spusti = (...u) => u.forEach((x) => cakajo.get(x).resolve());
+      // Prenesene datoteke beležimo tu (medpomnilnik Resource Timing v strani ima omejeno število vnosov).
+      const preneseno = new Set();
+      page.on("requestfinished", (r) => preneseno.add(new URL(r.url()).pathname));
       await page.goto(base + "/", { waitUntil: "commit" });
       // Učna pot ne čaka nobenega od njih.
       await page.waitForSelector("#view-path #xp-card .hero", { timeout: 60000 });
@@ -154,7 +157,9 @@ test("prvi klik na vsak odložen zaslon, medtem ko modul še prihaja: takoj »Na
       await page.waitForFunction(() => !/Nalagam/.test(document.querySelector("#lab-content").innerText), null, { timeout: 20000 });
 
       // Po prvem izrisu se vsi naložijo sami (kasnejši klik takoj, service worker jih shrani za delo brez povezave).
-      await page.waitForFunction((l) => l.every((u) => performance.getEntriesByType("resource").some((e) => new URL(e.name).pathname === u)), LENI.filter((u) => !["/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pass-offer.js"].includes(u)), { timeout: 30000 });
+      const sami = LENI.filter((u) => !["/credit-card.js", "/garancija-ui.js", "/odstop-ui.js", "/pass-offer.js"].includes(u));
+      for (let i = 0; i < 120 && !sami.every((u) => preneseno.has(u)); i++) await page.waitForTimeout(500);
+      assert.deepEqual(sami.filter((u) => !preneseno.has(u)), [], "moduli, ki se po prvem izrisu niso naložili sami");
       assert.deepEqual(napake, []);
     } finally {
       await ctx.close();
