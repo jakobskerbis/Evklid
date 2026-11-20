@@ -870,6 +870,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .goal-reminder .gr-body { flex: 1; display: grid; gap: 4px; min-width: 0; }
 .goal-reminder .gr-head { display: flex; justify-content: space-between; gap: 8px; font-size: 0.82rem; color: var(--muted); font-weight: 700; }
 .goal-reminder .actions { margin-top: 6px; }
+.goal-reminder .actions button.small { min-height: 40px !important; } /* dotik ≥ 40 px (button.small ima 38 px) */
 .goal-card { display: grid; gap: 12px; }
 .goal-card .goal-line { margin: 0; }
 .goal-card .goal-reminder { margin: 0; padding: 12px; border-radius: var(--radius-sm); }

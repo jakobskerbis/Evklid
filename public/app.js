@@ -3097,6 +3097,7 @@ document.addEventListener("click", (e) => {
   const mo = e.target.closest("[data-matura-offer]");
   if (mo && state.student) {
     $("#goal-reminder").hidden = true; // takoj; shrani v ozadju (sprejeto ali zavrnjeno: ponudbe ni več)
+    $("#xp-card button")?.focus({ preventScroll: true }); // fokus s tipkovnico ne pade na začetek strani
     const st = state.student;
     const yes = mo.dataset.maturaOffer === "yes";
     api(`/api/students/${st.id}`, { method: "PUT", body: { settings: { matura_offer: 1, ...(yes ? privzetiCilj(st.settings) : {}) } } })
