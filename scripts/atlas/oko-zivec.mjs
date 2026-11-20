@@ -77,15 +77,15 @@ export function votlaCev(os, rz, rn, stranic) {
 }
 
 // Zamenja mrežo vozlišča z novo (P, N, F); atributi iz najbližjega oglišča stare mreže.
-function zamenjaj(doc, node, nova, { enVir = false } = {}) {
+function zamenjaj(doc, node, nova, { atributi = null } = {}) {
   const prim = node.getMesh().listPrimitives()[0];
   const m = G.preberi(node, prim);
   const n0 = m.P.length / 3;
   const najblizje = (p) => { let v = 0, b = Infinity; for (let r = 0; r < n0; r += 1) { const d = (m.P[r * 3] - p[0]) ** 2 + (m.P[r * 3 + 1] - p[1]) ** 2 + (m.P[r * 3 + 2] - p[2]) ** 2; if (d < b) { b = d; v = r; } } return v; };
-  // enVir: vsa nova oglišča dobijo UV in barvo enega oglišča (sredina stare mreže): pri drugačni obliki bi najbližja
+  // atributi: vsa nova oglišča dobijo te UV in barvo (ovojnica: oglišče zadnje ploskve beločnice ob živcu, isti atlas):
+  // pri drugačni obliki bi najbližja oglišča stare mreže raztrgala zapečeno teksturo v lise, sredina pa je temna notranjost
   // oglišča raztrgala zapečeno teksturo v lise (ovojnica v pogledu od zadaj)
-  const sr = enVir ? najblizje(sredina(Array.from({ length: n0 }, (_, r) => [m.P[r * 3], m.P[r * 3 + 1], m.P[r * 3 + 2]]))) : -1;
-  for (let i = 0; i < nova.P.length; i++) G.dodajOglisce(m, nova.P[i], [[enVir ? sr : najblizje(nova.P[i]), 1]], m.A.has("NORMAL") ? { NORMAL: nova.N[i] } : {});
+  for (let i = 0; i < nova.P.length; i++) G.dodajOglisce(m, nova.P[i], [[atributi ? 0 : najblizje(nova.P[i]), 1]], { ...(m.A.has("NORMAL") ? { NORMAL: nova.N[i] } : {}), ...(atributi || {}) });
   m.P = m.P.slice(n0 * 3);
   for (const a of m.A.values()) a.d = a.d.slice(n0 * a.n);
   m.F = nova.F.slice();
@@ -165,7 +165,13 @@ export async function obdelaj(datoteka, ravnina, { suho = false } = {}) {
   const por = `${path.basename(datoteka)}: živec od mrežnice (${(tMrez * 1000).toFixed(2)} mm od središča), beločnica ${(sB0 * 1000).toFixed(2)}–${(sB1 * 1000).toFixed(2)} mm, Ø ${(2 * R_ZIVEC * 1000).toFixed(1)} mm, ovojnica Ø ${(2 * rz(0.004) * 1000).toFixed(1)} mm, dolžina ${(dol * 1000).toFixed(0)} mm`;
   if (suho) return { porocilo: por, opis };
   zamenjaj(doc, zivec, novZ);
-  zamenjaj(doc, ovoj, novO, { enVir: true });
+  // vir barve ovojnice: oglišče beločnice 3 mm od izstopa živca na zunanji ploskvi (svetla, osvetljena beločnica)
+  const cilj = G.v3.add(G.v3.add(O2, G.v3.mul(u, tBz)), G.v3.mul(G.v3.norm(G.v3.cross(nR, u)), 0.003));
+  let vb = 0, bd = Infinity;
+  for (let r = 0; r < mb.P.length / 3; r++) { const d = (mb.P[r * 3] - cilj[0]) ** 2 + (mb.P[r * 3 + 1] - cilj[1]) ** 2 + (mb.P[r * 3 + 2] - cilj[2]) ** 2; if (d < bd) { bd = d; vb = r; } }
+  const atributi = {};
+  for (const sem of ["TEXCOORD_0", "COLOR_0"]) { const a = mb.A.get(sem); if (a) atributi[sem] = a.d.slice(vb * a.n, vb * a.n + a.n); }
+  zamenjaj(doc, ovoj, novO, { atributi });
   for (const n of [zivec, ovoj]) n.setExtras({ ...(n.getExtras() || {}), r1: 1 });
   // čep papile HRA (debel ≈ 1 mm, v prerezu izbočen kremast valj) odpade: živec zdaj zapolni kanal do mrežnice, disk in
   // ekskavacijo nariše senčilnik mrežnice (mreznicaZile.disk)
