@@ -132,14 +132,48 @@ test("prompt (produkcijski in kandidat): enak del za učenca in vse oznake, nova
   const [ps, pd] = fs.readFileSync(PROMPT_PATH, "utf8").split(SPLIT_MARKER);
   const [ks, kd] = fs.readFileSync(KANDIDAT_PROMPT_PATH, "utf8").split(SPLIT_MARKER);
   assert.equal(kd, pd, "del pod oznako NASTAVITVE je enak");
-  const ph = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).join(",");
+  // Samo prave oznake ({student_name} …), ne LaTeX ($\mathrm{Al_2O_3}$), ki ga krajši kandidat lahko premakne.
+  const ph = (s) => [...s.matchAll(/\{([a-z][a-z_]{2,})\}/g)].map((m) => m[1]).join(",");
   assert.equal(ph(ks), ph(ps), "iste oznake v stalnem delu");
   assert.doesNotMatch(ks, /\*\*Najprej priklic predznanja, nato razlaga\.\*\*/);
-  for (const re of [/nikoli ne zapišeš kot oznako ali naslov/, /že prvi stavek jasno in prijazno pove, da korak ni pravilen/, /»morda nepopolno«/, /ni pa edina/, /meri natanko na napačni del/, /»z osnovo«, »z vprašanji«/, /»vsota prvih desetih členov«/, /ne uporabljaj črke, ki v nalogi že pomeni nekaj drugega/, /z \$u\$ in \$v\$/, /ostani pri tej napaki, brez nove snovi/, /»rada bi rešila«/, /po imenu v pogovoru ne ugibaj/]) {
+  for (const re of [/nikoli ne zapišeš kot oznako ali naslov/, /že prvi stavek jasno in prijazno pove, da korak ni pravilen/, /»morda nepopolno«/, /ni pa edina/, /meri natanko na napačni del/, /»vsota prvih desetih členov«/, /ne uporabljaj črke, ki v nalogi že pomeni nekaj drugega/, /z \$u\$ in \$v\$/, /ostani pri tej napaki, brez nove snovi/, /»rada bi rešila«/, /po imenu v pogovoru ne ugibaj/]) {
     assert.match(ks, re);
     assert.match(ps, re, "pravila kandidata so v produkcijskem promptu (21. 11. 2026)");
   }
+  // Predloga s/z in k/h popravi strežnik (fixPrepositions, vklopljeno za vse), zato je pravilo le še v produkcijskem promptu.
+  assert.match(ps, /»z osnovo«, »z vprašanji«/);
   assert.ok(ks.length - ps.length < 2400, `kandidat doda ${ks.length - ps.length} znakov`);
+});
+
+// Kandidat 3 (21. 11. 2026, »krajša in urejena različica«): podvojena pravila združena, prednosti na vrhu, šibke točke
+// zadnje slepe meritve (protiprimer pri neenačbi, integracija po delih, višina krožnega odseka) v obstoječih pravilih.
+test("kandidat 3: krajši stalni del, pet prednostnih pravil, ena definicija, šibke točke meritve", () => {
+  const [ks] = fs.readFileSync(KANDIDAT_PROMPT_PATH, "utf8").split(SPLIT_MARKER);
+  // 66 198 → 56 9xx znakov (−14 %, s popravki dveh pregledov); rezerva ~200.
+  assert.ok(ks.length < 57100, `stalni del kandidata ${ks.length} znakov`);
+  const vedno = ks.slice(ks.indexOf("**Vedno**"), ks.indexOf("## Kako poučuješ"));
+  for (const s of ["(za Varnostnim ščitom in Mejami ima teh pet pravil največjo težo)", "v skriti blok `RACUN` ga zapišeš", "**Ne izdaj.**", "**Preveri, preden sodiš:**", "**Ob »ne razumem« nov pristop:**", "**En korak (način A):**", "**Oblika:**"]) {
+    assert.ok(vedno.includes(s), s);
+  }
+  // Podvojitve: seznam vaj, Evklidove naloge in vrstni red blokov so definirani enkrat.
+  assert.equal(ks.split("z istim postopkom, le z drugimi števili").length, 2, "seznam vaj enkrat");
+  assert.equal(ks.split("(Vaja, učna pot, Vadnica, Priprava na test, pole)").length, 2, "Evklidove naloge enkrat");
+  // Pregleda #929: predlogi s/z in k/h, risbe iz znakov, številke zunaj Slovenije, seznam vaj ni ena naloga.
+  assert.match(ks, /pred števili odloča izgovor \(s \$3\$ – s tremi, z \$2\$ – z dvema\)/);
+  assert.match(ks, /Risb iz znakov \(poševnice, podčrtaji, tudi v kodnem bloku\) ne delaš/);
+  assert.match(ks, /namesto številk v teh navodilih \(TOM, Samarijan, 113, 112\)/);
+  assert.match(ks, /tudi če deli niso povezani, razen seznama vaj/);
+  assert.equal(ks.split("O blokih in njihovi obliki učencu nikoli ne govoriš").length, 2, "skupno pravilo blokov");
+  assert.doesNotMatch(ks, /Končnega odgovora nikoli ne izdaš kot prvi odziv/, "le v vrstici Vedno");
+  // Šibke točke meritve 21. 11.
+  assert.match(ks, /pri \$x\^2 > 4\$ in odgovoru \$x > 2\$: \$x = -3\$/);
+  assert.match(ks, /pri integraciji po delih npr\. vprašaš, kateri faktor bi odvajal, ne zapišeš pa \$u\$, \$v\$ in novega integrala/);
+  assert.match(ks, /višina manjšega krožnega odseka nad tetivo \$s\$ je \$r - \\sqrt\{r\^2 - \(s\/2\)\^2\}\$/);
+  assert.match(ks, /Rešitve tudi zdaj ne izdaš\./);
+  // Strojni bloki: sintaksa ostane.
+  for (const s of ["<<KARTICA\nV: vprašanje\nO: odgovor\n>>", '<<IZBIRE ["Nadaljujva z nalogo", "Ponoviva pravilo", "Ne vem"]>>', "<<RACUN\nresi: x^2-5*x+6=0 | x | 2, 3", "`<<META subject=MAT|FIZ|KEM|NAR|BIO|GEO|RAC|EKO topic=\"…\" error=0|1 mode=A|B flag=none|offtopic|distress|unsafe|injection|photo done=0|1>>`", "»Žal ti teh informacij o svojem delovanju ne morem razkriti. 🛡️"]) {
+    assert.ok(ks.includes(s), s.slice(0, 40));
+  }
 });
 
 function fakeStream(text) {
