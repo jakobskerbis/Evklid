@@ -5,14 +5,29 @@ import vm from "node:vm";
 
 // Zaslon na dotik: :hover se odstrani iz pravil CSS (j, 17. 11. 2026: »ikone ostanejo označene«).
 const src = readFileSync(new URL("../public/brez-lebdenja.js", import.meta.url), "utf8");
-function run(hoverNone, sheets) {
+// paint: brez njega (brskalnik brez Paint Timing in brez requestAnimationFrame) čiščenje steče takoj.
+function run(hoverNone, sheets, { paint = false } = {}) {
+  const on = {};
+  const timers = [];
   const ctx = {
-    window: { matchMedia: () => ({ matches: hoverNone }), addEventListener() {} },
+    window: { matchMedia: () => ({ matches: hoverNone }), addEventListener(t, f) { on[t] = f; } },
     matchMedia: () => ({ matches: hoverNone }),
-    document: { styleSheets: sheets, addEventListener() {}, head: {}, documentElement: {} },
+    document: { styleSheets: sheets, addEventListener(t, f) { on[t] = f; }, head: {}, documentElement: {} },
     MutationObserver: class { observe() {} },
     WeakSet,
+    setTimeout: (f, ms) => timers.push({ f, ms }),
+    on,
+    timers,
   };
+  if (paint) {
+    ctx.PerformanceObserver = class {
+      static supportedEntryTypes = ["paint", "largest-contentful-paint"];
+      constructor(cb) { ctx.paintCb = cb; }
+      observe(o) { ctx.observed = o; }
+      disconnect() { ctx.disconnected = true; }
+    };
+    ctx.window.PerformanceObserver = ctx.PerformanceObserver;
+  }
   ctx.window.matchMedia = ctx.matchMedia;
   vm.runInNewContext(src, ctx);
   return ctx;
@@ -43,6 +58,43 @@ test("mouse devices keep :hover", () => {
   const rules = [rule("button.ghost:hover")];
   run(false, [sheetOf(rules)]);
   assert.equal(rules[0].selectorText, "button.ghost:hover");
+});
+
+test("touch screens: cleaning waits for the first paint (it delayed the first paint by ~50 ms on phones)", () => {
+  const rules = [rule("button.ghost:hover"), rule(".plain")];
+  const ctx = run(true, [sheetOf(rules)], { paint: true });
+  assert.deepEqual({ ...ctx.observed }, { type: "paint", buffered: true });
+  ctx.on.DOMContentLoaded();
+  ctx.on.load();
+  assert.equal(rules[0].selectorText, "button.ghost:hover", "before the first paint nothing changes");
+  ctx.paintCb({ getEntriesByName: () => [] }); // first-paint without content does not count
+  assert.equal(ctx.timers.filter((t) => t.ms === 0).length, 0, "waits for first-contentful-paint");
+  ctx.paintCb({ getEntriesByName: (n) => (n === "first-contentful-paint" ? [{}] : []) });
+  assert.equal(ctx.disconnected, true);
+  assert.equal(rules[0].selectorText, "button.ghost:hover", "right after the paint, in a new task");
+  for (const t of ctx.timers.filter((t) => t.ms === 0)) t.f();
+  assert.deepEqual(rules.map((r) => r.selectorText), [".plain"]);
+  const late = [rule(".late:hover, .late:focus")];
+  ctx.document.styleSheets.push(sheetOf(late));
+  ctx.on.load();
+  assert.equal(late[0].selectorText, ".late:focus", "after the first paint every later stylesheet as before");
+});
+
+test("touch screens: a tab that never paints (hidden) is cleaned after 3 s at the latest", () => {
+  const rules = [rule(".a:hover")];
+  const ctx = run(true, [sheetOf(rules)], { paint: true });
+  const t = ctx.timers.find((t) => t.ms === 3000);
+  assert.ok(t);
+  t.f();
+  assert.equal(rules.length, 0);
+});
+
+test("touch screens: the first touch cleans at once, before the post-paint task (review #931)", () => {
+  const rules = [rule(".a:hover"), rule(".b")];
+  const ctx = run(true, [sheetOf(rules)], { paint: true });
+  assert.equal(rules.length, 2, "nothing before the touch");
+  ctx.on.touchstart();
+  assert.deepEqual(rules.map((r) => r.selectorText), [".b"]);
 });
 
 test("split keeps commas inside :is() and attribute values", () => {

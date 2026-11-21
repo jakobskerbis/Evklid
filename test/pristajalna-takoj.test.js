@@ -72,7 +72,10 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
     assert.match(html, /<template id="evklid-moduli"><link rel="modulepreload" href="\/zagon\.js" fetchpriority="low">/);
     const head = html.slice(0, html.indexOf("</head>"));
     assert.ok(!/^\s*<link rel="modulepreload"/m.test(head), "nobenega modulepreload zunaj <template>");
-    for (const f of ["style.css", "ui.css", "account.css", "vendor/katex/katex.min.css"]) assert.ok(head.includes(`<link rel="stylesheet" href="${f}">`), f);
+    for (const f of ["style.css", "ui.css", "account.css"]) assert.ok(head.includes(`<link rel="stylesheet" href="${f}">`), f);
+    // KaTeX (pristajalna stran nima formul) šele po prvem izrisu, na svojem mestu pred style.css (meritev 21. 11. 2026).
+    assert.match(head, /<link rel="stylesheet" href="vendor\/nunito\/index\.css">\s*<template data-evklid-slogi><link rel="stylesheet" href="vendor\/katex\/katex\.min\.css"><\/template>\s*<link rel="stylesheet" href="style\.css">/);
+    assert.equal(head.split('href="vendor/katex/katex.min.css"').length, 2, "KaTeX samo v <template>");
     const tplSlogi = /<link rel="stylesheet" href="account\.css">\s*<template data-evklid-slogi>(.*?)<\/template>\s*<link rel="stylesheet" href="touch\.css">\s*<template data-evklid-slogi>(.*?)<\/template>/.exec(head);
     assert.ok(tplSlogi, "slogi drugih zaslonov v <template> na svojem mestu, touch.css (tablice) pred prvim izrisom");
     for (const f of LATE_CSS) {
@@ -259,6 +262,40 @@ test("brskalnik: pristajalna stran vidna brez JavaScripta aplikacije, app.js jo 
         visible: getComputedStyle(document.body).visibility,
       }));
       assert.deepEqual(s, { pre: false, land: false, slogi: false, pozneje: 0, visible: "visible" });
+      await ctx.close();
+    }
+    // 3b) Prvi izris na telefonu (meritev 21. 11. 2026, FCP −150 ms): zacetek.js za slovensko stran ne ustvari
+    //     Intl.DateTimeFormat (~40 ms na telefonu), brez-lebdenja.js počisti :hover šele po prvem izrisu (~50 ms),
+    //     nato pa v vseh slogih, tudi v tistih, ki pridejo po izrisu (KaTeX).
+    {
+      const ctx = await browser.newContext({ ...ctxOpts, hasTouch: true, isMobile: true });
+      const p = await ctx.newPage();
+      await p.addInitScript(() => {
+        const DTF = Intl.DateTimeFormat;
+        window.__intl = [];
+        Intl.DateTimeFormat = function (...a) {
+          window.__intl.push((document.currentScript && document.currentScript.src) || "");
+          return new DTF(...a);
+        };
+        Intl.DateTimeFormat.prototype = DTF.prototype;
+        Intl.DateTimeFormat.supportedLocalesOf = DTF.supportedLocalesOf;
+        const hover = () => [...document.styleSheets].reduce((n, s) => n + [...s.cssRules].filter((r) => (r.selectorText || "").includes(":hover")).length, 0);
+        const po = new PerformanceObserver((l) => {
+          if (!l.getEntriesByName("first-contentful-paint").length) return;
+          po.disconnect();
+          window.__fcp = { hover: hover(), intl: window.__intl.slice() };
+        });
+        po.observe({ type: "paint", buffered: true });
+        window.__hover = hover;
+      });
+      await p.goto(base + "/");
+      await p.waitForSelector("body.land-mode #view-auth .land", { timeout: 30_000 });
+      await p.waitForFunction(() => window.__fcp && !document.querySelector("template[data-evklid-slogi]"));
+      await p.waitForFunction(() => [...document.styleSheets].some((s) => /katex/.test(s.href || "")) && window.__hover() === 0, null, { timeout: 10_000 });
+      const fcp = await p.evaluate(() => window.__fcp);
+      assert.ok(fcp.hover > 0, "ob prvem izrisu :hover še ni počiščen (čiščenje ne zadrži izrisa)");
+      assert.deepEqual(fcp.intl.filter((u) => u.endsWith("/zacetek.js")), [], "zacetek.js pred izrisom brez Intl.DateTimeFormat");
+      assert.equal(await p.evaluate(() => matchMedia("(hover: none)").matches), true);
       await ctx.close();
     }
     // 4) Jezik brskalnika angleščina, a časovni pas Ljubljana: app.js izbere slovenščino, zato strani s strežnika ne pokaže.
