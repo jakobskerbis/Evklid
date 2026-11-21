@@ -129,9 +129,9 @@ export function stripLabels(text) {
 
 // Cirilična črka, ki je videti kot latinska, sredi latinske besede (meritev 21. 11. 2026: »prištejеš« s cirilskim »е«):
 // zamenja se z latinsko, le v besedah z vsaj eno latinsko črko in brez druge cirilice; formule in koda ostanejo.
-// Ista dolžina, zato se položaji pri pretakanju ne premaknejo. Pri jezikih v cirilici (sr, mk, ru, uk, bg) ne.
+// Ista dolžina, zato se položaji pri pretakanju ne premaknejo. Pri jezikih v cirilici (CYR_SCRIPT) ne.
 const CYR_LATIN = { а: "a", е: "e", о: "o", р: "p", с: "c", у: "y", х: "x", і: "i", ј: "j", к: "k", м: "m", т: "t", ѕ: "s", А: "A", В: "B", Е: "E", К: "K", М: "M", Н: "H", О: "O", Р: "P", С: "C", Т: "T", Х: "X", У: "Y", І: "I", Ј: "J", Ѕ: "S" };
-const CYR_SCRIPT = new Set(["sr", "mk", "ru", "uk", "bg"]);
+const CYR_SCRIPT = new Set(["sr", "mk", "ru", "uk", "bg", "be", "kk", "ky", "tg", "mn", "tt", "ba", "ce"]); // public/i18n/languages.js, domače ime v cirilici
 const MIXED_WORD_RE = /[\p{L}\p{M}]+/gu;
 export function fixMixedScript(text, { language = "sl" } = {}) {
   const s = String(text);
@@ -180,7 +180,8 @@ export function polishHold(text) {
   const md = MD_PREFIX_RE.exec(s);
   if (md && md[2].length > hold) hold = md[2].length;
   // Nedokončana beseda s cirilico na koncu: še ni znano, ali bo mešana (latinska črka lahko pride v naslednjem kosu).
-  const cyr = /[\p{L}\p{M}]*\p{Script=Cyrillic}[\p{L}\p{M}]*$/u.exec(s);
+  // Le zadnjih 80 znakov: regex brez sidra na začetku bi pri vsakem kosu preiskal ves odgovor (kvadratno).
+  const cyr = /[\p{L}\p{M}]*\p{Script=Cyrillic}[\p{L}\p{M}]*$/u.exec(s.slice(-80));
   if (cyr && cyr[0].length > hold) hold = cyr[0].length;
   return hold;
 }

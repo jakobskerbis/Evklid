@@ -24,12 +24,13 @@ const db = new DatabaseSync(file, { readOnly: args[0] !== "--odstrani" });
 const hasTable = (t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
 const cut = (s, n = 600) => (s.length > n ? `${s.slice(0, n)} …` : s);
 // Vsak ogled pogovora ali prijav se zapiše v dnevnik dostopov (skrbnik, brez besedila in iskalnega niza);
-// branje: node scripts/dnevnik-dostopov.js. Ločena povezava za pisanje, ker je glavna samo za branje.
+// branje: node scripts/dnevnik-dostopov.js; parent_id je tu račun, čigar sporočilo je bilo ogledano (ne račun skrbnika).
+// Ločena povezava za pisanje, ker je glavna samo za branje.
 let auditDb = null;
-function logView(target, parentId = null) {
+function logView(target, parentId = null, action = "message_lookup") {
   try {
-    auditDb ??= new DatabaseSync(file);
-    audit(auditDb, { actor: "admin", action: "message_lookup", target, parentId });
+    auditDb ??= new DatabaseSync(file, { timeout: 5000 }); // strežnik lahko ravno piše (WAL)
+    audit(auditDb, { actor: "admin", action, target, parentId });
   } catch (e) {
     console.warn(`Dnevnik dostopov: ${e.message}`);
   }
@@ -75,6 +76,7 @@ if (args[0] === "--prijave") {
   else {
     const raw = openMessage(m).api_content.find?.((b) => b.type === "text")?.text || "";
     const n = hasTable("answer_cache") ? purgeCachedAnswer(db, raw, m.name || "") : 0;
+    logView(`msg:${parseMessageCode(args[1])}`, null, "answer_purge");
     console.log(n ? `Odstranjeno iz predpomnilnika (${n}). Tega odgovora ne dobi nihče več.` : "Odgovora ni v predpomnilniku.");
   }
 } else if (args[0] === "--besedilo" && args[1]) {
