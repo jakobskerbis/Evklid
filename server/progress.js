@@ -383,7 +383,10 @@ export class Progress {
   startPlacement(studentId, pathKey, unitIndex) {
     const unit = getPath(pathKey)?.units[unitIndex];
     if (!unit) return null;
-    const topics = unit.topics.filter((t) => hasGenerator(t.id));
+    // Kot sklop na poti (pathView): osnovna raven brez tem samo za višjo raven, sicer bi OR pri Odvodu dobil 3 od 6 nalog iz VR.
+    const all = unit.topics.filter((t) => hasGenerator(t.id));
+    const own = all.filter(ravenKeeps(this.profileRaven(studentId, pathKey)));
+    const topics = own.length ? own : all;
     if (!topics.length) return null;
     const open = this.openSession(studentId, "placement", (x) => x.params.path === pathKey && x.params.unit === unitIndex);
     if (open) return this.sessionNext(open.id);
@@ -1109,7 +1112,10 @@ export class Progress {
       // Vse teme sklopa (tudi brez vaj) štejemo kot obvladane.
       const t0 = getTopic(topics[0]);
       const unit = getPath(t0.path).units[t0.unitIndex];
-      for (const t of unit.topics) this.markMastered(studentId, t.id, "placement");
+      // Teme samo za višjo raven, ki jih preizkus osnovne ravni ni zajel, ostanejo neosvojene (sicer bi prišle v ponavljanje).
+      const keep = ravenKeeps(this.profileRaven(studentId, t0.path));
+      const own = unit.topics.filter(keep);
+      for (const t of own.length ? own : unit.topics) this.markMastered(studentId, t.id, "placement");
       xp = this.award(studentId, [[XP.placement, "preizkus znanja"]]);
     } else {
       for (const id of topics) {

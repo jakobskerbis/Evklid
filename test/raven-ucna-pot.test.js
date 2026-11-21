@@ -35,6 +35,8 @@ test("MAT-SS path for an OR student hides VR-only topics; VR and unsure students
     assert.equal(pOr.key, "MAT-SS-4");
     assert.ok(!ids(pOr).some((id) => vrOnly.has(id)), "osnovna raven: brez tem višje ravni");
     assert.ok(!/indukcij/.test(ids(pOr)[0]), "pot OR se ne začne z indukcijo");
+    // Indeks sklopa iz pogleda (test-plan, placement, sklop) je indeks v path.units: noben sklop ne sme izpasti.
+    assert.equal(pOr.units.length, path.units.length, "OR: vsi sklopi ostanejo (indeksi sklopov se ne zamaknejo)");
     assert.equal(ids(pVr).length, all.length, "višja raven: vse teme");
     assert.equal(ids(pUn).length, all.length, "»še ne vem«: vse teme");
 
@@ -48,6 +50,13 @@ test("MAT-SS path for an OR student hides VR-only topics; VR and unsure students
       const row = store.db.prepare("SELECT plan FROM sessions WHERE student_id = ? AND kind = 'test' ORDER BY rowid DESC").get(s.id);
       const topics = new Set(JSON.parse(row.plan).map((x) => x.topic));
       assert.equal([...topics].some((id) => vrOnly.has(id)), expectVr, `${expectVr ? "VR" : "OR"}: ${[...topics].join(", ")}`);
+    }
+    // Preizkus znanja sklopa Odvod: OR samo teme osnovne ravni (kot sklop na poti).
+    for (const [s, expectVr] of [[or, false], [vr, true]]) {
+      assert.equal((await call(`/api/students/${s.id}/placement`, { method: "POST", body: { path: "MAT-SS-4", unit: odvod } })).status, 200);
+      const row = store.db.prepare("SELECT plan FROM sessions WHERE student_id = ? AND kind = 'placement' ORDER BY rowid DESC").get(s.id);
+      const topics = new Set(JSON.parse(row.plan).map((x) => x.topic));
+      assert.equal([...topics].some((id) => vrOnly.has(id)), expectVr, `placement ${expectVr ? "VR" : "OR"}: ${[...topics].join(", ")}`);
     }
   } finally {
     server.close();
