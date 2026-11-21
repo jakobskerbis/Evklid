@@ -10,10 +10,11 @@ import crypto from "node:crypto";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
-import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, stripLeadPhrase } from "./meta.js";
+import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, replyText } from "./meta.js";
+import { kandidatOn, polishReply } from "./instruktor-kandidat.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
-import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL } from "./claude.js";
+import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL, nastaviOpazovalcaAi } from "./claude.js";
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
@@ -113,6 +114,7 @@ import { stevilke as nujnoStevilke } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
+import { createZdravje, razlogiAlarma } from "./zdravje.js";
 import { startStiskaObvestila, mountStiske } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 import { createVrsta } from "./vrsta-ai.js";
@@ -276,6 +278,10 @@ function securityHeaders(app) {
 
 export const SLIKE_3D_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
 
+// Odgovor, ki ga je prekinila zaustavitev strežnika (objava nove različice): odjemalec pokaže svoje besedilo
+// (public/app.js, off.serverBusy v jeziku vmesnika), to je za mobilno aplikacijo in starejše odjemalce.
+export const POSODOBITEV_TEXT = "Evklid se posodablja. Pošlji vprašanje znova čez minuto.";
+
 export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
@@ -315,12 +321,28 @@ export function createApp(store, opts = {}) {
   let backupChecks = null; // nočni preizkus obnove iz kopije (server/kopije-preveri.js)
   let aiCostAlert = null; // opozorilo o dnevnem strošku AI (server/opozorilo-ai.js)
   let stiskaObvestila = null; // e-mail skrbniku ob oznaki stiske (server/stiska-obvestilo.js)
+  let zdravje = null; // zdravje AI, ponovni zagoni in disk (server/zdravje.js), nastavljeno spodaj
   // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
   const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
   app.locals.pomnilnik = pomnilnik;
+  const stanje = () => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai: zdravje?.ai() ?? null, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null });
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn() });
+    res.json(stanje());
+  });
+  // Javni alarm za drugi monitor UptimeRobot (server/zdravje.js razlogiAlarma): 200 »ok« ali 503 s kratkimi kodami
+  // (baza, ai, posta, kopije, disk, pomnilnik, zagon) brez podrobnosti; podrobnosti so v /healthz/stanje.
+  app.get("/healthz/alarm", (_req, res) => {
+    res.set("Cache-Control", "no-store");
+    let bazaOk = true;
+    try {
+      store.db.prepare("SELECT 1").get();
+    } catch {
+      bazaOk = false;
+    }
+    const razlogi = razlogiAlarma(stanje(), { bazaOk });
+    if (razlogi.length) return res.status(503).type("text/plain").send(`alarm: ${razlogi.join(",")}`);
+    res.type("text/plain").send("ok");
   });
   // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
   const afterDelete = [];
@@ -661,6 +683,18 @@ export function createApp(store, opts = {}) {
   };
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor
+  // Odprti odgovori v klepetu za zaustavitev strežnika (server/index.js, SIGTERM ob objavi): zaustaviOdgovore takoj
+  // ustavi zahteve, ki še čakajo v vrsti za AI (samoVrsta), po roku pa še vse ostale. Učenec dobi dogodek »error«
+  // z obvestilom o posodobitvi (osnutek gre nazaj v polje), vprašanje ne šteje v dnevno mejo; že porabljeni žetoni
+  // so zapisani kot pri prekinitvi. Nove zahteve med zaustavljanjem se ustavijo takoj.
+  const tokovi = new Set();
+  let zaustavljanje = false;
+  app.locals.zaustaviOdgovore = ({ samoVrsta = false } = {}) => {
+    zaustavljanje = true;
+    for (const t of tokovi) if (!samoVrsta || t.vVrsti()) t.ustavi();
+    return tokovi.size;
+  };
+  app.locals.odgovoriVTeku = () => tokovi.size;
   const pendingSettings = new Map(); // pogovor → predlog spremembe šole/letnika, ki čaka na potrditev
   // »Vprašaj Evklida« iz Vadnice: pogovor -> naloga, da prvi odgovor sestavi koda.
   const helpTasks = new Map();
@@ -1314,8 +1348,20 @@ export function createApp(store, opts = {}) {
     res.on("close", () => {
       if (!finished) controller.abort();
     });
+    let zaustavitev = false; // strežnik se ustavlja (objava): odgovor prekine strežnik, ne učenec
+    const tok = {
+      vVrsti: () => vVrsti,
+      ustavi: () => {
+        if (finished) return;
+        zaustavitev = true;
+        controller.abort();
+      },
+    };
 
-    const filter = createStreamFilter();
+    // Kandidat izboljšav (EVKLID_INSTRUKTOR_KANDIDAT=1, privzeto izklopljen): popravka besedila pri pretakanju in v prikazu.
+    const kandidat = kandidatOn();
+    const jezik = student.settings.language || "sl";
+    const filter = createStreamFilter({ kandidat, language: jezik });
     // Nastavitve iz klepeta (server/chat-settings.js): orodji za model, dogodki za odjemalca.
     const settingsTools = createSettingsTools({
       store,
@@ -1334,6 +1380,8 @@ export function createApp(store, opts = {}) {
     onToolUse.hasPending = () => pendingSettings.has(conv.id);
     started = true;
     try {
+      tokovi.add(tok); // v try: finally ga vedno odstrani
+      if (zaustavljanje) tok.ustavi();
       // Prvi korak pri nalogi iz Vadnice sestavi koda (podatki, iskano, namig), brez klica modela.
       const hinted =
         help && !help.kind && help.text === text && student.settings.solving_mode !== "B" && (student.settings.language || "sl") === "sl"
@@ -1507,7 +1555,7 @@ export function createApp(store, opts = {}) {
           // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor).
           if (reason && hold.take(mainReserve)) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
-            const again2 = createStreamFilter();
+            const again2 = createStreamFilter({ kandidat, language: jezik });
             held.length = 0;
             const r2 = await streamFn({
               system,
@@ -1633,11 +1681,13 @@ export function createApp(store, opts = {}) {
       // Fotografija, ki ni učno gradivo (obraz, oseba, osebni dokument …): inštruktor jo zavrne z flag=photo,
       // slika pa se takoj odstrani iz shranjenega sporočila (j, 2026-10-30).
       if (image && meta?.flag === "photo") store.setMessageContent(userMsgId, withoutImages(userContent, PHOTO_REJECTED_TEXT), 2);
-      let display = (note || "") + stripLeadPhrase(stripMeta(result.text)) + fix;
+      let display = (note || "") + replyText(result.text, { kandidat, language: jezik }) + fix;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
       // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
       let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
+      // Kandidat: tudi zgodovina za model brez »s osnovo« in oznak (sicer jih model iz nje ponavlja); strojni bloki ostanejo.
+      if (kandidat) content[0].text = polishReply(content[0].text, { language: jezik });
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
       unlogged = null;
@@ -1797,14 +1847,20 @@ export function createApp(store, opts = {}) {
         }
       }
       // Napaka strežnika ali API (ne prekinitev): vprašanje ne šteje, učenec lahko poskusi znova. Prav tako ne, če je
-      // učenec povezavo prekinil še v vrsti za AI (model ni dobil nobenega klica).
-      const neplacano = !aborted || vVrsti;
+      // učenec povezavo prekinil še v vrsti za AI (model ni dobil nobenega klica), in ne, če je odgovor prekinil
+      // strežnik ob zaustavitvi (objava): učenec vprašanje pošlje znova (porabljeni žetoni so zapisani zgoraj).
+      const neplacano = !aborted || vVrsti || zaustavitev;
       if (neplacano) store.logQuestion(student.id, -1);
       // Neuspelo potezo odstranimo, da zgodovina ostane čista za ponovni poskus.
       store.db.prepare("DELETE FROM messages WHERE id = ?").run(userMsgId);
       // Prekinitev (plačan klic) ne vrne števca zaporednih prošenj: naslednji poskus ne gre spet brezplačno k Opusu.
       if (again && neplacano) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
-      if (!controller.signal.aborted) {
+      if (zaustavitev) {
+        if (!res.writableEnded && !res.destroyed) {
+          oddajZaostalo();
+          send("error", { error: POSODOBITEV_TEXT, posodobitev: true, nujno: nujnoPoslano ? undefined : nujnoZa(lokalnaVrsta(text), student.settings) || undefined });
+        }
+      } else if (!controller.signal.aborted) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
         // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
@@ -1815,6 +1871,7 @@ export function createApp(store, opts = {}) {
       }
       res.end();
     } finally {
+      tokovi.delete(tok);
       mestoAi?.sprosti();
       busy.delete(conv.id);
       hold.release();
@@ -1841,12 +1898,14 @@ export function createApp(store, opts = {}) {
     res.json({ ...view, label: pathLabelFor(key, s.settings.school_system), defaultKey: pathKeyFor(s.settings), xp: progress.xpSummary(s.id), ...(danes ? { danes } : {}) });
   });
   // Kartica »Danes« na Učni poti za cilj matura (j, 20. 11. 2026, public/zacetna.js heroHtml): najprej ponavljanje, kar je
-  // na vrsti, nato prva tema iz »Najprej vadi« na strani NPZ in matura (ista examReadiness, zato se nikoli ne razlikujeta).
+  // na vrsti, nato najšibkejša tema mature med temami, ki jih je učenec že vadil (examReadiness.weakestTried). Dokler ni
+  // vadil nobene, tema, ki je na Učni poti na vrsti (view.next, ista kot Današnji trening in »Naslednja«), ne prva tema
+  // kataloga (j, kartica 21. 11. 2026: »Topic from the learning path«).
   // Minute: 1,5 minute na nalogo (Današnji trening: 10 nalog ≈ 15 minut). odsoten: dni od zadnje naloge (0 = danes ali še nobene).
   const danesMatura = (s, view) => {
     const exKey = examKeyFor(s.settings);
     const r = isExamPath(exKey) ? progress.examReadiness(s.id, exKey, examRaven(exKey, s.settings)) : null;
-    const w = r?.weakest?.[0];
+    const w = r?.weakestTried || view.next || r?.weakest?.[0];
     const naloge = Math.min(view.dueCount * RULES.reviewPerTopic, RULES.reviewSessionMax);
     const zadnji = store.db.prepare("SELECT CAST(julianday(date('now')) - julianday(MAX(date(created_at))) AS INTEGER) AS d FROM tasks WHERE student_id = ?").get(s.id)?.d;
     return {
@@ -2355,6 +2414,10 @@ export function createApp(store, opts = {}) {
   backupChecks = startBackupChecks(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, isBusy: () => activity.active > 0 });
   // Vsakih 10 min: današnji strošek AI nad EVKLID_OPOZORILO_AI_USD → e-mail skrbnikom, največ enkrat na dan.
   aiCostAlert = startAiCostAlert(store.db, usage, { scheduler: opts.scheduler !== false, mock: isMockMode(), mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
+  // Zdravje AI (izidi klicev iz server/claude.js), ponovni zagoni (index.js kliče zagon/sesutje/cistaZaustavitev) in disk.
+  zdravje = createZdravje(store.db, { dbFile: store.file, scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
+  nastaviOpazovalcaAi(zdravje.aiIzid);
+  app.locals.zdravje = zdravje;
   stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
   app.use(notFound); // neznana pot: stran v slogu aplikacije namesto »Cannot GET« (server/ni-strani.js)
   return app;

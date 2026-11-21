@@ -30,6 +30,8 @@ export function presojaStanja(j, now = Date.now()) {
   if (j.kopije?.napaka) napake.push("varnostna kopija baze javlja napako");
   // Strežnik brez EVKLID_DATA_KEY (zažene se samo z EVKLID_ALLOW_PLAINTEXT=1) shranjuje osebne podatke nešifrirane.
   if (j.sifriranje === false) napake.push("šifriranje osebnih podatkov v bazi je izklopljeno (EVKLID_DATA_KEY ni nastavljen)");
+  // Inštruktor v preizkusnem načinu (vnaprej pripravljeni odgovori): v produkciji samo z izrecnim EVKLID_MOCK=1.
+  if (j.mock === true) napake.push("inštruktor teče v preizkusnem načinu (EVKLID_MOCK=1 ali brez ANTHROPIC_API_KEY)");
   // Točka D4: opozorilo, ko je bil pomnilnik v zadnjih 30 minutah nad 85 % meje (Render ob meji proces ubije).
   const pm = j.pomnilnik;
   if (pm && pm.najvecDelez > (pm.opozorilo ?? 85))
@@ -50,6 +52,10 @@ export function presojaStanja(j, now = Date.now()) {
     if (sveze(po.zadnjaNapaka)) napake.push(`e-pošta (Resend) ne gre ven: ${po.razlog}`);
     else opozorila.push(`zadnje pošiljanje e-pošte ni uspelo (${po.razlog})`);
   }
+  // Zdravje strežnika (server/zdravje.js): inštruktor AI ne dela, disk skoraj poln, nepričakovan ponovni zagon v zadnji uri.
+  if (j.ai?.deluje === false) napake.push(`inštruktor AI ne dela (zadnja napaka: ${j.ai.vrsta}, zaporednih ${j.ai.zapored}; skrbnik dobi e-pošto)`);
+  if (j.disk && j.disk.delez >= j.disk.opozorilo) napake.push(`disk z bazo je zaseden ${j.disk.delez} % (prosto ${j.disk.prostoMb} MB)`);
+  if (j.zagoni?.zadnji && sveze(j.zagoni.zadnji)) napake.push(`strežnik se je nepričakovano znova zagnal ob ${j.zagoni.zadnji} (${j.zagoni.razlog})`);
   if (j.pdfUcbenika?.napaka) opozorila.push(`PDF učbenika: ${j.pdfUcbenika.napaka} (aplikacija ponudi tiskanje)`);
   if (j.kopije && !j.kopijeZunaj) opozorila.push("kopija baze zunaj Renderja (R2) ni nastavljena");
   return { napake, opozorila };

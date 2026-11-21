@@ -10,7 +10,7 @@ import { createApp } from "../server/app.js";
 import { verifyAppleJws, AppleSignatureError, APPLE_ROOT_G3 } from "../server/mobile/apple-crypto.js";
 import { BUNDLE_ID, STORE_PRODUCTS, appleState } from "../server/mobile/store-billing.js";
 import { googleSubscriptionState } from "../server/mobile/google-play.js";
-import { goalPushText } from "../server/mobile/push.js";
+import { dropExpiredPushTokens, goalPushText } from "../server/mobile/push.js";
 import { fetchApk } from "../server/mobile/download.js";
 import { apkVersion, manifestVersion } from "../server/mobile/apk-info.js";
 import os from "node:os";
@@ -457,6 +457,51 @@ test("push tokens: only Expo tokens, tied to the account", async () => {
     assert.equal(store.db.prepare("SELECT parent_id FROM push_tokens").get().parent_id, p.id);
     assert.equal((await appClient()("/api/push/register", { body: { token: "ExponentPushToken[abcDEF1234567890]" } })).status, 401);
     assert.match(goalPushText({ name: "Ana", settings: { goal: "matura" } }, 3).title, /Matura: še 3 dnevi/);
+  });
+});
+
+// Pregled #897: žeton obvestil ne sme ostati vezan na račun, ko prijava na telefonu poteče ali je odjavljena.
+test("push tokens follow the login session: expired or logged-out session stops reminders", async () => {
+  await withServer(async ({ appClient, adult, store }) => {
+    const db = store.db;
+    const tokens = () => db.prepare("SELECT token FROM push_tokens ORDER BY token").all().map((r) => r.token);
+    const c = appClient();
+    const p = await adult(c);
+    const T1 = "ExponentPushToken[telefon1aaaaaaaaaaa]";
+    assert.equal((await c("/api/push/register", { body: { token: T1, platform: "android" } })).status, 200);
+    const row = db.prepare("SELECT session_hash FROM push_tokens WHERE token = ?").get(T1);
+    assert.equal(row.session_hash, crypto.createHash("sha256").update(c.session()).digest("hex"), "žeton je vezan na to prijavo");
+
+    // Druga prijava istega računa (npr. brskalnik) žetona prve ne ohranja pri življenju.
+    const web = appClient();
+    assert.equal((await web("/api/auth/login", { body: { email: "starsh@primer.si", password: "geslo12345" } })).status, 200);
+    assert.equal(dropExpiredPushTokens(db), 0);
+    assert.deepEqual(tokens(), [T1]);
+    db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE token_hash = ?").run("2000-01-01T00:00:00.000Z", row.session_hash);
+    assert.equal(dropExpiredPushTokens(db, new Date(), p.id + 1), 0, "samo za podani račun");
+    assert.equal(dropExpiredPushTokens(db, new Date(), p.id), 1, "potekla seja telefona: žeton gre");
+    assert.deepEqual(tokens(), []);
+
+    // Odjava, ki ne odjavi žetona (npr. telefon brez povezave ob odjavi), ga ne pusti vezanega.
+    const c2 = appClient();
+    assert.equal((await c2("/api/auth/login", { body: { email: "starsh@primer.si", password: "geslo12345" } })).status, 200);
+    const T2 = "ExponentPushToken[telefon2bbbbbbbbbbb]";
+    assert.equal((await c2("/api/push/register", { body: { token: T2 } })).status, 200);
+    assert.equal((await c2("/api/auth/logout", { body: {} })).status, 200);
+    dropExpiredPushTokens(db);
+    assert.deepEqual(tokens(), []);
+
+    // Stari zapis brez seje velja, dokler ima račun živo prijavo.
+    const T3 = "ExponentPushToken[starizapiscccccccccc]";
+    db.prepare("INSERT INTO push_tokens (token, parent_id) VALUES (?, ?)").run(T3, p.id);
+    assert.equal(dropExpiredPushTokens(db), 0);
+    db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE parent_id = ?").run("2000-01-01T00:00:00.000Z", p.id);
+    assert.equal(dropExpiredPushTokens(db), 1);
+    // … a največ 30 dni od zadnje prijave žetona, tudi ob živi prijavi v brskalniku (aplikacija brez opomnika ga ne prijavi znova).
+    db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE parent_id = ?").run("2999-01-01T00:00:00.000Z", p.id);
+    db.prepare("INSERT INTO push_tokens (token, parent_id, updated_at) VALUES (?, ?, datetime('now', '-29 days'))").run(T3, p.id);
+    assert.equal(dropExpiredPushTokens(db), 0, "29 dni: še velja");
+    assert.equal(dropExpiredPushTokens(db, new Date(Date.now() + 2 * 86400000)), 1, "čez 30 dni: gre");
   });
 });
 

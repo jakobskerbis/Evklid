@@ -15,7 +15,7 @@ const YEAR = 365 * 24 * 3600;
 // prebere za bližnjico na začetnem zaslonu, preden je uporabnik prijavljen).
 // /.well-known/security.txt: kontakt za prijavo ranljivosti (server/webapp.js) mora biti dosegljiv tudi za testno različico z geslom.
 // /api/kozmetika/export ima svoj ključ (server/avatar.js), prav tako izvoz in stanje prijav (server/reports.js).
-const PUBLIC = [/^\/healthz$/, /^\/api\/kozmetika\/export$/, /^\/api\/kozmetika\/prijave\/izvoz$/, /^\/api\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/, /^\/manifest\.webmanifest$/, /^\/icons\/[\w.-]+\.png$/, /^\/favicon\.ico$/, /^\/\.well-known\/assetlinks\.json$/, /^\/\.well-known\/security\.txt$/];
+const PUBLIC = [/^\/healthz$/, /^\/healthz\/alarm$/, /^\/api\/kozmetika\/export$/, /^\/api\/kozmetika\/prijave\/izvoz$/, /^\/api\/kozmetika\/prijave\/(message|lesson|app)\/\d+\/stanje$/, /^\/manifest\.webmanifest$/, /^\/icons\/[\w.-]+\.png$/, /^\/favicon\.ico$/, /^\/\.well-known\/assetlinks\.json$/, /^\/\.well-known\/security\.txt$/];
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

@@ -261,12 +261,14 @@ function tap(f, o, e) {
 }
 
 // Polje s predogledom ali izrisom: tudi vrednost ali kazalec, ki ju nastavi koda brez dogodka (plošča Piši: enota,
-// prebrani zapis, Popravi; puščici tipkovnice; nastavitve ob menjavi profila), osveži izris.
+// prebrani zapis, Popravi; puščici tipkovnice; nastavitve ob menjavi profila), osveži izris. Polje, ki že ima svoj
+// nastavljalec (klepet: app.js z njim poveča polje), ga obdrži: izris se doda zraven (prej je bil tam izpuščen, zato je
+// po »Pošlji« v praznem polju ostal izris zadnjega ulomka).
 function sledi(f) {
   if (sledeno.has(f)) return;
   sledeno.add(f);
-  const d = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(f), "value");
-  if (d?.set && !Object.getOwnPropertyDescriptor(f, "value")) {
+  const d = Object.getOwnPropertyDescriptor(f, "value") || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(f), "value");
+  if (d?.get && d?.set && d.configurable) {
     Object.defineProperty(f, "value", {
       configurable: true,
       get: () => d.get.call(f),

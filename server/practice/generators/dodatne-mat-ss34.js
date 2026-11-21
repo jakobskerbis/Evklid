@@ -24,10 +24,22 @@ function fr(n, d) {
   const k = gcd2(n, d);
   return [n / k, d / k];
 }
-const frAns = (n, d) => {
+// Tipične napake brez pravilne vrednosti (in brez nekončnih). Če dve različni napaki dasta isto vrednost,
+// ne vemo, katera razlaga velja: odpadeta obe (kjer je skupna razlaga smiselna, jo generator zapiše sam).
+function uniqMs(right, mistakes) {
+  const ok = mistakes.filter((m) => m && m.why && Number.isFinite(m.value) && Math.abs(m.value - right) >= 1e-9);
+  return ok.filter((m) => ok.filter((o) => Math.abs(o.value - m.value) < 1e-9).length === 1);
+}
+// Ulomek kot odgovor; tipične napake [{ value, why }] po vrednosti ulomka (preverjanje jih primerja natančno).
+const frAns = (n, d, mistakes = []) => {
   const [a, b] = fr(n, d);
-  return { type: "fraction", num: a, den: b };
+  const ms = uniqMs(a / b, mistakes).slice(0, 3);
+  return { type: "fraction", num: a, den: b, ...(ms.length ? { mistakes: ms } : {}) };
 };
+// Napaka »razmerje prostih členov« pri limiti v neskončnosti; 0 in 1 imata splošno razlago, zato tedaj odpade.
+const freeRatio = (v, why) => (Math.abs(v) < 1e-9 || Math.abs(v - 1) < 1e-9 ? [] : [{ value: v, why }]);
+// Napake pri celoštevilskem odgovoru: le cele vrednosti (necela bi se ujemala s sosednjim celim vnosom).
+const intMs = (ms) => ms.filter((m) => Number.isFinite(m.value) && Math.abs(m.value - Math.round(m.value)) < 1e-9).map((m) => ({ ...m, value: Math.round(m.value) }));
 // Ulomek v TeX (okrajšan): 3/4 → \frac{3}{4}, -6/3 → -2.
 function ft(n, d) {
   const [a, b] = fr(n, d);
@@ -361,7 +373,11 @@ const GENS = [
         if (ask === "tan") {
           return {
             text: `Za ostri kot $\\alpha$ velja $\\tan\\alpha = ${ft(s, k)}$. Izračunaj $\\tan 2\\alpha$ in ga vpiši kot ulomek.`,
-            answer: frAns(2 * s * k, k * k - s * s),
+            answer: frAns(2 * s * k, k * k - s * s, [
+              { value: (2 * s) / k, why: "Imenovalca $1 - \\tan^2\\alpha$ ne smeš izpustiti: $\\tan 2\\alpha \\ne 2\\tan\\alpha$." },
+              { value: (2 * s * k) / (k * k + s * s), why: "V imenovalcu formule je $1 - \\tan^2\\alpha$, ne $1 + \\tan^2\\alpha$." },
+              { value: (2 * s) / (k - s), why: "V imenovalcu je kvadrat tangensa: $1 - \\tan^2\\alpha$." },
+            ]),
             hint: "Uporabi formulo za tangens dvojnega kota in uredi dvojni ulomek.",
             data: { given: [`\\tan\\alpha = ${ft(s, k)}`], find: ["\\tan 2\\alpha"] },
             formula: "\\tan 2\\alpha = \\dfrac{2\\tan\\alpha}{1 - \\tan^2\\alpha}",
@@ -371,7 +387,19 @@ const GENS = [
         const res = ask === "sin" ? [2 * s * k, c * c] : [k * k - s * s, c * c];
         return {
           text: `Za ostri kot $\\alpha$ velja $\\sin\\alpha = ${ft(s, c)}$ in $\\cos\\alpha = ${ft(k, c)}$. Izračunaj $\\${ask} 2\\alpha$ in ga vpiši kot ulomek.`,
-          answer: frAns(...res),
+          answer: frAns(
+            ...res,
+            ask === "sin"
+              ? [
+                  { value: (s * k) / (c * c), why: "$\\sin 2\\alpha = 2\\sin\\alpha\\cos\\alpha$: ne pozabi faktorja 2." },
+                  { value: (2 * s) / c, why: "$\\sin 2\\alpha \\ne 2\\sin\\alpha$. Uporabi formulo $\\sin 2\\alpha = 2\\sin\\alpha\\cos\\alpha$." },
+                ]
+              : [
+                  { value: (s * s - k * k) / (c * c), why: "Preveri vrstni red: $\\cos 2\\alpha = \\cos^2\\alpha - \\sin^2\\alpha$." },
+                  { value: 1, why: "$\\cos^2\\alpha + \\sin^2\\alpha = 1$ je vsota; pri $\\cos 2\\alpha$ kvadrata odšteješ." },
+                  { value: (2 * k) / c, why: "$\\cos 2\\alpha \\ne 2\\cos\\alpha$. Uporabi formulo $\\cos 2\\alpha = \\cos^2\\alpha - \\sin^2\\alpha$." },
+                ],
+          ),
           hint: `Uporabi formulo za ${ask === "sin" ? "sinus" : "kosinus"} dvojnega kota.`,
           data: { given: [`\\sin\\alpha = ${ft(s, c)}`, `\\cos\\alpha = ${ft(k, c)}`], find: [`\\${ask} 2\\alpha`] },
           formula: ask === "sin" ? "\\sin 2\\alpha = 2\\sin\\alpha\\cos\\alpha" : "\\cos 2\\alpha = \\cos^2\\alpha - \\sin^2\\alpha",
@@ -398,7 +426,12 @@ const GENS = [
         const rad = r.next() < 0.5;
         return {
           text: `Za kot $\\alpha$ velja $\\${givenSin ? "sin" : "cos"}\\alpha = ${ft(...gv)}$ in $${rad ? QUAD_RAD[q] : QUAD_DEG[q]}$. Izračunaj natančno vrednost $\\${ask} 2\\alpha$ (ulomek).`,
-          answer: frAns(...res),
+          answer: frAns(...res, [
+            { value: (givenSin ? sC : sS) < 0 ? -res[0] / res[1] : NaN, why: `V ${q}. kvadrantu je $\\${oth}\\alpha$ negativen: pri korenjenju upoštevaj predznak.` },
+            ask === "sin"
+              ? { value: res[0] / (2 * res[1]), why: "$\\sin 2\\alpha = 2\\sin\\alpha\\cos\\alpha$: ne pozabi faktorja 2." }
+              : { value: (2 * sS * p * sC * k) / (c * c), why: "To je $\\sin 2\\alpha$. Za $\\tan 2\\alpha$ ga deli še s $\\cos 2\\alpha$." },
+          ]),
           hint: `Najprej izračunaj $\\${oth}\\alpha$; predznak določi kvadrant. Nato uporabi formulo za dvojni kot.`,
           data: { given: [`\\${givenSin ? "sin" : "cos"}\\alpha = ${ft(...gv)}`], find: [`\\${ask} 2\\alpha`] },
           formula: ["\\sin^2\\alpha + \\cos^2\\alpha = 1", ask === "sin" ? "\\sin 2\\alpha = 2\\sin\\alpha\\cos\\alpha" : "\\tan 2\\alpha = \\dfrac{\\sin 2\\alpha}{\\cos 2\\alpha} = \\dfrac{2\\sin\\alpha\\cos\\alpha}{\\cos^2\\alpha - \\sin^2\\alpha}"],
@@ -418,7 +451,10 @@ const GENS = [
         if (den2 === 0) return null;
         return {
           text: `Velja $\\tan\\alpha = ${ft(n1, d1)}$ in $\\tan\\beta = ${ft(n2, d2)}$. Izračunaj $\\tan(\\alpha ${minus ? "-" : "+"} \\beta)$ in ga vpiši kot okrajšan ulomek.`,
-          answer: frAns(num2, den2),
+          answer: frAns(num2, den2, [
+            { value: num2 / (minus ? d1 * d2 - n1 * n2 : d1 * d2 + n1 * n2), why: `V imenovalcu je obraten predznak kot v števcu: $1 ${minus ? "+" : "-"} \\tan\\alpha\\tan\\beta$.` },
+            { value: num2 / (d1 * d2), why: `Tangens ${minus ? "razlike ni razlika" : "vsote ni vsota"} tangensov: deliti moraš še z $1 ${minus ? "+" : "-"} \\tan\\alpha\\tan\\beta$.` },
+          ]),
           hint: "Uporabi adicijski izrek za tangens; števec in imenovalec dvojnega ulomka pomnoži s skupnim imenovalcem.",
           data: { given: [`\\tan\\alpha = ${ft(n1, d1)}`, `\\tan\\beta = ${ft(n2, d2)}`], find: [`\\tan(\\alpha ${minus ? "-" : "+"} \\beta)`] },
           formula: `\\tan(\\alpha ${minus ? "-" : "+"} \\beta) = \\dfrac{\\tan\\alpha ${minus ? "-" : "+"} \\tan\\beta}{1 ${minus ? "+" : "-"} \\tan\\alpha\\tan\\beta}`,
@@ -448,9 +484,25 @@ const GENS = [
         fn === "sin"
           ? `${ft(...sa)} \\cdot \\left(${ft(...cb)}\\right) ${op} \\left(${ft(...ca)}\\right) \\cdot \\left(${ft(...sb)}\\right)`
           : `\\left(${ft(...ca)}\\right) \\cdot \\left(${ft(...cb)}\\right) ${minus ? "+" : "-"} ${ft(...sa)} \\cdot \\left(${ft(...sb)}\\right)`;
+      // Napaki: predznaka cos α in sin β brez kvadranta; napačen predznak v adicijskem izreku.
+      // Pogosto dasta isto vrednost (napačen predznak drugega člena): tedaj ena skupna razlaga.
+      const vQuad = fn === "sin" ? (sa[0] * cb[0] + (minus ? -1 : 1) * Math.abs(ca[0]) * Math.abs(sb[0])) / den : (Math.abs(ca[0]) * cb[0] + (minus ? 1 : -1) * sa[0] * Math.abs(sb[0])) / den;
+      const vForm = fn === "sin" ? (sa[0] * cb[0] + (minus ? 1 : -1) * ca[0] * sb[0]) / den : (ca[0] * cb[0] + (minus ? -1 : 1) * sa[0] * sb[0]) / den;
+      const whyQuad = "Predznaka $\\cos\\alpha$ in $\\sin\\beta$ sta odvisna od kvadranta, v katerem leži posamezni kot. Preveri ju.";
+      const whyForm =
+        fn === "sin"
+          ? "Pri sinusu je predznak v formuli enak kot v argumentu: $\\sin(\\alpha \\pm \\beta) = \\sin\\alpha\\cos\\beta \\pm \\cos\\alpha\\sin\\beta$."
+          : "Pri kosinusu je predznak v formuli obraten: $\\cos(\\alpha \\pm \\beta) = \\cos\\alpha\\cos\\beta \\mp \\sin\\alpha\\sin\\beta$.";
+      const addMs =
+        Math.abs(vQuad - vForm) < 1e-9
+          ? [{ value: vQuad, why: "Preveri predznak drugega člena: v formuli in po kvadrantu." }]
+          : [
+              { value: vQuad, why: whyQuad },
+              { value: vForm, why: whyForm },
+            ];
       return {
         text: `Velja $\\sin\\alpha = ${ft(...sa)}$, $${QUAD_DEG[qa].replace(/alpha/g, "alpha")}$, in $\\cos\\beta = ${ft(...cb)}$, $${QUAD_DEG[qb].replace(/alpha/g, "beta")}$. Izračunaj natančno vrednost $\\${fn}(\\alpha ${op} \\beta)$ (ulomek).`,
-        answer: frAns(n, den),
+        answer: frAns(n, den, addMs),
         hint: "Najprej izračunaj $\\cos\\alpha$ in $\\sin\\beta$ (predznak glede na kvadrant), nato uporabi adicijski izrek.",
         data: { given: [`\\sin\\alpha = ${ft(...sa)}`, `\\cos\\beta = ${ft(...cb)}`], find: [`\\${fn}(\\alpha ${op} \\beta)`] },
         formula: ["\\sin^2 x + \\cos^2 x = 1", `\\${fn}(\\alpha ${op} \\beta) = ${exp}`],
@@ -512,7 +564,7 @@ const GENS = [
             `Brez računala izračunaj natančno vrednost izraza $${exp}$.`,
             `${who} trdi, da lahko izraz $${exp}$ izračuna na pamet. Koliko je vreden?`,
           ]),
-          answer: frAns(...v),
+          answer: frAns(...v, Tt > 90 && v[0] !== 0 ? [{ value: -v[0] / v[1], why: "Absolutna vrednost je prava, predznak pa ne. Preveri vrstni red kotov v adicijskem izreku in predznak vrednosti na enotski krožnici." }] : []),
           hint: `Primerjaj izraz z desno stranjo adicijskega izreka za ${isSin ? "sinus" : "kosinus"} ${plus ? "vsote" : "razlike"}.`,
           data: { given: [`\\alpha = ${a}^\\circ`, `\\beta = ${b}^\\circ`], find: ["\\text{vrednost izraza}"] },
           formula: isSin ? `\\sin(\\alpha ${plus ? "+" : "-"} \\beta) = \\sin\\alpha\\cos\\beta ${plus ? "+" : "-"} \\cos\\alpha\\sin\\beta` : `\\cos(\\alpha ${plus ? "+" : "-"} \\beta) = \\cos\\alpha\\cos\\beta ${plus ? "-" : "+"} \\sin\\alpha\\sin\\beta`,
@@ -526,7 +578,11 @@ const GENS = [
         const res = plus ? [p * p - q * q, q * q] : [q * q - p * p, q * q];
         return {
           text: `Za kot $x$ velja $\\sin x ${plus ? "+" : "-"} \\cos x = ${ft(p, q)}$. Izračunaj $\\sin 2x$ (ulomek).`,
-          answer: frAns(...res),
+          answer: frAns(...res, [
+            { value: plus ? (p - q) / q : (q - p) / q, why: "Kvadrirati moraš obe strani enakosti, tudi desno." },
+            { value: plus ? (p * p) / (q * q) : -(p * p) / (q * q), why: "Pri kvadriranju dobiš tudi $\\sin^2 x + \\cos^2 x = 1$; to enico upoštevaj." },
+            { value: -res[0] / res[1], why: plus ? "Pri $(\\sin x + \\cos x)^2$ je dvojni produkt $+2\\sin x\\cos x$: pazi na predznak." : "Pri $(\\sin x - \\cos x)^2$ je dvojni produkt $-2\\sin x\\cos x$: pazi na predznak." },
+          ]),
           hint: "Kvadriraj obe strani enakosti in uporabi $\\sin^2 x + \\cos^2 x = 1$.",
           data: { given: [`\\sin x ${plus ? "+" : "-"} \\cos x = ${ft(p, q)}`], find: ["\\sin 2x"] },
           formula: ["\\sin^2 x + \\cos^2 x = 1", "\\sin 2x = 2\\sin x\\cos x"],
@@ -538,7 +594,18 @@ const GENS = [
       const res = askSin ? [2 * n * d, d * d + n * n] : [d * d - n * n, d * d + n * n];
       return {
         text: `Za kot $x$ velja $\\tan x = ${ft(n, d)}$. Izračunaj $\\${askSin ? "sin" : "cos"} 2x$ (ulomek), ne da bi računal kot $x$.`,
-        answer: frAns(...res),
+        answer: frAns(
+          ...res,
+          askSin
+            ? [
+                { value: (2 * n * d) / (d * d - n * n), why: "To je $\\tan 2x$. Pri $\\sin 2x$ je v imenovalcu $1 + \\tan^2 x$." },
+                { value: (2 * n) / d, why: "Pri deljenju s $\\cos^2 x$ deliš tudi imenovalec $1 = \\sin^2 x + \\cos^2 x$, zato dobiš $1 + \\tan^2 x$." },
+              ]
+            : [
+                { value: (d * d - n * n) / (d * d), why: "Pri deljenju s $\\cos^2 x$ deliš tudi imenovalec $1 = \\sin^2 x + \\cos^2 x$, zato dobiš $1 + \\tan^2 x$." },
+                { value: (n * n - d * d) / (d * d + n * n), why: "Preveri vrstni red v števcu: $\\cos 2x = \\cos^2 x - \\sin^2 x$, torej $1 - \\tan^2 x$." },
+              ],
+        ),
         hint: `Zapiši $\\${askSin ? "sin 2x = \\dfrac{2\\sin x\\cos x}{\\sin^2 x + \\cos^2 x}" : "cos 2x = \\dfrac{\\cos^2 x - \\sin^2 x}{\\sin^2 x + \\cos^2 x}"}$ in deli števec in imenovalec s $\\cos^2 x$.`,
         data: { given: [`\\tan x = ${ft(n, d)}`], find: [`\\${askSin ? "sin" : "cos"} 2x`] },
         formula: askSin ? "\\sin 2x = \\dfrac{2\\tan x}{1 + \\tan^2 x}" : "\\cos 2x = \\dfrac{1 - \\tan^2 x}{1 + \\tan^2 x}",
@@ -1879,7 +1946,9 @@ const GENS = [
           const k = r.int(3, 15);
           return {
             text: `Zaporedje je podano s splošnim členom $a_n = ${S.tex}$. Izračunaj člen $a_{${k}}$ (okrajšan ulomek).`,
-            answer: frAns(S.a * k + S.b, S.c * k + S.d),
+            answer: frAns(S.a * k + S.b, S.c * k + S.d, [
+              { value: S.a / S.c, why: `To je limita zaporedja (ko gre $n$ proti neskončno), ne člen $a_{${k}}$. V splošni člen vstavi $n = ${k}$.` },
+            ]),
             hint: `Namesto $n$ vstavi $${k}$.`,
             data: { given: [`a_n = ${S.tex}`], find: [`a_{${k}}`] },
             formula: `a_n = ${S.tex}`,
@@ -1894,7 +1963,12 @@ const GENS = [
         const tex = `\\dfrac{${poly(numP, "n")}}{${poly(denP, "n")}}`;
         return {
           text: `Izračunaj limito zaporedja $a_n = ${tex}$ (okrajšan ulomek ali celo število).`,
-          answer: frAns(p, u),
+          answer: frAns(p, u, [
+            // Splošna napaka prva; pri limiti −1 je vnos 1 prej zdrs pri predznaku. Razmerje prostih členov 0 ali 1
+            // bi prekrilo splošno razlago, zato ga tedaj izpustimo.
+            ...(p === -u ? [] : [{ value: 1, why: "Oblika $\\frac{\\infty}{\\infty}$ ni enaka 1. Števec in imenovalec deli z najvišjo potenco $n$ in poglej, kaj ostane." }]),
+            ...freeRatio(numP[numP.length - 1] / denP[denP.length - 1], "Ko gre $n$ proti neskončno, odločajo členi z najvišjo potenco $n$, ne prosti členi. Deli z najvišjo potenco."),
+          ]),
           hint: `Števec in imenovalec deli z najvišjo potenco $n${deg2 ? "^2" : ""}$.`,
           data: { given: [`a_n = ${tex}`], find: ["\\lim_{n \\to \\infty} a_n"] },
           formula: "\\lim_{n \\to \\infty} \\dfrac{1}{n} = 0",
@@ -1909,7 +1983,12 @@ const GENS = [
           const [vn, vd] = fr(S.a * N + S.b, S.c * N + S.d);
           return {
             text: `Kateri člen zaporedja $a_n = ${S.tex}$ je enak $${ft(vn, vd)}$?`,
-            answer: num(N, null, []),
+            answer: num(N, null, uniqMs(N, intMs([
+              { value: (vn * S.d + vd * S.b) / (vd * S.a - vn * S.c), why: "Ko prosti člen preneseš na drugo stran enačbe, mu spremeni predznak." },
+              { value: (vn * S.d - vd * S.b) / (vd * S.a + vn * S.c), why: "Ko člen z $n$ preneseš na drugo stran enačbe, mu spremeni predznak." },
+              { value: (vn * S.d - S.b) / (vd * S.a - vn * S.c), why: "Pri odpravi ulomkov pomnoži cel števec in cel imenovalec, tudi prosta člena." },
+              { value: -N, why: "Indeks člena je naravno število. Pri deljenju s koeficientom pred $n$ pazi na predznak." },
+            ]))),
             hint: "Zapiši enačbo $a_n = $ dana vrednost, odpravi ulomke in reši linearno enačbo za $n$.",
             data: { given: [`a_n = ${S.tex}`, `a_n = ${ft(vn, vd)}`], find: ["n"] },
             formula: `${S.tex} = ${ft(vn, vd)}`,
@@ -1956,7 +2035,10 @@ const GENS = [
       const inner = `${k === 1 ? "" : k}n^2 ${sg(a)}n`.replace("+ 1n", "+ n").replace("- 1n", "- n");
       return {
         text: `Izračunaj $\\lim\\limits_{n \\to \\infty} \\left(\\sqrt{${inner}} - ${sq === 1 ? "" : sq}n\\right)$. Vpiši ulomek ali celo število.`,
-        answer: frAns(a, 2 * sq),
+        answer: frAns(a, 2 * sq, [
+          { value: 0, why: "Oblika $\\infty - \\infty$ ni enaka 0. Izraz najprej racionaliziraj, nato deli z $n$." },
+          { value: a / sq, why: `Po racionalizaciji deli števec in imenovalec z $n$. Kam gre imenovalec $\\sqrt{${inner}} + ${sq === 1 ? "" : sq}n$, deljen z $n$? Upoštevaj oba člena.` },
+        ]),
         hint: "Pomnoži in deli z izrazom $\\sqrt{\\ldots} + " + (sq === 1 ? "" : sq) + "n$ (racionalizacija).",
         data: { given: [`a_n = \\sqrt{${inner}} - ${sq === 1 ? "" : sq}n`], find: ["\\lim_{n \\to \\infty} a_n"] },
         formula: "(\\sqrt{A} - B)(\\sqrt{A} + B) = A - B^2",
@@ -2131,7 +2213,11 @@ const GENS = [
         const series = `${terms[0]} ${sg(terms[1])} ${sg(terms[2])} ${a1 * qn ** 3 < 0 ? "-" : "+"} \\ldots`;
         return {
           text: `Izračunaj vsoto neskončne geometrijske vrste $${series}$ (okrajšan ulomek ali celo število).`,
-          answer: frAns(a1 * qd, qd - qn),
+          answer: frAns(a1 * qd, qd - qn, [
+            { value: (a1 * qd) / (qd + qn), why: qn < 0 ? "Pazi na predznak: pri negativnem kvocientu je $1 - q = 1 + |q|$, imenovalec je torej večji od 1." : "V imenovalcu formule je $1 - q$, ne $1 + q$." },
+            { value: (a1 * qn) / (qn - qd), why: "Kvocient je drugi člen deljeno s prvim ($q = a_2 : a_1$), ne obratno. Pri konvergentni vrsti je $|q| < 1$." },
+            { value: (a1 * qn) / (qd - qn), why: "V števcu formule je prvi člen vrste $a_1$, ne drugi." },
+          ]),
           hint: "Določi prvi člen in kvocient. Vrsta je konvergentna, ker je $|q| < 1$.",
           data: { given: [`a_1 = ${a1}`, `\\text{vrsta: } ${series.replace(" \\ldots", "").replace(/ [+-]$/, "")} = s`], find: ["s"] },
           formula: "s = \\dfrac{a_1}{1 - q},\\ |q| < 1",
@@ -2142,7 +2228,7 @@ const GENS = [
         const t = r.int(0, 2);
         if (t === 0) {
           const mixed = r.next() < 0.5;
-          let tex, n, d, steps;
+          let tex, n, d, steps, ms;
           if (mixed) {
             const a = r.int(1, 9);
             let b;
@@ -2150,6 +2236,10 @@ const GENS = [
             while (b === a);
             tex = `0{,}${a}\\overline{${b}}`;
             [n, d] = [9 * a + b, 90];
+            ms = [
+              { value: (10 * a + b) / 99, why: `Ponavlja se le števka ${b}, števka ${a} ni del periode. Vrsta se začne šele pri $\\frac{${b}}{100}$.` },
+              { value: b / 90, why: `Ne pozabi prvega člena $\\frac{${a}}{10}$, ki ni del vrste: prišteti ga moraš vsoti vrste.` },
+            ];
             steps = `$${tex} = \\dfrac{${a}}{10} + \\dfrac{${b}}{100} + \\dfrac{${b}}{1000} + \\ldots$\nVrsta od drugega člena: $a_1 = \\dfrac{${b}}{100}$, $q = \\dfrac{1}{10}$, vsota $\\dfrac{${b}}{90}$.\n$${tex} = \\dfrac{${a}}{10} + \\dfrac{${b}}{90} = ${ft(n, d)}$`;
           } else {
             let d1, d2;
@@ -2159,11 +2249,15 @@ const GENS = [
             } while (d1 === d2);
             tex = `0{,}\\overline{${d1}${d2}}`;
             [n, d] = [10 * d1 + d2, 99];
+            ms = [
+              { value: (10 * d1 + d2) / 100, why: `To je končno decimalno število $0{,}${d1}${d2}$. Perioda se ponavlja v neskončnost, zato sešteješ neskončno geometrijsko vrsto s $q = \\frac{1}{100}$.` },
+              { value: (10 * d1 + d2) / 90, why: "Perioda ima dve števki, zato je kvocient vrste $q = \\frac{1}{100}$, ne $\\frac{1}{10}$." },
+            ];
             steps = `$${tex} = \\dfrac{${10 * d1 + d2}}{100} + \\dfrac{${10 * d1 + d2}}{10000} + \\ldots$\n$a_1 = \\dfrac{${10 * d1 + d2}}{100}$, $q = \\dfrac{1}{100}$\n$s = \\dfrac{${10 * d1 + d2}/100}{1 - 1/100} = \\dfrac{${10 * d1 + d2}}{99} = ${ft(n, d)}$`;
           }
           return {
             text: `Periodično decimalno število $${tex}$ zapiši kot vsoto geometrijske vrste in ga pretvori v okrajšan ulomek.`,
-            answer: frAns(n, d),
+            answer: frAns(n, d, ms),
             hint: "Razpiši število kot vsoto: vsaka ponovitev periode je naslednji člen geometrijske vrste.",
             data: { given: [`x = ${tex}`], find: ["x \\text{ kot ulomek}"] },
             formula: "s = \\dfrac{a_1}{1 - q}",
@@ -2177,7 +2271,10 @@ const GENS = [
         if (t === 1) {
           return {
             text: `Vsota neskončne geometrijske vrste je $${S}$, njen prvi člen pa $${a1}$. Kolikšen je kvocient? Vpiši ulomek.`,
-            answer: frAns(qn, qd),
+            answer: frAns(qn, qd, [
+              { value: a1 / S, why: "To je $1 - q$. Kvocient dobiš šele, ko izraziš $q = 1 - \\frac{a_1}{s}$." },
+              { value: 1 - S / a1, why: "Iz $s(1 - q) = a_1$ sledi $1 - q = \\frac{a_1}{s}$: deli z vsoto $s$, ne s prvim členom." },
+            ]),
             hint: "V formulo za vsoto vstavi znani količini in izrazi $q$.",
             data: { given: [`s = ${S}`, `a_1 = ${a1}`], find: ["q"] },
             formula: "s = \\dfrac{a_1}{1 - q}",
@@ -2252,7 +2349,10 @@ const GENS = [
       const [xn, xd] = fr(k * (sn - sd), sn);
       return {
         text: `Za katero število $x$ je vsota vrste $1 + \\dfrac{x}{${k}} + \\dfrac{x^2}{${k * k}} + \\dfrac{x^3}{${k ** 3}} + \\ldots$ enaka $${ft(sn, sd)}$? Vpiši ulomek ali celo število.`,
-        answer: frAns(xn, xd),
+        answer: frAns(xn, xd, [
+          { value: (sn - sd) / sn, why: `To je kvocient $q$, ne $x$. Poveži ju z $q = \\frac{x}{${k}}$.` },
+          { value: (k * (sd - sn)) / sd, why: "Iz $\\frac{1}{1 - q} = s$ sledi $1 - q = \\frac{1}{s}$, ne $1 - q = s$." },
+        ]),
         hint: "Kvocient vrste je $\\frac{x}{" + k + "}$. Zapiši vsoto in reši enačbo; preveri še pogoj $|q| < 1$.",
         data: { given: [`a_1 = 1`, `q = \\dfrac{x}{${k}}`, `s = ${ft(sn, sd)}`], find: ["x"] },
         formula: "s = \\dfrac{a_1}{1 - q},\\ |q| < 1",
@@ -2409,7 +2509,12 @@ const GENS = [
         const de = [u, r.int(-8, 8), r.nonZero(-8, 8)];
         return {
           text: `Izračunaj $\\lim\\limits_{x \\to \\infty} \\dfrac{${poly(nu)}}{${poly(de)}}$ (ulomek ali celo število).`,
-          answer: frAns(p, u),
+          answer: frAns(p, u, [
+            // Splošni napaki prvi; pri limiti −1 je vnos 1 prej zdrs pri predznaku.
+            ...(p === -u ? [] : [{ value: 1, why: "Oblika $\\frac{\\infty}{\\infty}$ ni enaka 1. Števec in imenovalec deli z $x^2$ in poglej, kaj ostane." }]),
+            { value: 0, why: "Proti 0 gredo le členi z $\\frac{1}{x}$ in $\\frac{1}{x^2}$; vodilna koeficienta ostaneta." },
+            ...freeRatio(nu[2] / de[2], "Ko gre $x$ proti neskončno, odločajo členi z najvišjo potenco $x$, ne prosti členi."),
+          ]),
           hint: "Števec in imenovalec deli z najvišjo potenco $x^2$.",
           data: { given: [`f(x) = \\dfrac{${poly(nu)}}{${poly(de)}}`], find: ["\\lim_{x \\to \\infty} f(x)"] },
           formula: "\\lim_{x \\to \\infty} \\dfrac{1}{x^k} = 0",
@@ -2429,7 +2534,12 @@ const GENS = [
           const de = fromRoots([a, u]);
           return {
             text: `Izračunaj $\\lim\\limits_{x \\to ${a}} \\dfrac{${poly(nu)}}{${poly(de)}}$ (ulomek ali celo število).`,
-            answer: frAns(a - s, a - u),
+            answer: frAns(a - s, a - u, [
+              { value: 1, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 1. Razstavi števec in imenovalec ter okrajšaj skupni faktor." },
+              { value: 0, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 0. Razstavi števec in imenovalec ter okrajšaj skupni faktor." },
+              // Napačen predznak ničel; vrednosti 0 in 1 imata splošno razlago (0/0), zato tedaj odpade.
+              ...freeRatio((a + s) / (a + u), "Pri razcepu $x^2 + bx + c = (x - x_1)(x - x_2)$ pazi na predznaka ničel."),
+            ]),
             hint: "Vstavljanje da $\\frac{0}{0}$: števec in imenovalec imata skupni faktor. Razstavi oba.",
             data: { given: [`f(x) = \\dfrac{${poly(nu)}}{${poly(de)}}`], find: [`\\lim_{x \\to ${a}} f(x)`] },
             formula: "x^2 + bx + c = (x - x_1)(x - x_2)",
@@ -2446,7 +2556,10 @@ const GENS = [
           const res = inv ? [m, k] : [k, m];
           return {
             text: `Izračunaj $\\lim\\limits_{x \\to 0} ${form}$ (ulomek ali celo število).`,
-            answer: frAns(...res),
+            answer: frAns(...res, [
+              { value: 1, why: `Limita $\\frac{\\${form.includes("tan") ? "tan" : "sin"} u}{u} = 1$ velja le, ko je v drugem delu ulomka isti izraz $u$ kot v argumentu ${form.includes("tan") ? "tangensa" : "sinusa"}. Ulomek najprej ustrezno razširi.` },
+              { value: 0, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 0. Uporabi limito $\\frac{\\sin u}{u} \\to 1$." },
+            ]),
             hint: `Uporabi znano limito $\\lim\\limits_{x \\to 0} \\frac{\\sin x}{x} = 1$: ulomek razširi tako, da bo pod $\\sin ${k}x$ stal ravno $${k}x$.`.replace(/\b1x/g, "x"),
             data: { given: [`f(x) = ${form}`], find: ["\\lim_{x \\to 0} f(x)"] },
             formula: "\\lim_{x \\to 0} \\dfrac{\\sin x}{x} = 1",
@@ -2456,7 +2569,10 @@ const GENS = [
         const k = r.int(1, 6);
         return {
           text: `Izračunaj $\\lim\\limits_{x \\to 0} \\dfrac{\\sqrt{x + ${k * k}} - ${k}}{x}$ (ulomek).`,
-          answer: frAns(1, 2 * k),
+          answer: frAns(1, 2 * k, [
+            { value: 1 / k, why: `Po racionalizaciji je v imenovalcu $\\sqrt{x + ${k * k}} + ${k}$. Kam gre ta vsota, ko gre $x$ proti 0? Upoštevaj oba člena.` },
+            { value: 0, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 0. Števec najprej racionaliziraj." },
+          ]),
           hint: "Pomnoži števec in imenovalec z $\\sqrt{x + " + k * k + "} + " + k + "$.",
           data: { given: [`f(x) = \\dfrac{\\sqrt{x + ${k * k}} - ${k}}{x}`], find: ["\\lim_{x \\to 0} f(x)"] },
           formula: "(\\sqrt{A} - B)(\\sqrt{A} + B) = A - B^2",
@@ -2471,7 +2587,10 @@ const GENS = [
         const fx = `\\begin{cases} ax${b ? ` ${sg(b)}` : ""}, & x < ${c} \\\\ x^2${d ? ` ${sg(d)}` : ""}, & x \\ge ${c} \\end{cases}`;
         return {
           text: `Za katero vrednost parametra $a$ je funkcija $f(x) = ${fx}$ zvezna? Vpiši ulomek ali celo število.`,
-          answer: frAns(an, ad),
+          answer: frAns(an, ad, [
+            { value: (c * c + d + b) / c, why: `Ko prosti člen $${b}$ preneseš na drugo stran enačbe, mu spremeni predznak.` },
+            { value: c * c + d - b, why: `Na koncu še deli s koeficientom pred $a$ (to je $${c}$).` },
+          ]),
           hint: `V točki $x = ${c}$ se morata leva in desna limita ujemati z vrednostjo $f(${c})$.`,
           data: { given: [`f(x) = x^2${d ? ` ${sg(d)}` : ""}`, `x_0 = ${c}`], find: ["a"] },
           formula: "\\lim_{x \\to c^-} f(x) = \\lim_{x \\to c^+} f(x) = f(c)",
@@ -2875,7 +2994,12 @@ const GENS = [
           const a = r.nonZero(-12, 12);
           return {
             text: `Velja $\\displaystyle\\int ${a === 1 ? "" : a === -1 ? "-" : a}x^${n === 1 ? "{}" : n}\\,dx = kx^{${n + 1}} + C$. Koliko je $k$? Vpiši ulomek ali celo število.`.replace("x^{}", "x"),
-            answer: frAns(a, n + 1),
+            answer: frAns(a, n + 1, [
+              { value: a, why: "Pri integriranju potence eksponent povečaš za 1 in koeficient deliš z novim eksponentom." },
+              // Pri n = 1 je deljenje s starim eksponentom isto kot brez deljenja: velja prva razlaga.
+              ...(n === 1 ? [] : [{ value: a / n, why: `Deli z novim eksponentom $${n + 1}$, ne s starim $${n}$.` }]),
+              { value: a * (n + 1), why: "Z novim eksponentom deliš, ne množiš (množenje z eksponentom je pravilo za odvod)." },
+            ]),
             hint: "Pri integriranju potence eksponent povečaš za 1 in z novim eksponentom deliš.",
             data: { given: [`f(x) = ${a === 1 ? "" : a === -1 ? "-" : a}x^${n === 1 ? "{}" : n}`.replace("x^{}", "x")], find: ["k"] },
             formula: "\\int x^n\\,dx = \\dfrac{x^{n+1}}{n + 1} + C",
@@ -2953,7 +3077,11 @@ const GENS = [
         const inner = le(a, b);
         return {
           text: `Velja $\\displaystyle\\int (${inner})^${n}\\,dx = k(${inner})^{${n + 1}} + C$. Koliko je $k$? Vpiši ulomek.`,
-          answer: frAns(1, a * (n + 1)),
+          answer: frAns(1, a * (n + 1), [
+            { value: 1 / (n + 1), why: `Ne pozabi notranjega odvoda: iz $dt = ${a}\\,dx$ sledi $dx = \\frac{dt}{${a}}$, zato deliš še z $${a}$.` },
+            { value: a / (n + 1), why: `Z notranjim odvodom $${a}$ deliš, ne množiš: $dx = \\frac{dt}{${a}}$.` },
+            { value: 1 / (a * n), why: `Deli z novim eksponentom $${n + 1}$, ne s starim $${n}$.` },
+          ]),
           hint: `Uvedi novo spremenljivko $t = ${inner}$; potem je $dx = \\frac{dt}{${a}}$.`,
           data: { given: [`f(x) = (${inner})^${n}`], find: ["k"] },
           formula: ["t = ax + b,\\ dt = a\\,dx", "\\int t^n\\,dt = \\dfrac{t^{n+1}}{n + 1} + C"],
@@ -2966,7 +3094,11 @@ const GENS = [
         const m = r.pick([1, 2, 3, 4, 6]);
         return {
           text: `Velja $\\displaystyle\\int ${m === 1 ? "" : m}x(x^2 + ${c})^${n === 1 ? "{}" : n}\\,dx = k(x^2 + ${c})^{${n + 1}} + C$. Koliko je $k$? Vpiši ulomek ali celo število.`.replace("^{}", ""),
-          answer: frAns(m, 2 * (n + 1)),
+          answer: frAns(m, 2 * (n + 1), [
+            { value: m / (n + 1), why: "Iz $dt = 2x\\,dx$ sledi $x\\,dx = \\frac{dt}{2}$: ne pozabi deliti z 2." },
+            { value: (2 * m) / (n + 1), why: "Faktor 2 iz $dt = 2x\\,dx$ je na napačni strani: $x\\,dx = \\frac{dt}{2}$, z 2 torej deliš." },
+            { value: m / (2 * n), why: `Deli z novim eksponentom $${n + 1}$, ne s starim $${n}$.` },
+          ]),
           hint: `Uvedi $t = x^2 + ${c}$; potem je $dt = 2x\\,dx$.`,
           data: { given: [`f(x) = ${m === 1 ? "" : m}x(x^2 + ${c})^${n === 1 ? "{}" : n}`.replace("^{}", "")], find: ["k"] },
           formula: ["t = x^2 + c,\\ dt = 2x\\,dx", "\\int t^n\\,dt = \\dfrac{t^{n+1}}{n + 1} + C"],
@@ -2976,7 +3108,11 @@ const GENS = [
       const num1 = (1 + c) ** (n + 1) - c ** (n + 1);
       return {
         text: `Funkcija $F$ je nedoločeni integral funkcije $f(x) = x(x^2 + ${c})^${n === 1 ? "{}" : n}$ in velja $F(0) = 0$. Izračunaj $F(1)$ (ulomek ali celo število).`.replace("^{}", ""),
-        answer: frAns(num1, 2 * (n + 1)),
+        answer: frAns(num1, 2 * (n + 1), [
+          { value: (1 + c) ** (n + 1) / (2 * (n + 1)), why: "Konstante $C$ ne smeš izpustiti: določi jo iz pogoja $F(0) = 0$." },
+          { value: num1 / (n + 1), why: "Iz $dt = 2x\\,dx$ sledi $x\\,dx = \\frac{dt}{2}$: ne pozabi deliti z 2." },
+          { value: (1 + c) ** n, why: "To je $f(1)$. Najprej z integriranjem poišči $F(x)$, nato vstavi $x = 1$." },
+        ]),
         hint: `Z uvedbo $t = x^2 + ${c}$ najprej poišči $F(x)$, nato določi konstanto iz pogoja $F(0) = 0$.`,
         data: { given: [`f(x) = x(x^2 + ${c})^${n === 1 ? "{}" : n}`.replace("^{}", ""), "F(0) = 0"], find: ["F(1)"] },
         formula: ["t = x^2 + c,\\ dt = 2x\\,dx", "\\int t^n\\,dt = \\dfrac{t^{n+1}}{n + 1} + C"],
