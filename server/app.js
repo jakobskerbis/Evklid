@@ -1839,7 +1839,7 @@ export function createApp(store, opts = {}) {
     const danes = s.settings.goal === "matura" && key === pathKeyFor(s.settings) ? danesMatura(s, view) : null;
     res.json({ ...view, label: pathLabelFor(key, s.settings.school_system), defaultKey: pathKeyFor(s.settings), xp: progress.xpSummary(s.id), ...(danes ? { danes } : {}) });
   });
-  // Kartica »Danes« na Učni poti za cilj matura (j, 20. 11. 2026, public/goal.js danesHtml): najprej ponavljanje, kar je
+  // Kartica »Danes« na Učni poti za cilj matura (j, 20. 11. 2026, public/zacetna.js heroHtml): najprej ponavljanje, kar je
   // na vrsti, nato prva tema iz »Najprej vadi« na strani NPZ in matura (ista examReadiness, zato se nikoli ne razlikujeta).
   // Minute: 1,5 minute na nalogo (Današnji trening: 10 nalog ≈ 15 minut). odsoten: dni od zadnje naloge (0 = danes ali še nobene).
   const danesMatura = (s, view) => {
