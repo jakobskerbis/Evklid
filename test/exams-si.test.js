@@ -19,6 +19,16 @@ test("si exams: NPZ and matura for Slovenian students only, default by school an
   assert.equal(key("SREDNJA_SOLA", "3. letnik VR", "MAT"), "MAT-EX-MATURA", "SŠ: privzeto splošna matura");
 });
 
+test("si exams: path labels and subject names are Slovenian (no »Mathematics« in the matura header)", () => {
+  assert.equal(getPath("MAT-EX-MATURA").label, "Splošna matura – Matematika");
+  assert.doesNotMatch(getPath("MAT-EX-MATURA").label, /Mathematics/);
+  assert.equal(getPath("FIZ-EX-NPZ9").label, "NPZ 9. razred – Fizika");
+  const info = examInfo("MAT-EX-MATURA", "SI");
+  assert.equal(info.subjectName, "Matematika");
+  assert.deepEqual(info.subjects.map((s) => s.name), ["Matematika", "Fizika", "Kemija", "Biologija"]);
+  assert.equal(getPath("MAT-EX-SAT").label, "SAT – Mathematics"); // tuji izpiti ostanejo angleški
+});
+
 test("si exams: topics come from the Slovenian learning paths, tasks are in Slovenian", () => {
   const info = examInfo("MAT-EX-MATURA", "SI");
   assert.equal(info.tasksLang, "sl");
