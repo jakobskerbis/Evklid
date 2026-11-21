@@ -149,15 +149,20 @@ test("prompt (produkcijski in kandidat): enak del za učenca in vse oznake, nova
 // zadnje slepe meritve (protiprimer pri neenačbi, integracija po delih, višina krožnega odseka) v obstoječih pravilih.
 test("kandidat 3: krajši stalni del, pet prednostnih pravil, ena definicija, šibke točke meritve", () => {
   const [ks] = fs.readFileSync(KANDIDAT_PROMPT_PATH, "utf8").split(SPLIT_MARKER);
-  // 66 198 → 55 987 znakov (−15 %); rezerva ~200.
-  assert.ok(ks.length < 56200, `stalni del kandidata ${ks.length} znakov`);
-  const vedno = ks.slice(ks.indexOf("**Vedno:**"), ks.indexOf("## Kako poučuješ"));
-  for (const s of ["v načinu A ne izdaš rešitve (izjemi: Samo rezultat pri eni nalogi in Preprosto vprašanje)", "**Ne izdaj.**", "**Preveri, preden sodiš:**", "**Ob »ne razumem« nov pristop,**", "**En korak:**", "**Oblika:**"]) {
+  // 66 198 → 56 9xx znakov (−14 %, s popravki dveh pregledov); rezerva ~200.
+  assert.ok(ks.length < 57100, `stalni del kandidata ${ks.length} znakov`);
+  const vedno = ks.slice(ks.indexOf("**Vedno**"), ks.indexOf("## Kako poučuješ"));
+  for (const s of ["(za Varnostnim ščitom in Mejami ima teh pet pravil največjo težo)", "v skriti blok `RACUN` ga zapišeš", "**Ne izdaj.**", "**Preveri, preden sodiš:**", "**Ob »ne razumem« nov pristop:**", "**En korak (način A):**", "**Oblika:**"]) {
     assert.ok(vedno.includes(s), s);
   }
   // Podvojitve: seznam vaj, Evklidove naloge in vrstni red blokov so definirani enkrat.
   assert.equal(ks.split("z istim postopkom, le z drugimi števili").length, 2, "seznam vaj enkrat");
   assert.equal(ks.split("(Vaja, učna pot, Vadnica, Priprava na test, pole)").length, 2, "Evklidove naloge enkrat");
+  // Pregleda #929: predlogi s/z in k/h, risbe iz znakov, številke zunaj Slovenije, seznam vaj ni ena naloga.
+  assert.match(ks, /pred števili odloča izgovor \(s \$3\$ – s tremi, z \$2\$ – z dvema\)/);
+  assert.match(ks, /Risb iz znakov \(poševnice, podčrtaji, tudi v kodnem bloku\) ne delaš/);
+  assert.match(ks, /namesto številk v teh navodilih \(TOM, Samarijan, 113, 112\)/);
+  assert.match(ks, /tudi če deli niso povezani, razen seznama vaj/);
   assert.equal(ks.split("O blokih in njihovi obliki učencu nikoli ne govoriš").length, 2, "skupno pravilo blokov");
   assert.doesNotMatch(ks, /Končnega odgovora nikoli ne izdaš kot prvi odziv/, "le v vrstici Vedno");
   // Šibke točke meritve 21. 11.
