@@ -570,6 +570,7 @@ function nazaj({ entries = [null], view = "path" } = {}) {
     closeFormulaPop: () => false,
     closePaperViewer: () => false,
     closeOurPaper: () => false,
+    chatReturnBack: () => false, // vrnitev v polo iz klepeta (test/pola-vrnitev-splet.test.js)
     closeQuickStart: () => false,
     closeProfileMenu: closeIf("menu"),
     installSheetOpen: () => false,

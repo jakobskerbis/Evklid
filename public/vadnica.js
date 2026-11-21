@@ -314,6 +314,7 @@ function renderTask(task, ctx) {
     sendBtns.forEach((b) => (b.disabled = true));
     try {
       finished = await checkTask(task, ctx, value);
+      odgovorShrani(task.id, ""); // poslano: osnutek ni več potreben (odgovor ostane v polju)
     } finally {
       checking = false;
     }
@@ -376,8 +377,33 @@ function renderTask(task, ctx) {
       readFn: (image) => api(`/api/students/${state.student.id}/tasks/${task.id}/read`, { method: "POST", body: { image } }),
       stay: !!ctx.noFocus,
     });
+    // Osnutek odgovora (UX maturanta 9): preživi odhod z naloge, osvežitev in »Nadaljuj tukaj«.
+    const ans = $("#answer");
+    if (!ans.value) ans.value = odgovorOsnutek(task.id);
+    ans.addEventListener("input", () => odgovorShrani(task.id, ans.value));
     if (!ctx.noFocus && !document.body.classList.contains("pad-open")) $("#answer").focus();
   } else closePad();
+}
+
+// Natipkan, še neposlan odgovor naloge za vsako nalogo (id) v sessionStorage: ostane do pošiljanja, tudi ob vrnitvi
+// na isto nalogo, osvežitvi strani in prevzemu profila (account.js »Nadaljuj tukaj« osveži stran). Vmesni koraki so
+// v localStorage (workKey).
+// Ključ ima tudi id profila: id naloge se po izbrisu profila (SQLite) lahko ponovi pri drugem profilu.
+const odgovorKey = (id) => `evklid.odgovor.${state.student?.id}.${id}`;
+function odgovorOsnutek(id) {
+  try {
+    return (id && sessionStorage.getItem(odgovorKey(id))) || "";
+  } catch {
+    return "";
+  }
+}
+const OSNUTEK_MAX = 20000; // znakov; daljše besedilo (prilepljeno) ne zasede shrambe zavihka
+function odgovorShrani(id, v) {
+  if (!id) return;
+  try {
+    if (v && v.trim()) sessionStorage.setItem(odgovorKey(id), v.slice(0, OSNUTEK_MAX));
+    else sessionStorage.removeItem(odgovorKey(id));
+  } catch {}
 }
 
 // ---------- vmesni koraki (kot v zvezek) in pomoč inštruktorja pri nalogi ----------
@@ -969,10 +995,10 @@ const taskMdForChat = (md) =>
 // Dvojni dotik ne odpre dveh pogovorov.
 let paperBusy = false;
 async function paperTutor(entry, subjectName) {
-  if (!entry || paperBusy) return;
+  if (!entry || paperZaseden()) return;
   paperBusy = true;
   try {
-    await newTutorChat();
+    if (!(await newTutorChat())) return;
     const paper = paperLabel(entry, subjectName);
     state.paperCtx = { conv: state.conversationId, paper };
     fillInput(`${t("pp.tutorMsg", { paper })} `);
@@ -986,7 +1012,7 @@ async function paperTutor(entry, subjectName) {
 // učenec označi, ostanejo v tej napravi. »Vprašaj inštruktorja«: nov pogovor z nalogo, naša rešitev gre
 // inštruktorju kot skrit kontekst (server/paper-context.js), učenec vidi le nalogo.
 async function openOurs(entry, subjectName, focus = null) {
-  if (!entry?.ours || paperBusy) return;
+  if (!entry?.ours || paperZaseden()) return;
   paperBusy = true;
   try {
     const [paper, op] = await Promise.all([api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`), ourMod.load(), pripraviIzris()]);
@@ -1007,7 +1033,8 @@ async function openOurs(entry, subjectName, focus = null) {
         set: (v) => localStorageSet(key, JSON.stringify(v)),
       },
       focus,
-      onTutor: (task, part) => oursTutor(entry, title, task, part),
+      // Vrnitev iz klepeta (← ali Nazaj) odpre isto polo pri isti nalogi (UX maturanta 5; app.js chatReturnBack).
+      onTutor: (task, part) => oursTutor(entry, title, task, part, { view: currentView, open: () => poPaperBusy(() => openOurs(entry, subjectName, paper.tasks.indexOf(task))) }),
       // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
       onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
     });
@@ -1017,42 +1044,83 @@ async function openOurs(entry, subjectName, focus = null) {
     paperBusy = false;
   }
 }
-async function oursTutor(entry, title, task, part) {
-  if (paperBusy) return;
+// Počaka, da se konča odpiranje pogovora (paperBusy, največ 5 s), nato fn: hiter ← med odpiranjem klepeta iz pole.
+async function poPaperBusy(fn) {
+  for (let i = 0; paperBusy && i < 50; i++) await new Promise((r) => setTimeout(r, 100));
+  return fn();
+}
+async function oursTutor(entry, title, task, part, back = null) {
+  if (paperZaseden()) return;
   paperBusy = true;
+  let msg;
+  // Pola, odprta na strani (NPZ in matura), ne v klepetu: ← v klepetu in Nazaj jo odpreta znova. Velja že, ko se klepet
+  // pokaže (conv: null, preden je pogovor ustvarjen), da hiter ← ne vodi drugam.
+  state.chatReturn = back && back.view !== "chat" ? { ...back, conv: null } : null;
   try {
-    await newTutorChat();
+    const kam = await newTutorChat();
+    if (kam !== "chat") state.chatReturn = null; // učenec je medtem odšel drugam: ← ne vodi nazaj na polo
+    if (!kam) return;
+    if (state.chatReturn) state.chatReturn.conv = state.conversationId;
     const n = partLabel(task, part);
     const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
     const strip = taskMdForChat;
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
     state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
-    await send(`${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`);
+    msg = `${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`;
   } catch (err) {
-    toast(err.message);
+    state.chatReturn = null;
+    return toast(err.message);
   } finally {
     paperBusy = false;
   }
+  // Odgovor inštruktorja ne drži paperBusy: med njim ← ali Nazaj polo že odpreta znova (chatReturnBack).
+  await send(msg).catch((err) => toast(err.message));
 }
 // ---------- naloga iz pretekle pole, omenjena v klepetu (j 19. 11. 2026) ----------
 // »matura mat OR 2024 pola 1 naloga 5«: public/naloga-pole/klepet.js (s svojimi besedili) se naloži šele ob prvi
 // omembi pole, ker ni del prvega odprtja (proračun hitrosti, test/hitrost-proracun.test.js).
 // Hiter predpregled (brez nalaganja modula): kratko sporočilo z izpitom in »naloga«; natančno prepozna modul.
+// Med odgovorom inštruktorja (state.sending) bi send() novo vprašanje tiho zavrgel in ostal bi prazen pogovor
+// (pregled #917): najprej počaka, da se odgovor izpiše (največ 3 min), nato odpre nov pogovor. Vrne "chat" (klepet je
+// odprt), "ozadje" (učenec je med čakanjem odšel na drug zaslon: pogovor je odprt, a zaslona ne zamenjamo) ali null:
+// med čakanjem je zamenjal profil – vprašanje starega profila ne gre v pogovor (in mejo) novega, nič se ne pošlje.
+let tutorWaiting = false;
 async function newTutorChat() {
-  const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST", body: {} });
+  const sid = state.student?.id;
+  const zaslon = currentView;
+  if (state.sending) {
+    toast(t("pp.tutorWait"));
+    tutorWaiting = true;
+    try {
+      for (let i = 0; state.sending && i < 1800 && state.student?.id === sid; i++) await new Promise((r) => setTimeout(r, 100));
+    } finally {
+      tutorWaiting = false;
+    }
+    if (!state.student || state.student.id !== sid) return null;
+    if (state.sending) throw new Error(t("off.serverBusy"));
+  }
+  const conv = await api(`/api/students/${sid}/conversations`, { method: "POST", body: {} });
+  if (state.student?.id !== sid) return null;
   await loadConversations();
-  showView("chat");
+  const kam = currentView === zaslon || currentView === "chat" ? "chat" : "ozadje";
+  if (kam === "chat") showView("chat");
   await openConversation(conv.id);
+  return kam;
+}
+// Dejanje pole, ki ga zadrži čakanje na prejšnji odgovor (newTutorChat): kratko obvestilo namesto tihega neuspeha.
+function paperZaseden() {
+  if (paperBusy && tutorWaiting) toast(t("pp.tutorBusy"));
+  return paperBusy;
 }
 // »Pomoč pri tej nalogi« v preneseni poli (public/paper-viewer.js): nov pogovor, v enem sporočilu izrez naloge
 // (slika kot pri fotografiji) in besedilo iz pole. Pošlje se samo ta naloga, ker jo je učenec izbral.
 // Učenec vidi le kratek naslov in čisto besedilo naloge; navodilo za inštruktorja je skrit kontekst (state.paperCtx).
 async function paperTask(entry, subjectName, task) {
-  if (!entry || !task?.image || paperBusy) return;
+  if (!entry || !task?.image || paperZaseden()) return;
   paperBusy = true;
   try {
-    await newTutorChat();
+    if (!(await newTutorChat())) return;
     const paper = paperLabel(entry, subjectName);
     const head = task.label ? t("pp.taskMsg", { paper, n: task.label }) : t("pp.boxMsg", { paper, page: task.page });
     const text = String(task.text || "").slice(0, 1500).trim();

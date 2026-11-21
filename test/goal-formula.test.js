@@ -1,13 +1,13 @@
-// Cilj z datumom (nastavitve, prompt, opomnik ob 12.00) in klikljive formule (slovar, označevanje TeX).
+// Cilj z datumom (nastavitve, prompt, dnevni opomnik ob OPOMNIK_URA) in klikljive formule (slovar, označevanje TeX).
 import test from "node:test";
 import assert from "node:assert/strict";
 import katex from "katex";
 import { normalizeSettings } from "../server/settings.js";
 import { buildSystemPrompt } from "../server/prompt.js";
 import { openDb } from "../server/db.js";
-import { goalsFor, daysUntil, goalPrompt } from "../public/goal-data.js";
+import { goalsFor, daysUntil, goalPrompt, OPOMNIK_URA } from "../public/goal-data.js";
 import { annotateTex, lookupSymbol, lookupUnit, SYMBOLS, UNITS } from "../public/formula-data.js";
-import { buildGoalReminder, reminderDays, ljNow, isNoonTime } from "../server/accounts/goal-reminder.js";
+import { buildGoalReminder, reminderDays, ljNow, isReminderTime } from "../server/accounts/goal-reminder.js";
 
 test("goal settings: valid per school, date optional and deletable, reminder on by default", () => {
   const ss = normalizeSettings({ educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik", goal: "matura", goal_date: "2027-06-01" });
@@ -42,9 +42,12 @@ test("goal: countdown, prompt line and daily reminder until the goal day", () =>
   assert.equal(reminderDays({ ...child, settings: { ...child.settings, goal_reminder: false } }, "2027-05-05"), null);
   const mail = buildGoalReminder(child, 1, { appUrl: "http://x/" });
   assert.match(mail.subject, /NPZ: še 1 dan · Zala/);
-  // 11.30 UTC = 12.30 v Ljubljani pozimi
-  assert.equal(isNoonTime(new Date("2026-12-01T11:30:00Z")), true);
-  assert.equal(isNoonTime(new Date("2026-12-01T10:30:00Z")), false);
+  assert.match(mail.text, /Opomnik izklopite/); // račun staršev: vikanje
+  // Ena ura za e-pošto, potisno obvestilo in kartico (j, 21. 11. 2026: 16.00). 15.30 UTC = 16.30 v Ljubljani pozimi.
+  assert.equal(OPOMNIK_URA, 16);
+  assert.equal(isReminderTime(new Date("2026-12-01T15:30:00Z")), true);
+  assert.equal(isReminderTime(new Date("2026-12-01T14:30:00Z")), false);
+  assert.match(mail.html, /Dnevni opomnik ob 16\.00/);
   assert.equal(ljNow(new Date("2026-12-31T23:30:00Z")).date, "2027-01-01");
 });
 
@@ -60,6 +63,40 @@ test("goal reminder e-mail goes once per child per day", async () => {
   store.db.prepare("UPDATE students SET parent_id = 1 WHERE id IN (?, ?)").run(a.id, b.id);
   assert.equal(await api.sendGoalRemindersAll(), 1);
   assert.equal(await api.sendGoalRemindersAll(), 0);
+});
+
+test("goal reminder: skipped on a day the student already practised; self-only account gets tikanje", async () => {
+  const { mountAccounts, SELF_CONSENT_TEXT } = await import("../server/accounts/index.js");
+  const express = (await import("express")).default;
+  const store = openDb(":memory:");
+  const mails = [];
+  const api = mountAccounts(express(), store, { accounts: true, scheduler: false, resendKey: "", mailLog: (m) => mails.push(m), log: { error() {} } });
+  const far = `${new Date().getFullYear() + 1}-06-01`;
+  const ins = store.db.prepare("INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code, email_verified_at) VALUES (?, 'x', 'v', ?, ?, '2026-01-01')");
+  const self = ins.run("nika@p.si", "t1", "C1").lastInsertRowid;
+  const fam = ins.run("mama@p.si", "t2", "C2").lastInsertRowid;
+  const nika = store.createStudent("Nika", { goal: "matura", goal_date: far });
+  const jan = store.createStudent("Jan", { goal: "matura", goal_date: far });
+  const vadil = store.createStudent("Vid", { goal: "matura", goal_date: far });
+  store.db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(self, nika.id);
+  store.db.prepare("UPDATE students SET parent_id = ? WHERE id IN (?, ?)").run(fam, jan.id, vadil.id);
+  store.db.prepare("INSERT INTO consents (parent_id, student_id, under_15, version, text, parent_email) VALUES (?, ?, 0, 'v', ?, 'nika@p.si')").run(self, nika.id, SELF_CONSENT_TEXT);
+  // 22.30 UTC prejšnji dan = 23.30 v Ljubljani: ne šteje; 23.30 UTC = 0.30 naslednji dan: šteje.
+  const now = new Date("2026-12-02T15:30:00Z");
+  store.db.prepare("INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, 5, 'task', '2026-12-01 22:30:00')").run(jan.id);
+  store.db.prepare("INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, 5, 'task', '2026-12-01 23:30:00')").run(vadil.id);
+  assert.equal(await api.sendGoalRemindersAll(now), 2); // Nika in Jan, Vid je danes že vadil
+  const toNika = mails.find((m) => m.includes("nika@p.si"));
+  const toMama = mails.filter((m) => m.includes("mama@p.si"));
+  assert.equal(toMama.length, 1);
+  assert.match(toMama[0], /Jan/);
+  assert.match(toNika, /Danes 15 minut\?/);
+  // HTML za »Zame«: »Tvoj cilj: Matura (1. 6. 2027).«, ne »Tvoj cilj je Matura« (pregled #917, 3. prehod).
+  const { html } = buildGoalReminder({ name: "Nika", settings: { goal: "matura", goal_date: "2027-06-01" } }, 10, { appUrl: "https://x/", self: true });
+  assert.match(html, /Tvoj cilj: <b>Matura<\/b> \(1\. 6\. 2027\)\./);
+  assert.doesNotMatch(html, /Tvoj cilj je/);
+  assert.match(toNika, /Opomnik izklopiš/);
+  assert.doesNotMatch(toNika, /Nika|izklopite/); // brez tretje osebe in vikanja
 });
 
 test("formula symbols: subject meanings, units after numbers, no chemistry formulas or subscripts", () => {
@@ -101,5 +138,14 @@ test("formula symbols: subject meanings, units after numbers, no chemistry formu
   for (const [k, u] of Object.entries(UNITS)) {
     assert.ok(u.n && u.en, k);
     if (u.c) katex.renderToString(u.c, { throwOnError: true, strict: "ignore" });
+  }
+});
+
+test("settings registry tells the tutor the real reminder hour (OPOMNIK_URA), not 12:00", async () => {
+  const { PROFILE_SETTINGS } = await import("../public/settings-registry.js");
+  const { OPOMNIK_URA } = await import("../public/goal-data.js");
+  for (const k of ["goal_date", "goal_reminder"]) {
+    assert.match(PROFILE_SETTINGS[k].desc, new RegExp(`reminder at ${OPOMNIK_URA}:00`), k);
+    assert.doesNotMatch(PROFILE_SETTINGS[k].desc, /12:00/, k);
   }
 });
