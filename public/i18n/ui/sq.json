@@ -3441,7 +3441,7 @@
   "pp.tutor": "Zgjidh me mësuesin",
   "pp.tutorMsg": "Po zgjidh provimin e kaluar {paper}.",
   "pp.openLocal": "Hap provimin e shkarkuar",
-  "pp.openLocalHint": "Fillimisht shkarko provimin nga ric.si (butoni i parë), pastaj zgjidhe me «Hap provimin e shkarkuar». Provimi mbetet në pajisjen tënde; tutori merr vetëm detyrën për të cilën kërkon ndihmë.",
+  "pp.openLocalHint": "Fillimisht shkarko provimin nga ric.si (butoni «Fleta e provimit 1» ose «2»), pastaj zgjidhe me «Hap provimin e shkarkuar». Provimi mbetet në pajisjen tënde; tutori merr vetëm detyrën për të cilën kërkon ndihmë.",
   "pp.viewerClose": "Mbyll provimin",
   "pp.viewerLoading": "Po hapet provimi …",
   "pp.notPdf": "Ky skedar nuk është PDF. Zgjidh provimin e shkarkuar nga ric.si.",

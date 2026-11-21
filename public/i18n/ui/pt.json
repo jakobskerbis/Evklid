@@ -3446,7 +3446,7 @@
   "pp.tutor": "Resolver com o tutor",
   "pp.tutorMsg": "Estou a resolver a prova anterior {paper}.",
   "pp.openLocal": "Abrir prova baixada",
-  "pp.openLocalHint": "Primeiro baixe a prova em ric.si (primeiro botão) e depois escolha-a com «Abrir prova baixada». A prova fica no seu dispositivo; o tutor recebe apenas a questão com que você pede ajuda.",
+  "pp.openLocalHint": "Primeiro baixe a prova em ric.si (botão «Caderno 1» ou «2») e depois escolha-a com «Abrir prova baixada». A prova fica no seu dispositivo; o tutor recebe apenas a questão com que você pede ajuda.",
   "pp.viewerClose": "Fechar prova",
   "pp.viewerLoading": "Abrindo a prova …",
   "pp.notPdf": "Este arquivo não é um PDF. Escolha a prova baixada de ric.si.",

@@ -3415,7 +3415,7 @@
   "pp.tutor": "Giải cùng gia sư",
   "pp.tutorMsg": "Mình đang làm đề thi cũ {paper}.",
   "pp.openLocal": "Mở đề đã tải",
-  "pp.openLocalHint": "Trước tiên hãy tải đề từ ric.si (nút đầu tiên), rồi chọn bằng «Mở đề đã tải». Đề vẫn nằm trên thiết bị của bạn; gia sư chỉ nhận câu mà bạn cần giúp.",
+  "pp.openLocalHint": "Trước tiên hãy tải đề từ ric.si (nút «Đề thi 1» hoặc «2»), rồi chọn bằng «Mở đề đã tải». Đề vẫn nằm trên thiết bị của bạn; gia sư chỉ nhận câu mà bạn cần giúp.",
   "pp.viewerClose": "Đóng đề",
   "pp.viewerLoading": "Đang mở đề …",
   "pp.notPdf": "Tệp này không phải PDF. Hãy chọn đề đã tải từ ric.si.",

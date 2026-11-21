@@ -3442,7 +3442,7 @@
   "pp.tutor": "Risolvi con il tutor",
   "pp.tutorMsg": "Sto svolgendo la prova passata {paper}.",
   "pp.openLocal": "Apri la prova scaricata",
-  "pp.openLocalHint": "Prima scarica la prova da ric.si (primo pulsante), poi sceglila con «Apri la prova scaricata». La prova resta sul tuo dispositivo; al tutor arriva solo l'esercizio per cui chiedi aiuto.",
+  "pp.openLocalHint": "Prima scarica la prova da ric.si (pulsante «Fascicolo 1» o «2»), poi sceglila con «Apri la prova scaricata». La prova resta sul tuo dispositivo; al tutor arriva solo l'esercizio per cui chiedi aiuto.",
   "pp.viewerClose": "Chiudi la prova",
   "pp.viewerLoading": "Apertura della prova …",
   "pp.notPdf": "Questo file non è un PDF. Scegli la prova scaricata da ric.si.",

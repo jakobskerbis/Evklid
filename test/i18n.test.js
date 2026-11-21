@@ -122,3 +122,15 @@ test("region reaches the tutor prompt and is validated", () => {
   const p = buildSystemPrompt({ settings: normalizeSettings({ language: "pt", region: "BR" }), studentName: "Ana" });
   assert.match(systemBlocks(p)[1].text, /Jezik pogovora: Portuguese – Português \(pt\), regija: Brazil \(BR\)/);
 });
+
+// Navodilo pri preteklih polah: prvi gumb vrstice je »Reši našo polo v tem slogu«, prenos z ric.si sta
+// »Izpitna pola 1« in »2« (UX maturanta, točka 8). Vsak jezik imenuje gumb s svojim prevodom pp.file.paper1.
+test("past papers hint names the »Exam paper 1« button, not »the first button«, in every language", () => {
+  assert.match(SL["pp.openLocalHint"], /»Izpitna pola 1« ali »2«/);
+  assert.doesNotMatch(SL["pp.openLocalHint"], /prvi gumb/);
+  for (const f of fs.readdirSync(UI_DIR).filter((x) => x.endsWith(".json"))) {
+    const ui = JSON.parse(fs.readFileSync(path.join(UI_DIR, f), "utf8"));
+    const label = ui["pp.file.paper1"].replace(/\s*[1१১۱]$/u, "").replace(/^1\.\s*/, "");
+    assert.ok(ui["pp.openLocalHint"].includes(label), `${f}: ${ui["pp.openLocalHint"]}`);
+  }
+});

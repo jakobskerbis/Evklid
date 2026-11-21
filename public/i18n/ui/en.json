@@ -3441,7 +3441,7 @@
   "pp.tutor": "Solve with the tutor",
   "pp.tutorMsg": "I'm working on the past paper {paper}.",
   "pp.openLocal": "Open downloaded paper",
-  "pp.openLocalHint": "First download the paper from ric.si (first button), then choose it with “Open downloaded paper”. The paper stays on your device; the tutor only gets the task you ask for help with.",
+  "pp.openLocalHint": "First download the paper from ric.si (“Exam paper 1” or “2” button), then choose it with “Open downloaded paper”. The paper stays on your device; the tutor only gets the task you ask for help with.",
   "pp.viewerClose": "Close paper",
   "pp.viewerLoading": "Opening paper …",
   "pp.notPdf": "This file is not a PDF. Choose the paper downloaded from ric.si.",

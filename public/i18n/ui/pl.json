@@ -3505,7 +3505,7 @@
   "pp.tutor": "Rozwiązuj z korepetytorem",
   "pp.tutorMsg": "Rozwiązuję arkusz z poprzednich lat {paper}.",
   "pp.openLocal": "Otwórz pobrany arkusz",
-  "pp.openLocalHint": "Najpierw pobierz arkusz z ric.si (pierwszy przycisk), a potem wybierz go przyciskiem „Otwórz pobrany arkusz”. Arkusz zostaje na twoim urządzeniu; korepetytor dostaje tylko zadanie, przy którym prosisz o pomoc.",
+  "pp.openLocalHint": "Najpierw pobierz arkusz z ric.si (przycisk „Arkusz 1” lub „2”), a potem wybierz go przyciskiem „Otwórz pobrany arkusz”. Arkusz zostaje na twoim urządzeniu; korepetytor dostaje tylko zadanie, przy którym prosisz o pomoc.",
   "pp.viewerClose": "Zamknij arkusz",
   "pp.viewerLoading": "Otwieranie arkusza …",
   "pp.notPdf": "Ten plik nie jest plikiem PDF. Wybierz arkusz pobrany z ric.si.",

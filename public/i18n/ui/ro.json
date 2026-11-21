@@ -3473,7 +3473,7 @@
   "pp.tutor": "Rezolvă cu profesorul",
   "pp.tutorMsg": "Lucrez la subiectul din anii trecuți {paper}.",
   "pp.openLocal": "Deschide lucrarea descărcată",
-  "pp.openLocalHint": "Mai întâi descarcă lucrarea de pe ric.si (primul buton), apoi alege-o cu „Deschide lucrarea descărcată”. Lucrarea rămâne pe dispozitivul tău; tutorele primește doar exercițiul la care ceri ajutor.",
+  "pp.openLocalHint": "Mai întâi descarcă lucrarea de pe ric.si (butonul „Subiectul 1” sau „2”), apoi alege-o cu „Deschide lucrarea descărcată”. Lucrarea rămâne pe dispozitivul tău; tutorele primește doar exercițiul la care ceri ajutor.",
   "pp.viewerClose": "Închide lucrarea",
   "pp.viewerLoading": "Se deschide lucrarea …",
   "pp.notPdf": "Acest fișier nu este PDF. Alege lucrarea descărcată de pe ric.si.",

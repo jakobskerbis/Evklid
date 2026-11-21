@@ -3442,7 +3442,7 @@
   "pp.tutor": "Resolver con el tutor",
   "pp.tutorMsg": "Estoy resolviendo el examen anterior {paper}.",
   "pp.openLocal": "Abrir examen descargado",
-  "pp.openLocalHint": "Primero descarga el examen de ric.si (primer botón) y luego elígelo con «Abrir examen descargado». El examen se queda en tu dispositivo; al tutor solo le llega el ejercicio con el que pides ayuda.",
+  "pp.openLocalHint": "Primero descarga el examen de ric.si (botón «Cuadernillo 1» o «2») y luego elígelo con «Abrir examen descargado». El examen se queda en tu dispositivo; al tutor solo le llega el ejercicio con el que pides ayuda.",
   "pp.viewerClose": "Cerrar examen",
   "pp.viewerLoading": "Abriendo examen …",
   "pp.notPdf": "Este archivo no es un PDF. Elige el examen descargado de ric.si.",

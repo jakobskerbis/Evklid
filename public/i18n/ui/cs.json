@@ -3499,7 +3499,7 @@
   "pp.tutor": "Řeš s lektorem",
   "pp.tutorMsg": "Řeším minulou zkouškovou písemku {paper}.",
   "pp.openLocal": "Otevřít staženou písemku",
-  "pp.openLocalHint": "Nejprve stáhni písemku z ric.si (první tlačítko) a pak ji vyber pomocí „Otevřít staženou písemku“. Písemka zůstane ve tvém zařízení; lektor dostane jen úlohu, ke které chceš pomoc.",
+  "pp.openLocalHint": "Nejprve stáhni písemku z ric.si (tlačítko „Zkušební arch 1“ nebo „2“) a pak ji vyber pomocí „Otevřít staženou písemku“. Písemka zůstane ve tvém zařízení; lektor dostane jen úlohu, ke které chceš pomoc.",
   "pp.viewerClose": "Zavřít písemku",
   "pp.viewerLoading": "Otevírám písemku …",
   "pp.notPdf": "Tento soubor není PDF. Vyber písemku staženou z ric.si.",

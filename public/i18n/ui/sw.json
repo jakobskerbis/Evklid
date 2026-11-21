@@ -3439,7 +3439,7 @@
   "pp.tutor": "Tatua pamoja na mwalimu",
   "pp.tutorMsg": "Ninafanya karatasi ya mtihani uliopita {paper}.",
   "pp.openLocal": "Fungua mtihani uliopakuliwa",
-  "pp.openLocalHint": "Kwanza pakua mtihani kutoka ric.si (kitufe cha kwanza), kisha uuchague kwa «Fungua mtihani uliopakuliwa». Mtihani unabaki kwenye kifaa chako; mkufunzi anapokea swali unaloombea msaada tu.",
+  "pp.openLocalHint": "Kwanza pakua mtihani kutoka ric.si (kitufe «Karatasi ya mtihani 1» au «2»), kisha uuchague kwa «Fungua mtihani uliopakuliwa». Mtihani unabaki kwenye kifaa chako; mkufunzi anapokea swali unaloombea msaada tu.",
   "pp.viewerClose": "Funga mtihani",
   "pp.viewerLoading": "Inafungua mtihani …",
   "pp.notPdf": "Faili hili si PDF. Chagua mtihani uliopakuliwa kutoka ric.si.",

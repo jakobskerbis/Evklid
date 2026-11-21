@@ -3415,7 +3415,7 @@
   "pp.tutor": "和辅导老师一起解题",
   "pp.tutorMsg": "我正在做往年试卷 {paper}。",
   "pp.openLocal": "打开已下载的试卷",
-  "pp.openLocalHint": "请先从 ric.si 下载试卷（第一个按钮），然后用“打开已下载的试卷”选择它。试卷只保存在你的设备上；导师只会收到你求助的那一道题。",
+  "pp.openLocalHint": "请先从 ric.si 下载试卷（“试卷 1”或“2”按钮），然后用“打开已下载的试卷”选择它。试卷只保存在你的设备上；导师只会收到你求助的那一道题。",
   "pp.viewerClose": "关闭试卷",
   "pp.viewerLoading": "正在打开试卷…",
   "pp.notPdf": "此文件不是 PDF。请选择从 ric.si 下载的试卷。",
