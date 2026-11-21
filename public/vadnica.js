@@ -1032,7 +1032,7 @@ async function openOurs(entry, subjectName, focus = null) {
       },
       focus,
       // Vrnitev iz klepeta (← ali Nazaj) odpre isto polo pri isti nalogi (UX maturanta 5; app.js chatReturnBack).
-      onTutor: (task, part) => oursTutor(entry, title, task, part, { view: currentView, open: () => openOurs(entry, subjectName, paper.tasks.indexOf(task)) }),
+      onTutor: (task, part) => oursTutor(entry, title, task, part, { view: currentView, open: () => poPaperBusy(() => openOurs(entry, subjectName, paper.tasks.indexOf(task))) }),
       // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
       onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
     });
@@ -1042,14 +1042,21 @@ async function openOurs(entry, subjectName, focus = null) {
     paperBusy = false;
   }
 }
+// Počaka, da se konča odpiranje pogovora (paperBusy, največ 5 s), nato fn: hiter ← med odpiranjem klepeta iz pole.
+async function poPaperBusy(fn) {
+  for (let i = 0; paperBusy && i < 50; i++) await new Promise((r) => setTimeout(r, 100));
+  return fn();
+}
 async function oursTutor(entry, title, task, part, back = null) {
   if (paperBusy) return;
   paperBusy = true;
   let msg;
+  // Pola, odprta na strani (NPZ in matura), ne v klepetu: ← v klepetu in Nazaj jo odpreta znova. Velja že, ko se klepet
+  // pokaže (conv: null, preden je pogovor ustvarjen), da hiter ← ne vodi drugam.
+  state.chatReturn = back && back.view !== "chat" ? { ...back, conv: null } : null;
   try {
     await newTutorChat();
-    // Pola, odprta na strani (NPZ in matura), ne v klepetu: ← v klepetu in Nazaj jo odpreta znova.
-    state.chatReturn = back && back.view !== "chat" ? { ...back, conv: state.conversationId } : null;
+    if (state.chatReturn) state.chatReturn.conv = state.conversationId;
     const n = partLabel(task, part);
     const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
     const strip = taskMdForChat;
@@ -1058,6 +1065,7 @@ async function oursTutor(entry, title, task, part, back = null) {
     state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
     msg = `${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`;
   } catch (err) {
+    state.chatReturn = null;
     return toast(err.message);
   } finally {
     paperBusy = false;

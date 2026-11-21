@@ -996,7 +996,7 @@ nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(fal
 // odpreta znova pri isti nalogi (UX maturanta 5). Velja le za ta pogovor, dokler je klepet odprt.
 function chatReturnBack() {
   const r = state.chatReturn;
-  if (currentView !== "chat" || !r || r.conv !== state.conversationId) return false;
+  if (currentView !== "chat" || !r || (r.conv !== null && r.conv !== state.conversationId)) return false;
   state.chatReturn = null;
   showView(r.view);
   r.open();
