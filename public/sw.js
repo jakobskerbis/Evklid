@@ -127,7 +127,9 @@ self.addEventListener("message", (e) => {
         // Stran je datoteko pravkar prenesla: kopija iz predpomnilnika brskalnika (force-cache) brez ponovnega klica
         // strežnika. Prej je šel vsak naslov še enkrat na strežnik (ob prvem obisku ~190 zahtev; meritev 21. 11. 2026).
         // Različico pove shranjena glava X-Evklid-App (put, fresh); česar brskalnik nima, pride z omrežja kot prej.
-        const res = await fetch(u, { cache: "force-cache" }).catch(() => null);
+        // Samo datoteke aplikacije: vstopno stran in drug HTML vedno preveri strežnik (stara kopija iz predpomnilnika
+        // brskalnika bi lahko prepisala kopijo vstopne strani; pregled PR #919).
+        const res = await fetch(u, APP_FILE.test(new URL(u, self.location.origin).pathname) ? { cache: "force-cache" } : undefined).catch(() => null);
         if (res?.ok) await put(cache, u, res);
       }),
     ).finally(() => e.ports?.[0]?.postMessage("ok")), // stran pošilja seznam po kosih (public/app.js predpomni)
