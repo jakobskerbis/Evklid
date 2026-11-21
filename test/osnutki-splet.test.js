@@ -70,4 +70,40 @@ test("osnutek vprašanja preživi osvežitev, po pošiljanju ga ni; odgovor nalo
   }
 });
 
+test("osnutek: »Nov pogovor« ga prenese k novemu, izbris pogovora ga pobriše, največ 20 000 znakov", opts, async () => {
+  const srv = streznik();
+  const racun = await racunZame(srv, "osnutki2@test.si");
+  const { ctx, p } = await stran(srv.base, racun);
+  const osnutki = () => p.evaluate(() => Object.fromEntries(Object.entries(sessionStorage).filter(([k]) => k.startsWith("evklid.osnutek."))));
+  const klik = (sel) => p.evaluate((s) => document.querySelector(s).click(), sel); // seznam pogovorov je na telefonu v predalu
+  try {
+    await p.goto(srv.base + "/");
+    await p.waitForSelector("#xp-card [data-danes-topic]", { state: "attached", timeout: 20000 });
+    await zavihek(p, "chat");
+    await p.fill("#input", "prvo vprašanje");
+    await p.click("#send");
+    await p.waitForFunction(() => !document.querySelector("#messages .typing") && document.querySelector("#conversation-list li"), null, { timeout: 15000 });
+    const conv = await p.evaluate(() => document.querySelector("#conversation-list li").dataset.id);
+    await p.fill("#input", "x".repeat(25000));
+    assert.equal((await osnutki())[`evklid.osnutek.${racun.id}.${conv}`].length, 20000, "omejen osnutek");
+    await p.fill("#input", "nadaljevanje");
+    await klik("#new-chat");
+    assert.deepEqual(await osnutki(), { [`evklid.osnutek.${racun.id}.nov`]: "nadaljevanje" }, "besedilo gre k novemu pogovoru");
+    assert.equal(await p.inputValue("#input"), "nadaljevanje");
+    // Nazaj v pogovor, nov osnutek, nato izbris pogovora: osnutka ni več, polje je prazno (z osnutkom novega).
+    await p.fill("#input", "");
+    await klik(`#conversation-list li[data-id="${conv}"]`);
+    await p.waitForFunction((c) => document.querySelector(`#conversation-list li[data-id="${c}"]`)?.classList.contains("active"), conv, { timeout: 15000 });
+    await p.fill("#input", "za izbrisani pogovor");
+    await klik(`#conversation-list li[data-id="${conv}"] button`);
+    await p.waitForFunction((c) => !document.querySelector(`#conversation-list li[data-id="${c}"]`), conv, { timeout: 15000 });
+    assert.deepEqual(await osnutki(), {}, "osnutek izbrisanega pogovora je pobrisan");
+    assert.equal(await p.inputValue("#input"), "");
+    assert.deepEqual(p.napake, []);
+  } finally {
+    await ctx.close();
+    srv.close();
+  }
+});
+
 test.after(() => chromium?.close());

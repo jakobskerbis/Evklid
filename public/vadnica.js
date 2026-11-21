@@ -397,10 +397,11 @@ function odgovorOsnutek(id) {
     return "";
   }
 }
+const OSNUTEK_MAX = 20000; // znakov; daljše besedilo (prilepljeno) ne zasede shrambe zavihka
 function odgovorShrani(id, v) {
   if (!id) return;
   try {
-    if (v && v.trim()) sessionStorage.setItem(odgovorKey(id), v);
+    if (v && v.trim()) sessionStorage.setItem(odgovorKey(id), v.slice(0, OSNUTEK_MAX));
     else sessionStorage.removeItem(odgovorKey(id));
   } catch {}
 }

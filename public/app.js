@@ -1548,11 +1548,15 @@ function renderConversationList() {
       e.stopPropagation();
       state.conversations = state.conversations.filter((x) => x.id !== c.id);
       if (state.paperCtx?.conv === c.id) state.paperCtx = null; // id se lahko ponovi pri novem pogovoru
+      chatDraftSave(c.id, ""); // osnutek izbrisanega pogovora ne ostane v zavihku
       if (state.conversationId === c.id) {
         state.pacer?.skip();
         state.conversationId = null;
         state.convTopic = null;
+        $("#input").value = ""; // vprašanje je bilo za izbrisani pogovor
+        autoGrow();
         renderEmptyChat();
+        chatDraftRestore();
       }
       renderConversationList();
       refreshBubble();
@@ -2012,10 +2016,13 @@ $("#chat-idea").addEventListener("click", (e) => openChatBug(e, true));
 
 $("#new-chat").addEventListener("click", () => {
   setSidebar(false);
+  if (state.conversationId) chatDraftSave(state.conversationId, ""); // besedilo v polju gre k novemu pogovoru
   state.conversationId = null;
   state.chatFx = null;
   renderConversationList();
   renderEmptyChat();
+  if ($("#input").value.trim()) chatDraftSave(); // prazno polje: osnutek novega pogovora, če je
+  else chatDraftRestore();
   $("#input").focus();
   refreshBubble();
 });
@@ -2470,6 +2477,8 @@ function fillInput(text) {
 // Osnutek vprašanja za vsak pogovor (UX maturanta 2 in 9) v sessionStorage: preživi osvežitev strani (telefon zavihek
 // v ozadju pogosto naloži znova) in »Nadaljuj tukaj« ob prevzemu profila (account.js osveži stran). Po pošiljanju se
 // zbriše. Nov, še neustvarjen pogovor ima ključ »nov«.
+// Največ 20 000 znakov (prilepljeno dolgo besedilo ne zasede shrambe zavihka). Izbris pogovora in »Nov pogovor«
+// osnutek tega pogovora pobrišeta (pri »Nov pogovor« besedilo iz polja preide k novemu pogovoru).
 const chatDraftKey = (conv) => `evklid.osnutek.${state.student?.id}.${conv || "nov"}`;
 function chatDraftGet(conv) {
   try {
@@ -2481,7 +2490,7 @@ function chatDraftGet(conv) {
 function chatDraftSave(conv = state.conversationId, v = $("#input")?.value || "") {
   if (!state.student) return;
   try {
-    if (v.trim()) sessionStorage.setItem(chatDraftKey(conv), v);
+    if (v.trim()) sessionStorage.setItem(chatDraftKey(conv), v.slice(0, 20000));
     else sessionStorage.removeItem(chatDraftKey(conv));
   } catch {}
 }
