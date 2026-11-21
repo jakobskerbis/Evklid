@@ -545,3 +545,17 @@ test("Wilsonov 95-% interval za delež napak (točka 16): 3 od 91 ≈ 1,1–9,2 
   assert.equal(wilson(1, 0), null);
   assert.equal(wilson(5, 3), null);
 });
+
+test("/o-evklidu in /zakaj-evklid: pisavi Instrument Sans vnaprej (preload), da zamenjava pisave ne premakne vsebine ob sidru", () => {
+  // Meritev 21. 11. 2026 (telefon, 9 Mbit/s, 170 ms): brez tega CLS 0,20 ob /o-evklidu#cene, 0,10 ob #h-matura; s tem 0.
+  const css = readFileSync(new URL("../node_modules/@fontsource-variable/instrument-sans/index.css", import.meta.url), "utf8");
+  const files = [...css.matchAll(/url\(\.\/files\/([^)]+-wght-normal\.woff2)\)/g)].map((m) => `/vendor/instrument-sans/files/${m[1]}`);
+  assert.equal(files.length, 2, "latinica in razširjena latinica (č, š, ž)");
+  for (const [name, html] of [["/o-evklidu", aboutPage()], ["/zakaj-evklid", whyPage()]]) {
+    for (const f of files) {
+      const at = html.indexOf(`<link rel="preload" href="${f}" as="font" type="font/woff2" crossorigin>`);
+      assert.ok(at > 0, `${name}: preload ${f}`);
+      assert.ok(at < html.indexOf('<link rel="stylesheet"'), `${name}: preload pred slogi`);
+    }
+  }
+});
