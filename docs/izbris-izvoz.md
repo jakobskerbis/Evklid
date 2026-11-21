@@ -132,9 +132,8 @@ Popravljeno 16. 11. 2026 (j je izbral »vse v bazi«; test vsake je v oklepaju):
 Odprto:
 
 6. `public/zasebnost.html` §5 ne omenja, da po izbrisu ostanejo (brez povezave na račun) predpomnjeni odgovori,
-   nagrade za priporočilo, šola in naloge v razredu drugega učitelja. Od 20. 11. 2026 ne omenja niti seznama izbrisov
-   (številki računa in profilov s časom nastanka in izbrisa, 45 dni) niti izbrisa stranke v Stripu ob izbrisu računa.
-   Besedilo je za drug profil; zapisano za j.
+   nagrade za priporočilo, šola in naloge v razredu drugega učitelja. Besedilo je za drug profil; zapisano za j.
+   Seznam izbrisov (45 dni, posnetek diska, šifrirana kopija v R2) in izbris stranke v Stripu §5 opisuje od 21. 11. 2026.
 
 Zunaj baze (pregled 3; test jih ne vidi):
 
@@ -145,7 +144,7 @@ Zunaj baze (pregled 3; test jih ne vidi):
 8. ~~Obnova iz kopije vrne izbrisane račune.~~ Zaprto 20. 11. 2026: seznam izbrisov zunaj baze (zgoraj »Varnostne
    kopije«), ob zagonu se izbrisi ponovijo (`test/obnova-izbris.test.js`).
 9. ~~Stranka v Stripu ostane.~~ Zaprto 20. 11. 2026: po izbrisu računa se izbriše tudi stranka v Stripu, razen ob
-   odprtem odstopu od pogodbe (zgoraj »Izbris računa«; `test/stripe-poti.test.js`).
+   odprtem odstopu od pogodbe ali zahtevku garancije brez odločitve (zgoraj »Izbris računa«; `test/stripe-poti.test.js`).
 10. **R2:** kopije, starejše od 30 dni, se brišejo samo ob uspešnem nalaganju; če nalaganje odpove, ostanejo. Kopija,
     prenesena iz R2 (`--oblak-prenesi`), je ročna kopija in spada pod točko 1 (ker ima datum izvirne kopije, se lahko
     pobriše že naslednji dan; pred obnovo jo po potrebi prenesi znova). Rok 30 dni nima rezerve: kopija se pobriše ob
