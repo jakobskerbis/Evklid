@@ -43,6 +43,17 @@ const feedbackFile = path.resolve(path.dirname(process.env.EVKLID_DB || "data/ev
 const trendsFile = path.resolve(path.dirname(feedbackFile), "kozmetika-trendi.json");
 const app = createApp(store, { feedbackFile, trendsFile });
 const port = Number(process.env.PORT || 3000);
+// Nepričakovan ponovni zagon (sesutje, premalo pomnilnika, SIGKILL): oznaka teka ob bazi je ostala od prejšnjega
+// procesa → števec v /healthz/stanje (zagoni) in e-pošta skrbniku (server/zdravje.js).
+const zdravje = app.locals.zdravje;
+zdravje?.zagon();
+// Nepričakovana napaka (tudi neobravnavana zavrnjena obljuba, ki jo Node privzeto preda sem kot origin
+// »unhandledRejection«): zapišemo vrsto za naslednji zagon in izstopimo s kodo 1 kot doslej (Render proces znova zažene).
+process.on("uncaughtException", (err, origin) => {
+  console.error(`[evklid] nepričakovana napaka (${origin}), strežnik se ustavi:`, err);
+  zdravje?.sesutje(err, origin);
+  process.exit(1);
+});
 
 const server = app.listen(port, () => {
   console.log(`Evklid teče na http://localhost:${port}`);
@@ -95,8 +106,10 @@ function shutdown(signal) {
   const t0 = Date.now();
   const tick = () => {
     const busy = app.locals.usage?.inflight?.size || 0;
-    if (!busy || Date.now() - t0 > 20000) process.exit(0);
-    else setTimeout(tick, 250).unref?.();
+    if (!busy || Date.now() - t0 > 20000) {
+      zdravje?.cistaZaustavitev();
+      process.exit(0);
+    } else setTimeout(tick, 250).unref?.();
   };
   tick();
 }
