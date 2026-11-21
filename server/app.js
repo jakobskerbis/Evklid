@@ -1840,15 +1840,14 @@ export function createApp(store, opts = {}) {
     res.json({ ...view, label: pathLabelFor(key, s.settings.school_system), defaultKey: pathKeyFor(s.settings), xp: progress.xpSummary(s.id), ...(danes ? { danes } : {}) });
   });
   // Kartica »Danes« na Učni poti za cilj matura (j, 20. 11. 2026, public/zacetna.js heroHtml): najprej ponavljanje, kar je
-  // na vrsti, nato prva tema iz »Najprej vadi« na strani NPZ in matura (ista examReadiness). Dokler ta tema ni bila še
-  // nikoli vadena (nov maturant: prva tema kataloga, npr. 1. letnik), o šibkosti ne pove nič: takrat tema, ki je na Učni
-  // poti na vrsti (view.next, ista kot Današnji trening in »Naslednja«; 50 izboljšav, 21. 11.).
+  // na vrsti, nato najšibkejša tema mature med temami, ki jih je učenec že vadil (examReadiness.weakestTried). Dokler ni
+  // vadil nobene, tema, ki je na Učni poti na vrsti (view.next, ista kot Današnji trening in »Naslednja«), ne prva tema
+  // kataloga (j, kartica 21. 11. 2026: »Topic from the learning path«).
   // Minute: 1,5 minute na nalogo (Današnji trening: 10 nalog ≈ 15 minut). odsoten: dni od zadnje naloge (0 = danes ali še nobene).
   const danesMatura = (s, view) => {
     const exKey = examKeyFor(s.settings);
     const r = isExamPath(exKey) ? progress.examReadiness(s.id, exKey, examRaven(exKey, s.settings)) : null;
-    const sibka = r?.weakest?.[0];
-    const w = sibka && (sibka.tried || sibka.status !== "new") ? sibka : view.next || sibka;
+    const w = r?.weakestTried || view.next || r?.weakest?.[0];
     const naloge = Math.min(view.dueCount * RULES.reviewPerTopic, RULES.reviewSessionMax);
     const zadnji = store.db.prepare("SELECT CAST(julianday(date('now')) - julianday(MAX(date(created_at))) AS INTEGER) AS d FROM tasks WHERE student_id = ?").get(s.id)?.d;
     return {
