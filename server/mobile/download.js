@@ -119,6 +119,8 @@ export function mountDownload(app, opts = {}) {
       testflight: httpsUrl(env.EVKLID_TESTFLIGHT_URL),
     };
   };
+  // Podatki o APK na tem strežniku za /prenesi (velikost, različica, datum); APK z drugega naslova: null.
+  const localApkStat = () => (httpsUrl(env.EVKLID_ANDROID_APK_URL) ? null : fs.statSync(apkFile, { throwIfNoEntry: false }));
   app.get("/api/app-links", (_req, res) => res.set("Cache-Control", "no-cache").json(links()));
 
   const admin = (req, res) => {
@@ -161,7 +163,7 @@ export function mountDownload(app, opts = {}) {
     const { apk, play, appStore, testflight } = links();
     // Velikost, različica in datum APK na tem strežniku (pregled javnih strani 21. 11. 2026, P5: na mobilnih podatkih
     // dijak pred prenosom vidi, koliko prenaša). APK z drugega naslova (EVKLID_ANDROID_APK_URL): teh podatkov nimamo.
-    const st = apk && !httpsUrl(env.EVKLID_ANDROID_APK_URL) ? fs.statSync(apkFile, { throwIfNoEntry: false }) : null;
+    const st = apk ? localApkStat() : null;
     const apkInfo = st
       ? [
           t("dl.apkSize", { mb: Math.max(1, Math.round(st.size / 1e6)) }),

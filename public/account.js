@@ -637,10 +637,11 @@ const ageBlocked = () => Date.now() - Number(store.get(AGE_BLOCK) || 0) < 864000
 
 // Uvod obrazca za registracijo: preizkus in cena iz /api/account/prices (P9). Brez cen (še niso prišle ali strežnik ni
 // odgovoril) samo splošen stavek; v aplikaciji iz trgovine brez zneska (nakup mimo trgovine, public/pay-ui.js).
-function registerIntro(prices) {
+function registerIntroText(prices) {
   const trial = prices?.trial_days ? `${t("land.trial", { n: prices.trial_days })} ` : "";
-  return esc(`${trial}${(!isStoreApp() && priceText(t, prices, locale())) || t("price.none")}`);
+  return `${trial}${(!isStoreApp() && priceText(t, prices, locale())) || t("price.none")}`;
 }
+const registerIntro = (prices) => esc(registerIntroText(prices));
 
 // Gumb »Pokaži geslo« (P9): na telefonu je napačno vtipkano geslo pogost razlog za ponastavitev že prvi dan.
 function bindPasswordToggle(root) {
@@ -706,7 +707,7 @@ function renderLogin(mode = "login") {
   if (mode === "register" && !landingNow) {
     loadLandingPrices().then((p) => {
       const intro = $("#auth-intro");
-      if (p && intro && $("#auth-form")) intro.innerHTML = registerIntro(p);
+      if (p && intro && $("#auth-form")) intro.textContent = registerIntroText(p);
     });
   }
   bindLinks();
