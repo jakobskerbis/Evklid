@@ -1,8 +1,10 @@
 // Zdravje strežnika za lastnika (pilot, 21. 11. 2026): ali inštruktor AI dela za vse, nepričakovani ponovni zagoni,
 // zasedenost diska in javni alarm /healthz/alarm (drugi monitor v UptimeRobotu, docs/spremljanje.md).
 // Ob okvari, ki ustavi inštruktorja za vse (ni dobroimetja, neveljaven ključ, model ne obstaja ali ZAPORED zaporednih
-// neuspelih klicev), ob nepričakovanem ponovnem zagonu in ob polnem disku dobi skrbnik (EVKLID_ADMIN_EMAILS) e-pošto,
-// za vsako vrsto največ eno v RAZMIK (čas zadnjega opozorila je v kv, zato velja tudi čez ponovni zagon).
+// neuspelih klicev), ob nepričakovanem ponovnem zagonu in ob polnem disku dobi skrbnik (EVKLID_ADMIN_EMAILS) e-pošto.
+// AI: ena e-pošta na izpad (vse vrste skupaj), opomnik šele po AI_OPOMNIKI (1 h, 6 h, nato vsakih 24 h), nov izpad po
+// uspešnem odgovoru najprej čez 1 h; zagon in disk največ en na RAZMIK. Vseh teh e-pošt je skupaj največ NAJVEC_NA_DAN
+// na dan (ista kvota Resend kot potrditve in gesla učencev). Časi so v kv, zato veljajo tudi čez ponovni zagon.
 // Na javnih poteh so samo časi, vrste in zaokrožena števila: brez vsebine, naslovov, poti in ključev.
 // Nov modul: zbira zdravje, ki ga drugi moduli (opozorilo-ai.js strošek, kopije*.js, pomnilnik.js) nimajo; opozorilo-ai.js
 // ostane ločen, ker teče po urniku in šteje znesek, tu pa se odziva na dogodke.
@@ -17,8 +19,13 @@ const MIN = 60_000;
 const URA = 60 * MIN;
 export const ZAPORED = 5; // toliko zaporednih neuspelih klicev AI (ne glede na vrsto) = inštruktor ne dela
 export const RAZMIK = { ai: URA, zagon: 6 * URA, disk: 6 * URA };
+export const AI_OPOMNIKI = [URA, 6 * URA, 24 * URA]; // razmik do 2., 3. in vsakega naslednjega e-maila istega izpada
+export const NAJVEC_NA_DAN = 12; // pošiljk (prejemnik × e-mail) iz tega modula na dan (UTC), skupaj za vse vrste
+// Alarm »ai« velja, dokler je zadnja napaka sveža: ponoči brez učencev uspeha ni, alarm pa ne sme ostati do jutra.
+export const SVEZ_AI_MS = { kriticna: 6 * URA, prehodna: URA };
+export const SVEZ_POSTA_MS = URA; // prehodna napaka pošte (omrežje, 429, 5xx) v alarmu eno uro kot v Straži
 export const SVEZ_ZAGON_MS = URA; // alarm »zagon« še uro po nepričakovanem ponovnem zagonu
-export const PRIVZETO_DISK = 85; // % zasedenosti diska z bazo, nad tem opozorilo
+export const PRIVZETO_DISK = 90; // % zasedenosti diska z bazo (kot df: brez rezerve ext4), nad tem opozorilo
 
 const NAVODILA = `https://github.com/${BRAND.repo}/blob/main/docs/spremljanje.md`;
 
@@ -33,7 +40,7 @@ export const KRITICNE = {
 // Koda iz claude.js apiErrorCode → kratka vrsta. null: napaka enega učenca (predolgo sporočilo) ali naša vrsta za AI.
 export function vrstaNapakeAi(koda) {
   const k = String(koda || "");
-  if (!k || /^413/.test(k) || /hkratnih/.test(k)) return null;
+  if (!k || /^413/.test(k) || /hkratnih/.test(k) || /^400 napačna zahteva/.test(k)) return null;
   if (/dobroimetja/.test(k)) return "dobroimetje";
   if (/^401/.test(k)) return "kljuc";
   if (/^403/.test(k)) return "dovoljenje";
@@ -45,6 +52,14 @@ export function vrstaNapakeAi(koda) {
   if (/zastoj/.test(k)) return "zastoj";
   if (/^400/.test(k)) return "zahteva";
   return "drugo";
+}
+
+// Rok zaustavitve ob SIGTERM (server/index.js): EVKLID_ZAUSTAVITEV_MS, privzeto 20 s, največ 25 s. Z 2 s za obvestila
+// mora biti proces končan v 30 s, ko Render pošlje SIGKILL; sicer oznaka teka ostane in naslednji zagon šteje kot
+// nepričakovan.
+export function rokZaustavitveMs(env = process.env) {
+  const v = Number(env.EVKLID_ZAUSTAVITEV_MS);
+  return Math.min(25_000, v > 0 ? v : 20_000);
 }
 
 export function pragDiska(env = process.env) {
@@ -86,8 +101,10 @@ export function razlogiAlarma(j, { bazaOk = true, now = Date.now() } = {}) {
   const r = [];
   if (!bazaOk) r.push("baza");
   if (j.ai?.deluje === false) r.push("ai");
+  // Pošta: 401/403 (ključ Resend) do prvega uspeha; prehodne napake (omrežje, 429, 5xx) samo prvo uro.
   const po = j.posta;
-  if (po?.nastavljena && po.zadnjaNapaka && (!po.zadnjiUspeh || po.zadnjaNapaka > po.zadnjiUspeh) && /^(omrežje|401|403|429|5\d\d)/.test(po.razlog || "")) r.push("posta");
+  const zadnjaPosta = po?.zadnjaNapaka && (!po.zadnjiUspeh || po.zadnjaNapaka > po.zadnjiUspeh) ? String(po.razlog || "") : "";
+  if (po?.nastavljena && (/^(401|403)/.test(zadnjaPosta) || (/^(omrežje|429|5\d\d)/.test(zadnjaPosta) && now - Date.parse(po.zadnjaNapaka) < SVEZ_POSTA_MS))) r.push("posta");
   const pk = j.preverjanjeKopij;
   if (j.kopije?.napaka || j.kopijeZunaj?.napaka || (pk && pk.ok === false && !pk.prehodna)) r.push("kopije");
   if (j.disk && j.disk.delez >= j.disk.opozorilo) r.push("disk");
@@ -129,12 +146,24 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
     const prej = stanje.opozorila?.[kljuc];
     if (prej && now().getTime() - Date.parse(prej) < razmikMs) return "prezgodaj";
     kvSet({ ...stanje, opozorila: { ...stanje.opozorila, [kljuc]: iso() } }); // tudi ob neuspehu: ne pošiljamo v zanki
+    return poslji(kljuc, sporocilo);
+  }
+  // Pošiljanje z dnevno mejo NAJVEC_NA_DAN (vse vrste skupaj).
+  async function poslji(kljuc, sporocilo) {
     const to = emailList(env.EVKLID_ADMIN_EMAILS);
     const m = mailer ?? new Mailer({ fetchFn });
     if (!to.length || !m.enabled) {
       log.error?.(`[evklid] zdravje (${kljuc}): e-pošta skrbniku ni poslana (ni EVKLID_ADMIN_EMAILS ali Resend)`);
       return "ni nastavljeno";
     }
+    const dan = iso().slice(0, 10);
+    const st = kvGet();
+    const danes = st.posta?.dan === dan ? st.posta.n : 0;
+    if (danes + to.length > NAJVEC_NA_DAN) {
+      log.error?.(`[evklid] zdravje (${kljuc}): dnevna meja e-pošte skrbniku (${NAJVEC_NA_DAN}) dosežena, ne pošljem`);
+      return "omejeno";
+    }
+    kvSet({ ...st, posta: { dan, n: danes + to.length } });
     let sent = 0;
     for (const addr of to) {
       try {
@@ -150,13 +179,41 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
 
   // --- AI ---
   const ai = { zadnjiUspeh: null, zadnjaNapaka: null, vrsta: null, zapored: 0 };
-  // zapored: neuspeli klici od zadnjega uspeha (uspeh ga postavi na 0).
-  const aiNeDela = () => ai.zapored > 0 && (!!KRITICNE[ai.vrsta] || ai.zapored >= ZAPORED);
+  // zapored: neuspeli klici od zadnjega uspeha (uspeh ga postavi na 0). Alarm samo, dokler je zadnja napaka sveža.
+  const aiNeDela = () => {
+    if (!(ai.zapored > 0 && (!!KRITICNE[ai.vrsta] || ai.zapored >= ZAPORED))) return false;
+    return now().getTime() - Date.parse(ai.zadnjaNapaka) < (KRITICNE[ai.vrsta] ? SVEZ_AI_MS.kriticna : SVEZ_AI_MS.prehodna);
+  };
+  // Izpad AI (kv »aiIzpad«: { od, poslanih, zadnje }): ena e-pošta ob začetku, opomniki po AI_OPOMNIKI. Uspeh izpad
+  // konča (kv ostane z »konec«), nov izpad pošlje šele RAZMIK.ai po zadnji e-pošti (nihajoč ponudnik ne pošilja v zanki).
+  let izpadOdprt = !!kvGet().aiIzpad && !kvGet().aiIzpad.konec;
+  async function opozoriAi(sporocilo) {
+    const st = kvGet();
+    const iz = st.aiIzpad;
+    const t = now().getTime();
+    let nov;
+    if (!iz || iz.konec) {
+      if (iz?.zadnje && t - Date.parse(iz.zadnje) < RAZMIK.ai) return "prezgodaj";
+      nov = { od: iso(), poslanih: 1, zadnje: iso() };
+    } else {
+      const razmik = AI_OPOMNIKI[Math.min(iz.poslanih, AI_OPOMNIKI.length) - 1];
+      if (t - Date.parse(iz.zadnje) < razmik) return "prezgodaj";
+      nov = { ...iz, poslanih: iz.poslanih + 1, zadnje: iso() };
+    }
+    izpadOdprt = true;
+    kvSet({ ...st, aiIzpad: nov }); // tudi ob neuspehu: ne pošiljamo v zanki
+    return poslji("ai", sporocilo);
+  }
   // Klic iz claude.js (nastaviOpazovalcaAi). Vrne obljubo e-pošte ali null (za teste).
   function aiIzid({ ok, koda } = {}) {
     if (ok) {
       ai.zadnjiUspeh = iso();
       ai.zapored = 0;
+      if (izpadOdprt) {
+        izpadOdprt = false;
+        const st = kvGet();
+        if (st.aiIzpad) kvSet({ ...st, aiIzpad: { ...st.aiIzpad, konec: iso() } });
+      }
       return null;
     }
     const vrsta = vrstaNapakeAi(koda);
@@ -164,8 +221,8 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
     ai.zadnjaNapaka = iso();
     ai.vrsta = vrsta;
     ai.zapored++;
-    if (KRITICNE[vrsta]) return vOzadju(opozori(`ai-${vrsta}`, pismoAi(vrsta), RAZMIK.ai));
-    if (ai.zapored >= ZAPORED) return vOzadju(opozori("ai-zapored", pismoAi(vrsta, ai.zapored), RAZMIK.ai));
+    if (KRITICNE[vrsta]) return vOzadju(opozoriAi(pismoAi(vrsta)));
+    if (ai.zapored >= ZAPORED) return vOzadju(opozoriAi(pismoAi(vrsta, ai.zapored)));
     return null;
   }
   const aiStanje = () => ({ deluje: !aiNeDela(), zadnjiUspeh: ai.zadnjiUspeh, zadnjaNapaka: ai.zadnjaNapaka, vrsta: ai.vrsta, zapored: ai.zapored });
@@ -215,14 +272,17 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
   }
 
   // --- disk ---
-  function disk() {
+  // Polno stanje za e-pošto skrbniku; javni del (disk) brez velikosti baze in diska.
+  function diskPodrobno() {
     if (!dir) return null;
     try {
       const s = statfs(dir);
       const MB = 1024 * 1024;
       const skupaj = Number(s.blocks) * Number(s.bsize);
       const prosto = Number(s.bavail) * Number(s.bsize);
-      if (!(skupaj > 0)) return null;
+      // Kot df: zasedeno / (zasedeno + prosto za uporabnika); rezerva ext4 za root ne šteje kot zasedena.
+      const zasedeno = (Number(s.blocks) - Number(s.bfree)) * Number(s.bsize);
+      if (!(skupaj > 0) || !(zasedeno + prosto > 0)) return null;
       let baza = 0;
       for (const f of [dbFile, `${dbFile}-wal`]) {
         try {
@@ -231,13 +291,17 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
           // ni datoteke (npr. brez WAL)
         }
       }
-      return { skupajMb: Math.round(skupaj / MB), prostoMb: Math.round(prosto / MB), delez: Math.round((1 - prosto / skupaj) * 100), bazaMb: Math.round(baza / MB), opozorilo: pragDiska(env) };
+      return { skupajMb: Math.round(skupaj / MB), prostoMb: Math.round(prosto / MB), delez: Math.round((zasedeno / (zasedeno + prosto)) * 100), bazaMb: Math.round(baza / MB), opozorilo: pragDiska(env) };
     } catch {
       return null;
     }
   }
+  function disk() {
+    const d = diskPodrobno();
+    return d && { prostoMb: d.prostoMb, delez: d.delez, opozorilo: d.opozorilo };
+  }
   function preveriDisk() {
-    const d = disk();
+    const d = diskPodrobno();
     if (!d || d.delez < d.opozorilo) return null;
     log.error?.(`[evklid] OPOZORILO: disk z bazo je zaseden ${d.delez} % (prosto ${d.prostoMb} MB)`);
     return vOzadju(opozori("disk", pismoDisk(d), RAZMIK.disk));

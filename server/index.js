@@ -9,6 +9,7 @@ import { createApp } from "./app.js";
 import { isMockMode, MODEL, zagonBrezAiKljuca } from "./claude.js";
 import { casCheck, casOn } from "./cas.js";
 import { ogrej as ogrejNujno } from "../public/nujno.js";
+import { rokZaustavitveMs } from "./zdravje.js";
 
 // Produkcija brez EVKLID_DATA_KEY: osebni podatki bi šli v bazo nešifrirani, zato se strežnik ne zažene.
 const brezKljuca = zagonBrezKljuca();
@@ -100,13 +101,15 @@ const server = app.listen(port, () => {
 // (pregled #462 K3-5). Vprašanja, ki še čakajo v vrsti za AI, in nova vprašanja med zaustavljanjem takoj dobijo
 // obvestilo o posodobitvi; odgovore, ki po roku še tečejo, prekinemo z istim obvestilom (vprašanje ne šteje v dnevno
 // mejo, server/app.js zaustaviOdgovore) in počakamo največ 2 s, da se zapišejo in pošljejo.
-const ROK_ZAUSTAVITVE_MS = Number(process.env.EVKLID_ZAUSTAVITEV_MS) > 0 ? Number(process.env.EVKLID_ZAUSTAVITEV_MS) : 20000;
+const ROK_ZAUSTAVITVE_MS = rokZaustavitveMs(); // največ 25 s (Render pošlje SIGKILL po 30 s; server/zdravje.js)
 let stopping = false;
 function shutdown(signal) {
   if (stopping) return;
   stopping = true;
   console.log(`[evklid] ${signal}: zaustavljam, čakam na klice AI v teku …`);
   server.close();
+  // Če se zanka dogodkov izprazni pred naslednjim tikom, Node izstopi sam: oznaka teka se pobriše tudi takrat.
+  process.once("beforeExit", () => zdravje?.cistaZaustavitev());
   app.locals.zaustaviOdgovore?.({ samoVrsta: true });
   const t0 = Date.now();
   let prekinjeno = 0; // čas, ko so bili odgovori po roku prekinjeni
@@ -120,7 +123,7 @@ function shutdown(signal) {
     if (!busy || (prekinjeno && Date.now() - prekinjeno > 2000)) {
       zdravje?.cistaZaustavitev();
       process.exit(0);
-    } else setTimeout(tick, 250).unref?.();
+    } else setTimeout(tick, 250); // brez unref: zaustavitev se vedno konča tu, s pobrisano oznako teka
   };
   tick();
 }

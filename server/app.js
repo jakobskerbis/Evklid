@@ -1356,8 +1356,6 @@ export function createApp(store, opts = {}) {
         controller.abort();
       },
     };
-    tokovi.add(tok);
-    if (zaustavljanje) tok.ustavi();
 
     // Kandidat izboljšav (EVKLID_INSTRUKTOR_KANDIDAT=1, privzeto izklopljen): popravka besedila pri pretakanju in v prikazu.
     const kandidat = kandidatOn();
@@ -1381,6 +1379,8 @@ export function createApp(store, opts = {}) {
     onToolUse.hasPending = () => pendingSettings.has(conv.id);
     started = true;
     try {
+      tokovi.add(tok); // v try: finally ga vedno odstrani
+      if (zaustavljanje) tok.ustavi();
       // Prvi korak pri nalogi iz Vadnice sestavi koda (podatki, iskano, namig), brez klica modela.
       const hinted =
         help && !help.kind && help.text === text && student.settings.solving_mode !== "B" && (student.settings.language || "sl") === "sl"
