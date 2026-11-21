@@ -8,7 +8,7 @@
     "node": ">=22.13"
   },
   "scripts": {
-    "start": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning server/index.js",
+    "start": "exec node --env-file-if-exists=.env --disable-warning=ExperimentalWarning server/index.js",
     "dev": "EVKLID_MOCK=1 node --disable-warning=ExperimentalWarning --watch server/index.js",
     "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js",
     "sim": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning sim/run.js",
