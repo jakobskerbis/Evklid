@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { createZdravje, vrstaNapakeAi, razlogiAlarma, ZAPORED, NAJVEC_NA_DAN } from "../server/zdravje.js";
+import { createZdravje, vrstaNapakeAi, razlogiAlarma, ZAPORED, NAJVEC_NA_DAN, NAJVEC_OPOMNIKOV } from "../server/zdravje.js";
 import { apiErrorCode } from "../server/claude.js";
 import { presojaStanja } from "../scripts/straza.mjs";
 
@@ -61,7 +61,7 @@ test("zdravje AI: ena e-pošta na izpad (vse vrste skupaj), opomniki po 1 h, 6 h
   ob("2026-11-22T15:03:00Z");
   assert.equal(await kredit(), "poslano", "nato vsakih 24 h");
   assert.equal(poslano.length, 4);
-  // Uspeh konča izpad; nov izpad takoj za tem ne pošilja v zanki (najprej 1 h po zadnji e-pošti).
+  // Uspeh konča izpad; nov kritičen izpad iste vrste takoj za tem ne pošilja v zanki (najprej 1 h po zadnji e-pošti).
   z.aiIzid({ ok: true });
   assert.equal(z.ai().deluje, true);
   assert.equal(z.ai().zapored, 0);
@@ -108,6 +108,67 @@ test("zdravje: vse e-pošte skrbniku skupaj največ NAJVEC_NA_DAN pošiljk na da
   assert.equal(poslano.length, 10);
   t = new Date("2026-11-22T07:00:00Z");
   assert.equal(await z.preveriDisk(), "poslano", "nov dan");
+});
+
+const kv = (db) => JSON.parse(db.prepare("SELECT value FROM kv WHERE key = 'zdravje'").get()?.value || "{}");
+const nastaviPosto = (db, dan, n) => db.prepare("INSERT OR REPLACE INTO kv (key, value) VALUES ('zdravje', ?)").run(JSON.stringify({ ...kv(db), posta: { dan, n } }));
+
+test("zdravje: prva e-pošta izpada, ki jo dnevna meja zavrne, se ne zapiše; opomniki do NAJVEC_OPOMNIKOV, prve do 12", async () => {
+  const dir = tmp();
+  const store = openDb(":memory:");
+  const { poslano, mailer } = posta();
+  let t = new Date("2026-11-21T20:00:00Z");
+  const z = createZdravje(store.db, { dbFile: path.join(dir, "evklid.db"), mailer, env: ENV, log: tiho, now: () => t, statfs: () => ({ bsize: 1024 * 1024, blocks: 1000, bfree: 10, bavail: 10 }) });
+  const kredit = () => z.aiIzid({ ok: false, koda: "400 ni dobroimetja na API računu" });
+  nastaviPosto(store.db, "2026-11-21", NAJVEC_NA_DAN);
+  assert.equal(await kredit(), "omejeno");
+  assert.equal(kv(store.db).aiIzpad, undefined, "zavrnjena e-pošta ni zapisana kot poslana");
+  assert.equal(z.ai().deluje, false, "alarm velja ne glede na e-pošto");
+  t = new Date("2026-11-22T00:01:00Z");
+  assert.equal(await kredit(), "poslano", "prva naslednja napaka nov dan pošlje prvo e-pošto");
+  assert.equal(kv(store.db).aiIzpad.poslanih, 1);
+  // Rezerva: opomniki se ustavijo pri NAJVEC_OPOMNIKOV, prva e-pošta druge okvare (disk) še gre.
+  assert.equal(NAJVEC_OPOMNIKOV, 8);
+  nastaviPosto(store.db, "2026-11-22", NAJVEC_OPOMNIKOV);
+  t = new Date("2026-11-22T01:05:00Z");
+  assert.equal(await kredit(), "omejeno", "opomnik nad 8");
+  assert.equal(kv(store.db).aiIzpad.poslanih, 1, "zavrnjen opomnik ni zapisan");
+  assert.equal(await z.preveriDisk(), "poslano", "prva e-pošta o disku iz rezerve");
+  assert.equal(poslano.length, 2);
+});
+
+test("zdravje AI: nov izpad prehodnih napak po uspehu šele čez 6 h, kritičen takoj; stare napake se ne seštevajo", async () => {
+  const store = openDb(":memory:");
+  const { poslano, mailer } = posta();
+  let t = new Date("2026-11-21T08:00:00Z");
+  const z = createZdravje(store.db, { mailer, env: ENV, log: tiho, now: () => t });
+  const preobr = async () => {
+    let r;
+    for (let i = 0; i < ZAPORED; i++) r = await z.aiIzid({ ok: false, koda: "529 Anthropic je preobremenjen" });
+    return r;
+  };
+  assert.equal(await preobr(), "poslano");
+  t = new Date("2026-11-21T08:10:00Z");
+  z.aiIzid({ ok: true });
+  t = new Date("2026-11-21T09:30:00Z");
+  assert.equal(await preobr(), "prezgodaj", "nihajoč ponudnik: nov izpad iste vrste ne pošlje po 1 h");
+  assert.equal(z.ai().deluje, false, "alarm pa velja");
+  t = new Date("2026-11-21T09:40:00Z");
+  z.aiIzid({ ok: true });
+  t = new Date("2026-11-21T15:41:00Z");
+  assert.equal(await preobr(), "poslano", "6 h po koncu prejšnjega izpada");
+  z.aiIzid({ ok: true });
+  t = new Date("2026-11-21T15:50:00Z");
+  assert.equal(await z.aiIzid({ ok: false, koda: "400 ni dobroimetja na API računu" }), "poslano", "kritična vrsta takoj");
+  assert.equal(poslano.length, 3);
+  // Napake, starejše od okna alarma (1 h), se ne seštevajo: ena 529 po mirni noči ne sproži alarma.
+  const z2 = createZdravje(openDb(":memory:").db, { mailer, env: ENV, log: tiho, now: () => t });
+  t = new Date("2026-11-21T22:00:00Z");
+  for (let i = 1; i < ZAPORED; i++) z2.aiIzid({ ok: false, koda: "529 Anthropic je preobremenjen" });
+  t = new Date("2026-11-22T06:00:00Z");
+  assert.equal(z2.aiIzid({ ok: false, koda: "529 Anthropic je preobremenjen" }), null);
+  assert.equal(z2.ai().zapored, 1);
+  assert.equal(z2.ai().deluje, true);
 });
 
 test("zdravje AI: prehodne napake šele po ZAPORED zaporednih, ena e-pošta; brez naslovov skrbnika nič ne pade", async () => {

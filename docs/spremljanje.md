@@ -28,10 +28,10 @@ Tri poti, neodvisne ena od druge:
 | Šifriranje osebnih podatkov izklopljeno (`sifriranje: false`; strežnik brez `EVKLID_DATA_KEY` se v produkciji zažene samo z `EVKLID_ALLOW_PLAINTEXT=1`) | da, dokler traja | – |
 | E-pošta ne gre ven (Resend zavrne ključ, preobremenjen, ni omrežja) | da, prvo uro po zadnji neuspeli pošiljki | – (e-pošta ne deluje) |
 | Pomnilnik nad 85 % meje v zadnjih 30 min | da | – |
-| Inštruktor AI ne dela za nikogar (`ai.deluje: false`): ni dobroimetja, neveljaven ključ (401), ključ brez dovoljenja (403), model ne obstaja (404), ali 5 zaporednih neuspelih odgovorov (napaka enega učenca, npr. 400 ali 413, ne šteje) | da, dokler traja (brez novih napak alarm poteče: po 6 h pri ključu, dobroimetju in modelu, po 1 h pri drugih) | da, takoj en e-mail na izpad (vse vrste skupaj), z navodilom, kaj popraviti; opomnik po 1 h, nato po 6 h, nato vsakih 24 h. Prvi uspešen odgovor izpad konča; nov izpad najprej 1 h po zadnjem e-mailu |
+| Inštruktor AI ne dela za nikogar (`ai.deluje: false`): ni dobroimetja, neveljaven ključ (401), ključ brez dovoljenja (403), model ne obstaja (404), ali 5 zaporednih neuspelih odgovorov (napaka enega učenca, npr. 400 ali 413, ne šteje) | da, dokler traja (brez novih napak alarm poteče: po 6 h pri ključu, dobroimetju in modelu, po 1 h pri drugih) | da, takoj en e-mail na izpad (vse vrste skupaj), z navodilom, kaj popraviti; opomnik po 1 h, nato po 6 h, nato vsakih 24 h. Prvi uspešen odgovor izpad konča; nov izpad iste vrste pošlje šele 6 h po koncu prejšnjega (5 zaporednih napak, nihajoč ponudnik) oziroma 1 h po zadnjem e-mailu (ključ, dobroimetje, model); druga vrsta takoj. Napake, starejše od ure (pri ključu, dobroimetju in modelu 6 h), se ne seštevajo |
 | Nepričakovan ponovni zagon (`zagoni`: premalo pomnilnika, SIGKILL, sesutje; ne objava) | da, prvo uro | da, največ en e-mail na 6 ur, z vrsto napake, če je znana |
 | Disk z bazo nad `EVKLID_DISK_OPOZORILO` (privzeto 90 %, računano kot `df`: rezerva ext4 ne šteje kot zasedena) (`disk`) | da, dokler traja | da, pregled na 10 min, največ en e-mail na 6 ur. Po prvi objavi preveri trenutno vrednost na https://evklid.app/healthz/stanje → `disk.delez` |
-| Vse e-pošte zgornjih treh vrstic skupaj (`server/zdravje.js`) | – | največ 12 pošiljk na dan (prejemnik × e-mail), da ne porabijo kvote Resend za potrditve in gesla učencev; čez mejo samo vrstica v dnevniku |
+| Vse e-pošte zgornjih treh vrstic skupaj (`server/zdravje.js`) | – | največ 12 pošiljk na dan (prejemnik × e-mail), od tega opomniki (isti izpad AI, disk ali zagon v 24 h) največ 8, da prvi e-mail nove okvare vedno pride; da ne porabijo kvote Resend za potrditve in gesla učencev. Čez mejo samo vrstica v dnevniku, e-mail pa ni zapisan kot poslan: poskusi se ob naslednji napaki |
 | Inštruktor v preizkusnem načinu (`mock: true`) | da, dokler traja | – (v produkciji se strežnik brez `ANTHROPIC_API_KEY` ne zažene, razen z izrecnim `EVKLID_MOCK=1`) |
 | PDF učbenika se ne prenese; kopija v R2 ni nastavljena | samo vrstica »Opozorilo« v dnevniku Straže | – |
 
@@ -118,7 +118,7 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
   `EVKLID_AI_MIROVANJE_DEEP_S` (privzeto 180): odgovor AI, ki toliko sekund ne pošlje ničesar (niti »ping«), se prekine
   z napako »zastoj odgovora« (učenec poskusi znova, vprašanje ne šteje); `EVKLID_SIGNUPS_PER_DAY`
   (privzeto 5): novih računov z enega omrežja na dan (veljavna koda vabila v pilot to mejo obide, z eno kodo največ 3
-  na dan); `EVKLID_ZAUSTAVITEV_MS` (privzeto 20000, največ 25000 zaradi Renderjevih 30 s): koliko ob objavi čakamo na odgovore v teku, preden jih prekinemo
+  na dan; z omrežja nad mejo največ 10 napačnih kod na dan); `EVKLID_ZAUSTAVITEV_MS` (privzeto 20000, največ 25000 zaradi Renderjevih 30 s): koliko ob objavi čakamo na odgovore v teku, preden jih prekinemo
   z obvestilom o posodobitvi (vprašanje ne šteje).
 - GitHub v javnem repozitoriju izklopi načrtovane delovne tokove po 60 dneh brez sprememb v repozitoriju (pošlje
   opozorilo). Takrat Stražo v Actions znova vklopi (in alarmi gredo tebi).

@@ -2,9 +2,11 @@
 // zasedenost diska in javni alarm /healthz/alarm (drugi monitor v UptimeRobotu, docs/spremljanje.md).
 // Ob okvari, ki ustavi inštruktorja za vse (ni dobroimetja, neveljaven ključ, model ne obstaja ali ZAPORED zaporednih
 // neuspelih klicev), ob nepričakovanem ponovnem zagonu in ob polnem disku dobi skrbnik (EVKLID_ADMIN_EMAILS) e-pošto.
-// AI: ena e-pošta na izpad (vse vrste skupaj), opomnik šele po AI_OPOMNIKI (1 h, 6 h, nato vsakih 24 h), nov izpad po
-// uspešnem odgovoru najprej čez 1 h; zagon in disk največ en na RAZMIK. Vseh teh e-pošt je skupaj največ NAJVEC_NA_DAN
-// na dan (ista kvota Resend kot potrditve in gesla učencev). Časi so v kv, zato veljajo tudi čez ponovni zagon.
+// AI: ena e-pošta na izpad (vse vrste skupaj), opomnik šele po AI_OPOMNIKI (1 h, 6 h, nato vsakih 24 h); nov izpad iste
+// vrste po uspešnem odgovoru najprej čez NOV_IZPAD_MS (prehodne napake 6 h, kritične 1 h); zagon in disk največ en na
+// RAZMIK. Vseh teh e-pošt je skupaj največ NAJVEC_NA_DAN na dan (ista kvota Resend kot potrditve in gesla učencev),
+// opomnikov največ NAJVEC_OPOMNIKOV, da prva e-pošta novega izpada vedno pride. Čas e-pošte se zapiše šele, ko meja
+// dopušča pošiljanje: zavrnjena prva e-pošta se poskusi ob naslednji napaki. Časi so v kv, zato veljajo čez ponovni zagon.
 // Na javnih poteh so samo časi, vrste in zaokrožena števila: brez vsebine, naslovov, poti in ključev.
 // Nov modul: zbira zdravje, ki ga drugi moduli (opozorilo-ai.js strošek, kopije*.js, pomnilnik.js) nimajo; opozorilo-ai.js
 // ostane ločen, ker teče po urniku in šteje znesek, tu pa se odziva na dogodke.
@@ -18,9 +20,13 @@ const KV_KEY = "zdravje";
 const MIN = 60_000;
 const URA = 60 * MIN;
 export const ZAPORED = 5; // toliko zaporednih neuspelih klicev AI (ne glede na vrsto) = inštruktor ne dela
-export const RAZMIK = { ai: URA, zagon: 6 * URA, disk: 6 * URA };
+export const RAZMIK = { zagon: 6 * URA, disk: 6 * URA };
 export const AI_OPOMNIKI = [URA, 6 * URA, 24 * URA]; // razmik do 2., 3. in vsakega naslednjega e-maila istega izpada
 export const NAJVEC_NA_DAN = 12; // pošiljk (prejemnik × e-mail) iz tega modula na dan (UTC), skupaj za vse vrste
+export const NAJVEC_OPOMNIKOV = 8; // od tega za opomnike (isti izpad AI, isti disk ali zagon v 24 h); ostalo prvim e-poštam
+// Nov izpad AI iste vrste po uspehu: prehodne napake (zapored) šele 6 h po koncu prejšnjega (nihajoč ponudnik),
+// kritične (dobroimetje, ključ, model) 1 h po zadnji e-pošti (npr. 404 samo za deep, ostali odgovori uspevajo).
+export const NOV_IZPAD_MS = { prehodna: 6 * URA, kriticna: URA };
 // Alarm »ai« velja, dokler je zadnja napaka sveža: ponoči brez učencev uspeha ni, alarm pa ne sme ostati do jutra.
 export const SVEZ_AI_MS = { kriticna: 6 * URA, prehodna: URA };
 export const SVEZ_POSTA_MS = URA; // prehodna napaka pošte (omrežje, 429, 5xx) v alarmu eno uro kot v Straži
@@ -140,16 +146,18 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
   };
   const iso = () => now().toISOString();
 
-  // E-pošta skrbniku za vrsto `kljuc`, največ ena v razmikMs. Vrne obljubo "poslano" | "napaka" | "ni nastavljeno" | "prezgodaj".
+  // E-pošta skrbniku za vrsto `kljuc`, največ ena v razmikMs; ponovitev v 24 h je opomnik.
+  // Vrne obljubo "poslano" | "napaka" | "ni nastavljeno" | "prezgodaj" | "omejeno".
   async function opozori(kljuc, sporocilo, razmikMs) {
-    const stanje = kvGet();
-    const prej = stanje.opozorila?.[kljuc];
-    if (prej && now().getTime() - Date.parse(prej) < razmikMs) return "prezgodaj";
-    kvSet({ ...stanje, opozorila: { ...stanje.opozorila, [kljuc]: iso() } }); // tudi ob neuspehu: ne pošiljamo v zanki
-    return poslji(kljuc, sporocilo);
+    const prej = kvGet().opozorila?.[kljuc];
+    const t = now().getTime();
+    if (prej && t - Date.parse(prej) < razmikMs) return "prezgodaj";
+    const opomnik = !!prej && t - Date.parse(prej) < 24 * URA;
+    return poslji(kljuc, sporocilo, { opomnik, zapis: (st) => ({ ...st, opozorila: { ...st.opozorila, [kljuc]: iso() } }) });
   }
-  // Pošiljanje z dnevno mejo NAJVEC_NA_DAN (vse vrste skupaj).
-  async function poslji(kljuc, sporocilo) {
+  // Pošiljanje z dnevno mejo NAJVEC_NA_DAN (vse vrste skupaj, opomniki do NAJVEC_OPOMNIKOV). zapis(stanje) doda čas
+  // e-pošte v kv v istem zapisu kot števec, šele ko meja pošiljanje dopušča; tudi ob neuspehu pošiljanja (ne v zanki).
+  async function poslji(kljuc, sporocilo, { opomnik = false, zapis = (st) => st } = {}) {
     const to = emailList(env.EVKLID_ADMIN_EMAILS);
     const m = mailer ?? new Mailer({ fetchFn });
     if (!to.length || !m.enabled) {
@@ -159,11 +167,12 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
     const dan = iso().slice(0, 10);
     const st = kvGet();
     const danes = st.posta?.dan === dan ? st.posta.n : 0;
-    if (danes + to.length > NAJVEC_NA_DAN) {
-      log.error?.(`[evklid] zdravje (${kljuc}): dnevna meja e-pošte skrbniku (${NAJVEC_NA_DAN}) dosežena, ne pošljem`);
+    const meja = opomnik ? NAJVEC_OPOMNIKOV : NAJVEC_NA_DAN;
+    if (danes + to.length > meja) {
+      log.error?.(`[evklid] zdravje (${kljuc}): dnevna meja e-pošte skrbniku (${meja}${opomnik ? " za opomnike" : ""}) dosežena, ne pošljem`);
       return "omejeno";
     }
-    kvSet({ ...st, posta: { dan, n: danes + to.length } });
+    kvSet(zapis({ ...st, posta: { dan, n: danes + to.length } }));
     let sent = 0;
     for (const addr of to) {
       try {
@@ -180,29 +189,39 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
   // --- AI ---
   const ai = { zadnjiUspeh: null, zadnjaNapaka: null, vrsta: null, zapored: 0 };
   // zapored: neuspeli klici od zadnjega uspeha (uspeh ga postavi na 0). Alarm samo, dokler je zadnja napaka sveža.
+  const svezAi = (vrsta) => (KRITICNE[vrsta] ? SVEZ_AI_MS.kriticna : SVEZ_AI_MS.prehodna);
   const aiNeDela = () => {
     if (!(ai.zapored > 0 && (!!KRITICNE[ai.vrsta] || ai.zapored >= ZAPORED))) return false;
-    return now().getTime() - Date.parse(ai.zadnjaNapaka) < (KRITICNE[ai.vrsta] ? SVEZ_AI_MS.kriticna : SVEZ_AI_MS.prehodna);
+    return now().getTime() - Date.parse(ai.zadnjaNapaka) < svezAi(ai.vrsta);
   };
-  // Izpad AI (kv »aiIzpad«: { od, poslanih, zadnje }): ena e-pošta ob začetku, opomniki po AI_OPOMNIKI. Uspeh izpad
-  // konča (kv ostane z »konec«), nov izpad pošlje šele RAZMIK.ai po zadnji e-pošti (nihajoč ponudnik ne pošilja v zanki).
+  // Izpad AI (kv »aiIzpad«: { od, vrsta, poslanih, zadnje, konec }): ena e-pošta ob začetku, opomniki po AI_OPOMNIKI.
+  // Uspeh izpad konča (kv ostane s »konec«); nov izpad iste vrste pošlje šele po NOV_IZPAD_MS (nihajoč ponudnik ne
+  // pošilja v zanki). vrsta: kritična vrsta ali »zapored«.
   let izpadOdprt = !!kvGet().aiIzpad && !kvGet().aiIzpad.konec;
-  async function opozoriAi(sporocilo) {
-    const st = kvGet();
-    const iz = st.aiIzpad;
+  async function opozoriAi(vrsta, sporocilo) {
+    const iz = kvGet().aiIzpad;
     const t = now().getTime();
+    const vrstaIzpada = KRITICNE[vrsta] ? vrsta : "zapored";
     let nov;
     if (!iz || iz.konec) {
-      if (iz?.zadnje && t - Date.parse(iz.zadnje) < RAZMIK.ai) return "prezgodaj";
-      nov = { od: iso(), poslanih: 1, zadnje: iso() };
+      if (iz?.vrsta === vrstaIzpada) {
+        const od = KRITICNE[vrsta] ? iz.zadnje : iz.konec;
+        if (od && t - Date.parse(od) < (KRITICNE[vrsta] ? NOV_IZPAD_MS.kriticna : NOV_IZPAD_MS.prehodna)) return "prezgodaj";
+      }
+      nov = () => ({ od: iso(), vrsta: vrstaIzpada, poslanih: 1, zadnje: iso() });
     } else {
       const razmik = AI_OPOMNIKI[Math.min(iz.poslanih, AI_OPOMNIKI.length) - 1];
       if (t - Date.parse(iz.zadnje) < razmik) return "prezgodaj";
-      nov = { ...iz, poslanih: iz.poslanih + 1, zadnje: iso() };
+      nov = () => ({ ...iz, poslanih: iz.poslanih + 1, zadnje: iso() });
     }
-    izpadOdprt = true;
-    kvSet({ ...st, aiIzpad: nov }); // tudi ob neuspehu: ne pošiljamo v zanki
-    return poslji("ai", sporocilo);
+    const opomnik = !!iz && !iz.konec;
+    return poslji("ai", sporocilo, {
+      opomnik,
+      zapis: (st) => {
+        izpadOdprt = true;
+        return { ...st, aiIzpad: nov() };
+      },
+    });
   }
   // Klic iz claude.js (nastaviOpazovalcaAi). Vrne obljubo e-pošte ali null (za teste).
   function aiIzid({ ok, koda } = {}) {
@@ -218,11 +237,13 @@ export function createZdravje(db, { dbFile = null, mailer = null, fetchFn, env =
     }
     const vrsta = vrstaNapakeAi(koda);
     if (!vrsta) return null;
+    // Napake, starejše od okna alarma, ne štejejo več: ena 529 po mirni noči ne sproži alarma ne e-pošte.
+    if (ai.zapored > 0 && now().getTime() - Date.parse(ai.zadnjaNapaka) >= svezAi(ai.vrsta)) ai.zapored = 0;
     ai.zadnjaNapaka = iso();
     ai.vrsta = vrsta;
     ai.zapored++;
-    if (KRITICNE[vrsta]) return vOzadju(opozoriAi(pismoAi(vrsta)));
-    if (ai.zapored >= ZAPORED) return vOzadju(opozoriAi(pismoAi(vrsta, ai.zapored)));
+    if (KRITICNE[vrsta]) return vOzadju(opozoriAi(vrsta, pismoAi(vrsta)));
+    if (ai.zapored >= ZAPORED) return vOzadju(opozoriAi(vrsta, pismoAi(vrsta, ai.zapored)));
     return null;
   }
   const aiStanje = () => ({ deluje: !aiNeDela(), zadnjiUspeh: ai.zadnjiUspeh, zadnjaNapaka: ai.zadnjaNapaka, vrsta: ai.vrsta, zapored: ai.zapored });
