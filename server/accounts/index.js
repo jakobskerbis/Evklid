@@ -1336,6 +1336,9 @@ export function mountAccounts(app, store, opts = {}) {
     guests.logCreated(net);
     const country = String(req.headers["cf-ipcountry"] || req.body?.country || "").toUpperCase();
     if (/^[A-Z]{2}$/.test(country)) db.prepare("UPDATE parents SET country = ? WHERE id = ?").run(country, id);
+    // Piškotek naprave skupaj s sejo (kot prijava in registracija): sicer bi vzporedne zahteve s samo sejo dobile vsaka
+    // svojo napravo in profil bi bil »odprt na drugi napravi« (pregled 2, točka 4).
+    void req.deviceId;
     setSessionCookie(req, res, sessions.create(id, GUEST_SESSION_DAYS));
     res.status(201).json({ parent: publicParent(getParent(id)) });
   });

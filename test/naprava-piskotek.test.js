@@ -67,6 +67,33 @@ test("registracija in prijava: piškotek naprave (400 dni) skupaj s sejo; z obst
   });
 });
 
+test("uporaba brez računa: piškotek naprave skupaj s sejo, tri vzporedne zahteve ostanejo na eni napravi", async () => {
+  // Pregled 2, točka 4: brez piškotka naprave ob ustvaritvi gosta bi vsaka vzporedna zahteva s samo sejo dobila svojo
+  // napravo, profil pa bi bil po krivem »odprt na drugi napravi«.
+  const store = openDb(":memory:");
+  const app = createApp(store, { accounts: true, guest: true, scheduler: false, log: { error() {}, warn() {}, info() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const g = await fetch(`${base}/api/auth/guest`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ accept_privacy: true }) });
+    assert.equal(g.status, 201);
+    assert.ok(names(g).includes(SESSION_COOKIE) && names(g).includes(DEVICE_COOKIE), g.headers.getSetCookie().join(" | "));
+    const cookie = g.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
+    const device = cookie.match(new RegExp(`${DEVICE_COOKIE}=([^;]+)`))[1];
+    const all = await Promise.all([1, 2, 3].map(() => fetch(`${base}/api/account`, { headers: { cookie, accept: "application/json" } })));
+    for (const r of all) {
+      assert.equal(r.status, 200);
+      const again = r.headers.getSetCookie().filter((c) => c.startsWith(`${DEVICE_COOKIE}=`));
+      assert.deepEqual(again, [], "brez nove naprave");
+    }
+    const ids = new Set([device, ...all.flatMap((r) => r.headers.getSetCookie().filter((c) => c.startsWith(`${DEVICE_COOKIE}=`)).map((c) => c.split(";")[0].split("=")[1]))]);
+    assert.equal(ids.size, 1, "ena naprava");
+  } finally {
+    server.close();
+    store.db.close();
+  }
+});
+
 test("Devices.attach: s sejo takoj, brez seje šele ob branju req.deviceId (enkrat)", () => {
   const d = new Devices(null);
   const mkRes = () => ({ cookies: [], append(_k, v) { this.cookies.push(v); } });
@@ -88,11 +115,16 @@ test("Devices.attach: s sejo takoj, brez seje šele ob branju req.deviceId (enkr
   assert.ok(known.deviceId && r3.cookies.length === 0, "obstoječ piškotek: brez novega");
 });
 
-test("zasebnost.html: tabela piškotkov z imeni in roki iz kode", () => {
+test("zasebnost.html: tabela piškotkov z imeni in roki iz kode, brez žargona, na telefonu po vrsticah", () => {
   const html = readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
   const table = html.slice(html.indexOf('<h3 id="piskotki">'), html.indexOf("<h2>6. Vaše pravice</h2>"));
-  assert.ok(table.includes("<table>"));
-  for (const name of [SESSION_COOKIE, DEVICE_COOKIE, `${BRAND.slug}_age`]) assert.ok(table.includes(`<td>${name}</td>`), name);
-  assert.ok(table.includes("<td>400 dni</td>") && table.includes("<td>24 ur</td>") && table.includes("<td>1 leto ali do odjave</td>"));
-  assert.match(table, /ne dobi nobenega piškotka/);
+  assert.ok(table.includes('<table class="piskotki">'));
+  const cell = (th, v) => `<td data-th="${th}">${v}</td>`;
+  for (const name of [SESSION_COOKIE, DEVICE_COOKIE, `${BRAND.slug}_age`, `${BRAND.slug}_geslo`]) assert.ok(table.includes(cell("Piškotek", name)), name);
+  for (const d of ["400 dni", "24 ur", "1 leto ali do odjave", "1 leto"]) assert.ok(table.includes(cell("Trajanje", d)), d);
+  // Pregled 3, S5: seja in naprava tudi pri uporabi brez računa (/api/auth/guest), pravilna beseda »ustvaritvi«.
+  assert.equal((table.match(/Ob prijavi, ustvaritvi računa ali uporabi brez računa/g) || []).length, 2);
+  assert.doesNotMatch(table, /ustvarjenju|HttpOnly|SameSite/);
+  assert.match(table, /ne uporablja Evklida brez računa, ne dobi nobenega piškotka; izjema je evklid_age/);
+  assert.match(html, /\.piskotki td::before \{ content: attr\(data-th\)/);
 });

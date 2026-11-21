@@ -22,6 +22,14 @@
     .todo { background: #fff4d6; color: #6b4e00; padding: 0 4px; border-radius: 4px; }
     a { color: var(--accent); }
     @media (max-width: 480px) { .doc table { font-size: 0.85rem; } .doc td, .doc th { padding: 6px; hyphens: auto; } } /* tabela ne sme čez rob na telefonu */
+    /* Piškotki na telefonu: vsak piškotek kot kartica z oznakami polj (pregled 3, N4), brez deljenih naslovov stolpcev. */
+    @media (max-width: 480px) {
+      .doc table.piskotki, .doc .piskotki tbody, .doc .piskotki tr, .doc .piskotki td { display: block; }
+      .doc .piskotki tr:first-child { display: none; }
+      .doc .piskotki tr { border-top: 1px solid var(--border); padding: 6px 0; }
+      .doc .piskotki td { border: 0; padding: 2px 0; hyphens: manual; }
+      .doc .piskotki td::before { content: attr(data-th) ": "; font-weight: 600; }
+    }
   </style>
 </head>
 <body>
@@ -86,12 +94,13 @@
   <p>Da Evklid deluje tudi brez povezave, si brskalnik ali aplikacija na napravi zapomni seznam profilov (ime in nastavitve), paket nalog za vaje brez povezave in še neposlane odgovore, zgodovino skenerja, zapis postopka pri nalogah, stanje kalkulatorja in besedilo že odprtih lekcij. Za hitrejše odprtje hrani tudi sliko zadnjega zaslona (brez pogovorov z inštruktorjem); uporabi se le, če je mlajša od 12 ur, starejša se ob odprtju izbriše, ob odjavi pa se izbriše vedno. Pogovorov z inštruktorjem na napravi ne shranimo. Ob odjavi, ob koncu seje (npr. po »Odjavi vse druge naprave«), ob izbrisu računa in ob prijavi v drug račun na isti napravi se vse to pobriše; ostanejo samo nastavitve videza (jezik, tema, enote). Ob izbrisu profila se pobrišejo njegovi podatki na napravi. Neposlani odgovori gredo pred odjavo na strežnik. V izvozu vseh podatkov so tudi podatki z naprave (zgodovina skenerja, neposlani odgovori, kalkulator), vendar samo za profile vašega računa.</p>
 
   <h3 id="piskotki">Piškotki</h3>
-  <p>Evklid uporablja samo piškotke, ki so nujni za delovanje storitve. Piškotkov za oglaševanje, analitiko ali sledenje ne uporabljamo, zato vas za privolitev ne sprašujemo. Brskalnik jih ne pokaže drugim stranem (HttpOnly, SameSite=Lax). Obiskovalec, ki se ne prijavi in ne ustvari računa, ne dobi nobenega piškotka.</p>
-  <table>
+  <p>Evklid uporablja samo piškotke, ki so nujni za delovanje storitve. Piškotkov za oglaševanje, analitiko ali sledenje ne uporabljamo, zato vas za privolitev ne sprašujemo. Brskalnik jih pošilja samo Evklidu in jih skripte na strani ne morejo prebrati. Obiskovalec, ki se ne prijavi, ne ustvari računa in ne uporablja Evklida brez računa, ne dobi nobenega piškotka; izjema je evklid_age po zavrnjeni registraciji (spodaj).</p>
+  <table class="piskotki">
     <tr><th>Piškotek</th><th>Namen</th><th>Kdaj ga dobite</th><th>Trajanje</th></tr>
-    <tr><td>sm_session</td><td>Prijava: brskalnik si zapomni, da ste prijavljeni.</td><td>Ob prijavi ali ustvarjenju računa</td><td>1 leto ali do odjave</td></tr>
-    <tr><td>sm_device</td><td>Naključna oznaka naprave: profil je hkrati odprt samo na eni napravi, odklep profila ali računa velja za to napravo, v zavihku Račun vidite, na koliko napravah je bil profil odprt.</td><td>Ob prijavi ali ustvarjenju računa</td><td>400 dni</td></tr>
-    <tr><td>evklid_age</td><td>Po zavrnjeni registraciji zaradi starosti prepreči ponovni poskus z drugim datumom rojstva (glejte točko 3).</td><td>Ob zavrnjeni registraciji</td><td>24 ur</td></tr>
+    <tr><td data-th="Piškotek">sm_session</td><td data-th="Namen">Prijava: brskalnik si zapomni, da ste prijavljeni. Pri uporabi brez računa si zapomni vaš profil.</td><td data-th="Kdaj ga dobite">Ob prijavi, ustvaritvi računa ali uporabi brez računa</td><td data-th="Trajanje">1 leto ali do odjave</td></tr>
+    <tr><td data-th="Piškotek">sm_device</td><td data-th="Namen">Naključna oznaka naprave. Z njo je profil hkrati odprt samo na eni napravi, odklep profila ali računa velja samo za to napravo, v zavihku Račun pa vidite, na koliko napravah je bil profil odprt.</td><td data-th="Kdaj ga dobite">Ob prijavi, ustvaritvi računa ali uporabi brez računa</td><td data-th="Trajanje">400 dni</td></tr>
+    <tr><td data-th="Piškotek">evklid_age</td><td data-th="Namen">Po zavrnjeni registraciji zaradi starosti prepreči ponovni poskus z drugim datumom rojstva (glejte točko 3).</td><td data-th="Kdaj ga dobite">Ob zavrnjeni registraciji</td><td data-th="Trajanje">24 ur</td></tr>
+    <tr><td data-th="Piškotek">evklid_geslo</td><td data-th="Namen">Samo v testni različici, zaščiteni z geslom: brskalnik si zapomni, da ste geslo za dostop že vpisali.</td><td data-th="Kdaj ga dobite">Ko vpišete geslo testne različice</td><td data-th="Trajanje">1 leto</td></tr>
   </table>
 
   <h2>6. Vaše pravice</h2>
