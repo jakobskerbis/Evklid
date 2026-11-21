@@ -38,6 +38,7 @@ export function migrateAccounts(db) {
       expires_at TEXT NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+    CREATE INDEX IF NOT EXISTS idx_parent_sessions_parent ON parent_sessions(parent_id);
     -- Dokaz o soglasju zakonitega zastopnika (GDPR čl. 8, ZVOP-2: mlajši od 15 let)
     CREATE TABLE IF NOT EXISTS consents (
       id INTEGER PRIMARY KEY,

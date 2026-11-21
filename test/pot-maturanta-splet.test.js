@@ -55,8 +55,8 @@ test("maturant: obrazec, kartica Danes, brez uvoda, ponudba za star profil", opt
     // Mnenje in namestitev sta pod kartico (nikoli nad glavnim dejanjem).
     const pod = await p.evaluate(() => ["feedback-card", "install-card"].every((id) => document.getElementById("xp-card").compareDocumentPosition(document.getElementById(id)) & Node.DOCUMENT_POSITION_FOLLOWING));
     assert.ok(pod);
-    // Gumb »Vadi« odpre temo iz »Najprej vadi«.
-    const next = (await p.evaluate((id) => fetch(`/api/students/${id}/exams`).then((r) => r.json()), ana.id)).readiness.weakest[0];
+    // Gumb »Vadi« odpre temo, ki je na vrsti na Učni poti (nova maturantka še ni vadila nobene teme iz »Najprej vadi«).
+    const next = (await p.evaluate((id) => fetch(`/api/students/${id}/path`).then((r) => r.json()), ana.id)).next;
     assert.equal(await p.getAttribute("#xp-card [data-danes-topic]", "data-danes-topic"), next.id);
     await p.click("#xp-card [data-danes-topic]");
     await p.waitForSelector("#view-topic:not([hidden])");

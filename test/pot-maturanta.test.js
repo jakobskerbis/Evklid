@@ -80,7 +80,7 @@ test("intro (interests questionnaire and tour) only for primary school under 15"
   assert.equal(brezUvoda({ settings: { educational_track: "UNIVERZA", curriculum_level: "1. letnik" } }, 2026), true);
 });
 
-test("/path for goal matura: Danes data = due reviews, then the first »Najprej vadi« topic of the matura page", async () => {
+test("/path for goal matura: Danes data = due reviews, then the path's next topic until a matura topic has been practised, then the weakest practised one", async () => {
   const store = openDb(":memory:");
   const app = createApp(store, { scheduler: false, log: { error() {}, warn() {}, info() {} } });
   const server = app.listen(0);
@@ -92,7 +92,10 @@ test("/path for goal matura: Danes data = due reviews, then the first »Najprej 
     let p = await get(`/api/students/${s.id}/path`);
     const ex = await get(`/api/students/${s.id}/exams`);
     assert.ok(ex.readiness.weakest.length);
-    assert.deepEqual(p.danes.next, { id: ex.readiness.weakest[0].id, name: ex.readiness.weakest[0].name }, "ista tema kot Najprej vadi");
+    // Nov maturant: nobena tema še ni vadena, zato tema Učne poti (kot Današnji trening in »Naslednja«), ne prva tema kataloga.
+    assert.equal(ex.readiness.weakestTried, null);
+    assert.ok(p.next && p.next.id !== ex.readiness.weakest[0].id, "pot je drugje kot prva tema kataloga");
+    assert.deepEqual(p.danes.next, { id: p.next.id, name: p.next.name }, "ista tema kot Naslednja na Učni poti");
     assert.equal(p.danes.due, 0);
     assert.equal(p.danes.minutes, 15);
     assert.equal(p.danes.odsoten, 0, "brez nalog ni vrnitve");
@@ -107,6 +110,19 @@ test("/path for goal matura: Danes data = due reviews, then the first »Najprej 
     assert.equal(p.danes.review, 2);
     assert.equal(p.danes.minutes, 5);
     assert.equal(p.danes.odsoten, 8);
+    // Napačen prvi odgovor v temi mature (prek API kot v aplikaciji): ta tema je najšibkejša vadena, kartica Danes jo ponudi,
+    // čeprav so v »Najprej vadi« pred njo še nevadene teme.
+    const post = (u, body) => fetch(base + u, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
+    const sibka = ex.readiness.weakest[1].id;
+    let task = null;
+    for (let i = 0; i < 3 && !task?.id; i++) task = (await post(`/api/students/${s.id}/practice/next`, { topic_id: sibka })).task;
+    assert.ok(task?.id, "naloga iz teme mature");
+    await post(`/api/students/${s.id}/tasks/${task.id}/answer`, { answer: task.answerType === "choice" ? "Z" : "987654321" });
+    p = await get(`/api/students/${s.id}/path`);
+    const ex2 = await get(`/api/students/${s.id}/exams`);
+    assert.equal(ex2.readiness.weakestTried?.id, sibka, JSON.stringify(ex2.readiness));
+    assert.notEqual(ex2.readiness.weakest[0].id, sibka, "nevadene teme ostanejo prve v Najprej vadi");
+    assert.deepEqual(p.danes.next, { id: sibka, name: ex2.readiness.weakestTried.name });
     // Drug cilj ali druga pot: brez kartice.
     assert.equal((await get(`/api/students/${s.id}/path?key=MAT-SS-1`)).danes, undefined);
     await fetch(base + `/api/students/${s.id}`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ settings: { goal: "sprotno" } }) });
