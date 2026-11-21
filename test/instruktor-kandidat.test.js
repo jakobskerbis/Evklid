@@ -135,10 +135,10 @@ test("kandidat prompta: enak del za učenca in vse oznake, nova pravila v predpo
   const ph = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).join(",");
   assert.equal(ph(ks), ph(ps), "iste oznake v stalnem delu");
   assert.doesNotMatch(ks, /\*\*Najprej priklic predznanja, nato razlaga\.\*\*/);
-  for (const re of [/nikoli ne zapišeš kot oznako ali naslov/, /že prvi stavek jasno in prijazno pove, da korak ni pravilen/, /»morda nepopolno«/, /ni pa edina/, /meri natanko na napačni del/, /»z osnovo«, »z vprašanji«/, /»vsota prvih desetih členov«/, /ne uporabljaj črke, ki v nalogi že pomeni nekaj drugega/, /z \$u\$ in \$v\$/]) {
+  for (const re of [/nikoli ne zapišeš kot oznako ali naslov/, /že prvi stavek jasno in prijazno pove, da korak ni pravilen/, /»morda nepopolno«/, /ni pa edina/, /meri natanko na napačni del/, /»z osnovo«, »z vprašanji«/, /»vsota prvih desetih členov«/, /ne uporabljaj črke, ki v nalogi že pomeni nekaj drugega/, /z \$u\$ in \$v\$/, /ostani pri tej napaki, brez nove snovi/, /»rada bi rešila«/, /po imenu v pogovoru ne ugibaj/]) {
     assert.match(ks, re);
   }
-  assert.ok(ks.length - ps.length < 1600, `kandidat doda ${ks.length - ps.length} znakov`);
+  assert.ok(ks.length - ps.length < 1800, `kandidat doda ${ks.length - ps.length} znakov`);
 });
 
 function fakeStream(text) {
