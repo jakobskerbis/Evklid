@@ -107,24 +107,29 @@ export function potStrani(html, podatki, req, { publicDir, nakljucno = Math.rand
   const early = level === "OS" && /^[1-5]\./.test(String(st.curriculum_level || "").trim());
   if (early) h = element(h, "path-note", { html: izris.esc(t("path.earlyNote", { grade: izris.levelLabel(t, st.curriculum_level) })), hidden: false });
   h = element(h, "lang-note", { hidden: jezik.lang === "sl" });
-  // Kartica mnenja (public/feedback.js): od drugega dne profila; dan in skritje preveri zacetek.js (ura in shramba naprave).
-  if (cfg.feedback?.prompt && s.created_at) h = element(h, "feedback-card", { cls: "card fb-card", html: izris.feedbackCardHtml(t), hidden: false, attrs: ` data-pogoj="fb" data-nastal="${attr(s.created_at)}"` });
-  // Namestitev (public/install.js): na telefonu, ko aplikacija ni nameščena in vrstica ni skrita (zacetek.js).
-  if (dev.macSafari) return null;
-  if (dev.mobile) h = element(h, "install-card", { cls: "card list-card install-mini", html: izris.installMiniHtml(t, true), hidden: false, attrs: ' data-pogoj="inst"' });
-  // Današnji trening (app.js loadPath) in dnevna uganka (stanje iz /daily).
-  let xc = izris.xpCardHtml(t, { p, done: modes.daily?.done, scan: true, games });
-  const dz = games ? parse(d[`/api/students/${sid}/daily`]) : null;
-  if (dz?.streak?.today) xc = zamenjaj(xc, `<span class="next-name">${t("dz.statusNew")}</span>`, `<span class="next-name">${izris.esc(t("dz.streak", { n: dz.streak.days }))}</span>`);
-  // Kartice pred načini učenja (#xp-card, #schedule-card, #stage-card) v vrstnem redu stopnje (public/zacetna.js
-  // uvrstiKartice): iz lupine vzamemo prazna mesta, jih napolnimo in vstavimo pred #modebar.
+  // Ponudba »cilj matura« za star profil maturanta (app.js renderGoal; brez cilja in datuma, zato brez opomnika ob 12.00).
+  const ponudba = izris.maturaPonudbaHtml(t, st);
+  if (ponudba) h = element(h, "goal-reminder", { html: ponudba, hidden: false });
+  // Kartice pred načini učenja (#xp-card, #schedule-card, #stage-card) v vrstnem redu stopnje, mnenje in namestitev tik
+  // pod #xp-card (public/zacetna.js uvrstiKartice): iz lupine vzamemo prazna mesta, jih napolnimo in vstavimo pred #modebar.
   const mesto = (id) => {
     const m = new RegExp(`\\n *<div id="${id}"[^>]*></div>`).exec(h);
     if (!m) throw new Error(`pot-takoj: ni #${id}`);
     h = h.slice(0, m.index) + h.slice(m.index + m[0].length);
     return m[0].replace(/^\n */, "");
   };
-  const kartica = { "xp-card": element(mesto("xp-card"), "xp-card", { html: xc }) };
+  // Kartica mnenja (public/feedback.js): od drugega dne profila; dan in skritje preveri zacetek.js (ura in shramba naprave).
+  let fb = mesto("feedback-card");
+  if (cfg.feedback?.prompt && s.created_at) fb = element(fb, "feedback-card", { cls: "card fb-card", html: izris.feedbackCardHtml(t), hidden: false, attrs: ` data-pogoj="fb" data-nastal="${attr(s.created_at)}"` });
+  // Namestitev (public/install.js): na telefonu, ko aplikacija ni nameščena in vrstica ni skrita (zacetek.js).
+  if (dev.macSafari) return null;
+  let inst = mesto("install-card");
+  if (dev.mobile) inst = element(inst, "install-card", { cls: "card list-card install-mini", html: izris.installMiniHtml(t, true), hidden: false, attrs: ' data-pogoj="inst"' });
+  // Današnji trening (app.js loadPath) in dnevna uganka (stanje iz /daily).
+  let xc = izris.xpCardHtml(t, { p, done: modes.daily?.done, scan: true, games, goalDate: st.goal_date });
+  const dz = games ? parse(d[`/api/students/${sid}/daily`]) : null;
+  if (dz?.streak?.today) xc = zamenjaj(xc, `<span class="next-name">${t("dz.statusNew")}</span>`, `<span class="next-name">${izris.esc(t("dz.streak", { n: dz.streak.days }))}</span>`);
+  const kartica = { "xp-card": element(mesto("xp-card"), "xp-card", { html: xc }) + fb + inst };
   // Urnik (public/urnik-kartica.js) in kartica stopnje (public/zacetna.js).
   const k = izris.scheduleCardHtml(t, sch.schedule, { faks: false });
   kartica["schedule-card"] = element(mesto("schedule-card"), "schedule-card", { html: k.html, hidden: false, attrs: k.empty ? ' data-pogoj="sch"' : "" });

@@ -163,6 +163,8 @@ export function normalizeSettings(input = {}) {
   if (Number.isInteger(tv) && tv >= 0 && tv <= 99) out.tour_version = tv;
   // Profil je rešil prvo nalogo (public/app.js): šele potem vprašalnik zanimanj in vodič; ni nastavitev za inštruktorja.
   if (input.first_task === true || input.first_task === 1) out.first_task = 1;
+  // Maturant je ponudbo »cilj matura« na Učni poti sprejel ali zavrnil (public/goal-data.js ponudiMaturo); ni za inštruktorja.
+  if (input.matura_offer === true || input.matura_offer === 1) out.matura_offer = 1;
   return out;
 }
 

@@ -458,14 +458,15 @@ async function intro(p, name, { interests = false, tour = "preskoci", away = fal
     await click(p, ".iq-wrap [data-level]");
     await click(p, ".iq-wrap [data-iq=next]");
     await p.fill(".iq-wrap .iq-custom input", "šah");
-    await click(p, ".iq-wrap [data-iq=save]", { wait: 300 });
-  } else if (away)
-    await p.evaluate(() => {
-      document.querySelector(".iq-wrap [data-iq=skip]").click();
+  }
+  const zapri = interests ? ".iq-wrap [data-iq=save]" : ".iq-wrap [data-iq=skip]";
+  if (away)
+    await p.evaluate((sel) => {
+      document.querySelector(sel).click();
       document.querySelector('.topbar .tab[data-view="uci"]').click();
       document.querySelector('#view-uci [data-uci-tab="textbook"]').click();
-    });
-  else await click(p, ".iq-wrap [data-iq=skip]", { wait: 300 });
+    }, zapri);
+  else await click(p, zapri, { wait: 300 });
   await p.locator(".iq-wrap").waitFor({ state: "detached", timeout: 5000 }).catch(() => {
     throw new Error("vprašalnik zanimanj se ni zaprl");
   });
@@ -1398,7 +1399,8 @@ async function desktop(browser, app) {
   await p.goto(app.base + "/");
   await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"]));
   await step(p, "naloga", () => practiceTopic(p, app.db));
-  await step(p, "zanimanja-vodic", () => intro(p, "Ana", { interests: true, tour: "vse" }));
+  // away: vodič počaka na vrnitev na Učno pot (SŠ uvoda nima več, zato to preveri osnovnošolka).
+  await step(p, "zanimanja-vodic", () => intro(p, "Ana", { interests: true, tour: "vse", away: true }));
   await step(p, "dnevni-trening", async () => {
     await click(p, "#xp-card [data-daily]", { wait: 400 });
     await expectVisible(p, "#practice .task, #practice .result, #practice p", "dnevni trening");
@@ -1455,7 +1457,8 @@ async function desktop(browser, app) {
   });
   // Drugi in tretji profil: »Dodaj profil« iz menija profila.
   for (const [name, levels, lbl, opts] of [
-    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { intro: true, tour: "esc", away: true }],
+    // SŠ (j, 20. 11. 2026): brez vprašalnika zanimanj in vodiča tudi po prvi nalogi; vodič iz Nastavitev se zapre z Esc.
+    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { intro: true, noIntro: true }],
     ["Cene", ["UNIVERZA", "UL", "UL-FMF", "UL-FMF-MAT", "1. letnik"], "UNI", {}],
   ]) {
     await step(p, `nov-profil-${lbl}`, async () => {
@@ -1470,7 +1473,15 @@ async function desktop(browser, app) {
           await fetch(`/api/students/${localStorage.getItem("studentId")}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { first_task: 1 } }) });
         });
         await p.reload();
-        await intro(p, name, opts);
+        if (opts.noIntro) {
+          await expectVisible(p, "#view-path #xp-card .hero", "učna pot", 8000);
+          await settle(p, 2500);
+          if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj v srednji šoli");
+          if (await p.locator("#tour").isVisible()) throw new Error("vodič v srednji šoli");
+          await tab(p, "settings");
+          await click(p, "#tour-again", { wait: 200 });
+          await closeTour(p, "esc");
+        } else await intro(p, name, opts);
       }
     });
     await step(p, `pot-${lbl}`, async () => {

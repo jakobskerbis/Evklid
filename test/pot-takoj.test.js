@@ -177,9 +177,10 @@ const ZAJEMI = (ids) => {
     out[id] = k.outerHTML;
   }
   out.vrstni = [...m.children].filter((c) => !c.classList.contains("split-handle")).map((c) => c.id || c.className).join(",");
+  out.kartice = [...(m.querySelector("#xp-card")?.parentElement?.children || [])].map((c) => c.id || c.className).join(",");
   return out;
 };
-const IDS = ["path-head", "path-level", "path-lower", "path-note", "lang-note", "xp-card", "schedule-card", "stage-card", "modebar", "goal-modes", "path-content", "feedback-card", "install-card", "goal-line", "level-card"];
+const IDS = ["path-head", "path-level", "path-lower", "path-note", "lang-note", "xp-card", "schedule-card", "stage-card", "modebar", "goal-modes", "path-content", "feedback-card", "install-card", "goal-line", "level-card", "goal-reminder"];
 
 async function stran(base, jar, { locale = "sl-SI", tz = "Europe/Ljubljana", init = () => {}, mobile = true, pot = "/" } = {}) {
   const ctx = await chromium.newContext({ viewport: mobile ? { width: 390, height: 844 } : { width: 1280, height: 800 }, isMobile: mobile, hasTouch: mobile, locale, timezoneId: tz, serviceWorkers: "block", reducedMotion: "reduce" });
@@ -207,9 +208,12 @@ test("isti HTML: Učna pot s strežnika je enaka tisti, ki jo izriše app.js (sl
     const sl = await signup("sl@primer.si", [{ name: "Lena" }]);
     await sl.c(`/api/students/${sl.sid}/schedule`, { method: "PUT", body: { lessons: [1, 2, 3, 4, 5, 6, 7].map((day) => ({ day, start: "23:00", end: "23:45", name: "Matematika" })), events: [{ date: datum(4), time: "08:00", kind: "test", name: "Test <b>ulomki</b>" }] } });
     const ar = await signup("ar@primer.si", [{ name: "Amira", settings: { language: "ar" } }]);
+    // Star profil maturanta brez cilja: ponudba »cilj matura« (#goal-reminder) že s strežnika (public/zacetna.js).
+    const mat = await signup("mat@primer.si", [{ name: "Maj", settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik" } }]);
     for (const [u, o] of [
       [sl, {}],
       [ar, { locale: "ar", tz: "Asia/Dubai", mobile: false }],
+      [mat, { ponudba: true }],
     ]) {
       const { ctx, page, napake, spusti, pripravljen } = await stran(base, u.c.jar, o);
       try {
@@ -221,7 +225,10 @@ test("isti HTML: Učna pot s strežnika je enaka tisti, ki jo izriše app.js (sl
         assert.deepEqual(m, { id: "view-path", aria: null, inert: false, dir: o.locale === "ar" ? "rtl" : "ltr", lang: o.locale === "ar" ? "ar" : "sl" }, "dostopna Učna pot pred zagonom");
         const pred = await page.evaluate(ZAJEMI, IDS);
         assert.ok(pred["xp-card"] && pred["path-content"] && pred.modebar, JSON.stringify(Object.keys(pred)));
-        if (!o.locale) assert.match(pred["schedule-card"], /Test &lt;b&gt;ulomki&lt;\/b&gt;/, "dogodek iz urnika ubežan");
+        if (!o.locale && !o.ponudba) assert.match(pred["schedule-card"], /Test &lt;b&gt;ulomki&lt;\/b&gt;/, "dogodek iz urnika ubežan");
+        if (o.ponudba) assert.match(pred["goal-reminder"], /data-matura-offer="yes"/, "ponudba cilja matura");
+        else assert.equal(pred["goal-reminder"], "skrit");
+        assert.match(pred.kartice, /xp-card,feedback-card,install-card/, "mnenje in namestitev tik pod #xp-card");
         // Napisi lupine že v jeziku profila (arabščina): enaki kot po zagonu.
         const lupina = () => page.evaluate(() => [...document.querySelectorAll(".topbar .tab span, #tabbar .tab span, #test-notice b")].map((e) => e.textContent).join("|"));
         const lupinaPred = await lupina();
@@ -229,7 +236,7 @@ test("isti HTML: Učna pot s strežnika je enaka tisti, ki jo izriše app.js (sl
         await pripravljen();
         await page.waitForLoadState("networkidle");
         const po = await page.evaluate(ZAJEMI, IDS);
-        for (const id of [...IDS, "vrstni"]) assert.equal(pred[id], po[id], `${o.locale || "sl"}: #${id}`);
+        for (const id of [...IDS, "vrstni", "kartice"]) assert.equal(pred[id], po[id], `${o.locale || "sl"}: #${id}`);
         assert.equal(lupinaPred, await lupina(), "napisi lupine");
         assert.deepEqual(napake, []);
       } finally {

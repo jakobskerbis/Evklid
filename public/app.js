@@ -75,7 +75,7 @@ import { initTestNotice } from "./testna-verzija.js";
 import { xpStatsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import * as izris from "./zacetna.js"; // izris Učne poti, skupen s strežnikom (server/pot-takoj.js)
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
-import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml } from "./goal.js";
+import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, onbGoal, wireDanes } from "./goal.js";
 import { goalTabbarView } from "./goal-data.js";
 import { loadPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 // Zasloni, ki niso Učna pot (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2): skener z
@@ -337,7 +337,7 @@ const loadPaperViewer = () =>
 const closePaperViewer = () => paperViewer?.closePaperViewer() || false;
 import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
-import { jeFaks, jeSs, jeOs, stopnja } from "./stopnja.js";
+import { jeFaks, jeSs, jeOs, stopnja, brezUvoda } from "./stopnja.js";
 import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { GUIDE } from "./vodic.js";
 import { FREE_LIMIT_CODES, showLimitCard } from "./meja-placilo.js";
@@ -1353,17 +1353,11 @@ async function onboard(name = "") {
   const f = $("#onboard-form");
   mountLanguageCard(f.querySelector(".onb-lang"), { compact: true });
   // Cilj in datum: vprašamo samo tokrat (izbira ciljev je odvisna od šole).
-  const goalBox = f.querySelector(".goal-box");
-  const drawGoal = () => {
-    const keep = goalBox.innerHTML ? readGoalFields(goalBox) : {};
-    goalBox.innerHTML = goalFieldsHtml({ ...keep, school_system: f.school_system.value, educational_track: f.educational_track.value }, { idPrefix: "onb-goal" });
-  };
-  drawGoal();
-  wireGoalFields(goalBox);
-  const picker = mountLevelPicker(f.querySelector(".level-picker"), f, { programs, settings: { school_system: defaultSystem }, onChange: drawGoal });
+  const goal = onbGoal(f.querySelector(".goal-box"), f);
+  const picker = mountLevelPicker(f.querySelector(".level-picker"), f, { programs, settings: { school_system: defaultSystem }, onChange: goal.draw });
   f.school_system.addEventListener("change", () => {
     picker.setSystem(f.school_system.value);
-    drawGoal();
+    goal.draw();
   });
   showView("onboard");
   document.body.classList.add("onboarding");
@@ -1391,7 +1385,7 @@ async function onboard(name = "") {
         curriculum_level: f.curriculum_level.value,
         language: currentLang(),
         region: currentRegion(),
-        ...readGoalFields(goalBox),
+        ...goal.read(),
       };
       if (track === "UNIVERZA") settings.subject = programs.find((p) => p.id === settings.study_program)?.mainSubject || "MAT";
       const btn = f.querySelector('button[type="submit"]');
@@ -3242,7 +3236,7 @@ function renderGoal() {
   const s = st.settings;
   const line = $("#goal-line");
   line.hidden = !hasGoal(s);
-  if (hasGoal(s)) line.innerHTML = goalLineHtml(st, goalLevelText(s));
+  if (hasGoal(s)) line.innerHTML = goalLineHtml(st, goalLevelText(s), s.goal == "matura");
   const chip = $("#goal-chip");
   chip.hidden = !hasGoal(s);
   if (hasGoal(s)) {
@@ -3251,9 +3245,8 @@ function renderGoal() {
     chip.title = t("goal.change");
   }
   const rem = $("#goal-reminder");
-  const due = reminderDue(st);
-  rem.hidden = !due;
-  if (due) rem.innerHTML = reminderCardHtml(st);
+  rem.innerHTML = reminderDue(st) ? reminderCardHtml(st) : izris.maturaPonudbaHtml(t, s);
+  rem.hidden = !rem.innerHTML;
   renderGoalModes();
 }
 
@@ -3303,6 +3296,15 @@ document.addEventListener("click", (e) => {
     $("#goal-reminder").hidden = true;
     if (e.target.closest("[data-goal-start]")) startSession("daily", { path: state.pathKey });
   }
+});
+wireDanes({
+  state,
+  start: startSession,
+  topic: (id) => (setBack("path"), openTopic(id).then((x) => !x && $("#t-practice") && nextPractice())),
+  save: (st, settings, yes) =>
+    api(`/api/students/${st.id}`, { method: "PUT", body: { settings } })
+      .then((u) => (studentUpdated(u), yes && currentView === "path" && loadPath()))
+      .catch((e) => toast(e.message)),
 });
 // Opomnik ob 12.00, tudi če je aplikacija ves čas odprta.
 setInterval(() => {
@@ -3771,8 +3773,9 @@ async function loadPath(key = state.pathKey) {
   }
   renderGoal();
   const done = state.modes?.daily?.done;
-  // Izris skupen s strežnikom (public/zacetna.js, server/pot-takoj.js): Učna pot v prvem odgovoru strani je enaka.
-  $("#xp-card").innerHTML = izris.xpCardHtml(t, { p, done, scan: !!document.getElementById("view-scan"), games: gamesOn(state.student.settings) });
+  // Izris skupen s strežnikom (public/zacetna.js, server/pot-takoj.js): Učna pot v prvem odgovoru strani je enaka;
+  // pri cilju matura kartica »Danes« (p.danes).
+  $("#xp-card").innerHTML = izris.xpCardHtml(t, { p, done, scan: !!document.getElementById("view-scan"), games: gamesOn(state.student.settings), goalDate: state.student.settings.goal_date });
   // Dnevna uganka (public/games/daily.js): stanje v ozadju; rešena danes → niz dni.
   if (gamesOn(state.student.settings)) {
     const sid = state.student.id;
@@ -4052,7 +4055,7 @@ function markFirstTask(s = state.student) {
 }
 async function maybeIntro() {
   const s = state.student;
-  if (!s || (s.settings?.interests !== null && (s.settings?.tour_version || 0) >= TOUR_VERSION)) return;
+  if (!s || brezUvoda(s) || (s.settings?.interests !== null && (s.settings?.tour_version || 0) >= TOUR_VERSION)) return;
   const done = await firstTaskDone(s);
   if (!done || state.student?.id !== s.id || currentView !== "path") {
     maybeTour.done = false; // poskusi znova ob naslednjem izrisu Učne poti
