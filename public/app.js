@@ -2974,7 +2974,7 @@ function fillLevelOptions() {
   fillSubjectOptions();
   fillGoalFields();
 }
-// Cilj, datum in opomnik ob 12.00 (cilji so odvisni od šole: NPZ v OŠ, matura v SŠ, izpit na fakulteti).
+// Cilj, datum in dnevni opomnik (cilji so odvisni od šole: NPZ v OŠ, matura v SŠ, izpit na fakulteti).
 function fillGoalFields(fresh = false) {
   const box = $("#settings-goal");
   const f = $("#settings-form");
@@ -3226,7 +3226,7 @@ $("#delete-student").addEventListener("click", async () => {
 
 // ---------- napredek ----------
 
-// Cilj: vrstica na Učni poti, značka v zgornji vrstici in opomnik ob 12.00 (public/goal.js).
+// Cilj: vrstica na Učni poti, značka v zgornji vrstici in dnevni opomnik (public/goal.js, OPOMNIK_URA).
 function goalLevelText(st) {
   return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
 }
@@ -3306,7 +3306,7 @@ wireDanes({
       .then((u) => (studentUpdated(u), yes && currentView === "path" && loadPath()))
       .catch((e) => toast(e.message)),
 });
-// Opomnik ob 12.00, tudi če je aplikacija ves čas odprta.
+// Opomnik ob OPOMNIK_URA (goal-data.js), tudi če je aplikacija ves čas odprta.
 setInterval(() => {
   if (state.student && currentView === "path" && $("#goal-reminder").hidden && reminderDue(state.student)) renderGoal();
 }, 5 * 60000);

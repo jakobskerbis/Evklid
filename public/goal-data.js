@@ -1,6 +1,10 @@
 import { jeFaks, jeSs } from "./stopnja.js";
 // Cilj učenca (NPZ, matura, tekmovanje, izpit …) in neobvezni datum. Vpraša se enkrat ob novem profilu,
-// spremeni ali izbriše se v Nastavitvah. Brez DOM: uporabljata ga strežnik (prompt, opomnik ob 12.00) in odjemalec.
+// spremeni ali izbriše se v Nastavitvah. Brez DOM: uporabljata ga strežnik (prompt, opomnik) in odjemalec.
+
+// Ura dnevnega opomnika cilja (Ljubljana): e-pošta, potisno obvestilo in kartica na Učni poti (j, 21. 11. 2026: 16.00,
+// ko je maturant že iz šole). Ena konstanta za vse tri; besedila jo dobijo kot {h}.
+export const OPOMNIK_URA = 16;
 
 export const GOALS = ["sprotno", "test", "npz", "matura", "tekmovanje", "izpit"];
 export const DEFAULT_GOAL = "sprotno";
@@ -35,7 +39,7 @@ export const MATURA_SPOMLADI = ["2027-05-29"];
 export const maturaDatum = (today = null) => MATURA_SPOMLADI.find((d) => daysUntil(d, today) >= 0) || "";
 
 // Maturant (j, 20. 11. 2026): 4. letnik srednje šole v Sloveniji pri matematiki ima cilj matura z datumom spomladanskega
-// roka (raven ostane v curriculum_level: »4. letnik OR/VR«, »še ne vem« = »4. letnik«). Opomnika ob 12.00 (in e-pošte
+// roka (raven ostane v curriculum_level: »4. letnik OR/VR«, »še ne vem« = »4. letnik«). Opomnika (in e-pošte
 // staršu) samodejno ne vklopimo; vklopi ga učenec v Nastavitvah. Vrne popravek nastavitev ali {}.
 export function privzetiCilj(settings = {}, today = null) {
   const s = settings || {};
@@ -43,7 +47,7 @@ export function privzetiCilj(settings = {}, today = null) {
   return { goal: "matura", goal_date: maturaDatum(today), goal_reminder: false };
 }
 // Obrazec ob prvem zagonu, ko se je učenec dotaknil cilja: datum mature, ki ga je vpisal obrazec sam (privzetiCilj),
-// tudi tedaj ne vklopi opomnika ob 12.00 in e-pošte staršu (enako kot nedotaknjen obrazec); vklopi ga v Nastavitvah.
+// tudi tedaj ne vklopi opomnika in e-pošte staršu (enako kot nedotaknjen obrazec); vklopi ga v Nastavitvah.
 export function ciljObrazca(polja, where, today = null) {
   const p = privzetiCilj(where, today);
   return p.goal && polja.goal === p.goal && polja.goal_date === p.goal_date ? { ...polja, goal_reminder: false } : polja;
