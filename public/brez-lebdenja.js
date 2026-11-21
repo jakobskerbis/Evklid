@@ -57,6 +57,8 @@
   }
   function poIzrisu() {
     setTimeout(zacni, 3000);
+    // Dotik pred čiščenjem (počasen telefon, ~0,6 s po izrisu): počisti takoj, da se :hover ne prikaže (pregled #931).
+    document.addEventListener("touchstart", zacni, { capture: true, passive: true, once: true });
     var po, tipi = window.PerformanceObserver && PerformanceObserver.supportedEntryTypes;
     if (tipi && tipi.indexOf("paint") !== -1) {
       try {

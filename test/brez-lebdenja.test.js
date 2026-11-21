@@ -89,6 +89,14 @@ test("touch screens: a tab that never paints (hidden) is cleaned after 3 s at th
   assert.equal(rules.length, 0);
 });
 
+test("touch screens: the first touch cleans at once, before the post-paint task (review #931)", () => {
+  const rules = [rule(".a:hover"), rule(".b")];
+  const ctx = run(true, [sheetOf(rules)], { paint: true });
+  assert.equal(rules.length, 2, "nothing before the touch");
+  ctx.on.touchstart();
+  assert.deepEqual(rules.map((r) => r.selectorText), [".b"]);
+});
+
 test("split keeps commas inside :is() and attribute values", () => {
   const ctx = run(true, []);
   assert.deepEqual([...ctx.window.EvklidDotik.split(':is(.a, .b) .c, [data-x="1,2"]:hover')], [":is(.a, .b) .c", '[data-x="1,2"]:hover']);
