@@ -165,7 +165,9 @@ export function entryPage(publicDir, { version = "", preload = true, landing = n
   const ver = typeof version === "function" ? version : () => version;
   const file = path.join(publicDir, "index.html");
   // Jedro besedil se izračuna enkrat ob zagonu (EVKLID_SL_JEDRO=0: brez, za primerjavo); napaka: stran brez jedra.
-  const jedroP = seja && process.env.EVKLID_SL_JEDRO !== "0" ? slJedro(publicDir).catch(() => null) : Promise.resolve(null);
+  // Tudi slovenska pristajalna stran ga dobi (meritev hitrosti 21. 11. 2026): obrazec za registracijo (/#registracija,
+  // gumb »Začni brezplačno«) tako ne čaka celega slovarja (~83 KB), obiskovalec, ki se ne registrira, pa ga ne prenese.
+  const jedroP = (seja || landing) && process.env.EVKLID_SL_JEDRO !== "0" ? slJedro(publicDir).catch(() => null) : Promise.resolve(null);
   let jedro = null;
   let built = null; // { mtime, v, html, variants: Map(ključ → { raw, etag, enc }) }
   const variant = (raw) => ({ raw, etag: `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}"`, enc: {} });
@@ -186,7 +188,8 @@ export function entryPage(publicDir, { version = "", preload = true, landing = n
     let x = built.variants.get(page.key);
     if (!x) {
       if (built.variants.size >= 64) built.variants.delete(built.variants.keys().next().value);
-      x = variant(Buffer.from(withLanding(built.html, page)));
+      // Jedro samo za slovensko stran: druge jezike i18n-osnova.js naloži s celim slovarjem kot prej (prenos ostane vnaprej).
+      x = variant(Buffer.from(withLanding(page.lang === "sl" ? withSlJedro(built.html, jedro) : built.html, page)));
       built.variants.set(page.key, x);
     }
     return { v, ...x };
@@ -214,6 +217,7 @@ export function entryPage(publicDir, { version = "", preload = true, landing = n
     if ((req.method !== "GET" && req.method !== "HEAD") || (req.path !== "/" && req.path !== "/index.html")) return next();
     let page;
     try {
+      if (landing) jedro ??= await jedroP;
       page = build(req);
     } catch {
       return next(); // brez seznama: express.static pošlje navaden index.html

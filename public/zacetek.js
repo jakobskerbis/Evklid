@@ -49,6 +49,10 @@
       slogiPoKoncu = false;
       slogi(false, true);
     }
+    if (obrazecCaka) {
+      obrazecCaka = false;
+      html.removeAttribute("data-zacetek-slogi");
+    }
     html.removeAttribute("data-zacetek");
     html.removeAttribute("data-zacetek-pot");
     html.removeAttribute("data-zacetek-pod");
@@ -744,12 +748,27 @@
       }
     );
   }
+  var obrazecCaka = false;
+  function obrazecObiskovalca() {
+    moduli();
+    slogiPoKoncu = true;
+    obrazecCaka = true;
+    html.setAttribute("data-zacetek-slogi", "");
+    setTimeout(function () {
+      if (!obrazecCaka) return;
+      obrazecCaka = slogiPoKoncu = false;
+      slogi(false, true);
+      html.removeAttribute("data-zacetek-slogi");
+    }, 8000);
+  }
+  var OBRAZCI = { "#registracija": 1, "#prijava": 1, "#pozabljeno-geslo": 1 };
   var poIzrisu = null;
   var pm = null;
   try {
     pm = document.querySelector('meta[name="evklid-pristajalna"]');
     var prist = !!pm && !html.hasAttribute("data-zacetek") && pristajalnaVelja(pm);
-    if (!prist) brezPristajalne(pm || (zp && !slogiPoKoncu));
+    if (!prist && pm && !html.hasAttribute("data-zacetek") && OBRAZCI[location.hash] === 1) obrazecObiskovalca();
+    else if (!prist) brezPristajalne(pm || (zp && !slogiPoKoncu));
     else {
       poIzrisu = new Promise(function (ok) {
         var konc = false;
