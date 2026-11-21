@@ -216,3 +216,13 @@ test("pretakanje: oznaka v markdown (krepko, naslov, citat) se ne pokaže na pol
     assert.equal(out, replyText(raw, { polish: true }), JSON.stringify(raw));
   }
 });
+
+// Pregled #915: črka kot ime, hrvaščina pri nastavitvi »sl«, gola »Priklic:« je pojem.
+test("predlogi: črka kot ime (orbitala, komponenta, koordinata, naštevanje črk) in hrvaško besedilo ostanejo", () => {
+  for (const t of ["Elektron je v s orbitali.", "Zapolni s orbitalo.", "Izračunaj x, y in z komponento.", "Poišči z koordinato točke.", "Enako z koordinato.", "Pri a, b ali k vrednosti.", "Množi s brojem koji je veći, ili s olovkom."]) {
+    assert.equal(fixPrepositions(t), t, t);
+  }
+  assert.equal(fixPrepositions("Primerjaj s rezultatom in s osnovo."), "Primerjaj z rezultatom in z osnovo.");
+  assert.equal(stripLabels("- Priklic: dostop do shranjene informacije"), "- Priklic: dostop do shranjene informacije");
+  assert.equal(stripLabels("**Priklic predznanja:** kaj je potenca?"), "Kaj je potenca?");
+});

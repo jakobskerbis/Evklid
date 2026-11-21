@@ -202,6 +202,9 @@ export function createStreamFilter({ polish = true, language = "sl" } = {}) {
         safeEnd = end;
       }
       if (safeEnd <= emitted) return "";
+      // Popravek gre vsakič čez celotno besedilo: pri dolgih odgovorih ga ne ponavljaj za vsak droben kos (pregled #915),
+      // počakaj na vsaj 48 znakov (pri dolgem besedilu do 300) ali na prelom vrstice. Konec gre vedno naprej v end().
+      if (polish && leadDone && safeEnd - emitted < Math.min(300, Math.max(48, buffer.length / 60)) && !buffer.slice(emitted, safeEnd).includes("\n")) return "";
       if (polish) {
         // Uvodna fraza se odloči šele na dovolj dolgem začetku (tudi ko je konec zadržan zaradi oznake ali predloga).
         if (!leadDone && safeEnd < LEAD_MAX && !buffer.slice(0, safeEnd).includes("\n")) return "";

@@ -68,13 +68,21 @@ const ADVERB_NO = /no$/;
 // Pred temi besedami je črka spremenljivka (»ko gre h proti 0«, »naj bo z …«, »če je s …«, »označimo h višino«).
 const VAR_BEFORE = /(?:^|[^\p{L}])(?:gre|gredo|bo|bodo|naj|ko|če|je|označimo|označi|izberimo|vzemimo|imenujmo|za)[ \t]+$/iu;
 const CASE_END = /(?:o|m|i|u|ej|oj|ma)$/;
+// Črka kot ime (»v s orbitali«, »z koordinato«, »x, y in z komponento«): beseda, ki jo črka označi, ali črka v naštevanju
+// črk. Tam bi popravek spremenil pomen (pregled #915).
+const LETTER_NOUN = /^(?:orbital|komponent|koordinat|podlupin|osjo$|osi$|os$)/;
+const LETTER_LIST = /(?:^|[^\p{L}])\p{L}(?:,|[ \t]+(?:in|ali|ter))[ \t]+$/u;
+// Hrvaščina ali srbščina pri nastavitvi »sl« (inštruktor odgovori v jeziku učenca): tam je »s brojem« pravilno. Vsaj dve
+// različni besedi, ki ju v slovenščini ni.
+const HR_WORDS = new Set("koji koja koje kojeg što šta nije ili ovaj ova ovo ovdje gdje jer sada ću će brojem treba trebaš".split(" "));
+const tujJezik = (s) => new Set((s.toLowerCase().match(/\p{L}+/gu) || []).filter((w) => HR_WORDS.has(w))).size >= 2;
 const NOT_CASE = /(?:mo|[šžč]i)$/;
 const PREP_RE = /(?<![\p{L}\p{N}_\\/.\-'’^=+*<>|~\0])(?<![\p{N}\0=+*/^<>|)\]°%][ \t]+)([sSzZkKhH]) (\p{L}{2,})(?=$|[\s.,;:!?)\]»«"“”'’…–—-])/gu;
 const SENTENCE_START = /(?:^|\n[ \t]*(?:[-*>][ \t]+|\d+[.)][ \t]+)?|[.!?…:][ \t]+|[«»"„“(][ \t]*)$/;
 
 export function fixPrepositions(text) {
   const s = String(text);
-  if (!/(?:^|[^\p{L}])[szkh] /iu.test(s)) return s;
+  if (!/(?:^|[^\p{L}])[szkh] /iu.test(s) || tujJezik(s)) return s;
   const plain = maskNonText(s);
   let out = s;
   for (const m of plain.matchAll(PREP_RE)) {
@@ -82,7 +90,7 @@ export function fixPrepositions(text) {
     const at = m.index;
     const lower = word.toLowerCase();
     if (STOP.has(lower) || NOT_CASE.test(lower) || ADVERB_NO.test(lower) || !CASE_END.test(lower)) continue;
-    if (VAR_BEFORE.test(plain.slice(Math.max(0, at - 16), at))) continue;
+    if (VAR_BEFORE.test(plain.slice(Math.max(0, at - 16), at)) || LETTER_LIST.test(plain.slice(Math.max(0, at - 12), at)) || LETTER_NOUN.test(lower)) continue;
     if ((word.match(/\p{Lu}/gu) || []).length > 1) continue; // kratica (DNA, ATP): izgovorjava po črkah
     const upper = prep === prep.toUpperCase();
     if (upper && !SENTENCE_START.test(plain.slice(Math.max(0, at - 12), at))) continue;
@@ -98,7 +106,8 @@ export function fixPrepositions(text) {
 // Notranje oznake iz navodil (»Najprej priklic:«, »Najprej preveri predznanje:«), ki jih je model izpisal učencu kot
 // naslov ali predpono. Samo ti znani zapisi in samo na začetku vrstice ali stavka; vprašanje za oznako ostane
 // (z veliko začetnico).
-const LABELS = ["Najprej priklic predznanja", "Najprej priklic", "Najprej preverimo predznanje", "Najprej preveri predznanje", "Priklic predznanja", "Priklic"];
+// Gola »Priklic« ne: v BIO, psihologiji in RAC je to pojem (»Priklic: dostop do shranjene informacije«, pregled #915).
+const LABELS = ["Najprej priklic predznanja", "Najprej priklic", "Najprej preverimo predznanje", "Najprej preveri predznanje", "Priklic predznanja"];
 const LABEL_ALT = LABELS.join("|");
 const MD = "(?:\\*\\*|__)?";
 // Oznaka v svoji vrstici (tudi kot naslov ali krepko): vrstica izgine.
@@ -108,7 +117,7 @@ const LABEL_INLINE_RE = new RegExp(`(^|\\n[ \\t]*(?:[-*>][ \\t]+)?|[.!?…][ \\t
 
 export function stripLabels(text) {
   const s = String(text);
-  if (!/Najprej p|Priklic/.test(s)) return s;
+  if (!/Najprej p|Priklic predznanja/.test(s)) return s;
   return s.replace(LABEL_LINE_RE, "$1").replace(LABEL_INLINE_RE, (_, before, ch) => before + (ch ? ch.toUpperCase() : ""));
 }
 
