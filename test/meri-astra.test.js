@@ -43,6 +43,8 @@ test("meri-astra --preizkus: vsi primeri in drugi krog v istem pogovoru skozi pr
   assert.equal(izid.izid.length, 10);
   assert.equal(izid.izid[0].prepis.length, 2, "1b v istem pogovoru");
   assert.ok(izid.izid.every((x) => x.prepis.every((k) => k.evklid.length > 0 && k.ms >= 0)));
+  // Čas do prvega besedila, ki ga vidi učenec, je izmerjen in ni po koncu odgovora.
+  assert.ok(izid.izid.every((x) => x.prepis.every((k) => Number.isFinite(k.prvoMs) && k.prvoMs >= 0 && k.prvoMs <= k.ms)));
   const m = /ODGOVORI-ZACETEK\n(.*)\nODGOVORI-KONEC/.exec(r.stdout);
   assert.ok(m, "odgovori v dnevniku");
   assert.equal(JSON.parse(m[1]).length, 10);
