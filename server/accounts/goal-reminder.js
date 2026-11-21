@@ -21,19 +21,32 @@ export function ljNow(d = new Date()) {
 // Ura pošiljanja (e-pošta in potisno obvestilo): od OPOMNIK_URA naprej, enkrat na dan.
 export const isReminderTime = (d = new Date()) => ljNow(d).hour >= OPOMNIK_URA;
 
-// Ali je učenec na dan »YYYY-MM-DD« (Ljubljana) že vadil: XP, dogodek (vaja, klepet) ali lastno sporočilo inštruktorju.
-// SQL vzame dan prej (UTC ↔ Ljubljana), natančno izbiro naredi ljDay.
+// UTC meje dneva »YYYY-MM-DD« v Ljubljani v zapisu datetime('now'): [začetek, konec). Polnoč v Ljubljani je
+// 22.00 UTC (poletni čas) ali 23.00 UTC (zimski) prejšnji dan.
+const utcText = (ms) => new Date(ms).toISOString().slice(0, 19).replace("T", " ");
+const ljStart = (date) => {
+  const ms = Date.parse(`${date}T00:00:00Z`) - 2 * 3600000;
+  return ljDay(ms) === date ? ms : ms + 3600000;
+};
+const nextDay = (date) => new Date(Date.parse(`${date}T12:00:00Z`) + 86400000).toISOString().slice(0, 10);
+export const ljDayBounds = (date) => [utcText(ljStart(date)), utcText(ljStart(nextDay(date)))];
+
+// Ali je učenec na dan »YYYY-MM-DD« (Ljubljana) že vadil: XP, dogodek (vaja, klepet), naloga s poskusom ali lastno
+// sporočilo inštruktorju. Ena poizvedba EXISTS, omejena na ta dan (indeksi po učencu in času; sporočila le v
+// pogovorih, spremenjenih ta dan), pripravljena enkrat na bazo.
+const vadilStmt = new WeakMap();
 export function vadilDanes(db, studentId, date) {
-  const from = new Date(Date.parse(`${date}T12:00:00Z`) - 86400000).toISOString().slice(0, 10);
-  const rows = [
-    ...db.prepare("SELECT created_at FROM xp_events WHERE student_id = ? AND created_at >= ?").all(studentId, from),
-    ...db.prepare("SELECT created_at FROM events WHERE student_id = ? AND created_at >= ?").all(studentId, from),
-    ...db.prepare("SELECT created_at FROM tasks WHERE student_id = ? AND attempts > 0 AND created_at >= ?").all(studentId, from),
-    ...db
-      .prepare("SELECT m.created_at FROM messages m JOIN conversations c ON c.id = m.conversation_id WHERE c.student_id = ? AND m.role = 'user' AND m.created_at >= ?")
-      .all(studentId, from),
-  ];
-  return rows.some((r) => ljDay(r.created_at) === date);
+  let st = vadilStmt.get(db);
+  if (!st) {
+    st = db.prepare(`SELECT EXISTS (SELECT 1 FROM xp_events WHERE student_id = $s AND created_at >= $od AND created_at < $do)
+      OR EXISTS (SELECT 1 FROM events WHERE student_id = $s AND created_at >= $od AND created_at < $do)
+      OR EXISTS (SELECT 1 FROM tasks WHERE student_id = $s AND attempts > 0 AND created_at >= $od AND created_at < $do)
+      OR EXISTS (SELECT 1 FROM conversations c JOIN messages m ON m.conversation_id = c.id
+        WHERE c.student_id = $s AND c.updated_at >= $od AND m.role = 'user' AND m.created_at >= $od AND m.created_at < $do) AS v`);
+    vadilStmt.set(db, st);
+  }
+  const [od, doo] = ljDayBounds(date);
+  return !!st.get({ s: studentId, od, do: doo }).v;
 }
 
 const daysWord = (n) => (n % 100 === 1 ? "dan" : n % 100 === 2 ? "dneva" : n % 100 === 3 || n % 100 === 4 ? "dnevi" : "dni");

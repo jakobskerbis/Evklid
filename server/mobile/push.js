@@ -116,12 +116,15 @@ export function mountPush(app, ctx, opts = {}) {
     const { date } = ljNow(now);
     dropExpiredPushTokens(db, now);
     const parents = db.prepare("SELECT DISTINCT parent_id AS id FROM push_tokens").all();
+    const goalSent = db.prepare("SELECT 1 FROM push_log WHERE parent_id = ? AND kind = 'goal' AND period = ?");
     let sent = 0;
     for (const { id } of parents) {
       for (const child of children(id)) {
         const n = reminderDays(child, date);
-        if (n === null || vadilDanes(db, child.id, date)) continue;
-        const claim = db.prepare("INSERT OR IGNORE INTO push_log (parent_id, kind, period) VALUES (?, 'goal', ?)").run(id, `${date}:${child.id}`);
+        if (n === null) continue;
+        const period = `${date}:${child.id}`;
+        if (goalSent.get(id, period) || vadilDanes(db, child.id, date)) continue; // že poslano danes ali že vadil
+        const claim = db.prepare("INSERT OR IGNORE INTO push_log (parent_id, kind, period) VALUES (?, 'goal', ?)").run(id, period);
         if (!claim.changes) continue;
         try {
           sent += await sendPush(id, { ...goalPushText(child, n), data: { student_id: child.id, view: "path" } }, now);

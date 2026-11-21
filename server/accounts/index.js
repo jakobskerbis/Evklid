@@ -3122,14 +3122,17 @@ export function mountAccounts(app, store, opts = {}) {
   // Ne, če je otrok ta dan že vadil; račun »Zame« dobi besedilo v 2. osebi (buildGoalReminder self).
   async function sendGoalRemindersAll(now = new Date()) {
     const { date } = ljNow(now);
+    const goalSent = db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = 'goal' AND period = ?");
     const parents = db.prepare("SELECT * FROM parents WHERE email_verified_at IS NOT NULL").all();
     let sent = 0;
     for (const p of parents) {
       const self = selfOnly(p.id);
       for (const child of children(p.id)) {
         const n = reminderDays(child, date);
-        if (n === null || vadilDanes(db, child.id, date)) continue;
+        if (n === null) continue;
         const period = `${date}:${child.id}`;
+        // Že poslan danes: brez poizvedbe o vaji. Sicer vadilDanes (ena omejena poizvedba), nato zasedba.
+        if (goalSent.get(p.id, period) || vadilDanes(db, child.id, date)) continue;
         const claim = db.prepare("INSERT OR IGNORE INTO email_log (parent_id, kind, period) VALUES (?, 'goal', ?)").run(p.id, period);
         if (!claim.changes) continue;
         const ok = await sendMail(p.email, buildGoalReminder(child, n, { appUrl: baseUrl(null) + "/", self }));
