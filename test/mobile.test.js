@@ -497,6 +497,11 @@ test("push tokens follow the login session: expired or logged-out session stops 
     assert.equal(dropExpiredPushTokens(db), 0);
     db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE parent_id = ?").run("2000-01-01T00:00:00.000Z", p.id);
     assert.equal(dropExpiredPushTokens(db), 1);
+    // … a največ 30 dni od zadnje prijave žetona, tudi ob živi prijavi v brskalniku (aplikacija brez opomnika ga ne prijavi znova).
+    db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE parent_id = ?").run("2999-01-01T00:00:00.000Z", p.id);
+    db.prepare("INSERT INTO push_tokens (token, parent_id, updated_at) VALUES (?, ?, datetime('now', '-29 days'))").run(T3, p.id);
+    assert.equal(dropExpiredPushTokens(db), 0, "29 dni: še velja");
+    assert.equal(dropExpiredPushTokens(db, new Date(Date.now() + 2 * 86400000)), 1, "čez 30 dni: gre");
   });
 });
 

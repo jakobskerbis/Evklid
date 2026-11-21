@@ -52,10 +52,13 @@ export function goalPushText(child, n) {
   };
 }
 
-// Žetoni, katerih prijava je potekla ali je bila odjavljena. Stari zapisi brez seje (pred tem popravkom)
-// veljajo, dokler ima račun kakšno živo prijavo; aplikacija jih ob naslednjem zagonu prijavi s sejo.
-const DEAD = `NOT EXISTS (SELECT 1 FROM parent_sessions s WHERE s.parent_id = push_tokens.parent_id AND s.expires_at > @now
-  AND (push_tokens.session_hash IS NULL OR s.token_hash = push_tokens.session_hash))`;
+// Žetoni, katerih prijava je potekla ali je bila odjavljena. Stari zapisi brez seje (pred tem popravkom) veljajo,
+// dokler ima račun kakšno živo prijavo, a največ 30 dni od zadnje prijave žetona: aplikacija z nastavljenim opomnikom
+// žeton ob zagonu prijavi znova (zdaj s sejo); brez opomnika ga ne, zato star zapis ne sme živeti, dokler živi
+// katera koli druga prijava računa (npr. v brskalniku).
+const DEAD = `(NOT EXISTS (SELECT 1 FROM parent_sessions s WHERE s.parent_id = push_tokens.parent_id AND s.expires_at > @now
+  AND (push_tokens.session_hash IS NULL OR s.token_hash = push_tokens.session_hash))
+  OR (push_tokens.session_hash IS NULL AND push_tokens.updated_at < datetime(@now, '-30 days')))`;
 
 // Brez parentId za vse račune (dnevni krog), sicer samo za en račun (pred pošiljanjem).
 export function dropExpiredPushTokens(db, now = new Date(), parentId = null) {
@@ -89,9 +92,9 @@ export function mountPush(app, ctx, opts = {}) {
     res.json({ ok: true });
   });
 
-  async function sendPush(parentId, { title, body, data = {} }) {
+  async function sendPush(parentId, { title, body, data = {} }, now = new Date()) {
     // Samo žetoni z živo prijavo (dnevni krog sendGoalPushAll potečene že pobriše za vse račune).
-    dropExpiredPushTokens(db, new Date(), parentId);
+    dropExpiredPushTokens(db, now, parentId);
     const tokens = db.prepare("SELECT token FROM push_tokens WHERE parent_id = ?").all(parentId).map((r) => r.token);
     if (!tokens.length) return 0;
     const r = await fetchFn(EXPO_PUSH, {
@@ -121,7 +124,7 @@ export function mountPush(app, ctx, opts = {}) {
         const claim = db.prepare("INSERT OR IGNORE INTO push_log (parent_id, kind, period) VALUES (?, 'goal', ?)").run(id, `${date}:${child.id}`);
         if (!claim.changes) continue;
         try {
-          sent += await sendPush(id, { ...goalPushText(child, n), data: { student_id: child.id, view: "path" } });
+          sent += await sendPush(id, { ...goalPushText(child, n), data: { student_id: child.id, view: "path" } }, now);
         } catch (err) {
           log.error?.("[evklid] potisno obvestilo:", err.message);
         }
