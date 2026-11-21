@@ -196,6 +196,7 @@ test("predlogi: spremenljivka za »gre/bo/naj/ko/če/je/označimo« in pred pris
     "Naj bo s realno število.",
     "Če je z čisto imaginarno, je $z^2$ negativno.",
     "Označimo h višino trikotnika.",
+    "Za s večjo od nič je izraz pozitiven.",
   ]) assert.equal(fixPrepositions(t), t, t);
   // Popravki iz ocen ostanejo.
   assert.equal(fixPrepositions("Jaz te bom vodil s vprašanji."), "Jaz te bom vodil z vprašanji.");

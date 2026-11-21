@@ -65,7 +65,7 @@ const STOP = new Set(
 // količina (»naj bo h pozitivno število«), zato raje brez popravka.
 const ADVERB_NO = /no$/;
 // Pred temi besedami je črka spremenljivka (»ko gre h proti 0«, »naj bo z …«, »če je s …«, »označimo h višino«).
-const VAR_BEFORE = /(?:^|[^\p{L}])(?:gre|gredo|bo|bodo|naj|ko|če|je|označimo|označi|izberimo|vzemimo|imenujmo)[ \t]+$/iu;
+const VAR_BEFORE = /(?:^|[^\p{L}])(?:gre|gredo|bo|bodo|naj|ko|če|je|označimo|označi|izberimo|vzemimo|imenujmo|za)[ \t]+$/iu;
 const CASE_END = /(?:o|m|i|u|ej|oj|ma)$/;
 const NOT_CASE = /(?:mo|[šžč]i)$/;
 const PREP_RE = /(?<![\p{L}\p{N}_\\/.\-'’^=+*<>|~\0])(?<![\p{N}\0=+*/^<>|)\]°%][ \t]+)([sSzZkKhH]) (\p{L}{2,})(?=$|[\s.,;:!?)\]»«"“”'’…–—-])/gu;
