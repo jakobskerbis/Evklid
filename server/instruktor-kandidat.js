@@ -1,8 +1,9 @@
-// Kandidat izboljšav inštruktorja (j 21. 11. 2026, kartica z odločitvijo): meritev pedagoških mer 19. 11.
+// Popravki inštruktorja (j 21. 11. 2026, kartici z odločitvijo): meritev pedagoških mer 19. 11.
 // (scripts/meri-pedagogika.mjs) je pokazala slovnične napake (»s osnovo«) in notranje oznake v odgovorih
-// (»Najprej priklic:«). Z EVKLID_INSTRUKTOR_KANDIDAT=1 aplikacija uporabi prompts/system_prompt-kandidat.md
-// (server/prompt.js) in spodnja popravka besedila, ki ga vidi učenec (server/meta.js createStreamFilter, server/app.js).
-// Privzeto izklopljeno: produkcija ostane enaka, dokler j ne vidi primerjave pred/po in kandidata ne potrdi.
+// (»Najprej priklic:«). Spodnja popravka besedila, ki ga vidi učenec, sta vklopljena za vse (server/meta.js
+// createStreamFilter in replyText, server/app.js); prompt kandidata je po dveh slepih primerjavah prej/potem postal
+// prompts/system_prompt.md. EVKLID_INSTRUKTOR_KANDIDAT=1 še vedno izbere prompts/system_prompt-kandidat.md (server/prompt.js)
+// za meritev naslednjega kandidata (scripts/meri-pedagogika.mjs --kandidat); zdaj je enak produkcijskemu.
 // Oba popravka sta namenoma previdna: napačen popravek je slabši od nobenega.
 
 export const kandidatOn = (env = process.env) => env.EVKLID_INSTRUKTOR_KANDIDAT === "1";
