@@ -2837,6 +2837,7 @@
   "mob.takenText": "Tento profil je práve otvorený na inom zariadení. Ak budeš pokračovať tu, tam sa zatvorí.",
   "mob.takenHere": "Pokračovať tu",
   "mob.takenOther": "Vybrať iný profil",
+  "mob.takenOtherDevice": "Neznáme zariadenie",
   "mob.explain": "Vysvetli",
   "mob.explainAsk": "V lekcii „{name}“ mi nie je jasná táto časť:\n\n„{quote}“\n\nMôžeš mi ju vysvetliť jednoduchšie, krok za krokom?",
   "mob.calcOffline": "Kalkulačka potrebuje pripojenie na internet.",

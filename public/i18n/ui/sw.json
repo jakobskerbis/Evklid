@@ -2789,6 +2789,7 @@
   "mob.takenText": "Wasifu huu uko wazi kwenye kifaa kingine sasa. Ukiendelea hapa, utafungwa huko.",
   "mob.takenHere": "Endelea hapa",
   "mob.takenOther": "Chagua wasifu mwingine",
+  "mob.takenOtherDevice": "Kifaa kisichojulikana",
   "mob.explain": "Eleza",
   "mob.explainAsk": "Katika somo “{name}” sehemu hii sijaielewa:\n\n“{quote}”\n\nUnaweza kunieleza kwa urahisi zaidi, hatua kwa hatua?",
   "mob.calcOffline": "Kikokotoo kinahitaji muunganisho wa intaneti.",

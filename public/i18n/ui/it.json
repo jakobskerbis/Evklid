@@ -2790,6 +2790,7 @@
   "mob.takenText": "Questo profilo è aperto su un altro dispositivo. Se continui qui, lì verrà chiuso.",
   "mob.takenHere": "Continua qui",
   "mob.takenOther": "Scegli un altro profilo",
+  "mob.takenOtherDevice": "Dispositivo sconosciuto",
   "mob.explain": "Spiega",
   "mob.explainAsk": "Nella lezione «{name}» non mi è chiara questa parte:\n\n«{quote}»\n\nMe la spieghi in modo più semplice, passo per passo?",
   "mob.calcOffline": "La calcolatrice ha bisogno di una connessione a internet.",

@@ -2789,6 +2789,7 @@
   "mob.takenText": "Ez a profil most egy másik eszközön van megnyitva. Ha itt folytatod, ott bezárul.",
   "mob.takenHere": "Folytatás itt",
   "mob.takenOther": "Másik profil választása",
+  "mob.takenOtherDevice": "Ismeretlen eszköz",
   "mob.explain": "Magyarázd el",
   "mob.explainAsk": "A(z) „{name}” leckében ez a rész nem világos:\n\n„{quote}”\n\nElmagyaráznád egyszerűbben, lépésről lépésre?",
   "mob.calcOffline": "A számológéphez internetkapcsolat kell.",

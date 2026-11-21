@@ -2726,6 +2726,7 @@ export default {
   "mob.takenText": "Ta profil je trenutno odprt na drugi napravi. Če nadaljuješ tukaj, se tam zapre.",
   "mob.takenHere": "Nadaljuj tukaj",
   "mob.takenOther": "Izberi drug profil",
+  "mob.takenOtherDevice": "Neznana naprava",
   "mob.explain": "Razloži",
   "mob.explainAsk": "V lekciji »{name}« mi ni jasen ta del:\n\n»{quote}«\n\nMi ga razložiš preprosteje, po korakih?",
   "mob.calcOffline": "Kalkulator potrebuje povezavo z internetom.",

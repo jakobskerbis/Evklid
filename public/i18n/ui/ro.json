@@ -2813,6 +2813,7 @@
   "mob.takenText": "Acest profil este deschis acum pe alt dispozitiv. Dacă continui aici, acolo se va închide.",
   "mob.takenHere": "Continuă aici",
   "mob.takenOther": "Alege alt profil",
+  "mob.takenOtherDevice": "Dispozitiv necunoscut",
   "mob.explain": "Explică",
   "mob.explainAsk": "În lecția „{name}” nu înțeleg această parte:\n\n„{quote}”\n\nMi-o poți explica mai simplu, pas cu pas?",
   "mob.calcOffline": "Calculatorul are nevoie de conexiune la internet.",

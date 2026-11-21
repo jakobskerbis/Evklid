@@ -27,7 +27,9 @@ test("en profil: prevzem ponudi Nadaljuj tukaj in Odjava, osnutek ostane", opts,
     // Okno v jeziku vmesnika (mob.taken*), z imenom druge naprave; dialog z aria-modal, fokus v njem, Tab ostane v njem.
     assert.equal(await p.locator("#taken-title").innerText(), "Profil je odprt drugje");
     assert.match(await p.locator("#taken-text").innerText(), /Če nadaljuješ tukaj, se tam zapre\./);
-    assert.doesNotMatch(await p.locator("#taken-overlay").innerText(), /Naprava/, "neznana naprava (fetch brez brskalnika) brez imena");
+    // Neznana naprava (fetch brez brskalnika): prevedeni napis, ne slovenski privzeti z strežnika.
+    assert.match(await p.locator("#taken-overlay").innerText(), /Neznana naprava/);
+    assert.doesNotMatch(await p.locator("#taken-overlay").innerText(), /druga naprava|\nNaprava\n/);
     const dlg = p.locator('#taken-overlay [role="dialog"][aria-modal="true"]');
     assert.equal(await dlg.getAttribute("aria-labelledby"), "taken-title");
     const fokus = () => p.evaluate(() => document.activeElement?.id);

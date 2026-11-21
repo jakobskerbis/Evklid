@@ -1164,8 +1164,9 @@ export function mountAccounts(app, store, opts = {}) {
             error: `Ta profil je trenutno odprt na drugi napravi (${r.other}). Profil je lahko hkrati odprt samo na eni napravi.`,
             taken: true,
             student_id: studentId,
-            // ime druge naprave (»Android · Chrome«) za okno v jeziku vmesnika (account.js showTaken); neznana brez imena
-            device: r.other === "Naprava" ? "" : r.other,
+            // ime druge naprave (»Android · Chrome«) za okno v jeziku vmesnika (account.js showTaken); privzeti slovenski
+            // napis (»druga naprava«, »Naprava«) ne: odjemalec pokaže prevedeni mob.takenOtherDevice
+            device: r.other && r.other !== "druga naprava" && r.other !== "Naprava" ? r.other : null,
           });
         }
       }

@@ -2789,6 +2789,7 @@
   "mob.takenText": "Bu profil şu anda başka bir cihazda açık. Burada devam edersen orada kapanır.",
   "mob.takenHere": "Burada devam et",
   "mob.takenOther": "Başka profil seç",
+  "mob.takenOtherDevice": "Bilinmeyen cihaz",
   "mob.explain": "Açıkla",
   "mob.explainAsk": "“{name}” dersinde bu kısmı anlamadım:\n\n“{quote}”\n\nBunu bana daha basit, adım adım açıklar mısın?",
   "mob.calcOffline": "Hesap makinesi için internet bağlantısı gerekiyor.",

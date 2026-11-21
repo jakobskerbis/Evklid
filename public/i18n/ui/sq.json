@@ -2789,6 +2789,7 @@
   "mob.takenText": "Ky profil është i hapur në një pajisje tjetër. Nëse vazhdon këtu, atje do të mbyllet.",
   "mob.takenHere": "Vazhdo këtu",
   "mob.takenOther": "Zgjidh një profil tjetër",
+  "mob.takenOtherDevice": "Pajisje e panjohur",
   "mob.explain": "Shpjego",
   "mob.explainAsk": "Në mësimin «{name}» nuk e kuptoj këtë pjesë:\n\n«{quote}»\n\nMa shpjegon më thjesht, hap pas hapi?",
   "mob.calcOffline": "Makina llogaritëse ka nevojë për lidhje me internetin.",

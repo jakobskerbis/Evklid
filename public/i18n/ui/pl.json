@@ -2837,6 +2837,7 @@
   "mob.takenText": "Ten profil jest teraz otwarty na innym urządzeniu. Jeśli kontynuujesz tutaj, tam zostanie zamknięty.",
   "mob.takenHere": "Kontynuuj tutaj",
   "mob.takenOther": "Wybierz inny profil",
+  "mob.takenOtherDevice": "Nieznane urządzenie",
   "mob.explain": "Wyjaśnij",
   "mob.explainAsk": "W lekcji „{name}” nie rozumiem tego fragmentu:\n\n„{quote}”\n\nMożesz mi go wyjaśnić prościej, krok po kroku?",
   "mob.calcOffline": "Kalkulator potrzebuje połączenia z internetem.",

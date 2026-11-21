@@ -2813,6 +2813,7 @@
   "mob.takenText": "Ovaj je profil trenutno otvoren na drugom uređaju. Ako nastaviš ovdje, ondje će se zatvoriti.",
   "mob.takenHere": "Nastavi ovdje",
   "mob.takenOther": "Odaberi drugi profil",
+  "mob.takenOtherDevice": "Nepoznati uređaj",
   "mob.explain": "Objasni",
   "mob.explainAsk": "U lekciji »{name}« nije mi jasan ovaj dio:\n\n»{quote}«\n\nMožeš li mi ga objasniti jednostavnije, korak po korak?",
   "mob.calcOffline": "Kalkulatoru je potrebna internetska veza.",

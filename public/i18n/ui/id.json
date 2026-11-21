@@ -2771,6 +2771,7 @@
   "mob.takenText": "Profil ini sedang terbuka di perangkat lain. Jika kamu lanjut di sini, profil di sana akan ditutup.",
   "mob.takenHere": "Lanjut di sini",
   "mob.takenOther": "Pilih profil lain",
+  "mob.takenOtherDevice": "Perangkat tidak dikenal",
   "mob.explain": "Jelaskan",
   "mob.explainAsk": "Di pelajaran “{name}” bagian ini belum jelas bagiku:\n\n“{quote}”\n\nBisa jelaskan dengan lebih sederhana, langkah demi langkah?",
   "mob.calcOffline": "Kalkulator memerlukan koneksi internet.",

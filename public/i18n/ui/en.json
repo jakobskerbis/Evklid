@@ -2789,6 +2789,7 @@
   "mob.takenText": "This profile is open on another device right now. If you continue here, it closes there.",
   "mob.takenHere": "Continue here",
   "mob.takenOther": "Choose another profile",
+  "mob.takenOtherDevice": "Unknown device",
   "mob.explain": "Explain",
   "mob.explainAsk": "In the lesson “{name}” this part isn't clear to me:\n\n“{quote}”\n\nCan you explain it more simply, step by step?",
   "mob.calcOffline": "The calculator needs an internet connection.",

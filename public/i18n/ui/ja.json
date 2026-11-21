@@ -2771,6 +2771,7 @@
   "mob.takenText": "このプロフィールは今、別の端末で開かれています。ここで続けると、そちらでは閉じられます。",
   "mob.takenHere": "ここで続ける",
   "mob.takenOther": "別のプロフィールを選ぶ",
+  "mob.takenOtherDevice": "不明なデバイス",
   "mob.explain": "説明して",
   "mob.explainAsk": "レッスン「{name}」のこの部分がよく分かりません:\n\n「{quote}」\n\nもっと簡単に、順を追って説明してもらえますか？",
   "mob.calcOffline": "計算機にはインターネット接続が必要です。",

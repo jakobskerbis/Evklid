@@ -2771,6 +2771,7 @@
   "mob.takenText": "Hồ sơ này đang mở trên một thiết bị khác. Nếu bạn tiếp tục ở đây, nó sẽ đóng ở đó.",
   "mob.takenHere": "Tiếp tục ở đây",
   "mob.takenOther": "Chọn hồ sơ khác",
+  "mob.takenOtherDevice": "Thiết bị không xác định",
   "mob.explain": "Giải thích",
   "mob.explainAsk": "Trong bài “{name}”, mình chưa hiểu phần này:\n\n“{quote}”\n\nBạn giải thích đơn giản hơn, từng bước được không?",
   "mob.calcOffline": "Máy tính cần kết nối internet.",

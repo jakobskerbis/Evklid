@@ -2771,6 +2771,7 @@
   "mob.takenText": "此個人檔案正在另一台裝置上開啟。如果你在這裡繼續，那邊會關閉。",
   "mob.takenHere": "在這裡繼續",
   "mob.takenOther": "選擇其他個人檔案",
+  "mob.takenOtherDevice": "未知裝置",
   "mob.explain": "解釋",
   "mob.explainAsk": "在課程「{name}」中，這部分我不太明白：\n\n「{quote}」\n\n你能更簡單地一步一步講給我聽嗎？",
   "mob.calcOffline": "計算機需要連上網路。",

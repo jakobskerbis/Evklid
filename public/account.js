@@ -183,7 +183,7 @@ function showTaken(d, rawFetch) {
   box.innerHTML = `<div class="card overlay-card" role="dialog" aria-modal="true" aria-labelledby="taken-title" aria-describedby="taken-text">
     <h2 id="taken-title">${esc(t("mob.takenTitle"))}</h2>
     <p id="taken-text">${esc(t("mob.takenText"))}</p>
-    ${d.device ? `<p class="muted">${esc(d.device)}</p>` : ""}
+    <p class="muted">${esc(d.device || t("mob.takenOtherDevice"))}</p>
     <div class="form-actions">
       <button class="primary" id="taken-here" type="button">${esc(t("mob.takenHere"))}</button>
       ${single ? `<button id="taken-logout" type="button">${esc(t("pm.logout"))}</button>` : `<button id="taken-other" type="button">${esc(t("mob.takenOther"))}</button>`}
