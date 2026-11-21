@@ -75,7 +75,7 @@ export function potStrani(html, podatki, req, { publicDir, nakljucno = Math.rand
   if (!s || !Number.isInteger(s.id)) return null;
   const st = s.settings || {};
   const sys = st.school_system || "SI";
-  // Fakulteta (izbira predmeta), regijski sistemi (opomba) in cilj (vrstica, opomnik ob 12.00 po uri naprave): okostje.
+  // Fakulteta (izbira predmeta), regijski sistemi (opomba) in cilj (vrstica, opomnik od OPOMNIK_URA po uri naprave, goal-data.js): okostje.
   if (jeFaks(st) || sys !== "SI" || hasGoal(st)) return null;
   const sid = s.id;
   const p = parse(d[`/api/students/${sid}/path`]);
@@ -107,7 +107,7 @@ export function potStrani(html, podatki, req, { publicDir, nakljucno = Math.rand
   const early = level === "OS" && /^[1-5]\./.test(String(st.curriculum_level || "").trim());
   if (early) h = element(h, "path-note", { html: izris.esc(t("path.earlyNote", { grade: izris.levelLabel(t, st.curriculum_level) })), hidden: false });
   h = element(h, "lang-note", { hidden: jezik.lang === "sl" });
-  // Ponudba »cilj matura« za star profil maturanta (app.js renderGoal; brez cilja in datuma, zato brez opomnika ob 12.00).
+  // Ponudba »cilj matura« za star profil maturanta (app.js renderGoal; brez cilja in datuma, zato brez dnevnega opomnika).
   const ponudba = izris.maturaPonudbaHtml(t, st);
   if (ponudba) h = element(h, "goal-reminder", { html: ponudba, hidden: false });
   // Kartice pred načini učenja (#xp-card, #schedule-card, #stage-card) v vrstnem redu stopnje, mnenje in namestitev tik
