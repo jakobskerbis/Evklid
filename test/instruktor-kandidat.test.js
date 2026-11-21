@@ -185,3 +185,33 @@ test("aplikacija: s kandidatom učenec vidi popravljeno besedilo (pretočeno, ko
     else process.env.EVKLID_INSTRUKTOR_KANDIDAT = prej;
   }
 });
+
+// Pregled 2 (#910): črka kot spremenljivka v besedilu brez $…$ ostane; oznaka v markdown se ne pretoči na pol.
+test("predlogi: spremenljivka za »gre/bo/naj/ko/če/je/označimo« in pred prislovom na -no ostane", () => {
+  for (const t of [
+    "Ko gre h proti 0, se kvocient približa odvodu.",
+    "Kaj se zgodi, ko h zelo zmanjšamo?",
+    "Naj bo h pozitivno število.",
+    "Naj bo z poljubno kompleksno število.",
+    "Naj bo s realno število.",
+    "Če je z čisto imaginarno, je $z^2$ negativno.",
+    "Označimo h višino trikotnika.",
+  ]) assert.equal(fixPrepositions(t), t, t);
+  // Popravki iz ocen ostanejo.
+  assert.equal(fixPrepositions("Jaz te bom vodil s vprašanji."), "Jaz te bom vodil z vprašanji.");
+});
+
+test("pretakanje: oznaka v markdown (krepko, naslov, citat) se ne pokaže na pol, pretočeno = končno", () => {
+  for (const raw of [
+    "Super, da jo želiš rešiti sama.\n\n**Najprej priklic:** Kaj veš o potencah?",
+    "Dobro.\n\n### Najprej priklic\nKaj veš o potencah?",
+    "Poglejva.\n\n> **Najprej priklic:** kaj je potenca?",
+    "To je\n**Priklic\nvišino trikotnika izračunaj prej.",
+  ]) {
+    const f = createStreamFilter({ kandidat: true });
+    let out = "";
+    for (const ch of raw) out += f.push(ch);
+    out += f.end().rest;
+    assert.equal(out, replyText(raw, { kandidat: true }), JSON.stringify(raw));
+  }
+});

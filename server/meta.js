@@ -155,7 +155,8 @@ export function createStreamFilter({ kandidat = kandidatOn(), language = "sl" } 
   // Popravljen nadaljnji del: popravek je odvisen le od besedila pred mestom (zadržan konec je pri tem upoštevan).
   const next = (raw) => {
     const all = view(raw);
-    const out = all.startsWith(shown) ? all.slice(shown.length) : all.slice(Math.min(shown.length, all.length));
+    // Če se že prikazan začetek po popravku ne ujema več, ne pošlji nič: končni done.text ga popravi.
+    const out = all.startsWith(shown) ? all.slice(shown.length) : "";
     shown = all;
     return out;
   };

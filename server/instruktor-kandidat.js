@@ -59,8 +59,13 @@ export function maskNonText(text) {
 // npr. točka S).
 const VOICELESS = new Set([..."pftcčkhsš"]);
 const STOP = new Set(
-  "je so sta ste smo bo bi ni ima imata imajo pri ki ali in pa da ko naj se si mi ti jo jih mu ga kot nato zato tako tudi lahko torej potem sledi pomeni velja dobi meri leži kaže znaša reši preveri vstavi uporabi to ta te tu".split(" "),
+  "je so sta ste smo bo bi ni ima imata imajo pri ki ali in pa da ko naj se si mi ti jo jih mu ga kot nato zato tako tudi lahko torej potem sledi pomeni velja dobi meri leži kaže znaša reši preveri vstavi uporabi to ta te tu proti zelo dovolj malo manj več skoraj".split(" "),
 );
+// Prislovi in pridevniki srednjega spola na -no (»h pozitivno«, »z poljubno«, »z čisto«): tam je črka skoraj vedno
+// količina (»naj bo h pozitivno število«), zato raje brez popravka.
+const ADVERB_NO = /no$/;
+// Pred temi besedami je črka spremenljivka (»ko gre h proti 0«, »naj bo z …«, »če je s …«, »označimo h višino«).
+const VAR_BEFORE = /(?:^|[^\p{L}])(?:gre|gredo|bo|bodo|naj|ko|če|je|označimo|označi|izberimo|vzemimo|imenujmo)[ \t]+$/iu;
 const CASE_END = /(?:o|m|i|u|ej|oj|ma)$/;
 const NOT_CASE = /(?:mo|[šžč]i)$/;
 const PREP_RE = /(?<![\p{L}\p{N}_\\/.\-'’^=+*<>|~\0])(?<![\p{N}\0=+*/^<>|)\]°%][ \t]+)([sSzZkKhH]) (\p{L}{2,})(?=$|[\s.,;:!?)\]»«"“”'’…–—-])/gu;
@@ -75,7 +80,8 @@ export function fixPrepositions(text) {
     const [, prep, word] = m;
     const at = m.index;
     const lower = word.toLowerCase();
-    if (STOP.has(lower) || NOT_CASE.test(lower) || !CASE_END.test(lower)) continue;
+    if (STOP.has(lower) || NOT_CASE.test(lower) || ADVERB_NO.test(lower) || !CASE_END.test(lower)) continue;
+    if (VAR_BEFORE.test(plain.slice(Math.max(0, at - 16), at))) continue;
     if ((word.match(/\p{Lu}/gu) || []).length > 1) continue; // kratica (DNA, ATP): izgovorjava po črkah
     const upper = prep === prep.toUpperCase();
     if (upper && !SENTENCE_START.test(plain.slice(Math.max(0, at - 12), at))) continue;
@@ -126,11 +132,16 @@ export function polishHold(text) {
     const start = s.length - k;
     if (start > 0 && !/[\s*_#>.!?…-]/.test(s[start - 1])) continue;
     const tail = s.slice(start).replace(/^[*_#> \t-]+/, "");
-    if (!tail) continue;
+    if (!tail) continue; // sama predpona markdown: spodaj
     if (LABELS.some((l) => `${l}:`.startsWith(tail) || (tail.startsWith(l) && LABEL_DONE_RE.test(tail.slice(l.length))))) {
       hold = k;
       break;
     }
   }
+  // Predpona markdown na začetku vrstice (»**«, »### «, »> **«), ki ji lahko sledi oznaka: počaka na naslednjo besedo,
+  // sicer bi šla naprej, oznaka pa bi jo nato odnesla s seboj (pretočeno besedilo ≠ končno).
+  const md = MD_PREFIX_RE.exec(s);
+  if (md && md[2].length > hold) hold = md[2].length;
   return hold;
 }
+const MD_PREFIX_RE = /(^|\n)([ \t]*(?:#{1,6}[ \t]*)?(?:[->][ \t]*)?(?:\*{1,2}|_{1,2})?)$/;
