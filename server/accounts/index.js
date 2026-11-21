@@ -1076,7 +1076,7 @@ export function mountAccounts(app, store, opts = {}) {
       req.parent.is_admin = 0;
       req.skrbnikCaka = true;
     }
-    req.deviceId = devices.identify(req, _res);
+    devices.attach(req, _res); // piškotek naprave samo s sejo ali ko ga prijava res potrebuje (P6)
     next();
   });
 

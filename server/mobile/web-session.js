@@ -6,10 +6,9 @@
 // Varnost: deluje samo z glavo X-App-Client (brskalnik z druge strani je brez CORS ne more poslati) in samo z
 // veljavno sejo računa; cilj je vedno pot na tem strežniku.
 import { readCookie, COOKIE } from "../accounts/auth.js";
-import { DEVICE_COOKIE } from "../accounts/devices.js";
+import { DEVICE_COOKIE, DEVICE_MAX_AGE } from "../accounts/devices.js";
 
 const SESSION_MAX_AGE = 365 * 86400; // kot SESSION_DAYS v server/accounts/auth.js
-const DEVICE_MAX_AGE = 2 * 365 * 86400; // kot v server/accounts/devices.js
 const TOKEN = /^[A-Za-z0-9_-]{20,200}$/;
 
 // Samo pot na tem strežniku (ne »//drug.si« in ne »/\drug.si«).
