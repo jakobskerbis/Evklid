@@ -1317,7 +1317,9 @@ export function createApp(store, opts = {}) {
 
     // Popravka besedila (predlogi s/z, k/h in notranje oznake, server/instruktor-kandidat.js) pri pretakanju, v prikazu in zgodovini.
     // Jezik odgovora za popravek predlogov: nastavitev, pri »sl« pa hrvaščina, če učenec piše hrvaško (enkrat na odgovor).
-    const jezik = jezikOdgovora(student.settings.language, text);
+    // Kratko sporočilo (»da«, »x = 5«) ne pove jezika: upoštevaj še zadnja tri učenčeva sporočila v pogovoru.
+    const zadnjaUcenca = zgodovina.filter((m) => m.role === "user").slice(-3).map((m) => (Array.isArray(m.content) ? m.content.map((b) => b.text || "").join(" ") : String(m.content || "")));
+    const jezik = jezikOdgovora(student.settings.language, [...zadnjaUcenca, text].join("\n"));
     const filter = createStreamFilter({ language: jezik });
     // Nastavitve iz klepeta (server/chat-settings.js): orodji za model, dogodki za odjemalca.
     const settingsTools = createSettingsTools({

@@ -149,7 +149,7 @@ function fakeStream(text) {
   };
 }
 
-async function pogovor(reply) {
+async function pogovor(reply, sporocila = ["Kako rešim $2^{x+1} = 32$?"]) {
   const store = openDb(":memory:");
   const server = createApp(store, { streamFn: fakeStream(reply) }).listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -157,10 +157,11 @@ async function pogovor(reply) {
   try {
     const s = await (await post("/api/students", { name: "Miha" })).json();
     const c = await (await post(`/api/students/${s.id}/conversations`)).json();
-    const sse = await (await post(`/api/conversations/${c.id}/messages`, { text: "Kako rešim $2^{x+1} = 32$?" })).text();
+    let sse = "";
+    for (const text of sporocila) sse = await (await post(`/api/conversations/${c.id}/messages`, { text })).text();
     const ev = sse.split("\n\n").filter(Boolean).map((x) => ({ event: /^event: (.*)$/m.exec(x)[1], data: JSON.parse(/^data: (.*)$/m.exec(x)[1]) }));
     const conv = await (await fetch(`${base}/api/conversations/${c.id}`)).json();
-    const api = store.db.prepare("SELECT api_content AS content FROM messages WHERE role = 'assistant'").get();
+    const api = store.db.prepare("SELECT api_content AS content FROM messages WHERE role = 'assistant' ORDER BY id DESC").get();
     return { streamed: ev.filter((e) => e.event === "delta").map((e) => e.data.text).join(""), done: ev.at(-1).data.text, stored: conv.messages.at(-1).text, api: String(api?.content || "") };
   } finally {
     server.close();
@@ -230,4 +231,10 @@ test("predlogi: črka kot ime (orbitala, komponenta, koordinata, naštevanje čr
   assert.equal(polishReply("Rješavamo s brojem pet.", { language: jezikOdgovora("sl", "Pomozi mi molim te") }), "Rješavamo s brojem pet.");
   assert.equal(stripLabels("- Priklic: dostop do shranjene informacije"), "- Priklic: dostop do shranjene informacije");
   assert.equal(stripLabels("**Priklic predznanja:** kaj je potenca?"), "Kaj je potenca?");
+});
+
+test("aplikacija: v hrvaškem pogovoru kratko sporočilo (»da«) ne vklopi slovenskega popravka predlogov", async () => {
+  const r = await pogovor("Dobro, sada množimo s brojem tri.\n<<META subject=MAT topic=\"potence\" error=0 mode=A flag=none>>", ["Ne razumijem ovaj zadatak, pomozi", "da"]);
+  assert.equal(r.done, "Dobro, sada množimo s brojem tri.");
+  assert.equal(r.streamed, r.done);
 });
