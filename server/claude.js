@@ -6,6 +6,7 @@ import { isHiddenNote } from "./skrite-opombe.js";
 import { mockToolCall, mockToolText } from "./chat-settings.js";
 // Zgornja meja vhoda ob prekinitvi pred message_start (krožni uvoz: meje-ai.js uporablja claude.js le v funkcijah).
 import { systemTokens, messageTokens } from "./meje-ai.js";
+import { jeProdukcija } from "./crypto-polje.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 
@@ -107,6 +108,8 @@ export function apiErrorCode(err) {
   const is = (C, name) => (typeof C === "function" && err instanceof C) || err?.name === name;
   const status = Number(err?.status) || ERROR_TYPE_STATUS[err?.error?.error?.type] || 0;
   const msg = String(err?.error?.error?.message || err?.message || "");
+  // Tok je obmolknil (nadzornik mirovanja v streamReply): ni odgovora od Anthropic, učenec lahko poskusi znova.
+  if (err?.zastoj) return "zastoj odgovora";
   if (!status) {
     if (is(Anthropic.APIUserAbortError, "APIUserAbortError") || err?.name === "AbortError") return null;
     // Druge napake brez statusa so napake v naši kodi: vzrok je v konzoli strežnika, ne pri povezavi.
@@ -133,6 +136,63 @@ export function isMockMode() {
   if (process.env.EVKLID_MOCK === "1") return true;
   return !process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN;
 }
+
+// Ob zagonu (server/index.js): v produkciji (isti znaki kot crypto-polje.js jeProdukcija) brez ključa API bi strežnik
+// tiho tekel v preizkusnem načinu (vnaprej pripravljeni odgovori za vse učence), zato se ne zažene. Preizkusni način v
+// produkciji samo izrecno z EVKLID_MOCK=1. Vrne besedilo napake ali null.
+export function zagonBrezAiKljuca(env = process.env) {
+  if (!jeProdukcija(env) || env.EVKLID_MOCK === "1") return null;
+  if (String(env.ANTHROPIC_API_KEY || "").trim() || String(env.ANTHROPIC_AUTH_TOKEN || "").trim()) return null;
+  return (
+    "[evklid] Strežnik se ne zažene: v produkciji ni nastavljen ANTHROPIC_API_KEY, zato bi inštruktor tekel v preizkusnem " +
+    "načinu (vnaprej pripravljeni odgovori). Nastavi ANTHROPIC_API_KEY v Render → Environment. Samo če preizkusni način " +
+    "res želiš: EVKLID_MOCK=1."
+  );
+}
+
+// Izid klicev modela za zdravje strežnika (server/zdravje.js, /healthz/stanje → ai): fn({ ok: true }) ali
+// fn({ ok: false, koda }) s kodo iz apiErrorCode (brez vsebine in brez ključa). Prekinitev učenca ni izid.
+let opazovalecAi = null;
+export function nastaviOpazovalcaAi(fn) {
+  opazovalecAi = typeof fn === "function" ? fn : null;
+}
+const javiIzid = (izid) => {
+  try {
+    opazovalecAi?.(izid);
+  } catch (e) {
+    console.warn(`[evklid] zdravje AI: ${e?.message || e}`);
+  }
+};
+
+// Nadzornik mirovanja toka (zastoj): SDK meri rok samo do glav odgovora; če tok nato obmolkne, bi odgovor visel v
+// nedogled (pogovor zaklenjen, mesto v vrsti za AI zasedeno). Šteje vsak kos iz omrežja, tudi »ping« Anthropica, ki ga
+// SDK ne pokaže (razmišljanje modela je v toku privzeto skrito). EVKLID_AI_MIROVANJE_S (privzeto 60, 0 = izklop);
+// za Opus in Sonnet (deep, mid: dolgo skrito razmišljanje, presledki med »ping« še niso izmerjeni)
+// EVKLID_AI_MIROVANJE_DEEP_S (privzeto 180).
+export function mirovanjeMs(env = process.env, mode = "chat") {
+  const dolgo = mode === "deep" || mode === "mid";
+  const raw = dolgo ? env.EVKLID_AI_MIROVANJE_DEEP_S : env.EVKLID_AI_MIROVANJE_S;
+  const v = raw == null || String(raw).trim() === "" ? (dolgo ? 180 : 60) : Number(raw);
+  return Number.isFinite(v) && v > 0 ? Math.round(v * 1000) : 0;
+}
+// Vmesnik SDK za en klic: glave odgovora in vsak prebrani kos telesa pokličejo tik(); samo uspešen odgovor (2xx) pomeni,
+// da je klic morda plačan (429/529, ki ju SDK ponovi, ne). Ob prekinitvi (signal) se telo takoj zapre z napako, tudi
+// če povezava sama ne odgovori več.
+const vmesnikZivosti = (tik, signal) => async (request, next) => {
+  const res = await next(request);
+  tik(res.ok);
+  if (!res.body || typeof res.body.pipeThrough !== "function") return res;
+  const body = res.body.pipeThrough(
+    new TransformStream({
+      transform(chunk, ctrl) {
+        tik(res.ok);
+        ctrl.enqueue(chunk);
+      },
+    }),
+    { signal },
+  );
+  return new Response(body, { status: res.status, statusText: res.statusText, headers: res.headers });
+};
 
 let client = null;
 // Samo za teste: lažen odjemalec API (null vrne pravega).
@@ -168,7 +228,7 @@ export const isPreamble = (s) => {
 // onPhase("think"): model je začel razmišljati (prvi blok razmišljanja, preden je kaj besedila); odjemalec pokaže
 // »Razmišljam …«. noThinking: klic brez razmišljanja (samo Haiku, poskus EVKLID_HITRI_KORAK, server/hitri-korak.js).
 // Rezultat ima timing: { thinking, firstThinkMs, firstTextMs, totalMs } od začetka klica (server/casi-odgovora.js).
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, onPhase = null, noThinking = false, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, onPhase = null, noThinking = false, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true, idleMs = mirovanjeMs(process.env, mode) }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, onPhase, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
@@ -232,7 +292,25 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     const p = { ...params, messages: msgs };
     if (tools?.length && round === MAX_TOOL_ROUNDS) p.tool_choice = { type: "none" };
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
-    const stream = getClient().beta.messages.stream(p, { signal });
+    // Nadzornik mirovanja (zastoj): lasten signal klica, ki ga prekine učenec (signal) ali obmolkel tok (budilka).
+    let zastoj = false;
+    let glave = false; // API je odgovoril (glave): klic je morda plačan
+    let budilka = null;
+    const klic = new AbortController();
+    const odvezi = () => klic.abort();
+    if (signal?.aborted) klic.abort();
+    else signal?.addEventListener?.("abort", odvezi, { once: true });
+    const tik = (odgovor = false) => {
+      glave ||= odgovor;
+      if (!idleMs) return;
+      clearTimeout(budilka);
+      budilka = setTimeout(() => {
+        zastoj = true;
+        klic.abort();
+      }, idleMs); // brez unref: budilka se vedno počisti v finally spodaj
+    };
+    tik();
+    const stream = getClient().beta.messages.stream(p, { signal: klic.signal, middleware: [vmesnikZivosti(tik, klic.signal)] });
     // Poraba sproti: ob prekinitvi (učenec zapre aplikacijo) ali napaki sredi toka je klic že plačan, zato napaka nese
     // porabo in strežnik jo zapiše (server/app.js). message_start nosi vhod in output_tokens ≈ 1; message_delta s
     // pravim izhodom pride šele tik pred koncem (pregled #462, KRITIČNO). Brez message_delta zato zapišemo izhod
@@ -249,6 +327,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     let final;
     try {
       for await (const event of stream) {
+        tik(true);
         if (event.type === "message_start") {
           live = { ...(event.message?.usage || {}) };
           liveModel = event.message?.model || model;
@@ -281,7 +360,14 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         }
       }
       final = await stream.finalMessage();
-    } catch (err) {
+    } catch (napaka) {
+      let err = napaka;
+      // Prekinil je nadzornik mirovanja, ne učenec: napaka s kodo »zastoj odgovora« gre učencu kot običajna napaka.
+      if (zastoj && !signal?.aborted) {
+        err = new Error(`Tok odgovora AI je obmolknil za ${Math.round(idleMs / 1000)} s.`);
+        err.name = "ZastojAI";
+        err.zastoj = true;
+      }
       const roundMax = p.max_tokens || max_tokens;
       let partial = null;
       if (thinkAt) thinkMs += Date.now() - thinkAt;
@@ -292,12 +378,13 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
       // bajti vseh delt (žeton ≤ bajt) + 10 %; razmišljanje, ki ga tok ne pokaže v celoti (povzetek ali skrito), po
       // času bloka razmišljanja × največja hitrost modela. Pri drugi napaki sredi toka (API, omrežje) ne vemo,
       // koliko je API napisal: previdno ves max_tokens kroga. Pol sekunde pisanja po zaprtju povezave je rezerva.
-      const ours = !!signal?.aborted;
+      // Zastoj (nadzornik mirovanja) je prav tako naša prekinitev ob znanem času: šteje dejansko napisano.
+      const ours = !!signal?.aborted || zastoj;
       const outBound = ours
         ? Math.min(roundMax, Math.ceil(1.1 * deltaBytes + (thinkMs / 1000 + ABORT_LAG_S) * maxTokensPerSec(liveModel)))
         : roundMax;
       if (live) partial = lastDelta ? live : { ...live, output_tokens: Math.max(outBound, live.output_tokens || 0) };
-      else if (signal?.aborted) {
+      else if (signal?.aborted || (zastoj && glave)) {
         const inBound = systemTokens(p.system) + messageTokens(p.messages) + (p.tools?.length ? Math.ceil(Buffer.byteLength(JSON.stringify(p.tools), "utf8") / 2) : 0);
         partial = { input_tokens: 0, cache_creation_input_tokens: inBound, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: inBound }, output_tokens: 0 };
       }
@@ -306,7 +393,11 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         err.usage = spent;
         err.model = liveModel;
       }
+      if (!signal?.aborted) javiIzid({ ok: false, koda: apiErrorCode(err) });
       throw err;
+    } finally {
+      clearTimeout(budilka);
+      signal?.removeEventListener?.("abort", odvezi);
     }
     const extra = fallbackExtraUsd(final.usage);
     const roundUsage = extra ? { ...final.usage, extra_cost_usd: extra } : { ...final.usage };
@@ -333,6 +424,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   }
   if (!text.trim() && dropped) text = dropped;
   timing.totalMs = Date.now() - t0;
+  javiIzid({ ok: true });
   return { content, text, stopReason, usage, model: finalModel, toolCalls, timing };
 }
 

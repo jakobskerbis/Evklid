@@ -174,7 +174,7 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
 /* Kartica s profilom je gumb: odpre Nastavitve (šola in letnik, račun). */
 .me-head { display: flex; align-items: center; gap: 16px; width: 100%; text-align: start; color: var(--text); font: inherit; cursor: pointer; }
 .me-head:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
-.me-head:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+.me-head:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .me-head > svg.i { flex: none; color: var(--muted); }
 .me-who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .me-name { font-size: 1.55rem; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; overflow-wrap: anywhere; }

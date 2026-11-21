@@ -22,7 +22,7 @@ const racun = (o = {}) => ({
 const sme = (o = {}) => povabiSme({ acc: racun(o), profileId: 7, now: NOW, storage: o.storage || shramba(), ua: o.ua || "Mozilla/5.0" });
 
 test("pokaže se polnoletnemu imetniku in profilu s 15+ leti", () => {
-  assert.deepEqual(sme(), { reward: false });
+  assert.deepEqual(sme(), { reward: false, zame: false });
 });
 
 test("starost: profil mlajši od 15 ali brez letnice ne", () => {
@@ -64,10 +64,21 @@ test("največ enkrat na 7 dni in ne 7 dni po »Ne zdaj«", () => {
 });
 
 test("nagrada samo, ko plačila delujejo, ne v pilotu in ne mladoletnemu imetniku", () => {
-  assert.deepEqual(sme({ billing: true }), { reward: true });
-  assert.deepEqual(sme({ billing: false }), { reward: false });
-  assert.deepEqual(sme({ billing: true, pilot: { kind: "pilot" } }), { reward: false });
-  assert.deepEqual(sme({ billing: true, parent: { birth_year: 2009, minor: true } }), { reward: false });
+  assert.deepEqual(sme({ billing: true }), { reward: true, zame: false });
+  assert.deepEqual(sme({ billing: false }), { reward: false, zame: false });
+  assert.deepEqual(sme({ billing: true, pilot: { kind: "pilot" } }), { reward: false, zame: false });
+  assert.deepEqual(sme({ billing: true, parent: { birth_year: 2009, minor: true } }), { reward: false, zame: false });
+});
+
+// Račun »Zame« (maturant sam, acc.self_only): ista nagrada, besedilo za prijatelja, ne za družino (UX maturanta 10).
+test("račun Zame: nagrada z besedami za prijatelja, ponudba ista", () => {
+  const acc = { ...racun({ billing: true }), self_only: true };
+  const ok = povabiSme({ acc, profileId: 7, now: NOW, storage: shramba(), ua: "Mozilla/5.0" });
+  assert.deepEqual(ok, { reward: true, zame: true });
+  const h = povabiHtml("https://evklid.app/?ref=ABC123", ok);
+  assert.match(h, /Ko se prijatelj, ki ga povabiš, naroči in prvič plača, oba dobita en mesec brezplačno\./);
+  assert.doesNotMatch(h, /družin/);
+  assert.match(povabiHtml("https://evklid.app/?ref=ABC123", { reward: true }), /obe družini/);
 });
 
 test("kartica: obljuba nagrade samo z reward, povezava in »Ne zdaj«", () => {

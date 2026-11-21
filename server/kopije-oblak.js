@@ -40,6 +40,70 @@ export function encryptBackup(buf) {
   return Buffer.concat([head, iv, c.getAuthTag(), body]);
 }
 
+// Ista oblika po kosih (dnevna kopija v R2): prej je šlo vse skozi pomnilnik (branje, šifriranje in dvakrat
+// Buffer.concat ≈ 4× velikost baze, pri 60 MB bazi +240 MB ob meji 512 MB na Renderju). Oznaka GCM je v glavi pred
+// šifriranim telesom, zato gre datoteka skozi šifrirnik z istim ključem in iv večkrat: prvič za oznako, drugič za
+// zgoščeno vrednost za podpis S3, tretjič med pošiljanjem. Isti ključ, iv in vsebina dajo isto šifrirano besedilo, ven
+// pa gre samo enkrat. V pomnilniku je naenkrat en kos (1 MB). Če se datoteka vmes spremeni, pošiljanje pade.
+const KOS = 1024 * 1024;
+async function* sifrirano(file, k, iv, head, izid) {
+  const c = crypto.createCipheriv("aes-256-gcm", k.key, iv);
+  c.setAAD(head);
+  for await (const kos of fs.createReadStream(file, { highWaterMark: KOS })) yield c.update(kos);
+  const rep = c.final();
+  if (rep.length) yield rep;
+  izid.oznaka = c.getAuthTag();
+}
+export async function encryptBackupFile(file) {
+  const k = backupKey();
+  if (!k) throw new Error("EVKLID_DATA_KEY ni nastavljen; nešifrirane kopije ne nalagam (docs/varnost-podatkov.md).");
+  const iv = crypto.randomBytes(12);
+  const head = Buffer.concat([MAGIC, Buffer.from(k.id, "ascii")]);
+  const pred = fs.statSync(file);
+  // En prehod skozi šifrirnik: daje šifrirane kose, na koncu vrne { oznaka, telo (bajtov) }.
+  const prehod = async function* () {
+    const izid = {};
+    let telo = 0;
+    for await (const kos of sifrirano(file, k, iv, head, izid)) {
+      telo += kos.length;
+      yield kos;
+    }
+    return { ...izid, telo };
+  };
+  const izteci = async (naKos) => {
+    const it = prehod();
+    for (let r = await it.next(); ; r = await it.next()) {
+      if (r.done) return r.value;
+      naKos(r.value);
+    }
+  };
+  const prvi = await izteci(() => {});
+  const glava = Buffer.concat([head, iv, prvi.oznaka]);
+  const h = crypto.createHash("sha256").update(glava);
+  const preveri = (r) => {
+    const zdaj = fs.statSync(file);
+    if (!r.oznaka.equals(prvi.oznaka) || r.telo !== prvi.telo || zdaj.size !== pred.size || zdaj.mtimeMs !== pred.mtimeMs) throw new Error("kopija se je med šifriranjem spremenila");
+  };
+  preveri(await izteci((kos) => h.update(kos)));
+  return {
+    bytes: glava.length + prvi.telo,
+    sha256: h.digest("hex"),
+    // Telo za fetch: glava, nato šifrirano po kosih (pritisk nazaj: bere se le, kar fetch pošlje). Če se datoteka
+    // vmes spremeni, tok pade in zahteva ne uspe.
+    stream: () =>
+      ReadableStream.from(
+        (async function* () {
+          yield glava;
+          const it = prehod();
+          for (let r = await it.next(); ; r = await it.next()) {
+            if (r.done) return preveri(r.value);
+            yield r.value;
+          }
+        })(),
+      ),
+  };
+}
+
 export function decryptBackup(buf) {
   if (buf.length < 40 || !buf.subarray(0, 4).equals(MAGIC)) throw new Error("datoteka ni šifrirana kopija Evklida");
   const id = buf.subarray(4, 12).toString("ascii");
@@ -63,11 +127,11 @@ const hmac = (key, data) => crypto.createHmac("sha256", key).update(data).digest
 const enc = (s) => encodeURIComponent(s).replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
 
 /** Glave s podpisom za zahtevo (izvoženo za test z AWS-ovim primerom). host je v podpisu, fetch ga pošlje sam. */
-export function signRequest({ method, url, body = "", keyId, secret, region, now = new Date() }) {
+export function signRequest({ method, url, body = "", payloadHash: hash = null, keyId, secret, region, now = new Date() }) {
   const u = new URL(url);
   const amzDate = now.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const date = amzDate.slice(0, 8);
-  const payloadHash = sha256(body);
+  const payloadHash = hash || sha256(body);
   const headers = { host: u.host, "x-amz-content-sha256": payloadHash, "x-amz-date": amzDate };
   const names = Object.keys(headers).sort();
   const query = [...u.searchParams]
@@ -86,9 +150,12 @@ export function signRequest({ method, url, body = "", keyId, secret, region, now
 
 export function makeClient(cfg, { fetchFn = globalThis.fetch, now = () => new Date() } = {}) {
   const objUrl = (key) => `${cfg.url}/${enc(cfg.bucket)}/${key.split("/").map(enc).join("/")}`;
-  const call = async (method, url, body) => {
-    const headers = signRequest({ method, url, body: body ?? "", keyId: cfg.keyId, secret: cfg.secret, region: cfg.region, now: now() });
-    const res = await fetchFn(url, { method, headers, body: body ?? undefined, signal: AbortSignal.timeout(120_000) });
+  // tok: { stream(), bytes, sha256 } namesto body (encryptBackupFile): pošlje se po kosih z znano dolžino.
+  const call = async (method, url, body, tok = null) => {
+    const headers = signRequest({ method, url, body: body ?? "", payloadHash: tok?.sha256, keyId: cfg.keyId, secret: cfg.secret, region: cfg.region, now: now() });
+    const init = { method, headers, body: body ?? undefined, signal: AbortSignal.timeout(tok ? 600_000 : 120_000) };
+    if (tok) Object.assign(init, { body: tok.stream(), duplex: "half", headers: { ...headers, "content-length": String(tok.bytes) } });
+    const res = await fetchFn(url, init);
     if (!res.ok) {
       const text = await res.text().catch(() => "");
       const code = text.match(/<Code>([^<]+)<\/Code>/)?.[1];
@@ -100,6 +167,7 @@ export function makeClient(cfg, { fetchFn = globalThis.fetch, now = () => new Da
   };
   return {
     put: (key, body) => call("PUT", objUrl(key), body),
+    putStream: (key, tok) => call("PUT", objUrl(key), null, tok),
     get: async (key) => Buffer.from(await (await call("GET", objUrl(key))).arrayBuffer()),
     del: (key) => call("DELETE", objUrl(key)),
     // Do 1000 ključev (hranimo največ ~30 dnevnih kopij).
@@ -126,9 +194,9 @@ export async function listCloud(cfg, dbFile, opts) {
  */
 export async function uploadBackup(cfg, dbFile, backupFile, date, { fetchFn, now = () => new Date() } = {}) {
   const client = makeClient(cfg, { fetchFn, now });
-  const body = encryptBackup(fs.readFileSync(backupFile));
+  const tok = await encryptBackupFile(backupFile);
   const key = objectKey(dbFile, date);
-  await client.put(key, body);
+  await client.putStream(key, tok);
   // Kopija z datumom `limit` ali starejša gre: nobena kopija ni starejša od keepDays dni (obvestilo o zasebnosti).
   const limit = new Date(now().getTime() - cfg.keepDays * DAY).toISOString().slice(0, 10);
   const deleted = [];
@@ -138,7 +206,7 @@ export async function uploadBackup(cfg, dbFile, backupFile, date, { fetchFn, now
       deleted.push(b.date);
     }
   }
-  return { key, bytes: body.length, deleted };
+  return { key, bytes: tok.bytes, deleted };
 }
 
 /**

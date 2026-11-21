@@ -74,6 +74,7 @@
 "u.nalagam": "載入中 …",
 "u.starsNaslov": "語音回答",
 "u.starsOpis": "在口頭提問以及與家教聊天時使用麥克風，孩子都可以用聲音回答。語音由瀏覽器供應商（例如 Google、Apple 或 Microsoft）轉成文字；Evklid 只收到文字，不保存任何音訊。15 歲以下預設關閉，直到您開啟。打字一律可用。",
+"u.starsOpisZame": "在口頭提問以及與家教聊天時使用麥克風，你都可以用聲音回答。語音由瀏覽器供應商（例如 Google、Apple 或 Microsoft）轉成文字；Evklid 只收到文字，不保存任何音訊。打字一律可用。",
 "u.dovoli": "允許語音回答",
 "u.nad15": "15 歲以上：不需要允許。",
 "u.shranjeno": "已儲存。"

@@ -5,7 +5,8 @@ import { icon } from "../icons.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-export async function karticaStarsev(el, api) {
+// zame: račun »Zame« (učenec 15+ je sam lastnik računa): opis nagovori učenca, ne starša (UX maturanta 10).
+export async function karticaStarsev(el, api, { zame = false } = {}) {
   if (!el) return;
   let r;
   try {
@@ -16,8 +17,8 @@ export async function karticaStarsev(el, api) {
   if (!el.isConnected || !r?.profili?.length) return;
   el.innerHTML = `<div class="card us-stars">
     <h2>${icon("mic")} ${esc(tt("u.starsNaslov"))}</h2>
-    <p class="muted">${esc(tt("u.starsOpis"))}</p>
-    ${r.profili
+    <p class="muted">${esc(tt(zame ? "u.starsOpisZame" : "u.starsOpis"))}</p>
+    ${(zame ? [] : r.profili) // »Zame«: brez vrstice »Ime: 15 let ali več …« (soglasje je za starše mlajših od 15)
       .map((p) =>
         p.pod15
           ? `<label class="check"><input type="checkbox" data-glas="${p.id}" ${p.dovoljeno ? "checked" : ""}><span><b dir="auto">${esc(p.ime)}</b>: ${esc(tt("u.dovoli"))}</span></label>`

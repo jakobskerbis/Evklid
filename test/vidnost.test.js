@@ -57,7 +57,10 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   assert.ok(meta(index, "property", "og:title") && meta(index, "property", "og:description") && meta(index, "property", "og:image"));
   assert.equal(meta(index, "name", "twitter:card"), "summary_large_image");
   // Opis za iskalnike in predogled povezave: naslov in uvod pristajalne strani (#750, land.title in land.lead v sl.js).
-  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo, vse šolsko leto."), desc);
+  // Matura v naslovu, opisu in predogledu (pregled javnih strani 21. 11. 2026, P1).
+  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo in maturo, vse šolsko leto."), desc);
+  assert.match(title, /maturo/);
+  assert.match(meta(index, "property", "og:title"), /maturo/);
   for (const k of ["og:description", "twitter:description"]) {
     const d = meta(index, k.startsWith("og") ? "property" : "name", k);
     assert.equal(d, `${SL["land.title"]} ${SL["land.lead"]}`, k);
@@ -541,4 +544,18 @@ test("Wilsonov 95-% interval za delež napak (točka 16): 3 od 91 ≈ 1,1–9,2 
   assert.deepEqual(wilson(0, 50), ["0", "7,1"]);
   assert.equal(wilson(1, 0), null);
   assert.equal(wilson(5, 3), null);
+});
+
+test("/o-evklidu in /zakaj-evklid: pisavi Instrument Sans vnaprej (preload), da zamenjava pisave ne premakne vsebine ob sidru", () => {
+  // Meritev 21. 11. 2026 (telefon, 9 Mbit/s, 170 ms): brez tega CLS 0,20 ob /o-evklidu#cene, 0,10 ob #h-matura; s tem 0.
+  const css = readFileSync(new URL("../node_modules/@fontsource-variable/instrument-sans/index.css", import.meta.url), "utf8");
+  const files = [...css.matchAll(/url\(\.\/files\/([^)]+-wght-normal\.woff2)\)/g)].map((m) => `/vendor/instrument-sans/files/${m[1]}`);
+  assert.equal(files.length, 2, "latinica in razširjena latinica (č, š, ž)");
+  for (const [name, html] of [["/o-evklidu", aboutPage()], ["/zakaj-evklid", whyPage()]]) {
+    for (const f of files) {
+      const at = html.indexOf(`<link rel="preload" href="${f}" as="font" type="font/woff2" crossorigin>`);
+      assert.ok(at > 0, `${name}: preload ${f}`);
+      assert.ok(at < html.indexOf('<link rel="stylesheet"'), `${name}: preload pred slogi`);
+    }
+  }
 });

@@ -6,14 +6,22 @@ import { applyPendingRestore } from "./kopije.js";
 import { cloudConfig, uskladiIzbrise } from "./kopije-oblak.js";
 import { zagonBrezKljuca } from "./crypto-polje.js";
 import { createApp } from "./app.js";
-import { isMockMode, MODEL } from "./claude.js";
+import { isMockMode, MODEL, zagonBrezAiKljuca } from "./claude.js";
 import { casCheck, casOn } from "./cas.js";
 import { ogrej as ogrejNujno } from "../public/nujno.js";
+import { rokZaustavitveMs } from "./zdravje.js";
 
 // Produkcija brez EVKLID_DATA_KEY: osebni podatki bi šli v bazo nešifrirani, zato se strežnik ne zažene.
 const brezKljuca = zagonBrezKljuca();
 if (brezKljuca) {
   console.error(brezKljuca);
+  process.exit(1);
+}
+// Produkcija brez ANTHROPIC_API_KEY: inštruktor bi tiho tekel v preizkusnem načinu, zato se strežnik ne zažene
+// (izjema samo izrecno z EVKLID_MOCK=1; server/claude.js zagonBrezAiKljuca).
+const brezAi = zagonBrezAiKljuca();
+if (brezAi) {
+  console.error(brezAi);
   process.exit(1);
 }
 
@@ -36,6 +44,17 @@ const feedbackFile = path.resolve(path.dirname(process.env.EVKLID_DB || "data/ev
 const trendsFile = path.resolve(path.dirname(feedbackFile), "kozmetika-trendi.json");
 const app = createApp(store, { feedbackFile, trendsFile });
 const port = Number(process.env.PORT || 3000);
+// Nepričakovan ponovni zagon (sesutje, premalo pomnilnika, SIGKILL): oznaka teka ob bazi je ostala od prejšnjega
+// procesa → števec v /healthz/stanje (zagoni) in e-pošta skrbniku (server/zdravje.js).
+const zdravje = app.locals.zdravje;
+zdravje?.zagon();
+// Nepričakovana napaka (tudi neobravnavana zavrnjena obljuba, ki jo Node privzeto preda sem kot origin
+// »unhandledRejection«): zapišemo vrsto za naslednji zagon in izstopimo s kodo 1 kot doslej (Render proces znova zažene).
+process.on("uncaughtException", (err, origin) => {
+  console.error(`[evklid] nepričakovana napaka (${origin}), strežnik se ustavi:`, err);
+  zdravje?.sesutje(err, origin);
+  process.exit(1);
+});
 
 const server = app.listen(port, () => {
   console.log(`Evklid teče na http://localhost:${port}`);
@@ -78,18 +97,33 @@ const server = app.listen(port, () => {
 });
 
 // Zaustavitev (objava na Render pošlje SIGTERM): novih zahtev ne sprejmemo, klici AI v teku se lahko končajo
-// (največ 20 s), da se zapiše njihov pravi strošek, ne cela rezerva ob naslednjem zagonu (pregled #462 K3-5).
+// (največ 20 s, EVKLID_ZAUSTAVITEV_MS), da se zapiše njihov pravi strošek, ne cela rezerva ob naslednjem zagonu
+// (pregled #462 K3-5). Vprašanja, ki še čakajo v vrsti za AI, in nova vprašanja med zaustavljanjem takoj dobijo
+// obvestilo o posodobitvi; odgovore, ki po roku še tečejo, prekinemo z istim obvestilom (vprašanje ne šteje v dnevno
+// mejo, server/app.js zaustaviOdgovore) in počakamo največ 2 s, da se zapišejo in pošljejo.
+const ROK_ZAUSTAVITVE_MS = rokZaustavitveMs(); // največ 25 s (Render pošlje SIGKILL po 30 s; server/zdravje.js)
 let stopping = false;
 function shutdown(signal) {
   if (stopping) return;
   stopping = true;
   console.log(`[evklid] ${signal}: zaustavljam, čakam na klice AI v teku …`);
   server.close();
+  // Če se zanka dogodkov izprazni pred naslednjim tikom, Node izstopi sam: oznaka teka se pobriše tudi takrat.
+  process.once("beforeExit", () => zdravje?.cistaZaustavitev());
+  app.locals.zaustaviOdgovore?.({ samoVrsta: true });
   const t0 = Date.now();
+  let prekinjeno = 0; // čas, ko so bili odgovori po roku prekinjeni
   const tick = () => {
-    const busy = app.locals.usage?.inflight?.size || 0;
-    if (!busy || Date.now() - t0 > 20000) process.exit(0);
-    else setTimeout(tick, 250).unref?.();
+    const busy = (app.locals.usage?.inflight?.size || 0) + (app.locals.odgovoriVTeku?.() || 0);
+    if (busy && !prekinjeno && Date.now() - t0 > ROK_ZAUSTAVITVE_MS) {
+      prekinjeno = Date.now();
+      const n = app.locals.zaustaviOdgovore?.() || 0;
+      if (n) console.log(`[evklid] ${n} odgovorov v teku prekinjenih z obvestilom o posodobitvi`);
+    }
+    if (!busy || (prekinjeno && Date.now() - prekinjeno > 2000)) {
+      zdravje?.cistaZaustavitev();
+      process.exit(0);
+    } else setTimeout(tick, 250); // brez unref: zaustavitev se vedno konča tu, s pobrisano oznako teka
   };
   tick();
 }

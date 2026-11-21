@@ -6,7 +6,11 @@
 // merah: ali inštruktor ne izda rezultata prehitro, ali prepozna napačen korak (in ne graja pravilnega), ali razlago
 // ob »ne razumem« res poenostavi.
 // Ne piše v pravo bazo in ne v docs/. Ustavi se, preden bi strošek presegel --max-usd.
-//   node scripts/meri-pedagogika.mjs [--max-usd 2] [--nacin think|chat] [--suho] [--preizkus]
+//   node scripts/meri-pedagogika.mjs [--max-usd 2] [--nacin think|chat] [--kandidat] [--suho] [--preizkus]
+//   --kandidat  kandidat prompta (EVKLID_INSTRUKTOR_KANDIDAT=1: prompts/system_prompt-kandidat.md; popravka besedila iz
+//               server/instruktor-kandidat.js sta od 21. 11. 2026 vklopljena v obeh različicah, zato izidi pred tem dnem
+//               brez argumenta niso neposredno primerljivi); izid v data/meri-pedagogika-kandidat.json z "kandidat": true,
+//               za primerjavo pred/po z zagonom brez argumenta (j 21. 11. 2026: primerjavo vidi, preden gre v produkcijo)
 //   --suho      samo ocena najslabšega stroška, brez klica modela (0 $)
 //   --preizkus  preizkusni odgovori namesto modela (samo brez ključa API), za test poti (0 $)
 // Zagon: GitHub Actions > Meritev, skripta scripts/meri-pedagogika.mjs. Izid: data/meri-pedagogika.json (artefakt
@@ -20,7 +24,7 @@ const arg = (name, d) => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : d;
 };
-const ZNANI = { "--max-usd": 1, "--nacin": 1, "--suho": 0, "--preizkus": 0 };
+const ZNANI = { "--max-usd": 1, "--nacin": 1, "--kandidat": 0, "--suho": 0, "--preizkus": 0 };
 for (let i = 2; i < process.argv.length; i++) {
   const a = process.argv[i];
   if (!(a in ZNANI)) {
@@ -33,7 +37,8 @@ const MAX_USD = Number(arg("--max-usd", 2));
 const NACIN = arg("--nacin", "think");
 const SUHO = process.argv.includes("--suho");
 const PREIZKUS = process.argv.includes("--preizkus");
-const OUT = process.env.EVKLID_MERI_IZID || "data/meri-pedagogika.json";
+const KANDIDAT = process.argv.includes("--kandidat");
+const OUT = process.env.EVKLID_MERI_IZID || (KANDIDAT ? "data/meri-pedagogika-kandidat.json" : "data/meri-pedagogika.json");
 if (!(MAX_USD > 0) || MAX_USD > 5) {
   console.error("--max-usd mora biti večji od 0 in največ 5. Nič ni bilo poklicano.");
   process.exit(1);
@@ -51,6 +56,9 @@ const sporocila = (p) => [`Pomagaj mi pri tej nalogi, rada bi jo rešila sama.\n
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-pedagogika-"));
 process.env.EVKLID_DB = path.join(tmp, "meritev.db");
 if (NACIN === "chat") process.env.EVKLID_SS_THINK = "0";
+// Kandidat ali trenutni inštruktor: izrecno v obe smeri (lokalno okolje ne sme pomešati različic).
+process.env.EVKLID_INSTRUKTOR_KANDIDAT = KANDIDAT ? "1" : "0";
+delete process.env.EVKLID_PROMPT_PATH;
 // Preverjanje kartic v ozadju (Sonnet + Opus) ni del odgovora, ki ga vidi učenec: izklopljeno, da ostane pod mejo.
 process.env.EVKLID_VERIFY_DAILY_USD = "0";
 // Brez mesečnega proračuna (server/proracun.js budgetMode): z njim bi prazna baza nadgradila Haiku v Sonnet ali Opus in
@@ -62,7 +70,7 @@ process.env.EVKLID_MONTHLY_BUDGET_USD = "0";
 process.env.EVKLID_LIVE_REVIEW_TIMEOUT_MS = "300000";
 const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
-const { buildSystemPrompt } = await import("../server/prompt.js");
+const { buildSystemPrompt, templatePath } = await import("../server/prompt.js");
 const { isMockMode, modeParams, MODEL_MID, MAX_TOKENS, MAX_TOOL_ROUNDS } = await import("../server/claude.js");
 const { callMaxUsd } = await import("../server/meje-ai.js");
 const { normalizeSettings } = await import("../server/settings.js");
@@ -79,6 +87,7 @@ const izhod = Math.max(max_tokens, MAX_TOKENS.think);
 const klicUsd = callMaxUsd(model, Math.ceil(system.length / 3) + 3 * najdaljsa + (MAX_TOOL_ROUNDS + 3) * izhod + 4000, izhod);
 const najslabse = (2 * (MAX_TOOL_ROUNDS + 1) + 2) * klicUsd + 2 * callMaxUsd(MODEL_MID, 4000 + 3 * najdaljsa + 2 * max_tokens, 8000) + 0.01;
 console.log(`${pogovori.length} pogovorov po 3 sporočila; način ${NACIN} (${model}); najslabši primer na sporočilo ${najslabse.toFixed(3)} $; meja ${MAX_USD} $.`);
+console.log(`Različica: ${KANDIDAT ? "KANDIDAT" : "trenutni inštruktor"} (${path.basename(templatePath())}); izid ${OUT}`);
 if (SUHO) process.exit(0);
 if (PREIZKUS !== isMockMode()) {
   console.error(PREIZKUS ? "--preizkus deluje samo brez ključa API (sicer bi klical pravi model). Nič ni bilo poklicano." : "Ni ključa API (preizkusni način; GitHub Actions: manjka skrivnost ANTHROPIC_API_KEY).");
@@ -109,7 +118,7 @@ const izid = [];
 let ustavljeno = false;
 const zapisi = (koncano) => {
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), nacin: NACIN, model, porabljeno: porabljeno(), ustavljeno, koncano, izid }, null, 1));
+  fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), kandidat: KANDIDAT, prompt: path.basename(templatePath()), nacin: NACIN, model, porabljeno: porabljeno(), ustavljeno, koncano, izid }, null, 1));
 };
 for (const p of pogovori) {
   const s = store.createStudent("Ana", nastavitve()); // nov učenec za vsak pogovor: dnevne meje ne vplivajo

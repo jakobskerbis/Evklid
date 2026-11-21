@@ -274,8 +274,28 @@ let pozneje = false;
 // Delo, ki ni za prvi izris Učne poti (moduli, ki jih ta ne rabi): po njem (zasloniPozneje), sicer takoj.
 const poZagonuVrsta = [];
 const poZagonu = (fn) => (pozneje ? fn() : void poZagonuVrsta.push(fn));
+// Obiskovalec brez prijave (pristajalna stran, prijava, registracija): zasloni, igre in cel slovar (~0,8 MB, ~90 datotek)
+// se prenesejo šele, ko začne izpolnjevati obrazec za prijavo ali registracijo, ali ob prijavi (start). Obiskovalec, ki
+// samo pogleda pristajalno stran, jih ne prenese (meritev hitrosti 21. 11. 2026); kdor izpolnjuje obrazec, jih ima, preden
+// konča, kot prej. Moduli prvega odprtja (obrazec, Učna pot, nujno.js) so že naloženi in se ne spremenijo.
+let obiskovalec = false;
+const zaObiskovalca = [];
+const poObiskovalcu = (fn) => (obiskovalec ? void zaObiskovalca.push(fn) : fn());
+// zdaj=false (prijava): delo gre v vrsto za prvim izrisom Učne poti (zasloniPozneje iz startDone), kot ob zagonu prijavljenega.
+const obiskovalecKonec = (zdaj = true) => {
+  if (!obiskovalec) return;
+  obiskovalec = false;
+  for (const ev of ["focusin", "pointerdown"]) document.removeEventListener(ev, obiskovalecObrazec, true);
+  if (zdaj) zasloniPozneje();
+  for (const fn of zaObiskovalca.splice(0)) poZagonu(fn);
+};
+const obiskovalecObrazec = (e) => e.target.closest?.("#view-auth form") && obiskovalecKonec();
+const cakajObiskovalca = () => {
+  obiskovalec = true;
+  for (const ev of ["focusin", "pointerdown"]) document.addEventListener(ev, obiskovalecObrazec, { capture: true, passive: true });
+};
 const zasloniPozneje = () => {
-  if (pozneje) return;
+  if (pozneje || obiskovalec) return;
   pozneje = true;
   for (const fn of poZagonuVrsta.splice(0)) fn();
   // Vzorci varnostnega zaznavalnika nastanejo šele ob prvi uporabi (public/nujno.js compile): pripravimo jih takoj po
@@ -484,7 +504,8 @@ const apiCall = async (url, opts = {}) => {
   if (!res || (res.status === 503 && res.headers.get("X-Offline")) || serverDown(res)) {
     // Gostitelj odgovori, naš strežnik pa ne (npr. med objavo nove različice): ne pišemo »Ni povezave z internetom«.
     // offline: sporočilo je že prevedeno in pove, ali manjka povezava ali odgovor strežnika (npr. 502 med objavo).
-    const napaka = brezPovezave(() => (!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")));
+    // Brez odgovora ob delujočem internetu (navigator.onLine) ne dela Evklid, ne učenčeva povezava (UX maturanta 11).
+    const napaka = brezPovezave(() => (navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")));
     const local = fromPack(url, opts, napaka);
     if (local !== undefined) return local;
     throw napaka();
@@ -648,6 +669,7 @@ function renderUserText(text) {
 
 function showView(name) {
   if (name === "chat") oznakaZdaj?.();
+  else state.chatReturn = null; // vrnitev v polo velja samo neposredno iz tega klepeta (chatReturnBack)
   if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
   // »Moji zapiski« so del pogleda Kartice (nazaj po vaji iz testa, public/zapiski/vaja.js).
   const notes = name === "zapiski";
@@ -990,7 +1012,17 @@ document.addEventListener("focusin", () => document.body.classList.contains("tb-
 new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#view-textbook"), { childList: true });
 // Po 3 s neuporabe se vrstica skrije (j 2026-11-14, 3 s od 2026-11-15), kjer ni že drugače določeno (public/noga.js).
 nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(false) });
-$("#chat-back").addEventListener("click", () => showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
+// Klepet, odprt z »Vprašaj inštruktorja« v poli (vadnica.js oursTutor): ← in Nazaj vrneta na stran pole in polo
+// odpreta znova pri isti nalogi (UX maturanta 5). Velja le za ta pogovor, dokler je klepet odprt.
+function chatReturnBack() {
+  const r = state.chatReturn;
+  if (currentView !== "chat" || !r || (r.conv !== null && r.conv !== state.conversationId)) return false;
+  state.chatReturn = null;
+  showView(r.view);
+  r.open();
+  return true;
+}
+$("#chat-back").addEventListener("click", () => chatReturnBack() || showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).
 document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => (isFloating(t.dataset.view) ? focusWindow(t.dataset.view) : showView(t.dataset.view))));
@@ -1134,6 +1166,7 @@ function backStep(wasOverlay) {
   if (currentView === "scan" && scanBack()) return true;
   if (currentView === "scan" && state.scanFromChat) return showView("chat"), true; // skener iz kamere v Inštruktorju
   if (closeByEsc()) return true;
+  if (chatReturnBack()) return true;
   if (currentView === "path") return false;
   const subMe = currentView !== "me" && (meView(currentView) || podJazZgoraj(currentView));
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
@@ -1426,6 +1459,13 @@ async function selectStudent(id) {
   }
   dropOtherShot(target?.id); // menjava profila: posnetek zaslona prejšnjega profila izgine takoj
   if (target) ZACETEK?.znova?.(); // izbran odklenjen profil: zapis zadnjega zaslona in posnetka spet velja
+  // Natipkano vprašanje in fotografija prejšnjega profila ne ostaneta v polju (in se ne shranita kot osnutek drugega
+  // profila); osnutek novega profila vrne chatDraftRestore spodaj.
+  if (state.student && target && state.student.id !== target.id) {
+    $("#input").value = "";
+    clearImage();
+    autoGrow();
+  }
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
@@ -1462,6 +1502,7 @@ async function selectStudent(id) {
   const keep = chatKeepId();
   if (keep) await openConversation(keep, { mark: false });
   else renderEmptyChat();
+  chatDraftRestore(); // osnutek po osvežitvi strani ali »Nadaljuj tukaj«
   if (!$("#view-settings").hidden) fillSettingsForm();
   if (!$("#view-progress").hidden) loadProgress();
   if (!$("#view-me").hidden) renderMe(); // pregled (aktivnost, testi) novega profila
@@ -1527,11 +1568,15 @@ function renderConversationList() {
       e.stopPropagation();
       state.conversations = state.conversations.filter((x) => x.id !== c.id);
       if (state.paperCtx?.conv === c.id) state.paperCtx = null; // id se lahko ponovi pri novem pogovoru
+      chatDraftSave(c.id, ""); // osnutek izbrisanega pogovora ne ostane v zavihku
       if (state.conversationId === c.id) {
         state.pacer?.skip();
         state.conversationId = null;
         state.convTopic = null;
+        $("#input").value = ""; // vprašanje je bilo za izbrisani pogovor
+        autoGrow();
         renderEmptyChat();
+        chatDraftRestore();
       }
       renderConversationList();
       refreshBubble();
@@ -1766,7 +1811,8 @@ function chatStillFresh(convTopic) {
 function chatKeepId() {
   const seen = readRec(chatSeenKey());
   const conv = seen?.conv && state.conversations.find((c) => c.id === seen.conv);
-  return conv && chatStillFresh(conv.path_topic ?? null) ? conv.id : null;
+  // Z nedokončanim osnutkom pogovor ostane (kot v freshChatIfStale z besedilom v polju).
+  return conv && (chatStillFresh(conv.path_topic ?? null) || chatDraftGet(conv.id)) ? conv.id : null;
 }
 // Inštruktor se prikaže: zastarel pogovor zamenja nov (razen z nedokončanim besedilom v polju ali med odgovorom).
 // Samo ob vrnitvi (chatAway): klik zavihka ali okna, ko je učenec že v inštruktorju, pogovora ne zamenja.
@@ -1806,6 +1852,7 @@ async function openConversation(id, { mark = true } = {}) {
   izrisiZgodovino(conv.id, conv.messages);
   renderState(conv.state);
   renderConversationList();
+  chatDraftRestore();
   const oznaka = aiOznaka();
   prilagodiZdaj(); // zložene formule (sirina.js) so višje: na dno šele zdaj
   box.scrollTop = box.scrollHeight;
@@ -1989,10 +2036,13 @@ $("#chat-idea").addEventListener("click", (e) => openChatBug(e, true));
 
 $("#new-chat").addEventListener("click", () => {
   setSidebar(false);
+  if (state.conversationId) chatDraftSave(state.conversationId, ""); // besedilo v polju gre k novemu pogovoru
   state.conversationId = null;
   state.chatFx = null;
   renderConversationList();
   renderEmptyChat();
+  if ($("#input").value.trim()) chatDraftSave(); // prazno polje: osnutek novega pogovora, če je
+  else chatDraftRestore();
   $("#input").focus();
   refreshBubble();
 });
@@ -2042,7 +2092,7 @@ document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]"
 async function send(text, { deep = false, image: attached = null, paper: paperOpt = null, afterUser = null, plain = false, draft = null } = {}) {
   if (state.sending) return;
   if (nalogaPole?.busy() && !plain) return; // Evklid še odpira nalogo pole: novo sporočilo počaka (besedilo ostane v polju)
-  if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
+  if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), chatDraftSave(), openUstno({ besedilo: text });
   // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
   // fotografija v polju ostaneta (ne pošljemo ju zraven in ju ne pobrišemo). Slika samodejnega sporočila
   // (izrez naloge iz pole) pride kot attached.
@@ -2082,6 +2132,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
   $("#send").disabled = true;
   state.pacer?.skip();
 
+  const wasNew = !state.conversationId; // osnutek novega pogovora je shranjen pod »nov«
   try {
     if (!state.conversationId) {
       const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST" });
@@ -2111,6 +2162,8 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     if (fromInput) {
       $("#input").value = "";
       clearImage();
+      chatDraftSave(sentTo, ""); // poslano: osnutek tega pogovora (in novega, če je bil nov) ni več potreben
+      if (wasNew) chatDraftSave(null, "");
       state.dictated = false;
     }
     if (afterUser) naDno(); // opomba pod učenčevim oblačkom (public/naloga-pole/klepet.js) meri sama
@@ -2167,7 +2220,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     });
     if (!res) {
       bubble.remove();
-      throw new Error(t("off.noConnection"));
+      throw Object.assign(new Error(t("off.noConnection")), { offline: true });
     }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -2283,7 +2336,8 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
         waitNote = "";
         showNujno(d.nujno || lokalnoNujno(text), { before: bubble, meja: true });
         bubble.classList.add("error");
-        pacer.finish(d.error);
+        // Strežnik se ustavlja zaradi posodobitve (server/index.js): besedilo v jeziku vmesnika.
+        pacer.finish(d.posodobitev ? t("off.serverBusy") : d.error);
         pacer.skip();
         if (state.conversationId === sentTo && !deep) restoreDraft(draft ?? text, image); // vrni besedilo za ponovni poskus
       },
@@ -2348,8 +2402,11 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     // dobi razumljivo obvestilo, vprašanje ostane v polju za ponovno pošiljanje.
     const dropped = err instanceof TypeError && /^(network ?error|failed to fetch|load failed|networkerror)/i.test(err.message);
     if (!dropped && !err.limit) console.error(err); // meja porabe je pričakovan odgovor, ne napaka aplikacije
+    // Internet dela (navigator.onLine), Evklid pa ne odgovori: ne »Ni povezave z internetom« (UX maturanta 11).
+    // Samo, ko se vprašanje spodaj vrne v polje (ne pri »Razloži podrobneje«).
+    const nedosegljiv = err.offline && !deep && navigator.onLine !== false;
     if (err.limitBody && FREE_LIMIT_CODES.has(err.limitBody.code)) await showLimitCard($("#messages"), err.limitBody, limitCardCtx());
-    else addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
+    else addMessage("assistant", nedosegljiv ? t("off.serverUnreachable") : dropped ? t("off.serverBusy") : err.message, false, { error: true });
     // Neuspelo pošiljanje (omrežje, strežnik): besedilo in fotografija se vrneta v polje, da se ne izgubita.
     // Meja porabe: ne (sporočilo ostane v oblačku, polje prazno).
     // »Razloži podrobneje« (deep) se ne vrne v polje (kot mobilna): ponovno pošiljanje bi šlo kot navadno vprašanje.
@@ -2431,9 +2488,39 @@ function fillInput(text) {
   const box = $("#input");
   const typed = box.value.replace(/\s+$/, "");
   box.value = typed ? `${typed}\n\n${text}` : text;
+  chatDraftSave();
   autoGrow();
   box.focus();
   box.setSelectionRange?.(box.value.length, box.value.length);
+}
+
+// Osnutek vprašanja za vsak pogovor (UX maturanta 2 in 9) v sessionStorage: preživi osvežitev strani (telefon zavihek
+// v ozadju pogosto naloži znova) in »Nadaljuj tukaj« ob prevzemu profila (account.js osveži stran). Po pošiljanju se
+// zbriše. Nov, še neustvarjen pogovor ima ključ »nov«.
+// Največ 20 000 znakov (prilepljeno dolgo besedilo ne zasede shrambe zavihka). Izbris pogovora in »Nov pogovor«
+// osnutek tega pogovora pobrišeta (pri »Nov pogovor« besedilo iz polja preide k novemu pogovoru).
+const chatDraftKey = (conv) => `evklid.osnutek.${state.student?.id}.${conv || "nov"}`;
+function chatDraftGet(conv) {
+  try {
+    return (state.student && sessionStorage.getItem(chatDraftKey(conv))) || "";
+  } catch {
+    return "";
+  }
+}
+function chatDraftSave(conv = state.conversationId, v = $("#input")?.value || "") {
+  if (!state.student) return;
+  try {
+    if (v.trim()) sessionStorage.setItem(chatDraftKey(conv), v.slice(0, 20000));
+    else sessionStorage.removeItem(chatDraftKey(conv));
+  } catch {}
+}
+// Prazno polje dobi osnutek odprtega pogovora (ob zagonu in ob odprtju pogovora); vneseno besedilo ostane.
+function chatDraftRestore() {
+  const box = $("#input");
+  const v = box && !box.value.trim() ? chatDraftGet(state.conversationId) : "";
+  if (!v) return;
+  box.value = v;
+  box.dispatchEvent(new Event("input")); // višina polja in izris formul kot pri tipkanju
 }
 
 // Besedilo neuspelega sporočila nazaj v polje; osnutka, ki ga je učenec medtem (ali že prej) napisal, ne prepiše.
@@ -2442,6 +2529,7 @@ function restoreDraft(text, image) {
   const box = $("#input");
   if (text && !box.value.trim()) {
     box.value = text;
+    chatDraftSave();
     autoGrow();
   }
   if (image && !state.image) {
@@ -2537,6 +2625,7 @@ function autoGrow(stick, again) {
 }
 attachPrettify(input); // x^2 → x², 3/4 → ³⁄₄, sqrt → √ že med pisanjem (pred autoGrow, ki izmeri novo besedilo)
 input.addEventListener("input", autoGrow);
+input.addEventListener("input", () => chatDraftSave());
 input.addEventListener("vnos-izris-visina", () => autoGrow());
 // Ozko polje (telefon): namig se ne odreže sredi besede (»Napiši nalogo a«), ampak za zadnjo celo besedo
 // (»Napiši nalogo …«). Celoten namig ostane v polju, ko je prostora dovolj; nov namig (jezik, način) se izmeri znova.
@@ -2974,7 +3063,7 @@ function fillLevelOptions() {
   fillSubjectOptions();
   fillGoalFields();
 }
-// Cilj, datum in opomnik ob 12.00 (cilji so odvisni od šole: NPZ v OŠ, matura v SŠ, izpit na fakulteti).
+// Cilj, datum in dnevni opomnik (cilji so odvisni od šole: NPZ v OŠ, matura v SŠ, izpit na fakulteti).
 function fillGoalFields(fresh = false) {
   const box = $("#settings-goal");
   const f = $("#settings-form");
@@ -3226,7 +3315,7 @@ $("#delete-student").addEventListener("click", async () => {
 
 // ---------- napredek ----------
 
-// Cilj: vrstica na Učni poti, značka v zgornji vrstici in opomnik ob 12.00 (public/goal.js).
+// Cilj: vrstica na Učni poti, značka v zgornji vrstici in dnevni opomnik (public/goal.js, OPOMNIK_URA).
 function goalLevelText(st) {
   return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
 }
@@ -3245,7 +3334,7 @@ function renderGoal() {
     chip.title = t("goal.change");
   }
   const rem = $("#goal-reminder");
-  rem.innerHTML = reminderDue(st) ? reminderCardHtml(st) : izris.maturaPonudbaHtml(t, s);
+  rem.innerHTML = opomnikDanes(st) ? reminderCardHtml(st) : izris.maturaPonudbaHtml(t, s);
   rem.hidden = !rem.innerHTML;
   renderGoalModes();
 }
@@ -3306,9 +3395,13 @@ wireDanes({
       .then((u) => (studentUpdated(u), yes && currentView === "path" && loadPath()))
       .catch((e) => toast(e.message)),
 });
-// Opomnik ob 12.00, tudi če je aplikacija ves čas odprta.
+// Kartica opomnika ne na dan, ko je učenec že zbral XP (state.xp.today; refreshXp jo ob prvem XP skrije).
+function opomnikDanes(st) {
+  return reminderDue(st, new Date(), { vadil: state.xp?.sid === st.id && state.xp.today > 0 });
+}
+// Opomnik ob OPOMNIK_URA (goal-data.js), tudi če je aplikacija ves čas odprta.
 setInterval(() => {
-  if (state.student && currentView === "path" && $("#goal-reminder").hidden && reminderDue(state.student)) renderGoal();
+  if (state.student && currentView === "path" && $("#goal-reminder").hidden && opomnikDanes(state.student)) renderGoal();
 }, 5 * 60000);
 
 async function loadProgress() {
@@ -3574,6 +3667,7 @@ async function refreshXp() {
   const card = $("#xp-card .xp-stats");
   if (card) card.innerHTML = xpStatsHtml(x, prev);
   if (!$("#view-me").hidden) paintMeLevel();
+  if (x.today > 0 && $("#goal-reminder .gr-body")) renderGoal(); // danes že vadil: kartica opomnika izgine
   refreshModes();
   return x;
 }
@@ -4450,13 +4544,13 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju
   // s podatki, počasni ali mobilni povezavi (backgroundLoadOk): takrat se igre naložijo ob dotiku zavihka Igre.
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
-  setTimeout(() => idle(() => {
+  setTimeout(() => idle(() => poObiskovalcu(() => {
     if ((state.student && !gamesOn(state.student.settings)) || !backgroundLoadOk(navigator.connection)) return;
     loadGames().catch(() => {});
-  }), 3000);
+  })), 3000);
   // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.
   // Kalkulator (zadnje uporabljeno orodje) se zgradi v pomnilniku, moduli ostalih orodij in 3D sveta se le prenesejo.
-  setTimeout(() => whenQuiet(prefetchNext), 2500);
+  setTimeout(() => whenQuiet(() => poObiskovalcu(prefetchNext)), 2500);
   // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
   document.addEventListener("pointerdown", (e) => {
     if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
@@ -4485,6 +4579,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   // Starševski računi (account.js): prijava, potrditev, prvi otrok.
   let first = true;
   const start = async (o) => {
+    obiskovalecKonec(false); // prijava: zasloni, igre in cel slovar po prvem izrisu Učne poti, če jih obrazec še ni začel
     // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik. Ob prvem
     // zagonu že prijavljenega (cfgFresh) je config iz te seje: drugič ga ne zahtevamo.
     const admin = (cfg.admin || o?.cfgFresh)
@@ -4545,6 +4640,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     // Prijava ali pristajalna stran: po prijavi se odpre Učna pot, ne zadnji zaslon pred odjavo.
     startRec = null;
     startHold = false;
+    cakajObiskovalca();
     startDone();
   }
 })().catch(bootFailed);

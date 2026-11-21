@@ -31,15 +31,60 @@ const DEMO = [
   ["a", "a3"],
 ];
 
-// Eno sporočilo in en gumb (j 2026-11-15): prvi segment so gimnazijci med letom (domača naloga, testi).
-// Brez cen, stopenj in trditev, ki jih obiskovalec ne more preveriti; cene so pri izbiri paketa po registraciji.
+// Cena v valuti paketa v jeziku vmesnika (loc kot locale() v public/i18n.js; enako kot izbirnik paketov v account.js,
+// pregled 3, S2): slovensko »12,34 €«, angleško »€12.34«. Strežnik da isti loc (server/pristajalna-takoj.js), zato
+// stran s strežnika ostane (account.js sameMarkup). Valute brez decimalk s celimi enotami.
+const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
+const money = (minor, currency, loc) => {
+  const major = ZERO_DECIMAL.has(currency) ? minor : minor / 100;
+  const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
+  return major.toLocaleString(loc, { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
+};
+
+// Vrstica s ceno iz /api/account/prices (pregled javnih strani 21. 11. 2026, P2 in P9). Pri cenah po stopnjah najprej
+// srednja šola, mesečno in letno (maturant plača ceno SŠ, letni paket je zanj najugodnejši; pregled 3, S1), nato
+// najnižja mesečna (osnovna šola). Brez letnega SŠ ali pri regijskih cenah (ene za vse stopnje) en znesek. Brez cen
+// (strežnik ni odgovoril) prazen niz. Številk ni v kodi strani: spremembo cenika pokaže sama.
+export function priceText(t, prices, loc = "sl") {
+  const single = (p) => p.seats === 1 && !p.family && p.amount > 0;
+  const plans = (prices?.plans || []).filter(single);
+  const month = plans.filter((p) => p.interval === "month");
+  if (!month.length) return "";
+  const cur = month[0].currency || prices.currency || "EUR";
+  const fmt = (minor) => money(minor, cur, loc);
+  const min = Math.min(...month.map((p) => p.amount));
+  const ss = month.find((p) => p.level === "SS");
+  const ssYear = plans.find((p) => p.level === "SS" && p.interval === "year");
+  if (ss && ssYear && ss.amount !== min) return t("price.levels", { ss: fmt(ss.amount), ssYear: fmt(ssYear.amount), price: fmt(min) });
+  return t("price.one", { price: fmt(ss ? ss.amount : min) });
+}
+
+// Prvi segment so gimnazijci med letom in maturanti (j 2026-11-15; matura v uvodu, P1 21. 11. 2026). Glavni gumb na vrhu,
+// pod tremi dokazi še enkrat (P2), da se obiskovalcu ni treba vračati na vrh. Pod uvodom vrstica s ceno iz cenika in pas
+// zaupanja kot na /o-evklidu, /zakaj-evklid in /starsi.html (P2: starš najprej vpraša, koliko stane in kam gredo podatki).
+// loc: jezik za zapis zneskov (locale() iz public/i18n.js).
+// store: aplikacija iz trgovine (public/pay-ui.js isStoreApp) brez cene in povezave na cenik (nakup mimo trgovine).
 // noscript: stran za brskalnike brez JavaScripta in bralnike besedila (iskalniki, predogledi, orodja AI), ki jo
-// scripts/pristajalna-noscript.js zapiše v <noscript> v public/index.html. Namesto gumba za registracijo in povezave
-// za prijavo (delujeta le z JavaScriptom) je opomba.
-export function landingHtml(t, { name, prices = null, noscript = false } = {}) {
+// scripts/pristajalna-noscript.js zapiše v <noscript> v public/index.html. Namesto gumbov za registracijo in povezave
+// za prijavo (delujejo le z JavaScriptom) je opomba.
+export function landingHtml(t, { name, prices = null, noscript = false, store = false, loc = "sl" } = {}) {
   const days = prices?.trial_days;
   const age = prices?.min_age;
   const trial = days ? `<p class="land-trial">${icon("gift")}<span>${esc(t("land.trial", { n: days }))}</span></p>` : "";
+  const price = store ? "" : priceText(t, prices, loc);
+  const priceLine = price ? `<p class="land-price">${esc(price)} <a href="/o-evklidu#cene">${esc(t("land.prices"))}</a></p>` : "";
+  const trust = `<ul class="mkt-trust land-trust" aria-label="${esc(t("land.trustLabel"))}">
+      <li>${esc(t("land.trust.eu"))}</li>
+      <li>${esc(t("land.trust.ads"))}</li>
+      <li>${esc(t("land.trust.ai"))}</li>
+      <li><a href="/zasebnost.html">${esc(t("land.trust.more"))}</a></li>
+    </ul>`;
+  const again = noscript
+    ? ""
+    : `<section class="land-cta">
+      <div class="land-actions"><a class="btn-primary" href="#registracija" data-land="register">${esc(t("land.start"))}</a></div>
+      ${trial}
+    </section>`;
   const ageNote = age ? `<p class="land-age">${esc(t("land.s1.age", { age }))}</p>` : "";
   const demo = DEMO.map(([who, k], i) => `<li class="land-msg ${who === "q" ? "me" : "tutor"}" style="--i:${i}">${esc(t(`land.demo.${k}`))}</li>`).join("");
   const proofs = PROOFS.map(
@@ -62,6 +107,7 @@ export function landingHtml(t, { name, prices = null, noscript = false } = {}) {
         </div>
         <p class="land-login">${esc(t("land.haveAccount"))} <a href="#prijava" data-land="login">${esc(t("mob.signIn"))}</a></p>`}
         ${trial}
+        ${priceLine}
         ${ageNote}
       </div>
       <figure class="land-demo" aria-label="${esc(t("land.demoLabel"))}">
@@ -69,18 +115,21 @@ export function landingHtml(t, { name, prices = null, noscript = false } = {}) {
         <ol>${demo}</ol>
       </figure>
     </section>
+    ${trust}
     <section class="land-sec" aria-labelledby="land-proof-h">
       <h2 id="land-proof-h">${esc(t("land.proofTitle"))}</h2>
       <ul class="land-grid land-proofs">${proofs}</ul>
     </section>
+    ${again}
     <footer class="land-foot">
       <a href="/o-evklidu">${esc(t("land.what"))}</a>
       <a href="/zakaj-evklid">${esc(t("land.why"))}</a>
+      ${store ? "" : `<a href="/o-evklidu#cene">${esc(t("land.prices"))}</a>`}
       <a href="/zasebnost.html">${esc(t("land.privacy"))}</a>
       <a href="/pogoji.html">${esc(t("land.terms"))}</a>
       <a href="/odstop.html">${esc(t("land.withdraw"))}</a>
       <a href="/starsi.html">${esc(t("land.par.t"))}</a>
-      <a href="/sole.html">${esc(t("land.sch.t"))}</a>
+      <a href="/sole">${esc(t("land.sch.t"))}</a>
       <a href="/prenesi">${esc(t("land.app.go"))}</a>
       <p class="land-provider">${esc(t("land.provider", { app: name, name: PROVIDER.name }))} · <span class="land-contact">${esc(t("land.contact"))}: <a href="mailto:${PROVIDER.email}">${PROVIDER.email}</a></span></p>
     </footer>

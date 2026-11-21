@@ -10,6 +10,7 @@ async function withServer(fn) {
   app.get("/", (_req, res) => res.send("DOMOV"));
   app.get("/api/x", (_req, res) => res.json({ ok: true }));
   app.get("/manifest.webmanifest", (_req, res) => res.json({ name: "Evklid" }));
+  app.get("/healthz/alarm", (_req, res) => res.send("ok"));
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   try { await fn(base); } finally { server.close(); }
@@ -30,6 +31,11 @@ test("brez gesla: stran za prijavo namesto okna brskalnika, API vrne 401", () =>
 test("opis aplikacije za začetni zaslon je dostopen brez gesla", () => withServer(async (base) => {
   const r = await fetch(base + "/manifest.webmanifest");
   assert.equal(r.status, 200);
+}));
+
+test("javni alarm za UptimeRobot (/healthz/alarm) je dostopen brez gesla, druge poti healthz ne", () => withServer(async (base) => {
+  assert.equal((await fetch(base + "/healthz/alarm")).status, 200);
+  assert.equal((await fetch(base + "/healthz/alarm/x")).status, 401);
 }));
 
 test("prijava z obrazcem nastavi piškotek, ki odpre aplikacijo", () => withServer(async (base) => {

@@ -1,7 +1,7 @@
 // Učne poti: dostop do podatkov iz curriculum-data.js.
 import { PATHS } from "./curriculum-data.js";
 import { UNI_PATHS, PROGRAMS, FACULTIES, FAC_SHORT, UNIVERSITIES } from "./university-data.js";
-import { ALL_SUBJECTS } from "./subjects.js";
+import { ALL_SUBJECTS, SUBJECT_NAMES } from "./subjects.js";
 import { EN, EN_UNITS, INT_LEVELS, IN_PATHS, SUBJECT_EN } from "./region-curricula.js";
 import { SCHOOL_SYSTEMS, isRegional, gradeInfo, gradesOf } from "../public/regions.js";
 import { BANK, EXAMS, SUBJECT_NAMES_EN } from "./exam-data.js";
@@ -131,6 +131,7 @@ for (const [key, topics] of Object.entries(BANK)) {
 }
 
 // Priprave na izpite: pot "<predmet>-EX-<izpit>", npr. MAT-EX-SAT (server/exams.js).
+// Slovenski izpiti (NPZ, matura) imajo slovensko ime predmeta (»Splošna matura – Matematika«), drugi angleško.
 const parseRefs = (line) => {
   const [text, refs = ""] = line.split("=>");
   const [name, goals = ""] = text.split("|").map((x) => x.trim());
@@ -139,7 +140,7 @@ const parseRefs = (line) => {
 for (const [examId, exam] of Object.entries(EXAMS)) {
   for (const [subject, def] of Object.entries(exam.subjects)) {
     const units = def.units.map(([title, topics]) => [title, topics.map(parseRefs)]);
-    addRegionPath(`${subject}-EX-${examId}`, `${exam.name} – ${SUBJECT_NAMES_EN[subject]}`, subject, "EX", 0, units, { exam: examId });
+    addRegionPath(`${subject}-EX-${examId}`, `${exam.name} – ${(exam.systems?.includes("SI") ? SUBJECT_NAMES : SUBJECT_NAMES_EN)[subject]}`, subject, "EX", 0, units, { exam: examId });
   }
 }
 

@@ -102,6 +102,14 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   in po `initAccount`). Moduli vstopne strani imajo `fetchpriority="low"` (ne tekmujejo s slogi). Izklop za primerjavo:
   `EVKLID_PRISTAJALNA_TAKOJ=0`. Meritev (Lighthouse 12, telefon, počasen 4G, lokalno): LCP 10,7 → 2,8 s (simulirano),
   21 → 2,2 s (pravo upočasnjevanje); test `test/pristajalna-takoj.test.js`.
+- Obiskovalec hitreje do obrazca, brez odvečnih prenosov (meritev hitrosti 21. 11. 2026, primerjava z Astra AI): slovenska
+  pristajalna stran nosi jedro besedil (`withSlJedro`, kot stran prijavljenega) namesto `modulepreload` celega slovarja; ob
+  sidru `#registracija`, `#prijava` ali `#pozabljeno-geslo` `zacetek.js` (`obrazecObiskovalca`) stran skrije do obrazca (prej
+  ~0,6 s okostje Učne poti) in sloge drugih zaslonov vklopi šele v `konec` (za obrazcem; varovalo 8 s; `.small` za namig je v
+  `account.css`). Zasloni, igre, orodja kalkulatorja in cel slovar (`zasloniPozneje`, ~90 modulov, ~0,8 MB) se obiskovalcu
+  prenesejo šele, ko začne izpolnjevati obrazec (`focusin`/`pointerdown` v `#view-auth form`), ali po prijavi za prvim
+  izrisom Učne poti (`app.js cakajObiskovalca`, `obiskovalecKonec`). Service worker ob prvem obisku shrani prenesene
+  datoteke iz predpomnilnika brskalnika (`fetch(u, { cache: "force-cache" })`), brez ponovne zahteve za vsako.
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).

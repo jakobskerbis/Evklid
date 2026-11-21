@@ -21,7 +21,7 @@ export const ENUMS = {
   school_system: SYSTEM_IDS,
   // Lahki način (varčevanje s podatki): auto = po povezavi naprave, lite = vedno, normal = nikoli.
   data_mode: ["auto", "lite", "normal"],
-  // Cilj učenca (public/goal-data.js); datum je neobvezen, opomnik ob 12.00 velja le z datumom.
+  // Cilj učenca (public/goal-data.js); datum je neobvezen, dnevni opomnik velja le z datumom.
   goal: GOALS,
   // Kotiček zanimanj: kako zahtevne novice (auto = po šoli) in ali tudi v angleščini.
   news_level: NEWS_LEVELS,
@@ -50,7 +50,7 @@ export const DEFAULT_SETTINGS = {
   data_mode: "auto",
   goal: DEFAULT_GOAL,
   goal_date: "", // YYYY-MM-DD ali prazno
-  goal_reminder: true, // dnevni opomnik ob 12.00 do datuma cilja
+  goal_reminder: true, // dnevni opomnik (OPOMNIK_URA, 16.00) do datuma cilja
   xp_goal: DEFAULT_XP_GOAL, // dnevni cilj XP (public/xp-levels.js XP_GOALS)
   // Kotiček zanimanj (public/interests.js): null = vprašalnik še ni bil izpolnjen, [] = preskočen.
   interests: null,

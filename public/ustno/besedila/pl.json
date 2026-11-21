@@ -74,6 +74,7 @@
 "u.nalagam": "Wczytuję …",
 "u.starsNaslov": "Odpowiadanie głosem",
 "u.starsOpis": "Podczas odpytywania ustnego i z mikrofonem w czacie z korepetytorem dziecko może odpowiadać głosem. Mowę na tekst zamienia dostawca przeglądarki (np. Google, Apple lub Microsoft); Evklid dostaje tylko tekst i nie zapisuje dźwięku. Dla dzieci poniżej 15 lat jest wyłączone, dopóki tego nie włączysz. Pisanie działa zawsze.",
+"u.starsOpisZame": "Podczas odpytywania ustnego i z mikrofonem w czacie z korepetytorem możesz odpowiadać głosem. Mowę na tekst zamienia dostawca przeglądarki (np. Google, Apple lub Microsoft); Evklid dostaje tylko tekst i nie zapisuje dźwięku. Pisanie działa zawsze.",
 "u.dovoli": "Zezwól na odpowiadanie głosem",
 "u.nad15": "15 lat lub więcej: zgoda nie jest potrzebna.",
 "u.shranjeno": "Zapisano."

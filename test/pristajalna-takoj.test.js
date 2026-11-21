@@ -82,11 +82,21 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
     assert.match(head, /<link rel="preload" href="\/vendor\/instrument-sans\/files\/instrument-sans-latin-wght-normal\.woff2" as="font" type="font\/woff2" crossorigin>/);
     assert.ok(tplSlogi[1].includes("textbook.css") && tplSlogi[2].includes("drsniki.css"), "vrstni red ostane");
 
-    // Angleščina: stran in pasica »Testna različica« v angleščini.
+    // Jedro slovenskih besedil namesto celega slovarja (meritev hitrosti 21. 11. 2026): obrazec za registracijo ne čaka
+    // ~83 KB slovarja, obiskovalec, ki se ne registrira, ga ne prenese. Jedro je pred zagon.js (prebere ga i18n-osnova.js).
+    assert.ok(!/modulepreload" href="\/i18n(?:\/sl)?\.js"/.test(html), "brez celega slovarja vnaprej");
+    assert.ok(html.indexOf('<script type="application/json" id="evklid-sl-jedro">') > html.indexOf("</main>"), "jedro za vsebino strani");
+    assert.ok(html.indexOf('id="evklid-sl-jedro"') < html.indexOf('<script type="module" src="zagon.js"'), "jedro pred zagon.js");
+    const jedro = JSON.parse(html.match(/<script type="application\/json" id="evklid-sl-jedro">(.*?)<\/script>/s)[1]);
+    for (const k of ["auth.registerTitle", "mob.register", "mob.email", "mob.password", "auth.privacy", "land.title"]) assert.equal(jedro[k], tSl(k), k);
+
+    // Angleščina: stran in pasica »Testna različica« v angleščini; brez slovenskega jedra, cel slovar vnaprej kot prej.
     const en = await (await fetch(`${base}/`, { headers: { "accept-language": "en-US,en;q=0.9" } })).text();
     const tEn = translator("en", new URL("../public/", import.meta.url).pathname);
     assert.ok(en.includes(`<h1>${tEn("land.title")}</h1>`));
     assert.ok(en.includes(`<b data-i18n="beta.title">${tEn("beta.title")}</b>`));
+    assert.ok(!en.includes("evklid-sl-jedro"));
+    assert.match(en, /<link rel="modulepreload" href="\/i18n\/sl\.js" fetchpriority="low">/);
 
     // Seja, aplikacija za telefon ali brez jezika: navadna stran (z modulepreload v <head>), kot prej.
     for (const headers of [{ "accept-language": "sl", cookie: "sm_session=abc" }, { "accept-language": "sl", "user-agent": "EvklidApp/1.0" }, {}]) {
@@ -101,6 +111,61 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
     const b = await fetch(`${base}/`, { headers: { "accept-language": "de-DE", "accept-encoding": "br" } });
     assert.notEqual(a.headers.get("etag"), b.headers.get("etag"));
   } finally {
+    server.close();
+  }
+});
+
+// Meritev hitrosti 21. 11. 2026: obiskovalec na /#registracija prej ~0,6 s videl okostje Učne poti (zavihki, »Nova snov«), obrazec
+// je čakal cel slovar in vse sloge; pristajalna stran je po prvem izrisu prenesla še ~90 modulov drugih zaslonov (~0,8 MB).
+test("brskalnik: /#registracija brez okostja aplikacije, besedila iz jedra; zasloni šele, ko obiskovalec začne izpolnjevati obrazec", { skip: !playwright && "Playwright ni nameščen", timeout: 120_000 }, async () => {
+  const { server, base } = start();
+  const browser = await playwright.chromium.launch();
+  try {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", timezoneId: "Europe/Ljubljana", serviceWorkers: "block" });
+    const p = await ctx.newPage();
+    const errors = [];
+    p.on("pageerror", (e) => errors.push(e.message));
+    const urls = [];
+    p.on("request", (r) => urls.push(new URL(r.url()).pathname));
+    // Cel slovar zadržimo: obrazec ga ne sme čakati.
+    let spusti = null;
+    const spusceno = new Promise((ok) => (spusti = ok));
+    await p.route(/\/i18n(\/sl)?\.js$/, async (r) => {
+      await spusceno;
+      await r.continue();
+    });
+    await p.addInitScript(() => {
+      window.__okostje = false;
+      document.addEventListener("DOMContentLoaded", () => {
+        window.__dcl = { slogi: document.documentElement.hasAttribute("data-zacetek-slogi"), tpl: !!document.querySelector("template[data-evklid-slogi]") };
+        const vidno = (el) => !!el && el.checkVisibility({ visibilityProperty: true });
+        const korak = () => {
+          if (vidno(document.body) && !vidno(document.querySelector("#auth-form"))) window.__okostje ||= vidno(document.querySelector("#view-path")) || vidno(document.querySelector(".topbar .tabs"));
+          if (!vidno(document.querySelector("#auth-form"))) requestAnimationFrame(korak);
+        };
+        korak();
+      });
+    });
+    await p.goto(base + "/#registracija");
+    await p.locator('#auth-form button[type="submit"]').waitFor({ state: "visible", timeout: 30_000 });
+    assert.deepEqual(await p.evaluate(() => window.__dcl), { slogi: true, tpl: true }, "stran skrita, slogi drugih zaslonov še v <template>");
+    assert.equal(await p.evaluate(() => window.__okostje), false, "nobene sličice z okostjem Učne poti pred obrazcem");
+    assert.equal(await p.locator('#auth-form button[type="submit"]').textContent(), tSl("mob.register"));
+    const i18n = await p.evaluate(() => import("/i18n-osnova.js").then((m) => ({ vse: m.vseNalozeno(), manjka: m.manjkajoci() })));
+    assert.deepEqual(i18n, { vse: false, manjka: [] }, "obrazec samo z jedrom, brez manjkajočih besedil");
+    await p.waitForFunction(() => !document.querySelector("template[data-evklid-slogi]") && !document.documentElement.hasAttribute("data-zacetek-slogi"));
+    // Igre (3 s) in orodja kalkulatorja (2,5 s) po zagonu, zasloni po prvem izrisu: obiskovalec, ki ne izpolnjuje, nič od tega.
+    await p.waitForTimeout(3500);
+    const ZASLONI = ["/vadnica.js", "/racun.js", "/games/index.js", "/textbook.js", "/i18n/sl.js"];
+    assert.deepEqual(ZASLONI.filter((u) => urls.includes(u)), [], "brez modulov drugih zaslonov pred izpolnjevanjem");
+    spusti();
+    await p.locator('#auth-form input[name="email"]').focus();
+    await p.waitForFunction(() => import("/i18n-osnova.js").then((m) => m.vseNalozeno()), null, { timeout: 30_000 });
+    await p.waitForFunction(() => performance.getEntriesByType("resource").some((e) => e.name.endsWith("/vadnica.js")), null, { timeout: 30_000 });
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  } finally {
+    await browser.close();
     server.close();
   }
 });

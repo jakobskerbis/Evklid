@@ -263,8 +263,8 @@ test("result only (j 2026-11-17): one task, asked only for the result → result
   assert.ok(hw.includes("»samo rezultat« pri več nalogah"), "sprožilec pravila za več nalog");
   assert.match(hw, /»reši vse« ali »moram oddati« ob več nalogah ni prošnja za način B/);
   // Izjema je navedena pri obeh pravilih, ki bi ji sicer nasprotovali; preverjanje učenčevega golega rezultata ostane.
-  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
-  assert.match(stat, /Končnega odgovora nikoli ne izdaš kot prvi odziv na novo nalogo \(izjema: Samo rezultat pri eni nalogi v Pedagoških situacijah\)\./);
+  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjemi: Samo rezultat pri eni nalogi in Preprosto vprašanje\)/);
+  assert.match(stat, /Končnega odgovora nikoli ne izdaš kot prvi odziv na novo nalogo \(izjemi: Samo rezultat pri eni nalogi v Pedagoških situacijah in Preprosto vprašanje\)\./);
   assert.match(stat, /Pravilen rezultat brez postopka ali z napačnim postopkom ni rešen/);
   // 1 452 znakov po PR #836 (sklic na definicijo seznama vaj in skladen zgled); rezerva ~20.
   assert.ok(row.length < 1475, `točka naj ostane kratka (${row.length} znakov)`);
@@ -279,7 +279,8 @@ test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step
   const line = (start) => stat.split("\n").find((l) => l.startsWith(start)) || "";
   // 6 in 112 (Vodenje): »Pravilno, …« ob napačnem koraku tudi pred #836; splošno pravilo v Načinu A, točka 2 (pregled #841).
   const p2 = line("2. Eno vprašanje naenkrat;");
-  assert.ok(p2.endsWith("Ko je v koraku napaka, ne začni s pohvalo ali potrditvijo (»Prav«, »Pravilno«, »Dobro«, »Odlično«, »Res je«); najprej pokaži napako, nato povej, kaj je prav."), "Način A, točka 2");
+  // Popravki inštruktorja 21. 11. 2026 (kandidat po dveh slepih primerjavah prej/potem): napako pove že prvi stavek.
+  assert.ok(p2.endsWith("Ko je v učenčevem koraku ali trditvi napaka, ne začni s pohvalo ali potrditvijo (»Prav«, »Dobro«, »Res je«): že prvi stavek jasno in prijazno pove, da korak ni pravilen, in pokaže, kje je napaka (člen, predznak, del trditve), brez pravilnega rezultata; ne omili je (»morda nepopolno«) in je ne skrij v vprašanje. Nato povej, kateri del je prav."), "Način A, točka 2");
   assert.ok(line("- Delno pravilen odgovor").includes("potrdi, kar je prav, in z enim vprašanjem pokaži, da nekaj manjka"), "oklepaj iz prve različice ni več potreben");
   assert.doesNotMatch(line("- Delno pravilen odgovor"), /ne začni s/);
   // Pohvala pravilnega koraka v OŠ 6.–9. ostane (ne nasprotuje: velja le za pravilen korak).
@@ -290,7 +291,9 @@ test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step
   // 45: samo rezultat brez okvirja »Zapomni si«.
   assert.ok(line("- **Samo rezultat pri eni nalogi**").includes("Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage"));
   // +266 znakov (61 734 → 62 000; ~75 žetonov) po pregledu #841; s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
-  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226, `stalni del ${stat.length} znakov`);
+  // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
+  // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
+  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460, `stalni del ${stat.length} znakov`);
 });
 
 test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts with another method are one task, grades 1–4 short", () => {
@@ -352,7 +355,7 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
   // Vodenje (način A) ostane nespremenjeno.
   const a = stat.slice(stat.indexOf("## Način A – vodenje"), stat.indexOf("## Način B – celotna rešitev"));
   assert.doesNotMatch(a, /podvprašanj/);
-  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
+  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjemi: Samo rezultat pri eni nalogi in Preprosto vprašanje\)/);
   // 2. OŠ 1.–4.: brez ogrodja, kratko; 5. razred ohrani vrstni red.
   const kids = line("OŠ 1.–4. razred (1.–4. leto šolanja):");
   for (const s of ["namesto točk 1–6 brez Podatkov, Iščemo, Načrta, Preverbe ali »Preverimo« (razen kadar preizkus zahteva naloga ali otrok), okvirja »Zapomni si«, stavka, kaj je naloga preverjala, in Vaje", "en do dva kratka stavka s preprostimi besedami", "rezultat krepko", "Skupaj do okoli 450 znakov, razen če otrok prosi za več", "le z gumbi `IZBIRE`"]) assert.ok(kids.includes(s), `OŠ 1.–4.: »${s}«`);
@@ -385,7 +388,9 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // +1019 znakov (60 195 → 61 214; ~290 žetonov).
     // Preizkus 3, krog 2 (18. 11., PR #836: definicija seznama vaj, OŠ 1.–4.): +506 znakov (61 224 → 61 730; ~140 žetonov), meja +510.
     // Meritev po #836 s pregledom #841: +266 znakov (61 734 → 62 000); s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226, `stalni del ${stat.length} znakov`);
+    // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
+    // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460, `stalni del ${stat.length} znakov`);
   });
 });
 
