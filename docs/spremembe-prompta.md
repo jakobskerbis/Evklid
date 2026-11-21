@@ -2,6 +2,30 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-21: kandidat: krajša in urejena različica (`prompts/system_prompt-kandidat.md`, privzeto izklopljen)
+
+- Zakaj: j je vprašal, ali je prompt predolg (»Izboljšaj vse kar lahko«). Pri manj razmisleka (Haiku 5.5 s prilagodljivim razmislekom) je zadnja slepa meritev pokazala več izdajanja rešitve in šibkejšo ponovno razlago; ista pravila so bila na več mestih z različnimi besedami, kar mali model stane razmislek. Produkcijski prompt je nespremenjen; kandidat (`EVKLID_INSTRUKTOR_KANDIDAT=1`) se pred vklopom slepo primerja s produkcijo.
+- Velikost stalnega dela: 66 198 → 55 987 znakov (−15 %; 10 495 → 8 848 besed, ~−2 700 žetonov na klic brez predpomnilnika). Del za učenca (pod `EVKLID:NASTAVITVE`) in vse oznake so enaki.
+- Prednosti na vrhu: vrstica »Vedno« je zdaj pet oštevilčenih pravil z največjo težo: ne izdaj (tudi ne v namigu, okvirju, kartici, gumbu, bloku), preveri pred sodbo, ob »ne razumem« nov pristop na napačni del, en korak do 60 besed z enim vprašanjem, oblika in META.
+- Združeno (pravilo ostane, zapisano enkrat):
+  - »Končnega odgovora nikoli ne izdaš kot prvi odziv …« (Način A) je v vrstici »Vedno«; brez emojijev le tam.
+  - Seznam »naloge, ki jih je dal Evklid« (Preprosto vprašanje, Samo rezultat) → enkrat, nato »Evklidove naloge«.
+  - »Podvprašanja so ena naloga« (Način B, Samo rezultat, Domača naloga) → enkrat v Načinu B (»velja v vseh pravilih«); definicija seznama vaj z zgledom le v Domači nalogi.
+  - Vzorec za računske naloge (6 točk) → ena veriga »Računske naloge« (Podatki → Iščemo → zveza → simbolično → rezultat → Preverba); FIZ ne ponavlja SI in simboličnega izražanja.
+  - Rešen zgled po korakih (Kako poučuješ in Tempo) → ena alineja; Majhni koraki v Tempo; Natančna povratna informacija in pohvala v eno alinejo.
+  - »Daj težje«, »to znam«, začetni test, del iz Napreden učenec → alineja »Kar že zna, skrajšaj«.
+  - 120 besed za izpeljave (Tempo in UNIVERZA) → enkrat v Tempo.
+  - Skupna pravila strojnih blokov (vrstni red ×5, oznake v vseh jezikih ×4, »o bloku ne govoriš« ×5, brez blokov pri ščitu in `flag`≠`none` ×3) → uvod »Strojni bloki«; sintaksa KARTICA, IZBIRE, ODPRI/GRAF/SKICA, RACUN, META nespremenjena.
+  - Številke za pomoč zunaj Slovenije (×3 v Mejah, Pritisk) → en stavek na začetku Mej.
+  - »(prepoznaj v odgovoru; ravnaj po Spodrsljaj …)« ×4 pri predmetih → en uvodni stavek.
+  - Risbe iz znakov (Kako poučuješ in SKICA) → pri SKICA.
+- Odstranjeno, ker to naredi strežnik: predloga s/z in k/h (`fixPrepositions`, vklopljeno za vse), »brez oznak kode« ob IZBIRE in META (`server/meta.js` odstrani ograje okoli blokov). Pravilo o imenih pristopov (»priklic«, »način A«) ostane v enem stavku, ker `stripLabels` odstrani le znane oznake na začetku.
+- Razrešeni nasprotji: (1) potrditev spremembe »v enem kratkem stavku« proti »prvi stavek je rezultat« v načinu B (#920 je novejši): potrditev gre na konec, kadar je prvi stavek rezultat; (2) »izrecno zahteva celotno rešitev → način B« proti »reši vse ob več nalogah ni prošnja za način B«: pri več nalogah najprej velja Domača naloga za oddajo (izrecno zapisano pri obeh).
+- Šibke točke zadnje slepe meritve, vpete v obstoječa pravila: protiprimer naj napako pokaže na prvi pogled in je preverjen z vstavljanjem (pri $x^2 > 4$ in odgovoru $x > 2$: $x = -3$); natančen namig na 3. stopnički brez rezultata koraka (pri integraciji po delih vprašanje, kateri faktor odvajaš, ne že zapisani $u$, $v$ in nov integral); višina lika iz pravokotnega trikotnika (višina manjšega krožnega odseka $r - \sqrt{r^2 - (s/2)^2}$, ne razdalja tetive od središča); »Tega ne razumem« doda »Rešitve tudi zdaj ne izdaš« in sklic na protiprimer.
+- Namenoma ohranjeno kljub dolžini: Varnostni ščit dobesedno, Meje (stiska, nujni primer, 112), Pravila brez posploševanja (#833/#835), dodatne vaje in stranske trditve (krogi natančnosti 2–5), celotno pravilo KEM (ionske formule, križno pravilo, Lewisove formule, krogi 2–8), OŠ 1.–4. in 5. razred v načinu B, Preprosto vprašanje in Pojmovno vprašanje (#918), zgledi GRAF (škatla z brki, histogram) in RACUN.
+- Opomba za vklop: shranjeni odgovori (`server/app.js`, `cacheKey`) nimajo dela ključa za različico prompta; ob vklopu kandidata za vse naj se doda nova oznaka, da se ne vračajo odgovori stare različice.
+- Test: `test/instruktor-kandidat.test.js` (nov test »kandidat 3«: meja stalnega dela 56 200, pet prednostnih pravil, ena definicija seznama vaj in Evklidovih nalog, šibke točke meritve, sintaksa blokov; primerjava oznak le za prave oznake `{ime}`, ne za LaTeX; pravilo s/z le še v produkciji). Meje velikosti v `test/prompt.test.js` veljajo za produkcijski prompt in ostanejo.
+
 ## 2026-11-18: ime učenca ne gre k ponudniku AI, samo slovnični spol (PR #845)
 
 - Zakaj: j 18. 11. po osnutku DPIA: ime otroka ne sme k Anthropic. Model dobi oznako `{{IME}}`, strežnik jo zamenja z imenom samo v besedilu za učenca (`server/ime-oznaka.js`). Namesto imena (iz katerega je model sklepal na spol) dobi slovnični spol: iz nove neobvezne nastavitve »Kako naj ti inštruktor piše« (`settings.gender`) ali uganjen iz imena (-a → ženski z izjemami Luka, Jaka, Miha, Žiga …; soglasnik ali -o → moški z izjemami Ines, Karmen …; dvoumna in druga imena → neznan).
