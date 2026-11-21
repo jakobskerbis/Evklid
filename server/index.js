@@ -6,7 +6,7 @@ import { applyPendingRestore } from "./kopije.js";
 import { cloudConfig, uskladiIzbrise } from "./kopije-oblak.js";
 import { zagonBrezKljuca } from "./crypto-polje.js";
 import { createApp } from "./app.js";
-import { isMockMode, MODEL } from "./claude.js";
+import { isMockMode, MODEL, zagonBrezAiKljuca } from "./claude.js";
 import { casCheck, casOn } from "./cas.js";
 import { ogrej as ogrejNujno } from "../public/nujno.js";
 
@@ -14,6 +14,13 @@ import { ogrej as ogrejNujno } from "../public/nujno.js";
 const brezKljuca = zagonBrezKljuca();
 if (brezKljuca) {
   console.error(brezKljuca);
+  process.exit(1);
+}
+// Produkcija brez ANTHROPIC_API_KEY: inštruktor bi tiho tekel v preizkusnem načinu, zato se strežnik ne zažene
+// (izjema samo izrecno z EVKLID_MOCK=1; server/claude.js zagonBrezAiKljuca).
+const brezAi = zagonBrezAiKljuca();
+if (brezAi) {
+  console.error(brezAi);
   process.exit(1);
 }
 

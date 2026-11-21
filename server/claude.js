@@ -6,6 +6,7 @@ import { isHiddenNote } from "./skrite-opombe.js";
 import { mockToolCall, mockToolText } from "./chat-settings.js";
 // Zgornja meja vhoda ob prekinitvi pred message_start (krožni uvoz: meje-ai.js uporablja claude.js le v funkcijah).
 import { systemTokens, messageTokens } from "./meje-ai.js";
+import { jeProdukcija } from "./crypto-polje.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 
@@ -134,6 +135,19 @@ export const errorText = (err, base = ERROR_TEXT) => {
 export function isMockMode() {
   if (process.env.EVKLID_MOCK === "1") return true;
   return !process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN;
+}
+
+// Ob zagonu (server/index.js): v produkciji (isti znaki kot crypto-polje.js jeProdukcija) brez ključa API bi strežnik
+// tiho tekel v preizkusnem načinu (vnaprej pripravljeni odgovori za vse učence), zato se ne zažene. Preizkusni način v
+// produkciji samo izrecno z EVKLID_MOCK=1. Vrne besedilo napake ali null.
+export function zagonBrezAiKljuca(env = process.env) {
+  if (!jeProdukcija(env) || env.EVKLID_MOCK === "1") return null;
+  if (String(env.ANTHROPIC_API_KEY || "").trim() || String(env.ANTHROPIC_AUTH_TOKEN || "").trim()) return null;
+  return (
+    "[evklid] Strežnik se ne zažene: v produkciji ni nastavljen ANTHROPIC_API_KEY, zato bi inštruktor tekel v preizkusnem " +
+    "načinu (vnaprej pripravljeni odgovori). Nastavi ANTHROPIC_API_KEY v Render → Environment. Samo če preizkusni način " +
+    "res želiš: EVKLID_MOCK=1."
+  );
 }
 
 // Izid klicev modela za zdravje strežnika (server/zdravje.js, /healthz/stanje → ai): fn({ ok: true }) ali

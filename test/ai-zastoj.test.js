@@ -1,11 +1,12 @@
-// Zanesljivost klica AI (21. 11. 2026): nadzornik mirovanja toka (zastoj) in izid klicev za zdravje strežnika.
+// Zanesljivost klica AI (21. 11. 2026): nadzornik mirovanja toka (zastoj), izid klicev za zdravje strežnika in
+// zagon v produkciji brez ključa API.
 import test from "node:test";
 import assert from "node:assert/strict";
 
 process.env.ANTHROPIC_API_KEY = "sk-test";
 process.env.EVKLID_MOCK = "0";
 const Anthropic = (await import("@anthropic-ai/sdk")).default;
-const { streamReply, setClient, apiErrorCode, errorText, nastaviOpazovalcaAi, mirovanjeMs } = await import("../server/claude.js");
+const { streamReply, setClient, apiErrorCode, errorText, nastaviOpazovalcaAi, zagonBrezAiKljuca, mirovanjeMs } = await import("../server/claude.js");
 
 const enc = new TextEncoder();
 const sse = (type, data) => enc.encode(`event: ${type}\ndata: ${JSON.stringify({ type, ...data })}\n\n`);
@@ -93,3 +94,13 @@ test("zastoj: rok iz EVKLID_AI_MIROVANJE_S (privzeto 60 s, 0 = izklop)", () => {
   assert.equal(mirovanjeMs({ EVKLID_AI_MIROVANJE_S: "x" }), 0);
 });
 
+test("zagon: produkcija brez ključa API se ne zažene, razen z izrecnim EVKLID_MOCK=1", () => {
+  assert.equal(zagonBrezAiKljuca({}), null); // razvoj in testi: preizkusni način kot doslej
+  assert.match(zagonBrezAiKljuca({ NODE_ENV: "production" }), /ANTHROPIC_API_KEY/);
+  assert.match(zagonBrezAiKljuca({ RENDER: "true", ANTHROPIC_API_KEY: "  " }), /ne zažene/);
+  assert.equal(zagonBrezAiKljuca({ RENDER: "true", EVKLID_MOCK: "1" }), null);
+  assert.equal(zagonBrezAiKljuca({ NODE_ENV: "production", ANTHROPIC_API_KEY: "sk-x" }), null);
+  assert.equal(zagonBrezAiKljuca({ NODE_ENV: "production", ANTHROPIC_AUTH_TOKEN: "t" }), null);
+  // Besedilo ne izpiše nobene vrednosti iz okolja.
+  assert.doesNotMatch(zagonBrezAiKljuca({ NODE_ENV: "production", EVKLID_DATA_KEY: "skrivnost" }), /skrivnost/);
+});
