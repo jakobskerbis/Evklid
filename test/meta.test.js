@@ -131,3 +131,24 @@ test("stripMeta keeps the fences of a real code block and strips only the block 
   assert.equal(stripMeta(code + '\n```\n<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>\n```'), code);
   assert.equal(stripMeta('Ok.\n`META subject=MAT topic="x" error=0 mode=A flag=none done=0`'), "Ok.");
 });
+
+test("ostanki oznak kode okoli strojnih blokov ne ostanejo v odgovoru; pravi bloki kode ostanejo (meritev 21. 11.)", async () => {
+  const { replyText, tidyFences } = await import("../server/meta.js");
+  const meta = '<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>';
+  const izbire = '<<IZBIRE ["0,7", "0,9"]>>';
+  for (const v of [`Q?\n\n\`\`\n${meta}\n\`\``, `Q?\n\n\`\`${meta}\`\``, `Q?\n\n\`\`\`\n${meta}`, `Q?\n\n\`\`\`\n${meta}\n${izbire}\n\`\`\``, `Q?\n\n\`\`\n${meta}\n\`\`\``]) {
+    assert.equal(replyText(v), "Q?", JSON.stringify(v));
+    for (const size of [1, 5, 40]) {
+      const f = createStreamFilter();
+      let out = "";
+      for (let i = 0; i < v.length; i += size) out += f.push(v.slice(i, i + size));
+      out += f.end().rest;
+      assert.equal(out, "Q?", `${JSON.stringify(v)} (size ${size})`);
+    }
+  }
+  const code = "Velja:\n\n```js\nlet x = 1;\n```\n\n```\ny = 2\n```\n\nKonec.";
+  assert.equal(tidyFences(code), code);
+  assert.equal(replyText(code + "\n```\n" + meta + "\n```"), code);
+  const odprto = "Koda:\n```py\nprint(1)";
+  assert.equal(tidyFences(odprto), odprto, "nezaprt pravi blok ostane");
+});

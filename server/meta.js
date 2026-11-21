@@ -128,6 +128,33 @@ export function stripMeta(text) {
     .replace(/\s+$/, "");
 }
 
+// Ostanki oznak kode okoli odstranjenih strojnih blokov (meritev 21. 11. 2026: odgovor se je končal z »``«): prazen blok
+// kode (tudi nezaprt na koncu) in vrstica z eno ali dvema oznakama zunaj bloka kode. Pravi bloki kode ostanejo. Samo na
+// celotnem besedilu (ne na koncu toka), ker je zaključna oznaka pravega bloka sama zase videti kot začetek novega.
+export function tidyFences(text) {
+  const out = [];
+  let open = null; // začeti blok kode: { at, n, empty }
+  for (const line of String(text).split("\n")) {
+    const m = /^[ \t]*(`{3,})([^`]*)$/.exec(line);
+    if (!open) {
+      if (m) open = { at: out.length, n: m[1].length, empty: true };
+      else if (/^[ \t]*`{1,2}[ \t]*$/.test(line)) continue;
+      out.push(line);
+      continue;
+    }
+    if (m && m[1].length >= open.n && !m[2].trim()) {
+      if (open.empty) out.length = open.at;
+      else out.push(line);
+      open = null;
+      continue;
+    }
+    if (line.trim()) open.empty = false;
+    out.push(line);
+  }
+  if (open?.empty) out.length = open.at;
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").replace(/\s+$/, "");
+}
+
 // Uvodne fraze, ki jih prompt prepoveduje (»Odlično vprašanje!«, »Seveda!«): odstranjene še na strežniku.
 // Pohvala pravilnega koraka (»Točno tako.«, »Bravo.«) ni uvodna fraza in ostane.
 const LEAD_RE = /^[ \t]*(?:(?:odlično|dobro|super|zanimivo|izvrstno|krasno|lepo|zelo dobro|fino)\s+vprašanje|seveda|z veseljem|jasno|great question|good question|of course|sure)[!.,:;]+(?![ \t]*da\b)[ \t]*(?:\n[ \t]*)?/i; // »Jasno, da …« je stavek, ne uvodna fraza
@@ -137,7 +164,7 @@ export const stripLeadPhrase = (text) => String(text).replace(LEAD_RE, (m) => (m
 // Besedilo odgovora, kot ga vidi učenec (prikaz in shranjeno sporočilo): brez strojnih blokov in uvodne fraze, s
 // popravkoma predlogov in oznak (server/instruktor-kandidat.js; j 21. 11. 2026), enako kot pri pretakanju spodaj.
 export function replyText(text, { polish = true, language = "sl" } = {}) {
-  const t = stripLeadPhrase(stripMeta(text));
+  const t = stripLeadPhrase(tidyFences(stripMeta(text)));
   return polish ? polishReply(t, { language }) : t;
 }
 
@@ -226,7 +253,7 @@ export function createStreamFilter({ polish = true, language = "sl" } = {}) {
     },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
-      if (polish) return { rest: next(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted))), raw: buffer };
+      if (polish) return { rest: next(tidyFences(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted)))), raw: buffer };
       const rest = lead(stripMeta(buffer.slice(emitted)));
       return { rest, raw: buffer };
     },
