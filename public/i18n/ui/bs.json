@@ -4472,7 +4472,7 @@
   "pilot.n.wtpPay": "Platili bi",
   "pilot.n.wtpAmount": "Iznos mjesečno",
   "starsi.privTitle": "Ažurirali smo pravila privatnosti",
-  "starsi.privText": "Sada preciznije piše koje podatke možete izvesti i izbrisati i koliko ih dugo čuvamo. Dodali smo i zadatke za pilot i mjerenje da li Evklid pomaže. Ne morate ništa uraditi.",
+  "starsi.privText": "Dopunili smo kako čuvamo raspored časova i IP adresu, koje kolačiće koristimo i kada administrator aplikacije otvara razgovor. Ne morate ništa uraditi.",
   "starsi.privRead": "Pročitajte pravila",
   "starsi.privPw": "Lozinka računa",
   "starsi.privPwNote": "Obavještenje sakrivate lozinkom računa, da ga ne sakrije neko drugi na ovom uređaju.",

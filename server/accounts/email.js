@@ -220,8 +220,10 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
 }
 
 // Enkratno obvestilo o spremenjeni politiki zasebnosti (scripts/obvestilo-zasebnost.js). Besedilo potrdi j, preden
-// se pošlje; skripta brez --poslji ničesar ne pošlje. Točke opisujejo trenutno različico (PRIVACY_VERSION 2026-11-18,
-// #817); prejšnja (6. 11. 2026) je v zgodovini git. dateText poda klicatelj (privacyDateText).
+// se pošlje; skripta brez --poslji ničesar ne pošlje. Točke opisujejo različico 2026-11-18 (#817); prejšnja (6. 11. 2026)
+// je v zgodovini git. Za 2026-11-21 (#908) e-pošte ni (j 21. 11., kartica »Da, v aplikaciji«): samo obvestilo v
+// aplikaciji, zato --poslji 2026-11-21 ne poganjaj, dokler točke spodaj ne opisujejo te različice.
+// dateText poda klicatelj (privacyDateText).
 const MESECI = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
 export const privacyDateText = (iso) => {
   const [y, m, d] = String(iso).split("-").map(Number);

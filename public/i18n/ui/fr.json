@@ -4441,7 +4441,7 @@
   "pilot.n.wtpPay": "Paieraient",
   "pilot.n.wtpAmount": "Montant par mois",
   "starsi.privTitle": "Nous avons mis à jour les règles de confidentialité",
-  "starsi.privText": "Elles disent maintenant plus précisément quelles données vous pouvez exporter et supprimer et combien de temps nous les gardons. Nous avons aussi ajouté les tâches du pilote et la mesure de l’aide apportée par Evklid. Vous n’avez rien à faire.",
+  "starsi.privText": "Nous avons précisé comment nous conservons l’emploi du temps et l’adresse IP, quels cookies nous utilisons et quand l’administrateur de l’application ouvre une conversation. Vous n’avez rien à faire.",
   "starsi.privRead": "Lire les règles",
   "starsi.privPw": "Mot de passe du compte",
   "starsi.privPwNote": "Masquez l’avis avec le mot de passe du compte, pour que personne d’autre ne le masque sur cet appareil.",

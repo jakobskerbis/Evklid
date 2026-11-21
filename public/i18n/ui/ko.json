@@ -4412,7 +4412,7 @@
   "pilot.n.wtpPay": "지불함",
   "pilot.n.wtpAmount": "월 금액",
   "starsi.privTitle": "개인정보 규칙을 업데이트했습니다",
-  "starsi.privText": "어떤 데이터를 내보내고 삭제할 수 있는지, 얼마나 오래 보관하는지 더 정확하게 적었습니다. 파일럿 과제와 Evklid가 도움이 되는지 측정하는 내용도 추가했습니다. 하실 일은 없습니다.",
+  "starsi.privText": "시간표와 IP 주소를 어떻게 보관하는지, 어떤 쿠키를 쓰는지, 앱 관리자가 언제 대화를 여는지 추가했습니다. 하실 일은 없습니다.",
   "starsi.privRead": "규칙 읽기",
   "starsi.privPw": "계정 비밀번호",
   "starsi.privPwNote": "이 기기의 다른 사람이 숨기지 못하도록 계정 비밀번호로 알림을 숨깁니다.",

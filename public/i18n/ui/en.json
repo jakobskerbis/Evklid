@@ -4440,7 +4440,7 @@
   "pilot.n.wtpPay": "Would pay",
   "pilot.n.wtpAmount": "Amount per month",
   "starsi.privTitle": "We updated the privacy rules",
-  "starsi.privText": "They now say more precisely which data you can export and delete and how long we keep it. We also added the pilot tasks and measuring whether Evklid helps. You don't need to do anything.",
+  "starsi.privText": "We added how we keep the timetable and IP address, which cookies we use and when the app administrator opens a conversation. You don't need to do anything.",
   "starsi.privRead": "Read the rules",
   "starsi.privPw": "Account password",
   "starsi.privPwNote": "Hide the notice with the account password, so nobody else on this device hides it.",

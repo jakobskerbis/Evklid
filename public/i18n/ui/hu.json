@@ -4438,7 +4438,7 @@
   "pilot.n.wtpPay": "Fizetnének",
   "pilot.n.wtpAmount": "Havi összeg",
   "starsi.privTitle": "Frissítettük az adatvédelmi szabályokat",
-  "starsi.privText": "Most pontosabban leírják, mely adatait exportálhatja és törölheti, és meddig őrizzük őket. Hozzáadtuk a pilot feladatait és annak mérését is, hogy segít-e az Evklid. Önnek nem kell semmit tennie.",
+  "starsi.privText": "Kiegészítettük, hogyan őrizzük az órarendet és az IP-címet, milyen sütiket használunk, és mikor nyit meg egy beszélgetést az alkalmazás adminisztrátora. Önnek nem kell semmit tennie.",
   "starsi.privRead": "Szabályok elolvasása",
   "starsi.privPw": "Fiókjelszó",
   "starsi.privPwNote": "Az értesítést a fiók jelszavával rejtheti el, hogy más ne rejthesse el ezen az eszközön.",

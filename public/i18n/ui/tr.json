@@ -4438,7 +4438,7 @@
   "pilot.n.wtpPay": "Öderlerdi",
   "pilot.n.wtpAmount": "Aylık tutar",
   "starsi.privTitle": "Gizlilik kurallarını güncelledik",
-  "starsi.privText": "Artık hangi verileri dışa aktarıp silebileceğinizi ve onları ne kadar sakladığımızı daha açık anlatıyor. Pilot görevlerini ve Evklid’in yardımcı olup olmadığının ölçülmesini de ekledik. Bir şey yapmanıza gerek yok.",
+  "starsi.privText": "Ders programını ve IP adresini nasıl sakladığımızı, hangi çerezleri kullandığımızı ve uygulama yöneticisinin bir konuşmayı ne zaman açtığını ekledik. Bir şey yapmanıza gerek yok.",
   "starsi.privRead": "Kuralları okuyun",
   "starsi.privPw": "Hesap şifresi",
   "starsi.privPwNote": "Bildirimi hesap şifresiyle gizlersiniz; böylece bu cihazda başkası gizleyemez.",

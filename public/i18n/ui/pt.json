@@ -4445,7 +4445,7 @@
   "pilot.n.wtpPay": "Pagariam",
   "pilot.n.wtpAmount": "Valor por mês",
   "starsi.privTitle": "Atualizámos as regras de privacidade",
-  "starsi.privText": "Agora dizem com mais precisão que dados pode exportar e apagar e durante quanto tempo os guardamos. Também acrescentámos as tarefas do piloto e a medição de se o Evklid ajuda. Não precisa de fazer nada.",
+  "starsi.privText": "Acrescentámos como guardamos o horário e o endereço IP, que cookies usamos e quando o administrador da aplicação abre uma conversa. Não precisa de fazer nada.",
   "starsi.privRead": "Ler as regras",
   "starsi.privPw": "Palavra-passe da conta",
   "starsi.privPwNote": "Oculte o aviso com a palavra-passe da conta, para que ninguém mais o oculte neste dispositivo.",
