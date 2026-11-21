@@ -83,3 +83,18 @@ test("registracija nad mejo: ugibanje kod je omejeno (10 napačnih na dan), nato
     assert.equal((await register({ invite: CODE })).status, 429);
   });
 });
+
+test("registracija nad mejo: enak odgovor za veljavno in napačno kodo, ko obrazec ni veljaven; vsak poskus s kodo šteje", async () => {
+  await withServer(ENV, async ({ register }) => {
+    for (let i = 0; i < 5; i++) await register();
+    // Napačen e-naslov: obe kodi dobita isti 400 (iz koda ni mogoče sklepati, ali je veljavna).
+    const prava = await register({ invite: CODE, email: "ni-naslov" });
+    const napacna = await register({ invite: "ni-prava-koda-123", email: "ni-naslov" });
+    assert.equal(prava.status, 400);
+    assert.deepEqual(napacna, prava);
+    // Doslej 2 poskusa; še 3 uspešne registracije z veljavno kodo in 5 napačnih = 10 na dan, nato nič več.
+    for (let i = 0; i < 3; i++) assert.equal((await register({ invite: CODE })).status, 201);
+    for (let i = 0; i < 5; i++) assert.equal((await register({ invite: `ugibam-${i}-xyz` })).status, 429);
+    assert.equal((await register({ invite: OTHER })).status, 429, "tudi veljavna koda po 10 poskusih");
+  });
+});
