@@ -78,3 +78,30 @@ test("/healthz/stanje: sifriranje true s ključem; Straža pade samo ob false", 
   assert.deepEqual(presojaStanja(osnova).napake, [], "starejši strežnik brez polja ne podre Straže");
   assert.match(presojaStanja({ ...osnova, sifriranje: false }).napake[0], /šifriranje/);
 });
+
+// Kvote gostov (server/accounts/guest.js guestNet): s ključem podatkov je omrežje v bazi HMAC, ki ga brez ključa ni
+// mogoče obrniti s preizkušanjem vseh naslovov IPv4; brez ključa (razvoj) ostane sha256 kot prej.
+test("netHash: s ključem HMAC (stabilen, drugačen od sha256), brez ključa sha256 kot prej", async () => {
+  const { netHash } = await import("../server/crypto-polje.js");
+  const nodeCrypto = await import("node:crypto");
+  const prej = { k: process.env.EVKLID_DATA_KEY, o: process.env.EVKLID_DATA_KEYS_OLD };
+  try {
+    delete process.env.EVKLID_DATA_KEY;
+    delete process.env.EVKLID_DATA_KEYS_OLD;
+    const plain = nodeCrypto.createHash("sha256").update("evklid-guest-net|203.0.113.7").digest("hex");
+    assert.equal(netHash("203.0.113.7"), plain);
+    process.env.EVKLID_DATA_KEY = nodeCrypto.randomBytes(32).toString("base64");
+    const a = netHash("203.0.113.7");
+    assert.match(a, /^[0-9a-f]{64}$/);
+    assert.notEqual(a, plain);
+    assert.equal(netHash("203.0.113.7"), a, "ista vrednost za isto omrežje");
+    assert.notEqual(netHash("203.0.113.8"), a);
+    process.env.EVKLID_DATA_KEY = nodeCrypto.randomBytes(32).toString("base64");
+    assert.notEqual(netHash("203.0.113.7"), a, "drug ključ, druga vrednost");
+  } finally {
+    if (prej.k === undefined) delete process.env.EVKLID_DATA_KEY;
+    else process.env.EVKLID_DATA_KEY = prej.k;
+    if (prej.o === undefined) delete process.env.EVKLID_DATA_KEYS_OLD;
+    else process.env.EVKLID_DATA_KEYS_OLD = prej.o;
+  }
+});
