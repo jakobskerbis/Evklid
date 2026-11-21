@@ -37,9 +37,9 @@ test("glavni gumb na vrhu in pod dokazi, prijava kot navadna povezava, matura v 
     assert.equal((html.match(/class="land-msg /g) || []).length, 6);
     assert.ok(html.indexOf('data-land="register"') < html.indexOf("land-demo"), "gumb je pred zgledom pogovora");
     assert.ok(html.lastIndexOf('data-land="register"') > html.indexOf("land-proofs"), "drugi gumb je pod dokazi");
-    // Pas zaupanja (isto besedilo kot na /o-evklidu) pod uvodom, pred dokazi.
+    // Pas zaupanja pod uvodom, pred dokazi; učencem brez žargona (strežnik, Anthropic, modeli), glej test/besedila.test.js.
     assert.match(html, /<ul class="mkt-trust land-trust" aria-label="Zasebnost na kratko">/);
-    for (const s of ["Strežnik in baza v EU (Frankfurt)", "Brez oglasov in sledilnikov", "Anthropic podatkov ne uporablja za učenje modelov", '<a href="/zasebnost.html">Več o zasebnosti</a>'])
+    for (const s of ["Podatki ostanejo v EU (Frankfurt)", "Brez oglasov in sledilnikov", "Tvoji pogovori se ne uporabljajo za učenje umetne inteligence", '<a href="/zasebnost.html">Več o zasebnosti</a>'])
       assert.ok(html.includes(s), s);
     assert.ok(html.indexOf("land-trust") > html.indexOf("land-demo") && html.indexOf("land-trust") < html.indexOf("land-proofs"));
     // Noga: povezava na cenik.
@@ -49,7 +49,6 @@ test("glavni gumb na vrhu in pod dokazi, prijava kot navadna povezava, matura v 
   assert.match(html, /7 dni brezplačno, brez kartice\./);
   assert.match(html, /Za mlajše od 15 let račun ustvari starš\./);
   const about = readFileSync(new URL("../public/o-evklidu.html", import.meta.url), "utf8");
-  for (const s of ["Strežnik in baza v EU (Frankfurt)", "Brez oglasov in sledilnikov", "Anthropic podatkov ne uporablja za učenje modelov"]) assert.ok(about.includes(`<li>${s}</li>`), `/o-evklidu: ${s}`);
   assert.ok(about.includes('<h2 id="cene">'), "sidro #cene obstaja");
 });
 

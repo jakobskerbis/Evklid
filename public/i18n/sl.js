@@ -4345,9 +4345,9 @@ export default {
   // Zneski pridejo s strežnika (/api/account/prices), zato {price} in {ss}.
   "land.prices": "Cene",
   "land.trustLabel": "Zasebnost na kratko",
-  "land.trust.eu": "Strežnik in baza v EU (Frankfurt)",
+  "land.trust.eu": "Podatki ostanejo v EU (Frankfurt)",
   "land.trust.ads": "Brez oglasov in sledilnikov",
-  "land.trust.ai": "Anthropic podatkov ne uporablja za učenje modelov",
+  "land.trust.ai": "Tvoji pogovori se ne uporabljajo za učenje umetne inteligence",
   "land.trust.more": "Več o zasebnosti",
   "price.levels": "Nato naročnina od {price} na mesec (srednja šola {ss}) ali brezplačni paket z omejenim številom vprašanj.",
   "price.one": "Nato naročnina {price} na mesec ali brezplačni paket z omejenim številom vprašanj.",
