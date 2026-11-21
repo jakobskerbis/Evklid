@@ -215,3 +215,14 @@ test("si exams: maths matura level chosen on the page applies to readiness, topi
     server.close();
   }
 });
+
+test("past papers hint names the row's first download button (NPZ, poklicna, splošna matura)", async () => {
+  globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+  const { firstFile } = await import("../public/exam-papers.js");
+  const { t } = await import("../public/i18n-osnova.js");
+  const prvi = (exam) => firstFile(PAPERS_SI.find((p) => p.exam === exam));
+  assert.equal(prvi("NPZ9"), "Preizkus znanja");
+  assert.equal(prvi("POKLICNA"), "Izpitna pola");
+  assert.equal(prvi("MATURA"), "Izpitna pola 1");
+  assert.match(t("pp.openLocalHint", { file: prvi("NPZ6") }), /\(gumb »Preizkus znanja«\)/);
+});

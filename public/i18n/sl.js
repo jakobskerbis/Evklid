@@ -1218,7 +1218,7 @@ export default {
   "pp.tutor": "Rešuj z inštruktorjem",
   "pp.tutorMsg": "Rešujem preteklo polo: {paper}.",
   "pp.openLocal": "Odpri preneseno polo",
-  "pp.openLocalHint": "Najprej prenesi polo z ric.si (gumb »Izpitna pola 1« ali »2«), nato jo izberi z »Odpri preneseno polo«. Pola ostane v tvoji napravi; inštruktor dobi samo nalogo, pri kateri prosiš za pomoč.",
+  "pp.openLocalHint": "Najprej prenesi polo z ric.si (gumb »{file}«), nato jo izberi z »Odpri preneseno polo«. Pola ostane v tvoji napravi; inštruktor dobi samo nalogo, pri kateri prosiš za pomoč.",
   "pp.viewerClose": "Zapri polo",
   "pp.viewerLoading": "Odpiram polo …",
   "pp.notPdf": "Ta datoteka ni PDF. Izberi polo, preneseno z ric.si.",

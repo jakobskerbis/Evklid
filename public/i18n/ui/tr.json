@@ -3445,7 +3445,7 @@
   "pp.tutor": "Öğretmenle çöz",
   "pp.tutorMsg": "Geçmiş sınav kâğıdı {paper} üzerinde çalışıyorum.",
   "pp.openLocal": "İndirilen sınavı aç",
-  "pp.openLocalHint": "Önce sınavı ric.si'den indir («Sınav kitapçığı 1» veya «2» düğmesi), ardından «İndirilen sınavı aç» ile seç. Sınav cihazında kalır; öğretmene yalnızca yardım istediğin soru gider.",
+  "pp.openLocalHint": "Önce sınavı ric.si'den indir («{file}» düğmesi), ardından «İndirilen sınavı aç» ile seç. Sınav cihazında kalır; öğretmene yalnızca yardım istediğin soru gider.",
   "pp.viewerClose": "Sınavı kapat",
   "pp.viewerLoading": "Sınav açılıyor …",
   "pp.notPdf": "Bu dosya PDF değil. ric.si'den indirilen sınavı seç.",

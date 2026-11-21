@@ -3448,7 +3448,7 @@
   "pp.tutor": "Résoudre avec le tuteur",
   "pp.tutorMsg": "Je travaille sur l’ancien sujet {paper}.",
   "pp.openLocal": "Ouvrir l'épreuve téléchargée",
-  "pp.openLocalHint": "Télécharge d'abord l'épreuve sur ric.si (bouton « Sujet 1 » ou « 2 »), puis choisis-la avec « Ouvrir l'épreuve téléchargée ». L'épreuve reste sur ton appareil ; le tuteur ne reçoit que l'exercice pour lequel tu demandes de l'aide.",
+  "pp.openLocalHint": "Télécharge d'abord l'épreuve sur ric.si (bouton « {file} »), puis choisis-la avec « Ouvrir l'épreuve téléchargée ». L'épreuve reste sur ton appareil ; le tuteur ne reçoit que l'exercice pour lequel tu demandes de l'aide.",
   "pp.viewerClose": "Fermer l'épreuve",
   "pp.viewerLoading": "Ouverture de l'épreuve …",
   "pp.notPdf": "Ce fichier n'est pas un PDF. Choisis l'épreuve téléchargée sur ric.si.",

@@ -3447,7 +3447,7 @@
   "pp.tutor": "Mit dem Tutor lösen",
   "pp.tutorMsg": "Ich bearbeite die frühere Prüfung {paper}.",
   "pp.openLocal": "Heruntergeladene Prüfung öffnen",
-  "pp.openLocalHint": "Lade die Prüfung zuerst von ric.si herunter (Schaltfläche „Prüfungsbogen 1“ oder „2“) und wähle sie dann mit „Heruntergeladene Prüfung öffnen“ aus. Die Prüfung bleibt auf deinem Gerät; an den Tutor geht nur die Aufgabe, zu der du Hilfe möchtest.",
+  "pp.openLocalHint": "Lade die Prüfung zuerst von ric.si herunter (Schaltfläche „{file}“) und wähle sie dann mit „Heruntergeladene Prüfung öffnen“ aus. Die Prüfung bleibt auf deinem Gerät; an den Tutor geht nur die Aufgabe, zu der du Hilfe möchtest.",
   "pp.viewerClose": "Prüfung schließen",
   "pp.viewerLoading": "Prüfung wird geöffnet …",
   "pp.notPdf": "Diese Datei ist kein PDF. Wähle die von ric.si heruntergeladene Prüfung.",

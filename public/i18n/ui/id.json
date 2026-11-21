@@ -3421,7 +3421,7 @@
   "pp.tutor": "Kerjakan dengan tutor",
   "pp.tutorMsg": "Aku sedang mengerjakan soal ujian lalu {paper}.",
   "pp.openLocal": "Buka soal yang diunduh",
-  "pp.openLocalHint": "Unduh dulu soal dari ric.si (tombol «Lembar ujian 1» atau «2»), lalu pilih dengan «Buka soal yang diunduh». Soal tetap ada di perangkatmu; tutor hanya menerima soal yang kamu mintai bantuan.",
+  "pp.openLocalHint": "Unduh dulu soal dari ric.si (tombol «{file}»), lalu pilih dengan «Buka soal yang diunduh». Soal tetap ada di perangkatmu; tutor hanya menerima soal yang kamu mintai bantuan.",
   "pp.viewerClose": "Tutup soal",
   "pp.viewerLoading": "Membuka soal …",
   "pp.notPdf": "File ini bukan PDF. Pilih soal yang diunduh dari ric.si.",

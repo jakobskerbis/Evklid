@@ -3509,7 +3509,7 @@
   "pp.tutor": "Rieš s lektorom",
   "pp.tutorMsg": "Riešim minulú skúškovú písomku {paper}.",
   "pp.openLocal": "Otvoriť stiahnutú písomku",
-  "pp.openLocalHint": "Najprv stiahni písomku z ric.si (tlačidlo „Skúšobný hárok 1“ alebo „2“) a potom ju vyber cez „Otvoriť stiahnutú písomku“. Písomka zostane v tvojom zariadení; lektor dostane iba úlohu, ku ktorej chceš pomoc.",
+  "pp.openLocalHint": "Najprv stiahni písomku z ric.si (tlačidlo „{file}“) a potom ju vyber cez „Otvoriť stiahnutú písomku“. Písomka zostane v tvojom zariadení; lektor dostane iba úlohu, ku ktorej chceš pomoc.",
   "pp.viewerClose": "Zavrieť písomku",
   "pp.viewerLoading": "Otváram písomku …",
   "pp.notPdf": "Tento súbor nie je PDF. Vyber písomku stiahnutú z ric.si.",

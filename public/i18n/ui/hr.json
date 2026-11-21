@@ -3477,7 +3477,7 @@
   "pp.tutor": "Rješavaj s instruktorom",
   "pp.tutorMsg": "Rješavam prošli ispit {paper}.",
   "pp.openLocal": "Otvori preuzeti ispit",
-  "pp.openLocalHint": "Najprije preuzmi ispit s ric.si (gumb »Ispitni list 1« ili »2«), a zatim ga odaberi s »Otvori preuzeti ispit«. Ispit ostaje na tvom uređaju; instruktor dobiva samo zadatak za koji tražiš pomoć.",
+  "pp.openLocalHint": "Najprije preuzmi ispit s ric.si (gumb »{file}«), a zatim ga odaberi s »Otvori preuzeti ispit«. Ispit ostaje na tvom uređaju; instruktor dobiva samo zadatak za koji tražiš pomoć.",
   "pp.viewerClose": "Zatvori ispit",
   "pp.viewerLoading": "Otvaram ispit …",
   "pp.notPdf": "Ova datoteka nije PDF. Odaberi ispit preuzet s ric.si.",

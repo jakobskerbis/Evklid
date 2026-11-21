@@ -3421,7 +3421,7 @@
   "pp.tutor": "和家教一起解題",
   "pp.tutorMsg": "我正在做往年試卷 {paper}。",
   "pp.openLocal": "開啟已下載的試卷",
-  "pp.openLocalHint": "請先從 ric.si 下載試卷（「試卷 1」或「2」按鈕），再用「開啟已下載的試卷」選擇它。試卷只保存在你的裝置上；導師只會收到你求助的那一道題。",
+  "pp.openLocalHint": "請先從 ric.si 下載試卷（「{file}」按鈕），再用「開啟已下載的試卷」選擇它。試卷只保存在你的裝置上；導師只會收到你求助的那一道題。",
   "pp.viewerClose": "關閉試卷",
   "pp.viewerLoading": "正在開啟試卷…",
   "pp.notPdf": "此檔案不是 PDF。請選擇從 ric.si 下載的試卷。",
