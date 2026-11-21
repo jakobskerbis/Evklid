@@ -2602,6 +2602,8 @@
   "dl.apk": "Preuzmi za Android (APK)",
   "dl.apkSteps": "Otvori preuzetu datoteku i potvrdi instalaciju. Ako mobitel pita, dozvoli instaliranje iz ovog preglednika.",
   "dl.apkWhy": "Aplikacija još nije na Google Playu, pa je preuzimaš direktno s ove stranice.",
+  "dl.apkSize": "oko {mb} MB",
+  "dl.apkVersion": "verzija {version}",
   "dl.ios": "iPhone i iPad",
   "dl.appStore": "Preuzmi na App Storeu",
   "dl.testflight": "Instaliraj putem TestFlighta",

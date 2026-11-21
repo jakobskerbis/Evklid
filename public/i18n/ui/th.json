@@ -2568,6 +2568,8 @@
   "dl.apk": "ดาวน์โหลดสำหรับ Android (APK)",
   "dl.apkSteps": "เปิดไฟล์ที่ดาวน์โหลดมาแล้วยืนยันการติดตั้ง ถ้าโทรศัพท์ถาม ให้อนุญาตการติดตั้งจากเบราว์เซอร์นี้",
   "dl.apkWhy": "แอปยังไม่มีใน Google Play จึงต้องดาวน์โหลดจากหน้านี้โดยตรง",
+  "dl.apkSize": "ประมาณ {mb} MB",
+  "dl.apkVersion": "เวอร์ชัน {version}",
   "dl.ios": "iPhone และ iPad",
   "dl.appStore": "ดาวน์โหลดจาก App Store",
   "dl.testflight": "ติดตั้งผ่าน TestFlight",

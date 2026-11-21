@@ -2622,6 +2622,8 @@
   "dl.apk": "Скачать для Android (APK)",
   "dl.apkSteps": "Открой скачанный файл и подтверди установку. Если телефон спросит, разреши установку из этого браузера.",
   "dl.apkWhy": "Приложения пока нет в Google Play, поэтому ты скачиваешь его прямо с этой страницы.",
+  "dl.apkSize": "около {mb} МБ",
+  "dl.apkVersion": "версия {version}",
   "dl.ios": "iPhone и iPad",
   "dl.appStore": "Скачать в App Store",
   "dl.testflight": "Установить через TestFlight",

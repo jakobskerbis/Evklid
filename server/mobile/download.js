@@ -158,6 +158,18 @@ export function mountDownload(app, opts = {}) {
     const lang = manifestLang(req.query.lang, req.acceptsLanguages());
     const t = (k, v) => esc(uiText(lang, k, v));
     const { apk, play, appStore, testflight } = links();
+    // Velikost, različica in datum APK na tem strežniku (pregled javnih strani 21. 11. 2026, P5: na mobilnih podatkih
+    // dijak pred prenosom vidi, koliko prenaša). APK z drugega naslova (EVKLID_ANDROID_APK_URL): teh podatkov nimamo.
+    const st = apk && !httpsUrl(env.EVKLID_ANDROID_APK_URL) ? fs.statSync(apkFile, { throwIfNoEntry: false }) : null;
+    const apkInfo = st
+      ? [
+          t("dl.apkSize", { mb: Math.max(1, Math.round(st.size / 1e6)) }),
+          fileVersion(st) ? t("dl.apkVersion", { version: fileVersion(st) }) : "",
+          esc(st.mtime.toLocaleDateString(lang === "sl" ? "sl-SI" : lang, { day: "numeric", month: "numeric", year: "numeric", timeZone: "Europe/Ljubljana" })),
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : "";
     const ua = String(req.get("user-agent") || "");
     const first = /iPhone|iPad|Macintosh.*Mobile/.test(ua) ? "ios" : "android";
     // Uvod pove samo, kar res obstaja: brez App Store in TestFlight na iPhonu ni aplikacije, le »Dodaj na začetni zaslon«;
@@ -165,7 +177,7 @@ export function mountDownload(app, opts = {}) {
     const btn = (href, label, primary = true) => `<a class="btn${primary ? "" : " sec"}" href="${esc(href)}">${label}</a>`;
     const android = `<section><h2>${t("dl.android")}</h2>
       ${play ? btn(play, t("dl.play")) : ""}
-      ${apk ? `${btn(apk, t("dl.apk"), !play)}<p class="muted">${play ? "" : `${t("dl.apkWhy")} `}${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
+      ${apk ? `${btn(apk, t("dl.apk"), !play)}${apkInfo ? `<p class="muted" id="apk-info">${apkInfo}</p>` : ""}<p class="muted">${play ? "" : `${t("dl.apkWhy")} `}${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
     </section>`;
     // Prijavljen v tem brskalniku na telefonu: enkratna povezava, ki odpre aplikacijo prijavljeno (app-link.js).
     // ?app=1: stran je odprla aplikacija (gumb na zaslonu za prijavo), zato je ta del na vrhu.

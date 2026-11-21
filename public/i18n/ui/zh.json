@@ -2568,6 +2568,8 @@
   "dl.apk": "下载 Android 版（APK）",
   "dl.apkSteps": "打开下载的文件并确认安装。如果手机询问，请允许从此浏览器安装应用。",
   "dl.apkWhy": "该应用尚未上架 Google Play，所以请直接从本页下载。",
+  "dl.apkSize": "约 {mb} MB",
+  "dl.apkVersion": "版本 {version}",
   "dl.ios": "iPhone 和 iPad",
   "dl.appStore": "在 App Store 下载",
   "dl.testflight": "通过 TestFlight 安装",

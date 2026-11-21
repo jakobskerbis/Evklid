@@ -2568,6 +2568,8 @@
   "dl.apk": "Android용 다운로드(APK)",
   "dl.apkSteps": "다운로드한 파일을 열고 설치를 확인하세요. 휴대폰이 물어보면 이 브라우저에서 설치하도록 허용하세요.",
   "dl.apkWhy": "앱이 아직 Google Play에 없어서 이 페이지에서 바로 내려받아.",
+  "dl.apkSize": "약 {mb}MB",
+  "dl.apkVersion": "버전 {version}",
   "dl.ios": "iPhone·iPad",
   "dl.appStore": "App Store에서 다운로드",
   "dl.testflight": "TestFlight로 설치",

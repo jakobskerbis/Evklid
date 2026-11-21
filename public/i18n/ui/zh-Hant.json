@@ -2568,6 +2568,8 @@
   "dl.apk": "下載 Android 版（APK）",
   "dl.apkSteps": "開啟下載的檔案並確認安裝。如果手機詢問，請允許從這個瀏覽器安裝。",
   "dl.apkWhy": "此應用程式尚未上架 Google Play，所以請直接從本頁下載。",
+  "dl.apkSize": "約 {mb} MB",
+  "dl.apkVersion": "版本 {version}",
   "dl.ios": "iPhone 和 iPad",
   "dl.appStore": "在 App Store 下載",
   "dl.testflight": "透過 TestFlight 安裝",

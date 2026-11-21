@@ -2530,6 +2530,8 @@ export default {
   "dl.apk": "Prenesi za Android (APK)",
   "dl.apkSteps": "Odpri preneseno datoteko in potrdi namestitev. Če telefon vpraša, dovoli nameščanje iz tega brskalnika.",
   "dl.apkWhy": "Aplikacije še ni v trgovini Google Play, zato jo preneseš kar s te strani.",
+  "dl.apkSize": "približno {mb} MB",
+  "dl.apkVersion": "različica {version}",
   "dl.ios": "iPhone in iPad",
   "dl.appStore": "Prenesi v trgovini App Store",
   "dl.testflight": "Namesti prek TestFlight",

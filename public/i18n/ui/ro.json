@@ -2602,6 +2602,8 @@
   "dl.apk": "Descarcă pentru Android (APK)",
   "dl.apkSteps": "Deschide fișierul descărcat și confirmă instalarea. Dacă telefonul întreabă, permite instalarea din acest browser.",
   "dl.apkWhy": "Aplicația nu este încă în Google Play, așa că o descarci direct de pe această pagină.",
+  "dl.apkSize": "aproximativ {mb} MB",
+  "dl.apkVersion": "versiunea {version}",
   "dl.ios": "iPhone și iPad",
   "dl.appStore": "Descarcă din App Store",
   "dl.testflight": "Instalează prin TestFlight",

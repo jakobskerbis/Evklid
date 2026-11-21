@@ -2602,6 +2602,8 @@
   "dl.apk": "Преузми за Android (APK)",
   "dl.apkSteps": "Отвори преузету датотеку и потврди инсталацију. Ако телефон пита, дозволи инсталирање из овог прегледача.",
   "dl.apkWhy": "Aplikacija još nije na Google Play-u, pa je preuzimaš direktno sa ove stranice.",
+  "dl.apkSize": "око {mb} MB",
+  "dl.apkVersion": "верзија {version}",
   "dl.ios": "iPhone и iPad",
   "dl.appStore": "Преузми са App Store",
   "dl.testflight": "Инсталирај преко TestFlight",

@@ -2582,6 +2582,8 @@
   "dl.apk": "Download for Android (APK)",
   "dl.apkSteps": "Open the downloaded file and confirm the installation. If your phone asks, allow installing from this browser.",
   "dl.apkWhy": "The app is not in Google Play yet, so you download it directly from this page.",
+  "dl.apkSize": "about {mb} MB",
+  "dl.apkVersion": "version {version}",
   "dl.ios": "iPhone and iPad",
   "dl.appStore": "Download on the App Store",
   "dl.testflight": "Install via TestFlight",

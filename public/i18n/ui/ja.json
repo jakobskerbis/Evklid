@@ -2568,6 +2568,8 @@
   "dl.apk": "Android 用をダウンロード（APK）",
   "dl.apkSteps": "ダウンロードしたファイルを開いて、インストールを確定してください。スマホに確認されたら、このブラウザからのインストールを許可してください。",
   "dl.apkWhy": "アプリはまだ Google Play にないため、このページから直接ダウンロードします。",
+  "dl.apkSize": "約 {mb} MB",
+  "dl.apkVersion": "バージョン {version}",
   "dl.ios": "iPhone・iPad",
   "dl.appStore": "App Store からダウンロード",
   "dl.testflight": "TestFlight でインストール",

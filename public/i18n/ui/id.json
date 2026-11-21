@@ -2568,6 +2568,8 @@
   "dl.apk": "Unduh untuk Android (APK)",
   "dl.apkSteps": "Buka file yang sudah diunduh dan konfirmasi pemasangan. Jika ponsel bertanya, izinkan pemasangan dari browser ini.",
   "dl.apkWhy": "Aplikasi ini belum ada di Google Play, jadi kamu mengunduhnya langsung dari halaman ini.",
+  "dl.apkSize": "sekitar {mb} MB",
+  "dl.apkVersion": "versi {version}",
   "dl.ios": "iPhone dan iPad",
   "dl.appStore": "Unduh di App Store",
   "dl.testflight": "Pasang lewat TestFlight",

@@ -2582,6 +2582,8 @@
   "dl.apk": "Letöltés Androidra (APK)",
   "dl.apkSteps": "Nyisd meg a letöltött fájlt, és erősítsd meg a telepítést. Ha a telefon rákérdez, engedélyezd a telepítést ebből a böngészőből.",
   "dl.apkWhy": "Az alkalmazás még nincs a Google Playen, ezért közvetlenül erről az oldalról töltöd le.",
+  "dl.apkSize": "kb. {mb} MB",
+  "dl.apkVersion": "{version}. verzió",
   "dl.ios": "iPhone és iPad",
   "dl.appStore": "Letöltés az App Store-ból",
   "dl.testflight": "Telepítés TestFlighttal",

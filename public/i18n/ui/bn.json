@@ -2582,6 +2582,8 @@
   "dl.apk": "Android-এর জন্য ডাউনলোড করো (APK)",
   "dl.apkSteps": "ডাউনলোড করা ফাইলটি খোলো এবং ইনস্টল নিশ্চিত করো। ফোন জিজ্ঞেস করলে এই ব্রাউজার থেকে ইনস্টলের অনুমতি দাও।",
   "dl.apkWhy": "অ্যাপটি এখনও Google Play-তে নেই, তাই তুমি এটি সরাসরি এই পেজ থেকে ডাউনলোড করো।",
+  "dl.apkSize": "প্রায় {mb} MB",
+  "dl.apkVersion": "সংস্করণ {version}",
   "dl.ios": "iPhone ও iPad",
   "dl.appStore": "App Store থেকে নামাও",
   "dl.testflight": "TestFlight দিয়ে ইনস্টল করো",
