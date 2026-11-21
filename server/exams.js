@@ -10,6 +10,7 @@ import { gradeInfo } from "../public/regions.js";
 import { uiChain } from "../public/i18n/languages.js";
 import { EXAM_HI, NAMES_HI, COUNTRY_HI, SUBJECT_HI } from "./exam-hi.js";
 import { jeSs, stopnja } from "../public/stopnja.js";
+import { SUBJECT_NAMES } from "./subjects.js";
 
 // Jezik besedila pri dvojezičnih (angleško-hindijskih) nalogah in opisih izpitov: "hi", če je
 // hindijščina v verigi jezikov vmesnika pred angleščino (hi, bho, mai, mr …), sicer "en".
@@ -113,10 +114,11 @@ export function examInfo(key, system, lang = "en") {
 }
 
 // Izpit v jeziku učenca: hindijska imena in opis, kjer obstajajo (indijski izpiti), sicer angleško.
+// Slovenski izpiti (NPZ, matura) imajo slovenska imena predmetov, kot ime izpita.
 function localExam(id, lang) {
   const e = EXAMS[id];
   const hi = lang === "hi" && EXAM_HI[id];
-  if (!hi) return { ...e, lang: "en", subjectNames: SUBJECT_NAMES_EN };
+  if (!hi) return { ...e, lang: "en", subjectNames: e.systems?.includes("SI") ? SUBJECT_NAMES : SUBJECT_NAMES_EN };
   return { ...e, ...hi, name: hi.name || e.name, country: COUNTRY_HI[e.country] || e.country, lang: "hi", subjectNames: { ...SUBJECT_NAMES_EN, ...SUBJECT_HI } };
 }
 

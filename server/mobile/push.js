@@ -1,9 +1,9 @@
 // Potisna obvestila v mobilno aplikacijo (Expo Push: ena pot za APNs na iPhonu in FCM na Androidu).
 // Aplikacija sama nastavi lokalni dnevni opomnik za vajo; strežnik pošlje le to, česar telefon ne ve:
-// opomnik cilja (npr. »Matura: še 30 dni«) ob 12.00, enkrat na dan za vsakega otroka.
+// opomnik cilja (npr. »Matura: še 30 dni«) od OPOMNIK_URA (16.00), enkrat na dan za vsakega otroka, ki ta dan še ni vadil.
 import express from "express";
 import { readCookie, sha256 } from "../accounts/auth.js";
-import { ljNow, reminderDays } from "../accounts/goal-reminder.js";
+import { ljNow, reminderDays, isReminderTime, vadilDanes } from "../accounts/goal-reminder.js";
 
 // Besedilo iz zahteve; drugačna vrednost (predmet, število) šteje kot prazna, da ni napake 500.
 const text = (v) => (typeof v === "string" ? v : "");
@@ -116,12 +116,15 @@ export function mountPush(app, ctx, opts = {}) {
     const { date } = ljNow(now);
     dropExpiredPushTokens(db, now);
     const parents = db.prepare("SELECT DISTINCT parent_id AS id FROM push_tokens").all();
+    const goalSent = db.prepare("SELECT 1 FROM push_log WHERE parent_id = ? AND kind = 'goal' AND period = ?");
     let sent = 0;
     for (const { id } of parents) {
       for (const child of children(id)) {
         const n = reminderDays(child, date);
         if (n === null) continue;
-        const claim = db.prepare("INSERT OR IGNORE INTO push_log (parent_id, kind, period) VALUES (?, 'goal', ?)").run(id, `${date}:${child.id}`);
+        const period = `${date}:${child.id}`;
+        if (goalSent.get(id, period) || vadilDanes(db, child.id, date)) continue; // že poslano danes ali že vadil
+        const claim = db.prepare("INSERT OR IGNORE INTO push_log (parent_id, kind, period) VALUES (?, 'goal', ?)").run(id, period);
         if (!claim.changes) continue;
         try {
           sent += await sendPush(id, { ...goalPushText(child, n), data: { student_id: child.id, view: "path" } }, now);
@@ -135,7 +138,7 @@ export function mountPush(app, ctx, opts = {}) {
 
   if (opts.scheduler !== false && process.env.EVKLID_PUSH !== "0") {
     const timer = setInterval(() => {
-      if (ljNow().hour >= 12) sendGoalPushAll().catch((e) => log.error?.("[evklid] potisna obvestila:", e.message));
+      if (isReminderTime()) sendGoalPushAll().catch((e) => log.error?.("[evklid] potisna obvestila:", e.message));
     }, 30 * 60000);
     timer.unref();
   }

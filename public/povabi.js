@@ -47,15 +47,16 @@ export function povabiSme({ acc, profileId, now = new Date(), storage, ua = "" }
   const profil = (acc.children || []).find((c) => String(c.id) === String(profileId));
   if (!profil || !odrasel15(profil.birth_year, now)) return null;
   if (acc.parent.birth_missing || !odrasel15(acc.parent.birth_year, now)) return null;
-  return { reward: !!acc.billing && !acc.pilot && !acc.parent.minor };
+  return { reward: !!acc.billing && !acc.pilot && !acc.parent.minor, zame: !!acc.self_only };
 }
 
-export function povabiHtml(url, { reward }) {
+// zame: račun »Zame« (učenec sam): nagrada z besedami za prijatelja, ne za družino (ponudba je ista).
+export function povabiHtml(url, { reward, zame = false }) {
   const share = typeof navigator !== "undefined" && navigator.share;
   return `<div class="povabi card" role="group" aria-labelledby="povabi-h">
     <div class="povabi-glava"><span class="povabi-ic" aria-hidden="true">${icon("user-plus")}</span>
       <div class="povabi-t"><b id="povabi-h">${esc(t("povabi.title"))}</b><small>${esc(t("povabi.text"))}</small></div></div>
-    ${reward ? `<p class="povabi-nagrada">${esc(t("povabi.reward"))}</p>` : ""}
+    ${reward ? `<p class="povabi-nagrada">${esc(t(zame ? "povabi.rewardZame" : "povabi.reward"))}</p>` : ""}
     <div class="povabi-vrsta"><input readonly dir="ltr" value="${esc(url)}" aria-label="${esc(t("povabi.link"))}">
       <button type="button" class="secondary" data-povabi-copy>${icon("copy")}${esc(t("pay.copy"))}</button>
       ${share ? `<button type="button" class="secondary" data-povabi-share>${icon("share")}${esc(t("pay.share"))}</button>` : ""}

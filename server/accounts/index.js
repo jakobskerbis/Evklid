@@ -24,7 +24,7 @@ import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT, 
 import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, firstChargeText, termsAccepted, TERMS_ERROR, TERMS_VERSION, termsNotice, livePayBlocked, LIVE_BLOCKED } from "./potrdilo.js";
 import { mountWithdrawal, contractsFor } from "../placila/odstop.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
-import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
+import { buildGoalReminder, reminderDays, isReminderTime, ljNow, vadilDanes } from "./goal-reminder.js";
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
 import { cleanText } from "../settings.js";
 import { Usage, BLOCK_TEXT } from "../usage.js";
@@ -1164,6 +1164,9 @@ export function mountAccounts(app, store, opts = {}) {
             error: `Ta profil je trenutno odprt na drugi napravi (${r.other}). Profil je lahko hkrati odprt samo na eni napravi.`,
             taken: true,
             student_id: studentId,
+            // ime druge naprave (»Android · Chrome«) za okno v jeziku vmesnika (account.js showTaken); privzeti slovenski
+            // napis (»druga naprava«, »Naprava«) ne: odjemalec pokaže prevedeni mob.takenOtherDevice
+            device: r.other && r.other !== "druga naprava" && r.other !== "Naprava" ? r.other : null,
           });
         }
       }
@@ -3118,19 +3121,24 @@ export function mountAccounts(app, store, opts = {}) {
     return sent;
   }
 
-  // --- dnevni opomnik do datuma cilja (ob 12.00 v Ljubljani, enkrat na dan za vsakega otroka) ---
+  // --- dnevni opomnik do datuma cilja (od OPOMNIK_URA v Ljubljani, enkrat na dan za vsakega otroka) ---
+  // Ne, če je otrok ta dan že vadil; račun »Zame« dobi besedilo v 2. osebi (buildGoalReminder self).
   async function sendGoalRemindersAll(now = new Date()) {
     const { date } = ljNow(now);
+    const goalSent = db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = 'goal' AND period = ?");
     const parents = db.prepare("SELECT * FROM parents WHERE email_verified_at IS NOT NULL").all();
     let sent = 0;
     for (const p of parents) {
+      const self = selfOnly(p.id);
       for (const child of children(p.id)) {
         const n = reminderDays(child, date);
         if (n === null) continue;
         const period = `${date}:${child.id}`;
+        // Že poslan danes: brez poizvedbe o vaji. Sicer vadilDanes (ena omejena poizvedba), nato zasedba.
+        if (goalSent.get(p.id, period) || vadilDanes(db, child.id, date)) continue;
         const claim = db.prepare("INSERT OR IGNORE INTO email_log (parent_id, kind, period) VALUES (?, 'goal', ?)").run(p.id, period);
         if (!claim.changes) continue;
-        const ok = await sendMail(p.email, buildGoalReminder(child, n, { appUrl: baseUrl(null) + "/" }));
+        const ok = await sendMail(p.email, buildGoalReminder(child, n, { appUrl: baseUrl(null) + "/", self }));
         if (!ok) db.prepare("UPDATE email_log SET ok = 0 WHERE parent_id = ? AND kind = 'goal' AND period = ?").run(p.id, period);
         else sent++;
       }
@@ -3189,7 +3197,7 @@ export function mountAccounts(app, store, opts = {}) {
     const timer = setInterval(() => {
       inactiveDaily().catch((e) => log.error?.("[evklid] neaktivni računi:", e.message));
       if (process.env.EVKLID_WEEKLY_EMAIL !== "0" && isSendTime()) sendWeeklyAll().catch((e) => log.error?.("[evklid] tedenska poročila:", e.message));
-      if (process.env.EVKLID_GOAL_EMAIL !== "0" && isNoonTime()) sendGoalRemindersAll().catch((e) => log.error?.("[evklid] opomniki cilja:", e.message));
+      if (process.env.EVKLID_GOAL_EMAIL !== "0" && isReminderTime()) sendGoalRemindersAll().catch((e) => log.error?.("[evklid] opomniki cilja:", e.message));
       billing.billingDaily().catch((e) => log.error?.("[evklid] dnevna opravila plačil:", e.message));
       withdrawals?.retryAcks().catch((e) => log.error?.("[evklid] potrdila o odstopu (ponovno):", e.message));
       try {

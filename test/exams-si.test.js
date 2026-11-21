@@ -19,6 +19,16 @@ test("si exams: NPZ and matura for Slovenian students only, default by school an
   assert.equal(key("SREDNJA_SOLA", "3. letnik VR", "MAT"), "MAT-EX-MATURA", "SŠ: privzeto splošna matura");
 });
 
+test("si exams: path labels and subject names are Slovenian (no »Mathematics« in the matura header)", () => {
+  assert.equal(getPath("MAT-EX-MATURA").label, "Splošna matura – Matematika");
+  assert.doesNotMatch(getPath("MAT-EX-MATURA").label, /Mathematics/);
+  assert.equal(getPath("FIZ-EX-NPZ9").label, "NPZ 9. razred – Fizika");
+  const info = examInfo("MAT-EX-MATURA", "SI");
+  assert.equal(info.subjectName, "Matematika");
+  assert.deepEqual(info.subjects.map((s) => s.name), ["Matematika", "Fizika", "Kemija", "Biologija"]);
+  assert.equal(getPath("MAT-EX-SAT").label, "SAT – Mathematics"); // tuji izpiti ostanejo angleški
+});
+
 test("si exams: topics come from the Slovenian learning paths, tasks are in Slovenian", () => {
   const info = examInfo("MAT-EX-MATURA", "SI");
   assert.equal(info.tasksLang, "sl");
@@ -204,4 +214,15 @@ test("si exams: maths matura level chosen on the page applies to readiness, topi
   } finally {
     server.close();
   }
+});
+
+test("past papers hint names the row's first download button (NPZ, poklicna, splošna matura)", async () => {
+  globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+  const { firstFile } = await import("../public/exam-papers.js");
+  const { t } = await import("../public/i18n-osnova.js");
+  const prvi = (exam) => firstFile(PAPERS_SI.find((p) => p.exam === exam));
+  assert.equal(prvi("NPZ9"), "Preizkus znanja");
+  assert.equal(prvi("POKLICNA"), "Izpitna pola");
+  assert.equal(prvi("MATURA"), "Izpitna pola 1");
+  assert.match(t("pp.openLocalHint", { file: prvi("NPZ6") }), /\(gumb »Preizkus znanja«\)/);
 });

@@ -872,7 +872,7 @@ async function renderAccount() {
 
     <div class="card">
       <h2>${icon("award")} Povabi prijatelje</h2>
-      <p>Ko se družina, ki jo povabiš, naroči in prvič plača, <b>obe družini dobita en mesec brezplačno</b>.</p>
+      ${acc.self_only ? `<p>Ko se prijatelj, ki ga povabiš, naroči in prvič plača, <b>oba dobita en mesec brezplačno</b>.</p>` : `<p>Ko se družina, ki jo povabiš, naroči in prvič plača, <b>obe družini dobita en mesec brezplačno</b>.</p>`}
       <div class="inline"><input id="ref-url" readonly value="${esc(acc.referral.url)}"><button id="ref-copy" type="button">Kopiraj</button></div>
       <p class="muted">Tvoja koda: <b>${esc(acc.referral.code)}</b>${acc.referral.rewards ? ` · prisluženi meseci: ${acc.referral.rewards}` : ""}</p>
     </div>
@@ -948,7 +948,7 @@ async function renderAccount() {
   // Kaj je izrisano (refreshAfterPay izriše znova le ob spremembi, da ne pobriše napol izpolnjenih obrazcev).
   setShownSig(null);
   renderCreditCard($("#credit-card"), { api, buy: !storeApp }).then((balance) => setShownSig(paySig(acc, balance)));
-  import("./ustno/starsi.js").then((m) => m.karticaStarsev($("#ustno-starsi"), api)).catch(() => {}); // glas pri ustnem (ob odprtju)
+  import("./ustno/starsi.js").then((m) => m.karticaStarsev($("#ustno-starsi"), api, { zame: !!acc.self_only })).catch(() => {}); // glas pri ustnem (ob odprtju)
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = $("button[type=submit]", e.target);

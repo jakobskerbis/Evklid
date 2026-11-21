@@ -74,6 +74,7 @@
 "u.nalagam": "Loading …",
 "u.starsNaslov": "Answering by voice",
 "u.starsOpis": "In the oral quiz and with the microphone in the chat with the tutor, your child can answer by voice. The browser's provider (e.g. Google, Apple or Microsoft) turns speech into text; Evklid only gets the text and does not store any audio. For children under 15 it is off until you turn it on. Typing always works.",
+"u.starsOpisZame": "In the oral quiz and with the microphone in the chat with the tutor, you can answer by voice. The browser's provider (e.g. Google, Apple or Microsoft) turns speech into text; Evklid only gets the text and does not store any audio. Typing always works.",
 "u.dovoli": "Allow answering by voice",
 "u.nad15": "15 or older: no permission needed.",
 "u.shranjeno": "Saved."

@@ -572,6 +572,7 @@ test("anti-sharing: a profile is open on one device at a time", async () => {
     const blocked = await tablet(`/api/students/${kid.id}/xp`);
     assert.equal(blocked.status, 409);
     assert.equal(blocked.body.taken, true);
+    assert.equal(blocked.body.device, null, "privzeti slovenski napis naprave ne gre odjemalcu (ta pokaže prevod)");
 
     // Prevzem: tablica nadaljuje, telefon se ustavi.
     assert.equal((await tablet(`/api/students/${kid.id}/claim`, { method: "POST" })).status, 200);
