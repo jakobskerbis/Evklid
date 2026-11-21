@@ -38,6 +38,9 @@ test("strežnik: moduli obrazca so prvi na seznamu (pristajalna stran in navadna
       assert.deepEqual(new Set(mods.slice(0, prvi.size)), prvi, `${lang || "brez jezika"}: najprej moduli obrazca`);
       assert.ok(mods.includes("/app.js"));
     }
+    // Brez jedra besedil (nemščina): cel slovar takoj za moduli obrazca, ne za ~50 moduli app.js.
+    const de = modulesOf(await (await fetch(`${base}/`, { headers: { "accept-language": "de-DE,de;q=0.9" } })).text());
+    assert.deepEqual(de.slice(prvi.size, prvi.size + 2), ["/i18n.js", "/i18n/sl.js"]);
   } finally {
     server.close();
   }
@@ -47,11 +50,13 @@ test("v brskalniku: obrazec pred app.js, vpisano ostane, registracija pred app.j
   const { server, base } = start();
   const browser = await playwright.chromium.launch();
   // app.js zadržimo, dokler test ne reče: tako je jasno, kaj se zgodi pred zagonom aplikacije.
-  const open = async (path, w = 390, h = 844) => {
-    const ctx = await browser.newContext({ viewport: { width: w, height: h }, locale: "sl-SI", timezoneId: "Europe/Ljubljana", serviceWorkers: "block" });
+  const open = async (path, w = 390, h = 844, locale = "sl-SI", timezoneId = "Europe/Ljubljana") => {
+    const ctx = await browser.newContext({ viewport: { width: w, height: h }, locale, timezoneId, serviceWorkers: "block" });
     const p = await ctx.newPage();
     const errors = [];
     p.on("pageerror", (e) => errors.push(e.message));
+    const prijave = [];
+    p.on("request", (r) => r.method() === "POST" && /\/api\/auth\//.test(r.url()) && prijave.push(r.url()));
     let spusti;
     const app = new Promise((ok) => (spusti = ok));
     let appPoslan = false;
@@ -61,13 +66,13 @@ test("v brskalniku: obrazec pred app.js, vpisano ostane, registracija pred app.j
       await r.continue();
     });
     await p.goto(base + path);
-    return { ctx, p, errors, spusti, appPoslan: () => appPoslan };
+    return { ctx, p, errors, spusti, prijave, appPoslan: () => appPoslan };
   };
   const gumb = (p, text) => p.waitForFunction((tx) => [...document.querySelectorAll("#view-auth button")].some((b) => b.textContent.includes(tx) && !b.disabled && b.checkVisibility({ visibilityProperty: true })), text, { timeout: 20_000 });
   try {
     // 1. Registracija: obrazec in pasica sta vidna pred app.js; poizvedba z oznako vira umaknjena, sidro ostane.
     {
-      const { ctx, p, errors, spusti, appPoslan } = await open("/?utm_source=test#registracija");
+      const { ctx, p, errors, spusti, prijave, appPoslan } = await open("/?utm_source=test#registracija");
       await gumb(p, "Ustvari račun");
       assert.equal(appPoslan(), false, "app.js še ni prenesen");
       const st = await p.evaluate(() => ({
@@ -85,9 +90,18 @@ test("v brskalniku: obrazec pred app.js, vpisano ostane, registracija pred app.j
       await f.locator('[name="birth_date"]').fill("2008-05-05");
       for (const box of await f.locator('input[type="checkbox"][required]').all()) await box.check();
       await p.evaluate(() => (document.querySelector("#auth-form").dataset.prej = "1"));
-      await f.locator('button[type="submit"]').click();
-      // Račun je ustvarjen, a brez app.js (onReady) ni kam naprej: obrazec ostane, nič ne utripne.
+      // Dva hitra dotika: ena registracija, gumb zaseden, brez napake »e-naslov je že registriran« (pregled #932).
+      await p.evaluate(() => {
+        const b = document.querySelector('#auth-form button[type="submit"]');
+        b.click();
+        b.click();
+        document.querySelector("#auth-form").requestSubmit();
+      });
+      // Račun je ustvarjen, a brez app.js (onReady) ni kam naprej: obrazec ostane, gumb zaseden, nič ne utripne.
       await p.waitForTimeout(800);
+      assert.deepEqual(prijave.map((u) => new URL(u).pathname), ["/api/auth/register"], "ena zahteva");
+      assert.equal(await p.locator("#auth-form .form-error").isHidden(), true, "brez napake");
+      assert.deepEqual(await p.evaluate(() => { const b = document.querySelector('#auth-form button[type="submit"]'); return [b.disabled, b.getAttribute("aria-busy")]; }), [true, "true"]);
       assert.equal(await p.locator("#child-form").count(), 0, "brez app.js ne naprej");
       assert.equal(await p.locator('#auth-form[data-prej="1"] [name="email"]').inputValue(), "ana@primer.si");
       spusti();
@@ -125,7 +139,19 @@ test("v brskalniku: obrazec pred app.js, vpisano ostane, registracija pred app.j
       assert.deepEqual(errors, []);
       await ctx.close();
     }
-    // 3. Pristajalna stran (brez sidra) in povezava s kodo (?ref=): brez obrazca pred app.js, kot prej.
+    // 3. Nemščina: cel slovar je takoj za moduli obrazca, obrazec pride pred app.js, v nemščini (pregled #932).
+    {
+      const { ctx, p, errors, spusti, appPoslan } = await open("/#registracija", 1440, 900, "de-DE", "Europe/Berlin");
+      await p.waitForSelector('#auth-form button[type="submit"]', { state: "visible", timeout: 20_000 });
+      assert.equal(appPoslan(), false, "app.js še ni prenesen");
+      assert.equal(await p.evaluate(() => document.documentElement.lang), "de");
+      assert.notEqual((await p.locator("#view-auth h1").textContent()).trim(), "Nov račun");
+      spusti();
+      await p.waitForFunction(() => !document.documentElement.hasAttribute("data-zacetek"), null, { timeout: 30_000 });
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
+    // 4. Pristajalna stran (brez sidra) in povezava s kodo (?ref=): brez obrazca pred app.js, kot prej.
     for (const path of ["/", "/?ref=ABC123#registracija"]) {
       const { ctx, p, spusti } = await open(path);
       await p.waitForTimeout(1500);

@@ -115,7 +115,9 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   `modulepreload`. Ko `zacetek.js` (`obrazecObiskovalca`) obrazec dovoli (brez poizvedbe razen oznak vira, brez lastnika
   naprave), nastavi `evklidZacetek.obrazec`; `zagon.js` po jeziku uvozi `account.js` in `obrazecVnaprej` izriše obrazec,
   pokaže pasici in stran. `initAccount` ga v `route` prevzame brez ponovnega izrisa (vpisano in fokus ostaneta);
-  `continueFlow` po prijavi ali registraciji počaka konec `initAccount` (`onReady` iz `app.js`). Lokalno (HTTP/1.1 kot meritev
+  `continueFlow` po prijavi ali registraciji počaka konec `initAccount` (`onReady` iz `app.js`; če ta v 15 s ne začne,
+  stran naloži znova), gumb za oddajo je ta čas zaseden (`busy`, brez druge registracije). Cel slovar (`/i18n.js`,
+  `/i18n/sl.js`, drugi jeziki brez jedra) je takoj za moduli obrazca (nemščina 3,1 → 1,8 s na telefonu). Lokalno (HTTP/1.1 kot meritev
   iz ZDA, 5 hladnih zagonov, mediana): računalnik s 150 ms zakasnitve 2,42 → 1,16 s, telefon (9 Mbit/s, 170 ms, CPU 4×)
   3,19 → 1,51 s; test `test/registracija-takoj.test.js`.
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).

@@ -293,6 +293,8 @@ const obiskovalecObrazec = (e) => e.target.closest?.("#view-auth form") && obisk
 const cakajObiskovalca = () => {
   obiskovalec = true;
   for (const ev of ["focusin", "pointerdown"]) document.addEventListener(ev, obiskovalecObrazec, { capture: true, passive: true });
+  // Obrazec, izrisan pred app.js (account.js obrazecVnaprej): obiskovalec je morda že v polju, focusin ne pride več.
+  if (document.activeElement?.closest?.("#view-auth form")) obiskovalecKonec();
 };
 const zasloniPozneje = () => {
   if (pozneje || obiskovalec) return;

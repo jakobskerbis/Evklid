@@ -49,9 +49,11 @@ export function entryHtml(publicDir, { version = "", preload = true } = {}) {
   if (version) head.push(`  <meta name="${META}" content="${version}">`);
   // fetchpriority="low": moduli ne tekmujejo s slogi in pisavami za prvi izris (počasen 4G, j 19. 11. 2026). Prej so vsi
   // hkrati jemali pasovno širino slogom, zato je bil prvi izris v Lighthouse (telefon, počasen 4G) šele po ~9 s.
-  if (preload) for (const u of mods) head.push(`  <link rel="modulepreload" href="${u}" fetchpriority="low">`);
-  // Cel slovar (public/i18n.js, i18n/sl.js) zagon naloži z import(): brez jedra besedil (withSlJedro) ga počaka.
-  if (preload) for (const u of CEL_SLOVAR) head.push(`  <link rel="modulepreload" href="${u}" fetchpriority="low">`);
+  // Cel slovar (public/i18n.js, i18n/sl.js) zagon naloži z import(): brez jedra besedil (withSlJedro: drugi jeziki, nova
+  // različica brez ponovnega zagona) ga počaka pred vsem, tudi pred obrazcem, zato takoj za moduli obrazca (pregled #932).
+  const slovar = mods.filter((u) => prvi.has(u)).length;
+  const vrsta = [...mods.slice(0, slovar), ...CEL_SLOVAR, ...mods.slice(slovar)];
+  if (preload) for (const u of vrsta) head.push(`  <link rel="modulepreload" href="${u}" fetchpriority="low">`);
   return { html: head.length ? html.replace("</head>", `${head.join("\n")}\n</head>`) : html, modules: preload ? mods : [] };
 }
 
