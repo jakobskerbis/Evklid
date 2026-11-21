@@ -47,7 +47,7 @@ section{background:var(--surface);border:1px solid var(--border);border-radius:1
 img{width:56px;height:56px}h1{font-size:24px;margin:12px 0 8px}p{margin:0 0 8px}.muted{color:var(--muted);font-size:14px}
 .btn{display:inline-block;background:var(--accent);color:var(--accent-text);font:inherit;font-weight:700;text-decoration:none;border:0;border-radius:10px;padding:12px 20px;margin-top:12px;min-height:44px;cursor:pointer}
 .btn:focus-visible{outline:3px solid var(--text);outline-offset:2px}
-.link{display:inline-block;margin-top:12px;color:var(--accent);font-weight:600}
+.link{display:inline-flex;align-items:center;min-height:44px;margin-top:4px;color:var(--accent);font-weight:600}
 form{margin:0}
 </style></head><body><main><section>
 <img src="/icons/favicon.svg?v=kristal" alt="">

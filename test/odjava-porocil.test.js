@@ -33,6 +33,10 @@ test("GET: stran s potrditvijo (POST gumb), brez odjave; oblikovana kot stran 40
     const html = await r.text();
     assert.match(html, /<form method="post" action="\/api\/account\/unsubscribe\?token=odjava-zeton-123">/);
     assert.match(html, /<button class="btn" type="submit">Odjavi me<\/button>/);
+    // Pritrdilno vprašanje (pregled 3, S4: »Ali res ne želite …?« + »Ne, …« je dvoumno); e‑pošta z nedeljivim vezajem.
+    assert.match(html, /<p>Se želite odjaviti od tedenskega poročila o učenju, ki vam ga pošiljamo po e\u2011pošti\?<\/p>/);
+    assert.doesNotMatch(html, /ne želite/);
+    assert.match(html, /\.link\{[^}]*min-height:44px/, "povezava ≥ 40 px za dotik");
     assert.match(html, /prefers-color-scheme:dark/, "temni način kot stran 404");
     assert.match(html, /<meta name="robots" content="noindex">/);
     assert.equal(weekly(), 1, "odpiranje povezave ne odjavi");
@@ -45,7 +49,7 @@ test("POST z gumba (žeton v obrazcu) in odjava z enim klikom (RFC 8058) odjavit
     assert.equal(form.status, 200);
     assert.match(await form.text(), /Odjava je uspela/);
     assert.equal(weekly(), 0);
-    assert.match(await (await fetch(`${base}/api/account/unsubscribe?token=odjava-zeton-123`)).text(), /Tedenskih poročil ne boste več prejemali/);
+    assert.match(await (await fetch(`${base}/api/account/unsubscribe?token=odjava-zeton-123`)).text(), /Tedenskih poročil ne boste več prejemali[\s\S]*Znova jih vklopite/);
     db.prepare("UPDATE parents SET weekly_email = 1").run();
     const one = await fetch(`${base}/api/account/unsubscribe?token=odjava-zeton-123`, { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" }, body: "List-Unsubscribe=One-Click" });
     assert.equal(one.status, 200);

@@ -2323,7 +2323,7 @@ export function mountAccounts(app, store, opts = {}) {
       .type("html")
       .send(simplePage({ title, body }));
   const unsubDone = (res) =>
-    unsubPage(res, 200, "Odjava je uspela", `<p>Tedenskih poročil ne boste več prejemali.</p><p class="muted">Ponovno jih vklopite v zavihku Račun.</p><a class="link" href="/">Odpri ${esc(BRAND.name)}</a>`);
+    unsubPage(res, 200, "Odjava je uspela", `<p>Tedenskih poročil ne boste več prejemali.</p><p class="muted">Znova jih vklopite v zavihku Račun.</p><a class="link" href="/">Odpri ${esc(BRAND.name)}</a>`);
   const unsubBad = (res) => unsubPage(res, 404, "Povezava ni veljavna", `<p>Ta povezava za odjavo ne velja več.</p><p class="muted">Tedenska poročila izklopite v zavihku Račun.</p><a class="link" href="/">Odpri ${esc(BRAND.name)}</a>`);
   app.get("/api/account/unsubscribe", (req, res) => {
     const token = String(req.query.token || "");
@@ -2334,7 +2334,7 @@ export function mountAccounts(app, store, opts = {}) {
       res,
       200,
       "Odjava od tedenskih poročil",
-      `<p>Ali res ne želite več prejemati tedenskega poročila o učenju po e-pošti?</p>
+      `<p>Se želite odjaviti od tedenskega poročila o učenju, ki vam ga pošiljamo po e‑pošti?</p>
 <form method="post" action="/api/account/unsubscribe?token=${encodeURIComponent(token)}"><input type="hidden" name="token" value="${esc(token)}"><button class="btn" type="submit">Odjavi me</button></form>
 <a class="link" href="/">Ne, odpri ${esc(BRAND.name)}</a>`,
     );

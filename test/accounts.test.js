@@ -451,6 +451,11 @@ test("weekly scheduler sends once per week", async () => {
   store.db.prepare("INSERT INTO xp_events (student_id, amount, reason) VALUES (?, 10, 'test')").run(s.id);
   assert.equal(await api.sendWeeklyAll(), 1);
   assert.equal(await api.sendWeeklyAll(), 0);
+  // Tudi pošiljanje po urniku ima glavi za odjavo z enim klikom (RFC 8058; pregled 2, opomba 6).
+  const mail = calls.filter((c) => c.host === "api.resend.com");
+  assert.equal(mail.length, 1);
+  assert.match(mail[0].body.headers["List-Unsubscribe"], /^<https?:\/\/[^>]+\/api\/account\/unsubscribe\?token=t>$/);
+  assert.equal(mail[0].body.headers["List-Unsubscribe-Post"], "List-Unsubscribe=One-Click");
 });
 
 test("weekly report: what was learned, weak spots, next steps, Slovenian plurals", async () => {
