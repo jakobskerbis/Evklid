@@ -1,5 +1,5 @@
-// Pristajalna stran pred prijavo (public/pristajalna.js, j 2026-11-04; en gumb za gimnazijce, j 2026-11-15):
-// eno sporočilo, en gumb, brez cen in nepreverljivih trditev, vsi napisi prevedeni, pot do prijave in registracije.
+// Pristajalna stran pred prijavo (public/pristajalna.js, j 2026-11-04; za gimnazijce, j 2026-11-15; matura, cena iz cenika,
+// pas zaupanja in drugi gumb, pregled javnih strani 21. 11. 2026): brez nepreverljivih trditev, vsi napisi prevedeni.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
@@ -7,7 +7,7 @@ import { plansFor } from "../server/accounts/plans.js";
 
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
-const { landingHtml } = await import("../public/pristajalna.js");
+const { landingHtml, priceText } = await import("../public/pristajalna.js");
 const { t } = await import("../public/i18n.js");
 // Uvozi so pred prvim testom: po njem bi jih --test-force-exit izpustil skupaj s testi.
 const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
@@ -19,24 +19,81 @@ const KEYS = ["land.subjects", "land.title", "land.lead", "land.start", "land.ha
   ...["q1", "a1", "q2", "a2", "q3", "a3"].map((k) => `land.demo.${k}`), ...[1, 2, 3].flatMap((n) => [`land.p${n}.t`, `land.p${n}.d`])];
 const primaries = (html) => (html.match(/class="btn-primary/g) || []).length;
 
-test("en gumb, prijava kot navadna povezava, brez cen in stopenj (j 2026-11-15)", () => {
+// Pregled javnih strani 21. 11. 2026 (P1, P2; j izbral »vse, kar je varno med pilotom«): matura v uvodu, vrstica s ceno
+// iz cenika, pas zaupanja in drugi gumb »Začni brezplačno« pod dokazi. Prej (j 2026-11-15) en gumb in brez cen.
+test("glavni gumb na vrhu in pod dokazi, prijava kot navadna povezava, matura v uvodu", () => {
   const prices = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
   for (const html of [landingHtml(t, { name: "Evklid" }), landingHtml(t, { name: "Evklid", prices })]) {
-    assert.equal(primaries(html), 1, "natanko en glavni gumb");
+    assert.equal(primaries(html), 2, "gumb na vrhu in pod dokazi");
     assert.doesNotMatch(html, /btn-secondary|<button/);
-    assert.equal((html.match(/data-land="register"/g) || []).length, 1);
+    assert.equal((html.match(/data-land="register"/g) || []).length, 2);
     assert.match(html, /<p class="land-login">Že imaš račun\? <a href="#prijava" data-land="login">Prijava<\/a><\/p>/);
-    assert.doesNotMatch(html, /na mesec|na leto|€|EUR|land-level|land-feat|land-cta|land-facts|land-more/);
-    assert.doesNotMatch(html, /Račune preveri program|Brez oglasov/);
+    assert.doesNotMatch(html, /land-level|land-feat|land-facts|land-more/);
+    assert.doesNotMatch(html, /Račune preveri program/);
     assert.match(html, /<h1>Ko se pri domači nalogi zatakne, ti Evklid pokaže naslednji korak\.<\/h1>/);
-    assert.match(html, /Za gimnazijo, vse šolsko leto\./);
+    assert.match(html, /Za gimnazijo in maturo, vse šolsko leto\./);
+    assert.ok(SL["land.lead"].length <= 120, "uvod največ 120 znakov");
     assert.equal((html.match(/class="card land-proof"/g) || []).length, 3);
     assert.equal((html.match(/class="land-msg /g) || []).length, 6);
     assert.ok(html.indexOf('data-land="register"') < html.indexOf("land-demo"), "gumb je pred zgledom pogovora");
+    assert.ok(html.lastIndexOf('data-land="register"') > html.indexOf("land-proofs"), "drugi gumb je pod dokazi");
+    // Pas zaupanja pod uvodom, pred dokazi; učencem brez žargona (strežnik, Anthropic, modeli), glej test/besedila.test.js.
+    assert.match(html, /<ul class="mkt-trust land-trust" aria-label="Zasebnost na kratko">/);
+    for (const s of ["Podatke hranimo v EU (Frankfurt)", "Brez oglasov in sledilnikov", "Tvoji pogovori se ne uporabljajo za učenje umetne inteligence", '<a href="/zasebnost.html">Več o zasebnosti</a>'])
+      assert.ok(html.includes(s), s);
+    assert.ok(html.indexOf("land-trust") > html.indexOf("land-demo") && html.indexOf("land-trust") < html.indexOf("land-proofs"));
+    // Noga: povezava na cenik.
+    assert.match(html.match(/<footer class="land-foot">[\s\S]*<\/footer>/)[0], /<a href="\/o-evklidu#cene">Cene<\/a>/);
   }
   const html = landingHtml(t, { name: "Evklid", prices });
   assert.match(html, /7 dni brezplačno, brez kartice\./);
   assert.match(html, /Za mlajše od 15 let račun ustvari starš\./);
+  const about = readFileSync(new URL("../public/o-evklidu.html", import.meta.url), "utf8");
+  assert.ok(about.includes('<h2 id="cene">'), "sidro #cene obstaja");
+});
+
+test("vrstica s ceno: zneski iz cenika (srednja šola mesečno in letno, najnižja mesečna), zapis v jeziku vmesnika, regijske cene, brez cen in v aplikaciji iz trgovine brez nje", () => {
+  const eur = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
+  const line = (html) => html.match(/<p class="land-price">([\s\S]*?)<\/p>/)?.[1];
+  const nb = (s) => s.replace(/\u00a0/g, " ");
+  const os = plansFor("EUR").find((p) => p.level === "OS" && p.interval === "month" && !p.family).amount;
+  const ss = plansFor("EUR").find((p) => p.level === "SS" && p.interval === "month" && !p.family).amount;
+  const ssy = plansFor("EUR").find((p) => p.level === "SS" && p.interval === "year" && p.seats === 1 && !p.family).amount;
+  const fmt = (c) => `${(c / 100).toFixed(2).replace(".", ",")} €`;
+  // Maturant najprej vidi svojo ceno, mesečno in letno (pregled 3, S1).
+  assert.equal(nb(line(landingHtml(t, { name: "Evklid", prices: eur }))), `Nato naročnina za srednjo šolo ${fmt(ss)} na mesec ali ${fmt(ssy)} na leto (za osnovno šolo od ${fmt(os)} na mesec) ali brezplačni paket z omejenim številom vprašanj. <a href="/o-evklidu#cene">Cene</a>`);
+  // Zapis zneskov v jeziku vmesnika kot izbirnik paketov (pregled 3, S2): angleško »€13.99«, slovensko »13,99 €«.
+  const en = priceText((k, v) => `${k} ${JSON.stringify(v)}`, eur, "en");
+  assert.match(en, new RegExp(`"ss":"€${(ss / 100).toFixed(2).replace(".", "\\.")}"`), en);
+  // Brez letnega paketa SŠ: en znesek, cena srednje šole.
+  const noYear = { ...eur, plans: eur.plans.filter((p) => !(p.level === "SS" && p.interval === "year")) };
+  assert.equal(nb(priceText(t, noYear)), `Nato naročnina ${fmt(ss)} na mesec ali brezplačni paket z omejenim številom vprašanj.`);
+  // Drug cenik: vrstica sledi podatkom, številk v kodi strani ni.
+  const changed = { ...eur, plans: eur.plans.map((p) => (p.level === "SS" && p.interval === "month" && !p.family ? { ...p, amount: 1499 } : p)) };
+  assert.match(nb(line(landingHtml(t, { name: "Evklid", prices: changed }))), /za srednjo šolo 14,99 €/);
+  const src = readFileSync(new URL("../public/pristajalna.js", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /9[,.]99|13[,.]99|\b999\b|\b1399\b/, "brez zapisanih cen");
+  // Regijske cene (ena za vse stopnje): brez »srednjo šolo«.
+  const inr = line(landingHtml(t, { name: "Evklid", prices: { currency: "INR", plans: plansFor("INR"), trial_days: 7 } }));
+  assert.ok(inr && !/srednjo šolo/.test(inr) && /₹/.test(inr), inr);
+  assert.equal(line(landingHtml(t, { name: "Evklid" })), undefined, "brez odgovora strežnika ni vrstice");
+  const store = landingHtml(t, { name: "Evklid", prices: eur, store: true });
+  assert.equal(line(store), undefined, "aplikacija iz trgovine: brez cene");
+  assert.ok(!store.includes("o-evklidu#cene"), "aplikacija iz trgovine: brez povezave na cenik");
+  // Vrstica je prevedena v vseh jezikih z istima spremenljivkama.
+  for (const f of readdirSync(new URL("../public/i18n/ui/", import.meta.url)).filter((x) => x.endsWith(".json"))) {
+    const d = JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"));
+    assert.ok(d["price.levels"].includes("{price}") && d["price.levels"].includes("{ss}") && d["price.levels"].includes("{ssYear}") && d["price.one"].includes("{price}"), f);
+    for (const k of ["land.prices", "land.trust.eu", "land.trust.ads", "land.trust.ai", "land.trust.more", "land.trustLabel", "price.levels"]) assert.notEqual(d[k], SL[k], `${f}: ${k}`);
+  }
+});
+
+test("noscript: cena, pas zaupanja in povezava na cenik so, gumbov za registracijo ni", () => {
+  const block = nos.noscriptBlock();
+  assert.match(block, /class="land-price"/);
+  assert.match(block, /class="mkt-trust land-trust"/);
+  assert.doesNotMatch(block, /data-land=/);
+  assert.doesNotMatch(block, /land-cta/);
 });
 
 test("zgled pogovora: x² − 5x + 6 = 0 z namigi, rešitvi in preizkus sta pravilni", () => {

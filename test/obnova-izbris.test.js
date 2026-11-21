@@ -135,7 +135,7 @@ function fakeS3() {
   const objects = new Map();
   const fetchFn = async (url, { method, body }) => {
     const key = decodeURIComponent(new URL(url).pathname.replace(/^\/kopije-vedro\//, ""));
-    if (method === "PUT") return objects.set(key, Buffer.from(body)), new Response("");
+    if (method === "PUT") return objects.set(key, Buffer.from(await new Response(body).arrayBuffer())), new Response("");
     if (method === "GET" && !new URL(url).searchParams.get("list-type")) return objects.has(key) ? new Response(objects.get(key)) : new Response("<Code>NoSuchKey</Code>", { status: 404 });
     return new Response("<ListBucketResult></ListBucketResult>");
   };

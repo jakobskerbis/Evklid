@@ -96,6 +96,13 @@ export class Progress {
   uiLang(studentId) {
     return uiLanguage(this.store.getStudent?.(studentId)?.settings?.language);
   }
+  // Raven mature iz profila (»4. letnik OR«) za šolske poti matematike v gimnaziji: na osnovni ravni učna pot,
+  // nova snov in priprava na test izpustijo teme samo za višjo raven (exams.js ravenKeeps), kot jih že stran
+  // »NPZ in matura« (#891). Druge poti in »še ne vem«: null (vse teme).
+  profileRaven(studentId, pathKey) {
+    if (!/^MAT-SS-\d$/.test(String(pathKey || ""))) return null;
+    return / (VR|OR)$/.exec(String(this.store.getStudent?.(studentId)?.settings?.curriculum_level || "").trim())?.[1] || null;
+  }
 
   // ---------- stanje teme ----------
   state(studentId, topicId) {
@@ -149,7 +156,7 @@ export class Progress {
     if (!path) return null;
     const keep =
       year && isCompetitionPath(pathKey) ? new Set(topicsForYear(path.units.flatMap((u) => u.topics.map((t) => t.id)), year)) : null;
-    const forRaven = ravenKeeps(raven);
+    const forRaven = ravenKeeps(raven ?? this.profileRaven(studentId, pathKey));
     const states = Object.fromEntries(
       this.db
         .prepare("SELECT * FROM topic_state WHERE student_id = ? AND topic_id LIKE ?")
@@ -376,7 +383,10 @@ export class Progress {
   startPlacement(studentId, pathKey, unitIndex) {
     const unit = getPath(pathKey)?.units[unitIndex];
     if (!unit) return null;
-    const topics = unit.topics.filter((t) => hasGenerator(t.id));
+    // Kot sklop na poti (pathView): osnovna raven brez tem samo za višjo raven, sicer bi OR pri Odvodu dobil 3 od 6 nalog iz VR.
+    const all = unit.topics.filter((t) => hasGenerator(t.id));
+    const own = all.filter(ravenKeeps(this.profileRaven(studentId, pathKey)));
+    const topics = own.length ? own : all;
     if (!topics.length) return null;
     const open = this.openSession(studentId, "placement", (x) => x.params.path === pathKey && x.params.unit === unitIndex);
     if (open) return this.sessionNext(open.id);
@@ -680,12 +690,14 @@ export class Progress {
     );
     if (!topics.length) return { percent: 0, weakest: [] };
     const percent = Math.round((100 * topics.reduce((s, t) => s + t.score, 0)) / topics.length);
-    const weakest = topics
+    const out = ({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" });
+    const sorted = topics
       .filter((t) => t.score < 1)
-      .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order)
-      .slice(0, 3)
-      .map(({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" }));
-    return { percent, weakest };
+      .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order);
+    const weakest = sorted.slice(0, 3).map(out);
+    // Najšibkejša med temami, ki jih je učenec že vadil (kartica Danes): neizvadena tema o šibkosti ne pove nič.
+    const vadena = sorted.find((t) => t.tried > 0 || t.score > 0);
+    return { percent, weakest, weakestTried: vadena ? out(vadena) : null };
   }
 
   // Zadnji rezultati poskusnih tekmovanj na tej poti.
@@ -747,7 +759,10 @@ export class Progress {
     const open = this.openSession(studentId, "test", (x) => x.created_at.slice(0, 10) === today());
     if (open) return this.sessionNext(open.id);
     const path = getPath(plan.path);
-    const topics = plan.units.flatMap((i) => path.units[i].topics).filter((t) => hasGenerator(t.id)).map((t) => t.id);
+    const all = plan.units.flatMap((i) => path.units[i].topics).filter((t) => hasGenerator(t.id));
+    // Osnovna raven brez tem samo za višjo raven; če izbrani sklopi nimajo drugih tem, ostanejo vse.
+    const own = all.filter(ravenKeeps(this.profileRaven(studentId, plan.path)));
+    const topics = (own.length ? own : all).map((t) => t.id);
     if (!topics.length) return null;
     const d = plan.daysLeft;
     const levels = d >= 7 ? [1, 1, 2, 2, 2, 2, 2, 2, 3, 3] : d >= 3 ? [1, 2, 2, 2, 2, 3, 3, 3, 3, 3] : [2, 2, 3, 3, 3, 3, 3, 3, 3, 3];
@@ -1097,7 +1112,10 @@ export class Progress {
       // Vse teme sklopa (tudi brez vaj) štejemo kot obvladane.
       const t0 = getTopic(topics[0]);
       const unit = getPath(t0.path).units[t0.unitIndex];
-      for (const t of unit.topics) this.markMastered(studentId, t.id, "placement");
+      // Teme samo za višjo raven, ki jih preizkus osnovne ravni ni zajel, ostanejo neosvojene (sicer bi prišle v ponavljanje).
+      const keep = ravenKeeps(this.profileRaven(studentId, t0.path));
+      const own = unit.topics.filter(keep);
+      for (const t of own.length ? own : unit.topics) this.markMastered(studentId, t.id, "placement");
       xp = this.award(studentId, [[XP.placement, "preizkus znanja"]]);
     } else {
       for (const id of topics) {
