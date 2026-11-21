@@ -116,8 +116,8 @@ test("strežnik: obiskovalec brez seje dobi pristajalno stran, enako izrisu v br
 });
 
 // Meritev hitrosti 21. 11. 2026: obiskovalec na /#registracija prej ~0,6 s videl okostje Učne poti (zavihki, »Nova snov«), obrazec
-// je čakal cel slovar in vse sloge.
-test("brskalnik: /#registracija brez okostja aplikacije, besedila iz jedra, slogi drugih zaslonov za obrazcem", { skip: !playwright && "Playwright ni nameščen", timeout: 120_000 }, async () => {
+// je čakal cel slovar in vse sloge; pristajalna stran je po prvem izrisu prenesla še ~90 modulov drugih zaslonov (~0,8 MB).
+test("brskalnik: /#registracija brez okostja aplikacije, besedila iz jedra; zasloni šele, ko obiskovalec začne izpolnjevati obrazec", { skip: !playwright && "Playwright ni nameščen", timeout: 120_000 }, async () => {
   const { server, base } = start();
   const browser = await playwright.chromium.launch();
   try {
@@ -154,7 +154,14 @@ test("brskalnik: /#registracija brez okostja aplikacije, besedila iz jedra, slog
     const i18n = await p.evaluate(() => import("/i18n-osnova.js").then((m) => ({ vse: m.vseNalozeno(), manjka: m.manjkajoci() })));
     assert.deepEqual(i18n, { vse: false, manjka: [] }, "obrazec samo z jedrom, brez manjkajočih besedil");
     await p.waitForFunction(() => !document.querySelector("template[data-evklid-slogi]") && !document.documentElement.hasAttribute("data-zacetek-slogi"));
+    // Igre (3 s) in orodja kalkulatorja (2,5 s) po zagonu, zasloni po prvem izrisu: obiskovalec, ki ne izpolnjuje, nič od tega.
+    await p.waitForTimeout(3500);
+    const ZASLONI = ["/vadnica.js", "/racun.js", "/games/index.js", "/textbook.js", "/i18n/sl.js"];
+    assert.deepEqual(ZASLONI.filter((u) => urls.includes(u)), [], "brez modulov drugih zaslonov pred izpolnjevanjem");
     spusti();
+    await p.locator('#auth-form input[name="email"]').focus();
+    await p.waitForFunction(() => import("/i18n-osnova.js").then((m) => m.vseNalozeno()), null, { timeout: 30_000 });
+    await p.waitForFunction(() => performance.getEntriesByType("resource").some((e) => e.name.endsWith("/vadnica.js")), null, { timeout: 30_000 });
     assert.deepEqual(errors, []);
     await ctx.close();
   } finally {

@@ -124,7 +124,10 @@ self.addEventListener("message", (e) => {
         const cache = new URL(u, self.location.origin).pathname.startsWith("/vendor/") ? await caches.open(VENDOR) : statics;
         const hit = await cache.match(u);
         if (hit && (cache !== statics || fresh(hit))) return;
-        const res = await fetch(u).catch(() => null);
+        // Stran je datoteko pravkar prenesla: kopija iz predpomnilnika brskalnika (force-cache) brez ponovnega klica
+        // strežnika. Prej je šel vsak naslov še enkrat na strežnik (ob prvem obisku ~190 zahtev; meritev 21. 11. 2026).
+        // Različico pove shranjena glava X-Evklid-App (put, fresh); česar brskalnik nima, pride z omrežja kot prej.
+        const res = await fetch(u, { cache: "force-cache" }).catch(() => null);
         if (res?.ok) await put(cache, u, res);
       }),
     ).finally(() => e.ports?.[0]?.postMessage("ok")), // stran pošilja seznam po kosih (public/app.js predpomni)
