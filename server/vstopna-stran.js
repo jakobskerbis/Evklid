@@ -68,11 +68,14 @@ export function withSlJedro(html, json) {
   return `${html.slice(0, at)}<script type="application/json" id="evklid-sl-jedro">${json}</script>\n  ${html.slice(at)}`;
 }
 
-// Zadnji slog, ki ga pristajalna stran potrebuje za prvi izris (pred njim pisave, KaTeX, style.css, ui.css).
+// Zadnji slog, ki ga pristajalna stran potrebuje za prvi izris (pred njim pisave, style.css, ui.css).
 const ZADNJI_SLOG = "account.css";
 // Za account.css, a vseeno pred prvim izrisom: touch.css ima pravila za zgornjo vrstico na tablicah na dotik (761–1240 px,
 // znak »Evklid«, višina vrstice); brez njega bi vrstica ob prihodu sloga poskočila (pregled 3, 19. 11. 2026).
 const PRVI_IZRIS = ["touch.css"];
+// Slogi pred account.css, ki jih pristajalna stran ne uporablja (brez formul): v <template> na svojem mestu kot slogi za
+// druge zaslone (meritev 21. 11. 2026: manj prenosa in razčlenjevanja pred prvim izrisom na telefonu).
+const PRISTAJALNA_POZNEJE = ["vendor/katex/katex.min.css"];
 // Pisavi pristajalne strani (vendor/instrument-sans/index.css): latinica in razširjena latinica (č, š, ž).
 const PISAVE = ["/vendor/instrument-sans/files/instrument-sans-latin-wght-normal.woff2", "/vendor/instrument-sans/files/instrument-sans-latin-ext-wght-normal.woff2"];
 
@@ -92,10 +95,14 @@ export function withLanding(html, page) {
   // Slogi za druge zaslone (vsi za account.css razen PRVI_IZRIS) gredo v <template data-evklid-slogi> na svojem mestu
   // (zaporedni v isti <template>, vrstni red ostane): zacetek.js vsakega zamenja z njegovimi povezavami po prvem izrisu
   // pristajalne strani (je ne spremenijo, test/pristajalna-takoj.test.js) ali takoj, ko je ne pokaže.
-  const head = html.slice(0, html.indexOf("</head>"));
+  let head = html.slice(0, html.indexOf("</head>"));
   const zadnji = `<link rel="stylesheet" href="${ZADNJI_SLOG}">`;
-  const last = head.indexOf(zadnji);
+  let last = head.indexOf(zadnji);
   if (last > 0) {
+    const prej = PRISTAJALNA_POZNEJE.reduce((h, f) => h.replace(`<link rel="stylesheet" href="${f}">`, (l) => `<template data-evklid-slogi>${l}</template>`), head.slice(0, last));
+    html = prej + html.slice(last);
+    head = prej + head.slice(last);
+    last = prej.length;
     const from = last + zadnji.length;
     const rest = head
       .slice(from)

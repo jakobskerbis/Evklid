@@ -693,11 +693,12 @@
     if (!lang || !tag || String(nav).toLowerCase() !== tag.toLowerCase()) return false;
     var izbran = jezik();
     if (izbran) return izbran === lang;
+    if (lang !== "en") return true;
     var tz = "";
     try {
       tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
     } catch (e) {}
-    return !(lang === "en" && tz === "Europe/Ljubljana");
+    return tz !== "Europe/Ljubljana";
   }
   function moduli() {
     var tpl = document.getElementById("evklid-moduli");

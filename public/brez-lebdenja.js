@@ -46,16 +46,45 @@
     clean(rules);
   }
   function all() { for (var i = 0; i < document.styleSheets.length; i++) sheet(document.styleSheets[i]); }
+  // Šele po prvem izrisu (meritev 21. 11. 2026: na telefonu je čiščenje vseh slogov zadržalo prvi izris za ~50 ms):
+  // ob nalaganju se nihče ne dotika strani, zato :hover do prvega izrisa ne velja nikjer in videz je enak. Nato
+  // počistimo vse sloge naenkrat, pozneje pa vsakega, ko se naloži. Skrit zavihek (brez izrisa): najpozneje po 3 s.
+  var zacel = false;
+  function zacni() {
+    if (zacel) return;
+    zacel = true;
+    all();
+  }
+  function poIzrisu() {
+    setTimeout(zacni, 3000);
+    // Dotik pred čiščenjem (počasen telefon, ~0,6 s po izrisu): počisti takoj, da se :hover ne prikaže (pregled #931).
+    document.addEventListener("touchstart", zacni, { capture: true, passive: true, once: true });
+    var po, tipi = window.PerformanceObserver && PerformanceObserver.supportedEntryTypes;
+    if (tipi && tipi.indexOf("paint") !== -1) {
+      try {
+        po = new PerformanceObserver(function (l) {
+          if (!l.getEntriesByName("first-contentful-paint").length) return;
+          po.disconnect();
+          setTimeout(zacni, 0);
+        });
+        po.observe({ type: "paint", buffered: true });
+        return;
+      } catch (e) {}
+    }
+    if (window.requestAnimationFrame) requestAnimationFrame(function () { setTimeout(zacni, 0); });
+    else zacni();
+  }
+  function pozneje() { if (zacel) all(); }
   function watch(el) {
-    if (el.tagName === "STYLE") sheet(el.sheet);
+    if (el.tagName === "STYLE") { if (zacel) sheet(el.sheet); }
     else if (el.tagName === "LINK" && /stylesheet/i.test(el.rel)) {
-      if (el.sheet) sheet(el.sheet);
-      el.addEventListener("load", function () { sheet(el.sheet); });
+      if (el.sheet && zacel) sheet(el.sheet);
+      el.addEventListener("load", function () { if (zacel) sheet(el.sheet); });
     }
   }
-  all();
-  document.addEventListener("DOMContentLoaded", all);
-  window.addEventListener("load", all);
+  poIzrisu();
+  document.addEventListener("DOMContentLoaded", pozneje);
+  window.addEventListener("load", pozneje);
   new MutationObserver(function (ms) {
     ms.forEach(function (m) { m.addedNodes.forEach(function (n) { if (n.nodeType === 1) watch(n); }); });
   }).observe(document.head || document.documentElement, { childList: true }); // leni slogi gredo v <head>
