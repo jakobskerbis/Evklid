@@ -101,7 +101,18 @@ async function krog(conv, text) {
   const zacetek = store.db.prepare("SELECT COALESCE(MAX(id), 0) AS m FROM usage").get().m;
   const t0 = Date.now();
   const res = await fetch(`${base}/api/conversations/${conv.id}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
-  const body = await res.text();
+  // Tok se bere sproti: čas do prvega besedila, ki ga učenec vidi (»delta«), in do napisa »Preverjam odgovor …«
+  // (phase check: sprotni pregled, račun ali popravek po odgovoru). Vse v ms od oddaje sporočila.
+  let body = "";
+  let prvoMs = null;
+  let preverjamMs = null;
+  const dec = new TextDecoder();
+  for await (const kos of res.body) {
+    body += dec.decode(kos, { stream: true });
+    if (prvoMs == null && body.includes("event: delta\n")) prvoMs = Date.now() - t0;
+    if (preverjamMs == null && /event: phase\ndata: \{"phase":"check"/.test(body)) preverjamMs = Date.now() - t0;
+  }
+  body += dec.decode();
   const ms = Date.now() - t0;
   const vrstice = store.db.prepare("SELECT kind, model, cost_usd FROM usage WHERE id > ? ORDER BY id").all(zacetek);
   const klici = vrstice.map((r) => `${r.kind}:${String(r.model).replace(/^claude-/, "")}`);
@@ -109,7 +120,7 @@ async function krog(conv, text) {
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
   const done = [...body.matchAll(/event: done\ndata: (.*)\n/g)].at(-1);
   if (!done) throw new Error(`brez dogodka done: ${body.slice(-200)}`);
-  return { ucenec: text, evklid: JSON.parse(done[1]).text, klici, usd, ms };
+  return { ucenec: text, evklid: JSON.parse(done[1]).text, klici, usd, ms, prvoMs, preverjamMs };
 }
 
 const izid = [];
@@ -130,7 +141,8 @@ for (const p of primeri) {
     const prepis = [];
     for (const k of p.krogi) prepis.push(await krog(conv, k));
     izid.push({ id: p.id, prepis });
-    console.log(`${p.id}: ${prepis.map((x) => `${x.evklid.length} znakov v ${(x.ms / 1000).toFixed(1)} s`).join(", ")}, skupaj ${porabljeno().toFixed(3)} $`);
+    const sek = (v) => (v == null ? "–" : `${(v / 1000).toFixed(1)} s`);
+    console.log(`${p.id}: ${prepis.map((x) => `${x.evklid.length} znakov v ${sek(x.ms)} (besedilo po ${sek(x.prvoMs)}, preverjanje od ${sek(x.preverjamMs)}; ${x.klici.join(" ")})`).join(", ")}, skupaj ${porabljeno().toFixed(3)} $`);
   } catch (e) {
     console.log(`${p.id}: napaka ${String(e?.message || e).slice(0, 200)}`);
   }
@@ -139,7 +151,7 @@ for (const p of primeri) {
 server.close();
 zapisi(true);
 console.log("ODGOVORI-ZACETEK");
-console.log(JSON.stringify(izid.map(({ id, prepis }) => ({ id, prepis: prepis.map(({ ucenec, evklid, ms }) => ({ ucenec, evklid, ms })) }))));
+console.log(JSON.stringify(izid.map(({ id, prepis }) => ({ id, prepis: prepis.map(({ ucenec, evklid, ms, prvoMs, preverjamMs, klici }) => ({ ucenec, evklid, ms, prvoMs, preverjamMs, klici })) }))));
 console.log("ODGOVORI-KONEC");
 console.log(`\nIZID: ${izid.length}/${primeri.length} primerov; strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Odgovori: ${OUT}`);
 fs.rmSync(tmp, { recursive: true, force: true });
