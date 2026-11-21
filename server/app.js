@@ -276,6 +276,10 @@ function securityHeaders(app) {
 
 export const SLIKE_3D_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
 
+// Odgovor, ki ga je prekinila zaustavitev strežnika (objava nove različice): odjemalec pokaže svoje besedilo
+// (public/app.js, off.serverBusy v jeziku vmesnika), to je za mobilno aplikacijo in starejše odjemalce.
+export const POSODOBITEV_TEXT = "Evklid se posodablja. Pošlji vprašanje znova čez minuto.";
+
 export function createApp(store, opts = {}) {
   const { streamFn = streamReply, readFn = readHandwriting } = opts;
   const app = express();
@@ -677,6 +681,18 @@ export function createApp(store, opts = {}) {
   };
 
   const busy = new Set(); // pogovori, ki trenutno čakajo na odgovor
+  // Odprti odgovori v klepetu za zaustavitev strežnika (server/index.js, SIGTERM ob objavi): zaustaviOdgovore takoj
+  // ustavi zahteve, ki še čakajo v vrsti za AI (samoVrsta), po roku pa še vse ostale. Učenec dobi dogodek »error«
+  // z obvestilom o posodobitvi (osnutek gre nazaj v polje), vprašanje ne šteje v dnevno mejo; že porabljeni žetoni
+  // so zapisani kot pri prekinitvi. Nove zahteve med zaustavljanjem se ustavijo takoj.
+  const tokovi = new Set();
+  let zaustavljanje = false;
+  app.locals.zaustaviOdgovore = ({ samoVrsta = false } = {}) => {
+    zaustavljanje = true;
+    for (const t of tokovi) if (!samoVrsta || t.vVrsti()) t.ustavi();
+    return tokovi.size;
+  };
+  app.locals.odgovoriVTeku = () => tokovi.size;
   const pendingSettings = new Map(); // pogovor → predlog spremembe šole/letnika, ki čaka na potrditev
   // »Vprašaj Evklida« iz Vadnice: pogovor -> naloga, da prvi odgovor sestavi koda.
   const helpTasks = new Map();
@@ -1330,6 +1346,17 @@ export function createApp(store, opts = {}) {
     res.on("close", () => {
       if (!finished) controller.abort();
     });
+    let zaustavitev = false; // strežnik se ustavlja (objava): odgovor prekine strežnik, ne učenec
+    const tok = {
+      vVrsti: () => vVrsti,
+      ustavi: () => {
+        if (finished) return;
+        zaustavitev = true;
+        controller.abort();
+      },
+    };
+    tokovi.add(tok);
+    if (zaustavljanje) tok.ustavi();
 
     const filter = createStreamFilter();
     // Nastavitve iz klepeta (server/chat-settings.js): orodji za model, dogodki za odjemalca.
@@ -1813,14 +1840,20 @@ export function createApp(store, opts = {}) {
         }
       }
       // Napaka strežnika ali API (ne prekinitev): vprašanje ne šteje, učenec lahko poskusi znova. Prav tako ne, če je
-      // učenec povezavo prekinil še v vrsti za AI (model ni dobil nobenega klica).
-      const neplacano = !aborted || vVrsti;
+      // učenec povezavo prekinil še v vrsti za AI (model ni dobil nobenega klica), in ne, če je odgovor prekinil
+      // strežnik ob zaustavitvi (objava): učenec vprašanje pošlje znova (porabljeni žetoni so zapisani zgoraj).
+      const neplacano = !aborted || vVrsti || zaustavitev;
       if (neplacano) store.logQuestion(student.id, -1);
       // Neuspelo potezo odstranimo, da zgodovina ostane čista za ponovni poskus.
       store.db.prepare("DELETE FROM messages WHERE id = ?").run(userMsgId);
       // Prekinitev (plačan klic) ne vrne števca zaporednih prošenj: naslednji poskus ne gre spet brezplačno k Opusu.
       if (again && neplacano) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
-      if (!controller.signal.aborted) {
+      if (zaustavitev) {
+        if (!res.writableEnded && !res.destroyed) {
+          oddajZaostalo();
+          send("error", { error: POSODOBITEV_TEXT, posodobitev: true, nujno: nujnoPoslano ? undefined : nujnoZa(lokalnaVrsta(text), student.settings) || undefined });
+        }
+      } else if (!controller.signal.aborted) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
         // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
@@ -1831,6 +1864,7 @@ export function createApp(store, opts = {}) {
       }
       res.end();
     } finally {
+      tokovi.delete(tok);
       mestoAi?.sprosti();
       busy.delete(conv.id);
       hold.release();

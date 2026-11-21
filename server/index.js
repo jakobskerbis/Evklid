@@ -96,17 +96,28 @@ const server = app.listen(port, () => {
 });
 
 // Zaustavitev (objava na Render pošlje SIGTERM): novih zahtev ne sprejmemo, klici AI v teku se lahko končajo
-// (največ 20 s), da se zapiše njihov pravi strošek, ne cela rezerva ob naslednjem zagonu (pregled #462 K3-5).
+// (največ 20 s, EVKLID_ZAUSTAVITEV_MS), da se zapiše njihov pravi strošek, ne cela rezerva ob naslednjem zagonu
+// (pregled #462 K3-5). Vprašanja, ki še čakajo v vrsti za AI, in nova vprašanja med zaustavljanjem takoj dobijo
+// obvestilo o posodobitvi; odgovore, ki po roku še tečejo, prekinemo z istim obvestilom (vprašanje ne šteje v dnevno
+// mejo, server/app.js zaustaviOdgovore) in počakamo največ 2 s, da se zapišejo in pošljejo.
+const ROK_ZAUSTAVITVE_MS = Number(process.env.EVKLID_ZAUSTAVITEV_MS) > 0 ? Number(process.env.EVKLID_ZAUSTAVITEV_MS) : 20000;
 let stopping = false;
 function shutdown(signal) {
   if (stopping) return;
   stopping = true;
   console.log(`[evklid] ${signal}: zaustavljam, čakam na klice AI v teku …`);
   server.close();
+  app.locals.zaustaviOdgovore?.({ samoVrsta: true });
   const t0 = Date.now();
+  let prekinjeno = 0; // čas, ko so bili odgovori po roku prekinjeni
   const tick = () => {
-    const busy = app.locals.usage?.inflight?.size || 0;
-    if (!busy || Date.now() - t0 > 20000) {
+    const busy = (app.locals.usage?.inflight?.size || 0) + (app.locals.odgovoriVTeku?.() || 0);
+    if (busy && !prekinjeno && Date.now() - t0 > ROK_ZAUSTAVITVE_MS) {
+      prekinjeno = Date.now();
+      const n = app.locals.zaustaviOdgovore?.() || 0;
+      if (n) console.log(`[evklid] ${n} odgovorov v teku prekinjenih z obvestilom o posodobitvi`);
+    }
+    if (!busy || (prekinjeno && Date.now() - prekinjeno > 2000)) {
       zdravje?.cistaZaustavitev();
       process.exit(0);
     } else setTimeout(tick, 250).unref?.();

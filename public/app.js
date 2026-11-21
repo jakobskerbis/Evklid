@@ -2283,7 +2283,8 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
         waitNote = "";
         showNujno(d.nujno || lokalnoNujno(text), { before: bubble, meja: true });
         bubble.classList.add("error");
-        pacer.finish(d.error);
+        // Strežnik se ustavlja zaradi posodobitve (server/index.js): besedilo v jeziku vmesnika.
+        pacer.finish(d.posodobitev ? t("off.serverBusy") : d.error);
         pacer.skip();
         if (state.conversationId === sentTo && !deep) restoreDraft(draft ?? text, image); // vrni besedilo za ponovni poskus
       },
