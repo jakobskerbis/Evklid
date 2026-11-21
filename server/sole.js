@@ -172,10 +172,10 @@ export function solePage({ pilot = true, narocila = soleNarocilaOdprta() } = {})
     .replace(/\{\{([\w.]+)\}\}/g, (m, k) => (k in vars ? esc(vars[k]) : m));
 }
 
-// Stran /sole in /sole.html (pred statičnimi datotekami in za števcem obiskov v pilot.js).
+// Stran /sole (pred statičnimi datotekami in za števcem obiskov v pilot.js). /sole.html preusmeri na /sole server/ni-strani.js.
 export function mountSolePage(app, store = null) {
   const cached = {};
-  app.get(["/sole", "/sole.html"], (_req, res) => {
+  app.get("/sole", (_req, res) => {
     // Brez predpomnjenja v razvoju (datoteko lahko urejamo), sicer enkrat na zagon za vsako stanje pilota.
     const pilot = store?.db ? pilotOpenForOrder(store.db) : true;
     const narocila = soleNarocilaOdprta();

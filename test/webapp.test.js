@@ -4,7 +4,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import express from "express";
-import { manifest, manifestLang, mountWebApp } from "../server/webapp.js";
+import { manifest, manifestLang, mountWebApp, securityTxt } from "../server/webapp.js";
+import { PERMISSIONS_POLICY } from "../server/app.js";
+import { structuredData } from "../server/vidnost.js";
 import { passwordGate } from "../server/gate.js";
 
 const PUB = path.join(import.meta.dirname, "..", "public");
@@ -26,7 +28,7 @@ test("manifest: namestljiv (ime, ikone, začetek, samostojno okno) in vse datote
   assert.equal(m.id, "/");
   assert.equal(m.start_url, "/");
   assert.equal(m.display, "standalone");
-  assert.equal(m.description, "Inštruktor za matematiko, fiziko in kemijo");
+  assert.equal(m.description, "Inštruktor za matematiko, fiziko, kemijo in biologijo"); // P11: z biologijo, kot na vseh straneh
   assert.ok(m.icons.some((i) => i.sizes === "192x192") && m.icons.some((i) => i.sizes === "512x512" && i.purpose === "maskable"));
   assert.ok(m.screenshots.some((s) => s.form_factor === "wide") && m.screenshots.some((s) => s.form_factor === "narrow"));
   for (const src of [...m.icons, ...m.screenshots, ...m.shortcuts.flatMap((s) => s.icons)].map((i) => i.src)) {
@@ -89,4 +91,33 @@ test("manifest: barva sistemske vrstice sledi slogu (?barva=, ?ozadje=), nevelja
   const inst = fs.readFileSync(path.join(PUB, "install.js"), "utf8");
   assert.match(theme, /searchParams\.set\("barva"/);
   assert.match(inst, /searchParams\.set\("lang"/);
+});
+
+// Pregled javnih strani 21. 11. 2026, P11: drobni tehnični popravki.
+test("security.txt (RFC 9116): kontakt, Expires manj kot leto naprej, jeziki; dostopen tudi za vrati z geslom", async () => {
+  const now = Date.UTC(2026, 10, 21, 15, 30);
+  const txt = securityTxt(now);
+  assert.match(txt, /^Contact: mailto:zasebnost@evklid\.app$/m);
+  assert.match(txt, /^Preferred-Languages: sl, en$/m);
+  assert.match(txt, /^Canonical: https:\/\/evklid\.app\/\.well-known\/security\.txt$/m);
+  const exp = Date.parse(txt.match(/^Expires: (\S+)$/m)[1]);
+  assert.ok(exp > now + 300 * 86400000 && exp < now + 365 * 86400000, "Expires manj kot leto dni naprej");
+  assert.equal(securityTxt(now), securityTxt(now + 3600000), "ves dan isti odgovor");
+  await withServer(
+    async (base) => {
+      const r = await fetch(base + "/.well-known/security.txt");
+      assert.equal(r.status, 200);
+      assert.match(r.headers.get("content-type"), /^text\/plain/);
+      assert.match(await r.text(), /^Contact: mailto:/m);
+    },
+    { gate: true },
+  );
+});
+
+test("Permissions-Policy brez »web-share« (Chrome ga ne pozna), ostalo ostane; schema.org brez sameAs na lastno stran", () => {
+  assert.ok(!/web-share/.test(PERMISSIONS_POLICY));
+  for (const f of ["camera=(self)", "microphone=(self)", "clipboard-write=(self)", "geolocation=()", "payment=()", "browsing-topics=()"]) assert.ok(PERMISSIONS_POLICY.includes(f), f);
+  const org = structuredData()["@graph"].find((n) => n["@type"] === "Organization");
+  assert.equal(org.sameAs, undefined);
+  assert.ok(!fs.readFileSync(path.join(PUB, "index.html"), "utf8").includes('"sameAs"'));
 });

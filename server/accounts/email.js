@@ -16,7 +16,8 @@ export class Mailer {
   get enabled() {
     return !!this.key;
   }
-  async send({ to, subject, html, text }) {
+  // headers: dodatne glave sporočila (Resend »headers«), npr. List-Unsubscribe pri tedenskem poročilu.
+  async send({ to, subject, html, text, headers }) {
     if (!this.key) {
       // Na javnem strežniku brez e-naslova in vsebine (povezave za novo geslo so kot geslo); lokalno cela vsebina.
       const prod = process.env.NODE_ENV === "production" || /^https:/i.test(process.env.EVKLID_BASE_URL || "");
@@ -28,7 +29,7 @@ export class Mailer {
       res = await this.fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${this.key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from: this.from, to: [to], subject, html, text }),
+        body: JSON.stringify({ from: this.from, to: [to], subject, html, text, ...(headers ? { headers } : {}) }),
         signal: AbortSignal.timeout(30_000), // obdelava dogodka Stripe ne sme čakati na pošto dlje od prevzema (točka A7)
       });
     } catch (err) {

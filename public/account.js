@@ -5,16 +5,15 @@ import { systemForCountry } from "./regions.js";
 import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n-osnova.js";
 import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
-import { termsField, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
+import { termsField, clearCheckout, watchReturnFromPay, isStoreApp } from "./pay-ui.js";
 import { clearPrivate, checkOwner, endedSession, syncOffline } from "./offline.js";
-import { landingHtml } from "./pristajalna.js";
+import { landingHtml, priceText } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
 // Deluje samo, ko je na strežniku EVKLID_ACCOUNTS=1.
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const eur = (cents) => (cents / 100).toLocaleString("sl-SI", { style: "currency", currency: "EUR" });
 // Cena v valuti paketa (regijske cene: rupije, naire …); valute brez decimalk imajo cele enote.
 const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
 // V jeziku vmesnika (locale(), kot garancija-ui.js, placaj.js), da je zapis enak povsod (npr. arabščina »9.99 €«).
@@ -534,13 +533,14 @@ function goAuth(mode) {
 }
 
 // Preizkus, starost in garancija za pristajalno stran (isti podatki kot na strani za starše); največ 1,5 s čakanja.
-let landingPrices, landingReq;
+// landingKnown: že prejete cene (obrazec za registracijo jih pokaže takoj, brez čakanja; P9).
+let landingPrices, landingReq, landingKnown = null;
 function loadLandingPrices() {
   if (landingReq) return landingPrices;
   const region = deviceRegion();
   landingReq = api(`/api/account/prices${region ? `?country=${region}` : ""}`).catch(() => null);
   landingPrices = Promise.race([landingReq, new Promise((r) => setTimeout(() => r(null), 1500))]);
-  landingReq.then((p) => p && (landingPrices = Promise.resolve(p)));
+  landingReq.then((p) => p && ((landingKnown = p), (landingPrices = Promise.resolve(p))));
   return landingPrices;
 }
 
@@ -556,7 +556,7 @@ async function renderLanding() {
   // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo.
   if (status?.logged_in || hashMode()) return;
   const name = document.querySelector(".topbar .brand-name")?.textContent || "";
-  const html = landingHtml(t, { name, prices });
+  const html = landingHtml(t, { name, prices, store: isStoreApp(), loc: locale() }); // aplikacija iz trgovine: brez cene (P2)
   const box = $("#view-auth");
   // Stran s strežnika ostane, ko je enaka (sicer bi se pogovor v primeru znova animiral); brez cen (počasna povezava)
   // ostane tudi, ker ima cene s strežnika. Enak izris: brez utripa in brez ponovne animacije, ko cene pridejo pozneje.
@@ -635,6 +635,28 @@ function shell(inner) {
 const AGE_BLOCK = "evklid_age_block";
 const ageBlocked = () => Date.now() - Number(store.get(AGE_BLOCK) || 0) < 86400000;
 
+// Uvod obrazca za registracijo: preizkus in cena iz /api/account/prices (P9). Brez cen (še niso prišle ali strežnik ni
+// odgovoril) samo splošen stavek; v aplikaciji iz trgovine brez zneska (nakup mimo trgovine, public/pay-ui.js).
+function registerIntroText(prices) {
+  const trial = prices?.trial_days ? `${t("land.trial", { n: prices.trial_days })} ` : "";
+  return `${trial}${(!isStoreApp() && priceText(t, prices, locale())) || t("price.none")}`;
+}
+const registerIntro = (prices) => esc(registerIntroText(prices));
+
+// Gumb »Pokaži geslo« (P9): na telefonu je napačno vtipkano geslo pogost razlog za ponastavitev že prvi dan.
+function bindPasswordToggle(root) {
+  root?.querySelectorAll(".pw-toggle").forEach((btn) => {
+    const input = root.querySelector(`#${btn.getAttribute("aria-controls")}`);
+    btn.addEventListener("click", () => {
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      // Oznaka ostane »Pokaži geslo«, stanje pove aria-pressed (pregled 3, N2: brez dvojnega »Skrij geslo, pritisnjeno«).
+      btn.setAttribute("aria-pressed", String(show));
+      btn.innerHTML = icon(show ? "eye-off" : "eye");
+    });
+  });
+}
+
 function renderLogin(mode = "login") {
   if (mode === "register" && ageBlocked()) return renderAskParent();
   const invited = mode === "register" && store.get("evklid_invite_name");
@@ -643,32 +665,51 @@ function renderLogin(mode = "login") {
   const invite = store.get(INVITE_KEY) || "";
   // Ena vrstica »Imam kodo« namesto treh polj (ovire na telefonu 2026-11-18): koda iz povezave je že vpisana.
   const code = koda || invite || ref;
+  // Besedila prek t() (P9, 21. 11. 2026): prej v kodi, v drugih jezikih je bil obrazec napol slovenski.
+  const landingNow = landingKnown;
+  const [privBefore, privAfter = ""] = t("auth.privacy").split("{link}");
+  const [invBefore, invAfter = ""] = t("auth.invited").split("{name}");
   shell(`
-    <h1>${mode === "login" ? "Prijava" : "Nov račun"}</h1>
-    <p class="muted">${mode === "login" ? "Za starše (otrokov profil) in za dijake ter študente (lasten profil)." : `Evklid je 7 dni brezplačen, brez kartice. Nato naročnina od ${eur(999)} na mesec ali brezplačni paket z omejenim številom vprašanj.`}</p>
-    ${invited ? `<p class="card">Ustvari svoj račun starša. Nato dodaš otrokov profil (<b>${esc(invited)}</b>) in s tem daš soglasje.</p>` : ""}
+    <h1>${esc(t(mode === "login" ? "mob.signIn" : "auth.registerTitle"))}</h1>
+    <p class="muted" id="auth-intro">${mode === "login" ? esc(t("auth.loginIntro")) : registerIntro(landingNow)}</p>
+    ${invited ? `<p class="card">${esc(invBefore)}<b>${esc(invited)}</b>${esc(invAfter)}</p>` : ""}
     <form id="auth-form" class="card form">
-      ${mode === "register" ? `<label>Tvoje ime (neobvezno) <input name="name" maxlength="60" autocomplete="name"></label>` : ""}
-      <label>E-naslov <input name="email" type="email" required autocomplete="email"></label>
-      <label>Geslo <input name="password" type="password" required minlength="8" autocomplete="${mode === "login" ? "current-password" : "new-password"}"></label>
+      ${mode === "register" ? `<label>${esc(t("guest.name"))} <input name="name" maxlength="60" autocomplete="name"></label>` : ""}
+      <label>${esc(t("mob.email"))} <input name="email" type="email" required autocomplete="email"></label>
+      <div class="pw-field">
+        <label for="auth-password">${esc(t("mob.password"))}</label>
+        <div class="pw-row">
+          <input id="auth-password" name="password" type="password" required minlength="8" autocomplete="${mode === "login" ? "current-password" : "new-password"}"${mode === "register" ? ' aria-describedby="auth-password-hint"' : ""}>
+          <button type="button" class="pw-toggle" aria-controls="auth-password" aria-pressed="false" aria-label="${esc(t("auth.showPassword"))}" title="${esc(t("auth.showPassword"))}">${icon("eye")}</button>
+        </div>
+        ${mode === "register" ? `<p class="muted small" id="auth-password-hint">${esc(t("mob.passwordShort"))}</p>` : ""}
+      </div>
       ${mode === "register" ? `
-        <label>Tvoj datum rojstva <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
+        <label>${esc(t("auth.birth"))} <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
         <details class="reg-code"${code ? " open" : ""}><summary>${esc(t("code.have"))}</summary>
           <label>${esc(t("code.label"))} <input name="code" maxlength="64" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-describedby="code-hint" value="${esc(code)}"></label>
           <p class="muted small" id="code-hint">${esc(t("code.hint"))}</p>
         </details>
         <label class="check"><input type="checkbox" name="accept_privacy" required>
-          <span>Prebral(a) sem <a href="/zasebnost.html" target="_blank">obvestilo o varstvu osebnih podatkov</a>. Račun ustvarjam zase (dijak ali študent) ali kot starš ali zakoniti zastopnik.</span></label>
+          <span>${esc(privBefore)}<a href="/zasebnost.html" target="_blank">${esc(t("auth.privacyLink"))}</a>${esc(privAfter)}</span></label>
         ${termsField("accept_terms")}` : ""}
       <p class="form-error" hidden></p>
-      <button class="primary" type="submit">${mode === "login" ? "Prijava" : "Ustvari račun"}</button>
+      <button class="primary" type="submit">${esc(t(mode === "login" ? "mob.signIn" : "mob.register"))}</button>
     </form>
     <p class="auth-links">
       ${mode === "login"
-        ? `Še nimaš računa? <a href="#" data-go="register">Registracija</a> · <a href="#" data-go="forgot">Pozabljeno geslo</a>`
-        : `Že imaš račun? <a href="#" data-go="login">Prijava</a>`}
+        ? `${esc(t("mob.noAccount"))} <a href="#" data-go="register">${esc(t("auth.registerLink"))}</a> · <a href="#" data-go="forgot">${esc(t("mob.forgot"))}</a>`
+        : `${esc(t("land.haveAccount"))} <a href="#" data-go="login">${esc(t("mob.signIn"))}</a>`}
     </p>
     <p class="auth-links"><a href="#" data-go="landing">${esc(t("land.what"))}</a></p>`);
+  bindPasswordToggle($("#auth-form"));
+  // Cena iz cenika (P9): če ob izrisu še ni prišla, jo dopolnimo, ko pride (isti klic kot pristajalna stran).
+  if (mode === "register" && !landingNow) {
+    loadLandingPrices().then((p) => {
+      const intro = $("#auth-intro");
+      if (p && intro && $("#auth-form")) intro.textContent = registerIntroText(p);
+    });
+  }
   bindLinks();
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();

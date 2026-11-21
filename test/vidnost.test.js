@@ -57,7 +57,10 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   assert.ok(meta(index, "property", "og:title") && meta(index, "property", "og:description") && meta(index, "property", "og:image"));
   assert.equal(meta(index, "name", "twitter:card"), "summary_large_image");
   // Opis za iskalnike in predogled povezave: naslov in uvod pristajalne strani (#750, land.title in land.lead v sl.js).
-  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo, vse šolsko leto."), desc);
+  // Matura v naslovu, opisu in predogledu (pregled javnih strani 21. 11. 2026, P1).
+  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo in maturo, vse šolsko leto."), desc);
+  assert.match(title, /maturo/);
+  assert.match(meta(index, "property", "og:title"), /maturo/);
   for (const k of ["og:description", "twitter:description"]) {
     const d = meta(index, k.startsWith("og") ? "property" : "name", k);
     assert.equal(d, `${SL["land.title"]} ${SL["land.lead"]}`, k);

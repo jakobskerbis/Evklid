@@ -3,7 +3,11 @@
 import "../env.js";
 import { randomToken, sha256, readCookie } from "./auth.js";
 
+// Ime ostane »sm_device« (iz časa prejšnjega imena), da obstoječe naprave obdržijo svoj id (zaklep profila, odklepi).
 export const DEVICE_COOKIE = "sm_device";
+// 400 dni: več brskalniki (Chrome) ne dovolijo; prej 2 leti (pregled javnih strani 21. 11. 2026, P6). Isti rok v
+// public/zasebnost.html (tabela piškotkov) in server/mobile/web-session.js.
+export const DEVICE_MAX_AGE = 400 * 86400;
 export const CLAIM_IDLE_MS = 30 * 60000; // po 30 minutah nedejavnosti profil prevzame druga naprava brez vprašanja
 export const SWAP_DAYS = 30;
 export const deviceWarnLimit = () => Number(process.env.EVKLID_DEVICE_WARN) || 3;
@@ -19,15 +23,35 @@ export class Devices {
     this.db = db;
   }
 
-  // Vrne id naprave; ob prvem obisku nastavi dolgotrajni piškotek.
+  // Vrne id naprave; ob prvem klicu na tej napravi nastavi piškotek naprave.
   identify(req, res) {
     let token = readCookie(req, DEVICE_COOKIE);
     if (!token || token.length < 20) {
       token = randomToken();
       const secure = req.secure ? "; Secure" : "";
-      res.append("Set-Cookie", `${DEVICE_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${2 * 365 * 86400}${secure}`);
+      res.append("Set-Cookie", `${DEVICE_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${DEVICE_MAX_AGE}${secure}`);
     }
     return sha256(token);
+  }
+
+  // req.deviceId za vsako zahtevo (pregled javnih strani 21. 11. 2026, P6): piškotek naprave potrebuje samo prijavljen
+  // uporabnik (profil na eni napravi hkrati, odklepi). S sejo (req.parent) ga določimo takoj, kot prej. Brez seje šele, ko
+  // ga koda res prebere (prijava, registracija, račun gosta ga preberejo, ko ustvarijo sejo), zato anonimni obiskovalec
+  // pristajalne strani, /api/account ali /api/account/prices piškotka ne dobi.
+  attach(req, res) {
+    if (req.parent) {
+      req.deviceId = this.identify(req, res);
+      return;
+    }
+    let id;
+    Object.defineProperty(req, "deviceId", {
+      configurable: true,
+      enumerable: true,
+      get: () => (id ??= this.identify(req, res)),
+      set: (v) => {
+        id = v;
+      },
+    });
   }
 
   // Zabeleži uporabo profila na napravi in preveri, ali ga ima trenutno druga naprava.

@@ -19,7 +19,7 @@ import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, P
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planOfPrice, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, unverifiedDayUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
-import { Mailer, inactiveEmail, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
+import { Mailer, esc, inactiveEmail, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail, ownerCodeEmail, skrbnikKodaEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT, CREDIT_WITHDRAWAL_TEXT, WITHDRAWAL_VERSION } from "./billing.js";
 import { insertBillingConsent, recordSignupTerms, sendPurchaseConfirmation, subItem, firstChargeText, termsAccepted, TERMS_ERROR, TERMS_VERSION, termsNotice, livePayBlocked, LIVE_BLOCKED } from "./potrdilo.js";
 import { mountWithdrawal, contractsFor } from "../placila/odstop.js";
@@ -52,7 +52,7 @@ import { parentFromMeta, unmatchedRecorder } from "./ponoven-id.js";
 import { isInviteCode, inviteHash, inviteHashValid, inviteUsed, ensureInviteUses, claimInvite } from "../vabila.js";
 import { setInviteSecret } from "../vabila-kode.js";
 import { appMark } from "../mobile/trgovina.js";
-import { IKONE_HEAD } from "../ikone.js";
+import { simplePage } from "../ni-strani.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -1082,7 +1082,7 @@ export function mountAccounts(app, store, opts = {}) {
       req.parent.is_admin = 0;
       req.skrbnikCaka = true;
     }
-    req.deviceId = devices.identify(req, _res);
+    devices.attach(req, _res); // piškotek naprave samo s sejo ali ko ga prijava res potrebuje (P6)
     next();
   });
 
@@ -1373,6 +1373,9 @@ export function mountAccounts(app, store, opts = {}) {
     guests.logCreated(net);
     const country = String(req.headers["cf-ipcountry"] || req.body?.country || "").toUpperCase();
     if (/^[A-Z]{2}$/.test(country)) db.prepare("UPDATE parents SET country = ? WHERE id = ?").run(country, id);
+    // Piškotek naprave skupaj s sejo (kot prijava in registracija): sicer bi vzporedne zahteve s samo sejo dobile vsaka
+    // svojo napravo in profil bi bil »odprt na drugi napravi« (pregled 2, točka 4).
+    void req.deviceId;
     setSessionCookie(req, res, sessions.create(id, GUEST_SESSION_DAYS));
     res.status(201).json({ parent: publicParent(getParent(id)) });
   });
@@ -2347,16 +2350,41 @@ export function mountAccounts(app, store, opts = {}) {
     });
   }
 
+  // Odjava od tedenskih poročil (pregled javnih strani 21. 11. 2026, P7). GET samo pokaže stran z gumbom: varnostni
+  // pregledovalniki pošte (Outlook Safe Links, Mimecast …) povezave v sporočilih odpirajo sami in bi starša odjavili brez
+  // klika. Odjavi šele POST: gumb na strani ali odjava z enim klikom iz programa za pošto (RFC 8058, glavi
+  // List-Unsubscribe in List-Unsubscribe-Post v reportFor). Žeton je v naslovu (?token=), pri gumbu tudi v telesu.
+  const unsubForm = express.urlencoded({ extended: false, limit: "2kb" });
+  const unsubParent = (token) => (/^[\w-]{1,200}$/.test(token) ? db.prepare("SELECT id, weekly_email FROM parents WHERE unsubscribe_token = ?").get(token) : null);
+  const unsubPage = (res, status, title, body) =>
+    res
+      .status(status)
+      .set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" })
+      .type("html")
+      .send(simplePage({ title, body }));
+  const unsubDone = (res) =>
+    unsubPage(res, 200, "Odjava je uspela", `<p>Tedenskih poročil ne boste več prejemali.</p><p class="muted">Znova jih vklopite v zavihku Račun.</p><a class="link" href="/">Odpri ${esc(BRAND.name)}</a>`);
+  const unsubBad = (res) => unsubPage(res, 404, "Povezava ni veljavna", `<p>Ta povezava za odjavo ne velja več.</p><p class="muted">Tedenska poročila izklopite v zavihku Račun.</p><a class="link" href="/">Odpri ${esc(BRAND.name)}</a>`);
   app.get("/api/account/unsubscribe", (req, res) => {
     const token = String(req.query.token || "");
-    const p = token && db.prepare("SELECT id FROM parents WHERE unsubscribe_token = ?").get(token);
-    if (p) update(p.id, { weekly_email: 0 });
-    res.type("html").send(
-      `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evklid</title>${IKONE_HEAD}` +
-        `<body style="font-family:sans-serif;max-width:480px;margin:40px auto;padding:0 16px"><h1>Evklid</h1><p>${
-          p ? "Tedenskih poročil ne boste več prejemali. Ponovno jih vklopite v zavihku Račun." : "Povezava ni veljavna."
-        }</p><p><a href="/">Odpri Evklid</a></p></body>`,
+    const p = unsubParent(token);
+    if (!p) return unsubBad(res);
+    if (!p.weekly_email) return unsubDone(res);
+    unsubPage(
+      res,
+      200,
+      "Odjava od tedenskih poročil",
+      `<p>Se želite odjaviti od tedenskega poročila o učenju, ki vam ga pošiljamo po e‑pošti?</p>
+<form method="post" action="/api/account/unsubscribe?token=${encodeURIComponent(token)}"><input type="hidden" name="token" value="${esc(token)}"><button class="btn" type="submit">Odjavi me</button></form>
+<a class="link" href="/">Ne, odpri ${esc(BRAND.name)}</a>`,
     );
+  });
+  app.post("/api/account/unsubscribe", unsubForm, (req, res) => {
+    const token = String(req.query.token || req.body?.token || "");
+    const p = unsubParent(token);
+    if (!p) return unsubBad(res);
+    if (p.weekly_email) update(p.id, { weekly_email: 0 });
+    unsubDone(res);
   });
 
   // --- otroci (nadomesti osnovni GET/POST /api/students) ---
@@ -3047,13 +3075,19 @@ export function mountAccounts(app, store, opts = {}) {
     const own = new Set(selfIds(parentId));
     return ids.every((id) => own.has(id));
   }
+  const unsubscribeUrlOf = (p, req) => `${baseUrl(req)}/api/account/unsubscribe?token=${encodeURIComponent(p.unsubscribe_token)}`;
   const reportFor = (p, req) =>
     buildWeeklyReport(db, p, children(p.id), {
       appUrl: baseUrl(req) + "/",
-      unsubscribeUrl: `${baseUrl(req)}/api/account/unsubscribe?token=${p.unsubscribe_token}`,
+      unsubscribeUrl: unsubscribeUrlOf(p, req),
       selfIds: selfIds(p.id),
       aiOf: (id) => aiUsage.studentMonth(id),
     });
+  // Odjava z enim klikom v Gmailu, Yahooju, Outlooku (RFC 8058): program za pošto pošlje POST na isti naslov (P7).
+  const reportMail = (p, req) => ({
+    ...reportFor(p, req),
+    headers: { "List-Unsubscribe": `<${unsubscribeUrlOf(p, req)}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
+  });
 
   app.get("/api/account/weekly-report/preview", (req, res) => res.type("html").send(reportFor(req.parent, req).html));
 
@@ -3061,7 +3095,7 @@ export function mountAccounts(app, store, opts = {}) {
     const p = req.parent;
     if (p.is_guest) return res.status(400).json({ error: "Najprej ustvari račun." });
     if (!childIds(p.id).length) return res.status(400).json({ error: "Najprej dodaj profil." });
-    const ok = await sendMail(p.email, reportFor(p, req));
+    const ok = await sendMail(p.email, reportMail(p, req));
     res.status(ok ? 200 : 502).json(ok ? { ok: true, dev: !mailer.enabled } : { error: "Pošiljanje ni uspelo." });
   });
 
@@ -3073,7 +3107,7 @@ export function mountAccounts(app, store, opts = {}) {
       if (!childIds(p.id).length) continue;
       // Že poslano ta teden: poročila ne sestavljamo znova (urnik teče vsakih 30 minut).
       if (db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = 'weekly' AND period = ?").get(p.id, period)) continue;
-      const report = reportFor(p, null);
+      const report = reportMail(p, null);
       if (report.quiet) continue; // dva tedna brez vaje: ne pošiljamo praznih poročil
       const claim = db.prepare("INSERT OR IGNORE INTO email_log (parent_id, kind, period) VALUES (?, 'weekly', ?)").run(p.id, period);
       if (!claim.changes) continue;
