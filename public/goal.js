@@ -129,9 +129,10 @@ const todayKey = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 const seenKey = (id) => `evklid.goalSeen.${id}`;
-export function reminderDue(student, now = new Date()) {
+// vadil: učenec je danes že zbral XP – kartice ni, kot ne e-pošte in obvestila (vadilDanes, pregled #917).
+export function reminderDue(student, now = new Date(), { vadil = false } = {}) {
   const s = student?.settings || {};
-  if (!s.goal_reminder || !validDate(s.goal_date)) return false;
+  if (vadil || !s.goal_reminder || !validDate(s.goal_date)) return false;
   const n = daysUntil(s.goal_date);
   if (n === null || n < 0 || now.getHours() < OPOMNIK_URA) return false;
   try {

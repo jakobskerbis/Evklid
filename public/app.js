@@ -3305,7 +3305,7 @@ function renderGoal() {
     chip.title = t("goal.change");
   }
   const rem = $("#goal-reminder");
-  rem.innerHTML = reminderDue(st) ? reminderCardHtml(st) : izris.maturaPonudbaHtml(t, s);
+  rem.innerHTML = opomnikDanes(st) ? reminderCardHtml(st) : izris.maturaPonudbaHtml(t, s);
   rem.hidden = !rem.innerHTML;
   renderGoalModes();
 }
@@ -3366,9 +3366,13 @@ wireDanes({
       .then((u) => (studentUpdated(u), yes && currentView === "path" && loadPath()))
       .catch((e) => toast(e.message)),
 });
+// Kartica opomnika ne na dan, ko je učenec že zbral XP (state.xp.today; refreshXp jo ob prvem XP skrije).
+function opomnikDanes(st) {
+  return reminderDue(st, new Date(), { vadil: state.xp?.sid === st.id && state.xp.today > 0 });
+}
 // Opomnik ob OPOMNIK_URA (goal-data.js), tudi če je aplikacija ves čas odprta.
 setInterval(() => {
-  if (state.student && currentView === "path" && $("#goal-reminder").hidden && reminderDue(state.student)) renderGoal();
+  if (state.student && currentView === "path" && $("#goal-reminder").hidden && opomnikDanes(state.student)) renderGoal();
 }, 5 * 60000);
 
 async function loadProgress() {
@@ -3634,6 +3638,7 @@ async function refreshXp() {
   const card = $("#xp-card .xp-stats");
   if (card) card.innerHTML = xpStatsHtml(x, prev);
   if (!$("#view-me").hidden) paintMeLevel();
+  if (x.today > 0 && $("#goal-reminder .gr-body")) renderGoal(); // danes že vadil: kartica opomnika izgine
   refreshModes();
   return x;
 }
