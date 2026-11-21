@@ -136,3 +136,12 @@ test("formula symbols: subject meanings, units after numbers, no chemistry formu
     if (u.c) katex.renderToString(u.c, { throwOnError: true, strict: "ignore" });
   }
 });
+
+test("settings registry tells the tutor the real reminder hour (OPOMNIK_URA), not 12:00", async () => {
+  const { PROFILE_SETTINGS } = await import("../public/settings-registry.js");
+  const { OPOMNIK_URA } = await import("../public/goal-data.js");
+  for (const k of ["goal_date", "goal_reminder"]) {
+    assert.match(PROFILE_SETTINGS[k].desc, new RegExp(`reminder at ${OPOMNIK_URA}:00`), k);
+    assert.doesNotMatch(PROFILE_SETTINGS[k].desc, /12:00/, k);
+  }
+});
