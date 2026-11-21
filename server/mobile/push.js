@@ -57,9 +57,11 @@ export function goalPushText(child, n) {
 const DEAD = `NOT EXISTS (SELECT 1 FROM parent_sessions s WHERE s.parent_id = push_tokens.parent_id AND s.expires_at > @now
   AND (push_tokens.session_hash IS NULL OR s.token_hash = push_tokens.session_hash))`;
 
-export function dropExpiredPushTokens(db, now = new Date()) {
+// Brez parentId za vse račune (dnevni krog), sicer samo za en račun (pred pošiljanjem).
+export function dropExpiredPushTokens(db, now = new Date(), parentId = null) {
   if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parent_sessions'").get()) return 0;
-  return db.prepare(`DELETE FROM push_tokens WHERE ${DEAD}`).run({ now: now.toISOString() }).changes;
+  if (parentId == null) return db.prepare(`DELETE FROM push_tokens WHERE ${DEAD}`).run({ now: now.toISOString() }).changes;
+  return db.prepare(`DELETE FROM push_tokens WHERE parent_id = @pid AND ${DEAD}`).run({ pid: parentId, now: now.toISOString() }).changes;
 }
 
 export function mountPush(app, ctx, opts = {}) {
@@ -88,7 +90,8 @@ export function mountPush(app, ctx, opts = {}) {
   });
 
   async function sendPush(parentId, { title, body, data = {} }) {
-    dropExpiredPushTokens(db);
+    // Samo žetoni z živo prijavo (dnevni krog sendGoalPushAll potečene že pobriše za vse račune).
+    dropExpiredPushTokens(db, new Date(), parentId);
     const tokens = db.prepare("SELECT token FROM push_tokens WHERE parent_id = ?").all(parentId).map((r) => r.token);
     if (!tokens.length) return 0;
     const r = await fetchFn(EXPO_PUSH, {

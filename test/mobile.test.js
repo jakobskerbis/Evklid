@@ -478,7 +478,8 @@ test("push tokens follow the login session: expired or logged-out session stops 
     assert.equal(dropExpiredPushTokens(db), 0);
     assert.deepEqual(tokens(), [T1]);
     db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE token_hash = ?").run("2000-01-01T00:00:00.000Z", row.session_hash);
-    assert.equal(dropExpiredPushTokens(db), 1, "potekla seja telefona: žeton gre");
+    assert.equal(dropExpiredPushTokens(db, new Date(), p.id + 1), 0, "samo za podani račun");
+    assert.equal(dropExpiredPushTokens(db, new Date(), p.id), 1, "potekla seja telefona: žeton gre");
     assert.deepEqual(tokens(), []);
 
     // Odjava, ki ne odjavi žetona (npr. telefon brez povezave ob odjavi), ga ne pusti vezanega.
