@@ -133,6 +133,8 @@ export function withSession(html, json) {
 // moduli delili počasno povezavo pred prvim izrisom.
 // kviz.css, competition.css in tipkovnica.css (tipkovnica se naloži po prvem izrisu, public/tipkovnica-lena.js): preverjeno
 // s posnetki Učne poti brez njih (telefon 390×844 in računalnik 1280×800, enaki do piksla).
+// leagues.css: njeno splošno pravilo za gumbe (button.secondary, button.ghost.small) je v style.css, ker velja tudi na
+// Učni poti, ki jo strežnik pošlje že izrisano (server/pot-takoj.js; brez njega so gumbi sklopov pred zagonom 2 px širši).
 export const SEJA_POZNEJE = ["vendor/nunito/index.css", "vendor/katex/katex.min.css", "textbook.css", "risbe.css", "leagues.css", "kviz.css", "competition.css", "scan.css", "games.css", "zbirke.css", "lab.css", "uci.css", "corner.css", "tipkovnica.css"];
 export function withSessionStyles(html) {
   const end = html.indexOf("</head>");
@@ -158,7 +160,8 @@ export function withSessionStyles(html) {
 // version: različica datotek (niz ali funkcija, ki jo vrne trenutno; server/razlicica.js liveStaticVersion).
 // landing(req): podatki za pristajalno stran (server/pristajalna-takoj.js landingPage) ali null.
 // seja(req): začetni podatki prijavljenega učenca (server/zacetni-podatki.js zacetniPodatki) ali null.
-export function entryPage(publicDir, { version = "", preload = true, landing = null, seja = null } = {}) {
+// pot(html, podatki, req): stran z Učno potjo (server/pot-takoj.js potTakoj) ali null (brez nje).
+export function entryPage(publicDir, { version = "", preload = true, landing = null, seja = null, pot = null } = {}) {
   const ver = typeof version === "function" ? version : () => version;
   const file = path.join(publicDir, "index.html");
   // Jedro besedil se izračuna enkrat ob zagonu (EVKLID_SL_JEDRO=0: brez, za primerjavo); napaka: stran brez jedra.
@@ -189,9 +192,11 @@ export function entryPage(publicDir, { version = "", preload = true, landing = n
     return { v, ...x };
   };
   // Osebna stran (začetni podatki): sestavljena in stisnjena za vsako zahtevo (hitrejša stopnja stiskanja), nikjer shranjena.
-  const osebna = (req, res, page, json) => {
+  const osebna = (req, res, page, p) => {
     built.seja ||= withSlJedro(withSessionStyles(built.html), jedro);
-    const raw = Buffer.from(withSession(built.seja, json));
+    // Učna pot, izrisana na strežniku (server/pot-takoj.js), za učenca z enim profilom; brez nje okostje kot prej.
+    const s = pot && p.podatki ? pot(built.seja, p.podatki, req) : built.seja;
+    const raw = Buffer.from(withSession(s, p.json));
     const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Vary", "Accept-Encoding, Accept-Language, Cookie");
@@ -223,7 +228,7 @@ export function entryPage(publicDir, { version = "", preload = true, landing = n
       }
       // Piškotek notranjega klica (npr. nova naprava) dobi brskalnik tudi brez podatkov, kot bi ga dobil klic API.
       for (const c of p?.cookies || []) res.append("Set-Cookie", c);
-      if (p?.json && built) return osebna(req, res, page, p.json);
+      if (p?.json && built) return osebna(req, res, page, p);
     }
     const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
     const etag = enc ? page.etag.replace(/"$/, `-${enc}"`) : page.etag;

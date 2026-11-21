@@ -59,7 +59,7 @@ test("prijavljen: naključna števila so v [0, 1) in ponovljiva; merilnik v stra
   // addInitScript pošlje besedilo funkcije: brez sklicev na uvoze modula.
   const src = MERILNIK_PRIJAVLJEN.toString();
   for (const ime of ["nacrtUcenca", "povzemiZahteve", "nakljucno", "import"]) assert.ok(!src.includes(ime), ime);
-  for (const s of ["#view-path #xp-card .hero", "#view-chat #input", "#messages .msg.assistant", "__cakaj", "__tPot"]) assert.ok(src.includes(s), s);
+  for (const s of ["#view-path #xp-card .hero", "#view-chat #input", "#messages .msg.assistant", "__cakaj", "__tPot", "__tApp", "main#view-path:not([data-posnetek])"]) assert.ok(src.includes(s), s);
 });
 
 test("prijavljen: skripta pozna del »prijavljen«, privzeto ga ne zažene", () => {

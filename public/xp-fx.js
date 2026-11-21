@@ -5,47 +5,17 @@
 import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { levelProgress, crossedMilestone, reasonKey } from "./xp-levels.js";
+import * as izris from "./zacetna.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("lite");
 
 // ---------- prikaz ----------
 
-// Raven z vrstico napredka (kartica na Učni poti, stran Jaz).
-// prev: prejšnji povzetek, da se vrstica napolni od prejšnjega stanja (ob novi ravni od začetka).
-export function levelRowHtml(x, prev = null) {
-  const lp = levelProgress(x.total);
-  const before = prev && levelProgress(prev.total).level === lp.level ? levelProgress(prev.total).pct : 0;
-  return `<div class="lvl-row">
-    <span class="lvl-badge" aria-hidden="true">${icon("star")}<b>${lp.level}</b></span>
-    <div class="lvl-main">
-      <div class="lvl-top"><b>${esc(t("xp.level", { n: lp.level }))}</b><span>${esc(t("xp.toNext", { xp: lp.to - x.total, n: lp.level + 1 }))}</span></div>
-      <div class="lvl-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${lp.pct}" aria-label="${esc(t("xp.toNext", { xp: lp.to - x.total, n: lp.level + 1 }))}"><i style="--p:${lp.pct / 100};--from:${before / 100}"></i></div>
-    </div>
-  </div>`;
-}
-
-// Dnevni cilj: krog, ki se polni z današnjim XP (ob doseženem cilju zlat s kljukico).
-export function goalRingHtml(x) {
-  const goal = x.goal || 50;
-  const today = x.today || 0;
-  const pct = Math.min(100, Math.round((today / goal) * 100));
-  const done = today >= goal;
-  return `<div class="goal-cell${done ? " done" : ""}">
-    <span class="goal-ring" style="--p:${pct}" role="img" aria-label="${esc(t("xp.goalShort", { today, goal }))}">${done ? icon("check") : `<b>${today}</b>`}</span>
-    <span>${esc(t("xp.goalShort", { today, goal }))}</span>
-  </div>`;
-}
-
-// Kartica pod Današnjim treningom: raven + dnevni cilj, XP v tednu in niz dni.
-export function xpStatsHtml(x, prev = null) {
-  return `${levelRowHtml(x, prev)}
-    <div class="stats-row">
-      ${goalRingHtml(x)}
-      <div><b>${x.week}</b><span>${esc(t("stats.week"))}</span></div>
-      <div><b>${x.streak}</b><span>${esc(t("stats.streak", { n: x.streak }))}</span></div>
-    </div>`;
-}
+// Raven, dnevni cilj in kartica pod Današnjim treningom: izris je skupen s strežnikom (public/zacetna.js).
+export const levelRowHtml = (x, prev = null) => izris.levelRowHtml(t, x, prev);
+export const goalRingHtml = (x) => izris.goalRingHtml(t, x);
+export const xpStatsHtml = (x, prev = null) => izris.xpStatsHtml(t, x, prev);
 
 // Za kaj je bil XP (pravilno, popravljena napaka, niz dni …) in koliko še do dnevnega cilja.
 export function xpItemsHtml(xp) {

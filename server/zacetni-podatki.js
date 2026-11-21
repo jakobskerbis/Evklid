@@ -161,6 +161,7 @@ export function zacetniPodatki(app) {
     }
     const parts = Object.entries(d).map(([url, txt]) => `${JSON.stringify(url)}:${txt}`);
     const json = varenJson(`{"s":${s ? s.id : "null"},"d":{${parts.join(",")}}}`);
-    return { json, cookies, student: s ? s.id : null };
+    // podatki: za Učno pot v strani (server/pot-takoj.js), ki jo sestavi iz istih odgovorov.
+    return { json, cookies, student: s ? s.id : null, podatki: s ? { s, d } : null };
   };
 }

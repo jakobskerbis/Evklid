@@ -68,14 +68,15 @@ import { gamesOn, backgroundLoadOk } from "./games/stage.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
 import { initSchedule, renderScheduleCard, lastSchedule } from "./urnik-kartica.js";
-import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
+import { stageCardHtml, vrstniRed, uvrstiKartice } from "./zacetna.js";
 import { initAnketa, preveriAnketo } from "./anketa-teden.js";
 import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initTestNotice } from "./testna-verzija.js";
 import { xpStatsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
+import * as izris from "./zacetna.js"; // izris Učne poti, skupen s strežnikom (server/pot-takoj.js)
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml } from "./goal.js";
-import { goalShortcuts, goalTabbarView } from "./goal-data.js";
+import { goalTabbarView } from "./goal-data.js";
 import { loadPapers, paperLabel, fileText, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 // Zasloni, ki niso Učna pot (naloga hitrost, docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2): skener z
 // reševalnikom (scan/, ~65 KB stisnjeno) ter zbirke, avatar in lige (~55 KB) niso več del zagona. Naložijo se takoj po
@@ -720,13 +721,14 @@ function showView(name) {
 // lekcijo Učbenika ali temo), če od zadnjega obiska ni minilo več kot 12 ur. Zapis se osveži ob vsaki menjavi
 // pogleda in ko stran izgine z zaslona (čas zadnjega obiska, lekcija, odprta med branjem kazala).
 const ZACETEK = window.evklidZacetek || null;
+ZACETEK?.zacel?.(); // od tu klik iz skripte ni dotik pred zagonom (public/zacetek.js tapZadrzi)
 let startRec = ZACETEK?.beri() ?? null; // prebrano pred prvim showView, ki zapis prepiše
 let startHold = true; // do konca zagona (start) Učna pot ostane skrita: vmesni showView("path") ne sme utripniti
 // Konec zagona: oznaki na <html> in posnetek zadnjega zaslona izginejo skupaj, pravi pogled se pokaže v istem izrisu.
 const startShot = () => document.querySelector("main[data-posnetek]");
 const startDone = () => {
   zasloniPozneje(); // moduli drugih zaslonov po prvem izrisu (zgoraj)
-  if (ZACETEK?.konec) return ZACETEK.konec();
+  if (ZACETEK?.konec) return ZACETEK.konec(true); // true: app.js je pripravljen (dotik na Učni poti s strežnika se izvede)
   document.documentElement.removeAttribute("data-zacetek");
 };
 // Posnetek pripnemo na njegovo mesto, pravi pogled se pod njim izriše neviden (style.css html[data-zacetek-pod]).
@@ -742,6 +744,7 @@ function pinSnapshot() {
 // mark: zadnji klic pred zadnjim zaslonom (Učne poti pod njim ne čakamo); null: čakamo vse.
 function finishStart(mark = null) {
   startHold = false;
+  ZACETEK?.gotov?.(); // dotik zavihka med čakanjem spodaj gre takoj naprej (Učna pot s strežnika ga še zadrži)
   // Modul posnetka vnaprej (v miru): ob pagehide se ne naloži več pravočasno.
   setTimeout(() => (window.requestIdleCallback || setTimeout)(loadShot), 1500);
   if (!startShot()) return startDone();
@@ -3256,16 +3259,6 @@ function renderGoal() {
 
 // Domači zaslon po cilju: dve bližnjici na Učni poti, pri NPZ, maturi, tekmovanju in izpitu nad načini učenja
 // (public/goal-data.js → goalShortcuts). Videz je isti kot pri načinih; vse ostane dosegljivo tudi v meniju.
-const GOAL_MODES = {
-  scan: ["scan-line", "scan.title", "scan.meSub"],
-  games: ["gamepad-2", "nav.games", "games.meSub"],
-  chat: ["message-circle", "nav.chat", "goal.mChatSub"],
-  textbook: ["book-open", "nav.textbook", "goal.mTextbookSub"],
-  exams: ["clipboard-check", "nav.examsSi", "exam.meSub"],
-  izpiti: ["clipboard-check", "nav.exams", "exam.title"],
-  tek: ["medal", "session.tek", "goal.mTekSub"],
-  contest: ["timer", "session.contest", "goal.mContestSub"],
-};
 // Cilj »test« premakne Pripravo na test na prvo mesto; ob drugem cilju gre nazaj pred svojega prejšnjega soseda.
 // Le ta gumb, da ostane red, ki ga je učenec nastavil s potegom (public/vrstice.js).
 let testModeNext; // undefined: ni premaknjen; sicer gumb (ali null = konec), pred katerim je bil
@@ -3275,23 +3268,8 @@ function renderGoalModes() {
   const bar = $("#modebar");
   if (!st || !box || !bar) return;
   const s = st.settings;
-  const { first, items } = goalShortcuts(s);
-  // Kar že odpre kartica stopnje (public/zacetna.js: OŠ igre, SŠ matura, faks Moj študij), tu nadomesti druga bližnjica.
-  const shown = stageRows(stopnja(s), { games: gamesOn(s), exams: siExams() });
-  const list = items
-    .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
-    .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
-    .filter((k) => !shown.includes(k))
-    .filter((k) => k !== "scan") // »Skeniraj nalogo« je že vrstica v #xp-card tik pod današnjim treningom (j, 18. 11. 2026)
-    .filter((k, i, a) => a.indexOf(k) === i);
-  // Nadomestki ne smejo podvojiti kartice stopnje (shown) niti ponuditi izklopljenih iger.
-  for (const alt of ["chat", "textbook", "games"]) if (list.length < 2 && !list.includes(alt) && !shown.includes(alt) && (alt !== "games" || gamesOn(s))) list.push(alt);
-  box.innerHTML = list
-    .map((k) => {
-      const [ic, name, sub] = GOAL_MODES[k];
-      return `<button type="button" data-gm="${k}"><span class="ic">${icon(ic)}</span><span class="m-name">${t(name)}</span><span class="m-sub">${t(sub)}</span></button>`;
-    })
-    .join("");
+  const { first, list } = izris.goalModes(s, { level: stopnja(s), games: gamesOn(s), siExams: siExams(), regionalExams: regionalExams() });
+  box.innerHTML = izris.goalModesHtml(t, list);
   box.hidden = !list.length;
   if (first) bar.before(box);
   else bar.after(box);
@@ -3568,13 +3546,8 @@ function localStorageRemove(k) {
 
 // ---------- učna pot ----------
 
-const LEVEL_NAMES = { 1: t("level.1"), 2: t("level.2"), 3: t("level.3") };
-const NODE = {
-  due: ["rotate-ccw", t("node.due")],
-  mastered: ["check", t("node.mastered")],
-  learning: ["pencil", t("node.learning")],
-  new: ["play", t("node.new")],
-};
+const LEVEL_NAMES = izris.levelNames(t);
+const NODE = izris.nodeNames(t);
 // Tekmovalni razdelek ima svoja imena težavnosti: tudi najlažja raven je nad rednim poukom.
 const COMP_LEVEL_NAMES = { 1: t("level.comp1"), 2: t("level.comp2"), 3: t("level.comp3") };
 const isCompTopic = (id) => /^(MAT|FIZ|KEM)-TEK-/.test(String(id || ""));
@@ -3765,8 +3738,7 @@ async function loadPath(key = state.pathKey) {
       : "";
   $(".path-head").classList.toggle("fixed", !uni);
   // Napis v jeziku učenca: »Matematika, 2. letnik« → »Mathematics, Year 2« (oznaka poti s strežnika je slovenska).
-  const lvl = /^(.+), (\d+\. (?:razred|letnik).*)$/.exec(own?.label || "");
-  $("#path-level").textContent = lvl ? [SUBJECT_NAMES[own.subject] || lvl[1], levelLabel(lvl[2])].join(document.documentElement.dir === "rtl" ? "، " : ", ") : own?.label || p.label || "";
+  $("#path-level").textContent = izris.pathLevelText(t, own, p, document.documentElement.dir === "rtl");
   // Povezava na Učbenik, kadar so pred to potjo nižji razredi/letniki istega predmeta
   // (ali kadar za to raven poti še ni, a ima predmet druge poti).
   $("#path-lower").hidden = uni || (own ? paths.indexOf(own) < 1 : !paths.length);
@@ -3798,22 +3770,9 @@ async function loadPath(key = state.pathKey) {
     $("#path-note").innerHTML = `${t(prog.degree === "EMŠ" ? "path.emsNote" : "path.uniNote", { faculty: escapeHtml(prog.facultyName), program: escapeHtml(prog.name), year: escapeHtml(prog.sourceYear || "") })} ${prog.source ? `<a href="${escapeHtml(prog.source)}" target="_blank" rel="noopener">${t("path.uniSource")}</a>.` : ""}`;
   }
   renderGoal();
-  const x = p.xp;
   const done = state.modes?.daily?.done;
-  $("#xp-card").innerHTML = `
-    <div class="hero">
-      <div class="hero-icon">${icon("zap")}</div>
-      <div class="hero-text"><h2>${t("daily.title")}</h2><p>${done ? t("daily.doneText") : t("daily.text")}</p></div>
-      <button class="primary big" data-daily>${done ? t("daily.again") : t("daily.start")}</button>
-    </div>
-    ${document.getElementById("view-scan") ? `<button type="button" class="next-row scan-path-row" data-scan-home><span class="eyebrow">${t("scan.title")}</span><span class="next-name">${t("scan.meSub")}</span>${icon("camera")}</button>` : ""}
-    ${
-      p.next
-        ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
-        : `<div class="next-row done">${icon("trophy")}<span class="next-name">${t("path.allDone")}</span></div>`
-    }
-    ${gamesOn(state.student.settings) ? `<button type="button" class="next-row dz-path-row" data-dnevna><span class="eyebrow">${t("dz.title")}</span><span class="next-name">${t("dz.statusNew")}</span>${icon("puzzle")}</button>` : ""}
-    <div class="xp-stats">${xpStatsHtml(x)}</div>`;
+  // Izris skupen s strežnikom (public/zacetna.js, server/pot-takoj.js): Učna pot v prvem odgovoru strani je enaka.
+  $("#xp-card").innerHTML = izris.xpCardHtml(t, { p, done, scan: !!document.getElementById("view-scan"), games: gamesOn(state.student.settings) });
   // Dnevna uganka (public/games/daily.js): stanje v ozadju; rešena danes → niz dni.
   if (gamesOn(state.student.settings)) {
     const sid = state.student.id;
@@ -3825,40 +3784,9 @@ async function loadPath(key = state.pathKey) {
       .catch(() => {});
   }
 
-  content.innerHTML =
-    `<div class="legend">${["mastered", "learning", "due"].map((k) => `<span class="lg ${k}">${icon(NODE[k][0])}${NODE[k][1]}</span>`).join("")}</div>` +
-    p.units
-      .map((u, ui) => {
-        const rel = u.topics.filter((t) => t.practice).length ? u.topics.filter((t) => t.practice) : u.topics;
-        const nDone = rel.filter((t) => t.status === "mastered").length;
-        const pct = Math.round(u.progress * 100);
-        return `<section class="unit card ${u.ahead ? "ahead" : ""} ${u.mastered ? "mastered" : ""}">
-        <div class="unit-head">
-          <div class="ring" style="--p:${pct}">${u.mastered ? icon("award") : `<span>${pct}%</span>`}</div>
-          <div class="unit-title"><span class="eyebrow">${t("unit.label", { n: ui + 1 })}</span><h2>${escapeHtml(u.title)}</h2>
-            <span class="muted">${u.suggest ? t("unit.aheadNote", { unit: `<bdi>${escapeHtml(u.suggest.unit)}</bdi>` }) : t("unit.progress", { done: nDone, total: rel.length })}</span></div>
-        </div>
-        <ol class="path">
-          ${u.topics
-            .map((tp) => {
-              const st = tp.due ? "due" : tp.status;
-              const isNext = p.next && p.next.id === tp.id;
-              const sub = NODE[st][1] + (tp.practice && tp.status === "learning" ? ` · ${LEVEL_NAMES[tp.level]}` : "");
-              return `<li><button class="node ${st} ${isNext ? "current" : ""}" data-open="${tp.id}">
-                <span class="node-dot">${icon(NODE[st][0])}</span>
-                <span class="node-text"><span class="node-name">${escapeHtml(tp.name)}</span><span class="node-sub">${isNext ? t("node.nextPrefix") : ""}${sub}</span></span>
-              </button></li>`;
-            })
-            .join("")}
-        </ol>
-        <div class="unit-actions">
-          ${u.hasPractice && u.started ? `<button class="secondary small" data-unit="${ui}">${icon("puzzle")}${t("unit.practice")}</button>` : ""}
-          ${u.hasPractice && !u.mastered ? `<button class="secondary small" data-placement="${ui}">${icon("target")}${u.ahead ? t("unit.skipTest") : t("unit.test")}</button>` : ""}
-        </div>
-      </section>`;
-      })
-      .join("") +
-    greekFactHtml("gr-path");
+  // Dejstvo na dnu: prvič isto kot na Učni poti s strežnika (public/zacetek.js), sicer naključno.
+  const prvo = ZACETEK?.dejstvo?.();
+  content.innerHTML = izris.pathUnitsHtml(t, p) + greekFactHtml("gr-path", prvo);
   wireGreekFacts(content);
   prefetchTopics(); // teme, ki jih učenec verjetno odpre: vsebina v miru vnaprej (odprtje brez čakanja strežnika)
   // Kartice (gumb nad potjo): seznam kartic te poti vnaprej, enak naslov kot public/flashcards.js showFlashcards.
@@ -4629,6 +4557,7 @@ const serverReach = () =>
 async function bootFailed(err) {
   console.error(err);
   startHold = false;
+  ZACETEK?.konec?.(); // brez dotika iz zagona: zagon ni uspel
   startDone();
   if (document.getElementById("boot-down") || (await serverReach()) === "ok") return;
   const box = document.createElement("div");

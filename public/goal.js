@@ -3,7 +3,7 @@
 // kartica v aplikaciji (ko jo odpreš po 12.00) in, z računom, e-pošta (server/accounts/goal-reminder.js).
 import { t, locale } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
-import { goalsFor, daysUntil, validDate, DEFAULT_GOAL } from "./goal-data.js";
+import { goalsFor, daysUntil, validDate, DEFAULT_GOAL, hasGoal } from "./goal-data.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const goalName = (g) => t(`goal.${g || DEFAULT_GOAL}`);
@@ -33,7 +33,7 @@ export function goalSummary(settings = {}) {
   if (validDate(settings.goal_date)) parts.push(fmtDate(settings.goal_date), countdown(settings.goal_date));
   return parts.join(" · ");
 }
-export const hasGoal = (s = {}) => (s.goal && s.goal !== DEFAULT_GOAL) || validDate(s.goal_date);
+export { hasGoal }; // public/goal-data.js (tudi strežnik: server/pot-takoj.js)
 
 // Polja za obrazec (nov profil in Nastavitve). withReminder: stikalo za opomnik in gumb Izbriši datum.
 export function goalFieldsHtml(settings = {}, { withReminder = false, idPrefix = "goal" } = {}) {

@@ -1733,6 +1733,9 @@ async function prijavljenVBrskalniku(vhod, u, naprava) {
       await page.goto(vhod.base + "/", { waitUntil: "commit", timeout: 180_000 });
       await page.waitForSelector("#view-path #xp-card .hero", { timeout: 180_000 }).catch(() => napake.push(`${obisk}: Učna pot ni uporabna v 180 s`));
       const potMs = await page.evaluate(() => window.__tPot).catch(() => null);
+      // app.js zagnan (Učna pot s strežnika ali posnetek je pred tem že na zaslonu, dotiki se izvedejo ob zagonu).
+      await page.waitForFunction(() => window.__tApp !== null, null, { timeout: 180_000 }).catch(() => napake.push(`${obisk}: app.js ni zagnan v 180 s`));
+      const appMs = await page.evaluate(() => window.__tApp).catch(() => null);
       // Datoteke, prenesene do uporabne Učne poti (za iskanje, kaj jo še zadržuje): pot, KB po omrežju, konec v ms.
       const viri = await page
         .evaluate(() =>
@@ -1816,6 +1819,7 @@ async function prijavljenVBrskalniku(vhod, u, naprava) {
       const dolge0 = v0.dolge;
       out.obiski[obisk] = {
         potMs: r1(potMs),
+        appMs: r1(appMs),
         viriDoPoti: viri,
         loadMs: r1(loadMs),
         ttiMs,
@@ -2449,12 +2453,12 @@ function povzetek(R) {
     );
     L.push(`Protokol: ${p.protokol}.`);
     L.push(`Učenec: ${JSON.stringify(p.ucenec)}${p.baza ? `; sintetična baza ${JSON.stringify(p.baza)}` : ""}. EVKLID_MOCK_DELAY_MS=${n.mockZamikMs} (prvi znak brez časa pravega modela).\n`);
-    L.push("| Naprava | obisk | Učna pot uporabna | interaktivno | FCP | LCP | CLS (odpiranje / skupaj) | INP | dolge naloge (najdaljša) | zahtev (po omrežju) | prenos KB (+ service worker) | Inštruktor: polje / interaktivno | dolgi pogovor / interaktivno | prvi znak |");
-    L.push("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
+    L.push("| Naprava | obisk | Učna pot uporabna | app.js zagnan | interaktivno | FCP | LCP | CLS (odpiranje / skupaj) | INP | dolge naloge (najdaljša) | zahtev (po omrežju) | prenos KB (+ service worker) | Inštruktor: polje / interaktivno | dolgi pogovor / interaktivno | prvi znak |");
+    L.push("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
     for (const [ime, x] of Object.entries(p.naprave || {}))
       for (const [obisk, o] of Object.entries(x.obiski))
         L.push(
-          `| ${ime} | ${obisk} | ${o.potMs} | ${o.ttiMs} | ${o.fcpMs} | ${o.lcpMs} (${o.lcpElement}) | ${o.clsOdpiranje} / ${o.cls} | ${o.inpMs ?? "–"} | ${o.dolgihOdpiranje} (${o.najdaljsaOdpiranjeMs}) | ${o.odpiranje.zahtev} (${o.odpiranje.mreznih}) | ${o.odpiranje.prenosKB} (+${o.odpiranje.swKB}) | ${o.vnos?.pripravljeno ?? "–"} / ${o.vnos?.interaktivno ?? "–"} | ${o.pogovor?.pripravljeno ?? "–"} / ${o.pogovor?.interaktivno ?? "–"} | ${o.znak?.pripravljeno ?? "–"} |`,
+          `| ${ime} | ${obisk} | ${o.potMs} | ${o.appMs ?? "–"} | ${o.ttiMs} | ${o.fcpMs} | ${o.lcpMs} (${o.lcpElement}) | ${o.clsOdpiranje} / ${o.cls} | ${o.inpMs ?? "–"} | ${o.dolgihOdpiranje} (${o.najdaljsaOdpiranjeMs}) | ${o.odpiranje.zahtev} (${o.odpiranje.mreznih}) | ${o.odpiranje.prenosKB} (+${o.odpiranje.swKB}) | ${o.vnos?.pripravljeno ?? "–"} / ${o.vnos?.interaktivno ?? "–"} | ${o.pogovor?.pripravljeno ?? "–"} / ${o.pogovor?.interaktivno ?? "–"} | ${o.znak?.pripravljeno ?? "–"} |`,
         );
     for (const [ime, x] of Object.entries(p.naprave || {})) if (x.napake?.length) L.push(`\n${ime}: ${x.napake.join("; ")}`);
   }
