@@ -4058,7 +4058,7 @@
   "chat.deleted": "会話を削除しました。",
   "land.subjects": "数学 · 物理 · 化学 · 生物",
   "land.title": "宿題でつまずいたら、Evklid が次の一歩を示します。",
-  "land.lead": "高校生向け、学年を通して使えます。Evklid は代わりに解きません。どう始めるかを聞き、ヒントで答えまで導きます。",
+  "land.lead": "高校生と卒業試験（マトゥーラ）向け、学年を通して使えます。Evklid は代わりに解きません。どう始めるかを聞き、ヒントで導きます。",
   "land.start": "無料で始める",
   "land.trial": {
     "other": "{n} 日間無料、カード登録は不要です。"
@@ -4091,6 +4091,14 @@
   "land.provider": "{app} の現在の運営者：{name}",
   "land.contact": "お問い合わせ",
   "land.noJs": "ブラウザーで登録・ログインするには JavaScript をオンにしてください。",
+  "land.prices": "料金",
+  "land.trustLabel": "プライバシーの要点",
+  "land.trust.eu": "サーバーとデータベースはEU内（フランクフルト）",
+  "land.trust.ads": "広告もトラッカーもなし",
+  "land.trust.ai": "Anthropic はデータをモデルの学習に使いません",
+  "land.trust.more": "プライバシーの詳細",
+  "price.levels": "その後は月額{price}からのサブスクリプション（高校は{ss}）、または質問数に上限のある無料プラン。",
+  "price.one": "その後は月額{price}のサブスクリプション、または質問数に上限のある無料プラン。",
   "pay.perStudyYear": "年度（大学）",
   "pay.yearPerMonth": "≈ {price} / 月（10か月）",
   "pay.secureCancel": "お支払いは Stripe を通じて安全に処理されます。サブスクリプションはいつでも解約できます。",

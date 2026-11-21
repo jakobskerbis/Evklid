@@ -4058,7 +4058,7 @@
   "chat.deleted": "Đã xóa cuộc trò chuyện.",
   "land.subjects": "Toán · Vật lý · Hóa học · Sinh học",
   "land.title": "Bí bài tập về nhà? Evklid chỉ cho em bước tiếp theo.",
-  "land.lead": "Dành cho THPT, suốt cả năm học. Evklid không giải bài thay em: hỏi em sẽ bắt đầu thế nào và dùng gợi ý dẫn em đến lời giải.",
+  "land.lead": "Dành cho THPT và kỳ thi tốt nghiệp (matura), suốt cả năm học. Evklid không giải bài thay em: hỏi em sẽ bắt đầu thế nào và dẫn dắt em bằng gợi ý.",
   "land.start": "Bắt đầu miễn phí",
   "land.trial": {
     "other": "Miễn phí {n} ngày, không cần thẻ."
@@ -4091,6 +4091,14 @@
   "land.provider": "{app} hiện do {name} vận hành",
   "land.contact": "Liên hệ",
   "land.noJs": "Để đăng ký và đăng nhập trên trình duyệt, hãy bật JavaScript.",
+  "land.prices": "Bảng giá",
+  "land.trustLabel": "Tóm tắt về quyền riêng tư",
+  "land.trust.eu": "Máy chủ và cơ sở dữ liệu ở EU (Frankfurt)",
+  "land.trust.ads": "Không quảng cáo, không theo dõi",
+  "land.trust.ai": "Anthropic không dùng dữ liệu để huấn luyện mô hình",
+  "land.trust.more": "Thêm về quyền riêng tư",
+  "price.levels": "Sau đó là gói đăng ký từ {price} mỗi tháng (THPT {ss}) hoặc gói miễn phí với số câu hỏi giới hạn.",
+  "price.one": "Sau đó là gói đăng ký {price} mỗi tháng hoặc gói miễn phí với số câu hỏi giới hạn.",
   "pay.perStudyYear": "năm học đại học",
   "pay.yearPerMonth": "≈ {price} / tháng (10 tháng)",
   "pay.secureCancel": "Thanh toán được xử lý an toàn qua Stripe. Bạn có thể hủy gói đăng ký bất cứ lúc nào.",

@@ -5,7 +5,7 @@ import { systemForCountry } from "./regions.js";
 import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n-osnova.js";
 import { dateText } from "./datum.js";
 import { openProfileMenu } from "./profile-menu.js";
-import { termsField, clearCheckout, watchReturnFromPay } from "./pay-ui.js";
+import { termsField, clearCheckout, watchReturnFromPay, isStoreApp } from "./pay-ui.js";
 import { clearPrivate, checkOwner, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
@@ -556,7 +556,7 @@ async function renderLanding() {
   // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo.
   if (status?.logged_in || hashMode()) return;
   const name = document.querySelector(".topbar .brand-name")?.textContent || "";
-  const html = landingHtml(t, { name, prices });
+  const html = landingHtml(t, { name, prices, store: isStoreApp() }); // aplikacija iz trgovine: brez cene (P2)
   const box = $("#view-auth");
   // Stran s strežnika ostane, ko je enaka (sicer bi se pogovor v primeru znova animiral); brez cen (počasna povezava)
   // ostane tudi, ker ima cene s strežnika. Enak izris: brez utripa in brez ponovne animacije, ko cene pridejo pozneje.

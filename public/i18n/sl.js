@@ -4307,7 +4307,8 @@ export default {
   // Pristajalna stran za nove obiskovalce pred prijavo (public/pristajalna.js, j 2026-11-04)
   "land.subjects": "Matematika · Fizika · Kemija · Biologija",
   "land.title": "Ko se pri domači nalogi zatakne, ti Evklid pokaže naslednji korak.",
-  "land.lead": "Za gimnazijo, vse šolsko leto. Evklid ne reši naloge namesto tebe: vpraša, kako bi začel, in te z namigi vodi do rešitve.",
+  // Matura v uvodu (pregled javnih strani 21. 11. 2026, P1; možnosti za j: izboljsave-nove/po-p/besedila-pristajalna.md)
+  "land.lead": "Za gimnazijo in maturo, vse šolsko leto. Evklid ne reši naloge namesto tebe: vpraša, kako bi začel, in te vodi z namigi.",
   "land.start": "Začni brezplačno",
   "land.trial": { "one": "{n} dan brezplačno, brez kartice.", "two": "{n} dneva brezplačno, brez kartice.", "few": "{n} dnevi brezplačno, brez kartice.", "other": "{n} dni brezplačno, brez kartice." },
   "land.demoLabel": "Primer pogovora z inštruktorjem",
@@ -4338,6 +4339,16 @@ export default {
   "land.provider": "{app} trenutno upravlja {name}",
   "land.contact": "Kontakt",
   "land.noJs": "Za registracijo in prijavo vklopi JavaScript v brskalniku.",
+  // Cena, pas zaupanja in spodnji gumb na pristajalni strani (P2, 21. 11. 2026); price.* tudi v obrazcu za registracijo.
+  // Zneski pridejo s strežnika (/api/account/prices), zato {price} in {ss}.
+  "land.prices": "Cene",
+  "land.trustLabel": "Zasebnost na kratko",
+  "land.trust.eu": "Strežnik in baza v EU (Frankfurt)",
+  "land.trust.ads": "Brez oglasov in sledilnikov",
+  "land.trust.ai": "Anthropic podatkov ne uporablja za učenje modelov",
+  "land.trust.more": "Več o zasebnosti",
+  "price.levels": "Nato naročnina od {price} na mesec (srednja šola {ss}) ali brezplačni paket z omejenim številom vprašanj.",
+  "price.one": "Nato naročnina {price} na mesec ali brezplačni paket z omejenim številom vprašanj.",
   "open.group": "Odpri v aplikaciji",
   "open.sim": "Poskus",
   "open.3d": "3D",

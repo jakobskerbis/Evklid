@@ -104,7 +104,8 @@ export function landingPage(req, { publicDir, name, prices, mock = false, testNo
   const t = translator(jezik.lang, publicDir);
   return {
     ...jezik,
-    key: JSON.stringify([jezik.lang, jezik.tag, p.trial_days, p.min_age, p.guarantee || null, mock, testNotice]),
+    // Cena je na strani (P2): ključ vsebuje valuto in mesečne zneske, da se izris ne pomeša med valutami.
+    key: JSON.stringify([jezik.lang, jezik.tag, p.trial_days, p.min_age, p.guarantee || null, p.currency, (p.plans || []).map((x) => x.amount), mock, testNotice]),
     html: landingHtml(t, { name, prices: p }),
     t,
     mock,

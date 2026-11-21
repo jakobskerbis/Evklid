@@ -4058,7 +4058,7 @@
   "chat.deleted": "Percakapan dihapus.",
   "land.subjects": "Matematika · Fisika · Kimia · Biologi",
   "land.title": "Buntu saat mengerjakan PR? Evklid menunjukkan langkah berikutnya.",
-  "land.lead": "Untuk SMA, sepanjang tahun ajaran. Evklid tidak menyelesaikan soal untukmu: ia bertanya bagaimana kamu akan mulai dan membimbingmu ke jawaban dengan petunjuk.",
+  "land.lead": "Untuk SMA dan ujian akhir (matura), sepanjang tahun ajaran. Evklid tidak menyelesaikan soal untukmu: ia bertanya bagaimana kamu akan mulai dan membimbingmu dengan petunjuk.",
   "land.start": "Mulai gratis",
   "land.trial": {
     "other": "Gratis {n} hari, tanpa kartu."
@@ -4091,6 +4091,14 @@
   "land.provider": "{app} saat ini dikelola oleh {name}",
   "land.contact": "Kontak",
   "land.noJs": "Untuk mendaftar dan masuk di browser, aktifkan JavaScript.",
+  "land.prices": "Harga",
+  "land.trustLabel": "Privasi singkatnya",
+  "land.trust.eu": "Server dan basis data di UE (Frankfurt)",
+  "land.trust.ads": "Tanpa iklan dan pelacak",
+  "land.trust.ai": "Anthropic tidak memakai data untuk melatih model",
+  "land.trust.more": "Selengkapnya tentang privasi",
+  "price.levels": "Lalu langganan mulai {price} per bulan (sekolah menengah {ss}) atau paket gratis dengan jumlah pertanyaan terbatas.",
+  "price.one": "Lalu langganan {price} per bulan atau paket gratis dengan jumlah pertanyaan terbatas.",
   "pay.perStudyYear": "tahun akademik",
   "pay.yearPerMonth": "≈ {price} / bulan (10 bulan)",
   "pay.secureCancel": "Pembayaran diproses dengan aman melalui Stripe. Kamu bisa membatalkan langganan kapan saja.",

@@ -171,6 +171,16 @@ details .card { margin-top: 8px; }
 .land-trial { display: flex; align-items: center; gap: 8px; margin: 12px 0 0; font-weight: 600; }
 .land-trial svg { width: 18px; height: 18px; flex: none; }
 .land-age { margin: 6px 0 0; font-size: 0.92rem; opacity: 0.92; }
+/* Cena pod preizkusom (P2, 21. 11. 2026): zneski iz /api/account/prices, povezava na cenik na /o-evklidu. */
+.land-price { margin: 8px 0 0; font-size: 0.95rem; line-height: 1.5; opacity: 0.95; }
+.land-price a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; display: inline-block; padding: 8px 0; margin: -8px 0; }
+.land-price a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px; }
+/* Pas zaupanja pod uvodom: isti kot .mkt-trust na /o-evklidu, /zakaj-evklid, /starsi.html (public/predstavitev.css), ki ga
+   aplikacija ne naloži; tu sredinsko, ker je med uvodom in dokazi. */
+.land-trust { list-style: none; margin: 0; padding: 8px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.92rem; font-weight: 600; line-height: 1.6; text-align: center; }
+.land-trust li { display: inline; }
+.land-trust li:not(:last-child)::after { content: "\00a0·"; color: var(--muted); }
+.land-trust a { color: var(--accent); }
 /* Pas pri vrhu: garancija, samo ko jo strežnik oglašuje */
 .land-top { display: flex; flex-direction: column; gap: 10px; margin-bottom: calc(-1 * clamp(16px, 3.5vw, 44px)); }
 .land-gar { display: flex; align-items: center; gap: 14px; margin: 0; padding: 14px 18px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--accent); line-height: 1.45; }
@@ -224,7 +234,7 @@ details .card { margin-top: 8px; }
 @media (min-width: 900px) {
   .land-hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(32px, 4vw, 64px); }
 }
-/* Razredi, ki jih še uporabljata /o-evklidu in /zakaj-evklid (pristajalna stran jih ne): kartice zmožnosti in stopenj, opomba, spodnji poziv */
+/* Razredi, ki jih še uporabljata /o-evklidu in /zakaj-evklid: kartice zmožnosti in stopenj, opomba; spodnji poziv (.land-cta) tudi pristajalna stran (P2) */
 .land-hero .land-actions a.btn-secondary { background: transparent; color: #fff; border-color: rgb(255 255 255 / 0.7); }
 .land-note { margin: 12px 0 0; color: var(--muted); }
 .land-cta { text-align: center; padding: clamp(28px, 4vw, 48px) var(--rob-strani); border-radius: var(--radius); background: var(--accent-soft); }

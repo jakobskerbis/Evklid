@@ -4058,7 +4058,7 @@
   "chat.deleted": "已刪除對話。",
   "land.subjects": "數學 · 物理 · 化學 · 生物",
   "land.title": "作業卡住了？Evklid 告訴你下一步。",
-  "land.lead": "給高中生，整個學年都能用。Evklid 不會替你解題：它先問你打算怎麼開始，再用提示帶你找到答案。",
+  "land.lead": "給高中生和畢業考試（matura），整個學年都能用。Evklid 不會替你解題：它先問你打算怎麼開始，再用提示引導你。",
   "land.start": "免費開始",
   "land.trial": {
     "other": "免費試用 {n} 天，不需信用卡。"
@@ -4091,6 +4091,14 @@
   "land.provider": "{app} 目前由 {name} 營運",
   "land.contact": "聯絡我們",
   "land.noJs": "要在瀏覽器中註冊和登入，請開啟 JavaScript。",
+  "land.prices": "價格",
+  "land.trustLabel": "隱私重點",
+  "land.trust.eu": "伺服器與資料庫位於歐盟（法蘭克福）",
+  "land.trust.ads": "無廣告、無追蹤",
+  "land.trust.ai": "Anthropic 不會用這些資料訓練模型",
+  "land.trust.more": "了解更多隱私資訊",
+  "price.levels": "之後訂閱每月 {price} 起（高中 {ss}），或使用提問次數有限的免費方案。",
+  "price.one": "之後訂閱每月 {price}，或使用提問次數有限的免費方案。",
   "pay.perStudyYear": "學年（大學）",
   "pay.yearPerMonth": "≈ {price} / 月（10 個月）",
   "pay.secureCancel": "付款透過 Stripe 安全處理。你可以隨時取消訂閱。",
