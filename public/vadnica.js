@@ -1031,7 +1031,8 @@ async function openOurs(entry, subjectName, focus = null) {
         set: (v) => localStorageSet(key, JSON.stringify(v)),
       },
       focus,
-      onTutor: (task, part) => oursTutor(entry, title, task, part),
+      // Vrnitev iz klepeta (← ali Nazaj) odpre isto polo pri isti nalogi (UX maturanta 5; app.js chatReturnBack).
+      onTutor: (task, part) => oursTutor(entry, title, task, part, { view: currentView, open: () => openOurs(entry, subjectName, paper.tasks.indexOf(task)) }),
       // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
       onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
     });
@@ -1041,23 +1042,28 @@ async function openOurs(entry, subjectName, focus = null) {
     paperBusy = false;
   }
 }
-async function oursTutor(entry, title, task, part) {
+async function oursTutor(entry, title, task, part, back = null) {
   if (paperBusy) return;
   paperBusy = true;
+  let msg;
   try {
     await newTutorChat();
+    // Pola, odprta na strani (NPZ in matura), ne v klepetu: ← v klepetu in Nazaj jo odpreta znova.
+    state.chatReturn = back && back.view !== "chat" ? { ...back, conv: state.conversationId } : null;
     const n = partLabel(task, part);
     const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
     const strip = taskMdForChat;
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
     state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
-    await send(`${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`);
+    msg = `${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`;
   } catch (err) {
-    toast(err.message);
+    return toast(err.message);
   } finally {
     paperBusy = false;
   }
+  // Odgovor inštruktorja ne drži paperBusy: med njim ← ali Nazaj polo že odpreta znova (chatReturnBack).
+  await send(msg).catch((err) => toast(err.message));
 }
 // ---------- naloga iz pretekle pole, omenjena v klepetu (j 19. 11. 2026) ----------
 // »matura mat OR 2024 pola 1 naloga 5«: public/naloga-pole/klepet.js (s svojimi besedili) se naloži šele ob prvi

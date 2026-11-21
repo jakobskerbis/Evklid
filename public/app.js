@@ -648,6 +648,7 @@ function renderUserText(text) {
 
 function showView(name) {
   if (name === "chat") oznakaZdaj?.();
+  else state.chatReturn = null; // vrnitev v polo velja samo neposredno iz tega klepeta (chatReturnBack)
   if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
   // »Moji zapiski« so del pogleda Kartice (nazaj po vaji iz testa, public/zapiski/vaja.js).
   const notes = name === "zapiski";
@@ -990,7 +991,17 @@ document.addEventListener("focusin", () => document.body.classList.contains("tb-
 new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#view-textbook"), { childList: true });
 // Po 3 s neuporabe se vrstica skrije (j 2026-11-14, 3 s od 2026-11-15), kjer ni že drugače določeno (public/noga.js).
 nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(false) });
-$("#chat-back").addEventListener("click", () => showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
+// Klepet, odprt z »Vprašaj inštruktorja« v poli (vadnica.js oursTutor): ← in Nazaj vrneta na stran pole in polo
+// odpreta znova pri isti nalogi (UX maturanta 5). Velja le za ta pogovor, dokler je klepet odprt.
+function chatReturnBack() {
+  const r = state.chatReturn;
+  if (currentView !== "chat" || !r || r.conv !== state.conversationId) return false;
+  state.chatReturn = null;
+  showView(r.view);
+  r.open();
+  return true;
+}
+$("#chat-back").addEventListener("click", () => chatReturnBack() || showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).
 document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => (isFloating(t.dataset.view) ? focusWindow(t.dataset.view) : showView(t.dataset.view))));
@@ -1134,6 +1145,7 @@ function backStep(wasOverlay) {
   if (currentView === "scan" && scanBack()) return true;
   if (currentView === "scan" && state.scanFromChat) return showView("chat"), true; // skener iz kamere v Inštruktorju
   if (closeByEsc()) return true;
+  if (chatReturnBack()) return true;
   if (currentView === "path") return false;
   const subMe = currentView !== "me" && (meView(currentView) || podJazZgoraj(currentView));
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
