@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import crypto from "node:crypto";
-import { startupFiles } from "./startup-files.js";
+import { moduleDeps, startupFiles } from "./startup-files.js";
 import { pickEncoding } from "./compress.js";
 import { icon } from "../public/icons.js";
 import { translateStatic } from "./pristajalna-takoj.js";
@@ -20,6 +20,8 @@ import { slJedro } from "./i18n-jedro.js";
 const CLASSIC = /<script(?![^>]*type="module")[^>]*\ssrc="([^"?#]+)/g;
 
 const META = "evklid-app";
+// Vstopni moduli obrazca pred zagonom aplikacije (public/zagon.js uvozi account.js, ko zacetek.js nastavi obrazec).
+export const OBRAZEC = ["zagon.js", "account.js"];
 
 // Ikone lupine (<i data-icon="ime"></i>) pošljemo že izrisane (j 16. 11. 2026: »vedno ko odprem evklida se zaslon
 // osveži in utripne«): prej jih je dopolnil šele app.js (hydrateIcons), zato so se glava, spodnja vrstica in pasici
@@ -37,7 +39,12 @@ export function entryHtml(publicDir, { version = "", preload = true } = {}) {
   const file = path.join(publicDir, "index.html");
   const html = withIcons(fs.readFileSync(file, "utf8"));
   const classic = new Set([...html.matchAll(CLASSIC)].map((m) => "/" + m[1].replace(/^\.?\//, "")));
-  const mods = startupFiles(publicDir, "index.html").filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && !classic.has(u));
+  const vsi = startupFiles(publicDir, "index.html").filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && !classic.has(u));
+  // Najprej moduli obrazca za prijavo in registracijo (zagon.js, account.js z odvisnostmi): na /#registracija ga zagon.js
+  // izriše, ko so preneseni, ne šele za celo aplikacijo (public/zacetek.js obrazec). Ostali v istem vrstnem redu; vsi so
+  // potrebni pred app.js, zato vrstni red drugih strani ne upočasni.
+  const prvi = new Set(OBRAZEC.flatMap((m) => moduleDeps(publicDir, m)));
+  const mods = [...vsi.filter((u) => prvi.has(u)), ...vsi.filter((u) => !prvi.has(u))];
   const head = [];
   if (version) head.push(`  <meta name="${META}" content="${version}">`);
   // fetchpriority="low": moduli ne tekmujejo s slogi in pisavami za prvi izris (počasen 4G, j 19. 11. 2026). Prej so vsi

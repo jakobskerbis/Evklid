@@ -749,7 +749,7 @@
     );
   }
   var obrazecCaka = false;
-  function obrazecObiskovalca() {
+  function obrazecObiskovalca(pm) {
     moduli();
     slogiPoKoncu = true;
     obrazecCaka = true;
@@ -760,6 +760,19 @@
       slogi(false, true);
       html.removeAttribute("data-zacetek-slogi");
     }, 8000);
+    try {
+      var q = location.search.replace(/^\?/, "").split("&");
+      for (var i = 0; i < q.length; i++) if (q[i] && !/^(utm_[a-z_]+|fbclid|gclid|vir)(=|$)/i.test(q[i])) return;
+      if (localStorage.getItem(OWNER) !== null) return;
+    } catch (e) {
+      return;
+    }
+    window.evklidZacetek.obrazec = function () {
+      if (!obrazecCaka) return;
+      obrazecCaka = false;
+      pasovi(pm.getAttribute("data-mock") === "1", pm.getAttribute("data-tn") || "");
+      html.removeAttribute("data-zacetek-slogi");
+    };
   }
   var OBRAZCI = { "#registracija": 1, "#prijava": 1, "#pozabljeno-geslo": 1 };
   var poIzrisu = null;
@@ -767,7 +780,7 @@
   try {
     pm = document.querySelector('meta[name="evklid-pristajalna"]');
     var prist = !!pm && !html.hasAttribute("data-zacetek") && pristajalnaVelja(pm);
-    if (!prist && pm && !html.hasAttribute("data-zacetek") && OBRAZCI[location.hash] === 1) obrazecObiskovalca();
+    if (!prist && pm && !html.hasAttribute("data-zacetek") && OBRAZCI[location.hash] === 1) obrazecObiskovalca(pm);
     else if (!prist) brezPristajalne(pm || (zp && !slogiPoKoncu));
     else {
       poIzrisu = new Promise(function (ok) {

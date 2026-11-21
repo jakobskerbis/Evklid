@@ -110,6 +110,14 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   prenesejo šele, ko začne izpolnjevati obrazec (`focusin`/`pointerdown` v `#view-auth form`), ali po prijavi za prvim
   izrisom Učne poti (`app.js cakajObiskovalca`, `obiskovalecKonec`). Service worker ob prvem obisku shrani prenesene
   datoteke iz predpomnilnika brskalnika (`fetch(u, { cache: "force-cache" })`), brez ponovne zahteve za vsako.
+- Obrazec pred aplikacijo (meritev 21. 11. 2026: gumb »Ustvari račun« je čakal ~50 modulov `app.js`): strežnik da module
+  obrazca (`OBRAZEC` v `server/vstopna-stran.js`: `zagon.js`, `account.js` z odvisnostmi, 18 datotek) na začetek seznama
+  `modulepreload`. Ko `zacetek.js` (`obrazecObiskovalca`) obrazec dovoli (brez poizvedbe razen oznak vira, brez lastnika
+  naprave), nastavi `evklidZacetek.obrazec`; `zagon.js` po jeziku uvozi `account.js` in `obrazecVnaprej` izriše obrazec,
+  pokaže pasici in stran. `initAccount` ga v `route` prevzame brez ponovnega izrisa (vpisano in fokus ostaneta);
+  `continueFlow` po prijavi ali registraciji počaka konec `initAccount` (`onReady` iz `app.js`). Lokalno (HTTP/1.1 kot meritev
+  iz ZDA, 5 hladnih zagonov, mediana): računalnik s 150 ms zakasnitve 2,42 → 1,16 s, telefon (9 Mbit/s, 170 ms, CPU 4×)
+  3,19 → 1,51 s; test `test/registracija-takoj.test.js`.
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).
