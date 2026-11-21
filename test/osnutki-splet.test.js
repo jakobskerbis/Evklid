@@ -42,7 +42,7 @@ test("osnutek vprašanja preživi osvežitev, po pošiljanju ga ni; odgovor nalo
       await p.waitForSelector("#practice .card.task[data-task-id]", { timeout: 15000 });
       return p.getAttribute("#practice .card.task", "data-task-id");
     };
-    const shranjen = (t) => p.evaluate((x) => sessionStorage.getItem(`evklid.odgovor.${x}`), t);
+    const shranjen = (t) => p.evaluate((x) => sessionStorage.getItem(`evklid.odgovor.${x}`), `${racun.id}.${t}`);
     const id = await naNalogo();
     if (!(await p.locator("#answer").count())) return; // naloga z izbiro: polja za odgovor ni
     await p.fill("#answer", "42");
@@ -61,7 +61,7 @@ test("osnutek vprašanja preživi osvežitev, po pošiljanju ga ni; odgovor nalo
     if ((await p.getAttribute("#practice .card.task", "data-task-id")) === id) {
       assert.equal(await p.inputValue("#answer"), "42", "odgovor po osvežitvi");
       await p.locator("#practice .answer-row button.primary").click();
-      await p.waitForFunction((t) => sessionStorage.getItem(`evklid.odgovor.${t}`) === null, id, { timeout: 15000 }); // po preverjanju ni osnutka
+      await p.waitForFunction((t) => sessionStorage.getItem(`evklid.odgovor.${t}`) === null, `${racun.id}.${id}`, { timeout: 15000 }); // po preverjanju ni osnutka
     }
     assert.deepEqual(p.napake, []);
   } finally {

@@ -388,7 +388,8 @@ function renderTask(task, ctx) {
 // Natipkan, še neposlan odgovor naloge za vsako nalogo (id) v sessionStorage: ostane do pošiljanja, tudi ob vrnitvi
 // na isto nalogo, osvežitvi strani in prevzemu profila (account.js »Nadaljuj tukaj« osveži stran). Vmesni koraki so
 // v localStorage (workKey).
-const odgovorKey = (id) => `evklid.odgovor.${id}`;
+// Ključ ima tudi id profila: id naloge se po izbrisu profila (SQLite) lahko ponovi pri drugem profilu.
+const odgovorKey = (id) => `evklid.odgovor.${state.student?.id}.${id}`;
 function odgovorOsnutek(id) {
   try {
     return (id && sessionStorage.getItem(odgovorKey(id))) || "";

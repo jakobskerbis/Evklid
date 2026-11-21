@@ -1439,6 +1439,13 @@ async function selectStudent(id) {
   }
   dropOtherShot(target?.id); // menjava profila: posnetek zaslona prejšnjega profila izgine takoj
   if (target) ZACETEK?.znova?.(); // izbran odklenjen profil: zapis zadnjega zaslona in posnetka spet velja
+  // Natipkano vprašanje in fotografija prejšnjega profila ne ostaneta v polju (in se ne shranita kot osnutek drugega
+  // profila); osnutek novega profila vrne chatDraftRestore spodaj.
+  if (state.student && target && state.student.id !== target.id) {
+    $("#input").value = "";
+    clearImage();
+    autoGrow();
+  }
   state.student = target;
   state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
