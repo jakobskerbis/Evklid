@@ -1693,7 +1693,7 @@ export default {
   "inst.and2": "Izberi »Namesti aplikacijo« ali »Dodaj na začetni zaslon« in potrdi.",
   "inst.desk1": "V meniju brskalnika izberi »Namesti Evklid« (v Safariju: Datoteka → Dodaj v Dock).",
   "inst.done": "Evklid je nameščen. Najdeš ga na začetnem zaslonu.",
-  "inst.desc": "Inštruktor za matematiko, fiziko in kemijo",
+  "inst.desc": "Inštruktor za matematiko, fiziko, kemijo in biologijo",
   "nav.games": "Igre",
   "games.meSub": "Učenje z igrami",
   "games.intro": "Igraj in se uči: {n} iger iz matematike, fizike, kemije, biologije in drugih predmetov. Težavnost se prilagaja tebi.",

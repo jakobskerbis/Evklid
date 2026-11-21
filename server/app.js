@@ -231,6 +231,8 @@ export const CSP = {
   "frame-ancestors": ["'none'"],
 };
 // Kamera (skeniranje, fotografija naloge) in mikrofon (govor) samo za to stran; senzorji gibanja za igre.
+// Brez »web-share«: Chrome ga ne pozna in na vsaki strani izpiše opozorilo v konzolo (pregled javnih strani 21. 11. 2026, P11);
+// navigator.share deluje tudi brez njega.
 export const PERMISSIONS_POLICY = [
   "camera=(self)",
   "microphone=(self)",
@@ -239,7 +241,6 @@ export const PERMISSIONS_POLICY = [
   "gyroscope=(self)",
   "magnetometer=(self)",
   "clipboard-write=(self)",
-  "web-share=(self)",
   "geolocation=()",
   "payment=()",
   "usb=()",

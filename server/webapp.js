@@ -3,7 +3,9 @@
 //   z bližnjicami (dolg pritisk na ikono) in posnetki zaslona za okno »Namesti«.
 // - /.well-known/assetlinks.json: povezava z aplikacijo v Google Play (TWA), ko sta v .env
 //   ANDROID_PACKAGE in ANDROID_SHA256 (glej docs/aplikacija.md).
+// - /.well-known/security.txt (RFC 9116): kam prijaviti ranljivost (pregled javnih strani 21. 11. 2026, P11).
 import { BRAND } from "./brand.js";
+import { PROVIDER } from "../public/pristajalna.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -95,7 +97,23 @@ export function manifestLang(query, acceptLanguages = []) {
   return detectLanguage(acceptLanguages).code;
 }
 
+// security.txt: kontakt je isti kot upravljavec v obvestilu o zasebnosti (PROVIDER). Expires mora biti manj kot leto dni
+// naprej (RFC 9116, 2.5.5), zato ga izračunamo ob vsaki zahtevi: 360 dni od današnjega dne (UTC, brez ure, da je odgovor ves
+// dan enak). Datoteke ni treba ročno obnavljati.
+export function securityTxt(now = Date.now()) {
+  const day = new Date(now);
+  const expires = new Date(Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate()) + 360 * 86400000);
+  return [
+    `Contact: mailto:${PROVIDER.email}`,
+    `Expires: ${expires.toISOString().replace(/\.\d{3}Z$/, "Z")}`,
+    "Preferred-Languages: sl, en",
+    `Canonical: https://${BRAND.domain}/.well-known/security.txt`,
+    "",
+  ].join("\n");
+}
+
 export function mountWebApp(app) {
+  app.get("/.well-known/security.txt", (_req, res) => res.set("Cache-Control", "public, max-age=3600").type("text/plain; charset=utf-8").send(securityTxt()));
   app.get("/manifest.webmanifest", (req, res) => {
     const lang = manifestLang(req.query.lang, req.acceptsLanguages());
     res.set("Cache-Control", "no-cache").type("application/manifest+json").send(JSON.stringify(manifest(lang, req.query)));

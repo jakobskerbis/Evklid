@@ -1239,7 +1239,7 @@
   "inst.and2": "Choisis « Installer l’application » ou « Ajouter à l’écran d’accueil » et confirme.",
   "inst.desk1": "Dans le menu du navigateur, choisis « Installer Evklid » (dans Safari : Fichier → Ajouter au Dock).",
   "inst.done": "Evklid est installé. Tu le trouveras sur l’écran d’accueil.",
-  "inst.desc": "Tuteur de mathématiques, physique et chimie",
+  "inst.desc": "Tuteur de mathématiques, physique, chimie et biologie",
   "sc.tool.prob": "Probabilités",
   "sc.tool.rxn": "Équations de réaction",
   "sc.tool.conc": "Solutions",

@@ -210,7 +210,8 @@ export function structuredData() {
   const offer = (name, cents, extra = {}) => ({ "@type": "Offer", name, price: dec(cents), priceCurrency: "EUR", ...extra });
   const month = { "@type": "UnitPriceSpecification", priceCurrency: "EUR", billingDuration: "P1M" };
   const sub = (name, cents) => offer(name, cents, { priceSpecification: { ...month, price: dec(cents) } });
-  const org = { "@type": "Organization", "@id": `${ORIGIN}/#organizacija`, name: BRAND.name, url: `${ORIGIN}/`, logo: `${ORIGIN}/icons/icon-512.png`, sameAs: [`${ORIGIN}/prenesi`] };
+  // Brez »sameAs«: ta je za zunanje profile (npr. Instagram, GitHub), ne za lastne strani (P11, 21. 11. 2026); dodaj ga, ko bodo.
+  const org = { "@type": "Organization", "@id": `${ORIGIN}/#organizacija`, name: BRAND.name, url: `${ORIGIN}/`, logo: `${ORIGIN}/icons/icon-512.png` };
   return {
     "@context": "https://schema.org",
     "@graph": [

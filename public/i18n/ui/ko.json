@@ -1233,7 +1233,7 @@
   "inst.and2": "‘앱 설치’ 또는 ‘홈 화면에 추가’를 선택하고 확인하세요.",
   "inst.desk1": "브라우저 메뉴에서 ‘Evklid 설치’를 선택하세요(Safari: 파일 → Dock에 추가).",
   "inst.done": "Evklid가 설치됐어요. 홈 화면에서 찾을 수 있어요.",
-  "inst.desc": "수학·물리·화학 튜터",
+  "inst.desc": "수학·물리·화학·생물 튜터",
   "sc.tool.prob": "확률",
   "sc.tool.rxn": "반응식",
   "sc.tool.conc": "용액",
