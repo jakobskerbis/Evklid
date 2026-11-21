@@ -173,8 +173,11 @@ function lockAccountOnLeave() {
   }).observe(view, { attributes: true, attributeFilter: ["hidden"] });
 }
 
+// Račun z enim profilom: »Izberi drug profil« bi odprl meni brez drugega profila in prazno Učno pot,
+// zato tedaj okno ponudi »Nadaljuj tukaj« in »Odjava«.
 function showTaken(d, rawFetch) {
   if ($("#taken-overlay")) return;
+  const single = status?.children === 1;
   const box = document.createElement("div");
   box.id = "taken-overlay";
   box.className = "overlay";
@@ -184,7 +187,7 @@ function showTaken(d, rawFetch) {
     <p class="muted">Če nadaljuješ tukaj, se na drugi napravi profil zapre.</p>
     <div class="form-actions">
       <button class="primary" id="taken-here" type="button">Nadaljuj tukaj</button>
-      <button id="taken-other" type="button">Izberi drug profil</button>
+      ${single ? `<button id="taken-logout" type="button">${esc(t("pm.logout"))}</button>` : `<button id="taken-other" type="button">Izberi drug profil</button>`}
     </div></div>`;
   document.body.appendChild(box);
   $("#taken-here").addEventListener("click", async () => {
@@ -192,10 +195,11 @@ function showTaken(d, rawFetch) {
     store.set("studentId", String(d.student_id));
     location.reload();
   });
-  $("#taken-other").addEventListener("click", () => {
+  $("#taken-other")?.addEventListener("click", () => {
     box.remove();
     openProfileMenu();
   });
+  $("#taken-logout")?.addEventListener("click", () => logout());
 }
 
 // ---------- geslo profila ----------
