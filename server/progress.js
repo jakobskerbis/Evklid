@@ -680,12 +680,14 @@ export class Progress {
     );
     if (!topics.length) return { percent: 0, weakest: [] };
     const percent = Math.round((100 * topics.reduce((s, t) => s + t.score, 0)) / topics.length);
-    const weakest = topics
+    const out = ({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" });
+    const sorted = topics
       .filter((t) => t.score < 1)
-      .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order)
-      .slice(0, 3)
-      .map(({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" }));
-    return { percent, weakest };
+      .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order);
+    const weakest = sorted.slice(0, 3).map(out);
+    // Najšibkejša med temami, ki jih je učenec že vadil (kartica Danes): neizvadena tema o šibkosti ne pove nič.
+    const vadena = sorted.find((t) => t.tried > 0 || t.score > 0);
+    return { percent, weakest, weakestTried: vadena ? out(vadena) : null };
   }
 
   // Zadnji rezultati poskusnih tekmovanj na tej poti.

@@ -176,4 +176,42 @@ for (const [kind, browser] of browsers) {
     assert.deepEqual(errors, []);
     await ctx.close();
   });
+
+  // 50 izboljšav (21. 11.): a/b → 3 → 4 → Pošlji je v praznem polju pustil izris ¾. Polje klepeta ima svoj nastavljalec
+  // vrednosti (app.js: poveča polje), ki ga je izris izpustil; zdaj tečeta oba.
+  test(`klepet (${kind}): po praznjenju iz kode (Pošlji) izris izgine, tudi ko ima polje svoj nastavljalec vrednosti`, async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const p = await ctx.newPage();
+    const errors = [];
+    p.on("pageerror", (e) => errors.push(e.message));
+    await p.goto(`http://127.0.0.1:${server.address().port}/t.html`);
+    await p.waitForFunction(() => window.ready);
+    await p.evaluate(() => {
+      const i = document.getElementById("input");
+      const d = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value");
+      window.poveca = 0;
+      Object.defineProperty(i, "value", { configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, v); window.poveca++; } });
+    });
+    await p.focus("#input");
+    await p.keyboard.type("(3)/(4)");
+    const st = () =>
+      p.evaluate(async () => {
+        await new Promise((r) => setTimeout(r, 0));
+        const i = document.getElementById("input");
+        const o = document.querySelector("#klepet .vnos-izris");
+        return { v: i.value, hidden: !!o?.hidden, izrisan: i.classList.contains("vnos-izrisan"), poveca: window.poveca };
+      });
+    let s = await st();
+    assert.ok(!s.hidden && s.izrisan, JSON.stringify(s));
+    await p.evaluate(() => (document.getElementById("input").value = ""));
+    s = await st();
+    assert.equal(s.v, "");
+    assert.ok(s.hidden && !s.izrisan, `prazno polje brez izrisa: ${JSON.stringify(s)}`);
+    assert.equal(s.poveca, 1, "nastavljalec polja (app.js) še teče");
+    await p.evaluate(() => (document.getElementById("input").value = "(1)/(2)"));
+    s = await st();
+    assert.ok(!s.hidden && s.izrisan, "vrednost iz kode (predlog) se spet izriše");
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
 }
