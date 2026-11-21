@@ -238,3 +238,14 @@ test("aplikacija: v hrvaškem pogovoru kratko sporočilo (»da«) ne vklopi slov
   assert.equal(r.done, "Dobro, sada množimo s brojem tri.");
   assert.equal(r.streamed, r.done);
 });
+
+// Kandidat 2 (j 21. 11. 2026, kartici iz primerjave z Astro): preprosto vprašanje, razlaga na prošnjo, GRAF/ODPRI, strah pred testom.
+test("kandidat 2: pravila iz primerjave z Astro so v kandidatu, produkcijski prompt jih še nima", () => {
+  const ps = fs.readFileSync(PROMPT_PATH, "utf8");
+  const ks = fs.readFileSync(KANDIDAT_PROMPT_PATH, "utf8");
+  for (const re of [/- Preprosto vprašanje \(kratek račun ali dejstvo/, /ali izrecna prošnja za razlago pojma ali pravila/, /razloži takoj, brez uvodnega vprašanja o predznanju/, /dodaj `GRAF` z drsnikom, ki ne izda rešitve naloge/, /\*\*Strah pred bližnjim testom\*\*/]) {
+    assert.match(ks, re);
+    assert.doesNotMatch(ps, re);
+  }
+  assert.match(ks, /Ne velja, ko učenec želi rešiti sam/);
+});

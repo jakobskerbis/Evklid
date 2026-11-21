@@ -5,7 +5,9 @@
 // Veljajo vsa varovala kot v produkciji. Privzeto plačljivi paket (»think«); --nacin chat = brezplačni paket.
 // Ocene tu ni: odgovore oceni ločen ocenjevalec skupaj z Astrinimi (izven repozitorija). Ne piše v pravo bazo.
 // Ustavi se, preden bi strošek presegel --max-usd.
-//   node scripts/meri-astra.mjs [--max-usd 2] [--nacin think|chat] [--model haiku|sonnet] [--suho] [--preizkus]
+//   node scripts/meri-astra.mjs [--max-usd 2] [--nacin think|chat] [--model haiku|sonnet] [--kandidat] [--suho] [--preizkus]
+//   --kandidat  kandidat prompta (EVKLID_INSTRUKTOR_KANDIDAT=1: prompts/system_prompt-kandidat.md), izid v
+//               data/meri-astra-kandidat.json z "kandidat": true, za primerjavo pred/po z zagonom brez argumenta
 // Zagon: GitHub Actions > Meritev, skripta scripts/meri-astra.mjs. Izid: data/meri-astra.json (artefakt »meritev«) in
 // v dnevniku med vrsticama ODGOVORI-ZACETEK in ODGOVORI-KONEC (vprašanja in odgovori so javni, brez osebnih podatkov).
 import fs from "node:fs";
@@ -16,7 +18,7 @@ const arg = (name, d) => {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : d;
 };
-const ZNANI = { "--max-usd": 1, "--nacin": 1, "--model": 1, "--suho": 0, "--preizkus": 0 };
+const ZNANI = { "--max-usd": 1, "--nacin": 1, "--model": 1, "--kandidat": 0, "--suho": 0, "--preizkus": 0 };
 for (let i = 2; i < process.argv.length; i++) {
   const a = process.argv[i];
   if (!(a in ZNANI)) {
@@ -29,7 +31,8 @@ const MAX_USD = Number(arg("--max-usd", 2));
 const NACIN = arg("--nacin", "think");
 const SUHO = process.argv.includes("--suho");
 const PREIZKUS = process.argv.includes("--preizkus");
-const OUT = process.env.EVKLID_MERI_IZID || "data/meri-astra.json";
+const KANDIDAT = process.argv.includes("--kandidat");
+const OUT = process.env.EVKLID_MERI_IZID || (KANDIDAT ? "data/meri-astra-kandidat.json" : "data/meri-astra.json");
 if (!(MAX_USD > 0) || MAX_USD > 5) {
   console.error("--max-usd mora biti večji od 0 in največ 5. Nič ni bilo poklicano.");
   process.exit(1);
@@ -50,6 +53,7 @@ const { primeri } = JSON.parse(fs.readFileSync(new URL("../test/fixtures/astra-v
 // Okolje pred uvozom aplikacije: začasna baza (nikoli prava).
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-astra-"));
 process.env.EVKLID_DB = path.join(tmp, "meritev.db");
+process.env.EVKLID_INSTRUKTOR_KANDIDAT = KANDIDAT ? "1" : "0";
 if (NACIN === "chat") process.env.EVKLID_SS_THINK = "0";
 process.env.EVKLID_MODEL = MODELI[MODEL_IME];
 // Preverjanje kartic v ozadju (Sonnet + Opus) ni del odgovora, ki ga vidi učenec: izklopljeno, da ostane pod mejo.
@@ -63,7 +67,7 @@ process.env.EVKLID_MONTHLY_BUDGET_USD = "0";
 process.env.EVKLID_LIVE_REVIEW_TIMEOUT_MS = "300000";
 const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
-const { buildSystemPrompt } = await import("../server/prompt.js");
+const { buildSystemPrompt, templatePath } = await import("../server/prompt.js");
 const { isMockMode, modeParams, MODEL_MID } = await import("../server/claude.js");
 const { callMaxUsd } = await import("../server/meje-ai.js");
 const { normalizeSettings } = await import("../server/settings.js");
@@ -77,6 +81,7 @@ const najdaljsa = Math.max(...primeri.flatMap((p) => p.krogi.map((k) => k.length
 const klicUsd = callMaxUsd(model, Math.ceil(system / 3) + najdaljsa + 4000 + max_tokens, max_tokens);
 const naKrog = 4 * klicUsd + 2 * callMaxUsd(MODEL_MID, 4000 + najdaljsa + 2 * max_tokens, 8000) + 0.01;
 const krogov = primeri.reduce((a, p) => a + p.krogi.length, 0);
+console.log(`Različica: ${KANDIDAT ? "KANDIDAT" : "trenutni inštruktor"} (${path.basename(templatePath())}); izid ${OUT}`);
 console.log(`${primeri.length} primerov, ${krogov} krogov; način ${NACIN} (${model}); najslabši primer na krog ${naKrog.toFixed(3)} $; meja ${MAX_USD} $.`);
 if (SUHO) process.exit(0);
 if (PREIZKUS !== isMockMode()) {
@@ -111,7 +116,7 @@ const izid = [];
 let ustavljeno = false;
 const zapisi = (koncano) => {
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), nacin: NACIN, model, porabljeno: porabljeno(), ustavljeno, koncano, izid }, null, 1));
+  fs.writeFileSync(OUT, JSON.stringify({ datum: new Date().toISOString(), kandidat: KANDIDAT, prompt: path.basename(templatePath()), nacin: NACIN, model, porabljeno: porabljeno(), ustavljeno, koncano, izid }, null, 1));
 };
 for (const p of primeri) {
   if (porabljeno() + p.krogi.length * naKrog > MAX_USD) {

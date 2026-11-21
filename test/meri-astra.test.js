@@ -25,7 +25,11 @@ test("meri-astra: --suho brez klica; neveljavni argumenti končajo z 1", () => {
   const suho = spawnSync(process.execPath, [skripta, "--suho"], { encoding: "utf8", env });
   assert.equal(suho.status, 0, suho.stderr);
   assert.match(suho.stdout, /10 primerov, 11 krogov; način think/);
-  for (const slab of [["--max-usd", "9"], ["--nacin", "deep"], ["--max-usd=1"], ["--neznano"]]) {
+  assert.match(suho.stdout, /Različica: trenutni inštruktor \(system_prompt\.md\); izid data\/meri-astra\.json/);
+  const kand = spawnSync(process.execPath, [skripta, "--suho", "--kandidat"], { encoding: "utf8", env: { ...env, EVKLID_MERI_IZID: "" } });
+  assert.equal(kand.status, 0, kand.stderr);
+  assert.match(kand.stdout, /Različica: KANDIDAT \(system_prompt-kandidat\.md\); izid data\/meri-astra-kandidat\.json/);
+  for (const slab of [["--max-usd", "9"], ["--nacin", "deep"], ["--max-usd=1"], ["--neznano"], ["--kandidat=1"]]) {
     assert.equal(spawnSync(process.execPath, [skripta, "--suho", ...slab], { encoding: "utf8", env }).status, 1, slab.join(" "));
   }
 });
