@@ -486,3 +486,16 @@ test("dnevnik dostopov: izbrisan gost ne ostane povezan z vrsticami (id se lahko
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'export' AND parent_id IS NULL").get().n, 1);
   });
 });
+
+// DPIA (21. 11. 2026): obvestilo o zasebnosti pove, da shranimo urnik (šifrirano, brez fotografije), in ne trdi, da je
+// dnevnik dostopov »brez naslova IP«, ko hrani zgoščeno vrednost naslova (server/dnevnik-dostopov.js ip_hash).
+test("zasebnost.html: urnik je opisan, dnevnik dostopov pove zgoščeni naslov IP", () => {
+  const html = fs.readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
+  assert.match(html, /<b>Urnik<\/b>/);
+  assert.match(html, /fotografij[eo][^.]*urnika/);
+  assert.doesNotMatch(html, /brez naslova IP/);
+  const dnevnik = fs.readFileSync(new URL("../server/dnevnik-dostopov.js", import.meta.url), "utf8");
+  if (/ip_hash/.test(dnevnik)) assert.match(html, /dnevnik dostopov[^.]*zgoščeno vrednost/);
+  const urnik = fs.readFileSync(new URL("../server/schedule.js", import.meta.url), "utf8");
+  assert.match(urnik, /60 \* 86400000/, "rok 60 dni v obvestilu velja");
+});
