@@ -2,6 +2,7 @@
 // Aplikacija sama nastavi lokalni dnevni opomnik za vajo; strežnik pošlje le to, česar telefon ne ve:
 // opomnik cilja (npr. »Matura: še 30 dni«) ob 12.00, enkrat na dan za vsakega otroka.
 import express from "express";
+import { readCookie, sha256 } from "../accounts/auth.js";
 import { ljNow, reminderDays } from "../accounts/goal-reminder.js";
 
 // Besedilo iz zahteve; drugačna vrednost (predmet, število) šteje kot prazna, da ni napake 500.
@@ -29,6 +30,11 @@ export function migratePush(db) {
       PRIMARY KEY (parent_id, kind, period)
     );
   `);
+  // Žeton obvestil velja samo, dokler živi prijava, s katero je bil prijavljen: po poteku seje ali odjavi
+  // v brskalniku telefon ne dobi več opomnikov z imenom otroka na zaklenjenem zaslonu.
+  if (!db.prepare("SELECT 1 FROM pragma_table_info('push_tokens') WHERE name = 'session_hash'").get()) {
+    db.exec("ALTER TABLE push_tokens ADD COLUMN session_hash TEXT");
+  }
   // Izbris računa: dnevnik obvestil (brez tuje povezave) gre z njim.
   if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get()) {
     db.exec(`CREATE TRIGGER IF NOT EXISTS push_log_parent_delete AFTER DELETE ON parents BEGIN
@@ -46,6 +52,16 @@ export function goalPushText(child, n) {
   };
 }
 
+// Žetoni, katerih prijava je potekla ali je bila odjavljena. Stari zapisi brez seje (pred tem popravkom)
+// veljajo, dokler ima račun kakšno živo prijavo; aplikacija jih ob naslednjem zagonu prijavi s sejo.
+const DEAD = `NOT EXISTS (SELECT 1 FROM parent_sessions s WHERE s.parent_id = push_tokens.parent_id AND s.expires_at > @now
+  AND (push_tokens.session_hash IS NULL OR s.token_hash = push_tokens.session_hash))`;
+
+export function dropExpiredPushTokens(db, now = new Date()) {
+  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parent_sessions'").get()) return 0;
+  return db.prepare(`DELETE FROM push_tokens WHERE ${DEAD}`).run({ now: now.toISOString() }).changes;
+}
+
 export function mountPush(app, ctx, opts = {}) {
   const { db, children } = ctx;
   const fetchFn = opts.fetchFn || fetch;
@@ -57,11 +73,13 @@ export function mountPush(app, ctx, opts = {}) {
     const token = text(req.body?.token);
     if (!TOKEN_RE.test(token)) return res.status(400).json({ error: "Napačen žeton obvestil." });
     const platform = ["ios", "android"].includes(req.body?.platform) ? req.body.platform : "";
-    // Žeton pripada napravi: ob prijavi z drugim računom gre k novemu računu.
+    // Žeton pripada napravi: ob prijavi z drugim računom gre k novemu računu. Vezan je na to prijavo (seja).
+    const session = readCookie(req);
     db.prepare(
-      `INSERT INTO push_tokens (token, parent_id, platform) VALUES (?, ?, ?)
-       ON CONFLICT(token) DO UPDATE SET parent_id = excluded.parent_id, platform = excluded.platform, updated_at = datetime('now')`,
-    ).run(token, req.parent.id, platform);
+      `INSERT INTO push_tokens (token, parent_id, platform, session_hash) VALUES (?, ?, ?, ?)
+       ON CONFLICT(token) DO UPDATE SET parent_id = excluded.parent_id, platform = excluded.platform,
+         session_hash = excluded.session_hash, updated_at = datetime('now')`,
+    ).run(token, req.parent.id, platform, session ? sha256(session) : null);
     res.json({ ok: true });
   });
   app.post("/api/push/unregister", json, (req, res) => {
@@ -70,6 +88,7 @@ export function mountPush(app, ctx, opts = {}) {
   });
 
   async function sendPush(parentId, { title, body, data = {} }) {
+    dropExpiredPushTokens(db);
     const tokens = db.prepare("SELECT token FROM push_tokens WHERE parent_id = ?").all(parentId).map((r) => r.token);
     if (!tokens.length) return 0;
     const r = await fetchFn(EXPO_PUSH, {
@@ -89,6 +108,7 @@ export function mountPush(app, ctx, opts = {}) {
 
   async function sendGoalPushAll(now = new Date()) {
     const { date } = ljNow(now);
+    dropExpiredPushTokens(db, now);
     const parents = db.prepare("SELECT DISTINCT parent_id AS id FROM push_tokens").all();
     let sent = 0;
     for (const { id } of parents) {
