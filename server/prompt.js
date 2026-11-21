@@ -12,9 +12,14 @@ import { studyProgramPrompt } from "./curriculum.js";
 import { langInfo } from "../public/i18n/languages.js";
 import { dialectInfo } from "../public/dialects.js";
 import { SCHOOL_SYSTEMS, isRegional, gradeInfo } from "../public/regions.js";
+import { kandidatOn } from "./instruktor-kandidat.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const TEMPLATE_PATH = process.env.EVKLID_PROMPT_PATH || path.join(here, "..", "prompts", "system_prompt.md");
+export const PROMPT_PATH = path.join(here, "..", "prompts", "system_prompt.md");
+// Kandidat izboljšav (server/instruktor-kandidat.js): EVKLID_INSTRUKTOR_KANDIDAT=1 izbere prompts/system_prompt-kandidat.md;
+// izrecna EVKLID_PROMPT_PATH ima prednost. Prebrano ob prvem klicu loadTemplate (okolje je tedaj že nastavljeno).
+export const KANDIDAT_PROMPT_PATH = path.join(here, "..", "prompts", "system_prompt-kandidat.md");
+export const templatePath = (env = process.env) => env.EVKLID_PROMPT_PATH || (kandidatOn(env) ? KANDIDAT_PROMPT_PATH : PROMPT_PATH);
 
 // Vrstica, ki loči stalni del prompta (enak za vse učence, predpomnjen pri
 // Claude API) od nastavitev učenca, ki jih vstavi strežnik.
@@ -22,7 +27,7 @@ export const SPLIT_MARKER = `<!-- ${BRAND.env}:NASTAVITVE`;
 
 let cached = null;
 export function loadTemplate() {
-  if (!cached) cached = fs.readFileSync(TEMPLATE_PATH, "utf8");
+  if (!cached) cached = fs.readFileSync(templatePath(), "utf8");
   return cached;
 }
 
