@@ -677,6 +677,7 @@
   "set.xpGoal200": "200 XP – intens",
   "set.xpGoalNote": "Aproximativ 15 XP pentru fiecare problemă rezolvată. Când atingi obiectivul, aplicația te felicită.",
   "off.noConnection": "Nu există conexiune la internet.",
+  "off.serverUnreachable": "Evklid nu este disponibil acum. Încearcă din nou peste un minut; întrebarea ta este salvată.",
   "off.serverBusy": "Evklid nu răspunde acum, poate se actualizează. Încearcă din nou peste un minut.",
   "off.updating": "Evklid se actualizează. O clipă, continui automat …",
   "off.serverDown": "Aplicația nu este disponibilă acum. Se va deschide singură imediat ce revine.",

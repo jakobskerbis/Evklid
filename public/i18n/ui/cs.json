@@ -683,6 +683,7 @@
   "set.xpGoal200": "200 XP – naplno",
   "set.xpGoalNote": "Zhruba 15 XP za každou vyřešenou úlohu. Když cíl splníš, aplikace ti pogratuluje.",
   "off.noConnection": "Žádné připojení k internetu.",
+  "off.serverUnreachable": "Evklid teď není dostupný. Zkus to znovu za minutu; tvoje otázka je uložená.",
   "off.serverBusy": "Evklid teď neodpovídá, možná se právě aktualizuje. Zkus to znovu za minutu.",
   "off.updating": "Evklid se aktualizuje. Chvilku, pokračuji automaticky …",
   "off.serverDown": "Aplikace teď není dostupná. Až bude znovu k dispozici, otevře se sama.",

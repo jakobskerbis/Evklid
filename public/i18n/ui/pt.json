@@ -671,6 +671,7 @@
   "set.xpGoal200": "200 XP – intenso",
   "set.xpGoalNote": "Cerca de 15 XP por cada exercício resolvido. Quando você atinge a meta, o app te dá os parabéns.",
   "off.noConnection": "Sem ligação à Internet.",
+  "off.serverUnreachable": "O Evklid não está disponível agora. Tenta de novo daqui a um minuto; a tua pergunta está guardada.",
   "off.serverBusy": "O Evklid não está a responder agora, talvez esteja a atualizar. Tenta outra vez daqui a um minuto.",
   "off.updating": "O Evklid está a atualizar. Um momento, continuo automaticamente …",
   "off.serverDown": "A aplicação não está acessível neste momento. Vai abrir sozinha assim que voltar.",

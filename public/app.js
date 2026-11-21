@@ -484,7 +484,8 @@ const apiCall = async (url, opts = {}) => {
   if (!res || (res.status === 503 && res.headers.get("X-Offline")) || serverDown(res)) {
     // Gostitelj odgovori, naš strežnik pa ne (npr. med objavo nove različice): ne pišemo »Ni povezave z internetom«.
     // offline: sporočilo je že prevedeno in pove, ali manjka povezava ali odgovor strežnika (npr. 502 med objavo).
-    const napaka = brezPovezave(() => (!res || navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")));
+    // Brez odgovora ob delujočem internetu (navigator.onLine) ne dela Evklid, ne učenčeva povezava (UX maturanta 11).
+    const napaka = brezPovezave(() => (navigator.onLine === false ? t("off.noConnection") : t("off.serverBusy")));
     const local = fromPack(url, opts, napaka);
     if (local !== undefined) return local;
     throw napaka();
@@ -2185,7 +2186,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     });
     if (!res) {
       bubble.remove();
-      throw new Error(t("off.noConnection"));
+      throw Object.assign(new Error(t("off.noConnection")), { offline: true });
     }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -2366,8 +2367,11 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     // dobi razumljivo obvestilo, vprašanje ostane v polju za ponovno pošiljanje.
     const dropped = err instanceof TypeError && /^(network ?error|failed to fetch|load failed|networkerror)/i.test(err.message);
     if (!dropped && !err.limit) console.error(err); // meja porabe je pričakovan odgovor, ne napaka aplikacije
+    // Internet dela (navigator.onLine), Evklid pa ne odgovori: ne »Ni povezave z internetom« (UX maturanta 11).
+    // Samo, ko se vprašanje spodaj vrne v polje (ne pri »Razloži podrobneje«).
+    const nedosegljiv = err.offline && !deep && navigator.onLine !== false;
     if (err.limitBody && FREE_LIMIT_CODES.has(err.limitBody.code)) await showLimitCard($("#messages"), err.limitBody, limitCardCtx());
-    else addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
+    else addMessage("assistant", nedosegljiv ? t("off.serverUnreachable") : dropped ? t("off.serverBusy") : err.message, false, { error: true });
     // Neuspelo pošiljanje (omrežje, strežnik): besedilo in fotografija se vrneta v polje, da se ne izgubita.
     // Meja porabe: ne (sporočilo ostane v oblačku, polje prazno).
     // »Razloži podrobneje« (deep) se ne vrne v polje (kot mobilna): ponovno pošiljanje bi šlo kot navadno vprašanje.

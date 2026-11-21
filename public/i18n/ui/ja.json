@@ -665,6 +665,7 @@
   "set.xpGoal200": "200 XP – 全力",
   "set.xpGoalNote": "問題を1つ解くと約15 XP。目標を達成するとアプリがお祝いします。",
   "off.noConnection": "インターネットに接続されていません。",
+  "off.serverUnreachable": "Evklid に今つながりません。1分後にもう一度試してください。質問は保存されています。",
   "off.serverBusy": "Evklid は今応答していません。更新中かもしれません。1 分後にもう一度試してね。",
   "off.updating": "Evklid を更新中です。少し待ってね、自動で続けます …",
   "off.serverDown": "現在アプリに接続できません。再び利用できるようになると自動で開きます。",

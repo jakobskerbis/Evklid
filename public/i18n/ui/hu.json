@@ -671,6 +671,7 @@
   "set.xpGoal200": "200 XP – keményen",
   "set.xpGoalNote": "Nagyjából 15 XP minden megoldott feladatért. Ha eléred a célt, az alkalmazás gratulál.",
   "off.noConnection": "Nincs internetkapcsolat.",
+  "off.serverUnreachable": "Az Evklid most nem érhető el. Próbáld újra egy perc múlva; a kérdésed el van mentve.",
   "off.serverBusy": "Az Evklid most nem válaszol, lehet, hogy éppen frissül. Próbáld újra egy perc múlva.",
   "off.updating": "Az Evklid frissül. Egy pillanat, automatikusan folytatom …",
   "off.serverDown": "Az alkalmazás most nem érhető el. Amint újra elérhető, magától megnyílik.",
