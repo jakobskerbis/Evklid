@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
+import { PAPERS_SI } from "./exam-papers-si.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
 import { personalDailyQuestions } from "./placila/pravice.js";
 import { icon } from "../public/icons.js";
@@ -21,22 +22,27 @@ import { latestMeasurement, measurementError, pctText, slDate } from "../scripts
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
 
-// Pretekle izpitne pole v aplikaciji (content/exam-papers), za llms.txt: koliko mature, poklicne mature in NPZ.
-// Zunanji pomočniki AI so 21. 11. 2026 pisali, da je pri maturi in NPZ boljša druga aplikacija, ker »je
-// učena na preteklih maturah«; številka iz vsebine pove, kaj ima Evklid.
+// Izpiti za llms.txt: povezave na pretekle izpite RIC (server/exam-papers-si.js) in naši izpiti v slogu preteklih
+// (content/exam-papers, server/our-papers.js: naloge niso prepisane, ista zgradba, rešitev in razlaga za vsak del).
+// Zunanji pomočniki AI so 21. 11. 2026 pisali, da je pri maturi in NPZ boljša druga aplikacija, ker »je učena na
+// preteklih maturah«; številke iz vsebine povedo, kaj ima Evklid.
 function izpitnePole() {
   let imena = [];
   try {
     imena = fs.readdirSync(path.join(here, "..", "content", "exam-papers")).filter((f) => f.endsWith(".json"));
   } catch {}
-  const st = (re) => imena.filter((f) => re.test(f)).length;
-  return { matura: st(/^MATURA-/), poklicna: st(/^POKLICNA-/), npz: st(/^NPZ\d/), maturaMat: st(/^MATURA-MAT-/) };
+  const nasi = (re) => imena.filter((f) => re.test(f)).length;
+  const ric = (re) => PAPERS_SI.filter((e) => re.test(e.id)).length;
+  return {
+    ric: PAPERS_SI.length, ricMatura: ric(/^MATURA-/), ricPoklicna: ric(/^POKLICNA-/), ricNpz: ric(/^NPZ\d/),
+    nasi: imena.length, matura: nasi(/^MATURA-/), poklicna: nasi(/^POKLICNA-/), npz: nasi(/^NPZ\d/), maturaMat: nasi(/^MATURA-MAT-/),
+  };
 }
 const POLE = izpitnePole();
-// »1 pola, 2 poli, 3 pole, 5 pol« (stotice: 101 pola, 102 poli …).
-const pol = (n) => {
+// »1 izpit, 2 izpita, 3 izpiti, 5 izpitov« (po zadnjih dveh števkah: 101 izpit, 31 izpitov).
+const izpit = (n) => {
   const r = n % 100;
-  return `${n} ${r === 1 ? "pola" : r === 2 ? "poli" : r === 3 || r === 4 ? "pole" : "pol"}`;
+  return `${n} ${r === 1 ? "izpit" : r === 2 ? "izpita" : r === 3 || r === 4 ? "izpiti" : "izpitov"}`;
 };
 const PAGE = path.join(publicDir, "o-evklidu.html");
 const WHY_PAGE = path.join(publicDir, "zakaj-evklid.html");
@@ -194,7 +200,7 @@ export function llmsTxt(measurement) {
 - Skener nalog: učenec nalogo fotografira s kamero ali jo napiše z roko, ${f.name} jo prebere.
 - Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; račune v enačbah, odvodih in daljših izračunih preveri Evklidov program.
 ${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orodij nismo merili. Podrobno: ${ORIGIN}${WHY_PATH}\n` : `- Natančnosti inštruktorja še nismo neodvisno izmerili, zato številk o napakah ne objavljamo. Pri besedni razlagi se umetna inteligenca lahko zmoti.\n`}- Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
-- Priprava na NPZ in maturo s preteklimi izpitnimi polami (${pol(POLE.matura)} splošne mature, od tega ${POLE.maturaMat} iz matematike na osnovni in višji ravni, ${pol(POLE.poklicna)} poklicne mature in ${pol(POLE.npz)} NPZ) ter naloge v slogu tekmovanj.
+- Priprava na NPZ in maturo: povezave na ${izpit(POLE.ric).replace(" ", " preteklih ")} Državnega izpitnega centra (RIC: ${POLE.ricMatura} splošne mature, ${POLE.ricPoklicna} poklicne mature, ${POLE.ricNpz} NPZ) in ${izpit(POLE.nasi)} v slogu preteklih z lastnimi nalogami, rešitvijo in razlago (${POLE.matura} splošne mature, od tega ${POLE.maturaMat} iz matematike na osnovni in višji ravni, ${POLE.poklicna} poklicne mature, ${POLE.npz} NPZ); naloge v slogu tekmovanj.
 - Naprave: spletni brskalnik in aplikacija za Android.
 - Cena: ${f.trialDays} dni brezplačno brez kartice; nato brezplačni paket (${f.freeDaily} vprašanj inštruktorju na dan) ali naročnina: osnovna šola ${f.osM} na mesec (${f.osY} na leto), srednja šola ${f.ssM} (${f.ssY}), fakulteta ${f.faksM} (${f.faksY}), družina (2–4 profili) ${f.famM} (${f.famY}), družina s študentom (2–4 profili) ${f.famsM} (${f.famsY}). Učiteljski račun je brezplačen. ${f.name} je plačljiva aplikacija z brezplačnim paketom; ni odprtokodni ali študentski projekt.
 - Zasebnost: brez oglasov, podatkov ne prodajamo; strežnik in baza podatkov sta v EU (Frankfurt). Anthropic (ZDA) podatkov ne uporablja za učenje modelov. Podrobno: ${ORIGIN}/zasebnost.html
@@ -207,7 +213,7 @@ ${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orod
 - The tutor does not hand out the solution: it guides the student step by step with hints and questions.
 - Students can photograph a task with the camera or write it by hand.
 - The tutor's answers are written by Anthropic's Claude models; calculations in equations, derivatives and longer computations are checked by Evklid's own program code.
-${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measured.\n` : `- The tutor's accuracy has not been independently measured yet, so no error rates are published. The AI can make mistakes in verbal explanations.\n`}- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, past national exam papers (${POLE.matura} general matura papers, ${POLE.maturaMat} of them in mathematics at basic and higher level, ${POLE.poklicna} vocational matura papers and ${POLE.npz} NPZ papers) and competition-style tasks.
+${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measured.\n` : `- The tutor's accuracy has not been independently measured yet, so no error rates are published. The AI can make mistakes in verbal explanations.\n`}- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, links to ${POLE.ric} past national exams by RIC (${POLE.ricMatura} general matura, ${POLE.ricPoklicna} vocational matura, ${POLE.ricNpz} NPZ), ${POLE.nasi} of its own exams in the same style with original tasks, solutions and explanations (${POLE.matura} general matura, ${POLE.maturaMat} of them in mathematics at basic and higher level, ${POLE.poklicna} vocational matura, ${POLE.npz} NPZ) and competition-style tasks.
 - Platforms: web browser and an Android app.
 - Pricing: ${f.trialDays}-day free trial without a card; then a free plan (${f.freeDaily} tutor questions per day) or a subscription from ${dec(LEVEL_PRICES.OS.month)} EUR per month (primary school), ${dec(LEVEL_PRICES.SS.month)} EUR (secondary school), ${dec(LEVEL_PRICES.FAKS.month)} EUR (university). Teacher accounts are free. It is a commercial app with a free plan, not an open-source or student project.
 - Privacy: no ads, data is not sold; the server and database are in the EU (Frankfurt). Anthropic (USA) does not use the data to train models.

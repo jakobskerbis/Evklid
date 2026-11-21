@@ -560,14 +560,15 @@ test("/o-evklidu in /zakaj-evklid: pisavi Instrument Sans vnaprej (preload), da 
   }
 });
 
-test("llms.txt: število preteklih izpitnih pol iz content/exam-papers, s pravilno obliko (21. 11. 2026)", async () => {
+test("llms.txt: povezave na izpite RIC in naši izpiti v slogu preteklih, s pravilno obliko (21. 11. 2026)", async () => {
   const { llmsTxt } = await import("../server/vidnost.js");
-  const fs = await import("node:fs");
-  const imena = fs.readdirSync(new URL("../content/exam-papers/", import.meta.url)).filter((f) => f.endsWith(".json"));
+  const { PAPERS_SI } = await import("../server/exam-papers-si.js");
+  const imena = readdirSync(new URL("../content/exam-papers/", import.meta.url)).filter((f) => f.endsWith(".json"));
   const t = llmsTxt(null);
-  const matura = imena.filter((f) => f.startsWith("MATURA-")).length;
-  assert.ok(matura > 0);
-  assert.match(t, new RegExp(`\\(${matura} pol[aei]? splošne mature`));
-  assert.match(t, new RegExp(`${imena.filter((f) => /^NPZ\d/.test(f)).length} NPZ papers`));
-  assert.doesNotMatch(t, /\b[34] pol poklicne/);
+  assert.ok(PAPERS_SI.length > 0 && imena.length > 0);
+  assert.match(t, new RegExp(`povezave na ${PAPERS_SI.length} preteklih izpit(ov|a|i)? Državnega izpitnega centra`));
+  assert.match(t, new RegExp(`in ${imena.length} izpit(ov|a|i)? v slogu preteklih z lastnimi nalogami`));
+  assert.match(t, new RegExp(`links to ${PAPERS_SI.length} past national exams by RIC`));
+  // Naši izpiti niso pretekli izpiti (naloge so lastne, server/our-papers.js).
+  assert.doesNotMatch(t, /preteklimi izpitnimi polami \(\d/);
 });
