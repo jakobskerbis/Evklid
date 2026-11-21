@@ -198,6 +198,7 @@ test("šifriranje od konca do konca: pogovor, izvoz, prijava napake, kartice; v 
     const out = execFileSync(process.execPath, ["--disable-warning=ExperimentalWarning", "scripts/najdi-sporocilo.js", "--besedilo", "V redu"], { env: { ...process.env, EVKLID_DB: file }, encoding: "utf8" });
     assert.match(out, new RegExp(SECRET_TEXT));
     // Ogled pogovora je zapisan v dnevnik dostopov (skrbnik), brez iskalnega niza.
+    assert.match(fs.readFileSync("public/zasebnost.html", "utf8"), /vsak tak ogled se zapiše v dnevnik dostopov/);
     const adb = new DatabaseSync(file);
     const seen = adb.prepare("SELECT actor, action, target FROM audit_log WHERE action = 'message_lookup'").all();
     adb.close();
