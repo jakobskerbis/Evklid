@@ -788,7 +788,9 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .small-note { margin: 0; font-size: 0.85rem; }
 /* Podatki / Iščemo in formula v rešenem zgledu */
 .task-data { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 10px; }
-.task-data .data-col { min-width: 120px; }
+.task-data .data-col { min-width: 120px; max-width: 100%; }
+/* Podatek je ena vrstica (KaTeX bi sicer lomil pri + in =, s(t) = −t³ + 15t² + 2t v 4 vrstice); stolpca se raje zložita. */
+.task-data .data-list .katex { white-space: nowrap; }
 .task-data .data-list { display: flex; flex-direction: column; gap: 2px; font-size: 1.05rem; }
 .formula { margin-bottom: 10px; }
 .formula summary { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; padding: 6px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); font-weight: 700; font-size: 0.92rem; user-select: none; }

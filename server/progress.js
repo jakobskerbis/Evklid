@@ -96,6 +96,13 @@ export class Progress {
   uiLang(studentId) {
     return uiLanguage(this.store.getStudent?.(studentId)?.settings?.language);
   }
+  // Raven mature iz profila (»4. letnik OR«) za šolske poti matematike v gimnaziji: na osnovni ravni učna pot,
+  // nova snov in priprava na test izpustijo teme samo za višjo raven (exams.js ravenKeeps), kot jih že stran
+  // »NPZ in matura« (#891). Druge poti in »še ne vem«: null (vse teme).
+  profileRaven(studentId, pathKey) {
+    if (!/^MAT-SS-\d$/.test(String(pathKey || ""))) return null;
+    return / (VR|OR)$/.exec(String(this.store.getStudent?.(studentId)?.settings?.curriculum_level || "").trim())?.[1] || null;
+  }
 
   // ---------- stanje teme ----------
   state(studentId, topicId) {
@@ -149,7 +156,7 @@ export class Progress {
     if (!path) return null;
     const keep =
       year && isCompetitionPath(pathKey) ? new Set(topicsForYear(path.units.flatMap((u) => u.topics.map((t) => t.id)), year)) : null;
-    const forRaven = ravenKeeps(raven);
+    const forRaven = ravenKeeps(raven ?? this.profileRaven(studentId, pathKey));
     const states = Object.fromEntries(
       this.db
         .prepare("SELECT * FROM topic_state WHERE student_id = ? AND topic_id LIKE ?")
@@ -749,7 +756,10 @@ export class Progress {
     const open = this.openSession(studentId, "test", (x) => x.created_at.slice(0, 10) === today());
     if (open) return this.sessionNext(open.id);
     const path = getPath(plan.path);
-    const topics = plan.units.flatMap((i) => path.units[i].topics).filter((t) => hasGenerator(t.id)).map((t) => t.id);
+    const all = plan.units.flatMap((i) => path.units[i].topics).filter((t) => hasGenerator(t.id));
+    // Osnovna raven brez tem samo za višjo raven; če izbrani sklopi nimajo drugih tem, ostanejo vse.
+    const own = all.filter(ravenKeeps(this.profileRaven(studentId, plan.path)));
+    const topics = (own.length ? own : all).map((t) => t.id);
     if (!topics.length) return null;
     const d = plan.daysLeft;
     const levels = d >= 7 ? [1, 1, 2, 2, 2, 2, 2, 2, 3, 3] : d >= 3 ? [1, 2, 2, 2, 2, 3, 3, 3, 3, 3] : [2, 2, 3, 3, 3, 3, 3, 3, 3, 3];
