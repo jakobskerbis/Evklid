@@ -187,7 +187,7 @@ export function odstevanje(t, date, today = null) {
 
 // Vrh Učne poti (#xp-card, p = /path): [kartica, vrstica pod njo]. Navadno Današnji trening in »Naslednja tema«.
 // Pri cilju matura kartica »Danes« (j, 20. 11. 2026): odštevanje do mature (goalDate), korak za danes (najprej
-// ponavljanje, kar je na vrsti, nato tema iz »Najprej vadi« na strani NPZ in matura; podatki: /path → danes), približne
+// ponavljanje, kar je na vrsti, nato tema iz »Najprej vadi« na strani NPZ in matura, dokler nobena še ni vadena pa tema Učne poti; podatki: /path → danes), približne
 // minute in en gumb, po vsaj 3 dneh odsotnosti kratek pozdrav; Današnji trening je tedaj vrstica pod njo.
 export function heroHtml(t, p, done = false, goalDate = "") {
   const d = p.danes;

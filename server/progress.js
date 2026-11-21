@@ -684,7 +684,7 @@ export class Progress {
       .filter((t) => t.score < 1)
       .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order)
       .slice(0, 3)
-      .map(({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" }));
+      .map(({ id, name, unit, score, tried }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due", tried }));
     return { percent, weakest };
   }
 

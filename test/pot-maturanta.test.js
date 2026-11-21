@@ -80,7 +80,7 @@ test("intro (interests questionnaire and tour) only for primary school under 15"
   assert.equal(brezUvoda({ settings: { educational_track: "UNIVERZA", curriculum_level: "1. letnik" } }, 2026), true);
 });
 
-test("/path for goal matura: Danes data = due reviews, then the first »Najprej vadi« topic of the matura page", async () => {
+test("/path for goal matura: Danes data = due reviews, then the path's next topic until a »Najprej vadi« topic has been practised", async () => {
   const store = openDb(":memory:");
   const app = createApp(store, { scheduler: false, log: { error() {}, warn() {}, info() {} } });
   const server = app.listen(0);
@@ -92,7 +92,10 @@ test("/path for goal matura: Danes data = due reviews, then the first »Najprej 
     let p = await get(`/api/students/${s.id}/path`);
     const ex = await get(`/api/students/${s.id}/exams`);
     assert.ok(ex.readiness.weakest.length);
-    assert.deepEqual(p.danes.next, { id: ex.readiness.weakest[0].id, name: ex.readiness.weakest[0].name }, "ista tema kot Najprej vadi");
+    // Nov maturant: nobena tema še ni vadena, zato tema Učne poti (kot Današnji trening in »Naslednja«), ne prva tema kataloga.
+    assert.equal(ex.readiness.weakest[0].tried, 0);
+    assert.ok(p.next && p.next.id !== ex.readiness.weakest[0].id, "pot je drugje kot prva tema kataloga");
+    assert.deepEqual(p.danes.next, { id: p.next.id, name: p.next.name }, "ista tema kot Naslednja na Učni poti");
     assert.equal(p.danes.due, 0);
     assert.equal(p.danes.minutes, 15);
     assert.equal(p.danes.odsoten, 0, "brez nalog ni vrnitve");
@@ -107,6 +110,13 @@ test("/path for goal matura: Danes data = due reviews, then the first »Najprej 
     assert.equal(p.danes.review, 2);
     assert.equal(p.danes.minutes, 5);
     assert.equal(p.danes.odsoten, 8);
+    // Napačen prvi odgovor v temi mature: ta tema je zdaj prva v »Najprej vadi« in na kartici Danes.
+    const sibka = ex.readiness.weakest[1].id;
+    store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, first_try_correct, created_at) VALUES (?, ?, 1, '{}', 0, datetime('now', '-8 days'))").run(s.id, sibka);
+    p = await get(`/api/students/${s.id}/path`);
+    const ex2 = await get(`/api/students/${s.id}/exams`);
+    assert.equal(ex2.readiness.weakest[0].id, sibka);
+    assert.deepEqual(p.danes.next, { id: sibka, name: ex2.readiness.weakest[0].name }, "ista tema kot Najprej vadi");
     // Drug cilj ali druga pot: brez kartice.
     assert.equal((await get(`/api/students/${s.id}/path?key=MAT-SS-1`)).danes, undefined);
     await fetch(base + `/api/students/${s.id}`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ settings: { goal: "sprotno" } }) });
