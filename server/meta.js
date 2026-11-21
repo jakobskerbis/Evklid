@@ -115,12 +115,20 @@ export function parseChoices(text) {
 const S = "\u0000";
 const FENCE_AROUND_RE = /^[ \t]*`+[\w-]*[ \t]*\n(?:[ \t\u0000]*\n)*[ \t]*\u0000[ \t\u0000]*(?:\n[ \t\u0000]*)*\n[ \t]*`+[ \t]*$/gm;
 const FENCE_OPEN_END_RE = /(^|\n)[ \t]*`+[\w-]*[ \t]*\n[\s\u0000]*\u0000[\s\u0000]*$/;
+const FENCE_AFTER_END_RE = /(\u0000[ \t\u0000]*\n(?:[ \t\u0000]*\n)*)([ \t]*`+[\w-]*[ \t]*)\s*$/; // prazen nezaprt blok za mestom na koncu
 
-export function stripMeta(text) {
+// Je oznaka na mestu `at` zaključek pravega bloka kode (pred njo je liho število oznak s tremi ali več »`«)?
+// before: besedilo pred `all` (konec toka: že pretočeni del), da se oznake štejejo od začetka odgovora.
+function closesBlock(all, at, m, before = "") {
+  if (!/^[ \t]*`{3,}/.test(m)) return false;
+  return ((before + all.slice(0, at)).match(/^[ \t]*`{3,}/gm) || []).length % 2 === 1;
+}
+
+export function stripMeta(text, before = "") {
   return String(text)
     .replace(/\u0000/g, "")
     // META v bloku kode: cel blok z oznakami (zaključne oznake pravih blokov kode ostanejo).
-    .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, "")
+    .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, (m, off, all) => (closesBlock(all, off, m, before) ? m : ""))
     .replace(META_LOOSE_RE, S) // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
     .replace(META_RE, S)
     .replace(CARD_RE, S)
@@ -132,8 +140,9 @@ export function stripMeta(text) {
     .replace(/<orodje>[\s\S]*?(?:<\/orodje>|$)/g, S) // skrit zapis orodja (chat-settings.js actionNote), če ga model ponovi
     .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, S) // nedokončan blok (npr. odrezan odgovor)
     .replace(/`+[ \t]*\u0000[ \t]*`+/g, S) // »``<<META …>>``« v vrstici
-    .replace(FENCE_AROUND_RE, S)
-    .replace(FENCE_OPEN_END_RE, "$1")
+    .replace(FENCE_AROUND_RE, (m, off, all) => (closesBlock(all, off, m, before) ? m : S))
+    .replace(FENCE_OPEN_END_RE, (m, pre, off, all) => (closesBlock(all, off + pre.length, m.slice(pre.length), before) ? m : pre))
+    .replace(FENCE_AFTER_END_RE, (m, pre, f, off, all) => (closesBlock(all, off + pre.length, f, before) ? m : pre))
     .replace(/\u0000/g, "")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
@@ -241,8 +250,9 @@ export function createStreamFilter({ polish = true, language = "sl" } = {}) {
     },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
-      if (polish) return { rest: next(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted))), raw: buffer };
-      const rest = lead(stripMeta(buffer.slice(emitted)));
+      const tail = stripMeta(buffer.slice(emitted), buffer.slice(0, emitted));
+      if (polish) return { rest: next(buffer.slice(0, emitted) + tail), raw: buffer };
+      const rest = lead(tail);
       return { rest, raw: buffer };
     },
   };

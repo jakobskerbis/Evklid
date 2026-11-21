@@ -158,8 +158,14 @@ test("ostanki oznak kode okoli strojnih blokov ne ostanejo v odgovoru; pravi blo
   // Pravi bloki kode (tudi brez jezika, dva zapored, z »```« v bloku ~~~, s praznim blokom) ostanejo nespremenjeni.
   for (const code of ["Velja:\n\n```js\nlet x = 1;\n```\n\n```\ny = 2\n```\n\nKonec.", "~~~\n```\n```\n~~~\nKonec.", "Koda:\n```py\nprint(1)", "Prazno:\n```\n```\nKonec.", "    ``\nzamik"]) {
     assert.equal(replyText(code), code);
-    assert.equal(replyText(`${code}\n\`\`\`\n${meta}\n\`\`\``), code);
+    // Nezaprt pravi blok: oznaka za njim ga zapre (ostane), sicer gre z blokom META.
+    if (!code.includes("print(1)")) assert.equal(replyText(`${code}\n\`\`\`\n${meta}\n\`\`\``), code);
     for (const out of tok(`${code}\n${meta}`)) assert.equal(out, code, JSON.stringify(code));
+  }
+  // Strojni blok tik za pravim blokom kode: zaključna oznaka ostane (pregled #923).
+  for (const v of [`Koda:\n\n\`\`\`py\nprint(1)\n\`\`\`\n${meta}`, `Koda:\n\n\`\`\`py\nprint(1)\n\`\`\`\n${meta}\n${izbire}`, `Koda:\n\n\`\`\`py\nprint(1)\n\`\`\`\n${meta}\n\`\`\``]) {
+    assert.equal(replyText(v), "Koda:\n\n```py\nprint(1)\n```", JSON.stringify(v));
+    for (const out of tok(v)) assert.equal(out, "Koda:\n\n```py\nprint(1)\n```", JSON.stringify(v));
   }
   // Oznaka kode z jezikom se ne pretoči, preden je jasno, ali obdaja strojni blok; pravi blok se pretoči z vsebino.
   const pravi = "Primer:\n```json\n[1, 2]\n```\nKonec.";
