@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { spawnSync } from "node:child_process";
-import { fixPrepositions, stripLabels, polishReply, polishHold, kandidatOn, jezikOdgovora } from "../server/instruktor-kandidat.js";
+import { fixPrepositions, stripLabels, polishReply, polishHold, kandidatOn, jezikOdgovora, fixMixedScript } from "../server/instruktor-kandidat.js";
 import { createStreamFilter, replyText, stripMeta, stripLeadPhrase } from "../server/meta.js";
 import { templatePath, PROMPT_PATH, KANDIDAT_PROMPT_PATH, SPLIT_MARKER } from "../server/prompt.js";
 import { openDb } from "../server/db.js";
@@ -252,4 +252,26 @@ test("kandidat 2: pravila iz primerjave z Astro so v kandidatu in v produkcijske
   assert.match(ks, /`flag` ostane `none`/);
   assert.match(ks, /lestvica pomoči, način A, način B\) učencu nikoli/);
   assert.match(ks, /»Pri naslednji nalogi spet rešuješ ti, jaz te vodim\.«/);
+});
+
+test("cirilska črka sredi latinske besede (meritev 21. 11. 2026, »prištejеš«): zamenja se, pretočeno = končno", () => {
+  assert.equal(fixMixedScript("Koliko prištejеš?"), "Koliko prišteješ?");
+  assert.equal(fixMixedScript("Сlen in rаzlika"), "Clen in razlika");
+  // Cela cirilska beseda, formula, koda in jeziki v cirilici ostanejo.
+  assert.equal(fixMixedScript("Пример: $е^x$ in `сode`"), "Пример: $е^x$ in `сode`");
+  assert.equal(fixMixedScript("Здраво x", { language: "sr" }), "Здраво x");
+  assert.equal(fixMixedScript("prištejеš", { language: "sr" }), "prištejеš");
+  // Črka brez latinske dvojnice (ж) pusti besedo pri miru.
+  assert.equal(fixMixedScript("prižеж"), "prižеж");
+  assert.equal(polishHold("ko prištejе"), "prištejе".length);
+  const text = "Kaj dobiš, ko prištejеš $3$? Нато še еnkrat.";
+  const want = replyText(text, { polish: true });
+  assert.equal(want, "Kaj dobiš, ko prišteješ $3$? Нато še enkrat.");
+  for (const size of [1, 2, 3, 5, 8]) {
+    const f = createStreamFilter({ polish: true });
+    let got = "";
+    for (let i = 0; i < text.length; i += size) got += f.push(text.slice(i, i + size));
+    got += f.end().rest;
+    assert.equal(got, want, `razrez ${size}`);
+  }
 });

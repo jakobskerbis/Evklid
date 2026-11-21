@@ -72,6 +72,8 @@ export async function setReminder(time: string) {
   if (time && !(await permission())) return false;
   Storage.setItemSync(KEY, time);
   await scheduleReminders(time);
+  // Izklop: strežnik ne pošilja več obvestil na ta telefon (vklop telefon znova prijavi).
   if (time) registerPush();
+  else await unregisterPush();
   return true;
 }

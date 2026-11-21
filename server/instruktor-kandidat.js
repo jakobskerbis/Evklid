@@ -127,9 +127,30 @@ export function stripLabels(text) {
   return s.replace(LABEL_LINE_RE, "$1").replace(LABEL_INLINE_RE, (_, before, ch) => before + (ch ? ch.toUpperCase() : ""));
 }
 
-// Oba popravka; predlogi le, ko je jezik pogovora slovenščina (v hrvaščini je »s osnovom« pravilno).
+// Cirilična črka, ki je videti kot latinska, sredi latinske besede (meritev 21. 11. 2026: »prištejеš« s cirilskim »е«):
+// zamenja se z latinsko, le v besedah z vsaj eno latinsko črko in brez druge cirilice; formule in koda ostanejo.
+// Ista dolžina, zato se položaji pri pretakanju ne premaknejo. Pri jezikih v cirilici (sr, mk, ru, uk, bg) ne.
+const CYR_LATIN = { а: "a", е: "e", о: "o", р: "p", с: "c", у: "y", х: "x", і: "i", ј: "j", к: "k", м: "m", т: "t", ѕ: "s", А: "A", В: "B", Е: "E", К: "K", М: "M", Н: "H", О: "O", Р: "P", С: "C", Т: "T", Х: "X", У: "Y", І: "I", Ј: "J", Ѕ: "S" };
+const CYR_SCRIPT = new Set(["sr", "mk", "ru", "uk", "bg"]);
+const MIXED_WORD_RE = /[\p{L}\p{M}]+/gu;
+export function fixMixedScript(text, { language = "sl" } = {}) {
+  const s = String(text);
+  if (CYR_SCRIPT.has(language) || !/\p{Script=Cyrillic}/u.test(s)) return s;
+  const plain = maskNonText(s);
+  let out = s;
+  for (const m of plain.matchAll(MIXED_WORD_RE)) {
+    const w = m[0];
+    if (!/\p{Script=Latin}/u.test(w)) continue;
+    const fixed = [...w].map((ch) => CYR_LATIN[ch] ?? ch).join("");
+    if (fixed === w || /\p{Script=Cyrillic}/u.test(fixed)) continue;
+    out = out.slice(0, m.index) + fixed + out.slice(m.index + w.length);
+  }
+  return out;
+}
+
+// Popravki; predlogi le, ko je jezik pogovora slovenščina (v hrvaščini je »s osnovom« pravilno).
 export function polishReply(text, { language = "sl" } = {}) {
-  const t = stripLabels(text);
+  const t = fixMixedScript(stripLabels(text), { language });
   return !language || language === "sl" ? fixPrepositions(t) : t;
 }
 
@@ -158,6 +179,9 @@ export function polishHold(text) {
   // sicer bi šla naprej, oznaka pa bi jo nato odnesla s seboj (pretočeno besedilo ≠ končno).
   const md = MD_PREFIX_RE.exec(s);
   if (md && md[2].length > hold) hold = md[2].length;
+  // Nedokončana beseda s cirilico na koncu: še ni znano, ali bo mešana (latinska črka lahko pride v naslednjem kosu).
+  const cyr = /[\p{L}\p{M}]*\p{Script=Cyrillic}[\p{L}\p{M}]*$/u.exec(s);
+  if (cyr && cyr[0].length > hold) hold = cyr[0].length;
   return hold;
 }
 const MD_PREFIX_RE = /(^|\n)([ \t]*(?:#{1,6}[ \t]*)?(?:[->][ \t]*)?(?:\*{1,2}|_{1,2})?)$/;
