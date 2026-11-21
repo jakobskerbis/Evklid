@@ -1,18 +1,30 @@
 // Kratke povezave na javne strani in prijazna stran 404 (pregled celotne aplikacije, 17. 11. 2026).
-// - /pogoji, /zasebnost, /starsi, /garancija: preusmeritev na .html (poizvedba, npr. ?vir=…, ostane), tako da
+// - /pogoji, /zasebnost, /starsi, /garancija, /odstop: preusmeritev na .html (poizvedba, npr. ?vir=…, ostane), tako da
 //   števec obiskov (pilot.js, rast.js) šteje isto stran kot prej. /sole ima svojo pot (server/sole.js).
 // - Neznana pot: stran v slogu aplikacije namesto Expressovega »Cannot GET«; /api dobi JSON, drugo kratko besedilo.
 import { BRAND } from "./brand.js";
 
-export const KRATKE_POTI = { "/pogoji": "/pogoji.html", "/zasebnost": "/zasebnost.html", "/starsi": "/starsi.html", "/garancija": "/garancija.html", "/odstop": "/odstop.html" };
+// - /sole.html → /sole (pregled javnih strani 21. 11. 2026, P8): ista stran na dveh naslovih je razpolovila uvrstitev pri
+//   iskalnikih. Preusmeritev je pred števcem obiskov, zato se obisk šteje enkrat (na /sole).
+export const KRATKE_POTI = { "/pogoji": "/pogoji.html", "/zasebnost": "/zasebnost.html", "/starsi": "/starsi.html", "/garancija": "/garancija.html", "/odstop": "/odstop.html", "/sole.html": "/sole" };
+
+// Naslovi, ki jih kdo nareka ali napiše v opis profila (»evklid.app/prijava«), vodijo na del strani (P8). 302, ne 301:
+// cilj je sidro, ki se lahko spremeni, brskalnik pa 301 hrani brez roka. Samo GET: POST /prijava ostane vratom z geslom
+// (server/gate.js), ki so pred temi potmi in GET /prijava tam preusmerijo na začetek.
+export const KRATKA_SIDRA = { "/prijava": "/#prijava", "/registracija": "/#registracija", "/cenik": "/o-evklidu#cene", "/cene": "/o-evklidu#cene" };
 
 export function mountShortLinks(app) {
-  app.get(Object.keys(KRATKE_POTI), (req, res, next) => {
+  app.get([...Object.keys(KRATKE_POTI), ...Object.keys(KRATKA_SIDRA)], (req, res, next) => {
     // Usmerjevalnik ne loči velikih črk in sprejme poševnico na koncu: preusmerimo samo točno pot.
-    const cilj = KRATKE_POTI[req.path];
-    if (!cilj) return next();
     const q = req.originalUrl.indexOf("?");
-    res.redirect(301, cilj + (q >= 0 ? req.originalUrl.slice(q) : ""));
+    const query = q >= 0 ? req.originalUrl.slice(q) : "";
+    const cilj = KRATKE_POTI[req.path];
+    if (cilj) return res.redirect(301, cilj + query);
+    const sidro = KRATKA_SIDRA[req.path];
+    if (!sidro) return next();
+    // Poizvedba (npr. ?vir=…) gre pred sidro: /cene?vir=ig → /o-evklidu?vir=ig#cene.
+    const [pot, del] = sidro.split("#");
+    res.redirect(302, `${pot}${query}#${del}`);
   });
 }
 
