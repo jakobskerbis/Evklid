@@ -7,6 +7,7 @@ import "../env.js";
 import { randomBytes } from "node:crypto";
 import { sha256 } from "./auth.js";
 import { detachAudit } from "../dnevnik-dostopov.js";
+import { netHash } from "../crypto-polje.js";
 
 export const GUEST_SESSION_DAYS = 365;
 
@@ -88,7 +89,8 @@ export function netKey(ip = "") {
   return s.includes(":") ? `${v6prefix(s)}::/56` : s;
 }
 
-export const guestNet = (req) => sha256(`evklid-guest-net|${netKey(req.ip || req.socket?.remoteAddress)}`);
+// Ob uvedbi ključa (21. 11. 2026) se zapisi starih zgoščenih vrednosti ne ujemajo več: vsako omrežje enkrat dobi novo kvoto.
+export const guestNet = (req) => netHash(netKey(req.ip || req.socket?.remoteAddress));
 
 // Gost ali nekdanji gost, ki še ni potrdil e-naslova: šteje se v kvoto omrežja.
 const ON_NET = "(p.is_guest = 1 OR (p.guest_net IS NOT NULL AND p.email_verified_at IS NULL))";

@@ -139,6 +139,14 @@ export function blindIndex(text) {
   return `h1:${k.id}:${crypto.createHmac("sha256", sub).update(String(text)).digest("base64url").slice(0, 32)}`;
 }
 
+// Zgoščena vrednost omrežja (naslova IP) za kvote gostov: HMAC s ključem, izpeljanim iz EVKLID_DATA_KEY, da je iz baze
+// ni mogoče obrniti s preizkušanjem vseh naslovov IPv4 (pregled DPIA, 21. 11. 2026). Brez ključa (razvoj, testi) sha256.
+export function netHash(text) {
+  const k = keys();
+  if (!k) return crypto.createHash("sha256").update(`evklid-guest-net|${text}`).digest("hex");
+  return crypto.createHmac("sha256", crypto.createHmac("sha256", k.key).update("evklid-gost-omrezje").digest()).update(String(text)).digest("hex");
+}
+
 // Skrivnost za HMAC naslovov IP v dnevniku dostopov: iz ključa podatkov ali naključna, shranjena v bazi.
 export function auditSecret(db) {
   const k = keys();
