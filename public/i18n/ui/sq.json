@@ -4440,7 +4440,7 @@
   "pilot.n.wtpPay": "Do të paguanin",
   "pilot.n.wtpAmount": "Shuma në muaj",
   "starsi.privTitle": "I përditësuam rregullat e privatësisë",
-  "starsi.privText": "Tani shkruhet më saktë cilat të dhëna mund t'i eksportoni dhe t'i fshini dhe sa kohë i ruajmë. Shtuam edhe detyrat e pilotit dhe matjen nëse Evklid ndihmon. Nuk keni nevojë të bëni asgjë.",
+  "starsi.privText": "Shtuam si e ruajmë orarin dhe adresën IP, cilat cookies përdorim dhe kur administratori i aplikacionit hap një bisedë. Nuk keni nevojë të bëni asgjë.",
   "starsi.privRead": "Lexoni rregullat",
   "starsi.privPw": "Fjalëkalimi i llogarisë",
   "starsi.privPwNote": "Njoftimin e fshehni me fjalëkalimin e llogarisë, që të mos e fshehë dikush tjetër në këtë pajisje.",

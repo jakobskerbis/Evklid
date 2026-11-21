@@ -3518,7 +3518,7 @@ export default {
   "starsi.wtpThanks": "Hvala za odgovor.",
   "starsi.wtpNeed": "Najprej izberite odgovor.",
   "starsi.privTitle": "Pravila zasebnosti smo posodobili",
-  "starsi.privText": "Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo. Dodali smo tudi naloge za pilot in merjenje, ali Evklid pomaga. Nič vam ni treba narediti.",
+  "starsi.privText": "Dopolnili smo, kako hranimo urnik in naslov IP, katere piškotke uporabljamo in kdaj skrbnik aplikacije odpre pogovor. Nič vam ni treba narediti.",
   "starsi.privRead": "Preberite pravila",
   "starsi.privPw": "Geslo računa",
   "starsi.privPwNote": "Obvestilo skrijete z geslom računa, da ga ne skrije kdo drug na tej napravi.",
