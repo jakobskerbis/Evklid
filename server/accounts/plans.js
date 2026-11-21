@@ -14,7 +14,9 @@ export const MAX_CHILDREN = 4;
 // 2026-11-14 (j 14. 11., »Vse ja«): alineja »Kratka anketa po 7 dneh« (B3, #674).
 // 2026-11-18 (j 17. 11.): strani usklajene s kodo (#817): fotografije 7 dni, kdo vidi podatke, šola upravljavec
 // podatkov razreda, šifrirana kopija v EU (R2), študenti.
-export const PRIVACY_VERSION = "2026-11-18";
+// 2026-11-21 (j 21. 11., kartica »Da, v aplikaciji«, brez e-pošte): urnik in zgoščeni IP (#908), tabela piškotkov (#916),
+// ogledi pogovora v dnevniku dostopov (#924).
+export const PRIVACY_VERSION = "2026-11-21";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
