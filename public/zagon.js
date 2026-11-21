@@ -37,7 +37,12 @@ const zacni = () => {
   return import("./i18n-osnova.js")
     .then((m) => m.ready)
     .catch(() => null)
-    .then(() => mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve()));
+    .then(() => {
+      // Obiskovalec na /#registracija, #prijava ali #pozabljeno-geslo (public/zacetek.js obrazec): obrazec izriše account.js,
+      // ko so preneseni njegovi moduli (strežnik jih da na začetek seznama), ne šele za celo aplikacijo; app.js ga prevzame.
+      if (window.evklidZacetek?.obrazec) import("./account.js").then((m) => m.obrazecVnaprej()).catch(() => {});
+      return mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve());
+    });
 };
 const izris = window.evklidZacetek?.poIzrisu;
 if (izris) izris.then(zacni, zacni);

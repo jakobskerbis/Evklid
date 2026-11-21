@@ -352,6 +352,15 @@ function authMode(on) {
 }
 
 const errorBox = (form) => $(".form-error", form);
+// Gumb za oddajo zaseden do odgovora (in med čakanjem na zagon aplikacije, continueFlow): drugi dotik ne pošlje znova
+// (pregled #932: druga registracija je vrnila »e-naslov je že registriran«). Videz kot drugje (button.primary:disabled).
+function busy(form, on) {
+  const btn = form?.querySelector('button[type="submit"]');
+  if (!btn) return;
+  btn.disabled = on;
+  if (on) btn.setAttribute("aria-busy", "true");
+  else btn.removeAttribute("aria-busy");
+}
 function showError(form, err) {
   const box = errorBox(form);
   box.textContent = err.message;
@@ -371,7 +380,51 @@ export function prefetchAccountStatus() {
     .catch(() => ({ enabled: false }));
 }
 
-export async function initAccount({ onReady }) {
+// Obrazec za prijavo ali registracijo pred zagonom aplikacije (public/zagon.js, ko public/zacetek.js nastavi obrazec:
+// nov obiskovalec brez seje in brez poizvedbe na /#registracija, #prijava, #pozabljeno-geslo). Prej je čakal še ~50 modulov
+// app.js (meritev 21. 11. 2026: gumb »Ustvari račun« na računalniku 2,6 s). initAccount ga nato prevzame brez ponovnega
+// izrisa (route), prijava ali registracija pred tem počaka na initAccount (continueFlow), da je onReady app.js nastavljen.
+let zacet = false; // initAccount je začel
+let zgodaj = false; // obrazec je bil izrisan pred initAccount
+let prikazan = null; // način obrazca, ki je zdaj na zaslonu (renderAuthMode), sicer null
+let initKonec;
+const initGotov = new Promise((ok) => (initKonec = ok));
+export function obrazecVnaprej() {
+  const pokazi = window.evklidZacetek?.obrazec;
+  const mode = hashMode();
+  if (zacet || zgodaj || typeof pokazi !== "function" || !mode) return;
+  zgodaj = true;
+  navigacija();
+  // Kot initAccount: poizvedbo (tu samo oznake vira, zacetek.js; public/vir.js jo je že shranil) umaknemo, sidro ostane.
+  if (location.search) history.replaceState(null, "", location.pathname + location.hash);
+  renderAuthMode(mode);
+  pokazi();
+}
+
+// Nazaj in Naprej med pristajalno stranjo, prijavo in registracijo (#prijava, #registracija) in znak aplikacije na
+// zaslonu prijave; enkrat, tudi ko je obrazec izrisan pred initAccount.
+let navigacijaOn = false;
+function navigacija() {
+  if (navigacijaOn) return;
+  navigacijaOn = true;
+  guardLogoOnAuth();
+  addEventListener("popstate", () => {
+    if (status?.logged_in || !document.body.classList.contains("auth-mode")) return;
+    const m = hashMode();
+    if (m) renderAuthMode(m);
+    else renderLanding();
+  });
+}
+
+export async function initAccount(o) {
+  zacet = true;
+  try {
+    return await initAccount0(o);
+  } finally {
+    initKonec();
+  }
+}
+async function initAccount0({ onReady }) {
   onReadyCb = onReady;
   status = await (statusEarly || api("/api/account/status").catch(() => ({ enabled: false })));
   statusEarly = null;
@@ -383,15 +436,8 @@ export async function initAccount({ onReady }) {
   $("#account-tab").hidden = false;
   watchTakenProfiles();
   lockAccountOnLeave();
-  guardLogoOnAuth();
   $("#account-tab").addEventListener("click", renderAccount);
-  // Nazaj in Naprej med pristajalno stranjo, prijavo in registracijo (#prijava, #registracija).
-  addEventListener("popstate", () => {
-    if (status?.logged_in || !document.body.classList.contains("auth-mode")) return;
-    const m = hashMode();
-    if (m) renderAuthMode(m);
-    else renderLanding();
-  });
+  navigacija();
 
   const q = new URLSearchParams(location.search);
   if (q.get("ref")) store.set("evklid_ref", q.get("ref"));
@@ -532,7 +578,11 @@ const SEEN = "evklid.racun";
 const AUTH_HASH = { "#prijava": "login", "#registracija": "register", "#pozabljeno-geslo": "forgot" };
 const hashMode = () => AUTH_HASH[location.hash] || null;
 const hashOf = (mode) => Object.keys(AUTH_HASH).find((h) => AUTH_HASH[h] === mode) || "";
-const renderAuthMode = (mode) => (mode === "forgot" ? renderForgot() : renderLogin(mode));
+const renderAuthMode = (mode) => {
+  const r = mode === "forgot" ? renderForgot() : renderLogin(mode);
+  prikazan = mode;
+  return r;
+};
 
 // Pristajalna stran ↔ prijava ↔ registracija, z zapisom v zgodovini (#prijava, #registracija), da Nazaj deluje.
 function goAuth(mode) {
@@ -579,6 +629,7 @@ async function renderLanding() {
   // ostane tudi, ker ima cene s strežnika. Enak izris: brez utripa in brez ponovne animacije, ko cene pridejo pozneje.
   const pre = box.hasAttribute("data-vnaprej");
   box.removeAttribute("data-vnaprej");
+  prikazan = null;
   document.body.classList.add("land-mode");
   authMode(true);
   if (!(pre && !prices) && !sameMarkup(box, html)) box.innerHTML = html;
@@ -603,6 +654,10 @@ async function route() {
     const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
     // Prijava dobi svoj zapis (#prijava), da »Kaj je Evklid?« in nato Nazaj vrneta na prijavo.
     if (mode && !hashMode()) history.replaceState(null, "", location.pathname + location.search + hashOf(mode));
+    // Obrazec, izrisan pred initAccount (obrazecVnaprej), ostane: vpisano ostane, fokus tudi.
+    const ze = zgodaj && mode && (prikazan === mode || (mode === "register" && prikazan === "ask-parent"));
+    zgodaj = false;
+    if (ze) return false;
     return (mode ? renderAuthMode(mode) : await renderLanding()), false;
   }
   store.set(SEEN, "1");
@@ -622,6 +677,11 @@ async function route() {
 
 async function continueFlow() {
   if (backToWithdrawal()) return; // prijava ali registracija s strani za odstop od pogodbe
+  // Obrazec pred zagonom aplikacije (obrazecVnaprej): onReady je nastavljen šele v initAccount. Če app.js v 15 s niti ne začne
+  // (omrežje, nova različica), stran naložimo znova: seja je že tu, zato se odpre aplikacija namesto obstanka na obrazcu.
+  await Promise.race([initGotov, new Promise((ok) => setTimeout(ok, 15000))]);
+  if (!zacet) return location.reload();
+  await initGotov;
   status = await api("/api/account/status");
   if (await route()) await onReadyCb?.();
 }
@@ -648,6 +708,7 @@ export function openAddChild() {
 // Na širokem zaslonu je levo od obrazca znak aplikacije s kratkim opisom (j 2026-11-04: brez praznih robov);
 // ime vzamemo iz zgornje vrstice (brand.json → scripts/preimenuj.js), da ga ni treba popravljati na dveh mestih.
 function shell(inner) {
+  prikazan = null;
   authMode(true);
   document.body.classList.remove("land-mode");
   const name = document.querySelector(".topbar .brand-name")?.innerHTML || "";
@@ -737,6 +798,8 @@ function renderLogin(mode = "login") {
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target;
+    if (f.querySelector('button[type="submit"]')?.disabled) return;
+    busy(f, true);
     try {
       if (mode === "login") {
         await api("/api/auth/login", { method: "POST", body: { email: f.email.value, password: f.password.value } });
@@ -780,6 +843,7 @@ function renderLogin(mode = "login") {
         return renderAskParent(err.data.min_age);
       }
       if (err.data?.birth_date) err = { message: t("birth.missing") };
+      busy(f, false);
       showError(f, err);
     }
   });
@@ -806,6 +870,7 @@ function renderAskParent(minAge) {
       </div>
     </form>
     <p class="auth-links">Si starš? <a href="/starsi.html">Preberi več in ustvari račun</a> · <a href="#" data-go="login">Prijava</a></p>`);
+  prikazan = "ask-parent"; // route ga ob initAccount ne izriše znova (obrazecVnaprej)
   bindLinks();
   const f = $("#ask-parent");
   const link = () => linkFor(f.name.value.trim());
@@ -872,12 +937,15 @@ function renderForgot() {
   bindLinks();
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (e.target.querySelector('button[type="submit"]')?.disabled) return;
+    busy(e.target, true);
     try {
       const r = await api("/api/auth/forgot", { method: "POST", body: { email: e.target.email.value } });
       e.target.outerHTML = `<div class="card"><p>Če račun s tem e-naslovom obstaja, smo ti poslali povezavo za novo geslo.</p>${
         r.dev_reset_url ? `<p class="muted">Razvojni način (e-pošta ni nastavljena): <a href="${esc(r.dev_reset_url)}">nastavi geslo</a></p>` : ""
       }</div>`;
     } catch (err) {
+      busy(e.target, false);
       showError(e.target, err);
     }
   });
