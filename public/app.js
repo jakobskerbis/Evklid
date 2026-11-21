@@ -1462,6 +1462,7 @@ async function selectStudent(id) {
   const keep = chatKeepId();
   if (keep) await openConversation(keep, { mark: false });
   else renderEmptyChat();
+  chatDraftRestore(); // osnutek po osvežitvi strani ali »Nadaljuj tukaj«
   if (!$("#view-settings").hidden) fillSettingsForm();
   if (!$("#view-progress").hidden) loadProgress();
   if (!$("#view-me").hidden) renderMe(); // pregled (aktivnost, testi) novega profila
@@ -1766,7 +1767,8 @@ function chatStillFresh(convTopic) {
 function chatKeepId() {
   const seen = readRec(chatSeenKey());
   const conv = seen?.conv && state.conversations.find((c) => c.id === seen.conv);
-  return conv && chatStillFresh(conv.path_topic ?? null) ? conv.id : null;
+  // Z nedokončanim osnutkom pogovor ostane (kot v freshChatIfStale z besedilom v polju).
+  return conv && (chatStillFresh(conv.path_topic ?? null) || chatDraftGet(conv.id)) ? conv.id : null;
 }
 // Inštruktor se prikaže: zastarel pogovor zamenja nov (razen z nedokončanim besedilom v polju ali med odgovorom).
 // Samo ob vrnitvi (chatAway): klik zavihka ali okna, ko je učenec že v inštruktorju, pogovora ne zamenja.
@@ -1806,6 +1808,7 @@ async function openConversation(id, { mark = true } = {}) {
   izrisiZgodovino(conv.id, conv.messages);
   renderState(conv.state);
   renderConversationList();
+  chatDraftRestore();
   const oznaka = aiOznaka();
   prilagodiZdaj(); // zložene formule (sirina.js) so višje: na dno šele zdaj
   box.scrollTop = box.scrollHeight;
@@ -2042,7 +2045,7 @@ document.addEventListener("click", (e) => (e = e.target.closest?.("[data-ustno]"
 async function send(text, { deep = false, image: attached = null, paper: paperOpt = null, afterUser = null, plain = false, draft = null } = {}) {
   if (state.sending) return;
   if (nalogaPole?.busy() && !plain) return; // Evklid še odpira nalogo pole: novo sporočilo počaka (besedilo ostane v polju)
-  if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), openUstno({ besedilo: text });
+  if (!attached && !state.image && /^\s*vprašaj me\b/i.test(text)) return ($("#input").value = ""), chatDraftSave(), openUstno({ besedilo: text });
   // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
   // fotografija v polju ostaneta (ne pošljemo ju zraven in ju ne pobrišemo). Slika samodejnega sporočila
   // (izrez naloge iz pole) pride kot attached.
@@ -2082,6 +2085,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
   $("#send").disabled = true;
   state.pacer?.skip();
 
+  const wasNew = !state.conversationId; // osnutek novega pogovora je shranjen pod »nov«
   try {
     if (!state.conversationId) {
       const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST" });
@@ -2110,6 +2114,8 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     naDnoRaf = requestAnimationFrame(naDno);
     if (fromInput) {
       $("#input").value = "";
+      chatDraftSave(sentTo, "");
+      if (wasNew) chatDraftSave(null, "");
       clearImage();
       state.dictated = false;
     }
@@ -2431,9 +2437,37 @@ function fillInput(text) {
   const box = $("#input");
   const typed = box.value.replace(/\s+$/, "");
   box.value = typed ? `${typed}\n\n${text}` : text;
+  chatDraftSave();
   autoGrow();
   box.focus();
   box.setSelectionRange?.(box.value.length, box.value.length);
+}
+
+// Osnutek vprašanja za vsak pogovor (UX maturanta 2 in 9) v sessionStorage: preživi osvežitev strani (telefon zavihek
+// v ozadju pogosto naloži znova) in »Nadaljuj tukaj« ob prevzemu profila (account.js osveži stran). Po pošiljanju se
+// zbriše. Nov, še neustvarjen pogovor ima ključ »nov«.
+const chatDraftKey = (conv) => `evklid.osnutek.${state.student?.id}.${conv || "nov"}`;
+function chatDraftGet(conv) {
+  try {
+    return (state.student && sessionStorage.getItem(chatDraftKey(conv))) || "";
+  } catch {
+    return "";
+  }
+}
+function chatDraftSave(conv = state.conversationId, v = $("#input")?.value || "") {
+  if (!state.student) return;
+  try {
+    if (v.trim()) sessionStorage.setItem(chatDraftKey(conv), v);
+    else sessionStorage.removeItem(chatDraftKey(conv));
+  } catch {}
+}
+// Prazno polje dobi osnutek odprtega pogovora (ob zagonu in ob odprtju pogovora); vneseno besedilo ostane.
+function chatDraftRestore() {
+  const box = $("#input");
+  const v = box && !box.value.trim() ? chatDraftGet(state.conversationId) : "";
+  if (!v) return;
+  box.value = v;
+  box.dispatchEvent(new Event("input")); // višina polja in izris formul kot pri tipkanju
 }
 
 // Besedilo neuspelega sporočila nazaj v polje; osnutka, ki ga je učenec medtem (ali že prej) napisal, ne prepiše.
@@ -2442,6 +2476,7 @@ function restoreDraft(text, image) {
   const box = $("#input");
   if (text && !box.value.trim()) {
     box.value = text;
+    chatDraftSave();
     autoGrow();
   }
   if (image && !state.image) {
@@ -2537,6 +2572,7 @@ function autoGrow(stick, again) {
 }
 attachPrettify(input); // x^2 → x², 3/4 → ³⁄₄, sqrt → √ že med pisanjem (pred autoGrow, ki izmeri novo besedilo)
 input.addEventListener("input", autoGrow);
+input.addEventListener("input", () => chatDraftSave());
 input.addEventListener("vnos-izris-visina", () => autoGrow());
 // Ozko polje (telefon): namig se ne odreže sredi besede (»Napiši nalogo a«), ampak za zadnjo celo besedo
 // (»Napiši nalogo …«). Celoten namig ostane v polju, ko je prostora dovolj; nov namig (jezik, način) se izmeri znova.

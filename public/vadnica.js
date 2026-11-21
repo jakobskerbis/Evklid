@@ -314,6 +314,7 @@ function renderTask(task, ctx) {
     sendBtns.forEach((b) => (b.disabled = true));
     try {
       finished = await checkTask(task, ctx, value);
+      odgovorShrani(task.id, ""); // poslano: osnutek ni več potreben (odgovor ostane v polju)
     } finally {
       checking = false;
     }
@@ -376,8 +377,31 @@ function renderTask(task, ctx) {
       readFn: (image) => api(`/api/students/${state.student.id}/tasks/${task.id}/read`, { method: "POST", body: { image } }),
       stay: !!ctx.noFocus,
     });
+    // Osnutek odgovora (UX maturanta 9): preživi odhod z naloge, osvežitev in »Nadaljuj tukaj«.
+    const ans = $("#answer");
+    if (!ans.value) ans.value = odgovorOsnutek(task.id);
+    ans.addEventListener("input", () => odgovorShrani(task.id, ans.value));
     if (!ctx.noFocus && !document.body.classList.contains("pad-open")) $("#answer").focus();
   } else closePad();
+}
+
+// Natipkan, še neposlan odgovor naloge za vsako nalogo (id) v sessionStorage: ostane do pošiljanja, tudi ob vrnitvi
+// na isto nalogo, osvežitvi strani in prevzemu profila (account.js »Nadaljuj tukaj« osveži stran). Vmesni koraki so
+// v localStorage (workKey).
+const odgovorKey = (id) => `evklid.odgovor.${id}`;
+function odgovorOsnutek(id) {
+  try {
+    return (id && sessionStorage.getItem(odgovorKey(id))) || "";
+  } catch {
+    return "";
+  }
+}
+function odgovorShrani(id, v) {
+  if (!id) return;
+  try {
+    if (v && v.trim()) sessionStorage.setItem(odgovorKey(id), v);
+    else sessionStorage.removeItem(odgovorKey(id));
+  } catch {}
 }
 
 // ---------- vmesni koraki (kot v zvezek) in pomoč inštruktorja pri nalogi ----------
