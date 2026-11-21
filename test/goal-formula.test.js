@@ -91,6 +91,10 @@ test("goal reminder: skipped on a day the student already practised; self-only a
   assert.equal(toMama.length, 1);
   assert.match(toMama[0], /Jan/);
   assert.match(toNika, /Danes 15 minut\?/);
+  // HTML za »Zame«: »Tvoj cilj: Matura (1. 6. 2027).«, ne »Tvoj cilj je Matura« (pregled #917, 3. prehod).
+  const { html } = buildGoalReminder({ name: "Nika", settings: { goal: "matura", goal_date: "2027-06-01" } }, 10, { appUrl: "https://x/", self: true });
+  assert.match(html, /Tvoj cilj: <b>Matura<\/b> \(1\. 6\. 2027\)\./);
+  assert.doesNotMatch(html, /Tvoj cilj je/);
   assert.match(toNika, /Opomnik izklopiš/);
   assert.doesNotMatch(toNika, /Nika|izklopite/); // brez tretje osebe in vikanja
 });

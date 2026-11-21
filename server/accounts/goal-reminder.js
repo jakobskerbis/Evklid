@@ -71,7 +71,7 @@ export function buildGoalReminder(child, n, { appUrl, self = false }) {
       text: `${goal} ${fmtDateSl(s.goal_date)} – ${left}. Danes 15 minut? Kratek Današnji trening naredi veliko razliko. ${appUrl}\nOpomnik izklopiš v aplikaciji: Nastavitve → Cilj.`,
       html: layout(
         `${goal}: ${left}`,
-        `<p>Tvoj cilj je <b>${esc(goal)}</b> (${esc(fmtDateSl(s.goal_date))}).</p>
+        `<p>Tvoj cilj: <b>${esc(goal)}</b> (${esc(fmtDateSl(s.goal_date))}).</p>
        <p>Danes 15 minut? Kratek Današnji trening ali ponovitev teme, ki ti jo predlaga Evklid, je dovolj.</p>${button(appUrl, "Odpri Evklid")}`,
         `Opomnik izklopiš v aplikaciji: ${off}.`,
       ),
