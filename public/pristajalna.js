@@ -31,39 +31,47 @@ const DEMO = [
   ["a", "a3"],
 ];
 
-// Cena v valuti paketa, enako na strežniku in v brskalniku (stran s strežnika ostane, ko je izris enak, account.js
-// sameMarkup): evro v slovenskem zapisu (»12,34 €«), druge valute v angleškem, valute brez decimalk s celimi enotami.
+// Cena v valuti paketa v jeziku vmesnika (loc kot locale() v public/i18n.js; enako kot izbirnik paketov v account.js,
+// pregled 3, S2): slovensko »12,34 €«, angleško »€12.34«. Strežnik da isti loc (server/pristajalna-takoj.js), zato
+// stran s strežnika ostane (account.js sameMarkup). Valute brez decimalk s celimi enotami.
 const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
-const money = (minor, currency) => {
+const money = (minor, currency, loc) => {
   const major = ZERO_DECIMAL.has(currency) ? minor : minor / 100;
   const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
-  return major.toLocaleString(currency === "EUR" ? "sl-SI" : "en", { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
+  return major.toLocaleString(loc, { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
 
-// Vrstica s ceno iz /api/account/prices (pregled javnih strani 21. 11. 2026, P2 in P9): najnižja mesečna cena za en
-// profil, pri cenah po stopnjah še srednja šola (maturant plača ceno SŠ, ne najnižje). Regijske cene so ene za vse
-// stopnje. Brez cen (strežnik ni odgovoril) prazen niz. Številk ni v kodi strani: spremembo cenika pokaže sama.
-export function priceText(t, prices) {
-  const month = (prices?.plans || []).filter((p) => p.interval === "month" && p.seats === 1 && !p.family && p.amount > 0);
+// Vrstica s ceno iz /api/account/prices (pregled javnih strani 21. 11. 2026, P2 in P9). Pri cenah po stopnjah najprej
+// srednja šola, mesečno in letno (maturant plača ceno SŠ, letni paket je zanj najugodnejši; pregled 3, S1), nato
+// najnižja mesečna (osnovna šola). Brez letnega SŠ ali pri regijskih cenah (ene za vse stopnje) en znesek. Brez cen
+// (strežnik ni odgovoril) prazen niz. Številk ni v kodi strani: spremembo cenika pokaže sama.
+export function priceText(t, prices, loc = "sl") {
+  const single = (p) => p.seats === 1 && !p.family && p.amount > 0;
+  const plans = (prices?.plans || []).filter(single);
+  const month = plans.filter((p) => p.interval === "month");
   if (!month.length) return "";
   const cur = month[0].currency || prices.currency || "EUR";
+  const fmt = (minor) => money(minor, cur, loc);
   const min = Math.min(...month.map((p) => p.amount));
   const ss = month.find((p) => p.level === "SS");
-  return ss && ss.amount !== min ? t("price.levels", { price: money(min, cur), ss: money(ss.amount, cur) }) : t("price.one", { price: money(min, cur) });
+  const ssYear = plans.find((p) => p.level === "SS" && p.interval === "year");
+  if (ss && ssYear && ss.amount !== min) return t("price.levels", { ss: fmt(ss.amount), ssYear: fmt(ssYear.amount), price: fmt(min) });
+  return t("price.one", { price: fmt(ss ? ss.amount : min) });
 }
 
 // Prvi segment so gimnazijci med letom in maturanti (j 2026-11-15; matura v uvodu, P1 21. 11. 2026). Glavni gumb na vrhu,
 // pod tremi dokazi še enkrat (P2), da se obiskovalcu ni treba vračati na vrh. Pod uvodom vrstica s ceno iz cenika in pas
 // zaupanja kot na /o-evklidu, /zakaj-evklid in /starsi.html (P2: starš najprej vpraša, koliko stane in kam gredo podatki).
+// loc: jezik za zapis zneskov (locale() iz public/i18n.js).
 // store: aplikacija iz trgovine (public/pay-ui.js isStoreApp) brez cene in povezave na cenik (nakup mimo trgovine).
 // noscript: stran za brskalnike brez JavaScripta in bralnike besedila (iskalniki, predogledi, orodja AI), ki jo
 // scripts/pristajalna-noscript.js zapiše v <noscript> v public/index.html. Namesto gumbov za registracijo in povezave
 // za prijavo (delujejo le z JavaScriptom) je opomba.
-export function landingHtml(t, { name, prices = null, noscript = false, store = false } = {}) {
+export function landingHtml(t, { name, prices = null, noscript = false, store = false, loc = "sl" } = {}) {
   const days = prices?.trial_days;
   const age = prices?.min_age;
   const trial = days ? `<p class="land-trial">${icon("gift")}<span>${esc(t("land.trial", { n: days }))}</span></p>` : "";
-  const price = store ? "" : priceText(t, prices);
+  const price = store ? "" : priceText(t, prices, loc);
   const priceLine = price ? `<p class="land-price">${esc(price)} <a href="/o-evklidu#cene">${esc(t("land.prices"))}</a></p>` : "";
   const trust = `<ul class="mkt-trust land-trust" aria-label="${esc(t("land.trustLabel"))}">
       <li>${esc(t("land.trust.eu"))}</li>

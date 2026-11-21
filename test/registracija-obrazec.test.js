@@ -16,7 +16,7 @@ try {
   playwright = require("playwright");
 } catch {}
 const UA = "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36";
-const KEYS = ["auth.registerTitle", "auth.loginIntro", "auth.invited", "auth.birth", "auth.privacy", "auth.privacyLink", "auth.registerLink", "auth.showPassword", "auth.hidePassword", "price.none"];
+const KEYS = ["auth.registerTitle", "auth.loginIntro", "auth.invited", "auth.birth", "auth.privacy", "auth.privacyLink", "auth.registerLink", "auth.showPassword", "price.none"];
 
 test("account.js: obrazec brez slovenskih besedil v kodi in brez zapisane cene", () => {
   const src = readFileSync(new URL("../public/account.js", import.meta.url), "utf8");
@@ -54,10 +54,11 @@ test("v brskalniku: cena iz cenika, pokaži/skrij geslo, namig; v angleščini b
     const { ctx, p } = await open("sl-SI");
     const os = plansFor("EUR").find((x) => x.level === "OS" && x.interval === "month" && !x.family).amount;
     const ss = plansFor("EUR").find((x) => x.level === "SS" && x.interval === "month" && !x.family).amount;
+    const ssy = plansFor("EUR").find((x) => x.level === "SS" && x.interval === "year" && x.seats === 1 && !x.family).amount;
     const fmt = (c) => `${(c / 100).toFixed(2).replace(".", ",")} €`;
     await p.waitForFunction(() => /€/.test(document.querySelector("#auth-intro")?.textContent || ""), null, { timeout: 10_000 });
     const intro = (await p.textContent("#auth-intro")).replace(/ /g, " ");
-    assert.ok(intro.includes(`od ${fmt(os)} na mesec (srednja šola ${fmt(ss)})`), intro);
+    assert.ok(intro.includes(`za srednjo šolo ${fmt(ss)} na mesec ali ${fmt(ssy)} na leto (za osnovno šolo od ${fmt(os)} na mesec)`), intro);
     assert.match(intro, /7 dni brezplačno, brez kartice\./);
     const pw = p.locator("#auth-password");
     assert.equal(await pw.getAttribute("aria-describedby"), "auth-password-hint");
@@ -68,7 +69,7 @@ test("v brskalniku: cena iz cenika, pokaži/skrij geslo, namig; v angleščini b
     await btn.click();
     assert.equal(await pw.getAttribute("type"), "text");
     assert.equal(await btn.getAttribute("aria-pressed"), "true");
-    assert.equal(await btn.getAttribute("aria-label"), SL["auth.hidePassword"]);
+    assert.equal(await btn.getAttribute("aria-label"), SL["auth.showPassword"], "oznaka ostane, stanje pove aria-pressed");
     await btn.click();
     assert.equal(await pw.getAttribute("type"), "password");
     assert.equal(await pw.inputValue(), "skrivnost1", "geslo ostane");

@@ -7,7 +7,7 @@ import { plansFor } from "../server/accounts/plans.js";
 
 // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
 globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
-const { landingHtml } = await import("../public/pristajalna.js");
+const { landingHtml, priceText } = await import("../public/pristajalna.js");
 const { t } = await import("../public/i18n.js");
 // Uvozi so pred prvim testom: po njem bi jih --test-force-exit izpustil skupaj s testi.
 const { guaranteeAdvertised, GUARANTEE } = await import("../server/placila/garancija.js");
@@ -39,7 +39,7 @@ test("glavni gumb na vrhu in pod dokazi, prijava kot navadna povezava, matura v 
     assert.ok(html.lastIndexOf('data-land="register"') > html.indexOf("land-proofs"), "drugi gumb je pod dokazi");
     // Pas zaupanja pod uvodom, pred dokazi; učencem brez žargona (strežnik, Anthropic, modeli), glej test/besedila.test.js.
     assert.match(html, /<ul class="mkt-trust land-trust" aria-label="Zasebnost na kratko">/);
-    for (const s of ["Podatki ostanejo v EU (Frankfurt)", "Brez oglasov in sledilnikov", "Tvoji pogovori se ne uporabljajo za učenje umetne inteligence", '<a href="/zasebnost.html">Več o zasebnosti</a>'])
+    for (const s of ["Podatke hranimo v EU (Frankfurt)", "Brez oglasov in sledilnikov", "Tvoji pogovori se ne uporabljajo za učenje umetne inteligence", '<a href="/zasebnost.html">Več o zasebnosti</a>'])
       assert.ok(html.includes(s), s);
     assert.ok(html.indexOf("land-trust") > html.indexOf("land-demo") && html.indexOf("land-trust") < html.indexOf("land-proofs"));
     // Noga: povezava na cenik.
@@ -52,22 +52,30 @@ test("glavni gumb na vrhu in pod dokazi, prijava kot navadna povezava, matura v 
   assert.ok(about.includes('<h2 id="cene">'), "sidro #cene obstaja");
 });
 
-test("vrstica s ceno: zneski iz cenika (najnižja mesečna in srednja šola), regijske cene, brez cen in v aplikaciji iz trgovine brez nje", () => {
+test("vrstica s ceno: zneski iz cenika (srednja šola mesečno in letno, najnižja mesečna), zapis v jeziku vmesnika, regijske cene, brez cen in v aplikaciji iz trgovine brez nje", () => {
   const eur = { currency: "EUR", plans: plansFor("EUR"), trial_days: 7, min_age: 15 };
   const line = (html) => html.match(/<p class="land-price">([\s\S]*?)<\/p>/)?.[1];
   const nb = (s) => s.replace(/\u00a0/g, " ");
   const os = plansFor("EUR").find((p) => p.level === "OS" && p.interval === "month" && !p.family).amount;
   const ss = plansFor("EUR").find((p) => p.level === "SS" && p.interval === "month" && !p.family).amount;
+  const ssy = plansFor("EUR").find((p) => p.level === "SS" && p.interval === "year" && p.seats === 1 && !p.family).amount;
   const fmt = (c) => `${(c / 100).toFixed(2).replace(".", ",")} €`;
-  assert.equal(nb(line(landingHtml(t, { name: "Evklid", prices: eur }))), `Nato naročnina od ${fmt(os)} na mesec (srednja šola ${fmt(ss)}) ali brezplačni paket z omejenim številom vprašanj. <a href="/o-evklidu#cene">Cene</a>`);
+  // Maturant najprej vidi svojo ceno, mesečno in letno (pregled 3, S1).
+  assert.equal(nb(line(landingHtml(t, { name: "Evklid", prices: eur }))), `Nato naročnina za srednjo šolo ${fmt(ss)} na mesec ali ${fmt(ssy)} na leto (za osnovno šolo od ${fmt(os)} na mesec) ali brezplačni paket z omejenim številom vprašanj. <a href="/o-evklidu#cene">Cene</a>`);
+  // Zapis zneskov v jeziku vmesnika kot izbirnik paketov (pregled 3, S2): angleško »€13.99«, slovensko »13,99 €«.
+  const en = priceText((k, v) => `${k} ${JSON.stringify(v)}`, eur, "en");
+  assert.match(en, new RegExp(`"ss":"€${(ss / 100).toFixed(2).replace(".", "\\.")}"`), en);
+  // Brez letnega paketa SŠ: en znesek, cena srednje šole.
+  const noYear = { ...eur, plans: eur.plans.filter((p) => !(p.level === "SS" && p.interval === "year")) };
+  assert.equal(nb(priceText(t, noYear)), `Nato naročnina ${fmt(ss)} na mesec ali brezplačni paket z omejenim številom vprašanj.`);
   // Drug cenik: vrstica sledi podatkom, številk v kodi strani ni.
   const changed = { ...eur, plans: eur.plans.map((p) => (p.level === "SS" && p.interval === "month" && !p.family ? { ...p, amount: 1499 } : p)) };
-  assert.match(nb(line(landingHtml(t, { name: "Evklid", prices: changed }))), /srednja šola 14,99 €/);
+  assert.match(nb(line(landingHtml(t, { name: "Evklid", prices: changed }))), /za srednjo šolo 14,99 €/);
   const src = readFileSync(new URL("../public/pristajalna.js", import.meta.url), "utf8");
   assert.doesNotMatch(src, /9[,.]99|13[,.]99|\b999\b|\b1399\b/, "brez zapisanih cen");
-  // Regijske cene (ena za vse stopnje): brez »srednja šola«.
+  // Regijske cene (ena za vse stopnje): brez »srednjo šolo«.
   const inr = line(landingHtml(t, { name: "Evklid", prices: { currency: "INR", plans: plansFor("INR"), trial_days: 7 } }));
-  assert.ok(inr && !/srednja šola/.test(inr) && /₹/.test(inr), inr);
+  assert.ok(inr && !/srednjo šolo/.test(inr) && /₹/.test(inr), inr);
   assert.equal(line(landingHtml(t, { name: "Evklid" })), undefined, "brez odgovora strežnika ni vrstice");
   const store = landingHtml(t, { name: "Evklid", prices: eur, store: true });
   assert.equal(line(store), undefined, "aplikacija iz trgovine: brez cene");
@@ -75,7 +83,7 @@ test("vrstica s ceno: zneski iz cenika (najnižja mesečna in srednja šola), re
   // Vrstica je prevedena v vseh jezikih z istima spremenljivkama.
   for (const f of readdirSync(new URL("../public/i18n/ui/", import.meta.url)).filter((x) => x.endsWith(".json"))) {
     const d = JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"));
-    assert.ok(d["price.levels"].includes("{price}") && d["price.levels"].includes("{ss}") && d["price.one"].includes("{price}"), f);
+    assert.ok(d["price.levels"].includes("{price}") && d["price.levels"].includes("{ss}") && d["price.levels"].includes("{ssYear}") && d["price.one"].includes("{price}"), f);
     for (const k of ["land.prices", "land.trust.eu", "land.trust.ads", "land.trust.ai", "land.trust.more", "land.trustLabel", "price.levels"]) assert.notEqual(d[k], SL[k], `${f}: ${k}`);
   }
 });

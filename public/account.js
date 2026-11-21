@@ -556,7 +556,7 @@ async function renderLanding() {
   // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo.
   if (status?.logged_in || hashMode()) return;
   const name = document.querySelector(".topbar .brand-name")?.textContent || "";
-  const html = landingHtml(t, { name, prices, store: isStoreApp() }); // aplikacija iz trgovine: brez cene (P2)
+  const html = landingHtml(t, { name, prices, store: isStoreApp(), loc: locale() }); // aplikacija iz trgovine: brez cene (P2)
   const box = $("#view-auth");
   // Stran s strežnika ostane, ko je enaka (sicer bi se pogovor v primeru znova animiral); brez cen (počasna povezava)
   // ostane tudi, ker ima cene s strežnika. Enak izris: brez utripa in brez ponovne animacije, ko cene pridejo pozneje.
@@ -639,7 +639,7 @@ const ageBlocked = () => Date.now() - Number(store.get(AGE_BLOCK) || 0) < 864000
 // odgovoril) samo splošen stavek; v aplikaciji iz trgovine brez zneska (nakup mimo trgovine, public/pay-ui.js).
 function registerIntro(prices) {
   const trial = prices?.trial_days ? `${t("land.trial", { n: prices.trial_days })} ` : "";
-  return esc(`${trial}${(!isStoreApp() && priceText(t, prices)) || t("price.none")}`);
+  return esc(`${trial}${(!isStoreApp() && priceText(t, prices, locale())) || t("price.none")}`);
 }
 
 // Gumb »Pokaži geslo« (P9): na telefonu je napačno vtipkano geslo pogost razlog za ponastavitev že prvi dan.
@@ -649,10 +649,8 @@ function bindPasswordToggle(root) {
     btn.addEventListener("click", () => {
       const show = input.type === "password";
       input.type = show ? "text" : "password";
+      // Oznaka ostane »Pokaži geslo«, stanje pove aria-pressed (pregled 3, N2: brez dvojnega »Skrij geslo, pritisnjeno«).
       btn.setAttribute("aria-pressed", String(show));
-      const label = t(show ? "auth.hidePassword" : "auth.showPassword");
-      btn.setAttribute("aria-label", label);
-      btn.title = label;
       btn.innerHTML = icon(show ? "eye-off" : "eye");
     });
   });

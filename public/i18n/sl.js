@@ -2532,6 +2532,7 @@ export default {
   "dl.apkWhy": "Aplikacije še ni v trgovini Google Play, zato jo preneseš kar s te strani.",
   "dl.apkSize": "približno {mb} MB",
   "dl.apkVersion": "različica {version}",
+  "dl.apkDate": "objavljeno {date}",
   "dl.ios": "iPhone in iPad",
   "dl.appStore": "Prenesi v trgovini App Store",
   "dl.testflight": "Namesti prek TestFlight",
@@ -4345,13 +4346,13 @@ export default {
   // Zneski pridejo s strežnika (/api/account/prices), zato {price} in {ss}.
   "land.prices": "Cene",
   "land.trustLabel": "Zasebnost na kratko",
-  "land.trust.eu": "Podatki ostanejo v EU (Frankfurt)",
+  "land.trust.eu": "Podatke hranimo v EU (Frankfurt)",
   "land.trust.ads": "Brez oglasov in sledilnikov",
   "land.trust.ai": "Tvoji pogovori se ne uporabljajo za učenje umetne inteligence",
   "land.trust.more": "Več o zasebnosti",
-  "price.levels": "Nato naročnina od {price} na mesec (srednja šola {ss}) ali brezplačni paket z omejenim številom vprašanj.",
+  "price.levels": "Nato naročnina za srednjo šolo {ss} na mesec ali {ssYear} na leto (za osnovno šolo od {price} na mesec) ali brezplačni paket z omejenim številom vprašanj.",
   "price.one": "Nato naročnina {price} na mesec ali brezplačni paket z omejenim številom vprašanj.",
-  "price.none": "Nato brezplačni paket z omejenim številom vprašanj ali naročnina.",
+  "price.none": "Nato izbereš naročnino ali ostaneš na brezplačnem paketu z omejenim številom vprašanj.",
   // Obrazec za prijavo in registracijo (public/account.js renderLogin; P9, 21. 11. 2026: prej zapisano v kodi, v drugih
   // jezikih napol slovensko). Ostali napisi obrazca so mob.* (isti kot v mobilni aplikaciji), guest.name, land.haveAccount.
   "auth.registerTitle": "Nov račun",
@@ -4362,7 +4363,6 @@ export default {
   "auth.privacyLink": "obvestilo o varstvu osebnih podatkov",
   "auth.registerLink": "Registracija",
   "auth.showPassword": "Pokaži geslo",
-  "auth.hidePassword": "Skrij geslo",
   "open.group": "Odpri v aplikaciji",
   "open.sim": "Poskus",
   "open.3d": "3D",

@@ -30,9 +30,9 @@ test("lokalni APK: približna velikost in datum pod gumbom; brez APK ali z oddal
     const info = sl.match(/<p class="muted" id="apk-info">([^<]*)<\/p>/)?.[1];
     assert.ok(info, "vrstica z velikostjo");
     assert.match(info, /^približno 2 MB · /);
-    assert.match(info, /4\. 11\. 2026$/);
+    assert.match(info, /objavljeno 4\. novembra 2026$/);
     const en = await page({ apkFile, env: {} }, "?lang=en");
-    assert.match(en.match(/id="apk-info">([^<]*)</)[1], /^about 2 MB · /);
+    assert.match(en.match(/id="apk-info">([^<]*)</)[1], /^about 2 MB · .*released November 4, 2026$/);
     assert.doesNotMatch(await page({ apkFile: path.join(dir, "ni.apk"), env: {} }), /apk-info/);
     assert.doesNotMatch(await page({ apkFile, env: { EVKLID_ANDROID_APK_URL: "https://example.org/a.apk" } }), /apk-info/);
   } finally {

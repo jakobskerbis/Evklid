@@ -15,6 +15,7 @@ import { uiText, manifestLang } from "../webapp.js";
 import { RTL } from "../../public/i18n/languages.js";
 import { appLinkUrl } from "./app-link.js";
 import { IKONE_HEAD } from "../ikone.js";
+import { dateText } from "../../public/datum.js";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const httpsUrl = (u) => (/^https:\/\/[^\s"'<>]+$/.test(String(u || "")) ? u : null);
@@ -165,7 +166,8 @@ export function mountDownload(app, opts = {}) {
       ? [
           t("dl.apkSize", { mb: Math.max(1, Math.round(st.size / 1e6)) }),
           fileVersion(st) ? t("dl.apkVersion", { version: fileVersion(st) }) : "",
-          esc(st.mtime.toLocaleDateString(lang === "sl" ? "sl-SI" : lang, { day: "numeric", month: "numeric", year: "numeric", timeZone: "Europe/Ljubljana" })),
+          // Datum z imenom meseca v jeziku strani (pregled 3, N1: »11/21/2026« je v angleščini dvoumen).
+          t("dl.apkDate", { date: dateText(st.mtime, lang, { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Ljubljana" }) }),
         ]
           .filter(Boolean)
           .join(" · ")
