@@ -7,10 +7,13 @@ Tri poti, neodvisne ena od druge:
    (izmerjeno 8.–16. 11. 2026), zato hiter alarm ob izpadu da UptimeRobot (3.). Ko preizkus ne uspe, delovni tok
    pade in **GitHub pošlje e-pošto** (komu: spodaj, »Kaj narediš ročno«). Deluje tudi, ko strežnik ne teče.
 2. **Strežnik sam** pošlje e-pošto naslovom iz `EVKLID_ADMIN_EMAILS` (prek Resenda) ob dogodkih, ki jih vidi samo on:
-   dnevni strošek AI nad mejo, neuspel nočni preizkus varnostne kopije in nova oznaka stiske.
+   dnevni strošek AI nad mejo, neuspel nočni preizkus varnostne kopije, nova oznaka stiske, inštruktor AI ne dela,
+   nepričakovan ponovni zagon in poln disk (`server/zdravje.js`).
 3. **UptimeRobot** (brezplačen račun j, 16. 11. 2026): vsakih 5 min odpre `https://evklid.app/healthz` in ob izpadu
    pošlje e-pošto »Down«, ob vrnitvi »Up«. Če ob objavi nove različice prideta »Down« in v nekaj minutah »Up«, je bil
-   to le ponovni zagon.
+   to le ponovni zagon. Drugi monitor na `https://evklid.app/healthz/alarm` (21. 11. 2026) vrne 503 »alarm: <kode>«,
+   dokler traja katera od okvar iz `/healthz/stanje` (spodaj), in tako v 5 min javi tudi to, kar Straža ujame šele
+   po urah.
 
 ## Kaj sproži opozorilo
 
@@ -25,6 +28,10 @@ Tri poti, neodvisne ena od druge:
 | Šifriranje osebnih podatkov izklopljeno (`sifriranje: false`; strežnik brez `EVKLID_DATA_KEY` se v produkciji zažene samo z `EVKLID_ALLOW_PLAINTEXT=1`) | da, dokler traja | – |
 | E-pošta ne gre ven (Resend zavrne ključ, preobremenjen, ni omrežja) | da, prvo uro po zadnji neuspeli pošiljki | – (e-pošta ne deluje) |
 | Pomnilnik nad 85 % meje v zadnjih 30 min | da | – |
+| Inštruktor AI ne dela za nikogar (`ai.deluje: false`): ni dobroimetja, neveljaven ključ (401), ključ brez dovoljenja (403), model ne obstaja (404), ali 5 zaporednih neuspelih odgovorov | da, dokler traja | da, takoj; za vsako vrsto največ en e-mail na uro, z navodilom, kaj popraviti. Prvi uspešen odgovor stanje počisti |
+| Nepričakovan ponovni zagon (`zagoni`: premalo pomnilnika, SIGKILL, sesutje; ne objava) | da, prvo uro | da, največ en e-mail na 6 ur, z vrsto napake, če je znana |
+| Disk z bazo nad `EVKLID_DISK_OPOZORILO` (privzeto 85 %) (`disk`) | da, dokler traja | da, pregled na 10 min, največ en e-mail na 6 ur |
+| Inštruktor v preizkusnem načinu (`mock: true`) | da, dokler traja | – (v produkciji se strežnik brez `ANTHROPIC_API_KEY` ne zažene, razen z izrecnim `EVKLID_MOCK=1`) |
 | PDF učbenika se ne prenese; kopija v R2 ni nastavljena | samo vrstica »Opozorilo« v dnevniku Straže | – |
 
 Stanja, ki trajajo ves dan (strošek AI nad mejo, neuspel preizkus kopije, e-pošta), Stražo podrejo samo eno uro po
@@ -73,8 +80,8 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
   napisal ničesar več in okna ni videl), `nad_varovalko` (čez mejo več kot 10 pregledov profila na dan),
   `brez_dobroimetja` (dobroimetje pri ponudniku AI je bilo porabljeno) in `neznano` (model ni odgovoril z vrsto ali NE).
   `pozna_okna_cakajo` pove, koliko oken zdaj čaka na naslednji odgovor.
-- Ko `nepregledano` raste: v Anthropic Console preveri dobroimetje in omejitve ključa. E-pošte o tem strežnik (še) ne
-  pošlje.
+- Ko `nepregledano` raste: v Anthropic Console preveri dobroimetje in omejitve ključa. Ko zmanjka dobroimetja za
+  inštruktorja, strežnik pošlje e-pošto (`ai.deluje: false`, zgoraj).
 
 ## Kaj narediš ročno (enkrat)
 
@@ -90,14 +97,24 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
 4. **Preveri `EVKLID_ADMIN_EMAILS` in Resend** v Render → Environment. Brez njiju strežnik e-pošte ne pošlje in v
    dnevnik zapiše »e-pošta skrbniku ni poslana«.
 5. **UptimeRobot.** uptimerobot.com → Register for FREE → + New monitor: HTTP(s), URL `https://evklid.app/healthz`,
-   interval 5 minutes, obvestilo E-mail → Create monitor. Uspelo je, ko je monitor zelen (»Up«).
+   interval 5 minutes, obvestilo E-mail → Create monitor. Uspelo je, ko je monitor zelen (»Up«). Nato še drugi monitor
+   enako na `https://evklid.app/healthz/alarm` (ime npr. »Evklid alarm«). Kode v odgovoru 503: `baza` (baza ne
+   odgovori), `ai` (inštruktor ne dela), `posta` (Resend ne sprejema), `kopije` (dnevna kopija, kopija v R2 ali nočni
+   preizkus), `disk`, `pomnilnik`, `zagon` (nepričakovan ponovni zagon v zadnji uri). Podrobnosti so v
+   `/healthz/stanje`.
 
 ## Česar ni
 
 - GitHub načrtovani zagon Straže zamakne za ure, zato stanj iz `/healthz/stanje` (strošek AI, kopija, e-pošta)
-  Straža večinoma ne javi. Strošek AI in neuspel preizkus kopije ti strežnik pošlje sam po e-pošti. **Napake e-pošte
-  (Resend) ti nihče ne javi**: enkrat na teden odpri https://evklid.app/healthz/stanje in preveri, da je pri `posta`
-  `"napak":0` ali da je `zadnjiUspeh` novejši od `zadnjaNapaka`. Izpad strežnika javi UptimeRobot.
+  Straža večinoma ne javi. Strošek AI in neuspel preizkus kopije ti strežnik pošlje sam po e-pošti. Napake e-pošte
+  (Resend) javi samo drugi monitor UptimeRobot (`/healthz/alarm`, koda `posta`); brez njega enkrat na teden odpri
+  https://evklid.app/healthz/stanje in preveri, da je pri `posta` `"napak":0` ali da je `zadnjiUspeh` novejši od
+  `zadnjaNapaka`. Izpad strežnika javi UptimeRobot.
+- Nastavitve brez opozorila: `EVKLID_AI_MIROVANJE_S` (privzeto 60): odgovor AI, ki toliko sekund ne pošlje ničesar,
+  se prekine z napako »zastoj odgovora« (učenec poskusi znova, vprašanje ne šteje); `EVKLID_SIGNUPS_PER_DAY`
+  (privzeto 5): novih računov z enega omrežja na dan (veljavna koda vabila v pilot to mejo obide, z eno kodo največ 3
+  na dan); `EVKLID_ZAUSTAVITEV_MS` (privzeto 20000): koliko ob objavi čakamo na odgovore v teku, preden jih prekinemo
+  z obvestilom o posodobitvi (vprašanje ne šteje).
 - GitHub v javnem repozitoriju izklopi načrtovane delovne tokove po 60 dneh brez sprememb v repozitoriju (pošlje
   opozorilo). Takrat Stražo v Actions znova vklopi (in alarmi gredo tebi).
 - Dodatna varovalka zunaj aplikacije (šteje tudi meritve po objavi): mesečna meja porabe v Anthropic Console
