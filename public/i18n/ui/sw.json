@@ -755,6 +755,7 @@
   "pp.oursAbout": "Maswali yameandikwa na Evklid (AI). Muundo na pointi ni kama kwenye karatasi asili, lakini maswali ni mapya. Yatatue kwenye karatasi, kisha kagua suluhisho na ujiwekee pointi zako.",
   "pp.oursTask": "Swali {n}",
   "pp.tutorWait": "Mkufunzi bado anajibu swali lililotangulia. Nitatuma swali lako mara baada ya hapo.",
+  "pp.tutorBusy": "Subiri hadi mkufunzi ajibu swali lililotangulia.",
   "pp.oursPoints": "Pointi {n}",
   "pp.oursShow": "Onyesha suluhisho",
   "pp.oursHide": "Ficha suluhisho",

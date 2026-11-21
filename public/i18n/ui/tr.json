@@ -755,6 +755,7 @@
   "pp.oursAbout": "Soruları Evklid (yapay zekâ) yazdı. Yapı ve puanlar asıl sınavdaki gibi, ama sorular yeni. Onları kâğıt üzerinde çöz, sonra çözümü kontrol et ve puanlarını işaretle.",
   "pp.oursTask": "Soru {n}",
   "pp.tutorWait": "Öğretmen hâlâ önceki soruyu yanıtlıyor. Sorunu hemen ardından göndereceğim.",
+  "pp.tutorBusy": "Öğretmen önceki soruyu yanıtlayana kadar bekle.",
   "pp.oursPoints": "{n} p",
   "pp.oursShow": "Çözümü göster",
   "pp.oursHide": "Çözümü gizle",

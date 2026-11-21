@@ -1203,6 +1203,7 @@ export default {
   "pp.oursAbout": "Naloge je napisal Evklid (AI). Zgradba in točke so kot na izvirni poli, naloge pa so nove. Reši jih na papir, nato preveri rešitev in si označi točke.",
   "pp.oursTask": "{n}. naloga",
   "pp.tutorWait": "Inštruktor še odgovarja na prejšnje vprašanje. Tvoje vprašanje pošljem takoj za tem.",
+  "pp.tutorBusy": "Počakaj, da inštruktor odgovori na prejšnje vprašanje.",
   "pp.oursPoints": "{n} t.",
   "pp.oursShow": "Pokaži rešitev",
   "pp.oursHide": "Skrij rešitev",

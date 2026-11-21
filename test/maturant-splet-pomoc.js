@@ -54,6 +54,35 @@ export async function racunZame({ base, store }, email, settings = MATURANT) {
   return { cookie, id: (await s.json()).id };
 }
 
+// Družina: starš z dvema profiloma (Ana, Bor), vsak z geslom profila GESLO_PROFILA; vrne piškotek in id-ja profilov.
+export const GESLO_PROFILA = "Profil-9876";
+export async function druzina({ base, store }, email, settings = MATURANT) {
+  const reg = await fetch(`${base}/api/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password: "geslo1234", accept_privacy: true, birth_date: "1980-03-03" }) });
+  assert.equal(reg.status, 201);
+  const cookie = piskot(reg);
+  store.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE email = ?").run(email);
+  const ids = [];
+  for (const name of ["Ana", "Bor"]) {
+    const body = { name, birth_year: 2009, consent: true, settings, profile_password: GESLO_PROFILA, other_passwords: Object.fromEntries(ids.map((i) => [i, GESLO_PROFILA])) };
+    const s = await fetch(`${base}/api/students`, { method: "POST", headers: { "Content-Type": "application/json", cookie }, body: JSON.stringify(body) });
+    assert.equal(s.status, 201, await s.clone().text());
+    ids.push((await s.json()).id);
+  }
+  return { cookie, ids };
+}
+// Odklene vse profile družine v odprti strani (geslo profila) in jo osveži.
+export async function odkleni(p, ids) {
+  for (const id of ids) await p.evaluate(([i, g]) => fetch(`/api/students/${i}/unlock`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: g }) }), [id, GESLO_PROFILA]);
+  await p.reload();
+}
+// Menjava profila v meniju profila (brez osvežitve strani); gumb profila je v zgornji vrstici Učne poti.
+export async function menjajProfil(p, id) {
+  await zavihek(p, "path");
+  await p.click(".profile-btn");
+  await p.click(`.pm-student[data-id="${id}"]`);
+  await p.waitForFunction((i) => localStorage.getItem("studentId") === String(i), id, { timeout: 15000 });
+}
+
 // Druga naprava istega računa (prijava z geslom): piškotek za klice API.
 export async function prijava(base, email) {
   const r = await fetch(`${base}/api/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password: "geslo1234" }) });

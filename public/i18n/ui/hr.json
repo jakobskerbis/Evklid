@@ -761,6 +761,7 @@
   "pp.oursAbout": "Zadatke je napisao Evklid (AI). Struktura i bodovi su kao na izvornom ispitu, ali su zadatci novi. Riješi ih na papiru, zatim provjeri rješenje i označi svoje bodove.",
   "pp.oursTask": "Zadatak {n}",
   "pp.tutorWait": "Instruktor još odgovara na prethodno pitanje. Tvoje pitanje šaljem odmah nakon toga.",
+  "pp.tutorBusy": "Pričekaj da instruktor odgovori na prethodno pitanje.",
   "pp.oursPoints": "{n} b.",
   "pp.oursShow": "Prikaži rješenje",
   "pp.oursHide": "Sakrij rješenje",

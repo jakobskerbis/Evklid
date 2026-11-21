@@ -749,6 +749,7 @@
   "pp.oursAbout": "Soal-soal ini ditulis oleh Evklid (AI). Susunan dan poinnya sama seperti lembar aslinya, tetapi soalnya baru. Kerjakan di kertas, lalu cek penyelesaiannya dan tandai poinmu.",
   "pp.oursTask": "Soal {n}",
   "pp.tutorWait": "Tutor masih menjawab pertanyaan sebelumnya. Pertanyaanmu akan kukirim tepat setelahnya.",
+  "pp.tutorBusy": "Tunggu sampai tutor menjawab pertanyaan sebelumnya.",
   "pp.oursPoints": "{n} poin",
   "pp.oursShow": "Lihat penyelesaian",
   "pp.oursHide": "Sembunyikan penyelesaian",
