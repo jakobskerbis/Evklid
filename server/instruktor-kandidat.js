@@ -72,17 +72,23 @@ const CASE_END = /(?:o|m|i|u|ej|oj|ma)$/;
 // črk. Tam bi popravek spremenil pomen (pregled #915).
 const LETTER_NOUN = /^(?:orbital|komponent|koordinat|podlupin|osjo$|osi$|os$)/;
 const LETTER_LIST = /(?:^|[^\p{L}])\p{L}(?:,|[ \t]+(?:in|ali|ter))[ \t]+$/u;
-// Hrvaščina ali srbščina pri nastavitvi »sl« (inštruktor odgovori v jeziku učenca): tam je »s brojem« pravilno. Vsaj dve
-// različni besedi, ki ju v slovenščini ni.
-const HR_WORDS = new Set("koji koja koje kojeg što šta nije ili ovaj ova ovo ovdje gdje jer sada ću će brojem treba trebaš".split(" "));
-const tujJezik = (s) => new Set((s.toLowerCase().match(/\p{L}+/gu) || []).filter((w) => HR_WORDS.has(w))).size >= 2;
+// Hrvaščina ali srbščina pri nastavitvi »sl«: inštruktor odgovori v jeziku učenca, tam je »s brojem« pravilno. Jezik odgovora
+// se odloči enkrat, iz učenčevega sporočila (server/app.js), da se med pretakanjem ne spremeni (pregled #915).
+const HR_WORDS = new Set(
+  "koji koja koje kojeg kojem što šta nije ili ovaj ova ovo ovdje gdje jer sada ću će brojem trebaš molim zadatak zadatku riješi riješiti rješenje rješenja pomozi jednadžbu jednadžba razumijem objasni".split(" "),
+);
+export const jezikOdgovora = (setting, userText = "") => {
+  const l = setting || "sl";
+  if (l !== "sl") return l;
+  return (String(userText).toLowerCase().match(/\p{L}+/gu) || []).some((w) => HR_WORDS.has(w)) ? "hr" : "sl";
+};
 const NOT_CASE = /(?:mo|[šžč]i)$/;
 const PREP_RE = /(?<![\p{L}\p{N}_\\/.\-'’^=+*<>|~\0])(?<![\p{N}\0=+*/^<>|)\]°%][ \t]+)([sSzZkKhH]) (\p{L}{2,})(?=$|[\s.,;:!?)\]»«"“”'’…–—-])/gu;
 const SENTENCE_START = /(?:^|\n[ \t]*(?:[-*>][ \t]+|\d+[.)][ \t]+)?|[.!?…:][ \t]+|[«»"„“(][ \t]*)$/;
 
 export function fixPrepositions(text) {
   const s = String(text);
-  if (!/(?:^|[^\p{L}])[szkh] /iu.test(s) || tujJezik(s)) return s;
+  if (!/(?:^|[^\p{L}])[szkh] /iu.test(s)) return s;
   const plain = maskNonText(s);
   let out = s;
   for (const m of plain.matchAll(PREP_RE)) {

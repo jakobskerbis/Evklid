@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { spawnSync } from "node:child_process";
-import { fixPrepositions, stripLabels, polishReply, polishHold, kandidatOn } from "../server/instruktor-kandidat.js";
+import { fixPrepositions, stripLabels, polishReply, polishHold, kandidatOn, jezikOdgovora } from "../server/instruktor-kandidat.js";
 import { createStreamFilter, replyText, stripMeta, stripLeadPhrase } from "../server/meta.js";
 import { templatePath, PROMPT_PATH, KANDIDAT_PROMPT_PATH, SPLIT_MARKER } from "../server/prompt.js";
 import { openDb } from "../server/db.js";
@@ -219,10 +219,15 @@ test("pretakanje: oznaka v markdown (krepko, naslov, citat) se ne pokaže na pol
 
 // Pregled #915: črka kot ime, hrvaščina pri nastavitvi »sl«, gola »Priklic:« je pojem.
 test("predlogi: črka kot ime (orbitala, komponenta, koordinata, naštevanje črk) in hrvaško besedilo ostanejo", () => {
-  for (const t of ["Elektron je v s orbitali.", "Zapolni s orbitalo.", "Izračunaj x, y in z komponento.", "Poišči z koordinato točke.", "Enako z koordinato.", "Pri a, b ali k vrednosti.", "Množi s brojem koji je veći, ili s olovkom."]) {
+  for (const t of ["Elektron je v s orbitali.", "Zapolni s orbitalo.", "Izračunaj x, y in z komponento.", "Poišči z koordinato točke.", "Enako z koordinato.", "Pri a, b ali k vrednosti."]) {
     assert.equal(fixPrepositions(t), t, t);
   }
   assert.equal(fixPrepositions("Primerjaj s rezultatom in s osnovo."), "Primerjaj z rezultatom in z osnovo.");
+  // Jezik se odloči iz učenčevega sporočila, ne iz odgovora (stabilno med pretakanjem).
+  assert.equal(jezikOdgovora("sl", "Ne razumijem ovaj zadatak"), "hr");
+  assert.equal(jezikOdgovora("sl", "Ne razumem te naloge, treba je deliti?"), "sl");
+  assert.equal(jezikOdgovora("en", "koji"), "en");
+  assert.equal(polishReply("Rješavamo s brojem pet.", { language: jezikOdgovora("sl", "Pomozi mi molim te") }), "Rješavamo s brojem pet.");
   assert.equal(stripLabels("- Priklic: dostop do shranjene informacije"), "- Priklic: dostop do shranjene informacije");
   assert.equal(stripLabels("**Priklic predznanja:** kaj je potenca?"), "Kaj je potenca?");
 });

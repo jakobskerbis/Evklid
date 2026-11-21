@@ -11,7 +11,7 @@ import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
 import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, replyText } from "./meta.js";
-import { polishReply } from "./instruktor-kandidat.js";
+import { jezikOdgovora, polishReply } from "./instruktor-kandidat.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL } from "./claude.js";
@@ -1316,7 +1316,8 @@ export function createApp(store, opts = {}) {
     });
 
     // Popravka besedila (predlogi s/z, k/h in notranje oznake, server/instruktor-kandidat.js) pri pretakanju, v prikazu in zgodovini.
-    const jezik = student.settings.language || "sl";
+    // Jezik odgovora za popravek predlogov: nastavitev, pri »sl« pa hrvaščina, če učenec piše hrvaško (enkrat na odgovor).
+    const jezik = jezikOdgovora(student.settings.language, text);
     const filter = createStreamFilter({ language: jezik });
     // Nastavitve iz klepeta (server/chat-settings.js): orodji za model, dogodki za odjemalca.
     const settingsTools = createSettingsTools({
