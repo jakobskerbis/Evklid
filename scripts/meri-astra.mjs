@@ -96,6 +96,8 @@ await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}`;
 const porabljeno = () => store.db.prepare("SELECT COALESCE(SUM(cost_usd), 0) AS s FROM usage").get().s;
 
+const videniCasi = new Set();
+
 // En krog pogovora; vrne besedilo, kot ga vidi učenec (dogodek done), in vrste klicev.
 async function krog(conv, text) {
   const zacetek = store.db.prepare("SELECT COALESCE(MAX(id), 0) AS m FROM usage").get().m;
@@ -115,12 +117,20 @@ async function krog(conv, text) {
   body += dec.decode();
   const ms = Date.now() - t0;
   const vrstice = store.db.prepare("SELECT kind, model, cost_usd FROM usage WHERE id > ? ORDER BY id").all(zacetek);
+  // Časi klica odgovora (server/casi-odgovora.js): do prvega bloka razmišljanja (branje navodil in zgodovine) in do
+  // prvega besedila modela; ms od začetka klica. Vrstice imajo naključen ključ, zato nove po razliki množice.
+  let casi = null;
+  try {
+    const nove = store.db.prepare("SELECT id, pred_ms, razmislek_ms, besedilo_ms, konec_ms FROM casi_odgovora").all().filter((r) => !videniCasi.has(r.id));
+    for (const r of nove) videniCasi.add(r.id);
+    if (nove.length) casi = nove.map(({ pred_ms, razmislek_ms, besedilo_ms, konec_ms }) => ({ pred_ms, razmislek_ms, besedilo_ms, konec_ms }));
+  } catch {}
   const klici = vrstice.map((r) => `${r.kind}:${String(r.model).replace(/^claude-/, "")}`);
   const usd = vrstice.reduce((a, r) => a + (r.cost_usd || 0), 0);
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
   const done = [...body.matchAll(/event: done\ndata: (.*)\n/g)].at(-1);
   if (!done) throw new Error(`brez dogodka done: ${body.slice(-200)}`);
-  return { ucenec: text, evklid: JSON.parse(done[1]).text, klici, usd, ms, prvoMs, preverjamMs };
+  return { ucenec: text, evklid: JSON.parse(done[1]).text, klici, usd, ms, prvoMs, preverjamMs, casi };
 }
 
 const izid = [];
@@ -142,7 +152,7 @@ for (const p of primeri) {
     for (const k of p.krogi) prepis.push(await krog(conv, k));
     izid.push({ id: p.id, prepis });
     const sek = (v) => (v == null ? "–" : `${(v / 1000).toFixed(1)} s`);
-    console.log(`${p.id}: ${prepis.map((x) => `${x.evklid.length} znakov v ${sek(x.ms)} (besedilo po ${sek(x.prvoMs)}, preverjanje od ${sek(x.preverjamMs)}; ${x.klici.join(" ")})`).join(", ")}, skupaj ${porabljeno().toFixed(3)} $`);
+    console.log(`${p.id}: ${prepis.map((x) => `${x.evklid.length} znakov v ${sek(x.ms)} (besedilo po ${sek(x.prvoMs)}, preverjanje od ${sek(x.preverjamMs)}; klic: razmislek od ${sek(x.casi?.[0]?.razmislek_ms)}, besedilo od ${sek(x.casi?.[0]?.besedilo_ms)}; ${x.klici.join(" ")})`).join(", ")}, skupaj ${porabljeno().toFixed(3)} $`);
   } catch (e) {
     console.log(`${p.id}: napaka ${String(e?.message || e).slice(0, 200)}`);
   }
@@ -151,7 +161,7 @@ for (const p of primeri) {
 server.close();
 zapisi(true);
 console.log("ODGOVORI-ZACETEK");
-console.log(JSON.stringify(izid.map(({ id, prepis }) => ({ id, prepis: prepis.map(({ ucenec, evklid, ms, prvoMs, preverjamMs, klici }) => ({ ucenec, evklid, ms, prvoMs, preverjamMs, klici })) }))));
+console.log(JSON.stringify(izid.map(({ id, prepis }) => ({ id, prepis: prepis.map(({ ucenec, evklid, ms, prvoMs, preverjamMs, klici, casi }) => ({ ucenec, evklid, ms, prvoMs, preverjamMs, klici, casi })) }))));
 console.log("ODGOVORI-KONEC");
 console.log(`\nIZID: ${izid.length}/${primeri.length} primerov; strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Odgovori: ${OUT}`);
 fs.rmSync(tmp, { recursive: true, force: true });
