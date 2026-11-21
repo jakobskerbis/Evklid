@@ -115,7 +115,7 @@ jobs:
           done
           echo "::error::Namestitev brskalnikov ni uspela v 3 poskusih"
           exit 1
-      # Nestabilni testi: največ 1 ponovitev, samo za datoteke, ki so padle (največ 3). Ponovitev je vidna:
+      # Nestabilni testi: največ 1 ponovitev, samo za datoteke, ki so padle (največ 2 v delu, prej 3 v celem npm test). Ponovitev je vidna:
       # opozorilo (annotations_count > 0 v check-runs), vrstica v povzetku zagona, izhod ponovljeno=true in
       # naložen dnevnik. Več padlih datotek = prava napaka, brez ponovitve.
       # Ukaz mora ustrezati package.json scripts.test (+ $TEST_ZASTAVICE in --test-shard).
@@ -129,7 +129,7 @@ jobs:
           if [ "$status" -ne 0 ]; then
             files=$(grep -A8 -E '^\s*not ok' test.log | sed -n -E "s#.*location: '.*/(test/[^/:']+\.test\.js):.*#\1#p" | sort -u)
             n=$(printf '%s' "$files" | grep -c . || true)
-            if [ "$n" -ge 1 ] && [ "$n" -le 3 ]; then
+            if [ "$n" -ge 1 ] && [ "$n" -le 2 ]; then
               echo "::warning::Ponovitev (1x) padlih testov: $(echo $files)"
               echo "ponovljeno=true" >> "$GITHUB_OUTPUT"
               echo "**Nestabilno – ponovljeno 1x:** $(echo $files). Dnevnik: artefakt testi-dnevnik-${{ matrix.del }}." >> "$GITHUB_STEP_SUMMARY"

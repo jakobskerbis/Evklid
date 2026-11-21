@@ -15,18 +15,20 @@ commands below and the checklist of their lens.
 ## 1. Code and UI changes (every PR that touches `public/`, `server/`, `prompts/`, `scripts/`)
 
 **Pass 1 – automatic (must be green before passes 2 and 3):**
-- **Green CI on the PR** (j, 2026-11-06). `.github/workflows/testi.yml` runs three parallel jobs on every
-  PR and push to main: `testi` (`npm test`, Chromium + WebKit), `preveri`
-  (`node scripts/preveri-aplikacijo.cjs`) and `hrosci` (`node scripts/najdi-hrosce.mjs`: duplicate keys in
-  code and translations, no AI), in test mode with no secrets. Read the result with
+- **Green CI on the PR** (j, 2026-11-06). `.github/workflows/testi.yml` runs on every PR and push to main:
+  `testi` (`npm test`, Chromium + WebKit, in 4 parallel parts `testi (N/4)`, j 2026-11-21), `preveri`
+  (`node scripts/preveri-aplikacijo.cjs`, in 3 parallel parts `preveri (racunalnik|telefon|racuni)`),
+  `hrosci` (`node scripts/najdi-hrosce.mjs`: duplicate keys in code and translations, no AI) and `tipi`
+  (mobile TypeScript), in test mode with no secrets. `testi` and `preveri` are summary jobs: green only when all
+  their parts are. Read the result with
   `gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs -q '.check_runs[]|"\(.name) \(.status) \(.conclusion) \(.output.annotations_count) \(.id)"'`
-  (all three `completed success`); on failure the run's artifacts hold the log and screenshots
-  (`gh api repos/jakobskerbis/evklid/actions/runs/<run>/artifacts`). A new push to a PR cancels its old run
-  (pushes to main are never cancelled).
-- **`annotations_count > 0` on `testi` = a flaky test**: a failed test file passed only on its single retry.
-  Read `gh api repos/jakobskerbis/evklid/check-runs/<id>/annotations` (and the `testi-dnevnik` artifact),
-  then fix the test in the same PR, or write it in the PR body with a reason. Green with a retry is not
-  clean.
+  (all `completed success`); on failure the run's artifacts hold the log and screenshots per part
+  (`testi-dnevnik-N`, `preveri-posnetki-<part>`; `gh api repos/jakobskerbis/evklid/actions/runs/<run>/artifacts`).
+  A new push to a PR cancels its old run (pushes to main are never cancelled).
+- **`annotations_count > 0` on a `testi (N/4)` part = a flaky test**: a failed test file (at most 2 per part)
+  passed only on its single retry. Read `gh api repos/jakobskerbis/evklid/check-runs/<id>/annotations` (and that
+  part's `testi-dnevnik-N` artifact), then fix the test in the same PR, or write it in the PR body with a reason.
+  Green with a retry is not clean.
 - Locally (2-core server, under `flock /tmp/evklid-tezko.lock`) run only the affected test files
   (`node --test test/x.test.js`) and screenshots; CI covers the full `npm test` and
   `preveri-aplikacijo.cjs` (it clicks through every tab and main flow on desktop and phone in test mode;

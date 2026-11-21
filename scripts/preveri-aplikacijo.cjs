@@ -2017,8 +2017,16 @@ async function accounts(browser, app) {
   const browser = await chromium.launch();
   try {
     if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
-    const app = await startServer();
+    const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik
     if (!ONLY || ONLY === "racunalnik") await desktop(browser, app);
+    if (ONLY === "telefon") {
+      // Samo telefon (CI ga zažene hkrati z računalnikom): prvi profil, ki ga sicer ustvari del »računalnik«.
+      const p = await newPage(browser, false, "pc", app.base);
+      p.db = app.db;
+      await p.goto(app.base + "/");
+      await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"]));
+      await p.context().close();
+    }
     if (!ONLY || ONLY === "telefon") await phone(browser, app);
     if (ACCOUNTS && (!ONLY || ONLY === "racuni")) {
       const acc = await startServer({ EVKLID_ACCOUNTS: "1" });
@@ -2026,7 +2034,7 @@ async function accounts(browser, app) {
       const bad = acc.log.join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
       bad.forEach((l) => problem("strežnik (računi)", l.slice(0, 200)));
     }
-    const bad = app.log.join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
+    const bad = (app?.log || []).join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
     bad.forEach((l) => problem("strežnik", l.slice(0, 200)));
   } finally {
     await browser.close();
