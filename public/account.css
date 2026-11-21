@@ -22,6 +22,15 @@ a { color: var(--accent); }
 .form-error { color: var(--danger); margin: 0; font-size: 0.92rem; }
 .form label.check, label.check { flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 400; display: flex; }
 label.check input { margin-top: 4px; flex: none; width: 18px; height: 18px; }
+/* Geslo z gumbom »Pokaži geslo« in namigom »Vsaj 8 znakov« (P9, 21. 11. 2026). Gumb je zunaj <label> (gumb v oznaki ni dovoljen). */
+.pw-field { display: flex; flex-direction: column; gap: 6px; }
+.pw-field > label { font-weight: 800; font-size: 0.92rem; }
+.pw-row { display: flex; gap: 8px; }
+.pw-row input { flex: 1; min-width: 0; }
+.pw-toggle { flex: none; width: 44px; min-height: 44px; padding: 0; display: inline-grid; place-items: center; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); color: var(--muted); }
+.pw-toggle[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.pw-toggle svg { width: 20px; height: 20px; }
+.pw-field .small { margin: 0; }
 
 .plans { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
 .plans[hidden], .plan-row[hidden] { display: none; }

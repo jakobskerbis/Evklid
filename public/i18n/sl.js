@@ -4349,6 +4349,18 @@ export default {
   "land.trust.more": "Več o zasebnosti",
   "price.levels": "Nato naročnina od {price} na mesec (srednja šola {ss}) ali brezplačni paket z omejenim številom vprašanj.",
   "price.one": "Nato naročnina {price} na mesec ali brezplačni paket z omejenim številom vprašanj.",
+  "price.none": "Nato brezplačni paket z omejenim številom vprašanj ali naročnina.",
+  // Obrazec za prijavo in registracijo (public/account.js renderLogin; P9, 21. 11. 2026: prej zapisano v kodi, v drugih
+  // jezikih napol slovensko). Ostali napisi obrazca so mob.* (isti kot v mobilni aplikaciji), guest.name, land.haveAccount.
+  "auth.registerTitle": "Nov račun",
+  "auth.loginIntro": "Za starše (otrokov profil) in za dijake ter študente (lasten profil).",
+  "auth.invited": "Ustvari svoj račun starša. Nato dodaš otrokov profil ({name}) in s tem daš soglasje.",
+  "auth.birth": "Tvoj datum rojstva",
+  "auth.privacy": "Prebral(a) sem {link}. Račun ustvarjam zase (dijak ali študent) ali kot starš ali zakoniti zastopnik.",
+  "auth.privacyLink": "obvestilo o varstvu osebnih podatkov",
+  "auth.registerLink": "Registracija",
+  "auth.showPassword": "Pokaži geslo",
+  "auth.hidePassword": "Skrij geslo",
   "open.group": "Odpri v aplikaciji",
   "open.sim": "Poskus",
   "open.3d": "3D",
