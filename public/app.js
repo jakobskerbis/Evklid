@@ -2127,9 +2127,9 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     naDnoRaf = requestAnimationFrame(naDno);
     if (fromInput) {
       $("#input").value = "";
-      chatDraftSave(sentTo, "");
-      if (wasNew) chatDraftSave(null, "");
       clearImage();
+      chatDraftSave(sentTo, ""); // poslano: osnutek tega pogovora (in novega, če je bil nov) ni več potreben
+      if (wasNew) chatDraftSave(null, "");
       state.dictated = false;
     }
     if (afterUser) naDno(); // opomba pod učenčevim oblačkom (public/naloga-pole/klepet.js) meri sama
