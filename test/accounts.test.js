@@ -393,9 +393,17 @@ test("weekly report, export and account deletion", async () => {
     assert.equal(mail.body.to[0], "gal@primer.si");
     assert.match(mail.body.subject, /Zala/);
 
-    // Odjava od poročil prek povezave.
+    // Odjava od poročil prek povezave: GET samo pokaže stran z gumbom (pregledovalniki pošte odpirajo povezave sami),
+    // odjavi POST (gumb ali odjava z enim klikom, RFC 8058). Glavi List-Unsubscribe gresta Resendu (P7).
     const unsub = /\/api\/account\/unsubscribe\?token=[\w-]+/.exec(mail.body.text)[0];
-    await client()(unsub);
+    assert.equal(mail.body.headers["List-Unsubscribe"], `<${/https?:\/\/\S+\/api\/account\/unsubscribe\?token=[\w-]+/.exec(mail.body.text)[0]}>`);
+    assert.equal(mail.body.headers["List-Unsubscribe-Post"], "List-Unsubscribe=One-Click");
+    const page = await client()(unsub);
+    assert.equal(page.status, 200);
+    assert.match(page.body, /<form method="post" action="\/api\/account\/unsubscribe\?token=/);
+    assert.equal((await a("/api/account")).body.parent.weekly_email, true, "GET ne odjavi");
+    const one = await client()(unsub, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, raw: "List-Unsubscribe=One-Click" });
+    assert.equal(one.status, 200);
     assert.equal((await a("/api/account")).body.parent.weekly_email, false);
 
     const consent = store.db.prepare("SELECT * FROM consents WHERE student_id = ?").get(kid.id);

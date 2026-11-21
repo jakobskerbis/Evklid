@@ -30,12 +30,14 @@ export function mountShortLinks(app) {
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
-export function notFoundPage() {
+// Preprosta stran v slogu aplikacije (barve iz public/style.css, svetla in temna po napravi), brez skript: stran 404 in
+// odjava od tedenskih poročil (server/accounts/index.js). body je že pripravljen HTML (besedila ubežena pri klicatelju).
+export function simplePage({ title, docTitle = title, body, lang = "sl" }) {
   const name = esc(BRAND.name);
   return `<!doctype html>
-<html lang="sl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="${esc(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Strani ni · ${name}</title><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
+<title>${esc(docTitle)} · ${name}</title><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
 <style>
 :root{--bg:#F6F7F9;--surface:#fff;--text:#0f172a;--muted:#5b6474;--accent:#2353D1;--accent-text:#fff;--border:#e3e7ee}
 @media (prefers-color-scheme:dark){:root{--bg:#0D1117;--surface:#161b22;--text:#e6edf3;--muted:#9aa4b2;--accent:#6E9BFF;--accent-text:#0D1117;--border:#30363d}}
@@ -43,14 +45,26 @@ body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-ap
 main{max-width:520px;margin:0 auto;padding:48px 16px}
 section{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center}
 img{width:56px;height:56px}h1{font-size:24px;margin:12px 0 8px}p{margin:0 0 8px}.muted{color:var(--muted);font-size:14px}
-.btn{display:inline-block;background:var(--accent);color:var(--accent-text);font-weight:700;text-decoration:none;border-radius:10px;padding:12px 20px;margin-top:12px}
+.btn{display:inline-block;background:var(--accent);color:var(--accent-text);font:inherit;font-weight:700;text-decoration:none;border:0;border-radius:10px;padding:12px 20px;margin-top:12px;min-height:44px;cursor:pointer}
+.btn:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+.link{display:inline-block;margin-top:12px;color:var(--accent);font-weight:600}
+form{margin:0}
 </style></head><body><main><section>
 <img src="/icons/favicon.svg?v=kristal" alt="">
-<h1>Te strani ni</h1>
-<p>Povezava je morda zastarela ali napačno prepisana.</p>
-<p class="muted" lang="en">This page does not exist.</p>
-<a class="btn" href="/">Na začetek – ${name}</a>
+<h1>${esc(title)}</h1>
+${body}
 </section></main></body></html>`;
+}
+
+export function notFoundPage() {
+  const name = esc(BRAND.name);
+  return simplePage({
+    title: "Te strani ni",
+    docTitle: "Strani ni",
+    body: `<p>Povezava je morda zastarela ali napačno prepisana.</p>
+<p class="muted" lang="en">This page does not exist.</p>
+<a class="btn" href="/">Na začetek – ${name}</a>`,
+  });
 }
 
 // Zadnji vmesnik v createApp (za vsemi potmi).
