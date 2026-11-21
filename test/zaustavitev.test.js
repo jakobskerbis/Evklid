@@ -142,3 +142,43 @@ test("zaustaviOdgovore: odgovor v teku in novo vprašanje med zaustavljanjem dob
     server.close();
   }
 });
+
+// Render zažene `npm start` (render.yaml). npm signal posreduje svojemu otroku `sh -c`, ki ga ne posreduje naprej: brez
+// `exec` v skripti start strežnik ni dobil SIGTERM, Render ga je po 30 s ubil, oznaka teka je ostala in vsaka objava je
+// sprožila lažen alarm »zagon« in e-pošto skrbniku (21. 11. 2026).
+test("npm start: SIGTERM procesu npm doseže strežnik, ki se čisto zaustavi (oznaka teka pobrisana)", { skip: process.platform === "win32" }, async () => {
+  const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+  assert.match(pkg.scripts.start, /^exec node /, "skripta start mora z exec zamenjati lupino s strežnikom");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-npm-"));
+  const oznaka = path.join(dir, "zagon.json");
+  const port = 39900 + Math.floor(Math.random() * 90);
+  const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_PDF: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_BACKUPS: "0", EVKLID_CAS: "0" };
+  for (const k of ["EVKLID_DATA_KEY", "NODE_ENV", "EVKLID_BASE_URL", "RENDER", "EVKLID_ADMIN_EMAILS", "RESEND_API_KEY"]) delete env[k];
+  // detached: lastna skupina procesov, da finally ob napaki ubije tudi strežnik (sicer drži cev odprto in test visi).
+  const npm = spawn("npm", ["start", "--silent"], { env, stdio: ["ignore", "pipe", "pipe"], detached: true });
+  let izpis = "";
+  npm.stdout.on("data", (d) => (izpis += d));
+  npm.stderr.on("data", (d) => (izpis += d));
+  const konec = new Promise((resolve) => npm.on("exit", (code, signal) => resolve({ code, signal })));
+  try {
+    let tece = false;
+    for (let i = 0; i < 300 && !tece; i++) {
+      try {
+        tece = (await fetch(`http://127.0.0.1:${port}/healthz`)).ok;
+      } catch {}
+      if (!tece) await new Promise((r) => setTimeout(r, 100));
+    }
+    assert.ok(tece, `strežnik se ni zagnal: ${izpis}`);
+    assert.ok(fs.existsSync(oznaka), "oznaka teka med delovanjem");
+    npm.kill("SIGTERM"); // kot Render ob objavi: signal dobi samo glavni proces
+    await konec;
+    assert.match(izpis, /SIGTERM: zaustavljam/, "strežnik je dobil SIGTERM");
+    assert.ok(!fs.existsSync(oznaka), "čista zaustavitev pobriše oznako");
+    await assert.rejects(fetch(`http://127.0.0.1:${port}/healthz`), "strežnik ne teče več");
+  } finally {
+    try {
+      process.kill(-npm.pid, "SIGKILL");
+    } catch {}
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
