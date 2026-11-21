@@ -678,7 +678,7 @@
   "set.xpGoal200": "200 XP – predano",
   "set.xpGoalNote": "Otprilike 15 XP za svaki riješeni zadatak. Kad postigneš cilj, aplikacija ti čestita.",
   "off.noConnection": "Nema internet veze.",
-  "off.serverUnreachable": "Evklid trenutno nije dostupan. Pokušaj ponovo za minutu; tvoje pitanje je sačuvano.",
+  "off.serverUnreachable": "Evklid trenutno nije dostupan. Pokušaj ponovo za minutu; tvoje pitanje je ostalo u polju.",
   "off.serverBusy": "Evklid trenutno ne odgovara, možda se upravo ažurira. Pokušaj ponovo za minutu.",
   "off.updating": "Evklid se ažurira. Trenutak, nastavljam automatski …",
   "off.serverDown": "Aplikacija trenutno nije dostupna. Otvorit će se sama kada ponovo bude dostupna.",

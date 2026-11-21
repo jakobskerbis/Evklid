@@ -1,12 +1,12 @@
 // Internet dela, Evklid pa ne odgovori (UX maturanta 11): klepet ne trdi »Ni povezave z internetom«, ampak »Evklid
-// trenutno ni dosegljiv. Poskusi čez minuto; tvoje vprašanje je shranjeno.« in vprašanje ostane v polju.
+// trenutno ni dosegljiv. Poskusi čez minuto; tvoje vprašanje je ostalo v polju.« in vprašanje res ostane v polju.
 import test from "node:test";
 import assert from "node:assert/strict";
 import SL from "../public/i18n/sl.js";
 import { chromium, opts, streznik, racunZame, stran, zavihek } from "./maturant-splet-pomoc.js";
 
 test("strežnik nedosegljiv ob delujočem internetu: pravo sporočilo, vprašanje ostane", opts, async () => {
-  assert.equal(SL["off.serverUnreachable"], "Evklid trenutno ni dosegljiv. Poskusi čez minuto; tvoje vprašanje je shranjeno.");
+  assert.equal(SL["off.serverUnreachable"], "Evklid trenutno ni dosegljiv. Poskusi čez minuto; tvoje vprašanje je ostalo v polju.");
   const srv = streznik();
   const racun = await racunZame(srv, "izpad@test.si");
   const { ctx, p } = await stran(srv.base, racun);
@@ -23,7 +23,7 @@ test("strežnik nedosegljiv ob delujočem internetu: pravo sporočilo, vprašanj
     await napaka.waitFor({ timeout: 20000 });
     await p.waitForFunction(() => !document.querySelector("#messages .typing"), null, { timeout: 20000 });
     const besedilo = await p.locator("#messages").innerText();
-    assert.match(besedilo, /Evklid trenutno ni dosegljiv\. Poskusi čez minuto; tvoje vprašanje je shranjeno\./);
+    assert.match(besedilo, /Evklid trenutno ni dosegljiv\. Poskusi čez minuto; tvoje vprašanje je ostalo v polju\./);
     assert.doesNotMatch(besedilo, /Ni povezave z internetom/);
     assert.equal(await p.inputValue("#input"), vprasanje, "vprašanje ostane v polju");
     // Brez interneta ostane »Ni povezave z internetom.«

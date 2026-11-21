@@ -672,7 +672,7 @@
   "set.xpGoal200": "200 XP – intense",
   "set.xpGoalNote": "About 15 XP for each solved task. When you reach the goal, the app congratulates you.",
   "off.noConnection": "No internet connection.",
-  "off.serverUnreachable": "Evklid can't be reached right now. Try again in a minute; your question is saved.",
+  "off.serverUnreachable": "Evklid can't be reached right now. Try again in a minute; your question is still in the box.",
   "off.serverBusy": "Evklid isn't responding right now, it may be updating. Try again in a minute.",
   "off.updating": "Evklid is updating. Just a moment, I'll continue automatically …",
   "off.serverDown": "The app is not reachable right now. It will open by itself as soon as it is back.",

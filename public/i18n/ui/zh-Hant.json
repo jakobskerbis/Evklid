@@ -666,7 +666,7 @@
   "set.xpGoal200": "200 XP – 衝刺",
   "set.xpGoalNote": "每解出一道題約得 15 XP。達成目標時，應用程式會為你慶祝。",
   "off.noConnection": "沒有網路連線。",
-  "off.serverUnreachable": "目前無法連線到 Evklid。請一分鐘後再試；你的問題已保存。",
+  "off.serverUnreachable": "目前無法連線到 Evklid。請一分鐘後再試；你的問題仍在輸入框中。",
   "off.serverBusy": "Evklid 現在沒有回應，可能正在更新。請一分鐘後再試。",
   "off.updating": "Evklid 正在更新。請稍等，會自動繼續 …",
   "off.serverDown": "目前無法連線到應用程式。恢復後會自動開啟。",

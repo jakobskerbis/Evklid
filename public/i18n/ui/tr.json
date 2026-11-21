@@ -672,7 +672,7 @@
   "set.xpGoal200": "200 XP – yoğun",
   "set.xpGoalNote": "Çözülen her soru için yaklaşık 15 XP. Hedefe ulaştığında uygulama seni tebrik eder.",
   "off.noConnection": "İnternet bağlantısı yok.",
-  "off.serverUnreachable": "Evklid'e şu anda ulaşılamıyor. Bir dakika sonra yeniden dene; sorun kaydedildi.",
+  "off.serverUnreachable": "Evklid'e şu anda ulaşılamıyor. Bir dakika sonra yeniden dene; sorun hâlâ kutuda duruyor.",
   "off.serverBusy": "Evklid şu anda yanıt vermiyor, güncelleniyor olabilir. Bir dakika sonra yeniden dene.",
   "off.updating": "Evklid güncelleniyor. Bir saniye, otomatik olarak devam edeceğim …",
   "off.serverDown": "Uygulamaya şu anda ulaşılamıyor. Yeniden kullanılabilir olduğunda kendiliğinden açılacak.",

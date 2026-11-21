@@ -993,7 +993,7 @@ export default {
   "set.xpGoal200": "200 XP – zagnano",
   "set.xpGoalNote": "Približno 15 XP za vsako rešeno nalogo. Ko cilj dosežeš, ti aplikacija čestita.",
   "off.noConnection": "Ni povezave z internetom.",
-  "off.serverUnreachable": "Evklid trenutno ni dosegljiv. Poskusi čez minuto; tvoje vprašanje je shranjeno.",
+  "off.serverUnreachable": "Evklid trenutno ni dosegljiv. Poskusi čez minuto; tvoje vprašanje je ostalo v polju.",
   "off.serverBusy": "Evklid se trenutno ne odziva, morda se ravno posodablja. Poskusi znova čez minuto.",
   "off.updating": "Evklid se posodablja. Čez trenutek nadaljuje samodejno …",
   "off.serverDown": "Aplikacija trenutno ni dosegljiva. Ko bo spet na voljo, se odpre sama.",

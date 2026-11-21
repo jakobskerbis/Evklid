@@ -672,7 +672,7 @@
   "set.xpGoal200": "XP 200 – kwa nguvu",
   "set.xpGoalNote": "Takriban XP 15 kwa kila zoezi ulilotatua. Ukifikia lengo, programu inakupongeza.",
   "off.noConnection": "Hakuna muunganisho wa intaneti.",
-  "off.serverUnreachable": "Evklid haipatikani kwa sasa. Jaribu tena baada ya dakika moja; swali lako limehifadhiwa.",
+  "off.serverUnreachable": "Evklid haipatikani kwa sasa. Jaribu tena baada ya dakika moja; swali lako bado liko kwenye kisanduku.",
   "off.serverBusy": "Evklid haijibu kwa sasa, huenda inasasishwa. Jaribu tena baada ya dakika moja.",
   "off.updating": "Evklid inasasishwa. Subiri kidogo, nitaendelea yenyewe …",
   "off.serverDown": "Programu haipatikani kwa sasa. Itafunguka yenyewe itakapopatikana tena.",

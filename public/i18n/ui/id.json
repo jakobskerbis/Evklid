@@ -666,7 +666,7 @@
   "set.xpGoal200": "200 XP – intens",
   "set.xpGoalNote": "Sekitar 15 XP untuk setiap soal yang diselesaikan. Saat target tercapai, aplikasi memberimu ucapan selamat.",
   "off.noConnection": "Tidak ada koneksi internet.",
-  "off.serverUnreachable": "Evklid sedang tidak dapat dijangkau. Coba lagi dalam satu menit; pertanyaanmu sudah tersimpan.",
+  "off.serverUnreachable": "Evklid sedang tidak dapat dijangkau. Coba lagi dalam satu menit; pertanyaanmu masih ada di kolom.",
   "off.serverBusy": "Evklid sedang tidak merespons, mungkin sedang diperbarui. Coba lagi dalam satu menit.",
   "off.updating": "Evklid sedang diperbarui. Sebentar, aku lanjut otomatis …",
   "off.serverDown": "Aplikasi sedang tidak dapat dijangkau. Aplikasi akan terbuka sendiri begitu tersedia lagi.",

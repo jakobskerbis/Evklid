@@ -666,7 +666,7 @@
   "set.xpGoal200": "200 XP – 집중",
   "set.xpGoalNote": "문제 하나를 풀면 약 15 XP. 목표를 달성하면 앱이 축하해 줘요.",
   "off.noConnection": "인터넷에 연결되어 있지 않습니다.",
-  "off.serverUnreachable": "지금 Evklid에 연결할 수 없어요. 1분 뒤에 다시 시도해 주세요. 질문은 저장되어 있어요.",
+  "off.serverUnreachable": "지금 Evklid에 연결할 수 없어요. 1분 뒤에 다시 시도해 주세요. 질문은 입력란에 그대로 있어요.",
   "off.serverBusy": "Evklid가 지금 응답하지 않아요. 업데이트 중일 수 있어요. 1분 뒤에 다시 시도해 봐.",
   "off.updating": "Evklid를 업데이트하는 중이에요. 잠시만요, 자동으로 계속할게요 …",
   "off.serverDown": "지금은 앱에 연결할 수 없습니다. 다시 사용할 수 있게 되면 자동으로 열립니다.",

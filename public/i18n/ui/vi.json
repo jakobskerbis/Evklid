@@ -666,7 +666,7 @@
   "set.xpGoal200": "200 XP – chăm chỉ",
   "set.xpGoalNote": "Khoảng 15 XP cho mỗi bài giải được. Khi đạt mục tiêu, ứng dụng sẽ chúc mừng bạn.",
   "off.noConnection": "Không có kết nối Internet.",
-  "off.serverUnreachable": "Hiện không kết nối được với Evklid. Hãy thử lại sau một phút; câu hỏi của bạn đã được lưu.",
+  "off.serverUnreachable": "Hiện không kết nối được với Evklid. Hãy thử lại sau một phút; câu hỏi của bạn vẫn còn trong ô nhập.",
   "off.serverBusy": "Evklid hiện không phản hồi, có thể đang cập nhật. Hãy thử lại sau một phút.",
   "off.updating": "Evklid đang cập nhật. Chờ một chút, mình sẽ tự tiếp tục …",
   "off.serverDown": "Hiện không thể truy cập ứng dụng. Ứng dụng sẽ tự mở khi hoạt động trở lại.",

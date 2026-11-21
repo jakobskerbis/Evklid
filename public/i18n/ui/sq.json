@@ -672,7 +672,7 @@
   "set.xpGoal200": "200 XP – intensiv",
   "set.xpGoalNote": "Rreth 15 XP për çdo detyrë të zgjidhur. Kur e arrin qëllimin, aplikacioni të uron.",
   "off.noConnection": "Nuk ka lidhje interneti.",
-  "off.serverUnreachable": "Evklid nuk është i arritshëm tani. Provo sërish pas një minute; pyetja jote është ruajtur.",
+  "off.serverUnreachable": "Evklid nuk është i arritshëm tani. Provo sërish pas një minute; pyetja jote ka mbetur në fushë.",
   "off.serverBusy": "Evklid nuk po përgjigjet tani, ndoshta po përditësohet. Provo sërish pas një minute.",
   "off.updating": "Evklid po përditësohet. Një çast, vazhdoj automatikisht …",
   "off.serverDown": "Aplikacioni nuk është i arritshëm tani. Do të hapet vetë sapo të jetë sërish në dispozicion.",
