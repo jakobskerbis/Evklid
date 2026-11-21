@@ -542,6 +542,7 @@
   "lg.classMonth": "Žebříček tohoto měsíce",
   "me.settingsSub": "Profil, škola, jazyk, vzhled a barvy",
   "me.accountSub": "Předplatné a děti",
+  "me.accountSubSelf": "Předplatné a profil",
   "onb.hello": "Vítej v Evklidu!",
   "onb.text": "Řekni nám, kde se učíš, a přizpůsobíme cestu učení, úlohy i učebnici. Volbu můžeš kdykoli změnit v profilu.",
   "onb.name": "Jméno nebo přezdívka",
@@ -4546,6 +4547,7 @@
   "povabi.title": "Ukaž Evklid kamarádovi",
   "povabi.text": "Pokud ti Evklid pomáhá, pošli odkaz kamarádovi, který se taky učí.",
   "povabi.reward": "Když si rodina, kterou pozveš, předplatné objedná a poprvé zaplatí, obě rodiny dostanou jeden měsíc zdarma.",
+  "povabi.rewardZame": "Když si kamarád, kterého pozveš, předplatné objedná a poprvé zaplatí, oba dostanete jeden měsíc zdarma.",
   "povabi.later": "Teď ne",
   "povabi.link": "Odkaz pro kamaráda",
   "povabi.shareText": "Učím se s Evklidem. Zkus to taky:"

@@ -530,6 +530,7 @@
   "lg.classMonth": "Msimamo wa mwezi huu",
   "me.settingsSub": "Wasifu, shule, lugha, mwonekano na rangi",
   "me.accountSub": "Usajili na watoto",
+  "me.accountSubSelf": "Usajili na wasifu",
   "onb.hello": "Karibu Evklid!",
   "onb.text": "Tuambie unasoma wapi, nasi tutarekebisha njia ya kujifunza, maswali na kitabu. Unaweza kubadilisha wakati wowote kwenye wasifu.",
   "onb.name": "Jina au jina la utani",
@@ -4482,6 +4483,7 @@
   "povabi.title": "Mwonyeshe rafiki Evklid",
   "povabi.text": "Kama Evklid inakusaidia, mtumie kiungo rafiki ambaye pia anasoma.",
   "povabi.reward": "Familia unayoialika ikijisajili na kulipa kwa mara ya kwanza, familia zote mbili zinapata mwezi mmoja bure.",
+  "povabi.rewardZame": "Rafiki unayemwalika akijisajili na kulipa kwa mara ya kwanza, nyote wawili mnapata mwezi mmoja bure.",
   "povabi.later": "Si sasa",
   "povabi.link": "Kiungo kwa rafiki",
   "povabi.shareText": "Ninajifunza na Evklid. Jaribu nawe:"

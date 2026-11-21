@@ -524,6 +524,7 @@
   "lg.classMonth": "Bảng xếp hạng tháng này",
   "me.settingsSub": "Hồ sơ, trường, ngôn ngữ, giao diện và màu sắc",
   "me.accountSub": "Gói đăng ký và con",
+  "me.accountSubSelf": "Gói đăng ký và hồ sơ",
   "onb.hello": "Chào mừng đến với Evklid!",
   "onb.text": "Cho chúng mình biết em học ở đâu để điều chỉnh lộ trình học, bài tập và sách. Em có thể đổi bất cứ lúc nào trong hồ sơ.",
   "onb.name": "Tên hoặc biệt danh",
@@ -4456,6 +4457,7 @@
   "povabi.title": "Giới thiệu Evklid cho bạn bè",
   "povabi.text": "Nếu Evklid giúp được bạn, hãy gửi đường liên kết cho một người bạn cũng đang học.",
   "povabi.reward": "Khi gia đình mà bạn mời đăng ký và thanh toán lần đầu, cả hai gia đình đều được miễn phí một tháng.",
+  "povabi.rewardZame": "Khi người bạn mà bạn mời đăng ký và thanh toán lần đầu, cả hai bạn đều được miễn phí một tháng.",
   "povabi.later": "Để sau",
   "povabi.link": "Liên kết cho bạn bè",
   "povabi.shareText": "Mình đang học với Evklid. Bạn thử xem nhé:"

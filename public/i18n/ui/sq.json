@@ -530,6 +530,7 @@
   "lg.classMonth": "Renditja e këtij muaji",
   "me.settingsSub": "Profili, shkolla, gjuha, pamja dhe ngjyrat",
   "me.accountSub": "Abonimi dhe fëmijët",
+  "me.accountSubSelf": "Abonimi dhe profili",
   "onb.hello": "Mirë se erdhe në Evklid!",
   "onb.text": "Na trego ku mëson dhe do ta përshtatim rrugën, ushtrimet dhe tekstin. Zgjedhjen mund ta ndryshosh kurdo në profil.",
   "onb.name": "Emri ose nofka",
@@ -4484,6 +4485,7 @@
   "povabi.title": "Tregoji një shoku Evklid-in",
   "povabi.text": "Nëse Evklid të ndihmon, dërgoja lidhjen një shoku që gjithashtu mëson.",
   "povabi.reward": "Kur familja që fton pajtohet dhe paguan për herë të parë, të dyja familjet marrin një muaj falas.",
+  "povabi.rewardZame": "Kur shoku që fton pajtohet dhe paguan për herë të parë, të dy merrni një muaj falas.",
   "povabi.later": "Jo tani",
   "povabi.link": "Lidhje për një shok",
   "povabi.shareText": "Po mësoj me Evklid. Provoje edhe ti:"

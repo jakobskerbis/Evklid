@@ -617,6 +617,12 @@ async function continueFlow() {
 function adjustAppForAccounts() {
   const card = $("#new-student-card");
   if (card) card.hidden = true;
+  // Račun »Zame« (dijak ali študent sam, status.self_only): »Naročnina in profil« namesto »Naročnina in otroci«
+  // v vrstici Račun na strani Jaz (UX maturanta 10). data-i18n, da ostane tudi ob menjavi jezika.
+  document.querySelectorAll('[data-i18n="me.accountSub"], [data-i18n="me.accountSubSelf"]').forEach((el) => {
+    el.dataset.i18n = status?.self_only ? "me.accountSubSelf" : "me.accountSub";
+    el.textContent = t(el.dataset.i18n);
+  });
 }
 
 // Ko starš izbriše zadnjega otroka.

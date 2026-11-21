@@ -524,6 +524,7 @@
   "lg.classMonth": "本月排行榜",
   "me.settingsSub": "个人资料、学校、语言、外观和颜色",
   "me.accountSub": "订阅和孩子",
+  "me.accountSubSelf": "订阅和个人资料",
   "onb.hello": "欢迎来到 Evklid！",
   "onb.text": "告诉我们你在哪里上学，我们会为你定制学习路径、题目和课本。你可以随时在个人资料中修改。",
   "onb.name": "名字或昵称",
@@ -4456,6 +4457,7 @@
   "povabi.title": "把 Evklid 推荐给朋友",
   "povabi.text": "如果 Evklid 对你有帮助，就把链接发给也在学习的朋友吧。",
   "povabi.reward": "你邀请的家庭订阅并首次付款后，两个家庭都可免费使用一个月。",
+  "povabi.rewardZame": "你邀请的朋友订阅并首次付款后，你们两人都可免费使用一个月。",
   "povabi.later": "以后再说",
   "povabi.link": "给朋友的链接",
   "povabi.shareText": "我在用 Evklid 学习，你也来试试："

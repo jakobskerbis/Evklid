@@ -530,6 +530,7 @@
   "lg.classMonth": "Bu ayın sıralaması",
   "me.settingsSub": "Profil, okul, dil, görünüm ve renkler",
   "me.accountSub": "Abonelik ve çocuklar",
+  "me.accountSubSelf": "Abonelik ve profil",
   "onb.hello": "Evklid'e hoş geldin!",
   "onb.text": "Nerede okuduğunu söyle; öğrenme yolunu, soruları ve ders kitabını sana göre ayarlayalım. Bunu istediğin zaman profilinden değiştirebilirsin.",
   "onb.name": "Ad veya takma ad",
@@ -4482,6 +4483,7 @@
   "povabi.title": "Evklid'i bir arkadaşına göster",
   "povabi.text": "Evklid sana yardımcı oluyorsa, bağlantıyı ders çalışan bir arkadaşına gönder.",
   "povabi.reward": "Davet ettiğin aile abone olup ilk kez ödeme yaptığında, iki aile de bir ay ücretsiz kullanır.",
+  "povabi.rewardZame": "Davet ettiğin arkadaşın abone olup ilk kez ödeme yaptığında, ikiniz de bir ay ücretsiz kullanırsınız.",
   "povabi.later": "Şimdi değil",
   "povabi.link": "Arkadaş için bağlantı",
   "povabi.shareText": "Evklid ile öğreniyorum. Sen de dene:"

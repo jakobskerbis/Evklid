@@ -524,6 +524,7 @@
   "lg.classMonth": "Peringkat bulan ini",
   "me.settingsSub": "Profil, sekolah, bahasa, tampilan, dan warna",
   "me.accountSub": "Langganan dan anak",
+  "me.accountSubSelf": "Langganan dan profil",
   "onb.hello": "Selamat datang di Evklid!",
   "onb.text": "Beri tahu di mana kamu belajar, dan kami sesuaikan jalur belajar, soal, dan buku. Kamu bisa mengubahnya kapan saja di profil.",
   "onb.name": "Nama atau nama panggilan",
@@ -4456,6 +4457,7 @@
   "povabi.title": "Tunjukkan Evklid ke teman",
   "povabi.text": "Kalau Evklid membantumu, kirim tautannya ke teman yang juga sedang belajar.",
   "povabi.reward": "Saat keluarga yang kamu undang berlangganan dan membayar pertama kali, kedua keluarga mendapat gratis satu bulan.",
+  "povabi.rewardZame": "Saat teman yang kamu undang berlangganan dan membayar pertama kali, kalian berdua mendapat gratis satu bulan.",
   "povabi.later": "Nanti saja",
   "povabi.link": "Tautan untuk teman",
   "povabi.shareText": "Aku belajar dengan Evklid. Coba juga, yuk:"

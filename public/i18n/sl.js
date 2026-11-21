@@ -817,6 +817,7 @@ export default {
   "lg.classMonth": "Lestvica tega meseca",
   "me.settingsSub": "Profil, šola, jezik, videz in barve",
   "me.accountSub": "Naročnina in otroci",
+  "me.accountSubSelf": "Naročnina in profil",
 
   // prvi zagon
   "onb.hello": "Dobrodošel v Evklidu!",
@@ -4485,6 +4486,7 @@ export default {
   "povabi.title": "Pokaži Evklida prijatelju",
   "povabi.text": "Če ti Evklid pomaga, pošlji povezavo prijatelju, ki se tudi uči.",
   "povabi.reward": "Ko se družina, ki jo povabiš, naroči in prvič plača, obe družini dobita en mesec brezplačno.",
+  "povabi.rewardZame": "Ko se prijatelj, ki ga povabiš, naroči in prvič plača, oba dobita en mesec brezplačno.",
   "povabi.later": "Ne zdaj",
   "povabi.link": "Povezava za prijatelja",
   "povabi.shareText": "Učim se z Evklidom. Poskusi še ti:",

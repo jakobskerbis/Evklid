@@ -524,6 +524,7 @@
   "lg.classMonth": "今月のランキング",
   "me.settingsSub": "プロフィール、学校、言語、外観、色",
   "me.accountSub": "サブスクリプションとお子さま",
+  "me.accountSubSelf": "サブスクリプションとプロフィール",
   "onb.hello": "Evklid へようこそ！",
   "onb.text": "どこで勉強しているか教えてください。学習パス、問題、教科書をあなたに合わせます。プロフィールでいつでも変更できます。",
   "onb.name": "名前またはニックネーム",
@@ -4456,6 +4457,7 @@
   "povabi.title": "友だちにEvklidを紹介しよう",
   "povabi.text": "Evklidが役に立っているなら、一緒に勉強している友だちにリンクを送ってみよう。",
   "povabi.reward": "招待した家族が登録して初めて支払うと、両方の家族が1か月無料になります。",
+  "povabi.rewardZame": "招待した友だちが登録して初めて支払うと、2人とも1か月無料になります。",
   "povabi.later": "今はしない",
   "povabi.link": "友だち用のリンク",
   "povabi.shareText": "Evklidで勉強しているよ。きみも試してみて："

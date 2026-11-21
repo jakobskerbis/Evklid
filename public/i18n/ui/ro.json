@@ -536,6 +536,7 @@
   "lg.classMonth": "Clasamentul lunii",
   "me.settingsSub": "Profil, școală, limbă, aspect și culori",
   "me.accountSub": "Abonament și copii",
+  "me.accountSubSelf": "Abonament și profil",
   "onb.hello": "Bine ai venit în Evklid!",
   "onb.text": "Spune-ne unde înveți și adaptăm traseul de învățare, exercițiile și manualul. Poți schimba oricând din profil.",
   "onb.name": "Nume sau poreclă",
@@ -4518,6 +4519,7 @@
   "povabi.title": "Arată-i Evklid unui prieten",
   "povabi.text": "Dacă Evklid te ajută, trimite linkul unui prieten care învață și el.",
   "povabi.reward": "Când o familie pe care o inviți se abonează și plătește prima dată, ambele familii primesc o lună gratuit.",
+  "povabi.rewardZame": "Când un prieten pe care îl inviți se abonează și plătește prima dată, amândoi primiți o lună gratuit.",
   "povabi.later": "Nu acum",
   "povabi.link": "Link pentru un prieten",
   "povabi.shareText": "Învăț cu Evklid. Încearcă și tu:"

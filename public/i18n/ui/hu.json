@@ -530,6 +530,7 @@
   "lg.classMonth": "E havi ranglista",
   "me.settingsSub": "Profil, iskola, nyelv, megjelenés és színek",
   "me.accountSub": "Előfizetés és gyerekek",
+  "me.accountSubSelf": "Előfizetés és profil",
   "onb.hello": "Üdv az Evklidben!",
   "onb.text": "Mondd el, hol tanulsz, és hozzáigazítjuk a tanulási utat, a feladatokat és a tankönyvet. A választást bármikor módosíthatod a profilban.",
   "onb.name": "Név vagy becenév",
@@ -4482,6 +4483,7 @@
   "povabi.title": "Mutasd meg az Evklidet egy barátodnak",
   "povabi.text": "Ha az Evklid segít neked, küldd el a linket egy barátodnak, aki szintén tanul.",
   "povabi.reward": "Amikor egy általad meghívott család előfizet és először fizet, mindkét család egy hónapot ingyen kap.",
+  "povabi.rewardZame": "Amikor egy általad meghívott barát előfizet és először fizet, mindketten egy hónapot ingyen kaptok.",
   "povabi.later": "Most nem",
   "povabi.link": "Link egy barátnak",
   "povabi.shareText": "Az Evkliddel tanulok. Próbáld ki te is:"

@@ -530,6 +530,7 @@
   "lg.classMonth": "Clasificación de este mes",
   "me.settingsSub": "Perfil, centro, idioma, aspecto y colores",
   "me.accountSub": "Suscripción e hijos",
+  "me.accountSubSelf": "Suscripción y perfil",
   "onb.hello": "¡Bienvenido a Evklid!",
   "onb.text": "Dinos dónde estudias y adaptaremos la ruta, los ejercicios y el libro. Puedes cambiarlo cuando quieras en tu perfil.",
   "onb.name": "Nombre o apodo",
@@ -4485,6 +4486,7 @@
   "povabi.title": "Enseña Evklid a un amigo",
   "povabi.text": "Si Evklid te ayuda, envía el enlace a un amigo que también estudie.",
   "povabi.reward": "Cuando una familia a la que invites se suscriba y pague por primera vez, ambas familias recibirán un mes gratis.",
+  "povabi.rewardZame": "Cuando un amigo al que invites se suscriba y pague por primera vez, los dos recibiréis un mes gratis.",
   "povabi.later": "Ahora no",
   "povabi.link": "Enlace para un amigo",
   "povabi.shareText": "Estoy aprendiendo con Evklid. Pruébalo tú también:"
