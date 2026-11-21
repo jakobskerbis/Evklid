@@ -138,7 +138,7 @@
 }
 .tb-step-btn.next { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
 .tb-step-btn svg { width: 24px; height: 24px; margin: 0; }
-.tb-step-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 3px; }
+.tb-step-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 /* Na prvem koraku ni Nazaj, na zadnjem ni Naprej (j, 17. 11. 2026): krog izgine, mesto ostane (števec ostane na sredini). */
 .tb-step-btn:disabled { visibility: hidden; }
 @media (hover: hover) { .tb-step-btn:not(:disabled):hover { border-color: var(--accent); } .tb-step-btn.next:not(:disabled):hover { filter: brightness(1.08); } }

@@ -109,7 +109,10 @@ html { -webkit-tap-highlight-color: transparent; }
 @media (pointer: coarse) { a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; } }
 a.card { transition: transform 0.08s, border-color 0.15s; }
 a.card:active { transform: scale(0.985); }
-:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Obroba fokusa polne barve poudarka (WCAG 1.4.11: ≥ 3 : 1 ob ozadju; prej 45 % prosojna ≈ 2,1 : 1). Na modri podlagi
+   (kartica Danes, Današnji trening) je bela, da se ne zlije s podlago. test/fokus-kontrast.test.js */
+.hero :focus-visible { outline-color: #fff; }
 
 /* ---------- gumbi ---------- */
 button { cursor: pointer; }
@@ -224,7 +227,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
   font: inherit; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 .profile-btn:hover, .profile-btn[aria-expanded="true"] { border-color: var(--accent); }
-.profile-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+.profile-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .profile-btn .pm-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .profile-btn > svg.i { flex: none; width: 18px; height: 18px; color: var(--muted); transition: transform 0.15s; }
 .profile-btn[aria-expanded="true"] > svg.i { transform: rotate(180deg); }
@@ -258,7 +261,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
 .pm-item[data-act="logout"] > svg.i { color: var(--danger); }
 /* Klik na klobuk: »Nadaljuj z učenjem« (quick-start.js). */
 .brand { cursor: pointer; border-radius: 12px; padding: 2px; margin: -2px; } /* 40 px za dotik */
-.brand:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 3px; }
+.brand:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .brand[aria-expanded="true"] .logo { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
 .quick-pop {
   position: fixed; z-index: 60; width: min(360px, calc(100vw - 16px)); max-height: calc(100dvh - 88px); overflow-y: auto;
