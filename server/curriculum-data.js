@@ -547,7 +547,7 @@ export const PATHS = {
     label: "Matematika, 4. letnik",
     units: [
       ["Zaporedja in vrste", [
-        "Matematična indukcija | dokaže trditev za vsa naravna števila s popolno indukcijo (vsote, deljivost, neenakosti)",
+        "Matematična indukcija | dokaže trditev za vsa naravna števila s popolno indukcijo (vsote, deljivost, neenakosti) (višja raven)",
         "Zaporedja | lastnosti, limita zaporedja",
         "Aritmetično in geometrijsko zaporedje | splošni člen, vsota",
         "Geometrijska vrsta | konvergenca, vsota",
