@@ -52,7 +52,7 @@ export function withdrawalRefundCents({ paidCents, startMs, endMs, nowMs = Date.
 }
 // Vračilo v centih, zaokroženo navzgor (v korist kupca, #815 L5); 1e-9 popravi napako plavajoče vejice (566,0000001).
 export const refundUp = (cents) => Math.max(0, Math.ceil((Number(cents) || 0) - 1e-9));
-const PAY_LINK_DAYS = 7;
+export const PAY_LINK_DAYS = 7; // povezava za plačilo staršu; isto število na public/starsi.html (#placilo-dijak)
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function migrateBilling(db) {
