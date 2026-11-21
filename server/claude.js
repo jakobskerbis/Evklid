@@ -172,15 +172,16 @@ export function mirovanjeMs(env = process.env) {
   const v = raw == null || String(raw).trim() === "" ? 60 : Number(raw);
   return Number.isFinite(v) && v > 0 ? Math.round(v * 1000) : 0;
 }
-// Vmesnik SDK za en klic: vsak prebrani kos telesa odgovora pokliče tik(); ob prekinitvi (signal) se telo takoj
-// zapre z napako, tudi če povezava sama ne odgovori več.
+// Vmesnik SDK za en klic: glave odgovora in vsak prebrani kos telesa pokličejo tik(true); ob prekinitvi (signal) se
+// telo takoj zapre z napako, tudi če povezava sama ne odgovori več.
 const vmesnikZivosti = (tik, signal) => async (request, next) => {
   const res = await next(request);
+  tik(true);
   if (!res.body || typeof res.body.pipeThrough !== "function") return res;
   const body = res.body.pipeThrough(
     new TransformStream({
       transform(chunk, ctrl) {
-        tik();
+        tik(true);
         ctrl.enqueue(chunk);
       },
     }),
@@ -289,12 +290,14 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
     // Nadzornik mirovanja (zastoj): lasten signal klica, ki ga prekine učenec (signal) ali obmolkel tok (budilka).
     let zastoj = false;
+    let glave = false; // API je odgovoril (glave): klic je morda plačan
     let budilka = null;
     const klic = new AbortController();
     const odvezi = () => klic.abort();
     if (signal?.aborted) klic.abort();
     else signal?.addEventListener?.("abort", odvezi, { once: true });
-    const tik = () => {
+    const tik = (odgovor = false) => {
+      glave ||= odgovor;
       if (!idleMs) return;
       clearTimeout(budilka);
       budilka = setTimeout(() => {
@@ -320,7 +323,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     let final;
     try {
       for await (const event of stream) {
-        tik();
+        tik(true);
         if (event.type === "message_start") {
           live = { ...(event.message?.usage || {}) };
           liveModel = event.message?.model || model;
@@ -376,7 +379,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         ? Math.min(roundMax, Math.ceil(1.1 * deltaBytes + (thinkMs / 1000 + ABORT_LAG_S) * maxTokensPerSec(liveModel)))
         : roundMax;
       if (live) partial = lastDelta ? live : { ...live, output_tokens: Math.max(outBound, live.output_tokens || 0) };
-      else if (signal?.aborted || zastoj) {
+      else if (signal?.aborted || (zastoj && glave)) {
         const inBound = systemTokens(p.system) + messageTokens(p.messages) + (p.tools?.length ? Math.ceil(Buffer.byteLength(JSON.stringify(p.tools), "utf8") / 2) : 0);
         partial = { input_tokens: 0, cache_creation_input_tokens: inBound, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: inBound }, output_tokens: 0 };
       }

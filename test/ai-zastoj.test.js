@@ -104,3 +104,11 @@ test("zagon: produkcija brez ključa API se ne zažene, razen z izrecnim EVKLID_
   // Besedilo ne izpiše nobene vrednosti iz okolja.
   assert.doesNotMatch(zagonBrezAiKljuca({ NODE_ENV: "production", EVKLID_DATA_KEY: "skrivnost" }), /skrivnost/);
 });
+
+test("zastoj pred glavami odgovora (povezava visi): napaka brez zapisane porabe", async (t) => {
+  t.after(() => setClient(null));
+  setClient(new Anthropic({ apiKey: "sk-test", maxRetries: 0, timeout: 60_000, fetch: (_url, init) => new Promise((_res, rej) => init.signal.addEventListener("abort", () => rej(Object.assign(new Error("aborted"), { name: "AbortError" })))) }));
+  const err = await klic(300).then(() => null, (e) => e);
+  assert.equal(err?.zastoj, true);
+  assert.equal(err.usage, undefined, "API ni odgovoril: klic ni plačan");
+});
