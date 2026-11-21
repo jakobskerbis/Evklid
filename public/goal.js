@@ -1,10 +1,10 @@
 // Cilj in datum cilja: vprašamo enkrat (nov profil), nato le vrstica z odštevanjem na Učni poti,
-// v Napredku in v zgornji vrstici. Spremeni ali izbriši se v Nastavitvah. Opomnik ob 12.00:
-// kartica v aplikaciji (ko jo odpreš po 12.00) in, z računom, e-pošta (server/accounts/goal-reminder.js).
+// v Napredku in v zgornji vrstici. Spremeni ali izbriši se v Nastavitvah. Opomnik ob OPOMNIK_URA (goal-data.js):
+// kartica v aplikaciji (ko jo odpreš po tej uri) in, z računom, e-pošta (server/accounts/goal-reminder.js).
 import { t, locale } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { odstevanje } from "./zacetna.js";
-import { goalsFor, daysUntil, validDate, DEFAULT_GOAL, hasGoal, privzetiCilj, ciljObrazca } from "./goal-data.js";
+import { goalsFor, daysUntil, validDate, DEFAULT_GOAL, hasGoal, privzetiCilj, ciljObrazca, OPOMNIK_URA } from "./goal-data.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const goalName = (g) => t(`goal.${g || DEFAULT_GOAL}`);
@@ -51,11 +51,11 @@ export function goalFieldsHtml(settings = {}, { withReminder = false, idPrefix =
     <p class="goal-countdown" aria-live="polite">${esc(date ? `${goalName(cur)} · ${countdown(date)}` : "")}</p>
     ${withReminder ? `
     <div class="goal-reminder-row" ${date ? "" : "hidden"}>
-      <span class="gr-text"><b id="${idPrefix}-rem-label">${esc(t("goal.reminder"))}</b><small class="muted">${esc(t("goal.reminderNote", { date: fmtDate(date) }))}</small></span>
+      <span class="gr-text"><b id="${idPrefix}-rem-label">${esc(t("goal.reminder", { h: OPOMNIK_URA }))}</b><small class="muted">${esc(t("goal.reminderNote", { date: fmtDate(date) }))}</small></span>
       <button type="button" class="switch" role="switch" aria-checked="${settings.goal_reminder !== false}" aria-labelledby="${idPrefix}-rem-label" data-goal-reminder></button>
       <input type="hidden" name="goal_reminder" value="${settings.goal_reminder !== false ? "1" : "0"}">
     </div>
-    <p class="muted small-note goal-no-date" ${date ? "hidden" : ""}>${esc(t("goal.reminderNeedsDate"))}</p>` : ""}`;
+    <p class="muted small-note goal-no-date" ${date ? "hidden" : ""}>${esc(t("goal.reminderNeedsDate", { h: OPOMNIK_URA }))}</p>` : ""}`;
 }
 
 // Odzivnost polj: izbira cilja, datum, brisanje datuma, stikalo. Klic po vsakem izrisu polj.
@@ -123,17 +123,18 @@ export function goalLineHtml(student, levelText = "", brezDni = false) {
     <button type="button" class="text-btn gl-edit" data-view="settings" data-goal-edit>${esc(t("goal.change"))}</button>`;
 }
 
-// Opomnik: danes po 12.00, do dneva cilja vključno, če je vključen in še ni bil skrit danes.
+// Opomnik: danes od OPOMNIK_URA, do dneva cilja vključno, če je vključen in še ni bil skrit danes.
 const todayKey = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 const seenKey = (id) => `evklid.goalSeen.${id}`;
-export function reminderDue(student, now = new Date()) {
+// vadil: učenec je danes že zbral XP – kartice ni, kot ne e-pošte in obvestila (vadilDanes, pregled #917).
+export function reminderDue(student, now = new Date(), { vadil = false } = {}) {
   const s = student?.settings || {};
-  if (!s.goal_reminder || !validDate(s.goal_date)) return false;
+  if (vadil || !s.goal_reminder || !validDate(s.goal_date)) return false;
   const n = daysUntil(s.goal_date);
-  if (n === null || n < 0 || now.getHours() < 12) return false;
+  if (n === null || n < 0 || now.getHours() < OPOMNIK_URA) return false;
   try {
     return localStorage.getItem(seenKey(student.id)) !== todayKey();
   } catch {
@@ -154,7 +155,7 @@ export function reminderText(settings = {}) {
 export function reminderCardHtml(student, { preview = false } = {}) {
   return `<span class="gr-ic" aria-hidden="true">${icon("bell")}</span>
     <div class="gr-body">
-      <div class="gr-head"><span>${esc(t("goal.remHead"))}</span><span>${esc(t("goal.remWhen"))}</span></div>
+      <div class="gr-head"><span>${esc(t("goal.remHead"))}</span><span>${esc(t("goal.remWhen", { h: OPOMNIK_URA }))}</span></div>
       <b>${esc(reminderText(student.settings))}</b>
       ${preview ? "" : `<div class="actions"><button type="button" class="primary small" data-goal-start>${icon("play")}${esc(t("goal.remStart"))}</button><button type="button" class="ghost small" data-goal-later>${esc(t("goal.remLater"))}</button></div>`}
     </div>`;

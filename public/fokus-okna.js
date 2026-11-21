@@ -1,7 +1,7 @@
 // Okno čez zaslon (role="dialog", aria-modal="true"): fokus gre v okno, Tab in Shift+Tab krožita samo po njem
 // (ne po skriti strani pod njim), ob zaprtju se vrne tja, od koder je bil. Več odprtih oken: velja zadnje odprto.
-// Okna, ki niso v skladu (oznaka formule #fx-pop, zaklep profila, »Profil je odprt drugje«, geslo računa), imajo
-// svoj fokus: vanje ne posegamo.
+// Okna, ki niso v skladu (oznaka formule #fx-pop, zaklep profila, »Profil je odprt drugje« v account.js, geslo
+// računa), imajo svoj fokus: vanje ne posegamo.
 const SEL = 'a[href], button, input, select, textarea, iframe, canvas[tabindex], [tabindex], [contenteditable]:not([contenteditable="false"]), details > summary:first-of-type, audio[controls], video[controls]';
 const DRUGO_OKNO = '[role="dialog"], [role="alertdialog"], [aria-modal="true"], dialog[open], .overlay';
 const odprta = [];

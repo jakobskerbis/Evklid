@@ -31,6 +31,12 @@ const termText = (e) => [t(`pp.term.${e.term}`), e.session ? t("pp.session", { n
 // RIC pri NPZ: »preizkus znanja« in »navodila za vrednotenje«, pri maturi »izpitna pola« in »navodila za ocenjevanje«.
 const NPZ_FILE = { paper: "pp.file.test", scoring: "pp.file.scoringNpz" };
 export const fileText = (f, e) => t((e.exam.startsWith("NPZ") && NPZ_FILE[f.kind]) || `pp.file.${f.kind}`);
+// Navodilo »Najprej prenesi polo …« imenuje prvi gumb za prenos v vrstici: NPZ »Preizkus znanja«, poklicna matura
+// »Izpitna pola«, splošna matura »Izpitna pola 1« (pregled #917, 3. prehod).
+export const firstFile = (e) => {
+  const f = e?.files.find((x) => x.kind.startsWith("paper")) || e?.files[0];
+  return f ? fileText(f, e) : t("pp.file.paper");
+};
 
 // Koraki izbire: [ključ, vprašanje, možnosti [vrednost, oznaka, opis], izbrana oznaka].
 function steps(v, papers, subjectName) {
@@ -125,7 +131,7 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
           .map(([val, label, sub]) => `<button type="button" class="choice lp-opt ${val === v[current[0]] ? "on" : ""}" data-pp-key="${current[0]}" data-pp-val="${esc(val)}"><span>${esc(label)}</span>${sub ? `<small>${esc(sub)}</small>` : ""}</button>`)
           .join("")}</div>`
           : entries.length
-            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint"))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
+            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint", { file: firstFile(shown[0]) }))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
             : `<p class="muted">${esc(t("pp.empty"))}</p>`
       }${other}`;
   };

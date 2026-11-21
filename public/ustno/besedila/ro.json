@@ -74,6 +74,7 @@
 "u.nalagam": "Se încarcă …",
 "u.starsNaslov": "Răspuns cu vocea",
 "u.starsOpis": "La ascultarea orală și cu microfonul din chatul cu tutorele, copilul poate răspunde cu vocea. Furnizorul browserului (de ex. Google, Apple sau Microsoft) transformă vorbirea în text; Evklid primește doar textul și nu păstrează sunetul. Pentru copiii sub 15 ani este oprit până îl porniți. Scrisul funcționează mereu.",
+"u.starsOpisZame": "La ascultarea orală și cu microfonul din chatul cu tutorele, poți răspunde cu vocea. Furnizorul browserului (de ex. Google, Apple sau Microsoft) transformă vorbirea în text; Evklid primește doar textul și nu păstrează sunetul. Scrisul funcționează mereu.",
 "u.dovoli": "Permite răspunsul cu vocea",
 "u.nad15": "15 ani sau mai mult: nu e nevoie de permisiune.",
 "u.shranjeno": "Salvat."

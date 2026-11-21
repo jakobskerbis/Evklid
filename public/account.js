@@ -172,29 +172,46 @@ function lockAccountOnLeave() {
   }).observe(view, { attributes: true, attributeFilter: ["hidden"] });
 }
 
+// Račun z enim profilom: »Izberi drug profil« bi odprl meni brez drugega profila in prazno Učno pot,
+// zato tedaj okno ponudi »Nadaljuj tukaj« in »Odjava«.
 function showTaken(d, rawFetch) {
   if ($("#taken-overlay")) return;
+  const single = status?.children === 1;
   const box = document.createElement("div");
   box.id = "taken-overlay";
   box.className = "overlay";
-  box.innerHTML = `<div class="card overlay-card">
-    <h2>Profil je odprt drugje</h2>
-    <p>${esc(d.error)}</p>
-    <p class="muted">Če nadaljuješ tukaj, se na drugi napravi profil zapre.</p>
+  box.innerHTML = `<div class="card overlay-card" role="dialog" aria-modal="true" aria-labelledby="taken-title" aria-describedby="taken-text">
+    <h2 id="taken-title">${esc(t("mob.takenTitle"))}</h2>
+    <p id="taken-text">${esc(t("mob.takenText"))}</p>
+    <p class="muted">${esc(d.device || t("mob.takenOtherDevice"))}</p>
     <div class="form-actions">
-      <button class="primary" id="taken-here" type="button">Nadaljuj tukaj</button>
-      <button id="taken-other" type="button">Izberi drug profil</button>
+      <button class="primary" id="taken-here" type="button">${esc(t("mob.takenHere"))}</button>
+      ${single ? `<button id="taken-logout" type="button">${esc(t("pm.logout"))}</button>` : `<button id="taken-other" type="button">${esc(t("mob.takenOther"))}</button>`}
     </div></div>`;
   document.body.appendChild(box);
+  // Okno čez zaslon: fokus gre v okno, Tab in Shift+Tab krožita po njegovih gumbih (ne po strani pod njim).
+  const card = box.firstElementChild;
+  const onTab = (e) => {
+    if (!box.isConnected) return document.removeEventListener("keydown", onTab, true);
+    if (e.key !== "Tab") return;
+    const b = [...card.querySelectorAll("button")];
+    const i = b.indexOf(document.activeElement);
+    if (i >= 0 && !(e.shiftKey ? i === 0 : i === b.length - 1)) return;
+    e.preventDefault();
+    b.at(e.shiftKey ? -1 : 0).focus();
+  };
+  document.addEventListener("keydown", onTab, true);
+  $("#taken-here").focus();
   $("#taken-here").addEventListener("click", async () => {
     await rawFetch(`/api/students/${d.student_id}/claim`, { method: "POST" });
     store.set("studentId", String(d.student_id));
     location.reload();
   });
-  $("#taken-other").addEventListener("click", () => {
+  $("#taken-other")?.addEventListener("click", () => {
     box.remove();
     openProfileMenu();
   });
+  $("#taken-logout")?.addEventListener("click", () => logout());
 }
 
 // ---------- geslo profila ----------
@@ -613,6 +630,12 @@ async function continueFlow() {
 function adjustAppForAccounts() {
   const card = $("#new-student-card");
   if (card) card.hidden = true;
+  // Račun »Zame« (dijak ali študent sam, status.self_only): »Naročnina in profil« namesto »Naročnina in otroci«
+  // v vrstici Račun na strani Jaz (UX maturanta 10). data-i18n, da ostane tudi ob menjavi jezika.
+  document.querySelectorAll('[data-i18n="me.accountSub"], [data-i18n="me.accountSubSelf"]').forEach((el) => {
+    el.dataset.i18n = status?.self_only ? "me.accountSubSelf" : "me.accountSub";
+    el.textContent = t(el.dataset.i18n);
+  });
 }
 
 // Ko starš izbriše zadnjega otroka.

@@ -74,6 +74,7 @@
 "u.nalagam": "Načítavam …",
 "u.starsNaslov": "Odpovedanie hlasom",
 "u.starsOpis": "Pri ústnom skúšaní a s mikrofónom v chate s lektorom môže dieťa odpovedať hlasom. Reč na text prevádza poskytovateľ prehliadača (napr. Google, Apple alebo Microsoft); Evklid dostane len text a zvuk neukladá. Pre deti mladšie ako 15 rokov je to vypnuté, kým to nezapnete. Písanie funguje vždy.",
+"u.starsOpisZame": "Pri ústnom skúšaní a s mikrofónom v chate s lektorom môžeš odpovedať hlasom. Reč na text prevádza poskytovateľ prehliadača (napr. Google, Apple alebo Microsoft); Evklid dostane len text a zvuk neukladá. Písanie funguje vždy.",
 "u.dovoli": "Povoliť odpovedanie hlasom",
 "u.nad15": "15 rokov a viac: povolenie nie je potrebné.",
 "u.shranjeno": "Uložené."
