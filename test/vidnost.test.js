@@ -559,3 +559,15 @@ test("/o-evklidu in /zakaj-evklid: pisavi Instrument Sans vnaprej (preload), da 
     }
   }
 });
+
+test("llms.txt: število preteklih izpitnih pol iz content/exam-papers, s pravilno obliko (21. 11. 2026)", async () => {
+  const { llmsTxt } = await import("../server/vidnost.js");
+  const fs = await import("node:fs");
+  const imena = fs.readdirSync(new URL("../content/exam-papers/", import.meta.url)).filter((f) => f.endsWith(".json"));
+  const t = llmsTxt(null);
+  const matura = imena.filter((f) => f.startsWith("MATURA-")).length;
+  assert.ok(matura > 0);
+  assert.match(t, new RegExp(`\\(${matura} pol[aei]? splošne mature`));
+  assert.match(t, new RegExp(`${imena.filter((f) => /^NPZ\d/.test(f)).length} NPZ papers`));
+  assert.doesNotMatch(t, /\b[34] pol poklicne/);
+});
