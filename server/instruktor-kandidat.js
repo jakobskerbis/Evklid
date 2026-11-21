@@ -3,7 +3,7 @@
 // (»Najprej priklic:«). Spodnja popravka besedila, ki ga vidi učenec, sta vklopljena za vse (server/meta.js
 // createStreamFilter in replyText, server/app.js); prompt kandidata je po dveh slepih primerjavah prej/potem postal
 // prompts/system_prompt.md. EVKLID_INSTRUKTOR_KANDIDAT=1 še vedno izbere prompts/system_prompt-kandidat.md (server/prompt.js)
-// za meritev naslednjega kandidata (scripts/meri-pedagogika.mjs --kandidat); zdaj je enak produkcijskemu.
+// za meritev naslednjega kandidata (scripts/meri-pedagogika.mjs --kandidat, scripts/meri-astra.mjs --kandidat).
 // Oba popravka sta namenoma previdna: napačen popravek je slabši od nobenega.
 
 export const kandidatOn = (env = process.env) => env.EVKLID_INSTRUKTOR_KANDIDAT === "1";
