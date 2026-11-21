@@ -366,6 +366,9 @@ const DOJENCEK_ZNAK = [
 
 // Pripravljeni vzorci: { re } za latinico in ostale pisave s presledki (začetek besede), { sub } za
 // pisave brez presledkov, { raw } za znake z »=« (primerja se lower(), s šumniki).
+// re nastane ob prvi uporabi (getter, nato navadna lastnost): nekaj tisoč vzorcev z \p{…} je ob nalaganju modula vzelo
+// ~1,2 s na telefonu (CPU 4×) pred prvim izrisom Učne poti (naloga hitrost). Vzorci in zaznavanje so isti; ogrej() jih
+// v času mirovanja pripravi vnaprej po kosih, kot prej.
 const NOSPACE = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}]/u;
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 function compile(list) {
@@ -373,14 +376,19 @@ function compile(list) {
     // »?« = šibek znak (pogost tudi v snovi): ne šteje v vprašanju o snovi (SNOV spodaj).
     const weak = p0.startsWith("?");
     const p = weak ? p0.slice(1) : p0;
-    if (weak) return { ...compile([p])[0], weak };
+    if (weak) return Object.assign(compile([p])[0], { weak });
     if (p.startsWith("=")) return { raw: lower(p.slice(1)) };
     const n = normalize(p);
     if (NOSPACE.test(n)) return { sub: n };
     // Presledek na koncu (»sin «) pomeni celo besedo.
     const whole = /\s$/.test(p);
+    const src = `(?:^|[^\\p{L}\\p{N}])${esc(n)}${whole ? "(?![\\p{L}\\p{N}])" : ""}`;
     return {
-      re: new RegExp(`(?:^|[^\\p{L}\\p{N}])${esc(n)}${whole ? "(?![\\p{L}\\p{N}])" : ""}`, "u"),
+      get re() {
+        const re = new RegExp(src, "u");
+        Object.defineProperty(this, "re", { value: re, enumerable: true });
+        return re;
+      },
     };
   });
 }
@@ -706,17 +714,19 @@ let zaOgreti = null;
 export function ogrej(ms = 8) {
   if (!zaOgreti) {
     zaOgreti = [];
-    const dodaj = (re) => re && zaOgreti.push(re.global || re.sticky ? new RegExp(re.source, re.flags) : re);
-    for (const pats of [...Object.values(PATTERNS), P_VROCINA, P_TEMP, P_OSEBA, P_DOJENCEK, P_DOJENCEK_ZNAK, IZSILJEVANJE]) for (const p of pats) dodaj(p.re);
-    for (const p of [...P_VROCINA, ...P_TEMP]) if (p.re) zaOgreti.push(new RegExp(p.re.source, "gu")); // fever()
+    // Vsak vnos je funkcija, ki vrne vzorec: re iz compile() nastane šele v kosu spodaj (getter), ne vsi naenkrat.
+    const kopija = (re) => (re.global || re.sticky ? new RegExp(re.source, re.flags) : re);
+    const dodaj = (o, k) => o && k in o && zaOgreti.push(() => kopija(o[k]));
+    for (const pats of [...Object.values(PATTERNS), P_VROCINA, P_TEMP, P_OSEBA, P_DOJENCEK, P_DOJENCEK_ZNAK, IZSILJEVANJE]) for (const p of pats) dodaj(p, "re");
+    for (const p of [...P_VROCINA, ...P_TEMP]) if ("re" in p) zaOgreti.push(() => new RegExp(p.re.source, "gu")); // fever()
     for (const r of Object.values(IZRAZI).flat()) {
-      dodaj(r.re);
-      dodaj(r.brez);
+      dodaj(r, "re");
+      dodaj(r, "brez");
     }
   }
   const konec = performance.now() + ms;
   while (zaOgreti.length && performance.now() < konec) {
-    const re = zaOgreti.pop();
+    const re = zaOgreti.pop()();
     re.test("a"); // večkrat: V8 vzorec najprej prevede za tolmač, ob drugi uporabi v strojno kodo
     re.test("a");
     re.test("a");

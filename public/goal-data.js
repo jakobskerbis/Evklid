@@ -13,6 +13,9 @@ export function goalsFor(settings = {}) {
   return ["sprotno", "test", "npz", "tekmovanje"];
 }
 
+// Učenec ima cilj (ne le sprotno učenje) ali datum: vrstica na Učni poti in značka v zgornji vrstici (public/goal.js).
+export const hasGoal = (s = {}) => (s.goal && s.goal !== DEFAULT_GOAL) || validDate(s.goal_date);
+
 export const validDate = (s) => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(`${s}T00:00:00Z`));
 
 // Dni do datuma (v lokalnem času naprave ali podanem »today« kot YYYY-MM-DD). null = ni datuma.

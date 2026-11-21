@@ -91,7 +91,7 @@ export function povzemiZahteve(zahteve) {
 // stanja »pripravljeno« in do interaktivnosti (zadnja dolga naloga ≥ 50 ms, nato 300 ms brez nove; window.__long iz
 // PAGE_MERI v scripts/meri-hitrost.cjs). Stanja: »pot« (Učna pot uporabna), »vnos« (polje inštruktorja vidno in
 // gumb Pošlji omogočen), »pogovor« (vsaj `min` odgovorov v pogovoru), »znak« (nov odgovor ima prvi znak besedila).
-// Ob nalaganju beleži še window.__tPot: ms od začetka navigacije do uporabne Učne poti.
+// Ob nalaganju beleži še window.__tPot: ms od začetka navigacije do uporabne Učne poti, in window.__tApp: do zagnanega app.js.
 export function MERILNIK_PRIJAVLJEN() {
   const vidno = (el) => {
     if (!el || !el.isConnected) return false;
@@ -116,6 +116,15 @@ export function MERILNIK_PRIJAVLJEN() {
     vnos: () => vidno(document.querySelector("#view-chat #input")) && !document.querySelector("#input").disabled && !document.querySelector("#send")?.disabled,
     pogovor: (o) => odgovori().filter(vidno).length >= o.min,
     znak: (o) => odgovori().length > o.prej && besediloOdgovora(odgovori().at(-1)).length > 0,
+    // Meritev klikov (del »kliki«): vsaj o.min (1) vidnih elementov o.sel, vsaj eden z besedilom o.besedilo, in noben
+    // viden o.brez; o.vse: več takih pogojev hkrati. (Brez new Function: CSP strani ne dovoli eval.)
+    sel: (o) => {
+      const v = [...document.querySelectorAll(o.sel)].filter(vidno);
+      if (v.length < (o.min || 1)) return false;
+      if (o.besedilo && !v.some((el) => el.textContent.includes(o.besedilo))) return false;
+      return !o.brez || ![...document.querySelectorAll(o.brez)].some(vidno);
+    },
+    vse: (o) => o.vse.every((x) => STANJA.sel(x)),
   };
   window.__tPot = null;
   // Največji premiki postavitve z izvorom (kateri element se je premaknil), za iskanje vzroka CLS.
@@ -128,24 +137,36 @@ export function MERILNIK_PRIJAVLJEN() {
         if (!e.hadRecentInput) window.__premiki.push({ t: Math.round(e.startTime), v: Math.round(e.value * 1000) / 1000, izvor: (e.sources || []).map((x) => oznaka(x.node)).filter(Boolean).slice(0, 3) });
     }).observe({ type: "layout-shift", buffered: true });
   } catch {}
+  // window.__tApp: app.js zagnan (ni več posnetka ali Učne poti s strežnika, server/pot-takoj.js; dotik se izvede takoj).
+  window.__tApp = null;
+  const appPot = () => !document.documentElement.hasAttribute("data-zacetek") && [...document.querySelectorAll("main#view-path:not([data-posnetek]) #xp-card .hero")].some(vidno);
   const nalaganje = () => {
     if (window.__tPot === null && document.body && STANJA.pot()) window.__tPot = performance.now();
-    if (window.__tPot === null) requestAnimationFrame(nalaganje);
+    if (window.__tApp === null && document.body && appPot()) window.__tApp = performance.now();
+    if (window.__tPot === null || window.__tApp === null) requestAnimationFrame(nalaganje);
   };
   requestAnimationFrame(nalaganje);
   window.__prijavljenStanje = (ime, o = {}) => STANJA[ime](o);
   window.__cakaj = (ime, o = {}) =>
     new Promise((resolve) => {
       const zacetek = performance.now();
+      // o.odZdaj: korak brez tapa (tipka Nazaj telefona, history.back()): čas teče od dogodka popstate.
       let t0 = null;
       const ob = (e) => {
-        if (t0 === null && e.isTrusted) t0 = e.timeStamp;
+        if (t0 === null && (e.isTrusted || (o.odZdaj && e.type === "popstate"))) t0 = e.timeStamp;
       };
-      for (const v of ["pointerdown", "click", "keydown"]) addEventListener(v, ob, true);
+      const VRSTE = o.odZdaj ? ["popstate"] : ["pointerdown", "click", "keydown"];
+      for (const v of VRSTE) addEventListener(v, ob, true);
       let tReady = null;
+      // INP tega klika: najdaljši dogodek interakcije (Event Timing, window.__vitali iz VITALI), ki se je začel ob tapu.
+      // Vnosi pridejo šele po naslednjem izrisu, zato ga preberemo ob koncu (po 300 ms brez dolgih nalog).
+      const inp = () => {
+        const x = (window.__vitali?.interakcije || []).filter((e) => t0 !== null && e[2] >= t0 - 2);
+        return x.length ? Math.max(...x.map((e) => e[1])) : null;
+      };
       const konec = (r) => {
-        for (const v of ["pointerdown", "click", "keydown"]) removeEventListener(v, ob, true);
-        resolve(r);
+        for (const v of VRSTE) removeEventListener(v, ob, true);
+        resolve({ ...r, inp: inp() });
       };
       const tick = () => {
         const zdaj = performance.now();

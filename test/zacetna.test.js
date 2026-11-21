@@ -1,7 +1,7 @@
 // Začetna stran po stopnji (public/zacetna.js): vrstni red kartic in kartica stopnje.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { vrstniRed, VRSTNI_RED, uvrstiKartice, izpitnoObdobje, izpitniRoki, stageCardHtml, stageRows } from "../public/zacetna.js";
+import { vrstniRed, VRSTNI_RED, uvrstiKartice, izpitnoObdobje, izpitniRoki, stageCardHtml, stageRows, xpCardHtml, maturaPonudbaHtml } from "../public/zacetna.js";
 
 import SL from "../public/i18n/sl.js";
 
@@ -101,4 +101,33 @@ test("kartica stopnje: OŠ igre (razen skritih), SŠ matura (samo slovenski sist
   assert.match(full, /Analiza &#60;1&#62;/, "ime roka je ubežano");
   assert.match(full, /čez 2 dni/);
   assert.doesNotMatch(full, /Vpiši roke/);
+});
+
+test("kartica na vrhu Učne poti (skupna app.js in strežniku): Današnji trening, pri cilju matura »Danes«", () => {
+  const xp = { total: 0, today: 0, goal: 50, week: 0, streak: 0 };
+  const p = { next: { id: "t1", name: "Ulomki <1>" }, xp };
+  const plain = xpCardHtml(t, { p, done: false, scan: true, games: false });
+  assert.match(plain, /class="hero">[^]*data-daily/);
+  assert.match(plain, /data-open="t1"[^]*Ulomki &lt;1&gt;/);
+  assert.doesNotMatch(plain, /hero danes|data-danes/);
+  // Brez koraka za danes (nič na vrsti, ni šibke teme) ostane Današnji trening.
+  assert.equal(xpCardHtml(t, { p: { ...p, danes: { due: 0, review: 0, next: null, minutes: 15, odsoten: 0 } }, done: false, scan: true, games: false }), plain);
+  const leto = new Date().getFullYear() + 1;
+  const danes = xpCardHtml(t, { p: { ...p, danes: { due: 2, review: 6, next: { id: "t9", name: "Funkcije" }, minutes: 9, odsoten: 4 } }, done: false, scan: true, games: true, goalDate: `${leto}-05-29` });
+  assert.match(danes, /class="hero danes"[^]*data-danes-review/);
+  assert.match(danes, /Matura · še \d+ dni/);
+  assert.match(danes, /class="danes-back"/, "po vsaj 3 dneh odsotnosti pozdrav");
+  assert.match(danes, /data-scan-home[^]*class="next-row" data-daily[^]*data-dnevna[^]*xp-stats/, "Današnji trening kot vrstica pod skenerjem");
+  assert.doesNotMatch(danes, /data-open="t1"/);
+  const tema = xpCardHtml(t, { p: { ...p, danes: { due: 0, review: 0, next: { id: "t9", name: "Funkcije" }, minutes: 15, odsoten: 0 } }, done: true, scan: false, games: false });
+  assert.match(tema, /data-danes-topic="t9"/);
+  assert.doesNotMatch(tema, /danes-back|data-danes-review/);
+});
+
+test("ponudba »cilj matura«: samo star profil maturanta brez cilja in brez odločitve", () => {
+  const m = { school_system: "SI", educational_track: "SREDNJA_SOLA", subject: "MAT", curriculum_level: "4. letnik OR" };
+  assert.match(maturaPonudbaHtml(t, m), /data-matura-offer="yes"[^]*data-matura-offer="no"/);
+  assert.equal(maturaPonudbaHtml(t, { ...m, matura_offer: 1 }), "");
+  assert.equal(maturaPonudbaHtml(t, { ...m, goal: "matura", goal_date: "2027-05-29" }), "");
+  assert.equal(maturaPonudbaHtml(t, { ...m, curriculum_level: "3. letnik" }), "");
 });

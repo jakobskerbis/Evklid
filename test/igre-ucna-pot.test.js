@@ -146,7 +146,7 @@ test("pilot metrics: admin only (computer running the server), invalid period â†
 
 test("reward and weak row: hidden games hide the offer; the docs describe the three features", async () => {
   const fs = await import("node:fs");
-  const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const app = ["app.js", "vadnica.js"].map((f) => fs.readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8")).join("\n"); // vadnica: public/vadnica.js
   assert.match(app, /rewardOffer\(state\.student\.settings/);
   const doc = fs.readFileSync(new URL("../docs/igre-smernice.md", import.meta.url), "utf8");
   assert.match(doc, /Ponovi Å¡ibke teme/);

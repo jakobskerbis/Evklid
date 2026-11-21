@@ -128,7 +128,7 @@ test("odločitev pade pred prvim izrisom: html[data-zacetek] skrije Učno pot, d
   assert.ok(head.indexOf('<script src="zacetek.js"></script>') > 0 && head.indexOf('<script src="zacetek.js"></script>') < head.indexOf('rel="stylesheet"'));
   assert.match(read("public/style.css"), /html\[data-zacetek\]:not\(\[data-zacetek-pod\]\) #view-path:not\(\[data-posnetek\]\) \{ display: none; \}/);
   const app = read("public/app.js");
-  assert.match(app, /const startDone = \(\) => \{\n(?:\s*zasloniPozneje\(\);[^\n]*\n)?\s*if \(ZACETEK\?\.konec\) return ZACETEK\.konec\(\);/);
+  assert.match(app, /const startDone = \(\) => \{\n(?:\s*zasloniPozneje\(\);[^\n]*\n)?\s*if \(ZACETEK\?\.konec\) return ZACETEK\.konec\((?:true)?\);/);
   assert.match(app, /let startRec = ZACETEK\?\.beri\(\) \?\? null;/, "zapis se prebere pred prvim showView");
   assert.match(app, /let startHold = true;/, "vmesni showView med zagonom Učne poti ne pokaže");
   assert.match(app, /startRec = null;\n\s*startHold = false;\n\s*startDone\(\);/, "po prijavi Učna pot, ne zaslon pred odjavo");

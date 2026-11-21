@@ -59,7 +59,7 @@ test("prijavljen: naključna števila so v [0, 1) in ponovljiva; merilnik v stra
   // addInitScript pošlje besedilo funkcije: brez sklicev na uvoze modula.
   const src = MERILNIK_PRIJAVLJEN.toString();
   for (const ime of ["nacrtUcenca", "povzemiZahteve", "nakljucno", "import"]) assert.ok(!src.includes(ime), ime);
-  for (const s of ["#view-path #xp-card .hero", "#view-chat #input", "#messages .msg.assistant", "__cakaj", "__tPot"]) assert.ok(src.includes(s), s);
+  for (const s of ["#view-path #xp-card .hero", "#view-chat #input", "#messages .msg.assistant", "__cakaj", "__tPot", "__tApp", "main#view-path:not([data-posnetek])"]) assert.ok(src.includes(s), s);
 });
 
 test("prijavljen: skripta pozna del »prijavljen«, privzeto ga ne zažene", () => {
@@ -67,7 +67,7 @@ test("prijavljen: skripta pozna del »prijavljen«, privzeto ga ne zažene", () 
   assert.notEqual(r.status, 0);
   assert.match(r.stderr, /možni: [^)]*prijavljen/);
   const src = fs.readFileSync("scripts/meritev-zmogljivosti.mjs", "utf8");
-  assert.match(src, /DELI\.filter\(\(d\) => d !== "obremenitev" && d !== "prijavljen"\)/, "privzeti deli brez »prijavljen« (potrebuje koren)");
+  assert.match(src, /DELI\.filter\(\(d\) => d !== "obremenitev" && d !== "prijavljen" && d !== "kliki"\)/, "privzeti deli brez »prijavljen« (potrebuje koren)");
   const glava = src.split("\n").slice(0, 40).join("\n");
   assert.match(glava, /prijavljen +[A-Z0-9]/, "del je opisan v glavi skripte");
 });

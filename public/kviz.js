@@ -12,6 +12,8 @@ async function call(url, { method = "GET", body, headers = {} } = {}) {
   let r;
   try {
     r = await fetch(url, { method, headers: { "Content-Type": "application/json", ...headers }, body: body && JSON.stringify(body) });
+    // Sprememba mimo app.js api(): vnaprej prenesene kopije (public/kliki.js topli) niso več sveže.
+    if (method !== "GET") dispatchEvent(new Event("evklid:sprememba"));
   } catch {
     throw Object.assign(new Error(t("off.noConnection")), { status: 0 });
   }

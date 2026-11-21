@@ -446,7 +446,7 @@ test("javne strani (Za starše, Za šole, Zasebnost) imajo videz po napravi, bre
   assert.match(read("starsi.js"), /if \(q\.has\("prosnja"\) \|\| ime\) document\.getElementById\("ask"\)\.hidden = false;/);
   assert.ok(read("account.js").includes("/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : \"\"}prosnja=1"), "povezava v prošnji otroka");
   for (const href of ['href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}', 'href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink")'])
-    assert.ok(read("account.js").includes(href), href);
+    assert.ok((read("account.js") + read("racun.js")).includes(href), href); // zavihek Račun in računi gostov: racun.js
   // V aplikaciji (WebView) brez dvojnega odmika, enako kot theme.js.
   const app = read("v-aplikaciji.js").match(/\(function \(\) \{[\s\S]*\}\)\(\);/)[0];
   assert.ok(read("theme.js").includes(app), "v-aplikaciji.js = blok iz theme.js");

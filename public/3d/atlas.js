@@ -1634,6 +1634,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ game: `atlas:telo_${k.nacin}`, score: k.prav * 10, correct: k.prav, wrong: k.narobe, tier: raven }),
       });
+      dispatchEvent(new Event("evklid:sprememba")); // XP se je spremenil: vnaprej prenesena Liga (public/kliki.js topli) ni več sveža
       if (!r.ok) return 0;
       return (await r.json()).xp || 0;
     } catch {

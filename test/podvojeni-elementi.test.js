@@ -30,7 +30,7 @@ test("NPZ in matura: past papers follow the chips at the top, the full picker on
   // Brez follow (drugje) ostane izbira po korakih.
   mountPapers(box, PAPERS, { track: "OSNOVNA_SOLA", exam: "NPZ9", subject: "MAT" });
   assert.match(box.innerHTML, /data-pp-step="exam"/);
-  assert.match(pub("app.js"), /mountPapers\(slot, papers, [^\n]+\n[^\n]+\n\s+follow: true,/);
+  assert.match(pub("vadnica.js"), /mountPapers\(slot, papers, [^\n]+\n[^\n]+\n\s+follow: true,/);
 });
 
 test("Jaz: overview does not repeat the bottom bar or the list above it", () => {

@@ -2,7 +2,7 @@
 // Vsak profil ima mesečni del skupnega proračuna AI (server/proracun.js); ko ga porabi, imetnik računa
 // tukaj dokupi pogovore, ki veljajo za vse profile računa in ne potečejo. Prikazano je samo število
 // pogovorov, ne delež plačila ali znesek kredita (j 2026-10-30).
-import { t, locale } from "./i18n-osnova.js";
+import { t, locale } from "./i18n-zasloni.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { consentFields, consentsOk, consentMessage, consentBody, markCheckout } from "./pay-ui.js";
 

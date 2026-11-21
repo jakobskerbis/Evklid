@@ -166,10 +166,15 @@ button.danger { background: none; border: 1.5px solid var(--danger); color: var(
 /* Odprtje na zadnjem zaslonu (public/zacetek.js): dokler app.js ne pokaže prvega pogleda, Učna pot iz index.html in
    njen označeni zavihek ne utripneta. */
 html[data-zacetek]:not([data-zacetek-pod]) #view-path:not([data-posnetek]) { display: none; }
-html[data-zacetek] .tabs .tab.active { background: none; color: var(--muted); }
+html[data-zacetek]:not([data-zacetek-pot]) .tabs .tab.active { background: none; color: var(--muted); }
 /* Hiter zagon: posnetek zadnjega zaslona ali okostje (main[data-posnetek], vstavi ga zacetek.js) je samo slika. Ko
    app.js odkrije pravi pogled, je ta do zamenjave neviden na svojem mestu, posnetek pa pripet čezenj (app.js pinSnapshot). */
 main[data-posnetek] { pointer-events: none; user-select: none; }
+/* Učna pot s strežnika (server/pot-takoj.js) se dotika: zacetek.js dotik shrani, app.js ga izvede, ko je pripravljen. */
+main[data-posnetek][data-streznik] { pointer-events: auto; user-select: auto; }
+/* Dotik pred zagonom (public/zacetek.js): gumb kot pritisnjen, dokler ga app.js ne izvede. */
+[data-caka] { opacity: 0.7; }
+html[data-zacetek-caka], html[data-zacetek-caka] * { cursor: progress; }
 /* Do konca razčlenjene lupine (spodnja vrstica, zacetek.js) se stran ne izriše po kosih: prej se je ob dolgi strani
    za trenutek pokazala brez spodnje vrstice (utrip ob odprtju, j 16. 11. 2026). Varovalo: DOMContentLoaded, 3 s. */
 html[data-zacetek-lupina] body { visibility: hidden; }
@@ -473,7 +478,9 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .idea:hover { border-color: var(--accent); }
 .tutor-avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); }
 .tutor-avatar.big { width: 64px; height: 64px; border-radius: 20px; box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 35%, transparent); }
-.tutor-avatar.big svg.i { width: 30px; height: 30px; }
+/* Pravila s :has() velikost ikone nastavijo na avatarju (--ta-ic), ne na svg.i: Chrome vse, kar stoji za :has(), združi
+   v en nabor in ob vsaki spremembi strani znova preračuna vsak tak element, pri svg.i in span so to vse ikone (test/has-invalidacija.test.js). */
+.tutor-avatar.big svg.i { width: var(--ta-ic, 30px); height: var(--ta-ic, 30px); }
 .msg { max-width: 85%; width: fit-content; padding: 12px 16px; border-radius: 20px; overflow-wrap: anywhere; line-height: 1.6; animation: msg-in 0.2s ease; }
 @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .msg.user { align-self: flex-end; background: var(--user-bubble); color: var(--user-text); border-end-end-radius: 6px; white-space: pre-wrap; font-weight: 600; }
@@ -684,6 +691,20 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .node.new .node-dot { background: var(--surface); color: var(--accent); border-color: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent-soft); }
 .node.current .node-dot { animation: pulse 1.8s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 50% { box-shadow: 0 0 0 10px transparent; } }
+/* Isti utrip kot zgoraj, a na GPU (kliki 20. 11. 2026): animirana senca je vsak okvir znova risala Učno pot na glavni niti in
+   zavlekla vsak tap na njej. Krog pod piko se z enako krivuljo poveča 27 → 37 px in zbledi z 45 % na 0 – na zaslonu enako kot
+   senca 0 → 10 px. Ob »manj gibanja« ostane prvotno pravilo (brez utripa, s senco pritiska). */
+@media (prefers-reduced-motion: no-preference) {
+  .node.current { position: relative; }
+  .node.current .node-dot { animation: none; box-shadow: none; }
+  .node.current::before {
+    content: ""; position: absolute; inset-inline-start: 0; top: 50%; width: 54px; height: 54px; margin-top: -27px; border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 45%, transparent); pointer-events: none;
+    animation: pulse-krog 1.8s ease-in-out infinite; transition: scale 0.15s;
+  }
+  .node.current:hover:not(:disabled)::before { scale: 1.06; }
+}
+@keyframes pulse-krog { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3703704); opacity: 0; } }
 .node-text { display: flex; flex-direction: column; min-width: 0; }
 .node-name { font-weight: 800; }
 .node-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
@@ -1398,3 +1419,6 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .open-sim-body { padding: 12px; min-width: 0; }
 .open-sim-note { margin: 0 12px 12px; font-size: 0.85rem; }
 @media (max-width: 600px) { .open-sim { padding: var(--varno-zg, env(safe-area-inset-top, 0px)) 0 var(--varno-sp, env(safe-area-inset-bottom, 0px)); } .open-sim-card { border-radius: 0; height: 100%; } }
+/* Gumbi z ikono in napisom (prej v leagues.css, ki se na vstopni strani prijavljenega učenca naloži po prvem izrisu,
+   server/vstopna-stran.js SEJA_POZNEJE; na koncu datoteke, da prevlada nad pravili zgoraj kot prej). */
+.row button, button.ghost.small, button.secondary { display: inline-flex; align-items: center; gap: 6px; }

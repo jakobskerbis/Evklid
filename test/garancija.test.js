@@ -498,7 +498,7 @@ test("garancija: brez vseh treh varoval je Račun ne ponudi (ni vrstice, ni prij
 });
 
 test("garancija: vrstica pri izbiri paketa samo ob ponudbi (account.js), pogoji niso v iskalnikih", () => {
-  const acc = readFileSync(new URL("../public/account.js", import.meta.url), "utf8");
+  const acc = ["account.js", "racun.js"].map((f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8")).join("\n"); // zavihek Račun: public/racun.js
   assert.ok(acc.includes("${acc.guarantee?.offered ? guaranteeLine() : \"\"}"));
   const html = readFileSync(new URL("../public/garancija.html", import.meta.url), "utf8");
   assert.match(html, /<meta name="robots" content="noindex">/);

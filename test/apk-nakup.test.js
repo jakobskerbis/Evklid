@@ -107,7 +107,8 @@ test("splet: /?pogled=racun odpre zavihek Račun z obrazcem za naročnino (telef
 
     // Brez parametra ostane običajen zagon (ne Račun).
     await page.goto(base + "/", { waitUntil: "load" });
-    await page.locator("#view-path").waitFor({ state: "visible", timeout: 20_000 });
+    // Pravi pogled po zagonu app.js (Učna pot s strežnika, server/pot-takoj.js, je pred tem main[data-posnetek]).
+    await page.locator("main#view-path:not([data-posnetek])").waitFor({ state: "visible", timeout: 20_000 });
     assert.equal(await page.locator("#view-account").isVisible(), false);
     assert.deepEqual(errors, []);
     await ctx.close();
