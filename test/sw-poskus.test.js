@@ -56,12 +56,20 @@ test("service worker: ob prvem obisku shrani prenesene datoteke brez ponovne zah
   await p.goto(base + "/");
   await p.waitForFunction(() => navigator.serviceWorker?.controller, null, { timeout: 30000 });
   const FILES = ["/app.js", "/i18n-osnova.js", "/style.css", "/nujno.js"];
-  await p.waitForFunction((files) => caches.keys().then((k) => Promise.all(files.map((f) => caches.match(f)))).then((r) => r.every(Boolean)), FILES, { timeout: 30000 });
+  // Čakamo s ponavljanjem p.evaluate: waitForFunction obljube ne počaka (obljuba je »resnična«, čakanje se je končalo
+  // takoj, zato je bil test občasno rdeč, ko service worker datotek še ni shranil). Kopije beremo v istem klicu.
+  const preberi = (files) => Promise.all(files.map((f) => caches.match(f))).then((r) =>
+    r.every(Boolean) ? Promise.all(r.map(async (x) => ({ text: await x.text(), app: x.headers.has("X-Evklid-App") }))) : null);
+  let got = null;
+  for (const konec = Date.now() + 30000; !got && Date.now() < konec; ) {
+    got = await p.evaluate(preberi, FILES);
+    if (!got) await p.waitForTimeout(100);
+  }
+  assert.ok(got, "service worker je shranil vse datoteke");
   for (const f of FILES) assert.equal(hits.get(f), 1, `${f}: ena zahteva (stran), service worker brez ponovne`);
   // Kopija v predpomnilniku service workerja je ista datoteka kot na strežniku, z različico (glava X-Evklid-App).
-  for (const f of FILES) {
+  for (const [i, f] of FILES.entries()) {
     const want = await (await fetch(base + f)).text();
-    const got = await p.evaluate((f) => caches.match(f).then(async (r) => ({ text: await r.text(), app: r.headers.has("X-Evklid-App") })), f);
-    assert.ok(got.text === want && got.app, f);
+    assert.ok(got[i].text === want && got[i].app, f);
   }
 });
