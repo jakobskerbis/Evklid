@@ -24,6 +24,20 @@ test("en profil: prevzem ponudi Nadaljuj tukaj in Odjava, osnutek ostane", opts,
     assert.equal(await p.locator("#taken-other").count(), 0, "brez »Izberi drug profil«");
     assert.equal(await p.locator("#taken-logout").innerText(), "Odjava");
     assert.ok(await p.locator("#taken-here").isVisible());
+    // Okno v jeziku vmesnika (mob.taken*), z imenom druge naprave; dialog z aria-modal, fokus v njem, Tab ostane v njem.
+    assert.equal(await p.locator("#taken-title").innerText(), "Profil je odprt drugje");
+    assert.match(await p.locator("#taken-text").innerText(), /Če nadaljuješ tukaj, se tam zapre\./);
+    assert.doesNotMatch(await p.locator("#taken-overlay").innerText(), /Naprava/, "neznana naprava (fetch brez brskalnika) brez imena");
+    const dlg = p.locator('#taken-overlay [role="dialog"][aria-modal="true"]');
+    assert.equal(await dlg.getAttribute("aria-labelledby"), "taken-title");
+    const fokus = () => p.evaluate(() => document.activeElement?.id);
+    assert.equal(await fokus(), "taken-here");
+    await p.keyboard.press("Tab");
+    assert.equal(await fokus(), "taken-logout");
+    await p.keyboard.press("Tab");
+    assert.equal(await fokus(), "taken-here", "Tab ostane v oknu");
+    await p.keyboard.press("Shift+Tab");
+    assert.equal(await fokus(), "taken-logout");
     assert.equal(await p.inputValue("#input"), vprasanje);
     await Promise.all([p.waitForNavigation(), p.click("#taken-here")]);
     await p.waitForSelector("#xp-card [data-danes-topic]", { state: "attached", timeout: 20000 });

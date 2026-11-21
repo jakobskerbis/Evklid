@@ -180,15 +180,28 @@ function showTaken(d, rawFetch) {
   const box = document.createElement("div");
   box.id = "taken-overlay";
   box.className = "overlay";
-  box.innerHTML = `<div class="card overlay-card">
-    <h2>Profil je odprt drugje</h2>
-    <p>${esc(d.error)}</p>
-    <p class="muted">Če nadaljuješ tukaj, se na drugi napravi profil zapre.</p>
+  box.innerHTML = `<div class="card overlay-card" role="dialog" aria-modal="true" aria-labelledby="taken-title" aria-describedby="taken-text">
+    <h2 id="taken-title">${esc(t("mob.takenTitle"))}</h2>
+    <p id="taken-text">${esc(t("mob.takenText"))}</p>
+    ${d.device ? `<p class="muted">${esc(d.device)}</p>` : ""}
     <div class="form-actions">
-      <button class="primary" id="taken-here" type="button">Nadaljuj tukaj</button>
-      ${single ? `<button id="taken-logout" type="button">${esc(t("pm.logout"))}</button>` : `<button id="taken-other" type="button">Izberi drug profil</button>`}
+      <button class="primary" id="taken-here" type="button">${esc(t("mob.takenHere"))}</button>
+      ${single ? `<button id="taken-logout" type="button">${esc(t("pm.logout"))}</button>` : `<button id="taken-other" type="button">${esc(t("mob.takenOther"))}</button>`}
     </div></div>`;
   document.body.appendChild(box);
+  // Okno čez zaslon: fokus gre v okno, Tab in Shift+Tab krožita po njegovih gumbih (ne po strani pod njim).
+  const card = box.firstElementChild;
+  const onTab = (e) => {
+    if (!box.isConnected) return document.removeEventListener("keydown", onTab, true);
+    if (e.key !== "Tab") return;
+    const b = [...card.querySelectorAll("button")];
+    const i = b.indexOf(document.activeElement);
+    if (i >= 0 && !(e.shiftKey ? i === 0 : i === b.length - 1)) return;
+    e.preventDefault();
+    b.at(e.shiftKey ? -1 : 0).focus();
+  };
+  document.addEventListener("keydown", onTab, true);
+  $("#taken-here").focus();
   $("#taken-here").addEventListener("click", async () => {
     await rawFetch(`/api/students/${d.student_id}/claim`, { method: "POST" });
     store.set("studentId", String(d.student_id));
