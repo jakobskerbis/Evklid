@@ -247,5 +247,7 @@ test("kandidat 2: pravila iz primerjave z Astro so v kandidatu, produkcijski pro
     assert.match(ks, re);
     assert.doesNotMatch(ps, re);
   }
-  assert.match(ks, /Ne velja, ko učenec želi rešiti sam/);
+  assert.match(ks, /po dveh takih računih istega tipa zapored ali ob »moram oddati« velja Domača naloga za oddajo/);
+  assert.match(ks, /ne velja za razlago rešitve naloge, ki jo rešujeta/);
+  assert.match(ks, /`flag` ostane `none`/);
 });
