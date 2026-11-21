@@ -166,22 +166,26 @@ const javiIzid = (izid) => {
 
 // Nadzornik mirovanja toka (zastoj): SDK meri rok samo do glav odgovora; če tok nato obmolkne, bi odgovor visel v
 // nedogled (pogovor zaklenjen, mesto v vrsti za AI zasedeno). Šteje vsak kos iz omrežja, tudi »ping« Anthropica, ki ga
-// SDK ne pokaže (razmišljanje modela je v toku privzeto skrito). EVKLID_AI_MIROVANJE_S (privzeto 60, 0 = izklop).
-export function mirovanjeMs(env = process.env) {
-  const raw = env.EVKLID_AI_MIROVANJE_S;
-  const v = raw == null || String(raw).trim() === "" ? 60 : Number(raw);
+// SDK ne pokaže (razmišljanje modela je v toku privzeto skrito). EVKLID_AI_MIROVANJE_S (privzeto 60, 0 = izklop);
+// za Opus in Sonnet (deep, mid: dolgo skrito razmišljanje, presledki med »ping« še niso izmerjeni)
+// EVKLID_AI_MIROVANJE_DEEP_S (privzeto 180).
+export function mirovanjeMs(env = process.env, mode = "chat") {
+  const dolgo = mode === "deep" || mode === "mid";
+  const raw = dolgo ? env.EVKLID_AI_MIROVANJE_DEEP_S : env.EVKLID_AI_MIROVANJE_S;
+  const v = raw == null || String(raw).trim() === "" ? (dolgo ? 180 : 60) : Number(raw);
   return Number.isFinite(v) && v > 0 ? Math.round(v * 1000) : 0;
 }
-// Vmesnik SDK za en klic: glave odgovora in vsak prebrani kos telesa pokličejo tik(true); ob prekinitvi (signal) se
-// telo takoj zapre z napako, tudi če povezava sama ne odgovori več.
+// Vmesnik SDK za en klic: glave odgovora in vsak prebrani kos telesa pokličejo tik(); samo uspešen odgovor (2xx) pomeni,
+// da je klic morda plačan (429/529, ki ju SDK ponovi, ne). Ob prekinitvi (signal) se telo takoj zapre z napako, tudi
+// če povezava sama ne odgovori več.
 const vmesnikZivosti = (tik, signal) => async (request, next) => {
   const res = await next(request);
-  tik(true);
+  tik(res.ok);
   if (!res.body || typeof res.body.pipeThrough !== "function") return res;
   const body = res.body.pipeThrough(
     new TransformStream({
       transform(chunk, ctrl) {
-        tik(true);
+        tik(res.ok);
         ctrl.enqueue(chunk);
       },
     }),
@@ -224,7 +228,7 @@ export const isPreamble = (s) => {
 // onPhase("think"): model je začel razmišljati (prvi blok razmišljanja, preden je kaj besedila); odjemalec pokaže
 // »Razmišljam …«. noThinking: klic brez razmišljanja (samo Haiku, poskus EVKLID_HITRI_KORAK, server/hitri-korak.js).
 // Rezultat ima timing: { thinking, firstThinkMs, firstTextMs, totalMs } od začetka klica (server/casi-odgovora.js).
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, onPhase = null, noThinking = false, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true, idleMs = mirovanjeMs() }) {
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, onPhase = null, noThinking = false, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true, idleMs = mirovanjeMs(process.env, mode) }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, onPhase, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
@@ -374,7 +378,8 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
       // bajti vseh delt (žeton ≤ bajt) + 10 %; razmišljanje, ki ga tok ne pokaže v celoti (povzetek ali skrito), po
       // času bloka razmišljanja × največja hitrost modela. Pri drugi napaki sredi toka (API, omrežje) ne vemo,
       // koliko je API napisal: previdno ves max_tokens kroga. Pol sekunde pisanja po zaprtju povezave je rezerva.
-      const ours = !!signal?.aborted;
+      // Zastoj (nadzornik mirovanja) je prav tako naša prekinitev ob znanem času: šteje dejansko napisano.
+      const ours = !!signal?.aborted || zastoj;
       const outBound = ours
         ? Math.min(roundMax, Math.ceil(1.1 * deltaBytes + (thinkMs / 1000 + ABORT_LAG_S) * maxTokensPerSec(liveModel)))
         : roundMax;

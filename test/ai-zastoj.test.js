@@ -42,9 +42,10 @@ test("zastoj: tok, ki po message_start obmolkne, se konča z napako »zastoj odg
   assert.equal(err.zastoj, true);
   assert.equal(apiErrorCode(err), "zastoj odgovora");
   assert.match(errorText(err), /Koda: zastoj odgovora/);
-  // Poraba: message_start je prišel, izhod ni znan → previdno ves max_tokens kroga (klic je morda plačan).
+  // Poraba: message_start je prišel; zastoj je naša prekinitev ob znanem času → dejansko napisano (bajti + čas
+  // razmišljanja × največja hitrost), ne ves max_tokens kroga.
   assert.equal(err.usage.input_tokens, 10);
-  assert.ok(err.usage.output_tokens >= 1000);
+  assert.ok(err.usage.output_tokens >= 1 && err.usage.output_tokens < 3000, String(err.usage.output_tokens));
   assert.deepEqual(izidi, [{ ok: false, koda: "zastoj odgovora" }]);
 });
 
@@ -87,8 +88,13 @@ test("zastoj: učenčeva prekinitev ni izid za zdravje AI", async (t) => {
   assert.deepEqual(izidi, []);
 });
 
-test("zastoj: rok iz EVKLID_AI_MIROVANJE_S (privzeto 60 s, 0 = izklop)", () => {
+test("zastoj: rok iz EVKLID_AI_MIROVANJE_S (privzeto 60 s, 0 = izklop), za deep in mid 180 s", () => {
   assert.equal(mirovanjeMs({}), 60_000);
+  assert.equal(mirovanjeMs({}, "think"), 60_000);
+  assert.equal(mirovanjeMs({}, "deep"), 180_000);
+  assert.equal(mirovanjeMs({}, "mid"), 180_000);
+  assert.equal(mirovanjeMs({ EVKLID_AI_MIROVANJE_DEEP_S: "240", EVKLID_AI_MIROVANJE_S: "30" }, "deep"), 240_000);
+  assert.equal(mirovanjeMs({ EVKLID_AI_MIROVANJE_DEEP_S: "240", EVKLID_AI_MIROVANJE_S: "30" }, "chat"), 30_000);
   assert.equal(mirovanjeMs({ EVKLID_AI_MIROVANJE_S: "90" }), 90_000);
   assert.equal(mirovanjeMs({ EVKLID_AI_MIROVANJE_S: "0" }), 0);
   assert.equal(mirovanjeMs({ EVKLID_AI_MIROVANJE_S: "x" }), 0);
@@ -111,4 +117,24 @@ test("zastoj pred glavami odgovora (povezava visi): napaka brez zapisane porabe"
   const err = await klic(300).then(() => null, (e) => e);
   assert.equal(err?.zastoj, true);
   assert.equal(err.usage, undefined, "API ni odgovoril: klic ni plačan");
+});
+
+test("zastoj med čakanjem SDK na ponovni poskus (429): odgovor brez 2xx ne pomeni plačanega klica", async (t) => {
+  t.after(() => setClient(null));
+  let klici = 0;
+  setClient(
+    new Anthropic({
+      apiKey: "sk-test",
+      maxRetries: 1,
+      timeout: 60_000,
+      fetch: async () => {
+        klici++;
+        return new Response(JSON.stringify({ type: "error", error: { type: "rate_limit_error", message: "x" } }), { status: 429, headers: { "content-type": "application/json", "retry-after": "2" } });
+      },
+    }),
+  );
+  const err = await klic(300).then(() => null, (e) => e);
+  assert.equal(err?.zastoj, true);
+  assert.equal(klici, 1, "nadzornik prekine čakanje na ponovni poskus");
+  assert.equal(err.usage, undefined, "429 ni plačan: ni ocene vhoda");
 });
