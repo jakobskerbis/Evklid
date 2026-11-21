@@ -18,7 +18,7 @@ export async function karticaStarsev(el, api, { zame = false } = {}) {
   el.innerHTML = `<div class="card us-stars">
     <h2>${icon("mic")} ${esc(tt("u.starsNaslov"))}</h2>
     <p class="muted">${esc(tt(zame ? "u.starsOpisZame" : "u.starsOpis"))}</p>
-    ${r.profili
+    ${(zame ? [] : r.profili) // »Zame«: brez vrstice »Ime: 15 let ali več …« (soglasje je za starše mlajših od 15)
       .map((p) =>
         p.pod15
           ? `<label class="check"><input type="checkbox" data-glas="${p.id}" ${p.dovoljeno ? "checked" : ""}><span><b dir="auto">${esc(p.ime)}</b>: ${esc(tt("u.dovoli"))}</span></label>`

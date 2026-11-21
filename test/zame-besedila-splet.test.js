@@ -22,6 +22,9 @@ test("račun Zame: Jaz in Račun nagovorita učenca, ne starša", opts, async ()
     assert.match(racunTxt, /Ko se prijatelj, ki ga povabiš, naroči in prvič plača, oba dobita en mesec brezplačno\./);
     assert.match(racunTxt, /lahko odgovarjaš z glasom/);
     assert.doesNotMatch(racunTxt, /obe družini|lahko otrok odgovarja|dokler ga ne vklopite/);
+    // Vrstica za starše (»Nika: 15 let ali več …«) pri računu Zame ni potrebna (pregled #917, 3. prehod).
+    assert.equal(await p.locator("#ustno-starsi .us-stars b[dir]").count(), 0);
+    assert.doesNotMatch(await p.locator("#ustno-starsi").innerText(), /Nika/);
     assert.deepEqual(p.napake, []);
   } finally {
     await ctx.close();
