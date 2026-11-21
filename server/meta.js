@@ -110,49 +110,33 @@ export function parseChoices(text) {
   return out.length >= 2 ? out.slice(0, CHOICES_MAX) : [];
 }
 
+// Mesto odstranjenega strojnega bloka (znak, ki ga v besedilu modela ni): oznake kode, ki obdajajo samo taka mesta, gredo
+// z njimi (meritev 21. 11. 2026: odgovor se je končal z »``«). Pravi bloki kode z vsebino ostanejo nedotaknjeni.
+const S = "\u0000";
+const FENCE_AROUND_RE = /^[ \t]*`+[\w-]*[ \t]*\n(?:[ \t\u0000]*\n)*[ \t]*\u0000[ \t\u0000]*(?:\n[ \t\u0000]*)*\n[ \t]*`+[ \t]*$/gm;
+const FENCE_OPEN_END_RE = /(^|\n)[ \t]*`+[\w-]*[ \t]*\n[\s\u0000]*\u0000[\s\u0000]*$/;
+
 export function stripMeta(text) {
   return String(text)
+    .replace(/\u0000/g, "")
     // META v bloku kode: cel blok z oznakami (zaključne oznake pravih blokov kode ostanejo).
     .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, "")
-    .replace(META_LOOSE_RE, "") // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
-    .replace(META_RE, "")
-    .replace(CARD_RE, "")
-    .replace(RACUN_RE, "")
-    .replace(CHOICES_JSON_RE, "")
-    .replace(CHOICES_RE, "")
-    .replace(CHOICES_LOOSE_RE, "")
-    .replace(OPEN_RE, "")
-    .replace(/<orodje>[\s\S]*?(?:<\/orodje>|$)/g, "") // skrit zapis orodja (chat-settings.js actionNote), če ga model ponovi
-    .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
+    .replace(META_LOOSE_RE, S) // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
+    .replace(META_RE, S)
+    .replace(CARD_RE, S)
+    .replace(RACUN_RE, S)
+    .replace(CHOICES_JSON_RE, S)
+    .replace(CHOICES_RE, S)
+    .replace(CHOICES_LOOSE_RE, S)
+    .replace(OPEN_RE, S)
+    .replace(/<orodje>[\s\S]*?(?:<\/orodje>|$)/g, S) // skrit zapis orodja (chat-settings.js actionNote), če ga model ponovi
+    .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, S) // nedokončan blok (npr. odrezan odgovor)
+    .replace(/`+[ \t]*\u0000[ \t]*`+/g, S) // »``<<META …>>``« v vrstici
+    .replace(FENCE_AROUND_RE, S)
+    .replace(FENCE_OPEN_END_RE, "$1")
+    .replace(/\u0000/g, "")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
-}
-
-// Ostanki oznak kode okoli odstranjenih strojnih blokov (meritev 21. 11. 2026: odgovor se je končal z »``«): prazen blok
-// kode (tudi nezaprt na koncu) in vrstica z eno ali dvema oznakama zunaj bloka kode. Pravi bloki kode ostanejo. Samo na
-// celotnem besedilu (ne na koncu toka), ker je zaključna oznaka pravega bloka sama zase videti kot začetek novega.
-export function tidyFences(text) {
-  const out = [];
-  let open = null; // začeti blok kode: { at, n, empty }
-  for (const line of String(text).split("\n")) {
-    const m = /^[ \t]*(`{3,})([^`]*)$/.exec(line);
-    if (!open) {
-      if (m) open = { at: out.length, n: m[1].length, empty: true };
-      else if (/^[ \t]*`{1,2}[ \t]*$/.test(line)) continue;
-      out.push(line);
-      continue;
-    }
-    if (m && m[1].length >= open.n && !m[2].trim()) {
-      if (open.empty) out.length = open.at;
-      else out.push(line);
-      open = null;
-      continue;
-    }
-    if (line.trim()) open.empty = false;
-    out.push(line);
-  }
-  if (open?.empty) out.length = open.at;
-  return out.join("\n").replace(/\n{3,}/g, "\n\n").replace(/\s+$/, "");
 }
 
 // Uvodne fraze, ki jih prompt prepoveduje (»Odlično vprašanje!«, »Seveda!«): odstranjene še na strežniku.
@@ -164,7 +148,7 @@ export const stripLeadPhrase = (text) => String(text).replace(LEAD_RE, (m) => (m
 // Besedilo odgovora, kot ga vidi učenec (prikaz in shranjeno sporočilo): brez strojnih blokov in uvodne fraze, s
 // popravkoma predlogov in oznak (server/instruktor-kandidat.js; j 21. 11. 2026), enako kot pri pretakanju spodaj.
 export function replyText(text, { polish = true, language = "sl" } = {}) {
-  const t = stripLeadPhrase(tidyFences(stripMeta(text)));
+  const t = stripLeadPhrase(stripMeta(text));
   return polish ? polishReply(t, { language }) : t;
 }
 
@@ -221,6 +205,10 @@ export function createStreamFilter({ polish = true, language = "sl" } = {}) {
       }
       // Presledke, prelome in oznake kode na koncu zadrži, dokler ne vemo, ali jim sledi META.
       while (safeEnd > emitted && /[\s`]/.test(buffer[safeEnd - 1])) safeEnd--;
+      // Tudi začetek bloka kode z jezikom (»```json«) na koncu: lahko obdaja strojni blok (stripMeta ga odstrani).
+      const vrstica = buffer.lastIndexOf("\n", safeEnd - 1) + 1;
+      if (vrstica >= emitted && /^[ \t]*`{3,}[\w-]+[ \t]*$/.test(buffer.slice(vrstica, safeEnd))) safeEnd = vrstica;
+      while (safeEnd > emitted && /\s/.test(buffer[safeEnd - 1])) safeEnd--;
       // Popravki: zadrži še predlog brez naslednje besede in začetek morebitne oznake (»Najprej pri…«).
       for (let i = 0; polish && i < 4 && safeEnd > emitted; i++) {
         let end = Math.max(emitted, safeEnd - polishHold(buffer.slice(0, safeEnd)));
@@ -253,7 +241,7 @@ export function createStreamFilter({ polish = true, language = "sl" } = {}) {
     },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
-      if (polish) return { rest: next(tidyFences(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted)))), raw: buffer };
+      if (polish) return { rest: next(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted))), raw: buffer };
       const rest = lead(stripMeta(buffer.slice(emitted)));
       return { rest, raw: buffer };
     },

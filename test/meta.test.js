@@ -133,22 +133,35 @@ test("stripMeta keeps the fences of a real code block and strips only the block 
 });
 
 test("ostanki oznak kode okoli strojnih blokov ne ostanejo v odgovoru; pravi bloki kode ostanejo (meritev 21. 11.)", async () => {
-  const { replyText, tidyFences } = await import("../server/meta.js");
+  const { replyText } = await import("../server/meta.js");
   const meta = '<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>';
   const izbire = '<<IZBIRE ["0,7", "0,9"]>>';
-  for (const v of [`Q?\n\n\`\`\n${meta}\n\`\``, `Q?\n\n\`\`${meta}\`\``, `Q?\n\n\`\`\`\n${meta}`, `Q?\n\n\`\`\`\n${meta}\n${izbire}\n\`\`\``, `Q?\n\n\`\`\n${meta}\n\`\`\``]) {
-    assert.equal(replyText(v), "Q?", JSON.stringify(v));
+  const tok = (v) => {
+    const f = createStreamFilter();
+    const kosi = [];
     for (const size of [1, 5, 40]) {
-      const f = createStreamFilter();
+      f.reset();
       let out = "";
       for (let i = 0; i < v.length; i += size) out += f.push(v.slice(i, i + size));
-      out += f.end().rest;
-      assert.equal(out, "Q?", `${JSON.stringify(v)} (size ${size})`);
+      kosi.push(out + f.end().rest);
     }
+    return kosi;
+  };
+  const oblike = [
+    `Q?\n\n\`\`\n${meta}\n\`\``, `Q?\n\n\`\`${meta}\`\``, `Q?\n\n\`\`\`\n${meta}`, `Q?\n\n\`\`\`\n${meta}\n${izbire}\n\`\`\``,
+    `Q?\n\n\`\`\n${meta}\n\`\`\``, `Q?\n\n\`\`\`\n${meta}\n\`\``, `Q?\n\`\`\`json\n${izbire}\n\`\`\``,
+  ];
+  for (const v of oblike) {
+    assert.equal(replyText(v), "Q?", JSON.stringify(v));
+    for (const out of tok(v)) assert.equal(out, "Q?", JSON.stringify(v));
   }
-  const code = "Velja:\n\n```js\nlet x = 1;\n```\n\n```\ny = 2\n```\n\nKonec.";
-  assert.equal(tidyFences(code), code);
-  assert.equal(replyText(code + "\n```\n" + meta + "\n```"), code);
-  const odprto = "Koda:\n```py\nprint(1)";
-  assert.equal(tidyFences(odprto), odprto, "nezaprt pravi blok ostane");
+  // Pravi bloki kode (tudi brez jezika, dva zapored, z »```« v bloku ~~~, s praznim blokom) ostanejo nespremenjeni.
+  for (const code of ["Velja:\n\n```js\nlet x = 1;\n```\n\n```\ny = 2\n```\n\nKonec.", "~~~\n```\n```\n~~~\nKonec.", "Koda:\n```py\nprint(1)", "Prazno:\n```\n```\nKonec.", "    ``\nzamik"]) {
+    assert.equal(replyText(code), code);
+    assert.equal(replyText(`${code}\n\`\`\`\n${meta}\n\`\`\``), code);
+    for (const out of tok(`${code}\n${meta}`)) assert.equal(out, code, JSON.stringify(code));
+  }
+  // Oznaka kode z jezikom se ne pretoči, preden je jasno, ali obdaja strojni blok; pravi blok se pretoči z vsebino.
+  const pravi = "Primer:\n```json\n[1, 2]\n```\nKonec.";
+  for (const out of tok(pravi)) assert.equal(out, pravi);
 });
