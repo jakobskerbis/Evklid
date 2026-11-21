@@ -23,6 +23,12 @@ test("vprašanje in odgovor: povezava za plačilo in darilna koda, z napisi gumb
   assert.ok(f.includes("samo polnoletna oseba"), "darilno kodo kupi samo polnoletna oseba");
   assert.match(f, /potrdi\w* (svoj )?e-naslov/, "pred povezavo in nakupom je potreben potrjen e-naslov");
   assert.ok(!/\d+(,\d+)? ?€/.test(f), "brez zneskov: cena je na povezavi in v zavihku Račun");
+  // Pregled 2, opomba 5: brez računa samo pri povezavi (darilno kodo kupi starš z računom); otrok za kodo potrebuje
+  // potrjen e-naslov (/account/promo je v UNVERIFIED_BLOCKED); Stripe z nekaj besedami razlage.
+  assert.doesNotMatch(f, /Svojega računa vam za to ni treba/);
+  assert.ok(f.includes("Za povezavo za plačilo vam računa ni treba ustvariti"));
+  assert.ok(f.includes("za to mora imeti svoj račun s potrjenim e-naslovom"));
+  assert.ok(f.includes("(plačilo prek ponudnika Stripe)"));
   // Povezava pod uvodom vodi na odgovor.
   assert.ok(html.includes('<a href="#placilo-dijak">'));
 });
