@@ -163,10 +163,12 @@ test("kopije: dnevno čiščenje po rokih hrambe pobriše stare ročne kopije in
 });
 
 // Pravila zasebnosti (§5) povedo, koliko časa hranimo seznam izbrisov in da se ob izbrisu računa izbriše stranka v Stripu.
-test("privacy policy states the deletion-list retention from code and Stripe customer deletion", async () => {
+test("kopije: zasebnost.html pove rok hrambe seznama izbrisov (IZBRISI_DNI) in izbris stranke v Stripu", async () => {
   const { IZBRISI_DNI } = await import("../server/kopije.js");
-  const html = (await import("node:fs")).readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
-  assert.match(html, new RegExp(`${IZBRISI_DNI} dni hranimo seznam izbrisov`));
+  const html = fs.readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
+  assert.match(html, new RegExp(`(?<!\\d)${IZBRISI_DNI} dni hranimo seznam izbrisov`));
   assert.match(html, /brez imena, e-naslova in vsebine/);
-  assert.match(html, /izbrišemo tudi vaš zapis stranke pri ponudniku plačil Stripe/);
+  assert.match(html, /pri ponudniku plačil Stripe izbrišemo tudi vaše podatke stranke/);
+  assert.match(html, /odstop od pogodbe ali zahtevek za garancijo, o katerem še nismo odločili, podatke stranke pri Stripu izbrišemo šele/);
+  assert.match(html, /Cloudflare, Inc\.<\/td><td>[^<]*šifriran seznam izbrisov/);
 });
