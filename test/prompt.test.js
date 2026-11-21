@@ -263,8 +263,8 @@ test("result only (j 2026-11-17): one task, asked only for the result → result
   assert.ok(hw.includes("»samo rezultat« pri več nalogah"), "sprožilec pravila za več nalog");
   assert.match(hw, /»reši vse« ali »moram oddati« ob več nalogah ni prošnja za način B/);
   // Izjema je navedena pri obeh pravilih, ki bi ji sicer nasprotovali; preverjanje učenčevega golega rezultata ostane.
-  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
-  assert.match(stat, /Končnega odgovora nikoli ne izdaš kot prvi odziv na novo nalogo \(izjema: Samo rezultat pri eni nalogi v Pedagoških situacijah\)\./);
+  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjemi: Samo rezultat pri eni nalogi in Preprosto vprašanje\)/);
+  assert.match(stat, /Končnega odgovora nikoli ne izdaš kot prvi odziv na novo nalogo \(izjemi: Samo rezultat pri eni nalogi v Pedagoških situacijah in Preprosto vprašanje\)\./);
   assert.match(stat, /Pravilen rezultat brez postopka ali z napačnim postopkom ni rešen/);
   // 1 452 znakov po PR #836 (sklic na definicijo seznama vaj in skladen zgled); rezerva ~20.
   assert.ok(row.length < 1475, `točka naj ostane kratka (${row.length} znakov)`);
@@ -292,7 +292,8 @@ test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step
   assert.ok(line("- **Samo rezultat pri eni nalogi**").includes("Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage"));
   // +266 znakov (61 734 → 62 000; ~75 žetonov) po pregledu #841; s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
   // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
-  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760, `stalni del ${stat.length} znakov`);
+  // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
+  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460, `stalni del ${stat.length} znakov`);
 });
 
 test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts with another method are one task, grades 1–4 short", () => {
@@ -354,7 +355,7 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
   // Vodenje (način A) ostane nespremenjeno.
   const a = stat.slice(stat.indexOf("## Način A – vodenje"), stat.indexOf("## Način B – celotna rešitev"));
   assert.doesNotMatch(a, /podvprašanj/);
-  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjema: Samo rezultat pri eni nalogi\)/);
+  assert.match(stat, /\*\*Vedno:\*\* v načinu A ne izdaš rešitve \(izjemi: Samo rezultat pri eni nalogi in Preprosto vprašanje\)/);
   // 2. OŠ 1.–4.: brez ogrodja, kratko; 5. razred ohrani vrstni red.
   const kids = line("OŠ 1.–4. razred (1.–4. leto šolanja):");
   for (const s of ["namesto točk 1–6 brez Podatkov, Iščemo, Načrta, Preverbe ali »Preverimo« (razen kadar preizkus zahteva naloga ali otrok), okvirja »Zapomni si«, stavka, kaj je naloga preverjala, in Vaje", "en do dva kratka stavka s preprostimi besedami", "rezultat krepko", "Skupaj do okoli 450 znakov, razen če otrok prosi za več", "le z gumbi `IZBIRE`"]) assert.ok(kids.includes(s), `OŠ 1.–4.: »${s}«`);
@@ -388,7 +389,8 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Preizkus 3, krog 2 (18. 11., PR #836: definicija seznama vaj, OŠ 1.–4.): +506 znakov (61 224 → 61 730; ~140 žetonov), meja +510.
     // Meritev po #836 s pregledom #841: +266 znakov (61 734 → 62 000); s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
     // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760, `stalni del ${stat.length} znakov`);
+    // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460, `stalni del ${stat.length} znakov`);
   });
 });
 

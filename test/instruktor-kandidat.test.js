@@ -240,14 +240,16 @@ test("aplikacija: v hrvaškem pogovoru kratko sporočilo (»da«) ne vklopi slov
 });
 
 // Kandidat 2 (j 21. 11. 2026, kartici iz primerjave z Astro): preprosto vprašanje, razlaga na prošnjo, GRAF/ODPRI, strah pred testom.
-test("kandidat 2: pravila iz primerjave z Astro so v kandidatu, produkcijski prompt jih še nima", () => {
+test("kandidat 2: pravila iz primerjave z Astro so v kandidatu in v produkcijskem promptu (21. 11. 2026)", () => {
   const ps = fs.readFileSync(PROMPT_PATH, "utf8");
   const ks = fs.readFileSync(KANDIDAT_PROMPT_PATH, "utf8");
   for (const re of [/- Preprosto vprašanje \(en račun na pamet ali dejstvo/, /ali izrecna prošnja za razlago pojma ali pravila/, /razloži takoj, brez uvodnega vprašanja o predznanju/, /dodaj `GRAF` z drsnikom, ki ne izda rešitve naloge/, /\*\*Strah pred bližnjim testom\*\*/]) {
     assert.match(ks, re);
-    assert.doesNotMatch(ps, re);
+    assert.match(ps, re);
   }
   assert.match(ks, /po dveh takih računih istega tipa zapored ali ob »moram oddati« velja Domača naloga za oddajo/);
   assert.match(ks, /ne velja za razlago rešitve naloge, ki jo rešujeta/);
   assert.match(ks, /`flag` ostane `none`/);
+  assert.match(ks, /lestvica pomoči, način A, način B\) učencu nikoli/);
+  assert.match(ks, /»Pri naslednji nalogi spet rešuješ ti, jaz te vodim\.«/);
 });
