@@ -292,7 +292,8 @@ test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step
   assert.ok(line("- **Samo rezultat pri eni nalogi**").includes("Brez Podatkov, Iščemo, Preverbe, »Zapomni si« in razlage"));
   // +266 znakov (61 734 → 62 000; ~75 žetonov) po pregledu #841; s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
   // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
-  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2200, `stalni del ${stat.length} znakov`);
+  // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
+  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460, `stalni del ${stat.length} znakov`);
 });
 
 test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts with another method are one task, grades 1–4 short", () => {
@@ -388,7 +389,8 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Preizkus 3, krog 2 (18. 11., PR #836: definicija seznama vaj, OŠ 1.–4.): +506 znakov (61 224 → 61 730; ~140 žetonov), meja +510.
     // Meritev po #836 s pregledom #841: +266 znakov (61 734 → 62 000); s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
     // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2200, `stalni del ${stat.length} znakov`);
+    // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460, `stalni del ${stat.length} znakov`);
   });
 });
 

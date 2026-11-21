@@ -250,6 +250,6 @@ test("kandidat 2: pravila iz primerjave z Astro so v kandidatu in v produkcijske
   assert.match(ks, /po dveh takih računih istega tipa zapored ali ob »moram oddati« velja Domača naloga za oddajo/);
   assert.match(ks, /ne velja za razlago rešitve naloge, ki jo rešujeta/);
   assert.match(ks, /`flag` ostane `none`/);
-  assert.match(ks, /lestvica pomoči, način A in način B\) učencu nikoli/);
+  assert.match(ks, /lestvica pomoči, način A, način B\) učencu nikoli/);
   assert.match(ks, /»Pri naslednji nalogi spet rešuješ ti, jaz te vodim\.«/);
 });
