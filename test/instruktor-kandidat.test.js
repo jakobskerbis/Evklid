@@ -139,7 +139,7 @@ test("prompt (produkcijski in kandidat): enak del za učenca in vse oznake, nova
     assert.match(ks, re);
     assert.match(ps, re, "pravila kandidata so v produkcijskem promptu (21. 11. 2026)");
   }
-  assert.ok(ks.length - ps.length < 1800, `kandidat doda ${ks.length - ps.length} znakov`);
+  assert.ok(ks.length - ps.length < 2400, `kandidat doda ${ks.length - ps.length} znakov`);
 });
 
 function fakeStream(text) {
@@ -237,4 +237,17 @@ test("aplikacija: v hrvaškem pogovoru kratko sporočilo (»da«) ne vklopi slov
   const r = await pogovor("Dobro, sada množimo s brojem tri.\n<<META subject=MAT topic=\"potence\" error=0 mode=A flag=none>>", ["Ne razumijem ovaj zadatak, pomozi", "da"]);
   assert.equal(r.done, "Dobro, sada množimo s brojem tri.");
   assert.equal(r.streamed, r.done);
+});
+
+// Kandidat 2 (j 21. 11. 2026, kartici iz primerjave z Astro): preprosto vprašanje, razlaga na prošnjo, GRAF/ODPRI, strah pred testom.
+test("kandidat 2: pravila iz primerjave z Astro so v kandidatu, produkcijski prompt jih še nima", () => {
+  const ps = fs.readFileSync(PROMPT_PATH, "utf8");
+  const ks = fs.readFileSync(KANDIDAT_PROMPT_PATH, "utf8");
+  for (const re of [/- Preprosto vprašanje \(en račun na pamet ali dejstvo/, /ali izrecna prošnja za razlago pojma ali pravila/, /razloži takoj, brez uvodnega vprašanja o predznanju/, /dodaj `GRAF` z drsnikom, ki ne izda rešitve naloge/, /\*\*Strah pred bližnjim testom\*\*/]) {
+    assert.match(ks, re);
+    assert.doesNotMatch(ps, re);
+  }
+  assert.match(ks, /po dveh takih računih istega tipa zapored ali ob »moram oddati« velja Domača naloga za oddajo/);
+  assert.match(ks, /ne velja za razlago rešitve naloge, ki jo rešujeta/);
+  assert.match(ks, /`flag` ostane `none`/);
 });
