@@ -748,6 +748,7 @@
   "pp.oursInfo": "{minutes}분 · {points}점",
   "pp.oursAbout": "문제는 Evklid(AI)가 만들었어요. 구성과 배점은 원래 시험지와 같지만 문제는 새로워요. 종이에 풀고, 풀이를 확인한 다음 점수를 표시하세요.",
   "pp.oursTask": "문제 {n}",
+  "pp.tutorWait": "튜터가 아직 이전 질문에 답하고 있어요. 그 직후에 질문을 보낼게요.",
   "pp.oursPoints": "{n}점",
   "pp.oursShow": "풀이 보기",
   "pp.oursHide": "풀이 숨기기",

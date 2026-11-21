@@ -754,6 +754,7 @@
   "pp.oursInfo": "{minutes} min · {points} pikë",
   "pp.oursAbout": "Detyrat i shkroi Evklid (AI). Struktura dhe pikët janë si në fletën origjinale, por detyrat janë të reja. Zgjidhi në letër, pastaj kontrollo zgjidhjen dhe shëno pikët e tua.",
   "pp.oursTask": "Detyra {n}",
+  "pp.tutorWait": "Tutori po përgjigjet ende pyetjes së mëparshme. Pyetjen tënde do ta dërgoj menjëherë pas saj.",
   "pp.oursPoints": "{n} p.",
   "pp.oursShow": "Shfaq zgjidhjen",
   "pp.oursHide": "Fshih zgjidhjen",

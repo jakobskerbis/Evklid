@@ -760,6 +760,7 @@
   "pp.oursInfo": "{minutes} min · {points} puncte",
   "pp.oursAbout": "Exercițiile au fost scrise de Evklid (AI). Structura și punctajul sunt ca la subiectul original, dar exercițiile sunt noi. Rezolvă-le pe hârtie, apoi verifică rezolvarea și notează-ți punctele.",
   "pp.oursTask": "Exercițiul {n}",
+  "pp.tutorWait": "Tutorele încă răspunde la întrebarea anterioară. Îți trimit întrebarea imediat după.",
   "pp.oursPoints": "{n} p.",
   "pp.oursShow": "Arată rezolvarea",
   "pp.oursHide": "Ascunde rezolvarea",

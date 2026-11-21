@@ -748,6 +748,7 @@
   "pp.oursInfo": "{minutes} 分鐘 · {points} 分",
   "pp.oursAbout": "題目由 Evklid（AI）編寫。結構和配分與原試卷相同，但題目是新的。先在紙上作答，再核對解答並給自己打分。",
   "pp.oursTask": "第 {n} 題",
+  "pp.tutorWait": "家教還在回答上一個問題。之後會馬上送出你的問題。",
   "pp.oursPoints": "{n} 分",
   "pp.oursShow": "顯示解答",
   "pp.oursHide": "隱藏解答",

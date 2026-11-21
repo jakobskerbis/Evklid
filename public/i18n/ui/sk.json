@@ -766,6 +766,7 @@
   "pp.oursInfo": "{minutes} min · {points} bodov",
   "pp.oursAbout": "Úlohy napísal Evklid (AI). Štruktúra a body sú ako v pôvodnom zadaní, úlohy sú však nové. Vyrieš ich na papier, potom si skontroluj riešenie a zapíš si body.",
   "pp.oursTask": "Úloha {n}",
+  "pp.tutorWait": "Lektor ešte odpovedá na predchádzajúcu otázku. Tvoju otázku pošlem hneď potom.",
   "pp.oursPoints": "{n} b.",
   "pp.oursShow": "Zobraziť riešenie",
   "pp.oursHide": "Skryť riešenie",

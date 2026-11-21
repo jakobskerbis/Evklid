@@ -748,6 +748,7 @@
   "pp.oursInfo": "{minutes} phút · {points} điểm",
   "pp.oursAbout": "Các câu hỏi do Evklid (AI) soạn. Cấu trúc và thang điểm giống đề gốc, nhưng câu hỏi là mới. Hãy làm ra giấy, rồi xem lời giải và tự chấm điểm.",
   "pp.oursTask": "Câu {n}",
+  "pp.tutorWait": "Gia sư vẫn đang trả lời câu hỏi trước. Mình sẽ gửi câu hỏi của bạn ngay sau đó.",
   "pp.oursPoints": "{n} đ",
   "pp.oursShow": "Xem lời giải",
   "pp.oursHide": "Ẩn lời giải",

@@ -766,6 +766,7 @@
   "pp.oursInfo": "{minutes} min · {points} pkt",
   "pp.oursAbout": "Zadania napisał Evklid (AI). Budowa i punktacja są takie jak w oryginalnym arkuszu, ale zadania są nowe. Rozwiąż je na papierze, potem sprawdź rozwiązanie i zaznacz swoje punkty.",
   "pp.oursTask": "Zadanie {n}",
+  "pp.tutorWait": "Korepetytor wciąż odpowiada na poprzednie pytanie. Twoje pytanie wyślę zaraz potem.",
   "pp.oursPoints": "{n} pkt",
   "pp.oursShow": "Pokaż rozwiązanie",
   "pp.oursHide": "Ukryj rozwiązanie",

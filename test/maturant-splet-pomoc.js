@@ -11,11 +11,11 @@ try {
   chromium = await require("playwright").chromium.launch();
 } catch {}
 export const opts = { skip: chromium ? false : "Playwright Chromium ni nameščen", timeout: 240000 };
-const META = '\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>';
+export const META = '\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>';
 export const MATURANT = { educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik OR", subject: "MAT", tour_version: 99, first_task: 1 };
 export const TELEFON = { viewport: { width: 412, height: 839 }, isMobile: true, hasTouch: true, locale: "sl-SI", serviceWorkers: "block" };
 
-export function streznik() {
+export function streznik({ streamFn } = {}) {
   const store = openDb(":memory:");
   const app = createApp(store, {
     accounts: true,
@@ -23,10 +23,12 @@ export function streznik() {
     stripeKey: "",
     resendKey: "",
     log: { error() {}, warn() {}, info() {} },
-    streamFn: async ({ onText }) => {
-      onText("ok");
-      return { text: "ok" + META, stopReason: "end_turn" };
-    },
+    streamFn:
+      streamFn ||
+      (async ({ onText }) => {
+        onText("ok");
+        return { text: "ok" + META, stopReason: "end_turn" };
+      }),
   });
   const server = app.listen(0);
   return { store, base: `http://127.0.0.1:${server.address().port}`, close: () => server.close() };

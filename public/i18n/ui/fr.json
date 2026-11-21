@@ -754,6 +754,7 @@
   "pp.oursInfo": "{minutes} min · {points} points",
   "pp.oursAbout": "Les exercices ont été rédigés par Evklid (IA). La structure et les points sont ceux du sujet original, mais les exercices sont nouveaux. Résous-les sur papier, puis vérifie la solution et note tes points.",
   "pp.oursTask": "Exercice {n}",
+  "pp.tutorWait": "Le tuteur répond encore à la question précédente. J’envoie la tienne juste après.",
   "pp.oursPoints": "{n} pts",
   "pp.oursShow": "Voir la solution",
   "pp.oursHide": "Masquer la solution",

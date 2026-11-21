@@ -1078,7 +1078,14 @@ async function oursTutor(entry, title, task, part, back = null) {
 // »matura mat OR 2024 pola 1 naloga 5«: public/naloga-pole/klepet.js (s svojimi besedili) se naloži šele ob prvi
 // omembi pole, ker ni del prvega odprtja (proračun hitrosti, test/hitrost-proracun.test.js).
 // Hiter predpregled (brez nalaganja modula): kratko sporočilo z izpitom in »naloga«; natančno prepozna modul.
+// Med odgovorom inštruktorja (state.sending) bi send() novo vprašanje tiho zavrgel in ostal bi prazen pogovor
+// (pregled #917): najprej počaka, da se odgovor izpiše (največ 3 min), nato odpre nov pogovor.
 async function newTutorChat() {
+  if (state.sending) {
+    toast(t("pp.tutorWait"));
+    for (let i = 0; state.sending && i < 1800; i++) await new Promise((r) => setTimeout(r, 100));
+    if (state.sending) throw new Error(t("off.serverBusy"));
+  }
   const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST", body: {} });
   await loadConversations();
   showView("chat");

@@ -748,6 +748,7 @@
   "pp.oursInfo": "{minutes} 分 · {points} 点",
   "pp.oursAbout": "問題は Evklid（AI）が作成しました。構成と配点は元の試験と同じですが、問題は新しいものです。紙に解いてから解答を確認し、自分で点数をつけましょう。",
   "pp.oursTask": "問題 {n}",
+  "pp.tutorWait": "講師はまだ前の質問に答えています。そのすぐ後にあなたの質問を送ります。",
   "pp.oursPoints": "{n} 点",
   "pp.oursShow": "解答を表示",
   "pp.oursHide": "解答を隠す",

@@ -754,6 +754,7 @@
   "pp.oursInfo": "{minutes} min · {points} points",
   "pp.oursAbout": "The tasks were written by Evklid (AI). The structure and points match the original paper, but the tasks are new. Solve them on paper, then check the solution and mark your points.",
   "pp.oursTask": "Task {n}",
+  "pp.tutorWait": "The tutor is still answering the previous question. I'll send yours right after.",
   "pp.oursPoints": "{n} pts",
   "pp.oursShow": "Show solution",
   "pp.oursHide": "Hide solution",
