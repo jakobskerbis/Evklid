@@ -92,7 +92,7 @@ export function netKey(ip = "") {
 // Ob uvedbi ključa (21. 11. 2026) in ob vsaki menjavi EVKLID_DATA_KEY se nove vrednosti ne ujemajo s starimi: do konca
 // meseca ima omrežje dve ločeni skupini (stari in novi računi), skupne meje (nepotrjeni računi na dan, brezplačni sklad)
 // pa veljajo naprej, zato je največ okoli 0,20 $ na dan več. Stari zapisi parents.guest_net ostanejo nezaščiten sha256,
-// dokler račun ni potrjen (takrat se pobriše) ali izbrisan; obrniti jih ni mogoče, ker naslova IP ne poznamo več.
+// dokler račun ni potrjen (takrat se pobriše) ali izbrisan; v novo obliko jih ni mogoče pretvoriti, ker naslova IP ne hranimo.
 export const guestNet = (req) => netHash(netKey(req.ip || req.socket?.remoteAddress));
 
 // Gost ali nekdanji gost, ki še ni potrdil e-naslova: šteje se v kvoto omrežja.
