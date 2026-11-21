@@ -7,8 +7,9 @@
 // ob »ne razumem« res poenostavi.
 // Ne piše v pravo bazo in ne v docs/. Ustavi se, preden bi strošek presegel --max-usd.
 //   node scripts/meri-pedagogika.mjs [--max-usd 2] [--nacin think|chat] [--kandidat] [--suho] [--preizkus]
-//   --kandidat  kandidat izboljšav inštruktorja (EVKLID_INSTRUKTOR_KANDIDAT=1: prompts/system_prompt-kandidat.md in popravka
-//               besedila iz server/instruktor-kandidat.js); izid v data/meri-pedagogika-kandidat.json z "kandidat": true,
+//   --kandidat  kandidat prompta (EVKLID_INSTRUKTOR_KANDIDAT=1: prompts/system_prompt-kandidat.md; popravka besedila iz
+//               server/instruktor-kandidat.js sta od 21. 11. 2026 vklopljena v obeh različicah, zato izidi pred tem dnem
+//               brez argumenta niso neposredno primerljivi); izid v data/meri-pedagogika-kandidat.json z "kandidat": true,
 //               za primerjavo pred/po z zagonom brez argumenta (j 21. 11. 2026: primerjavo vidi, preden gre v produkcijo)
 //   --suho      samo ocena najslabšega stroška, brez klica modela (0 $)
 //   --preizkus  preizkusni odgovori namesto modela (samo brez ključa API), za test poti (0 $)

@@ -21,7 +21,7 @@ const MARKERS = ["<<RACUN", "<< RACUN", "<<RAČUN", "<< RAČUN", "<<ODPRI", "<<G
 const MARKER_MAX = Math.max(...MARKERS.map((m) => m.length));
 
 import { ALL_SUBJECTS } from "./subjects.js";
-import { kandidatOn, polishHold, polishReply } from "./instruktor-kandidat.js";
+import { polishHold, polishReply } from "./instruktor-kandidat.js";
 
 const VALID = {
   subject: ALL_SUBJECTS,
@@ -134,23 +134,23 @@ const LEAD_RE = /^[ \t]*(?:(?:odlično|dobro|super|zanimivo|izvrstno|krasno|lepo
 export const LEAD_MAX = 40; // toliko znakov zadrži pretakanje, dokler ni jasno, ali se odgovor začne z uvodno frazo
 export const stripLeadPhrase = (text) => String(text).replace(LEAD_RE, (m) => (m.trim().length === String(text).trim().length ? m : "")).replace(/^[ \t]*\n/, "");
 
-// Besedilo odgovora, kot ga vidi učenec (prikaz in shranjeno sporočilo): brez strojnih blokov in uvodne fraze; s
-// kandidatom (server/instruktor-kandidat.js) še s popravkoma predlogov in oznak, enako kot pri pretakanju spodaj.
-export function replyText(text, { kandidat = kandidatOn(), language = "sl" } = {}) {
+// Besedilo odgovora, kot ga vidi učenec (prikaz in shranjeno sporočilo): brez strojnih blokov in uvodne fraze, s
+// popravkoma predlogov in oznak (server/instruktor-kandidat.js; j 21. 11. 2026), enako kot pri pretakanju spodaj.
+export function replyText(text, { polish = true, language = "sl" } = {}) {
   const t = stripLeadPhrase(stripMeta(text));
-  return kandidat ? polishReply(t, { language }) : t;
+  return polish ? polishReply(t, { language }) : t;
 }
 
 // Filter za pretakanje: sproti spušča besedilo naprej, a zadrži vse od
 // začetka prvega strojnega bloka ("<<META" ali "<<KARTICA") naprej (in morebitno
 // nedokončano predpono na koncu), da učenec strojnih blokov nikoli ne vidi.
-// kandidat (EVKLID_INSTRUKTOR_KANDIDAT=1, server/instruktor-kandidat.js): pretočeno besedilo dobi enaka popravka kot
+// polish (privzeto vklopljeno, server/instruktor-kandidat.js): pretočeno besedilo dobi enaka popravka kot
 // končni prikaz (replyText zgoraj, server/app.js), da se izpis ob koncu ne začne znova; language: jezik pogovora.
-export function createStreamFilter({ kandidat = kandidatOn(), language = "sl" } = {}) {
+export function createStreamFilter({ polish = true, language = "sl" } = {}) {
   let buffer = "";
   let emitted = 0; // koliko znakov iz buffer je že šlo naprej
   let metaStarted = false;
-  let shown = ""; // kandidat: popravljeno besedilo, ki je že šlo naprej
+  let shown = ""; // polish: popravljeno besedilo, ki je že šlo naprej
   const view = (raw) => polishReply(stripLeadPhrase(raw), { language });
   // Popravljen nadaljnji del: popravek je odvisen le od besedila pred mestom (zadržan konec je pri tem upoštevan).
   const next = (raw) => {
@@ -194,15 +194,18 @@ export function createStreamFilter({ kandidat = kandidatOn(), language = "sl" } 
       }
       // Presledke, prelome in oznake kode na koncu zadrži, dokler ne vemo, ali jim sledi META.
       while (safeEnd > emitted && /[\s`]/.test(buffer[safeEnd - 1])) safeEnd--;
-      // Kandidat: zadrži še predlog brez naslednje besede in začetek morebitne oznake (»Najprej pri…«).
-      for (let i = 0; kandidat && i < 4 && safeEnd > emitted; i++) {
+      // Popravki: zadrži še predlog brez naslednje besede in začetek morebitne oznake (»Najprej pri…«).
+      for (let i = 0; polish && i < 4 && safeEnd > emitted; i++) {
         let end = Math.max(emitted, safeEnd - polishHold(buffer.slice(0, safeEnd)));
         while (end > emitted && /[\s`]/.test(buffer[end - 1])) end--;
         if (end === safeEnd) break;
         safeEnd = end;
       }
       if (safeEnd <= emitted) return "";
-      if (kandidat) {
+      // Popravek gre vsakič čez celotno besedilo: pri dolgih odgovorih ga ne ponavljaj za vsak droben kos (pregled #915),
+      // počakaj na vsaj 48 znakov (pri dolgem besedilu do 300) ali na prelom vrstice. Konec gre vedno naprej v end().
+      if (polish && leadDone && safeEnd - emitted < Math.min(300, Math.max(48, buffer.length / 60)) && !buffer.slice(emitted, safeEnd).includes("\n")) return "";
+      if (polish) {
         // Uvodna fraza se odloči šele na dovolj dolgem začetku (tudi ko je konec zadržan zaradi oznake ali predloga).
         if (!leadDone && safeEnd < LEAD_MAX && !buffer.slice(0, safeEnd).includes("\n")) return "";
         emitted = safeEnd;
@@ -223,7 +226,7 @@ export function createStreamFilter({ kandidat = kandidatOn(), language = "sl" } 
     },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
-      if (kandidat) return { rest: next(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted))), raw: buffer };
+      if (polish) return { rest: next(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted))), raw: buffer };
       const rest = lead(stripMeta(buffer.slice(emitted)));
       return { rest, raw: buffer };
     },

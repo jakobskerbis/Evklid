@@ -11,7 +11,7 @@ import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
 import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, replyText } from "./meta.js";
-import { kandidatOn, polishReply } from "./instruktor-kandidat.js";
+import { jezikOdgovora, polishReply } from "./instruktor-kandidat.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL, nastaviOpazovalcaAi } from "./claude.js";
@@ -1358,10 +1358,12 @@ export function createApp(store, opts = {}) {
       },
     };
 
-    // Kandidat izboljšav (EVKLID_INSTRUKTOR_KANDIDAT=1, privzeto izklopljen): popravka besedila pri pretakanju in v prikazu.
-    const kandidat = kandidatOn();
-    const jezik = student.settings.language || "sl";
-    const filter = createStreamFilter({ kandidat, language: jezik });
+    // Popravka besedila (predlogi s/z, k/h in notranje oznake, server/instruktor-kandidat.js) pri pretakanju, v prikazu in zgodovini.
+    // Jezik odgovora za popravek predlogov: nastavitev, pri »sl« pa hrvaščina, če učenec piše hrvaško (enkrat na odgovor).
+    // Kratko sporočilo (»da«, »x = 5«) ne pove jezika: upoštevaj še zadnja tri učenčeva sporočila v pogovoru.
+    const zadnjaUcenca = zgodovina.filter((m) => m.role === "user").slice(-3).map((m) => (Array.isArray(m.content) ? m.content.map((b) => b.text || "").join(" ") : String(m.content || "")));
+    const jezik = jezikOdgovora(student.settings.language, [...zadnjaUcenca, text].join("\n"));
+    const filter = createStreamFilter({ language: jezik });
     // Nastavitve iz klepeta (server/chat-settings.js): orodji za model, dogodki za odjemalca.
     const settingsTools = createSettingsTools({
       store,
@@ -1555,7 +1557,7 @@ export function createApp(store, opts = {}) {
           // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor).
           if (reason && hold.take(mainReserve)) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
-            const again2 = createStreamFilter({ kandidat, language: jezik });
+            const again2 = createStreamFilter({ language: jezik });
             held.length = 0;
             const r2 = await streamFn({
               system,
@@ -1681,13 +1683,13 @@ export function createApp(store, opts = {}) {
       // Fotografija, ki ni učno gradivo (obraz, oseba, osebni dokument …): inštruktor jo zavrne z flag=photo,
       // slika pa se takoj odstrani iz shranjenega sporočila (j, 2026-10-30).
       if (image && meta?.flag === "photo") store.setMessageContent(userMsgId, withoutImages(userContent, PHOTO_REJECTED_TEXT), 2);
-      let display = (note || "") + replyText(result.text, { kandidat, language: jezik }) + fix;
+      let display = (note || "") + replyText(result.text, { language: jezik }) + fix;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
       // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
       let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
-      // Kandidat: tudi zgodovina za model brez »s osnovo« in oznak (sicer jih model iz nje ponavlja); strojni bloki ostanejo.
-      if (kandidat) content[0].text = polishReply(content[0].text, { language: jezik });
+      // Tudi zgodovina za model brez »s osnovo« in oznak (sicer jih model iz nje ponavlja); strojni bloki ostanejo.
+      content[0].text = polishReply(content[0].text, { language: jezik });
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
       unlogged = null;

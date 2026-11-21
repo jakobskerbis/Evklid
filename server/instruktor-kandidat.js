@@ -1,8 +1,9 @@
-// Kandidat izboljšav inštruktorja (j 21. 11. 2026, kartica z odločitvijo): meritev pedagoških mer 19. 11.
+// Popravki inštruktorja (j 21. 11. 2026, kartici z odločitvijo): meritev pedagoških mer 19. 11.
 // (scripts/meri-pedagogika.mjs) je pokazala slovnične napake (»s osnovo«) in notranje oznake v odgovorih
-// (»Najprej priklic:«). Z EVKLID_INSTRUKTOR_KANDIDAT=1 aplikacija uporabi prompts/system_prompt-kandidat.md
-// (server/prompt.js) in spodnja popravka besedila, ki ga vidi učenec (server/meta.js createStreamFilter, server/app.js).
-// Privzeto izklopljeno: produkcija ostane enaka, dokler j ne vidi primerjave pred/po in kandidata ne potrdi.
+// (»Najprej priklic:«). Spodnja popravka besedila, ki ga vidi učenec, sta vklopljena za vse (server/meta.js
+// createStreamFilter in replyText, server/app.js); prompt kandidata je po dveh slepih primerjavah prej/potem postal
+// prompts/system_prompt.md. EVKLID_INSTRUKTOR_KANDIDAT=1 še vedno izbere prompts/system_prompt-kandidat.md (server/prompt.js)
+// za meritev naslednjega kandidata (scripts/meri-pedagogika.mjs --kandidat); zdaj je enak produkcijskemu.
 // Oba popravka sta namenoma previdna: napačen popravek je slabši od nobenega.
 
 export const kandidatOn = (env = process.env) => env.EVKLID_INSTRUKTOR_KANDIDAT === "1";
@@ -67,6 +68,20 @@ const ADVERB_NO = /no$/;
 // Pred temi besedami je črka spremenljivka (»ko gre h proti 0«, »naj bo z …«, »če je s …«, »označimo h višino«).
 const VAR_BEFORE = /(?:^|[^\p{L}])(?:gre|gredo|bo|bodo|naj|ko|če|je|označimo|označi|izberimo|vzemimo|imenujmo|za)[ \t]+$/iu;
 const CASE_END = /(?:o|m|i|u|ej|oj|ma)$/;
+// Črka kot ime (»v s orbitali«, »z koordinato«, »x, y in z komponento«): beseda, ki jo črka označi, ali črka v naštevanju
+// črk. Tam bi popravek spremenil pomen (pregled #915).
+const LETTER_NOUN = /^(?:orbital|komponent|koordinat|podlupin|osjo$|osi$|os$)/;
+const LETTER_LIST = /(?:^|[^\p{L}])\p{L}(?:,|[ \t]+(?:in|ali|ter))[ \t]+$/u;
+// Hrvaščina ali srbščina pri nastavitvi »sl«: inštruktor odgovori v jeziku učenca, tam je »s brojem« pravilno. Jezik odgovora
+// se odloči enkrat, iz učenčevega sporočila (server/app.js), da se med pretakanjem ne spremeni (pregled #915).
+const HR_WORDS = new Set(
+  "koji koja koje kojeg kojem što šta nije ili ovaj ova ovo ovdje gdje jer sada ću će brojem trebaš molim zadatak zadatku riješi riješiti rješenje rješenja pomozi jednadžbu jednadžba razumijem objasni".split(" "),
+);
+export const jezikOdgovora = (setting, userText = "") => {
+  const l = setting || "sl";
+  if (l !== "sl") return l;
+  return (String(userText).toLowerCase().match(/\p{L}+/gu) || []).some((w) => HR_WORDS.has(w)) ? "hr" : "sl";
+};
 const NOT_CASE = /(?:mo|[šžč]i)$/;
 const PREP_RE = /(?<![\p{L}\p{N}_\\/.\-'’^=+*<>|~\0])(?<![\p{N}\0=+*/^<>|)\]°%][ \t]+)([sSzZkKhH]) (\p{L}{2,})(?=$|[\s.,;:!?)\]»«"“”'’…–—-])/gu;
 const SENTENCE_START = /(?:^|\n[ \t]*(?:[-*>][ \t]+|\d+[.)][ \t]+)?|[.!?…:][ \t]+|[«»"„“(][ \t]*)$/;
@@ -81,7 +96,7 @@ export function fixPrepositions(text) {
     const at = m.index;
     const lower = word.toLowerCase();
     if (STOP.has(lower) || NOT_CASE.test(lower) || ADVERB_NO.test(lower) || !CASE_END.test(lower)) continue;
-    if (VAR_BEFORE.test(plain.slice(Math.max(0, at - 16), at))) continue;
+    if (VAR_BEFORE.test(plain.slice(Math.max(0, at - 16), at)) || LETTER_LIST.test(plain.slice(Math.max(0, at - 12), at)) || LETTER_NOUN.test(lower)) continue;
     if ((word.match(/\p{Lu}/gu) || []).length > 1) continue; // kratica (DNA, ATP): izgovorjava po črkah
     const upper = prep === prep.toUpperCase();
     if (upper && !SENTENCE_START.test(plain.slice(Math.max(0, at - 12), at))) continue;
@@ -97,7 +112,8 @@ export function fixPrepositions(text) {
 // Notranje oznake iz navodil (»Najprej priklic:«, »Najprej preveri predznanje:«), ki jih je model izpisal učencu kot
 // naslov ali predpono. Samo ti znani zapisi in samo na začetku vrstice ali stavka; vprašanje za oznako ostane
 // (z veliko začetnico).
-const LABELS = ["Najprej priklic predznanja", "Najprej priklic", "Najprej preverimo predznanje", "Najprej preveri predznanje", "Priklic predznanja", "Priklic"];
+// Gola »Priklic« ne: v BIO, psihologiji in RAC je to pojem (»Priklic: dostop do shranjene informacije«, pregled #915).
+const LABELS = ["Najprej priklic predznanja", "Najprej priklic", "Najprej preverimo predznanje", "Najprej preveri predznanje", "Priklic predznanja"];
 const LABEL_ALT = LABELS.join("|");
 const MD = "(?:\\*\\*|__)?";
 // Oznaka v svoji vrstici (tudi kot naslov ali krepko): vrstica izgine.
@@ -107,7 +123,7 @@ const LABEL_INLINE_RE = new RegExp(`(^|\\n[ \\t]*(?:[-*>][ \\t]+)?|[.!?…][ \\t
 
 export function stripLabels(text) {
   const s = String(text);
-  if (!/Najprej p|Priklic/.test(s)) return s;
+  if (!/Najprej p|Priklic predznanja/.test(s)) return s;
   return s.replace(LABEL_LINE_RE, "$1").replace(LABEL_INLINE_RE, (_, before, ch) => before + (ch ? ch.toUpperCase() : ""));
 }
 
