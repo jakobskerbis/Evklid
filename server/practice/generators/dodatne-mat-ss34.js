@@ -24,18 +24,20 @@ function fr(n, d) {
   const k = gcd2(n, d);
   return [n / k, d / k];
 }
+// Tipične napake brez pravilne vrednosti (in brez nekončnih). Če dve različni napaki dasta isto vrednost,
+// ne vemo, katera razlaga velja: odpadeta obe (kjer je skupna razlaga smiselna, jo generator zapiše sam).
+function uniqMs(right, mistakes) {
+  const ok = mistakes.filter((m) => m && m.why && Number.isFinite(m.value) && Math.abs(m.value - right) >= 1e-9);
+  return ok.filter((m) => ok.filter((o) => Math.abs(o.value - m.value) < 1e-9).length === 1);
+}
 // Ulomek kot odgovor; tipične napake [{ value, why }] po vrednosti ulomka (preverjanje jih primerja natančno).
-// Napaka, ki bi bila enaka pravilnemu odgovoru ali drugi napaki (ali ni končna), odpade.
 const frAns = (n, d, mistakes = []) => {
   const [a, b] = fr(n, d);
-  const ms = [];
-  for (const m of mistakes) {
-    if (!m || !m.why || !Number.isFinite(m.value)) continue;
-    if (Math.abs(m.value - a / b) < 1e-9 || ms.some((x) => Math.abs(x.value - m.value) < 1e-9)) continue;
-    ms.push(m);
-  }
-  return { type: "fraction", num: a, den: b, ...(ms.length ? { mistakes: ms.slice(0, 3) } : {}) };
+  const ms = uniqMs(a / b, mistakes).slice(0, 3);
+  return { type: "fraction", num: a, den: b, ...(ms.length ? { mistakes: ms } : {}) };
 };
+// Napaka »razmerje prostih členov« pri limiti v neskončnosti; 0 in 1 imata splošno razlago, zato tedaj odpade.
+const freeRatio = (v, why) => (Math.abs(v) < 1e-9 || Math.abs(v - 1) < 1e-9 ? [] : [{ value: v, why }]);
 // Napake pri celoštevilskem odgovoru: le cele vrednosti (necela bi se ujemala s sosednjim celim vnosom).
 const intMs = (ms) => ms.filter((m) => Number.isFinite(m.value) && Math.abs(m.value - Math.round(m.value)) < 1e-9).map((m) => ({ ...m, value: Math.round(m.value) }));
 // Ulomek v TeX (okrajšan): 3/4 → \frac{3}{4}, -6/3 → -2.
@@ -482,18 +484,25 @@ const GENS = [
         fn === "sin"
           ? `${ft(...sa)} \\cdot \\left(${ft(...cb)}\\right) ${op} \\left(${ft(...ca)}\\right) \\cdot \\left(${ft(...sb)}\\right)`
           : `\\left(${ft(...ca)}\\right) \\cdot \\left(${ft(...cb)}\\right) ${minus ? "+" : "-"} ${ft(...sa)} \\cdot \\left(${ft(...sb)}\\right)`;
+      // Napaki: predznaka cos α in sin β brez kvadranta; napačen predznak v adicijskem izreku.
+      // Pogosto dasta isto vrednost (napačen predznak drugega člena): tedaj ena skupna razlaga.
+      const vQuad = fn === "sin" ? (sa[0] * cb[0] + (minus ? -1 : 1) * Math.abs(ca[0]) * Math.abs(sb[0])) / den : (Math.abs(ca[0]) * cb[0] + (minus ? 1 : -1) * sa[0] * Math.abs(sb[0])) / den;
+      const vForm = fn === "sin" ? (sa[0] * cb[0] + (minus ? 1 : -1) * ca[0] * sb[0]) / den : (ca[0] * cb[0] + (minus ? -1 : 1) * sa[0] * sb[0]) / den;
+      const whyQuad = "Predznaka $\\cos\\alpha$ in $\\sin\\beta$ sta odvisna od kvadranta, v katerem leži posamezni kot. Preveri ju.";
+      const whyForm =
+        fn === "sin"
+          ? "Pri sinusu je predznak v formuli enak kot v argumentu: $\\sin(\\alpha \\pm \\beta) = \\sin\\alpha\\cos\\beta \\pm \\cos\\alpha\\sin\\beta$."
+          : "Pri kosinusu je predznak v formuli obraten: $\\cos(\\alpha \\pm \\beta) = \\cos\\alpha\\cos\\beta \\mp \\sin\\alpha\\sin\\beta$.";
+      const addMs =
+        Math.abs(vQuad - vForm) < 1e-9
+          ? [{ value: vQuad, why: "Preveri predznak drugega člena: v formuli in po kvadrantu." }]
+          : [
+              { value: vQuad, why: whyQuad },
+              { value: vForm, why: whyForm },
+            ];
       return {
         text: `Velja $\\sin\\alpha = ${ft(...sa)}$, $${QUAD_DEG[qa].replace(/alpha/g, "alpha")}$, in $\\cos\\beta = ${ft(...cb)}$, $${QUAD_DEG[qb].replace(/alpha/g, "beta")}$. Izračunaj natančno vrednost $\\${fn}(\\alpha ${op} \\beta)$ (ulomek).`,
-        answer: frAns(n, den, [
-          {
-            value: fn === "sin" ? (sa[0] * cb[0] + (minus ? -1 : 1) * Math.abs(ca[0]) * Math.abs(sb[0])) / den : (Math.abs(ca[0]) * cb[0] + (minus ? 1 : -1) * sa[0] * Math.abs(sb[0])) / den,
-            why: "Predznaka $\\cos\\alpha$ in $\\sin\\beta$ določi kvadrant, v katerem leži kot. Preveri ju.",
-          },
-          {
-            value: fn === "sin" ? (sa[0] * cb[0] + (minus ? 1 : -1) * ca[0] * sb[0]) / den : (ca[0] * cb[0] + (minus ? -1 : 1) * sa[0] * sb[0]) / den,
-            why: fn === "sin" ? "Pri sinusu je predznak v formuli enak kot v argumentu: $\\sin(\\alpha \\pm \\beta) = \\sin\\alpha\\cos\\beta \\pm \\cos\\alpha\\sin\\beta$." : "Pri kosinusu je predznak v formuli obraten: $\\cos(\\alpha \\pm \\beta) = \\cos\\alpha\\cos\\beta \\mp \\sin\\alpha\\sin\\beta$.",
-          },
-        ]),
+        answer: frAns(n, den, addMs),
         hint: "Najprej izračunaj $\\cos\\alpha$ in $\\sin\\beta$ (predznak glede na kvadrant), nato uporabi adicijski izrek.",
         data: { given: [`\\sin\\alpha = ${ft(...sa)}`, `\\cos\\beta = ${ft(...cb)}`], find: [`\\${fn}(\\alpha ${op} \\beta)`] },
         formula: ["\\sin^2 x + \\cos^2 x = 1", `\\${fn}(\\alpha ${op} \\beta) = ${exp}`],
@@ -555,7 +564,7 @@ const GENS = [
             `Brez računala izračunaj natančno vrednost izraza $${exp}$.`,
             `${who} trdi, da lahko izraz $${exp}$ izračuna na pamet. Koliko je vreden?`,
           ]),
-          answer: frAns(...v, Tt > 90 && v[0] !== 0 ? [{ value: -v[0] / v[1], why: `Absolutna vrednost je prava, predznak pa ne. Kje na enotski krožnici leži kot $${Tt}^\\circ$?` }] : []),
+          answer: frAns(...v, Tt > 90 && v[0] !== 0 ? [{ value: -v[0] / v[1], why: "Absolutna vrednost je prava, predznak pa ne. Preveri vrstni red kotov v adicijskem izreku in predznak vrednosti na enotski krožnici." }] : []),
           hint: `Primerjaj izraz z desno stranjo adicijskega izreka za ${isSin ? "sinus" : "kosinus"} ${plus ? "vsote" : "razlike"}.`,
           data: { given: [`\\alpha = ${a}^\\circ`, `\\beta = ${b}^\\circ`], find: ["\\text{vrednost izraza}"] },
           formula: isSin ? `\\sin(\\alpha ${plus ? "+" : "-"} \\beta) = \\sin\\alpha\\cos\\beta ${plus ? "+" : "-"} \\cos\\alpha\\sin\\beta` : `\\cos(\\alpha ${plus ? "+" : "-"} \\beta) = \\cos\\alpha\\cos\\beta ${plus ? "-" : "+"} \\sin\\alpha\\sin\\beta`,
@@ -572,7 +581,7 @@ const GENS = [
           answer: frAns(...res, [
             { value: plus ? (p - q) / q : (q - p) / q, why: "Kvadrirati moraš obe strani enakosti, tudi desno." },
             { value: plus ? (p * p) / (q * q) : -(p * p) / (q * q), why: "Pri kvadriranju dobiš tudi $\\sin^2 x + \\cos^2 x = 1$; to enico upoštevaj." },
-            { value: -res[0] / res[1], why: plus ? "Ko enico preneseš na desno stran, ji spremeni predznak." : "Pri $(\\sin x - \\cos x)^2$ je dvojni produkt $-2\\sin x\\cos x$: pazi na predznak." },
+            { value: -res[0] / res[1], why: plus ? "Pri $(\\sin x + \\cos x)^2$ je dvojni produkt $+2\\sin x\\cos x$: pazi na predznak." : "Pri $(\\sin x - \\cos x)^2$ je dvojni produkt $-2\\sin x\\cos x$: pazi na predznak." },
           ]),
           hint: "Kvadriraj obe strani enakosti in uporabi $\\sin^2 x + \\cos^2 x = 1$.",
           data: { given: [`\\sin x ${plus ? "+" : "-"} \\cos x = ${ft(p, q)}`], find: ["\\sin 2x"] },
@@ -1955,8 +1964,10 @@ const GENS = [
         return {
           text: `Izračunaj limito zaporedja $a_n = ${tex}$ (okrajšan ulomek ali celo število).`,
           answer: frAns(p, u, [
-            { value: numP[numP.length - 1] / denP[denP.length - 1], why: "Ko gre $n$ proti neskončno, odločajo členi z najvišjo potenco $n$, ne prosti členi. Deli z najvišjo potenco." },
-            { value: 1, why: "Oblika $\\frac{\\infty}{\\infty}$ ni enaka 1. Števec in imenovalec deli z najvišjo potenco $n$ in poglej, kaj ostane." },
+            // Splošna napaka prva; pri limiti −1 je vnos 1 prej zdrs pri predznaku. Razmerje prostih členov 0 ali 1
+            // bi prekrilo splošno razlago, zato ga tedaj izpustimo.
+            ...(p === -u ? [] : [{ value: 1, why: "Oblika $\\frac{\\infty}{\\infty}$ ni enaka 1. Števec in imenovalec deli z najvišjo potenco $n$ in poglej, kaj ostane." }]),
+            ...freeRatio(numP[numP.length - 1] / denP[denP.length - 1], "Ko gre $n$ proti neskončno, odločajo členi z najvišjo potenco $n$, ne prosti členi. Deli z najvišjo potenco."),
           ]),
           hint: `Števec in imenovalec deli z najvišjo potenco $n${deg2 ? "^2" : ""}$.`,
           data: { given: [`a_n = ${tex}`], find: ["\\lim_{n \\to \\infty} a_n"] },
@@ -1972,12 +1983,12 @@ const GENS = [
           const [vn, vd] = fr(S.a * N + S.b, S.c * N + S.d);
           return {
             text: `Kateri člen zaporedja $a_n = ${S.tex}$ je enak $${ft(vn, vd)}$?`,
-            answer: num(N, null, intMs([
+            answer: num(N, null, uniqMs(N, intMs([
               { value: (vn * S.d + vd * S.b) / (vd * S.a - vn * S.c), why: "Ko prosti člen preneseš na drugo stran enačbe, mu spremeni predznak." },
               { value: (vn * S.d - vd * S.b) / (vd * S.a + vn * S.c), why: "Ko člen z $n$ preneseš na drugo stran enačbe, mu spremeni predznak." },
               { value: (vn * S.d - S.b) / (vd * S.a - vn * S.c), why: "Pri odpravi ulomkov pomnoži cel števec in cel imenovalec, tudi prosta člena." },
               { value: -N, why: "Indeks člena je naravno število. Pri deljenju s koeficientom pred $n$ pazi na predznak." },
-            ])),
+            ]))),
             hint: "Zapiši enačbo $a_n = $ dana vrednost, odpravi ulomke in reši linearno enačbo za $n$.",
             data: { given: [`a_n = ${S.tex}`, `a_n = ${ft(vn, vd)}`], find: ["n"] },
             formula: `${S.tex} = ${ft(vn, vd)}`,
@@ -2026,7 +2037,7 @@ const GENS = [
         text: `Izračunaj $\\lim\\limits_{n \\to \\infty} \\left(\\sqrt{${inner}} - ${sq === 1 ? "" : sq}n\\right)$. Vpiši ulomek ali celo število.`,
         answer: frAns(a, 2 * sq, [
           { value: 0, why: "Oblika $\\infty - \\infty$ ni enaka 0. Izraz najprej racionaliziraj, nato deli z $n$." },
-          { value: a / sq, why: `Po racionalizaciji sta v imenovalcu dva člena, ki se oba obnašata kot $${sq === 1 ? "" : sq}n$: skupaj torej $${2 * sq}n$.` },
+          { value: a / sq, why: `Po racionalizaciji deli števec in imenovalec z $n$. Kam gre imenovalec $\\sqrt{${inner}} + ${sq === 1 ? "" : sq}n$, deljen z $n$? Upoštevaj oba člena.` },
         ]),
         hint: "Pomnoži in deli z izrazom $\\sqrt{\\ldots} + " + (sq === 1 ? "" : sq) + "n$ (racionalizacija).",
         data: { given: [`a_n = \\sqrt{${inner}} - ${sq === 1 ? "" : sq}n`], find: ["\\lim_{n \\to \\infty} a_n"] },
@@ -2339,7 +2350,7 @@ const GENS = [
       return {
         text: `Za katero število $x$ je vsota vrste $1 + \\dfrac{x}{${k}} + \\dfrac{x^2}{${k * k}} + \\dfrac{x^3}{${k ** 3}} + \\ldots$ enaka $${ft(sn, sd)}$? Vpiši ulomek ali celo število.`,
         answer: frAns(xn, xd, [
-          { value: (sn - sd) / sn, why: `To je kvocient $q = \\frac{x}{${k}}$. Število $x$ je ${k}-krat večje.` },
+          { value: (sn - sd) / sn, why: `To je kvocient $q$, ne $x$. Poveži ju z $q = \\frac{x}{${k}}$.` },
           { value: (k * (sd - sn)) / sd, why: "Iz $\\frac{1}{1 - q} = s$ sledi $1 - q = \\frac{1}{s}$, ne $1 - q = s$." },
         ]),
         hint: "Kvocient vrste je $\\frac{x}{" + k + "}$. Zapiši vsoto in reši enačbo; preveri še pogoj $|q| < 1$.",
@@ -2499,9 +2510,10 @@ const GENS = [
         return {
           text: `Izračunaj $\\lim\\limits_{x \\to \\infty} \\dfrac{${poly(nu)}}{${poly(de)}}$ (ulomek ali celo število).`,
           answer: frAns(p, u, [
-            { value: nu[2] / de[2], why: "Ko gre $x$ proti neskončno, odločajo členi z najvišjo potenco $x$, ne prosti členi." },
-            { value: 1, why: "Oblika $\\frac{\\infty}{\\infty}$ ni enaka 1. Števec in imenovalec deli z $x^2$ in poglej, kaj ostane." },
+            // Splošni napaki prvi; pri limiti −1 je vnos 1 prej zdrs pri predznaku.
+            ...(p === -u ? [] : [{ value: 1, why: "Oblika $\\frac{\\infty}{\\infty}$ ni enaka 1. Števec in imenovalec deli z $x^2$ in poglej, kaj ostane." }]),
             { value: 0, why: "Proti 0 gredo le členi z $\\frac{1}{x}$ in $\\frac{1}{x^2}$; vodilna koeficienta ostaneta." },
+            ...freeRatio(nu[2] / de[2], "Ko gre $x$ proti neskončno, odločajo členi z najvišjo potenco $x$, ne prosti členi."),
           ]),
           hint: "Števec in imenovalec deli z najvišjo potenco $x^2$.",
           data: { given: [`f(x) = \\dfrac{${poly(nu)}}{${poly(de)}}`], find: ["\\lim_{x \\to \\infty} f(x)"] },
@@ -2523,9 +2535,10 @@ const GENS = [
           return {
             text: `Izračunaj $\\lim\\limits_{x \\to ${a}} \\dfrac{${poly(nu)}}{${poly(de)}}$ (ulomek ali celo število).`,
             answer: frAns(a - s, a - u, [
-              { value: (a + s) / (a + u), why: "Pri razcepu $x^2 + bx + c = (x - x_1)(x - x_2)$ pazi na predznaka ničel." },
               { value: 1, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 1. Razstavi števec in imenovalec ter okrajšaj skupni faktor." },
               { value: 0, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 0. Razstavi števec in imenovalec ter okrajšaj skupni faktor." },
+              // Napačen predznak ničel; vrednosti 0 in 1 imata splošno razlago (0/0), zato tedaj odpade.
+              ...freeRatio((a + s) / (a + u), "Pri razcepu $x^2 + bx + c = (x - x_1)(x - x_2)$ pazi na predznaka ničel."),
             ]),
             hint: "Vstavljanje da $\\frac{0}{0}$: števec in imenovalec imata skupni faktor. Razstavi oba.",
             data: { given: [`f(x) = \\dfrac{${poly(nu)}}{${poly(de)}}`], find: [`\\lim_{x \\to ${a}} f(x)`] },
@@ -2544,7 +2557,7 @@ const GENS = [
           return {
             text: `Izračunaj $\\lim\\limits_{x \\to 0} ${form}$ (ulomek ali celo število).`,
             answer: frAns(...res, [
-              { value: 1, why: "Limita $\\frac{\\sin u}{u} = 1$ velja le, ko je v drugem delu ulomka isti izraz $u$ kot pod sinusom. Ulomek najprej ustrezno razširi." },
+              { value: 1, why: `Limita $\\frac{\\${form.includes("tan") ? "tan" : "sin"} u}{u} = 1$ velja le, ko je v drugem delu ulomka isti izraz $u$ kot v argumentu ${form.includes("tan") ? "tangensa" : "sinusa"}. Ulomek najprej ustrezno razširi.` },
               { value: 0, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 0. Uporabi limito $\\frac{\\sin u}{u} \\to 1$." },
             ]),
             hint: `Uporabi znano limito $\\lim\\limits_{x \\to 0} \\frac{\\sin x}{x} = 1$: ulomek razširi tako, da bo pod $\\sin ${k}x$ stal ravno $${k}x$.`.replace(/\b1x/g, "x"),
@@ -2557,7 +2570,7 @@ const GENS = [
         return {
           text: `Izračunaj $\\lim\\limits_{x \\to 0} \\dfrac{\\sqrt{x + ${k * k}} - ${k}}{x}$ (ulomek).`,
           answer: frAns(1, 2 * k, [
-            { value: 1 / k, why: `Po racionalizaciji je v imenovalcu $\\sqrt{x + ${k * k}} + ${k}$, kar gre proti $${k} + ${k}$, ne proti $${k}$.` },
+            { value: 1 / k, why: `Po racionalizaciji je v imenovalcu $\\sqrt{x + ${k * k}} + ${k}$. Kam gre ta vsota, ko gre $x$ proti 0? Upoštevaj oba člena.` },
             { value: 0, why: "Izraz $\\frac{0}{0}$ je nedoločen, ni enak 0. Števec najprej racionaliziraj." },
           ]),
           hint: "Pomnoži števec in imenovalec z $\\sqrt{x + " + k * k + "} + " + k + "$.",
@@ -2983,7 +2996,8 @@ const GENS = [
             text: `Velja $\\displaystyle\\int ${a === 1 ? "" : a === -1 ? "-" : a}x^${n === 1 ? "{}" : n}\\,dx = kx^{${n + 1}} + C$. Koliko je $k$? Vpiši ulomek ali celo število.`.replace("x^{}", "x"),
             answer: frAns(a, n + 1, [
               { value: a, why: "Pri integriranju potence eksponent povečaš za 1 in koeficient deliš z novim eksponentom." },
-              { value: a / n, why: `Deli z novim eksponentom $${n + 1}$, ne s starim $${n}$.` },
+              // Pri n = 1 je deljenje s starim eksponentom isto kot brez deljenja: velja prva razlaga.
+              ...(n === 1 ? [] : [{ value: a / n, why: `Deli z novim eksponentom $${n + 1}$, ne s starim $${n}$.` }]),
               { value: a * (n + 1), why: "Z novim eksponentom deliš, ne množiš (množenje z eksponentom je pravilo za odvod)." },
             ]),
             hint: "Pri integriranju potence eksponent povečaš za 1 in z novim eksponentom deliš.",

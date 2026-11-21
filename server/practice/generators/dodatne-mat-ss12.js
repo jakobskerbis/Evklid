@@ -107,18 +107,17 @@ function num(value, unit = null, decimals = null, mistakes = [], extra = {}) {
 }
 // Racionalni odgovor: celo število kot število (z napakami), sicer okrajšan ulomek a/b.
 // frac: napake veljajo tudi za ulomek (preverjanje jih primerja natančno); pri celem odgovoru ostanejo
-// le cele napake, ker bi se necela ujemala s sosednjim celim vnosom.
+// le cele napake, ker bi se necela ujemala s sosednjim celim vnosom. Če dve različni napaki dasta isto
+// vrednost, ne vemo, katera razlaga velja: odpadeta obe.
 function rat(x, mistakes = [], frac = false) {
   const [n, d] = red(x[0], x[1]);
-  const whole = (v) => Math.abs(v - Math.round(v)) < 1e-9;
-  if (d === 1) return num(n, null, null, frac ? mistakes.filter(([v]) => Number.isFinite(v) && whole(v)) : mistakes);
-  if (!frac) return { type: "fraction", num: n, den: d };
-  const ms = [];
-  for (const [v, why] of mistakes) {
-    if (!Number.isFinite(v) || Math.abs(v - n / d) < 1e-9 || ms.some((m) => Math.abs(m.value - v) < 1e-9)) continue;
-    ms.push({ value: v, why });
-  }
-  return { type: "fraction", num: n, den: d, ...(ms.length ? { mistakes: ms.slice(0, 3) } : {}) };
+  if (!frac) return d === 1 ? num(n, null, null, mistakes) : { type: "fraction", num: n, den: d };
+  const same = (u, v) => Math.abs(u - v) < 1e-9;
+  let ok = mistakes.filter(([v]) => Number.isFinite(v) && !same(v, n / d) && (d !== 1 || same(v, Math.round(v))));
+  ok = ok.filter(([v]) => ok.filter(([w]) => same(v, w)).length === 1);
+  if (d === 1) return num(n, null, null, ok.map(([v, why]) => [Math.round(v), why]));
+  const ms = ok.slice(0, 3).map(([value, why]) => ({ value, why }));
+  return { type: "fraction", num: n, den: d, ...(ms.length ? { mistakes: ms } : {}) };
 }
 // Izbirni odgovor: pravilni + napačni [[možnost, zakaj], …]; why je urejen po premešanem vrstnem redu.
 function choice(r, correct, wrong) {
@@ -1247,7 +1246,7 @@ export const DODATNE_MAT_SS12 = [
         bad = [a, -a];
         f = (x) => q(2 * a * b, x * x - a * a);
         errs = [
-          [() => 0, `Minus pred drugim ulomkom velja za ves razširjeni števec: −${b}(x − ${a}) = −${b}x + ${a * b}.`],
+          [() => 0, "Najprej razširi na skupni imenovalec; minus velja za ves števec."],
           [(x) => (2 * a * b) / (x * x + a * a), `(x − ${a})(x + ${a}) = x² − ${a * a}, ne x² + ${a * a}.`],
         ];
         lines = [`$E = ${dfr(`${b}(x + ${a}) - ${b}(x - ${a})`, `(x - ${a})(x + ${a})`)}$`, `$E = ${simp}$`];
