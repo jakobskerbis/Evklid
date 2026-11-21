@@ -1260,14 +1260,17 @@ export function mountAccounts(app, store, opts = {}) {
     const prevec = () => res.status(429).json({ error: "S tega omrežja je danes ustvarjenih že preveč računov. Poskusi jutri." });
     let mimoMeje = null; // zgoščena koda vabila, s katero ta registracija obide mejo omrežja
     const nadMejo = !isLocalRequest(req) && signupThrottle.blocked(signupKey);
-    // Nad mejo s kodo: najprej obrazec (enak odgovor za veljavno in napačno kodo), šele nato koda; vsak poskus šteje.
+    // Nad mejo s kodo: najprej obrazec (enak odgovor za veljavno in napačno kodo), šele nato koda. Šteje samo napačna,
+    // potekla ali porabljena koda (ugibanje); veljavne ne, da se cel razred z enega šolskega Wi-Fi registrira v eni uri.
     if (nadMejo && (!kodaVabila(req) || vabiloUgibanjeThrottle.blocked(signupKey))) return prevec();
-    if (nadMejo) vabiloUgibanjeThrottle.fail(signupKey);
     const v = checkSignup(req, res);
     if (!v) return;
     if (nadMejo) {
       mimoMeje = vabiloMimoMeje(req);
-      if (!mimoMeje) return prevec();
+      if (!mimoMeje) {
+        vabiloUgibanjeThrottle.fail(signupKey);
+        return prevec();
+      }
     }
     signupThrottle.fail(signupKey);
     if (mimoMeje) vabiloMimoMejeThrottle.fail(mimoMeje);
@@ -1311,7 +1314,7 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Koda vabila v pilot iz registracije (polje invite ali »Imam kodo«), ki sme obiti mejo omrežja: veljavna (na seznamu
   // EVKLID_VABILA), še neporabljena, pilot še traja in z njo danes še ni bilo 3 registracij mimo meje. Vrne zgoščeno
-  // kodo ali null. Poskuse z omrežja nad mejo šteje klicatelj (vabiloUgibanjeThrottle).
+  // kodo ali null. Neuspele poskuse z omrežja nad mejo šteje klicatelj (vabiloUgibanjeThrottle).
   const kodaVabila = (req) => {
     const invite = typeof req.body?.invite === "string" ? req.body.invite.trim() : "";
     const code = invite || (typeof req.body?.code === "string" ? req.body.code.trim() : "");

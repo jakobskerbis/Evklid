@@ -84,7 +84,7 @@ test("registracija nad mejo: ugibanje kod je omejeno (10 napačnih na dan), nato
   });
 });
 
-test("registracija nad mejo: enak odgovor za veljavno in napačno kodo, ko obrazec ni veljaven; vsak poskus s kodo šteje", async () => {
+test("registracija nad mejo: enak odgovor za veljavno in napačno kodo, ko obrazec ni veljaven; šteje samo napačna koda", async () => {
   await withServer(ENV, async ({ register }) => {
     for (let i = 0; i < 5; i++) await register();
     // Napačen e-naslov: obe kodi dobita isti 400 (iz koda ni mogoče sklepati, ali je veljavna).
@@ -92,9 +92,25 @@ test("registracija nad mejo: enak odgovor za veljavno in napačno kodo, ko obraz
     const napacna = await register({ invite: "ni-prava-koda-123", email: "ni-naslov" });
     assert.equal(prava.status, 400);
     assert.deepEqual(napacna, prava);
-    // Doslej 2 poskusa; še 3 uspešne registracije z veljavno kodo in 5 napačnih = 10 na dan, nato nič več.
+    // Neveljaven obrazec in veljavne kode ne štejejo: 3 uspešne + 10 napačnih, nato je omrežje zaprto tudi za veljavno.
     for (let i = 0; i < 3; i++) assert.equal((await register({ invite: CODE })).status, 201);
-    for (let i = 0; i < 5; i++) assert.equal((await register({ invite: `ugibam-${i}-xyz` })).status, 429);
-    assert.equal((await register({ invite: OTHER })).status, 429, "tudi veljavna koda po 10 poskusih");
+    for (let i = 0; i < 10; i++) assert.equal((await register({ invite: `ugibam-${i}-xyz` })).status, 429);
+    assert.equal((await register({ invite: OTHER })).status, 429, "tudi veljavna koda po 10 napačnih");
+  });
+});
+
+test("registracija nad mejo: razred 30 učencev z enega omrežja, vsak s svojo kodo, uspe; 11. napačna koda 429", async () => {
+  const kode = Array.from({ length: 30 }, (_, i) => `razred-4a-ucenec-${String(i).padStart(2, "0")}`);
+  await withServer({ ...ENV, EVKLID_VABILA: kode.join(" ") }, async ({ register }) => {
+    for (let i = 0; i < 5; i++) assert.equal((await register()).status, 201);
+    for (const k of kode) {
+      const r = await register({ invite: k });
+      assert.equal(r.status, 201, `${k}: ${JSON.stringify(r.body)}`);
+    }
+  });
+  await withServer(ENV, async ({ register }) => {
+    for (let i = 0; i < 5; i++) await register();
+    for (let i = 0; i < 11; i++) assert.equal((await register({ invite: `ugibam-kodo-${i}` })).status, 429);
+    assert.equal((await register({ invite: CODE })).status, 429, "po 10 napačnih tudi veljavna ne obide meje");
   });
 });
