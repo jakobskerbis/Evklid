@@ -349,7 +349,7 @@ test("objavljeni pogoji: strežnik odstrani dele osnutka (pasica, noindex), razl
       assert.ok(!html.includes("v pripravi"));
       assert.ok(!html.includes('content="noindex"'));
       assert.ok(!html.includes("osnutek -->"));
-      assert.ok(html.includes("Različica 17. 11. 2026"));
+      assert.ok(html.includes("Različica 21. 11. 2026"));
       const src = fs.readFileSync(new URL("../public/pogoji.html", import.meta.url), "utf8");
       assert.equal(publishedHtml(src), html);
     },

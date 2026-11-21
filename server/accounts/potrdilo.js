@@ -6,7 +6,7 @@ import { BRAND } from "../brand.js";
 import { purchaseEmail } from "./email.js";
 
 // Ob vsaki spremembi pogojev: novi datum tukaj in na strani (test/pogoji-potrditev.test.js preveri, da se ujemata).
-export const TERMS_VERSION = "2026-11-17";
+export const TERMS_VERSION = "2026-11-21";
 export const TERMS_TEXT = "Strinjam se s splošnimi pogoji uporabe.";
 export const TERMS_ERROR = { error: "Pred plačilom potrdite, da se strinjate s splošnimi pogoji uporabe.", consent: true, terms: true };
 export const CONTACT_EMAIL = `zasebnost@${BRAND.domain}`;
