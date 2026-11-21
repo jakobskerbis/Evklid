@@ -65,7 +65,22 @@ test("testi.yml ima vse posle, ki jih zahteva objava, tudi preverjanje tipov mob
   assert.match(wf, /^name: Testi$/m, "ota.yml in render-posodobitev.yml ga iščeta po imenu");
   assert.match(wf, /^  push:\n    branches: \[main\]/m);
   const posli = [...wf.split(/^jobs:$/m)[1].matchAll(/^  ([a-z_-]+):\s*$/gm)].map((m) => m[1]);
-  assert.deepEqual([...posli].sort(), [...POTREBNI_TESTI].sort());
+  // testi-del: npm test v štirih delih hkrati; posel »testi« združi njihov izid pod imenom, ki ga bere objava.
+  assert.deepEqual(posli.filter((p) => !p.endsWith("-del")).sort(), [...POTREBNI_TESTI].sort());
+  const pdel = wf.split(/^  preveri-del:$/m)[1].split(/^  [a-z_-]+:$/m)[0];
+  assert.match(pdel, /fail-fast: false/);
+  assert.match(pdel, /del: \[racunalnik, telefon, racuni\]/);
+  assert.match(pdel, /preveri-aplikacijo\.cjs --samo \$\{\{ matrix\.del \}\}/);
+  const pzdruzi = wf.split(/^  preveri:$/m)[1].split(/^  [a-z_-]+:$/m)[0];
+  assert.match(pzdruzi, /needs: preveri-del\n\s+if: always\(\)/);
+  assert.match(pzdruzi, /IZID: \$\{\{ needs\.preveri-del\.result \}\}[\s\S]*\[ "\$IZID" = "success" \]/);
+  const del = wf.split(/^  testi-del:$/m)[1].split(/^  [a-z_-]+:$/m)[0];
+  assert.match(del, /fail-fast: false/);
+  assert.match(del, /del: \[1, 2, 3, 4\]/);
+  assert.match(del, /--test-shard=\$\{\{ matrix\.del \}\}\/4 test\/\*\.test\.js/);
+  const zdruzi = wf.split(/^  testi:$/m)[1].split(/^  [a-z_-]+:$/m)[0];
+  assert.match(zdruzi, /needs: testi-del\n\s+if: always\(\)/, "testi mora teči tudi, ko kak del pade, in takrat pasti");
+  assert.match(zdruzi, /IZID: \$\{\{ needs\.testi-del\.result \}\}[\s\S]*\[ "\$IZID" = "success" \]/);
   const tipi = wf.split(/^  tipi:$/m)[1];
   assert.match(tipi, /npm ci --prefix mobile [^\n]*--ignore-scripts/);
   assert.match(tipi, /cache-dependency-path: mobile\/package-lock\.json/);

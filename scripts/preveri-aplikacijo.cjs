@@ -5,7 +5,8 @@
 // tekmovalni trening, nastavitve, meni profila, urnik in izpite; z računi še registracijo,
 // prijavo, Račun in stran za starše. Beleži napake strani in konzole, neuspele zahteve in odgovore
 // ≥ 400, vodoravno drsenje in vidne neprevedene ključe (npr. »nav.path«).
-// Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon]
+// Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon|racuni]
+// (--samo: en del, CI jih zažene tri hkrati; računi tečejo samo brez --samo ali z --samo racuni).
 // Izhod 1, če je kaj narobe. Potrebuje Playwright s Chromiumom (require("playwright")).
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
@@ -2015,16 +2016,25 @@ async function accounts(browser, app) {
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
   const browser = await chromium.launch();
   try {
-    const app = await startServer();
-    if (ONLY !== "telefon") await desktop(browser, app);
-    if (ONLY !== "racunalnik") await phone(browser, app);
-    if (ACCOUNTS && !ONLY) {
+    if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
+    const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik
+    if (!ONLY || ONLY === "racunalnik") await desktop(browser, app);
+    if (ONLY === "telefon") {
+      // Samo telefon (CI ga zažene hkrati z računalnikom): prvi profil, ki ga sicer ustvari del »računalnik«.
+      const p = await newPage(browser, false, "pc", app.base);
+      p.db = app.db;
+      await p.goto(app.base + "/");
+      await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"]));
+      await p.context().close();
+    }
+    if (!ONLY || ONLY === "telefon") await phone(browser, app);
+    if (ACCOUNTS && (!ONLY || ONLY === "racuni")) {
       const acc = await startServer({ EVKLID_ACCOUNTS: "1" });
       await accounts(browser, acc);
       const bad = acc.log.join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
       bad.forEach((l) => problem("strežnik (računi)", l.slice(0, 200)));
     }
-    const bad = app.log.join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
+    const bad = (app?.log || []).join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
     bad.forEach((l) => problem("strežnik", l.slice(0, 200)));
   } finally {
     await browser.close();
