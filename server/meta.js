@@ -110,20 +110,40 @@ export function parseChoices(text) {
   return out.length >= 2 ? out.slice(0, CHOICES_MAX) : [];
 }
 
-export function stripMeta(text) {
+// Mesto odstranjenega strojnega bloka (znak, ki ga v besedilu modela ni): oznake kode, ki obdajajo samo taka mesta, gredo
+// z njimi (meritev 21. 11. 2026: odgovor se je končal z »``«). Pravi bloki kode z vsebino ostanejo nedotaknjeni.
+const S = "\u0000";
+const FENCE_AROUND_RE = /^[ \t]*`+[\w-]*[ \t]*\n(?:[ \t\u0000]*\n)*[ \t]*\u0000[ \t\u0000]*(?:\n[ \t\u0000]*)*\n[ \t]*`+[ \t]*$/gm;
+const FENCE_OPEN_END_RE = /(^|\n)[ \t]*`+[\w-]*[ \t]*\n[\s\u0000]*\u0000[\s\u0000]*$/;
+const FENCE_AFTER_END_RE = /(\u0000[ \t\u0000]*\n(?:[ \t\u0000]*\n)*)([ \t]*`+[\w-]*[ \t]*)\s*$/; // prazen nezaprt blok za mestom na koncu
+
+// Je oznaka na mestu `at` zaključek pravega bloka kode (pred njo je liho število oznak s tremi ali več »`«)?
+// before: besedilo pred `all` (konec toka: že pretočeni del), da se oznake štejejo od začetka odgovora.
+function closesBlock(all, at, m, before = "") {
+  if (!/^[ \t]*`{3,}/.test(m)) return false;
+  return ((before + all.slice(0, at)).match(/^[ \t]*`{3,}/gm) || []).length % 2 === 1;
+}
+
+export function stripMeta(text, before = "") {
   return String(text)
+    .replace(/\u0000/g, "")
     // META v bloku kode: cel blok z oznakami (zaključne oznake pravih blokov kode ostanejo).
-    .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, "")
-    .replace(META_LOOSE_RE, "") // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
-    .replace(META_RE, "")
-    .replace(CARD_RE, "")
-    .replace(RACUN_RE, "")
-    .replace(CHOICES_JSON_RE, "")
-    .replace(CHOICES_RE, "")
-    .replace(CHOICES_LOOSE_RE, "")
-    .replace(OPEN_RE, "")
-    .replace(/<orodje>[\s\S]*?(?:<\/orodje>|$)/g, "") // skrit zapis orodja (chat-settings.js actionNote), če ga model ponovi
-    .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
+    .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, (m, off, all) => (closesBlock(all, off, m, before) ? m : ""))
+    .replace(META_LOOSE_RE, S) // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
+    .replace(META_RE, S)
+    .replace(CARD_RE, S)
+    .replace(RACUN_RE, S)
+    .replace(CHOICES_JSON_RE, S)
+    .replace(CHOICES_RE, S)
+    .replace(CHOICES_LOOSE_RE, S)
+    .replace(OPEN_RE, S)
+    .replace(/<orodje>[\s\S]*?(?:<\/orodje>|$)/g, S) // skrit zapis orodja (chat-settings.js actionNote), če ga model ponovi
+    .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, S) // nedokončan blok (npr. odrezan odgovor)
+    .replace(/`+[ \t]*\u0000[ \t]*`+/g, S) // »``<<META …>>``« v vrstici
+    .replace(FENCE_AROUND_RE, (m, off, all) => (closesBlock(all, off, m, before) ? m : S))
+    .replace(FENCE_OPEN_END_RE, (m, pre, off, all) => (closesBlock(all, off + pre.length, m.slice(pre.length), before) ? m : pre))
+    .replace(FENCE_AFTER_END_RE, (m, pre, f, off, all) => (closesBlock(all, off + pre.length, f, before) ? m : pre))
+    .replace(/\u0000/g, "")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
 }
@@ -194,6 +214,10 @@ export function createStreamFilter({ polish = true, language = "sl" } = {}) {
       }
       // Presledke, prelome in oznake kode na koncu zadrži, dokler ne vemo, ali jim sledi META.
       while (safeEnd > emitted && /[\s`]/.test(buffer[safeEnd - 1])) safeEnd--;
+      // Tudi začetek bloka kode z jezikom (»```json«) na koncu: lahko obdaja strojni blok (stripMeta ga odstrani).
+      const vrstica = buffer.lastIndexOf("\n", safeEnd - 1) + 1;
+      if (vrstica >= emitted && /^[ \t]*`{3,}[\w-]+[ \t]*$/.test(buffer.slice(vrstica, safeEnd))) safeEnd = vrstica;
+      while (safeEnd > emitted && /\s/.test(buffer[safeEnd - 1])) safeEnd--;
       // Popravki: zadrži še predlog brez naslednje besede in začetek morebitne oznake (»Najprej pri…«).
       for (let i = 0; polish && i < 4 && safeEnd > emitted; i++) {
         let end = Math.max(emitted, safeEnd - polishHold(buffer.slice(0, safeEnd)));
@@ -226,8 +250,9 @@ export function createStreamFilter({ polish = true, language = "sl" } = {}) {
     },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
-      if (polish) return { rest: next(buffer.slice(0, emitted) + stripMeta(buffer.slice(emitted))), raw: buffer };
-      const rest = lead(stripMeta(buffer.slice(emitted)));
+      const tail = stripMeta(buffer.slice(emitted), buffer.slice(0, emitted));
+      if (polish) return { rest: next(buffer.slice(0, emitted) + tail), raw: buffer };
+      const rest = lead(tail);
       return { rest, raw: buffer };
     },
   };
