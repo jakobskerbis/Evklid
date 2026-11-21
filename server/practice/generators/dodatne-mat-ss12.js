@@ -106,10 +106,19 @@ function num(value, unit = null, decimals = null, mistakes = [], extra = {}) {
   return { ...a, ...extra };
 }
 // Racionalni odgovor: celo število kot število (z napakami), sicer okrajšan ulomek a/b.
-function rat(x, mistakes = []) {
+// frac: napake veljajo tudi za ulomek (preverjanje jih primerja natančno); pri celem odgovoru ostanejo
+// le cele napake, ker bi se necela ujemala s sosednjim celim vnosom.
+function rat(x, mistakes = [], frac = false) {
   const [n, d] = red(x[0], x[1]);
-  if (d === 1) return num(n, null, null, mistakes);
-  return { type: "fraction", num: n, den: d };
+  const whole = (v) => Math.abs(v - Math.round(v)) < 1e-9;
+  if (d === 1) return num(n, null, null, frac ? mistakes.filter(([v]) => Number.isFinite(v) && whole(v)) : mistakes);
+  if (!frac) return { type: "fraction", num: n, den: d };
+  const ms = [];
+  for (const [v, why] of mistakes) {
+    if (!Number.isFinite(v) || Math.abs(v - n / d) < 1e-9 || ms.some((m) => Math.abs(m.value - v) < 1e-9)) continue;
+    ms.push({ value: v, why });
+  }
+  return { type: "fraction", num: n, den: d, ...(ms.length ? { mistakes: ms.slice(0, 3) } : {}) };
 }
 // Izbirni odgovor: pravilni + napačni [[možnost, zakaj], …]; why je urejen po premešanem vrstnem redu.
 function choice(r, correct, wrong) {
@@ -1210,23 +1219,37 @@ export const DODATNE_MAT_SS12 = [
       let bad;
       let lines;
       let f;
+      // Tipične napake kot funkcije x: [[vrednost(x), zakaj], …].
+      let errs;
       if (t === 0) {
         E = `${dfr(`x^2 - ${a * a}`, `x^2 + ${mono(b, "x")}`)} \\cdot ${dfr(`x + ${b}`, `x + ${a}`)}`;
         simp = dfr(`x - ${a}`, "x");
         bad = [0, -b, -a, a];
         f = (x) => q(x - a, x);
+        errs = [
+          [(x) => ((-a * a) / (b * x)) * ((x + b) / (x + a)), "Krajšaš lahko le faktorje, ne posameznih členov: x² v števcu in imenovalcu se ne pokrajša. Najprej razstavi."],
+          [(x) => x - a, "Po krajšanju v imenovalcu ostane še faktor x."],
+        ];
         lines = [`$E = ${dfr(`(x - ${a})(x + ${a})`, `x(x + ${b})`)} \\cdot ${dfr(`x + ${b}`, `x + ${a}`)}$`, `Okrajšamo $(x + ${a})$ in $(x + ${b})$: $E = ${simp}$`];
       } else if (t === 1) {
         E = `${dfr(poly([1, 2 * a, a * a]), `x^2 - ${b * b}`)} : ${dfr(`x + ${a}`, `x - ${b}`)}`;
         simp = dfr(`x + ${a}`, `x + ${b}`);
         bad = [b, -b, -a];
         f = (x) => q(x + a, x + b);
+        errs = [
+          [(x) => (x + a) ** 3 / ((x - b) ** 2 * (x + b)), "Pri deljenju z ulomkom pomnožiš z obratno vrednostjo drugega ulomka."],
+          [(x) => (x + a) / (x - b), `x² − ${b * b} je razlika kvadratov (x − ${b})(x + ${b}), ne (x − ${b})².`],
+        ];
         lines = [`$E = ${dfr(`(x + ${a})^2`, `(x - ${b})(x + ${b})`)} \\cdot ${dfr(`x - ${b}`, `x + ${a}`)}$`, `Okrajšamo $(x + ${a})$ in $(x - ${b})$: $E = ${simp}$`];
       } else {
         E = `${dfr(b, `x - ${a}`)} - ${dfr(b, `x + ${a}`)}`;
         simp = dfr(2 * a * b, `x^2 - ${a * a}`);
         bad = [a, -a];
         f = (x) => q(2 * a * b, x * x - a * a);
+        errs = [
+          [() => 0, `Minus pred drugim ulomkom velja za ves razširjeni števec: −${b}(x − ${a}) = −${b}x + ${a * b}.`],
+          [(x) => (2 * a * b) / (x * x + a * a), `(x − ${a})(x + ${a}) = x² − ${a * a}, ne x² + ${a * a}.`],
+        ];
         lines = [`$E = ${dfr(`${b}(x + ${a}) - ${b}(x - ${a})`, `(x - ${a})(x + ${a})`)}$`, `$E = ${simp}$`];
       }
       let x0;
@@ -1235,7 +1258,11 @@ export const DODATNE_MAT_SS12 = [
       const v = f(x0);
       return T({
         text: r.pick([`Poenostavi izraz $E = ${E}$ in izračunaj njegovo vrednost za $x = ${x0}$.`, `Izraz $E = ${E}$ najprej poenostavi, nato izračunaj $E$ pri $x = ${x0}$ (rezultat kot okrajšan ulomek).`]),
-        answer: rat(v),
+        answer: rat(
+          v,
+          errs.map(([e, why]) => [e(x0), why]),
+          true,
+        ),
         hint: "Števce in imenovalce razstavi, pri deljenju pomnoži z obratno vrednostjo, okrajšaj in šele nato vstavi $x$.",
         data: { given: [`E = ${E}`, `x = ${x0}`], find: ["E"] },
         formula: ["a^2 - b^2 = (a - b)(a + b)", "\\dfrac{a}{b} \\cdot \\dfrac{c}{d} = \\dfrac{ac}{bd}", "\\dfrac{a}{b} : \\dfrac{c}{d} = \\dfrac{a}{b} \\cdot \\dfrac{d}{c}"],
