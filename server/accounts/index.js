@@ -119,6 +119,12 @@ export function mountAccounts(app, store, opts = {}) {
   const throttle = new Throttle();
   // Brez skupnega gesla je registracija odprta spletu: največ 5 novih računov z enega naslova IP na dan.
   const signupThrottle = new Throttle(Number(env.EVKLID_SIGNUPS_PER_DAY) || 5, 24 * 3600000);
+  // Veljavna, še neporabljena koda vabila v pilot obide to mejo (šesti maturant na istem šolskem Wi-Fi ali za istim
+  // mobilnim CGNAT naslovom bi sicer čakal do jutri). Ostaneta meji: z eno kodo največ 3 registracije na dan mimo
+  // meje (koda se porabi šele ob potrditvi e-naslova), z omrežja nad mejo največ 10 poskusov s kodo na dan (veljavnih
+  // ali ne: ugibanje kod in preverjanje e-naslovov).
+  const vabiloMimoMejeThrottle = new Throttle(3, 24 * 3600000);
+  const vabiloUgibanjeThrottle = new Throttle(10, 24 * 3600000);
   // Povezava za potrditev ali novo geslo v odgovoru (ko e-pošta ni nastavljena) samo na računalniku s strežnikom
   // ali za skupnim geslom; sicer bi kdorkoli prevzel tuj račun (»pozabljeno geslo«) ali potrdil izmišljen e-naslov.
   const forgotThrottle = new Throttle(5, 3600000); // pošiljanje povezav za novo geslo: 5 na uro
@@ -1251,10 +1257,23 @@ export function mountAccounts(app, store, opts = {}) {
   app.post("/api/auth/register", json, async (req, res) => {
     // Ključ je omrežje (IPv6: /56, guest.js netKey), sicer bi en priključek z menjavo naslovov v svojem omrežju ustvaril neomejeno računov.
     const signupKey = netKey(req.ip);
-    if (!isLocalRequest(req) && signupThrottle.blocked(signupKey)) return res.status(429).json({ error: "S tega omrežja je danes ustvarjenih že preveč računov. Poskusi jutri." });
+    const prevec = () => res.status(429).json({ error: "S tega omrežja je danes ustvarjenih že preveč računov. Poskusi jutri." });
+    let mimoMeje = null; // zgoščena koda vabila, s katero ta registracija obide mejo omrežja
+    const nadMejo = !isLocalRequest(req) && signupThrottle.blocked(signupKey);
+    // Nad mejo s kodo: najprej obrazec (enak odgovor za veljavno in napačno kodo), šele nato koda. Šteje samo napačna,
+    // potekla ali porabljena koda (ugibanje); veljavne ne, da se cel razred z enega šolskega Wi-Fi registrira v eni uri.
+    if (nadMejo && (!kodaVabila(req) || vabiloUgibanjeThrottle.blocked(signupKey))) return prevec();
     const v = checkSignup(req, res);
     if (!v) return;
+    if (nadMejo) {
+      mimoMeje = vabiloMimoMeje(req);
+      if (!mimoMeje) {
+        vabiloUgibanjeThrottle.fail(signupKey);
+        return prevec();
+      }
+    }
     signupThrottle.fail(signupKey);
+    if (mimoMeje) vabiloMimoMejeThrottle.fail(mimoMeje);
     const { email, password } = v;
 
     // Ena koda (»Imam kodo«): vrsto določi strežnik in jo zapiše v staro polje (promo_code, referral_code, invite),
@@ -1292,6 +1311,24 @@ export function mountAccounts(app, store, opts = {}) {
       ...(devLinks(req, getParent(id)?.email) ? { dev_verify_url: url } : {}),
     });
   });
+
+  // Koda vabila v pilot iz registracije (polje invite ali »Imam kodo«), ki sme obiti mejo omrežja: veljavna (na seznamu
+  // EVKLID_VABILA), še neporabljena, pilot še traja in z njo danes še ni bilo 3 registracij mimo meje. Vrne zgoščeno
+  // kodo ali null. Neuspele poskuse z omrežja nad mejo šteje klicatelj (vabiloUgibanjeThrottle).
+  const kodaVabila = (req) => {
+    const invite = typeof req.body?.invite === "string" ? req.body.invite.trim() : "";
+    const code = invite || (typeof req.body?.code === "string" ? req.body.code.trim() : "");
+    return code ? { invite, code } : null;
+  };
+  function vabiloMimoMeje(req) {
+    const k = kodaVabila(req);
+    if (!k) return null;
+    const { invite, code } = k;
+    const veljavna = (invite ? isInviteCode(invite) : signupCodeKind(code) === "invite") && !inviteUsed(db, code) && Date.now() < pilotEndMs();
+    if (!veljavna) return null;
+    const hash = inviteHash(code);
+    return vabiloMimoMejeThrottle.blocked(hash) ? null : hash;
+  }
 
   // Vrsta kode iz polja »Imam kodo« ob registraciji: darilna (DAR-XXXX-XXXX, velja šele v Računu po potrditvi), aktivacijska
   // (obstaja v promo_codes, 4–30 znakov A–Z, 0–9, -), priporočila (7 znakov iz CODE_CHARS, obstoječ račun), vabilo v pilot

@@ -21,7 +21,7 @@ function fakeS3() {
     calls.push(`${method} ${u.pathname}${u.search}`);
     if (!/^AWS4-HMAC-SHA256 Credential=id\//.test(headers.authorization)) return new Response("<Code>AccessDenied</Code>", { status: 403 });
     const key = decodeURIComponent(u.pathname.replace(/^\/evklid-kopije\/?/, ""));
-    if (method === "PUT") objects.set(key, Buffer.from(body));
+    if (method === "PUT") objects.set(key, Buffer.from(await new Response(body).arrayBuffer()));
     else if (method === "DELETE") objects.delete(key);
     else if (method === "GET" && u.searchParams.get("list-type") === "2") {
       const p = u.searchParams.get("prefix") || "";
@@ -158,5 +158,50 @@ test("kopija zunaj strežnika: urnik naloži vsako dnevno kopijo enkrat, napako 
     assert.equal(startCloudBackups(file, { scheduler: false, log: quiet, env: {} }).status(), null);
     assert.equal(startCloudBackups(file, { scheduler: false, log: quiet, env: { ...ENV, EVKLID_BACKUPS: "0" } }).status(), null);
     store.db.close();
+  });
+});
+
+test("kopija zunaj strežnika: pošiljanje po kosih (pravi HTTP), ista oblika kot encryptBackup, znana dolžina in podpis", async () => {
+  await withKey(async () => {
+    const http = await import("node:http");
+    const dir = tmp();
+    const src = path.join(dir, "kopija.db");
+    const plain = crypto.randomBytes(3 * 1024 * 1024 + 123); // več kosov po 1 MB
+    fs.writeFileSync(src, plain);
+    let prejeto = null;
+    const server = http.createServer((req, res) => {
+      const kosi = [];
+      req.on("data", (c) => kosi.push(c));
+      req.on("end", () => {
+        if (req.method === "PUT") prejeto = { headers: req.headers, body: Buffer.concat(kosi) };
+        res.writeHead(200, { "content-type": "application/xml" });
+        res.end(req.method === "GET" ? "<ListBucketResult></ListBucketResult>" : "");
+      });
+    });
+    await new Promise((r) => server.listen(0, "127.0.0.1", r));
+    try {
+      const cfg = cloudConfig({ ...ENV, EVKLID_KOPIJE_S3_URL: `http://127.0.0.1:${server.address().port}` });
+      const r = await uploadBackup(cfg, path.join(dir, "evklid.db"), src, "2026-11-21", { now: () => new Date("2026-11-21T04:00:00Z") });
+      assert.equal(r.bytes, plain.length + 40);
+      assert.equal(prejeto.body.length, r.bytes);
+      assert.equal(prejeto.headers["content-length"], String(r.bytes), "S3 zahteva Content-Length, ne chunked");
+      assert.equal(prejeto.headers["transfer-encoding"], undefined);
+      assert.equal(prejeto.headers["x-amz-content-sha256"], crypto.createHash("sha256").update(prejeto.body).digest("hex"));
+      assert.deepEqual(decryptBackup(prejeto.body), plain, "obnova (downloadBackup, decryptBackup) bere isto obliko");
+    } finally {
+      server.close();
+    }
+  });
+});
+
+test("kopija zunaj strežnika: sprememba datoteke med pošiljanjem podre nalaganje", async () => {
+  await withKey(async () => {
+    const { encryptBackupFile } = await import("../server/kopije-oblak.js");
+    const dir = tmp();
+    const src = path.join(dir, "kopija.db");
+    fs.writeFileSync(src, crypto.randomBytes(2 * 1024 * 1024));
+    const tok = await encryptBackupFile(src);
+    fs.writeFileSync(src, crypto.randomBytes(2 * 1024 * 1024));
+    await assert.rejects(new Response(tok.stream()).arrayBuffer(), /spremenila/);
   });
 });
