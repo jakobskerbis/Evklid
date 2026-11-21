@@ -161,3 +161,12 @@ test("kopije: dnevno čiščenje po rokih hrambe pobriše stare ročne kopije in
   store.db.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });
+
+// Pravila zasebnosti (§5) povedo, koliko časa hranimo seznam izbrisov in da se ob izbrisu računa izbriše stranka v Stripu.
+test("privacy policy states the deletion-list retention from code and Stripe customer deletion", async () => {
+  const { IZBRISI_DNI } = await import("../server/kopije.js");
+  const html = (await import("node:fs")).readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
+  assert.match(html, new RegExp(`${IZBRISI_DNI} dni hranimo seznam izbrisov`));
+  assert.match(html, /brez imena, e-naslova in vsebine/);
+  assert.match(html, /izbrišemo tudi vaš zapis stranke pri ponudniku plačil Stripe/);
+});
