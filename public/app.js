@@ -274,8 +274,28 @@ let pozneje = false;
 // Delo, ki ni za prvi izris Učne poti (moduli, ki jih ta ne rabi): po njem (zasloniPozneje), sicer takoj.
 const poZagonuVrsta = [];
 const poZagonu = (fn) => (pozneje ? fn() : void poZagonuVrsta.push(fn));
+// Obiskovalec brez prijave (pristajalna stran, prijava, registracija): zasloni, igre in cel slovar (~0,8 MB, ~90 datotek)
+// se prenesejo šele, ko začne izpolnjevati obrazec za prijavo ali registracijo, ali ob prijavi (start). Obiskovalec, ki
+// samo pogleda pristajalno stran, jih ne prenese (meritev hitrosti 21. 11. 2026); kdor izpolnjuje obrazec, jih ima, preden
+// konča, kot prej. Moduli prvega odprtja (obrazec, Učna pot, nujno.js) so že naloženi in se ne spremenijo.
+let obiskovalec = false;
+const zaObiskovalca = [];
+const poObiskovalcu = (fn) => (obiskovalec ? void zaObiskovalca.push(fn) : fn());
+// zdaj=false (prijava): delo gre v vrsto za prvim izrisom Učne poti (zasloniPozneje iz startDone), kot ob zagonu prijavljenega.
+const obiskovalecKonec = (zdaj = true) => {
+  if (!obiskovalec) return;
+  obiskovalec = false;
+  for (const ev of ["focusin", "pointerdown"]) document.removeEventListener(ev, obiskovalecObrazec, true);
+  if (zdaj) zasloniPozneje();
+  for (const fn of zaObiskovalca.splice(0)) poZagonu(fn);
+};
+const obiskovalecObrazec = (e) => e.target.closest?.("#view-auth form") && obiskovalecKonec();
+const cakajObiskovalca = () => {
+  obiskovalec = true;
+  for (const ev of ["focusin", "pointerdown"]) document.addEventListener(ev, obiskovalecObrazec, { capture: true, passive: true });
+};
 const zasloniPozneje = () => {
-  if (pozneje) return;
+  if (pozneje || obiskovalec) return;
   pozneje = true;
   for (const fn of poZagonuVrsta.splice(0)) fn();
   // Vzorci varnostnega zaznavalnika nastanejo šele ob prvi uporabi (public/nujno.js compile): pripravimo jih takoj po
@@ -4524,13 +4544,13 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju
   // s podatki, počasni ali mobilni povezavi (backgroundLoadOk): takrat se igre naložijo ob dotiku zavihka Igre.
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
-  setTimeout(() => idle(() => {
+  setTimeout(() => idle(() => poObiskovalcu(() => {
     if ((state.student && !gamesOn(state.student.settings)) || !backgroundLoadOk(navigator.connection)) return;
     loadGames().catch(() => {});
-  }), 3000);
+  })), 3000);
   // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.
   // Kalkulator (zadnje uporabljeno orodje) se zgradi v pomnilniku, moduli ostalih orodij in 3D sveta se le prenesejo.
-  setTimeout(() => whenQuiet(prefetchNext), 2500);
+  setTimeout(() => whenQuiet(() => poObiskovalcu(prefetchNext)), 2500);
   // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
   document.addEventListener("pointerdown", (e) => {
     if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
@@ -4559,6 +4579,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
   // Starševski računi (account.js): prijava, potrditev, prvi otrok.
   let first = true;
   const start = async (o) => {
+    obiskovalecKonec(false); // prijava: zasloni, igre in cel slovar po prvem izrisu Učne poti, če jih obrazec še ni začel
     // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik. Ob prvem
     // zagonu že prijavljenega (cfgFresh) je config iz te seje: drugič ga ne zahtevamo.
     const admin = (cfg.admin || o?.cfgFresh)
@@ -4619,6 +4640,7 @@ initFormulaInfo({ opened: overlayOpened, closed: overlayClosed });
     // Prijava ali pristajalna stran: po prijavi se odpre Učna pot, ne zadnji zaslon pred odjavo.
     startRec = null;
     startHold = false;
+    cakajObiskovalca();
     startDone();
   }
 })().catch(bootFailed);
