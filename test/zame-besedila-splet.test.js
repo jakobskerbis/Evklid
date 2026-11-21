@@ -19,7 +19,7 @@ test("račun Zame: Jaz in Račun nagovorita učenca, ne starša", opts, async ()
     await p.waitForSelector("#view-account:not([hidden]) #ref-url", { timeout: 20000 });
     await p.waitForSelector("#ustno-starsi .us-stars", { timeout: 20000 });
     const racunTxt = await p.locator("#view-account").innerText();
-    assert.match(racunTxt, /Ko se prijatelj, ki ga povabiš, naroči in prvič plača, oba dobita en mesec brezplačno\./);
+    assert.match(racunTxt, /Ko se prijatelj, ki ga povabiš, naroči in prvič plača na spletu, oba dobita en mesec brezplačno\./);
     assert.match(racunTxt, /lahko odgovarjaš z glasom/);
     assert.doesNotMatch(racunTxt, /obe družini|lahko otrok odgovarja|dokler ga ne vklopite/);
     // Vrstica za starše (»Nika: 15 let ali več …«) pri računu Zame ni potrebna (pregled #917, 3. prehod).
