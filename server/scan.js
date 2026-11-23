@@ -14,11 +14,17 @@ import { casCheck } from "./cas.js";
 // SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja numerično preverjanje.
 // Ujame tudi rešitve izven numeričnega iskanja (|x| > 10⁶) in točne vrednosti (√2 proti 1,414).
 // Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam SymPy ne odloča.
+// Kjer numerika popolnosti ne more preveriti (partial: sistem, periodične rešitve, »ni rešitve«), brez
+// odločitve SymPy rešitev ni »preverjena«, ampak nepreverjena (reason "unknown"; AUDIT-001).
 export async function verifyAiFull(text, sol, { cas = true } = {}) {
   const num = verifyAi(text, sol);
   const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
   if (c.ok === true) return { verified: true, reason: null };
-  if (c.ok === false) return { verified: false, reason: num.reason === "missing" ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+  if (c.ok === false) {
+    const missing = num.reason === "missing" || /^manjka rešitev/.test(c.why || "");
+    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+  }
+  if (num.verified && num.partial) return { verified: false, reason: "unknown" };
   return num;
 }
 
@@ -29,8 +35,11 @@ async function casScan(text, sol) {
   if (sol?.kind === "system") {
     const eqs = (splitSystem(text) || String(text).split(/;|\n/).filter((x) => x.includes("="))).map((e) => prep(e));
     const names = [...new Set(eqs.join(" ").match(/\b[a-z]\b/g) || [])].filter((n) => n !== "e");
-    if (!eqs.length || (sol.solutions || []).length !== 1) return { ok: null };
-    return casCheck("solve", [eqs.join(", "), names.join(", "), String(sol.solutions[0]).replace(/;/g, ",")]);
+    // Vse rešitve naenkrat (»x=3, y=4; x=4, y=3«), da SymPy preveri tudi popolnost; prej je sistem z več
+    // rešitvami SymPy preskočil in odločila je numerika, ki popolnosti ne preveri (AUDIT-001).
+    const claims = (sol.solutions || []).map((s) => String(s).replace(/;/g, ",").trim()).filter(Boolean);
+    if (!eqs.length || !claims.length) return { ok: null };
+    return casCheck("solve", [eqs.join(", "), names.join(", "), claims.join("; ")]);
   }
   if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [prep(text), prep(sol.value)]);
   if (sol?.kind === "derivative" && sol.value) {

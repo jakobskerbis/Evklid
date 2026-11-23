@@ -5,7 +5,7 @@ import path from "node:path";
 import SL from "../public/i18n/sl.js";
 import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
-import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, solveWithAi, READ_PROMPT, readLangLine } from "../server/scan.js";
+import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, solveWithAi, READ_PROMPT, readLangLine, verifyAiFull } from "../server/scan.js";
 import { setClient } from "../server/claude.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
@@ -268,6 +268,39 @@ test("AI solutions are verified: substitution, missing roots, derivatives, integ
   // neenačba ni enačba; »x = 2« je dovoljen zapis rešitve
   assert.equal(verifyAi("x > 0", { kind: "equation", solutions: ["1"] }).verified, false);
   assert.equal(verifyAi("x^2 = 4", { kind: "equation", solutions: ["x = 2", "x = -2"] }).verified, true);
+});
+
+// AUDIT-001 (neodvisni pregled, PR #934): numerika ne sme trditi, da je množica rešitev popolna, kadar tega ne
+// preveri (sistem, periodične rešitve, »ni rešitve«). Brez SymPy (cas: false, npr. naloga s podatki ali izpad)
+// taka rešitev ni »preverjena«; ko jo SymPy potrdi, je (test/racun.test.js).
+test("AUDIT-001: without SymPy an unproven complete solution set is not »verified«", async () => {
+  const partial = [
+    ["x=10000000", { kind: "equation", variable: "x", solutions: [] }],
+    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2+0*k"] }],
+    ["x^2=1; y=0", { kind: "system", solutions: ["x=1; y=0"] }],
+    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi"] }],
+    ["x^2+y^2=25; x+y=7", { kind: "system", solutions: ["x=3; y=4"] }],
+    ["x^2=1; y^2=1", { kind: "system", solutions: ["x=1; y=1", "x=-1; y=-1"] }],
+  ];
+  for (const [t, sol] of partial) {
+    const n = verifyAi(t, sol);
+    assert.equal(n.verified, true, `${t}: dane rešitve držijo`);
+    assert.equal(n.partial, true, `${t}: popolnost ni preverjena`);
+    assert.deepEqual(await verifyAiFull(t, sol, { cas: false }), { verified: false, reason: "unknown" }, t);
+  }
+  // Napačna ali manjkajoča rešitev ostane »wrong« / »missing« (inštruktor jo popravi), ne »unknown«.
+  assert.equal((await verifyAiFull("x^2=1; y=0", { kind: "system", solutions: ["x=2; y=0"] }, { cas: false })).reason, "wrong");
+  assert.equal((await verifyAiFull("x^2-1=0", { kind: "equation", variable: "x", solutions: [] }, { cas: false })).reason, "missing");
+  // Kjer numerika popolnost preveri (navadna enačba, vse ničle v iskanem območju), ostane preverjeno.
+  for (const [t, sol] of [
+    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2", "x=-2"] }],
+    ["x^2-5x+6=0", { kind: "equation", variable: "x", solutions: ["2", "3"] }],
+    ["x=3", { kind: "equation", variable: "x", solutions: ["3"] }],
+    ["x*e^x", { kind: "derivative", value: "e^x + x*e^x" }],
+  ]) {
+    assert.equal(verifyAi(t, sol).partial, undefined, t);
+    assert.equal((await verifyAiFull(t, sol, { cas: false })).verified, true, t);
+  }
 });
 
 test("server cleans AI output (limits, types)", () => {
