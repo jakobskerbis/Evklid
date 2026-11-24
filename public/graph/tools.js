@@ -2,6 +2,7 @@
 // matrike, številski sistemi; periodni sistem z molsko maso; zbirka formul predmeta.
 // Vse računa brskalnik (toolscore.js, pse-data.js), brez API.
 import { skicaZa } from "../skice/index.js";
+import { plainTex } from "../formula-data.js";
 import { createUnits } from "./sci.js";
 import { formatNumber } from "./scicore.js";
 import { evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber, solveRatio } from "./toolscore.js";
@@ -728,7 +729,7 @@ export function createFormulas(root, opts) {
     btn.innerHTML = opts.icon("calculator");
     box.append(f, btn);
     // »Nariši«: formula z izraženo količino na grafu (os x: t, x, r …; ostale črke drsniki)
-    const plot = opts.onGraph && formulaPlot(vejica(text));
+    const plot = opts.onGraph && formulaPlot(vejica(text), { tex: plainTex(f.querySelector('.katex-mathml annotation[encoding="application/x-tex"]')?.textContent || ""), subject });
     if (plot) {
       const g = document.createElement("button");
       g.type = "button";
