@@ -1051,6 +1051,8 @@ export default {
   "gc.tangent": "Tangenta",
   "gc.deriv": "Odvod",
   "gc.area": "Ploščina pod krivuljo (integral)",
+  "gc.useInCalc": "Uporabi v računu",
+  "gc.useValue": "Uporabi v računu: {v}",
   "gc.valueTable": "Tabela vrednosti",
   "gc.label": "Pokaži koordinate",
   "gc.duplicate": "Podvoji",

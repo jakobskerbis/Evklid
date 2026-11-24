@@ -882,6 +882,8 @@
   "gc.tangent": "Tangente",
   "gc.deriv": "Derivata",
   "gc.area": "Area sotto la curva (integrale)",
+  "gc.useInCalc": "Usa nel calcolo",
+  "gc.useValue": "Usa nel calcolo: {v}",
   "gc.valueTable": "Tabella dei valori",
   "gc.label": "Mostra le coordinate",
   "gc.duplicate": "Duplica",

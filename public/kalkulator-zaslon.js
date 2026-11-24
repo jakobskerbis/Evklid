@@ -44,6 +44,8 @@ function graphCalc() {
       toast: (m) => toast(m, "check"),
       storageKey: () => `evklid.graph.${state.student?.id ?? 0}`,
       studentId: () => state.student?.id,
+      // »Uporabi v računu«: vrednost točke ali ∫(f; a; b) v znanstveni kalkulator (zavihek Znanstveni)
+      useInCalc: (text) => insertIntoCalc(text),
       askTutor: (text) => {
         closeCalcOverlay();
         showView("chat");

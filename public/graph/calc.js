@@ -1,7 +1,7 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
 import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
-import { niceNumber, parse, compile, arityExample } from "./math.js";
+import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
@@ -15,7 +15,8 @@ const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: n
 
 /**
  * Ustvari kalkulator v elementu root.
- * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field) }
+ * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field),
+ *   useInCalc?(text) (»Uporabi v računu«: vrednost ali ∫(f; a; b) v znanstveni kalkulator) }
  * Brez api ni »Moji grafi« (stran /kalkulator brez prijave), brez askTutor ni »Vprašaj inštruktorja«.
  */
 export function createCalculator(root, opts) {
@@ -71,6 +72,7 @@ export function createCalculator(root, opts) {
         <button type="button" class="gc-fab" data-act="home" title="${esc(t("gc.home"))}" aria-label="${esc(t("gc.home"))}">${icon("house")}</button>
         <button type="button" class="gc-fab" data-act="fit" title="${esc(t("gc.fit"))}" aria-label="${esc(t("gc.fit"))}">${icon("maximize")}</button>
       </div>
+      <div class="gc-use" hidden></div>
       <button type="button" class="gc-fab gc-expand" data-act="expand" title="${esc(t("gc.fullGraph"))}" aria-label="${esc(t("gc.fullGraph"))}" aria-pressed="false">${icon("maximize-2")}</button>
     </section>
     <div class="gc-pop" hidden role="dialog"></div>`;
@@ -87,6 +89,7 @@ export function createCalculator(root, opts) {
       if (id) list.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: "nearest" });
     },
     onDrag: drag,
+    onMark: (p) => showUse(p),
     onDragEnd: () => commit(),
     label: (k) => t(`gc.poi.${k}`),
     fmt: (v, digits) => fmt(v, digits), // oznake točk: značilna mesta
@@ -377,6 +380,10 @@ export function createCalculator(root, opts) {
         parts.push(`<div class="gc-val">${icon("trending-up")}<span>${t("gc.tangent")}: ${tex(`y = ${num(k)}x${nTxt}`)}</span></div>`);
       }
     }
+    // ploščina: »Uporabi v računu« vpiše ∫(f; a; b) v znanstveni kalkulator (le funkcija samo od x, brez drsnikov)
+    if (opts.useInCalc && (o.kind === "y" || o.plot === "y") && Array.isArray(it.tools?.area) && areaText(o, it)) {
+      parts.push(`<div class="gc-val gc-use-area"><span>${tex(`\\int_{${fmt(it.tools.area[0], 4).replace(",", "{,}")}}^{${fmt(it.tools.area[1], 4).replace(",", "{,}")}}`)}</span><button type="button" class="sc-act gc-use-btn" data-act="use-area">${icon("calculator")}<span>${esc(t("gc.useInCalc"))}</span></button></div>`);
+    }
     parts.push(hintHtml(o));
     return parts.join("");
   }
@@ -633,6 +640,11 @@ export function createCalculator(root, opts) {
       return;
     }
     if (act === "del") return removeItem(id);
+    if (act === "use-area") {
+      const txt = areaText(modelItem(id), it);
+      if (txt) opts.useInCalc?.(txt);
+      return;
+    }
     if (act === "menu") return openRowMenu(id, e.target.closest("[data-act]"));
     if (act === "sliders") {
       const o = modelItem(id);
@@ -973,6 +985,7 @@ export function createCalculator(root, opts) {
     view.selected = null;
     view.shown = [];
     view.trace = null;
+    $(".gc-use").hidden = true;
     renderList();
     refresh();
     view.view = view.squared(state.view);
@@ -981,6 +994,46 @@ export function createCalculator(root, opts) {
     scheduleSave();
     if (state.items.some((x) => x.slider?.play)) animate();
   }
+
+  // ---------- »Uporabi v računu« (graf → znanstveni kalkulator) ----------
+  // Število za vnos v kalkulator: 12 mest, zapis kalkulatorja (vejica ali pika), brez »e« in brez šuma 0,30000000004.
+  const numIn = (v) => {
+    let s = String(Number(v.toPrecision(12)));
+    if (/e/.test(s)) s = s.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+    return comma() ? s.replace(".", ",") : s;
+  };
+  // ∫(f; a; b) s telesom vrstice (zapis 3 je isti kot v znanstvenem kalkulatorju); null, če f uporablja drsnike
+  function areaText(o, it) {
+    if (!o || state.zapis !== 3) return null;
+    const body = o.ast2 || o.body;
+    const v = o.varName || "x";
+    if (!body || [...freeVars(body)].some((w) => w !== v)) return null;
+    const m = /=(?!=)\s*(.*)$/s.exec(String(it.text || ""));
+    const f = m ? m[1].trim() : String(it.text || "").trim();
+    let ufn = false;
+    walk(body, (n) => n.k === "ufn" && (ufn = true)); // klic funkcije grafa (f(x) + 1): kalkulator je ne pozna
+    if (!f || ufn) return null;
+    const sub = v === "x" ? f : null;
+    if (!sub) return null;
+    const [a, b] = it.tools.area;
+    return `∫(${sub}; ${numIn(Math.min(a, b))}; ${numIn(Math.max(a, b))})${a > b ? "·(-1)" : ""}`;
+  }
+  // označena točka na grafu: gumba x = … in y = …
+  const useBox = $(".gc-use");
+  function showUse(p) {
+    if (!opts.useInCalc || !p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) {
+      useBox.hidden = true;
+      return;
+    }
+    const kind = p.types?.length ? `${p.types.map((k) => t(`gc.poi.${k}`)).join(", ")}: ` : "";
+    const b = (n, v) => `<button type="button" class="sc-act gc-use-btn" data-use="${esc(numIn(v))}" aria-label="${esc(t("gc.useValue", { v: `${n} = ${fmt(v, 8)}` }))}">${icon("calculator")}<span>${tex(`${n} = ${fmt(v, 8).replace("−", "-").replace(",", "{,}")}`)}</span></button>`;
+    useBox.innerHTML = `<span class="gc-use-h">${esc(kind)}${esc(t("gc.useInCalc"))}</span><span class="gc-use-row">${b("x", p.x)}${b("y", p.y)}</span>`;
+    useBox.hidden = false;
+  }
+  useBox.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-use]");
+    if (b) opts.useInCalc?.(b.dataset.use);
+  });
 
   // shranjeni grafi na strežniku (po učencu)
   async function openGraphs(anchor) {
