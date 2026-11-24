@@ -80,12 +80,6 @@ function factorTex(n) {
     .map(([p, e]) => (e === 1 ? p : `${p}^${e}`))
     .join(" \\cdot ");
 }
-const name2 = (r) => {
-  const a = r.pick(NAMES);
-  let b = r.pick(NAMES);
-  while (b === a) b = r.pick(NAMES);
-  return [a, b];
-};
 
 // Številski odgovor s tipičnimi napakami [[vrednost, zakaj], …]; napaka, ki je enaka pravilnemu rezultatu, odpade.
 function num(value, unit = null, decimals = null, mistakes = [], extra = {}) {

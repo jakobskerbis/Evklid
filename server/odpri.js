@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
 import { TOPIC_CONCEPTS } from "../public/games/learn-link.js";
-import { getTopic, getPath, pathKeyFor } from "./curriculum.js";
+import { getTopic, pathKeyFor } from "./curriculum.js";
 import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
 import { formulaSheet } from "./textbook.js";
 import { stopnja } from "../public/stopnja.js";

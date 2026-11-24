@@ -2,10 +2,7 @@
 // hidrostatični tlak z manometrom (lab-tlak). Modeli: lab-model-sile.js (brez DOM). Odčitki analognih skal so v povečavi (lupa).
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
-import {
-  HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI,
-  SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, fmtSila, POENOSTAVITVE_SILE,
-} from "./lab-model-sile.js";
+import { HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI, SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, POENOSTAVITVE_SILE } from "./lab-model-sile.js";
 
 const nb = " ";
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -19,7 +16,6 @@ const seg = (name, options, value, onChange) => {
 };
 const hint = (text) => h("p", { class: "lab-tit-hint", html: text });
 const tekOpts = Object.entries(TEKOCINE).map(([id, t]) => [id, t.name]);
-const g3 = (x) => fixed(x, 2);
 
 // Serije za graf po skupinah (snov, vzmet, tekočina): barva in oblika po vrstnem redu, premica skozi izhodišče z naklonom k.
 function serije(skupine) {

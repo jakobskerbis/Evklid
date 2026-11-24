@@ -39,7 +39,6 @@ function spU(s) {
 // Racionalna (strukturna) formula organske spojine: "-" enojna, "=" dvojna, "#" trojna vez.
 const org = (s) =>
   `\\mathrm{${s.replace(/([A-Za-z)])(\d+)/g, "$1_{$2}").replace(/-/g, "{-}").replace(/=/g, "{=}").replace(/#/g, "{\\equiv}")}}`;
-const orgU = (s) => s.replace(/([A-Za-z)])(\d+)/g, (_, a, d) => a + sub(d)).replace(/-/g, "–").replace(/#/g, "≡");
 // Enačba: "2H2(g) + O2(g) -> 2H2O(l)" → TeX.
 function eqTex(s) {
   return s
@@ -53,7 +52,6 @@ function eqTex(s) {
     })
     .join(" ");
 }
-const eqU = (s) => s.split(" ").map((t) => (t === "->" ? "→" : t === "<=>" ? "⇌" : t === "+" ? "+" : t.replace(/^(\d*)(.+?)(\((?:g|l|s|aq)\))?$/, (_, c, f, st) => c + spU(f) + (st || "")))).join(" ");
 
 // Razlage in izbirne možnosti so navadno besedilo (brez KaTeX).
 function plain(s) {
@@ -1433,8 +1431,6 @@ const BRANCHED = [
 ];
 const HC_BURN = [["CH4", "metan", 1, 4], ["C2H6", "etan", 2, 6], ["C3H8", "propan", 3, 8], ["C4H10", "butan", 4, 10], ["C5H12", "pentan", 5, 12], ["C6H14", "heksan", 6, 14], ["C8H18", "oktan", 8, 18], ["C2H4", "eten", 2, 4], ["C3H6", "propen", 3, 6], ["C2H2", "etin", 2, 2], ["C6H6", "benzen", 6, 6], ["C7H16", "heptan", 7, 16]];
 const SERIES = [["alkan", "alkana", 2], ["alken", "alkena", 0], ["alkin", "alkina", -2]];
-const AR_CH = "$A_r(\\mathrm{C}) = 12{,}01$, $A_r(\\mathrm{H}) = 1{,}01$";
-const AR_CH_DAT = ["A_r(\\mathrm{C}) = 12{,}01", "A_r(\\mathrm{H}) = 1{,}01"];
 const mCH = (x, y) => roundHalfUp(12.01 * x + 1.01 * y, 2);
 
 const genOgljikovodiki = {

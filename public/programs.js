@@ -10,7 +10,6 @@ export async function loadPrograms(api) {
 // Že naloženi programi (prazen seznam, dokler jih ne naložimo).
 export const programsCache = () => cache || [];
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 
 export const UNI_YEARS = ["1. letnik", "2. letnik", "3. letnik", "4. letnik"];

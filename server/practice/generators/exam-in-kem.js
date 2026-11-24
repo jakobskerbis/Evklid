@@ -3,7 +3,7 @@
 // Vsi pravilni odgovori so izračunani v kodi: izenačenost enačb se preveri ob nalaganju, oblike molekul
 // iz VSEPR (H = ½(V + M − C + A)), vezni red iz zaporedja MO, nesparjeni elektroni iz števila d-elektronov,
 // vrstni redi iz tabel NCERT. Možnosti in razlage napak so navadno besedilo (Unicode), brez $…$.
-import { en, num, numM as numM0, task, choiceWhy, bi, roundToL } from "./exam-util.js";
+import { en, numM as numM0, task, choiceWhy, bi, roundToL } from "./exam-util.js";
 import { gcd } from "../check.js";
 
 // numM brez šuma plavajoče vejice (22.400000000000002 → 22.4).
