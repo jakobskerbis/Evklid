@@ -877,6 +877,8 @@
   "gc.errOnlyY": "Krzywą zależną od y zapisz jako x = …",
   "gc.errChar": "Nie znam „{ch}”.",
   "gc.errSyntax": "Wyrażenie jest niedokończone lub go nie rozumiem.",
+  "gc.errArity": "Nieprawidłowa liczba wartości w nawiasie. Zapisz to tak: {ex}",
+  "gc.hintPoint": "To jest liczba w nawiasie. Chodziło o punkt? Oddziel współrzędne średnikiem: {ex}",
   "gc.errOther": "Nie umiem tego narysować.",
   "gc.min": "Min",
   "gc.max": "Maks",

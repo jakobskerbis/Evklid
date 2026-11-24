@@ -2,6 +2,7 @@
 // Knjižnice (marked, KaTeX, DOMPurify) so v brskalniku globalne; testi jih podajo sami.
 
 import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabela.js";
+import { izrisi as izrisiTex, NAPAKA_HTML } from "./mat/izris.js";
 
 const lib = (name) => globalThis[name];
 
@@ -229,7 +230,8 @@ export function createRenderer({ marked: markedLib, katex: katexLib, sanitize, a
     const kljuc = `${opts === trusted ? "t" : "p"}${display ? "D" : "i"}${tex}`;
     let h = izrisi.get(kljuc);
     if (h !== undefined) return h;
-    h = katex.renderToString(tex, { ...opts, ...(opts === trusted ? { throwOnError: true } : {}), displayMode: display });
+    // Skupni izris (public/mat/izris.js); napaka se vrže, renderMath spodaj poskusi brez oznak in nazadnje okvirček.
+    h = izrisiTex(tex, { blok: display, katex, zaupaj: opts === trusted ? "oznake" : undefined, napaka: "vrzi" });
     if (izrisi.size >= NAJVEC_IZRISOV) izrisi.delete(izrisi.keys().next().value);
     izrisi.set(kljuc, h);
     return h;
@@ -253,13 +255,9 @@ export function createRenderer({ marked: markedLib, katex: katexLib, sanitize, a
       }
       return izris(tex, plain, display);
     } catch {
-      try {
-        return izris(tex, plain, display);
-      } catch {
-        // Ne ParseError (npr. RangeError ob zelo globokem gnezdenju): formula je bila skrita pred čiščenjem, zato
-        // gre surov TeX na stran samo kot izpisano besedilo (sicer bi bil v njem lahko poljuben HTML).
-        return escHtml(tex);
-      }
+      // Neveljaven ali nepopoln izraz (ali RangeError ob zelo globokem gnezdenju): nikoli rdeč surov LaTeX, ampak
+      // okvirček (public/mat/izris.js NAPAKA_HTML; j, 24. 11. 2026).
+      return NAPAKA_HTML;
     }
   }
 

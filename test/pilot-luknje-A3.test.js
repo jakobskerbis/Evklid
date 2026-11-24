@@ -7,7 +7,7 @@ import { withAccounts } from "./racuni-pomoc.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { BUNDLE_ID } from "../server/mobile/store-billing.js";
-import { guaranteeUsd, subscriptionCeiling, detailedShare, explanationsFor } from "../server/accounts/plans.js";
+import { guaranteeUsd, subscriptionCeiling } from "../server/accounts/plans.js";
 
 const DAY = 86400000;
 const dayIso = (d) => new Date(Date.now() + d * DAY).toISOString().slice(0, 10);

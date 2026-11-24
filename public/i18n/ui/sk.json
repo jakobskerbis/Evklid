@@ -877,6 +877,8 @@
   "gc.errOnlyY": "Krivku závislú od y zapíš ako x = …",
   "gc.errChar": "Nepoznám „{ch}“.",
   "gc.errSyntax": "Výraz nie je dokončený alebo mu nerozumiem.",
+  "gc.errArity": "Nesprávny počet hodnôt v zátvorke. Napíš to takto: {ex}",
+  "gc.hintPoint": "Toto je číslo v zátvorke. Myslíš bod? Súradnice oddeľ bodkočiarkou: {ex}",
   "gc.errOther": "Toto neviem nakresliť.",
   "gc.min": "Min",
   "gc.max": "Max",
