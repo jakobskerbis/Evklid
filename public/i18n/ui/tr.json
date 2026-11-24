@@ -1076,6 +1076,7 @@
   "sc.fmHint": "Bilinen harflerin yerine sayıları yaz, bilinmeyeni bırak ve = tuşuna bas.",
   "sc.fmRad": "Hesap makinesi artık RAD modunda (açılar radyan cinsinden).",
   "sc.errUndefined": "Sonuç tanımsız (ör. 0'a bölme).",
+  "sc.errNcrK": "{f}(n; k) içinde k, 0'a eşit veya 0'dan büyük bir tam sayı olmalıdır.",
   "sc.constants": "Sabitler",
   "sc.toCalc": "Hesap makinesine",
   "sc.input": "Giriş",

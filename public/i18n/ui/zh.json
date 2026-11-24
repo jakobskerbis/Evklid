@@ -1070,6 +1070,7 @@
   "sc.fmHint": "把已知的字母换成数字，保留未知量，然后按 =。",
   "sc.fmRad": "计算器现在处于 RAD 模式（角度以弧度为单位）。",
   "sc.errUndefined": "结果无定义（例如除以 0）。",
+  "sc.errNcrK": "在 {f}(n; k) 中，k 必须是大于或等于 0 的整数。",
   "sc.constants": "常数",
   "sc.toCalc": "放入计算器",
   "sc.input": "输入",

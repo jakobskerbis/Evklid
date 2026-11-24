@@ -1076,6 +1076,7 @@
   "sc.fmHint": "Badilisha herufi zinazojulikana kwa namba, acha isiyojulikana kisha bonyeza =.",
   "sc.fmRad": "Kikokotoo sasa kiko katika hali ya RAD (pembe katika radiani).",
   "sc.errUndefined": "Jibu halijafafanuliwa (k.m. kugawanya kwa 0).",
+  "sc.errNcrK": "Katika {f}(n; k), k lazima iwe namba kamili iliyo kubwa kuliko au sawa na 0.",
   "sc.constants": "Viasili",
   "sc.toCalc": "Kwenye kikokotoo",
   "sc.input": "Ingizo",

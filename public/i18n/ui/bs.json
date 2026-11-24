@@ -1082,6 +1082,7 @@
   "sc.fmHint": "Umjesto poznatih slova upiši brojeve, nepoznatu ostavi i pritisni =.",
   "sc.fmRad": "Kalkulator je sada u načinu RAD (uglovi u radijanima).",
   "sc.errUndefined": "Rezultat nije definisan (npr. dijeljenje sa 0).",
+  "sc.errNcrK": "U {f}(n; k) k mora biti cijeli broj veći ili jednak 0.",
   "sc.constants": "Konstante",
   "sc.toCalc": "U kalkulator",
   "sc.input": "Unos",

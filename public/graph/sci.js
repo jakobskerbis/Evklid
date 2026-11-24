@@ -287,6 +287,8 @@ export function createScientific(root, opts) {
         return t("sc.errEquation");
       case "sumLimit":
         return t("sc.errSumLimit");
+      case "ncrK":
+        return t("sc.errNcrK", { f: e.info.f || "nCr" });
       case "polInside":
         return t("sc.errPolInside");
       case "arity":

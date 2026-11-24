@@ -1070,6 +1070,7 @@
   "sc.fmHint": "Ganti huruf yang diketahui dengan angka, biarkan yang tidak diketahui, lalu tekan =.",
   "sc.fmRad": "Kalkulator sekarang dalam mode RAD (sudut dalam radian).",
   "sc.errUndefined": "Hasil tidak terdefinisi (mis. pembagian dengan 0).",
+  "sc.errNcrK": "Pada {f}(n; k), k harus bilangan bulat yang lebih besar atau sama dengan 0.",
   "sc.constants": "Konstanta",
   "sc.toCalc": "Ke kalkulator",
   "sc.input": "Masukan",

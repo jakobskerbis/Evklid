@@ -31,6 +31,21 @@ const fallProd = (n, k, binom) => {
   for (let i = 1n; i <= BigInt(k); i++) r = binom ? (r * (N - BigInt(k) + i)) / i : r * (N - i + 1n);
   return Number(r);
 };
+// Splošni binomski koeficient in padajoča potenca (kot SymPy binomial, ff) za celo število k ≥ 0 in poljuben n:
+// nCr(n; k) = n(n − 1)…(n − k + 1)/k!, nPr(n; k) = n(n − 1)…(n − k + 1). nCr(−5; 2) = 15, nCr(5,5; 2) = 12,375.
+// k, ki ni celo nenegativno število, da NaN (scicore pove, zakaj: »ncrK«).
+function genBinom(n, k, binom) {
+  if (!Number.isInteger(k) || k < 0 || !Number.isFinite(n)) return NaN;
+  if (Number.isInteger(n)) {
+    if (n >= 0) return k > n ? 0 : fallProd(n, binom ? Math.min(k, n - k) : k, binom);
+    // negativen n: nCr(n; k) = (−1)^k·nCr(k − n − 1; k), nPr(n; k) = (−1)^k·(−n)(−n + 1)…(−n + k − 1)
+    const v = fallProd(k - n - 1, binom ? Math.min(k, -n - 1) : k, binom);
+    return k % 2 ? -v : v;
+  }
+  let r = 1;
+  for (let i = 0; i < k && r !== 0 && Number.isFinite(r); i++) r *= binom ? (n - i) / (i + 1) : n - i;
+  return r;
+}
 function gamma(z) {
   // Lanczos
   if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
@@ -142,8 +157,8 @@ const MULTI = {
   mod: (a, b) => ((a % b) + b) % b,
   gcd: (...a) => a.reduce(gcd2),
   lcm: (...a) => a.reduce((x, y) => Math.abs(Math.round(x) * Math.round(y)) / gcd2(x, y)),
-  nCr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, Math.min(k, n - k), true) : Math.round(fact(n) / (fact(k) * fact(n - k)))),
-  nPr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, k, false) : Math.round(fact(n) / fact(n - k))),
+  nCr: (n, k) => genBinom(n, k, true),
+  nPr: (n, k) => genBinom(n, k, false),
   root: (x, n) => nthroot(x, n),
   logb: (x, b) => Math.log(x) / Math.log(b),
   // celo število na [a, b] (Casio RanInt#)
@@ -851,6 +866,11 @@ export function compile(node, ctx = {}) {
         };
       }
       if (f === "sort") return (s) => sorted([args.map((a) => a(s))].flat(2));
+      // nCr(5; 2,5), nPr(5; −1): k mora biti celo število ≥ 0 – povemo takoj, ne le »ni definirano«
+      if ((f === "nCr" || f === "nPr") && node.args[1] && !freeVars(node.args[1]).size) {
+        const kv = compile(node.args[1], ctx)({});
+        if (typeof kv === "number" && !(Number.isInteger(kv) && kv >= 0)) throw new MathError("ncrK", { f });
+      }
       if (MULTI[f]) {
         const g = MULTI[f];
         const many = f === "min" || f === "max" || f === "gcd" || f === "lcm";

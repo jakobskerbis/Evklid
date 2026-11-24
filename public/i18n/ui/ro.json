@@ -1082,6 +1082,7 @@
   "sc.fmHint": "Înlocuiește literele cunoscute cu numere, lasă necunoscuta și apasă =.",
   "sc.fmRad": "Calculatorul este acum în modul RAD (unghiuri în radiani).",
   "sc.errUndefined": "Rezultatul nu este definit (de ex. împărțire la 0).",
+  "sc.errNcrK": "În {f}(n; k), k trebuie să fie un număr întreg mai mare sau egal cu 0.",
   "sc.constants": "Constante",
   "sc.toCalc": "În calculator",
   "sc.input": "Intrare",
