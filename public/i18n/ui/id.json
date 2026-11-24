@@ -865,6 +865,7 @@
   "gc.errSyntax": "Ekspresinya belum lengkap atau aku tidak memahaminya.",
   "gc.errArity": "Jumlah nilai di dalam kurung salah. Tulis seperti ini: {ex}",
   "gc.hintPoint": "Ini adalah bilangan dalam kurung. Maksudmu sebuah titik? Pisahkan koordinat dengan titik koma: {ex}",
+  "gc.hintEuler": "“{src}” berarti {euler}: e adalah bilangan Euler. Untuk notasi ilmiah, ketik {fix}.",
   "gc.errOther": "Aku tidak bisa menggambar ini.",
   "gc.min": "Min",
   "gc.max": "Maks",

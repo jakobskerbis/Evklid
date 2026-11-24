@@ -871,6 +871,7 @@
   "gc.errSyntax": "Der Ausdruck ist unvollständig oder ich verstehe ihn nicht.",
   "gc.errArity": "Falsche Anzahl von Werten in der Klammer. Schreibe es so: {ex}",
   "gc.hintPoint": "Das ist eine Zahl in Klammern. Meinst du einen Punkt? Trenne die Koordinaten mit einem Semikolon: {ex}",
+  "gc.hintEuler": "„{src}“ bedeutet {euler}: e ist die Eulersche Zahl. Für die wissenschaftliche Schreibweise gib {fix} ein.",
   "gc.errOther": "Das kann ich nicht zeichnen.",
   "gc.min": "Min",
   "gc.max": "Max",

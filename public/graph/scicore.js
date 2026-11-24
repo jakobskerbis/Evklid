@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, numberText, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, calcText, calcRewrite, splitTop, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -14,40 +14,7 @@ export const HIDDEN_VARS = new Set([ANS_VAR, DEG_VAR, MIN_VAR, SEC_VAR]);
 // 30°15′20″ → (30° + 15′ + 20″), da ostane skupaj (−30°15′ = −30,25°, 2·30°15′ = 60,5°)
 const DMS_RUN = /\d+(?:\.\d+)?\s*[°′](?:\s*\d+(?:\.\d+)?\s*[′″])+/g;
 
-/** Razdeli besedilo na vrhnji ravni (zunaj oklepajev) pri znakih iz »seps«. */
-export function splitTop(s, seps = ";") {
-  const out = [];
-  let depth = 0;
-  let cur = "";
-  for (const c of String(s)) {
-    if ("([{".includes(c)) depth++;
-    else if (")]}".includes(c)) depth = Math.max(0, depth - 1);
-    if (depth === 0 && seps.includes(c)) {
-      out.push(cur);
-      cur = "";
-    } else cur += c;
-  }
-  out.push(cur);
-  return out;
-}
-
-// »∫(f; a; b)« → »∫_(a)^(b) (f) dx« (zapis, ki ga razume razčlenjevalnik)
-function rewriteIntegrals(s) {
-  for (let guard = 0; guard < 20; guard++) {
-    const i = s.indexOf("∫(");
-    if (i < 0) break;
-    let depth = 0;
-    let j = i + 1;
-    for (; j < s.length; j++) {
-      if (s[j] === "(") depth++;
-      else if (s[j] === ")" && --depth === 0) break;
-    }
-    const args = splitTop(s.slice(i + 2, j), ",");
-    if (args.length !== 3) break;
-    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) dx)${s.slice(j + 1)}`;
-  }
-  return s;
-}
+export { splitTop }; // skupno z grafičnim kalkulatorjem (math.js)
 
 /**
  * Besedilo s tipkovnice → izraz za razčlenjevalnik.
@@ -56,13 +23,13 @@ function rewriteIntegrals(s) {
  *   kotna minuta in sekunda (30°15′20″),
  * - 1,2E5 → 1,2·10^(5), manjkajoče zaklepaje dodamo na konec, ∫(f; a; b) je določeni integral.
  */
-export function prepare(text, { comma = true } = {}) {
+export function prepare(text, { comma = true, names = null } = {}) {
   // »1 000 000/4«: presledek med skupinami po 3 števke je ločilo tisočic, ne množenje
   // »1.234,5« = 1234,5; nejasen zapis števila (»12 3456«, »1.2.3«) je napaka, ne tiho množenje (12 · 3456, 1,2 · 0,3).
   // Isto pravilo kot grafični kalkulator in preverjanje odgovorov (numberText v math.js).
-  let s = numberText(String(text ?? "").trim(), comma);
-  s = s.replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
-  s = s.replace(/(\d|\.)[eE]([+\-−]?\d+)/g, "$1*10^($2)");
+  // Znanstveni zapis, ∫(f; a; b) in manjkajoči zaklepaji: skupna priprava z grafičnim kalkulatorjem (calcText).
+  let s = String(text ?? "").trim().replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
+  s = calcText(s, { comma, names, close: true });
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
   // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem
@@ -72,12 +39,7 @@ export function prepare(text, { comma = true } = {}) {
     .replace(/°/g, ` ${DEG}`)
     .replace(/(\d+(?:\.\d+)?)\s*′/g, `($1 ${MIN})`)
     .replace(/(\d+(?:\.\d+)?)\s*″/g, `($1 ${SEC})`);
-  let open = 0;
-  for (const c of s) {
-    if (c === "(") open++;
-    else if (c === ")") open = Math.max(0, open - 1);
-  }
-  return rewriteIntegrals(s + ")".repeat(open));
+  return s;
 }
 
 /** Je besedilo prirejanje »a = 5«? Vrne ime spremenljivke ali null. */
@@ -92,36 +54,21 @@ function assignment(ast) {
 // - round(x; n) zaokroži na n decimalk,
 // - d/dx(f; a) je odvod v točki a.
 function rewrite(n, ctx) {
-  if (!n || typeof n !== "object") return n;
-  const r = (x) => rewrite(x, ctx);
-  if ((n.k === "+" || n.k === "-") && n.b?.k === "pct") {
-    const one = { k: "num", v: 1 };
-    const part = { k: "/", a: r(n.b.a), b: { k: "num", v: 100 } };
-    return { k: "*", a: r(n.a), b: { k: "grp", a: { k: n.k, a: one, b: part } } };
-  }
-  if (n.k === "call" && n.f === "round" && n.args.length === 2) {
-    const p = { k: "^", a: { k: "num", v: 10 }, b: r(n.args[1]) };
-    return { k: "/", a: { k: "call", f: "round", args: [{ k: "*", a: r(n.args[0]), b: p }] }, b: p };
-  }
-  if (n.k === "der" && n.a?.k === "tuple" && n.a.items.length === 2) {
-    // Simbolni odvod v točki a ne zadošča (AUDIT-017, AUDIT-018): ln x ima pri x = −1 »odvod« −1, |x| pri 0
-    // »odvod« 0. __ODVOD_V_TOCKI (math.js) zato preveri še, da je f v a definirana in da se levi in desni odvod
-    // ujemata z njim. Gnezden odvod (d/dx(d/dx(…; x); 2)) in odvod za simbolno računanje ostaneta navadna.
-    const plain = { ...ctx, plainDer: true };
-    const f = rewrite(n.a.items[0], plain);
-    const a = r(n.a.items[1]);
-    const d = simplify(diff(f, n.v, ctx));
-    const at = substitute(d, { [n.v]: a });
-    if (ctx.plainDer) return { k: "grp", a: at };
-    return { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: n.v };
-  }
-  const out = { ...n };
-  for (const key of ["a", "b", "other"]) if (n[key]) out[key] = r(n[key]);
-  for (const key of ["args", "terms", "items"]) if (Array.isArray(n[key])) out[key] = n[key].map(r);
-  if (n.cases) out.cases = n.cases.map(([c, v]) => [r(c), r(v)]);
-  if (n.lo) out.lo = r(n.lo);
-  if (n.hi) out.hi = r(n.hi);
-  return out;
+  // odstotki in round(x; n): skupno z grafičnim kalkulatorjem (calcRewrite v math.js)
+  return calcRewrite(n, (m, r) => {
+    if (m.k === "der" && m.a?.k === "tuple" && m.a.items.length === 2) {
+      // Simbolni odvod v točki a ne zadošča (AUDIT-017, AUDIT-018): ln x ima pri x = −1 »odvod« −1, |x| pri 0
+      // »odvod« 0. __ODVOD_V_TOCKI (math.js) zato preveri še, da je f v a definirana in da se levi in desni odvod
+      // ujemata z njim. Gnezden odvod (d/dx(d/dx(…; x); 2)) in odvod za simbolno računanje ostaneta navadna.
+      const plain = { ...ctx, plainDer: true };
+      const f = rewrite(m.a.items[0], plain);
+      const a = r(m.a.items[1]);
+      const d = simplify(diff(f, m.v, ctx));
+      const at = substitute(d, { [m.v]: a });
+      if (ctx.plainDer) return { k: "grp", a: at };
+      return { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: m.v };
+    }
+  });
 }
 
 /** Zapis TeX za zgodovino: ° namesto pomožne spremenljivke, Ans, odvod v točki. */
@@ -156,7 +103,8 @@ export function functionDef(text) {
  * funcs: { f: { param, body } } (besedilo telesa, kot ga je vpisal učenec)
  */
 export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = false, comma = true, funcs = {} } = {}) {
-  const src = prepare(text, { comma });
+  const known = new Set([...Object.keys(vars), ...Object.keys(funcs)]); // spremenljivka E: »3E-2« je 3·E − 2
+  const src = prepare(text, { comma, names: known });
   if (!src) return null;
   const names = new Set(Object.keys(funcs));
   const one = grad ? 200 / 180 : deg ? 1 : Math.PI / 180; // 1° v trenutni enoti kota
@@ -165,7 +113,7 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope, derCheck: true };
   for (const [name, f] of Object.entries(funcs)) {
     try {
-      defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma }), { funcs: names }), ctx), body: null };
+      defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma, names: known }), { funcs: names }), ctx), body: null };
     } catch {}
   }
   for (const d of Object.values(defs)) {

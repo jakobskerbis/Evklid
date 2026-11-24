@@ -877,6 +877,7 @@
   "gc.errSyntax": "Израз није завршен или га не разумем.",
   "gc.errArity": "Погрешан број вредности у загради. Напиши овако: {ex}",
   "gc.hintPoint": "Ово је број у загради. Мислиш ли на тачку? Координате одвоји тачком и зарезом: {ex}",
+  "gc.hintEuler": "„{src}“ znači {euler}: e je Ojlerov broj. Za naučni zapis upiši {fix}.",
   "gc.errOther": "Ово не умем да нацртам.",
   "gc.min": "Најмање",
   "gc.max": "Највише",
