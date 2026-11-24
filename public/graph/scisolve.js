@@ -256,13 +256,22 @@ function polyRootsOf(L, R, v, scope, run, unit = "rad") {
   // √m). Tudi točne racionalne ničle in ničle linearnih faktorjev: x − 0,666666666667 = 0 ima ničlo 0,666666666667, ne 2/3;
   // (x − π − 10⁻¹⁵)(x − 1) = 0 nima ničle π. Izjema: realni koren iz točnega faktorja (r.form, preverjen z deljenjem).
   const verifyIn = (A, B, list) => {
-    for (const r of list) {
+    // ista točna vrednost le enkrat: druga številska ničla z enako obliko je napačno locirana (gruča
+    // (x − 1)((x − 1)² + 10⁻²⁰) = 0: trije »= 1«), zato ostane »≈«
+    const taken = new Set();
+    const key = (re, im) => `${re}|${im}`;
+    for (const r of list) if (r.exact) taken.add(key(r.re, r.im));
+    for (const r of [...list].sort((a, b) => !!b.exact - !!a.exact)) {
       if (r.im === 0 && r.form) continue;
       const c = verifiedForm(A, B, scope, v, r.re, r.im, false, unit);
       if (!c) continue;
+      if (!r.exact) {
+        if (taken.has(key(c[0], c[1]))) continue;
+        taken.add(key(c[0], c[1]));
+        Object.assign(r, { re: c[0], im: c[1] });
+      }
       r.ver = true;
       r.vk = c[2];
-      if (!r.exact) Object.assign(r, { re: c[0], im: c[1] });
     }
     return list;
   };
@@ -323,10 +332,12 @@ const fracNode = (f) => (f.q === 1 ? numNode(f.p) : { k: "/", a: numNode(f.p), b
 // Kandidati za točno obliko x, kot jo pokaže zapis: najprej scicore exactTex (p/q, ±(k/q)·√m, (p/q)·π), nato končna
 // decimalka (najkrajši toFixed, ki je točno x; pri dec6 le do 6 decimalk, kot jih kaže kompleksni zapis).
 // Vrne [{ val, node, isq, vk }] (node z ι, ι² = isq, pri korenu).
-function formsOf(x, allowPi, dec6 = false) {
+function formsOf(x, allowPi, dec6 = false, scale = 0) {
   const out = [];
-  const c = clean(x);
-  const near = (val) => Math.abs(val - x) <= 1e-6 * Math.max(1, Math.abs(x));
+  // pri |x| < 1 brez clean(): 10⁻¹⁰ (imaginarni del 1 ± 10⁻¹⁰ i) ni 0; kandidat mora biti relativno blizu
+  const c = Math.abs(x) >= 1 ? clean(x) : x; // clean je pri |x| < 1 absoluten (10⁻¹⁰ → 0)
+  // scale: |z| pri realnem delu kompleksne ničle (re ≈ 10⁻¹⁷ pri ±i je 0); imaginarni del le relativno
+  const near = (val) => val === x || Math.abs(val - x) <= 1e-9 * Math.max(Math.abs(x), 1e-6 * scale);
   const f = Number.isInteger(c) ? { p: c, q: 1 } : toFraction(c, 1000);
   if (f) {
     if (Number.isSafeInteger(f.p) && near(f.p / f.q)) out.push({ val: f.p / f.q, node: fracNode(f), vk: "tex" });
@@ -367,7 +378,7 @@ function verifiedForm(L, R, scope, v, re, im, tri = false, unit = "rad") {
   if (im === 0) {
     // tri: true, če katera oblika velja; false, če je vsaj ena točno ovržena; null, ko točno ne gre nobena
     let no = false;
-    for (const a of formsOf(re, true)) {
+    for (const a of formsOf(re, true, false, 1)) {
       const z = zeroAtExact(L, R, scope, v, a.node, a.isq ?? -1, undefined, unit);
       if (z) return tri ? true : [a.val, 0, a.vk];
       if (z === false) no = true;
@@ -377,8 +388,9 @@ function verifiedForm(L, R, scope, v, re, im, tri = false, unit = "rad") {
   // a + b·i: a racionalen ali (k/q)·ι z ι² = m₁; b·i = b·κ z κ² = −1 ali pri b = (k/q)·√m₂ kot (k/q)·κ z κ² = −m₂
   // (x⁶ = 8: −√2/2 ± √6/2 i)
   const toK = (n) => JSON.parse(JSON.stringify(n).replaceAll('"ι"', '"κ"'));
-  for (const a of formsOf(re, false, true)) {
+  for (const a of formsOf(re, false, true, Math.hypot(re, im))) {
     for (const b of formsOf(im, false, true)) {
+      if (b.val === 0) continue;
       const bi = b.isq ? toK(b.node) : { k: "*", a: b.node, b: { k: "var", name: "κ" } };
       const rep = { k: "+", a: a.node, b: bi };
       if (zeroAtExact(L, R, scope, v, rep, a.isq ?? -1, undefined, unit, b.isq ? -b.isq : -1)) return [a.val, b.val, a.vk === "dec" || b.vk === "dec" ? "dec" : "tex"];
