@@ -71,6 +71,10 @@ test("polyRootsMult: večkratnosti kot SymPy, polyRoots vsako ničlo tolikokrat"
   assert.equal(pi.length, 1);
   assert.equal(pi[0].m, 3);
   assert.ok(close(pi[0].re, Math.PI));
+  // majhni koeficienti niso 0: x² − 10⁻¹² = 0 → ±10⁻⁶; x³ − 10⁻¹⁸ x = 0 → 0, ±10⁻⁹
+  assert.deepEqual(polyRootsMult([1, 0, -1e-12]).map((r) => [r.re, r.m]), [[-1e-6, 1], [1e-6, 1]]);
+  assert.ok(close(polyRootsMult([1, 0, -1e-18, 0])[2].re / 1e-9, 1));
+  assert.deepEqual(polyRoots([1, -1e-300]), [[1e-300, 0]]);
   // bližnji, a različni ničli ostaneta dve: (x − 1)(x − 1,0001)
   assert.deepEqual(polyRootsMult([1, -2.0001, 1.0001]).map((r) => [r.re, r.m]), [[1, 1], [1.0001, 1]]);
 });

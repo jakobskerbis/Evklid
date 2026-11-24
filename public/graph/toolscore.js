@@ -310,6 +310,7 @@ function rootB(p, num, den) {
 // racionalni približek s q ≤ maxQ (verižni ulomek) ali null
 function ratOf(v, maxQ) {
   if (!Number.isFinite(v)) return null;
+  if (v === 0) return { p: 0n, q: 1n };
   const x = Math.abs(v);
   let [h0, h1, k0, k1] = [0, 1, 1, 0];
   let r = x;
@@ -318,7 +319,8 @@ function ratOf(v, maxQ) {
     [h0, h1] = [h1, a * h1 + h0];
     [k0, k1] = [k1, a * k1 + k0];
     if (k1 > maxQ) return null;
-    if (Math.abs(h1 / k1 - x) <= 1e-11 * Math.max(1, x)) return { p: BigInt(v < 0 ? -h1 : h1), q: BigInt(k1) };
+    // relativno: 10⁻¹² ni 0 (x² − 10⁻¹² = 0 ima rešitvi ±10⁻⁶)
+    if (Math.abs(h1 / k1 - x) <= 1e-11 * x) return { p: BigInt(v < 0 ? -h1 : h1), q: BigInt(k1) };
     const f = r - a;
     if (f < 1e-15) break;
     r = 1 / f;
@@ -433,7 +435,7 @@ export function polyRootsMult(coeffs) {
     let d = c;
     for (let j = 1; j < r.m; j++) d = derivF(d);
     const z = [r.re, r.im];
-    if (C.abs(hornerC(d, z)) > 1e-8 * sizeAt(d, z)) return null;
+    if (!(C.abs(hornerC(d, z)) <= 1e-8 * sizeAt(d, z))) return null; // tudi NaN (prevelik koeficient) ni ničla
   }
   if (out.reduce((s, r) => s + r.m, 0) !== c.length - 1) return null;
   return out.sort((x, y) => x.re - y.re || x.im - y.im);
@@ -444,6 +446,7 @@ export function polyRoots(coeffs) {
   let c = coeffs.map(Number);
   while (c.length && Math.abs(c[0]) < 1e-14) c.shift();
   if (c.length < 2) return [];
+  if (c.length <= 3) return dkRoots(c); // stopnja 1 in 2: obrazca, kot prej
   const mult = polyRootsMult(c);
   const raw = mult ? mult.flatMap((r) => Array.from({ length: r.m }, () => [r.re, r.im])) : dkRoots(c);
   return raw
