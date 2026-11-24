@@ -384,7 +384,7 @@ const periodTex = (unit, comma) => {
 function solveOne(F, v, { comma, unit = "rad", src, pr = null }) {
   // polinom iz drevesa (polyRootsOf): ničle z večkratnostmi, točno ali po faktorjih z oceno napake
   if (pr && pr.deg >= 1) {
-    const poly = polyCoeffs(F) || pr.poly;
+    const poly = pr.poly || polyCoeffs(F); // polyCoeffs pri koeficientih nad ~10¹⁰ ni zanesljiv
     if (pr.deg === 2 && pr.exactAll && poly?.length === 3) {
       const q = quadraticExact(poly, v, comma);
       if (q) return { kind: "solve", v, roots: q.roots, complex: q.complex || [], exact: q.tex, poly };

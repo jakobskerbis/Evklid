@@ -449,7 +449,7 @@ function rat0(node, ctx) {
     case "num": {
       if (!Number.isInteger(node.v)) ctx.dec = true;
       try {
-        return new R(P.num(Q.of(node.v)));
+        return new R(P.num(node.raw ? qOfText(node.raw) : Q.of(node.v)));
       } catch {
         throw fail("unsupported");
       }
@@ -518,6 +518,11 @@ function rat0(node, ctx) {
       if (ctx.ext) return ctx.ext(node, ctx); // 3. faza: koreni, kotne funkcije, logaritmi (casalg.js)
       throw fail("unsupported");
   }
+}
+// točen ulomek iz vpisanega besedila števila (166381621938133156, 1,0000000001)
+function qOfText(t) {
+  const [i, f = ""] = t.replace(/^\./, "0.").split(".");
+  return new Q(BigInt(i + f), 10n ** BigInt(f.length));
 }
 function qOfNumber(v) {
   try {
