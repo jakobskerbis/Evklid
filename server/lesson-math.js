@@ -47,10 +47,21 @@ function isDataStep(a, b, tol) {
 
 // LaTeX → preprost aritmetični izraz. Vrne null, če del ni čisto številski.
 // pct: "div" bere »25\%« kot 25/100, "unit" kot število 25 z enoto %.
-export function normalizeTex(tex, pct = "div") {
+// colon: »:« med števili je deljenje (48 : 6 = 8, slovenski zapis v OŠ; AUDIT-062), razen pri razmerju z več »:«
+// (3 : 4 : 5) in pri deljenju z ostankom (vrstica z »ostane«, checkArithmetic tedaj poda colon: false).
+export function normalizeTex(tex, pct = "div", { colon = true } = {}) {
   if (tex.length > 300) return null;
-  let s = tex.replace(/\\,/g, "").replace(/\\left|\\right|\\[!;:>]|\\quad|\\qquad|\\ |~/g, " ");
+  let s = tex.replace(/\\,/g, "").replace(/\\left|\\right|\\[!;>]|\\quad|\\qquad|\\ |~/g, " ");
+  // »\:« je presledek (kot \;), »:« in »\colon« med števili ali oklepaji deljenje
+  s = s.replace(/\\:/g, " ");
+  const colons = (s.match(/(?<!\\):|\\colon/g) || []).length;
+  if (colons) {
+    if (!colon || colons > 1) return null;
+    s = s.replace(/([\d)}])\s*(?:\\colon|:)\s*(?=[\d({]|\\[dt]?frac)/g, "$1 / ");
+  }
   const units = [];
+  // € (tudi \euro) je enota: 80 € · 0,75 = 60 €
+  s = s.replace(/€|\\euro\b|\\EUR\b/g, () => (units.push("€"), " "));
   // Enote: \mathrm{kW}, \text{cm}^2, \Omega, °, ^\circ
   s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (_, u, e) => {
     if (u.trim()) units.push(u.trim() + (e || "").replace(/\s/g, ""));
@@ -92,6 +103,8 @@ export function normalizeTex(tex, pct = "div") {
   const ulp = bare ? 10 ** (exp - decimals) : null;
   const trailingZeros = bare && !mantissa.includes(".") ? (mantissa.match(/0*$/) || [""])[0].length : 0;
   const maxLiteral = Math.max(0, ...(s.match(/\d+\.?\d*/g) || []).map(Number));
+  // razmerje količin z enotama (50 cm : 2 m = 1 : 4) ni deljenje števil
+  if (colons && units.length >= 2) return null;
   return { expr: s, units, bare, ulp, exp, trailingZeros, maxLiteral };
 }
 
@@ -215,14 +228,14 @@ function compare(a, b, approx, loose, afterData = false) {
 
 const fmt = (v) => String(Number(v.toPrecision(6))).replace(".", ",");
 
-function checkChain(tex, pct, loose) {
+function checkChain(tex, pct, loose, colon = true) {
   const parts = tex.split(SEP); // del, ločilo, del, …
   let prev = null;
   let checked = 0;
   const mismatches = [];
   let afterData = false; // prejšnji korak je bil sprejeta pretvorba enot podatkov
   for (let k = 0; k < parts.length; k += 2) {
-    const n = normalizeTex(parts[k], pct);
+    const n = normalizeTex(parts[k], pct, { colon });
     const value = n ? evaluate(n.expr) : NaN;
     if (!Number.isFinite(value)) {
       prev = null;
@@ -262,10 +275,12 @@ export function checkArithmetic(body) {
     if (skipLine[line]) continue;
     if (!SEP.test(tex) || SKIP_TEX.test(tex)) continue;
     const loose = LOOSE_LINE.test(lines[line] || "");
-    // Odstotek je lahko količnik (25 % · 80 = 20) ali enota (0,10 · 100 = 10 %): velja ugodnejše branje.
-    let r = checkChain(tex, "div", loose);
-    if (r.mismatches.length && tex.includes("\\%")) {
-      const u = checkChain(tex, "unit", loose);
+    // Odstotek je lahko količnik (25 % · 80 = 20) ali enota (0,10 · 100 = 10 %): velja ugodnejše branje, branje kot
+    // enota pa le, kadar je % na koncu dela (»= 10 %«, »· 100 %«), ne sredi računa (»20 % · 60 = 3« je 20 % od 60; AUDIT-062).
+    const colon = !/ostan|ostal|ostanek|remainder|razmerj/i.test(lines[line] || "");
+    let r = checkChain(tex, "div", loose, colon);
+    if (r.mismatches.length && tex.includes("\\%") && tex.split(SEP).every((p) => !p.includes("\\%") || /\\%(?:\s|\\[ ,;!]|\\(?:mathrm|text)\s*\{[^{}]*\})*[.,;]*$/.test(p))) {
+      const u = checkChain(tex, "unit", loose, colon);
       if (u.mismatches.length < r.mismatches.length) r = u;
     }
     checked += r.checked;

@@ -213,3 +213,23 @@ test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1
   ];
   for (const t of bad) assert.equal(one(t).mismatches.length, 1, t);
 });
+
+// AUDIT-062: »:« med števili je deljenje, € je enota, % sredi računa je količnik.
+test("AUDIT-062: 48 : 6 = 7, 20 % · 60 = 3 in 80 € · 0,75 = 65 € se ujamejo", () => {
+  const R = String.raw;
+  for (const t of [R`$48 : 6 = 7$`, R`$(12 - 4) : 2 = 8 : 2 = 3$`, R`$20\ \% \cdot 60 = 3$`, R`$80\ € \cdot 0{,}75 = 65\ €$`]) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+  for (const t of [
+    R`$48 : 6 = 8$`,
+    R`$20\ \% \cdot 60 = 12$`,
+    R`$80\ € \cdot 0{,}75 = 60\ €$`,
+    R`$0{,}10 \cdot 100 = 10\,\%$`,
+    R`$\dfrac{1}{51} \cdot 100\,\% \approx 2{,}0\,\%$`,
+    R`$\frac{42}{100} = 0{,}42\,\%\ \mathrm{C}$`,
+    R`$3 : 4 : 5$`,
+    R`$1 : 2 = 2 : 4$`,
+    "$7 : 4 = 1$, ostane $3$", // deljenje z ostankom
+    R`$50\,\text{cm} : 2\,\text{m} = 50 : 200 = 1 : 4$`, // razmerje količin
+  ]) {
+    assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  }
+});
