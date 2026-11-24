@@ -521,7 +521,7 @@ export function caretStops(base) {
 /** TeX z merilno točko (htmlData evk-p) na vsakem mestu kazalca: dotik na lep zapis → položaj v besedilu. */
 export function stopsTex(base) {
   const stops = caretStops(base);
-  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.8em}}}`])));
+  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\smash{\\rule{0em}{0.8em}}}}`])));
 }
 
 /** Zapis vnosa s kazalcem: { ok, tex } ali null za prazen vnos. */
