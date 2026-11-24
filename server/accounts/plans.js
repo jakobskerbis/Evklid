@@ -187,7 +187,6 @@ let fx = { rates: {}, at: 0 };
 export function setFxRates(rates, at = Date.now()) {
   fx = { rates: { ...(rates || {}) }, at: Number(at) || 0 };
 }
-export const fxState = () => ({ ...fx, fresh: Date.now() - fx.at <= FX_MAX_AGE_MS });
 // € za eno enoto valute za izračun meje (z rezervo); 0 za neznano valuto.
 export function eurPerUnitNow(cur, now = Date.now()) {
   if (cur === "EUR") return 1;

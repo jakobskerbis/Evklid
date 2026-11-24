@@ -4,7 +4,7 @@
 import { skicaZa } from "../skice/index.js";
 import { createUnits } from "./sci.js";
 import { formatNumber } from "./scicore.js";
-import { readList, evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber, solveRatio } from "./toolscore.js";
+import { evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber, solveRatio } from "./toolscore.js";
 import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";

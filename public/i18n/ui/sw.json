@@ -865,6 +865,8 @@
   "gc.errOnlyY": "Andika mkunjo unaotegemea y kama x = …",
   "gc.errChar": "Sielewi “{ch}”.",
   "gc.errSyntax": "Usemi haujakamilika au sielewi.",
+  "gc.errArity": "Idadi ya thamani ndani ya mabano si sahihi. Andika hivi: {ex}",
+  "gc.hintPoint": "Hii ni namba ndani ya mabano. Ulimaanisha nukta? Tenganisha viwianishi kwa nukta-mkato: {ex}",
   "gc.errOther": "Siwezi kuchora hiki.",
   "gc.min": "Chini",
   "gc.max": "Juu",

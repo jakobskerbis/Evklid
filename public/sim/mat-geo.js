@@ -1,5 +1,5 @@
 // Simulacije: ravninska geometrija (točke, premice, koti, liki, konstrukcije, simetrija).
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, stage, layout, tex, texBlock, fmt, tfmt, clamp, label, axes, draggable, handle, deg, rad, arrow, animate, rint } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, stage, layout, tex, texBlock, fmt, tfmt, clamp, label, axes, draggable, handle, deg, rad, animate, rint } from "./kit.js";
 
 export const dist = (P, Q) => Math.hypot(P[0] - Q[0], P[1] - Q[1]);
 // Kot pri vrhu V med VA in VB v stopinjah (0–180).

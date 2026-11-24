@@ -4,7 +4,7 @@
 // morfologija ter živalska tkiva (NCERT 11), mikrobi v človekovo korist (NCERT 12) in osnove vedenja (A-level, A/L).
 // Pojmovni motor (izbire v slogu NEET/CBSE z razlago vsake napačne možnosti) je kopija motorja iz exam-in-bio.js.
 // Naključna števila in izbire so v obeh jezikih enake (r.* nikoli znotraj veje, ki je odvisna od jezika).
-import { en, num, numM, task as baseTask, bi, roundToL, fracTex, fraction, fractionM } from "./exam-util.js";
+import { en, numM, task as baseTask, bi, roundToL, fracTex, fraction, fractionM } from "./exam-util.js";
 
 // Hindijska rešitev, ki je samo račun, dobi uvodno vrstico »हल:« (kot v učbenikih NCERT v hindijščini).
 const DEV = /[\u0900-\u097F]/;

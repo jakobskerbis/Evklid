@@ -67,7 +67,6 @@ export function splitSystem(text) {
 // Zapis drevesa v TeX (lepši od splošnega: ulomki Q, oklepaji pri vstavljanju, decimalna vejica)
 
 const unwrap = (n) => (n && n.k === "grp" ? unwrap(n.a) : n);
-const isLeafNum = (n) => n && (n.k === "num" || n.k === "q");
 const negLike = (n) => (n.k === "num" && n.v < 0) || (n.k === "q" && n.q.sign < 0) || n.k === "neg";
 
 export function tex(node, opt = {}) {
@@ -205,8 +204,6 @@ function decompose(node) {
 
 const grp = (a) => ({ k: "grp", a });
 const lines = (rows) => (rows.length > 1 ? `\\begin{gathered} ${rows.join(" \\\\ ")} \\end{gathered}` : rows[0]);
-const qn = (q, dec = false) => ({ k: "q", q: Q.of(q), dec });
-const mulN = (a, b) => ({ k: "*", a, b });
 
 // izpis člena {sign, c, f}
 function termNodeTex({ c, f }, first) {

@@ -20,16 +20,6 @@ const shuffle = (a) => {
   }
   return b;
 };
-const SUBS = "₀₁₂₃₄₅₆₇₈₉", SUPS = "⁰¹²³⁴⁵⁶⁷⁸⁹";
-const sub = (s) => String(s).replace(/\d/g, (d) => SUBS[d]);
-const sup = (s) => String(s).replace(/\d/g, (d) => SUPS[d]).replace(/\+/g, "⁺").replace(/-/g, "⁻");
-// "Ca3(PO4)2" → "Ca₃(PO₄)₂", "SO4^2-" → "SO₄²⁻", "->" → "→"
-const F = (s) =>
-  s
-    .replace(/\^(\d*[+-])/g, (_, c) => sup(c))
-    .replace(/([A-Za-z)\]])(\d+)/g, (_, l, d) => l + sub(d))
-    .replace(/<=>/g, "⇌")
-    .replace(/->/g, "→");
 // "slovensko|english" → izbrani jezik
 const L = (ctx, s) => (typeof s === "string" && s.includes("|") ? s.split("|")[ctx.lang === "sl" ? 0 : 1] : s);
 // naloga: napačni brez podvajanja in brez pravilnega; najprej ws (tipične napake), nato pool

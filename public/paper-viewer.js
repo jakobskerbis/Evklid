@@ -30,7 +30,6 @@ const withTimeout = (promise, ms) =>
   Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { fallback: true })), ms))]);
 
 let current = null;
-export const paperViewerOpen = () => !!current;
 // Zapre pregledovalnik (gumb, Esc, tipka Nazaj v app.js). Vrne true, če je bil odprt.
 export function closePaperViewer() {
   if (!current) return false;

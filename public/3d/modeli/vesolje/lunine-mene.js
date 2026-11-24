@@ -17,7 +17,7 @@ export const info = {
 };
 
 const D = Math.PI / 180;
-const SINODSKI = 29.530589, SIDERSKI = 27.321661;
+const SINODSKI = 29.530589;
 const R_ZEMLJA = 0.17, R_LUNA = (0.17 * 1737.4) / 6371, R_TIR = 0.66;
 
 // ---------------------------------------------------------------- coastlines
@@ -368,7 +368,6 @@ function texLuna(w, h) {
 
 // ---------------------------------------------------------------- scene helpers (same in letni-casi, lunine-mene, mrki)
 const stevilo = (x, d) => (Math.abs(x) < 0.5 * 10 ** -d ? 0 : x).toFixed(d).replace(".", ",").replace("-", "−");
-const MESECI = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
 function zaobljen(c2, x, y, w, h, r) {
   c2.beginPath(); c2.moveTo(x + r, y); c2.arcTo(x + w, y, x + w, y + h, r); c2.arcTo(x + w, y + h, x, y + h, r);
   c2.arcTo(x, y + h, x, y, r); c2.arcTo(x, y, x + w, y, r); c2.closePath();

@@ -14,6 +14,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import katex from "katex";
+import { napakaIzraza } from "../public/mat/izris.js";
 import { checkArithmetic } from "./lesson-math.js";
 
 export const OUR_PAPERS_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "content", "exam-papers");
@@ -32,11 +33,8 @@ function texErrors(md, where, err) {
   s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => (texs.push([t, true]), ""));
   s.replace(/\$\$[\s\S]+?\$\$/g, "").replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, p, t) => (texs.push([t, false]), ""));
   for (const [tex, display] of texs) {
-    try {
-      katex.renderToString(tex, { displayMode: display, throwOnError: true, strict: "ignore" });
-    } catch (e) {
-      err(`${where}: formula se ne izriše: $${tex.slice(0, 50)}$ (${String(e.message).split("\n")[0].slice(0, 70)})`);
-    }
+    const napaka = napakaIzraza(tex, { blok: display, katex });
+    if (napaka) err(`${where}: formula se ne izriše: $${tex.slice(0, 50)}$ (${napaka.slice(0, 70)})`);
   }
 }
 
