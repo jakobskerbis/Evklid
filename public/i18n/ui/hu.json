@@ -1012,6 +1012,7 @@
   "sc.say.sqrt": "négyzetgyök {a}",
   "sc.say.root": "{k}. gyök {a}",
   "sc.say.abs": "{a} abszolút értéke",
+  "sc.say.absLong": "abszolút érték: {a}, abszolút érték vége",
   "sc.say.binom": "{a} alatt a {b}",
   "sc.say.paren": "nyitó zárójel {a} záró zárójel",
   "sc.say.matrix": "mátrix {a}",

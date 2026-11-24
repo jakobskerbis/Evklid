@@ -1024,6 +1024,7 @@
   "sc.say.sqrt": "pierwiastek z {a}",
   "sc.say.root": "pierwiastek stopnia {k} z {a}",
   "sc.say.abs": "wartość bezwzględna {a}",
+  "sc.say.absLong": "wartość bezwzględna {a}, koniec wartości bezwzględnej",
   "sc.say.binom": "{a} po {b}",
   "sc.say.paren": "nawias {a} koniec nawiasu",
   "sc.say.matrix": "macierz {a}",
