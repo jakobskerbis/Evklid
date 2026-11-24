@@ -871,6 +871,7 @@
   "gc.errSyntax": "Shprehja nuk është e plotë ose nuk e kuptoj.",
   "gc.errArity": "Numër i gabuar vlerash brenda kllapave. Shkruaje kështu: {ex}",
   "gc.hintPoint": "Ky është një numër në kllapa. A e ke fjalën për një pikë? Ndaji koordinatat me pikëpresje: {ex}",
+  "gc.hintEuler": "«{src}» do të thotë {euler}: e është numri i Euler-it. Për shënimin shkencor shkruaj {fix}.",
   "gc.errOther": "Këtë nuk di ta vizatoj.",
   "gc.min": "Min",
   "gc.max": "Maks",

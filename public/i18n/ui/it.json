@@ -871,6 +871,7 @@
   "gc.errSyntax": "L'espressione è incompleta o non la capisco.",
   "gc.errArity": "Numero di valori tra parentesi errato. Scrivilo così: {ex}",
   "gc.hintPoint": "Questo è un numero tra parentesi. Intendevi un punto? Separa le coordinate con il punto e virgola: {ex}",
+  "gc.hintEuler": "«{src}» significa {euler}: e è il numero di Nepero. Per la notazione scientifica scrivi {fix}.",
   "gc.errOther": "Non so disegnare questo.",
   "gc.min": "Min",
   "gc.max": "Max",

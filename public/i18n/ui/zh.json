@@ -865,6 +865,7 @@
   "gc.errSyntax": "表达式不完整或无法理解。",
   "gc.errArity": "括号内的数值个数不正确。请这样写：{ex}",
   "gc.hintPoint": "这是括号中的一个数。你是想写一个点吗？请用分号分隔坐标：{ex}",
+  "gc.hintEuler": "“{src}”表示 {euler}：e 是欧拉数。若要科学记数法，请输入 {fix}。",
   "gc.errOther": "这个画不出来。",
   "gc.min": "最小",
   "gc.max": "最大",

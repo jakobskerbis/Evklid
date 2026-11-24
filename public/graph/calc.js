@@ -339,8 +339,7 @@ export function createCalculator(root, opts) {
     }
     if (o.kind === "value" || o.kind === "define" || o.kind === "list") {
       if (o.kind === "list" && Array.isArray(o.value) && o.value.length > 30) return `<div class="gc-val">= ${esc(fmt(o.value))}</div>`;
-      const hint = o.hint?.code === "pointSep" ? `<div class="gc-hint">${icon("info")}<span>${esc(t("gc.hintPoint", { ex: o.hint.ex.replace(" ", "\u00a0") }))}</span></div>` : "";
-      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>${hint}`;
+      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>${hintHtml(o)}`;
     }
     if (o.kind === "slider") {
       const sl = { ...sliderRange(o.value), ...(it.slider || {}) };
@@ -378,7 +377,18 @@ export function createCalculator(root, opts) {
         parts.push(`<div class="gc-val">${icon("trending-up")}<span>${t("gc.tangent")}: ${tex(`y = ${num(k)}x${nTxt}`)}</span></div>`);
       }
     }
+    parts.push(hintHtml(o));
     return parts.join("");
+  }
+
+  // Namig pod vrstico (pomen ostane): »(2,3)« je morda točka, »2e3x« je 2·e·3·x
+  function hintHtml(o) {
+    const h = o.hint;
+    const nb = (x) => String(x).replace(/ /g, "\u00a0");
+    let msg = "";
+    if (h?.code === "pointSep") msg = t("gc.hintPoint", { ex: nb(h.ex) });
+    else if (h?.code === "eulerE") msg = t("gc.hintEuler", { src: nb(h.src), euler: nb(h.euler), fix: nb(h.fix) });
+    return msg ? `<div class="gc-hint">${icon("info")}<span>${esc(msg)}</span></div>` : "";
   }
 
   // 6,283 → 2π (meje parametrov so pogosto večkratniki π)
