@@ -70,7 +70,7 @@ import { initFullscreen } from "./fullscreen.js";
 import { initSchedule, renderScheduleCard, lastSchedule } from "./urnik-kartica.js";
 import { stageCardHtml, vrstniRed, uvrstiKartice } from "./zacetna.js";
 import { initAnketa, preveriAnketo } from "./anketa-teden.js";
-import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
+import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, labIsFromLesson, lessonFromLab, UCI_TABS } from "./uci-se.js";
 import { initTestNotice } from "./testna-verzija.js";
 import { xpStatsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import * as izris from "./zacetna.js"; // izris Učne poti, skupen s strežnikom (server/pot-takoj.js)
@@ -532,6 +532,35 @@ const state = {
   sending: false,
   image: null, // { media_type, data, url }
 };
+// Vrnitev iz klepeta (chatReturnBack): { view, open, conv, oznaka? }. Z oznako (poskus, 3D model) je nad vnosnim poljem
+// gumb »Nazaj na: …«, da se učenec vrne tudi na računalniku, kjer ni gumba ← v glavi klepeta.
+let chatReturnVal = null;
+Object.defineProperty(state, "chatReturn", {
+  get: () => chatReturnVal,
+  set: (v) => {
+    chatReturnVal = v || null;
+    syncChatReturn();
+  },
+  enumerable: true,
+});
+// Vrnitev velja le v pogovoru, kjer je bilo vprašanje (conv); »nov« = še neustvarjen pogovor (pregled 2, #963).
+const returnConvOk = (r) => r.conv === null || r.conv === (state.conversationId ?? "nov");
+function syncChatReturn() {
+  const b = document.getElementById("chat-return");
+  if (!b) return;
+  const ime = chatReturnVal?.oznaka && returnConvOk(chatReturnVal) ? String(chatReturnVal.oznaka).slice(0, 80) : "";
+  b.hidden = !ime;
+  if (!ime) return b.replaceChildren();
+  b.innerHTML = `${icon("undo-2", "i-dir")}<span></span>`;
+  b.lastChild.textContent = t("chat.returnTo", { ime });
+}
+// »Vprašaj inštruktorja« iz poskusa ali 3D modela: klepet z vpisanim vprašanjem (pošlje ga učenec sam); ← , Nazaj in
+// gumb »Nazaj na: …« vrnejo na isto mesto (back = { view, open, oznaka }).
+function askTutorFrom(text, back = null) {
+  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "" } : null;
+  showView("chat");
+  fillInput(text);
+}
 
 // ---------- izris matematike in markdowna ----------
 
@@ -1016,14 +1045,16 @@ new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#vi
 nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(false) });
 // Klepet, odprt z »Vprašaj inštruktorja« v poli (vadnica.js oursTutor): ← in Nazaj vrneta na stran pole in polo
 // odpreta znova pri isti nalogi (UX maturanta 5). Velja le za ta pogovor, dokler je klepet odprt.
-function chatReturnBack() {
+// okno: gumb »Nazaj na: …« deluje tudi, ko je Inštruktor v premičnem oknu (poskus ali 3D je tedaj glavni pogled).
+function chatReturnBack({ okno = false } = {}) {
   const r = state.chatReturn;
-  if (currentView !== "chat" || !r || (r.conv !== null && r.conv !== state.conversationId)) return false;
+  if ((currentView !== "chat" && !(okno && isFloating("chat"))) || !r || !returnConvOk(r)) return false;
   state.chatReturn = null;
   showView(r.view);
   r.open();
   return true;
 }
+$("#chat-return").addEventListener("click", () => chatReturnBack({ okno: true }));
 $("#chat-back").addEventListener("click", () => chatReturnBack() || showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).
@@ -1163,7 +1194,7 @@ function backStep(wasOverlay) {
   // Plast v pogledu Kalkulator; šele za 3D in drugimi plastmi, ki ga prekrijejo.
   if (currentView === "graph" && calcBack()) return true;
   // Podstran pogleda: lekcija → kazalo, poskus → seznam, igra → seznam iger …
-  if (currentView === "uci" && uciBack({ textbookBack, labBack })) return true;
+  if (currentView === "uci" && uciBack({ textbookBack, labBack, lessonId: openLessonId() })) return true;
   if (currentView === "games" && gamesBack()) return true;
   if (currentView === "scan" && scanBack()) return true;
   if (currentView === "scan" && state.scanFromChat) return showView("chat"), true; // skener iz kamere v Inštruktorju
@@ -1473,6 +1504,7 @@ async function selectStudent(id) {
   keptPaper = null;
   nalogaPole?.pozabi(); // izbrani izvirniki pol (public/naloga-pole/klepet.js) so od prejšnjega profila
   state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
+  state.chatReturn = null; // ne vrnitev v poskus ali 3D drugega profila (pregled 2, #963)
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
   const want = state.student.settings.language;
   if (want && want !== currentLang()) {
@@ -1844,6 +1876,7 @@ async function openConversation(id, { mark = true } = {}) {
   const conv = await api(`/api/conversations/${id}`);
   state.conversationId = conv.id;
   state.convTopic = conv.topic?.id || null;
+  syncChatReturn(); // »Nazaj na: …« le v pogovoru, kjer je bilo vprašanje
   if (mark) markChat();
   await setChatFx(conv);
   if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
@@ -2041,6 +2074,7 @@ $("#new-chat").addEventListener("click", () => {
   if (state.conversationId) chatDraftSave(state.conversationId, ""); // besedilo v polju gre k novemu pogovoru
   state.conversationId = null;
   state.chatFx = null;
+  syncChatReturn();
   renderConversationList();
   renderEmptyChat();
   if ($("#input").value.trim()) chatDraftSave(); // prazno polje: osnutek novega pogovora, če je
@@ -2139,6 +2173,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     if (!state.conversationId) {
       const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST" });
       state.conversationId = conv.id;
+      if (state.chatReturn?.conv === "nov") state.chatReturn.conv = conv.id; // vrnitev iz poskusa ali 3D gre z novim pogovorom
     }
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
@@ -4463,7 +4498,21 @@ initPilot({
   choiceHtml: (task, o) => choiceHtml(task, o, false),
 });
 // Laboratorij (public/laboratorij.js): vsi virtualni poskusi; »Odpri temo v učbeniku« odpre lekcijo.
-initLab({ api, escapeHtml, getStudent: () => state.student, openLesson });
+// »Vprašaj inštruktorja« v poskusu: vrnitev iz klepeta odpre isti poskus (stanje ostane); poskus iz lekcije se po vrnitvi
+// s tipko Nazaj še vedno vrne v lekcijo. Tema iz poskusa: Nazaj iz lekcije vrne v poskus (lessonFromLab).
+initLab({
+  api,
+  escapeHtml,
+  getStudent: () => state.student,
+  openLesson: (id) => {
+    lessonFromLab(id);
+    openLesson(id);
+  },
+  askTutor: (text, oznaka) => {
+    const izLekcije = labIsFromLesson();
+    askTutorFrom(text, { view: "lab", oznaka, open: () => izLekcije && labFromLesson() });
+  },
+});
 // Uči se (public/uci-se.js): Učbenik, Laboratorij in 3D svet v enem pogledu; »Vprašaj inštruktorja« iz 3D atlasa.
 initUci({
   escapeHtml,
@@ -4472,9 +4521,10 @@ initUci({
   showLab,
   stopReading,
   odprto,
-  askTutor: (text) => {
-    showView("chat");
-    fillInput(text);
+  // vrni: { oznaka, open } iz 3D (atlas ali model): vrnitev iz klepeta znova odpre isti model ali strukturo.
+  // 3D, ki ga je odprl gumb v klepetu (public/odpri.js), je nad klepetom: brez vrnitve v Uči se, posnetek pa gre.
+  askTutor: (text, vrni = null) => {
+    askTutorFrom(text, vrni ? { ...vrni, view: currentView === "chat" ? null : "uci" } : null);
   },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
 });
