@@ -135,3 +135,22 @@ test("sporočilo za neskončni interval je v vseh 33 jezikih", () => {
     assert.ok(j["sc.errIntDivergeInf"] && j["sc.errIntDivergeInf"] !== sl["sc.errIntDivergeInf"], f);
   }
 });
+
+// ---------- 3. krog ----------
+test("x^n·e^(−x) do ∞: n! tudi pri velikih n (∞·0 v repu), sicer »ni mogoče zanesljivo«, nikoli »—«", () => {
+  const fact = (n) => {
+    let r = 1;
+    for (let i = 2; i <= n; i++) r *= i;
+    return r;
+  };
+  for (const n of [33, 35, 40, 50, 70]) assert.ok(check(`∫(x^${n}·e^(−x);0;∞)`, fact(n))[0], `n = ${n}: ${JSON.stringify(analyze(`∫(x^${n}·e^(−x);0;∞)`, ENV))}`);
+  for (const n of [100, 150]) {
+    const r = analyze(`∫(x^${n}·e^(−x);0;∞)`, ENV);
+    assert.ok(r.error?.code === "intUnknown" || check(`∫(x^${n}·e^(−x);0;∞)`, fact(n))[0], `n = ${n}: ${JSON.stringify(r)}`);
+  }
+});
+
+test("sestavljen izraz z integralom do ∞: le zanesljiva mesta", () => {
+  const r = evaluate("∫(abs(sin(x))/x^2;1;∞)·2", ENV);
+  assert.ok(r.error?.code === "intTimeout" || (r.est && digitsOk({ kind: "value", ...r }, 1.5488598147, r.digits)), JSON.stringify(r));
+});

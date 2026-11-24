@@ -926,8 +926,25 @@ export class GraphView {
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-    // številski integral: vedno »≈« in le mesta, ki jih podpira ocena napake (največ 5); med vlečenjem največ 30 ms
-    const info = withIntegralBudget(30, () => integrateInfo(f, a, b));
+    // številski integral: vedno »≈« in le mesta, ki jih podpira ocena napake (največ 5); med risanjem največ 30 ms,
+    // kar se ne izide, dokonča (do 2 s) takoj za risanjem in nato nariše znova (počasnejše naprave)
+    const key = `${o.id}|${a}|${b}`;
+    this._area ||= new Map();
+    // izid poznejšega izračuna uporabimo enkrat (v risanju, ki ga sproži); parametri se lahko vmes spremenijo
+    let info = this._area.get(key)?.fn === fn ? this._area.get(key).info : null;
+    this._area.delete(key);
+    if (!info) {
+      info = withIntegralBudget(30, () => integrateInfo(f, a, b));
+      if (info.timeout && !this._areaPending?.has(key)) {
+        (this._areaPending ||= new Set()).add(key);
+        setTimeout(() => {
+          const full = withIntegralBudget(2000, () => integrateInfo(f, a, b));
+          this._areaPending.delete(key);
+          this._area.set(key, { fn, info: full });
+          this.draw();
+        }, 0);
+      }
+    }
     const val = info.value;
     const digits = Number.isFinite(val) && info.err >= 0 && Number.isFinite(info.err) ? Math.min(5, Math.floor(Math.log10(Math.abs(val) / Math.max(info.err, 1e-300)))) : 0;
     // ročaja za meji
@@ -950,7 +967,7 @@ export class GraphView {
     ctx.font = "800 13px 'Nunito Variable', Nunito, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const text = digits >= 1 ? `∫ ≈ ${this.hooks.fmt(Number(val.toPrecision(digits)), digits)}` : Number.isFinite(val) && info.err <= 1e-9 * (info.abs || 0) ? "∫ ≈ 0" : "∫ ≈ ?";
+    const text = digits >= 1 ? `∫ ≈ ${this.hooks.fmt(Number(val.toPrecision(digits)), digits)}` : Number.isFinite(val) && info.err <= 1e-9 * (info.abs || 0) ? "∫ ≈ 0" : info.timeout ? "∫ ≈ …" : "∫ ≈ ?";
     ctx.lineWidth = 4;
     ctx.strokeStyle = C.bg;
     ctx.strokeText(text, mx, Number.isFinite(my) ? Math.max(14, Math.min(this.H - 14, my)) : this.Y(0) - 20);
