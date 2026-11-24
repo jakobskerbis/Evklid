@@ -860,6 +860,7 @@
   "gc.errChar": "不認識「{ch}」。",
   "gc.errSyntax": "運算式不完整或無法理解。",
   "gc.errArity": "括號內的數值個數不正確。請這樣寫：{ex}",
+  "gc.hintPoint": "這是括號中的一個數。你是想寫一個點嗎？請用分號分隔座標：{ex}",
   "gc.errOther": "這個畫不出來。",
   "gc.min": "最小",
   "gc.max": "最大",

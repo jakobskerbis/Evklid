@@ -872,6 +872,7 @@
   "gc.errChar": "Ne poznajem »{ch}«.",
   "gc.errSyntax": "Izraz nije završen ili ga ne razumijem.",
   "gc.errArity": "Pogrešan broj vrijednosti u zagradi. Napiši ovako: {ex}",
+  "gc.hintPoint": "Ovo je broj u zagradi. Misliš li na tačku? Koordinate odvoji tačkom-zarezom: {ex}",
   "gc.errOther": "Ovo ne znam nacrtati.",
   "gc.min": "Najmanje",
   "gc.max": "Najviše",

@@ -866,6 +866,7 @@
   "gc.errChar": "Nem ismerem: „{ch}”.",
   "gc.errSyntax": "A kifejezés befejezetlen, vagy nem értem.",
   "gc.errArity": "Rossz a zárójelben lévő értékek száma. Így írd: {ex}",
+  "gc.hintPoint": "Ez egy szám zárójelben. Pontra gondoltál? A koordinátákat pontosvesszővel válaszd el: {ex}",
   "gc.errOther": "Ezt nem tudom lerajzolni.",
   "gc.min": "Min.",
   "gc.max": "Max.",

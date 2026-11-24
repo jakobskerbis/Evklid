@@ -866,6 +866,7 @@
   "gc.errChar": "Je ne connais pas « {ch} ».",
   "gc.errSyntax": "L'expression est incomplète ou je ne la comprends pas.",
   "gc.errArity": "Nombre de valeurs incorrect entre les parenthèses. Écris-le ainsi : {ex}",
+  "gc.hintPoint": "Ceci est un nombre entre parenthèses. Tu voulais un point ? Sépare les coordonnées par un point-virgule : {ex}",
   "gc.errOther": "Je ne sais pas tracer ceci.",
   "gc.min": "Min",
   "gc.max": "Max",
