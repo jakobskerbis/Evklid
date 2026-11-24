@@ -10,7 +10,7 @@ import { gradienti, plastMehurckov, steklo, tekocina, mehurcki, stojalo, prijema
 import {
   MarmorBench, MagnezijBench, TiosulfatBench, PeroksidBench, MARMOR, MARMOR_OBLIKE, MARMOR_MASE, KONC_HCL, MG_TRAK, TIO, TIO_VOLUMNI, KATALIZATORJI, PEROKSID_V,
   BRIZGA, KalorimeterBench, TRDNE, DH, TERMOMETRI, ekstrapolacija, entalpija,
-  PlamenBench, IONI, BARVE_PLAMENA, valovRgb, cmf, kobalt, energijaFotona, E_NAB, POENOSTAVITVE_REAKCIJE,
+  PlamenBench, IONI, imeBarve, BARVE_PLAMENA, valovRgb, cmf, kobalt, energijaFotona, E_NAB, POENOSTAVITVE_REAKCIJE,
 } from "./lab-model-reakcije.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -1191,10 +1191,7 @@ export function labPlamenska(el, opts = {}) {
     if (!B.prizgan) return "ni";
     const vid = B.vidnostSoli();
     if (!B.vPlamenu || vid < 0.3) return B.zrak < 0.3 ? "rumena (saje)" : "bledo modra";
-    const [r, g, b] = B.barva().rgb, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn || 1;
-    const hue = (mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4) * 60;
-    const ime = hue < 15 || hue >= 340 ? "rdeča" : hue < 38 ? "oranžno rdeča" : hue < 52 ? "oranžna" : hue < 70 ? "rumena" : hue < 150 ? "zelena" : hue < 190 ? "modro zelena" : hue < 255 ? "modra" : hue < 300 ? "vijolična" : "rožnato vijolična";
-    return (mx - mn) / (mx || 1) < 0.3 ? `bledo ${ime}` : ime;
+    return imeBarve(B.barva().xyz); // po prevladujoči valovni dolžini (natrij 589 nm je rumena, ne »oranžno rdeča« kot odtenek v sRGB)
   }
   // Plamen: svetel (saje: rumeno oranžen, plapola) ali nesvetel (bledo vijoličasto moder z modrim notranjim stožcem); sol ga obarva.
   function plamen(bx, ct) {

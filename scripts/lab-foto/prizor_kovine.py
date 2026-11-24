@@ -317,6 +317,14 @@ def kovine():
         o = bpy.data.objects[f"kov-zrno{i}"]
         o2 = o.copy(); o2.data = o.data.copy(); M.zbirka("id-zrnca").objects.link(o2)
         o2.data.materials.clear(); o2.data.materials.append(id_mat(f"id-z{i}", vrednost=ID_MAX * (i + 0.5) / len(lege)))
+    # maske »mk-<oblika>«: bela kovina, ki sveti, za istim steklom z lomom na črnem ozadju. Kar na sliki kovine ni kovina
+    # (črni robovi stekla pri popolnem odboju, ki ga lom brez odboja ne izriše, šum lovilca senc na pultu za dnom),
+    # ima v maski 0; lab_izris s tem pomnoži alfo sloja kovine in sloj »id« (tam ozadje 1), da se izrez neopazno zlije.
+    bel_mk = svetilo("mk-bela", (1, 1, 1), 1.0)
+    for obl in ("zvitek", "trak", "zrnca", "prah"):
+        for o in list(M.zbirka("kov-" + obl).objects):
+            o2 = o.copy(); o2.data = o.data.copy(); M.zbirka("mk-" + obl).objects.link(o2)
+            o2.data.materials.clear(); o2.data.materials.append(bel_mk)
     bpy.context.view_layer.update()
 
     # ---- pogledi in sloji
@@ -357,12 +365,13 @@ def kovine():
     for pos in ("bucka", "casa"):
         for obl in ("zvitek", "trak", "zrnca", "prah"):
             for Pg, pre, ok in ((P, "k", ok_k), (D, "dno", None)):
-                sl = dict(ime=f"{pre}-{pos}-{obl}", pogled=Pg, vidno=["studio", "lom-" + pos, "kov-" + obl], lovilci=["pult"], vrsta="prosojno", prozornoSteklo=True)
+                mk = ["lom-" + pos, "mk-" + obl]
+                sl = dict(ime=f"{pre}-{pos}-{obl}", pogled=Pg, vidno=["studio", "lom-" + pos, "kov-" + obl], lovilci=["pult"], vrsta="prosojno", prozornoSteklo=True, maska=mk)
                 if ok:
                     sl["izrez"] = ok
                 sloji.append(sl)
                 if obl != "prah":
-                    sl2 = dict(ime=f"{pre}-{pos}-{obl}-id", pogled=Pg, vidno=["lom-" + pos, "id-" + obl], vrsta="debelina")
+                    sl2 = dict(ime=f"{pre}-{pos}-{obl}-id", pogled=Pg, vidno=["lom-" + pos, "id-" + obl], vrsta="debelina", maska=mk)
                     if ok:
                         sl2["izrez"] = ok
                     sloji.append(sl2)
