@@ -52,7 +52,6 @@ function gen(r, comma, depth = 0) {
   }
 }
 
-const FROMTEX_GAP = /\\binom|\\lfloor|\\lceil|\\left\|.*\\left\|/;
 const same = (a, b) => (Number.isNaN(a) && Number.isNaN(b)) || a === b || Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
 const sciValue = (text, comma) => {
   const r = evaluate(text, { comma });
@@ -79,9 +78,7 @@ for (const comma of [true, false]) {
       }
       const ast = parse(argSeparators(text, comma));
       const tex = toTex(ast, { comma, sep: comma ? ";" : "," });
-      // Znani vrzeli (ločeni najdbi, AUDIT-005 ju ne popravlja): fromTex ne pozna \binom, \lfloor, \lceil,
-      // gnezdeni |…|…|| pa po fromTex ni več enoumen. Te izraze preskočimo samo pri poti nazaj, ne pri primerjavi kalkulatorjev.
-      if (FROMTEX_GAP.test(tex)) continue;
+      // brez preskakovanja: fromTex pozna \\binom, \\lfloor, \\lceil in gnezdene \\left| … \\right| (AUDIT-018)
       let back;
       try {
         back = toNum(compile(parse(fromTex(tex)))({ x: 0.7 }));
@@ -94,14 +91,9 @@ for (const comma of [true, false]) {
   });
 }
 
-test("preskočeni del poti nazaj je majhen (vrzeli fromTex ne skrijejo večine izrazov)", () => {
-  const r = rng(20261124);
-  let skipped = 0;
-  for (let k = 0; k < 10000; k++) {
-    const text = gen(r, true);
-    try {
-      if (FROMTEX_GAP.test(toTex(parse(argSeparators(text, true)), { comma: true, sep: ";" }))) skipped++;
-    } catch {}
+test("toTex → fromTex: \\binom, \\lfloor, \\lceil in gnezdene absolutne vrednosti (AUDIT-018)", () => {
+  for (const [text, x] of [["nCr(5, 2)", 10], ["floor(2.5) + ceil(0.2)", 3], ["abs(abs(x) - 1)·abs(2 - abs(x - 3))", 0.3 * 0.3], ["abs(x - abs(x - 2)·abs(1 - x))", 0.31], ["floor(abs(-2.5))", 2], ["nCr(floor(5.5), ceil(1.5))", 10]]) {
+    const tex = toTex(parse(text), { comma: false });
+    assert.ok(same(compile(parse(fromTex(tex)))({ x: 0.7 }), x), `${text} → ${tex} → ${fromTex(tex)}`);
   }
-  assert.ok(skipped < 4000, `preskočenih ${skipped} od 10 000`);
 });

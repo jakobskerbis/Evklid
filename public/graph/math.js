@@ -1489,6 +1489,37 @@ export function fromTex(tex) {
     const [b, e2] = group(s, q);
     s = `${s.slice(0, m.index)}((${a})/(${b}))${s.slice(e2)}`;
   }
+  // \binom{n}{k} → nCr((n),(k)) (toTex ga zapiše za nCr)
+  for (let guard = 0; guard < 50; guard++) {
+    const m = /\\[dt]?binom/.exec(s);
+    if (!m) break;
+    let p = m.index + m[0].length;
+    while (s[p] === " ") p++;
+    const [a, e1] = group(s, p);
+    let q = e1;
+    while (s[q] === " ") q++;
+    const [b, e2] = group(s, q);
+    s = `${s.slice(0, m.index)}nCr((${a}),(${b}))${s.slice(e2)}`;
+  }
+  // \left| … \right| → abs(…), \lfloor … \rfloor → floor(…), \lceil … \rceil → ceil(…): po toTex je gnezdeno
+  // |a|b|c|| sicer nejasno (AUDIT-018). \right| brez para \left| (npr. \left. … \right|_{x=2}) ostane |.
+  {
+    const stack = [];
+    s = s.replace(/\\(left|right)\s*(\||\\[lr]floor|\\[lr]ceil|\\[lr]vert|\\\{|\\\}|\\?[^\sa-zA-Z\\]|\\langle|\\rangle)|\\([lr])(floor|ceil)\b/g, (m, side, d, lr, fc) => {
+      if (fc) return lr === "l" ? `${fc}(` : ")";
+      const abs = d === "|" || d === "\\lvert" || d === "\\rvert";
+      if (side === "left") {
+        stack.push(abs ? "abs" : d);
+        if (abs) return "abs(";
+        if (/floor|ceil/.test(d)) return `${d.slice(2)}(`;
+        return m;
+      }
+      const top = stack.pop();
+      if (abs && top === "abs") return ")";
+      if (/floor|ceil/.test(d)) return ")";
+      return m;
+    });
+  }
   for (let guard = 0; guard < 50; guard++) {
     const m = /\\sqrt(\[([^\]]*)\])?/.exec(s);
     if (!m) break;
