@@ -106,6 +106,19 @@ export function complete(text, hole) {
     };
     return group("_") && group("^") && /^[\s)\]]*$/.test(s.slice(j)) ? j : -1; // indeks za mejama ali −1
   })();
+  // ∫( z manj kot dvema »;« (ročno natipkan »∫(«, »∫(x«, »∫(x;0«): pred zaklepajem manjkajoči reži (AUDIT-037)
+  const intMissing = new Map();
+  {
+    const st = [];
+    for (let i = 0; i < s.length; i++) {
+      if (OPENERS.includes(s[i])) st.push({ int: s[i] === "(" && s[i - 1] === "∫", semis: 0 });
+      else if (s[i] === ";" && st.length) st[st.length - 1].semis++;
+      else if (CLOSERS.includes(s[i]) && st.length) {
+        const g = st.pop();
+        if (g.int && g.semis < 2) intMissing.set(i, 2 - g.semis);
+      }
+    }
+  }
   let out = "";
   const shift = new Array(s.length + 1).fill(0); // koliko znakov okvirčkov je pred položajem i (brez tistih NA i)
   let added = 0;
@@ -126,6 +139,10 @@ export function complete(text, hole) {
     if (want) {
       out += hole;
       added += hole.length;
+    }
+    for (let m = intMissing.get(i) || 0; m > 0; m--) {
+      out += `;${hole}`;
+      added += 1 + hole.length;
     }
     if (i < s.length) out += c;
   }
