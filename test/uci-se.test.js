@@ -254,6 +254,18 @@ test("Back: a lesson opened from an experiment's topic returns to the experiment
   u.setUciTab("3d");
   u.setUciTab("textbook");
   assert.equal(u.uciBack({ textbookBack: () => false, labBack: () => false }), false);
+  // Z id-jem lekcije (app.js): Nazaj vrne v poskus le iz iste lekcije, ne iz druge, odprte prek kazala.
+  u.setUciTab("lab");
+  u.lessonFromLab("FIZ-OS-9/upor-in-ohmov-zakon");
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => true, labBack: () => false, lessonId: "MAT-OS-9/linearna-funkcija" }), true);
+  assert.equal(u.uciTab(), "textbook", "druga lekcija: samo zapre");
+  assert.equal(u.uciBack({ textbookBack: () => false, labBack: () => false, lessonId: null }), false, "oznaka je porabljena");
+  u.setUciTab("lab");
+  u.lessonFromLab("FIZ-OS-9/upor-in-ohmov-zakon");
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => true, labBack: () => false, lessonId: "FIZ-OS-9/upor-in-ohmov-zakon" }), true);
+  assert.equal(u.uciTab(), "lab");
   // Poskus iz lekcije: app.js prebere oznako, preden gre v klepet, in jo po vrnitvi postavi nazaj.
   u.setUciTab("lab");
   u.labFromLesson();
@@ -274,7 +286,11 @@ test("Ask the tutor from an experiment or a 3D model: the chat opens with the qu
   assert.match(app, /currentView !== "chat" && !\(okno && isFloating\("chat"\)\)/);
   assert.match(html, /<button type="button" id="chat-return" class="secondary small chat-return" hidden><\/button>/);
   assert.match(app, /askTutorFrom\(text, \{ view: "lab", oznaka, open: \(\) => izLekcije && labFromLesson\(\) \}\)/);
-  assert.match(app, /askTutor: \(text, vrni = null\) => \{\s*askTutorFrom\(text, vrni \? \{ view: "uci", \.\.\.vrni \} : null\);/);
+  assert.match(app, /askTutor: \(text, vrni = null\) => \{\s*askTutorFrom\(text, vrni \? \{ \.\.\.vrni, view: currentView === "chat" \? null : "uci" \} : null\);/);
+  // Vrnitev velja le v pogovoru vprašanja; drug profil je ne podeduje (pregled 2, #963).
+  assert.match(app, /conv: state\.conversationId \?\? "nov"/);
+  assert.match(app, /if \(state\.chatReturn\?\.conv === "nov"\) state\.chatReturn\.conv = conv\.id;/);
+  assert.match(app, /state\.paperCtx = null; \/\/ skrit kontekst pole ne gre v pogovor drugega profila\s*state\.chatReturn = null;/);
   // Poskus: gumb le pri odklenjenem poskusu, oznaka je ime poskusa.
   const lab = read("public/laboratorij.js");
   assert.match(lab, /x\.locked \|\| !D\.askTutor \? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>/);
