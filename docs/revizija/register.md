@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-052 (AUDIT-041–047 so v PR-jih #974–#986)
+**Naslednji prosti ID:** AUDIT-054
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -52,6 +52,8 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-049 | P2 | Kalkulator, numerična stabilnost | Izguba natančnosti brez opozorila, z »=«: `sqrt(10^16+1)−10^8` = 0 (≈ 5·10⁻⁹), `1−cos(10^(−8))` = 0, `sqrt(10^10+1)−10^5` = 0,00000499999441672 (pravilnih 5 mest); `ln(e^(1000))` → »ni definiran« (1000) | ZAKLJUČENO | `7623e05` | j, 24. 11. (stresni test) | [#989](https://github.com/jakobskerbis/Evklid/pull/989) |
 | AUDIT-050 | P2 | Kalkulator, kombinatorika in izpis | Cela števila nad 2⁵³ zaokrožena z »=«: `nCr(100;50)` = 1,008913445·10²⁹ (točno 100891344545564193334812497256), `2^60`, `100!`, `nCr(60;30)`; #967 tega ne pokrije | ZAKLJUČENO | `7623e05` | j, 24. 11. (stresni test) | [#990](https://github.com/jakobskerbis/Evklid/pull/990) |
 | AUDIT-051 | P3 | Kalkulator, vnos | `lim_(x→0)(…)` s tipkovnice klepeta (symbols.js) v kalkulatorju »Ne poznam →«; `√(−1)` → »ni definiran (npr. deljenje z 0)«, `√(−1)+i` pa 2i | ZAKLJUČENO | `7623e05` | j, 24. 11. (stresni test) | [#991](https://github.com/jakobskerbis/Evklid/pull/991) |
+| AUDIT-052 | P2 | Kalkulator, vnos | Kazalec znotraj »10« pri ×10ˣ tiho spremeni število (`2×1|0^(5)` + ⌫ → `2×0^(5)`); bralnik: »konec absolutne vrednosti« | PRIPRAVLJENO ZA PONOVNI PREGLED | `d16a7c1` | Claude (pregled #945), 24. 11. | #992 |
+| AUDIT-053 | P1 | Kalkulator, enačbe | Nepreverjena ničla dobi ugibano točno obliko z »=«: `x^15+7x−1=0` → »= 1/7«, `x^25+10^(−30)x−1=0` → »= 1«, »= 141/11« pri polinomih s π (na evklid.app od #968) | PRIPRAVLJENO ZA PONOVNI PREGLED | `710429a` | Claude (pregled #979/#980), 24. 11. | #993 |
 
 ## Zgodovina statusov
 
@@ -85,3 +87,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: Stresni test kalkulatorja (j, 15 primerov, SymPy 1.14, `main` @ `7623e05`, Chromium 360 in 1280 px): AUDIT-048 do AUDIT-051 NOVO → POTRJENO → ODOBRENO (j) → V IZVEDBI (Claude). AUDIT-047 je že zaseden (#986).
 - 24. 11. 2026: AUDIT-048 (#988), 049 (#989), 050 (#990, nad #989), 051 (#991) V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (Claude). CI zeleno, pregledi po `docs/pregled.md` (#989 dva pregledovalca), najdbe pregledovalcev popravljene v istih PR-jih. Združitev samo z j-jevo odobritvijo.
 - 24. 11. 2026: AUDIT-048 (#988), 049 (#989), 050 (#990), 051 (#991) → ZAKLJUČENO: j odobril združitev, združeno v `main` (`710429a`), na evklid.app po zelenih testih (preverjeno v živo).
+- 24. 11. 2026: AUDIT-052 in AUDIT-053 (Claude); prvotno označena kot AUDIT-048/050, kar je že zasedla druga seja – preštevilčeno, naslova PR #992 in #993 popravljena. Veriga urejevalnika #945, #970–#974, #965 združena (j); #986 zaprt, ker ga vsebuje veriga.
