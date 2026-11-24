@@ -6,7 +6,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -252,8 +252,19 @@ export function createScientific(root, opts) {
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
+    // izbira, ki zajame le del imenovane predloge, se razširi na celo predlogo (ne ostane »;0;1)«); oklepaj, ki bi
+    // ostal brez para, ostane (AUDIT-039)
+    {
+      const a = input.selectionStart ?? input.value.length;
+      const b = input.selectionEnd ?? a;
+      if (a !== b) {
+        const d = deleteSpan(input.value, a, b);
+        input.value = d.text;
+        input.setSelectionRange(d.pos, d.pos);
+      }
+    }
     const s = input.selectionStart ?? input.value.length;
-    const e = input.selectionEnd ?? s;
+    const e = s;
     const at = ins.indexOf("@");
     const clean = ins.replace("@", "");
     input.value = input.value.slice(0, s) + clean + input.value.slice(e);
@@ -957,6 +968,13 @@ export function createScientific(root, opts) {
     if (e.inputType === "historyUndo" || e.inputType === "historyRedo") {
       e.preventDefault();
       history(e.inputType === "historyUndo" ? -1 : 1);
+      return;
+    }
+    // tipkanje čez izbiro: izbira dela imenovane predloge se razširi na celo predlogo, oklepaj, ki bi ostal brez para,
+    // ostane (AUDIT-039); vstavi insert(), ker WebKit spremenjene izbire v beforeinput ne upošteva
+    if (e.inputType === "insertText" && e.data && input.selectionStart !== input.selectionEnd) {
+      e.preventDefault();
+      insert(e.data);
       return;
     }
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
