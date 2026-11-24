@@ -1298,6 +1298,7 @@ export default {
   "sc.errSumLimit": "Preveč členov: vsota ima lahko največ 100 000 členov.",
   "sc.errIntDiverge": "Integral ne obstaja: divergira (funkcija ima na intervalu pol ali neintegrabilno singularnost).",
   "sc.errIntPv": "Integral ne obstaja: divergira (funkcija ima na intervalu pol). Obstaja le Cauchyjeva glavna vrednost {pv}, ki pa ni vrednost integrala.",
+  "sc.errIntDivergeInf": "Integral ne obstaja: na neskončnem intervalu divergira (funkcija proti neskončnosti ne pada dovolj hitro).",
   "sc.errIntUnknown": "Integrala ni mogoče zanesljivo izračunati: numerični izračun ne da nobenega zanesljivega mesta.",
   "sc.more": "Vse funkcije",
   "sc.functions": "Funkcije",

@@ -275,7 +275,8 @@ export function evaluate(text, env = {}) {
       if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
       // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
       const div = infos.find((r) => r.diverges);
-      if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
+      // ∫(1/x; 1; ∞): divergira zaradi neskončnega intervala (inf), ne zaradi pola
+      if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : Number.isFinite(div.at) ? {} : { inf: true } } };
       const zm = infos.map((r) => (Number.isFinite(r.value) ? zanesljivaMesta(r) : null));
       // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
       if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !zm[i]))) return { error: { code: "intUnknown", info: {} } };
