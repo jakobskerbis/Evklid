@@ -1,12 +1,7 @@
 // Skupni pripomočki za orodja (tools.js, tools-chem.js, tools-prob.js).
+import { izrisi } from "../mat/izris.js";
 export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-export const texHtml = (s, display = false) => {
-  try {
-    return window.katex.renderToString(s, { throwOnError: false, displayMode: display, strict: "ignore" });
-  } catch {
-    return esc(s);
-  }
-};
+export const texHtml = (s, display = false) => izrisi(s, { blok: display });
 export const usesComma = (locale) => {
   try {
     return (1.5).toLocaleString(locale || "sl").includes(",");
