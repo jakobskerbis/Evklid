@@ -78,7 +78,7 @@ for (const comma of [true, false]) {
       }
       const ast = parse(argSeparators(text, comma));
       const tex = toTex(ast, { comma, sep: comma ? ";" : "," });
-      // brez preskakovanja: fromTex pozna \\binom, \\lfloor, \\lceil in gnezdene \\left| … \\right| (AUDIT-018)
+      // brez preskakovanja: fromTex pozna \\binom, \\lfloor, \\lceil in gnezdene \\left| … \\right| (AUDIT-027)
       let back;
       try {
         back = toNum(compile(parse(fromTex(tex)))({ x: 0.7 }));
@@ -91,7 +91,7 @@ for (const comma of [true, false]) {
   });
 }
 
-test("toTex → fromTex: \\binom, \\lfloor, \\lceil in gnezdene absolutne vrednosti (AUDIT-018)", () => {
+test("toTex → fromTex: \\binom, \\lfloor, \\lceil in gnezdene absolutne vrednosti (AUDIT-027)", () => {
   for (const [text, x] of [["nCr(5, 2)", 10], ["floor(2.5) + ceil(0.2)", 3], ["abs(abs(x) - 1)·abs(2 - abs(x - 3))", 0.3 * 0.3], ["abs(x - abs(x - 2)·abs(1 - x))", 0.31], ["floor(abs(-2.5))", 2], ["nCr(floor(5.5), ceil(1.5))", 10]]) {
     const tex = toTex(parse(text), { comma: false });
     assert.ok(same(compile(parse(fromTex(tex)))({ x: 0.7 }), x), `${text} → ${tex} → ${fromTex(tex)}`);

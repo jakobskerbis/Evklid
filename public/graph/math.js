@@ -1561,7 +1561,7 @@ export function fromTex(tex) {
     s = `${s.slice(0, m.index)}nCr((${a}),(${b}))${s.slice(e2)}`;
   }
   // \left| … \right| → abs(…), \lfloor … \rfloor → floor(…), \lceil … \rceil → ceil(…): po toTex je gnezdeno
-  // |a|b|c|| sicer nejasno (AUDIT-018). \right| brez para \left| (npr. \left. … \right|_{x=2}) ostane |.
+  // |a|b|c|| sicer nejasno (AUDIT-027). \right| brez para \left| (npr. \left. … \right|_{x=2}) ostane |.
   {
     const stack = [];
     s = s.replace(/\\(left|right)\s*(\||\\[lr]floor|\\[lr]ceil|\\[lr]vert|\\\{|\\\}|\\?[^\sa-zA-Z\\]|\\langle|\\rangle)|\\([lr])(floor|ceil)\b/g, (m, side, d, lr, fc) => {
