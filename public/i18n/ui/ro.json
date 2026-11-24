@@ -1027,6 +1027,7 @@
   "sc.grp.cplx": "Numere complexe",
   "sc.fmtEng": "Notație inginerească (10³ⁿ)",
   "sc.onePeriod": "Soluții într-o perioadă:",
+  "sc.precision": "Calculat cu precizie mai mare: cele ~16 cifre obișnuite nu ajung aici.",
   "sc.noReal": "Nu există soluții reale, doar complexe.",
   "sc.searchedNone": "Nu există soluție pe interval (în afara lui nu am căutat):",
   "sc.sysNone": "Sistemul nu are soluție.",

@@ -1021,6 +1021,7 @@
   "sc.grp.cplx": "Nombres complexes",
   "sc.fmtEng": "Notation ingénieur (10³ⁿ)",
   "sc.onePeriod": "Solutions sur une période :",
+  "sc.precision": "Calculé avec une précision accrue : les ~16 chiffres habituels ne suffisent pas ici.",
   "sc.noReal": "Pas de solution réelle, seulement des solutions complexes.",
   "sc.searchedNone": "Pas de solution sur l'intervalle (je n'ai pas cherché en dehors) :",
   "sc.sysNone": "Le système n'a pas de solution.",

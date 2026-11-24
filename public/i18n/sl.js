@@ -1316,6 +1316,7 @@ export default {
   "sc.grp.cplx": "Kompleksna števila",
   "sc.fmtEng": "Inženirski zapis (10³ⁿ)",
   "sc.onePeriod": "Rešitve na eni periodi:",
+  "sc.precision": "Računano z večjo natančnostjo: navadnih približno 16 mest tu ne zadošča.",
   "sc.noReal": "Realnih rešitev ni, so samo kompleksne.",
   "sc.searchedNone": "Rešitve ni na intervalu (zunaj njega nisem iskal):",
   "sc.sysNone": "Sistem nima rešitve.",

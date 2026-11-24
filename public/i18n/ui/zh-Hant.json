@@ -1015,6 +1015,7 @@
   "sc.grp.cplx": "複數",
   "sc.fmtEng": "工程記號 (10³ⁿ)",
   "sc.onePeriod": "一個週期內的解：",
+  "sc.precision": "以更高精度計算：一般約 16 位數字在此不夠。",
   "sc.noReal": "沒有實數解，只有複數解。",
   "sc.searchedNone": "該區間內無解（區間外未搜尋）：",
   "sc.sysNone": "方程組無解。",

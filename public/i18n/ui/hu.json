@@ -1021,6 +1021,7 @@
   "sc.grp.cplx": "Komplex számok",
   "sc.fmtEng": "Mérnöki alak (10³ⁿ)",
   "sc.onePeriod": "Megoldások egy perióduson belül:",
+  "sc.precision": "Nagyobb pontossággal számolva: a szokásos kb. 16 számjegy itt nem elég.",
   "sc.noReal": "Nincs valós megoldás, csak komplex.",
   "sc.searchedNone": "Az intervallumon nincs megoldás (azon kívül nem kerestem):",
   "sc.sysNone": "Az egyenletrendszernek nincs megoldása.",

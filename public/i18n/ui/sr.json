@@ -1027,6 +1027,7 @@
   "sc.grp.cplx": "Комплексни бројеви",
   "sc.fmtEng": "Инжењерски запис (10³ⁿ)",
   "sc.onePeriod": "Решења у оквиру једног периода:",
+  "sc.precision": "Izračunato sa većom tačnošću: uobičajenih oko 16 cifara ovde nije dovoljno.",
   "sc.noReal": "Нема реалних решења, само комплексна.",
   "sc.searchedNone": "Нема решења на интервалу (ван њега нисам тражио):",
   "sc.sysNone": "Систем нема решења.",

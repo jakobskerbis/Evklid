@@ -1033,6 +1033,7 @@
   "sc.grp.cplx": "Komplexní čísla",
   "sc.fmtEng": "Inženýrský zápis (10³ⁿ)",
   "sc.onePeriod": "Řešení v jedné periodě:",
+  "sc.precision": "Spočítáno s vyšší přesností: obvyklých asi 16 číslic zde nestačí.",
   "sc.noReal": "Reálná řešení neexistují, jsou jen komplexní.",
   "sc.searchedNone": "Na intervalu není řešení (mimo něj jsem nehledal):",
   "sc.sysNone": "Soustava nemá řešení.",

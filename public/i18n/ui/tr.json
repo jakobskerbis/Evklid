@@ -1021,6 +1021,7 @@
   "sc.grp.cplx": "Karmaşık sayılar",
   "sc.fmtEng": "Mühendislik gösterimi (10³ⁿ)",
   "sc.onePeriod": "Bir periyottaki çözümler:",
+  "sc.precision": "Daha yüksek hassasiyetle hesaplandı: olağan yaklaşık 16 basamak burada yetmiyor.",
   "sc.noReal": "Gerçek çözüm yok, yalnızca karmaşık çözümler var.",
   "sc.searchedNone": "Aralıkta çözüm yok (dışında aramadım):",
   "sc.sysNone": "Sistemin çözümü yok.",

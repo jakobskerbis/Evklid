@@ -1033,6 +1033,7 @@
   "sc.grp.cplx": "Liczby zespolone",
   "sc.fmtEng": "Notacja inżynierska (10³ⁿ)",
   "sc.onePeriod": "Rozwiązania w jednym okresie:",
+  "sc.precision": "Obliczono z większą dokładnością: zwykłe ok. 16 cyfr tu nie wystarcza.",
   "sc.noReal": "Brak rozwiązań rzeczywistych, są tylko zespolone.",
   "sc.searchedNone": "Brak rozwiązania w przedziale (poza nim nie szukałem):",
   "sc.sysNone": "Układ nie ma rozwiązania.",

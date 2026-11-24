@@ -1021,6 +1021,7 @@
   "sc.grp.cplx": "Namba changamano",
   "sc.fmtEng": "Mwandiko wa kihandisi (10³ⁿ)",
   "sc.onePeriod": "Majibu ndani ya kipindi kimoja:",
+  "sc.precision": "Imehesabiwa kwa usahihi wa juu zaidi: tarakimu 16 za kawaida hazitoshi hapa.",
   "sc.noReal": "Hakuna majibu halisi, kuna changamano tu.",
   "sc.searchedNone": "Hakuna suluhisho katika kipindi hiki (sikutafuta nje yake):",
   "sc.sysNone": "Mfumo hauna jibu.",

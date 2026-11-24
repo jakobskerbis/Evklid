@@ -1015,6 +1015,7 @@
   "sc.grp.cplx": "复数",
   "sc.fmtEng": "工程记数法 (10³ⁿ)",
   "sc.onePeriod": "一个周期内的解：",
+  "sc.precision": "以更高精度计算：通常约 16 位数字在此不够。",
   "sc.noReal": "没有实数解，只有复数解。",
   "sc.searchedNone": "该区间内无解（区间外未搜索）：",
   "sc.sysNone": "方程组无解。",
