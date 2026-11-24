@@ -6,7 +6,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, texSpeech, SAY_WORDS } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -217,7 +217,35 @@ export function createScientific(root, opts) {
   const OPS = /^[+×÷^²³⁻!%−]/;
   // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
   // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
+  // Lastna razveljavitev (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y, »razveljavi« na telefonu): vnos se spreminja tudi s kodo
+  // (⌫, tipke na zaslonu), kar sistemsko razveljavitev pokvari ali izbriše (pregled #945: prazno polje v Firefoxu,
+  // kazalec na napačnem mestu). Stanje je besedilo in kazalec PRED spremembo; zapiše ga update() ob vsaki spremembi.
+  const undo = { back: [], fwd: [], cur: { v: "", p: 0 } };
+  function record() {
+    const v = input.value;
+    const p = input.selectionStart ?? v.length;
+    if (v === undo.cur.v) {
+      undo.cur.p = p;
+      return;
+    }
+    undo.back.push(undo.cur);
+    if (undo.back.length > 200) undo.back.shift();
+    undo.fwd = [];
+    undo.cur = { v, p };
+  }
+  function history(dir) {
+    const from = dir < 0 ? undo.back : undo.fwd;
+    const to = dir < 0 ? undo.fwd : undo.back;
+    if (!from.length) return;
+    to.push({ v: input.value, p: input.selectionStart ?? input.value.length });
+    undo.cur = from.pop();
+    input.value = undo.cur.v;
+    input.setSelectionRange(undo.cur.p, undo.cur.p);
+    recall = -1;
+    update();
+  }
   function insert(text, o = {}) {
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? input.value.length;
     if (o.replace) input.value = "";
     if (o.angle && ANGLES.includes(o.angle) && st.angle !== o.angle) {
       st.angle = o.angle;
@@ -227,8 +255,19 @@ export function createScientific(root, opts) {
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
-    // izbira, ki zajame le del predloge, se razširi na celo predlogo (ne ostane »;0;1)«, AUDIT-039)
-    const [s, e] = selectionSpan(input.value, input.selectionStart ?? input.value.length, input.selectionEnd ?? input.selectionStart ?? input.value.length);
+    // izbira, ki zajame le del imenovane predloge, se razširi na celo predlogo (ne ostane »;0;1)«); oklepaj, ki bi
+    // ostal brez para, ostane (AUDIT-039)
+    {
+      const a = input.selectionStart ?? input.value.length;
+      const b = input.selectionEnd ?? a;
+      if (a !== b) {
+        const d = deleteSpan(input.value, a, b);
+        input.value = d.text;
+        input.setSelectionRange(d.pos, d.pos);
+      }
+    }
+    const s = input.selectionStart ?? input.value.length;
+    const e = s;
     const at = ins.indexOf("@");
     const clean = ins.replace("@", "");
     input.value = input.value.slice(0, s) + clean + input.value.slice(e);
@@ -247,6 +286,7 @@ export function createScientific(root, opts) {
   function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
+    if (input.value === undo.cur.v) undo.cur.p = s; // razveljavitev vrne kazalec sem (selectionchange je lahko še na poti)
     // varovalo: brisanje, po katerem se zapis ne bi izrisal, se ne zgodi (AUDIT-034)
     const ok = (x) => {
       try {
@@ -264,27 +304,7 @@ export function createScientific(root, opts) {
       update();
     } else showEntry();
   }
-  // Zamenja le spremenjeni del besedila z execCommand: ostane sistemska razveljavitev (Ctrl+Z, Ctrl+Y), ki jo
-  // input.value = … izbriše (pregled #945). Kjer ne gre (polje brez fokusa na telefonu), navadna zamenjava.
-  let replacing = false;
-  function replaceText(next) {
-    const old = input.value;
-    let a = 0;
-    while (a < old.length && a < next.length && old[a] === next[a]) a++;
-    let b = 0;
-    while (b < old.length - a && b < next.length - a && old[old.length - 1 - b] === next[next.length - 1 - b]) b++;
-    const mid = next.slice(a, next.length - b);
-    let done = false;
-    if (document.activeElement === input && typeof document.execCommand === "function") {
-      replacing = true;
-      try {
-        input.setSelectionRange(a, old.length - b);
-        done = mid ? document.execCommand("insertText", false, mid) : document.execCommand("delete", false);
-      } catch {}
-      replacing = false;
-    }
-    if (!done || input.value !== next) input.value = next;
-  }
+  const replaceText = (next) => (input.value = next);
   const del = () => edit(backspace);
   const delForward = () => edit(deleteForward);
   // ◀ ▶: na naslednje mesto kazalca v zapisu (iz integranda v mejo, čez ime funkcije), ne za en znak
@@ -326,7 +346,7 @@ export function createScientific(root, opts) {
       case "sumLimit":
         return t("sc.errSumLimit");
       case "intDiverge":
-        return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t("sc.errIntDiverge");
+        return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t(e.info?.inf ? "sc.errIntDivergeInf" : "sc.errIntDiverge");
       case "intUnknown":
       case "intTimeout":
         return t("sc.errIntUnknown");
@@ -577,12 +597,13 @@ export function createScientific(root, opts) {
   }
   // bralnik zaslona: opis matematike namesto surovega vnosa (AUDIT-040), z besedami v jeziku vmesnika
   const sayWords = () => Object.fromEntries(t("sc.say.words").split("|").map((w, i) => [SAY_WORDS[i], w.trim()]));
+  const sayGreek = () => Object.fromEntries(t("sc.say.greek").split("|").map((w, i) => [SAY_GREEK[i], w.trim()]));
   function speak(tex) {
     const el = $(".sc-say");
     if (!el) return;
     let txt = "";
     try {
-      txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), parse: window.katex.__parse }) : "";
+      txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), greek: sayGreek(), parse: window.katex.__parse }) : "";
     } catch {}
     if (el.textContent !== txt) el.textContent = txt;
   }
@@ -624,8 +645,13 @@ export function createScientific(root, opts) {
     });
   });
   input.addEventListener("keyup", () => showEntry());
-  document.addEventListener("selectionchange", () => document.activeElement === input && showEntry());
+  document.addEventListener("selectionchange", () => {
+    if (document.activeElement !== input) return;
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? undo.cur.p; // kazalec pred naslednjo spremembo
+    showEntry();
+  });
   function update() {
+    record();
     const text = input.value;
     const prev = $(".sc-preview");
     const live = $(".sc-live");
@@ -947,19 +973,18 @@ export function createScientific(root, opts) {
   });
   // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
   input.addEventListener("beforeinput", (e) => {
-    if (e.isComposing || replacing) return;
-    // tipkanje čez izbiro: izbira dela predloge se najprej razširi na celo predlogo (AUDIT-039)
-    if (e.inputType.startsWith("insert") && input.selectionStart !== input.selectionEnd) {
-      const [a, b] = selectionSpan(input.value, input.selectionStart, input.selectionEnd);
-      if (a !== input.selectionStart || b !== input.selectionEnd) {
-        input.setSelectionRange(a, b);
-        // WebKit ne upošteva spremenjene izbire v beforeinput: vstavimo sami
-        if (e.inputType === "insertText" && e.data) {
-          e.preventDefault();
-          insert(e.data);
-          return;
-        }
-      }
+    if (e.isComposing) return;
+    if (e.inputType === "historyUndo" || e.inputType === "historyRedo") {
+      e.preventDefault();
+      history(e.inputType === "historyUndo" ? -1 : 1);
+      return;
+    }
+    // tipkanje čez izbiro: izbira dela imenovane predloge se razširi na celo predlogo, oklepaj, ki bi ostal brez para,
+    // ostane (AUDIT-039); vstavi insert(), ker WebKit spremenjene izbire v beforeinput ne upošteva
+    if (e.inputType === "insertText" && e.data && input.selectionStart !== input.selectionEnd) {
+      e.preventDefault();
+      insert(e.data);
+      return;
     }
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
       e.preventDefault();
@@ -970,6 +995,11 @@ export function createScientific(root, opts) {
     }
   });
   input.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && /^[zy]$/i.test(e.key)) {
+      e.preventDefault();
+      history(e.key.toLowerCase() === "y" || e.shiftKey ? 1 : -1);
+      return;
+    }
     if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && input.value) {
       e.preventDefault();
       move(e.key === "ArrowLeft" ? -1 : 1);
