@@ -35,7 +35,7 @@ export function initLab(deps) {
       const x = find(openKey);
       if (!x || x.locked) return;
       const mount = box().querySelector(".lab-mount");
-      const kontekst = { v: 1, sourceType: "lab", sourceId: x.key, lessonId: x.topics[0]?.id || null };
+      const kontekst = { v: 1, sourceType: "lab", sourceId: x.key }; // temo izbere strežnik (učenčeva pot)
       import("./sim/lab.js")
         .then((m) => Object.assign(kontekst, m.stanjePoskusa(mount)))
         .catch(() => {})

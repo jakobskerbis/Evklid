@@ -277,9 +277,9 @@ test("Back: a lesson opened from an experiment's topic returns to the experiment
 test("Ask the tutor from an experiment or a 3D model: the chat opens with the question typed in and leads back to the same place", () => {
   const app = read("public/app.js");
   // En pomočnik za vse: vrnitev (← , tipka Nazaj, gumb »Nazaj na: …«) prek state.chatReturn, vprašanje samo vpisano.
-  const fn = app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 400);
+  const fn = app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 700);
   assert.match(fn, /state\.chatReturn = /);
-  assert.match(fn, /showView\("chat"\);\s*state\.ucniKontekst = [^;]*;\s*fillInput\(text\);/);
+  assert.match(fn, /showView\("chat"\);\s*ucniKontekstConv = [^;]*;\s*state\.ucniKontekst = [^;]*;\s*if \(!\$\("#input"\)\.value\.includes\(text\)\) fillInput\(text\);/);
   assert.match(app, /Object\.defineProperty\(state, "chatReturn"/);
   assert.match(app, /\$\("#chat-return"\)\.addEventListener\("click", \(\) => chatReturnBack\(\{ okno: true \}\)\)/);
   // Inštruktor v premičnem oknu: gumb »Nazaj na: …« vrne tudi takrat (glavni pogled ni klepet).

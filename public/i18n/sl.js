@@ -482,7 +482,7 @@ export default {
   "chat.new": "Nov pogovor",
   "chat.returnTo": "Nazaj na: {ime}",
   "chat.ctxLab": "Inštruktor bo videl nastavitve poskusa (v tabeli še ni meritev).",
-  "chat.ctxLabRows": "Inštruktor bo videl nastavitve poskusa in meritve iz tabele ({n}).",
+  "chat.ctxLabRows": "Inštruktor bo videl nastavitve poskusa in meritve iz tabele (vrstic: {n}).",
   "chat.ctx3d": "Inštruktor bo videl izbrani del v 3D svetu.",
   "chat.list": "Pogovori",
   "chat.photoPreview": "Predogled fotografije",

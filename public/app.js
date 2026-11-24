@@ -545,6 +545,8 @@ Object.defineProperty(state, "chatReturn", {
 });
 // Posnetek poskusa ali 3D modela za naslednje vpisano sporočilo (askTutorFrom); vrstica »Inštruktor vidi …« mu sledi.
 let ucniKontekstVal = null;
+let ucniKontekstConv = null; // pogovor vprašanja (kot chatReturn.conv): v drug pogovor posnetek ne gre (pregled 2, #975)
+const ucniKontekstOk = () => !!ucniKontekstVal && ucniKontekstConv === (state.conversationId ?? "nov");
 Object.defineProperty(state, "ucniKontekst", {
   get: () => ucniKontekstVal,
   set: (v) => {
@@ -562,8 +564,8 @@ function syncChatReturn() {
   b.hidden = !ime;
   // Kaj inštruktor ve (faza B): ena vrstica pod gumbom, dokler posnetek ni poslan.
   const ve = document.getElementById("chat-kontekst");
-  const k = state.ucniKontekst;
-  const kaj = !k ? "" : k.sourceType === "lab" ? (k.measurements?.vrstice?.length ? "chat.ctxLabRows" : "chat.ctxLab") : "chat.ctx3d";
+  const k = ucniKontekstOk() ? state.ucniKontekst : null;
+  const kaj = !k ? "" : k.sourceType !== "lab" ? "chat.ctx3d" : k.measurements?.vrstice?.length ? "chat.ctxLabRows" : k.parameters?.length ? "chat.ctxLab" : "";
   if (ve) {
     ve.hidden = !kaj;
     ve.textContent = kaj ? t(kaj, { n: k.measurements?.vrstice?.length || 0 }) : "";
@@ -578,8 +580,9 @@ function syncChatReturn() {
 function askTutorFrom(text, back = null) {
   state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "" } : null;
   showView("chat");
+  ucniKontekstConv = state.conversationId ?? "nov";
   state.ucniKontekst = back?.kontekst && typeof back.kontekst === "object" ? back.kontekst : null;
-  fillInput(text);
+  if (!$("#input").value.includes(text)) fillInput(text); // drugo vprašanje iz istega poskusa ne podvoji začetka
 }
 
 // ---------- izris matematike in markdowna ----------
@@ -2198,12 +2201,13 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
       const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST" });
       state.conversationId = conv.id;
       if (state.chatReturn?.conv === "nov") state.chatReturn.conv = conv.id; // vrnitev iz poskusa ali 3D gre z novim pogovorom
+      if (ucniKontekstConv === "nov") ucniKontekstConv = conv.id; // posnetek tudi
     }
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = paperOpt || (state.paperCtx?.conv === sentTo ? state.paperCtx : null);
     // Posnetek poskusa ali 3D modela (»Vprašaj inštruktorja«, server/ucni-kontekst.js): z naslednjim vpisanim sporočilom.
-    const kontekst = fromInput && !paperCtx ? state.ucniKontekst : null;
+    const kontekst = fromInput && !paperCtx && ucniKontekstOk() ? state.ucniKontekst : null;
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     zgodovina.zadnji = {}; // tudi starejši, še neizrisani odgovori teh gumbov ne dobijo več
     const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)

@@ -283,7 +283,7 @@
   "chat.new": "New conversation",
   "chat.returnTo": "Back to: {ime}",
   "chat.ctxLab": "The tutor will see the experiment's settings (no measurements in the table yet).",
-  "chat.ctxLabRows": "The tutor will see the experiment's settings and the measurements from the table ({n}).",
+  "chat.ctxLabRows": "The tutor will see the experiment's settings and the measurements from the table (rows: {n}).",
   "chat.ctx3d": "The tutor will see the selected model and part.",
   "chat.list": "Conversations",
   "chat.photoPreview": "Photo preview",
