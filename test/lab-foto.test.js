@@ -11,10 +11,12 @@ import { fotoVklopljen, fotoIzbran, vodnikiKroga, visinaIzProstornine, eksponent
 import { BIRETA } from "../public/sim/lab-model-titracija.js";
 import { LOADS, UPOR, AM_RANGES, VM_RANGES } from "../public/sim/lab-model.js";
 import { BANDS } from "../public/sim/lab-fiz.js";
+import { OKNA_PREVODNOST, vodnikiPrevodnosti, prosojnostSvetenja, prosojnostMehurckov } from "../public/sim/foto-prevodnost.js";
+import { MATERIALI, TESTER, tester } from "../public/sim/lab-model-elektrika.js";
 
 const FOTO = path.resolve("public/sim/foto");
 const meta = (p) => JSON.parse(fs.readFileSync(path.join(FOTO, p, "meta.json"), "utf8"));
-const POSKUSI = ["titracija", "dokaz", "krog"];
+const POSKUSI = ["titracija", "dokaz", "krog", "prevodnost"];
 
 test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike", () => {
   assert.equal(fotoIzbran(), true);
@@ -22,7 +24,7 @@ test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike",
   assert.ok(SL["sim.lab.foto"]);
   for (const f of fs.readdirSync("public/i18n/ui")) assert.ok(JSON.parse(fs.readFileSync(`public/i18n/ui/${f}`, "utf8"))["sim.lab.foto"], `${f}: sim.lab.foto`);
   // motorji narišejo risbo, kadar risi() vrne false (rezerva brez povezave in pri »manj podatkov«)
-  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"]]) {
+  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-elektrika.js", "risiPrevodnost"]]) {
     const src = fs.readFileSync(`public/sim/${f}`, "utf8");
     assert.match(src, new RegExp(`foto\\.risi\\(\\(o, meta\\) => ${klic}\\(`), f);
   }
@@ -159,4 +161,65 @@ test("barvni obročki izrisanih uporov po IEC 60062 ustrezajo upornosti iz model
     assert.equal(tol, "zlata"); // ±5 %
     assert.deepEqual([BARVA[a], BARVA[b], BARVA[e]], BANDS[id].slice(0, 3), `${id}: enake barve kot v risbi`);
   }
+});
+
+test("prevodnost: vsaka snov iz modela ima sloj, sponki 6 cm narazen, celica v čaši ima K iz modela", () => {
+  const m = meta("prevodnost"), K = m.sidra.prevodnost, V = m.snovi;
+  for (const [id, mat] of Object.entries(MATERIALI)) {
+    if (mat.tekocina) assert.ok(V.tekocine.includes(id), `${id}: tekočina`);
+    else assert.ok(V.trdne.includes(id) && m.sloji[`vzorec-${id}`], `${id}: sloj vzorca`);
+  }
+  assert.equal(V.trdne.length + V.tekocine.length, Object.keys(MATERIALI).length);
+  for (const n of ["vzorec-tekocina", "vzorec-tekocina-mehurcki", "sponke-tekocina", "magnet-privlaci", "magnet-blizu", "gumb-200m", "gumb-10"]) assert.ok(m.sloji[n], n);
+  for (const n of ["zarnica", "led"]) assert.ok(m.sloji[`ind-${n}`] && m.sloji[`ind-${n}-sveti`], `lučka ${n} in njen sveteči sloj`);
+  // kos snovi med sponkama je dolg 6 cm (model: R = ρ · 0,06 m / S); kamera ortografska, stični točki na isti višini
+  assert.equal(V.razmikMm, 60);
+  assert.ok(Math.abs(K.stikD[0] - K.stikL[0] - 60 * m.merila.prevodnost) < 0.01 && K.stikD[1] === K.stikL[1]);
+  // žice in mina v izrisu imajo premer iz modela: R(baker) = ρ · 0,06 / (π · (d/2)²)
+  const R = (rho, d) => (rho * 0.06) / (Math.PI * (d / 2000) ** 2);
+  assert.ok(Math.abs(MATERIALI.baker.R / R(1.68e-8, V.debelina.baker) - 1) < 1e-9);
+  assert.ok(Math.abs(MATERIALI.grafit.R / R(3e-5, V.debelina.grafit) - 1) < 1e-9);
+  // ploščici: razmik 30 mm, potopljeni sirina × (gladina − dno ploščice) = 2 cm × 3 cm → K = d/A = 50 m⁻¹ kot v modelu
+  const c = V.casa, A = (c.sirina / 1000) * ((c.gladinaMm - c.nad_dnom) / 1000);
+  assert.ok(Math.abs(c.razmik / 1000 / A - TESTER.K) < 1e-9, `K = ${c.razmik / 1000 / A}`);
+  for (const k of ["potopL", "potopD", "amLcd"]) assert.equal(K[k].length, 3, k);
+  assert.ok(K.vzorec[1] < OKNA_PREVODNOST.prevodnost[3] && K.am[1] + 25 < OKNA_PREVODNOST.prevodnost[3]);
+});
+
+test("prevodnost: vodniki sklenejo krog s pravo polariteto (+ → ampermeter → lučka → desna sponka, leva sponka → −)", () => {
+  const m = meta("prevodnost");
+  const konca = { plus: "B+", minus: "B-", ind: "Lizh", AmA: "A+", A10: "A+", ACOM: "A-" };
+  for (const am of [false, true]) for (const obm of ["200m", "10"]) for (const tek of [false, true]) {
+    const v = vodnikiPrevodnosti(am, obm, tek);
+    const g = {};
+    const dodaj = (a, b) => ((g[a] ||= new Set()).add(b), (g[b] ||= new Set()).add(a));
+    for (const ime of v) {
+      assert.ok(m.sloji[`vod-${ime}`], `manjka sloj vodnika ${ime}`);
+      const [a, b] = ime.split("-");
+      if (b === "trdno" || b === "tekocina") dodaj(konca[a], a === "minus" ? "S-L" : "S-D");
+      else dodaj(konca[a], b === "ind" ? "Lvh" : konca[b]);
+    }
+    dodaj("Lvh", "Lizh"); dodaj("S-L", "S-D"); dodaj("B+", "B-"); // lučka, snov med sponkama, baterija
+    if (am) dodaj("A+", "A-");
+    // ena sama zanka: vsako vozlišče ima dva soseda
+    for (const [k, n] of Object.entries(g)) assert.equal(n.size, 2, `${am}/${obm}/${tek}: ${k}`);
+    if (am) assert.ok(v.includes(obm === "10" ? "plus-A10" : "plus-AmA") && v.includes("ACOM-ind"), "tok vstopi v ampermeter skozi mA ali 10 A in izstopi iz COM");
+    assert.equal(v.filter((x) => x.includes(tek ? "tekocina" : "trdno")).length, 2);
+  }
+  for (const [ime, d] of Object.entries(m.vodniki)) assert.equal(d.barva, /^(minus|ACOM)-/.test(ime) ? "crna" : "rdeca", ime);
+});
+
+test("prevodnost: svetenje in mehurčki iz modela, ne iz slike", () => {
+  assert.equal(prosojnostSvetenja(0), 0);
+  assert.equal(prosojnostSvetenja(1), 1);
+  assert.equal(prosojnostSvetenja(1.5), 1);
+  assert.ok(Math.abs(prosojnostSvetenja(0.5) - 0.5 ** (1 / 2.2)) < 1e-12);
+  // vidni prag modela (žarnica 3 %, LED 0,25 %) da viden, a šibek sij
+  for (const b of [0.03, 0.0025]) assert.ok(prosojnostSvetenja(b) > 0.05 && prosojnostSvetenja(b) < 0.25);
+  assert.equal(prosojnostMehurckov(0.5e-3), 0);
+  assert.ok(Math.abs(prosojnostMehurckov(0.2) - 1) < 1e-12);
+  // slana voda z LED (nekaj mA): mehurčki so vidni; z žarnico jih je več
+  const led = tester("slana1", "led"), zar = tester("slana20", "zarnica");
+  assert.ok(led.mehurcki && prosojnostMehurckov(led.I) > 0.25 && prosojnostMehurckov(zar.I) > prosojnostMehurckov(led.I));
+  assert.ok(!tester("destilirana", "zarnica").mehurcki);
 });

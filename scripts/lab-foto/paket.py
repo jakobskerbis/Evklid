@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # Paket za izris laboratorija na j-jevem računalniku (mapa peka-rtx, okno peci.bat → koda/rtx.py):
 #   python3 scripts/lab-foto/paket.py <kopija trenutne koda/ z računalnika> <izhodna mapa>
-# Ustvari <izhod>/lab/ (naše štiri skripte + manifest.json) in <izhod>/koda-nova/{rtx.py, manifest.json}: rtx.py je
+# Ustvari <izhod>/lab/ (naše štiri skripte in prizor_*.py + manifest.json) in <izhod>/koda-nova/{rtx.py, manifest.json}: rtx.py je
 # trenutno nameščena datoteka z majhnim popravkom (naloga »lab«), vse druge datoteke koda/ ostanejo iste (v koda-nova
 # že so), zato naloge organov in rezin delujejo naprej. Različica »lab-<sha8>«; manifest navaja še »zdruzljivo«
 # (različica, iz katere je nastala), da naloga drugega agenta s staro različico ne sproži zamenjave kode.
 import hashlib, json, os, shutil, sys
 
 TU = os.path.dirname(os.path.abspath(__file__))
-LAB = ("lab_modeli.py", "lab_prizori.py", "lab_izris.py", "lab_naloga.py")
+LAB = ("lab_modeli.py", "lab_prizori.py", "lab_izris.py", "lab_naloga.py") + tuple(sorted(f for f in os.listdir(TU) if f.startswith("prizor_") and f.endswith(".py")))
 
 
 def sha(pot):

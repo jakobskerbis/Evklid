@@ -3,13 +3,13 @@
 # preveri pred zagonom; koda/ drugih nalog (organi, rezine) ostane nedotaknjena.
 # naloga.txt: {"id": "lab1", "organi": ["lab"], "koda": "<različica>",
 #              "lab": {"poskusi": ["titracija", "dokaz", "krog"], "vzorci": 512, "merilo": 4}}
-#   poskusi: podmnožica treh; vzorci 16–4096; merilo 1–4 (px na enoto risbe; 4 = nadvzorčenje za 2×).
+#   poskusi: podmnožica POSKUSI; vzorci 16–4096; merilo 1–4 (px na enoto risbe; 4 = nadvzorčenje za 2×).
 #   Samo ta polja, vsa preverjena; nič iz naloge se ne izvede kot ukaz. Izhod: izhod/lab-<id>/<poskus>/*.png + meta.json.
 # Ponovna naloga z istim id nadaljuje (že izrisani sloji se preskočijo). Napredek: stanje.json → lab.
 import json, os, re, subprocess, time
 
 TU = os.path.dirname(os.path.abspath(__file__))
-POSKUSI = ("titracija", "dokaz", "krog")
+POSKUSI = ("titracija", "dokaz", "krog", "prevodnost")
 
 
 def preveri_nalogo(n):

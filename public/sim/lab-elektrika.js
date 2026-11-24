@@ -5,6 +5,8 @@ import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, 
 import { drawMeter, drawResistor, drawLamp } from "./lab-fiz.js";
 import { AM_RANGES, VM_RANGES, NAPAJALNIK, UPOR, makeMeter, meterRead, fuseRate, rng } from "./lab-model.js";
 import { VezBench, VEZ_DELI, MATERIALI, tester, POENOSTAVITVE_ELEKTRIKA } from "./lab-model-elektrika.js";
+import { fotoPoskus } from "./foto.js";
+import { risiPrevodnost, OKNA_PREVODNOST } from "./foto-prevodnost.js";
 
 const grp = (title, ...kids) => h("fieldset", { class: "lab-tit-grp" }, h("legend", {}, title), ...kids);
 const buttons = (...k) => h("div", { class: "demo-buttons" }, ...k);
@@ -364,6 +366,8 @@ export function labPrevodnost(el) {
     const rg = AM_RANGES[st.amRange];
     reading = meterRead(amM, cur().I, rg, "A");
     amLcd.set(reading.text, reading.over ? "" : rg.unit, `območje ${rg.max * rg.k} ${rg.unit}`);
+    const fz = svg.querySelector(".lab-prev-lcd"); // fotografski prikaz: zaslon ampermetra v sliki
+    if (fz) fz.textContent = String(reading.text).replace(".", ",");
   }
   const entry = () => {
     if (!tested.has(st.mat)) tested.set(st.mat, {});
@@ -453,6 +457,10 @@ export function labPrevodnost(el) {
   function draw(t) {
     svg.replaceChildren();
     const m = MATERIALI[st.mat];
+    svg.setAttribute("aria-label", `Baterija 4,5 V, ${st.ind === "led" ? "LED" : "žarnica"} in dve sponki${m.tekocina ? " na bakrenih ploščicah v čaši" : ""}; med njima ${m.name}. ${st.ind === "led" ? "LED" : "Žarnica"} ${stanje[t.stanje]}.`);
+    // Fotografski prikaz (foto-prevodnost.js): snov, lučka, vezava, svetlost, mehurčki in odčitek iz modela na izrisanih slojih.
+    if (foto.risi((o, meta) => risiPrevodnost(o, meta, { mat: st.mat, ime: m.name, tekocina: !!m.tekocina, ind: st.ind, b: t.b, am: st.am, obmocje: st.amRange, varovalka: st.fuse,
+      I: st.am && st.fuse ? 0 : t.I, odcitek: !st.am ? "" : st.fuse ? "0.0" : reading ? reading.text : "", magnet: st.magnet, privlaci: !!m.magnet, mehurcki: t.mehurcki }))) return;
     const wire = (d) => s("path", { d, class: "lab-wire" }, svg);
     // baterija 4,5 V (ploščata), + levo, − desno
     s("rect", { x: 18, y: 160, width: 80, height: 76, rx: 6, class: "lab-batt" }, svg);
@@ -499,9 +507,9 @@ export function labPrevodnost(el) {
         s("path", { d: `M${mx - 18},${my + 26} V${my} H${mx - 6} V${my + 26} M${mx + 6},${my + 26} V${my} H${mx + 18} V${my + 26}`, class: "lab-magnet" }, svg);
       }
     }
-    svg.setAttribute("aria-label", `Baterija 4,5 V, ${st.ind === "led" ? "LED" : "žarnica"} in dve sponki${m.tekocina ? " na bakrenih ploščicah v čaši" : ""}; med njima ${m.name}. ${st.ind === "led" ? "LED" : "Žarnica"} ${stanje[t.stanje]}.`);
   }
 
+  const foto = fotoPoskus("prevodnost", svg, el, () => draw(cur()), OKNA_PREVODNOST);
   // Varovalka v ampermetru (IEC 60127-2, F): pri kovinah z žarnico teče okoli 0,3 A, kar je za vhod 200 mA na meji.
   let fuseQ = 0;
   ticker(el, (dt) => {

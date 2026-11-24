@@ -435,3 +435,4 @@ def krog():
 
 
 PRIZORI = {"titracija": titracija, "dokaz": dokaz, "krog": krog}
+PRIZORI["prevodnost"] = __import__("prizor_prevodnost").prevodnost   # scripts/lab-foto/prizor_prevodnost.py

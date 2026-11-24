@@ -12,6 +12,7 @@ NUJNI = {
     "titracija": ["celota", "menisk-prazna", "blizu"],
     "dokaz": ["dokaz"],
     "krog": ["krog"],
+    "prevodnost": ["prevodnost"],
 }
 
 
