@@ -2891,7 +2891,7 @@ export function toTex(node, opt = {}) {
     case "nder":
       return `\\frac{d}{d${n.v}}\\left(${T(n.a)}\\right)`;
     case "int":
-      return `\\int${n.lo ? `_{${T(n.lo)}}^{${T(n.hi)}}` : ""}${T(n.a)}\\,d${TEXVAR[n.v] || n.v}`;
+      return `\\int${n.lo ? `_{${T(n.lo)}}^{${T(n.hi)}}` : ""}${wrap(n.a, 1.5)}\\,d${TEXVAR[n.v] || n.v}`;
     case "sum":
       return `${n.f === "prod" ? "\\prod" : "\\sum"}_{${n.v}=${T(n.lo)}}^{${T(n.hi)}}${wrap(n.a, 2)}`;
     default:

@@ -1307,6 +1307,7 @@ export default {
   "sc.say.sqrt": "koren iz {a}",
   "sc.say.root": "koren stopnje {k} iz {a}",
   "sc.say.abs": "absolutna vrednost {a}",
+  "sc.say.absLong": "absolutna vrednost {a}, konec absolutne vrednosti",
   "sc.say.binom": "{a} nad {b}",
   "sc.say.paren": "oklepaj {a} zaklepaj",
   "sc.say.matrix": "matrika {a}",

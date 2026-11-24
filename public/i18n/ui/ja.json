@@ -1006,6 +1006,7 @@
   "sc.say.sqrt": "ルート {a}",
   "sc.say.root": "{k} 乗根 {a}",
   "sc.say.abs": "{a} の絶対値",
+  "sc.say.absLong": "絶対値：{a}、絶対値ここまで",
   "sc.say.binom": "{a} C {b}",
   "sc.say.paren": "かっこ {a} かっこ閉じ",
   "sc.say.matrix": "行列 {a}",

@@ -1018,6 +1018,7 @@
   "sc.say.sqrt": "radical din {a}",
   "sc.say.root": "radical de ordin {k} din {a}",
   "sc.say.abs": "modul de {a}",
+  "sc.say.absLong": "modul de {a}, sfârșit modul",
   "sc.say.binom": "combinări de {a} luate câte {b}",
   "sc.say.paren": "deschide paranteza {a} închide paranteza",
   "sc.say.matrix": "matrice {a}",

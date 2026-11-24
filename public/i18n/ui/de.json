@@ -1012,6 +1012,7 @@
   "sc.say.sqrt": "Wurzel aus {a}",
   "sc.say.root": "{k}-te Wurzel aus {a}",
   "sc.say.abs": "Betrag von {a}",
+  "sc.say.absLong": "Betrag von {a}, Ende des Betrags",
   "sc.say.binom": "{a} über {b}",
   "sc.say.paren": "Klammer auf {a} Klammer zu",
   "sc.say.matrix": "Matrix {a}",
