@@ -1046,6 +1046,7 @@
   "sc.grp.cplx": "Numere complexe",
   "sc.fmtEng": "Notație inginerească (10³ⁿ)",
   "sc.onePeriod": "Soluții într-o perioadă:",
+  "sc.precision": "Calculat cu precizie mai mare: cele ~16 cifre obișnuite nu ajung aici.",
   "sc.mult.2": "rădăcină dublă",
   "sc.mult.3": "rădăcină triplă",
   "sc.mult.n": "rădăcină de ordin {n}",

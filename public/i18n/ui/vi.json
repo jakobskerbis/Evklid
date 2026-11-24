@@ -1034,6 +1034,7 @@
   "sc.grp.cplx": "Số phức",
   "sc.fmtEng": "Dạng kỹ thuật (10³ⁿ)",
   "sc.onePeriod": "Nghiệm trong một chu kỳ:",
+  "sc.precision": "Tính với độ chính xác cao hơn: khoảng 16 chữ số thông thường không đủ ở đây.",
   "sc.mult.2": "nghiệm kép",
   "sc.mult.3": "nghiệm bội ba",
   "sc.mult.n": "nghiệm bội {n}",

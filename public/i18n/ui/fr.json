@@ -1040,6 +1040,7 @@
   "sc.grp.cplx": "Nombres complexes",
   "sc.fmtEng": "Notation ingénieur (10³ⁿ)",
   "sc.onePeriod": "Solutions sur une période :",
+  "sc.precision": "Calculé avec une précision accrue : les ~16 chiffres habituels ne suffisent pas ici.",
   "sc.mult.2": "racine double",
   "sc.mult.3": "racine triple",
   "sc.mult.n": "racine de multiplicité {n}",

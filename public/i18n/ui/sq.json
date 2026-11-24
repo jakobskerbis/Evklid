@@ -1040,6 +1040,7 @@
   "sc.grp.cplx": "Numra kompleksë",
   "sc.fmtEng": "Shënim inxhinierik (10³ⁿ)",
   "sc.onePeriod": "Zgjidhjet brenda një periode:",
+  "sc.precision": "Llogaritur me saktësi më të lartë: rreth 16 shifrat e zakonshme nuk mjaftojnë këtu.",
   "sc.mult.2": "rrënjë e dyfishtë",
   "sc.mult.3": "rrënjë e trefishtë",
   "sc.mult.n": "rrënjë me shumëfishësi {n}",

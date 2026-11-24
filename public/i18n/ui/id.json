@@ -1034,6 +1034,7 @@
   "sc.grp.cplx": "Bilangan kompleks",
   "sc.fmtEng": "Notasi teknik (10³ⁿ)",
   "sc.onePeriod": "Penyelesaian dalam satu periode:",
+  "sc.precision": "Dihitung dengan presisi lebih tinggi: sekitar 16 digit biasa tidak cukup di sini.",
   "sc.mult.2": "akar ganda",
   "sc.mult.3": "akar rangkap tiga",
   "sc.mult.n": "akar dengan multiplisitas {n}",

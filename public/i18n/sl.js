@@ -1335,6 +1335,7 @@ export default {
   "sc.grp.cplx": "Kompleksna števila",
   "sc.fmtEng": "Inženirski zapis (10³ⁿ)",
   "sc.onePeriod": "Rešitve na eni periodi:",
+  "sc.precision": "Računano z večjo natančnostjo: navadnih približno 16 mest tu ne zadošča.",
   "sc.mult.2": "dvojna rešitev",
   "sc.mult.3": "trojna rešitev",
   "sc.mult.n": "{n}-kratna rešitev",

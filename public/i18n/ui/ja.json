@@ -1034,6 +1034,7 @@
   "sc.grp.cplx": "複素数",
   "sc.fmtEng": "工学表記 (10³ⁿ)",
   "sc.onePeriod": "1周期内の解:",
+  "sc.precision": "高い精度で計算しました：ここでは通常の約16桁では足りません。",
   "sc.mult.2": "2重解",
   "sc.mult.3": "3重解",
   "sc.mult.n": "{n}重解",

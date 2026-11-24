@@ -1040,6 +1040,7 @@
   "sc.grp.cplx": "Namba changamano",
   "sc.fmtEng": "Mwandiko wa kihandisi (10³ⁿ)",
   "sc.onePeriod": "Majibu ndani ya kipindi kimoja:",
+  "sc.precision": "Imehesabiwa kwa usahihi wa juu zaidi: tarakimu 16 za kawaida hazitoshi hapa.",
   "sc.mult.2": "mzizi maradufu",
   "sc.mult.3": "mzizi mara tatu",
   "sc.mult.n": "mzizi wa marudio {n}",

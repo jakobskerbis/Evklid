@@ -1040,6 +1040,7 @@
   "sc.grp.cplx": "Karmaşık sayılar",
   "sc.fmtEng": "Mühendislik gösterimi (10³ⁿ)",
   "sc.onePeriod": "Bir periyottaki çözümler:",
+  "sc.precision": "Daha yüksek hassasiyetle hesaplandı: olağan yaklaşık 16 basamak burada yetmiyor.",
   "sc.mult.2": "çift kök",
   "sc.mult.3": "üçlü kök",
   "sc.mult.n": "{n} katlı kök",

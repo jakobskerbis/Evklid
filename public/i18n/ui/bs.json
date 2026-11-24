@@ -1046,6 +1046,7 @@
   "sc.grp.cplx": "Kompleksni brojevi",
   "sc.fmtEng": "Inženjerski zapis (10³ⁿ)",
   "sc.onePeriod": "Rješenja unutar jednog perioda:",
+  "sc.precision": "Izračunato s većom tačnošću: uobičajenih oko 16 cifara ovdje nije dovoljno.",
   "sc.mult.2": "dvostruko rješenje",
   "sc.mult.3": "trostruko rješenje",
   "sc.mult.n": "{n}-struko rješenje",

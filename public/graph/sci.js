@@ -437,6 +437,7 @@ export function createScientific(root, opts) {
         if (r.assign) e.assign = r.assign;
         if (r.approx) e.approx = true;
         if (r.est) e.est = true;
+        if (r.precision) e.note = { key: "sc.precision" }; // AUDIT-049: navadnih 16 mest ni bilo dovolj
         break;
       case "complex":
         e.re = r.re;

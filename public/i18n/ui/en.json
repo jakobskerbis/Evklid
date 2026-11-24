@@ -1040,6 +1040,7 @@
   "sc.grp.cplx": "Complex numbers",
   "sc.fmtEng": "Engineering notation (10³ⁿ)",
   "sc.onePeriod": "Solutions within one period:",
+  "sc.precision": "Calculated with higher precision: the usual ~16 digits are not enough here.",
   "sc.mult.2": "double root",
   "sc.mult.3": "triple root",
   "sc.mult.n": "root of multiplicity {n}",

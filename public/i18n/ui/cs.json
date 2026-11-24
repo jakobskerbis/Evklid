@@ -1052,6 +1052,7 @@
   "sc.grp.cplx": "Komplexní čísla",
   "sc.fmtEng": "Inženýrský zápis (10³ⁿ)",
   "sc.onePeriod": "Řešení v jedné periodě:",
+  "sc.precision": "Spočítáno s vyšší přesností: obvyklých asi 16 číslic zde nestačí.",
   "sc.mult.2": "dvojnásobný kořen",
   "sc.mult.3": "trojnásobný kořen",
   "sc.mult.n": "{n}násobný kořen",

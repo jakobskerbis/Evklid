@@ -1034,6 +1034,7 @@
   "sc.grp.cplx": "复数",
   "sc.fmtEng": "工程记数法 (10³ⁿ)",
   "sc.onePeriod": "一个周期内的解：",
+  "sc.precision": "以更高精度计算：通常约 16 位数字在此不够。",
   "sc.mult.2": "二重根",
   "sc.mult.3": "三重根",
   "sc.mult.n": "{n}重根",

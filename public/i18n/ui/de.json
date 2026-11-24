@@ -1040,6 +1040,7 @@
   "sc.grp.cplx": "Komplexe Zahlen",
   "sc.fmtEng": "Technische Schreibweise (10³ⁿ)",
   "sc.onePeriod": "Lösungen in einer Periode:",
+  "sc.precision": "Mit höherer Genauigkeit berechnet: Die üblichen etwa 16 Stellen reichen hier nicht.",
   "sc.mult.2": "doppelte Lösung",
   "sc.mult.3": "dreifache Lösung",
   "sc.mult.n": "{n}-fache Lösung",

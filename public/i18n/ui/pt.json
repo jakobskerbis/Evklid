@@ -1040,6 +1040,7 @@
   "sc.grp.cplx": "Números complexos",
   "sc.fmtEng": "Notação de engenharia (10³ⁿ)",
   "sc.onePeriod": "Soluções num período:",
+  "sc.precision": "Calculado com maior precisão: os ~16 dígitos habituais não chegam aqui.",
   "sc.mult.2": "raiz dupla",
   "sc.mult.3": "raiz tripla",
   "sc.mult.n": "raiz de multiplicidade {n}",
