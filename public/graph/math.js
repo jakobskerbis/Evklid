@@ -1195,6 +1195,8 @@ export function integrateInfo(f, a, b, eps = 1e-9, depth = 0) {
     err += p.err;
   }
   if (!Number.isFinite(value)) return { value: NaN };
+  // samo skoki (floor x, predznak): kosi so navadni Simpsonovi, vrednost ni približek prek singularnosti
+  if (!sing.some((s) => s.pl > 0.02 || s.pr > 0.02)) return { value };
   return { value, err, singular: true };
 }
 

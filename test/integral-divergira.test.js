@@ -86,3 +86,11 @@ test("sporočili sta v slovenščini in v vseh jezikih, z {pv}", () => {
     if (f !== "sl.json") assert.notEqual(j["sc.errIntDiverge"], sl["sc.errIntDiverge"], f);
   }
 });
+
+test("skoki (floor, sgn) niso singularnosti: vrednost brez ≈ in točnejša kot prej", () => {
+  // SymPy: ∫₀^3,5 floor x dx = 4,5; ∫₀³ sgn(x − 1) dx = 1 (prej 4,49999996 in 0,99999996)
+  const f = analyze("∫(floor(x);0;3,5)", ENV);
+  assert.ok(Math.abs(f.value - 4.5) < 1e-12 && !f.est, JSON.stringify(f));
+  const s = analyze("∫(sgn(x−1);0;3)", ENV);
+  assert.ok(Math.abs(s.value - 1) < 1e-8 && !s.est, JSON.stringify(s));
+});
