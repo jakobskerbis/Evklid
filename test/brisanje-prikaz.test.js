@@ -94,25 +94,34 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
             i.setSelectionRange(p, p);
             i.dispatchEvent(new KeyboardEvent("keyup"));
           }, [full, start]);
-          for (let k = 0; k < 80; k++) {
+          // ⌫ do začetka vrstice: vsak pritisk nekaj izbriše ali premakne kazalec pred izpolnjeno predlogo (nikoli
+          // »hodi« levo brez brisanja po navadnem besedilu), vsako stanje je izrisano s kazalcem
+          const press = async (what2) => {
             const before = await state();
-            if (!before.v) break;
             await key("#del");
             const s = await state();
             checked++;
             assert.ok(!s.bad, `${engine} ${vw} ${what}: ⌫ na »${before.v}« @${before.p} → »${s.v}« se ne izriše`);
             if (s.v) assert.equal(s.carets, 1, `${engine} ${vw} ${what}: »${s.v}« brez kazalca`);
             if (s.v) assert.ok(!s.empty, `${engine} ${vw} ${what}: prazen prikaz pri »${s.v}«`);
-            // na začetku vrstice ni več česa izbrisati (predloga z izpolnjeno režo desno od kazalca ostane, prav tako)
-            if (s.v === before.v && s.p === before.p) {
-              assert.equal(s.p, 0, `${engine} ${vw} ${what}: ⌫ obtiči na »${s.v}« @${s.p}`);
-              break;
-            }
+            const moved = s.v === before.v && s.p < before.p && /[(]/.test(before.v.slice(s.p, before.p));
+            assert.ok(s.v.length < before.v.length || moved || before.p === 0, `${engine} ${vw} ${what}${what2}: ⌫ na »${before.v}« @${before.p} ni nič izbrisal (→ @${s.p})`);
+            return s;
+          };
+          for (let k = 0; k < 120; k++) {
+            const s = await state();
+            if (!s.v || s.p === 0) break;
+            await press("");
           }
-          const end = await state();
-          assert.ok(end.v.length < full.length || end.p === 0, `${engine} ${vw} ${what}: ⌫ izbriše`);
-          // s konca vrstice ⌫ izbriše vse
-          if (start === full.length) assert.equal(end.v, "", `${engine} ${vw} ${what}: s konca do praznega`);
+          assert.equal((await state()).p, 0, `${engine} ${vw} ${what}: ⌫ od @${start} pride do začetka`);
+          // nato s konca vrstice ⌫ do praznega
+          await page.evaluate(() => {
+            const i = document.querySelector(".sc-input");
+            i.setSelectionRange(i.value.length, i.value.length);
+            i.dispatchEvent(new KeyboardEvent("keyup"));
+          });
+          for (let k = 0; k < 120 && (await state()).v; k++) await press(" (s konca)");
+          assert.equal((await state()).v, "", `${engine} ${vw} ${what}: od @${start}, nato s konca, ⌫ do praznega`);
         }
       }
       assert.ok(checked > 100, `${checked}`);

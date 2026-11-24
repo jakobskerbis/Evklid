@@ -282,14 +282,38 @@ export function createScientific(root, opts) {
       }
     }
     // varovalo (AUDIT-047): ⌫, po katerem se zapis ne bi izrisal (prej prazen prikaz ⬚, npr. ločilo »;« v ∫(f;a;b)),
-    // ne izbriše ničesar, kazalec gre en znak levo
-    if (next.trim() && !renders(next) && renders(t)) {
-      const p = Math.max(0, s - 1);
-      input.setSelectionRange(p, p);
-      showEntry();
-      return;
+    // izbriše najbližji znak levo, ki ga lahko (∫(x;0;|) → ∫(x;;)), sicer najmanjšo predlogo okoli kazalca, sicer vse levo
+    // od kazalca: ⌫ vedno nekaj izbriše in se ne zatakne (pregled #986). Ob združitvi #945 velja njegova rešitev.
+    if (next.trim() && !renders(next) && renders(t) && s === e) {
+      const cut = (a, b) => t.slice(0, a) + t.slice(b);
+      let best = null;
+      // samo vsebina (števke, črke, operatorji), ne zgradba predloge (oklepaj, ločilo, ∫, √, ime funkcije)
+      const content = (k) => {
+        if (!/[\d.,+\-−×÷·*/=<>≤≥!%π∞²³°A-Za-zα-ω]/u.test(t[k])) return false;
+        if (!/[A-Za-zčšž]/.test(t[k])) return true;
+        let b = k;
+        while (/[A-Za-zčšž]/.test(t[b] || "")) b++;
+        return t[b] !== "("; // črka imena funkcije (sin, limita) ni vsebina
+      };
+      for (let k = s - 2; k >= Math.max(0, s - 12) && !best; k--) if (content(k) && renders(cut(k, k + 1))) best = [k, k + 1];
+      for (let o = s - 1, d = 0; o >= 0 && !best; o--) {
+        if (")]".includes(t[o])) d++;
+        else if ("([".includes(t[o]) && d-- === 0) {
+          const name = /(?:[A-Za-zčšž]+|d\/dx|√|∛|∫|[∑∏]_|×10\^|\^|_)$/u.exec(t.slice(0, o))?.[0] || "";
+          const c = closeAt(t, o);
+          let end = c < 0 ? t.length : c + 1;
+          if (/^[∑∏]_$/.test(name) && t[end] === "^" && t[end + 1] === "(") end = closeAt(t, end + 1) < 0 ? t.length : closeAt(t, end + 1) + 1;
+          if (renders(cut(o - name.length, end))) best = [o - name.length, end];
+          d = 0;
+        }
+      }
+      if (!best) best = renders(t.slice(s)) ? [0, s] : [0, t.length];
+      next = cut(...best);
+      pos = best[0];
     }
+    if (!next.trim()) next = ""; // ostali presledki (»∑_(n=1)^(5) « brez predloge) niso vnos
     input.value = next;
+    pos = Math.min(pos, next.length);
     input.setSelectionRange(pos, pos);
     update();
   }
