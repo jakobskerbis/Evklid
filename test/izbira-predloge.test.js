@@ -52,16 +52,21 @@ function serve() {
   return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
 }
 
-const engines = [];
-for (const name of ["chromium", "webkit", "firefox"]) {
-  try {
-    if (playwright) engines.push([name, await playwright[name].launch()]);
-  } catch {}
+// brskalniki se zaženejo v testu: CI teče s --test-force-exit, ki konča proces, preden bi se zagnali na vrhu datoteke
+async function launchAll() {
+  const out = [];
+  for (const name of ["chromium", "webkit", "firefox"]) {
+    try {
+      if (playwright) out.push([name, await playwright[name].launch()]);
+    } catch {}
+  }
+  return out;
 }
-const skip = engines.length ? false : "Playwright ni nameščen";
 
 
-test("Shift+puščica čez del predloge, nato ⌫ ali tipka: brez ostankov (AUDIT-039)", { skip }, async (t) => {
+test("Shift+puščica čez del predloge, nato ⌫ ali tipka: brez ostankov (AUDIT-039)", { timeout: 300000 }, async (t) => {
+  const engines = await launchAll();
+  if (!engines.length) return t.skip("Playwright ni nameščen");
   const server = await serve();
   t.after(async () => {
     for (const [, b] of engines) await b.close();
