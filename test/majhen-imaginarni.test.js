@@ -73,3 +73,17 @@ test("500 gruč iz mpmath: vse pravilne", () => {
   }
   assert.equal(ok, cases.length, JSON.stringify(bad));
 });
+
+test("redki polinomi: Sturmova veriga s pravim predznakom (hitro in pravilno, SymPy)", () => {
+  // (5x⁶ − 24)(5x² − 32) = 0: realne ±(24/5)^(1/6), ±√(32/5)
+  const t0 = performance.now();
+  const r = analyze("(5x^6−24)(5x^2−32)=0", ENV);
+  assert.ok(performance.now() - t0 < 1000, "prej ~60 s");
+  const a = (24 / 5) ** (1 / 6);
+  const b = Math.sqrt(32 / 5);
+  assert.deepEqual(r.roots.map((x) => Number(x.toPrecision(13))), [-b, -a, a, b].map((x) => Number(x.toPrecision(13))));
+  assert.equal(r.complex.length, 4);
+  const s = analyze("(x−4)(x^6−20)(7x^2−40)=0", ENV);
+  assert.equal(s.roots.length, 5);
+  assert.equal(s.roots[4], 4);
+});

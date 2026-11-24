@@ -294,18 +294,20 @@ function pdivB(a, b) {
   const db = b.length - 1;
   const lb = b[db];
   let q = [0n];
+  let steps = 0; // število množenj z lc(b) (lahko manj kot δ, če vodilni členi odpadejo)
   while (!zeroB(r) && r.length - 1 >= db) {
     const k = r.length - 1 - db;
     const lr = r[r.length - 1];
     r = r.map((x) => x * lb);
     q = q.map((x) => x * lb);
+    steps++;
     while (q.length <= k) q.push(0n);
     q[k] += lr;
     for (let i = 0; i <= db; i++) r[i + k] -= lr * b[i];
     r.pop();
     trimB(r);
   }
-  return [q, r];
+  return [q, r, steps];
 }
 function gcdB(a, b) {
   a = primB(a);
@@ -605,7 +607,11 @@ function solveSquarefree(t, k, found, depth = 0) {
 function signAt(p, num, den) {
   const n = p.length - 1;
   let s = 0n;
-  for (let i = n; i >= 0; i--) s = s * num + p[i] * den ** BigInt(n - i);
+  let dk = 1n; // den^(n − i), sproti (potenciranje v vsakem členu je bilo prepočasno)
+  for (let i = n; i >= 0; i--) {
+    s = s * num + p[i] * dk;
+    dk *= den;
+  }
   return s > 0n ? 1 : s < 0n ? -1 : 0;
 }
 // Sturmova veriga: p, p′, −rem(p, p′), … (psevdo-ostanek s pravilnim predznakom)
@@ -615,10 +621,10 @@ function sturmChain(p) {
     const a = chain[chain.length - 2];
     const b = chain[chain.length - 1];
     const lb = b[b.length - 1];
-    const delta = a.length - b.length + 1;
-    let r = pdivB(a, b)[1];
+    const [, rr, steps] = pdivB(a, b);
+    let r = rr;
     if (zeroB(r)) break;
-    if (lb < 0n && delta % 2) r = r.map((x) => -x); // lc(b)^δ < 0 obrne predznak
+    if (lb < 0n && steps % 2) r = r.map((x) => -x); // lc(b)^steps < 0 obrne predznak
     const g = r.reduce(bGcd, 0n) || 1n;
     chain.push(r.map((x) => -x / g));
   }
