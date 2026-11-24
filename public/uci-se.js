@@ -116,8 +116,10 @@ export function initUci(deps) {
     if (msg.tip === "vprasaj" && typeof msg.besedilo === "string" && msg.besedilo.trim()) {
       // vrni: naslov v okvirju (»atlas?izberi=…«, »celica-zivalska?del=…«): vrnitev iz klepeta odpre isti model in del.
       const vrni = vrnitev3d(msg.vrni, msg.oznaka);
+      // Posnetek (model, izbrani del) gre z vprašanjem; strežnik ga preveri (server/ucni-kontekst.js).
+      const kontekst = msg.kontekst && typeof msg.kontekst === "object" && JSON.stringify(msg.kontekst).length <= 2000 ? msg.kontekst : null;
       close3d();
-      D.askTutor(msg.besedilo.slice(0, 2000), vrni);
+      D.askTutor(msg.besedilo.slice(0, 2000), vrni && kontekst ? { ...vrni, kontekst } : vrni);
     }
   });
   document.addEventListener("keydown", (e) => {

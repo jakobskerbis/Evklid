@@ -544,6 +544,7 @@ async function model(id, param, moj) {
     vprasajInstruktorja(t("a3.askPartText", { naslov: mod.info.naslov, ime: d.la ? `${d.ime} (${d.la})` : d.ime }), {
       vrni: `${id}?del=${encodeURIComponent(d.id)}`,
       oznaka: `${d.ime} (${mod.info.naslov})`, // »Nazaj na: Jedro (Živalska celica)«, brez dveh dvopičij
+      kontekst: { v: 1, sourceType: "model3d", sourceId: id, selectedObject: { id: d.id, ime: d.ime } },
     });
   return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop, vprasaj });
 }
