@@ -118,7 +118,8 @@ function parseQuotient(input, { dot = false } = {}) {
   const a = parseNumberWithUnit(l, { dot });
   const b = parseNumberWithUnit(r, { dot });
   // »12:3=4«: zapisan je cel račun, ne količnik (ni ga mogoče preveriti kot količnik).
-  if (!a || !b || a.unit || !/^[+-]?\s*\d/.test(r) || b.unit.includes("=")) return null;
+  // »2/1e8«: e za številom je znanstveni zapis, ne enota (izraz prebere exprValue)
+  if (!a || !b || a.unit || !/^[+-]?\s*\d/.test(r) || b.unit.includes("=") || /^[eE][+-]?\d/.test(b.unit)) return null;
   return { value: a.value / b.value, unit: b.unit };
 }
 
@@ -126,6 +127,12 @@ function parseQuotient(input, { dot = false } = {}) {
 const SUPER = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
 function parseScientific(input) {
   const s = westernDigits(String(input).trim()).replace(/[−–]/g, "-");
+  // »1e8«, »2,5e-3 m«, »3E2« (zapis kalkulatorja): isto pravilo za e kot calcText v math.js (za njim ni črke ali oklepaja)
+  const e = s.match(/^((?:[+-]\s*)?\d+(?:[.,]\d+)?)[eE]([+-]?\d+)(?![\d.,(A-Za-z])\s*([\s\S]*)$/);
+  if (e) {
+    const value = Number(`${e[1].replace(/\s/g, "").replace(",", ".")}e${e[2]}`);
+    if (Number.isFinite(value)) return { value, decimals: effDecimals(value), unit: e[3].trim() };
+  }
   // Brez dveh zaporednih delov, ki oba sprejmeta presledke (»[+-]?\s*« za »\s*«, »\s*(.*)«): sicer kvadratni čas pri dolgem nizu presledkov.
   const m = s.match(/^((?:[+-]\s*)?\d+(?:[.,]\d+)?)\s*[·*×xX]\s*10\s*(?:\^\s*(?:\(\s*((?:[+-]\s*)?\d+)\s*\)|\{\s*((?:[+-]\s*)?\d+)\s*\}|((?:[+-]\s*)?\d+))|([⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+))(?![\d⁰¹²³⁴⁵⁶⁷⁸⁹])([\s\S]*)$/);
   if (!m) return null;
@@ -149,6 +156,8 @@ function constNode(n) {
 // dot: naloga z decimalno piko (vejica v oklepaju loči vrednosti).
 function studentText(input, math, dot = false) {
   const s = westernDigits(String(input).trim());
+  // calcText: še znanstveni zapis »1e8«, »2,5e-3« kot v kalkulatorjih (AUDIT-041)
+  if (math.calcText) return math.calcText(s, { comma: !dot });
   return math.numberText ? math.numberText(s, !dot) : s;
 }
 // own: false za zapis iz naloge (decimalna pika), ne za učenčev odgovor.

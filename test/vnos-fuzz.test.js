@@ -120,6 +120,15 @@ const CLASSES = [
   ["2e^2", 2 * Math.E ** 2], // e je Eulerjevo število, kadar sledi potenca, črka ali oklepaj
   ["2e3x", 2 * Math.E * 3 * 0.7],
   ["2e-x", 2 * Math.E - 0.7],
+  // AUDIT-041: število v znanstvenem zapisu je celota (prej x/1e8 = (x/1)·10⁸)
+  ["x/1e8", 0.7e-8],
+  ["2/3e2", 2 / 300],
+  ["1/2E-3", 500],
+  ["x^2e3", 0], // 0,7^2000
+  ["−1e2", -100],
+  ["2e3^2", 4e6],
+  ["3e2!", Infinity],
+  ["2/1,5e1", 2 / 15],
 ];
 test("isti zapis pomeni isto v znanstvenem in grafičnem kalkulatorju (tisočice, 2e3, %, round, ∫, nejasna števila)", () => {
   for (const [text, want] of CLASSES) {

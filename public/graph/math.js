@@ -274,10 +274,10 @@ function rewriteIntegrals(s) {
  * Skupna priprava vrstice za znanstveni in grafični kalkulator (AUDIT-017): isto besedilo pomeni isto v obeh.
  * - števila in vejica kot numberText (»1 000« = 1000, »1.234,5« = 1234,5, »12 3456« je napaka, »;« loči argumente),
  * - znanstveni zapis: »2e3« = 2000, »3E-2« = 0,03, »1,5e-3« = 0,0015. Pravilo: število (ne za črko ali »_«),
- *   takoj »e« ali »E«, celoštevilski eksponent (po želji s predznakom), za njim pa ne črka, »(«, »^«, števka ali
+ *   takoj »e« ali »E«, celoštevilski eksponent (po želji s predznakom), za njim pa ne črka, »(«, števka ali
  *   decimalno ločilo. Drugače je e Eulerjevo število (»2e^x«, »2e3x« = 2·e·3·x, »2e-x«), E pa spremenljivka.
  *   »E« ostane spremenljivka tudi, kadar je E v names (graf z vrstico »E = …«, spremenljivka E v kalkulatorju):
- *   takrat je »3E-2« 3·E − 2,
+ *   takrat je »3E-2« 3·E − 2. Število je v oklepaju (AUDIT-041): x/1e8 = x/10⁸, 2e3^2 = (2·10³)², −1e2 = −100,
  * - ∫(f; a; b) je določeni integral od a do b,
  * - close: manjkajoče zaklepaje doda na konec (znanstveni kalkulator; grafični jih pokaže kot napako).
  * Pomen zapisa po razčlenitvi poenoti še calcRewrite (odstotki, round na decimalke).
@@ -285,8 +285,8 @@ function rewriteIntegrals(s) {
 export function calcText(s, { comma = true, names = null, close = false } = {}) {
   let out = numberText(s, comma);
   const bigE = !(names && (names.has ? names.has("E") : "E" in names));
-  out = out.replace(/(?<![A-Za-z_\d.])(\d+(?:\.\d+)?|\.\d+)([eE])([+\-−]?)(\d+)(?![\d.A-Za-zα-ωΑ-Ω_(^])/g, (m, a, e, sign, d) =>
-    e === "E" && !bigE ? m : `${a}*10^(${sign === "−" ? "-" : sign}${d})`,
+  out = out.replace(/(?<![A-Za-z_\d.])(\d+(?:\.\d+)?|\.\d+)([eE])([+\-−]?)(\d+)(?![\d.A-Za-zα-ωΑ-Ω_(])/g, (m, a, e, sign, d) =>
+    e === "E" && !bigE ? m : `(${a}*10^(${sign === "−" ? "-" : sign}${d}))`, // v oklepaju: x/1e8 = x/10⁸ (AUDIT-041)
   );
   if (close) {
     let open = 0;

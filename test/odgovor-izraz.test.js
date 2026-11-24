@@ -58,3 +58,15 @@ test("numberText je isto pravilo kot znanstveni kalkulator", () => {
   assert.throws(() => math.numberText("1.2.3"), math.MathError);
   assert.equal(math.numberText("max(1.5, 2)", false), "max(1.5, 2)");
 });
+
+test("znanstveni zapis z e v odgovoru (AUDIT-041): število, ne enota »e8«", () => {
+  for (const [v, inp, unit] of [[1e8, "1e8"], [0.002, "2e-3"], [2500, "2,5e3"], [300, "3E2"], [0.0025, "2,5e-3 m", "m"], [3e8, "3e8 m/s", "m/s"]]) {
+    assert.equal(chk({ value: v, unit }, inp).kind, "correct", inp);
+  }
+  assert.equal(verdict(chk({ value: 2e-8 }, "2/1e8")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 2 / 300, decimals: 4 }, "2/3e2")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 500 }, "1/2E-3")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: -100 }, "−1e2")), "correct");
+  // e brez eksponenta ostane, kot je bilo
+  assert.equal(chk({ value: 5 }, "5 e").kind, "correct");
+});
