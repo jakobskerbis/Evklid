@@ -71,7 +71,8 @@ test("klik/dotik na meje integrala in reže limite ureja pravo režo (AUDIT-003)
       const at = async (x, y) => {
         if (opt.hasTouch) await page.touchscreen.tap(x, y);
         else await page.mouse.click(x, y);
-        await page.waitForTimeout(30);
+        // kalkulator postavi kazalec v setTimeout po kliku: počakaj na naslednji krog (tudi pod obremenitvijo)
+        await page.evaluate(() => new Promise((r) => setTimeout(() => setTimeout(r, 0), 0)));
       };
       // središče n-tega okvirčka □ v zapisu (vrstni red v zapisu: spodnja meja, zgornja meja, integrand)
       const hole = async (n) => {
@@ -138,7 +139,7 @@ test("klik/dotik na meje integrala in reže limite ureja pravo režo (AUDIT-003)
             return { x: k.left + k.width * 0.6, y: k.top + k.height / 2 };
           });
           await page.mouse.dblclick(r.x, r.y);
-          await page.waitForTimeout(50);
+          await page.evaluate(() => new Promise((r) => setTimeout(() => setTimeout(r, 0), 0)));
           const sel = await page.evaluate(() => [document.querySelector(".sc-input").selectionStart, document.querySelector(".sc-input").selectionEnd]);
           assert.equal(sel[0], sel[1], `${where}: dvojni klik na ${tx} ne izbere besedila`);
         }
