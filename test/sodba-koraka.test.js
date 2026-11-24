@@ -211,8 +211,8 @@ test("pregled sodbe: navodila zajamejo »Pravilno« pred namigom, dvom o praviln
 
 // AUDIT-056: negotov rezultat z vprašajem (»x = 5?«) je trditev; sodba inštruktorja se preveri kot pri »x = 5«.
 test("AUDIT-056: »x = 5?«, »je 7 · 8 = 54?«, »mogoče 12?« so trditve, prava vprašanja ne", async () => {
-  for (const t of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?", "mogoče 12?", "12?", "x=-2?", "Je rezultat 3/4?"]) assert.equal(isClaim(t, ""), true, t);
-  for (const t of ["Koliko je 7 · 8?", "Zakaj ne smem deliti z 0?", "Kaj je x?", "Ali je to 3. naloga?"]) assert.equal(isClaim(t, ""), false, t);
+  for (const t of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?", "7·8=54?", "mogoče 12?", "12?", "x=-2?", "Je rezultat 3/4?"]) assert.equal(isClaim(t, ""), true, t);
+  for (const t of ["Koliko je 7 · 8?", "Zakaj ne smem deliti z 0?", "Kaj je x?", "Ali je to 3. naloga?", "Kaj pa 3x = 15?", "Reši 2x+3=11?"]) assert.equal(isClaim(t, ""), false, t);
   // po poti klepeta: »x = 5?« pri 2x + 3 = 11 z odgovorom »Da, pravilno!« sproži ponovni odgovor (kot »x = 5«)
   const { openDb } = await import("../server/db.js");
   const run = async (msg) => {
