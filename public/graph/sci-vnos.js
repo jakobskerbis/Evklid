@@ -74,6 +74,7 @@ export function liveTex(text, env = {}) {
 const OPENERS = "([";
 const CLOSERS = ")]";
 const OPS = "+-−×÷*/^·=<>≤≥,.";
+const POSTFIX = "²³⁻¹!%°′″"; // brez operanda pred seboj (√(² , ∫(⁻¹;;)) dobijo okvirček
 
 /**
  * Dokonča besedilo za izris: zapre oklepaje in na mesto manjkajočega operanda vstavi `hole`.
@@ -86,14 +87,30 @@ export function complete(text, hole) {
     if (OPENERS.includes(c)) stack.push(c === "(" ? ")" : "]");
     else if (CLOSERS.includes(c) && stack.length) stack.pop();
   }
-  const s = src + stack.reverse().join("");
+  let s = src + stack.reverse().join("");
+  // ∑_(n=1)^(10) brez telesa: telo je okvirček (predloga tipke ∑ in ∏, AUDIT-020); meje so lahko gnezdene
+  const bigOp = (() => {
+    const i = Math.max(s.lastIndexOf("∑"), s.lastIndexOf("∏"));
+    if (i < 0) return -1;
+    let j = i + 1;
+    const group = (open) => {
+      if (s[j] !== open[0] || s[j + 1] !== "(") return false;
+      let d = 0;
+      for (j += 1; j < s.length; j++) {
+        if (s[j] === "(") d++;
+        else if (s[j] === ")" && --d === 0) return ++j;
+      }
+      return false;
+    };
+    return group("_") && group("^") && /^[\s)\]]*$/.test(s.slice(j)) ? j : -1; // indeks za mejama ali −1
+  })();
   let out = "";
   const shift = new Array(s.length + 1).fill(0); // koliko znakov okvirčkov je pred položajem i (brez tistih NA i)
   let added = 0;
   for (let i = 0; i <= s.length; i++) {
     shift[i] = added;
     const c = s[i];
-    if (i === s.length || CLOSERS.includes(c) || c === ";") {
+    if (i === s.length || CLOSERS.includes(c) || c === ";" || (POSTFIX.includes(c) && !POSTFIX.includes(s[i - 1] ?? ""))) {
       let k = i - 1;
       while (k >= 0 && /\s/.test(s[k])) k--;
       const p = k >= 0 ? s[k] : "";
@@ -104,6 +121,7 @@ export function complete(text, hole) {
     }
     if (i < s.length) out += c;
   }
+  if (bigOp >= 0) out = `${out.slice(0, bigOp + shift[bigOp])} ${hole}${out.slice(bigOp + shift[bigOp])}`;
   return { text: out, at: (p) => Math.max(0, Math.min(src.length, p)) + shift[Math.max(0, Math.min(src.length, p))] };
 }
 
@@ -409,14 +427,16 @@ function depthAt(toks, i) {
 }
 
 /** TeX z vstavljenimi \left( in \right. za učenčeve odprte oklepaje, ki jih je previewTex odstranil; null, če ni kaj vstaviti. */
-function openParens(raw, A, to, toks) {
+function openParens(end, A, to, toks) {
   const stack = [];
   const ins = []; // [indeks žetona, vrstni red (zaklepaj pred oklepajem), niz]
   A.forEach((a, i) => {
     if (a.k === "(" || a.k === "[") stack.push(i);
     else if ((a.k === ")" || a.k === "]") && stack.length) {
       const o = stack.pop();
-      if (a.s < raw.length || to[o] >= 0) return; // učenčev zaklepaj ali oklepaj, ki je v zapisu že viden
+      // učenčev zaklepaj ali oklepaj, ki je v zapisu že viden; end = konec učenčevega besedila v dokončanem
+      // (okvirčki pred njim premaknejo položaje: det([[; ]; [; ]]) je bil zaprt, a je dobil \left( v matriki, AUDIT-020)
+      if (a.s < end || to[o] >= 0) return;
       let first = -1;
       for (let j = o + 1; j < i; j++) if (to[j] >= 0) { first = j; break; }
       let last = -1;
@@ -455,7 +475,7 @@ export function entryBase(text, env = {}, render = (s) => liveTex(s, env)) {
   let to = align(A, B);
   // oklepaj, ki ga je učenec odprl, previewTex pa ga je kot nepotrebnega odstranil, mora ostati viden:
   // \left( … \right. (zaklepaj, ki ga je dodal complete, ni izrisan, da se vidi, da je oklepaj odprt)
-  const fix = openParens(raw, A, to, toks);
+  const fix = openParens(done.at(raw.length), A, to, toks);
   if (fix) {
     tex = fix;
     toks = lex(tex, hole);
