@@ -49,7 +49,7 @@ function graphCalc() {
       shared: () => {
         try {
           const s = JSON.parse(localStorage.getItem(`evklid.sci.${state.student?.id ?? 0}`) || "null");
-          return s ? { vars: s.vars || {}, funcs: s.funcs || {} } : null;
+          return s ? { vars: s.vars || {}, funcs: s.funcs || {}, angle: s.angle || (s.deg === false ? "rad" : "deg") } : null;
         } catch {
           return null;
         }

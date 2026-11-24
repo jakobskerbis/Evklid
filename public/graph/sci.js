@@ -875,7 +875,9 @@ export function createScientific(root, opts) {
     names = [...names];
     const sh = names.length && opts.sharedGraph ? opts.sharedGraph() : null;
     if (!sh) return null;
-    const known = names.filter((n) => !(n in st.vars) && !st.funcs[n] && (Number.isFinite(sh.vars?.[n]) || sh.funcs?.[n]));
+    // funkcija grafa s kotnimi funkcijami pri drugi enoti kota (graf RAD, kalkulator DEG) bi pomenila drugo: ne ponudimo
+    const trigOk = (f) => !/(?<![A-Za-z])(?:sin|cos|tan|cot|sec|csc|tg|ctg|arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg)(?![a-z])/.test(f.body) || (sh.angle || "rad") === st.angle;
+    const known = names.filter((n) => !(n in st.vars) && !st.funcs[n] && (Number.isFinite(sh.vars?.[n]) || (sh.funcs?.[n] && trigOk(sh.funcs[n]))));
     if (!known.length) return null;
     return {
       label: known.map((n) => (sh.funcs?.[n] ? `${n}(${sh.funcs[n].param})` : `${n} = ${fmt(sh.vars[n]).text}`)).join(", "),

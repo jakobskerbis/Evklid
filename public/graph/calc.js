@@ -339,6 +339,7 @@ export function createCalculator(root, opts) {
     if (/e/.test(s)) s = s.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
     return comma() ? s.replace(".", ",") : s;
   };
+  const TRIG_FN = /(?<![A-Za-z])(?:sin|cos|tan|cot|sec|csc|tg|ctg|arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg)(?![a-z])/;
   function fromSci(names) {
     const sh = (names?.length && opts.shared?.()) || null;
     if (!sh || state.zapis !== 3) return [];
@@ -348,7 +349,8 @@ export function createCalculator(root, opts) {
       const f = sh.funcs?.[n];
       if (typeof v === "number" && Number.isFinite(v)) out.push({ name: n, label: `${n} = ${fmt(v, 8)}`, text: `${n} = ${sciNum(v)}` });
       // funkcija iz kalkulatorja (zapis je isti); Ans in ° pomenita v grafu drugo, zato teh ne prenesemo
-      else if (f && typeof f.body === "string" && /^[A-Za-z]$/.test(f.param || "") && !/Ans|°|′|″/.test(f.body)) out.push({ name: n, label: `${n}(${f.param})`, text: `${n}(${f.param}) = ${f.body}` });
+      // kotne funkcije pri različni enoti kota (kalkulator DEG, graf RAD) bi pomenile drugo: take funkcije ne ponudimo
+      else if (f && typeof f.body === "string" && /^[A-Za-z]$/.test(f.param || "") && !/Ans|°|′|″/.test(f.body) && !(TRIG_FN.test(f.body) && (sh.angle || "deg") !== (state.settings.deg ? "deg" : "rad"))) out.push({ name: n, label: `${n}(${f.param})`, text: `${n}(${f.param}) = ${f.body}` });
     }
     return out;
   }
@@ -1330,7 +1332,7 @@ export function createCalculator(root, opts) {
           if (m && m[1].trim()) funcs[o.fname] = { param: o.params[0], body: m[1].trim() };
         }
       }
-      return { vars, funcs };
+      return { vars, funcs, angle: state.settings.deg ? "deg" : "rad" };
     },
     resize() {
       view.resize();

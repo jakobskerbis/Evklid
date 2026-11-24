@@ -108,6 +108,19 @@ test("skupne vrednosti med znanstvenim in grafičnim kalkulatorjem (obe smeri)",
       await tap(".sc-from-graph");
       const res = await page.locator(".sc-h-row.last .sc-h-res").innerText();
       assert.match(res, /13/, `${where}: ${res}`);
+      // kotne funkcije pri različni enoti kota (kalkulator DEG, graf RAD; pregled #1002): ne ponudimo, pomen bi se spremenil
+      await run("h(x) = sin(x)");
+      await page.evaluate(() => window.toGraph());
+      await page.evaluate(() => {
+        const g = window.graph;
+        const s = JSON.parse(JSON.stringify(g.state));
+        s.items.push({ id: "n2", type: "expr", text: "y = h(x)", color: 3 }, { id: "n3", type: "expr", text: "w(x) = cos(x)", color: 4 });
+        g.loadState(s);
+      });
+      assert.equal(await page.locator('[data-id="n2"] [data-act="fromsci"]').count(), 0, where);
+      await page.evaluate(() => window.toSci());
+      await run("w(0) + w(π)");
+      assert.equal(await page.locator(".sc-from-graph").count(), 0, where);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), where);
       assert.deepEqual(errors, [], where);
       await ctx.close();
