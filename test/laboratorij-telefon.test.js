@@ -161,6 +161,19 @@ test("lab on a phone: the drawing stays visible while using the controls", { tim
 
   await t.test("»Povečaj risbo«: drawing over the whole screen, much taller; same button and Esc close it", async () => {
     const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+    // fotografija titracije (sim/foto.js) je pokončna (0,71 : 1) in že pripeta velika: v povečavi zraste, a jo omeji širina
+    {
+      const f = await run(ctx, "lab-titracija");
+      await f.p.waitForSelector("svg.lab-foto-on", { timeout: 15000 });
+      const vf = () => f.p.evaluate(() => { const r = document.querySelector(".demo-stage .demo-svg").getBoundingClientRect(); return { h: Math.round(r.height), cela: r.left >= -1 && r.right <= 361 && r.top >= -1 && r.bottom <= 741 }; });
+      const pf = await vf();
+      await f.p.locator(".lab-zoom").tap();
+      const zf = await vf();
+      assert.ok(zf.cela && zf.h >= pf.h * 1.2, `fotografija ${pf.h} → ${zf.h} px, cela ${zf.cela}`);
+      await f.p.close();
+    }
+    // mehanika povečave na risbi (izbran »Fotografski prikaz« izklopljen)
+    await ctx.addInitScript(() => localStorage.setItem("evklid.lab.foto", "0"));
     const { p } = await run(ctx, "lab-titracija");
     const visina = () => p.evaluate(() => Math.round(document.querySelector(".demo-stage .demo-svg").getBoundingClientRect().height));
     const prej = await visina();
@@ -179,6 +192,7 @@ test("lab on a phone: the drawing stays visible while using the controls", { tim
     await p.keyboard.press("Escape");
     assert.deepEqual(await p.evaluate(() => [document.querySelector(".demo-stage").classList.contains("lab-povecano"), document.querySelector(".demo-stage").getAttribute("role"), document.querySelectorAll("[inert]").length]), [false, null, 0]);
     // ležeča risba (Ohmov zakon) je v povečavi cela na zaslonu: na pokončnem telefonu se obrne
+    await ctx.addInitScript(() => localStorage.removeItem("evklid.lab.foto")); // spet privzeto: fotografija
     // fotografija mize (sim/foto.js) se ne obrne: napisi in prizor ostanejo pokonci
     const f = await run(ctx, "lab-ohm");
     await f.p.waitForSelector("svg.lab-foto-on", { timeout: 15000 });
