@@ -390,6 +390,7 @@ export function createScientific(root, opts) {
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (r.searched) e.note = { key: "sc.searchedNone", tex: r.searched };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
+        if (r.all && r.cond) e.note = { key: "sc.cas.cond", tex: r.cond }; // x ∈ ℝ, velja za x ≠ 2 (AUDIT-048)
         e.steps = true;
         if (r.roots.length) e.first = r.roots[0];
         break;
@@ -397,6 +398,7 @@ export function createScientific(root, opts) {
         e.res = intervalsTex(r, c, st.format);
         e.r = pick(r, ["v", "intervals"]); // ±∞ se v JSON shrani kot null
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
+        if (r.cond) e.note = { key: "sc.cas.cond", tex: r.cond };
         e.steps = true;
         break;
       case "system":

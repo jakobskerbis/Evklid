@@ -9,7 +9,7 @@ import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
 import { polyRootsMult, polyRootsExact } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
 import { exactPolyIn } from "./cas.js";
-import { walk } from "./math.js";
+import { walk, fromTex } from "./math.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE] gosto,
 const FAR = 1e12; // zunaj pa do ±FAR na logaritemski mreži (AUDIT-015: √x = 20 ima rešitev 400)
@@ -1200,6 +1200,18 @@ export function analyze(text, env = {}) {
       if (U.length === 1) {
         const v = U[0];
         const plot = v === "x" && cmp && ast.ops.length === 1 ? plotPair(cmp, env) : [];
+        // istovetnost (AUDIT-048): 1/(x − 2) = 1/(x − 2), x/x = 1, √x = √x veljajo za vsak x, kjer sta strani definirani
+        // L − R je konstanta c: x = x + 10⁻¹² in x/x = 2 nimata rešitve (prej »x ∈ ℝ« oziroma »x = −100«)
+        const id = ast.ops.length === 1 && cmp ? identityOf(cmp, env, v, fnOf(ast.terms[0], v), fnOf(ast.terms[1], v)) : null;
+        const holds = id && CMP_OK[ast.ops[0]](id.c);
+        // pogoj iz CAS mora opisati, kje sta strani res definirani (√(x² − 1): ne le x ≥ 1; ∛x tudi za x < 0)
+        if (id && (!holds || condMatches(id.cond, env, v, fnOf(ast.terms[0], v), fnOf(ast.terms[1], v)))) {
+          const op = ast.ops[0];
+          const cond = holds && id.cond ? { cond: id.cond } : {};
+          if (op === "=") return holds ? { kind: "solve", v, all: true, roots: [], complex: [], ...cond, tex, plot } : { kind: "solve", v, none: true, roots: [], complex: [], tex, plot };
+          // a ≤ a velja povsod v definicijskem območju, a < a nikjer
+          return { kind: "ineq", v, intervals: holds ? [{ lo: -Infinity, loIn: false, hi: Infinity, hiIn: false }] : [], ...cond, tex, plot };
+        }
         if (ast.ops.length === 1 && ast.ops[0] === "=") {
           const L = fnOf(ast.terms[0], v);
           const R = fnOf(ast.terms[1], v);
@@ -1240,6 +1252,53 @@ export function analyze(text, env = {}) {
     return { error: { code: e.code || "other", info: e.info || {} } };
   }
   return r;
+}
+
+// Je L − R simbolno konstanta (poenostavi, preverjeno s števili)? Vrne { c, cond } – c = 0 za istovetnost, cond je
+// definicijsko območje (»x ≠ 2«, »x ≥ 0«) – ali null. Številska pot tega ne zna: L − R je 0 ali šum zaokrožitve povsod,
+// zato je vrnila naključne točke ali »rešitve ni« (AUDIT-048).
+function identityOf([l, , rr], env, v, L, R) {
+  let r;
+  try {
+    r = runCas({ op: "simplify", name: "simplify", inner: `(${l})-(${rr})` }, { ...env, live: true });
+  } catch {
+    return null;
+  }
+  if (r?.kind !== "cas" || typeof r.resTex !== "string") return null;
+  if (r.resTex === "0") return { c: 0, cond: r.cond || "" };
+  // rezultat brez neznanke: predznak konstante iz vrednosti strani v točki, kjer sta definirani
+  if (new RegExp(`(?<![A-Za-z])${v}(?![A-Za-z])`).test(r.resTex.replace(/\\[A-Za-z]+/g, " "))) return null;
+  for (const x of [0.37, 1.3, -0.7, 2.9, 5.1, -3.3, 17.3, 0.013]) {
+    const d = L(x) - R(x);
+    if (typeof d === "number" && Number.isFinite(d) && d !== 0) return { c: d, cond: r.cond || "" };
+  }
+  return null;
+}
+
+// Ali pogoj (TeX »x \ge 1,\; x \ne 2«) velja natanko tam, kjer sta L in R končni? Preverjeno na mreži točk.
+function condMatches(cond, env, v, L, R) {
+  let tests;
+  try {
+    tests = (cond ? cond.split(",\\;") : []).map((part) => {
+      const line = compileLine(fromTex(part.trim()).replace(/\bne\b/g, "!="), { ...env, comma: false });
+      if (line.ast.k !== "cmp") throw new Error("cond");
+      const f = line.run(line.ast);
+      return (x) => {
+        const s = Object.create(line.scope);
+        s[v] = x;
+        const y = f(s);
+        return y === true || y === 1;
+      };
+    });
+  } catch {
+    return false;
+  }
+  const fin = (y) => typeof y === "number" && Number.isFinite(y);
+  for (let x = -12.0071; x < 12; x += 0.0937) {
+    const def = fin(L(x)) && fin(R(x));
+    if (def !== tests.every((t) => t(x))) return false;
+  }
+  return true;
 }
 
 function plotPair([l, , rr], env) {
