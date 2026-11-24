@@ -553,10 +553,12 @@ Object.defineProperty(state, "ucniKontekst", {
   },
   enumerable: true,
 });
+// Vrnitev velja le v pogovoru, kjer je bilo vprašanje (conv); »nov« = še neustvarjen pogovor (pregled 2, #963).
+const returnConvOk = (r) => r.conv === null || r.conv === (state.conversationId ?? "nov");
 function syncChatReturn() {
   const b = document.getElementById("chat-return");
   if (!b) return;
-  const ime = chatReturnVal?.oznaka ? String(chatReturnVal.oznaka).slice(0, 80) : "";
+  const ime = chatReturnVal?.oznaka && returnConvOk(chatReturnVal) ? String(chatReturnVal.oznaka).slice(0, 80) : "";
   b.hidden = !ime;
   // Kaj inštruktor ve (faza B): ena vrstica pod gumbom, dokler posnetek ni poslan.
   const ve = document.getElementById("chat-kontekst");
@@ -574,7 +576,7 @@ function syncChatReturn() {
 // gumb »Nazaj na: …« vrnejo na isto mesto (back = { view, open, oznaka }).
 // back.kontekst: posnetek stanja (sourceType, sourceId, …), ki gre z naslednjim vpisanim sporočilom kot skrit blok.
 function askTutorFrom(text, back = null) {
-  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: null, oznaka: back.oznaka || "" } : null;
+  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "" } : null;
   showView("chat");
   state.ucniKontekst = back?.kontekst && typeof back.kontekst === "object" ? back.kontekst : null;
   fillInput(text);
@@ -1069,7 +1071,7 @@ nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(fal
 // okno: gumb »Nazaj na: …« deluje tudi, ko je Inštruktor v premičnem oknu (poskus ali 3D je tedaj glavni pogled).
 function chatReturnBack({ okno = false } = {}) {
   const r = state.chatReturn;
-  if ((currentView !== "chat" && !(okno && isFloating("chat"))) || !r || (r.conv !== null && r.conv !== state.conversationId)) return false;
+  if ((currentView !== "chat" && !(okno && isFloating("chat"))) || !r || !returnConvOk(r)) return false;
   state.chatReturn = null;
   showView(r.view);
   r.open();
@@ -1215,7 +1217,7 @@ function backStep(wasOverlay) {
   // Plast v pogledu Kalkulator; šele za 3D in drugimi plastmi, ki ga prekrijejo.
   if (currentView === "graph" && calcBack()) return true;
   // Podstran pogleda: lekcija → kazalo, poskus → seznam, igra → seznam iger …
-  if (currentView === "uci" && uciBack({ textbookBack, labBack })) return true;
+  if (currentView === "uci" && uciBack({ textbookBack, labBack, lessonId: openLessonId() })) return true;
   if (currentView === "games" && gamesBack()) return true;
   if (currentView === "scan" && scanBack()) return true;
   if (currentView === "scan" && state.scanFromChat) return showView("chat"), true; // skener iz kamere v Inštruktorju
@@ -1526,6 +1528,7 @@ async function selectStudent(id) {
   nalogaPole?.pozabi(); // izbrani izvirniki pol (public/naloga-pole/klepet.js) so od prejšnjega profila
   state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
   state.ucniKontekst = null;
+  state.chatReturn = null; // ne vrnitev v poskus ali 3D drugega profila (pregled 2, #963)
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
   const want = state.student.settings.language;
   if (want && want !== currentLang()) {
@@ -1897,6 +1900,7 @@ async function openConversation(id, { mark = true } = {}) {
   const conv = await api(`/api/conversations/${id}`);
   state.conversationId = conv.id;
   state.convTopic = conv.topic?.id || null;
+  syncChatReturn(); // »Nazaj na: …« le v pogovoru, kjer je bilo vprašanje
   if (mark) markChat();
   await setChatFx(conv);
   if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
@@ -2094,6 +2098,7 @@ $("#new-chat").addEventListener("click", () => {
   if (state.conversationId) chatDraftSave(state.conversationId, ""); // besedilo v polju gre k novemu pogovoru
   state.conversationId = null;
   state.chatFx = null;
+  syncChatReturn();
   renderConversationList();
   renderEmptyChat();
   if ($("#input").value.trim()) chatDraftSave(); // prazno polje: osnutek novega pogovora, če je
@@ -2192,6 +2197,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     if (!state.conversationId) {
       const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST" });
       state.conversationId = conv.id;
+      if (state.chatReturn?.conv === "nov") state.chatReturn.conv = conv.id; // vrnitev iz poskusa ali 3D gre z novim pogovorom
     }
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
@@ -4526,7 +4532,7 @@ initLab({
   escapeHtml,
   getStudent: () => state.student,
   openLesson: (id) => {
-    lessonFromLab();
+    lessonFromLab(id);
     openLesson(id);
   },
   askTutor: (text, oznaka, kontekst) => {
@@ -4543,8 +4549,9 @@ initUci({
   stopReading,
   odprto,
   // vrni: { oznaka, open } iz 3D (atlas ali model): vrnitev iz klepeta znova odpre isti model ali strukturo.
+  // 3D, ki ga je odprl gumb v klepetu (public/odpri.js), je nad klepetom: brez vrnitve v Uči se, posnetek pa gre.
   askTutor: (text, vrni = null) => {
-    askTutorFrom(text, vrni ? { view: "uci", ...vrni } : null);
+    askTutorFrom(text, vrni ? { ...vrni, view: currentView === "chat" ? null : "uci" } : null);
   },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
 });

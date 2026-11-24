@@ -15,7 +15,7 @@ let tab = read();
 let hub = null; // { key, html } narisan 3D svet (key = jezik|slog|pot veje)
 let full = null; // { el, frame } odprt atlas ali model čez cel zaslon
 let fromLesson = false; // poskus je odprla povezava v lekciji: tipka Nazaj vrne v lekcijo
-let fromLab = false; // lekcijo je odprla tema v poskusu (»Odpri temo v učbeniku«): tipka Nazaj vrne v poskus
+let fromLab = null; // id lekcije, ki jo je odprla tema v poskusu (»Odpri temo v učbeniku«): tipka Nazaj iz nje vrne v poskus
 
 function read() {
   try {
@@ -46,7 +46,7 @@ export function setUciTab(name) {
   if (!UCI_TABS.includes(name)) return;
   if (name !== "textbook" && tab === "textbook") D?.stopReading?.(); // branje lekcije na glas ne teče naprej skrito
   if (name !== "lab") fromLesson = false;
-  if (name !== "textbook") fromLab = false;
+  if (name !== "textbook") fromLab = null;
   tab = name;
   save(name);
   for (const b of document.querySelectorAll("[data-uci-tab]")) {
@@ -89,7 +89,7 @@ export function initUci(deps) {
     const b = e.target.closest("[data-uci-tab]");
     if (!b || b.dataset.uciTab === tab) return;
     fromLesson = false;
-    fromLab = false;
+    fromLab = null;
     setUciTab(b.dataset.uciTab);
     showUci();
   });
@@ -131,15 +131,17 @@ export function initUci(deps) {
 }
 
 /** Tipka Nazaj v »Uči se«: zapre atlas ali model, sicer lekcijo ali poskus. Vrne true, če je kaj zaprla. */
-export function uciBack({ textbookBack, labBack }) {
+export function uciBack({ textbookBack, labBack, lessonId = undefined }) {
   if (close3d()) return true;
   // Nazaj v veji drevesa 3D sveta gre za eno vejo višje (kot drobtinice), šele na vrhu zapusti zavihek.
   if (tab === "3d" && pot) { nastaviPot(pot.split("/").slice(0, -1).join("/")); return true; }
   if (tab === "textbook") {
+    // Le iz iste lekcije (lessonId iz app.js); drugo lekcijo, odprto prek kazala, zapre običajno.
+    const izLab = fromLab && (lessonId === undefined || lessonId === fromLab);
+    fromLab = null;
     const closed = textbookBack();
-    if (!fromLab) return closed;
+    if (!izLab) return closed;
     // Lekcija iz poskusa (»Odpri temo v učbeniku«): Nazaj vrne v isti poskus, ne na kazalo učbenika.
-    fromLab = false;
     setUciTab("lab");
     showUci();
     return true;
@@ -165,8 +167,8 @@ export function labFromLesson() {
 export const labIsFromLesson = () => fromLesson;
 
 /** Tema v poskusu je odprla lekcijo (app.js, initLab → openLesson): tipka Nazaj iz lekcije vrne v poskus. */
-export function lessonFromLab() {
-  fromLab = true;
+export function lessonFromLab(id = true) {
+  fromLab = id;
 }
 
 // Naslov modela iz okvirja /3d za vrnitev iz klepeta: »<id>« ali »<id>?ključ=vrednost&…« (samo varni znaki, kot open3d).
@@ -184,7 +186,7 @@ export function vrnitev3d(naslov, oznaka) {
 /** Pogled »Uči se« je zaprt (premično okno ali drug pogled): okvir 3D se zapre, da ne porablja grafične kartice. */
 export function leaveUci() {
   fromLesson = false;
-  fromLab = false;
+  fromLab = null;
   close3d();
 }
 
