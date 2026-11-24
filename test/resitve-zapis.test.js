@@ -42,3 +42,22 @@ test("točne rešitve ostanejo z »=«", () => {
   assert.ok(tex("(x−√(7))^2(x−π)=0").startsWith("x_{1} = \\sqrt{7} \\approx 2{,}645751"));
   assert.equal(tex("(x−0,1)(x−0,1000001)(x−3)=0"), "x_{1} = \\frac{1}{10} \\approx 0{,}1,\\quad x_{2} = 0{,}1000001,\\quad x_{3} = 3");
 });
+
+// Pregled #968: popolne potence izpod korena (SymPy real_roots: 2·∛2, 2·∛3, −3·∛2, ±2·∜3, 2·∜6 … ), vpisana
+// decimalka ni nikoli π, končen decimalni zapis točne rešitve z vsemi mesti.
+test("ᵏ√ brez popolnih potenc pod korenom (SymPy)", () => {
+  const first = (t) => tex(t).split(",\\quad")[0];
+  assert.equal(first("x^3=16"), "x_{1} = 2\\sqrt[3]{2} \\approx 2{,}519842");
+  assert.equal(first("x^3=24"), "x_{1} = 2\\sqrt[3]{3} \\approx 2{,}884499");
+  assert.equal(first("x^3=−54"), "x_{1} = -3\\sqrt[3]{2} \\approx -3{,}779763");
+  assert.equal(first("x^4=48"), "x_{1} = -2\\sqrt[4]{3} \\approx -2{,}632148");
+  assert.equal(first("x^5=96"), "x_{1} = 2\\sqrt[5]{3} \\approx 2{,}491462"); // SymPy 2·3^(1/5) = 2,49146187923
+  assert.equal(first("16x^3=1"), "x_{1} = \\frac{1}{2}\\sqrt[3]{\\frac{1}{2}} \\approx 0{,}39685"); // SymPy 2^(2/3)/4
+});
+
+test("vpisana decimalka ni π, točna rešitev z vsemi mesti", () => {
+  assert.ok(!tex("(x−3,14159265358979)(x−1)=0").includes("\\pi"));
+  assert.ok(tex("(x−π)(x−1)=0").includes("\\pi"));
+  assert.equal(tex("(x−1,0000001)(x−2)=0"), "x_{1} = 1{,}0000001,\\quad x_{2} = 2");
+  assert.equal(tex("(x+20)(x+9,6537162)=0"), "x_{1} = -20,\\quad x_{2} = -9{,}6537162");
+});
