@@ -649,6 +649,69 @@ export function exactIntegral(raw, env, r) {
   }
 }
 
+// Številski izračun je obupal (∫(sin x; 0; 10⁴): tisoči nihajev, »ni mogoče zanesljivo«). Če znamo nedoločeni
+// integral F (preverjen z odvodom) in je F na [a, b] zvezna, je vrednost F(b) − F(a) (»=«). Zveznost preverimo v 4096
+// točkah: F in f sta končni, prirastek F pa ne presega 2·max|f|·h (skok veje atan ali ln bi to mejo prekoračil).
+function exactFallback(raw, env) {
+  try {
+    const line = compileLine(raw, env);
+    let n = line.ast;
+    while (n.k === "grp") n = n.a;
+    if (n.k !== "int" || !n.lo || !n.hi) return null;
+    const a = line.run(n.lo)(line.scope);
+    const b = line.run(n.hi)(line.scope);
+    if (!Number.isFinite(a) || !Number.isFinite(b) || a === b) return null;
+    const F = antiderivativeAst(line, n.a, n.v);
+    if (!F) return null;
+    const mk = (node) => {
+      const g = line.run(node);
+      return (x) => {
+        const sc = Object.create(line.scope);
+        sc[n.v] = x;
+        const y = g(sc);
+        return typeof y === "number" ? y : NaN;
+      };
+    };
+    const Fx = mk(F);
+    const fx = mk(n.a);
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    const N = 4096;
+    const h = (hi - lo) / N;
+    let x0 = lo + 0.5 * h;
+    let F0 = Fx(x0);
+    let f0 = fx(x0);
+    if (!Number.isFinite(F0) || !Number.isFinite(f0)) return null;
+    for (let i = 1; i < N; i++) {
+      const x1 = lo + (i + 0.5) * h;
+      const F1 = Fx(x1);
+      const f1 = fx(x1);
+      const fm = fx(0.5 * (x0 + x1));
+      if (!Number.isFinite(F1) || !Number.isFinite(f1) || !Number.isFinite(fm)) return null;
+      const bound = 2 * Math.max(Math.abs(f0), Math.abs(f1), Math.abs(fm)) * h + 1e-12 * (Math.abs(F0) + Math.abs(F1) + 1);
+      if (Math.abs(F1 - F0) > bound) return null;
+      [x0, F0, f0] = [x1, F1, f1];
+    }
+    // krajišči: vrednost F, sicer enostranska limita, ki se ustali
+    let lim = false;
+    const end = (x, sd) => {
+      const y = Fx(x);
+      if (Number.isFinite(y)) return y;
+      lim = true;
+      const y1 = Fx(x + sd * (hi - lo) * 1e-13);
+      const y2 = Fx(x + sd * (hi - lo) * 1e-16);
+      return Math.abs(y1 - y2) <= 1e-9 * Math.max(1, Math.abs(y2)) ? y2 : NaN;
+    };
+    const sd = b > a ? 1 : -1;
+    let value = end(b, -sd) - end(a, sd);
+    if (lim) value = Number(value.toPrecision(12));
+    if (!Number.isFinite(value)) return null;
+    return { kind: "value", value, tex: lineTex(line.ast, env.comma !== false) };
+  } catch {
+    return null;
+  }
+}
+
 export function analyze(text, env = {}) {
   const comma = env.comma !== false;
   const vars = env.vars || {};
@@ -699,6 +762,7 @@ export function analyze(text, env = {}) {
   if (r && !r.error) return { kind: "value", ...(r.est ? exactIntegral(raw, env, r) : r) };
   if (!r) return null;
   const code = r.error.code;
+  if ((code === "intUnknown" || code === "intTimeout") && !env.live) return exactFallback(raw, env) || r;
   if (code !== "missing" && code !== "notCalc") return r;
 
   // kompleksno število (i je imaginarna enota, če ni spremenljivka)
