@@ -6,7 +6,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { analyze } from "../public/graph/scisolve.js";
 import { evaluate } from "../public/graph/scicore.js";
-import { integrate, integrateInfo, parse, compile } from "../public/graph/math.js";
+import { integrate, integrateInfo as integrateInfo0, withIntegralBudget, parse, compile } from "../public/graph/math.js";
+// neposredni klici: velikodušna časovna meja (obremenjen stroj med testi), da test meri pravilnost, ne hitrosti
+const integrateInfo = (...args) => withIntegralBudget(10000, () => integrateInfo0(...args));
 import sl from "../public/i18n/sl.js";
 import fs from "node:fs";
 
