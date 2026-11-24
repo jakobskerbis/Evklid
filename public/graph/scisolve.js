@@ -1062,6 +1062,31 @@ function exactFallback(raw, env) {
   }
 }
 
+/**
+ * Sporočilo za napako določenega integrala (kalkulator in orodje Analiza govorita isto): [ključ prevoda, parametri]
+ * ali null, če napaka ni od integrala.
+ */
+export function integralErrorKey(e) {
+  switch (e?.code) {
+    case "intDiverge":
+      return e.info?.pv !== undefined ? ["sc.errIntPv", { pv: e.info.pv }] : [e.info?.inf ? "sc.errIntDivergeInf" : "sc.errIntDiverge", {}];
+    case "intUndefined":
+      return ["sc.errIntUndefined", {}];
+    case "intUnknown":
+    case "intTimeout":
+      return ["sc.errIntUnknown", {}];
+    default:
+      return null;
+  }
+}
+
+/** ∫ f(x) od a do b za orodje Analiza: isti izračun (točno ali »≈«) in iste napake kot znanstveni kalkulator. */
+export function integralOf(fText, a, b, { live = false } = {}) {
+  const num = (v) => (v === Infinity ? "∞" : v === -Infinity ? "−∞" : String(v));
+  // comma: true bere decimalno vejico (x^0,5) in piko (x^0.5) kot v orodju; meji v zapisu s piko
+  return analyze(`∫(${fText};${num(a)};${num(b)})`, { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true, live });
+}
+
 export function analyze(text, env = {}) {
   const comma = env.comma !== false;
   const vars = env.vars || {};

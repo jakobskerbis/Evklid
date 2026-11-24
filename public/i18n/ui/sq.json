@@ -1010,6 +1010,7 @@
   "sc.errIntPv": "Integrali nuk ekziston: divergjon (funksioni ka një pol në interval). Ekziston vetëm vlera kryesore e Cauchy-t {pv}, por ajo nuk është vlera e integralit.",
   "sc.errIntDivergeInf": "Integrali nuk ekziston: divergjon në intervalin e pafundëm (funksioni nuk zvogëlohet mjaft shpejt drejt pafundësisë).",
   "sc.errIntUnknown": "Integrali nuk mund të llogaritet në mënyrë të besueshme: llogaritja numerike nuk jep asnjë shifër të besueshme.",
+  "sc.errIntUndefined": "Integrali nuk ekziston: funksioni nuk është i përcaktuar në një pjesë të intervalit (p.sh. rrënja ose logaritmi i një numri negativ).",
   "sc.more": "Të gjitha funksionet",
   "sc.functions": "Funksionet",
   "sc.grp.cmp": "Ekuacione dhe mosbarazime",
