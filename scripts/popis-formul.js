@@ -53,7 +53,7 @@ const vidno = (html) =>
     .replace(/\u0001[^\u0002]*\u0002/g, " ⟦F⟧ ")
     .replace(/<pre[\s\S]*?<\/pre>|<code[\s\S]*?<\/code>|<svg[\s\S]*?<\/svg>/g, " ")
     .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
 
 const VZOREC = {
   latex: /\\(?:frac|sqrt|cdot|times|int|sum|lim|left|right|mathrm|text|alpha|beta|pi|Delta|vec|overline|le|ge|neq|approx|infty)\b/g,
