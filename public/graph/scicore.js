@@ -121,6 +121,8 @@ export function lineTex(ast, comma = true) {
   }
   return toTex(ast, { comma, sep: comma ? ";" : "," })
     .replaceAll(ANS, "\\mathrm{Ans}")
+    // potenca s stopinjami (Ans²°): drugi eksponent na prazni osnovi, sicer je dvojni eksponent napaka KaTeX (AUDIT-020)
+    .replace(/(\^\{(?:[^{}]|\{[^{}]*\})*\})\s*(?:\\cdot\s*)?G_\{(deg|min|sec)\}/g, (_, sup, u) => `${sup}{}^{${{ deg: "\\circ", min: "\\prime", sec: "\\prime\\prime" }[u]}}`)
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
     .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
