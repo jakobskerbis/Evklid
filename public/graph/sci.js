@@ -6,7 +6,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -224,8 +224,8 @@ export function createScientific(root, opts) {
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
-    const s = input.selectionStart ?? input.value.length;
-    const e = input.selectionEnd ?? s;
+    // izbira, ki zajame le del predloge, se razširi na celo predlogo (ne ostane »;0;1)«, AUDIT-039)
+    const [s, e] = selectionSpan(input.value, input.selectionStart ?? input.value.length, input.selectionEnd ?? input.selectionStart ?? input.value.length);
     const at = ins.indexOf("@");
     const clean = ins.replace("@", "");
     input.value = input.value.slice(0, s) + clean + input.value.slice(e);
@@ -895,6 +895,19 @@ export function createScientific(root, opts) {
   // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
   input.addEventListener("beforeinput", (e) => {
     if (e.isComposing) return;
+    // tipkanje čez izbiro: izbira dela predloge se najprej razširi na celo predlogo (AUDIT-039)
+    if (e.inputType.startsWith("insert") && input.selectionStart !== input.selectionEnd) {
+      const [a, b] = selectionSpan(input.value, input.selectionStart, input.selectionEnd);
+      if (a !== input.selectionStart || b !== input.selectionEnd) {
+        input.setSelectionRange(a, b);
+        // WebKit ne upošteva spremenjene izbire v beforeinput: vstavimo sami
+        if (e.inputType === "insertText" && e.data) {
+          e.preventDefault();
+          insert(e.data);
+          return;
+        }
+      }
+    }
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
       e.preventDefault();
       del();

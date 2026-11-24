@@ -670,10 +670,40 @@ function unwrap(s, start, o, c, keep) {
   return done(s.slice(0, start) + inner + s.slice(end), start);
 }
 
+/**
+ * Izbira [s, e) razširjena tako, da ne zajame le dela predloge ali oklepaja (AUDIT-039): izbira je v eni reži, zajame
+ * celo predlogo ali je zunaj nje; sicer se razširi na celo predlogo (z imenom). Vrne [s, e].
+ */
+export function selectionSpan(text, s, e) {
+  const t = String(text ?? "");
+  let a = Math.max(0, Math.min(s, e));
+  let b = Math.min(t.length, Math.max(s, e));
+  if (a === b) return [a, b];
+  for (let changed = true, guard = 0; changed && guard < 50; guard++) {
+    changed = false;
+    for (let o = 0; o < t.length; o++) {
+      if (!OPENERS.includes(t[o])) continue;
+      const m = OPENER.exec(t.slice(0, o + 1));
+      const start = m ? o + 1 - m[0].length : o;
+      const c = closeAt(t, o);
+      const end = c < 0 ? t.length : c + 1;
+      if (b <= start || a >= end || (a <= start && b >= end)) continue; // zunaj ali cela
+      if (slotsOf(t, o, c).some(([x, y]) => a >= x && b <= y)) continue; // v eni reži
+      a = Math.min(a, start);
+      b = Math.max(b, end);
+      changed = true;
+    }
+  }
+  return [a, b];
+}
+
 /** ⌫: { text, pos } po brisanju levo od kazalca (s, e: izbira). */
 function backspaceRaw(text, s, e = s) {
   const t = String(text ?? "");
-  if (s !== e) return done(t.slice(0, Math.min(s, e)) + t.slice(Math.max(s, e)), Math.min(s, e));
+  if (s !== e) {
+    const [a, b] = selectionSpan(t, s, e);
+    return done(t.slice(0, a) + t.slice(b), a);
+  }
   if (s <= 0) return done(t, 0);
   // kazalec sredi odpirala (»integr|iraj(«, »sin|(«, »d/d|x(«, »∫|(«): kot da je za njegovim oklepajem
   const inOp = openerAround(t, s);
