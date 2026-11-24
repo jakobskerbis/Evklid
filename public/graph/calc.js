@@ -1313,8 +1313,6 @@ export function createCalculator(root, opts) {
       }
       const next = clone(state);
       next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
-      const note = noteText(p, req.message);
-      if (note) next.items.push({ id: newId(), type: "note", text: note });
       const used = next.items.map((x) => x.color);
       let c = 0;
       const color = () => {
@@ -1327,11 +1325,22 @@ export function createCalculator(root, opts) {
         if (row.label === undefined) delete row.label;
         next.items.push(row);
       }
-      if (p.deg !== undefined) next.settings = { ...next.settings, deg: p.deg };
+      // spremenjena nastavitev grafa: kratka opomba (učenec ve, zakaj se je graf spremenil; j, 24. 11. 2026)
+      const changed = [];
+      if (p.deg !== undefined && p.deg !== !!state.settings.deg) {
+        next.settings = { ...next.settings, deg: p.deg };
+        changed.push(t(p.deg ? "gc.fromSci.setDeg" : "gc.fromSci.setRad"));
+      }
       if (p.view) {
         next.view = p.view;
-        if (!p.square || Math.abs(Math.log(((p.view.ymax - p.view.ymin) / view.H) / ((p.view.xmax - p.view.xmin) / view.W))) > Math.log(1.6)) next.settings = { ...next.settings, square: false };
+        const wide = Math.abs(Math.log(((p.view.ymax - p.view.ymin) / view.H) / ((p.view.xmax - p.view.xmin) / view.W))) > Math.log(1.6);
+        if ((!p.square || wide) && state.settings.square !== false) {
+          next.settings = { ...next.settings, square: false };
+          changed.push(t("gc.fromSci.noSquare"));
+        }
       }
+      const note = [noteText(p, req.message), ...changed].filter(Boolean).join(" ");
+      if (note) next.items.splice(next.items.length - p.items.length, 0, { id: newId(), type: "note", text: note });
       loadState(next);
       if (p.view) {
         state.view = view.squared(p.view);

@@ -135,7 +135,13 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       const last = s.items.at(-1);
       assert.match(last.text, /^(?:[a-z]\(x\)|y) = 1\/x$/, where);
       assert.equal(last.tools, undefined, where);
-      assert.ok(s.items.some((x) => x.type === "note" && x.text === msg), `${where}: opomba ${msg}`);
+      assert.ok(s.items.some((x) => x.type === "note" && x.text.startsWith(msg)), `${where}: opomba ${msg}`);
+
+      // sprememba nastavitve grafa (DEG) dobi kratko opombo
+      await run("sin(x)=0,5");
+      s = await show();
+      assert.equal(s.settings.deg, true, where);
+      assert.ok(s.items.some((x) => x.type === "note" && x.text.includes("gc.fromSci.setDeg")), where);
 
       // osnovna šola: integral brez gumba, enačba z njim
       await page.evaluate(() => (window.stage = "OS"));
