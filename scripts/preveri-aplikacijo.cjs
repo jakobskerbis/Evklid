@@ -290,8 +290,8 @@ async function screen(p, name) {
 // Mehurček inštruktorja (public/okna.js) ne sme prekriti gumba, povezave ali polja (primerjava z Astro 24. 11. 2026:
 // prekrit X na pasu, gumb za pripenjanje v poskusu). Mesto popravi v 400 ms po menjavi pogleda, zato počakamo.
 async function bubbleCovers(p) {
-  const vidno = await p.locator("#chat-bubble:not([hidden]):not(.umaknjen)").isVisible().catch(() => false);
-  if (!vidno) return [];
+  // Najprej počakamo (mesto in »umaknjen« se popravita v 400 ms), šele nato preverimo vidnost.
+  if (!(await p.locator("#chat-bubble:not([hidden])").count().catch(() => 0))) return [];
   await p.waitForTimeout(500);
   return p
     .evaluate(() => {
@@ -299,7 +299,7 @@ async function bubbleCovers(p) {
       // Med vlečenjem (tudi magnet na X) je mehurček pod prstom namenoma kjerkoli.
       if (!b || b.hidden || ["umaknjen", "scrolling", "dragging", "magnet", "show-x"].some((c) => b.classList.contains(c))) return [];
       const r = b.querySelector(".cb-main").getBoundingClientRect();
-      const sel = "button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch], .sc-empty";
+      const sel = "button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch], .sc-empty p";
       const out = [];
       for (const el of document.querySelectorAll(sel)) {
         if (b.contains(el) || el.closest(".cb-drop, [hidden], [inert]")) continue;

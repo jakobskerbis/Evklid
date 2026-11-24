@@ -564,14 +564,16 @@ const CONTROLS = "body > main.view:not([hidden]):not(.in-okno) :is(input:not([ty
 // Obvestilni pasovi pod zgornjo vrstico (testna različica, preizkusni način) so zunaj pogleda: mehurček gre pod njih,
 // da ne prekrije njihovih gumbov (»Kaj še ne deluje«, X).
 const BANNERS = "#test-notice:not([hidden]), #mock-banner:not([hidden])";
+const HINT = "body > main.view:not([hidden]):not(.in-okno) .sc-empty :is(p, button)";
 // Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno) ne KEEP_CLEAR: najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
 function placeBubble() {
   const size = 56;
   const a = area();
   const pref = bstate.side === "left" ? "left" : "right";
-  const banners = [...document.querySelectorAll(BANNERS)].map((el) => el.getBoundingClientRect()).filter((r) => r.height > 0 && r.bottom < a.bottom - 2 * size);
-  const lo = Math.max(a.top, ...banners.map((r) => r.bottom)) + 8;
+  const banners = [...document.querySelectorAll(BANNERS)].map((el) => el.getBoundingClientRect()).filter((r) => r.height > 0);
+  // Visok pas (npr. razprt seznam »Kaj še ne deluje«): mehurček ostane vsaj na dnu zaslona, ne pod njim.
+  const lo = Math.min(Math.max(a.top, ...banners.map((r) => r.bottom)) + 8, Math.max(a.top + 8, a.bottom - size - 8));
   let hi = Math.max(lo, a.bottom - size - 8);
   // Lekcija po korakih: krogi Nazaj · 1/12 · Naprej plavajo na dnu glavnega pogleda, mehurček ostane nad njimi.
   const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
@@ -598,11 +600,14 @@ function placeBubble() {
   const keep = controls.length && cur.side === pref && cur.y >= lo && cur.y <= hi && !rects.concat(controls).some((r) => hit(r, xOf(pref), cur.y));
   const prost = keep ? cur : controls.length ? find(rects.concat(controls)) : null;
   let spot = prost || find(rects);
-  // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah in gumbih: mehurček se skrije, dokler
+  // Navodilo in zgledi praznega kalkulatorja (»Vpiši račun …«, »Preizkusi:«) ostanejo vidni: če jih edino prosto mesto prekrije, se mehurček umakne.
+  const hint = [...document.querySelectorAll(HINT)].map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0);
+  const hintCovered = !prost && !!spot && hint.some((r) => hit(r, xOf(spot.side), spot.y));
+  // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah: mehurček se skrije, dokler
   // se to ne spremeni (obrat, drug način ali pogled; j 14. 11. 2026). Inštruktor ostane v spodnji vrstici.
   const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
-  // V kalkulatorju se skrije tudi, kadar bi prekril gumb ali navodilo (prazen kalkulator na telefonu, 24. 11. 2026).
-  const away = clear.length > 0 && (!spot || lowLandscape || (controls.length > 0 && !prost));
+  // V kalkulatorju se skrije tudi, kadar bi prekril navodilo praznega kalkulatorja (telefon, 24. 11. 2026).
+  const away = clear.length > 0 && (!spot || lowLandscape || hintCovered);
   bubble.classList.toggle("umaknjen", away);
   if (away) return;
   // Ni prostega mesta: mehurček ne gre na tipke kalkulatorja, raje na drugo okno.
@@ -778,6 +783,12 @@ export function initOkna(opts) {
     });
   });
   window.addEventListener("evklid:stepper", () => bubble && !bubble.hidden && placeBubble());
+  // Pas se pokaže, zapre ali razpre (»Kaj še ne deluje«): mehurček takoj na novo mesto.
+  const pasovi = new MutationObserver(() => bubble && !bubble.hidden && placeBubble());
+  for (const id of ["test-notice", "mock-banner", "test-notice-list"]) {
+    const el = document.getElementById(id);
+    if (el) pasovi.observe(el, { attributes: true, attributeFilter: ["hidden"] });
+  }
   // Uvod, prijava in tekmovalna ura skrijejo mehurček (razredi na <body>).
   new MutationObserver(() => refreshBubble()).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 }
