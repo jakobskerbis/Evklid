@@ -194,7 +194,7 @@ export function evalComplex(text, { deg = false } = {}) {
 // ---------- polinomske enačbe ----------
 
 // Durand–Kerner in trije Newtonovi koraki, brez zaokroževanja. c: od najvišje potence, c[0] ≠ 0, stopnja ≥ 1.
-function dkRoots(c) {
+function dkRoots(c, scaled = false) {
   const n = c.length - 1;
   if (n === 1) return [[-c[1] / c[0], 0]];
   if (n === 2) {
@@ -226,7 +226,17 @@ function dkRoots(c) {
     });
     if (moved < 1e-15) break;
   }
-  return z.map((zi) => newton(c, zi, 3));
+  const out = z.map((zi) => newton(c, zi, 3));
+  // zelo različno velike ničle (4 in 10⁷, koeficienti do 10⁴³): iteracija preplavi; x = s·y, s = 2^k ≈ meja ničel
+  if (!scaled && out.some((zi) => !Number.isFinite(zi[0]) || !Number.isFinite(zi[1]))) {
+    const n = c.length - 1;
+    let bound = 0;
+    for (let i = 1; i <= n; i++) bound = Math.max(bound, Math.abs(c[i] / c[0]) ** (1 / i));
+    const sc = 2 ** Math.round(Math.log2(2 * bound || 1));
+    const cy = c.map((a, i) => a * sc ** -i); // a_i·s^(n−i)/s^n
+    if (cy.every(Number.isFinite) && cy[0] !== 0) return dkRoots(cy, true).map(([re, im]) => newton(c, [re * sc, im * sc], 3));
+  }
+  return out;
 }
 
 // p(z) in »velikost« Σ|a_k|·|z|^k (merilo za ostanek), c od najvišje potence
@@ -481,6 +491,55 @@ function intPoly(c) {
   return primB(fr.map((f) => (f.p * L) / f.q).reverse());
 }
 
+// Ničle enostavnega celoštevilskega polinoma t (BigInt, od najnižje) s kratnostjo k v found. Racionalne ničle
+// najdene numerično potrdimo točno in jih točno izločimo (deljenje), ostanek rešimo znova: pri ničlah od 4 do 10⁷
+// (koeficienti do 10⁴³) so male ničle v double sicer netočne.
+function solveSquarefree(t, k, found, depth = 0) {
+  if (t.length < 2) return;
+  if (t.length === 2) {
+    const [c0, c1] = t;
+    const g = bGcd(c0, c1) || 1n;
+    found.push({ z: [Number(-c0 / g) / Number(c1 / g), 0], m: k, exact: true });
+    return;
+  }
+  if (t.length === 3) {
+    // enostaven kvadratni faktor: točna diskriminanta (bližnji ničli 1 in 1,000001 ostaneta dve)
+    const [c0, b1, a2] = t;
+    const D = b1 * b1 - 4n * a2 * c0;
+    const sq = bSqrt(bAbs(D));
+    const den = 2 * Number(a2);
+    if (D >= 0n && sq * sq === D) {
+      for (const num of [-b1 - sq, -b1 + sq]) {
+        const g = bGcd(num, 2n * a2) || 1n;
+        found.push({ z: [Number(num / g) / Number((2n * a2) / g), 0], m: k, exact: true });
+      }
+    } else {
+      const r = Math.sqrt(Number(bAbs(D))) / Math.abs(den);
+      const re = -Number(b1) / den;
+      if (D > 0n) {
+        // stabilno: večja po absolutni vrednosti iz vsote, manjša iz produkta c/a
+        const big = re + Math.sign(re || 1) * r;
+        found.push({ z: [big, 0], m: k }, { z: [Number(c0) / Number(a2) / big, 0], m: k });
+      } else found.push({ z: [re, -r], m: k }, { z: [re, r], m: k });
+    }
+    return;
+  }
+  const tf = t.map(Number).reverse();
+  const rest = [];
+  let q = t;
+  for (let z of dkRoots(tf)) {
+    z = newton(tf, z);
+    if (Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z))) z = [exactNewton(t, z[0]), z[1]];
+    const f = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? ratOf(z[0], 10000000, 1e-15) || ratOf(z[0], 10000000) : null; // po exactNewton je ničla na ~ulp
+    if (f && rootB(t, f.p, f.q)) {
+      found.push({ z: [Number(f.p) / Number(f.q), 0], m: k, exact: true });
+      q = divB(q, [-f.p, f.q]);
+    } else rest.push(z);
+  }
+  if (q.length < t.length && q.length > 1 && depth < 8) solveSquarefree(q, k, found, depth + 1);
+  else for (const z of rest) found.push({ z, m: k });
+}
+
 /**
  * Ničle polinoma z večkratnostmi: [{ re, im, m }], ali null, če preizkus ostanka ne uspe.
  * Racionalni koeficienti: točen razcep brez kvadratov (f = t₁·t₂²·t₃³…), racionalne ničle točno,
@@ -507,36 +566,7 @@ export function polyRootsMult(coeffs, exact = null, radii = null) {
     for (let k = 1; k < ss.length; k++) {
       const t = divB(ss[k - 1], ss[k]);
       if (t.length < 2) continue;
-      const tf = t.map(Number).reverse();
-      if (t.length === 3) {
-        // enostaven kvadratni faktor: točna diskriminanta (bližnji ničli 1 in 1,000001 ostaneta dve)
-        const [c0, b1, a2] = t;
-        const D = b1 * b1 - 4n * a2 * c0;
-        const sq = bSqrt(bAbs(D));
-        const den = 2 * Number(a2);
-        if (D >= 0n && sq * sq === D) {
-          for (const num of [-b1 - sq, -b1 + sq]) {
-            const g = bGcd(num, 2n * a2) || 1n;
-            found.push({ z: [Number(num / g) / Number((2n * a2) / g), 0], m: k, exact: true });
-          }
-        } else {
-          const r = Math.sqrt(Number(bAbs(D))) / Math.abs(den);
-          const re = -Number(b1) / den;
-          if (D > 0n) {
-            // stabilno: večja po absolutni vrednosti iz vsote, manjša iz produkta c/a
-            const big = re + Math.sign(re || 1) * r;
-            found.push({ z: [big, 0], m: k }, { z: [Number(c0) / Number(a2) / big, 0], m: k });
-          } else found.push({ z: [re, -r], m: k }, { z: [re, r], m: k });
-        }
-        continue;
-      }
-      for (let z of dkRoots(tf)) {
-        z = newton(tf, z);
-        if (Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z))) z = [exactNewton(t, z[0]), z[1]];
-        const q = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? (ratOf(z[0], 10000000, 1e-15) || ratOf(z[0], 10000000)) : null; // po exactNewton je ničla na ~ulp
-        if (q && rootB(t, q.p, q.q)) found.push({ z: [Number(q.p) / Number(q.q), 0], m: k, exact: true });
-        else found.push({ z, m: k });
-      }
+      solveSquarefree(t, k, found);
     }
   } else found.push(...mergeClusters(c, dkRoots(c), 0.05, r || undefined));
   // realne ničle in konjugirani pari
