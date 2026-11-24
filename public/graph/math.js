@@ -1393,10 +1393,12 @@ function sideModel(F, c, s, w) {
   if (nan) {
     // NaN le v najglobljem delu (x^20·e^(−x) pri x ~ 10¹⁶: ∞·0): tam odrežemo, če ostane dovolj vzorcev
     const k = raw.findIndex((r) => Number.isNaN(r[1]));
-    const decayed = k >= 3 && raw[k - 1][1] === 0 && raw[k - 2][1] === 0;
+    const decayed = k >= 2 && raw[k - 1][1] === 0 && Number.isFinite(raw[0][1]);
     if ((k >= 20 || decayed) && raw.slice(k).every((r) => Number.isNaN(r[1]) || r[1] === 0)) {
       const tk = raw[k][0];
       cut = raw[k - 1][0];
+      // f je pred NaN že padla na 0 (e^(−x) podteče prej, kot x^50 preliva): za cut je del omejen z 0
+      if (decayed && k < 20) return { kind: "bounded", M: 0, cut, repair: null };
       raw.splice(k);
       while (pts.length && Math.exp(-pts[pts.length - 1][0]) <= tk) pts.pop();
       nan = 0;
