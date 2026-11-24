@@ -6,7 +6,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { selectionSpan, backspace, deleteForward, entryBase } from "../public/graph/sci-vnos.js";
+import { selectionSpan, deleteSpan, backspace, deleteForward, entryBase } from "../public/graph/sci-vnos.js";
 
 const env = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
 test("selectionSpan: izbira v eni reži ostane, čez mejo predloge se razširi (AUDIT-039)", () => {
@@ -14,7 +14,12 @@ test("selectionSpan: izbira v eni reži ostane, čez mejo predloge se razširi (
   assert.deepEqual(selectionSpan("∫(x;0;1)", 2, 5), [0, 8]);
   assert.deepEqual(selectionSpan("∫(x²+1;0;1)", 2, 4), [2, 4]);
   assert.deepEqual(selectionSpan("sin(30)+2", 2, 6), [0, 7]);
-  assert.deepEqual(selectionSpan("2+(3+4)·5", 0, 4), [0, 7]);
+  // navaden oklepaj se ne razširi (j, 24. 11.): izbriše se le izbrano, oklepaj brez para ostane
+  assert.deepEqual(selectionSpan("2+(3+4)·5", 0, 4), [0, 4]);
+  assert.deepEqual(deleteSpan("(1+2)·3", 0, 2), { text: "(+2)·3", pos: 1 });
+  assert.deepEqual(deleteSpan("2+(3+4)·5", 0, 4), { text: "(+4)·5", pos: 1 });
+  assert.deepEqual(deleteSpan("(1+2)·3", 3, 6), { text: "(1+)3", pos: 3 });
+  assert.deepEqual(deleteSpan("(1+2)·3", 0, 5), { text: "·3", pos: 0 });
   assert.deepEqual(selectionSpan("2+3", 0, 1), [0, 1]);
   for (const [t, s, e] of [["∫(x;0;1)", 0, 3], ["∫(x;0;1)", 3, 8], ["d/dx(x³;2)", 2, 7], ["limita(x; x; 0)", 0, 9], ["√(2)+1", 1, 3], ["det([[1; 2]; [3; 4]])", 5, 12]]) {
     for (const fn of [backspace, deleteForward]) {
@@ -85,6 +90,16 @@ test("Shift+puščica čez del predloge, nato ⌫ ali tipka: brez ostankov (AUDI
         i.setSelectionRange(p, p);
       }, [text, p]);
     const state = () => page.evaluate(() => ({ v: document.querySelector(".sc-input").value, raw: !!document.querySelector(".sc-preview .text, .sc-preview .katex-error, .sc-preview .mat-napaka") }));
+    // navaden oklepaj: »(1+2)·3«, izbrano »(1«, tipka 4 → »(4+2)·3« (oklepaj ostane, j 24. 11.)
+    await start("(1+2)·3", 0);
+    for (let k = 0; k < 2; k++) await page.keyboard.press("Shift+ArrowRight");
+    await page.keyboard.press("4");
+    assert.equal((await state()).v, "(4+2)·3", `${engine}: izbira »(1« in 4`);
+    await start("(1+2)·3", 0);
+    for (let k = 0; k < 2; k++) await page.keyboard.press("Shift+ArrowRight");
+    await page.keyboard.press("Backspace");
+    assert.equal((await state()).v, "(+2)·3", `${engine}: izbira »(1« in ⌫`);
+    assert.ok(!(await state()).raw, `${engine}: izrisano`);
     for (const key of ["Backspace", "Delete", "7"]) {
       await start("∫(x;0;1)", 0);
       for (let k = 0; k < 3; k++) await page.keyboard.press("Shift+ArrowRight");
