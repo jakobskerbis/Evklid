@@ -106,7 +106,7 @@ test("preskočeni del poti nazaj je majhen (vrzeli fromTex ne skrijejo večine i
   assert.ok(skipped < 4000, `preskočenih ${skipped} od 10 000`);
 });
 
-// AUDIT-017: razredi zapisov, ki so prej v kalkulatorjih pomenili različno (skupna priprava calcText in calcRewrite).
+// AUDIT-026: razredi zapisov, ki so prej v kalkulatorjih pomenili različno (skupna priprava calcText in calcRewrite).
 const CLASSES = [
   ["1 000 + 1", 1001],
   ["2e3", 2000],
@@ -169,7 +169,7 @@ function genClass(r, comma) {
   return pick([() => a, () => `${a} + ${term()}`, () => `${a} ${pick(["+", "-"])} ${Math.floor(r() * 50)} %`, () => `${a}·${term()}`, () => `(${a})/(${term()})`])();
 }
 for (const comma of [true, false]) {
-  test(`3000 izrazov iz razredov AUDIT-017 (${comma ? "decimalna vejica" : "decimalna pika"}): kalkulatorja se ujemata`, () => {
+  test(`3000 izrazov iz razredov AUDIT-026 (${comma ? "decimalna vejica" : "decimalna pika"}): kalkulatorja se ujemata`, () => {
     const r = rng(comma ? 17112026 : 26111017);
     const bad = [];
     for (let k = 0; k < 3000 && bad.length < 10; k++) {

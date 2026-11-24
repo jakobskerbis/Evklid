@@ -271,7 +271,7 @@ function rewriteIntegrals(s) {
 }
 
 /**
- * Skupna priprava vrstice za znanstveni in grafični kalkulator (AUDIT-017): isto besedilo pomeni isto v obeh.
+ * Skupna priprava vrstice za znanstveni in grafični kalkulator (AUDIT-026): isto besedilo pomeni isto v obeh.
  * - števila in vejica kot numberText (»1 000« = 1000, »1.234,5« = 1234,5, »12 3456« je napaka, »;« loči argumente),
  * - znanstveni zapis: »2e3« = 2000, »3E-2« = 0,03, »1,5e-3« = 0,0015. Pravilo: število (ne za črko ali »_«),
  *   takoj »e« ali »E«, celoštevilski eksponent (po želji s predznakom), za njim pa ne črka, »(«, števka ali
