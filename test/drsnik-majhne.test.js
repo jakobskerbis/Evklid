@@ -60,13 +60,13 @@ localStorage.clear();
 window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => "t-calc", studentId: () => "", toast() {}, askTutor() {} });
 window.ready = true;
 </script>`;
-let browser = null;
-try {
-  if (playwright) browser = await playwright.chromium.launch();
-} catch {}
-const skip = browser ? false : "Playwright/Chromium ni nameščen";
-
-test("drsnik 10⁻⁸ v brskalniku: premik desno in levo vrne 10⁻⁸, nikoli 0 (AUDIT-014)", { skip }, async (t) => {
+// brskalnik se zažene v testu: CI teče s --test-force-exit, ki konča proces, preden bi se zagnal na vrhu datoteke
+test("drsnik 10⁻⁸ v brskalniku: premik desno in levo vrne 10⁻⁸, nikoli 0 (AUDIT-014)", { timeout: 300000 }, async (t) => {
+  let browser = null;
+  try {
+    if (playwright) browser = await playwright.chromium.launch();
+  } catch {}
+  if (!browser) return t.skip("Playwright/Chromium ni nameščen");
   const server = http.createServer((req, res) => {
     const url = decodeURIComponent(req.url.split("?")[0]);
     if (url === "/t.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE);
