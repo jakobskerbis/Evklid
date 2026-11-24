@@ -294,18 +294,20 @@ function pdivB(a, b) {
   const db = b.length - 1;
   const lb = b[db];
   let q = [0n];
+  let steps = 0; // število množenj z lc(b) (lahko manj kot δ, če vodilni členi odpadejo)
   while (!zeroB(r) && r.length - 1 >= db) {
     const k = r.length - 1 - db;
     const lr = r[r.length - 1];
     r = r.map((x) => x * lb);
     q = q.map((x) => x * lb);
+    steps++;
     while (q.length <= k) q.push(0n);
     q[k] += lr;
     for (let i = 0; i <= db; i++) r[i + k] -= lr * b[i];
     r.pop();
     trimB(r);
   }
-  return [q, r];
+  return [q, r, steps];
 }
 function gcdB(a, b) {
   a = primB(a);
@@ -491,6 +493,46 @@ function intPoly(c) {
   return primB(fr.map((f) => (f.p * L) / f.q).reverse());
 }
 
+// Realne ničle in konjugirani pari. sf: ničla enostavnega (brez kvadratov) faktorja – realna je natanko tedaj, ko
+// zraven ni njene konjugirane (1 ± 10⁻¹⁰ i sta par, ne dvakrat 1); cx: zagotovo kompleksna; sicer meja 1e-9.
+function pairUp(found) {
+  const real = [];
+  const upper = [];
+  const lower = [];
+  for (const r of found) {
+    let isReal;
+    if (r.exact || r.real) isReal = true;
+    else if (r.cx) isReal = false;
+    else if (r.sf) isReal = !found.some((w) => w !== r && w.sf && Math.abs(r.z[1]) > 0 && C.abs(C.sub(w.z, [r.z[0], -r.z[1]])) < Math.abs(r.z[1]));
+    else isReal = Math.abs(r.z[1]) < 1e-9 * Math.max(1, C.abs(r.z));
+    if (isReal) real.push({ ...r, z: [r.z[0], 0] });
+    else (r.z[1] > 0 ? upper : lower).push(r);
+  }
+  const out = real.map((r) => ({ re: r.z[0], im: 0, m: r.m, exact: !!r.exact, ...(r.unc ? { unc: true } : {}) }));
+  for (const u of upper) {
+    let best = -1;
+    lower.forEach((l, i) => {
+      if (l && l.m === u.m && (best < 0 || C.abs(C.sub(l.z, [u.z[0], -u.z[1]])) < C.abs(C.sub(lower[best].z, [u.z[0], -u.z[1]])))) best = i;
+    });
+    if (best < 0) return null;
+    const l = lower[best];
+    lower[best] = null;
+    const re = (u.z[0] + l.z[0]) / 2;
+    const im = (u.z[1] - l.z[1]) / 2;
+    const err = Math.max(u.err || 0, l.err || 0);
+    const extra = { ...(err ? { err } : {}), ...(u.unc || l.unc ? { unc: true } : {}), ...(u.qex && l.qex ? { qex: true } : {}) };
+    out.push({ re, im: -im, m: u.m, ...extra }, { re, im, m: u.m, ...extra });
+  }
+  return lower.some(Boolean) ? null : out;
+}
+
+/** Ničle polinoma, za katerega vemo, da nima večkratnih ničel (npr. faktor nad ℚ[π]): vse enostavne, brez združevanja. */
+export function simpleRoots(coeffs, m = 1) {
+  const c = coeffs.map(Number);
+  if (c.length < 2 || c.some((v) => !Number.isFinite(v)) || c[0] === 0) return null;
+  return pairUp(dkRoots(c).map((z) => ({ z: newton(c, z), m, sf: true })));
+}
+
 // Ničle enostavnega celoštevilskega polinoma t (BigInt, od najnižje) s kratnostjo k v found. Racionalne ničle
 // najdene numerično potrdimo točno in jih točno izločimo (deljenje), ostanek rešimo znova: pri ničlah od 4 do 10⁷
 // (koeficienti do 10⁴³) so male ničle v double sicer netočne.
@@ -520,24 +562,230 @@ function solveSquarefree(t, k, found, depth = 0) {
         // stabilno: večja po absolutni vrednosti iz vsote, manjša iz produkta c/a
         const big = re + Math.sign(re || 1) * r;
         found.push({ z: [big, 0], m: k }, { z: [Number(c0) / Number(a2) / big, 0], m: k });
-      } else found.push({ z: [re, -r], m: k }, { z: [re, r], m: k });
+      } else {
+        // D < 0 točno: kompleksni; če je |D| popoln kvadrat, sta realni in imaginarni del točna ulomka (1 ± 10⁻¹⁰ i)
+        const qex = sq * sq === bAbs(D);
+        found.push({ z: [re, -r], m: k, cx: true, qex }, { z: [re, r], m: k, cx: true, qex });
+      }
     }
     return;
   }
   const tf = t.map(Number).reverse();
   const rest = [];
   let q = t;
-  for (let z of dkRoots(tf)) {
-    z = newton(tf, z);
-    if (Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z))) z = [exactNewton(t, z[0]), z[1]];
-    const f = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? ratOf(z[0], 10000000, 1e-15) || ratOf(z[0], 10000000) : null; // po exactNewton je ničla na ~ulp
-    if (f && rootB(t, f.p, f.q)) {
-      found.push({ z: [Number(f.p) / Number(f.q), 0], m: k, exact: true });
-      q = divB(q, [-f.p, f.q]);
-    } else rest.push(z);
+  const got = [];
+  for (let z0 of dkRoots(tf)) {
+    let z = newton(tf, z0);
+    if (Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z))) {
+      const x = exactNewton(t, z[0]);
+      const f = ratOf(x, 10000000, 1e-15) || ratOf(x, 10000000); // po exactNewton je ničla na ~ulp
+      // vsako racionalno ničlo le enkrat (Newton iz gruče bližnjih ničel lahko zdrsne k isti realni ničli)
+      if (f && rootB(t, f.p, f.q) && !got.some((g) => g.p * f.q === f.p * g.q)) {
+        got.push(f);
+        found.push({ z: [Number(f.p) / Number(f.q), 0], m: k, exact: true });
+        q = divB(q, [-f.p, f.q]);
+        continue;
+      }
+    }
+    rest.push(z);
   }
   if (q.length < t.length && q.length > 1 && depth < 8) solveSquarefree(q, k, found, depth + 1);
-  else for (const z of rest) found.push({ z, m: k });
+  else if (q.length > 1 && rest.length) {
+    let cert = null;
+    try {
+      cert = certifiedRoots(q, rest);
+    } catch {
+      cert = null;
+    }
+    // brez potrditve: približki (unc) – v zapisu »≈«, nikoli »=«
+    for (const r of cert || rest.map((z) => ({ z }))) found.push(cert ? { ...r, m: k } : { z: r.z, m: k, sf: true, unc: true });
+  }
+}
+
+// ---- točna izolacija ničel (Sturm) in točen Newton v ℚ(i) ----
+// p (BigInt, od najnižje) v točki num/den: predznak vrednosti (homogeno, brez deljenja)
+function signAt(p, num, den) {
+  const n = p.length - 1;
+  let s = 0n;
+  let dk = 1n; // den^(n − i), sproti (potenciranje v vsakem členu je bilo prepočasno)
+  for (let i = n; i >= 0; i--) {
+    s = s * num + p[i] * dk;
+    dk *= den;
+  }
+  return s > 0n ? 1 : s < 0n ? -1 : 0;
+}
+// Sturmova veriga: p, p′, −rem(p, p′), … (psevdo-ostanek s pravilnim predznakom)
+function sturmChain(p) {
+  const chain = [p, derivB(p)];
+  while (chain[chain.length - 1].length > 1) {
+    const a = chain[chain.length - 2];
+    const b = chain[chain.length - 1];
+    const lb = b[b.length - 1];
+    const [, rr, steps] = pdivB(a, b);
+    let r = rr;
+    if (zeroB(r)) break;
+    if (lb < 0n && steps % 2) r = r.map((x) => -x); // lc(b)^steps < 0 obrne predznak
+    const g = r.reduce(bGcd, 0n) || 1n;
+    chain.push(r.map((x) => -x / g));
+  }
+  return chain;
+}
+const changes = (signs) => {
+  let c = 0;
+  let prev = 0;
+  for (const s of signs) {
+    if (!s) continue;
+    if (prev && s !== prev) c++;
+    prev = s;
+  }
+  return c;
+};
+const V = (chain, num, den) => changes(chain.map((q) => signAt(q, num, den)));
+const Vinf = (chain, sg) => changes(chain.map((q) => Math.sign(Number(q[q.length - 1] > 0n ? 1 : -1)) * (sg < 0 && (q.length - 1) % 2 ? -1 : 1)));
+// realne ničle enostavnega p točno izolirane in bisekcijsko zožene do ~1 ulp; null, če ne gre (preveč korakov)
+function realRootsExact(p) {
+  const chain = sturmChain(p);
+  const R = Vinf(chain, -1) - Vinf(chain, 1);
+  if (R === 0) return [];
+  const n = p.length - 1;
+  let bound = 1;
+  for (let i = 0; i < n; i++) bound = Math.max(bound, 1 + bigRatio(bAbs(p[i]), bAbs(p[n])));
+  const e = BigInt(Math.ceil(Math.log2(bound)) + 1);
+  // intervali kot [lo, hi] števcev nad imenovalcem 2^E (E raste)
+  const out = [];
+  const stack = [[-(1n << e), 1n << e, 0n]]; // lo, hi, E (vrednost = x / 2^E)
+  let guard = 0;
+  while (stack.length) {
+    if (++guard > 20000) return null;
+    const [lo, hi, E] = stack.pop();
+    const D = 1n << E;
+    const cnt = V(chain, lo, D) - V(chain, hi, D) + (signAt(p, lo, D) === 0 ? 0 : 0);
+    if (cnt === 0) continue;
+    if (signAt(p, hi, D) === 0) {
+      out.push(Number(hi) / Number(D));
+      // ničla v desnem krajišču: ostanek (lo, hi) brez nje
+      if (cnt > 1) stack.push([lo * 2n, hi * 2n - 1n, E + 1n]);
+      continue;
+    }
+    if (cnt === 1) {
+      // bisekcija po predznaku p do ~ulp
+      let a = lo;
+      let b = hi;
+      let F = E;
+      const sa = signAt(p, a, 1n << F);
+      for (let it = 0; it < 1200; it++) {
+        const x = Number(a) / 2 ** Number(F);
+        const y = Number(b) / 2 ** Number(F);
+        if (!(y - x > 2 ** -53 * Math.max(Math.abs(x), Math.abs(y), 1e-300))) break;
+        a *= 2n;
+        b *= 2n;
+        F += 1n;
+        const m = a + (b - a) / 2n;
+        const sm = signAt(p, m, 1n << F);
+        if (sm === 0) {
+          a = b = m;
+          break;
+        }
+        if (sm === sa) a = m;
+        else b = m;
+      }
+      out.push(bigRatio(a + b, 2n << F));
+      continue;
+    }
+    const mid = lo + hi; // (lo+hi)/2 pri E+1
+    stack.push([lo * 2n, mid, E + 1n], [mid, hi * 2n, E + 1n]);
+  }
+  return out.length === R ? out.sort((x, y) => x - y) : null;
+}
+// točen Newton za kompleksno ničlo: z dvojiški ulomek, p(z) in p′(z) v Gaussovih celih številih; vrne [z, r], kjer je
+// r = n·|p(z)/p′(z)| polmer kroga okoli z, v katerem je zagotovo ničla
+function complexNewtonExact(p, z0, steps = 80, known = []) {
+  const n = p.length - 1;
+  const dp = derivB(p);
+  let z = z0;
+  let rad = Infinity;
+  for (let it = 0; it < steps; it++) {
+    if (!Number.isFinite(z[0]) || !Number.isFinite(z[1])) return [z, Infinity];
+    const [ar, dr] = dyadic(z[0]);
+    const [ai, di] = dyadic(z[1]);
+    const D = dr > di ? dr : di;
+    const A = ar * (D / dr);
+    const B = ai * (D / di);
+    const ev = (q) => {
+      const m = q.length - 1;
+      let sr = 0n;
+      let si = 0n;
+      for (let i = m; i >= 0; i--) {
+        const pw = D ** BigInt(m - i);
+        [sr, si] = [sr * A - si * B + q[i] * pw, sr * B + si * A];
+      }
+      return [sr, si];
+    };
+    const [pr, pi] = ev(p);
+    const [qr, qi] = ev(dp);
+    if (pr === 0n && pi === 0n) return [z, 0];
+    // korak = p/p′ = (pr + i·pi)/((qr + i·qi)·D)
+    const den = (qr * qr + qi * qi) * D;
+    if (den === 0n) return [z, Infinity];
+    let re = bigRatio(pr * qr + pi * qi, den);
+    let im = bigRatio(pi * qr - pr * qi, den);
+    rad = n * Math.hypot(re, im);
+    // Maehly: že znane ničle (realne, prejšnji pari) izločimo implicitno: korak = w/(1 − w·Σ 1/(z − r_j)), w = p/p′
+    if (known.length) {
+      let sr = 0;
+      let si = 0;
+      for (const r of known) {
+        const [a, b] = C.div([1, 0], C.sub(z, r));
+        sr += a;
+        si += b;
+      }
+      const [cr, ci] = C.sub([1, 0], C.mul([re, im], [sr, si]));
+      [re, im] = C.div([re, im], [cr, ci]);
+    }
+    const z2 = [z[0] - re, z[1] - im];
+    if (z2[0] === z[0] && z2[1] === z[1]) break;
+    z = z2;
+  }
+  return [z, rad];
+}
+// Ničle enostavnega p: realne točno (Sturm), kompleksne s točnim Newtonom in polmerom napake (err). null, če ne gre.
+function certifiedRoots(p, approx) {
+  const n = p.length - 1;
+  const reals = realRootsExact(p);
+  if (!reals) return null;
+  const nc = n - reals.length;
+  if (nc % 2) return null;
+  const out = reals.map((x) => ({ z: [x, 0], real: true }));
+  if (!nc) return out;
+  // kompleksni pari: izhodišča so približki z največjim |im| (pri gruči jih odmaknemo od realne osi), nato še
+  // zasukani okoli središča gruče; Newton z Maehlyjevim izločanjem že najdenih ničel
+  const scale = Math.max(...approx.map((z) => C.abs(z)), 1e-300);
+  const spread = Math.max(...approx.map((z) => C.abs(C.sub(z, approx[0]))), 1e-12 * scale);
+  const cand = [...approx].sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, nc);
+  const starts = cand.map((z) => [z[0], Math.max(Math.abs(z[1]), spread / 2)]);
+  for (const z of cand)
+    for (let t = 1; t <= 6; t++) {
+      const ang = (t * Math.PI) / 7;
+      starts.push([z[0] + spread * Math.cos(ang), Math.abs(z[1]) + spread * Math.sin(ang)]);
+    }
+  const ups = [];
+  const known = reals.map((x) => [x, 0]);
+  for (const st of starts) {
+    if (ups.length === nc / 2) break;
+    let [z, r] = complexNewtonExact(p, st, 80, known);
+    if (!Number.isFinite(r) || !Number.isFinite(z[0]) || !Number.isFinite(z[1])) continue;
+    if (z[1] < 0) z = [z[0], -z[1]]; // konjugirana je tudi ničla
+    if (!(z[1] > r)) continue; // ni dokazano nerealna (realne so že vse naštete)
+    if (ups.some((u) => C.abs(C.sub(u.z, z)) <= u.err + r) || reals.some((x) => C.abs(C.sub([x, 0], z)) <= r)) continue;
+    ups.push({ z, err: r });
+    known.push(z, [z[0], -z[1]]);
+  }
+  if (ups.length !== nc / 2) return null;
+  for (const u of ups) {
+    const err = u.err <= 4e-16 * C.abs(u.z) ? 0 : u.err;
+    out.push({ z: [u.z[0], -u.z[1]], cx: true, err }, { z: u.z, cx: true, err });
+  }
+  return out;
 }
 
 /**
@@ -569,29 +817,8 @@ export function polyRootsMult(coeffs, exact = null, radii = null) {
       solveSquarefree(t, k, found);
     }
   } else found.push(...mergeClusters(c, dkRoots(c), 0.05, r || undefined));
-  // realne ničle in konjugirani pari
-  const real = [];
-  const upper = [];
-  const lower = [];
-  for (const r of found) {
-    const tol = 1e-9 * Math.max(1, C.abs(r.z));
-    if (r.exact || Math.abs(r.z[1]) < tol) real.push({ ...r, z: [r.z[0], 0] });
-    else (r.z[1] > 0 ? upper : lower).push(r);
-  }
-  const out = real.map((r) => ({ re: r.z[0], im: 0, m: r.m, exact: !!r.exact }));
-  for (const u of upper) {
-    let best = -1;
-    lower.forEach((l, i) => {
-      if (l && l.m === u.m && (best < 0 || C.abs(C.sub(l.z, [u.z[0], -u.z[1]])) < C.abs(C.sub(lower[best].z, [u.z[0], -u.z[1]])))) best = i;
-    });
-    if (best < 0) return null;
-    const l = lower[best];
-    lower[best] = null;
-    const re = (u.z[0] + l.z[0]) / 2;
-    const im = (u.z[1] - l.z[1]) / 2;
-    out.push({ re, im: -im, m: u.m }, { re, im, m: u.m });
-  }
-  if (lower.some(Boolean)) return null;
+  const out = pairUp(found);
+  if (!out) return null;
   // preizkus ostanka vsake ničle v prvotnem polinomu
   for (const r of out) {
     let d = c;
@@ -617,11 +844,81 @@ export function polyRootsExact(qs) {
   const shift = big > 10n ** 300n ? 10n ** BigInt(String(big).length - 300) : 1n;
   const c = P.map((x) => Number(x / shift)).reverse();
   if (c.some((x) => !Number.isFinite(x)) || c[0] === 0) return null;
+  // racionalne ničle najprej točno izločimo s kratnostjo (#979: ((x − 5)⁴ − 10⁻¹⁴)(x − 5) = 0 je dal 5 dvakrat,
+  // 5,000316 je manjkala), ostanek rešimo posebej
+  const rats = rationalRoots(P, c);
+  if (rats.found.length) {
+    const rest = rats.rest;
+    let more = { roots: [] };
+    if (rest.length > 1) {
+      more = polyRootsExact(rest.slice().reverse().map((n) => ({ n, d: 1n })));
+      if (!more) return null;
+    }
+    const roots = [...rats.found, ...more.roots].sort((a, b) => a.re - b.re || a.im - b.im);
+    for (const r of roots) if (r.im === 0 && !r.exact && r.form === undefined) r.form = radicalForm(P, r.re);
+    return { roots, poly: c };
+  }
   const roots = polyRootsMult(c, P);
   if (!roots) return null;
   // iracionalna realna ničla oblike ±ᵏ√(p/q) (x³ = 2 → ∛2): potrdimo točno, da q·x^k − p deli polinom
   for (const r of roots) if (r.im === 0 && !r.exact) r.form = radicalForm(P, r.re);
   return { roots, poly: c };
+}
+// P (BigInt, od najnižje potence) v p/q točno: Σ P[i]·pⁱ·q^(n−i) = 0
+function ratRootB(P, p, q) {
+  let s = 0n;
+  for (let i = P.length - 1; i >= 0; i--) s = s * p + P[i] * q ** BigInt(P.length - 1 - i);
+  // Horner: s_n = P[n]; s_{i} = s_{i+1}·p + P[i]·q^(n−i)
+  return s === 0n;
+}
+// Racionalne ničle P: kandidati so verižni približki realnih delov številskih ničel (tudi iz gruče: 5,00001 → 5),
+// vsakega preverimo točno in ga s kratnostjo izločimo. Vrne { found: [{ re, im: 0, m, exact }], rest } (rest: P brez njih).
+function rationalRoots(P, c) {
+  let rest = P;
+  const found = [];
+  let approx;
+  try {
+    approx = dkRoots(c);
+  } catch {
+    return { found, rest };
+  }
+  const tried = new Set();
+  for (const z of approx || []) {
+    const x = z[0];
+    if (!Number.isFinite(x) || rest.length < 2) continue;
+    if (Math.abs(z[1]) > 1e-2 * Math.max(1e-300, Math.abs(x)) && Math.abs(z[1]) > 1e-12) continue;
+    const ax = Math.abs(x);
+    let [h0, h1, k0, k1] = [0n, 1n, 1n, 0n];
+    let r = ax;
+    const cands = x === 0 || ax < 1e-300 ? [[0n, 1n]] : [];
+    for (let i = 0; i < 60 && ax >= 1e-300; i++) {
+      const a = Math.floor(r);
+      if (!Number.isFinite(a) || a > 1e300) break;
+      const A = BigInt(a);
+      [h0, h1] = [h1, A * h1 + h0];
+      [k0, k1] = [k1, A * k1 + k0];
+      if (k1 > 10n ** 15n) break;
+      const v = Number(h1) / Number(k1);
+      if (Math.abs(v - ax) <= 1e-2 * ax) cands.push([x < 0 ? -h1 : h1, k1]);
+      if (v === ax) break;
+      const f = r - a;
+      if (f < 1e-300) break;
+      r = 1 / f;
+    }
+    if (x !== 0 && Math.abs(x) < 1e-6) cands.push([0n, 1n]);
+    for (const [p, q] of cands) {
+      const key = `${p}/${q}`;
+      if (tried.has(key)) continue;
+      tried.add(key);
+      let m = 0;
+      while (rest.length > 1 && ratRootB(rest, p, q)) {
+        rest = primB(pdivB(rest, [-p, q])[0]);
+        m++;
+      }
+      if (m) found.push({ re: Number(p) / Number(q), im: 0, m, exact: true });
+    }
+  }
+  return { found, rest };
 }
 function radicalForm(P, x) {
   for (let k = 2; k <= 6; k++) {
