@@ -1380,6 +1380,7 @@ export default {
   "sc.true": "Drži",
   "sc.false": "Ne drži",
   "sc.plot": "Nariši graf",
+  "sc.fmGraph": "Nariši graf ({v} na osi x)",
   "sc.steps": "Po korakih",
   "sc.factor": "Prafaktorji",
   "sc.grad": "Gradi (gon)",

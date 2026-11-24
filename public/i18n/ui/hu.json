@@ -1085,6 +1085,7 @@
   "sc.true": "Igaz",
   "sc.false": "Hamis",
   "sc.plot": "Grafikon rajzolása",
+  "sc.fmGraph": "Grafikon rajzolása ({v} az x tengelyen)",
   "sc.steps": "Lépésről lépésre",
   "sc.factor": "Prímtényezők",
   "sc.grad": "Újfok (gon)",

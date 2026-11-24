@@ -1085,6 +1085,7 @@
   "sc.true": "True",
   "sc.false": "False",
   "sc.plot": "Draw graph",
+  "sc.fmGraph": "Draw graph ({v} on the x-axis)",
   "sc.steps": "Step by step",
   "sc.factor": "Prime factors",
   "sc.grad": "Gradians",

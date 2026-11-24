@@ -1091,6 +1091,7 @@
   "sc.true": "Točno",
   "sc.false": "Netočno",
   "sc.plot": "Nacrtaj graf",
+  "sc.fmGraph": "Nacrtaj graf ({v} na osi x)",
   "sc.steps": "Korak po korak",
   "sc.factor": "Prosti faktori",
   "sc.grad": "Gradi (gon)",

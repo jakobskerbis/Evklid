@@ -1085,6 +1085,7 @@
   "sc.true": "Wahr",
   "sc.false": "Falsch",
   "sc.plot": "Graph zeichnen",
+  "sc.fmGraph": "Graph zeichnen ({v} auf der x-Achse)",
   "sc.steps": "Schritt für Schritt",
   "sc.factor": "Primfaktoren",
   "sc.grad": "Gon",

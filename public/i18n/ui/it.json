@@ -1085,6 +1085,7 @@
   "sc.true": "Vero",
   "sc.false": "Falso",
   "sc.plot": "Disegna il grafico",
+  "sc.fmGraph": "Disegna il grafico ({v} sull'asse x)",
   "sc.steps": "Passo dopo passo",
   "sc.factor": "Fattori primi",
   "sc.grad": "Gradi centesimali",
