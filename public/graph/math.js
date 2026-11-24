@@ -1162,7 +1162,7 @@ export function integrateInfo(f, a, b, eps = 1e-9, depth = 0) {
     const span = x1 - x0;
     // točka, kjer je f neskončna (1/x pri 0), ali mesto največje |f| v grozdu
     let c = hit !== undefined && !Number.isFinite(f(hit)) ? hit : locate(f, Math.max(a, x0 - span), Math.min(b, x1 + span));
-    if (Math.abs(c) <= H * 1e-14) c = 0;
+    if (a <= 0 && b >= 0 && Math.abs(c) <= H * 1e-14) c = 0;
     if (Math.abs(c - a) <= H * 1e-12) c = a;
     if (Math.abs(c - b) <= H * 1e-12) c = b;
     const scale = Math.max(Math.abs(c), H) * 1e-1;
