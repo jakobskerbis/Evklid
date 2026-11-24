@@ -527,7 +527,7 @@ export function caretStops(base) {
 export function stopsTex(base) {
   // dotik nikoli ne postavi kazalca sredi imena ali odpirala (»d|/dx(«, »sin|(«): tam bi vnos ime pokvaril (AUDIT-004)
   const stops = caretStops(base).filter((s) => !(openerAround(base.raw, s.p)?.[0] < s.p));
-  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.8em}}}`])));
+  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\smash{\\rule{0em}{0.8em}}}}`])));
 }
 
 /** Zapis vnosa s kazalcem: { ok, tex } ali null za prazen vnos. */
