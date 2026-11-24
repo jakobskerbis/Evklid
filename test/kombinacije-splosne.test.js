@@ -78,7 +78,8 @@ test("velik k pri neceloštevilskem n: hitro in kot mpmath", () => {
   const t0 = performance.now();
   for (const [t, want] of CASES) {
     const v = evaluate(t, ENV).value;
-    assert.ok(Math.abs(v - want) <= 1e-11 * Math.abs(want), `${t}: ${v} ≠ ${want}`);
+    // prikaz na 11 mest: do pol enote 11. mesta (relativno ≤ 5·10⁻¹¹)
+    assert.ok(Math.abs(v - want) <= 5.0001e-11 * Math.abs(want), `${t}: ${v} ≠ ${want}`);
   }
   assert.ok(performance.now() - t0 < 500, "brez zanke do k");
   // nPr: 3,59·10²⁵⁶⁵ in −9,83·10⁵⁷²³ (mpmath ff) sta zunaj double: ±∞ s pravim predznakom
@@ -92,7 +93,8 @@ test("velik k pri neceloštevilskem n: hitro in kot mpmath", () => {
 });
 
 // Pregled #966, 2. krog: pri k ~ 10⁹ je bil k − n zaokrožen v double (napaka v 6. mestu, prikazano z »=«).
-// Zdaj d = −n − 1 točno; rezultat ln Γ je približek: »≈« in 12 mest. Vrednosti: mpmath binomial na 30 mest.
+// Zdaj d = −n − 1 točno; rezultat ln Γ je približek: »≈« in 11 mest (pri 12 je bilo zadnje mesto napačno v 17/1900
+// primerih, 3. krog). Vrednosti: mpmath binomial na 30 mest.
 test("zelo velik k: točen d = −n − 1, prikaz z ≈", () => {
   for (const [t, want] of [
     ["nCr(−6,45;977673386)", 3.7685890136673263e46],
@@ -100,8 +102,10 @@ test("zelo velik k: točen d = −n − 1, prikaz z ≈", () => {
     ["nCr(−3,7;5·10^8)", 7.3623266941007667e22],
   ]) {
     const r = evaluate(t, ENV);
-    assert.ok(Math.abs(r.value - want) <= 1e-11 * Math.abs(want), `${t}: ${r.value} ≠ ${want}`);
+    assert.ok(Math.abs(r.value - want) <= 5.0001e-11 * Math.abs(want), `${t}: ${r.value} ≠ ${want}`);
     assert.ok(r.est && r.approx, `${t}: približek`);
+    assert.equal(r.digits, 11, t);
+    assert.equal(r.value, Number(want.toPrecision(11)), t);
   }
   // točni ostanejo brez ≈
   assert.ok(!evaluate("nCr(5,5;2)", ENV).est);

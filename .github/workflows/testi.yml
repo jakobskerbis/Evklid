@@ -127,7 +127,8 @@ jobs:
           node --disable-warning=ExperimentalWarning --test $TEST_ZASTAVICE --test-shard=${{ matrix.del }}/4 test/*.test.js 2>&1 | tee test.log
           status=${PIPESTATUS[0]}
           if [ "$status" -ne 0 ]; then
-            files=$(grep -A8 -E '^\s*not ok' test.log | sed -n -E "s#.*location: '.*/(test/[^/:']+\.test\.js):.*#\1#p" | sort -u)
+            # »not ok … # TODO« ni napaka (node:test ga izpiše, a ne šteje): brez tega je bila datoteka lažno »nestabilna«
+            files=$(grep -v -E '^\s*not ok .*# TODO' test.log | grep -A8 -E '^\s*not ok' | sed -n -E "s#.*location: '.*/(test/[^/:']+\.test\.js):.*#\1#p" | sort -u)
             n=$(printf '%s' "$files" | grep -c . || true)
             if [ "$n" -ge 1 ] && [ "$n" -le 2 ]; then
               echo "::warning::Ponovitev (1x) padlih testov: $(echo $files)"

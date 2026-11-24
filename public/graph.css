@@ -281,7 +281,8 @@ body.graph-open { overflow: hidden; }
 .sc-preview { min-height: 1.7em; text-align: right; overflow-x: auto; color: var(--text); font-size: 1.5rem; }
 /* Vnos je viden samo kot lep zapis s kazalcem (j, 5. 11.: »nikjer naj ni viden surov vnos«): surovo polje je prosojno čez vso vnosno vrstico (tipkovnica, dotik in kazalec delujejo kot prej), prazno pa kaže namig. */
 .sc-entry { position: relative; }
-.sc-entry:has(.sc-preview:not(:empty)) .sc-input { position: absolute; inset: 0 12px; width: auto; height: 100%; opacity: 0; }
+/* čez vso vrstico, tudi čez 12 px robova: dotik desno od zadnjega znaka postavi kazalec na konec (AUDIT-038) */
+.sc-entry:has(.sc-preview:not(:empty)) .sc-input { position: absolute; inset: 0; width: auto; height: 100%; opacity: 0; }
 .sc-entry:has(.sc-preview:not(:empty)) .sc-preview { min-height: 2.2em; display: flex; align-items: center; cursor: text; }
 /* desno poravnano z margin-left: auto (ne justify-content: flex-end), da se dolg vnos lahko pomakne tudi do začetka */
 .sc-preview > .katex { margin-left: auto; }
