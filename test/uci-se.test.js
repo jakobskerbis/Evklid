@@ -269,7 +269,9 @@ test("Ask the tutor from an experiment or a 3D model: the chat opens with the qu
   assert.match(fn, /state\.chatReturn = /);
   assert.match(fn, /showView\("chat"\);\s*state\.ucniKontekst = [^;]*;\s*fillInput\(text\);/);
   assert.match(app, /Object\.defineProperty\(state, "chatReturn"/);
-  assert.match(app, /\$\("#chat-return"\)\.addEventListener\("click", \(\) => chatReturnBack\(\)\)/);
+  assert.match(app, /\$\("#chat-return"\)\.addEventListener\("click", \(\) => chatReturnBack\(\{ okno: true \}\)\)/);
+  // Inštruktor v premičnem oknu: gumb »Nazaj na: …« vrne tudi takrat (glavni pogled ni klepet).
+  assert.match(app, /currentView !== "chat" && !\(okno && isFloating\("chat"\)\)/);
   assert.match(html, /<button type="button" id="chat-return" class="secondary small chat-return" hidden><\/button>/);
   assert.match(app, /askTutorFrom\(text, \{ view: "lab", oznaka, kontekst, open: \(\) => izLekcije && labFromLesson\(\) \}\)/);
   assert.match(app, /askTutor: \(text, vrni = null\) => \{\s*askTutorFrom\(text, vrni \? \{ view: "uci", \.\.\.vrni \} : null\);/);

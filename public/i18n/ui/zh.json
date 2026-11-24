@@ -3546,7 +3546,7 @@
   "a3.breadcrumb": "分组",
   "a3.hide": "隐藏",
   "a3.only": "只显示这个",
-  "a3.ask": "问导师",
+  "a3.ask": "问辅导老师",
   "a3.askText": "给我讲讲 {ime} 是什么，在身体里起什么作用。",
   "a3.askPartText": "在3D模型“{naslov}”中：请解释{ime}是什么，有什么作用。",
   "a3.layers": "图层",

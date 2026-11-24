@@ -587,7 +587,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .chat-off { margin: 0 auto 8px; width: calc(100% - 32px); box-sizing: border-box; padding: 10px 14px; border: 1px solid var(--danger); border-radius: 12px; background: var(--danger-bg); color: var(--text); font-size: 0.9rem; text-align: center; } /* --danger na --danger-bg je v svetlem načinu 4,1 : 1 */
 .composer { padding: 2px 16px 6px; background: transparent; }
 /* »Nazaj na: …« nad vnosnim poljem (vrnitev v poskus ali 3D model, app.js syncChatReturn) */
-.chat-return { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; max-width: 100%; margin: 0 0 6px; }
+.chat-return { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin: 0 0 6px; }
+button.chat-return { min-height: 40px !important; } /* button.small ima 38 px (!important) */
 .chat-return[hidden] { display: none; }
 .chat-return span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chat-kontekst { margin: -2px 0 6px; font-size: 0.8rem; }

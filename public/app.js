@@ -567,7 +567,7 @@ function syncChatReturn() {
     ve.textContent = kaj ? t(kaj, { n: k.measurements?.vrstice?.length || 0 }) : "";
   }
   if (!ime) return b.replaceChildren();
-  b.innerHTML = `${icon("undo-2")}<span></span>`;
+  b.innerHTML = `${icon("undo-2", "i-dir")}<span></span>`;
   b.lastChild.textContent = t("chat.returnTo", { ime });
 }
 // »Vprašaj inštruktorja« iz poskusa ali 3D modela: klepet z vpisanim vprašanjem (pošlje ga učenec sam); ← , Nazaj in
@@ -1066,15 +1066,16 @@ new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#vi
 nastaviNogo({ bar: tabbarEl, sync: syncTabbarH, skrijPokukano: () => peekBar(false) });
 // Klepet, odprt z »Vprašaj inštruktorja« v poli (vadnica.js oursTutor): ← in Nazaj vrneta na stran pole in polo
 // odpreta znova pri isti nalogi (UX maturanta 5). Velja le za ta pogovor, dokler je klepet odprt.
-function chatReturnBack() {
+// okno: gumb »Nazaj na: …« deluje tudi, ko je Inštruktor v premičnem oknu (poskus ali 3D je tedaj glavni pogled).
+function chatReturnBack({ okno = false } = {}) {
   const r = state.chatReturn;
-  if (currentView !== "chat" || !r || (r.conv !== null && r.conv !== state.conversationId)) return false;
+  if ((currentView !== "chat" && !(okno && isFloating("chat"))) || !r || (r.conv !== null && r.conv !== state.conversationId)) return false;
   state.chatReturn = null;
   showView(r.view);
   r.open();
   return true;
 }
-$("#chat-return").addEventListener("click", () => chatReturnBack());
+$("#chat-return").addEventListener("click", () => chatReturnBack({ okno: true }));
 $("#chat-back").addEventListener("click", () => chatReturnBack() || showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).
