@@ -72,6 +72,7 @@ test("⌫ briše predlogo ali ime kot celoto, nikoli pol imena ali ločil (AUDIT
     ["sin(3;|)", "sin(3|)"],
     ["Ans|", "|"],
     ["f(x)=|", "|"],
+    ["sin(x)=|0,5", "sin(x)|0,5"],
     ["|x", "|x"],
   ];
   for (const [a, b] of cases) assert.equal(bs(a), b, a);
