@@ -981,7 +981,7 @@ export function labKovine(el) {
     gD.replaceChildren();
     P.begin();
     const t = B.tek, kis = t ? RAZTOPINE_K[t.id].kislina : rId in RAZTOPINE_K && RAZTOPINE_K[rId].kislina;
-    svg.setAttribute("aria-label", `${t ? `${RAZTOPINE_K[t.id].name} ${cFmt(t.c)} mol/L` : "Prazna posoda"}${B.kos ? `, v njej ${KOVINE[B.kos.kovina].name} (${OBLIKE[B.kos.oblika].name}), mehurčki: ${["ni", "posamezni", "zmerno", "živahno", "burno"][B.mehurcki()]}${B.prevleka() > 0.3 ? ", kovina je prevlečena" : ""}` : ""}${B.brizga && t ? `, v brizgi ${B.odcitekBrizge().text.replace(".", ",")} mL` : ""}.`);
+    svg.setAttribute("aria-label", `${t ? `${RAZTOPINE_K[t.id].name} ${cFmt(t.c)} mol/L` : "Prazna posoda"}${B.kos ? `, v njej ${KOVINE[B.kos.kovina].name} (${OBLIKE[B.kos.oblika].name}), mehurčki: ${["ni", "posamezni", "zmerno", "živahno", "burno"][B.mehurcki()]}${B.prevleka() > 0.3 ? ", kovina je prevlečena" : ""}` : ""}${B.brizga && t ? (B.batIzpadel ? ", bat brizge je izpadel" : `, v brizgi ${B.odcitekBrizge().text.replace(".", ",")} mL`) : ""}.`);
     // Fotografski prikaz (foto-kovine.js, privzeto vklopljen): posoda, barva, bat brizge, kovina in mehurčki iz modela.
     const ion = t && !RAZTOPINE_K[t.id].kislina ? RAZTOPINE_K[t.id].ion : null;
     if (foto.risi((o, meta) => risiKovine(o, meta, {

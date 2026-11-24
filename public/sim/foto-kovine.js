@@ -78,8 +78,8 @@ export function risiKovine(o, meta, st, P, mehurcki) {
   // napisi
   const yN = S.pult + 12;
   label(o.g, 6, yN, pos === "casa" ? "čaša 100 mL" : "erlenmajerica 100 mL", "lab-ek-miza", "start");
-  label(o.g, (Bz.x0 + Bz.x100) / 2, Bz.dno + 11, "plinska brizga 100 mL", "tick small");
-  if (st.batIzpadel) label(o.g, (Bz.x0 + Bz.x100) / 2, Bz.dno + 14, "bat je izpadel", "lab-warn small");
+  // bat je izpadel: opozorilo namesto napisa brizge (3 enote niže bi ga prekrilo)
+  label(o.g, (Bz.x0 + Bz.x100) / 2, Bz.dno + 11, st.batIzpadel ? "bat je izpadel" : "plinska brizga 100 mL", st.batIzpadel ? "lab-warn small" : "tick small");
   if (!st.ocala) label(o.g, 255, 14, "brez zaščitnih očal", "lab-warn");
   if (st.hitrost > 1) label(o.g, 360, 30, `čas teče ×${st.hitrost}`, "lab-warn small");
   const d = S.merilo50[1] - S.merilo50[0];

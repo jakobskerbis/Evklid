@@ -36,7 +36,8 @@ export function barvePlamena({ zrak, steklo = false, zanka = {}, vPlamenu = fals
   const saje = barvaSpektra(sp.filter((q) => q.vir === "saje"), { steklo });
   const ref = barvaSpektra(spekterPlamena(0).filter((q) => q.vir === "saje")).Y;
   const modri = barvaSpektra(sp.filter((q) => q.vir === "plamen"), { steklo }), modri0 = barvaSpektra(sp.filter((q) => q.vir === "plamen"));
-  const sol = vPlamenu ? barvaSpektra(spekterSoli(zanka), { steklo }) : null;
+  // skozi kobaltovo steklo ostane od soli malo svetlobe (Na ~0,1 %), zato barvo določi tudi moder plamen (kot barva() v modelu)
+  const sol = vPlamenu ? barvaSpektra([...spekterSoli(zanka), ...(steklo ? sp.filter((q) => q.vir === "plamen") : [])], { steklo }) : null;
   return {
     saje: saje.Y > 0 ? nasici(saje.rgb, saje.Y / Y_REF) : null,
     sajeA: Math.min(0.92, (0.92 * saje.Y) / ref),

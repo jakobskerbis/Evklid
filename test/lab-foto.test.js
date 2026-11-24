@@ -31,7 +31,7 @@ test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike",
   assert.ok(SL["sim.lab.foto"]);
   for (const f of fs.readdirSync("public/i18n/ui")) assert.ok(JSON.parse(fs.readFileSync(`public/i18n/ui/${f}`, "utf8"))["sim.lab.foto"], `${f}: sim.lab.foto`);
   // motorji narišejo risbo, kadar risi() vrne false (rezerva brez povezave in pri »manj podatkov«)
-  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-elektrika.js", "risiPrevodnost"], ["lab-indikatorji.js", "risiPh"], ["lab-reakcije.js", "risiPlamensko"], ["lab-kem.js", "risiCo2", ["lab-elektrokemija.js", "risiKovine"]]]) {
+  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-elektrika.js", "risiPrevodnost"], ["lab-indikatorji.js", "risiPh"], ["lab-reakcije.js", "risiPlamensko"], ["lab-kem.js", "risiCo2"], ["lab-elektrokemija.js", "risiKovine"]]) {
     const src = fs.readFileSync(`public/sim/${f}`, "utf8");
     assert.match(src, new RegExp(`foto\\.risi\\(\\(o, meta\\) => ${klic}\\(`), f);
   }
@@ -259,6 +259,9 @@ test("plamenska: gorilnik, zanka in urni stekli v merilu; plamen in barve samo i
   const na = barvePlamena({ zrak: 1, vPlamenu: true, zanka: { Na: 1 } }).sol, cu = barvePlamena({ zrak: 1, vPlamenu: true, zanka: { Cu: 1 } }).sol;
   assert.ok(na[0] > 200 && na[1] > 120 && na[2] < 40, `natrij rumen: ${na}`);
   assert.ok(cu[1] > 150 && cu[0] < 60, `baker modro zelen: ${cu}`);
+  // skozi kobaltovo steklo natrij ni rumen: kot v modelu (barva() z modrim plamenom) rožnato vijoličen
+  const nk = barvePlamena({ zrak: 1, vPlamenu: true, zanka: { Na: 1 }, steklo: true }).sol;
+  assert.ok(nk[2] > 150 && nk[1] < 0.6 * nk[0], `natrij skozi kobaltovo steklo: ${nk}`);
   const sp = spekterPlamena(1), b = barvePlamena({ zrak: 1 });
   assert.deepEqual(b.modri, barvaSpektra(sp.filter((q) => q.vir === "plamen")).rgb);
   // kobaltovo steklo zadrži rumeno: prepušča malo svetlobe, modro; žareča žica je oranžna
