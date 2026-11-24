@@ -11,7 +11,7 @@ import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
-import { vgrajeno, starsu } from "./vgrajeno.js";
+import { vprasajInstruktorja } from "./vgrajeno.js";
 import { skoziLupino } from "./izbira.js";
 import { preparatAtlasa } from "/mikroskop/mapa.js";
 
@@ -927,16 +927,11 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
   // (WebView) sporočilo aplikaciji, na spletu klepet z vnaprej vpisanim vprašanjem.
   function vprasaj(r) {
     const ime = r.la ? `${r.prikaz} (${r.la})` : r.prikaz;
-    const besedilo = t("a3.askText", { ime });
-    if (vgrajeno) {
-      starsu({ tip: "vprasaj", besedilo });
-      return;
-    }
-    if (window.ReactNativeWebView?.postMessage) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ tip: "vprasaj", besedilo }));
-      return;
-    }
-    location.href = `/?pogled=chat&vprasaj=${encodeURIComponent(besedilo)}`;
+    vprasajInstruktorja(t("a3.askText", { ime }), {
+      vrni: `atlas?izberi=${encodeURIComponent(r.id)}`,
+      oznaka: r.prikaz,
+      kontekst: { v: 1, sourceType: "atlas", sourceId: "atlas", selectedObject: { id: r.id } },
+    });
   }
 
   // Tap na model: izbira (ali odgovor v kvizu »Najdi strukturo«).

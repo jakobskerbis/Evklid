@@ -51,13 +51,15 @@ test("prepared questions (calculator, scanner, 3D, corner, suggestion) never ove
   const fill = app.slice(app.indexOf("function fillInput("), app.indexOf("function restoreDraft("));
   assert.match(fill, /box\.value = typed \? `\$\{typed\}\\n\\n\$\{text\}` : text;/);
   // Vse poti askTutor in predlogi uporabijo fillInput.
-  const asks = app.match(/askTutor: \(text\) => \{[\s\S]*?\n\s*\},/g) || [];
-  assert.ok(asks.length >= 4, "kalkulator, skener, uči-se, kotiček");
+  // Poskus in 3D (uči-se) gresta prek askTutorFrom, ki prav tako le doda (fillInput) in nastavi vrnitev iz klepeta.
+  const asks = app.match(/askTutor: \(text[^)]*\) => \{[\s\S]*?\n\s*\},/g) || [];
+  assert.ok(asks.length >= 5, "kalkulator, skener, uči-se, laboratorij, kotiček");
+  assert.match(app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 600), /fillInput\(text\);/);
   // »Rešuj z inštruktorjem« (cela pola) tudi doda, ne prepiše.
   assert.match(app, /fillInput\(`\$\{t\("pp\.tutorMsg", \{ paper \}\)\} `\);/);
   assert.doesNotMatch(app, /box\.value = `\$\{t\("pp\.tutorMsg"/);
   for (const a of asks) {
-    assert.match(a, /fillInput\(text\)/);
+    assert.match(a, /fillInput\(text\)|askTutorFrom\(text,/);
     assert.doesNotMatch(a, /\.value = text/);
   }
   assert.match(app, /if \(!\$\("#input"\)\.value\.trim\(\) && !state\.image\) return send\(b\.dataset\.idea\);\s*fillInput\(b\.dataset\.idea\);/);
