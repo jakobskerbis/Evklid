@@ -872,6 +872,7 @@
   "gc.errChar": "Nu cunosc „{ch}”.",
   "gc.errSyntax": "Expresia nu este completă sau nu o înțeleg.",
   "gc.errArity": "Număr greșit de valori în paranteză. Scrie așa: {ex}",
+  "gc.hintPoint": "Acesta este un număr în paranteză. Te-ai gândit la un punct? Separă coordonatele cu punct și virgulă: {ex}",
   "gc.errOther": "Nu știu să desenez asta.",
   "gc.min": "Min",
   "gc.max": "Max",

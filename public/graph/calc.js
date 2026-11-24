@@ -41,6 +41,7 @@ export function createCalculator(root, opts) {
   };
 
   let state = load() || upgrade(emptyState());
+  let kbComma = null; // zapis (vejica/pika), s katerim je zgrajena tipkovnica
   let model = null;
   let focusId = null;
   const undo = [];
@@ -110,7 +111,9 @@ export function createCalculator(root, opts) {
     return null;
   }
   function upgrade(s) {
-    s = upgradeZapis(s); // star zapis (max(1,2), tudi bloki GRAF in shranjeni grafi) → zapis 2 z enakim pomenom
+    // star zapis (max(1,2), tudi bloki GRAF in shranjeni grafi) ali graf iz drugega zapisa (pika/vejica) → zapis 2
+    // v trenutnem zapisu, z enakim pomenom
+    s = upgradeZapis(s, comma());
     const base = emptyState();
     // prazen graf vedno začne v običajnem oknu (prej se je lahko shranilo oddaljeno −150 … 150)
     const blank = !s.items.some((it) => it.type !== "expr" || String(it.text || "").trim());
@@ -163,6 +166,14 @@ export function createCalculator(root, opts) {
   // ---------- model in osveževanje ----------
 
   function rebuild() {
+    // zapis se je med sejo spremenil (jezik s piko ↔ z vejico): besedila v novem zapisu z enakim pomenom, nove tipke
+    if (state.vejica !== comma()) {
+      const next = upgradeZapis(state, comma());
+      state.items = next.items;
+      state.vejica = next.vejica;
+      state.zapis = next.zapis;
+    }
+    if (kbComma !== null && kbComma !== comma()) configureKeys();
     model = buildModel(state, { comma: comma() });
     for (const o of model.items) {
       const tools = o.src?.tools;
@@ -266,7 +277,7 @@ export function createCalculator(root, opts) {
       case "polInside":
         return t("sc.errPolInside");
       case "arity":
-        return t("gc.errArity", { ex: arityExample(e.info, ",") });
+        return t("gc.errArity", { ex: arityExample(e.info, comma() ? ";" : ",") });
       case "seqStart":
         return t("gc.errSeqStart", { name: e.info.name });
       case "vecMix":
@@ -332,7 +343,8 @@ export function createCalculator(root, opts) {
     }
     if (o.kind === "value" || o.kind === "define" || o.kind === "list") {
       if (o.kind === "list" && Array.isArray(o.value) && o.value.length > 30) return `<div class="gc-val">= ${esc(fmt(o.value))}</div>`;
-      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>`;
+      const hint = o.hint?.code === "pointSep" ? `<div class="gc-hint">${icon("info")}<span>${esc(t("gc.hintPoint", { ex: o.hint.ex.replace(" ", "\u00a0") }))}</span></div>` : "";
+      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>${hint}`;
     }
     if (o.kind === "slider") {
       const sl = { ...sliderRange(o.value), ...(it.slider || {}) };
@@ -1204,30 +1216,35 @@ export function createCalculator(root, opts) {
 
   let lastField = null;
   // V slovenskem zapisu je vejica decimalna, argumente in koordinate loči »;« (kot v znanstvenem kalkulatorju).
-  const SEP = comma() ? ";" : ",";
-  const KEYS = {
-    "123": [
-      ["x", "x"], ["y", "y"], ["a²", "^2", "x²"], ["aᵇ", "^"], ["7"], ["8"], ["9"], ["÷", "/"],
-      ["(", "("], [")", ")"], ["<", "<"], [">", ">"], ["4"], ["5"], ["6"], ["×", "*"],
-      ["|a|", "|@|"], [SEP, SEP], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
-      ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], comma() ? [",", ","] : [".", "."], ["=", "="], ["+", "+"],
-    ],
-    fx: [
-      ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", `root(@${SEP} )`],
-      ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["∛", "∛(@)"], ["n!", "!"], ["°", "°"], ["{ : }", "{@ : }"], ["[ ]", "[@]"],
-      ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", `mod(@${SEP} )`], ["min", "min(@)"], ["max", "max(@)"],
-      ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", `nCr(@${SEP} )`], ["%", "%"],
-    ],
-  };
+  // Tipke se zgradijo znova, če se zapis med sejo spremeni (configureKeys iz rebuild).
+  function configureKeys() {
+    kbComma = comma();
+    const SEP = kbComma ? ";" : ",";
+    const KEYS = {
+      "123": [
+        ["x", "x"], ["y", "y"], ["a²", "^2", "x²"], ["aᵇ", "^"], ["7"], ["8"], ["9"], ["÷", "/"],
+        ["(", "("], [")", ")"], ["<", "<"], [">", ">"], ["4"], ["5"], ["6"], ["×", "*"],
+        ["|a|", "|@|"], [SEP, SEP], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
+        ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], kbComma ? [",", ","] : [".", "."], ["=", "="], ["+", "+"],
+      ],
+      fx: [
+        ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", `root(@${SEP} )`],
+        ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["∛", "∛(@)"], ["n!", "!"], ["°", "°"], ["{ : }", "{@ : }"], ["[ ]", "[@]"],
+        ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", `mod(@${SEP} )`], ["min", "min(@)"], ["max", "max(@)"],
+        ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", `nCr(@${SEP} )`], ["%", "%"],
+      ],
+    };
+    configureKeyboard(list, {
+      math: true,
+      layers: [{ id: "num", label: "123", cols: 8, keys: KEYS["123"] }, { id: "fx", label: "f(x)", cols: 8, keys: KEYS.fx }, "sym", "abc"],
+      start: "num",
+      enter: "go",
+      parsed: true, // math.js: abs, floor … ostanejo imena funkcij
+    });
+  }
   root.dataset.kbScope = "";
   initKeyboard();
-  configureKeyboard(list, {
-    math: true,
-    layers: [{ id: "num", label: "123", cols: 8, keys: KEYS["123"] }, { id: "fx", label: "f(x)", cols: 8, keys: KEYS.fx }, "sym", "abc"],
-    start: "num",
-    enter: "go",
-    parsed: true, // math.js: abs, floor … ostanejo imena funkcij
-  });
+  configureKeys();
   // Odprta tipkovnica: graf in seznam se stisneta, pomoč pod seznamom se skrije.
   const onKeyboard = (e) => {
     const on = !!e.detail?.open && root.contains(e.detail.field);

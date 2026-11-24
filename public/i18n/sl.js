@@ -1035,6 +1035,7 @@ export default {
   "gc.errChar": "Ne poznam »{ch}«.",
   "gc.errSyntax": "Izraz ni dokončan ali ga ne razumem.",
   "gc.errArity": "Napačno število vrednosti v oklepaju. Zapiši tako: {ex}",
+  "gc.hintPoint": "To je število v oklepaju. Je mišljena točka? Koordinati loči s podpičjem: {ex}",
   "gc.errOther": "Tega ne znam narisati.",
   "gc.min": "Najmanj",
   "gc.max": "Največ",

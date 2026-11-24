@@ -72,3 +72,37 @@ test("ukaz CAS: graf dobi pripravljeno besedilo, ne surovega sin(0,5x)", () => {
   const m = buildModel(upgradeZapis({ items: r.plot.map((text, i) => ({ id: `c${i}`, type: "expr", text })) }), { comma: true });
   near(toNum(m.items[0].fn(1)), 2.25);
 });
+
+test("»(2,3)« v slovenskem zapisu: število 2,3 z namigom za točko (2; 3)", () => {
+  const o = line("(2,3)");
+  assert.equal(o.kind, "value");
+  near(o.value, 2.3);
+  assert.deepEqual(o.hint, { code: "pointSep", ex: "(2; 3)" });
+  assert.equal(line("(2; 3)").hint, undefined);
+  assert.equal(line("(2,3)", { comma: false }).kind, "points"); // s piko je točka, brez namiga
+  assert.equal(line("(2,3)", { comma: false }).hint, undefined);
+});
+
+test("zapis (vejica/pika) je shranjen z grafom: pomen se ob menjavi zapisa ne spremeni", () => {
+  // graf, narejen s piko: max(1,5) = max(1; 5)
+  const dot = { zapis: ZAPIS, vejica: false, items: [{ id: "a", type: "expr", text: "y = max(1,5)" }, { id: "b", type: "expr", text: "y = 2,5x" }] };
+  const m = buildModel(dot, { comma: true }); // jezik je zdaj slovenski, graf se še vedno bere s piko
+  near(m.items[0].fn(0), 5);
+  near(m.items[1].fn(2), 5);
+  const sl = upgradeZapis(dot, true);
+  assert.equal(sl.vejica, true);
+  assert.deepEqual(sl.items.map((i) => i.text), ["y = max(1, 5)", "y = 2,5x"]);
+  const m2 = buildModel(sl, { comma: true });
+  near(m2.items[0].fn(0), 5);
+  near(m2.items[1].fn(2), 5);
+  // nazaj v zapis s piko
+  const sl2 = { zapis: ZAPIS, vejica: true, items: [{ id: "c", type: "expr", text: "y = max(1,5; 2) + sin(0,5x)" }, { id: "d", type: "expr", text: "(1,5; 2)" }] };
+  const back = upgradeZapis(sl2, false);
+  assert.deepEqual(back.items.map((i) => i.text), ["y = max(1.5; 2) + sin(0.5x)", "(1.5; 2)"]);
+  const m3 = buildModel(back, { comma: false });
+  near(m3.items[0].fn(2), 2 + Math.sin(1));
+  assert.equal(m3.items[1].kind, "points");
+  // star graf dobi zapis trenutnega jezika
+  assert.equal(upgradeZapis({ items: [] }, false).vejica, false);
+  assert.equal(upgradeZapis(sl2, true), sl2); // že v pravem zapisu: nič
+});

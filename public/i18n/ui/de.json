@@ -866,6 +866,7 @@
   "gc.errChar": "„{ch}“ kenne ich nicht.",
   "gc.errSyntax": "Der Ausdruck ist unvollständig oder ich verstehe ihn nicht.",
   "gc.errArity": "Falsche Anzahl von Werten in der Klammer. Schreibe es so: {ex}",
+  "gc.hintPoint": "Das ist eine Zahl in Klammern. Meinst du einen Punkt? Trenne die Koordinaten mit einem Semikolon: {ex}",
   "gc.errOther": "Das kann ich nicht zeichnen.",
   "gc.min": "Min",
   "gc.max": "Max",

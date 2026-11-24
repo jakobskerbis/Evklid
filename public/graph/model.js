@@ -24,7 +24,7 @@ const ONE_ARG_NAMES = [...BUILTINS].filter(oneArgFn).sort((a, b) => b.length - a
  * Izjema: neposredno v funkciji ene vrednosti (sin(0,5x), √(2,25)) je vejica ostala decimalna, ker je star zapis
  * tam drugo vrednost tiho izpustil (sin(0,5x) je risal y = 0); tak zapis je mislil 0,5.
  */
-export function migrateText(text) {
+export function migrateText(text, { oneArgDecimal = true } = {}) {
   const stack = []; // za vsak odprt oklepaj: ali je oklepaj funkcije ene vrednosti
   let out = "";
   const s = String(text ?? "");
@@ -32,21 +32,34 @@ export function migrateText(text) {
     const c = s[i];
     if ("([{".includes(c)) {
       const run = /[A-Za-z]*$/.exec(s.slice(0, i))[0];
-      stack.push(c === "(" && (ONE_ARG_NAMES.some((n) => run.endsWith(n)) || /√$/.test(s.slice(0, i).trimEnd())));
+      stack.push(oneArgDecimal && c === "(" && (ONE_ARG_NAMES.some((n) => run.endsWith(n)) || /√$/.test(s.slice(0, i).trimEnd())));
     } else if (")]}".includes(c)) stack.pop();
     out += c;
     if (c === "," && stack.length && !stack[stack.length - 1] && /\d/.test(s[i - 1] || "") && /\d/.test(s[i + 1] || "")) out += " ";
   }
   return out;
 }
-/** Star graf (brez »zapis«) → zapis 2: besedila vrstic z enakim pomenom (migrateText). */
-export function upgradeZapis(state) {
-  if (!state || state.zapis === ZAPIS) return state;
-  const items = (state.items || []).map((it) => (it.type === "expr" && typeof it.text === "string" ? { ...it, text: migrateText(it.text) } : it));
-  return { ...state, items, zapis: ZAPIS };
+const mapTexts = (state, fn) => (state.items || []).map((it) => (it.type === "expr" && typeof it.text === "string" ? { ...it, text: fn(it.text) } : it));
+/**
+ * Graf v zapis 2 za kalkulator v zapisu »comma« (slovenski z vejico ali s piko); pomen vrstic se nikoli ne spremeni.
+ * - star graf (brez »zapis«): migrateText,
+ * - graf zapisa 2, narejen v drugem zapisu (»vejica« ob grafu): pretvorba besedil (pika → vejica: vejica med
+ *   števkami v oklepaju dobi presledek, max(1,5) → max(1, 5); vejica → pika: decimalna vejica postane pika).
+ * Vrne isti predmet, če ni kaj spremeniti.
+ */
+export function upgradeZapis(state, comma = true) {
+  if (!state) return state;
+  comma = comma !== false;
+  if (state.zapis !== ZAPIS) return { ...state, items: mapTexts(state, (t) => migrateText(t)), zapis: ZAPIS, vejica: comma };
+  const was = state.vejica !== false;
+  if (was === comma) return state.vejica === comma ? state : { ...state, vejica: comma };
+  const conv = comma ? (t) => migrateText(t, { oneArgDecimal: false }) : (t) => t.replace(/(\d),(?=\d)/g, "$1.");
+  return { ...state, items: mapTexts(state, conv), vejica: comma };
 }
 /** Besedilo vrstice za parse(): pri zapisu 2 decimalna vejica in »;« kot v znanstvenem kalkulatorju. */
 const lineText = (text, v2, comma) => (v2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
+// »(2,3)« v slovenskem zapisu je število 2,3 v oklepaju; morda je mišljena točka (2; 3): namig, pomen ostane.
+const POINT_LIKE = /^\s*\(\s*([+\-−]?\d+),(\d+)\s*\)\s*$/;
 
 /** Prazen graf. */
 export function emptyState() {
@@ -87,11 +100,13 @@ export function buildModel(state, { comma = true } = {}) {
   const deg = !!state.settings?.deg;
   const items = state.items || [];
   const v2 = state.zapis === ZAPIS;
+  // Graf zapisa 2 se bere v zapisu, v katerem je nastal (state.vejica), ne v trenutnem jeziku: pomen se ne spremeni.
+  const readComma = v2 && typeof state.vejica === "boolean" ? state.vejica : comma;
   const texts = new Map(); // vrstica → besedilo za parse() (ali napaka zapisa števila)
   for (const it of items) {
     if (it.type !== "expr") continue;
     try {
-      texts.set(it, lineText(it.text, v2, comma));
+      texts.set(it, lineText(it.text, v2, readComma));
     } catch (e) {
       texts.set(it, e);
     }
@@ -106,7 +121,7 @@ export function buildModel(state, { comma = true } = {}) {
   const scope = Object.create(null);
   const funcs = {};
   const ctx = { deg, funcs, global: scope };
-  const texOpt = { comma, sep: v2 && comma ? ";" : "," };
+  const texOpt = { comma, sep: v2 && readComma ? ";" : "," };
   const out = items.map((it) => ({ id: it.id, type: it.type, src: it }));
 
   // 1. razčlenimo
@@ -130,6 +145,8 @@ export function buildModel(state, { comma = true } = {}) {
       if (texts.get(it) instanceof Error) throw texts.get(it);
       o.ast = parse(text, { funcs: funcNames });
       o.tex = toTex(o.ast, texOpt);
+      const pt = v2 && readComma && POINT_LIKE.exec(it.text);
+      if (pt) o.hint = { code: "pointSep", ex: `(${pt[1]}; ${pt[2]})` };
     } catch (e) {
       o.kind = "error";
       o.error = e instanceof MathError ? err(e.code, e.info) : err("parse", { msg: e.message });
