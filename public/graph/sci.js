@@ -744,8 +744,9 @@ export function createScientific(root, opts) {
     fromFormula = null;
     // skupna zgodovina zavihkov: številski izid (Grafični ga ponudi kot vrednost)
     if (e.kind === "value" && Number.isFinite(e.value)) {
-      let txt = String(Number(e.value.toPrecision(12)));
-      if (/e/.test(txt)) txt = txt.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+      // 10 mest; zelo velika in majhna števila z ×10ˣ (»E« kot tipka ×10ˣ: v vnosu se izriše kot 6,022 · 10²³)
+      const a = Math.abs(e.value);
+      const txt = a && (a >= 1e10 || a < 1e-4) ? e.value.toExponential(9).replace(/\.?0+e/, "e").replace(/e\+?/, "E") : String(Number(e.value.toPrecision(10)));
       opts.addRecent?.({ text: comma() ? txt.replace(".", ",") : txt, src: "sci" });
     }
     st.history.push(e);
@@ -879,7 +880,7 @@ export function createScientific(root, opts) {
       (vs.length || fs.length ? `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` : "") +
       vs.map(([n, v]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}" title="${esc(t("sc.insert"))}">${texHtml(`${n} = ${formatNumber(v, { mode: "auto", comma: c }).tex}`)}</button>`).join("") +
       fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("") +
-      (rec.length ? `<span class="sc-vars-l">${esc(t("sc.recent"))}</span>` + rec.map((r) => `<button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${esc(r.text)}</button>`).join("") : "");
+      (rec.length ? `<span class="sc-vars-l">${esc(t("sc.recent"))}</span>` + rec.map((r) => `<button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${texHtml(r.text.replace(/E(-?\d+)$/, "\\cdot 10^{$1}").replace(/(\d),(\d)/, "$1{,}$2"))}</button>`).join("") : "");
   }
   // skupna zgodovina zavihkov (opts.recent): izidi iz Orodij, PSE, grafa … kot čipi »Nedavno«
   const srcName = (src) => t({ sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" }[src] || "sc.modeSci");

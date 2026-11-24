@@ -62,7 +62,7 @@ function formulaBook() {
 // Skupna zgodovina zavihkov (j, 24. 11. 2026): zadnji številski izidi Znanstvenega, Orodij, PSE … istega učenca.
 // Znanstveni jih (iz drugih zavihkov) pokaže kot čipe »Nedavno«, Grafični v meniju »Dodaj« kot vrednost drsnika.
 const izidiKey = () => `evklid.izidi.${state.student?.id ?? 0}`;
-const NUM_TEXT = /^-?[\d.,]+(?:·10\^\(-?\d+\))?$/;
+const NUM_TEXT = /^-?[\d.,]+(?:E-?\d+)?$/; // 18,015 ali 6,02214076E23 (E je ×10ˣ kalkulatorja)
 function izidi() {
   try {
     const l = JSON.parse(localStorage.getItem(izidiKey()) || "[]");

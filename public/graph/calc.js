@@ -910,12 +910,15 @@ export function createCalculator(root, opts) {
     });
   }
 
+  // 6,02214076E23 → 6,02214076 · 10²³ (napis; vrednost vrstice ostane v zapisu kalkulatorja)
+  const SUPD = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
+  const recentLabel = (x) => String(x).replace(/E(-?\d+)$/, (m, e) => ` · 10${[...e].map((c) => SUPD[c]).join("")}`).replace(/^-/, "−");
   // skupna zgodovina zavihkov (opts.recent): zadnji številski izidi kot vrstice menija »Dodaj«
   function recentRows() {
     const src = { sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" };
-    const rec = (opts.recent?.() || []).filter((r) => /^-?[\d.,]+(?:·10\^\(-?\d+\))?$/.test(r.text)).slice(0, 4);
+    const rec = (opts.recent?.() || []).filter((r) => /^-?[\d.,]+(?:E-?\d+)?$/.test(r.text)).slice(0, 4);
     if (!rec.length || state.zapis !== 3) return "";
-    return `<div class="gc-pop-h">${esc(t("gc.addRecent"))}</div>` + rec.map((r) => `<button type="button" class="gc-menu-row" data-add="recent" data-v="${esc(r.text)}">${icon("calculator")}<span>${esc(r.text)} <span class="muted">· ${esc(t(src[r.src] || "sc.modeSci"))}</span></span></button>`).join("");
+    return `<div class="gc-pop-h">${esc(t("gc.addRecent"))}</div>` + rec.map((r) => `<button type="button" class="gc-menu-row" data-add="recent" data-v="${esc(r.text)}">${icon("calculator")}<span>${esc(recentLabel(r.text))} <span class="muted">· ${esc(t(src[r.src] || "sc.modeSci"))}</span></span></button>`).join("");
   }
 
   function openAddMenu(anchor) {

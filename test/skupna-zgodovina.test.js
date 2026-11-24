@@ -76,10 +76,16 @@ test("skupna zgodovina: PSE → Znanstveni (čip), Znanstveni → Grafični (drs
       await page.fill(".sc-input", "6·7");
       await page.press(".sc-input", "Enter");
       assert.equal(await chip.count(), 1, where);
+      // veliko število: 10 mest in ×10ˣ (E kot tipka kalkulatorja), ne 12 mest in surov ·10^(23)
+      await page.fill(".sc-input", "6,02214076·10^23·2");
+      await page.press(".sc-input", "Enter");
+      const big = await page.evaluate(() => JSON.parse(localStorage.getItem("t-izidi"))[0].text);
+      assert.equal(big, "1,204428152E24", where);
       // Grafični: meni »Dodaj« ponudi izid; dotik doda drsnik z vrednostjo
       await page.evaluate(() => window.toGraph());
       await tap('.gc-bar [data-act="add"]');
-      const row = page.locator('[data-add="recent"]').first();
+      const row = page.locator('[data-add="recent"]').nth(1);
+      assert.match(await page.locator('[data-add="recent"]').first().innerText(), /1,204428152 · 10²⁴/, where);
       assert.equal(await row.getAttribute("data-v"), "42", where);
       await row.click();
       const texts = await page.evaluate(() => window.graph.state.items.map((x) => x.text));
