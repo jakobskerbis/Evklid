@@ -339,7 +339,9 @@ function visualOrder(s, A) {
         const c = closeOf(o);
         const g = c > 0 && c < hi ? slots(o, c) : null;
         if (g?.length === 2) {
-          for (let q = i; q < o; q++) out.push(...(at.get(q) || []));
+          // ime: pri korenu je v zapisu \sqrt (ključi s, q, r, t), pri logb \log
+          if (s[i] === "r") out.push(...[..."sqrt"].map((k) => ({ k, s: i, e: o })));
+          else for (let q = i; q < o; q++) out.push(...(at.get(q) || []));
           for (let q = i + 1; q <= o; q++) alias.set(q, o + 1); // v imenu = začetek prvega argumenta
           walk(...g[1]);
           // oklepaj in zaklepaj besedila sta oklepaja korenjenca oziroma logaritmanda: ⁿ√{x}, log_b(x)

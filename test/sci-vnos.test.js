@@ -178,4 +178,5 @@ test("root in logb: drugi argument je v zapisu pred prvim, kazalec sledi zapisu 
   const r = at("root(16;4)");
   assert.ok(r[8] < r[5], "4 je pred 16");
   assert.equal(r[10], Math.max(...r));
+  assert.equal(r[0], 0, "pred korenom je kazalec pred \\sqrt");
 });
