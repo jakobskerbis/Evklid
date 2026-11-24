@@ -723,6 +723,9 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-foto-gumb svg.i { width: 18px; height: 18px; }
 .lab-foto-gumb[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: var(--accent-soft); }
 .lab-foto-gumb:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Sivi napisi (.tick) in opozorila na fotografiji dobijo obrobo podlage kot .lbl: v temnem načinu so svetli in bi bili
+   na svetli fotografiji (stena, miza) skoraj nevidni (»ni umerjen«, »zrak«, »2 cm«, »čas teče ×10«). */
+.demo-svg .lab-foto :is(.tick, .lab-warn) { paint-order: stroke; stroke: var(--mat-ozadje, var(--surface)); stroke-width: 3px; stroke-linejoin: round; }
 @media not ((orientation: landscape) and (max-height: 560px)) {
 @container labtit (max-width: 799.98px) {
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage {
