@@ -871,6 +871,7 @@
   "gc.errOnlyY": "Scrie o curbă care depinde de y sub forma x = …",
   "gc.errChar": "Nu cunosc „{ch}”.",
   "gc.errSyntax": "Expresia nu este completă sau nu o înțeleg.",
+  "gc.errArity": "Număr greșit de valori în paranteză. Scrie așa: {ex}",
   "gc.errOther": "Nu știu să desenez asta.",
   "gc.min": "Min",
   "gc.max": "Max",

@@ -865,6 +865,7 @@
   "gc.errOnlyY": "Kurbën që varet nga y shkruaje si x = …",
   "gc.errChar": "Nuk e njoh “{ch}”.",
   "gc.errSyntax": "Shprehja nuk është e plotë ose nuk e kuptoj.",
+  "gc.errArity": "Numër i gabuar vlerash brenda kllapave. Shkruaje kështu: {ex}",
   "gc.errOther": "Këtë nuk di ta vizatoj.",
   "gc.min": "Min",
   "gc.max": "Maks",

@@ -1,7 +1,7 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
 import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum } from "./model.js";
-import { niceNumber, parse, compile } from "./math.js";
+import { niceNumber, parse, compile, arityExample } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
@@ -259,6 +259,8 @@ export function createCalculator(root, opts) {
         return t("gc.errChar", { ch: e.info.f });
       case "polInside":
         return t("sc.errPolInside");
+      case "arity":
+        return t("gc.errArity", { ex: arityExample(e.info, ",") });
       case "seqStart":
         return t("gc.errSeqStart", { name: e.info.name });
       case "vecMix":

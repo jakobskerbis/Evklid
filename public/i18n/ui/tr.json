@@ -865,6 +865,7 @@
   "gc.errOnlyY": "y'ye bağlı bir eğriyi x = … biçiminde yaz.",
   "gc.errChar": "“{ch}” ifadesini tanımıyorum.",
   "gc.errSyntax": "İfade eksik ya da anlamıyorum.",
+  "gc.errArity": "Parantez içindeki değer sayısı yanlış. Şöyle yaz: {ex}",
   "gc.errOther": "Bunu çizemiyorum.",
   "gc.min": "En az",
   "gc.max": "En çok",
