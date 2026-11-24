@@ -547,7 +547,8 @@ export function createScientific(root, opts) {
     try {
       prev.innerHTML = entryHtml(stopsTex(entry.base));
       for (const el of prev.querySelectorAll("[data-evk-p]")) {
-        const b = el.getBoundingClientRect();
+        // okvir same merilne črte (0,4 em nad osnovnico), ne vrstice okoli nje: vrstici števca in imenovalca se prekrivata
+        const b = (el.querySelector(".katex-rule, .rule") || el).getBoundingClientRect();
         const dy = y < b.top ? b.top - y : y > b.bottom ? y - b.bottom : 0;
         // tudi oddaljenost od navpične sredine točke: pred ∫ in na začetku spodnje meje sta skoraj na istem x,
         // dotik v višini vrstice je pred ∫, dotik nižje je v meji (AUDIT-003)
@@ -558,8 +559,15 @@ export function createScientific(root, opts) {
     prev.innerHTML = shown;
     return best && Number.isFinite(best.p) ? best.p : input.value.length;
   }
+  // Dotik: Chromium (Android) klik premakne proti sredini polja (prilagoditev dotika, ~8 px); kazalec postavimo po
+  // točki, kjer se je prst res dotaknil (pointerdown), ne po kliku (AUDIT-003: dotik na števec ni v imenovalcu).
+  let down = null;
+  input.addEventListener("pointerdown", (ev) => (down = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp }));
   input.addEventListener("click", (ev) => {
-    const p = ev.detail > 0 && input.value ? caretFromPoint(ev.clientX, ev.clientY) : null;
+    const near = down && ev.timeStamp - down.t < 1500 && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) < 48;
+    const [x, y] = near ? [down.x, down.y] : [ev.clientX, ev.clientY];
+    down = null;
+    const p = ev.detail > 0 && input.value ? caretFromPoint(x, y) : null;
     setTimeout(() => {
       // dvojni ali trojni klik/dotik ne izbere skrite »besede« surovega vnosa (»∫«, »sin«), ki bi jo naslednja tipka
       // nadomestila: kazalec gre na mesto dotika (AUDIT-003); vlečenje z miško (detail 1) izbiro ohrani
