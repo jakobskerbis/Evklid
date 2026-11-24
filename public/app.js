@@ -543,20 +543,40 @@ Object.defineProperty(state, "chatReturn", {
   },
   enumerable: true,
 });
+// Posnetek poskusa ali 3D modela za naslednje vpisano sporočilo (askTutorFrom); vrstica »Inštruktor vidi …« mu sledi.
+let ucniKontekstVal = null;
+Object.defineProperty(state, "ucniKontekst", {
+  get: () => ucniKontekstVal,
+  set: (v) => {
+    ucniKontekstVal = v || null;
+    syncChatReturn();
+  },
+  enumerable: true,
+});
 function syncChatReturn() {
   const b = document.getElementById("chat-return");
   if (!b) return;
   const ime = chatReturnVal?.oznaka ? String(chatReturnVal.oznaka).slice(0, 80) : "";
   b.hidden = !ime;
+  // Kaj inštruktor ve (faza B): ena vrstica pod gumbom, dokler posnetek ni poslan.
+  const ve = document.getElementById("chat-kontekst");
+  const k = state.ucniKontekst;
+  const kaj = !k ? "" : k.sourceType === "lab" ? (k.measurements?.vrstice?.length ? "chat.ctxLabRows" : "chat.ctxLab") : "chat.ctx3d";
+  if (ve) {
+    ve.hidden = !kaj;
+    ve.textContent = kaj ? t(kaj, { n: k.measurements?.vrstice?.length || 0 }) : "";
+  }
   if (!ime) return b.replaceChildren();
   b.innerHTML = `${icon("undo-2")}<span></span>`;
   b.lastChild.textContent = t("chat.returnTo", { ime });
 }
 // »Vprašaj inštruktorja« iz poskusa ali 3D modela: klepet z vpisanim vprašanjem (pošlje ga učenec sam); ← , Nazaj in
 // gumb »Nazaj na: …« vrnejo na isto mesto (back = { view, open, oznaka }).
+// back.kontekst: posnetek stanja (sourceType, sourceId, …), ki gre z naslednjim vpisanim sporočilom kot skrit blok.
 function askTutorFrom(text, back = null) {
   state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: null, oznaka: back.oznaka || "" } : null;
   showView("chat");
+  state.ucniKontekst = back?.kontekst && typeof back.kontekst === "object" ? back.kontekst : null;
   fillInput(text);
 }
 
@@ -698,7 +718,10 @@ function renderUserText(text) {
 
 function showView(name) {
   if (name === "chat") oznakaZdaj?.();
-  else state.chatReturn = null; // vrnitev v polo velja samo neposredno iz tega klepeta (chatReturnBack)
+  else {
+    state.chatReturn = null; // vrnitev v polo velja samo neposredno iz tega klepeta (chatReturnBack)
+    state.ucniKontekst = null; // posnetek poskusa ali modela velja le za vprašanje, zaradi katerega je klepet odprt
+  }
   if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
   // »Moji zapiski« so del pogleda Kartice (nazaj po vaji iz testa, public/zapiski/vaja.js).
   const notes = name === "zapiski";
@@ -1501,6 +1524,7 @@ async function selectStudent(id) {
   keptPaper = null;
   nalogaPole?.pozabi(); // izbrani izvirniki pol (public/naloga-pole/klepet.js) so od prejšnjega profila
   state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
+  state.ucniKontekst = null;
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
   const want = state.student.settings.language;
   if (want && want !== currentLang()) {
@@ -2171,6 +2195,8 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = paperOpt || (state.paperCtx?.conv === sentTo ? state.paperCtx : null);
+    // Posnetek poskusa ali 3D modela (»Vprašaj inštruktorja«, server/ucni-kontekst.js): z naslednjim vpisanim sporočilom.
+    const kontekst = fromInput && !paperCtx ? state.ucniKontekst : null;
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     zgodovina.zadnji = {}; // tudi starejši, še neizrisani odgovori teh gumbov ne dobijo več
     const nacin = fromInput && state.dictated ? "glas" : undefined; // narekovano z mikrofonom (strežnik preveri stikalo starša)
@@ -2246,7 +2272,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     const res = await fetchThroughRestart(`/api/conversations/${state.conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, deep, nacin, lite: liteActive(), device: await deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
+      body: JSON.stringify({ text, deep, nacin, lite: liteActive(), device: await deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined, kontekst: kontekst || undefined }),
     });
     if (!res) {
       bubble.remove();
@@ -2265,6 +2291,7 @@ async function send(text, { deep = false, image: attached = null, paper: paperOp
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
+    if (kontekst && state.ucniKontekst === kontekst) state.ucniKontekst = null; // tudi posnetek: shranjen s sporočilom
     if (paperOpt && state.paperCtx?.conv === sentTo) state.paperCtx = null; // starejši kontekst pole ne gre k naslednjemu
     let doneData = null;
     let cardsData = null;
@@ -4501,9 +4528,9 @@ initLab({
     lessonFromLab();
     openLesson(id);
   },
-  askTutor: (text, oznaka) => {
+  askTutor: (text, oznaka, kontekst) => {
     const izLekcije = labIsFromLesson();
-    askTutorFrom(text, { view: "lab", oznaka, open: () => izLekcije && labFromLesson() });
+    askTutorFrom(text, { view: "lab", oznaka, kontekst, open: () => izLekcije && labFromLesson() });
   },
 });
 // Uči se (public/uci-se.js): Učbenik, Laboratorij in 3D svet v enem pogledu; »Vprašaj inštruktorja« iz 3D atlasa.
@@ -4515,7 +4542,9 @@ initUci({
   stopReading,
   odprto,
   // vrni: { oznaka, open } iz 3D (atlas ali model): vrnitev iz klepeta znova odpre isti model ali strukturo.
-  askTutor: (text, vrni = null) => askTutorFrom(text, vrni ? { view: "uci", ...vrni } : null),
+  askTutor: (text, vrni = null) => {
+    askTutorFrom(text, vrni ? { view: "uci", ...vrni } : null);
+  },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
 });
 

@@ -927,7 +927,11 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
   // (WebView) sporočilo aplikaciji, na spletu klepet z vnaprej vpisanim vprašanjem.
   function vprasaj(r) {
     const ime = r.la ? `${r.prikaz} (${r.la})` : r.prikaz;
-    vprasajInstruktorja(t("a3.askText", { ime }), { vrni: `atlas?izberi=${encodeURIComponent(r.id)}`, oznaka: r.prikaz });
+    vprasajInstruktorja(t("a3.askText", { ime }), {
+      vrni: `atlas?izberi=${encodeURIComponent(r.id)}`,
+      oznaka: r.prikaz,
+      kontekst: { v: 1, sourceType: "atlas", sourceId: "atlas", selectedObject: { id: r.id } },
+    });
   }
 
   // Tap na model: izbira (ali odgovor v kvizu »Najdi strukturo«).

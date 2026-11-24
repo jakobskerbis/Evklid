@@ -541,9 +541,10 @@ async function model(id, param, moj) {
   const mikroskop = prepModela ? { za: (delId) => pogledDela(id, delId), odpri: odpriMikroskop } : null;
   // »Vprašaj inštruktorja« v oknu dela (public/3d/vgrajeno.js): vrnitev iz klepeta odpre ta model z istim delom.
   const vprasaj = (d) =>
-    vprasajInstruktorja(t("a3.askPartText", { model: mod.info.naslov, ime: d.la ? `${d.ime} (${d.la})` : d.ime }), {
+    vprasajInstruktorja(t("a3.askPartText", { naslov: mod.info.naslov, ime: d.la ? `${d.ime} (${d.la})` : d.ime }), {
       vrni: `${id}?del=${encodeURIComponent(d.id)}`,
       oznaka: `${mod.info.naslov}: ${d.ime}`,
+      kontekst: { v: 1, sourceType: "model3d", sourceId: id, selectedObject: { id: d.id, ime: d.ime } },
     });
   return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop, vprasaj });
 }

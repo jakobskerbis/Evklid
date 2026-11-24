@@ -389,3 +389,51 @@ const enTex = (u) => String(u).replace(/⁻¹|[ %°·²³Ω\\{}$_^~#&]/g, (c) =>
 export const en = (u) => `\\,\\mathrm{${enTex(u)}}`;
 // Število, ki ga ni (fmt da »–«), je v formuli \text{–}; µ v enoti ne gre (KaTeX ga piše ležeče): enoto z µ napiši za formulo.
 export const rez = (x, u) => `\\mathbf{${String(x).replace("–", "\\text{–}")}${u ? `\\,${enTex(u)}` : ""}}`;
+
+// Posnetek stanja odprtega poskusa za »Vprašaj inštruktorja« (server/ucni-kontekst.js, j 24. 11. 2026): iz DOM, zato
+// velja za vse poskuse brez kode v vsakem posebej. Kontrole: vsaka ima oznako `.demo-slider-label` (kit.js slider,
+// select, vrstice `row` v lab-*.js) in vrednost v drsniku (izpis), izbranem gumbu, seznamu ali stikalu `.demo-check`.
+// Odčitki: zasloni merilnikov (lcd). Meritve: samo vrstice, ki so v tabeli meritev (dataTable), zadnjih 20.
+// Nič ne izračuna in nič ne ugiba: česar ni na zaslonu, v posnetku ni.
+const besedilo = (el) => (el?.textContent || "").replace(/\s+/g, " ").trim();
+export function stanjePoskusa(root, { parametri = 12, odcitki = 8, vrstice = 20 } = {}) {
+  const parameters = [];
+  const vidno = (el) => !el.closest("[hidden]");
+  for (const lab of root?.querySelectorAll?.(".demo-slider-label") || []) {
+    if (parameters.length >= parametri) break;
+    const box = lab.parentElement;
+    // Vrstica (`row`) okoli drsnika ali seznama z lastno oznako: vrednost prebere notranja oznaka, ne obe.
+    if (!box || !vidno(box) || box.querySelectorAll(".demo-slider-label").length > 1) continue;
+    const ime = besedilo(lab);
+    const range = box.querySelector('input[type="range"]');
+    const on = box.querySelector('.seg-btn.on, .seg-btn[aria-checked="true"]');
+    const sel = box.querySelector("select");
+    let vrednost = "";
+    if (range && !range.hidden) vrednost = besedilo(box.querySelector("output")) || String(range.value);
+    else if (on) vrednost = besedilo(on);
+    else if (sel) vrednost = besedilo(sel.selectedOptions?.[0]) || sel.value;
+    if (ime && vrednost) parameters.push({ ime, vrednost });
+  }
+  for (const chk of root?.querySelectorAll?.(".demo-check") || []) {
+    if (parameters.length >= parametri) break;
+    const input = chk.querySelector('input[type="checkbox"]');
+    const ime = besedilo(chk);
+    if (input && ime && vidno(chk)) parameters.push({ ime, vrednost: input.checked ? "da" : "ne" });
+  }
+  const readings = [];
+  for (const el of root?.querySelectorAll?.(".lab-lcd") || []) {
+    if (readings.length >= odcitki) break;
+    if (!vidno(el) || el.classList.contains("off")) continue;
+    const v = besedilo(el.querySelector(".lab-lcd-val"));
+    if (!v || v === "–") continue;
+    readings.push({ ime: besedilo(el.querySelector(".lab-lcd-name")), vrednost: `${v} ${besedilo(el.querySelector(".lab-lcd-unit"))}`.trim() });
+  }
+  let measurements = null;
+  for (const table of root?.querySelectorAll?.("table.lab-table") || []) {
+    const rows = [...table.querySelectorAll("tbody tr")].map((tr) => [...tr.children].slice(1).map(besedilo));
+    if (!rows.length) continue;
+    measurements = { stolpci: [...table.querySelectorAll("thead th")].slice(1).map(besedilo), vrstice: rows.slice(-vrstice) };
+    break;
+  }
+  return { parameters, readings, ...(measurements ? { measurements } : {}) };
+}
