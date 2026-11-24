@@ -193,6 +193,9 @@ export class GraphView {
     const model = this.hooks.getModel();
     const st = state.settings || {};
     ctx.save();
+    // Matematične oznake (točke »(2; 1)«, osi »−5«, naklon) so vedno od leve proti desni, tudi v arabščini in hebrejščini
+    // (AUDIT-056: platno je dedovalo dir="rtl" strani, zato je bila točka (2; 1) zapisana »(1;2)« in os »5−«).
+    ctx.direction = "ltr";
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, W, H);
     this.polylines = new Map();
@@ -1489,6 +1492,7 @@ export class GraphView {
     c.width = W * scale;
     c.height = H * scale;
     const ctx = c.getContext("2d");
+    ctx.direction = "ltr"; // legenda z izrazi (AUDIT-056)
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     this.render(ctx, W, H, { exporting: true });
     const C = this.C;
