@@ -889,9 +889,9 @@ export function imeBarve(xyz) {
   const l = d.l;
   // škrlatne barve (zmes rdeče in vijolične; litij 671 nm in stroncij z modrim plamenom): »skrlatna« = 0 pri 380 nm, 1 pri 700 nm.
   // Nad 0,6 je rdeča z modrim nadihom, v šolski kemiji »karminasto rdeča« (litij od 1 do ~0,15 na zanki; ko izhlapi, prevlada modri plamen); kalij skozi kobaltovo steklo ~0,3.
-  // Meje (nm): Cu 486–489 modro zelena tudi, ko sol izhlapeva; Ca 598–602 (s sledjo natrija) oranžno rdeča; Ba z umazano zanko 571 rumeno zelena.
+  // Meje (nm): Cu 486–489 modro zelena tudi, ko sol izhlapeva; Ca 598–602 (s sledjo natrija) opečnato rdeča (j, 2026-11-24: kot v učbenikih in v seznamu); Ba z umazano zanko 571 rumeno zelena.
   const ime = l == null ? (d.skrlatna > 0.6 ? "karminasto rdeča" : d.skrlatna > 0.35 ? "rožnato vijolična" : "vijolična")
-    : l < 450 ? "vijolična" : l < 482 ? "modra" : l < 500 ? "modro zelena" : l < 555 ? "zelena" : l < 575 ? "rumeno zelena" : l < 595 ? "rumena" : l < 597 ? "oranžna" : l < 620 ? "oranžno rdeča" : "rdeča";
+    : l < 450 ? "vijolična" : l < 482 ? "modra" : l < 500 ? "modro zelena" : l < 555 ? "zelena" : l < 575 ? "rumeno zelena" : l < 595 ? "rumena" : l < 597 ? "oranžna" : l < 620 ? "opečnato rdeča" : "rdeča";
   return d.cistost < 0.3 ? `bledo ${ime}` : ime;
 }
 // Delež svetlosti (Y), ki ga prispeva posamezen element.
