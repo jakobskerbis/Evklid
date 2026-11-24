@@ -76,7 +76,7 @@ test("lesson-math: pretvorbe enot in simbolni deli se izpustijo", () => {
   ]) {
     assert.equal(one(tex).mismatches.length, 0, tex);
   }
-  // AUDIT-055: prava pretvorba enot je zdaj preverjen korak (prej preskočen)
+  // AUDIT-058: prava pretvorba enot je zdaj preverjen korak (prej preskočen)
   assert.equal(one("10\\,\\mathrm{m} = 1000\\,\\mathrm{cm}").checked, 1);
   assert.equal(normalizeTex("x + 1"), null);
   assert.equal(evaluate("2 pi"), 2 * Math.PI);
@@ -215,8 +215,8 @@ test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1
   for (const t of bad) assert.equal(one(t).mismatches.length, 1, t);
 });
 
-// AUDIT-055: pretvorbe enot s predponami se preverijo točno, ne po »mantisi« (prej je bil 72 km/h = 200 m/s »pretvorba«).
-test("AUDIT-055: napaka ×10ⁿ z enotami se ujame, prave pretvorbe ostanejo brez popravka", () => {
+// AUDIT-058: pretvorbe enot s predponami se preverijo točno, ne po »mantisi« (prej je bil 72 km/h = 200 m/s »pretvorba«).
+test("AUDIT-058: napaka ×10ⁿ z enotami se ujame, prave pretvorbe ostanejo brez popravka", () => {
   const R = String.raw;
   const wrong = [
     R`$\rho = \frac{540\ \mathrm{g}}{200\ \mathrm{cm^3}} = 27\ \mathrm{g/cm^3}$`,

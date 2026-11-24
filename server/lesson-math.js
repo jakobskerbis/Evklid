@@ -45,7 +45,7 @@ function isDataStep(a, b, tol) {
   return BIT_UNIT.test(unit) ? DATA_POWERS.some((p) => near(p / 8)) : DATA_POWERS.some((p) => near(8 * p));
 }
 
-// Enote s predponami (AUDIT-055): vrednost enote v SI kot število pri izbranih vrednostih osnovnih dimenzij. Pri dveh
+// Enote s predponami (AUDIT-058): vrednost enote v SI kot število pri izbranih vrednostih osnovnih dimenzij. Pri dveh
 // različnih izbirah je razmerje dveh količin enako natanko takrat, ko imata isto dimenzijo; takrat je to pravo
 // razmerje v SI (72 km/h : 20 m/s = 1). Tako se pretvorba preveri točno, ne po »mantisi« (prej je bil 72 km/h = 200 m/s
 // »pretvorba«, ker je 10 = 10ⁿ). Neznana enota (kemijska formula \mathrm{H_2O}, mmHg …) vrne null: velja staro pravilo.
@@ -146,7 +146,7 @@ function unitStep(a, b, relTol, chainUnits) {
 
 // LaTeX → preprost aritmetični izraz. Vrne null, če del ni čisto številski.
 // pct: "div" bere »25\%« kot 25/100, "unit" kot število 25 z enoto %.
-// unitSub (AUDIT-055): enota → število (vrednost enote v SI pri izbranih osnovnih dimenzijah) ali null; enota se tedaj
+// unitSub (AUDIT-058): enota → število (vrednost enote v SI pri izbranih osnovnih dimenzijah) ali null; enota se tedaj
 // v izrazu nadomesti s tem številom, da izraz izračuna količino z enotami (540 g / 200 cm³ → g/cm³). unitFail: enote ni
 // bilo mogoče prebrati.
 export function normalizeTex(tex, pct = "div", { unitSub = null } = {}) {
@@ -319,7 +319,7 @@ function compare(a, b, approx, loose, afterData = false, chainUnits = []) {
   const ub = b.units.join();
   if (a.units.includes("%") !== b.units.includes("%")) return "skip"; // 20 % = 60 €
   if (a.units.includes("°") !== b.units.includes("°")) return "skip"; // 150° = 5π/6
-  // Različne enote (ali enota le na eni strani): prava pretvorba s predponami (AUDIT-055), razen pri enotah podatkov.
+  // Različne enote (ali enota le na eni strani): prava pretvorba s predponami (AUDIT-058), razen pri enotah podatkov.
   if (ua !== ub && !hasDataUnit(a) && !hasDataUnit(b)) {
     // relativna toleranca po pretvorbi: 1 % (ocene 15 %) ali pol zadnjega mesta zapisanega števila (3142 cm³ ≈ 3,1 L)
     let rel = loose ? 0.15 : 0.01;
