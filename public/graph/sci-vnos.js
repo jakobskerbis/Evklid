@@ -544,11 +544,15 @@ export function caretStops(base) {
   return [...best.values()].filter((s) => s.dist < 1e3).sort((x, y) => x.p - y.p);
 }
 
-/** TeX z merilno točko (htmlData evk-p) na vsakem mestu kazalca: dotik na lep zapis → položaj v besedilu. */
+/**
+ * TeX z merilno točko (htmlData evk-p) na vsakem mestu kazalca: dotik na lep zapis → položaj v besedilu.
+ * Točka je 0,4 em visoka (nižja od x in števk): ne spremeni višine zapisa (gnezdeni ulomki), točke števca in imenovalca
+ * pa se navpično ne prekrivajo (z \smash so se in dotik na števec, ki ga Chromium premakne ~8 px, je padel v imenovalec).
+ */
 export function stopsTex(base) {
   // dotik nikoli ne postavi kazalca sredi imena ali odpirala (»d|/dx(«, »sin|(«): tam bi vnos ime pokvaril (AUDIT-004)
   const stops = caretStops(base).filter((s) => !(openerAround(base.raw, s.p)?.[0] < s.p));
-  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\smash{\\rule{0em}{0.8em}}}}`])));
+  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.4em}}}`])));
 }
 
 /** Zapis vnosa s kazalcem: { ok, tex } ali null za prazen vnos. */
