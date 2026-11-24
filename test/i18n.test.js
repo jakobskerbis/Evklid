@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import SL from "../public/i18n/sl.js";
-import { LANGUAGES, LANGUAGE_CODES, UI_LANGUAGES, RTL, uiChain, uiLanguage, langInfo, detectLanguage, homeLanguage } from "../public/i18n/languages.js";
+import { LANGUAGES, LANGUAGE_CODES, UI_LANGUAGES, FROZEN_UI_LANGUAGES, RTL, uiChain, uiLanguage, langInfo, detectLanguage, homeLanguage } from "../public/i18n/languages.js";
 import { buildSystemPrompt, systemBlocks, languagePrompt } from "../server/prompt.js";
 import { normalizeSettings } from "../server/settings.js";
 
@@ -28,14 +28,17 @@ test("language list: unique codes, all over a million speakers, every fallback l
   assert.equal(langInfo("ar").rtl, true);
 });
 
-test("every UI translation has exactly the Slovenian keys and the same placeholders", () => {
+test("live UI translations have exactly the Slovenian keys; frozen ones only known keys; same placeholders", () => {
   const keys = Object.keys(SL).sort();
   for (const code of UI_LANGUAGES.filter((c) => c !== "sl")) {
     const file = path.join(UI_DIR, `${code}.json`);
     assert.ok(fs.existsSync(file), `manjka ${code}.json`);
     const d = JSON.parse(fs.readFileSync(file, "utf8"));
-    assert.deepEqual(Object.keys(d).sort(), keys, `${code}: ključi se ne ujemajo`);
-    for (const k of keys) {
+    // Zamrznjeni jeziki (j, 24. 11. 2026) smejo imeti manjkajoče ključe – vmesnik uporabi nadomestni jezik.
+    if (FROZEN_UI_LANGUAGES.includes(code)) {
+      for (const k of Object.keys(d)) assert.ok(k in SL, `${code}: odvečen ključ ${k}`);
+    } else assert.deepEqual(Object.keys(d).sort(), keys, `${code}: ključi se ne ujemajo`);
+    for (const k of keys.filter((x) => x in d)) {
       const want = vars(forms(SL[k])[0]).filter((v) => v !== "n");
       for (const f of forms(d[k])) {
         assert.equal(typeof f, "string", `${code} ${k}`);
