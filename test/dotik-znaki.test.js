@@ -107,7 +107,11 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
           // oklepaji so v zapisu lahko drugje kot v besedilu (d/dx(x³;2): zaklepaj pred »|«), zato samo števke, črke, operatorji
           if (/[()[\]|]/.test(g.ch) || count([...ex], g.ch) !== 1 || count(glyphs.map((x) => x.ch), g.ch) !== 1) continue;
           const i = [...ex].indexOf(g.ch);
-          const want = new Set([caretTex(base, i), caretTex(base, i + 1)]);
+          // črka imena funkcije (»sin«): z #945 kazalec ne sme v ime, zato je prav tudi mesto pred imenom ali za oklepajem
+          const word = /[A-Za-zčšž]{2,}(?=\s*\()/g;
+          let inName = null;
+          for (const m of ex.matchAll(word)) if (m.index <= i && i < m.index + m[0].length) inName = m;
+          const want = new Set([caretTex(base, i), caretTex(base, i + 1), ...(inName ? [caretTex(base, inName.index), caretTex(base, ex.indexOf("(", inName.index) + 1)] : [])]);
           const shots = [["dotik", 0]];
           if (opt.hasTouch && engine === "chromium") shots.push(["klik +10 px", 10], ["klik −10 px", -10]);
           for (const [how, dy] of shots) {
