@@ -21,3 +21,21 @@ sredi pogovora pokaže Evklidova orodja.
   ali obe osi), ostane nespremenjeno; inštruktorjev prompt ga (še) ne omenja. Ob krožnici, parametrični ali polarni
   krivulji ali območju ostane običajno okno.
 - Preizkus brez API ključa: v klepet napiši »pokaži poskus« (vnaprej pripravljen odgovor v `server/claude.js`).
+
+## Obratna smer: iz poskusa ali 3D modela v klepet in nazaj (j, 24. 11. 2026, faza A načrta »povezan učni prostor«)
+
+- »Vprašaj inštruktorja« je v odprtem (odklenjenem) poskusu pod opisom (`public/laboratorij.js`, `data-lab-ask`), v oknu
+  izbranega dela vsakega 3D modela na strani `/3d` (`pregledovalnik.js`, `opts.vprasaj` iz `stran.js`) in v atlasu.
+  Vse tri poti gredo skozi `app.js` → `askTutorFrom(text, back)`: klepet z **vpisanim** vprašanjem (pošlje ga učenec
+  sam), `state.chatReturn = { view, open, oznaka }`.
+- 3D v okvirju pošlje staršu `{ tip: "vprasaj", besedilo, vrni, oznaka }` (`public/3d/vgrajeno.js`
+  `vprasajInstruktorja`); `vrni` je naslov pogleda (`atlas?izberi=<id>`, `<model>?del=<id>`), ki ga `uci-se.js`
+  `vrnitev3d` preveri (id modela, kratki parametri) in ob vrnitvi z `open3d` odpre isti model z istim delom.
+- Vrnitev: ← v glavi klepeta (telefon), tipka Nazaj in gumb »Nazaj na: …« nad vnosnim poljem (`#chat-return`, viden,
+  kadar ima `chatReturn` oznako). Poskus ostane, kot je bil (DOM laboratorija se ne zbriše); poskus iz lekcije se po
+  vrnitvi s tipko Nazaj še vedno vrne v lekcijo. Tema iz poskusa (»Odpri temo v učbeniku«): Nazaj iz lekcije vrne v
+  poskus (`uci-se.js` `lessonFromLab`).
+- Aplikacija iz trgovine, ko je `/3d` odprt kot samostojen zaslon (`mobile/src/components/Web3D.tsx`), vprašanje še
+  vedno pošlje takoj in nima vrnitve; to se spremeni šele z novo različico aplikacije.
+- Preizkusi: `test/uci-se.test.js`, `scripts/preveri-aplikacijo.cjs` (laboratorij na računalniku in telefonu, 3D na
+  telefonu).
