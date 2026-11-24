@@ -1016,6 +1016,7 @@
   "sc.errIntPv": "Integral ne postoji: divergira (funkcija na intervalu ima pol). Postoji samo Cauchyjeva glavna vrijednost {pv}, ali ona nije vrijednost integrala.",
   "sc.errIntDivergeInf": "Integral ne postoji: na beskonačnom intervalu divergira (funkcija prema beskonačnosti ne opada dovoljno brzo).",
   "sc.errIntUnknown": "Integral nije moguće pouzdano izračunati: numerički izračun ne daje nijednu pouzdanu cifru.",
+  "sc.errIntUndefined": "Integral ne postoji: funkcija nije definisana na dijelu intervala (npr. korijen ili logaritam negativnog broja).",
   "sc.more": "Sve funkcije",
   "sc.functions": "Funkcije",
   "sc.grp.cmp": "Jednačine i nejednačine",

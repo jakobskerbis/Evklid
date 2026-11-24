@@ -3,6 +3,7 @@
 import { esc, texHtml, remember } from "./tools-kit.js";
 import { readNumber, readList } from "./toolscore.js";
 import { exactTex, zanesljivaMesta } from "./scicore.js";
+import { integralOf, integralErrorKey } from "./scisolve.js";
 import { fn, derivative, toTex, roots, limit, taylor, V, odeSolve, measurement, propagate, roundMeasurement } from "./anacore.js";
 import { createPlot3d } from "./plot3d.js";
 import { compile, integrateInfo, withIntegralBudget } from "./math.js";
@@ -110,14 +111,34 @@ export function anaTools(ctx) {
           const a = readNumber(st.a);
           const b = readNumber(st.b);
           if (!Number.isFinite(a) || !Number.isFinite(b)) return (out.innerHTML = err(t("sc.ana.badInterval")));
-          // številski integral: »≈« in le mesta, ki jih podpira ocena napake (kot v kalkulatorju); med tipkanjem ≤ 200 ms
-          const info = withIntegralBudget(200, () => integrateInfo(f, a, b));
-          const c = Number.isFinite(info.value) ? zanesljivaMesta(info) : null;
-          out.innerHTML = card(
-            c
-              ? row(`\\int_{${tnum(a)}}^{${tnum(b)}} ${fTex}\\,dx \\approx ${tnum(c.value)}`, c.value) + `<p class="muted tl-note">${esc(t("sc.ana.intNote"))}</p>`
-              : `<p>${esc(t(info.diverges ? "sc.ana.intDiverge" : "sc.errIntUnknown"))}</p>`,
-          );
+          // isti izračun in ista sporočila kot znanstveni kalkulator (točno »=«, sicer »≈« z zanesljivimi mesti; »ne obstaja«,
+          // »ni definirana«, »ni mogoče zanesljivo«). Med tipkanjem kratka meja; če ne zadošča, takoj zatem polni izračun.
+          const show = (r) => {
+            if (r?.kind === "value" && Number.isFinite(r.value))
+              return card(row(`\\int_{${tnum(a)}}^{${tnum(b)}} ${fTex}\\,dx ${r.est ? `\\approx ${tnum(r.value)}` : `= ${exact(r.value)}`}`, r.value) + (r.est ? `<p class="muted tl-note">${esc(t("sc.ana.intNote"))}</p>` : ""));
+            const key = r?.error ? integralErrorKey(r.error) : null;
+            if (key) return `<p>${esc(t(key[0], key[1].pv !== undefined ? { pv: String(Number(key[1].pv.toPrecision(8))) } : key[1]))}</p>`;
+            return null;
+          };
+          const live = integralOf(st.f, a, b, { live: true });
+          let html = show(live);
+          if (html === null) {
+            // izraza kalkulator ne bere (npr. drug zapis): številsko kot prej
+            const info = withIntegralBudget(200, () => integrateInfo(f, a, b));
+            const c = Number.isFinite(info.value) ? zanesljivaMesta(info) : null;
+            html = c
+              ? card(row(`\\int_{${tnum(a)}}^{${tnum(b)}} ${fTex}\\,dx \\approx ${tnum(c.value)}`, c.value) + `<p class="muted tl-note">${esc(t("sc.ana.intNote"))}</p>`)
+              : `<p>${esc(t(info.diverges ? "sc.errIntDiverge" : "sc.errIntUnknown"))}</p>`;
+          }
+          out.innerHTML = html;
+          const stamp = (run.stamp = (run.stamp || 0) + 1);
+          // predogled ne poskusi točne poti F(b) − F(a) (∫ sin x od 0 do 10⁴): po »čas« ali »ni mogoče zanesljivo« polni izračun
+          if (live?.error?.code === "intTimeout" || live?.error?.code === "intUnknown")
+            setTimeout(() => {
+              if (run.stamp !== stamp || part !== "int") return;
+              const full = show(integralOf(st.f, a, b));
+              if (full !== null) out.innerHTML = full;
+            }, 150);
         } else if (part === "lim") {
           const cs = st.c.trim().replace(/\s/g, "");
           const c = /^\+?(∞|inf|oo)$/i.test(cs) ? Infinity : /^-(∞|inf|oo)$/i.test(cs) ? -Infinity : readNumber(cs);

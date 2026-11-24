@@ -903,6 +903,37 @@ export function derivCheck(fx, a, d) {
   throw new MathError("noDeriv");
 }
 
+// Merilo za šum zaokrožitve v argumentu: vsota |sumandov| (sin²x + cos²x − 1: 2), da je −10⁻¹⁷ »nič«, ne »negativno«
+function addScale(node, ctx) {
+  if (node.k === "+" || node.k === "-") {
+    const p = addScale(node.a, ctx);
+    const q = addScale(node.b, ctx);
+    return (s) => p(s) + q(s);
+  }
+  if (node.k === "neg" || node.k === "grp") return addScale(node.a, ctx);
+  const f = compile(node, ctx);
+  return (s) => {
+    const y = f(s);
+    return typeof y === "number" && Number.isFinite(y) ? Math.abs(y) : 0;
+  };
+}
+// ctx.tolerant (integrand določenega integrala): argument korena, ln, arcsin …, ki je zaradi zaokrožitve malo ČEZ mejo
+// definicijskega območja (√(sin²x + cos²x − 1) = √(−10⁻¹⁷)), štejemo za mejo (0 oziroma ±1), ne za »ni definirano«.
+// Šum je največ nekaj ulp merila (vsota |sumandov|): 16·ε·merilo. Pozitivnih vrednosti ne spreminjamo nikoli
+// (ln(10⁻¹³) ostane −29,9, ne ln 0). Prava negativna vrednost, manjša od 16·ε·merila (√(x − x − 10⁻¹³) pri x ≥ 30),
+// se od šuma ne loči.
+function tolerantArg(argNode, a, ctx, lo, hi) {
+  const sc = addScale(argNode, ctx);
+  const TOL = 16 * 2.220446049250313e-16;
+  return (s) => {
+    const v = a(s);
+    if (typeof v !== "number") return v;
+    if (v < lo && lo - v <= TOL * Math.max(sc(s), Math.abs(lo))) return lo;
+    if (hi !== undefined && v > hi && v - hi <= TOL * Math.max(sc(s), hi)) return hi;
+    return v;
+  };
+}
+
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
   const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
@@ -934,8 +965,14 @@ export function compile(node, ctx = {}) {
     case "*":
     case "/":
     case "^": {
-      const a = c(node.a);
+      let a = c(node.a);
       const b = c(node.b);
+      // (sin²x + cos²x − 1)^0,5 v integrandu: osnova v šumu pod 0 je 0
+      if (ctx.tolerant && node.k === "^") {
+        let e = node.b;
+        while (e.k === "grp") e = e.a;
+        if (!(e.k === "num" && Number.isInteger(e.v))) a = tolerantArg(node.a, a, ctx, 0);
+      }
       const f = { "+": ADD, "-": SUB, "*": MUL, "/": DIV, "^": POW }[node.k];
       // hitra pot za števila
       const raw = { "+": (x, y) => x + y, "-": (x, y) => x - y, "*": (x, y) => x * y, "/": (x, y) => x / y, "^": pow }[node.k];
@@ -974,6 +1011,15 @@ export function compile(node, ctx = {}) {
       // nCr(171,1) z decimalno vejico ni nCr(171,1; ?). Število za MathError("arity") je v ARITY.
       const want = TRIG[f] ? 1 : ARITY[f];
       if (want && args.length !== want) throw new MathError("arity", { f, n: want });
+      if (ctx.tolerant && args.length === 1) {
+        if (f === "sqrt" || f === "root4" || f === "ln" || f === "log") args[0] = tolerantArg(node.args[0], args[0], ctx, 0);
+        else if (f === "arcsin" || f === "arccos") args[0] = tolerantArg(node.args[0], args[0], ctx, -1, 1);
+        else if (f === "arcosh") args[0] = tolerantArg(node.args[0], args[0], ctx, 1);
+      }
+      if (ctx.tolerant && f === "root" && args.length === 2) {
+        const n = node.args[1];
+        if (n.k === "num" && n.v % 2 === 0) args[0] = tolerantArg(node.args[0], args[0], ctx, 0);
+      }
       if (TRIG[f]) {
         const g = TRIG[f];
         const a = args[0];
@@ -1136,7 +1182,7 @@ export function compile(node, ctx = {}) {
       };
     }
     case "int": {
-      const a = c(node.a);
+      const a = node.lo ? compile(node.a, { ...ctx, tolerant: true }) : c(node.a); // šum zaokrožitve ob meji območja
       const v = node.v;
       const lo = node.lo ? c(node.lo) : () => 0;
       const hi = node.hi ? c(node.hi) : (s) => s[v];
@@ -1358,7 +1404,7 @@ function adapt(F, a, b, n0 = 16, maxIv = MAX_IV, onStuck = null, tolAbs = 0) {
       check *= 2;
     }
     const w = hpop(heap);
-    if (w.bad && w.nan && ++nanBad > 200) return { abort: { nan: true } };
+    if (w.bad && w.nan && ++nanBad > 200) return { abort: { nan: true, a: w.a, b: w.b } };
     if (w.b - w.a <= minW) {
       done.push(w);
       sI += w.I;
@@ -1513,7 +1559,7 @@ function sideModel(F, c, s, w) {
       raw.splice(k);
       while (pts.length && Math.exp(-pts[pts.length - 1][0]) <= tk) pts.pop();
       nan = 0;
-    } else return { kind: Number.isNaN(raw[0][1]) && nan > raw.length / 2 ? "nan" : "unknown" }; // »nan« le, ko f ob c res ni definirana
+    } else return { kind: Number.isNaN(raw[0][1]) && nan > raw.length / 2 ? "nan" : "unknown", at: c + s * raw[k][0] }; // »nan« le, ko f ob c res ni definirana
   }
   // nenadne ničle na koncu (1/√(x³) pri x > 10¹⁰³: x³ = ∞): preliv, ne prava vrednost — odrežemo
   {
@@ -1780,6 +1826,15 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0, brk = null) {
   return { value, err, abs };
 }
 
+// f je NaN na kosu [x0, x1] (√(x − 5) na [0, 5)): mesto, kjer je NaN, za preverbo v evaluate
+function undefPart(F, x0, x1) {
+  for (let i = 0; i <= 64; i++) {
+    const x = x0 + ((x1 - x0) * i) / 64;
+    if (Number.isNaN(F(x))) return { value: NaN, undef: true, at: x };
+  }
+  return { value: NaN, undef: true, at: 0.5 * (x0 + x1) };
+}
+
 const DIVERGES = (at, pv) => ({ value: NaN, diverges: true, at, ...(pv !== undefined ? { pv } : {}) });
 const UNKNOWN = { value: NaN, unknown: true };
 
@@ -1805,7 +1860,7 @@ function finiteCore(F0, a, b, depth = 0, tolAbs = 0, n0 = 16) {
   };
   let F = F0;
   let r1 = adapt(F, a, b, n0, MAX_IV, onStuck, tolAbs);
-  if (r1.abort?.nan) return { value: NaN };
+  if (r1.abort?.nan) return undefPart(F0, r1.abort.a, r1.abort.b);
   if (r1.abort) return withPv(F0, a, b, r1.abort.c, r1.abort.L, r1.abort.R, depth);
   if (r1.converged && Number.isFinite(r1.I)) {
     // skrit ozek vrh (e^(−10¹²x²)): vozli ga niso zadeli
@@ -1860,16 +1915,21 @@ function finiteCore(F0, a, b, depth = 0, tolAbs = 0, n0 = 16) {
     pts = ptsOf(ivs.slice().sort((p, q) => (Number.isFinite(q.fmax) ? q.fmax : 1e308) - (Number.isFinite(p.fmax) ? p.fmax : 1e308)).slice(0, 12));
   }
   const info = [];
-  let nanSeen = false;
+  let nanSeen = null;
   for (const c of pts) {
     const L = side(F0, c, -1);
     const R = side(F0, c, 1);
     if (L?.kind === "div" || R?.kind === "div") return withPv(F0, a, b, c, L, R, many ? 1 : depth);
-    if (L?.kind === "nan" || R?.kind === "nan") nanSeen = true;
+    if (L?.kind === "nan" || R?.kind === "nan") nanSeen ??= (L?.kind === "nan" ? L : R).at;
     info.push({ c, L, R });
   }
-  if (nanSeen) return { value: NaN };
-  if (info.some((p) => p.L?.kind === "unknown" || p.R?.kind === "unknown")) return UNKNOWN;
+  if (nanSeen !== null) return { value: NaN, undef: true, at: nanSeen };
+  const unk = info.find((p) => p.L?.kind === "unknown" || p.R?.kind === "unknown");
+  if (unk) {
+    // NaN ob točki: mesto povemo, da evaluate preveri, ali je f tam res nedefinirana (√ negativnega) ali le preliv
+    const at = unk.L?.at ?? unk.R?.at;
+    return at !== undefined ? { ...UNKNOWN, at } : UNKNOWN;
+  }
   // odpravljive točke s šumom zaokrožitve: nadomestimo z limito in računamo znova
   const reps = [];
   for (const p of info)
@@ -2022,7 +2082,7 @@ function halfLine(F, c, s, end = Infinity, brk = null) {
     const tail = sideModel(G, 0, 1, 0.04);
     if (tail.kind === "div") return DIVERGES(s * Infinity);
     if (tail.kind === "unknown") return UNKNOWN;
-    if (tail.kind === "nan") return { value: NaN };
+    if (tail.kind === "nan") return { value: NaN, undef: true, at: s / tail.at };
     // omejena in pod tail.cut neračunljiva: ta del ocenimo z |G| ≤ M
     if (tail.kind === "bounded" && tail.cut) {
       uMin = tail.cut;
@@ -2057,7 +2117,7 @@ function halfLine(F, c, s, end = Infinity, brk = null) {
     vs.push(v);
     if (v > vmax) vmax = v;
   }
-  if (nan > 1200) return Number.isNaN(F(c + s * 1e-3)) ? { value: NaN } : UNKNOWN;
+  if (nan > 1200) return Number.isNaN(F(c + s * 1e-3)) ? { value: NaN, undef: true, at: c + s * 1e-3 } : UNKNOWN;
   // vrhovi: lokalni maksimumi v, ki niso zanemarljivi
   const peaks = [];
   for (let k = 0; k < vs.length && ds[k] <= 1e5; k++) {

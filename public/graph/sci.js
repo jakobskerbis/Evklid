@@ -3,7 +3,7 @@
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
 import { arityExample } from "./math.js";
 import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
-import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
+import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
@@ -290,10 +290,12 @@ export function createScientific(root, opts) {
       case "sumLimit":
         return t("sc.errSumLimit");
       case "intDiverge":
-        return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t(e.info?.inf ? "sc.errIntDivergeInf" : "sc.errIntDiverge");
+      case "intUndefined":
       case "intUnknown":
-      case "intTimeout":
-        return t("sc.errIntUnknown");
+      case "intTimeout": {
+        const [key, p] = integralErrorKey(e);
+        return t(key, p.pv !== undefined ? { pv: plainNum(p.pv) } : p);
+      }
       case "polInside":
         return t("sc.errPolInside");
       case "arity":
