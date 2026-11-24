@@ -15,6 +15,7 @@ let tab = read();
 let hub = null; // { key, html } narisan 3D svet (key = jezik|slog|pot veje)
 let full = null; // { el, frame } odprt atlas ali model čez cel zaslon
 let fromLesson = false; // poskus je odprla povezava v lekciji: tipka Nazaj vrne v lekcijo
+let fromLab = null; // id lekcije, ki jo je odprla tema v poskusu (»Odpri temo v učbeniku«): tipka Nazaj iz nje vrne v poskus
 
 function read() {
   try {
@@ -45,6 +46,7 @@ export function setUciTab(name) {
   if (!UCI_TABS.includes(name)) return;
   if (name !== "textbook" && tab === "textbook") D?.stopReading?.(); // branje lekcije na glas ne teče naprej skrito
   if (name !== "lab") fromLesson = false;
+  if (name !== "textbook") fromLab = null;
   tab = name;
   save(name);
   for (const b of document.querySelectorAll("[data-uci-tab]")) {
@@ -87,6 +89,7 @@ export function initUci(deps) {
     const b = e.target.closest("[data-uci-tab]");
     if (!b || b.dataset.uciTab === tab) return;
     fromLesson = false;
+    fromLab = null;
     setUciTab(b.dataset.uciTab);
     showUci();
   });
@@ -111,8 +114,12 @@ export function initUci(deps) {
     const msg = e.data || {};
     if (msg.tip === "zapri3d") close3d();
     if (msg.tip === "vprasaj" && typeof msg.besedilo === "string" && msg.besedilo.trim()) {
+      // vrni: naslov v okvirju (»atlas?izberi=…«, »celica-zivalska?del=…«): vrnitev iz klepeta odpre isti model in del.
+      const vrni = vrnitev3d(msg.vrni, msg.oznaka);
+      // Posnetek (model, izbrani del) gre z vprašanjem; strežnik ga preveri (server/ucni-kontekst.js).
+      const kontekst = msg.kontekst && typeof msg.kontekst === "object" && JSON.stringify(msg.kontekst).length <= 2000 ? msg.kontekst : null;
       close3d();
-      D.askTutor(msg.besedilo.slice(0, 2000));
+      D.askTutor(msg.besedilo.slice(0, 2000), vrni && kontekst ? { ...vrni, kontekst } : vrni);
     }
   });
   document.addEventListener("keydown", (e) => {
@@ -124,11 +131,21 @@ export function initUci(deps) {
 }
 
 /** Tipka Nazaj v »Uči se«: zapre atlas ali model, sicer lekcijo ali poskus. Vrne true, če je kaj zaprla. */
-export function uciBack({ textbookBack, labBack }) {
+export function uciBack({ textbookBack, labBack, lessonId = undefined }) {
   if (close3d()) return true;
   // Nazaj v veji drevesa 3D sveta gre za eno vejo višje (kot drobtinice), šele na vrhu zapusti zavihek.
   if (tab === "3d" && pot) { nastaviPot(pot.split("/").slice(0, -1).join("/")); return true; }
-  if (tab === "textbook") return textbookBack();
+  if (tab === "textbook") {
+    // Le iz iste lekcije (lessonId iz app.js); drugo lekcijo, odprto prek kazala, zapre običajno.
+    const izLab = fromLab && (lessonId === undefined || lessonId === fromLab);
+    fromLab = null;
+    const closed = textbookBack();
+    if (!izLab) return closed;
+    // Lekcija iz poskusa (»Odpri temo v učbeniku«): Nazaj vrne v isti poskus, ne na kazalo učbenika.
+    setUciTab("lab");
+    showUci();
+    return true;
+  }
   if (tab === "lab") {
     const closed = labBack();
     if (!fromLesson) return closed;
@@ -146,9 +163,30 @@ export function labFromLesson() {
   fromLesson = true;
 }
 
+/** Ali je odprti poskus odprla povezava v lekciji (app.js: vrnitev iz klepeta to ohrani). */
+export const labIsFromLesson = () => fromLesson;
+
+/** Tema v poskusu je odprla lekcijo (app.js, initLab → openLesson): tipka Nazaj iz lekcije vrne v poskus. */
+export function lessonFromLab(id = true) {
+  fromLab = id;
+}
+
+// Naslov modela iz okvirja /3d za vrnitev iz klepeta: »<id>« ali »<id>?ključ=vrednost&…« (samo varni znaki, kot open3d).
+// Vrne { oznaka, open } ali null.
+export function vrnitev3d(naslov, oznaka) {
+  if (typeof naslov !== "string" || naslov.length > 300) return null;
+  const [id, q = ""] = naslov.split("?");
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)) return null;
+  const param = {};
+  for (const [k, v] of new URLSearchParams(q)) if (/^[a-z]{1,20}$/i.test(k) && v.length <= 120) param[k] = v;
+  const ime = typeof oznaka === "string" ? oznaka.trim().slice(0, 80) : "";
+  return { oznaka: ime || t("a3.hubTitle"), open: () => open3d(id, ime, Object.keys(param).length ? param : null) };
+}
+
 /** Pogled »Uči se« je zaprt (premično okno ali drug pogled): okvir 3D se zapre, da ne porablja grafične kartice. */
 export function leaveUci() {
   fromLesson = false;
+  fromLab = null;
   close3d();
 }
 

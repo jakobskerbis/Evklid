@@ -195,16 +195,17 @@ test("brez regresij: kar je main izračunal pravilno, je še vedno število s pr
   for (const t of MAIN_OK) assert.ok(check(t, ref.get(t))[0], t);
 });
 
-test("številski integral je vedno »≈«, z vsaj 9 zanesljivimi mesti pri gladkih", () => {
-  for (const t of ["∫(x^2;0;1)", "∫(sin(x);0;π)", "∫(e^(−1000x^2);−1;1)", "∫(1/x;1;2)"]) {
-    const r = analyze(t, ENV);
-    assert.ok(r.est && r.approx, `${t}: ${JSON.stringify(r)}`);
-    assert.ok(sig(r.value) >= 1);
-  }
-  // e^(−1000x²) na [−1, 1]: √(π/1000)·erf(√1000)
+test("številski integral je »≈«, točen (simbolni) »=«", () => {
+  // e^(−1000x²) na [−1, 1]: √(π/1000)·erf(√1000) — brez elementarnega F, zato številsko
   const g = analyze("∫(e^(−1000x^2);−1;1)", ENV);
-  assert.ok(digitsOk(g, 0.05604991216397929), JSON.stringify(g));
-  assert.ok(Math.abs(analyze("∫(x^2;0;1)", ENV).value - 1 / 3) < 1e-12);
+  assert.ok(g.est && g.approx && digitsOk(g, 0.05604991216397929), JSON.stringify(g));
+  const f = analyze("∫(floor(x);0;3,5)", ENV);
+  assert.ok(f.est && Math.abs(f.value - 4.5) < 1e-12, JSON.stringify(f));
+  // F(b) − F(a), preverjeno s številskim izidom (AUDIT-007)
+  for (const [t, want] of [["∫(x^2;0;1)", 1 / 3], ["∫(sin(x);0;π)", 2], ["∫(1/x;1;2)", Math.LN2]]) {
+    const r = analyze(t, ENV);
+    assert.ok(!r.est && Math.abs(r.value - want) < 1e-15, `${t}: ${JSON.stringify(r)}`);
+  }
 });
 
 test("pregled: primeri iz ocene #944 (vnos → pričakovano)", () => {
@@ -353,5 +354,27 @@ test("senčenje v grafu: kar se ne izide v 30 ms, dokonča pozneje (ne ostane »
 });
 
 test("ime za zanesljiva mesta ni »certified« (CodeQL)", () => {
-  for (const f of ["scicore.js", "sci.js", "plot.js"]) assert.doesNotMatch(fs.readFileSync(new URL(`../public/graph/${f}`, import.meta.url), "utf8"), /certif|\bcert\b/i, f);
+  for (const f of ["scicore.js", "sci.js", "plot.js", "tools-ana.js"]) assert.doesNotMatch(fs.readFileSync(new URL(`../public/graph/${f}`, import.meta.url), "utf8"), /certif|\bcert\b/i, f);
+});
+
+test("predogled kaže isto kot Izračunaj (∫(1/√x; 0; 1): »= 2« v obeh)", async () => {
+  const { analyzeLive } = await import("../public/graph/sci-vnos.js");
+  for (const [t, want] of [["∫(1/√(x);0;1)", 2], ["∫(x^2;0;1)", 1 / 3]]) {
+    const full = analyze(t, ENV); // najprej Izračunaj (ogrevanje: predogled ima mejo 50 ms)
+    const live = analyzeLive(t, ENV);
+    if (live?.error?.code === "intTimeout" || live?.kind === "solve") continue; // zelo obremenjen stroj: predogled je prazen, ne napačen
+    assert.equal(!!live.est, !!full.est, t);
+    assert.ok(Math.abs(live.value - want) < 1e-15 && Math.abs(full.value - want) < 1e-15, `${t}: ${live.value} / ${full.value}`);
+  }
+  const n = analyzeLive("∫(1/√(sin(x));0;1)", ENV);
+  assert.ok(n?.error?.code === "intTimeout" || n?.kind === "solve" || (n.est && digitsOk(n, 2.0348053192075697)), JSON.stringify(n));
+});
+
+test("orodje Analiza: integral z »≈«, zanesljivimi mesti in sporočilom, ko ga ni (ne »=«)", () => {
+  const src = fs.readFileSync(new URL("../public/graph/tools-ana.js", import.meta.url), "utf8");
+  const part = src.slice(src.indexOf('part === "int"'), src.indexOf('part === "lim"'));
+  assert.match(part, /zanesljivaMesta\(info\)/);
+  assert.match(part, /\\\\approx/);
+  assert.doesNotMatch(part, /dx = \$\{/);
+  assert.match(part, /sc\.errIntUnknown/);
 });

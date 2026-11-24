@@ -222,6 +222,19 @@ export function argSeparators(s, comma = true) {
   return out.replace(/;/g, ",");
 }
 
+/**
+ * Zapis števil in argumentov, enak v znanstvenem kalkulatorju, grafičnem kalkulatorju in pri preverjanju
+ * učenčevega odgovora (AUDIT-024): »1 000« je tisoč, »1.234,5« (comma) je 1234,5, »12 3456« in »1.2.3« sta
+ * nejasna (MathError), nato argSeparators (decimalna vejica, »;«). Vrne besedilo za parse().
+ */
+export function numberText(s, comma = true) {
+  let out = joinThousands(String(s ?? ""));
+  if (digitGap(out)) throw new MathError("unexpected", { got: " " });
+  if (comma) out = joinDotThousands(out);
+  if (twoDots(out)) throw new MathError("unexpected", { got: "." });
+  return argSeparators(out, comma);
+}
+
 export function normalize(src) {
   return String(src ?? "")
     .replace(/[−–—]/g, "-")
@@ -634,6 +647,8 @@ export function parse(src, { funcs = new Set() } = {}) {
           if (!args.length) throw new MathError("emptyArgs", { f });
         } else if (startsFactor(peek()) || is("op", "-")) args = [bareArg()];
         else throw new MathError("needArg", { f });
+        // log_b ima eno vrednost: druga (log_2(0,5) v zapisu, kjer vejica loči vrednosti) ni tiho izpuščena (AUDIT-028)
+        if (base && args.length !== 1) throw new MathError("arity", { f: "log_b", n: 1 });
         let node = base ? { k: "call", f: "logb", args: [args[0], base] } : { k: "call", f, args };
         if (pw) node = B("^", node, pw);
         return node;
@@ -919,6 +934,9 @@ export function compile(node, ctx = {}) {
       const args = node.args.map(c);
       const name = node.f;
       const d = node.d;
+      // f(2,5) pri f(x) = …: napačno število vrednosti je napaka, ne tiho f(2) (AUDIT-028)
+      const known = ctx.funcs?.[name]?.params;
+      if (Array.isArray(known) && known.length !== node.args.length) throw new MathError("arity", { f: name, n: known.length });
       return (s) => {
         const def = ctx.funcs?.[name];
         if (!def) return NaN;
@@ -1878,6 +1896,7 @@ export function integrateInfo(f, a, b, eps, depth = 0, brk = null) {
   try {
     const F = wrap(f);
     if (!Number.isFinite(a) || !Number.isFinite(b)) return infiniteIntegral(F, a, b, brk);
+    if (isWide(a, b)) return wideIntegral(F, a, b, brk);
     return finiteIntegral(F, a, b, 0, 0, brk || null);
   } catch (e) {
     if (e === BUDGET && outer) return { value: NaN, timeout: true };
@@ -1889,10 +1908,131 @@ export function integrateInfo(f, a, b, eps, depth = 0, brk = null) {
   }
 }
 
-// neskončnih mej (∫ do ∞) tu še ne računamo
-function infiniteIntegral() {
-  return { value: NaN };
+// ---- neskončna meja (in zelo dolgi intervali) ----
+// ∫ od c do s·end (end = ∞ ali zelo velik): [c, X0] po kosih (geometrične meje in vrhovi, ki jih najde gosto
+// tipanje — e^(−(x − 1000)²)), od X0 naprej z x = s/u: ∫₀^(1/|X0|) f(s/u)/u² du, kjer je u = 0 točka, ki jo oceni
+// sideModel (1/x²: omejena, 1/x: p = 1 → divergira, 1/x^1,001: p = 0,999 → obstaja in je 1000).
+function halfLine(F, c, s, end = Infinity, brk = null) {
+  const G = (u) => F(s / u) / (u * u);
+  const uEnd = Number.isFinite(end) ? 1 / Math.abs(end) : 0;
+  // najprej rep: divergenco in nihanje brez konca (sin x, sin x / x) prepoznamo hitro
+  let uMin = uEnd;
+  let tailErr = 0;
+  if (!uEnd) {
+    const tail = sideModel(G, 0, 1, 0.04);
+    if (tail.kind === "div") return DIVERGES(s * Infinity);
+    if (tail.kind === "unknown") return UNKNOWN;
+    if (tail.kind === "nan") return { value: NaN };
+    // omejena in pod tail.cut neračunljiva: ta del ocenimo z |G| ≤ M
+    if (tail.kind === "bounded" && tail.cut) {
+      uMin = tail.cut;
+      tailErr = tail.M * tail.cut;
+    }
+  }
+  // gosto tipanje: v = |f(c + s·d)|·d (prispevek na desetiško enoto)
+  const ds = [];
+  for (let k = -900; k <= 1500; k++) ds.push(10 ** (k / 300));
+  for (let k = 51; k <= 1500; k++) ds.push(10 ** (k / 10));
+  const dEnd = Number.isFinite(end) ? Math.abs(end - c) : Infinity;
+  const vs = [];
+  let vmax = 0;
+  let nan = 0;
+  let flips = 0;
+  let sg = 0;
+  let prevY;
+  for (const d of ds) {
+    if (d >= dEnd) break;
+    const y = F(c + s * d);
+    // nihanje: kolikokrat f spremeni smer (lokalni ekstremi)
+    if (Number.isFinite(y) && d <= 1e5) {
+      if (prevY !== undefined && y !== prevY) {
+        const dir = Math.sign(y - prevY);
+        if (sg && dir !== sg) flips++;
+        sg = dir;
+      }
+      prevY = y;
+    }
+    if (Number.isNaN(y) && d <= 1e5) nan++;
+    const v = Number.isFinite(y) ? Math.abs(y) * d : Number.isNaN(y) ? 0 : Infinity;
+    vs.push(v);
+    if (v > vmax) vmax = v;
+  }
+  if (nan > 1200) return Number.isNaN(F(c + s * 1e-3)) ? { value: NaN } : UNKNOWN;
+  // vrhovi: lokalni maksimumi v, ki niso zanemarljivi
+  const peaks = [];
+  for (let k = 0; k < vs.length && ds[k] <= 1e5; k++) {
+    if (vs[k] >= 1e-6 * vmax && vs[k] > 0 && (k === 0 || vs[k] >= vs[k - 1]) && (k + 1 >= vs.length || vs[k] > vs[k + 1])) peaks.push(k);
+  }
+  // od X0 = c + s·D naprej računamo v u = 1/x: D za zadnjim delom z opaznim prispevkom (v ≥ 10⁻³·največji)
+  let dk = 0;
+  for (let k = 0; k < vs.length && ds[k] <= 1e5; k++) if (vs[k] >= 1e-3 * vmax) dk = ds[k];
+  const peakD = peaks.length ? ds[peaks[peaks.length - 1]] : 0;
+  let D = Math.min(Math.max(4 * dk, 10 * peakD, 1), 1e5, dEnd);
+  if (flips >= 40) {
+    // nihanje: daleč od izhodišča ga računamo v u = 1/x (z oceno napake), ne s tisoči nihajev v x
+    let kmax = 0;
+    for (let k = 0; k < vs.length && ds[k] <= 1e5; k++) if (vs[k] > vs[kmax]) kmax = k;
+    D = Math.min(D, Math.max(64, 4 * dk, 4 * ds[kmax]), dEnd);
+  }
+  if (dEnd > D) D = Math.min(Math.max(D, 1 - s * c), dEnd); // s·X0 ≥ 1
+  const marks = new Set([0, D]);
+  for (let d = Math.min(1, D) / 4; d < D; d *= 4) marks.add(d);
+  for (const k of flips >= 40 ? [] : peaks.slice(-40)) for (const j of [k - 1, k, k + 1]) if (j >= 0 && ds[j] < D) marks.add(ds[j]);
+  const bs = [...marks].sort((p, q) => p - q);
+  let value = 0;
+  let err = 0;
+  let abs = 0;
+  for (let i = 0; i + 1 < bs.length; i++) {
+    const x0 = c + s * bs[i];
+    const x1 = c + s * bs[i + 1];
+    if (x0 === x1) continue;
+    const tA = 2e-15 * abs;
+    const r = s > 0 ? finiteIntegral(F, x0, x1, 0, tA, brk) : finiteIntegral(F, x1, x0, 0, tA, brk);
+    if (!Number.isFinite(r.value)) return r;
+    value += r.value;
+    err += r.err;
+    abs += r.abs || 0;
+  }
+  if (D < dEnd) {
+    const X0 = c + s * D;
+    const u0 = 1 / Math.abs(X0);
+    if (uMin < u0) {
+      const r = finiteIntegral(G, uMin, u0, 0, 2e-15 * abs);
+      if (r.diverges) return DIVERGES(s * Infinity);
+      if (!Number.isFinite(r.value)) return r;
+      value += r.value;
+      err += r.err;
+      abs += r.abs || 0;
+    }
+  }
+  if (!Number.isFinite(value)) return UNKNOWN;
+  return { value, err: err + tailErr, abs, singular: true };
 }
+
+function infiniteIntegral(F, a, b, brk) {
+  if (a === -Infinity && b === Infinity) {
+    const l = halfLine(F, 0, -1, Infinity, brk);
+    if (!Number.isFinite(l.value) && !l.diverges) return l;
+    const r = halfLine(F, 0, 1, Infinity, brk);
+    if (l.diverges || r.diverges) return l.diverges ? l : r;
+    if (!Number.isFinite(r.value)) return r;
+    return { value: l.value + r.value, err: l.err + r.err, abs: l.abs + r.abs, singular: true };
+  }
+  return b === Infinity ? halfLine(F, a, 1, Infinity, brk) : halfLine(F, b, -1, Infinity, brk);
+}
+
+// zelo dolg interval ([0, 10³⁰⁰], [−10¹⁰, 10¹⁰]): kot neskončna meja, a s končnim koncem
+function wideIntegral(F, a, b, brk) {
+  if (a < 0 && b > 0) {
+    const l = halfLine(F, 0, -1, a, brk);
+    if (!Number.isFinite(l.value)) return l;
+    const r = halfLine(F, 0, 1, b, brk);
+    if (!Number.isFinite(r.value)) return r;
+    return { value: l.value + r.value, err: l.err + r.err, abs: l.abs + r.abs, singular: true };
+  }
+  return a >= 0 ? halfLine(F, a, 1, b, brk) : halfLine(F, b, -1, a, brk);
+}
+const isWide = (a, b) => b - a > 1e6 && (a <= 0 || Math.max(Math.abs(a), Math.abs(b)) > 1e6 * Math.min(Math.abs(a), Math.abs(b)));
 
 /** Določeni integral (število); NaN, ko ne obstaja, ga ne znamo zanesljivo izračunati ali je zmanjkalo časa. brk(a, b): znani skoki. */
 export function integrate(f, a, b, eps = 1e-9, brk = null) {
@@ -2464,6 +2604,37 @@ export function fromTex(tex) {
     while (s[q] === " ") q++;
     const [b, e2] = group(s, q);
     s = `${s.slice(0, m.index)}((${a})/(${b}))${s.slice(e2)}`;
+  }
+  // \binom{n}{k} → nCr((n),(k)) (toTex ga zapiše za nCr)
+  for (let guard = 0; guard < 50; guard++) {
+    const m = /\\[dt]?binom/.exec(s);
+    if (!m) break;
+    let p = m.index + m[0].length;
+    while (s[p] === " ") p++;
+    const [a, e1] = group(s, p);
+    let q = e1;
+    while (s[q] === " ") q++;
+    const [b, e2] = group(s, q);
+    s = `${s.slice(0, m.index)}nCr((${a}),(${b}))${s.slice(e2)}`;
+  }
+  // \left| … \right| → abs(…), \lfloor … \rfloor → floor(…), \lceil … \rceil → ceil(…): po toTex je gnezdeno
+  // |a|b|c|| sicer nejasno (AUDIT-027). \right| brez para \left| (npr. \left. … \right|_{x=2}) ostane |.
+  {
+    const stack = [];
+    s = s.replace(/\\(left|right)\s*(\||\\[lr]floor|\\[lr]ceil|\\[lr]vert|\\\{|\\\}|\\?[^\sa-zA-Z\\]|\\langle|\\rangle)|\\([lr])(floor|ceil)\b/g, (m, side, d, lr, fc) => {
+      if (fc) return lr === "l" ? `${fc}(` : ")";
+      const abs = d === "|" || d === "\\lvert" || d === "\\rvert";
+      if (side === "left") {
+        stack.push(abs ? "abs" : d);
+        if (abs) return "abs(";
+        if (/floor|ceil/.test(d)) return `${d.slice(2)}(`;
+        return m;
+      }
+      const top = stack.pop();
+      if (abs && top === "abs") return ")";
+      if (/floor|ceil/.test(d)) return ")";
+      return m;
+    });
   }
   for (let guard = 0; guard < 50; guard++) {
     const m = /\\sqrt(\[([^\]]*)\])?/.exec(s);

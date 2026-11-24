@@ -5,7 +5,7 @@
 // Nedokončano besedilo (odprt oklepaj, operator na koncu) se pred izrisom dokonča: oklepaji se zaprejo, manjkajoči
 // operand je prazen okvirček □ (v izraz ga vstavimo kot število, ki ga v TeX zamenjamo z □, da se operator vidi).
 // Brez DOM; test/sci-vnos.test.js.
-import { previewTex, analyze } from "./scisolve.js";
+import { previewTex, analyze, exactIntegral } from "./scisolve.js";
 import { evaluate, functionDef } from "./scicore.js";
 import { parseCommand, COMMAND_NAMES } from "./cas.js";
 import { BUILTINS } from "./math.js";
@@ -39,7 +39,8 @@ export function analyzeLive(text, env = {}) {
   if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env, live: true });
   if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
     const r = withChem(text, evaluate, env);
-    if (r && !r.error) return { kind: "value", ...r };
+    // ∫(1/√x; 0; 1): v predogledu isto kot ob Izračunaj (»= 2«, ne »≈ 2«)
+    if (r && !r.error) return { kind: "value", ...(r.est ? exactIntegral(text, env, r) : r) };
     const tex = withChem(text, previewTex, env);
     return tex ? { kind: "solve", tex } : null;
   }
