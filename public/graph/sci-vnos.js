@@ -575,7 +575,9 @@ const WORDS = [...new Set([...BUILTINS, ...COMMAND_NAMES, "Ans"])].filter((w) =>
 const OPENER = new RegExp(`(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|\\^\\(|_\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()$`, "u");
 const OPENER_AT = new RegExp(`^(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()`, "u");
 const WORD_CHAR = /[A-Za-zčšž]/;
-const OPENERS_ALL = new RegExp(`×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\(`, "gu");
+// mesta, kjer kazalec ne sme stati (sredi imena ali odpirala). »×10^(« ni med njimi: dotik na števko v 10 postavi kazalec
+// ob to števko (pregled #965); ⌫ za »×10^(« ga še vedno izbriše kot celoto (OPENER).
+const OPENERS_ALL = new RegExp(`[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\(`, "gu");
 
 /** Zaklepaj za oklepajem na o (ali -1, če ni zaprt). */
 function closeAt(s, o) {
