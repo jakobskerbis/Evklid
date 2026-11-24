@@ -295,6 +295,9 @@ export function createScientific(root, opts) {
         return t("sc.errSumLimit");
       case "intDiverge":
         return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t("sc.errIntDiverge");
+      case "intUnknown":
+      case "intTimeout":
+        return t("sc.errIntUnknown");
       case "polInside":
         return t("sc.errPolInside");
       case "vecMix":

@@ -995,6 +995,7 @@
   "sc.errSumLimit": "Quá nhiều số hạng: tổng có tối đa 100 000 số hạng.",
   "sc.errIntDiverge": "Tích phân không tồn tại: nó phân kỳ (hàm số có một cực hoặc điểm kỳ dị không khả tích trên khoảng).",
   "sc.errIntPv": "Tích phân không tồn tại: nó phân kỳ (hàm số có một cực trên khoảng). Chỉ tồn tại giá trị chính Cauchy {pv}, nhưng đó không phải giá trị của tích phân.",
+  "sc.errIntUnknown": "Không thể tính tích phân một cách đáng tin cậy: phép tính số không cho chữ số nào đáng tin.",
   "sc.more": "Tất cả chức năng",
   "sc.functions": "Chức năng",
   "sc.grp.cmp": "Phương trình và bất phương trình",

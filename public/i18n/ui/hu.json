@@ -1001,6 +1001,7 @@
   "sc.errSumLimit": "Túl sok tag: az összegnek legfeljebb 100 000 tagja lehet.",
   "sc.errIntDiverge": "Az integrál nem létezik: divergens (a függvénynek az intervallumon pólusa vagy nem integrálható szingularitása van).",
   "sc.errIntPv": "Az integrál nem létezik: divergens (a függvénynek az intervallumon pólusa van). Csak a Cauchy-féle főérték létezik ({pv}), de ez nem az integrál értéke.",
+  "sc.errIntUnknown": "Az integrál nem számítható ki megbízhatóan: a numerikus számítás egyetlen megbízható jegyet sem ad.",
   "sc.more": "Összes funkció",
   "sc.functions": "Funkciók",
   "sc.grp.cmp": "Egyenletek és egyenlőtlenségek",
