@@ -1105,6 +1105,17 @@ export function analyze(text, env = {}) {
       if (U.length === 1) {
         const v = U[0];
         const plot = v === "x" && cmp && ast.ops.length === 1 ? plotPair(cmp, env) : [];
+        // istovetnost (AUDIT-048): 1/(x − 2) = 1/(x − 2), x/x = 1, √x = √x veljajo za vsak x, kjer sta strani definirani
+        // L − R je konstanta c: x = x + 10⁻¹² in x/x = 2 nimata rešitve (prej »x ∈ ℝ« oziroma »x = −100«)
+        const id = ast.ops.length === 1 && cmp ? identityOf(cmp, env, v, fnOf(ast.terms[0], v), fnOf(ast.terms[1], v)) : null;
+        if (id) {
+          const op = ast.ops[0];
+          const holds = CMP_OK[op](id.c);
+          const cond = holds && id.cond ? { cond: id.cond } : {};
+          if (op === "=") return holds ? { kind: "solve", v, all: true, roots: [], complex: [], ...cond, tex, plot } : { kind: "solve", v, none: true, roots: [], complex: [], tex, plot };
+          // a ≤ a velja povsod v definicijskem območju, a < a nikjer
+          return { kind: "ineq", v, intervals: holds ? [{ lo: -Infinity, loIn: false, hi: Infinity, hiIn: false }] : [], ...cond, tex, plot };
+        }
         if (ast.ops.length === 1 && ast.ops[0] === "=") {
           const L = fnOf(ast.terms[0], v);
           const R = fnOf(ast.terms[1], v);
@@ -1145,6 +1156,27 @@ export function analyze(text, env = {}) {
     return { error: { code: e.code || "other", info: e.info || {} } };
   }
   return r;
+}
+
+// Je L − R simbolno konstanta (poenostavi, preverjeno s števili)? Vrne { c, cond } – c = 0 za istovetnost, cond je
+// definicijsko območje (»x ≠ 2«, »x ≥ 0«) – ali null. Številska pot tega ne zna: L − R je 0 ali šum zaokrožitve povsod,
+// zato je vrnila naključne točke ali »rešitve ni« (AUDIT-048).
+function identityOf([l, , rr], env, v, L, R) {
+  let r;
+  try {
+    r = runCas({ op: "simplify", name: "simplify", inner: `(${l})-(${rr})` }, { ...env, live: true });
+  } catch {
+    return null;
+  }
+  if (r?.kind !== "cas" || typeof r.resTex !== "string") return null;
+  if (r.resTex === "0") return { c: 0, cond: r.cond || "" };
+  // rezultat brez neznanke: predznak konstante iz vrednosti strani v točki, kjer sta definirani
+  if (new RegExp(`(?<![A-Za-z])${v}(?![A-Za-z])`).test(r.resTex.replace(/\\[A-Za-z]+/g, " "))) return null;
+  for (const x of [0.37, 1.3, -0.7, 2.9, 5.1, -3.3, 17.3, 0.013]) {
+    const d = L(x) - R(x);
+    if (typeof d === "number" && Number.isFinite(d) && d !== 0) return { c: d, cond: r.cond || "" };
+  }
+  return null;
 }
 
 function plotPair([l, , rr], env) {
