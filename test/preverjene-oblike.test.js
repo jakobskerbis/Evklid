@@ -90,3 +90,16 @@ test("pregled #993: točna racionalna ničla in ničla linearnega faktorja se pr
   assert.equal(solutionTex(analyze("sin(x)=0,5", DEG)), "x_{1} = 30^{\\circ},\\quad x_{2} = 150^{\\circ}");
   assert.equal(solutionTex(analyze("sin(x)=1/2+10^(−17)", DEG)), "x_{1} \\approx 30^{\\circ},\\quad x_{2} \\approx 150^{\\circ}");
 });
+
+test("pregled #993, 2. krog: kompleksne ničle z dvema korenoma ostanejo točne (dve spremenljivki v zeroAtExact)", () => {
+  const CASES = [
+    ["x^6=8", "x_{3} = -\\frac{\\sqrt{2}}{2}-\\frac{\\sqrt{6}}{2}\\,i"],
+    ["x^6=27", "x_{3} = -\\frac{\\sqrt{3}}{2}-\\frac{3}{2}\\,i"],
+    ["x^3=−3√3", "x_{2} = \\frac{\\sqrt{3}}{2}-\\frac{3}{2}\\,i"],
+    ["x^2+√2x+2=0", "x_{1} = -\\frac{\\sqrt{2}}{2}-\\frac{\\sqrt{6}}{2}\\,i"],
+    ["(x+1/3)^2+10^(−16)=0", "x_{1} = -\\frac{1}{3}-1\\cdot 10^{-8}\\,i"],
+  ];
+  for (const [t, part] of CASES) assert.ok(parts(t).includes(part), `${t}: ${tex(t)}`);
+  // brez točne preverbe ostane ≈ (x² − 0,666666666667x + 1 = 0)
+  assert.ok(parts("x^2−0,666666666667x+1=0").every((p) => p.includes("\\approx")));
+});
