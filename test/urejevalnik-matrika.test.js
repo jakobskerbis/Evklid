@@ -87,8 +87,8 @@ const shows = (t) => {
   }
 };
 const RUN = /[A-Za-zčšž]{2,}/g;
-// odpiralo predloge: ime z oklepajem, ∫(, d/dx(, √(, ∑_( …
-const OPENER = /×10\^\(|[∑∏]_\(|d\/dx\(|[√∛∫]\(|[A-Za-zčšž]{2,}\s*\(/g;
+// odpiralo predloge: ime z oklepajem, ∫(, d/dx(, √(, ∑_( … (»×10^(« ne: kazalec sme ob vsako števko v 10, pregled #965)
+const OPENER = /[∑∏]_\(|d\/dx\(|[√∛∫]\(|[A-Za-zčšž]{2,}\s*\(/g;
 // pol imena: niz črk, ki ga v izvirniku ni, in je del izvirnega imena ali ga vsebuje (integrira, si, sinx)
 function halfName(orig, res) {
   const before = new Set(orig.match(RUN) || []);
