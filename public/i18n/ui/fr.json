@@ -3369,6 +3369,7 @@
   "sim.layers.show": "Afficher :",
   "sim.layer.grid": "Grille",
   "sim.lab.pin": "Épingler l'image",
+  "sim.lab.foto": "Vue photo",
   "sim.lab.zoom": "Agrandir l’image",
   "sim.layer.marks": "Repères",
   "sim.layer.fit": "{name} : droite",

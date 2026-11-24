@@ -3745,6 +3745,7 @@ export default {
   "sim.layers.show": "Prikaži:",
   "sim.layer.grid": "Mreža",
   "sim.lab.pin": "Pripni sliko",
+  "sim.lab.foto": "Fotografski prikaz",
   "sim.lab.zoom": "Povečaj risbo",
   "sim.layer.marks": "Oznake",
   "sim.layer.fit": "{name}: premica",
