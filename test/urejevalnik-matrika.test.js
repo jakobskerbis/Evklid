@@ -10,6 +10,11 @@
 //    točno tja, zaslonska ⌫, strojni Backspace in Delete na vsakem mestu, ◀ ▶ in puščici, hitro tipkanje, preklop
 //    znanstveni ↔ grafični, decimalna vejica, samo tipkovnica, osnovne oznake ARIA.
 //
+// Poln zagon (MATRIKA_VSE=1, vse predloge na vseh mestih) traja ~27 min (Chromium ~7, WebKit ~10, Firefox ~11 min).
+// Poganjaj ga po brskalnikih, da ena ukazna meja ne ustavi celote:
+//   MATRIKA_VSE=1 node --test --test-force-exit --test-name-pattern="brskalnik chromium" test/urejevalnik-matrika.test.js
+//   (nato »brskalnik webkit« in »brskalnik firefox«; čiste funkcije: MATRIKA_VSE=1 … --test-name-pattern="matrika")
+//
 // Napake, ki jih je matrika našla (AUDIT-034 do AUDIT-040, #970–#974), so popravljene: brez oznak todo.
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -1012,7 +1012,7 @@
   "sc.say.sqrt": "{a} এর বর্গমূল",
   "sc.say.root": "{a} এর {k}তম মূল",
   "sc.say.abs": "{a} এর পরম মান",
-  "sc.say.absLong": "{a} এর পরম মান, পরম মান শেষ",
+  "sc.say.absLong": "পরম মান: {a}, পরম মান শেষ",
   "sc.say.binom": "{a} থেকে {b}",
   "sc.say.paren": "বন্ধনী খোলো {a} বন্ধনী বন্ধ",
   "sc.say.matrix": "ম্যাট্রিক্স {a}",

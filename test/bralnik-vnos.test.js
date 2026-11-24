@@ -63,6 +63,9 @@ test("besede sc.say.* so v vseh jezikih vmesnika in imajo 32 besed (AUDIT-040)",
     const d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
     assert.equal(d["sc.say.words"].split("|").length, 32, f);
     assert.equal(d["sc.say.greek"].split("|").length, 13, f);
+    // AUDIT-048 (pregled #992): absLong pove začetek pred {a} in konec za njim, sicer je 2+|x−1| dvoumno
+    const L = d["sc.say.absLong"];
+    assert.ok(L && L.indexOf("{a}") > 0 && L.trim().length > L.indexOf("{a}") + 3, `${f}: absLong »${L}«`);
   }
 });
 

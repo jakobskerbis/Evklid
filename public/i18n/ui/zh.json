@@ -1006,7 +1006,7 @@
   "sc.say.sqrt": "根号 {a}",
   "sc.say.root": "{k} 次根号 {a}",
   "sc.say.abs": "{a} 的绝对值",
-  "sc.say.absLong": "{a} 的绝对值，绝对值结束",
+  "sc.say.absLong": "绝对值：{a}，绝对值结束",
   "sc.say.binom": "组合数 {a} 选 {b}",
   "sc.say.paren": "左括号 {a} 右括号",
   "sc.say.matrix": "矩阵 {a}",

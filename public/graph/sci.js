@@ -616,6 +616,38 @@ export function createScientific(root, opts) {
     } catch {}
     if (el.textContent !== txt) el.textContent = txt;
   }
+  // vodoravni okvirji vidnih znakov zapisa (brez kazalca) po vrsti
+  function glyphBoxes(root) {
+    const out = [];
+    const w = document.createTreeWalker(root.querySelector(".katex-html") || root, NodeFilter.SHOW_TEXT);
+    for (let n; (n = w.nextNode()); ) {
+      if (n.parentElement.closest(".sc-caret")) continue;
+      for (let k = 0; k < n.data.length; k++) {
+        if (!n.data[k].trim()) continue;
+        const r = document.createRange();
+        r.setStart(n, k);
+        r.setEnd(n, k + 1);
+        const b = r.getBoundingClientRect();
+        if (b.width > 0) out.push([b.left, b.right]);
+      }
+    }
+    return out;
+  }
+  // x v prvem izrisu → x v drugem: znotraj znaka sorazmerno, med znakoma sorazmerno, zunaj premik najbližjega
+  function mapX(x, A, B) {
+    if (!A.length || A.length !== B.length) return x;
+    const lin = (x, a0, a1, b0, b1) => (a1 - a0 > 0.5 ? b0 + ((x - a0) * (b1 - b0)) / (a1 - a0) : b0 + (x - a0));
+    const idx = A.map((_, i) => i).sort((i, j) => A[i][0] - A[j][0]);
+    const first = idx[0], last = idx.at(-1);
+    if (x <= A[first][0]) return B[first][0] + (x - A[first][0]);
+    if (x >= A[last][1]) return B[last][1] + (x - A[last][1]);
+    for (const i of idx) if (A[i][0] <= x && x <= A[i][1]) return lin(x, A[i][0], A[i][1], B[i][0], B[i][1]);
+    for (let k = 0; k + 1 < idx.length; k++) {
+      const i = idx[k], j = idx[k + 1];
+      if (A[i][1] <= x && x <= A[j][0]) return lin(x, A[i][1], A[j][0], B[i][1], B[j][0]);
+    }
+    return x;
+  }
   // Dotik na lep zapis: položaj v besedilu iz izrisa (merilne točke na vseh mestih kazalca), ne iz prosojnega polja.
   function caretFromPoint(x, y) {
     const prev = $(".sc-preview");
@@ -623,7 +655,11 @@ export function createScientific(root, opts) {
     const shown = prev.innerHTML;
     let best = null;
     try {
+      // izris z merilnimi točkami je lahko nekoliko širši (točka ob \left| doda tanek presledek, ||x|−1| ~13 px):
+      // dotik prevedemo z znakov prikazanega izrisa na iste znake v izrisu s točkami (AUDIT-048)
+      const from = glyphBoxes(prev);
       prev.innerHTML = entryHtml(stopsTex(entry.base));
+      x = mapX(x, from, glyphBoxes(prev));
       for (const el of prev.querySelectorAll("[data-evk-p]")) {
         // okvir same merilne črte (0,4 em nad osnovnico), ne vrstice okoli nje: vrstici števca in imenovalca se prekrivata
         const b = (el.querySelector(".katex-rule, .rule") || el).getBoundingClientRect();

@@ -1012,7 +1012,7 @@
   "sc.say.sqrt": "{a} کا جذر",
   "sc.say.root": "{a} کا {k} واں جذر",
   "sc.say.abs": "{a} کی مطلق قیمت",
-  "sc.say.absLong": "{a} کی مطلق قیمت، مطلق قیمت ختم",
+  "sc.say.absLong": "مطلق قیمت: {a}، مطلق قیمت ختم",
   "sc.say.binom": "{a} میں سے {b}",
   "sc.say.paren": "قوس کھولیں {a} قوس بند کریں",
   "sc.say.matrix": "میٹرکس {a}",

@@ -624,7 +624,10 @@ export function stopsTex(base) {
   const stops = caretStops(base)
     .map((s) => {
       const o = openerAround(base.raw, s.p)?.[0];
-      return !(o < s.p) ? s : base.place(o).at === s.at ? { ...s, p: o } : null;
+      if (!(o < s.p)) return s;
+      // za »×10« (pred ^): dotik na 0 postavi kazalec pred eksponent, ne za celo predlogo (AUDIT-048)
+      if (s.p === o + 3 && base.raw.startsWith("×10^(", o)) return { ...s, p: o + 5 };
+      return base.place(o).at === s.at ? { ...s, p: o } : null;
     })
     .filter(Boolean);
   return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.4em}}}`])));

@@ -1006,7 +1006,7 @@
   "sc.say.sqrt": "루트 {a}",
   "sc.say.root": "{k}제곱근 {a}",
   "sc.say.abs": "{a}의 절댓값",
-  "sc.say.absLong": "{a}의 절댓값, 절댓값 끝",
+  "sc.say.absLong": "절댓값: {a}, 절댓값 끝",
   "sc.say.binom": "{a} C {b}",
   "sc.say.paren": "괄호 열고 {a} 괄호 닫고",
   "sc.say.matrix": "행렬 {a}",
