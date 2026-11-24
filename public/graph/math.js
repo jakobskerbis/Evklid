@@ -634,6 +634,8 @@ export function parse(src, { funcs = new Set() } = {}) {
           if (!args.length) throw new MathError("emptyArgs", { f });
         } else if (startsFactor(peek()) || is("op", "-")) args = [bareArg()];
         else throw new MathError("needArg", { f });
+        // log_b ima eno vrednost: druga (log_2(0,5) v zapisu, kjer vejica loči vrednosti) ni tiho izpuščena (AUDIT-019)
+        if (base && args.length !== 1) throw new MathError("arity", { f: "log_b", n: 1 });
         let node = base ? { k: "call", f: "logb", args: [args[0], base] } : { k: "call", f, args };
         if (pw) node = B("^", node, pw);
         return node;
@@ -870,6 +872,9 @@ export function compile(node, ctx = {}) {
       const args = node.args.map(c);
       const name = node.f;
       const d = node.d;
+      // f(2,5) pri f(x) = …: napačno število vrednosti je napaka, ne tiho f(2) (AUDIT-019)
+      const known = ctx.funcs?.[name]?.params;
+      if (Array.isArray(known) && known.length !== node.args.length) throw new MathError("arity", { f: name, n: known.length });
       return (s) => {
         const def = ctx.funcs?.[name];
         if (!def) return NaN;
