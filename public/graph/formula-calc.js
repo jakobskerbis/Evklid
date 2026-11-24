@@ -203,7 +203,8 @@ export function formulaToCalc(tex, subject = "MAT", { surovo = false } = {}) {
 // (formula-data.js) in pravila za fotone, c² in gravitacijski zakon.
 const CONST_KEYS = { N_A: "NA", k_B: "kB", ε_0: "eps0", μ_0: "mu0", m_e: "me", m_p: "mp", m_n: "mn", V_m: "Vm" };
 const CONST_NAMES = [
-  [/^(?:težni|gravitacijski) pospešek(?! na)/, "g"],
+  // »težni pospešek na površju« (Zemlje) je 9,81; »na razdalji r od središča planeta« je spremenljivka
+  [/^(?:težni|gravitacijski) pospešek(?! na (?!površju(?! (?!zemlje)\S)|površini zemlje|zemlji))/, "g"],
   [/^hitrost svetlobe(?: v vakuumu| v praznem prostoru)?$/, "c"],
   [/^gravitacijska konstanta/, "G"],
   [/^planckova konstanta/, "h"],

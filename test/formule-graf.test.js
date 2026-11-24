@@ -82,6 +82,8 @@ test("vse zbirke: konstanta je to, kar pove :::simboli razdelka; konstanta nikol
   has("E = c B", "c");
   has("W_n = (n² h²)/(8 m L²)", "h");
   assert.equal(seen["FIZ-UNI: W_v = (Z m_p + N m_n - m_j) c²"].m_n, 1.67492749804e-27);
+  has("t₀ = 2 π √(l/g)", "g"); // »težni pospešek na površju« (FIZ-TEK)
+  assert.equal(formulaConstant("g", "", "FIZ", [{ keys: ["g"], n: "težni pospešek na razdalji $r$ od središča planeta" }]), null);
   assert.equal(formulaPlot("c_V = (3/2) R", { glossary: [{ keys: ["R"], n: "splošna plinska konstanta" }] }), null); // le konstante: ni grafa
 });
 
