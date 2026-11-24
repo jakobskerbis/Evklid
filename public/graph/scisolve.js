@@ -595,8 +595,13 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
     const tight = (x) => (Math.abs(x - Math.round(x)) <= 1e-13 * Math.max(1, Math.abs(x)) ? Math.round(x) : Math.abs(x) < 1e-15 ? 0 : x);
     const real = pr.filter((r) => r.im === 0);
     const roots = real.map((r) => (r.exact || r.ver ? r.re : tight(r.re))); // preverjeno ne zaokrožamo (−1 − 10⁻¹⁵)
-    const complex = pr.filter((r) => r.im !== 0).map((r) => (r.ver ? [r.re, r.im] : [tight(r.re), tight(r.im)]));
+    // imaginarni del iz točne poti ne zaokrožamo na 0 (x² + 10⁻³⁰ = 0: ±10⁻¹⁵ i)
+    const complex = pr.filter((r) => r.im !== 0).map((r) => (r.ver ? [r.re, r.im] : [tight(r.re), pr.exactAll ? r.im : tight(r.im)]));
     // rex: točno racionalna; forms: potrjena oblika ±ᵏ√(p/q) (za zapis z »=« namesto »≈«)
+    // unc: ničla ni potrjena (ali ima polmer napake err) – v zapisu »≈« in le zanesljiva mesta
+    const runc = real.map((r) => !!(r.unc || r.err));
+    const cx = pr.filter((r) => r.im !== 0);
+    const cerr = cx.map((r) => (r.unc ? Infinity : r.err || 0));
     // rex: true = preverjen ulomek (exactTex), "dec" = preverjena končna decimalka (x − 0,666666666667 = 0)
     const rex = real.map((r) => (r.ver && r.vk === "dec" ? "dec" : !!(r.exact && r.ver)));
     const forms = real.map((r) => (r.form ? { k: r.form.k, p: String(r.form.p), q: String(r.form.q), neg: r.form.neg } : null));
@@ -611,6 +616,8 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
     // π ni ničla polinoma brez π v koeficientih: 3,14159265358979 iz vnosa ni π
     if (!/π|pi|\\pi/.test(src || "")) out.noPi = true;
     if (forms.some(Boolean)) out.forms = forms;
+    if (runc.some(Boolean)) out.runc = runc;
+    if (cerr.some((e) => e > 0)) out.cerr = cerr.map((e) => (Number.isFinite(e) ? e : -1));
     return out;
   }
   const poly = polyCoeffs(F);
@@ -655,8 +662,8 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
 }
 
 // Ali je število v zapisu točno: celo, kratek decimalni zapis (≤ 6 decimalk) ali točna oblika (ulomek, koren, π)
-const shownExact = (x) => {
-  const c = clean(x);
+const shownExact = (x, raw = false) => {
+  const c = raw ? x : clean(x); // raw: v gruči (0,9999999999) ne zaokrožamo na 1
   return Number.isInteger(c) || Number(c.toFixed(6)) === c || !!exactTex(c);
 };
 // »= točna oblika ≈ decimalno«, »= decimalno« ali »≈ decimalno« (x³ = 2: x = ∛2 ≈ 1,259921; 2^x = 5: x ≈ 2,321928)
@@ -694,7 +701,8 @@ function rootTex(x, rex, form, comma, mode, dec, noPi = false) {
     for (let d = 0; d <= 15; d++)
       if (Number(x.toFixed(d)) === x) {
         const t = decTex(x, comma, mode, Math.max(dec, d));
-        if (!/\\cdot 10/.test(t)) return `= ${t}`;
+        // eksponentni zapis je točen, če prikazana mesta dajo natanko x (−1·10⁻¹⁰)
+        if (!/\\cdot 10/.test(t) || Number(t.replace("{,}", ".").replace(/\\cdot 10\^\{(-?\d+)\}/, "e$1")) === x) return `= ${t}`;
         // eksponentni zapis ni točen: celo število z vsemi števkami (2⁶⁰ = 1 152 921 504 606 846 976), sicer ≈
         if (Number.isInteger(x) && Math.abs(x) < 1e40) return `= ${BigInt(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\\,")}`;
         return `\\approx ${t}`;
@@ -702,7 +710,7 @@ function rootTex(x, rex, form, comma, mode, dec, noPi = false) {
     return `\\approx ${decTex(x, comma, mode, dec)}`;
   }
   if (noPi && /\\pi/.test(exactTex(clean(x)) || "")) return `\\approx ${decTex(x, comma, mode, dec)}`;
-  return shownExact(x) ? `= ${numberTex(x, comma, mode, dec)}` : `\\approx ${decTex(x, comma, mode, dec)}`;
+  return shownExact(x, dec > 6) ? `= ${numberTex(x, comma, mode, dec)}` : `\\approx ${decTex(x, comma, mode, dec)}`;
 }
 
 /** TeX rešitev enačbe. */
@@ -729,21 +737,29 @@ export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) 
   };
   const tag = (i) => (!r.exact && ms[i] > 1 ? `\\;(\\text{${multText(ms[i]).replace(/[{}\\$&#%_^~]/g, "")}})` : "");
   const dec = decimalsFor(r.roots);
+  const decAll = decimalsFor([...r.roots, ...(r.complex || []).map((z) => z[0])]);
   if (r.exact)
     r.roots.forEach((x, i) => parts.push(`${name(i)} \\approx ${decTex(x, comma, mode, dec)}`));
   else if (r.deg || r.grad) r.roots.forEach((x, i) => parts.push(`${name(i)} ${Number(clean(x).toFixed(6)) === clean(x) && !(r.gx && !r.gx[i]) ? "=" : "\\approx"} ${decTex(x, comma, mode)}${ANGLE_SUP[r.grad ? "grad" : "deg"]}`));
   else if (r.approx) r.roots.forEach((x, i) => parts.push(`${name(i)} = ${decTex(x, comma, mode, dec)}`)); // approx: izmerjena vrednost (molska masa), brez ulomka
-  else r.roots.forEach((x, i) => parts.push(`${name(i)} ${(r.vx && !r.vx[i]) || (r.gx && !r.gx[i]) ? `\\approx ${decTex(x, comma, mode, dec)}` : rootTex(x, r.rex?.[i], r.forms?.[i], comma, mode, dec, r.noPi)}${tag(i)}`));
+  else r.roots.forEach((x, i) => parts.push(`${name(i)} ${r.runc?.[i] || (r.vx && !r.vx[i]) || (r.gx && !r.gx[i]) ? `\\approx ${decTex(x, comma, mode, decAll)}` : rootTex(x, r.rex?.[i], r.forms?.[i], comma, mode, decAll, r.noPi)}${tag(i)}`));
   if (!r.exact)
     (r.complex || []).forEach(([re, im], i) => {
+      // ce: polmer napake (−1: ni potrjena); realni deli v gruči (1,00000000005) z dovolj mesti, da se ločijo
+      const ce = r.cerr?.[i] || 0;
+      // mesta: kot pri realnih (decAll), a ne več, kot jih zanesljivo poznamo (napaka ce, absolutno); realni in
+      // imaginarni del enako (−1,129900 − 0,255830i, ne −1,12990045984811 − 0,25583i)
+      const d = ce > 0 && !r.cex?.[i] ? Math.max(1, Math.min(decAll, Math.floor(-Math.log10(2 * ce)))) : decAll;
       // AUDIT-053: nepreverjena kompleksna ničla brez ugibanih ulomkov in korenov (≈ 0,333333 − 0,942809i, ne ≈ 1/3 − 2√2/3 i)
-      const raw = r.cex && !r.cex[i];
-      const pt = (x) => (raw ? decTex(x, comma, mode) : plainTex(x, comma, mode));
-      const a = re === 0 ? "" : pt(re);
-      const b = pt(Math.abs(im));
-      // iracionalna dela brez točne oblike: približek (≈)
-      // AUDIT-053: »=« le pri preverjeno točnih delih (točna kvadratna, linearni faktor); številski približki z »≈«
-      const eq = (r.cex ? r.cex[i] : !r.gx && shownExact(re) && shownExact(Math.abs(im))) ? "=" : "\\approx";
+      const raw = r.cex ? !r.cex[i] : !!r.gx || ce > 0;
+      const small = (x) => formatNumber(Number(x.toPrecision(6)), { mode, comma }).tex;
+      // preverjena: točna oblika (1/3 ± 10⁻⁷ i, ne 0,3333333 ± 10⁻⁷ i)
+      const part = (x) => (Math.abs(x) < 1e-6 ? small(x) : r.cex?.[i] ? plainTex(x, comma, mode) : raw || decAll > 6 ? decTex(x, comma, mode, d) : plainTex(x, comma, mode));
+      const a = re === 0 ? "" : part(re);
+      // zelo majhen imaginarni del (1 ± 10⁻¹⁰ i) ne sme postati 0
+      const b = part(Math.abs(im));
+      // »=« le pri točno preverjeni ničli (AUDIT-053); številska pot brez preverjanja po starem pravilu
+      const eq = (r.cex ? r.cex[i] : !r.gx && !ce && shownExact(re, decAll > 6) && shownExact(Math.abs(im), decAll > 6 || Math.abs(im) < 1e-6)) ? "=" : "\\approx";
       parts.push(`${name(r.roots.length + i)} ${eq} ${a}${im < 0 ? "-" : a ? "+" : ""}${b === "1" ? "" : b}${/^[\d{}]+$/.test(b) ? "" : "\\,"}i${tag(r.roots.length + i)}`);
     });
   return parts.join(",\\quad ");
