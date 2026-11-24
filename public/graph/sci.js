@@ -241,18 +241,80 @@ export function createScientific(root, opts) {
     }
   }
   function del() {
-    const s = input.selectionStart ?? input.value.length;
+    const t = input.value;
+    const s = input.selectionStart ?? t.length;
     const e = input.selectionEnd ?? s;
-    if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
-    else if (s > 0) {
-      // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
-      const n = m ? m[0].length : 1;
-      input.value = input.value.slice(0, s - n) + input.value.slice(s);
-      input.setSelectionRange(s - n, s - n);
+    let next = t;
+    let pos = s;
+    if (s !== e) {
+      next = t.slice(0, s) + t.slice(e);
+      pos = s;
+    } else if (s > 0) {
+      const before = t.slice(0, s);
+      // prazna predloga za kazalcem na začetku prve reže (∫(□;□;□), limita(□; x; □), √(□), ^(□) …) gre cela (AUDIT-047)
+      const op = /(?:[A-Za-zčšž]+|d\/dx|√|∛|∫|[∑∏]_|×10\^|\^)\($/u.exec(before);
+      // zaklepaj (nezaprta predloga, »∫(;;«: do konca)
+      const c = op ? (closeAt(t, s - 1) >= 0 ? closeAt(t, s - 1) : t.length) : -1;
+      // ∑_(n=1)^(□) brez telesa: indeks je privzet, predloga gre cela
+      const bigEmpty = op && /^[∑∏]_\($/.test(op[0]) && /^\)\^\(\s*\)?\s*$/.test(t.slice(c));
+      if (bigEmpty) {
+        next = t.slice(0, s - op[0].length);
+        pos = next.length;
+      } else if (op && blankSlots(t.slice(s, c), op[0])) {
+        // ∑_(□)^(□) in prazno telo: cela predloga
+        const sum = /^[∑∏]_\($/.test(op[0]) && /^\^\(\s*\)?\s*$/.test(t.slice(c + 1)) ? t.length : c + 1;
+        next = t.slice(0, s - op[0].length) + t.slice(sum);
+        pos = s - op[0].length;
+      } else if (op && t.slice(s, c).includes(";")) {
+        // predloga z več režami, ki niso prazne: nič se ne izbriše, kazalec gre pred predlogo (ne ostane »;0;9)«)
+        input.setSelectionRange(s - op[0].length, s - op[0].length);
+        showEntry();
+        return;
+      } else {
+        // celo ime funkcije z oklepajem naenkrat (sin( …)
+        const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(before);
+        const n = m ? m[0].length : 1;
+        next = t.slice(0, s - n) + t.slice(s);
+        pos = s - n;
+        // ime z oklepajem: gre tudi njegov zaklepaj, vsebina ostane (sin(|x) → x, ne »x)«)
+        const cc = m && m[0].endsWith("(") ? closeAt(t, s - 1) : -1;
+        if (cc >= 0 && !t.slice(s, cc).includes(";")) next = t.slice(0, s - n) + t.slice(s, cc) + t.slice(cc + 1);
+      }
     }
+    // varovalo (AUDIT-047): ⌫, po katerem se zapis ne bi izrisal (prej prazen prikaz ⬚, npr. ločilo »;« v ∫(f;a;b)),
+    // ne izbriše ničesar, kazalec gre en znak levo
+    if (next.trim() && !renders(next) && renders(t)) {
+      const p = Math.max(0, s - 1);
+      input.setSelectionRange(p, p);
+      showEntry();
+      return;
+    }
+    input.value = next;
+    input.setSelectionRange(pos, pos);
     update();
   }
+  // zaklepaj za oklepajem na o (ali −1)
+  function closeAt(t, o) {
+    let d = 0;
+    for (let j = o; j < t.length; j++) {
+      if ("([".includes(t[j])) d++;
+      else if (")]".includes(t[j]) && --d === 0) return j;
+    }
+    return -1;
+  }
+  // reže predloge so prazne (privzeti x v limita in taylor šteje kot prazen)
+  const blankSlots = (inner, name) => {
+    const parts = inner.split(";").map((x) => x.trim());
+    const def = /^(limita|limit|lim|taylor)\($/i.test(name) ? ["", "x", "0", "5"] : [];
+    return parts.every((x, k) => !x || (k > 0 && x === def[k]));
+  };
+  const renders = (x) => {
+    try {
+      return !!entryBase(x, env())?.ok;
+    } catch {
+      return false;
+    }
+  };
   function move(d) {
     const p = Math.max(0, Math.min(input.value.length, (input.selectionStart ?? input.value.length) + d));
     input.setSelectionRange(p, p);
