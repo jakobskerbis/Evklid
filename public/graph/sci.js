@@ -296,6 +296,14 @@ export function createScientific(root, opts) {
         return t("sc.errVec");
       case "undef":
         return t("sc.errUndefined");
+      case "noDeriv": {
+        // levi in desni odvod se ne ujemata (|x| pri 0) ali funkcija tu ni zvezna (AUDIT-018)
+        const { left, right } = e.info || {};
+        if (Number.isFinite(left) && Number.isFinite(right)) return t("sc.errNoDerivLR", { left: fmt(left).text, right: fmt(right).text });
+        return t("sc.errNoDeriv");
+      }
+      case "noDerivDomain":
+        return t("sc.errNoDerivDomain");
       case "casUnsupported":
       case "casEquation":
       case "casNeedEq":
@@ -366,8 +374,9 @@ export function createScientific(root, opts) {
         break;
       case "solve":
         e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx"]);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
+        if (r.searched) e.note = { key: "sc.searchedNone", tex: r.searched };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
         e.steps = true;
         if (r.roots.length) e.first = r.roots[0];
@@ -577,6 +586,7 @@ export function createScientific(root, opts) {
     if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
+    else if (r.kind === "cas" && !r.resTex && !r.none) live.innerHTML = ""; // samo zapis (predogled matrike z okvirčki)
     else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${matBreak(r.resTex)}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
   }
