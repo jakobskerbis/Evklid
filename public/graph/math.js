@@ -1287,6 +1287,17 @@ function sideModel(F, c, s, w) {
       nan = 0;
     } else return { kind: nan > raw.length / 2 ? "nan" : "unknown" };
   }
+  // nenadne ničle na koncu (1/√(x³) pri x > 10¹⁰³: x³ = ∞): preliv, ne prava vrednost — odrežemo
+  {
+    let k = raw.length;
+    while (k > 0 && raw[k - 1][1] === 0) k--;
+    if (k < raw.length && k >= 20 && Math.abs(raw[k - 1][1]) > 1e-250) {
+      cut = raw[k - 1][0];
+      const tk = raw[k][0];
+      raw.splice(k);
+      while (pts.length && Math.exp(-pts[pts.length - 1][0]) <= tk) pts.pop();
+    }
+  }
   if (inf === raw.length) return { kind: "div" };
   if (inf) {
     // preliv: |f| raste prek vsake meje; div le, če so neskončne samo najgloblje vrednosti in pred njimi |f| raste
