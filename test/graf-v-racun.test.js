@@ -76,7 +76,9 @@ test("graf → znanstveni kalkulator: točka na krivulji (x, y) in ploščina �
       const tap = (sel) => (opt.hasTouch && engine !== "webkit" ? page.tap(sel) : page.click(sel));
 
       // ploščina: vrstica ima gumb, v kalkulator gre ∫(x^2 - 1; 0; 2) in izračun da 2/3
+      await page.locator('[data-act="use-area"]').waitFor({ state: "visible" });
       await tap('[data-act="use-area"]');
+      await page.waitForFunction(() => window.used);
       assert.equal(await page.evaluate(() => window.used), "∫(x^2 - 1; 0; 2)", where);
       await page.press(".sc-input", "Enter");
       const res = await page.locator(".sc-h-row.last .sc-h-res").innerText();
@@ -89,7 +91,9 @@ test("graf → znanstveni kalkulator: točka na krivulji (x, y) in ploščina �
         const st = JSON.parse(JSON.stringify(g.state));
         g.loadState({ ...st, settings: { ...st.settings, deg: true }, items: [{ id: "d1", type: "expr", text: "y = sin(x)", color: 0, tools: { area: [0, 180] } }] });
       });
+      await page.locator('[data-act="use-area"]').waitFor({ state: "visible" });
       await tap('[data-act="use-area"]');
+      await page.waitForFunction(() => window.used?.includes("sin"));
       assert.equal(await page.evaluate(() => window.used), "∫(sin((x)°); 0; 180)", where);
       await page.press(".sc-input", "Enter");
       assert.match((await page.locator(".sc-h-row.last .sc-h-res").innerText()).replace(/\s/g, ""), /114,59/, where);
@@ -107,8 +111,14 @@ test("graf → znanstveni kalkulator: točka na krivulji (x, y) in ploščina �
         const r = v.canvas.getBoundingClientRect();
         return [r.left + v.X(1.5), r.top + v.Y(1.25)];
       });
-      if (opt.hasTouch) await page.touchscreen.tap(pt[0], pt[1]);
-      else await page.mouse.click(pt[0], pt[1]);
+      // graf se po preklopu izriše v naslednji sliki (šele takrat so krivulje za dotik): počakamo nanjo; dotik
+      // ponovimo, če ga je brskalnik pod obremenitvijo (CI) vzel kot začetek premika (pregled #998, ponovitev v CI)
+      for (let i = 0; i < 4 && !(await page.locator(".gc-use:not([hidden])").count()); i++) {
+        await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+        if (opt.hasTouch) await page.touchscreen.tap(pt[0], pt[1]);
+        else await page.mouse.click(pt[0], pt[1]);
+        await page.waitForTimeout(100);
+      }
       await page.waitForSelector(".gc-use:not([hidden])");
       const btns = page.locator(".gc-use [data-use]");
       assert.equal(await btns.count(), 2, where);
