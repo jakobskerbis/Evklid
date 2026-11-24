@@ -104,7 +104,10 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
             assert.ok(!s.bad, `${engine} ${vw} ${what}: ⌫ na »${before.v}« @${before.p} → »${s.v}« se ne izriše`);
             if (s.v) assert.equal(s.carets, 1, `${engine} ${vw} ${what}: »${s.v}« brez kazalca`);
             if (s.v) assert.ok(!s.empty, `${engine} ${vw} ${what}: prazen prikaz pri »${s.v}«`);
-            const moved = s.v === before.v && s.p < before.p && /[(]/.test(before.v.slice(s.p, before.p));
+            // premik brez brisanja je dovoljen le čez zgradbo predloge (oklepaj, zaklepaj, ločilo, ∫, ime; #945 tako vstopi v
+            // režo ali gre pred izpolnjeno predlogo)
+            const skipped = before.v.slice(s.p, before.p);
+            const moved = s.v === before.v && s.p < before.p && (/[()[\];∫√∛∑∏_^]/.test(skipped) || /^[A-Za-zčšž]+$/.test(skipped));
             assert.ok(s.v.length < before.v.length || moved || before.p === 0, `${engine} ${vw} ${what}${what2}: ⌫ na »${before.v}« @${before.p} ni nič izbrisal (→ @${s.p})`);
             return s;
           };
