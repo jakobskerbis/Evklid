@@ -1010,6 +1010,7 @@
   "sc.errIntPv": "O integral não existe: diverge (a função tem um polo no intervalo). Só existe o valor principal de Cauchy {pv}, que não é o valor do integral.",
   "sc.errIntDivergeInf": "O integral não existe: diverge no intervalo infinito (a função não decresce suficientemente depressa para o infinito).",
   "sc.errIntUnknown": "O integral não pode ser calculado de forma fiável: o cálculo numérico não dá nenhum algarismo fiável.",
+  "sc.errIntUndefined": "O integral não existe: a função não está definida numa parte do intervalo (p. ex., raiz ou logaritmo de um número negativo).",
   "sc.more": "Todas as funções",
   "sc.functions": "Funções",
   "sc.grp.cmp": "Equações e inequações",
