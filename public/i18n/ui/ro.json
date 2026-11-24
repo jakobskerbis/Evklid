@@ -1005,6 +1005,8 @@
   "sc.equals": "Calculează",
   "sc.errEquation": "Nu știu să rezolv această ecuație. Încearcă s-o desenezi în modul Grafic.",
   "sc.errSumLimit": "Prea mulți termeni: suma poate avea cel mult 100 000 de termeni.",
+  "sc.errIntDiverge": "Integrala nu există: este divergentă (funcția are pe interval un pol sau o singularitate neintegrabilă).",
+  "sc.errIntPv": "Integrala nu există: este divergentă (funcția are pe interval un pol). Există doar valoarea principală Cauchy {pv}, care însă nu este valoarea integralei.",
   "sc.more": "Toate funcțiile",
   "sc.functions": "Funcții",
   "sc.grp.cmp": "Ecuații și inecuații",

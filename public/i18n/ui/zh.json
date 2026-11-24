@@ -993,6 +993,8 @@
   "sc.equals": "计算",
   "sc.errEquation": "这个方程我解不了。试试在“图形”模式中画出来。",
   "sc.errSumLimit": "项数太多：求和最多可以有 100000 项。",
+  "sc.errIntDiverge": "积分不存在：发散（函数在区间内有极点或不可积的奇点）。",
+  "sc.errIntPv": "积分不存在：发散（函数在区间内有极点）。只存在柯西主值 {pv}，但它不是积分的值。",
   "sc.more": "全部功能",
   "sc.functions": "功能",
   "sc.grp.cmp": "方程与不等式",

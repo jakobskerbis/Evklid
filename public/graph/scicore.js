@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, integrateInfo, walk } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -166,6 +166,31 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   return { src, ast, scope, ctx, rw: (node) => rewrite(node, ctx), run: (node) => compile(rewrite(node, ctx), ctx) };
 }
 
+/** Podatki integrateInfo za vsak določeni integral v drevesu (ne znotraj drugega integrala). */
+export function integralsOf(node, ctx, scope) {
+  const all = [];
+  walk(node, (n) => n.k === "int" && all.push(n));
+  const nested = new Set();
+  for (const n of all) [n.a, n.lo, n.hi].forEach((c) => walk(c, (m) => m.k === "int" && nested.add(m)));
+  const out = [];
+  for (const n of all) {
+    if (nested.has(n) || !n.lo || !n.hi) continue;
+    try {
+      const f = compile(n.a, ctx);
+      const a = compile(n.lo, ctx)(scope);
+      const b = compile(n.hi, ctx)(scope);
+      const sc = Object.create(scope);
+      const g = (t) => {
+        sc[n.v] = t;
+        const y = f(sc);
+        return Array.isArray(y) ? y[0] : y;
+      };
+      out.push(integrateInfo(g, a, b));
+    } catch {}
+  }
+  return out;
+}
+
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
 export function unknownsOf(node, vars = {}) {
   return [...freeVars(node)].filter((v) => !HIDDEN_VARS.has(v) && !(v in vars));
@@ -189,6 +214,11 @@ export function evaluate(text, env = {}) {
     let value = run(expr)(scope);
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
+    // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
+    if (!Number.isFinite(value)) {
+      const div = integralsOf(rw(expr), line.ctx, scope).find((r) => r.diverges);
+      if (div) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
+    }
     const tex = lineTex(ast, comma);
     return name ? { value, tex, assign: name } : { value, tex };
   } catch (e) {

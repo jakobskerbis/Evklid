@@ -999,6 +999,8 @@
   "sc.equals": "Calculer",
   "sc.errEquation": "Je ne sais pas résoudre cette équation. Essaie de la tracer en mode Graphique.",
   "sc.errSumLimit": "Trop de termes : la somme peut en avoir 100 000 au maximum.",
+  "sc.errIntDiverge": "L’intégrale n’existe pas : elle diverge (la fonction a sur l’intervalle un pôle ou une singularité non intégrable).",
+  "sc.errIntPv": "L’intégrale n’existe pas : elle diverge (la fonction a un pôle sur l’intervalle). Seule la valeur principale de Cauchy {pv} existe, mais ce n’est pas la valeur de l’intégrale.",
   "sc.more": "Toutes les fonctions",
   "sc.functions": "Fonctions",
   "sc.grp.cmp": "Équations et inéquations",

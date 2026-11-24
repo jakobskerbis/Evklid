@@ -278,6 +278,8 @@ export function createScientific(root, opts) {
   };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
+  // število v navadnem besedilu (sporočilo, ne TeX): 8 mest, decimalna vejica, pravi minus
+  const plainNum = (v) => String(Number(v.toPrecision(8))).replace(".", comma() ? "," : ".").replace("-", "−");
   function errorText(e) {
     const names = (e.info?.names || []).join(", ");
     switch (e.code) {
@@ -291,6 +293,8 @@ export function createScientific(root, opts) {
         return t("sc.errEquation");
       case "sumLimit":
         return t("sc.errSumLimit");
+      case "intDiverge":
+        return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t("sc.errIntDiverge");
       case "polInside":
         return t("sc.errPolInside");
       case "vecMix":

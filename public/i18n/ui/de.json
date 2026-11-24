@@ -999,6 +999,8 @@
   "sc.equals": "Berechnen",
   "sc.errEquation": "Diese Gleichung kann ich nicht lösen. Versuche, sie im Modus Grafisch zu zeichnen.",
   "sc.errSumLimit": "Zu viele Summanden: Die Summe darf höchstens 100 000 Glieder haben.",
+  "sc.errIntDiverge": "Das Integral existiert nicht: Es divergiert (die Funktion hat im Intervall einen Pol oder eine nicht integrierbare Singularität).",
+  "sc.errIntPv": "Das Integral existiert nicht: Es divergiert (die Funktion hat im Intervall einen Pol). Es gibt nur den Cauchy-Hauptwert {pv}, der aber nicht der Wert des Integrals ist.",
   "sc.more": "Alle Funktionen",
   "sc.functions": "Funktionen",
   "sc.grp.cmp": "Gleichungen und Ungleichungen",

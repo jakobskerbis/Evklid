@@ -1011,6 +1011,8 @@
   "sc.equals": "Vypočítať",
   "sc.errEquation": "Túto rovnicu neviem vyriešiť. Skús ju nakresliť v režime Grafická.",
   "sc.errSumLimit": "Príliš veľa členov: súčet môže mať najviac 100 000 členov.",
+  "sc.errIntDiverge": "Integrál neexistuje: diverguje (funkcia má na intervale pól alebo neintegrovateľnú singularitu).",
+  "sc.errIntPv": "Integrál neexistuje: diverguje (funkcia má na intervale pól). Existuje len Cauchyho hlavná hodnota {pv}, ktorá však nie je hodnotou integrálu.",
   "sc.more": "Všetky funkcie",
   "sc.functions": "Funkcie",
   "sc.grp.cmp": "Rovnice a nerovnice",

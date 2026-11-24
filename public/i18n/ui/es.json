@@ -999,6 +999,8 @@
   "sc.equals": "Calcular",
   "sc.errEquation": "No sé resolver esta ecuación. Prueba a dibujarla en el modo Gráfica.",
   "sc.errSumLimit": "Demasiados términos: la suma puede tener como máximo 100 000 términos.",
+  "sc.errIntDiverge": "La integral no existe: diverge (la función tiene en el intervalo un polo o una singularidad no integrable).",
+  "sc.errIntPv": "La integral no existe: diverge (la función tiene un polo en el intervalo). Solo existe el valor principal de Cauchy {pv}, que no es el valor de la integral.",
   "sc.more": "Todas las funciones",
   "sc.functions": "Funciones",
   "sc.grp.cmp": "Ecuaciones e inecuaciones",

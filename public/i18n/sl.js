@@ -1294,6 +1294,8 @@ export default {
   "sc.equals": "Izračunaj",
   "sc.errEquation": "Te enačbe ne znam rešiti. Poskusi jo narisati v načinu Grafični.",
   "sc.errSumLimit": "Preveč členov: vsota ima lahko največ 100 000 členov.",
+  "sc.errIntDiverge": "Integral ne obstaja: divergira (funkcija ima na intervalu pol ali neintegrabilno singularnost).",
+  "sc.errIntPv": "Integral ne obstaja: divergira (funkcija ima na intervalu pol). Obstaja le Cauchyjeva glavna vrednost {pv}, ki pa ni vrednost integrala.",
   "sc.more": "Vse funkcije",
   "sc.functions": "Funkcije",
   "sc.grp.cmp": "Enačbe in neenačbe",

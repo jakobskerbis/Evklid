@@ -967,41 +967,276 @@ export function compile(node, ctx = {}) {
   }
 }
 
-// ---------- integral (prilagodljivo Simpsonovo pravilo) ----------
+// ---------- integral ----------
+// Najprej prilagodljivo Simpsonovo pravilo (64 kosov). Če pri tem naletimo na neskončno vrednost ali kos ne
+// konvergira (pol, singularnost na robu), poiščemo singularne točke in pri vsaki ocenimo red |f| ~ |x − c|^(−p):
+// p ≥ 1 pomeni, da integral ne obstaja (divergira), p < 1, da obstaja (1/√x na [0, 1]); takrat računamo s
+// kvadraturo tanh-sinh (dvojno eksponentno), ki singularnosti na robovih zdrži, in oceno napake.
 
-export function integrate(f, a, b, eps = 1e-9) {
-  if (!Number.isFinite(a) || !Number.isFinite(b)) return NaN;
-  if (a === b) return 0;
-  if (a > b) return -integrate(f, b, a, eps);
-  // razdelimo na 64 kosov (robustno pri nezveznostih), vsak prilagodljivo
+function simpsonPass(f, a, b, eps) {
   const n = 64;
   const h = (b - a) / n;
   let total = 0;
+  const trouble = []; // [x0, x1] kosov, kjer je f neskončna ali pravilo ne konvergira
+  const val = (x) => {
+    const y = f(x);
+    return typeof y === "number" ? y : NaN;
+  };
   const simpson = (fa, fm, fb, w) => (w / 6) * (fa + 4 * fm + fb);
   const rec = (x0, x1, f0, fm, f1, whole, e, depth) => {
     const m = (x0 + x1) / 2;
     const lm = (x0 + m) / 2;
     const rm = (m + x1) / 2;
-    const flm = f(lm);
-    const frm = f(rm);
+    const flm = val(lm);
+    const frm = val(rm);
     const left = simpson(f0, flm, fm, m - x0);
     const right = simpson(fm, frm, f1, x1 - m);
     const delta = left + right - whole;
-    if (depth <= 0 || Math.abs(delta) <= 15 * e || !Number.isFinite(delta)) return left + right + delta / 15;
+    if (!Number.isFinite(delta)) {
+      trouble.push([x0, x1]);
+      return left + right + delta / 15;
+    }
+    if (Math.abs(delta) <= 15 * e) return left + right + delta / 15;
+    if (depth <= 0) {
+      trouble.push([x0, x1]);
+      return left + right + delta / 15;
+    }
     return rec(x0, m, f0, flm, fm, left, e / 2, depth - 1) + rec(m, x1, fm, frm, f1, right, e / 2, depth - 1);
   };
   for (let k = 0; k < n; k++) {
     let x0 = a + k * h;
-    let x1 = x0 + h;
-    let f0 = f(x0);
-    let f1 = f(x1);
+    let x1 = k === n - 1 ? b : x0 + h;
+    let f0 = val(x0);
+    let f1 = val(x1);
     // na robu definicijskega območja (npr. √x pri 0) se malo umaknemo
-    if (!Number.isFinite(f0)) f0 = f((x0 = x0 + h * 1e-9));
-    if (!Number.isFinite(f1)) f1 = f((x1 = x1 - h * 1e-9));
-    const fm = f((x0 + x1) / 2);
+    if (!Number.isFinite(f0)) {
+      trouble.push([x0, x0]);
+      f0 = val((x0 = x0 + h * 1e-9));
+    }
+    if (!Number.isFinite(f1)) {
+      trouble.push([x1, x1]);
+      f1 = val((x1 = x1 - h * 1e-9));
+    }
+    const fm = val((x0 + x1) / 2);
     total += rec(x0, x1, f0, fm, f1, simpson(f0, fm, f1, x1 - x0), eps / n, 18);
   }
-  return total;
+  return { value: total, trouble };
+}
+
+// tanh-sinh na [a, b]; f se ne računa v samih krajiščih. pa, pb: red singularnosti v a in b (|f| ~ t^(−p)).
+// Za zadnjim vozlom pred krajiščem (bliže ga double ne loči) dodamo rep ∫₀^δ C·t^(−p) dt = f(δ)·δ/(1 − p).
+// Vrne { value, err }.
+function tanhSinh(f, a, b, pa = 0, pb = 0) {
+  const d = (b - a) / 2;
+  const HP = Math.PI / 2;
+  const edge = [null, null]; // [δ, f] najbližjega vozla pri a in pri b
+  const node = (t) => {
+    const u = HP * Math.sinh(t);
+    const ch = Math.cosh(u);
+    const w = (d * HP * Math.cosh(t)) / (ch * ch);
+    const off = (2 * d) / (Math.exp(2 * Math.abs(u)) + 1); // d·(1 − tanh|u|), brez odštevanja
+    const x = t < 0 ? a + off : b - off;
+    if (!(x > a && x < b) || !(w > 0)) return 0;
+    const y = f(x);
+    if (typeof y !== "number" || !Number.isFinite(y)) return NaN;
+    const side = t < 0 ? 0 : 1;
+    const dist = t < 0 ? x - a : b - x;
+    if (!edge[side] || dist < edge[side][0]) edge[side] = [dist, y];
+    return w * y;
+  };
+  const TMAX = 6; // vozli do ~1e-270·d od krajišča (kolikor jih double loči); uteži tam so ~0
+  let h = 0.5;
+  let sum = node(0);
+  for (let k = 1; k * h <= TMAX; k++) sum += node(k * h) + node(-k * h);
+  let prev = sum * h;
+  let err = Infinity;
+  for (let level = 1; level <= 7; level++) {
+    h /= 2;
+    for (let k = 1; k * h <= TMAX; k += 2) sum += node(k * h) + node(-k * h);
+    const cur = sum * h;
+    if (!Number.isFinite(cur)) return { value: NaN, err: Infinity };
+    err = Math.abs(cur - prev);
+    prev = cur;
+    if (level >= 3 && err <= 1e-14 * Math.max(1, Math.abs(cur))) break;
+  }
+  let tail = 0;
+  let noise = 0;
+  [pa, pb].forEach((p, i) => {
+    if (!edge[i] || p <= 0.02) return;
+    const [dist, y] = edge[i];
+    const q = Math.min(p, 0.99);
+    tail += (y * dist) / (1 - q);
+    // ob krajišču e ≠ 0 je f(e ± t) zaradi zaokrožitve x (npr. 1 − x² pri x ≈ −1) netočna za ~ε·|e|/t;
+    // napaka integrala je zato ~ C·(ε·|e|)^(1−p)/p, kjer je |f| ≈ C·t^(−p)
+    const e = Math.abs(i ? b : a);
+    noise += Math.abs(y) * dist ** q * (2.2e-16 * e) ** (1 - q) / Math.max(q, 0.05);
+  });
+  return { value: prev + tail, err: Math.max(err, 0.2 * Math.abs(tail), noise, 4e-16 * Math.abs(prev)) };
+}
+
+const absV = (f, x) => {
+  const y = f(x);
+  return typeof y === "number" ? Math.abs(y) : NaN;
+};
+// red singularnosti v c s strani s (±1): p iz |f(c + s·h)| pri h = H·1e-5 in H·1e-10; Infinity, če f tam ni končna
+function orderAt(f, c, s, H) {
+  const h1 = H * 1e-5;
+  const h2 = H * 1e-10;
+  const y1 = absV(f, c + s * h1);
+  const y2 = absV(f, c + s * h2);
+  if (!Number.isFinite(y1) || !Number.isFinite(y2)) return Number.isNaN(y1) || Number.isNaN(y2) ? NaN : Infinity;
+  if (y2 <= y1 || y1 === 0) return 0;
+  return Math.log(y2 / y1) / Math.log(h1 / h2);
+}
+
+// mesto singularnosti v [x0, x1]: tam, kjer je |f| največja (ternarno iskanje), ali krajišče z neskončno vrednostjo
+function locate(f, x0, x1) {
+  if (x0 === x1) return x0;
+  let lo = x0;
+  let hi = x1;
+  for (let k = 0; k < 200 && hi - lo > 0; k++) {
+    const m1 = lo + (hi - lo) / 3;
+    const m2 = hi - (hi - lo) / 3;
+    if (m1 === lo || m2 === hi) break;
+    const g1 = absV(f, m1);
+    const g2 = absV(f, m2);
+    if (!(g1 < Infinity)) return m1;
+    if (!(g2 < Infinity)) return m2;
+    if (g1 < g2) lo = m1;
+    else hi = m2;
+  }
+  return (lo + hi) / 2;
+}
+
+// integral kosa [a, b] s singularnostmi kvečjemu na robovih (red pa, pb; 0 = brez): tanh-sinh ob robovih, Simpson v sredini
+function pieceIntegral(f, a, b, pa, pb, depth = 0) {
+  // sredina kosa naj bo brez težav; če niso (še en pol), jo analiziramo posebej
+  const simp = (x0, x1) => {
+    const r = simpsonPass(f, x0, x1, 1e-11);
+    if (r.trouble.length && depth < 3) return integrateInfo(f, x0, x1, 1e-9, depth + 1);
+    return { value: r.value, err: 1e-10 * Math.max(1, Math.abs(r.value)) };
+  };
+  if (!pa && !pb) return simp(a, b);
+  const w = (b - a) / 8;
+  const lo = pa ? a + w : a;
+  const hi = pb ? b - w : b;
+  const parts = [];
+  if (pa) parts.push(tanhSinh(f, a, lo, pa, 0));
+  if (hi > lo) parts.push(simp(lo, hi));
+  if (pb) parts.push(tanhSinh(f, hi, b, 0, pb));
+  const div = parts.find((p) => p.diverges);
+  if (div) return div;
+  return { value: parts.reduce((s, p) => s + p.value, 0), err: parts.reduce((s, p) => s + (p.err || 0), 0) };
+}
+
+/**
+ * Določeni integral s podatki: { value, err?, singular?, diverges?, pv?, at? }.
+ * value je NaN, ko integral ne obstaja (diverges: true; pv: Cauchyjeva glavna vrednost, če obstaja; at: mesto pola).
+ * singular: računano prek singularnosti (vrednost je približek z oceno napake err).
+ */
+export function integrateInfo(f, a, b, eps = 1e-9, depth = 0) {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return { value: NaN };
+  if (a === b) return { value: 0 };
+  if (a > b) {
+    const r = integrateInfo(f, b, a, eps, depth);
+    return { ...r, value: -r.value, ...(r.pv !== undefined ? { pv: -r.pv } : {}) };
+  }
+  const first = simpsonPass(f, a, b, eps);
+  if (!first.trouble.length) return { value: first.value };
+  // singularne točke: grozdi težavnih kosov, v vsakem mesto največje |f|
+  const H = b - a;
+  const tr = first.trouble.sort((p, q) => p[0] - q[0]);
+  const pts = [];
+  let cur = null;
+  for (const [x0, x1] of tr) {
+    // težave okoli pola so raztresene po več kosih: združimo vse v razmiku ene šestdesetčetrtine intervala
+    if (cur && x0 <= cur[1] + H / 64) {
+      cur[1] = Math.max(cur[1], x1);
+      if (x0 === x1) cur[2] = x0;
+    } else pts.push((cur = [x0, x1, x0 === x1 ? x0 : undefined]));
+  }
+  if (pts.length > 50) return { value: first.value }; // npr. 1/sin(100x): ne znamo bolje kot prej
+  const sing = [];
+  for (const [x0, x1, hit] of pts) {
+    const span = x1 - x0;
+    // točka, kjer je f neskončna (1/x pri 0), ali mesto največje |f| v grozdu
+    let c = hit !== undefined && !Number.isFinite(f(hit)) ? hit : locate(f, Math.max(a, x0 - span), Math.min(b, x1 + span));
+    if (Math.abs(c) <= H * 1e-14) c = 0;
+    if (Math.abs(c - a) <= H * 1e-12) c = a;
+    if (Math.abs(c - b) <= H * 1e-12) c = b;
+    const scale = Math.max(Math.abs(c), H) * 1e-1;
+    const pl = c > a ? orderAt(f, c, -1, Math.min(scale, c - a)) : 0;
+    const pr = c < b ? orderAt(f, c, 1, Math.min(scale, b - c)) : 0;
+    if (Number.isNaN(pl) || Number.isNaN(pr)) return { value: first.value }; // f ob točki ni definirana (√ negativnega)
+    if (!sing.some((s) => s.c === c)) sing.push({ c, pl, pr });
+  }
+  sing.sort((p, q) => p.c - q.c);
+  const DIV = 0.99; // |f| ~ |x − c|^(−p): p ≥ 1 → ∫ divergira
+  const bad = sing.filter((s) => s.pl >= DIV || s.pr >= DIV);
+  if (bad.length) {
+    const out = { value: NaN, diverges: true, at: bad[0].c };
+    const pv = principalValue(f, a, b, sing);
+    if (pv !== null) out.pv = pv;
+    return out;
+  }
+  // integrabilne singularnosti: kosi med njimi
+  const cuts = [a, ...sing.map((s) => s.c).filter((c) => c > a && c < b), b];
+  // red na desni strani točke (začetek kosa) in na levi (konec kosa); vsak kos z robom v singularni točki dobi tanh-sinh
+  const ord = (c, side) => {
+    const s = sing.find((q) => q.c === c);
+    return s ? Math.max(side > 0 ? s.pr : s.pl, 1e-3) : 0;
+  };
+  let value = 0;
+  let err = 0;
+  for (let i = 0; i + 1 < cuts.length; i++) {
+    const p = pieceIntegral(f, cuts[i], cuts[i + 1], ord(cuts[i], 1), ord(cuts[i + 1], -1), depth);
+    if (p.diverges) return { value: NaN, diverges: true, at: p.at };
+    value += p.value;
+    err += p.err;
+  }
+  if (!Number.isFinite(value)) return { value: NaN };
+  return { value, err, singular: true };
+}
+
+// Cauchyjeva glavna vrednost, kadar so vsi poli notranji in je g(t) = f(c + t) + f(c − t) ob t → 0 omejena
+// (lihi pol: 1/x, tan x pri π/2). Sicer null.
+function principalValue(f, a, b, sing) {
+  const inner = sing.filter((s) => s.c > a && s.c < b);
+  const ends = sing.filter((s) => s.c === a || s.c === b);
+  if (ends.some((s) => s.pl >= 0.99 || s.pr >= 0.99)) return null;
+  if (inner.length !== 1) return null; // več polov: ne računamo
+  const { c } = inner[0];
+  const r = Math.min(c - a, b - c);
+  // točno simetrični točki: τ = (c + t) − c je točen (Sterbenz), c − τ večinoma tudi
+  const g = (t) => {
+    const x1 = c + t;
+    const tau = x1 - c;
+    const x2 = c - tau;
+    const y1 = f(x1);
+    const y2 = f(c - (x2 === c - tau && c - x2 === tau ? tau : t));
+    return typeof y1 === "number" && typeof y2 === "number" ? y1 + y2 : NaN;
+  };
+  // g mora biti ob 0 omejena: |g| se od t = r·1e-3 do r·1e-6 ne sme povečati za več kot ~10-krat
+  // (razen za šum zaokrožitve c ± t, ki je ~ |f|·1e-15·|c|/t)
+  const t1 = r * 1e-3;
+  const t2 = r * 1e-6;
+  const g1 = Math.abs(g(t1));
+  const g2 = Math.abs(g(t2));
+  const noise = (t) => Math.abs(f(c + t)) * ((1e-15 * Math.max(1, Math.abs(c))) / t);
+  if (!Number.isFinite(g1) || !Number.isFinite(g2) || g2 > 10 * Math.max(g1, noise(t1), noise(t2))) return null;
+  // pod t = r·1e-7 je g nezanesljiva (pol c je zaokrožen, npr. π/2: g ~ 2δ/t²); odrezan del je ~ r·1e-7·|g|
+  const cut = r * 1e-7;
+  let pv = simpsonPass(g, cut, r, 1e-11).value;
+  const ends2 = (x) => sing.find((q) => q.c === x);
+  if (c - r > a) pv += pieceIntegral(f, a, c - r, ends2(a) ? Math.max(ends2(a).pr, 1e-3) : 0, 0).value;
+  if (c + r < b) pv += pieceIntegral(f, c + r, b, 0, ends2(b) ? Math.max(ends2(b).pl, 1e-3) : 0).value;
+  if (!Number.isFinite(pv)) return null;
+  return Math.abs(pv) < 1e-7 * Math.max(1, r) ? 0 : Number(pv.toPrecision(6)); // zanesljivih je ~6 mest
+}
+
+/** Določeni integral (število); NaN, ko ne obstaja (divergira). */
+export function integrate(f, a, b, eps = 1e-9) {
+  return integrateInfo(f, a, b, eps).value;
 }
 
 // ---------- simbolni odvod ----------
