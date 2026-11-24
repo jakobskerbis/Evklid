@@ -66,7 +66,7 @@ export function prepare(text, { comma = true } = {}) {
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
   // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem
-  // kalkulatorju): sin 30° = sin(30°), 1/30° = 1/(30°), 30°^2 = (30°)². Prej je bil »sin 30°« (sin 30)·° (AUDIT-016).
+  // kalkulatorju): sin 30° = sin(30°), 1/30° = 1/(30°), 30°^2 = (30°)². Prej je bil »sin 30°« (sin 30)·° (AUDIT-025).
   s = s
     .replace(/(\d+(?:\.\d+)?|(?<![A-Za-z_{])[A-Za-zα-ωπθ](?![A-Za-z_(]))\s*°/g, `($1 ${DEG})`)
     .replace(/°/g, ` ${DEG}`)

@@ -1,4 +1,4 @@
-// AUDIT-016: »°« se v znanstvenem kalkulatorju veže na število pred njim, močneje kot funkcija brez oklepaja,
+// AUDIT-025: »°« se v znanstvenem kalkulatorju veže na število pred njim, močneje kot funkcija brez oklepaja,
 // potenca in deljenje, tako kot v grafičnem kalkulatorju. Prej je bil »sin 30°« v radianih (sin 30)·π/180 = −0,0172.
 import test from "node:test";
 import assert from "node:assert/strict";
