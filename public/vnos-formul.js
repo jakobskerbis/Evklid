@@ -40,10 +40,47 @@ function args(s) {
   return out.map((x) => x.trim());
 }
 
+// Ali se TeX konča z \lim, \sum ali \prod z mejami (_{…}, ^{…}) in še brez telesa.
+function bigOpEnd(tex) {
+  const t = String(tex ?? "");
+  const re = /\\(?:lim|sum|prod)(?![a-zA-Z])/g;
+  let at = -1;
+  for (let m; (m = re.exec(t)); ) at = re.lastIndex;
+  if (at < 0) return false;
+  let k = at;
+  while ((t[k] === "_" || t[k] === "^") && t[k + 1] === "{") {
+    let d = 0;
+    let j = k + 1;
+    for (; j < t.length; j++) {
+      if (t[j] === "{") d++;
+      else if (t[j] === "}" && --d === 0) break;
+    }
+    k = j + 1;
+  }
+  return k > at && k === t.length;
+}
+// Vsota ali razlika na vrhnji ravni (ne predznak na začetku): telo »i+1« potrebuje oklepaj.
+function topSum(s) {
+  let d = 0;
+  for (let j = 0; j < s.length; j++) {
+    if (s[j] === "(") d++;
+    else if (s[j] === ")") d--;
+    else if (d === 0 && j > 0 && /[+−\-±]/.test(s[j])) return true;
+  }
+  return false;
+}
+
 const BIG = { "∑": "\\sum", "∏": "\\prod", "∫": "\\int", lim: "\\lim", log: "\\log" };
 const ROOT = { "√": "\\sqrt", "∛": "\\sqrt[3]", "∜": "\\sqrt[4]" };
 const ESC = { "\\": "\\backslash ", "~": "\\sim ", "^": "\\^{}", _: "\\_{}" };
 const FN = /(?<!\p{L})(sin|cos|tan|cot|ln|log|exp)(?!\p{L})/gu;
+// ∫(f;a;b) nima zapisanega diferenciala: edina prosta črka v f (∫(θ;0;1) → dθ), sicer x (AUDIT-012).
+// Imena funkcij, e in π niso spremenljivke; dve različni črki (∫(a·t;0;1)) ali nobena: dx.
+const NOT_VAR = /(?<!\p{L})(?:arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|exp|sqrt|abs)(?!\p{L})|[eπ]/gu;
+function differential(f) {
+  const vars = new Set(String(f).replace(NOT_VAR, " ").match(/\p{L}/gu) || []);
+  return vars.size === 1 ? [...vars][0] : "x";
+}
 const texText = (s) => s.replace(/[\\{}$%#&~^_]/g, (c) => ESC[c] ?? `\\${c}`).replace(FN, "\\$1 ");
 
 /** Besedilo → deli [{ text } | { tex }]. Brez zapisa s tipkovnice je en sam del z besedilom. */
@@ -76,13 +113,27 @@ export function splitFormulas(src) {
         }
       }
     }
+    // Telo limite, vsote, produkta: lim_(x→0)(x^(2)), ∑_(i=1)^(5) (i) – telo je del iste formule (AUDIT-013).
+    // Oklepaja sta skupina s tipke (kot pri ∫ (x) dx); vsota ali razlika v telesu ju obdrži: ∑ (i+1), ne ∑ i + 1.
+    if (c === "(" && !buf.trim() && bigOpEnd(parts[parts.length - 1]?.tex)) {
+      const j = closeAt(s, i);
+      if (j > 0) {
+        const inner = s.slice(i + 1, j - 1);
+        const t = toTex(inner);
+        parts[parts.length - 1].tex += ` ${topSum(inner) ? `\\left(${t}\\right)` : t}`;
+        buf = "";
+        i = j;
+        continue;
+      }
+    }
     // Telo integrala s tipke »∫« ali »∫ₐᵇ«: ∫ (x²) dx, ∫_(0)^(1) (x²) dx
     if (c === "(") {
       const last = parts[parts.length - 1];
       const after = /\\int(?:[_^]\{[^}]*\})*$/.test(last?.tex || "") && !buf.trim();
       const plain = /∫\s*$/.test(buf);
       const j = after || plain ? closeAt(s, i) : -1;
-      const d = j > 0 ? s.slice(j).match(/^\s*d([a-zA-Z])(?![\p{L}])/u) : null;
+      // diferencial je katerakoli črka, tudi grška (dθ, dφ; AUDIT-012)
+      const d = j > 0 ? s.slice(j).match(/^\s*d(\p{L})(?!\p{L})/u) : null;
       if (d) {
         if (plain) buf = buf.replace(/∫\s*$/, "");
         else buf = "";
@@ -108,7 +159,7 @@ export function splitFormulas(src) {
       const a = j > 0 ? args(s.slice(i + 2, j - 1)) : [];
       if (a.length === 3 || a.length === 1) {
         const lim = a.length === 3 && (a[1] || a[2]) ? `_{${toTex(a[1])}}^{${toTex(a[2])}}` : "";
-        push(`\\int${lim} ${toTex(a[0])}\\,dx`);
+        push(`\\int${lim} ${toTex(a[0])}\\,d${differential(a[0])}`);
         i = j;
         continue;
       }
@@ -219,7 +270,7 @@ function zgradbe(s) {
         if (k > 0) out.push({ od: i, do: k, reze: [[i + 1, j - 1], [j + 2, k - 1]] });
       }
       // Telo integrala: ∫ (x) dx, ∫_(0)^(1) (x) dx
-      const d = j > 0 ? s.slice(j).match(/^\s*d[a-zA-Z](?![\p{L}])/u) : null;
+      const d = j > 0 ? s.slice(j).match(/^\s*d\p{L}(?!\p{L})/u) : null;
       if (d && /∫(?:[_^]\([^()]*\))*\s*$/.test(s.slice(0, i))) {
         out.push({ od: i, do: j + d[0].length, reze: [[i + 1, j - 1]] });
       }
