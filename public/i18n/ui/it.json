@@ -1061,6 +1061,8 @@
   "sc.cas.symHint": "Espressione con lettere: scegli che cosa farne.",
   "sc.cas.eqHint": "Equazione con lettere: scegli quale lettera ricavare.",
   "sc.cas.radians": "Calcolato in radianti.",
+  "sc.radiansPart": "∫ e d/dx sono calcolati in radianti, il resto in gradi.",
+  "sc.radiansPartGrad": "∫ e d/dx sono calcolati in radianti, il resto in gradi centesimali.",
   "sc.cas.cond": "Vale per",
   "sc.cas.unsupported": "Non so ancora semplificare questa espressione con lettere. So lavorare con polinomi e frazioni, radici, funzioni goniometriche, logaritmi ed esponenziali.",
   "sc.cas.singular": "La matrice è singolare (il suo determinante è 0), quindi non ha inversa.",

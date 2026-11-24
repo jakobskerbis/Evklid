@@ -1356,6 +1356,8 @@ export default {
   "sc.cas.symHint": "Izraz s črkami: izberi, kaj naj naredim z njim.",
   "sc.cas.eqHint": "Enačba s črkami: izberi, katero črko naj izrazim.",
   "sc.cas.radians": "Računano v radianih.",
+  "sc.radiansPart": "∫ in d/dx sta računana v radianih, ostalo v stopinjah.",
+  "sc.radiansPartGrad": "∫ in d/dx sta računana v radianih, ostalo v gradih.",
   "sc.cas.cond": "Velja za",
   "sc.cas.unsupported": "Tega izraza s črkami še ne znam poenostaviti. Računam s polinomi in ulomki, koreni, kotnimi funkcijami, logaritmi in eksponentnimi funkcijami.",
   "sc.cas.singular": "Matrika je singularna (njena determinanta je 0), zato nima inverza.",

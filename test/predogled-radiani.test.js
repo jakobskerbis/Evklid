@@ -23,6 +23,11 @@ test("predogled = rezultat za odvode in integrale v DEG, RAD in GRA", () => {
   for (const [t, want] of [["sin(30)+∫(x;0;1)", 1], ["cos(60)+∫(1;0;1)", 1.5], ["sin(30)·d/dx(x^2;1)", 1], ["sin(30°)+d/dx(cos(x);0)", 0.5], ["∫(sin(x);0;90°)", 1]]) {
     for (const f of [analyze, analyzeLive]) assert.ok(Math.abs(f(t, env).value - want) < 1e-9, `${t} (${f.name}): ${f(t, env).value}`);
   }
+  // uporabniška funkcija znotraj ∫ in d/dx je v radianih, zunaj v stopinjah; f′ je odvod le lokalno (pregled #1005, 2. krog)
+  const envF = { ...env, funcs: { f: { param: "x", body: "sin(x)" } } };
+  for (const [t, want] of [["1+∫(f(x);0;π)", 3], ["2·∫(f(x);0;π)", 4], ["1+d/dx(f(x);0)", 2], ["sin(30)+f'(0)", 1.5], ["f'(0)", 1], ["f(90)+∫(f(x);0;π)", 3]]) {
+    for (const f of [analyze, analyzeLive]) assert.ok(Math.abs(f(t, envF).value - want) < 1e-9, `${t} (${f.name}): ${JSON.stringify(f(t, envF))}`);
+  }
   // brez odvoda in integrala ostane enota kota: sin 30 v DEG je 0,5
   assert.ok(Math.abs(analyzeLive("sin(30)", env).value - 0.5) < 1e-12);
   assert.ok(Math.abs(analyzeLive("sin(30°)+1", env).value - 1.5) < 1e-12);
@@ -66,7 +71,12 @@ test("opomba »Računano v radianih« v DEG pod ∫ in d/dx (predogled in rezult
   await page.waitForFunction(() => window.ready);
   await page.click('[data-angle="deg"]');
   await page.fill(".sc-input", "sin(30)+∫(x;0;1)");
-  await page.waitForFunction(() => document.querySelector(".sc-live")?.textContent.includes("sc.cas.radians"));
+  // mešana vrstica: le ∫ in d/dx v radianih, ostalo v stopinjah
+  await page.waitForFunction(() => document.querySelector(".sc-live")?.textContent.includes("sc.radiansPart"));
+  await page.press(".sc-input", "Enter");
+  assert.match(await page.locator(".sc-h-row.last").innerText(), /sc\.radiansPart/);
+  // cela vrstica je integral: »Računano v radianih«
+  await page.fill(".sc-input", "∫(sin(x);0;π)");
   await page.press(".sc-input", "Enter");
   assert.match(await page.locator(".sc-h-row.last").innerText(), /sc\.cas\.radians/);
   await page.click('[data-angle="rad"]');

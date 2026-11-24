@@ -1067,6 +1067,8 @@
   "sc.cas.symHint": "Izraz sa slovima: odaberi što da učinim s njim.",
   "sc.cas.eqHint": "Jednadžba sa slovima: odaberi koje slovo da izrazim.",
   "sc.cas.radians": "Izračunano u radijanima.",
+  "sc.radiansPart": "∫ i d/dx računaju se u radijanima, ostalo u stupnjevima.",
+  "sc.radiansPartGrad": "∫ i d/dx računaju se u radijanima, ostalo u gradima.",
   "sc.cas.cond": "Vrijedi za",
   "sc.cas.unsupported": "Ovaj izraz sa slovima još ne znam pojednostaviti. Znam računati s polinomima i razlomcima, korijenima, trigonometrijskim funkcijama, logaritmima i eksponencijalnim funkcijama.",
   "sc.cas.singular": "Matrica je singularna (determinanta joj je 0), pa nema inverz.",
