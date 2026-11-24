@@ -6,7 +6,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK, pressKey } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -257,21 +257,31 @@ export function createScientific(root, opts) {
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
     // izbira, ki zajame le del imenovane predloge, se razširi na celo predlogo (ne ostane »;0;1)«); oklepaj, ki bi
     // ostal brez para, ostane (AUDIT-039)
+    let cur = input.value;
+    let s = input.selectionStart ?? cur.length;
     {
-      const a = input.selectionStart ?? input.value.length;
-      const b = input.selectionEnd ?? a;
-      if (a !== b) {
-        const d = deleteSpan(input.value, a, b);
-        input.value = d.text;
-        input.setSelectionRange(d.pos, d.pos);
+      const b = input.selectionEnd ?? s;
+      if (s !== b) {
+        const d = deleteSpan(cur, s, b);
+        cur = d.text;
+        s = d.pos;
       }
     }
-    const s = input.selectionStart ?? input.value.length;
-    const e = s;
-    const at = ins.indexOf("@");
-    const clean = ins.replace("@", "");
-    input.value = input.value.slice(0, s) + clean + input.value.slice(e);
-    const pos = s + (at >= 0 ? at : clean.length);
+    // odprt oklepaj tipke se zapre pred ločilom zunanje predloge; tipka predloge, ki bi pokvarila zapis ali reže
+    // zunanje predloge (∫(|;0;1) + xʸ), se ne zgodi (AUDIT-059)
+    const r = pressKey(cur, s, ins, env(), {
+      check: (tex) => {
+        try {
+          window.katex?.renderToString(tex, { throwOnError: true, strict: "ignore", trust: TRUST });
+          return true;
+        } catch {
+          return false;
+        }
+      },
+    });
+    if (!r) return showEntry();
+    input.value = r.text;
+    const pos = r.pos;
     input.setSelectionRange(pos, pos);
     recall = -1;
     if (o.replace) fromFormula = namesIn(input.value);

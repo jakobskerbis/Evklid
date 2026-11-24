@@ -23,7 +23,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import katex from "katex";
-import { entryBase, caretTex, caretStops, stopsTex, stripCaret, backspace, deleteForward, stepCaret, analyzeLive, liveTex, TRUST, HOLE, CARET } from "../public/graph/sci-vnos.js";
+import { entryBase, caretTex, caretStops, stopsTex, stripCaret, backspace, deleteForward, stepCaret, analyzeLive, liveTex, TRUST, HOLE, CARET, pressKey } from "../public/graph/sci-vnos.js";
 import { analyze } from "../public/graph/scisolve.js";
 
 const env = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
@@ -184,6 +184,66 @@ const VALUES = [
   ["det([[1; 2]; [3; 4]])", -2], ["2,5+1", 3.5], ["0,1+0,2", 0.3], ["2^(10)", 1024], ["(1+2)/(3+4)", 3 / 7], ["1/(2/3)", 1.5], ["ln(e)", 1],
   ["log(100)", 2], ["5!", 120], ["12%", 0.12], ["gcd(12;18)", 6], ["lcm(4;6)", 12], ["mod(7;3)", 1], ["round(2,5)", 3], ["√(√(16))", 2],
 ];
+// AUDIT-059 (j, evklid.app): xʸ v praznem integrandu ∫(□;0;1) je dal ∫(^(;0;1) – »^(« je požrl ločili in meje.
+// Vsaka tipka predloge na vsakem mestu kazalca (prazne in polne reže) vsake predloge: zapis se izriše, brez surovih
+// ločil (»;« v zapisu), zunanje predloge ohranijo reže (število »;«, zaprtost); ali pa se tipka ne zgodi (null).
+const KEYS_T = ["²", "^(", "√(", "⁻¹", "sin(", "∫(@;;)", "d/dx(@)", ";", "×10^(", "!", "%", "°", "(", "abs(", "nCr(@;)"];
+const katexOk = (tex) => {
+  try {
+    render(tex);
+    return true;
+  } catch {
+    return false;
+  }
+};
+function slotsAt(t, p) {
+  const st = [];
+  for (let i = 0; i < p; i++) {
+    if ("([".includes(t[i])) st.push(i);
+    else if (")]".includes(t[i])) st.pop();
+  }
+  return st.map((o) => {
+    let d = 0, sep = 0, cl = -1;
+    for (let j = o; j < t.length && cl < 0; j++) {
+      if ("([".includes(t[j])) d++;
+      else if (")]".includes(t[j])) d === 1 ? (cl = j) : d--;
+      else if (t[j] === ";" && d === 1) sep++;
+    }
+    return `${o}:${sep}:${cl >= 0}`;
+  }).join(",");
+}
+const texSemi = (tex) => (tex.replace(/\\text\{[^}]*\}/g, "").match(/;/g) || []).length;
+test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT-059)`, () => {
+  let n = 0, done = 0;
+  for (const T of TEMPLATES) {
+    const b0 = entryBase(T, env);
+    if (!b0?.ok) continue;
+    const stops = new Set([...stopsTex(b0).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1])));
+    for (const p of stops)
+      for (const k of KEYS_T) {
+        n++;
+        const r = pressKey(T, p, k, env, { check: katexOk });
+        if (!r) continue;
+        done++;
+        const w = `${T} @${p} ${k} → ${r.text}`;
+        const b = entryBase(r.text, env);
+        assert.ok(b?.ok && !BAD.test(b.tex) && katexOk(caretTex(b, r.pos)), `${w}: ne izriše`);
+        assert.ok(texSemi(b.tex) <= texSemi(b0.tex), `${w}: surovo ločilo v ${b.tex}`);
+        if (k !== ";") assert.equal(slotsAt(r.text, p), slotsAt(T, p), `${w}: reže zunanje predloge`);
+      }
+  }
+  assert.ok(n > 10000 && done > 0.85 * n, `${done}/${n} tipk izvedenih`);
+  // tipke, ki morajo uspeti (ne le ne pokvariti): prazne in polne reže
+  for (const [t, p, k, want] of [
+    ["∫(;0;1)", 2, "^(", "∫(^();0;1)"], ["∫(;0;1)", 2, "√(", "∫(√();0;1)"], ["∫(x;0;1)", 2, "sin(", "∫(sin(x);0;1)"],
+    ["∫(x;0;1)", 3, "^(", "∫(x^();0;1)"], ["∫(x;0;1)", 5, "×10^(", "∫(x;0×10^();1)"], ["∫(;;)", 2, "∫(@;;)", "∫(∫(;;);;)"],
+    ["nCr(5;2)", 4, "√(", "nCr(√(5);2)"], ["d/dx(x³)", 7, ";", "d/dx(x³;)"], ["x+y=3; x−y=1", 4, "√(", "x+y=√(3); x−y=1"],
+    ["sin(x)", 6, "²", "sin(x)²"], ["2+3", 1, "^(", "2^(+3"], ["", 0, "√(", "√("],
+  ]) assert.equal(pressKey(t, p, k, env, { check: katexOk })?.text, want, `${t} @${p} ${k}`);
+  // ; v predlogi z določenim številom rež se ne zgodi
+  for (const [t, p] of [["∫(;0;1)", 2], ["sin(x)", 5], ["nCr(5;2)", 6], ["2^(5)", 3]]) assert.equal(pressKey(t, p, ";", env), null, `${t} @${p} ;`);
+});
+
 test("vnos, zapis in izračun se ujemajo (decimalna vejica, predloge)", () => {
   for (const [t, v] of VALUES) {
     const r = analyze(t, env);
