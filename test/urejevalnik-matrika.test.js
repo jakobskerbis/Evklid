@@ -10,8 +10,7 @@
 //    točno tja, zaslonska ⌫, strojni Backspace in Delete na vsakem mestu, ◀ ▶ in puščici, hitro tipkanje, preklop
 //    znanstveni ↔ grafični, decimalna vejica, samo tipkovnica, osnovne oznake ARIA.
 //
-// Znane napake, ki niso AUDIT-003/004 (nove ugotovitve, PR regresijske matrike), so označene s `todo` in z oznako
-// NOVO-n: test se izvede in izpiše, ne podre pa CI. Ko je napaka popravljena, se oznaka odstrani.
+// Napake, ki jih je matrika našla (AUDIT-034 do AUDIT-040, #970–#974), so popravljene: brez oznak todo.
 import test from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
@@ -68,15 +67,14 @@ const TEMPLATES = [
   "2,5+1", "0,1+0,2", "sin(0,5)", "1,5E3", "Ans+1", "5!", "π·2", "(1+2i)(3−i)", "12%", "f(x)=x²", "f(x)=",
 ];
 
-// Nove ugotovitve (niso AUDIT-003/004), opisane v PR regresijske matrike:
-// NOVO-1: brisanje levega operanda ali števke pred vejico pusti surov zapis (1/2 → /2, x² → ², 2,5 → ,5, 2x+3=7 → 2x+=7).
-// NOVO-2: prazno telo ∑/∏ takoj po tipki je surov TeX (KaTeX napaka).
-// NOVO-3: prazna predloga det/inverz je surov TeX (KaTeX napaka v pmatrix).
-// NOVO-4: ročno natipkan nedokončan integral ∫(, ∫(x, ∫(x;0 je surovo besedilo.
-const RAW_TODO = { "∫(": "NOVO-4", "∫(x": "NOVO-4", "∫(x;0": "NOVO-4", "∑_(n=1)^() ": "NOVO-2", "∏_(n=1)^() ": "NOVO-2", "det([[; ]; [; ]])": "NOVO-3" };
+// Prej znane napake (AUDIT-034 brisanje levega operanda, AUDIT-035/036 prazne predloge ∑/∏ in det (#956), AUDIT-037
+// natipkan ∫(): popravljene, zato ni več izjem.
+const RAW_TODO = {};
 
 const BAD = /;;\)|undefined/;
 const render = (tex) => katex.renderToString(tex, { throwOnError: true, strict: "ignore", trust: TRUST });
+// kalkulator (sci.js) poda ⌫ in Delete preverjanje izrisa (varovalo AUDIT-034): isto tukaj
+const ok = (t) => !t.trim() || !!entryBase(t, env)?.ok;
 const shows = (t) => {
   if (!t.trim()) return true;
   const b = entryBase(t, env);
@@ -139,7 +137,7 @@ for (const t of TEMPLATES) {
     const stops = b?.ok ? caretStops(b).map((s) => s.p) : [...Array(t.length + 1).keys()];
     for (const p of stops) {
       for (const [name, fn] of [["⌫", backspace], ["Delete", deleteForward]]) {
-        const r = fn(t, p);
+        const r = fn(t, p, p, { ok });
         assert.ok(r.pos >= 0 && r.pos <= r.text.length, `${name}@${p}: kazalec v besedilu`);
         assert.doesNotMatch(r.text.replace(/∫\([^()]*\)?/g, ""), /;;\)|^\s*[;)]/, `${name}@${p}: ostanek predloge v »${r.text}«`);
         assert.equal(halfName(t, r.text), undefined, `${name}@${p}: pol imena v »${r.text}«`);
@@ -150,13 +148,13 @@ for (const t of TEMPLATES) {
   });
 }
 
-// zapis po brisanju se izriše (brez surovega besedila); znane izjeme so NOVO-1
+// zapis po brisanju se izriše (brez surovega besedila; AUDIT-034)
 const AFTER_DELETE_RAW = TEMPLATES.filter((t) => {
   const b = entryBase(t, env);
   if (!b?.ok) return false;
-  return caretStops(b).some(({ p }) => !shows(backspace(t, p).text) || !shows(deleteForward(t, p).text));
+  return caretStops(b).some(({ p }) => !shows(backspace(t, p, p, { ok }).text) || !shows(deleteForward(t, p, p, { ok }).text));
 });
-test("po ⌫ in Delete na mestih, kjer ni zgradbe predloge, ostane izrisan zapis", { todo: AFTER_DELETE_RAW.length ? `NOVO-1 (${AFTER_DELETE_RAW.length} predlog)` : undefined }, () => {
+test("po ⌫ in Delete na vsakem mestu ostane izrisan zapis (AUDIT-034)", () => {
   assert.deepEqual(AFTER_DELETE_RAW, []);
 });
 test("⌫ in Delete na zgradbi predlog (∫, integriraj, limita, d/dx, koren, funkcije, ukazi) vedno pustita izrisan zapis", () => {
@@ -169,6 +167,7 @@ test("⌫ in Delete na zgradbi predlog (∫, integriraj, limita, d/dx, koren, fu
     for (const { p } of caretStops(b)) {
       if ("(;)".includes(t[p - 1] || "x")) assert.ok(shows(backspace(t, p).text), `${t} ⌫@${p} → »${backspace(t, p).text}«`);
       if ("(;)".includes(t[p] || "x")) assert.ok(shows(deleteForward(t, p).text), `${t} Delete@${p} → »${deleteForward(t, p).text}«`);
+      // (brez varovala: zgradba predloge se ne pokvari niti brez njega)
     }
   }
 });
@@ -219,7 +218,7 @@ for (const name of ["chromium", "webkit", "firefox"]) {
 }
 const skip = engines.length ? false : "Playwright ni nameščen";
 
-// predloge za brskalnik: vse, ki se izrišejo (brez znanih NOVO), z do 14 mesti kazalca
+// predloge za brskalnik: vse z do 14 mesti kazalca
 const BROWSER = TEMPLATES.filter((t) => !RAW_TODO[t] && entryBase(t, env)?.ok && caretStops(entryBase(t, env)).length <= 14).slice(0, Number(process.env.MATRIKA_N) || Infinity);
 
 let server = null;
@@ -275,11 +274,10 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
           const r = c[0]?.getBoundingClientRect();
           return { v: i.value, p: i.selectionStart, shown: prev.textContent, raw: !!prev.querySelector(".text, .katex-error, .mat-napaka"), carets: c.length, x: r ? r.left + r.width / 2 : null, y: r ? r.top + r.height / 2 : null };
         });
-      // allowRaw: znan surov zapis NOVO-1 (čista funkcija da isto besedilo, ki se ne izriše)
-      const clean = async (what, allowRaw = false) => {
+      const clean = async (what) => {
         const s = await state();
-        if (!(allowRaw && s.raw)) assert.ok(!/integriraj|integral|;;\)|undefined/.test(s.shown), `${where} ${what}: ostanek v zapisu ${JSON.stringify(s)}`);
-        if (s.v && !s.raw) assert.equal(s.carets, 1, `${where} ${what}: en kazalec ${JSON.stringify(s)}`);
+        assert.ok(!/integriraj|integral|;;\)|undefined/.test(s.shown), `${where} ${what}: ostanek v zapisu ${JSON.stringify(s)}`);
+        if (s.v) assert.equal(s.carets, 1, `${where} ${what}: en kazalec ${JSON.stringify(s)}`);
         n++;
         return s;
       };
@@ -311,9 +309,8 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
             return { p: Number(e.dataset.evkP), x: r.left + 0.5, y: (r.top + r.bottom) / 2 };
           });
           prev.innerHTML = shown;
-          // merilna točka na desnem robu zapisa je na robu prosojnega polja: dotik 1 px znotraj polja (rob 12 px je NOVO-5)
+          // (merilna točka na desnem robu zapisa je zdaj v prosojnem polju, AUDIT-038)
           const ir = document.querySelector(".sc-input").getBoundingClientRect();
-          for (const o of out) o.x = Math.min(o.x, ir.right - 1);
           return [out, [ir.left, ir.right, document.querySelectorAll(".sc-input").length]];
         }, tx).then(([o, ir]) => ((o.ir = ir), o));
         assert.deepEqual(targets.map((x) => x.p).sort((a, b) => a - b), [...stops].sort((a, b) => a - b), `${where} ${tx}: merilne točke`);
@@ -339,10 +336,10 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
             await set(tx, p);
             if (how === "⌫") await key("#del");
             else await page.keyboard.press(how);
-            const want = fn(tx, p);
-            const s = await clean(`${tx} ${how}@${p}`, !shows(want.text));
+            const want = fn(tx, p, p, { ok: (x) => !x.trim() || !!appBase(x, { ...env, deg: true })?.ok });
+            const s = await clean(`${tx} ${how}@${p}`);
             assert.equal(s.v, want.text, `${where} ${tx} ${how}@${p}: isto kot ${fn.name}`);
-            if (shows(want.text)) assert.ok(!s.raw, `${where} ${tx} ${how}@${p}: surovo besedilo »${s.v}«`);
+            assert.ok(!s.raw, `${where} ${tx} ${how}@${p}: neizrisan zapis »${s.v}«`);
           }
         }
         // ◀ ▶ (zaslonski) in puščici (strojni) gresta po istih mestih kot stepCaret
@@ -375,6 +372,17 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
       for (let k = 0; k < 30; k++) {
         await key("#del");
         await clean(`⌫ ${k}`);
+      }
+      // AUDIT-039: Shift+puščica čez del predloge in ⌫ ne pusti ostankov
+      await set("∫(x;0;1)", 0);
+      for (let k = 0; k < 3; k++) await page.keyboard.press("Shift+ArrowRight");
+      await page.keyboard.press("Backspace");
+      assert.equal((await state()).v, "", `${where}: izbira dela predloge in ⌫`);
+      // AUDIT-040: opis za bralnik zaslona (slovenščina), nikoli surov vnos
+      for (const [tx, want] of [["∫(x;0;1)", /^integral od 0 do 1 x d x kazalec$/], ["1/2", /^1 skozi 2 kazalec$/], ["√(2)", /^koren iz 2/]]) {
+        await set(tx, tx.length);
+        const said = await page.evaluate(() => document.getElementById(document.querySelector(".sc-input").getAttribute("aria-describedby"))?.textContent || "");
+        assert.match(said, want, `${where}: bralnik ${tx} → ${said}`);
       }
       // decimalna vejica (slovenščina): tipka , in rezultat z vejico
       await set("", 0);
