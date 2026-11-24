@@ -246,14 +246,15 @@ export function canInsert(toks, i) {
   if (P && (P.kind === "prefix" || P.optClose)) return false;
   if (N && (N.argOpen || N.argTok || N.kind === "limits")) return false;
   // pred ^ in _ le za navadnim znakom (potenca se nato drži kazalca, osnova ostane ista); nikoli za ∫, lim
-  if (N && (N.s === "^" || N.s === "_") && (!P || /^(open|bigop|limits|sep)$/.test(P.kind))) return false;
+  // ne med mejama ∑_{…}^{…} (ali x_{1}^{2}): zgornja meja bi se prijela kazalca (AUDIT-003)
+  if (N && (N.s === "^" || N.s === "_") && (!P || /^(open|close|bigop|limits|sep)$/.test(P.kind))) return false;
   return true;
 }
 
 // ---------- ujemanje besedila in TeX ----------
 
 const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
-const TKEY = { "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
+const TKEY = { "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
 
 function textAtoms(s, hole) {
   const out = [];
@@ -270,6 +271,111 @@ function textAtoms(s, hole) {
     for (const k of keys) out.push({ k, s: i, e: i + 1 });
   }
   return out;
+}
+
+/**
+ * Atomi besedila v vrstnem redu zapisa (AUDIT-003). Kjer zapis argumente prestavi, jih prestavimo tudi tu, da
+ * ujemanje (align) poveže vsako režo s pravim delom zapisa:
+ * ∫(f; a; b) → \int_{a}^{b} f\,dx, limita(f; x; a) → \lim_{x\to a} f, integriraj(f; x) → \int f\,dx.
+ * Oklepaji in podpičja teh predlog v zapisu niso vidni, zato nimajo atomov; zaklepaj dobi »d x«, da je kazalec za
+ * predlogo za dx (ne pred njim). Atomi obdržijo svoje položaje v besedilu (s, e), spremeni se le vrstni red.
+ */
+function visualOrder(s, A) {
+  const alias = new Map();
+  const at = new Map();
+  for (const a of A) at.has(a.s) ? at.get(a.s).push(a) : at.set(a.s, [a]);
+  const closeOf = (o) => {
+    let d = 0;
+    for (let j = o; j < s.length; j++) {
+      if (OPENERS.includes(s[j])) d++;
+      else if (CLOSERS.includes(s[j]) && --d === 0) return j;
+    }
+    return -1;
+  };
+  // reže med oklepajem o in zaklepajem c: [[od, do), …]
+  const slots = (o, c) => {
+    const cut = [o];
+    let d = 0;
+    for (let j = o + 1; j < c; j++) {
+      if (OPENERS.includes(s[j])) d++;
+      else if (CLOSERS.includes(s[j])) d--;
+      else if (s[j] === ";" && d === 0) cut.push(j);
+    }
+    cut.push(c);
+    const g = cut.slice(0, -1).map((b, k) => [b + 1, cut[k + 1]]);
+    // presledki na robu reže: kazalec je na začetku oziroma koncu njene vsebine (»limita(□; x; )«)
+    for (const [b, e] of g) {
+      let x = b;
+      while (x < e && /\s/.test(s[x])) x++;
+      for (let q = b; q < x && x < e; q++) alias.set(q, x);
+      let y = e;
+      while (y > x && /\s/.test(s[y - 1])) y--;
+      for (let q = y + 1; q <= e && y > x; q++) alias.set(q, y);
+    }
+    return g;
+  };
+  const cm = /^\s*([A-Za-zčšž]+)\s*\(/.exec(s);
+  let cmd = null;
+  try {
+    cmd = cm && parseCommand(s);
+  } catch {}
+  const out = [];
+  let moved = false;
+  const walk = (lo, hi) => {
+    for (let i = lo; i < hi; ) {
+      if (s[i] === "∫" && s[i + 1] === "(") {
+        const c = closeOf(i + 1);
+        const g = c > 0 && c < hi ? slots(i + 1, c) : null;
+        if (g?.length === 3) {
+          out.push(...(at.get(i) || []));
+          alias.set(i + 1, i + 2); // med ∫ in oklepajem = začetek integranda
+          walk(...g[1]);
+          walk(...g[2]);
+          walk(...g[0]);
+          out.push({ k: "d", s: c, e: c + 1 }, { k: "x", s: c, e: c + 1 });
+          moved = true;
+          i = c + 1;
+          continue;
+        }
+      }
+      if (i === cm?.index + cm?.[0].search(/\S/) && cmd && (cmd.op === "limit" || cmd.op === "integrate")) {
+        const o = cm.index + cm[0].length - 1;
+        const c = closeOf(o);
+        const g = c > 0 && c < hi ? slots(o, c) : null;
+        const ne = i + cm[1].length;
+        // v imenu ukaza ali tik pred oklepajem = začetek prve reže (ime se ne razbije)
+        const inName = () => { for (let q = i + 1; q <= o; q++) alias.set(q, o + 1); };
+        if (g && cmd.op === "limit" && g.length === 3) {
+          inName();
+          out.push(...[..."lim"].map((k) => ({ k, s: i, e: ne })));
+          walk(...g[1]);
+          walk(...g[2]);
+          walk(...g[0]);
+          // za zaklepajem je kazalec za telesom limite (zadnja stvar v zapisu)
+          alias.set(c + 1, g[0][1]);
+          moved = true;
+          i = c + 1;
+          continue;
+        }
+        if (g && cmd.op === "integrate" && g.length <= 2) {
+          inName();
+          out.push(...[..."int"].map((k) => ({ k, s: i, e: ne })));
+          walk(...g[0]);
+          if (g[1] && s.slice(...g[1]).trim()) {
+            out.push({ k: "d", s: g[1][0] - 1, e: g[1][0] });
+            walk(...g[1]);
+          } else out.push({ k: "d", s: c, e: c + 1 }, { k: "x", s: c, e: c + 1 });
+          moved = true;
+          i = c + 1;
+          continue;
+        }
+      }
+      out.push(...(at.get(i) || []));
+      i++;
+    }
+  };
+  walk(0, s.length);
+  return { A: moved ? out : A, alias };
 }
 
 function texAtoms(toks) {
@@ -344,7 +450,7 @@ export function entryBase(text, env = {}, render = (s) => liveTex(s, env)) {
   } catch {}
   if (!tex) return { ok: false, raw };
   let toks = lex(tex, hole);
-  const A = textAtoms(done.text, hole);
+  const { A, alias } = visualOrder(done.text, textAtoms(done.text, hole));
   let B = texAtoms(toks);
   let to = align(A, B);
   // oklepaj, ki ga je učenec odprl, previewTex pa ga je kot nepotrebnega odstranil, mora ostati viden:
@@ -358,7 +464,8 @@ export function entryBase(text, env = {}, render = (s) => liveTex(s, env)) {
   }
   // položaj kazalca → mesto v žetonih (najbližji ujeti atom levo ali desno, kjer je atom lahko samostojen)
   const place = (p) => {
-    const q = done.at(p);
+    const q0 = done.at(p);
+    const q = alias.get(q0) ?? q0;
     const c = [];
     A.forEach((a, i) => {
       if (to[i] < 0) return;
@@ -369,11 +476,12 @@ export function entryBase(text, env = {}, render = (s) => liveTex(s, env)) {
     // najbližji atom; pri enaki razdalji levi, med levimi zadnji (x³| je za eksponentom, ne v njem)
     c.sort((x, y) => x[0] - y[0] || x[1] - y[1] || x[2] - y[2]);
     let rank = 0;
-    for (const [, , , at] of c) {
-      if (canInsert(toks, at)) return { at, rank };
+    for (const [dist, , , at] of c) {
+      // preslikan položaj (v imenu ukaza, za zaklepajem limite) ni nikoli glavni položaj mesta
+      if (canInsert(toks, at)) return { at, rank, dist: dist + (q !== q0 ? 1e3 : 0) };
       rank++;
     }
-    return { at: q === 0 ? 0 : toks.length, rank: 99 };
+    return { at: q === 0 ? 0 : toks.length, rank: 99, dist: 99 };
   };
   return { ok: true, raw, tex, toks, place, hole };
 }
@@ -405,18 +513,21 @@ export function caretStops(base) {
   if (!base?.ok) return [];
   const best = new Map();
   for (let p = 0; p <= base.raw.length; p++) {
-    const { at, rank } = base.place(p);
+    const { at, rank, dist = 0 } = base.place(p);
     const b = best.get(at);
-    if (!b || rank < b.rank) best.set(at, { p, at, rank });
+    // mesto dobi položaj, ki se z njim ujema najbolje (najmanjši rang, nato najmanjša razdalja do atoma):
+    // dotik na spodnjo mejo ∫ da položaj v spodnji meji, ne v integrandu (AUDIT-003)
+    if (!b || rank < b.rank || (rank === b.rank && dist < b.dist)) best.set(at, { p, at, rank, dist });
   }
-  return [...best.values()].sort((x, y) => x.p - y.p);
+  // mesto, ki ga doseže le preslikan položaj (za praznim telesom limite), ni merilna točka: tam bi vnos šel za ukaz
+  return [...best.values()].filter((s) => s.dist < 1e3).sort((x, y) => x.p - y.p);
 }
 
 /** TeX z merilno točko (htmlData evk-p) na vsakem mestu kazalca: dotik na lep zapis → položaj v besedilu. */
 export function stopsTex(base) {
   // dotik nikoli ne postavi kazalca sredi imena ali odpirala (»d|/dx(«, »sin|(«): tam bi vnos ime pokvaril (AUDIT-004)
   const stops = caretStops(base).filter((s) => !(openerAround(base.raw, s.p)?.[0] < s.p));
-  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.8em}}}`])));
+  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\smash{\\rule{0em}{0.8em}}}}`])));
 }
 
 /** Zapis vnosa s kazalcem: { ok, tex } ali null za prazen vnos. */
