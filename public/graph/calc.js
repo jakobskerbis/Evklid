@@ -982,6 +982,16 @@ export function createCalculator(root, opts) {
     if (state.items.some((x) => x.slider?.play)) animate();
   }
 
+  // opomba k grafu iz znanstvenega kalkulatorja: sporočilo kalkulatorja (divergenten integral) ali razlaga okna
+  function noteText(p, message) {
+    if (p.message && message) return message;
+    if (p.message && !p.note) return ""; // sporočilo napake brez besedila (npr. iz starejše vrstice): le graf
+    if (!p.note) return "";
+    const v = {};
+    for (const [k, x] of Object.entries(p.note.vars || {})) v[k] = typeof x === "number" ? (x === Infinity ? "∞" : x === -Infinity ? "−∞" : fmt(x)) : x;
+    return t(p.note.key, v);
+  }
+
   // shranjeni grafi na strežniku (po učencu)
   async function openGraphs(anchor) {
     const sid = opts.studentId?.();
@@ -1320,6 +1330,61 @@ export function createCalculator(root, opts) {
         view.view = state.view;
         view.draw();
       }
+      return true;
+    },
+    /**
+     * »Pokaži na grafu« iz znanstvenega kalkulatorja (public/graph/v-graf.js): doda vrstice k trenutnemu grafu
+     * (ne pobriše ga; v razveljavi), vključi orodja in okno pokaže zanimiv del. req: { text, env, message?, simple? }.
+     * Vrne true, če je graf narisan.
+     */
+    async showPlan(req) {
+      const { graphPlan } = await import("./v-graf.js");
+      view.resize();
+      const texts = state.items.filter((x) => x.type === "expr").map((x) => String(x.text || ""));
+      const p = graphPlan(req.text, req.env, { texts, deg: !!state.settings.deg, W: view.W, H: view.H, simple: !!req.simple });
+      if (!p) {
+        opts.toast?.(t("gc.fromSci.none"));
+        return false;
+      }
+      const next = clone(state);
+      next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
+      const used = next.items.map((x) => x.color);
+      let c = 0;
+      const color = () => {
+        while (used.includes(c % PALETTE.length) && c < PALETTE.length) c++;
+        used.push(c % PALETTE.length);
+        return c++ % PALETTE.length;
+      };
+      for (const it of p.items) {
+        const row = { id: newId(), color: color(), ...it };
+        if (row.label === undefined) delete row.label;
+        next.items.push(row);
+      }
+      // spremenjena nastavitev grafa: kratka opomba (učenec ve, zakaj se je graf spremenil; j, 24. 11. 2026)
+      const changed = [];
+      if (p.deg !== undefined && p.deg !== !!state.settings.deg) {
+        next.settings = { ...next.settings, deg: p.deg };
+        changed.push(t(p.deg ? "gc.fromSci.setDeg" : "gc.fromSci.setRad"));
+      }
+      if (p.view) {
+        next.view = p.view;
+        const wide = Math.abs(Math.log(((p.view.ymax - p.view.ymin) / view.H) / ((p.view.xmax - p.view.xmin) / view.W))) > Math.log(1.6);
+        if ((!p.square || wide) && state.settings.square !== false) {
+          next.settings = { ...next.settings, square: false };
+          changed.push(t("gc.fromSci.noSquare"));
+        }
+      }
+      const note = [noteText(p, req.message), ...changed].filter(Boolean).join(" ");
+      if (note) next.items.splice(next.items.length - p.items.length, 0, { id: newId(), type: "note", text: note });
+      loadState(next);
+      if (p.view) {
+        state.view = view.squared(p.view);
+        view.view = state.view;
+        view.draw();
+      }
+      list.querySelectorAll(".gc-note-in").forEach(autoGrow); // opomba v celoti (sicer ena vrstica)
+      const last = state.items[state.items.length - 1];
+      if (last) list.querySelector(`[data-id="${last.id}"]`)?.scrollIntoView({ block: "nearest" });
       return true;
     },
     resize() {

@@ -231,6 +231,20 @@ function domainViolation(intNode, ctx, scope, x) {
   return found;
 }
 
+// Ali drevo vsebuje nCr/nPr z neceloštevilskim n in k > 1000 (math.js genBinom: pot z ln Γ, ne točen produkt)
+function gammaBinom(node, ctx, scope) {
+  let yes = false;
+  walk(node, (n) => {
+    if (yes || n.k !== "call" || (n.f !== "nCr" && n.f !== "nPr") || n.args.length !== 2) return;
+    try {
+      const a = compile(n.args[0], ctx)(scope);
+      const k = compile(n.args[1], ctx)(scope);
+      if (typeof a === "number" && typeof k === "number" && !Number.isInteger(a) && k > 1000) yes = true;
+    } catch {}
+  });
+  return yes;
+}
+
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
 export function unknownsOf(node, vars = {}) {
   return [...freeVars(node)].filter((v) => !HIDDEN_VARS.has(v) && !(v in vars));
@@ -322,6 +336,12 @@ export function evaluate(text, env = {}) {
         }
       }
     }
+    // nCr/nPr z neceloštevilskim n in k > 1000: računano z ln Γ (~12 mest, zadnje včasih napačno), zato »≈« in 11 mest
+    if (!est && Number.isFinite(value) && value !== 0 && gammaBinom(rw(expr), line.ctx, scope)) {
+      est = true;
+      digits = 11;
+      value = Number(value.toPrecision(11));
+    }
     const tex = lineTex(ast, comma);
     const out = name ? { value, tex, assign: name } : { value, tex };
     // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
@@ -388,6 +408,17 @@ const fracTex = (p, q, inner = "") => {
  * Točna oblika števila v TeX (npr. \frac{1}{3}, \frac{\sqrt{3}}{2}, \frac{3\pi}{4}) ali null,
  * kadar je število celo ali točne oblike ne najdemo.
  */
+/** Kot exactTex, a še z vrednostjo oblike (p/q, m√n/q, pπ/q kot število), da jo lahko preverimo v enačbi. */
+export function exactForm(v) {
+  const tex = exactTex(v);
+  if (!tex) return null;
+  const f = toFraction(v, 1000);
+  if (f) return { tex, value: f.p / f.q };
+  const sq = toFraction(v * v, 1000);
+  if (sq && sq.p > 0 && sq.p * sq.q <= 1e6) return { tex, value: Math.sign(v) * Math.sqrt(sq.p / sq.q) };
+  const pi = toFraction(v / Math.PI, 24);
+  return pi ? { tex, value: (pi.p * Math.PI) / pi.q } : null;
+}
 export function exactTex(v) {
   if (!Number.isFinite(v) || Math.abs(v - Math.round(v)) < 1e-9 * Math.max(1, Math.abs(v)) || Math.abs(v) > 1e9 || Math.abs(v) < 1e-9) return null;
   const f = toFraction(v, 1000);
