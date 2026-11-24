@@ -10,7 +10,7 @@
 // Po odgovoru: če inštruktor sodbi kode ne sledi (potrdi napačen korak ali zavrne pravilnega), odgovori še enkrat s
 // skrito ugotovitvijo (brez modela za pregled). Ob dvomu koda ne sodi: raje brez sodbe kot napačna sodba.
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
-import { parse, compile, joinThousands, digitGap } from "../public/graph/math.js";
+import { parse, compile, calcText, joinThousands, digitGap } from "../public/graph/math.js";
 import { NOTE_TAG, claimNote, hasExercise, solverValues } from "./live-check.js";
 
 // Vrstica inštruktorja, ki navaja učenčevo (morda napačno) enačbo ali kandidata: ni enačba, ki se rešuje.
@@ -85,13 +85,15 @@ function runs(text, chars) {
 const THOUSANDS_DOT = /(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/;
 // Ena stran računa → število ali null. Decimalna vejica (»2,5«); druga vejica ali »1.000« (tisočice ali decimalke?)
 // pomeni nejasen zapis.
-function value(part) {
-  let s = joinThousands(part.trim());
-  if (!s || digitGap(s) || THOUSANDS_DOT.test(s)) return null;
-  s = s.replace(/(\d),(?=\d)/g, "$1.");
-  if (s.includes(",")) return null;
+// Števila po istem pravilu kot kalkulatorja (calcText: »1 000«, »1.234,5«, »2e3«; »12 34« in »1,2,3« sta napaka).
+export function value(part) {
+  const s = String(part).trim();
+  // »1 1/2«, »1\frac{1}{2}« (po TeX »1((1)/(2))«, mešano število ali 1 · ½?) in »12 34«: nejasno, preden prep iz »1 1/2« naredi »1 (1/2)«
+  if (!s || digitGap(joinThousands(s)) || /\d\s*(?:\\[dt]?frac|\(\([^()]*\)\/\([^()]*\)\))/.test(s) || THOUSANDS_DOT.test(joinThousands(s))) return null;
   try {
-    const v = compile(parse(prep(s)))({});
+    const t = calcText(prep(s));
+    if (t.includes(",")) return null; // »1, 2«: dve števili, ne eno
+    const v = compile(parse(t))({});
     return Number.isFinite(v) ? v : null;
   } catch {
     return null;

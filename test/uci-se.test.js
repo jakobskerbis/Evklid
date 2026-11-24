@@ -163,7 +163,7 @@ test("3D world: the /3d page in a frame closes itself and asks the tutor through
   const stran = read("public/3d/stran.js");
   assert.match(stran, /else if \(vgrajeno\) starsu\(\{ tip: "zapri3d" \}\)/);
   // »Vprašaj inštruktorja« iz atlasa in iz okna dela v modelu gre skozi isto pot (vgrajeno.js) z naslovom za vrnitev.
-  assert.match(read("public/3d/vgrajeno.js"), /if \(vgrajeno\) \{\s*starsu\(\{ tip: "vprasaj", besedilo, vrni, oznaka \}\)/);
+  assert.match(read("public/3d/vgrajeno.js"), /if \(vgrajeno\) \{\s*starsu\(\{ tip: "vprasaj", besedilo, vrni, oznaka, kontekst \}\)/);
   assert.match(read("public/3d/atlas.js"), /vprasajInstruktorja\(t\("a3\.askText"[^;]*vrni: `atlas\?izberi=\$\{encodeURIComponent\(r\.id\)\}`/);
   assert.match(stran, /vprasajInstruktorja\(t\("a3\.askPartText"[\s\S]*?vrni: `\$\{id\}\?del=\$\{encodeURIComponent\(d\.id\)\}`/);
   assert.match(stran, /odpriModel\(mount, mod, \{[^}]*vprasaj \}\)/);
@@ -277,27 +277,28 @@ test("Back: a lesson opened from an experiment's topic returns to the experiment
 test("Ask the tutor from an experiment or a 3D model: the chat opens with the question typed in and leads back to the same place", () => {
   const app = read("public/app.js");
   // En pomočnik za vse: vrnitev (← , tipka Nazaj, gumb »Nazaj na: …«) prek state.chatReturn, vprašanje samo vpisano.
-  const fn = app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 400);
+  const fn = app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 700);
   assert.match(fn, /state\.chatReturn = /);
-  assert.match(fn, /showView\("chat"\);\s*fillInput\(text\);/);
+  assert.match(fn, /showView\("chat"\);\s*ucniKontekstConv = [^;]*;\s*state\.ucniKontekst = [^;]*;\s*if \(!\$\("#input"\)\.value\.includes\(text\)\) fillInput\(text\);/);
   assert.match(app, /Object\.defineProperty\(state, "chatReturn"/);
   assert.match(app, /\$\("#chat-return"\)\.addEventListener\("click", \(\) => chatReturnBack\(\{ okno: true \}\)\)/);
   // Inštruktor v premičnem oknu: gumb »Nazaj na: …« vrne tudi takrat (glavni pogled ni klepet).
   assert.match(app, /currentView !== "chat" && !\(okno && isFloating\("chat"\)\)/);
   assert.match(html, /<button type="button" id="chat-return" class="secondary small chat-return" hidden><\/button>/);
-  assert.match(app, /askTutorFrom\(text, \{ view: "lab", oznaka, open: \(\) => izLekcije && labFromLesson\(\) \}\)/);
+  assert.match(app, /askTutorFrom\(text, \{ view: "lab", oznaka, kontekst, open: \(\) => izLekcije && labFromLesson\(\) \}\)/);
   assert.match(app, /askTutor: \(text, vrni = null\) => \{\s*askTutorFrom\(text, vrni \? \{ \.\.\.vrni, view: currentView === "chat" \? null : "uci" \} : null\);/);
   // Vrnitev velja le v pogovoru vprašanja; drug profil je ne podeduje (pregled 2, #963).
   assert.match(app, /conv: state\.conversationId \?\? "nov"/);
   assert.match(app, /if \(state\.chatReturn\?\.conv === "nov"\) state\.chatReturn\.conv = conv\.id;/);
-  assert.match(app, /state\.paperCtx = null; \/\/ skrit kontekst pole ne gre v pogovor drugega profila\s*state\.chatReturn = null;/);
+  assert.match(app, /state\.paperCtx = null; \/\/ skrit kontekst pole ne gre v pogovor drugega profila\s*state\.ucniKontekst = null;\s*state\.chatReturn = null;/);
   // Poskus: gumb le pri odklenjenem poskusu, oznaka je ime poskusa.
   const lab = read("public/laboratorij.js");
   assert.match(lab, /x\.locked \|\| !D\.askTutor \? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>/);
-  assert.match(lab, /if \(x && !x\.locked\) D\.askTutor\?\.\(t\("lab\.askText", \{ title: x\.title \}\), x\.title\)/);
+  assert.match(lab, /if \(!x \|\| x\.locked\) return;/);
+  assert.match(lab, /D\.askTutor\?\.\(t\("lab\.askText", \{ title: x\.title \}\), x\.title, kontekst\)/);
   // Sporočilo iz okvirja /3d: naslov za vrnitev gre v askTutor.
   const uci = read("public/uci-se.js");
-  assert.match(uci, /const vrni = vrnitev3d\(msg\.vrni, msg\.oznaka\);\s*close3d\(\);\s*D\.askTutor\(msg\.besedilo\.slice\(0, 2000\), vrni\);/);
+  assert.match(uci, /const vrni = vrnitev3d\(msg\.vrni, msg\.oznaka\);[\s\S]{0,400}close3d\(\);\s*D\.askTutor\(msg\.besedilo\.slice\(0, 2000\), vrni && kontekst \? \{ \.\.\.vrni, kontekst \} : vrni\);/);
   for (const k of ["chat.returnTo", "lab.askText", "a3.askPartText"]) assert.ok(SL[k], k);
   assert.match(SL["chat.returnTo"], /\{ime\}/);
   assert.match(SL["lab.askText"], /\{title\}/);
