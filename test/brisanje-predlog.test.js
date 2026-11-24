@@ -239,14 +239,24 @@ test("zaslonska ⌫, strojni Backspace/Delete in puščice v brskalniku: brez os
       assert.equal((await state()).v, "sin(x)+", `${engine} ${how}`);
       await page.keyboard.press("Control+z");
       assert.equal((await state()).v, "sin(x)+2", `${engine}: Ctrl+Z po ${how}`);
+      assert.equal(await page.evaluate(() => document.querySelector(".sc-input").selectionStart), how === "Delete" ? 7 : 8, `${engine}: kazalec po Ctrl+Z (${how})`);
     }
-    // razveljavitev brisanja cele predloge
-    await start("");
-    await page.keyboard.type("2+sin(");
-    await page.keyboard.press("Backspace");
-    assert.equal((await state()).v, "2+", `${engine}: sin( gre celo`);
-    await page.keyboard.press("Control+z");
-    assert.equal((await state()).v, "2+sin(", `${engine}: Ctrl+Z vrne sin(`);
+    // razveljavitev vrne tudi kazalec na mesto pred brisanjem; prazno polje (Firefox prej ni vrnil); ponovitev
+    const caretAt = () => page.evaluate(() => document.querySelector(".sc-input").selectionStart);
+    for (const [typed, after, caret] of [["2+sin(", "2+", 6], ["sin(", "", 4], ["integriraj(", "", 11], ["sin(x)+2", "sin(x)+", 8]]) {
+      await start("");
+      await page.keyboard.type(typed);
+      await page.keyboard.press("Backspace");
+      assert.equal((await state()).v, after, `${engine}: ${typed} ⌫`);
+      await page.keyboard.press("Control+z");
+      assert.equal((await state()).v, typed, `${engine}: Ctrl+Z vrne ${typed}`);
+      assert.equal(await caretAt(), caret, `${engine}: kazalec po Ctrl+Z (${typed})`);
+      await page.keyboard.press("Control+Shift+z");
+      assert.equal((await state()).v, after, `${engine}: Ctrl+Shift+Z ponovi brisanje (${typed})`);
+      await page.keyboard.press("Control+z");
+      await page.keyboard.press("Control+y");
+      assert.equal((await state()).v, after, `${engine}: Ctrl+Y ponovi brisanje (${typed})`);
+    }
     assert.deepEqual(errors, [], engine);
     await page.close();
   }

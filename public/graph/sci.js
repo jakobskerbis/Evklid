@@ -214,7 +214,35 @@ export function createScientific(root, opts) {
   const OPS = /^[+×÷^²³⁻!%−]/;
   // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
   // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
+  // Lastna razveljavitev (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y, »razveljavi« na telefonu): vnos se spreminja tudi s kodo
+  // (⌫, tipke na zaslonu), kar sistemsko razveljavitev pokvari ali izbriše (pregled #945: prazno polje v Firefoxu,
+  // kazalec na napačnem mestu). Stanje je besedilo in kazalec PRED spremembo; zapiše ga update() ob vsaki spremembi.
+  const undo = { back: [], fwd: [], cur: { v: "", p: 0 } };
+  function record() {
+    const v = input.value;
+    const p = input.selectionStart ?? v.length;
+    if (v === undo.cur.v) {
+      undo.cur.p = p;
+      return;
+    }
+    undo.back.push(undo.cur);
+    if (undo.back.length > 200) undo.back.shift();
+    undo.fwd = [];
+    undo.cur = { v, p };
+  }
+  function history(dir) {
+    const from = dir < 0 ? undo.back : undo.fwd;
+    const to = dir < 0 ? undo.fwd : undo.back;
+    if (!from.length) return;
+    to.push({ v: input.value, p: input.selectionStart ?? input.value.length });
+    undo.cur = from.pop();
+    input.value = undo.cur.v;
+    input.setSelectionRange(undo.cur.p, undo.cur.p);
+    recall = -1;
+    update();
+  }
   function insert(text, o = {}) {
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? input.value.length;
     if (o.replace) input.value = "";
     if (o.angle && ANGLES.includes(o.angle) && st.angle !== o.angle) {
       st.angle = o.angle;
@@ -244,6 +272,7 @@ export function createScientific(root, opts) {
   function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
+    if (input.value === undo.cur.v) undo.cur.p = s; // razveljavitev vrne kazalec sem (selectionchange je lahko še na poti)
     // varovalo: brisanje, po katerem se zapis ne bi izrisal, se ne zgodi (AUDIT-034)
     const ok = (x) => {
       try {
@@ -261,27 +290,7 @@ export function createScientific(root, opts) {
       update();
     } else showEntry();
   }
-  // Zamenja le spremenjeni del besedila z execCommand: ostane sistemska razveljavitev (Ctrl+Z, Ctrl+Y), ki jo
-  // input.value = … izbriše (pregled #945). Kjer ne gre (polje brez fokusa na telefonu), navadna zamenjava.
-  let replacing = false;
-  function replaceText(next) {
-    const old = input.value;
-    let a = 0;
-    while (a < old.length && a < next.length && old[a] === next[a]) a++;
-    let b = 0;
-    while (b < old.length - a && b < next.length - a && old[old.length - 1 - b] === next[next.length - 1 - b]) b++;
-    const mid = next.slice(a, next.length - b);
-    let done = false;
-    if (document.activeElement === input && typeof document.execCommand === "function") {
-      replacing = true;
-      try {
-        input.setSelectionRange(a, old.length - b);
-        done = mid ? document.execCommand("insertText", false, mid) : document.execCommand("delete", false);
-      } catch {}
-      replacing = false;
-    }
-    if (!done || input.value !== next) input.value = next;
-  }
+  const replaceText = (next) => (input.value = next);
   const del = () => edit(backspace);
   const delForward = () => edit(deleteForward);
   // ◀ ▶: na naslednje mesto kazalca v zapisu (iz integranda v mejo, čez ime funkcije), ne za en znak
@@ -609,8 +618,13 @@ export function createScientific(root, opts) {
     });
   });
   input.addEventListener("keyup", () => showEntry());
-  document.addEventListener("selectionchange", () => document.activeElement === input && showEntry());
+  document.addEventListener("selectionchange", () => {
+    if (document.activeElement !== input) return;
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? undo.cur.p; // kazalec pred naslednjo spremembo
+    showEntry();
+  });
   function update() {
+    record();
     const text = input.value;
     const prev = $(".sc-preview");
     const live = $(".sc-live");
@@ -931,7 +945,12 @@ export function createScientific(root, opts) {
   });
   // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
   input.addEventListener("beforeinput", (e) => {
-    if (e.isComposing || replacing) return;
+    if (e.isComposing) return;
+    if (e.inputType === "historyUndo" || e.inputType === "historyRedo") {
+      e.preventDefault();
+      history(e.inputType === "historyUndo" ? -1 : 1);
+      return;
+    }
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
       e.preventDefault();
       del();
@@ -941,6 +960,11 @@ export function createScientific(root, opts) {
     }
   });
   input.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && /^[zy]$/i.test(e.key)) {
+      e.preventDefault();
+      history(e.key.toLowerCase() === "y" || e.shiftKey ? 1 : -1);
+      return;
+    }
     if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && input.value) {
       e.preventDefault();
       move(e.key === "ArrowLeft" ? -1 : 1);
