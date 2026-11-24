@@ -17,9 +17,10 @@ export function starsu(sporocilo) {
 // z vpisanim vprašanjem); vrni je naslov tega pogleda (»atlas?izberi=…«, »<id>?del=…«), da vrnitev iz klepeta odpre
 // isti model in del, oznaka pa ime na gumbu »Nazaj na: …«. V aplikaciji (WebView) sporočilo aplikaciji, na spletu
 // klepet z vnaprej vpisanim vprašanjem (Nazaj v brskalniku vrne sem).
-export function vprasajInstruktorja(besedilo, { vrni = "", oznaka = "" } = {}) {
+// kontekst: { v, sourceType: "atlas" | "model3d", sourceId, selectedObject } za skrit kontekst (server/ucni-kontekst.js).
+export function vprasajInstruktorja(besedilo, { vrni = "", oznaka = "", kontekst = null } = {}) {
   if (vgrajeno) {
-    starsu({ tip: "vprasaj", besedilo, vrni, oznaka });
+    starsu({ tip: "vprasaj", besedilo, vrni, oznaka, kontekst });
     return;
   }
   if (window.ReactNativeWebView?.postMessage) {

@@ -1,6 +1,6 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
+import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
 import { niceNumber, parse, compile, arityExample } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
@@ -33,6 +33,7 @@ export function createCalculator(root, opts) {
     if (comma()) s = s.replace(".", ",");
     return s.replace(/^-/, "−");
   };
+  const stepText = sliderText; // model.js (AUDIT-014)
   const tex = (s, display = false) => izrisi(s, { blok: display });
 
   let state = load() || upgrade(emptyState());
@@ -338,8 +339,7 @@ export function createCalculator(root, opts) {
     }
     if (o.kind === "value" || o.kind === "define" || o.kind === "list") {
       if (o.kind === "list" && Array.isArray(o.value) && o.value.length > 30) return `<div class="gc-val">= ${esc(fmt(o.value))}</div>`;
-      const hint = o.hint?.code === "pointSep" ? `<div class="gc-hint">${icon("info")}<span>${esc(t("gc.hintPoint", { ex: o.hint.ex.replace(" ", "\u00a0") }))}</span></div>` : "";
-      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>${hint}`;
+      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>${hintHtml(o)}`;
     }
     if (o.kind === "slider") {
       const sl = { ...sliderRange(o.value), ...(it.slider || {}) };
@@ -377,7 +377,18 @@ export function createCalculator(root, opts) {
         parts.push(`<div class="gc-val">${icon("trending-up")}<span>${t("gc.tangent")}: ${tex(`y = ${num(k)}x${nTxt}`)}</span></div>`);
       }
     }
+    parts.push(hintHtml(o));
     return parts.join("");
+  }
+
+  // Namig pod vrstico (pomen ostane): »(2,3)« je morda točka, »2e3x« je 2·e·3·x
+  function hintHtml(o) {
+    const h = o.hint;
+    const nb = (x) => String(x).replace(/ /g, "\u00a0");
+    let msg = "";
+    if (h?.code === "pointSep") msg = t("gc.hintPoint", { ex: nb(h.ex) });
+    else if (h?.code === "eulerE") msg = t("gc.hintEuler", { src: nb(h.src), euler: nb(h.euler), fix: nb(h.fix) });
+    return msg ? `<div class="gc-hint">${icon("info")}<span>${esc(msg)}</span></div>` : "";
   }
 
   // 6,283 → 2π (meje parametrov so pogosto večkratniki π)
@@ -477,9 +488,7 @@ export function createCalculator(root, opts) {
     if (!it) return;
     const name = /^\s*([^=]+?)\s*=/.exec(it.text)?.[1] || "a";
     const step = it.slider?.step || sliderRange(value).step;
-    const digits = Math.max(0, Math.min(6, -Math.floor(Math.log10(step) + 1e-9)));
-    const v = Number(value.toFixed(digits));
-    it.text = `${name} = ${v}`;
+    it.text = `${name} = ${stepText(value, step)}`;
     if (record) commit(false);
     refresh();
   }
@@ -732,7 +741,7 @@ export function createCalculator(root, opts) {
         const sl = { ...sliderRange(v), ...(s.slider || {}) };
         const step = sl.step || 0.1;
         const val = Math.min(sl.max, Math.max(sl.min, Math.round(v / step) * step));
-        s.text = `${name} = ${Number(val.toFixed(6))}`;
+        s.text = `${name} = ${stepText(val, step)}`;
       };
       if (x?.slider) setS(x.slider, gx);
       if (y?.slider) setS(y.slider, gy);
@@ -782,7 +791,8 @@ export function createCalculator(root, opts) {
           it.slider.dir = 1;
         }
         const name = /^\s*([^=]+?)\s*=/.exec(it.text)?.[1] || "a";
-        it.text = `${name} = ${Number(v.toFixed(4))}`;
+        // predvajanje: 100-krat drobneje od koraka (gladko tudi pri razponu ±10⁻⁷), nikoli zaokroženo na 0 (AUDIT-014)
+        it.text = `${name} = ${stepText(v, (sl.step || span / 100) / 100)}`;
       }
       refresh();
       scheduleSave();
