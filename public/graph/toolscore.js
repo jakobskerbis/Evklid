@@ -353,7 +353,7 @@ function exactNewton(t, z) {
   return z;
 }
 // racionalni približek s q ≤ maxQ (verižni ulomek) ali null
-function ratOf(v, maxQ) {
+function ratOf(v, maxQ, tol = 1e-11) {
   if (!Number.isFinite(v)) return null;
   if (v === 0) return { p: 0n, q: 1n };
   const x = Math.abs(v);
@@ -365,7 +365,7 @@ function ratOf(v, maxQ) {
     [k0, k1] = [k1, a * k1 + k0];
     if (k1 > maxQ) return null;
     // relativno: 10⁻¹² ni 0 (x² − 10⁻¹² = 0 ima rešitvi ±10⁻⁶)
-    if (Math.abs(h1 / k1 - x) <= 1e-11 * x) return { p: BigInt(v < 0 ? -h1 : h1), q: BigInt(k1) };
+    if (Math.abs(h1 / k1 - x) <= tol * x) return { p: BigInt(v < 0 ? -h1 : h1), q: BigInt(k1) };
     const f = r - a;
     if (f < 1e-15) break;
     r = 1 / f;
@@ -533,7 +533,7 @@ export function polyRootsMult(coeffs, exact = null, radii = null) {
       for (let z of dkRoots(tf)) {
         z = newton(tf, z);
         if (Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z))) z = [exactNewton(t, z[0]), z[1]];
-        const q = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? ratOf(z[0], 10000000) : null;
+        const q = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? (ratOf(z[0], 10000000, 1e-15) || ratOf(z[0], 10000000)) : null; // po exactNewton je ničla na ~ulp
         if (q && rootB(t, q.p, q.q)) found.push({ z: [Number(q.p) / Number(q.q), 0], m: k, exact: true });
         else found.push({ z, m: k });
       }
@@ -588,7 +588,33 @@ export function polyRootsExact(qs) {
   const c = P.map((x) => Number(x / shift)).reverse();
   if (c.some((x) => !Number.isFinite(x)) || c[0] === 0) return null;
   const roots = polyRootsMult(c, P);
-  return roots ? { roots, poly: c } : null;
+  if (!roots) return null;
+  // iracionalna realna ničla oblike ±ᵏ√(p/q) (x³ = 2 → ∛2): potrdimo točno, da q·x^k − p deli polinom
+  for (const r of roots) if (r.im === 0 && !r.exact) r.form = radicalForm(P, r.re);
+  return { roots, poly: c };
+}
+function radicalForm(P, x) {
+  for (let k = 2; k <= 6; k++) {
+    const y = x ** k;
+    const f = ratOf(y, 100000);
+    if (!f) continue;
+    if (k % 2 === 0 && x < 0) continue; // −√a: pri sodem k sta ±; obravnavamo spodaj z |x|
+    const B = Array(k + 1).fill(0n);
+    B[0] = -f.p;
+    B[k] = f.q;
+    if (zeroB(pdivB(P, primB(B))[1])) return { k, p: f.p, q: f.q, neg: false };
+  }
+  if (x < 0) {
+    for (let k = 2; k <= 6; k += 2) {
+      const f = ratOf((-x) ** k, 100000);
+      if (!f) continue;
+      const B = Array(k + 1).fill(0n);
+      B[0] = -f.p;
+      B[k] = f.q;
+      if (zeroB(pdivB(P, primB(B))[1])) return { k, p: f.p, q: f.q, neg: true };
+    }
+  }
+  return null;
 }
 
 /** Ničle polinoma s koeficienti od najvišje potence. Vrne [[re, im], …], vsako tolikokrat, kolikor je kratna. */

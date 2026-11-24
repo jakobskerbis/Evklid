@@ -366,7 +366,7 @@ export function createScientific(root, opts) {
         break;
       case "solve":
         e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx"]);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "rex", "forms"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
         e.steps = true;

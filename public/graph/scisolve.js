@@ -391,9 +391,15 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null }) {
     }
     // točne rešitve brez zaokroževanja; približne le na ~ulp (1,0000000001 ni 1)
     const tight = (x) => (Math.abs(x - Math.round(x)) <= 1e-13 * Math.max(1, Math.abs(x)) ? Math.round(x) : Math.abs(x) < 1e-15 ? 0 : x);
-    const roots = pr.filter((r) => r.im === 0).map((r) => (r.exact ? r.re : tight(r.re)));
+    const real = pr.filter((r) => r.im === 0);
+    const roots = real.map((r) => (r.exact ? r.re : tight(r.re)));
     const complex = pr.filter((r) => r.im !== 0).map((r) => [tight(r.re), tight(r.im)]);
-    return { kind: "solve", v, roots, complex, poly, mult: pr.filter((r) => r.im === 0).map((r) => r.m) };
+    // rex: točno racionalna; forms: potrjena oblika ±ᵏ√(p/q) (za zapis z »=« namesto »≈«)
+    const rex = real.map((r) => !!r.exact);
+    const forms = real.map((r) => (r.form ? { k: r.form.k, p: String(r.form.p), q: String(r.form.q), neg: r.form.neg } : null));
+    const out = { kind: "solve", v, roots, complex, poly, mult: real.map((r) => r.m), rex };
+    if (forms.some(Boolean)) out.forms = forms;
+    return out;
   }
   const poly = polyCoeffs(F);
   if (poly) {
@@ -428,6 +434,30 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null }) {
   return { kind: "solve", v, roots, complex: [] };
 }
 
+// Ali je število v zapisu točno: celo, kratek decimalni zapis (≤ 6 decimalk) ali točna oblika (ulomek, koren, π)
+const shownExact = (x) => {
+  const c = clean(x);
+  return Number.isInteger(c) || Number(c.toFixed(6)) === c || !!exactTex(c);
+};
+// »= točna oblika ≈ decimalno«, »= decimalno« ali »≈ decimalno« (x³ = 2: x = ∛2 ≈ 1,259921; 2^x = 5: x ≈ 2,321928)
+function rootTex(x, rex, form, comma, mode, dec) {
+  if (form) {
+    const rad = form.q === "1" ? form.p.replace(/^-/, "") : `\\frac{${form.p.replace(/^-/, "")}}{${form.q}}`;
+    const neg = form.neg !== form.p.startsWith("-");
+    const root = form.k === 2 ? `\\sqrt{${rad}}` : `\\sqrt[${form.k}]{${rad}}`;
+    const ex = exactTex(clean(x));
+    // √ ima že lepšo obliko v exactTex (2√2 namesto √8)
+    const t = form.k === 2 && ex ? ex : `${neg ? "-" : ""}${root}`;
+    return `= ${t} \\approx ${decTex(x, comma, mode, dec)}`;
+  }
+  if (rex === true) {
+    const ex = exactTex(x);
+    if (ex) return `= ${ex} \\approx ${decTex(x, comma, mode, dec)}`;
+    return Number(x.toFixed(dec)) === x || Number.isInteger(x) ? `= ${decTex(x, comma, mode, dec)}` : `\\approx ${decTex(x, comma, mode, dec)}`;
+  }
+  return shownExact(x) ? `= ${numberTex(x, comma, mode, dec)}` : `\\approx ${decTex(x, comma, mode, dec)}`;
+}
+
 /** TeX rešitev enačbe. */
 export function solutionTex(r, comma = true, mode = "auto") {
   const v = r.v;
@@ -440,13 +470,16 @@ export function solutionTex(r, comma = true, mode = "auto") {
   const dec = decimalsFor(r.roots);
   if (r.exact)
     r.roots.forEach((x, i) => parts.push(`${name(i)} \\approx ${decTex(x, comma, mode, dec)}`));
-  else if (r.deg || r.grad) r.roots.forEach((x, i) => parts.push(`${name(i)} = ${decTex(x, comma, mode)}${ANGLE_SUP[r.grad ? "grad" : "deg"]}`));
-  else r.roots.forEach((x, i) => parts.push(`${name(i)} = ${r.approx ? decTex(x, comma, mode, dec) : numberTex(x, comma, mode, dec)}`)); // approx: izmerjena vrednost (molska masa), brez ulomka
+  else if (r.deg || r.grad) r.roots.forEach((x, i) => parts.push(`${name(i)} ${Number(clean(x).toFixed(6)) === clean(x) ? "=" : "\\approx"} ${decTex(x, comma, mode)}${ANGLE_SUP[r.grad ? "grad" : "deg"]}`));
+  else if (r.approx) r.roots.forEach((x, i) => parts.push(`${name(i)} = ${decTex(x, comma, mode, dec)}`)); // approx: izmerjena vrednost (molska masa), brez ulomka
+  else r.roots.forEach((x, i) => parts.push(`${name(i)} ${rootTex(x, r.rex?.[i], r.forms?.[i], comma, mode, dec)}`));
   if (!r.exact)
     (r.complex || []).forEach(([re, im], i) => {
       const a = re === 0 ? "" : plainTex(re, comma, mode);
       const b = plainTex(Math.abs(im), comma, mode);
-      parts.push(`${name(r.roots.length + i)} = ${a}${im < 0 ? "-" : a ? "+" : ""}${b === "1" ? "" : b}${/^[\d{}]+$/.test(b) ? "" : "\\,"}i`);
+      // iracionalna dela brez točne oblike: približek (≈)
+      const eq = shownExact(re) && shownExact(Math.abs(im)) ? "=" : "\\approx";
+      parts.push(`${name(r.roots.length + i)} ${eq} ${a}${im < 0 ? "-" : a ? "+" : ""}${b === "1" ? "" : b}${/^[\d{}]+$/.test(b) ? "" : "\\,"}i`);
     });
   return parts.join(",\\quad ");
 }
