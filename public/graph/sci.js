@@ -5,7 +5,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 
@@ -244,21 +244,25 @@ export function createScientific(root, opts) {
       live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
     }
   }
-  function del() {
+  // ⌫ (zaslonska in strojna tipka) in Delete: ime funkcije, ukaz in predloga gredo kot celota (sci-vnos.js, AUDIT-004)
+  function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
-    if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
-    else if (s > 0) {
-      // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
-      const n = m ? m[0].length : 1;
-      input.value = input.value.slice(0, s - n) + input.value.slice(s);
-      input.setSelectionRange(s - n, s - n);
-    }
-    update();
+    const r = fn(input.value, s, e);
+    const changed = r.text !== input.value;
+    input.value = r.text;
+    input.setSelectionRange(r.pos, r.pos);
+    if (changed) {
+      recall = -1;
+      update();
+    } else showEntry();
   }
+  const del = () => edit(backspace);
+  const delForward = () => edit(deleteForward);
+  // ◀ ▶: na naslednje mesto kazalca v zapisu (iz integranda v mejo, čez ime funkcije), ne za en znak
   function move(d) {
-    const p = Math.max(0, Math.min(input.value.length, (input.selectionStart ?? input.value.length) + d));
+    if (entry.text !== input.value) showEntry();
+    const p = stepCaret(entry.base, input.value, input.selectionStart ?? input.value.length, d);
     input.setSelectionRange(p, p);
     showEntry();
   }
@@ -868,7 +872,23 @@ export function createScientific(root, opts) {
     recall = -1;
     update();
   });
+  // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
+  input.addEventListener("beforeinput", (e) => {
+    if (e.isComposing) return;
+    if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
+      e.preventDefault();
+      del();
+    } else if (e.inputType === "deleteContentForward" || e.inputType === "deleteWordForward") {
+      e.preventDefault();
+      delForward();
+    }
+  });
   input.addEventListener("keydown", (e) => {
+    if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && input.value) {
+      e.preventDefault();
+      move(e.key === "ArrowLeft" ? -1 : 1);
+      return;
+    }
     if (e.key === "Enter") {
       e.preventDefault();
       compute();

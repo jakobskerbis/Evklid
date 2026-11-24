@@ -728,6 +728,8 @@ const CMDS = {
   inverse: "inverse",
   inv: "inverse",
 };
+/** Vsa imena ukazov CAS (vse jezikovne oblike): urejevalnik jih briše kot celoto (sci-vnos.js, AUDIT-004). */
+export const COMMAND_NAMES = Object.keys(CMDS);
 /** Imena ukazov v jeziku vmesnika (slovenski zapis za sl, sicer angleški, kot na kalkulatorjih CAS). */
 export function commandName(op, locale = "sl") {
   const sl = /^sl/i.test(locale || "");
