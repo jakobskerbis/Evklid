@@ -1007,6 +1007,7 @@
   "sc.fmtEng": "공학적 표기법 (10³ⁿ)",
   "sc.onePeriod": "한 주기 안의 해:",
   "sc.noReal": "실수해는 없고 복소수해만 있어.",
+  "sc.searchedNone": "이 구간에는 해가 없어 (구간 밖은 찾지 않았어):",
   "sc.sysNone": "연립방정식의 해가 없어.",
   "sc.sysMany": "연립방정식의 해가 무수히 많아.",
   "sc.funcSaved": "함수 {name} 저장 완료. 예를 들어 {fn}(2)를 계산해 봐.",

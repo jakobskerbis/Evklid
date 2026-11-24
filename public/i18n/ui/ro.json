@@ -1019,6 +1019,7 @@
   "sc.fmtEng": "Notație inginerească (10³ⁿ)",
   "sc.onePeriod": "Soluții într-o perioadă:",
   "sc.noReal": "Nu există soluții reale, doar complexe.",
+  "sc.searchedNone": "Nu există soluție pe interval (în afara lui nu am căutat):",
   "sc.sysNone": "Sistemul nu are soluție.",
   "sc.sysMany": "Sistemul are o infinitate de soluții.",
   "sc.funcSaved": "Funcția {name} a fost salvată. Calculează de ex. {fn}(2).",

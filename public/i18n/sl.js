@@ -1308,6 +1308,7 @@ export default {
   "sc.fmtEng": "Inženirski zapis (10³ⁿ)",
   "sc.onePeriod": "Rešitve na eni periodi:",
   "sc.noReal": "Realnih rešitev ni, so samo kompleksne.",
+  "sc.searchedNone": "Rešitve ni na intervalu (zunaj njega nisem iskal):",
   "sc.sysNone": "Sistem nima rešitve.",
   "sc.sysMany": "Sistem ima neskončno mnogo rešitev.",
   "sc.funcSaved": "Funkcija {name} je shranjena. Izračunaj npr. {fn}(2).",

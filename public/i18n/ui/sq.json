@@ -1013,6 +1013,7 @@
   "sc.fmtEng": "Shënim inxhinierik (10³ⁿ)",
   "sc.onePeriod": "Zgjidhjet brenda një periode:",
   "sc.noReal": "Nuk ka zgjidhje reale, vetëm komplekse.",
+  "sc.searchedNone": "Nuk ka zgjidhje në interval (jashtë tij nuk kam kërkuar):",
   "sc.sysNone": "Sistemi nuk ka zgjidhje.",
   "sc.sysMany": "Sistemi ka pafundësisht shumë zgjidhje.",
   "sc.funcSaved": "Funksioni {name} u ruajt. Llogarit p.sh. {fn}(2).",

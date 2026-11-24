@@ -1007,6 +1007,7 @@
   "sc.fmtEng": "Dạng kỹ thuật (10³ⁿ)",
   "sc.onePeriod": "Nghiệm trong một chu kỳ:",
   "sc.noReal": "Không có nghiệm thực, chỉ có nghiệm phức.",
+  "sc.searchedNone": "Không có nghiệm trên khoảng này (ngoài khoảng chưa tìm):",
   "sc.sysNone": "Hệ vô nghiệm.",
   "sc.sysMany": "Hệ có vô số nghiệm.",
   "sc.funcSaved": "Đã lưu hàm số {name}. Hãy tính thử, ví dụ {fn}(2).",

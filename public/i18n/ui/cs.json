@@ -1025,6 +1025,7 @@
   "sc.fmtEng": "Inženýrský zápis (10³ⁿ)",
   "sc.onePeriod": "Řešení v jedné periodě:",
   "sc.noReal": "Reálná řešení neexistují, jsou jen komplexní.",
+  "sc.searchedNone": "Na intervalu není řešení (mimo něj jsem nehledal):",
   "sc.sysNone": "Soustava nemá řešení.",
   "sc.sysMany": "Soustava má nekonečně mnoho řešení.",
   "sc.funcSaved": "Funkce {name} je uložena. Vypočítej např. {fn}(2).",

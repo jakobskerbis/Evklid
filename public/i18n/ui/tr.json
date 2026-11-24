@@ -1013,6 +1013,7 @@
   "sc.fmtEng": "Mühendislik gösterimi (10³ⁿ)",
   "sc.onePeriod": "Bir periyottaki çözümler:",
   "sc.noReal": "Gerçek çözüm yok, yalnızca karmaşık çözümler var.",
+  "sc.searchedNone": "Aralıkta çözüm yok (dışında aramadım):",
   "sc.sysNone": "Sistemin çözümü yok.",
   "sc.sysMany": "Sistemin sonsuz çözümü var.",
   "sc.funcSaved": "{name} fonksiyonu kaydedildi. Örneğin {fn}(2) değerini hesapla.",

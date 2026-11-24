@@ -1025,6 +1025,7 @@
   "sc.fmtEng": "Notacja inżynierska (10³ⁿ)",
   "sc.onePeriod": "Rozwiązania w jednym okresie:",
   "sc.noReal": "Brak rozwiązań rzeczywistych, są tylko zespolone.",
+  "sc.searchedNone": "Brak rozwiązania w przedziale (poza nim nie szukałem):",
   "sc.sysNone": "Układ nie ma rozwiązania.",
   "sc.sysMany": "Układ ma nieskończenie wiele rozwiązań.",
   "sc.funcSaved": "Funkcja {name} została zapisana. Oblicz np. {fn}(2).",
