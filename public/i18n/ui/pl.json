@@ -883,6 +883,7 @@
   "gc.errSyntax": "Wyrażenie jest niedokończone lub go nie rozumiem.",
   "gc.errArity": "Nieprawidłowa liczba wartości w nawiasie. Zapisz to tak: {ex}",
   "gc.hintPoint": "To jest liczba w nawiasie. Chodziło o punkt? Oddziel współrzędne średnikiem: {ex}",
+  "gc.hintEuler": "„{src}” oznacza {euler}: e to liczba Eulera. Aby zapisać w notacji naukowej, wpisz {fix}.",
   "gc.errOther": "Nie umiem tego narysować.",
   "gc.min": "Min",
   "gc.max": "Maks",
