@@ -1501,7 +1501,7 @@ const complexOf = (raw, env) => {
 // lim_(x→a)(f), lim_{x→a} f, lim_(x->a) f → limita(f; x; a); drugo besedilo ostane
 // točka sme imeti en nivo oklepajev: x→(π/2), x→sqrt(2)
 const LIM = /^\s*lim\s*_\s*[({]\s*([A-Za-zα-ω])\s*(?:→|->|\\to)\s*((?:[^(){}]|\([^(){}]*\))+?)\s*[)}]\s*/;
-function limText(raw) {
+export function limText(raw) {
   const m = LIM.exec(raw);
   if (!m) return raw;
   let body = raw.slice(m[0].length).trim();

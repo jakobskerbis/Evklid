@@ -1118,3 +1118,39 @@ function fitTex(fit, comma) {
   return "";
 }
 
+
+// Kotne funkcije grafa v stopinjah → zapis, ki v znanstvenem kalkulatorju (integrali in odvodi so tam vedno v
+// radianih) pomeni isto: sin(x) → sin((x)°), arcsin(x) → (arcsin(x)·180/π). Le zapis z oklepaji; »sin x« brez
+// oklepaja, »°« ali sopomenke, ki jih ne poznamo, vrnejo null (gumba »Uporabi v računu« takrat ni).
+const DEG_FN = /(?<![A-Za-z])(arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg|sin|cos|tan|cot|sec|csc|tg|ctg)(?![A-Za-z])/;
+const DEG_INV = /^(?:arc|a)/;
+export function degreesToCalc(text) {
+  const s = String(text ?? "");
+  if (/°/.test(s)) return null;
+  const tr = (str) => {
+    let out = "";
+    let rest = str;
+    for (;;) {
+      const m = DEG_FN.exec(rest);
+      if (!m) return out + rest;
+      const open = m.index + m[0].length;
+      if (rest[open] !== "(") return null; // sin x, sin²(x): ne znamo zanesljivo
+      let d = 0;
+      let close = -1;
+      for (let j = open; j < rest.length; j++) {
+        if (rest[j] === "(") d++;
+        else if (rest[j] === ")" && --d === 0) {
+          close = j;
+          break;
+        }
+      }
+      if (close < 0) return null;
+      const inner = tr(rest.slice(open + 1, close));
+      if (inner === null) return null;
+      const name = m[0];
+      out += rest.slice(0, m.index) + (DEG_INV.test(name) ? `(${name}(${inner})·180/π)` : `${name}((${inner})°)`);
+      rest = rest.slice(close + 1);
+    }
+  };
+  return tr(s);
+}
