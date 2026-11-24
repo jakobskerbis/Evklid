@@ -877,6 +877,7 @@
   "gc.errOnlyY": "Křivku závislou na y zapiš jako x = …",
   "gc.errChar": "Neznám „{ch}“.",
   "gc.errSyntax": "Výraz není dokončený nebo mu nerozumím.",
+  "gc.errArity": "Nesprávný počet hodnot v závorce. Napiš to takto: {ex}",
   "gc.errOther": "Tohle nakreslit neumím.",
   "gc.min": "Min",
   "gc.max": "Max",

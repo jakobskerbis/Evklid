@@ -859,6 +859,7 @@
   "gc.errOnlyY": "依赖于 y 的曲线请写成 x = … 的形式",
   "gc.errChar": "不认识“{ch}”。",
   "gc.errSyntax": "表达式不完整或无法理解。",
+  "gc.errArity": "括号内的数值个数不正确。请这样写：{ex}",
   "gc.errOther": "这个画不出来。",
   "gc.min": "最小",
   "gc.max": "最大",

@@ -859,6 +859,7 @@
   "gc.errOnlyY": "Tulis kurva yang bergantung pada y sebagai x = …",
   "gc.errChar": "Aku tidak mengenal “{ch}”.",
   "gc.errSyntax": "Ekspresinya belum lengkap atau aku tidak memahaminya.",
+  "gc.errArity": "Jumlah nilai di dalam kurung salah. Tulis seperti ini: {ex}",
   "gc.errOther": "Aku tidak bisa menggambar ini.",
   "gc.min": "Min",
   "gc.max": "Maks",

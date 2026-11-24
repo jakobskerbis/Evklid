@@ -865,6 +865,7 @@
   "gc.errOnlyY": "Scrivi una curva che dipende da y come x = …",
   "gc.errChar": "Non conosco «{ch}».",
   "gc.errSyntax": "L'espressione è incompleta o non la capisco.",
+  "gc.errArity": "Numero di valori tra parentesi errato. Scrivilo così: {ex}",
   "gc.errOther": "Non so disegnare questo.",
   "gc.min": "Min",
   "gc.max": "Max",

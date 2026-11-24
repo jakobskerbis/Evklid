@@ -144,6 +144,11 @@ const MULTI = {
     return hi < lo ? NaN : lo + Math.floor(Math.random() * (hi - lo + 1));
   },
 };
+// funkcije iz MULTI z natanko dvema vrednostma (min, max, gcd, lcm jih vzamejo poljubno mnogo)
+const ARITY = { mod: 2, nCr: 2, nPr: 2, root: 2, logb: 2, randint: 2 };
+const ARG_NAMES = { nCr: "n k", nPr: "n k", root: "x n", logb: "x b", Pol: "x y", Rec: "r θ" };
+/** Pravilen zapis za napako »arity« ({ f, n }): »nCr(n; k)«, »sin(x)«; sep je ločilo argumentov. */
+export const arityExample = ({ f, n } = {}, sep = ",") => `${f}(${(ARG_NAMES[f] || (n === 1 ? "x" : "a b c d").split(" ").slice(0, n).join(" ")).split(" ").join(`${sep} `)})`;
 // funkcije seznamov (vrnejo eno število)
 const LISTF = {
   mean,
@@ -795,6 +800,10 @@ export function compile(node, ctx = {}) {
           return f === "Pol" ? [Math.hypot(p, q), Math.atan2(q, p) / k] : [p * Math.cos(q * k), p * Math.sin(q * k)];
         };
       }
+      // Napačno število vrednosti je napaka, nikoli tiho izpuščena vrednost: sin(0,5) z vejico kot ločilom ni sin(0),
+      // nCr(171,1) z decimalno vejico ni nCr(171,1; ?). Število za MathError("arity") je v ARITY.
+      const want = TRIG[f] ? 1 : ARITY[f];
+      if (want && args.length !== want) throw new MathError("arity", { f, n: want });
       if (TRIG[f]) {
         const g = TRIG[f];
         const a = args[0];
@@ -1360,7 +1369,10 @@ export function toTex(node, opt = {}) {
     case "pct":
       return `${wrap(n.a, 6)}\\%`;
     case "call": {
+      // manjkajoča vrednost (nCr(171,1) z decimalno vejico) je prazen okvirček, nikoli »undefined«
       const a = n.args.map(T);
+      const want = TRIG[n.f] || UNARY[n.f] ? 1 : ARITY[n.f] || 0;
+      while (a.length < want) a.push("\\square");
       switch (n.f) {
         case "sqrt":
           return `\\sqrt{${a[0]}}`;

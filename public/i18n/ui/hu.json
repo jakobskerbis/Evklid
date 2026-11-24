@@ -865,6 +865,7 @@
   "gc.errOnlyY": "Az y-tól függő görbét írd x = … alakban.",
   "gc.errChar": "Nem ismerem: „{ch}”.",
   "gc.errSyntax": "A kifejezés befejezetlen, vagy nem értem.",
+  "gc.errArity": "Rossz a zárójelben lévő értékek száma. Így írd: {ex}",
   "gc.errOther": "Ezt nem tudom lerajzolni.",
   "gc.min": "Min.",
   "gc.max": "Max.",

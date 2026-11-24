@@ -871,6 +871,7 @@
   "gc.errOnlyY": "Krivulju koja ovisi o y zapiši kao x = …",
   "gc.errChar": "Ne poznajem »{ch}«.",
   "gc.errSyntax": "Izraz nije dovršen ili ga ne razumijem.",
+  "gc.errArity": "Pogrešan broj vrijednosti u zagradi. Napiši ovako: {ex}",
   "gc.errOther": "Ovo ne znam nacrtati.",
   "gc.min": "Najmanje",
   "gc.max": "Najviše",

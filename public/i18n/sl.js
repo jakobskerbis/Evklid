@@ -1034,6 +1034,7 @@ export default {
   "gc.errOnlyY": "Krivuljo, ki je odvisna od y, zapiši kot x = …",
   "gc.errChar": "Ne poznam »{ch}«.",
   "gc.errSyntax": "Izraz ni dokončan ali ga ne razumem.",
+  "gc.errArity": "Napačno število vrednosti v oklepaju. Zapiši tako: {ex}",
   "gc.errOther": "Tega ne znam narisati.",
   "gc.min": "Najmanj",
   "gc.max": "Največ",

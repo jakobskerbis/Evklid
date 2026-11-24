@@ -1,6 +1,7 @@
 // Znanstveni kalkulator in pretvornik enot (vmesnik). Računa scicore.js (+ scisolve.js za enačbe,
 // neenačbe, sisteme, funkcije, odvode in kompleksna števila), brez API in brez knjižnic.
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
+import { arityExample } from "./math.js";
 import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName } from "./cas.js";
@@ -293,6 +294,8 @@ export function createScientific(root, opts) {
         return t("sc.errSumLimit");
       case "polInside":
         return t("sc.errPolInside");
+      case "arity":
+        return t("gc.errArity", { ex: arityExample(e.info, ";") });
       case "vecMix":
       case "vecOp":
         return t("sc.errVec");
