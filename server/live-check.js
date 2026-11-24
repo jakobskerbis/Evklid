@@ -929,7 +929,7 @@ export function isClaim(text, prevTutor = "") {
   const t = String(text || "").trim();
   if (!t || t.length > 1500) return false;
   // Vprašanje ni trditev, razen če predlaga vrednost ali rezultat (»x = 5?«, »je 7 · 8 = 54?«, »mogoče 12?«): tak
-  // negotov odgovor je trditev, o kateri inštruktor sodi, zato mora biti sodba preverjena (AUDIT-056).
+  // negotov odgovor je trditev, o kateri inštruktor sodi, zato mora biti sodba preverjena (AUDIT-059).
   // »Kaj pa 3x = 15?« je nova naloga: vrednost predlaga le gola neznanka ali račun brez črk pred »=«.
   if (/\?\s*$/.test(t)) return /(?:(?<![\p{L}\d])[a-zA-Z](?:_?\{?\d\}?)?|(?:^|\s)[\d(][\d.,\s+\-−*·×:/()^]*)\s*=\s*[-−+]?\s*\(?\s*[\d.,]*\d[^=]*\?\s*$/u.test(t) || /^(?:(?:a|ali)\s+)?(?:je\s+)?(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)?\s*[-−]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?\s*\p{L}{0,4}\s*\?+\s*$/iu.test(t);
   if (/\d|=/.test(t)) return true;
