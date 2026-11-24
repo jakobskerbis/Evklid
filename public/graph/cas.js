@@ -5,7 +5,7 @@
 // Vsak rezultat preverimo s števili: prvotni izraz in rezultat izračunamo v 20 točkah in se morata ujemati
 // (rešitve enačbe vstavimo nazaj v enačbo). Česar ne prestane preverjanja, ne pokažemo.
 // π in e sta simbola (transcendentni števili), zato x·π − π = π(x − 1); pri preverjanju dobita svojo vrednost.
-import { Q, P, AlgebraError, gcdInt, lcmInt } from "../scan/algebra.js";
+import { Q, P, AlgebraError, gcdInt, lcmInt, withLimit } from "../scan/algebra.js";
 import { compileLine, lineTex, splitTop, HIDDEN_VARS } from "./scicore.js";
 import { runCalc, CALC_OPS } from "./calculus.js";
 import { runAtoms, atomInfo, ATOM_TEX, isAtom } from "./casalg.js";
@@ -449,7 +449,7 @@ function rat0(node, ctx) {
     case "num": {
       if (!Number.isInteger(node.v)) ctx.dec = true;
       try {
-        return new R(P.num(Q.of(node.v)));
+        return new R(P.num(node.raw ? qOfText(node.raw) : Q.of(node.v)));
       } catch {
         throw fail("unsupported");
       }
@@ -518,6 +518,11 @@ function rat0(node, ctx) {
       if (ctx.ext) return ctx.ext(node, ctx); // 3. faza: koreni, kotne funkcije, logaritmi (casalg.js)
       throw fail("unsupported");
   }
+}
+// točen ulomek iz vpisanega besedila števila (166381621938133156, 1,0000000001)
+function qOfText(t) {
+  const [i, f = ""] = t.replace(/^\./, "0.").split(".");
+  return new Q(BigInt(i + f), 10n ** BigInt(f.length));
 }
 function qOfNumber(v) {
   try {
@@ -732,6 +737,8 @@ const CMDS = {
   inverse: "inverse",
   inv: "inverse",
 };
+/** Vsa imena ukazov CAS (vse jezikovne oblike): urejevalnik jih briše kot celoto (sci-vnos.js, AUDIT-004). */
+export const COMMAND_NAMES = Object.keys(CMDS);
 /** Imena ukazov v jeziku vmesnika (slovenski zapis za sl, sicer angleški, kot na kalkulatorjih CAS). */
 export function commandName(op, locale = "sl") {
   const sl = /^sl/i.test(locale || "");
@@ -871,21 +878,23 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
   const saved = deadline;
   try {
     deadline = Date.now() + ms;
-    const ctx = { scope, dens: [], dec: false };
-    const a = rat(L, ctx);
-    const b = rat(Rn, ctx);
-    if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
-    const N = a.n.mul(b.d).sub(b.n.mul(a.d));
-    if (N.vars().some((w) => w !== v)) return null;
-    const deg = N.zero ? 0 : N.degree(v);
-    if (deg > 60) return null;
-    const out = [];
-    for (let k = deg; k >= 0; k--) {
-      const c = coefIn(N, v, k);
-      const q = c.zero ? Q.ZERO : c.constValue();
-      out.push({ n: q.n, d: q.d });
-    }
-    return out;
+    return withLimit(10n ** 400n, () => {
+      const ctx = { scope, dens: [], dec: false };
+      const a = rat(L, ctx);
+      const b = rat(Rn, ctx);
+      if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+      const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+      if (N.vars().some((w) => w !== v)) return null;
+      const deg = N.zero ? 0 : N.degree(v);
+      if (deg > 60) return null;
+      const out = [];
+      for (let k = deg; k >= 0; k--) {
+        const c = coefIn(N, v, k);
+        const q = c.zero ? Q.ZERO : c.constValue();
+        out.push({ n: q.n, d: q.d });
+      }
+      return out;
+    });
   } catch {
     return null;
   } finally {

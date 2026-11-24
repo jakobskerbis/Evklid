@@ -57,6 +57,9 @@ const sciValue = (text, comma) => {
   const r = evaluate(text, { comma });
   return r?.error ? { error: r.error.code } : toNum(r.value ?? NaN);
 };
+// Znanstveni kalkulator slabo pogojene izraze (cos((18,7 + 16,2)⁵): napaka 10⁻¹⁶ v argumentu se poveča na 10⁻⁹)
+// računa z večjo natančnostjo (AUDIT-049), grafični v plavajoči vejici: razlika je tam pravilna, ne neskladje.
+const sciPrecise = (text, comma) => !!evaluate(text, { comma })?.precision;
 const graphValue = (text, comma) => {
   const m = buildModel({ zapis: ZAPIS, items: [{ id: "a", type: "expr", text: `y = ${text}` }] }, { comma });
   const o = m.items[0];
@@ -72,6 +75,7 @@ for (const comma of [true, false]) {
       const text = gen(r, comma);
       const g = graphValue(text, comma);
       const sx = sciValue(text.replace(/(?<![a-z])x(?![a-z])/g, comma ? "(0,7)" : "(0.7)"), comma);
+      if (typeof g === "number" && typeof sx === "number" && !same(g, sx) && sciPrecise(text.replace(/(?<![a-z])x(?![a-z])/g, comma ? "(0,7)" : "(0.7)"), comma)) continue;
       if (typeof g === "object" || typeof sx === "object" || !same(g, sx)) {
         bad.push(`kalkulatorja: ${text} → graf ${JSON.stringify(g)}, znanstveni ${JSON.stringify(sx)}`);
         continue;

@@ -3,10 +3,10 @@
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
 import { arityExample } from "./math.js";
 import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
-import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
+import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -130,7 +130,9 @@ export function texPlain(tex) {
  * Znanstveni kalkulator v elementu root.
  * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
  */
+let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
+  const sayId = `sc-say-${++sayCount}`;
   const { t, icon } = opts;
   const comma = () => usesComma(opts.locale?.());
   const key = () => opts.storageKey?.() || "evklid.sci.0";
@@ -169,7 +171,8 @@ export function createScientific(root, opts) {
         <div class="sc-line">
           <div class="sc-preview" aria-hidden="true"></div>
         </div>
-        <input class="sc-input" data-kb-own autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("sc.title"))}" placeholder="${esc(t("sc.placeholder"))}">
+        <input class="sc-input" data-kb-own autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("sc.title"))}" aria-describedby="${sayId}" placeholder="${esc(t("sc.placeholder"))}">
+        <div class="sc-say sr-only" id="${sayId}"></div>
         <div class="sc-live" aria-live="polite"></div>
       </div>
     </div>
@@ -214,7 +217,35 @@ export function createScientific(root, opts) {
   const OPS = /^[+×÷^²³⁻!%−]/;
   // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
   // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
+  // Lastna razveljavitev (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y, »razveljavi« na telefonu): vnos se spreminja tudi s kodo
+  // (⌫, tipke na zaslonu), kar sistemsko razveljavitev pokvari ali izbriše (pregled #945: prazno polje v Firefoxu,
+  // kazalec na napačnem mestu). Stanje je besedilo in kazalec PRED spremembo; zapiše ga update() ob vsaki spremembi.
+  const undo = { back: [], fwd: [], cur: { v: "", p: 0 } };
+  function record() {
+    const v = input.value;
+    const p = input.selectionStart ?? v.length;
+    if (v === undo.cur.v) {
+      undo.cur.p = p;
+      return;
+    }
+    undo.back.push(undo.cur);
+    if (undo.back.length > 200) undo.back.shift();
+    undo.fwd = [];
+    undo.cur = { v, p };
+  }
+  function history(dir) {
+    const from = dir < 0 ? undo.back : undo.fwd;
+    const to = dir < 0 ? undo.fwd : undo.back;
+    if (!from.length) return;
+    to.push({ v: input.value, p: input.selectionStart ?? input.value.length });
+    undo.cur = from.pop();
+    input.value = undo.cur.v;
+    input.setSelectionRange(undo.cur.p, undo.cur.p);
+    recall = -1;
+    update();
+  }
   function insert(text, o = {}) {
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? input.value.length;
     if (o.replace) input.value = "";
     if (o.angle && ANGLES.includes(o.angle) && st.angle !== o.angle) {
       st.angle = o.angle;
@@ -224,8 +255,19 @@ export function createScientific(root, opts) {
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
+    // izbira, ki zajame le del imenovane predloge, se razširi na celo predlogo (ne ostane »;0;1)«); oklepaj, ki bi
+    // ostal brez para, ostane (AUDIT-039)
+    {
+      const a = input.selectionStart ?? input.value.length;
+      const b = input.selectionEnd ?? a;
+      if (a !== b) {
+        const d = deleteSpan(input.value, a, b);
+        input.value = d.text;
+        input.setSelectionRange(d.pos, d.pos);
+      }
+    }
     const s = input.selectionStart ?? input.value.length;
-    const e = input.selectionEnd ?? s;
+    const e = s;
     const at = ins.indexOf("@");
     const clean = ins.replace("@", "");
     input.value = input.value.slice(0, s) + clean + input.value.slice(e);
@@ -240,21 +282,37 @@ export function createScientific(root, opts) {
       live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
     }
   }
-  function del() {
+  // ⌫ (zaslonska in strojna tipka) in Delete: ime funkcije, ukaz in predloga gredo kot celota (sci-vnos.js, AUDIT-004)
+  function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
-    if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
-    else if (s > 0) {
-      // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
-      const n = m ? m[0].length : 1;
-      input.value = input.value.slice(0, s - n) + input.value.slice(s);
-      input.setSelectionRange(s - n, s - n);
-    }
-    update();
+    if (input.value === undo.cur.v) undo.cur.p = s; // razveljavitev vrne kazalec sem (selectionchange je lahko še na poti)
+    // varovalo: brisanje, po katerem se zapis ne bi izrisal, se ne zgodi (AUDIT-034)
+    const ok = (x) => {
+      try {
+        return !!entryBase(x, env())?.ok;
+      } catch {
+        return false;
+      }
+    };
+    const r = fn(input.value, s, e, { ok });
+    if (!r.text.trim()) r.text = r.pos = ""; // ostali presledki (»∑_(n=1)^(5) « brez predloge) niso vnos
+    r.pos = Math.min(Number(r.pos) || 0, r.text.length);
+    const changed = r.text !== input.value;
+    if (changed) replaceText(r.text);
+    input.setSelectionRange(r.pos, r.pos);
+    if (changed) {
+      recall = -1;
+      update();
+    } else showEntry();
   }
+  const replaceText = (next) => (input.value = next);
+  const del = () => edit(backspace);
+  const delForward = () => edit(deleteForward);
+  // ◀ ▶: na naslednje mesto kazalca v zapisu (iz integranda v mejo, čez ime funkcije), ne za en znak
   function move(d) {
-    const p = Math.max(0, Math.min(input.value.length, (input.selectionStart ?? input.value.length) + d));
+    if (entry.text !== input.value) showEntry();
+    const p = stepCaret(entry.base, input.value, input.selectionStart ?? input.value.length, d);
     input.setSelectionRange(p, p);
     showEntry();
   }
@@ -274,6 +332,8 @@ export function createScientific(root, opts) {
   };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
+  // »dvojna rešitev«, »trojna rešitev«, »4-kratna rešitev« v jeziku vmesnika
+  const multText = (m) => (m === 2 ? t("sc.mult.2") : m === 3 ? t("sc.mult.3") : t("sc.mult.n", { n: m }));
   // število v navadnem besedilu (sporočilo, ne TeX): 8 mest, decimalna vejica, pravi minus
   const plainNum = (v) => String(Number(v.toPrecision(8))).replace(".", comma() ? "," : ".").replace("-", "−");
   function errorText(e) {
@@ -292,10 +352,12 @@ export function createScientific(root, opts) {
       case "sumLimit":
         return t("sc.errSumLimit");
       case "intDiverge":
-        return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t(e.info?.inf ? "sc.errIntDivergeInf" : "sc.errIntDiverge");
+      case "intUndefined":
       case "intUnknown":
-      case "intTimeout":
-        return t("sc.errIntUnknown");
+      case "intTimeout": {
+        const [key, p] = integralErrorKey(e);
+        return t(key, p.pv !== undefined ? { pv: plainNum(p.pv) } : p);
+      }
       case "polInside":
         return t("sc.errPolInside");
       case "arity":
@@ -377,17 +439,19 @@ export function createScientific(root, opts) {
         if (r.assign) e.assign = r.assign;
         if (r.approx) e.approx = true;
         if (r.est) e.est = true;
+        if (r.precision) e.note = { key: "sc.precision" }; // AUDIT-049: navadnih 16 mest ni bilo dovolj
         break;
       case "complex":
         e.re = r.re;
         e.im = r.im;
         break;
       case "solve":
-        e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched"]);
+        e.res = solutionTex(r, c, st.format, multText);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched", "rex", "forms", "noPi", "mult", "cmult"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (r.searched) e.note = { key: "sc.searchedNone", tex: r.searched };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
+        if (r.all && r.cond) e.note = { key: "sc.cas.cond", tex: r.cond }; // x ∈ ℝ, velja za x ≠ 2 (AUDIT-048)
         e.steps = true;
         if (r.roots.length) e.first = r.roots[0];
         break;
@@ -395,6 +459,7 @@ export function createScientific(root, opts) {
         e.res = intervalsTex(r, c, st.format);
         e.r = pick(r, ["v", "intervals"]); // ±∞ se v JSON shrani kot null
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
+        if (r.cond) e.note = { key: "sc.cas.cond", tex: r.cond };
         e.steps = true;
         break;
       case "system":
@@ -461,7 +526,7 @@ export function createScientific(root, opts) {
     if (!r) return e.res || "";
     try {
       const c = comma();
-      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format);
+      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format, multText);
       if (e.kind === "ineq") return intervalsTex({ ...r, intervals: r.intervals.map((i) => ({ ...i, lo: i.lo ?? -Infinity, hi: i.hi ?? Infinity })) }, c, st.format);
       if (e.kind === "system") return systemTex(r, c, st.format);
     } catch {}
@@ -529,6 +594,7 @@ export function createScientific(root, opts) {
       tex = caretTex(entry.base, input.selectionStart ?? text.length);
     } catch {}
     prev.innerHTML = tex ? entryHtml(tex) : "";
+    speak(tex);
     // dolg vnos se najprej malo pomanjša (do 80 %); šele nato se pomika, kazalec pa ostane viden
     const k = prev.querySelector(".katex");
     if (!k) return;
@@ -539,6 +605,18 @@ export function createScientific(root, opts) {
       if (cr.left < pr.left + 8) prev.scrollLeft -= pr.left + 8 - cr.left;
       else if (cr.right > pr.right - 8) prev.scrollLeft += cr.right - pr.right + 8;
     }
+  }
+  // bralnik zaslona: opis matematike namesto surovega vnosa (AUDIT-040), z besedami v jeziku vmesnika
+  const sayWords = () => Object.fromEntries(t("sc.say.words").split("|").map((w, i) => [SAY_WORDS[i], w.trim()]));
+  const sayGreek = () => Object.fromEntries(t("sc.say.greek").split("|").map((w, i) => [SAY_GREEK[i], w.trim()]));
+  function speak(tex) {
+    const el = $(".sc-say");
+    if (!el) return;
+    let txt = "";
+    try {
+      txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), greek: sayGreek(), parse: window.katex.__parse }) : "";
+    } catch {}
+    if (el.textContent !== txt) el.textContent = txt;
   }
   // Dotik na lep zapis: položaj v besedilu iz izrisa (merilne točke na vseh mestih kazalca), ne iz prosojnega polja.
   function caretFromPoint(x, y) {
@@ -578,8 +656,13 @@ export function createScientific(root, opts) {
     });
   });
   input.addEventListener("keyup", () => showEntry());
-  document.addEventListener("selectionchange", () => document.activeElement === input && showEntry());
+  document.addEventListener("selectionchange", () => {
+    if (document.activeElement !== input) return;
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? undo.cur.p; // kazalec pred naslednjo spremembo
+    showEntry();
+  });
   function update() {
+    record();
     const text = input.value;
     const prev = $(".sc-preview");
     const live = $(".sc-live");
@@ -587,6 +670,7 @@ export function createScientific(root, opts) {
     if (!text.trim()) {
       fromFormula = null;
       prev.innerHTML = "";
+      speak(null);
       live.textContent = "";
       live.className = "sc-live";
       return;
@@ -898,7 +982,40 @@ export function createScientific(root, opts) {
     recall = -1;
     update();
   });
+  // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
+  input.addEventListener("beforeinput", (e) => {
+    if (e.isComposing) return;
+    if (e.inputType === "historyUndo" || e.inputType === "historyRedo") {
+      e.preventDefault();
+      history(e.inputType === "historyUndo" ? -1 : 1);
+      return;
+    }
+    // tipkanje čez izbiro: izbira dela imenovane predloge se razširi na celo predlogo, oklepaj, ki bi ostal brez para,
+    // ostane (AUDIT-039); vstavi insert(), ker WebKit spremenjene izbire v beforeinput ne upošteva
+    if (e.inputType === "insertText" && e.data && input.selectionStart !== input.selectionEnd) {
+      e.preventDefault();
+      insert(e.data);
+      return;
+    }
+    if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
+      e.preventDefault();
+      del();
+    } else if (e.inputType === "deleteContentForward" || e.inputType === "deleteWordForward") {
+      e.preventDefault();
+      delForward();
+    }
+  });
   input.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && /^[zy]$/i.test(e.key)) {
+      e.preventDefault();
+      history(e.key.toLowerCase() === "y" || e.shiftKey ? 1 : -1);
+      return;
+    }
+    if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && input.value) {
+      e.preventDefault();
+      move(e.key === "ArrowLeft" ? -1 : 1);
+      return;
+    }
     if (e.key === "Enter") {
       e.preventDefault();
       compute();

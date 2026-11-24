@@ -1,5 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
+import { precise } from "./natancnost.js";
 import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, calcText, calcRewrite, splitTop, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
@@ -187,6 +188,49 @@ export function zanesljivaMesta(info) {
   return { value: Number(v.toPrecision(digits)), est: true, digits };
 }
 
+/** Zunanji določeni integrali v drevesu po vrsti računanja (ne znotraj drugega integrala). */
+function topIntegrals(node) {
+  const all = [];
+  walk(node, (n) => n.k === "int" && all.push(n));
+  const nested = new Set();
+  for (const n of all) [n.a, n.lo, n.hi].forEach((c) => walk(c, (m) => m !== n && m.k === "int" && nested.add(m)));
+  return all.filter((n) => n.lo && n.hi && !nested.has(n));
+}
+/**
+ * Ali je integrand v x zunaj definicijskega območja: v drevesu je vozel, katerega vrednost je NaN, čeprav so vsi
+ * njegovi argumenti končna števila (√ negativnega, ln negativnega, arcsin 2). ∞/∞ ali ∞ − ∞ (preliv) ne šteje.
+ */
+function domainViolation(intNode, ctx, scope, x) {
+  const sc = Object.create(scope);
+  sc[intNode.v] = x;
+  let found = false;
+  const val = (n) => {
+    try {
+      const y = compile(n, { ...ctx, tolerant: true })(sc); // isti šum zaokrožitve kot v integralu
+      return typeof y === "number" ? y : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const visit = (n) => {
+    if (found || !n || typeof n !== "object" || n.k === "int") return undefined;
+    const kids = [];
+    for (const k in n) {
+      if (k === "k") continue;
+      const c = n[k];
+      if (Array.isArray(c)) c.forEach((z) => z && typeof z === "object" && z.k && kids.push(z));
+      else if (c && typeof c === "object" && c.k) kids.push(c);
+    }
+    const kv = kids.map(visit);
+    if (found) return undefined;
+    const y = val(n);
+    if (Number.isNaN(y) && kv.every((z) => typeof z === "number" && Number.isFinite(z))) found = true;
+    return y;
+  };
+  visit(intNode.a);
+  return found;
+}
+
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
 export function unknownsOf(node, vars = {}) {
   return [...freeVars(node)].filter((v) => !HIDDEN_VARS.has(v) && !(v in vars));
@@ -216,6 +260,21 @@ export function evaluate(text, env = {}) {
     else value = run(expr)(scope);
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
+    // Plavajoča vejica ima ~16 mest (AUDIT-049): √(10¹⁶ + 1) − 10⁸ = 0, 1 − cos(10⁻⁸) = 0, ln(e¹⁰⁰⁰) = ∞.
+    // Isto drevo izračunamo še z večjo natančnostjo; če se rezultat razlikuje, velja natančnejši.
+    let precision = false;
+    if (!withInt && typeof value === "number") {
+      const hp = precise(rwe, scope, { unit: env.grad ? "grad" : env.deg ? "deg" : "rad", ms: env.live ? 15 : 40 });
+      if (hp && Number.isFinite(hp.value) && (hp.value !== 0 || hp.zero)) {
+        const H = hp.value;
+        const off = !Number.isFinite(value) || Math.abs(value - H) > 1e-14 * Math.abs(H) || (H === 0 && value !== 0);
+        if (off) {
+          // opomba le, kadar bi učenec videl drugo število (0,1 + 0,2 = 0,30000000000000004 ni vredno opombe)
+          precision = formatNumber(value).text !== formatNumber(H).text;
+          value = H;
+        }
+      }
+    }
     let est = false;
     let single = null; // podatki edinega integrala (scisolve: točna vrednost iz nedoločenega integrala)
     let digits; // zanesljiva mesta edinega integrala
@@ -225,6 +284,16 @@ export function evaluate(text, env = {}) {
       const div = infos.find((r) => r.diverges);
       // ∫(1/x; 1; ∞): divergira zaradi neskončnega intervala (inf), ne zaradi pola
       if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : Number.isFinite(div.at) ? {} : { inf: true } } };
+      // √(x − 5) na [0, 10⁴]: f na delu intervala ni definirana (pove to, ne »—«); NaN zaradi preliva
+      // (sinh x / cosh x pri 10⁴: ∞/∞) pa ni nedefiniranost, ampak »ni mogoče zanesljivo izračunati«
+      const iNan = infos.findIndex((r) => !Number.isFinite(r.value) && !r.diverges && r.at !== undefined);
+      if (iNan >= 0 && !Number.isFinite(value)) {
+        const ints = topIntegrals(rwe);
+        const node = ints.length === infos.length ? ints[iNan] : null;
+        if (node && domainViolation(node, line.ctx, scope, infos[iNan].at)) return { error: { code: "intUndefined", info: {} } };
+        return { error: { code: "intUnknown", info: {} } };
+      }
+      if (infos.some((r) => r.undef) && !Number.isFinite(value)) return { error: { code: "intUnknown", info: {} } };
       const zm = infos.map((r) => (Number.isFinite(r.value) ? zanesljivaMesta(r) : null));
       // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
       if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !zm[i]))) return { error: { code: "intUnknown", info: {} } };
@@ -256,6 +325,7 @@ export function evaluate(text, env = {}) {
     const out = name ? { value, tex, assign: name } : { value, tex };
     // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
     if (est) Object.assign(out, { approx: true, est: true });
+    if (precision) out.precision = true;
     if (single) Object.defineProperty(out, "int", { value: single, enumerable: false });
     if (digits) Object.defineProperty(out, "digits", { value: digits, enumerable: false });
     return out;

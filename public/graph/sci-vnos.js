@@ -7,7 +7,8 @@
 // Brez DOM; test/sci-vnos.test.js.
 import { previewTex, analyze, exactIntegral } from "./scisolve.js";
 import { evaluate, functionDef } from "./scicore.js";
-import { parseCommand } from "./cas.js";
+import { parseCommand, COMMAND_NAMES } from "./cas.js";
+import { BUILTINS } from "./math.js";
 import { chemSub } from "./molska.js";
 
 // Barvi kazalca in okvirčka sta v graph.css (.sc-caret, .sc-hole: CSS spremenljivke, tudi temna tema).
@@ -57,6 +58,10 @@ export function liveTex(text, env = {}) {
   const cmd = /^\s*([A-Za-zčšž]+)\s*\((.*)\)\s*$/s.exec(text);
   if (cmd && parseCommand(text)) {
     const inner = cmd[2].split(";").map((p) => (p.trim() ? previewTex(p, env) : null));
+    const op = parseCommand(text)?.op;
+    // integral in limita z (še) prazno režo: zapis predloge, ne ime ukaza (»integriraj(t²; □)« → ∫ t² d□; AUDIT-004)
+    if (inner.every(Boolean) && op === "integrate" && inner.length === 2) return `\\int ${inner[0]}\\,d${inner[1]}`;
+    if (inner.every(Boolean) && op === "limit" && inner.length === 3) return `\\lim\\limits_{${inner[1]} \\to ${inner[2]}} ${inner[0]}`;
     if (inner.every(Boolean)) return `\\operatorname{${cmd[1]}}\\left(${inner.join(",\\ ")}\\right)`;
   }
   try {
@@ -72,6 +77,8 @@ const OPENERS = "([";
 const CLOSERS = ")]";
 const OPS = "+-−×÷*/^·=<>≤≥,.";
 const POSTFIX = "²³⁻¹!%°′″"; // brez operanda pred seboj (√(² , ∫(⁻¹;;)) dobijo okvirček
+const OPSX = OPS + "_"; // za indeksom manjka operand kot za operatorjem
+const LEFT = "×÷*/^·=<>≤≥,._" + POSTFIX; // potrebujejo levi operand (predznaki + − ne)
 
 /**
  * Dokonča besedilo za izris: zapre oklepaje in na mesto manjkajočega operanda vstavi `hole`.
@@ -101,20 +108,43 @@ export function complete(text, hole) {
     };
     return group("_") && group("^") && /^[\s)\]]*$/.test(s.slice(j)) ? j : -1; // indeks za mejama ali −1
   })();
+  // ∫( z manj kot dvema »;« (ročno natipkan »∫(«, »∫(x«, »∫(x;0«): pred zaklepajem manjkajoči reži (AUDIT-037)
+  const intMissing = new Map();
+  {
+    const st = [];
+    for (let i = 0; i < s.length; i++) {
+      if (OPENERS.includes(s[i])) st.push({ int: s[i] === "(" && s[i - 1] === "∫", semis: 0 });
+      else if (s[i] === ";" && st.length) st[st.length - 1].semis++;
+      else if (CLOSERS.includes(s[i]) && st.length) {
+        const g = st.pop();
+        if (g.int && g.semis < 2) intMissing.set(i, 2 - g.semis);
+      }
+    }
+  }
   let out = "";
   const shift = new Array(s.length + 1).fill(0); // koliko znakov okvirčkov je pred položajem i (brez tistih NA i)
   let added = 0;
   for (let i = 0; i <= s.length; i++) {
     shift[i] = added;
     const c = s[i];
-    if (i === s.length || CLOSERS.includes(c) || c === ";" || (POSTFIX.includes(c) && !POSTFIX.includes(s[i - 1] ?? ""))) {
-      let k = i - 1;
-      while (k >= 0 && /\s/.test(s[k])) k--;
-      const p = k >= 0 ? s[k] : "";
-      if (p && (OPENERS.includes(p) || p === ";" || OPS.includes(p)) && !(i === s.length && !OPS.includes(p))) {
-        out += hole;
-        added += hole.length;
-      }
+    let k = i - 1;
+    while (k >= 0 && /\s/.test(s[k])) k--;
+    const p = k >= 0 ? s[k] : "";
+    let want = false;
+    if (i === s.length || CLOSERS.includes(c) || c === ";") want = !!p && (OPENERS.includes(p) || p === ";" || OPSX.includes(p)) && !(i === s.length && !OPSX.includes(p));
+    // operator ali pripona brez levega operanda (izbrisan: »/2«, »²«, »,5«, »2x+=7«, »∑_(=1)«): okvirček pred njim (AUDIT-034)
+    else if (LEFT.includes(c) && !(POSTFIX.includes(c) && POSTFIX.includes(s[i - 1] || "\u0000"))) want = !p || OPENERS.includes(p) || p === ";" || OPSX.includes(p);
+    // predznak je lahko brez levega operanda, razen za vejico, piko ali indeksom (»2,+1«, »x_+x_2«); za vejico ali piko
+    // mora biti števka (»1,E3«)
+    else if ("+-−".includes(c)) want = !!p && ",._".includes(p);
+    else if (c && p && ",.".includes(p) && !/[\d\s]/.test(c)) want = true;
+    if (want) {
+      out += hole;
+      added += hole.length;
+    }
+    for (let m = intMissing.get(i) || 0; m > 0; m--) {
+      out += `;${hole}`;
+      added += 1 + hole.length;
     }
     if (i < s.length) out += c;
   }
@@ -269,7 +299,8 @@ export function canInsert(toks, i) {
 // ---------- ujemanje besedila in TeX ----------
 
 const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
-const TKEY = { "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
+// grške črke kot v zapisu (math.js TEXVAR): kazalec za »α« je za \alpha (prej pred njo; pregled #974)
+const TKEY = { "θ": "theta", "α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "λ": "lambda", "μ": "mu", "φ": "varphi", "ω": "omega", "σ": "sigma", "ρ": "rho", "ε": "varepsilon", "τ": "tau", "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
 
 function textAtoms(s, hole) {
   const out = [];
@@ -295,6 +326,7 @@ function textAtoms(s, hole) {
  * Oklepaji in podpičja teh predlog v zapisu niso vidni, zato nimajo atomov; zaklepaj dobi »d x«, da je kazalec za
  * predlogo za dx (ne pred njim). Atomi obdržijo svoje položaje v besedilu (s, e), spremeni se le vrstni red.
  */
+const SUP_CH = /[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]/;
 function visualOrder(s, A) {
   const alias = new Map();
   const at = new Map();
@@ -350,6 +382,32 @@ function visualOrder(s, A) {
           out.push({ k: "d", s: c, e: c + 1 }, { k: "x", s: c, e: c + 1 });
           moved = true;
           i = c + 1;
+          continue;
+        }
+      }
+      // sin(x)² in sin(x)^(2): zapis je \sin^{2}\left(x\right) – potenca pred oklepajem; kazalec za ² je za oklepajem
+      const fn = /^(?:arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log)\(/.exec(s.slice(i));
+      if (fn && !/[A-Za-z]/.test(s[i - 1] || "")) {
+        const o = i + fn[0].length - 1;
+        const c = closeOf(o);
+        let e = -1;
+        if (c > 0 && c < hi) {
+          if (SUP_CH.test(s[c + 1] || "")) {
+            e = c + 1;
+            while (SUP_CH.test(s[e] || "")) e++;
+          } else if (s[c + 1] === "^" && s[c + 2] === "(") {
+            const cc = closeOf(c + 2);
+            if (cc > 0 && cc < hi) e = cc + 1;
+          }
+        }
+        if (e > 0) {
+          for (let k = i; k < o; k++) out.push(...(at.get(k) || []));
+          walk(c + 1, e);
+          walk(o, c);
+          // zaklepaj »konča« tudi potenco: kazalec na koncu (za ²) je za oklepajem, kjer je v zapisu konec
+          out.push(...(at.get(c) || []).map((x) => ({ ...x, e })));
+          moved = true;
+          i = e;
           continue;
         }
       }
@@ -546,7 +604,8 @@ export function caretStops(base) {
  * pa se navpično ne prekrivajo (z \smash so se in dotik na števec, ki ga Chromium premakne ~8 px, je padel v imenovalec).
  */
 export function stopsTex(base) {
-  const stops = caretStops(base);
+  // dotik nikoli ne postavi kazalca sredi imena ali odpirala (»d|/dx(«, »sin|(«): tam bi vnos ime pokvaril (AUDIT-004)
+  const stops = caretStops(base).filter((s) => !(openerAround(base.raw, s.p)?.[0] < s.p));
   return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.4em}}}`])));
 }
 
@@ -558,3 +617,464 @@ export function entryTex(text, caret = String(text ?? "").length, env = {}, rend
 
 /** Zapis brez kazalca in brez okvirčkov (za preverjanje): odstrani vstavljeni kazalec. */
 export const stripCaret = (tex) => tex.split(CARET).join("");
+
+// ---------- brisanje in premik kazalca (AUDIT-004) ----------
+// Ena pot za zaslonsko ⌫ in strojni Backspace/Delete: ime funkcije ali ukaza se nikoli ne razpolovi, predloga
+// (∫(f;a;b), d/dx(…), limita(…), ∑_(…)^(…), det([[…]])) ne pusti ostankov (»integriraj)«, »;;)«, »)«).
+
+const esc = (x) => x.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+const WORDS = [...new Set([...BUILTINS, ...COMMAND_NAMES, "Ans"])].filter((w) => w.length > 1).sort((a, b) => b.length - a.length);
+// odpiralo predloge ali funkcije, ki se konča z oklepajem
+const OPENER = new RegExp(`(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|\\^\\(|_\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()$`, "u");
+const OPENER_AT = new RegExp(`^(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()`, "u");
+const WORD_CHAR = /[A-Za-zčšž]/;
+// mesta, kjer kazalec ne sme stati (sredi imena ali odpirala). »×10^(« ni med njimi: dotik na števko v 10 postavi kazalec
+// ob to števko (pregled #965); ⌫ za »×10^(« ga še vedno izbriše kot celoto (OPENER).
+const OPENERS_ALL = new RegExp(`[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\(`, "gu");
+
+/** Zaklepaj za oklepajem na o (ali -1, če ni zaprt). */
+function closeAt(s, o) {
+  let d = 0;
+  for (let j = o; j < s.length; j++) {
+    if (OPENERS.includes(s[j])) d++;
+    else if (CLOSERS.includes(s[j]) && --d === 0) return j;
+  }
+  return -1;
+}
+/** Reže med oklepajem o in zaklepajem c (c = -1: do konca). */
+function slotsOf(s, o, c) {
+  const end = c < 0 ? s.length : c;
+  const out = [];
+  let d = 0;
+  let b = o + 1;
+  for (let j = o + 1; j < end; j++) {
+    if (OPENERS.includes(s[j])) d++;
+    else if (CLOSERS.includes(s[j])) d--;
+    else if (s[j] === ";" && d === 0) {
+      out.push([b, j]);
+      b = j + 1;
+    }
+  }
+  out.push([b, end]);
+  return out;
+}
+/** Najbližji odprt oklepaj levo od p (indeks) in odpiralo pred njim. */
+function enclosing(s, p) {
+  let d = 0;
+  for (let j = p - 1; j >= 0; j--) {
+    if (CLOSERS.includes(s[j])) d++;
+    else if (OPENERS.includes(s[j])) {
+      if (d === 0) {
+        const m = OPENER.exec(s.slice(0, j + 1));
+        return { o: j, start: m ? j + 1 - m[0].length : j, name: m ? m[0].replace(/\s*\($/, "") : s[j] };
+      }
+      d--;
+    }
+  }
+  return null;
+}
+// predloge s stalnim številom rež: ločila se ne briše (∫(x;0) ni več integral), ⌫ gre v prejšnjo režo
+const FIXED = (name) => name === "∫" || name === "[" || /^(limita|limit|lim|taylor)$/i.test(name);
+const blank = (s, [a, b]) => !s.slice(a, b).replace(/[[\];\s]/g, "");
+// privzete vrednosti predlog (sci.js anaKeys) štejejo kot prazne: prazno »limita(□; x; □)« se izbriše kot celota
+const DEFAULTS = { limita: [, "x"], limit: [, "x"], lim: [, "x"], taylor: [, "x", "0", "5"] };
+const emptySlot = (s, name, x, k) => blank(s, x) || s.slice(...x).trim() === DEFAULTS[name.toLowerCase()]?.[k];
+const done = (text, pos) => ({ text, pos });
+
+/** Ime (ali »Ans«), v katerem je položaj p (strogo znotraj), ali null: { start, end }. */
+function wordAround(s, p) {
+  if (!WORD_CHAR.test(s[p - 1] || "") || !WORD_CHAR.test(s[p] || "")) return null;
+  let b = p;
+  while (b < s.length && WORD_CHAR.test(s[b])) b++;
+  let a = p;
+  while (a > 0 && WORD_CHAR.test(s[a - 1])) a--;
+  const run = s.slice(a, b);
+  const x = WORDS.find((w) => run.endsWith(w) && b - w.length < p);
+  return x ? { start: b - x.length, end: b } : null;
+}
+
+/** Odpiralo (ime z oklepajem, ∫(, d/dx( …), ki vsebuje položaj p ali se na njem začne: [začetek, konec) ali null. */
+function openerAround(s, p) {
+  for (const m of s.matchAll(OPENERS_ALL)) if (m.index <= p && p < m.index + m[0].length) return [m.index, m.index + m[0].length];
+  return null;
+}
+
+/** Odstrani predlogo z odpiralom [start, o] in zaklepajem c; ohrani vsebino prve reže. */
+function unwrap(s, start, o, c, keep) {
+  const end = c < 0 ? s.length : c + 1;
+  const inner = keep ? s.slice(o + 1, keep[1]) : "";
+  return done(s.slice(0, start) + inner + s.slice(end), start);
+}
+
+/**
+ * Izbira [s, e) razširjena tako, da ne zajame le dela imenovane predloge (∫(, sin(, limita(, d/dx(, √( …; AUDIT-039):
+ * izbira je v eni reži, zajame celo predlogo ali je zunaj nje; sicer se razširi na celo predlogo z imenom. Navadni
+ * oklepaji se ne razširijo (j, 24. 11.): pri njih deleteSpan obdrži oklepaj, ki bi ostal brez para. Vrne [s, e].
+ */
+export function selectionSpan(text, s, e) {
+  const t = String(text ?? "");
+  let a = Math.max(0, Math.min(s, e));
+  let b = Math.min(t.length, Math.max(s, e));
+  if (a === b) return [a, b];
+  for (let changed = true, guard = 0; changed && guard < 50; guard++) {
+    changed = false;
+    for (let o = 0; o < t.length; o++) {
+      if (!OPENERS.includes(t[o])) continue;
+      const m = OPENER.exec(t.slice(0, o + 1));
+      if (!m) continue; // navaden oklepaj ali [ matrike: brez razširitve
+      const start = o + 1 - m[0].length;
+      const c = closeAt(t, o);
+      const end = c < 0 ? t.length : c + 1;
+      if (b <= start || a >= end || (a <= start && b >= end)) continue; // zunaj ali cela
+      if (slotsOf(t, o, c).some(([x, y]) => a >= x && b <= y)) continue; // v eni reži
+      a = Math.min(a, start);
+      b = Math.max(b, end);
+      changed = true;
+    }
+  }
+  return [a, b];
+}
+
+/**
+ * Izbriše izbiro [s, e) (razširjeno s selectionSpan); oklepaj ali zaklepaj, katerega par je zunaj izbire, ostane
+ * (»(1+2)·3«, izbrano »(1« → »(+2)·3«). pos: mesto prvega izbrisanega znaka (tja gre vnos čez izbiro).
+ */
+export function deleteSpan(text, s, e) {
+  const t = String(text ?? "");
+  const [a, b] = selectionSpan(t, s, e);
+  const keep = new Set();
+  for (let i = a; i < b; i++) {
+    if (OPENERS.includes(t[i])) {
+      const c = closeAt(t, i);
+      if (c >= b) keep.add(i);
+    } else if (CLOSERS.includes(t[i])) {
+      let d = 0;
+      let o = -1;
+      for (let j = i; j >= 0; j--) {
+        if (CLOSERS.includes(t[j])) d++;
+        else if (OPENERS.includes(t[j]) && --d === 0) {
+          o = j;
+          break;
+        }
+      }
+      if (o >= 0 && o < a) keep.add(i);
+    }
+  }
+  let out = t.slice(0, a);
+  let pos = -1;
+  let afterOpen = -1; // za ohranjenim oklepajem: vnos gre v oklepaj (»2+(3« izbrano, 4 → »(4+4)«)
+  for (let i = a; i < b; i++) {
+    if (keep.has(i)) {
+      out += t[i];
+      if (OPENERS.includes(t[i])) afterOpen = out.length;
+    } else if (pos < 0) pos = out.length;
+  }
+  return done(out + t.slice(b), afterOpen >= 0 ? afterOpen : pos < 0 ? out.length : pos);
+}
+
+/** ⌫: { text, pos } po brisanju levo od kazalca (s, e: izbira). */
+function backspaceRaw(text, s, e = s) {
+  const t = String(text ?? "");
+  if (s !== e) return deleteSpan(t, s, e);
+  if (s <= 0) return done(t, 0);
+  // kazalec sredi odpirala (»integr|iraj(«, »sin|(«, »d/d|x(«, »∫|(«): kot da je za njegovim oklepajem
+  const inOp = openerAround(t, s);
+  if (inOp && inOp[0] < s) s = inOp[1];
+  // sredi imena brez oklepaja (»An|s«): ime gre celo
+  const w = wordAround(t, s);
+  if (w && !/^\s*\(/.test(t.slice(w.end))) return done(t.slice(0, w.start) + t.slice(w.end), w.start);
+  const before = t.slice(0, s);
+  const op = OPENER.exec(before);
+  if (op) {
+    const start = s - op[0].length;
+    const o = s - 1;
+    const c = closeAt(t, o);
+    // ^( v ∑_(…)^(…): na začetku zgornje meje gre ⌫ na konec spodnje
+    if (op[0] === "^(" && /[∑∏]_\([^()]*\)$/.test(t.slice(0, start))) return done(t, start - 1);
+    if (/^[∑∏]_\($/.test(op[0])) {
+      const up = /^\^\(/.test(t.slice(c + 1)) ? closeAt(t, c + 2) : -2;
+      const body = up >= 0 ? t.slice(up + 1) : "";
+      if (c >= 0 && up >= 0 && blank(t, [c + 3, up]) && !body.trim()) return done(t.slice(0, start), start);
+      if (c < 0 || up === -2) return done(t.slice(0, start) + t.slice(c < 0 ? t.length : c + 1), start);
+      return done(t, start); // izpolnjena vsota: kazalec pred ∑, nič se ne izbriše
+    }
+    const slots = slotsOf(t, o, c);
+    const name = op[0].replace(/\s*\($/, "");
+    if (slots.slice(1).every((x, k) => emptySlot(t, name, x, k + 1))) return unwrap(t, start, o, c, blank(t, slots[0]) ? null : slots[0]);
+    return done(t, start); // druge reže niso prazne: kazalec gre pred predlogo, nič se ne izbriše
+  }
+  // [ matrike: prazna matrika (tudi v det(…), inverz(…)) gre kot celota, izpolnjena ostane, kazalec gre pred njo
+  if (t[s - 1] === "[") {
+    // začetek druge vrstice: na konec prejšnje vrstice
+    let j = s - 2;
+    while (j >= 0 && /\s/.test(t[j])) j--;
+    if (t[j] === ";") {
+      let k = j - 1;
+      while (k >= 0 && /\s/.test(t[k])) k--;
+      if (t[k] === "]") return done(t, k);
+    }
+    let o = s - 1;
+    for (let enc = enclosing(t, o); enc && enc.name === "["; enc = enclosing(t, o)) o = enc.o;
+    const enc = enclosing(t, o);
+    const c = closeAt(t, o);
+    if (enc && enc.start < o && enc.o === o - 1 && closeAt(t, enc.o) === (c < 0 ? -1 : c + 1)) {
+      if (blank(t, [o, c < 0 ? t.length : c + 1])) return backspaceRaw(t, enc.o + 1);
+      return done(t, enc.start);
+    }
+    if (blank(t, [o, c < 0 ? t.length : c + 1])) return done(t.slice(0, o) + t.slice(c < 0 ? t.length : c + 1), o);
+    return done(t, o);
+  }
+  // zaklepaj se ne briše posamič (predloga ali oklepaj bi razpadla): kazalec gre v oklepaj
+  if (CLOSERS.includes(t[s - 1])) return done(t, s - 1);
+  // navaden oklepaj: prazen gre s parom, sicer gresta oba oklepaja, vsebina ostane
+  if (t[s - 1] === "(") return unwrap(t, s - 1, s - 1, closeAt(t, s - 1), [s, closeAt(t, s - 1) < 0 ? t.length : closeAt(t, s - 1)]);
+  if (/Ans$/.test(before)) return done(t.slice(0, s - 3) + t.slice(s), s - 3);
+  // »f(x)=« kot celota, ne »n(x)=« iz »sin(x)=« (prej »sin(x)=|0,5« → »si0,5«)
+  const fx = /(?<![A-Za-zčšž])[a-z]\([a-z]\)=$/.exec(before);
+  if (fx) return done(t.slice(0, s - fx[0].length) + t.slice(s), s - fx[0].length);
+  if (t[s - 1] === ";") {
+    const enc = enclosing(t, s - 1);
+    if (enc) {
+      const c = closeAt(t, enc.o);
+      const slot = slotsOf(t, enc.o, c).find(([a]) => a === s);
+      if (FIXED(enc.name) || (slot && !blank(t, slot))) return done(t, s - 1);
+    }
+  }
+  // en znak (tudi znak zunaj BMP)
+  const n = /[\uDC00-\uDFFF]/.test(t[s - 1]) && s > 1 ? 2 : 1;
+  return done(t.slice(0, s - n) + t.slice(s), s - n);
+}
+
+/** Delete: { text, pos } po brisanju desno od kazalca. */
+function deleteForwardRaw(text, s, e = s) {
+  const t = String(text ?? "");
+  if (s !== e) return backspaceRaw(t, s, e);
+  if (s >= t.length) return done(t, t.length);
+  const inOp = openerAround(t, s);
+  if (inOp) s = inOp[0];
+  const w = wordAround(t, s);
+  if (w) s = w.start;
+  const after = t.slice(s);
+  const op = OPENER_AT.exec(after);
+  if (op) {
+    const o = s + op[0].length - 1;
+    const c = closeAt(t, o);
+    if (/^[∑∏]_\($/.test(op[0])) return done(t, o + 1);
+    const slots = slotsOf(t, o, c);
+    const name = op[0].replace(/\s*\($/, "");
+    if (slots.slice(1).every((x, k) => emptySlot(t, name, x, k + 1))) return unwrap(t, s, o, c, blank(t, slots[0]) ? null : slots[0]);
+    return done(t, o + 1); // v prvo režo
+  }
+  if (/^Ans/.test(after)) return done(t.slice(0, s) + t.slice(s + 3), s);
+  if (CLOSERS.includes(t[s])) return done(t, s + 1); // zaklepaja ne brišemo naprej: kazalec gre čez
+  if (t[s] === "(") {
+    const c = closeAt(t, s);
+    return unwrap(t, s, s, c, [s + 1, c < 0 ? t.length : c]);
+  }
+  if (t[s] === "[") return done(t, s + 1);
+  if (t[s] === ";") {
+    const enc = enclosing(t, s);
+    if (enc) {
+      const c = closeAt(t, enc.o);
+      const slot = slotsOf(t, enc.o, c).find(([, b]) => b === s);
+      if (FIXED(enc.name) || (slot && !blank(t, slot))) return done(t, s + 1);
+    }
+  }
+  if (t[s] === "^" && t[s + 1] === "(") {
+    const c = closeAt(t, s + 1);
+    if (c > 0 && !t.slice(s + 2, c).trim()) return done(t.slice(0, s) + t.slice(c + 1), s);
+    return done(t, s + 2);
+  }
+  const n = /[\uD800-\uDBFF]/.test(t[s]) ? 2 : 1;
+  return done(t.slice(0, s) + t.slice(s + n), s);
+}
+
+// Varovalo (AUDIT-034): brisanje nikoli ne pokvari izrisa. ok(besedilo) pove, ali se zapis izriše (sci.js: entryBase z
+// okoljem kalkulatorja); če se je prej in se po brisanju ne bi (»0,1+0,2« brez + → »0,10,2«, »∑_(n=1)« brez n), se nič ne
+// izbriše in kazalec gre en korak v smer brisanja.
+function guarded(raw, step) {
+  return (text, s, e = s, { ok } = {}) => {
+    const t = String(text ?? "");
+    const r = raw(t, s, e);
+    if (!ok || r.text === t || !r.text.trim() || ok(r.text) || !ok(t)) return r;
+    // ⌫ se ne sme zatakniti (pregled #986: ∑_(n=)^() s kazalcem le hodi levo): najbližji znak vsebine levo, ki ga lahko
+    // izbrišemo, sicer najmanjša predloga okoli kazalca, sicer vse levo od kazalca
+    if (step < 0 && s === e && s > 0) return progress(t, s, ok);
+    return { text: t, pos: Math.max(0, Math.min(t.length, (s === e ? s : step < 0 ? Math.min(s, e) : Math.max(s, e)) + (s === e ? step : 0))) };
+  };
+}
+function progress(t, s, ok) {
+  const cut = (a, b) => ({ text: t.slice(0, a) + t.slice(b), pos: a });
+  const content = (k) => {
+    if (!/[\d.,+\-−×÷·*/=<>≤≥!%π∞²³°A-Za-zα-ω]/u.test(t[k])) return false;
+    if (!/[A-Za-zčšž]/.test(t[k])) return true;
+    let b = k;
+    while (/[A-Za-zčšž]/.test(t[b] || "")) b++;
+    return t[b] !== "("; // črka imena funkcije ni vsebina
+  };
+  for (let k = s - 1; k >= Math.max(0, s - 12); k--) if (content(k) && ok(cut(k, k + 1).text)) return cut(k, k + 1);
+  for (let o = s - 1, d = 0; o >= 0; o--) {
+    if (CLOSERS.includes(t[o])) d++;
+    else if (OPENERS.includes(t[o])) {
+      if (d > 0) {
+        d--;
+        continue;
+      }
+      const m = OPENER.exec(t.slice(0, o + 1));
+      const start = m ? o + 1 - m[0].length : o;
+      const c = closeAt(t, o);
+      let end = c < 0 ? t.length : c + 1;
+      if (m && /^[∑∏]_\($/.test(m[0]) && t[end] === "^" && t[end + 1] === "(") end = closeAt(t, end + 1) < 0 ? t.length : closeAt(t, end + 1) + 1;
+      const r = cut(start, end);
+      if (!r.text.trim() || ok(r.text)) return { text: r.text.trim() ? r.text : "", pos: r.text.trim() ? start : 0 };
+    }
+  }
+  return ok(t.slice(s)) ? cut(0, s) : { text: "", pos: 0 };
+}
+/** ⌫: { text, pos }; opts.ok(besedilo) → ali se izriše (varovalo). */
+export const backspace = guarded(backspaceRaw, -1);
+/** Delete: { text, pos }; opts.ok kot pri backspace. */
+export const deleteForward = guarded(deleteForwardRaw, 1);
+
+/** ◀ ▶: naslednje mesto kazalca v zapisu (merilne točke), ne naslednji znak besedila (ime ostane celo). */
+export function stepCaret(base, text, p, d) {
+  const t = String(text ?? "");
+  // začetek in konec sta vedno mesti; mesto sredi imena ali odpirala (»integr|iraj(«, »d/d|x(«, »∫|(«) je začetek
+  // prve reže, sredi imena brez oklepaja (»An|s«) ga ni
+  const openers = [...t.matchAll(OPENERS_ALL)].map((m) => [m.index, m.index + m[0].length]);
+  const fix = (x) => openers.find(([a, b]) => a < x && x < b)?.[1] ?? x;
+  const stops = base?.ok ? [...new Set([0, ...caretStops(base).map((x) => fix(x.p)), t.length])].filter((x) => !wordAround(t, x)).sort((x, y) => x - y) : [];
+  if (stops.length) {
+    const next = d > 0 ? stops.find((x) => x > p) : [...stops].reverse().find((x) => x < p);
+    return next ?? (d > 0 ? Math.max(p, stops.at(-1)) : Math.min(p, stops[0]));
+  }
+  let q = Math.max(0, Math.min(t.length, p + d));
+  const w = wordAround(t, q);
+  if (w) q = d > 0 ? w.end : w.start;
+  return q;
+}
+
+// ---------- zapis za bralnik zaslona (AUDIT-040) ----------
+// Polje vnosa je prosojno besedilo (»∫(x;0;1)«); bralnik zaslona dobi opis matematike iz izrisanega zapisa (drevo KaTeX),
+// z besedami v jeziku vmesnika (sc.say.* v i18n), npr. »integral od 0 do 1 x d x«. Kazalec in okvirček sta besedi.
+
+/** Imena besed v ključu sc.say.words (ločene z »|«, v tem vrstnem redu). */
+export const SAY_WORDS = ["plus", "minus", "times", "div", "eq", "ne", "lt", "gt", "le", "ge", "approx", "to", "infty", "pi", "comma", "hole", "caret", "int", "sum", "prod", "lim", "det", "sin", "cos", "tan", "cot", "ln", "log", "fact", "percent", "deg", "pm"];
+const SAY_SYM = { "+": "plus", "-": "minus", "−": "minus", "\\cdot": "times", "\\times": "times", "*": "times", "\\div": "div", "/": "div", ":": "div", "=": "eq", "\\ne": "ne", "\\neq": "ne", "<": "lt", ">": "gt", "\\lt": "lt", "\\gt": "gt", "\\le": "le", "\\leq": "le", "\\ge": "ge", "\\geq": "ge", "\\approx": "approx", "\\to": "to", "\\rightarrow": "to", "\\infty": "infty", "\\pi": "pi", ",": "comma", "!": "fact", "\\%": "percent", "%": "percent", "\\circ": "deg", "^\\circ": "deg", "\\degree": "deg", "\\pm": "pm" };
+const SAY_OP = { "\\int": "int", "\\sum": "sum", "\\prod": "prod", "\\lim": "lim", "\\det": "det", "\\sin": "sin", "\\cos": "cos", "\\tan": "tan", "\\cot": "cot", "\\ln": "ln", "\\log": "log" };
+/** Imena grških črk v ključu sc.say.greek (ločena z »|«, v tem vrstnem redu), v jeziku vmesnika. */
+export const SAY_GREEK = ["alpha", "beta", "gamma", "delta", "epsilon", "theta", "lambda", "mu", "sigma", "tau", "phi", "omega", "rho"];
+const GREEK_TEX = { varepsilon: "epsilon", varphi: "phi" };
+
+/**
+ * TeX zapisa vnosa → besedilo za bralnik zaslona.
+ * say(key, vars): prevod sc.say.<key> (range, frac, fracLong, pow, powLong, sub, at, sqrt, sqrtLong, root, rootLong, abs, binom,
+ * paren, matrix, deriv); greek: { ime: beseda } za SAY_GREEK;
+ * words: { ime: beseda } za SAY_WORDS; parse: katex.__parse.
+ */
+export function texSpeech(tex, { say, words, greek = {}, parse }) {
+  let tree;
+  try {
+    tree = parse(String(tex ?? ""), { trust: TRUST, strict: "ignore", throwOnError: true });
+  } catch {
+    return "";
+  }
+  const w = (k) => words[k] ?? k;
+  // en člen (brez presledka; beseda »kazalec« ne šteje)
+  const one = (x) => !/ /.test(x.replace(w("caret"), "").trim());
+  // več členov: na vrhnji ravni skupine je + ali − (√(x²+1), ne √(x²))
+  const terms = (g) => list(g?.type === "ordgroup" ? g.body : g).some((x) => x?.type === "atom" && x.family === "bin" && /^(\+|-|−|\\pm)$/.test(x.text));
+  const list = (body) => (Array.isArray(body) ? body : body ? [body] : []);
+  const sp = (nodes) => {
+    const out = [];
+    for (const n of list(nodes)) {
+      const s = node(n);
+      if (s) out.push(s);
+    }
+    // števke in decimalna vejica skupaj (»2 cela 5«, ne »2 5«)
+    return out.join(" ").replace(/(\d) (?=\d)/g, "$1");
+  };
+  const node = (n) => {
+    if (!n) return "";
+    switch (n.type) {
+      case "ordgroup":
+      case "styling":
+      case "sizing":
+      case "font":
+      case "text":
+      case "smash":
+      case "mclass":
+        return sp(n.body);
+      case "mathord":
+      case "textord": {
+        if (n.text in SAY_SYM) return w(SAY_SYM[n.text]);
+        const g = /^\\([a-zA-Z]+)$/.exec(n.text);
+        if (g) return g[1] === "square" ? w("hole") : greek[GREEK_TEX[g[1]] ?? g[1]] ?? g[1];
+        return n.text;
+      }
+      case "atom":
+      case "spacing":
+        if (n.type === "spacing") return "";
+        return n.text in SAY_SYM ? w(SAY_SYM[n.text]) : /^[,;]$/.test(n.text) ? "," : "";
+      case "kern":
+      case "rule":
+      case "phantom":
+        return "";
+      case "html": {
+        const cls = n.attributes?.class || "";
+        if (/sc-caret/.test(cls)) return w("caret");
+        if (/sc-hole/.test(cls)) return w("hole");
+        return sp(n.body);
+      }
+      case "htmlmathml":
+        return sp(n.mathml ?? n.html);
+      case "op":
+        return SAY_OP[n.name] ? w(SAY_OP[n.name]) : n.name ? n.name.replace(/^\\/, "") : sp(n.body);
+      case "operatorname":
+        return sp(n.body).replace(/ /g, "");
+      case "supsub": {
+        const base = node(n.base);
+        if (n.base?.type === "op" && n.sub && n.sup) return say("range", { op: base, a: node(n.sub), b: node(n.sup) });
+        let s = base;
+        // odvod v točki: \left. … \right|_{x=2}
+        if (n.sub && n.base?.type === "leftright" && n.base.right === "|") s = say("at", { a: s, b: node(n.sub) });
+        else if (n.sub) s = n.base?.type === "op" ? `${s} ${node(n.sub)}` : say("sub", { a: s, b: node(n.sub) });
+        if (n.sup) {
+          const sup = node(n.sup);
+          // eksponent iz več členov: povemo, kje se konča (»2 na x plus 1, konec potence« ≠ »2 na x, plus 1«)
+          s = sup.startsWith(w("deg")) ? `${s} ${sup}` : say(terms(n.sup) ? "powLong" : "pow", { a: s, b: sup });
+        }
+        return s;
+      }
+      case "genfrac": {
+        const a = node(n.numer);
+        const b = node(n.denom);
+        if (!n.hasBarLine) return say("binom", { a, b });
+        const dx = /^d ?(\S+)$/.exec(b);
+        if (a === "d" && dx) return say("deriv", { x: dx[1] });
+        // sestavljen števec ali imenovalec: povemo, kje se začne in konča (»1 plus 2 skozi 3 plus 4« je dvoumno)
+        return say(one(a) && one(b) ? "frac" : "fracLong", { a, b });
+      }
+      case "sqrt": {
+        // korenjenec iz več členov: »koren iz x na 2 plus 1, konec korena« ≠ »koren iz x na 2, plus 1«
+        const a = node(n.body);
+        const long = terms(n.body) ? "Long" : "";
+        return n.index ? say(`root${long}`, { k: node(n.index), a }) : say(`sqrt${long}`, { a });
+      }
+      case "leftright": {
+        const a = sp(n.body);
+        if (n.left === "|" || n.left === "\\vert" || n.left === "\\lvert") return say("abs", { a });
+        if (n.left === ".") return a;
+        if (list(n.body).length === 1 && list(n.body)[0].type === "array") return a; // matrika: oklepaj je del matrike
+        return say("paren", { a });
+      }
+      case "array":
+        return say("matrix", { a: n.body.map((row) => row.map(node).join(", ")).join("; ") });
+      case "accent":
+        return node(n.base);
+      default:
+        return n.body ? sp(n.body) : "";
+    }
+  };
+  return sp(tree).replace(/\s+/g, " ").trim();
+}
