@@ -84,3 +84,16 @@ test("za znanstvenim zapisom je le enota ali nič: račun ni število z »enoto�
     assert.equal(chk({ value: v, unit }, inp).kind, "correct", inp);
   }
 });
+
+test("enota-znak za znanstvenim zapisom (€, %, ‰) in »7e0« pri obliki a·10^n ostaneta pravilna (pregled #961, 2. krog)", () => {
+  for (const [v, inp, unit] of [[8000, "8·10^3 €", "€"], [97.5, "9,75·10^1 %", "%"], [2000, "2·10^3 ‰", "‰"], [8000, "8e3 €", "€"], [2000, "2·10^3)"]]) {
+    assert.equal(chk({ value: v, unit }, inp).kind, "correct", inp);
+  }
+  assert.equal(chk({ value: 97.5, unit: "%", decimals: 1 }, "9,75·10^1 %").kind, "correct");
+  // brez enote naloge je »2e3%« izraz (20), ne 2000 z enoto
+  assert.equal(verdict(chk({ value: 2000 }, "2e3%")), "wrong/chk.expression");
+  // »7e0« = 7 pri nalogi »zapiši v obliki a·10^n, koliko je n«
+  const form = { expr: "a*10^n", vals: { a: 3.1, n: 7 }, ask: "n" };
+  assert.equal(chk({ value: 7, form }, "7e0").kind, "correct");
+  assert.equal(verdict(chk({ value: 3.2, form: { expr: "a*10^n", vals: { a: 3.2, n: 4 }, ask: "a" } }, "3,2e4")), "format/chk.partOnly");
+});

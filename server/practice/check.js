@@ -127,14 +127,19 @@ function parseQuotient(input, { dot = false } = {}) {
 const SUPER = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
 // Ostanek za znanstvenim zapisom je enota (»m/s«, »°C«, »eV«) ali nič. Operator, potenca, √, π, e, »)«, »!«, »%« ali
 // števka pomenijo, da je zapis izraz (»2e3+1«, »2·10^3 + 500«, »2e3²«): takega prebere exprValue, ne kot število z enoto.
-const unitRest = (r) => r === "" || (/^[\p{L}°µ]/u.test(r) && !/^(?:π|[eE](?![\p{L}]))/u.test(r));
-function parseScientific(input) {
+// Pri nalogi z enoto je enota tudi znak (»8·10^3 €«, »9,75·10^1 %«, »2·10^3 ‰«); pri nalogi brez enote je »2e3%« izraz.
+const unitRest = (r, ans) =>
+  r === "" ||
+  /^\)+$/.test(r) || // odvečen zaklepaj (»2·10^3)«) kot doslej ne spremeni števila
+  (/^[\p{L}°µ]/u.test(r) && !/^(?:π|[eE](?![\p{L}]))/u.test(r)) ||
+  (!!ans?.unit && !/^[\d+\-−*/·×:÷^²³⁰¹⁴⁵⁶⁷⁸⁹⁻√∛π()!=.,\[\]{}|]/u.test(r));
+function parseScientific(input, ans = null) {
   const s = westernDigits(String(input).trim()).replace(/[−–]/g, "-");
   // »1e8«, »2,5e-3 m«, »3E2« (zapis kalkulatorja): isto pravilo za e kot calcText v math.js (za njim ni črke ali oklepaja)
   const e = s.match(/^((?:[+-]\s*)?\d+(?:[.,]\d+)?)[eE]([+-]?\d+)(?![\d.,(A-Za-z])\s*([\s\S]*)$/);
   if (e) {
     const value = Number(`${e[1].replace(/\s/g, "").replace(",", ".")}e${e[2]}`);
-    if (!unitRest(e[3].trim())) return null;
+    if (!unitRest(e[3].trim(), ans)) return null;
     if (Number.isFinite(value)) return { value, decimals: effDecimals(value), unit: e[3].trim() };
   }
   // Brez dveh zaporednih delov, ki oba sprejmeta presledke (»[+-]?\s*« za »\s*«, »\s*(.*)«): sicer kvadratni čas pri dolgem nizu presledkov.
@@ -142,7 +147,7 @@ function parseScientific(input) {
   if (!m) return null;
   const exp = (m[2] ?? m[3] ?? m[4] ?? [...m[5]].map((c) => SUPER[c]).join("")).replace(/\s/g, "");
   const value = Number(`${m[1].replace(/\s/g, "").replace(",", ".")}e${exp}`);
-  if (!Number.isFinite(value) || !unitRest(m[6].trim())) return null;
+  if (!Number.isFinite(value) || !unitRest(m[6].trim(), ans)) return null;
   return { value, decimals: effDecimals(value), unit: m[6].trim() };
 }
 
@@ -188,7 +193,7 @@ function sameValue(ans, v) {
 function checkNumber(ans, input, opts = {}) {
   const s = westernDigits(String(input).trim());
   // Znanstveni zapis je število (prej je »2,5·10^3« veljal kot 2,5 z namigom »1000-krat premajhen«).
-  const sci = parseScientific(input);
+  const sci = parseScientific(input, ans);
   if (sci) return checkParsed(ans, sci, opts);
   const q = clockLike(ans, s) ? null : parseQuotient(input, { dot: !!ans.dot });
   if (q) {
@@ -769,7 +774,9 @@ export function checkAnswer(answer, input, opts = {}) {
     return { kind: "format", code: "chk.empty", message: "Najprej vpiši odgovor." };
   }
   if (answer.type === "number" || answer.type === "fraction") {
-    const form = checkForm(answer, input, opts);
+    // »7e0«, »-5e0«: število v znanstvenem zapisu z vrednostjo rešitve je odgovor, ne zapis oblike a·10^n
+    const sci = answer.type === "number" && /\d[eE][+-−]?\d/.test(String(input)) ? parseScientific(input, answer) : null;
+    const form = sci && !sci.unit && sameValue(answer, sci.value) ? null : checkForm(answer, input, opts);
     if (form) return form;
     input = stripAsked(input, answer, opts);
   }

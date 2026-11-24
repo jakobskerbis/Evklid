@@ -51,7 +51,7 @@ export function migrateText(text, { oneArgDecimal = true } = {}) {
 export function migrateV2(text, { hasE = false } = {}) {
   return String(text ?? "")
     .replace(/(?<![A-Za-z_\d.,])(\d+(?:[.,]\d+)?|[.,]\d+)([eE])(?=[+\-−]?\d+(?![\d.,A-Za-zα-ωΑ-Ω_(]))/g, (m, a, e) => (e === "E" && hasE ? m : `${a}·${e}`))
-    .replace(/([+\-−]\s*)(\d+(?:[.,]\d+)?\s*%)/g, "$1($2)");
+    .replace(/([+\-−]\s*)((?:\d+(?:[.,]\d+)?|[.,]\d+)\s*%)/g, "$1($2)");
 }
 const definesE = (state) => (state.items || []).some((it) => it.type === "expr" && /^\s*E\s*(?:\([^()]*\)\s*)?=(?!=)/.test(String(it.text ?? "")));
 const mapTexts = (state, fn) => (state.items || []).map((it) => (it.type === "expr" && typeof it.text === "string" ? { ...it, text: fn(it.text) } : it));
