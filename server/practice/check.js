@@ -775,7 +775,7 @@ export function checkAnswer(answer, input, opts = {}) {
   }
   if (answer.type === "number" || answer.type === "fraction") {
     // »7e0«, »-5e0«: število v znanstvenem zapisu z vrednostjo rešitve je odgovor, ne zapis oblike a·10^n
-    const sci = answer.type === "number" && /\d[eE][+-−]?\d/.test(String(input)) ? parseScientific(input, answer) : null;
+    const sci = answer.type === "number" && /\d[eE][+\-−]?\d/.test(String(input)) ? parseScientific(input, answer) : null;
     const form = sci && !sci.unit && sameValue(answer, sci.value) ? null : checkForm(answer, input, opts);
     if (form) return form;
     input = stripAsked(input, answer, opts);
