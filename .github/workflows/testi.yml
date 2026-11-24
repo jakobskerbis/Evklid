@@ -13,10 +13,11 @@ on:
     branches: [main]
 permissions:
   contents: read
-# PR: nov push prekliče star zagon istega PR. main: vsak commit dobi svoj izid (brez preklica).
+# PR: nov push prekliče star zagon istega PR. main (j 2026-11-24: »star testni zagon se ustavi, ko pride nov«):
+# nov commit v main prekliče star zagon na main – objava (render-objava.js, ota.yml) potrebuje le izid zadnjega commita.
 concurrency:
-  group: testi-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: testi-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 # Izrecno bash: GitHub ga potem zažene z »-eo pipefail«, zato napaka pred »| tee« podre korak.
 defaults:
   run:
