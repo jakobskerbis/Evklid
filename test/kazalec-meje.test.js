@@ -129,6 +129,20 @@ test("klik/dotik na meje integrala in reže limite ureja pravo režo (AUDIT-003)
       await key("x");
       const v = await value();
       assert.match(v, /^limita\(x; x; 0\)$/, `${where}: limita ${v}`);
+      // dvojni klik (miška) na zapis ne izbere skritega »∫« ali »sin«: naslednja tipka ne pokvari predloge
+      if (!opt.hasTouch) {
+        for (const tx of ["∫(x²+1;0;2)", "sin(30)+cos(60)"]) {
+          await reset(tx);
+          const r = await page.evaluate(() => {
+            const k = document.querySelector(".sc-preview .katex").getBoundingClientRect();
+            return { x: k.left + k.width * 0.6, y: k.top + k.height / 2 };
+          });
+          await page.mouse.dblclick(r.x, r.y);
+          await page.waitForTimeout(50);
+          const sel = await page.evaluate(() => [document.querySelector(".sc-input").selectionStart, document.querySelector(".sc-input").selectionEnd]);
+          assert.equal(sel[0], sel[1], `${where}: dvojni klik na ${tx} ne izbere besedila`);
+        }
+      }
       assert.deepEqual(errors, [], `${where}: napake na strani`);
       await ctx.close();
     }

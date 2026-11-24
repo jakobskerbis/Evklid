@@ -550,7 +550,9 @@ export function createScientific(root, opts) {
   input.addEventListener("click", (ev) => {
     const p = ev.detail > 0 && input.value ? caretFromPoint(ev.clientX, ev.clientY) : null;
     setTimeout(() => {
-      if (p != null && input.selectionStart === input.selectionEnd) input.setSelectionRange(p, p);
+      // dvojni ali trojni klik/dotik ne izbere skrite »besede« surovega vnosa (»∫«, »sin«), ki bi jo naslednja tipka
+      // nadomestila: kazalec gre na mesto dotika (AUDIT-003); vlečenje z miško (detail 1) izbiro ohrani
+      if (p != null && (input.selectionStart === input.selectionEnd || ev.detail > 1)) input.setSelectionRange(p, p);
       showEntry();
     });
   });
