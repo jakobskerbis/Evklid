@@ -29,6 +29,22 @@ test("keyboard notation becomes formulas, the rest stays text", () => {
   assert.equal(toTex("a{b}%"), "a\\{b\\}\\%");
 });
 
+// AUDIT-013: telo limite, vsote in produkta v oklepaju je del iste formule (prej dva kosa in surov »(i)«)
+test("lim_(x→0)(x^(2)), ∑_(i=1)^(5)(i), ∏_(i=1)^(5)(i): operator in telo sta ena formula (AUDIT-013)", () => {
+  assert.deepEqual(splitFormulas("lim_(x→0)(x^(2))"), [{ tex: "\\lim_{x→0} x^{2}" }]);
+  assert.deepEqual(splitFormulas("lim_(x→0) (x^(2))"), [{ tex: "\\lim_{x→0} x^{2}" }]);
+  assert.deepEqual(splitFormulas("∑_(i=1)^(5)(i)"), [{ tex: "\\sum_{i=1}^{5} i" }]);
+  assert.deepEqual(splitFormulas("∑_(i=1)^(5) (i)"), [{ tex: "\\sum_{i=1}^{5} i" }]);
+  assert.deepEqual(splitFormulas("∏_(i=1)^(5)(i)"), [{ tex: "\\prod_{i=1}^{5} i" }]);
+  assert.deepEqual(splitFormulas("∏_(i=1)^(5) (i)"), [{ tex: "\\prod_{i=1}^{5} i" }]);
+  // vsota v telesu obdrži oklepaj (pomen se ne spremeni)
+  assert.deepEqual(tex("∑_(i=1)^(5)(i+1)"), ["\\sum_{i=1}^{5} \\left(i+1\\right)"]);
+  assert.deepEqual(splitFormulas("Koliko je ∑_(i=1)^(3)(i)?"), [{ text: "Koliko je " }, { tex: "\\sum_{i=1}^{3} i" }, { text: "?" }]);
+  // navaden oklepaj brez operatorja ostane besedilo
+  assert.ok(!hasFormula("(a)(b)"));
+  for (const s of ["lim_(x→0)(x^(2))", "∑_(i=1)^(5)(i)", "∏_(i=1)^(5)(i)", "∑_(i=1)^(5)(i+1)"]) for (const t of tex(s)) assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "ignore" }), t);
+});
+
 test("every formula from the tutor keys renders in KaTeX", () => {
   const samples = ["(3)/(4)", "x^(2)", "√((x+1)/(2))", "a_(n)", "∑_(n=1)^(10) n", "∫ (x) dx", "∫_(0)^(π) (sin(x)) dx", "∫(e^(x);0;1)", "lim_(x→∞)((1)/(x))", "a{b}%#&~"];
   for (const s of samples) for (const t of [toTex(s), ...tex(s)]) assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "ignore" }), `${s} → ${t}`);
@@ -116,18 +132,3 @@ test("brisiNazaj v telesu integrala in brisiNaprej (Del): zgradba ostane cela", 
   assert.equal(brisiNaprej("(1)/(2)", 1), null, "števka se zbriše kot vsak znak");
 });
 
-// AUDIT-013: telo limite, vsote in produkta v oklepaju je del iste formule (prej dva kosa in surov »(i)«)
-test("lim_(x→0)(x^(2)), ∑_(i=1)^(5)(i), ∏_(i=1)^(5)(i): operator in telo sta ena formula (AUDIT-013)", () => {
-  assert.deepEqual(splitFormulas("lim_(x→0)(x^(2))"), [{ tex: "\\lim_{x→0} x^{2}" }]);
-  assert.deepEqual(splitFormulas("lim_(x→0) (x^(2))"), [{ tex: "\\lim_{x→0} x^{2}" }]);
-  assert.deepEqual(splitFormulas("∑_(i=1)^(5)(i)"), [{ tex: "\\sum_{i=1}^{5} i" }]);
-  assert.deepEqual(splitFormulas("∑_(i=1)^(5) (i)"), [{ tex: "\\sum_{i=1}^{5} i" }]);
-  assert.deepEqual(splitFormulas("∏_(i=1)^(5)(i)"), [{ tex: "\\prod_{i=1}^{5} i" }]);
-  assert.deepEqual(splitFormulas("∏_(i=1)^(5) (i)"), [{ tex: "\\prod_{i=1}^{5} i" }]);
-  // vsota v telesu obdrži oklepaj (pomen se ne spremeni)
-  assert.deepEqual(tex("∑_(i=1)^(5)(i+1)"), ["\\sum_{i=1}^{5} \\left(i+1\\right)"]);
-  assert.deepEqual(splitFormulas("Koliko je ∑_(i=1)^(3)(i)?"), [{ text: "Koliko je " }, { tex: "\\sum_{i=1}^{3} i" }, { text: "?" }]);
-  // navaden oklepaj brez operatorja ostane besedilo
-  assert.ok(!hasFormula("(a)(b)"));
-  for (const s of ["lim_(x→0)(x^(2))", "∑_(i=1)^(5)(i)", "∏_(i=1)^(5)(i)", "∑_(i=1)^(5)(i+1)"]) for (const t of tex(s)) assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "ignore" }), t);
-});
