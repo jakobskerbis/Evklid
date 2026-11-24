@@ -331,6 +331,13 @@ export const UI_LANGUAGES = [
   "uk", "ru", "tr", "ar", "fa", "hi", "bn", "ur", "id", "vi", "zh", "zh-Hant", "ja", "ko", "th", "sw",
 ];
 
+// Sproti prevajani jeziki vmesnika (j, 24. 11. 2026): poleg slovenščine angleščina, nemščina, hrvaščina,
+// italijanščina in madžarščina. Ostali prevodi so zamrznjeni: obstoječa besedila ostanejo, nova besedila
+// se jim NE dodajajo – vmesnik jih pokaže v nadomestnem jeziku (uiChain, npr. sr → hr, fr → en).
+// Odmrzne jih samo j.
+export const LIVE_UI_LANGUAGES = ["sl", "en", "de", "hr", "it", "hu"];
+export const FROZEN_UI_LANGUAGES = UI_LANGUAGES.filter((c) => !LIVE_UI_LANGUAGES.includes(c));
+
 export const DEFAULT_LANGUAGE = "sl";
 export const LANGUAGE_CODES = LANGUAGES.map((l) => l[0]);
 

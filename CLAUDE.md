@@ -7,3 +7,5 @@
 - Lesson format: `content/lessons/README.md`; check with `node scripts/check-lesson.js -q <files>` (also recomputes numeric steps). Writer/reviewer prompts: `node scripts/lesson-brief.js [--review|--read] <ids>`.
 - Lessons are written and reviewed by Opus (or Fable), never Sonnet.
 - Every change is reviewed three times before merge (j, 2026-10-29): `docs/pregled.md` (pass 1 automatic incl. `node scripts/preveri-aplikacijo.cjs`, passes 2 and 3 by separate reviewer agents). Small fixes (≤ ~50 lines, nothing about money, AI cost, accounts, personal data, tutor prompt or content): pass 1 plus one reviewer (j, 2026-11-04; `docs/pregled.md` §1).
+
+- UI translations (j, 2026-11-24): only `LIVE_UI_LANGUAGES` in `public/i18n/languages.js` (sl, en, de, hr, it, hu) get new or changed strings. All other `public/i18n/ui/*.json` are frozen: do not add or edit keys there (existing text stays; the UI falls back via `uiChain`, e.g. sr → hr, fr → en). `test/i18n.test.js` enforces full keys only for live languages. Only j unfreezes.
