@@ -534,7 +534,11 @@ test("flame colour name: sodium reads yellow, other ions keep their textbook col
   assert.equal(ime({ Na: 0.3, K: 0.02 }), "rumena"); // umazana zanka
   assert.equal(ime({ Na: 0.3, K: 1 }), "rumena"); // natrij prekrije kalij
   assert.equal(ime({ Na: 0.3, K: 1 }, 1, { steklo: true }), "vijolična"); // skozi kobaltovo steklo samo kalij
-  assert.equal(ime({ Li: 1 }), "rdeča");
+  for (const n of [1, 0.3]) assert.equal(ime({ Li: n }), "karminasto rdeča", `Li ${n}`);
+  assert.equal(ime({ Sr: 0.3 }), "karminasto rdeča");
+  assert.equal(ime({ Ca: 1, Na: 0.045, K: 0.003 }), "oranžno rdeča"); // po enem čiščenju umazane zanke
+  assert.equal(ime({ Ba: 1, Na: 0.3, K: 0.02 }), "rumeno zelena");
+  assert.equal(ime({ Cu: 0.05 }), "modro zelena");
   assert.equal(ime({ Sr: 1 }), "rdeča");
   assert.equal(ime({ Ca: 1 }), "oranžno rdeča");
   assert.equal(ime({ Ba: 1 }), "zelena");
