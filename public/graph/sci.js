@@ -6,7 +6,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -214,7 +214,35 @@ export function createScientific(root, opts) {
   const OPS = /^[+×÷^²³⁻!%−]/;
   // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
   // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
+  // Lastna razveljavitev (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y, »razveljavi« na telefonu): vnos se spreminja tudi s kodo
+  // (⌫, tipke na zaslonu), kar sistemsko razveljavitev pokvari ali izbriše (pregled #945: prazno polje v Firefoxu,
+  // kazalec na napačnem mestu). Stanje je besedilo in kazalec PRED spremembo; zapiše ga update() ob vsaki spremembi.
+  const undo = { back: [], fwd: [], cur: { v: "", p: 0 } };
+  function record() {
+    const v = input.value;
+    const p = input.selectionStart ?? v.length;
+    if (v === undo.cur.v) {
+      undo.cur.p = p;
+      return;
+    }
+    undo.back.push(undo.cur);
+    if (undo.back.length > 200) undo.back.shift();
+    undo.fwd = [];
+    undo.cur = { v, p };
+  }
+  function history(dir) {
+    const from = dir < 0 ? undo.back : undo.fwd;
+    const to = dir < 0 ? undo.fwd : undo.back;
+    if (!from.length) return;
+    to.push({ v: input.value, p: input.selectionStart ?? input.value.length });
+    undo.cur = from.pop();
+    input.value = undo.cur.v;
+    input.setSelectionRange(undo.cur.p, undo.cur.p);
+    recall = -1;
+    update();
+  }
   function insert(text, o = {}) {
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? input.value.length;
     if (o.replace) input.value = "";
     if (o.angle && ANGLES.includes(o.angle) && st.angle !== o.angle) {
       st.angle = o.angle;
@@ -240,21 +268,29 @@ export function createScientific(root, opts) {
       live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
     }
   }
-  function del() {
+  // ⌫ (zaslonska in strojna tipka) in Delete: ime funkcije, ukaz in predloga gredo kot celota (sci-vnos.js, AUDIT-004)
+  function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
-    if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
-    else if (s > 0) {
-      // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
-      const n = m ? m[0].length : 1;
-      input.value = input.value.slice(0, s - n) + input.value.slice(s);
-      input.setSelectionRange(s - n, s - n);
-    }
-    update();
+    if (input.value === undo.cur.v) undo.cur.p = s; // razveljavitev vrne kazalec sem (selectionchange je lahko še na poti)
+    const r = fn(input.value, s, e);
+    if (!r.text.trim()) r.text = r.pos = ""; // ostali presledki (»∑_(n=1)^(5) « brez predloge) niso vnos
+    r.pos = Math.min(Number(r.pos) || 0, r.text.length);
+    const changed = r.text !== input.value;
+    if (changed) replaceText(r.text);
+    input.setSelectionRange(r.pos, r.pos);
+    if (changed) {
+      recall = -1;
+      update();
+    } else showEntry();
   }
+  const replaceText = (next) => (input.value = next);
+  const del = () => edit(backspace);
+  const delForward = () => edit(deleteForward);
+  // ◀ ▶: na naslednje mesto kazalca v zapisu (iz integranda v mejo, čez ime funkcije), ne za en znak
   function move(d) {
-    const p = Math.max(0, Math.min(input.value.length, (input.selectionStart ?? input.value.length) + d));
+    if (entry.text !== input.value) showEntry();
+    const p = stepCaret(entry.base, input.value, input.selectionStart ?? input.value.length, d);
     input.setSelectionRange(p, p);
     showEntry();
   }
@@ -582,8 +618,13 @@ export function createScientific(root, opts) {
     });
   });
   input.addEventListener("keyup", () => showEntry());
-  document.addEventListener("selectionchange", () => document.activeElement === input && showEntry());
+  document.addEventListener("selectionchange", () => {
+    if (document.activeElement !== input) return;
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? undo.cur.p; // kazalec pred naslednjo spremembo
+    showEntry();
+  });
   function update() {
+    record();
     const text = input.value;
     const prev = $(".sc-preview");
     const live = $(".sc-live");
@@ -902,7 +943,33 @@ export function createScientific(root, opts) {
     recall = -1;
     update();
   });
+  // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
+  input.addEventListener("beforeinput", (e) => {
+    if (e.isComposing) return;
+    if (e.inputType === "historyUndo" || e.inputType === "historyRedo") {
+      e.preventDefault();
+      history(e.inputType === "historyUndo" ? -1 : 1);
+      return;
+    }
+    if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
+      e.preventDefault();
+      del();
+    } else if (e.inputType === "deleteContentForward" || e.inputType === "deleteWordForward") {
+      e.preventDefault();
+      delForward();
+    }
+  });
   input.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && /^[zy]$/i.test(e.key)) {
+      e.preventDefault();
+      history(e.key.toLowerCase() === "y" || e.shiftKey ? 1 : -1);
+      return;
+    }
+    if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && input.value) {
+      e.preventDefault();
+      move(e.key === "ArrowLeft" ? -1 : 1);
+      return;
+    }
     if (e.key === "Enter") {
       e.preventDefault();
       compute();

@@ -7,7 +7,8 @@
 // Brez DOM; test/sci-vnos.test.js.
 import { previewTex, analyze, exactIntegral } from "./scisolve.js";
 import { evaluate, functionDef } from "./scicore.js";
-import { parseCommand } from "./cas.js";
+import { parseCommand, COMMAND_NAMES } from "./cas.js";
+import { BUILTINS } from "./math.js";
 import { chemSub } from "./molska.js";
 
 // Barvi kazalca in okvirčka sta v graph.css (.sc-caret, .sc-hole: CSS spremenljivke, tudi temna tema).
@@ -57,6 +58,10 @@ export function liveTex(text, env = {}) {
   const cmd = /^\s*([A-Za-zčšž]+)\s*\((.*)\)\s*$/s.exec(text);
   if (cmd && parseCommand(text)) {
     const inner = cmd[2].split(";").map((p) => (p.trim() ? previewTex(p, env) : null));
+    const op = parseCommand(text)?.op;
+    // integral in limita z (še) prazno režo: zapis predloge, ne ime ukaza (»integriraj(t²; □)« → ∫ t² d□; AUDIT-004)
+    if (inner.every(Boolean) && op === "integrate" && inner.length === 2) return `\\int ${inner[0]}\\,d${inner[1]}`;
+    if (inner.every(Boolean) && op === "limit" && inner.length === 3) return `\\lim\\limits_{${inner[1]} \\to ${inner[2]}} ${inner[0]}`;
     if (inner.every(Boolean)) return `\\operatorname{${cmd[1]}}\\left(${inner.join(",\\ ")}\\right)`;
   }
   try {
@@ -546,7 +551,8 @@ export function caretStops(base) {
  * pa se navpično ne prekrivajo (z \smash so se in dotik na števec, ki ga Chromium premakne ~8 px, je padel v imenovalec).
  */
 export function stopsTex(base) {
-  const stops = caretStops(base);
+  // dotik nikoli ne postavi kazalca sredi imena ali odpirala (»d|/dx(«, »sin|(«): tam bi vnos ime pokvaril (AUDIT-004)
+  const stops = caretStops(base).filter((s) => !(openerAround(base.raw, s.p)?.[0] < s.p));
   return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.4em}}}`])));
 }
 
@@ -558,3 +564,226 @@ export function entryTex(text, caret = String(text ?? "").length, env = {}, rend
 
 /** Zapis brez kazalca in brez okvirčkov (za preverjanje): odstrani vstavljeni kazalec. */
 export const stripCaret = (tex) => tex.split(CARET).join("");
+
+// ---------- brisanje in premik kazalca (AUDIT-004) ----------
+// Ena pot za zaslonsko ⌫ in strojni Backspace/Delete: ime funkcije ali ukaza se nikoli ne razpolovi, predloga
+// (∫(f;a;b), d/dx(…), limita(…), ∑_(…)^(…), det([[…]])) ne pusti ostankov (»integriraj)«, »;;)«, »)«).
+
+const esc = (x) => x.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+const WORDS = [...new Set([...BUILTINS, ...COMMAND_NAMES, "Ans"])].filter((w) => w.length > 1).sort((a, b) => b.length - a.length);
+// odpiralo predloge ali funkcije, ki se konča z oklepajem
+const OPENER = new RegExp(`(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|\\^\\(|_\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()$`, "u");
+const OPENER_AT = new RegExp(`^(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()`, "u");
+const WORD_CHAR = /[A-Za-zčšž]/;
+// mesta, kjer kazalec ne sme stati (sredi imena ali odpirala). »×10^(« ni med njimi: dotik na števko v 10 postavi kazalec
+// ob to števko (pregled #965); ⌫ za »×10^(« ga še vedno izbriše kot celoto (OPENER).
+const OPENERS_ALL = new RegExp(`[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\(`, "gu");
+
+/** Zaklepaj za oklepajem na o (ali -1, če ni zaprt). */
+function closeAt(s, o) {
+  let d = 0;
+  for (let j = o; j < s.length; j++) {
+    if (OPENERS.includes(s[j])) d++;
+    else if (CLOSERS.includes(s[j]) && --d === 0) return j;
+  }
+  return -1;
+}
+/** Reže med oklepajem o in zaklepajem c (c = -1: do konca). */
+function slotsOf(s, o, c) {
+  const end = c < 0 ? s.length : c;
+  const out = [];
+  let d = 0;
+  let b = o + 1;
+  for (let j = o + 1; j < end; j++) {
+    if (OPENERS.includes(s[j])) d++;
+    else if (CLOSERS.includes(s[j])) d--;
+    else if (s[j] === ";" && d === 0) {
+      out.push([b, j]);
+      b = j + 1;
+    }
+  }
+  out.push([b, end]);
+  return out;
+}
+/** Najbližji odprt oklepaj levo od p (indeks) in odpiralo pred njim. */
+function enclosing(s, p) {
+  let d = 0;
+  for (let j = p - 1; j >= 0; j--) {
+    if (CLOSERS.includes(s[j])) d++;
+    else if (OPENERS.includes(s[j])) {
+      if (d === 0) {
+        const m = OPENER.exec(s.slice(0, j + 1));
+        return { o: j, start: m ? j + 1 - m[0].length : j, name: m ? m[0].replace(/\s*\($/, "") : s[j] };
+      }
+      d--;
+    }
+  }
+  return null;
+}
+// predloge s stalnim številom rež: ločila se ne briše (∫(x;0) ni več integral), ⌫ gre v prejšnjo režo
+const FIXED = (name) => name === "∫" || name === "[" || /^(limita|limit|lim|taylor)$/i.test(name);
+const blank = (s, [a, b]) => !s.slice(a, b).replace(/[[\];\s]/g, "");
+// privzete vrednosti predlog (sci.js anaKeys) štejejo kot prazne: prazno »limita(□; x; □)« se izbriše kot celota
+const DEFAULTS = { limita: [, "x"], limit: [, "x"], lim: [, "x"], taylor: [, "x", "0", "5"] };
+const emptySlot = (s, name, x, k) => blank(s, x) || s.slice(...x).trim() === DEFAULTS[name.toLowerCase()]?.[k];
+const done = (text, pos) => ({ text, pos });
+
+/** Ime (ali »Ans«), v katerem je položaj p (strogo znotraj), ali null: { start, end }. */
+function wordAround(s, p) {
+  if (!WORD_CHAR.test(s[p - 1] || "") || !WORD_CHAR.test(s[p] || "")) return null;
+  let b = p;
+  while (b < s.length && WORD_CHAR.test(s[b])) b++;
+  let a = p;
+  while (a > 0 && WORD_CHAR.test(s[a - 1])) a--;
+  const run = s.slice(a, b);
+  const x = WORDS.find((w) => run.endsWith(w) && b - w.length < p);
+  return x ? { start: b - x.length, end: b } : null;
+}
+
+/** Odpiralo (ime z oklepajem, ∫(, d/dx( …), ki vsebuje položaj p ali se na njem začne: [začetek, konec) ali null. */
+function openerAround(s, p) {
+  for (const m of s.matchAll(OPENERS_ALL)) if (m.index <= p && p < m.index + m[0].length) return [m.index, m.index + m[0].length];
+  return null;
+}
+
+/** Odstrani predlogo z odpiralom [start, o] in zaklepajem c; ohrani vsebino prve reže. */
+function unwrap(s, start, o, c, keep) {
+  const end = c < 0 ? s.length : c + 1;
+  const inner = keep ? s.slice(o + 1, keep[1]) : "";
+  return done(s.slice(0, start) + inner + s.slice(end), start);
+}
+
+/** ⌫: { text, pos } po brisanju levo od kazalca (s, e: izbira). */
+export function backspace(text, s, e = s) {
+  const t = String(text ?? "");
+  if (s !== e) return done(t.slice(0, Math.min(s, e)) + t.slice(Math.max(s, e)), Math.min(s, e));
+  if (s <= 0) return done(t, 0);
+  // kazalec sredi odpirala (»integr|iraj(«, »sin|(«, »d/d|x(«, »∫|(«): kot da je za njegovim oklepajem
+  const inOp = openerAround(t, s);
+  if (inOp && inOp[0] < s) s = inOp[1];
+  // sredi imena brez oklepaja (»An|s«): ime gre celo
+  const w = wordAround(t, s);
+  if (w && !/^\s*\(/.test(t.slice(w.end))) return done(t.slice(0, w.start) + t.slice(w.end), w.start);
+  const before = t.slice(0, s);
+  const op = OPENER.exec(before);
+  if (op) {
+    const start = s - op[0].length;
+    const o = s - 1;
+    const c = closeAt(t, o);
+    // ^( v ∑_(…)^(…): na začetku zgornje meje gre ⌫ na konec spodnje
+    if (op[0] === "^(" && /[∑∏]_\([^()]*\)$/.test(t.slice(0, start))) return done(t, start - 1);
+    if (/^[∑∏]_\($/.test(op[0])) {
+      const up = /^\^\(/.test(t.slice(c + 1)) ? closeAt(t, c + 2) : -2;
+      const body = up >= 0 ? t.slice(up + 1) : "";
+      if (c >= 0 && up >= 0 && blank(t, [c + 3, up]) && !body.trim()) return done(t.slice(0, start), start);
+      if (c < 0 || up === -2) return done(t.slice(0, start) + t.slice(c < 0 ? t.length : c + 1), start);
+      return done(t, start); // izpolnjena vsota: kazalec pred ∑, nič se ne izbriše
+    }
+    const slots = slotsOf(t, o, c);
+    const name = op[0].replace(/\s*\($/, "");
+    if (slots.slice(1).every((x, k) => emptySlot(t, name, x, k + 1))) return unwrap(t, start, o, c, blank(t, slots[0]) ? null : slots[0]);
+    return done(t, start); // druge reže niso prazne: kazalec gre pred predlogo, nič se ne izbriše
+  }
+  // [ matrike: prazna matrika (tudi v det(…), inverz(…)) gre kot celota, izpolnjena ostane, kazalec gre pred njo
+  if (t[s - 1] === "[") {
+    // začetek druge vrstice: na konec prejšnje vrstice
+    let j = s - 2;
+    while (j >= 0 && /\s/.test(t[j])) j--;
+    if (t[j] === ";") {
+      let k = j - 1;
+      while (k >= 0 && /\s/.test(t[k])) k--;
+      if (t[k] === "]") return done(t, k);
+    }
+    let o = s - 1;
+    for (let enc = enclosing(t, o); enc && enc.name === "["; enc = enclosing(t, o)) o = enc.o;
+    const enc = enclosing(t, o);
+    const c = closeAt(t, o);
+    if (enc && enc.start < o && enc.o === o - 1 && closeAt(t, enc.o) === (c < 0 ? -1 : c + 1)) {
+      if (blank(t, [o, c < 0 ? t.length : c + 1])) return backspace(t, enc.o + 1);
+      return done(t, enc.start);
+    }
+    if (blank(t, [o, c < 0 ? t.length : c + 1])) return done(t.slice(0, o) + t.slice(c < 0 ? t.length : c + 1), o);
+    return done(t, o);
+  }
+  // zaklepaj se ne briše posamič (predloga ali oklepaj bi razpadla): kazalec gre v oklepaj
+  if (CLOSERS.includes(t[s - 1])) return done(t, s - 1);
+  // navaden oklepaj: prazen gre s parom, sicer gresta oba oklepaja, vsebina ostane
+  if (t[s - 1] === "(") return unwrap(t, s - 1, s - 1, closeAt(t, s - 1), [s, closeAt(t, s - 1) < 0 ? t.length : closeAt(t, s - 1)]);
+  if (/Ans$/.test(before)) return done(t.slice(0, s - 3) + t.slice(s), s - 3);
+  // »f(x)=« kot celota, ne »n(x)=« iz »sin(x)=« (prej »sin(x)=|0,5« → »si0,5«)
+  const fx = /(?<![A-Za-zčšž])[a-z]\([a-z]\)=$/.exec(before);
+  if (fx) return done(t.slice(0, s - fx[0].length) + t.slice(s), s - fx[0].length);
+  if (t[s - 1] === ";") {
+    const enc = enclosing(t, s - 1);
+    if (enc) {
+      const c = closeAt(t, enc.o);
+      const slot = slotsOf(t, enc.o, c).find(([a]) => a === s);
+      if (FIXED(enc.name) || (slot && !blank(t, slot))) return done(t, s - 1);
+    }
+  }
+  // en znak (tudi znak zunaj BMP)
+  const n = /[\uDC00-\uDFFF]/.test(t[s - 1]) && s > 1 ? 2 : 1;
+  return done(t.slice(0, s - n) + t.slice(s), s - n);
+}
+
+/** Delete: { text, pos } po brisanju desno od kazalca. */
+export function deleteForward(text, s, e = s) {
+  const t = String(text ?? "");
+  if (s !== e) return backspace(t, s, e);
+  if (s >= t.length) return done(t, t.length);
+  const inOp = openerAround(t, s);
+  if (inOp) s = inOp[0];
+  const w = wordAround(t, s);
+  if (w) s = w.start;
+  const after = t.slice(s);
+  const op = OPENER_AT.exec(after);
+  if (op) {
+    const o = s + op[0].length - 1;
+    const c = closeAt(t, o);
+    if (/^[∑∏]_\($/.test(op[0])) return done(t, o + 1);
+    const slots = slotsOf(t, o, c);
+    const name = op[0].replace(/\s*\($/, "");
+    if (slots.slice(1).every((x, k) => emptySlot(t, name, x, k + 1))) return unwrap(t, s, o, c, blank(t, slots[0]) ? null : slots[0]);
+    return done(t, o + 1); // v prvo režo
+  }
+  if (/^Ans/.test(after)) return done(t.slice(0, s) + t.slice(s + 3), s);
+  if (CLOSERS.includes(t[s])) return done(t, s + 1); // zaklepaja ne brišemo naprej: kazalec gre čez
+  if (t[s] === "(") {
+    const c = closeAt(t, s);
+    return unwrap(t, s, s, c, [s + 1, c < 0 ? t.length : c]);
+  }
+  if (t[s] === "[") return done(t, s + 1);
+  if (t[s] === ";") {
+    const enc = enclosing(t, s);
+    if (enc) {
+      const c = closeAt(t, enc.o);
+      const slot = slotsOf(t, enc.o, c).find(([, b]) => b === s);
+      if (FIXED(enc.name) || (slot && !blank(t, slot))) return done(t, s + 1);
+    }
+  }
+  if (t[s] === "^" && t[s + 1] === "(") {
+    const c = closeAt(t, s + 1);
+    if (c > 0 && !t.slice(s + 2, c).trim()) return done(t.slice(0, s) + t.slice(c + 1), s);
+    return done(t, s + 2);
+  }
+  const n = /[\uD800-\uDBFF]/.test(t[s]) ? 2 : 1;
+  return done(t.slice(0, s) + t.slice(s + n), s);
+}
+
+/** ◀ ▶: naslednje mesto kazalca v zapisu (merilne točke), ne naslednji znak besedila (ime ostane celo). */
+export function stepCaret(base, text, p, d) {
+  const t = String(text ?? "");
+  // začetek in konec sta vedno mesti; mesto sredi imena ali odpirala (»integr|iraj(«, »d/d|x(«, »∫|(«) je začetek
+  // prve reže, sredi imena brez oklepaja (»An|s«) ga ni
+  const openers = [...t.matchAll(OPENERS_ALL)].map((m) => [m.index, m.index + m[0].length]);
+  const fix = (x) => openers.find(([a, b]) => a < x && x < b)?.[1] ?? x;
+  const stops = base?.ok ? [...new Set([0, ...caretStops(base).map((x) => fix(x.p)), t.length])].filter((x) => !wordAround(t, x)).sort((x, y) => x - y) : [];
+  if (stops.length) {
+    const next = d > 0 ? stops.find((x) => x > p) : [...stops].reverse().find((x) => x < p);
+    return next ?? (d > 0 ? Math.max(p, stops.at(-1)) : Math.min(p, stops[0]));
+  }
+  let q = Math.max(0, Math.min(t.length, p + d));
+  const w = wordAround(t, q);
+  if (w) q = d > 0 ? w.end : w.start;
+  return q;
+}
