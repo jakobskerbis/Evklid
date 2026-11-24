@@ -4,12 +4,12 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-055
+**Naslednji prosti ID:** AUDIT-057
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
 | AUDIT-001 | P1 | Skener, preverjanje rešitev | »Preverjeno« ob nepopolni množici rešitev (numerična rezerva; sistemi z več rešitvami tudi s SymPy) | PRIPRAVLJENO ZA PONOVNI PREGLED | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7097462158) | [#935](https://github.com/jakobskerbis/Evklid/pull/935) |
-| AUDIT-002 | P2 | Matematični kalkulator | Neskončna vrsta/produkt vrne delno vsoto 100.000 členov kot vrednost, tudi pri divergentnih (∑1/n, ∑n, ∑(−1)ⁿ) | ODOBRENO | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7097688909) | – |
+| AUDIT-002 | P2 | Matematični kalkulator | Neskončna vrsta/produkt vrne delno vsoto 100.000 členov kot vrednost, tudi pri divergentnih (∑1/n, ∑n, ∑(−1)ⁿ) | PRIPRAVLJENO ZA PONOVNI PREGLED | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7097688909) | [#1004](https://github.com/jakobskerbis/Evklid/pull/1004) |
 | AUDIT-003 | P1 | Kalkulator, vnos integrala | Dotik na spodnjo mejo določenega integrala postavi kazalec v integrand (`∫(0x;;2)`), računalnik in telefon | ODOBRENO | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7098980020) | – |
 | AUDIT-004 | P2 | Kalkulator, brisanje | ⌫ pusti polovico imena ali ostanke predloge (`integriraj)`, `;;)`, `)`); strojni Backspace gre mimo `del()` | ODOBRENO | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7098997935) | – |
 | AUDIT-005 | P1 | Grafični kalkulator | `sin(0,5)` = 0: decimalna vejica v oklepaju je ločilo argumentov, odvečni argument tiho prezrt (znanstveni kalkulator pravilen) | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #943 |
@@ -55,6 +55,8 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-052 | P2 | Kalkulator, vnos | Kazalec znotraj »10« pri ×10ˣ tiho spremeni število (`2×1|0^(5)` + ⌫ → `2×0^(5)`); bralnik: »konec absolutne vrednosti« | PRIPRAVLJENO ZA PONOVNI PREGLED | `d16a7c1` | Claude (pregled #945), 24. 11. | #992 |
 | AUDIT-053 | P1 | Kalkulator, enačbe | Nepreverjena ničla dobi ugibano točno obliko z »=«: `x^15+7x−1=0` → »= 1/7«, `x^25+10^(−30)x−1=0` → »= 1«, »= 141/11« pri polinomih s π (na evklid.app od #968) | PRIPRAVLJENO ZA PONOVNI PREGLED | `710429a` | Claude (pregled #979/#980), 24. 11. | #993 |
 | AUDIT-054 | P3 | Kalkulator, izpis | Integrand iz več členov brez oklepaja: `∫(x²−1;0;2)` → ∫₀² x² − 1 dx (dvoumno); `math.js toTex` | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (#998), 24. 11. | [#999](https://github.com/jakobskerbis/Evklid/pull/999) |
+| AUDIT-055 | P2 | Kalkulator, predogled | V DEG/GRA predogled odvoda in integrala računa v stopinjah, rezultat v radianih: `∫(sin(x);0;π)` predogled ≈ 0,0861, rezultat 2; `d/dx(sin(x);0)` 0,01745 proti 1 | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (pregled #997), 24. 11. | [#1005](https://github.com/jakobskerbis/Evklid/pull/1005) |
+| AUDIT-056 | P3 | Grafični kalkulator, RTL | V arabščini (dir="rtl") so oznake na platnu obrnjene: točka (2; 1) kot »(1;2)«, os »5−« | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (pregled #997), 24. 11. | [#1006](https://github.com/jakobskerbis/Evklid/pull/1006) |
 
 ## Zgodovina statusov
 
@@ -90,3 +92,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: AUDIT-048 (#988), 049 (#989), 050 (#990), 051 (#991) → ZAKLJUČENO: j odobril združitev, združeno v `main` (`710429a`), na evklid.app po zelenih testih (preverjeno v živo).
 - 24. 11. 2026: AUDIT-052 in AUDIT-053 (Claude); prvotno označena kot AUDIT-048/050, kar je že zasedla druga seja – preštevilčeno, naslova PR #992 in #993 popravljena. Veriga urejevalnika #945, #970–#974, #965 združena (j); #986 zaprt, ker ga vsebuje veriga.
 - 24. 11. 2026: AUDIT-054 (Claude, ob #998): oklepaj okoli integranda v zapisu ∫, popravek #999.
+- 24. 11. 2026: AUDIT-002 popravek #1004 (Claude, po pregledu #997: neskončne vrste); AUDIT-055 (#1005) in AUDIT-056 (#1006) iz pregleda #997.
