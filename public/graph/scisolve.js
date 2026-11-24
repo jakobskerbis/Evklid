@@ -7,8 +7,8 @@ import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prep
 import { antiderivativeAst } from "./calculus.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
-import { polyRootsMult, polyRootsExact } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
-import { exactPolyIn } from "./cas.js";
+import { polyRootsMult, polyRootsExact, polyRootsSym } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
+import { exactPolyIn, symbolPolyIn } from "./cas.js";
 import { walk } from "./math.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE] gosto,
@@ -267,6 +267,14 @@ function polyRootsOf(L, R, v, scope, run) {
     let rs = null;
     const fe = exactPolyIn(node, ZERO_NODE, scope, v);
     if (fe && fe.length > 1) rs = polyRootsExact(fe)?.roots || null;
+    // koeficienti s π ali e: točen vzorec kratnosti nad ℚ[π, e] (razvit (x − π)(x − 5,451)²(x − 5,454)²)
+    if (!rs) {
+      const sp = symbolPolyIn(node, ZERO_NODE, scope, v);
+      if (sp) {
+        rs = polyRootsSym(sp);
+        if (rs) exactAll = false;
+      }
+    }
     if (!rs) {
       exactAll = false;
       const bp = ballPoly(node, v, val);

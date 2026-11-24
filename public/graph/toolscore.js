@@ -333,10 +333,10 @@ function bigRatio(a, b) {
 }
 // Newtonovi koraki za realno ničlo enostavnega celoštevilskega polinoma t, s točnim ostankom (z je točen ulomek):
 // ničla na ~1 ulp tudi pri bližnjih ničlah (1 in 1,000001), da jo nato prepoznamo kot ulomek
-function exactNewton(t, z) {
+function exactNewton(t, z, steps = 4) {
   const dt = derivB(t);
   const n = t.length - 1;
-  for (let k = 0; k < 4; k++) {
+  for (let k = 0; k < steps; k++) {
     if (!Number.isFinite(z)) return z;
     const [num, den] = dyadic(z);
     let s = 0n;
@@ -606,6 +606,111 @@ export function polyRootsExact(qs) {
   if (c.some((x) => !Number.isFinite(x)) || c[0] === 0) return null;
   const roots = polyRootsMult(c, P);
   return roots ? { roots, poly: c } : null;
+}
+
+// vzorec kratnosti celoštevilskega polinoma (BigInt, od najnižje): [[k, število ničel s kratnostjo k], …]
+function multPattern(P) {
+  const fs = [P];
+  while (fs[fs.length - 1].length > 1) fs.push(gcdB(fs[fs.length - 1], derivB(fs[fs.length - 1])));
+  const ss = [];
+  for (let k = 1; k < fs.length; k++) ss.push(divB(fs[k - 1], fs[k]));
+  ss.push([1n]);
+  const out = [];
+  for (let k = 1; k < ss.length; k++) {
+    const d = divB(ss[k - 1], ss[k]).length - 1;
+    if (d > 0) out.push([k, d]);
+  }
+  return out;
+}
+
+/**
+ * Ničle polinoma s koeficienti v ℚ[π, e] (cas.js symbolPolyIn): terms[k] = [{ n, d, pi, e }], od najvišje potence.
+ * Vzorec kratnosti dobimo točno: π in e nadomestimo z naključnimi ulomki (π je transcendentno, zato ima vzorec, ki ga
+ * da skoraj vsaka vstavitev; slaba vstavitev lahko le doda sovpadanja, zato vzamemo vzorec z največ različnimi
+ * ničlami od treh). Številske ničle pri pravem π nato razdelimo v gruče po tem vzorcu (AUDIT-044).
+ * Vrne [{ re, im, m }] ali null.
+ */
+export function polyRootsSym(terms) {
+  const n = terms.length - 1;
+  if (n < 1) return null;
+  // vstavitev π = a, e = b (ulomka) → celoštevilski polinom
+  const special = (a, b) => {
+    const coef = terms.map((ts) =>
+      ts.reduce(
+        (acc, t) => {
+          const num = t.n * a[0] ** BigInt(t.pi) * b[0] ** BigInt(t.e);
+          const den = t.d * a[1] ** BigInt(t.pi) * b[1] ** BigInt(t.e);
+          return [acc[0] * den + num * acc[1], acc[1] * den];
+        },
+        [0n, 1n],
+      ),
+    );
+    const L = coef.reduce((l, [, d]) => (l * d) / bGcd(l, d), 1n);
+    return primB(coef.map(([p, q]) => (p * L) / q).reverse());
+  };
+  const tries = [
+    [[314159n, 100003n], [271829n, 100019n]],
+    [[1000003n, 318313n], [999983n, 367883n]],
+    [[7919n, 2521n], [104729n, 38527n]],
+  ];
+  let pattern = null;
+  for (const [a, b] of tries) {
+    const P = special(a, b);
+    if (P.length - 1 !== n) continue; // vodilni koeficient je pri tej vstavitvi 0
+    const pt = multPattern(P);
+    const distinct = pt.reduce((s, [, d]) => s + d, 0);
+    if (!pattern || distinct > pattern.distinct) pattern = { pt, distinct };
+  }
+  if (!pattern) return null;
+  // brez večkratnih ničel ne dodamo ničesar novega: ostane pot s kroglami (ta zaokrožene koeficiente, npr. 15 mest
+  // iz SymPy, obravnava kot negotove in njihov par bližnjih ničel ne razglasi za kompleksen)
+  if (pattern.pt.every(([k]) => k === 1)) return null;
+  // koeficienti pri pravem π in e
+  const PI = Math.PI;
+  const E = Math.E;
+  const c = terms.map((ts) => ts.reduce((s, t) => s + (Number(t.n) / Number(t.d)) * PI ** t.pi * E ** t.e, 0));
+  if (!c[0] || c.some((x) => !Number.isFinite(x))) return null;
+  let left = dkRoots(c).map((z) => newton(c, z));
+  const P32 = special([314159265358979323846264338327950n, 10n ** 32n], [271828182845904523536028747135266n, 10n ** 32n]);
+  const found = [];
+  // od največje kratnosti navzdol: k ničel z najmanjšim razponom je ena k-kratna ničla
+  for (const [k, cnt] of [...pattern.pt].sort((x, y) => y[0] - x[0])) {
+    for (let t = 0; t < cnt; t++) {
+      if (k === 1) break;
+      let best = null;
+      left.forEach((z, i) => {
+        const near = left.map((w, j) => [C.abs(C.sub(w, z)), j]).sort((x, y) => x[0] - y[0]).slice(0, k);
+        if (near.length === k && (!best || near[k - 1][0] < best.rad)) best = { rad: near[k - 1][0], idx: near.map(([, j]) => j) };
+      });
+      if (!best) return null;
+      const g = best.idx.map((j) => left[j]);
+      left = left.filter((_, j) => !best.idx.includes(j));
+      let dm = c;
+      for (let j = 1; j < k; j++) dm = derivF(dm);
+      const cen = [g.reduce((s, z) => s + z[0], 0) / k, g.reduce((s, z) => s + z[1], 0) / k];
+      found.push({ z: newton(dm, cen, 30), cen, m: k, sf: true });
+    }
+  }
+  // realna večkratna ničla: njene gruče ne spremlja konjugirana gruča. Središče izboljšamo s točnim Newtonom na
+  // p^(k−1) pri π, e na 32 mest (BigInt): ~1 ulp, ker so ničle gruče v double lahko netočne za 10⁻⁴
+  for (const f of found) {
+    const partner = found.some((o) => o !== f && o.m === f.m && C.abs(C.sub(o.cen, [f.cen[0], -f.cen[1]])) < Math.max(Math.abs(f.cen[1]), 1e-300) * 0.5);
+    if (partner) continue;
+    let D = P32;
+    for (let j = 1; j < f.m; j++) D = derivB(D);
+    const cands = [f.cen[0], f.z[0]].map((x0) => exactNewton(D, x0, 12));
+    f.z = [cands.reduce((b, x) => (Math.abs(x - f.cen[0]) < Math.abs(b - f.cen[0]) ? x : b)), 0];
+  }
+  found.push(...left.map((z) => ({ z, m: 1, sf: true })));
+  const out = pairUp(found);
+  if (!out || out.reduce((s, r) => s + r.m, 0) !== n) return null;
+  // preizkus: p^(m−1)(z) ≈ 0
+  for (const r of out) {
+    let d = c;
+    for (let j = 1; j < r.m; j++) d = derivF(d);
+    if (!(C.abs(hornerC(d, [r.re, r.im])) <= 1e-8 * sizeAt(d, [r.re, r.im]))) return null;
+  }
+  return out.sort((x, y) => x.re - y.re || x.im - y.im);
 }
 
 /** Ničle polinoma s koeficienti od najvišje potence. Vrne [[re, im], …], vsako tolikokrat, kolikor je kratna. */

@@ -449,7 +449,7 @@ function rat0(node, ctx) {
     case "num": {
       if (!Number.isInteger(node.v)) ctx.dec = true;
       try {
-        return new R(P.num(Q.of(node.v)));
+        return new R(P.num(ctx.longDec ? qOfLiteral(node.v) : Q.of(node.v)));
       } catch {
         throw fail("unsupported");
       }
@@ -525,6 +525,17 @@ function rat0(node, ctx) {
     default:
       if (ctx.ext) return ctx.ext(node, ctx); // 3. faza: koreni, kotne funkcije, logaritmi (casalg.js)
       throw fail("unsupported");
+  }
+}
+// vpisano število kot točen ulomek: do 9 decimalk kot Q.of, sicer do 15 veljavnih mest (toliko jih double
+// zapiše točno, 883,858272900516), nikoli izračunan približek (0,1 + 0,2 = 0,30000000000000004 ima 17 mest)
+function qOfLiteral(v) {
+  try {
+    return Q.of(v);
+  } catch (e) {
+    const m = /^(-?)(\d+)\.(\d+)$/.exec(String(v));
+    if (!m || (m[2].replace(/^0+/, "") + m[3]).replace(/^0+/, "").length > 15) throw e;
+    return new Q(BigInt(m[1] + m[2] + m[3]), 10n ** BigInt(m[3].length));
   }
 }
 function qOfNumber(v) {
@@ -893,6 +904,33 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
       const q = c.zero ? Q.ZERO : c.constValue();
       out.push({ n: q.n, d: q.d });
     }
+    return out;
+  } catch {
+    return null;
+  } finally {
+    deadline = saved;
+  }
+}
+
+/**
+ * Kot exactPolyIn, a s π in e kot simboloma: L − R ∈ ℚ[π, e][v]. Vrne koeficiente od najvišje potence, vsak kot
+ * seznam členov [{ n, d, pi, e }] (n/d·π^pi·e^e), ali null. Za AUDIT-044 (toolscore polyRootsSym).
+ */
+export function symbolPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
+  const saved = deadline;
+  try {
+    deadline = Date.now() + ms;
+    const ctx = { scope, dens: [], dec: false, longDec: true }; // vpisane decimalke do 15 mest točno
+    const a = rat(L, ctx);
+    const b = rat(Rn, ctx);
+    if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+    const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+    const vs = N.vars();
+    if (!vs.includes(v) || vs.some((w) => w !== v && !(w in SYMBOLS)) || vs.length < 2) return null;
+    const deg = N.degree(v);
+    if (deg > 60) return null;
+    const out = [];
+    for (let k = deg; k >= 0; k--) out.push(coefIn(N, v, k).terms().map(({ m, c }) => ({ n: c.n, d: c.d, pi: m["π"] || 0, e: m.e || 0 })));
     return out;
   } catch {
     return null;
