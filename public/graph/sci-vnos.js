@@ -56,6 +56,10 @@ export function liveTex(text, env = {}) {
   const cmd = /^\s*([A-Za-zčšž]+)\s*\((.*)\)\s*$/s.exec(text);
   if (cmd && parseCommand(text)) {
     const inner = cmd[2].split(";").map((p) => (p.trim() ? previewTex(p, env) : null));
+    const op = parseCommand(text)?.op;
+    // integral in limita z (še) prazno režo: zapis predloge, ne ime ukaza (»integriraj(t²; □)« → ∫ t² d□; AUDIT-004)
+    if (inner.every(Boolean) && op === "integrate" && inner.length === 2) return `\\int ${inner[0]}\\,d${inner[1]}`;
+    if (inner.every(Boolean) && op === "limit" && inner.length === 3) return `\\lim\\limits_{${inner[1]} \\to ${inner[2]}} ${inner[0]}`;
     if (inner.every(Boolean)) return `\\operatorname{${cmd[1]}}\\left(${inner.join(",\\ ")}\\right)`;
   }
   try {
