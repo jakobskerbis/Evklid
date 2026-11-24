@@ -1120,6 +1120,42 @@ export function runCalc(cmd, env = {}) {
   }
 }
 
+/**
+ * Nedoločeni integral drevesa node (iz compileLine(…).ast) po spremenljivki v kot drevo math.js, preverjen z
+ * odvajanjem (kot integriraj), ali null. Za točno vrednost določenega integrala (scisolve: ∫(1/√x; 0; 1) = 2).
+ */
+export function antiderivativeAst(line, node, v, ms = KIT.LIVE_MS) {
+  try {
+    KIT.setDeadline(ms);
+    const map = {};
+    for (const k in line.scope) if (k !== v && typeof line.scope[k] === "number") map[k] = N(line.scope[k]);
+    const ast = substitute(inlineUfn(line.rw(node), line.ctx), map);
+    if ([...freeVars(ast)].some((w) => w !== v)) return null;
+    const run = (n) => {
+      const f = line.run(n);
+      return (pt) => {
+        const sc = Object.create(line.scope);
+        Object.assign(sc, pt);
+        try {
+          const y = f(sc);
+          return typeof y === "number" ? y : NaN;
+        } catch {
+          return NaN;
+        }
+      };
+    };
+    const S = { scope: Object.create(null), ctx: line.ctx, fn: run };
+    const base = KIT.points([v]);
+    S.pts = [...base, ...base.map((p) => ({ [v]: p[v] * 0.27 }))];
+    const ts0 = integ(ast, v, S);
+    if (!ts0) return null;
+    const F = sumAst(combine(ts0));
+    return verifyIntegral(F, ast, v, S) ? F : null;
+  } catch {
+    return null;
+  }
+}
+
 function limitCmd(ast, v, cmd, env, S, wrapT) {
   const pt = parsePoint(cmd.args[1], env);
   if (!pt) return err("casPoint");

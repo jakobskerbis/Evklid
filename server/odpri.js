@@ -210,7 +210,7 @@ function findSim(q, settings, canOpen) {
 
 // 3D: modeli iz public/3d/modeli/<področje>/index.js (samo podatki) in imena struktur atlasa telesa.
 let MODELS = null;
-async function allModels() {
+export async function allModels() {
   if (MODELS) return MODELS;
   const dir = path.join(here, "..", "public", "3d", "modeli");
   const out = [];
@@ -226,7 +226,7 @@ async function allModels() {
   return out;
 }
 let ATLAS = null;
-function atlasNames() {
+export function atlasNames() {
   if (ATLAS) return ATLAS;
   try {
     const read = (f) => JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", f), "utf8"));
