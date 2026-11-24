@@ -331,7 +331,11 @@ export function evaluate(text, env = {}) {
     // Točne števke (BigInt), če jih natančni račun pozna, sicer je rezultat le približek.
     if (typeof value === "number" && Number.isInteger(value) && Math.abs(value) > Number.MAX_SAFE_INTEGER) {
       // 100! v plavajoči vejici zgreši zadnje mesto (…441 namesto …4415): velja točna vrednost
-      if (typeof hp?.int === "bigint" && Math.abs(Number(hp.int) - value) <= 1e-12 * Math.abs(value)) {
+      // Ans in spremenljivke so shranjene kot double: Ans = nCr(100; 50) ima le ~16 mest, Ans + 1 zato nima točnih števk
+      const exactVars = [...freeVars(rwe)].every((n) => n === DEG_VAR || n === MIN_VAR || n === SEC_VAR || typeof scope[n] !== "number" || Number.isSafeInteger(scope[n]));
+      // vpisano število z več kot 15 mesti (tudi s tapom vstavljene števke) je v double že zaokroženo
+      const exactLits = !(String(text).match(/\d+(?:[.,]\d+)?/g) || []).some((d) => d.replace(/\D/g, "").replace(/^0+/, "").replace(/0+$/, "").length > 15);
+      if (exactVars && exactLits && typeof hp?.int === "bigint" && Math.abs(Number(hp.int) - value) <= 1e-12 * Math.abs(value)) {
         out.value = Number(hp.int);
         out.big = hp.int.toString();
       } else out.bigApprox = true;
