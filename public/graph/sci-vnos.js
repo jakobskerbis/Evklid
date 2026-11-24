@@ -32,6 +32,7 @@ export function withChem(text, fn, env = {}, extra) {
 
 /** Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število, ukaz CAS. */
 export function analyzeLive(text, env = {}) {
+  env = { ...env, live: true }; // integrali v predogledu s kratko časovno mejo
   // limita(f; x; a), taylor(f; x; a; n), det([[a; b]; [c; d]]): podpičje loči argumente oziroma elemente
   const cmd = parseCommand(text);
   if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env, live: true });
