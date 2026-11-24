@@ -132,7 +132,8 @@ export function anaTools(ctx) {
           }
           out.innerHTML = html;
           const stamp = (run.stamp = (run.stamp || 0) + 1);
-          if (live?.error?.code === "intTimeout")
+          // predogled ne poskusi točne poti F(b) − F(a) (∫ sin x od 0 do 10⁴): po »čas« ali »ni mogoče zanesljivo« polni izračun
+          if (live?.error?.code === "intTimeout" || live?.error?.code === "intUnknown")
             setTimeout(() => {
               if (run.stamp !== stamp || part !== "int") return;
               const full = show(integralOf(st.f, a, b));

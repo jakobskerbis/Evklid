@@ -1027,7 +1027,8 @@ export function integralErrorKey(e) {
 /** ∫ f(x) od a do b za orodje Analiza: isti izračun (točno ali »≈«) in iste napake kot znanstveni kalkulator. */
 export function integralOf(fText, a, b, { live = false } = {}) {
   const num = (v) => (v === Infinity ? "∞" : v === -Infinity ? "−∞" : String(v));
-  return analyze(`∫(${fText};${num(a)};${num(b)})`, { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: false, live });
+  // comma: true bere decimalno vejico (x^0,5) in piko (x^0.5) kot v orodju; meji v zapisu s piko
+  return analyze(`∫(${fText};${num(a)};${num(b)})`, { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true, live });
 }
 
 export function analyze(text, env = {}) {

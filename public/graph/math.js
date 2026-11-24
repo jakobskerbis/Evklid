@@ -917,17 +917,19 @@ function addScale(node, ctx) {
     return typeof y === "number" && Number.isFinite(y) ? Math.abs(y) : 0;
   };
 }
-// ctx.tolerant (integrand določenega integrala): argument korena, ln, arcsin …, ki je zaradi zaokrožitve malo pod
-// mejo definicijskega območja (√(sin²x + cos²x − 1)), štejemo za mejo (0 oziroma ±1), ne za »ni definirano«
+// ctx.tolerant (integrand določenega integrala): argument korena, ln, arcsin …, ki je zaradi zaokrožitve malo ČEZ mejo
+// definicijskega območja (√(sin²x + cos²x − 1) = √(−10⁻¹⁷)), štejemo za mejo (0 oziroma ±1), ne za »ni definirano«.
+// Šum je največ nekaj ulp merila (vsota |sumandov|): 16·ε·merilo. Pozitivnih vrednosti ne spreminjamo nikoli
+// (ln(10⁻¹³) ostane −29,9, ne ln 0). Prava negativna vrednost, manjša od 16·ε·merila (√(x − x − 10⁻¹³) pri x ≥ 30),
+// se od šuma ne loči.
 function tolerantArg(argNode, a, ctx, lo, hi) {
   const sc = addScale(argNode, ctx);
+  const TOL = 16 * 2.220446049250313e-16;
   return (s) => {
     const v = a(s);
     if (typeof v !== "number") return v;
-    // pri meji 0 je šum tudi pozitiven (√(10⁻¹⁶) = 10⁻⁸ bi bil izmišljen prispevek): |v| ≤ 10⁻¹² · merilo → 0
-    // (merilo računamo le, ko je v blizu meje: navadne vrednosti so tako hitre kot prej)
-    if (lo === 0 ? v !== 0 && (v < 0 || v < 1e-6) && Math.abs(v) <= 1e-12 * sc(s) : v < lo && v >= lo - 1e-12 * Math.max(sc(s), Math.abs(lo))) return lo;
-    if (hi !== undefined && v > hi && v <= hi + 1e-12 * Math.max(sc(s), hi)) return hi;
+    if (v < lo && lo - v <= TOL * Math.max(sc(s), Math.abs(lo))) return lo;
+    if (hi !== undefined && v > hi && v - hi <= TOL * Math.max(sc(s), hi)) return hi;
     return v;
   };
 }
