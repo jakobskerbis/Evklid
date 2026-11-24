@@ -9,6 +9,7 @@ import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
+import { izrisi } from "../mat/izris.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -16,13 +17,7 @@ const MAX_HISTORY = 60;
 const FORMATS = ["auto", "sci", "eng", "fix2", "fix3", "fix4", "sig2", "sig3", "sig4"];
 const ANGLES = ["deg", "rad", "grad"]; // stopinje, radiani, gradi (400 v polnem krogu)
 
-const texHtml = (s, display = false) => {
-  try {
-    return window.katex.renderToString(s, { throwOnError: false, displayMode: display, strict: "ignore" });
-  } catch {
-    return esc(s);
-  }
-};
+const texHtml = (s, display = false) => izrisi(s, { blok: display });
 // 1/det A pred matriko: na ozkem zaslonu se matrika prelomi v svojo vrstico, ne pomika vstran
 const matBreak = (tex) => String(tex ?? "").replace(/\}\\begin\{pmatrix\}/g, "}\\allowbreak\\begin{pmatrix}");
 const usesComma = (locale) => {
@@ -498,7 +493,7 @@ export function createScientific(root, opts) {
   // Vnos je viden samo kot lep zapis s kazalcem (sci-vnos.js); surovo polje je neviden (graph.css).
   // Zapis brez kazalca se izračuna enkrat na besedilo (update); premik kazalca le vstavi kazalec v isti TeX.
   let entry = { text: null, base: null };
-  const entryHtml = (tex) => window.katex.renderToString(tex, { throwOnError: false, strict: "ignore", trust: TRUST });
+  const entryHtml = (tex) => izrisi(tex, { zaupaj: TRUST });
   function showEntry(r) {
     const prev = $(".sc-preview");
     const text = input.value;
