@@ -1142,3 +1142,17 @@ test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil'
   }
   assert.equal((await run(null)).calls, 0, "brez stikala (privzeto v kodi) OŠ nima pregleda");
 });
+
+// AUDIT-054: »če«, »ali« in »?« v razlagi ne izklopijo preverjanja računa in končne vrednosti.
+const R = String.raw;
+test("AUDIT-054: »Če najprej množimo: 7 · 8 = 54« dobi popravek, učenčev zapis in vprašanje ne", () => {
+  const q = "Koliko je 7 krat 8 plus 2?";
+  for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, R`Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.`, R`Če računamo po vrsti: $3 + 4 \cdot 2 = 14$.`]) {
+    assert.match(codeFindings(a, presolve(q, { first: true }), q).issue || "", /does not hold/, a);
+  }
+  const eq = "Reši 2x + 3 = 11";
+  assert.ok(codeFindings(R`Če odštejemo 3, dobimo $2x = 8$, torej $x = 5$.`, presolve(eq, { first: true }), eq).issue, "x = 5");
+  for (const a of [R`Ti si napisal $7 \cdot 8 = 54$, prav pa je $7 \cdot 8 = 56$.`, R`Ali je $7 \cdot 8 = 54$?`, R`Če bi pozabil na vrstni red, bi dobil $3 + 4 \cdot 2 = 14$.`, R`Kaj pa, če je $x = 5$? Preveri: $2 \cdot 4 + 3 = 11$.`]) {
+    assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+  }
+});

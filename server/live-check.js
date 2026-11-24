@@ -172,11 +172,17 @@ export function withNote(messages, note) {
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
 export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
 
+// Ožje za račune in končne vrednosti (AUDIT-054): »če«, »ali« in »?« v razlagi so pogosti (»Če najprej množimo:
+// $7 \cdot 8 = 54$«, način A konča z vprašanjem), zato ne izklopijo vrstice. Preskoči se le vrstica z učenčevo ali
+// namerno napačno trditvijo, pogojnik (»bi dobil«, »would«) in račun, ki je sam vprašanje (»Ali je $7 \cdot 8 = 54$?«).
+// Kemijske preverbe še naprej uporabljajo širši SKIP_LINE.
+export const ARITH_SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|(?<!\p{L})(bi|would|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})|\$[^$\n]*\$\s*[?]|=\s*\??\s*\?/iu;
+
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
 function statedValues(answer, vars) {
   const out = new Map();
   for (const line of String(answer).split("\n")) {
-    if (SKIP_LINE.test(line)) continue;
+    if (ARITH_SKIP_LINE.test(line)) continue;
     for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
       let tex = m[1] ?? m[2];
       // »±« je par vrednosti; »≈« (texToText ga izpusti) loči točno vrednost od približka.
@@ -266,7 +272,7 @@ export function codeFindings(answer, pre = null, question = "") {
     checked += r.checked;
     // Vrstice z učenčevim ali namerno napačnim računom (»Ti si napisal $3 + 4 \\cdot 2 = 14$«) niso napaka odgovora.
     const lines = String(answer || "").split("\n");
-    const real = r.mismatches.filter((m) => !SKIP_LINE.test(lines[m.line - 1] || ""));
+    const real = r.mismatches.filter((m) => !ARITH_SKIP_LINE.test(lines[m.line - 1] || ""));
     if (real.length) {
       const m = real[0];
       return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}` };
