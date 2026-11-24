@@ -305,7 +305,7 @@ async function renderHome() {
         <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)} · ${esc(book.schoolName)}</h2>
         <p class="muted">${esc(t(book.lessons < book.topics ? "tbk.countMore" : "tbk.count", { done: book.lessons, total: book.topics }))}</p></div>
         <div class="tb-book-actions">
-          <a class="btn-primary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
+          <a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
           ${book.formulas ? `<a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key, { topic: "formule" }))}" target="_blank" rel="noopener">${ic("sigma")}${esc(t("tbk.pdfFormulas"))}</a>` : ""}
         </div>
         ${book.subject === "PROG" ? `<div class="seg tb-mode" role="tablist" aria-label="${esc(t("refs.title"))}">
