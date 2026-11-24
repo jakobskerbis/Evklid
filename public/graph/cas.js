@@ -860,6 +860,39 @@ function verifyExpr(line, vs, check, scale) {
   return ok >= Math.min(5, vs.length ? 5 : 1);
 }
 
+// ---------- točen polinom za številski reševalnik ----------
+
+/**
+ * Leva − desna stran kot polinom v v z racionalnimi koeficienti (točno, iz drevesa: 1,000001 in 33/5 sta točna
+ * ulomka), od najvišje potence: [{ n, d } (BigInt)], ali null (iracionalno, π, druge črke, v v imenovalcu).
+ * Za scisolve: večkratne in bližnje ničle brez zaokrožitve koeficientov (AUDIT-009).
+ */
+export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
+  const saved = deadline;
+  try {
+    deadline = Date.now() + ms;
+    const ctx = { scope, dens: [], dec: false };
+    const a = rat(L, ctx);
+    const b = rat(Rn, ctx);
+    if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+    const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+    if (N.vars().some((w) => w !== v)) return null;
+    const deg = N.zero ? 0 : N.degree(v);
+    if (deg > 60) return null;
+    const out = [];
+    for (let k = deg; k >= 0; k--) {
+      const c = coefIn(N, v, k);
+      const q = c.zero ? Q.ZERO : c.constValue();
+      out.push({ n: q.n, d: q.d });
+    }
+    return out;
+  } catch {
+    return null;
+  } finally {
+    deadline = saved;
+  }
+}
+
 // ---------- reši za črko ----------
 
 function solveCmd(cmd, line, name, innerTex) {
