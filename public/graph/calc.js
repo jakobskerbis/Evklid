@@ -1,6 +1,6 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
+import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
 import { niceNumber, parse, compile, arityExample } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
@@ -33,13 +33,7 @@ export function createCalculator(root, opts) {
     if (comma()) s = s.replace(".", ",");
     return s.replace(/^-/, "−");
   };
-  // vrednost drsnika kot besedilo: toliko decimalk, kot jih ima korak (brez zgornje meje 6: 10⁻⁸ ne postane 0, AUDIT-014),
-  // največ 15 veljavnih mest (brez repa plavajoče vejice 0,30000000000000004), brez zapisa z e
-  const stepText = (v, step) => {
-    const digits = Math.max(0, Math.min(20, -Math.floor(Math.log10(step) + 1e-9)));
-    const x = Number(Number(v.toFixed(digits)).toPrecision(15));
-    return Math.abs(x) < 1e21 && x !== 0 ? x.toFixed(digits).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "") : String(x);
-  };
+  const stepText = sliderText; // model.js (AUDIT-014)
   const tex = (s, display = false) => izrisi(s, { blok: display });
 
   let state = load() || upgrade(emptyState());
@@ -787,7 +781,8 @@ export function createCalculator(root, opts) {
           it.slider.dir = 1;
         }
         const name = /^\s*([^=]+?)\s*=/.exec(it.text)?.[1] || "a";
-        it.text = `${name} = ${Number(v.toFixed(4))}`;
+        // predvajanje: 100-krat drobneje od koraka (gladko tudi pri razponu ±10⁻⁷), nikoli zaokroženo na 0 (AUDIT-014)
+        it.text = `${name} = ${stepText(v, (sl.step || span / 100) / 100)}`;
       }
       refresh();
       scheduleSave();

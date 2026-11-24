@@ -84,6 +84,16 @@ export function sliderRange(v) {
   return { min: -p, max: p, step: Number(`1e${e - 2}`) };
 }
 
+/**
+ * Vrednost drsnika kot besedilo, ki ga kalkulator spet prebere kot drsnik: toliko decimalk, kot jih ima korak, največ 15
+ * veljavnih mest, nikoli zapis z e (»3e-8« bi bil 3·e − 8). AUDIT-014: 10⁻⁸ ne postane 0.
+ */
+export function sliderText(v, step) {
+  const digits = Math.max(0, Math.min(20, -Math.floor(Math.log10(step > 0 ? step : 0.1) + 1e-9)));
+  const x = Number(Number(v.toFixed(digits)).toPrecision(15));
+  return Math.abs(x) < 1e21 && x !== 0 ? x.toFixed(digits).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "") : String(x);
+}
+
 function definitionOf(text) {
   const m = DEF_RE.exec(normalize(text));
   if (!m) return null;
