@@ -5,7 +5,6 @@ import { rng, gauss, R_PLIN, M_ZRAK } from "./lab-model.js";
 import { G_LJ, G_SOLA, naklonSkoziIzhodisce, premica, UTEZI_MPE } from "./lab-model-sile.js";
 
 export { G_LJ, G_SOLA, naklonSkoziIzhodisce, premica };
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const napaka = (r, max, lim = 2.5) => gauss(r, max / lim, lim); // naključna napaka, ki nikoli ne preseže max
 
 // ------------------------------------------------------------------ časovnik za svetlobna vrata

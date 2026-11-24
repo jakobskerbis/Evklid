@@ -1,7 +1,6 @@
 // Simulacije pri fiziki: naboji in električno polje, električni krog, poraba energije, magnetno polje,
 // magnetna sila na naboj, elektromagnetna indukcija.
 import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, tfmt, clamp, label, arrow, animate, playButton, draggable, handle } from "./kit.js";
-import { timeGraph } from "./fiz-skupno.js";
 
 const T = (x, d = 2) => tfmt(x, d);
 

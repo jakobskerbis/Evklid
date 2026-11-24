@@ -4,12 +4,7 @@
 // sta označena v risbi). Risba se nariše znova ob vsakem koraku ure (10-krat na sekundo) ali sličici poskusa.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
-import {
-  ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, SPONKA, HALL,
-  TehtnicaBench, MAGNETI, VODNIKI, TEHTNICA, NAPAJALNIK_TT, poljeReze,
-  IndukcijaBench, MAGNET_IND, CEV, SENZOR, GALVANOMETER,
-  G_SOLA, naklonSkoziIzhodisce, POENOSTAVITVE_MAGNETIZEM,
-} from "./lab-model-magnetizem.js";
+import { ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, HALL, TehtnicaBench, MAGNETI, VODNIKI, IndukcijaBench, MAGNET_IND, CEV, SENZOR, GALVANOMETER, G_SOLA, naklonSkoziIzhodisce, POENOSTAVITVE_MAGNETIZEM } from "./lab-model-magnetizem.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
 const nb = " "; // nedeljiv presledek (število in enota v isti vrstici)
@@ -26,7 +21,6 @@ const hint = (text) => h("p", { class: "lab-tit-hint", html: text });
 const mn = (n, [e, d, m, r]) => { const k = Math.abs(n) % 100; return k === 1 ? e : k === 2 ? d : k === 3 || k === 4 ? m : r; };
 const num = (x, d = 1) => fixed(x, d);
 const reduced = () => typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-const setTxt = (el, t) => el && el.textContent !== t && (el.textContent = t);
 const hitrostSeg = (opts, value, onChange) => row("hitrost časa", seg("hitrost časa", opts.map((v) => [String(v), `×${v}`]), String(value), (v) => onChange(+v)));
 
 // Lepe meje osi: najmanjša »okrogla« zgornja meja nad max in korak (1, 2 ali 5 · 10ⁿ), največ 6 razdelkov (2,5 ne: kit.axes

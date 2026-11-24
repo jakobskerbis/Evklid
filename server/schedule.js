@@ -472,7 +472,6 @@ export function nowParts(now = new Date()) {
   const date = `${p.year}-${p.month}-${p.day}`;
   return { date, time: `${p.hour}:${p.minute}`, day: weekdayOf(date) };
 }
-const addDays = (date, n) => new Date(Date.parse(`${date}T12:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
 const daysBetween = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86400000);
 
 export function scheduleView(data, settings, now = new Date()) {

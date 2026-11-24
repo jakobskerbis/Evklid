@@ -1,6 +1,6 @@
 // Simulacije pri kemiji: snovi in zmesi, varnost, atom, periodni sistem, vezi, formule, medmolekulske sile, oksidacijska števila.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, clamp, label, animate, playButton, axes, lcm } from "./kit.js";
-import { ELEMENTS, BY_SYM, groupOf, periodOf, configText, shells, shellsOS, sub, texF, atomBall, drawMolecule, heat } from "./kem-skupno.js";
+import { h, s, svgBox, slider, select, segmented, button, buttons, readout, layout, texBlock, fmt, clamp, label, animate, playButton, axes, lcm } from "./kit.js";
+import { ELEMENTS, BY_SYM, groupOf, periodOf, configText, shells, shellsOS, sub, atomBall, heat } from "./kem-skupno.js";
 
 const shuffle = (a) => {
   a = a.slice();

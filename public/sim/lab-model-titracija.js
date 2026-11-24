@@ -88,8 +88,6 @@ export const PIPETA = { V: 25, napaka: 0.03, voda: 0.2 };
 // Erlenmajerica po spiranju: ~0,5 mL tekočine na steni (ocena: film ~30 μm na ~150 cm²). Destilirana voda ne spremeni
 // množine kisline; ostanek vzorca (splaknjena z vzorcem) jo poveča za ~2 %.
 export const ERLENMAJERICA = { ostanek: 0.5 };
-// pH-meter po umerjanju z dvema pufroma: natančnost ±0,02 pH, ločljivost 0,01 pH (ocena za laboratorijski pH-meter).
-export const PH_METER = { napaka: 0.02, dec: 2 };
 
 // Lokalna barva ob kapljici: v vrtinčeni raztopini izgine v ~0,3 s, blizu končne točke v do ~2,5 s (ocena).
 const flashTau = (left, n0) => 0.3 + 2.2 * Math.exp(-Math.max(0, left) / Math.max(1e-9, 0.02 * n0));

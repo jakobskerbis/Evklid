@@ -865,6 +865,8 @@
   "gc.errOnlyY": "Write a curve that depends on y as x = …",
   "gc.errChar": "I don't know “{ch}”.",
   "gc.errSyntax": "The expression is unfinished or I don't understand it.",
+  "gc.errArity": "Wrong number of values in the brackets. Write it like this: {ex}",
+  "gc.hintPoint": "This is a number in brackets. Did you mean a point? Separate the coordinates with a semicolon: {ex}",
   "gc.errOther": "I can't draw this.",
   "gc.min": "Min",
   "gc.max": "Max",
