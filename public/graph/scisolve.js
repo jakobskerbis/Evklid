@@ -594,8 +594,8 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
     // točne rešitve brez zaokroževanja; približne le na ~ulp (1,0000000001 ni 1)
     const tight = (x) => (Math.abs(x - Math.round(x)) <= 1e-13 * Math.max(1, Math.abs(x)) ? Math.round(x) : Math.abs(x) < 1e-15 ? 0 : x);
     const real = pr.filter((r) => r.im === 0);
-    const roots = real.map((r) => (r.exact ? r.re : tight(r.re)));
-    const complex = pr.filter((r) => r.im !== 0).map((r) => [tight(r.re), tight(r.im)]);
+    const roots = real.map((r) => (r.exact || r.ver ? r.re : tight(r.re))); // preverjeno ne zaokrožamo (−1 − 10⁻¹⁵)
+    const complex = pr.filter((r) => r.im !== 0).map((r) => (r.ver ? [r.re, r.im] : [tight(r.re), tight(r.im)]));
     // rex: točno racionalna; forms: potrjena oblika ±ᵏ√(p/q) (za zapis z »=« namesto »≈«)
     // rex: true = preverjen ulomek (exactTex), "dec" = preverjena končna decimalka (x − 0,666666666667 = 0)
     const rex = real.map((r) => (r.ver && r.vk === "dec" ? "dec" : !!(r.exact && r.ver)));
