@@ -100,6 +100,8 @@ test("pregled #993, 2. krog: kompleksne ničle z dvema korenoma ostanejo točne 
     ["(x+1/3)^2+10^(−16)=0", "x_{1} = -\\frac{1}{3}-1\\cdot 10^{-8}\\,i"],
   ];
   for (const [t, part] of CASES) assert.ok(parts(t).includes(part), `${t}: ${tex(t)}`);
+  // napačno locirana ničla v gruči z isto vrednostjo kot točna ni drugič »= 1« (prave 1 ± 10⁻¹⁰ i)
+  assert.equal(tex("(x−1)((x−1)^2+10^(−20))=0").match(/ = 1/g)?.length, 1, tex("(x−1)((x−1)^2+10^(−20))=0"));
   // brez točne preverbe ostane ≈ (x² − 0,666666666667x + 1 = 0)
   assert.ok(parts("x^2−0,666666666667x+1=0").every((p) => p.includes("\\approx")));
 });
