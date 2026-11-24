@@ -296,6 +296,14 @@ export function createScientific(root, opts) {
         return t("sc.errVec");
       case "undef":
         return t("sc.errUndefined");
+      case "noDeriv": {
+        // levi in desni odvod se ne ujemata (|x| pri 0) ali funkcija tu ni zvezna (AUDIT-018)
+        const { left, right } = e.info || {};
+        if (Number.isFinite(left) && Number.isFinite(right)) return t("sc.errNoDerivLR", { left: fmt(left).text, right: fmt(right).text });
+        return t("sc.errNoDeriv");
+      }
+      case "noDerivDomain":
+        return t("sc.errNoDerivDomain");
       case "casUnsupported":
       case "casEquation":
       case "casNeedEq":
