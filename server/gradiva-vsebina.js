@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import katex from "katex";
+import { napakaIzraza } from "../public/mat/izris.js";
 import { getTopic, getPath } from "./curriculum.js";
 import { parseLesson } from "./textbook.js";
 import { renderMd, shell } from "./textbook-print.js";
@@ -143,11 +144,8 @@ export function checkGradivo(vrsta, src, topicId = null) {
   }
   // Formule morajo izrisati brez napake.
   for (const m of src.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
-    try {
-      katex.renderToString(m[1] || m[2], { throwOnError: true, strict: "ignore" });
-    } catch (e) {
-      errs.push(`formula se ne izriše: ${(m[1] || m[2]).slice(0, 40)} (${String(e.message).slice(0, 60)})`);
-    }
+    const napaka = napakaIzraza(m[1] || m[2], { katex });
+    if (napaka) errs.push(`formula se ne izriše: ${(m[1] || m[2]).slice(0, 40)} (${napaka.slice(0, 60)})`);
   }
   if (/PhET/i.test(src)) errs.push("brez omembe PhET");
   // Formule, ki si jih učenec zapomni: enakost mora veljati za vse vrednosti (lesson-identity.js).

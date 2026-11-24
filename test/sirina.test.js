@@ -221,8 +221,9 @@ test("decimal comma in sim formulas has no gap (»0,041«, not »0, 041«); list
   assert.equal(decVejica("2,5 + 3,75 = 6,25"), "2{,}5 + 3{,}75 = 6{,}25");
   assert.equal(decVejica("10^{2,5}"), "10^{2{,}5}");
   for (const t of ["1{,}5", "x_{1,2} = 3", "\\{1,2,3\\}", "\\{1,5\\}", "(1,2,3)", "T(1, 2)", "5\\,000"]) assert.equal(decVejica(t), t);
-  assert.match(pub("sim/kit.js"), /katex\.renderToString\(decVejica\(t\)/);
-  assert.match(pub("demos.js"), /katex\.renderToString\(decVejica\(t\)/);
+  // Izris s skupnim pravilom za vejico (public/mat/izris.js, vejica: true; enoten matematični zapis F1).
+  assert.match(pub("sim/kit.js"), /izrisi\(t, \{ vejica: true \}\)/);
+  assert.match(pub("demos.js"), /izrisi\(t, \{ vejica: true \}\)/);
 });
 
 // Pregled 4. 11.: zložena formula ostane za bralnik zaslona in kopiranje izvirna (MathML in njegov TeX); klepet
