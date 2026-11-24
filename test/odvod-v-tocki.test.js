@@ -38,3 +38,19 @@ test("odvedljive funkcije ostanejo enake, tudi daleč od 0 in blizu vogala", () 
   assert.ok(Math.abs(val("d/dx(tan(x);1,5)") - 1 / Math.cos(1.5) ** 2) < 1e-9);
   assert.equal(val("d/dx(√x;4)"), 0.25);
 });
+
+test("pregled #953: blizu pola, navpična tangenta, gnezden odvod, f′(a), velik a", () => {
+  assert.equal(val("d/dx(ln(x);10^-6)"), 1e6);
+  assert.ok(Math.abs(val("d/dx(1/x;10^-6)") + 1e12) < 1);
+  assert.equal(val("d/dx(|x|;10^-9)"), 1);
+  assert.ok(Math.abs(val("d/dx(√(1-x^2);0,99999)") + 223.6051) < 1e-3);
+  assert.ok(Math.abs(val("d/dx(sin(x);10^9)") - Math.cos(1e9)) < 1e-6);
+  assert.equal(val("d/dx(d/dx(x^3;x);2)"), 12);
+  assert.equal(val("2·d/dx(x^2;1)+1"), 5);
+  // navpična tangenta in skok: ne obstaja, brez številk
+  for (const s of ["d/dx(x^(2/3);0)", "d/dx(√|x|;0)", "d/dx(∛x;0)", "d/dx(sign(x);0)"]) assert.deepEqual(at(s).error, { code: "noDeriv", info: {} }, s);
+  const f = (body, s) => analyze(s, { comma: true, funcs: { f: { param: "x", body } } });
+  assert.equal(f("ln(x)", "f'(-1)").error?.code, "noDerivDomain");
+  assert.deepEqual(f("|x-2|", "f'(2)").error, { code: "noDeriv", info: { left: -1, right: 1 } });
+  assert.equal(f("x^3", "f'(2)").value, 12);
+});

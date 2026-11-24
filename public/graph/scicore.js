@@ -103,15 +103,15 @@ function rewrite(n, ctx) {
   }
   if (n.k === "der" && n.a?.k === "tuple" && n.a.items.length === 2) {
     // Simbolni odvod v točki a ne zadošča (AUDIT-017, AUDIT-018): ln x ima pri x = −1 »odvod« −1, |x| pri 0
-    // »odvod« 0. Zato poleg odvoda izračunamo še f(a), f(a ± h) in f(a ± 2h); __ODVOD_V_TOCKI (math.js)
-    // preveri, da je f v a definirana in da se levi in desni odvod ujemata.
-    const f = r(n.a.items[0]);
+    // »odvod« 0. __ODVOD_V_TOCKI (math.js) zato preveri še, da je f v a definirana in da se levi in desni odvod
+    // ujemata z njim. Gnezden odvod (d/dx(d/dx(…; x); 2)) in odvod za simbolno računanje ostaneta navadna.
+    const plain = { ...ctx, plainDer: true };
+    const f = rewrite(n.a.items[0], plain);
     const a = r(n.a.items[1]);
     const d = simplify(diff(f, n.v, ctx));
-    const num = (v) => ({ k: "num", v });
-    const h = { k: "*", a: num(1e-5), b: { k: "^", a: { k: "grp", a: { k: "+", a: num(1), b: { k: "call", f: "abs", args: [a] } } }, b: num(0.5) } };
-    const at = (k) => substitute(f, { [n.v]: k === 0 ? a : { k: k > 0 ? "+" : "-", a, b: Math.abs(k) === 1 ? h : { k: "*", a: num(2), b: h } } });
-    return { k: "call", f: "__ODVOD_V_TOCKI", args: [substitute(d, { [n.v]: a }), at(0), at(-1), at(1), at(-2), at(2), h] };
+    const at = substitute(d, { [n.v]: a });
+    if (ctx.plainDer) return { k: "grp", a: at };
+    return { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: n.v };
   }
   const out = { ...n };
   for (const key of ["a", "b", "other"]) if (n[key]) out[key] = r(n[key]);
@@ -157,7 +157,7 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   const one = grad ? 200 / 180 : deg ? 1 : Math.PI / 180; // 1° v trenutni enoti kota
   const scope = Object.assign(Object.create(null), vars, { [ANS_VAR]: ans, [DEG_VAR]: one, [MIN_VAR]: one / 60, [SEC_VAR]: one / 3600 });
   const defs = {};
-  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope };
+  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope, derCheck: true };
   for (const [name, f] of Object.entries(funcs)) {
     try {
       defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma }), { funcs: names }), ctx), body: null };
