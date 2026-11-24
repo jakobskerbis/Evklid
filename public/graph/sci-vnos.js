@@ -5,7 +5,7 @@
 // Nedokončano besedilo (odprt oklepaj, operator na koncu) se pred izrisom dokonča: oklepaji se zaprejo, manjkajoči
 // operand je prazen okvirček □ (v izraz ga vstavimo kot število, ki ga v TeX zamenjamo z □, da se operator vidi).
 // Brez DOM; test/sci-vnos.test.js.
-import { previewTex, analyze, exactIntegral } from "./scisolve.js";
+import { previewTex, analyze, exactIntegral, calculusEnv } from "./scisolve.js";
 import { evaluate, functionDef } from "./scicore.js";
 import { parseCommand, COMMAND_NAMES } from "./cas.js";
 import { BUILTINS } from "./math.js";
@@ -33,7 +33,7 @@ export function withChem(text, fn, env = {}, extra) {
 
 /** Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število, ukaz CAS. */
 export function analyzeLive(text, env = {}) {
-  env = { ...env, live: true }; // integrali v predogledu s kratko časovno mejo
+  env = { ...calculusEnv(text, env), live: true }; // integrali v predogledu s kratko časovno mejo; odvodi in integrali v radianih (AUDIT-055)
   // limita(f; x; a), taylor(f; x; a; n), det([[a; b]; [c; d]]): podpičje loči argumente oziroma elemente
   const cmd = parseCommand(text);
   if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env, live: true });
