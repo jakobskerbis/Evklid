@@ -128,7 +128,8 @@ export function texPlain(tex) {
 
 /**
  * Znanstveni kalkulator v elementu root.
- * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
+ * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?(),
+ *   sharedGraph?() ({ vars, funcs } grafičnega kalkulatorja: »Iz grafa: a = 2«) }
  */
 let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
@@ -726,6 +727,7 @@ export function createScientific(root, opts) {
     if (bad) {
       live.className = "sc-live sc-err";
       live.innerHTML = `${icon("info")}<span>${esc(r.error ? errorText(r.error) : t("sc.errUndefined"))}</span>`;
+      if (r.error?.code === "missing") fromGraph(live, text);
       return;
     }
     if (r.kind === "value") {
@@ -801,6 +803,11 @@ export function createScientific(root, opts) {
       acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="taylor"${v} data-i="${i}" title="${esc(t("sc.cas.taylorPoly"))}">${icon("sigma")}<span>${esc(t("sc.cas.taylor"))}</span></button>`);
     }
     if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
+    // črke, ki jih definira graf (k = 3, g(x)): »Iz grafa: …« (skupne vrednosti)
+    if (["sym", "expr", "symeq", "plot", "solve", "ineq"].includes(e.kind)) {
+      const fg = fromGraphOf(namesIn(e.text));
+      if (fg) acts.push(fromGraphBtn(fg, i));
+    }
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
@@ -860,6 +867,39 @@ export function createScientific(root, opts) {
     new ResizeObserver(() => {
       if (priDnu) hist.scrollTop = hist.scrollHeight;
     }).observe(hist);
+
+  // Skupne vrednosti z grafičnim kalkulatorjem (opts.sharedGraph: { vars, funcs }): črka, ki je kalkulator ne
+  // pozna, graf pa jo definira (drsnik k = 3, g(x) = …), ponudi gumb »Iz grafa: …«; ob dotiku se shrani in vrstica
+  // izračuna znova. Nič se ne prenese tiho.
+  function fromGraphOf(names) {
+    names = [...names];
+    const sh = names.length && opts.sharedGraph ? opts.sharedGraph() : null;
+    if (!sh) return null;
+    const known = names.filter((n) => !(n in st.vars) && !st.funcs[n] && (Number.isFinite(sh.vars?.[n]) || sh.funcs?.[n]));
+    if (!known.length) return null;
+    return {
+      label: known.map((n) => (sh.funcs?.[n] ? `${n}(${sh.funcs[n].param})` : `${n} = ${fmt(sh.vars[n]).text}`)).join(", "),
+      apply() {
+        for (const n of known) {
+          if (sh.funcs?.[n]) st.funcs[n] = { param: sh.funcs[n].param, body: sh.funcs[n].body };
+          else st.vars[n] = sh.vars[n];
+        }
+        save();
+        renderVars();
+      },
+    };
+  }
+  const fromGraphBtn = (fg, i) => `<button type="button" class="sc-act sc-from-graph" data-act="fromgraph" data-i="${i}">${icon("chart-spline")}<span>${esc(t("sc.fromGraph", { names: fg.label }))}</span></button>`;
+  function fromGraph(live, text) {
+    const fg = fromGraphOf(namesIn(text));
+    if (!fg) return;
+    live.insertAdjacentHTML("beforeend", fromGraphBtn(fg, -1));
+    live.querySelector(".sc-from-graph").addEventListener("click", () => {
+      fg.apply();
+      input.value = text;
+      compute();
+    });
+  }
 
   function renderVars() {
     const vs = Object.entries(st.vars);
@@ -1075,6 +1115,11 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
+      else if (act === "fromgraph") {
+        fromGraphOf(namesIn(it.text))?.apply();
+        input.value = it.text;
+        compute();
+      }
       else if (act === "steps") opts.steps?.(chemNumbers(it.stepsText || it.text), it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
       else if (act === "cas") {
         // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)

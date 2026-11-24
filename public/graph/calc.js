@@ -15,7 +15,8 @@ const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: n
 
 /**
  * Ustvari kalkulator v elementu root.
- * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field) }
+ * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field),
+ *   shared?() ({ vars, funcs } znanstvenega kalkulatorja: »Iz kalkulatorja: a = 5«) }
  * Brez api ni »Moji grafi« (stran /kalkulator brez prijave), brez askTutor ni »Vprašaj inštruktorja«.
  */
 export function createCalculator(root, opts) {
@@ -331,11 +332,36 @@ export function createCalculator(root, opts) {
     if (o.kind === "param" || o.kind === "polar") bindDomain(o, extra);
   }
 
+  // Skupne vrednosti z znanstvenim kalkulatorjem (opts.shared: { vars, funcs } istega učenca). Graf jih ne bere
+  // tiho: vrstica z neznanim imenom ponudi »Iz kalkulatorja: a = 5«, ki doda vrstico z enakim pomenom.
+  const sciNum = (v) => {
+    let s = String(Number(v.toPrecision(15)));
+    if (/e/.test(s)) s = s.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+    return comma() ? s.replace(".", ",") : s;
+  };
+  function fromSci(names) {
+    const sh = (names?.length && opts.shared?.()) || null;
+    if (!sh || state.zapis !== 3) return [];
+    const out = [];
+    for (const n of names) {
+      const v = sh.vars?.[n];
+      const f = sh.funcs?.[n];
+      if (typeof v === "number" && Number.isFinite(v)) out.push({ name: n, label: `${n} = ${fmt(v, 8)}`, text: `${n} = ${sciNum(v)}` });
+      // funkcija iz kalkulatorja (zapis je isti); Ans in ° pomenita v grafu drugo, zato teh ne prenesemo
+      else if (f && typeof f.body === "string" && /^[A-Za-z]$/.test(f.param || "") && !/Ans|°|′|″/.test(f.body)) out.push({ name: n, label: `${n}(${f.param})`, text: `${n}(${f.param}) = ${f.body}` });
+    }
+    return out;
+  }
+
   function extraHtml(o) {
     const it = o.src;
     if (o.kind === "error") {
-      const add = o.missing?.length ? `<button type="button" class="gc-chip" data-act="sliders">${icon("sliders-horizontal")}${esc(t("gc.addSliders", { names: o.missing.join(", ") }))}</button>` : "";
-      return `<div class="gc-err">${icon("info")}<span>${esc(errorText(o.error))}</span></div>${add}`;
+      // imena, ki jih pozna znanstveni kalkulator (a = 5, f(x) = …): ponudimo njihove vrednosti (skupne vrednosti)
+      const known = fromSci(o.missing);
+      const rest = (o.missing || []).filter((n) => !known.some((k) => k.name === n));
+      const sci = known.length ? `<button type="button" class="gc-chip" data-act="fromsci">${icon("calculator")}${esc(t("gc.fromCalc", { names: known.map((k) => k.label).join(", ") }))}</button>` : "";
+      const add = rest.length ? `<button type="button" class="gc-chip" data-act="sliders">${icon("sliders-horizontal")}${esc(t("gc.addSliders", { names: rest.join(", ") }))}</button>` : "";
+      return `<div class="gc-err">${icon("info")}<span>${esc(errorText(o.error))}</span></div>${sci}${add}`;
     }
     if (o.kind === "value" || o.kind === "define" || o.kind === "list") {
       if (o.kind === "list" && Array.isArray(o.value) && o.value.length > 30) return `<div class="gc-val">= ${esc(fmt(o.value))}</div>`;
@@ -634,10 +660,14 @@ export function createCalculator(root, opts) {
     }
     if (act === "del") return removeItem(id);
     if (act === "menu") return openRowMenu(id, e.target.closest("[data-act]"));
-    if (act === "sliders") {
+    if (act === "sliders" || act === "fromsci") {
       const o = modelItem(id);
       const at = state.items.indexOf(it);
-      const add = (o.missing || []).map((n) => ({ id: newId(), type: "expr", text: `${n} = 1`, color: 0 }));
+      const known = fromSci(o.missing);
+      const add =
+        act === "fromsci"
+          ? known.map((k) => ({ id: newId(), type: "expr", text: k.text, color: nextColor() }))
+          : (o.missing || []).filter((n) => !known.some((k) => k.name === n)).map((n) => ({ id: newId(), type: "expr", text: `${n} = 1`, color: 0 }));
       state.items.splice(at, 0, ...add);
       commit();
       renderList();
@@ -1287,6 +1317,20 @@ export function createCalculator(root, opts) {
         state.view = view.squared(v, "y");
         view.draw();
       }
+    },
+    /** Definicije grafa za znanstveni kalkulator (»Iz grafa: a = 2, f(x)«): drsniki in vrednosti, funkcije ene črke. */
+    shared() {
+      const vars = {};
+      const funcs = {};
+      if (state.zapis !== 3) return { vars, funcs }; // drug zapis bi v kalkulatorju pomenil drugo
+      for (const o of model?.items || []) {
+        if ((o.kind === "slider" || o.kind === "define") && typeof o.value === "number" && Number.isFinite(o.value)) vars[o.name] = o.value;
+        if (o.kind === "func" && o.params?.length === 1 && /^[A-Za-z]$/.test(o.fname) && /^[A-Za-z]$/.test(o.params[0])) {
+          const m = /=(?!=)\s*(.*)$/s.exec(String(o.src.text || ""));
+          if (m && m[1].trim()) funcs[o.fname] = { param: o.params[0], body: m[1].trim() };
+        }
+      }
+      return { vars, funcs };
     },
     resize() {
       view.resize();
