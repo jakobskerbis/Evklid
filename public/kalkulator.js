@@ -29,11 +29,11 @@ function tool(m) {
   if (m === "graph") {
     host.id = "graph-host";
     tools.graph ||= import("./graph/calc.js").then(({ createCalculator }) =>
-      createCalculator(host, { ...base, toast, storageKey: () => "evklid.graph.0", studentId: () => null, canExport: false }),
+      createCalculator(host, { ...base, toast, storageKey: () => "evklid.graph.0", studentId: () => null, canExport: false, useInCalc: base.onInsert }),
     );
   } else if (m === "sci") {
     tools.sci ||= import("./graph/sci.js").then((mod) =>
-      mod.createScientific(host, { ...base, toast, storageKey: () => "evklid.sci.0", openGraph: async (exprs) => (await setMode("graph"))?.show(exprs), canSteps: () => false }),
+      mod.createScientific(host, { ...base, toast, storageKey: () => "evklid.sci.0", openGraph: async (exprs) => (await setMode("graph"))?.show(exprs), showOnGraph: async (req) => (await setMode("graph"))?.showPlan(req), canSteps: () => false }),
     );
   } else {
     tools[m] ||= import("./graph/tools.js").then((mod) => (m === "pse" ? mod.createPse(host, { ...base, lang: currentLang }) : mod.createTools(host, { ...base, subject: () => subject })));

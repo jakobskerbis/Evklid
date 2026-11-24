@@ -1104,6 +1104,7 @@
   "sc.fmHint": "把已知的字母換成數字，保留未知量，然後按 =。",
   "sc.fmRad": "計算機現在處於 RAD 模式（角度以弧度為單位）。",
   "sc.errUndefined": "結果無定義（例如除以 0）。",
+  "sc.errNcrK": "在 {f}(n; k) 中，k 必須是大於或等於 0 的整數。",
   "sc.notReal": "結果不是實數。在複數中為 {z}。",
   "sc.errNoDeriv": "該點處導數不存在。",
   "sc.errNoDerivLR": "該點處導數不存在：左導數為 {left}，右導數為 {right}。",

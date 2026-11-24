@@ -502,8 +502,16 @@ function rat0(node, ctx) {
       if (!e.n.isConst() || !e.d.isConst()) throw fail("unsupported");
       const k = e.n.constValue().div(e.d.constValue());
       if (!k.int) throw fail("unsupported");
-      if (k.abs().cmp(MAX_POW) > 0) throw fail("big");
       const a = r(node.a);
+      // število na celo potenco (10^(−30)): točno v BigInt, tudi nad MAX_POW, dokler je ulomek v mejah Q
+      if (a.n.isConst() && a.d.isConst() && k.abs().cmp(200) <= 0) {
+        const q = a.n.constValue().div(a.d.constValue());
+        const e = BigInt(Math.abs(Number(k.n)));
+        if (q.zero && k.n < 0n) throw fail("div0");
+        const pw = new Q(q.n ** e, q.d ** e);
+        return new R(P.num(k.n < 0n ? pw.inv() : pw));
+      }
+      if (k.abs().cmp(MAX_POW) > 0) throw fail("big");
       const n = Number(k.n);
       if (n >= 0) return new R(powP(a.n, n), powP(a.d, n));
       if (a.n.zero) throw fail("div0");
@@ -894,6 +902,163 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
         out.push({ n: q.n, d: q.d });
       }
       return out;
+    });
+  } catch {
+    return null;
+  } finally {
+    deadline = saved;
+  }
+}
+
+/**
+ * AUDIT-053: ali je L − R točno 0, ko črko v zamenjamo z drevesom rep (racionalno, racionalni večkratnik π ali
+ * a + b·ι z ι² = isq, npr. −1 za i ali 3 za √3). Računamo s polinomi v π in ι z racionalnimi koeficienti; ker je π
+ * transcendentno, je izraz 0 natanko takrat, ko so po ι² = isq vsi koeficienti 0. true / false; null, ko točno ne gre
+ * (imenovalec s črko, e, sin, druge črke).
+ */
+export function zeroAtExact(L, Rn, scope, v, rep, isq = -1, ms = LIVE_MS, unit = "rad", isq2 = null) {
+  const saved = deadline;
+  const sub = (n) => {
+    if (Array.isArray(n)) return n.map(sub);
+    if (!n || typeof n !== "object") return n;
+    if (n.k === "var" && n.name === v) return rep;
+    const o = {};
+    for (const key of Object.keys(n)) o[key] = sub(n[key]);
+    return o;
+  };
+  try {
+    deadline = Date.now() + ms;
+    return withLimit(10n ** 400n, () => {
+      // √r s konstantnim racionalnim r = (k/b)²·m zapišemo kot (k/b)·ι z ι² = m (x − √3 = 0 preverimo z x = ι, ι² = 3);
+      // vsi koreni morajo imeti isti m, ki se ujema z obliko (x = c·ι z ι² = m) ali pa oblika ι nima.
+      // sin, cos, tg pri racionalnem večkratniku π/12 (30°, 45° …) dobijo točno vrednost (sin π/6 = 1/2).
+      const usesI = JSON.stringify(rep).includes('"ι"');
+      let m = usesI ? isq : null;
+      const num = (b) => ({ k: "num", v: Number(b), raw: String(b) });
+      const surd = (q) => {
+        // √q za racionalen q ≥ 0 kot vozlišče
+        if (q.n < 0n) throw fail("unsupported");
+        if (q.n === 0n) return num(0n);
+        let N = q.n * q.d; // √(n/d) = √(n·d)/d
+        if (N > 10n ** 12n) throw fail("unsupported");
+        let k = 1n;
+        for (let p = 2n; p * p <= N; p++) while (N % (p * p) === 0n) (N /= p * p), (k *= p);
+        const coef = { k: "/", a: num(k), b: num(q.d) };
+        if (N === 1n) return coef;
+        if (m === null) m = Number(N);
+        if (m !== Number(N)) throw fail("unsupported");
+        return { k: "*", a: coef, b: { k: "var", name: "ι" } };
+      };
+      const constQ = (node) => {
+        const r0 = rat(node, { scope, dens: [], dec: false });
+        if (!r0.d.isConst()) throw fail("unsupported");
+        return r0;
+      };
+      // sin(k·π/12) za k = 0 … 6 (le večkratniki 30° in 45°)
+      const SIN = { 0: [0n, 1n], 2: [1n, 4n], 3: [1n, 2n], 4: [3n, 4n], 6: [1n, 1n] }; // sin² = p/q
+      const sinK = (k) => {
+        k = ((k % 24) + 24) % 24;
+        const sg = k > 12 ? -1n : 1n;
+        const j = k > 12 ? k - 12 : k;
+        const t = j > 6 ? 12 - j : j;
+        if (!(t in SIN)) throw fail("unsupported");
+        const [p, q] = SIN[t];
+        return [sg, new Q(p, q)];
+      };
+      const PER = { rad: null, deg: 180n, grad: 200n }; // enot na π
+      const tr = (n) => {
+        if (Array.isArray(n)) return n.map(tr);
+        if (!n || typeof n !== "object") return n;
+        const o = {};
+        for (const key of Object.keys(n)) o[key] = tr(n[key]);
+        // konstanta na celo potenco (10^(−17)) točno, tudi nad mejo potenc v rat
+        if (o.k === "^") {
+          let b0, e0;
+          try {
+            b0 = constQ(o.a);
+            e0 = constQ(o.b);
+          } catch {
+            return o;
+          }
+          if (b0.n.isConst() && e0.n.isConst()) {
+            const base = b0.n.constValue().div(b0.d.constValue());
+            const e = e0.n.constValue().div(e0.d.constValue());
+            const bits = (base.n < 0n ? -base.n : base.n).toString(2).length + base.d.toString(2).length;
+            if (e.int && e.abs().cmp(new Q(4000n, 1n)) <= 0 && bits * Number(e.n < 0n ? -e.n : e.n) <= 20000 && !(base.zero && e.n < 0n)) {
+              const k = e.n < 0n ? -e.n : e.n;
+              let pn = base.n ** k;
+              let pd = base.d ** k;
+              if (e.n < 0n) [pn, pd] = [pd, pn];
+              if (pd < 0n) [pn, pd] = [-pn, -pd];
+              return { k: "/", a: num(pn), b: num(pd) };
+            }
+          }
+          return o;
+        }
+        if (o.k === "call" && o.f === "sqrt" && o.args?.length === 1) {
+          const r0 = constQ(o.args[0]);
+          if (!r0.n.isConst()) throw fail("unsupported");
+          return surd(r0.n.constValue().div(r0.d.constValue()));
+        }
+        if (o.k === "call" && (o.f === "sin" || o.f === "cos" || o.f === "tan") && o.args?.length === 1) {
+          const r0 = constQ(o.args[0]);
+          if (r0.n.vars().some((w) => w !== "π")) throw fail("unsupported");
+          const d = r0.d.constValue();
+          const c1 = coefIn(r0.n, "π", 1).constValue().div(d);
+          const c0 = coefIn(r0.n, "π", 0).constValue().div(d);
+          if (r0.n.degree("π") > 1) throw fail("unsupported");
+          // kot / π (racionalno)
+          let c;
+          if (PER[unit] === null) {
+            if (!c0.zero) throw fail("unsupported");
+            c = c1;
+          } else {
+            if (!c1.zero) throw fail("unsupported");
+            c = c0.div(new Q(PER[unit], 1n));
+          }
+          const k12 = c.mul(new Q(12n, 1n));
+          if (!k12.int) throw fail("unsupported");
+          const k = Number(k12.n % 24n);
+          const val = (kk) => {
+            const [sg, sq] = sinK(kk);
+            const node = surd(sq);
+            return sg < 0n ? { k: "neg", a: node } : node;
+          };
+          if (o.f === "sin") return val(k);
+          if (o.f === "cos") return val(k + 6);
+          const [, cs] = sinK(k + 6);
+          if (cs.zero) throw fail("unsupported");
+          return { k: "/", a: val(k), b: val(k + 6) };
+        }
+        return o;
+      };
+      const L2 = tr(sub(L));
+      const R2 = tr(sub(Rn));
+      if (m !== null && !usesI) isq = m;
+      const ctx = { scope, dens: [], dec: false };
+      const a = rat(L2, ctx);
+      const b = rat(R2, ctx);
+      if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+      const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+      if (N.zero) return true;
+      if (N.vars().some((w) => w !== "π" && w !== "ι" && w !== "κ")) return null;
+      // ι² = isq, κ² = isq2: člene razvrstimo po (ι^(e mod 2), κ^(e mod 2)); vsi štirje deli morajo biti 0
+      const parts = [new P(), new P(), new P(), new P()];
+      const sq = [Q.of(isq), Q.of(isq2 ?? 1)];
+      const powQ = (q, k) => {
+        let r = Q.of(1);
+        for (let t = 0; t < k; t++) r = r.mul(q);
+        return r;
+      };
+      for (const { m: mono, c } of N.terms()) {
+        const ei = mono["ι"] || 0;
+        const ek = mono["κ"] || 0;
+        const mm = { ...mono };
+        delete mm["ι"];
+        delete mm["κ"];
+        parts[(ei % 2) * 2 + (ek % 2)].addTerm(mm, c.mul(powQ(sq[0], ei >> 1)).mul(powQ(sq[1], ek >> 1)));
+      }
+      return parts.every((x) => x.zero);
     });
   } catch {
     return null;

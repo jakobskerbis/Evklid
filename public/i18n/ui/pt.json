@@ -1110,6 +1110,7 @@
   "sc.fmHint": "Substitui as letras conhecidas por números, deixa a incógnita e carrega em =.",
   "sc.fmRad": "A calculadora está agora no modo RAD (ângulos em radianos).",
   "sc.errUndefined": "O resultado não está definido (p. ex. divisão por 0).",
+  "sc.errNcrK": "Em {f}(n; k), k tem de ser um número inteiro maior ou igual a 0.",
   "sc.notReal": "O resultado não é um número real. Nos números complexos é {z}.",
   "sc.errNoDeriv": "A derivada não existe neste ponto.",
   "sc.errNoDerivLR": "A derivada não existe neste ponto: a derivada à esquerda é {left} e à direita {right}.",
