@@ -1011,6 +1011,7 @@
   "sc.fmtEng": "Technische Schreibweise (10³ⁿ)",
   "sc.onePeriod": "Lösungen in einer Periode:",
   "sc.noReal": "Keine reellen Lösungen, nur komplexe.",
+  "sc.searchedNone": "Keine Lösung im Intervall (außerhalb habe ich nicht gesucht):",
   "sc.sysNone": "Das System hat keine Lösung.",
   "sc.sysMany": "Das System hat unendlich viele Lösungen.",
   "sc.funcSaved": "Die Funktion {name} ist gespeichert. Berechne z. B. {fn}(2).",

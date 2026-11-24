@@ -1011,6 +1011,7 @@
   "sc.fmtEng": "Mwandiko wa kihandisi (10³ⁿ)",
   "sc.onePeriod": "Majibu ndani ya kipindi kimoja:",
   "sc.noReal": "Hakuna majibu halisi, kuna changamano tu.",
+  "sc.searchedNone": "Hakuna suluhisho katika kipindi hiki (sikutafuta nje yake):",
   "sc.sysNone": "Mfumo hauna jibu.",
   "sc.sysMany": "Mfumo una majibu mengi yasiyo na kikomo.",
   "sc.funcSaved": "Fomula {name} imehifadhiwa. Hesabu k.m. {fn}(2).",

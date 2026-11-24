@@ -1017,6 +1017,7 @@
   "sc.fmtEng": "Inženjerski zapis (10³ⁿ)",
   "sc.onePeriod": "Rješenja unutar jednog perioda:",
   "sc.noReal": "Nema realnih rješenja, samo kompleksna.",
+  "sc.searchedNone": "Nema rješenja na intervalu (izvan njega nisam tražio):",
   "sc.sysNone": "Sustav nema rješenja.",
   "sc.sysMany": "Sustav ima beskonačno mnogo rješenja.",
   "sc.funcSaved": "Funkcija {name} je spremljena. Izračunaj npr. {fn}(2).",

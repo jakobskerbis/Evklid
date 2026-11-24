@@ -1005,6 +1005,7 @@
   "sc.fmtEng": "工程記號 (10³ⁿ)",
   "sc.onePeriod": "一個週期內的解：",
   "sc.noReal": "沒有實數解，只有複數解。",
+  "sc.searchedNone": "該區間內無解（區間外未搜尋）：",
   "sc.sysNone": "方程組無解。",
   "sc.sysMany": "方程組有無限多組解。",
   "sc.funcSaved": "已儲存函數 {name}。可以計算例如 {fn}(2)。",

@@ -1011,6 +1011,7 @@
   "sc.fmtEng": "Mérnöki alak (10³ⁿ)",
   "sc.onePeriod": "Megoldások egy perióduson belül:",
   "sc.noReal": "Nincs valós megoldás, csak komplex.",
+  "sc.searchedNone": "Az intervallumon nincs megoldás (azon kívül nem kerestem):",
   "sc.sysNone": "Az egyenletrendszernek nincs megoldása.",
   "sc.sysMany": "Az egyenletrendszernek végtelen sok megoldása van.",
   "sc.funcSaved": "A(z) {name} függvény elmentve. Számold ki pl. ezt: {fn}(2).",

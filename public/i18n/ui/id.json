@@ -1005,6 +1005,7 @@
   "sc.fmtEng": "Notasi teknik (10³ⁿ)",
   "sc.onePeriod": "Penyelesaian dalam satu periode:",
   "sc.noReal": "Tidak ada penyelesaian real, hanya kompleks.",
+  "sc.searchedNone": "Tidak ada solusi pada interval ini (di luar itu tidak dicari):",
   "sc.sysNone": "Sistem tidak memiliki penyelesaian.",
   "sc.sysMany": "Sistem memiliki tak hingga banyak penyelesaian.",
   "sc.funcSaved": "Fungsi {name} sudah disimpan. Hitung mis. {fn}(2).",

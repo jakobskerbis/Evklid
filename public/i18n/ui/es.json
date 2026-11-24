@@ -1011,6 +1011,7 @@
   "sc.fmtEng": "Notación de ingeniería (10³ⁿ)",
   "sc.onePeriod": "Soluciones en un periodo:",
   "sc.noReal": "No hay soluciones reales, solo complejas.",
+  "sc.searchedNone": "No hay solución en el intervalo (no busqué fuera de él):",
   "sc.sysNone": "El sistema no tiene solución.",
   "sc.sysMany": "El sistema tiene infinitas soluciones.",
   "sc.funcSaved": "La función {name} está guardada. Calcula p. ej. {fn}(2).",

@@ -1005,6 +1005,7 @@
   "sc.fmtEng": "工程记数法 (10³ⁿ)",
   "sc.onePeriod": "一个周期内的解：",
   "sc.noReal": "没有实数解，只有复数解。",
+  "sc.searchedNone": "该区间内无解（区间外未搜索）：",
   "sc.sysNone": "方程组无解。",
   "sc.sysMany": "方程组有无穷多个解。",
   "sc.funcSaved": "已保存函数 {name}。可以计算例如 {fn}(2)。",
