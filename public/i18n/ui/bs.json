@@ -1007,6 +1007,7 @@
   "sc.errSumLimit": "Previše članova: zbir može imati najviše 100 000 članova.",
   "sc.errIntDiverge": "Integral ne postoji: divergira (funkcija na intervalu ima pol ili neintegrabilan singularitet).",
   "sc.errIntPv": "Integral ne postoji: divergira (funkcija na intervalu ima pol). Postoji samo Cauchyjeva glavna vrijednost {pv}, ali ona nije vrijednost integrala.",
+  "sc.errIntUnknown": "Integral nije moguće pouzdano izračunati: numerički izračun ne daje nijednu pouzdanu cifru.",
   "sc.more": "Sve funkcije",
   "sc.functions": "Funkcije",
   "sc.grp.cmp": "Jednačine i nejednačine",

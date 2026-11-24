@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, integrateInfo, walk } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, integrateInfo, walk, withIntegralBudget, integralTrace } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -191,6 +191,31 @@ export function integralsOf(node, ctx, scope) {
   return out;
 }
 
+const INT_LIVE_MS = 40; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
+const INT_MS = 1000; // integrali ob Izračunaj
+const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
+const hasIntegral = (node) => {
+  let yes = false;
+  walk(node, (n) => {
+    if (n.k === "int" && n.lo) yes = true;
+  });
+  return yes;
+};
+/**
+ * Vrednost integrala (integrateInfo), kolikor jo podpira ocena napake: { value, est: true } — številski izid je
+ * vedno približek (»≈«; »=« le za točno, simbolno vrednost), value zaokrožen na zanesljiva mesta. null: niti enega mesta.
+ */
+export function certified(info) {
+  const { value: v, err } = info;
+  if (!Number.isFinite(v) || !(err >= 0) || !Number.isFinite(err)) return null;
+  if (err === 0) return { value: v, est: true };
+  const a = Math.abs(v);
+  // ∫(sin x; −π; π): vrednost je v šumu, a ta je zanemarljiv proti ∫|f|
+  if (a <= err) return err <= 1e-12 * (info.abs || 0) ? { value: 0, est: true } : null;
+  const d = Math.floor(Math.log10(a / err));
+  return { value: d >= 15 ? v : Number(v.toPrecision(Math.max(1, d))), est: true };
+}
+
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
 export function unknownsOf(node, vars = {}) {
   return [...freeVars(node)].filter((v) => !HIDDEN_VARS.has(v) && !(v in vars));
@@ -211,16 +236,34 @@ export function evaluate(text, env = {}) {
     if (ast.k === "cmp" && !name) return { error: { code: "notCalc", info: {} } };
     const fv = unknownsOf(rw(expr), vars);
     if (fv.length) return { error: { code: "missing", info: { names: fv } } };
-    let value = run(expr)(scope);
+    // določeni integrali: s časovno mejo in s podatki o vsakem (ne obstaja, ni zanesljiv, ocena napake)
+    const rwe = rw(expr);
+    const withInt = hasIntegral(rwe);
+    let value;
+    let infos = [];
+    if (withInt) ({ result: value, infos } = withIntegralBudget(env.live ? INT_LIVE_MS : INT_MS, () => integralTrace(() => run(expr)(scope))));
+    else value = run(expr)(scope);
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
-    // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
-    if (!Number.isFinite(value)) {
-      const div = integralsOf(rw(expr), line.ctx, scope).find((r) => r.diverges);
-      if (div) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
+    let est = false;
+    if (withInt) {
+      if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
+      // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
+      const div = infos.find((r) => r.diverges);
+      if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
+      const cert = infos.map((r) => (Number.isFinite(r.value) ? certified(r) : null));
+      // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
+      if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !cert[i]))) return { error: { code: "intUnknown", info: {} } };
+      if (Number.isFinite(value) && infos.length) {
+        if (infos.length === 1 && unwrapGrp(rwe).k === "int") ({ value, est } = cert[0]);
+        else est = cert.some((c) => c?.est);
+      }
     }
     const tex = lineTex(ast, comma);
-    return name ? { value, tex, assign: name } : { value, tex };
+    const out = name ? { value, tex, assign: name } : { value, tex };
+    // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
+    if (est) Object.assign(out, { approx: true, est: true });
+    return out;
   } catch (e) {
     if (e instanceof MathError) return { error: { code: e.code, info: e.info || {} } };
     return { error: { code: "other", info: {} } };

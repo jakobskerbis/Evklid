@@ -1001,6 +1001,7 @@
   "sc.errSumLimit": "Idadi ya maneno ni kubwa mno: jumla inaweza kuwa na maneno 100,000 tu kwa upeo.",
   "sc.errIntDiverge": "Kiunganishi hakipo: kinaachana (kitendakazi kina ncha au umoja usioweza kuunganishwa katika muda).",
   "sc.errIntPv": "Kiunganishi hakipo: kinaachana (kitendakazi kina ncha katika muda). Ipo tu thamani kuu ya Cauchy {pv}, lakini si thamani ya kiunganishi.",
+  "sc.errIntUnknown": "Kiunganishi hakiwezi kukokotolewa kwa uhakika: ukokotoaji wa kinambari hautoi tarakimu yoyote ya kuaminika.",
   "sc.more": "Kazi zote",
   "sc.functions": "Kazi",
   "sc.grp.cmp": "Milinganyo na kutolingana",

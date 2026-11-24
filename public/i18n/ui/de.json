@@ -1001,6 +1001,7 @@
   "sc.errSumLimit": "Zu viele Summanden: Die Summe darf höchstens 100 000 Glieder haben.",
   "sc.errIntDiverge": "Das Integral existiert nicht: Es divergiert (die Funktion hat im Intervall einen Pol oder eine nicht integrierbare Singularität).",
   "sc.errIntPv": "Das Integral existiert nicht: Es divergiert (die Funktion hat im Intervall einen Pol). Es gibt nur den Cauchy-Hauptwert {pv}, der aber nicht der Wert des Integrals ist.",
+  "sc.errIntUnknown": "Das Integral lässt sich nicht zuverlässig berechnen: Die numerische Rechnung liefert keine verlässliche Stelle.",
   "sc.more": "Alle Funktionen",
   "sc.functions": "Funktionen",
   "sc.grp.cmp": "Gleichungen und Ungleichungen",
