@@ -567,7 +567,8 @@ export function backspace(text, s, e = s) {
   // navaden oklepaj: prazen gre s parom, sicer gresta oba oklepaja, vsebina ostane
   if (t[s - 1] === "(") return unwrap(t, s - 1, s - 1, closeAt(t, s - 1), [s, closeAt(t, s - 1) < 0 ? t.length : closeAt(t, s - 1)]);
   if (/Ans$/.test(before)) return done(t.slice(0, s - 3) + t.slice(s), s - 3);
-  const fx = /[a-z]\([a-z]\)=$/.exec(before);
+  // »f(x)=« kot celota, ne »n(x)=« iz »sin(x)=« (prej »sin(x)=|0,5« → »si0,5«)
+  const fx = /(?<![A-Za-zčšž])[a-z]\([a-z]\)=$/.exec(before);
   if (fx) return done(t.slice(0, s - fx[0].length) + t.slice(s), s - fx[0].length);
   if (t[s - 1] === ";") {
     const enc = enclosing(t, s - 1);
