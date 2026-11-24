@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, argSeparators, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, numberText, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -58,17 +58,20 @@ function rewriteIntegrals(s) {
  */
 export function prepare(text, { comma = true } = {}) {
   // »1 000 000/4«: presledek med skupinami po 3 števke je ločilo tisočic, ne množenje
-  let s = joinThousands(String(text ?? "").trim());
-  // Nejasen zapis števila (»12 3456«, »1.2.3«) je napaka, ne tiho množenje (12 · 3456, 1,2 · 0,3).
-  if (digitGap(s)) throw new MathError("unexpected", { got: " " });
-  if (comma) s = joinDotThousands(s); // »1.234,5« = 1234,5
-  if (twoDots(s)) throw new MathError("unexpected", { got: "." });
+  // »1.234,5« = 1234,5; nejasen zapis števila (»12 3456«, »1.2.3«) je napaka, ne tiho množenje (12 · 3456, 1,2 · 0,3).
+  // Isto pravilo kot grafični kalkulator in preverjanje odgovorov (numberText v math.js).
+  let s = numberText(String(text ?? "").trim(), comma);
   s = s.replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
-  s = argSeparators(s, comma); // isto pravilo kot grafični kalkulator (math.js)
   s = s.replace(/(\d|\.)[eE]([+\-−]?\d+)/g, "$1*10^($2)");
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
-  s = s.replace(/°/g, `*${DEG}`).replace(/(\d|\.)\s*′/g, `$1*${MIN}`).replace(/(\d|\.)\s*″/g, `$1*${SEC}`);
+  // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem
+  // kalkulatorju): sin 30° = sin(30°), 1/30° = 1/(30°), 30°^2 = (30°)². Prej je bil »sin 30°« (sin 30)·° (AUDIT-025).
+  s = s
+    .replace(/(\d+(?:\.\d+)?|(?<![A-Za-z_{])[A-Za-zα-ωπθ](?![A-Za-z_(]))\s*°/g, `($1 ${DEG})`)
+    .replace(/°/g, ` ${DEG}`)
+    .replace(/(\d+(?:\.\d+)?)\s*′/g, `($1 ${MIN})`)
+    .replace(/(\d+(?:\.\d+)?)\s*″/g, `($1 ${SEC})`);
   let open = 0;
   for (const c of s) {
     if (c === "(") open++;
@@ -134,6 +137,7 @@ export function lineTex(ast, comma = true) {
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
     .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
+    .replace(/(?<=^|[{\s+\-=(,])\\left\(([\d{},.]+|[A-Za-z]|\\(?:pi|theta|alpha|beta|gamma|varphi|phi))\^\{(\\circ|\\prime|\\prime\\prime)\}\\right\)(?!\s*\^)/g, "$1^{$2}") // (30°) → 30° (ne za funkcijo, števko ali pred potenco)
     .replace(/(\^\{\\circ\}|\^\{\\prime\})\s*\+\s*(?=[\d{},.]+\^\{\\prime(?:\\prime)?\}(?!\s*(?:\\cdot|\^|\\times)))/g, "$1") // 30° + 15′ → 30°15′ (ne 30° + 15′·2)
     .replace(/\\cdot\s*10\^/g, "\\cdot 10^");
 }
@@ -173,6 +177,13 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   }
   const ast = parse(src, { funcs: names });
   return { src, ast, scope, ctx, rw: (node) => rewrite(node, ctx), run: (node) => compile(rewrite(node, ctx), ctx) };
+}
+
+/** v zaokrožen na mesta, ki jih napaka err še dopušča (vsaj 1, največ 15 značilnih mest). */
+export function reliable(v, err) {
+  if (!Number.isFinite(v) || v === 0 || !(err > 0)) return v;
+  const d = Math.max(1, Math.min(15, Math.floor(Math.log10(Math.abs(v) / err))));
+  return Number(v.toPrecision(d));
 }
 
 /** Podatki integrateInfo za vsak določeni integral v drevesu (ne znotraj drugega integrala). */
@@ -258,17 +269,22 @@ export function evaluate(text, env = {}) {
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
     let est = false;
+    let single = null; // podatki edinega integrala (scisolve: točna vrednost iz nedoločenega integrala)
     let digits; // zanesljiva mesta edinega integrala
     if (withInt) {
       if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
       // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
       const div = infos.find((r) => r.diverges);
-      if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
+      // ∫(1/x; 1; ∞): divergira zaradi neskončnega intervala (inf), ne zaradi pola
+      if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : Number.isFinite(div.at) ? {} : { inf: true } } };
       const zm = infos.map((r) => (Number.isFinite(r.value) ? zanesljivaMesta(r) : null));
       // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
       if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !zm[i]))) return { error: { code: "intUnknown", info: {} } };
       if (Number.isFinite(value) && infos.length) {
-        if (infos.length === 1 && unwrapGrp(rwe).k === "int") ({ value, est, digits } = zm[0]);
+        if (infos.length === 1 && unwrapGrp(rwe).k === "int") {
+          ({ value, est, digits } = zm[0]);
+          single = infos[0];
+        }
         else {
           // sestavljen izraz (∫(…)·2 + 1): napako vsakega integrala prenesemo skozi račun (izraz z vrednostjo ± err)
           const num = (y) => (Array.isArray(y) ? (y.length === 1 ? y[0] : NaN) : typeof y === "boolean" ? +y : y);
@@ -292,6 +308,7 @@ export function evaluate(text, env = {}) {
     const out = name ? { value, tex, assign: name } : { value, tex };
     // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
     if (est) Object.assign(out, { approx: true, est: true });
+    if (single) Object.defineProperty(out, "int", { value: single, enumerable: false });
     if (digits) Object.defineProperty(out, "digits", { value: digits, enumerable: false });
     return out;
   } catch (e) {
