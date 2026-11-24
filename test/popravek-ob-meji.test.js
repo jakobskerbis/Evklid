@@ -1,4 +1,4 @@
-// AUDIT-057: napaka, ki jo koda dokaže, učencu ne ostane zamolčana, ko klic popravka ni mogoč (meja porabe):
+// AUDIT-060: napaka, ki jo koda dokaže, učencu ne ostane zamolčana, ko klic popravka ni mogoč (meja porabe):
 // pripne se popravek brez modela (strošek 0) in šteje dogodek.
 import test from "node:test";
 import assert from "node:assert/strict";

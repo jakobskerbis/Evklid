@@ -1174,7 +1174,7 @@ export async function correction({ streamFn, mode, answer, issue, language = "sl
   return { block: r?.stopReason === "refusal" ? null : fixBlock(r?.text), usage: r?.usage, model: r?.model, mode: fixMode };
 }
 
-// Popravek brez modela (AUDIT-057): ko koda napako dokaže, klic popravka pa ni mogoč (meja porabe, napaka klica),
+// Popravek brez modela (AUDIT-060): ko koda napako dokaže, klic popravka pa ni mogoč (meja porabe, napaka klica),
 // učenec vseeno izve zanjo. Pri računu koda pozna obe vrednosti; drugače le kratko opozorilo. Strošek 0.
 const CODE_FIX = {
   sl: { head: "Popravek", arith: (t, l, r) => `Račun $${t}$ ne drži: leva stran je ${l}, desna pa ${r}. Preveri ga še enkrat.`, other: "V tem odgovoru je napaka. Preveri ga še enkrat ali vprašaj znova.", verdict: "Ta ocena tvojega koraka morda ni pravilna. Svoj korak preveri še enkrat ali vprašaj znova." },

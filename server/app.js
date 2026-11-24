@@ -1568,7 +1568,7 @@ export function createApp(store, opts = {}) {
             reason = rv.reason;
           }
           // Ponovni odgovor samo, če je zanj prostor pod mejo. Sicer ostane prvi odgovor, učenec pa dobi opozorilo
-          // brez modela (AUDIT-057): najdena napačna sodba se ne zamolči.
+          // brez modela (AUDIT-060): najdena napačna sodba se ne zamolči.
           if (reason && !hold.take(mainReserve)) {
             verdictFix = codeFixBlock(reason, student.settings.language || "sl", "verdict") || "";
             noteReviewSkip(store.db, jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS", "meja-sodba");
@@ -1696,7 +1696,7 @@ export function createApp(store, opts = {}) {
           }
         }
         // Koda je napako dokazala, popravka z modelom pa ni (meja porabe, izklopljen, napaka klica): popravek brez modela,
-        // da učenec napake ne dobi brez opozorila (AUDIT-057). Model, ki je odgovoril »OK«, je napako zavrnil: ostane brez.
+        // da učenec napake ne dobi brez opozorila (AUDIT-060). Model, ki je odgovoril »OK«, je napako zavrnil: ostane brez.
         if (issue && !fix && !fixTried && liveFixOn() && !controller.signal.aborted && !/^a reviewer reported/.test(issue)) {
           fix = codeFixBlock(issue, student.settings.language || "sl");
           if (fix) send("delta", { text: fix });
