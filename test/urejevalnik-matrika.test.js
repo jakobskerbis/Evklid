@@ -273,7 +273,7 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
           const prev = document.querySelector(".sc-preview");
           const c = prev.querySelectorAll(".sc-caret");
           const r = c[0]?.getBoundingClientRect();
-          return { v: i.value, p: i.selectionStart, shown: prev.textContent, raw: !!prev.querySelector(".text, .katex-error"), carets: c.length, x: r ? r.left + r.width / 2 : null, y: r ? r.top + r.height / 2 : null };
+          return { v: i.value, p: i.selectionStart, shown: prev.textContent, raw: !!prev.querySelector(".text, .katex-error, .mat-napaka"), carets: c.length, x: r ? r.left + r.width / 2 : null, y: r ? r.top + r.height / 2 : null };
         });
       // allowRaw: znan surov zapis NOVO-1 (čista funkcija da isto besedilo, ki se ne izriše)
       const clean = async (what, allowRaw = false) => {
