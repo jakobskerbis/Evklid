@@ -9,7 +9,7 @@ import { mountAccounts } from "../server/accounts/index.js";
 import { signWebhook } from "../server/accounts/stripe.js";
 import { PASSES, passForDaysLeft, paidActive, GRACE_DAYS } from "../server/accounts/plans.js";
 import { parseCode } from "../server/accounts/promo.js";
-import { ownsStripeObject, parentFromMeta } from "../server/accounts/ponoven-id.js";
+import { parentFromMeta } from "../server/accounts/ponoven-id.js";
 
 const SECRET = "whsec_test";
 const YEAR = new Date().getFullYear();

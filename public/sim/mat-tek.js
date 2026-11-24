@@ -1,7 +1,7 @@
 // Simulacije za matematična tekmovanja: logika, Dirichletovo načelo, invariante, igre, ostanki, poti,
 // diofantske enačbe, ura, sredine, urejanje, Vietove formule, funkcijske enačbe, Hanojski stolpi, grafi,
 // potenca točke, Cevov izrek, najkrajša pot, Legendrova formula.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, clamp, label, animate, playButton, axes, fnPath, handle, draggable, gcd, rint } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, clamp, label, animate, playButton, axes, fnPath, handle, draggable, gcd, rint } from "./kit.js";
 
 const binom = (n, k) => {
   if (k < 0 || k > n) return 0;

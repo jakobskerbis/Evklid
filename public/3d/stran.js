@@ -19,12 +19,6 @@ const mk = (tag, cls, text) => {
   if (text != null) e.textContent = text;
   return e;
 };
-const PREDMETI = { BIO: "subj.BIO", KEM: "subj.KEM", FIZ: "subj.FIZ", MAT: "subj.MAT", NAR: "subj.NAR" };
-const predmet = (p) => {
-  const k = PREDMETI[p];
-  const s = k ? t(k) : p;
-  return s === k ? p : s;
-};
 
 function razberi() {
   let h = location.hash.slice(1);

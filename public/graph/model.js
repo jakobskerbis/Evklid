@@ -1011,12 +1011,3 @@ function fitTex(fit, comma) {
   return "";
 }
 
-/** Imena spremenljivk, ki jih uporablja vrstica (za zaznavo, kdaj je treba risati znova). */
-export function usesAnimatedVar(o, names) {
-  if (!o.ast) return false;
-  let yes = false;
-  walk(o.ast, (n) => {
-    if (n.k === "var" && names.has(n.name)) yes = true;
-  });
-  return yes;
-}

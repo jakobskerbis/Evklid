@@ -1,6 +1,6 @@
 // Generatorji nalog za matematiko v OŠ (6.–9. razred).
 // Vsak generator izračuna števila in pravilen odgovor v kodi.
-import { NAMES, choices, g, nOf, verbOf } from "../rng.js";
+import { NAMES, g, nOf, verbOf } from "../rng.js";
 import { fmt, gcd, roundHalfUp } from "../check.js";
 
 // Število za LaTeX z decimalno vejico.
