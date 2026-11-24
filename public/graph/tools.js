@@ -710,6 +710,7 @@ export function createFormulas(root, opts) {
 
   // Gumb »V kalkulator« ob formuli, ki jo kalkulator zna (public/graph/formula-calc.js): formula se vpiše
   // v znanstveni kalkulator, učenec zamenja znane črke s števili in kalkulator izračuna neznanko.
+  let fmGlossary = null;
   function calcButton(item) {
     if (!opts.onInsert || item.classList.contains("fm-head")) return;
     const f = item.querySelector(".fm-f");
@@ -729,7 +730,7 @@ export function createFormulas(root, opts) {
     btn.innerHTML = opts.icon("calculator");
     box.append(f, btn);
     // »Nariši«: formula z izraženo količino na grafu (os x: t, x, r …; ostale črke drsniki)
-    const plot = opts.onGraph && formulaPlot(vejica(text), { tex: plainTex(f.querySelector('.katex-mathml annotation[encoding="application/x-tex"]')?.textContent || ""), subject });
+    const plot = opts.onGraph && formulaPlot(vejica(text), { tex: plainTex(f.querySelector('.katex-mathml annotation[encoding="application/x-tex"]')?.textContent || ""), subject, glossary: fmGlossary });
     if (plot) {
       const g = document.createElement("button");
       g.type = "button";
@@ -812,6 +813,7 @@ export function createFormulas(root, opts) {
         await kos();
         if (my !== gen) return;
       }
+      fmGlossary = parts[i].symbols || null; // oznake razdelka: katere črke so konstante (»Nariši graf«)
       const kartice = layout(render(parts[i]), i ? body.children.length : 0).children;
       if (i) body.append(...kartice);
       else body.replaceChildren(...kartice);

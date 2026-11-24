@@ -9,6 +9,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { formulaPlot, formulaToCalc, formulaConstant } from "../public/graph/formula-calc.js";
 import { buildModel, emptyState } from "../public/graph/model.js";
+import { formulaSheetSections } from "../server/textbook.js";
 
 test("formulaPlot: izražena količina, spremenljivka na osi x, brez grafa za formule brez izražene količine", () => {
   assert.deepEqual(formulaPlot("s = v₀ t + (a t²)/2"), { lhs: "s", rhs: "v₀ t + (a t²)/2", v: "t" });
@@ -43,6 +44,45 @@ test("znane konstante v formulah: prava vrednost, ne drsnik 1; dvoumne črke po 
   assert.deepEqual(Object.keys(P("W_p = m g h").consts), ["g"]); // h je višina
   // vse konstante iz tabele znanstvenega kalkulatorja (ena vrednost v aplikaciji)
   assert.equal(formulaConstant("k_B").id, "kB");
+});
+
+test("vse zbirke: konstanta je to, kar pove :::simboli razdelka; konstanta nikoli na osi x (pregled #1014)", () => {
+  const CONST = /^(?:težni|gravitacijski) pospešek|^gravitacijska konstanta|^planckova|plinska konstanta|^avogadrov|^boltzmannov|^influenčna|^indukcijska|^osnovni naboj|^masa (?:elektrona|protona|nevtrona)|^molska prostornina|^stefan|^hitrost svetlobe(?: v vakuumu| v praznem prostoru)?$/i;
+  let n = 0;
+  let withConst = 0;
+  const seen = {};
+  for (const book of ["FIZ-OS", "FIZ-SS", "FIZ-TEK", "FIZ-UNI", "KEM-OS", "KEM-SS", "KEM-TEK", "KEM-UNI"]) {
+    const sh = formulaSheetSections(book);
+    const subj = book.slice(0, 3);
+    for (const sec of sh.sections)
+      for (const m of sec.md.matchAll(/\$([^$]+)\$/g)) {
+        const text = formulaToCalc(m[1], subj);
+        if (!text) continue;
+        n++;
+        const p = formulaPlot(text, { tex: m[1], subject: subj, glossary: sec.symbols });
+        if (!p) continue;
+        const row = (k) => sec.symbols.find((r) => r.keys.includes(k));
+        // os x ni konstanta po razdelku
+        assert.ok(!(row(p.v) && CONST.test(row(p.v).n)), `${book}: ${text}: os x ${p.v} (${row(p.v)?.n})`);
+        for (const k of Object.keys(p.consts || {})) {
+          // konstanta ima v razdelku ime konstante (ali vrstice nima)
+          if (row(k)) assert.match(row(k).n, CONST, `${book}: ${text}: ${k} = ${row(k).n}`);
+          seen[`${book}: ${text}`] = p.consts;
+        }
+        if (p.consts) withConst++;
+      }
+  }
+  assert.ok(n >= 300, `formul: ${n}`);
+  assert.ok(withConst >= 45, `s konstantami: ${withConst}`);
+  // primeri iz pregleda
+  const has = (key, name) => assert.ok(Object.entries(seen).some(([k, c]) => k.includes(key) && name in c), `${key}: ${name}`);
+  has("g = (G M)/r²", "G");
+  has("v₁ = √((G M)/R)", "G");
+  has("v_(ef) = √((3 R T)/M)", "R");
+  has("E = c B", "c");
+  has("W_n = (n² h²)/(8 m L²)", "h");
+  assert.equal(seen["FIZ-UNI: W_v = (Z m_p + N m_n - m_j) c²"].m_n, 1.67492749804e-27);
+  assert.equal(formulaPlot("c_V = (3/2) R", { glossary: [{ keys: ["R"], n: "splošna plinska konstanta" }] }), null); // le konstante: ni grafa
 });
 
 const require = createRequire(import.meta.url);

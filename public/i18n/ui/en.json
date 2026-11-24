@@ -1151,6 +1151,7 @@
   "sc.c.e0": "Elementary charge",
   "sc.c.me": "Electron mass",
   "sc.c.mp": "Proton mass",
+  "sc.c.mn": "Neutron mass",
   "sc.c.u": "Atomic mass unit",
   "sc.c.NA": "Avogadro constant",
   "sc.c.kB": "Boltzmann constant",

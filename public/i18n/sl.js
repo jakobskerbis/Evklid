@@ -1446,6 +1446,7 @@ export default {
   "sc.c.e0": "Osnovni naboj",
   "sc.c.me": "Masa elektrona",
   "sc.c.mp": "Masa protona",
+  "sc.c.mn": "Masa nevtrona",
   "sc.c.u": "Atomska enota mase",
   "sc.c.NA": "Avogadrovo število",
   "sc.c.kB": "Boltzmannova konstanta",
