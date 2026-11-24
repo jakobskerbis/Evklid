@@ -2,6 +2,7 @@
 // razgradnja škroba z amilazo iz sline (lab-slina). Modeli: lab-model-indikatorji.js (brez DOM).
 import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { fotoPoskus, risiDokaz, OKNA_DOKAZ } from "./foto.js";
 import {
   PhBench, PH_VZORCI, PAPIR, zeljePas, razvrstitevOk, SKUPINE, DokazBench, ZIVILA, PRESKUSI,
   SlinaBench, EPRUVETE, JOD_STOPNJE, POENOSTAVITVE_INDIKATORJI,
@@ -301,7 +302,7 @@ export function labDokaz(el) {
     if (!B.goggles) return log.push(OCALA, "warn");
     const r = B.preskus(zivilo, test, { segrej: heat.get(), hidroliza: hyd.get(), cista: clean.get() });
     last = { zivilo, test, r, hyd: hyd.get() && test === "fehling" };
-    rack.push({ rgb: r.rgb, t: OKR[zivilo], p: { jod: "jod", fehling: "Feh.", biuret: "biur.", madez: "mad." }[test] });
+    rack.push({ rgb: r.rgb, t: OKR[zivilo], p: { jod: "jod", fehling: "Feh.", biuret: "biur.", madez: "mad." }[test], motnost: test === "fehling" && r.pozitiven ? 0.5 : 0 });
     if (rack.length > 6) rack.shift();
     log.push(`${ZIVILA[zivilo].name} + ${PRESKUSI[test].name.split(" (")[0]}: <b>${r.ime}</b>.`, "info");
     if (r.brezToplote) log.push("Fehlingov reagent brez segrevanja ne reagira: raztopina ostane modra, tudi če je sladkor v živilu.", "warn");
@@ -354,6 +355,9 @@ export function labDokaz(el) {
   // ---------------------------------------------------------------- risba: stojalo z epruvetami in vodna kopel
   function draw() {
     svg.replaceChildren();
+    svg.setAttribute("aria-label", `Stojalo z epruvetami: ${rack.map((t) => `${t.t} ${t.p}`).join(", ") || "prazno"}. Vodna kopel ${heat.get() ? "vre" : "ne greje"}.`);
+    // Fotografski prikaz (foto.js, privzeto izklopljen): barve iz modela na izrisanih epruvetah.
+    if (foto.risi((o, meta) => risiDokaz(o, meta, { stojalo: rack, greje: heat.get(), ocala: B.goggles }))) return;
     s("line", { x1: 0, y1: 176, x2: W, y2: 176, class: "lab-tit-bench" }, svg);
     s("rect", { x: 14, y: 120, width: 250, height: 10, rx: 2, class: "lab-ind-rack" }, svg);
     s("rect", { x: 20, y: 130, width: 6, height: 46, class: "lab-ind-rack" }, svg);
@@ -372,9 +376,9 @@ export function labDokaz(el) {
     label(svg, 337, 190, on ? "vrela vodna kopel" : "kopel (ne greje)", "tick small");
     if (!B.goggles) label(svg, 200, 24, "brez zaščitnih očal", "lab-warn");
     merilo(svg, 327, 200, 20, "2 cm");
-    svg.setAttribute("aria-label", `Stojalo z epruvetami: ${rack.map((t) => `${t.t} ${t.p}`).join(", ") || "prazno"}. Vodna kopel ${on ? "vre" : "ne greje"}.`);
   }
   heat.querySelector("input").addEventListener("change", draw);
+  const foto = fotoPoskus("dokaz", svg, el, () => draw(), OKNA_DOKAZ);
   drawGrid();
   draw();
 }

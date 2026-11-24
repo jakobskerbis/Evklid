@@ -44,7 +44,7 @@ before(async () => {
 });
 
 const PUB = path.resolve("public");
-const TYPES = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html", ".woff2": "font/woff2" };
+const TYPES = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html", ".woff2": "font/woff2", ".webp": "image/webp", ".avif": "image/avif" };
 // Kot v aplikaciji: glava zgoraj, pod njo drsni pogled z odmikom, v njem kartica .lab-bench (overflow-x: auto).
 const PAGE = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/lab.css"><link rel="stylesheet" href="/textbook.css">
@@ -179,6 +179,14 @@ test("lab on a phone: the drawing stays visible while using the controls", { tim
     await p.keyboard.press("Escape");
     assert.deepEqual(await p.evaluate(() => [document.querySelector(".demo-stage").classList.contains("lab-povecano"), document.querySelector(".demo-stage").getAttribute("role"), document.querySelectorAll("[inert]").length]), [false, null, 0]);
     // ležeča risba (Ohmov zakon) je v povečavi cela na zaslonu: na pokončnem telefonu se obrne
+    // fotografija mize (sim/foto.js) se ne obrne: napisi in prizor ostanejo pokonci
+    const f = await run(ctx, "lab-ohm");
+    await f.p.waitForSelector("svg.lab-foto-on", { timeout: 15000 });
+    await f.p.locator(".lab-zoom").tap();
+    assert.equal(await f.p.evaluate(() => document.querySelector(".demo-stage").classList.contains("lab-lezi")), false);
+    await f.p.close();
+    // risana shema (izbran »Fotografski prikaz« izklopljen) se v ozkem povečanem oknu obrne
+    await ctx.addInitScript(() => localStorage.setItem("evklid.lab.foto", "0"));
     const o = await run(ctx, "lab-ohm");
     await o.p.locator(".lab-zoom").tap();
     const lezi = await o.p.evaluate(() => {

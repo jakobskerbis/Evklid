@@ -259,7 +259,7 @@ export function pripni(el) {
       stage.classList.toggle("lab-povecano", on);
       // Obrne se le električna shema (napisi se zavrtijo nazaj pokonci); prizor na mizi (steklovina, tekočine) ostane
       // pokonci in cel na zaslonu, ker bi bil na boku fizikalno napačen. Večji je, ko učenec telefon obrne ležeče.
-      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
+      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit:not(.lab-foto-on)") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
       for (const [k, v] of [["role", "dialog"], ["aria-modal", "true"], ["aria-label", t("sim.lab.zoom")]]) on ? stage.setAttribute(k, v) : stage.removeAttribute(k);
       ozadje(on);
       // Poskus lahko izgine med odprto povečavo (drug pogled, »Ponastavi«, ukaz inštruktorja): ozadje ne sme ostati neodzivno.
