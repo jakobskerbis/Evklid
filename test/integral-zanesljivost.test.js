@@ -161,16 +161,18 @@ const MAIN_OK = [
 
 const sig = (v) => String(Math.abs(v)).replace(/e.*$/, "").replace(".", "").replace(/^0+/, "").length;
 /** Prikazana vrednost je pravilna na vsa svoja mesta (do enote zadnjega mesta). */
-export function digitsOk(r, want) {
+// d: zanesljiva mesta (evaluate(…).digits), sicer iz zapisa števila
+export function digitsOk(r, want, d) {
   if (!r || r.kind !== "value" || !Number.isFinite(r.value)) return false;
   const v = r.value;
   if (!r.est) return Math.abs(v - want) <= 1e-12 * Math.max(1, Math.abs(want));
   if (v === 0) return Math.abs(want) < 1e-9;
   const e = Math.floor(Math.log10(Math.abs(v)));
-  return Math.abs(v - want) <= 10 ** (e - sig(v) + 1);
+  return Math.abs(v - want) <= 10 ** (e - (d || sig(v)) + 1);
 }
 export function check(t, want, env = ENV) {
   const r = analyze(t, env);
+  if (typeof want === "number" && r?.est) return [digitsOk(r, want, evaluate(t, env).digits), r];
   if (want === "div") return [r?.error?.code === "intDiverge", r];
   if (want === "unk") return [r?.error?.code === "intUnknown" || r?.error?.code === "intTimeout", r];
   return [digitsOk(r, want), r];
@@ -281,8 +283,8 @@ test("sporočilo »ni mogoče zanesljivo izračunati« je v vseh 33 jezikih", ()
 test("predogled kaže isto kot Izračunaj (∫(1/√x; 0; 1): »= 2« v obeh)", async () => {
   const { analyzeLive } = await import("../public/graph/sci-vnos.js");
   for (const [t, want] of [["∫(1/√(x);0;1)", 2], ["∫(x^2;0;1)", 1 / 3]]) {
+    const full = analyze(t, ENV); // najprej Izračunaj (ogrevanje: predogled ima mejo 50 ms)
     const live = analyzeLive(t, ENV);
-    const full = analyze(t, ENV);
     assert.equal(!!live.est, !!full.est, t);
     assert.ok(Math.abs(live.value - want) < 1e-15 && Math.abs(full.value - want) < 1e-15, `${t}: ${live.value} / ${full.value}`);
   }

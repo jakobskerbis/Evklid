@@ -198,7 +198,7 @@ export function integralsOf(node, ctx, scope) {
   return out;
 }
 
-const INT_LIVE_MS = 40; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
+const INT_LIVE_MS = 50; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
 const INT_MS = 1000; // integrali ob Izračunaj
 const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
 const hasIntegral = (node) => {
@@ -220,7 +220,8 @@ export function certified(info) {
   // ∫(sin x; −π; π): vrednost je v šumu, a ta je zanemarljiv proti ∫|f|
   if (a <= err) return err <= 1e-12 * (info.abs || 0) ? { value: 0, est: true } : null;
   const d = Math.floor(Math.log10(a / err));
-  return { value: Number(v.toPrecision(Math.max(1, Math.min(12, d)))), est: true };
+  const digits = Math.max(1, Math.min(12, d));
+  return { value: Number(v.toPrecision(digits)), est: true, digits };
 }
 
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
@@ -254,6 +255,7 @@ export function evaluate(text, env = {}) {
     if (typeof value === "boolean") value = value ? 1 : 0;
     let est = false;
     let single = null; // podatki edinega integrala (scisolve: točna vrednost iz nedoločenega integrala)
+    let digits; // zanesljiva mesta edinega integrala
     if (withInt) {
       if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
       // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
@@ -264,7 +266,7 @@ export function evaluate(text, env = {}) {
       if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !cert[i]))) return { error: { code: "intUnknown", info: {} } };
       if (Number.isFinite(value) && infos.length) {
         if (infos.length === 1 && unwrapGrp(rwe).k === "int") {
-          ({ value, est } = cert[0]);
+          ({ value, est, digits } = cert[0]);
           single = infos[0];
         }
         else est = cert.some((c) => c?.est);
@@ -275,6 +277,7 @@ export function evaluate(text, env = {}) {
     // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
     if (est) Object.assign(out, { approx: true, est: true });
     if (single) Object.defineProperty(out, "int", { value: single, enumerable: false });
+    if (digits) Object.defineProperty(out, "digits", { value: digits, enumerable: false });
     return out;
   } catch (e) {
     if (e instanceof MathError) return { error: { code: e.code, info: e.info || {} } };
