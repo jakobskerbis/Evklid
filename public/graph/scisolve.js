@@ -4,8 +4,9 @@
 import { simplify, diff, toTex, MathError } from "./math.js";
 import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
-import { evalComplex, polyRoots, polyRootsMult } from "./toolscore.js";
+import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
+import { polyRootsMult } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE]
 const SAMPLES = 20000;
