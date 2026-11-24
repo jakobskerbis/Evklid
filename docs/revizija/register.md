@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-054
+**Naslednji prosti ID:** AUDIT-055
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -54,6 +54,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-051 | P3 | Kalkulator, vnos | `lim_(x→0)(…)` s tipkovnice klepeta (symbols.js) v kalkulatorju »Ne poznam →«; `√(−1)` → »ni definiran (npr. deljenje z 0)«, `√(−1)+i` pa 2i | ZAKLJUČENO | `7623e05` | j, 24. 11. (stresni test) | [#991](https://github.com/jakobskerbis/Evklid/pull/991) |
 | AUDIT-052 | P2 | Kalkulator, vnos | Kazalec znotraj »10« pri ×10ˣ tiho spremeni število (`2×1|0^(5)` + ⌫ → `2×0^(5)`); bralnik: »konec absolutne vrednosti« | PRIPRAVLJENO ZA PONOVNI PREGLED | `d16a7c1` | Claude (pregled #945), 24. 11. | #992 |
 | AUDIT-053 | P1 | Kalkulator, enačbe | Nepreverjena ničla dobi ugibano točno obliko z »=«: `x^15+7x−1=0` → »= 1/7«, `x^25+10^(−30)x−1=0` → »= 1«, »= 141/11« pri polinomih s π (na evklid.app od #968) | PRIPRAVLJENO ZA PONOVNI PREGLED | `710429a` | Claude (pregled #979/#980), 24. 11. | #993 |
+| AUDIT-054 | P3 | Kalkulator, izpis | Integrand iz več členov brez oklepaja: `∫(x²−1;0;2)` → ∫₀² x² − 1 dx (dvoumno); `math.js toTex` | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (#998), 24. 11. | [#999](https://github.com/jakobskerbis/Evklid/pull/999) |
 
 ## Zgodovina statusov
 
@@ -88,3 +89,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: AUDIT-048 (#988), 049 (#989), 050 (#990, nad #989), 051 (#991) V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (Claude). CI zeleno, pregledi po `docs/pregled.md` (#989 dva pregledovalca), najdbe pregledovalcev popravljene v istih PR-jih. Združitev samo z j-jevo odobritvijo.
 - 24. 11. 2026: AUDIT-048 (#988), 049 (#989), 050 (#990), 051 (#991) → ZAKLJUČENO: j odobril združitev, združeno v `main` (`710429a`), na evklid.app po zelenih testih (preverjeno v živo).
 - 24. 11. 2026: AUDIT-052 in AUDIT-053 (Claude); prvotno označena kot AUDIT-048/050, kar je že zasedla druga seja – preštevilčeno, naslova PR #992 in #993 popravljena. Veriga urejevalnika #945, #970–#974, #965 združena (j); #986 zaprt, ker ga vsebuje veriga.
+- 24. 11. 2026: AUDIT-054 (Claude, ob #998): oklepaj okoli integranda v zapisu ∫, popravek #999.
