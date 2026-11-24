@@ -159,4 +159,8 @@ test("∫(f;a;b), limita(f;x;a), integriraj(f): vsaka vidna reža ima svoj polo�
   assert.equal(where("limita(x; x; 0)", 7), "\\lim\\limits_{x \\to 0} ‸x");
   assert.equal(where("limita(x; x; 0)", 15), "\\lim\\limits_{x \\to 0} x‸");
   assert.equal(where("integriraj(x)", 13), "\\int x\\,dx‸");
+  // ∑ in ∏: kazalec pred znakom je pred znakom (ne v spodnji meji), nikoli med spodnjo in zgornjo mejo
+  assert.equal(where("∑_(n=1)^(5) n", 0), "‸\\sum_{n=1}^{5}n");
+  assert.equal(where("∏_(n=1)^(5) n", 0), "‸\\prod_{n=1}^{5}n");
+  for (let p = 0; p <= 13; p++) assert.ok(!where("∑_(n=1)^(5) n", p).includes("}‸^"), `∑ @${p}`);
 });

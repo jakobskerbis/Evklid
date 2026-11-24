@@ -241,14 +241,15 @@ export function canInsert(toks, i) {
   if (P && (P.kind === "prefix" || P.optClose)) return false;
   if (N && (N.argOpen || N.argTok || N.kind === "limits")) return false;
   // pred ^ in _ le za navadnim znakom (potenca se nato drži kazalca, osnova ostane ista); nikoli za ∫, lim
-  if (N && (N.s === "^" || N.s === "_") && (!P || /^(open|bigop|limits|sep)$/.test(P.kind))) return false;
+  // ne med mejama ∑_{…}^{…} (ali x_{1}^{2}): zgornja meja bi se prijela kazalca (AUDIT-003)
+  if (N && (N.s === "^" || N.s === "_") && (!P || /^(open|close|bigop|limits|sep)$/.test(P.kind))) return false;
   return true;
 }
 
 // ---------- ujemanje besedila in TeX ----------
 
 const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
-const TKEY = { "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
+const TKEY = { "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
 
 function textAtoms(s, hole) {
   const out = [];
