@@ -844,11 +844,81 @@ export function polyRootsExact(qs) {
   const shift = big > 10n ** 300n ? 10n ** BigInt(String(big).length - 300) : 1n;
   const c = P.map((x) => Number(x / shift)).reverse();
   if (c.some((x) => !Number.isFinite(x)) || c[0] === 0) return null;
+  // racionalne ničle najprej točno izločimo s kratnostjo (#979: ((x − 5)⁴ − 10⁻¹⁴)(x − 5) = 0 je dal 5 dvakrat,
+  // 5,000316 je manjkala), ostanek rešimo posebej
+  const rats = rationalRoots(P, c);
+  if (rats.found.length) {
+    const rest = rats.rest;
+    let more = { roots: [] };
+    if (rest.length > 1) {
+      more = polyRootsExact(rest.slice().reverse().map((n) => ({ n, d: 1n })));
+      if (!more) return null;
+    }
+    const roots = [...rats.found, ...more.roots].sort((a, b) => a.re - b.re || a.im - b.im);
+    for (const r of roots) if (r.im === 0 && !r.exact && r.form === undefined) r.form = radicalForm(P, r.re);
+    return { roots, poly: c };
+  }
   const roots = polyRootsMult(c, P);
   if (!roots) return null;
   // iracionalna realna ničla oblike ±ᵏ√(p/q) (x³ = 2 → ∛2): potrdimo točno, da q·x^k − p deli polinom
   for (const r of roots) if (r.im === 0 && !r.exact) r.form = radicalForm(P, r.re);
   return { roots, poly: c };
+}
+// P (BigInt, od najnižje potence) v p/q točno: Σ P[i]·pⁱ·q^(n−i) = 0
+function ratRootB(P, p, q) {
+  let s = 0n;
+  for (let i = P.length - 1; i >= 0; i--) s = s * p + P[i] * q ** BigInt(P.length - 1 - i);
+  // Horner: s_n = P[n]; s_{i} = s_{i+1}·p + P[i]·q^(n−i)
+  return s === 0n;
+}
+// Racionalne ničle P: kandidati so verižni približki realnih delov številskih ničel (tudi iz gruče: 5,00001 → 5),
+// vsakega preverimo točno in ga s kratnostjo izločimo. Vrne { found: [{ re, im: 0, m, exact }], rest } (rest: P brez njih).
+function rationalRoots(P, c) {
+  let rest = P;
+  const found = [];
+  let approx;
+  try {
+    approx = dkRoots(c);
+  } catch {
+    return { found, rest };
+  }
+  const tried = new Set();
+  for (const z of approx || []) {
+    const x = z[0];
+    if (!Number.isFinite(x) || rest.length < 2) continue;
+    if (Math.abs(z[1]) > 1e-2 * Math.max(1e-300, Math.abs(x)) && Math.abs(z[1]) > 1e-12) continue;
+    const ax = Math.abs(x);
+    let [h0, h1, k0, k1] = [0n, 1n, 1n, 0n];
+    let r = ax;
+    const cands = x === 0 || ax < 1e-300 ? [[0n, 1n]] : [];
+    for (let i = 0; i < 60 && ax >= 1e-300; i++) {
+      const a = Math.floor(r);
+      if (!Number.isFinite(a) || a > 1e300) break;
+      const A = BigInt(a);
+      [h0, h1] = [h1, A * h1 + h0];
+      [k0, k1] = [k1, A * k1 + k0];
+      if (k1 > 10n ** 15n) break;
+      const v = Number(h1) / Number(k1);
+      if (Math.abs(v - ax) <= 1e-2 * ax) cands.push([x < 0 ? -h1 : h1, k1]);
+      if (v === ax) break;
+      const f = r - a;
+      if (f < 1e-300) break;
+      r = 1 / f;
+    }
+    if (x !== 0 && Math.abs(x) < 1e-6) cands.push([0n, 1n]);
+    for (const [p, q] of cands) {
+      const key = `${p}/${q}`;
+      if (tried.has(key)) continue;
+      tried.add(key);
+      let m = 0;
+      while (rest.length > 1 && ratRootB(rest, p, q)) {
+        rest = primB(pdivB(rest, [-p, q])[0]);
+        m++;
+      }
+      if (m) found.push({ re: Number(p) / Number(q), im: 0, m, exact: true });
+    }
+  }
+  return { found, rest };
 }
 function radicalForm(P, x) {
   for (let k = 2; k <= 6; k++) {
