@@ -166,6 +166,21 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   return { src, ast, scope, ctx, rw: (node) => rewrite(node, ctx), run: (node) => compile(rewrite(node, ctx), ctx) };
 }
 
+const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
+const hasIntegral = (node) => {
+  let yes = false;
+  walk(node, (n) => {
+    if (n.k === "int" && n.lo) yes = true;
+  });
+  return yes;
+};
+/** v zaokrožen na mesta, ki jih napaka err še dopušča (vsaj 1, največ 15 značilnih mest). */
+export function reliable(v, err) {
+  if (!Number.isFinite(v) || v === 0 || !(err > 0)) return v;
+  const d = Math.max(1, Math.min(15, Math.floor(Math.log10(Math.abs(v) / err))));
+  return Number(v.toPrecision(d));
+}
+
 /** Podatki integrateInfo za vsak določeni integral v drevesu (ne znotraj drugega integrala). */
 export function integralsOf(node, ctx, scope) {
   const all = [];
@@ -215,12 +230,24 @@ export function evaluate(text, env = {}) {
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
     // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
-    if (!Number.isFinite(value)) {
-      const div = integralsOf(rw(expr), line.ctx, scope).find((r) => r.diverges);
+    let approx = false;
+    const rwe = rw(expr);
+    if (hasIntegral(rwe)) {
+      const infos = integralsOf(rwe, line.ctx, scope);
+      const div = !Number.isFinite(value) && infos.find((r) => r.diverges);
       if (div) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
+      // ∫(1/√x; 0; 1): računano prek singularnosti, zato približek; pri samem integralu le zanesljiva mesta
+      const sing = infos.filter((r) => r.singular);
+      if (sing.length && Number.isFinite(value)) {
+        approx = true;
+        if (infos.length === 1 && unwrapGrp(rwe).k === "int") value = reliable(value, sing[0].err);
+      }
     }
     const tex = lineTex(ast, comma);
-    return name ? { value, tex, assign: name } : { value, tex };
+    const out = name ? { value, tex, assign: name } : { value, tex };
+    // approx: samo decimalno (ne ulomek); est: številski približek, v vmesniku z »≈« namesto »=«
+    if (approx) Object.assign(out, { approx: true, est: true });
+    return out;
   } catch (e) {
     if (e instanceof MathError) return { error: { code: e.code, info: e.info || {} } };
     return { error: { code: "other", info: {} } };
