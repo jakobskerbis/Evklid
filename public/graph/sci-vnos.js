@@ -520,7 +520,8 @@ export function caretStops(base) {
 
 /** TeX z merilno točko (htmlData evk-p) na vsakem mestu kazalca: dotik na lep zapis → položaj v besedilu. */
 export function stopsTex(base) {
-  const stops = caretStops(base);
+  // dotik nikoli ne postavi kazalca sredi imena ali odpirala (»d|/dx(«, »sin|(«): tam bi vnos ime pokvaril (AUDIT-004)
+  const stops = caretStops(base).filter((s) => !(openerAround(base.raw, s.p)?.[0] < s.p));
   return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.8em}}}`])));
 }
 
@@ -606,6 +607,12 @@ function wordAround(s, p) {
   return x ? { start: b - x.length, end: b } : null;
 }
 
+/** Odpiralo (ime z oklepajem, ∫(, d/dx( …), ki vsebuje položaj p ali se na njem začne: [začetek, konec) ali null. */
+function openerAround(s, p) {
+  for (const m of s.matchAll(OPENERS_ALL)) if (m.index <= p && p < m.index + m[0].length) return [m.index, m.index + m[0].length];
+  return null;
+}
+
 /** Odstrani predlogo z odpiralom [start, o] in zaklepajem c; ohrani vsebino prve reže. */
 function unwrap(s, start, o, c, keep) {
   const end = c < 0 ? s.length : c + 1;
@@ -618,13 +625,12 @@ export function backspace(text, s, e = s) {
   const t = String(text ?? "");
   if (s !== e) return done(t.slice(0, Math.min(s, e)) + t.slice(Math.max(s, e)), Math.min(s, e));
   if (s <= 0) return done(t, 0);
-  // kazalec sredi imena: kot da je za oklepajem imena (ali za imenom brez oklepaja)
+  // kazalec sredi odpirala (»integr|iraj(«, »sin|(«, »d/d|x(«, »∫|(«): kot da je za njegovim oklepajem
+  const inOp = openerAround(t, s);
+  if (inOp && inOp[0] < s) s = inOp[1];
+  // sredi imena brez oklepaja (»An|s«): ime gre celo
   const w = wordAround(t, s);
-  if (w) {
-    const m = /^\s*\(/.exec(t.slice(w.end));
-    if (!m) return done(t.slice(0, w.start) + t.slice(w.end), w.start);
-    s = w.end + m[0].length;
-  }
+  if (w && !/^\s*\(/.test(t.slice(w.end))) return done(t.slice(0, w.start) + t.slice(w.end), w.start);
   const before = t.slice(0, s);
   const op = OPENER.exec(before);
   if (op) {
@@ -666,6 +672,10 @@ export function backspace(text, s, e = s) {
     if (blank(t, [o, c < 0 ? t.length : c + 1])) return done(t.slice(0, o) + t.slice(c < 0 ? t.length : c + 1), o);
     return done(t, o);
   }
+  // zaklepaj se ne briše posamič (predloga ali oklepaj bi razpadla): kazalec gre v oklepaj
+  if (CLOSERS.includes(t[s - 1])) return done(t, s - 1);
+  // navaden oklepaj: prazen gre s parom, sicer gresta oba oklepaja, vsebina ostane
+  if (t[s - 1] === "(") return unwrap(t, s - 1, s - 1, closeAt(t, s - 1), [s, closeAt(t, s - 1) < 0 ? t.length : closeAt(t, s - 1)]);
   if (/Ans$/.test(before)) return done(t.slice(0, s - 3) + t.slice(s), s - 3);
   const fx = /[a-z]\([a-z]\)=$/.exec(before);
   if (fx) return done(t.slice(0, s - fx[0].length) + t.slice(s), s - fx[0].length);
@@ -687,6 +697,8 @@ export function deleteForward(text, s, e = s) {
   const t = String(text ?? "");
   if (s !== e) return backspace(t, s, e);
   if (s >= t.length) return done(t, t.length);
+  const inOp = openerAround(t, s);
+  if (inOp) s = inOp[0];
   const w = wordAround(t, s);
   if (w) s = w.start;
   const after = t.slice(s);
@@ -702,6 +714,11 @@ export function deleteForward(text, s, e = s) {
   }
   if (/^Ans/.test(after)) return done(t.slice(0, s) + t.slice(s + 3), s);
   if (CLOSERS.includes(t[s])) return done(t, s + 1); // zaklepaja ne brišemo naprej: kazalec gre čez
+  if (t[s] === "(") {
+    const c = closeAt(t, s);
+    return unwrap(t, s, s, c, [s + 1, c < 0 ? t.length : c]);
+  }
+  if (t[s] === "[") return done(t, s + 1);
   if (t[s] === ";") {
     const enc = enclosing(t, s);
     if (enc) {

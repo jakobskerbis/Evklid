@@ -53,6 +53,18 @@ test("⌫ briše predlogo ali ime kot celoto, nikoli pol imena ali ločil (AUDIT
     ["integr|iraj(x)", "|x"],
     ["si|n(x)", "|x"],
     ["An|s+1", "|+1"],
+    // kazalec tik pred oklepajem imena ali sredi »d/dx(«: kot za oklepajem
+    ["sin|(30)", "|30"],
+    ["d|/dx(x³)", "|x³"],
+    // zaklepaj se ne briše posamič, kazalec gre v oklepaj (prej »∫(sin(x;0;π)« → surovo besedilo)
+    ["sin(30)|", "sin(30|)"],
+    ["(1+2)|", "(1+2|)"],
+    ["∫(sin(x)|;0;π)", "∫(sin(x|);0;π)"],
+    ["inverz([[1; 2]; [3; 4]])|", "inverz([[1; 2]; [3; 4]]|)"],
+    // navaden oklepaj gre s parom
+    ["(|1+2)", "|1+2"],
+    ["(|)", "|"],
+    ["(1+2)/(|3+4)", "(1+2)/|3+4"],
     // običajno brisanje ostane
     ["12|3", "1|3"],
     ["∫(x²|;0;1)", "∫(x|;0;1)"],
@@ -80,6 +92,10 @@ test("Delete (strojna tipka) briše desno po istih pravilih (AUDIT-004)", () => 
     ["|Ans+1", "|+1"],
     ["si|n(x)", "|x"],
     ["2|^()", "2|"],
+    ["sin|(30)", "|30"],
+    ["d/d|x(x)", "|x"],
+    ["(1+2)/|(3+4)", "(1+2)/|3+4"],
+    ["|[[1; 2]]", "[|[1; 2]]"],
     ["x|", "x|"],
   ];
   for (const [a, b] of cases) assert.equal(dl(a), b, a);
