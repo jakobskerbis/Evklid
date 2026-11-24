@@ -32,6 +32,13 @@ export function createCalculator(root, opts) {
     if (comma()) s = s.replace(".", ",");
     return s.replace(/^-/, "−");
   };
+  // vrednost drsnika kot besedilo: toliko decimalk, kot jih ima korak (brez zgornje meje 6: 10⁻⁸ ne postane 0, AUDIT-014),
+  // največ 15 veljavnih mest (brez repa plavajoče vejice 0,30000000000000004), brez zapisa z e
+  const stepText = (v, step) => {
+    const digits = Math.max(0, Math.min(20, -Math.floor(Math.log10(step) + 1e-9)));
+    const x = Number(Number(v.toFixed(digits)).toPrecision(15));
+    return Math.abs(x) < 1e21 && x !== 0 ? x.toFixed(digits).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "") : String(x);
+  };
   const tex = (s, display = false) => {
     try {
       return window.katex.renderToString(s, { throwOnError: false, displayMode: display, strict: "ignore" });
@@ -467,9 +474,7 @@ export function createCalculator(root, opts) {
     if (!it) return;
     const name = /^\s*([^=]+?)\s*=/.exec(it.text)?.[1] || "a";
     const step = it.slider?.step || sliderRange(value).step;
-    const digits = Math.max(0, Math.min(6, -Math.floor(Math.log10(step) + 1e-9)));
-    const v = Number(value.toFixed(digits));
-    it.text = `${name} = ${v}`;
+    it.text = `${name} = ${stepText(value, step)}`;
     if (record) commit(false);
     refresh();
   }
@@ -722,7 +727,7 @@ export function createCalculator(root, opts) {
         const sl = { ...sliderRange(v), ...(s.slider || {}) };
         const step = sl.step || 0.1;
         const val = Math.min(sl.max, Math.max(sl.min, Math.round(v / step) * step));
-        s.text = `${name} = ${Number(val.toFixed(6))}`;
+        s.text = `${name} = ${stepText(val, step)}`;
       };
       if (x?.slider) setS(x.slider, gx);
       if (y?.slider) setS(y.slider, gy);

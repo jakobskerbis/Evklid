@@ -25,12 +25,14 @@ export function emptyState() {
 // privzeta območja parametrov
 export const DEFAULT_DOMAIN = { param: [0, 2 * Math.PI], polar: [0, 2 * Math.PI] };
 
-/** Drsnik: privzeti razpon glede na vrednost. */
+/** Drsnik: privzeti razpon glede na vrednost; korak je sorazmeren z velikostjo (10⁻⁸ ne postane 0, AUDIT-014). */
 export function sliderRange(v) {
   const a = Math.abs(v);
-  if (a <= 10) return { min: -10, max: 10, step: 0.1 };
-  const p = 10 ** Math.ceil(Math.log10(a));
-  return { min: -p, max: p, step: p / 100 };
+  if (!(a > 0) || (a >= 0.1 && a <= 10)) return { min: -10, max: 10, step: 0.1 };
+  // majhna vrednost ni na robu (10⁻⁸ → ±10⁻⁷), da gre drsnik v obe smeri
+  const e = a < 0.1 ? Math.floor(Math.log10(a)) + 1 : Math.ceil(Math.log10(a));
+  const p = Number(`1e${e}`); // točno 10^e (10 ** -7 / 100 ni točno 1e-9)
+  return { min: -p, max: p, step: Number(`1e${e - 2}`) };
 }
 
 function definitionOf(text) {
