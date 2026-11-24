@@ -93,6 +93,8 @@ function trySolve(cand, deriv) {
   if (digitGap(c)) return null;
   // »2x = 1.000«: v Sloveniji je to tisoč, razčlenjevalnik pa bi bral 1,0 – dvoumno, zato brez »preverjenega« rezultata
   if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(c)) return null;
+  // »Odvajaj f(x) = e^{3x}«: odvaja se desna stran (AUDIT-063)
+  if (deriv) c = c.replace(/^\s*(?:[a-zA-Z]\s*\(\s*x\s*\)|y)\s*=(?!=)\s*/, "").replace(/\{/g, "(").replace(/\}/g, ")");
   if (!mathOnly(c)) return null;
   if (/^\s*d\/d[a-z]/i.test(c)) deriv = true;
   const hasEq = c.includes("=");
@@ -255,6 +257,52 @@ function valueIssue(answer, p) {
   return { checked: 1 };
 }
 
+// Znan odvod (presolve) proti zadnjemu »f'(x) = …« ali »y' = …« v odgovoru (AUDIT-063): primerjava vrednosti v več
+// točkah (brez SymPy). Prej se je končna vrednost preverjala le pri enačbah: »Odvajaj x³« → »f'(x) = 2x« je šlo mimo.
+const DERIV_LHS = /^(?:[a-zA-Z]\s*(?:'|\^\{?\\prime\}?|′)+\s*\(\s*x\s*\)|y\s*(?:'|\^\{?\\prime\}?|′)+|\\frac\s*\{\s*d\s*[a-zA-Z]?\s*\}\s*\{\s*dx\s*\}(?:\s*\\left)?\s*\(?.*)$/;
+const derivFn = (tex) => {
+  try {
+    const f = compile(parse(calcText(prep(texToText(tex)), { comma: false })));
+    return (x) => {
+      const v = f({ x });
+      return typeof v === "number" ? v : NaN;
+    };
+  } catch {
+    return null;
+  }
+};
+function derivativeIssue(answer, p) {
+  const want = derivFn(String(p.answerTex || p.answer).split("=").at(-1));
+  if (!want) return null;
+  let last = null;
+  for (const line of String(answer).split("\n")) {
+    if (SKIP_LINE.test(line)) continue;
+    for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+      const tex = m[1] ?? m[2];
+      if (/\\approx|≈|\\pm|±/.test(tex)) continue;
+      const parts = tex.split("=");
+      if (parts.length < 2 || !DERIV_LHS.test(parts[0].trim())) continue;
+      const rhs = parts.at(-1).trim().replace(/[.,;]$/, "");
+      if (rhs && /x|\d/.test(rhs)) last = { tex: tex.trim(), rhs };
+    }
+  }
+  if (!last) return null;
+  const got = derivFn(last.rhs);
+  if (!got) return { checked: 0, issue: null };
+  const xs = [0.37, 1.3, 2.1, -0.8, 3.7];
+  let n = 0;
+  for (const x of xs) {
+    const a = want(x);
+    const b = got(x);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+    n++;
+    if (Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) {
+      return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$` };
+    }
+  }
+  return { checked: n ? 1 : 0, issue: null };
+}
+
 /**
  * Preveri odgovor (brez vrstice META) s kodo.
  * @returns {{ checked: number, issue: string|null }} checked = koliko računov in vrednosti je koda preverila
@@ -273,6 +321,14 @@ export function codeFindings(answer, pre = null, question = "") {
     }
   } catch {
     // račun, ki ga ni mogoče prebrati, ni napaka
+  }
+  const der = (pre?.problems || []).filter((p) => p.type === "derivative");
+  if (der.length === 1) {
+    const d = derivativeIssue(answer, der[0]);
+    if (d) {
+      checked += d.checked;
+      if (d.issue) return { checked, issue: d.issue };
+    }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
   if (eq.length === 1) {

@@ -1142,3 +1142,25 @@ test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil'
   }
   assert.equal((await run(null)).calls, 0, "brez stikala (privzeto v kodi) OŠ nima pregleda");
 });
+
+// AUDIT-063: znan odvod (presolve) se primerja z zadnjim »f'(x) = …« v odgovoru.
+test("AUDIT-063: napačen odvod dobi issue, pravilen in učenčev zapis ne", () => {
+  const R = String.raw;
+  const cases = [
+    ["Odvajaj x^3", R`Odvod je $f'(x) = 2x$.`, true],
+    ["Odvajaj x^3", R`$f'(x) = 3 \cdot x^{3-1} = 3x^{2}$`, false],
+    ["Odvajaj sin(x)", R`$y' = -\cos x$`, true],
+    ["Odvajaj sin(x)", R`$y' = \cos x$`, false],
+    ["Odvajaj x^2 + 3x", R`$f^{\prime}(x) = 2x$`, true],
+    ["Odvajaj ln(x)", R`$f'(x) = \frac{1}{x}$`, false],
+    ["Odvajaj f(x) = e^{3x}", R`$f'(x) = e^{3x}$`, true],
+    ["Odvajaj f(x) = e^{3x}", R`$f'(x) = 3e^{3x}$`, false],
+    ["Odvajaj f(x) = x^2 sin x", R`$f'(x) = 2x \sin x + x^2 \cos x$`, false],
+    ["Odvajaj x^3", R`Pravilo: $(x^n)' = n x^{n-1}$, torej $f'(x) = 3x^2$.`, false],
+    ["Odvajaj x^3", R`Ti si napisal $f'(x) = 2x$, prav je $f'(x) = 3x^2$.`, false],
+  ];
+  for (const [q, a, bad] of cases) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.equal(!!f.issue, bad, `${q} | ${a} | ${f.issue}`);
+  }
+});
