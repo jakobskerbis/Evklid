@@ -1646,9 +1646,9 @@ export function zgradi(THREE, ctx) {
       { tip: "izpis", id: "mreza", oznaka: "Mreža", vrednost: () => mrezaBesedilo() },
       stikaloPro, stikaloKr,
       { tip: "stikalo", id: "prerez", oznaka: "Prerez z ravnino", vrednost: S.prerez, ob: ob("prerez") },
-      { tip: "drsnik", id: "lega", oznaka: "Lega ravnine", min: 0, max: 1, korak: 0.01, vrednost: S.lega, ob: ob("lega"), vidno: () => ravninaDela() },
-      { tip: "drsnik", id: "nagib", oznaka: "Nagib ravnine (°)", min: 0, max: 90, korak: 1, vrednost: S.nagib, ob: ob("nagib"), vidno: () => ravninaDela() },
-      { tip: "drsnik", id: "zasuk", oznaka: "Zasuk ravnine (°)", min: 0, max: 90, korak: 1, vrednost: S.zasuk, ob: ob("zasuk"), vidno: () => ravninaDela() && S.nagib > 0 },
+      { tip: "drsnik", id: "lega", oznaka: "Lega ravnine", prerez: true, min: 0, max: 1, korak: 0.01, vrednost: S.lega, ob: ob("lega"), vidno: () => ravninaDela() },
+      { tip: "drsnik", id: "nagib", oznaka: "Nagib ravnine (°)", prerez: true, min: 0, max: 90, korak: 1, vrednost: S.nagib, ob: ob("nagib"), vidno: () => ravninaDela() },
+      { tip: "drsnik", id: "zasuk", oznaka: "Zasuk ravnine (°)", prerez: true, min: 0, max: 90, korak: 1, vrednost: S.zasuk, ob: ob("zasuk"), vidno: () => ravninaDela() && S.nagib > 0 },
       { tip: "izpis", id: "prerezIzpis", oznaka: "Prerez", vidno: () => S.prerez, vrednost: () => {
         if (!S.prerez) return "vklopi »Prerez z ravnino«";
         if (S.razpri > 1e-4 && !T.krogla) return "prerez je prikazan, ko je mreža zložena (Razpri mrežo = 0)";

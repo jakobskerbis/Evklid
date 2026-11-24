@@ -641,8 +641,12 @@ function factoredTex(r, dec) {
   if (r.d.isConst()) {
     const c = fn.c.div(r.d.constValue());
     const [neg, body] = productTex(c, fn.fs, dec);
-    // en sam faktor brez konstante: brez oklepajev (x² + 1)
-    if (fn.fs.length === 1 && fn.fs[0].e === 1 && c.abs().one) return (neg ? "-" : "") + polyTex(fn.fs[0].p, dec);
+    // en sam faktor brez konstante: brez oklepajev (x² + 1); z minusom pa v oklepaju, sicer bi se predznak
+    // prenesel le na prvi člen: −(x − 3), ne −x − 3 (AUDIT-016)
+    if (fn.fs.length === 1 && fn.fs[0].e === 1 && c.abs().one) {
+      const t = polyTex(fn.fs[0].p, dec);
+      return neg && fn.fs[0].p.terms().length > 1 ? `-\\left(${t}\\right)` : (neg ? "-" : "") + t;
+    }
     return (neg ? "-" : "") + body;
   }
   const fd = factorP(r.d);
@@ -818,7 +822,8 @@ export function runCas(cmd, env = {}) {
     const out = { kind: "cas", op: cmd.op, tex: `${name}\\left(${innerTex}\\right)`, resTex, inner: cmd.inner };
     if (cond.length) out.cond = cond.join(",\\; ");
     const free = vs.filter((v) => !(v in SYMBOLS));
-    if (free.length === 1 && free[0] === "x") out.plot = [`y = ${cmd.inner}`];
+    // graf dobi besedilo za parse() (line.src: decimalna pika, ločilo »,«), ne učenčevega »sin(0,5x)«
+    if (free.length === 1 && free[0] === "x" && !/[AG]_\{/.test(line.src)) out.plot = [`y = ${line.src}`];
     // »Po korakih« (zaslon Skeniraj) zna poenostaviti in razstaviti polinome
     if (r.d.isConst() && cmd.op !== "expand" && !free.some((v) => v.length > 1)) out.steps = true;
     return out;
