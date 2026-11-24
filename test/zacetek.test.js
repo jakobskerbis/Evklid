@@ -778,8 +778,8 @@ test("plasti v app.js: okno <dialog>, Evklidova tipkovnica (samo prek API) in pl
   for (const s of ["closeTopDialog()", "hideKeyboard({ blur: true })", "padIsSheet()", "isOpen3d()", "setSidebar(false)"]) assert.ok(at(s) < views, s);
   // Plast v kalkulatorju se zapre pred kalkulatorjem čez cel zaslon (okno iz naloge ali Inštruktorja); v pogledu
   // Kalkulator šele za 3D in drugimi plastmi, ki ga prekrijejo.
-  assert.ok(at("if (calcOverlayOpen())") < at("if (!calcBack()) closeCalcOverlay({ fromBack: true });"));
-  const graphLayer = at('if (currentView === "graph" && calcBack()) return true;');
+  assert.ok(at("if (calcOverlayOpen())") < at("if (!calcBack({ tabs: true })) closeCalcOverlay({ fromBack: true });"));
+  const graphLayer = at('if (currentView === "graph" && calcBack({ tabs: true })) return true;');
   assert.ok(at("isOpen3d()") < graphLayer && at("setSidebar(false)") < graphLayer && graphLayer < views);
   assert.ok(views < at("closeByEsc()") && at("closeByEsc()") < at('if (currentView === "path") return false;'));
   assert.match(step, /currentView === "topic" && \["competition", "exams"\]\.includes\(state\.backTo\) \? state\.backTo : "path"/);
