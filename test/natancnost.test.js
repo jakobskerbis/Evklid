@@ -102,3 +102,9 @@ test("AUDIT-049 pregled: časovna meja tudi pri e^(10⁸), velikih ulomkih in po
     assert.ok(Date.now() - t0 < 150, `${t}: ${Date.now() - t0} ms`);
   }
 });
+
+// dolga vpisana števila (math.js raw, AUDIT-030) natančni račun prebere točno, ne iz zaokroženega double
+test("AUDIT-049: vpisano število z več kot 15 mesti", () => {
+  assert.equal(evaluate("1,00000000001-1", { ...ENV }).value, 1e-11);
+  assert.equal(evaluate("1,0000000000000001-1", { ...ENV }).value, 1e-16);
+});

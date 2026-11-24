@@ -72,10 +72,11 @@ const scaled = (x, k) => (k >= 0 ? mk(x.n << BigInt(k), x.d, x.ex, x.E + k) : mk
 const withE = (x, E) => (x.ex ? x : { ...x, E: Math.max(x.E, E) });
 
 /** Število (double) → točen ulomek po zapisu, ki ga vidi učenec (0,1 = 1/10, ne binarni približek). */
-export function fromNumber(v) {
-  if (!Number.isFinite(v)) no();
-  if (Number.isInteger(v) && Math.abs(v) <= Number.MAX_SAFE_INTEGER) return int(v);
-  const m = /^(-?)(\d+)(?:\.(\d+))?(?:e([+-]?\d+))?$/.exec(String(v));
+export function fromNumber(v, text = null) {
+  if (text === null && !Number.isFinite(v)) no();
+  if (text === null && Number.isInteger(v) && Math.abs(v) <= Number.MAX_SAFE_INTEGER) return int(v);
+  // text: zapis, kot ga je vpisal učenec (math.js raw pri številih z več kot 15 mesti, AUDIT-030)
+  const m = /^(-?)(\d+)(?:\.(\d+))?(?:e([+-]?\d+))?$/.exec(text ?? String(v));
   if (!m) no();
   const digits = BigInt(m[2] + (m[3] || ""));
   const e = Number(m[4] || 0) - (m[3] || "").length;
@@ -323,7 +324,7 @@ function ev(node, scope, ctx) {
   const c = (n) => ev(n, scope, ctx);
   switch (node.k) {
     case "num":
-      return fromNumber(node.v);
+      return typeof node.raw === "string" && /^\d*\.?\d+$|^\d+\.$/.test(node.raw) ? fromNumber(node.v, node.raw.replace(/^\./, "0.").replace(/\.$/, "")) : fromNumber(node.v);
     case "const":
       if (node.name === "pi" || node.name === "π") return PI();
       if (node.name === "tau" || node.name === "τ") return mul(int(2), PI());
