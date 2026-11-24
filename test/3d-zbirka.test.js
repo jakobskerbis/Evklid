@@ -101,8 +101,12 @@ test("every 3D stage (viewer and atlas) has the rotation mode button, with strin
   }
 });
 
-test("dragging a slider hides everything but its knob, track and value until release", () => {
+test("dragging a cut slider (prerez: true) hides everything but its knob, track and value until release", () => {
   const src = fs.readFileSync(path.join(D3, "pregledovalnik.js"), "utf8");
+  assert.match(src, /if \(c\.prerez\) inp\.addEventListener\("pointerdown"/, "only cut sliders hide the windows (j, 24. 11.)");
+  for (const [f, oz] of [["matematika/telesa.js", "Lega ravnine"], ["matematika/telesa.js", "Nagib ravnine"], ["matematika/telesa.js", "Zasuk ravnine"], ["matematika/graf-ploskev.js", "c \\(lega prereza\\)"]]) {
+    assert.match(fs.readFileSync(path.join(D3, "modeli", f), "utf8"), new RegExp(`oznaka: "${oz}[^"]*", prerez: true`), `${f} ${oz}`);
+  }
   assert.match(src, /koren\.classList\.add\("k3-drsam"\)/);
   // Brez pointercancel (iOS ga pošlje ob začetku poteza drsnika); konec ujame pointerup, touchend ali change.
   assert.match(src, /const KONEC = \["pointerup", "touchend", "touchcancel", "blur", "contextmenu"\]/, "released on pointerup/touchend/blur/contextmenu");
@@ -112,10 +116,10 @@ test("dragging a slider hides everything but its knob, track and value until rel
   assert.match(css, /\.k3-drsam \.k3-aktiven input\[type="range"\], \.k3-drsam \.k3-aktiven \.k3-drsnik-vrh \{ visibility: visible; \}/, "knob, track and the slider's name and value stay visible");
 });
 
-test("atlas: cut and spread sliders make everything else transparent while dragging", () => {
+test("atlas: only the cut slider makes everything else transparent while dragging", () => {
   const src = fs.readFileSync(path.join(D3, "atlas.js"), "utf8");
   assert.match(src, /prosojnoObVlecenju\(preIn, el\)/);
-  assert.match(src, /prosojnoObVlecenju\(razIn, el\)/);
+  assert.doesNotMatch(src, /prosojnoObVlecenju\(razIn, el\)/, "spread slider keeps the windows (j, 24. 11.)");
   assert.doesNotMatch(src, /"pointercancel"/);
   const css = fs.readFileSync(path.join(D3, "3d.css"), "utf8");
   assert.match(css, /\.a3-drsam \.a3-list[^{]*\{ visibility: hidden; \}/);
