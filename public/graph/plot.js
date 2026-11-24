@@ -935,14 +935,24 @@ export class GraphView {
     this._area.delete(key);
     if (!info) {
       info = withIntegralBudget(30, () => integrateInfo(f, a, b));
-      if (info.timeout && !this._areaPending?.has(key)) {
-        (this._areaPending ||= new Set()).add(key);
-        setTimeout(() => {
+      // en čakajoč izračun na krivuljo: novejše meje (vlečenje) prekličejo starejšega; začne se šele, ko se meje
+      // za 150 ms umirijo, zato se na počasnih napravah izračuni ne nabirajo
+      this._areaJob ||= new Map();
+      const job = this._areaJob.get(o.id);
+      if (info.timeout && job?.key !== key) {
+        if (job) clearTimeout(job.timer);
+        const timer = setTimeout(() => {
+          if (this._areaJob.get(o.id)?.timer !== timer) return;
           const full = withIntegralBudget(2000, () => integrateInfo(f, a, b));
-          this._areaPending.delete(key);
+          if (this._areaJob.get(o.id)?.timer !== timer) return; // medtem zamenjan
+          this._areaJob.delete(o.id);
           this._area.set(key, { fn, info: full });
           this.draw();
-        }, 0);
+        }, 150);
+        this._areaJob.set(o.id, { key, timer });
+      } else if (!info.timeout && job) {
+        clearTimeout(job.timer);
+        this._areaJob.delete(o.id);
       }
     }
     const val = info.value;

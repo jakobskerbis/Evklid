@@ -47,6 +47,7 @@ import { SETTINGS_TOOLS, createSettingsTools, actionNote, cleanDevice, looksLike
 import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, firstTime, mountSkillChecks } from "./weaknesses.js";
 import { cleanText, plainTitle, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
+import { ucniKontekst } from "./ucni-kontekst.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
@@ -1158,13 +1159,24 @@ export function createApp(store, opts = {}) {
     const solveAsk = solvingMode === "A" && asksForSolution(text);
     const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper, mode: solveAsk ? "B1" : solvingMode });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
+    // »Vprašaj inštruktorja« iz poskusa ali 3D modela: posnetek stanja kot skrit blok (server/ucni-kontekst.js).
+    // Ob opombi pole ga ni (pola ima prednost); zaklenjen poskus ali lekcija ne dasta opombe.
+    let kontekstNote = "";
+    if (!paperNote && req.body?.kontekst) {
+      try {
+        kontekstNote = await ucniKontekst(req.body.kontekst, { canOpen: accounts ? (id) => accounts.lessonInteractive(student.id, id) : null, myPath: pathKeyFor(student.settings) || "" });
+      } catch (err) {
+        console.warn(`[evklid] učni kontekst ni uspel: ${err?.message || err}`);
+      }
+    }
+    if (kontekstNote) userContent.push({ type: "text", text: kontekstNote });
     // D3: praznost z EXISTS; zgodovino pogovora naložimo (in odšifriramo) samo enkrat, spodaj (prior).
     const isFirst = !store.hasMessages(conv.id);
     // Prvo vprašanje prostega pogovora: povzetek ujemajoče se lekcije iz učbenika kot skrita opomba
     // (server/lekcija-za-vprasanje.js). Shranjen s sporočilom, zato se začetek zgodovine ne spreminja.
     let lesson = null;
     try {
-      if (isFirst && !conv.path_topic && !paperNote && text) lesson = lessonForQuestion(text, student.settings);
+      if (isFirst && !conv.path_topic && !paperNote && !kontekstNote && text) lesson = lessonForQuestion(text, student.settings);
     } catch (err) {
       console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
     }
@@ -1234,7 +1246,7 @@ export function createApp(store, opts = {}) {
     // Skupni predpomnilnik samo za odgovor brez osebnih podatkov v promptu (test/zasebnost-predpomnilnik*.test.js):
     // inštruktor primere vzame iz zanimanj, pozna cilj, urnik s testi, šibke točke in rezultate. Kdor jih ima, odgovora
     // ne shrani za druge (tudi brez dvojnega preverjanja, ki ga plača aplikacija) in ne vzame shranjenega.
-    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier, pupilGender(student.settings, student.name)) : null;
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !kontekstNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier, pupilGender(student.settings, student.name)) : null;
     if (conv.title === "Nov pogovor") {
       store.renameConversation(conv.id, cleanText(plainTitle(withName(text, student.name)), 50) || "Naloga s fotografije");
     }

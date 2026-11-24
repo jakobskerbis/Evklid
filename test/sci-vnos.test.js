@@ -117,3 +117,50 @@ test("kazalec pred ^ ne dvigne eksponenta (\\smash)", () => {
   assert.equal(sup(`x${CARET}^{2}`), sup("x^{2}"));
   assert.ok(sup("x^{2}"), "izmerjen odmik eksponenta");
 });
+
+// AUDIT-003: zapis predloge prestavi reže (meje pred integrandom), dotik in kazalec morata ostati v pravi reži
+test("∫(f;a;b), limita(f;x;a), integriraj(f): vsaka vidna reža ima svoj položaj v besedilu (AUDIT-003)", () => {
+  const where = (text, p) => {
+    const tex = caretTex(entryBase(text, env), p).replace(CARET, "‸");
+    return tex;
+  };
+  // kazalec v integrandu je pri integrandu, v spodnji meji v podpisu, v zgornji v nadpisu, za predlogo za dx
+  assert.equal(where("∫(x;0;2)", 2), "\\int_{0}^{2}‸x\\,dx");
+  assert.equal(where("∫(x;0;2)", 3), "\\int_{0}^{2}x‸\\,dx");
+  assert.equal(where("∫(x;0;2)", 4), "\\int_{‸0}^{2}x\\,dx");
+  assert.equal(where("∫(x;0;2)", 5), "\\int_{0‸}^{2}x\\,dx");
+  assert.equal(where("∫(x;0;2)", 6), "\\int_{0}^{‸2}x\\,dx");
+  assert.equal(where("∫(x;0;2)", 8), "\\int_{0}^{2}x\\,dx‸");
+  const hole = HOLE;
+  assert.equal(where("∫(;;)", 2), `\\int_{${hole}}^{${hole}}‸${hole}\\,dx`);
+  assert.equal(where("∫(;;)", 3), `\\int_{‸${hole}}^{${hole}}${hole}\\,dx`);
+  assert.equal(where("∫(;;)", 4), `\\int_{${hole}}^{‸${hole}}${hole}\\,dx`);
+  // merilne točke (dotik): točka v podpisu da položaj v spodnji meji, v nadpisu v zgornji, pri integrandu v integrandu
+  const slotOf = (text) => {
+    const base = entryBase(text, env);
+    const tex = stopsTex(base);
+    const p = (re) => Number(re.exec(tex)?.[1]);
+    return { lower: p(/\\int_\{\{\\htmlData\{evk-p=(\d+)\}/), upper: p(/\^\{\{\\htmlData\{evk-p=(\d+)\}/) };
+  };
+  assert.deepEqual(slotOf("∫(x;;2)"), { lower: 4, upper: 5 });
+  assert.deepEqual(slotOf("∫(;;)"), { lower: 3, upper: 4 });
+  assert.deepEqual(slotOf("∫(x²+1;−1;π)"), { lower: 7, upper: 10 });
+  // nobena merilna točka ni sredi imena ukaza ali med ∫ in oklepajem (tam vnos pokvari ukaz)
+  for (const t of ["∫(x;0;2)", "∫(;;)", "integriraj(x)", "limita(x; x; 0)", "limita(; x; )", "∫(∫(x;0;y);0;1)", "2∫(x;0;1)+3"]) {
+    for (const s of caretStops(entryBase(t, env))) {
+      assert.ok(!/[A-Za-zčšž]$/.test(t.slice(0, s.p)) || !/^[A-Za-zčšž(]/.test(t.slice(s.p)), `${t}: točka v imenu @${s.p}`);
+      assert.ok(!t.slice(0, s.p).endsWith("∫"), `${t}: točka med ∫ in ( @${s.p}`);
+    }
+    const b = entryBase(t, env);
+    everyCaret(t, b.hole ? b.tex.split(b.hole).join(HOLE) : b.tex);
+  }
+  // limita: x in a v podpisu, telo za njim; integriraj: kazalec na koncu je za dx
+  assert.equal(where("limita(x; x; 0)", 13), "\\lim\\limits_{x \\to ‸0} x");
+  assert.equal(where("limita(x; x; 0)", 7), "\\lim\\limits_{x \\to 0} ‸x");
+  assert.equal(where("limita(x; x; 0)", 15), "\\lim\\limits_{x \\to 0} x‸");
+  assert.equal(where("integriraj(x)", 13), "\\int x\\,dx‸");
+  // ∑ in ∏: kazalec pred znakom je pred znakom (ne v spodnji meji), nikoli med spodnjo in zgornjo mejo
+  assert.equal(where("∑_(n=1)^(5) n", 0), "‸\\sum_{n=1}^{5}n");
+  assert.equal(where("∏_(n=1)^(5) n", 0), "‸\\prod_{n=1}^{5}n");
+  for (let p = 0; p <= 13; p++) assert.ok(!where("∑_(n=1)^(5) n", p).includes("}‸^"), `∑ @${p}`);
+});

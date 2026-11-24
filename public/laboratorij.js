@@ -29,9 +29,17 @@ export function initLab(deps) {
     if (topic) return D.openLesson(topic.dataset.labTopic);
     if (e.target.closest("[data-lab-back]")) return labBack();
     // »Vprašaj inštruktorja«: klepet z vpisanim začetkom vprašanja; poskus ostane odprt, vrnitev iz klepeta (app.js).
+    // Posnetek stanja (nastavitve, odčitki, zapisane meritve; public/sim/lab.js stanjePoskusa) gre z vprašanjem kot
+    // skrit kontekst (server/ucni-kontekst.js). Modul lab.js je že naložen, ker je poskus odprt.
     if (e.target.closest("[data-lab-ask]")) {
       const x = find(openKey);
-      if (x && !x.locked) D.askTutor?.(t("lab.askText", { title: x.title }), x.title);
+      if (!x || x.locked) return;
+      const mount = box().querySelector(".lab-mount");
+      const kontekst = { v: 1, sourceType: "lab", sourceId: x.key }; // temo izbere strežnik (učenčeva pot)
+      import("./sim/lab.js")
+        .then((m) => Object.assign(kontekst, m.stanjePoskusa(mount)))
+        .catch(() => {})
+        .then(() => D.askTutor?.(t("lab.askText", { title: x.title }), x.title, kontekst));
       return;
     }
     if (e.target.closest("[data-lab-upgrade]")) document.querySelector("#account-tab")?.click();

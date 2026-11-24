@@ -39,3 +39,16 @@ sredi pogovora pokaže Evklidova orodja.
   vedno pošlje takoj in nima vrnitve; to se spremeni šele z novo različico aplikacije.
 - Preizkusi: `test/uci-se.test.js`, `scripts/preveri-aplikacijo.cjs` (laboratorij na računalniku in telefonu, 3D na
   telefonu).
+
+## Faza B: posnetek stanja za inštruktorja (j, 24. 11. 2026)
+
+- Ob »Vprašaj inštruktorja« odjemalec sestavi majhen posnetek (`state.ucniKontekst`): poskus (`public/sim/lab.js`
+  `stanjePoskusa`: oznake in vrednosti kontrol, odčitki merilnikov, zadnjih 20 vrstic tabele meritev; samo iz zaslona,
+  nič izračunanega), 3D model z izbranim delom ali struktura atlasa. Gre samo z naslednjim **vpisanim** sporočilom in
+  enkrat; nad vnosnim poljem vrstica »Inštruktor bo videl …« (`#chat-kontekst`), dokler ni poslan.
+- Strežnik (`server/ucni-kontekst.js`) poišče poskus, model, strukturo in lekcijo v svojih katalogih (imena vzame od
+  tam), vrednosti očisti in omeji, zaklenjenega poskusa ali lekcije ne omeni, in doda skrit blok `<kontekst_ucenja>`
+  (`server/skrite-opombe.js`). Pravila (ne trdi, da si meril; manjkajočih vrednosti ne ugibaj; predlagaj eno
+  spremembo z napovedjo) so v bloku, prompt inštruktorja je nespremenjen. Ob opombi pole ga ni; ne gre v predpomnilnik
+  odgovorov in ne sproži iskanja lekcije.
+- Preizkusi: `test/ucni-kontekst.test.js`, `scripts/preveri-aplikacijo.cjs` (sporočilo iz poskusa nese posnetek).
