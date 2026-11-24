@@ -481,6 +481,44 @@ function intPoly(c) {
   return primB(fr.map((f) => (f.p * L) / f.q).reverse());
 }
 
+// Realne ničle in konjugirani pari. sf: ničla enostavnega (brez kvadratov) faktorja – realna je natanko tedaj, ko
+// zraven ni njene konjugirane (1 ± 10⁻¹⁰ i sta par, ne dvakrat 1); cx: zagotovo kompleksna; sicer meja 1e-9.
+function pairUp(found) {
+  const real = [];
+  const upper = [];
+  const lower = [];
+  for (const r of found) {
+    let isReal;
+    if (r.exact) isReal = true;
+    else if (r.cx) isReal = false;
+    else if (r.sf) isReal = !found.some((w) => w !== r && w.sf && Math.abs(r.z[1]) > 0 && C.abs(C.sub(w.z, [r.z[0], -r.z[1]])) < Math.abs(r.z[1]));
+    else isReal = Math.abs(r.z[1]) < 1e-9 * Math.max(1, C.abs(r.z));
+    if (isReal) real.push({ ...r, z: [r.z[0], 0] });
+    else (r.z[1] > 0 ? upper : lower).push(r);
+  }
+  const out = real.map((r) => ({ re: r.z[0], im: 0, m: r.m, exact: !!r.exact }));
+  for (const u of upper) {
+    let best = -1;
+    lower.forEach((l, i) => {
+      if (l && l.m === u.m && (best < 0 || C.abs(C.sub(l.z, [u.z[0], -u.z[1]])) < C.abs(C.sub(lower[best].z, [u.z[0], -u.z[1]])))) best = i;
+    });
+    if (best < 0) return null;
+    const l = lower[best];
+    lower[best] = null;
+    const re = (u.z[0] + l.z[0]) / 2;
+    const im = (u.z[1] - l.z[1]) / 2;
+    out.push({ re, im: -im, m: u.m }, { re, im, m: u.m });
+  }
+  return lower.some(Boolean) ? null : out;
+}
+
+/** Ničle polinoma, za katerega vemo, da nima večkratnih ničel (npr. faktor nad ℚ[π]): vse enostavne, brez združevanja. */
+export function simpleRoots(coeffs, m = 1) {
+  const c = coeffs.map(Number);
+  if (c.length < 2 || c.some((v) => !Number.isFinite(v)) || c[0] === 0) return null;
+  return pairUp(dkRoots(c).map((z) => ({ z: newton(c, z), m, sf: true })));
+}
+
 /**
  * Ničle polinoma z večkratnostmi: [{ re, im, m }], ali null, če preizkus ostanka ne uspe.
  * Racionalni koeficienti: točen razcep brez kvadratov (f = t₁·t₂²·t₃³…), racionalne ničle točno,
@@ -526,7 +564,7 @@ export function polyRootsMult(coeffs, exact = null, radii = null) {
             // stabilno: večja po absolutni vrednosti iz vsote, manjša iz produkta c/a
             const big = re + Math.sign(re || 1) * r;
             found.push({ z: [big, 0], m: k }, { z: [Number(c0) / Number(a2) / big, 0], m: k });
-          } else found.push({ z: [re, -r], m: k }, { z: [re, r], m: k });
+          } else found.push({ z: [re, -r], m: k, cx: true }, { z: [re, r], m: k, cx: true }); // D < 0 točno: kompleksni
         }
         continue;
       }
@@ -535,33 +573,12 @@ export function polyRootsMult(coeffs, exact = null, radii = null) {
         if (Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z))) z = [exactNewton(t, z[0]), z[1]];
         const q = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? ratOf(z[0], 10000000) : null;
         if (q && rootB(t, q.p, q.q)) found.push({ z: [Number(q.p) / Number(q.q), 0], m: k, exact: true });
-        else found.push({ z, m: k });
+        else found.push({ z, m: k, sf: true });
       }
     }
   } else found.push(...mergeClusters(c, dkRoots(c), 0.05, r || undefined));
-  // realne ničle in konjugirani pari
-  const real = [];
-  const upper = [];
-  const lower = [];
-  for (const r of found) {
-    const tol = 1e-9 * Math.max(1, C.abs(r.z));
-    if (r.exact || Math.abs(r.z[1]) < tol) real.push({ ...r, z: [r.z[0], 0] });
-    else (r.z[1] > 0 ? upper : lower).push(r);
-  }
-  const out = real.map((r) => ({ re: r.z[0], im: 0, m: r.m, exact: !!r.exact }));
-  for (const u of upper) {
-    let best = -1;
-    lower.forEach((l, i) => {
-      if (l && l.m === u.m && (best < 0 || C.abs(C.sub(l.z, [u.z[0], -u.z[1]])) < C.abs(C.sub(lower[best].z, [u.z[0], -u.z[1]])))) best = i;
-    });
-    if (best < 0) return null;
-    const l = lower[best];
-    lower[best] = null;
-    const re = (u.z[0] + l.z[0]) / 2;
-    const im = (u.z[1] - l.z[1]) / 2;
-    out.push({ re, im: -im, m: u.m }, { re, im, m: u.m });
-  }
-  if (lower.some(Boolean)) return null;
+  const out = pairUp(found);
+  if (!out) return null;
   // preizkus ostanka vsake ničle v prvotnem polinomu
   for (const r of out) {
     let d = c;

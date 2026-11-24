@@ -502,8 +502,16 @@ function rat0(node, ctx) {
       if (!e.n.isConst() || !e.d.isConst()) throw fail("unsupported");
       const k = e.n.constValue().div(e.d.constValue());
       if (!k.int) throw fail("unsupported");
-      if (k.abs().cmp(MAX_POW) > 0) throw fail("big");
       const a = r(node.a);
+      // število na celo potenco (10^(−30)): točno v BigInt, tudi nad MAX_POW, dokler je ulomek v mejah Q
+      if (a.n.isConst() && a.d.isConst() && k.abs().cmp(200) <= 0) {
+        const q = a.n.constValue().div(a.d.constValue());
+        const e = BigInt(Math.abs(Number(k.n)));
+        if (q.zero && k.n < 0n) throw fail("div0");
+        const pw = new Q(q.n ** e, q.d ** e);
+        return new R(P.num(k.n < 0n ? pw.inv() : pw));
+      }
+      if (k.abs().cmp(MAX_POW) > 0) throw fail("big");
       const n = Number(k.n);
       if (n >= 0) return new R(powP(a.n, n), powP(a.d, n));
       if (a.n.zero) throw fail("div0");

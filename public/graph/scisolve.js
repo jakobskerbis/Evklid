@@ -462,7 +462,8 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null }) {
     // točne rešitve brez zaokroževanja; približne le na ~ulp (1,0000000001 ni 1)
     const tight = (x) => (Math.abs(x - Math.round(x)) <= 1e-13 * Math.max(1, Math.abs(x)) ? Math.round(x) : Math.abs(x) < 1e-15 ? 0 : x);
     const roots = pr.filter((r) => r.im === 0).map((r) => (r.exact ? r.re : tight(r.re)));
-    const complex = pr.filter((r) => r.im !== 0).map((r) => [tight(r.re), tight(r.im)]);
+    // imaginarni del iz točne poti ne zaokrožamo na 0 (x² + 10⁻³⁰ = 0: ±10⁻¹⁵ i)
+    const complex = pr.filter((r) => r.im !== 0).map((r) => [tight(r.re), pr.exactAll ? r.im : tight(r.im)]);
     return { kind: "solve", v, roots, complex, poly, mult: pr.filter((r) => r.im === 0).map((r) => r.m) };
   }
   const poly = polyCoeffs(F);
@@ -525,7 +526,8 @@ export function solutionTex(r, comma = true, mode = "auto") {
   if (!r.exact)
     (r.complex || []).forEach(([re, im], i) => {
       const a = re === 0 ? "" : plainTex(re, comma, mode);
-      const b = plainTex(Math.abs(im), comma, mode);
+      // zelo majhen imaginarni del (1 ± 10⁻¹⁰ i) ne sme postati 0
+      const b = Math.abs(im) < 1e-6 ? formatNumber(Number(Math.abs(im).toPrecision(6)), { mode, comma }).tex : plainTex(Math.abs(im), comma, mode);
       parts.push(`${name(r.roots.length + i)} = ${a}${im < 0 ? "-" : a ? "+" : ""}${b === "1" ? "" : b}${/^[\d{}]+$/.test(b) ? "" : "\\,"}i`);
     });
   return parts.join(",\\quad ");
