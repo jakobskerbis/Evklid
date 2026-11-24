@@ -3,6 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { analyze, solutionTex } from "../public/graph/scisolve.js";
+import fs from "node:fs";
 
 const ENV = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
 const close = (a, b) => Math.abs(a - b) <= 1e-12 * Math.max(Math.abs(a), Math.abs(b), 1e-300);
@@ -29,4 +30,46 @@ test("zapis pokaže imaginarni del, ne 0", () => {
   assert.equal(solutionTex(analyze("(x−1)^2+10^(−20)=0", ENV)), "x_{1} = 1-1\\cdot 10^{-10}\\,i,\\quad x_{2} = 1+1\\cdot 10^{-10}\\,i");
   assert.equal(solutionTex(analyze("(x−1)^2=0", ENV)), "x_{1,2} = 1\\;(\\text{dvojna rešitev})"); // AUDIT-032
   assert.equal(solutionTex(analyze("x^2+1=0", ENV)), "x_{1,2} = \\pm i");
+});
+
+// Pregled #979: pri gručah stopnje ≥ 3 so bile realne in kompleksne ničle napačne (z »=«). Zdaj realne točno
+// (Sturm in bisekcija na točnem polinomu), kompleksne s točnim Newtonom (Maehly) in polmerom napake.
+test("gruče stopnje ≥ 3: realne točno, kompleksne z napako, nikoli lažni »=« (mpmath)", () => {
+  const a = analyze("x^3−3x^2+3x−1+10^(−30)=0", ENV);
+  assert.deepEqual(a.roots, [0.9999999999]);
+  assert.ok(a.complex.every(([re, im]) => Math.abs(re - 1.00000000005) < 1e-20 && Math.abs(Math.abs(im) - 8.660254037844386e-11) < 1e-24));
+  const tex = solutionTex(a);
+  assert.ok(!tex.includes("= 1,") && !/x_\{\d\} = /.test(tex), tex); // vse z ≈
+  const b = analyze("((x−4/3)^4−10^(−25))=0", ENV);
+  assert.equal(b.roots.length, 2);
+  assert.ok(Math.abs(b.roots[0] - (4 / 3 - 5.623413251903491e-7)) < 1e-15 && Math.abs(b.roots[1] - (4 / 3 + 5.623413251903491e-7)) < 1e-15);
+  assert.equal(b.complex.length, 2);
+});
+
+// 500 naključnih gruč ((x − a)^k ± 10^(−e))·(drug faktor), k ≤ 4, e ≤ 30 (seme pregledovalca), ničle iz mpmath na
+// 120 mest: pravo število realnih in kompleksnih ter vrednosti na 1e-11. Pred popravkom 369/500.
+test("500 gruč iz mpmath: vse pravilne", () => {
+  const cases = JSON.parse(fs.readFileSync(new URL("./fixtures/gruce-mpmath.json", import.meta.url)));
+  let ok = 0;
+  const bad = [];
+  for (const c of cases) {
+    const r = analyze(c.fac, ENV);
+    const R = [];
+    (r.roots || []).forEach((x, i) => {
+      for (let t = 0; t < (r.mult?.[i] || 1); t++) R.push(x);
+    });
+    const C2 = [];
+    [...(r.complex || [])].forEach((z, j) => {
+      for (let t = 0; t < (r.cmult?.[j] || 1); t++) C2.push(z);
+    });
+    C2.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+    const good =
+      R.length === c.real.length &&
+      C2.length === c.cx.length &&
+      R.every((x, i) => Math.abs(x - c.real[i]) <= 1e-11) &&
+      C2.every((z, i) => Math.hypot(z[0] - c.cx[i][0], z[1] - c.cx[i][1]) <= 1e-11);
+    if (good) ok++;
+    else if (bad.length < 5) bad.push(c.fac);
+  }
+  assert.equal(ok, cases.length, JSON.stringify(bad));
 });
