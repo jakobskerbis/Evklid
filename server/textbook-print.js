@@ -124,11 +124,6 @@ const today = () => dateText(new Date(), "sl-SI"); // »17. novembra 2026« (pub
 const NOTE = `<p class="muted small">Interaktivni poskusi, simulacije, sprotno preverjanje in vaje so na voljo v aplikaciji Evklid.
         Lekcije, ki jih učitelj še ni pregledal, se lahko še spremenijo.</p>`;
 
-// Celoten učbenik predmeta (npr. MAT-OS): deli so razredi oziroma letniki.
-export function printBook(bookKey) {
-  const parts = printBookParts(bookKey);
-  return parts && joinParts(parts);
-}
 function printBookParts(bookKey) {
   const book = getBook(bookKey);
   if (!book) return null;

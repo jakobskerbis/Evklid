@@ -1693,5 +1693,3 @@ export const EXAM_MAT = [
   },
 ];
 
-// Pomožno: izbirna naloga z že pripravljenimi možnostmi (za generatorje, ki jo potrebujejo).
-export const examChoice = (r, correct, distractors) => ({ type: "choice", ...choices(r, correct, distractors) });

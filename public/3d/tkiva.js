@@ -23,7 +23,6 @@ const RAZREDI = {
   steklo: { roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.05, prosojno: 0.32 },
   koza: { roughness: 0.52, sheen: 0.6, sheenColor: "#ffd9c7", sheenRoughness: 0.45, clearcoat: 0.1, clearcoatRoughness: 0.45, prosojno: 0.5, d: { f: [300, 300, 300], f2: 1100, b: 0.05, r: 0.22, t: 0.03, s: 0.2 } },
 };
-export const IMENA_RAZREDOV = Object.keys(RAZREDI);
 
 const MISICE = {
   Abductor: "#b03a33", Adductor: "#9e2f2e", Biarticular: "#a93830", Depressor: "#a1342f", Diaphragm: "#9a2c2a",

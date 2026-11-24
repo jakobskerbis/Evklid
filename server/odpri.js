@@ -339,4 +339,3 @@ export async function resolveOpen(text, settings, { canOpen = null } = {}) {
   return out;
 }
 
-export const _test = { score, findSim, findModel, findLesson, findGame, findFormula, getPath };

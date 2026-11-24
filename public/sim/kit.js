@@ -520,14 +520,6 @@ export function handle(parent, cls = "a", r = 7) {
   return g;
 }
 
-// Canvas, ki se prilagodi gostoti zaslona. Vrne { cv, ctx, W, H }.
-export function canvasBox(W, H) {
-  const cv = h("canvas", { class: "demo-canvas", width: W * 2, height: H * 2 });
-  cv.style.aspectRatio = `${W} / ${H}`;
-  const ctx = cv.getContext("2d");
-  ctx.scale(2, 2);
-  return { cv, ctx, W, H };
-}
 
 // Barva iz CSS spremenljivke (za canvas).
 export function cssColor(el, name, fallback = "#2563eb") {

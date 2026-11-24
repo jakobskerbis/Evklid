@@ -289,10 +289,6 @@ export function closePad() {
   if (cur && keyboardOpenFor(cur.input)) hideKeyboard();
 }
 
-// Po oddanem odgovoru: pri pravilnem odgovoru plošča izgine, da je vidna razlaga.
-export function padAfterAnswer(correctOrDone) {
-  if (correctOrDone) closePad();
-}
 
 // ---------------------------------------------------------------------------
 // Risalna površina (prst, miška, pisalo). Pri pisalu so dotiki dlani prezrti.

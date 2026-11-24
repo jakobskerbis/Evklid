@@ -656,11 +656,3 @@ function ph(el) {
 
 export const DEMOS = { linearna, pitagora, ulomki, ohm, "prosti-pad": prostiPad, nihalo, plini, enacbe, ph };
 
-export function mountDemo(id, el) {
-  const fn = DEMOS[id];
-  if (!fn) return false;
-  el.replaceChildren();
-  el.classList.add("demo", `demo-${id}`);
-  fn(el);
-  return true;
-}

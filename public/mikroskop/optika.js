@@ -18,7 +18,6 @@ export const OBJEKTIVI = [
 ];
 export const MIN_M = 40;
 export const SVETLOBNI_MAX = 1000; // 100× objektiv · 10× okular
-export const TEM_MIN = 1000;
 export const MAX_M = 1e8; // (j, 16. 11. 2026: »do 100 milijonsko povecavo«) le z vklopljenimi »Molekulami v barvah« (ponazoritev molekul in atomov, ne posnetek)
 
 // Premer vidnega polja (µm) pri skupni povečavi m.
