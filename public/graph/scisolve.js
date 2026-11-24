@@ -4,7 +4,7 @@
 import { simplify, diff, toTex, MathError } from "./math.js";
 import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
-import { evalComplex, polyRoots } from "./toolscore.js";
+import { evalComplex, polyRoots, polyRootsMult } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE]
@@ -218,7 +218,9 @@ function solveOne(F, v, { comma, unit = "rad", src }) {
       const ex = quadraticExact(poly, v, comma);
       if (ex) return { kind: "solve", v, roots: ex.roots, complex: ex.complex || [], exact: ex.tex, poly };
     }
-    const all = polyRoots(poly);
+    // večkratne ničle ((x − 5)³ = 0) le enkrat in točno; brez preizkušenih ničel stara numerična pot
+    const mult = polyRootsMult(poly);
+    const all = mult ? mult.map((r) => [r.re, r.im]) : polyRoots(poly);
     const roots = [];
     const complex = [];
     for (const [re, im] of all) {
