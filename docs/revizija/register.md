@@ -12,15 +12,15 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-002 | P2 | Matematični kalkulator | Neskončna vrsta/produkt vrne delno vsoto 100.000 členov kot vrednost, tudi pri divergentnih (∑1/n, ∑n, ∑(−1)ⁿ) | ODOBRENO | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7097688909) | – |
 | AUDIT-003 | P1 | Kalkulator, vnos integrala | Dotik na spodnjo mejo določenega integrala postavi kazalec v integrand (`∫(0x;;2)`), računalnik in telefon | ODOBRENO | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7098980020) | – |
 | AUDIT-004 | P2 | Kalkulator, brisanje | ⌫ pusti polovico imena ali ostanke predloge (`integriraj)`, `;;)`, `)`); strojni Backspace gre mimo `del()` | ODOBRENO | `528c6c5` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7098997935) | – |
-| AUDIT-005 | P1 | Grafični kalkulator | `sin(0,5)` = 0: decimalna vejica v oklepaju je ločilo argumentov, odvečni argument tiho prezrt (znanstveni kalkulator pravilen) | PRIPRAVLJENO ZA PONOVNI PREGLED | `528c6c5` | j, 24. 11. | #943 |
-| AUDIT-006 | P1 | Kalkulator, integrali | Divergenten integral vrne končno število (`∫[−1,1] 1/x` ≈ 0, `∫[0,1] 1/x` = 315,6, `∫[−1,1] 1/x²` = 1,9·10¹³, `∫[0,3] tan x` = 64) | V IZVEDBI | `528c6c5` | j, 24. 11. | #944 |
-| AUDIT-007 | P2 | Kalkulator, integrali | Robna integrabilna singularnost netočna in prikazana z »=« (`∫[0,1] 1/√x` = 2,00102320794; `∫[−1,1] 1/√(1−x²)` = 3,14364) | V IZVEDBI | `528c6c5` | j, 24. 11. | #949 |
-| AUDIT-008 | P2 | Kalkulator, integrali | Neskončna meja vrne »—« brez razlage (`∫[1,∞] 1/x²` = 1) – omejitev | V IZVEDBI | `528c6c5` | j, 24. 11. | #950 |
+| AUDIT-005 | P1 | Grafični kalkulator | `sin(0,5)` = 0: decimalna vejica v oklepaju je ločilo argumentov, odvečni argument tiho prezrt (znanstveni kalkulator pravilen) | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #943 |
+| AUDIT-006 | P1 | Kalkulator, integrali | Divergenten integral vrne končno število (`∫[−1,1] 1/x` ≈ 0, `∫[0,1] 1/x` = 315,6, `∫[−1,1] 1/x²` = 1,9·10¹³, `∫[0,3] tan x` = 64) | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #944 |
+| AUDIT-007 | P2 | Kalkulator, integrali | Robna integrabilna singularnost netočna in prikazana z »=« (`∫[0,1] 1/√x` = 2,00102320794; `∫[−1,1] 1/√(1−x²)` = 3,14364) | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #949 |
+| AUDIT-008 | P2 | Kalkulator, integrali | Neskončna meja vrne »—« brez razlage (`∫[1,∞] 1/x²` = 1) – omejitev | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #950 |
 | AUDIT-009 | P1 | Kalkulator, enačbe | Večkratni koreni → napačne kompleksne rešitve (`(x−5)³=0`; `(x−1)²(x+2)=0` doda lažno 1,026+0,033i); `reši(…)` je pravilen | PRIPRAVLJENO ZA PONOVNI PREGLED | `528c6c5` | j, 24. 11. | #941 |
-| AUDIT-010 | P2 | Kalkulator, kombinatorika | Prelivanje pri n > 170 (`nCr(171;1)` = ∞, `nCr(200;2)` = —) | PRIPRAVLJENO ZA PONOVNI PREGLED | `528c6c5` | j, 24. 11. | #937 |
-| AUDIT-011 | P2 | Znanstveni kalkulator | `nCr(171,1)` → prikaz `\binom{171,1}{undefined}`, brez sporočila o napaki | PRIPRAVLJENO ZA PONOVNI PREGLED | `528c6c5` | j, 24. 11. | #942 |
-| AUDIT-012 | P2 | Vnos formul (klepet) | Grški diferencial ni prepoznan; `∫(θ;0;1)` → ∫θ dx | ODOBRENO | `528c6c5` | j, 24. 11. | – |
-| AUDIT-013 | P2 | Vnos formul (klepet) | `lim_(x→0)(x^(2))`, `∑_(i=1)^(5)(i)`, `∏…(i)`: telo ostane besedilo | ODOBRENO | `528c6c5` | j, 24. 11. | – |
+| AUDIT-010 | P2 | Kalkulator, kombinatorika | Prelivanje pri n > 170 (`nCr(171;1)` = ∞, `nCr(200;2)` = —) | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #937 |
+| AUDIT-011 | P2 | Znanstveni kalkulator | `nCr(171,1)` → prikaz `\binom{171,1}{undefined}`, brez sporočila o napaki | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #942 |
+| AUDIT-012 | P2 | Vnos formul (klepet) | Grški diferencial ni prepoznan; `∫(θ;0;1)` → ∫θ dx | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #946 |
+| AUDIT-013 | P2 | Vnos formul (klepet) | `lim_(x→0)(x^(2))`, `∑_(i=1)^(5)(i)`, `∏…(i)`: telo ostane besedilo | ZAKLJUČENO | `528c6c5` | j, 24. 11. | #947 |
 | AUDIT-014 | P2 | Grafični kalkulator, drsniki | Vrednost 10⁻⁸ postane 0 (korak 0,1 pri |v| ≤ 10, največ 6 decimalk) | ODOBRENO | `528c6c5` | j, 24. 11. | – |
 | AUDIT-015 | P1 | Kalkulator, enačbe in neenačbe | Numerično iskanje le na [−100, 100]: `√x=20` → x ∈ ∅, `ln(x)>5` → ∅, `√x<20` → [0, ∞); 3.829/3.829 primerov z rešitvijo nad 100 napačnih | ZAKLJUČENO | `528c6c5` | j, 24. 11. | [#954](https://github.com/jakobskerbis/Evklid/pull/954) |
 | AUDIT-016 | P1 | Kalkulator, CAS razstavi | Minus pred faktorjem brez oklepaja: `razstavi(3−x)` → −x − 3 (pravilno −(x − 3)), `razstavi(−x−3)` → −x + 3; preverjanje preveri polinom, ne izpisa | ZAKLJUČENO | `528c6c5` | j, 24. 11. | [#952](https://github.com/jakobskerbis/Evklid/pull/952) |
@@ -31,16 +31,16 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-021 | P2 | Kalkulator, izris vnosa | Ukaz CAS sredi izraza se izriše surovo: `sin(integriraj(…))`, `(limita(…)` | POTRJENO | `528c6c5` | – | – |
 | AUDIT-022 | P2 | Kalkulator, vnos (dotik) | Dotik na indeks korena, osnovo `logb` (kazalec v imenu »log\|b«), meje ∑ ali vsebino eksponenta postavi kazalec drugam; #940 tega ne pokrije | PRIPRAVLJENO ZA PONOVNI PREGLED | `528c6c5` | j, 24. 11. | [#959](https://github.com/jakobskerbis/Evklid/pull/959) (nad #940) |
 | AUDIT-023 | P3 | Kalkulator, razčlenjevanje | Neznana imena (`arg`, `conj`, `odvod`) se izrišejo kot zmnožek črk »a r g« brez namiga | POTRJENO | `528c6c5` | – | – |
-| AUDIT-024 | P1 | Vaje, kviz, napredek (strežnik) | `check.js` `exprValue` ne pretvori decimalne vejice: `sin(0,5)` pri pravem odgovoru »napačno«, pri odgovoru 0 »vrednost je prava« | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
-| AUDIT-025 | P2 | Znanstveni kalkulator | V radianih `sin 30°` brez oklepaja = −0,0172 namesto 0,5 | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
+| AUDIT-024 | P1 | Vaje, kviz, napredek (strežnik) | `check.js` `exprValue` ne pretvori decimalne vejice: `sin(0,5)` pri pravem odgovoru »napačno«, pri odgovoru 0 »vrednost je prava« | ZAKLJUČENO | `557aa3b` | Claude, 24. 11. | #958 |
+| AUDIT-025 | P2 | Znanstveni kalkulator | V radianih `sin 30°` brez oklepaja = −0,0172 namesto 0,5 | ZAKLJUČENO | `557aa3b` | Claude, 24. 11. | #960 |
 | AUDIT-026 | P2 | Kalkulatorja | Isto besedilo, drug pomen: `1 000 + 1`, `2e3`, `3E-2`, `200 + 10 %`, `1.234,5`, `round(2,345; 2)`, `12 3456`, `∫(x; 0; 1)` | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
-| AUDIT-027 | P3 | Kalkulator, zapis | `fromTex` ne pozna `\binom`, `\lfloor`, `\lceil`; gnezdena absolutna vrednost po prikazu ni enoumna | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
-| AUDIT-028 | P2 | Kalkulator | Odvečni argument tiho zavržen: `log_2(0,5)` = −∞, `f(2,5)` pri lastni funkciji | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
+| AUDIT-027 | P3 | Kalkulator, zapis | `fromTex` ne pozna `\binom`, `\lfloor`, `\lceil`; gnezdena absolutna vrednost po prikazu ni enoumna | ZAKLJUČENO | `557aa3b` | Claude, 24. 11. | #962 |
+| AUDIT-028 | P2 | Kalkulator | Odvečni argument tiho zavržen: `log_2(0,5)` = −∞, `f(2,5)` pri lastni funkciji | ZAKLJUČENO | `557aa3b` | Claude, 24. 11. | #964 |
 | AUDIT-029 | P3 | Kalkulator, kombinatorika | `nCr(−5;2)` = 0 (15), `nCr(5,5;2)` = 12 (12,375) | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
 | AUDIT-030 | P2 | Kalkulator, enačbe | Celi koeficienti nad 2⁵³ in nad ~10¹⁰ z iracionalnimi: realne rešitve tiho izginejo | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
 | AUDIT-031 | P2 | Kalkulator, enačbe | Iracionalne rešitve (`x^3=2`) z »=« na 6 mest | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
 | AUDIT-032 | P3 | Kalkulator, enačbe | Kratnost rešitve ni prikazana; bližnji rešitvi videti enaki (`0,1` in `0,1`) | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
-| AUDIT-033 | P2 | Kalkulator, integrali | Zelo široke meje (`∫[0,10³⁰⁰] 1/(1+x²)` = 5·10⁻²³, `∫[±10¹⁰] e^(−x²)` = 0); gladki rezultati z »=« na 12 mest | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
+| AUDIT-033 | P2 | Kalkulator, integrali | Zelo široke meje (`∫[0,10³⁰⁰] 1/(1+x²)` = 5·10⁻²³, `∫[±10¹⁰] e^(−x²)` = 0); gladki rezultati z »=« na 12 mest | ZAKLJUČENO | `557aa3b` | Claude, 24. 11. | #950 |
 | AUDIT-034 | P2 | Kalkulator, brisanje | Brisanje levega operanda pokvari izris (`1/2` → `/2`, `x²` → `²`, `2,5` → `,5`, `2x+3=7` → `2x+=7`); 65/136 predlog | V IZVEDBI | `1565138` | Claude (matrika #965), 24. 11. | – |
 | AUDIT-035 | P2 | Kalkulator, izris vnosa | ∑/∏ s praznim telesom takoj po tipki pokaže surov TeX (preveriti, ali že odpravljeno z #956) | V PREVERJANJU | `1565138` | Claude (matrika #965), 24. 11. | – |
 | AUDIT-036 | P2 | Kalkulator, izris vnosa | Prazna predloga det/inverz → napaka KaTeX (preveriti, ali že odpravljeno z #956) | V PREVERJANJU | `1565138` | Claude (matrika #965), 24. 11. | – |
@@ -77,3 +77,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: AUDIT-016 (#952) in AUDIT-020 (#956) → ZAKLJUČENO: j odobril združitev, združeno v `main` (c792db3, 2e65d75); na evklid.app v nočni objavi.
 - 24. 11. 2026: AUDIT-017 in 018 (#953) ter AUDIT-015 (#954) → ZAKLJUČENO: j odobril združitev, združeno v `main`; na evklid.app v nočni objavi.
 - 24. 11. 2026: AUDIT-034 do AUDIT-040 najdeni z regresijsko matriko urejevalnika (#965). PR-ji popravkov: #940 (003), #945 (004), #946 (012), #947 (013), #948 (014), #965 (matrika) – v neodvisnem pregledu.
+- 24. 11. 2026: ZAKLJUČENO (j združil, objavljeno na evklid.app po zelenih testih): AUDIT-005 (#943), 010 (#937), 011 (#942), 012 (#946), 013 (#947), 006 (#944), 007 (#949), 008 in 033 (#950), 024 (#958), 025 (#960), 027 (#962), 028 (#964).
