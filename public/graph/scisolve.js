@@ -349,9 +349,11 @@ function formsOf(x, allowPi, dec6 = false) {
   }
   // končna decimalka: x sam (ne zaokrožen), le če je zapis kratek in natanko x
   if (Math.abs(x) < 1e15 && Math.abs(x) >= 1e-15)
-    for (let d = 0; d <= (dec6 ? 6 : 15); d++) {
+    for (let d = 0; d <= (!dec6 ? 15 : Math.abs(x) < 1e-3 ? 30 : 6); d++) {
       const t = x.toFixed(d);
       if (Number(t) !== x) continue;
+      // majhna števila kompleksni zapis kaže na 6 veljavnih mest (1·10⁻⁸)
+      if (dec6 && Math.abs(x) < 1e-3 && Number(x.toPrecision(6)) !== x) break;
       if (!out.some((o) => o.val === x && o.vk === "tex")) out.push({ val: x, vk: "dec", node: { k: "num", v: x, raw: t } });
       break;
     }
@@ -372,12 +374,14 @@ function verifiedForm(L, R, scope, v, re, im, tri = false, unit = "rad") {
     }
     return tri ? (no ? false : null) : null;
   }
+  // a + b·i: a racionalen ali (k/q)·ι z ι² = m₁; b·i = b·κ z κ² = −1 ali pri b = (k/q)·√m₂ kot (k/q)·κ z κ² = −m₂
+  // (x⁶ = 8: −√2/2 ± √6/2 i)
+  const toK = (n) => JSON.parse(JSON.stringify(n).replaceAll('"ι"', '"κ"'));
   for (const a of formsOf(re, false, true)) {
-    if (a.isq) continue;
     for (const b of formsOf(im, false, true)) {
-      // a + b·i; pri b = (k/q)·√m je b·i = (k/q)·ι z ι² = −m
-      const rep = b.isq ? { k: "+", a: a.node, b: b.node } : { k: "+", a: a.node, b: { k: "*", a: b.node, b: { k: "var", name: "ι" } } };
-      if (zeroAtExact(L, R, scope, v, rep, b.isq ? -b.isq : -1, undefined, unit)) return [a.val, b.val, a.vk === "dec" || b.vk === "dec" ? "dec" : "tex"];
+      const bi = b.isq ? toK(b.node) : { k: "*", a: b.node, b: { k: "var", name: "κ" } };
+      const rep = { k: "+", a: a.node, b: bi };
+      if (zeroAtExact(L, R, scope, v, rep, a.isq ?? -1, undefined, unit, b.isq ? -b.isq : -1)) return [a.val, b.val, a.vk === "dec" || b.vk === "dec" ? "dec" : "tex"];
     }
   }
   return null;

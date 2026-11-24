@@ -908,7 +908,7 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
  * transcendentno, je izraz 0 natanko takrat, ko so po ι² = isq vsi koeficienti 0. true / false; null, ko točno ne gre
  * (imenovalec s črko, e, sin, druge črke).
  */
-export function zeroAtExact(L, Rn, scope, v, rep, isq = -1, ms = LIVE_MS, unit = "rad") {
+export function zeroAtExact(L, Rn, scope, v, rep, isq = -1, ms = LIVE_MS, unit = "rad", isq2 = null) {
   const saved = deadline;
   const sub = (n) => {
     if (Array.isArray(n)) return n.map(sub);
@@ -1033,18 +1033,24 @@ export function zeroAtExact(L, Rn, scope, v, rep, isq = -1, ms = LIVE_MS, unit =
       if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
       const N = a.n.mul(b.d).sub(b.n.mul(a.d));
       if (N.zero) return true;
-      if (N.vars().some((w) => w !== "π" && w !== "ι")) return null;
-      const deg = N.degree("ι");
-      let re = new P();
-      let im = new P();
-      let pw = Q.of(1); // isq^⌊k/2⌋
-      for (let k = 0; k <= deg; k++) {
-        if (k && k % 2 === 0) pw = pw.mul(Q.of(isq));
-        const c = coefIn(N, "ι", k).scale(pw);
-        if (k % 2) im = im.add(c);
-        else re = re.add(c);
+      if (N.vars().some((w) => w !== "π" && w !== "ι" && w !== "κ")) return null;
+      // ι² = isq, κ² = isq2: člene razvrstimo po (ι^(e mod 2), κ^(e mod 2)); vsi štirje deli morajo biti 0
+      const parts = [new P(), new P(), new P(), new P()];
+      const sq = [Q.of(isq), Q.of(isq2 ?? 1)];
+      const powQ = (q, k) => {
+        let r = Q.of(1);
+        for (let t = 0; t < k; t++) r = r.mul(q);
+        return r;
+      };
+      for (const { m: mono, c } of N.terms()) {
+        const ei = mono["ι"] || 0;
+        const ek = mono["κ"] || 0;
+        const mm = { ...mono };
+        delete mm["ι"];
+        delete mm["κ"];
+        parts[(ei % 2) * 2 + (ek % 2)].addTerm(mm, c.mul(powQ(sq[0], ei >> 1)).mul(powQ(sq[1], ek >> 1)));
       }
-      return re.zero && im.zero;
+      return parts.every((x) => x.zero);
     });
   } catch {
     return null;
