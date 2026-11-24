@@ -102,8 +102,16 @@ function rewrite(n, ctx) {
     return { k: "/", a: { k: "call", f: "round", args: [{ k: "*", a: r(n.args[0]), b: p }] }, b: p };
   }
   if (n.k === "der" && n.a?.k === "tuple" && n.a.items.length === 2) {
-    const d = simplify(diff(r(n.a.items[0]), n.v, ctx));
-    return { k: "grp", a: substitute(d, { [n.v]: r(n.a.items[1]) }) };
+    // Simbolni odvod v točki a ne zadošča (AUDIT-017, AUDIT-018): ln x ima pri x = −1 »odvod« −1, |x| pri 0
+    // »odvod« 0. Zato poleg odvoda izračunamo še f(a), f(a ± h) in f(a ± 2h); __ODVOD_V_TOCKI (math.js)
+    // preveri, da je f v a definirana in da se levi in desni odvod ujemata.
+    const f = r(n.a.items[0]);
+    const a = r(n.a.items[1]);
+    const d = simplify(diff(f, n.v, ctx));
+    const num = (v) => ({ k: "num", v });
+    const h = { k: "*", a: num(1e-5), b: { k: "^", a: { k: "grp", a: { k: "+", a: num(1), b: { k: "call", f: "abs", args: [a] } } }, b: num(0.5) } };
+    const at = (k) => substitute(f, { [n.v]: k === 0 ? a : { k: k > 0 ? "+" : "-", a, b: Math.abs(k) === 1 ? h : { k: "*", a: num(2), b: h } } });
+    return { k: "call", f: "__ODVOD_V_TOCKI", args: [substitute(d, { [n.v]: a }), at(0), at(-1), at(1), at(-2), at(2), h] };
   }
   const out = { ...n };
   for (const key of ["a", "b", "other"]) if (n[key]) out[key] = r(n[key]);

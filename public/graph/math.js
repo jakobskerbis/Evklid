@@ -815,6 +815,29 @@ export function compile(node, ctx = {}) {
         };
       }
       if (f === "sort") return (s) => sorted([args.map((a) => a(s))].flat(2));
+      if (f === "__ODVOD_V_TOCKI") {
+        // odvod v točki (scicore.js, d/dx(f; a)): [f′(a), f(a), f(a − h), f(a + h), f(a − 2h), f(a + 2h), h]
+        return (s) => {
+          const v = args.map((a) => a(s));
+          if (v.some(Array.isArray)) return v[0];
+          const [d, f0, fm, fp, fm2, fp2, h] = v;
+          if (!Number.isFinite(f0)) throw new MathError("noDerivDomain");
+          // enostranska odvoda (2. reda): ujemata se, kjer je funkcija odvedljiva
+          const L = (3 * f0 - 4 * fm + fm2) / (2 * h);
+          const R = (-3 * f0 + 4 * fp - fp2) / (2 * h);
+          const ok = (x) => Number.isFinite(x) && Math.abs(x) < 1e4;
+          if (ok(L) && ok(R)) {
+            if (Math.abs(L - R) > 1e-3 * (1 + Math.abs(L) + Math.abs(R))) {
+              const nice = (x) => Math.round(x * 1e6) / 1e6;
+              throw new MathError("noDeriv", { left: nice(L), right: nice(R) });
+            }
+          } else if (Number.isFinite(d) && (Number.isFinite(fm) || Number.isFinite(fp)) && !(Number.isFinite(L) && Number.isFinite(R) && Math.abs(L - R) <= 1e-3 * (1 + Math.abs(L) + Math.abs(R)))) {
+            // skok (floor pri 1) ali rob območja (√x pri 0 z desne): odvod ne obstaja
+            throw new MathError("noDeriv");
+          }
+          return d;
+        };
+      }
       if (MULTI[f]) {
         const g = MULTI[f];
         const many = f === "min" || f === "max" || f === "gcd" || f === "lcm";
