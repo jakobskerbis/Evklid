@@ -272,7 +272,7 @@ test("Ask the tutor from an experiment or a 3D model: the chat opens with the qu
   assert.match(app, /\$\("#chat-return"\)\.addEventListener\("click", \(\) => chatReturnBack\(\)\)/);
   assert.match(html, /<button type="button" id="chat-return" class="secondary small chat-return" hidden><\/button>/);
   assert.match(app, /askTutorFrom\(text, \{ view: "lab", oznaka, open: \(\) => izLekcije && labFromLesson\(\) \}\)/);
-  assert.match(app, /askTutor: \(text, vrni = null\) => askTutorFrom\(text, vrni \? \{ view: "uci", \.\.\.vrni \} : null\)/);
+  assert.match(app, /askTutor: \(text, vrni = null\) => \{\s*askTutorFrom\(text, vrni \? \{ view: "uci", \.\.\.vrni \} : null\);/);
   // Poskus: gumb le pri odklenjenem poskusu, oznaka je ime poskusa.
   const lab = read("public/laboratorij.js");
   assert.match(lab, /x\.locked \|\| !D\.askTutor \? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>/);
@@ -283,7 +283,7 @@ test("Ask the tutor from an experiment or a 3D model: the chat opens with the qu
   for (const k of ["chat.returnTo", "lab.askText", "a3.askPartText"]) assert.ok(SL[k], k);
   assert.match(SL["chat.returnTo"], /\{ime\}/);
   assert.match(SL["lab.askText"], /\{title\}/);
-  assert.match(SL["a3.askPartText"], /\{model\}[\s\S]*\{ime\}/);
+  assert.match(SL["a3.askPartText"], /\{naslov\}[\s\S]*\{ime\}/);
   // Enotno ime gumba (j, 24. 11. 2026): nikjer več »Vprašaj Evklida«.
   assert.equal(SL["scan.askStep"], "Vprašaj inštruktorja");
   assert.doesNotMatch(SL["scan.askAll"], /Evklid/);

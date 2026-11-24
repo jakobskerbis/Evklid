@@ -3628,7 +3628,7 @@
   "a3.only": "Zobraziť len toto",
   "a3.ask": "Opýtať sa lektora",
   "a3.askText": "Vysvetli mi, čo je {ime} a akú má v tele úlohu.",
-  "a3.askPartText": "V 3D modeli „{model}“: vysvetli mi, čo je {ime} a akú má úlohu.",
+  "a3.askPartText": "V 3D modeli „{naslov}“: vysvetli mi, čo je {ime} a akú má úlohu.",
   "a3.layers": "Vrstvy",
   "a3.groups": "Skupiny štruktúr",
   "a3.expand": "Otvoriť",

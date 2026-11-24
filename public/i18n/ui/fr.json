@@ -3567,7 +3567,7 @@
   "a3.only": "Afficher seulement ceci",
   "a3.ask": "Demander au tuteur",
   "a3.askText": "Explique-moi ce qu’est {ime} et quel est son rôle dans le corps.",
-  "a3.askPartText": "Dans le modèle 3D « {model} » : explique-moi ce qu’est {ime} et quel est son rôle.",
+  "a3.askPartText": "Dans le modèle 3D « {naslov} » : explique-moi ce qu’est {ime} et quel est son rôle.",
   "a3.layers": "Couches",
   "a3.groups": "Groupes de structures",
   "a3.expand": "Ouvrir",

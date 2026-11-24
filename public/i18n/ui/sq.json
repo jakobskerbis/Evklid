@@ -3566,7 +3566,7 @@
   "a3.only": "Shfaq vetëm këtë",
   "a3.ask": "Pyet tutorin",
   "a3.askText": "Më shpjego çfarë është {ime} dhe çfarë roli ka në trup.",
-  "a3.askPartText": "Në modelin 3D “{model}”: më shpjego çfarë është {ime} dhe çfarë roli ka.",
+  "a3.askPartText": "Në modelin 3D “{naslov}”: më shpjego çfarë është {ime} dhe çfarë roli ka.",
   "a3.layers": "Shtresat",
   "a3.groups": "Grupet e strukturave",
   "a3.expand": "Hap",

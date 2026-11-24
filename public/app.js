@@ -4515,7 +4515,9 @@ initUci({
   stopReading,
   odprto,
   // vrni: { oznaka, open } iz 3D (atlas ali model): vrnitev iz klepeta znova odpre isti model ali strukturo.
-  askTutor: (text, vrni = null) => askTutorFrom(text, vrni ? { view: "uci", ...vrni } : null),
+  askTutor: (text, vrni = null) => {
+    askTutorFrom(text, vrni ? { view: "uci", ...vrni } : null);
+  },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
 });
 

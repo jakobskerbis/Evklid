@@ -3540,7 +3540,7 @@
   "a3.only": "이것만 보기",
   "a3.ask": "튜터에게 묻기",
   "a3.askText": "{ime}이(가) 무엇이고 몸에서 어떤 일을 하는지 설명해 줘.",
-  "a3.askPartText": "3D 모델 “{model}”에서: {ime}이(가) 무엇이고 어떤 역할을 하는지 설명해 줘.",
+  "a3.askPartText": "3D 모델 “{naslov}”에서: {ime}이(가) 무엇이고 어떤 역할을 하는지 설명해 줘.",
   "a3.layers": "층",
   "a3.groups": "구조 그룹",
   "a3.expand": "열기",

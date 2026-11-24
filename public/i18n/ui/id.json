@@ -3540,7 +3540,7 @@
   "a3.only": "Tampilkan ini saja",
   "a3.ask": "Tanya tutor",
   "a3.askText": "Jelaskan apa itu {ime} dan apa fungsinya di tubuh.",
-  "a3.askPartText": "Di model 3D “{model}”: jelaskan apa itu {ime} dan apa perannya.",
+  "a3.askPartText": "Di model 3D “{naslov}”: jelaskan apa itu {ime} dan apa perannya.",
   "a3.layers": "Lapisan",
   "a3.groups": "Kelompok struktur",
   "a3.expand": "Buka",

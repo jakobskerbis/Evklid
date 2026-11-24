@@ -3630,7 +3630,7 @@
   "a3.only": "Pokaż tylko to",
   "a3.ask": "Zapytaj korepetytora",
   "a3.askText": "Wyjaśnij mi, czym jest {ime} i jaką pełni funkcję w ciele.",
-  "a3.askPartText": "W modelu 3D „{model}”: wyjaśnij mi, czym jest {ime} i jaką pełni rolę.",
+  "a3.askPartText": "W modelu 3D „{naslov}”: wyjaśnij mi, czym jest {ime} i jaką pełni rolę.",
   "a3.layers": "Warstwy",
   "a3.groups": "Grupy struktur",
   "a3.expand": "Otwórz",

@@ -3596,7 +3596,7 @@
   "a3.only": "Prikaži samo ovo",
   "a3.ask": "Pitaj instruktora",
   "a3.askText": "Objasni mi šta je {ime} i kakvu ulogu ima u tijelu.",
-  "a3.askPartText": "U 3D modelu „{model}“: objasni mi šta je {ime} i kakvu ulogu ima.",
+  "a3.askPartText": "U 3D modelu „{naslov}“: objasni mi šta je {ime} i kakvu ulogu ima.",
   "a3.layers": "Slojevi",
   "a3.groups": "Grupe struktura",
   "a3.expand": "Otvori",

@@ -3816,7 +3816,7 @@ export default {
   "a3.only": "Pokaži samo to",
   "a3.ask": "Vprašaj inštruktorja",
   "a3.askText": "Razloži mi, kaj je {ime} in kakšno nalogo ima v telesu.",
-  "a3.askPartText": "V 3D modelu »{model}«: razloži mi, kaj je {ime} in kakšno vlogo ima.",
+  "a3.askPartText": "V 3D svetu, pri »{naslov}«: razloži mi, kaj je {ime} in kakšno vlogo ima.",
   "a3.layers": "Plasti",
   "a3.groups": "Skupine struktur",
   "a3.expand": "Odpri",

@@ -3571,7 +3571,7 @@
   "a3.only": "Mostrar só isto",
   "a3.ask": "Perguntar ao tutor",
   "a3.askText": "Explica-me o que é {ime} e que função tem no corpo.",
-  "a3.askPartText": "No modelo 3D «{model}»: explica-me o que é {ime} e que função tem.",
+  "a3.askPartText": "No modelo 3D «{naslov}»: explica-me o que é {ime} e que função tem.",
   "a3.layers": "Camadas",
   "a3.groups": "Grupos de estruturas",
   "a3.expand": "Abrir",

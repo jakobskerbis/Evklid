@@ -3598,7 +3598,7 @@
   "a3.only": "Arată doar asta",
   "a3.ask": "Întreabă tutorele",
   "a3.askText": "Explică-mi ce este {ime} și ce rol are în corp.",
-  "a3.askPartText": "În modelul 3D „{model}”: explică-mi ce este {ime} și ce rol are.",
+  "a3.askPartText": "În modelul 3D „{naslov}”: explică-mi ce este {ime} și ce rol are.",
   "a3.layers": "Straturi",
   "a3.groups": "Grupuri de structuri",
   "a3.expand": "Deschide",
