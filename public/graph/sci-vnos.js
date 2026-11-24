@@ -299,7 +299,8 @@ export function canInsert(toks, i) {
 // ---------- ujemanje besedila in TeX ----------
 
 const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
-const TKEY = { "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
+// grške črke kot v zapisu (math.js TEXVAR): kazalec za »α« je za \alpha (prej pred njo; pregled #974)
+const TKEY = { "θ": "theta", "α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "λ": "lambda", "μ": "mu", "φ": "varphi", "ω": "omega", "σ": "sigma", "ρ": "rho", "ε": "varepsilon", "τ": "tau", "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
 
 function textAtoms(s, hole) {
   const out = [];
@@ -325,6 +326,7 @@ function textAtoms(s, hole) {
  * Oklepaji in podpičja teh predlog v zapisu niso vidni, zato nimajo atomov; zaklepaj dobi »d x«, da je kazalec za
  * predlogo za dx (ne pred njim). Atomi obdržijo svoje položaje v besedilu (s, e), spremeni se le vrstni red.
  */
+const SUP_CH = /[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]/;
 function visualOrder(s, A) {
   const alias = new Map();
   const at = new Map();
@@ -380,6 +382,32 @@ function visualOrder(s, A) {
           out.push({ k: "d", s: c, e: c + 1 }, { k: "x", s: c, e: c + 1 });
           moved = true;
           i = c + 1;
+          continue;
+        }
+      }
+      // sin(x)² in sin(x)^(2): zapis je \sin^{2}\left(x\right) – potenca pred oklepajem; kazalec za ² je za oklepajem
+      const fn = /^(?:arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log)\(/.exec(s.slice(i));
+      if (fn && !/[A-Za-z]/.test(s[i - 1] || "")) {
+        const o = i + fn[0].length - 1;
+        const c = closeOf(o);
+        let e = -1;
+        if (c > 0 && c < hi) {
+          if (SUP_CH.test(s[c + 1] || "")) {
+            e = c + 1;
+            while (SUP_CH.test(s[e] || "")) e++;
+          } else if (s[c + 1] === "^" && s[c + 2] === "(") {
+            const cc = closeOf(c + 2);
+            if (cc > 0 && cc < hi) e = cc + 1;
+          }
+        }
+        if (e > 0) {
+          for (let k = i; k < o; k++) out.push(...(at.get(k) || []));
+          walk(c + 1, e);
+          walk(o, c);
+          // zaklepaj »konča« tudi potenco: kazalec na koncu (za ²) je za oklepajem, kjer je v zapisu konec
+          out.push(...(at.get(c) || []).map((x) => ({ ...x, e })));
+          moved = true;
+          i = e;
           continue;
         }
       }
@@ -901,14 +929,17 @@ export function stepCaret(base, text, p, d) {
 export const SAY_WORDS = ["plus", "minus", "times", "div", "eq", "ne", "lt", "gt", "le", "ge", "approx", "to", "infty", "pi", "comma", "hole", "caret", "int", "sum", "prod", "lim", "det", "sin", "cos", "tan", "cot", "ln", "log", "fact", "percent", "deg", "pm"];
 const SAY_SYM = { "+": "plus", "-": "minus", "−": "minus", "\\cdot": "times", "\\times": "times", "*": "times", "\\div": "div", "/": "div", ":": "div", "=": "eq", "\\ne": "ne", "\\neq": "ne", "<": "lt", ">": "gt", "\\lt": "lt", "\\gt": "gt", "\\le": "le", "\\leq": "le", "\\ge": "ge", "\\geq": "ge", "\\approx": "approx", "\\to": "to", "\\rightarrow": "to", "\\infty": "infty", "\\pi": "pi", ",": "comma", "!": "fact", "\\%": "percent", "%": "percent", "\\circ": "deg", "^\\circ": "deg", "\\degree": "deg", "\\pm": "pm" };
 const SAY_OP = { "\\int": "int", "\\sum": "sum", "\\prod": "prod", "\\lim": "lim", "\\det": "det", "\\sin": "sin", "\\cos": "cos", "\\tan": "tan", "\\cot": "cot", "\\ln": "ln", "\\log": "log" };
-const GREEK = { alpha: "alfa", beta: "beta", gamma: "gama", delta: "delta", varepsilon: "epsilon", epsilon: "epsilon", theta: "theta", lambda: "lambda", mu: "mi", sigma: "sigma", tau: "tau", varphi: "fi", phi: "fi", omega: "omega", rho: "ro" };
+/** Imena grških črk v ključu sc.say.greek (ločena z »|«, v tem vrstnem redu), v jeziku vmesnika. */
+export const SAY_GREEK = ["alpha", "beta", "gamma", "delta", "epsilon", "theta", "lambda", "mu", "sigma", "tau", "phi", "omega", "rho"];
+const GREEK_TEX = { varepsilon: "epsilon", varphi: "phi" };
 
 /**
  * TeX zapisa vnosa → besedilo za bralnik zaslona.
- * say(key, vars): prevod sc.say.<key> (range, frac, fracLong, pow, sub, at, sqrt, root, abs, binom, paren, matrix, deriv);
+ * say(key, vars): prevod sc.say.<key> (range, frac, fracLong, pow, powLong, sub, at, sqrt, sqrtLong, root, rootLong, abs, binom,
+ * paren, matrix, deriv); greek: { ime: beseda } za SAY_GREEK;
  * words: { ime: beseda } za SAY_WORDS; parse: katex.__parse.
  */
-export function texSpeech(tex, { say, words, parse }) {
+export function texSpeech(tex, { say, words, greek = {}, parse }) {
   let tree;
   try {
     tree = parse(String(tex ?? ""), { trust: TRUST, strict: "ignore", throwOnError: true });
@@ -916,6 +947,10 @@ export function texSpeech(tex, { say, words, parse }) {
     return "";
   }
   const w = (k) => words[k] ?? k;
+  // en člen (brez presledka; beseda »kazalec« ne šteje)
+  const one = (x) => !/ /.test(x.replace(w("caret"), "").trim());
+  // več členov: na vrhnji ravni skupine je + ali − (√(x²+1), ne √(x²))
+  const terms = (g) => list(g?.type === "ordgroup" ? g.body : g).some((x) => x?.type === "atom" && x.family === "bin" && /^(\+|-|−|\\pm)$/.test(x.text));
   const list = (body) => (Array.isArray(body) ? body : body ? [body] : []);
   const sp = (nodes) => {
     const out = [];
@@ -941,7 +976,7 @@ export function texSpeech(tex, { say, words, parse }) {
       case "textord": {
         if (n.text in SAY_SYM) return w(SAY_SYM[n.text]);
         const g = /^\\([a-zA-Z]+)$/.exec(n.text);
-        if (g) return g[1] === "square" ? w("hole") : GREEK[g[1]] ?? g[1];
+        if (g) return g[1] === "square" ? w("hole") : greek[GREEK_TEX[g[1]] ?? g[1]] ?? g[1];
         return n.text;
       }
       case "atom":
@@ -973,7 +1008,8 @@ export function texSpeech(tex, { say, words, parse }) {
         else if (n.sub) s = n.base?.type === "op" ? `${s} ${node(n.sub)}` : say("sub", { a: s, b: node(n.sub) });
         if (n.sup) {
           const sup = node(n.sup);
-          s = sup.startsWith(w("deg")) ? `${s} ${sup}` : say("pow", { a: s, b: sup });
+          // eksponent iz več členov: povemo, kje se konča (»2 na x plus 1, konec potence« ≠ »2 na x, plus 1«)
+          s = sup.startsWith(w("deg")) ? `${s} ${sup}` : say(terms(n.sup) ? "powLong" : "pow", { a: s, b: sup });
         }
         return s;
       }
@@ -984,11 +1020,14 @@ export function texSpeech(tex, { say, words, parse }) {
         const dx = /^d ?(\S+)$/.exec(b);
         if (a === "d" && dx) return say("deriv", { x: dx[1] });
         // sestavljen števec ali imenovalec: povemo, kje se začne in konča (»1 plus 2 skozi 3 plus 4« je dvoumno)
-        const one = (x) => !/ /.test(x.replace(w("caret"), "").trim());
         return say(one(a) && one(b) ? "frac" : "fracLong", { a, b });
       }
-      case "sqrt":
-        return n.index ? say("root", { k: node(n.index), a: node(n.body) }) : say("sqrt", { a: node(n.body) });
+      case "sqrt": {
+        // korenjenec iz več členov: »koren iz x na 2 plus 1, konec korena« ≠ »koren iz x na 2, plus 1«
+        const a = node(n.body);
+        const long = terms(n.body) ? "Long" : "";
+        return n.index ? say(`root${long}`, { k: node(n.index), a }) : say(`sqrt${long}`, { a });
+      }
       case "leftright": {
         const a = sp(n.body);
         if (n.left === "|" || n.left === "\\vert" || n.left === "\\lvert") return say("abs", { a });

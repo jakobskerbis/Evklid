@@ -6,7 +6,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -597,12 +597,13 @@ export function createScientific(root, opts) {
   }
   // bralnik zaslona: opis matematike namesto surovega vnosa (AUDIT-040), z besedami v jeziku vmesnika
   const sayWords = () => Object.fromEntries(t("sc.say.words").split("|").map((w, i) => [SAY_WORDS[i], w.trim()]));
+  const sayGreek = () => Object.fromEntries(t("sc.say.greek").split("|").map((w, i) => [SAY_GREEK[i], w.trim()]));
   function speak(tex) {
     const el = $(".sc-say");
     if (!el) return;
     let txt = "";
     try {
-      txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), parse: window.katex.__parse }) : "";
+      txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), greek: sayGreek(), parse: window.katex.__parse }) : "";
     } catch {}
     if (el.textContent !== txt) el.textContent = txt;
   }
