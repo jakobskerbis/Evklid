@@ -162,7 +162,12 @@ test("lesson links: only lab experiments and 3D views that the catalogue has for
 test("3D world: the /3d page in a frame closes itself and asks the tutor through the app", () => {
   const stran = read("public/3d/stran.js");
   assert.match(stran, /else if \(vgrajeno\) starsu\(\{ tip: "zapri3d" \}\)/);
-  assert.match(read("public/3d/atlas.js"), /if \(vgrajeno\) \{\s*starsu\(\{ tip: "vprasaj", besedilo \}\)/);
+  // »Vprašaj inštruktorja« iz atlasa in iz okna dela v modelu gre skozi isto pot (vgrajeno.js) z naslovom za vrnitev.
+  assert.match(read("public/3d/vgrajeno.js"), /if \(vgrajeno\) \{\s*starsu\(\{ tip: "vprasaj", besedilo, vrni, oznaka \}\)/);
+  assert.match(read("public/3d/atlas.js"), /vprasajInstruktorja\(t\("a3\.askText"[^;]*vrni: `atlas\?izberi=\$\{encodeURIComponent\(r\.id\)\}`/);
+  assert.match(stran, /vprasajInstruktorja\(t\("a3\.askPartText"[\s\S]*?vrni: `\$\{id\}\?del=\$\{encodeURIComponent\(d\.id\)\}`/);
+  assert.match(stran, /odpriModel\(mount, mod, \{[^}]*vprasaj \}\)/);
+  assert.match(read("public/3d/pregledovalnik.js"), /typeof opts\.vprasaj === "function"/);
   const uci = read("public/uci-se.js");
   assert.match(uci, /e\.origin !== location\.origin \|\| e\.source !== full\.frame\.contentWindow/);
   assert.match(uci, /frame\.src = `\/3d\?vgrajeno=1#/);
@@ -223,4 +228,72 @@ test("Back: experiment opened from a lesson returns to the lesson, otherwise to 
   u.setUciTab("lab");
   assert.equal(u.uciBack(once), false);
   assert.equal(u.uciTab(), "lab");
+});
+
+test("Back: a lesson opened from an experiment's topic returns to the experiment, not to the textbook index", async () => {
+  mem.clear();
+  const u = await load(6);
+  const calls = [];
+  u.initUci({ showTextbook: () => calls.push("textbook"), showLab: () => calls.push("lab"), stopReading() {} });
+  u.setUciTab("lab");
+  u.lessonFromLab();
+  u.setUciTab("textbook"); // openLesson izbere Učbenik: oznaka ostane
+  assert.equal(u.uciBack({ textbookBack: () => true, labBack: () => false }), true);
+  assert.equal(u.uciTab(), "lab");
+  assert.deepEqual(calls, ["lab"]);
+  // Drugič Nazaj v lekciji (ki ni prišla iz poskusa): samo zapre lekcijo.
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => true, labBack: () => false }), true);
+  assert.equal(u.uciTab(), "textbook");
+  // Odhod iz »Uči se« ali drug zavihek pozabi oznako.
+  u.lessonFromLab();
+  u.leaveUci();
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => false, labBack: () => false }), false);
+  u.lessonFromLab();
+  u.setUciTab("3d");
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => false, labBack: () => false }), false);
+  // Poskus iz lekcije: app.js prebere oznako, preden gre v klepet, in jo po vrnitvi postavi nazaj.
+  u.setUciTab("lab");
+  u.labFromLesson();
+  assert.equal(u.labIsFromLesson(), true);
+  u.leaveUci();
+  assert.equal(u.labIsFromLesson(), false);
+});
+
+test("Ask the tutor from an experiment or a 3D model: the chat opens with the question typed in and leads back to the same place", () => {
+  const app = read("public/app.js");
+  // En pomočnik za vse: vrnitev (← , tipka Nazaj, gumb »Nazaj na: …«) prek state.chatReturn, vprašanje samo vpisano.
+  const fn = app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 400);
+  assert.match(fn, /state\.chatReturn = /);
+  assert.match(fn, /showView\("chat"\);\s*fillInput\(text\);/);
+  assert.match(app, /Object\.defineProperty\(state, "chatReturn"/);
+  assert.match(app, /\$\("#chat-return"\)\.addEventListener\("click", \(\) => chatReturnBack\(\)\)/);
+  assert.match(html, /<button type="button" id="chat-return" class="secondary small chat-return" hidden><\/button>/);
+  assert.match(app, /askTutorFrom\(text, \{ view: "lab", oznaka, open: \(\) => izLekcije && labFromLesson\(\) \}\)/);
+  assert.match(app, /askTutor: \(text, vrni = null\) => askTutorFrom\(text, vrni \? \{ view: "uci", \.\.\.vrni \} : null\)/);
+  // Poskus: gumb le pri odklenjenem poskusu, oznaka je ime poskusa.
+  const lab = read("public/laboratorij.js");
+  assert.match(lab, /x\.locked \|\| !D\.askTutor \? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>/);
+  assert.match(lab, /if \(x && !x\.locked\) D\.askTutor\?\.\(t\("lab\.askText", \{ title: x\.title \}\), x\.title\)/);
+  // Sporočilo iz okvirja /3d: naslov za vrnitev gre v askTutor.
+  const uci = read("public/uci-se.js");
+  assert.match(uci, /const vrni = vrnitev3d\(msg\.vrni, msg\.oznaka\);\s*close3d\(\);\s*D\.askTutor\(msg\.besedilo\.slice\(0, 2000\), vrni\);/);
+  for (const k of ["chat.returnTo", "lab.askText", "a3.askPartText"]) assert.ok(SL[k], k);
+  assert.match(SL["chat.returnTo"], /\{ime\}/);
+  assert.match(SL["lab.askText"], /\{title\}/);
+  assert.match(SL["a3.askPartText"], /\{model\}[\s\S]*\{ime\}/);
+  // Enotno ime gumba (j, 24. 11. 2026): nikjer več »Vprašaj Evklida«.
+  assert.equal(SL["scan.askStep"], "Vprašaj inštruktorja");
+  assert.doesNotMatch(SL["scan.askAll"], /Evklid/);
+});
+
+test("3D return address from the frame is checked: only a model id and short simple parameters", async () => {
+  const u = await load(7);
+  const ok = u.vrnitev3d("celica-zivalska?del=jedro", "Živalska celica: jedro");
+  assert.equal(ok.oznaka, "Živalska celica: jedro");
+  assert.equal(typeof ok.open, "function");
+  assert.equal(u.vrnitev3d("atlas?izberi=Femur.r", "  Stegnenica ").oznaka, "Stegnenica");
+  for (const bad of ["../x", "Celica", "a b", "", 5, null, "x".repeat(400)]) assert.equal(u.vrnitev3d(bad, "x"), null, String(bad));
 });

@@ -6,7 +6,7 @@ import { icon } from "./icons.js";
 import { mountSim } from "./sim/index.js";
 import { isStoreApp } from "./pay-ui.js";
 
-let D = null; // { api, escapeHtml, getStudent, openLesson }
+let D = null; // { api, escapeHtml, getStudent, openLesson, askTutor(text, oznaka) }
 let data = null; // { sid, myPath, experiments, offers }
 let openKey = null; // odprt poskus
 let shownKey = null; // poskus, ki je zdaj narisan
@@ -28,6 +28,12 @@ export function initLab(deps) {
     const topic = e.target.closest("[data-lab-topic]");
     if (topic) return D.openLesson(topic.dataset.labTopic);
     if (e.target.closest("[data-lab-back]")) return labBack();
+    // »Vprašaj inštruktorja«: klepet z vpisanim začetkom vprašanja; poskus ostane odprt, vrnitev iz klepeta (app.js).
+    if (e.target.closest("[data-lab-ask]")) {
+      const x = find(openKey);
+      if (x && !x.locked) D.askTutor?.(t("lab.askText", { title: x.title }), x.title);
+      return;
+    }
     if (e.target.closest("[data-lab-upgrade]")) document.querySelector("#account-tab")?.click();
   });
   // Esc v odprtem poskusu: nazaj na seznam (ne, ko je odprt meni ali okno, ki Esc porabi samo).
@@ -156,6 +162,7 @@ function renderExperiment() {
     <button type="button" class="ghost back lab-back" data-lab-back>${icon("arrow-left")}<span>${esc(t("nav.lab"))}</span></button>
     <h2 class="lab-title" dir="auto">${icon("flask-conical")}<span>${esc(x.title)}</span></h2>
     <p class="lab-desc" dir="auto">${esc(x.desc)}</p>
+    ${x.locked || !D.askTutor ? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>${icon("message-circle")}<span>${esc(t("task.askTutor"))}</span></button>`}
     ${
       x.locked
         ? `<section class="card tb-locked lab-locked"><h2>${icon("lock")}<span>${esc(t("lab.lockedTitle", { title: x.title }))}</span></h2>
