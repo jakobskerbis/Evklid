@@ -1212,7 +1212,34 @@ export function compile(node, ctx = {}) {
         const from = Math.ceil(lo(s));
         let to = Math.floor(hi(s));
         if (!Number.isFinite(from)) return NaN;
-        if (to === Infinity) to = from + 99999; // približek za neskončno vrsto
+        // neskončna vrsta ali produkt (AUDIT-002): konvergenca in vrednost z oceno napake, ne delna vsota 100 000 členov
+        if (to === Infinity) {
+          if (OVERRIDE && NEST === 0) return OVERRIDE.values[OVERRIDE.i++] ?? NaN;
+          const sc = Object.create(s);
+          const term = (k) => {
+            sc[v] = k;
+            const t = a(sc);
+            return typeof t === "number" ? t : NaN;
+          };
+          // ∏(1 + bₙ): ln(1 + bₙ) z log1p(bₙ) – faktor 1 + 1/n² ima v plavajoči vejici le ~16 mest skupaj (bₙ bi se izgubil)
+          let r;
+          const body = node.a?.k === "grp" ? node.a.a : node.a;
+          const one = (n) => n?.k === "num" && n.v === 1;
+          const bNode = isProd && body && (body.k === "+" || body.k === "-") ? (one(body.a) ? body.b : body.k === "+" && one(body.b) ? body.a : null) : null;
+          if (bNode) {
+            const bf = c(bNode);
+            const minus = body.k === "-";
+            const lt = (k) => {
+              sc[v] = k;
+              const b = bf(sc);
+              return typeof b === "number" ? Math.log1p(minus ? -b : b) : NaN;
+            };
+            const q = seriesInfo(lt, from, false);
+            r = q.diverges || q.unknown || !Number.isFinite(q.value) ? { ...q, value: NaN } : { series: true, value: Math.exp(q.value), err: Math.exp(q.value) * (Math.expm1(q.err) || q.err), abs: Math.exp(q.value) };
+          } else r = seriesInfo(term, from, isProd);
+          if (TRACE && NEST === 0) TRACE.push(r);
+          return r.value;
+        }
         if (!Number.isFinite(to)) return NaN;
         if (to - from >= 100000) throw new MathError("sumLimit"); // največ 100 000 členov
         const sc = Object.create(s);
@@ -1228,6 +1255,124 @@ export function compile(node, ctx = {}) {
     default:
       throw new MathError("unknown", { k: node.k });
   }
+}
+
+// ---------- neskončne vrste in produkti (AUDIT-002) ----------
+// Prej: delna vsota 100 000 členov kot vrednost (∑1/n = 12,09, ∑n = 5000050000, ∑(−1)ⁿ = 0, ∑1/n² = 1,6449241 z napačno
+// 5. decimalko). Zdaj: 1) členi, ki ne gredo proti 0 (ali padajo počasneje od 1/n pri vrsti z enakim predznakom), →
+// vrsta divergira; 2) izmenična vrsta s padajočimi členi: pospešek Cohen–Villegas–Zagier; 3) hitro padajoči členi
+// (geometrijsko ali hitreje): neposredna vsota do zanemarljivega člena; 4) potenčno padajoči členi (|aₙ| ~ C·n^(−p),
+// p > 1,15): Euler–Maclaurin z repom kot integralom. Mejni primeri (p blizu 1: 1/(n·ln n) divergira, 1/(n·ln² n) ne)
+// vrnejo »unknown«. Vsak izid ima err (kot integrateInfo), zato se prikaže z »≈« in samo z zanesljivimi mesti.
+// Produkt ∏aₙ je exp(∑ ln aₙ) (aₙ > 0); če ∑ ln aₙ divergira, produkt ne obstaja (pove kalkulator).
+const SER_FAR = [1e6, 1e9, 1e12];
+export function seriesInfo(term, from, isProd = false) {
+  const out = (o) => ({ series: true, ...o });
+  if (isProd) {
+    // ničelni faktor: produkt je 0
+    for (let k = from; k < from + 1000; k++) if (term(k) === 0) return out({ value: 0, err: 0, abs: 0 });
+    const neg = [from + 1000, from + 1e6].some((k) => term(k) < 0);
+    if (neg) return out({ value: NaN, unknown: true });
+    // faktorji blizu 1 brez zapisa 1 + bₙ: ln faktorja nima dovolj mest (zapis 1 + bₙ gre po poti z log1p)
+    if (Math.abs(term(from + 1000) - 1) < 1e-4) return out({ value: NaN, unknown: true });
+    const r = seriesInfo((k) => Math.log(term(k)), from, false);
+    if (r.diverges || r.unknown || !Number.isFinite(r.value)) return { ...r, value: NaN };
+    const value = Math.exp(r.value);
+    return out({ value, err: value * (Math.expm1(r.err) || r.err), abs: value });
+  }
+  const t0 = term(from);
+  if (!Number.isFinite(t0)) return out({ value: NaN, unknown: true });
+  const far = SER_FAR.map((k) => term(from + k));
+  const farAbs = far.map(Math.abs);
+  if (far.some((y) => Number.isNaN(y))) return out({ value: NaN, unknown: true });
+  if (farAbs.some((y) => y === Infinity)) return out({ value: NaN, diverges: true });
+  const sgn = (k) => Math.sign(term(k));
+  const alt = [1e3, 1e6].every((k) => sgn(from + k) * sgn(from + k + 1) < 0 && sgn(from + k + 1) * sgn(from + k + 2) < 0);
+  // lokalni eksponent padanja med 10⁹ in 10¹² (|a| ~ n^(−p)); členi, ki so že 0 (podtok), padajo hitro
+  const tiny = farAbs[2] < 1e-290;
+  const p = tiny ? Infinity : farAbs[1] > 0 ? -Math.log10(farAbs[2] / farAbs[1]) / 3 : Infinity;
+  if (alt) {
+    // členi ne gredo proti 0 (−1)ⁿ, (−1)ⁿ·n/(n + 1): divergira
+    if (!(p > 0.01) && !tiny) return out({ value: NaN, diverges: true });
+    // Cohen–Villegas–Zagier (alg. 1) na repu od m naprej, začetek sešteto neposredno
+    const m = from + 20;
+    let head = 0;
+    for (let k = from; k < m; k++) head += term(k);
+    // CVZ predpostavi a_k = (−1)^k·b_k z b_k = |člen|; zgoraj: znak vzamemo iz členov samih
+    const sign0 = Math.sign(term(m));
+    const cvzAbs = (n) => {
+      let d = (3 + Math.sqrt(8)) ** n;
+      d = (d + 1 / d) / 2;
+      let b = -1;
+      let c = -d;
+      let sum = 0;
+      for (let k = 0; k < n; k++) {
+        c = b - c;
+        sum += c * Math.abs(term(m + k));
+        b = ((k + n) * (k - n) * b) / ((k + 0.5) * (k + 1));
+      }
+      return sign0 * (sum / d);
+    };
+    const A = cvzAbs(30);
+    const B = cvzAbs(42);
+    const value = head + B;
+    const err = Math.abs(A - B) + 1e-15 * (Math.abs(head) + Math.abs(B)) * 10;
+    if (!Number.isFinite(value)) return out({ value: NaN, unknown: true });
+    return out({ value, err, abs: Math.abs(head) + Math.abs(B) });
+  }
+  // enak predznak (od nekod naprej)
+  if (!tiny && p < 0.9) return out({ value: NaN, diverges: true }); // ∑1/n^0,5, ∑n, ∑1, ∑1/ln n
+  // n·aₙ → C ≠ 0 (harmonična vrsta, 2/(n + 1), 1/(3n − 1)): primerjava z ∑1/n – divergira
+  const na = SER_FAR.map((k, i) => (from + k) * far[i]);
+  if (!tiny && na.every((y) => Math.abs(y) > 1e-12) && Math.abs(na[2] / na[1] - 1) < 1e-4 && Math.abs(na[1] / na[0] - 1) < 1e-3) return out({ value: NaN, diverges: true });
+  if (!tiny && p <= 1.15) return out({ value: NaN, unknown: true }); // 1/n, 1/(n·ln n), 1/n^1,1: ne ločimo zanesljivo
+  // hitro padanje: razmerje sosednjih členov
+  const ratio = Math.abs(term(from + 200) / term(from + 199));
+  if (tiny || ratio < 0.98) {
+    let sum = 0;
+    let comp = 0; // Kahan
+    let last = 0;
+    let k = from;
+    for (; k < from + 2e6; k++) {
+      const y = term(k);
+      if (!Number.isFinite(y)) return out({ value: NaN, unknown: true });
+      const z = y - comp;
+      const tt = sum + z;
+      comp = tt - sum - z;
+      sum = tt;
+      last = Math.abs(y);
+      if (k > from + 50 && last <= 1e-18 * Math.abs(sum)) break;
+      if (k > from + 50 && last === 0) break;
+    }
+    const r2 = Math.abs(term(k + 1) / (term(k) || 1));
+    const tail = last * (Number.isFinite(r2) && r2 < 1 ? r2 / (1 - r2) : 1e3);
+    return out({ value: sum, err: tail + 2e-16 * Math.abs(sum) * Math.log2(k - from + 2), abs: Math.abs(sum) });
+  }
+  // potenčno padanje: Euler–Maclaurin z repom ∫_N^∞
+  const em = (N) => {
+    let head = 0;
+    let comp = 0;
+    for (let k = from; k < N; k++) {
+      const z = term(k) - comp;
+      const tt = head + z;
+      comp = tt - head - z;
+      head = tt;
+    }
+    const tailInt = integrateInfo((x) => term(x), N, Infinity, 1e-12);
+    const h = N * 1e-3;
+    const d1 = (term(N + h) - term(N - h)) / (2 * h);
+    const d3 = (term(N + 2 * h) - 2 * term(N + h) + 2 * term(N - h) - term(N - 2 * h)) / (2 * h ** 3);
+    return { value: head + tailInt.value + term(N) / 2 - d1 / 12 + d3 / 720, err: tailInt.err, ok: Number.isFinite(tailInt.value) && !tailInt.diverges };
+  };
+  const mid = term(from + 1000.5);
+  const lo = Math.min(term(from + 1000), term(from + 1001));
+  const hi = Math.max(term(from + 1000), term(from + 1001));
+  if (!(mid >= lo && mid <= hi)) return out({ value: NaN, unknown: true }); // člen ni gladek v realnem n (n!, floor)
+  const E1 = em(from + 500);
+  const E2 = em(from + 1000);
+  if (!E1.ok || !E2.ok) return out({ value: NaN, unknown: true });
+  const err = Math.abs(E2.value - E1.value) + E2.err + 1e-15 * Math.abs(E2.value) * 10;
+  return out({ value: E2.value, err, abs: Math.abs(E2.value) });
 }
 
 // ---------- integral ----------

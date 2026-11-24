@@ -351,6 +351,10 @@ export function createScientific(root, opts) {
         return t("sc.errEquation");
       case "sumLimit":
         return t("sc.errSumLimit");
+      case "sumDiverge":
+        return t(e.info?.prod ? "sc.errProdDiverge" : "sc.errSumDiverge");
+      case "sumUnknown":
+        return t("sc.errSumUnknown");
       case "intDiverge":
       case "intUndefined":
       case "intUnknown":
