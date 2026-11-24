@@ -172,7 +172,7 @@ export function withNote(messages, note) {
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
 export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
 
-// Ožje za račune in končne vrednosti (AUDIT-057): »če«, »ali« in »?« v razlagi so pogosti (»Če najprej množimo:
+// Ožje za račune in končne vrednosti (AUDIT-066): »če«, »ali« in »?« v razlagi so pogosti (»Če najprej množimo:
 // $7 \cdot 8 = 54$«, način A konča z vprašanjem), zato ne izklopijo vrstice. Preskoči se le vrstica z učenčevo ali
 // namerno napačno trditvijo, pogojnik (»bi dobil«, »would«) in račun, ki je sam vprašanje (»Ali je $7 \cdot 8 = 54$?«).
 // Kemijske preverbe še naprej uporabljajo širši SKIP_LINE.

@@ -1143,9 +1143,9 @@ test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil'
   assert.equal((await run(null)).calls, 0, "brez stikala (privzeto v kodi) OŠ nima pregleda");
 });
 
-// AUDIT-057: »če«, »ali« in »?« v razlagi ne izklopijo preverjanja računa in končne vrednosti.
+// AUDIT-066: »če«, »ali« in »?« v razlagi ne izklopijo preverjanja računa in končne vrednosti.
 const R = String.raw;
-test("AUDIT-057: »Če najprej množimo: 7 · 8 = 54« dobi popravek, učenčev zapis in vprašanje ne", () => {
+test("AUDIT-066: »Če najprej množimo: 7 · 8 = 54« dobi popravek, učenčev zapis in vprašanje ne", () => {
   const q = "Koliko je 7 krat 8 plus 2?";
   for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, R`Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.`, R`Če računamo po vrsti: $3 + 4 \cdot 2 = 14$.`]) {
     assert.match(codeFindings(a, presolve(q, { first: true }), q).issue || "", /does not hold/, a);
