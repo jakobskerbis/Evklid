@@ -424,7 +424,7 @@ export function labTitracija(el) {
     const sampleV = f ? (pip ? f.Vs * Math.min(1, pip.t / pip.dur) : f.V) : 0;
     const col = f && !pip ? rgb(B.colour()) : "rgb(247,250,252)";
     const R = B.reading();
-    // Fotografski prikaz (foto.js, privzeto izklopljen): iste količine iz modela, položene na izrisane sloje.
+    // Fotografski prikaz (foto.js, privzeto vklopljen): iste količine iz modela, položene na izrisane sloje.
     const fotoOk = foto.risi((o, meta) => risiTitracijo(o, meta, { polna: B.filled, R, pipa: B.tap, mehur: b.mehur, V: sampleV, barva: f ? (pip ? [247, 250, 252] : B.colour()) : null, ph: phT.get(),
       blisk: f && !pip ? B.flash : 0, bliskBarva: f && f.ind !== "brez" ? indicatorColor(INDIKATORJI[f.ind], 13) : null, kapljice: drops, curek: B.tap === "curek" && sampleV > 0, miruje: reduced }));
     if (!fotoOk) risba(f, b, sampleV, col, R);

@@ -1,5 +1,5 @@
 // Fotografski prikaz laboratorija (public/sim/foto.js, scripts/lab-foto/; docs/laboratorij.md »Fotografski prikaz«).
-// Brez brskalnika: stikalo je privzeto izklopljeno, sloji in sidra v meta.json se ujemajo z modeli poskusov (merilo
+// Brez brskalnika: stikalo je privzeto vklopljeno, sloji in sidra v meta.json se ujemajo z modeli poskusov (merilo
 // birete, prostornina bučke, menisk iz Young–Laplaceove enačbe, barvne kode uporov, vezava in polariteta vodnikov),
 // slike obstajajo v vseh gostotah in so dovolj majhne za telefon (≤ 600 KB na poskus).
 import test from "node:test";

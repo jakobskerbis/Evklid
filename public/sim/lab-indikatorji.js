@@ -356,7 +356,7 @@ export function labDokaz(el) {
   function draw() {
     svg.replaceChildren();
     svg.setAttribute("aria-label", `Stojalo z epruvetami: ${rack.map((t) => `${t.t} ${t.p}`).join(", ") || "prazno"}. Vodna kopel ${heat.get() ? "vre" : "ne greje"}.`);
-    // Fotografski prikaz (foto.js, privzeto izklopljen): barve iz modela na izrisanih epruvetah.
+    // Fotografski prikaz (foto.js, privzeto vklopljen): barve iz modela na izrisanih epruvetah.
     if (foto.risi((o, meta) => risiDokaz(o, meta, { stojalo: rack, greje: heat.get(), ocala: B.goggles }))) return;
     s("line", { x1: 0, y1: 176, x2: W, y2: 176, class: "lab-tit-bench" }, svg);
     s("rect", { x: 14, y: 120, width: 250, height: 10, rx: 2, class: "lab-ind-rack" }, svg);
