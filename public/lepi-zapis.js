@@ -9,7 +9,8 @@
 // 3/4 → (3)/(4), da se izriše kot ulomek (prej ³⁄₄).
 
 // Zamenjave na koncu besedila pred kazalcem. Vsaka vrne [nov konec, tek] ali null. Tek »den« pomeni, da se naslednja
-// vpisana števka doda v imenovalec ((3)/(4) + 5 → (3)/(45)), »/« takoj za njim pa vrne prvotni zapis (datum 1/2/2025).
+// vpisana števka doda v imenovalec ((3)/(4) + 5 → (3)/(45)), »/«, ».« ali »,« takoj za njim pa vrne prvotni zapis (datum
+// 1/2/2025, decimalni imenovalec 3/4,5).
 const RULES = [
   [/\*$/, () => ["·"]],
   [/(?<!\p{L})sqrt$/u, () => ["√"]],
@@ -31,7 +32,8 @@ export function prettify(before, typed, run = null) {
   // Nadaljevanje ulomka: števka takoj za imenovalcem gre vanj, »/« vrne prvotni zapis (datum, ne ulomek).
   if (run?.kind === "den" && before.length === run.at + 1 && before[run.at - 1] === ")") {
     if (/^\d$/.test(typed)) return { from: run.at - 1, text: typed + ")", undo: ")", run: { ...run, at: run.at + 1, orig: run.orig + typed } };
-    if (typed === "/") return { from: run.from, text: run.orig + "/", run: null };
+    // »/« (datum 1/2/2025), ».« ali »,« (decimalni imenovalec 3/4,5) vrne prvotni zapis: to ni ulomek dveh celih števil.
+    if (/^[/.,]$/.test(typed)) return { from: run.from, text: run.orig + typed, run: null };
   }
   for (const [re, fn] of RULES) {
     const m = before.match(re);
@@ -46,6 +48,7 @@ export function prettify(before, typed, run = null) {
 /** Polje (textarea) med pisanjem sproti lepša. Kliči pred drugimi poslušalci »input«. */
 export function attachPrettify(field) {
   let run = null;
+  let lasten = false; // »input«, ki ga sproži zamenjava sama
   let last = null; // zadnja zamenjava: { from, text, orig } – Backspace takoj po njej vrne prvotni zapis (3/4, *, sqrt)
   const apply = (typed) => {
     const at = field.selectionStart;
@@ -57,18 +60,30 @@ export function attachPrettify(field) {
     if (!r) return;
     field.setRangeText(r.text, r.from, at, "end");
     last = { from: r.from, text: r.text, orig: r.undo ?? before.slice(r.from) };
+    // setRangeText ne sproži »input«: izris v polju (predogled-vnosa.js), višina in osnutek so že obdelali vneseni znak,
+    // ne zamenjave (3/4 → (3)/(4)). Lasten dogodek jih posodobi; ta poslušalec ga preskoči.
+    lasten = true;
+    try {
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    } finally {
+      lasten = false;
+    }
   };
-  field.addEventListener("keydown", (e) => {
-    if (e.key !== "Backspace" || !last || e.ctrlKey || e.metaKey || e.altKey) return;
+  // Na oknu v fazi zajema: pred ⌫ izrisanega polja (predogled-vnosa.js, poslušalec na document), ki bi v ulomku
+  // (3)/(4) le premaknil kazalec v imenovalec. Razveljavitev zamenjave ima prednost; sicer ⌫ dela kot vedno.
+  addEventListener("keydown", (e) => {
+    if (e.target !== field || e.key !== "Backspace" || !last || e.ctrlKey || e.metaKey || e.altKey) return;
     const at = field.selectionStart;
     const { from, text, orig } = last;
     last = run = null;
     if (at !== field.selectionEnd || at !== from + text.length || field.value.slice(from, at) !== text) return;
     e.preventDefault();
+    e.stopPropagation(); // ⌫ izrisanega polja (predogled-vnosa.js) tega ne obdela še enkrat
     field.setRangeText(orig, from, at, "end"); // kot razveljavitev samopopravka na tipkovnici
     field.dispatchEvent(new Event("input", { bubbles: true }));
-  });
+  }, true);
   field.addEventListener("input", (e) => {
+    if (lasten) return;
     const typed = e.data ?? "";
     if (e.isComposing || !/^insert(Text|CompositionText)?$/.test(e.inputType || "") || !typed) return void (run = last = null);
     apply(typed);
