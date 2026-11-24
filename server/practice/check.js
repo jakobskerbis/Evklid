@@ -125,12 +125,16 @@ function parseQuotient(input, { dot = false } = {}) {
 
 // Znanstveni zapis: »2,5·10^3«, »2,5 × 10^(-3) m«, »1,2*10⁻⁴ kg«, »3x10^8 m/s« (tipka ×10ⁿ na tipkovnici).
 const SUPER = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
+// Ostanek za znanstvenim zapisom je enota (»m/s«, »°C«, »eV«) ali nič. Operator, potenca, √, π, e, »)«, »!«, »%« ali
+// števka pomenijo, da je zapis izraz (»2e3+1«, »2·10^3 + 500«, »2e3²«): takega prebere exprValue, ne kot število z enoto.
+const unitRest = (r) => r === "" || (/^[\p{L}°µ]/u.test(r) && !/^(?:π|[eE](?![\p{L}]))/u.test(r));
 function parseScientific(input) {
   const s = westernDigits(String(input).trim()).replace(/[−–]/g, "-");
   // »1e8«, »2,5e-3 m«, »3E2« (zapis kalkulatorja): isto pravilo za e kot calcText v math.js (za njim ni črke ali oklepaja)
   const e = s.match(/^((?:[+-]\s*)?\d+(?:[.,]\d+)?)[eE]([+-]?\d+)(?![\d.,(A-Za-z])\s*([\s\S]*)$/);
   if (e) {
     const value = Number(`${e[1].replace(/\s/g, "").replace(",", ".")}e${e[2]}`);
+    if (!unitRest(e[3].trim())) return null;
     if (Number.isFinite(value)) return { value, decimals: effDecimals(value), unit: e[3].trim() };
   }
   // Brez dveh zaporednih delov, ki oba sprejmeta presledke (»[+-]?\s*« za »\s*«, »\s*(.*)«): sicer kvadratni čas pri dolgem nizu presledkov.
@@ -138,7 +142,7 @@ function parseScientific(input) {
   if (!m) return null;
   const exp = (m[2] ?? m[3] ?? m[4] ?? [...m[5]].map((c) => SUPER[c]).join("")).replace(/\s/g, "");
   const value = Number(`${m[1].replace(/\s/g, "").replace(",", ".")}e${exp}`);
-  if (!Number.isFinite(value)) return null;
+  if (!Number.isFinite(value) || !unitRest(m[6].trim())) return null;
   return { value, decimals: effDecimals(value), unit: m[6].trim() };
 }
 
@@ -210,7 +214,8 @@ function checkNumber(ans, input, opts = {}) {
   const p = parseNumberWithUnit(input, { dot: !!ans.dot });
   // Izraz namesto enega števila (»5√7«, »√(49)«): prej je »5√7« veljal kot 5 (ostanek je bil kot enota prezrt).
   // Prava vrednost: zapis še ni končan (ne šteje kot poskus); napačna: poskus z razlago, da se išče eno število.
-  if (!ans.unit && !ans.dot && (!p || MATH_TAIL.test(p.unit))) {
+  // »2e3/2«: e z eksponentom za številom je znanstveni zapis v izrazu, ne enota
+  if (!ans.unit && !ans.dot && (!p || MATH_TAIL.test(p.unit) || /^[eE][+-]?\d/.test(p.unit))) {
     const v = exprValue(input, opts.math);
     if (v !== null) {
       // S π je točen zapis pravilen kot pri »2π« (»2π/3«, »π/4«).

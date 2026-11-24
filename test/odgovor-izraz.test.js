@@ -70,3 +70,17 @@ test("znanstveni zapis z e v odgovoru (AUDIT-041): število, ne enota »e8«", (
   // e brez eksponenta ostane, kot je bilo
   assert.equal(chk({ value: 5 }, "5 e").kind, "correct");
 });
+
+test("za znanstvenim zapisom je le enota ali nič: račun ni število z »enoto« (pregled #961)", () => {
+  for (const [v, inp] of [[2000, "2e3+1"], [2000, "2e3 + 500"], [2000, "2e3π"], [2000, "2e3²"], [2000, "2e3√4"], [0.003, "3e-3·2"], [2000, "2·10^3+1"], [2000, "2·10^3 + 500"], [2500, "2,5×10^3 - 500"]]) {
+    assert.equal(verdict(chk({ value: v }, inp)), "wrong/chk.expression", inp);
+  }
+  // prava vrednost kot račun: »izračunaj do konca«, ne »2-krat prevelik«
+  assert.equal(verdict(chk({ value: 1000 }, "2e3/2")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 2001 }, "2e3+1")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 2000 }, "2·10^3·1")), "format/chk.calcFully");
+  // enota za zapisom ostane enota
+  for (const [v, inp, unit] of [[3e8, "3e8 m/s", "m/s"], [3e8, "3·10^8 m/s", "m/s"], [2000, "2e3 eV", "eV"], [293, "2,93e2 K", "K"], [2000, "2e3"], [2000, "2·10^3"]]) {
+    assert.equal(chk({ value: v, unit }, inp).kind, "correct", inp);
+  }
+});
