@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-034
+**Naslednji prosti ID:** AUDIT-041
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -41,6 +41,13 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-031 | P2 | Kalkulator, enačbe | Iracionalne rešitve (`x^3=2`) z »=« na 6 mest | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
 | AUDIT-032 | P3 | Kalkulator, enačbe | Kratnost rešitve ni prikazana; bližnji rešitvi videti enaki (`0,1` in `0,1`) | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
 | AUDIT-033 | P2 | Kalkulator, integrali | Zelo široke meje (`∫[0,10³⁰⁰] 1/(1+x²)` = 5·10⁻²³, `∫[±10¹⁰] e^(−x²)` = 0); gladki rezultati z »=« na 12 mest | V IZVEDBI | `557aa3b` | Claude, 24. 11. | – |
+| AUDIT-034 | P2 | Kalkulator, brisanje | Brisanje levega operanda pokvari izris (`1/2` → `/2`, `x²` → `²`, `2,5` → `,5`, `2x+3=7` → `2x+=7`); 65/136 predlog | V IZVEDBI | `1565138` | Claude (matrika #965), 24. 11. | – |
+| AUDIT-035 | P2 | Kalkulator, izris vnosa | ∑/∏ s praznim telesom takoj po tipki pokaže surov TeX (preveriti, ali že odpravljeno z #956) | V PREVERJANJU | `1565138` | Claude (matrika #965), 24. 11. | – |
+| AUDIT-036 | P2 | Kalkulator, izris vnosa | Prazna predloga det/inverz → napaka KaTeX (preveriti, ali že odpravljeno z #956) | V PREVERJANJU | `1565138` | Claude (matrika #965), 24. 11. | – |
+| AUDIT-037 | P3 | Kalkulator, vnos | Ročno natipkan `∫(`, `∫(x`, `∫(x;0` ostane surovo besedilo | V IZVEDBI | `1565138` | Claude (matrika #965), 24. 11. | – |
+| AUDIT-038 | P3 | Kalkulator, dotik | Dotik v desnih 12 px vrstice ne premakne kazalca | V IZVEDBI | `1565138` | Claude (matrika #965), 24. 11. | – |
+| AUDIT-039 | P3 | Kalkulator, označevanje | Shift+puščica v predlogi in ⌫ pusti `;0;1)` | V IZVEDBI | `1565138` | Claude (matrika #965), 24. 11. | – |
+| AUDIT-040 | P2 | Kalkulator, dostopnost | Bralnik zaslona prebere surov vnos namesto matematike | V IZVEDBI | `1565138` | Claude (matrika #965), 24. 11. | – |
 
 ## Zgodovina statusov
 
@@ -69,3 +76,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: Podvojeni ID-ji razrešeni (j): prvi niz AUDIT-015–023 (revizija kalkulatorja, 11.39) ostane; drugi niz (11.51) preštevilčen +9: AUDIT-015 → 024, 016 → 025, … 024 → 033. Naslova PR #958 (zdaj AUDIT-024) in #960 (zdaj AUDIT-025) popravljena.
 - 24. 11. 2026: AUDIT-016 (#952) in AUDIT-020 (#956) → ZAKLJUČENO: j odobril združitev, združeno v `main` (c792db3, 2e65d75); na evklid.app v nočni objavi.
 - 24. 11. 2026: AUDIT-017 in 018 (#953) ter AUDIT-015 (#954) → ZAKLJUČENO: j odobril združitev, združeno v `main`; na evklid.app v nočni objavi.
+- 24. 11. 2026: AUDIT-034 do AUDIT-040 najdeni z regresijsko matriko urejevalnika (#965). PR-ji popravkov: #940 (003), #945 (004), #946 (012), #947 (013), #948 (014), #965 (matrika) – v neodvisnem pregledu.
