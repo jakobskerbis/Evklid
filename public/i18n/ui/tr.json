@@ -1010,6 +1010,7 @@
   "sc.errIntPv": "İntegral yoktur: ıraksar (fonksiyonun aralıkta bir kutbu vardır). Yalnızca Cauchy esas değeri {pv} vardır, ancak bu integralin değeri değildir.",
   "sc.errIntDivergeInf": "İntegral yoktur: sonsuz aralıkta ıraksar (fonksiyon sonsuza doğru yeterince hızlı azalmaz).",
   "sc.errIntUnknown": "İntegral güvenilir biçimde hesaplanamıyor: sayısal hesap hiçbir güvenilir basamak vermiyor.",
+  "sc.errIntUndefined": "İntegral yoktur: fonksiyon aralığın bir bölümünde tanımlı değildir (ör. negatif bir sayının kökü veya logaritması).",
   "sc.more": "Tüm işlevler",
   "sc.functions": "İşlevler",
   "sc.grp.cmp": "Denklemler ve eşitsizlikler",

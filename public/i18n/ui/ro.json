@@ -1016,6 +1016,7 @@
   "sc.errIntPv": "Integrala nu există: este divergentă (funcția are pe interval un pol). Există doar valoarea principală Cauchy {pv}, care însă nu este valoarea integralei.",
   "sc.errIntDivergeInf": "Integrala nu există: este divergentă pe intervalul infinit (funcția nu scade suficient de repede spre infinit).",
   "sc.errIntUnknown": "Integrala nu poate fi calculată în mod fiabil: calculul numeric nu dă nicio cifră sigură.",
+  "sc.errIntUndefined": "Integrala nu există: funcția nu este definită pe o parte a intervalului (de ex. radical sau logaritm dintr-un număr negativ).",
   "sc.more": "Toate funcțiile",
   "sc.functions": "Funcții",
   "sc.grp.cmp": "Ecuații și inecuații",
