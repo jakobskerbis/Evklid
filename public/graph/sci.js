@@ -246,12 +246,33 @@ export function createScientific(root, opts) {
     const e = input.selectionEnd ?? s;
     const r = fn(input.value, s, e);
     const changed = r.text !== input.value;
-    input.value = r.text;
+    if (changed) replaceText(r.text);
     input.setSelectionRange(r.pos, r.pos);
     if (changed) {
       recall = -1;
       update();
     } else showEntry();
+  }
+  // Zamenja le spremenjeni del besedila z execCommand: ostane sistemska razveljavitev (Ctrl+Z, Ctrl+Y), ki jo
+  // input.value = … izbriše (pregled #945). Kjer ne gre (polje brez fokusa na telefonu), navadna zamenjava.
+  let replacing = false;
+  function replaceText(next) {
+    const old = input.value;
+    let a = 0;
+    while (a < old.length && a < next.length && old[a] === next[a]) a++;
+    let b = 0;
+    while (b < old.length - a && b < next.length - a && old[old.length - 1 - b] === next[next.length - 1 - b]) b++;
+    const mid = next.slice(a, next.length - b);
+    let done = false;
+    if (document.activeElement === input && typeof document.execCommand === "function") {
+      replacing = true;
+      try {
+        input.setSelectionRange(a, old.length - b);
+        done = mid ? document.execCommand("insertText", false, mid) : document.execCommand("delete", false);
+      } catch {}
+      replacing = false;
+    }
+    if (!done || input.value !== next) input.value = next;
   }
   const del = () => edit(backspace);
   const delForward = () => edit(deleteForward);
@@ -551,7 +572,8 @@ export function createScientific(root, opts) {
     try {
       prev.innerHTML = entryHtml(stopsTex(entry.base));
       for (const el of prev.querySelectorAll("[data-evk-p]")) {
-        const b = el.getBoundingClientRect();
+        // okvir same merilne črte (0,4 em nad osnovnico), ne vrstice okoli nje: vrstici števca in imenovalca se prekrivata
+        const b = (el.querySelector(".katex-rule, .rule") || el).getBoundingClientRect();
         const dy = y < b.top ? b.top - y : y > b.bottom ? y - b.bottom : 0;
         // tudi oddaljenost od navpične sredine točke: pred ∫ in na začetku spodnje meje sta skoraj na istem x,
         // dotik v višini vrstice je pred ∫, dotik nižje je v meji (AUDIT-003)
@@ -562,8 +584,15 @@ export function createScientific(root, opts) {
     prev.innerHTML = shown;
     return best && Number.isFinite(best.p) ? best.p : input.value.length;
   }
+  // Dotik: Chromium (Android) klik premakne proti sredini polja (prilagoditev dotika, ~8 px); kazalec postavimo po
+  // točki, kjer se je prst res dotaknil (pointerdown), ne po kliku (AUDIT-003: dotik na števec ni v imenovalcu).
+  let down = null;
+  input.addEventListener("pointerdown", (ev) => (down = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp }));
   input.addEventListener("click", (ev) => {
-    const p = ev.detail > 0 && input.value ? caretFromPoint(ev.clientX, ev.clientY) : null;
+    const near = down && ev.timeStamp - down.t < 1500 && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) < 48;
+    const [x, y] = near ? [down.x, down.y] : [ev.clientX, ev.clientY];
+    down = null;
+    const p = ev.detail > 0 && input.value ? caretFromPoint(x, y) : null;
     setTimeout(() => {
       // dvojni ali trojni klik/dotik ne izbere skrite »besede« surovega vnosa (»∫«, »sin«), ki bi jo naslednja tipka
       // nadomestila: kazalec gre na mesto dotika (AUDIT-003); vlečenje z miško (detail 1) izbiro ohrani
@@ -894,7 +923,7 @@ export function createScientific(root, opts) {
   });
   // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
   input.addEventListener("beforeinput", (e) => {
-    if (e.isComposing) return;
+    if (e.isComposing || replacing) return;
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
       e.preventDefault();
       del();
