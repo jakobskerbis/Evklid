@@ -773,6 +773,41 @@ let depthGuard = 0;
  * Prevede drevo v funkcijo (scope) => vrednost (število ali seznam števil).
  * ctx: { deg: bool, grad: bool (gradi, 400 v krogu; ima prednost pred deg), funcs: { ime: { params, body } }, global }
  */
+/**
+ * Odvod d = f′(a), izračunan simbolno, velja samo, če je f v a definirana in se levi in desni odvod ujemata z njim
+ * (AUDIT-017, AUDIT-018). Enostranska odvoda (2. reda) pri vedno manjšem h: blizu pola ali roba šele majhen h
+ * zadene pravo vrednost (ln x pri 10⁻⁶), daleč od 0 pa h ne sme biti pod natančnostjo a (sin x pri 10⁹).
+ * Vrne d ali vrže MathError noDerivDomain / noDeriv (z levim in desnim odvodom, kadar sta končna in stabilna).
+ */
+export function derivCheck(fx, a, d) {
+  const val = (x) => {
+    const y = fx(x);
+    return typeof y === "number" ? y : NaN;
+  };
+  const f0 = val(a);
+  if (!Number.isFinite(f0)) throw new MathError("noDerivDomain");
+  const tol = (x, y) => Math.abs(x - y) <= 1e-3 * (1 + Math.abs(x) + Math.abs(y));
+  const floor = 256 * Number.EPSILON * Math.max(1, Math.abs(a));
+  let prev = null;
+  let last = null;
+  for (let k = 0; k < 9; k++) {
+    const h = 1e-3 * Math.sqrt(1 + Math.abs(a)) * 10 ** -k;
+    if (h < floor) break;
+    const L = (3 * f0 - 4 * val(a - h) + val(a - 2 * h)) / (2 * h);
+    const R = (-3 * f0 + 4 * val(a + h) - val(a + 2 * h)) / (2 * h);
+    if (Number.isFinite(d) && Number.isFinite(L) && Number.isFinite(R) && tol(L, R) && tol((L + R) / 2, d)) return d;
+    prev = last;
+    last = [L, R];
+  }
+  // levi in desni odvod pokažemo le, kadar sta se ustalila (vogal |x|), ne pri navpični tangenti ali skoku
+  const stable = prev && last && last.every((x, i) => Number.isFinite(x) && Math.abs(x) < 1e6 && tol(x, prev[i]));
+  if (stable && !tol(last[0], last[1])) {
+    const nice = (x) => Number(x.toPrecision(4)) || 0; // enostranska odvoda sta numerična: 4 mesta
+    throw new MathError("noDeriv", { left: nice(last[0]), right: nice(last[1]) });
+  }
+  throw new MathError("noDeriv");
+}
+
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
   const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
@@ -864,6 +899,20 @@ export function compile(node, ctx = {}) {
         };
       }
       if (f === "sort") return (s) => sorted([args.map((a) => a(s))].flat(2));
+      if (f === "__ODVOD_V_TOCKI") {
+        // odvod v točki (scicore.js, d/dx(f; a)): args = [f′(a), a], node.fn = f, node.v = spremenljivka
+        const F = c(node.fn);
+        const v = node.v;
+        return (s) => {
+          const [d, a] = args.map((g) => g(s));
+          if (Array.isArray(d) || Array.isArray(a)) return d;
+          return derivCheck((x) => {
+            const sc = Object.create(s || null);
+            sc[v] = x;
+            return F(sc);
+          }, a, d);
+        };
+      }
       if (MULTI[f]) {
         const g = MULTI[f];
         const many = f === "min" || f === "max" || f === "gcd" || f === "lcm";
@@ -901,7 +950,17 @@ export function compile(node, ctx = {}) {
         def.params.forEach((p, i) => (sc[p] = args[i] ? args[i](s) : NaN));
         depthGuard++;
         try {
-          return body(sc);
+          const val = body(sc);
+          // f′(a) v znanstvenem kalkulatorju: enako preverjanje kot d/dx(f; a) (AUDIT-017, AUDIT-018); graf ga ne rabi
+          const p0 = def.params[0];
+          if (d === 1 && ctx.derCheck && def.params.length === 1 && typeof sc[p0] === "number" && typeof val === "number") {
+            return derivCheck((x) => {
+              const s2 = Object.create(ctx.global || null);
+              s2[p0] = x;
+              return def.body(s2);
+            }, sc[p0], val);
+          }
+          return val;
         } finally {
           depthGuard--;
         }
