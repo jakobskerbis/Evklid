@@ -52,8 +52,8 @@ podnevi in med uporabo (vsakič ~1 minuta izpada). Spodnja nočna pravila spet v
 | Testi za ta commit so padli | ne objavi; objavi se, ko so testi zeleni (ponovni zagon padlih testov ali naslednja združitev) |
 
 Tek ob združitvi počaka na okno le, če se odpre v naslednjih ~3 urah; sicer objavo opravi nočni urnik
-(0:47 in 1:47 UTC) ali urnik vsako uro. Ker se podnevi nič ne objavi, združitev med dnevom ne prekine
-testa v Render Shell.
+(0:47 in 1:47 UTC) ali urnik vsako uro. Ko velja nočno okno, se podnevi nič ne objavi, zato združitev med dnevom
+ne prekine testa v Render Shell (dokler velja »takoj«, ga lahko).
 
 ### Objava samo po zelenih testih
 
