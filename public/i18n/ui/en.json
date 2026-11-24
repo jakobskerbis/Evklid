@@ -1109,6 +1109,7 @@
   "sc.fmHint": "Replace the known letters with numbers, leave the unknown and press =.",
   "sc.fmRad": "The calculator is now in RAD mode (angles in radians).",
   "sc.errUndefined": "The result is undefined (e.g. division by 0).",
+  "sc.notReal": "The result is not a real number. In complex numbers it is {z}.",
   "sc.errNoDeriv": "The derivative does not exist at this point.",
   "sc.errNoDerivLR": "The derivative does not exist at this point: the left derivative is {left}, the right one {right}.",
   "sc.errNoDerivDomain": "The function is not defined at this point, so there is no derivative.",

@@ -1121,6 +1121,7 @@
   "sc.fmHint": "Zastąp znane litery liczbami, niewiadomą zostaw i naciśnij =.",
   "sc.fmRad": "Kalkulator jest teraz w trybie RAD (kąty w radianach).",
   "sc.errUndefined": "Wynik jest nieokreślony (np. dzielenie przez 0).",
+  "sc.notReal": "Wynik nie jest liczbą rzeczywistą. W liczbach zespolonych wynosi {z}.",
   "sc.errNoDeriv": "Pochodna w tym punkcie nie istnieje.",
   "sc.errNoDerivLR": "Pochodna w tym punkcie nie istnieje: pochodna lewostronna to {left}, prawostronna {right}.",
   "sc.errNoDerivDomain": "Funkcja nie jest określona w tym punkcie, więc nie ma pochodnej.",

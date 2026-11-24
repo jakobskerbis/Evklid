@@ -1103,6 +1103,7 @@
   "sc.fmHint": "Ganti huruf yang diketahui dengan angka, biarkan yang tidak diketahui, lalu tekan =.",
   "sc.fmRad": "Kalkulator sekarang dalam mode RAD (sudut dalam radian).",
   "sc.errUndefined": "Hasil tidak terdefinisi (mis. pembagian dengan 0).",
+  "sc.notReal": "Hasilnya bukan bilangan real. Dalam bilangan kompleks hasilnya {z}.",
   "sc.errNoDeriv": "Turunan tidak ada di titik ini.",
   "sc.errNoDerivLR": "Turunan tidak ada di titik ini: turunan kiri {left}, turunan kanan {right}.",
   "sc.errNoDerivDomain": "Fungsi tidak terdefinisi di titik ini, jadi tidak ada turunan.",

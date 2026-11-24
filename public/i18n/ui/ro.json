@@ -1115,6 +1115,7 @@
   "sc.fmHint": "Înlocuiește literele cunoscute cu numere, lasă necunoscuta și apasă =.",
   "sc.fmRad": "Calculatorul este acum în modul RAD (unghiuri în radiani).",
   "sc.errUndefined": "Rezultatul nu este definit (de ex. împărțire la 0).",
+  "sc.notReal": "Rezultatul nu este un număr real. În numerele complexe este {z}.",
   "sc.errNoDeriv": "Derivata nu există în acest punct.",
   "sc.errNoDerivLR": "Derivata nu există în acest punct: derivata la stânga este {left}, la dreapta {right}.",
   "sc.errNoDerivDomain": "Funcția nu este definită în acest punct, deci nu are derivată.",

@@ -1114,6 +1114,8 @@ export function analyze(text, env = {}) {
   if (parts.length === 1) raw = parts[0]; // »x² = 4;« (odvečno ločilo na koncu)
   else if (!parts.length) return null;
 
+  // lim_(x→a)(f) – zapis s tipkovnice klepeta (symbols.js) – je limita(f; x; a) (AUDIT-051)
+  raw = limText(raw);
   // simbolno računanje: poenostavi(…), razvij(…), razstavi(…), reši(…; x) (public/graph/cas.js)
   const cmd = parseCommand(raw);
   if (cmd) {
@@ -1148,6 +1150,12 @@ export function analyze(text, env = {}) {
   const pr = polRec(raw, env);
   if (pr) return pr;
   const r = evaluate(raw, env);
+  // √(−1), ln(−1): v realnih številih ni vrednosti; povemo kompleksno (prej »npr. deljenje z 0«, AUDIT-051)
+  // i in j kot shranjeni spremenljivki: kompleksni račun bi ju vzel za imaginarno enoto (√(−1) + i pri i = 2 ni 2i)
+  if (r && !r.error && Number.isNaN(r.value) && !env.live && !("i" in vars) && !("j" in vars)) {
+    const z = complexOf(raw, env);
+    if (z && z[1] !== 0) return { error: { code: "notReal", info: { re: z[0], im: z[1] } } };
+  }
   if (r && !r.error) return { kind: "value", ...(r.est ? exactIntegral(raw, env, r) : r) };
   if (!r) return null;
   const code = r.error.code;
@@ -1157,13 +1165,7 @@ export function analyze(text, env = {}) {
   // kompleksno število (i je imaginarna enota, če ni spremenljivka)
   if (code === "missing" && r.error.info.names.every((n) => n === "i") && !("i" in vars)) {
     try {
-      const s = prepare(raw, { comma })
-        .replace(/A_\{ans\}/g, `(${env.ans ?? 0})`)
-        .replace(/G_\{deg\}/g, env.deg && !env.grad ? "1" : "(π/180)")
-        .replace(/G_\{min\}/g, env.deg && !env.grad ? "(1/60)" : "(π/10800)")
-        .replace(/G_\{sec\}/g, env.deg && !env.grad ? "(1/3600)" : "(π/648000)");
-      if (/[A-Za-z]_\{/.test(s)) throw new MathError("other");
-      const [re, im] = evalComplex(s, { deg: !!env.deg && !env.grad });
+      const [re, im] = complexValue(raw, env);
       const line = compileLine(raw, env);
       return { kind: "complex", re: clean(re), im: clean(im), tex: lineTex(line.ast, comma) };
     } catch (e) {
@@ -1299,6 +1301,49 @@ function condMatches(cond, env, v, L, R) {
     if (def !== tests.every((t) => t(x))) return false;
   }
   return true;
+}
+
+// Vrednost izraza v kompleksnih številih [re, im] (vrže MathError)
+function complexValue(raw, env) {
+  const s = prepare(raw, { comma: env.comma !== false })
+    .replace(/A_\{ans\}/g, `(${env.ans ?? 0})`)
+    .replace(/G_\{deg\}/g, env.deg && !env.grad ? "1" : "(π/180)")
+    .replace(/G_\{min\}/g, env.deg && !env.grad ? "(1/60)" : "(π/10800)")
+    .replace(/G_\{sec\}/g, env.deg && !env.grad ? "(1/3600)" : "(π/648000)");
+  if (/[A-Za-z]_\{/.test(s)) throw new MathError("other");
+  return evalComplex(s, { deg: !!env.deg && !env.grad });
+}
+const complexOf = (raw, env) => {
+  try {
+    const [re, im] = complexValue(raw, env);
+    return Number.isFinite(re) && Number.isFinite(im) ? [clean(re), clean(im)] : null;
+  } catch {
+    return null;
+  }
+};
+
+// lim_(x→a)(f), lim_{x→a} f, lim_(x->a) f → limita(f; x; a); drugo besedilo ostane
+// točka sme imeti en nivo oklepajev: x→(π/2), x→sqrt(2)
+const LIM = /^\s*lim\s*_\s*[({]\s*([A-Za-zα-ω])\s*(?:→|->|\\to)\s*((?:[^(){}]|\([^(){}]*\))+?)\s*[)}]\s*/;
+function limText(raw) {
+  const m = LIM.exec(raw);
+  if (!m) return raw;
+  let body = raw.slice(m[0].length).trim();
+  if (!body) return raw;
+  // en oklepaj okoli celega telesa odstranimo: lim_(x→0)(sin(x)/x)
+  if (body[0] === "(") {
+    let depth = 0;
+    let end = -1;
+    for (let i = 0; i < body.length; i++) {
+      if (body[i] === "(") depth++;
+      else if (body[i] === ")" && --depth === 0) {
+        end = i;
+        break;
+      }
+    }
+    if (end === body.length - 1) body = body.slice(1, -1);
+  }
+  return `limita(${body}; ${m[1]}; ${m[2].replace(/\s+/g, "")})`;
 }
 
 function plotPair([l, , rr], env) {

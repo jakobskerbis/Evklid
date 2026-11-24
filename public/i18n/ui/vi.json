@@ -1103,6 +1103,7 @@
   "sc.fmHint": "Thay các chữ đã biết bằng số, giữ lại ẩn số rồi bấm =.",
   "sc.fmRad": "Máy tính hiện ở chế độ RAD (góc tính bằng radian).",
   "sc.errUndefined": "Kết quả không xác định (ví dụ chia cho 0).",
+  "sc.notReal": "Kết quả không phải là số thực. Trong số phức, kết quả là {z}.",
   "sc.errNoDeriv": "Đạo hàm không tồn tại tại điểm này.",
   "sc.errNoDerivLR": "Đạo hàm không tồn tại tại điểm này: đạo hàm trái là {left}, đạo hàm phải là {right}.",
   "sc.errNoDerivDomain": "Hàm số không xác định tại điểm này nên không có đạo hàm.",

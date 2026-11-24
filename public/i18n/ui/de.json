@@ -1109,6 +1109,7 @@
   "sc.fmHint": "Ersetze die bekannten Buchstaben durch Zahlen, lass die Unbekannte stehen und drücke =.",
   "sc.fmRad": "Der Rechner ist jetzt im Modus RAD (Winkel im Bogenmaß).",
   "sc.errUndefined": "Das Ergebnis ist nicht definiert (z. B. Division durch 0).",
+  "sc.notReal": "Das Ergebnis ist keine reelle Zahl. In den komplexen Zahlen ist es {z}.",
   "sc.errNoDeriv": "Die Ableitung existiert an dieser Stelle nicht.",
   "sc.errNoDerivLR": "Die Ableitung existiert an dieser Stelle nicht: linksseitig {left}, rechtsseitig {right}.",
   "sc.errNoDerivDomain": "Die Funktion ist an dieser Stelle nicht definiert, daher gibt es keine Ableitung.",

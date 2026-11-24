@@ -1121,6 +1121,7 @@
   "sc.fmHint": "Známe písmená nahraď číslami, neznámu nechaj a stlač =.",
   "sc.fmRad": "Kalkulačka je teraz v režime RAD (uhly v radiánoch).",
   "sc.errUndefined": "Výsledok nie je definovaný (napr. delenie 0).",
+  "sc.notReal": "Výsledok nie je reálne číslo. V komplexných číslach je {z}.",
   "sc.errNoDeriv": "Derivácia v tomto bode neexistuje.",
   "sc.errNoDerivLR": "Derivácia v tomto bode neexistuje: derivácia zľava je {left}, sprava {right}.",
   "sc.errNoDerivDomain": "Funkcia v tomto bode nie je definovaná, preto derivácia neexistuje.",

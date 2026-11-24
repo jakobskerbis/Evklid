@@ -339,6 +339,8 @@ export function createScientific(root, opts) {
   function errorText(e) {
     const names = (e.info?.names || []).join(", ");
     switch (e.code) {
+      case "notReal": // √(−1), ln(−1): kompleksna vrednost namesto »npr. deljenje z 0« (AUDIT-051)
+        return t("sc.notReal", { z: complexText(e.info) });
       case "missing":
         return t("gc.errMissing", { names });
       case "char":
