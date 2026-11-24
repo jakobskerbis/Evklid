@@ -1,4 +1,5 @@
-# Render: nova različica Evklida samo ponoči (3.–5. ura po ljubljanskem času), ko se nihče ne uči
+# Do nadaljnjega (j, 24. 11. 2026, TAKOJ_DO v scripts/render-objava.js): vsaka združitev se objavi takoj po zelenih testih.
+# Sicer: Render: nova različica Evklida samo ponoči (3.–5. ura po ljubljanskem času), ko se nihče ne uči
 # (ponovni zagon s trajnim diskom pomeni ~1 minuto izpada; j, 19. 11. 2026). Tek ob združitvi v main
 # počaka na nočno okno, če je to v naslednjih ~3 urah, sicer konča; nočna urnika (0:47 in 1:47 UTC, tj.
 # 1:47/2:47 pozimi, 2:47/3:47 poleti) in urnik vsako uro (rezerva) objavo opravijo v oknu.
