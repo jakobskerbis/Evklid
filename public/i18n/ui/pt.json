@@ -1004,6 +1004,7 @@
   "sc.errSumLimit": "Demasiados termos: a soma pode ter no máximo 100 000 termos.",
   "sc.errIntDiverge": "O integral não existe: diverge (a função tem no intervalo um polo ou uma singularidade não integrável).",
   "sc.errIntPv": "O integral não existe: diverge (a função tem um polo no intervalo). Só existe o valor principal de Cauchy {pv}, que não é o valor do integral.",
+  "sc.errIntDivergeInf": "O integral não existe: diverge no intervalo infinito (a função não decresce suficientemente depressa para o infinito).",
   "sc.errIntUnknown": "O integral não pode ser calculado de forma fiável: o cálculo numérico não dá nenhum algarismo fiável.",
   "sc.more": "Todas as funções",
   "sc.functions": "Funções",

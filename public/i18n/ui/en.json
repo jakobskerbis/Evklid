@@ -1004,6 +1004,7 @@
   "sc.errSumLimit": "Too many terms: the sum can have at most 100,000 terms.",
   "sc.errIntDiverge": "The integral does not exist: it diverges (the function has a pole or a non-integrable singularity on the interval).",
   "sc.errIntPv": "The integral does not exist: it diverges (the function has a pole on the interval). Only the Cauchy principal value {pv} exists, and it is not the value of the integral.",
+  "sc.errIntDivergeInf": "The integral does not exist: it diverges on the infinite interval (the function does not decrease fast enough towards infinity).",
   "sc.errIntUnknown": "The integral cannot be computed reliably: the numerical calculation gives no trustworthy digit.",
   "sc.more": "All functions",
   "sc.functions": "Functions",
