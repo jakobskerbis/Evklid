@@ -1233,7 +1233,7 @@ function adapt(F, a, b, n0 = 16, maxIv = MAX_IV, onStuck = null, tolAbs = 0) {
   let [I, E, A] = sums();
   let count = n0;
   let it = 0;
-  let check = 1000;
+  let check = 250;
   let Echeck = Infinity;
   let nanBad = 0;
   while (heap.length && count < maxIv) {
@@ -1242,7 +1242,7 @@ function adapt(F, a, b, n0 = 16, maxIv = MAX_IV, onStuck = null, tolAbs = 0) {
     if (count >= check) {
       // napaka se ne zmanjšuje več (šum zaokrožitve, nerazrešeno nihanje): nehamo
       [I, E, A] = sums();
-      if (E > 0.8 * Echeck) break;
+      if (E > 0.6 * Echeck) break;
       Echeck = E;
       check *= 2;
     }
