@@ -222,6 +222,19 @@ export function argSeparators(s, comma = true) {
   return out.replace(/;/g, ",");
 }
 
+/**
+ * Zapis števil in argumentov, enak v znanstvenem kalkulatorju, grafičnem kalkulatorju in pri preverjanju
+ * učenčevega odgovora (AUDIT-024): »1 000« je tisoč, »1.234,5« (comma) je 1234,5, »12 3456« in »1.2.3« sta
+ * nejasna (MathError), nato argSeparators (decimalna vejica, »;«). Vrne besedilo za parse().
+ */
+export function numberText(s, comma = true) {
+  let out = joinThousands(String(s ?? ""));
+  if (digitGap(out)) throw new MathError("unexpected", { got: " " });
+  if (comma) out = joinDotThousands(out);
+  if (twoDots(out)) throw new MathError("unexpected", { got: "." });
+  return argSeparators(out, comma);
+}
+
 export function normalize(src) {
   return String(src ?? "")
     .replace(/[−–—]/g, "-")
