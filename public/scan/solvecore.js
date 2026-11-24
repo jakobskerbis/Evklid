@@ -50,7 +50,8 @@ export function prep(text) {
     .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factor)\s*[:.]?\s*/i, "")
     .trim();
   // a/b z dvema celima številoma je ulomek: 3/4·2/5 = (3/4)·(2/5), ne ((3/4)·2)/5.
-  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!])/g, "($1/$2)");
+  // Ne pri znanstvenem zapisu v imenovalcu (»2/1e8« = 2/10⁸, ne (2/1)·10⁸; AUDIT-042).
+  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!]|[\d.,]*[eE][+\-−]?\d)/g, "($1/$2)");
   return s;
 }
 

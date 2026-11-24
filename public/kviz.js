@@ -90,7 +90,16 @@ const head = (v) => (v.q >= 0 ? `<p class="kv-qn">${esc(t("kv.question", { n: v.
 
 // --- učitelj (projektor) ---
 
+// Projektor (ucitelj.html) nima app.js: dolge formule vprašanj, možnosti in rešitev (KaTeX s strežnika) se tu zložijo
+// pri enačajih, pomanjšajo ali drsijo enako kot v aplikaciji (public/sirina.js; za zlaganje potrebuje KaTeX). V Ligah
+// (app.js) teče že; initSirina je enkraten (enoten matematični zapis F2, 24. 11. 2026).
+const sirinaFormul = () =>
+  Promise.all([import("./rich.js").then((m) => m.naloziKnjiznice()), import("./sirina.js")])
+    .then(([, m]) => m.initSirina())
+    .catch(() => {}); // brez KaTeX ostanejo formule s strežnika izrisane, le nezložene
+
 export function hostQuiz({ code, key, game, onClose }) {
+  sirinaFormul();
   const headers = key ? { "X-Teacher-Key": key } : {};
   const base = `/api/teacher/classes/${encodeURIComponent(code)}/kviz`;
   const s = screen("kv-host", titleHtml(game.className, game.topic.name), () => {
