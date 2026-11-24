@@ -6,9 +6,8 @@
 // - dve potrditvi pred vsakim plačilom (polnoletnost in takojšen začetek z vedenjem o odstopu);
 // - skrbniške aktivacijske kode (seznam, nova koda, izklop);
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
-import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, planOfPrice, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, eurVatFor, aiCapFromNetEur } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, planOfPrice, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, passCapUsd, planGuarantee, vatRateFor, eurVatFor, aiCapFromNetEur } from "./plans.js";
 import { BIRTH_MISSING_PAY } from "./age.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
