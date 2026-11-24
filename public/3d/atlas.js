@@ -43,8 +43,8 @@ const KOMPAS = [
   ["sp", [0, -1, 0]],
 ];
 const KVIZ_VPRASANJ = 10;
-// Med vlečenjem drsnika (prerez, razmik) ostaneta vidna le njegov gumb in tirnica, ostalo je prosojno, da se vidi
-// telo (j, 4. 11.). Brez pointercancel: iOS ga pošlje takoj, ko drsnik prevzame poteg; konec ujamemo s pointerup,
+// Med vlečenjem drsnika prereza ostaneta vidna le njegov gumb in tirnica, ostalo je prosojno, da se vidi
+// telo (j, 4. 11.). Razmik okna pusti vidna (j, 24. 11.: »samo pri prerezih«). Brez pointercancel: iOS ga pošlje takoj, ko drsnik prevzame poteg; konec ujamemo s pointerup,
 // touchend (iOS) ali change ob spustu.
 function prosojnoObVlecenju(inp, koren) {
   inp.addEventListener("pointerdown", (e) => {
@@ -1318,7 +1318,6 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       razIn.value = 0;
       razIn.dispatchEvent(new Event("input"));
     });
-    prosojnoObVlecenju(razIn, el);
     razVrsta.append(razIn, razPon);
     raz.append(razVrh, razVrsta);
     box.append(raz);

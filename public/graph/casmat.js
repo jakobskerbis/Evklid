@@ -64,6 +64,7 @@ function scalarTex(r, dec) {
 export function runMatrix(cmd, line, env) {
   const comma = env.comma !== false;
   const rowsAst = unwrap(line.ast);
+  let cells0 = null; // zapis elementov za predogled
   try {
     if (rowsAst.k !== "list" || !rowsAst.items.length) throw fail("matrix");
     const cells = rowsAst.items.map((r) => {
@@ -74,6 +75,7 @@ export function runMatrix(cmd, line, env) {
     const n = cells.length;
     if (cells.some((r) => r.length !== n)) throw fail("matrix");
     if (n > MAX_N) throw fail("big");
+    cells0 = cells.map((r) => r.map((x) => lineTex(x, comma)));
     const ctx = newCtx(line, env);
     const idx = [...Array(n).keys()];
     let A;
@@ -154,6 +156,9 @@ export function runMatrix(cmd, line, env) {
     if (cond.length) out.cond = cond.join(",\\; ");
     return out;
   } catch (e) {
+    // sproten predogled: matrika z okvirčki (vse enake vrednosti) je singularna, inverza zato ni; zapis vnosa
+    // pa vseeno izrišemo (AUDIT-020), rezultat pride ob =
+    if (env.live && cells0) return { kind: "cas", op: cmd.op, tex: cmd.op === "det" ? `\\det${pmatrix(cells0)}` : `${pmatrix(cells0)}^{-1}`, inner: cmd.inner, live: true };
     return { error: { code: KIT.casCode(e), info: {} } };
   }
 }
