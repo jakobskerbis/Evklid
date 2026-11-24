@@ -144,6 +144,16 @@ test("klik/dotik na meje integrala in reže limite ureja pravo režo (AUDIT-003)
           assert.equal(sel[0], sel[1], `${where}: dvojni klik na ${tx} ne izbere besedila`);
         }
       }
+      // AUDIT-038: dotik v desnem robu vrstice (desno od zadnjega znaka) postavi kazalec na konec
+      await reset("∫(x;0;2)");
+      await page.evaluate(() => document.querySelector(".sc-input").setSelectionRange(0, 0));
+      const edge = await page.evaluate(() => {
+        const e = document.querySelector(".sc-entry").getBoundingClientRect();
+        const k = document.querySelector(".sc-preview .katex").getBoundingClientRect();
+        return { x: e.right - 4, y: k.top + k.height / 2 };
+      });
+      await at(edge.x, edge.y);
+      assert.equal(await page.evaluate(() => document.querySelector(".sc-input").selectionStart), 8, `${where}: dotik v desnem robu`);
       assert.deepEqual(errors, [], `${where}: napake na strani`);
       await ctx.close();
     }
