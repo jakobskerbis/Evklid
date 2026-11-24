@@ -75,16 +75,20 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       await page.waitForFunction(() => window.ready);
       const where = `${engine} ${vw}`;
       const tap = (sel) => (opt.hasTouch && engine !== "webkit" ? page.tap(sel) : page.click(sel));
+      // Počakamo na NOVO vrstico zgodovine (prej je ».last« takoj našel prejšnjo vrstico, dotik je šel na gumb, ki ga je
+      // izris zgodovine nato zamenjal, in waitForFunction je v CI enkrat čakal 30 s; pregled #997).
       const run = async (text) => {
         await page.evaluate(() => window.back());
+        const n = await page.locator(".sc-h-row").count();
         await page.fill(".sc-input", text);
         await page.press(".sc-input", "Enter");
-        await page.waitForSelector(".sc-h-row.last");
+        await page.waitForFunction((n) => document.querySelectorAll(".sc-h-row").length > n, n);
       };
       const show = async (sel = '.sc-h-row.last [data-act="graf"]') => {
         await page.evaluate(() => (window.shown = undefined));
+        await page.locator(sel).waitFor({ state: "visible" });
         await tap(sel);
-        await page.waitForFunction(() => window.shown !== undefined);
+        await page.waitForFunction(() => window.shown !== undefined, null, { timeout: 60000 });
         return page.evaluate(() => JSON.parse(JSON.stringify(window.graph.state)));
       };
 

@@ -985,6 +985,7 @@ export function createCalculator(root, opts) {
   // opomba k grafu iz znanstvenega kalkulatorja: sporočilo kalkulatorja (divergenten integral) ali razlaga okna
   function noteText(p, message) {
     if (p.message && message) return message;
+    if (p.message && !p.note) return ""; // sporočilo napake brez besedila (npr. iz starejše vrstice): le graf
     if (!p.note) return "";
     const v = {};
     for (const [k, x] of Object.entries(p.note.vars || {})) v[k] = typeof x === "number" ? (x === Infinity ? "∞" : x === -Infinity ? "−∞" : fmt(x)) : x;

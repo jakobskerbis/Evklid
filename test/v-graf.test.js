@@ -157,6 +157,7 @@ test("limita: f okoli a z oznako (a; L), prazen krožec, kjer f v a ni definiran
   const s = plan("limita(1/x; 0)");
   assert.equal(s.items.length, 1);
   assert.equal(s.message, true);
+  assert.equal(s.note.key, "sc.cas.limitNone"); // tudi iz zgodovine (brez sporočila ob vnosu) opomba »Limita ne obstaja«
 });
 
 test("vsota in produkt: členi kot točke, opomba z vrednostjo; dolga vsota le prvi členi", () => {

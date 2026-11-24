@@ -391,7 +391,10 @@ function plan(text0, env0, g) {
           items.push({ type: "expr", text: `y = ${numText(L, comma)}`, style: "dash" });
           fns.push(() => L);
           note = { key: s > 0 ? "gc.fromSci.limInf" : "gc.fromSci.limNegInf", vars: { L } };
-        } else message = true;
+        } else {
+          message = true;
+          if (r?.none) note = { key: "sc.cas.limitNone" };
+        }
         return finish();
       }
       const span = Math.max(2, Math.abs(a) * 0.5);
@@ -402,7 +405,11 @@ function plan(text0, env0, g) {
         items.push({ ...ptsItem([[a, L]]), open: hole });
         points.push([a, L]);
         if (hole) note = { key: "gc.fromSci.limHole", vars: { a, L } };
-      } else message = true; // limita ne obstaja ali je ni bilo mogoče izračunati: sporočilo kalkulatorja
+      } else {
+        // limita ne obstaja ali je ni bilo mogoče izračunati: sporočilo kalkulatorja (iz zgodovine: »Limita ne obstaja«)
+        message = true;
+        if (r?.none) note = { key: "sc.cas.limitNone" };
+      }
       return finish();
     }
     // poenostavi, razvij, razstavi, taylor: ista funkcija kot vnos (luknje definicijskega območja ostanejo)
