@@ -375,7 +375,64 @@ function ratOf(v, maxQ) {
 
 // Gruče ničel (numerična pot, ko koeficienti niso racionalni): k ničel blizu skupaj je ena k-kratna ničla, če so
 // v njihovem težišču c vrednosti p, p′, …, p^(k−1) praktično 0. Sicer gručo razbijemo z manjšim polmerom.
-function mergeClusters(c, zs, rad = 0.05) {
+// Ali je |p^(j)(z)| od 0 neločljivo glede na negotovost koeficientov r_i (krogle) in zaokrožitev računa?
+// Realni z: kompenziran Horner (Graillat; kot v dvojni natančnosti), meja ε|p| + γ²·Σ|c_i||z|^i;
+// kompleksni z: navaden Horner, meja γ·Σ|c_i||z|^i. Negotovost koeficientov: Σ r_i·e!/(e − j)!·|z|^(e − j).
+const U53 = 2 ** -53;
+const twoSum = (a, b) => {
+  const s = a + b;
+  const bb = s - a;
+  return [s, a - (s - bb) + (b - bb)];
+};
+const split = (a) => {
+  const t = 134217729 * a;
+  const hi = t - (t - a);
+  return [hi, a - hi];
+};
+const twoProd = (a, b) => {
+  const p = a * b;
+  const [ah, al] = split(a);
+  const [bh, bl] = split(b);
+  return [p, ah * bh - p + ah * bl + al * bh + al * bl];
+};
+function compHorner(c, x) {
+  let s = c[0];
+  let e = 0;
+  for (let i = 1; i < c.length; i++) {
+    const [p, pe] = twoProd(s, x);
+    const [t, se] = twoSum(p, c[i]);
+    s = t;
+    e = e * x + (pe + se);
+  }
+  return s + e;
+}
+function indistinct(c, r, j, z) {
+  let d = c;
+  for (let t = 0; t < j; t++) d = derivF(d);
+  const n = d.length - 1;
+  const az = C.abs(z);
+  const abs = d.reduce((s, a) => s * az + Math.abs(a), 0);
+  // negotovost koeficientov (ena zaokrožitev več za množenje z e·(e − 1)·…)
+  let unc = 0;
+  for (let i = 0; i < c.length; i++) {
+    const e = c.length - 1 - i;
+    if (e < j) continue;
+    let f = 1;
+    for (let t = 0; t < j; t++) f *= e - t;
+    unc += (r[i] + (j ? U53 * Math.abs(c[i]) : 0)) * f * az ** (e - j);
+  }
+  if (Math.abs(z[1]) <= 1e-12 * Math.max(1, Math.abs(z[0]))) {
+    const g = 2 * (n + 1) * U53;
+    const v = compHorner(d, z[0]);
+    return Math.abs(v) <= unc + U53 * Math.abs(v) + g * g * abs;
+  }
+  return C.abs(hornerC(d, z)) <= unc + 2 * (n + 1) * U53 * abs;
+}
+
+// Gruče ničel (numerična pot, ko koeficienti niso točni): k ničel blizu skupaj je ena k-kratna ničla le, če so
+// v točki z (Newton na p^(k−1)) vrednosti p, p′, …, p^(k−2) od 0 neločljive (indistinct) – torej jih od 0 ne
+// moremo ločiti. Sicer gručo razbijemo z manjšim polmerom; ničla nikoli ne izgine.
+function mergeClusters(c, zs, rad = 0.05, r = c.map((x) => 2 ** -53 * Math.abs(x))) {
   const groups = [];
   const used = zs.map(() => false);
   for (let i = 0; i < zs.length; i++) {
@@ -397,19 +454,14 @@ function mergeClusters(c, zs, rad = 0.05) {
       continue;
     }
     const cen = [g.reduce((s, z) => s + z[0], 0) / g.length, g.reduce((s, z) => s + z[1], 0) / g.length];
-    // težišče izboljšamo z Newtonom na p^(k−1) (tam je ničla enostavna), nato preverimo p, …, p^(k−2)
     let dm = c;
     for (let j = 1; j < g.length; j++) dm = derivF(dm);
     const z = newton(dm, cen, 30);
-    let d = c;
-    // k-kratna ničla se zaradi zaokrožitve koeficientov (~1e-14) razprši za ~(1e-14)^(1/k): širša gruča so različne ničle
-    const spread = Math.max(...g.map((w) => C.abs(C.sub(w, cen))));
-    // združimo le, kar odvodi dokažejo: p, …, p^(k−2) v z so na ravni zaokrožitve (sicer ostanejo vse ničle)
-    let ok = C.abs(C.sub(z, cen)) < rad * Math.max(1, C.abs(cen)) && spread <= 10 * 1e-15 ** (1 / g.length) * Math.max(1, C.abs(cen));
-    for (let j = 0; j < g.length - 1 && ok; j++, d = derivF(d)) ok = C.abs(hornerC(d, z)) <= 2e-14 * sizeAt(d, z);
+    let ok = C.abs(C.sub(z, cen)) < rad * Math.max(1, C.abs(cen));
+    for (let j = 0; j < g.length - 1 && ok; j++) ok = indistinct(c, r, j, z);
     if (ok) out.push({ z, m: g.length });
-    else if (rad > 1e-7) out.push(...mergeClusters(c, g, rad / 10));
-    else out.push(...g.map((z) => ({ z, m: 1 })));
+    else if (rad > 1e-9) out.push(...mergeClusters(c, g, rad / 10, r));
+    else out.push(...g.map((w) => ({ z: newton(c, w), m: 1 })));
   }
   return out;
 }
@@ -435,13 +487,16 @@ function intPoly(c) {
  * ostale numerično na enostavnih faktorjih tₖ (Durand–Kerner + Newton). Drugače numerično z združevanjem gruč.
  * Vsako ničlo na koncu preverimo v prvotnem polinomu: p^(m−1)(z) ≈ 0. Pari konjugiranih ničel so točno konjugirani.
  */
-export function polyRootsMult(coeffs, exact = null) {
+export function polyRootsMult(coeffs, exact = null, radii = null) {
   let c = coeffs.map(Number);
-  while (c.length && c[0] === 0) c.shift();
-  if (!exact) while (c.length && Math.abs(c[0]) < 1e-14) c.shift();
+  let r = radii ? radii.slice(radii.length - c.length) : null;
+  while (c.length && c[0] === 0) (c.shift(), r?.shift());
+  if (!exact && !radii) while (c.length && Math.abs(c[0]) < 1e-14) c.shift();
   if (c.length < 2 || c.some((v) => !Number.isFinite(v))) return c.length < 2 ? [] : null;
+  if (r && r[0] >= Math.abs(c[0])) return null; // vodilni koeficient je lahko 0: stopnja ni znana
   const found = []; // { z, m, exact }
-  const P = exact || intPoly(c);
+  // radii: negotovost koeficientov (iz drevesa z iracionalnimi števili, scisolve ballPoly) – ne ugibamo ulomkov
+  const P = exact || (radii ? null : intPoly(c));
   if (P) {
     // f_0 = f, f_k = gcd(f_{k−1}, f′_{k−1}); s_k = f_{k−1}/f_k (ničle s kratnostjo ≥ k); t_k = s_k/s_{k+1}
     const fs = [P];
@@ -483,7 +538,7 @@ export function polyRootsMult(coeffs, exact = null) {
         else found.push({ z, m: k });
       }
     }
-  } else found.push(...mergeClusters(c, dkRoots(c)));
+  } else found.push(...mergeClusters(c, dkRoots(c), 0.05, r || undefined));
   // realne ničle in konjugirani pari
   const real = [];
   const upper = [];

@@ -172,3 +172,57 @@ test("1200 polinomov iz SymPy: nič, kar je bilo pravilno, ne postane napačno",
   // pred popravkom: eq 582, fac 503, > 956, < 990 od 1200
   assert.ok(count.eq >= 1190 && count.fac >= 1190 && count.gt >= 1190 && count.lt >= 1190, JSON.stringify(count));
 });
+
+// ---- 3. krog (#941): iracionalni koeficienti, bližnje decimalne ničle, zapis ----
+
+test("iracionalni faktorji: vsak faktor posebej, kratnosti se seštejejo (SymPy)", () => {
+  const ra = (t) => analyze(t, ENV);
+  const a = ra("(x−6,177104)(x−6,177106)(x+√(7))=0");
+  assert.deepEqual([a.roots, a.complex], [[-Math.sqrt(7), 6.177104, 6.177106], []]);
+  const b = ra("(x−√(7))^2(x−4/3)(x−π)=0");
+  assert.deepEqual([b.roots, b.complex, b.mult], [[4 / 3, Math.sqrt(7), Math.PI], [], [1, 2, 1]]);
+  const c = ra("(x−π)^2(x−3)^2=0");
+  assert.deepEqual([c.roots, c.mult], [[3, Math.PI], [2, 2]]);
+  const d = ra("(x−9,490161)^3(x−9,490162)^3=0");
+  assert.deepEqual([d.roots, d.mult], [[9.490161, 9.490162], [3, 3]]);
+  const e = ra("(x+√(5))^6(x+19/9)^2=0");
+  assert.deepEqual([e.roots, e.complex, e.mult], [[-Math.sqrt(5), -19 / 9], [], [6, 2]]);
+  const f = ra("(x−√(2))(x^2−2)=0"); // isti koren iz dveh faktorjev
+  assert.deepEqual(f.mult, [1, 2]);
+  const g = ra("x^2−2√(2)x+2=0"); // razvito: (x − √2)², kratnost iz meje napake
+  assert.deepEqual([g.roots, g.mult], [[Math.SQRT2], [2]]);
+  // razvito, bližnji decimalni ničli in √7: ostaneta dve (prej ena izgine)
+  const h = ra("x^3 + √(7)*x^2 + 16,676946*x^2 + 16,676946*√(7)*x + 69,530131971728*x + 69,530131971728*√(7)=0");
+  assert.equal(h.roots.length, 3);
+});
+
+test("bližnje rešitve se v zapisu razlikujejo", () => {
+  const tex = (t) => solutionTex(analyze(t, ENV));
+  assert.equal(tex("(x−0,1)(x−0,1000001)(x−3)=0"), "x_{1} = \\frac{1}{10} \\approx 0{,}1,\\quad x_{2} = 0{,}1000001,\\quad x_{3} = 3");
+  assert.equal(tex("(x−1)(x−1,0000000001)=0"), "x_{1} = 1,\\quad x_{2} = 1{,}0000000001");
+  assert.equal(tex("(x−1)(x−2)=0"), "x_{1} = 1,\\quad x_{2} = 2");
+});
+
+// 2700 razstavljenih (seme 3 in 4: decimalke s 3–7 mesti, bližnje ničle, ulomki, kratnosti do 6, √2…√10, π,
+// stopnje do 12) + 1151 istih z iracionalnimi koeficienti, razvitih s SymPy expand. »main«: pravilno pred popravkom.
+test("3851 polinomov z iracionalnimi koeficienti iz SymPy: nič pravilnega ne postane napačno", () => {
+  const cases = JSON.parse(fs.readFileSync(new URL("./fixtures/polinomi-sympy-3.json", import.meta.url)));
+  const near7 = (a, b) => Math.abs(a - b) <= 1e-7 * Math.max(1, Math.abs(b));
+  const ok = (r, c) =>
+    r?.kind === "solve" &&
+    r.roots.length === c.real.length &&
+    r.roots.every((x, i) => near7(x, c.real[i])) &&
+    r.complex.length === c.cx.length &&
+    [...r.complex].sort((a, b) => a[0] - b[0] || a[1] - b[1]).every((z, i) => near7(z[0], c.cx[i][0]) && near7(z[1], c.cx[i][1]));
+  const count = { razstavljeno: 0, razvito: 0 };
+  const regress = [];
+  for (const c of cases) {
+    if (ok(analyze(c.t, ENV), c)) count[c.src]++;
+    else if (c.main) regress.push(c.t);
+  }
+  assert.deepEqual(regress, [], "pravilno pred popravkom, zdaj napačno");
+  // pred popravkom: razstavljeno 958/2700, razvito 339/1151 (preostale razvite napake: SymPy izpiše 15 mest, zato
+  // je vpisan polinom drugačen od razstavljenega in ima res kompleksne ničle)
+  assert.equal(count.razstavljeno, 2700);
+  assert.ok(count.razvito >= 1090, JSON.stringify(count));
+});
