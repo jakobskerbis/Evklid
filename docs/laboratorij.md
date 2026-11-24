@@ -77,8 +77,8 @@ once (deduped by engine + opts) with the topics it belongs to; a new experiment 
 
 ## Fotografski prikaz (photo view; j, 2026-11-10: »fotorealističen videz in fizikalna točnost«)
 
-Five experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`, `lab-plamenska`), **on by default for everyone** (j, 2026-11-24: »vklopi
-vsem«; the other 26 follow in groups of 5, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
+Six experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`, `lab-plamenska`, `lab-kovine`), **on by default for everyone** (j, 2026-11-24: »vklopi
+vsem«; the other 25 follow in groups of 5, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
 colour, wiring and readings still come from the model and are laid over pre-rendered layers. Switch: the button
 »Fotografski prikaz« (`sim.lab.foto`, camera icon, `.lab-foto-gumb`) at the top of the experiment's controls, not over the
 picture (as an overlay it covered labels and the first test tube); the choice is `localStorage` `evklid.lab.foto`
@@ -91,6 +91,7 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 | `scripts/lab-foto/lab_modeli.py` | Blender (Python) procedural models in real dimensions, materials, meniscus solver |
 | `scripts/lab-foto/lab_prizori.py` | the three scenes, orthographic cameras (`Pogled`), layer list, anchors (`meta.sidra`) |
 | `scripts/lab-foto/prizor_plamenska.py` | scene of `lab-plamenska` |
+| `scripts/lab-foto/prizor_kovine.py` | scene of `lab-kovine` |
 | `scripts/lab-foto/prizor_ph.py` | scene of `lab-ph` (one file per experiment from now on, registered in `PRIZORI` with one line; `paket.py` packs every `prizor_*.py`) |
 | `scripts/lab-foto/bpy_zagon.py` | runs `lab_izris.py` with the Python module `bpy` instead of the `blender` program (`python bpy_zagon.py -- <poskus> <dir> …`, same arguments; previews on machines without Blender) |
 | `scripts/lab-foto/lab_izris.py` | `blender -b --factory-startup --python scripts/lab-foto/lab_izris.py -- <poskus> <dir> [--vzorci 512] [--merilo 3] [--naprava OPTIX\|CUDA\|CPU]` → one PNG per layer + `meta.json`; a rerun skips finished layers |
@@ -99,6 +100,7 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 | `public/sim/foto.js` | loader (lazy, AVIF if supported else WebP, density 1×/2×/3× by screen), `Oder` (layers as SVG `<image>` inside the experiment's own SVG, so pinning and layout are unchanged), `risiTitracijo`, `risiDokaz`, `risiKrog`, `vodnikiKroga` |
 | `public/sim/foto-ph.js` | `risiPh`, `OKNA_PH` for `lab-ph` (overlay code of each new experiment lives in its own `foto-<poskus>.js`) |
 | `public/sim/foto-plamenska.js` | `risiPlamensko`, `OKNA_PLAMENSKA`, `oblikaPlamena`, `barvePlamena`, `kobaltovoSteklo` for `lab-plamenska` |
+| `public/sim/foto-kovine.js` | `risiKovine`, `OKNA_KOVINE`, `prikazKovine`, `F0` for `lab-kovine` |
 | `test/lab-foto.test.js` | switch off by default, anchors vs. models, meniscus (independent Young–Laplace integration), flask volume table, Beer–Lambert exponent, wiring graph and polarity for all 27 configurations, colour codes, files and size budget |
 
 How a layer set works (all cameras are orthographic with a fixed scale, so model mm → drawing units is linear and exact):
@@ -170,6 +172,44 @@ salt mask ignores refraction in the watch glass; HCl fumes and the hand holding 
 a flat filter, not rendered glass.
 Fix: the engine's overlay layer (`.lab-ek-ov`, flame and bubbles) now has the same padding as an SVG with `.lab-bench`
 (14 px, 10 px on phones); before, flame and bubbles were shifted by the padding in every `lab-ek` drawing.
+
+`lab-kovine` (window 400 × 300 at 0,8 units/mm as the drawing, camera 8°; window »dno« 150 × 92 at 3,2 units/mm = 4×,
+camera 8°; window »lupa« 236 × 80 at 4 units/mm = 5×, camera at the syringe axis, 0°): Erlenmeyer 100 mL (DIN ISO 1773,
+as in the titration) for acids, low beaker 100 mL (ISO 3819, Ø 50 × 70 mm, wall 1,2 mm; `CASA100` in `lab_modeli.py`,
+`casa(…, mere=)`) for salt solutions, each with 50 mL (`POSODA_K.V`) rendered at the model's level (h from the true inner
+profile; the model never changes the volume, a test checks the level); rubber stopper Ø 23/17,6 × 22 mm with a Ø 6 mm
+glass tube and red rubber tubing Ø 8 mm to the syringe nozzle; digital thermometer probe Ø 4 × 130 mm (estimate) leaning
+on the neck (open flask), through the stopper, or on the beaker rim. Glass gas syringe 100 mL: 1 mL = 1,5 mm (as the
+drawing: 15 cm for 100 mL), so the bore is Ø 29,13 mm (wall 1,9 mm, Ø 33 outside); the ground-glass plunger (milky,
+partly translucent) is 165 mm long inside the barrel, so it falls out at 110 mL as in the model (`POSODA_K.izpade`);
+barrel held by a ring clamp at its open end on a retort stand. The plunger is two layers moved by the model: inside the
+barrel (barrel + plunger rendered at 0 mL, translated by (V + calibration offset) · 1,5 mm, clipped from the plunger face
+to the clamp; the barrel is a uniform tube, so the translated glass matches) and outside (plunger without the barrel at
+100 mL, translated, clipped from the barrel end); fallen out = plunger lying on the bench (shadow). The scale (1 mL
+lines, 5 and 10 mL longer, numbers every 10 mL, on the front of the barrel at 16–40° below the axis) is drawn by the app in
+both windows, so it is never moved by the plunger layer. Metal: rendered as »white metal« (F0 = 1) behind the vessel and
+the liquid with refraction-only glass on a transparent film (`prozornoSteklo`: Cycles `film_transparent_glass`; the
+refraction-only copies do not cast shadows, so light reaches the metal as through thin glass), then multiplied by the
+metal's F0 (Fe, Cu, Zn from physicallybased.info, Mg an estimate; for metals the reflection colour is F0, and multiplying
+sRGB values equals multiplying linear ones for a power-law encoding), mixed with the model's coating colour
+(`PREVLEKA`, weight 0,95 · `prevleka()`) and tinted by the solution in front of it (Beer–Lambert with half the path
+through the liquid). Shapes (the model fixes thickness and grain size, not width): Mg ribbon 3 × 0,2 mm coiled into a
+helix Ø 16 × 32 mm (0,5 g = 480 mm, 9,55 turns); Zn/Fe/Cu ribbon 10 × 0,25 mm, up to 28 mm (0,5 g Zn), slightly bent;
+21 grains Ø 3 mm (0,5 g Mg = 20,3 grains) in three rows, front row first; powder heap with angle of repose 32° and bulk
+density 50 % (0,5 g Mg = 575 mm³). How much is left comes from the model's mass: ribbon length L = m / (ρ w d), number of
+grains m / (ρ π d³/6) (at least one while any metal is left), powder heap scaled by (V/Vref)^⅓ about its centre. For
+ribbons and grains an »id« layer (lossless, Raw) stores the position along the ribbon (0 … 0,9) or the grain index; an SVG
+filter turns it into a mask »value ≤ 0,9 · f«, so the ribbon is shortened from its far end and grains vanish one by one,
+exactly as refracted in the render. Bubbles: the engine's bubble layer (`mehurcki`, count from `mehurcki()`), from the
+apparent extent of the metal (horizontal refraction in the liquid-filled vessel, 2D Snell in `videz_x`) to the surface;
+foam (`pena`) and overflow (`prelito`) are drawn by the app over the liquid, foam between the level and the height of
+V + foam in the true flask profile. Readings (stopwatch, syringe, thermometer, balance) stay the engine's LCDs.
+Simplifications: the Mg ribbon stays on the bottom (in reality bubbles lift it to the surface in 1 mol/L HCl); ribbons
+dissolve only in length, grains one by one (a partly dissolved grain is shown whole), powder stays a heap (part of it
+floats in reality); shavings (»ostružki« for Mg granules in the engine) are shown as grains; roughness is per shape,
+not per metal; the coating is a uniform colour (no copper sponge or silver needles as in the drawing's magnifier); the
+syringe scale in the magnifier at 0–4 mL ignores the barrel's end wall; the stopper's holes and the clamp's screw are
+not modelled; no balance on the bench (the balance and stopwatch are the LCDs under the picture, as in the drawing).
 
 ## Experiments
 

@@ -437,3 +437,4 @@ def krog():
 PRIZORI = {"titracija": titracija, "dokaz": dokaz, "krog": krog}
 PRIZORI["ph"] = __import__("prizor_ph").ph   # scripts/lab-foto/prizor_ph.py
 PRIZORI["plamenska"] = __import__("prizor_plamenska").plamenska   # scripts/lab-foto/prizor_plamenska.py
+PRIZORI["kovine"] = __import__("prizor_kovine").kovine   # scripts/lab-foto/prizor_kovine.py

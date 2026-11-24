@@ -92,6 +92,8 @@ def main():
         else:
             scene.world = svet; scene.cycles.samples = max(16, int(vzorci * s.get("vzorci", 1.0))); scene.cycles.use_denoising = True
             scene.view_settings.view_transform = "Standard"; r.film_transparent = vrsta == "prosojno"
+        # predmet za steklom (kovina v bučki): steklo z lomom brez odboja je na prozornem ozadju prozorno
+        scene.cycles.film_transparent_glass = bool(s.get("prozornoSteklo"))
         r.filepath = pot
         bpy.ops.render.render(write_still=True)
         print(f"LAB-SLOJ {i}/{len(sloji)} {s['ime']} {time.time() - t0:.0f}", flush=True)

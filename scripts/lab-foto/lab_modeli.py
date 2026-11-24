@@ -23,6 +23,7 @@ PIPETA = dict(V=25, dolzina=450, steblo=5.0, stena=0.9, bucka=21.0, bucka_l=100,
 EPRUVETA = dict(d=16.0, l=160, stena=1.1)
 # Nizka čaša 250 mL po ISO 3819: zunanji premer 70 mm, višina 95 mm, stena ~1,6 mm, izliv.
 CASA = dict(d=70.0, h=95, stena=1.6)
+CASA100 = dict(d=50.0, h=70, stena=1.2, dno=2.0, zaob=5.0, izliv=5.0)   # nizka čaša 100 mL (ISO 3819: Ø 50 × 70 mm)
 # Ogljikov plastni upornik 0,5 W (model UPOR.P = 0,5 W): telo 9,0 × Ø 3,3 mm, žica Ø 0,55 mm (Yageo CFR-50);
 # 0,25 W: 6,3 × Ø 2,4 mm (CFR-25).
 UPORNIK = {0.5: dict(l=9.0, d=3.3, zica=0.55), 0.25: dict(l=6.3, d=2.4, zica=0.55)}
@@ -412,10 +413,11 @@ def epruveta(ime, gladina=None, zb="prizor", premik=(0, 0, 0), n=64):
     return _posoda(ime, zunaj, znotraj, g, steklo(), steklo("meja", N_STEKLO / N_VODA), steklo("gladina", N_VODA), n, zb, premik, stena_r) + (t,)
 
 
-def casa(ime, gladina=None, zb="prizor", premik=(0, 0, 0), n=128):
-    """Nizka čaša 250 mL (ISO 3819) z izlivom v smeri −x."""
-    R, H, t = CASA["d"] / 2, CASA["h"], CASA["stena"]
-    dno, zaob = 2.2, 6.0
+def casa(ime, gladina=None, zb="prizor", premik=(0, 0, 0), n=128, mere=None):
+    """Nizka čaša 250 mL (ISO 3819) z izlivom v smeri −x; mere = dict(d, h, stena[, dno, zaob, izliv]) za drugo velikost."""
+    m_ = mere or CASA
+    R, H, t = m_["d"] / 2, m_["h"], m_["stena"]
+    dno, zaob, izl = m_.get("dno", 2.2), m_.get("zaob", 6.0), m_.get("izliv", 7.0)
     zunaj = [(0, 0), (R - zaob, 0)] + [(R - zaob + zaob * math.cos(-math.pi / 2 + k * math.pi / 12), zaob + zaob * math.sin(-math.pi / 2 + k * math.pi / 12)) for k in range(1, 7)]
     zunaj += [(R, H - 5), (R + 0.8, H - 2.5), (R + 1.8, H - 0.6), (R + 1.6, H)]
     Ri = R - t
@@ -431,7 +433,7 @@ def casa(ime, gladina=None, zb="prizor", premik=(0, 0, 0), n=128):
             d = abs(abs(kot) - math.pi)
             if d < 0.45:
                 f = (1 - d / 0.45) ** 2 * ((z - (H - 9)) / 9) ** 1.5
-                v.co.x -= 7 * MM * f; v.co.z -= 1.5 * MM * f
+                v.co.x -= izl * MM * f; v.co.z -= 1.5 * izl / 7 * MM * f
     return out + (dno,)
 
 
