@@ -26,7 +26,12 @@ test("opis vnosa za bralnik zaslona v slovenščini (AUDIT-040)", () => {
   assert.equal(speech("∑_(n=1)^(5) n"), "vsota od n je enako 1 do 5 n kazalec");
   assert.match(speech("limita(sin(x)/x; x; 0)"), /^limita x proti 0 /);
   assert.equal(speech("x²≤4"), "x na 2 manj ali enako 4 kazalec");
-  assert.equal(speech("abs(x−1)"), "absolutna vrednost x minus 1 kazalec");
+  assert.equal(speech("abs(x−1)"), "absolutna vrednost x minus 1, konec absolutne vrednosti kazalec");
+  assert.equal(speech("abs(x−1)", 7), "absolutna vrednost x minus 1 kazalec, konec absolutne vrednosti");
+  // AUDIT-048: |x−1|+2 in |x−1+2| se ne smeta slišati enako
+  assert.equal(speech("abs(x−1)+2"), "absolutna vrednost x minus 1, konec absolutne vrednosti plus 2 kazalec");
+  assert.equal(speech("abs(x−1+2)"), "absolutna vrednost x minus 1 plus 2, konec absolutne vrednosti kazalec");
+  assert.equal(speech("abs(x)+2"), "absolutna vrednost x plus 2 kazalec");
   // pregled #974: konec korena in potence, kjer je argument iz več členov; kazalec na pravem mestu; grške črke
   assert.equal(speech("√(x²+1)"), "koren iz x na 2 plus 1, konec korena kazalec");
   assert.equal(speech("√(x²)+1"), "koren iz x na 2 plus 1 kazalec");
@@ -58,6 +63,9 @@ test("besede sc.say.* so v vseh jezikih vmesnika in imajo 32 besed (AUDIT-040)",
     const d = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
     assert.equal(d["sc.say.words"].split("|").length, 32, f);
     assert.equal(d["sc.say.greek"].split("|").length, 13, f);
+    // AUDIT-048 (pregled #992): absLong pove začetek pred {a} in konec za njim, sicer je 2+|x−1| dvoumno
+    const L = d["sc.say.absLong"];
+    assert.ok(L && L.indexOf("{a}") > 0 && L.trim().length > L.indexOf("{a}") + 3, `${f}: absLong »${L}«`);
   }
 });
 
