@@ -520,7 +520,11 @@ function solveSquarefree(t, k, found, depth = 0) {
         // stabilno: večja po absolutni vrednosti iz vsote, manjša iz produkta c/a
         const big = re + Math.sign(re || 1) * r;
         found.push({ z: [big, 0], m: k }, { z: [Number(c0) / Number(a2) / big, 0], m: k });
-      } else found.push({ z: [re, -r], m: k }, { z: [re, r], m: k });
+      } else {
+        // |D| popoln kvadrat: realni in imaginarni del sta točna ulomka (preverjeno, sme biti »=«)
+        const qex = sq * sq === bAbs(D);
+        found.push({ z: [re, -r], m: k, qex }, { z: [re, r], m: k, qex });
+      }
     }
     return;
   }
@@ -589,7 +593,8 @@ export function polyRootsMult(coeffs, exact = null, radii = null) {
     lower[best] = null;
     const re = (u.z[0] + l.z[0]) / 2;
     const im = (u.z[1] - l.z[1]) / 2;
-    out.push({ re, im: -im, m: u.m }, { re, im, m: u.m });
+    const qex = !!(u.qex && l.qex);
+    out.push({ re, im: -im, m: u.m, qex }, { re, im, m: u.m, qex });
   }
   if (lower.some(Boolean)) return null;
   // preizkus ostanka vsake ničle v prvotnem polinomu

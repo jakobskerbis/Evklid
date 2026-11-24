@@ -388,6 +388,17 @@ const fracTex = (p, q, inner = "") => {
  * Točna oblika števila v TeX (npr. \frac{1}{3}, \frac{\sqrt{3}}{2}, \frac{3\pi}{4}) ali null,
  * kadar je število celo ali točne oblike ne najdemo.
  */
+/** Kot exactTex, a še z vrednostjo oblike (p/q, m√n/q, pπ/q kot število), da jo lahko preverimo v enačbi. */
+export function exactForm(v) {
+  const tex = exactTex(v);
+  if (!tex) return null;
+  const f = toFraction(v, 1000);
+  if (f) return { tex, value: f.p / f.q };
+  const sq = toFraction(v * v, 1000);
+  if (sq && sq.p > 0 && sq.p * sq.q <= 1e6) return { tex, value: Math.sign(v) * Math.sqrt(sq.p / sq.q) };
+  const pi = toFraction(v / Math.PI, 24);
+  return pi ? { tex, value: (pi.p * Math.PI) / pi.q } : null;
+}
 export function exactTex(v) {
   if (!Number.isFinite(v) || Math.abs(v - Math.round(v)) < 1e-9 * Math.max(1, Math.abs(v)) || Math.abs(v) > 1e9 || Math.abs(v) < 1e-9) return null;
   const f = toFraction(v, 1000);
