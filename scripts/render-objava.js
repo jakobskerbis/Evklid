@@ -38,7 +38,9 @@ export function doNoci(now = Date.now()) {
 // Začasno (j, 14. 11. 2026: »Odstrani to pravilo o objavah do ponedeljka«): do nedelje 15. 11. 00:00 (Ljubljana)
 // se vsaka združitev v main objavi takoj, brez čakanja na miren strežnik in brez ure med objavama.
 // Konec skrajšan na začetek pilota (j, 14. 11. 2026): objava med pilotom ne sme prekiniti odgovora inštruktorja.
-export const TAKOJ_DO = Date.parse("2026-11-15T00:00:00+01:00");
+// Znova vklopljeno do nadaljnjega (j, 24. 11. 2026: »do nadaljnega se spremembe objavljajo takoj«): vsaka združitev
+// v main gre na Render takoj, ko so testi zeleni, tudi podnevi in med uporabo. Nočno okno: TAKOJ_DO = 0.
+export const TAKOJ_DO = Infinity;
 
 // stanje: odgovor /healthz/stanje ali null (strežnik ni dosegljiv)
 // cakaMin: koliko minut je stara najstarejša neobjavljena sprememba v main
@@ -54,7 +56,7 @@ export function decide({ stanje, mainSha, cakaMin, testi = null, rocno = false, 
   if (rocno) return { objavi: true, zakaj: testi?.stanje === "uspeh" ? "ročni zagon" : "ročni zagon brez testov (izrecno izbrano)" };
   // Ista različica je bila sprožena, a ne teče: objava še poteka ali ni uspela. Ne ponavljaj ob vsakem teku.
   if (zadnja?.sha === mainSha && now - zadnja.at < NAJDLJE_MIN * 60000) return { objavi: false, zakaj: "ta različica je že bila sprožena (objava poteka ali ni uspela)" };
-  if (takoj) return { objavi: true, zakaj: "pravila o mirnem trenutku začasno ne veljajo (TAKOJ_DO)" };
+  if (takoj) return { objavi: true, zakaj: "objava takoj po zelenih testih (TAKOJ_DO, j 24. 11. 2026)" };
   if (nujno) return { objavi: true, zakaj: "nujen popravek ([nujno])" };
   const doOkna = doNoci(now);
   if (doOkna > 0) return { objavi: false, zakaj: `čakam na nočno okno (še ${Math.round(doOkna)} min)`, doOkna };

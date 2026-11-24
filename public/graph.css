@@ -122,6 +122,8 @@
 .gc-deriv { color: var(--muted); font-weight: 700; }
 .gc-err { display: flex; gap: 6px; align-items: flex-start; color: var(--danger); font-weight: 700; font-size: 0.88rem; line-height: 1.35; }
 .gc-err svg.i { margin-top: 2px; }
+.gc-hint { display: flex; gap: 6px; align-items: flex-start; color: var(--muted); font-size: 0.85rem; line-height: 1.35; margin-top: 2px; }
+.gc-hint svg.i { margin-top: 2px; flex: none; }
 .gc .gc-chip {
   justify-self: start; min-height: 36px; padding: 4px 12px; border-radius: 999px; font-size: 0.85rem;
   border: 1.5px solid var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 800;
