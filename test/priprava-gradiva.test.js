@@ -51,6 +51,26 @@ test("pričakovano besedilo, negotova mesta in slabo pokrite teme so dobesedno v
   }
 });
 
+// Simpsonovo pravilo: tipkarska napaka v pričakovanih rešitvah ne sme ostati neopažena.
+const simpson = (f, a, b, n = 1000) => {
+  const h = (b - a) / n;
+  let s = f(a) + f(b);
+  for (let i = 1; i < n; i++) s += (i % 2 ? 4 : 2) * f(a + i * h);
+  return (s * h) / 3;
+};
+test("preverjene rešitve se ujemajo z izračunom", () => {
+  const mat = exp.viri["mat-integrali.md"].resitve;
+  const t = exp.viri["star-test.md"].resitve;
+  const blizu = (x, y) => Math.abs(x - Number(y)) < 1e-9;
+  assert.ok(blizu(simpson((x) => 3 * x * x - 2 * x, 0, 2), mat["\\int_0^2 (3x^2 - 2x)\\,dx"]));
+  assert.ok(blizu(simpson((x) => x * x, 0, 3), mat["\\int_0^3 x^2\\,dx"]));
+  assert.ok(blizu(1 * 4 - 2 * 3, mat["\\det A"]));
+  assert.ok(blizu(3 * 2 ** 3, mat.a_4));
+  assert.ok(blizu(simpson((x) => 2 * x, 1, 2), t["1"]));
+  assert.ok(blizu(simpson((x) => x * x, 0, 3), t["3"]));
+  assert.ok(Math.abs(0.01 / 2e-6 - parseFloat(exp.viri["fiz-elektricno-polje.md"].resitve.E)) < 1e-6);
+});
+
 test("nabor pokriva predmete in vrste iz zahteve", () => {
   const predmeti = new Set(Object.values(exp.viri).map((e) => e.predmet));
   for (const p of ["MAT", "FIZ", "KEM", "BIO", "ZGO"]) assert.ok(predmeti.has(p), p);

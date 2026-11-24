@@ -7,11 +7,11 @@ kratek povzetek za agente. Pregledano stanje: `main` 91d88f7 (#977).
 ## Odločitve j (24. 11. 2026)
 
 1. Izvirniki (fotografije, PDF, Word, PowerPoint) se shranijo šifrirano; izbris kadar koli, samodejno 30 dni po
-   testu. To velja samo za pripravo na test; »Moji zapiski« zunaj priprave ostanejo brez slik (odločitev 10. 11.).
+   testu (brez datuma testa 30 dni po zadnji uporabi priprave; ob spremembi datuma šteje nov datum). To velja samo za pripravo na test; »Moji zapiski« zunaj priprave ostanejo brez slik (odločitev 10. 11.).
 2. Nadgradimo obstoječo »Pripravo na test« (`test_plans`, `/test-plan`, `/test-prep`, Urnik); nov razdelek ne nastane.
 3. Faza B najprej za MAT, FIZ, KEM (preverjanje s kodo); drugi predmeti v Fazi C.
-4. Vsak PR tega projekta gre v `main` in na evklid.app šele po izrecni odobritvi j (velja pred »objava takoj po
-   zelenih testih«).
+4. Vsak PR tega projekta gre v `main` in na evklid.app šele po izrecni odobritvi j (ima prednost pred pravilom
+   »objava takoj po zelenih testih«).
 
 ## Načela
 
@@ -22,6 +22,8 @@ kratek povzetek za agente. Pregledano stanje: `main` 91d88f7 (#977).
 - Računske naloge preveri koda (generator Vadnice ali SymPy, `server/cas.js`); besedilna trditev v načinu A
   potrebuje dobeseden navedek iz izseka, sicer »nepreverjeno« ali zavržena.
 - Negotovo branje (eksponenti, indeksi, predznaki, enote) se označi z `[?]` in nikoli ne popravi z ugibanjem.
+  Izjema so nedvoumni kemijski indeksi (H2SO4 → H₂SO₄): smejo se dopolniti, a z oznako `[?]`, da učenec vidi
+  popravek. Pri matematiki (x2 je lahko x², 2x ali x₂) samo oznaka, brez dopolnitve.
 - Besedilo dokumenta gre modelu samo kot podatek v oznakah; klici brez orodij, samo JSON z omejeno dolžino.
   Navodila v dokumentu se ne izvedejo (`test/fixtures/priprava/napad.md`).
 - Načrtovalnik je koda, ne model. Brez napovedi ocen in obljub.
@@ -64,7 +66,8 @@ v `priprave`; `/test-plan` in `/test-prep` ostaneta kot ovoj.
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot
 negotovo, kje je neskladje, česa ne sme izvesti). Binarne vire (PDF, Word, PowerPoint) ustvari test iz istih
-besedil, da v repozitoriju ni binarnih datotek; fotografije zvezkov priskrbi j (30 strani, kot pri zapiskih).
+besedil, da v repozitoriju ni binarnih datotek; fotografije zvezkov priskrbi j (30 strani, kot pri zapiskih): brez imen in drugih osebnih podatkov, ne gredo v
+repozitorij, hranijo se samo lokalno ali šifrirano.
 `test/priprava-gradiva.test.js` preveri, da je nabor popoln in da se vse formule izrišejo s KaTeX.
 Primerjava z Astro (`astra-rubrika.json`) gre po vzorcu `scripts/meri-astra.mjs`: j vnese isto gradivo v Astro
 in prepiše rezultate; trditev »boljše od Astre« šele z izmerjenimi rezultati.
