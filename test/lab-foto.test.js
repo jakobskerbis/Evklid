@@ -9,16 +9,17 @@ import path from "node:path";
 import SL from "../public/i18n/sl.js";
 import { fotoVklopljen, fotoIzbran, vodnikiKroga, visinaIzProstornine, eksponent, gostota, OKNA_TITRACIJA, OKNA_DOKAZ, OKNA_KROG } from "../public/sim/foto.js";
 import { BIRETA } from "../public/sim/lab-model-titracija.js";
-import { LOADS, UPOR, AM_RANGES, VM_RANGES } from "../public/sim/lab-model.js";
+import { LOADS, UPOR, AM_RANGES, VM_RANGES, Co2Bench, ACIDS, APNICA } from "../public/sim/lab-model.js";
 import { BANDS } from "../public/sim/lab-fiz.js";
 import { OKNA_PH, barvaVzorca, gladinaEpruvete, zaslonPh } from "../public/sim/foto-ph.js";
 import { PH_VZORCI, PH_KOLICINE } from "../public/sim/lab-model-indikatorji.js";
 import { OKNA_PLAMENSKA, SPEKTROSKOP_FOTO, oblikaPlamena, barvaVzorca as barvaSoli, barvePlamena, kobaltovoSteklo, zarenje, nasici } from "../public/sim/foto-plamenska.js";
 import { PlamenBench, VZORCI, barvaSpektra, spekterPlamena, spekterSoli } from "../public/sim/lab-model-reakcije.js";
+import { OKNA_CO2, BARVE_TEKOCIN, meriloKupcka, visinaPene, zaslon } from "../public/sim/foto-co2.js";
 
 const FOTO = path.resolve("public/sim/foto");
 const meta = (p) => JSON.parse(fs.readFileSync(path.join(FOTO, p, "meta.json"), "utf8"));
-const POSKUSI = ["titracija", "dokaz", "krog", "ph", "plamenska"];
+const POSKUSI = ["titracija", "dokaz", "krog", "ph", "plamenska", "co2"];
 
 test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike", () => {
   assert.equal(fotoIzbran(), true);
@@ -26,7 +27,7 @@ test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike",
   assert.ok(SL["sim.lab.foto"]);
   for (const f of fs.readdirSync("public/i18n/ui")) assert.ok(JSON.parse(fs.readFileSync(`public/i18n/ui/${f}`, "utf8"))["sim.lab.foto"], `${f}: sim.lab.foto`);
   // motorji narišejo risbo, kadar risi() vrne false (rezerva brez povezave in pri »manj podatkov«)
-  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-indikatorji.js", "risiPh"], ["lab-reakcije.js", "risiPlamensko"]]) {
+  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-indikatorji.js", "risiPh"], ["lab-reakcije.js", "risiPlamensko"], ["lab-kem.js", "risiCo2"]]) {
     const src = fs.readFileSync(`public/sim/${f}`, "utf8");
     assert.match(src, new RegExp(`foto\\.risi\\(\\(o, meta\\) => ${klic}\\(`), f);
   }
@@ -275,4 +276,60 @@ test("plamenska: gorilnik, zanka in urni stekli v merilu; plamen in barve samo i
   const py = fs.readFileSync("scripts/lab-foto/prizor_plamenska.py", "utf8");
   assert.doesNotMatch(py, /svetilo\(/);
   assert.match(py, /snov\("sol-bela", \((0\.\d+), \1, \1\)/);
+});
+
+test("CO₂: bučka na tehtnici, zamašek s cevko in apnica v merilu; gladina, pena, sode in motnost iz modela", () => {
+  const m = meta("co2"), S = m.sidra.co2, k = m.merila.co2, F = m.bucka, E = m.epruveta;
+  assert.deepEqual(OKNA_CO2.co2, [0, 0, 400, 300]);
+  assert.ok(Math.abs(m.merila.vodoravno - k / Math.cos((m.merila.visinaKamere.co2 * Math.PI) / 180)) < 1e-4);
+  // bučka 100 mL (ISO 1773, h 105 mm) stoji na tehtalni plošči; ortografska kamera: navpično 1 enota/mm
+  assert.equal(F.visina, 105);
+  assert.ok(Math.abs(S.pult - S.buckaDno[1] - (m.tehtnica.panZ + F.dno) * k) < 0.05, "dno bučke na plošči tehtnice");
+  assert.ok(Math.abs(S.buckaDno[1] - S.buckaVrh[1] - (F.visina - F.dno) * k) < 0.05);
+  // gladina: tabela V(h) prave notranje oblike narašča; »polna« slika pokrije vso tekočino, ki jo poskus dovoli (≤ 100 mL + šum valja)
+  const T = F.VodH;
+  for (let i = 1; i < T.length; i++) assert.ok(T[i][1] > T[i - 1][1] && T[i][0] > T[i - 1][0]);
+  assert.ok(visinaIzProstornine(T, 101.5) < F.polnaMm, "101,5 mL je pod gladino polne slike");
+  assert.ok(F.polnaMm < (S.buckaDno[1] - S.zamasek[1]) / k, "polna slika je pod zamaškom");
+  // pena: tekočina + pena po isti tabeli, največ do vrha izrisane pene ali do zamaška
+  assert.equal(visinaPene(F, 30, 0, null), visinaIzProstornine(T, 30));
+  assert.ok(visinaPene(F, 30, 40, null) > visinaIzProstornine(T, 30));
+  assert.equal(visinaPene(F, 60, 500, 91), 91);
+  assert.equal(visinaPene(F, 60, 500, null), F.penaMm);
+  // zamašek Ø 17/22 × 25 mm sedi v vratu (notranji Ø 22 − 2 · 1,3 mm) toliko globoko, kot ga vrat sprejme
+  const Z = m.zamasek;
+  assert.ok(Math.abs(Z.spodaj + ((Z.zgoraj - Z.spodaj) * Z.globina) / Z.visina - (22 - 2 * F.stena)) < 0.01);
+  assert.ok(Math.abs(S.zamasek[1] - S.buckaVrh[1] - Z.globina * k) < 0.05);
+  // epruveta 16 × 160 mm z 10 mL apnice (model: APNICA.V); konica cevke globoko pod gladino, nad dnom
+  assert.deepEqual([E.premer, E.dolzina, E.V], [16, 160, APNICA.V * 1000]);
+  assert.ok(Math.abs(E.gladinaMm - gladinaEpruvete(APNICA.V * 1000, E.premer, E.stena)) < 0.01);
+  assert.ok(Math.abs(S.epruvetaDno - S.epruvetaGladina - E.gladinaMm * k) < 0.05);
+  assert.ok(m.cevka.konicaMm > 5 && m.cevka.konicaMm < E.gladinaMm - 40, "mehurček gre skozi > 4 cm apnice");
+  assert.ok(Math.abs(S.epruvetaDno - S.cevkaKonica[1] - m.cevka.konicaMm * k) < 0.05);
+  assert.ok(m.cevka.zunaj < 2 * (E.premer / 2 - E.stena) - 6, "cevka se ne dotika sten epruvete");
+  // kupček sode: 5 g pri nasipni gostoti 1,1 g/mL (stožec z zaobljenim vrhom, do 4 % manj); manjša masa = podobno telo
+  const Sd = m.soda, Vk = (Math.PI * Sd.polmer ** 2 * Sd.visina) / 3;
+  assert.ok(Math.abs(Vk - (Sd.masa / Sd.gostota) * 1000) < 2, `stožec ${Vk.toFixed(0)} mm³`);
+  assert.ok(Math.abs(Sd.visina / Sd.polmer - Math.tan((Sd.nasip * Math.PI) / 180)) < 1e-3);
+  assert.equal(meriloKupcka(5, 5), 1);
+  assert.ok(Math.abs(meriloKupcka(0.625, 5) - 0.5) < 1e-12);
+  assert.ok(Sd.polmer < 64 / 2 - 1.3 - 5, "kupček je na ravnem dnu");
+  // zasloni: okni v ravnini sprednje plošče v pravem merilu; odčitek z decimalno vejico
+  const [lz, dz, ls] = S.lcdTehtnica;
+  assert.ok(Math.abs(dz[0] - lz[0] - m.zasloni.tehtnica[0] * m.merila.vodoravno) < 0.05 && Math.abs(ls[1] - lz[1] - m.zasloni.tehtnica[1] * k) < 0.05);
+  assert.equal(zaslon(103.456, 2), "103,46");
+  assert.equal(zaslon(0, 1), "0,0");
+  // barve tekočin: le za tekočine iz modela; klorovodikova kislina in voda sta brezbarvni
+  for (const id of Object.keys(BARVE_TEKOCIN)) assert.ok(id in ACIDS || id === "mesanica", id);
+  assert.equal(BARVE_TEKOCIN.hcl, undefined);
+  assert.equal(BARVE_TEKOCIN.voda, undefined);
+  // apnica se pomotni iz modela (CaCO₃), ko gre CO₂ skozi cevko; z vodo v epruveti ne
+  const B = new Co2Bench({ seed: 5 });
+  B.setStopper("cevka"); B.pour("kis", 30); B.addSoda(1); B.step(20);
+  assert.ok(B.milky() > 0.3 && B.events.some((e) => e.type === "motna"));
+  // izris: brez plamena (svetil), tekočine brezbarvne, zasloni prazni (besedilo nariše aplikacija)
+  const py = fs.readFileSync("scripts/lab-foto/prizor_co2.py", "utf8");
+  assert.doesNotMatch(py, /svetilo\(/);
+  assert.doesNotMatch(py, /steklo\("[^"]*", [^)]*barva=/);
+  assert.match(fs.readFileSync("scripts/lab-foto/lab_prizori.py", "utf8"), /PRIZORI\["co2"\] = __import__\("prizor_co2"\)\.co2/);
 });

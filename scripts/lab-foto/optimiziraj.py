@@ -14,6 +14,7 @@ NUJNI = {
     "krog": ["krog"],
     "ph": ["ph"],
     "plamenska": ["plamenska"],
+    "co2": ["co2"],
 }
 
 

@@ -77,8 +77,8 @@ once (deduped by engine + opts) with the topics it belongs to; a new experiment 
 
 ## Fotografski prikaz (photo view; j, 2026-11-10: »fotorealističen videz in fizikalna točnost«)
 
-Five experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`, `lab-plamenska`), **on by default for everyone** (j, 2026-11-24: »vklopi
-vsem«; the other 26 follow in groups of 5, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
+Six experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`, `lab-plamenska`, `lab-co2`), **on by default for everyone** (j, 2026-11-24:
+»vklopi vsem«, »dokončaj vse poskuse«; the others follow, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
 colour, wiring and readings still come from the model and are laid over pre-rendered layers. Switch: the button
 »Fotografski prikaz« (`sim.lab.foto`, camera icon, `.lab-foto-gumb`) at the top of the experiment's controls, not over the
 picture (as an overlay it covered labels and the first test tube); the choice is `localStorage` `evklid.lab.foto`
@@ -91,6 +91,7 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 | `scripts/lab-foto/lab_modeli.py` | Blender (Python) procedural models in real dimensions, materials, meniscus solver |
 | `scripts/lab-foto/lab_prizori.py` | the three scenes, orthographic cameras (`Pogled`), layer list, anchors (`meta.sidra`) |
 | `scripts/lab-foto/prizor_plamenska.py` | scene of `lab-plamenska` |
+| `scripts/lab-foto/prizor_co2.py` | scene of `lab-co2` |
 | `scripts/lab-foto/prizor_ph.py` | scene of `lab-ph` (one file per experiment from now on, registered in `PRIZORI` with one line; `paket.py` packs every `prizor_*.py`) |
 | `scripts/lab-foto/bpy_zagon.py` | runs `lab_izris.py` with the Python module `bpy` instead of the `blender` program (`python bpy_zagon.py -- <poskus> <dir> …`, same arguments; previews on machines without Blender) |
 | `scripts/lab-foto/lab_izris.py` | `blender -b --factory-startup --python scripts/lab-foto/lab_izris.py -- <poskus> <dir> [--vzorci 512] [--merilo 3] [--naprava OPTIX\|CUDA\|CPU]` → one PNG per layer + `meta.json`; a rerun skips finished layers |
@@ -99,6 +100,7 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 | `public/sim/foto.js` | loader (lazy, AVIF if supported else WebP, density 1×/2×/3× by screen), `Oder` (layers as SVG `<image>` inside the experiment's own SVG, so pinning and layout are unchanged), `risiTitracijo`, `risiDokaz`, `risiKrog`, `vodnikiKroga` |
 | `public/sim/foto-ph.js` | `risiPh`, `OKNA_PH` for `lab-ph` (overlay code of each new experiment lives in its own `foto-<poskus>.js`) |
 | `public/sim/foto-plamenska.js` | `risiPlamensko`, `OKNA_PLAMENSKA`, `oblikaPlamena`, `barvePlamena`, `kobaltovoSteklo` for `lab-plamenska` |
+| `public/sim/foto-co2.js` | `risiCo2`, `OKNA_CO2`, `BARVE_TEKOCIN`, `visinaPene`, `meriloKupcka` for `lab-co2` |
 | `test/lab-foto.test.js` | switch off by default, anchors vs. models, meniscus (independent Young–Laplace integration), flask volume table, Beer–Lambert exponent, wiring graph and polarity for all 27 configurations, colour codes, files and size budget |
 
 How a layer set works (all cameras are orthographic with a fixed scale, so model mm → drawing units is linear and exact):
@@ -170,6 +172,30 @@ salt mask ignores refraction in the watch glass; HCl fumes and the hand holding 
 a flat filter, not rendered glass.
 Fix: the engine's overlay layer (`.lab-ek-ov`, flame and bubbles) now has the same padding as an SVG with `.lab-bench`
 (14 px, 10 px on phones); before, flame and bubbles were shifted by the padding in every `lab-ek` drawing.
+
+`lab-co2` (window 400 × 300 at 1,0 units/mm, camera 8°): top-loading balance 160 × 220 × 72 mm (estimate; Max 300 g,
+d = 0,01 g) with a Ø 120 mm stainless pan (top 79,5 mm above the bench) and a 56 × 18 mm LCD on the front panel; the
+100 mL Erlenmeyer flask (as above, marks 50/75 mL) stands on the pan; tapered rubber stopper Ø 17/22 × 25 mm that sits
+12 mm deep in the 19,4 mm neck (with a Ø 6 mm bore or solid); bent glass tube Ø 6/4 mm (bends R 15 mm, horizontal at
+245 mm) ending flush with the stopper bottom and 12 mm above the inner bottom of a 16 × 160 mm test tube in a beech rack
+with 10 mL limewater (`APNICA.V`; level 69,2 mm from hemisphere + cylinder, so the gas passes ~57 mm of limewater);
+lab timer 66 × 20 × 72 mm with a 50 × 20 mm LCD; wooden splint 5 × 1,8 × 150 mm, tip 12,5 mm below the rim, 28° from
+vertical, charred 9 mm, handle out of the window (no hand). From the model only: liquid level (`B.Vliq`, true inner
+shape table `bucka.VodH`, »full« crop rendered at 106 mL and clipped), foam height (liquid + `B.foam` by the same table,
+up to the stopper or 2 mm under the rim; foam crop with a wavy top, flask glass in that layer lets shadow rays through so
+the foam is lit directly), soda heap (`B.soda`: one render of 5 g, cone at bulk density 1,1 g/mL and angle of repose 38°,
+scaled by (m/5 g)^(1/3) about the centre of the bottom), stopper state (also after it pops), limewater turbidity
+`B.milky()` as an opaque white mask from the tube's thickness layer, bubbles (the engine's bubble positions in mm),
+balance reading `B.readMass()` (same value as the meter under the picture) and stopwatch, splint flame (black body
+1900/1500 K through `nasici`, as the soot flame of `lab-plamenska`) that dies within 0,5 s when `B.splint()` says »out«,
+then the tip glows (1000 K, e^(−t/1,2 s)) and smoke rises for the 3 s of `B.flame`. Liquid colours are estimates at 40 mm
+(no colour in the model): lemon juice pale yellow, slightly turbid; vinegar pale straw as in the drawing; HCl and water
+colourless. Opaque crops have a 1,5-unit feathered edge (render noise and compression would otherwise show a rectangle).
+Simplifications: the tube in the limewater is rendered as glass in air (no nested media in Cycles); the thickness layer
+of the tube ignores the delivery tube, so turbid limewater also covers it (real milky limewater hides it too); the heap
+is a separate transparent layer (lit without the flask glass, liquid in front of it does not tint it); bubbles,
+foam spill and puddle are drawn, not rendered; the rigid tube touches nothing (its buoyancy in the limewater is constant,
+so Δm is unaffected); balance, timer, stopper and splint are estimates, not a specific product; CO₂ is invisible.
 
 ## Experiments
 

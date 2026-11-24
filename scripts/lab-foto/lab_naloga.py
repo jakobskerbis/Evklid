@@ -9,7 +9,7 @@
 import json, os, re, subprocess, time
 
 TU = os.path.dirname(os.path.abspath(__file__))
-POSKUSI = ("titracija", "dokaz", "krog", "ph", "plamenska")
+POSKUSI = ("titracija", "dokaz", "krog", "ph", "plamenska", "co2")
 
 
 def preveri_nalogo(n):
