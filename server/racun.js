@@ -14,6 +14,8 @@
 import { casCheck } from "./cas.js";
 import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
+import { texToText } from "../public/scan/solvecore.js";
+import { parse, compile } from "../public/graph/math.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -151,12 +153,54 @@ export function claimIssue(res) {
   return `an exact computer-algebra check of the claim »${f.line}« found it wrong (${f.why})`;
 }
 
+// Blok RACUN preveri le sebe (AUDIT-064): model zapiše trditve dvakrat, vidno in v bloku. Če vidno besedilo navede
+// drugo vrednost neznanke kot blok (»$x = 5$«, v bloku »resi: 2*x+3=11 | x | 4«), je »potrjen« le blok, učenec pa vidi
+// napačno vrednost. Zato se rešitve (»resi«) primerjajo z vrednostmi iste neznanke v vidnem besedilu.
+const numOf = (t) => {
+  try {
+    const v = compile(parse(String(t).replace(/(\d),(?=\d)/g, "$1.")))({});
+    return typeof v === "number" && Number.isFinite(v) ? v : null;
+  } catch {
+    return null;
+  }
+};
+const close = (a, b) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b));
+/** Vrednosti neznanke v vidnem besedilu (brez blokov): »$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = 8/2 = 4$«. */
+function visibleValues(text, v) {
+  const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^>]*>>/g, "");
+  const out = [];
+  for (const m of plain.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+    const tex = m[1] ?? m[2];
+    if (/\\pm|\\mp|[±∓]|\\approx|≈|\\neq|≠|<|>|\\le|\\ge/.test(tex)) continue;
+    for (const piece of texToText(tex).split(/,|;|\bin\b/)) {
+      const parts = piece.split("=").map((x) => x.trim());
+      if (parts.length < 2 || !new RegExp(`^${v}(?:_?\\(?\\d\\)?)?$`).test(parts[0])) continue;
+      const n = numOf(parts.at(-1));
+      if (n !== null) out.push(n);
+    }
+  }
+  return out;
+}
+export function visibleIssue(text, claims) {
+  for (const c of claims) {
+    if (c.op !== "solve" || c.args.length < 3 || !/^[a-zA-Z]$/.test(c.args[1])) continue;
+    const claimed = c.args[2].split(/[,;]/).map((x) => numOf(x.trim())).filter((x) => x !== null);
+    if (!claimed.length) continue;
+    const seen = visibleValues(text, c.args[1]);
+    // le kadar besedilo vrednost neznanke navede (način A rezultata ne pove): vsaka rešitev iz bloka mora biti v besedilu
+    if (seen.length && claimed.some((y) => !seen.some((x) => close(x, y)))) {
+      return `the answer text states ${c.args[1]} = ${seen.map((x) => String(+x.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${c.args[1]} = ${c.args[2]}`;
+    }
+  }
+  return null;
+}
+
 /** Celoten krog za besedilo: trditve iz bloka → { checked, issue, failed, unsure, claims }. */
 export async function checkAnswerClaims(text) {
   const claims = parseClaims(text);
   if (!claims.length) return { checked: 0, issue: null, failed: [], unsure: [], claims: 0 };
   const r = await checkClaims(claims);
-  return { ...r, issue: claimIssue(r), claims: claims.length };
+  return { ...r, issue: claimIssue(r) || (r.failed.length ? null : visibleIssue(text, claims)), claims: claims.length };
 }
 
 // Števec (kv »racun_statistika«): { "2026-11-11": { odgovori, z_blokom, potrjene, napake, nepreverjene } },
