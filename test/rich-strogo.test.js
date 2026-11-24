@@ -113,7 +113,9 @@ test("A3 Pregled 3: napaka KaTeX ne vstavi surovega HTML; url() in href v SVG/Ma
     assert.equal(xss, null, "onerror se ni izvedel");
     assert.equal(vrinjen, false, "HTML iz formule ni element");
     assert.doesNotMatch(html, /<(meta|form|button|img)\b/i, html);
-    assert.match(html, /&lt;meta http-equiv=/, "formula je izpisana kot besedilo");
+    // Od enotnega matematičnega zapisa (F1, j 24. 11. 2026) neizrisljiva formula ni več surovo besedilo, ampak okvirček.
+    assert.match(html, /class="mat-napaka"/, "formula je okvirček");
+    assert.doesNotMatch(html, /meta http-equiv/, "surov TeX formule ni na strani");
     assert.doesNotMatch(html, /napadalec\.example\/[a-f]\./, html);
     assert.match(html, /filter="url\(#lokalni\)"/, "url(#…) ostane");
     assert.deepEqual(zunanje, []);

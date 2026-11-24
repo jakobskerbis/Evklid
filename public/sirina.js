@@ -16,6 +16,7 @@
 // Odločitev j (9. 11. 2026): visoka formula (ulomek …) sredi besedila gre povsod v svojo vrstico kot v učbeniku
 // (prilagodiFormulo; izjema ostaneta .tb-opt in .tb-q); ui.css za vsak tak blok enako velja (.tb-zlozena je blok),
 // v gumbu odgovora (.choice) ostane znotraj gumba.
+import { izrisi as izrisiTex } from "./mat/izris.js";
 
 export const MIN = 0.8;
 const BOX = ".katex-display, .md-table-wrap";
@@ -337,7 +338,7 @@ function izrisi(al) {
   let html = izrisi_.get(al);
   if (html) return html;
   try {
-    html = globalThis.katex.renderToString(al, { throwOnError: true, strict: "ignore", trust: (c) => c.command === "\\htmlData" });
+    html = izrisiTex(al, { zaupaj: "oznake", napaka: "vrzi" });
   } catch {
     return null;
   }
@@ -355,7 +356,7 @@ function zlozi(k, stopnja, meja = 0, strnjeno = !!k.closest(STRNJENO)) {
   if (stopnja === "t") {
     let html;
     try {
-      html = globalThis.katex.renderToString(al, { throwOnError: true, strict: "ignore", trust: (c) => c.command === "\\htmlData" });
+      html = izrisiTex(al, { zaupaj: "oznake", napaka: "vrzi" });
     } catch {
       return null;
     }

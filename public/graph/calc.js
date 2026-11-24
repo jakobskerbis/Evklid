@@ -6,6 +6,7 @@ import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
+import { izrisi } from "../mat/izris.js";
 
 const MAX_HISTORY = 80;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -32,13 +33,7 @@ export function createCalculator(root, opts) {
     if (comma()) s = s.replace(".", ",");
     return s.replace(/^-/, "−");
   };
-  const tex = (s, display = false) => {
-    try {
-      return window.katex.renderToString(s, { throwOnError: false, displayMode: display, strict: "ignore" });
-    } catch {
-      return esc(s);
-    }
-  };
+  const tex = (s, display = false) => izrisi(s, { blok: display });
 
   let state = load() || emptyState();
   let model = null;

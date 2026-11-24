@@ -784,6 +784,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 /* ---------- Klikljive formule (public/formula-info.js) ---------- */
 /* Formule so vedno od leve proti desni, tudi v arabščini (sicer m/V = ρ postane obrnjeno). */
 .katex { direction: ltr; unicode-bidi: isolate; }
+/* Formula, ki je ni mogoče izrisati (public/mat/izris.js NAPAKA_HTML): okvirček namesto rdečega surovega LaTeX-a. */
+.mat-napaka { display: inline-block; color: var(--muted, #888); font-family: KaTeX_Main, serif; }
 /* Formula v svojem okviru (simulacija, namig, zbirka) se ne prelomi sama sredi izraza: preširoko zloži
    sirina.js pri enačajih (j 2026-11-04: »To naj velja za vse enačbe«). */
 /* Formula sredi besedila se nikjer ne prelomi sredi izraza (j 2026-11-08): ne za minusom, plusom, oklepajem. Cela

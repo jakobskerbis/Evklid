@@ -52,6 +52,7 @@ jobs:
         public/preveri-se.js
         public/regions.js
         public/rich.js
+        public/mat/izris.js
         public/stopnja.js
         public/tisk-v-chromu.js
         public/vodic.js
