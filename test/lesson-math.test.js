@@ -76,7 +76,8 @@ test("lesson-math: pretvorbe enot in simbolni deli se izpustijo", () => {
   ]) {
     assert.equal(one(tex).mismatches.length, 0, tex);
   }
-  assert.equal(one("10\\,\\mathrm{m} = 1000\\,\\mathrm{cm}").checked, 0);
+  // AUDIT-055: prava pretvorba enot je zdaj preverjen korak (prej preskočen)
+  assert.equal(one("10\\,\\mathrm{m} = 1000\\,\\mathrm{cm}").checked, 1);
   assert.equal(normalizeTex("x + 1"), null);
   assert.equal(evaluate("2 pi"), 2 * Math.PI);
   assert.equal(evaluate("2(3+4)"), 14);
@@ -212,4 +213,40 @@ test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1
     "40\\ \\mathrm{Mbit} = 40 \\cdot 8 = 320\\ \\mathrm{MB}",
   ];
   for (const t of bad) assert.equal(one(t).mismatches.length, 1, t);
+});
+
+// AUDIT-055: pretvorbe enot s predponami se preverijo točno, ne po »mantisi« (prej je bil 72 km/h = 200 m/s »pretvorba«).
+test("AUDIT-055: napaka ×10ⁿ z enotami se ujame, prave pretvorbe ostanejo brez popravka", () => {
+  const R = String.raw;
+  const wrong = [
+    R`$\rho = \frac{540\ \mathrm{g}}{200\ \mathrm{cm^3}} = 27\ \mathrm{g/cm^3}$`,
+    R`$72\ \mathrm{km/h} = 200\ \mathrm{m/s}$`,
+    R`$5\ \mathrm{cm} = 0{,}5\ \mathrm{m}$`,
+    R`$3\ \mathrm{kg} = 300\ \mathrm{g}$`,
+    R`$5\ \mathrm{min} = 30\ \mathrm{s}$`,
+    R`$I = \frac{6\ \mathrm{V}}{12\ \Omega} = 2\ \mathrm{A}$`,
+    R`$c = \sqrt{3^2+4^2} = \sqrt{25} = 7\ \mathrm{cm}$`,
+    R`$M(\mathrm{H_2SO_4}) = 2 \cdot 1 + 32 + 4 \cdot 16 = 96\ \mathrm{g/mol}$`,
+    R`$72\ \mathrm{km/h} = \frac{72}{3{,}6} = 200\ \mathrm{m/s}$`,
+    R`$t = 1{,}5\ \mathrm{h} = 9\ \mathrm{min}$`,
+  ];
+  for (const t of wrong) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+  const right = [
+    R`$72\ \mathrm{km/h} = 20\ \mathrm{m/s}$`,
+    R`$0{,}3\ \mathrm{kW} = 300\ \mathrm{W}$`,
+    R`$84\,000\ \mathrm{J} = 84\ \mathrm{kJ}$`,
+    R`$3\ \mathrm{kg} = 3 \cdot 100 = 300\ \mathrm{dag}$`,
+    R`$72\ \mathrm{km/h} = \frac{72}{3{,}6} = 20\ \mathrm{m/s}$`,
+    R`$\rho = \frac{540\ \mathrm{g}}{200\ \mathrm{cm^3}} = 2{,}7\ \mathrm{g/cm^3}$`,
+    R`$I = \frac{6\ \mathrm{V}}{12\ \Omega} = 0{,}5\ \mathrm{A}$`,
+    R`$F = 2\ \mathrm{kg} \cdot 3\ \mathrm{m/s^2} = 6\ \mathrm{N}$`,
+    R`$1\ \mathrm{eV} = 1{,}602 \cdot 10^{-19}\ \mathrm{J}$`,
+    R`$Q = 2\ \mathrm{kg} \cdot 4200\ \mathrm{J/(kg\,K)} \cdot 10\ \mathrm{K} = 84\,000\ \mathrm{J}$`,
+    R`$E = 2\ \mathrm{kW} \cdot 3\ \mathrm{h} = 6\ \mathrm{kWh}$`,
+    R`$V \approx 3142\,\mathrm{cm^3} \approx 3{,}1\,\mathrm{L}$`,
+    R`$\frac{1000\,\text{m}}{1\,\text{km}} = 1$`,
+    R`$1\,\mathrm{s} \approx 16{,}7$`, // izjava (merilo), ne račun
+    R`$1200\,\mathrm{nt} = 400$`, // nukleotidi, ne nanotone
+  ];
+  for (const t of right) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
 });

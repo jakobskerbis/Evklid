@@ -45,18 +45,133 @@ function isDataStep(a, b, tol) {
   return BIT_UNIT.test(unit) ? DATA_POWERS.some((p) => near(p / 8)) : DATA_POWERS.some((p) => near(8 * p));
 }
 
+// Enote s predponami (AUDIT-055): vrednost enote v SI kot število pri izbranih vrednostih osnovnih dimenzij. Pri dveh
+// različnih izbirah je razmerje dveh količin enako natanko takrat, ko imata isto dimenzijo; takrat je to pravo
+// razmerje v SI (72 km/h : 20 m/s = 1). Tako se pretvorba preveri točno, ne po »mantisi« (prej je bil 72 km/h = 200 m/s
+// »pretvorba«, ker je 10 = 10ⁿ). Neznana enota (kemijska formula \mathrm{H_2O}, mmHg …) vrne null: velja staro pravilo.
+// Osnovne dimenzije: m, kg, s, A, K, mol.
+const UNIT_BASES = [
+  [1.7, 2.3, 3.1, 0.7, 1.9, 2.9],
+  [0.37, 5.3, 0.61, 4.1, 0.53, 1.3],
+];
+const U = (f, m = 0, kg = 0, sec = 0, a = 0, k = 0, mol = 0) => ({ f, d: [m, kg, sec, a, k, mol] });
+const UNITS = {
+  m: U(1, 1), g: U(1e-3, 0, 1), t: U(1000, 0, 1), s: U(1, 0, 0, 1), min: U(60, 0, 0, 1), h: U(3600, 0, 0, 1), A: U(1, 0, 0, 0, 1),
+  K: U(1, 0, 0, 0, 0, 1), mol: U(1, 0, 0, 0, 0, 0, 1), N: U(1, 1, 1, -2), J: U(1, 2, 1, -2), W: U(1, 2, 1, -3), Wh: U(3600, 2, 1, -2),
+  Pa: U(1, -1, 1, -2), bar: U(1e5, -1, 1, -2), atm: U(101325, -1, 1, -2), V: U(1, 2, 1, -3, -1), "Ω": U(1, 2, 1, -3, -2),
+  Omega: U(1, 2, 1, -3, -2), C: U(1, 0, 0, 1, 1), Hz: U(1, 0, 0, -1), L: U(1e-3, 3), l: U(1e-3, 3), eV: U(1.602176634e-19, 2, 1, -2),
+  cal: U(4.184, 2, 1, -2), T: U(1, 0, 1, -2, -1), F: U(1, -2, -1, 4, 2), M: U(1000, -3, 0, 0, 0, 0, 1), Ah: U(3600, 0, 0, 1, 1),
+};
+const NO_PREFIX = new Set(["t", "h", "min", "atm", "M"]);
+const PREFIXES = { da: 10, h: 100, k: 1e3, M: 1e6, G: 1e9, T: 1e12, d: 0.1, c: 0.01, m: 1e-3, "µ": 1e-6, u: 1e-6, n: 1e-9, p: 1e-12 };
+const symbolSI = (name, base) => {
+  const val = (x) => x.f * x.d.reduce((p, e, i) => p * base[i] ** e, 1);
+  if (UNITS[name]) return val(UNITS[name]);
+  for (const p of Object.keys(PREFIXES).sort((x, y) => y.length - x.length)) {
+    const u = name.slice(p.length);
+    // brez predpone pri t, h, min (»nt« so nukleotidi, ne nanotone)
+    if (name.startsWith(p) && UNITS[u] && u && !NO_PREFIX.has(u)) return PREFIXES[p] * val(UNITS[u]);
+  }
+  return null;
+};
+const SUP = { "²": 2, "³": 3, "⁻¹": -1, "⁻²": -2, "⁻³": -3 };
+/** Vrednost enote (»km/h«, »g/cm^3«, »J/(kg K)«, »kΩ«) v SI pri osnovah base ali null. */
+export function unitSI(unit, base = UNIT_BASES[0]) {
+  const s = String(unit).replace(/\\Omega/g, "Ω").replace(/\\mu\s*/g, "µ").replace(/μ/g, "µ").replace(/\\cdot|·|⋅|\*|\\,|~/g, " ");
+  let expr = "";
+  const re = /\s*(?:([A-Za-zµΩ]+)(?:\s*\^\s*(?:\{\s*(-?\d+)\s*\}|(-?\d+))|(⁻?[¹²³]))?|([/()]))/gy;
+  let pos = 0;
+  while (pos < s.length) {
+    re.lastIndex = pos;
+    const m = re.exec(s);
+    if (!m) return /^\s*$/.test(s.slice(pos)) ? (expr ? evaluate(expr) : null) : null;
+    pos = re.lastIndex;
+    if (m[5]) {
+      expr += m[5];
+      continue;
+    }
+    const v = symbolSI(m[1], base);
+    if (v === null) return null;
+    const e = m[2] ?? m[3] ?? (m[4] ? SUP[m[4]] : 1);
+    expr += ` (${(v ** Number(e)).toExponential(14).replace(/e([+-]\d+)$/, (x, n) => `*10**(${Number(n)})`)}) `;
+  }
+  if (!expr) return null;
+  const v = evaluate(expr);
+  return Number.isFinite(v) && v > 0 ? v : null;
+}
+// Vrednost dela z enotami v SI pri obeh izbirah osnov ali null (kakšne enote ni mogoče prebrati).
+function siValues(x) {
+  if (!x.units.length || x.units.some((u) => u === "%" || u === "°")) return null;
+  const out = [];
+  for (const base of UNIT_BASES) {
+    const n = normalizeTex(x.tex, x.pct, { unitSub: (u) => unitSI(u, base) });
+    if (!n || n.unitFail) return null;
+    const v = evaluate(n.expr);
+    if (!Number.isFinite(v)) return null;
+    out.push(v);
+  }
+  return out;
+}
+const sameRatio = (p, q) => Math.abs(p / q - 1) < 1e-6;
+/**
+ * Korak med deloma z različnimi enotami (ali brez enote na eni strani), preverjen s pravimi pretvorbami.
+ * Vrne null (drži), relativno razliko (ne drži), "skip" (dimenziji se ne ujemata: o tem koda ne sodi) ali
+ * undefined (enot ni mogoče prebrati: velja staro pravilo).
+ * chainUnits: enote delov verige z eno samo enoto (cilj pretvorbe, npr. m/s v »72 km/h = 72/3,6 = 20 m/s«).
+ */
+function unitStep(a, b, relTol, chainUnits) {
+  const sa = a.units.length ? siValues(a) : null;
+  const sb = b.units.length ? siValues(b) : null;
+  if ((a.units.length && !sa) || (b.units.length && !sb)) return undefined;
+  if (sa && sb) {
+    const r = [sa[0] / sb[0], sa[1] / sb[1]];
+    if (!sameRatio(r[0], r[1])) return "skip"; // različni dimenziji (vmesni korak formule)
+    return Math.abs(r[0] - 1) <= relTol ? null : Math.abs(r[0] - 1);
+  }
+  // Ena stran brez enote: golo število je ista količina v eni od enot verige (ali v enoti, kot je zapisana).
+  // Dve goli števili, le eno z enoto (»1 s ≈ 16,7«, »1200 nt = 400«), sta izjava, ne račun: o tem koda ne sodi.
+  if (a.bare && b.bare) return "skip";
+  const [bare, withU, si] = sa ? [b, a, sa] : [a, b, sb];
+  const cands = [withU.value];
+  if (sameRatio(si[0], si[1])) cands.push(si[0]); // brezdimenzijsko: 1000 m / 1 km = 1
+  for (const u of chainUnits) {
+    const us = UNIT_BASES.map((base) => unitSI(u, base));
+    if (us.some((v) => v === null)) return undefined;
+    const c = [si[0] / us[0], si[1] / us[1]];
+    if (sameRatio(c[0], c[1])) cands.push(c[0]);
+  }
+  const ok = cands.some((c) => Math.abs(bare.value - c) <= relTol * Math.max(Math.abs(bare.value), Math.abs(c), 1e-12));
+  return ok ? null : Math.abs(bare.value - withU.value) / Math.max(Math.abs(bare.value), Math.abs(withU.value), 1e-12);
+}
+
 // LaTeX → preprost aritmetični izraz. Vrne null, če del ni čisto številski.
 // pct: "div" bere »25\%« kot 25/100, "unit" kot število 25 z enoto %.
-export function normalizeTex(tex, pct = "div") {
+// unitSub (AUDIT-055): enota → število (vrednost enote v SI pri izbranih osnovnih dimenzijah) ali null; enota se tedaj
+// v izrazu nadomesti s tem številom, da izraz izračuna količino z enotami (540 g / 200 cm³ → g/cm³). unitFail: enote ni
+// bilo mogoče prebrati.
+export function normalizeTex(tex, pct = "div", { unitSub = null } = {}) {
   if (tex.length > 300) return null;
   let s = tex.replace(/\\,/g, "").replace(/\\left|\\right|\\[!;:>]|\\quad|\\qquad|\\ |~/g, " ");
   const units = [];
+  let unitFail = false;
+  const sub = (u) => {
+    if (!unitSub) return " ";
+    const v = unitSub(u);
+    if (v === null || !Number.isFinite(v) || v <= 0) {
+      unitFail = true;
+      return " ";
+    }
+    const [mant, ex] = v.toExponential(14).split("e");
+    return ` (${mant}*10**(${Number(ex)})) `;
+  };
   // Enote: \mathrm{kW}, \text{cm}^2, \Omega, °, ^\circ
   s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (_, u, e) => {
-    if (u.trim()) units.push(u.trim() + (e || "").replace(/\s/g, ""));
-    return " ";
+    if (!u.trim()) return " ";
+    const unit = u.trim() + (e || "").replace(/\s/g, "");
+    units.push(unit);
+    return sub(unit);
   });
-  s = s.replace(/\\(Omega|degree)\b/g, (_, u) => (units.push(u === "degree" ? "°" : u), " "));
+  s = s.replace(/\\(Omega|degree)\b/g, (_, u) => (units.push(u === "degree" ? "°" : u), u === "degree" ? " " : sub("Ω")));
   s = s.replace(/\^\s*(?:\{\\circ\}|\\circ)|°/g, () => (units.push("°"), " "));
   s = s.replace(/\\[dt]?frac\s*\{\s*\}\s*\{\s*\}/g, " "); // ostanek enote m/s
   // Decimalna vejica, ločila stavka, odstotki, operatorji
@@ -92,7 +207,7 @@ export function normalizeTex(tex, pct = "div") {
   const ulp = bare ? 10 ** (exp - decimals) : null;
   const trailingZeros = bare && !mantissa.includes(".") ? (mantissa.match(/0*$/) || [""])[0].length : 0;
   const maxLiteral = Math.max(0, ...(s.match(/\d+\.?\d*/g) || []).map(Number));
-  return { expr: s, units, bare, ulp, exp, trailingZeros, maxLiteral };
+  return { expr: s, units, bare, ulp, exp, trailingZeros, maxLiteral, tex, pct, unitFail };
 }
 
 // Majhen razčlenjevalnik: števila, + - * / **, oklepaji, sqrt/root/abs/pi, implicitno množenje (2 pi, 2(3+4)).
@@ -186,7 +301,7 @@ export function evaluate(expr) {
 const halfUlp = (x, approx) => 0.5 * (approx && x.trailingZeros && x.ulp === 1 ? 10 ** x.trailingZeros : x.ulp);
 
 // Primerja dva izračunana dela. Vrne null (ujema se), "skip" (pretvorba, ustreznica, izjava) ali relativno razliko.
-function compare(a, b, approx, loose, afterData = false) {
+function compare(a, b, approx, loose, afterData = false, chainUnits = []) {
   const diff = Math.abs(a.value - b.value);
   const scale = Math.max(Math.abs(a.value), Math.abs(b.value), 1e-12);
   // 1 % rezultata (zaokrožanje, 3,14 za π) ali polovica zadnjega mesta; pri ocenah 15 %.
@@ -200,11 +315,19 @@ function compare(a, b, approx, loose, afterData = false) {
     ratioTol = Math.min(0.03, Math.max(ratioTol, halfUlp(x, approx) / Math.max(Math.abs(x.value), 1e-12)));
   }
   if (diff <= tol + 1e-12) return null;
-  if (a.bare && b.bare) return "skip"; // 1 eV = 1,602·10⁻¹⁹ J, 10 m = 1000 cm, »0 = 4«
   const ua = a.units.join();
   const ub = b.units.join();
   if (a.units.includes("%") !== b.units.includes("%")) return "skip"; // 20 % = 60 €
   if (a.units.includes("°") !== b.units.includes("°")) return "skip"; // 150° = 5π/6
+  // Različne enote (ali enota le na eni strani): prava pretvorba s predponami (AUDIT-055), razen pri enotah podatkov.
+  if (ua !== ub && !hasDataUnit(a) && !hasDataUnit(b)) {
+    // relativna toleranca po pretvorbi: 1 % (ocene 15 %) ali pol zadnjega mesta zapisanega števila (3142 cm³ ≈ 3,1 L)
+    let rel = loose ? 0.15 : 0.01;
+    for (const x of [a, b]) if (x.bare) rel = Math.max(rel, halfUlp(x, approx) / Math.max(Math.abs(x.value), 1e-12));
+    const u = unitStep(a, b, rel, chainUnits);
+    if (u !== undefined) return u;
+  }
+  if (a.bare && b.bare) return "skip"; // 1 eV = 1,602·10⁻¹⁹ J, 10 m = 1000 cm, »0 = 4«
   if (ua !== ub && (a.units.length || b.units.length)) {
     if (hasDataUnit(a) || hasDataUnit(b)) {
       if (!afterData && isDataStep(a, b, ratioTol)) return "data"; // 2 MB = 2 · 10⁶ · 8, 100 Mbit/s = 100/8
@@ -221,6 +344,12 @@ function checkChain(tex, pct, loose) {
   let checked = 0;
   const mismatches = [];
   let afterData = false; // prejšnji korak je bil sprejeta pretvorba enot podatkov
+  // enote delov z eno samo enoto: možni cilji pretvorbe za golo število (72/3,6 = 20 ob »20 m/s«)
+  const chainUnits = [];
+  for (let k = 0; k < parts.length; k += 2) {
+    const n = normalizeTex(parts[k], pct);
+    if (n?.units.length === 1 && !chainUnits.includes(n.units[0])) chainUnits.push(n.units[0]);
+  }
   for (let k = 0; k < parts.length; k += 2) {
     const n = normalizeTex(parts[k], pct);
     const value = n ? evaluate(n.expr) : NaN;
@@ -231,7 +360,7 @@ function checkChain(tex, pct, loose) {
     }
     const cur = { ...n, value };
     if (prev) {
-      const r = compare(prev, cur, parts[k - 1] !== "=", loose, afterData);
+      const r = compare(prev, cur, parts[k - 1] !== "=", loose, afterData, chainUnits);
       afterData = r === "data";
       if (r !== "skip" && r !== "data") checked++;
       if (typeof r === "number") mismatches.push({ left: fmt(prev.value), right: fmt(cur.value), rel: r });
