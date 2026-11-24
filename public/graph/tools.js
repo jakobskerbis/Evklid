@@ -424,6 +424,11 @@ export function createTools(root, opts) {
       for (const k of toolOrder(lastSubj)) pick.append(pick.querySelector(`[data-tool="${k}"]`));
     },
     show,
+    /** »Pretvori enote« iz znanstvenega kalkulatorja: pretvornik z vpisano vrednostjo. */
+    units(v) {
+      show("units");
+      views.units?._api?.setValue?.(v);
+    },
   };
 }
 

@@ -128,7 +128,8 @@ export function texPlain(tex) {
 
 /**
  * Znanstveni kalkulator v elementu root.
- * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
+ * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?(),
+ *   convert?(value) (»Pretvori enote«: Orodja → pretvornik z vrednostjo; v fiziki in kemiji) }
  */
 let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
@@ -806,6 +807,8 @@ export function createScientific(root, opts) {
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
     if ((e.kind || "value") === "value" && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
       acts.push(`<button type="button" class="sc-act" data-act="dms" data-i="${i}" aria-pressed="${!!e.dms}" title="${esc(t("sc.toDms"))}"><span aria-hidden="true">°′″</span><span class="sr-only">${esc(t("sc.toDms"))}</span></button>`);
+    // fizika in kemija: izid v pretvornik enot (Orodja), vrednost se vpiše tam (povezani zavihki)
+    if ((e.kind || "value") === "value" && opts.convert && Number.isFinite(e.value) && (profile === "fiz" || profile === "kem")) acts.push(btn("convert", "ruler", "sc.toUnits"));
     if (["value", "solve", "ineq", "system", "deriv", "complex", "pair", "cas"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
   }
@@ -1075,6 +1078,11 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
+      else if (act === "convert") {
+        let txt = String(Number(it.value.toPrecision(12)));
+        if (/e/.test(txt)) txt = it.value.toExponential(11).replace(/\.?0+e/, "e");
+        opts.convert?.(comma() ? txt.replace(".", ",") : txt);
+      }
       else if (act === "steps") opts.steps?.(chemNumbers(it.stepsText || it.text), it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
       else if (act === "cas") {
         // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)
@@ -1294,5 +1302,15 @@ export function createUnits(root, opts) {
     const r = calc();
     if (Number.isFinite(r)) opts.onInsert(show(r).text.replace(" · 10^", "E").replace("−", "-"));
   });
-  return { root, resize() {}, reload() {} };
+  return {
+    root,
+    resize() {},
+    reload() {},
+    /** Vrednost iz znanstvenega kalkulatorja (»Pretvori enote«): vpiše jo in preračuna, količina ostane izbrana. */
+    setValue(v) {
+      $(".un-val").value = String(v);
+      calc();
+      $(".un-val").focus({ preventScroll: true });
+    },
+  };
 }

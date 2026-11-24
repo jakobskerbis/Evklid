@@ -80,6 +80,8 @@ function calcTool(mode) {
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
+        // »Pretvori enote«: zavihek Orodja, pretvornik z vrednostjo izida
+        convert: async (v) => (await setCalcMode("tools"))?.units?.(v),
         // »Po korakih«: zaslon Skeniraj (public/scan/) ima reševalnik po korakih
         canSteps: () => !!document.getElementById("view-scan"),
         // goal: po »Razstavi« pokaže korake razstavljanja, ne poenostavljanja
