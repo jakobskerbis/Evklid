@@ -6,7 +6,7 @@ import { naloziKnjiznice } from "./rich.js";
 import { naloziVse, t, locale, currentLang } from "./i18n-osnova.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { icon } from "./icons.js";
-import { stageCode } from "./stopnja.js";
+import { stageCode, stopnja, imaStopnjo } from "./stopnja.js";
 import { hideKeyboard } from "./tipkovnica-lena.js";
 import { refreshBubble } from "./okna.js";
 import { backgroundLoadOk } from "./games/stage.js";
@@ -80,6 +80,9 @@ function calcTool(mode) {
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
+        // »Pokaži na grafu«: rezultat z orodji grafičnega kalkulatorja, doda se trenutnemu grafu (graph/v-graf.js)
+        showOnGraph: async (req) => (await setCalcMode("graph"))?.showPlan(req),
+        stage: () => (imaStopnjo(state.student) ? stopnja(state.student) : null), // brez zapisane stopnje vse
         // »Po korakih«: zaslon Skeniraj (public/scan/) ima reševalnik po korakih
         canSteps: () => !!document.getElementById("view-scan"),
         // goal: po »Razstavi« pokaže korake razstavljanja, ne poenostavljanja
