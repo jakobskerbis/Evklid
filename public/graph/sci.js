@@ -244,7 +244,15 @@ export function createScientific(root, opts) {
   function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
-    const r = fn(input.value, s, e);
+    // varovalo: brisanje, po katerem se zapis ne bi izrisal, se ne zgodi (AUDIT-034)
+    const ok = (x) => {
+      try {
+        return !!entryBase(x, env())?.ok;
+      } catch {
+        return false;
+      }
+    };
+    const r = fn(input.value, s, e, { ok });
     const changed = r.text !== input.value;
     input.value = r.text;
     input.setSelectionRange(r.pos, r.pos);
