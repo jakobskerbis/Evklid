@@ -592,6 +592,7 @@ function nazaj({ entries = [null], view = "path" } = {}) {
     uciBack: closeIf("lesson"),
     textbookBack() {},
     labBack() {},
+    openLessonId: () => null, // lekcija iz poskusa: Nazaj vrne v poskus le iz iste lekcije (uci-se.js lessonFromLab)
     gamesBack: () => false,
     scanBack: () => false,
     meView: (v) => ["me", "settings", "progress", "graph"].includes(v),

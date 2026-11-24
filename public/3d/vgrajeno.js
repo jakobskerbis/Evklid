@@ -12,3 +12,19 @@ export const vgrajeno = (() => {
 export function starsu(sporocilo) {
   window.parent.postMessage(sporocilo, location.origin);
 }
+
+// »Vprašaj inštruktorja« iz atlasa ali modela. V okvirju aplikacije gre sporočilo staršu (zapre okvir, odpre klepet
+// z vpisanim vprašanjem); vrni je naslov tega pogleda (»atlas?izberi=…«, »<id>?del=…«), da vrnitev iz klepeta odpre
+// isti model in del, oznaka pa ime na gumbu »Nazaj na: …«. V aplikaciji (WebView) sporočilo aplikaciji, na spletu
+// klepet z vnaprej vpisanim vprašanjem (Nazaj v brskalniku vrne sem).
+export function vprasajInstruktorja(besedilo, { vrni = "", oznaka = "" } = {}) {
+  if (vgrajeno) {
+    starsu({ tip: "vprasaj", besedilo, vrni, oznaka });
+    return;
+  }
+  if (window.ReactNativeWebView?.postMessage) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ tip: "vprasaj", besedilo }));
+    return;
+  }
+  location.href = `/?pogled=chat&vprasaj=${encodeURIComponent(besedilo)}`;
+}
