@@ -1086,6 +1086,7 @@
   "sc.fmHint": "Bilinen harflerin yerine sayıları yaz, bilinmeyeni bırak ve = tuşuna bas.",
   "sc.fmRad": "Hesap makinesi artık RAD modunda (açılar radyan cinsinden).",
   "sc.errUndefined": "Sonuç tanımsız (ör. 0'a bölme).",
+  "sc.notReal": "Sonuç bir gerçek sayı değil. Karmaşık sayılarda {z}.",
   "sc.errNoDeriv": "Bu noktada türev yok.",
   "sc.errNoDerivLR": "Bu noktada türev yok: soldan türev {left}, sağdan türev {right}.",
   "sc.errNoDerivDomain": "Fonksiyon bu noktada tanımlı değil, bu yüzden türev yok.",

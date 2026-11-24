@@ -1086,6 +1086,7 @@
   "sc.fmHint": "Zëvendëso shkronjat e njohura me numra, lëre të panjohurën dhe shtyp =.",
   "sc.fmRad": "Makina llogaritëse tani është në modalitetin RAD (këndet në radianë).",
   "sc.errUndefined": "Rezultati nuk është i përcaktuar (p.sh. pjesëtim me 0).",
+  "sc.notReal": "Rezultati nuk është numër real. Në numrat kompleksë është {z}.",
   "sc.errNoDeriv": "Derivati nuk ekziston në këtë pikë.",
   "sc.errNoDerivLR": "Derivati nuk ekziston në këtë pikë: derivati i majtë është {left}, i djathti {right}.",
   "sc.errNoDerivDomain": "Funksioni nuk është i përcaktuar në këtë pikë, prandaj nuk ka derivat.",
