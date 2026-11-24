@@ -152,15 +152,20 @@ function serve() {
   });
   return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
 }
-const engines = [];
-for (const name of ["chromium", "webkit", "firefox"]) {
-  try {
-    if (playwright) engines.push([name, await playwright[name].launch()]);
-  } catch {}
+// brskalniki se zaženejo v testu: CI teče s --test-force-exit, ki konča proces, preden bi se zagnali na vrhu datoteke
+async function launchAll() {
+  const out = [];
+  for (const name of ["chromium", "webkit", "firefox"]) {
+    try {
+      if (playwright) out.push([name, await playwright[name].launch()]);
+    } catch {}
+  }
+  return out;
 }
-const skip = engines.length ? false : "Playwright ni nameščen";
 
-test("zaslonska ⌫, strojni Backspace/Delete in puščice v brskalniku: brez ostankov (AUDIT-004)", { skip }, async (t) => {
+test("zaslonska ⌫, strojni Backspace/Delete in puščice v brskalniku: brez ostankov (AUDIT-004)", { timeout: 600000 }, async (t) => {
+  const engines = await launchAll();
+  if (!engines.length) return t.skip("Playwright ni nameščen");
   const server = await serve();
   const url = `http://127.0.0.1:${server.address().port}/t-sci.html`;
   t.after(async () => {
@@ -224,6 +229,24 @@ test("zaslonska ⌫, strojni Backspace/Delete in puščice v brskalniku: brez os
       await page.click('.sc-key[data-ins="#del"]');
       await clean(`∫ ⌫ ${k}`);
     }
+    // Ctrl+Z po strojnem Backspace, Delete in zaslonski ⌫ vrne izbrisano (sistemska razveljavitev ostane; pregled #945)
+    for (const how of ["Backspace", "Delete", "screen"]) {
+      await start("");
+      await page.keyboard.type("sin(x)+2");
+      if (how === "Delete") await page.keyboard.press("ArrowLeft");
+      if (how === "screen") await page.click('.sc-key[data-ins="#del"]');
+      else await page.keyboard.press(how);
+      assert.equal((await state()).v, "sin(x)+", `${engine} ${how}`);
+      await page.keyboard.press("Control+z");
+      assert.equal((await state()).v, "sin(x)+2", `${engine}: Ctrl+Z po ${how}`);
+    }
+    // razveljavitev brisanja cele predloge
+    await start("");
+    await page.keyboard.type("2+sin(");
+    await page.keyboard.press("Backspace");
+    assert.equal((await state()).v, "2+", `${engine}: sin( gre celo`);
+    await page.keyboard.press("Control+z");
+    assert.equal((await state()).v, "2+sin(", `${engine}: Ctrl+Z vrne sin(`);
     assert.deepEqual(errors, [], engine);
     await page.close();
   }
