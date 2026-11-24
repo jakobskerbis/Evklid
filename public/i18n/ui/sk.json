@@ -1024,6 +1024,7 @@
   "sc.say.sqrt": "odmocnina z {a}",
   "sc.say.root": "{k}. odmocnina z {a}",
   "sc.say.abs": "absolútna hodnota {a}",
+  "sc.say.absLong": "absolútna hodnota {a}, koniec absolútnej hodnoty",
   "sc.say.binom": "{a} nad {b}",
   "sc.say.paren": "zátvorka {a} koniec zátvorky",
   "sc.say.matrix": "matica {a}",

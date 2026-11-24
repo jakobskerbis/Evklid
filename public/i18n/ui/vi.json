@@ -1006,6 +1006,7 @@
   "sc.say.sqrt": "căn bậc hai của {a}",
   "sc.say.root": "căn bậc {k} của {a}",
   "sc.say.abs": "giá trị tuyệt đối của {a}",
+  "sc.say.absLong": "giá trị tuyệt đối của {a}, hết giá trị tuyệt đối",
   "sc.say.binom": "tổ hợp chập {b} của {a}",
   "sc.say.paren": "mở ngoặc {a} đóng ngoặc",
   "sc.say.matrix": "ma trận {a}",

@@ -1012,6 +1012,7 @@
   "sc.say.sqrt": "رادیکال {a}",
   "sc.say.root": "رادیکال فرجهٔ {k} از {a}",
   "sc.say.abs": "قدر مطلق {a}",
+  "sc.say.absLong": "قدر مطلق {a}، پایان قدر مطلق",
   "sc.say.binom": "ترکیب {b} از {a}",
   "sc.say.paren": "باز کردن پرانتز {a} بستن پرانتز",
   "sc.say.matrix": "ماتریس {a}",

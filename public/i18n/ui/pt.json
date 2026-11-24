@@ -1012,6 +1012,7 @@
   "sc.say.sqrt": "raiz quadrada de {a}",
   "sc.say.root": "raiz de índice {k} de {a}",
   "sc.say.abs": "valor absoluto de {a}",
+  "sc.say.absLong": "valor absoluto de {a}, fim do valor absoluto",
   "sc.say.binom": "{a} escolhe {b}",
   "sc.say.paren": "abre parênteses {a} fecha parênteses",
   "sc.say.matrix": "matriz {a}",

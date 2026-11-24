@@ -1018,6 +1018,7 @@
   "sc.say.sqrt": "korijen iz {a}",
   "sc.say.root": "{k}. korijen iz {a}",
   "sc.say.abs": "apsolutna vrijednost {a}",
+  "sc.say.absLong": "apsolutna vrijednost {a}, kraj apsolutne vrijednosti",
   "sc.say.binom": "{a} nad {b}",
   "sc.say.paren": "zagrada {a} zatvorena zagrada",
   "sc.say.matrix": "matrica {a}",

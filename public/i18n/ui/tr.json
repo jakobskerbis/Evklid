@@ -1012,6 +1012,7 @@
   "sc.say.sqrt": "{a} karekökü",
   "sc.say.root": "{k}. dereceden kök {a}",
   "sc.say.abs": "{a} mutlak değeri",
+  "sc.say.absLong": "mutlak değer: {a}, mutlak değer sonu",
   "sc.say.binom": "kombinasyon: {a} içinden {b}",
   "sc.say.paren": "parantez aç {a} parantez kapa",
   "sc.say.matrix": "matris {a}",

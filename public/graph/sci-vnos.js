@@ -451,6 +451,21 @@ function visualOrder(s, A) {
   return { A: moved ? out : A, alias };
 }
 
+/**
+ * abs(…) je v zapisu |…|: oklepaj in zaklepaj dobita ključ »|«, da se ujameta s \left| in \right|. Sicer kazalec na
+ * koncu »abs(x−1)« stoji v zapisu znotraj črt (|x−1‸|), vnos pa gre zunaj (AUDIT-048).
+ */
+function absBars(s, A) {
+  const bar = new Set();
+  for (const m of s.matchAll(/(?<![A-Za-z])abs\s*\(/g)) {
+    const o = m.index + m[0].length - 1;
+    bar.add(o);
+    const c = closeAt(s, o);
+    if (c >= 0) bar.add(c);
+  }
+  return bar.size ? A.map((a) => (bar.has(a.s) && (a.k === "(" || a.k === ")") ? { ...a, k: "|" } : a)) : A;
+}
+
 function texAtoms(toks) {
   const out = [];
   toks.forEach((t, ti) => t.keys.forEach((k, n) => out.push({ k, t: ti, first: n === 0, last: n === t.keys.length - 1 })));
@@ -525,7 +540,7 @@ export function entryBase(text, env = {}, render = (s) => liveTex(s, env)) {
   } catch {}
   if (!tex) return { ok: false, raw };
   let toks = lex(tex, hole);
-  const { A, alias } = visualOrder(done.text, textAtoms(done.text, hole));
+  const { A, alias } = visualOrder(done.text, absBars(done.text, textAtoms(done.text, hole)));
   let B = texAtoms(toks);
   let to = align(A, B);
   // oklepaj, ki ga je učenec odprl, previewTex pa ga je kot nepotrebnega odstranil, mora ostati viden:
@@ -605,7 +620,13 @@ export function caretStops(base) {
  */
 export function stopsTex(base) {
   // dotik nikoli ne postavi kazalca sredi imena ali odpirala (»d|/dx(«, »sin|(«): tam bi vnos ime pokvaril (AUDIT-004)
-  const stops = caretStops(base).filter((s) => !(openerAround(base.raw, s.p)?.[0] < s.p));
+  // mesto v odpiralu, ki je v zapisu isto kot začetek odpirala (pred |x| iz »abs(«), dobi začetek, ne izgine (AUDIT-048)
+  const stops = caretStops(base)
+    .map((s) => {
+      const o = openerAround(base.raw, s.p)?.[0];
+      return !(o < s.p) ? s : base.place(o).at === s.at ? { ...s, p: o } : null;
+    })
+    .filter(Boolean);
   return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.4em}}}`])));
 }
 
@@ -628,9 +649,9 @@ const WORDS = [...new Set([...BUILTINS, ...COMMAND_NAMES, "Ans"])].filter((w) =>
 const OPENER = new RegExp(`(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|\\^\\(|_\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()$`, "u");
 const OPENER_AT = new RegExp(`^(?:×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\()`, "u");
 const WORD_CHAR = /[A-Za-zčšž]/;
-// mesta, kjer kazalec ne sme stati (sredi imena ali odpirala). »×10^(« ni med njimi: dotik na števko v 10 postavi kazalec
-// ob to števko (pregled #965); ⌫ za »×10^(« ga še vedno izbriše kot celoto (OPENER).
-const OPENERS_ALL = new RegExp(`[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\(`, "gu");
+// mesta, kjer kazalec ne sme stati (sredi imena ali odpirala). »×10^(« iz tipke ×10ˣ je enota kot ime: kazalec v »10« bi
+// tiho spremenil število (2×1|0^(5) + ⌫ → 2×0^(5) = 0; AUDIT-048)
+const OPENERS_ALL = new RegExp(`×10\\^\\(|[∑∏]_\\(|d\\/dx\\(|[√∛∫]\\(|(?:${WORDS.map(esc).join("|")})\\s*\\(`, "gu");
 
 /** Zaklepaj za oklepajem na o (ali -1, če ni zaprt). */
 function closeAt(s, o) {
@@ -798,6 +819,8 @@ function backspaceRaw(text, s, e = s) {
       if (c < 0 || up === -2) return done(t.slice(0, start) + t.slice(c < 0 ? t.length : c + 1), start);
       return done(t, start); // izpolnjena vsota: kazalec pred ∑, nič se ne izbriše
     }
+    // ×10^(…) je enota: gre cela z eksponentom (vsebina »5« brez ×10 bi spremenila število: 2×10^(5) → 25; AUDIT-048)
+    if (op[0] === "×10^(") return done(t.slice(0, start) + t.slice(c < 0 ? t.length : c + 1), start);
     const slots = slotsOf(t, o, c);
     const name = op[0].replace(/\s*\($/, "");
     if (slots.slice(1).every((x, k) => emptySlot(t, name, x, k + 1))) return unwrap(t, start, o, c, blank(t, slots[0]) ? null : slots[0]);
@@ -860,6 +883,7 @@ function deleteForwardRaw(text, s, e = s) {
     const o = s + op[0].length - 1;
     const c = closeAt(t, o);
     if (/^[∑∏]_\($/.test(op[0])) return done(t, o + 1);
+    if (op[0] === "×10^(") return done(t.slice(0, s) + t.slice(c < 0 ? t.length : c + 1), s); // enota (AUDIT-048)
     const slots = slotsOf(t, o, c);
     const name = op[0].replace(/\s*\($/, "");
     if (slots.slice(1).every((x, k) => emptySlot(t, name, x, k + 1))) return unwrap(t, s, o, c, blank(t, slots[0]) ? null : slots[0]);
@@ -968,7 +992,7 @@ const GREEK_TEX = { varepsilon: "epsilon", varphi: "phi" };
 
 /**
  * TeX zapisa vnosa → besedilo za bralnik zaslona.
- * say(key, vars): prevod sc.say.<key> (range, frac, fracLong, pow, powLong, sub, at, sqrt, sqrtLong, root, rootLong, abs, binom,
+ * say(key, vars): prevod sc.say.<key> (range, frac, fracLong, pow, powLong, sub, at, sqrt, sqrtLong, root, rootLong, abs, absLong, binom,
  * paren, matrix, deriv); greek: { ime: beseda } za SAY_GREEK;
  * words: { ime: beseda } za SAY_WORDS; parse: katex.__parse.
  */
@@ -1063,7 +1087,8 @@ export function texSpeech(tex, { say, words, greek = {}, parse }) {
       }
       case "leftright": {
         const a = sp(n.body);
-        if (n.left === "|" || n.left === "\\vert" || n.left === "\\lvert") return say("abs", { a });
+        // več členov: »absolutna vrednost x minus 1, konec absolutne vrednosti« ≠ »… minus 1 plus 2« (AUDIT-048)
+        if (n.left === "|" || n.left === "\\vert" || n.left === "\\lvert") return say(terms({ type: "ordgroup", body: list(n.body) }) ? "absLong" : "abs", { a });
         if (n.left === ".") return a;
         if (list(n.body).length === 1 && list(n.body)[0].type === "array") return a; // matrika: oklepaj je del matrike
         return say("paren", { a });

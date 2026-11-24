@@ -1006,6 +1006,7 @@
   "sc.say.sqrt": "akar kuadrat dari {a}",
   "sc.say.root": "akar pangkat {k} dari {a}",
   "sc.say.abs": "nilai mutlak {a}",
+  "sc.say.absLong": "nilai mutlak {a}, akhir nilai mutlak",
   "sc.say.binom": "kombinasi {b} dari {a}",
   "sc.say.paren": "buka kurung {a} tutup kurung",
   "sc.say.matrix": "matriks {a}",

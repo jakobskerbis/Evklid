@@ -1012,6 +1012,7 @@
   "sc.say.sqrt": "rrënja katrore e {a}",
   "sc.say.root": "rrënja e rendit {k} e {a}",
   "sc.say.abs": "vlera absolute e {a}",
+  "sc.say.absLong": "vlera absolute e {a}, fund i vlerës absolute",
   "sc.say.binom": "kombinime nga {a} me nga {b}",
   "sc.say.paren": "hap kllapën {a} mbyll kllapën",
   "sc.say.matrix": "matricë {a}",
