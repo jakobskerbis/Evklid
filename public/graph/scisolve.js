@@ -594,9 +594,9 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
     // točne rešitve brez zaokroževanja; približne le na ~ulp (1,0000000001 ni 1)
     const tight = (x) => (Math.abs(x - Math.round(x)) <= 1e-13 * Math.max(1, Math.abs(x)) ? Math.round(x) : Math.abs(x) < 1e-15 ? 0 : x);
     const real = pr.filter((r) => r.im === 0);
-    const roots = real.map((r) => (r.exact ? r.re : tight(r.re)));
+    const roots = real.map((r) => (r.exact || r.ver ? r.re : tight(r.re))); // preverjeno ne zaokrožamo (−1 − 10⁻¹⁵)
     // imaginarni del iz točne poti ne zaokrožamo na 0 (x² + 10⁻³⁰ = 0: ±10⁻¹⁵ i)
-    const complex = pr.filter((r) => r.im !== 0).map((r) => [tight(r.re), pr.exactAll ? r.im : tight(r.im)]);
+    const complex = pr.filter((r) => r.im !== 0).map((r) => (r.ver ? [r.re, r.im] : [tight(r.re), pr.exactAll ? r.im : tight(r.im)]));
     // rex: točno racionalna; forms: potrjena oblika ±ᵏ√(p/q) (za zapis z »=« namesto »≈«)
     // unc: ničla ni potrjena (ali ima polmer napake err) – v zapisu »≈« in le zanesljiva mesta
     const runc = real.map((r) => !!(r.unc || r.err));
@@ -753,7 +753,8 @@ export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) 
       // AUDIT-053: nepreverjena kompleksna ničla brez ugibanih ulomkov in korenov (≈ 0,333333 − 0,942809i, ne ≈ 1/3 − 2√2/3 i)
       const raw = r.cex ? !r.cex[i] : !!r.gx || ce > 0;
       const small = (x) => formatNumber(Number(x.toPrecision(6)), { mode, comma }).tex;
-      const part = (x) => (Math.abs(x) < 1e-6 ? small(x) : raw || decAll > 6 ? decTex(x, comma, mode, d) : plainTex(x, comma, mode));
+      // preverjena: točna oblika (1/3 ± 10⁻⁷ i, ne 0,3333333 ± 10⁻⁷ i)
+      const part = (x) => (Math.abs(x) < 1e-6 ? small(x) : r.cex?.[i] ? plainTex(x, comma, mode) : raw || decAll > 6 ? decTex(x, comma, mode, d) : plainTex(x, comma, mode));
       const a = re === 0 ? "" : part(re);
       // zelo majhen imaginarni del (1 ± 10⁻¹⁰ i) ne sme postati 0
       const b = part(Math.abs(im));

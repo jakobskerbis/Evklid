@@ -39,7 +39,8 @@ test("gruče stopnje ≥ 3: realne točno, kompleksne z napako, nikoli lažni »
   assert.deepEqual(a.roots, [0.9999999999]);
   assert.ok(a.complex.every(([re, im]) => Math.abs(re - 1.00000000005) < 1e-20 && Math.abs(Math.abs(im) - 8.660254037844386e-11) < 1e-24));
   const tex = solutionTex(a);
-  assert.ok(!tex.includes("= 1,") && !/x_\{\d\} = /.test(tex), tex); // vse z ≈
+  // realna ničla je točno 1 − 10⁻¹⁰ (racionalna, točno izločena in preverjena: »=«), kompleksni z ≈
+  assert.ok(tex.startsWith("x_{1} = 0{,}9999999999,") && !tex.includes("= 1,") && !/x_\{[23]\} = /.test(tex), tex);
   const b = analyze("((x−4/3)^4−10^(−25))=0", ENV);
   assert.equal(b.roots.length, 2);
   assert.ok(Math.abs(b.roots[0] - (4 / 3 - 5.623413251903491e-7)) < 1e-15 && Math.abs(b.roots[1] - (4 / 3 + 5.623413251903491e-7)) < 1e-15);
@@ -86,4 +87,26 @@ test("redki polinomi: Sturmova veriga s pravim predznakom (hitro in pravilno, Sy
   const s = analyze("(x−4)(x^6−20)(7x^2−40)=0", ENV);
   assert.equal(s.roots.length, 5);
   assert.equal(s.roots[4], 4);
+});
+
+// Pregled #979, 3. krog: racionalna ničla v gruči je bila izpisana dvakrat z »=«, druga ničla je manjkala. Zdaj
+// racionalne ničle najprej točno izločimo (s kratnostjo) iz točnega polinoma, ostanek rešimo posebej. mpmath.
+test("racionalna ničla v gruči: točno izločena, ostale ničle prave", () => {
+  const a = analyze("((x−5)^4−10^(−14))*(x−5)=0", ENV);
+  // 5 ± 10^(−3,5) = 5 ± 0,000316227766…, 5 in 5 ± 0,000316227766… i
+  const d = 10 ** -3.5;
+  assert.equal(a.roots.length, 3);
+  assert.ok(Math.abs(a.roots[0] - (5 - d)) < 1e-12 && a.roots[1] === 5 && Math.abs(a.roots[2] - (5 + d)) < 1e-12, JSON.stringify(a.roots));
+  assert.ok(a.complex.length === 2 && a.complex.every(([re, im]) => Math.abs(re - 5) < 1e-12 && Math.abs(Math.abs(im) - d) < 1e-12));
+  const ta = solutionTex(a);
+  assert.equal(ta.match(/ = 5(,|$)/g)?.length, 1, ta);
+  // ((x − 5)² − 10⁻²⁰)(x − 5): 5 − 10⁻¹⁰, 5, 5 + 10⁻¹⁰ (vse racionalne, točno)
+  assert.equal(solutionTex(analyze("((x−5)^2−10^(−20))*(x−5)=0", ENV)), "x_{1} = 4{,}9999999999,\\quad x_{2} = 5,\\quad x_{3} = 5{,}0000000001");
+  // x³ + 10⁻³⁰ = 0: realna −10⁻¹⁰ (ne ≈ 0), kompleksni 5·10⁻¹¹ ± 8,66025·10⁻¹¹ i
+  const c = analyze("x^3+10^(−30)=0", ENV);
+  assert.deepEqual(c.roots, [-1e-10]);
+  assert.ok(solutionTex(c).startsWith("x_{1} = -1\\cdot 10^{-10},"), solutionTex(c));
+  assert.ok(c.complex.every(([re, im]) => Math.abs(re - 5e-11) < 1e-25 && Math.abs(Math.abs(im) - 8.660254037844386e-11) < 1e-25));
+  // (x − 1)((x − 1)² + 10⁻²⁰): 1 in 1 ± 10⁻¹⁰ i (prej trikrat 1)
+  assert.equal(solutionTex(analyze("(x−1)((x−1)^2+10^(−20))=0", ENV)), "x_{1} = 1,\\quad x_{2} = 1-1\\cdot 10^{-10}\\,i,\\quad x_{3} = 1+1\\cdot 10^{-10}\\,i");
 });
