@@ -5,7 +5,7 @@
 // Vsak rezultat preverimo s števili: prvotni izraz in rezultat izračunamo v 20 točkah in se morata ujemati
 // (rešitve enačbe vstavimo nazaj v enačbo). Česar ne prestane preverjanja, ne pokažemo.
 // π in e sta simbola (transcendentni števili), zato x·π − π = π(x − 1); pri preverjanju dobita svojo vrednost.
-import { Q, P, AlgebraError, gcdInt, lcmInt } from "../scan/algebra.js";
+import { Q, P, AlgebraError, gcdInt, lcmInt, withLimit } from "../scan/algebra.js";
 import { compileLine, lineTex, splitTop, HIDDEN_VARS } from "./scicore.js";
 import { runCalc, CALC_OPS } from "./calculus.js";
 import { runAtoms, atomInfo, ATOM_TEX, isAtom } from "./casalg.js";
@@ -876,21 +876,23 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
   const saved = deadline;
   try {
     deadline = Date.now() + ms;
-    const ctx = { scope, dens: [], dec: false };
-    const a = rat(L, ctx);
-    const b = rat(Rn, ctx);
-    if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
-    const N = a.n.mul(b.d).sub(b.n.mul(a.d));
-    if (N.vars().some((w) => w !== v)) return null;
-    const deg = N.zero ? 0 : N.degree(v);
-    if (deg > 60) return null;
-    const out = [];
-    for (let k = deg; k >= 0; k--) {
-      const c = coefIn(N, v, k);
-      const q = c.zero ? Q.ZERO : c.constValue();
-      out.push({ n: q.n, d: q.d });
-    }
-    return out;
+    return withLimit(10n ** 400n, () => {
+      const ctx = { scope, dens: [], dec: false };
+      const a = rat(L, ctx);
+      const b = rat(Rn, ctx);
+      if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+      const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+      if (N.vars().some((w) => w !== v)) return null;
+      const deg = N.zero ? 0 : N.degree(v);
+      if (deg > 60) return null;
+      const out = [];
+      for (let k = deg; k >= 0; k--) {
+        const c = coefIn(N, v, k);
+        const q = c.zero ? Q.ZERO : c.constValue();
+        out.push({ n: q.n, d: q.d });
+      }
+      return out;
+    });
   } catch {
     return null;
   } finally {

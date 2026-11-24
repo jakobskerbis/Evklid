@@ -56,3 +56,32 @@ test("veliki koeficienti z iracionalnimi števili: realne ničle ne izginejo (Sy
   assert.deepEqual(r.mult, [1, 1, 2]); // (x − √3)(x + 5)(x − 7)²
   assert.ok(close(r.roots[1], Math.sqrt(3)) && r.roots[2] === 7);
 });
+
+
+// Pregled #967: kvadratna enačba z dvema decimalnima rešitvama je dobila napačno »točno« obliko z »=«
+// (B² nad 2^53 v double), zelo različno velike ničle (4 do 10⁷, koeficienti do 10⁴³) pa napačno realno ničlo.
+test("kvadratna z decimalnima rešitvama: brez napačne točne oblike, hitro", () => {
+  for (const [t, roots] of [
+    ["(x+20)(x+9,6537162)=0", [-20, -9.6537162]],
+    ["(x−9,3764)(x−9,3767)=0", [9.3764, 9.3767]],
+    ["2*(x+4,361405)*(x+4,361404)=0", [-4.361405, -4.361404]],
+    ["(x+0,779182)(x+0,806)=0", [-0.806, -0.779182]],
+  ]) {
+    const t0 = performance.now();
+    const r = analyze(t, ENV);
+    assert.ok(performance.now() - t0 < 100, `${t}: počasi`);
+    assert.equal(r.exact, undefined, `${t}: ${r.exact}`);
+    assert.deepEqual(r.roots, roots, t);
+  }
+  // iracionalni ostaneta s točno obliko
+  assert.equal(analyze("x^2−2x−1=0", ENV).exact, "x_{1,2} = 1 \\pm \\sqrt{2}");
+});
+
+test("ničle od 4 do 10⁷ s koeficienti do 10⁴³ (SymPy, seme 11)", () => {
+  const EXT = [
+    ["12*x^7+362825551*x^6+3899237712752166*x^5+17172943676100967743693*x^4+26266219535403636469841237696*x^3+16463878737682647039094495725641433*x^2+3667970039115574849903059325391275714542*x-27205016761819410761695625264144678474709=0", [-9358703.0, -719787.0, 7.416666666666667], []],
+    ["11*x^7+289413208*x^6+1650901365726842*x^5-12616046698999422074888*x^4-120422925270139292377345023049*x^3+108504798891130942104403565336330200*x^2+1943647698628658098956196445944852434292620*x-18199619782328251068695174448059912781406704=0", [-9811367.0, -7124764.0, 9.363636363636363, 5124282.0], []],
+    ["63*x^8+786920394*x^7+2806496010237622*x^6+2162424581470442253630*x^5-21831096026085474795171*x^4-476940225368191609948740*x^3+599820735309403587437966*x^2+24510921602904830534963196*x-80600317995453433982820000=0", [-6189375.0, -5243869.0, -1057566.0, 19.428571428571427], [[-9.0, -4.0], [-9.0, 4.0], [4.333333333333333, -1.0], [4.333333333333333, 1.0]]]
+  ];
+  for (const [t, real, cx] of EXT) check(t, real, cx);
+});

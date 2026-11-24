@@ -105,8 +105,11 @@ function quadraticExact([a, b, c], v, comma) {
   const L = fr.reduce((l, x) => (l * x.q) / gcd(l, x.q), 1);
   let [A, B, C] = fr.map((x) => (x.p * L) / x.q);
   if (A < 0) [A, B, C] = [-A, -B, -C];
+  // vse vmesne vrednosti morajo biti točna cela števila (B² nad 2^53 se v double zaokroži: napačna »točna« oblika);
+  // |D| do 10¹² tudi zato, da je razcep √|D| = m√n hiter
+  if (![A, B, C, B * B, 4 * A * C].every(Number.isSafeInteger)) return null;
   const D = B * B - 4 * A * C;
-  if (!Number.isSafeInteger(D)) return null;
+  if (!Number.isSafeInteger(D) || Math.abs(D) > 1e12) return null;
   if (D === 0) return null; // ena dvojna rešitev: dovolj je numerična
   const sq = Math.round(Math.sqrt(Math.abs(D)));
   if (D > 0 && sq * sq === D) return null; // racionalni rešitvi: dovolj je exactTex
