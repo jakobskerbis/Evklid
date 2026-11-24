@@ -115,3 +115,22 @@ test("brisiNazaj v telesu integrala in brisiNaprej (Del): zgradba ostane cela", 
   assert.deepEqual(brisiNaprej("π()/()", 1), { value: "π", caret: 1 });
   assert.equal(brisiNaprej("(1)/(2)", 1), null, "števka se zbriše kot vsak znak");
 });
+
+// AUDIT-012: grški diferencial (dθ, dφ) je diferencial; ∫(f;a;b) dobi diferencial iz edine proste črke v f
+test("integral z grško spremenljivko: ∫ (θ) dθ, ∫_(0)^(1) (θ) dθ, ∫(θ;0;1) so ena formula z dθ (AUDIT-012)", () => {
+  assert.deepEqual(splitFormulas("∫ (θ) dθ"), [{ tex: "\\int θ\\,dθ" }]);
+  assert.deepEqual(splitFormulas("∫_(0)^(1) (θ) dθ"), [{ tex: "\\int_{0}^{1} θ\\,dθ" }]);
+  assert.deepEqual(splitFormulas("∫ (sin(φ)) dφ = ?"), [{ tex: "\\int \\sin (φ)\\,dφ" }, { text: " = ?" }]);
+  assert.deepEqual(tex("∫(θ;0;1)"), ["\\int_{0}^{1} θ\\,dθ"]);
+  assert.deepEqual(tex("∫(sin(θ);0;π)"), ["\\int_{0}^{π} \\sin (θ)\\,dθ"]);
+  assert.deepEqual(tex("∫(e^(t);0;1)"), ["\\int_{0}^{1} e^{t}\\,dt"]);
+  assert.deepEqual(tex("∫(θ)"), ["\\int θ\\,dθ"]);
+  // brez proste črke ali z več črkami ostane dx (kot prej)
+  assert.deepEqual(tex("∫(x^(2);0;1)"), ["\\int_{0}^{1} x^{2}\\,dx"]);
+  assert.deepEqual(tex("∫(5;0;1)"), ["\\int_{0}^{1} 5\\,dx"]);
+  assert.deepEqual(tex("∫(a·t;0;1)"), ["\\int_{0}^{1} a·t\\,dx"]);
+  assert.deepEqual(tex("∫(e^(x);0;1)"), ["\\int_{0}^{1} e^{x}\\,dx"]);
+  for (const s of ["∫ (θ) dθ", "∫_(0)^(1) (θ) dθ", "∫(θ;0;1)"]) for (const t of tex(s)) assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "ignore" }), t);
+  // ⌫ na prazni predlogi z dθ izbriše celo predlogo (zgradba je prepoznana)
+  assert.deepEqual(brisiNazaj("∫ () dθ", 3), { value: "∫ ", caret: 2 });
+});
