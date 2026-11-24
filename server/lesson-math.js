@@ -186,7 +186,9 @@ export function evaluate(expr) {
 const halfUlp = (x, approx) => 0.5 * (approx && x.trailingZeros && x.ulp === 1 ? 10 ** x.trailingZeros : x.ulp);
 
 // Izraz brez deljenja, korenov in π (le števila, + − · in cele potence): njegova vrednost je točna.
-const exactExpr = (x) => !/[/a-z]/.test(x.expr) && !/\*\*\s*\(?\s*-/.test(x.expr);
+// Števila z največ 4 veljavnimi mesti: večja (41 135) so pogosto zaokrožen vmesni rezultat (2 · 41 135 = 82 271).
+const sig = (n) => n.replace(".", "").replace(/^0+/, "").replace(/0+$/, "").length;
+const exactExpr = (x) => !/[/a-z]/.test(x.expr) && !/\*\*\s*\(?\s*-/.test(x.expr) && (x.expr.match(/\d+(?:\.\d+)?/g) || []).every((n) => sig(n) <= 4);
 
 // Primerja dva izračunana dela. Vrne null (ujema se), "skip" (pretvorba, ustreznica, izjava) ali relativno razliko.
 function compare(a, b, approx, loose, afterData = false) {
