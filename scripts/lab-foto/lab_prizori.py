@@ -438,3 +438,4 @@ PRIZORI = {"titracija": titracija, "dokaz": dokaz, "krog": krog}
 PRIZORI["ph"] = __import__("prizor_ph").ph   # scripts/lab-foto/prizor_ph.py
 PRIZORI["plamenska"] = __import__("prizor_plamenska").plamenska   # scripts/lab-foto/prizor_plamenska.py
 PRIZORI["co2"] = __import__("prizor_co2").co2   # scripts/lab-foto/prizor_co2.py
+PRIZORI["prevodnost"] = __import__("prizor_prevodnost").prevodnost   # scripts/lab-foto/prizor_prevodnost.py

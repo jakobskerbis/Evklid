@@ -77,7 +77,7 @@ once (deduped by engine + opts) with the topics it belongs to; a new experiment 
 
 ## Fotografski prikaz (photo view; j, 2026-11-10: »fotorealističen videz in fizikalna točnost«)
 
-Six experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`, `lab-plamenska`, `lab-co2`), **on by default for everyone** (j, 2026-11-24:
+Seven experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`, `lab-plamenska`, `lab-co2`, `lab-prevodnost`), **on by default for everyone** (j, 2026-11-24:
 »vklopi vsem«, »dokončaj vse poskuse«; the others follow, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
 colour, wiring and readings still come from the model and are laid over pre-rendered layers. Switch: the button
 »Fotografski prikaz« (`sim.lab.foto`, camera icon, `.lab-foto-gumb`) at the top of the experiment's controls, not over the
@@ -101,6 +101,8 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 | `public/sim/foto-ph.js` | `risiPh`, `OKNA_PH` for `lab-ph` (overlay code of each new experiment lives in its own `foto-<poskus>.js`) |
 | `public/sim/foto-plamenska.js` | `risiPlamensko`, `OKNA_PLAMENSKA`, `oblikaPlamena`, `barvePlamena`, `kobaltovoSteklo` for `lab-plamenska` |
 | `public/sim/foto-co2.js` | `risiCo2`, `OKNA_CO2`, `BARVE_TEKOCIN`, `visinaPene`, `meriloKupcka` for `lab-co2` |
+| `scripts/lab-foto/prizor_prevodnost.py`, `public/sim/foto-prevodnost.js` | scene and overlay of `lab-prevodnost` (one file each per experiment from now on; registered with one line in `PRIZORI`, `paket.py` packs every `prizor_*.py`) |
+| `scripts/lab-foto/bpy_zagon.py` | runs `lab_izris.py` with the pip module `bpy` instead of the `blender` program (same arguments after the experiment name) |
 | `test/lab-foto.test.js` | switch off by default, anchors vs. models, meniscus (independent Young–Laplace integration), flask volume table, Beer–Lambert exponent, wiring graph and polarity for all 27 configurations, colour codes, files and size budget |
 
 How a layer set works (all cameras are orthographic with a fixed scale, so model mm → drawing units is linear and exact):
@@ -196,6 +198,28 @@ of the tube ignores the delivery tube, so turbid limewater also covers it (real 
 is a separate transparent layer (lit without the flask glass, liquid in front of it does not tint it); bubbles,
 foam spill and puddle are drawn, not rendered; the rigid tube touches nothing (its buoyancy in the limewater is constant,
 so Δm is unaffected); balance, timer, stopper and splint are estimates, not a specific product; CO₂ is invisible.
+
+`lab-prevodnost` (photo view): flat battery 3LR12 (IEC 60086-2, 62 × 22 × 65 mm, short tab +, long tab −) with crocodile
+clips on its tabs, the multimeter of `lab-ohm` as ammeter (dial off when not in the circuit, 200 mA or 10 A with the plug in
+mA or 10 A), a grey base with red (in) and black (out) 4 mm sockets carrying either an E10 bulb 3,8 V / 0,3 A (G11 glass
+Ø 11 mm) or a red 5 mm LED with a 150 Ω 0,25 W resistor (IEC 60062 bands), 50 mm crocodile clips whose contact points are
+60 mm apart (the model's 6 cm piece). Current path + → (mA|10 A → COM) → lamp → right (red) clip → sample → left (black)
+clip → −; LED anode on the + side; in the beaker the left copper plate is the cathode. Layers: each solid as an opaque crop
+with both clips (jaws opened to its thickness), the beaker with 122 mL water (35 mm) and two copper plates 20 × 100 × 1 mm,
+30 mm apart, 30 mm immersed (K = d/A = 50 m⁻¹ = `TESTER.K`), a second beaker crop with electrolysis bubbles (more on the
+cathode), magnet touching the nail or 8 mm away from the thickest sample, every lead per wiring, unlit and lit lamp. The
+app sets: lit layer opacity `min(1, b)^(1/2,2)` (b from `tester()`, linear in radiance, layers mix in sRGB), bubble
+layer opacity 0 below 1 mA and `0,25 + 0,75·log₁₀(I/1 mA)/log₁₀ 200` above, the ammeter text from the model's reading
+(updated every tick), glow circles. Crops have a soft 6-unit edge (glass reflects light onto the bench around the beaker).
+Simplifications: all six liquids share one render (n = 1,333; 20 % NaCl has 1,368, sugar solution ~1,34, too small to
+see); bubbles are one fixed set faded by the current, not counted from Faraday's law; a dim bulb is the nominal-colour
+filament faded, not redder; glass and water let shadow rays through (×0,9) instead of tracing caustics (flat surfaces only
+shift the light; at preview sample counts the bench under water was black otherwise); sample shapes follow the model's
+section where it is stated (wire Ø 1 mm, lead Ø 0,5 mm, foil folded to 8 × 0,1 mm, rods Ø 11,3 mm = 1 cm², ruler
+28 × 3,5 mm, eraser 75 × 20 × 5 mm), but the nail is drawn 3,1 × 80 mm (model: Ø 1 mm wire; R ≪ 1,5 Ω either way), the
+pencil lead 76 mm (real leads are 60 mm, too short for clips 6 cm apart), paper a 0,4 mm folded strip and table salt
+a bar of rock salt 82 × 12 × 9 mm (clips cannot hold loose crystals; insulators give I ≈ 0 for any shape); the
+render is static (the drawing animates the bubbles).
 
 ## Experiments
 

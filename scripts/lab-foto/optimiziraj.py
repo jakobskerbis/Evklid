@@ -15,6 +15,7 @@ NUJNI = {
     "ph": ["ph"],
     "plamenska": ["plamenska"],
     "co2": ["co2"],
+    "prevodnost": ["prevodnost"],
 }
 
 
