@@ -280,10 +280,44 @@ async function screen(p, name) {
   if (r.down > 1) problem(`${p.label} ${name}`, `cela stran je za ${r.down} px višja od zaslona (drsi stran namesto pogleda)`);
   if (r.raw.length) problem(`${p.label} ${name}`, `neprevedeni ključi: ${r.raw.join(", ")}`);
   if (r.mini?.length) problem(`${p.label} ${name}`, `mali navpični drsnik (▲▼) v: ${r.mini.slice(0, 5).join(", ")} (docs/oblikovanje.md)`);
+  const pokrito = await bubbleCovers(p);
+  if (pokrito.length) problem(`${p.label} ${name}`, `mehurček inštruktorja prekriva: ${pokrito.join(", ")}`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
   }
+}
+// Mehurček inštruktorja (public/okna.js) ne sme prekriti gumba, povezave ali polja (primerjava z Astro 24. 11. 2026:
+// prekrit X na pasu, gumb za pripenjanje v poskusu). Mesto popravi v 400 ms po menjavi pogleda, zato počakamo.
+async function bubbleCovers(p) {
+  const vidno = await p.locator("#chat-bubble:not([hidden]):not(.umaknjen)").isVisible().catch(() => false);
+  if (!vidno) return [];
+  await p.waitForTimeout(500);
+  return p
+    .evaluate(() => {
+      const b = document.querySelector("#chat-bubble");
+      // Med vlečenjem (tudi magnet na X) je mehurček pod prstom namenoma kjerkoli.
+      if (!b || b.hidden || ["umaknjen", "scrolling", "dragging", "magnet", "show-x"].some((c) => b.classList.contains(c))) return [];
+      const r = b.querySelector(".cb-main").getBoundingClientRect();
+      const sel = "button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch], .sc-empty";
+      const out = [];
+      for (const el of document.querySelectorAll(sel)) {
+        if (b.contains(el) || el.closest(".cb-drop, [hidden], [inert]")) continue;
+        const s = el.getBoundingClientRect();
+        if (!s.width || !s.height || getComputedStyle(el).visibility === "hidden") continue;
+        // Prekrivanje vsaj 6 × 6 px, mehurček je tam na vrhu (meni z višjim z-index ga prekrije, to je v redu),
+        // element pa je takoj pod njim (ne pod drugim oknom).
+        const x0 = Math.max(r.left, s.left), x1 = Math.min(r.right, s.right), y0 = Math.max(r.top, s.top), y1 = Math.min(r.bottom, s.bottom);
+        if (x1 - x0 < 6 || y1 - y0 < 6) continue;
+        const sloji = document.elementsFromPoint((x0 + x1) / 2, (y0 + y1) / 2);
+        if (!sloji.length || !b.contains(sloji[0])) continue;
+        const pod = sloji.find((e) => !b.contains(e));
+        if (pod && !el.contains(pod) && !pod.contains(el)) continue;
+        out.push(`${el.nodeName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : ""}${el.getAttribute("aria-label") ? ` »${el.getAttribute("aria-label").slice(0, 30)}«` : ""}`);
+      }
+      return [...new Set(out)].slice(0, 4);
+    })
+    .catch(() => []);
 }
 // Počaka, da se zahteve umirijo (brez fiksnih dolgih čakanj).
 async function settle(p, ms = 150) {

@@ -559,14 +559,19 @@ function flyToDrop() {
 const KEEP_CLEAR = "body > main.view:not([hidden]):not(.in-okno) :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)";
 // Polja in gumbi glavnega pogleda (Nastavitve, Napredek, NPZ, Učbenik): mehurček jih ne prekrije, če ob robu najde
 // prosto mesto (ob koncu drsenja se premakne); sicer ostane kot prej (ne prekrije le oken in KEEP_CLEAR).
-const CONTROLS = "body > main.view:not([hidden]):not(.in-okno) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch])";
+// Tudi navodilo praznega znanstvenega kalkulatorja (»Vpiši račun …«), da ostane berljivo (primerjava z Astro 24. 11. 2026).
+const CONTROLS = "body > main.view:not([hidden]):not(.in-okno) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch], .sc-empty p)";
+// Obvestilni pasovi pod zgornjo vrstico (testna različica, preizkusni način) so zunaj pogleda: mehurček gre pod njih,
+// da ne prekrije njihovih gumbov (»Kaj še ne deluje«, X).
+const BANNERS = "#test-notice:not([hidden]), #mock-banner:not([hidden])";
 // Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno) ne KEEP_CLEAR: najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
 function placeBubble() {
   const size = 56;
   const a = area();
   const pref = bstate.side === "left" ? "left" : "right";
-  const lo = a.top + 8;
+  const banners = [...document.querySelectorAll(BANNERS)].map((el) => el.getBoundingClientRect()).filter((r) => r.height > 0 && r.bottom < a.bottom - 2 * size);
+  const lo = Math.max(a.top, ...banners.map((r) => r.bottom)) + 8;
   let hi = Math.max(lo, a.bottom - size - 8);
   // Lekcija po korakih: krogi Nazaj · 1/12 · Naprej plavajo na dnu glavnega pogleda, mehurček ostane nad njimi.
   const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
@@ -591,11 +596,13 @@ function placeBubble() {
   // Trenutno mesto je prosto (tudi polj): mehurček ostane, ne skače ob vsakem drsenju.
   const cur = { side: bubble.dataset.side, y: parseFloat(bubble.style.top) };
   const keep = controls.length && cur.side === pref && cur.y >= lo && cur.y <= hi && !rects.concat(controls).some((r) => hit(r, xOf(pref), cur.y));
-  let spot = keep ? cur : (controls.length && find(rects.concat(controls))) || find(rects);
-  // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah: mehurček se skrije, dokler
+  const prost = keep ? cur : controls.length ? find(rects.concat(controls)) : null;
+  let spot = prost || find(rects);
+  // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah in gumbih: mehurček se skrije, dokler
   // se to ne spremeni (obrat, drug način ali pogled; j 14. 11. 2026). Inštruktor ostane v spodnji vrstici.
   const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
-  const away = clear.length > 0 && (!spot || lowLandscape);
+  // V kalkulatorju se skrije tudi, kadar bi prekril gumb ali navodilo (prazen kalkulator na telefonu, 24. 11. 2026).
+  const away = clear.length > 0 && (!spot || lowLandscape || (controls.length > 0 && !prost));
   bubble.classList.toggle("umaknjen", away);
   if (away) return;
   // Ni prostega mesta: mehurček ne gre na tipke kalkulatorja, raje na drugo okno.
