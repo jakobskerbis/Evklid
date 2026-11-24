@@ -1,5 +1,5 @@
 // Simulacije: enačbe (tehtnica), neenačbe in intervali, algebrske ploščice, ploščinski model, sistemi.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, clamp, label, axes, rint } from "./kit.js";
+import { h, s, svgBox, slider, segmented, toggle, button, buttons, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, clamp, label, axes } from "./kit.js";
 
 // Racionalna števila kot [števec, imenovalec].
 const R = (n, d = 1) => {

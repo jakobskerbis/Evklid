@@ -268,7 +268,6 @@ export function closeBoard({ keepFullscreen = false } = {}) {
   prevFocus?.focus?.();
 }
 
-export const boardOpen = () => !!board;
 // Tipka Nazaj: najprej zapre oglasno desko.
 export function cornerBack() {
   if (!board) return false;

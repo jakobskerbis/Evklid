@@ -1,9 +1,9 @@
 // Znanstveni kalkulator in pretvornik enot (vmesnik). Računa scicore.js (+ scisolve.js za enačbe,
 // neenačbe, sisteme, funkcije, odvode in kompleksna števila), brez API in brez knjižnic.
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
-import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
+import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
-import { commandName, parseCommand } from "./cas.js";
+import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
