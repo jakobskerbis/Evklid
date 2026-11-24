@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-058
+**Naslednji prosti ID:** AUDIT-068
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -58,6 +58,16 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-055 | P2 | Kalkulator, predogled | V DEG/GRA predogled odvoda in integrala računa v stopinjah, rezultat v radianih: `∫(sin(x);0;π)` predogled ≈ 0,0861, rezultat 2; `d/dx(sin(x);0)` 0,01745 proti 1 | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (pregled #997), 24. 11. | [#1005](https://github.com/jakobskerbis/Evklid/pull/1005) |
 | AUDIT-056 | P3 | Grafični kalkulator, RTL | V arabščini (dir="rtl") so oznake na platnu obrnjene: točka (2; 1) kot »(1;2)«, os »5−« | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (pregled #997), 24. 11. | [#1006](https://github.com/jakobskerbis/Evklid/pull/1006) |
 | AUDIT-057 | P3 | 3D graf, RTL | V arabščini (dir="rtl") so oznake osi 3D grafa (Orodja → Analiza) obrnjene: »5−« namesto »−5« | PRIPRAVLJENO ZA PONOVNI PREGLED | `1796b90` | Claude (pregled #1006), 25. 11. | [#1019](https://github.com/jakobskerbis/Evklid/pull/1019) |
+| AUDIT-058 | P1 | Inštruktor, preverjanje | Pretvorbe enot s predponami se ne preverijo – napake ×10 z enotami nikoli ujete (72 km/h = 200 m/s) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1012 |
+| AUDIT-059 | P1 | Inštruktor, preverjanje | Rezultat z vprašajem (»x = 5?«, »je 7·8 = 54?«) se ne preveri | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1001 |
+| AUDIT-060 | P1 | Inštruktor, preverjanje | Najdena napaka se tiho ne popravi blizu meje porabe | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1009 |
+| AUDIT-061 | P2 | Inštruktor, preverjanje | Toleranca 1 % spusti napake za 1 pri velikih številih (305 − 7 = 297) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1011 |
+| AUDIT-062 | P2 | Inštruktor, preverjanje | »:«, € in % se ne preračunajo (48 : 6 = 7) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1013 |
+| AUDIT-063 | P2 | Inštruktor, preverjanje | Znan odvod se ne primerja z odgovorom (»Odvajaj x³« → »2x«) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1015 |
+| AUDIT-064 | P2 | Inštruktor, preverjanje | Skriti blok RACUN se ne primerja z vidnim besedilom | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1016 |
+| AUDIT-065 | P2 | Inštruktor, varnost | Učenec lahko ponaredi skrito opombo `<preverjen_racun>` | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1018 |
+| AUDIT-066 | P1 | Inštruktor, preverjanje | »Če«, »ali«, »bi«, »?« v vrstici izklopijo preverjanje računa (»Če najprej množimo: 7·8 = 54«) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1000 |
+| AUDIT-067 | P1 | Kalkulator, vnos | Tipka predloge (xʸ) v prazni reži pokvari zunanjo predlogo: `∫_□^□ □^{(□; 0; 1)}` (j, evklid.app) | V IZVEDBI | `f498a9e` | j, 24. 11. | #1017 |
 
 ## Zgodovina statusov
 
@@ -95,3 +105,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: AUDIT-054 (Claude, ob #998): oklepaj okoli integranda v zapisu ∫, popravek #999.
 - 24. 11. 2026: AUDIT-002 popravek #1004 (Claude, po pregledu #997: neskončne vrste); AUDIT-055 (#1005) in AUDIT-056 (#1006) iz pregleda #997.
 - 25. 11. 2026: AUDIT-057 (Claude, iz pregleda #1006): oznake 3D grafa v RTL, popravek #1019.
+- 25. 11. 2026: AUDIT-058 do 066 iz revizije AI-inštruktorja (poročilo `/home/claude/porocilo-instruktor.md`, Claude); AUDIT-067 napaka, ki jo je našel j (PR #1017 je bil napačno označen kot AUDIT-059). Nerešeno, odloči j: P2-4 (pregled z modelom tudi za odgovore pod 120 znakov – vpliva na stroške AI).
