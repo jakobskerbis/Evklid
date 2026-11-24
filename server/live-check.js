@@ -15,7 +15,7 @@
 import "./env.js";
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
 import { joinThousands, digitGap } from "../public/graph/math.js";
-import { parse, compile } from "../public/graph/math.js";
+import { parse, compile, calcText } from "../public/graph/math.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
@@ -200,9 +200,14 @@ function statedValues(answer, vars) {
   return out;
 }
 
-const num = (t) => {
+// Število ali račun (»1.234,5«, »2e3«, »1 000«, »√2«) po istem pravilu kot kalkulatorja in preverjanje odgovorov
+// (calcText v math.js). Prej je bil »1.234,5« 1,234 · 0,5 = 0,617, »2e3« pa 2·e·3 (AUDIT-042). Nejasno (»12 34«) → null.
+export const num = (t) => {
   try {
-    const v = compile(parse(prep(String(t).replace(/(\d),(?=\d)/g, "$1."))))({});
+    if (digitGap(joinThousands(String(t)))) return null; // »1 1/2«: mešano število ali 1 · ½? nejasno
+    const text = calcText(prep(String(t)));
+    if (text.includes(",")) return null; // »1;2«, »1, 2«: dve vrednosti, ne eno število
+    const v = compile(parse(text))({});
     return Number.isFinite(v) ? v : null;
   } catch {
     return null;
