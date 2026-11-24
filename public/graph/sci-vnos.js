@@ -869,8 +869,39 @@ function guarded(raw, step) {
     const t = String(text ?? "");
     const r = raw(t, s, e);
     if (!ok || r.text === t || !r.text.trim() || ok(r.text) || !ok(t)) return r;
+    // ⌫ se ne sme zatakniti (pregled #986: ∑_(n=)^() s kazalcem le hodi levo): najbližji znak vsebine levo, ki ga lahko
+    // izbrišemo, sicer najmanjša predloga okoli kazalca, sicer vse levo od kazalca
+    if (step < 0 && s === e && s > 0) return progress(t, s, ok);
     return { text: t, pos: Math.max(0, Math.min(t.length, (s === e ? s : step < 0 ? Math.min(s, e) : Math.max(s, e)) + (s === e ? step : 0))) };
   };
+}
+function progress(t, s, ok) {
+  const cut = (a, b) => ({ text: t.slice(0, a) + t.slice(b), pos: a });
+  const content = (k) => {
+    if (!/[\d.,+\-−×÷·*/=<>≤≥!%π∞²³°A-Za-zα-ω]/u.test(t[k])) return false;
+    if (!/[A-Za-zčšž]/.test(t[k])) return true;
+    let b = k;
+    while (/[A-Za-zčšž]/.test(t[b] || "")) b++;
+    return t[b] !== "("; // črka imena funkcije ni vsebina
+  };
+  for (let k = s - 1; k >= Math.max(0, s - 12); k--) if (content(k) && ok(cut(k, k + 1).text)) return cut(k, k + 1);
+  for (let o = s - 1, d = 0; o >= 0; o--) {
+    if (CLOSERS.includes(t[o])) d++;
+    else if (OPENERS.includes(t[o])) {
+      if (d > 0) {
+        d--;
+        continue;
+      }
+      const m = OPENER.exec(t.slice(0, o + 1));
+      const start = m ? o + 1 - m[0].length : o;
+      const c = closeAt(t, o);
+      let end = c < 0 ? t.length : c + 1;
+      if (m && /^[∑∏]_\($/.test(m[0]) && t[end] === "^" && t[end + 1] === "(") end = closeAt(t, end + 1) < 0 ? t.length : closeAt(t, end + 1) + 1;
+      const r = cut(start, end);
+      if (!r.text.trim() || ok(r.text)) return { text: r.text.trim() ? r.text : "", pos: r.text.trim() ? start : 0 };
+    }
+  }
+  return ok(t.slice(s)) ? cut(0, s) : { text: "", pos: 0 };
 }
 /** ⌫: { text, pos }; opts.ok(besedilo) → ali se izriše (varovalo). */
 export const backspace = guarded(backspaceRaw, -1);
