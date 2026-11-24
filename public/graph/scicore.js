@@ -333,9 +333,8 @@ export function evaluate(text, env = {}) {
       // 100! v plavajoči vejici zgreši zadnje mesto (…441 namesto …4415): velja točna vrednost
       // Ans in spremenljivke so shranjene kot double: Ans = nCr(100; 50) ima le ~16 mest, Ans + 1 zato nima točnih števk
       const exactVars = [...freeVars(rwe)].every((n) => n === DEG_VAR || n === MIN_VAR || n === SEC_VAR || typeof scope[n] !== "number" || Number.isSafeInteger(scope[n]));
-      // vpisano število z več kot 15 mesti (tudi s tapom vstavljene števke) je v double že zaokroženo
-      const exactLits = !(String(text).match(/\d+(?:[.,]\d+)?/g) || []).some((d) => d.replace(/\D/g, "").replace(/^0+/, "").replace(/0+$/, "").length > 15);
-      if (exactVars && exactLits && typeof hp?.int === "bigint" && Math.abs(Number(hp.int) - value) <= 1e-12 * Math.abs(value)) {
+      // vpisano število z več kot 15 mesti natančni račun prebere točno iz zapisa (raw, AUDIT-030)
+      if (exactVars && typeof hp?.int === "bigint" && Math.abs(Number(hp.int) - value) <= 1e-12 * Math.abs(value)) {
         out.value = Number(hp.int);
         out.big = hp.int.toString();
       } else out.bigApprox = true;

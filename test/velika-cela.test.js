@@ -59,11 +59,10 @@ test("AUDIT-050: Ans in spremenljivke z velikim doublom nimajo točnih števk (A
   assert.equal(evaluate("a·2^60", { ...ENV, vars: { a: 3 } }).big, "3458764513820540928");
 });
 
-test("AUDIT-050: vpisano število z več kot 15 mesti (tap na rezultat + 1) nima točnih števk", () => {
-  for (const t of ["100891344545564193334812497256+1", "9007199254740993", "0,33333333333333333333·3·10^20"]) {
-    const r = evaluate(t, { ...ENV });
-    assert.equal(r.big, undefined, t);
-    assert.equal(r.bigApprox, true, t);
-  }
+test("AUDIT-050: vpisano število z več kot 15 mesti (tap na rezultat + 1) je točno (raw, AUDIT-030)", () => {
+  assert.equal(evaluate("100891344545564193334812497256+1", { ...ENV }).big, "100891344545564193334812497257");
+  assert.equal(evaluate("9007199254740993", { ...ENV }).big, "9007199254740993");
   assert.equal(evaluate("100000000000000000000+1", { ...ENV }).big, "100000000000000000001");
+  // 0,333…·3·10²⁰ (20 trojk) = 99999999999999999999 točno
+  assert.equal(evaluate("0,33333333333333333333·3·10^20", { ...ENV }).big, "99999999999999999999");
 });
