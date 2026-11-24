@@ -27,6 +27,6 @@ test("kompleksni par z zelo majhnim imaginarnim delom (SymPy)", () => {
 
 test("zapis pokaže imaginarni del, ne 0", () => {
   assert.equal(solutionTex(analyze("(x−1)^2+10^(−20)=0", ENV)), "x_{1} = 1-1\\cdot 10^{-10}\\,i,\\quad x_{2} = 1+1\\cdot 10^{-10}\\,i");
-  assert.equal(solutionTex(analyze("(x−1)^2=0", ENV)), "x = 1");
+  assert.equal(solutionTex(analyze("(x−1)^2=0", ENV)), "x_{1,2} = 1\\;(\\text{dvojna rešitev})"); // AUDIT-032
   assert.equal(solutionTex(analyze("x^2+1=0", ENV)), "x_{1,2} = \\pm i");
 });
