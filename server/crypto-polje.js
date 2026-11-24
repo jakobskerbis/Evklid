@@ -49,8 +49,6 @@ export function backupKey(id = null) {
 export const encryptionOn = () => !!keys();
 export const currentKeyId = () => keys()?.id ?? null;
 export const isEncrypted = (v) => typeof v === "string" && v.startsWith(PREFIX);
-// keyId šifriranega zapisa (ali null).
-export const keyIdOfValue = (v) => (isEncrypted(v) ? v.slice(PREFIX.length, PREFIX.length + 8) : null);
 
 // Zašifrira besedilo (null in undefined ostaneta). Brez ključa vrne besedilo nespremenjeno.
 export function seal(text) {

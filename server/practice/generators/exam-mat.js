@@ -4,7 +4,6 @@
 // Teme so v banki "MAT-EXB" (server/exam-data.js); izpitne poti jih uporabijo kot osnovo.
 // Vsak generator ima langs: ["en", "hi"] in gen(level, r, _topic, lang); besedila z L = bi(lang),
 // števila in naključne izbire so v obeh jezikih enake.
-import { choices } from "../rng.js";
 import { en, sg, co, sco, par, frac, fracTex, reduce, num, fraction, task, nCr, fact, poly, factor, numM, fractionM, dq, bi, roundToL } from "./exam-util.js";
 
 const T = (slug) => `MAT-EXB/${slug}`;
@@ -1693,5 +1692,3 @@ export const EXAM_MAT = [
   },
 ];
 
-// Pomožno: izbirna naloga z že pripravljenimi možnostmi (za generatorje, ki jo potrebujejo).
-export const examChoice = (r, correct, distractors) => ({ type: "choice", ...choices(r, correct, distractors) });

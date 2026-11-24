@@ -865,6 +865,8 @@
   "gc.errOnlyY": "Escreva uma curva que depende de y como x = …",
   "gc.errChar": "Não conheço “{ch}”.",
   "gc.errSyntax": "A expressão está incompleta ou não a entendo.",
+  "gc.errArity": "Número errado de valores entre parênteses. Escreve assim: {ex}",
+  "gc.hintPoint": "Isto é um número entre parênteses. Querias um ponto? Separa as coordenadas com ponto e vírgula: {ex}",
   "gc.errOther": "Não sei desenhar isto.",
   "gc.min": "Mín.",
   "gc.max": "Máx.",

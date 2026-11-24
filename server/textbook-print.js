@@ -2,6 +2,7 @@
 // Strežnik izriše HTML z že izrisanimi formulami; brskalnik ga shrani kot PDF.
 import zlib from "node:zlib";
 import katex from "katex";
+import { izrisi } from "../public/mat/izris.js";
 import { marked } from "marked";
 import { getPath, getTopic, topicOrder } from "./curriculum.js";
 import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheet, formulaSheetSections } from "./textbook.js";
@@ -43,7 +44,7 @@ export function renderMd(text, output = "htmlAndMathml") {
     .parse(splitFormulaCells(src, math), { breaks: true })
     // Formula v svoji vrstici sredi odstavka: prelom vrstice pred in za njo bi dodal prazno vrstico.
     .replace(/(?:<br\s*\/?>\s*)*@@MATH(\d+)@@(?:\s*<br\s*\/?>)*/g, (m, i) => (math[i].display ? `@@MATH${i}@@` : m))
-    .replace(/@@MATH(\d+)@@/g, (_, i) => katex.renderToString(output === "html" ? absMinus(math[i].tex) : math[i].tex, { displayMode: math[i].display, throwOnError: false, strict: "ignore", output }))
+    .replace(/@@MATH(\d+)@@/g, (_, i) => izrisi(output === "html" ? absMinus(math[i].tex) : math[i].tex, { blok: math[i].display, izhod: output, katex }))
     // Vodoravna tabela (atomske mase, gostote …) se na ozkem zaslonu prelomi v več vrstic namesto pomika vstran.
     .replace(/<table>([\s\S]*?)<\/table>/g, (m, inner) => {
       const vod = vodoravnaTabela(inner);
@@ -124,11 +125,6 @@ const today = () => dateText(new Date(), "sl-SI"); // »17. novembra 2026« (pub
 const NOTE = `<p class="muted small">Interaktivni poskusi, simulacije, sprotno preverjanje in vaje so na voljo v aplikaciji Evklid.
         Lekcije, ki jih učitelj še ni pregledal, se lahko še spremenijo.</p>`;
 
-// Celoten učbenik predmeta (npr. MAT-OS): deli so razredi oziroma letniki.
-export function printBook(bookKey) {
-  const parts = printBookParts(bookKey);
-  return parts && joinParts(parts);
-}
 function printBookParts(bookKey) {
   const book = getBook(bookKey);
   if (!book) return null;

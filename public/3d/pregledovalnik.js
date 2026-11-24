@@ -9,6 +9,7 @@ import { mrezeOvojev, okvirDela as okvirDelaVSvetu } from "./ovoji.js";
 import { t } from "/i18n.js";
 import { napisPoskusa } from "../sim/napis-poskusa.js";
 import { icon } from "/icons.js";
+import { izrisi } from "/mat/izris.js";
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -43,7 +44,7 @@ export function izpisHtml(v) {
     d[i] = `${pred ? "\\text{(}" : ""}${d[i]}${za ? `\\text{${za[0]}}` : ""}`;
   }
   // \n: vsaka formula v svoji vrstici
-  return d.map((x, i) => (i % 2 ? globalThis.katex.renderToString(x, { throwOnError: false }) : esc(x).replace(/\n/g, "<br>"))).join("");
+  return d.map((x, i) => (i % 2 ? izrisi(x) : esc(x).replace(/\n/g, "<br>"))).join("");
 }
 // Brez KaTeX (ni povezave): formula kot berljivo besedilo, (a)/(b) in √(x).
 const brezTex = (v) => {

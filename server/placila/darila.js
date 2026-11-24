@@ -2,7 +2,6 @@
 // z enkratnim plačilom in jo podari. Prejemnik jo vpiše v polje za aktivacijsko kodo v zavihku Račun.
 // Koda je ločena od aktivacijskih kod (te so ena na račun): darilo podaljša dostop parents.gift_until.
 // Vračilo ali spor pred vpisom kodo izklopi; po vpisu se dostop prejemnika konča.
-import express from "express";
 import { randomBytes } from "node:crypto";
 
 // Izjavi ob nakupu darilne kode (darilo se uporabi pozneje, zato drugače kot pri naročnini).

@@ -13,7 +13,6 @@ export const info = {
 // viridis (barvno slepim prijazna zaporedna lestvica), sRGB
 const VIRIDIS = ["#440154", "#472d7b", "#3b528b", "#2c728e", "#21918c", "#28ae80", "#5ec962", "#addc30", "#fde725"];
 const PISAVA = '"Instrument Sans", system-ui, sans-serif';
-const NB = " ";
 
 // število v slovenskem zapisu z največ d decimalkami (odvečne ničle odrežemo)
 function st(x, d = 2) {

@@ -1,5 +1,5 @@
 // Simulacija: geometrijska telesa v 3D (vrtenje s prstom), mreže, površina in prostornina.
-import { h, s, svgBox, slider, select, toggle, button, buttons, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, animate, playButton, svgPoint, plural } from "./kit.js";
+import { h, s, svgBox, slider, select, toggle, buttons, readout, layout, texBlock, fmt, tfmt, clamp, label, animate, playButton, svgPoint, plural } from "./kit.js";
 
 const BODIES = {
   kocka: { name: "kocka", params: [["a", 1, 6, 3]] },

@@ -72,4 +72,3 @@ export function uvrsti(el, { set = "celica" } = {}) {
   sortSim(el, set);
 }
 
-export const NAR_SETS = Object.keys(SETS);

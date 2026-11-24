@@ -16,7 +16,6 @@ export const VEZ_DELI = {
   zica: { type: "W", name: "žica (kratek stik)" },
   prazno: { type: "O", name: "prazno podnožje" },
 };
-export const VEZAVE = { zaporedno: "zaporedna", vzporedno: "vzporedna", mesano: "mešana: 1 zaporedno z (2 ∥ 3)" };
 
 // Upornost iz nazivnih vrednosti (kar izračuna učenec): zaporedno R₁ + R₂ + …, vzporedno 1/R = 1/R₁ + 1/R₂ + …
 export function rSkupni(vez, R) {

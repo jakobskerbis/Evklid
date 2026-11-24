@@ -113,8 +113,6 @@ const sStart = (n) => {
 };
 export const sz = (n) => (sStart(n) ? "s" : "z");
 export const DAYS = ["ponedeljek", "torek", "sreda", "četrtek", "petek", "sobota", "nedelja"];
-// Tožilnik dneva: "v sredo", "v soboto", "v nedeljo", "v ponedeljek".
-export const dayAcc = (d) => (d.endsWith("a") ? d.slice(0, -1) + "o" : d);
 
 // Izbira z možnostmi (do 4); pravilni in motilci se ne ponovijo.
 export function choiceAns(r, correct, distractors) {

@@ -3,7 +3,6 @@
 // Vsaka številka ima vir ali je označena kot ocena. Enote: masa v g, prostornina v cm³ (= mL), dolžina v m, sila v N, tlak v Pa.
 import { rng, gauss } from "./lab-model.js";
 
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const napaka = (r, max, lim = 2.5) => gauss(r, max / lim, lim); // naključna napaka, ki nikoli ne preseže max
 
 // ------------------------------------------------------------------ težni pospešek

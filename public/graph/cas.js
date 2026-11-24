@@ -818,7 +818,8 @@ export function runCas(cmd, env = {}) {
     const out = { kind: "cas", op: cmd.op, tex: `${name}\\left(${innerTex}\\right)`, resTex, inner: cmd.inner };
     if (cond.length) out.cond = cond.join(",\\; ");
     const free = vs.filter((v) => !(v in SYMBOLS));
-    if (free.length === 1 && free[0] === "x") out.plot = [`y = ${cmd.inner}`];
+    // graf dobi besedilo za parse() (line.src: decimalna pika, ločilo »,«), ne učenčevega »sin(0,5x)«
+    if (free.length === 1 && free[0] === "x" && !/[AG]_\{/.test(line.src)) out.plot = [`y = ${line.src}`];
     // »Po korakih« (zaslon Skeniraj) zna poenostaviti in razstaviti polinome
     if (r.d.isConst() && cmd.op !== "expand" && !free.some((v) => v.length > 1)) out.steps = true;
     return out;
