@@ -144,10 +144,18 @@ function constNode(n) {
   if (n.k === "const") return n.name === "π" || n.name === "pi" || n.name === "e";
   return Object.values(n).every((v) => (Array.isArray(v) ? v.every(constNode) : typeof v !== "object" || constNode(v)));
 }
-function exprValue(input, math) {
+// Učenčev zapis → besedilo za parse() po istem pravilu kot kalkulatorja (math.numberText): »sin(0,5)« je sin 0,5,
+// »1 000« je tisoč, »max(1,5; 2)« ima dve vrednosti. Brez tega je »sin(0,5)« veljal kot sin(0) ali napaka (AUDIT-015).
+// dot: naloga z decimalno piko (vejica v oklepaju loči vrednosti).
+function studentText(input, math, dot = false) {
+  const s = westernDigits(String(input).trim());
+  return math.numberText ? math.numberText(s, !dot) : s;
+}
+// own: false za zapis iz naloge (decimalna pika), ne za učenčev odgovor.
+function exprValue(input, math, { own = true, dot = false } = {}) {
   if (!math) return null;
   try {
-    const node = math.parse(westernDigits(String(input).trim()));
+    const node = math.parse(own ? studentText(input, math, dot) : String(input).trim());
     if (!constNode(node) || node.k === "num" || node.k === "cmp") return null;
     const v = math.compile(node)({});
     return typeof v === "number" && Number.isFinite(v) ? v : null;
@@ -654,12 +662,12 @@ function sumMatch(T, I, P, b) {
 const isVar = (n, name) => ungrp(n)?.k === "var" && ungrp(n).name === name;
 const fnSide = (n) => isVar(n, "y") || (n.k === "*" && isVar(n.a, "f") && isVar(n.b, "x")) || (n.k === "call" && n.f === "f" && n.args.length === 1 && isVar(n.args[0], "x"));
 // Enačba: »y = k*x + n« proti »y = −9x + 6« ali samo desni strani »−9x + 6«.
-function formValues(form, input, math) {
+function formValues(form, input, math, dot = false) {
   let T;
   let I;
   try {
     T = math.parse(form.expr);
-    I = math.parse(westernDigits(String(input).trim()));
+    I = math.parse(studentText(input, math, dot));
   } catch {
     return null;
   }
@@ -721,7 +729,7 @@ function checkForm(answer, input, opts) {
   if (!f || !opts.math || !/[A-Za-zͰ-Ͽ√∛^=π⁰¹²³⁴⁵⁶⁷⁸⁹]/.test(String(input))) return null;
   // »3,2x10^4«: x je tu znak za množenje (kot v parseScientific), ne spremenljivka.
   const inp = /10\^/.test(f.expr) ? String(input).replace(/(\d)\s*[xX]\s*(?=10)/g, "$1*") : input;
-  const got = formValues(f, inp, opts.math);
+  const got = formValues(f, inp, opts.math, !!answer.dot);
   if (!got) return null;
   const sym = f.ask;
   // Iskana vrednost mora biti tudi enaka odgovoru naloge (če bi se form.vals in answer kdaj razšla, ne izdamo »pravilno«).
@@ -733,8 +741,8 @@ function checkForm(answer, input, opts) {
   }
   // »√175« pri obliki a√b: vrednost je prava, zapis pa še ni v zahtevani obliki (ni »napaka v zapisu«).
   if (!f.free?.length && !Object.entries(f.vals).every(([k, v]) => close(got[k], v))) {
-    const whole = exprValue(f.expr.replace(/\b[a-zA-Z]\b/g, (c) => (c in f.vals ? `(${f.vals[c]})` : c)), opts.math);
-    const own = exprValue(inp, opts.math);
+    const whole = exprValue(f.expr.replace(/\b[a-zA-Z]\b/g, (c) => (c in f.vals ? `(${f.vals[c]})` : c)), opts.math, { own: false });
+    const own = exprValue(inp, opts.math, { dot: !!answer.dot });
     if (whole !== null && own !== null && close(whole, own)) {
       return { kind: "wrong", mistake: { code: "chk.partOnlyForm", params: { sym }, message: `Vrednost je prava, a zapis še ni v zahtevani obliki. Naloga sprašuje samo po ${sym}: vpiši le to število.` } };
     }
