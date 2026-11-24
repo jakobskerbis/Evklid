@@ -68,7 +68,6 @@ export function povabiHtml(url, { reward, zame = false }) {
 // Enkrat na nalaganje strani: isti klic kot zavihek Račun; napaka (brez računa, zaklenjen račun, brez povezave) = null.
 let accPromise = null;
 const naloziRacun = (api) => (accPromise ||= api("/api/account").catch(() => null));
-export const _ponastavi = () => (accPromise = null);
 
 // Pokaže kartico v `slot`, če pravila to dovolijo; vse napake tiho.
 export async function povabiPoUspehu(slot, opts) {
