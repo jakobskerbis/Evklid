@@ -203,7 +203,7 @@ function compare(a, b, approx, loose, afterData = false) {
     ratioTol = Math.min(0.03, Math.max(ratioTol, halfUlp(x, approx) / Math.max(Math.abs(x.value), 1e-12)));
   }
   // Točna števila (cela in končne decimalke, le + − · in potence, brez »≈«, ocen in deljenja): rezultat je točen, zato
-  // velja le pol zadnjega zapisanega mesta (AUDIT-058). Prej je 1 % operandov spustil 305 − 7 = 297 in 1000 − 1 = 990.
+  // velja le pol zadnjega zapisanega mesta (AUDIT-061). Prej je 1 % operandov spustil 305 − 7 = 297 in 1000 − 1 = 990.
   // Dve goli števili (»0 = 8« ni res) ostaneta izjava kot prej.
   if (!approx && !loose && !(a.bare && b.bare) && exactExpr(a) && exactExpr(b) && a.units.join() === b.units.join()) {
     // pol zadnjega mesta: zapisanega rezultata ali zaokroženega vmesnega števila (20 + 1,5 · 5,71 = 20 + 8,57)
