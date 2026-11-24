@@ -16,6 +16,7 @@ NUJNI = {
     "plamenska": ["plamenska"],
     "co2": ["co2"],
     "prevodnost": ["prevodnost"],
+    "kovine": ["kovine", "k-bucka", "lupa"],
 }
 
 

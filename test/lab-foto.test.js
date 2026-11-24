@@ -16,12 +16,14 @@ import { PH_VZORCI, PH_KOLICINE } from "../public/sim/lab-model-indikatorji.js";
 import { OKNA_PLAMENSKA, SPEKTROSKOP_FOTO, oblikaPlamena, barvaVzorca as barvaSoli, barvePlamena, kobaltovoSteklo, zarenje, nasici } from "../public/sim/foto-plamenska.js";
 import { PlamenBench, VZORCI, barvaSpektra, spekterPlamena, spekterSoli } from "../public/sim/lab-model-reakcije.js";
 import { OKNA_CO2, BARVE_TEKOCIN, meriloKupcka, visinaPene, zaslon } from "../public/sim/foto-co2.js";
+import { OKNA_KOVINE, F0, prikazKovine } from "../public/sim/foto-kovine.js";
+import { POSODA_K, MASE, OBLIKE, KOVINE, KovineBench } from "../public/sim/lab-model-elektrokemija.js";
 
 import { OKNA_PREVODNOST, vodnikiPrevodnosti, prosojnostSvetenja, prosojnostMehurckov } from "../public/sim/foto-prevodnost.js";
 import { MATERIALI, TESTER, tester } from "../public/sim/lab-model-elektrika.js";
 const FOTO = path.resolve("public/sim/foto");
 const meta = (p) => JSON.parse(fs.readFileSync(path.join(FOTO, p, "meta.json"), "utf8"));
-const POSKUSI = ["titracija", "dokaz", "krog", "ph", "plamenska", "co2", "prevodnost"];
+const POSKUSI = ["titracija", "dokaz", "krog", "ph", "plamenska", "co2", "prevodnost", "kovine"];
 
 test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike", () => {
   assert.equal(fotoIzbran(), true);
@@ -29,7 +31,7 @@ test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike",
   assert.ok(SL["sim.lab.foto"]);
   for (const f of fs.readdirSync("public/i18n/ui")) assert.ok(JSON.parse(fs.readFileSync(`public/i18n/ui/${f}`, "utf8"))["sim.lab.foto"], `${f}: sim.lab.foto`);
   // motorji narišejo risbo, kadar risi() vrne false (rezerva brez povezave in pri »manj podatkov«)
-  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-elektrika.js", "risiPrevodnost"], ["lab-indikatorji.js", "risiPh"], ["lab-reakcije.js", "risiPlamensko"], ["lab-kem.js", "risiCo2"]]) {
+  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-elektrika.js", "risiPrevodnost"], ["lab-indikatorji.js", "risiPh"], ["lab-reakcije.js", "risiPlamensko"], ["lab-kem.js", "risiCo2", ["lab-elektrokemija.js", "risiKovine"]]]) {
     const src = fs.readFileSync(`public/sim/${f}`, "utf8");
     assert.match(src, new RegExp(`foto\\.risi\\(\\(o, meta\\) => ${klic}\\(`), f);
   }
@@ -395,4 +397,60 @@ test("prevodnost: svetenje in mehurčki iz modela, ne iz slike", () => {
   const led = tester("slana1", "led"), zar = tester("slana20", "zarnica");
   assert.ok(led.mehurcki && prosojnostMehurckov(led.I) > 0.25 && prosojnostMehurckov(zar.I) > prosojnostMehurckov(led.I));
   assert.ok(!tester("destilirana", "zarnica").mehurcki);
+});
+
+test("kovine: brizga, posodi in kovina v merilu; bat, barve in količina kovine samo iz modela", () => {
+  const m = meta("kovine"), S = m.sidra.kovine, k = m.merila.kovine, kx = m.merila.vodoravno.kovine, Bz = m.brizga;
+  // brizga 100 mL: 1 mL = 1,5 mm, notranji premer iz tega (π r² · 1,5 mm = 1 mL), bat izpade pri 110 mL kot v modelu
+  assert.equal(POSODA_K.brizga, 100);
+  assert.ok(Math.abs((Math.PI * (Bz.notranji / 2) ** 2 * Bz.mmNaML) / 1000 - 1) < 0.003, "prerez valja");
+  assert.ok(Math.abs(Bz.izpadeML - POSODA_K.izpade) < 0.5, `izpade ${Bz.izpadeML}`);
+  assert.ok(Math.abs(S.brizga.x100 - S.brizga.x0 - 100 * Bz.mmNaML * kx) < 0.01, "lestvica 0–100 mL");
+  assert.ok(S.brizga.x100 < S.brizga.obroc && S.brizga.obroc < S.brizga.konec, "100 mL pred prijemko");
+  assert.ok(Bz.bat.r < Bz.notranji / 2 && Bz.bat.dolzina >= Bz.dolzina, "bat v valju");
+  // posodi: erlenmajerica DIN ISO 1773 in nizka čaša 100 mL, obe s 50 mL iz modela; izris je pri gladini modela
+  assert.deepEqual([m.bucka.premer, m.bucka.visina, m.casa.premer, m.casa.visina], [64, 105, 50, 70]);
+  assert.ok(Math.abs(S.buckaDno - S.buckaVrh - (105 - m.bucka.dno) * k) < 0.05);
+  for (const B of [m.bucka, m.casa]) {
+    assert.equal(B.V, POSODA_K.V);
+    assert.ok(Math.abs(visinaIzProstornine(B.VodH, POSODA_K.V) - B.gladinaMm) < 0.01, `gladina ${B.gladinaMm}`);
+    assert.equal(B.lref, 40, "barvaRaztopine(c, 4): 4 cm");
+  }
+  // čaša: valj z notranjim polmerom do te višine ima malo več kot 50 mL (zaobljeno dno)
+  const vc = (Math.PI * m.casa.notranjiPolmer ** 2 * m.casa.gladinaMm) / 1000;
+  assert.ok(vc > 50 && vc < 53, `čaša ${vc}`);
+  // kovina: zvit Mg trak (0,5 g = 480 mm), trak, 21 zrnc Ø 3 mm, kupček 0,5 g Mg; vse mase modela gredo v izris
+  const K = m.kovina, Z = K.zvitek;
+  assert.ok(Math.abs(Z.zavoji * Math.hypot(2 * Math.PI * Z.R, (Z.x1 - Z.x0) / Z.zavoji) - Z.L) < 0.5, "dolžina vijačnice");
+  assert.ok(Math.abs(prikazKovine("Mg", "trak", 0.5, K).L - 0.5 / (1.738 * 0.3 * 0.02) * 10) < 1e-9);
+  assert.ok(Math.abs(prikazKovine("Mg", "trak", 0.05, K).L - 47.9) < 0.1, "5 cm traku za 0,05 g");
+  assert.ok(Math.abs(K.prah.V - (0.5 / 1.738 / 0.5) * 1000) < 0.5, "prostornina kupčka");
+  assert.equal(K.zrnca.lege.length, K.zrnca.N);
+  for (const kov of ["Mg", "Zn", "Fe", "Cu"]) for (const mm of MASE) {
+    const t = prikazKovine(kov, "trak", mm, K), z = prikazKovine(kov, "granule", mm, K), p = prikazKovine(kov, "prah", mm, K);
+    assert.ok(t.f <= 1 + 1e-9 && t.f > 0, `${kov} ${mm} g trak ${t.L}`);
+    assert.ok(z.n <= K.zrnca.N && z.k >= 1, `${kov} ${mm} g zrnca ${z.n}`);
+    assert.ok(p.sc <= 1 + 1e-9 && p.sc > 0.2, `${kov} ${mm} g prah ${p.sc}`);
+    assert.equal(t.obl, kov === "Mg" ? "zvitek" : "trak");
+  }
+  assert.ok(Object.keys(OBLIKE).every((o) => ["trak", "granule", "prah"].includes(o)));
+  // trak v modelu ima debelino 0,2 mm (Mg) in 0,25 mm (drugi): ista kot v izrisu
+  assert.ok(Math.abs(OBLIKE.trak.a(KOVINE.Mg) - 2 / (Z.d / 10 * KOVINE.Mg.rho)) < 1e-9 && Math.abs(OBLIKE.trak.a(KOVINE.Zn) - 2 / (K.trak.d / 10 * KOVINE.Zn.rho)) < 1e-9);
+  // barva kovine F0: baker rdečkast, železo najtemnejše, izris je bela kovina
+  assert.ok(F0.Cu[0] > F0.Cu[2] + 40 && F0.Fe[1] < F0.Mg[1] && F0.Zn[2] > F0.Zn[0]);
+  const py = fs.readFileSync("scripts/lab-foto/prizor_kovine.py", "utf8");
+  assert.match(py, /kovina\("kov-bela-gl", \(1, 1, 1\)/);
+  assert.doesNotMatch(py, /steklo\("[^"]*", [^)]*barva=/, "tekočine v izrisu so brezbarvne");
+  // okni povečave ne prekrijeta brizge in bučke
+  const [, dy, , dh] = OKNA_KOVINE.dno, [lx, ly] = OKNA_KOVINE.lupa;
+  assert.ok(dy + dh < S.brizga.vrh && ly > S.brizga.dno && lx > S.os + (m.bucka.premer / 2) * kx);
+  // model: bat se premakne za prostornino plina (Mg v HCl), sloji imajo kovino za vse štiri oblike in obe posodi
+  const B = new KovineBench({ seed: 4 });
+  B.ocala = true; B.nalij("HCl", 1); B.dodaj("Mg", "trak", 0.05); B.step(120);
+  assert.ok(B.Vbrizga() > 40 && B.Vbrizga() < 60, `V(H₂) ${B.Vbrizga()}`);
+  for (const pos of ["bucka", "casa"]) for (const o of ["zvitek", "trak", "zrnca", "prah"]) for (const pre of ["k", "dno"]) {
+    assert.ok(m.sloji[`${pre}-${pos}-${o}`], `${pre}-${pos}-${o}`);
+    if (o !== "prah") assert.ok(m.sloji[`${pre}-${pos}-${o}-id`]?.brezIzgub, `${pre}-${pos}-${o}-id brez izgub`);
+    assert.equal(K.obseg[`${pre}-${pos}-${o}`].length, 3);
+  }
 });
