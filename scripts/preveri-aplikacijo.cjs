@@ -1168,6 +1168,30 @@ async function lab(p, label) {
   await click(p, "#view-lab .lab-card [data-lab-open]", { wait: 300 });
   await expectVisible(p, opened, "odprt poskus");
   await screen(p, `poskus-${label}`);
+  // »Vprašaj inštruktorja« v poskusu (odklenjenem): klepet z vpisanim vprašanjem, gumb »Nazaj na: …« vrne v isti poskus.
+  const ask = p.locator("#view-lab [data-lab-ask]");
+  if (await ask.count()) {
+    const naslov = ((await p.locator("#view-lab .lab-title span").textContent()) || "").trim();
+    await ask.click();
+    await settle(p, 300);
+    if ((await currentView(p)) !== "view-chat") throw new Error("»Vprašaj inštruktorja« v poskusu ne odpre klepeta");
+    if (!(await p.locator("#input").inputValue()).includes(naslov)) throw new Error("v klepetu ni vpisano ime poskusa");
+    await expectVisible(p, "#chat-return", "gumb »Nazaj na: …« v klepetu");
+    if (!((await p.locator("#chat-return").textContent()) || "").includes(naslov)) throw new Error("gumb »Nazaj na: …« nima imena poskusa");
+    await screen(p, `poskus-vprasaj-${label}`);
+    await p.locator("#input").fill(""); // osnutek ne gre v naslednje korake klepeta
+    await click(p, "#chat-return", { wait: 300 });
+    if ((await currentView(p)) !== "view-lab") throw new Error("»Nazaj na: …« ne vrne v laboratorij");
+    await expectVisible(p, "#view-lab .lab-mount .demo-reset", "isti poskus po vrnitvi iz klepeta");
+    if (((await p.locator("#view-lab .lab-title span").textContent()) || "").trim() !== naslov) throw new Error("po vrnitvi iz klepeta je odprt drug poskus");
+    // Tipka Nazaj v klepetu vodi prav tako nazaj v poskus.
+    await ask.click();
+    await settle(p, 300);
+    await p.locator("#input").fill("");
+    await p.goBack();
+    await settle(p, 300);
+    if ((await currentView(p)) !== "view-lab" || !(await p.locator("#view-lab .lab-mount .demo-reset").count())) throw new Error("tipka Nazaj iz klepeta ne vrne v poskus");
+  }
   // »Povečaj risbo« (ozek zaslon): tipka Nazaj zapre le povečavo, poskus ostane odprt; ozadje ni več neodzivno (inert).
   const zoom = p.locator("#view-lab .lab-mount .lab-zoom");
   if ((await zoom.count()) && (await zoom.isVisible())) {
@@ -1197,6 +1221,12 @@ async function lab(p, label) {
   await expectVisible(p, opened, "odprt poskus");
   await p.keyboard.press("Escape");
   await expectVisible(p, "#view-lab .lab-card", "seznam po Esc");
+  await click(p, "#view-lab .lab-card [data-lab-topic]", { wait: 300 });
+  await expectVisible(p, "#view-textbook .tb-title", "tema učbenika iz laboratorija");
+  // Tipka Nazaj iz te lekcije vrne v Laboratorij (ne na kazalo učbenika); nato znova v isto temo.
+  await p.goBack();
+  await settle(p, 300);
+  if ((await currentView(p)) !== "view-lab") throw new Error("Nazaj iz lekcije, odprte v laboratoriju, ne vrne v laboratorij");
   await click(p, "#view-lab .lab-card [data-lab-topic]", { wait: 300 });
   await expectVisible(p, "#view-textbook .tb-title", "tema učbenika iz laboratorija");
   // Iz lekcije en dotik nazaj v isti poskus (»Uči se«: povezava iz kataloga, textbook.js .tb-links).
@@ -1559,6 +1589,29 @@ async function uciPhone(p) {
   await frame.locator("#k3-glavni > *").first().waitFor({ state: "attached", timeout: 20000 }).catch(() => {
     throw new Error("stran /3d se v okvirju ni naložila");
   });
+  // »Vprašaj inštruktorja« v oknu izbranega dela: klepet z vpisanim vprašanjem, »Nazaj na: …« odpre isti model z istim delom.
+  const delGumb = frame.locator(".k3-deli [data-del]").first();
+  await delGumb.waitFor({ state: "attached", timeout: 30000 }).catch(() => {
+    throw new Error("model v okvirju nima seznama delov");
+  });
+  const delId = await delGumb.getAttribute("data-del");
+  await delGumb.evaluate((b) => b.click());
+  await frame.locator(".k3-info .k3-vprasaj").waitFor({ state: "attached", timeout: 15000 }).catch(() => {
+    throw new Error("okno dela nima gumba »Vprašaj inštruktorja«");
+  });
+  await screen(p, "uci-3d-del");
+  await frame.locator(".k3-info .k3-vprasaj").evaluate((b) => b.click());
+  await settle(p, 400);
+  if (await p.locator(".uci-3d-full").count()) throw new Error("»Vprašaj inštruktorja« v 3D ne zapre okvirja");
+  if ((await currentView(p)) !== "view-chat") throw new Error("»Vprašaj inštruktorja« v 3D ne odpre klepeta");
+  if (!(await p.locator("#input").inputValue()).trim()) throw new Error("v klepetu ni vpisanega vprašanja iz 3D");
+  await expectVisible(p, "#chat-return", "gumb »Nazaj na: …« po vprašanju iz 3D");
+  await screen(p, "uci-3d-vprasaj");
+  await p.locator("#input").fill("");
+  await click(p, "#chat-return", { wait: 400 });
+  const nazaj3d = (await p.locator(".uci-3d-full iframe").getAttribute("src").catch(() => "")) || "";
+  if (!nazaj3d.includes(`del=${encodeURIComponent(delId)}`)) throw new Error(`»Nazaj na: …« ne odpre istega modela in dela (${nazaj3d || "brez okvirja"})`);
+  if ((await currentView(p)) !== "view-3d") throw new Error(`pod 3D po vrnitvi iz klepeta je ${await currentView(p)}`);
   await p.goBack();
   await settle(p, 300);
   if (await p.locator(".uci-3d-full").count()) throw new Error("tipka Nazaj ne zapre 3D čez cel zaslon");
