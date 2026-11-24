@@ -255,13 +255,9 @@ export function createRenderer({ marked: markedLib, katex: katexLib, sanitize, a
       }
       return izris(tex, plain, display);
     } catch {
-      try {
-        return izris(tex, plain, display);
-      } catch {
-        // Neveljaven ali nepopoln izraz (ali RangeError ob zelo globokem gnezdenju): nikoli rdeč surov LaTeX, ampak
-        // okvirček (public/mat/izris.js NAPAKA_HTML; j, 24. 11. 2026).
-        return NAPAKA_HTML;
-      }
+      // Neveljaven ali nepopoln izraz (ali RangeError ob zelo globokem gnezdenju): nikoli rdeč surov LaTeX, ampak
+      // okvirček (public/mat/izris.js NAPAKA_HTML; j, 24. 11. 2026).
+      return NAPAKA_HTML;
     }
   }
 

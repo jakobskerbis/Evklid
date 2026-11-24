@@ -32,7 +32,7 @@ const zaupanje = (z) => {
 
 // errorColor: nedovoljen ukaz (npr. \href brez trust) KaTeX ne vrže, ampak ga izpiše kot surovo besedilo v barvi napake.
 // Z lastno barvo ga prepoznamo in obravnavamo kot napako (nikoli surov \href na strani).
-const BARVA_NAPAKE = "#c00001";
+const BARVA_NAPAKE = "#c01e7a";
 const OSNOVA = { strict: "ignore", maxSize: 20, maxExpand: 1000, errorColor: BARVA_NAPAKE };
 
 // Okvirček namesto neizrisljive formule. Izvirnika ne kažemo (surov LaTeX); bralnik zaslona dobi opis.

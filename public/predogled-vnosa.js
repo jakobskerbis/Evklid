@@ -27,9 +27,11 @@ const tex = (t) => {
   try {
     // Prazno mesto iz tipke (ulomek, koren, potenca, ki ga učenec še ni izpolnil) kot okvirček, da se vidi, kam pišeš.
     const src = t.replace(/\{\}/g, "{\\square}").split(OZNAKA).join(KAZALEC);
-    return izrisiTex(`\\displaystyle ${src}`, { zaupaj: "kazalec" });
+    return izrisiTex(`\\displaystyle ${src}`, { zaupaj: "kazalec", napaka: "vrzi" });
   } catch {
-    return esc(t.split(OZNAKA).join(""));
+    // Napol napisan izraz, ki ga KaTeX ne razbere: besedilo, kot je napisano, s kazalcem na mestu (nikoli okvirček
+    // namesto vnosa, nikoli rdeč surov LaTeX).
+    return t.split(OZNAKA).map(esc).join('<span class="vnos-kazalka"></span>');
   }
 };
 const html = (deli) =>
