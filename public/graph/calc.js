@@ -1,11 +1,12 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum } from "./model.js";
-import { niceNumber, parse, compile } from "./math.js";
+import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
+import { niceNumber, parse, compile, arityExample } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
+import { izrisi } from "../mat/izris.js";
 
 const MAX_HISTORY = 80;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -39,15 +40,10 @@ export function createCalculator(root, opts) {
     const x = Number(Number(v.toFixed(digits)).toPrecision(15));
     return Math.abs(x) < 1e21 && x !== 0 ? x.toFixed(digits).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "") : String(x);
   };
-  const tex = (s, display = false) => {
-    try {
-      return window.katex.renderToString(s, { throwOnError: false, displayMode: display, strict: "ignore" });
-    } catch {
-      return esc(s);
-    }
-  };
+  const tex = (s, display = false) => izrisi(s, { blok: display });
 
-  let state = load() || emptyState();
+  let state = load() || upgrade(emptyState());
+  let kbComma = null; // zapis (vejica/pika), s katerim je zgrajena tipkovnica
   let model = null;
   let focusId = null;
   const undo = [];
@@ -117,6 +113,9 @@ export function createCalculator(root, opts) {
     return null;
   }
   function upgrade(s) {
+    // star zapis (max(1,2), tudi bloki GRAF in shranjeni grafi) ali graf iz drugega zapisa (pika/vejica) → zapis 2
+    // v trenutnem zapisu, z enakim pomenom
+    s = upgradeZapis(s, comma());
     const base = emptyState();
     // prazen graf vedno začne v običajnem oknu (prej se je lahko shranilo oddaljeno −150 … 150)
     const blank = !s.items.some((it) => it.type !== "expr" || String(it.text || "").trim());
@@ -169,6 +168,14 @@ export function createCalculator(root, opts) {
   // ---------- model in osveževanje ----------
 
   function rebuild() {
+    // zapis se je med sejo spremenil (jezik s piko ↔ z vejico): besedila v novem zapisu z enakim pomenom, nove tipke
+    if (state.vejica !== comma()) {
+      const next = upgradeZapis(state, comma());
+      state.items = next.items;
+      state.vejica = next.vejica;
+      state.zapis = next.zapis;
+    }
+    if (kbComma !== null && kbComma !== comma()) configureKeys();
     model = buildModel(state, { comma: comma() });
     for (const o of model.items) {
       const tools = o.src?.tools;
@@ -271,6 +278,8 @@ export function createCalculator(root, opts) {
         return t("gc.errChar", { ch: e.info.f });
       case "polInside":
         return t("sc.errPolInside");
+      case "arity":
+        return t("gc.errArity", { ex: arityExample(e.info, comma() ? ";" : ",") });
       case "seqStart":
         return t("gc.errSeqStart", { name: e.info.name });
       case "vecMix":
@@ -336,7 +345,8 @@ export function createCalculator(root, opts) {
     }
     if (o.kind === "value" || o.kind === "define" || o.kind === "list") {
       if (o.kind === "list" && Array.isArray(o.value) && o.value.length > 30) return `<div class="gc-val">= ${esc(fmt(o.value))}</div>`;
-      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>`;
+      const hint = o.hint?.code === "pointSep" ? `<div class="gc-hint">${icon("info")}<span>${esc(t("gc.hintPoint", { ex: o.hint.ex.replace(" ", "\u00a0") }))}</span></div>` : "";
+      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>${hint}`;
     }
     if (o.kind === "slider") {
       const sl = { ...sliderRange(o.value), ...(it.slider || {}) };
@@ -732,7 +742,8 @@ export function createCalculator(root, opts) {
       if (x?.slider) setS(x.slider, gx);
       if (y?.slider) setS(y.slider, gy);
       if (x?.lit || y?.lit) {
-        const m = /^\s*\((.*),(.*)\)\s*$/.exec(it.text);
+        // o.text: besedilo za parse() (decimalna pika, ločilo »,«), zato točka (1,5; 2) ostane ena točka
+        const m = /^\s*\((.*),(.*)\)\s*$/.exec(o.text || "");
         if (m) {
           const xs = x?.lit ? String(r(gx)) : m[1].trim();
           const ys = y?.lit ? String(r(gy)) : m[2].trim();
@@ -1204,29 +1215,36 @@ export function createCalculator(root, opts) {
   // Plasti 123 in f(x) sta mreži kalkulatorja; Σ in ABC sta skupni. Enter v vrstici doda novo vrstico.
 
   let lastField = null;
-  const KEYS = {
-    "123": [
-      ["x", "x"], ["y", "y"], ["a²", "^2", "x²"], ["aᵇ", "^"], ["7"], ["8"], ["9"], ["÷", "/"],
-      ["(", "("], [")", ")"], ["<", "<"], [">", ">"], ["4"], ["5"], ["6"], ["×", "*"],
-      ["|a|", "|@|"], [",", ","], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
-      ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], [".", "."], ["=", "="], ["+", "+"],
-    ],
-    fx: [
-      ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", "root(@, )"],
-      ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["∛", "∛(@)"], ["n!", "!"], ["°", "°"], ["{ : }", "{@ : }"], ["[ ]", "[@]"],
-      ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", "mod(@, )"], ["min", "min(@)"], ["max", "max(@)"],
-      ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", "nCr(@, )"], ["%", "%"],
-    ],
-  };
+  // V slovenskem zapisu je vejica decimalna, argumente in koordinate loči »;« (kot v znanstvenem kalkulatorju).
+  // Tipke se zgradijo znova, če se zapis med sejo spremeni (configureKeys iz rebuild).
+  function configureKeys() {
+    kbComma = comma();
+    const SEP = kbComma ? ";" : ",";
+    const KEYS = {
+      "123": [
+        ["x", "x"], ["y", "y"], ["a²", "^2", "x²"], ["aᵇ", "^"], ["7"], ["8"], ["9"], ["÷", "/"],
+        ["(", "("], [")", ")"], ["<", "<"], [">", ">"], ["4"], ["5"], ["6"], ["×", "*"],
+        ["|a|", "|@|"], [SEP, SEP], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
+        ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], kbComma ? [",", ","] : [".", "."], ["=", "="], ["+", "+"],
+      ],
+      fx: [
+        ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", `root(@${SEP} )`],
+        ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["∛", "∛(@)"], ["n!", "!"], ["°", "°"], ["{ : }", "{@ : }"], ["[ ]", "[@]"],
+        ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", `mod(@${SEP} )`], ["min", "min(@)"], ["max", "max(@)"],
+        ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", `nCr(@${SEP} )`], ["%", "%"],
+      ],
+    };
+    configureKeyboard(list, {
+      math: true,
+      layers: [{ id: "num", label: "123", cols: 8, keys: KEYS["123"] }, { id: "fx", label: "f(x)", cols: 8, keys: KEYS.fx }, "sym", "abc"],
+      start: "num",
+      enter: "go",
+      parsed: true, // math.js: abs, floor … ostanejo imena funkcij
+    });
+  }
   root.dataset.kbScope = "";
   initKeyboard();
-  configureKeyboard(list, {
-    math: true,
-    layers: [{ id: "num", label: "123", cols: 8, keys: KEYS["123"] }, { id: "fx", label: "f(x)", cols: 8, keys: KEYS.fx }, "sym", "abc"],
-    start: "num",
-    enter: "go",
-    parsed: true, // math.js: abs, floor … ostanejo imena funkcij
-  });
+  configureKeys();
   // Odprta tipkovnica: graf in seznam se stisneta, pomoč pod seznamom se skrije.
   const onKeyboard = (e) => {
     const on = !!e.detail?.open && root.contains(e.detail.field);
