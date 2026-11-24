@@ -598,6 +598,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sc-vars[hidden] { display: none; }
 .sc-vars-l { font-size: 0.75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
 .sc-var { flex-shrink: 0; min-height: 34px; white-space: nowrap; font-weight: 700; }
+.sc-recent-src { font-weight: 600; color: var(--muted); font-size: 0.8em; } /* izvor izida (Orodja, PSE …) */
 .sc-h-note { font-size: 0.85rem; text-align: right; padding: 0 6px 2px; max-width: 100%; overflow-x: auto; }
 .sc-bool { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
 .sc-bool.ok { color: var(--ok); }

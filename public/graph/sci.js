@@ -128,7 +128,8 @@ export function texPlain(tex) {
 
 /**
  * Znanstveni kalkulator v elementu root.
- * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
+ * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?(),
+ *   recent?() / addRecent?({ text, src }) (skupna zgodovina zavihkov) }
  */
 let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
@@ -741,6 +742,12 @@ export function createScientific(root, opts) {
       delete e.first;
     }
     fromFormula = null;
+    // skupna zgodovina zavihkov: številski izid (Grafični ga ponudi kot vrednost)
+    if (e.kind === "value" && Number.isFinite(e.value)) {
+      let txt = String(Number(e.value.toPrecision(12)));
+      if (/e/.test(txt)) txt = txt.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+      opts.addRecent?.({ text: comma() ? txt.replace(".", ",") : txt, src: "sci" });
+    }
     st.history.push(e);
     if (st.history.length > MAX_HISTORY) st.history.splice(0, st.history.length - MAX_HISTORY);
     save();
@@ -864,14 +871,18 @@ export function createScientific(root, opts) {
   function renderVars() {
     const vs = Object.entries(st.vars);
     const fs = Object.entries(st.funcs);
-    varsBar.hidden = !vs.length && !fs.length;
+    const rec = (opts.recent?.() || []).filter((r) => r.src !== "sci").slice(0, 4);
+    varsBar.hidden = !vs.length && !fs.length && !rec.length;
     if (varsBar.hidden) return (varsBar.innerHTML = "");
     const c = comma();
     varsBar.innerHTML =
-      `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` +
+      (vs.length || fs.length ? `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` : "") +
       vs.map(([n, v]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}" title="${esc(t("sc.insert"))}">${texHtml(`${n} = ${formatNumber(v, { mode: "auto", comma: c }).tex}`)}</button>`).join("") +
-      fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("");
+      fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("") +
+      (rec.length ? `<span class="sc-vars-l">${esc(t("sc.recent"))}</span>` + rec.map((r) => `<button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${esc(r.text)}</button>`).join("") : "");
   }
+  // skupna zgodovina zavihkov (opts.recent): izidi iz Orodij, PSE, grafa … kot čipi »Nedavno«
+  const srcName = (src) => t({ sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" }[src] || "sc.modeSci");
 
   function syncBar() {
     root.querySelectorAll(".sc-angle button").forEach((b) => {
@@ -1192,6 +1203,7 @@ export function createScientific(root, opts) {
       return true;
     },
     insert,
+    renderVars, // skupna zgodovina zavihkov: čipi »Nedavno« ob preklopu na Znanstveni
     get state() {
       return st;
     },
