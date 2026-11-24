@@ -534,9 +534,11 @@ function exactIntegral(raw, env, r) {
       const y = at(x);
       if (Number.isFinite(y)) return y;
       lim = true;
+      // neskončna meja (−e^(−x)(x + 1) pri ∞): vrednosti pri ±10¹², ±10¹⁵
+      const inf = !Number.isFinite(x);
       const h = Math.abs(b - a);
-      const y1 = at(x + s * h * 1e-13);
-      const y2 = at(x + s * h * 1e-16);
+      const y1 = inf ? at(Math.sign(x) * 1e12) : at(x + s * h * 1e-13);
+      const y2 = inf ? at(Math.sign(x) * 1e15) : at(x + s * h * 1e-16);
       return Math.abs(y1 - y2) <= 1e-9 * Math.max(1, Math.abs(y2)) ? y2 : NaN;
     };
     const s = b > a ? 1 : -1;

@@ -1135,12 +1135,13 @@ function pieceIntegral(f, a, b, pa, pb, depth = 0) {
  * singular: računano prek singularnosti (vrednost je približek z oceno napake err).
  */
 export function integrateInfo(f, a, b, eps = 1e-9, depth = 0) {
-  if (!Number.isFinite(a) || !Number.isFinite(b)) return { value: NaN };
+  if (Number.isNaN(a) || Number.isNaN(b)) return { value: NaN };
   if (a === b) return { value: 0 };
   if (a > b) {
     const r = integrateInfo(f, b, a, eps, depth);
     return { ...r, value: -r.value, ...(r.pv !== undefined ? { pv: -r.pv } : {}) };
   }
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return infiniteIntegral(f, a, b, eps, depth);
   const first = simpsonPass(f, a, b, eps);
   if (!first.trouble.length) return { value: first.value };
   // singularne točke: grozdi težavnih kosov, v vsakem mesto največje |f|
@@ -1198,6 +1199,47 @@ export function integrateInfo(f, a, b, eps = 1e-9, depth = 0) {
   // samo skoki (floor x, predznak): kosi so navadni Simpsonovi, vrednost ni približek prek singularnosti
   if (!sing.some((s) => s.pl > 0.02 || s.pr > 0.02)) return { value };
   return { value, err, singular: true };
+}
+
+// Neskončna meja: ∫_a^∞ f(x) dx = ∫_0^1 f(a + t/(1 − t))/(1 − t)² dt (in zrcalno za −∞; pri (−∞, ∞) delimo pri 0).
+// Novo integrand je ob t = 1 omejena, ko integral konvergira (1/x²: 1), in raste kot (1 − t)^(−p), p ≥ 1, ko divergira
+// (1/x: 1/(1 − t)), zato ga oceni isti postopek kot singularnost na robu. Nihajočih (sin x, sin x / x) ne računamo.
+function infiniteIntegral(f, a, b, eps, depth) {
+  if (a === -Infinity && b === Infinity) {
+    const l = infiniteIntegral(f, -Infinity, 0, eps, depth);
+    const r = infiniteIntegral(f, 0, Infinity, eps, depth);
+    if (l.diverges || r.diverges) return { value: NaN, diverges: true, at: l.diverges ? l.at : r.at };
+    if (!Number.isFinite(l.value) || !Number.isFinite(r.value)) return { value: NaN };
+    return { value: l.value + r.value, err: (l.err || 0) + (r.err || 0), singular: true };
+  }
+  const s = b === Infinity ? 1 : -1;
+  const c = s > 0 ? a : b;
+  // nihanje do neskončnosti: predznak f v točkah c ± 2^k se pogosto menja
+  let changes = 0;
+  let prev = 0;
+  for (let k = 0; k <= 60; k++) {
+    const y = f(c + s * 2 ** k);
+    if (typeof y !== "number" || !Number.isFinite(y) || y === 0) continue;
+    const sg = Math.sign(y);
+    if (prev && sg !== prev) changes++;
+    prev = sg;
+  }
+  const g = (t) => {
+    const u = 1 - t;
+    const y = f(c + (s * t) / u);
+    return typeof y === "number" ? y / (u * u) : NaN;
+  };
+  // nihajoča f: računamo le, če ∫|f| konvergira (e^(−x)·sin x); sin x / x konvergira le pogojno, tega ne znamo
+  if (changes > 4) {
+    const abs = integrateInfo((t) => Math.abs(g(t)), 0, 1, eps, depth);
+    if (abs.diverges || !Number.isFinite(abs.value)) return { value: NaN };
+  }
+  const r = integrateInfo(g, 0, 1, eps, depth);
+  if (r.diverges) {
+    const x = c + (s * r.at) / (1 - r.at);
+    return { value: NaN, diverges: true, at: Number.isFinite(x) ? x : s * Infinity };
+  }
+  return { value: r.value, err: r.err || 1e-10 * Math.max(1, Math.abs(r.value)), singular: true };
 }
 
 // Cauchyjeva glavna vrednost, kadar so vsi poli notranji in je g(t) = f(c + t) + f(c − t) ob t → 0 omejena
