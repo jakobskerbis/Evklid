@@ -223,7 +223,8 @@ test("3851 polinomov z iracionalnimi koeficienti iz SymPy: nič pravilnega ne po
   }
   assert.deepEqual(regress, [], "pravilno pred popravkom, zdaj napačno");
   // pred popravkom: razstavljeno 958/2700, razvito 339/1151 (preostale razvite napake: SymPy izpiše 15 mest, zato
-  // je vpisan polinom drugačen od razstavljenega in ima res kompleksne ničle)
+  // je vpisan polinom drugačen od razstavljenega in ima res kompleksne ničle). Pri 11 razvitih s π (»typed«) je
+  // pričakovano ničle vpisanega polinoma (mpmath, 60 mest; AUDIT-044 razstavi nad ℚ[π] točno), ne razstavljenega.
   assert.equal(count.razstavljeno, 2700);
-  assert.ok(count.razvito >= 1090, JSON.stringify(count));
+  assert.ok(count.razvito >= 1096, JSON.stringify(count));
 });

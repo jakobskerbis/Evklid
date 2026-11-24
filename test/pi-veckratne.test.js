@@ -3,7 +3,7 @@
 // naključnih ulomkov, π je transcendentno), ničle pa v gručah po tem vzorcu. Pričakovano: SymPy roots().
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { analyze } from "../public/graph/scisolve.js";
+import { analyze, solutionTex } from "../public/graph/scisolve.js";
 
 const ENV = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
 const close = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
@@ -37,4 +37,16 @@ test("brez večkratnih ničel ostane prejšnja pot (x² − (π + e)x + πe = 0)
   const r = analyze("x^2−(π+e)x+π·e=0", ENV);
   assert.ok(close(r.roots[0], Math.E) && close(r.roots[1], Math.PI));
   assert.deepEqual(r.mult, [1, 1]);
+});
+
+// Pregled #980 (2. krog): pravilo »manj kompleksnih« je dajalo samozavestno napačne ničle. Zdaj razcep nad ℚ[π, e]
+// (cas.js factorP), ničle faktorjev pri π na 32 mest. Pričakovano: SymPy roots().
+test("razcep nad ℚ[π]: (x − π)³((x − 2)² + 10⁻¹⁸) in (x − 8)³(x − π − 5)³(x − 8,172)", () => {
+  const a = analyze("x^5 - 3*π*x^4 - 4*x^4 + 4000000000000000001*x^3/1000000000000000000 + 3*π^2*x^3 + 12*π*x^3 - 12*π^2*x^2 - 12000000000000000003*π*x^2/1000000000000000000 - π^3*x^2 + 12000000000000000003*π^2*x/1000000000000000000 + 4*π^3*x - 4000000000000000001*π^3/1000000000000000000=0", ENV);
+  assert.deepEqual([a.roots, a.mult], [[Math.PI], [3]]);
+  assert.deepEqual(a.complex, [[2, -1e-9], [2, 1e-9]]);
+  assert.ok(!solutionTex(a).includes("x_{1,2} = 2"));
+  const b = analyze("x^7 - 11793*x^6/250 - 3*π*x^6 + 3*π^2*x^5 + 31629*π*x^5/250 + 236427*x^5/250 - 2610211*x^4/250 - 275568*π*x^4/125 - 27879*π^2*x^4/250 - π^3*x^4 + 8043*π^3*x^3/250 + 411741*π^2*x^3/250 + 5074953*π*x^3/250 + 17132631*x^3/250 - 13011564*π*x^2/125 - 6683844*x^2/25 - 1508124*π^2*x^2/125 - 48516*π^3*x^2/125 + 260128*π^3*x/125 + 5470944*π^2*x/125 + 2869664*x/5 + 7039968*π*x/25 - 1569024*π/5 - 1569024*π^2/25 - 523008 - 523008*π^3/125=0", ENV);
+  assert.deepEqual(b.mult, [3, 3, 1]);
+  assert.ok(close(b.roots[0], 8) && close(b.roots[1], Math.PI + 5) && close(b.roots[2], 8.172));
 });

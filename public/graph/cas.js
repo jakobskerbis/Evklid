@@ -923,22 +923,30 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
  * Kot exactPolyIn, a s π in e kot simboloma: L − R ∈ ℚ[π, e][v]. Vrne koeficiente od najvišje potence, vsak kot
  * seznam členov [{ n, d, pi, e }] (n/d·π^pi·e^e), ali null. Za AUDIT-044 (toolscore polyRootsSym).
  */
-export function symbolPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
+export function symbolPolyIn(L, Rn, scope, v, ms = 800) {
   const saved = deadline;
   try {
     deadline = Date.now() + ms;
-    const ctx = { scope, dens: [], dec: false, longDec: true }; // vpisane decimalke do 15 mest točno
-    const a = rat(L, ctx);
-    const b = rat(Rn, ctx);
-    if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
-    const N = a.n.mul(b.d).sub(b.n.mul(a.d));
-    const vs = N.vars();
-    if (!vs.includes(v) || vs.some((w) => w !== v && !(w in SYMBOLS)) || vs.length < 2) return null;
-    const deg = N.degree(v);
-    if (deg > 60) return null;
-    const out = [];
-    for (let k = deg; k >= 0; k--) out.push(coefIn(N, v, k).terms().map(({ m, c }) => ({ n: c.n, d: c.d, pi: m["π"] || 0, e: m.e || 0 })));
-    return out;
+    return withLimit(10n ** 400n, () => {
+      const ctx = { scope, dens: [], dec: false, longDec: true }; // vpisane decimalke do 15 mest točno
+      const a = rat(L, ctx);
+      const b = rat(Rn, ctx);
+      if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+      const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+      const vs = N.vars();
+      if (!vs.includes(v) || vs.some((w) => w !== v && !(w in SYMBOLS)) || vs.length < 2) return null;
+      if (N.degree(v) > 60) return null;
+      // razcep nad ℚ[π, e]: faktorji so brez kvadratov in tuji, kratnost je kratnost faktorja (π je transcendentno)
+      const out = [];
+      for (const f of factorP(N).fs) {
+        const deg = f.p.degree(v);
+        if (!deg) continue;
+        const terms = [];
+        for (let k = deg; k >= 0; k--) terms.push(coefIn(f.p, v, k).terms().map(({ m, c }) => ({ n: c.n, d: c.d, pi: m["π"] || 0, e: m.e || 0 })));
+        out.push({ terms, m: f.e, sym: f.p.vars().some((w) => w in SYMBOLS) });
+      }
+      return out.length ? out : null;
+    });
   } catch {
     return null;
   } finally {

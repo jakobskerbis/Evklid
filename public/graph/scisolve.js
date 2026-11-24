@@ -270,35 +270,29 @@ function polyRootsOf(L, R, v, scope, run) {
     let rs = null;
     const fe = exactPolyIn(node, ZERO_NODE, scope, v);
     if (fe && fe.length > 1) rs = polyRootsExact(fe)?.roots || null;
-    // koeficienti s π ali e: točen vzorec kratnosti nad ℚ[π, e] (razvit (x − π)(x − 5,451)²(x − 5,454)²)
-    let symRs = null;
+    // koeficienti s π ali e: razcep nad ℚ[π, e] (cas.js), ničle faktorjev pri π na 32 mest (AUDIT-044)
     if (!rs) {
       const sp = symbolPolyIn(node, ZERO_NODE, scope, v);
-      if (sp) symRs = polyRootsSym(sp);
+      if (sp) {
+        rs = polyRootsSym(sp);
+        if (rs) exactAll = false;
+      }
     }
     if (!rs) {
       exactAll = false;
       const bp = ballPoly(node, v, val);
-      if (!bp && !symRs) return null;
-      if (bp) {
-        while (bp.length > 1 && bp[bp.length - 1][0] === 0 && bp[bp.length - 1][1] === 0) bp.pop();
-        const [lead, lr] = bp[bp.length - 1];
-        if (lr >= Math.abs(lead) && !symRs) return null; // vodilni koeficient je lahko 0
-        if (bp.length < 2 && !symRs) continue; // neničelna konstanta
-        if (bp.length >= 2 && lr < Math.abs(lead)) rs = polyRootsMult(bp.map((b) => b[0]).reverse(), null, bp.map((b) => b[1]).reverse());
-      }
-      // Obe poti sta v mejah zaokrožitve vpisanih koeficientov (15 mest): vzamemo razlago z manj kompleksnimi
-      // ničlami. Točen vzorec nad ℚ[π] ujame prave večkratne ničle (krogle tam dajo lažne kompleksne), krogle pa
-      // združijo ničle, ki jih je razcepila le zaokrožitev vpisanih decimalk (vzorec tam pravi »enostavne«).
-      const nCx = (l) => l.filter((r) => r.im !== 0).reduce((a, r) => a + r.m, 0);
-      const better = (a, b) => nCx(a) < nCx(b) || (nCx(a) === nCx(b) && a.length <= b.length); // pri enakem: manj različnih
-      if (symRs && (!rs || better(symRs, rs))) rs = symRs;
+      if (!bp) return null;
+      while (bp.length > 1 && bp[bp.length - 1][0] === 0 && bp[bp.length - 1][1] === 0) bp.pop();
+      const [lead, lr] = bp[bp.length - 1];
+      if (lr >= Math.abs(lead)) return null; // vodilni koeficient je lahko 0
+      if (bp.length < 2) continue; // neničelna konstanta
+      rs = polyRootsMult(bp.map((b) => b[0]).reverse(), null, bp.map((b) => b[1]).reverse());
       if (!rs) return null;
     }
     for (const r of rs) {
       const same = all.find((q) => sameRoot(q, r));
       if (same) same.m += r.m * m;
-      else all.push({ re: r.re, im: r.im, m: r.m * m, exact: !!r.exact });
+      else all.push({ ...r, m: r.m * m, exact: !!r.exact }); // z oznakami unc, err, qex
     }
   }
   return finish(all, null, exactAll);
@@ -605,7 +599,9 @@ export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) 
     if (m === 1) return `${v}_{${k}}`;
     return m <= 3 ? `${v}_{${Array.from({ length: m }, (_, t) => k + t).join(",")}}` : `${v}_{${k},\\ldots,${k + m - 1}}`;
   };
-  const tag = (i) => (!r.exact && ms[i] > 1 ? `\\;(\\text{${multText(ms[i]).replace(/[{}\\$&#%_^~]/g, "")}})` : "");
+  // nepotrjena (številsko združena) ničla: brez oznake kratnosti
+  const unsure = (i) => (i < r.roots.length ? r.runc?.[i] : (r.cerr?.[i - r.roots.length] || 0) !== 0);
+  const tag = (i) => (!r.exact && ms[i] > 1 && !unsure(i) ? `\\;(\\text{${multText(ms[i]).replace(/[{}\\$&#%_^~]/g, "")}})` : "");
   const dec = decimalsFor(r.roots);
   const decAll = decimalsFor([...r.roots, ...(r.complex || []).map((z) => z[0])]);
   if (r.exact)
