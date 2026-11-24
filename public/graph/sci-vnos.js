@@ -677,8 +677,9 @@ function unwrap(s, start, o, c, keep) {
 }
 
 /**
- * Izbira [s, e) razširjena tako, da ne zajame le dela predloge ali oklepaja (AUDIT-039): izbira je v eni reži, zajame
- * celo predlogo ali je zunaj nje; sicer se razširi na celo predlogo (z imenom). Vrne [s, e].
+ * Izbira [s, e) razširjena tako, da ne zajame le dela imenovane predloge (∫(, sin(, limita(, d/dx(, √( …; AUDIT-039):
+ * izbira je v eni reži, zajame celo predlogo ali je zunaj nje; sicer se razširi na celo predlogo z imenom. Navadni
+ * oklepaji se ne razširijo (j, 24. 11.): pri njih deleteSpan obdrži oklepaj, ki bi ostal brez para. Vrne [s, e].
  */
 export function selectionSpan(text, s, e) {
   const t = String(text ?? "");
@@ -690,7 +691,8 @@ export function selectionSpan(text, s, e) {
     for (let o = 0; o < t.length; o++) {
       if (!OPENERS.includes(t[o])) continue;
       const m = OPENER.exec(t.slice(0, o + 1));
-      const start = m ? o + 1 - m[0].length : o;
+      if (!m) continue; // navaden oklepaj ali [ matrike: brez razširitve
+      const start = o + 1 - m[0].length;
       const c = closeAt(t, o);
       const end = c < 0 ? t.length : c + 1;
       if (b <= start || a >= end || (a <= start && b >= end)) continue; // zunaj ali cela
@@ -703,13 +705,47 @@ export function selectionSpan(text, s, e) {
   return [a, b];
 }
 
+/**
+ * Izbriše izbiro [s, e) (razširjeno s selectionSpan); oklepaj ali zaklepaj, katerega par je zunaj izbire, ostane
+ * (»(1+2)·3«, izbrano »(1« → »(+2)·3«). pos: mesto prvega izbrisanega znaka (tja gre vnos čez izbiro).
+ */
+export function deleteSpan(text, s, e) {
+  const t = String(text ?? "");
+  const [a, b] = selectionSpan(t, s, e);
+  const keep = new Set();
+  for (let i = a; i < b; i++) {
+    if (OPENERS.includes(t[i])) {
+      const c = closeAt(t, i);
+      if (c >= b) keep.add(i);
+    } else if (CLOSERS.includes(t[i])) {
+      let d = 0;
+      let o = -1;
+      for (let j = i; j >= 0; j--) {
+        if (CLOSERS.includes(t[j])) d++;
+        else if (OPENERS.includes(t[j]) && --d === 0) {
+          o = j;
+          break;
+        }
+      }
+      if (o >= 0 && o < a) keep.add(i);
+    }
+  }
+  let out = t.slice(0, a);
+  let pos = -1;
+  let afterOpen = -1; // za ohranjenim oklepajem: vnos gre v oklepaj (»2+(3« izbrano, 4 → »(4+4)«)
+  for (let i = a; i < b; i++) {
+    if (keep.has(i)) {
+      out += t[i];
+      if (OPENERS.includes(t[i])) afterOpen = out.length;
+    } else if (pos < 0) pos = out.length;
+  }
+  return done(out + t.slice(b), afterOpen >= 0 ? afterOpen : pos < 0 ? out.length : pos);
+}
+
 /** ⌫: { text, pos } po brisanju levo od kazalca (s, e: izbira). */
 function backspaceRaw(text, s, e = s) {
   const t = String(text ?? "");
-  if (s !== e) {
-    const [a, b] = selectionSpan(t, s, e);
-    return done(t.slice(0, a) + t.slice(b), a);
-  }
+  if (s !== e) return deleteSpan(t, s, e);
   if (s <= 0) return done(t, 0);
   // kazalec sredi odpirala (»integr|iraj(«, »sin|(«, »d/d|x(«, »∫|(«): kot da je za njegovim oklepajem
   const inOp = openerAround(t, s);
