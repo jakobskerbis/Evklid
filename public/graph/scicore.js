@@ -65,7 +65,13 @@ export function prepare(text, { comma = true } = {}) {
   s = s.replace(/(\d|\.)[eE]([+\-−]?\d+)/g, "$1*10^($2)");
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
-  s = s.replace(/°/g, `*${DEG}`).replace(/(\d|\.)\s*′/g, `$1*${MIN}`).replace(/(\d|\.)\s*″/g, `$1*${SEC}`);
+  // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem
+  // kalkulatorju): sin 30° = sin(30°), 1/30° = 1/(30°), 30°^2 = (30°)². Prej je bil »sin 30°« (sin 30)·° (AUDIT-016).
+  s = s
+    .replace(/(\d+(?:\.\d+)?|(?<![A-Za-z_{])[A-Za-zα-ωπθ](?![A-Za-z_(]))\s*°/g, `($1 ${DEG})`)
+    .replace(/°/g, ` ${DEG}`)
+    .replace(/(\d+(?:\.\d+)?)\s*′/g, `($1 ${MIN})`)
+    .replace(/(\d+(?:\.\d+)?)\s*″/g, `($1 ${SEC})`);
   let open = 0;
   for (const c of s) {
     if (c === "(") open++;
@@ -121,6 +127,7 @@ export function lineTex(ast, comma = true) {
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
     .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
+    .replace(/(?<=^|[{\s+\-=(,])\\left\(([\d{},.]+|[A-Za-z]|\\(?:pi|theta|alpha|beta|gamma|varphi|phi))\^\{(\\circ|\\prime|\\prime\\prime)\}\\right\)(?!\s*\^)/g, "$1^{$2}") // (30°) → 30° (ne za funkcijo, števko ali pred potenco)
     .replace(/(\^\{\\circ\}|\^\{\\prime\})\s*\+\s*(?=[\d{},.]+\^\{\\prime(?:\\prime)?\}(?!\s*(?:\\cdot|\^|\\times)))/g, "$1") // 30° + 15′ → 30°15′ (ne 30° + 15′·2)
     .replace(/\\cdot\s*10\^/g, "\\cdot 10^");
 }
