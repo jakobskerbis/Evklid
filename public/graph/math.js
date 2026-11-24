@@ -224,7 +224,7 @@ export function argSeparators(s, comma = true) {
 
 /**
  * Zapis števil in argumentov, enak v znanstvenem kalkulatorju, grafičnem kalkulatorju in pri preverjanju
- * učenčevega odgovora (AUDIT-015): »1 000« je tisoč, »1.234,5« (comma) je 1234,5, »12 3456« in »1.2.3« sta
+ * učenčevega odgovora (AUDIT-024): »1 000« je tisoč, »1.234,5« (comma) je 1234,5, »12 3456« in »1.2.3« sta
  * nejasna (MathError), nato argSeparators (decimalna vejica, »;«). Vrne besedilo za parse().
  */
 export function numberText(s, comma = true) {

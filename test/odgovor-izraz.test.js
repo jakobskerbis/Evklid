@@ -1,4 +1,4 @@
-// AUDIT-015: izraz v odgovoru (»sin(0,5)«, »2,5·sin(0,5)«) se bere po istem pravilu za števila in vejico kot
+// AUDIT-024: izraz v odgovoru (»sin(0,5)«, »2,5·sin(0,5)«) se bere po istem pravilu za števila in vejico kot
 // kalkulatorja (numberText v math.js): prej je bil »sin(0,5)« sin(0) (ali napaka), zato je pravi odgovor dobil
 // »izraz«, napačen (rešitev 0) pa »Vrednost je prava«.
 import test from "node:test";
