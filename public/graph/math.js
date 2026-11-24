@@ -235,6 +235,99 @@ export function numberText(s, comma = true) {
   return argSeparators(out, comma);
 }
 
+/** Razdeli besedilo na vrhnji ravni (zunaj oklepajev) pri znakih iz »seps«. */
+export function splitTop(s, seps = ";") {
+  const out = [];
+  let depth = 0;
+  let cur = "";
+  for (const c of String(s)) {
+    if ("([{".includes(c)) depth++;
+    else if (")]}".includes(c)) depth = Math.max(0, depth - 1);
+    if (depth === 0 && seps.includes(c)) {
+      out.push(cur);
+      cur = "";
+    } else cur += c;
+  }
+  out.push(cur);
+  return out;
+}
+
+// »∫(f, a, b)« (po argSeparators) → »∫_(a)^(b) (f) dx« (zapis, ki ga razume razčlenjevalnik)
+function rewriteIntegrals(s) {
+  for (let guard = 0; guard < 20; guard++) {
+    const i = s.indexOf("∫(");
+    if (i < 0) break;
+    let depth = 0;
+    let j = i + 1;
+    for (; j < s.length; j++) {
+      if (s[j] === "(") depth++;
+      else if (s[j] === ")" && --depth === 0) break;
+    }
+    const args = splitTop(s.slice(i + 2, j), ",");
+    if (args.length !== 3) break;
+    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) dx)${s.slice(j + 1)}`;
+  }
+  return s;
+}
+
+/**
+ * Skupna priprava vrstice za znanstveni in grafični kalkulator (AUDIT-026): isto besedilo pomeni isto v obeh.
+ * - števila in vejica kot numberText (»1 000« = 1000, »1.234,5« = 1234,5, »12 3456« je napaka, »;« loči argumente),
+ * - znanstveni zapis: »2e3« = 2000, »3E-2« = 0,03, »1,5e-3« = 0,0015. Pravilo: število (ne za črko ali »_«),
+ *   takoj »e« ali »E«, celoštevilski eksponent (po želji s predznakom), za njim pa ne črka, »(«, števka ali
+ *   decimalno ločilo. Drugače je e Eulerjevo število (»2e^x«, »2e3x« = 2·e·3·x, »2e-x«), E pa spremenljivka.
+ *   »E« ostane spremenljivka tudi, kadar je E v names (graf z vrstico »E = …«, spremenljivka E v kalkulatorju):
+ *   takrat je »3E-2« 3·E − 2. Število je v oklepaju (AUDIT-041): x/1e8 = x/10⁸, 2e3^2 = (2·10³)², −1e2 = −100,
+ * - ∫(f; a; b) je določeni integral od a do b,
+ * - close: manjkajoče zaklepaje doda na konec (znanstveni kalkulator; grafični jih pokaže kot napako).
+ * Pomen zapisa po razčlenitvi poenoti še calcRewrite (odstotki, round na decimalke).
+ */
+export function calcText(s, { comma = true, names = null, close = false } = {}) {
+  let out = numberText(s, comma);
+  const bigE = !(names && (names.has ? names.has("E") : "E" in names));
+  out = out.replace(/(?<![A-Za-z_\d.])(\d+(?:\.\d+)?|\.\d+)([eE])([+\-−]?)(\d+)(?![\d.A-Za-zα-ωΑ-Ω_(])/g, (m, a, e, sign, d) =>
+    e === "E" && !bigE ? m : `(${a}*10^(${sign === "−" ? "-" : sign}${d}))`, // v oklepaju: x/1e8 = x/10⁸ (AUDIT-041)
+  );
+  if (close) {
+    let open = 0;
+    for (const c of out) {
+      if (c === "(") open++;
+      else if (c === ")") open = Math.max(0, open - 1);
+    }
+    out += ")".repeat(open);
+  }
+  return rewriteIntegrals(out);
+}
+
+/**
+ * Skupni prepis drevesa pred računanjem v obeh kalkulatorjih (zapis ostane, kot ga je vpisal učenec):
+ * - a + p % → a·(1 + p/100) kot na kalkulatorju v telefonu (200 + 10 % = 220; 10 % sam je 0,1),
+ * - round(x; n) zaokroži na n decimalk.
+ * extra(n, r): dodaten prepis (znanstveni kalkulator: odvod v točki) ali undefined.
+ */
+export function calcRewrite(n, extra = null) {
+  if (!n || typeof n !== "object") return n;
+  const r = (x) => calcRewrite(x, extra);
+  if ((n.k === "+" || n.k === "-") && n.b?.k === "pct") {
+    const one = { k: "num", v: 1 };
+    const part = { k: "/", a: r(n.b.a), b: { k: "num", v: 100 } };
+    return { k: "*", a: r(n.a), b: { k: "grp", a: { k: n.k, a: one, b: part } } };
+  }
+  if (n.k === "call" && n.f === "round" && n.args.length === 2) {
+    const p = { k: "^", a: { k: "num", v: 10 }, b: r(n.args[1]) };
+    return { k: "/", a: { k: "call", f: "round", args: [{ k: "*", a: r(n.args[0]), b: p }] }, b: p };
+  }
+  const x = extra && extra(n, r);
+  if (x !== undefined && x !== null) return x;
+  const out = { ...n };
+  for (const key of ["a", "b", "other"]) if (n[key]) out[key] = r(n[key]);
+  for (const key of ["args", "terms", "items"]) if (Array.isArray(n[key])) out[key] = n[key].map(r);
+  if (n.cases) out.cases = n.cases.map(([c, v]) => [r(c), r(v)]);
+  if (n.lo) out.lo = r(n.lo);
+  if (n.hi) out.hi = r(n.hi);
+  return out;
+}
+
 export function normalize(src) {
   return String(src ?? "")
     .replace(/[−–—]/g, "-")
@@ -1678,6 +1771,13 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0, brk = null) {
   let value = 0;
   let err = 0;
   let abs = 0;
+  // mesto skoka poznamo le na nekaj zaokrožitev natančno: napaka ≤ velikost skoka · 8 ulp (sign(sin x) do 10⁴: 3183 skokov)
+  for (let i = 1; i + 1 < xs.length; i++) {
+    const x = xs[i];
+    const d = 8 * EPS * Math.max(Math.abs(x), 1e-300);
+    const jmp = Math.abs(F0(x + d) - F0(x - d));
+    err += Number.isFinite(jmp) ? jmp * d : 0;
+  }
   for (let i = 0; i + 1 < xs.length; i++) {
     if (!(xs[i + 1] > xs[i])) continue;
     const many = xs.length > 50; // mnogo kosov (floor(1000x)): brez tipanja vrhov, kos začnemo z dvema deloma
@@ -2101,7 +2201,8 @@ export function jumpFinder(node, v, cf) {
   return (scope, a, b) => {
     if (!(b > a) || !Number.isFinite(a) || !Number.isFinite(b)) return null;
     const sc = Object.create(scope);
-    const N = 1024;
+    // mreža N točk; pri nihajočem argumentu (sign(sin x) na [0, 10⁴]) gostimo, dokler se število skokov ne ustali
+    const scan = (N) => {
     const out = [];
     for (const { g, off, step } of gs) {
       const at = (x) => {
@@ -2121,7 +2222,7 @@ export function jumpFinder(node, v, cf) {
           const levels = [];
           if (step) for (let k = Math.ceil(Math.min(y0, y1) - off); k + off <= Math.max(y0, y1); k++) inside(k + off) && levels.push(k + off);
           else if (inside(0)) levels.push(0);
-          if (levels.length > 2000 || out.length > 5000) return null;
+          if (levels.length > 2000 || out.length > 20000) return null;
           for (const L of levels) {
             // g(x) = L: regula falsi (Illinois; linearni g v nekaj korakih), sicer bisekcija; q je prva točka na
             // drugi strani ravni
@@ -2163,6 +2264,15 @@ export function jumpFinder(node, v, cf) {
       if (x - a > tol && b - x > tol && !(res.length && x - res[res.length - 1] <= tol)) res.push(x);
     }
     return res;
+    };
+    let prev = scan(1024);
+    for (const N of [4096, 16384, 65536]) {
+      if (!prev) return null;
+      const cur = scan(N);
+      if (!cur || cur.length === prev.length) return cur;
+      prev = cur;
+    }
+    return null; // se ni ustalilo: skokov ne poznamo (preverjanje brez drevesa)
   };
 }
 

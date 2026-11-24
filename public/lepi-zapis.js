@@ -1,23 +1,16 @@
 // Lep zapis med pisanjem v klepetu (j, 2026-11-04: »naj se potence in ulomki izpisujejo tudi v chatboxu, ne kot
-// * in /«, »koreni tudi«, »itd.«). Ko učenec napiše x^2, 3/4, sqrt, a_n, * ali <=, se zapis v polju takoj zamenja z
-// znaki Unicode: x², ³⁄₄, √, aₙ, ·, ≤. Tako je že v polju videti kot matematika in inštruktor dobi enak zapis.
-// Zapletenejše formule s tipkovnice ((x+1)/(x−1), ∫, ∑) ostanejo zapis v vrstici; nad poljem jih izriše predogled.
+// * in /«, »koreni tudi«, »itd.«).
+// Od 24. 11. 2026 (j: »Evklid – obvezen enoten standard matematičnega zapisa«, faza F2; odločitev »Klepet: pravi
+// izris namesto Unicode«) polje NE piše več nadpisanih in podpisanih znakov Unicode (x², ³⁄₄, aₙ). Potenca, indeks in
+// ulomek ostanejo zapis v vrstici (x^2, a_n, (3)/(4)), ki ga izriše KaTeX: v polju predogled (public/predogled-vnosa.js),
+// v poslanem sporočilu app.js (public/vnos-formul.js splitFormulas → public/mat/izris.js). Tako je v klepetu ista
+// matematika kot v lekcijah in kalkulatorju, inštruktor pa dobi nedvoumen zapis.
+// Tu ostanejo le zamenjave posameznih znakov s pravim matematičnim znakom (·, ≤, ≥, ≠, →, ±, √) in ulomek iz števil:
+// 3/4 → (3)/(4), da se izriše kot ulomek (prej ³⁄₄).
 
-const map = (keys, vals) => Object.fromEntries([...keys].map((k, i) => [k, [...vals][i]]));
-export const SUP = {
-  ...map("0123456789+-−=()", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁻⁼⁽⁾"),
-  ...map("abcdefghijklmnoprstuvwxyz", "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛʷˣʸᶻ"),
-};
-export const SUB = {
-  ...map("0123456789+-−=()", "₀₁₂₃₄₅₆₇₈₉₊₋₋₌₍₎"),
-  ...map("aehijklmnoprstuvx", "ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ"),
-};
-const conv = (s, m) => ([...s].every((c) => c in m) ? [...s].map((c) => m[c]).join("") : null);
-const SUPS = Object.values(SUP).join("");
-const SUBS = Object.values(SUB).join("");
-
-// Zamenjave na koncu besedila pred kazalcem. Vsaka vrne [nov konec, ime teka] ali null. »Tek« pomeni, da se naslednja
-// vpisana števka nadaljuje v isti višini (x²³, log₁₀, ¹⁄₂₅).
+// Zamenjave na koncu besedila pred kazalcem. Vsaka vrne [nov konec, tek] ali null. Tek »den« pomeni, da se naslednja
+// vpisana števka doda v imenovalec ((3)/(4) + 5 → (3)/(45)), »/«, ».« ali »,« takoj za njim pa vrne prvotni zapis (datum
+// 1/2/2025, decimalni imenovalec 3/4,5).
 const RULES = [
   [/\*$/, () => ["·"]],
   [/(?<!\p{L})sqrt$/u, () => ["√"]],
@@ -26,42 +19,28 @@ const RULES = [
   [/!=$/, () => ["≠"]],
   [/->$/, () => ["→"]],
   [/\+-$/, () => ["±"]],
-  // Ulomek iz števil: 3/4 → ³⁄₄ (ne datum ali del daljšega števila z vejico).
-  [/(?<![\p{L}\d.,/⁄])(\d+)\/(\d)$/u, (m) => [conv(m[1], SUP) + "⁄" + SUB[m[2]], "sub"]],
-  // Ulomek s tipkovnice s preprostim števcem in imenovalcem: (3)/(4) → ³⁄₄, tudi ko kazalec že gre naprej.
-  [/(?<![\p{L}\p{N})\]])\((\d+|\p{L})\)\/\((\d+|\p{L})\)([^\p{L}\p{N}]?)$/u, (m) => {
-    const a = conv(m[1], SUP), b = conv(m[2], SUB);
-    return a && b ? [a + "⁄" + b + m[3]] : null;
-  }],
-  // Potenca in indeks: x^2, x^-1, x^n, x^(n+1), a_n, log_10, a_(n+1).
-  [/(?<=\S)([\^_])([−-]?\d)$/, (m) => [conv(m[2], m[1] === "^" ? SUP : SUB), m[1] === "^" ? "sup" : "sub"]],
-  [/(?<=\S)([\^_])(\p{Ll})$/u, (m) => (m[1] === "^" ? SUP : SUB)[m[2]] ? [(m[1] === "^" ? SUP : SUB)[m[2]]] : null],
-  [/(?<=\S)([\^_])\(([^()\s]+)\)(\D?)$/, (m) => {
-    const s = conv(m[2], m[1] === "^" ? SUP : SUB);
-    return s ? [s + m[3]] : null;
-  }],
-  // Koren s tipkovnice s preprostim argumentom: √(2) → √2.
-  [/([√∛∜])\((\d+|\p{L})\)([^\p{L}\p{N}]?)$/u, (m) => [m[1] + m[2] + m[3]]],
+  // Ulomek iz števil: 3/4 → (3)/(4) (ne del daljšega števila z vejico ali piko, ne za črko: x2/3 ostane).
+  [/(?<![\p{L}\d.,/⁄)])(\d+)\/(\d)$/u, (m) => [`(${m[1]})/(${m[2]})`, "den"]],
 ];
 
 /**
  * Lepši konec besedila pred kazalcem. `before` je besedilo do kazalca po vnosu, `typed` vpisani znaki, `run` tek
- * iz prejšnjega klica ({ at, kind } ali null). Vrne { from, text, run }: zamenjaj before.slice(from) s text,
- * ali null, ko ni kaj zamenjati.
+ * iz prejšnjega klica ({ at, kind, from, orig } ali null). Vrne { from, text, run, undo? }: zamenjaj before.slice(from)
+ * s text, ali null, ko ni kaj zamenjati. undo: kar vrne Backspace takoj po zamenjavi (privzeto before.slice(from)).
  */
 export function prettify(before, typed, run = null) {
-  // Nadaljevanje teka: števka takoj za nadpisano ali podpisano števko.
-  if (run && /^\d$/.test(typed) && before.length === run.at + 1) {
-    const prev = before[before.length - 2] || "";
-    const m = run.kind === "sup" ? SUP : SUB;
-    if ((run.kind === "sup" ? SUPS : SUBS).includes(prev)) return { from: before.length - 1, text: m[typed], run: { at: before.length, kind: run.kind } };
+  // Nadaljevanje ulomka: števka takoj za imenovalcem gre vanj, »/« vrne prvotni zapis (datum, ne ulomek).
+  if (run?.kind === "den" && before.length === run.at + 1 && before[run.at - 1] === ")") {
+    if (/^\d$/.test(typed)) return { from: run.at - 1, text: typed + ")", undo: ")", run: { ...run, at: run.at + 1, orig: run.orig + typed } };
+    // »/« (datum 1/2/2025), ».« ali »,« (decimalni imenovalec 3/4,5) vrne prvotni zapis: to ni ulomek dveh celih števil.
+    if (/^[/.,]$/.test(typed)) return { from: run.from, text: run.orig + typed, run: null };
   }
   for (const [re, fn] of RULES) {
     const m = before.match(re);
     if (!m) continue;
     const r = fn(m);
     if (!r || r[0] == null) continue;
-    return { from: m.index, text: r[0], run: r[1] ? { at: m.index + r[0].length, kind: r[1] } : null };
+    return { from: m.index, text: r[0], run: r[1] ? { at: m.index + r[0].length, kind: r[1], from: m.index, orig: m[0] } : null };
   }
   return null;
 }
@@ -69,7 +48,8 @@ export function prettify(before, typed, run = null) {
 /** Polje (textarea) med pisanjem sproti lepša. Kliči pred drugimi poslušalci »input«. */
 export function attachPrettify(field) {
   let run = null;
-  let last = null; // zadnja zamenjava: { from, text, orig } – Backspace takoj po njej vrne prvotni zapis (x^2, *, _)
+  let lasten = false; // »input«, ki ga sproži zamenjava sama
+  let last = null; // zadnja zamenjava: { from, text, orig } – Backspace takoj po njej vrne prvotni zapis (3/4, *, sqrt)
   const apply = (typed) => {
     const at = field.selectionStart;
     if (at !== field.selectionEnd) return void (run = last = null);
@@ -79,19 +59,31 @@ export function attachPrettify(field) {
     last = null;
     if (!r) return;
     field.setRangeText(r.text, r.from, at, "end");
-    last = { from: r.from, text: r.text, orig: before.slice(r.from) };
+    last = { from: r.from, text: r.text, orig: r.undo ?? before.slice(r.from) };
+    // setRangeText ne sproži »input«: izris v polju (predogled-vnosa.js), višina in osnutek so že obdelali vneseni znak,
+    // ne zamenjave (3/4 → (3)/(4)). Lasten dogodek jih posodobi; ta poslušalec ga preskoči.
+    lasten = true;
+    try {
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    } finally {
+      lasten = false;
+    }
   };
-  field.addEventListener("keydown", (e) => {
-    if (e.key !== "Backspace" || !last || e.ctrlKey || e.metaKey || e.altKey) return;
+  // Na oknu v fazi zajema: pred ⌫ izrisanega polja (predogled-vnosa.js, poslušalec na document), ki bi v ulomku
+  // (3)/(4) le premaknil kazalec v imenovalec. Razveljavitev zamenjave ima prednost; sicer ⌫ dela kot vedno.
+  addEventListener("keydown", (e) => {
+    if (e.target !== field || e.key !== "Backspace" || !last || e.ctrlKey || e.metaKey || e.altKey) return;
     const at = field.selectionStart;
     const { from, text, orig } = last;
     last = run = null;
     if (at !== field.selectionEnd || at !== from + text.length || field.value.slice(from, at) !== text) return;
     e.preventDefault();
+    e.stopPropagation(); // ⌫ izrisanega polja (predogled-vnosa.js) tega ne obdela še enkrat
     field.setRangeText(orig, from, at, "end"); // kot razveljavitev samopopravka na tipkovnici
     field.dispatchEvent(new Event("input", { bubbles: true }));
-  });
+  }, true);
   field.addEventListener("input", (e) => {
+    if (lasten) return;
     const typed = e.data ?? "";
     if (e.isComposing || !/^insert(Text|CompositionText)?$/.test(e.inputType || "") || !typed) return void (run = last = null);
     apply(typed);

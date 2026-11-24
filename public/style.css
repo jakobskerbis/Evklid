@@ -591,6 +591,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 button.chat-return { min-height: 40px !important; } /* button.small ima 38 px (!important) */
 .chat-return[hidden] { display: none; }
 .chat-return span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-kontekst { margin: -2px 0 6px; font-size: 0.8rem; }
+.chat-kontekst[hidden] { display: none; }
 /* Vrstica za pisanje brez okna (j, 2026-11-04: »naj samo piše po strani brez okna«, več prostora za vsebino): pišeš
    naravnost na stran pod pogovorom, le tanka črta pokaže, kje; ob pisanju se obarva. */
 .composer-row { display: flex; gap: 6px; align-items: flex-end; margin: 0 auto; background: none; border: 0; border-top: 1px solid color-mix(in srgb, var(--muted) 55%, transparent); border-radius: 0; padding: 4px 0 0; }

@@ -1,7 +1,7 @@
 // Znanstveni kalkulator razume več kot račun: enačbe, neenačbe, sisteme, funkcije f(x), odvode in
 // kompleksna števila. Vse brez DOM in brez API (preizkusi v test/tools.test.js).
 // Koraki rešitve niso tukaj: »Po korakih« odpre zaslon Skeniraj (public/scan/), ki ima svoj reševalnik.
-import { simplify, diff, toTex, MathError } from "./math.js";
+import { simplify, diff, toTex, MathError, freeVars } from "./math.js";
 import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
 import { antiderivativeAst } from "./calculus.js";
@@ -921,6 +921,163 @@ export function exactIntegral(raw, env, r) {
   }
 }
 
+// Funkcije, ki so zvezne povsod, kjer so definirane; nevarna mesta (pol, veja ln) so le ničle argumentov spodaj.
+const SAFE_FNS = new Set(["sin", "cos", "exp", "atan", "arctan", "sinh", "cosh", "tanh", "asinh", "arsinh", "erf", "abs", "sqrt", "cbrt", "ln", "log", "logb", "tan", "sec", "cot", "csc"]);
+/**
+ * Izrazi, katerih ničla na intervalu pomeni pol ali skok f oziroma F: imenovalci, osnove potenc z necelim ali
+ * negativnim eksponentom, argumenti ln/log, cos(u) pri tan/sec, sin(u) pri cot/csc, argumenti korenov.
+ * null: drevo ima funkcijo, ki je ne poznamo (lahko ima skok) — točne poti takrat ne uporabimo.
+ */
+function dangerNodes(node, v) {
+  const out = [];
+  let unknown = false;
+  const has = (n) => freeVars(n).has(v);
+  const visit = (n) => {
+    if (!n || typeof n !== "object" || unknown) return;
+    if (n.k === "/" && has(n.b)) out.push(n.b);
+    if (n.k === "^" && has(n.a)) {
+      let e = n.b;
+      while (e?.k === "grp") e = e.a;
+      if (!(e?.k === "num" && Number.isInteger(e.v) && e.v >= 0)) out.push(n.a);
+    }
+    if (n.k === "call") {
+      if (!SAFE_FNS.has(n.f)) unknown = true;
+      else if ((n.f === "ln" || n.f === "log" || n.f === "logb" || n.f === "sqrt" || n.f === "cbrt") && has(n.args[0])) out.push(n.args[0]);
+      else if ((n.f === "logb") && n.args[1] && has(n.args[1])) out.push(n.args[1]);
+      else if ((n.f === "tan" || n.f === "sec") && has(n.args[0])) out.push({ k: "call", f: "cos", args: [n.args[0]] });
+      else if ((n.f === "cot" || n.f === "csc") && has(n.args[0])) out.push({ k: "call", f: "sin", args: [n.args[0]] });
+    }
+    if (n.k === "pw" || n.k === "int" || n.k === "sum" || n.k === "deriv") unknown = true;
+    for (const k in n) if (k !== "k") {
+      const c = n[k];
+      if (Array.isArray(c)) c.forEach((x) => (Array.isArray(x) ? x.forEach(visit) : visit(x)));
+      else if (c && typeof c === "object") visit(c);
+    }
+  };
+  visit(node);
+  return unknown ? null : out;
+}
+// Ali ima g (x ↦ število) ničlo v notranjosti [lo, hi]: menjava predznaka na gosti mreži ali lokalni minimum |g|,
+// ki ga ternarno iskanje spravi na ~0. NaN (zunaj definicije) šteje kot ničla.
+function hasInnerZero(g, lo, hi) {
+  const N = 16384;
+  const h = (hi - lo) / N;
+  const xs = [];
+  const ys = [];
+  let big = 0;
+  for (let i = 0; i <= N; i++) {
+    const x = i === N ? hi : lo + i * h;
+    const y = g(x);
+    if (Number.isNaN(y) || !Number.isFinite(y)) {
+      if (i > 0 && i < N) return true;
+      continue;
+    }
+    xs.push(x);
+    ys.push(y);
+    big = Math.max(big, Math.abs(y));
+  }
+  const edge = 1e-12 * (hi - lo);
+  for (let i = 0; i + 1 < ys.length; i++) {
+    if (ys[i] === 0 && xs[i] - lo > edge && hi - xs[i] > edge) return true;
+    if (Math.sign(ys[i]) * Math.sign(ys[i + 1]) < 0) return true;
+  }
+  for (let i = 1; i + 1 < ys.length; i++) {
+    const m = Math.abs(ys[i]);
+    if (!(m <= Math.abs(ys[i - 1]) && m <= Math.abs(ys[i + 1]) && m < 1e-3 * big)) continue;
+    let p = xs[i - 1];
+    let q = xs[i + 1];
+    for (let k = 0; k < 120; k++) {
+      const m1 = p + (q - p) / 3;
+      const m2 = q - (q - p) / 3;
+      if (Math.abs(g(m1)) < Math.abs(g(m2))) q = m2;
+      else p = m1;
+    }
+    const c = 0.5 * (p + q);
+    if (Math.abs(g(c)) <= 1e-9 * Math.max(big, 1e-300) && c - lo > edge && hi - c > edge) return true;
+  }
+  return false;
+}
+
+// Številski izračun je obupal (∫(sin x; 0; 10⁴): tisoči nihajev, »ni mogoče zanesljivo«). Če znamo nedoločeni
+// integral F (preverjen z odvodom) in je F na [a, b] zvezna, je vrednost F(b) − F(a) (»=«). Zveznost preverimo v 4096
+// točkah: F in f sta končni, prirastek F pa ne presega 2·max|f|·h (skok veje atan ali ln bi to mejo prekoračil).
+function exactFallback(raw, env) {
+  try {
+    const line = compileLine(raw, env);
+    let n = line.ast;
+    while (n.k === "grp") n = n.a;
+    if (n.k !== "int" || !n.lo || !n.hi) return null;
+    const a = line.run(n.lo)(line.scope);
+    const b = line.run(n.hi)(line.scope);
+    if (!Number.isFinite(a) || !Number.isFinite(b) || a === b) return null;
+    const F = antiderivativeAst(line, n.a, n.v);
+    if (!F) return null;
+    const mkr = (node) => {
+      const g = line.run(node);
+      return (x) => {
+        const sc = Object.create(line.scope);
+        sc[n.v] = x;
+        const y = g(sc);
+        return typeof y === "number" ? y : NaN;
+      };
+    };
+    // pol ali veja (1/(x − 1) + sin x: ln|x − 1| v F) kjerkoli v notranjosti [a, b] → točne poti ne uporabimo
+    {
+      const dn = [...(dangerNodes(line.rw(n.a), n.v) ?? [null]), ...(dangerNodes(F, n.v) ?? [null])];
+      if (dn.includes(null)) return null;
+      const lo0 = Math.min(a, b);
+      const hi0 = Math.max(a, b);
+      for (const d of dn) if (hasInnerZero(mkr(d), lo0, hi0)) return null;
+    }
+    const mk = (node) => {
+      const g = line.run(node);
+      return (x) => {
+        const sc = Object.create(line.scope);
+        sc[n.v] = x;
+        const y = g(sc);
+        return typeof y === "number" ? y : NaN;
+      };
+    };
+    const Fx = mk(F);
+    const fx = mk(n.a);
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    const N = 4096;
+    const h = (hi - lo) / N;
+    let x0 = lo + 0.5 * h;
+    let F0 = Fx(x0);
+    let f0 = fx(x0);
+    if (!Number.isFinite(F0) || !Number.isFinite(f0)) return null;
+    for (let i = 1; i < N; i++) {
+      const x1 = lo + (i + 0.5) * h;
+      const F1 = Fx(x1);
+      const f1 = fx(x1);
+      const fm = fx(0.5 * (x0 + x1));
+      if (!Number.isFinite(F1) || !Number.isFinite(f1) || !Number.isFinite(fm)) return null;
+      const bound = 2 * Math.max(Math.abs(f0), Math.abs(f1), Math.abs(fm)) * h + 1e-12 * (Math.abs(F0) + Math.abs(F1) + 1);
+      if (Math.abs(F1 - F0) > bound) return null;
+      [x0, F0, f0] = [x1, F1, f1];
+    }
+    // krajišči: vrednost F, sicer enostranska limita, ki se ustali
+    let lim = false;
+    const end = (x, sd) => {
+      const y = Fx(x);
+      if (Number.isFinite(y)) return y;
+      lim = true;
+      const y1 = Fx(x + sd * (hi - lo) * 1e-13);
+      const y2 = Fx(x + sd * (hi - lo) * 1e-16);
+      return Math.abs(y1 - y2) <= 1e-9 * Math.max(1, Math.abs(y2)) ? y2 : NaN;
+    };
+    const sd = b > a ? 1 : -1;
+    let value = end(b, -sd) - end(a, sd);
+    if (lim) value = Number(value.toPrecision(12));
+    if (!Number.isFinite(value)) return null;
+    return { kind: "value", value, tex: lineTex(line.ast, env.comma !== false) };
+  } catch {
+    return null;
+  }
+}
+
 export function analyze(text, env = {}) {
   const comma = env.comma !== false;
   const vars = env.vars || {};
@@ -971,6 +1128,7 @@ export function analyze(text, env = {}) {
   if (r && !r.error) return { kind: "value", ...(r.est ? exactIntegral(raw, env, r) : r) };
   if (!r) return null;
   const code = r.error.code;
+  if ((code === "intUnknown" || code === "intTimeout") && !env.live) return exactFallback(raw, env) || r;
   if (code !== "missing" && code !== "notCalc") return r;
 
   // kompleksno število (i je imaginarna enota, če ni spremenljivka)

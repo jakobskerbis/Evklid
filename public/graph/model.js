@@ -2,7 +2,7 @@
 // kaj vsaka vrstica je (funkcija, krivulja, drsnik, točka …), prevedene funkcije za risanje
 // in vrednosti spremenljivk. Brez DOM (testi v test/graph.test.js).
 import { hasPolRec, vectorTuple } from "./vektor.js";
-import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, MathError, BUILTINS, walk, argSeparators, oneArgFn } from "./math.js";
+import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, MathError, BUILTINS, walk, calcText, calcRewrite, argSeparators, oneArgFn } from "./math.js";
 
 export const RESERVED = new Set(["x", "y", "r", "θ"]);
 const DEF_RE = /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*\(\s*([A-Za-zθ](?:\s*,\s*[A-Za-zθ])*)\s*\)\s*=(?!=)/;
@@ -16,7 +16,10 @@ export const newId = () => `i${Date.now().toString(36)}${(idSeq++).toString(36)}
 // kalkulator: v slovenskem zapisu je vejica med števkami decimalna povsod (sin(0,5x) = sin(0,5·x)), argumente
 // loči »;« (ali vejica s presledkom). Graf brez »zapis« (stari shranjeni grafi, bloki GRAF inštruktorja, skener)
 // bere vejico kot prej: decimalna le zunaj oklepajev, v oklepaju loči argumente.
-export const ZAPIS = 2;
+// Zapis 3 (AUDIT-026): vrstice berejo isto pripravo kot znanstveni kalkulator (calcText, calcRewrite): »2e3« = 2000,
+// »x + 10 %« = 1,1x, »1 000« = 1000, round(x; n), ∫(f; a; b). Graf zapisa 2 se ob odprtju pretvori v zapis 3 z enakim
+// pomenom (migrateV2); dokler ni pretvorjen, se bere kot prej (le decimalna vejica in »;«).
+export const ZAPIS = 3;
 const ONE_ARG_NAMES = [...BUILTINS].filter(oneArgFn).sort((a, b) => b.length - a.length);
 /**
  * Star zapis → zapis 2 z enakim pomenom: vejica med števkami v oklepaju je bila ločilo, zato dobi presledek
@@ -39,6 +42,18 @@ export function migrateText(text, { oneArgDecimal = true } = {}) {
   }
   return out;
 }
+/**
+ * Zapis 2 → zapis 3 z enakim pomenom: kar bi calcText prebral drugače, dobi izrecen zapis.
+ * - »2e-1«, »3E2« (v zapisu 2: 2·e − 1, 3·E·2) → »2·e-1«, »3·E2«; E ostane, če ga graf definira (tam se ne spremeni),
+ * - »a + 10 %« (v zapisu 2: a + 0,1) → »a + (10 %)«; calcRewrite prepiše le golo »+ p %«.
+ * Tisočice (»1 000«, prej 1·000) in »12 3456« (prej 12·3456) niso ohranjene: tak pomen ni bil nikoli mišljen.
+ */
+export function migrateV2(text, { hasE = false } = {}) {
+  return String(text ?? "")
+    .replace(/(?<![A-Za-z_\d.,])(\d+(?:[.,]\d+)?|[.,]\d+)([eE])(?=[+\-−]?\d+(?![\d.,A-Za-zα-ωΑ-Ω_(]))/g, (m, a, e) => (e === "E" && hasE ? m : `${a}·${e}`))
+    .replace(/([+\-−]\s*)((?:\d+(?:[.,]\d+)?|[.,]\d+)\s*%)/g, "$1($2)");
+}
+const definesE = (state) => (state.items || []).some((it) => it.type === "expr" && /^\s*E\s*(?:\([^()]*\)\s*)?=(?!=)/.test(String(it.text ?? "")));
 const mapTexts = (state, fn) => (state.items || []).map((it) => (it.type === "expr" && typeof it.text === "string" ? { ...it, text: fn(it.text) } : it));
 /**
  * Graf v zapis 2 za kalkulator v zapisu »comma« (slovenski z vejico ali s piko); pomen vrstic se nikoli ne spremeni.
@@ -50,16 +65,24 @@ const mapTexts = (state, fn) => (state.items || []).map((it) => (it.type === "ex
 export function upgradeZapis(state, comma = true) {
   if (!state) return state;
   comma = comma !== false;
-  if (state.zapis !== ZAPIS) return { ...state, items: mapTexts(state, (t) => migrateText(t)), zapis: ZAPIS, vejica: comma };
+  const hasE = definesE(state);
+  if (state.zapis !== ZAPIS && state.zapis !== 2) return { ...state, items: mapTexts(state, (t) => migrateV2(migrateText(t), { hasE })), zapis: ZAPIS, vejica: comma };
+  if (state.zapis === 2) state = { ...state, items: mapTexts(state, (t) => migrateV2(t, { hasE })), zapis: ZAPIS };
   const was = state.vejica !== false;
   if (was === comma) return state.vejica === comma ? state : { ...state, vejica: comma };
   const conv = comma ? (t) => migrateText(t, { oneArgDecimal: false }) : (t) => t.replace(/(\d),(?=\d)/g, "$1.");
   return { ...state, items: mapTexts(state, conv), vejica: comma };
 }
 /** Besedilo vrstice za parse(): pri zapisu 2 decimalna vejica in »;« kot v znanstvenem kalkulatorju. */
-const lineText = (text, v2, comma) => (v2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
+// Pri zapisu 2 je to ista priprava kot v znanstvenem kalkulatorju (calcText: tisočice, nejasna števila, znanstveni
+// zapis 2e3, ∫(f; a; b)); names: imena, ki jih graf definira (E = … → »3E-2« je 3·E − 2).
+// Zapis 2 (še ne pretvorjen graf): le decimalna vejica in »;«.
+const lineText = (text, v, comma, names) => (v >= 3 ? calcText(String(text ?? ""), { comma, names }) : v === 2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
 // »(2,3)« v slovenskem zapisu je število 2,3 v oklepaju; morda je mišljena točka (2; 3): namig, pomen ostane.
 const POINT_LIKE = /^\s*\(\s*([+\-−]?\d+),(\d+)\s*\)\s*$/;
+// »2e3x«: e za številom, ki mu sledi črka ali oklepaj, je Eulerjevo število (calcText), ne znanstveni zapis.
+// Pomen ostane, namig pove, kako zapisati 2000·x (pregled #961).
+const EULER_LIKE = /(?<![A-Za-z_\d.,])(\d+(?:[.,]\d+)?)e(\d+)\s*([A-Za-zα-ωθ(])/;
 
 /** Prazen graf. */
 export function emptyState() {
@@ -74,12 +97,24 @@ export function emptyState() {
 // privzeta območja parametrov
 export const DEFAULT_DOMAIN = { param: [0, 2 * Math.PI], polar: [0, 2 * Math.PI] };
 
-/** Drsnik: privzeti razpon glede na vrednost. */
+/** Drsnik: privzeti razpon glede na vrednost; korak je sorazmeren z velikostjo (10⁻⁸ ne postane 0, AUDIT-014). */
 export function sliderRange(v) {
   const a = Math.abs(v);
-  if (a <= 10) return { min: -10, max: 10, step: 0.1 };
-  const p = 10 ** Math.ceil(Math.log10(a));
-  return { min: -p, max: p, step: p / 100 };
+  if (!(a > 0) || (a >= 0.1 && a <= 10)) return { min: -10, max: 10, step: 0.1 };
+  // majhna vrednost ni na robu (10⁻⁸ → ±10⁻⁷), da gre drsnik v obe smeri
+  const e = a < 0.1 ? Math.floor(Math.log10(a)) + 1 : Math.ceil(Math.log10(a));
+  const p = Number(`1e${e}`); // točno 10^e (10 ** -7 / 100 ni točno 1e-9)
+  return { min: -p, max: p, step: Number(`1e${e - 2}`) };
+}
+
+/**
+ * Vrednost drsnika kot besedilo, ki ga kalkulator spet prebere kot drsnik: toliko decimalk, kot jih ima korak, največ 15
+ * veljavnih mest, nikoli zapis z e (»3e-8« bi bil 3·e − 8). AUDIT-014: 10⁻⁸ ne postane 0.
+ */
+export function sliderText(v, step) {
+  const digits = Math.max(0, Math.min(20, -Math.floor(Math.log10(step > 0 ? step : 0.1) + 1e-9)));
+  const x = Number(Number(v.toFixed(digits)).toPrecision(15));
+  return Math.abs(x) < 1e21 && x !== 0 ? x.toFixed(digits).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "") : String(x);
 }
 
 function definitionOf(text) {
@@ -99,14 +134,16 @@ const err = (code, info = {}) => ({ code, info });
 export function buildModel(state, { comma = true } = {}) {
   const deg = !!state.settings?.deg;
   const items = state.items || [];
-  const v2 = state.zapis === ZAPIS;
+  const zv = state.zapis === 2 || state.zapis === ZAPIS ? state.zapis : 0; // različica zapisa vrstic
+  const v2 = zv >= 2;
   // Graf zapisa 2 se bere v zapisu, v katerem je nastal (state.vejica), ne v trenutnem jeziku: pomen se ne spremeni.
   const readComma = v2 && typeof state.vejica === "boolean" ? state.vejica : comma;
   const texts = new Map(); // vrstica → besedilo za parse() (ali napaka zapisa števila)
+  const namesE = new Set(items.filter((it) => it.type === "expr" && /^\s*E\s*(?:\([^()]*\)\s*)?=(?!=)/.test(String(it.text ?? ""))).map(() => "E"));
   for (const it of items) {
     if (it.type !== "expr") continue;
     try {
-      texts.set(it, lineText(it.text, v2, readComma));
+      texts.set(it, lineText(it.text, zv, readComma, namesE));
     } catch (e) {
       texts.set(it, e);
     }
@@ -145,8 +182,12 @@ export function buildModel(state, { comma = true } = {}) {
       if (texts.get(it) instanceof Error) throw texts.get(it);
       o.ast = parse(text, { funcs: funcNames });
       o.tex = toTex(o.ast, texOpt);
+      // zapis 2: odstotki in round(x; n) pomenijo isto kot v znanstvenem kalkulatorju (zapis ostane, kot je vpisan)
+      if (zv >= 3) o.ast = calcRewrite(o.ast);
       const pt = v2 && readComma && POINT_LIKE.exec(it.text);
       if (pt) o.hint = { code: "pointSep", ex: `(${pt[1]}; ${pt[2]})` };
+      const ee = zv >= 3 && !pt && EULER_LIKE.exec(it.text);
+      if (ee) o.hint = { code: "eulerE", src: `${ee[1]}e${ee[2]}${ee[3]}`, euler: `${ee[1]}·e·${ee[2]}·${ee[3]}`, fix: `${ee[1]}e${ee[2]}·${ee[3]}` };
     } catch (e) {
       o.kind = "error";
       o.error = e instanceof MathError ? err(e.code, e.info) : err("parse", { msg: e.message });

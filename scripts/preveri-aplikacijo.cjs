@@ -1178,8 +1178,20 @@ async function lab(p, label) {
     if (!(await p.locator("#input").inputValue()).includes(naslov)) throw new Error("v klepetu ni vpisano ime poskusa");
     await expectVisible(p, "#chat-return", "gumb »Nazaj na: …« v klepetu");
     if (!((await p.locator("#chat-return").textContent()) || "").includes(naslov)) throw new Error("gumb »Nazaj na: …« nima imena poskusa");
+    // Faza B: vrstica »Inštruktor bo videl …« in posnetek stanja (server/ucni-kontekst.js) z naslednjim sporočilom.
+    await expectVisible(p, "#chat-kontekst", "vrstica »Inštruktor bo videl …«");
     await screen(p, `poskus-vprasaj-${label}`);
-    await p.locator("#input").fill(""); // osnutek ne gre v naslednje korake klepeta
+    await p.locator("#input").fill(`${await p.locator("#input").inputValue()}zakaj?`);
+    const [req] = await Promise.all([
+      p.waitForRequest((r) => r.method() === "POST" && /\/api\/conversations\/\d+\/messages$/.test(r.url()), { timeout: 10000 }),
+      p.locator("#send").click(),
+    ]);
+    const k = JSON.parse(req.postData() || "{}").kontekst;
+    if (k?.sourceType !== "lab" || !k.sourceId) throw new Error(`sporočilo iz poskusa nima posnetka stanja (${JSON.stringify(k)})`);
+    if (!k.parameters?.length) throw new Error("posnetek poskusa nima nobene nastavitve");
+    await (await req.response())?.finished(); // odgovor (SSE) do konca, preden zapustimo klepet
+    await settle(p, 500);
+    if (await p.locator("#chat-kontekst").isVisible()) throw new Error("vrstica »Inštruktor bo videl …« ostane po poslanem sporočilu");
     await click(p, "#chat-return", { wait: 300 });
     if ((await currentView(p)) !== "view-lab") throw new Error("»Nazaj na: …« ne vrne v laboratorij");
     await expectVisible(p, "#view-lab .lab-mount .demo-reset", "isti poskus po vrnitvi iz klepeta");
