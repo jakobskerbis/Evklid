@@ -175,6 +175,13 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   return { src, ast, scope, ctx, rw: (node) => rewrite(node, ctx), run: (node) => compile(rewrite(node, ctx), ctx) };
 }
 
+/** v zaokrožen na mesta, ki jih napaka err še dopušča (vsaj 1, največ 15 značilnih mest). */
+export function reliable(v, err) {
+  if (!Number.isFinite(v) || v === 0 || !(err > 0)) return v;
+  const d = Math.max(1, Math.min(15, Math.floor(Math.log10(Math.abs(v) / err))));
+  return Number(v.toPrecision(d));
+}
+
 /** Podatki integrateInfo za vsak določeni integral v drevesu (ne znotraj drugega integrala). */
 export function integralsOf(node, ctx, scope) {
   const all = [];
@@ -258,6 +265,7 @@ export function evaluate(text, env = {}) {
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
     let est = false;
+    let single = null; // podatki edinega integrala (scisolve: točna vrednost iz nedoločenega integrala)
     let digits; // zanesljiva mesta edinega integrala
     if (withInt) {
       if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
@@ -268,7 +276,10 @@ export function evaluate(text, env = {}) {
       // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
       if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !zm[i]))) return { error: { code: "intUnknown", info: {} } };
       if (Number.isFinite(value) && infos.length) {
-        if (infos.length === 1 && unwrapGrp(rwe).k === "int") ({ value, est, digits } = zm[0]);
+        if (infos.length === 1 && unwrapGrp(rwe).k === "int") {
+          ({ value, est, digits } = zm[0]);
+          single = infos[0];
+        }
         else {
           // sestavljen izraz (∫(…)·2 + 1): napako vsakega integrala prenesemo skozi račun (izraz z vrednostjo ± err)
           const num = (y) => (Array.isArray(y) ? (y.length === 1 ? y[0] : NaN) : typeof y === "boolean" ? +y : y);
@@ -292,6 +303,7 @@ export function evaluate(text, env = {}) {
     const out = name ? { value, tex, assign: name } : { value, tex };
     // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
     if (est) Object.assign(out, { approx: true, est: true });
+    if (single) Object.defineProperty(out, "int", { value: single, enumerable: false });
     if (digits) Object.defineProperty(out, "digits", { value: digits, enumerable: false });
     return out;
   } catch (e) {
