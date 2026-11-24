@@ -6,7 +6,7 @@ import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, d
 import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, texSpeech, SAY_WORDS } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -130,7 +130,9 @@ export function texPlain(tex) {
  * Znanstveni kalkulator v elementu root.
  * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
  */
+let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
+  const sayId = `sc-say-${++sayCount}`;
   const { t, icon } = opts;
   const comma = () => usesComma(opts.locale?.());
   const key = () => opts.storageKey?.() || "evklid.sci.0";
@@ -169,7 +171,8 @@ export function createScientific(root, opts) {
         <div class="sc-line">
           <div class="sc-preview" aria-hidden="true"></div>
         </div>
-        <input class="sc-input" data-kb-own autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("sc.title"))}" placeholder="${esc(t("sc.placeholder"))}">
+        <input class="sc-input" data-kb-own autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("sc.title"))}" aria-describedby="${sayId}" placeholder="${esc(t("sc.placeholder"))}">
+        <div class="sc-say sr-only" id="${sayId}"></div>
         <div class="sc-live" aria-live="polite"></div>
       </div>
     </div>
@@ -224,8 +227,8 @@ export function createScientific(root, opts) {
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
-    const s = input.selectionStart ?? input.value.length;
-    const e = input.selectionEnd ?? s;
+    // izbira, ki zajame le del predloge, se razširi na celo predlogo (ne ostane »;0;1)«, AUDIT-039)
+    const [s, e] = selectionSpan(input.value, input.selectionStart ?? input.value.length, input.selectionEnd ?? input.selectionStart ?? input.value.length);
     const at = ins.indexOf("@");
     const clean = ins.replace("@", "");
     input.value = input.value.slice(0, s) + clean + input.value.slice(e);
@@ -244,7 +247,15 @@ export function createScientific(root, opts) {
   function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
-    const r = fn(input.value, s, e);
+    // varovalo: brisanje, po katerem se zapis ne bi izrisal, se ne zgodi (AUDIT-034)
+    const ok = (x) => {
+      try {
+        return !!entryBase(x, env())?.ok;
+      } catch {
+        return false;
+      }
+    };
+    const r = fn(input.value, s, e, { ok });
     const changed = r.text !== input.value;
     input.value = r.text;
     input.setSelectionRange(r.pos, r.pos);
@@ -523,6 +534,7 @@ export function createScientific(root, opts) {
       tex = caretTex(entry.base, input.selectionStart ?? text.length);
     } catch {}
     prev.innerHTML = tex ? entryHtml(tex) : "";
+    speak(tex);
     // dolg vnos se najprej malo pomanjša (do 80 %); šele nato se pomika, kazalec pa ostane viden
     const k = prev.querySelector(".katex");
     if (!k) return;
@@ -533,6 +545,17 @@ export function createScientific(root, opts) {
       if (cr.left < pr.left + 8) prev.scrollLeft -= pr.left + 8 - cr.left;
       else if (cr.right > pr.right - 8) prev.scrollLeft += cr.right - pr.right + 8;
     }
+  }
+  // bralnik zaslona: opis matematike namesto surovega vnosa (AUDIT-040), z besedami v jeziku vmesnika
+  const sayWords = () => Object.fromEntries(t("sc.say.words").split("|").map((w, i) => [SAY_WORDS[i], w.trim()]));
+  function speak(tex) {
+    const el = $(".sc-say");
+    if (!el) return;
+    let txt = "";
+    try {
+      txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), parse: window.katex.__parse }) : "";
+    } catch {}
+    if (el.textContent !== txt) el.textContent = txt;
   }
   // Dotik na lep zapis: položaj v besedilu iz izrisa (merilne točke na vseh mestih kazalca), ne iz prosojnega polja.
   function caretFromPoint(x, y) {
@@ -573,6 +596,7 @@ export function createScientific(root, opts) {
     if (!text.trim()) {
       fromFormula = null;
       prev.innerHTML = "";
+      speak(null);
       live.textContent = "";
       live.className = "sc-live";
       return;
@@ -887,6 +911,19 @@ export function createScientific(root, opts) {
   // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
   input.addEventListener("beforeinput", (e) => {
     if (e.isComposing) return;
+    // tipkanje čez izbiro: izbira dela predloge se najprej razširi na celo predlogo (AUDIT-039)
+    if (e.inputType.startsWith("insert") && input.selectionStart !== input.selectionEnd) {
+      const [a, b] = selectionSpan(input.value, input.selectionStart, input.selectionEnd);
+      if (a !== input.selectionStart || b !== input.selectionEnd) {
+        input.setSelectionRange(a, b);
+        // WebKit ne upošteva spremenjene izbire v beforeinput: vstavimo sami
+        if (e.inputType === "insertText" && e.data) {
+          e.preventDefault();
+          insert(e.data);
+          return;
+        }
+      }
+    }
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
       e.preventDefault();
       del();
