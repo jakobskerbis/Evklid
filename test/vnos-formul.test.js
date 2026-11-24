@@ -131,4 +131,3 @@ test("brisiNazaj v telesu integrala in brisiNaprej (Del): zgradba ostane cela", 
   assert.deepEqual(brisiNaprej("π()/()", 1), { value: "π", caret: 1 });
   assert.equal(brisiNaprej("(1)/(2)", 1), null, "števka se zbriše kot vsak znak");
 });
-
