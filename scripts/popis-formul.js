@@ -58,7 +58,8 @@ const vidno = (html) =>
 const VZOREC = {
   latex: /\\(?:frac|sqrt|cdot|times|int|sum|lim|left|right|mathrm|text|alpha|beta|pi|Delta|vec|overline|le|ge|neq|approx|infty)\b/g,
   dolar: /\$/g,
-  potenca: /(?<![\w⟦])[A-Za-z0-9)\]]\^[\w({]|(?<![\w/:.])[A-Za-z]_[\w{(]/g,
+  // ^ brez pogleda nazaj (cm^2, 10^3); _ s pogledom nazaj (imena v SQL, npr. id_kluba), kemija posebej (CO_2).
+  potenca: /[A-Za-z0-9)\]]\^[\w({]|(?<![\w/:.])[A-Za-z]_[\w{(]|(?<![\w/:.])[A-Z][a-z]?[A-Z]?[a-z]?_\d/g,
   koren: /\bsqrt\s*\(/g,
 };
 
@@ -73,7 +74,7 @@ for (const f of datoteke) {
   const deli = [...(L.sections || []), ...(L.alternatives || [])].map((x) => hideSolutions(expandFormulaBlocks(x.md, "html")));
   for (const c0 of L.checks || []) {
     const c = viewCheck(c0);
-    deli.push(c.q, ...(c.options || []), c.unit, c.answer, c.why, ...(c.wrong || []).map((w) => w.why));
+    deli.push(c.q, ...(c.options || []), ...(c.items || []).map((x) => (typeof x === "string" ? x : x?.text ?? x?.t ?? "")), c.unit, c.answer, c.why, ...(c.wrong || []).map((w) => w.why));
   }
   const html = deli.filter((x) => typeof x === "string" && x.trim()).map((x) => renderRich(x)).join("\n");
   const t = vidno(html);

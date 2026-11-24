@@ -89,6 +89,7 @@ test("besedilo, ki ni matematika, ostane besedilo", () => {
 
 test("izris je enak zadnjemu posnetku (test/fiksno/mat-izrazi.json)", (t) => {
   // Izrisi se zberejo v testih zgoraj; ta test teče zadnji.
+  assert.ok(fs.existsSync(POSNETEK) || !process.env.CI, "manjka test/fiksno/mat-izrazi.json (v CI se ne zapiše sam)");
   if (process.env.MAT_POSNEMI === "1" || !fs.existsSync(POSNETEK)) {
     fs.mkdirSync(new URL("./fiksno/", import.meta.url), { recursive: true });
     fs.writeFileSync(POSNETEK, JSON.stringify(Object.fromEntries(Object.entries(izrisi).sort()), null, 1) + "\n");
