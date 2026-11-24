@@ -6,7 +6,7 @@ import { naloziKnjiznice } from "./rich.js";
 import { naloziVse, t, locale, currentLang } from "./i18n-osnova.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { icon } from "./icons.js";
-import { stageCode } from "./stopnja.js";
+import { stageCode, stopnja, imaStopnjo } from "./stopnja.js";
 import { hideKeyboard } from "./tipkovnica-lena.js";
 import { refreshBubble } from "./okna.js";
 import { backgroundLoadOk } from "./games/stage.js";
@@ -17,10 +17,18 @@ import { $, CALC_MODES, api, calcChapter, calcMode, nastaviCalcMode, calcOverlay
 const calcTools = {};
 let calcP = null; // grafični kalkulator
 let calcShownTool = null; // orodje, ki je trenutno prikazano (za tipko Nazaj)
-function calcBack() {
+// Prejšnji zavihki kalkulatorja (Znanstveni → Grafični → …): tipka Nazaj (tudi na Androidu) se vrne na prejšnjega,
+// z nedotaknjenim stanjem (orodja ostanejo ustvarjena). Ob zaprtju okna kalkulatorja se sklad počisti.
+const calcPrev = [];
+let calcShownMode = null;
+/** Nazaj v kalkulatorju: najprej plast v orodju (meni, plošča), nato (tabs) prejšnji zavihek. Vrne true, če je kaj naredil. */
+function calcBack({ tabs = false } = {}) {
   const tool = calcShownTool;
-  if (!tool?.back || !(calcOverlayOpen() || currentView === "graph")) return false;
-  return !!tool.root.isConnected && !tool.root.hidden && !!tool.back();
+  if (!(calcOverlayOpen() || currentView === "graph")) return false;
+  if (tool?.back && tool.root.isConnected && !tool.root.hidden && tool.back()) return true;
+  if (!tabs || !calcPrev.length) return false;
+  setCalcMode(calcPrev.pop(), { back: true });
+  return true;
 }
 function calcSlot() {
   return calcOverlayOpen() ? $("#graph-overlay-body") : $("#graph-slot");
@@ -82,6 +90,9 @@ function calcTool(mode) {
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
+        // »Pokaži na grafu«: rezultat z orodji grafičnega kalkulatorja, doda se trenutnemu grafu (graph/v-graf.js)
+        showOnGraph: async (req) => (await setCalcMode("graph"))?.showPlan(req),
+        stage: () => (imaStopnjo(state.student) ? stopnja(state.student) : null), // brez zapisane stopnje vse
         // »Po korakih«: zaslon Skeniraj (public/scan/) ima reševalnik po korakih
         canSteps: () => !!document.getElementById("view-scan"),
         // goal: po »Razstavi« pokaže korake razstavljanja, ne poenostavljanja
@@ -99,8 +110,13 @@ function calcTool(mode) {
   return calcTools[mode];
 }
 /** Pokaže izbrano orodje v zavihku ali v prekrivnem oknu. */
-async function setCalcMode(mode) {
+async function setCalcMode(mode, { back = false } = {}) {
   if (!CALC_MODES.includes(mode)) mode = "sci";
+  if (!back && calcShownMode && calcShownMode !== mode) {
+    calcPrev.push(calcShownMode);
+    if (calcPrev.length > 20) calcPrev.shift();
+  }
+  calcShownMode = mode;
   nastaviCalcMode(mode);
   try {
     localStorage.setItem("evklid.calcMode", mode);
@@ -210,6 +226,10 @@ async function openCalcOverlay({ mode = calcMode, exprs = [], backLabel = t("nav
   if (zaprt) overlayOpened();
   $("#graph-overlay").hidden = false;
   if (zaprt) calcFokus = zadrziFokus($("#graph-overlay"), { zacetni: $("#graph-close") });
+  if (zaprt) {
+    calcPrev.length = 0; // okno kalkulatorja začne brez prejšnjih zavihkov (Nazaj ga zapre)
+    calcShownMode = null;
+  }
   document.body.classList.add("graph-open");
   const tool = await setCalcMode(mode);
   if (mode === "graph" && exprs.length) tool.show(exprs);
@@ -221,6 +241,8 @@ function closeCalcOverlay({ fromBack = false } = {}) {
   if (!calcOverlayOpen()) return;
   if (!fromBack) overlayClosed();
   $("#graph-overlay").hidden = true;
+  calcPrev.length = 0; // nova seja kalkulatorja začne brez prejšnjih zavihkov
+  calcShownMode = null;
   calcFokus?.();
   calcFokus = null;
   document.body.classList.remove("graph-open");

@@ -201,7 +201,7 @@ const openCalcOverlay = calcCall("openCalcOverlay");
 const openGraphOverlay = calcCall("openGraphOverlay");
 const calcTool = calcCall("calcTool");
 const prefetchNext = () => calcMod.load().then((m) => m.prefetchNext()).catch(() => {});
-const calcBack = () => calcMod.now()?.calcBack() ?? false;
+const calcBack = (o) => calcMod.now()?.calcBack(o) ?? false;
 const closeCalcOverlay = (o) => calcMod.now()?.closeCalcOverlay(o);
 // Stran Urnik (public/schedule.js); kartica na Učni poti je v urnik-kartica.js.
 const urnikMod = lenModul("./schedule.js");
@@ -1194,7 +1194,7 @@ function backStep(wasOverlay) {
   }
   // Kalkulator čez cel zaslon: najprej plast v njem (plošča funkcij ali konstant, meni vrstice grafa, povečan graf), nato okno.
   if (calcOverlayOpen()) {
-    if (!calcBack()) closeCalcOverlay({ fromBack: true });
+    if (!calcBack({ tabs: true })) closeCalcOverlay({ fromBack: true }); // tudi prejšnji zavihek kalkulatorja
     return true;
   }
   if (cornerBack()) return true;
@@ -1218,7 +1218,7 @@ function backStep(wasOverlay) {
     return true;
   }
   // Plast v pogledu Kalkulator; šele za 3D in drugimi plastmi, ki ga prekrijejo.
-  if (currentView === "graph" && calcBack()) return true;
+  if (currentView === "graph" && calcBack({ tabs: true })) return true;
   // Podstran pogleda: lekcija → kazalo, poskus → seznam, igra → seznam iger …
   if (currentView === "uci" && uciBack({ textbookBack, labBack, lessonId: openLessonId() })) return true;
   if (currentView === "games" && gamesBack()) return true;
