@@ -191,7 +191,7 @@ export function integralsOf(node, ctx, scope) {
   return out;
 }
 
-const INT_LIVE_MS = 40; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
+const INT_LIVE_MS = 50; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
 const INT_MS = 1000; // integrali ob Izračunaj
 const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
 const hasIntegral = (node) => {
