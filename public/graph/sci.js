@@ -534,7 +534,9 @@ export function createScientific(root, opts) {
       for (const el of prev.querySelectorAll("[data-evk-p]")) {
         const b = el.getBoundingClientRect();
         const dy = y < b.top ? b.top - y : y > b.bottom ? y - b.bottom : 0;
-        const d = Math.abs(x - b.left) + 2 * dy;
+        // tudi oddaljenost od navpične sredine točke: pred ∫ in na začetku spodnje meje sta skoraj na istem x,
+        // dotik v višini vrstice je pred ∫, dotik nižje je v meji (AUDIT-003)
+        const d = Math.abs(x - b.left) + 2 * dy + 0.25 * Math.abs(y - (b.top + b.bottom) / 2);
         if (!best || d < best.d) best = { d, p: Number(el.dataset.evkP) };
       }
     } catch {}
