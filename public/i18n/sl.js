@@ -1040,6 +1040,7 @@ export default {
   "gc.errSyntax": "Izraz ni dokončan ali ga ne razumem.",
   "gc.errArity": "Napačno število vrednosti v oklepaju. Zapiši tako: {ex}",
   "gc.hintPoint": "To je število v oklepaju. Je mišljena točka? Koordinati loči s podpičjem: {ex}",
+  "gc.hintEuler": "»{src}« je {euler}: e je Eulerjevo število. Za znanstveni zapis vpiši {fix}.",
   "gc.errOther": "Tega ne znam narisati.",
   "gc.min": "Najmanj",
   "gc.max": "Največ",
