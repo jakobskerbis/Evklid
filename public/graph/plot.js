@@ -2,7 +2,7 @@
 // Mreža z lepimi koraki (1, 2, 5 ali π), puščice na oseh, krivulje z zaznavo asimptot,
 // implicitne krivulje (marching squares), senčenje neenačb, posebne točke in sledenje krivulji.
 import { toNum, specialPoints, intersections } from "./model.js";
-import { integrate, niceNumber } from "./math.js";
+import { integrateInfo, withIntegralBudget, niceNumber } from "./math.js";
 import { verticalAsymptotes, endAsymptotes, asymptoteLabel } from "./okno.js";
 
 // barve krivulj (kot CSS spremenljivke v graph.css, da delujejo v temnem načinu)
@@ -926,7 +926,10 @@ export class GraphView {
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-    const val = integrate(f, a, b);
+    // številski integral: vedno »≈« in le mesta, ki jih podpira ocena napake (največ 5); med vlečenjem največ 30 ms
+    const info = withIntegralBudget(30, () => integrateInfo(f, a, b));
+    const val = info.value;
+    const digits = Number.isFinite(val) && info.err >= 0 && Number.isFinite(info.err) ? Math.min(5, Math.floor(Math.log10(Math.abs(val) / Math.max(info.err, 1e-300)))) : 0;
     // ročaja za meji
     for (const [which, x] of [
       [0, a],
@@ -947,7 +950,7 @@ export class GraphView {
     ctx.font = "800 13px 'Nunito Variable', Nunito, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const text = `∫ = ${this.hooks.fmt(val, 5)}`;
+    const text = digits >= 1 ? `∫ ≈ ${this.hooks.fmt(Number(val.toPrecision(digits)), digits)}` : Number.isFinite(val) && info.err <= 1e-9 * (info.abs || 0) ? "∫ ≈ 0" : "∫ ≈ ?";
     ctx.lineWidth = 4;
     ctx.strokeStyle = C.bg;
     ctx.strokeText(text, mx, Number.isFinite(my) ? Math.max(14, Math.min(this.H - 14, my)) : this.Y(0) - 20);

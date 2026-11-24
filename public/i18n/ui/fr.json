@@ -1001,6 +1001,8 @@
   "sc.errSumLimit": "Trop de termes : la somme peut en avoir 100 000 au maximum.",
   "sc.errIntDiverge": "L’intégrale n’existe pas : elle diverge (la fonction a sur l’intervalle un pôle ou une singularité non intégrable).",
   "sc.errIntPv": "L’intégrale n’existe pas : elle diverge (la fonction a un pôle sur l’intervalle). Seule la valeur principale de Cauchy {pv} existe, mais ce n’est pas la valeur de l’intégrale.",
+  "sc.errIntDivergeInf": "L’intégrale n’existe pas : elle diverge sur l’intervalle infini (la fonction ne décroît pas assez vite vers l’infini).",
+  "sc.errIntUnknown": "L’intégrale ne peut pas être calculée de façon fiable : le calcul numérique ne donne aucun chiffre sûr.",
   "sc.more": "Toutes les fonctions",
   "sc.functions": "Fonctions",
   "sc.grp.cmp": "Équations et inéquations",

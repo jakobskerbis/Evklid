@@ -1013,6 +1013,8 @@
   "sc.errSumLimit": "Za dużo wyrazów: suma może mieć najwyżej 100 000 wyrazów.",
   "sc.errIntDiverge": "Całka nie istnieje: jest rozbieżna (funkcja ma w przedziale biegun lub niecałkowalną osobliwość).",
   "sc.errIntPv": "Całka nie istnieje: jest rozbieżna (funkcja ma w przedziale biegun). Istnieje tylko wartość główna Cauchy’ego {pv}, która nie jest wartością całki.",
+  "sc.errIntDivergeInf": "Całka nie istnieje: na przedziale nieskończonym jest rozbieżna (funkcja nie maleje dostatecznie szybko w stronę nieskończoności).",
+  "sc.errIntUnknown": "Całki nie da się wiarygodnie obliczyć: obliczenie numeryczne nie daje żadnej pewnej cyfry.",
   "sc.more": "Wszystkie funkcje",
   "sc.functions": "Funkcje",
   "sc.grp.cmp": "Równania i nierówności",

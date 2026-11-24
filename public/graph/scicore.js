@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, integrateInfo, walk } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, integrateInfo, walk, withIntegralBudget, integralTrace } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -166,14 +166,6 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   return { src, ast, scope, ctx, rw: (node) => rewrite(node, ctx), run: (node) => compile(rewrite(node, ctx), ctx) };
 }
 
-const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
-const hasIntegral = (node) => {
-  let yes = false;
-  walk(node, (n) => {
-    if (n.k === "int" && n.lo) yes = true;
-  });
-  return yes;
-};
 /** v zaokrožen na mesta, ki jih napaka err še dopušča (vsaj 1, največ 15 značilnih mest). */
 export function reliable(v, err) {
   if (!Number.isFinite(v) || v === 0 || !(err > 0)) return v;
@@ -206,6 +198,31 @@ export function integralsOf(node, ctx, scope) {
   return out;
 }
 
+const INT_LIVE_MS = 40; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
+const INT_MS = 1000; // integrali ob Izračunaj
+const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
+const hasIntegral = (node) => {
+  let yes = false;
+  walk(node, (n) => {
+    if (n.k === "int" && n.lo) yes = true;
+  });
+  return yes;
+};
+/**
+ * Vrednost integrala (integrateInfo), kolikor jo podpira ocena napake: { value, est: true } — številski izid je
+ * vedno približek (»≈«; »=« le za točno, simbolno vrednost), value zaokrožen na zanesljiva mesta. null: niti enega mesta.
+ */
+export function certified(info) {
+  const { value: v, err } = info;
+  if (!Number.isFinite(v) || !(err >= 0) || !Number.isFinite(err)) return null;
+  if (err === 0) return { value: v, est: true };
+  const a = Math.abs(v);
+  // ∫(sin x; −π; π): vrednost je v šumu, a ta je zanemarljiv proti ∫|f|
+  if (a <= err) return err <= 1e-12 * (info.abs || 0) ? { value: 0, est: true } : null;
+  const d = Math.floor(Math.log10(a / err));
+  return { value: Number(v.toPrecision(Math.max(1, Math.min(12, d)))), est: true };
+}
+
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
 export function unknownsOf(node, vars = {}) {
   return [...freeVars(node)].filter((v) => !HIDDEN_VARS.has(v) && !(v in vars));
@@ -226,27 +243,39 @@ export function evaluate(text, env = {}) {
     if (ast.k === "cmp" && !name) return { error: { code: "notCalc", info: {} } };
     const fv = unknownsOf(rw(expr), vars);
     if (fv.length) return { error: { code: "missing", info: { names: fv } } };
-    let value = run(expr)(scope);
+    // določeni integrali: s časovno mejo in s podatki o vsakem (ne obstaja, ni zanesljiv, ocena napake)
+    const rwe = rw(expr);
+    const withInt = hasIntegral(rwe);
+    let value;
+    let infos = [];
+    if (withInt) ({ result: value, infos } = withIntegralBudget(env.live ? INT_LIVE_MS : INT_MS, () => integralTrace(() => run(expr)(scope))));
+    else value = run(expr)(scope);
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
-    // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
-    let approx = false;
-    const rwe = rw(expr);
-    if (hasIntegral(rwe)) {
-      const infos = integralsOf(rwe, line.ctx, scope);
-      const div = !Number.isFinite(value) && infos.find((r) => r.diverges);
-      if (div) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
-      // ∫(1/√x; 0; 1): računano prek singularnosti, zato približek; pri samem integralu le zanesljiva mesta
-      const sing = infos.filter((r) => r.singular);
-      if (sing.length && Number.isFinite(value)) {
-        approx = true;
-        if (infos.length === 1 && unwrapGrp(rwe).k === "int") value = reliable(value, sing[0].err);
+    let est = false;
+    let single = null; // podatki edinega integrala (scisolve: točna vrednost iz nedoločenega integrala)
+    if (withInt) {
+      if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
+      // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
+      const div = infos.find((r) => r.diverges);
+      // ∫(1/x; 1; ∞): divergira zaradi neskončnega intervala (inf), ne zaradi pola
+      if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : Number.isFinite(div.at) ? {} : { inf: true } } };
+      const cert = infos.map((r) => (Number.isFinite(r.value) ? certified(r) : null));
+      // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
+      if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !cert[i]))) return { error: { code: "intUnknown", info: {} } };
+      if (Number.isFinite(value) && infos.length) {
+        if (infos.length === 1 && unwrapGrp(rwe).k === "int") {
+          ({ value, est } = cert[0]);
+          single = infos[0];
+        }
+        else est = cert.some((c) => c?.est);
       }
     }
     const tex = lineTex(ast, comma);
     const out = name ? { value, tex, assign: name } : { value, tex };
-    // approx: samo decimalno (ne ulomek); est: številski približek, v vmesniku z »≈« namesto »=«
-    if (approx) Object.assign(out, { approx: true, est: true });
+    // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
+    if (est) Object.assign(out, { approx: true, est: true });
+    if (single) Object.defineProperty(out, "int", { value: single, enumerable: false });
     return out;
   } catch (e) {
     if (e instanceof MathError) return { error: { code: e.code, info: e.info || {} } };

@@ -995,6 +995,8 @@
   "sc.errSumLimit": "Suku terlalu banyak: jumlah paling banyak boleh 100.000 suku.",
   "sc.errIntDiverge": "Integral tidak ada: divergen (fungsi memiliki kutub atau singularitas yang tidak terintegralkan pada interval).",
   "sc.errIntPv": "Integral tidak ada: divergen (fungsi memiliki kutub pada interval). Hanya nilai utama Cauchy {pv} yang ada, tetapi itu bukan nilai integral.",
+  "sc.errIntDivergeInf": "Integral tidak ada: divergen pada interval tak hingga (fungsi tidak turun cukup cepat menuju tak hingga).",
+  "sc.errIntUnknown": "Integral tidak dapat dihitung secara andal: perhitungan numerik tidak memberikan satu digit pun yang andal.",
   "sc.more": "Semua fungsi",
   "sc.functions": "Fungsi",
   "sc.grp.cmp": "Persamaan dan pertidaksamaan",
