@@ -22,6 +22,15 @@ const fact = (n) => {
   }
   return gamma(n + 1);
 };
+// n·(n−1)·…·(n−k+1) (deljeno s k!, če binom) v celih številih BigInt: nCr(200;2) = 19900 tudi za n > 170,
+// kjer n! ni več končen. Rezultat nad ~1,8·10^308 je ∞; to velja že za k > 170 (nPr ≥ k!) in k > 600 (nCr ≥ C(2k;k)).
+const fallProd = (n, k, binom) => {
+  if (k > (binom ? 600 : 170)) return Infinity;
+  const N = BigInt(n);
+  let r = 1n;
+  for (let i = 1n; i <= BigInt(k); i++) r = binom ? (r * (N - BigInt(k) + i)) / i : r * (N - i + 1n);
+  return Number(r);
+};
 function gamma(z) {
   // Lanczos
   if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
@@ -133,8 +142,8 @@ const MULTI = {
   mod: (a, b) => ((a % b) + b) % b,
   gcd: (...a) => a.reduce(gcd2),
   lcm: (...a) => a.reduce((x, y) => Math.abs(Math.round(x) * Math.round(y)) / gcd2(x, y)),
-  nCr: (n, k) => (k < 0 || k > n ? 0 : Math.round(fact(n) / (fact(k) * fact(n - k)))),
-  nPr: (n, k) => (k < 0 || k > n ? 0 : Math.round(fact(n) / fact(n - k))),
+  nCr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, Math.min(k, n - k), true) : Math.round(fact(n) / (fact(k) * fact(n - k)))),
+  nPr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, k, false) : Math.round(fact(n) / fact(n - k))),
   root: (x, n) => nthroot(x, n),
   logb: (x, b) => Math.log(x) / Math.log(b),
   // celo število na [a, b] (Casio RanInt#)
