@@ -2,7 +2,7 @@
 // kaj vsaka vrstica je (funkcija, krivulja, drsnik, točka …), prevedene funkcije za risanje
 // in vrednosti spremenljivk. Brez DOM (testi v test/graph.test.js).
 import { hasPolRec, vectorTuple } from "./vektor.js";
-import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, MathError, BUILTINS, walk, argSeparators, oneArgFn } from "./math.js";
+import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, MathError, BUILTINS, walk, calcText, calcRewrite, oneArgFn } from "./math.js";
 
 export const RESERVED = new Set(["x", "y", "r", "θ"]);
 const DEF_RE = /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*\(\s*([A-Za-zθ](?:\s*,\s*[A-Za-zθ])*)\s*\)\s*=(?!=)/;
@@ -57,7 +57,9 @@ export function upgradeZapis(state, comma = true) {
   return { ...state, items: mapTexts(state, conv), vejica: comma };
 }
 /** Besedilo vrstice za parse(): pri zapisu 2 decimalna vejica in »;« kot v znanstvenem kalkulatorju. */
-const lineText = (text, v2, comma) => (v2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
+// Pri zapisu 2 je to ista priprava kot v znanstvenem kalkulatorju (calcText: tisočice, nejasna števila, znanstveni
+// zapis 2e3, ∫(f; a; b)); names: imena, ki jih graf definira (E = … → »3E-2« je 3·E − 2).
+const lineText = (text, v2, comma, names) => (v2 ? calcText(String(text ?? ""), { comma, names }) : String(text ?? ""));
 // »(2,3)« v slovenskem zapisu je število 2,3 v oklepaju; morda je mišljena točka (2; 3): namig, pomen ostane.
 const POINT_LIKE = /^\s*\(\s*([+\-−]?\d+),(\d+)\s*\)\s*$/;
 
@@ -103,10 +105,11 @@ export function buildModel(state, { comma = true } = {}) {
   // Graf zapisa 2 se bere v zapisu, v katerem je nastal (state.vejica), ne v trenutnem jeziku: pomen se ne spremeni.
   const readComma = v2 && typeof state.vejica === "boolean" ? state.vejica : comma;
   const texts = new Map(); // vrstica → besedilo za parse() (ali napaka zapisa števila)
+  const namesE = new Set(items.filter((it) => it.type === "expr" && /^\s*E\s*(?:\([^()]*\)\s*)?=(?!=)/.test(String(it.text ?? ""))).map(() => "E"));
   for (const it of items) {
     if (it.type !== "expr") continue;
     try {
-      texts.set(it, lineText(it.text, v2, readComma));
+      texts.set(it, lineText(it.text, v2, readComma, namesE));
     } catch (e) {
       texts.set(it, e);
     }
@@ -145,6 +148,8 @@ export function buildModel(state, { comma = true } = {}) {
       if (texts.get(it) instanceof Error) throw texts.get(it);
       o.ast = parse(text, { funcs: funcNames });
       o.tex = toTex(o.ast, texOpt);
+      // zapis 2: odstotki in round(x; n) pomenijo isto kot v znanstvenem kalkulatorju (zapis ostane, kot je vpisan)
+      if (v2) o.ast = calcRewrite(o.ast);
       const pt = v2 && readComma && POINT_LIKE.exec(it.text);
       if (pt) o.hint = { code: "pointSep", ex: `(${pt[1]}; ${pt[2]})` };
     } catch (e) {

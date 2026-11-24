@@ -105,3 +105,71 @@ test("preskočeni del poti nazaj je majhen (vrzeli fromTex ne skrijejo večine i
   }
   assert.ok(skipped < 4000, `preskočenih ${skipped} od 10 000`);
 });
+
+// AUDIT-017: razredi zapisov, ki so prej v kalkulatorjih pomenili različno (skupna priprava calcText in calcRewrite).
+const CLASSES = [
+  ["1 000 + 1", 1001],
+  ["2e3", 2000],
+  ["3E-2", 0.03],
+  ["200 + 10 %", 220],
+  ["200 - 10 %", 180],
+  ["1.234,5", 1234.5],
+  ["round(2,345; 2)", 2.35],
+  ["12 3456", { error: "unexpected" }],
+  ["∫(x; 0; 1)", 0.5],
+  ["2e^2", 2 * Math.E ** 2], // e je Eulerjevo število, kadar sledi potenca, črka ali oklepaj
+  ["2e3x", 2 * Math.E * 3 * 0.7],
+  ["2e-x", 2 * Math.E - 0.7],
+];
+test("isti zapis pomeni isto v znanstvenem in grafičnem kalkulatorju (tisočice, 2e3, %, round, ∫, nejasna števila)", () => {
+  for (const [text, want] of CLASSES) {
+    const g = graphValue(text, true);
+    const s = sciValue(text.includes("∫") ? text : text.replace(/(?<![a-z])x(?![a-z])/g, "(0,7)"), true); // x v ∫ je spremenljivka integrala
+    if (typeof want === "object") {
+      assert.deepEqual(g, want, `graf ${text}`);
+      assert.deepEqual(s, want, `znanstveni ${text}`);
+    } else {
+      assert.ok(same(g, want), `graf ${text}: ${JSON.stringify(g)} ≠ ${want}`);
+      assert.ok(same(s, want), `znanstveni ${text}: ${JSON.stringify(s)} ≠ ${want}`);
+    }
+  }
+  // E kot ime: v grafu z vrstico »E = 5« in v kalkulatorju s spremenljivko E je »3E-2« 3·E − 2
+  const m = buildModel({ zapis: ZAPIS, items: [{ id: "a", type: "expr", text: "E = 5" }, { id: "b", type: "expr", text: "3E-2" }] }, { comma: true });
+  assert.equal(toNum(m.items[1].value), 13);
+  assert.equal(evaluate("3E-2", { comma: true, vars: { E: 5 } }).value, 13);
+});
+
+// Naključni izrazi iz teh razredov (stalno seme): oba kalkulatorja dasta isto vrednost ali isto napako.
+function genClass(r, comma) {
+  const pick = (a) => a[Math.floor(r() * a.length)];
+  const d = comma ? "," : ".";
+  const sep = comma ? "; " : ", ";
+  const int = () => String(1 + Math.floor(r() * 999));
+  const num = () => (r() < 0.5 ? int() : `${int()}${d}${Math.floor(r() * 100)}`);
+  const term = () =>
+    pick([
+      () => `${1 + Math.floor(r() * 99)} ${String(Math.floor(r() * 1000)).padStart(3, "0")}`, // tisočice
+      () => (comma ? `${1 + Math.floor(r() * 99)}.${String(Math.floor(r() * 1000)).padStart(3, "0")},${Math.floor(r() * 10)}` : num()),
+      () => `${num()}${pick(["e", "E"])}${pick(["", "-", "+"])}${Math.floor(r() * 4)}`,
+      () => `round(${num()}${sep}${Math.floor(r() * 3)})`,
+      () => `∫(${pick(["x", "x^2", "2x + 1", "sin(x)"])}${sep}0${sep}${1 + Math.floor(r() * 3)})`,
+      () => `${int()} ${int()}`, // nejasno, če skupina nima 3 števk
+      num,
+    ])();
+  const a = term();
+  return pick([() => a, () => `${a} + ${term()}`, () => `${a} ${pick(["+", "-"])} ${Math.floor(r() * 50)} %`, () => `${a}·${term()}`, () => `(${a})/(${term()})`])();
+}
+for (const comma of [true, false]) {
+  test(`3000 izrazov iz razredov AUDIT-017 (${comma ? "decimalna vejica" : "decimalna pika"}): kalkulatorja se ujemata`, () => {
+    const r = rng(comma ? 17112026 : 26111017);
+    const bad = [];
+    for (let k = 0; k < 3000 && bad.length < 10; k++) {
+      const text = genClass(r, comma);
+      const g = graphValue(text, comma);
+      const s = sciValue(text, comma);
+      const ok = typeof g === "object" || typeof s === "object" ? JSON.stringify(g) === JSON.stringify(s) : same(g, s);
+      if (!ok) bad.push(`${text} → graf ${JSON.stringify(g)}, znanstveni ${JSON.stringify(s)}`);
+    }
+    assert.deepEqual(bad, []);
+  });
+}
