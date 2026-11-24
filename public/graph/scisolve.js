@@ -1056,7 +1056,8 @@ export function analyze(text, env = {}) {
   if (pr) return pr;
   const r = evaluate(raw, env);
   // √(−1), ln(−1): v realnih številih ni vrednosti; povemo kompleksno (prej »npr. deljenje z 0«, AUDIT-051)
-  if (r && !r.error && Number.isNaN(r.value) && !env.live) {
+  // i in j kot shranjeni spremenljivki: kompleksni račun bi ju vzel za imaginarno enoto (√(−1) + i pri i = 2 ni 2i)
+  if (r && !r.error && Number.isNaN(r.value) && !env.live && !("i" in vars) && !("j" in vars)) {
     const z = complexOf(raw, env);
     if (z && z[1] !== 0) return { error: { code: "notReal", info: { re: z[0], im: z[1] } } };
   }
@@ -1168,7 +1169,8 @@ const complexOf = (raw, env) => {
 };
 
 // lim_(x→a)(f), lim_{x→a} f, lim_(x->a) f → limita(f; x; a); drugo besedilo ostane
-const LIM = /^\s*lim\s*_\s*[({]\s*([A-Za-zα-ω])\s*(?:→|->|\\to)\s*([^(){}]+?)\s*[)}]\s*/;
+// točka sme imeti en nivo oklepajev: x→(π/2), x→sqrt(2)
+const LIM = /^\s*lim\s*_\s*[({]\s*([A-Za-zα-ω])\s*(?:→|->|\\to)\s*((?:[^(){}]|\([^(){}]*\))+?)\s*[)}]\s*/;
 function limText(raw) {
   const m = LIM.exec(raw);
   if (!m) return raw;

@@ -52,3 +52,15 @@ test("AUDIT-051: 1/0 in kompleksni vnos ostaneta", () => {
   assert.equal(z.kind, "complex");
   assert.equal(z.im, 2);
 });
+
+test("AUDIT-051 (revizija): shranjena i ali j nista imaginarna enota v sporočilu notReal", () => {
+  for (const v of ["i", "j"]) {
+    const r = analyze(`sqrt(-1)+${v}`, { ...ENV, vars: { [v]: 2 } });
+    assert.notEqual(r.error?.code, "notReal", JSON.stringify(r));
+  }
+});
+
+test("AUDIT-051 (revizija): točka z oklepaji, lim_(x→(π/2)) in lim_(x→sqrt(2))", () => {
+  assert.equal(analyze("lim_(x→(π/2))(cos(x)/(x-π/2))", { ...ENV }).resTex, "-1");
+  assert.equal(analyze("lim_(x→sqrt(2))(x^2)", { ...ENV }).resTex, "2");
+});
