@@ -230,6 +230,20 @@ function domainViolation(intNode, ctx, scope, x) {
   return found;
 }
 
+// Ali drevo vsebuje nCr/nPr z neceloštevilskim n in k > 1000 (math.js genBinom: pot z ln Γ, ne točen produkt)
+function gammaBinom(node, ctx, scope) {
+  let yes = false;
+  walk(node, (n) => {
+    if (yes || n.k !== "call" || (n.f !== "nCr" && n.f !== "nPr") || n.args.length !== 2) return;
+    try {
+      const a = compile(n.args[0], ctx)(scope);
+      const k = compile(n.args[1], ctx)(scope);
+      if (typeof a === "number" && typeof k === "number" && !Number.isInteger(a) && k > 1000) yes = true;
+    } catch {}
+  });
+  return yes;
+}
+
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
 export function unknownsOf(node, vars = {}) {
   return [...freeVars(node)].filter((v) => !HIDDEN_VARS.has(v) && !(v in vars));
@@ -304,6 +318,12 @@ export function evaluate(text, env = {}) {
           ({ value, est, digits } = z);
         }
       }
+    }
+    // nCr/nPr z neceloštevilskim n in k > 1000: računano z ln Γ (~12 zanesljivih mest), zato »≈«
+    if (!est && Number.isFinite(value) && value !== 0 && gammaBinom(rw(expr), line.ctx, scope)) {
+      est = true;
+      digits = 12;
+      value = Number(value.toPrecision(12));
     }
     const tex = lineTex(ast, comma);
     const out = name ? { value, tex, assign: name } : { value, tex };

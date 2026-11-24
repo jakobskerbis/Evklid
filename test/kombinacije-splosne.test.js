@@ -90,3 +90,20 @@ test("velik k pri neceloštevilskem n: hitro in kot mpmath", () => {
   for (let x = -5; x < 5; x += 0.01) g({ x });
   assert.ok(performance.now() - t1 < 500);
 });
+
+// Pregled #966, 2. krog: pri k ~ 10⁹ je bil k − n zaokrožen v double (napaka v 6. mestu, prikazano z »=«).
+// Zdaj d = −n − 1 točno; rezultat ln Γ je približek: »≈« in 12 mest. Vrednosti: mpmath binomial na 30 mest.
+test("zelo velik k: točen d = −n − 1, prikaz z ≈", () => {
+  for (const [t, want] of [
+    ["nCr(−6,45;977673386)", 3.7685890136673263e46],
+    ["nCr(2,25;123456789)", 2.8928444458194487e-27],
+    ["nCr(−3,7;5·10^8)", 7.3623266941007667e22],
+  ]) {
+    const r = evaluate(t, ENV);
+    assert.ok(Math.abs(r.value - want) <= 1e-11 * Math.abs(want), `${t}: ${r.value} ≠ ${want}`);
+    assert.ok(r.est && r.approx, `${t}: približek`);
+  }
+  // točni ostanejo brez ≈
+  assert.ok(!evaluate("nCr(5,5;2)", ENV).est);
+  assert.ok(!evaluate("nCr(200;2)", ENV).est);
+});

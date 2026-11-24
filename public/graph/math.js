@@ -53,13 +53,14 @@ function genBinom(n, k, binom) {
   if (binom) {
     // nCr(n; k) = (−1)^k·Γ(k − n)/(Γ(−n)·Γ(k + 1))
     const [lg, sg] = lnAbsGamma(-n);
-    const ln = lnGammaRatio(k - n, k + 1) - lg;
+    // k − n = (k + 1) + d z d = −n − 1 točno: pri k ~ 10⁹ bi k − n v double izgubil ~7 mest
+    const ln = lnGammaRatio(k - n, k + 1, -n - 1) - lg;
     return sgnK * sg * Math.exp(ln);
   }
   // nPr(n; k) = Γ(n + 1)/Γ(n − k + 1) = Γ(n + 1)·Γ(k − n)·sin(π(n − k + 1))/π
   const [l1, s1] = lnAbsGamma(n + 1);
   const sn = sgnK * Math.sin(Math.PI * (n + 1 - 2 * Math.floor((n + 1) / 2)));
-  const [l2] = lnAbsGamma(k - n);
+  const l2 = lnAbsGamma(k + 1)[0] + lnGammaRatio(k - n, k + 1, -n - 1);
   return s1 * Math.sign(sn) * Math.exp(l1 + l2 + Math.log(Math.abs(sn)) - Math.log(Math.PI));
 }
 // ln|Γ(z)| in predznak Γ(z) (z ni celo ≤ 0)
@@ -76,10 +77,10 @@ function lnAbsGamma(z) {
   return [lnGammaRatio(z, 20) + Math.log(gamma(20)), 1];
 }
 // ln Γ(a) − ln Γ(b) za a, b > 10 po Stirlingu, brez odštevanja velikih števil (log1p)
-function lnGammaRatio(a, b) {
+function lnGammaRatio(a, b, dExact) {
   if (a < 10 || b < 10) return lnAbsGamma(a)[0] - lnAbsGamma(b)[0];
   const S = (x) => 1 / (12 * x) - 1 / (360 * x ** 3) + 1 / (1260 * x ** 5) - 1 / (1680 * x ** 7);
-  const d = a - b;
+  const d = dExact ?? a - b; // a − b, če je znan točno (a je lahko zaokrožen)
   return (b - 0.5) * Math.log1p(d / b) + d * Math.log(a) - d + (S(a) - S(b));
 }
 function gamma(z) {
