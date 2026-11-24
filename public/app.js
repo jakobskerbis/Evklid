@@ -2625,7 +2625,7 @@ function autoGrow(stick, again) {
   if (h > max + 2 && input.value.trim() && input.offsetParent) showFull({ kind: "composer", title: t("full.message"), field: input });
   else if (fullOpen("composer") && (h <= max || !input.value.trim())) closeFull();
 }
-attachPrettify(input); // x^2 → x², 3/4 → ³⁄₄, sqrt → √ že med pisanjem (pred autoGrow, ki izmeri novo besedilo)
+attachPrettify(input); // 3/4 → (3)/(4), sqrt → √, * → · med pisanjem; potence in ulomke izriše KaTeX (pred autoGrow)
 input.addEventListener("input", autoGrow);
 input.addEventListener("input", () => chatDraftSave());
 input.addEventListener("vnos-izris-visina", () => autoGrow());
