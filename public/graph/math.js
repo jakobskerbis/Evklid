@@ -1652,7 +1652,8 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0, brk = null) {
   let abs = 0;
   for (let i = 0; i + 1 < xs.length; i++) {
     if (!(xs[i + 1] > xs[i])) continue;
-    const r = finiteCore(F0, xs[i], xs[i + 1], xs.length > 50 ? 1 : 0, tolAbs); // mnogo kosov: brez tipanja vrhov
+    const many = xs.length > 50; // mnogo kosov (floor(1000x)): brez tipanja vrhov, kos začnemo z dvema deloma
+    const r = finiteCore(F0, xs[i], xs[i + 1], many ? 1 : 0, tolAbs, many ? 2 : 16);
     if (!Number.isFinite(r.value)) return r;
     value += r.value;
     err += r.err;
@@ -1665,7 +1666,7 @@ const DIVERGES = (at, pv) => ({ value: NaN, diverges: true, at, ...(pv !== undef
 const UNKNOWN = { value: NaN, unknown: true };
 
 // končni [a, b], a < b, brez znanih skokov
-function finiteCore(F0, a, b, depth = 0, tolAbs = 0) {
+function finiteCore(F0, a, b, depth = 0, tolAbs = 0, n0 = 16) {
   const H = b - a;
   const seen = new Map();
   const side = (F, c, s) => {
@@ -1685,7 +1686,7 @@ function finiteCore(F0, a, b, depth = 0, tolAbs = 0) {
     return null;
   };
   let F = F0;
-  let r1 = adapt(F, a, b, 16, MAX_IV, onStuck, tolAbs);
+  let r1 = adapt(F, a, b, n0, MAX_IV, onStuck, tolAbs);
   if (r1.abort?.nan) return { value: NaN };
   if (r1.abort) return withPv(F0, a, b, r1.abort.c, r1.abort.L, r1.abort.R, depth);
   if (r1.converged && Number.isFinite(r1.I)) {
@@ -1871,7 +1872,7 @@ export function integrateInfo(f, a, b, eps, depth = 0, brk = null) {
   const prevDeadline = DEADLINE;
   // brk === false: iz drevesa vemo, da integrand nima skokov; sicer (Analiza, graf) vsak izid preveri drugo deljenje
   const prevCheck = CHECK_JUMPS;
-  CHECK_JUMPS = brk !== false;
+  CHECK_JUMPS = brk == null;
   if (outer && !DEADLINE) DEADLINE = now() + DEFAULT_MS;
   NEST++;
   try {
@@ -2094,14 +2095,30 @@ export function jumpFinder(node, v, cf) {
           else if (inside(0)) levels.push(0);
           if (levels.length > 2000 || out.length > 5000) return null;
           for (const L of levels) {
-            // bisekcija g(x) = L
+            // g(x) = L: regula falsi (Illinois; linearni g v nekaj korakih), sicer bisekcija; q je prva točka na
+            // drugi strani ravni
             let p = x0;
             let q = x1;
-            for (let it = 0; it < 1100; it++) {
-              const m = 0.5 * (p + q);
+            let gp = y0 - L;
+            let gq = y1 - L;
+            let side = 0;
+            for (let it = 0; it < 200; it++) {
+              let m = it % 4 === 3 ? 0.5 * (p + q) : q - (gq * (q - p)) / (gq - gp);
+              if (!(m > p && m < q)) m = 0.5 * (p + q);
               if (!(m > p && m < q)) break;
-              if (at(m) >= L === up) q = m;
-              else p = m;
+              const gm = at(m) - L;
+              if (gm >= 0 === up) {
+                q = m;
+                gq = gm;
+                if (side === 1) gp /= 2;
+                side = 1;
+              } else {
+                p = m;
+                gp = gm;
+                if (side === -1) gq /= 2;
+                side = -1;
+              }
+              if (q - p <= 4 * EPS * Math.max(Math.abs(p), Math.abs(q))) break;
             }
             out.push(q);
           }
