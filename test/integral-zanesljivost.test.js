@@ -278,3 +278,78 @@ test("sporočilo »ni mogoče zanesljivo izračunati« je v vseh 33 jezikih", ()
     assert.ok(j["sc.errIntUnknown"] && j["sc.errIntUnknown"] !== sl["sc.errIntUnknown"], f);
   }
 });
+
+// ---------- 3. krog ----------
+const FU = (u) => {
+  const n = Math.floor(u);
+  return n * u - (n * (n + 1)) / 2; // ∫₀^u floor
+};
+
+test("skoki iz drevesa (floor, sign, round, mod, {…}): razdelimo pri njih, vsa mesta pravilna", () => {
+  assert.ok(check("∫(floor(7x);0;2,88)", 27.6)[0], JSON.stringify(analyze("∫(floor(7x);0;2,88)", ENV)));
+  assert.ok(check("∫(floor(7x);−0,627;2,88)", 25.893571428571427)[0]);
+  assert.ok(check("∫(sign(x+0,791);−2;2,35)", 1.932)[0]);
+  assert.ok(check("∫({x<0,4: 1, 2};0;1)", 1.6)[0]);
+  assert.ok(check("∫(mod(x;0,7);0;3)", 1)[0]);
+  assert.ok(check("∫(ceil(3x);0,1;1,234)", (1 / 3 - 0.1) + 2 / 3 + 1 + 4 * 0.234)[0]);
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 30; i++) {
+    const k = 1 + Math.floor(rnd() * 12);
+    const a = +(rnd() * 4 - 2).toFixed(3);
+    const b = +(a + 0.1 + rnd() * 4).toFixed(3);
+    const t = `∫(floor(${k}x);${String(a).replace(".", ",")};${String(b).replace(".", ",")})`;
+    assert.ok(check(t, (FU(k * b) - FU(k * a)) / k)[0], `${t}: ${JSON.stringify(analyze(t, ENV))}`);
+  }
+});
+
+test("brez drevesa (Analiza, graf): ocena napake pri skokih je poštena (prava napaka ≤ err)", () => {
+  let seed = 11;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 25; i++) {
+    const k = 1 + Math.floor(rnd() * 12);
+    const a = +(rnd() * 4 - 2).toFixed(3);
+    const b = +(a + 0.1 + rnd() * 4).toFixed(3);
+    const r = integrateInfo((x) => Math.floor(k * x), a, b);
+    const want = (FU(k * b) - FU(k * a)) / k;
+    assert.ok(Math.abs(r.value - want) <= r.err, `floor(${k}x) na [${a}, ${b}]: ${r.value} ± ${r.err} vs ${want}`);
+  }
+});
+
+test("pol tik ob meji: ∫(1/x; −1; 10⁻¹²) ne obstaja; ocena brez enega zanesljivega mesta ne da števila", async () => {
+  assert.equal(analyze("∫(1/x;−1;1e−12)", ENV).error?.code, "intDiverge");
+  const { zanesljivaMesta } = await import("../public/graph/scicore.js");
+  assert.equal(zanesljivaMesta({ value: 1.5, err: 0.4 }), null); // d = 0
+  assert.equal(zanesljivaMesta({ value: 1.5, err: 0.1 }).digits, 1);
+});
+
+test("sestavljen izraz z integralom kaže le zanesljiva mesta (napaka se prenese skozi račun)", () => {
+  const want = 0.5040670619069284;
+  for (const [t, w] of [
+    ["∫(sin(1/x);0;1)·1", want],
+    ["1+∫(sin(1/x);0;1)", 1 + want],
+    ["2·∫(sin(1/x);0;1)−∫(x;0;1)", 2 * want - 0.5],
+  ]) {
+    const r = evaluate(t, ENV);
+    assert.ok(r.est && r.digits <= 6 && digitsOk({ kind: "value", ...r }, w, r.digits), `${t}: ${JSON.stringify(r)} (${r.digits} mest)`);
+  }
+  assert.equal(analyze("∫(x;0;1)−∫(x;0;1)", ENV).value, 0);
+});
+
+test("ozki vrhovi: e^(−10¹²x²) in 1/(1 + 10³⁰⁰x²) (prej ≈ 0 in »ne obstaja«)", () => {
+  assert.ok(check("∫(e^(−1e12·x^2);−1;1)", Math.sqrt(Math.PI) * 1e-6)[0], JSON.stringify(analyze("∫(e^(−1e12·x^2);−1;1)", ENV)));
+  assert.ok(check("∫(1/(1+1e300·x^2);0;1)", (Math.PI / 2) * 1e-150)[0], JSON.stringify(analyze("∫(1/(1+1e300·x^2);0;1)", ENV)));
+  assert.ok(check("∫(e^(−1e8·(x−0,3)^2);0;1)", Math.sqrt(Math.PI) * 1e-4)[0], JSON.stringify(analyze("∫(e^(−1e8·(x−0,3)^2);0;1)", ENV)));
+});
+
+test("senčenje v grafu: kar se ne izide v 30 ms, dokonča pozneje (ne ostane »∫ ≈ ?«)", () => {
+  const src = fs.readFileSync(new URL("../public/graph/plot.js", import.meta.url), "utf8");
+  const part = src.slice(src.indexOf("drawArea(ctx, o, C) {"), src.indexOf("const text =", src.indexOf("drawArea(ctx, o, C) {")) + 400);
+  assert.match(part, /setTimeout/);
+  assert.match(part, /withIntegralBudget\(2000/);
+  assert.match(part, /∫ ≈ …/);
+});
+
+test("ime za zanesljiva mesta ni »certified« (CodeQL)", () => {
+  for (const f of ["scicore.js", "sci.js", "plot.js"]) assert.doesNotMatch(fs.readFileSync(new URL(`../public/graph/${f}`, import.meta.url), "utf8"), /certif|\bcert\b/i, f);
+});
