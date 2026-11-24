@@ -1016,6 +1016,7 @@
   "sc.errSumLimit": "Príliš veľa členov: súčet môže mať najviac 100 000 členov.",
   "sc.errIntDiverge": "Integrál neexistuje: diverguje (funkcia má na intervale pól alebo neintegrovateľnú singularitu).",
   "sc.errIntPv": "Integrál neexistuje: diverguje (funkcia má na intervale pól). Existuje len Cauchyho hlavná hodnota {pv}, ktorá však nie je hodnotou integrálu.",
+  "sc.errIntDivergeInf": "Integrál neexistuje: na nekonečnom intervale diverguje (funkcia smerom k nekonečnu neklesá dosť rýchlo).",
   "sc.errIntUnknown": "Integrál nemožno spoľahlivo vypočítať: numerický výpočet nedáva žiadnu spoľahlivú číslicu.",
   "sc.more": "Všetky funkcie",
   "sc.functions": "Funkcie",
