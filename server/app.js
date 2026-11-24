@@ -70,7 +70,7 @@ import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
-import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
+import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, codeFixBlock, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { stepVerdict, verdictIgnored } from "./sodba-koraka.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity, schoolYear } from "./games.js";
@@ -1548,6 +1548,7 @@ export function createApp(store, opts = {}) {
       let result = first;
       let { rest } = filter.end();
       let verdictChecked = false;
+      let verdictFix = ""; // opozorilo brez modela, ko ponovni odgovor po napačni sodbi ni mogoč (meja porabe)
       let extraCost = 0;
       const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
       const judgeable = claim && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used;
@@ -1566,8 +1567,12 @@ export function createApp(store, opts = {}) {
             hold.settle(verdictReserve);
             reason = rv.reason;
           }
-          // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor).
-          if (reason && hold.take(mainReserve)) {
+          // Ponovni odgovor samo, če je zanj prostor pod mejo. Sicer ostane prvi odgovor, učenec pa dobi opozorilo
+          // brez modela (AUDIT-057): najdena napačna sodba se ne zamolči.
+          if (reason && !hold.take(mainReserve)) {
+            verdictFix = codeFixBlock(reason, student.settings.language || "sl", "verdict") || "";
+            noteReviewSkip(store.db, jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS", "meja-sodba");
+          } else if (reason) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter({ language: jezik });
             held.length = 0;
@@ -1609,6 +1614,7 @@ export function createApp(store, opts = {}) {
       phase(false); // preverjanje sodbe je končano: napis »Preverjam odgovor …« izgine
       for (const t of held) send("delta", { text: t });
       if (rest) send("delta", { text: rest });
+      if (verdictFix) send("delta", { text: verdictFix });
 
       // Preverjanje odgovora (server/live-check.js): koda vedno, model samo, kjer je potrebno.
       // Ob napaki en kratek »Popravek:«, ki se pripne odgovoru (prikaz in zgodovina).
@@ -1672,12 +1678,14 @@ export function createApp(store, opts = {}) {
         // rezerva po njegovih parametrih.
         const fixMode = fixModeFor(mode);
         const fixReserve = callMaxUsd(modeParams(fixMode).model, Buffer.byteLength(plain + (issue || ""), "utf8") + 3000, modeParams(fixMode).max_tokens);
+        let fixTried = false; // model popravka je odgovoril (tudi z »OK«)
         if (issue && liveFixOn() && hold.take(fixReserve)) {
           phase(true);
           try {
             const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", stopnja, signal: controller.signal });
             extraCost += usage.log(student.id, c.model || modeParams(c.mode).model, c.usage || {}, "popravek");
             hold.settle(fixReserve);
+            fixTried = true;
             if (c.block) {
               fix = c.block;
               send("delta", { text: fix });
@@ -1687,7 +1695,15 @@ export function createApp(store, opts = {}) {
             if (!controller.signal.aborted) console.warn(`[evklid] popravek ni uspel: ${e?.message || e}`);
           }
         }
+        // Koda je napako dokazala, popravka z modelom pa ni (meja porabe, izklopljen, napaka klica): popravek brez modela,
+        // da učenec napake ne dobi brez opozorila (AUDIT-057). Model, ki je odgovoril »OK«, je napako zavrnil: ostane brez.
+        if (issue && !fix && !fixTried && liveFixOn() && !controller.signal.aborted && !/^a reviewer reported/.test(issue)) {
+          fix = codeFixBlock(issue, student.settings.language || "sl");
+          if (fix) send("delta", { text: fix });
+          noteReviewSkip(store.db, stopnja, "meja-popravek");
+        }
       }
+      if (verdictFix) fix = verdictFix + fix; // opozorilo o sodbi (že poslano) ostane v prikazu in zgodovini
       mestoAi?.sprosti(); // klici modela za ta odgovor so končani (preverjanje v ozadju ne drži mesta)
 
       phase(false);

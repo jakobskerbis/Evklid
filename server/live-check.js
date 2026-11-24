@@ -1174,6 +1174,24 @@ export async function correction({ streamFn, mode, answer, issue, language = "sl
   return { block: r?.stopReason === "refusal" ? null : fixBlock(r?.text), usage: r?.usage, model: r?.model, mode: fixMode };
 }
 
+// Popravek brez modela (AUDIT-057): ko koda napako dokaže, klic popravka pa ni mogoč (meja porabe, napaka klica),
+// učenec vseeno izve zanjo. Pri računu koda pozna obe vrednosti; drugače le kratko opozorilo. Strošek 0.
+const CODE_FIX = {
+  sl: { head: "Popravek", arith: (t, l, r) => `Račun $${t}$ ne drži: leva stran je ${l}, desna pa ${r}. Preveri ga še enkrat.`, other: "V tem odgovoru je napaka. Preveri ga še enkrat ali vprašaj znova.", verdict: "Ta ocena tvojega koraka morda ni pravilna. Svoj korak preveri še enkrat ali vprašaj znova." },
+  en: { head: "Correction", arith: (t, l, r) => `The calculation $${t}$ does not hold: the left side is ${l}, the right side ${r}. Please check it again.`, other: "There is a mistake in this answer. Please check it again or ask again.", verdict: "This assessment of your step may not be right. Check your step again or ask again." },
+  de: { head: "Korrektur", arith: (t, l, r) => `Die Rechnung $${t}$ stimmt nicht: Die linke Seite ist ${l}, die rechte ${r}. Prüfe sie noch einmal.`, other: "In dieser Antwort ist ein Fehler. Prüfe sie noch einmal oder frage erneut.", verdict: "Diese Bewertung deines Schritts ist möglicherweise nicht richtig. Prüfe deinen Schritt noch einmal oder frage erneut." },
+  hr: { head: "Ispravak", arith: (t, l, r) => `Račun $${t}$ nije točan: lijeva strana je ${l}, a desna ${r}. Provjeri ga još jednom.`, other: "U ovom odgovoru je pogreška. Provjeri ga još jednom ili pitaj ponovno.", verdict: "Ova ocjena tvog koraka možda nije točna. Provjeri svoj korak još jednom ili pitaj ponovno." },
+  it: { head: "Correzione", arith: (t, l, r) => `Il calcolo $${t}$ non è giusto: il lato sinistro è ${l}, quello destro ${r}. Controllalo ancora una volta.`, other: "In questa risposta c'è un errore. Controllala ancora una volta o chiedi di nuovo.", verdict: "Questa valutazione del tuo passaggio potrebbe non essere giusta. Controlla di nuovo il tuo passaggio o chiedi di nuovo." },
+  hu: { head: "Javítás", arith: (t, l, r) => `A(z) $${t}$ számolás nem helyes: a bal oldal ${l}, a jobb oldal ${r}. Ellenőrizd még egyszer.`, other: "Ebben a válaszban hiba van. Ellenőrizd még egyszer, vagy kérdezz újra.", verdict: "A lépésed értékelése lehet, hogy nem helyes. Ellenőrizd a lépésed még egyszer, vagy kérdezz újra." },
+};
+/** Blok »> **Popravek:** …« brez modela; kind »verdict« za sodbo učenčevega koraka. */
+export function codeFixBlock(issue, language = "sl", kind = "answer") {
+  const L = CODE_FIX[String(language || "sl").split("-")[0]] || CODE_FIX.en;
+  const m = /in the step \$(.+?)\$ the calculation does not hold: (.+?) ≠ (.+)$/.exec(String(issue || ""));
+  const body = kind === "verdict" ? L.verdict : m ? L.arith(m[1], m[2], m[3]) : L.other;
+  return fixBlock(`${L.head}: ${body}`);
+}
+
 // Popravek vstavi pred vrstico META (in kartice), da ostane zgodovina v pričakovani obliki.
 export function insertFix(text, block) {
   const s = String(text || "");
