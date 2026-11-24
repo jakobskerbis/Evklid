@@ -1107,7 +1107,19 @@ export function integralOf(fText, a, b, { live = false } = {}) {
  * (sci-vnos.js analyzeLive), da predogled in rezultat nikoli ne pokažeta različnih števil (AUDIT-055).
  */
 export function calculusEnv(text, env = {}) {
-  return (env.deg || env.grad) && /d\/d|∫|'/.test(String(text ?? "")) ? { ...env, deg: false, grad: false } : env;
+  if (!(env.deg || env.grad)) return env;
+  const src = String(text ?? "");
+  const rad = { ...env, deg: false, grad: false };
+  if (/'/.test(src)) return rad; // f′(x): odvod uporabniške funkcije
+  if (!/d\/d|∫/.test(src)) return env;
+  // Cela vrstica je ∫ ali d/dx: v radianih (tudi točna vrednost iz nedoločenega integrala, simbolni odvod). Sicer
+  // (sin(30) + ∫(x; 0; 1)) le notranjost ∫ in d/dx (math.js compile, calcRad); ostanek ostane v izbrani enoti.
+  try {
+    let n = compileLine(src, env)?.ast;
+    while (n?.k === "grp") n = n.a;
+    if (n?.k === "int" || n?.k === "der") return rad;
+  } catch {}
+  return env;
 }
 
 export function analyze(text, env = {}) {

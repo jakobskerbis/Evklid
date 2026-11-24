@@ -748,7 +748,10 @@ export function createScientific(root, opts) {
     else if (r.kind === "cas" && !r.resTex && !r.none) live.innerHTML = ""; // samo zapis (predogled matrike z okvirčki)
     else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${matBreak(r.resTex)}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
+    // DEG/GRA: ∫ in d/dx sta v radianih (AUDIT-055) – opomba tudi v predogledu, kot pod rezultatom
+    if (radNote(text, r) && live.innerHTML) live.insertAdjacentHTML("beforeend", ` <span class="sc-live-hint">${esc(t("sc.cas.radians"))}</span>`);
   }
+  const radNote = (text, r) => st.angle !== "rad" && ["value", "deriv"].includes(r?.kind) && /∫|d\/d|'/.test(text);
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
   const analyzeLive = (text) => analyzeLiveEnv(text, env());
 
@@ -770,6 +773,7 @@ export function createScientific(root, opts) {
     } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
     else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
     const e = entryOf(text, r);
+    if (radNote(text, r) && !e.note) e.note = { key: "sc.cas.radians" }; // ∫, d/dx v DEG/GRA (AUDIT-055)
     // vnos v minutah in sekundah (v DEG): tudi rezultat v °′″; f′(2) je odvod, ne minuta
     if (e.kind === "value" && st.angle === "deg" && /\d\s*[′″]/.test(text) && dmsOf(e.value)) e.dms = true;
     if (e.first !== undefined) {

@@ -944,11 +944,19 @@ function tolerantArg(argNode, a, ctx, lo, hi) {
   };
 }
 
+// Znanstveni kalkulator (ctx.calcRad, AUDIT-055): odvod in integral sta vedno v radianih, tudi v načinu DEG/GRA, a
+// samo znotraj ∫(…) in d/dx(…); ostanek vrstice ostane v izbrani enoti (sin(30) + ∫(x; 0; 1) = 1 v DEG). Kotna
+// stopinja (°, pomožne spremenljivke ctx.degUnits) je znotraj π/180. Grafični kalkulator tega ne vklopi: tam sta
+// odvod in ploščina v enoti osi x (geometrijsko pravilen naklon).
+const radCtx = (ctx) => ({ ...ctx, deg: false, grad: false, inRad: true });
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
   const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
   const c = (n) => compile(n, ctx);
+  if (ctx.calcRad && (deg || ctx.grad) && (node.k === "der" || node.k === "nder" || node.k === "int")) return compile(node, radCtx(ctx));
   switch (node.k) {
+    case "rad":
+      return compile(node.a, radCtx(ctx));
     case "num": {
       const v = node.v;
       return () => v;
@@ -959,6 +967,10 @@ export function compile(node, ctx = {}) {
     }
     case "var": {
       const name = node.name;
+      if (ctx.inRad && ctx.degUnits && name in ctx.degUnits) {
+        const r = ctx.degUnits[name];
+        return () => r;
+      }
       return (s) => {
         const v = s[name];
         return v === undefined ? NaN : v;
