@@ -1009,6 +1009,7 @@
   "sc.errIntPv": "Das Integral existiert nicht: Es divergiert (die Funktion hat im Intervall einen Pol). Es gibt nur den Cauchy-Hauptwert {pv}, der aber nicht der Wert des Integrals ist.",
   "sc.errIntDivergeInf": "Das Integral existiert nicht: Auf dem unendlichen Intervall divergiert es (die Funktion fällt gegen unendlich nicht schnell genug ab).",
   "sc.errIntUnknown": "Das Integral lässt sich nicht zuverlässig berechnen: Die numerische Rechnung liefert keine verlässliche Stelle.",
+  "sc.errIntUndefined": "Das Integral existiert nicht: Die Funktion ist auf einem Teil des Intervalls nicht definiert (z. B. Wurzel oder Logarithmus einer negativen Zahl).",
   "sc.more": "Alle Funktionen",
   "sc.functions": "Funktionen",
   "sc.grp.cmp": "Gleichungen und Ungleichungen",

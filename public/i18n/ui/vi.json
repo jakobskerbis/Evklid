@@ -1003,6 +1003,7 @@
   "sc.errIntPv": "Tích phân không tồn tại: nó phân kỳ (hàm số có một cực trên khoảng). Chỉ tồn tại giá trị chính Cauchy {pv}, nhưng đó không phải giá trị của tích phân.",
   "sc.errIntDivergeInf": "Tích phân không tồn tại: nó phân kỳ trên khoảng vô hạn (hàm số không giảm đủ nhanh khi tiến ra vô cùng).",
   "sc.errIntUnknown": "Không thể tính tích phân một cách đáng tin cậy: phép tính số không cho chữ số nào đáng tin.",
+  "sc.errIntUndefined": "Tích phân không tồn tại: hàm số không xác định trên một phần của khoảng (ví dụ căn hoặc lôgarit của số âm).",
   "sc.more": "Tất cả chức năng",
   "sc.functions": "Chức năng",
   "sc.grp.cmp": "Phương trình và bất phương trình",

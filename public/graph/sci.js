@@ -291,6 +291,8 @@ export function createScientific(root, opts) {
         return t("sc.errSumLimit");
       case "intDiverge":
         return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t(e.info?.inf ? "sc.errIntDivergeInf" : "sc.errIntDiverge");
+      case "intUndefined":
+        return t("sc.errIntUndefined");
       case "intUnknown":
       case "intTimeout":
         return t("sc.errIntUnknown");

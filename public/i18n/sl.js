@@ -1304,6 +1304,7 @@ export default {
   "sc.errIntPv": "Integral ne obstaja: divergira (funkcija ima na intervalu pol). Obstaja le Cauchyjeva glavna vrednost {pv}, ki pa ni vrednost integrala.",
   "sc.errIntDivergeInf": "Integral ne obstaja: na neskončnem intervalu divergira (funkcija proti neskončnosti ne pada dovolj hitro).",
   "sc.errIntUnknown": "Integrala ni mogoče zanesljivo izračunati: numerični izračun ne da nobenega zanesljivega mesta.",
+  "sc.errIntUndefined": "Integral ne obstaja: funkcija na delu intervala ni definirana (npr. koren ali logaritem negativnega števila).",
   "sc.more": "Vse funkcije",
   "sc.functions": "Funkcije",
   "sc.grp.cmp": "Enačbe in neenačbe",

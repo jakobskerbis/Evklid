@@ -1009,6 +1009,7 @@
   "sc.errIntPv": "Kiunganishi hakipo: kinaachana (kitendakazi kina ncha katika muda). Ipo tu thamani kuu ya Cauchy {pv}, lakini si thamani ya kiunganishi.",
   "sc.errIntDivergeInf": "Kiunganishi hakipo: kinaachana kwenye muda usio na kikomo (kitendakazi hakipungui haraka vya kutosha kuelekea usio na kikomo).",
   "sc.errIntUnknown": "Kiunganishi hakiwezi kukokotolewa kwa uhakika: ukokotoaji wa kinambari hautoi tarakimu yoyote ya kuaminika.",
+  "sc.errIntUndefined": "Kiunganishi hakipo: kitendakazi hakijafafanuliwa katika sehemu ya muda (k.m. kipeuo au logariti ya namba hasi).",
   "sc.more": "Kazi zote",
   "sc.functions": "Kazi",
   "sc.grp.cmp": "Milinganyo na kutolingana",

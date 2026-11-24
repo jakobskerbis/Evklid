@@ -1009,6 +1009,7 @@
   "sc.errIntPv": "Az integrál nem létezik: divergens (a függvénynek az intervallumon pólusa van). Csak a Cauchy-féle főérték létezik ({pv}), de ez nem az integrál értéke.",
   "sc.errIntDivergeInf": "Az integrál nem létezik: a végtelen intervallumon divergens (a függvény a végtelen felé nem csökken elég gyorsan).",
   "sc.errIntUnknown": "Az integrál nem számítható ki megbízhatóan: a numerikus számítás egyetlen megbízható jegyet sem ad.",
+  "sc.errIntUndefined": "Az integrál nem létezik: a függvény az intervallum egy részén nincs értelmezve (pl. negatív szám gyöke vagy logaritmusa).",
   "sc.more": "Összes funkció",
   "sc.functions": "Funkciók",
   "sc.grp.cmp": "Egyenletek és egyenlőtlenségek",

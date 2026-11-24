@@ -1265,7 +1265,7 @@ function adapt(F, a, b, n0 = 16, maxIv = MAX_IV, onStuck = null, tolAbs = 0) {
       check *= 2;
     }
     const w = hpop(heap);
-    if (w.bad && w.nan && ++nanBad > 200) return { abort: { nan: true } };
+    if (w.bad && w.nan && ++nanBad > 200) return { abort: { nan: true, a: w.a, b: w.b } };
     if (w.b - w.a <= minW) {
       done.push(w);
       sI += w.I;
@@ -1420,7 +1420,7 @@ function sideModel(F, c, s, w) {
       raw.splice(k);
       while (pts.length && Math.exp(-pts[pts.length - 1][0]) <= tk) pts.pop();
       nan = 0;
-    } else return { kind: Number.isNaN(raw[0][1]) && nan > raw.length / 2 ? "nan" : "unknown" }; // »nan« le, ko f ob c res ni definirana
+    } else return { kind: Number.isNaN(raw[0][1]) && nan > raw.length / 2 ? "nan" : "unknown", at: c + s * raw[k][0] }; // »nan« le, ko f ob c res ni definirana
   }
   // nenadne ničle na koncu (1/√(x³) pri x > 10¹⁰³: x³ = ∞): preliv, ne prava vrednost — odrežemo
   {
@@ -1687,6 +1687,15 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0, brk = null) {
   return { value, err, abs };
 }
 
+// f je NaN na kosu [x0, x1] (√(x − 5) na [0, 5)): mesto, kjer je NaN, za preverbo v evaluate
+function undefPart(F, x0, x1) {
+  for (let i = 0; i <= 64; i++) {
+    const x = x0 + ((x1 - x0) * i) / 64;
+    if (Number.isNaN(F(x))) return { value: NaN, undef: true, at: x };
+  }
+  return { value: NaN, undef: true, at: 0.5 * (x0 + x1) };
+}
+
 const DIVERGES = (at, pv) => ({ value: NaN, diverges: true, at, ...(pv !== undefined ? { pv } : {}) });
 const UNKNOWN = { value: NaN, unknown: true };
 
@@ -1712,7 +1721,7 @@ function finiteCore(F0, a, b, depth = 0, tolAbs = 0, n0 = 16) {
   };
   let F = F0;
   let r1 = adapt(F, a, b, n0, MAX_IV, onStuck, tolAbs);
-  if (r1.abort?.nan) return { value: NaN };
+  if (r1.abort?.nan) return undefPart(F0, r1.abort.a, r1.abort.b);
   if (r1.abort) return withPv(F0, a, b, r1.abort.c, r1.abort.L, r1.abort.R, depth);
   if (r1.converged && Number.isFinite(r1.I)) {
     // skrit ozek vrh (e^(−10¹²x²)): vozli ga niso zadeli
@@ -1767,16 +1776,21 @@ function finiteCore(F0, a, b, depth = 0, tolAbs = 0, n0 = 16) {
     pts = ptsOf(ivs.slice().sort((p, q) => (Number.isFinite(q.fmax) ? q.fmax : 1e308) - (Number.isFinite(p.fmax) ? p.fmax : 1e308)).slice(0, 12));
   }
   const info = [];
-  let nanSeen = false;
+  let nanSeen = null;
   for (const c of pts) {
     const L = side(F0, c, -1);
     const R = side(F0, c, 1);
     if (L?.kind === "div" || R?.kind === "div") return withPv(F0, a, b, c, L, R, many ? 1 : depth);
-    if (L?.kind === "nan" || R?.kind === "nan") nanSeen = true;
+    if (L?.kind === "nan" || R?.kind === "nan") nanSeen ??= (L?.kind === "nan" ? L : R).at;
     info.push({ c, L, R });
   }
-  if (nanSeen) return { value: NaN };
-  if (info.some((p) => p.L?.kind === "unknown" || p.R?.kind === "unknown")) return UNKNOWN;
+  if (nanSeen !== null) return { value: NaN, undef: true, at: nanSeen };
+  const unk = info.find((p) => p.L?.kind === "unknown" || p.R?.kind === "unknown");
+  if (unk) {
+    // NaN ob točki: mesto povemo, da evaluate preveri, ali je f tam res nedefinirana (√ negativnega) ali le preliv
+    const at = unk.L?.at ?? unk.R?.at;
+    return at !== undefined ? { ...UNKNOWN, at } : UNKNOWN;
+  }
   // odpravljive točke s šumom zaokrožitve: nadomestimo z limito in računamo znova
   const reps = [];
   for (const p of info)
@@ -1929,7 +1943,7 @@ function halfLine(F, c, s, end = Infinity, brk = null) {
     const tail = sideModel(G, 0, 1, 0.04);
     if (tail.kind === "div") return DIVERGES(s * Infinity);
     if (tail.kind === "unknown") return UNKNOWN;
-    if (tail.kind === "nan") return { value: NaN };
+    if (tail.kind === "nan") return { value: NaN, undef: true, at: s / tail.at };
     // omejena in pod tail.cut neračunljiva: ta del ocenimo z |G| ≤ M
     if (tail.kind === "bounded" && tail.cut) {
       uMin = tail.cut;
@@ -1964,7 +1978,7 @@ function halfLine(F, c, s, end = Infinity, brk = null) {
     vs.push(v);
     if (v > vmax) vmax = v;
   }
-  if (nan > 1200) return Number.isNaN(F(c + s * 1e-3)) ? { value: NaN } : UNKNOWN;
+  if (nan > 1200) return Number.isNaN(F(c + s * 1e-3)) ? { value: NaN, undef: true, at: c + s * 1e-3 } : UNKNOWN;
   // vrhovi: lokalni maksimumi v, ki niso zanemarljivi
   const peaks = [];
   for (let k = 0; k < vs.length && ds[k] <= 1e5; k++) {

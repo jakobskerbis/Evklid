@@ -1021,6 +1021,7 @@
   "sc.errIntPv": "Integrál neexistuje: diverguje (funkce má na intervalu pól). Existuje jen Cauchyho hlavní hodnota {pv}, která ale není hodnotou integrálu.",
   "sc.errIntDivergeInf": "Integrál neexistuje: na nekonečném intervalu diverguje (funkce směrem k nekonečnu neklesá dost rychle).",
   "sc.errIntUnknown": "Integrál nelze spolehlivě vypočítat: numerický výpočet nedává žádnou spolehlivou číslici.",
+  "sc.errIntUndefined": "Integrál neexistuje: funkce není na části intervalu definována (např. odmocnina nebo logaritmus záporného čísla).",
   "sc.more": "Všechny funkce",
   "sc.functions": "Funkce",
   "sc.grp.cmp": "Rovnice a nerovnice",
