@@ -10,8 +10,6 @@ export async function loadPrograms(api) {
 // Že naloženi programi (prazen seznam, dokler jih ne naložimo).
 export const programsCache = () => cache || [];
 
-
-
 export const UNI_YEARS = ["1. letnik", "2. letnik", "3. letnik", "4. letnik"];
 
 // Letniki programa (večina ima 3, nekateri 4).

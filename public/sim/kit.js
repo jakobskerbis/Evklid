@@ -520,7 +520,6 @@ export function handle(parent, cls = "a", r = 7) {
   return g;
 }
 
-
 // Barva iz CSS spremenljivke (za canvas).
 export function cssColor(el, name, fallback = "#2563eb") {
   const v = getComputedStyle(el).getPropertyValue(name).trim();

@@ -289,7 +289,6 @@ export function closePad() {
   if (cur && keyboardOpenFor(cur.input)) hideKeyboard();
 }
 
-
 // ---------------------------------------------------------------------------
 // Risalna površina (prst, miška, pisalo). Pri pisalu so dotiki dlani prezrti.
 
