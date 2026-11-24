@@ -481,6 +481,9 @@ export default {
   // inštruktor (klepet)
   "chat.new": "Nov pogovor",
   "chat.returnTo": "Nazaj na: {ime}",
+  "chat.ctxLab": "Inštruktor bo videl nastavitve poskusa (v tabeli še ni meritev).",
+  "chat.ctxLabRows": "Inštruktor bo videl nastavitve poskusa in meritve iz tabele (vrstic: {n}).",
+  "chat.ctx3d": "Inštruktor bo videl izbrani del v 3D svetu.",
   "chat.list": "Pogovori",
   "chat.photoPreview": "Predogled fotografije",
   "chat.removeImage": "Odstrani sliko",
@@ -1037,6 +1040,7 @@ export default {
   "gc.errSyntax": "Izraz ni dokončan ali ga ne razumem.",
   "gc.errArity": "Napačno število vrednosti v oklepaju. Zapiši tako: {ex}",
   "gc.hintPoint": "To je število v oklepaju. Je mišljena točka? Koordinati loči s podpičjem: {ex}",
+  "gc.hintEuler": "»{src}« je {euler}: e je Eulerjevo število. Za znanstveni zapis vpiši {fix}.",
   "gc.errOther": "Tega ne znam narisati.",
   "gc.min": "Najmanj",
   "gc.max": "Največ",
