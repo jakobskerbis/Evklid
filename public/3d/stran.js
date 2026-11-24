@@ -543,7 +543,7 @@ async function model(id, param, moj) {
   const vprasaj = (d) =>
     vprasajInstruktorja(t("a3.askPartText", { naslov: mod.info.naslov, ime: d.la ? `${d.ime} (${d.la})` : d.ime }), {
       vrni: `${id}?del=${encodeURIComponent(d.id)}`,
-      oznaka: `${mod.info.naslov}: ${d.ime}`,
+      oznaka: `${d.ime} (${mod.info.naslov})`, // »Nazaj na: Jedro (Živalska celica)«, brez dveh dvopičij
     });
   return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop, vprasaj });
 }
