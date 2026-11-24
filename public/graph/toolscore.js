@@ -527,6 +527,8 @@ export function simpleRoots(coeffs, m = 1) {
   const c = coeffs.map(Number);
   if (c.length < 2 || c.some((v) => !Number.isFinite(v)) || c[0] === 0) return null;
   return pairUp(dkRoots(c).map((z) => ({ z: newton(c, z), m, sf: true })));
+}
+
 // Ničle enostavnega celoštevilskega polinoma t (BigInt, od najnižje) s kratnostjo k v found. Racionalne ničle
 // najdene numerično potrdimo točno in jih točno izločimo (deljenje), ostanek rešimo znova: pri ničlah od 4 do 10⁷
 // (koeficienti do 10⁴³) so male ničle v double sicer netočne.
