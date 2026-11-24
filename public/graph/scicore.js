@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, argSeparators, integrateInfo, walk, withIntegralBudget, integralTrace } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, argSeparators, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -101,8 +101,16 @@ function rewrite(n, ctx) {
     return { k: "/", a: { k: "call", f: "round", args: [{ k: "*", a: r(n.args[0]), b: p }] }, b: p };
   }
   if (n.k === "der" && n.a?.k === "tuple" && n.a.items.length === 2) {
-    const d = simplify(diff(r(n.a.items[0]), n.v, ctx));
-    return { k: "grp", a: substitute(d, { [n.v]: r(n.a.items[1]) }) };
+    // Simbolni odvod v točki a ne zadošča (AUDIT-017, AUDIT-018): ln x ima pri x = −1 »odvod« −1, |x| pri 0
+    // »odvod« 0. __ODVOD_V_TOCKI (math.js) zato preveri še, da je f v a definirana in da se levi in desni odvod
+    // ujemata z njim. Gnezden odvod (d/dx(d/dx(…; x); 2)) in odvod za simbolno računanje ostaneta navadna.
+    const plain = { ...ctx, plainDer: true };
+    const f = rewrite(n.a.items[0], plain);
+    const a = r(n.a.items[1]);
+    const d = simplify(diff(f, n.v, ctx));
+    const at = substitute(d, { [n.v]: a });
+    if (ctx.plainDer) return { k: "grp", a: at };
+    return { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: n.v };
   }
   const out = { ...n };
   for (const key of ["a", "b", "other"]) if (n[key]) out[key] = r(n[key]);
@@ -121,6 +129,8 @@ export function lineTex(ast, comma = true) {
   }
   return toTex(ast, { comma, sep: comma ? ";" : "," })
     .replaceAll(ANS, "\\mathrm{Ans}")
+    // potenca s stopinjami (Ans²°): drugi eksponent na prazni osnovi, sicer je dvojni eksponent napaka KaTeX (AUDIT-020)
+    .replace(/(\^\{(?:[^{}]|\{[^{}]*\})*\})\s*(?:\\cdot\s*)?G_\{(deg|min|sec)\}/g, (_, sup, u) => `${sup}{}^{${{ deg: "\\circ", min: "\\prime", sec: "\\prime\\prime" }[u]}}`)
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
     .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
@@ -148,7 +158,7 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   const one = grad ? 200 / 180 : deg ? 1 : Math.PI / 180; // 1° v trenutni enoti kota
   const scope = Object.assign(Object.create(null), vars, { [ANS_VAR]: ans, [DEG_VAR]: one, [MIN_VAR]: one / 60, [SEC_VAR]: one / 3600 });
   const defs = {};
-  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope };
+  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope, derCheck: true };
   for (const [name, f] of Object.entries(funcs)) {
     try {
       defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma }), { funcs: names }), ctx), body: null };
@@ -208,18 +218,20 @@ const hasIntegral = (node) => {
   return yes;
 };
 /**
- * Vrednost integrala (integrateInfo), kolikor jo podpira ocena napake: { value, est: true } — številski izid je
- * vedno približek (»≈«; »=« le za točno, simbolno vrednost), value zaokrožen na zanesljiva mesta. null: niti enega mesta.
+ * Vrednost integrala (integrateInfo), kolikor jo podpira ocena napake: { value, est: true, digits } — številski izid je
+ * vedno približek (»≈«; »=« le za točno, simbolno vrednost), value zaokrožen na zanesljiva mesta (največ 12).
+ * null: ocena napake ne podpira niti enega mesta.
  */
-export function certified(info) {
+export function zanesljivaMesta(info) {
   const { value: v, err } = info;
   if (!Number.isFinite(v) || !(err >= 0) || !Number.isFinite(err)) return null;
-  if (err === 0) return { value: v, est: true };
+  if (err === 0) return { value: v, est: true, digits: 12 };
   const a = Math.abs(v);
   // ∫(sin x; −π; π): vrednost je v šumu, a ta je zanemarljiv proti ∫|f|
-  if (a <= err) return err <= 1e-12 * (info.abs || 0) ? { value: 0, est: true } : null;
+  if (a <= err) return err <= 1e-12 * (info.abs || 0) ? { value: 0, est: true, digits: 1 } : null;
   const d = Math.floor(Math.log10(a / err));
-  const digits = Math.max(1, Math.min(12, d));
+  if (d < 1) return null;
+  const digits = Math.min(12, d);
   return { value: Number(v.toPrecision(digits)), est: true, digits };
 }
 
@@ -260,15 +272,31 @@ export function evaluate(text, env = {}) {
       // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
       const div = infos.find((r) => r.diverges);
       if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : {} } };
-      const cert = infos.map((r) => (Number.isFinite(r.value) ? certified(r) : null));
+      const zm = infos.map((r) => (Number.isFinite(r.value) ? zanesljivaMesta(r) : null));
       // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
-      if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !cert[i]))) return { error: { code: "intUnknown", info: {} } };
+      if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !zm[i]))) return { error: { code: "intUnknown", info: {} } };
       if (Number.isFinite(value) && infos.length) {
         if (infos.length === 1 && unwrapGrp(rwe).k === "int") {
-          ({ value, est, digits } = cert[0]);
+          ({ value, est, digits } = zm[0]);
           single = infos[0];
         }
-        else est = cert.some((c) => c?.est);
+        else {
+          // sestavljen izraz (∫(…)·2 + 1): napako vsakega integrala prenesemo skozi račun (izraz z vrednostjo ± err)
+          const num = (y) => (Array.isArray(y) ? (y.length === 1 ? y[0] : NaN) : typeof y === "boolean" ? +y : y);
+          const at = (vs) => num(withIntegralValues(vs, () => run(expr)(scope)));
+          const vals = infos.map((r) => r.value);
+          let err = 1e-15 * Math.abs(value);
+          if (infos.length <= 8)
+            infos.forEach((r, i) => {
+              const vs = vals.slice();
+              vs[i] += r.err;
+              err += Math.abs(at(vs) - value);
+            });
+          else err += Math.max(Math.abs(at(vals.map((v, i) => v + infos[i].err)) - value), Math.abs(at(vals.map((v, i) => v - infos[i].err)) - value));
+          const z = zanesljivaMesta({ value, err, abs: Math.abs(value) + vals.reduce((t, v) => t + Math.abs(v), 0) });
+          if (!z || !Number.isFinite(err)) return { error: { code: "intUnknown", info: {} } };
+          ({ value, est, digits } = z);
+        }
       }
     }
     const tex = lineTex(ast, comma);

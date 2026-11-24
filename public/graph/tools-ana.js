@@ -2,7 +2,7 @@
 // in 3D graf. Računanje je v anacore.js, risanje 3D v plot3d.js.
 import { esc, texHtml, remember } from "./tools-kit.js";
 import { readNumber, readList } from "./toolscore.js";
-import { exactTex, certified } from "./scicore.js";
+import { exactTex, zanesljivaMesta } from "./scicore.js";
 import { fn, derivative, toTex, roots, limit, taylor, V, odeSolve, measurement, propagate, roundMeasurement } from "./anacore.js";
 import { createPlot3d } from "./plot3d.js";
 import { compile, integrateInfo, withIntegralBudget } from "./math.js";
@@ -112,7 +112,7 @@ export function anaTools(ctx) {
           if (!Number.isFinite(a) || !Number.isFinite(b)) return (out.innerHTML = err(t("sc.ana.badInterval")));
           // številski integral: »≈« in le mesta, ki jih podpira ocena napake (kot v kalkulatorju); med tipkanjem ≤ 200 ms
           const info = withIntegralBudget(200, () => integrateInfo(f, a, b));
-          const c = Number.isFinite(info.value) ? certified(info) : null;
+          const c = Number.isFinite(info.value) ? zanesljivaMesta(info) : null;
           out.innerHTML = card(
             c
               ? row(`\\int_{${tnum(a)}}^{${tnum(b)}} ${fTex}\\,dx \\approx ${tnum(c.value)}`, c.value) + `<p class="muted tl-note">${esc(t("sc.ana.intNote"))}</p>`

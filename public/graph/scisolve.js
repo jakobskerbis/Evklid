@@ -8,7 +8,9 @@ import { antiderivativeAst } from "./calculus.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
 
-const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE]
+const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE] gosto,
+const FAR = 1e12; // zunaj pa do ±FAR na logaritemski mreži (AUDIT-015: √x = 20 ima rešitev 400)
+const FAR_TEX = "\\left[-10^{12};\\,10^{12}\\right]";
 const SAMPLES = 20000;
 const TRIG = /(sin|cos|tan|cot|sec|csc)(?![a-z])/; // tudi »sin x« brez oklepaja
 // Iskanje rešitev ne sme zamrzniti vmesnika (∑ s 10 000 členi): po 1,5 s odnehamo (»ne znam rešiti«).
@@ -185,6 +187,73 @@ function criticalPoints(f, a, b, n = SAMPLES) {
   return pts.sort((p, q) => p - q);
 }
 
+/**
+ * Točke zunaj [−R, R] do ±FAR, kjer f spremeni predznak ali se začne/konča definicijsko območje (AUDIT-015).
+ * Logaritemska mreža (200 točk na dekado): najde ln x = 7 (x ≈ 1097), √x = 20 (400), ne pa dotikov daleč od 0.
+ */
+function farPoints(f, R, perDecade = 200) {
+  const pts = [];
+  const val = (x) => {
+    const y = f(x);
+    return typeof y === "number" ? y : NaN;
+  };
+  const cls = (y) => (Number.isNaN(y) ? 2 : Math.sign(y));
+  const n = Math.ceil(Math.log10(FAR / R) * perDecade);
+  // podliv (e^x pri x < −745 je točno 0): ni ničla ne rob območja
+  const under = (a, b) => (a === 0 && Math.abs(b) < 1e-280) || (b === 0 && Math.abs(a) < 1e-280);
+  for (const sgn of [1, -1]) {
+    const side = [];
+    let x0 = sgn * R;
+    let y0 = val(x0);
+    let xm = NaN;
+    let ym = NaN;
+    for (let i = 1; i <= n && side.length <= 20; i++) {
+      // čas je potekel: vrnemo, kar smo našli (iskanje blizu 0 je že končano)
+      if (Date.now() > deadline) return [...pts, ...side].sort((p, q) => p - q);
+      const x1 = sgn * R * 10 ** (i / perDecade);
+      const y1 = val(x1);
+      if (under(y0, y1)) {
+        [xm, ym, x0, y0] = [NaN, NaN, x1, y1];
+        continue;
+      }
+      if (y1 === 0) side.push(x1);
+      else if (cls(y0) !== cls(y1) && y0 !== 0) {
+        let lo = x0;
+        let hi = x1;
+        const c0 = cls(y0);
+        for (let k = 0; k < 200; k++) {
+          const m = (lo + hi) / 2;
+          if (m === lo || m === hi) break;
+          const yv = val(m);
+          if (yv === 0) {
+            lo = hi = m;
+            break;
+          }
+          if (cls(yv) === c0) lo = m;
+          else hi = m;
+        }
+        side.push(clean((lo + hi) / 2));
+      } else if (Number.isFinite(ym) && Number.isFinite(y0) && Number.isFinite(y1) && Math.sign(ym) === Math.sign(y0) && Math.sign(y0) === Math.sign(y1) && Math.abs(y0) < Math.abs(ym) && Math.abs(y0) <= Math.abs(y1)) {
+        // morda dotik (dvojna ničla) daleč od 0: (x − 5000)² = 0
+        let lo = Math.min(xm, x1);
+        let hi = Math.max(xm, x1);
+        const g = (x) => Math.abs(val(x));
+        for (let k = 0; k < 200; k++) {
+          const m1 = lo + (hi - lo) / 3;
+          const m2 = hi - (hi - lo) / 3;
+          if (g(m1) < g(m2)) hi = m2;
+          else lo = m1;
+        }
+        const r = clean((lo + hi) / 2);
+        if (isRoot(f, r)) side.push(r);
+      }
+      [xm, ym, x0, y0] = [x0, y0, x1, y1];
+    }
+    pts.push(...side);
+  }
+  return pts.sort((a, b) => a - b);
+}
+
 const isRoot = (f, x) => {
   const y = f(x);
   if (typeof y !== "number" || !Number.isFinite(y)) return false;
@@ -237,15 +306,25 @@ function solveOne(F, v, { comma, unit = "rad", src }) {
     return { kind: "solve", v, roots, complex: [], interval: periodTex(unit, comma), periodic: true, ...(unit === "rad" ? {} : { [unit]: true }) };
   }
   const R = unit === "rad" ? RANGE : 10 * RANGE;
-  let roots = criticalPoints(F, -R, R).filter((x) => isRoot(F, x));
+  const near0 = criticalPoints(F, -R, R);
+  let roots = near0.filter((x) => isRoot(F, x));
   if (roots.length > 12) roots = roots.filter((x) => Math.abs(x) <= 20).slice(0, 12);
-  return { kind: "solve", v, roots, complex: [] };
+  // zunaj ±R iščemo samo, kjer funkcija blizu 0 ne niha (sin x = x/1000 ima stotine rešitev: ostane, kot je bilo)
+  else if (near0.length <= 12) {
+    const all = [...roots, ...farPoints(F, R).filter((x) => isRoot(F, x))];
+    // največ 12, najbližje 0, nato po vrsti
+    roots = all.sort((a, b) => Math.abs(a) - Math.abs(b)).slice(0, 12).sort((a, b) => a - b);
+  }
+  // brez rešitve na [−10¹², 10¹²] ne trdimo, da je ni nikjer (AUDIT-015): searched = preiskani interval
+  return { kind: "solve", v, roots, complex: [], ...(roots.length ? {} : { searched: FAR_TEX }) };
 }
 
 /** TeX rešitev enačbe. */
 export function solutionTex(r, comma = true, mode = "auto") {
   const v = r.v;
   if (r.all) return `${v} \\in \\mathbb{R}`;
+  // numerično iskanje brez rešitve: na preiskanem intervalu je ni, zunaj ga nismo iskali (AUDIT-015)
+  if (r.searched && !r.roots.length && !r.complex?.length) return `${v} \\notin ${r.searched}`;
   if (r.none || (!r.roots.length && !r.complex?.length)) return `${v} \\in \\varnothing`;
   const parts = [];
   if (r.exact) parts.push(r.exact);
@@ -283,9 +362,24 @@ function solveIneq(pairs, ops, v, period = 0) {
       for (const [re, im] of polyRoots(poly)) {
         if (Math.abs(im) < 1e-7 * Math.max(1, Math.abs(re))) pts.push(clean(re));
       }
-    pts.push(...(period ? criticalPoints(F, 0, period, 6000) : criticalPoints(F, -RANGE, RANGE)));
+    if (period) pts.push(...criticalPoints(F, 0, period, 6000));
+    else {
+      const near0 = criticalPoints(F, -RANGE, RANGE);
+      // nihajoča funkcija (x·sin x > 0): zunaj ±RANGE ne iščemo, ker logaritemska mreža ne ujame vseh menjav predznaka
+      pts.push(...near0, ...(near0.length <= 12 ? farPoints(F, RANGE) : []));
+    }
   }
+  // meja goste mreže (±RANGE) ni kritična točka, če tam ni ničle ne menjave predznaka (e^x > 0 se ne razdeli pri −100)
+  const realPoint = (x) =>
+    Fs.some((F) => {
+      const y = F(x);
+      const d = 1e-7 * Math.abs(x);
+      const a = F(x - d);
+      const b = F(x + d);
+      return y === 0 || typeof a !== "number" || typeof b !== "number" || !Number.isFinite(a) || !Number.isFinite(b) || Math.sign(a) !== Math.sign(b);
+    });
   pts = pts
+    .filter((x) => period || Math.abs(x) !== RANGE || realPoint(x))
     .filter((x) => x > LO && x < HI && !(period && near(x, HI, 1e-9)))
     .sort((a, b) => a - b)
     .filter((x, i, a) => i === 0 || !near(x, a[i - 1], 1e-7));

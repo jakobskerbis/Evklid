@@ -760,6 +760,41 @@ let depthGuard = 0;
  * Prevede drevo v funkcijo (scope) => vrednost (število ali seznam števil).
  * ctx: { deg: bool, grad: bool (gradi, 400 v krogu; ima prednost pred deg), funcs: { ime: { params, body } }, global }
  */
+/**
+ * Odvod d = f′(a), izračunan simbolno, velja samo, če je f v a definirana in se levi in desni odvod ujemata z njim
+ * (AUDIT-017, AUDIT-018). Enostranska odvoda (2. reda) pri vedno manjšem h: blizu pola ali roba šele majhen h
+ * zadene pravo vrednost (ln x pri 10⁻⁶), daleč od 0 pa h ne sme biti pod natančnostjo a (sin x pri 10⁹).
+ * Vrne d ali vrže MathError noDerivDomain / noDeriv (z levim in desnim odvodom, kadar sta končna in stabilna).
+ */
+export function derivCheck(fx, a, d) {
+  const val = (x) => {
+    const y = fx(x);
+    return typeof y === "number" ? y : NaN;
+  };
+  const f0 = val(a);
+  if (!Number.isFinite(f0)) throw new MathError("noDerivDomain");
+  const tol = (x, y) => Math.abs(x - y) <= 1e-3 * (1 + Math.abs(x) + Math.abs(y));
+  const floor = 256 * Number.EPSILON * Math.max(1, Math.abs(a));
+  let prev = null;
+  let last = null;
+  for (let k = 0; k < 9; k++) {
+    const h = 1e-3 * Math.sqrt(1 + Math.abs(a)) * 10 ** -k;
+    if (h < floor) break;
+    const L = (3 * f0 - 4 * val(a - h) + val(a - 2 * h)) / (2 * h);
+    const R = (-3 * f0 + 4 * val(a + h) - val(a + 2 * h)) / (2 * h);
+    if (Number.isFinite(d) && Number.isFinite(L) && Number.isFinite(R) && tol(L, R) && tol((L + R) / 2, d)) return d;
+    prev = last;
+    last = [L, R];
+  }
+  // levi in desni odvod pokažemo le, kadar sta se ustalila (vogal |x|), ne pri navpični tangenti ali skoku
+  const stable = prev && last && last.every((x, i) => Number.isFinite(x) && Math.abs(x) < 1e6 && tol(x, prev[i]));
+  if (stable && !tol(last[0], last[1])) {
+    const nice = (x) => Number(x.toPrecision(4)) || 0; // enostranska odvoda sta numerična: 4 mesta
+    throw new MathError("noDeriv", { left: nice(last[0]), right: nice(last[1]) });
+  }
+  throw new MathError("noDeriv");
+}
+
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
   const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
@@ -851,6 +886,20 @@ export function compile(node, ctx = {}) {
         };
       }
       if (f === "sort") return (s) => sorted([args.map((a) => a(s))].flat(2));
+      if (f === "__ODVOD_V_TOCKI") {
+        // odvod v točki (scicore.js, d/dx(f; a)): args = [f′(a), a], node.fn = f, node.v = spremenljivka
+        const F = c(node.fn);
+        const v = node.v;
+        return (s) => {
+          const [d, a] = args.map((g) => g(s));
+          if (Array.isArray(d) || Array.isArray(a)) return d;
+          return derivCheck((x) => {
+            const sc = Object.create(s || null);
+            sc[v] = x;
+            return F(sc);
+          }, a, d);
+        };
+      }
       if (MULTI[f]) {
         const g = MULTI[f];
         const many = f === "min" || f === "max" || f === "gcd" || f === "lcm";
@@ -888,7 +937,17 @@ export function compile(node, ctx = {}) {
         def.params.forEach((p, i) => (sc[p] = args[i] ? args[i](s) : NaN));
         depthGuard++;
         try {
-          return body(sc);
+          const val = body(sc);
+          // f′(a) v znanstvenem kalkulatorju: enako preverjanje kot d/dx(f; a) (AUDIT-017, AUDIT-018); graf ga ne rabi
+          const p0 = def.params[0];
+          if (d === 1 && ctx.derCheck && def.params.length === 1 && typeof sc[p0] === "number" && typeof val === "number") {
+            return derivCheck((x) => {
+              const s2 = Object.create(ctx.global || null);
+              s2[p0] = x;
+              return def.body(s2);
+            }, sc[p0], val);
+          }
+          return val;
         } finally {
           depthGuard--;
         }
@@ -970,9 +1029,10 @@ export function compile(node, ctx = {}) {
       const v = node.v;
       const lo = node.lo ? c(node.lo) : () => 0;
       const hi = node.hi ? c(node.hi) : (s) => s[v];
+      const jf = node.lo ? jumpFinder(node.a, v, c) : null; // skoki (floor, sign, {…}): računamo po kosih
       return (s) => {
         const sc = Object.create(s);
-        return integrate((t) => ((sc[v] = t), a(sc)), lo(s), hi(s));
+        return integrate((t) => ((sc[v] = t), a(sc)), lo(s), hi(s), undefined, jf ? (x0, x1) => jf(s, x0, x1) : false);
       };
     }
     case "sum": {
@@ -1022,6 +1082,7 @@ let DEADLINE = 0;
 let EVALS = 0;
 let NEST = 0;
 let TRACE = null;
+let CHECK_JUMPS = true;
 const BUDGET = { budget: true };
 const now = () => (typeof performance !== "undefined" ? performance.now() : Date.now());
 
@@ -1097,6 +1158,21 @@ function gk(F, a, b) {
   rabs *= ah;
   if (rasc !== 0 && err !== 0) err = rasc * Math.min(1, (200 * err / rasc) ** 1.5);
   if (rabs > 1e-290) err = Math.max(10 * EPS * rabs, err);
+  // integrand brez znanih skokov (Analiza, graf): skok med krajiščem in skrajnim vozlom vozli ne vidijo —
+  // f v krajišču primerjamo z linearno napovedjo iz dveh skrajnih vozlov
+  if (CHECK_JUMPS && Number.isFinite(err)) {
+    const k = (1 - GK_X[0]) / (GK_X[0] - GK_X[1]);
+    const big = 1e-13 * fmax;
+    for (const [xe, y1, y2] of [
+      [a, v1[0], v1[1]],
+      [b, v2[0], v2[1]],
+    ]) {
+      const ye = F(xe);
+      if (!Number.isFinite(ye)) continue;
+      const pred = y1 + (y1 - y2) * k;
+      if (Math.abs(ye - pred) > 50 * (Math.abs(y1 - y2) + big)) err = Math.max(err, 2 * ah * (1 - GK_X[0]) * Math.abs(ye - y1) + 1e-300);
+    }
+  }
   const bad = !Number.isFinite(I) || !Number.isFinite(err);
   return { a, b, I: bad ? 0 : I, err: bad ? Infinity : err, abs: bad ? 0 : rabs, fmax, xmax, bad, nan: Number.isNaN(fc) || v1.some(Number.isNaN) || v2.some(Number.isNaN) };
 }
@@ -1203,7 +1279,10 @@ function adapt(F, a, b, n0 = 16, maxIv = MAX_IV, onStuck = null, tolAbs = 0) {
     for (let k = 0; k < 12 && tmp.length; k++) worst.push(hpop(tmp));
   }
   const Et = E + sE;
-  return { I, E: Et, abs: A, stuck, worst, converged: Et <= tol && !done.some((s) => s.bad) };
+  let fseen = 0;
+  for (const s of heap) if (s.fmax > fseen) fseen = s.fmax;
+  for (const s of done) if (s.fmax > fseen) fseen = s.fmax;
+  return { I, E: Et, abs: A, stuck, worst, converged: Et <= tol && !done.some((s) => s.bad), fseen, ndone: done.length, ivs: [...heap, ...done] };
 }
 
 // ---- asimptotika ob točki ----
@@ -1314,14 +1393,14 @@ function sideModel(F, c, s, w) {
   if (nan) {
     // NaN le v najglobljem delu (x^20·e^(−x) pri x ~ 10¹⁶: ∞·0): tam odrežemo, če ostane dovolj vzorcev
     const k = raw.findIndex((r) => Number.isNaN(r[1]));
-    const decayed = k >= 4 && raw[k - 1][1] === 0 && raw[k - 2][1] === 0;
+    const decayed = k >= 3 && raw[k - 1][1] === 0 && raw[k - 2][1] === 0;
     if ((k >= 20 || decayed) && raw.slice(k).every((r) => Number.isNaN(r[1]) || r[1] === 0)) {
       const tk = raw[k][0];
       cut = raw[k - 1][0];
       raw.splice(k);
       while (pts.length && Math.exp(-pts[pts.length - 1][0]) <= tk) pts.pop();
       nan = 0;
-    } else return { kind: nan > raw.length / 2 ? "nan" : "unknown" };
+    } else return { kind: Number.isNaN(raw[0][1]) && nan > raw.length / 2 ? "nan" : "unknown" }; // »nan« le, ko f ob c res ni definirana
   }
   // nenadne ničle na koncu (1/√(x³) pri x > 10¹⁰³: x³ = ∞): preliv, ne prava vrednost — odrežemo
   {
@@ -1377,8 +1456,17 @@ function sideModel(F, c, s, w) {
   // |f| ne raste: omejena
   if (p < -Math.max(4 * dp, 1e-6) || (Math.abs(p) <= Math.max(4 * dp, 1e-6) && q > -Math.max(4 * dq, 1e-3) && M3 <= 4 * Math.max(M1, M2))) return { kind: "bounded", M, cut, repair: limitRepair(raw) };
   const PE = Math.max(4 * dp, 1e-7);
+  // f(c) končna in manjša od najglobljega vzorca: ni pol, le zelo ozek vrh pod 10⁻¹⁴⁰ (1/(1 + 10³⁰⁰x²))
+  // (pri polu je f(c) neskončna ali vsaj tolikšna, kot jo da model na razdalji ene zaokrožitve od c, npr. tan(π/2))
+  const peakOr = (d) => {
+    const yc = Math.abs(F(c));
+    if (!Number.isFinite(yc)) return d;
+    const Lu = -Math.log(c === 0 ? 1e-300 : Math.abs(c) * EPS);
+    const lnModel = full.A + full.p * Lu - full.q * Math.log(Lu);
+    return Math.log(Math.max(yc, 1e-300)) < lnModel - 7 ? { kind: "peak", fc: yc } : d;
+  };
   if (p < 1 - PE) return { kind: "conv", sign, tcut, m: full, alt: half, alt2: shallow };
-  if (p > 1 + PE) return { kind: "div", p };
+  if (p > 1 + PE) return peakOr({ kind: "div", p });
   if (dp > 1e-4) return { kind: "unknown" };
   // p = 1: odloči logaritemski faktor
   const f1 = fitModel(use, 1);
@@ -1388,8 +1476,8 @@ function sideModel(F, c, s, w) {
   const dq1 = Math.max(Math.abs(f1.q - h1.q), Math.abs(f1.q - s1.q));
   const QE = Math.max(4 * dq1, 1e-6);
   if (f1.q > 1 + QE) return { kind: "conv", sign, tcut, m: f1, alt: h1, alt2: s1 };
-  if (f1.q < 1 - QE) return { kind: "div", p: 1 };
-  if (dq1 <= 1e-4) return { kind: "div", p: 1 }; // q = 1 (1/(x·ln x)): ∫ ~ ln ln
+  if (f1.q < 1 - QE) return peakOr({ kind: "div", p: 1 });
+  if (dq1 <= 1e-4) return peakOr({ kind: "div", p: 1 }); // q = 1 (1/(x·ln x)): ∫ ~ ln ln
   return { kind: "unknown" };
 }
 
@@ -1453,7 +1541,7 @@ function pointOf(F, a, b, x0, x1, fmax, xmax) {
   const H = b - a;
   const W = Math.max(x1 - x0, H * 1e-13);
   let c = Number.isFinite(fmax) ? locate(F, Math.max(a, x0 - W), Math.min(b, x1 + W)) : xmax;
-  if (a <= 0 && b >= 0 && Math.abs(c) <= H * 1e-12) c = 0;
+  if (a <= 0 && b >= 0 && Math.abs(c) <= H * 1e-12) return 0; // ∫(1/x; −1; 10⁻¹²): pol je 0, ne b
   if (c - a <= H * 1e-12) c = a;
   if (b - c <= H * 1e-12) c = b;
   return c;
@@ -1477,11 +1565,105 @@ function limitRepair(raw) {
   return { tstar: raw[k + 1][0], lim: ys[k + 1], lerr: 4 * d[k] + 1e-15 * scale };
 }
 
+// ∫ po t ∈ (0, w] od f(c + s·t) v L = ln(1/t) do najmanjše razdalje (ozek vrh, ki ga vozli ne vidijo); ostanek ≤ |f|·t
+function peakIntegral(F, c, s, w) {
+  const L0 = -Math.log(w);
+  const L1 = -Math.log(c === 0 ? 1e-300 : Math.abs(c) * 4 * EPS);
+  if (!(L1 > L0)) return { value: 0, err: Infinity, ok: false };
+  const G = (L) => {
+    const t = Math.exp(-L);
+    return F(c + s * t) * t;
+  };
+  const r = adapt(G, L0, L1, Math.max(8, Math.min(96, Math.ceil((L1 - L0) / 6))));
+  const tmin = Math.exp(-L1);
+  const yc = Math.abs(F(c));
+  const tail = tmin * (Number.isFinite(yc) ? Math.max(yc, Math.abs(F(c + s * tmin))) : Infinity);
+  return { value: r.I, err: r.E + tail, abs: r.abs, ok: Number.isFinite(r.I) && Number.isFinite(tail) && (r.converged || r.E < 1e-6 * Math.abs(r.I)) };
+}
+
+// skrit vrh ob 0 ali krajišču: tipanje f(c ± t) za t = w·10^(−k); vrne c ali null
+function hiddenPeak(F, a, b, r1) {
+  const H = b - a;
+  const scale = Math.abs(r1.I) + r1.abs;
+  const cs = [a, b];
+  if (a < 0 && b > 0) cs.push(0);
+  for (const c of cs) {
+    for (const s of [-1, 1]) {
+      if (s < 0 ? !(c > a) : !(c < b)) continue;
+      const w = Math.min(s < 0 ? c - a : b - c, H) * 0.5;
+      const tmin = c === 0 ? 1e-300 : Math.abs(c) * 1e-15;
+      for (let t = w * 0.1; t > tmin; t *= 0.1) {
+        const y = Math.abs(F(c + s * t));
+        if (Number.isFinite(y) && y > 2 * r1.fseen && y * t > 1e-14 * scale) return c;
+      }
+    }
+  }
+  // vsi vozli so dali 0 (e^(−10⁸(x − 0,3)²)): gosto enakomerno tipanje
+  if (r1.abs === 0) {
+    const N = 4096;
+    for (let i = 0; i < N; i++) {
+      const x = a + (H * (i + 0.5 + 0.1234567 * Math.sin(i))) / N;
+      const y = F(x);
+      if (Number.isFinite(y) && y !== 0) return x;
+    }
+  }
+  return null;
+}
+
+// razdeli pri c (skrit vrh): kosi ob c v L, ostalo običajno
+function splitAt(F, a, b, c, depth, tolAbs) {
+  let value = 0;
+  let err = 0;
+  let abs = 0;
+  const add = (r) => {
+    value += r.value;
+    err += r.err;
+    abs += r.abs || 0;
+  };
+  for (const [u, v, s] of [
+    [a, c, -1],
+    [c, b, 1],
+  ]) {
+    if (!(v > u)) continue;
+    const w = 0.5 * (v - u);
+    const p = peakIntegral(F, c, s, w);
+    if (!p.ok) return UNKNOWN;
+    add(p);
+    const lo = s < 0 ? u : c + w;
+    const hi = s < 0 ? c - w : v;
+    if (hi > lo) {
+      const r = depth < 2 ? finiteCore(F, lo, hi, depth + 1, tolAbs) : UNKNOWN;
+      if (!Number.isFinite(r.value)) return r;
+      add(r);
+    }
+  }
+  return { value, err, abs, singular: true };
+}
+
+// znani skoki (floor, sign, … iz drevesa izraza): računamo po kosih med njimi
+function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0, brk = null) {
+  const B = brk && !depth ? brk(a, b) : null;
+  if (!B || !B.length) return finiteCore(F0, a, b, depth, tolAbs);
+  const xs = [a, ...B.filter((x) => x > a && x < b), b];
+  let value = 0;
+  let err = 0;
+  let abs = 0;
+  for (let i = 0; i + 1 < xs.length; i++) {
+    if (!(xs[i + 1] > xs[i])) continue;
+    const r = finiteCore(F0, xs[i], xs[i + 1], xs.length > 50 ? 1 : 0, tolAbs); // mnogo kosov: brez tipanja vrhov
+    if (!Number.isFinite(r.value)) return r;
+    value += r.value;
+    err += r.err;
+    abs += r.abs || 0;
+  }
+  return { value, err, abs };
+}
+
 const DIVERGES = (at, pv) => ({ value: NaN, diverges: true, at, ...(pv !== undefined ? { pv } : {}) });
 const UNKNOWN = { value: NaN, unknown: true };
 
-// končni [a, b], a < b
-function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0) {
+// končni [a, b], a < b, brez znanih skokov
+function finiteCore(F0, a, b, depth = 0, tolAbs = 0) {
   const H = b - a;
   const seen = new Map();
   const side = (F, c, s) => {
@@ -1504,17 +1686,45 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0) {
   let r1 = adapt(F, a, b, 16, MAX_IV, onStuck, tolAbs);
   if (r1.abort?.nan) return { value: NaN };
   if (r1.abort) return withPv(F0, a, b, r1.abort.c, r1.abort.L, r1.abort.R, depth);
-  if (r1.converged && Number.isFinite(r1.I)) return { value: r1.I, err: r1.E, abs: r1.abs };
+  if (r1.converged && Number.isFinite(r1.I)) {
+    // skrit ozek vrh (e^(−10¹²x²)): vozli ga niso zadeli
+    const hid = depth ? null : hiddenPeak(F0, a, b, r1);
+    if (hid !== null) return splitAt(F0, a, b, hid, depth, tolAbs);
+    // skoki: neodvisno drugo deljenje (13 kosov); razlika je poštena ocena zgrešenega
+    // skoki, ki jih iz drevesa ne poznamo: vsak končni kos še enkrat na dveh polovicah (drugi vozli);
+    // razlika je poštena ocena zgrešenega skoka
+    if (r1.ndone || CHECK_JUMPS) {
+      let I2 = 0;
+      let E2 = 0;
+      let D = 0;
+      for (const w of r1.ivs) {
+        if (w.b - w.a <= 1e-14 * H) {
+          I2 += w.I;
+          E2 += w.err;
+          continue;
+        }
+        const m = 0.5 * (w.a + w.b);
+        const l = gk(F0, w.a, m);
+        const r = gk(F0, m, w.b);
+        I2 += l.I + r.I;
+        E2 += l.err + r.err;
+        D += Math.abs(l.I + r.I - w.I);
+      }
+      if (Number.isFinite(I2) && Number.isFinite(E2)) return { value: I2, err: Math.max(E2, D), abs: r1.abs };
+    }
+    return { value: r1.I, err: r1.E, abs: r1.abs };
+  }
   const ivs = [...r1.stuck, ...r1.worst];
   // točke, bližje od 10⁻⁹·H, so ista točka (prednost imajo a, b, 0 in večja |f|)
   const merge = (list) => {
     const tol = 1e-9 * H;
     const out = [];
     for (const p of list.sort((x, y) => x.c - y.c)) {
-      if (p.c - a <= tol) p.c = a;
-      if (b - p.c <= tol) p.c = b;
+      if (p.c !== 0 && p.c - a <= tol) p.c = a;
+      if (p.c !== 0 && b - p.c <= tol) p.c = b;
       const q = out[out.length - 1];
-      if (q && p.c - q.c <= tol) {
+      const nice2 = (z) => z.c === a || z.c === b || z.c === 0;
+      if (q && p.c - q.c <= tol && !(nice2(p) && nice2(q) && p.c !== q.c)) {
         const nice = (z) => z.c === a || z.c === b || z.c === 0;
         if (!nice(q) && (nice(p) || !(p.f <= q.f))) out[out.length - 1] = p;
       } else out.push(p);
@@ -1559,7 +1769,8 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0) {
     repErr = reps.reduce((e, r) => e + r.tstar * r.lerr, 0);
     r1 = adapt(F, a, b, 16, MAX_IV, null, tolAbs);
   }
-  const sing = info.filter((p) => p.L?.kind === "conv" || p.R?.kind === "conv");
+  const special = (m) => m?.kind === "conv" || m?.kind === "peak";
+  const sing = info.filter((p) => special(p.L) || special(p.R));
   if (!sing.length) {
     // le omejene točke (skok, nihanje): GK z oceno napake
     if (!Number.isFinite(r1.I) || !Number.isFinite(r1.E)) return UNKNOWN;
@@ -1577,18 +1788,18 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0) {
     const v = cuts[i + 1];
     const lm = at(u)?.R;
     const rm = at(v)?.L;
-    const wl = lm?.kind === "conv" ? 0.25 * (v - u) : 0;
-    const wr = rm?.kind === "conv" ? 0.25 * (v - u) : 0;
+    const wl = special(lm) ? 0.25 * (v - u) : 0;
+    const wr = special(rm) ? 0.25 * (v - u) : 0;
     const parts = [];
-    if (wl) parts.push(endpointIntegral(F, u, 1, wl, lm));
-    if (wr) parts.push(endpointIntegral(F, v, -1, wr, rm));
+    if (wl) parts.push(lm.kind === "peak" ? peakIntegral(F, u, 1, wl) : endpointIntegral(F, u, 1, wl, lm));
+    if (wr) parts.push(rm.kind === "peak" ? peakIntegral(F, v, -1, wr) : endpointIntegral(F, v, -1, wr, rm));
     const lo = u + wl;
     const hi = v - wr;
     if (hi > lo) {
       const m = adapt(F, lo, hi, 16, MAX_IV, null, tolAbs);
       if (m.converged && Number.isFinite(m.I)) parts.push({ value: m.I, err: m.E, abs: m.abs, ok: true });
       else if (depth < 2) {
-        const sub = finiteIntegral(F, lo, hi, depth + 1, tolAbs);
+        const sub = finiteCore(F, lo, hi, depth + 1, tolAbs);
         if (!Number.isFinite(sub.value)) return sub;
         parts.push({ ...sub, ok: true });
       } else if (Number.isFinite(m.I) && Number.isFinite(m.E)) parts.push({ value: m.I, err: m.E, abs: m.abs, ok: true });
@@ -1647,26 +1858,30 @@ function withPv(F, a, b, c, L, R, depth) {
  * value je NaN, ko integral ne obstaja (diverges; pv: Cauchyjeva glavna vrednost, at: mesto pola), ko ga ne znamo
  * zanesljivo izračunati (unknown) ali ko je zmanjkalo časa (timeout). err: ocena absolutne napake.
  */
-export function integrateInfo(f, a, b, eps, depth = 0) {
+export function integrateInfo(f, a, b, eps, depth = 0, brk = null) {
   if (Number.isNaN(a) || Number.isNaN(b)) return { value: NaN };
   if (a === b) return { value: 0, err: 0 };
   if (a > b) {
-    const r = integrateInfo(f, b, a, eps, depth);
+    const r = integrateInfo(f, b, a, eps, depth, brk);
     return { ...r, value: -r.value, ...(r.pv !== undefined ? { pv: -r.pv } : {}) };
   }
   const outer = NEST === 0;
   const prevDeadline = DEADLINE;
+  // brk === false: iz drevesa vemo, da integrand nima skokov; sicer (Analiza, graf) vsak izid preveri drugo deljenje
+  const prevCheck = CHECK_JUMPS;
+  CHECK_JUMPS = brk !== false;
   if (outer && !DEADLINE) DEADLINE = now() + DEFAULT_MS;
   NEST++;
   try {
     const F = wrap(f);
-    if (!Number.isFinite(a) || !Number.isFinite(b)) return infiniteIntegral(F, a, b);
-    return finiteIntegral(F, a, b);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return infiniteIntegral(F, a, b, brk);
+    return finiteIntegral(F, a, b, 0, 0, brk || null);
   } catch (e) {
     if (e === BUDGET && outer) return { value: NaN, timeout: true };
     throw e;
   } finally {
     NEST--;
+    CHECK_JUMPS = prevCheck;
     if (outer) DEADLINE = prevDeadline;
   }
 }
@@ -1676,11 +1891,110 @@ function infiniteIntegral() {
   return { value: NaN };
 }
 
-/** Določeni integral (število); NaN, ko ne obstaja, ga ne znamo zanesljivo izračunati ali je zmanjkalo časa. */
-export function integrate(f, a, b, eps = 1e-9) {
-  const r = integrateInfo(f, a, b, eps);
+/** Določeni integral (število); NaN, ko ne obstaja, ga ne znamo zanesljivo izračunati ali je zmanjkalo časa. brk(a, b): znani skoki. */
+export function integrate(f, a, b, eps = 1e-9, brk = null) {
+  if (OVERRIDE && NEST === 0) return OVERRIDE.values[OVERRIDE.i++] ?? NaN;
+  const r = integrateInfo(f, a, b, eps, 0, brk);
   if (TRACE && NEST === 0) TRACE.push(r);
   return r.value;
+}
+
+// fn() z danimi vrednostmi zunanjih integralov (po vrsti), brez računanja: za oceno napake sestavljenega izraza
+let OVERRIDE = null;
+export function withIntegralValues(values, fn) {
+  const prev = OVERRIDE;
+  OVERRIDE = { values, i: 0 };
+  try {
+    return fn();
+  } finally {
+    OVERRIDE = prev;
+  }
+}
+
+/**
+ * Skoki integranda iz drevesa izraza: floor, ceil, round, sign, abs (pregib), mod in pogoji {…}. Vrne funkcijo
+ * (scope, a, b) → urejena mesta skokov v (a, b) ali null (preveč ali neznano). cf: prevajalnik otrok (compile).
+ */
+export function jumpFinder(node, v, cf) {
+  const gs = [];
+  const visit = (n) => {
+    if (!n || typeof n !== "object") return;
+    if (n.k === "call" && n.args?.length) {
+      const f = n.f;
+      if (f === "floor" || f === "ceil") gs.push({ g: cf(n.args[0]), off: 0, step: 1 });
+      else if (f === "round") gs.push({ g: cf(n.args[0]), off: 0.5, step: 1 });
+      else if (f === "sign" || f === "sgn" || f === "abs") gs.push({ g: cf(n.args[0]), off: 0, step: 0 });
+      else if (f === "mod" && n.args.length === 2) {
+        const p = cf(n.args[0]);
+        const q = cf(n.args[1]);
+        gs.push({ g: (sc) => p(sc) / q(sc), off: 0, step: 1 });
+      }
+    }
+    if (n.k === "pw")
+      for (const [cond] of n.cases || [])
+        if (cond?.k === "cmp") for (let i = 0; i + 1 < cond.terms.length; i++) {
+          const l = cf(cond.terms[i]);
+          const r = cf(cond.terms[i + 1]);
+          gs.push({ g: (sc) => l(sc) - r(sc), off: 0, step: 0 });
+        }
+    for (const k in n) if (k !== "k") {
+      const c = n[k];
+      if (Array.isArray(c)) c.forEach((x) => (Array.isArray(x) ? x.forEach(visit) : visit(x)));
+      else if (c && typeof c === "object") visit(c);
+    }
+  };
+  visit(node);
+  if (!gs.length) return null;
+  return (scope, a, b) => {
+    if (!(b > a) || !Number.isFinite(a) || !Number.isFinite(b)) return null;
+    const sc = Object.create(scope);
+    const N = 1024;
+    const out = [];
+    for (const { g, off, step } of gs) {
+      const at = (x) => {
+        sc[v] = x;
+        const y = g(sc);
+        return typeof y === "number" ? y : NaN;
+      };
+      let x0 = a;
+      let y0 = at(a);
+      for (let i = 1; i <= N; i++) {
+        const x1 = i === N ? b : a + ((b - a) * i) / N;
+        const y1 = at(x1);
+        if (Number.isFinite(y0) && Number.isFinite(y1) && y0 !== y1) {
+          // ravni med y0 (izključno) in y1 (vključno)
+          const up = y1 > y0;
+          const inside = (L) => (up ? L > y0 && L <= y1 : L < y0 && L >= y1);
+          const levels = [];
+          if (step) for (let k = Math.ceil(Math.min(y0, y1) - off); k + off <= Math.max(y0, y1); k++) inside(k + off) && levels.push(k + off);
+          else if (inside(0)) levels.push(0);
+          if (levels.length > 2000 || out.length > 5000) return null;
+          for (const L of levels) {
+            // bisekcija g(x) = L
+            let p = x0;
+            let q = x1;
+            for (let it = 0; it < 1100; it++) {
+              const m = 0.5 * (p + q);
+              if (!(m > p && m < q)) break;
+              if (at(m) >= L === up) q = m;
+              else p = m;
+            }
+            out.push(q);
+          }
+        }
+        x0 = x1;
+        y0 = y1;
+      }
+    }
+    // bližnja mesta (in 0, kamor bisekcija le konvergira) združimo
+    const tol = 1e-13 * (b - a);
+    const res = [];
+    for (let x of out.sort((p, q) => p - q)) {
+      if (a < 0 && b > 0 && Math.abs(x) <= tol) x = 0;
+      if (x - a > tol && b - x > tol && !(res.length && x - res[res.length - 1] <= tol)) res.push(x);
+    }
+    return res;
+  };
 }
 
 // ---------- simbolni odvod ----------
