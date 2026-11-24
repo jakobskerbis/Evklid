@@ -17,7 +17,8 @@ Postavljeno 23. 11. 2026 po j-jevi odobritvi.
 
 1. ChatGPT nikoli ne spreminja kode, datotek, konfiguracije ali produkcije.
 2. Claude izvede spremembo samo po j-jevi izrecni odobritvi.
-3. Nobena sprememba se ne združi v `main` ali objavi na evklid.app samodejno.
+3. Noben popravek iz te revizije se ne združi v `main` ali objavi na evklid.app samodejno. (Za druge
+   spremembe veljajo običajna pravila iz `docs/pregled.md`.)
 4. Ta PR nikoli ne vsebuje popravkov. Vsak odobren popravek dobi svojo vejo (`claude/…`) in svoj PR, ki v
    naslovu nosi ID, npr. `AUDIT-007: …`.
 5. Uspešni testi sami po sebi niso dokaz pravilnosti. Samodejna preverjanja nikoli ne pomenijo odobritve
