@@ -82,6 +82,24 @@ test("graf → znanstveni kalkulator: točka na krivulji (x, y) in ploščina �
       const res = await page.locator(".sc-h-row.last .sc-h-res").innerText();
       assert.match(res.replace(/\s/g, ""), /2.*3/, `${where}: ${res}`);
 
+      // graf v stopinjah (pregled #998): ∫ v kalkulatorju pomeni isto kot ploščina na grafu (360/π ≈ 114,59)
+      await page.evaluate(() => {
+        window.back();
+        const g = window.graph;
+        const st = JSON.parse(JSON.stringify(g.state));
+        g.loadState({ ...st, settings: { ...st.settings, deg: true }, items: [{ id: "d1", type: "expr", text: "y = sin(x)", color: 0, tools: { area: [0, 180] } }] });
+      });
+      await tap('[data-act="use-area"]');
+      assert.equal(await page.evaluate(() => window.used), "∫(sin((x)°); 0; 180)", where);
+      await page.press(".sc-input", "Enter");
+      assert.match((await page.locator(".sc-h-row.last .sc-h-res").innerText()).replace(/\s/g, ""), /114,59/, where);
+      await page.evaluate(() => {
+        window.back();
+        const g = window.graph;
+        const st = JSON.parse(JSON.stringify(g.state));
+        g.loadState({ ...st, settings: { ...st.settings, deg: false }, items: [{ id: "u1", type: "expr", text: "f(x) = x^2 - 1", color: 0, tools: { area: [0, 2] } }] });
+      });
+
       // točka na krivulji: dotik krivulje pri x = 1,5 → gumba x in y
       await page.evaluate(() => window.back());
       const pt = await page.evaluate(() => {

@@ -1,6 +1,6 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
+import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
 import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
@@ -1013,7 +1013,8 @@ export function createCalculator(root, opts) {
     let ufn = false;
     walk(body, (n) => n.k === "ufn" && (ufn = true)); // klic funkcije grafa (f(x) + 1): kalkulator je ne pozna
     if (!f || ufn) return null;
-    const sub = v === "x" ? f : null;
+    // graf v stopinjah: v kalkulatorju so integrali v radianih, zato sin(x) → sin((x)°) (isti pomen)
+    const sub = v !== "x" ? null : state.settings.deg ? degreesToCalc(f) : f;
     if (!sub) return null;
     const [a, b] = it.tools.area;
     return `∫(${sub}; ${numIn(Math.min(a, b))}; ${numIn(Math.max(a, b))})${a > b ? "·(-1)" : ""}`;
