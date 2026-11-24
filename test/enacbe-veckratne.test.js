@@ -4,6 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { analyze, solutionTex } from "../public/graph/scisolve.js";
 import { polyRoots, polyRootsMult } from "../public/graph/toolscore.js";
+import fs from "node:fs";
 
 const ENV = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
 const close = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
@@ -84,4 +85,90 @@ test("neenačbe z večkratnimi ničlami ostanejo pravilne", () => {
   assert.deepEqual(iv, [[-2, 1], [1, Infinity]]);
   const iv2 = analyze("(x−5)^3≥0", ENV).intervals.map((i) => [i.lo, i.loIn, i.hi]);
   assert.deepEqual(iv2, [[5, true, Infinity]]);
+});
+
+// ---- 2. krog pregleda (#941): bližnje ničle, ulomki v razstavljenem zapisu, neenačbe ----
+
+test("bližnji različni ničli ostaneta dve (točni ulomki iz vnosa)", () => {
+  const roots = (t) => analyze(t, ENV).roots;
+  assert.deepEqual(roots("(x−1)(x−1,000001)(x+2)=0"), [-2, 1, 1.000001]);
+  assert.deepEqual(roots("(x−0,1)(x−0,1000001)(x−3)=0"), [0.1, 0.1000001, 3]);
+  assert.deepEqual(roots("x^3−3,000001x^2+3,000002x−1,000001=0"), [1, 1.000001]);
+  assert.deepEqual(roots("(x−1)(x−1,0000001)=0"), [1, 1.0000001]);
+});
+
+test("razstavljen zapis z ulomki: brez lažnih kompleksnih (SymPy)", () => {
+  const a = analyze("(x−33/5)^2(x+2)(x−7/4)^4(x−15/2)=0", ENV);
+  assert.deepEqual([a.roots, a.complex], [[-2, 1.75, 6.6, 7.5], []]);
+  const b = analyze("((x+9/5)^2+4)^4=0", ENV);
+  assert.deepEqual([b.roots, b.complex], [[], [[-1.8, -2], [-1.8, 2]]]);
+  const c = analyze("((x+8/7)^2+4)^2((x−10)^2+16)(x−49/3)=0", ENV);
+  assert.equal(c.roots.length, 1);
+  assert.ok(Math.abs(c.roots[0] - 49 / 3) < 1e-14);
+  assert.equal(c.complex.length, 4);
+  const d = analyze("((x−2)^2+25/4)^2(x−8)(x+13/3)(x−157/6)^2=0", ENV);
+  assert.equal(d.roots.length, 3);
+  assert.ok(Math.abs(d.roots[2] - 157 / 6) < 1e-14);
+  assert.deepEqual(d.complex, [[2, -2.5], [2, 2.5]]);
+  // veliki koeficienti (prej polyCoeffs = null in manjkajoča −26,8)
+  const e = analyze("5x^7+774x^6+51282x^5+1885284x^4+41536205x^3+548451550x^2+4018904000x+12608060000=0", ENV);
+  assert.deepEqual(e.roots, [-26.8, -20]);
+});
+
+test("neenačbe: brez lažnih intervalov in točk (primeri iz pregleda)", () => {
+  const iv = (t) => analyze(t, ENV).intervals.map((i) => [i.lo, i.loIn, i.hi, i.hiIn]);
+  const r1 = iv("81x^6+1242x^5+6939x^4+17724x^3+19159x^2+2058x−7203>0"); // (3x + 7)⁴(x² + 6x − 3)
+  assert.equal(r1.length, 2);
+  assert.ok(Math.abs(r1[0][2] - (-3 - 2 * Math.sqrt(3))) < 1e-12 && Math.abs(r1[1][0] - (-3 + 2 * Math.sqrt(3))) < 1e-12);
+  assert.deepEqual(iv("−196x^5−3836x^4−597x^3+282322x^2+398255x−6134700>0"), [[-Infinity, false, -12, false]]);
+  const r3 = iv("5x^7−155x^6+1955x^5−12145x^4+33920x^3−14620x^2−67200x−26000>0");
+  assert.equal(r3.length, 2);
+  assert.equal(r3[0][0], 5);
+  assert.ok(Math.abs(r3[0][2] - (3 + Math.sqrt(13))) < 1e-12 && r3[1][0] === r3[0][2]);
+  assert.deepEqual(iv("x^7−18x^6+128x^5−462x^4+892x^3−876x^2+369x−54>0"), [[6, false, Infinity, false]]);
+  // (x − 2)²(x + 1) ≥ 0: [−1; ∞), dvojna ničla 2 ni izločena; (x − 2)² ≤ 0: samo {2}
+  assert.deepEqual(iv("(x−2)^2(x+1)≥0"), [[-1, true, Infinity, false]]);
+  assert.deepEqual(iv("(x−2)^2≤0"), [[2, true, 2, true]]);
+});
+
+// 1200 naključnih polinomov (SymPy roots(), naključni seed 1, stopnje 2–8, večkratne, kompleksne, iracionalne
+// kvadratne): enačba razvita in razstavljena, neenačbi > 0 in < 0. »main«: kaj je bilo pravilno pred popravkom.
+test("1200 polinomov iz SymPy: nič, kar je bilo pravilno, ne postane napačno", () => {
+  const cases = JSON.parse(fs.readFileSync(new URL("./fixtures/polinomi-sympy.json", import.meta.url)));
+  const near6 = (a, b) => a === b || Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(b));
+  const okEq = (r, c) =>
+    r?.kind === "solve" &&
+    r.roots.length === c.real.length &&
+    r.roots.every((x, i) => near6(x, c.real[i])) &&
+    r.complex.length === c.cx.length &&
+    [...r.complex].sort((a, b) => a[0] - b[0] || a[1] - b[1]).every((z, i) => near6(z[0], c.cx[i][0]) && near6(z[1], c.cx[i][1]));
+  const want = (c, sgn) => {
+    const rr = c.mults.filter((m) => m[1] === 0);
+    const edges = [-Infinity, ...rr.map((m) => m[0]), Infinity];
+    let s = sgn * c.lead * (c.deg % 2 ? -1 : 1);
+    const w = [];
+    for (let i = 0; i + 1 < edges.length; i++) {
+      if (s > 0) w.push([edges[i], edges[i + 1]]);
+      if (i < rr.length && rr[i][2] % 2) s = -s;
+    }
+    return w;
+  };
+  const okIq = (r, w) => r.intervals.length === w.length && r.intervals.every((x, i) => near6(x.lo, w[i][0]) && near6(x.hi, w[i][1]));
+  const count = { eq: 0, fac: 0, gt: 0, lt: 0 };
+  const regress = [];
+  for (const c of cases) {
+    const res = {
+      eq: okEq(analyze(c.eq, ENV), c),
+      fac: okEq(analyze(c.fac, ENV), c),
+      gt: okIq(analyze(c.eq.replace("=0", ">0"), ENV), want(c, 1)),
+      lt: okIq(analyze(c.eq.replace("=0", "<0"), ENV), want(c, -1)),
+    };
+    for (const k in res) {
+      if (res[k]) count[k]++;
+      else if (c.main.split(",").includes(k)) regress.push(`${k}: ${c[k === "fac" ? "fac" : "eq"]}`);
+    }
+  }
+  assert.deepEqual(regress, [], "pravilno pred popravkom, zdaj napačno");
+  // pred popravkom: eq 582, fac 503, > 956, < 990 od 1200
+  assert.ok(count.eq >= 1190 && count.fac >= 1190 && count.gt >= 1190 && count.lt >= 1190, JSON.stringify(count));
 });

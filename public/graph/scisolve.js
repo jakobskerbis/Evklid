@@ -6,7 +6,8 @@ import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
-import { polyRootsMult } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
+import { polyRootsMult, polyRootsExact } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
+import { exactPolyIn } from "./cas.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE]
 const SAMPLES = 20000;
@@ -210,7 +211,19 @@ const periodTex = (unit, comma) => {
 
 // ---------- enačba z eno neznanko ----------
 
-function solveOne(F, v, { comma, unit = "rad", src }) {
+function solveOne(F, v, { comma, unit = "rad", src, exact = null }) {
+  // polinom s točnimi racionalnimi koeficienti (iz drevesa, cas.js): ničle z večkratnostmi brez zaokrožitve
+  const ex = exact && exact.length > 1 ? polyRootsExact(exact) : null;
+  if (ex && ex.poly.length > 1) {
+    const poly = polyCoeffs(F) || ex.poly;
+    if (ex.poly.length === 3) {
+      const q = quadraticExact(poly, v, comma);
+      if (q) return { kind: "solve", v, roots: q.roots, complex: q.complex || [], exact: q.tex, poly };
+    }
+    const roots = ex.roots.filter((r) => r.im === 0).map((r) => clean(r.re));
+    const complex = ex.roots.filter((r) => r.im !== 0).map((r) => [clean(r.re), clean(r.im)]);
+    return { kind: "solve", v, roots, complex, poly };
+  }
   const poly = polyCoeffs(F);
   if (poly) {
     const d = poly.length - 1;
@@ -274,12 +287,20 @@ const CMP_OK = { "<": (d) => d < 0, ">": (d) => d > 0, "<=": (d) => d <= 0, ">="
  * pairs: [[L, R], …] (strani verige a < b ≤ c …), ops: primerjave med njimi.
  * period: rešujemo samo na [0, period) (trigonometrične neenačbe), sicer na vsej realni osi.
  */
-function solveIneq(pairs, ops, v, period = 0) {
+function solveIneq(pairs, ops, v, period = 0, exacts = []) {
   const Fs = pairs.map(([L, R]) => (x) => L(x) - R(x));
   const LO = period ? 0 : -Infinity;
   const HI = period || Infinity;
   let pts = [];
-  for (const F of Fs) {
+  // točne ničle polinomov (cas.js + polyRootsExact): v njih je razlika strani točno 0, drugih točk ne dodajamo
+  const zeros = pairs.map(() => []);
+  for (const [i, F] of Fs.entries()) {
+    const ex = !period && exacts[i] ? polyRootsExact(exacts[i]) : null;
+    if (ex) {
+      for (const r of ex.roots) if (r.im === 0) zeros[i].push(clean(r.re));
+      pts.push(...zeros[i]);
+      continue;
+    }
     const poly = period ? null : polyCoeffs(F);
     if (poly && poly.length > 1)
       for (const [re, im] of polyRoots(poly)) {
@@ -287,10 +308,11 @@ function solveIneq(pairs, ops, v, period = 0) {
       }
     pts.push(...(period ? criticalPoints(F, 0, period, 6000) : criticalPoints(F, -RANGE, RANGE)));
   }
+  const exactAll = !period && pairs.every((_, i) => exacts[i]);
   pts = pts
     .filter((x) => x > LO && x < HI && !(period && near(x, HI, 1e-9)))
     .sort((a, b) => a - b)
-    .filter((x, i, a) => i === 0 || !near(x, a[i - 1], 1e-7));
+    .filter((x, i, a) => i === 0 || (exactAll ? x !== a[i - 1] : !near(x, a[i - 1], 1e-7)));
   // V točki (ničla, pol, rob definicijskega območja) je razlika strani lahko 1e-16 namesto 0
   // in tan(90°) je 1,6·10^16 namesto pola: ničlo zaokrožimo na 0, pol ni rešitev.
   const test = (x, point) => {
@@ -300,7 +322,8 @@ function solveIneq(pairs, ops, v, period = 0) {
         const b = R(x);
         if (typeof a !== "number" || typeof b !== "number" || !Number.isFinite(a) || !Number.isFinite(b)) return false;
         let d = a - b;
-        if (point) {
+        if (point && zeros[i].includes(x)) d = 0;
+        else if (point) {
           const s = Math.max(1, Math.abs(a), Math.abs(b));
           if (Math.abs(d) <= 1e-9 * s) d = 0;
           else if (Math.abs(d) > 1e9 * Math.max(1, Math.min(Math.abs(a), Math.abs(b)))) return false;
@@ -339,6 +362,8 @@ function solveIneq(pairs, ops, v, period = 0) {
     } else cur = { lo: s.lo, loIn: false, hi: s.hi, hiIn: false };
   }
   if (cur) out.push(cur);
+  // interval brez širine ((a; a) ali skoraj) ni rešitev; točka {a} je le, če je zaprta
+  out = out.filter((r) => (r.loIn && r.hiIn) || !Number.isFinite(r.hi - r.lo) || r.hi - r.lo > 1e-9 * Math.max(1, Math.abs(r.lo)));
   // velja na vsej periodi → velja za vsak x
   if (period && out.length === 1 && out[0].lo === LO && out[0].loIn && out[0].hi === HI) out = [{ lo: -Infinity, loIn: false, hi: Infinity, hiIn: false }];
   return { kind: "ineq", v, intervals: out };
@@ -611,7 +636,8 @@ export function analyze(text, env = {}) {
           const L = fnOf(ast.terms[0], v);
           const R = fnOf(ast.terms[1], v);
           const F = (x) => L(x) - R(x);
-          const res = solveOne(F, v, { comma, unit: unitOf(env), src: raw });
+          const exact = exactPolyIn(ast.terms[0], ast.terms[1], scope, v);
+          const res = solveOne(F, v, { comma, unit: unitOf(env), src: raw, exact });
           return { ...res, tex, plot };
         }
         const pairs = [];
@@ -619,7 +645,8 @@ export function analyze(text, env = {}) {
         // periodična neenačba (sin x > 0): rešitve na eni periodi kota, kot pri enačbah
         const P = PERIOD[unitOf(env)];
         const periodic = TRIG.test(raw) && pairs.every(([L, R]) => isPeriodic((x) => L(x) - R(x), P));
-        const res = solveIneq(pairs, ast.ops, v, periodic ? P : 0);
+        const exacts = periodic ? [] : ast.terms.slice(0, -1).map((t, i) => exactPolyIn(t, ast.terms[i + 1], scope, v));
+        const res = solveIneq(pairs, ast.ops, v, periodic ? P : 0, exacts);
         const full = res.intervals.length === 1 && res.intervals[0].lo === -Infinity && res.intervals[0].hi === Infinity;
         return { ...res, ...(periodic && res.intervals.length && !full ? { interval: periodTex(unitOf(env), comma), periodic: true } : {}), tex, plot };
       }

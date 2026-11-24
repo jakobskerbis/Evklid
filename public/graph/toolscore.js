@@ -269,6 +269,14 @@ const primB = (p) => {
   if (g > 1n) p = p.map((x) => x / g);
   return p[p.length - 1] < 0n ? p.map((x) => -x) : p;
 };
+// ⌊√n⌋ za n ≥ 0 (Newton v BigInt)
+const bSqrt = (n) => {
+  if (n < 2n) return n;
+  let x = BigInt(Math.floor(Math.sqrt(Number(n))));
+  while (x * x > n) x = (x + n / x) / 2n;
+  while ((x + 1n) * (x + 1n) <= n) x++;
+  return x;
+};
 const derivB = (p) => (p.length < 2 ? [0n] : p.slice(1).map((x, i) => x * BigInt(i + 1)));
 // psevdo-deljenje: lc(b)^k · a = q·b + r; vrne [q, r]
 function pdivB(a, b) {
@@ -306,6 +314,43 @@ function rootB(p, num, den) {
   let s = 0n;
   for (let i = n; i >= 0; i--) s = s * num + p[i] * den ** BigInt(n - i);
   return s === 0n;
+}
+// število double kot točen ulomek num/2^k
+function dyadic(x) {
+  let e = 0n;
+  while (!Number.isInteger(x) && e < 1100n) {
+    x *= 2;
+    e++;
+  }
+  return [BigInt(x), 2n ** e];
+}
+const bitLen = (a) => (a === 0n ? 0 : bAbs(a).toString(2).length);
+// a/b kot število, tudi ko sta a in b prevelika za double
+function bigRatio(a, b) {
+  const sa = Math.max(0, bitLen(a) - 60);
+  const sb = Math.max(0, bitLen(b) - 60);
+  return (Number(a >> BigInt(sa)) / Number(b >> BigInt(sb))) * 2 ** (sa - sb);
+}
+// Newtonovi koraki za realno ničlo enostavnega celoštevilskega polinoma t, s točnim ostankom (z je točen ulomek):
+// ničla na ~1 ulp tudi pri bližnjih ničlah (1 in 1,000001), da jo nato prepoznamo kot ulomek
+function exactNewton(t, z) {
+  const dt = derivB(t);
+  const n = t.length - 1;
+  for (let k = 0; k < 4; k++) {
+    if (!Number.isFinite(z)) return z;
+    const [num, den] = dyadic(z);
+    let s = 0n;
+    for (let i = n; i >= 0; i--) s = s * num + t[i] * den ** BigInt(n - i);
+    if (s === 0n) return z;
+    let sd = 0n;
+    for (let i = n - 1; i >= 0; i--) sd = sd * num + dt[i] * den ** BigInt(n - 1 - i);
+    if (sd === 0n) return z;
+    const step = bigRatio(s, sd * den);
+    const z2 = z - step;
+    if (z2 === z || !Number.isFinite(z2)) return z;
+    z = z2;
+  }
+  return z;
 }
 // racionalni približek s q ≤ maxQ (verižni ulomek) ali null
 function ratOf(v, maxQ) {
@@ -359,8 +404,9 @@ function mergeClusters(c, zs, rad = 0.05) {
     let d = c;
     // k-kratna ničla se zaradi zaokrožitve koeficientov (~1e-14) razprši za ~(1e-14)^(1/k): širša gruča so različne ničle
     const spread = Math.max(...g.map((w) => C.abs(C.sub(w, cen))));
-    let ok = C.abs(C.sub(z, cen)) < rad * Math.max(1, C.abs(cen)) && spread <= 10 * 1e-13 ** (1 / g.length) * Math.max(1, C.abs(cen));
-    for (let j = 0; j < g.length - 1 && ok; j++, d = derivF(d)) ok = C.abs(hornerC(d, z)) <= 1e-11 * sizeAt(d, z);
+    // združimo le, kar odvodi dokažejo: p, …, p^(k−2) v z so na ravni zaokrožitve (sicer ostanejo vse ničle)
+    let ok = C.abs(C.sub(z, cen)) < rad * Math.max(1, C.abs(cen)) && spread <= 10 * 1e-15 ** (1 / g.length) * Math.max(1, C.abs(cen));
+    for (let j = 0; j < g.length - 1 && ok; j++, d = derivF(d)) ok = C.abs(hornerC(d, z)) <= 2e-14 * sizeAt(d, z);
     if (ok) out.push({ z, m: g.length });
     else if (rad > 1e-7) out.push(...mergeClusters(c, g, rad / 10));
     else out.push(...g.map((z) => ({ z, m: 1 })));
@@ -370,7 +416,14 @@ function mergeClusters(c, zs, rad = 0.05) {
 
 // koeficienti (od najvišje potence) kot celoštevilski polinom (BigInt, od najnižje) ali null, če niso racionalni
 function intPoly(c) {
-  const fr = c.map((v) => ratOf(v, 10000));
+  // samo, če je ulomek točno to število (nekaj ulp): −2504,1055115923755 ni −16446965/6568
+  const fr = c.map((v) => {
+    // vpisana decimalka (1,000001): najkrajši zapis števila ima ≤ 9 decimalk → točen ulomek p/10^k
+    const m = /^(-?)(\d+)(?:\.(\d{1,9}))?$/.exec(String(v));
+    if (m) return { p: BigInt(m[1] + m[2] + (m[3] || "")), q: 10n ** BigInt((m[3] || "").length) };
+    const f = ratOf(v, 10000);
+    return f && Math.abs(Number(f.p) / Number(f.q) - v) <= 4e-16 * Math.abs(v) ? f : null;
+  });
   if (fr.some((f) => !f)) return null;
   const L = fr.reduce((l, f) => (l * f.q) / bGcd(l, f.q), 1n);
   return primB(fr.map((f) => (f.p * L) / f.q).reverse());
@@ -382,12 +435,13 @@ function intPoly(c) {
  * ostale numerično na enostavnih faktorjih tₖ (Durand–Kerner + Newton). Drugače numerično z združevanjem gruč.
  * Vsako ničlo na koncu preverimo v prvotnem polinomu: p^(m−1)(z) ≈ 0. Pari konjugiranih ničel so točno konjugirani.
  */
-export function polyRootsMult(coeffs) {
+export function polyRootsMult(coeffs, exact = null) {
   let c = coeffs.map(Number);
-  while (c.length && Math.abs(c[0]) < 1e-14) c.shift();
+  while (c.length && c[0] === 0) c.shift();
+  if (!exact) while (c.length && Math.abs(c[0]) < 1e-14) c.shift();
   if (c.length < 2 || c.some((v) => !Number.isFinite(v))) return c.length < 2 ? [] : null;
   const found = []; // { z, m, exact }
-  const P = intPoly(c);
+  const P = exact || intPoly(c);
   if (P) {
     // f_0 = f, f_k = gcd(f_{k−1}, f′_{k−1}); s_k = f_{k−1}/f_k (ničle s kratnostjo ≥ k); t_k = s_k/s_{k+1}
     const fs = [P];
@@ -399,9 +453,32 @@ export function polyRootsMult(coeffs) {
       const t = divB(ss[k - 1], ss[k]);
       if (t.length < 2) continue;
       const tf = t.map(Number).reverse();
+      if (t.length === 3) {
+        // enostaven kvadratni faktor: točna diskriminanta (bližnji ničli 1 in 1,000001 ostaneta dve)
+        const [c0, b1, a2] = t;
+        const D = b1 * b1 - 4n * a2 * c0;
+        const sq = bSqrt(bAbs(D));
+        const den = 2 * Number(a2);
+        if (D >= 0n && sq * sq === D) {
+          for (const num of [-b1 - sq, -b1 + sq]) {
+            const g = bGcd(num, 2n * a2) || 1n;
+            found.push({ z: [Number(num / g) / Number((2n * a2) / g), 0], m: k, exact: true });
+          }
+        } else {
+          const r = Math.sqrt(Number(bAbs(D))) / Math.abs(den);
+          const re = -Number(b1) / den;
+          if (D > 0n) {
+            // stabilno: večja po absolutni vrednosti iz vsote, manjša iz produkta c/a
+            const big = re + Math.sign(re || 1) * r;
+            found.push({ z: [big, 0], m: k }, { z: [Number(c0) / Number(a2) / big, 0], m: k });
+          } else found.push({ z: [re, -r], m: k }, { z: [re, r], m: k });
+        }
+        continue;
+      }
       for (let z of dkRoots(tf)) {
         z = newton(tf, z);
-        const q = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? ratOf(z[0], 100000) : null;
+        if (Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z))) z = [exactNewton(t, z[0]), z[1]];
+        const q = Math.abs(z[1]) < 1e-7 * Math.max(1, C.abs(z)) ? ratOf(z[0], 10000000) : null;
         if (q && rootB(t, q.p, q.q)) found.push({ z: [Number(q.p) / Number(q.q), 0], m: k, exact: true });
         else found.push({ z, m: k });
       }
@@ -439,6 +516,24 @@ export function polyRootsMult(coeffs) {
   }
   if (out.reduce((s, r) => s + r.m, 0) !== c.length - 1) return null;
   return out.sort((x, y) => x.re - y.re || x.im - y.im);
+}
+
+/**
+ * Kot polyRootsMult, a s točnimi racionalnimi koeficienti od najvišje potence [{ n, d }] (BigInt; iz cas.js exactPolyIn).
+ * Vrne { roots, poly } (poly: koeficienti kot števila) ali null.
+ */
+export function polyRootsExact(qs) {
+  if (!qs?.length) return null;
+  const L = qs.reduce((l, q) => (l * q.d) / bGcd(l, q.d), 1n);
+  const P = primB(qs.map((q) => (q.n * L) / q.d).reverse());
+  if (P.length < 2) return { roots: [], poly: P.map(Number) };
+  // koeficienti kot števila, deljeni z največjim (da ne preplavijo); ničle se s tem ne spremenijo
+  const big = P.reduce((m, x) => (bAbs(x) > m ? bAbs(x) : m), 0n);
+  const shift = big > 10n ** 300n ? 10n ** BigInt(String(big).length - 300) : 1n;
+  const c = P.map((x) => Number(x / shift)).reverse();
+  if (c.some((x) => !Number.isFinite(x)) || c[0] === 0) return null;
+  const roots = polyRootsMult(c, P);
+  return roots ? { roots, poly: c } : null;
 }
 
 /** Ničle polinoma s koeficienti od najvišje potence. Vrne [[re, im], …], vsako tolikokrat, kolikor je kratna. */
