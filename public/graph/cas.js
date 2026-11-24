@@ -902,6 +902,51 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
   }
 }
 
+/**
+ * AUDIT-050: ali je L − R točno 0, ko črko v zamenjamo z drevesom rep (racionalno, racionalni večkratnik π ali
+ * a + b·ι z ι² = isq, npr. −1 za i ali 3 za √3). Računamo s polinomi v π in ι z racionalnimi koeficienti; ker je π
+ * transcendentno, je izraz 0 natanko takrat, ko so po ι² = isq vsi koeficienti 0. true / false; null, ko točno ne gre
+ * (imenovalec s črko, e, sin, druge črke).
+ */
+export function zeroAtExact(L, Rn, scope, v, rep, isq = -1, ms = LIVE_MS) {
+  const saved = deadline;
+  const sub = (n) => {
+    if (Array.isArray(n)) return n.map(sub);
+    if (!n || typeof n !== "object") return n;
+    if (n.k === "var" && n.name === v) return rep;
+    const o = {};
+    for (const key of Object.keys(n)) o[key] = sub(n[key]);
+    return o;
+  };
+  try {
+    deadline = Date.now() + ms;
+    return withLimit(10n ** 400n, () => {
+      const ctx = { scope, dens: [], dec: false };
+      const a = rat(sub(L), ctx);
+      const b = rat(sub(Rn), ctx);
+      if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+      const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+      if (N.zero) return true;
+      if (N.vars().some((w) => w !== "π" && w !== "ι")) return null;
+      const deg = N.degree("ι");
+      let re = new P();
+      let im = new P();
+      let pw = Q.of(1); // isq^⌊k/2⌋
+      for (let k = 0; k <= deg; k++) {
+        if (k && k % 2 === 0) pw = pw.mul(Q.of(isq));
+        const c = coefIn(N, "ι", k).scale(pw);
+        if (k % 2) im = im.add(c);
+        else re = re.add(c);
+      }
+      return re.zero && im.zero;
+    });
+  } catch {
+    return null;
+  } finally {
+    deadline = saved;
+  }
+}
+
 // ---------- reši za črko ----------
 
 function solveCmd(cmd, line, name, innerTex) {
