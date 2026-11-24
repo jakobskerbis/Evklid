@@ -1,6 +1,6 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum } from "./model.js";
+import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
 import { niceNumber, parse, compile, arityExample } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
@@ -40,7 +40,7 @@ export function createCalculator(root, opts) {
     }
   };
 
-  let state = load() || emptyState();
+  let state = load() || upgrade(emptyState());
   let model = null;
   let focusId = null;
   const undo = [];
@@ -110,6 +110,7 @@ export function createCalculator(root, opts) {
     return null;
   }
   function upgrade(s) {
+    s = upgradeZapis(s); // star zapis (max(1,2), tudi bloki GRAF in shranjeni grafi) → zapis 2 z enakim pomenom
     const base = emptyState();
     // prazen graf vedno začne v običajnem oknu (prej se je lahko shranilo oddaljeno −150 … 150)
     const blank = !s.items.some((it) => it.type !== "expr" || String(it.text || "").trim());
@@ -729,7 +730,8 @@ export function createCalculator(root, opts) {
       if (x?.slider) setS(x.slider, gx);
       if (y?.slider) setS(y.slider, gy);
       if (x?.lit || y?.lit) {
-        const m = /^\s*\((.*),(.*)\)\s*$/.exec(it.text);
+        // o.text: besedilo za parse() (decimalna pika, ločilo »,«), zato točka (1,5; 2) ostane ena točka
+        const m = /^\s*\((.*),(.*)\)\s*$/.exec(o.text || "");
         if (m) {
           const xs = x?.lit ? String(r(gx)) : m[1].trim();
           const ys = y?.lit ? String(r(gy)) : m[2].trim();
@@ -1201,18 +1203,20 @@ export function createCalculator(root, opts) {
   // Plasti 123 in f(x) sta mreži kalkulatorja; Σ in ABC sta skupni. Enter v vrstici doda novo vrstico.
 
   let lastField = null;
+  // V slovenskem zapisu je vejica decimalna, argumente in koordinate loči »;« (kot v znanstvenem kalkulatorju).
+  const SEP = comma() ? ";" : ",";
   const KEYS = {
     "123": [
       ["x", "x"], ["y", "y"], ["a²", "^2", "x²"], ["aᵇ", "^"], ["7"], ["8"], ["9"], ["÷", "/"],
       ["(", "("], [")", ")"], ["<", "<"], [">", ">"], ["4"], ["5"], ["6"], ["×", "*"],
-      ["|a|", "|@|"], [",", ","], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
-      ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], [".", "."], ["=", "="], ["+", "+"],
+      ["|a|", "|@|"], [SEP, SEP], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
+      ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], comma() ? [",", ","] : [".", "."], ["=", "="], ["+", "+"],
     ],
     fx: [
-      ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", "root(@, )"],
+      ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", `root(@${SEP} )`],
       ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["∛", "∛(@)"], ["n!", "!"], ["°", "°"], ["{ : }", "{@ : }"], ["[ ]", "[@]"],
-      ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", "mod(@, )"], ["min", "min(@)"], ["max", "max(@)"],
-      ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", "nCr(@, )"], ["%", "%"],
+      ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", `mod(@${SEP} )`], ["min", "min(@)"], ["max", "max(@)"],
+      ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", `nCr(@${SEP} )`], ["%", "%"],
     ],
   };
   root.dataset.kbScope = "";

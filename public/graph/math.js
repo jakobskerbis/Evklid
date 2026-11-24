@@ -163,6 +163,8 @@ const LISTF = {
 const ALIASES = { asin: "arcsin", acos: "arccos", atan: "arctan", acot: "arccot", arctg: "arctan", tg: "tan", ctg: "cot", sh: "sinh", ch: "cosh", th: "tanh", lg: "log", sqr: "sqrt", asinh: "arsinh", acosh: "arcosh", atanh: "artanh", avg: "mean", ncr: "nCr", npr: "nPr", binom: "nCr" };
 const INVERSE = { sin: "arcsin", cos: "arccos", tan: "arctan", cot: "arccot", sinh: "arsinh", cosh: "arcosh", tanh: "artanh" };
 
+/** Funkcija ene same vrednosti (sin, ln, √ …; tudi sopomenke)? Pri njej vejica med števkami ne more ločiti argumentov. */
+export const oneArgFn = (f) => !!(TRIG[f] || UNARY[f] || TRIG[ALIASES[f]] || UNARY[ALIASES[f]]);
 export const BUILTINS = new Set([...Object.keys(TRIG), ...Object.keys(UNARY), ...Object.keys(MULTI), ...Object.keys(LISTF), "sort", "sum", "prod", "rand", "Pol", "Rec", ...Object.keys(ALIASES)]);
 const CONSTS = { pi: Math.PI, "π": Math.PI, tau: 2 * Math.PI, "τ": 2 * Math.PI, e: Math.E, inf: Infinity };
 const GREEK = { theta: "θ", alpha: "α", beta: "β", gamma: "γ", delta: "δ", lambda: "λ", mu: "μ", phi: "φ", omega: "ω", sigma: "σ", rho: "ρ" };
@@ -194,6 +196,22 @@ export const digitGap = (s) => /(?<![\d_^])\d+[ \t  ]+\d/.test(String(s ?? ""
 export const joinDotThousands = (s) => String(s ?? "").replace(/(?<![\d.,])\d{1,3}(?:\.\d{3})+(?=,\d)/g, (m) => m.replace(/\./g, ""));
 // Dve piki v istem številu (»1.2.3«, »1.234.567«) brez decimalne vejice: zapis ni jasen.
 export const twoDots = (s) => /\d\.\d+\.\d/.test(String(s ?? ""));
+
+/**
+ * Decimalna vejica in ločilo argumentov, enako v znanstvenem in grafičnem kalkulatorju (AUDIT-005).
+ * comma (slovenski zapis): vejica med števkami je decimalna povsod, tudi v oklepaju (sin(0,5) = sin 0,5);
+ * »;« vedno loči argumente (max(1,5; 2)), vejica s presledkom (max(1, 5)) prav tako.
+ * Brez comma (zapis s piko) ostane, kot je bilo: vejica v oklepaju loči argumente.
+ * Vrne besedilo za parse() (decimalna pika, ločilo »,«); »1,2,3« z vejico (dve decimalni vejici) je napaka.
+ */
+export function argSeparators(s, comma = true) {
+  let out = String(s ?? "");
+  if (comma) {
+    out = out.replace(/(\d),(?=\d)/g, "$1.");
+    if (twoDots(out)) throw new MathError("unexpected", { got: "," });
+  }
+  return out.replace(/;/g, ",");
+}
 
 export function normalize(src) {
   return String(src ?? "")
@@ -1407,9 +1425,9 @@ export function toTex(node, opt = {}) {
     case "cmp":
       return n.terms.map((t, i) => (i ? `${CMPTEX[n.ops[i - 1]]} ` : "") + T(t)).join(" ");
     case "tuple":
-      return `\\left(${n.items.map(T).join(",\\ ")}\\right)`;
+      return `\\left(${n.items.map(T).join(`${sep === ";" ? ";" : ","}\\ `)}\\right)`;
     case "list":
-      return `\\left[${n.items.map(T).join(",\\ ")}\\right]`;
+      return `\\left[${n.items.map(T).join(`${sep === ";" ? ";" : ","}\\ `)}\\right]`;
     case "range":
       return `${T(n.a)},\\ldots,${T(n.b)}`;
     case "pw": {
@@ -1490,6 +1508,7 @@ export function fromTex(tex) {
     .replace(/\\\{/g, "{")
     .replace(/\\\}/g, "}")
     .replace(/\{,\}/g, ".")
+    .replace(/;/g, ",") // ločilo argumentov v slovenskem zapisu (toTex s sep »;«)
     .replace(/\^\{([^{}]*)\}/g, "^($1)")
     .replace(/_\{([^{}]*)\}/g, "_($1)")
     .replace(/[{}]/g, (c) => (c === "{" ? "(" : ")"))

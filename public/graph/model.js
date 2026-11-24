@@ -2,7 +2,7 @@
 // kaj vsaka vrstica je (funkcija, krivulja, drsnik, točka …), prevedene funkcije za risanje
 // in vrednosti spremenljivk. Brez DOM (testi v test/graph.test.js).
 import { hasPolRec, vectorTuple } from "./vektor.js";
-import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, MathError, BUILTINS, walk } from "./math.js";
+import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, MathError, BUILTINS, walk, argSeparators, oneArgFn } from "./math.js";
 
 export const RESERVED = new Set(["x", "y", "r", "θ"]);
 const DEF_RE = /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*\(\s*([A-Za-zθ](?:\s*,\s*[A-Za-zθ])*)\s*\)\s*=(?!=)/;
@@ -11,6 +11,42 @@ export const MODELS = ["lin", "quad", "cubic", "quart", "exp", "expe", "pow", "l
 
 let idSeq = 0;
 export const newId = () => `i${Date.now().toString(36)}${(idSeq++).toString(36)}`;
+
+// Zapis števil v vrsticah (AUDIT-005). Graf z »zapis: 2« (grafični kalkulator) bere vrstice kot znanstveni
+// kalkulator: v slovenskem zapisu je vejica med števkami decimalna povsod (sin(0,5x) = sin(0,5·x)), argumente
+// loči »;« (ali vejica s presledkom). Graf brez »zapis« (stari shranjeni grafi, bloki GRAF inštruktorja, skener)
+// bere vejico kot prej: decimalna le zunaj oklepajev, v oklepaju loči argumente.
+export const ZAPIS = 2;
+const ONE_ARG_NAMES = [...BUILTINS].filter(oneArgFn).sort((a, b) => b.length - a.length);
+/**
+ * Star zapis → zapis 2 z enakim pomenom: vejica med števkami v oklepaju je bila ločilo, zato dobi presledek
+ * (max(1,2) → max(1, 2), (1,5) → (1, 5)); vejica zunaj oklepajev ostane decimalna (y = 0,5x).
+ * Izjema: neposredno v funkciji ene vrednosti (sin(0,5x), √(2,25)) je vejica ostala decimalna, ker je star zapis
+ * tam drugo vrednost tiho izpustil (sin(0,5x) je risal y = 0); tak zapis je mislil 0,5.
+ */
+export function migrateText(text) {
+  const stack = []; // za vsak odprt oklepaj: ali je oklepaj funkcije ene vrednosti
+  let out = "";
+  const s = String(text ?? "");
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if ("([{".includes(c)) {
+      const run = /[A-Za-z]*$/.exec(s.slice(0, i))[0];
+      stack.push(c === "(" && (ONE_ARG_NAMES.some((n) => run.endsWith(n)) || /√$/.test(s.slice(0, i).trimEnd())));
+    } else if (")]}".includes(c)) stack.pop();
+    out += c;
+    if (c === "," && stack.length && !stack[stack.length - 1] && /\d/.test(s[i - 1] || "") && /\d/.test(s[i + 1] || "")) out += " ";
+  }
+  return out;
+}
+/** Star graf (brez »zapis«) → zapis 2: besedila vrstic z enakim pomenom (migrateText). */
+export function upgradeZapis(state) {
+  if (!state || state.zapis === ZAPIS) return state;
+  const items = (state.items || []).map((it) => (it.type === "expr" && typeof it.text === "string" ? { ...it, text: migrateText(it.text) } : it));
+  return { ...state, items, zapis: ZAPIS };
+}
+/** Besedilo vrstice za parse(): pri zapisu 2 decimalna vejica in »;« kot v znanstvenem kalkulatorju. */
+const lineText = (text, v2, comma) => (v2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
 
 /** Prazen graf. */
 export function emptyState() {
@@ -50,16 +86,27 @@ const err = (code, info = {}) => ({ code, info });
 export function buildModel(state, { comma = true } = {}) {
   const deg = !!state.settings?.deg;
   const items = state.items || [];
+  const v2 = state.zapis === ZAPIS;
+  const texts = new Map(); // vrstica → besedilo za parse() (ali napaka zapisa števila)
+  for (const it of items) {
+    if (it.type !== "expr") continue;
+    try {
+      texts.set(it, lineText(it.text, v2, comma));
+    } catch (e) {
+      texts.set(it, e);
+    }
+  }
+  const textOf = (it) => (typeof texts.get(it) === "string" ? texts.get(it) : "");
   const funcNames = new Set();
   for (const it of items) {
     if (it.type !== "expr") continue;
-    const d = definitionOf(it.text);
+    const d = definitionOf(textOf(it));
     if (d) funcNames.add(d.name);
   }
   const scope = Object.create(null);
   const funcs = {};
   const ctx = { deg, funcs, global: scope };
-  const texOpt = { comma };
+  const texOpt = { comma, sep: v2 && comma ? ";" : "," };
   const out = items.map((it) => ({ id: it.id, type: it.type, src: it }));
 
   // 1. razčlenimo
@@ -73,12 +120,14 @@ export function buildModel(state, { comma = true } = {}) {
       o.kind = "table";
       continue;
     }
-    const text = String(it.text || "");
-    if (!text.trim()) {
+    if (!String(it.text || "").trim()) {
       o.kind = "empty";
       continue;
     }
+    const text = textOf(it);
+    o.text = text;
     try {
+      if (texts.get(it) instanceof Error) throw texts.get(it);
       o.ast = parse(text, { funcs: funcNames });
       o.tex = toTex(o.ast, texOpt);
     } catch (e) {
@@ -92,7 +141,7 @@ export function buildModel(state, { comma = true } = {}) {
   const seqNames = new Set();
   for (const o of out) {
     if (o.kind || !o.ast) continue;
-    const d = definitionOf(o.src.text);
+    const d = definitionOf(o.text);
     if (!d || d.params.length !== 1 || o.ast.k !== "cmp" || o.ast.ops.length !== 1 || o.ast.ops[0] !== "=") continue;
     let self = false;
     walk(o.ast.terms[1], (n) => n.k === "ufn" && n.f === d.name && (self = true));
@@ -133,7 +182,7 @@ export function buildModel(state, { comma = true } = {}) {
       }
     }
     // f(x) = …
-    const def = definitionOf(o.src.text);
+    const def = definitionOf(o.text);
     if (def && a.k === "cmp" && a.ops.length === 1 && a.ops[0] === "=") {
       const body = a.terms[1];
       if (defineName(def.name, o)) {
