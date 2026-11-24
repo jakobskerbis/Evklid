@@ -1668,6 +1668,13 @@ function finiteIntegral(F0, a, b, depth = 0, tolAbs = 0, brk = null) {
   let value = 0;
   let err = 0;
   let abs = 0;
+  // mesto skoka poznamo le na nekaj zaokrožitev natančno: napaka ≤ velikost skoka · 8 ulp (sign(sin x) do 10⁴: 3183 skokov)
+  for (let i = 1; i + 1 < xs.length; i++) {
+    const x = xs[i];
+    const d = 8 * EPS * Math.max(Math.abs(x), 1e-300);
+    const jmp = Math.abs(F0(x + d) - F0(x - d));
+    err += Number.isFinite(jmp) ? jmp * d : 0;
+  }
   for (let i = 0; i + 1 < xs.length; i++) {
     if (!(xs[i + 1] > xs[i])) continue;
     const many = xs.length > 50; // mnogo kosov (floor(1000x)): brez tipanja vrhov, kos začnemo z dvema deloma
@@ -2091,7 +2098,8 @@ export function jumpFinder(node, v, cf) {
   return (scope, a, b) => {
     if (!(b > a) || !Number.isFinite(a) || !Number.isFinite(b)) return null;
     const sc = Object.create(scope);
-    const N = 1024;
+    // mreža N točk; pri nihajočem argumentu (sign(sin x) na [0, 10⁴]) gostimo, dokler se število skokov ne ustali
+    const scan = (N) => {
     const out = [];
     for (const { g, off, step } of gs) {
       const at = (x) => {
@@ -2111,7 +2119,7 @@ export function jumpFinder(node, v, cf) {
           const levels = [];
           if (step) for (let k = Math.ceil(Math.min(y0, y1) - off); k + off <= Math.max(y0, y1); k++) inside(k + off) && levels.push(k + off);
           else if (inside(0)) levels.push(0);
-          if (levels.length > 2000 || out.length > 5000) return null;
+          if (levels.length > 2000 || out.length > 20000) return null;
           for (const L of levels) {
             // g(x) = L: regula falsi (Illinois; linearni g v nekaj korakih), sicer bisekcija; q je prva točka na
             // drugi strani ravni
@@ -2153,6 +2161,15 @@ export function jumpFinder(node, v, cf) {
       if (x - a > tol && b - x > tol && !(res.length && x - res[res.length - 1] <= tol)) res.push(x);
     }
     return res;
+    };
+    let prev = scan(1024);
+    for (const N of [4096, 16384, 65536]) {
+      if (!prev) return null;
+      const cur = scan(N);
+      if (!cur || cur.length === prev.length) return cur;
+      prev = cur;
+    }
+    return null; // se ni ustalilo: skokov ne poznamo (preverjanje brez drevesa)
   };
 }
 

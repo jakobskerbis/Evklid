@@ -34,6 +34,44 @@ test("brez F ali z neskončno mejo ostane »ni mogoče zanesljivo« (ne izmišlj
   assert.ok(analyze("∫(sin(x);0;1e4)", { ...ENV, live: true }).error, "predogled");
 });
 
+test("pol in nihanje skupaj: nikoli »=« (F(b) − F(a) čez pol), ostane »ni mogoče zanesljivo« ali »ne obstaja«", () => {
+  const DIV = [
+    "∫(1/(x−1)+sin(x);0;1e4)",
+    "∫(1/(x−2)+cos(x);0;1e4)",
+    "∫(1/(x^2−1)+cos(x);−5000;5000)",
+    "∫(x/(x^2−4)+sin(x);−1e4;1e4)",
+    "∫(1/(x·ln(x))+sin(x);0.5;1e4)",
+    "∫(1/(x−1)+sin(x)^2;0;1e4)",
+    "∫(1/(x^2−1)+sin(1000x);−1e4;1e4)",
+    "∫(1/(x^2−1)+cos(300x);−1e4;1e4)",
+    "∫(1/(x^2−1)+sin(x)^2;−1e4;1e4)",
+    "∫(x/(x^2−4)+sin(1000x);−1e4;1e4)",
+    "∫(x/(x^2−4)+cos(300x);−1e4;1e4)",
+    "∫(x/(x^2−4)+sin(x)^2;−1e4;1e4)",
+    "∫(1/(x·ln(x))+sin(1000x);0.5;1e4)",
+    "∫(1/(x·ln(x))+cos(300x);0.5;1e4)",
+    "∫(1/(x·ln(x))+sin(x)^2;0.5;1e4)",
+    "∫(tan(x)+sin(x);0;1e4)",
+    "∫(1/x+cos(x);−1e4;1e4)",
+  ];
+  for (const t of DIV) {
+    const r = analyze(t, ENV);
+    assert.ok(r.error && ["intUnknown", "intDiverge", "intTimeout"].includes(r.error.code), `${t}: ${JSON.stringify(r)}`);
+  }
+  // zvezen F ostane točen: imenovalec brez ničle
+  const r = analyze("∫(sin(x)·cos(x)/(1+sin(x)^2);0;1e4)", ENV);
+  assert.ok(r.kind === "value" && !r.est && Math.abs(r.value - Math.log(1 + Math.sin(1e4) ** 2) / 2) < 1e-12, JSON.stringify(r));
+});
+
+test("nihajoč argument skoka (sign(sin x) na [0, 10⁴]): vsi skoki najdeni, mesta pravilna", () => {
+  // 1591 polnih period, ostanek r = 3,4521762773 > π: 2π − r
+  const r = analyze("∫(sign(sin(x));0;1e4)", ENV);
+  const want = 2.8310090299016713;
+  assert.ok(r.kind === "value" && r.est, JSON.stringify(r));
+  const d = String(r.value).replace(/^-?0?\.?/, "").replace(".", "").length;
+  assert.ok(Math.abs(r.value - want) <= 10 ** (Math.floor(Math.log10(Math.abs(r.value))) - d + 1), `${r.value} vs ${want}`);
+});
+
 test("senčenje: vlečenje meja ne nabira izračunov, zadnji se izvede enkrat", async () => {
   const calls = [];
   const realST = globalThis.setTimeout;
