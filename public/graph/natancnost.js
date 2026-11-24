@@ -17,7 +17,11 @@ const bits = (a) => (a === 0n ? 0 : abs(a).toString(2).length);
 const gcd = (a, b) => {
   a = abs(a);
   b = abs(b);
-  while (b) [a, b] = [b, a % b];
+  // velika števila ((1/3)^40000 + (1/7)^40000): Evklid je počasen, zato časovna meja
+  for (let i = 1; b; i++) {
+    [a, b] = [b, a % b];
+    if ((i & 255) === 0) tick();
+  }
   return a;
 };
 const lg = (x) => (x.n === 0n ? -Infinity : bits(x.n) - bits(x.d)); // log2 |x| na ±1
@@ -156,7 +160,8 @@ const LN10 = () => cached("ln10", () => ln(int(10)));
 
 // Σ členov: člen_0 = first, člen_k = next(člen_{k−1}, k); x je v fiksni vejici xf (|x| < 1)
 function series(x, first, next) {
-  const W = BigInt(P + 30);
+  // fiksna vejica z P + 30 biti za majhnim x: sicer je sin(10⁻²⁰⁰) pri 256 in 512 bitih 0 (»zanesljiva« 0)
+  const W = BigInt(P + 30 + (x.n === 0n ? 0 : Math.max(0, -lg(x))));
   const one = 1n << W;
   const xf = (x.n << W) / x.d;
   const mw = (a, b) => (a * b) / one;
@@ -176,6 +181,7 @@ function exp(x) {
   if (lg(x) > 40) no();
   // x = k·ln 2 + r, |r| ≤ ln 2 / 2; e^r = (e^(r/2^h))^(2^h)
   const k = Math.round(toNumber(x) / Math.LN2);
+  if (Math.abs(k) > MAXBITS) no(); // e^(10⁸): sicer premik za 10⁸ bitov, preden mk zavrne prevelik rezultat
   const r = sub(x, mul(int(k), LN2()));
   const h = 12;
   let y = series(scaled(r, -h), (one) => one, (t, xf, i, mw) => mw(t, xf) / BigInt(i));
@@ -200,7 +206,7 @@ function ln(x) {
     kk--;
   }
   const z = div(sub(m, ONE()), add(m, ONE()));
-  const W = BigInt(P + 30);
+  const W = BigInt(P + 30 + (z.n === 0n ? 0 : Math.max(0, -lg(z)))); // ln(1 + 10⁻²⁰⁰) ni 0 (kot pri series)
   const one = 1n << W;
   const zf = (z.n << W) / z.d;
   const z2 = (zf * zf) / one;
@@ -237,9 +243,9 @@ function sinCos(x) {
   let s = series(a, (one, xf) => xf, (t, xf, k, mw) => -mw(mw(t, xf), xf) / BigInt(2 * k * (2 * k + 1)));
   let c = series(a, (one) => one, (t, xf, k, mw) => -mw(mw(t, xf), xf) / BigInt((2 * k - 1) * 2 * k));
   for (let i = 0; i < h; i++) [s, c] = [mul(int(2), mul(s, c)), sub(ONE(), mul(int(2), mul(s, s)))];
-  // napaka: |sin′|, |cos′| ≤ 1
-  const E = Math.max(x.E, r.E, s.E, c.E) + 2;
-  return [withE(s, E), withE(c, E)];
+  // napaka: |sin′|, |cos′| ≤ 1; napaka cos (≈ 2^−P) ne velja za sin (sin(10⁻²⁰⁰) ni šum okoli 0)
+  const E = Math.max(x.E, r.E) + 2;
+  return [withE(s, Math.max(E, s.E + 2)), withE(c, Math.max(E, c.E + 2))];
 }
 
 // ---------- drevo ----------
@@ -270,7 +276,9 @@ function powHP(a, b) {
   if (isInt(b)) {
     const e = b.n;
     if (e === 0n) return ONE();
-    if (abs(e) > 100000n || Math.max(1, Math.abs(lg(a))) * Number(abs(e)) > MAXBITS) no();
+    // točna osnova: velikost števca in imenovalca ((1 + 10⁻²⁰)^(10⁵) ima imenovalec 10^(2·10⁶))
+    const size = a.ex ? Math.max(bits(a.n), bits(a.d)) : Math.max(1, Math.abs(lg(a)));
+    if (abs(e) > 100000n || size * Number(abs(e)) > MAXBITS) no();
     if (a.n === 0n) {
       if (e < 0n) no();
       return a;
@@ -287,7 +295,8 @@ function powHP(a, b) {
     return e < 0n ? div(ONE(), r) : r;
   }
   // racionalni eksponent p/q: koren (lihi koren negativnega je realen kot v math.js: (−8)^(1/3) = −2)
-  if (b.ex && b.d <= 64n) return powHP(root(a, Number(b.d)), int(b.n));
+  // negativna osnova le z lihim imenovalcem do 15 kot pow v math.js: (−2)^(1/17) tam ni definirano
+  if (b.ex && b.d <= 64n && (a.n >= 0n || b.d <= 15n)) return powHP(root(a, Number(b.d)), int(b.n));
   if (sign(a) <= 0) no();
   return exp(mul(b, ln(a)));
 }
@@ -327,7 +336,10 @@ function ev(node, scope, ctx) {
       if (per) return mk(ctx.unit === "grad" ? 200n : 180n, BigInt(180 * per), true);
       const v = scope?.[node.name];
       if (typeof v !== "number") no();
-      return fromNumber(v);
+      // Ans in spremenljivke so double (Ans = 1 : 3 = 0,3333333333333333): necelo število ima napako ~2^−53,
+      // sicer bi bil Ans·3 − 1 »natančno« −10⁻¹⁶ namesto 0
+      const x = fromNumber(v);
+      return x.d === 1n ? x : mk(x.n, x.d, false, lg(x) - 52);
     }
     case "grp":
       return c(node.a);
@@ -403,6 +415,11 @@ export function precise(node, scope, { unit = "rad", ms = 40 } = {}) {
       const x = ev(node, scope, { unit });
       if (x.ex) return { value: toNumber(x), exact: true, zero: x.n === 0n, ...(x.d === 1n ? { int: x.n } : {}) };
       const z = isZero(x);
+      // 0 le, če je napaka res majhna (sin π: 2^−250); sicer je vrednost šum (sin(10⁻²⁰⁰) brez dovolj bitov)
+      if (z && !(x.E < -P / 2)) {
+        prev = null;
+        continue;
+      }
       const v = z ? 0 : toNumber(x);
       // zanesljivih vsaj 20 mest (napaka ≤ 2^−66 vrednosti) in enako pri dvojni natančnosti
       if (prev && z === prev.z && (z || (lg(x) - x.E > 66 && Math.abs(v - prev.v) <= 1e-15 * Math.abs(v)))) return { value: v, exact: false, zero: z };

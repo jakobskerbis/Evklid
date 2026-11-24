@@ -81,3 +81,24 @@ test("AUDIT-049: hitro tudi pri velikih številih", () => {
   for (const t of ["2^100000", "100!-99!", "e^(700)-e^(699)", "sqrt(10^300+1)-10^150", "sin(10^300)"]) evaluate(t, { ...ENV });
   assert.ok(Date.now() - t0 < 1500, `${Date.now() - t0} ms`);
 });
+
+// pregled (AUDIT-049): majhen argument ni »zanesljiva« 0, šum ni 0, Ans je double, negativna osnova kot v math.js
+test("AUDIT-049 pregled: sin(10⁻²⁰⁰) ni 0, Ans·3 − 1 je 0, (−2)^(1/17) ni definirano", () => {
+  for (const [t, want] of [["sin(10^(-200))", 1e-200], ["tan(10^(-200))", 1e-200], ["sin(10^(-200))·10^200", 1], ["ln(1+10^(-200))", 1e-200]]) {
+    const v = evaluate(t, { ...ENV }).value;
+    assert.ok(rel(v, want) < 1e-14, `${t}: ${v}`);
+  }
+  assert.ok(rel(evaluate("sin(10^(-200))", { ...ENV, deg: true }).value, 1.7453292519943295e-202) < 1e-14);
+  assert.equal(evaluate("Ans·3-1", { ...ENV, ans: 1 / 3 }).value, 0);
+  assert.equal(evaluate("x·3-2", { ...ENV, vars: { x: 2 / 3 } }).value, 0);
+  assert.ok(Number.isNaN(evaluate("(-2)^(1/17)", { ...ENV }).value));
+  assert.equal(evaluate("(-8)^(1/3)", { ...ENV }).value, -2);
+});
+
+test("AUDIT-049 pregled: časovna meja tudi pri e^(10⁸), velikih ulomkih in potencah", () => {
+  for (const t of ["exp(10^8)", "(1/3)^40000+(1/7)^40000", "3^100000/2^100000", "(1+10^(-20))^(10^5)"]) {
+    const t0 = Date.now();
+    evaluate(t, { ...ENV, live: true });
+    assert.ok(Date.now() - t0 < 150, `${t}: ${Date.now() - t0} ms`);
+  }
+});
