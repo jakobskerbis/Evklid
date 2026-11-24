@@ -7,7 +7,8 @@
 // razdelkov »Pogoste napake« in »Preveri se«, kjer napačni računi stojijo namenoma.
 // Uporaba: checkArithmetic(bodyMarkdown) → { checked, mismatches: [{ line, tex, left, right, rel }] }
 
-const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|neresnič|protislov|nemogoč|nima rešit|nesmisel|ne drži|✗/i;
+// Tudi namerno napačna razlaga napačne možnosti (»**D** dobimo, če vzamemo, da je 1 bar = 1000 Pa«; AUDIT-058).
+const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|neresnič|protislov|nemogoč|nima rešit|nesmisel|ne drži|✗|dobimo,? če|če vzamemo|če pozabimo|(?<!\p{L})bi (?:dobil|dobili|bilo|bil)(?!\p{L})/iu;
 const LOOSE_LINE = /ocen|približ|zaokrož/i; // ocenjevanje: 48² ≈ 50² = 2500
 const SKIP_TEX = /\\(pm|mp|le|ge|leq|geq|neq|ne|lt|gt|in|to|rightarrow|Rightarrow|longrightarrow|iff|implies|infty|ldots|cdots|dots|equiv|sim|propto)\b|[<>≤≥≠→]/;
 const SEP = /(=|\\approx|\\doteq)/;
