@@ -4,6 +4,7 @@
 import { simplify, diff, toTex, MathError } from "./math.js";
 import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
+import { antiderivativeAst } from "./calculus.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
 import { polyRootsMult, polyRootsExact } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
@@ -800,6 +801,54 @@ export function polRec(text, env = {}) {
  * - plot: enačba z dvema neznankama (narišemo jo)
  * Vsi razen value/complex/bool/func imajo plot: [izrazi za grafični kalkulator].
  */
+// Številski integral je približek (»≈«). Če znamo nedoločeni integral F (preverjen z odvodom, public/graph/calculus.js)
+// in se F(b) − F(a) ujema s številskim izidom v njegovi oceni napake (tako F na intervalu nima skoka), je to točna
+// vrednost (»=«): ∫(1/√x; 0; 1) = 2. live: predogled med tipkanjem, s kratko mejo za računanje F.
+export function exactIntegral(raw, env, r) {
+  const info = r?.int;
+  if (!info || !Number.isFinite(info.value) || !(info.err >= 0)) return r;
+  try {
+    const line = compileLine(raw, env);
+    let n = line.ast;
+    while (n.k === "grp") n = n.a;
+    if (n.k !== "int" || !n.lo || !n.hi) return r;
+    // brez dovolj natančnega številskega izida ne moremo preveriti, da F na intervalu nima skoka
+    if (!(info.err <= 1e-6 * Math.max(1, Math.abs(info.value)))) return r;
+    const F = antiderivativeAst(line, n.a, n.v, env.live ? 25 : undefined);
+    if (!F) return r;
+    const Ff = line.run(F);
+    const at = (x) => {
+      const sc = Object.create(line.scope);
+      sc[n.v] = x;
+      const y = Ff(sc);
+      return typeof y === "number" ? y : NaN;
+    };
+    const a = line.run(n.lo)(line.scope);
+    const b = line.run(n.hi)(line.scope);
+    // F v krajišču ni definirana (x·ln x − x pri 0): enostranska limita, če se vrednosti ob krajišču ustalijo
+    let lim = false;
+    const end = (x, s) => {
+      const y = at(x);
+      if (Number.isFinite(y)) return y;
+      lim = true;
+      // neskončna meja (−e^(−x)(x + 1) pri ∞): vrednosti pri ±10¹², ±10¹⁵
+      const inf = !Number.isFinite(x);
+      const h = Math.abs(b - a);
+      const y1 = inf ? at(Math.sign(x) * 1e12) : at(x + s * h * 1e-13);
+      const y2 = inf ? at(Math.sign(x) * 1e15) : at(x + s * h * 1e-16);
+      return Math.abs(y1 - y2) <= 1e-9 * Math.max(1, Math.abs(y2)) ? y2 : NaN;
+    };
+    const s = b > a ? 1 : -1;
+    let exact = end(b, -s) - end(a, s);
+    if (lim) exact = Number(exact.toPrecision(12)); // limita iz F(a + 10⁻¹⁶): šum v zadnjih mestih
+    if (!Number.isFinite(exact) || Math.abs(exact - info.value) > Math.max(4 * info.err, 1e-13 * Math.abs(exact))) return r;
+    const { approx, est, ...rest } = r;
+    return { ...rest, value: exact };
+  } catch {
+    return r;
+  }
+}
+
 export function analyze(text, env = {}) {
   const comma = env.comma !== false;
   const vars = env.vars || {};
@@ -847,7 +896,7 @@ export function analyze(text, env = {}) {
   const pr = polRec(raw, env);
   if (pr) return pr;
   const r = evaluate(raw, env);
-  if (r && !r.error) return { kind: "value", ...r };
+  if (r && !r.error) return { kind: "value", ...(r.est ? exactIntegral(raw, env, r) : r) };
   if (!r) return null;
   const code = r.error.code;
   if (code !== "missing" && code !== "notCalc") return r;
