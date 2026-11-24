@@ -352,6 +352,13 @@ export function normalize(src) {
 
 const LETTER = /[A-Za-zα-ωΑ-Ωθπτ]/;
 
+// Število, ki ga double ne zapiše točno (celo z več kot 15 mesti, npr. 166381621938133156, ali več kot 9 decimalk):
+// besedilo ostane v drevesu (raw), da ga točna pot (cas.js) prebere brez zaokrožitve (AUDIT-021).
+const exactText = (txt) => {
+  const [i, f = ""] = txt.replace(/^\./, "0.").split(".");
+  const digits = i.replace(/^0+/, "").length + f.length;
+  return digits > 15 || f.replace(/0+$/, "").length > 9 ? { raw: txt } : undefined;
+};
 export function tokenize(src) {
   const s = normalize(src);
   const out = [];
@@ -390,12 +397,12 @@ export function tokenize(src) {
       if (depth === 0 && !txt.includes(".") && s[i + txt.length] === "," && /\d/.test(s[i + txt.length + 1] || "")) {
         const m2 = /^\d+/.exec(s.slice(i + txt.length + 1));
         txt = `${txt}.${m2[0]}`; // enako dolg kot »2,5«
-        push("num", Number(txt));
+        push("num", Number(txt), exactText(txt));
         i += txt.length;
         continue;
       }
       if (txt.endsWith(".") && s[i + txt.length] === ".") txt = txt.slice(0, -1); // 1...5
-      push("num", Number(txt));
+      push("num", Number(txt), exactText(txt));
       i += txt.length;
       continue;
     }
@@ -607,7 +614,10 @@ export function parse(src, { funcs = new Set() } = {}) {
   function primary() {
     const tok = peek();
     if (!tok) throw new MathError("end");
-    if (tok.t === "num") return N(next().v);
+    if (tok.t === "num") {
+      const t = next();
+      return t.raw ? { k: "num", v: t.v, raw: t.raw } : N(t.v);
+    }
     if (tok.t === "(") {
       next();
       const items = [];
