@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-057
+**Naslednji prosti ID:** AUDIT-058
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -57,6 +57,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-054 | P3 | Kalkulator, izpis | Integrand iz več členov brez oklepaja: `∫(x²−1;0;2)` → ∫₀² x² − 1 dx (dvoumno); `math.js toTex` | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (#998), 24. 11. | [#999](https://github.com/jakobskerbis/Evklid/pull/999) |
 | AUDIT-055 | P2 | Kalkulator, predogled | V DEG/GRA predogled odvoda in integrala računa v stopinjah, rezultat v radianih: `∫(sin(x);0;π)` predogled ≈ 0,0861, rezultat 2; `d/dx(sin(x);0)` 0,01745 proti 1 | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (pregled #997), 24. 11. | [#1005](https://github.com/jakobskerbis/Evklid/pull/1005) |
 | AUDIT-056 | P3 | Grafični kalkulator, RTL | V arabščini (dir="rtl") so oznake na platnu obrnjene: točka (2; 1) kot »(1;2)«, os »5−« | PRIPRAVLJENO ZA PONOVNI PREGLED | `826c860` | Claude (pregled #997), 24. 11. | [#1006](https://github.com/jakobskerbis/Evklid/pull/1006) |
+| AUDIT-057 | P3 | 3D graf, RTL | V arabščini (dir="rtl") so oznake osi 3D grafa (Orodja → Analiza) obrnjene: »5−« namesto »−5« | PRIPRAVLJENO ZA PONOVNI PREGLED | `1796b90` | Claude (pregled #1006), 25. 11. | [#1019](https://github.com/jakobskerbis/Evklid/pull/1019) |
 
 ## Zgodovina statusov
 
@@ -93,3 +94,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: AUDIT-052 in AUDIT-053 (Claude); prvotno označena kot AUDIT-048/050, kar je že zasedla druga seja – preštevilčeno, naslova PR #992 in #993 popravljena. Veriga urejevalnika #945, #970–#974, #965 združena (j); #986 zaprt, ker ga vsebuje veriga.
 - 24. 11. 2026: AUDIT-054 (Claude, ob #998): oklepaj okoli integranda v zapisu ∫, popravek #999.
 - 24. 11. 2026: AUDIT-002 popravek #1004 (Claude, po pregledu #997: neskončne vrste); AUDIT-055 (#1005) in AUDIT-056 (#1006) iz pregleda #997.
+- 25. 11. 2026: AUDIT-057 (Claude, iz pregleda #1006): oznake 3D grafa v RTL, popravek #1019.
