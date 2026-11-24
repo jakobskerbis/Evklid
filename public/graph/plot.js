@@ -1432,6 +1432,10 @@ export class GraphView {
       if (!tap && this.trace?.types) this.shown.push({ x: this.trace.x, y: this.trace.y });
       this.trace = tap ? this.trace : null;
     }
+    // označena točka (posebna točka ali točka na krivulji) → calc.js »Uporabi v računu«
+    if (m?.type === "poi" && tap) this.hooks.onMark?.(this.shown.includes(m.poi) ? m.poi : null);
+    else if (m?.type === "trace") this.hooks.onMark?.(this.trace || this.shown[this.shown.length - 1] || null);
+    else if (m?.type === "pan" && !m.moved) this.hooks.onMark?.(null);
     if (m?.type === "pan" && !m.moved) {
       // dotik praznega dela: počistimo izbiro
       this.trace = null;

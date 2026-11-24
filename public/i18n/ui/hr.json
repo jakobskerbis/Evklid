@@ -888,6 +888,8 @@
   "gc.tangent": "Tangenta",
   "gc.deriv": "Derivacija",
   "gc.area": "Površina ispod krivulje (integral)",
+  "gc.useInCalc": "Upotrijebi u računu",
+  "gc.useValue": "Upotrijebi u računu: {v}",
   "gc.valueTable": "Tablica vrijednosti",
   "gc.label": "Prikaži koordinate",
   "gc.duplicate": "Udvostruči",

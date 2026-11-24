@@ -882,6 +882,8 @@
   "gc.tangent": "Érintő",
   "gc.deriv": "Derivált",
   "gc.area": "Görbe alatti terület (integrál)",
+  "gc.useInCalc": "Használd a számolásban",
+  "gc.useValue": "Használd a számolásban: {v}",
   "gc.valueTable": "Értéktáblázat",
   "gc.label": "Koordináták mutatása",
   "gc.duplicate": "Másolat",
