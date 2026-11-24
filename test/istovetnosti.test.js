@@ -72,3 +72,15 @@ test("AUDIT-048: enačbe brez istovetnosti se ne spremenijo", () => {
   assert.ok(Math.abs(analyze("sqrt(x+3)=x-1", { ...ENV }).roots[0] - (3 + Math.sqrt(17)) / 2) < 1e-12);
   assert.equal(analyze("2x+3=7", { ...ENV }).roots[0], 2);
 });
+
+// pogoj iz CAS mora biti pravo definicijsko območje, sicer ga ne pokažemo (pregled PR #988):
+// √(x² − 1) je definiran za |x| ≥ 1 (CAS je dal »x ≥ −1, x ≥ 1«), ∛x tudi za x < 0 (CAS je dal »x ≥ 0«),
+// √(1 − x²) za −1 ≤ x ≤ 1 (CAS je dal »x ≤ −1, x ≥ 1«)
+test("AUDIT-048: napačen pogoj iz CAS ne pride v odgovor", () => {
+  for (const text of ["sqrt(x^2-1)=sqrt(x^2-1)", "x^(1/3)=cbrt(x)", "sqrt(1-x^2)=sqrt(1-x^2)"]) {
+    const r = analyze(text, { ...ENV });
+    assert.ok(!/x \\ge -1|x \\ge 0|x \\le -1/.test(r.cond || ""), `${text}: ${r.cond}`);
+  }
+  assert.equal(analyze("x^(1/3)=cbrt(x)", { ...ENV }).all, true);
+  assert.equal(analyze("sqrt(x-1)*sqrt(x+1)=sqrt(x^2-1)", { ...ENV }).all, true);
+});
