@@ -278,6 +278,8 @@ export function createScientific(root, opts) {
   };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
+  // število v navadnem besedilu (sporočilo, ne TeX): 8 mest, decimalna vejica, pravi minus
+  const plainNum = (v) => String(Number(v.toPrecision(8))).replace(".", comma() ? "," : ".").replace("-", "−");
   function errorText(e) {
     const names = (e.info?.names || []).join(", ");
     switch (e.code) {
@@ -291,6 +293,11 @@ export function createScientific(root, opts) {
         return t("sc.errEquation");
       case "sumLimit":
         return t("sc.errSumLimit");
+      case "intDiverge":
+        return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t("sc.errIntDiverge");
+      case "intUnknown":
+      case "intTimeout":
+        return t("sc.errIntUnknown");
       case "polInside":
         return t("sc.errPolInside");
       case "arity":
@@ -371,6 +378,7 @@ export function createScientific(root, opts) {
         e.value = r.value;
         if (r.assign) e.assign = r.assign;
         if (r.approx) e.approx = true;
+        if (r.est) e.est = true;
         break;
       case "complex":
         e.re = r.re;
@@ -467,7 +475,7 @@ export function createScientific(root, opts) {
     switch (e.kind || "value") {
       case "value": {
         const d = e.dms ? dmsOf(e.value, { comma: comma() }) : null;
-        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
+        return texHtml(`${e.assign ? `${e.assign} ` : ""}${e.est ? "\\approx" : "="} ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
       }
       case "complex":
         return texHtml(`= ${complexTex(e.re, e.im)}`);
@@ -591,7 +599,7 @@ export function createScientific(root, opts) {
     }
     showEntry(r);
     live.className = "sc-live muted";
-    if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
+    if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`${r.est ? "\\approx" : "="} ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
     else if (r.kind === "cas" && !r.resTex && !r.none) live.innerHTML = ""; // samo zapis (predogled matrike z okvirčki)
