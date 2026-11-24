@@ -646,8 +646,12 @@ function factoredTex(r, dec) {
   if (r.d.isConst()) {
     const c = fn.c.div(r.d.constValue());
     const [neg, body] = productTex(c, fn.fs, dec);
-    // en sam faktor brez konstante: brez oklepajev (x² + 1)
-    if (fn.fs.length === 1 && fn.fs[0].e === 1 && c.abs().one) return (neg ? "-" : "") + polyTex(fn.fs[0].p, dec);
+    // en sam faktor brez konstante: brez oklepajev (x² + 1); z minusom pa v oklepaju, sicer bi se predznak
+    // prenesel le na prvi člen: −(x − 3), ne −x − 3 (AUDIT-016)
+    if (fn.fs.length === 1 && fn.fs[0].e === 1 && c.abs().one) {
+      const t = polyTex(fn.fs[0].p, dec);
+      return neg && fn.fs[0].p.terms().length > 1 ? `-\\left(${t}\\right)` : (neg ? "-" : "") + t;
+    }
     return (neg ? "-" : "") + body;
   }
   const fd = factorP(r.d);
