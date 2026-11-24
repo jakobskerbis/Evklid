@@ -48,10 +48,11 @@ test("enačbe z večkratnimi ničlami: rešitve kot SymPy, brez lažnih kompleks
 
 test("racionalne večkratne ničle so točne in v zapisu z »=«", () => {
   const tex = (t) => solutionTex(analyze(t, ENV));
-  assert.equal(tex("(x−5)^3=0"), "x = 5");
-  assert.equal(tex("x^3−3x+2=0"), "x_{1} = -2,\\quad x_{2} = 1");
-  assert.equal(tex("(x−2)^4=0"), "x = 2");
-  assert.equal(tex("(x+1)^5=0"), "x = -1");
+  // z oznako kratnosti (AUDIT-023)
+  assert.equal(tex("(x−5)^3=0"), "x_{1,2,3} = 5\\;(\\text{trojna rešitev})");
+  assert.equal(tex("x^3−3x+2=0"), "x_{1} = -2,\\quad x_{2,3} = 1\\;(\\text{dvojna rešitev})");
+  assert.equal(tex("(x−2)^4=0"), "x_{1,\\ldots,4} = 2\\;(\\text{4-kratna rešitev})");
+  assert.equal(tex("(x+1)^5=0"), "x_{1,\\ldots,5} = -1\\;(\\text{5-kratna rešitev})");
   assert.deepEqual(analyze("(2x−1)^2(x+3)=0", ENV).roots, [-3, 0.5]);
 });
 

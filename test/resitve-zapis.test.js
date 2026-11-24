@@ -36,9 +36,9 @@ test("brez točne oblike: »≈« (tudi kompleksne in kotne)", () => {
 
 test("točne rešitve ostanejo z »=«", () => {
   assert.equal(tex("8x^3=1"), "x_{1} = \\frac{1}{2} \\approx 0{,}5,\\quad x_{2} = -\\frac{1}{4}-\\frac{\\sqrt{3}}{4}\\,i,\\quad x_{3} = -\\frac{1}{4}+\\frac{\\sqrt{3}}{4}\\,i");
-  assert.equal(tex("(x−5)^3=0"), "x = 5");
+  assert.equal(tex("(x−5)^3=0"), "x_{1,2,3} = 5\\;(\\text{trojna rešitev})");
   assert.equal(tex("x^3=8"), "x_{1} = 2,\\quad x_{2} = -1-\\sqrt{3}\\,i,\\quad x_{3} = -1+\\sqrt{3}\\,i");
   assert.equal(tex("sin(x)=0,5", { ...ENV, deg: true }), "x_{1} = 30^{\\circ},\\quad x_{2} = 150^{\\circ}");
-  assert.ok(tex("(x−√(7))^2(x−π)=0").startsWith("x_{1} = \\sqrt{7} \\approx 2{,}645751"));
+  assert.ok(tex("(x−√(7))^2(x−π)=0").startsWith("x_{1,2} = \\sqrt{7} \\approx 2{,}645751"));
   assert.equal(tex("(x−0,1)(x−0,1000001)(x−3)=0"), "x_{1} = \\frac{1}{10} \\approx 0{,}1,\\quad x_{2} = 0{,}1000001,\\quad x_{3} = 3");
 });

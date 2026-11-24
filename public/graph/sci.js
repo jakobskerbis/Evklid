@@ -274,6 +274,8 @@ export function createScientific(root, opts) {
   };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
+  // »dvojna rešitev«, »trojna rešitev«, »4-kratna rešitev« v jeziku vmesnika
+  const multText = (m) => (m === 2 ? t("sc.mult.2") : m === 3 ? t("sc.mult.3") : t("sc.mult.n", { n: m }));
   function errorText(e) {
     const names = (e.info?.names || []).join(", ");
     switch (e.code) {
@@ -365,8 +367,8 @@ export function createScientific(root, opts) {
         e.im = r.im;
         break;
       case "solve":
-        e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "rex", "forms"]);
+        e.res = solutionTex(r, c, st.format, multText);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "rex", "forms", "mult", "cmult"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
         e.steps = true;
@@ -442,7 +444,7 @@ export function createScientific(root, opts) {
     if (!r) return e.res || "";
     try {
       const c = comma();
-      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format);
+      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format, multText);
       if (e.kind === "ineq") return intervalsTex({ ...r, intervals: r.intervals.map((i) => ({ ...i, lo: i.lo ?? -Infinity, hi: i.hi ?? Infinity })) }, c, st.format);
       if (e.kind === "system") return systemTex(r, c, st.format);
     } catch {}

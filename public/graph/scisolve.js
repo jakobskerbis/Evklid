@@ -398,6 +398,8 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null }) {
     const rex = real.map((r) => !!r.exact);
     const forms = real.map((r) => (r.form ? { k: r.form.k, p: String(r.form.p), q: String(r.form.q), neg: r.form.neg } : null));
     const out = { kind: "solve", v, roots, complex, poly, mult: real.map((r) => r.m), rex };
+    const cm = pr.filter((r) => r.im !== 0).map((r) => r.m);
+    if (cm.some((m) => m > 1)) out.cmult = cm;
     if (forms.some(Boolean)) out.forms = forms;
     return out;
   }
@@ -459,27 +461,39 @@ function rootTex(x, rex, form, comma, mode, dec) {
 }
 
 /** TeX rešitev enačbe. */
-export function solutionTex(r, comma = true, mode = "auto") {
+// večkratnost rešitve v besedilu (sci.js poda prevod: sc.mult.2, sc.mult.3, sc.mult.n)
+const MULT_SL = (m) => (m === 2 ? "dvojna rešitev" : m === 3 ? "trojna rešitev" : `${m}-kratna rešitev`);
+export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) {
   const v = r.v;
   if (r.all) return `${v} \\in \\mathbb{R}`;
   if (r.none || (!r.roots.length && !r.complex?.length)) return `${v} \\in \\varnothing`;
   const parts = [];
   if (r.exact) parts.push(r.exact);
-  const many = r.roots.length + (r.complex?.length || 0) > 1;
-  const name = (i) => (many ? `${v}_{${i + 1}}` : v);
+  // k-kratna rešitev dobi k zaporednih indeksov (x₁,₂ = 1) in oznako »dvojna rešitev«
+  const ms = [...r.roots.map((_, i) => r.mult?.[i] || 1), ...(r.complex || []).map((_, j) => r.cmult?.[j] || 1)];
+  const many = ms.reduce((a, b) => a + b, 0) > 1;
+  const first = ms.map((_, i) => 1 + ms.slice(0, i).reduce((a, b) => a + b, 0));
+  const name = (i) => {
+    if (!many) return v;
+    const k = first[i];
+    const m = r.exact ? 1 : ms[i];
+    if (m === 1) return `${v}_{${k}}`;
+    return m <= 3 ? `${v}_{${Array.from({ length: m }, (_, t) => k + t).join(",")}}` : `${v}_{${k},\\ldots,${k + m - 1}}`;
+  };
+  const tag = (i) => (!r.exact && ms[i] > 1 ? `\\;(\\text{${multText(ms[i]).replace(/[{}\\$&#%_^~]/g, "")}})` : "");
   const dec = decimalsFor(r.roots);
   if (r.exact)
     r.roots.forEach((x, i) => parts.push(`${name(i)} \\approx ${decTex(x, comma, mode, dec)}`));
   else if (r.deg || r.grad) r.roots.forEach((x, i) => parts.push(`${name(i)} ${Number(clean(x).toFixed(6)) === clean(x) ? "=" : "\\approx"} ${decTex(x, comma, mode)}${ANGLE_SUP[r.grad ? "grad" : "deg"]}`));
   else if (r.approx) r.roots.forEach((x, i) => parts.push(`${name(i)} = ${decTex(x, comma, mode, dec)}`)); // approx: izmerjena vrednost (molska masa), brez ulomka
-  else r.roots.forEach((x, i) => parts.push(`${name(i)} ${rootTex(x, r.rex?.[i], r.forms?.[i], comma, mode, dec)}`));
+  else r.roots.forEach((x, i) => parts.push(`${name(i)} ${rootTex(x, r.rex?.[i], r.forms?.[i], comma, mode, dec)}${tag(i)}`));
   if (!r.exact)
     (r.complex || []).forEach(([re, im], i) => {
       const a = re === 0 ? "" : plainTex(re, comma, mode);
       const b = plainTex(Math.abs(im), comma, mode);
       // iracionalna dela brez točne oblike: približek (≈)
       const eq = shownExact(re) && shownExact(Math.abs(im)) ? "=" : "\\approx";
-      parts.push(`${name(r.roots.length + i)} ${eq} ${a}${im < 0 ? "-" : a ? "+" : ""}${b === "1" ? "" : b}${/^[\d{}]+$/.test(b) ? "" : "\\,"}i`);
+      parts.push(`${name(r.roots.length + i)} ${eq} ${a}${im < 0 ? "-" : a ? "+" : ""}${b === "1" ? "" : b}${/^[\d{}]+$/.test(b) ? "" : "\\,"}i${tag(r.roots.length + i)}`);
     });
   return parts.join(",\\quad ");
 }
