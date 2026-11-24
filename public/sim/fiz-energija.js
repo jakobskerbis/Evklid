@@ -1,5 +1,5 @@
 // Simulacije pri fiziki: delo, moč, energija (skejter), izkoristek, met, klanec, trki, kroženje, orbite.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, tfmt, clamp, label, axes, arrow, animate, playButton } from "./kit.js";
+import { h, s, svgBox, slider, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, tfmt, clamp, label, axes, arrow, animate, playButton } from "./kit.js";
 import { G, force, timeGraph } from "./fiz-skupno.js";
 
 const T = (x, d = 2) => tfmt(x, d);

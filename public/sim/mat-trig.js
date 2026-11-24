@@ -1,6 +1,6 @@
 // Simulacije: kotne funkcije (pravokotni trikotnik, enotska krožnica, grafi, adicijski izreki, enačbe),
 // vektorji, krožnica in stožnice, obodni in središčni kot.
-import { h, s, svgBox, slider, select, segmented, toggle, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, axes, fnPath, arrow, animate, playButton, buttons, draggable, handle, deg, rad, gcd } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, readout, layout, texBlock, fmt, tfmt, clamp, label, axes, fnPath, arrow, animate, playButton, buttons, draggable, handle, deg, rad, gcd } from "./kit.js";
 
 const PI = Math.PI;
 const T = (x, d = 2) => tfmt(x, d);

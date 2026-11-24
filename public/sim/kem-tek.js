@@ -1,7 +1,7 @@
 // Simulacije za kemijska tekmovanja: Hessov zakon, pufri, oblike molekul (VSEPR).
-import { s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, clamp, label, arrow, axes, draggable } from "./kit.js";
+import { s, svgBox, slider, select, segmented, toggle, readout, layout, texBlock, fmt, clamp, label, arrow, axes, draggable } from "./kit.js";
 import { solvePH } from "./kem-reakcije.js";
-import { atomBall, beaker } from "./kem-skupno.js";
+import { atomBall } from "./kem-skupno.js";
 
 // ------------------------------------------------------------ hess: Hessov zakon
 const HESS = [

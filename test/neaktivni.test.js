@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import express from "express";
 import { openDb } from "../server/db.js";
 import { mountAccounts } from "../server/accounts/index.js";
-import { runInactive, NEAKTIVNI } from "../server/accounts/neaktivni.js";
+import { runInactive } from "../server/accounts/neaktivni.js";
 import { migrateSchools } from "../server/schools.js";
 
 const DAY = 86400000;

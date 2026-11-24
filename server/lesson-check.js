@@ -1,6 +1,7 @@
 // Preverjanje oblike lekcije učbenika (content/lessons/README.md).
 // Uporabljata ga scripts/check-lesson.js in testi.
 import katex from "katex";
+import { napakaIzraza } from "../public/mat/izris.js";
 import { parseLesson, expandFormulaBlocks } from "./textbook.js";
 import { drawingErrors, DRAW_RE } from "./risbe.js";
 import { parseAnswerLine } from "../public/preveri-se.js";
@@ -233,11 +234,8 @@ export function checkLessonSource(src, topicId) {
   body.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => (texs.push([t, true]), ""));
   body.replace(/\$\$[\s\S]+?\$\$/g, "").replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, p, t) => (texs.push([t, false]), ""));
   for (const [tex, display] of texs) {
-    try {
-      katex.renderToString(tex, { displayMode: display, throwOnError: true, strict: "ignore" });
-    } catch (e) {
-      err(`formula se ne izriše: $${tex.slice(0, 60)}$ (${String(e.message).split("\n")[0].slice(0, 80)})`);
-    }
+    const napaka = napakaIzraza(tex, { blok: display, katex });
+    if (napaka) err(`formula se ne izriše: $${tex.slice(0, 60)}$ (${napaka.slice(0, 80)})`);
   }
   // Računi: čisto številske korake preračuna sam (docs/kakovost.md §1.1); razlika nad 2 % je napaka, manjša opozorilo.
   const calc = checkArithmetic(body);
@@ -279,11 +277,8 @@ export function checkSymbols(body, err, warn) {
     for (const g of list) {
       for (const [what, tex] of [["oznaka", g.tex.join(", ")], ["zveza", g.r], ["enota", g.u && !/^(–|-|—|1|brez)$/.test(g.u) ? `\\mathrm{${g.u}}` : ""]]) {
         if (!tex) continue;
-        try {
-          katex.renderToString(tex, { throwOnError: true, strict: "ignore" });
-        } catch (e) {
-          err(`:::simboli: ${what} »${tex.slice(0, 40)}« se ne izriše (${String(e.message).split("\n")[0].slice(0, 60)})`);
-        }
+        const napaka = napakaIzraza(tex, { katex });
+        if (napaka) err(`:::simboli: ${what} »${tex.slice(0, 40)}« se ne izriše (${napaka.slice(0, 60)})`);
       }
       if (/\\[a-zA-Z]|[_^]\{/.test(`${g.n} ${g.note}`.replace(/\$[^$]*\$/g, ""))) warn(`:::simboli: ime ali opomba pri »${g.tex.join(", ")}« ima TeX brez $…$ (na kartici bi se izpisal surov)`);
       g.keys.forEach((k) => keys.add(k));

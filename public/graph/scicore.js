@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, integrateInfo, walk, withIntegralBudget, integralTrace } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots, argSeparators, integrateInfo, walk, withIntegralBudget, integralTrace } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -64,8 +64,7 @@ export function prepare(text, { comma = true } = {}) {
   if (comma) s = joinDotThousands(s); // »1.234,5« = 1234,5
   if (twoDots(s)) throw new MathError("unexpected", { got: "." });
   s = s.replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
-  if (comma) s = s.replace(/(\d),(?=\d)/g, "$1.");
-  s = s.replace(/;/g, ",");
+  s = argSeparators(s, comma); // isto pravilo kot grafični kalkulator (math.js)
   s = s.replace(/(\d|\.)[eE]([+\-−]?\d+)/g, "$1*10^($2)");
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')

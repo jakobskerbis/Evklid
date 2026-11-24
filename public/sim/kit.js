@@ -4,6 +4,7 @@
 
 import { okrasi, vstavi } from "./materiali.js";
 import { napisPoskusa } from "./napis-poskusa.js";
+import { izrisi, decVejica } from "../mat/izris.js";
 
 export const NS = "http://www.w3.org/2000/svg";
 
@@ -272,9 +273,9 @@ export function playButton(anim, { play = "Predvajaj", pause = "Ustavi" } = {}) 
 
 // Decimalna vejica v formuli: »0,041« → »0{,}041« (KaTeX bi za vejico dodal presledek kot za ločilom: »0, 041«).
 // Naštevanje (»1, 2«, »\{1, 2, 3\}«, »x_{1,2}«) ostane, kot je: le število z eno vejico med števkama.
-export const decVejica = (t) =>
-  String(t).replace(/\d+(?:,\d+)+/g, (m, i, s) => (m.indexOf(",") === m.lastIndexOf(",") && !/(?:_\{|\\\{)\s*$/.test(s.slice(0, i)) ? m.replace(",", "{,}") : m));
-export const tex = (t) => (window.katex ? katex.renderToString(decVejica(t), { throwOnError: false }) : t);
+// Pravilo je v public/mat/izris.js (decVejica), skupno za vso aplikacijo.
+export { decVejica };
+export const tex = (t) => izrisi(t, { vejica: true });
 export const texBlock = (t) => `<div class="demo-eq">${tex(t)}</div>`;
 
 // Koordinatni sistem. Vrne { X, Y, inv(px,py), g } za risanje v enotah.
@@ -518,15 +519,6 @@ export function handle(parent, cls = "a", r = 7) {
   g.move = (x, y) => g.setAttribute("transform", `translate(${x},${y})`);
   g.dot = c;
   return g;
-}
-
-// Canvas, ki se prilagodi gostoti zaslona. Vrne { cv, ctx, W, H }.
-export function canvasBox(W, H) {
-  const cv = h("canvas", { class: "demo-canvas", width: W * 2, height: H * 2 });
-  cv.style.aspectRatio = `${W} / ${H}`;
-  const ctx = cv.getContext("2d");
-  ctx.scale(2, 2);
-  return { cv, ctx, W, H };
 }
 
 // Barva iz CSS spremenljivke (za canvas).

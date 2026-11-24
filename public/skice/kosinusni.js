@@ -1,6 +1,6 @@
 // Kosinusni izrek (SŠ): A je pritrjen, B se vleče po osnovnici, C po mreži (korak 0,5); kot γ pri C.
 // Čipi: a, b, γ, c² in a² + b² − 2ab cos γ (vedno enaka).
-import { skica, st, crta, napis, lokKota, vr } from "./skica.js";
+import { skica, crta, napis, lokKota, vr } from "./skica.js";
 import { s } from "../sim/kit.js";
 import { trikotnik, rad } from "./geometrija.js";
 
