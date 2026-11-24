@@ -101,8 +101,16 @@ function rewrite(n, ctx) {
     return { k: "/", a: { k: "call", f: "round", args: [{ k: "*", a: r(n.args[0]), b: p }] }, b: p };
   }
   if (n.k === "der" && n.a?.k === "tuple" && n.a.items.length === 2) {
-    const d = simplify(diff(r(n.a.items[0]), n.v, ctx));
-    return { k: "grp", a: substitute(d, { [n.v]: r(n.a.items[1]) }) };
+    // Simbolni odvod v točki a ne zadošča (AUDIT-017, AUDIT-018): ln x ima pri x = −1 »odvod« −1, |x| pri 0
+    // »odvod« 0. __ODVOD_V_TOCKI (math.js) zato preveri še, da je f v a definirana in da se levi in desni odvod
+    // ujemata z njim. Gnezden odvod (d/dx(d/dx(…; x); 2)) in odvod za simbolno računanje ostaneta navadna.
+    const plain = { ...ctx, plainDer: true };
+    const f = rewrite(n.a.items[0], plain);
+    const a = r(n.a.items[1]);
+    const d = simplify(diff(f, n.v, ctx));
+    const at = substitute(d, { [n.v]: a });
+    if (ctx.plainDer) return { k: "grp", a: at };
+    return { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: n.v };
   }
   const out = { ...n };
   for (const key of ["a", "b", "other"]) if (n[key]) out[key] = r(n[key]);
@@ -121,6 +129,8 @@ export function lineTex(ast, comma = true) {
   }
   return toTex(ast, { comma, sep: comma ? ";" : "," })
     .replaceAll(ANS, "\\mathrm{Ans}")
+    // potenca s stopinjami (Ans²°): drugi eksponent na prazni osnovi, sicer je dvojni eksponent napaka KaTeX (AUDIT-020)
+    .replace(/(\^\{(?:[^{}]|\{[^{}]*\})*\})\s*(?:\\cdot\s*)?G_\{(deg|min|sec)\}/g, (_, sup, u) => `${sup}{}^{${{ deg: "\\circ", min: "\\prime", sec: "\\prime\\prime" }[u]}}`)
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
     .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
@@ -148,7 +158,7 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   const one = grad ? 200 / 180 : deg ? 1 : Math.PI / 180; // 1° v trenutni enoti kota
   const scope = Object.assign(Object.create(null), vars, { [ANS_VAR]: ans, [DEG_VAR]: one, [MIN_VAR]: one / 60, [SEC_VAR]: one / 3600 });
   const defs = {};
-  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope };
+  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope, derCheck: true };
   for (const [name, f] of Object.entries(funcs)) {
     try {
       defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma }), { funcs: names }), ctx), body: null };

@@ -36,6 +36,10 @@ približno minuto izpada, zato se nove različice objavljajo **samo ponoči med 
 času (j, 19. 11. 2026, »Noč zdaj, baza po pilotu«). Po pilotu (po 15. 12. 2026) se baza preseli izven
 Renderja; takrat objava ne bo več pomenila izpada in nočno okno ne bo več potrebno.
 
+**Do nadaljnjega (j, 24. 11. 2026): vsaka združitev v `main` se objavi takoj, ko so testi zeleni**, tudi
+podnevi in med uporabo (vsakič ~1 minuta izpada). Spodnja nočna pravila spet veljajo, ko v
+`scripts/render-objava.js` nastaviš `TAKOJ_DO = 0`.
+
 | Stanje | Kdaj se objavi |
 |---|---|
 | Podnevi (izven 3.–5. ure) | počaka na naslednjo noč |
@@ -48,8 +52,8 @@ Renderja; takrat objava ne bo več pomenila izpada in nočno okno ne bo več pot
 | Testi za ta commit so padli | ne objavi; objavi se, ko so testi zeleni (ponovni zagon padlih testov ali naslednja združitev) |
 
 Tek ob združitvi počaka na okno le, če se odpre v naslednjih ~3 urah; sicer objavo opravi nočni urnik
-(0:47 in 1:47 UTC) ali urnik vsako uro. Ker se podnevi nič ne objavi, združitev med dnevom ne prekine
-testa v Render Shell.
+(0:47 in 1:47 UTC) ali urnik vsako uro. Ko velja nočno okno, se podnevi nič ne objavi, zato združitev med dnevom
+ne prekine testa v Render Shell (dokler velja »takoj«, ga lahko).
 
 ### Objava samo po zelenih testih
 
