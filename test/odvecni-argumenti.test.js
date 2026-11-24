@@ -1,4 +1,4 @@
-// AUDIT-019: odvečna vrednost v log_b(…) in v uporabniški funkciji je napaka »arity«, nikoli tiho izpuščena.
+// AUDIT-028: odvečna vrednost v log_b(…) in v uporabniški funkciji je napaka »arity«, nikoli tiho izpuščena.
 // Prej: log_2(0,5) v zapisu, kjer vejica loči vrednosti, je bil log_2(0) = −∞ (zapis \log_{2}(0)), f(2,5) pri f(x) pa f(2).
 import test from "node:test";
 import assert from "node:assert/strict";
