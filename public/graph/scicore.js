@@ -213,7 +213,7 @@ export function certified(info) {
   // ∫(sin x; −π; π): vrednost je v šumu, a ta je zanemarljiv proti ∫|f|
   if (a <= err) return err <= 1e-12 * (info.abs || 0) ? { value: 0, est: true } : null;
   const d = Math.floor(Math.log10(a / err));
-  return { value: d >= 15 ? v : Number(v.toPrecision(Math.max(1, d))), est: true };
+  return { value: Number(v.toPrecision(Math.max(1, Math.min(12, d)))), est: true };
 }
 
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
