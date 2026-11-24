@@ -4,6 +4,8 @@
 # ključev, brez klicev AI, Stripe ali e-pošte, brez .env. Ob napaki se naložijo dnevniki in posnetki
 # (Actions > zagon > Artifacts). Agenti berejo izid z
 #   gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs
+# Brskalniški del regresijske matrike urejevalnika (test/urejevalnik-matrika.test.js) tu ne teče (v CI se ne prijavi):
+# poln teče vsako noč v matrika-nocna.yml. Čiste funkcije matrike in mala brskalniška testa (dotik-znaki, brisanje-predlog) tečejo tu.
 # Repozitorij je javen: brez skrivnosti, samo pravica branja, nikoli pull_request_target,
 # akcije pripete na SHA (komentar = različica).
 name: Testi
