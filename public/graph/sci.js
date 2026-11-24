@@ -3,7 +3,7 @@
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
 import { arityExample } from "./math.js";
 import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
-import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
+import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
@@ -274,6 +274,8 @@ export function createScientific(root, opts) {
   };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
+  // »dvojna rešitev«, »trojna rešitev«, »4-kratna rešitev« v jeziku vmesnika
+  const multText = (m) => (m === 2 ? t("sc.mult.2") : m === 3 ? t("sc.mult.3") : t("sc.mult.n", { n: m }));
   // število v navadnem besedilu (sporočilo, ne TeX): 8 mest, decimalna vejica, pravi minus
   const plainNum = (v) => String(Number(v.toPrecision(8))).replace(".", comma() ? "," : ".").replace("-", "−");
   function errorText(e) {
@@ -290,10 +292,12 @@ export function createScientific(root, opts) {
       case "sumLimit":
         return t("sc.errSumLimit");
       case "intDiverge":
-        return e.info?.pv !== undefined ? t("sc.errIntPv", { pv: plainNum(e.info.pv) }) : t(e.info?.inf ? "sc.errIntDivergeInf" : "sc.errIntDiverge");
+      case "intUndefined":
       case "intUnknown":
-      case "intTimeout":
-        return t("sc.errIntUnknown");
+      case "intTimeout": {
+        const [key, p] = integralErrorKey(e);
+        return t(key, p.pv !== undefined ? { pv: plainNum(p.pv) } : p);
+      }
       case "polInside":
         return t("sc.errPolInside");
       case "arity":
@@ -382,8 +386,8 @@ export function createScientific(root, opts) {
         e.im = r.im;
         break;
       case "solve":
-        e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched"]);
+        e.res = solutionTex(r, c, st.format, multText);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched", "rex", "forms", "noPi", "mult", "cmult"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (r.searched) e.note = { key: "sc.searchedNone", tex: r.searched };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
@@ -460,7 +464,7 @@ export function createScientific(root, opts) {
     if (!r) return e.res || "";
     try {
       const c = comma();
-      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format);
+      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format, multText);
       if (e.kind === "ineq") return intervalsTex({ ...r, intervals: r.intervals.map((i) => ({ ...i, lo: i.lo ?? -Infinity, hi: i.hi ?? Infinity })) }, c, st.format);
       if (e.kind === "system") return systemTex(r, c, st.format);
     } catch {}
