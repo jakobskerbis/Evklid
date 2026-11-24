@@ -77,7 +77,7 @@ once (deduped by engine + opts) with the topics it belongs to; a new experiment 
 
 ## Fotografski prikaz (photo view; j, 2026-11-10: »fotorealističen videz in fizikalna točnost«)
 
-Three experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`), **on by default for everyone** (j, 2026-11-24: »vklopi
+Four experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`), **on by default for everyone** (j, 2026-11-24: »vklopi
 vsem«; the other 27 follow in groups of 5, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
 colour, wiring and readings still come from the model and are laid over pre-rendered layers. Switch: the button
 »Fotografski prikaz« (`sim.lab.foto`, camera icon, `.lab-foto-gumb`) at the top of the experiment's controls, not over the
@@ -90,10 +90,13 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 |---|---|
 | `scripts/lab-foto/lab_modeli.py` | Blender (Python) procedural models in real dimensions, materials, meniscus solver |
 | `scripts/lab-foto/lab_prizori.py` | the three scenes, orthographic cameras (`Pogled`), layer list, anchors (`meta.sidra`) |
+| `scripts/lab-foto/prizor_ph.py` | scene of `lab-ph` (one file per experiment from now on, registered in `PRIZORI` with one line; `paket.py` packs every `prizor_*.py`) |
+| `scripts/lab-foto/bpy_zagon.py` | runs `lab_izris.py` with the Python module `bpy` instead of the `blender` program (`python bpy_zagon.py -- <poskus> <dir> …`, same arguments; previews on machines without Blender) |
 | `scripts/lab-foto/lab_izris.py` | `blender -b --factory-startup --python scripts/lab-foto/lab_izris.py -- <poskus> <dir> [--vzorci 512] [--merilo 3] [--naprava OPTIX\|CUDA\|CPU]` → one PNG per layer + `meta.json`; a rerun skips finished layers |
 | `scripts/lab-foto/optimiziraj.py` | PNG → `public/sim/foto/<poskus>/<layer>@{1,2,3}x.{webp,avif}` + trimmed `meta.json` (Pillow ≥ 11.3). Source PNGs never go into the repo |
 | `scripts/lab-foto/lab_naloga.py`, `paket.py` | job »lab« for the RTX window on j's laptop (`peka-rtx`, `koda/rtx.py`): `paket.py <copy of koda/> <out>` builds `lab/` (own `manifest.json`) and a patched `koda-nova/rtx.py` (dispatch of `"organi": ["lab"]`, nothing else changes; the manifest lists the version it was made from under `zdruzljivo`, so jobs of the other queue users do not trigger a code swap). `naloga.txt`: `{"id": "lab1", "organi": ["lab"], "koda": "<version>", "lab": {"poskusi": [...], "vzorci": 512, "merilo": 4}}` → `izhod/lab-<id>/<poskus>/` |
 | `public/sim/foto.js` | loader (lazy, AVIF if supported else WebP, density 1×/2×/3× by screen), `Oder` (layers as SVG `<image>` inside the experiment's own SVG, so pinning and layout are unchanged), `risiTitracijo`, `risiDokaz`, `risiKrog`, `vodnikiKroga` |
+| `public/sim/foto-ph.js` | `risiPh`, `OKNA_PH` for `lab-ph` (overlay code of each new experiment lives in its own `foto-<poskus>.js`) |
 | `test/lab-foto.test.js` | switch off by default, anchors vs. models, meniscus (independent Young–Laplace integration), flask volume table, Beer–Lambert exponent, wiring graph and polarity for all 27 configurations, colour codes, files and size budget |
 
 How a layer set works (all cameras are orthographic with a fixed scale, so model mm → drawing units is linear and exact):
@@ -122,6 +125,24 @@ is ~6 % higher than `flaskLevel` of the drawing, which treats the outer size as 
 flask is a drawn ellipse, not a render; test-tube contents are one fixed level (6 mL); the thickness layer ignores
 refraction; indicator colour is the model's colour at the vessel's reference thickness (flask 40 mm, tube 13,8 mm);
 the burette is 706 mm long (catalogue burettes ~820 mm).
+
+`lab-ph` (window 400 × 202 at 0,66 units/mm, camera 8°; the paper colour chart below is drawn by the app): test tube
+16 × 160 mm in a beech rack with 4 mL (2 mL sample + 2 mL red-cabbage extract, `PH_KOLICINE`), level from a hemisphere
++ cylinder (29,0 mm); low beaker 250 mL with 100 mL sample (the dilution 10 mL → 100 mL keeps the volume), level from
+the beaker's inner profile (29,7 mm); combination glass electrode Ø 12 × 120 mm (bulb Ø 9 mm, ceramic junction) in an
+electrode holder, either in the sample (bulb 6 mm above the bottom, junction under the surface) or lifted 5 mm above
+the rim; benchtop pH meter 160 × 140 × 64 mm with a 60 × 26 mm reflective LCD (digits drawn by the app in the display
+plane, from `readPH()`, updated by the ticker) and a BNC socket; universal indicator paper strip 7 × 70 mm in a 19 mm
+binder clip, wet end 25 mm. Colours from the model only: tube = `zelje().rgb` (Beer–Lambert, Lref 13,8 mm), paper =
+`papir().rgb` multiplied over the neutral white strip (dry part `#f3efe2` as in the drawing), sample in the beaker =
+`PH_VZORCI[id].barva` with weight `a` over white as the colour at Lref = 66,8 mm (inner diameter) for coloured samples
+(kola, kava); light samples (mleko, milo, zobna pasta: all channels ≥ 200) are turbid (mask from the thickness layer,
+opacity `a`; in the tube `a/2`, the sample is diluted 1 : 1). In the thickness layer with the electrode in the sample,
+the electrode is a white emitter, so liquid in front of it still colours it and liquid behind it does not.
+Simplifications: both levels are fixed (the model has no volumes besides `PH_KOLICINE`), so the »full« crops are
+clipped just above the model level (meniscus and the far arc of the surface stay rendered); strip dimensions,
+binder clip and the meter are estimates (no specific product); the indicator colour of the paper is uniform over the
+wet end (no wicking front); the colour of turbid samples ignores the indicator's own absorption depth.
 
 ## Experiments
 

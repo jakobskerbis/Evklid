@@ -8,7 +8,7 @@
 import hashlib, json, os, shutil, sys
 
 TU = os.path.dirname(os.path.abspath(__file__))
-LAB = ("lab_modeli.py", "lab_prizori.py", "lab_izris.py", "lab_naloga.py")
+LAB = ("lab_modeli.py", "lab_prizori.py", "lab_izris.py", "lab_naloga.py") + tuple(sorted(f for f in os.listdir(TU) if f.startswith("prizor_") and f.endswith(".py")))   # prizori posameznih poskusov
 
 
 def sha(pot):

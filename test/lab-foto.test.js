@@ -11,10 +11,12 @@ import { fotoVklopljen, fotoIzbran, vodnikiKroga, visinaIzProstornine, eksponent
 import { BIRETA } from "../public/sim/lab-model-titracija.js";
 import { LOADS, UPOR, AM_RANGES, VM_RANGES } from "../public/sim/lab-model.js";
 import { BANDS } from "../public/sim/lab-fiz.js";
+import { OKNA_PH, barvaVzorca, gladinaEpruvete, zaslonPh } from "../public/sim/foto-ph.js";
+import { PH_VZORCI, PH_KOLICINE } from "../public/sim/lab-model-indikatorji.js";
 
 const FOTO = path.resolve("public/sim/foto");
 const meta = (p) => JSON.parse(fs.readFileSync(path.join(FOTO, p, "meta.json"), "utf8"));
-const POSKUSI = ["titracija", "dokaz", "krog"];
+const POSKUSI = ["titracija", "dokaz", "krog", "ph"];
 
 test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike", () => {
   assert.equal(fotoIzbran(), true);
@@ -22,7 +24,7 @@ test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike",
   assert.ok(SL["sim.lab.foto"]);
   for (const f of fs.readdirSync("public/i18n/ui")) assert.ok(JSON.parse(fs.readFileSync(`public/i18n/ui/${f}`, "utf8"))["sim.lab.foto"], `${f}: sim.lab.foto`);
   // motorji narišejo risbo, kadar risi() vrne false (rezerva brez povezave in pri »manj podatkov«)
-  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"]]) {
+  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-indikatorji.js", "risiPh"]]) {
     const src = fs.readFileSync(`public/sim/${f}`, "utf8");
     assert.match(src, new RegExp(`foto\\.risi\\(\\(o, meta\\) => ${klic}\\(`), f);
   }
@@ -159,4 +161,57 @@ test("barvni obročki izrisanih uporov po IEC 60062 ustrezajo upornosti iz model
     assert.equal(tol, "zlata"); // ±5 %
     assert.deepEqual([BARVA[a], BARVA[b], BARVA[e]], BANDS[id].slice(0, 3), `${id}: enake barve kot v risbi`);
   }
+});
+
+test("pH snovi: merila, gladini in elektroda iz modela, barve samo iz modela", () => {
+  const m = meta("ph"), S = m.sidra.ph, k = m.merila.ph;
+  // ortografska kamera: navpične razdalje so mm · 0,66 enote
+  assert.ok(Math.abs(S.epruvetaDno - S.epruvetaVrh - (160 - m.epruveta.dno) * k) < 0.05, "epruveta 160 mm");
+  assert.ok(Math.abs(S.casaDno - S.casaVrh - (m.casa.visina - m.casa.dno) * k) < 0.05, "čaša 95 mm");
+  assert.deepEqual([m.epruveta.premer, m.epruveta.dolzina, m.casa.premer, m.casa.visina], [16, 160, 70, 95]);
+  // papir: mere iz modela, v merilu
+  assert.deepEqual([m.papir.sirina, m.papir.dolzina, m.papir.mokro], [PH_KOLICINE.papir.sirina, PH_KOLICINE.papir.dolzina, PH_KOLICINE.papir.mokro]);
+  const [[, y0], [, y1]] = S.papir;
+  assert.ok(Math.abs(y1 - y0 - m.papir.dolzina * k) < 0.05 && Math.abs(S.papirMokro - y0 - m.papir.mokro * k) < 0.05);
+  // gladini: izris je pri gladini iz modela (100 mL v čaši, 4 mL v epruveti)
+  assert.equal(m.casa.V, PH_KOLICINE.casaMl);
+  assert.equal(m.epruveta.V, PH_KOLICINE.epruvetaMl);
+  const T = m.casa.VodH;
+  for (let i = 1; i < T.length; i++) assert.ok(T[i][1] > T[i - 1][1]);
+  const hc = visinaIzProstornine(T, PH_KOLICINE.casaMl);
+  assert.ok(Math.abs(hc - m.casa.gladinaMm) < 0.3, `čaša: model ${hc.toFixed(2)} mm, izris ${m.casa.gladinaMm} mm`);
+  // valj z notranjim polmerom: nekaj več, ker ima čaša zaobljen prehod v dno (R 5,6 mm) in steno, ki se proti dnu zoži za 0,4 mm
+  const Ri = m.casa.premer / 2 - m.casa.stena, valj = (Math.PI * Ri * Ri * hc) / 1000;
+  assert.ok(valj > PH_KOLICINE.casaMl && valj < 1.06 * PH_KOLICINE.casaMl, `valj do ${hc} mm: ${valj.toFixed(1)} mL`);
+  const he = gladinaEpruvete(PH_KOLICINE.epruvetaMl, m.epruveta.premer, m.epruveta.stena), r = 8 - 1.1;
+  assert.ok(Math.abs((2 / 3) * Math.PI * r ** 3 + Math.PI * r * r * (he - r) - 4000) < 1, "4 mL = polkrogla + valj");
+  assert.ok(Math.abs(he - m.epruveta.gladinaMm) < 0.01, `epruveta: model ${he}, izris ${m.epruveta.gladinaMm}`);
+  const h5 = gladinaEpruvete(0.5, 16, 1.1);
+  assert.ok(h5 < r && Math.abs((Math.PI * h5 * h5 * (3 * r - h5)) / 3 - 500) < 0.1, "krogelni odsek pod polkroglo");
+  // elektroda: v vzorcu sta bučka in diafragma pod gladino, dvignjena je nad robom čaše
+  const E = m.elektroda;
+  assert.ok(E.vPotopljena - m.casa.dno + E.bucka + 3 < hc, "bučka in diafragma potopljeni");
+  assert.ok(E.vZunaj > m.casa.visina, "dvignjena elektroda je nad čašo");
+  // odrez polne čaše (gladina iz modela minus lok gladine in menisk) je znotraj izrisanega sloja
+  const yc = S.casaDno - hc * k, sl = m.sloji["ph-casa-polna"];
+  assert.ok(yc - Ri * k * Math.tan((8 * Math.PI) / 180) - 4 * k > sl.y && S.casaDno < sl.y + sl.h);
+  // zaslon pH-metra 60 × 26 mm v ravnini zaslona
+  assert.ok(Math.abs(S.lcd[1][0] - S.lcd[0][0] - 60 * k / Math.cos((8 * Math.PI) / 180)) < 0.05);
+  assert.equal(zaslonPh(7.026), "7,03");
+  assert.equal(zaslonPh(-0.5), "−0,50");
+  // barve: brezbarvni vzorci ne obarvajo, obarvani dajo barvo modela, motni so motni
+  assert.equal(barvaVzorca("hcl").barva, null);
+  for (const [id, V] of Object.entries(PH_VZORCI)) {
+    if (!V.barva) continue;
+    const b = barvaVzorca(id);
+    if (Math.min(...V.barva) >= 200) assert.deepEqual([b.barva, b.motnost], [V.barva, V.a], id);
+    else V.barva.forEach((c, i) => assert.ok(Math.abs(b.barva[i] - (255 - (255 - c) * V.a)) < 1e-9, id));
+  }
+  assert.ok(barvaVzorca("mleko").motnost > 0 && barvaVzorca("kola").motnost === 0);
+  // napisi in lestvica papirja so v risbi 400 × 262
+  assert.ok(S.pult + 11 < 210 && OKNA_PH.ph[3] <= 210, "okno nad barvno lestvico");
+  // nič barv v izrisu: papir in tekočine so v slojih brezbarvni (barvo doda aplikacija)
+  const src = fs.readFileSync("scripts/lab-foto/prizor_ph.py", "utf8");
+  assert.match(src, /snov\("papir-bel", \((0\.\d+), \1, \1\)/, "papir je v izrisu nevtralno bel");
+  assert.doesNotMatch(src, /steklo\("[^"]*", [^)]*barva=/, "tekočine v izrisu so brezbarvne");
 });
