@@ -2,7 +2,8 @@
 // Vsaka demonstracija je funkcija (el) => void, ki nariše vse v el.
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
-import { decVejica, tryIt } from "./sim/kit.js"; // tryIt: »Preizkusi: …« (sim/napis-poskusa.js)
+import { tryIt } from "./sim/kit.js"; // tryIt: »Preizkusi: …« (sim/napis-poskusa.js)
+import { izrisi } from "./mat/izris.js";
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -80,7 +81,7 @@ function animate(el, step) {
   requestAnimationFrame(tick);
 }
 
-const tex = (t) => (window.katex ? katex.renderToString(decVejica(t), { throwOnError: false }) : t);
+const tex = (t) => izrisi(t, { vejica: true });
 
 // ------------------------------------------------------------ y = kx + n
 function linearna(el) {

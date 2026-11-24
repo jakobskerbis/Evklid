@@ -22,6 +22,15 @@ const fact = (n) => {
   }
   return gamma(n + 1);
 };
+// n·(n−1)·…·(n−k+1) (deljeno s k!, če binom) v celih številih BigInt: nCr(200;2) = 19900 tudi za n > 170,
+// kjer n! ni več končen. Rezultat nad ~1,8·10^308 je ∞; to velja že za k > 170 (nPr ≥ k!) in k > 600 (nCr ≥ C(2k;k)).
+const fallProd = (n, k, binom) => {
+  if (k > (binom ? 600 : 170)) return Infinity;
+  const N = BigInt(n);
+  let r = 1n;
+  for (let i = 1n; i <= BigInt(k); i++) r = binom ? (r * (N - BigInt(k) + i)) / i : r * (N - i + 1n);
+  return Number(r);
+};
 function gamma(z) {
   // Lanczos
   if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
@@ -133,8 +142,8 @@ const MULTI = {
   mod: (a, b) => ((a % b) + b) % b,
   gcd: (...a) => a.reduce(gcd2),
   lcm: (...a) => a.reduce((x, y) => Math.abs(Math.round(x) * Math.round(y)) / gcd2(x, y)),
-  nCr: (n, k) => (k < 0 || k > n ? 0 : Math.round(fact(n) / (fact(k) * fact(n - k)))),
-  nPr: (n, k) => (k < 0 || k > n ? 0 : Math.round(fact(n) / fact(n - k))),
+  nCr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, Math.min(k, n - k), true) : Math.round(fact(n) / (fact(k) * fact(n - k)))),
+  nPr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, k, false) : Math.round(fact(n) / fact(n - k))),
   root: (x, n) => nthroot(x, n),
   logb: (x, b) => Math.log(x) / Math.log(b),
   // celo število na [a, b] (Casio RanInt#)
@@ -144,6 +153,11 @@ const MULTI = {
     return hi < lo ? NaN : lo + Math.floor(Math.random() * (hi - lo + 1));
   },
 };
+// funkcije iz MULTI z natanko dvema vrednostma (min, max, gcd, lcm jih vzamejo poljubno mnogo)
+const ARITY = { mod: 2, nCr: 2, nPr: 2, root: 2, logb: 2, randint: 2 };
+const ARG_NAMES = { nCr: "n k", nPr: "n k", root: "x n", logb: "x b", Pol: "x y", Rec: "r θ" };
+/** Pravilen zapis za napako »arity« ({ f, n }): »nCr(n; k)«, »sin(x)«; sep je ločilo argumentov. */
+export const arityExample = ({ f, n } = {}, sep = ",") => `${f}(${(ARG_NAMES[f] || (n === 1 ? "x" : "a b c d").split(" ").slice(0, n).join(" ")).split(" ").join(`${sep}\u00a0`)})`; // nedeljiv presledek: zgled se na ozkem zaslonu ne prelomi
 // funkcije seznamov (vrnejo eno število)
 const LISTF = {
   mean,
@@ -158,6 +172,8 @@ const LISTF = {
 const ALIASES = { asin: "arcsin", acos: "arccos", atan: "arctan", acot: "arccot", arctg: "arctan", tg: "tan", ctg: "cot", sh: "sinh", ch: "cosh", th: "tanh", lg: "log", sqr: "sqrt", asinh: "arsinh", acosh: "arcosh", atanh: "artanh", avg: "mean", ncr: "nCr", npr: "nPr", binom: "nCr" };
 const INVERSE = { sin: "arcsin", cos: "arccos", tan: "arctan", cot: "arccot", sinh: "arsinh", cosh: "arcosh", tanh: "artanh" };
 
+/** Funkcija ene same vrednosti (sin, ln, √ …; tudi sopomenke)? Pri njej vejica med števkami ne more ločiti argumentov. */
+export const oneArgFn = (f) => !!(TRIG[f] || UNARY[f] || TRIG[ALIASES[f]] || UNARY[ALIASES[f]]);
 export const BUILTINS = new Set([...Object.keys(TRIG), ...Object.keys(UNARY), ...Object.keys(MULTI), ...Object.keys(LISTF), "sort", "sum", "prod", "rand", "Pol", "Rec", ...Object.keys(ALIASES)]);
 const CONSTS = { pi: Math.PI, "π": Math.PI, tau: 2 * Math.PI, "τ": 2 * Math.PI, e: Math.E, inf: Infinity };
 const GREEK = { theta: "θ", alpha: "α", beta: "β", gamma: "γ", delta: "δ", lambda: "λ", mu: "μ", phi: "φ", omega: "ω", sigma: "σ", rho: "ρ" };
@@ -189,6 +205,22 @@ export const digitGap = (s) => /(?<![\d_^])\d+[ \t  ]+\d/.test(String(s ?? ""
 export const joinDotThousands = (s) => String(s ?? "").replace(/(?<![\d.,])\d{1,3}(?:\.\d{3})+(?=,\d)/g, (m) => m.replace(/\./g, ""));
 // Dve piki v istem številu (»1.2.3«, »1.234.567«) brez decimalne vejice: zapis ni jasen.
 export const twoDots = (s) => /\d\.\d+\.\d/.test(String(s ?? ""));
+
+/**
+ * Decimalna vejica in ločilo argumentov, enako v znanstvenem in grafičnem kalkulatorju (AUDIT-005).
+ * comma (slovenski zapis): vejica med števkami je decimalna povsod, tudi v oklepaju (sin(0,5) = sin 0,5);
+ * »;« vedno loči argumente (max(1,5; 2)), vejica s presledkom (max(1, 5)) prav tako.
+ * Brez comma (zapis s piko) ostane, kot je bilo: vejica v oklepaju loči argumente.
+ * Vrne besedilo za parse() (decimalna pika, ločilo »,«); »1,2,3« z vejico (dve decimalni vejici) je napaka.
+ */
+export function argSeparators(s, comma = true) {
+  let out = String(s ?? "");
+  if (comma) {
+    out = out.replace(/(\d),(?=\d)/g, "$1.");
+    if (twoDots(out)) throw new MathError("unexpected", { got: "," });
+  }
+  return out.replace(/;/g, ",");
+}
 
 export function normalize(src) {
   return String(src ?? "")
@@ -795,6 +827,10 @@ export function compile(node, ctx = {}) {
           return f === "Pol" ? [Math.hypot(p, q), Math.atan2(q, p) / k] : [p * Math.cos(q * k), p * Math.sin(q * k)];
         };
       }
+      // Napačno število vrednosti je napaka, nikoli tiho izpuščena vrednost: sin(0,5) z vejico kot ločilom ni sin(0),
+      // nCr(171,1) z decimalno vejico ni nCr(171,1; ?). Število za MathError("arity") je v ARITY.
+      const want = TRIG[f] ? 1 : ARITY[f];
+      if (want && args.length !== want) throw new MathError("arity", { f, n: want });
       if (TRIG[f]) {
         const g = TRIG[f];
         const a = args[0];
@@ -1360,7 +1396,10 @@ export function toTex(node, opt = {}) {
     case "pct":
       return `${wrap(n.a, 6)}\\%`;
     case "call": {
+      // manjkajoča vrednost (nCr(171,1) z decimalno vejico) je prazen okvirček, nikoli »undefined«
       const a = n.args.map(T);
+      const want = TRIG[n.f] || UNARY[n.f] ? 1 : ARITY[n.f] || 0;
+      while (a.length < want) a.push("\\square");
       switch (n.f) {
         case "sqrt":
           return `\\sqrt{${a[0]}}`;
@@ -1395,9 +1434,9 @@ export function toTex(node, opt = {}) {
     case "cmp":
       return n.terms.map((t, i) => (i ? `${CMPTEX[n.ops[i - 1]]} ` : "") + T(t)).join(" ");
     case "tuple":
-      return `\\left(${n.items.map(T).join(",\\ ")}\\right)`;
+      return `\\left(${n.items.map(T).join(`${sep === ";" ? ";" : ","}\\ `)}\\right)`;
     case "list":
-      return `\\left[${n.items.map(T).join(",\\ ")}\\right]`;
+      return `\\left[${n.items.map(T).join(`${sep === ";" ? ";" : ","}\\ `)}\\right]`;
     case "range":
       return `${T(n.a)},\\ldots,${T(n.b)}`;
     case "pw": {
@@ -1478,6 +1517,7 @@ export function fromTex(tex) {
     .replace(/\\\{/g, "{")
     .replace(/\\\}/g, "}")
     .replace(/\{,\}/g, ".")
+    .replace(/;/g, ",") // ločilo argumentov v slovenskem zapisu (toTex s sep »;«)
     .replace(/\^\{([^{}]*)\}/g, "^($1)")
     .replace(/_\{([^{}]*)\}/g, "_($1)")
     .replace(/[{}]/g, (c) => (c === "{" ? "(" : ")"))
