@@ -54,3 +54,14 @@ test("znanstveni kalkulator: napaka arity ima zgled zapisa", () => {
   assert.equal(arityExample({ f: "mod", n: 2 }, ","), "mod(a, b)");
   assert.equal(arityExample({ f: "root", n: 2 }, ";"), "root(x; n)");
 });
+
+test("risba graf: sin(0,63*x) z decimalno vejico niha (prej ravna črta sin 0, BIO-SS-3 odnosi-med-vrstami)", async () => {
+  const { renderDrawing } = await import("../public/risbe-izris.js");
+  const body = "opis: Graf nihanja števila živali v času.\nx: 0 .. 20 | 5 | t\ny: 0 .. 100 | 20 | n\nf: 60 + 30*sin(0,63*x) | modra | 0 .. 20";
+  const flat = "opis: Graf nihanja števila živali v času.\nx: 0 .. 20 | 5 | t\ny: 0 .. 100 | 20 | n\nf: 60 | modra | 0 .. 20";
+  const path = (svg) => /<path[^>]*d="([^"]+)"/.exec(String(svg?.html ?? svg))?.[1];
+  const a = path(renderDrawing("graf", body));
+  const b = path(renderDrawing("graf", flat));
+  assert.ok(a && b, "risba nima krivulje");
+  assert.notEqual(a, b);
+});
