@@ -3545,7 +3545,7 @@
   "a3.only": "Chỉ hiện cái này",
   "a3.ask": "Hỏi gia sư",
   "a3.askText": "Giải thích cho em {ime} là gì và có vai trò gì trong cơ thể.",
-  "a3.askPartText": "Trong mô hình 3D “{naslov}”: giải thích cho mình {ime} là gì và có vai trò gì.",
+  "a3.askPartText": "Trong mô hình 3D “{naslov}”: giải thích cho em {ime} là gì và có vai trò gì.",
   "a3.layers": "Lớp",
   "a3.groups": "Nhóm cấu trúc",
   "a3.expand": "Mở",
