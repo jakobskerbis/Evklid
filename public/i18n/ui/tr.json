@@ -867,6 +867,7 @@
   "gc.errSyntax": "İfade eksik ya da anlamıyorum.",
   "gc.errArity": "Parantez içindeki değer sayısı yanlış. Şöyle yaz: {ex}",
   "gc.hintPoint": "Bu parantez içinde bir sayı. Nokta mı demek istedin? Koordinatları noktalı virgülle ayır: {ex}",
+  "gc.hintEuler": "“{src}”, {euler} demektir: e, Euler sayısıdır. Bilimsel gösterim için {fix} yaz.",
   "gc.errOther": "Bunu çizemiyorum.",
   "gc.min": "En az",
   "gc.max": "En çok",

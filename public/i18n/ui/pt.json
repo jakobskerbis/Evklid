@@ -867,6 +867,7 @@
   "gc.errSyntax": "A expressão está incompleta ou não a entendo.",
   "gc.errArity": "Número errado de valores entre parênteses. Escreve assim: {ex}",
   "gc.hintPoint": "Isto é um número entre parênteses. Querias um ponto? Separa as coordenadas com ponto e vírgula: {ex}",
+  "gc.hintEuler": "“{src}” significa {euler}: e é o número de Euler. Para notação científica, escreve {fix}.",
   "gc.errOther": "Não sei desenhar isto.",
   "gc.min": "Mín.",
   "gc.max": "Máx.",

@@ -879,6 +879,7 @@
   "gc.errSyntax": "Výraz nie je dokončený alebo mu nerozumiem.",
   "gc.errArity": "Nesprávny počet hodnôt v zátvorke. Napíš to takto: {ex}",
   "gc.hintPoint": "Toto je číslo v zátvorke. Myslíš bod? Súradnice oddeľ bodkočiarkou: {ex}",
+  "gc.hintEuler": "„{src}“ znamená {euler}: e je Eulerovo číslo. Pre vedecký zápis napíš {fix}.",
   "gc.errOther": "Toto neviem nakresliť.",
   "gc.min": "Min",
   "gc.max": "Max",

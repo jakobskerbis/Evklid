@@ -867,6 +867,7 @@
   "gc.errSyntax": "A kifejezés befejezetlen, vagy nem értem.",
   "gc.errArity": "Rossz a zárójelben lévő értékek száma. Így írd: {ex}",
   "gc.hintPoint": "Ez egy szám zárójelben. Pontra gondoltál? A koordinátákat pontosvesszővel válaszd el: {ex}",
+  "gc.hintEuler": "„{src}” jelentése {euler}: az e az Euler-szám. Normálalakhoz írd be: {fix}.",
   "gc.errOther": "Ezt nem tudom lerajzolni.",
   "gc.min": "Min.",
   "gc.max": "Max.",

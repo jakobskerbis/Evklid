@@ -861,6 +861,7 @@
   "gc.errSyntax": "Biểu thức chưa hoàn chỉnh hoặc tôi không hiểu.",
   "gc.errArity": "Số giá trị trong ngoặc không đúng. Hãy viết như sau: {ex}",
   "gc.hintPoint": "Đây là một số trong ngoặc. Bạn muốn viết một điểm? Hãy tách hai tọa độ bằng dấu chấm phẩy: {ex}",
+  "gc.hintEuler": "“{src}” nghĩa là {euler}: e là số Euler. Để viết dạng khoa học, hãy nhập {fix}.",
   "gc.errOther": "Tôi không vẽ được cái này.",
   "gc.min": "Nhỏ nhất",
   "gc.max": "Lớn nhất",

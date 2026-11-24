@@ -867,6 +867,7 @@
   "gc.errSyntax": "Usemi haujakamilika au sielewi.",
   "gc.errArity": "Idadi ya thamani ndani ya mabano si sahihi. Andika hivi: {ex}",
   "gc.hintPoint": "Hii ni namba ndani ya mabano. Ulimaanisha nukta? Tenganisha viwianishi kwa nukta-mkato: {ex}",
+  "gc.hintEuler": "“{src}” ina maana {euler}: e ni namba ya Euler. Kwa uandishi wa kisayansi, andika {fix}.",
   "gc.errOther": "Siwezi kuchora hiki.",
   "gc.min": "Chini",
   "gc.max": "Juu",

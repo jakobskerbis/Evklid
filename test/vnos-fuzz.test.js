@@ -182,3 +182,23 @@ for (const comma of [true, false]) {
     assert.deepEqual(bad, []);
   });
 }
+
+test("graf zapisa 2 se pretvori v zapis 3 z enakim pomenom (2e-1, + 10 %), namig ob »2e3x« (pregled #961)", async () => {
+  const { upgradeZapis } = await import("../public/graph/model.js");
+  const st = { zapis: 2, vejica: true, items: ["y = 2e-1", "y = x + 10 %", "y = 2,5e3x", "y = max(1,5; 2)", "y = 3E-2"].map((text, i) => ({ id: `i${i}`, type: "expr", text })) };
+  const val = (s) => buildModel(s, { comma: true }).items.map((o) => toNum(o.fn ? o.fn(2) : o.value));
+  const before = val(st);
+  const up = upgradeZapis(st, true);
+  assert.equal(up.zapis, ZAPIS);
+  assert.deepEqual(up.items.map((i) => i.text), ["y = 2·e-1", "y = x + (10 %)", "y = 2,5e3x", "y = max(1,5; 2)", "y = 3·E-2"]);
+  const after = val(up);
+  before.forEach((b, i) => assert.ok(Number.isNaN(b) ? Number.isNaN(after[i]) : same(b, after[i]), `${st.items[i].text}: ${b} → ${after[i]}`));
+  // star graf brez zapisa (blok GRAF): enako
+  const old = { items: [{ id: "a", type: "expr", text: "y = 2e-1" }] };
+  assert.ok(same(val(old)[0], val(upgradeZapis(old, true))[0]));
+  // namig: pomen ostane 2·e·3·x
+  const o = buildModel({ zapis: ZAPIS, items: [{ id: "a", type: "expr", text: "y = 2e3x" }] }, { comma: true }).items[0];
+  assert.deepEqual(o.hint, { code: "eulerE", src: "2e3x", euler: "2·e·3·x", fix: "2e3·x" });
+  assert.ok(same(toNum(o.fn(1)), 6 * Math.E));
+  assert.equal(buildModel({ zapis: ZAPIS, items: [{ id: "a", type: "expr", text: "y = 2e3·x" }] }, { comma: true }).items[0].hint, undefined);
+});
