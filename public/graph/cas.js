@@ -929,7 +929,7 @@ export function symbolPolyIn(L, Rn, scope, v, ms = 800) {
   const saved = deadline;
   try {
     deadline = Date.now() + ms;
-    return withLimit(10n ** 400n, () => {
+    return withLimit(10n ** 2000n, () => {
       const ctx = { scope, dens: [], dec: false, longDec: true }; // vpisane decimalke do 15 mest točno
       const a = rat(L, ctx);
       const b = rat(Rn, ctx);
