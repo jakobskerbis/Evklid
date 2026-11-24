@@ -10,6 +10,7 @@
 // Vrednost polja ostane nespremenjena (preverjanje odgovora dobi točno to, kar je napisano). Prazno mesto (»()/()«) je
 // okvirček. Kalkulator (sprotni izračun) ima svoje.
 import { splitFormulas, hasFormula, varnaMesta, delisKazalcem, brisiNazaj, brisiNaprej, OZNAKA } from "./vnos-formul.js";
+import { izrisi as izrisiTex } from "./mat/izris.js";
 
 // Polja s svojim izrisom: kalkulator (sprotni izračun pod vnosom), skeniraj (.scan-preview);
 // iskalnik spustnega seznama (ikona kljukice je sosed polja: .dd-search input + .dd-check).
@@ -21,12 +22,12 @@ const zadnje = new WeakMap(); // polje → zadnji položaj kazalca (smer pomika 
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 // \vphantom: prazno mesto s kazalcem (števec »()/()«) dobi višino števke, da ulomek ne zleze skupaj.
 const KAZALEC = "\\htmlClass{vnos-kazalka}{\\vphantom{1}}";
-const zaupaj = (c) => c.command === "\\htmlClass" && c.class === "vnos-kazalka";
+// Kazalec (\htmlClass vnos-kazalka) dovoli skupni izris: public/mat/izris.js ZAUPAJ.kazalec.
 const tex = (t) => {
   try {
     // Prazno mesto iz tipke (ulomek, koren, potenca, ki ga učenec še ni izpolnil) kot okvirček, da se vidi, kam pišeš.
     const src = t.replace(/\{\}/g, "{\\square}").split(OZNAKA).join(KAZALEC);
-    return globalThis.katex.renderToString(`\\displaystyle ${src}`, { throwOnError: false, strict: "ignore", trust: zaupaj });
+    return izrisiTex(`\\displaystyle ${src}`, { zaupaj: "kazalec" });
   } catch {
     return esc(t.split(OZNAKA).join(""));
   }

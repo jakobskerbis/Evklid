@@ -4,6 +4,7 @@
 // ploščine in glavne vrednosti), izbor (rumena, izbrani element in višine), druga (zelena, druga krivulja,
 // polmeri, odkloni), napaka (rdeča). Vlečne točke, drsniki in segmentni gumbi so iz public/sim/kit.js.
 import { s, h, svgBox, slider, segmented, draggable, fmt } from "../sim/kit.js";
+import { izrisi } from "../mat/izris.js";
 
 export const BARVE = ["glavna", "ploskev", "izbor", "druga", "napaka"];
 
@@ -13,7 +14,7 @@ const tex = (t) => {
   if (texCache.has(t)) return texCache.get(t);
   try {
     if (!globalThis.katex) return t;
-    const html = globalThis.katex.renderToString(t, { throwOnError: false, strict: "ignore" });
+    const html = izrisi(t);
     texCache.set(t, html);
     return html;
   } catch {
