@@ -1,5 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
+import { precise } from "./natancnost.js";
 import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, calcText, calcRewrite, splitTop, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
@@ -259,6 +260,22 @@ export function evaluate(text, env = {}) {
     else value = run(expr)(scope);
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
+    // Plavajoča vejica ima ~16 mest (AUDIT-049): √(10¹⁶ + 1) − 10⁸ = 0, 1 − cos(10⁻⁸) = 0, ln(e¹⁰⁰⁰) = ∞.
+    // Isto drevo izračunamo še z večjo natančnostjo; če se rezultat razlikuje, velja natančnejši.
+    let precision = false;
+    let hp = null;
+    if (!withInt && typeof value === "number") {
+      hp = precise(rwe, scope, { unit: env.grad ? "grad" : env.deg ? "deg" : "rad", ms: env.live ? 15 : 40 });
+      if (hp && Number.isFinite(hp.value) && (hp.value !== 0 || hp.zero)) {
+        const H = hp.value;
+        const off = !Number.isFinite(value) || Math.abs(value - H) > 1e-14 * Math.abs(H) || (H === 0 && value !== 0);
+        if (off) {
+          // opomba le, kadar bi učenec videl drugo število (0,1 + 0,2 = 0,30000000000000004 ni vredno opombe)
+          precision = formatNumber(value).text !== formatNumber(H).text;
+          value = H;
+        }
+      }
+    }
     let est = false;
     let single = null; // podatki edinega integrala (scisolve: točna vrednost iz nedoločenega integrala)
     let digits; // zanesljiva mesta edinega integrala
@@ -309,6 +326,19 @@ export function evaluate(text, env = {}) {
     const out = name ? { value, tex, assign: name } : { value, tex };
     // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
     if (est) Object.assign(out, { approx: true, est: true });
+    if (precision) out.precision = true;
+    // Celo število nad 2⁵³ ima v plavajoči vejici le ~16 mest (AUDIT-050): nCr(100; 50) = 1,0089…·10²⁹ ni »=«.
+    // Točne števke (BigInt), če jih natančni račun pozna, sicer je rezultat le približek.
+    if (typeof value === "number" && Number.isInteger(value) && Math.abs(value) > Number.MAX_SAFE_INTEGER) {
+      // 100! v plavajoči vejici zgreši zadnje mesto (…441 namesto …4415): velja točna vrednost
+      // Ans in spremenljivke so shranjene kot double: Ans = nCr(100; 50) ima le ~16 mest, Ans + 1 zato nima točnih števk
+      const exactVars = [...freeVars(rwe)].every((n) => n === DEG_VAR || n === MIN_VAR || n === SEC_VAR || typeof scope[n] !== "number" || Number.isSafeInteger(scope[n]));
+      // vpisano število z več kot 15 mesti natančni račun prebere točno iz zapisa (raw, AUDIT-030)
+      if (exactVars && typeof hp?.int === "bigint" && Math.abs(Number(hp.int) - value) <= 1e-12 * Math.abs(value)) {
+        out.value = Number(hp.int);
+        out.big = hp.int.toString();
+      } else out.bigApprox = true;
+    }
     if (single) Object.defineProperty(out, "int", { value: single, enumerable: false });
     if (digits) Object.defineProperty(out, "digits", { value: digits, enumerable: false });
     return out;

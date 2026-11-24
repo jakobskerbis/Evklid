@@ -9,7 +9,7 @@ import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
 import { polyRootsMult, polyRootsExact } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
 import { exactPolyIn } from "./cas.js";
-import { walk } from "./math.js";
+import { walk, fromTex } from "./math.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE] gosto,
 const FAR = 1e12; // zunaj pa do ±FAR na logaritemski mreži (AUDIT-015: √x = 20 ima rešitev 400)
@@ -1127,6 +1127,8 @@ export function analyze(text, env = {}) {
   if (parts.length === 1) raw = parts[0]; // »x² = 4;« (odvečno ločilo na koncu)
   else if (!parts.length) return null;
 
+  // lim_(x→a)(f) – zapis s tipkovnice klepeta (symbols.js) – je limita(f; x; a) (AUDIT-051)
+  raw = limText(raw);
   // simbolno računanje: poenostavi(…), razvij(…), razstavi(…), reši(…; x) (public/graph/cas.js)
   const cmd = parseCommand(raw);
   if (cmd) {
@@ -1161,6 +1163,12 @@ export function analyze(text, env = {}) {
   const pr = polRec(raw, env);
   if (pr) return pr;
   const r = evaluate(raw, env);
+  // √(−1), ln(−1): v realnih številih ni vrednosti; povemo kompleksno (prej »npr. deljenje z 0«, AUDIT-051)
+  // i in j kot shranjeni spremenljivki: kompleksni račun bi ju vzel za imaginarno enoto (√(−1) + i pri i = 2 ni 2i)
+  if (r && !r.error && Number.isNaN(r.value) && !env.live && !("i" in vars) && !("j" in vars)) {
+    const z = complexOf(raw, env);
+    if (z && z[1] !== 0) return { error: { code: "notReal", info: { re: z[0], im: z[1] } } };
+  }
   if (r && !r.error) return { kind: "value", ...(r.est ? exactIntegral(raw, env, r) : r) };
   if (!r) return null;
   const code = r.error.code;
@@ -1170,13 +1178,7 @@ export function analyze(text, env = {}) {
   // kompleksno število (i je imaginarna enota, če ni spremenljivka)
   if (code === "missing" && r.error.info.names.every((n) => n === "i") && !("i" in vars)) {
     try {
-      const s = prepare(raw, { comma })
-        .replace(/A_\{ans\}/g, `(${env.ans ?? 0})`)
-        .replace(/G_\{deg\}/g, env.deg && !env.grad ? "1" : "(π/180)")
-        .replace(/G_\{min\}/g, env.deg && !env.grad ? "(1/60)" : "(π/10800)")
-        .replace(/G_\{sec\}/g, env.deg && !env.grad ? "(1/3600)" : "(π/648000)");
-      if (/[A-Za-z]_\{/.test(s)) throw new MathError("other");
-      const [re, im] = evalComplex(s, { deg: !!env.deg && !env.grad });
+      const [re, im] = complexValue(raw, env);
       const line = compileLine(raw, env);
       return { kind: "complex", re: clean(re), im: clean(im), tex: lineTex(line.ast, comma) };
     } catch (e) {
@@ -1213,6 +1215,18 @@ export function analyze(text, env = {}) {
       if (U.length === 1) {
         const v = U[0];
         const plot = v === "x" && cmp && ast.ops.length === 1 ? plotPair(cmp, env) : [];
+        // istovetnost (AUDIT-048): 1/(x − 2) = 1/(x − 2), x/x = 1, √x = √x veljajo za vsak x, kjer sta strani definirani
+        // L − R je konstanta c: x = x + 10⁻¹² in x/x = 2 nimata rešitve (prej »x ∈ ℝ« oziroma »x = −100«)
+        const id = ast.ops.length === 1 && cmp ? identityOf(cmp, env, v, fnOf(ast.terms[0], v), fnOf(ast.terms[1], v)) : null;
+        const holds = id && CMP_OK[ast.ops[0]](id.c);
+        // pogoj iz CAS mora opisati, kje sta strani res definirani (√(x² − 1): ne le x ≥ 1; ∛x tudi za x < 0)
+        if (id && (!holds || condMatches(id.cond, env, v, fnOf(ast.terms[0], v), fnOf(ast.terms[1], v)))) {
+          const op = ast.ops[0];
+          const cond = holds && id.cond ? { cond: id.cond } : {};
+          if (op === "=") return holds ? { kind: "solve", v, all: true, roots: [], complex: [], ...cond, tex, plot } : { kind: "solve", v, none: true, roots: [], complex: [], tex, plot };
+          // a ≤ a velja povsod v definicijskem območju, a < a nikjer
+          return { kind: "ineq", v, intervals: holds ? [{ lo: -Infinity, loIn: false, hi: Infinity, hiIn: false }] : [], ...cond, tex, plot };
+        }
         if (ast.ops.length === 1 && ast.ops[0] === "=") {
           const L = fnOf(ast.terms[0], v);
           const R = fnOf(ast.terms[1], v);
@@ -1253,6 +1267,96 @@ export function analyze(text, env = {}) {
     return { error: { code: e.code || "other", info: e.info || {} } };
   }
   return r;
+}
+
+// Je L − R simbolno konstanta (poenostavi, preverjeno s števili)? Vrne { c, cond } – c = 0 za istovetnost, cond je
+// definicijsko območje (»x ≠ 2«, »x ≥ 0«) – ali null. Številska pot tega ne zna: L − R je 0 ali šum zaokrožitve povsod,
+// zato je vrnila naključne točke ali »rešitve ni« (AUDIT-048).
+function identityOf([l, , rr], env, v, L, R) {
+  let r;
+  try {
+    r = runCas({ op: "simplify", name: "simplify", inner: `(${l})-(${rr})` }, { ...env, live: true });
+  } catch {
+    return null;
+  }
+  if (r?.kind !== "cas" || typeof r.resTex !== "string") return null;
+  if (r.resTex === "0") return { c: 0, cond: r.cond || "" };
+  // rezultat brez neznanke: predznak konstante iz vrednosti strani v točki, kjer sta definirani
+  if (new RegExp(`(?<![A-Za-z])${v}(?![A-Za-z])`).test(r.resTex.replace(/\\[A-Za-z]+/g, " "))) return null;
+  for (const x of [0.37, 1.3, -0.7, 2.9, 5.1, -3.3, 17.3, 0.013]) {
+    const d = L(x) - R(x);
+    if (typeof d === "number" && Number.isFinite(d) && d !== 0) return { c: d, cond: r.cond || "" };
+  }
+  return null;
+}
+
+// Ali pogoj (TeX »x \ge 1,\; x \ne 2«) velja natanko tam, kjer sta L in R končni? Preverjeno na mreži točk.
+function condMatches(cond, env, v, L, R) {
+  let tests;
+  try {
+    tests = (cond ? cond.split(",\\;") : []).map((part) => {
+      const line = compileLine(fromTex(part.trim()).replace(/\bne\b/g, "!="), { ...env, comma: false });
+      if (line.ast.k !== "cmp") throw new Error("cond");
+      const f = line.run(line.ast);
+      return (x) => {
+        const s = Object.create(line.scope);
+        s[v] = x;
+        const y = f(s);
+        return y === true || y === 1;
+      };
+    });
+  } catch {
+    return false;
+  }
+  const fin = (y) => typeof y === "number" && Number.isFinite(y);
+  for (let x = -12.0071; x < 12; x += 0.0937) {
+    const def = fin(L(x)) && fin(R(x));
+    if (def !== tests.every((t) => t(x))) return false;
+  }
+  return true;
+}
+
+// Vrednost izraza v kompleksnih številih [re, im] (vrže MathError)
+function complexValue(raw, env) {
+  const s = prepare(raw, { comma: env.comma !== false })
+    .replace(/A_\{ans\}/g, `(${env.ans ?? 0})`)
+    .replace(/G_\{deg\}/g, env.deg && !env.grad ? "1" : "(π/180)")
+    .replace(/G_\{min\}/g, env.deg && !env.grad ? "(1/60)" : "(π/10800)")
+    .replace(/G_\{sec\}/g, env.deg && !env.grad ? "(1/3600)" : "(π/648000)");
+  if (/[A-Za-z]_\{/.test(s)) throw new MathError("other");
+  return evalComplex(s, { deg: !!env.deg && !env.grad });
+}
+const complexOf = (raw, env) => {
+  try {
+    const [re, im] = complexValue(raw, env);
+    return Number.isFinite(re) && Number.isFinite(im) ? [clean(re), clean(im)] : null;
+  } catch {
+    return null;
+  }
+};
+
+// lim_(x→a)(f), lim_{x→a} f, lim_(x->a) f → limita(f; x; a); drugo besedilo ostane
+// točka sme imeti en nivo oklepajev: x→(π/2), x→sqrt(2)
+const LIM = /^\s*lim\s*_\s*[({]\s*([A-Za-zα-ω])\s*(?:→|->|\\to)\s*((?:[^(){}]|\([^(){}]*\))+?)\s*[)}]\s*/;
+function limText(raw) {
+  const m = LIM.exec(raw);
+  if (!m) return raw;
+  let body = raw.slice(m[0].length).trim();
+  if (!body) return raw;
+  // en oklepaj okoli celega telesa odstranimo: lim_(x→0)(sin(x)/x)
+  if (body[0] === "(") {
+    let depth = 0;
+    let end = -1;
+    for (let i = 0; i < body.length; i++) {
+      if (body[i] === "(") depth++;
+      else if (body[i] === ")" && --depth === 0) {
+        end = i;
+        break;
+      }
+    }
+    if (end === body.length - 1) body = body.slice(1, -1);
+  }
+  return `limita(${body}; ${m[1]}; ${m[2].replace(/\s+/g, "")})`;
 }
 
 function plotPair([l, , rr], env) {
