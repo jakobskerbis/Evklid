@@ -414,6 +414,17 @@ export function createScientific(root, opts) {
     }
   }
 
+  // Celo število nad 2⁵³ (AUDIT-050): do 40 mest vse števke s presledki po tri (»=«), daljše ali brez točnih števk
+  // »≈« in zaokroženo. 10²⁰ ostane 1·10²⁰ (zaokroženi zapis je že točen).
+  const BIG_DIGITS = 40;
+  const bigShown = (e) => {
+    if (!e.big && !e.bigApprox) return null;
+    const digits = e.big?.replace("-", "");
+    if (digits && digits.replace(/0+$/, "").length <= 10) return null;
+    if (digits && digits.length <= BIG_DIGITS && st.format === "auto") return { rel: "=", tex: groupTex(e.big) };
+    return { rel: "\\approx", tex: fmt(e.value).tex };
+  };
+  const groupTex = (s) => `${s.startsWith("-") ? "-" : ""}${s.replace("-", "").replace(/\B(?=(\d{3})+(?!\d))/g, "\\,")}`;
   // rezultat (TeX za vrednost) po trenutni obliki zapisa
   function valueTex(v, approx) {
     const f = fmt(v);
@@ -440,6 +451,8 @@ export function createScientific(root, opts) {
         if (r.approx) e.approx = true;
         if (r.est) e.est = true;
         if (r.precision) e.note = { key: "sc.precision" }; // AUDIT-049: navadnih 16 mest ni bilo dovolj
+        if (r.big) e.big = r.big; // AUDIT-050: točne števke celega števila nad 2⁵³
+        if (r.bigApprox) e.bigApprox = true;
         break;
       case "complex":
         e.re = r.re;
@@ -538,6 +551,8 @@ export function createScientific(root, opts) {
     switch (e.kind || "value") {
       case "value": {
         const d = e.dms ? dmsOf(e.value, { comma: comma() }) : null;
+        const big = bigShown(e);
+        if (big) return texHtml(`${e.assign ? `${e.assign} ` : ""}${big.rel} ${big.tex}`);
         return texHtml(`${e.assign ? `${e.assign} ` : ""}${e.est ? "\\approx" : "="} ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
       }
       case "complex":
@@ -689,7 +704,9 @@ export function createScientific(root, opts) {
     }
     showEntry(r);
     live.className = "sc-live muted";
-    if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`${r.est ? "\\approx" : "="} ${fmt(r.value).tex}`) : "";
+    const big = r.kind === "value" ? bigShown(r) : null;
+    if (big) live.innerHTML = texHtml(`${big.rel} ${big.tex}`);
+    else if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`${r.est ? "\\approx" : "="} ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
     else if (r.kind === "cas" && !r.resTex && !r.none) live.innerHTML = ""; // samo zapis (predogled matrike z okvirčki)
@@ -1088,7 +1105,8 @@ export function createScientific(root, opts) {
       input.value = it.text;
       input.setSelectionRange(it.text.length, it.text.length);
       update();
-    } else if ((it.kind || "value") === "value") insert(it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: comma() }).text.replace("−", "-") : formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-"));
+    } else if ((it.kind || "value") === "value" && it.big && bigShown(it)?.rel === "=") insert(it.big);
+    else if ((it.kind || "value") === "value") insert(it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: comma() }).text.replace("−", "-") : formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-"));
     else if (it.kind === "complex") insert(`(${complexText(it)})`);
     if (!touch) input.focus({ preventScroll: true });
   });
@@ -1102,6 +1120,7 @@ export function createScientific(root, opts) {
   function copyText(it) {
     const c = comma();
     if (it.none) return t("sc.cas.limitNone");
+    if ((it.kind || "value") === "value" && it.big && bigShown(it)?.rel === "=") return it.big.replace("-", "−");
     if ((it.kind || "value") === "value") return it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: c }).text : formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
     return texPlain(String(resTex(it)));
