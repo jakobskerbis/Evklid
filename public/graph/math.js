@@ -42,9 +42,45 @@ function genBinom(n, k, binom) {
     const v = fallProd(k - n - 1, binom ? Math.min(k, -n - 1) : k, binom);
     return k % 2 ? -v : v;
   }
-  let r = 1;
-  for (let i = 0; i < k && r !== 0 && Number.isFinite(r); i++) r *= binom ? (n - i) / (i + 1) : n - i;
-  return r;
+  // do k = 1000 produkt (točen na ~k ulp); naprej logaritem gama (zanka do k = 10⁹ bi zamrznila vmesnik)
+  if (k <= 1000) {
+    let r = 1;
+    for (let i = 0; i < k && r !== 0 && Number.isFinite(r); i++) r *= binom ? (n - i) / (i + 1) : n - i;
+    return r;
+  }
+  // (−1)^k sin(π(n + 1)) brez izgube natančnosti pri velikem k (k je celo)
+  const sgnK = k % 2 ? -1 : 1;
+  if (binom) {
+    // nCr(n; k) = (−1)^k·Γ(k − n)/(Γ(−n)·Γ(k + 1))
+    const [lg, sg] = lnAbsGamma(-n);
+    const ln = lnGammaRatio(k - n, k + 1) - lg;
+    return sgnK * sg * Math.exp(ln);
+  }
+  // nPr(n; k) = Γ(n + 1)/Γ(n − k + 1) = Γ(n + 1)·Γ(k − n)·sin(π(n − k + 1))/π
+  const [l1, s1] = lnAbsGamma(n + 1);
+  const sn = sgnK * Math.sin(Math.PI * (n + 1 - 2 * Math.floor((n + 1) / 2)));
+  const [l2] = lnAbsGamma(k - n);
+  return s1 * Math.sign(sn) * Math.exp(l1 + l2 + Math.log(Math.abs(sn)) - Math.log(Math.PI));
+}
+// ln|Γ(z)| in predznak Γ(z) (z ni celo ≤ 0)
+function lnAbsGamma(z) {
+  if (z < 0.5) {
+    const s = Math.sin(Math.PI * (z - 2 * Math.floor(z / 2)));
+    const [l, sg] = lnAbsGamma(1 - z);
+    return [Math.log(Math.PI) - Math.log(Math.abs(s)) - l, Math.sign(s) * sg];
+  }
+  if (z < 20) {
+    const g = gamma(z);
+    return [Math.log(Math.abs(g)), Math.sign(g)];
+  }
+  return [lnGammaRatio(z, 20) + Math.log(gamma(20)), 1];
+}
+// ln Γ(a) − ln Γ(b) za a, b > 10 po Stirlingu, brez odštevanja velikih števil (log1p)
+function lnGammaRatio(a, b) {
+  if (a < 10 || b < 10) return lnAbsGamma(a)[0] - lnAbsGamma(b)[0];
+  const S = (x) => 1 / (12 * x) - 1 / (360 * x ** 3) + 1 / (1260 * x ** 5) - 1 / (1680 * x ** 7);
+  const d = a - b;
+  return (b - 0.5) * Math.log1p(d / b) + d * Math.log(a) - d + (S(a) - S(b));
 }
 function gamma(z) {
   // Lanczos

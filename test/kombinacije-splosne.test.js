@@ -62,3 +62,31 @@ test("sporočilo sc.errNcrK v vseh jezikih", () => {
     assert.ok(j["sc.errNcrK"]?.includes("{f}"), f);
   }
 });
+
+// Pregled #966: neceloštevilski n z velikim k je šel v zanko k-krat (nCr(−0,5; 10⁹) 11,5 s). Nad k = 1000 zdaj
+// logaritem gama (Stirling z log1p). Vrednosti: mpmath binomial/ff na 30 mest (SymPy jih pri tako velikem k ne izračuna).
+test("velik k pri neceloštevilskem n: hitro in kot mpmath", () => {
+  const CASES = [
+    ["nCr(−0,5;10^9)", 1.7841241159297556e-5],
+    ["nCr(0,5;10^8)", -2.8209479283173362e-13],
+    ["nCr(0,5;1001)", 8.9105949779492112e-6],
+    ["nCr(2,5;5000)", -1.1978747326735088e-13],
+    ["nCr(−1,5;3000)", 61.811597432226553],
+    ["nCr(0,25;1500)", -2.1856840645835243e-5],
+    ["nCr(7,5;10^6)", 4.467432985782343e-48],
+  ];
+  const t0 = performance.now();
+  for (const [t, want] of CASES) {
+    const v = evaluate(t, ENV).value;
+    assert.ok(Math.abs(v - want) <= 1e-11 * Math.abs(want), `${t}: ${v} ≠ ${want}`);
+  }
+  assert.ok(performance.now() - t0 < 500, "brez zanke do k");
+  // nPr: 3,59·10²⁵⁶⁵ in −9,83·10⁵⁷²³ (mpmath ff) sta zunaj double: ±∞ s pravim predznakom
+  assert.equal(compile(parse("nPr(0.5, 1001)"))({}), Infinity);
+  assert.equal(compile(parse("nPr(2.5, 2000)"))({}), -Infinity);
+  // graf y = nCr(x; 10⁶): 1000 točk hitro
+  const g = compile(parse("nCr(x, 1000000)"));
+  const t1 = performance.now();
+  for (let x = -5; x < 5; x += 0.01) g({ x });
+  assert.ok(performance.now() - t1 < 500);
+});
