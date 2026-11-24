@@ -40,10 +40,6 @@ test("sliderText: zapis, ki ga kalkulator spet prebere kot drsnik, nikoli 0 ali 
     assert.equal(o.kind, "slider", `${v}: ${st.items[0].text}`);
     assert.ok(Math.abs(o.value - v) <= Math.abs(v) * 1e-9, `${v} → ${o.value}`);
   }
-  // okno grafa v klepetu (odpri.js) zapiše vrednost s sliderText, ne String(v) (»3e-8« = 3·e − 8)
-  const odpri = readFileSync(new URL("../public/odpri.js", import.meta.url), "utf8");
-  assert.match(odpri, /it\.text = `\$\{o\.name\} = \$\{sliderText\(v, r\.step\)\}`/);
-  assert.doesNotMatch(odpri, /it\.text = `\$\{o\.name\} = \$\{v\}`/);
 });
 
 const require = createRequire(import.meta.url);
@@ -109,5 +105,59 @@ test("drsnik 10⁻⁸ v brskalniku: premik desno in levo vrne 10⁻⁸, nikoli 0
     assert.ok(Math.abs(v) <= Math.abs(v0) * 10 + 1e-15, `${start}: v razponu ${txt}`);
     assert.doesNotMatch(txt, /e/i, `${start}: brez zapisa z e`);
   }
+  assert.deepEqual(errors, []);
+});
+
+// okno grafa v klepetu (public/odpri.js): prikaz drsnika kot prej (vsaj 2 decimalki: 3,14), majhne vrednosti z veljavnimi
+// mesti (ne 0), zapis, ki ga kalkulator prebere kot drsnik (ne »3e-8« = 3·e − 8); pregled #948
+const ODPRI = `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/graph.css"><div id="b" style="width:600px"></div>
+<script type="module">
+import { initOpen, addOpen } from "/odpri.js";
+window.got = [];
+initOpen({ t: (k) => k, icon: () => "", escapeHtml: (s) => String(s), renderMath: (s) => s, openGraph: (list) => window.got.push(list) });
+addOpen(document.getElementById("b"), [{ kind: "graph", exprs: ["y = a*x + b + c", "a = 3.14159", "b = 0.00000001", "c = 0.0000000123"] }]);
+window.ready = true;
+</script>`;
+test("okno grafa v klepetu: drsnik 3,14 ostane 3,14, 10⁻⁸ ni 0, zapis je drsnik (AUDIT-014)", { timeout: 300000 }, async (t) => {
+  let browser = null;
+  try {
+    if (playwright) browser = await playwright.chromium.launch();
+  } catch {}
+  if (!browser) return t.skip("Playwright/Chromium ni nameščen");
+  const server = http.createServer((req, res) => {
+    const url = decodeURIComponent(req.url.split("?")[0]);
+    if (url === "/o.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(ODPRI);
+    const file = path.join(PUB, path.normalize(url));
+    if (!file.startsWith(PUB) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
+    res.writeHead(200, { "content-type": file.endsWith(".js") ? "text/javascript" : file.endsWith(".css") ? "text/css" : "application/octet-stream" }).end(fs.readFileSync(file));
+  });
+  await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
+  t.after(async () => {
+    await browser.close();
+    server.close();
+  });
+  const page = await browser.newPage({ viewport: { width: 800, height: 700 } });
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(`http://127.0.0.1:${server.address().port}/o.html`);
+  await page.waitForSelector(".open-graph-slider output");
+  const outs = () => page.evaluate(() => Object.fromEntries([...document.querySelectorAll(".open-graph-slider")].map((r) => [r.querySelector(".open-graph-name").textContent, r.querySelector("output").textContent])));
+  assert.deepEqual(await outs(), { a: "3,14", b: "0,00000001", c: "0,0000000123" });
+  // premik drsnika b za en korak: vrednost ni 0, zapis je decimalno število, ki ga kalkulator prebere kot drsnik
+  await page.evaluate(() => {
+    const inp = [...document.querySelectorAll(".open-graph-slider")].find((r) => r.querySelector(".open-graph-name").textContent === "b").querySelector("input");
+    inp.stepDown();
+    inp.dispatchEvent(new Event("input"));
+  });
+  const o = await outs();
+  assert.match(o.b, /^0,0000000\d+$/);
+  assert.notEqual(o.b, "0");
+  await page.click(".open-graph button");
+  const list = await page.evaluate(() => window.got.at(-1));
+  const bText = list.find((x) => /^b =/.test(x));
+  assert.match(bText, /^b = 0\.0000000\d+$/, bText);
+  const st = { ...emptyState(), items: list.map((text, i) => ({ id: String(i), type: "expr", text })) };
+  assert.equal(buildModel(st).items[2].kind, "slider", bText);
+  assert.ok(buildModel(st).items[2].value > 0, bText);
   assert.deepEqual(errors, []);
 });

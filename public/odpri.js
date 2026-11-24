@@ -224,8 +224,14 @@ async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
     const inp = document.createElement("input");
     Object.assign(inp, { type: "range", min: r.min, max: r.max, step: r.step, value: o.value });
     inp.setAttribute("aria-label", o.name);
-    // zapis in prikaz z veljavnimi mesti (10⁻⁸ ni 0, ne »3e-8«, ki bi bil 3·e − 8; AUDIT-014)
-    const show = (v) => sliderText(v, r.step).replace(".", ",").replace("-", "−");
+    // zapis z decimalkami koraka (10⁻⁸ ni 0, ne »3e-8«, ki bi bil 3·e − 8; AUDIT-014); prikaz kot prej z vsaj 2 decimalkama
+    // (3,14), majhne vrednosti s 3 veljavnimi mesti (0,0000000123)
+    const stepDec = Math.max(0, -Math.floor(Math.log10(r.step) + 1e-9));
+    const show = (v) => {
+      const a = Math.abs(v);
+      const d = !a || a >= 0.01 ? Math.max(2, stepDec) : -Math.floor(Math.log10(a)) + 2;
+      return sliderText(v, 10 ** -d).replace(".", ",").replace("-", "−");
+    };
     const out = el("output", "", show(o.value));
     inp.addEventListener("input", () => {
       const v = Number(inp.value);
