@@ -274,6 +274,8 @@ export function createScientific(root, opts) {
     const e = input.selectionEnd ?? s;
     if (input.value === undo.cur.v) undo.cur.p = s; // razveljavitev vrne kazalec sem (selectionchange je lahko še na poti)
     const r = fn(input.value, s, e);
+    if (!r.text.trim()) r.text = r.pos = ""; // ostali presledki (»∑_(n=1)^(5) « brez predloge) niso vnos
+    r.pos = Math.min(Number(r.pos) || 0, r.text.length);
     const changed = r.text !== input.value;
     if (changed) replaceText(r.text);
     input.setSelectionRange(r.pos, r.pos);
