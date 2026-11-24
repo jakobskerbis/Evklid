@@ -161,16 +161,18 @@ const MAIN_OK = [
 
 const sig = (v) => String(Math.abs(v)).replace(/e.*$/, "").replace(".", "").replace(/^0+/, "").length;
 /** Prikazana vrednost je pravilna na vsa svoja mesta (do enote zadnjega mesta). */
-export function digitsOk(r, want) {
+// d: zanesljiva mesta (evaluate(…).digits), sicer iz zapisa števila
+export function digitsOk(r, want, d) {
   if (!r || r.kind !== "value" || !Number.isFinite(r.value)) return false;
   const v = r.value;
   if (!r.est) return Math.abs(v - want) <= 1e-12 * Math.max(1, Math.abs(want));
   if (v === 0) return Math.abs(want) < 1e-9;
   const e = Math.floor(Math.log10(Math.abs(v)));
-  return Math.abs(v - want) <= 10 ** (e - sig(v) + 1);
+  return Math.abs(v - want) <= 10 ** (e - (d || sig(v)) + 1);
 }
 export function check(t, want, env = ENV) {
   const r = analyze(t, env);
+  if (typeof want === "number" && r?.est) return [digitsOk(r, want, evaluate(t, env).digits), r];
   if (want === "div") return [r?.error?.code === "intDiverge", r];
   if (want === "unk") return [r?.error?.code === "intUnknown" || r?.error?.code === "intTimeout", r];
   return [digitsOk(r, want), r];
