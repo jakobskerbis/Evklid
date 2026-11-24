@@ -99,8 +99,14 @@ export function polyCoeffs(f, maxDeg = 8) {
 }
 
 /** Točne rešitve kvadratne enačbe z racionalnimi koeficienti: { tex, roots, complex } ali null. */
-function quadraticExact([a, b, c], v, comma) {
-  const fr = [a, b, c].map((x) => toFraction(x, 1000));
+function quadraticExact([a, b, c], v, comma, exact = null) {
+  // AUDIT-053: ulomki morajo biti točni koeficienti (0,666666666667 ni 2/3): iz točnega polinoma ali točno enaki double
+  const fr = exact
+    ? exact.map((q) => (q.n >= BigInt(-Number.MAX_SAFE_INTEGER) && q.n <= BigInt(Number.MAX_SAFE_INTEGER) && q.d <= BigInt(Number.MAX_SAFE_INTEGER) ? { p: Number(q.n), q: Number(q.d) } : null))
+    : [a, b, c].map((x) => {
+        const f = toFraction(x, 1000);
+        return f && f.p / f.q === x ? f : null;
+      });
   if (fr.some((x) => !x)) return null;
   const L = fr.reduce((l, x) => (l * x.q) / gcd(l, x.q), 1);
   let [A, B, C] = fr.map((x) => (x.p * L) / x.q);
@@ -236,7 +242,7 @@ const sameRoot = (a, b) => {
   const tol = (x, y) => Math.abs(x - y) <= 8 * EPS * Math.max(Math.abs(x), Math.abs(y));
   return tol(a.re, b.re) && tol(a.im, b.im);
 };
-function polyRootsOf(L, R, v, scope, run) {
+function polyRootsOf(L, R, v, scope, run, unit = "rad") {
   const val = (n) => {
     try {
       const y = run(n)(scope);
@@ -245,14 +251,18 @@ function polyRootsOf(L, R, v, scope, run) {
       return NaN;
     }
   };
-  // AUDIT-050: približna ničla dobi točno obliko (ulomek, celo, ±(k/q)√m, racionalni večkratnik π, a + bi) le, če jo
-  // točno preverimo (cas.js zeroAtExact: obliko vstavimo v L − R, račun s polinomi v π in √m). Expandiran polinom s π:
-  // 141/11 ni ničla, −19/2 je; x^15 + 7x − 1 = 0 nima ničle 1/7.
-  const verifyAll = (list) => {
+  // AUDIT-053: vsaka prikazana točna oblika (ulomek, celo, ±(k/q)√m, racionalni večkratnik π, a + bi, končna decimalka)
+  // mora biti točno preverjena v vpisani enačbi (cas.js zeroAtExact: obliko vstavimo v L − R, račun s polinomi v π in
+  // √m). Tudi točne racionalne ničle in ničle linearnih faktorjev: x − 0,666666666667 = 0 ima ničlo 0,666666666667, ne 2/3;
+  // (x − π − 10⁻¹⁵)(x − 1) = 0 nima ničle π. Izjema: realni koren iz točnega faktorja (r.form, preverjen z deljenjem).
+  const verifyIn = (A, B, list) => {
     for (const r of list) {
-      if (r.exact || r.lin || (r.im === 0 && r.form)) continue;
-      const c = verifiedForm(L, R, scope, v, r.re, r.im);
-      if (c) Object.assign(r, { re: c[0], im: c[1], ver: true });
+      if (r.im === 0 && r.form) continue;
+      const c = verifiedForm(A, B, scope, v, r.re, r.im, false, unit);
+      if (!c) continue;
+      r.ver = true;
+      r.vk = c[2];
+      if (!r.exact) Object.assign(r, { re: c[0], im: c[1] });
     }
     return list;
   };
@@ -267,7 +277,11 @@ function polyRootsOf(L, R, v, scope, run) {
   const ex = exactPolyIn(L, R, scope, v);
   if (ex && ex.length > 1) {
     const e = polyRootsExact(ex);
-    if (e) return finish(verifyAll(e.roots.map((r) => ({ ...r }))), e.poly, true);
+    if (e) {
+      const out = finish(verifyIn(L, R, e.roots.map((r) => ({ ...r }))), e.poly, true);
+      out.ex = ex; // točni koeficienti za quadraticExact
+      return out;
+    }
   }
   if (ex && ex.length <= 1) return null; // konstanta: stara pot (vsa števila / ni rešitev)
   // 2) po faktorjih
@@ -291,53 +305,83 @@ function polyRootsOf(L, R, v, scope, run) {
       if (bp.length < 2) continue; // neničelna konstanta
       rs = polyRootsMult(bp.map((b) => b[0]).reverse(), null, bp.map((b) => b[1]).reverse());
       if (!rs) return null;
-      // ničla linearnega faktorja (x − π/2) je −b/a: točna oblika sme ostati (AUDIT-050), drugače le približek
+      // ničla linearnega faktorja (x − π/2) je −b/a: točna oblika sme ostati (AUDIT-053), drugače le približek
       if (bp.length === 2) rs = rs.map((r) => ({ ...r, lin: true }));
     }
+    // preverjamo v faktorju (√2 v drugem faktorju točen račun celotne enačbe onemogoči, ničla faktorja pa je ničla zmnožka)
+    verifyIn(node, ZERO_NODE, rs);
     for (const r of rs) {
       const same = all.find((q) => sameRoot(q, r));
       if (same) same.m += r.m * m;
-      else all.push({ re: r.re, im: r.im, m: r.m * m, exact: !!r.exact, lin: !!r.lin, qex: !!r.qex, form: r.form });
+      else all.push({ re: r.re, im: r.im, m: r.m * m, exact: !!r.exact, lin: !!r.lin, qex: !!r.qex, form: r.form, ver: r.ver, vk: r.vk });
     }
   }
-  return finish(verifyAll(all), null, exactAll);
+  return finish(all, null, exactAll);
 }
 const numNode = (k) => ({ k: "num", v: k, raw: String(k) });
 const fracNode = (f) => (f.q === 1 ? numNode(f.p) : { k: "/", a: numNode(f.p), b: numNode(f.q) });
-// Oblika, kot jo zapiše scicore exactTex: x ≈ p/q, ±(k/q)·√m ali (p/q)·π. Vrne { val, node, isq } (node z ι, ι² = isq,
-// pri korenu) ali null.
-function formOf(x, allowPi) {
+// Kandidati za točno obliko x, kot jo pokaže zapis: najprej scicore exactTex (p/q, ±(k/q)·√m, (p/q)·π), nato končna
+// decimalka (najkrajši toFixed, ki je točno x; pri dec6 le do 6 decimalk, kot jih kaže kompleksni zapis).
+// Vrne [{ val, node, isq, vk }] (node z ι, ι² = isq, pri korenu).
+function formsOf(x, allowPi, dec6 = false) {
+  const out = [];
   const c = clean(x);
   const near = (val) => Math.abs(val - x) <= 1e-6 * Math.max(1, Math.abs(x));
   const f = Number.isInteger(c) ? { p: c, q: 1 } : toFraction(c, 1000);
-  if (f) return Number.isSafeInteger(f.p) && near(f.p / f.q) ? { val: f.p / f.q, node: fracNode(f) } : null;
-  const sq = toFraction(c * c, 1000);
-  if (sq && sq.p > 0 && sq.p * sq.q <= 1e6) {
-    let m = sq.p * sq.q; // |x| = √(p·q)/q = (k/q)·√m
-    let k = 1;
-    for (let d = 2; d * d <= m; d++) while (m % (d * d) === 0) (m /= d * d), (k *= d);
-    const val = (Math.sign(c) * k * Math.sqrt(m)) / sq.q;
-    if (m > 1 && near(val)) return { val, isq: m, node: { k: "*", a: fracNode({ p: Math.sign(c) * k, q: sq.q }), b: { k: "var", name: "ι" } } };
+  if (f) {
+    if (Number.isSafeInteger(f.p) && near(f.p / f.q)) out.push({ val: f.p / f.q, node: fracNode(f), vk: "tex" });
+  } else {
+    const sq = toFraction(c * c, 1000);
+    let done = false;
+    if (sq && sq.p > 0 && sq.p * sq.q <= 1e6) {
+      let m = sq.p * sq.q; // |x| = √(p·q)/q = (k/q)·√m
+      let k = 1;
+      for (let d = 2; d * d <= m; d++) while (m % (d * d) === 0) (m /= d * d), (k *= d);
+      const val = (Math.sign(c) * k * Math.sqrt(m)) / sq.q;
+      if (m > 1 && near(val)) {
+        out.push({ val, isq: m, vk: "tex", node: { k: "*", a: fracNode({ p: Math.sign(c) * k, q: sq.q }), b: { k: "var", name: "ι" } } });
+        done = true;
+      }
+    }
+    const pi = !done && allowPi ? toFraction(c / Math.PI, 24) : null;
+    if (pi && Math.abs(pi.p) <= 100 && near((pi.p * Math.PI) / pi.q))
+      out.push({ val: (pi.p * Math.PI) / pi.q, vk: "tex", node: { k: "/", a: { k: "*", a: numNode(pi.p), b: { k: "const", name: "π" } }, b: numNode(pi.q) } });
   }
-  if (!allowPi) return null;
-  const pi = toFraction(c / Math.PI, 24);
-  if (!pi || Math.abs(pi.p) > 100 || !near((pi.p * Math.PI) / pi.q)) return null;
-  return { val: (pi.p * Math.PI) / pi.q, node: { k: "/", a: { k: "*", a: numNode(pi.p), b: { k: "const", name: "π" } }, b: numNode(pi.q) } };
+  // končna decimalka: x sam (ne zaokrožen), le če je zapis kratek in natanko x
+  if (Math.abs(x) < 1e15 && Math.abs(x) >= 1e-15)
+    for (let d = 0; d <= (dec6 ? 6 : 15); d++) {
+      const t = x.toFixed(d);
+      if (Number(t) !== x) continue;
+      if (!out.some((o) => o.val === x && o.vk === "tex")) out.push({ val: x, vk: "dec", node: { k: "num", v: x, raw: t } });
+      break;
+    }
+  if (x === 0) out.push({ val: 0, vk: "dec", node: numNode(0) });
+  // celo število nad 2⁵³ (x − 2^60 = 0): točno iz double
+  else if (Number.isInteger(x) && !Number.isSafeInteger(x) && Math.abs(x) < 1e300) out.push({ val: x, vk: "dec", node: { k: "num", v: x, raw: BigInt(x).toString() } });
+  return out;
 }
-// [re, im] preverjene oblike ali null; s tri = true pri realni: true / false / null (točno ne gre)
-function verifiedForm(L, R, scope, v, re, im, tri = false) {
-  const a = formOf(re, im === 0);
-  if (!a) return tri ? false : null;
-  if (tri) return zeroAtExact(L, R, scope, v, a.node, a.isq ?? -1);
-  if (im === 0) return zeroAtExact(L, R, scope, v, a.node, a.isq ?? -1) ? [a.val, 0] : null;
-  if (a.isq) return null;
-  const b = formOf(im, false);
-  if (!b) return null;
-  // a + b·i; pri b = (k/q)·√m je b·i = (k/q)·ι z ι² = −m
-  const rep = b.isq ? { k: "+", a: a.node, b: b.node } : { k: "+", a: a.node, b: { k: "*", a: b.node, b: { k: "var", name: "ι" } } };
-  return zeroAtExact(L, R, scope, v, rep, b.isq ? -b.isq : -1) ? [a.val, b.val] : null;
+// [re, im, vk] preverjene oblike ali null; s tri = true pri realni: true / false / null (točno ne gre)
+function verifiedForm(L, R, scope, v, re, im, tri = false, unit = "rad") {
+  if (im === 0) {
+    // tri: true, če katera oblika velja; false, če je vsaj ena točno ovržena; null, ko točno ne gre nobena
+    let no = false;
+    for (const a of formsOf(re, true)) {
+      const z = zeroAtExact(L, R, scope, v, a.node, a.isq ?? -1, undefined, unit);
+      if (z) return tri ? true : [a.val, 0, a.vk];
+      if (z === false) no = true;
+    }
+    return tri ? (no ? false : null) : null;
+  }
+  for (const a of formsOf(re, false, true)) {
+    if (a.isq) continue;
+    for (const b of formsOf(im, false, true)) {
+      // a + b·i; pri b = (k/q)·√m je b·i = (k/q)·ι z ι² = −m
+      const rep = b.isq ? { k: "+", a: a.node, b: b.node } : { k: "+", a: a.node, b: { k: "*", a: b.node, b: { k: "var", name: "ι" } } };
+      if (zeroAtExact(L, R, scope, v, rep, b.isq ? -b.isq : -1, undefined, unit)) return [a.val, b.val, a.vk === "dec" || b.vk === "dec" ? "dec" : "tex"];
+    }
+  }
+  return null;
 }
-
 
 // ---------- numerične rešitve ----------
 
@@ -503,7 +547,7 @@ const periodTex = (unit, comma) => {
 
 // ---------- enačba z eno neznanko ----------
 
-// AUDIT-050: številska rešitev sme imeti točno obliko (ulomek, koren, π, celo, kratka decimalka) le, če je ta oblika
+// AUDIT-053: številska rešitev sme imeti točno obliko (ulomek, koren, π, celo, kratka decimalka) le, če je ta oblika
 // ničla enačbe na ~10⁻¹⁵ (Newtonov korak iz oblike); x^15 + 7x − 1 = 0 → ≈ 0,142857, ne »= 1/7«
 function formOk(F, x, vf, strict) {
   // polinomska enačba: točen preizkus oblike (cas.js zeroAtExact); sicer (sin x = 0,5) Newtonov korak
@@ -527,8 +571,8 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
   // polinom iz drevesa (polyRootsOf): ničle z večkratnostmi, točno ali po faktorjih z oceno napake
   if (pr && pr.deg >= 1) {
     const poly = pr.poly || polyCoeffs(F); // polyCoeffs pri koeficientih nad ~10¹⁰ ni zanesljiv
-    if (pr.deg === 2 && pr.exactAll && poly?.length === 3) {
-      const q = quadraticExact(poly, v, comma);
+    if (pr.deg === 2 && pr.exactAll && poly?.length === 3 && pr.ex?.length === 3) {
+      const q = quadraticExact(poly, v, comma, pr.ex);
       if (q) return { kind: "solve", v, roots: q.roots, complex: q.complex || [], exact: q.tex, poly };
     }
     // točne rešitve brez zaokroževanja; približne le na ~ulp (1,0000000001 ni 1)
@@ -537,14 +581,15 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
     const roots = real.map((r) => (r.exact ? r.re : tight(r.re)));
     const complex = pr.filter((r) => r.im !== 0).map((r) => [tight(r.re), tight(r.im)]);
     // rex: točno racionalna; forms: potrjena oblika ±ᵏ√(p/q) (za zapis z »=« namesto »≈«)
-    const rex = real.map((r) => !!r.exact);
+    // rex: true = preverjen ulomek (exactTex), "dec" = preverjena končna decimalka (x − 0,666666666667 = 0)
+    const rex = real.map((r) => (r.ver && r.vk === "dec" ? "dec" : !!(r.exact && r.ver)));
     const forms = real.map((r) => (r.form ? { k: r.form.k, p: String(r.form.p), q: String(r.form.q), neg: r.form.neg } : null));
     const out = { kind: "solve", v, roots, complex, poly, mult: real.map((r) => r.m), rex };
-    // vx: točna oblika je preverjena (ulomek, potrjen koren ali ničla linearnega faktorja); sicer le »≈« (AUDIT-050:
-    // x^15 + 7x − 1 = 0 ni 1/7); cex: kompleksna z točnima deloma (točna kvadratna)
-    out.vx = real.map((r) => !!(r.exact || r.form || r.lin || r.ver));
+    // vx / cex: prikazana oblika je točno preverjena (verifyAll) ali potrjen koren iz točnega faktorja; sicer le »≈«
+    // (AUDIT-053: x^15 + 7x − 1 = 0 ni 1/7)
+    out.vx = real.map((r) => !!(r.form || r.ver));
     const cxl = pr.filter((r) => r.im !== 0);
-    out.cex = cxl.map((r) => !!(r.qex || r.lin || r.ver));
+    out.cex = cxl.map((r) => !!r.ver);
     const cm = pr.filter((r) => r.im !== 0).map((r) => r.m);
     if (cm.some((m) => m > 1)) out.cmult = cm;
     // π ni ničla polinoma brez π v koeficientih: 3,14159265358979 iz vnosa ni π
@@ -618,17 +663,26 @@ function radicalTex(k, p, q, neg) {
 function rootTex(x, rex, form, comma, mode, dec, noPi = false) {
   if (form) {
     const neg = form.neg !== form.p.startsWith("-");
-    const ex = exactTex(clean(x));
-    // √ ima že lepšo obliko v exactTex (2√2 namesto √8)
-    const t = form.k === 2 && ex ? ex : radicalTex(form.k, form.p, form.q, neg);
+    // √ ima že lepšo obliko v exactTex (2√2 namesto √8), a le, če je x² v njej točno p/q (x² = 2,000000000001 ni √2)
+    const sq = form.k === 2 ? toFraction(clean(x) ** 2, 1000) : null;
+    const ex = sq && BigInt(sq.p) * BigInt(form.q) === BigInt(sq.q) * BigInt(form.p.replace("-", "")) ? exactTex(clean(x)) : null;
+    const t = ex || radicalTex(form.k, form.p, form.q, neg);
     return `= ${t} \\approx ${decTex(x, comma, mode, dec)}`;
   }
-  if (rex === true) {
-    // točno racionalna: nikoli π ali √ iz vpisanega decimalnega števila (3,14159265358979 ni π), le ulomek
-    const ex = exactTex(x);
+  if (rex === true || rex === "dec") {
+    // točno racionalna: nikoli π ali √ iz vpisanega decimalnega števila (3,14159265358979 ni π), le ulomek;
+    // pri "dec" je preverjena le decimalka (x − 0,666666666667 = 0: ne 2/3)
+    const ex = rex === true ? exactTex(x) : null;
     if (ex && !/\\pi|\\sqrt|e/.test(ex)) return `= ${ex} \\approx ${decTex(x, comma, mode, dec)}`;
     // končen decimalni zapis do 15 mest: z »=« in vsemi mesti (1,0000001)
-    for (let d = 0; d <= 15; d++) if (Number(x.toFixed(d)) === x) return `= ${decTex(x, comma, mode, Math.max(dec, d))}`;
+    for (let d = 0; d <= 15; d++)
+      if (Number(x.toFixed(d)) === x) {
+        const t = decTex(x, comma, mode, Math.max(dec, d));
+        if (!/\\cdot 10/.test(t)) return `= ${t}`;
+        // eksponentni zapis ni točen: celo število z vsemi števkami (2⁶⁰ = 1 152 921 504 606 846 976), sicer ≈
+        if (Number.isInteger(x) && Math.abs(x) < 1e40) return `= ${BigInt(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\\,")}`;
+        return `\\approx ${t}`;
+      }
     return `\\approx ${decTex(x, comma, mode, dec)}`;
   }
   if (noPi && /\\pi/.test(exactTex(clean(x)) || "")) return `\\approx ${decTex(x, comma, mode, dec)}`;
@@ -666,10 +720,13 @@ export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) 
   else r.roots.forEach((x, i) => parts.push(`${name(i)} ${(r.vx && !r.vx[i]) || (r.gx && !r.gx[i]) ? `\\approx ${decTex(x, comma, mode, dec)}` : rootTex(x, r.rex?.[i], r.forms?.[i], comma, mode, dec, r.noPi)}${tag(i)}`));
   if (!r.exact)
     (r.complex || []).forEach(([re, im], i) => {
-      const a = re === 0 ? "" : plainTex(re, comma, mode);
-      const b = plainTex(Math.abs(im), comma, mode);
+      // AUDIT-053: nepreverjena kompleksna ničla brez ugibanih ulomkov in korenov (≈ 0,333333 − 0,942809i, ne ≈ 1/3 − 2√2/3 i)
+      const raw = r.cex && !r.cex[i];
+      const pt = (x) => (raw ? decTex(x, comma, mode) : plainTex(x, comma, mode));
+      const a = re === 0 ? "" : pt(re);
+      const b = pt(Math.abs(im));
       // iracionalna dela brez točne oblike: približek (≈)
-      // AUDIT-050: »=« le pri preverjeno točnih delih (točna kvadratna, linearni faktor); številski približki z »≈«
+      // AUDIT-053: »=« le pri preverjeno točnih delih (točna kvadratna, linearni faktor); številski približki z »≈«
       const eq = (r.cex ? r.cex[i] : !r.gx && shownExact(re) && shownExact(Math.abs(im))) ? "=" : "\\approx";
       parts.push(`${name(r.roots.length + i)} ${eq} ${a}${im < 0 ? "-" : a ? "+" : ""}${b === "1" ? "" : b}${/^[\d{}]+$/.test(b) ? "" : "\\,"}i${tag(r.roots.length + i)}`);
     });
@@ -1293,9 +1350,9 @@ export function analyze(text, env = {}) {
           const L = fnOf(ast.terms[0], v);
           const R = fnOf(ast.terms[1], v);
           const F = (x) => L(x) - R(x);
-          const pr = polyRootsOf(ast.terms[0], ast.terms[1], v, scope, run);
-          // AUDIT-050: točen preizkus številske rešitve, kadar je enačba v racionalnih številih in π
-          const vf = (x) => verifiedForm(ast.terms[0], ast.terms[1], scope, v, x, 0, true);
+          const pr = polyRootsOf(ast.terms[0], ast.terms[1], v, scope, run, unitOf(env));
+          // AUDIT-053: točen preizkus številske rešitve, kadar je enačba v racionalnih številih in π
+          const vf = (x) => verifiedForm(ast.terms[0], ast.terms[1], scope, v, x, 0, true, unitOf(env));
           const res = solveOne(F, v, { comma, unit: unitOf(env), src: raw, pr, vf });
           return { ...res, tex, plot };
         }

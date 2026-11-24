@@ -1,4 +1,4 @@
-// AUDIT-050: točna oblika rešitve (ulomek, celo število, koren, π, a + bi) sme imeti »=« le, če je preverjena točno
+// AUDIT-053 (prvotno AUDIT-050, ID je že zaseden): točna oblika rešitve (ulomek, celo število, koren, π, a + bi) sme imeti »=« le, če je preverjena točno
 // (vstavljena v točen polinom da 0 ali je ničla točnega faktorja); sicer »≈«. Pred popravkom: x^15 + 7x − 1 = 0 → »= 1/7«
 // (prava 0,142857142857114…), x^25 + 10⁻³⁰x − 1 = 0 → »= 1«, expandiran polinom s π → »= 141/11« (prava 141/11 + 10⁻¹⁴).
 // Vrednosti: SymPy (nroots, 50 mest).
@@ -61,4 +61,32 @@ test("preverjene točne oblike ostanejo z »=«", () => {
 
 test("x^3 + 10⁻³⁰ = 0: ni »x = 0« (prava −10⁻¹⁰)", () => {
   assert.ok(!/^x = 0$/.test(tex("x^3+10^(−30)=0")), tex("x^3+10^(−30)=0"));
+});
+
+test("pregled #993: točna racionalna ničla in ničla linearnega faktorja se preverita v vpisani enačbi", () => {
+  const CASES = [
+    // [enačba, pričakovan zapis] (SymPy: točne ničle iz vpisanih decimalk)
+    ["x−0,666666666667=0", "x = 0{,}666666666667"],
+    ["(x−0,1428571428571)(x−1)=0", "x_{1} = 0{,}1428571428571,\\quad x_{2} = 1"],
+    ["3x−1,000000000001=0", "x \\approx 0{,}333333"], // 1000000000001/3000000000000: ni končne decimalke
+    ["((x−4/3)^2−10^(−24))=0", "x_{1} \\approx 1{,}333333333332,\\quad x_{2} \\approx 1{,}333333333334"],
+    ["(x−√(2)−10^(−20))(x−1)=0", "x_{1} = 1,\\quad x_{2} \\approx 1{,}414214"],
+    ["(x−π−10^(−15))(x−1)=0", "x_{1} = 1,\\quad x_{2} \\approx 3{,}141593"],
+    ["x^2−0,666666666667x+1=0", "x_{1} \\approx 0{,}333333-0{,}942809\\,i,\\quad x_{2} \\approx 0{,}333333+0{,}942809\\,i"],
+    ["(x−0,666666666667)^2+1=0", "x_{1} \\approx 0{,}666667-i,\\quad x_{2} \\approx 0{,}666667+i"],
+    ["x^2=2,000000000001", "x_{1} \\approx -1{,}414214,\\quad x_{2} \\approx 1{,}414214"],
+    ["x−2^60=0", "x = 1\\,152\\,921\\,504\\,606\\,846\\,976"],
+    ["sin(x)=1/2+10^(−17)", "x_{1} \\approx 0{,}523599,\\quad x_{2} \\approx 2{,}617994"],
+    // ostane točno
+    ["x−0,25=0", "x = \\frac{1}{4} \\approx 0{,}25"],
+    ["(x^2+1)(x−√(3))=0", "x_{1} = \\sqrt{3} \\approx 1{,}732051,\\quad x_{2} = -i,\\quad x_{3} = i"],
+    ["(x−√2)(x+√8)=0", "x_{1} = -2\\sqrt{2} \\approx -2{,}828427,\\quad x_{2} = \\sqrt{2} \\approx 1{,}414214"],
+    ["2sin(x)=√(2)", "x_{1} = \\frac{\\pi}{4} \\approx 0{,}785398,\\quad x_{2} = \\frac{3\\pi}{4} \\approx 2{,}356194"],
+    ["cos(x)=−1/2", "x_{1} = \\frac{2\\pi}{3} \\approx 2{,}094395,\\quad x_{2} = \\frac{4\\pi}{3} \\approx 4{,}18879"],
+    ["x^2+2x+1,000000000001=0", "x_{1} = -1-0{,}000001\\,i,\\quad x_{2} = -1+0{,}000001\\,i"],
+  ];
+  for (const [t, want] of CASES) assert.equal(tex(t), want, t);
+  const DEG = { ...ENV, deg: true };
+  assert.equal(solutionTex(analyze("sin(x)=0,5", DEG)), "x_{1} = 30^{\\circ},\\quad x_{2} = 150^{\\circ}");
+  assert.equal(solutionTex(analyze("sin(x)=1/2+10^(−17)", DEG)), "x_{1} \\approx 30^{\\circ},\\quad x_{2} \\approx 150^{\\circ}");
 });
