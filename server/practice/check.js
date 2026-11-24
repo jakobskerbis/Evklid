@@ -145,7 +145,7 @@ function constNode(n) {
   return Object.values(n).every((v) => (Array.isArray(v) ? v.every(constNode) : typeof v !== "object" || constNode(v)));
 }
 // Učenčev zapis → besedilo za parse() po istem pravilu kot kalkulatorja (math.numberText): »sin(0,5)« je sin 0,5,
-// »1 000« je tisoč, »max(1,5; 2)« ima dve vrednosti. Brez tega je »sin(0,5)« veljal kot sin(0) ali napaka (AUDIT-015).
+// »1 000« je tisoč, »max(1,5; 2)« ima dve vrednosti. Brez tega je »sin(0,5)« veljal kot sin(0) ali napaka (AUDIT-024).
 // dot: naloga z decimalno piko (vejica v oklepaju loči vrednosti).
 function studentText(input, math, dot = false) {
   const s = westernDigits(String(input).trim());
