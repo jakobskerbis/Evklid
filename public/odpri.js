@@ -179,7 +179,7 @@ function graphCard(x) {
 }
 
 async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
-  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange }, { fitModelView, modelAsymptoteLabels }] = await Promise.all([
+  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange, sliderText }, { fitModelView, modelAsymptoteLabels }] = await Promise.all([
     import("./graph/plot.js"),
     import("./graph/model.js"),
     import("./graph/okno.js"),
@@ -224,11 +224,19 @@ async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
     const inp = document.createElement("input");
     Object.assign(inp, { type: "range", min: r.min, max: r.max, step: r.step, value: o.value });
     inp.setAttribute("aria-label", o.name);
-    const out = el("output", "", fmt(o.value, 2));
+    // zapis z decimalkami koraka (10⁻⁸ ni 0, ne »3e-8«, ki bi bil 3·e − 8; AUDIT-014); prikaz kot prej z vsaj 2 decimalkama
+    // (3,14), majhne vrednosti s 3 veljavnimi mesti (0,0000000123)
+    const stepDec = Math.max(0, -Math.floor(Math.log10(r.step) + 1e-9));
+    const show = (v) => {
+      const a = Math.abs(v);
+      const d = !a || a >= 0.01 ? Math.max(2, stepDec) : -Math.floor(Math.log10(a)) + 2;
+      return sliderText(v, 10 ** -d).replace(".", ",").replace("-", "−");
+    };
+    const out = el("output", "", show(o.value));
     inp.addEventListener("input", () => {
       const v = Number(inp.value);
-      it.text = `${o.name} = ${v}`;
-      out.textContent = fmt(v, 2);
+      it.text = `${o.name} = ${sliderText(v, r.step)}`;
+      out.textContent = show(v);
       redraw();
     });
     row.append(name, inp, out);

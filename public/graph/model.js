@@ -74,12 +74,24 @@ export function emptyState() {
 // privzeta območja parametrov
 export const DEFAULT_DOMAIN = { param: [0, 2 * Math.PI], polar: [0, 2 * Math.PI] };
 
-/** Drsnik: privzeti razpon glede na vrednost. */
+/** Drsnik: privzeti razpon glede na vrednost; korak je sorazmeren z velikostjo (10⁻⁸ ne postane 0, AUDIT-014). */
 export function sliderRange(v) {
   const a = Math.abs(v);
-  if (a <= 10) return { min: -10, max: 10, step: 0.1 };
-  const p = 10 ** Math.ceil(Math.log10(a));
-  return { min: -p, max: p, step: p / 100 };
+  if (!(a > 0) || (a >= 0.1 && a <= 10)) return { min: -10, max: 10, step: 0.1 };
+  // majhna vrednost ni na robu (10⁻⁸ → ±10⁻⁷), da gre drsnik v obe smeri
+  const e = a < 0.1 ? Math.floor(Math.log10(a)) + 1 : Math.ceil(Math.log10(a));
+  const p = Number(`1e${e}`); // točno 10^e (10 ** -7 / 100 ni točno 1e-9)
+  return { min: -p, max: p, step: Number(`1e${e - 2}`) };
+}
+
+/**
+ * Vrednost drsnika kot besedilo, ki ga kalkulator spet prebere kot drsnik: toliko decimalk, kot jih ima korak, največ 15
+ * veljavnih mest, nikoli zapis z e (»3e-8« bi bil 3·e − 8). AUDIT-014: 10⁻⁸ ne postane 0.
+ */
+export function sliderText(v, step) {
+  const digits = Math.max(0, Math.min(20, -Math.floor(Math.log10(step > 0 ? step : 0.1) + 1e-9)));
+  const x = Number(Number(v.toFixed(digits)).toPrecision(15));
+  return Math.abs(x) < 1e21 && x !== 0 ? x.toFixed(digits).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "") : String(x);
 }
 
 function definitionOf(text) {
