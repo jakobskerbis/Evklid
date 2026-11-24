@@ -850,3 +850,117 @@ export function stepCaret(base, text, p, d) {
   if (w) q = d > 0 ? w.end : w.start;
   return q;
 }
+
+// ---------- zapis za bralnik zaslona (AUDIT-040) ----------
+// Polje vnosa je prosojno besedilo (»∫(x;0;1)«); bralnik zaslona dobi opis matematike iz izrisanega zapisa (drevo KaTeX),
+// z besedami v jeziku vmesnika (sc.say.* v i18n), npr. »integral od 0 do 1 x d x«. Kazalec in okvirček sta besedi.
+
+/** Imena besed v ključu sc.say.words (ločene z »|«, v tem vrstnem redu). */
+export const SAY_WORDS = ["plus", "minus", "times", "div", "eq", "ne", "lt", "gt", "le", "ge", "approx", "to", "infty", "pi", "comma", "hole", "caret", "int", "sum", "prod", "lim", "det", "sin", "cos", "tan", "cot", "ln", "log", "fact", "percent", "deg", "pm"];
+const SAY_SYM = { "+": "plus", "-": "minus", "−": "minus", "\\cdot": "times", "\\times": "times", "*": "times", "\\div": "div", "/": "div", ":": "div", "=": "eq", "\\ne": "ne", "\\neq": "ne", "<": "lt", ">": "gt", "\\lt": "lt", "\\gt": "gt", "\\le": "le", "\\leq": "le", "\\ge": "ge", "\\geq": "ge", "\\approx": "approx", "\\to": "to", "\\rightarrow": "to", "\\infty": "infty", "\\pi": "pi", ",": "comma", "!": "fact", "\\%": "percent", "%": "percent", "\\circ": "deg", "^\\circ": "deg", "\\degree": "deg", "\\pm": "pm" };
+const SAY_OP = { "\\int": "int", "\\sum": "sum", "\\prod": "prod", "\\lim": "lim", "\\det": "det", "\\sin": "sin", "\\cos": "cos", "\\tan": "tan", "\\cot": "cot", "\\ln": "ln", "\\log": "log" };
+const GREEK = { alpha: "alfa", beta: "beta", gamma: "gama", delta: "delta", varepsilon: "epsilon", epsilon: "epsilon", theta: "theta", lambda: "lambda", mu: "mi", sigma: "sigma", tau: "tau", varphi: "fi", phi: "fi", omega: "omega", rho: "ro" };
+
+/**
+ * TeX zapisa vnosa → besedilo za bralnik zaslona.
+ * say(key, vars): prevod sc.say.<key> (range, frac, fracLong, pow, sub, at, sqrt, root, abs, binom, paren, matrix, deriv);
+ * words: { ime: beseda } za SAY_WORDS; parse: katex.__parse.
+ */
+export function texSpeech(tex, { say, words, parse }) {
+  let tree;
+  try {
+    tree = parse(String(tex ?? ""), { trust: TRUST, strict: "ignore", throwOnError: true });
+  } catch {
+    return "";
+  }
+  const w = (k) => words[k] ?? k;
+  const list = (body) => (Array.isArray(body) ? body : body ? [body] : []);
+  const sp = (nodes) => {
+    const out = [];
+    for (const n of list(nodes)) {
+      const s = node(n);
+      if (s) out.push(s);
+    }
+    // števke in decimalna vejica skupaj (»2 cela 5«, ne »2 5«)
+    return out.join(" ").replace(/(\d) (?=\d)/g, "$1");
+  };
+  const node = (n) => {
+    if (!n) return "";
+    switch (n.type) {
+      case "ordgroup":
+      case "styling":
+      case "sizing":
+      case "font":
+      case "text":
+      case "smash":
+      case "mclass":
+        return sp(n.body);
+      case "mathord":
+      case "textord": {
+        if (n.text in SAY_SYM) return w(SAY_SYM[n.text]);
+        const g = /^\\([a-zA-Z]+)$/.exec(n.text);
+        if (g) return g[1] === "square" ? w("hole") : GREEK[g[1]] ?? g[1];
+        return n.text;
+      }
+      case "atom":
+      case "spacing":
+        if (n.type === "spacing") return "";
+        return n.text in SAY_SYM ? w(SAY_SYM[n.text]) : /^[,;]$/.test(n.text) ? "," : "";
+      case "kern":
+      case "rule":
+      case "phantom":
+        return "";
+      case "html": {
+        const cls = n.attributes?.class || "";
+        if (/sc-caret/.test(cls)) return w("caret");
+        if (/sc-hole/.test(cls)) return w("hole");
+        return sp(n.body);
+      }
+      case "htmlmathml":
+        return sp(n.mathml ?? n.html);
+      case "op":
+        return SAY_OP[n.name] ? w(SAY_OP[n.name]) : n.name ? n.name.replace(/^\\/, "") : sp(n.body);
+      case "operatorname":
+        return sp(n.body).replace(/ /g, "");
+      case "supsub": {
+        const base = node(n.base);
+        if (n.base?.type === "op" && n.sub && n.sup) return say("range", { op: base, a: node(n.sub), b: node(n.sup) });
+        let s = base;
+        // odvod v točki: \left. … \right|_{x=2}
+        if (n.sub && n.base?.type === "leftright" && n.base.right === "|") s = say("at", { a: s, b: node(n.sub) });
+        else if (n.sub) s = n.base?.type === "op" ? `${s} ${node(n.sub)}` : say("sub", { a: s, b: node(n.sub) });
+        if (n.sup) {
+          const sup = node(n.sup);
+          s = sup.startsWith(w("deg")) ? `${s} ${sup}` : say("pow", { a: s, b: sup });
+        }
+        return s;
+      }
+      case "genfrac": {
+        const a = node(n.numer);
+        const b = node(n.denom);
+        if (!n.hasBarLine) return say("binom", { a, b });
+        const dx = /^d ?(\S+)$/.exec(b);
+        if (a === "d" && dx) return say("deriv", { x: dx[1] });
+        // sestavljen števec ali imenovalec: povemo, kje se začne in konča (»1 plus 2 skozi 3 plus 4« je dvoumno)
+        const one = (x) => !/ /.test(x.replace(w("caret"), "").trim());
+        return say(one(a) && one(b) ? "frac" : "fracLong", { a, b });
+      }
+      case "sqrt":
+        return n.index ? say("root", { k: node(n.index), a: node(n.body) }) : say("sqrt", { a: node(n.body) });
+      case "leftright": {
+        const a = sp(n.body);
+        if (n.left === "|" || n.left === "\\vert" || n.left === "\\lvert") return say("abs", { a });
+        if (n.left === ".") return a;
+        if (list(n.body).length === 1 && list(n.body)[0].type === "array") return a; // matrika: oklepaj je del matrike
+        return say("paren", { a });
+      }
+      case "array":
+        return say("matrix", { a: n.body.map((row) => row.map(node).join(", ")).join("; ") });
+      case "accent":
+        return node(n.base);
+      default:
+        return n.body ? sp(n.body) : "";
+    }
+  };
+  return sp(tree).replace(/\s+/g, " ").trim();
+}
