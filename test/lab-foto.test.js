@@ -13,10 +13,12 @@ import { LOADS, UPOR, AM_RANGES, VM_RANGES } from "../public/sim/lab-model.js";
 import { BANDS } from "../public/sim/lab-fiz.js";
 import { OKNA_PH, barvaVzorca, gladinaEpruvete, zaslonPh } from "../public/sim/foto-ph.js";
 import { PH_VZORCI, PH_KOLICINE } from "../public/sim/lab-model-indikatorji.js";
+import { OKNA_PLAMENSKA, SPEKTROSKOP_FOTO, oblikaPlamena, barvaVzorca as barvaSoli, barvePlamena, kobaltovoSteklo, zarenje, nasici } from "../public/sim/foto-plamenska.js";
+import { PlamenBench, VZORCI, barvaSpektra, spekterPlamena, spekterSoli } from "../public/sim/lab-model-reakcije.js";
 
 const FOTO = path.resolve("public/sim/foto");
 const meta = (p) => JSON.parse(fs.readFileSync(path.join(FOTO, p, "meta.json"), "utf8"));
-const POSKUSI = ["titracija", "dokaz", "krog", "ph"];
+const POSKUSI = ["titracija", "dokaz", "krog", "ph", "plamenska"];
 
 test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike", () => {
   assert.equal(fotoIzbran(), true);
@@ -24,7 +26,7 @@ test("stikalo je privzeto vklopljeno (j, 2026-11-24) in prevedeno v vse jezike",
   assert.ok(SL["sim.lab.foto"]);
   for (const f of fs.readdirSync("public/i18n/ui")) assert.ok(JSON.parse(fs.readFileSync(`public/i18n/ui/${f}`, "utf8"))["sim.lab.foto"], `${f}: sim.lab.foto`);
   // motorji narišejo risbo, kadar risi() vrne false (rezerva brez povezave in pri »manj podatkov«)
-  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-indikatorji.js", "risiPh"]]) {
+  for (const [f, klic] of [["lab-titracija.js", "risiTitracijo"], ["lab-indikatorji.js", "risiDokaz"], ["lab-fiz.js", "risiKrog"], ["lab-indikatorji.js", "risiPh"], ["lab-reakcije.js", "risiPlamensko"]]) {
     const src = fs.readFileSync(`public/sim/${f}`, "utf8");
     assert.match(src, new RegExp(`foto\\.risi\\(\\(o, meta\\) => ${klic}\\(`), f);
   }
@@ -214,4 +216,63 @@ test("pH snovi: merila, gladini in elektroda iz modela, barve samo iz modela", (
   const src = fs.readFileSync("scripts/lab-foto/prizor_ph.py", "utf8");
   assert.match(src, /snov\("papir-bel", \((0\.\d+), \1, \1\)/, "papir je v izrisu nevtralno bel");
   assert.doesNotMatch(src, /steklo\("[^"]*", [^)]*barva=/, "tekočine v izrisu so brezbarvne");
+});
+
+test("plamenska: gorilnik, zanka in urni stekli v merilu; plamen in barve samo iz modela", () => {
+  const m = meta("plamenska"), S = m.sidra.plamenska, k = m.merila.plamenska, G = m.gorilnik;
+  // gorilnik Ø 13 × 150 mm, podnožje Ø 90 mm; ortografska kamera: navpično 0,9 enote/mm
+  assert.deepEqual([G.cev, G.visina, G.podnozje], [13, 150, 90]);
+  assert.ok(Math.abs(S.podnozje[1] - S.ustje[1] - G.visina * k) < 0.05, "višina gorilnika");
+  assert.ok(Math.abs(m.merila.vodoravno - k / Math.cos((m.merila.visinaKamere.plamenska * Math.PI) / 180)) < 1e-4);
+  // zračna odprtina: odprti delež ploščine pri zasuku obroča (presek dveh krogov Ø 7 mm) = model (0, ½, 1)
+  for (const [ime, f] of [["zrak0", 0], ["zrak05", 0.5], ["zrak1", 1]]) assert.ok(Math.abs(G.odprtost[ime] - f) < 0.002, `${ime}: ${G.odprtost[ime]}`);
+  // zanka Ø 3 mm iz žice Ø 0,5 mm, 40 mm nad ustjem: v plamenu pri vsaki odprtosti in nad notranjim stožcem
+  assert.deepEqual([m.zanka.premer, m.zanka.zica], [3, 0.5]);
+  assert.ok(Math.abs(S.ustje[1] - S.zankaPlamen[1] - m.zanka.nadUstjem * k) < 0.05);
+  for (const z of [0, 0.5, 1]) {
+    const F = oblikaPlamena(z);
+    assert.ok(m.zanka.nadUstjem < F.H * 0.8 && m.zanka.nadUstjem > F.stozec, `zanka v plamenu pri zrak = ${z}`);
+    assert.ok(Math.abs(m.zanka.x) < F.W / 2);
+  }
+  // oblika plamena je ista kot v risbi (lab-reakcije.js, 1 cm = 10 enot)
+  const src = fs.readFileSync("public/sim/lab-reakcije.js", "utf8");
+  assert.match(src, /const Hf = \(12 - 4 \* z\) \* S, Wf = \(2\.4 - 0\.6 \* z\) \* S;/);
+  assert.match(src, /const hc = \(2\.5 \+ \(1 - z\) \* 2\) \* S;/);
+  for (const z of [0.5, 1]) assert.deepEqual([oblikaPlamena(z).H, oblikaPlamena(z).W, oblikaPlamena(z).stozec], [(12 - 4 * z) * 10, (2.4 - 0.6 * z) * 10, (2.5 + (1 - z) * 2) * 10]);
+  assert.equal(oblikaPlamena(0).stozec, 0, "svetel plamen nima notranjega stožca");
+  // HCl na urnem steklu: 2 mL v krogelni kapici V = πh²(3R − h)/3
+  const H = m.hcl;
+  assert.ok(Math.abs((Math.PI * H.gladinaMm ** 2 * (3 * H.Ri - H.gladinaMm)) / 3 - H.V * 1000) < 2, "gladina zaokrožena na µm");
+  assert.ok(H.polmer < m.urnoSteklo.premer / 2 - 5, "HCl ne sega do roba");
+  // barve plamena iz modela: saje le pri zaprti in pol odprti odprtini, sol iz črt in pasov (CIE 1931)
+  assert.equal(barvePlamena({ zrak: 1 }).saje, null);
+  assert.ok(barvePlamena({ zrak: 0 }).sajeA > barvePlamena({ zrak: 0.5 }).sajeA);
+  for (const el of Object.keys(VZORCI)) {
+    const zanka = { [el]: 1 }, c = barvaSpektra(spekterSoli(zanka));
+    assert.deepEqual(barvePlamena({ zrak: 1, vPlamenu: true, zanka }).sol, nasici(c.rgb, c.Y / 10), el);
+  }
+  const na = barvePlamena({ zrak: 1, vPlamenu: true, zanka: { Na: 1 } }).sol, cu = barvePlamena({ zrak: 1, vPlamenu: true, zanka: { Cu: 1 } }).sol;
+  assert.ok(na[0] > 200 && na[1] > 120 && na[2] < 40, `natrij rumen: ${na}`);
+  assert.ok(cu[1] > 150 && cu[0] < 60, `baker modro zelen: ${cu}`);
+  const sp = spekterPlamena(1), b = barvePlamena({ zrak: 1 });
+  assert.deepEqual(b.modri, barvaSpektra(sp.filter((q) => q.vir === "plamen")).rgb);
+  // kobaltovo steklo zadrži rumeno: prepušča malo svetlobe, modro; žareča žica je oranžna
+  const kb = kobaltovoSteklo();
+  assert.ok(kb.T < 0.06 && kb.rgb[2] > kb.rgb[0] && kb.rgb[1] < 5);
+  const zr = zarenje();
+  assert.ok(zr[0] === 255 && zr[1] > zr[2]);
+  // sol na urnem steklu: vsak vzorec, ki ga poskus ponudi (tudi neznani), ima barvo; CuCl₂ je modro zelen, drugi beli
+  const B = new PlamenBench({ seed: 3 });
+  for (const [id, V] of Object.entries(B.vzorci)) {
+    const c = barvaSoli(V.sestava);
+    if ("Cu" in V.sestava) assert.deepEqual(c, [95, 179, 160], id);
+    else assert.equal(c, null, id);
+  }
+  // okno spektroskopa ne prekrije plamena ali gorilnika in je v oknu
+  const [sx, sy] = SPEKTROSKOP_FOTO;
+  assert.ok(sx > S.ustje[0] + oblikaPlamena(0).W * m.merila.vodoravno && sx + 232 <= OKNA_PLAMENSKA.plamenska[2] && sy >= 0);
+  // plamena v izrisu ni (nobenega svetila), sol je v izrisu nevtralno bela
+  const py = fs.readFileSync("scripts/lab-foto/prizor_plamenska.py", "utf8");
+  assert.doesNotMatch(py, /svetilo\(/);
+  assert.match(py, /snov\("sol-bela", \((0\.\d+), \1, \1\)/);
 });

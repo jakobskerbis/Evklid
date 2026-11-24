@@ -13,6 +13,7 @@ NUJNI = {
     "dokaz": ["dokaz"],
     "krog": ["krog"],
     "ph": ["ph"],
+    "plamenska": ["plamenska"],
 }
 
 

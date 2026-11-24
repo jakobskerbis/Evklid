@@ -77,8 +77,8 @@ once (deduped by engine + opts) with the topics it belongs to; a new experiment 
 
 ## Fotografski prikaz (photo view; j, 2026-11-10: »fotorealističen videz in fizikalna točnost«)
 
-Four experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`), **on by default for everyone** (j, 2026-11-24: »vklopi
-vsem«; the other 27 follow in groups of 5, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
+Five experiments so far (`lab-titracija`, `lab-dokaz`, `lab-ohm`, `lab-ph`, `lab-plamenska`), **on by default for everyone** (j, 2026-11-24: »vklopi
+vsem«; the other 26 follow in groups of 5, chemistry first). The experiment models (`lab-model*.js`) are untouched: level,
 colour, wiring and readings still come from the model and are laid over pre-rendered layers. Switch: the button
 »Fotografski prikaz« (`sim.lab.foto`, camera icon, `.lab-foto-gumb`) at the top of the experiment's controls, not over the
 picture (as an overlay it covered labels and the first test tube); the choice is `localStorage` `evklid.lab.foto`
@@ -90,6 +90,7 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 |---|---|
 | `scripts/lab-foto/lab_modeli.py` | Blender (Python) procedural models in real dimensions, materials, meniscus solver |
 | `scripts/lab-foto/lab_prizori.py` | the three scenes, orthographic cameras (`Pogled`), layer list, anchors (`meta.sidra`) |
+| `scripts/lab-foto/prizor_plamenska.py` | scene of `lab-plamenska` |
 | `scripts/lab-foto/prizor_ph.py` | scene of `lab-ph` (one file per experiment from now on, registered in `PRIZORI` with one line; `paket.py` packs every `prizor_*.py`) |
 | `scripts/lab-foto/bpy_zagon.py` | runs `lab_izris.py` with the Python module `bpy` instead of the `blender` program (`python bpy_zagon.py -- <poskus> <dir> …`, same arguments; previews on machines without Blender) |
 | `scripts/lab-foto/lab_izris.py` | `blender -b --factory-startup --python scripts/lab-foto/lab_izris.py -- <poskus> <dir> [--vzorci 512] [--merilo 3] [--naprava OPTIX\|CUDA\|CPU]` → one PNG per layer + `meta.json`; a rerun skips finished layers |
@@ -97,6 +98,7 @@ version stays as the fallback: while images load, offline (the fetch of `meta.js
 | `scripts/lab-foto/lab_naloga.py`, `paket.py` | job »lab« for the RTX window on j's laptop (`peka-rtx`, `koda/rtx.py`): `paket.py <copy of koda/> <out>` builds `lab/` (own `manifest.json`) and a patched `koda-nova/rtx.py` (dispatch of `"organi": ["lab"]`, nothing else changes; the manifest lists the version it was made from under `zdruzljivo`, so jobs of the other queue users do not trigger a code swap). `naloga.txt`: `{"id": "lab1", "organi": ["lab"], "koda": "<version>", "lab": {"poskusi": [...], "vzorci": 512, "merilo": 4}}` → `izhod/lab-<id>/<poskus>/` |
 | `public/sim/foto.js` | loader (lazy, AVIF if supported else WebP, density 1×/2×/3× by screen), `Oder` (layers as SVG `<image>` inside the experiment's own SVG, so pinning and layout are unchanged), `risiTitracijo`, `risiDokaz`, `risiKrog`, `vodnikiKroga` |
 | `public/sim/foto-ph.js` | `risiPh`, `OKNA_PH` for `lab-ph` (overlay code of each new experiment lives in its own `foto-<poskus>.js`) |
+| `public/sim/foto-plamenska.js` | `risiPlamensko`, `OKNA_PLAMENSKA`, `oblikaPlamena`, `barvePlamena`, `kobaltovoSteklo` for `lab-plamenska` |
 | `test/lab-foto.test.js` | switch off by default, anchors vs. models, meniscus (independent Young–Laplace integration), flask volume table, Beer–Lambert exponent, wiring graph and polarity for all 27 configurations, colour codes, files and size budget |
 
 How a layer set works (all cameras are orthographic with a fixed scale, so model mm → drawing units is linear and exact):
@@ -143,6 +145,31 @@ Simplifications: both levels are fixed (the model has no volumes besides `PH_KOL
 clipped just above the model level (meniscus and the far arc of the surface stay rendered); strip dimensions,
 binder clip and the meter are estimates (no specific product); the indicator colour of the paper is uniform over the
 wet end (no wicking front); the colour of turbid samples ignores the indicator's own absorption depth.
+
+`lab-plamenska` (window 400 × 300 at 0,9 units/mm, camera 15°; the spectroscope view 232 × 74 top right is drawn by the
+engine's own `spektroskop()` from the model, as in the drawing): Bunsen burner 150 mm (brass tube Ø 13 mm, wall 1 mm,
+top 8 mm heat-tinted, cast-iron base Ø 90 mm, brass gas nozzle, hose barb and red rubber hose) with a rotating collar
+Ø 17 mm; two Ø 7 mm air holes in tube and collar, the collar turned so the open share of the hole area (lens of two
+circles) is the model's `zrak` 0 / ½ / 1 (90°, 24,6°, 0°; opaque crops of the collar); watch glasses Ø 80 mm, 10 mm deep,
+1,5 mm glass (spherical cap R 85 mm), one with 2 mL conc. HCl (n = 1,41, colourless, level from V = πh²(3R − h)/3:
+2,78 mm, glass–liquid interface 1,474/1,41), one with a ~1,5 g heap of salt (Ø 24 × 7 mm, angle of repose 32°, a few
+loose grains) rendered white; nichrome loop Ø 3 mm, wire Ø 0,5 mm × 50 mm in a Kolle holder (brass chuck, aluminium rod
+Ø 6 × 150 mm, black grip), either in the flame (40 mm above the mouth, on the axis, handle out of the window top left;
+no hand) or lying on the bench (both transparent layers with shadow). **No flame in the render**: the app draws it in
+the engine's flickering layer from the model: shape `oblikaPlamena(zrak)` = the drawing's sizes (height 120 − 40·zrak mm,
+width 24 − 6·zrak mm, inner cone 25 + 20·(1 − zrak) mm for zrak ≥ 0,3, base = inner tube diameter, soot part from 6 % or
+45 % of the height); colours from `barvaSpektra` of the model's spectra (soot continuum, CH/C₂ lines, salt lines and
+bands), with and without cobalt glass; brightness → colour by `nasici` (1 − e^−(1+J)·lin, J = Y/10: bright sodium
+and soot flames get a yellow core like an exposed photo, weak Li stays carmine); salt plume opacity as in the drawing
+(from `vidnostSoli`). Cobalt glass 92 × 100 mm = multiply by the colour of white light through the model's `kobalt(λ)`
+(T ≈ 3 %); the glowing loop is a 1300 K black body; the salt bead on the loop and the heap use `BARVA_SOLI`
+(CuCl₂·2H₂O #5fb3a0 as in the drawing, other chlorides white) through a mask layer (`pl-sol-maska`, colour c + t(1 − c)).
+Simplifications: the flame does not light the scene (burner top, loop, wall); flame edges are a fixed 0,9 mm blur, not
+a 3D emission volume; mantle and inner-cone opacity are estimates (the model's CH/C₂ intensities are only relative);
+salt mask ignores refraction in the watch glass; HCl fumes and the hand holding the loop are not shown; cobalt glass is
+a flat filter, not rendered glass.
+Fix: the engine's overlay layer (`.lab-ek-ov`, flame and bubbles) now has the same padding as an SVG with `.lab-bench`
+(14 px, 10 px on phones); before, flame and bubbles were shifted by the padding in every `lab-ek` drawing.
 
 ## Experiments
 

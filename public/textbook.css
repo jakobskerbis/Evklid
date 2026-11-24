@@ -1069,6 +1069,9 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-ek-risba { position: relative; width: 100%; max-width: 460px; }
 .lab-ek-risba > .demo-svg { display: block; width: 100%; max-width: none; }
 .lab-ek-risba > .lab-ek-ov { position: absolute; inset: 0; height: 100%; pointer-events: none; will-change: transform; }
+/* risba z razredom .lab-bench ima odmik (lab.css): plast nad njo (plamen, mehurčki) mora imeti enakega, sicer se zamakne */
+.lab-ek-risba > .lab-bench + .lab-ek-ov { padding: 14px; }
+@media (max-width: 480px) { .lab-ek-risba > .lab-bench + .lab-ek-ov { padding: 10px; } }
 .demo-svg .lab-ek-bubst { stroke: rgb(90 120 145 / 0.55); stroke-width: 0.3; }
 @keyframes lab-ek-up { from { transform: translate(0, 0); opacity: 0.95; } 85% { opacity: 0.95; } to { transform: translate(var(--dx, 0px), var(--d)); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .demo-svg .lab-ek-bub { animation: none; transform: translate(0, calc(var(--d) * var(--f))); } }
