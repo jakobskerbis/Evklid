@@ -39,6 +39,7 @@ export function preveriModel(model) {
     if (c.tip === "drsnik" && !(c.min < c.max && Number.isFinite(c.vrednost))) napake.push(`nadzor ${c.id}: drsnik potrebuje min < max in vrednost`);
     if (c.tip === "izbira" && !(Array.isArray(c.moznosti) && c.moznosti.length >= 2)) napake.push(`nadzor ${c.id}: izbira potrebuje vsaj dve možnosti`);
     else if (c.tip === "izbira" && !c.moznosti.every((o) => Array.isArray(o) && o.length === 2 && o[1])) napake.push(`nadzor ${c.id}: možnost mora biti [ključ, oznaka]`);
+    if (c.prerez != null && !(c.tip === "drsnik" && c.prerez === true)) napake.push(`nadzor ${c.id}: prerez: true velja le za drsnik`);
     if (c.vidno != null && typeof c.vidno !== "function") napake.push(`nadzor ${c.id}: vidno mora biti funkcija`);
     if (c.tip === "izpis" && typeof c.vrednost !== "function") napake.push(`nadzor ${c.id}: izpis potrebuje vrednost()`);
     if (["drsnik", "izbira", "gumb", "stikalo"].includes(c.tip) && typeof c.ob !== "function") napake.push(`nadzor ${c.id}: manjka ob()`);
