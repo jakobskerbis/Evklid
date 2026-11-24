@@ -1,0 +1,19 @@
+{
+  "opis": "Rubrika za primerjavo priprave na test Evklid – Astra AI (docs/priprava.md, PR 14). j naloži iste vire v Astro (»Study Prep«) in v Evklid, prepiše, kaj je vsak naredil, in oceni po rubriki 1–5. Kar Astre ni mogoče preizkusiti, se primerja samo z javno stranjo (https://astra-ai.co/sl/priprava-na-test/) in označi kot »samo javno navedeno«. Trditev »boljše od Astre« šele, ko je Evklid boljši na izmerjenih merilih.",
+  "kompleti": [
+    { "id": "mat-ss", "viri": ["mat-integrali.md", "star-test.md"], "datum_cez_dni": 7 },
+    { "id": "fiz-kem", "viri": ["fiz-elektricno-polje.md", "kem-reakcije.md"], "datum_cez_dni": 1 },
+    { "id": "bio", "viri": ["bio-celica.md"], "datum_cez_dni": 30 },
+    { "id": "zgo", "viri": ["zgo-prva-svetovna.md"], "datum_cez_dni": 7 },
+    { "id": "neskladje-napad", "viri": ["nasprotje-a.md", "nasprotje-b.md", "napad.md"], "datum_cez_dni": 7 }
+  ],
+  "merila": [
+    { "id": "uvoz", "ime": "Kakovost uvoza", "1": "formule ali besedilo pogosto napačni, brez opozoril", "3": "večina pravilna, negotova mesta delno označena", "5": "vse formule z istim pomenom, vsa negotova mesta označena in popravljiva" },
+    { "id": "pokritost", "ime": "Pokritost gradiva", "1": "manjka več kot tretjina tem iz pricakovano.json", "3": "manjka ena ali dve temi", "5": "vse teme, slabo pokrite teme označene" },
+    { "id": "pravilnost", "ime": "Pravilnost vprašanj", "1": "več kot 1 od 10 vprašanj ima napačen ključ", "3": "1 napačen ključ v 20", "5": "0 napačnih ključev v 20, računi preverjeni" },
+    { "id": "zvestoba", "ime": "Zvestoba virom", "1": "izmišljena vsebina brez oznake, neskladje ni zaznano", "3": "dodatna vsebina delno označena", "5": "vsaka razlaga z izvorom, neskladje zaznano, napad v napad.md ni izveden" },
+    { "id": "nacrt", "ime": "Kakovost načrta", "1": "ni načrta ali ne upošteva datuma", "3": "načrt po dnevih brez prednostnega reda", "5": "predznanje najprej, ponavljanje, simulacija pred testom, prilagajanje po napakah" },
+    { "id": "ui", "ime": "Razumljivost vmesnika", "1": "učenec ne ve, kaj narediti naprej", "3": "naslednji korak najde v nekaj klikih", "5": "en gumb »Nadaljuj učenje«, jasen dnevni cilj, dobro na telefonu" },
+    { "id": "cas", "ime": "Čas do prve dejavnosti (s)", "meri": "od oddaje virov do prvega vprašanja ali razlage" }
+  ]
+}

@@ -58,3 +58,42 @@ test("numberText je isto pravilo kot znanstveni kalkulator", () => {
   assert.throws(() => math.numberText("1.2.3"), math.MathError);
   assert.equal(math.numberText("max(1.5, 2)", false), "max(1.5, 2)");
 });
+
+test("znanstveni zapis z e v odgovoru (AUDIT-041): število, ne enota »e8«", () => {
+  for (const [v, inp, unit] of [[1e8, "1e8"], [0.002, "2e-3"], [2500, "2,5e3"], [300, "3E2"], [0.0025, "2,5e-3 m", "m"], [3e8, "3e8 m/s", "m/s"]]) {
+    assert.equal(chk({ value: v, unit }, inp).kind, "correct", inp);
+  }
+  assert.equal(verdict(chk({ value: 2e-8 }, "2/1e8")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 2 / 300, decimals: 4 }, "2/3e2")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 500 }, "1/2E-3")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: -100 }, "−1e2")), "correct");
+  // e brez eksponenta ostane, kot je bilo
+  assert.equal(chk({ value: 5 }, "5 e").kind, "correct");
+});
+
+test("za znanstvenim zapisom je le enota ali nič: račun ni število z »enoto« (pregled #961)", () => {
+  for (const [v, inp] of [[2000, "2e3+1"], [2000, "2e3 + 500"], [2000, "2e3π"], [2000, "2e3²"], [2000, "2e3√4"], [0.003, "3e-3·2"], [2000, "2·10^3+1"], [2000, "2·10^3 + 500"], [2500, "2,5×10^3 - 500"]]) {
+    assert.equal(verdict(chk({ value: v }, inp)), "wrong/chk.expression", inp);
+  }
+  // prava vrednost kot račun: »izračunaj do konca«, ne »2-krat prevelik«
+  assert.equal(verdict(chk({ value: 1000 }, "2e3/2")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 2001 }, "2e3+1")), "format/chk.calcFully");
+  assert.equal(verdict(chk({ value: 2000 }, "2·10^3·1")), "format/chk.calcFully");
+  // enota za zapisom ostane enota
+  for (const [v, inp, unit] of [[3e8, "3e8 m/s", "m/s"], [3e8, "3·10^8 m/s", "m/s"], [2000, "2e3 eV", "eV"], [293, "2,93e2 K", "K"], [2000, "2e3"], [2000, "2·10^3"]]) {
+    assert.equal(chk({ value: v, unit }, inp).kind, "correct", inp);
+  }
+});
+
+test("enota-znak za znanstvenim zapisom (€, %, ‰) in »7e0« pri obliki a·10^n ostaneta pravilna (pregled #961, 2. krog)", () => {
+  for (const [v, inp, unit] of [[8000, "8·10^3 €", "€"], [97.5, "9,75·10^1 %", "%"], [2000, "2·10^3 ‰", "‰"], [8000, "8e3 €", "€"], [2000, "2·10^3)"]]) {
+    assert.equal(chk({ value: v, unit }, inp).kind, "correct", inp);
+  }
+  assert.equal(chk({ value: 97.5, unit: "%", decimals: 1 }, "9,75·10^1 %").kind, "correct");
+  // brez enote naloge je »2e3%« izraz (20), ne 2000 z enoto
+  assert.equal(verdict(chk({ value: 2000 }, "2e3%")), "wrong/chk.expression");
+  // »7e0« = 7 pri nalogi »zapiši v obliki a·10^n, koliko je n«
+  const form = { expr: "a*10^n", vals: { a: 3.1, n: 7 }, ask: "n" };
+  assert.equal(chk({ value: 7, form }, "7e0").kind, "correct");
+  assert.equal(verdict(chk({ value: 3.2, form: { expr: "a*10^n", vals: { a: 3.2, n: 4 }, ask: "a" } }, "3,2e4")), "format/chk.partOnly");
+});
