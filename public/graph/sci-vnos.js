@@ -77,6 +77,8 @@ const OPENERS = "([";
 const CLOSERS = ")]";
 const OPS = "+-−×÷*/^·=<>≤≥,.";
 const POSTFIX = "²³⁻¹!%°′″"; // brez operanda pred seboj (√(² , ∫(⁻¹;;)) dobijo okvirček
+const OPSX = OPS + "_"; // za indeksom manjka operand kot za operatorjem
+const LEFT = "×÷*/^·=<>≤≥,._" + POSTFIX; // potrebujejo levi operand (predznaki + − ne)
 
 /**
  * Dokonča besedilo za izris: zapre oklepaje in na mesto manjkajočega operanda vstavi `hole`.
@@ -112,14 +114,20 @@ export function complete(text, hole) {
   for (let i = 0; i <= s.length; i++) {
     shift[i] = added;
     const c = s[i];
-    if (i === s.length || CLOSERS.includes(c) || c === ";" || (POSTFIX.includes(c) && !POSTFIX.includes(s[i - 1] ?? ""))) {
-      let k = i - 1;
-      while (k >= 0 && /\s/.test(s[k])) k--;
-      const p = k >= 0 ? s[k] : "";
-      if (p && (OPENERS.includes(p) || p === ";" || OPS.includes(p)) && !(i === s.length && !OPS.includes(p))) {
-        out += hole;
-        added += hole.length;
-      }
+    let k = i - 1;
+    while (k >= 0 && /\s/.test(s[k])) k--;
+    const p = k >= 0 ? s[k] : "";
+    let want = false;
+    if (i === s.length || CLOSERS.includes(c) || c === ";") want = !!p && (OPENERS.includes(p) || p === ";" || OPSX.includes(p)) && !(i === s.length && !OPSX.includes(p));
+    // operator ali pripona brez levega operanda (izbrisan: »/2«, »²«, »,5«, »2x+=7«, »∑_(=1)«): okvirček pred njim (AUDIT-034)
+    else if (LEFT.includes(c) && !(POSTFIX.includes(c) && POSTFIX.includes(s[i - 1] || "\u0000"))) want = !p || OPENERS.includes(p) || p === ";" || OPSX.includes(p);
+    // predznak je lahko brez levega operanda, razen za vejico, piko ali indeksom (»2,+1«, »x_+x_2«); za vejico ali piko
+    // mora biti števka (»1,E3«)
+    else if ("+-−".includes(c)) want = !!p && ",._".includes(p);
+    else if (c && p && ",.".includes(p) && !/[\d\s]/.test(c)) want = true;
+    if (want) {
+      out += hole;
+      added += hole.length;
     }
     if (i < s.length) out += c;
   }
@@ -654,7 +662,7 @@ function unwrap(s, start, o, c, keep) {
 }
 
 /** ⌫: { text, pos } po brisanju levo od kazalca (s, e: izbira). */
-export function backspace(text, s, e = s) {
+function backspaceRaw(text, s, e = s) {
   const t = String(text ?? "");
   if (s !== e) return done(t.slice(0, Math.min(s, e)) + t.slice(Math.max(s, e)), Math.min(s, e));
   if (s <= 0) return done(t, 0);
@@ -699,7 +707,7 @@ export function backspace(text, s, e = s) {
     const enc = enclosing(t, o);
     const c = closeAt(t, o);
     if (enc && enc.start < o && enc.o === o - 1 && closeAt(t, enc.o) === (c < 0 ? -1 : c + 1)) {
-      if (blank(t, [o, c < 0 ? t.length : c + 1])) return backspace(t, enc.o + 1);
+      if (blank(t, [o, c < 0 ? t.length : c + 1])) return backspaceRaw(t, enc.o + 1);
       return done(t, enc.start);
     }
     if (blank(t, [o, c < 0 ? t.length : c + 1])) return done(t.slice(0, o) + t.slice(c < 0 ? t.length : c + 1), o);
@@ -727,9 +735,9 @@ export function backspace(text, s, e = s) {
 }
 
 /** Delete: { text, pos } po brisanju desno od kazalca. */
-export function deleteForward(text, s, e = s) {
+function deleteForwardRaw(text, s, e = s) {
   const t = String(text ?? "");
-  if (s !== e) return backspace(t, s, e);
+  if (s !== e) return backspaceRaw(t, s, e);
   if (s >= t.length) return done(t, t.length);
   const inOp = openerAround(t, s);
   if (inOp) s = inOp[0];
@@ -769,6 +777,53 @@ export function deleteForward(text, s, e = s) {
   const n = /[\uD800-\uDBFF]/.test(t[s]) ? 2 : 1;
   return done(t.slice(0, s) + t.slice(s + n), s);
 }
+
+// Varovalo (AUDIT-034): brisanje nikoli ne pokvari izrisa. ok(besedilo) pove, ali se zapis izriše (sci.js: entryBase z
+// okoljem kalkulatorja); če se je prej in se po brisanju ne bi (»0,1+0,2« brez + → »0,10,2«, »∑_(n=1)« brez n), se nič ne
+// izbriše in kazalec gre en korak v smer brisanja.
+function guarded(raw, step) {
+  return (text, s, e = s, { ok } = {}) => {
+    const t = String(text ?? "");
+    const r = raw(t, s, e);
+    if (!ok || r.text === t || !r.text.trim() || ok(r.text) || !ok(t)) return r;
+    // ⌫ se ne sme zatakniti (pregled #986: ∑_(n=)^() s kazalcem le hodi levo): najbližji znak vsebine levo, ki ga lahko
+    // izbrišemo, sicer najmanjša predloga okoli kazalca, sicer vse levo od kazalca
+    if (step < 0 && s === e && s > 0) return progress(t, s, ok);
+    return { text: t, pos: Math.max(0, Math.min(t.length, (s === e ? s : step < 0 ? Math.min(s, e) : Math.max(s, e)) + (s === e ? step : 0))) };
+  };
+}
+function progress(t, s, ok) {
+  const cut = (a, b) => ({ text: t.slice(0, a) + t.slice(b), pos: a });
+  const content = (k) => {
+    if (!/[\d.,+\-−×÷·*/=<>≤≥!%π∞²³°A-Za-zα-ω]/u.test(t[k])) return false;
+    if (!/[A-Za-zčšž]/.test(t[k])) return true;
+    let b = k;
+    while (/[A-Za-zčšž]/.test(t[b] || "")) b++;
+    return t[b] !== "("; // črka imena funkcije ni vsebina
+  };
+  for (let k = s - 1; k >= Math.max(0, s - 12); k--) if (content(k) && ok(cut(k, k + 1).text)) return cut(k, k + 1);
+  for (let o = s - 1, d = 0; o >= 0; o--) {
+    if (CLOSERS.includes(t[o])) d++;
+    else if (OPENERS.includes(t[o])) {
+      if (d > 0) {
+        d--;
+        continue;
+      }
+      const m = OPENER.exec(t.slice(0, o + 1));
+      const start = m ? o + 1 - m[0].length : o;
+      const c = closeAt(t, o);
+      let end = c < 0 ? t.length : c + 1;
+      if (m && /^[∑∏]_\($/.test(m[0]) && t[end] === "^" && t[end + 1] === "(") end = closeAt(t, end + 1) < 0 ? t.length : closeAt(t, end + 1) + 1;
+      const r = cut(start, end);
+      if (!r.text.trim() || ok(r.text)) return { text: r.text.trim() ? r.text : "", pos: r.text.trim() ? start : 0 };
+    }
+  }
+  return ok(t.slice(s)) ? cut(0, s) : { text: "", pos: 0 };
+}
+/** ⌫: { text, pos }; opts.ok(besedilo) → ali se izriše (varovalo). */
+export const backspace = guarded(backspaceRaw, -1);
+/** Delete: { text, pos }; opts.ok kot pri backspace. */
+export const deleteForward = guarded(deleteForwardRaw, 1);
 
 /** ◀ ▶: naslednje mesto kazalca v zapisu (merilne točke), ne naslednji znak besedila (ime ostane celo). */
 export function stepCaret(base, text, p, d) {

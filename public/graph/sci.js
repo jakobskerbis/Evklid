@@ -273,7 +273,15 @@ export function createScientific(root, opts) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
     if (input.value === undo.cur.v) undo.cur.p = s; // razveljavitev vrne kazalec sem (selectionchange je lahko še na poti)
-    const r = fn(input.value, s, e);
+    // varovalo: brisanje, po katerem se zapis ne bi izrisal, se ne zgodi (AUDIT-034)
+    const ok = (x) => {
+      try {
+        return !!entryBase(x, env())?.ok;
+      } catch {
+        return false;
+      }
+    };
+    const r = fn(input.value, s, e, { ok });
     if (!r.text.trim()) r.text = r.pos = ""; // ostali presledki (»∑_(n=1)^(5) « brez predloge) niso vnos
     r.pos = Math.min(Number(r.pos) || 0, r.text.length);
     const changed = r.text !== input.value;
