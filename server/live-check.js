@@ -204,7 +204,10 @@ function statedValues(answer, vars) {
 // (calcText v math.js). Prej je bil »1.234,5« 1,234 · 0,5 = 0,617, »2e3« pa 2·e·3 (AUDIT-042). Nejasno (»12 34«) → null.
 export const num = (t) => {
   try {
-    const v = compile(parse(calcText(prep(String(t)))))({});
+    if (digitGap(joinThousands(String(t)))) return null; // »1 1/2«: mešano število ali 1 · ½? nejasno
+    const text = calcText(prep(String(t)));
+    if (text.includes(",")) return null; // »1;2«, »1, 2«: dve vrednosti, ne eno število
+    const v = compile(parse(text))({});
     return Number.isFinite(v) ? v : null;
   } catch {
     return null;

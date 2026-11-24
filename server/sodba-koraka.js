@@ -88,7 +88,8 @@ const THOUSANDS_DOT = /(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/;
 // Števila po istem pravilu kot kalkulatorja (calcText: »1 000«, »1.234,5«, »2e3«; »12 34« in »1,2,3« sta napaka).
 export function value(part) {
   const s = String(part).trim();
-  if (!s || THOUSANDS_DOT.test(joinThousands(s))) return null;
+  // »1 1/2«, »1\frac{1}{2}« (po TeX »1((1)/(2))«, mešano število ali 1 · ½?) in »12 34«: nejasno, preden prep iz »1 1/2« naredi »1 (1/2)«
+  if (!s || digitGap(joinThousands(s)) || /\d\s*(?:\\[dt]?frac|\(\([^()]*\)\/\([^()]*\)\))/.test(s) || THOUSANDS_DOT.test(joinThousands(s))) return null;
   try {
     const t = calcText(prep(s));
     if (t.includes(",")) return null; // »1, 2«: dve števili, ne eno

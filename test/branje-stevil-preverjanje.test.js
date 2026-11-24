@@ -29,3 +29,19 @@ test("isto branje števil kot kalkulatorja", () => {
   }
   assert.equal(value("1.000"), null); // tisočice ali decimalke: sodba koraka ne sodi
 });
+
+test("mešana števila (»1 1/2«, »1\\frac{1}{2}«) so nejasna: sodba koraka ne sodi (pregled #976)", async () => {
+  const { stepVerdict } = await import("../server/sodba-koraka.js");
+  for (const m of ["1 1/2 + 1 = 2 1/2", "2 1/2 · 2 = 5", "1 1/2 = 1,5", "2 2/3 · 3 = 8", "3/2 = 1 1/2", "5 - 1 1/2 = 3 1/2", "$1\\frac{1}{2} + 1 = 2\\frac{1}{2}$", "$2\\frac{1}{2} \\cdot 2 = 5$"]) {
+    assert.equal(stepVerdict(m, {}), null, m);
+  }
+  assert.equal(value("1 1/2"), null);
+  assert.equal(num("1 1/2"), null);
+  // dve vrednosti niso eno število
+  assert.equal(num("1;2"), null);
+  // večmestni imenovalec z znanstvenim zapisom
+  for (const [t, v] of [["2/12e3", 2 / 12000], ["1/25e-3", 40]]) {
+    assert.ok(Math.abs(num(t) - v) < 1e-12, `${t}: ${num(t)}`);
+    assert.ok(Math.abs(value(t) - v) < 1e-12, `${t}: ${value(t)}`);
+  }
+});

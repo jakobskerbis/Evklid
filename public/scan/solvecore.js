@@ -51,7 +51,7 @@ export function prep(text) {
     .trim();
   // a/b z dvema celima številoma je ulomek: 3/4·2/5 = (3/4)·(2/5), ne ((3/4)·2)/5.
   // Ne pri znanstvenem zapisu v imenovalcu (»2/1e8« = 2/10⁸, ne (2/1)·10⁸; AUDIT-042).
-  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!]|[eE][+\-−]?\d)/g, "($1/$2)");
+  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!]|[\d.,]*[eE][+\-−]?\d)/g, "($1/$2)");
   return s;
 }
 
