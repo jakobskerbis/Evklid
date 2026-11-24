@@ -47,7 +47,7 @@ function appBase(t) {
   return entryBase(t, env, (s) => (s === t && r && !r.error && r.tex ? r.tex : liveTex(s, env)));
 }
 // ulomki (števec/imenovalec), potence, indeksi, meje ∫ in ∑, lim, gnezdeno
-const EXPR = ["(4+5)/(6−1)", "3/(4+√(9))", "1/(1/2+3)", "2^(10)+7", "x_(5)+2", "∫(x²;0;2)", "∫(x;−1;π)", "∑_(n=1)^(5) n", "limita(sin(x)/x; x; 0)", "d/dx(x³;2)", "√(x²+7)"];
+const EXPR = ["(4+5)/(6−1)", "3/(4+√(9))", "1/(1/2+3)", "2^(10)+7", "x_(5)+2", "∫(x²;0;2)", "∫(x;−1;π)", "∑_(n=1)^(5) n", "limita(sin(x)/x; x; 0)", "d/dx(x³;2)", "√(x²+7)", "2+abs(x−1)", "abs(abs(x)−1)+7"];
 
 for (const engine of ["chromium", "webkit", "firefox"]) {
   for (const [vw, opt] of [
@@ -132,6 +132,36 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
           }
         }
       }
+      // AUDIT-048: dotik levo od zapisa → začetek (tudi pred ||x|−1|, kjer je izris s točkami širši);
+      // dotik na 0 v ×10 → pred eksponent (6), ne za celo predlogo (8)
+      const tapAt = async (x, y) => {
+        if (opt.hasTouch) await page.touchscreen.tap(x, y);
+        else await page.mouse.click(x, y);
+        await settle();
+        return caret();
+      };
+      for (const ex of ["abs(abs(x)−1)", "abs(x−1)", "sin(abs(x))", "2×10^(5)"]) {
+        await set(ex, ex.length);
+        const r = await page.evaluate(() => {
+          const b = document.querySelector(".sc-preview .katex-html").getBoundingClientRect();
+          return { x: b.left, y: (b.top + b.bottom) / 2 };
+        });
+        assert.equal(await tapAt(r.x - 3, r.y), 0, `${engine} ${vw} ${ex}: dotik levo od zapisa`);
+      }
+      await set("2×10^(5)", 0);
+      const zero = await page.evaluate(() => {
+        const w = document.createTreeWalker(document.querySelector(".sc-preview .katex-html"), NodeFilter.SHOW_TEXT);
+        for (let n; (n = w.nextNode()); ) {
+          const k = n.data.indexOf("0");
+          if (k < 0) continue;
+          const r = document.createRange();
+          r.setStart(n, k);
+          r.setEnd(n, k + 1);
+          const b = r.getBoundingClientRect();
+          return { x: b.left + b.width * 0.6, y: b.top + b.height / 2 };
+        }
+      });
+      assert.equal(await tapAt(zero.x, zero.y), 6, `${engine} ${vw}: dotik na 0 v ×10 → pred eksponent`);
       assert.ok(checked >= 40, `preverjenih ${checked}`);
       t.diagnostic(`${engine} ${vw}: ${checked} dotikov`);
     });
