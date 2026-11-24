@@ -274,6 +274,8 @@ export function createScientific(root, opts) {
   };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
+  // »dvojna rešitev«, »trojna rešitev«, »4-kratna rešitev« v jeziku vmesnika
+  const multText = (m) => (m === 2 ? t("sc.mult.2") : m === 3 ? t("sc.mult.3") : t("sc.mult.n", { n: m }));
   // število v navadnem besedilu (sporočilo, ne TeX): 8 mest, decimalna vejica, pravi minus
   const plainNum = (v) => String(Number(v.toPrecision(8))).replace(".", comma() ? "," : ".").replace("-", "−");
   function errorText(e) {
@@ -385,8 +387,8 @@ export function createScientific(root, opts) {
         e.im = r.im;
         break;
       case "solve":
-        e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched"]);
+        e.res = solutionTex(r, c, st.format, multText);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched", "rex", "forms", "noPi", "mult", "cmult"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (r.searched) e.note = { key: "sc.searchedNone", tex: r.searched };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
@@ -463,7 +465,7 @@ export function createScientific(root, opts) {
     if (!r) return e.res || "";
     try {
       const c = comma();
-      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format);
+      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format, multText);
       if (e.kind === "ineq") return intervalsTex({ ...r, intervals: r.intervals.map((i) => ({ ...i, lo: i.lo ?? -Infinity, hi: i.hi ?? Infinity })) }, c, st.format);
       if (e.kind === "system") return systemTex(r, c, st.format);
     } catch {}
