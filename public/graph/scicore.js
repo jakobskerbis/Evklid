@@ -257,7 +257,7 @@ function domainViolation(intNode, ctx, scope, x) {
   let found = false;
   const val = (n) => {
     try {
-      const y = compile(n, ctx)(sc);
+      const y = compile(n, { ...ctx, tolerant: true })(sc); // isti šum zaokrožitve kot v integralu
       return typeof y === "number" ? y : undefined;
     } catch {
       return undefined;

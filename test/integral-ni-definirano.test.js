@@ -6,7 +6,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { analyze } from "../public/graph/scisolve.js";
+import { analyze, integralOf, integralErrorKey } from "../public/graph/scisolve.js";
 import sl from "../public/i18n/sl.js";
 
 const ENV = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
@@ -150,5 +150,54 @@ test("sporočilo je v vseh 33 jezikih", () => {
     const j = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
     assert.ok(j["sc.errIntUndefined"] && j["sc.errIntUndefined"] !== sl["sc.errIntUndefined"], f);
   }
-  assert.match(fs.readFileSync(new URL("../public/graph/sci.js", import.meta.url), "utf8"), /case "intUndefined":\s*return t\("sc\.errIntUndefined"\)/);
+  assert.deepEqual(integralErrorKey({ code: "intUndefined" }), ["sc.errIntUndefined", {}]);
+  assert.match(fs.readFileSync(new URL("../public/graph/sci.js", import.meta.url), "utf8"), /case "intUndefined":[\s\S]{0,120}integralErrorKey\(e\)/);
+});
+
+test("šum zaokrožitve ob meji območja ni »ni definirana« (sin²x + cos²x − 1 ≡ 0)", () => {
+  for (const t of [
+    "∫(sqrt(sin(x)^2+cos(x)^2−1);0;10)",
+    "∫(sqrt(1−sin(x)^2−cos(x)^2);0;10)",
+    "∫(sqrt((x+1)^2−x^2−2x−1);0;1000)",
+    "∫((sin(x)^2+cos(x)^2−1)^0,5;0;10)",
+    "∫(sqrt(cos(x)^2−1+sin(x)^2);−5;5)",
+  ]) {
+    const r = analyze(t, ENV);
+    assert.ok(r.kind === "value" && Math.abs(r.value) < 1e-6, `${t}: ${JSON.stringify(r)}`);
+  }
+  const r = analyze("∫(x·sqrt(sin(x)^2+cos(x)^2−1)+1;0;2)", ENV);
+  assert.ok(r.kind === "value" && Math.abs(r.value - 2) < 1e-9, JSON.stringify(r));
+  // arcsin(sin² + cos²) = arcsin(1) = π/2 tudi, ko je argument zaradi zaokrožitve 1 + 2·10⁻¹⁶
+  const s2 = analyze("∫(arcsin(sin(x)^2+cos(x)^2);0;1)", ENV);
+  assert.ok(s2.kind === "value" && Math.abs(s2.value - Math.PI / 2) < 1e-6, JSON.stringify(s2));
+  // res negativno ostane »ni definirana«
+  for (const t of ["∫(sqrt(−1e−20);0;1)", "∫(sqrt(x−5);0;10)", "∫(sqrt(sin(x)^2+cos(x)^2−1,001);0;10)"]) assert.equal(analyze(t, ENV).error?.code, "intUndefined", t);
+  // drobna prava vrednost ni šum
+  assert.ok(Math.abs(analyze("∫(sqrt(x^2−1e−30);0;1)", ENV).value - 0.5) < 1e-9);
+});
+
+test("orodje Analiza da isti izid in isto sporočilo kot kalkulator", () => {
+  const CASES = [
+    ["sqrt(sin(x))", 0, 10],
+    ["sqrt(x-5)", 0, 1e4],
+    ["ln(x-3)", 0, 10],
+    ["sinh(x)/cosh(x)", -1e4, 1e4],
+    ["1/x", -1, 1],
+    ["1/x", 0, 1],
+    ["sin(1/x)/x", 0, 1],
+    ["1/sqrt(x)", 0, 1],
+    ["x^3 - 3x", -3, 3],
+    ["sqrt(sin(x)^2+cos(x)^2-1)", 0, 10],
+    ["sin(x)", 0, 1e4],
+  ];
+  for (const [f, a, b] of CASES) {
+    const tool = integralOf(f, a, b);
+    const calc = analyze(`∫(${f};${a};${b})`, { ...ENV, comma: false });
+    assert.deepEqual(tool.error ? integralErrorKey(tool.error) : [tool.value, !!tool.est], calc.error ? integralErrorKey(calc.error) : [calc.value, !!calc.est], f);
+  }
+  assert.equal(integralOf("sqrt(sin(x))", 0, 10).error.code, "intUndefined");
+  const src = fs.readFileSync(new URL("../public/graph/tools-ana.js", import.meta.url), "utf8");
+  const part = src.slice(src.indexOf('part === "int"'), src.indexOf('part === "lim"'));
+  assert.match(part, /integralOf\(st\.f, a, b/);
+  assert.match(part, /integralErrorKey/);
 });

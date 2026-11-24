@@ -810,6 +810,35 @@ export function derivCheck(fx, a, d) {
   throw new MathError("noDeriv");
 }
 
+// Merilo za šum zaokrožitve v argumentu: vsota |sumandov| (sin²x + cos²x − 1: 2), da je −10⁻¹⁷ »nič«, ne »negativno«
+function addScale(node, ctx) {
+  if (node.k === "+" || node.k === "-") {
+    const p = addScale(node.a, ctx);
+    const q = addScale(node.b, ctx);
+    return (s) => p(s) + q(s);
+  }
+  if (node.k === "neg" || node.k === "grp") return addScale(node.a, ctx);
+  const f = compile(node, ctx);
+  return (s) => {
+    const y = f(s);
+    return typeof y === "number" && Number.isFinite(y) ? Math.abs(y) : 0;
+  };
+}
+// ctx.tolerant (integrand določenega integrala): argument korena, ln, arcsin …, ki je zaradi zaokrožitve malo pod
+// mejo definicijskega območja (√(sin²x + cos²x − 1)), štejemo za mejo (0 oziroma ±1), ne za »ni definirano«
+function tolerantArg(argNode, a, ctx, lo, hi) {
+  const sc = addScale(argNode, ctx);
+  return (s) => {
+    const v = a(s);
+    if (typeof v !== "number") return v;
+    // pri meji 0 je šum tudi pozitiven (√(10⁻¹⁶) = 10⁻⁸ bi bil izmišljen prispevek): |v| ≤ 10⁻¹² · merilo → 0
+    // (merilo računamo le, ko je v blizu meje: navadne vrednosti so tako hitre kot prej)
+    if (lo === 0 ? v !== 0 && (v < 0 || v < 1e-6) && Math.abs(v) <= 1e-12 * sc(s) : v < lo && v >= lo - 1e-12 * Math.max(sc(s), Math.abs(lo))) return lo;
+    if (hi !== undefined && v > hi && v <= hi + 1e-12 * Math.max(sc(s), hi)) return hi;
+    return v;
+  };
+}
+
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
   const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
@@ -841,8 +870,14 @@ export function compile(node, ctx = {}) {
     case "*":
     case "/":
     case "^": {
-      const a = c(node.a);
+      let a = c(node.a);
       const b = c(node.b);
+      // (sin²x + cos²x − 1)^0,5 v integrandu: osnova v šumu pod 0 je 0
+      if (ctx.tolerant && node.k === "^") {
+        let e = node.b;
+        while (e.k === "grp") e = e.a;
+        if (!(e.k === "num" && Number.isInteger(e.v))) a = tolerantArg(node.a, a, ctx, 0);
+      }
       const f = { "+": ADD, "-": SUB, "*": MUL, "/": DIV, "^": POW }[node.k];
       // hitra pot za števila
       const raw = { "+": (x, y) => x + y, "-": (x, y) => x - y, "*": (x, y) => x * y, "/": (x, y) => x / y, "^": pow }[node.k];
@@ -881,6 +916,15 @@ export function compile(node, ctx = {}) {
       // nCr(171,1) z decimalno vejico ni nCr(171,1; ?). Število za MathError("arity") je v ARITY.
       const want = TRIG[f] ? 1 : ARITY[f];
       if (want && args.length !== want) throw new MathError("arity", { f, n: want });
+      if (ctx.tolerant && args.length === 1) {
+        if (f === "sqrt" || f === "root4" || f === "ln" || f === "log") args[0] = tolerantArg(node.args[0], args[0], ctx, 0);
+        else if (f === "arcsin" || f === "arccos") args[0] = tolerantArg(node.args[0], args[0], ctx, -1, 1);
+        else if (f === "arcosh") args[0] = tolerantArg(node.args[0], args[0], ctx, 1);
+      }
+      if (ctx.tolerant && f === "root" && args.length === 2) {
+        const n = node.args[1];
+        if (n.k === "num" && n.v % 2 === 0) args[0] = tolerantArg(node.args[0], args[0], ctx, 0);
+      }
       if (TRIG[f]) {
         const g = TRIG[f];
         const a = args[0];
@@ -1043,7 +1087,7 @@ export function compile(node, ctx = {}) {
       };
     }
     case "int": {
-      const a = c(node.a);
+      const a = node.lo ? compile(node.a, { ...ctx, tolerant: true }) : c(node.a); // šum zaokrožitve ob meji območja
       const v = node.v;
       const lo = node.lo ? c(node.lo) : () => 0;
       const hi = node.hi ? c(node.hi) : (s) => s[v];
