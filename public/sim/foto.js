@@ -16,7 +16,7 @@ import { icon } from "../icons.js";
 import { jsonAliNic } from "../odgovor.js";
 
 let t = (k) => String(SL[k] ?? k);
-if (typeof document !== "undefined") import("../i18n.js").then((m) => (t = m.t)).catch(() => {});
+const prevodi = typeof document !== "undefined" ? import("../i18n.js").then((m) => (t = m.t)).catch(() => {}) : Promise.resolve();
 
 export const FOTO_KEY = "evklid.lab.foto";
 const beri = () => { try { return localStorage.getItem(FOTO_KEY); } catch { return null; } };
@@ -162,7 +162,9 @@ export function fotoPoskus(poskus, svg, el, ponovno, okna) {
       // Gumb na vrhu kontrol (ne kot plast čez sliko: prej je prekril napise in epruvete).
       const ctl = el.querySelector(".demo-controls");
       if (!ctl || el.querySelector(".lab-foto-gumb")) return;
-      const btn = h("button", { type: "button", class: "lab-foto-gumb", "aria-pressed": String(fotoIzbran()), html: icon("camera") }, h("span", {}, t("sim.lab.foto")));
+      const napis = h("span", {}, t("sim.lab.foto"));
+      const btn = h("button", { type: "button", class: "lab-foto-gumb", "aria-pressed": String(fotoIzbran()), html: icon("camera") }, napis);
+      prevodi.then(() => (napis.textContent = t("sim.lab.foto"))); // gumb lahko nastane, preden je i18n.js naložen
       const kazi = () => btn.setAttribute("aria-pressed", String(fotoIzbran()));
       btn.addEventListener("click", () => { pisi(fotoIzbran() ? "0" : "1"); kazi(); zacni(); ponovno(); });
       ctl.prepend(btn);
@@ -298,8 +300,9 @@ export function risiDokaz(o, meta, st) {
   label(o.g, D.kopel[0], D.pult + 14, st.greje ? "vrela vodna kopel" : "kopel (ne greje)", "lbl small");
   if (!st.ocala) label(o.g, 200, 16, "brez zaščitnih očal", "lab-warn");
   const d = D.merilo20[1] - D.merilo20[0];
-  s("line", { x1: 272, y1: 14, x2: 272 + d, y2: 14, class: "lab-scale" }, o.g);
-  s("text", { x: 272 + d + 5, y: 18, class: "lbl small", "text-anchor": "start" }, o.g, "2 cm");
+  // merilo spodaj desno (kot v risbi): zgoraj desno ga na telefonu prekrijeta gumba »Povečaj« in »Pripni«
+  s("line", { x1: 300, y1: 208, x2: 300 + d, y2: 208, class: "lab-scale" }, o.g);
+  s("text", { x: 300 + d + 5, y: 212, class: "lbl small", "text-anchor": "start" }, o.g, "2 cm");
 }
 
 // ================================================================ ELEKTRIČNI KROG (Ohmov zakon)
