@@ -2,10 +2,10 @@
 // in 3D graf. Računanje je v anacore.js, risanje 3D v plot3d.js.
 import { esc, texHtml, remember } from "./tools-kit.js";
 import { readNumber, readList } from "./toolscore.js";
-import { exactTex } from "./scicore.js";
-import { fn, derivative, toTex, integrate, roots, limit, taylor, V, odeSolve, measurement, propagate, roundMeasurement } from "./anacore.js";
+import { exactTex, zanesljivaMesta } from "./scicore.js";
+import { fn, derivative, toTex, roots, limit, taylor, V, odeSolve, measurement, propagate, roundMeasurement } from "./anacore.js";
 import { createPlot3d } from "./plot3d.js";
-import { compile } from "./math.js";
+import { compile, integrateInfo, withIntegralBudget } from "./math.js";
 
 /** ctx: { t, icon, num(v), card(html), err(msg), insertBtn(v), comma() } */
 export function anaTools(ctx) {
@@ -110,8 +110,14 @@ export function anaTools(ctx) {
           const a = readNumber(st.a);
           const b = readNumber(st.b);
           if (!Number.isFinite(a) || !Number.isFinite(b)) return (out.innerHTML = err(t("sc.ana.badInterval")));
-          const v = integrate(f, a, b);
-          out.innerHTML = card(Number.isFinite(v) ? row(`\\int_{${tnum(a)}}^{${tnum(b)}} ${fTex}\\,dx = ${exact(v)}`, v) + `<p class="muted tl-note">${esc(t("sc.ana.intNote"))}</p>` : `<p>${esc(t("sc.ana.intDiverge"))}</p>`);
+          // številski integral: »≈« in le mesta, ki jih podpira ocena napake (kot v kalkulatorju); med tipkanjem ≤ 200 ms
+          const info = withIntegralBudget(200, () => integrateInfo(f, a, b));
+          const c = Number.isFinite(info.value) ? zanesljivaMesta(info) : null;
+          out.innerHTML = card(
+            c
+              ? row(`\\int_{${tnum(a)}}^{${tnum(b)}} ${fTex}\\,dx \\approx ${tnum(c.value)}`, c.value) + `<p class="muted tl-note">${esc(t("sc.ana.intNote"))}</p>`
+              : `<p>${esc(t(info.diverges ? "sc.ana.intDiverge" : "sc.errIntUnknown"))}</p>`,
+          );
         } else if (part === "lim") {
           const cs = st.c.trim().replace(/\s/g, "");
           const c = /^\+?(∞|inf|oo)$/i.test(cs) ? Infinity : /^-(∞|inf|oo)$/i.test(cs) ? -Infinity : readNumber(cs);
