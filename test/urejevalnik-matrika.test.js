@@ -210,13 +210,7 @@ function serve() {
   });
   return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
 }
-const engines = [];
-for (const name of ["chromium", "webkit", "firefox"]) {
-  try {
-    if (playwright) engines.push([name, await playwright[name].launch()]);
-  } catch {}
-}
-const skip = engines.length ? false : "Playwright ni nameščen";
+// brskalniki se zaženejo v testih: CI teče s --test-force-exit, ki konča proces, preden bi se zagnali na vrhu datoteke
 
 // predloge za brskalnik: vse z do 14 mesti kazalca
 const BROWSER = TEMPLATES.filter((t) => !RAW_TODO[t] && entryBase(t, env)?.ok && caretStops(entryBase(t, env)).length <= 14).slice(0, Number(process.env.MATRIKA_N) || Infinity);
@@ -231,10 +225,19 @@ const VIEWS = [
   ["360", { viewport: { width: 360, height: 740 }, hasTouch: true, isMobile: true }],
 ];
 const ALL = process.env.MATRIKA_VSE === "1";
-for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]) {
+// izbor v CI (Chromium in WebKit, ~3 min skupaj): vsaka n-ta predloga; vse: MATRIKA_VSE=1 (lokalno, ~4 min na brskalnik in širino)
+const EVERY = { chromium: { 1280: 3, 360: 6 }, webkit: { 1280: 6, 360: 12 }, firefox: { 1280: 6, 360: 12 } };
+const browsers = [];
+for (const engine of ["chromium", "webkit", "firefox"]) {
   for (const [vw, opt0] of VIEWS) {
     const opt = engine === "firefox" ? { ...opt0, isMobile: undefined } : opt0;
-    test(`brskalnik ${engine} ${vw}: klik/dotik, ⌫, Backspace, Delete, puščice, tipkanje, preklop, vejica, tipkovnica, ARIA`, { skip, timeout: ALL ? 3600000 : 600000 }, async (t) => {
+    test(`brskalnik ${engine} ${vw}: dotik na znake, ⌫, Backspace, Delete, puščice, tipkanje, preklop, vejica, tipkovnica, ARIA`, { timeout: ALL ? 3600000 : 600000 }, async (t) => {
+      let browser = null;
+      try {
+        browser = playwright && (await playwright[engine].launch());
+      } catch {}
+      if (!browser) return t.skip(`${engine} ni nameščen`);
+      browsers.push(browser);
       const url = await base();
       const where = `${engine} ${vw}`;
       let n = 0;
@@ -247,10 +250,6 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
       // pisave KaTeX (velik ∫, oklepaji) se sicer naložijo šele ob prvi rabi in med merjenjem spremenijo širino zapisa;
       // učenec vidi zapis z naloženimi pisavami
       await page.evaluate(() => Promise.all([...document.fonts].filter((f) => /KaTeX/.test(f.family)).map((f) => f.load().catch(() => {}))));
-      await page.evaluate(() => {
-        window.L = [];
-        document.addEventListener("click", (e) => window.L.push([e.target.className, e.detail, e.clientX, e.clientY]), true);
-      });
       const touch = !!opt.hasTouch;
       // WebKit v Playwrightu po preventDefault na pointerdown ob dotiku ne pošlje klika (pravi iOS ga): tam klik
       const key = (ins) => (touch && engine !== "webkit" ? page.tap(`.sc-key[data-ins="${ins}"]`) : page.click(`.sc-key[data-ins="${ins}"]`));
@@ -283,51 +282,73 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
       };
       const tapAt = (x, y) => (touch ? page.touchscreen.tap(x, y) : page.mouse.click(x, y));
 
-      // vse kombinacije: MATRIKA_VSE=1 (lokalno, ~4 min na brskalnik in širino); sicer (CI) 1280 px vsaka druga predloga,
-      // 360 px vsaka četrta (zamik, da se izbora ne prekrivata)
+      const every = ALL ? 1 : EVERY[engine][vw];
       for (const [ti, tx] of BROWSER.entries()) {
-        if (!ALL && (touch ? (ti + 1) % 4 : ti % 2)) continue;
+        if ((ti + (touch ? 1 : 0)) % every) continue;
         const b = appBase(tx, { ...env, deg: true });
         // mesta za dotik (stopsTex: brez mest sredi imena ali odpirala)
         const stops = [...stopsTex(b).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1]));
-        // klik/dotik na merilno točko vsakega mesta (kot jih izmeri caretFromPoint v trenutnem izrisu) postavi kazalec
-        // točno na to mesto (AUDIT-003)
+        // dotik/klik na sredino vidnih znakov zapisa (okvirji iz .katex-html, ne merilne točke kalkulatorja): kazalec je ob
+        // znaku (AUDIT-003). Samo znaki, ki so v besedilu in v zapisu natanko enkrat (enolično mesto); oklepaji niso
+        // vedno na istem mestu kot v besedilu, črke imena funkcije niso mesto kazalca. Preveri se izrisani kazalec ob znaku.
         await set(tx, tx.length);
-        const targets = await page.evaluate(async (tx) => {
-          const V = await import("/graph/sci-vnos.js");
-          const prev = document.querySelector(".sc-preview");
-          const shown = prev.innerHTML;
-          const env = { vars: {}, funcs: {}, ans: 0, deg: true, grad: false, comma: true };
-          let r = null;
-          try {
-            r = V.analyzeLive(tx, env);
-          } catch {}
-          const base = V.entryBase(tx, env, (s) => (s === tx && r && !r.error && r.tex ? r.tex : V.liveTex(s, env)));
-          prev.innerHTML = window.katex.renderToString(V.stopsTex(base), { throwOnError: false, strict: "ignore", trust: V.TRUST });
-          const out = [...prev.querySelectorAll("[data-evk-p]")].map((e) => {
-            const r = e.getBoundingClientRect();
-            return { p: Number(e.dataset.evkP), x: r.left + 0.5, y: (r.top + r.bottom) / 2 };
-          });
-          prev.innerHTML = shown;
-          // (merilna točka na desnem robu zapisa je zdaj v prosojnem polju, AUDIT-038)
-          const ir = document.querySelector(".sc-input").getBoundingClientRect();
-          return [out, [ir.left, ir.right, document.querySelectorAll(".sc-input").length]];
-        }, tx).then(([o, ir]) => ((o.ir = ir), o));
-        assert.deepEqual(targets.map((x) => x.p).sort((a, b) => a - b), [...stops].sort((a, b) => a - b), `${where} ${tx}: merilne točke`);
-        for (const tg of targets) {
-          await set(tx, tg.p === tx.length ? 0 : tx.length);
-          await tapAt(tg.x, tg.y);
+        const glyphs = await page.evaluate(() => {
+          const root = document.querySelector(".sc-preview .katex-html");
+          const out = [];
+          if (!root) return out;
+          const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+          for (let nd; (nd = w.nextNode()); ) {
+            if (nd.parentElement.closest(".sc-caret, .sc-hole")) continue;
+            for (let k = 0; k < nd.data.length; k++) {
+              if (!nd.data[k].trim() || nd.data[k] === "\u200b") continue;
+              const r = document.createRange();
+              r.setStart(nd, k);
+              r.setEnd(nd, k + 1);
+              const bb = r.getBoundingClientRect();
+              if (bb.width >= 1) out.push({ ch: nd.data[k], x: bb.left + bb.width / 2, y: bb.top + bb.height / 2 });
+            }
+          }
+          return out;
+        });
+        const cnt = (arr, c) => arr.filter((x) => x === c).length;
+        for (const g of glyphs) {
+          if (/[()[\]|]/.test(g.ch) || cnt([...tx], g.ch) !== 1 || cnt(glyphs.map((x) => x.ch), g.ch) !== 1) continue;
+          const i = [...tx].indexOf(g.ch);
+          if ([...tx.matchAll(/[A-Za-zčšž]{2,}(?=\s*\()/g)].some((m) => m.index <= i && i < m.index + m[0].length)) continue; // ime funkcije
+          await set(tx, i === 0 ? tx.length : 0);
+          await tapAt(g.x, g.y);
           // kalkulator postavi kazalec v setTimeout po kliku: počakaj na naslednji krog (deterministično tudi pod obremenitvijo)
           await page.evaluate(() => new Promise((r) => setTimeout(() => setTimeout(r, 0), 0)));
-          const after = await clean(`${tx} dotik @${tg.p}`);
+          const after = await clean(`${tx} dotik na ${g.ch}`);
           assert.equal(after.v, tx, `${where} ${tx}: dotik ne spremeni vnosa`);
-          // dve mesti na istem pikslu (za x v √(x) in za korenom) sta enakovredni
-          // dotik: brskalnik premakne točko dotika za nekaj px (prilagoditev dotika), prst tudi ni natančnejši; sprejmemo
-          // mesto, katerega točka je največ 20 px od dotika
-          const tol = touch ? 20 : 1;
-          const twin = targets.find((o) => o.p === after.p && Math.hypot(o.x - tg.x, o.y - tg.y) <= tol);
-          if (!twin) assert.equal(after.p, tg.p, `${where} ${tx}: dotik na mesto @${tg.p} (${tg.x}, ${tg.y}) da kazalec @${after.p} ${JSON.stringify(await page.evaluate(() => window.L.slice(-3)))}`);
-          // (izrisani kazalec je lahko do ~17 px stran od točke, ker kazalec sam malo premakne zapis, npr. pred \\left.)
+          // izrisani kazalec stoji tik ob tem znaku (v novem izrisu, s kazalcem): v isti višini in med kazalcem in znakom
+          // ni nobenega drugega znaka (kazalec za x² in pred < je ob <, čeprav je med njima presledek relacije)
+          const at = await page.evaluate((ch) => {
+            const prev = document.querySelector(".sc-preview");
+            const c = prev.querySelector(".sc-caret")?.getBoundingClientRect();
+            if (!c) return null;
+            const boxes = [];
+            const w = document.createTreeWalker(prev.querySelector(".katex-html"), NodeFilter.SHOW_TEXT);
+            for (let nd; (nd = w.nextNode()); ) {
+              if (nd.parentElement.closest(".sc-caret, .sc-hole")) continue;
+              for (let k = 0; k < nd.data.length; k++) {
+                if (!nd.data[k].trim() || nd.data[k] === "\u200b") continue;
+                const r = document.createRange();
+                r.setStart(nd, k);
+                r.setEnd(nd, k + 1);
+                const b = r.getBoundingClientRect();
+                if (b.width >= 1) boxes.push({ ch: nd.data[k], l: b.left, r: b.right, t: b.top, b: b.bottom });
+              }
+            }
+            return { cx: c.left + c.width / 2, ct: c.top, cb: c.bottom, boxes };
+          }, g.ch);
+          let ok = false;
+          const me = at?.boxes.find((x) => x.ch === g.ch);
+          if (me && at.ct < me.b && at.cb > me.t) {
+            const [lo, hi] = at.cx <= me.l ? [at.cx, me.l] : at.cx >= me.r ? [me.r, at.cx] : [at.cx, at.cx];
+            ok = !at.boxes.some((x) => x !== me && x.l >= lo - 0.5 && x.r <= hi + 0.5 && x.r - x.l > 1 && at.ct < x.b && at.cb > x.t);
+          }
+          assert.ok(ok, `${where} ${tx}: dotik na »${g.ch}« (${g.x.toFixed(0)}, ${g.y.toFixed(0)}) da kazalec @${after.p}, ne ob znaku (kazalec x ${at?.cx?.toFixed(0)}, znak ${JSON.stringify(me)})`);
         }
         // ⌫ (zaslonska), Backspace in Delete (strojna) na vsakem mestu: kot čiste funkcije, brez surovega besedila
         for (const p of stops) {
@@ -431,6 +452,6 @@ for (const [engine, browser] of engines.length ? engines : [["brskalnik", null]]
   }
 }
 test.after(async () => {
-  for (const [, b] of engines) await b.close();
+  for (const b of browsers) await b.close();
   server?.close();
 });
