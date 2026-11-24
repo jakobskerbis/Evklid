@@ -35,3 +35,13 @@ test("brez rešitve: »na intervalu ni rešitve«, ne »∅« (AUDIT-015)", () =
   // polinom brez realnih rešitev ostane, kot je bil (dokazano)
   assert.ok(!an("x^2+1=0").searched);
 });
+
+test("pregled #954: dotik daleč od 0, nihajoče enačbe ostanejo simetrične", () => {
+  assert.deepEqual(an("(x-5000)^2/x=0").roots, [5000]);
+  assert.ok(close(an("(ln(x)-10)^2=0").roots[0], Math.exp(10)));
+  const r = an("sin(x/10)=x/500").roots;
+  assert.equal(r.length, 12);
+  assert.ok(r.includes(0) && r.some((x) => x > 0) && r.some((x) => x < 0));
+  // nihajoča neenačba: zunaj ±100 ne iščemo (kot prej), ni pa razreza pri −100 brez razloga
+  assert.ok(an("x·sin(x)>0").intervals.length > 10);
+});
