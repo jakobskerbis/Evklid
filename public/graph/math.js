@@ -148,7 +148,7 @@ const MULTI = {
 const ARITY = { mod: 2, nCr: 2, nPr: 2, root: 2, logb: 2, randint: 2 };
 const ARG_NAMES = { nCr: "n k", nPr: "n k", root: "x n", logb: "x b", Pol: "x y", Rec: "r θ" };
 /** Pravilen zapis za napako »arity« ({ f, n }): »nCr(n; k)«, »sin(x)«; sep je ločilo argumentov. */
-export const arityExample = ({ f, n } = {}, sep = ",") => `${f}(${(ARG_NAMES[f] || (n === 1 ? "x" : "a b c d").split(" ").slice(0, n).join(" ")).split(" ").join(`${sep} `)})`;
+export const arityExample = ({ f, n } = {}, sep = ",") => `${f}(${(ARG_NAMES[f] || (n === 1 ? "x" : "a b c d").split(" ").slice(0, n).join(" ")).split(" ").join(`${sep}\u00a0`)})`; // nedeljiv presledek: zgled se na ozkem zaslonu ne prelomi
 // funkcije seznamov (vrnejo eno število)
 const LISTF = {
   mean,

@@ -12,7 +12,7 @@ test("nCr(171,1) z decimalno vejico: jasna napaka, brez »undefined«", () => {
   const tex = liveTex("nCr(171,1)", { comma: true });
   assert.ok(tex && !tex.includes("undefined"), tex);
   assert.match(tex, /\\square/);
-  assert.equal(arityExample(r.error.info, ";"), "nCr(n; k)");
+  assert.equal(arityExample(r.error.info, ";"), "nCr(n;\u00a0k)");
 });
 
 test("napačno število vrednosti: napaka arity v compile", () => {
@@ -51,8 +51,8 @@ test("toTex: nobena funkcija s premalo vrednostmi ne izpiše »undefined«", () 
 
 test("znanstveni kalkulator: napaka arity ima zgled zapisa", () => {
   assert.equal(arityExample({ f: "sin", n: 1 }, ";"), "sin(x)");
-  assert.equal(arityExample({ f: "mod", n: 2 }, ","), "mod(a, b)");
-  assert.equal(arityExample({ f: "root", n: 2 }, ";"), "root(x; n)");
+  assert.equal(arityExample({ f: "mod", n: 2 }, ","), "mod(a,\u00a0b)");
+  assert.equal(arityExample({ f: "root", n: 2 }, ";"), "root(x;\u00a0n)");
 });
 
 test("risba graf: sin(0,63*x) z decimalno vejico niha (prej ravna črta sin 0, BIO-SS-3 odnosi-med-vrstami)", async () => {
@@ -64,4 +64,6 @@ test("risba graf: sin(0,63*x) z decimalno vejico niha (prej ravna črta sin 0, B
   const b = path(renderDrawing("graf", flat));
   assert.ok(a && b, "risba nima krivulje");
   assert.notEqual(a, b);
+  const c = path(renderDrawing("graf", body.replace("60 + 30*sin(0,63*x)", "max(90*sin(0,63*x); 60)")));
+  assert.ok(c && c !== b, "»;« v risbi loči vrednosti");
 });

@@ -6,9 +6,9 @@
 // Datoteka je v public/, ker isto kodo (brez DOM in brez knjižnic) uporabljata strežnik (server/risbe.js) in
 // brskalnik: graf z drsniki (»drsnik:«, j, 11. 11. 2026) public/risbe-zive.js ob premiku drsnika izriše znova.
 import { parse, compile, freeVars } from "./graph/math.js";
-// Izraz v risbi je v slovenskem zapisu: vejica med števkami je decimalna tudi v oklepaju (sin(0,63*x)).
+// Izraz v risbi je v slovenskem zapisu: vejica med števkami je decimalna tudi v oklepaju (sin(0,63*x)), »;« loči vrednosti.
 // Prej je math.js vejico v oklepaju bral kot ločilo in sin(0,63*x) narisal kot sin 0 (ravna črta).
-const izraz = (src) => parse(String(src).replace(/(\d),(?=\d)/g, "$1."));
+const izraz = (src) => parse(String(src).replace(/(\d),(?=\d)/g, "$1.").replace(/;/g, ","));
 
 export const DRAW_RE = /^[ \t]*:::[ \t]*risba(?:[ \t]+([^\n]*?))?[ \t]*\n([\s\S]*?)\n[ \t]*:::[ \t]*$/gm;
 
