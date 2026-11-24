@@ -928,7 +928,9 @@ export function noteReviewSkip(db, stopnja, reason) {
 export function isClaim(text, prevTutor = "") {
   const t = String(text || "").trim();
   if (!t || t.length > 1500) return false;
-  if (/\?\s*$/.test(t)) return false; // vprašanje, ne trditev
+  // Vprašanje ni trditev, razen če predlaga vrednost ali rezultat (»x = 5?«, »je 7 · 8 = 54?«, »mogoče 12?«): tak
+  // negotov odgovor je trditev, o kateri inštruktor sodi, zato mora biti sodba preverjena (AUDIT-056).
+  if (/\?\s*$/.test(t)) return /=\s*[-−+]?\s*\(?\s*[\d.,]*\d/.test(t) || /^(?:(?:a|ali)\s+)?(?:je\s+)?(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)?\s*[-−]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?\s*\p{L}{0,4}\s*\?+\s*$/iu.test(t);
   if (/\d|=/.test(t)) return true;
   return /\?\s*$/.test(String(prevTutor || "").trim()) && /\p{L}{2,}/u.test(t);
 }
