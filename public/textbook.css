@@ -760,7 +760,7 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-screen { grid-area: 1 / 2 / 3 / 3; min-height: 1.6em; padding: 1px 4px; gap: 2px; }
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-val { font-size: 0.92rem; letter-spacing: 0; }
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-unit { font-size: 0.72rem; }
-  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-note { grid-area: 2 / 1; align-self: start; font-size: 0.64rem; line-height: 1.15; min-height: 0; -webkit-line-clamp: 2; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-note { grid-area: 2 / 1; align-self: start; font-size: 0.64rem; line-height: 1.15; min-height: 0; -webkit-line-clamp: 3; } /* »porcelanska skodelica s pokrovčkom« (ohlajanje) ima v ~66 px tri vrstice */
 }
 }
 /* Telefon ležeče (nizek zaslon): risba levo pripeta in cela vidna, kontrole desno. */
