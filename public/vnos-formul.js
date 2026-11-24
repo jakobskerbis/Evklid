@@ -40,6 +40,36 @@ function args(s) {
   return out.map((x) => x.trim());
 }
 
+// Ali se TeX konča z \lim, \sum ali \prod z mejami (_{…}, ^{…}) in še brez telesa.
+function bigOpEnd(tex) {
+  const t = String(tex ?? "");
+  const re = /\\(?:lim|sum|prod)(?![a-zA-Z])/g;
+  let at = -1;
+  for (let m; (m = re.exec(t)); ) at = re.lastIndex;
+  if (at < 0) return false;
+  let k = at;
+  while ((t[k] === "_" || t[k] === "^") && t[k + 1] === "{") {
+    let d = 0;
+    let j = k + 1;
+    for (; j < t.length; j++) {
+      if (t[j] === "{") d++;
+      else if (t[j] === "}" && --d === 0) break;
+    }
+    k = j + 1;
+  }
+  return k > at && k === t.length;
+}
+// Vsota ali razlika na vrhnji ravni (ne predznak na začetku): telo »i+1« potrebuje oklepaj.
+function topSum(s) {
+  let d = 0;
+  for (let j = 0; j < s.length; j++) {
+    if (s[j] === "(") d++;
+    else if (s[j] === ")") d--;
+    else if (d === 0 && j > 0 && /[+−\-±]/.test(s[j])) return true;
+  }
+  return false;
+}
+
 const BIG = { "∑": "\\sum", "∏": "\\prod", "∫": "\\int", lim: "\\lim", log: "\\log" };
 const ROOT = { "√": "\\sqrt", "∛": "\\sqrt[3]", "∜": "\\sqrt[4]" };
 const ESC = { "\\": "\\backslash ", "~": "\\sim ", "^": "\\^{}", _: "\\_{}" };
@@ -74,6 +104,19 @@ export function splitFormulas(src) {
           i = k;
           continue;
         }
+      }
+    }
+    // Telo limite, vsote, produkta: lim_(x→0)(x^(2)), ∑_(i=1)^(5) (i) – telo je del iste formule (AUDIT-013).
+    // Oklepaja sta skupina s tipke (kot pri ∫ (x) dx); vsota ali razlika v telesu ju obdrži: ∑ (i+1), ne ∑ i + 1.
+    if (c === "(" && !buf.trim() && bigOpEnd(parts[parts.length - 1]?.tex)) {
+      const j = closeAt(s, i);
+      if (j > 0) {
+        const inner = s.slice(i + 1, j - 1);
+        const t = toTex(inner);
+        parts[parts.length - 1].tex += ` ${topSum(inner) ? `\\left(${t}\\right)` : t}`;
+        buf = "";
+        i = j;
+        continue;
       }
     }
     // Telo integrala s tipke »∫« ali »∫ₐᵇ«: ∫ (x²) dx, ∫_(0)^(1) (x²) dx

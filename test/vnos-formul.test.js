@@ -22,7 +22,7 @@ test("keyboard notation becomes formulas, the rest stays text", () => {
   assert.deepEqual(tex("∫(x;;)"), ["\\int x\\,dx"]);
   assert.deepEqual(tex("∫ (x^(2)) dx"), ["\\int x^{2}\\,dx"]);
   assert.deepEqual(tex("∫_(0)^(1) (x²) dx je?"), ["\\int_{0}^{1} x²\\,dx"]);
-  assert.deepEqual(tex("lim_(x→0)((sin(x))/(x))"), ["\\lim_{x→0}", "\\frac{\\sin (x)}{x}"]);
+  assert.deepEqual(tex("lim_(x→0)((sin(x))/(x))"), ["\\lim_{x→0} \\frac{\\sin (x)}{x}"]); // ena formula (AUDIT-013)
   assert.deepEqual(tex("d/dx(x³)"), ["\\frac{d}{dx}"]);
   // Navadno besedilo ostane besedilo.
   for (const s of ["Živjo, kako rešim nalogo?", "3/4 + 1/8", "moja_spremenljivka", "(a) dx", "cena (z DDV) / (brez)"]) assert.ok(!hasFormula(s), s);
@@ -114,4 +114,20 @@ test("brisiNazaj v telesu integrala in brisiNaprej (Del): zgradba ostane cela", 
   assert.deepEqual(brisiNaprej("(1)/(2)", 2), { value: "(1)/(2)", caret: 5 });
   assert.deepEqual(brisiNaprej("π()/()", 1), { value: "π", caret: 1 });
   assert.equal(brisiNaprej("(1)/(2)", 1), null, "števka se zbriše kot vsak znak");
+});
+
+// AUDIT-013: telo limite, vsote in produkta v oklepaju je del iste formule (prej dva kosa in surov »(i)«)
+test("lim_(x→0)(x^(2)), ∑_(i=1)^(5)(i), ∏_(i=1)^(5)(i): operator in telo sta ena formula (AUDIT-013)", () => {
+  assert.deepEqual(splitFormulas("lim_(x→0)(x^(2))"), [{ tex: "\\lim_{x→0} x^{2}" }]);
+  assert.deepEqual(splitFormulas("lim_(x→0) (x^(2))"), [{ tex: "\\lim_{x→0} x^{2}" }]);
+  assert.deepEqual(splitFormulas("∑_(i=1)^(5)(i)"), [{ tex: "\\sum_{i=1}^{5} i" }]);
+  assert.deepEqual(splitFormulas("∑_(i=1)^(5) (i)"), [{ tex: "\\sum_{i=1}^{5} i" }]);
+  assert.deepEqual(splitFormulas("∏_(i=1)^(5)(i)"), [{ tex: "\\prod_{i=1}^{5} i" }]);
+  assert.deepEqual(splitFormulas("∏_(i=1)^(5) (i)"), [{ tex: "\\prod_{i=1}^{5} i" }]);
+  // vsota v telesu obdrži oklepaj (pomen se ne spremeni)
+  assert.deepEqual(tex("∑_(i=1)^(5)(i+1)"), ["\\sum_{i=1}^{5} \\left(i+1\\right)"]);
+  assert.deepEqual(splitFormulas("Koliko je ∑_(i=1)^(3)(i)?"), [{ text: "Koliko je " }, { tex: "\\sum_{i=1}^{3} i" }, { text: "?" }]);
+  // navaden oklepaj brez operatorja ostane besedilo
+  assert.ok(!hasFormula("(a)(b)"));
+  for (const s of ["lim_(x→0)(x^(2))", "∑_(i=1)^(5)(i)", "∏_(i=1)^(5)(i)", "∑_(i=1)^(5)(i+1)"]) for (const t of tex(s)) assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "ignore" }), t);
 });
