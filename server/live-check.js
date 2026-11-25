@@ -176,15 +176,33 @@ export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne dr
 // $7 \cdot 8 = 54$«, način A konča z vprašanjem), zato ne izklopijo vrstice. Preskoči se le vrstica z učenčevo ali
 // namerno napačno trditvijo, pogojnik (»bi dobil«, »would«) in račun, ki je sam vprašanje (»Ali je $7 \cdot 8 = 54$?«).
 // Kemijske preverbe še naprej uporabljajo širši SKIP_LINE.
-export const ARITH_SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|(?<!\p{L})(bi|would|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})|\$[^$\n]*\$\s*[?]|=\s*\??\s*\?/iu;
+export const ARITH_SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|preizkus|predpostav|recimo|tvoj|na listu|pri tebi|✗|(?<!\p{L})(bi|would|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|rekel|rekla|imaš|imas|poglej|extraneous|reject)(?!\p{L})/iu;
+// Stavek, ki se konča z »?«, je vprašanje: računi in vrednosti v njem niso trditve (»Če je $x = 3$, kaj dobiš?«,
+// »Ali je $x = 3$ rešitev?«). Velja le za ta stavek, ne za celo vrstico (»Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.«).
+// Zapisi se pred iskanjem konca stavka skrijejo, da decimalna pika ali »?« v zapisu ne konča stavka.
+export function inQuestion(line, idx) {
+  const masked = String(line).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, (m) => "$" + "x".repeat(m.length - 2) + "$");
+  const rest = masked.slice(idx);
+  const end = rest.search(/[.!?](?=\s|$)/);
+  return end >= 0 && rest[end] === "?";
+}
+// Račun ali vrednost, ki dobesedno stoji v učenčevem sporočilu, je citat (»Imaš $7 \cdot 8 = 54$.«), ne trditev odgovora.
+const squash = (t) => String(t || "").replace(/\\left|\\right|\\[,;:! ]|\s|\$/g, "").replace(/\\cdot|\\times|·|×/g, "*");
+export const quoted = (tex, question) => {
+  const t = squash(tex);
+  return t.length >= 3 && squash(question).includes(t);
+};
 
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
-function statedValues(answer, vars) {
+function statedValues(answer, vars, question = "") {
   const out = new Map();
   for (const line of String(answer).split("\n")) {
     if (ARITH_SKIP_LINE.test(line)) continue;
     for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
       let tex = m[1] ?? m[2];
+      if (inQuestion(line, m.index) || quoted(tex, question)) continue;
+      // pogoj, ne trditev: »Za $x = 3$ je leva stran 9«, »pri $x = 2$«, »ko je $x = 0$«
+      if (/(?:^|[\s(,:;])(?:za|pri|ko(?:\s+je)?|če(?:\s+je)?|kadar(?:\s+je)?|for|if|when|at)\s*$/iu.test(line.slice(0, m.index))) continue;
       // »±« je par vrednosti; »≈« (texToText ga izpusti) loči točno vrednost od približka.
       if (/\\pm|\\mp|[±∓]/.test(tex)) continue;
       const ap = tex.search(/\\approx|\\doteq|≈|≐/);
@@ -240,10 +258,10 @@ function nearSolver(s, sols) {
   return sols.some((r) => r.v === s.v && Math.abs(r.x - x) <= tol * (dec || s.approx ? 1 : Math.max(1, Math.abs(r.x))));
 }
 
-function valueIssue(answer, p) {
+function valueIssue(answer, p, question = "") {
   const vars = [...new Set([...String(p.answerTex || "").matchAll(/([a-zA-Z])(?:_\{?\d+\}?)?\s*=/g)].map((m) => m[1]))];
   if (!vars.length) return null;
-  const stated = statedValues(answer, vars);
+  const stated = statedValues(answer, vars, question);
   if (!stated.size) return null;
   if (p.type === "system") {
     const byVar = new Map([...stated.values()].map((s) => [s.v, s.val]));
@@ -272,7 +290,11 @@ export function codeFindings(answer, pre = null, question = "") {
     checked += r.checked;
     // Vrstice z učenčevim ali namerno napačnim računom (»Ti si napisal $3 + 4 \\cdot 2 = 14$«) niso napaka odgovora.
     const lines = String(answer || "").split("\n");
-    const real = r.mismatches.filter((m) => !ARITH_SKIP_LINE.test(lines[m.line - 1] || ""));
+    const real = r.mismatches.filter((m) => {
+      const line = lines[m.line - 1] || "";
+      const at = line.indexOf(m.tex.slice(0, 20));
+      return !ARITH_SKIP_LINE.test(line) && !(at >= 0 && inQuestion(line, at)) && !quoted(m.tex, question);
+    });
     if (real.length) {
       const m = real[0];
       return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}` };
@@ -282,7 +304,7 @@ export function codeFindings(answer, pre = null, question = "") {
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
   if (eq.length === 1) {
-    const v = valueIssue(answer, eq[0]);
+    const v = valueIssue(answer, eq[0], question);
     if (v) {
       checked += v.checked;
       if (v.issue) return { checked, issue: v.issue };
