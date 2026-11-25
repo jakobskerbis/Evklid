@@ -30,10 +30,10 @@ export const decZapis = (t, lang) => String(t).replace(".", decLocilo(lang)).rep
 // Pri pikastem ločilu: decimalna vejica (»0,25«, v TeX tudi »9{,}81«) → pika. Ostanejo: naštevanja (»1,2,3«, »1, 2«),
 // tisočice (»1,000,000«), indeksi (»x_{1,2}«) in par v oklepaju (»(1,2)«, »A(1,2)«, »[1,5]«, »\{1,2\}«).
 // Pravilo pisanja: točke in pare pišemo z vejico in presledkom ali s podpičjem (»(4; 3,5)«, skica.js par).
-const OKLEPAJ = /(?:[([]|\\\{)$/, ZAKLEPAJ = /^(?:[)\]]|\\\})/;
+const OKLEPAJ = /(?:[([]|\\\{)[-−]?$/, ZAKLEPAJ = /^(?:[)\]]|\\\})/;
 const vPiko = (t, vejica) =>
   String(t).replace(new RegExp(String.raw`(?<![\d.,]|\d\{,\}|_\{)(\d+)${vejica}(\d+)(?![\d,]|\{,\})`, "g"), (m, a, b, i, s) =>
-    OKLEPAJ.test(s.slice(Math.max(0, i - 2), i)) && ZAKLEPAJ.test(s.slice(i + m.length, i + m.length + 2)) ? m : `${a}.${b}`);
+    OKLEPAJ.test(s.slice(Math.max(0, i - 3), i)) && ZAKLEPAJ.test(s.slice(i + m.length, i + m.length + 2)) ? m : `${a}.${b}`);
 // Besedilo s števili, zapisanimi s slovensko vejico (»0,25«, »1,70 m«): ločilo jezika. Ne za prozo in TeX.
 export const decBesedilo = (t, lang) => (decLocilo(lang) === "." ? vPiko(t, ",") : t);
 // Formula s stalnicami, zapisanimi z vejico (»9{,}81«, »0,1«): pri pikastem ločilu pika (tex to naredi sam).

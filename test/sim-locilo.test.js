@@ -44,7 +44,7 @@ test("stalnice v formuli in besedilu ter eksponent", () => {
 });
 
 test("pari, množice, naštevanja in indeksi ostanejo (pravilo: točke z vejico in presledkom ali podpičjem)", () => {
-  for (const t of ["A(1,2)", "(1,2)", "f(2,3)", "[1,5]", String.raw`\{1,2\}`, "x_{1,2}", "1,2,3", "1,000,000", "(1, 2)"]) {
+  for (const t of ["A(1,2)", "(1,2)", "f(2,3)", "[1,5]", String.raw`\{1,2\}`, "x_{1,2}", "1,2,3", "1,000,000", "(1, 2)", "A(-2,3)", "[-1,1]", String.raw`x\in[-2,2]`, "(−1,4)", String.raw`\{-1,2\}`]) {
     assert.equal(decTeX(t, "en"), t, t);
     assert.equal(decBesedilo(t, "en"), t, t);
   }
