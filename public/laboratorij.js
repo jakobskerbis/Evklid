@@ -28,7 +28,7 @@ export function initLab(deps) {
     const topic = e.target.closest("[data-lab-topic]");
     if (topic) return D.openLesson(topic.dataset.labTopic);
     const vaja = e.target.closest("[data-lab-practice]");
-    if (vaja) return D.practice?.(vaja.dataset.labPractice);
+    if (vaja) return D.practice?.(vaja.dataset.labPractice)?.catch?.(() => D.toast?.(t("lab.error")));
     if (e.target.closest("[data-lab-back]")) return labBack();
     // »Vprašaj inštruktorja«: klepet z vpisanim začetkom vprašanja; poskus ostane odprt, vrnitev iz klepeta (app.js).
     // Posnetek stanja (nastavitve, odčitki, zapisane meritve; public/sim/lab.js stanjePoskusa) gre z vprašanjem kot

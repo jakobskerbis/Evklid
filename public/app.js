@@ -4535,6 +4535,7 @@ initPilot({
 initLab({
   api,
   escapeHtml,
+  toast,
   getStudent: () => state.student,
   openLesson: (id) => {
     lessonFromLab(id);
