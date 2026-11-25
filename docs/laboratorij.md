@@ -480,15 +480,21 @@ and submits a number, a unit and an absolute uncertainty. The program scores it 
   student simulated in the model must land within tol in ≥ 95 % of seeds (`test/laboratorij-matura.test.js`);
 - the result counts only if it comes from the student's own data: `izMeritev(c)` computes the same quantity from the
   table/log by the task's method; a result more than 2·tol away from it (or no usable data) scores 0 for the result, so a
-  known value (g, F, Eₐ, a resistor label) typed without measuring earns nothing. After submitting, the card shows
-  »Iz tvojih meritev« next to the true value. lab-elektroliza reads p and T only from the displays, which `kontekst` does
-  not include, so its `izMeritev` uses the lab's average p and T (≤ 4 % shift, inside the 2·tol window);
+  known value (g, F, Eₐ, a resistor label) typed without measuring earns nothing. Where the true value is a model
+  constant (`stalnica: true`: prosti-pad g, elektroliza F, hitrost Eₐ) the window is tol, so typing the textbook value
+  after any run does not beat honest work. After submitting, the card shows »Iz tvojih meritev« next to the true value.
+  `izMeritev(c)` also gets `c.B` (the bench): lab-elektroliza takes p and T from it, because `kontekst` does not read
+  the displays (without B, e.g. in unit tests, the lab's average 98,0 kPa and 22 °C);
 - unit, 1 point (`enote: [[name, factor to the right unit | null], …]`, first is right; mmol/L is converted);
 - uncertainty, 1 point: the true value lies within result ± max(Δ, tol·result) (the model's hidden systematic errors,
-  such as the magnet delay or pipette calibration, are not the student's fault) and Δ ≤ 4·tol of the result.
+  such as the magnet delay or pipette calibration, are not the student's fault) and 0,2·tol ≤ Δ/result ≤ 4·tol
+  (a leading ± is accepted).
 Unit and uncertainty count only when the result comes from the student's own data (not more than 2·tol from `izMeritev`), so a
 guess without measurements scores nothing. Optional task fields: `zgledNap` (example uncertainty on the card), `merOpomba`
-(printed after »Iz tvojih meritev«, e.g. the lab-average p and T in lab-elektroliza).
+(printed after »Iz tvojih meritev«). Leaving »Matura« while a task runs abandons it (the next start gives a new sample),
+so the free mode cannot be used to see computed results or the true value. While a task runs, »Vprašaj inštruktorja« is
+hidden (`mount.dataset.matura`, public/lab.css). The best score per task is stored per profile in
+`evklid.lab.matura.<studentId>` (personal data: cleared with `clearPrivate`/`clearProfile`, included in `deviceData`).
 During the task `.lab-racun`, `.lab-q` and the task's `skrij` selectors (anything showing a computed result or the true
 value) get `.lab-mat-skrito`; after submitting everything shows again with the points, the true value and the student's
 result. The method (equations, averaging, graph) is not scored: that is the tutor's job in phase 4 (profil B, j's card).
@@ -497,7 +503,7 @@ newton2 accelerated mass (2,5 %), hooke k of the soft spring (1 %), lom n of »s
 (1 %), grelnik efficiency of the student's own run (2 %), co2 mass of a hidden NaHCO₃ sample (8 %), hitrost Eₐ of the
 thiosulfate reaction (3 %), elektroliza F (4,5 %). Each task's simulation and browser play: `test/matura/<key>.js`
 (loaded by `test/laboratorij-matura.test.js`). »↺ Ponastavi« during a task keeps the task running and reruns `priprava`.
-The best score stays on the device (`localStorage` `evklid.lab.matura`); the server only counts submissions
+The best score stays on the device (`localStorage` `evklid.lab.matura.<studentId>`); the server only counts submissions
 (`nacin: matura`, `dogodek: oddano`, no points, no student). »Matura« is not remembered as the default mode.
 
 ## Next (from j's list)

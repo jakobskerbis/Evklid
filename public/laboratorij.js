@@ -35,8 +35,9 @@ export function initLab(deps) {
     // skrit kontekst (server/ucni-kontekst.js). Modul lab.js je že naložen, ker je poskus odprt.
     if (e.target.closest("[data-lab-ask]")) {
       const x = find(openKey);
-      if (!x || x.locked) return;
       const mount = box().querySelector(".lab-mount");
+      // Med maturitetnim poskusom inštruktor ne pomaga (gumb je skrit, public/lab.css); po oddaji spet.
+      if (!x || x.locked || mount?.dataset.matura === "tece") return;
       const kontekst = { v: 1, sourceType: "lab", sourceId: x.key }; // temo izbere strežnik (učenčeva pot)
       import("./sim/lab.js")
         .then((m) => Object.assign(kontekst, m.stanjePoskusa(mount)))

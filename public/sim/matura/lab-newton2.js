@@ -39,7 +39,7 @@ export default {
   // (test/laboratorij-matura.test.js): največ ~2,3 %. Z načinom »vrata 1 → 2« je odmik do ~5 % (vrata zastavico
   // »vidijo« ~1 % širšo), zato naloga zahteva način od spusta.
   tol: 0.025,
-  resnica: (B) => B.mVoz + B.utezi.reduce((a, b) => a + b, 0) + B.mObes + VOZICEK.Iw + SKRIPEC.Ip,
+  resnica: (B) => B.M + B.mo + VOZICEK.Iw + SKRIPEC.Ip,
   // Iz tabele kot račun pod grafom: premica a(F) z odsekom pri skupni masi z največ različnimi silami (vsaj tri), m = 1/naklon.
   // Vsota nazivnih mas (320 g) brez meritev ne prinese točk.
   izMeritev: (c) => {

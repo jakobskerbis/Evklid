@@ -19,7 +19,14 @@ import { h, button } from "./kit.js";
 import { parseStevilo, num } from "./lab.js";
 
 export const TOCKE = { rezultat: 4, enota: 1, napaka: 1 }; // + meritve (4) = 10
-const KLJUC = "evklid.lab.matura";
+// Najboljši rezultati po profilu (osebni podatek: public/offline.js → PRIVATE_KEYS ga ob odjavi pobriše).
+const kljuc = () => {
+  let id = null;
+  try {
+    id = localStorage.getItem("studentId");
+  } catch {}
+  return `evklid.lab.matura.${id || "0"}`;
+};
 // Tisočice ločene z nedeljivim presledkom od petih mest naprej (96\u00a0485), kot v slovenskem pravopisu.
 const tisoc = (t) => t.replace(/^(-?)(\d{5,})/, (_, m, d) => m + d.replace(/\B(?=(\d{3})+$)/g, "\u00a0"));
 
@@ -43,7 +50,7 @@ export function oceni(def, vnos, resnica, c) {
   }
   const enota = def.enote.find((e) => e[0] === vnos.enota);
   const f = enota?.[1] ?? null;
-  const x0 = parseStevilo(vnos.rezultat), dx0 = parseStevilo(vnos.napaka);
+  const x0 = parseStevilo(vnos.rezultat), dx0 = parseStevilo(String(vnos.napaka ?? "").replace(/^\s*±\s*/, ""));
   const x = x0 != null && f != null ? x0 * f : null;
   const dx = dx0 != null && f != null ? Math.abs(dx0 * f) : null;
   const odmik = x != null && resnica ? Math.abs(x - resnica) / Math.abs(resnica) : NaN;
@@ -54,7 +61,10 @@ export function oceni(def, vnos, resnica, c) {
     try {
       mer = Number(def.izMeritev(c));
     } catch {}
-  const neujema = !!def.izMeritev && x != null && !(Number.isFinite(mer) && Math.abs(x - mer) <= 2 * def.tol * Math.abs(mer) + 1e-12);
+  // Kjer je prava vrednost konstanta (g, F, Eₐ: `stalnica`), je okno ožje (tol), da vpisana vrednost iz učbenika po
+  // poljubni meritvi ne prehiti poštenega rezultata.
+  const okno = (def.stalnica ? 1 : 2) * def.tol;
+  const neujema = !!def.izMeritev && x != null && !(Number.isFinite(mer) && Math.abs(x - mer) <= okno * Math.abs(mer) + 1e-12);
   const tr = neujema ? 0 : tockeRezultata(odmik, def.tol);
   postavke.push({
     kaj: "Rezultat",
@@ -76,12 +86,14 @@ export function oceni(def, vnos, resnica, c) {
   });
   // Napaka meritve: prava vrednost leži v intervalu x ± Δx ali v dovoljenem odmiku tol (sistematske napake pripomočkov,
   // ki jih učenec ne more poznati), Δx pa ni nesmiselno velik (največ 4·tol rezultata).
-  const okNap = !neujema && x != null && dx > 0 && dx <= 4 * def.tol * Math.abs(x) && Math.abs(x - resnica) <= Math.max(dx, def.tol * Math.abs(x)) * (1 + 1e-9);
+  // Spodnja meja 0,2·tol: napaka 0,0001 % ni ocena napake (tudi najboljši pripomočki niso tako natančni).
+  const premajhna = dx > 0 && x != null && dx < 0.2 * def.tol * Math.abs(x);
+  const okNap = !neujema && x != null && dx > 0 && !premajhna && dx <= 4 * def.tol * Math.abs(x) && Math.abs(x - resnica) <= Math.max(dx, def.tol * Math.abs(x)) * (1 + 1e-9);
   postavke.push({
     kaj: "Napaka meritve",
     tock: okNap ? TOCKE.napaka : 0,
     max: TOCKE.napaka,
-    opomba: okNap ? "" : !(dx > 0) ? "Napake nisi zapisal." : neujema ? KMER : dx > 4 * def.tol * Math.abs(x ?? 0) ? "Napaka je prevelika za tako meritev." : "Prava vrednost ni v intervalu rezultat ± napaka.",
+    opomba: okNap ? "" : !(dx > 0) ? "Napake nisi zapisal." : neujema ? KMER : premajhna ? "Napaka je premajhna za tako meritev." : dx > 4 * def.tol * Math.abs(x ?? 0) ? "Napaka je prevelika za tako meritev." : "Prava vrednost ni v intervalu rezultat ± napaka.",
   });
   return { postavke, tocke: postavke.reduce((a, p) => a + p.tock, 0), max: postavke.reduce((a, p) => a + p.max, 0), x, dx, odmik, mer };
 }
@@ -89,17 +101,17 @@ export function oceni(def, vnos, resnica, c) {
 // Najboljši rezultat na napravi: { [ključ]: { tocke, max, t } }.
 export function najboljsi(key) {
   try {
-    return JSON.parse(localStorage.getItem(KLJUC) || "{}")?.[key] || null;
+    return JSON.parse(localStorage.getItem(kljuc()) || "{}")?.[key] || null;
   } catch {
     return null;
   }
 }
 function shraniNajboljsi(key, r) {
   try {
-    const vse = JSON.parse(localStorage.getItem(KLJUC) || "{}") || {};
+    const vse = JSON.parse(localStorage.getItem(kljuc()) || "{}") || {};
     const prej = vse[key];
     if (!prej || r.tocke / r.max > prej.tocke / prej.max) vse[key] = { tocke: r.tocke, max: r.max, t: Date.now() };
-    localStorage.setItem(KLJUC, JSON.stringify(vse));
+    localStorage.setItem(kljuc(), JSON.stringify(vse));
   } catch {}
 }
 
@@ -136,6 +148,10 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
       onZacni?.();
       def.priprava?.(mount);
       ctl = kontrole();
+    } catch {
+      faza = "uvod";
+      render();
+      return opozori("Poskusa ni bilo mogoče postaviti znova. Poskusi še enkrat.");
     } finally {
       zaganjam = false;
     }
@@ -148,7 +164,8 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
     if (parseStevilo(rez.value) == null) return opozori(`Vpiši rezultat kot število (npr. ${def.zgled || "0,0985"}).`);
     if (!enota.value) return opozori("Izberi enoto rezultata.");
     if (!Number.isFinite(resnica)) return opozori(def.niResnice || "Poskus se še ni naložil. Poskusi znova.");
-    ocena = oceni(def, { rezultat: rez.value, enota: enota.value, napaka: nap.value }, resnica, kontekst());
+    // c.B: poskus (npr. izmerjeni tlak in temperatura pri elektrolizi, ki ju kontekst vodenja ne bere).
+    ocena = oceni(def, { rezultat: rez.value, enota: enota.value, napaka: nap.value }, resnica, { ...kontekst(), B });
     faza = "oddano";
     shraniNajboljsi(key, ocena);
     onOddaj?.(ocena);
@@ -172,6 +189,7 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
 
   function render() {
     skrij();
+    mount.dataset.matura = faza; // »Vprašaj inštruktorja« je med nalogo skrit (public/lab.css, laboratorij.js)
     const best = najboljsi(key);
     const kids = [h("div", { class: "lab-vod-head" }, h("span", { class: "lab-vod-oznaka" }, faza === "oddano" ? "Maturitetni poskus: oddano" : "Maturitetni poskus"))];
     if (faza === "uvod") {
@@ -179,7 +197,7 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
         h("p", { class: "lab-vod-kaj" }, "Meriš sam, brez korakov. Ob začetku dobiš nov vzorec, dosedanje meritve tega poskusa se pobrišejo."),
         tockovnik());
       if (best) kids.push(h("p", { class: "muted" }, `Tvoj najboljši rezultat: ${best.tocke} od ${best.max} točk.`));
-      kids.push(h("div", { class: "demo-buttons" }, button("Začni nalogo", () => zacni(), "primary small")));
+      kids.push(h("div", { class: "demo-buttons" }, button("Začni nalogo", () => zacni(), "primary small")), opozorilo);
     } else if (faza === "tece") {
       kids.push(h("h3", {}, def.naslov), h("p", {}, def.naloga), tockovnik(),
         h("div", { class: "lab-mat-polja" },
@@ -221,8 +239,12 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
       ctl = c;
       def.priprava?.(mount);
     },
-    // Ob odhodu iz načina »Matura«: vse spet vidno, naloga ostane, kot je.
-    pokazi: () => mount.querySelectorAll(".lab-mat-skrito").forEach((x) => x.classList.remove("lab-mat-skrito")),
+    // Ob odhodu iz načina »Matura«: vse spet vidno. Naloga, ki teče, se opusti (sicer bi učenec v načinu »Prosto«
+    // videl izračune in pravo vrednost ter se vrnil k isti nalogi); naslednji začetek da nov vzorec.
+    pokazi: () => {
+      if (faza === "tece") (faza = "uvod"), (opozorilo.hidden = true), render();
+      mount.querySelectorAll(".lab-mat-skrito").forEach((x) => x.classList.remove("lab-mat-skrito"));
+    },
     render,
   };
 }

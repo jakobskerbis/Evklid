@@ -23,6 +23,7 @@ import { Co2Bench, M as MOL } from "../public/sim/lab-model.js";
 import { TiosulfatBench, reakcijskiCas } from "../public/sim/lab-model-reakcije.js";
 import { ElektrolizaBench, barometerRead } from "../public/sim/lab-model-elektrokemija.js";
 import { fixed } from "../public/sim/lab.js";
+import { pNas } from "../public/sim/lab-model-toplota.js";
 
 test("every matura task is complete: 10 points, the right unit first, a calibrated tolerance", () => {
   for (const [key, def] of Object.entries(MATURA)) {
@@ -69,6 +70,11 @@ test("scoring: result by relative error, unit, measurement uncertainty", () => {
   assert.equal(napX("0,1010", "0,0010").tock, 0, "odmik 3,3 % je večji od napake in od tol");
   assert.match(napX("0,1010", "0,0010").opomba, /ni v intervalu/);
   assert.equal(napX("0,1010", "0,0035").tock, 1);
+  // Premajhna napaka (pod 0,2·tol rezultata) ni ocena napake, tudi kadar je rezultat znotraj tol.
+  assert.equal(napX("0,0985", "0,0000001").tock, 0);
+  assert.match(napX("0,0985", "0,0000001").opomba, /premajhna/);
+  assert.equal(napX("0,0985", "0,0005").tock, 1, "0,5 % ≥ 0,2·tol");
+  assert.equal(napX("0,0985", "±0,0010").tock, 1, "vodilni ± je dovoljen");
   assert.equal(nap(""), 0, "brez napake");
   assert.equal(nap("0,02"), 0, "napaka 20 % je prevelika");
   assert.equal(nap("0,0008"), 1);
@@ -87,6 +93,11 @@ test("scoring: result by relative error, unit, measurement uncertainty", () => {
     assert.match(en.opomba + na.opomba, /^Šteje le pri rezultatu iz tvojih meritev\.Šteje le/);
   }
   assert.deepEqual(rz(dm(0.0990)).postavke.slice(-2).map((p) => p.tock), [1, 1]);
+  // Prava vrednost je konstanta (stalnica): okno do izMeritev je tol, ne 2·tol (vrednost iz učbenika po poljubni meritvi).
+  const st = (v) => ({ ...dm(v), stalnica: true });
+  assert.equal(rz(st(0.0985 * 1.03)).postavke[2].tock, 0, "3 % od meritev pri stalnici");
+  assert.equal(rz(dm(0.0985 * 1.03)).postavke[2].tock, 4, "3 % od meritev je sicer v oknu 2·tol");
+  assert.equal(rz(st(0.0985 * 1.02)).postavke[2].tock, 4);
   assert.equal(rz(dm(0.0990)).mer, 0.099);
 });
 
@@ -255,11 +266,11 @@ test("reaction-rate tolerance: a careful student's activation energy lands withi
     assert.ok(avg(b, "T") - avg(a, "T") >= 15, "kopel pri 40 °C je vsaj 15 °C toplejša");
     const Ea = (8.314 * Math.log(avg(a, "t") / avg(b, "t"))) / (1 / avg(a, "T") - 1 / avg(b, "T")) / 1000;
     const prava = t.resnica({ tio: B }), mer = izMer([...a, ...b]);
-    if (Math.abs(Ea - mer) <= 2 * t.tol * mer) ujema++;
+    if (Math.abs(Ea - mer) <= t.tol * mer) ujema++; // Eₐ je konstanta modela (stalnica): okno tol
     return Math.abs(Ea - prava) / prava <= t.tol;
   });
   assert.ok(delez >= 0.95, `le ${(delez * 100).toFixed(1)} % znotraj ${t.tol * 100} %`);
-  assert.ok(ujema / 500 >= 0.99, `iz meritev: le ${ujema}/500 do 2·tol`);
+  assert.ok(ujema / 500 >= 0.99, `iz meritev: le ${ujema}/500 do tol`);
 });
 
 test("electrolysis matura: measurement criteria read the log and the table", () => {
@@ -291,6 +302,11 @@ test("electrolysis matura: measurement criteria read the log and the table", () 
   assert.ok(Math.abs(t.izMeritev(kont([], [...dolga.slice(0, 2), r("1250", "0,0", "20,0"), dolga[2]])) - Fx) < 1e-6, "tok 0 (pregorela varovalka) ne šteje");
   assert.ok(Number.isNaN(t.izMeritev(kont([], []))));
   assert.ok(Number.isNaN(t.izMeritev(kont([], [r("0", "118,9", "0,0")]))), "še ni vodika");
+  // S poskusom (c.B) vzame njegov tlak in temperaturo.
+  const Bp = { lab: { p: 101000, T: 24 }, T: 24 };
+  const nB = ((101000 - pNas(24)) * 20.7e-6) / (8.314462618 * 297.15);
+  assert.ok(Math.abs(t.izMeritev({ ...kont([], dolga), B: Bp }) - (Fx * n) / nB) < 1e-6);
+  assert.equal(t.stalnica, true);
 });
 
 // Skrben dijak: 0,5 mol/L H₂SO₄ z odprtima pipama, pipi zaprti, 5–8 V; vsako minuto odčita tok, ko je na katodi vsaj
@@ -322,14 +338,14 @@ test("electrolysis tolerance: a careful student's Faraday constant lands within 
     assert.ok(T < 28, "tekočina se ne segreje nad tabelo v nalogi");
     const n = ((p - pw(T)) * V * 1e-6) / (8.314 * (T + 273.15));
     const Fx = ((I.reduce((a, b) => a + b, 0) / I.length) * cas) / (2 * n);
-    // Rezultat izhaja iz meritev (oceni: do 2·tol od izMeritev), čeprav izMeritev ne pozna izmerjenega tlaka in temperature.
-    const mer = t.izMeritev(kont([], vrstice));
-    if (Math.abs(Fx - mer) <= 2 * t.tol * mer) ujema++;
+    // Rezultat izhaja iz meritev (oceni: F je konstanta, zato do tol od izMeritev s tlakom in temperaturo poskusa).
+    const mer = t.izMeritev({ ...kont([], vrstice), B });
+    if (Math.abs(Fx - mer) <= t.tol * mer) ujema++;
     najOdmik = Math.max(najOdmik, Math.abs(Fx - mer) / mer);
     return Math.abs(Fx - t.resnica(B)) / t.resnica(B) <= t.tol;
   });
   assert.ok(delez >= 0.95, `le ${(delez * 100).toFixed(1)} % znotraj ${t.tol * 100} %`);
-  assert.ok(ujema / 500 >= 0.99, `iz meritev: le ${ujema}/500 do 2·tol (največ ${(najOdmik * 100).toFixed(1)} %)`);
+  assert.ok(ujema / 500 >= 0.99, `iz meritev: le ${ujema}/500 do tol (največ ${(najOdmik * 100).toFixed(1)} %)`);
 });
 
 // ---------------------------------------------------------------- v brskalniku
@@ -405,7 +421,7 @@ window.belezi = () => {
 // Prava vrednost in rezultat iz meritev v strani (izMeritev naloge s kontekstom kot lab-vodeno.js → kontekst).
 window.izMeritevStrani = async (k) => {
   const [{ kontekst }, { MATURA: M }] = await Promise.all([import("/sim/lab-vodeno.js"), import("/sim/lab-matura-naloge.js")]);
-  return { prava: M[k].resnica(m._labBench), mer: M[k].izMeritev ? Number(M[k].izMeritev(kontekst(m, zapisi))) : null };
+  return { prava: M[k].resnica(m._labBench), mer: M[k].izMeritev ? Number(M[k].izMeritev({ ...kontekst(m, zapisi), B: m._labBench })) : null };
 };
 window.ready = true;
 </script>`;
@@ -445,7 +461,7 @@ async function oddajZnano(page, key, vrednost) {
   assert.ok(Number.isFinite(mer), `${key}: iz meritev igre ni rezultata`);
   await page.evaluate(([a, e]) => oddaj(a, e, ""), [String(vrednost).replace(".", ","), def.enote[0][0]]);
   const li = await page.evaluate(() => [...m.querySelectorAll(".lab-mat-ocena li")].map(txt).find((x) => x.startsWith("Rezultat:")));
-  const dalec = Math.abs(vrednost - mer) > 2 * def.tol * mer;
+  const dalec = Math.abs(vrednost - mer) > (def.stalnica ? 1 : 2) * def.tol * mer;
   return { li, dalec, mer, pricakovano: dalec ? 0 : tockeRezultata(Math.abs(vrednost - prava) / prava, def.tol) };
 }
 
@@ -502,7 +518,7 @@ test("in a browser: the titration matura task from start to points", async (t) =
     assert.equal(s.li.find((x) => x.startsWith("Dve titraciji")), "Dve titraciji HCl se ujemata na 0,10 mL: 0/1");
     assert.equal(s.skrito, 0, "po oddaji je vse spet vidno");
     assert.deepEqual(await page.evaluate(() => dogodki.at(-1)), ["oddano", 3]);
-    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura"))["lab-titracija"].tocke), 3);
+    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura.0"))["lab-titracija"].tocke), 3);
 
     // »Nova naloga«: meritve se pobrišejo, dnevnik naloge začne znova (spiranje ne šteje več).
     await page.evaluate(() => gumb("Nova naloga", true));
@@ -511,7 +527,7 @@ test("in a browser: the titration matura task from start to points", async (t) =
     s = await page.evaluate(() => [...m.querySelectorAll(".lab-mat-ocena li b")].map(txt));
     assert.equal(s[0], "Bireto si pred polnjenjem spral s titrantom: 0/1");
     // Najboljši rezultat ostane 3.
-    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura"))["lab-titracija"].tocke), 3);
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura.0"))["lab-titracija"].tocke), 3);
 
     // »↺ Ponastavi« med nalogo: poskus zgrajen znova, naloga teče naprej (nov vzorec, priprava znova).
     await page.evaluate(() => gumb("Nova naloga", true));
@@ -521,10 +537,18 @@ test("in a browser: the titration matura task from start to points", async (t) =
     assert.equal(await page.evaluate(() => [...m.querySelectorAll("select")].find((x) => x.getAttribute("aria-label") === "vzorec").value), "hcl");
     // Na telefonu kartica ne povzroči vodoravnega drsenja.
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
-    // »Prosto« skrije kartico naloge.
-    await page.evaluate(() => [...m.querySelectorAll(".lab-vod-nacin .seg-btn")].find((b) => txt(b) === "Prosto").click());
-    await page.evaluate(() => wait(200));
+    // »Prosto« skrije kartico naloge in opusti nalogo, ki teče: vse je spet vidno, ob vrnitvi v »Matura« ni iste naloge
+    // (sicer bi učenec v načinu »Prosto« videl izračune in pravo vrednost ter jo oddal).
+    const nacin = (n) => page.evaluate(async (x) => ([...m.querySelectorAll(".lab-vod-nacin .seg-btn")].find((b) => txt(b) === x).click(), await wait(200)), n);
+    await nacin("Prosto");
     assert.equal(await page.evaluate(() => m.querySelector(".lab-mat").hidden), true);
+    assert.equal(await page.evaluate(() => m.querySelectorAll(".lab-mat-skrito").length), 0);
+    await page.evaluate(() => wait(900)); // pregled vodenja (tick) v načinu »Prosto« ne skrije ničesar
+    assert.equal(await page.evaluate(() => m.querySelectorAll(".lab-mat-skrito").length), 0);
+    await nacin("Matura");
+    assert.equal(await page.evaluate(() => !!m.querySelector(".lab-mat .lab-mat-polja")), false, "naloga je opuščena");
+    assert.ok(await page.evaluate(() => [...m.querySelectorAll(".lab-mat button")].some((b) => txt(b) === "Začni nalogo")));
+    await nacin("Prosto");
     assert.deepEqual(napake, []);
   } finally {
     await page.close();

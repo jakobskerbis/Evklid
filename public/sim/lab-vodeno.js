@@ -97,7 +97,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec, onMatura 
   });
   // Maturitetni poskus: kartica naloge namesto kartice korakov (meritve sam, rezultat oceni program).
   const matK = mat
-    ? maturaKartica({ mount, key, def: mat, kontekst: () => kontekst(mount, dnevnik), onZacni: () => onMatura?.("zacetek"), onOddaj: (o) => onMatura?.("oddano", o) })
+    ? maturaKartica({ mount, key, def: mat, kontekst: () => kontekst(mount, dnevnik), onZacni: () => (onMatura?.("zacetek"), tick()), onOddaj: (o) => onMatura?.("oddano", o) })
     : null;
   const ui = h("div", { class: "lab-vod-wrap" }, bar, card, ...(matK ? [matK.el] : []), glas);
   const cilj = () => {

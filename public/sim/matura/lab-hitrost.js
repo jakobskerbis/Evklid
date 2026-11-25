@@ -33,6 +33,8 @@ export default {
   // je zaradi presoje križa in reakcijskega časa do ~2,5 % od prave vrednosti (test/laboratorij-matura.test.js, 500 vzorcev).
   tol: 0.03,
   resnica: (Bs) => (Bs?.tio ? TIO.Ea / 1000 : NaN),
+  // Prava vrednost je konstanta: rezultat se mora z izMeritev ujemati na tol (lab-matura.js → oceni).
+  stalnica: true,
   // Iz tabele in dnevnika: pravočasno ustavljene meritve pri najnižji in najvišji temperaturi (±3 °C, kot ponovljivost),
   // povprečna časa in temperaturi, Eₐ = R · ln(t₁/t₂) / (1/T₁ − 1/T₂). Temperaturi se morata razlikovati za več kot 6 °C.
   izMeritev: (c) => {

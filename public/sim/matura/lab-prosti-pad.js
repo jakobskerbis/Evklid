@@ -40,6 +40,8 @@ export default {
   // vzorcih (test/laboratorij-matura.test.js): največ ~2,5 % od prave vrednosti.
   tol: 0.025,
   resnica: () => G_LJ,
+  // Prava vrednost je konstanta: rezultat se mora z izMeritev ujemati na tol (lab-matura.js → oceni).
+  stalnica: true,
   // Iz tabele po navodilu naloge: pri vsaki višini povprečni čas kroglice, premica h(t²) skozi izhodišče (vsaj tri višine),
   // g = 2 · naklon. Vrednost 9,81 m/s² brez meritev ne prinese točk.
   izMeritev: (c) => {
