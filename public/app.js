@@ -768,6 +768,7 @@ function showView(name) {
   currentView = name;
   syncCompetitionTab();
   if (name === "path" || name === "competition" || name === "exams") setBack(name);
+  else if (name === "uci" && state.backTo === "uci") setBack("path"); // vrnitev v poskus porabi »← Laboratorij« (tema iz lekcije ne vodi v Laboratorij)
   if (name !== "topic") stopContestTimer();
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
@@ -1231,7 +1232,7 @@ function backStep(wasOverlay) {
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
   // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
   // Urnik, NPZ/matura, Tekmovanja: tja, od koder je učenec prišel (kot gumb »←«, meBackTarget).
-  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? (BACK_ORIGIN.includes(currentView) ? meBackTarget(currentView) : "me") : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? (BACK_ORIGIN.includes(currentView) ? meBackTarget(currentView) : "me") : currentView === "topic" && ["competition", "exams", "uci"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {
     showView(up); // zapis v zgodovini doda showView (syncHistory)
     return true;
@@ -4099,7 +4100,7 @@ const takePractice = vadi.take;
 // Gumb »nazaj« na temi oziroma pri seriji nalog vodi tja, od koder je učenec prišel.
 function setBack(view) {
   state.backTo = view;
-  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : view === "zapiski" ? t("cards.notes") : t("nav.path")}`;
+  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : view === "zapiski" ? t("cards.notes") : view === "uci" ? t("nav.lab") : t("nav.path")}`;
 }
 
 // Seje modulov, ki se naložijo šele ob odprtju (»Vaja iz testa«, public/zapiski/vaja.js): modul doda naslov, uvod,
@@ -4534,10 +4535,18 @@ initPilot({
 initLab({
   api,
   escapeHtml,
+  toast,
   getStudent: () => state.student,
   openLesson: (id) => {
     lessonFromLab(id);
     openLesson(id);
+  },
+  // »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici; ← in Nazaj vrneta v isti poskus.
+  practice: async (id) => {
+    const testPredznanja = await openTopic(id); // nova tema: najprej test predznanja (kot »Vadi« v lekciji)
+    if (currentView !== "topic" || state.topic?.id !== id) return; // medtem odprto kaj drugega
+    setBack("uci");
+    if (!testPredznanja && $("#t-practice")) nextPractice();
   },
   askTutor: (text, oznaka, kontekst) => {
     const izLekcije = labIsFromLesson();

@@ -3523,6 +3523,8 @@
   "lab.intro": "Set up and carry out the experiments yourself: equipment, measurements, table, graph and conclusion. Mistakes have consequences, just like in a real lab.",
   "lab.start": "Start experiment",
   "lab.inTextbook": "Open topic in the textbook",
+  "lab.check": "Check yourself",
+  "lab.checkText": "Check that you understand: solve a task on this topic.",
   "lab.askText": "About the experiment “{title}”: ",
   "lab.locked": "Locked",
   "lab.lockedTitle": "Experiment “{title}”",

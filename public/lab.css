@@ -55,3 +55,9 @@
   .lab-bench { padding: 10px; }
   .lab-start { align-self: stretch; justify-content: center; }
 }
+
+/* »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici. */
+.lab-check { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; justify-content: space-between; }
+.lab-check p { display: flex; align-items: center; gap: 8px; margin: 0; flex: 1 1 220px; }
+.lab-check-go { display: flex; flex-wrap: wrap; gap: 8px; }
+.lab-check-go button { min-height: 44px; }

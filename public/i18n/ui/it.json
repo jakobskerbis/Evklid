@@ -3524,6 +3524,8 @@
   "lab.intro": "Monti e misuri tu gli esperimenti: strumenti, misure, tabella, grafico e conclusione. Gli errori hanno conseguenze come in un vero laboratorio.",
   "lab.start": "Avvia l'esperimento",
   "lab.inTextbook": "Apri l'argomento nel libro",
+  "lab.check": "Mettiti alla prova",
+  "lab.checkText": "Verifica se hai capito: risolvi un esercizio su questo argomento.",
   "lab.askText": "Sull’esperimento «{title}»: ",
   "lab.locked": "Bloccato",
   "lab.lockedTitle": "Esperimento: {title}",
