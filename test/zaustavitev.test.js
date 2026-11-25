@@ -203,7 +203,7 @@ test("zasedena vrata: izpis pove EADDRINUSE, strežnik konča z 1 in ne javi usp
     srv.stdout.on("data", (d) => (out += d));
     srv.stderr.on("data", (d) => (err += d));
     const ubij = setTimeout(() => srv.kill("SIGKILL"), 30_000);
-    const code = await new Promise((resolve) => srv.on("exit", (c) => resolve(c)));
+    const code = await new Promise((resolve) => srv.on("close", (c) => resolve(c))); // close: stderr do konca prebran
     clearTimeout(ubij);
     assert.equal(code, 1, `izhod ${code}\n${err}`);
     assert.match(err, /EADDRINUSE/);
