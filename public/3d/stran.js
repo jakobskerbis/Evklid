@@ -5,6 +5,7 @@ import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
 import { vgrajeno, starsu, vprasajInstruktorja } from "./vgrajeno.js";
+import { jsonAliNic } from "/odgovor.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
 
@@ -593,7 +594,7 @@ function gumbLekcije(id, naslov) {
     b.setAttribute("aria-expanded", "false");
   }, true);
   fetch(`/api/students/${UCENEC}/svet3d/${encodeURIComponent(id)}/teme`, { credentials: "same-origin" })
-    .then((r) => (r.ok ? r.json() : { teme: [] }))
+    .then((r) => jsonAliNic(r, { teme: [] }))
     .then((d) => {
       teme = Array.isArray(d?.teme) ? d.teme : [];
       if (!teme.length || !ovoj.isConnected) return;
