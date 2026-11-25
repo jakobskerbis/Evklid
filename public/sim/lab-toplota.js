@@ -359,11 +359,11 @@ export function labMesanje(el) {
   const posSeg = seg("posoda", [["stiropor", "lonček iz stiropora"], ["casa400", "steklena čaša"]], B.posoda, (v) => ((B.posoda = v), B.faza === "prazno" || log.push("Posodo zamenjaš pri novem poskusu.", "info"), draw()));
   const lidT = toggle("pokrov s luknjo za termometer", true, (v) => ((B.pokrov = v), draw()));
   // nova mešanica (mase, temperature): napoved za prejšnjo ne velja več (napoved → kljuc)
-  const voda = () => (draw(), N.osvezi());
-  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), voda()) });
-  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), voda()) });
-  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), voda()) });
-  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), voda()) });
+  const noviPodatki = () => (draw(), N.osvezi());
+  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), noviPodatki()) });
+  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), noviPodatki()) });
+  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), noviPodatki()) });
+  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), noviPodatki()) });
   const wT = toggle("vodo stehtam (sicer natočim do oznake)", true, (v) => (st.tehtaj = v));
   const coldBtn = button("Natoči hladno vodo", () => cold(), "primary small");
   const mixBtn = button("Zlij toplo vodo v posodo", () => mix(), "primary small");
