@@ -44,14 +44,18 @@ export function ft(n, d) {
 // zaokrožen na dEnd decimalk, da isti rezultat kot f iz natančnih vrednosti (ta je ocenjeni odgovor). Šolsko pravilo:
 // vmesne rezultate pišemo z več mesti in zaokrožimo šele na koncu; sicer dijak, ki sledi rešitvi, pride do druge
 // zadnje števke in dobi »Zaokrožil si v napačno smer« (test/matura-zaokrozevanje.test.js).
+// Vrne null, če niti dMax mest ne zadošča (rezultat leži tik ob meji zaokrožanja): generator naj tedaj izbere
+// druga števila (wrapGens ponovi nalogo, ki vrne null).
 export function decimalke(xs, d, f, dEnd, dMax = 10) {
   const arr = [].concat(xs);
   const prav = roundHalfUp(f(...arr), dEnd);
-  for (let k = d; k < dMax; k++) {
+  for (let k = d; k <= Math.max(d, dMax); k++) {
     if (Math.abs(roundHalfUp(f(...arr.map((x) => roundHalfUp(x, k))), dEnd) - prav) < 10 ** -dEnd / 2) return k;
   }
-  return dMax;
+  return null;
 }
+// »=« le, če je x na d decimalk natančno (z dopustom, ki je majhen glede na d, ne le 1e-9: 1,131408213 ≠ 1,025^5).
+export const ap = (x, d) => (Math.abs(roundHalfUp(x, d) - x) < Math.max(10 ** -(d + 4), Math.abs(x) * 1e-13) ? "=" : "\\approx");
 export const sg = (c) => (c < 0 ? `- ${tx(-c)}` : `+ ${tx(c)}`);
 export const pickAns = (r, correct, wrongs) => ({ type: "choice", ...choicesWhy(r, correct, wrongs) });
 export const name = (r) => r.pick(NAMES);

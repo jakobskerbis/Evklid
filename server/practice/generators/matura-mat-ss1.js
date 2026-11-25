@@ -6,7 +6,7 @@
 import { g } from "../rng.js";
 import { roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { fr, num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens, ap } from "./matura-util.js";
 
 const P = "mat-ss1-matura-";
 const T = (s) => `MAT-SS-1/${s}`;
@@ -769,19 +769,20 @@ const GENS = [
         const askRel = r.next() < 0.5;
         const given = [`a = ${md(a, da)}\\ \\mathrm{cm}`, `\\Delta a = ${tx(da)}\\ \\mathrm{cm}`, `b = ${md(b, db)}\\ \\mathrm{cm}`, `\\Delta b = ${tx(db)}\\ \\mathrm{cm}`];
         const base = `Stranici pravokotnika smo izmerili: $a = (${md(a, da)} \\pm ${tx(da)})\\ \\mathrm{cm}$ in $b = (${md(b, db)} \\pm ${tx(db)})\\ \\mathrm{cm}$.`;
-        const dS = S * dRel;
-        // Relativni napaki z dovolj mesti, da vsota izpisanih vrednosti da isti odgovor (odstotek in ΔS) kot natančen račun.
+        // Natančno ΔS = S · (δa + δb) = b·Δa + a·Δb (končno decimalno število, brez napake zaokroževanja).
+        const dS = cl(b * da + a * db);
+        // Relativni napaki z dovolj mesti, da vsota izpisanih vrednosti da isti odstotek kot natančen račun.
         let k = 5;
-        let rA, rB;
+        let rA, rB, rS;
         for (; k <= 9; k++) {
           rA = roundHalfUp(da / a, k);
           rB = roundHalfUp(db / b, k);
-          const sum = roundHalfUp(rA + rB, k);
-          if (roundHalfUp(sum * 100, 1) === roundHalfUp(dRel * 100, 1) && roundHalfUp(S * sum, 2) === roundHalfUp(dS, 2)) break;
+          rS = roundHalfUp(rA + rB, k);
+          if (roundHalfUp(rS * 100, 1) === roundHalfUp(dRel * 100, 1)) break;
         }
-        k = Math.min(k, 9);
-        const rS = roundHalfUp(rA + rB, k);
-        const steps = `$S = ${md(a, da)} \\cdot ${md(b, db)} = ${tx(S)}\\ \\mathrm{cm^2}$\n$\\delta a = \\frac{${tx(da)}}{${md(a, da)}} \\approx ${tx(rA)}$, $\\delta b = \\frac{${tx(db)}}{${md(b, db)}} \\approx ${tx(rB)}$\n$\\delta S \\approx \\delta a + \\delta b \\approx ${tx(rA)} + ${tx(rB)} = ${tx(rS)} \\approx ${tx(roundHalfUp(dRel * 100, 1), 1)}\\ \\%$`;
+        if (k > 9) return null; // tik ob meji zaokrožanja: druga števila
+        const tocni = ap(da / a, k) === "=" && ap(db / b, k) === "=";
+        const steps = `$S = ${md(a, da)} \\cdot ${md(b, db)} = ${tx(S)}\\ \\mathrm{cm^2}$\n$\\delta a = \\frac{${tx(da)}}{${md(a, da)}} ${ap(da / a, k)} ${tx(rA, k)}$, $\\delta b = \\frac{${tx(db)}}{${md(b, db)}} ${ap(db / b, k)} ${tx(rB, k)}$\n$\\delta S \\approx \\delta a + \\delta b ${tocni ? "=" : "\\approx"} ${tx(rA, k)} + ${tx(rB, k)} = ${tx(rS, k)} ${ap(rS * 100, 1)} ${tx(roundHalfUp(dRel * 100, 1), 1)}\\ \\%$`;
         return askRel
           ? {
               text: `${base} Oceni relativno napako ploščine v odstotkih. Zaokroži na desetinko odstotka.`,
@@ -806,7 +807,7 @@ const GENS = [
               hint: "Najprej oceni relativno napako ploščine, nato jo pomnoži s ploščino.",
               data: { given, find: ["\\Delta S"] },
               formula: ["\\delta(a \\cdot b) \\approx \\delta a + \\delta b", "\\Delta S = S \\cdot \\delta S"],
-              solution: `${steps}\n$\\Delta S \\approx ${tx(S)} \\cdot ${tx(rS)} \\approx ${tx(roundHalfUp(dS, 2), 2)}\\ \\mathrm{cm^2}$ (enako je $b\\,\\Delta a + a\\,\\Delta b$)`,
+              solution: `${steps}\n$\\Delta S = S \\cdot \\delta S = b\\,\\Delta a + a\\,\\Delta b = ${md(b, db)} \\cdot ${tx(da)} + ${md(a, da)} \\cdot ${tx(db)} = ${tx(dS)} ${ap(dS, 2)} ${tx(roundHalfUp(dS, 2), 2)}\\ \\mathrm{cm^2}$`,
             };
       }
       if (t === 1) {
@@ -1049,7 +1050,7 @@ const GENS = [
           hint: `V drugem faktorju je člen oblike $${xk} \\cdot ${c}^{j}$, pri čemer je $${k} + j = ${n - 1}$.`,
           data: { given: [`${E} = (x ${plus ? "+" : "-"} ${c})(\\ldots)`], find: [`\\text{koeficient pri } ${xk}`] },
           formula: plus ? "a^n + b^n = (a + b)(a^{n-1} - a^{n-2}b + \\ldots + b^{n-1}),\\ n \\text{ lih}" : "a^n - b^n = (a - b)(a^{n-1} + a^{n-2}b + \\ldots + b^{n-1})",
-          solution: `$a = x$, $b = ${c}$, $n = ${n}$\nČlen z $${xk}$: $${plus && e % 2 === 1 ? "-" : ""}${xk} \\cdot ${c}^{${e}}$ (vsota eksponentov je $${n - 1}$${plus ? ", predznak se izmenjuje" : ""})\nKoeficient: $${coef}$`,
+          solution: `$a = x$, $b = ${c}$, $n = ${n}$\nČlen z $${xk}$: $${plus && e % 2 === 1 ? "-" : ""}${xk} \\cdot ${c}${e === 1 ? "" : `^{${e}}`}$ (vsota eksponentov je $${n - 1}$${plus ? ", predznak se izmenjuje" : ""})\nKoeficient: $${coef}$`,
         };
       }
       if (t === 1) {

@@ -6,7 +6,7 @@
 import { g } from "../rng.js";
 import { roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { num, frA, ft, sg, pickAns, name, wrapGens, decimalke } from "./matura-util.js";
+import { num, frA, ft, sg, pickAns, name, wrapGens, decimalke, ap } from "./matura-util.js";
 
 const P = "mat-ss2-matura-";
 const T = (s) => `MAT-SS-2/${s}`;
@@ -49,7 +49,6 @@ function evT(cs, x) {
 }
 // Točka; pri decimalnih koordinatah podpičje kot v lekciji: (5; 7,5).
 const pnt = (x, y) => `(${tx(x)}${Number.isInteger(x) && Number.isInteger(y) ? ", " : "; "}${tx(y)})`;
-const ap = (x, d) => (Math.abs(roundHalfUp(x, d) - x) < 1e-9 ? "=" : "\\approx");
 const txr = (x, d) => tx(roundHalfUp(x, d));
 const r2 = (x) => Math.round(x * 100) / 100;
 // Odpravi napake plavajoče vejice (1,4²/4 = 0,48999… → 0,49).
@@ -507,7 +506,9 @@ const GENS = [
       const pp = (root - 1) * 100;
       // Vmesna rezultata z dovolj mesti, da se veriga izide v isti desetinki odstotka kot odgovor.
       const dr = decimalke(root, 5, (x) => (x - 1) * 100, 1);
+      if (dr == null) return null;
       const dq = decimalke(q, 5, (x) => x ** (1 / n), dr);
+      if (dq == null) return null;
       const text = pop
         ? `Mesto je imelo $${K0}$ prebivalcev, po $${n}$ letih pa $${Kn}$. Za koliko odstotkov se je število prebivalcev v povprečju povečalo vsako leto, če je bila letna rast ves čas enaka? Zaokroži na desetinko odstotka.`
         : `${nm} je ${g(nm, "vložil", "vložila")} $${K0}$ € na varčevalni račun z obrestnim obrestovanjem (obresti se pripišejo enkrat letno). Po $${n}$ letih je na računu $${tx(Kn, 2)}$ €. Kolikšna je letna obrestna mera? Zaokroži na desetinko odstotka.`;
