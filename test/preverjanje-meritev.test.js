@@ -11,7 +11,7 @@ const nabor = naloziNabor();
 const HAVE = await casAvailable();
 after(() => casStop());
 
-const LOKALNO_ALARMI = ["luknja-009", "luknja-017", "integral-019", "integral-021", "skoraj-009", "skoraj-016", "skoraj-018", "skoraj-022"];
+const LOKALNO_ALARMI = ["luknja-009", "luknja-017", "integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022"];
 const IZHODISCE = {
   "skener-lokalno": {
     potrjene: [],
@@ -19,7 +19,7 @@ const IZHODISCE = {
     sibke: ["periodicna-004", "periodicna-006", "periodicna-010", "druge-017"],
     alarmi: LOKALNO_ALARMI,
     ujete: 173,
-    potrjena: 105,
+    potrjena: 106,
   },
   // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
   skener: {
@@ -28,7 +28,7 @@ const IZHODISCE = {
     sibke: [],
     alarmi: ["integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022", ...LOKALNO_ALARMI],
     ujete: 178,
-    potrjena: 153,
+    potrjena: 154,
   },
 };
 

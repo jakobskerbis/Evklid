@@ -94,8 +94,8 @@ Izhodišče 25. 11. 2026:
 | sympy (surovo) | 384 | 5 | 187/193 | 0 | 0 | 179/191 (+12 previsoko) |
 | skener | 363 | **4** | 178/182 | 0 | 5 | 153/181 (+1 previsoko) |
 | skener-lokalno | 363 | 0 | 172/182 | 5 | 8 | 101/181 |
-| skener po popravku | 363 | 0 | 178/182 | 0 | 5 | 153/181 |
-| skener-lokalno po popravku | 363 | 0 | 173/182 | 4 | 8 | 105/181 |
+| skener po popravku | 363 | 0 | 178/182 | 0 | 5 | 154/181 |
+| skener-lokalno po popravku | 363 | 0 | 173/182 | 4 | 7 | 106/181 |
 
 0 napačno potrjenih na tem naboru pomeni pri 95-odstotnem zaupanju delež pod približno 3/n (n = število napačnih
 trditev) in velja samo za vrste napak v naboru.
@@ -108,13 +108,17 @@ Ugotovitve:
   z napačno mantiso (`2*10^6` namesto 2,4·10⁶, `1e6` namesto 1,4·10⁶): `decimals_tol` da toleranco pol enote zadnjega
   mesta mantise (5·10⁵). Pri treh od štirih je lokalna točna algebra pravilno rekla »napaka«, a `verifyAiFull` je
   dal prednost SymPy. **Popravljeno:** točen lokalni protiprimer (`verifyAi` vrne `exact: true`) SymPy ne preglasi,
-  skener pokaže »Nepreverjeno«; odvod polinoma `verify.js` preveri točno (ulomki).
+  skener pokaže »Nepreverjeno«; odvod polinoma `verify.js` preveri točno (ulomki); zapis `1.4e6` se lokalno prebere kot
+  1,4·10⁶ (prej kot 1,4·e·6). **Ostane odprto:** popravek velja le za polinome. Napačen odgovor z velikimi koeficienti
+  v nepolinomskem izrazu (npr. `(x+1000000)^2 + sin(x)` ali `e*(x+1000000)^3` za odvod) še dobi »Preverjeno«, ker
+  vzroka v `is_zero` (relativna toleranca glede na največji člen) ni popravil; to reši PV-03 (worker vrne način
+  preverjanja, vzorčeno → največ »Numerično«).
 - Skener: »≈1414« (zaokroženo na celo število) je dobil »Preverjeno«, ker je regex `rounded` v `verifyAiFull`
   prepoznal le decimalno piko. **Popravljeno:** »≈«, »approx« in znanstveni zapis (2e6, 2*10^6) so približek.
 - Odprto, skener: pravilen določeni integral z mejo iz več znakov (`∫_0^pi sin(x) dx = 2`, `∫_1^10 1/x dx = ln(10)`) dobi
   »Zaznana napaka«, ker `public/scan/verify.js` mejo prebere le do prvega znaka. Zaokrožen račun (`1/3+1/7 ≈ 0.476`,
   `sqrt(2) ≈ 1.414`) dobi »Zaznana napaka«, ker skener račun pošlje v `equal` (točno), ne v `value`.
-- Odprto, skener brez SymPy: luknja brez rešitev (`(x^2-1)/(x-1)=2`) in `1.4e6` dobita »Zaznana napaka«; štirje napačni
+- Odprto, skener brez SymPy: luknja brez rešitev (`(x^2-1)/(x-1)=2`) dobi »Zaznana napaka«; štirje napačni
   odgovori dobijo šibek pozitiven status: trije periodični in napačna periodična rešitev s predolgo periodo
   »Delno preverjeno«.
 - Surov SymPy: zaokrožene decimalke sprejme s toleranco (`decimals_tol`) in vrne `ok: true` (12 previsokih

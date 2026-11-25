@@ -39,4 +39,19 @@ test("strežnik: SymPy ne preglasi točnega protiprimera, približek ni »Prever
   assert.equal(await s("(x-2)*(x-2400000)=0", eq(["2", "2400000"])), "verified");
   assert.equal(await s("(x+1000000)^2", { kind: "expression", variable: "x", value: "x^2+2000000*x+1000000000000" }), "verified");
   assert.equal(await s("x^2-5*x+6=0", eq(["2", "3"])), "verified");
+  // kompleksna števila: i je za SymPy imaginarna enota, lokalno spremenljivka; lokalni »ne drži« tu ni točen
+  assert.equal(await s("(1+i)^2", { kind: "arith", value: "2*i" }), "verified");
+  assert.equal(await s("(2+3*i)*(2-3*i)", { kind: "arith", value: "13" }), "verified");
+  // znanstveni zapis in predznaki se preberejo kot števila, ne kot Eulerjevo število
+  assert.equal(await s("1000*x=1", eq(["1e-3"])), "verified");
+  assert.equal(await s("x-1400000=0", eq(["1.4e6"])), "verified");
+  assert.equal(await s("x^2=2", eq(["−1.414", "1.414"])), "numeric");
+  assert.equal(await s("x^2=2", eq(["- 1.414", "1.414"])), "numeric");
+});
+
+test("lokalno: zapis e se prebere kot desetiška potenca", () => {
+  assert.equal(verifyAi("x-1400000=0", eq(["1.4e6"])).status, "verified");
+  assert.equal(verifyAi("x-1400000=0", eq(["1e6"])).status, "wrong");
+  assert.equal(verifyAi("1000*x=1", eq(["1e-3"])).status, "verified");
+  assert.equal(verifyAi("(1+i)^2", { kind: "arith", value: "2*i" }).exact, undefined);
 });

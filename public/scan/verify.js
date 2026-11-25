@@ -19,8 +19,16 @@ function fnOf(text) {
 }
 
 // vrednost »2«, »-1/3«, »sqrt(2)«, »π/6 + 2kπ« (k = 0, 1, −1)
+// Zapis števila v rešitvi: »1.4e6«, »1e-3« → 1.4*10^(6), 10^(-3) (sicer bi »e« prebrali kot Eulerjevo število),
+// »−1.414« (unicode minus) in »- 1.414« (presledek za predznakom) → »-1.414«.
+const stevilo = (t) =>
+  String(t ?? "")
+    .replace(/−/g, "-")
+    .replace(/^\s*([+-])\s+/, "$1")
+    .replace(/(\d)[eE]([+-]?\d+)(?![\d.])/g, "$1*10^($2)");
+
 function values(expr) {
-  const f = fnOf(String(expr).replace(/\bk\b/g, "k"));
+  const f = fnOf(stevilo(expr).replace(/\bk\b/g, "k"));
   if (!f) return [];
   const out = [];
   for (const k of [0, 1, -1]) {
@@ -126,7 +134,7 @@ function sidesPoly(a, b, v) {
 // Zaokroženo decimalno število (»1.324718«): toleranca pol zadnjega mesta; drug zapis z decimalno piko: majhna
 // toleranca (vrednost je približek); brez decimalk 0 (vrednost je točna).
 function decimalTol(text) {
-  const t = String(text ?? "").trim();
+  const t = stevilo(text).trim();
   const m = /^[+-]?\d*\.(\d+)$/.exec(t);
   if (m) return 0.5 * 10 ** -m[1].length * 1.0001;
   return /\d\.\d/.test(t) ? 1e-12 : 0;
@@ -135,7 +143,7 @@ function decimalTol(text) {
 // »2«, »-1/3«, »(1+sqrt(5))/2« → točno (Surd); sicer null
 function exactValue(text) {
   try {
-    return surdOf(parse(prep(text)));
+    return surdOf(parse(prep(stevilo(text))));
   } catch {
     return null;
   }
@@ -231,8 +239,9 @@ export function verifyAi(problemText, ai) {
   const ev = r.evidence || (r.verified ? { holds: true, how: "numeric", complete: r.partial ? "unknown" : "numeric" } : { holds: r.reason === "wrong" || r.reason === "missing" ? false : null });
   const status = statusOf(ev);
   const out = { ...r, partial: ev.complete === "unknown" || undefined, status };
-  // točen protiprimer (ulomki, Sturm): strežnik ga ne sme preglasiti s SymPy (server/scan.js verifyAiFull)
-  if (ev.holds === false && ev.how === "exact") out.exact = true;
+  // Točen protiprimer (ulomki, Sturm): strežnik ga ne sme preglasiti s SymPy (server/scan.js verifyAiFull). Ne, kadar
+  // naloga ali odgovor vsebuje i, I ali E: SymPy ju bere kot imaginarno enoto oz. konstanto, tryPoly pa kot spremenljivko.
+  if (ev.holds === false && ev.how === "exact" && !/(?<![A-Za-z])[iIE](?![A-Za-z])/.test(`${problemText} ${JSON.stringify(ai ?? {})}`)) out.exact = true;
   delete out.evidence;
   if (!out.partial) delete out.partial;
   return r.verified ? { ...out, reason: null } : out;
@@ -286,7 +295,7 @@ function check(problemText, ai) {
         if (claims.some((c) => !c.s && !Number.isFinite(c.num))) return { verified: false, reason: "parse" };
         const pe = polyEquationProof(cs, claims);
         if (pe) {
-          if (!pe.holds) return { verified: false, reason: "wrong", evidence: { holds: false, how: "exact" } };
+          if (!pe.holds) return { verified: false, reason: "wrong", evidence: { holds: false, how: pe.exact ? "exact" : "numeric" } };
           if (pe.complete === false) return { verified: false, reason: "missing", missing: pe.missing };
           return { verified: true, evidence: { holds: true, how: pe.exact ? "exact" : "numeric", complete: pe.complete === true ? "exact" : "unknown" } };
         }
