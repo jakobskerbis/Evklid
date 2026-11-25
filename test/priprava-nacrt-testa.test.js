@@ -105,15 +105,41 @@ test("odstranitev načrta: brez virov se priprava izbriše, z viri ostane neakti
   assert.equal(p.getSession(sess.sessionId).finished, 1);
 });
 
-test("meja 20 priprav: nov test posodobi aktivno pripravo z viri, namesto da doda 21.", () => {
+test("meja 20 priprav ne velja za načrt testa: viri starega testa se ne premaknejo na nov datum", () => {
   const { db, p, s, ui } = setup();
   for (let i = 0; i < 19; i++) db.prepare("INSERT INTO priprave (student_id, naslov) VALUES (?, 'x')").run(s.id);
   const a = p.setTestPlan(s.id, PATH, [ui[0]], cez(5), "dog-1").pripravaId;
   dodajVir(db, a, s.id);
   const b = p.setTestPlan(s.id, PATH, [ui[0]], cez(15), "dog-2").pripravaId;
-  assert.equal(b, a);
-  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM priprave WHERE student_id = ?").get(s.id).n, 20);
-  assert.equal(p.testPlan(s.id).date, cez(15));
+  assert.notEqual(b, a);
+  assert.equal(db.prepare("SELECT datum_testa FROM priprave WHERE id = ?").get(a).datum_testa, cez(5), "stari test obdrži svoj datum (izbris 30 dni po njem)");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM priprave WHERE student_id = ?").get(s.id).n, 21);
+});
+
+test("test, ki se vrne, spet dobi svojo pripravo z viri (ne nove prazne)", () => {
+  const { db, p, s, ui } = setup();
+  const a = p.setTestPlan(s.id, PATH, [ui[0]], cez(5), "dog-1").pripravaId;
+  dodajVir(db, a, s.id);
+  // Učenec za vmes nastavi drug test, ga odstrani, urnik nato znova nastavi dog-1.
+  p.setTestPlan(s.id, "MAT-OS-9", [0], cez(7));
+  p.clearTestPlan(s.id);
+  const plan = p.setTestPlan(s.id, PATH, ui.slice(0, 2), cez(6), "dog-1");
+  assert.equal(plan.pripravaId, a);
+  assert.equal(plan.date, cez(6));
+  assert.deepEqual(priprave(db, s.id).map((r) => [r.id, r.aktivna]), [[a, 1]]);
+  // Ročni načrt brez dogodka: ista pot in datum vrne isto pripravo.
+  const { db: db2, p: p2, s: s2 } = setup();
+  const c = p2.setTestPlan(s2.id, PATH, [ui[0]], cez(9)).pripravaId;
+  dodajVir(db2, c, s2.id);
+  p2.clearTestPlan(s2.id);
+  assert.equal(p2.setTestPlan(s2.id, PATH, [ui[0]], cez(9)).pripravaId, c);
+});
+
+test("napačen vnos načrta: sklopi niso seznam, neobstoječ datum → null (400), ne napaka strežnika", () => {
+  const { p, s, ui } = setup();
+  for (const units of ["1", { 0: 1 }, null, 5]) assert.equal(p.setTestPlan(s.id, PATH, units, cez(5)), null);
+  for (const date of ["2026-13-45", "2026-02-30", "jutri", 20261201]) assert.equal(p.setTestPlan(s.id, PATH, [ui[0]], date), null);
+  assert.equal(p.testPlan(s.id), null);
 });
 
 test("samodejni izbris 30 dni po testu odnese tudi aktivno pripravo; enolična aktivna na profil", () => {
@@ -136,6 +162,8 @@ test("selitev test_plans: brez stolpca event_id, profil z že aktivno pripravo, 
     // Najstarejša oblika tabele (brez event_id).
     store.db.exec("CREATE TABLE test_plans (student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE, path_key TEXT NOT NULL, units TEXT NOT NULL, test_date TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')))");
     store.db.exec("INSERT INTO test_plans (student_id, path_key, units, test_date, created_at) VALUES (1, 'MAT-OS-8', '[0,2]', '2099-01-10', '2026-11-20 08:00:00'), (2, 'MAT-OS-8', '[1]', '2099-01-11', '2026-11-20 08:00:00')");
+    // Osirotela vrstica (profil izbrisan ob izklopljenih tujih ključih) ne sme ustaviti odprtja baze.
+    store.db.exec("PRAGMA foreign_keys = OFF; INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (9, 'MAT-OS-8', '[0]', '2099-01-12'); PRAGMA foreign_keys = ON");
     store.db.close();
     store = openDb(file);
     const db = store.db;

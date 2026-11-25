@@ -80,8 +80,13 @@ enolični indeks); `server/priprava/aktivna.js` nadomesti SQL v `progress.js` (`
 `pripravaId`. Pravila: isti test (isti dogodek iz urnika, ista pot z istim datumom ali premaknjen datum še
 prihajajočega testa na isti poti) posodobi isto pripravo, da viri ostanejo pri njem; drug test naredi novo aktivno
 pripravo, prejšnja brez virov se izbriše, z viri ostane neaktivna. Odstranitev načrta izbriše pripravo brez virov,
-pripravo z viri samo deaktivira. Test v urniku sam odpre pripravo z naslovom testa. Novo: tudi načrt testa se
-samodejno izbriše 30 dni po testu (prej je `test_plans` ostal do zamenjave). `/priprave` vrne `aktivna`, `pot`,
+pripravo z viri samo deaktivira; ko se isti test vrne (isti dogodek ali ista pot in datum), se ta priprava spet
+aktivira, da so viri spet pri njem. Meja 20 priprav na profil velja samo za ročno dodane priprave (POST
+`/priprave`), načrt testa jo sme preseči, da se viri starega testa ne premaknejo na nov datum. Datum aktivne priprave
+se spreminja tudi prek PUT `/priprave/:pid` (isti načrt). Selitev preskoči vrstice izbrisanih profilov; ob vrnitvi na
+starejšo kodo in ponovni nadgradnji se načrt, nastavljen vmes, ne preseli, če ima profil že aktivno pripravo. Test v
+urniku sam odpre pripravo z naslovom testa. Novo: tudi načrt testa se
+samodejno izbriše 30 dni po testu (prej je načrt v `test_plans` ostal do zamenjave). `/priprave` vrne `aktivna`, `pot`,
 `sklopi`, `dogodek_id`. Test: `test/priprava-nacrt-testa.test.js`.
 
 ## Testni nabor

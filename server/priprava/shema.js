@@ -53,8 +53,6 @@ export function migratePriprava(db) {
 // transakciji: ob napaki ostane test_plans cel in selitev se ponovi ob naslednjem zagonu.
 function preseliTestPlans(db) {
   if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'test_plans'").get()) return;
-  const imaDogodek = db.prepare("PRAGMA table_info(test_plans)").all().some((c) => c.name === "event_id");
-  const vrstice = db.prepare(`SELECT student_id, path_key, units, test_date, ${imaDogodek ? "event_id" : "NULL AS event_id"}, created_at FROM test_plans`).all();
   const imaAktivno = db.prepare("SELECT 1 FROM priprave WHERE student_id = ? AND aktivna = 1");
   const vpis = db.prepare(
     `INSERT INTO priprave (student_id, naslov, predmet, datum_testa, zadnja_uporaba, created_at, pot, sklopi, dogodek_id, aktivna)
@@ -62,6 +60,16 @@ function preseliTestPlans(db) {
   );
   db.exec("BEGIN IMMEDIATE");
   try {
+    // Ponovno v transakciji: drug proces (skripta ob zagonu) je tabelo morda že preselil in izbrisal.
+    if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'test_plans'").get()) return void db.exec("COMMIT");
+    const imaDogodek = db.prepare("PRAGMA table_info(test_plans)").all().some((c) => c.name === "event_id");
+    // Brez osirotelih vrstic (profil izbrisan ob izklopljenih tujih ključih): sicer INSERT pade in baza se ne odpre.
+    const vrstice = db
+      .prepare(
+        `SELECT student_id, path_key, units, test_date, ${imaDogodek ? "event_id" : "NULL AS event_id"}, created_at FROM test_plans
+         WHERE student_id IN (SELECT id FROM students)`,
+      )
+      .all();
     for (const r of vrstice) {
       if (imaAktivno.get(r.student_id)) continue;
       const predmet = /^([A-Z]{2,6})-/.exec(String(r.path_key))?.[1] || null;

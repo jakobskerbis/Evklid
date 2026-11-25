@@ -770,8 +770,10 @@ export class Progress {
   // naslov: ime testa iz urnika (sicer ime učne poti); shrani se šifrirano kot naslov priprave.
   setTestPlan(studentId, pathKey, units, date, eventId = null, naslov = null) {
     const path = getPath(pathKey);
-    const clean = [...new Set((units || []).map(Number))].filter((i) => Number.isInteger(i) && path?.units[i]);
-    if (!path || !clean.length || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) return null;
+    const clean = [...new Set((Array.isArray(units) ? units : []).map(Number))].filter((i) => Number.isInteger(i) && path?.units[i]);
+    // Pravi koledarski dan (2026-13-45 ne), kot pri /priprave.
+    const d = String(date);
+    if (!path || !clean.length || !/^\d{4}-\d{2}-\d{2}$/.test(d) || !(Date.parse(`${d}T00:00:00Z`) >= 0) || new Date(`${d}T00:00:00Z`).toISOString().slice(0, 10) !== d) return null;
     nastaviTest(this.db, studentId, { pot: pathKey, sklopi: clean, datum: date, dogodek: eventId, naslov: naslov || path.label, predmet: path.subject || null });
     // Stare nedokončane seje priprave zapremo, nova upošteva nov načrt.
     this.db.prepare("UPDATE sessions SET finished = 1 WHERE student_id = ? AND kind = 'test' AND finished = 0").run(studentId);

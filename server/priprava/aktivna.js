@@ -8,7 +8,7 @@
 //   prejšnja z viri ostane (neaktivna) do samodejnega izbrisa 30 dni po testu (ciscenje.js).
 // - Odstranitev načrta: priprava brez virov se izbriše, z viri samo ni več aktivna (učenčevo gradivo ostane).
 import { seal } from "../crypto-polje.js";
-import { NAJVEC_PRIPRAV, zVarnimBrisanjem } from "./shramba.js";
+import { zVarnimBrisanjem } from "./shramba.js";
 
 const NASLOV_MAX = 120;
 const sqlCas = (ms) => new Date(ms).toISOString().replace("T", " ").slice(0, 19);
@@ -36,14 +36,27 @@ export function nastaviTest(db, studentId, { pot, sklopi, datum, dogodek = null,
   const drugDogodek = !!(dogodek && cur?.dogodek_id && cur.dogodek_id !== dogodek);
   const istiTest =
     !!cur && ((!!dogodek && cur.dogodek_id === dogodek) || (cur.pot === pot && (cur.datum_testa === datum || (!drugDogodek && cur.datum_testa >= sqlCas(now).slice(0, 10)))));
-  // Pri 20 pripravah (meja na profil) se novega testa ne doda: aktivna priprava se posodobi na mestu.
-  const polno = cur && !istiTest && db.prepare("SELECT COUNT(*) AS n FROM priprave WHERE student_id = ?").get(studentId).n >= NAJVEC_PRIPRAV && steviloVirov(db, cur.id) > 0;
-  if (cur && (istiTest || polno)) {
+  const posodobi = (id) =>
     db.prepare("UPDATE priprave SET pot = ?, sklopi = ?, datum_testa = ?, dogodek_id = ?, predmet = COALESCE(?, predmet), zadnja_uporaba = ? WHERE id = ?").run(
-      pot, json, datum, dogodek, predmet, t, cur.id,
+      pot, json, datum, dogodek, predmet, t, id,
     );
+  if (istiTest) {
+    posodobi(cur.id);
     return cur.id;
   }
+  // Test, ki se vrne (učenec je za vmes nastavil drug test, urnik ga znova nastavi): neaktivna priprava z istim
+  // dogodkom ali isto potjo in datumom spet postane aktivna, da so viri spet pri testu.
+  const prej = db
+    .prepare("SELECT id FROM priprave WHERE student_id = ? AND aktivna = 0 AND ((? IS NOT NULL AND dogodek_id = ?) OR (pot = ? AND datum_testa = ?)) ORDER BY id DESC")
+    .get(studentId, dogodek, dogodek, pot, datum);
+  if (prej) {
+    if (cur) odstrani(db, cur);
+    posodobi(prej.id);
+    db.prepare("UPDATE priprave SET aktivna = 1 WHERE id = ?").run(prej.id);
+    return prej.id;
+  }
+  // Meja NAJVEC_PRIPRAV (20) velja za ročno dodane priprave (POST /priprave); načrt testa jo sme preseči, ker bi
+  // posodobitev na mestu premaknila vire starega testa na nov datum (izbris 30 dni po testu, odločitev j 24. 11.).
   if (cur) odstrani(db, cur);
   const ime = String(naslov || "").trim().slice(0, NASLOV_MAX) || "Priprava na test";
   return Number(
