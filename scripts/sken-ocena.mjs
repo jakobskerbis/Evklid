@@ -180,8 +180,37 @@ function enakovredno(a, b) {
   return ea.every((x) => eb.some((y) => ena(x, y)));
 }
 
-// Ena prebrana naloga zaslona Skeniraj ({ text, goal, given }) proti pričakovani (racun, goal, podatki).
+// Negotovo branje (P3-5): ali se branje z oznakami [?] ujema s pričakovanim, ko oznake nadomestimo. Najprej možnosti
+// modela (unclear), nato poljubni znaki na mestu oznake (1 do 6). Ne ujema se → model je drugje ugibal.
+const NEJASNO = "[?]";
+const brezRegex = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function ujemaZOznakami(racun, text, unclear) {
+  const k = text.split(NEJASNO).length - 1;
+  if (Array.isArray(unclear) && unclear.length === k && k <= 4 && unclear.every((o) => Array.isArray(o) && o.length)) {
+    const deli = text.split(NEJASNO);
+    let moznosti = [deli[0]];
+    for (let i = 0; i < k; i++) moznosti = moznosti.flatMap((m) => unclear[i].map((o) => m + o + deli[i + 1]));
+    if (moznosti.some((m) => zgostiRacun(racun) === zgostiRacun(m) || enakovredno(racun, m))) return true;
+  }
+  const vzorec = zgostiRacun(text).split(NEJASNO).map(brezRegex).join(".{1,6}");
+  return new RegExp(`^${vzorec}$`).test(zgostiRacun(racun));
+}
+
+// Ena prebrana naloga zaslona Skeniraj ({ text, goal, given, unclear }) proti pričakovani (racun, goal, podatki).
+// oznaceno: koliko znakov je model označil z [?] (v računu in podatkih); ugibano: napačno prebrano, ne da bi bilo
+// označeno (merilo P3-5: 0 ugibanih na naboru).
 export function oceniRacun(n, problem) {
+  const o = oceniRacunBrezOznak(n, problem);
+  const text = String(problem?.text ?? "");
+  const vGiven = (problem?.given || []).filter((g) => String(g).includes(NEJASNO)).length;
+  const oznaceno = text.split(NEJASNO).length - 1 + (problem?.given || []).reduce((a, g) => a + String(g).split(NEJASNO).length - 1, 0);
+  if (!oznaceno) return { ...o, oznaceno: 0, ugibano: !o.ok };
+  // z oznakami: račun mora ustrezati (oznake nadomeščene), manjkajoči podatki so lahko le označeni
+  const racunOk = n.racun === null || /=\s*\?$/.test(n.racun) ? true : !text.includes(NEJASNO) ? o.enakovredno || o.ok : ujemaZOznakami(n.racun, text, problem?.unclear);
+  const podatkiOk = o.podatki === 1 || vGiven > 0;
+  return { ...o, ok: false, oznaceno, ugibano: !(racunOk && podatkiOk) };
+}
+function oceniRacunBrezOznak(n, problem) {
   const text = String(problem?.text ?? "");
   const given = (problem?.given || []).join(" ; ");
   const podatki = n.podatki?.length ? delez(n.podatki, stevila(normalizirajBesedilo(`${given} ${text}`), true)) : 1;

@@ -10,6 +10,7 @@ import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } fro
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
 import { STATUSES } from "./status.js";
+import { unclearCount, hasUnclear, fillUnclear, firstUnclear, markUnclear } from "./nejasno.js";
 import { plottableFromText } from "../graph/math.js";
 import { izrisi } from "../mat/izris.js";
 
@@ -28,6 +29,7 @@ const fresh = () => ({
   note: null, // obvestilo nad poljem (npr. brez povezave)
   given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
   sought: "", // iskano (»kot, pod katerim graf seka os x«): ni podatek, zato ne izklopi lastnega reševalnika
+  unclear: [], // možnosti za vsak nejasen znak [?] v text (P3-5, public/scan/nejasno.js)
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
   shot: null, // zadnja prebrana fotografija (samo v pomnilniku; za pilot se shrani le ob soglasju)
 });
@@ -133,6 +135,7 @@ export function showScan({ text = null, goal = null } = {}) {
     S.text = text;
     S.problems = [];
     S.given = [];
+    S.unclear = [];
     S.sought = "";
     S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
@@ -244,6 +247,7 @@ function renderCapture(box) {
     S.text = "";
     S.problems = [];
     S.given = [];
+    S.unclear = [];
     S.sought = "";
     S.note = null;
     S.mode = "confirm";
@@ -590,6 +594,7 @@ async function readImage(dataUrl) {
       S.note = t("scan.mock");
       S.problems = [];
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       S.text = "";
       S.mode = "confirm";
@@ -600,6 +605,7 @@ async function readImage(dataUrl) {
     if (!S.problems.length && pilotTask && S.readOk) {
       // Pilot: tudi neuspešno branje oceni (»Prebrano narobe«), zato ostanemo na prepisu.
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       S.text = "";
       S.note = t("scan.readFail");
@@ -608,6 +614,7 @@ async function readImage(dataUrl) {
     }
     if (!S.problems.length) {
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       D.toast(t("scan.readFail"));
       S.mode = "crop";
@@ -615,7 +622,8 @@ async function readImage(dataUrl) {
     }
     S.note = null;
     S.text = S.problems[0].text;
-    S.given = S.problems[0].given || [];
+    S.given = [...(S.problems[0].given || [])];
+    S.unclear = (S.problems[0].unclear || []).map((o) => [...o]);
     S.sought = S.problems[0].sought || "";
     S.goal = S.problems[0].goal || null;
     S.mode = "confirm";
@@ -722,7 +730,8 @@ function renderConfirm(box) {
     <div class="card scan-confirm">
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
-      ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item">${math(g)}</span>`).join("")}</p>` : ""}
+      <div class="scan-unclear-host"></div>
+      ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item${hasUnclear(g) ? " scan-given-unclear" : ""}">${math(boxUnclear(g))}</span>`).join("")}</p>` : ""}
       ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span>${soughtHtml(S.sought)}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
@@ -739,16 +748,32 @@ function renderConfirm(box) {
   const input = box.querySelector("#scan-input");
   const prev = box.querySelector(".scan-preview");
   const err = box.querySelector(".scan-err");
+  const unclearHost = box.querySelector(".scan-unclear-host");
+  const showUnclear = () => {
+    const html = unclearBlock();
+    if (unclearHost.dataset.html === html) return; // ne prepiši polja, v katerega učenec piše
+    unclearHost.dataset.html = html;
+    unclearHost.innerHTML = html;
+    bindGivenInputs();
+  };
   const update = () => {
     S.text = input.value;
+    showUnclear();
     const info = analyze(input.value);
     err.hidden = true;
     if (!input.value.trim()) {
       // izbrisana naloga: podatki prejšnje ne smejo k novi, vpisani
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       box.querySelectorAll(".scan-given").forEach((el) => el.remove());
+      showUnclear();
       return (prev.innerHTML = "");
+    }
+    // nejasni znaki: nespremenjen prepis pokažemo z modelovim LaTeX (\boxed{?}), sicer zapis z označenimi mesti
+    if (hasUnclear(input.value)) {
+      const read = S.problems.find((p) => p.text === input.value && /\\boxed\{\?\}/.test(p.tex || ""));
+      return (prev.innerHTML = read ? math(read.tex, true) : `<p class="scan-unclear-text">${markUnclear(input.value, esc)}</p>`);
     }
     if (info.type === "error") {
       prev.innerHTML = "";
@@ -757,6 +782,47 @@ function renderConfirm(box) {
     prev.innerHTML = problemTexOf(input.value);
   };
   input.addEventListener("input", update);
+  // izbira ene od možnosti za nejasen znak: zamenja ta [?], fokus na naslednjega
+  unclearHost.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-fill]");
+    if (!b) return;
+    const i = Number(b.dataset.fill);
+    input.value = fillUnclear(input.value, i, b.dataset.val);
+    S.unclear.splice(i, 1);
+    update();
+    const at = firstUnclear(input.value);
+    if (at >= 0 && !coarse()) {
+      input.focus();
+      input.setSelectionRange(at, at + 3);
+    } else unclearHost.querySelector("[data-fill]")?.focus();
+  });
+  // nejasen znak v podatku: učenec vpiše, kaj piše na listu (gumb ✓, Enter ali Reši)
+  function fillGiven(rerender = true) {
+    let changed = false;
+    unclearHost.querySelectorAll("[data-given-fill]").forEach((el) => {
+      const v = el.value.trim();
+      if (!v || hasUnclear(v)) return;
+      const i = Number(el.dataset.givenFill);
+      S.given[i] = fillUnclear(S.given[i], 0, v);
+      changed = true;
+    });
+    if (changed && rerender) render();
+    return changed;
+  }
+  function bindGivenInputs() {
+    unclearHost.querySelectorAll("[data-given-fill]").forEach((el) => {
+      configureKeyboard(el, { math: true, layers: ["num", "fx", "sym", "abc"], start: "num" });
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          fillGiven();
+        }
+      });
+    });
+  }
+  unclearHost.addEventListener("click", (e) => {
+    if (e.target.closest("[data-given-ok]")) fillGiven();
+  });
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -777,7 +843,8 @@ function renderConfirm(box) {
     b.addEventListener("click", () => {
       const p = S.problems[Number(b.dataset.pick)];
       S.text = p.text;
-      S.given = p.given || [];
+      S.given = [...(p.given || [])];
+      S.unclear = (p.unclear || []).map((o) => [...o]);
       S.sought = p.sought || "";
       S.goal = p.goal || null;
       render();
@@ -791,6 +858,23 @@ function renderConfirm(box) {
     render();
   });
   const go = () => {
+    // P3-5: neprebran znak popravi učenec, nihče ga ne ugiba (tudi strežnik zavrne [?])
+    // vpisan znak v podatku velja tudi brez ✓
+    const filled = fillGiven(false);
+    if (hasUnclear(input.value) || S.given.some(hasUnclear)) {
+      S.text = input.value;
+      if (filled) render(); // pokaže popravljene podatke; sporočilo in fokus v novem zaslonu
+      const e2 = box.querySelector(".scan-err");
+      const in2 = box.querySelector("#scan-input");
+      e2.textContent = t("scan.unclearErr");
+      e2.hidden = false;
+      const at = firstUnclear(in2.value);
+      if (at >= 0) {
+        in2.focus();
+        in2.setSelectionRange(at, at + 3);
+      } else box.querySelector("[data-given-fill]")?.focus();
+      return;
+    }
     const info = analyze(input.value);
     if (info.type === "error" || info.type === "empty") {
       err.textContent = t("scan.parseErr");
@@ -803,6 +887,35 @@ function renderConfirm(box) {
   };
   box.querySelector('[data-act="solve"]').addEventListener("click", go);
   if (!S.problems.length && !coarse()) input.focus();
+  else if (hasUnclear(S.text) && !coarse()) {
+    const at = firstUnclear(S.text);
+    input.focus();
+    input.setSelectionRange(at, at + 3);
+  }
+}
+
+// Negotovo branje (P3-5): obvestilo o branju je ločeno od napake zapisa (scan-err) in od statusov rešitve; ob vsakem
+// nejasnem znaku po vrsti možnosti, ki jih je predlagal model (samo, dokler se število oznak ujema z njimi).
+const boxUnclear = (g) => String(g).split("[?]").join("\\boxed{?}");
+function unclearBlock() {
+  const n = unclearCount(S.text);
+  if (!n && !S.given.some(hasUnclear)) return "";
+  const opts = S.unclear.length === n ? S.unclear : [];
+  const rows = opts
+    .map((o, i) =>
+      o.length
+        ? `<div class="scan-unclear-row"><span class="scan-unclear-n">${esc(t("scan.unclearN", { n: i + 1 }))}</span>${o.map((v) => `<button type="button" class="scan-unclear-opt" data-fill="${i}" data-val="${esc(v)}">${esc(v)}</button>`).join("")}</div>`
+        : "",
+    )
+    .join("");
+  const given = S.given
+    .map((g, i) =>
+      hasUnclear(g)
+        ? `<div class="scan-unclear-row"><span class="scan-unclear-n">${math(boxUnclear(g))}</span><input type="text" class="scan-unclear-in" data-given-fill="${i}" maxlength="12" aria-label="${esc(t("scan.unclearGiven"))}" placeholder="?" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="scan-unclear-opt" data-given-ok aria-label="${esc(t("scan.unclearGiven"))}">${icon("check")}</button></div>`
+        : "",
+    )
+    .join("");
+  return `<div class="scan-unclear" role="status">${icon("eye")}<div><p><b>${esc(t("scan.unclearTitle"))}</b> ${esc(t(n ? "scan.unclear" : "scan.unclearGivenOnly"))}</p>${rows}${given}</div></div>`;
 }
 
 // Pilot: ocena branja nad prepisom; fotografija gre na strežnik samo ob kljukici (in samo, kjer jo smemo ponuditi).
@@ -1076,6 +1189,7 @@ function bindSolution(box) {
     setImage(null);
     S.problems = [];
     S.given = [];
+    S.unclear = [];
     S.sought = "";
     S.text = "";
     S.goal = null;

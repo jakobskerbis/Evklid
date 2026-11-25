@@ -191,6 +191,9 @@ async function meriSliko(s, x) {
       pricakovano: naloge.length,
       prva: problems.length ? oceniRacun(s, problems[0]) : null,
       vse: naloge.filter((n) => problems.some((p) => oceniRacun(n, p).ok)).length,
+      // P3-5: prebrane naloge, ki so napačne brez oznake [?] (ugibanje), in označeni znaki
+      ugibano: problems.filter((p) => oceniRacun(najblizja(s, p).n, p).ugibano).length,
+      oznaceno: problems.reduce((a, p) => a + oceniRacun(najblizja(s, p).n, p).oznaceno, 0),
     };
   } catch (e) {
     x.napake.push(`branje: ${e.message}`);
@@ -269,6 +272,7 @@ console.log(
   `\nIZID: ${izid.length}/${slike.length} slik; Inštruktor (prepis) ${st((x) => x.ocena.prepis?.ok)}/${sPrepisom.length} pravilnih, ` +
     `slika ${st((x) => x.ocena.prepis?.figure)}/${sPrepisom.length}, več nalog ${st((x) => x.ocena.prepis?.more && x.ocena.prepis?.tasks)}/${sPrepisom.length}; ` +
     `Skeniraj (prva naloga) ${st((x) => x.ocena.branje?.prva?.ok)}/${zBranjem.length}, vse naloge ${st((x) => x.ocena.branje && x.ocena.branje.vse === x.ocena.branje.pricakovano)}/${zBranjem.length}; ` +
+    `branje z ugibanjem ${st((x) => x.ocena.branje?.ugibano > 0)}/${zBranjem.length} slik (merilo 0), označenih znakov ${zBranjem.reduce((a, x) => a + (x.ocena.branje.oznaceno || 0), 0)}; ` +
     `rešitev ${st((x) => x.ocena.resitev?.pravilno)}/${zResitvijo.length} pravilnih (lastni reševalnik ${st((x) => x.resitev?.vir === "lastni reševalnik")}, AI ${st((x) => x.resitev?.vir === "AI")}, preverjenih ${st((x) => x.ocena.resitev?.preverjeno)}); ` +
     `strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Izid: ${OUT}`,
 );
