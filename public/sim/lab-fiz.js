@@ -32,7 +32,8 @@ export function labOhm(el, { load = "R100" } = {}) {
     { key: "p", label: "porabnik" },
     { key: "U", label: "<i>U</i> [V]" },
     { key: "I", label: "<i>I</i> [mA]" },
-    { key: "R", label: "<i>U</i>/<i>I</i> žarnice [Ω]" }, // pri uporniku bi stolpec izdal upor, ki ga učenec izračuna iz naklona
+    // pri uporniku bi stolpec izdal upor, ki ga učenec izračuna iz naklona; »žarnica« v drugi vrstici, da gre tabela na telefonu v okvir
+    { key: "R", label: "<i>U</i>/<i>I</i> [Ω]<br>žarnica" },
   ]);
   const graph = dataGraph({ x: [0, 12], y: [0, YMAX[B.load]], xStep: 2, xLabel: "U [V]", yLabel: "I [mA]", title: "Graf toka v odvisnosti od napetosti", formula: tex(String.raw`I = \frac{U}{R}`) });
   const fitOut = h("p", { class: "lab-fitout", "aria-live": "polite" });

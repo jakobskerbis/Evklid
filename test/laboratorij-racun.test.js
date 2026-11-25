@@ -146,6 +146,8 @@ test("student's own calculation in a browser", { timeout: 180000 }, async (t) =>
     }));
     assert.equal(st.skrito, false);
     assert.deepEqual(st.ui, ["–", "–", "–"], "stolpec U/I pri uporniku ne izda upora");
+    const sirina = await p.evaluate(() => { const t = document.querySelector(".lab-table"); return [t.scrollWidth, t.closest(".lab-table-wrap").clientWidth]; });
+    assert.ok(sirina[0] <= sirina[1], `tabela pri 360 px ne drsi vstran: ${sirina}`);
     assert.doesNotMatch(st.kaj, /Ω|100/, "naloga ne pove napisa na uporniku");
     assert.doesNotMatch(st.fit, /Ω|R =/, "upora aplikacija ne pove, dokler ga učenec ne izračuna");
     // pričakovano iz točk v tabeli (zaokroženi odčitki): premica skozi izhodišče
