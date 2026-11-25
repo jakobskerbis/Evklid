@@ -184,7 +184,7 @@ test("lab in a browser: locked conclusion, measurements survive reopening and re
     await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.2.lab-ohm", d), pokvarjeno);
     await p.evaluate(() => window.mount("lab-ohm"));
     await p.waitForTimeout(300);
-    const st = await p.evaluate(() => ({ napaka: /ni bilo mogoče naložiti/.test(document.body.textContent), vrstice: document.querySelectorAll(".lab-table tbody tr").length, tocke: JSON.parse(localStorage.getItem("evklid.lab.meritve.2.lab-ohm"))?.series }));
+    const st = await p.evaluate(() => ({ napaka: /ni bilo mogoče naložiti/.test(document.body.textContent), vrstice: document.querySelectorAll("#m .lab-table tbody tr").length, tocke: JSON.parse(localStorage.getItem("evklid.lab.meritve.2.lab-ohm"))?.series }));
     assert.equal(st.napaka, false);
     assert.equal(st.vrstice, 1);
     await meriOhm(p, [8]);
