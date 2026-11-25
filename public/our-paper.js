@@ -257,7 +257,7 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice, fok
           (x) => `<li class="card"><div><h2>${esc(x.pola ? t("pp.oursPola", { n: x.pola }) : t("pi.whole"))}</h2>
             <p class="muted">${esc(t("pi.polaInfo", { minutes: r.minutes(x.minutes), points: x.points }))}</p>
             ${x.tools ? `<p class="op-tools">${esc(x.tools)}</p>` : ""}${x.choice ? `<p class="op-tools">${esc(t("pi.choice"))}</p>` : ""}</div>
-            <button type="button" class="primary" data-sim-start="${x.pola ?? ""}">${icon("clock")}<span>${esc(t("pi.start"))}</span></button></li>`,
+            <button type="button" class="primary" data-sim-start="${x.pola ?? ""}">${icon("timer")}<span>${esc(t("pi.start"))}</span></button></li>`,
         )
         .join("")}</ul>`)}`);
   };

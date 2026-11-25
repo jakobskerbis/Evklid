@@ -873,7 +873,7 @@ function simsHtml(sims = []) {
       }</li>`,
     )
     .join("");
-  return `<section class="card exam-sims" tabindex="-1"><h2>${icon("clock")}${t("pi.histTitle")}</h2>${rows ? `<ul class="sim-list">${rows}</ul>` : `<p class="muted small-note">${t("pi.histEmpty")}</p>`}</section>`;
+  return `<section class="card exam-sims" tabindex="-1"><h2>${icon("list-checks")}${t("pi.histTitle")}</h2>${rows ? `<ul class="sim-list">${rows}</ul>` : `<p class="muted small-note">${t("pi.histEmpty")}</p>`}</section>`;
 }
 
 // Raven mature iz matematike na strani »NPZ in matura« (j, 20. 11.): izbira pri Preteklih polah velja za celo stran
