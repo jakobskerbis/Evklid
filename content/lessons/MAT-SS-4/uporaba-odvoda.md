@@ -51,7 +51,7 @@ Pri $f'(a) = 0$ je normala navpična premica $x = a$.
 
 $$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
 
-kjer je $1 + k_1 k_2 \ne 0$ in $0^\circ \le \varphi < 90^\circ$. Pri $k_1 k_2 = -1$ formula ne velja: krivulji se sekata **pravokotno** ($\varphi = 90^\circ$). Pri $k_1 = k_2$ se dotikata ($\varphi = 0^\circ$).
+kjer je $1 + k_1 k_2 \ne 0$ in $0^\circ \le \varphi < 90^\circ$. Pri $k_1 k_2 = -1$ je imenovalec $1 + k_1 k_2 = 0$, zato formula ne velja: tangenti sta pravokotni in krivulji se sekata **pravokotno** ($\varphi = 90^\circ$). Pri $k_1 = k_2$ se dotikata ($\varphi = 0^\circ$).
 
 **Naraščanje in padanje.** Predznak odvoda pove smer grafa:
 
@@ -222,7 +222,7 @@ $$k_n = -\frac{1}{f'(a)}$$
 
 $$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
 
-- Pri $k_1 k_2 = -1$ sta pravokotni.
+- Pri $k_1 k_2 = -1$ sta tangenti pravokotni (formula ne velja).
 
 **Naraščanje in ekstremi:**
 
@@ -237,7 +237,7 @@ $$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
 **Formule**
 - tangenta: $y = f(a) + f'(a)(x - a)$ (na pamet)
 - normala: $k_n = -\frac{1}{f'(a)}$, $f'(a) \ne 0$ (na pamet)
-- $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$ (na pamet)
+- $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, če $k_1 k_2 \ne -1$ (na pamet)
 - $f' > 0$: narašča, $f' < 0$: pada (na pamet)
 - ekstrem: $f'(a) = 0$ in $f'$ zamenja predznak (na pamet)
 
