@@ -56,7 +56,10 @@ process.on("uncaughtException", (err, origin) => {
   process.exit(1);
 });
 
-const server = app.listen(port, () => {
+const server = app.listen(port, (err) => {
+  // Express 5 pokliče to funkcijo tudi, ko listen ne uspe (npr. EADDRINUSE): pravo napako vržemo naprej v
+  // uncaughtException zgoraj, sicer bi jo skrila druga (server.address() je null) (AUDIT-077).
+  if (err) throw err;
   // dejanska vrata (PORT=0: izbere jih sistem; testi jih preberejo iz te vrstice, naključna vrata so trčila z drugimi)
   console.log(`Evklid teče na http://localhost:${server.address().port}`);
   console.log(isMockMode() ? "Preizkusni način (brez API ključa)." : `Model: ${MODEL}`);
