@@ -481,6 +481,7 @@
   "set.tourAgain": "Ripeti il tour iniziale",
   "set.newStudent": "Aggiungi profilo",
   "set.newStudentText": "Un nuovo profilo per un altro studente: ognuno ha il proprio percorso, i propri progressi e le proprie conversazioni.",
+  "set.nameBad": "Non possiamo usare questo nome. Scegli un altro nome o soprannome.",
   "set.namePh": "Nome",
   "set.deleteTitle": "Elimina profilo",
   "set.deleteText": "Elimina per sempre il profilo «{name}»: percorso, progressi, impostazioni e tutte le conversazioni. Non si può annullare.",

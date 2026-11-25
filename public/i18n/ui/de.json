@@ -481,6 +481,7 @@
   "set.tourAgain": "Einführung wiederholen",
   "set.newStudent": "Profil hinzufügen",
   "set.newStudentText": "Ein neues Profil für einen weiteren Lernenden: Jedes hat einen eigenen Lernpfad, eigenen Fortschritt und eigene Gespräche.",
+  "set.nameBad": "Diesen Namen können wir nicht verwenden. Wähle bitte einen anderen Namen oder Spitznamen.",
   "set.namePh": "Name",
   "set.deleteTitle": "Profil löschen",
   "set.deleteText": "Löscht das Profil „{name}“ endgültig: Lernpfad, Fortschritt, Einstellungen und alle Gespräche. Das kann nicht rückgängig gemacht werden.",

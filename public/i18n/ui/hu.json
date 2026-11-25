@@ -481,6 +481,7 @@
   "set.tourAgain": "Bemutató újra",
   "set.newStudent": "Profil hozzáadása",
   "set.newStudentText": "Új profil egy másik tanulónak: mindegyiknek saját tanulási útja, haladása és beszélgetései vannak.",
+  "set.nameBad": "Ezt a nevet nem használhatjuk. Válassz másik nevet vagy becenevet.",
   "set.namePh": "Név",
   "set.deleteTitle": "Profil törlése",
   "set.deleteText": "Véglegesen törli a(z) „{name}” profilt: a tanulási utat, a haladást, a beállításokat és minden beszélgetést. Ez nem vonható vissza.",
