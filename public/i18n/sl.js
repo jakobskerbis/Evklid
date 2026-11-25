@@ -1431,6 +1431,7 @@ export default {
   "sc.errNoDerivDomain": "Funkcija v tej točki ni definirana, zato odvoda ni.",
   "sc.constants": "Konstante",
   "sc.toCalc": "V kalkulator",
+  "sc.toUnits": "Pretvori enote",
   "sc.input": "Vnos",
   "sc.tool.units": "Enote",
   "sc.tool.stats": "Statistika",

@@ -1136,6 +1136,7 @@
   "sc.errNoDerivDomain": "Die Funktion ist an dieser Stelle nicht definiert, daher gibt es keine Ableitung.",
   "sc.constants": "Konstanten",
   "sc.toCalc": "In den Rechner",
+  "sc.toUnits": "Einheiten umrechnen",
   "sc.input": "Eingabe",
   "sc.tool.units": "Einheiten",
   "sc.tool.stats": "Statistik",

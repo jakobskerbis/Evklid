@@ -1136,6 +1136,7 @@
   "sc.errNoDerivDomain": "A függvény ebben a pontban nincs értelmezve, ezért nincs deriváltja.",
   "sc.constants": "Állandók",
   "sc.toCalc": "A számológépbe",
+  "sc.toUnits": "Mértékegység átváltása",
   "sc.input": "Bevitel",
   "sc.tool.units": "Mértékegységek",
   "sc.tool.stats": "Statisztika",
