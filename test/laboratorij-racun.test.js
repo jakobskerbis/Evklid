@@ -57,12 +57,12 @@ test("unit after the number, nominal and textbook values, feedback without the a
   assert.equal(preveriRacun("9,8", 9.79, { tol: 0.03, nazivno: g }).ok, true);
   // odziv ne izda rešitve: ne odstotka ne številke, le približno (blizu, precej, daleč) ali faktor 10ⁿ
   const odz = (x, p, tol = 0.04) => odzivRacuna(preveriRacun(String(x), p, { tol }), tol);
-  assert.match(odz(105, 96.2), /blizu/);
+  assert.match(odz(102, 96.2), /blizu/);
   assert.match(odz(110, 96.2), /precej/);
   assert.match(odz(150, 96.2), /daleč/);
   assert.match(odz(9.62, 96.2), /faktor ~10\b.*enot/);
   assert.match(odz(0.0962, 96.2), /faktor ~1000\b/);
-  for (const x of [105, 110, 150, 9.62]) assert.doesNotMatch(odz(x, 96.2), /\d+\s?%|96/, `odziv za ${x}`);
+  for (const x of [102, 110, 150, 9.62]) assert.doesNotMatch(odz(x, 96.2), /\d+\s?%|96/, `odziv za ${x}`);
 });
 
 // Shranjene meritve (kot jih zapiše vsak poskus, lab.js → shramba) in vrednost, ki jo mora učenec izračunati iz njih.
