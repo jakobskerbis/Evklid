@@ -5,7 +5,6 @@
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { skoziLupino } from "./izbira.js";
-import { napakaVsebina } from "./napake.js";
 import { mrezeOvojev, okvirDela as okvirDelaVSvetu } from "./ovoji.js";
 import { t, dodajIzvirnik } from "/i18n.js";
 import SL3D from "/i18n/sl-3d.js";
@@ -1080,17 +1079,24 @@ export function odpriModel(el, mod, opts = {}) {
     // Brez modela ni kaj vrteti: namig »Povleci za vrtenje …« skrijemo.
     oder.querySelector(".k3-namig")?.remove();
     oder.classList.remove("k3-namig-viden");
-    // Besedilo po vrsti napake (napake.js); »Poskusi znova« zgradi model še enkrat (prizor ostane).
-    nalagEl.replaceChildren(
-      ...napakaVsebina(err, {
-        t,
-        znova: () => {
-          nalaganje(null);
-          zgradiVse(false);
+    // Besedilo po vrsti napake (napake.js); »Poskusi znova« zgradi model še enkrat (prizor ostane). napake.js uvozimo šele
+    // tu: brez njega (izpad povezave) se pregledovalnik vseeno naloži (sim.js), kartica pa ima vsaj a3.loadError in gumb.
+    const kartica = nalagEl;
+    const znova = () => {
+      nalaganje(null);
+      zgradiVse(false);
+    };
+    import("./napake.js")
+      .then(
+        ({ napakaVsebina }) => napakaVsebina(err, { t, znova, razredGumba: "a3-pill a3-mali" }),
+        () => {
+          const b = mk("button", "a3-pill a3-mali", t("a3.retry"));
+          b.type = "button";
+          b.addEventListener("click", znova, { once: true });
+          return [mk("p", "", t("a3.loadError")), b];
         },
-        razredGumba: "a3-pill a3-mali",
-      }),
-    );
+      )
+      .then((vsebina) => nalagEl === kartica && kartica.replaceChildren(...vsebina));
   }
 
   // »Podrobnosti organa«: gumb pod odrom in list z besedilom (model.podrobnosti = { naslov, odseki: [{ naslov, besedilo }] }).

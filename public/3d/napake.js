@@ -11,10 +11,12 @@ const UVOZ = /importing a module script failed|dynamically imported module|modul
 // Star modul ob novem: izvoza, ki ga novi modul uvozi, ni (Chrome, Firefox, Safari). Brskalnik to javi kot SyntaxError,
 // zato ga moramo ločiti od starega brskalnika.
 const NESKLADJE = /does not provide an export named|importing binding name|binding name .* (is )?not found|ambiguous indirect export|no such export|doesn't provide an export/i;
-const POMNILNIK = /out of memory|memory|allocation|allocate|context lost|context_lost|contextlost/i;
-// RangeError pomeni pomnilnik samo s takim sporočilom (»Array buffer allocation failed«); prirezan GLB (»Offset is outside
-// the bounds of the DataView«) ni pomanjkanje pomnilnika.
-const RANGE_POMNILNIK = /memory|allocation|buffer/i;
+const POMNILNIK = /out of memory|out-of-memory|out_of_memory|allocation failed|failed to allocate|could not allocate|cannot allocate|context lost|context_lost|contextlost/i;
+// RangeError pomeni pomnilnik samo s sporočilom iz POMNILNIK (»Array buffer allocation failed«, »Out of memory«).
+// Prirezan medpomnilnik (prekinjen prenos GLB) je napaka nalaganja: Chrome in Firefox »Offset is outside the bounds of the
+// DataView«, Safari »Length out of range of buffer«, Firefox »attempting to construct out-of-bounds Float32Array on
+// ArrayBuffer«, Chrome »Invalid typed array length« in »Start offset … should be a multiple of«.
+const PRIREZAN = /outside the bounds|out of range of buffer|out-of-bounds|out of bounds|invalid typed array length|start offset/i;
 // SyntaxError, ki ni star brskalnik: HTML namesto JSON (prestrezna stran omrežja, posrednik), neveljaven izbirnik (DOMException).
 const NI_BRSKALNIK = /JSON|Unrecognized token|token '<'|token <|selector/i;
 
@@ -33,6 +35,7 @@ export function tehnicno(err) {
   const ime = String(err?.name || (typeof err === "string" ? "Error" : typeof err)).slice(0, 40);
   let s = String(err?.message ?? (typeof err === "string" ? err : "")).split("\n")[0].trim();
   s = s.replace(/[^\s"'<>@]+@[^\s"'<>@]+\.[a-z]{2,}/gi, "[e-pošta]");
+  s = s.replace(/\bBearer\s+[^\s"'<>]+/gi, "Bearer [žeton]");
   // Naslov do presledka ali narekovaja (tudi z oklepaji v poti ali poizvedbi): ostane samo pot.
   s = s.replace(/\b(?:https?|wss?|blob|file):\/\/[^\s"'<>]+/gi, (u) => {
     try {
@@ -42,9 +45,11 @@ export function tehnicno(err) {
     }
   });
   s = s.replace(/\?[^\s"'<>]*[=&][^\s"'<>]*/g, ""); // poizvedba brez izvora (…/a.js?t=x&y=1)
+  s = s.replace(/=[A-Za-z0-9_-]{16,}/g, "=[žeton]"); // vrednost brez poizvedbe (»token=…« v besedilu)
   // Žeton s pikami (JWT »eyJ….….…« ali tri dolge kose): pred dolgimi nizi, sicer bi ostale pike in kratki kosi.
   s = s.replace(/\beyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]*)?|\b[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{6,}\b/g, "[žeton]");
   s = s.replace(/[A-Za-z0-9_-]{32,}/g, "…");
+  s = s.replace(/\s+;(?=\s|$)/g, "").replace(/;\s*$/, "").replace(/\s{2,}/g, " ").trim(); // »; « za odstranjeno poizvedbo
   const v = s ? `${ime}: ${s}` : ime;
   return v.length > 120 ? `${v.slice(0, 119)}…` : v;
 }
@@ -64,7 +69,8 @@ export function napakaBesedilo(err, { naVoljo = typeof navigator !== "undefined"
   if (NESKLADJE.test(sporocilo)) return { vrsta: "posodobitev", key: "a3.updated", detail: null, modul: true };
   if (ime === "SyntaxError" && /JSON|Unrecognized token|token '<'|token </i.test(sporocilo)) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
   if (ime === "SyntaxError" && !NI_BRSKALNIK.test(sporocilo)) return { vrsta: "brskalnik", key: "a3.oldBrowser", detail: null, modul: false };
-  if ((ime === "RangeError" && RANGE_POMNILNIK.test(sporocilo)) || POMNILNIK.test(sporocilo)) return { vrsta: "pomnilnik", key: "a3.lowMemory", detail: null, modul: false };
+  if (POMNILNIK.test(sporocilo)) return { vrsta: "pomnilnik", key: "a3.lowMemory", detail: null, modul: false };
+  if (ime === "RangeError" && PRIREZAN.test(sporocilo)) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
   const status = statusNapake(err);
   if (status >= 400) return { vrsta: "povezava", key: "a3.loadError", detail: `HTTP ${status}`, modul: false };
   if (OMREZJE.test(sporocilo)) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: UVOZ.test(sporocilo) };
@@ -140,7 +146,7 @@ export function napakaVsebina(err, { t, znova = null, razredGumba = "a3-pill" } 
     return x;
   };
   const out = [el("p", "", t(n.key))];
-  const teh = tehnicno(err);
+  const teh = n.key === "a3.noConnection" ? "" : tehnicno(err);
   if (teh) out.push(el("p", "k3-napaka-koda", t("a3.errorTech", { koda: teh })));
   if (n.vrsta === "pomnilnik" && kakovostNaprave() !== "nizka" && typeof location !== "undefined") {
     const a = el("a", "k3-napaka-povezava", t("a3.lowQuality"));
