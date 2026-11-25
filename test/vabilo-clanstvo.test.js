@@ -68,7 +68,8 @@ async function withServer(env, fn) {
     };
   };
   const register = async (call, email, invite) => {
-    const r = await call("/api/auth/register", { method: "POST", body: { email, password: "geslo1234", accept_privacy: true, birth_date: "2009-03-04", ...(invite !== undefined ? { invite } : {}) } });
+    // Polnoleten imetnik: pilot je samo za polnoletne (N-11, j 2026-11-25); mladoletnega preizkuša pilot-polnoletni.test.js.
+    const r = await call("/api/auth/register", { method: "POST", body: { email, password: "geslo1234", accept_privacy: true, birth_date: "2007-03-04", ...(invite !== undefined ? { invite } : {}) } });
     assert.equal(r.status, 201, JSON.stringify(r.body));
     return r.body;
   };

@@ -33,7 +33,7 @@ import { Usage, BLOCK_TEXT } from "../usage.js";
 import { USTNO_QUESTIONS } from "../ustno.js";
 import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
-import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
+import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY, SELF_CONSENT_PREFIX } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestInvites, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
 import { eraseAccount, eraseProfiles, posnetekIzbrisa, zapisiIzbris } from "./izbris.js";
 import { runInactive, neaktivniVklopljeni } from "./neaktivni.js";
@@ -63,7 +63,7 @@ export const CONSENT_TEXT =
 
 // Soglasje dijaka, ki je dovolj star za lastno privolitev in ustvarja svoj profil.
 export const SELF_CONSENT_TEXT =
-  "Profil je moj. Prebral(a) sem Obvestilo o varstvu osebnih podatkov in soglašam, da Evklid obdeluje moje podatke " +
+  SELF_CONSENT_PREFIX + " Prebral(a) sem Obvestilo o varstvu osebnih podatkov in soglašam, da Evklid obdeluje moje podatke " +
   "(ime ali vzdevek, letnica rojstva, nastavitve, pogovori z AI inštruktorjem, fotografije nalog in napredek) za namen učenja.";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1472,6 +1472,11 @@ export function mountAccounts(app, store, opts = {}) {
       audit(db, { req, parentId, action: "pilot_invite_rejected", ok: false });
       return "invalid";
     }
+    // Pilot samo s polnoletnimi (j 2026-11-25, N-11): mlajši od 18 let kode ne shrani (koda ostane neporabljena).
+    if (isMinor(getParent(parentId))) {
+      audit(db, { req, parentId, action: "pilot_invite_minor", ok: false });
+      return "minor";
+    }
     update(parentId, { pilot_invite_hash: inviteHash(code) });
     audit(db, { req, parentId, action: "pilot_invite_pending" });
     return "pending";
@@ -1490,6 +1495,10 @@ export function mountAccounts(app, store, opts = {}) {
     };
     if (Date.now() >= pilotEndMs()) return drop("pilot_invite_ended");
     if (!inviteHashValid(p.pilot_invite_hash)) return drop("pilot_invite_revoked");
+    // Pilot samo s polnoletnimi (N-11): mlajši od 18 let kode ne porabi; brez datuma rojstva (star račun) koda počaka,
+    // da imetnik datum vpiše v Računu (ogled stanja jo nato porabi, spodaj).
+    if (isMinor(p)) return drop("pilot_invite_minor");
+    if (!p.birth_date) return false;
     // Poraba kode in oznaka na računu skupaj (#819): brez pol porabljene kode ob napaki vmes.
     const claimed = inTx(() => {
       if (!claimInvite(db, p.pilot_invite_hash, parentId)) return false;
@@ -1779,6 +1788,7 @@ export function mountAccounts(app, store, opts = {}) {
     const iso = `${birth.y}-${String(birth.m).padStart(2, "0")}-${String(birth.d).padStart(2, "0")}`;
     const r = db.prepare("UPDATE parents SET birth_date = ?, birth_asked_at = ? WHERE id = ? AND birth_date IS NULL").run(iso, now, p.id);
     if (!r.changes) return taken();
+    claimPilotInvite(p.id, req); // čakajoča koda vabila (star račun brez datuma rojstva, N-11): zdaj se porabi ali odpade
     const minAge = minAgeOf(p.country, String(req.headers["cf-ipcountry"] || ""));
     res.json({ parent: publicParent(getParent(p.id)), ...(age < minAge ? { under_age: true, min_age: minAge } : {}) });
   });

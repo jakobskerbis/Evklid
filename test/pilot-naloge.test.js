@@ -5,7 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { pilotTasksReport, pilotTasksMarkdown, TOTAL, XP, SCAN_CONDITIONS, PHOTO_DAILY_MAX } from "../server/pilot-naloge.js";
+import { pilotTasksReport, pilotTasksMarkdown, TOTAL, XP, SCAN_CONDITIONS, PHOTO_DAILY_MAX, photoAllowed } from "../server/pilot-naloge.js";
 import { Leagues } from "../server/leagues.js";
 import { withoutPilotPhotos } from "../server/kopije.js";
 import fs from "node:fs";
@@ -180,8 +180,10 @@ test("pilot: fotografija samo ob soglasju, samo od 15 let, izbris in rok hrambe"
     assert.equal(photos(), 1);
     assert.match(store.db.prepare("SELECT consent FROM pilot_photos").get().consent, /30 dni/);
     assert.equal((await adult.call(`/api/students/${adult.sid}/pilot/scan`, { method: "POST", body: { cond: "screen", ok: true, image: "data:text/html;base64,AAAA", consent: true } })).status, 400);
-    // Mlajši od 15: kljukice ni, poskus s soglasjem zavrnjen in nič shranjeno.
-    assert.equal((await teen.call(`/api/students/${teen.sid}/pilot`)).body.photo.allowed, false);
+    // Mlajši od 15: kljukice ni, poskus s soglasjem zavrnjen in nič shranjeno. Od N-11 (pilot samo za polnoletne,
+    // j 2026-11-25) mlajši od 18 sploh ni član pilota (stanje member:false); meja 15 za fotografije ostane (photoAllowed).
+    assert.deepEqual((await teen.call(`/api/students/${teen.sid}/pilot`)).body, { member: false });
+    assert.equal(photoAllowed(store.db, teen.sid), false);
     r = await teen.call(`/api/students/${teen.sid}/pilot/scan`, { method: "POST", body: { cond: "light", ok: true, image: IMG, consent: true } });
     assert.equal(r.status, 403);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM pilot_scans WHERE student_id = ?").get(teen.sid).n, 0);
