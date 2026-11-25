@@ -224,6 +224,18 @@ Polna in črtkana črta vodita od vsake reže do istega svetlega pasu. Črtkana 
 ~ Polovico prepusti le iz nepolarizirane svetlobe. Kaj pride skozi drugi polarizator, je odvisno od kota: $j = j_0 \cos^2\theta$.
 > Pri $\theta = 90^\circ$ je $\cos^2\theta = 0$, zato skozi očala pride skoraj nič svetlobe.
 
+? Mrežica ima $400$ rež na milimeter, nanjo pade rdeča svetloba z valovno dolžino $650\,\mathrm{nm}$. Kateri je najvišji red ojačitve $N$, ki ga še vidimo?
+= 3
+~ 3,85 | Red ojačitve je celo število. Vzemi največje celo $N$, pri katerem je $\dfrac{N\lambda}{d} \le 1$.
+~ 4 | Pri $N = 4$ bi bil $\sin\varphi = 1{,}04 > 1$, zato četrtega reda ni.
+> $d = \dfrac{1\,\mathrm{mm}}{400} = 2{,}5\,\mathrm{\mu m}$. Iz $\dfrac{N\lambda}{d} \le 1$ sledi $N \le \dfrac{2{,}5\cdot10^{-6}\,\mathrm{m}}{6{,}5\cdot10^{-7}\,\mathrm{m}} = 3{,}85$, torej je najvišji red $N = 3$.
+
+? Nepolarizirana svetloba z gostoto toka $80\,\mathrm{W/m^2}$ gre skozi dva polarizatorja. Njuni prepustni smeri oklepata $60^\circ$. Kolikšna gostota toka pride skozi oba?
+= 10 W/m² | 0,1
+~ 20 | Upoštevati moraš oboje: prvi polarizator prepusti polovico nepolarizirane svetlobe, drugi pa delež $\cos^2\theta$ (ne $\cos\theta$).
+~ 30 | Uporabil si $\sin^2\theta$. Za polarizirano svetlobo velja $j = j_0 \cos^2\theta$.
+> Po prvem polarizatorju: $j_0 = \dfrac{80\,\mathrm{W/m^2}}{2} = 40\,\mathrm{W/m^2}$. Po drugem: $j = j_0 \cos^2 60^\circ = 40\,\mathrm{W/m^2} \cdot 0{,}25 = 10\,\mathrm{W/m^2}$.
+
 :::simboli
 \lambda | valovna dolžina svetlobe | | m | vidna: $380$–$750\,\mathrm{nm}$
 b | širina reže | | m

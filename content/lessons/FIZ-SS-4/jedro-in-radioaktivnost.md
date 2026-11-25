@@ -269,6 +269,19 @@ Podobno izzveni ton klavirske strune: v vsaki sekundi izgubi približno enak del
 + Ker so jedra po cepitvi močneje zvezana; manjkajoča masa $\Delta m$ se sprosti kot energija $\Delta m \, c^2$.
 > Srednje težka jedra imajo večjo vezavno energijo na nukleon kot uran. Pri prehodu se sprosti energija $\Delta m \, c^2$, okoli $200\,\mathrm{MeV}$ na cepitev.
 
+? Jod-131 ima razpolovni čas $8$ dni. Bolnišnica dobi vzorec z aktivnostjo $400\,\mathrm{MBq}$. Kolikšna je njegova aktivnost čez $20$ dni? (Na desetinko MBq.)
+= 70,7 MBq | 0,2
+~ 160 | Aktivnosti ne deliš s številom razpolovnih časov. Vsak razpolovni čas jo razpolovi: $A = A_0 \cdot 2^{-t/t_{1/2}}$.
+~ 100 | Upoštevati moraš vseh $2{,}5$ razpolovnega časa, ne le dveh celih.
+~ 50 | Minilo je $2{,}5$ razpolovnega časa, ne $3$.
+> $\dfrac{t}{t_{1/2}} = \dfrac{20}{8} = 2{,}5$, $A = 400\,\mathrm{MBq} \cdot 2^{-2{,}5} \approx 70{,}7\,\mathrm{MBq}$.
+
+? Torij ${}^{232}_{90}\mathrm{Th}$ razpada v verigi razpadov $\alpha$ in $\beta^-$, dokler ne nastane stabilni svinec ${}^{208}_{82}\mathrm{Pb}$. Koliko razpadov $\beta^-$ je v tej verigi?
+= 4
+~ 6 | To je število razpadov $\alpha$: $\dfrac{232 - 208}{4} = 6$. Iz vrstnega števila izračunaj še razpade $\beta^-$.
+~ 8 | Razlika vrstnih števil je $8$, a šest razpadov $\alpha$ zmanjša $Z$ za $12$. Razpadi $\beta^-$ ga povečajo nazaj.
+> Masno število se spremeni le pri $\alpha$: $\dfrac{232 - 208}{4} = 6$ razpadov $\alpha$, ki zmanjšajo $Z$ na $90 - 12 = 78$. Do $82$ manjkajo $4$, vsak $\beta^-$ poveča $Z$ za $1$: $4$ razpadi $\beta^-$.
+
 :::simboli
 N | število nerazpadlih jeder | N = N_0 \cdot 2^{-t/t_{1/2}} | – |
 N_0 | začetno število jeder | | – |

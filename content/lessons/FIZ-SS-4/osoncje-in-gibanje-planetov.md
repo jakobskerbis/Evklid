@@ -246,6 +246,18 @@ Višji tir je daljši, satelit pa se na njem giblje počasneje. Zato obhodni ča
 ~ To je $\sqrt{8^3}$: zamenjal si vlogi $T$ in $a$.
 > $a^3 = T^2 = 64$, zato $a = \sqrt[3]{64} = 4\,\mathrm{a.e.}$ Asteroid kroži med tiroma Marsa in Jupitra.
 
+? Saturn obkroži Sonce v $29{,}5$ leta. Kolikšna je velika polos njegovega tira v astronomskih enotah? (Na stotinko.)
+= 9,55 a.e. | 0,03
+~ 160 | Eksponenta si zamenjal. Iz $a^3 = T^2$ sledi $a = T^{2/3}$, ne $T^{3/2}$.
+~ 5,43 | Iz obhodnega časa si izračunal kvadratni koren. Velja $a^3 = T^2$, torej $a = \sqrt[3]{T^2}$.
+> $a = \sqrt[3]{T^2} = \sqrt[3]{29{,}5^2} = \sqrt[3]{870} \approx 9{,}55\,\mathrm{a.e.}$
+
+? Mednarodna vesoljska postaja kroži $400\,\mathrm{km}$ nad površjem Zemlje. Kolikšna je njena hitrost? Podatki: $M_\mathrm{Z} = 5{,}97\cdot10^{24}\,\mathrm{kg}$, $R_\mathrm{Z} = 6370\,\mathrm{km}$, $G = 6{,}67\cdot10^{-11}\,\mathrm{N\,m^2/kg^2}$. Rezultat vpiši v km/s.
+= 7,67 km/s | 0,02
+~ 31,6 | Za $r$ si vzel samo višino. Gravitacijski zakon meri razdaljo od središča Zemlje: $r = R_\mathrm{Z} + h$.
+~ 7,91 | Za $r$ si vzel samo polmer Zemlje. Prišteti moraš še višino $400\,\mathrm{km}$.
+> $r = 6370\,\mathrm{km} + 400\,\mathrm{km} = 6{,}77\cdot10^{6}\,\mathrm{m}$, $v = \sqrt{\dfrac{G M}{r}} = \sqrt{\dfrac{6{,}67\cdot10^{-11} \cdot 5{,}97\cdot10^{24}}{6{,}77\cdot10^{6}}}\,\mathrm{m/s} \approx 7670\,\mathrm{m/s} = 7{,}67\,\mathrm{km/s}$.
+
 :::simboli
 F_\mathrm{g} | gravitacijska sila | F_\mathrm{g} = \frac{G m M}{r^2} | N
 F_\mathrm{c} | centripetalna sila | F_\mathrm{c} = \frac{m v^2}{r} | N

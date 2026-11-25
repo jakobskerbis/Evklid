@@ -208,6 +208,18 @@ Danes ista ideja teče v tvojem telefonu: atomske ure v satelitih štejejo nihaj
 ~ Pozabil si neposredni skok z $-1\,\mathrm{eV}$ na $-10\,\mathrm{eV}$, ki da $9\,\mathrm{eV}$.
 > Razlike: $-1 - (-4) = 3\,\mathrm{eV}$, $-4 - (-10) = 6\,\mathrm{eV}$, $-1 - (-10) = 9\,\mathrm{eV}$. Vsak par nivojev da svojo črto.
 
+? Elektron v vodikovem atomu preskoči z nivoja $n = 3$ na $n = 2$. Kolikšna je valovna dolžina izsevanega fotona? Vzemi $hc = 1240\,\mathrm{eV\,nm}$ in rezultat vpiši v nanometrih.
+= 656 nm | 2
+~ 1,89 | To je energija fotona v eV. Valovno dolžino dobiš iz $\lambda = \dfrac{hc}{W_f}$.
+~ 365 | Uporabil si samo energijo nivoja $n = 2$. Foton nosi razliko $E_3 - E_2$.
+> $E_3 = -\dfrac{13{,}6}{9}\,\mathrm{eV} = -1{,}51\,\mathrm{eV}$, $E_2 = -3{,}40\,\mathrm{eV}$, $W_f = 1{,}89\,\mathrm{eV}$. $\lambda = \dfrac{1240\,\mathrm{eV\,nm}}{1{,}89\,\mathrm{eV}} \approx 656\,\mathrm{nm}$: rdeča Balmerjeva črta.
+
+? Koliko energije potrebujemo, da elektron z nivoja $n = 2$ popolnoma odtrgamo od vodikovega atoma? Rezultat vpiši v eV.
+= 3,40 eV | 0,01
+~ 13,6 | To je ionizacijska energija iz osnovnega stanja $n = 1$. Elektron na $n = 2$ je vezan šibkeje.
+~ 10,2 | To je energija za prehod z $n = 1$ na $n = 2$, ne za odtrganje.
+> Odtrgan elektron ima energijo $0$. Potrebujemo $0 - E_2 = \dfrac{13{,}6\,\mathrm{eV}}{4} = 3{,}40\,\mathrm{eV}$.
+
 :::simboli
 E_n | energija n-tega nivoja vodika | E_n = -\frac{13{,}6\,\mathrm{eV}}{n^2} | eV
 n | zaporedna številka energijskega nivoja | | – | n = 1, 2, 3, …
