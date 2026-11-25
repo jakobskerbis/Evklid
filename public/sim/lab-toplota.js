@@ -589,6 +589,7 @@ export function labFaze(el) {
   function record(isAuto) {
     const r = B.readT();
     if (!Number.isFinite(r.value)) return;
+    if (zap.obnovljeno) (meas.length = 0), table.clear(); // obnovljene meritve so od prejšnjega obiska: nova čaša, nov niz
     meas.push([B.t / 60, r.value]);
     table.add({ t: minSek(B.t), T: fixed(r.value, 1), v: B.stanje }, { quiet: isAuto });
     if (!isAuto && B.polozaj === "dno" && B.Pk > 20 && !asked.has("dno-hint")) asked.add("dno-hint"), log.push("Sonda se dotika dna, ki je na kuhalniku toplejše od vode. Termometer kaže preveč.", "warn");
@@ -716,7 +717,7 @@ export function labOhlajanje(el) {
   const qBox = h("div");
   const meas = [[], [], []];
   const auto = { on: true, every: 60, next: 60 };
-  let speed = 60, asked = false, imena = [null, null, null]; // imena posod ob nalivanju (tudi za obnovljene meritve)
+  let speed = 60, asked = false, imena = [null, null, null], nalite = null; // imena in vrste posod ob nalivanju (tudi za obnovljene meritve)
   const opts = [["", "brez posode"], ...Object.entries(SKODELICE).map(([k, x]) => [k, x.name])];
   const sels = [0, 1, 2].map((i) => select({ label: `posoda ${i + 1}`, options: opts, value: B.vrste[i], onChange: (v) => ((B.vrste[i] = v || null), draw()) }));
   const pourBtn = button(`Nalij čaj (${CAJ.T} °C, ${CAJ.m * 1000} g)`, () => pour(), "primary small");
@@ -743,6 +744,7 @@ export function labOhlajanje(el) {
     B.cups.forEach((c, i) => c && (B.th[i].Tp = c.T)); // sonda je takoj v čaju: zapis pri t = 0 ni prazen (sicer NaN, »1 izven grafa«)
     meas.forEach((m) => (m.length = 0));
     imena = B.vrste.map((v, i) => (B.cups[i] && v ? SKODELICE[v].name : null));
+    nalite = [...B.vrste];
     table.clear();
     auto.next = auto.every;
     record(true);
@@ -822,9 +824,13 @@ export function labOhlajanje(el) {
     svg.setAttribute("aria-label", `Tri posode s čajem: ${B.vrste.map((k, i) => `${i + 1} ${k ? SKODELICE[k].name : "brez posode"}`).join(", ")}.`);
   }
   zap.vezi(table, {
-    get: () => ({ meas, imena }),
+    get: () => ({ meas, imena, vrste: nalite }),
     set: (d) => {
       if (!Array.isArray(d?.meas) || !Array.isArray(d.imena)) return;
+      // posode, v katere je bil čaj nalit: izbira in risba se ujemata z obnovljenimi meritvami
+      const vrste = Array.isArray(d.vrste) ? d.vrste : d.imena.map((n) => Object.keys(SKODELICE).find((k) => SKODELICE[k].name === n)); // starejši zapis: po imenu
+      vrste.slice(0, 3).forEach((v, i) => sels[i].set(Object.hasOwn(SKODELICE, v ?? "") ? v : ""));
+      nalite = [...B.vrste];
       d.meas.slice(0, 3).forEach((m, i) => Array.isArray(m) && meas[i].push(...m.filter((p) => Array.isArray(p) && p.every(Number.isFinite))));
       imena = [0, 1, 2].map((i) => (typeof d.imena[i] === "string" ? d.imena[i] : null));
       if (zadnji(meas.flat(), (p) => p[0]) >= 20) vprasaj();

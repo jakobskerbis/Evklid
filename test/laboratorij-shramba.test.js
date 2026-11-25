@@ -143,4 +143,63 @@ test("lab in a browser: locked conclusion, measurements survive reopening and re
     assert.deepEqual(errs, []);
     await ctx.close();
   });
+
+  // Pregled #1052: pokvarjen zapis, menjava profila, obnova posod (ohlajanje) in nov niz po obnovi (faze).
+  await t.test("corrupt saved data is forgotten and the lab is rebuilt; after a profile switch nothing is saved", async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const { p, errs } = await odpri(ctx, base);
+    const r = await p.evaluate(async () => {
+      localStorage.setItem("evklid.lab.meritve.0.test", JSON.stringify({ v: 1, seed: 4, rows: [{ a: "1" }, null, "x"], meas: "pokvarjeno" }));
+      const el = document.createElement("div");
+      el.dataset.labId = "test";
+      let znova = 0;
+      el._labZnova = () => znova++;
+      document.body.append(el);
+      const zap = window.lab.shramba(el), t = window.lab.dataTable([{ key: "a", label: "a" }]);
+      el.append(t);
+      zap.vezi(t, { get: () => ({}), set: (d) => d.meas.map((x) => x) });
+      await new Promise((ok) => setTimeout(ok, 20));
+      return { znova, key: localStorage.getItem("evklid.lab.meritve.0.test") };
+    });
+    assert.deepEqual(r, { znova: 1, key: null }, "pokvarjen zapis: pozabljen, poskus postavljen znova");
+    // menjava profila, ko je poskus še na zaslonu: meritve ne gredo k drugemu profilu
+    await p.evaluate(() => localStorage.setItem("studentId", "1"));
+    await p.evaluate(() => window.mount("lab-ohm"));
+    await meriOhm(p, [2]);
+    await p.evaluate(() => localStorage.setItem("studentId", "2"));
+    await meriOhm(p, [4]);
+    const k = await p.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("evklid.lab.meritve.")).sort());
+    assert.deepEqual(k, ["evklid.lab.meritve.1.lab-ohm"]);
+    const rows = await p.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.meritve.1.lab-ohm")).rows.length);
+    assert.equal(rows, 1, "po menjavi profila se zapis profila 1 ne spremeni");
+    assert.deepEqual(errs, []);
+    await ctx.close();
+  });
+
+  await t.test("lab-ohlajanje restores the cups the tea was poured into; lab-faze starts a new series after a restore", async () => {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    const { p, errs } = await odpri(ctx, base);
+    const rows = [{ t: "0", T0: "90,0", T1: "–", T2: "90,0" }, { t: "1", T0: "88,1", T1: "–", T2: "85,0" }];
+    const meas = [[[0, 90], [1, 88.1]], [], [[0, 90], [1, 85]]];
+    const imena = ["lonček iz stiropora s pokrovom", null, "emajliran kovinski lonček"];
+    const posode = () => p.evaluate(() => [1, 2, 3].map((i) => document.querySelector(`select[aria-label="posoda ${i}"]`).value));
+    await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.0.lab-ohlajanje", JSON.stringify(d)), { v: 1, seed: 2, rows, meas, imena, vrste: ["stiropor", null, "kovina"] });
+    await p.evaluate(() => window.mount("lab-ohlajanje"));
+    assert.deepEqual(await posode(), ["stiropor", "", "kovina"]);
+    assert.match(await p.locator("svg.lab-top-ohl").getAttribute("aria-label"), /1 lonček iz stiropora s pokrovom, 2 brez posode, 3 emajliran kovinski lonček/);
+    // zapis pred to popravo (brez vrst): posode po imenih
+    await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.0.lab-ohlajanje", JSON.stringify(d)), { v: 1, seed: 2, rows, meas, imena });
+    await p.evaluate(() => window.mount("lab-ohlajanje"));
+    assert.deepEqual(await posode(), ["stiropor", "", "kovina"]);
+    // faze: ročni zapis po obnovi začne nov niz (ne doda vrstice k meritvam prejšnjega obiska)
+    await p.evaluate(() => localStorage.setItem("evklid.lab.meritve.0.lab-faze", JSON.stringify({ v: 1, seed: 3, rows: [{ t: "0:00", T: "-15,0", v: "led" }, { t: "5:00", T: "0,0", v: "led in voda" }], meas: [[0, -15], [5, 0]] })));
+    await p.evaluate(() => window.mount("lab-faze"));
+    assert.equal(await p.locator(".lab-table tbody tr").count(), 2);
+    await p.waitForFunction(() => /\d/.test(document.querySelector('[aria-label="termometer"] .lab-lcd-val')?.textContent || "")); // termometer že kaže
+    await p.getByRole("button", { name: "Zapiši meritev", exact: true }).click();
+    assert.equal(await p.locator(".lab-table tbody tr").count(), 1);
+    assert.equal(await p.locator(".lab-obnova").count(), 0);
+    assert.deepEqual(errs, []);
+    await ctx.close();
+  });
 });
