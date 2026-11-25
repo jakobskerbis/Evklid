@@ -40,3 +40,7 @@ import Evklid.Lekcije.MAT_SS_3.SkalarniProdukt
 import Evklid.Lekcije.MAT_SS_3.StozniceVPremaknjeniLegiInTangente
 import Evklid.Lekcije.MAT_SS_3.VektorjiVGeometriji
 import Evklid.Lekcije.MAT_SS_3.VektorjiVRavniniInProstoru
+import Evklid.Lekcije.MAT_SS_3.GrafPolinoma
+import Evklid.Lekcije.MAT_SS_3.Polinomi
+import Evklid.Lekcije.MAT_SS_3.SinusniInKosinusniIzrek
+import Evklid.Lekcije.MAT_SS_3.TrigonometrijskeEnacbe
