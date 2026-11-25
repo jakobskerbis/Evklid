@@ -35,8 +35,8 @@ function veljavenDokaz(d, vrsta, dokaz) {
   const meja = MOTORJI[d.motor];
   if (!meja || !Object.hasOwn(MOTORJI, d.motor)) return null;
   // Leanov »drži« šteje samo z imenovanim izrekom (izvor dokaza), sicer ga ne moremo izslediti. Leanov »ne drži«
-  // (protiprimer) šteje tudi brez izreka: napake ne skrijemo.
-  if (d.motor === "lean" && d.holds === true && !(dokaz && niz(dokaz.izrek) && dokaz.izrek)) return null;
+  // (protiprimer) in najdena manjkajoča rešitev štejeta tudi brez izreka: napake ne skrijemo.
+  if (d.motor === "lean" && d.holds === true && d.complete !== false && !(dokaz && niz(dokaz.izrek) && dokaz.izrek)) return null;
   const how = (MOC_NACINA[d.how] || 1) > MOC_NACINA[meja] ? meja : MOC_NACINA[d.how] ? d.how : "numeric";
   let complete = d.complete;
   if (complete === "formal" && d.motor !== "lean") complete = "exact";
@@ -116,7 +116,7 @@ export function napakeZapisa(t) {
       const meja = MOTORJI[d.motor];
       if (MOC_NACINA[d.how] && (!meja || MOC_NACINA[d.how] > MOC_NACINA[meja])) e.push(`dokaz ${i}: motor ${d.motor} ne sme navesti načina ${d.how}`);
       if (d.complete === "na" && S_POPOLNOSTJO.includes(t.vrsta)) e.push(`dokaz ${i}: pri vrsti ${t.vrsta} je popolnost del trditve (ne »na«)`);
-      if (d.motor === "lean" && d.holds === true && !(t.dokaz && t.dokaz.izrek)) e.push(`dokaz ${i}: Lean brez imena izreka`);
+      if (d.motor === "lean" && d.holds === true && d.complete !== false && !(t.dokaz && t.dokaz.izrek)) e.push(`dokaz ${i}: Lean brez imena izreka`);
     });
   if (t.dokaz != null && !(t.dokaz && niz(t.dokaz.izrek) && t.dokaz.izrek)) e.push("dokaz brez imena izreka");
   if (t.izid !== undefined && Array.isArray(t.dokazi) && t.izid !== izidTrditve(t)) e.push(`izid ${t.izid} se ne ujema z dokazi (${izidTrditve(t)})`);

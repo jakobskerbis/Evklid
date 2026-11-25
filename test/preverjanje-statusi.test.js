@@ -122,6 +122,7 @@ test("statusTrditve: več dokazov za isto trditev", () => {
   // Leanov protiprimer šteje tudi brez imena izreka
   const leanNe = { motor: "lean", holds: false, how: "formal", complete: "na" };
   assert.equal(statusTrditve([sympyNa, leanNe], "racun"), "napaka");
+  assert.equal(statusTrditve([sympyDa, { motor: "lean", holds: true, how: "formal", complete: false }], "enacba"), "napaka");
   assert.deepEqual(napakeZapisa(novaTrditev({ id: "a", besedilo: "2+2=5", zapis: "2+2=5", vrsta: "racun", dokazi: [leanNe] })), []);
   // brez vrste »na« ne velja kot popolnost
   assert.equal(statusTrditve([sympyNa]), "delno");
