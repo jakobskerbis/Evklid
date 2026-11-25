@@ -532,7 +532,7 @@ export function syncTestPlan(progress, studentId, view) {
   }
   if (plan && plan.eventId === next.id && plan.date === next.date && plan.path === next.path && (!next.units.length || plan.units.join() === next.units.join())) return plan;
   const units = next.units.length ? next.units : defaultUnits(progress.pathView(studentId, next.path));
-  return progress.setTestPlan(studentId, next.path, units, next.date, next.id) || plan;
+  return progress.setTestPlan(studentId, next.path, units, next.date, next.id, next.name) || plan;
 }
 
 // Uvoz (fotografija, .ics) k obstoječemu urniku: ure zamenja ali doda, dogodke doda brez podvojenih.

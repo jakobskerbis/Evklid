@@ -238,6 +238,7 @@ export const SEALED = [
   // binarno (sealBytes) v priprava_izvirniki in jih ta seznam ne zajame.
   { table: "priprave", cols: ["naslov"] },
   { table: "priprava_viri", cols: ["ime"] },
+  { table: "priprava_izseki", cols: ["naslov", "besedilo", "negotovo"] },
   // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
   // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
   // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).

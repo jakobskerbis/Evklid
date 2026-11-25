@@ -53,6 +53,7 @@ import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
+import { mountPoskusnaPola, simHistory } from "./poskusna-pola.js";
 import { mountAccounts } from "./accounts/index.js";
 import { emailList } from "./accounts/pilot-meja.js";
 import { passwordGate, gateNeeded } from "./gate.js";
@@ -117,6 +118,7 @@ import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
 import { createZdravje, razlogiAlarma } from "./zdravje.js";
+import { casStanje } from "./cas.js";
 import { startStiskaObvestila, mountStiske, prejemnikStarsa } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 import { createVrsta } from "./vrsta-ai.js";
@@ -327,7 +329,7 @@ export function createApp(store, opts = {}) {
   // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
   const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
   app.locals.pomnilnik = pomnilnik;
-  const stanje = () => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai: zdravje?.ai() ?? null, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null });
+  const stanje = () => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai: zdravje?.ai() ?? null, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null, cas: casStanje() });
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
     res.json(stanje());
@@ -2178,8 +2180,9 @@ export function createApp(store, opts = {}) {
     if (!key) return res.json({ key: null });
     const lang = taskLanguage(s.settings.language);
     const raven = examRaven(key, s.settings, String(req.query.raven || ""));
+    const info = examInfo(key, s.settings.school_system, lang);
     res.json({
-      ...examInfo(key, s.settings.school_system, lang),
+      ...info,
       ...localizeExamView(progress.pathView(s.id, key, null, raven), lang),
       defaultKey,
       defaultExam: examOf(defaultKey),
@@ -2187,6 +2190,8 @@ export function createApp(store, opts = {}) {
       openContest: progress.openContest(s.id, key),
       readiness: progress.examReadiness(s.id, key, raven),
       raven,
+      // Poskusne pole (server/poskusna-pola.js): zadnji rezultati za ta izpit in predmet.
+      sims: simHistory(store.db, s.id, info.exam, info.subject),
     });
   });
   // Pretekle pole NPZ in mature: samo povezave na ric.si (server/exam-papers-si.js), brez besedila pol.
@@ -2391,6 +2396,7 @@ export function createApp(store, opts = {}) {
   mountGradiva(app, store, { loadStudent, accounts, leagues }); // povzetek na eni strani, zvočni povzetek, delovni listi
   mountKviz(app, store, { loadStudent, leagues }); // kviz v živo za razred
   mountSkillChecks(app, store, { loadStudent }); // šibke točke: »Preveri se« v učbeniku in naše pole
+  mountPoskusnaPola(app, store, { loadStudent }); // poskusni izpit na naši poli (čas, točkovnik, rezultat po temah)
   mountGraphs(app, store, { loadStudent });
   mountGames(app, store, { loadStudent, progress, avatars, knowledge });
   mountDailyPuzzle(app, store, { loadStudent, leagues, ...(opts.dailyNow ? { now: opts.dailyNow } : {}) }); // dnevna uganka in lestvica po času
@@ -2406,7 +2412,7 @@ export function createApp(store, opts = {}) {
   mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });
   // Vaja iz testa ali domače naloge (faza 1): veščine nalog → naše naloge iz Vadnice; strani iz iste meje kot zapiski.
   mountVajaIzLista(app, store, { loadStudent, usage, progress, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, ...(opts.vajaPickFn ? { pickFn: opts.vajaPickFn } : {}) });
-  mountPriprave(app, store, { loadStudent, ...(opts.pripravaNow ? { now: opts.pripravaNow } : {}) }); // priprava na test iz zapiskov (server/priprava/)
+  mountPriprave(app, store, { loadStudent, log: opts.log || console, ...(opts.pripravaNow ? { now: opts.pripravaNow } : {}) }); // priprava na test iz zapiskov (server/priprava/)
 
   // --- poraba AI ---
   // Poraba AI za vse profile: brez računov samo na računalniku, kjer teče strežnik

@@ -7,6 +7,8 @@
 // ≥ 400, vodoravno drsenje in vidne neprevedene ključe (npr. »nav.path«).
 // Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon|racuni]
 //   [--brskalnik chromium|webkit] [--jezik sl|en|de|it|hu]
+//   [--zaslon ŠxV] [--dotik] [--mobilno] [--tema temna] [--meritve] (druge naprave)
+//   [--naprave [seznam]] (vse naprave in legi naenkrat, s kazalom: scripts/posnetki-naprave.cjs)
 // (--samo: en del, CI jih zažene tri hkrati; računi tečejo samo brez --samo ali z --samo racuni).
 // --brskalnik webkit (#11): Safarijev pogon, telefon s profilom iPhone 13 (390×664, dotik); v CI vsako noč
 // (.github/workflows/matrika-nocna.yml), ne ob vsakem PR.
@@ -26,6 +28,14 @@ const { tinyPdf, SAMPLE } = require("../test/fixtures/tiny-pdf.cjs");
 
 const ROOT = path.join(__dirname, "..");
 const args = process.argv.slice(2);
+// --naprave [tel-390,ipad-820,…]: vse naprave in obe legi naenkrat (scripts/posnetki-naprave.cjs), z istimi preverjanji.
+if (args.includes("--naprave")) {
+  const i = args.indexOf("--naprave");
+  const izbor = args[i + 1] && !args[i + 1].startsWith("--") ? ["--naprave", args[i + 1]] : [];
+  const ostalo = args.filter((a, j) => j !== i && !(izbor.length && j === i + 1));
+  const r = require("node:child_process").spawnSync(process.execPath, [path.join(__dirname, "posnetki-naprave.cjs"), ...izbor, ...ostalo], { stdio: "inherit" });
+  process.exit(r.status ?? 1);
+}
 const arg = (name) => {
   const i = args.indexOf(name);
   return i >= 0 ? args[i + 1] : null;
@@ -47,6 +57,26 @@ const NAPRAVA = {
 };
 // Pomešan jezik (č, š, ž zunaj lekcije pri tujem jeziku): true = napaka, false = samo opozorilo (stanje na main 25. 11. 2026).
 const JEZIK_STROGO = false;
+// Druge naprave (scripts/posnetki-naprave.cjs, zunanji pregled 25. 11. 2026): --zaslon ŠxV zamenja velikost okna
+// obeh tokov, --dotik vklopi dotik, --mobilno mobilni pogled (meta viewport). Brez njih ostane 1280×800 in 360×740.
+const ZASLON = (() => {
+  const m = /^(\d{3,4})x(\d{3,4})$/.exec(arg("--zaslon") || "");
+  return m ? { width: Number(m[1]), height: Number(m[2]) } : null;
+})();
+if (arg("--zaslon") && !ZASLON) throw new Error("--zaslon: npr. 390x844");
+const DOTIK = args.includes("--dotik");
+const MOBILNO = args.includes("--mobilno");
+// --tema temna: sistemska temna tema (privzeti način videza je »system«, public/theme.js).
+const TEMNA = arg("--tema") === "temna";
+// --meritve: ob vsakem posnetku zapiše v <posnetki>/meritve.jsonl premajhne cilje za dotik, odrezano besedilo in
+// kršitve axe-core (če je nameščen). To so opombe za pregled, ne napake: izhod testa se zaradi njih ne spremeni.
+const MERITVE = args.includes("--meritve") && SHOTS;
+let AXE = null;
+if (MERITVE) {
+  try {
+    AXE = fs.readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
+  } catch {}
+}
 const T0 = Date.now();
 
 const problems = []; // { where, what }
@@ -160,9 +190,10 @@ function answersFor(a) {
 let KEYS = [];
 async function newPage(browser, phone, label, base) {
   const ctx = await browser.newContext({
-    viewport: phone ? { width: 360, height: 740 } : { width: 1280, height: 800 },
-    hasTouch: phone,
-    isMobile: phone,
+    viewport: ZASLON || (phone ? { width: 360, height: 740 } : { width: 1280, height: 800 }),
+    hasTouch: phone || DOTIK,
+    isMobile: phone || MOBILNO,
+    colorScheme: TEMNA ? "dark" : "light",
     deviceScaleFactor: 1,
     // WebKit na telefonu: iPhone 13 (zaslon, dotik, uporabniški niz Safarija); posnetki ostanejo v merilu 1.
     ...(phone && WEBKIT ? { ...playwright.devices["iPhone 13"], deviceScaleFactor: 1 } : {}),
@@ -308,7 +339,63 @@ async function screen(p, name) {
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
+    if (MERITVE) await meritve(p, path.basename(file, ".png"));
   }
+}
+// Meritve za zunanji pregled (scripts/posnetki-naprave.cjs). To so kandidati za ročni pregled, ne napake:
+// - cilji pod 24 × 24 px brez izjem WCAG 2.2 (2.5.8): izjema za razmik (krog s premerom 24 px okoli cilja ne seka
+//   kroga drugega cilja) in za cilje v vrstici besedila; dokončno sodbo da axe-core (pravilo target-size, wcag22aa);
+// - na dotik (--dotik) cilji pod 40 px (docs/pregled.md: »touch targets ≥ 40 px«), štetje različnih elementov;
+// - besedilo, ki ga rob odreže (overflow hidden/clip, brez tropičja), brez .sr-only in brez namenoma drsnih vrstic;
+// - kršitve axe-core (wcag2a, wcag21a, wcag2aa, wcag21aa, wcag22aa), če je axe-core nameščen.
+async function meritve(p, posnetek) {
+  const m = await p
+    .evaluate((dotik) => {
+      const vis = (el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 2 && r.height > 2 && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth && getComputedStyle(el).visibility !== "hidden" && !el.closest("[hidden],[inert],[aria-hidden=true],.sr-only");
+      };
+      const ime = (el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : el.classList[0] ? "." + el.classList[0] : ""}${(el.getAttribute("aria-label") || el.innerText || "").trim() ? ` »${(el.getAttribute("aria-label") || el.innerText).trim().slice(0, 24)}«` : ""}`;
+      const cilji = [...document.querySelectorAll("button, a[href], input:not([type=hidden]), select, [role=button], [role=tab], [role=switch]")].filter(vis);
+      const sredisca = cilji.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { el, x: r.left + r.width / 2, y: r.top + r.height / 2, r };
+      });
+      // Cilj v vrstici besedila (povezava v stavku): izjema 2.5.8.
+      const vBesedilu = (el) => getComputedStyle(el).display === "inline" && [...(el.parentElement?.childNodes || [])].some((n) => n.nodeType === 3 && n.textContent.trim());
+      const pod24 = [];
+      const pod40 = [];
+      for (const c of sredisca) {
+        const { el, r } = c;
+        if (el.matches("input[type=checkbox], input[type=radio]") && el.closest("label")) continue; // cilj je oznaka
+        if (r.width < 24 || r.height < 24) {
+          if (vBesedilu(el)) continue;
+          // Izjema za razmik: krog s premerom 24 px okoli središča ne seka kroga (24 px) nobenega drugega cilja pod 24 px.
+          const majhen = (d) => d.r.width < 24 || d.r.height < 24;
+          const blizu = sredisca.some((d) => d !== c && !d.el.contains(el) && !el.contains(d.el) && Math.hypot(d.x - c.x, d.y - c.y) < (majhen(d) ? 24 : 12 + Math.min(d.r.width, d.r.height) / 2));
+          if (blizu) pod24.push(`${ime(el)} ${Math.round(r.width)}×${Math.round(r.height)}`);
+        } else if (dotik && (r.width < 40 || r.height < 40)) pod40.push(ime(el));
+      }
+      const odrezano = [];
+      for (const el of document.querySelectorAll("body *")) {
+        if (el.children.length || !vis(el) || !(el.textContent || "").trim()) continue;
+        const cs = getComputedStyle(el);
+        if (!/hidden|clip/.test(cs.overflowX) || cs.textOverflow === "ellipsis" || cs.webkitLineClamp !== "none") continue;
+        if (el.scrollWidth > el.clientWidth + 2) odrezano.push(ime(el));
+      }
+      return { cilji: cilji.length, pod24: [...new Set(pod24)].slice(0, 15), pod40: [...new Set(pod40)], odrezano: [...new Set(odrezano)].slice(0, 10) };
+    }, DOTIK || p.label === "tel")
+    .catch((e) => ({ napaka: e.message.slice(0, 120) }));
+  if (AXE) {
+    m.axe = await p
+      .evaluate(async (src) => {
+        if (!window.axe) (0, eval)(src);
+        const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag21a", "wcag2aa", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] });
+        return r.violations.map((v) => ({ id: v.id, vpliv: v.impact, n: v.nodes.length, primer: v.nodes[0]?.target?.join(" ") }));
+      }, AXE)
+      .catch((e) => [{ id: "axe-napaka", primer: e.message.slice(0, 120) }]);
+  }
+  fs.appendFileSync(path.join(SHOTS, "meritve.jsonl"), JSON.stringify({ posnetek, sirina: p.viewportSize().width, axeTekel: !!AXE, ...m }) + "\n");
 }
 // Mehurček inštruktorja (public/okna.js) ne sme prekriti gumba, povezave ali polja (primerjava z Astro 24. 11. 2026:
 // prekrit X na pasu, gumb za pripenjanje v poskusu). Mesto popravi v 400 ms po menjavi pogleda, zato počakamo.
@@ -1142,6 +1229,26 @@ async function examsView(p, label) {
   await expectVisible(p, "#exams-content .exam-ready", "NPZ in matura: pripravljenost");
   await expectVisible(p, '#exam-papers .pp-row a[href^="https://www.ric.si/mma/"]', "pretekle pole");
   await screen(p, `npz-matura-pole-${label}`);
+  // Poskusni izpit na naši poli (public/our-paper.js openExamSim): uvod → pisanje z uro → ocena po točkovniku →
+  // rezultat po temah; po zaprtju je rezultat na strani (Tvoje poskusne pole).
+  await click(p, "#exam-papers .pp-sim", { wait: 500 });
+  await expectVisible(p, ".pv.op-sim [data-sim-start]", "poskusni izpit: uvod", 8000);
+  await screen(p, `poskusni-izpit-uvod-${label}`);
+  await click(p, ".pv.op-sim [data-sim-start]", { wait: 300 });
+  await expectVisible(p, ".pv.op-sim .op-timer", "poskusni izpit: ura");
+  if (await p.locator(".pv.op-sim .op-sol, .pv.op-sim [data-op-show]").count()) throw new Error("poskusni izpit: rešitve so vidne med pisanjem");
+  await screen(p, `poskusni-izpit-pisanje-${label}`);
+  await click(p, ".pv.op-sim [data-sim-finish]", { wait: 300 });
+  await expectVisible(p, ".pv.op-sim .op-pick [data-sim-pt]", "poskusni izpit: ocena po točkovniku");
+  await click(p, ".pv.op-sim .op-pick [data-sim-pt]:last-child", { wait: 100 });
+  await screen(p, `poskusni-izpit-ocena-${label}`);
+  await click(p, ".pv.op-sim [data-sim-save]", { wait: 800 });
+  await expectVisible(p, ".pv.op-sim .op-sim-result", "poskusni izpit: rezultat", 8000);
+  await screen(p, `poskusni-izpit-rezultat-${label}`);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre poskusnega izpita");
+  await expectVisible(p, "#exams-content .exam-sims .sim-list li", "Tvoje poskusne pole", 8000);
   await click(p, "#exams-content [data-er-practice]", { wait: 500 });
   await expectVisible(p, "#view-topic #practice .task", "vaja šibke teme");
   await click(p, "#back-to-path", { wait: 300 });
@@ -1689,6 +1796,11 @@ async function desktop(browser, app) {
   // preveri tudi, da zgodovina ne odpelje iz aplikacije.
   await step(p, "izpiti", async () => {
     const id = await p.evaluate(() => localStorage.getItem("studentId"));
+    // Tuji sistem velja samo za ta korak: telefonski del nadaljuje z istim profilom (prej so bili telefonski
+    // posnetki zato v indijskem učnem načrtu, zunanji pregled 25. 11. 2026). Prejšnje nastavitve vrnemo v finally.
+    // Cele nastavitve: preklop na IN-CBSE počisti tudi study_program, study_course in subject (server/settings.js).
+    p.prejsnjiId = id;
+    p.prejsnjiSistem = await p.evaluate(async (id) => (await (await fetch(`/api/students/${id}`)).json()).settings || null, id);
     await p.evaluate(async (id) => {
       await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { school_system: "IN-CBSE", educational_track: "SREDNJA_SOLA", curriculum_level: "Class 11", language: "sl" } }) });
     }, id);
@@ -1711,6 +1823,12 @@ async function desktop(browser, app) {
     const title = (await p.locator("#view-textbook .tb-title").innerText()).trim();
     if (title !== topic) throw new Error(`»Celotna lekcija« odpre »${title}« namesto »${topic}«`);
   });
+  if (p.prejsnjiSistem)
+    await p
+      .evaluate(async ([id, settings]) => {
+        await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings }) });
+      }, [p.prejsnjiId, p.prejsnjiSistem])
+      .catch((e) => problem("pc izpiti", `nastavitev šolskega sistema ni vrnjena: ${e.message.slice(0, 100)}`));
   await p.context().close();
 }
 
@@ -2364,7 +2482,9 @@ async function tujJezik(browser, app, phone) {
   if (!["chromium", "webkit"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium ali webkit (ne »${BRSKALNIK}«)`);
   if (!NAPRAVA[JEZIK]) throw new Error(`--jezik: ${Object.keys(NAPRAVA).join(", ")} (ne »${JEZIK}«)`);
   if (JEZIK !== "sl" && ONLY === "racuni") throw new Error("--jezik: računi se preverjajo samo v slovenščini");
-  const browser = await playwright[BRSKALNIK].launch();
+  // Z --zaslon (scripts/posnetki-naprave.cjs) teče Chromium v slovenščini: sicer polje za datum kaže mm/dd/llll
+  // in zunanji recenzent to prijavi kot napako lokalizacije (pregled 3, PR #1079). Brez --zaslon kot prej.
+  const browser = await playwright[BRSKALNIK].launch(ZASLON && !WEBKIT ? { args: ["--lang=sl-SI"] } : {});
   try {
     if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
     const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik

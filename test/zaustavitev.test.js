@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import net from "node:net";
 import { spawn } from "node:child_process";
 import { DatabaseSync } from "node:sqlite";
 
@@ -182,6 +183,34 @@ test("npm start: SIGTERM procesu npm doseže strežnik, ki se čisto zaustavi (o
     try {
       process.kill(-npm.pid, "SIGKILL");
     } catch {}
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+// AUDIT-077: Express 5 ob napaki poslušanja pokliče povratni klic z napako (address() je null). Prej je sekundarni
+// TypeError (»reading 'port'«) zakril pravi vzrok; zdaj je v izpisu EADDRINUSE, izhod 1, brez »Evklid teče«.
+test("zasedena vrata: izpis pove EADDRINUSE, strežnik konča z 1 in ne javi uspešnega zagona", async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-vrata-"));
+  const zaseden = net.createServer();
+  await new Promise((resolve) => zaseden.listen(0, resolve));
+  const port = zaseden.address().port;
+  try {
+    const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_PDF: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_BACKUPS: "0", EVKLID_CAS: "0" };
+    for (const k of ["EVKLID_DATA_KEY", "NODE_ENV", "EVKLID_BASE_URL", "RENDER", "EVKLID_ADMIN_EMAILS", "RESEND_API_KEY"]) delete env[k];
+    const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { env, stdio: ["ignore", "pipe", "pipe"] });
+    let out = "";
+    let err = "";
+    srv.stdout.on("data", (d) => (out += d));
+    srv.stderr.on("data", (d) => (err += d));
+    const ubij = setTimeout(() => srv.kill("SIGKILL"), 30_000);
+    const code = await new Promise((resolve) => srv.on("close", (c) => resolve(c))); // close: stderr do konca prebran
+    clearTimeout(ubij);
+    assert.equal(code, 1, `izhod ${code}\n${err}`);
+    assert.match(err, /EADDRINUSE/);
+    assert.doesNotMatch(err, /reading 'port'/);
+    assert.doesNotMatch(out, /Evklid teče/);
+  } finally {
+    zaseden.close();
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });

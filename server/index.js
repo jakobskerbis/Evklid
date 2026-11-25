@@ -56,7 +56,14 @@ process.on("uncaughtException", (err, origin) => {
   process.exit(1);
 });
 
-const server = app.listen(port, () => {
+const server = app.listen(port, (err) => {
+  // Express 5 pokliče ta povratni klic tudi ob napaki poslušanja (npr. zasedena vrata, EADDRINUSE); takrat je
+  // server.address() null. Izpišemo pravi vzrok in končamo, brez zagonskih opravil (AUDIT-077).
+  if (err) {
+    console.error(`[evklid] strežnik ne more poslušati na vratih ${port}:`, err);
+    zdravje?.sesutje(err, `listen_${err.code || "napaka"}`);
+    process.exit(1);
+  }
   // dejanska vrata (PORT=0: izbere jih sistem; testi jih preberejo iz te vrstice, naključna vrata so trčila z drugimi)
   console.log(`Evklid teče na http://localhost:${server.address().port}`);
   console.log(isMockMode() ? "Preizkusni način (brez API ključa)." : `Model: ${MODEL}`);

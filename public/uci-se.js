@@ -7,6 +7,7 @@ import { t } from "./i18n-osnova.js";
 import { stopnja } from "./stopnja.js";
 import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
+import { cuvaj3d } from "./3d/vgrajeno.js";
 
 export const UCI_TABS = ["textbook", "lab", "3d"];
 const KEY = "evklid.uciZavihek";
@@ -115,6 +116,8 @@ export function initUci(deps) {
     if (!full || e.origin !== location.origin || e.source !== full.frame.contentWindow) return;
     const msg = e.data || {};
     if (msg.tip === "zapri3d") close3d();
+    if (msg.tip === "pripravljen") full.cuvaj.pripravljen();
+    if (msg.tip === "napaka") full.cuvaj.napaka();
     // »Lekcija« v modelu: zapre okvir in odpre lekcijo; Nazaj iz nje znova odpre isti model (vrni = id modela).
     if (msg.tip === "lekcija" && LEKCIJA_ID.test(msg.id || "")) {
       close3d();
@@ -390,16 +393,19 @@ export function open3d(id, title = "", param = null) {
   prilagodi();
   vv?.addEventListener("resize", prilagodi);
   vv?.addEventListener("scroll", prilagodi); // iOS premakne vidni del (tipkovnica): okvir mu sledi
-  full = { el, frame, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
+  // Okvir se v 8 s ne oglasi (»pripravljen«): gumb »Zapri« čez okvir (public/3d/vgrajeno.js cuvaj3d).
+  const cuvaj = cuvaj3d(el, { zapri: close3d, t });
+  full = { el, frame, cuvaj, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
   D?.onOverlay?.(true);
   frame.focus();
 }
 
 function close3d() {
   if (!full) return false;
-  const { el, from, odjavi } = full;
+  const { el, from, odjavi, cuvaj } = full;
   full = null;
   odjavi();
+  cuvaj.ustavi();
   el.remove(); // okvir se uniči skupaj s prizorom (pomnilnik grafične kartice)
   document.body.classList.remove("uci-3d-odprto");
   D?.onOverlay?.(false);

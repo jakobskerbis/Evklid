@@ -7,6 +7,8 @@ import express from "express";
 import { seal, unseal } from "../crypto-polje.js";
 import { cleanText } from "../settings.js";
 import { danIzbrisa } from "./ciscenje.js";
+import { uvoziVNiti, NapakaUvoza } from "./uvoz.js";
+import { shraniIzseke, VRSTE } from "./izseki.js";
 import {
   preveriDatoteko, shraniIzvirnik, preberiIzvirnik, lahkoShranim, zVarnimBrisanjem,
   MEJE, MIME, NAJVEC_BAJTOV, NAJVEC_VIROV, NAJVEC_PRIPRAV, NAJVEC_SKUPAJ, NAJVEC_HKRATI, zasedeno, prostorVsi,
@@ -45,6 +47,22 @@ function imeIz(req) {
   return cleanText(v, IME_MAX) || null;
 }
 
+const sklopiIz = (v) => {
+  try {
+    const a = JSON.parse(v || "[]");
+    return Array.isArray(a) ? a : [];
+  } catch {
+    return [];
+  }
+};
+
+const jsonIz = (v, privzeto) => {
+  try {
+    return v ? JSON.parse(v) : privzeto;
+  } catch {
+    return privzeto;
+  }
+};
 const virVen = (r) => ({
   id: r.id,
   vrsta: r.vrsta,
@@ -53,6 +71,22 @@ const virVen = (r) => ({
   ime: r.ime == null ? null : unseal(r.ime),
   izvirnik: !!r.ima_izvirnik,
   created_at: r.created_at,
+  // Obdelava (PR 3a): caka | obdelan | branje (fotografija ali skeniran PDF čaka na branje) | napaka
+  stanje: r.stanje || (r.vrsta === "slika" ? "branje" : "caka"),
+  strani: r.strani ?? null,
+  napaka: r.napaka ?? null,
+  opozorila: jsonIz(r.opozorila, []),
+  izsekov: r.izsekov ?? 0,
+});
+const izsekVen = (r) => ({
+  id: r.id,
+  vir_id: r.vir_id,
+  stran: r.stran,
+  zaporedje: r.zaporedje,
+  vrsta: r.vrsta,
+  naslov: r.naslov == null ? null : unseal(r.naslov),
+  besedilo: unseal(r.besedilo),
+  negotovo: r.negotovo == null ? [] : jsonIz(unseal(r.negotovo), []),
 });
 const pripravaVen = (r) => ({
   id: r.id,
@@ -62,6 +96,11 @@ const pripravaVen = (r) => ({
   zadnja_uporaba: r.zadnja_uporaba,
   izbris_dne: danIzbrisa(r),
   created_at: r.created_at,
+  // Načrt testa (PR 2b, server/priprava/aktivna.js): aktivna = »Priprava na test« v Vadnici in Urniku.
+  aktivna: !!r.aktivna,
+  pot: r.pot ?? null,
+  sklopi: sklopiIz(r.sklopi),
+  dogodek_id: r.dogodek_id ?? null,
   ...(r.virov !== undefined ? { virov: r.virov } : {}),
 });
 
@@ -69,7 +108,7 @@ const pripravaVen = (r) => ({
  * Poti pod /api/students/:id/priprave. loadStudent iz app.js (404 za neobstoječ profil); lastništvo profila preverijo
  * računi pred potjo. now(): ura (testi).
  */
-export function mountPriprave(app, store, { loadStudent, now = () => Date.now() }) {
+export function mountPriprave(app, store, { loadStudent, now = () => Date.now(), log = console }) {
   const db = store.db;
   // Izbris profila (DELETE /api/students/:id, store.deleteStudent) odnese priprave s kaskado; s secure_delete, da
   // šifrirani izvirniki ne ostanejo v prostih straneh baze (izbris računa: server/accounts/izbris.js).
@@ -85,12 +124,41 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
   const viriOd = (p) =>
     db
       .prepare(
-        `SELECT v.*, EXISTS (SELECT 1 FROM priprava_izvirniki i WHERE i.vir_id = v.id) AS ima_izvirnik
+        `SELECT v.*, EXISTS (SELECT 1 FROM priprava_izvirniki i WHERE i.vir_id = v.id) AS ima_izvirnik,
+           (SELECT COUNT(*) FROM priprava_izseki z WHERE z.vir_id = v.id) AS izsekov
          FROM priprava_viri v WHERE v.priprava_id = ? AND v.student_id = ? ORDER BY v.id`,
       )
       .all(p.id, p.student_id)
       .map(virVen);
   const celotna = (p) => ({ ...pripravaVen(db.prepare("SELECT * FROM priprave WHERE id = ?").get(p.id)), viri: viriOd(p) });
+
+  // Obdelava vira brez AI (PR 3a): besedilo, Word, PowerPoint, PDF z besedilom → izseki. Fotografije in skenirane
+  // strani PDF čakajo na branje (PR 3b). PDF bere ločena nit; hkrati največ OBDELAVE_HKRATI, sicer vir ostane »caka«
+  // in ga odjemalec obdela pozneje (POST …/viri/:vid/obdelaj).
+  let obdelujem = 0;
+  const OBDELAVE_HKRATI = 2;
+  const napakaVira = (vir, koda) => db.prepare("UPDATE priprava_viri SET stanje = 'napaka', napaka = ? WHERE id = ?").run(koda, vir.id);
+  async function obdelaj(vir, buf) {
+    if (vir.vrsta === "slika") {
+      db.prepare("UPDATE priprava_viri SET stanje = 'branje' WHERE id = ?").run(vir.id);
+      return;
+    }
+    if (obdelujem >= OBDELAVE_HKRATI) return;
+    obdelujem++;
+    try {
+      const r = await uvoziVNiti(vir.vrsta, buf);
+      const izseki = r.izseki;
+      const opozorila = [...r.opozorila, ...(r.brezBesedila.length ? [{ koda: "uvoz_brez_besedila", strani: r.brezBesedila.slice(0, 100) }] : [])];
+      // Samo skenirane strani (PDF brez besedila): čaka na branje fotografij.
+      const stanje = !izseki.length && r.brezBesedila.length ? "branje" : "obdelan";
+      shraniIzseke(db, { vir, izseki, strani: r.strani, opozorila, stanje, seal });
+    } catch (e) {
+      if (!(e instanceof NapakaUvoza)) throw e;
+      napakaVira(vir, e.code);
+    } finally {
+      obdelujem--;
+    }
+  }
 
   app.get("/api/students/:id/priprave", (req, res) => {
     const s = loadStudent(req, res);
@@ -198,7 +266,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
     vTeku.add(s.id);
     res.on("close", () => vTeku.delete(s.id));
     surovo(req, res, next);
-  }, (req, res) => {
+  }, async (req, res) => {
     // Znova po branju telesa: priprava je bila med nalaganjem morda izbrisana (drug zavihek, dnevno čiščenje).
     const s = req.priprava.s;
     const p = ena(s, req);
@@ -242,7 +310,16 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
       db.exec("ROLLBACK");
       throw e;
     }
+    try {
+      await obdelaj({ id: virId, priprava_id: p.id, student_id: s.id, vrsta: t.vrsta }, buf);
+    } catch (e) {
+      // Nepričakovana napaka branja: vir je shranjen, obdelava se lahko ponovi.
+      napakaVira({ id: virId }, "uvoz_napaka");
+      log.error?.(`[evklid] obdelava vira priprave: ${e?.name || "napaka"}`);
+    }
     const vir = viriOd(p).find((v) => v.id === virId);
+    // Vir ali priprava je bila med branjem izbrisana (drug zavihek, čiščenje).
+    if (!vir) return niVira(res);
     res.status(201).json({ vir });
   });
 
@@ -271,6 +348,52 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
       "Content-Security-Policy": "sandbox; default-src 'none'",
     });
     res.send(buf);
+  });
+
+  // Ponovna obdelava vira (vir »caka« ali »napaka«, ali po izboljšanem uvozu). Fotografije: 409 (branje je PR 3b).
+  app.post("/api/students/:id/priprave/:pid/viri/:vid/obdelaj", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    const v = enVir(s, p, req);
+    if (!v) return niVira(res);
+    if (v.vrsta === "slika") return res.status(409).json({ error: "Fotografije prebere branje zapiskov.", code: "priprava_branje" });
+    if (obdelujem >= OBDELAVE_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Obdelava že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
+    const buf = preberiIzvirnik(db, v.id);
+    if (!buf) return res.status(404).json({ error: "Izvirnika ni več.", code: "priprava_ni_izvirnika" });
+    try {
+      await obdelaj(v, buf);
+    } catch (e) {
+      napakaVira(v, "uvoz_napaka");
+      log.error?.(`[evklid] obdelava vira priprave: ${e?.name || "napaka"}`);
+    }
+    uporabljena(p);
+    res.json({ vir: viriOd(p).find((x) => x.id === v.id) || null });
+  });
+
+  // Izseki priprave (vsi viri ali en vir: ?vir=<id>; ?vrsta=<vrsta>), v vrstnem redu virov in zaporedja.
+  app.get("/api/students/:id/priprave/:pid/izseki", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    const where = ["priprava_id = ?", "student_id = ?"];
+    const args = [p.id, s.id];
+    if (req.query.vir !== undefined) {
+      const vid = idIz(req.query.vir);
+      if (!Number.isFinite(vid)) return res.status(400).json({ error: "Napačen vir." });
+      where.push("vir_id = ?");
+      args.push(vid);
+    }
+    if (req.query.vrsta !== undefined) {
+      if (!VRSTE.includes(String(req.query.vrsta))) return res.status(400).json({ error: "Napačna vrsta izseka." });
+      where.push("vrsta = ?");
+      args.push(String(req.query.vrsta));
+    }
+    const rows = db.prepare(`SELECT * FROM priprava_izseki WHERE ${where.join(" AND ")} ORDER BY vir_id, zaporedje`).all(...args);
+    uporabljena(p);
+    res.set("Cache-Control", "no-store").json({ izseki: rows.map(izsekVen) });
   });
 
   app.delete("/api/students/:id/priprave/:pid/viri/:vid", (req, res) => {
