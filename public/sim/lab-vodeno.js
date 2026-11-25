@@ -85,7 +85,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
   const cilj = () => {
     const k = mode === "vodeno" ? def.koraki[i] : null;
     if (!k) return null;
-    if (k.pokazi) return [...mount.querySelectorAll(k.pokazi)].at(-1) || null;
+    if (k.pokazi) return [...mount.querySelectorAll(".lab-q")].find((q) => k.pokazi.test(besedilo(q.querySelector(".lab-q-text")))) || null;
     return [...cilji][0] || null;
   };
 

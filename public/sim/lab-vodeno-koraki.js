@@ -4,7 +4,7 @@
 // bilo(re, vrsta?) ali je bilo v dnevniku tako sporočilo (od začetka vodenja), vrstice (meritve iz tabele, ključ je
 // glava stolpca brez oznak), zadnji(...re) kateri od vzorcev se ujema z najnovejšo takšno vrstico dnevnika (-1: noben),
 // sklep(re) ali je vprašanje »Sklep« z besedilom, ki se ujema z `re`, pravilno odgovorjeno.
-// `pokazi`: izbirnik elementa, do katerega skoči »Pokaži, kje« (sicer prva obkrožena kontrola).
+// `pokazi`: besedilo vprašanja »Sklep«, do katerega skoči »Pokaži, kje« (sicer prva obkrožena kontrola).
 // `poudari`: začetek besedila gumba, stikala ali oznake kontrole, ki jo korak obkroži. `zakaj` se pokaže, ko je korak
 // opravljen. Besedila so slovenska kot vse besedilo poskusov (lab-*.js).
 
@@ -161,7 +161,7 @@ export const KORAKI = {
         kaj: "Pod grafom je vprašanje »Sklep«. Poglej točke in črtkano premico ter izberi pravilen odgovor.",
         namig: "Če napetost podvojiš, kaj se zgodi s tokom?",
         zakaj: "Naklon premice je 1/R. Iz njega izračunaš upor in ga primerjaš z oznako na uporniku.",
-        pokazi: ".lab-q",
+        pokazi: /za upornik/,
         done: (c) => c.sklep(/za upornik/),
       },
       {
@@ -195,7 +195,7 @@ export const KORAKI = {
         kaj: "Pod grafom je novo vprašanje »Sklep« za žarnico. Izberi pravilen odgovor.",
         namig: "Primerjaj U/I v tabeli pri 2\u00a0V in pri 6\u00a0V.",
         zakaj: "Upor kovine raste s temperaturo. Zato graf žarnice ni premica.",
-        pokazi: ".lab-q",
+        pokazi: /za žarnico/,
         done: (c) => c.sklep(/za žarnico/),
       },
     ],
@@ -236,7 +236,7 @@ export const KORAKI = {
         kaj: "Poglej graf h(t²) in račun pod njim, nato odgovori na vprašanje »Sklep«.",
         namig: "Iz h = ½gt² sledi, da je naklon premice h(t²) enak ½g.",
         zakaj: "Ker so točke na premici, je pospešek stalen. Dvakratnik naklona je težni pospešek, približno 9,8\u00a0m/s².",
-        pokazi: ".lab-q",
+        pokazi: /naklon premice/,
         done: (c) => c.sklep(/naklon premice/),
       },
       {
@@ -259,7 +259,7 @@ export const KORAKI = {
         kaj: "Odgovori na drugo vprašanje »Sklep«.",
         namig: "Kaj se zgodi s silo zračnega upora, ko hitrost raste?",
         zakaj: "Ko je upor enak teži, filter ne pospešuje več in pada s stalno končno hitrostjo.",
-        pokazi: ".lab-q",
+        pokazi: /filter za kavo/,
         done: (c) => c.sklep(/filter za kavo/),
       },
     ],

@@ -238,7 +238,7 @@ const IGRA = {
       await klik("Dodaj 2 kapljici");
       await vpisi("odčitek birete v mililitrih", r1);
       await klik("Zapiši");
-      await dokler(() => /Začetni odčitek/.test(document.querySelector(".lab-log").textContent));
+      await dokler(() => /Začetni odčitek/.test(zadnjiDnevnik()));
       const n = vrstic();
       for (let k = 0; k < 20 && vrstic() === n; k++) {
         // kapljica mora v erlenmajerico, preden je končni odčitek veljaven
