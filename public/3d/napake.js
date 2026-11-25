@@ -2,7 +2,7 @@
 // povezavo«, tudi star Safari (SyntaxError), premalo pomnilnika na iPadu in napaka v naši kodi, zato učenec ni vedel,
 // kaj storiti. Brez three.js (preizkus v Node: test/3d-napake.test.js).
 import { kakovostNaprave } from "./modeli.js";
-import { jsonAliNic } from "../odgovor.js";
+import { jsonAliNic, zavrzi } from "../odgovor.js";
 
 // Sporočila brskalnikov, ko modul ali datoteka ne pride čez omrežje (Chrome, Safari, Firefox).
 const OMREZJE = /failed to fetch|load failed|networkerror|network error|importing a module script failed|error loading dynamically imported module|failed to fetch dynamically imported module|network connection was lost|internet connection appears to be offline|err_internet_disconnected/i;
@@ -91,15 +91,35 @@ export async function osveziMimoStarih({ okno = typeof window !== "undefined" ? 
 // Pred three.js (stran.js, sim.js): ali brskalnik prebere statični blok razreda (podpora.js). Star Safari uvoza z
 // neznano sintakso ne loči od napake povezave (»Importing a module script failed«), zato preverimo, ali se datoteka
 // prenese: če se, je kriv brskalnik ({ koda: "brskalnik" } → a3.oldBrowser), sicer ostane napaka povezave.
-export async function razlogPodpore(err, prenese = () => fetch(new URL("./podpora.js", import.meta.url), { cache: "no-store" }).then((r) => r.ok, () => false)) {
+const prenesePodporo = () =>
+  fetch(new URL("./podpora.js", import.meta.url), { cache: "no-store" }).then(
+    (r) => (zavrzi(r), r.ok), // samo status; telo zavržemo (public/odgovor.js)
+    () => false,
+  );
+export async function razlogPodpore(err, prenese = prenesePodporo) {
   if (err?.name === "SyntaxError" || (await prenese())) return Object.assign(new Error("Brskalnik ne prebere statičnega bloka razreda", { cause: err }), { koda: "brskalnik" });
   return err;
 }
+// Pred odločitvijo »prestar brskalnik« uvoz enkrat ponovimo (kratek izpad povezave na sodobnem brskalniku); drugi poskus
+// ima drug naslov, ker si brskalnik spodleteli uvoz lahko zapomni. SyntaxError je dokončen (brskalnik datoteko je prebral).
+export async function preveriPodporoZ({ uvozi = (n) => (n ? import("./podpora.js?znova=1") : import("./podpora.js")), prenese, cakaj = 400 } = {}) {
+  try {
+    return await uvozi(0);
+  } catch (err) {
+    if (err?.name !== "SyntaxError") {
+      await new Promise((r) => setTimeout(r, cakaj));
+      try {
+        return await uvozi(1);
+      } catch {}
+    }
+    throw await razlogPodpore(err, prenese);
+  }
+}
 let podpora = null;
 export function preveriPodporo() {
-  podpora ||= import("./podpora.js").catch(async (err) => {
+  podpora ||= preveriPodporoZ().catch((err) => {
     podpora = null; // ob napaki povezave naslednji poskus znova
-    throw await razlogPodpore(err);
+    throw err;
   });
   return podpora;
 }

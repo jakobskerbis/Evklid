@@ -85,6 +85,23 @@ test("podpora.js ima statični blok razreda; stran.js in sim.js ga uvozita pred 
   assert.ok(sim.indexOf("preveriPodporo()") > 0 && sim.indexOf("preveriPodporo()") < sim.indexOf('import("./pregledovalnik.js")'), "sim.js: preverjanje pred pregledovalnikom");
 });
 
+test("preveriPodporo: pred »prestar brskalnik« en ponovni uvoz (kratek izpad povezave)", async () => {
+  const { preveriPodporoZ } = await import("../public/3d/napake.js");
+  const omrezje = new TypeError("Importing a module script failed.");
+  // prvi uvoz pade, drugi uspe: ni napake
+  let klici = 0;
+  const ok = await preveriPodporoZ({ uvozi: async (n) => (klici++, n ? { podprto: true } : Promise.reject(omrezje)), prenese: async () => true, cakaj: 1 });
+  assert.deepEqual([ok.podprto, klici], [true, 2]);
+  // oba padeta, datoteka se prenese: star brskalnik
+  await assert.rejects(preveriPodporoZ({ uvozi: async () => Promise.reject(omrezje), prenese: async () => true, cakaj: 1 }), (e) => e.koda === "brskalnik");
+  // oba padeta, datoteka se ne prenese: napaka povezave
+  await assert.rejects(preveriPodporoZ({ uvozi: async () => Promise.reject(omrezje), prenese: async () => false, cakaj: 1 }), (e) => e === omrezje);
+  // SyntaxError: brez ponovnega poskusa
+  klici = 0;
+  await assert.rejects(preveriPodporoZ({ uvozi: async () => (klici++, Promise.reject(new SyntaxError("Unexpected token '{'"))), prenese: async () => false, cakaj: 1 }), (e) => e.koda === "brskalnik");
+  assert.equal(klici, 1);
+});
+
 test("preveriPodporo: uvoz, ki ne uspe, a se datoteka prenese, pomeni star brskalnik; brez prenosa ostane napaka povezave", async () => {
   const { razlogPodpore } = await import("../public/3d/napake.js");
   const omrezje = new TypeError("Importing a module script failed.");
