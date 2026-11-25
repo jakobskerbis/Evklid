@@ -1,48 +1,56 @@
-// Merjenje učinka v pilotu (j, 6. 11. 16:0x): kratek preizkus znanja na začetku in čez 14 dni ter vprašanje za starše
-// (in polnoletne imetnike računa), ali bi za Evklid plačali. Del »Pomagaj izboljšati Evklid« (server/pilot-naloge.js).
+// Merjenje učinka v pilotu (j, 6. 11. 16:0x; N-10, j 2026-11-25): preizkus znanja na začetku in čez 14 dni ter
+// vprašanje za starše (in polnoletne imetnike računa), ali bi za Evklid plačali. Del »Pomagaj izboljšati Evklid«
+// (server/pilot-naloge.js).
 //
-// Preizkus znanja: 6 nalog iz obstoječih generatorjev vadnice (server/practice), iz teme, ki se jo bo učenec učil
-// NASLEDNJO na svoji poti (še ni začeta, sicer še ni osvojena; nikoli osvojena), 2 lažji, 2 srednji, 2 težji (j, 6. 11.).
-// Kdor prvič reši vseh 6, takoj dobi še 3 težje naloge (raven 3 iz naslednje teme na poti, sicer iz iste) – brez tega
-// bi bil na stropu in napredka ne bi videli. Čez 14 dni ISTA sestava (z dodatnimi nalogami, če jih je imel), nove
-// naloge (druga semena). Skrbnik vidi primere s stropom (6/6 prvič) posebej, da ne popačijo povprečij.
-// Oceni koda (checkAnswer kot v kvizu), brez AI. En odgovor na nalogo, »Ne vem« šteje kot napačno. XP samo za
-// opravljen preizkus (enkrat na fazo), nikoli za rezultat; izid ne vpliva na napredek, ravni ali lige.
+// Preizkus znanja (N-10, načrt »Kakovost pred obsegom«): 12 nalog iz 12 sklopov Predmetnega izpitnega kataloga za
+// splošno maturo – matematika (osnovna raven), v dveh vzporednih oblikah A in B (isto mesto = ista tema, raven in tip
+// naloge, druga števila). Obliki sta zamrznjeni v content/pilot-preizkus/matura-mat.json (scripts/pilot-preizkus.js),
+// da se med pilotom ne spremenita. Polovica učencev začne z A in čez 14 dni reši B, polovica obratno (izmenično po vrsti
+// začetka), da razlika v težavnosti oblik ne popači napredka. Oceni koda (checkAnswer kot v kvizu), brez AI. En odgovor
+// na nalogo, »Ne vem« šteje kot napačno. XP samo za opravljen preizkus (enkrat na fazo), nikoli za rezultat; izid ne
+// vpliva na napredek, ravni ali lige. Prejšnji preizkus (6 nalog iz naslednje teme na poti) ostane v bazi kot
+// pre-v1/post-v1 (izvoz in izbris kot prej), v poročilu ga ni.
 //
 // Plačilo: enkrat, 14 dni po začetku pilota; »Ali bi plačal?« (Da / Mogoče / Ne / Raje ne povem) in pri Da ali Mogoče
 // še »Koliko na mesec?« (razponi v evrih ali Raje ne povem). Brez XP.
 //
-// Skrbnik vidi samo vsote brez imen in šele od MIN_GROUP odgovorov (povprečje pred in po, razlika pri istih učencih,
-// porazdelitev odgovorov o plačilu). Izvoz GDPR: tabeli imata student_id/parent_id (zasebnost.js exportOtherTables),
-// izbris profila ali računa ju pobriše (ON DELETE CASCADE).
-import { generateTask, publicTask } from "./practice/index.js";
+// Skrbnik vidi samo vsote brez imen in šele od praga odgovorov (povprečje pred in po pri istih učencih, po obliki in
+// vrstnem redu, po sklopih; porazdelitev odgovorov o plačilu). Izvoz GDPR: tabeli imata student_id/parent_id
+// (zasebnost.js exportOtherTables), izbris profila ali računa ju pobriše (ON DELETE CASCADE).
+import fs from "node:fs";
+import { publicTask } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
 import * as MATH from "../public/graph/math.js";
 import { ageOn, ADULT_AGE } from "./accounts/age.js";
 
-export const QUIZ_LEVELS = [1, 1, 2, 2, 3, 3];
-export const QUIZ_EXTRA = [3, 3, 3]; // ob 6/6 v prvem preizkusu
+export const QUIZ = JSON.parse(fs.readFileSync(new URL("../content/pilot-preizkus/matura-mat.json", import.meta.url), "utf8"));
+export const QUIZ_FORMS = ["A", "B"];
+export const QUIZ_LEN = QUIZ.slots.length;
 export const QUIZ_GAP_DAYS = 14;
 export const WTP_AFTER_DAYS = 14;
 export const WTP_PAY = ["yes", "maybe", "no", "skip"];
 export const WTP_AMOUNT = ["lt5", "5to10", "10to15", "15to20", "gt20", "skip"];
 const PHASES = ["pre", "post"];
-const ANSWER_TYPES = ["number", "fraction", "choice"]; // eno polje ali gumbi (brez koeficientov in slik)
+const otherForm = (f) => (f === "A" ? "B" : "A");
 
 export function migratePilotImpact(db) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS pilot_quiz (
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
-      phase TEXT NOT NULL,           -- pre | post
-      topic_id TEXT NOT NULL,
-      items TEXT NOT NULL,           -- JSON [{ seed, level, topic? }] (topic: dodatna naloga iz druge teme)
+      phase TEXT NOT NULL,           -- pre | post (prejšnji preizkus: pre-v1 | post-v1)
+      topic_id TEXT NOT NULL,        -- različica oblik (QUIZ.version); pri prejšnjem tema
+      items TEXT NOT NULL,           -- JSON: mesta v obliki [0..11]; pri prejšnjem [{ seed, level, topic? }]
       answers TEXT NOT NULL,         -- JSON [1 | 0 | -1 | null] (-1 = »Ne vem«, null = še brez odgovora)
       score INTEGER,                 -- pravilnih, ko je preizkus končan
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       finished_at TEXT,
+      form TEXT,                     -- A | B (NULL = prejšnji preizkus)
       PRIMARY KEY (student_id, phase)
     );
   `);
+  if (!db.prepare("PRAGMA table_info(pilot_quiz)").all().some((c) => c.name === "form")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN form TEXT");
+  // Prejšnji preizkus (pred N-10) se umakne pod pre-v1/post-v1: ostane v izvozu, nov preizkus začne znova.
+  db.prepare("UPDATE pilot_quiz SET phase = phase || '-v1' WHERE form IS NULL AND phase IN ('pre', 'post')").run();
   const hasParents = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get();
   if (hasParents)
     db.exec(`
@@ -66,45 +74,23 @@ const parse = (s, d) => {
 };
 const rowOf = (db, sid, phase) => db.prepare("SELECT * FROM pilot_quiz WHERE student_id = ? AND phase = ?").get(sid, phase);
 
-// Naloga preizkusa iz semena (ista naloga ob vsakem klicu).
-const taskOf = (row, i, lang) => {
-  const it = parse(row.items, [])[i];
-  return it ? generateTask(it.topic || row.topic_id, it.level, it.seed, lang) : null;
+// Naloga preizkusa: zamrznjena naloga oblike (kopija, da je klic ne spremeni).
+const taskOf = (row, i) => {
+  const t = QUIZ.forms[row?.form]?.[parse(row.items, [])[i]];
+  return t ? structuredClone(t) : null;
 };
 
-// Semena za nalogo, ki jo vmesnik pokaže v enem polju ali z gumbi, brez slike in brez ponovitve besedila.
-function pickItems(topicId, lang, levels = QUIZ_LEVELS, { tag = false, rand = () => Math.floor(Math.random() * 2 ** 31) } = {}) {
-  const seen = new Set();
-  const items = [];
-  for (const level of levels) {
-    let found = null;
-    for (let k = 0; k < 40 && !found; k++) {
-      const seed = rand();
-      let t;
-      try {
-        t = generateTask(topicId, level, seed, lang);
-      } catch {
-        continue;
-      }
-      if (!t || t.figure || !ANSWER_TYPES.includes(t.answer?.type) || seen.has(t.text)) continue;
-      seen.add(t.text);
-      found = tag ? { seed, level, topic: topicId } : { seed, level };
-    }
-    if (!found) return null;
-    items.push(found);
-  }
-  return items;
+// Oblika prvega preizkusa: izmenično po vrsti začetka (A, B, A, B …), da sta skupini »A nato B« in »B nato A« enako veliki.
+function firstForm(db) {
+  const n = db.prepare("SELECT COUNT(*) AS n FROM pilot_quiz WHERE phase = 'pre' AND form IS NOT NULL").get().n;
+  return QUIZ_FORMS[n % 2];
 }
-
-// Dodatne naloge (ob 6/6): iz naslednje teme, sicer iz iste; vrne null, če jih ni mogoče sestaviti.
-const extraItems = (topicId, nextId, lang) => (nextId && pickItems(nextId, lang, QUIZ_EXTRA, { tag: true })) || pickItems(topicId, lang, QUIZ_EXTRA, { tag: true });
-const isCeiling = (row) => parse(row.items, []).length > QUIZ_LEVELS.length;
 
 const phaseView = (row) => {
   if (!row) return { started: false, done: false };
   const answers = parse(row.answers, []);
   const done = row.finished_at != null;
-  return { started: true, done, index: answers.filter((a) => a != null).length, total: answers.length, harder: isCeiling(row), ...(done ? { score: row.score } : {}) };
+  return { started: true, done, index: answers.filter((a) => a != null).length, total: answers.length, ...(done ? { score: row.score } : {}) };
 };
 
 /** Stanje preizkusa za zaslon »Pomagaj izboljšati Evklid«. */
@@ -155,13 +141,15 @@ export const WTP_MIN = 5;
 
 export function impactReport(db, minGroup) {
   migratePilotImpact(db);
-  const rows = db.prepare("SELECT rowid, student_id, phase, score, items, answers, finished_at FROM pilot_quiz WHERE finished_at IS NOT NULL ORDER BY finished_at, rowid").all();
+  const rows = db
+    .prepare("SELECT rowid, student_id, phase, score, form, answers, finished_at FROM pilot_quiz WHERE finished_at IS NOT NULL AND phase IN ('pre', 'post') AND form IS NOT NULL ORDER BY finished_at, rowid")
+    .all();
   const pct = (r) => r.score / Math.max(1, parse(r.answers, []).length);
-  const avg = (xs) => Math.round((xs.reduce((s, x) => s + x, 0) / xs.length) * 1000) / 1000;
+  const avg = (xs) => (xs.length ? Math.round((xs.reduce((s, x) => s + x, 0) / xs.length) * 1000) / 1000 : null);
   // »Ne vem« pri vseh nalogah (-1): preizkus ni meritev znanja, zato ni v povprečjih; prikaže se samo število.
   const allSkip = (r) => parse(r.answers, []).every((a) => a === -1);
-  // Paket vzamemo iz VSEH končanih preizkusov po času in jih šele v paketu delimo (strop, samo »Ne vem«, ostali):
-  // skupina je odvisna od rezultata, zato bi ločeno število po skupinah razkrilo rezultat zadnjega (pregled A4).
+  // Paket vzamemo iz VSEH končanih preizkusov po času in jih šele v paketu delimo (samo »Ne vem«, ostali, oblika):
+  // ločeno število po skupini, odvisni od rezultata, bi razkrilo rezultat zadnjega (pregled A4).
   const preAll = rows.filter((r) => r.phase === "pre");
   const postBy = new Map(rows.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
   const preBlock = block(preAll, minGroup);
@@ -169,26 +157,50 @@ export function impactReport(db, minGroup) {
   const pairAll = preAll.filter((r) => postBy.has(r.student_id)).sort((a, b) => order.get(postBy.get(a.student_id)) - order.get(postBy.get(b.student_id)));
   const pairBlock = block(pairAll, minGroup);
   const usable = (r) => !allSkip(r) && !allSkip(postBy.get(r.student_id) || r);
-  // Pred in po samo pri istih učencih (sicer bi se primerjali različni ljudje). Strop (6/6 prvič, z dodatnimi težjimi
-  // nalogami) posebej: drugače bi njihov visok začetek in drugačna sestava popačila povprečje ostalih.
-  const group = (keep) => {
-    const pre = preBlock.filter((r) => !allSkip(r) && keep(r));
-    const pairs = pairBlock.filter((r) => usable(r) && keep(r)).map((r) => [pct(r), pct(postBy.get(r.student_id))]);
-    return {
-      shownPre: pre.length,
-      shownPaired: pairs.length,
-      pre: pre.length ? avg(pre.map(pct)) : null,
-      pairedPre: pairs.length ? avg(pairs.map((p) => p[0])) : null,
-      pairedPost: pairs.length ? avg(pairs.map((p) => p[1])) : null,
-      diff: pairs.length ? avg(pairs.map((p) => p[1] - p[0])) : null,
-    };
-  };
+  // Pred in po samo pri istih učencih (sicer bi se primerjali različni ljudje).
+  const pre = preBlock.filter((r) => !allSkip(r));
+  const pairs = pairBlock.filter(usable);
+  const pairStats = (list) => ({
+    pre: avg(list.map(pct)),
+    post: avg(list.map((r) => pct(postBy.get(r.student_id)))),
+    diff: avg(list.map((r) => pct(postBy.get(r.student_id)) - pct(r))),
+  });
+  // Po obliki (začetni preizkus) in po vrstnem redu (A nato B, B nato A): samo skupine z vsaj minGroup učenci.
+  // Oblika je določena z vrstnim redom začetka, ne z rezultatom, zato to ne razkrije posameznika.
+  const enough = (list) => list.length >= minGroup;
+  const byForm = Object.fromEntries(QUIZ_FORMS.map((f) => {
+    const g = pre.filter((r) => r.form === f);
+    return [f, enough(g) ? { n: g.length, avg: avg(g.map(pct)) } : null];
+  }));
+  const byOrder = Object.fromEntries(QUIZ_FORMS.map((f) => {
+    const g = pairs.filter((r) => r.form === f);
+    return [`${f}${otherForm(f)}`, enough(g) ? { n: g.length, ...pairStats(g) } : null];
+  }));
+  // Po sklopih kataloga: delež pravilnih na tem mestu prej in po (isti učenci, oba preizkusa).
+  const share = (list, i) => avg(list.map((a) => (a[i] === 1 ? 1 : 0)));
+  const slots = pairs.length
+    ? QUIZ.slots.map((sl, i) => ({
+        sklop: sl.sklop,
+        pre: share(pairs.map((r) => parse(r.answers, [])), i),
+        post: share(pairs.map((r) => parse(postBy.get(r.student_id).answers, [])), i),
+      }))
+    : null;
   // Natančno je samo skupno število; štetja po skupinah so samo znotraj paketa.
+  const ps = pairs.length ? pairStats(pairs) : { pre: null, post: null, diff: null };
   const quiz = {
+    version: QUIZ.version,
+    total: QUIZ_LEN,
     nPre: shownN(preAll.length, minGroup),
     nPaired: shownN(pairAll.length, minGroup),
-    ...group((r) => !isCeiling(r)),
-    ceiling: { nPre: preBlock.filter((r) => isCeiling(r) && !allSkip(r)).length, nPaired: pairBlock.filter((r) => isCeiling(r) && usable(r)).length, ...group(isCeiling) },
+    shownPre: pre.length,
+    shownPaired: pairs.length,
+    pre: avg(pre.map(pct)),
+    pairedPre: ps.pre,
+    pairedPost: ps.post,
+    diff: ps.diff,
+    byForm,
+    byOrder,
+    slots,
     allSkip: preBlock.filter(allSkip).length + pairBlock.filter((r) => !allSkip(r) && allSkip(postBy.get(r.student_id))).length,
   };
   let wtp = { n: 0, shown: 0, min: WTP_MIN, pay: null, amount: null };
@@ -208,13 +220,13 @@ export function impactReport(db, minGroup) {
 
 // ---------- API ----------
 // member(req, res) → učenec v pilotu ali null (odgovor je že poslan); reward(sid, item, xp) → dobljeni XP.
-export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nextTopicFor = () => null, langFor, accounts, isMember, confirmOwner = async () => false }) {
+export function mountPilotImpact(app, db, { member, reward, reply, accounts, isMember, confirmOwner = async () => false }) {
   migratePilotImpact(db);
 
-  const publicQuiz = (row, lang) => {
+  const publicQuiz = (row) => {
     const v = phaseView(row);
     if (v.done || !v.started) return v;
-    const t = taskOf(row, v.index, lang);
+    const t = taskOf(row, v.index);
     return { ...v, task: t ? publicTask(t) : null };
   };
 
@@ -224,36 +236,26 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nex
     if (!s) return;
     const phase = req.body?.phase;
     if (!PHASES.includes(phase)) return res.status(400).json({ error: "Napačna zahteva." });
-    const lang = langFor(s.id);
     let row = rowOf(db, s.id, phase);
     if (!row) {
-      let topic;
-      let items;
+      let form;
       if (phase === "post") {
         const st = quizState(db, s.id);
         if (!st.postOpen) return res.status(409).json({ error: "Drugi preizkus še ni odprt." });
-        const pre = rowOf(db, s.id, "pre");
-        topic = pre.topic_id; // ista tema kot na začetku
-        // Ista sestava kot prvič: kdor je imel dodatne težje naloge, jih ima tudi zdaj (iz iste teme kot takrat).
-        const extraTopic = parse(pre.items, [])[QUIZ_LEVELS.length]?.topic;
-        const base = pickItems(topic, lang);
-        const extra = extraTopic ? pickItems(extraTopic, lang, QUIZ_EXTRA, { tag: true }) : [];
-        items = base && extra ? [...base, ...extra] : null;
-      } else {
-        topic = topicFor(s);
-        items = topic ? pickItems(topic, lang) : null;
-      }
-      if (!items) return res.status(409).json({ error: "Za tvojo pot preizkusa še ni.", unavailable: true });
-      db.prepare("INSERT OR IGNORE INTO pilot_quiz (student_id, phase, topic_id, items, answers) VALUES (?, ?, ?, ?, ?)").run(
+        form = otherForm(rowOf(db, s.id, "pre").form); // vzporedna oblika
+      } else form = firstForm(db);
+      const items = QUIZ.slots.map((_, i) => i);
+      db.prepare("INSERT OR IGNORE INTO pilot_quiz (student_id, phase, topic_id, items, answers, form) VALUES (?, ?, ?, ?, ?, ?)").run(
         s.id,
         phase,
-        topic,
+        QUIZ.version,
         JSON.stringify(items),
         JSON.stringify(items.map(() => null)),
+        form,
       );
       row = rowOf(db, s.id, phase);
     }
-    res.json({ run: publicQuiz(row, lang) });
+    res.json({ run: publicQuiz(row) });
   });
 
   // Odgovor na trenutno nalogo: { phase, index, answer } ali { phase, index, skip: true } (»Ne vem«).
@@ -268,8 +270,7 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nex
     const i = answers.findIndex((a) => a == null);
     // Odgovor velja samo za nalogo, ki je na vrsti (dvojni klik ali stari zavihek ne prepiše drugega odgovora).
     if (b.index !== i) return res.status(409).json({ error: "Ta naloga je že zaključena." });
-    const lang = langFor(s.id);
-    const task = taskOf(row, i, lang);
+    const task = taskOf(row, i);
     if (!task) return res.status(409).json({ error: "Ta naloga ni več na voljo." });
     let ok = false;
     if (b.skip !== true) {
@@ -282,25 +283,15 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nex
       ok = r.kind === "correct" || r.kind === "rounding" || r.kind === "simplify";
     }
     answers[i] = b.skip === true ? -1 : ok ? 1 : 0; // -1 = »Ne vem« (šteje kot nepravilno, a ločeno od napačnega)
-    let last = answers.every((a) => a != null);
+    const last = answers.every((a) => a != null);
     const score = answers.filter((a) => a === 1).length;
-    let items = row.items;
-    // Strop: prvi preizkus brez napake → takoj še 3 težje naloge (enkrat), da drugi preizkus lahko pokaže napredek.
-    if (last && b.phase === "pre" && answers.length === QUIZ_LEVELS.length && score === QUIZ_LEVELS.length) {
-      const extra = extraItems(row.topic_id, nextTopicFor(s, row.topic_id), lang);
-      if (extra) {
-        items = JSON.stringify([...parse(row.items, []), ...extra]);
-        answers.push(...extra.map(() => null));
-        last = false;
-      }
-    }
     const n = db
-      .prepare(`UPDATE pilot_quiz SET items = ?, answers = ?${last ? ", score = ?, finished_at = datetime('now')" : ""} WHERE student_id = ? AND phase = ? AND answers = ?`)
-      .run(...[items, JSON.stringify(answers), ...(last ? [score] : []), s.id, b.phase, row.answers]).changes;
+      .prepare(`UPDATE pilot_quiz SET answers = ?${last ? ", score = ?, finished_at = datetime('now')" : ""} WHERE student_id = ? AND phase = ? AND answers = ?`)
+      .run(...[JSON.stringify(answers), ...(last ? [score] : []), s.id, b.phase, row.answers]).changes;
     if (!n) return res.status(409).json({ error: "Ta naloga je že zaključena." });
     // XP samo za opravljen preizkus, enkrat na fazo (ne za rezultat).
     const gained = last ? reward(s.id, `quiz:${b.phase}`) : 0;
-    reply(res, s, gained, { run: publicQuiz(rowOf(db, s.id, b.phase), lang) });
+    reply(res, s, gained, { run: publicQuiz(rowOf(db, s.id, b.phase)) });
   });
 
   // Vprašanje o plačilu (Račun, samo lastnik računa, z geslom računa): { pay, amount?, password }

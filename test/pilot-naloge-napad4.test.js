@@ -100,24 +100,23 @@ test("A4-2 starš z dvema profiloma (z gesli) v Računu izbriše fotografije otr
   });
 });
 
-test("A4-3 strop in »Ne vem«: natančna števila razkrijejo rezultat zadnjega učenca", () => {
+test("A4-3 oblika in »Ne vem«: natančna števila po skupinah ne razkrijejo rezultata zadnjega učenca", () => {
   const db = openDb(":memory:").db;
   impactReport(db, 3);
-  const add = (i, items, answers) => {
+  const add = (i, form, answers) => {
     const sid = Number(db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run(`U${i}`).lastInsertRowid);
     const score = answers.filter((x) => x === 1).length;
-    db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at) VALUES (?, 'pre', 't', ?, ?, ?, datetime('now', ?))").run(sid, JSON.stringify(items), JSON.stringify(answers), score, `+${i} seconds`);
+    db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at, form) VALUES (?, 'pre', 't', '[]', ?, ?, datetime('now', ?), ?)").run(sid, JSON.stringify(answers), score, `+${i} seconds`, form);
   };
-  const six = [1, 2, 3, 4, 5, 6].map((s) => ({ seed: s, level: 1 }));
-  const nine = [...six, ...[7, 8, 9].map((s) => ({ seed: s, level: 3 }))];
-  add(1, six, [1, 0, 1, 0, 1, 0]);
-  add(2, six, [1, 1, 1, 0, 0, 0]);
-  add(3, six, [0, 0, 1, 0, 1, 1]);
+  const row = (k) => Array.from({ length: 12 }, (_, j) => (j < k ? 1 : 0));
+  add(1, "A", row(3));
+  add(2, "B", row(5));
+  add(3, "A", row(4));
   const r0 = impactReport(db, 3).quiz;
-  add(4, nine, [1, 1, 1, 1, 1, 1, 0, 1, 0]); // četrti: 6/6 v prvem delu
+  add(4, "B", row(12)); // četrti: vse pravilno
   const r1 = impactReport(db, 3).quiz;
-  assert.equal(r1.ceiling.nPre, r0.ceiling.nPre, "iz spremembe števila strop/ne-strop se ne vidi, ali je zadnji rešil vse");
-  add(5, six, [-1, -1, -1, -1, -1, -1]);
+  assert.deepEqual(r1.byForm, r0.byForm, "iz skupin po obliki se ne vidi rezultat zadnjega");
+  add(5, "A", Array(12).fill(-1));
   const r2 = impactReport(db, 3).quiz;
   assert.equal(r2.allSkip, r1.allSkip, "»Ne vem« zadnjega se ne vidi, dokler ni nov paket");
   assert.deepEqual([r1.shownPre, r2.shownPre], [r0.shownPre, r0.shownPre]);
