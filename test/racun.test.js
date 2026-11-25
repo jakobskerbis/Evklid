@@ -153,6 +153,65 @@ cas("skeniranje: AI rešitev preverita numerika in SymPy", async () => {
   assert.equal((await verifyAiFull("\\frac{1}{2}+\\frac{1}{3}", { kind: "arith", value: "5/6" })).verified, true);
 });
 
+// AUDIT-001: SymPy preveri popolnost tudi pri sistemih z več rešitvami (prej jih je preskočil) in pri
+// primerih, kjer numerika popolnosti ne preveri.
+cas("AUDIT-001: SymPy rejects incomplete solution sets, accepts complete ones", async () => {
+  const wrong = [
+    ["x=10000000", { kind: "equation", variable: "x", solutions: [] }],
+    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2+0*k"] }],
+    ["x^2=1; y=0", { kind: "system", solutions: ["x=1; y=0"] }],
+    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi"] }],
+    ["x^2+y^2=25; x+y=7", { kind: "system", solutions: ["x=3; y=4"] }],
+    ["x^2=1; y^2=1", { kind: "system", solutions: ["x=1; y=1", "x=-1; y=-1"] }],
+  ];
+  for (const [t, sol] of wrong) {
+    const r = await verifyAiFull(t, sol);
+    assert.equal(r.verified, false, t);
+    assert.equal(r.reason, "missing", `${t}: ${r.cas}`);
+  }
+  const right = [
+    ["x^2+y^2=25; x+y=7", { kind: "system", solutions: ["x=3; y=4", "x=4; y=3"] }],
+    ["x^2=1; y^2=1", { kind: "system", solutions: ["x=1; y=1", "x=1; y=-1", "x=-1; y=1", "x=-1; y=-1"] }],
+    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi", "x=5*pi/6+2*k*pi"] }],
+    ["x^2+1=0", { kind: "equation", variable: "x", solutions: [] }],
+  ];
+  for (const [t, sol] of right) assert.equal((await verifyAiFull(t, sol)).verified, true, t);
+});
+
+// Pregled #935 (oba pregledovalca): pravilni odgovori, ki jih je SymPy po spremembi zavrnil ali ni odločil.
+cas("AUDIT-001 pregled: log, implicitno množenje, √, »2x«, več rešitev v enem nizu, sistem brez rešitve", async () => {
+  const ok = [
+    ["2x^2+y=3; 3x+y=1", { kind: "system", solutions: ["x=2; y=-5", "x=-1/2; y=5/2"] }],
+    ["2x+3y=7; 4x-y=0", { kind: "system", solutions: ["x=1/2; y=2"] }],
+    ["log_10(x)+log_10(y)=1; x+y=11", { kind: "system", solutions: ["x=1; y=10", "x=10; y=1"] }],
+    ["log(x)+log(y)=1; x+y=7", { kind: "system", solutions: ["x=2; y=5", "x=5; y=2"] }],
+    ["x^2+y^2=13; xy=6", { kind: "system", solutions: ["x=2; y=3", "x=3; y=2", "x=-2; y=-3", "x=-3; y=-2"] }],
+    ["x^2+y^2=4; y=x", { kind: "system", solutions: ["x=√2; y=√2", "x=-√2; y=-√2"] }],
+    ["x+y=7; x*y=12", { kind: "system", solutions: ["x=3, y=4; x=4, y=3"] }],
+    ["x+y=2; 2*x+2*y=5", { kind: "system", solutions: [] }],
+    ["x-y=1; 2x-2y=3", { kind: "system", solutions: ["ni rešitve"] }],
+    ["x-y=1; 2x-2y=3", { kind: "system", solutions: ["Sistem nima rešitve."] }],
+    ["x+y=2; 2x+2y=4", { kind: "system", solutions: ["x=k; y=2-k"] }],
+    ["log_10(x)=1", { kind: "equation", variable: "x", solutions: ["10"] }],
+    ["log_2(x)+log_2(x-2)=3", { kind: "equation", variable: "x", solutions: ["4"] }],
+    ["log(x)+log(x-3)=1", { kind: "equation", variable: "x", solutions: ["5"] }],
+    ["log(x^2)=2", { kind: "equation", variable: "x", solutions: ["10", "-10"] }],
+  ];
+  for (const [t, sol] of ok) {
+    const r = await verifyAiFull(t, sol);
+    assert.equal(r.verified, true, `${t}: ${JSON.stringify(r)}`);
+  }
+  // Premica v ravnini rešitev ni cela množica rešitev.
+  const plane = await verifyAiFull("x+y+z=1; 2*x+2*y+2*z=2; 3*x+3*y+3*z=3", { kind: "system", solutions: ["x=t; y=1-t; z=0"] });
+  assert.equal(plane.verified, false);
+  assert.equal(plane.reason, "missing");
+  // Periodične rešitve v sistemu: SymPy ne odloča, numerika jih ne potrdi (nepreverjeno, ne »napačno«).
+  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2*k*pi; y=1/2", "x=5*pi/6+2*k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
+  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2k*pi; y=1/2", "x=5pi/6+2k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
+  // Nepopolno ostane nepopolno tudi z log in implicitnim množenjem.
+  assert.equal((await verifyAiFull("x^2+y^2=13; xy=6", { kind: "system", solutions: ["x=2; y=3", "x=3; y=2"] })).reason, "missing");
+});
+
 // Pregled #581 (funkcija): pravilni šolski odgovori ne smejo sprožiti lažnega alarma.
 cas("SymPy: brez lažnih alarmov (definicijsko območje, zaokroževanje, ±, sistemi, pravila za pozitivna števila)", async () => {
   const yes = [
