@@ -1111,7 +1111,7 @@ export function labBoyle(el) {
     s("rect", { x: 16, y: 195, width: 160, height: 28, rx: 3, class: "lab-gib-lcdbg" }, svg);
     lcdTxt = s("text", { x: 168, y: 215, class: "lab-gib-lcdtxt lab-boy-lcd", "text-anchor": "end" }, svg, "");
     label(svg, W - 8, H - 18, `soba ~${Math.round(B.Tsoba - 273.15)} °C, zračni tlak ~98 kPa`, "tick small", "end");
-    merilo(svg, W - 60, H - 34, 29, "2 cm");
+    merilo(svg, W - 60, H - 52, 29, "2 cm"); // nad napisom o sobi (ne čez njega)
     lcdTxt.textContent = zaslon();
     drawBat();
     svg.setAttribute("aria-label", `Brizga 60 mL, bat na ${B.V} mL, s cevko in ventilom na senzorju tlaka. Ventil je ${B.zaprto ? "zaprt" : "odprt proti zraku"}.`);
