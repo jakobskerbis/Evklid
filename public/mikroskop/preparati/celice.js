@@ -322,14 +322,13 @@ float cIdx(float y) {
   if (y < -500.0) return y / 14.0;
   return -500.0 / 14.0 + (log(14.0 + 0.09 * (y + 500.0)) - log(14.0)) / 0.09;
 }
-// višina celice v vrsti (µm): meristem 14, v coni podaljševanja vse daljše
-float korenHH(float y) { return y < -500.0 ? 14.0 : 14.0 + 0.09 * (y + 500.0); }
 // koordinate vrst korenine: x = u (čez vrste, širina vrste 13), y = zaporedna številka celice v vrsti (cc)
+// šum dolžine celic teče po indeksu celice (cIdx / 2,5): enakomerno po vsej vrsti, cc tudi v coni podaljševanja monoton
 vec2 korenUC(vec2 p, float fi, vec4 hf) {
   float R = 420.0 * sqrt(clamp((p.y + 1300.0) / 420.0, 0.0, 1.0));
   float u = p.x * 420.0 / max(R, 40.0) + 5.0 * (sum(vec2(p.y / 70.0, p.x / 90.0)) - 0.5) + 2.0 * (sum(vec2(p.y / 23.0, p.x / 31.0) + 4.0) - 0.5);
   float lu0 = u / 13.0 - fi - 0.5;
-  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, p.y / (2.5 * korenHH(p.y)))) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
+  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, cIdx(p.y) / 2.5)) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
   return vec2(u, cc);
 }
 // sredina celice (fi, ci) v µm: Newtonova metoda na korenUC. Rezultat je v vsej celici enak, zato je sistem p − cc za
@@ -404,7 +403,7 @@ T tkivo(vec2 p, float px) {
   vec4 hf = h42(vec2(fi, 3.0));
   // prečne stene so rahlo poševne in ukrivljene, celice v vrsti so različno dolge
   float lu0 = (fract(u / fw) - 0.5);
-  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, p.y / (2.5 * korenHH(p.y)))) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
+  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, cIdx(p.y) / 2.5)) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
   float ci = floor(cc);
   float hh = p.y < -500.0 ? 14.0 : 14.0 + 0.09 * (p.y + 500.0);
   float lv = (fract(cc) - 0.5) * hh;
