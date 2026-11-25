@@ -57,7 +57,8 @@ process.on("uncaughtException", (err, origin) => {
 });
 
 const server = app.listen(port, () => {
-  console.log(`Evklid teče na http://localhost:${port}`);
+  // dejanska vrata (PORT=0: izbere jih sistem; testi jih preberejo iz te vrstice, naključna vrata so trčila z drugimi)
+  console.log(`Evklid teče na http://localhost:${server.address().port}`);
   console.log(isMockMode() ? "Preizkusni način (brez API ključa)." : `Model: ${MODEL}`);
   // Preverjanje s SymPy (server/cas.js): proces se zažene takoj, da prvi odgovor ne čaka; v dnevniku je vidno, ali dela.
   if (casOn())
