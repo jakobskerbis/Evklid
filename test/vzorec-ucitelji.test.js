@@ -38,3 +38,14 @@ test("odg: odgovor kot ga vidi učenec", () => {
   assert.equal(odg({ type: "choice", options: ["a", "b"], index: 1 }), "b");
   assert.equal(odg({ type: "number", value: 0.1 + 0.2 }), "0,3");
 });
+
+test("vzorec: deli pol, ki se sklicujejo na sliko, imajo sliko v zapisu in v docs/strokovni-pregled-slike", () => {
+  const md = fs.readFileSync("docs/strokovni-pregled-vzorec.md", "utf8");
+  izberiVzorec(PRIVZETO_SEME).pole.forEach((p, i) => {
+    if (/slik|shem/i.test(`${p.uvod || ""} ${p.besedilo}`)) assert.ok(p.slika, `C${i + 1} omenja sliko, a je nima`);
+    if (p.slika) {
+      assert.ok(md.includes(`docs/strokovni-pregled-slike/C${i + 1}.svg`), `C${i + 1} v zapisu`);
+      assert.equal(fs.readFileSync(`docs/strokovni-pregled-slike/C${i + 1}.svg`, "utf8"), p.slika);
+    }
+  });
+});

@@ -7,7 +7,8 @@
 // »olepšati« z lažjimi lekcijami, vsak pa ga lahko ponovi z istim semenom.
 //
 // Uporaba:
-//   node scripts/vzorec-ucitelji.mjs [--seme <niz>] [--json] [--md]
+//   node scripts/vzorec-ucitelji.mjs [--seme <niz>] [--json] [--md] [--slike <mapa>]
+// --slike zapiše slike delov pol (SVG) v mapo, da jih učitelj vidi brez prijave (docs/strokovni-pregled-slike).
 // Brez --json/--md izpiše kratek povzetek.
 import fs from "node:fs";
 import path from "node:path";
@@ -83,7 +84,7 @@ export function izberiVzorec(seme = PRIVZETO_SEME) {
     });
     const rng = makeRng(seedNum(`${seme}|pole|${predmet}`));
     const izbrani = new Set(izberi(deli.map((d) => d.kljuc), k, rng));
-    for (const d of deli.filter((x) => izbrani.has(x.kljuc))) pole.push({ kljuc: d.kljuc, uvod: d.tk.intro || null, besedilo: d.part.text || "", odgovor: d.part.answer || "", tocke: d.part.points ?? null });
+    for (const d of deli.filter((x) => izbrani.has(x.kljuc))) pole.push({ kljuc: d.kljuc, uvod: d.tk.intro || null, besedilo: d.part.text || "", odgovor: d.part.answer || "", tocke: d.part.points ?? null, slika: d.part.figure || d.tk.figure || null });
   }
   return { seme, lekcije, naloge, pole };
 }
@@ -121,6 +122,7 @@ export function vzorecMd(v) {
   v.pole.forEach((p, i) => {
     L.push(`**C${i + 1}.** \`${p.kljuc}\`${p.tocke != null ? ` (${p.tocke} t.)` : ""}`, "");
     if (p.uvod) L.push(`- Uvod naloge: ${ena(p.uvod)}`);
+    if (p.slika) L.push(`- Slika: \`docs/strokovni-pregled-slike/C${i + 1}.svg\``);
     L.push(`- Besedilo: ${ena(p.besedilo)}`, `- Odgovor Evklida: ${ena(odg(p.odgovor))}`, "");
   });
   return L.join("\n");
@@ -131,5 +133,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const v = izberiVzorec(i > 0 ? process.argv[i + 1] : PRIVZETO_SEME);
   if (process.argv.includes("--json")) console.log(JSON.stringify(v, null, 2));
   else if (process.argv.includes("--md")) console.log(vzorecMd(v));
-  else console.log(`Seme ${v.seme}: ${v.lekcije.length} lekcij, ${v.naloge.length} nalog Vadnice, ${v.pole.length} delov pol.`);
+  const j = process.argv.indexOf("--slike");
+  if (j > 0) {
+    const dir = path.resolve(process.argv[j + 1] || path.join(ROOT, "docs", "strokovni-pregled-slike"));
+    fs.mkdirSync(dir, { recursive: true });
+    v.pole.forEach((p, i) => p.slika && fs.writeFileSync(path.join(dir, `C${i + 1}.svg`), p.slika));
+  }
+  if (!["--json", "--md", "--slike"].some((f) => process.argv.includes(f))) console.log(`Seme ${v.seme}: ${v.lekcije.length} lekcij, ${v.naloge.length} nalog Vadnice, ${v.pole.length} delov pol.`);
 }

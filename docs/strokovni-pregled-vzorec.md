@@ -123,11 +123,13 @@ Naloge je napisal Evklid (AI) po zgradbi izvirne pole; učitelj preveri besedilo
 
 **C1.** `MATURA-MAT-OR-2024-spomladanski#2-A6` (2 t.)
 
+- Slika: `docs/strokovni-pregled-slike/C1.svg`
 - Besedilo: Kocka $ABCDEFGH$ na sliki ima rob dolg $9\,\mathrm{cm}$. Izračunaj prostornino tristrane piramide z oglišči $B$, $C$, $D$ in $G$.
 - Odgovor Evklida: $V = 121{,}5\,\mathrm{cm^3}$
 
 **C2.** `MATURA-MAT-OR-2026-spomladanski#1-A4` (2 t.)
 
+- Slika: `docs/strokovni-pregled-slike/C2.svg`
 - Besedilo: Na sliki je graf funkcije $f(x) = A\cos x + B$, pri čemer sta $A > 0$ in $B$ realni števili. Iz grafa odčitaj in zapiši: $A = \underline{\qquad}$, $\quad B = \underline{\qquad}$
 - Odgovor Evklida: $A = 2$, $B = 1$
 
@@ -152,6 +154,7 @@ Naloge je napisal Evklid (AI) po zgradbi izvirne pole; učitelj preveri besedilo
 **C6.** `MATURA-KEM-2025-spomladanski#2-13` (3 t.)
 
 - Uvod naloge: Dana je reakcijska shema zaporednih pretvorb but-1-ena.
+- Slika: `docs/strokovni-pregled-slike/C6.svg`
 - Besedilo: Nariši racionalne ali skeletne formule glavnih organskih produktov A, B in C.
 - Odgovor Evklida: A: $\mathrm{CH_3CHBrCH_2CH_3}$ (2-bromobutan); B: $\mathrm{CH_3CH(OH)CH_2CH_3}$ (butan-2-ol); C: $\mathrm{CH_3COCH_2CH_3}$ (butanon).
 
