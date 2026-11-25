@@ -2393,7 +2393,7 @@ export function createApp(store, opts = {}) {
   mountGraphs(app, store, { loadStudent });
   mountGames(app, store, { loadStudent, progress, avatars, knowledge });
   mountDailyPuzzle(app, store, { loadStudent, leagues, ...(opts.dailyNow ? { now: opts.dailyNow } : {}) }); // dnevna uganka in lestvica po času
-  mountLab(app, { loadStudent, accounts }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku
+  mountLab(app, { loadStudent, accounts, db: store.db, isAdmin: (req) => (accounts ? !!req.parent?.is_admin : isLocalRequest(req)) }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku, štetje uporabe
   mountAvatar(app, avatars, { loadStudent, trendsFile: opts.trendsFile ?? null });
   mountKnowledge(app, knowledge, { loadStudent, avatars });
   mountClassShowcase(app, store.db, { loadStudent, leagues, knowledge }); // vitrina v razredu (opt-in, server/vitrina.js)
