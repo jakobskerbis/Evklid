@@ -443,11 +443,12 @@ async function toastCovers(p) {
       // Šteje samo vidni del: kar je odrinjeno pod glavo, odreže rob pogleda (main.view).
       const vidni = (el) => {
         const s = el.getBoundingClientRect();
-        const v = el.closest("main.view")?.getBoundingClientRect();
+        const v = (el.closest(".okno") || el.closest("main.view"))?.getBoundingClientRect();
         return v ? { left: s.left, right: s.right, top: Math.max(s.top, v.top), bottom: Math.min(s.bottom, v.bottom) } : s;
       };
       return [...new Set([...document.querySelectorAll(sel)]
-        .filter((el) => !el.closest("[hidden], [inert], .in-okno") && el.checkVisibility())
+        // Tudi v oknih in spodnjem listu: obvestilo je nad njimi (--z-okno < --z-obvestilo).
+        .filter((el) => !el.closest("[hidden], [inert]") && el.checkVisibility())
         .filter((el) => {
           const s = vidni(el);
           return Math.min(r.right, s.right) - Math.max(r.left, s.left) >= 6 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) >= 6;

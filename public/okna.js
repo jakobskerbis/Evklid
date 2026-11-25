@@ -647,7 +647,10 @@ function placeBubble() {
 // data-ne-prekrij (npr. vrstico za pisanje, odgovor naloge, simulacijo), gre višje, na prvo mesto brez njih, do glave
 // pogleda; če takega mesta ni, tja, kjer prekrije najmanj (UX-105). Tapi gredo skozenj (pointer-events: none, style.css).
 // Vrstica za pisanje in vrstica odgovora štejeta v celoti (ne le polje v njej), da obvestilo ne sede na njun rob.
-const TOAST_OVIRE = `${CONTROLS}, ${NE_PREKRIJ}, body > main.view:not([hidden]):not(.in-okno) :is(.composer-row, .answer-row), #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
+// Okna in spodnji list so pod obvestilom (--z-okno < --z-obvestilo): tudi njihova polja in gumbi so ovire (klepet v oknu ob
+// učbeniku, na telefonu klepet v listu, ki ga odpre mehurček).
+const OKNA_KONTROLE = ".okno:not([hidden]) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch], .composer-row, .answer-row)";
+const TOAST_OVIRE = `${CONTROLS}, ${OKNA_KONTROLE}, ${NE_PREKRIJ}, body > main.view:not([hidden]):not(.in-okno) :is(.composer-row, .answer-row), #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
 const GLAVE = "body > :is(.topbar, #mock-banner, #test-notice):not([hidden]), body > main.view:not([hidden]):not(.in-okno) :is(.chat-head, .topic-top)";
 export function placeToast() {
   const el = $("#toast");
@@ -659,7 +662,11 @@ export function placeToast() {
   const vrh = Math.max(0, ...glave.map((r) => r.bottom));
   // Samo vidni del ovire: del simulacije ali odgovora, odrinjen pod glavo, je odrezan z robom pogleda.
   const pogled = document.querySelector("body > main.view:not([hidden]):not(.in-okno)")?.getBoundingClientRect();
-  const vidni = (o, r) => (pogled && o.closest("main.view") ? { left: r.left, right: r.right, top: Math.max(r.top, pogled.top), bottom: Math.min(r.bottom, pogled.bottom) } : r);
+  // V oknu ga odreže okno.
+  const vidni = (o, r) => {
+    const v = o.closest(".okno")?.getBoundingClientRect() ?? (o.closest("main.view") ? pogled : null);
+    return v ? { left: r.left, right: r.right, top: Math.max(r.top, v.top), bottom: Math.min(r.bottom, v.bottom) } : r;
+  };
   const ovire = [...document.querySelectorAll(TOAST_OVIRE)]
     .filter((o) => !el.contains(o) && !o.closest("[hidden], [inert]"))
     .map((o) => vidni(o, o.getBoundingClientRect()))

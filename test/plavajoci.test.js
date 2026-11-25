@@ -59,8 +59,8 @@ async function withApp(fn) {
   }
 }
 // Telefon z enim pogovorom (mehurček se pokaže, ko klepet ni na zaslonu).
-async function phone(base, viewport) {
-  const ctx = await chromium.newContext({ viewport, isMobile: true, hasTouch: true, serviceWorkers: "block" });
+async function phone(base, viewport, mobile = true) {
+  const ctx = await chromium.newContext({ viewport, isMobile: mobile, hasTouch: mobile, serviceWorkers: "block" });
   const p = await ctx.newPage();
   const errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
@@ -275,6 +275,50 @@ test("telefon 360 × 740, klepet: obvestilo ne prekrije vrstice za pisanje in gu
       return { top: t.top, bottom: t.bottom, head: document.querySelector("#view-chat .chat-head").getBoundingClientRect().bottom, comp: document.querySelector("#view-chat .composer").getBoundingClientRect().top };
     });
     assert.ok(r.top >= r.head && r.bottom <= r.comp, `obvestilo je med glavo in vrstico za pisanje: ${JSON.stringify(r)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
+test("računalnik 1280 × 800, klepet v oknu ob učbeniku: obvestilo ne prekrije polja in gumbov okna (okna so pod obvestilom)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 1280, height: 800 }, false);
+    await p.evaluate(() => window.evklid.showView("textbook"));
+    await p.waitForSelector("#tb-q", { state: "visible" });
+    await p.evaluate(() => window.evklid.openWindow("chat", { snap: "left" }));
+    await p.waitForSelector(".okno #input", { state: "visible" });
+    await p.waitForTimeout(300);
+    await p.evaluate(() => {
+      const t = document.querySelector("#toast");
+      t.textContent = "Napaka je zapisana. Najdeš jo v Računu pod »Prijave napak«.";
+      t.hidden = false;
+      t.dataset.at = Date.now();
+    });
+    await p.waitForTimeout(100);
+    // pokrito: vsi vidni main.view, tudi tisti v oknu (.in-okno).
+    assert.deepEqual(await pokrito(p, "#toast"), [], "obvestilo prekrije polje ali gumb klepeta v oknu");
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
+test("telefon 390 × 844: klepet v spodnjem listu (tap na mehurček) – obvestilo ne prekrije vrstice za pisanje lista", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 390, height: 844 });
+    await p.evaluate(() => window.evklid.showView("textbook"));
+    await p.waitForSelector("#chat-bubble:not([hidden])");
+    await p.waitForTimeout(600);
+    await p.click("#chat-bubble .cb-main");
+    await p.waitForSelector("#input", { state: "visible" });
+    const vListu = await p.evaluate(() => !!document.querySelector("#input").closest(".okno"));
+    await p.evaluate(() => {
+      const t = document.querySelector("#toast");
+      t.textContent = "Shranjeno";
+      t.hidden = false;
+      t.dataset.at = Date.now();
+    });
+    await p.waitForTimeout(100);
+    assert.deepEqual(await pokrito(p, "#toast"), [], `obvestilo prekrije kontrolnik (klepet v listu: ${vListu})`);
     assert.deepEqual(errors, []);
     await ctx.close();
   });
