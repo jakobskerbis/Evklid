@@ -60,3 +60,41 @@ test("sim3d: brez napake.js in modelov sporočilo o povezavi in »Poskusi znova�
     server.close();
   }
 });
+
+// Samo napake.js manjka (izpad med nalaganjem): pregledovalnik ga ne uvaža statično, zato se model vseeno naloži.
+test("sim3d: brez napake.js se model vseeno naloži (pregledovalnik ga uvozi šele ob napaki)", { skip: playwright ? false : "Playwright ni nameščen", timeout: 180000 }, async (t) => {
+  const src = (await import("node:fs")).readFileSync(new URL("../public/3d/pregledovalnik.js", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /^import [^\n]*"\.\/napake\.js"/m, "pregledovalnik.js: napake.js ni statičen uvoz");
+  let browser;
+  try {
+    browser = await playwright.chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, info() {}, warn() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", serviceWorkers: "block" });
+  try {
+    const p = await ctx.newPage();
+    const napake = [];
+    p.on("pageerror", (e) => napake.push(String(e)));
+    let blokiran = 0;
+    await p.route("**/3d/napake.js", (r) => (blokiran++, r.abort("internetdisconnected")));
+    await p.goto(`${base}/healthz`);
+    await p.evaluate(async () => {
+      const el = document.createElement("div");
+      el.id = "sim";
+      document.body.append(el);
+      const { sim3d } = await import("/3d/sim.js");
+      sim3d(el, { model: "celica-zivalska" });
+    });
+    await p.waitForSelector("#sim canvas", { timeout: 90000 });
+    assert.equal(await p.locator("#sim .k3-nalaganje.napaka, #sim button.secondary").count(), 0, "brez kartice z napako");
+    assert.deepEqual(napake, []);
+  } finally {
+    await ctx.close();
+    await browser.close();
+    server.close();
+  }
+});
