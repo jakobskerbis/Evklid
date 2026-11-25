@@ -4,7 +4,7 @@
 // Gibljivi deli (voziček, obešalo, krogla) so skupine, ki jim v vsaki sličici spremenimo le transform; ostala risba se
 // nariše znova samo, ko se spremeni postavitev.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
+import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
 import {
   ProgaBench, PadBench, PROGA, VOZICEK, SKRIPEC, PREDMETI, PAD, G_SOLA, naklonSkoziIzhodisce, premica, koncnaHitrost, zastira, POENOSTAVITVE_GIBANJE,
 } from "./lab-model-gibanje.js";
@@ -291,6 +291,9 @@ export function labKlanec(el) {
     tryText: "Postavi 2 kvadra in vrata na 30, 50, 70 in 90 cm (dva spusta). Nariši s(t²) in iz naklona izračunaj pospešek. Je manjši od g·sin θ? Zakaj? Kaj se zgodi s pospeškom, če voziček obtežiš?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "m/s²", dec: 3, tol: 0.04, onOdkrij: () => (redraw(), zap.shrani()) });
+  calc.after(Rr.el);
   imenaKanalov(B, L1, L2);
 
   function go(sl) {
@@ -345,13 +348,16 @@ export function labKlanec(el) {
     gV.setAxes({ x: [0, a2.top], y: [0, b2.top], xStep: a2.step, yStep: b2.step });
     gV.draw(serije(skupine(vm, "niz", "tv", "v")));
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     for (const [name, pts] of skupine(meas, "niz", "t2", "s")) {
       if (pts.length < 2) continue;
       const a = 2 * naklonSkoziIzhodisce(pts), vp = meas.filter((r) => r.niz === name && r.v != null).map((r) => [r.tv, r.v]);
       const av = vp.length >= 2 ? naklonSkoziIzhodisce(vp) : null, h_ = parseFloat(name) / 100;
-      out.push(`<p><b>${name}</b>: ${tex(String.raw`a = 2k = ${rez(num(a, 3), "m/s²")}`)}${av ? `; iz <i>v</i>(<i>t</i>): ${num(av, 3)}${nb}m/s²` : ""}. ${h_ ? `Brez upora in vrtenja koles bi bil ${tex(String.raw`g\sin\theta = 9{,}81 \cdot ${num(h_, 2)} = ${num(G_SOLA * h_, 3)}${en("m/s²")}`)}; izmerjeni pospešek je ${num((100 * a) / (G_SOLA * h_), 0)}${nb}% tega.` : ""}</p>`);
+      cilji.push({ key: name, ime: name, kaj: `Iz naklona premice <i>s</i>(<i>t</i>²) izračunaj pospešek <i>a</i> (${name}).`, vrednost: a });
+      out.push(Rr.odkrito(name) ? `<p><b>${name}</b>: ${tex(String.raw`a = 2k = ${rez(num(a, 3), "m/s²")}`)}${av ? `; iz <i>v</i>(<i>t</i>): ${num(av, 3)}${nb}m/s²` : ""}. ${h_ ? `Brez upora in vrtenja koles bi bil ${tex(String.raw`g\sin\theta = 9{,}81 \cdot ${num(h_, 2)} = ${num(G_SOLA * h_, 3)}${en("m/s²")}`)}; izmerjeni pospešek je ${num((100 * a) / (G_SOLA * h_), 0)}${nb}% tega.` : ""}</p>` : `<p><b>${name}</b>: izračunaj pospešek <i>a</i> iz naklona grafa <i>s</i>(<i>t</i>²) in ga preveri spodaj.</p>`);
     }
     calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
     const max = Math.max(0, ...[...skupine(meas, "niz", "t2", "s").values()].map((p) => p.length));
     if (max >= 4 && !asked) {
       asked = true;
@@ -393,8 +399,9 @@ export function labKlanec(el) {
   draw();
   redraw();
   zap.vezi(table, {
-    get: () => ({ meas }),
+    get: () => ({ racun: Rr.stanje(), meas }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
       redraw();
     },
@@ -477,6 +484,9 @@ export function labProstiPad(el) {
     tryText: "Kroglico spusti z višin 20, 50, 100, 150 in 200 cm. Nariši h(t²) in iz naklona izračunaj g. Nato isto naredi s filtrom za kavo. Kdaj filter neha pospeševati?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "m/s²", dec: 2, tol: 0.03, onOdkrij: () => (redraw(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function go(sl) {
     if (sl && !B.run) return log.push("Najprej spusti predmet; posnetek pokaže zadnji spust 10-krat počasneje.", "warn");
@@ -526,6 +536,7 @@ export function labProstiPad(el) {
     gV.setAxes({ x: [0, a2.top], y: [0, b2.top], xStep: a2.step, yStep: b2.step });
     gV.draw(serije(skupine(vm, "pr", "tv", "v"), { origin: false }));
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     for (const [name, pts] of skupine(meas, "pr", "t2", "h")) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), L = premica(pts), id = meas.find((r) => r.pr === name).id;
@@ -533,9 +544,11 @@ export function labProstiPad(el) {
       const lahek = vt < 4, upor = !lahek && vt < 12, hMax = Math.max(...pts.map((p) => p[1]));
       // delež upora ob vratih pri največji višini: F/(mg) = (v/v_t)², v² = v_t²(1 − e^(−2gh/v_t²)) (upor ∝ v²)
       const delez = 1 - Math.exp((-2 * G_SOLA * hMax) / (vt * vt)), zamik = id === "jeklo" && 2 * k < 9.75 ? " Manj kot 9,81: časovnik začne teči ob izklopu magneta, kroglica pa se odlepi nekaj milisekund pozneje (zamik je največji delež pri majhnih višinah)." : "";
-      out.push(`<p><b>${name}</b>: ${lahek || upor ? "2<i>k</i>" : "<i>g</i> = 2<i>k</i>"} = <b>${num(2 * k, 2)}${nb}m/s²</b>${pts.length >= 3 ? ` (premica, ki ni nujno skozi izhodišče: ${num(2 * L.a, 2)}${nb}m/s²)` : ""}.${lahek ? ` To ni težni pospešek: zaradi zračnega upora točke ne ležijo na premici. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : upor ? ` To ni težni pospešek: zračni upor jo močno zavira. Pri padcu z ${num(hMax, 2)}${nb}m je upor ob vratih že ~${Math.round(delez * 20) * 5}${nb}% njene teže, zato žogica pospešuje vse manj in 2<i>k</i> je manjši od <i>g</i>. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : ""}${zamik}</p>`);
+      cilji.push({ key: name, ime: name, kaj: `Iz naklona premice <i>h</i>(<i>t</i>²) izračunaj težni pospešek <i>g</i> (${name}).`, vrednost: lahek || upor ? NaN : 2 * k });
+      out.push(Rr.odkrito(name) || lahek || upor ? `<p><b>${name}</b>: ${lahek || upor ? "2<i>k</i>" : "<i>g</i> = 2<i>k</i>"} = <b>${num(2 * k, 2)}${nb}m/s²</b>${pts.length >= 3 ? ` (premica, ki ni nujno skozi izhodišče: ${num(2 * L.a, 2)}${nb}m/s²)` : ""}.${lahek ? ` To ni težni pospešek: zaradi zračnega upora točke ne ležijo na premici. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : upor ? ` To ni težni pospešek: zračni upor jo močno zavira. Pri padcu z ${num(hMax, 2)}${nb}m je upor ob vratih že ~${Math.round(delez * 20) * 5}${nb}% njene teže, zato žogica pospešuje vse manj in 2<i>k</i> je manjši od <i>g</i>. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : ""}${zamik}</p>` : `<p><b>${name}</b>: izračunaj <i>g</i> iz naklona grafa <i>h</i>(<i>t</i>²) in ga preveri spodaj.</p>`);
     }
     calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
     const nJ = meas.filter((r) => r.id === "jeklo").length, nL = Math.max(0, ...["stozec", "filter", "pero", "pingpong"].map((id) => meas.filter((r) => r.id === id).length));
     if (nJ >= 4 && !asked) {
       asked = true;
@@ -632,8 +645,9 @@ export function labProstiPad(el) {
   draw();
   redraw();
   zap.vezi(table, {
-    get: () => ({ meas }),
+    get: () => ({ racun: Rr.stanje(), meas }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
       redraw();
     },

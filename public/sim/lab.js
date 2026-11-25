@@ -344,6 +344,87 @@ export function napoved(o) {
   };
 }
 
+// Račun iz meritev (profil A, 2026-11-25): končni rezultat (upor iz naklona, izkoristek, g …) izračuna učenec sam.
+// Aplikacija ga preveri z vrednostjo iz učenčevih meritev (ne s podatkom iz učbenika) in pokaže svoj izračun šele
+// po pravilnem računu ali po »Pokaži rešitev«. Primerjava je lokalna (ne server/practice/check.js).
+// preveriRacun(vnos, pricakovano, { tol, abs }) → null (ni število) ali { ok, x, odmik }; tol relativno (0,05 = 5 %), abs absolutno.
+export function preveriRacun(vnos, pricakovano, { tol = 0.05, abs = 0 } = {}) {
+  const x = parseStevilo(vnos);
+  if (x == null || !Number.isFinite(pricakovano)) return null;
+  const d = Math.abs(x - pricakovano);
+  return { ok: d <= Math.max(abs, tol * Math.abs(pricakovano)) + 1e-12, x, odmik: pricakovano ? d / Math.abs(pricakovano) : d };
+}
+// racun({ enota, tol, abs, dec, onOdkrij }) → { el, nastavi(cilji), odkrito(key), stanje(), obnovi(s) }
+//   cilji: [{ key, kaj (HTML: kaj izračunaš), vrednost (iz meritev) }] (prazno: okvir je skrit); privzeto zadnji cilj
+//   onOdkrij(key): poskus ponovno nariše izračun (zdaj s številko)
+export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {}) {
+  let cilji = [], izbran = null;
+  const odkrito = new Set();
+  const izbira = h("select", { class: "lab-racun-sel", "aria-label": "kaj računaš" });
+  izbira.addEventListener("change", () => ((izbran = izbira.value), pokazi()));
+  const izbiraVrsta = h("label", { class: "demo-slider", hidden: true }, h("span", { class: "demo-slider-label" }, "kaj računaš"), izbira);
+  const kaj = h("p", { class: "lab-q-text" });
+  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoj rezultat${enota ? ` v ${enota}` : ""}` });
+  vnos.addEventListener("keydown", (e) => e.key === "Enter" && preveri());
+  const odziv = h("p", { class: "lab-why", "aria-live": "polite", hidden: true });
+  const el = h("section", { class: "lab-q lab-racun", hidden: true },
+    h("h4", {}, "Tvoj račun"),
+    izbiraVrsta, kaj,
+    h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoj rezultat${enota ? ` [${enota}]` : ""}`), vnos),
+    h("div", { class: "demo-buttons" }, button("Preveri moj račun", () => preveri(), "primary small"), button("Pokaži rešitev", () => odkrij(false))),
+    odziv);
+  const cilj = () => cilji.find((c) => c.key === izbran);
+  const izpis = (x) => `${fmt(x, dec)}${enota ? ` ${enota}` : ""}`;
+  function pokazi() {
+    const c = cilj();
+    if (!c) return;
+    kaj.innerHTML = c.kaj;
+    odziv.hidden = true;
+  }
+  function odkrij(pravilno) {
+    const c = cilj();
+    if (!c) return;
+    odkrito.add(c.key);
+    odziv.hidden = false;
+    odziv.className = `lab-why ${pravilno ? "ok" : ""}`;
+    odziv.innerHTML = pravilno
+      ? `<b>Pravilno.</b> Iz tvojih meritev dobiš ${izpis(c.vrednost)}. Izračun je zdaj tudi zgoraj.`
+      : `Rešitev iz tvojih meritev: <b>${izpis(c.vrednost)}</b>. Postopek je v izračunu zgoraj.`;
+    onOdkrij?.(c.key);
+  }
+  function preveri() {
+    const c = cilj();
+    if (!c) return;
+    const r = preveriRacun(vnos.value, c.vrednost, { tol, abs });
+    odziv.hidden = false;
+    if (!r) return (odziv.className = "lab-why"), (odziv.textContent = "Vpiši število (npr. 98,5).");
+    if (r.ok) return odkrij(true);
+    odziv.className = "lab-why bad";
+    odziv.innerHTML = `<b>Ne čisto.</b> Tvoj rezultat se od vrednosti iz tvojih meritev razlikuje za ${fmt(100 * r.odmik, 0)} %. Preveri odčitke z grafa, račun in enote.`;
+  }
+  return {
+    el,
+    odkrito: (key) => odkrito.has(key),
+    // cilji iz meritev; okvir je viden, ko je kaj računati. Izbira ostane, dokler je med cilji, sicer zadnji cilj.
+    nastavi(list) {
+      const prej = JSON.stringify(cilji.map((c) => [c.key, c.kaj]));
+      cilji = list.filter((c) => Number.isFinite(c.vrednost));
+      el.hidden = !cilji.length;
+      if (!cilji.length) return;
+      if (!cilji.some((c) => c.key === izbran)) (izbran = cilji.at(-1).key), (vnos.value = "");
+      if (prej !== JSON.stringify(cilji.map((c) => [c.key, c.kaj]))) {
+        izbira.replaceChildren(...cilji.map((c) => h("option", { value: c.key }, c.ime || c.key)));
+        izbira.value = izbran;
+        izbiraVrsta.hidden = cilji.length < 2;
+        pokazi();
+      }
+    },
+    get pricakovano() { return cilj()?.vrednost ?? null; },
+    stanje: () => [...odkrito],
+    obnovi: (s) => Array.isArray(s) && s.forEach((k) => typeof k === "string" && odkrito.add(k)),
+  };
+}
+
 // Dnevnik dogodkov (kaj se je zgodilo v laboratoriju), najnovejši zgoraj.
 export function eventLog() {
   const ul = h("ul", { class: "lab-log", "aria-live": "polite" });

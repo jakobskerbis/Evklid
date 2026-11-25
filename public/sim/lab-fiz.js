@@ -1,6 +1,6 @@
 // Virtualni laboratorij, fizika. Učenec sam sestavi poskus, meri in vidi posledice napak.
 import { h, s, fmt, svgBox, slider, select, segmented, button, layout, label } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez, shramba, napoved } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez, shramba, napoved, racun } from "./lab.js";
 import { fotoPoskus, risiKrog, OKNA_KROG } from "./foto.js";
 import { OhmBench, LOADS, AM_RANGES, VM_RANGES, NAPAJALNIK, UPOR, POENOSTAVITVE, fitOrigin } from "./lab-model.js";
 
@@ -64,6 +64,9 @@ export function labOhm(el, { load = "R100" } = {}) {
     tryText: "Napovej, kolikšen tok teče skozi upornik 100 Ω pri 6 V. Izmeri tok pri vsaj petih napetostih in iz naklona grafa določi upor. Potem priključi žarnico: ali je tudi njen graf premica? Kaj se zgodi, če ampermeter priključiš vzporedno?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "Ω", dec: 1, tol: 0.04, onOdkrij: () => (redrawGraph(), zap.shrani()) });
+  fitOut.after(Rr.el);
   // Napoved pred prvo meritvijo (Preizkusi: »Napovej, kolikšen tok teče skozi upornik 100 Ω pri 6 V«).
   const L0 = LOADS[B.load].type === "R" ? B.load : "R100";
   const N = napoved({
@@ -102,7 +105,10 @@ export function labOhm(el, { load = "R100" } = {}) {
     });
     graph.draw(list);
     const fit = list.find((S) => S.id === cur && Number.isFinite(S.k));
-    fitOut.innerHTML = fit
+    Rr.nastavi(list.filter((S) => Number.isFinite(S.k)).map((S) => ({ key: S.id, ime: LOADS[S.id].name, kaj: `Iz naklona premice na grafu izračunaj upor (${LOADS[S.id].name}).`, vrednost: 1000 / S.k })));
+    fitOut.innerHTML = fit && !Rr.odkrito(fit.id)
+      ? "Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Iz njenega naklona izračunaj upor in ga preveri spodaj."
+      : fit
       ? `Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Naklon: ${fmt(fit.k, 2)} mA/V = ${fmt(fit.k / 1000, 5)} A/V, zato ${tex(String.raw`R = \frac{1}{\text{naklon}} = ${rez(fmt(1000 / fit.k, 1), "Ω")}`)}. Na uporniku piše ${LOADS[cur].nom} Ω ± 5 %.`
       : LOADS[cur].type === "R" ? "Za premico in upor iz naklona potrebuješ vsaj 3 meritve." : `Žarnica: primerjaj ${tex(String.raw`\frac{U}{I}`)} pri različnih napetostih.`;
     N.osvezi();
@@ -216,8 +222,9 @@ export function labOhm(el, { load = "R100" } = {}) {
   const foto = fotoPoskus("krog", svg, el, () => draw(), OKNA_KROG);
   graph.setAxes({ y: [0, YMAX[B.load]] });
   zap.vezi(table, {
-    get: () => ({ series, napoved: N.stanje() }),
+    get: () => ({ racun: Rr.stanje(), series, napoved: N.stanje() }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       N.obnovi(d?.napoved);
       for (const [id, pts] of Object.entries(d?.series || {})) if (id in LOADS && Array.isArray(pts)) series[id] = pts;
       Object.keys(series).forEach(maybeAsk);

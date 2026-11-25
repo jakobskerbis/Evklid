@@ -1,7 +1,7 @@
 // Virtualni laboratorij, »Silomer in uteži«: Hookov zakon (lab-hooke), gostota (lab-gostota), vzgon (lab-vzgon),
 // hidrostatični tlak z manometrom (lab-tlak). Modeli: lab-model-sile.js (brez DOM). Odčitki analognih skal so v povečavi (lupa).
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
 import { HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI, SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, POENOSTAVITVE_SILE } from "./lab-model-sile.js";
 
 const nb = " ";
@@ -134,6 +134,9 @@ export function labHooke(el) {
     tryText: "Odčitaj kazalec brez uteži, nato mehko vzmet obremeni s 50, 100, 150, 200 in 250 g in nariši graf. Izračunaj k. Kaj se zgodi, ko na mehko vzmet obesiš 350 g in uteži nato snameš?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "N/m", dec: 1, tol: 0.04, onOdkrij: () => (sync(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function syncUt() {
     utBtns.forEach((b, i) => b.setAttribute("aria-pressed", String(B.obesene.includes(i))));
@@ -155,12 +158,15 @@ export function labHooke(el) {
   }
   function sync() {
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     for (const [name, pts] of skupaj(meas, "g")) {
       if (pts.filter(([x]) => x > 0.05).length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), id = Object.keys(VZMETI).find((i) => VZMETI[i].name.startsWith(name));
-      out.push(`<p><b>${name} vzmet</b>: ${tex(String.raw`k = \frac{F}{x} \approx ${fixed(k, 3)}${en("N/cm")} = ${rez(fixed(k * 100, 1), "N/m")}`)} (naklon premice skozi izhodišče; na vzmeti piše ${VZMETI[id].k}${nb}N/m ±${nb}5${nb}%).</p>`);
+      cilji.push({ key: name, ime: `${name} vzmet`, kaj: `Iz naklona premice <i>F</i>(<i>x</i>) izračunaj prožnostni koeficient <i>k</i> (${name} vzmet).`, vrednost: k * 100 });
+      out.push(Rr.odkrito(name) ? `<p><b>${name} vzmet</b>: ${tex(String.raw`k = \frac{F}{x} \approx ${fixed(k, 3)}${en("N/cm")} = ${rez(fixed(k * 100, 1), "N/m")}`)} (naklon premice skozi izhodišče; na vzmeti piše ${VZMETI[id].k}${nb}N/m ±${nb}5${nb}%).</p>` : `<p><b>${name} vzmet</b>: izračunaj <i>k</i> iz naklona premice in ga preveri spodaj.</p>`);
     }
     calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
     const max = Math.max(0, ...[...skupaj(meas, "g").values()].map((p) => p.filter(([x]) => x > 0.05).length));
     if (max >= 4 && !asked) {
       asked = true;
@@ -222,8 +228,9 @@ export function labHooke(el) {
   redraw();
   draw();
   zap.vezi(table, {
-    get: () => ({ meas, x0 }),
+    get: () => ({ racun: Rr.stanje(), meas, x0 }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
       if (d?.x0 && typeof d.x0 === "object") for (const [k, v] of Object.entries(d.x0)) if (k in VZMETI && Number.isFinite(v)) x0[k] = v;
       redraw(), sync();

@@ -2,7 +2,7 @@
 // taljenje ledu in vrenje vode (lab-faze), ohlajanje čaja v različnih posodah (lab-ohlajanje).
 // Modeli: lab-model-toplota.js (brez DOM). Čas teče v realnem času, učenec ga lahko pospeši.
 import { h, s, fmt, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved, racun } from "./lab.js";
 import { drawMeter } from "./lab-fiz.js";
 import { GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, izkoristek, geometrija, POSODE, VODA, GRELEC, NAPAJALNIK_T, KRAJI, SKODELICE, CAJ, T_IDEALNA, tlakNaVisini, vrelisce, POENOSTAVITVE_TOPLOTA } from "./lab-model-toplota.js";
 
@@ -130,6 +130,9 @@ export function labGrelnik(el) {
     tryText: "Segrej 200 g vode z grelcem 12 V približno 5 minut (izberi ×10) in izračunaj izkoristek. Nato poskus ponovi s pokrovom in z mešanjem. Kdaj je izkoristek večji in zakaj? Kaj se zgodi, če grelec vklopiš, ko ni v vodi?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "%", dec: 1, tol: 0.03, onOdkrij: () => (sync(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function pour() {
     if (B.on) setOn(false);
@@ -201,16 +204,19 @@ export function labGrelnik(el) {
     if (!med.length) out.push("<li>Med segrevanjem zapiši vsaj eno meritev napetosti in toka.</li>");
     if (B.on) out.push("<li>Ko se voda segreje za 10–20 °C, izklopi grelec.</li>");
     else if (B.tekla && !po.length) out.push("<li>Po izklopu premešaj vodo in zapiši najvišjo temperaturo.</li>");
-    if (out.length) return (calc.innerHTML = `<ul>${out.join("")}</ul>`);
+    if (out.length) return Rr.nastavi([]), (calc.innerHTML = `<ul>${out.join("")}</ul>`);
     const U = med.reduce((a, m) => a + m.U, 0) / med.length, I = med.reduce((a, m) => a + m.I, 0) / med.length;
     const T1 = zac.T, T2 = Math.max(...po.map((m) => m.T)), m = mStud / 1000, t = B.tekla ? B.tOn : tOn0 ?? B.tOn;
     const r = izkoristek({ m, T1, T2, U, I, t });
     const dT = T2 - T1;
-    calc.innerHTML = `${texBlock(String.raw`W = UIt = ${fixed(U, 2)}${en("V")} \cdot ${fixed(I, 2)}${en("A")} \cdot ${fixed(t, 1)}${en("s")} = ${rez(fixed(r.W / 1000, 2), "kJ")}`)}
+    const izracun = `${texBlock(String.raw`W = UIt = ${fixed(U, 2)}${en("V")} \cdot ${fixed(I, 2)}${en("A")} \cdot ${fixed(t, 1)}${en("s")} = ${rez(fixed(r.W / 1000, 2), "kJ")}`)}
       ${texBlock(String.raw`Q = mc\,\Delta T = ${fixed(m, 4)}${en("kg")} \cdot 4182${en("J/(kg·K)")} \cdot (${fixed(T2, 1)} - ${fixed(T1, 1)})${en("K")} = ${rez(fixed(r.Q / 1000, 2), "kJ")}`)}
-      ${texBlock(String.raw`\eta = \dfrac{Q}{W} = ${rez(fmt(100 * r.eta, 0), "%")}`)}
-      ${dT < 3 ? `<p class="lab-top-warn">Δ<i>T</i> je samo ${fixed(dT, 1)} K. Napaka razlike dveh odčitkov je ~0,2 K, to je že ${fmt((100 * 0.2) / Math.max(dT, 0.1), 0)} %. Manj vode ali daljše segrevanje da natančnejši rezultat.</p>` : ""}
+      ${texBlock(String.raw`\eta = \dfrac{Q}{W} = ${rez(fmt(100 * r.eta, 0), "%")}`)}`;
+    const opozorila = `${dT < 3 ? `<p class="lab-top-warn">Δ<i>T</i> je samo ${fixed(dT, 1)} K. Napaka razlike dveh odčitkov je ~0,2 K, to je že ${fmt((100 * 0.2) / Math.max(dT, 0.1), 0)} %. Manj vode ali daljše segrevanje da natančnejši rezultat.</p>` : ""}
       ${po.every((x) => !x.mes) ? `<p class="lab-top-warn">Končne temperature nisi zapisal med mešanjem. Voda brez mešanja ni enako topla povsod.</p>` : ""}`;
+    Rr.nastavi([{ key: "eta", ime: "izkoristek", kaj: "Iz svojih meritev izračunaj delo <i>W</i>, toploto <i>Q</i> in izkoristek grelca η (v odstotkih).", vrednost: 100 * r.eta }]);
+    const podatki = `<p>Tvoji podatki: <i>m</i> = ${fixed(m, 4)}\u00a0kg, <i>T</i>₁ = ${fixed(T1, 1)}\u00a0°C, <i>T</i>₂ = ${fixed(T2, 1)}\u00a0°C (najvišja po izklopu), <i>U</i> = ${fixed(U, 2)}\u00a0V in <i>I</i> = ${fixed(I, 2)}\u00a0A (povprečje med segrevanjem), <i>t</i> = ${fixed(t, 1)}\u00a0s, <i>c</i> = 4182\u00a0J/(kg·K).</p>`;
+    calc.innerHTML = (Rr.odkrito("eta") ? izracun : podatki) + opozorila;
     if (!asked && r.eta > 0 && r.eta < 1.2) {
       asked = true;
       qBox.append(conclusion({
@@ -308,8 +314,9 @@ export function labGrelnik(el) {
   }
 
   zap.vezi(table, {
-    get: () => ({ meas, mStud, tOn: B.tekla ? B.tOn : tOn0 }),
+    get: () => ({ racun: Rr.stanje(), meas, mStud, tOn: B.tekla ? B.tOn : tOn0 }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       if (Array.isArray(d?.meas)) meas.push(...d.meas.filter((m) => m && Number.isFinite(m.t) && Number.isFinite(m.T)));
       if (Number.isFinite(d?.mStud)) (mStud = d.mStud), balL.set(fixed(mStud, 1), "g", "masa vode");
       if (Number.isFinite(d?.tOn)) tOn0 = d.tOn;

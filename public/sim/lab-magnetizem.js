@@ -3,7 +3,7 @@
 // Risbe so v stalnem merilu (merilna črta), oprema v pravih razmerjih; čas teče v realnem času (pospešek časa in posnetek ×0,1
 // sta označena v risbi). Risba se nariše znova ob vsakem koraku ure (10-krat na sekundo) ali sličici poskusa.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
 import { ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, HALL, TehtnicaBench, MAGNETI, VODNIKI, IndukcijaBench, MAGNET_IND, CEV, SENZOR, GALVANOMETER, G_SOLA, naklonSkoziIzhodisce, POENOSTAVITVE_MAGNETIZEM } from "./lab-model-magnetizem.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -730,6 +730,9 @@ export function labSilaVodnik(el) {
     tryText: "Tariraj tehtnico in povečuj tok od 0 do 5 A po 1 A. Nariši F(I) in iz naklona izračunaj B. Nato pri 3 A zamenjaj tiskanine (1, 2, 4, 8 cm). Kaj se zgodi, ko zamenjaš smer toka ali nosilec zasukaš za 90°?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "T", dec: 3, tol: 0.05, onOdkrij: () => (redraw(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function events() {
     for (const e of B.events.splice(0)) {
@@ -768,17 +771,23 @@ export function labSilaVodnik(el) {
     gL.setAxes({ x: [0, 8], y: [0, b2.top], xStep: 2, yStep: b2.step });
     gL.draw(serije(gr2));
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     for (const [name, pts] of gr1) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), L = parseFloat(name) / 100;
-      out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je ${tex(String.raw`B = \frac{k}{L} = \frac{${num(k / 1000, 5)}${en("N/A")}}{${num(L, 2)}${en("m")}} = ${rez(num(k / 1000 / L, 3), "T")}`)}.</p>`);
+      cilji.push({ key: `I:${name}`, ime: `F(I), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>I</i>) izračunaj gostoto magnetnega polja <i>B</i> (${name}).`, vrednost: k / 1000 / L });
+      out.push(Rr.odkrito(`I:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je ${tex(String.raw`B = \frac{k}{L} = \frac{${num(k / 1000, 5)}${en("N/A")}}{${num(L, 2)}${en("m")}} = ${rez(num(k / 1000 / L, 3), "T")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>I</i>) in ga preveri spodaj.</p>`);
     }
     for (const [name, pts] of gr2) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), I = parseFloat(name.replace(",", "."));
-      if (I > 0) out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je ${tex(String.raw`B = \frac{k}{I} = ${rez(num((k * 100) / 1000 / I, 3), "T")}`)}.</p>`);
+      if (I > 0) {
+        cilji.push({ key: `L:${name}`, ime: `F(L), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>L</i>) izračunaj gostoto magnetnega polja <i>B</i> (${name}).`, vrednost: (k * 100) / 1000 / I });
+        out.push(Rr.odkrito(`L:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je ${tex(String.raw`B = \frac{k}{I} = ${rez(num((k * 100) / 1000 / I, 3), "T")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>L</i>) in ga preveri spodaj.</p>`);
+      }
     }
     calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
     const max = Math.max(0, ...[...gr1.values(), ...gr2.values()].map((p) => p.length));
     if (max >= 4 && !asked) {
       asked = true;
@@ -929,8 +938,9 @@ export function labSilaVodnik(el) {
     draw();
   }, 100);
   zap.vezi(table, {
-    get: () => ({ meas }),
+    get: () => ({ racun: Rr.stanje(), meas }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
       redraw();
     },

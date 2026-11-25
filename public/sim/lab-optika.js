@@ -1,7 +1,7 @@
 // Virtualni laboratorij, optika: optični disk z laserjem (lab-lom) in optična klop z zbiralno lečo (lab-leca).
 // Modeli: lab-model-optika.js (brez DOM). Optika ne potrebuje ure: risba se nariše ob vsaki spremembi.
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
+import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
 import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, mejniKot, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -72,6 +72,9 @@ export function labLom(el) {
     tryText: "Izberi akrilni polvalj in izmeri lomni kot pri vpadnih kotih 10°, 20° … 80°. Iz naklona grafa izračunaj lomni količnik. Nato obrni smer (iz snovi v zrak) in poišči kot, pri katerem lomljeni žarek izgine.",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ dec: 2, tol: 0.03, onOdkrij: () => (sync(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function change() {
     cur = B.laser ? B.odcitaj({ odPloskve }) : null;
@@ -122,12 +125,15 @@ export function labLom(el) {
   }
   function sync() {
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     for (const x of serije.values()) {
       if (x.pts.length < 2) continue;
       const kk = naklon(x.pts), n = x.smer === "zrak" ? 1 / kk : kk;
-      out.push(`<p>${x.name}: naklon ${tex(String.raw`\frac{\sin\beta}{\sin\alpha} = ${fixed(kk, 3)}`)} → ${tex(String.raw`n = ${x.smer === "zrak" ? String.raw`\frac{1}{${fixed(kk, 3)}} = ` : ""}${rez(fixed(n, 2))}`)} (iz ${x.pts.length} meritev).</p>`);
+      cilji.push({ key: x.name, ime: x.name, kaj: `Iz naklona premice na grafu izračunaj lomni količnik <i>n</i> (${x.name}).`, vrednost: n });
+      out.push(Rr.odkrito(x.name) ? `<p>${x.name}: naklon ${tex(String.raw`\frac{\sin\beta}{\sin\alpha} = ${fixed(kk, 3)}`)} → ${tex(String.raw`n = ${x.smer === "zrak" ? String.raw`\frac{1}{${fixed(kk, 3)}} = ` : ""}${rez(fixed(n, 2))}`)} (iz ${x.pts.length} meritev).</p>` : `<p>${x.name}: ${x.pts.length} meritev. Iz naklona premice izračunaj lomni količnik <i>n</i> in ga preveri spodaj.</p>`);
     }
     calc.innerHTML = out.join("") + (out.length ? `<p class="muted">Iz zraka v snov je naklon 1/<i>n</i>, iz snovi v zrak pa <i>n</i>.</p>` : "");
+    Rr.nastavi(cilji);
     graph.draw([...serije.values()].map((x, i) => {
       const kk = x.pts.length >= 2 ? naklon(x.pts) : null;
       return { id: x.name, pts: [...x.pts], cls: RAZREDI[i % 3], shape: i % 2 ? "^" : "o", label: x.name, line: kk ? (xx) => kk * xx : undefined };
@@ -191,8 +197,9 @@ export function labLom(el) {
   change();
   sync();
   zap.vezi(table, {
-    get: () => ({ serije: [...serije] }),
+    get: () => ({ racun: Rr.stanje(), serije: [...serije] }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       for (const [k, x] of Array.isArray(d?.serije) ? d.serije : []) if (typeof k === "string" && x && Array.isArray(x.pts)) serije.set(k, x);
       sync();
       vprasaj();
@@ -254,6 +261,9 @@ export function labLeca(el) {
     tryText: "Z lečo f = 100 mm postavi predmet 200 mm pred lečo in poišči ostro sliko. Kje je in kako velika je? Nato zapiši vsaj pet meritev pri različnih a in iz grafa 1/b od 1/a določi goriščno razdaljo. Kaj vidiš, ko je predmet bližje kot f?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "mm", dec: 1, tol: 0.03, onOdkrij: () => (sync(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function move(kaj, v) {
     const x = B.premakni(kaj, v);
@@ -299,11 +309,13 @@ export function labLeca(el) {
   }
   function sync() {
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     let i = 0;
     const ser = [];
     for (const [f, rows] of meritve) {
       const fm = fIzMeritev(rows), cls = RAZREDI[i % 3];
-      out.push(`<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} ${tex(String.raw`f = \text{povprečje } \frac{ab}{a + b} = ${rez(fixed(fm, 1), "mm")}`)}, ${tex(String.raw`\frac{1}{f} = ${fixed(1000 / fm, 2)}${en("m⁻¹")}`)}.</p>`);
+      cilji.push({ key: `f${f}`, ime: `f = ${f} mm`, kaj: `Iz svojih meritev <i>a</i> in <i>b</i> izračunaj goriščno razdaljo leče z napisom ${f}${NB}mm.`, vrednost: fm });
+      out.push(Rr.odkrito(`f${f}`) ? `<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} ${tex(String.raw`f = \text{povprečje } \frac{ab}{a + b} = ${rez(fixed(fm, 1), "mm")}`)}, ${tex(String.raw`\frac{1}{f} = ${fixed(1000 / fm, 2)}${en("m⁻¹")}`)}.</p>` : `<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} izračunaj goriščno razdaljo in jo preveri spodaj.</p>`);
       ser.push({ id: `f${f}`, pts: rows.map((r) => [1000 / r.a, 1000 / r.b]), cls, shape: i % 2 ? "^" : "o", label: `f = ${f}${NB}mm`, line: (x) => 1000 / fm - x });
       i++;
     }
@@ -311,6 +323,7 @@ export function labLeca(el) {
     graph.setAxes({ x: [0, top], y: [0, top], xStep: top > 25 ? 10 : 5, yStep: top > 25 ? 10 : 5 });
     graph.draw(ser);
     calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
   }
   function clear() {
     table.clear();
@@ -396,8 +409,9 @@ export function labLeca(el) {
   draw();
   sync();
   zap.vezi(table, {
-    get: () => ({ meritve: [...meritve] }),
+    get: () => ({ racun: Rr.stanje(), meritve: [...meritve] }),
     set: (d) => {
+      Rr.obnovi(d?.racun);
       for (const [f, rows] of Array.isArray(d?.meritve) ? d.meritve : []) if (LECE.includes(+f) && Array.isArray(rows)) meritve.set(+f, rows.filter((x) => x && Number.isFinite(x.a) && Number.isFinite(x.b)));
       sync();
       vprasaj();
