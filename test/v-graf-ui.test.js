@@ -116,9 +116,14 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       const old = page.locator('.sc-h-row:not(.last) .sc-h-graf');
       assert.equal(await old.getAttribute("aria-label"), "sc.showOnGraph", where);
       if (!opt.hasTouch) {
-        await old.focus();
+        // tipka Enter na gumbu (dostopnost). Fokus lahko kalkulator po izrisu vrne v vnos, zato preverimo, da je na
+        // gumbu, in poskusimo znova (v CI je enkrat 30 s čakal na prazen vnos; pregled #1003)
         await page.evaluate(() => (window.shown = undefined));
-        await page.keyboard.press("Enter");
+        for (let i = 0; i < 5 && (await page.evaluate(() => window.shown === undefined)); i++) {
+          await old.focus();
+          if (await old.evaluate((b) => document.activeElement === b)) await page.keyboard.press("Enter");
+          await page.waitForFunction(() => window.shown !== undefined, null, { timeout: 5000 }).catch(() => {});
+        }
         await page.waitForFunction(() => window.shown !== undefined);
         s = await page.evaluate(() => JSON.parse(JSON.stringify(window.graph.state)));
         assert.equal(s.items.filter((x) => x.tools?.area).length, 2, `${where}: tipka Enter na gumbu`);

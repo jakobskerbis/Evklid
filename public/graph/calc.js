@@ -1352,6 +1352,40 @@ export function createCalculator(root, opts) {
       }
     },
     /**
+     * Formula iz zbirke na grafu ({ lhs, rhs, v } iz formula-calc.js formulaPlot): vrstica »s(t) = v₀ t + …«
+     * (ime je leva stran, če je prosta črka) in drsniki za ostale količine (vrednost 1). Doda k trenutnemu grafu.
+     */
+    addFormula({ lhs, rhs, v }) {
+      const used = new Set(state.items.map((x) => /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*[(=]/.exec(String(x.text || ""))?.[1]).filter(Boolean));
+      const ok = (n) => /^[A-Za-zα-ωΑ-Ω]$/.test(n) && !["x", "y", "r", "θ", "e", v].includes(n) && !used.has(n) && !new RegExp(`(^|[^\\p{L}_])${n}(?![\\p{L}_₀-₉])`, "u").test(rhs);
+      const name = [lhs, "f", "g", "h", "p", "q"].find(ok);
+      if (!name) return false;
+      const next = clone(state);
+      next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
+      const fid = newId();
+      next.items.push({ id: fid, type: "expr", text: `${name}(${v}) = ${rhs}`, color: 0 });
+      loadState(next);
+      // ostale količine formule: drsniki (kot gumb »Dodaj drsnik«)
+      const o = modelItem(fid);
+      if (o?.missing?.length) {
+        const at = state.items.findIndex((x) => x.id === fid);
+        state.items.splice(at, 0, ...o.missing.map((n) => ({ id: newId(), type: "expr", text: `${n} = 1` })));
+        renderList();
+        refresh();
+      }
+      const it = item(fid);
+      it.color = nextColor();
+      commit();
+      refresh();
+      const fit = view.fitBounds();
+      if (fit) {
+        state.view = view.squared(fit, "y");
+        view.view = state.view;
+        view.draw();
+      }
+      return true;
+    },
+    /**
      * »Pokaži na grafu« iz znanstvenega kalkulatorja (public/graph/v-graf.js): doda vrstice k trenutnemu grafu
      * (ne pobriše ga; v razveljavi), vključi orodja in okno pokaže zanimiv del. req: { text, env, message?, simple? }.
      * Vrne true, če je graf narisan.
