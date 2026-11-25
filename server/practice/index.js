@@ -21,6 +21,13 @@ import { DODATNE_FIZ_SS } from "./generators/dodatne-fiz-ss.js";
 import { DODATNE_KEM_SS } from "./generators/dodatne-kem-ss.js";
 import { DODATNE_VRZELI_MAT } from "./generators/dodatne-vrzeli-mat.js";
 import { DODATNE_VRZELI_FIZ_KEM } from "./generators/dodatne-vrzeli-fiz-kem.js";
+import { GIMNAZIJA_MAT_SS1 } from "./generators/gimnazija-mat-ss1.js";
+import { GIMNAZIJA_MAT_SS2 } from "./generators/gimnazija-mat-ss2.js";
+import { GIMNAZIJA_MAT_SS3 } from "./generators/gimnazija-mat-ss3.js";
+import { GIMNAZIJA_MAT_SS4 } from "./generators/gimnazija-mat-ss4.js";
+import { GIMNAZIJA_FIZ_SS1 } from "./generators/gimnazija-fiz-ss1.js";
+import { GIMNAZIJA_FIZ_SS23 } from "./generators/gimnazija-fiz-ss23.js";
+import { GIMNAZIJA_KEM_SS } from "./generators/gimnazija-kem-ss.js";
 import { NAR_GENERATORS } from "./generators/nar.js";
 import { BIO_GENERATORS } from "./generators/bio.js";
 import { TEK_MAT_OS } from "./generators/tek-mat-os.js";
@@ -60,6 +67,14 @@ export const GENERATORS = [
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   ...DODATNE_VRZELI_MAT,
   ...DODATNE_VRZELI_FIZ_KEM,
+  // Gimnazija: drugi tip naloge za teme z enim samim generatorjem (2026-11-25).
+  ...GIMNAZIJA_MAT_SS1,
+  ...GIMNAZIJA_MAT_SS2,
+  ...GIMNAZIJA_MAT_SS3,
+  ...GIMNAZIJA_MAT_SS4,
+  ...GIMNAZIJA_FIZ_SS1,
+  ...GIMNAZIJA_FIZ_SS23,
+  ...GIMNAZIJA_KEM_SS,
   // naravoslovje OŠ 6. in 7. razred
   ...NAR_GENERATORS,
   ...BIO_GENERATORS,
