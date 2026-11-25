@@ -5,6 +5,8 @@
 //   <<ODPRI ucbenik="Pitagorov izrek">>                          lekcija v učbeniku
 //   <<ODPRI igra="ulomki">>                                     igra za to snov
 //   <<ODPRI formula="Ohmov zakon">>                              formula iz zbirke formul (prikaz v sporočilu)
+//   <<ODPRI vaja="kvadratna enačba">>                            podobna naloga iz Vadnice (generator, preveri koda;
+//                                                               samo s stikalom EVKLID_VAJA_PO_RAZLAGI, server/vaja-po-razlagi.js)
 //   <<GRAF ["y = a*x^2 + c", "a = 1", "c = 0"]>>               premičen graf v sporočilu (vrstica »a = 1« je drsnik)
 //   <<SKICA {"tocke": {...}, "daljice": [...]}>>                 preprosta skica (trikotnik, sile, krožnica)
 // Model ne pozna id-jev: išče z besedami, strežnik izbere najbližje ujemanje (najprej učenčeva pot) ali nič.
@@ -18,10 +20,11 @@ import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
 import { formulaSheet } from "./textbook.js";
 import { stopnja } from "../public/stopnja.js";
 import { SKUPINE, najdiSkupino, delPoImenu } from "../public/3d/skupine.js";
+import { temaZVajo, vajaVklopljena } from "./vaja-po-razlagi.js";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 export const OPEN_MAX = 4; // orodij pod enim sporočilom (prompt dovoli dve; strežnik je strpen)
-const KINDS = { poskus: "sim", sim: "sim", lab: "sim", "3d": "3d", ucbenik: "lesson", "učbenik": "lesson", igra: "game", formula: "formula" };
+const KINDS = { poskus: "sim", sim: "sim", lab: "sim", "3d": "3d", ucbenik: "lesson", "učbenik": "lesson", igra: "game", formula: "formula", vaja: "practice" };
 
 const OPEN_RE = /<<\s*ODPRI\b([^\n]*?)>>/g;
 const GRAPH_RE = /<<\s*GRAF\b\s*(\[[^\n]*?\])\s*>>/g;
@@ -338,6 +341,13 @@ function findGame(q, settings) {
   return null;
 }
 
+// Podobna naloga iz Vadnice (P1-3): tema z generatorjem nalog; brez stikala ali teme nič (gumba ni).
+function findPractice(q, settings) {
+  if (!vajaVklopljena()) return null;
+  const t = temaZVajo(q, settings || {});
+  return t ? { kind: "practice", id: t.topicId, title: t.title } : null;
+}
+
 // Zbirka formul učenčeve stopnje: vrstice »| Ime | $formula$ |«.
 function findFormula(q, settings) {
   const subj = String(settings?.subject || "").toUpperCase();
@@ -379,6 +389,7 @@ export async function resolveOpen(text, settings, { canOpen = null, prefer = "" 
       else if (b.kind === "lesson") r = findLesson(b.q, settings);
       else if (b.kind === "game") r = findGame(b.q, settings);
       else if (b.kind === "formula") r = findFormula(b.q, settings);
+      else if (b.kind === "practice") r = findPractice(b.q, settings);
     } catch (err) {
       console.warn("[evklid] odpri:", err?.message);
     }

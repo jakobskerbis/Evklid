@@ -20,6 +20,13 @@ sredi pogovora pokaže Evklidova orodja.
   oznako (`x = 1`, `y = x + 1`). Neobvezno okno v bloku, `<<GRAF ["y = 1/x", {"x": [-3, 3], "y": [-4, 4]}]>>` (ena
   ali obe osi), ostane nespremenjeno; inštruktorjev prompt ga (še) ne omenja. Ob krožnici, parametrični ali polarni
   krivulji ali območju ostane običajno okno.
+- **Podobna naloga** (P1-3, del A; j 25. 11. 2026, načrt treh prioritet): `<<ODPRI vaja="kvadratna enačba">>` →
+  `server/vaja-po-razlagi.js` poišče temo učenčeve stopnje z generatorjem nalog (najprej `topicForName`, sicer ena od
+  prvih treh lekcij z vsaj dvema tretjinama besed v naslovu; tema brez generatorja → ni gumba). Gumb »Podobna naloga«
+  (`vr.vaja`) odpre temo v Vadnici in začne vajo (kot »Preveri se« v laboratoriju): nalogo ustvari generator, odgovor
+  preveri koda (`progress.answer`), rezultat gre v napredek in šibke točke. Samo s stikalom `EVKLID_VAJA_PO_RAZLAGI=1`
+  (privzeto izklopljeno), dokler profil B v pozivu ne doda pravila, kdaj inštruktor blok napiše (#539). Znana omejitev:
+  »Nazaj« iz teme vodi na Učno pot, ne nazaj v pogovor.
 - Preizkus brez API ključa: v klepet napiši »pokaži poskus« (vnaprej pripravljen odgovor v `server/claude.js`).
 
 ## Obratna smer: iz poskusa ali 3D modela v klepet in nazaj (j, 24. 11. 2026, faza A načrta »povezan učni prostor«)
