@@ -7,7 +7,7 @@ import * as THREE from "/vendor/three/build/three.module.js";
 import { OrbitControls } from "/vendor/three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "/vendor/three/examples/jsm/environments/RoomEnvironment.js";
 import { zavrtiOkoli } from "./vrtenje.js";
-import { kakovostNaprave, locljivostPlatna, MSAA_DO_TOCK } from "./modeli.js";
+import { kakovostNaprave, locljivostPlatna, vzorciMSAA as vzorciZaTocke, naDotik } from "./modeli.js";
 
 export { THREE };
 
@@ -138,6 +138,7 @@ export function shranjenNacin() {
 export function ustvariSceno(el, opts = {}) {
   const kakovost = opts.kakovost || kakovostNaprave();
   const visoka = kakovost === "visoka";
+  const dotik = naDotik(); // meja točk in brez MSAA samo na tablici in telefonu (modeli.js locljivostPlatna)
   const gib = opts.gibanje ?? gibanje();
   el.classList.add("k3-oder");
   const canvas = document.createElement("canvas");
@@ -516,7 +517,7 @@ export function ustvariSceno(el, opts = {}) {
   let w = 0;
   let h = 1;
   let zamikZg = 0;
-  const vzorciMSAA = () => (w * h * gostota * gostota > MSAA_DO_TOCK ? 0 : 4);
+  const vzorciMSAA = () => vzorciZaTocke(w * h * gostota * gostota, dotik);
   // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
   function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
@@ -525,7 +526,7 @@ export function ustvariSceno(el, opts = {}) {
     if (nw === w && nh === h && prisilno !== true) return;
     w = nw;
     h = nh;
-    gostota = locljivostPlatna(locljivost, w, h, kakovost);
+    gostota = locljivostPlatna(locljivost, w, h, kakovost, dotik);
     renderer.setPixelRatio(gostota);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
