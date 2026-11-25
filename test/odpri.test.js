@@ -147,3 +147,12 @@ test("ODPRI 3d: ime posameznega dela celice ali virusa ostane del (ne postane sk
     }
   }
 });
+
+test("resolve: naslov poskusa iz Laboratorija (kot v opombi inštruktorju) najde ta poskus (povezave C1)", async () => {
+  const FIZ9 = { subject: "FIZ", curriculum_level: "9. razred", school_system: "SI" };
+  const [r] = await resolveOpen('<<ODPRI poskus="Ohmov zakon: tok in napetost" nastavi="napetost=6">>', FIZ9);
+  assert.equal(r.id, "lab-ohm");
+  assert.deepEqual(r.set, { napetost: 6 });
+  const [os] = await resolveOpen('<<ODPRI poskus="Elektromagnet (OŠ)">>', FIZ9);
+  assert.deepEqual([os.id, os.opts], ["lab-elektromagnet", { raven: "os" }]);
+});

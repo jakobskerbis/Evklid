@@ -4599,9 +4599,11 @@ initOpen({
   odprtiPoskus: (key, { vrni = false } = {}) => {
     const r = state.chatReturn;
     if (!key || !r || r.view !== "lab" || r.poskus !== key || !returnConvOk(r)) return null;
+    // Klepet v oknu: učenec je medtem morda odprl drug poskus ali seznam; drsnike premaknemo le v istem poskusu.
+    const mount = document.querySelector("#lab-content .lab-mount");
+    if (mount?.dataset.labKey !== key) return null;
     if (!vrni) return true;
-    if (!chatReturnBack({ okno: true })) return null;
-    return document.querySelector("#lab-content .lab-mount");
+    return chatReturnBack({ okno: true }) ? mount : null;
   },
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),

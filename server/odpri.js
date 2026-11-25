@@ -11,7 +11,7 @@
 // Nič ne najde → gumba ni (nikoli napačen gumb). Učenec blokov nikoli ne vidi (meta.js stripMeta in MARKERS).
 import fs from "node:fs";
 import path from "node:path";
-import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
+import { SIM_TOPICS, simsForTopic, LAB_INFO, labKey } from "../public/sim/katalog.js";
 import { TOPIC_CONCEPTS } from "../public/games/learn-link.js";
 import { getTopic, pathKeyFor } from "./curriculum.js";
 import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
@@ -181,6 +181,9 @@ function allSims() {
       x.topics.push(topicId);
       if (!x.titles.includes(d.title)) x.titles.push(d.title);
       x.topicOf[d.title] ||= topicId;
+      // Laboratorij: naslov poskusa, kot ga vidi učenec in ga dobi inštruktor v opombi (server/ucni-kontekst.js).
+      const lab = d.id.startsWith("lab-") && (LAB_INFO[labKey(d.id, d.opts)] || LAB_INFO[d.id])?.title;
+      if (lab && !x.titles.includes(lab)) x.titles.push(lab);
     }
   SIMS = [...map.values()];
   return SIMS;
