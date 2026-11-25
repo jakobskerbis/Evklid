@@ -42,6 +42,17 @@ export function lcd(name, { cls = "" } = {}) {
   return el;
 }
 
+// Lepe meje osi grafa: najmanjša »okrogla« zgornja meja nad max in korak (1, 2, 2,5 ali 5 · 10ⁿ), največ 6 razdelkov.
+export function lepaOs(max) {
+  const m = Math.max(max, 1e-6) * 1.08;
+  const e = 10 ** Math.floor(Math.log10(m / 5));
+  for (const k of [1, 2, 2.5, 5, 10, 20]) {
+    const st = k * e;
+    if (m / st <= 6) return { top: Math.ceil(m / st) * st, step: st };
+  }
+  return { top: m, step: m / 5 };
+}
+
 // Tabela meritev. cols: [{ key, label }]. add(row) doda vrstico (vrednosti so že nizi za prikaz).
 export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in pritisni »Zapiši meritev«." } = {}) {
   const tbody = h("tbody");
