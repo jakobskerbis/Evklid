@@ -12,7 +12,7 @@
 //  * polmer živca: v mrežnici in žilnici R_PAPILA (papila Ø 1,7 mm), skozi kanal beločnice zvezno do R_ZIVEC na
 //    zunanji ploskvi beločnice (kanal je lijak, ki se navzven širi), za njo stalen (mielin);
 //  * ovojnica: votla cev (stena STENA) z notranjim polmerom R_ZIVEC + REZA, začne se ZAMIK_OVOJNICE v beločnici
-//    (zvezno nadaljevanje), konec KRAJSA pred koncem živca; brez razširitve čez beločnico;
+//    (zvezno nadaljevanje), do konca osi (živec se konča KONEC_Z prej), konec zaobljen (KUPOLA); brez razširitve čez beločnico;
 //  * oko.json: živec se v prerezu reže (brez brezReza), rezSnopi.os = smer osi pri zrklu, rezSnopi.crte = osrednja
 //    arterija in vena (vzporedni črti ob osi do ZILE_DO za beločnico) in lamina cribrosa (prečna črta).
 // Ponovljivo: vozlišči dobita extras »r1«.
@@ -25,8 +25,11 @@ import * as G from "./zile-mreza.mjs";
 import { okvirZrkla, cev } from "./oko-dodelava.mjs";
 
 const MAPA = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public", "3d", "modeli", "organi-3d");
-export const PRAVO = 0.011, R_PAPILA = 0.00085, R_ZIVEC = 0.00145, REZA = 0.00022, STENA = 0.00034;
-export const ZLIVANJE = 0.0004, ZAMIK_OVOJNICE = 0.00035, KRAJSA = 0.0016, ZILE_DO = 0.008, CUP = 0.00008;
+// r2 (ocena r1: od zadaj »debela bela cev ≈ 5,5 mm s sivim prerezanim koncem«): živec Ø 2,4 mm, ovojnica Ø 3,4 mm;
+// ovojnica je KONEC_Z daljša od živca in se konča zaobljeno (brez sivega pokrova živca in belega obroča), pas zlivanja z
+// beločnico se zoži v ZLIVANJE_DOL (prej 1,4 mm: bela stopnica v prerezu).
+export const PRAVO = 0.011, R_PAPILA = 0.00085, R_ZIVEC = 0.0012, REZA = 0.00022, STENA = 0.00028;
+export const ZLIVANJE = 0.0004, ZLIVANJE_DOL = 0.0024, ZAMIK_OVOJNICE = 0.00035, KONEC_Z = 0.0014, KUPOLA = 0.0012, ZILE_DO = 0.008, CUP = 0.00008;
 
 const gl = (x, a, b) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const sredina = (W) => { const c = [0, 0, 0]; for (const p of W) for (let k = 0; k < 3; k++) c[k] += p[k] / W.length; return c; };
@@ -135,19 +138,27 @@ export async function obdelaj(datoteka, ravnina, { suho = false } = {}) {
   const os = osR1(zac, u, kon, telefon ? 18 : 34);
   const rZ = (s) => R_PAPILA + (R_ZIVEC - R_PAPILA) * gl(s, sB0 - 0.0001, sB1);
   const stranic = telefon ? 12 : 20;
-  const novZ = cev(os, rZ, stranic);
-  // ovojnica: od ZAMIK_OVOJNICE pod zunanjo ploskvijo beločnice do KRAJSA pred koncem živca
+  // ovojnica: od ZAMIK_OVOJNICE pod zunanjo ploskvijo beločnice do konca osi; živec se konča KONEC_Z prej (v ovojnici)
   let dol = 0; const sOs = [0];
   for (let i = 1; i < os.length; i++) sOs.push((dol += G.v3.dist(os[i], os[i - 1])));
-  const s0 = sB1 - Math.max(ZAMIK_OVOJNICE, 0.7 * (sB1 - sB0)), s1 = dol - KRAJSA;
-  const osO = [];
-  for (let i = 0; i < os.length; i++) if (sOs[i] > s0 && sOs[i] < s1) osO.push(os[i]);
   const tocka = (s) => { for (let i = 1; i < os.length; i++) if (sOs[i] >= s) { const f = (s - sOs[i - 1]) / (sOs[i] - sOs[i - 1]); return G.v3.add(os[i - 1], G.v3.mul(G.v3.sub(os[i], os[i - 1]), f)); } return os[os.length - 1]; };
-  osO.unshift(tocka(s0)); osO.push(tocka(s1));
+  const sZ = dol - KONEC_Z;
+  const osZ = os.filter((_, i) => sOs[i] < sZ - 0.0002);
+  osZ.push(tocka(sZ));
+  const novZ = cev(osZ, rZ, stranic);
+  const s0 = sB1 - Math.max(ZAMIK_OVOJNICE, 0.7 * (sB1 - sB0)), s1 = dol;
+  const osO = [];
+  for (let i = 0; i < os.length; i++) if (sOs[i] > s0 && sOs[i] < s1 - KUPOLA) osO.push(os[i]);
+  osO.unshift(tocka(s0));
+  for (let k = 0; k <= 8; k++) osO.push(tocka(s1 - KUPOLA * Math.cos((k / 8) * Math.PI / 2))); // gosto po kupoli
   // v beločnici se ovojnica zlije z njo: notranji polmer = živec (subarahnoidna reža se ob beločnici slepo konča),
   // zunanji je ob začetku za ZLIVANJE širši in se v 1,4 mm zoži na steno STENA
-  const rn = (t) => rZ(s0 + t) + 0.00001 + REZA * gl(t, sB1 - s0, sB1 - s0 + 0.0009);
-  const rz = (t) => rn(t) + STENA + ZLIVANJE * (1 - gl(t, sB1 - s0 - 0.0002, sB1 - s0 + 0.0012));
+  // za koncem živca se notranja ploskev zapre, zunanja se zaobli v kupolo
+  const L = s1 - s0;
+  const rn0 = (t) => rZ(s0 + t) + 0.00001 + REZA * gl(t, sB1 - s0, sB1 - s0 + 0.0009);
+  const rn = (t) => Math.max(0.00002, rn0(t) * (1 - gl(t, sZ - s0 + 0.0001, sZ - s0 + 0.0005)));
+  const kup = (t) => { const u = (t - (L - KUPOLA)) / KUPOLA; return u <= 0 ? 1 : Math.sqrt(Math.max(0.04, 1 - u * u)); };
+  const rz = (t) => (rn0(t) + STENA + ZLIVANJE * (1 - gl(t, sB1 - s0 - 0.0002, sB1 - s0 + ZLIVANJE_DOL))) * kup(t);
   const novO = votlaCev(osO, rz, rn, telefon ? 14 : 24);
   const crte = [];
   if (!telefon) {
@@ -161,7 +172,7 @@ export async function obdelaj(datoteka, ravnina, { suho = false } = {}) {
     crte.push({ a: G.v3.add(sl, G.v3.mul(p, -0.0011)), b: G.v3.add(sl, G.v3.mul(p, 0.0011)), polmer: 0.00011, barva: "#f3eee4", moc: 0.75 });
   }
   const r = (x) => +x.toFixed(5);
-  const opis = { os: u.map((x) => +x.toFixed(4)), crte: crte.map((c) => ({ ...c, a: c.a.map(r), b: c.b.map(r) })), konec: { sredisce: os[os.length - 1].map(r), os: G.v3.norm(G.v3.sub(os[os.length - 1], os[os.length - 2])).map((x) => +x.toFixed(4)), polmer: R_ZIVEC } };
+  const opis = { os: u.map((x) => +x.toFixed(4)), crte: crte.map((c) => ({ ...c, a: c.a.map(r), b: c.b.map(r) })), konec: { sredisce: osZ[osZ.length - 1].map(r), os: G.v3.norm(G.v3.sub(osZ[osZ.length - 1], osZ[osZ.length - 2])).map((x) => +x.toFixed(4)), polmer: R_ZIVEC } };
   const por = `${path.basename(datoteka)}: živec od mrežnice (${(tMrez * 1000).toFixed(2)} mm od središča), beločnica ${(sB0 * 1000).toFixed(2)}–${(sB1 * 1000).toFixed(2)} mm, Ø ${(2 * R_ZIVEC * 1000).toFixed(1)} mm, ovojnica Ø ${(2 * rz(0.004) * 1000).toFixed(1)} mm, dolžina ${(dol * 1000).toFixed(0)} mm`;
   if (suho) return { porocilo: por, opis };
   zamenjaj(doc, zivec, novZ);

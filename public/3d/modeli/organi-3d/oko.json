@@ -272,16 +272,16 @@
    "detajl": true,
    "konec": {
     "sredisce": [
-     -0.00816,
-     0.00775,
-     -0.01749
+     -0.00715,
+     0.00735,
+     -0.0166
     ],
     "os": [
-     -0.7062,
-     0.2822,
-     -0.6493
+     -0.7436,
+     0.2851,
+     -0.6048
     ],
-    "polmer": 0.00145
+    "polmer": 0.0012
    },
    "tekstura": false,
    "zile": 0.5,
@@ -634,8 +634,8 @@
      -0.00136,
      0.01468
     ],
-    "polmer": 1.2434,
-    "polmerTelefon": 1.1812
+    "polmer": 1.2486,
+    "polmerTelefon": 1.1862
    },
    "skrijTkiva": [
     "leča",
@@ -686,8 +686,8 @@
      0.00221,
      0.01544
     ],
-    "polmer": 0.6714,
-    "polmerTelefon": 0.6466
+    "polmer": 0.6742,
+    "polmerTelefon": 0.6493
    },
    "skrijDele": [
     "misice"
@@ -745,8 +745,8 @@
  },
  "velikost": 0.082,
  "trikotniki": {
-  "racunalnik": 149371,
-  "telefon": 46142
+  "racunalnik": 150099,
+  "telefon": 46590
  },
  "luci": [
   {
