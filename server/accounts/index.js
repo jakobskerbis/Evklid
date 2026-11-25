@@ -1,5 +1,6 @@
 // Starševski računi, soglasja, naročnine (Stripe), priporočila in tedenska poročila (Resend).
 // Vklop: EVKLID_ACCOUNTS=1. Brez tega aplikacija deluje kot prej (brez prijave).
+import { personalDailyQuestions } from "../placila/pravice.js";
 import crypto from "node:crypto";
 import "../env.js";
 import { BRAND, LEGACY } from "../brand.js";
@@ -828,7 +829,8 @@ export function mountAccounts(app, store, opts = {}) {
     const g = subGuarantee(studentId);
     // Preizkus in bonus (nopay): rep ni razporejen po dnevih (spreadOf), ob koncu repa poziv k naročnini.
     if (/^block\.freeTail(Topup|Birth)?$/.test(code) && (g?.nopay === "trial" || g?.nopay === "bonus")) code = "block.trialOut";
-    if (code === "block.freeMonth" || code === "block.freePool" || code === "block.unverifiedDay") return freeBlock(studentId, code);
+    // Konec preizkusa ali bonusa (#759): z istim namigom kot brezplačni paket, da kartica ponudi naročnino.
+    if (code === "block.freeMonth" || code === "block.freePool" || code === "block.unverifiedDay" || code === "block.trialOut") return freeBlock(studentId, code);
     return { error: BLOCK_TEXT[code], code };
   }
   // Paket pred testom: poraba nad mejo paketa (brez dela iz kredita), ki jo plača kredit; null brez paketa.
@@ -961,10 +963,17 @@ export function mountAccounts(app, store, opts = {}) {
   const moreHintCode = (studentId) =>
     guests.netOf(studentId) ? (getParent(ownerOf(studentId))?.is_guest ? "block.hintGuest" : "block.hintVerify") : upsell(studentId) ? ((ageOfStudent(studentId) ?? 0) >= 18 ? "block.hintAdult" : "block.hintParent") : null;
   // Odgovor 429 za brezplačni paket: { error, code, params?, hint? }; error je slovenska rezerva (razlog + namig).
+  // offer_reason (#759): zakaj ni ponudbe s ceno (ponudbe.js: lesson, school_hours, teacher_off, under_15; »school«
+  // za učenca iz šole), da kartica (public/meja-placilo.js) pove pravo stvar; z namigom ponudbe ga ni.
   function freeBlock(studentId, code, params) {
     const hint = moreHintCode(studentId);
     const text = params ? BLOCK_TEXT[code].replace("{n}", params.n) : BLOCK_TEXT[code];
-    return { error: hint ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}) };
+    let offerReason = null;
+    if (!hint) {
+      const o = offersFor(studentId);
+      offerReason = o.reason || (schools.membership(studentId)?.inSchool ? "school" : null);
+    }
+    return { error: hint ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}), ...(offerReason ? { offer_reason: offerReason } : {}) };
   }
 
   // Poraba brezplačnega profila ta mesec (gost: vse omrežje) in poraba izbrisanih profilov istega računa.
@@ -2058,13 +2067,16 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Cene in preizkus za stran za starše (starsi.html), brez prijave.
   // Isti podatki gredo tudi v pristajalno stran, ki jo strežnik pošlje že izrisano (server/pristajalna-takoj.js).
+  // Prijavljen račun (#759): valuta kot povezava za plačilo (pay-link, currencyOf računa), da se cena na kartici ob meji
+  // ujema s ceno na placaj.html; brez računa iz ?country= ali države zahteve.
   const pricesFor = (req, countryParam) => {
     const country = String(countryParam || "").toUpperCase();
-    const currency = currencyOf(req, /^[A-Z]{2}$/.test(country) ? { country } : null);
+    const own = req.parent && !req.parent.is_guest ? req.parent : null;
+    const currency = currencyOf(req, own || (/^[A-Z]{2}$/.test(country) ? { country } : null));
     // Garancija na pristajalni strani: samo ob vklopljenem stikalu in živih plačilih (garancija.js guaranteeAdvertised),
     // samo pri cenah v evrih (garancija velja za slovensko lestvico ocen 1–5).
     const guarantee = currency === "EUR" && guaranteeAdvertised(stripe) ? { weeks: GUARANTEE.weeks, min_days: GUARANTEE.minDays, enroll_days: GUARANTEE.enrollDays } : null;
-    return { currency, plans: plansFor(currency), trial_days: TRIAL_DAYS, free_daily_questions: freeDailyQuestions(), min_age: minAgeOf(String(req.headers["cf-ipcountry"] || ""), country), ...(guarantee ? { guarantee } : {}) };
+    return { currency, plans: plansFor(currency), trial_days: TRIAL_DAYS, free_daily_questions: freeDailyQuestions(), paid_daily_questions: { OS: personalDailyQuestions("OS"), SS: personalDailyQuestions("SS"), FAKS: personalDailyQuestions("FAKS") }, min_age: minAgeOf(String(req.headers["cf-ipcountry"] || ""), country), ...(guarantee ? { guarantee } : {}) };
   };
   app.get("/api/account/prices", (req, res) => res.json(pricesFor(req, req.query.country)));
 

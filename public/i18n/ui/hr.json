@@ -4583,6 +4583,8 @@
   "meja.sub": "S pretplatom dobivaš:",
   "meja.price": "{price} mjesečno",
   "meja.more": "Više pitanja za instruktora svaki dan i svaki mjesec",
+  "meja.moreN": "Do {n} pitanja za instruktora dnevno umjesto {free}",
+  "meja.whyUnder15": "Ako trebaš više pitanja, razgovaraj s roditeljem.",
   "meja.deep": "Detaljnija objašnjenja",
   "meja.lessons": "Interaktivni dijelovi lekcija u svim temama tvoje razine",
   "meja.btnParent": "Pošalji poveznicu roditelju",

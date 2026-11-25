@@ -4552,6 +4552,8 @@
   "meja.sub": "Con un abbonamento ottieni:",
   "meja.price": "{price} al mese",
   "meja.more": "Più domande al tutor ogni giorno e ogni mese",
+  "meja.moreN": "Fino a {n} domande al tutor al giorno invece di {free}",
+  "meja.whyUnder15": "Se ti servono più domande, parlane con un genitore.",
   "meja.deep": "Spiegazioni più dettagliate",
   "meja.lessons": "Parti interattive delle lezioni in tutti gli argomenti del tuo livello",
   "meja.btnParent": "Invia un link a un genitore",

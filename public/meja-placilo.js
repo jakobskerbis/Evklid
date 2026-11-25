@@ -66,7 +66,10 @@ export function limitVariant({ body, status = null, prices = null, level = "OS",
     if (!parentPays) action = "account";
     else if (single) action = "link";
   }
-  return { kind: "offer", price, action, payOn };
+  // Plačljiva dnevna meja na stopnji profila (#759): »Do 60 vprašanj na dan namesto 10«.
+  const paidN = Number(prices?.paid_daily_questions?.[level]) || 0;
+  const freeN = Number(prices?.free_daily_questions) || 0;
+  return { kind: "offer", price, action, payOn, ...(paidN > freeN && freeN > 0 ? { daily: { n: paidN, free: freeN } } : {}) };
 }
 
 // Besedilo razloga v jeziku vmesnika (kot public/app.js serverError, brez namiga).
@@ -82,8 +85,10 @@ const hintText = (body) => {
 export function limitCardHtml(v, body) {
   // Brez delujočih plačil seznama ni (j 2026-11-16): nakup ni mogoč, zato ostaneta sporočilo in »Vadi naprej«.
   const facts = v.kind === "offer" && v.payOn
-    ? [t("meja.more"), t("meja.deep"), t("meja.lessons")]
+    ? [v.daily ? t("meja.moreN", v.daily) : t("meja.more"), t("meja.deep"), t("meja.lessons")]
     : [];
+  // Brez ponudbe (#759): pod 15 let je naročnina stvar starša (brez cene in gumba, server/placila/ponudbe.js).
+  const why = v.kind === "plain" && body.offer_reason === "under_15" ? `<p class="meja-sub">${esc(t("meja.whyUnder15"))}</p>` : "";
   // Cena je posebna vrstica pod seznamom, ne alineja s kljukico (»Z naročnino dobiš: 9,99 € na mesec« bi bilo narobe).
   const price = v.kind === "offer" && v.price ? `<p class="meja-price">${esc(t("meja.price", { price: v.price }))}</p>` : "";
   // Namig strežnika (»ustvari račun«, »naj starš izbere naročnino«) ostane, ko ni gumba, ki ga nadomesti,
@@ -95,7 +100,7 @@ export function limitCardHtml(v, body) {
       ? `<button type="button" class="primary" data-meja-account>${icon("wallet")} <span>${esc(t("meja.btnAdult"))}</span></button>`
       : "";
   return `<div class="meja-head">${icon("info")}<p>${esc(reason(body))}${hint ? ` ${esc(hint)}` : ""}</p></div>
-    ${facts.length ? `<div class="meja-plus"><p class="meja-sub">${esc(t("meja.sub"))}</p><ul>${facts.map((f) => `<li>${icon("check")}<span>${esc(f)}</span></li>`).join("")}</ul>${price}</div>` : ""}
+    ${why}${facts.length ? `<div class="meja-plus"><p class="meja-sub">${esc(t("meja.sub"))}</p><ul>${facts.map((f) => `<li>${icon("check")}<span>${esc(f)}</span></li>`).join("")}</ul>${price}</div>` : ""}
     <div class="meja-out"></div>
     <div class="meja-actions">${btn}<button type="button" class="text-btn" data-meja-practice>${esc(t("meja.practice"))} ${icon("chevron-right")}</button></div>
     <p class="form-error" role="alert" hidden></p>`;
