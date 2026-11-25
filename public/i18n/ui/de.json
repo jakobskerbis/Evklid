@@ -3649,6 +3649,8 @@
   "a3.noWebgl": "Dieser Browser kann keine 3D-Modelle anzeigen (WebGL ist ausgeschaltet oder wird nicht unterstützt). Versuch es mit einem anderen Browser oder Gerät.",
   "a3.offline": "Der 3D-Atlas braucht beim ersten Öffnen eine Internetverbindung.",
   "a3.notFound": "Diese 3D-Ansicht gibt es nicht.",
+  "a3.noConnection": "Die Verbindung wurde unterbrochen. Versuche es in ein paar Sekunden erneut.",
+  "a3.retry": "Erneut versuchen",
   "a3.left": "links",
   "a3.right": "rechts",
   "a3.breadcrumb": "Gruppen",

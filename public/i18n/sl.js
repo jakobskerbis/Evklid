@@ -3900,6 +3900,8 @@ export default {
   "a3.noWebgl": "Ta brskalnik ne more pokazati 3D prikaza (WebGL je izklopljen ali ni na voljo). Poskusi v drugem brskalniku ali na drugi napravi.",
   "a3.offline": "3D atlas ob prvem odprtju potrebuje povezavo z internetom.",
   "a3.notFound": "Ta 3D prikaz ne obstaja.",
+  "a3.noConnection": "Povezava je prekinjena. Poskusi znova čez nekaj sekund.",
+  "a3.retry": "Poskusi znova",
   "a3.left": "levo",
   "a3.right": "desno",
   "a3.breadcrumb": "Skupine",

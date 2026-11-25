@@ -3647,6 +3647,8 @@
   "a3.noWebgl": "Ez a böngésző nem tud 3D modelleket megjeleníteni (a WebGL ki van kapcsolva vagy nem támogatott). Próbáld meg egy másik böngészőben vagy eszközön.",
   "a3.offline": "A 3D atlasz első megnyitásához internet kell.",
   "a3.notFound": "Ez a 3D nézet nem létezik.",
+  "a3.noConnection": "Megszakadt a kapcsolat. Próbáld újra néhány másodperc múlva.",
+  "a3.retry": "Újra",
   "a3.left": "bal",
   "a3.right": "jobb",
   "a3.breadcrumb": "Csoportok",
