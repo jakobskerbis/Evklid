@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-070
+**Naslednji prosti ID:** AUDIT-071
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -70,6 +70,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-067 | P1 | Kalkulator, vnos | Tipka predloge (xʸ) v prazni reži pokvari zunanjo predlogo: `∫_□^□ □^{(□; 0; 1)}` (j, evklid.app) | V IZVEDBI | `f498a9e` | j, 24. 11. | #1017 |
 | AUDIT-068 | P3 | Kalkulator, enačbe | Gruča s kompleksnim parom: napačna zadnja mesta majhnega imaginarnega dela z »≈« (`((x−9/2)^4+10^(−26))(x^3−3x+1)=0` → Im 2,24542·10⁻⁷, prav 2,23607·10⁻⁷) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (pregled #979), 25. 11. | #1021 |
 | AUDIT-069 | P2 | Inštruktor, preverjanje | Gol rezultat (»Rezultat: 317«, »= …«) se ne primerja z rešitvijo, ki jo pozna presolve; račun z eno operacijo in »p % od x« se ne rešita (18 od 26 zgrešenih napak pri kratkih odgovorih OŠ) | V IZVEDBI | `f498a9e` | Claude (meritev kratkih odgovorov), 25. 11. | – |
+| AUDIT-070 | P3 | Kalkulator, videz | `public/graph.css:97` (`.gc-math`): `scrollbar-width: thin` v Chromiumu na Windows nariše tanek sistemski drsnik z mini puščicami (j-jevo pravilo: brez mini puščic). Predlog: `scrollbar-width` v `@supports not selector(::-webkit-scrollbar)`, plus `::-webkit-scrollbar{width:6px;height:6px}` in `::-webkit-scrollbar-button{display:none}` (kot #1068 v drsniki.css, style.css, 3d.css). Lastnik: profil B | NOVO | `f4f1972` | Claude (pregled videza #1068), 25. 11. | – |
 
 ## Zgodovina statusov
 
@@ -108,3 +109,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 24. 11. 2026: AUDIT-002 popravek #1004 (Claude, po pregledu #997: neskončne vrste); AUDIT-055 (#1005) in AUDIT-056 (#1006) iz pregleda #997.
 - 25. 11. 2026: AUDIT-057 (Claude, iz pregleda #1006): oznake 3D grafa v RTL, popravek #1019.
 - 25. 11. 2026: AUDIT-058 do 066 iz revizije AI-inštruktorja (poročilo `/home/claude/porocilo-instruktor.md`, Claude); AUDIT-067 napaka, ki jo je našel j (PR #1017 je bil napačno označen kot AUDIT-059). Nerešeno, odloči j: P2-4 (pregled z modelom tudi za odgovore pod 120 znakov – vpliva na stroške AI).
+- 25. 11. 2026: AUDIT-070 (Claude, iz pregleda videza #1068): mini puščice drsnika v vrstici izraza kalkulatorja na Windows; dodeljeno profilu B (kalkulator), zapisano tudi v #539. Na Windows še ni ponovljeno.
