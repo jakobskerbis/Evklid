@@ -20,7 +20,7 @@ test("raven profila iz stopnje", () => {
 
 test("razlaga po ravni: OŠ preprosto (latinsko v »Več o tem«), SŠ z latinskim, študij vse", () => {
   const d = { ime: "Levi prekat", la: "Ventriculus sinister", opisOs: "Najmočnejši del srca.", opis: "Stisne kri v aorto.", opisStudij: "Stena 10–15 mm." };
-  assert.deepEqual(razlaga(d, 1), { opis: "Najmočnejši del srca.", la: null, vec: "Ventriculus sinister · Stisne kri v aorto. Stena 10–15 mm." });
+  assert.deepEqual(razlaga(d, 1), { opis: "Najmočnejši del srca.", la: null, vec: "Ventriculus sinister\u00a0· Stisne kri v aorto. Stena 10–15 mm." }); // »·« ne na začetek vrstice (datum.js zdruzi)
   assert.deepEqual(razlaga(d, 2), { opis: "Stisne kri v aorto.", la: "Ventriculus sinister", vec: "Stena 10–15 mm." });
   assert.deepEqual(razlaga(d, 3), { opis: "Stisne kri v aorto. Stena 10–15 mm.", la: "Ventriculus sinister", vec: null });
   assert.equal(razlaga({ opis: "Samo to." }, 1).opis, "Samo to.");

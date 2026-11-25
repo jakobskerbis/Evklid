@@ -4,6 +4,7 @@
 // profila: okvir »Uči se« jo dobi v naslovu (uci-se.js: /3d?raven=…), samostojna stran /3d brez profila »?raven=«
 // ali SŠ. nastaviVirRavni(fn) lahko poda vir nastavitev neposredno (zdaj ga kliče le test; aplikacija 3D odpre v okvirju).
 import { stopnja } from "../stopnja.js";
+import { zdruzi } from "../datum.js";
 
 let vir = () => null;
 export function nastaviVirRavni(fn) {
@@ -35,7 +36,7 @@ export function razlaga(d, raven) {
   const st = d?.opisStudij || "";
   if (raven <= 1) {
     const vec = [ss !== os ? ss : "", st].filter(Boolean).join(" ");
-    return { opis: os, la: null, vec: [d?.la, vec].filter(Boolean).join(" · ") || null };
+    return { opis: os, la: null, vec: zdruzi([d?.la, vec]) || null };
   }
   if (raven === 2) return { opis: ss, la: d?.la || null, vec: st || null };
   return { opis: [ss, st].filter(Boolean).join(" "), la: d?.la || null, vec: null };

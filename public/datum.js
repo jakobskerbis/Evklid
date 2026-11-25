@@ -16,3 +16,13 @@ export function dateText(value, loc, opts = { day: "numeric", month: "long", yea
     .map((p) => (p.type === "month" ? SL_MONTH[m - 1] : p.value))
     .join("");
 }
+
+// Vrstica podatkov z ločilom »·« (»Osnovna šola 9. razred · NPZ · 29. 5. 2027 · še 185 dni«, A9): pred »·« je
+// nedeljiv presledek, da se ločilo nikoli ne prelomi na začetek vrstice, datum s številkami (»29. 5. 2027«) pa ostane
+// v eni vrstici. Za ločila »·« med podatki v besedilu, ne za množenje v formulah in nalogah.
+export const NBSP = " ";
+export const LOCILO = `${NBSP}· `;
+/** Datum »29. 5. 2027« (tudi »29. 5.«) brez preloma: presledek za piko pred števko postane nedeljiv. */
+export const celDatum = (s) => String(s ?? "").replace(/(\d\.) +(?=\d)/g, `$1${NBSP}`);
+/** Deli, združeni z ločilom »·«: prazni izpadejo, datumi ostanejo celi. */
+export const zdruzi = (deli) => deli.filter(Boolean).map(celDatum).join(LOCILO);

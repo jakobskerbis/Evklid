@@ -14,6 +14,7 @@ import { termsBanner, withdrawalLink, withdrawalAdminCard, bindWithdrawal } from
 import { loadPrograms } from "./programs.js";
 import { renderCreditCard } from "./credit-card.js";
 import { $, GUEST_INVITE, PROFILE_PW_MIN, STATUS_KEYS, api, bindBirthForm, bindChildForm, birthFormHtml, childForm, continueFlow, date, errorBox, esc, goAuth, localToday, lockError, logout, money, onReadyCb, paySig, renderVerify, route, shell, showError, setShownSig, setStatus, status, store, toast, underAgeHtml } from "./account.js";
+import { zdruzi } from "./datum.js";
 
 const statusText = (st) => (STATUS_KEYS.includes(st) ? t(`acct.st.${st}`) : st);
 
@@ -346,7 +347,7 @@ function deliHtml(o, loc) {
 function anketaHtml(k, loc) {
   const nf = (x) => Number(x).toLocaleString(loc);
   const OZNAKA = { zelo: "ank.a.zelo", malo: "ank.a.malo", da: "fb.yes", mogoce: "fb.maybe", ne: "fb.no" };
-  const vrstica = (q, v) => `<tr><th scope="row">${esc(t(q))}</th><td>${v ? Object.entries(v).map(([m, n]) => `${esc(t(OZNAKA[m]))} <b>${nf(n)}</b>`).join(" · ") : "–"}</td></tr>`;
+  const vrstica = (q, v) => `<tr><th scope="row">${esc(t(q))}</th><td>${v ? zdruzi(Object.entries(v).map(([m, n]) => `${esc(t(OZNAKA[m]))} <b>${nf(n)}</b>`)) : "–"}</td></tr>`;
   return `<h4>${esc(t("ank.adm.title"))}</h4>
     <ul class="pilot-sum"><li><b>${esc(typeof k.n === "number" ? nf(k.n) : k.n)}</b> ${esc(t("ank.adm.n"))}</li><li><b>${esc(typeof k.zavrnili === "number" ? nf(k.zavrnili) : k.zavrnili)}</b> ${esc(t("ank.adm.declined"))}</li></ul>
     ${k.pomaga ? `<div class="pilot-scroll"><table class="table pilot-table"><tbody>${vrstica("ank.q.pomaga", k.pomaga)}${vrstica("ank.q.naprej", k.naprej)}${vrstica("ank.q.placal", k.placal)}${vrstica("ank.q.priporocil", k.priporocil)}</tbody></table></div>` : ""}

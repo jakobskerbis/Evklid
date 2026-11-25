@@ -4,6 +4,7 @@
 // (nikoli med nalogo, preizkusom ali testom s časom). Vedno dostopno: Jaz → »Povej mnenje«.
 import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
+import { zdruzi } from "./datum.js";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -244,7 +245,7 @@ export async function renderOpinionsAdmin(box, { api }) {
     : "";
   box.innerHTML = `${endedHtml}<ul class="mn-admin">${r.opinions
     .map(
-      (o) => `<li><b>${"★".repeat(o.stars)}${"☆".repeat(5 - o.stars)}</b> <small class="muted">${esc([o.label, `${o.stars}/5`, o.grade, o.month, t(o.publish ? "pilot.mn.pub" : "pilot.mn.team"), o.consent_v ? `dovoljenje v${o.consent_v}` : ""].filter(Boolean).join(" · "))}</small>
+      (o) => `<li><b>${"★".repeat(o.stars)}${"☆".repeat(5 - o.stars)}</b> <small class="muted">${esc(zdruzi([o.label, `${o.stars}/5`, o.grade, o.month, t(o.publish ? "pilot.mn.pub" : "pilot.mn.team"), o.consent_v ? `dovoljenje v${o.consent_v}` : ""]))}</small>
         ${consent(o)}${row(t("mn.liked"), o.liked)}${row(t("mn.bothers"), o.bothers)}</li>`,
     )
     .join("")}</ul>`;

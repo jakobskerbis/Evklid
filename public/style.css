@@ -138,7 +138,7 @@ button.secondary, button:where(:not(.primary, .tab, .danger, .ghost, .text-btn, 
 }
 button.secondary:hover, button:where(:not(.primary, .tab, .danger, .ghost, .text-btn, .node, .next-row, .brand, .link, .choice, .tk-k, .tk-tab, .tk-hide, .tk-chip, .tk-subtab, .idea)):hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 button.secondary svg.i { color: var(--accent); }
-button.small { min-height: 38px !important; padding: 6px 12px !important; font-size: 0.9rem; }
+button.small { min-height: 40px !important; padding: 6px 12px !important; font-size: 0.9rem; }
 button.ghost { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; color: var(--muted); font-weight: 700; padding: 8px 10px; border-radius: var(--radius-sm); min-height: 40px; }
 button.ghost:hover { background: var(--surface-2); color: var(--text); }
 .text-btn { border: 0; background: none; color: var(--muted); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; padding: 8px 0; margin-top: 4px; }
@@ -1092,7 +1092,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 .modes .m-sub { font-size: 0.8rem; color: var(--muted); font-weight: 600; line-height: 1.3; }
 .modes .badge, .tabbar .badge {
   position: absolute; top: -6px; right: -8px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 99px;
-  background: var(--gold); color: #fff; font-size: 0.72rem; line-height: 20px; text-align: center; font-weight: 900; border: 2px solid var(--surface);
+  background: var(--gold); color: #fff; font-size: 0.75rem; line-height: 20px; text-align: center; font-weight: 900; border: 2px solid var(--surface);
 }
 @media (max-width: 520px) {
   /* Telefon: štirje načini v mreži 2 × 2, ikona levo od imena. */
@@ -1236,7 +1236,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
   }
   .tabbar .tab {
     flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    padding: 4px 1px; border-radius: 14px; font-size: 0.72rem; font-weight: 800; line-height: 1.15; background: none;
+    padding: 4px 1px; border-radius: 14px; font-size: 0.75rem; font-weight: 800; /* vsaj 12 px (A9) */ line-height: 1.15; background: none;
   }
   /* Napis v eni vrstici; predolg (»Rruga e të mësuarit«, »Навчальний шлях«) gre v največ dve vrstici, ne v tropičje. */
   .tabbar .tab span { max-width: 100%; overflow: hidden; overflow-wrap: break-word; text-align: center; text-wrap: balance; hyphens: manual; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
@@ -1251,8 +1251,8 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
   .tabbar { padding-inline: 2px; }
   .tabbar .tab { padding-inline: 0; }
   .tabbar .tab span { letter-spacing: -0.015em; }
-  /* Cirilica (Instrument Sans je nima): sistemska pisava je širša, »Инструктор« ostane cel. */
-  :lang(ru, uk, mk, sr, bg) .tabbar .tab span { font-size: 0.66rem; letter-spacing: -0.02em; }
+  /* Cirilica (Instrument Sans je nima): sistemska pisava je širša; »Инструктор« ostane cel tudi pri 12 px (A9: napis vsaj 12 px). */
+  :is(:lang(ru), :lang(uk), :lang(mk), :lang(sr), :lang(bg)) .tabbar .tab span { letter-spacing: -0.05em; } /* :lang(a, b) s seznamom Chromium ne pozna */
 }
 body.pad-open .tabbar { display: none; }
 .pad-tabs button { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
@@ -1268,7 +1268,7 @@ body.pad-open .tabbar { display: none; }
 .level-picker { display: grid; gap: 10px; }
 .lp-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .lp-crumbs:empty { display: none; }
-.lp-crumb { border: 1px solid var(--border) !important; background: var(--surface-2) !important; border-radius: 999px !important; padding: 5px 12px !important; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+.lp-crumb { border: 1px solid var(--border) !important; background: var(--surface-2) !important; border-radius: 999px !important; padding: 5px 12px !important; min-height: 40px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
 .lp-crumb:hover { border-color: var(--accent) !important; }
 .lp-sep { color: var(--muted); }
 [dir="rtl"] .lp-sep { display: inline-block; transform: scaleX(-1); }

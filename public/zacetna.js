@@ -6,6 +6,7 @@
 import { icon } from "./icons.js";
 import { levelProgress } from "./xp-levels.js";
 import { goalShortcuts, daysUntil, ponudiMaturo } from "./goal-data.js";
+import { zdruzi } from "./datum.js";
 
 // Kartice med glavo učne poti in izbiro načina (#modebar), od zgoraj navzdol. Kartice, ki jih ni na seznamu
 // (cilj, predlog prehoda), ostanejo nad njimi; mnenje in namestitev gresta tik pod #xp-card (uvrstiKartice).
@@ -202,7 +203,7 @@ export function heroHtml(t, p, done = false, goalDate = "") {
         ? `<button class="next-row" data-open="${escN(p.next.id)}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escN(p.next.name)}</span>${icon("chevron-right")}</button>`
         : `<div class="next-row done">${icon("trophy")}<span class="next-name">${t("path.allDone")}</span></div>`,
     ];
-  const when = [t("goal.matura"), odstevanje(t, goalDate)].filter(Boolean).join(" · ");
+  const when = zdruzi([t("goal.matura"), odstevanje(t, goalDate)]);
   const min = escN(t("danes.min", { n: d.minutes }));
   const back = d.odsoten >= 3 ? `<p class="danes-back">${escN(t(d.due ? "danes.back" : "danes.backHi"))}</p>` : "";
   const step = d.due

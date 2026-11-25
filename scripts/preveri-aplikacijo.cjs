@@ -1972,6 +1972,7 @@ async function phone(browser, app) {
   await step(p, "tel-okna", () => okna(p, "tel"));
   await step(p, "tel-igre", () => games(p, "tel"));
   await step(p, "tel-skeniraj", () => scan(p, "tel"));
+  await step(p, "tel-dostopnost", () => dostopnostTelefon(p));
   await p.context().close();
 }
 
@@ -2114,6 +2115,52 @@ async function accounts(browser, app) {
     await screen(p, "sole");
   });
   await p.context().close();
+}
+
+// Dostopnost na telefonu (A9): oba menija sta navigacija z aria-current="page" (ne tablist brez zavihkov), napisi
+// spodnje vrstice vsaj 12 px, gumbi za dotik na Učni poti, v Napredku in Nastavitvah vsaj 40 px visoki, ločilo »·« in
+// datum cilja v vrstici cilja se ne prelomita (nedeljiv presledek, public/datum.js zdruzi).
+async function dostopnostTelefon(p) {
+  const nastavi = (s) =>
+    p.evaluate(async (s) => {
+      const id = localStorage.getItem("studentId");
+      const r = await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: s }) });
+      return r.ok;
+    }, s);
+  const prej = await p.evaluate(async () => (await (await fetch(`/api/students/${localStorage.getItem("studentId")}`)).json()).settings || {});
+  if (!(await nastavi({ goal: "test", goal_date: "2027-05-29", goal_reminder: true }))) throw new Error("cilja z datumom ni bilo mogoče nastaviti");
+  try {
+    await p.goto(p.base + "/");
+    await settle(p, 600);
+    if (await p.locator('.topbar .tabs[role="tablist"]').count()) throw new Error("zgornji meni ima role=tablist brez zavihkov (role=tab)");
+    for (const v of ["path", "progress", "settings"]) {
+      await tab(p, v);
+      await settle(p, 300);
+      if (v === "path") await expectVisible(p, "#view-path .goal-line .gl-edit", "vrstica cilja s »Spremeni«");
+      const r = await p.evaluate(() => {
+        const vis = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== "hidden";
+        const ime = (el) => `${el.nodeName.toLowerCase()}${el.id ? `#${el.id}` : ""}${[...el.classList].map((c) => `.${c}`).join("")} »${(el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 24)}«`;
+        const tabs = [...document.querySelectorAll("#tabbar .tab")].filter(vis);
+        const cur = tabs.filter((t) => t.getAttribute("aria-current") === "page");
+        const pogled = [...document.querySelectorAll("main.view:not(.in-okno)")].find((x) => !x.hidden);
+        const mali = [...(pogled?.querySelectorAll('button, [role="button"], [role="tab"], [role="switch"], [role="radio"]') || [])]
+          .filter((el) => vis(el) && el.getBoundingClientRect().height < 39.5)
+          .map((el) => `${ime(el)} ${Math.round(el.getBoundingClientRect().height)} px`);
+        const pisava = tabs.map((t) => [t.dataset.view, parseFloat(getComputedStyle(t.querySelector("span") || t).fontSize)]).filter(([, px]) => px < 12);
+        const cilj = pogled?.querySelector(".goal-line .gl-text")?.textContent || "";
+        return { n: tabs.length, cur: cur.map((t) => t.dataset.view), active: tabs.filter((t) => t.classList.contains("active")).map((t) => t.dataset.view), mali, pisava, cilj };
+      });
+      if (!r.n) throw new Error(`${v}: spodnja vrstica ni vidna`);
+      if (r.cur.length !== 1 || r.cur[0] !== r.active[0]) throw new Error(`${v}: aria-current="page" na [${r.cur}], izbran zavihek [${r.active}]`);
+      if (r.pisava.length) throw new Error(`${v}: napis v spodnji vrstici manjši od 12 px: ${r.pisava.map(([k, px]) => `${k} ${px} px`).join(", ")}`);
+      if (r.mali.length) throw new Error(`${v}: gumbi nižji od 40 px: ${r.mali.slice(0, 6).join("; ")}`);
+      if (r.cilj && (/ ·/.test(r.cilj) || /\d\. \d/.test(r.cilj))) throw new Error(`${v}: ločilo »·« ali datum se lahko prelomi: »${r.cilj}«`);
+      if (v === "path" && !r.cilj.includes("2027")) throw new Error(`vrstica cilja brez datuma: »${r.cilj}«`);
+    }
+    await screen(p, "dostopnost-nastavitve");
+  } finally {
+    await nastavi({ goal: prej.goal || "sprotno", goal_date: prej.goal_date || "", goal_reminder: prej.goal_reminder !== false });
+  }
 }
 
 (async () => {

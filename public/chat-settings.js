@@ -7,6 +7,7 @@ import { t } from "./i18n-osnova.js";
 import { DEVICE_SETTINGS } from "./settings-registry.js";
 import { levelLabel } from "./level-picker.js";
 import { PREF_KEY, parsePrefs } from "./tipkovnica-nastavitve.js";
+import { zdruzi } from "./datum.js";
 
 const get = (k) => {
   try {
@@ -105,7 +106,7 @@ export function applyDeviceSettings(changes = {}) {
 
 function describe(d) {
   const track = { OSNOVNA_SOLA: t("lp.os"), SREDNJA_SOLA: t("lp.ss"), UNIVERZA: t("lp.uni") }[d.track];
-  return [d.system, d.system ? null : track, levelLabel(d.level), d.program].filter(Boolean).join(" · ");
+  return zdruzi([d.system, d.system ? null : track, levelLabel(d.level), d.program]);
 }
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

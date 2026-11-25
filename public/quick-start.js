@@ -5,6 +5,7 @@
 import { icon } from "./icons.js";
 import { t } from "./i18n-osnova.js";
 import { mountSubjectSwitch, SUBJECT_KEYS } from "./subject-switch.js";
+import { zdruzi } from "./datum.js";
 
 const $ = (sel) => document.querySelector(sel);
 let D = null; // { getState, refresh, showView, goNew, startSession, showTestPrep, overlayOpened, overlayClosed }
@@ -51,7 +52,7 @@ function rows(m) {
   const p = m.testPlan;
   if (p && p.daysLeft >= 0 && p.daysLeft <= TEST_DAYS) {
     const when = p.daysLeft === 0 ? t("test.today") : p.daysLeft === 1 ? t("test.tomorrow") : t("test.inDays", { n: p.daysLeft });
-    out.push({ act: "test", ic: "clipboard-check", title: t("mode.test"), sub: [t("qs.test", { when }), ...(p.unitTitles || [])].join(" · ") });
+    out.push({ act: "test", ic: "clipboard-check", title: t("mode.test"), sub: zdruzi([t("qs.test", { when }), ...(p.unitTitles || [])]) });
   }
   if (m.cardsDue > 0) out.push({ act: "cards", ic: "layers", title: t("mode.cards"), sub: t("cards.dueN", { n: m.cardsDue }) });
   return out;

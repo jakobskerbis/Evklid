@@ -6,6 +6,7 @@
 // zato jih ne kopiramo in ne prenašamo; vsaka povezava odpre dokument na ric.si v novem zavihku.
 import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
+import { zdruzi } from "./datum.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -27,7 +28,7 @@ export async function loadPapers(api) {
   return cache;
 }
 
-const termText = (e) => [t(`pp.term.${e.term}`), e.session ? t("pp.session", { n: e.session }) : ""].filter(Boolean).join(" · ");
+const termText = (e) => zdruzi([t(`pp.term.${e.term}`), e.session ? t("pp.session", { n: e.session }) : ""]);
 // RIC pri NPZ: »preizkus znanja« in »navodila za vrednotenje«, pri maturi »izpitna pola« in »navodila za ocenjevanje«.
 const NPZ_FILE = { paper: "pp.file.test", scoring: "pp.file.scoringNpz" };
 export const fileText = (f, e) => t((e.exam.startsWith("NPZ") && NPZ_FILE[f.kind]) || `pp.file.${f.kind}`);

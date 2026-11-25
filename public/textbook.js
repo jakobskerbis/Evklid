@@ -10,6 +10,7 @@ import { jeFaks, jeSs } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
 import { isStoreApp } from "./pay-ui.js"; // aplikacija iz trgovine: brez ponudbe paketov mimo trgovine
+import { zdruzi } from "./datum.js";
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -941,7 +942,7 @@ const refRow = (it) => `<a class="list-row ref-row" href="${esc(it.url)}" target
     <span class="ic">${ic(REF_ICONS[it.type] || "file-text")}</span>
     <span class="lr-text">
       <b>${esc(it.title)}</b>
-      <small>${esc([it.source, it.author].filter(Boolean).join(" · "))}</small>
+      <small>${esc(zdruzi([it.source, it.author]))}</small>
       ${it.desc ? `<span class="ref-desc">${esc(it.desc)}</span>` : ""}
       <span class="tb-badges ref-badges">
         <span class="tb-badge">${esc(t(`refs.type.${it.type}`))}</span>

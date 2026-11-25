@@ -2,6 +2,7 @@
 // Strežnik: server/kviz.js. Oba pogleda vprašata strežnik vsakih 1,5 s; čas teče po uri strežnika.
 import { t } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
+import { zdruzi } from "./datum.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const LETTERS = "ABCDEFGHIJ";
@@ -23,7 +24,7 @@ async function call(url, { method = "GET", body, headers = {} } = {}) {
 }
 
 // Naslov okna: »Kviz v živo · 7.a · tema«; imena v <bdi>, da se v RTL ne pomešajo.
-const titleHtml = (...names) => [esc(t("kv.live")), ...names.filter(Boolean).map((n) => `<bdi>${esc(n)}</bdi>`)].join(" · ");
+const titleHtml = (...names) => zdruzi([esc(t("kv.live")), ...names.filter(Boolean).map((n) => `<bdi>${esc(n)}</bdi>`)]);
 
 // Okno čez ves zaslon; zapre se z gumbom ali Esc. Vrne { dlg, body, foot, close }.
 // Fokus gre na naslov (bralnik zaslona ga prebere), ne na gumb za zapiranje.

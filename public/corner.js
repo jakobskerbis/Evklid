@@ -2,7 +2,7 @@
 // celozaslonski pogled (časopis ali oglasna deska) in kratek vprašalnik ob prvem zagonu.
 // Novice da strežnik (server/corner.js), seznam področij je v public/interests.js.
 import { t, locale, currentLang } from "./i18n-osnova.js";
-import { dateText } from "./datum.js";
+import { dateText, zdruzi } from "./datum.js";
 import { icon } from "./icons.js";
 import { zadrziFokus } from "./fokus-okna.js";
 import { jeOs } from "./stopnja.js";
@@ -419,5 +419,5 @@ export function maybeAskInterests() {
 export function interestsSummary(settings) {
   const names = (settings.interests || []).map((id) => `${emoji(id)} ${t(`int.${id}`)}`);
   if (settings.interest_custom) names.push(`⭐ ${settings.interest_custom}`);
-  return names.join(" · ");
+  return zdruzi(names);
 }
