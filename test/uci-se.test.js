@@ -441,3 +441,19 @@ test("teme3d: teme, ki uporabljajo 3D model, najprej učenčeva pot; vsak 3D mod
   const modeli = new Set(Object.keys(SIM_TOPICS).flatMap((id) => simsForTopic(id).map((d) => d.id)).filter((x) => x.startsWith("3d-")));
   for (const m of modeli) assert.ok(teme3d(m.slice(3)).length >= 1, m);
 });
+
+test("3D svet: »Poskusi znova« brez napake.js po neuspelem uvozu modula osveži stran, sicer naloži znova", async () => {
+  const { poskusiZnova3d } = await load(41);
+  const klici = [];
+  const znova = () => klici.push("znova");
+  const osvezi = () => klici.push("osvezi");
+  for (const m of [
+    "Failed to fetch dynamically imported module: http://x/3d/modeli.js", // Chrome
+    "Importing a module script failed.", // Safari
+    "error loading dynamically imported module: http://x/3d/drevo.js", // Firefox
+  ]) poskusiZnova3d(new TypeError(m), znova, osvezi)();
+  poskusiZnova3d(new TypeError("Failed to fetch"), znova, osvezi)();
+  poskusiZnova3d(null, znova, osvezi)();
+  assert.deepEqual(klici, ["osvezi", "osvezi", "osvezi", "znova", "znova"]);
+  assert.match(read("public/uci-se.js"), /addEventListener\("click", poskusiZnova3d\(err, \(\) => show3d\(\)\), \{ once: true \}\)/);
+});
