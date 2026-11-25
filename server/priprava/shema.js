@@ -46,6 +46,31 @@ export function migratePriprava(db) {
   if (!cols.includes("dogodek_id")) db.exec("ALTER TABLE priprave ADD COLUMN dogodek_id TEXT"); // test iz urnika
   if (!cols.includes("aktivna")) db.exec("ALTER TABLE priprave ADD COLUMN aktivna INTEGER NOT NULL DEFAULT 0");
   db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_priprave_aktivna ON priprave(student_id) WHERE aktivna = 1");
+  // PR 3a: izseki virov (server/priprava/uvoz.js, izseki.js) in stanje obdelave vira.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS priprava_izseki (
+      id INTEGER PRIMARY KEY,
+      priprava_id INTEGER NOT NULL REFERENCES priprave(id) ON DELETE CASCADE,
+      vir_id INTEGER NOT NULL REFERENCES priprava_viri(id) ON DELETE CASCADE,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      stran INTEGER,                             -- stran PDF/Word, prosojnica; besedilo: 1
+      zaporedje INTEGER NOT NULL,                -- vrstni red v viru
+      vrsta TEXT NOT NULL,                       -- definicija | izrek | postopek | formula | primer | naloga | teorija
+      naslov TEXT,                               -- naslov razdelka, šifrirano
+      besedilo TEXT NOT NULL,                    -- šifrirano; negotovo branje z oznako [?]
+      negotovo TEXT,                             -- JSON [{ vrsta, izvirno, prepis? }], šifrirano
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_priprava_izseki ON priprava_izseki(priprava_id, vir_id, zaporedje);
+    CREATE INDEX IF NOT EXISTS idx_priprava_izseki_vir ON priprava_izseki(vir_id);
+    CREATE INDEX IF NOT EXISTS idx_priprava_izseki_student ON priprava_izseki(student_id);
+  `);
+  const virCols = db.prepare("PRAGMA table_info(priprava_viri)").all().map((c) => c.name);
+  // caka | obdelan | branje (fotografija ali skeniran PDF čaka na branje, PR 3b) | napaka
+  if (!virCols.includes("stanje")) db.exec("ALTER TABLE priprava_viri ADD COLUMN stanje TEXT");
+  if (!virCols.includes("strani")) db.exec("ALTER TABLE priprava_viri ADD COLUMN strani INTEGER"); // prebrane strani
+  if (!virCols.includes("napaka")) db.exec("ALTER TABLE priprava_viri ADD COLUMN napaka TEXT"); // koda uvoz_*
+  if (!virCols.includes("opozorila")) db.exec("ALTER TABLE priprava_viri ADD COLUMN opozorila TEXT"); // JSON kod in številk, brez besedila
   preseliTestPlans(db);
 }
 
