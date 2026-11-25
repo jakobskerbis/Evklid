@@ -20,7 +20,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { checkLessonSource, veljavenDatumPregleda } from "./lesson-check.js";
 import { lessonSource, parseLesson } from "./textbook.js";
-import { validatePaper, loadOurPaper } from "./our-papers.js";
+import { validatePaper, loadOurPaper, ourPaperIds } from "./our-papers.js";
 import { PAPER_STRUCTURES } from "./our-paper-structures.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -59,6 +59,28 @@ export function oznakeIzDokazov({ stanje = "osnutek", pregledal = null, pregleda
 
 // Dokazi Lean po lekcijah: glava »vir: content/lessons/<pot>.md« in »sha256: …« (docs/lean.md, L2), izreki so vrstice,
 // ki se začnejo s »theorem« ali »lemma« (»example« je samo pokazatelj, da se predpostavke dajo izpolniti).
+// Koda Lean brez komentarjev (»-- …« in gnezdeni »/- … -/«): izrek v komentarju ni izrek.
+export function brezKomentarjev(txt) {
+  let out = "";
+  let globina = 0;
+  for (let i = 0; i < txt.length; i++) {
+    const c = txt[i];
+    const n = txt[i + 1];
+    if (c === "/" && n === "-") {
+      globina++;
+      i++;
+    } else if (globina && c === "-" && n === "/") {
+      globina--;
+      i++;
+    } else if (globina) {
+      if (c === "\n") out += c;
+    } else if (c === "-" && n === "-") {
+      while (i + 1 < txt.length && txt[i + 1] !== "\n") i++;
+    } else out += c;
+  }
+  return out;
+}
+
 let leanIndex = null;
 export function leanDokazi(dir = LEAN_DIR) {
   if (leanIndex && dir === LEAN_DIR) return leanIndex;
@@ -78,7 +100,9 @@ export function leanDokazi(dir = LEAN_DIR) {
         const vir = /^vir: (content\/lessons\/\S+\.md)$/m.exec(txt)?.[1];
         const sha = /^sha256: ([0-9a-f]{64})$/m.exec(txt)?.[1];
         if (!vir || !sha || idx.has(vir)) continue; // brez glave ali podvojeno: ni dokaz (scripts/lean-lekcije.mjs to javi)
-        const izreki = (txt.match(/^(?:(?:private|protected|public|nonrec)\s+)*(?:theorem|lemma)\s/gm) || []).length;
+        const koda = brezKomentarjev(txt);
+        if (/(?<![\w.'])(sorry|admit|axiom|native_decide)(?![\w'])/.test(koda)) continue; // prepovedano (docs/lean.md): ni dokaz
+        const izreki = (koda.match(/^(?:(?:private|protected|public|nonrec)\s+)*(?:theorem|lemma)\s/gm) || []).length;
         idx.set(vir, { sha, izreki });
       }
     }
@@ -126,10 +150,19 @@ export function oznakeLekcije(topicId, { danes = new Date(), lean = leanDokazi()
 // Oznake naše pole: napisal AI, pregledali trije pregledovalci AI (docs/token-rules.md), program preračuna korake
 // (validatePaper). »strojno« samo, če pola gre skozi preverjanje in je program preračunal vsaj en korak; »strokovno«
 // samo z imenom učitelja in datumom v poli (»pregledal«, »pregledano«).
-const paperCache = new Map(); // pola -> { preverjanje, paper }
+const paperCache = new Map(); // pola -> { mtime, size, preverjanje, pregledal, pregledano }
 export function oznakePole(id, { danes = new Date() } = {}) {
+  const file = ourPaperIds().get(String(id));
+  let st = null;
+  try {
+    st = file ? fs.statSync(file) : null;
+  } catch {
+    st = null;
+  }
+  if (!st) return null;
   let hit = paperCache.get(id);
-  if (!hit) {
+  // Ob spremembi datoteke pola znova skozi program (loadOurPaper jo bere ob vsakem klicu): oznaka ni starejša od vsebine.
+  if (!hit || hit.mtime !== st.mtimeMs || hit.size !== st.size) {
     const paper = loadOurPaper(id);
     if (!paper) return null;
     let preverjanje = null;
@@ -139,8 +172,15 @@ export function oznakePole(id, { danes = new Date() } = {}) {
     } catch {
       preverjanje = null;
     }
-    hit = { preverjanje, pregledal: paper.pregledal || null, pregledano: paper.pregledano || null };
+    hit = { mtime: st.mtimeMs, size: st.size, preverjanje, pregledal: paper.pregledal || null, pregledano: paper.pregledano || null };
     paperCache.set(id, hit);
   }
   return oznakeIzDokazov({ stanje: hit.pregledal ? "pregledano" : "preverjeno", pregledal: hit.pregledal, pregledano: hit.pregledano, preverjanje: hit.preverjanje }, danes);
+}
+
+// Staro polje lesson.status za stare odjemalce, ki iz njega izrišejo opombo: nikoli močnejše od oznak.
+export function stanjeZaStare(status, oznake) {
+  if (!Array.isArray(oznake) || oznake.some((o) => o.id === "osnutek")) return "osnutek";
+  if (status === "pregledano" && !oznake.some((o) => o.id === "strokovno")) return "preverjeno";
+  return status;
 }

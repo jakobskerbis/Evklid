@@ -53,7 +53,7 @@ import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
-import { oznakeLekcije, oznakePole } from "./oznake-vsebine.js";
+import { oznakeLekcije, oznakePole, stanjeZaStare } from "./oznake-vsebine.js";
 import { mountPoskusnaPola, simHistory } from "./poskusna-pola.js";
 import { mountAccounts } from "./accounts/index.js";
 import { emailList } from "./accounts/pilot-meja.js";
@@ -1993,7 +1993,9 @@ export function createApp(store, opts = {}) {
     const view = viewForClient(lessonView(String(req.query.id || "")), legacyClient(req));
     res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
-    res.json({ ...view, labels: view.lesson ? oznakeLekcije(view.id) : null, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
+    const labels = view.lesson ? oznakeLekcije(view.id) : null; // poštene oznake (N-03); staro stanje nikoli močnejše (stari odjemalci)
+    if (view.lesson) view.lesson = { ...view.lesson, status: stanjeZaStare(view.lesson.status, labels) };
+    res.json({ ...view, labels, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
   });
   // Lekcija za učenca. Interaktivni del (poskusi, simulacije, sprotno preverjanje)
   // je v plačljivem paketu in preizkusu; besedilo je za vse (tudi kot PDF).
@@ -2005,6 +2007,7 @@ export function createApp(store, opts = {}) {
     res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
     if (view.lesson) view.labels = oznakeLekcije(view.id); // poštene oznake (N-03, server/oznake-vsebine.js)
+    if (view.lesson) view.lesson = { ...view.lesson, status: stanjeZaStare(view.lesson.status, view.labels) }; // stari odjemalci
     const interactive = !accounts || accounts.lessonInteractive(s.id, view.id);
     // Nova tema z nalogami: na začetku lekcije povabilo na test predznanja.
     const st = progress.state(s.id, view.id);

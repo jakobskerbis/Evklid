@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { oznakeIzDokazov, leanDokazi, oznakeLekcije, oznakePole, OZNAKE, imeCloveka, sha256 } from "../server/oznake-vsebine.js";
+import { oznakeIzDokazov, leanDokazi, oznakeLekcije, oznakePole, OZNAKE, imeCloveka, sha256, stanjeZaStare } from "../server/oznake-vsebine.js";
 import { checkLessonSource } from "../server/lesson-check.js";
 import { ourPaperIds } from "../server/our-papers.js";
 import { openDb } from "../server/db.js";
@@ -74,8 +74,16 @@ test("leanDokazi: glava vir + sha256, izreki brez »example«, brez glave ni dok
     const sha = "a".repeat(64);
     fs.writeFileSync(path.join(dir, "MAT_SS_4", "Odvod.lean"), `/-\nvir: content/lessons/MAT-SS-4/odvod.md\nsha256: ${sha}\n-/\nmodule\n\ntheorem a : 1 = 1 := rfl\nlemma b : 2 = 2 := rfl\nprivate theorem c : 3 = 3 := rfl\nexample : 4 = 4 := rfl\n-- theorem d v komentarju se ne šteje\n`);
     fs.writeFileSync(path.join(dir, "MAT_SS_4", "Brez.lean"), `theorem x : 1 = 1 := rfl\n`);
+    // Pregled 2: izrek v (gnezdenem) bločnem komentarju ni izrek; datoteka s »sorry« ali »axiom« ni dokaz.
+    const glava = (l) => `/-\nvir: content/lessons/MAT-SS-4/${l}.md\nsha256: ${sha}\n-/\n`;
+    fs.writeFileSync(path.join(dir, "MAT_SS_4", "Kom.lean"), `${glava("integral")}theorem a : 1 = 1 := rfl\n/- zunaj /- gnezdeno -/\ntheorem skrit : 2 = 2 := rfl\n-/\n`);
+    fs.writeFileSync(path.join(dir, "MAT_SS_4", "Sorry.lean"), `${glava("limita")}theorem a : 1 = 2 := by\n  sorry\n`);
+    fs.writeFileSync(path.join(dir, "MAT_SS_4", "Aks.lean"), `${glava("vrsta")}axiom h : 1 = 2\ntheorem a : 1 = 2 := h\n`);
+    fs.writeFileSync(path.join(dir, "MAT_SS_4", "SorryKom.lean"), `${glava("zaporedje")}-- brez sorry\ntheorem a : 1 = 1 := rfl\n`);
     const idx = leanDokazi(dir);
-    assert.deepEqual([...idx.keys()], ["content/lessons/MAT-SS-4/odvod.md"]);
+    assert.deepEqual([...idx.keys()].sort(), ["integral", "odvod", "zaporedje"].map((l) => `content/lessons/MAT-SS-4/${l}.md`));
+    assert.equal(idx.get("content/lessons/MAT-SS-4/integral.md").izreki, 1);
+    assert.equal(idx.get("content/lessons/MAT-SS-4/zaporedje.md").izreki, 1);
     assert.deepEqual(idx.get("content/lessons/MAT-SS-4/odvod.md"), { sha, izreki: 3 });
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
@@ -127,6 +135,11 @@ test("API: lekcija in pola vrneta oznake", async () => {
     const l = await (await fetch(`${base}/api/lesson?id=${encodeURIComponent("FIZ-OS-9/upor-in-ohmov-zakon")}`)).json();
     assert.equal(l.labels[0].id, "strojno");
     assert.equal(l.lesson.status, "preverjeno"); // staro polje ostane za stare odjemalce
+    // Pregled 2: staro polje za stare odjemalce nikoli močnejše od oznak.
+    assert.equal(stanjeZaStare("preverjeno", [{ id: "osnutek" }]), "osnutek");
+    assert.equal(stanjeZaStare("pregledano", [{ id: "strojno", koraki: 3 }]), "preverjeno");
+    assert.equal(stanjeZaStare("pregledano", [{ id: "strojno", koraki: 3 }, { id: "strokovno", datum: "2026-11-20" }]), "pregledano");
+    assert.equal(stanjeZaStare("preverjeno", null), "osnutek");
     const pid = [...ourPaperIds().keys()][0];
     const p = await (await fetch(`${base}/api/exam-papers/ours/${pid}`)).json();
     assert.equal(p.labels[0].id, "strojno");
