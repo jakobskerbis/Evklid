@@ -32,15 +32,17 @@ export const DAYS = 60;
 // Ena igra prinese veliko hitrih odgovorov; da igre ne preglasijo nalog in klepeta, šteje ena igra
 // največ GAME_MAX odgovorov (napake sorazmerno).
 export const GAME_MAX = 4;
-export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"];
+export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas", "ustno"];
 // Orodja (P1-8, načrt treh prioritet, j 25. 11. 2026): skener (napaka v učenčevem rezultatu, ki jo potrdi preverjanje),
 // laboratorij (napoved, sklep, »Preveri moj račun«) in kviz atlasa. Vsako vprašanje šteje enkrat na dan, ena tema iz
 // enega orodja največ TOOL_DAY_MAX odgovorov na dan: kviz atlasa ima veliko hitrih vprašanj, ki jih oceni brskalnik,
 // zato sam v enem dnevu ne naredi šibke teme (potrebna je še napaka drug dan ali drugje). Iz brskalnika največ
 // TOOL_STUDENT_DAY_MAX zapisov na učenca na dan (skupaj, vse teme).
-export const TOOL_SOURCES = ["scan", "lab", "atlas"];
+// Ustno spraševanje (P1-4, načrt kakovosti pred obsegom, j 25. 11. 2026): vprašanje, ki ga je ocenila koda ali model s
+// pregledom (server/ustno.js), nikoli samoocena. Kot laboratorij: eno spraševanje v enem dnevu samo ne naredi šibke teme.
+export const TOOL_SOURCES = ["scan", "lab", "atlas", "ustno"];
 // lab 2 (pregled 3, #1094 laboratorij): sklepa in račun enega poskusa v enem dnevu sama ne naredita šibke teme.
-export const TOOL_DAY_MAX = { scan: 4, lab: 2, atlas: 2 };
+export const TOOL_DAY_MAX = { scan: 4, lab: 2, atlas: 2, ustno: 2 };
 export const TOOL_STUDENT_DAY_MAX = 60;
 // Id vprašanja ali naloge, nikoli učenčevo besedilo ali vrednost (skill_seen hrani le, kaj je bilo šteto).
 const TOOL_ITEM = /^[A-Za-z0-9_:.\/-]{1,80}$/;

@@ -18,7 +18,7 @@ const SLOG = `
 .vrzeli-card #weak-list { margin-top: 10px; }`;
 const slog = () => document.getElementById("vrzeli-slog") || document.head.append(Object.assign(document.createElement("style"), { id: "vrzeli-slog", textContent: SLOG }));
 
-const VIRI = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"];
+const VIRI = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas", "ustno"];
 let zadnji = 0; // ob hitrem preklopu profila nariše samo zadnji klic
 let vadi = null; // iz public/app.js (lenivo naložena Vadnica, kot gumb »Preveri se« v laboratoriju)
 
