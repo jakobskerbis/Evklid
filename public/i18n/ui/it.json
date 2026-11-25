@@ -1088,6 +1088,7 @@
   "sc.true": "Vero",
   "sc.false": "Falso",
   "sc.plot": "Disegna il grafico",
+  "sc.fmGraph": "Disegna il grafico ({v} sull'asse x)",
   "sc.showOnGraph": "Mostra sul grafico",
   "gc.fromSci.none": "Non riesco a mostrare questo risultato sul grafico.",
   "gc.fromSci.partArea": "È ombreggiata solo la parte da {a} a {b}. L'integrale intero è {v}.",
