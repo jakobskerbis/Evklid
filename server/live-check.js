@@ -93,11 +93,14 @@ function trySolve(cand, deriv) {
   if (digitGap(c)) return null;
   // »2x = 1.000«: v Sloveniji je to tisoč, razčlenjevalnik pa bi bral 1,0 – dvoumno, zato brez »preverjenega« rezultata
   if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(c)) return null;
+  // »81 % od 300«, »20 % · 60«: odstotek je količnik (AUDIT-069)
+  c = c.replace(/(\d+(?:[.,]\d+)?)\s*%\s*(?:od|of)\s+(\d+(?:[.,]\d+)?)/giu, "($1/100*$2)").replace(/(\d)\s*%/g, "$1/100");
   if (!mathOnly(c)) return null;
   if (/^\s*d\/d[a-z]/i.test(c)) deriv = true;
   const hasEq = c.includes("=");
   if (hasEq && deriv) return null;
-  if (!hasEq && !deriv && (/\p{L}/u.test(c.replace(FUNCS, "")) || opsCount(c) < 2)) return null;
+  // Tudi račun z eno samo operacijo (»7 · 8«, AUDIT-069): rezultat je potem mogoče primerjati z odgovorom.
+  if (!hasEq && !deriv && (/\p{L}/u.test(c.replace(FUNCS, "")) || opsCount(c) < 1)) return null;
   if (hasEq && (solvedForm(c) || opsCount(c.replace(/=/g, " ")) + (/\d\s*[a-z(]/i.test(c) ? 1 : 0) < 1)) return null;
   let r;
   try {
@@ -255,6 +258,29 @@ function valueIssue(answer, p) {
   return { checked: 1 };
 }
 
+// Gol rezultat računa (AUDIT-069): »**Rezultat:** 317«, »Odgovor: 56«, odgovor iz enega samega števila (»**54**«) se
+// primerja z rešitvijo, ki jo pozna presolve. Prej se je pri računu primerjal le zapisan račun »$… = 317$«, kratek
+// odgovor »Samo rezultat« pa ne. Vrednost mora biti enaka ali pravilno zaokrožena (pol zadnjega mesta).
+const RESULT_LINE = /(?:^|\n)\s*[*_]*(?:rezultat|odgovor|rešitev|result|answer)[*_]*\s*(?:je|is)?\s*[:=]?\s*[*_]*\s*\$?\s*(?:[a-zA-Z]\s*=\s*)?([-−+]?\d[\d\s.,]*(?:\/\d+)?)\s*\$?[*_]*(?:\s*[\p{L}%€°]{0,6}\.?)?\s*[*_]*\s*(?=\n|$)/iu;
+const BARE_ANSWER = /^\s*[*_]*\s*\$?\s*([-−+]?\d[\d\s.,]*(?:\/\d+)?)\s*\$?\s*[*_]*\s*[.!]?\s*$/u;
+function bareResultIssue(answer, p) {
+  const a = String(answer || "");
+  // ves odgovor je en sam zapis »$… = 317$«: zadnji del je rezultat
+  const only = /^\s*(?:[*_]*(?:rezultat|odgovor|rešitev)[*_:\s]*)?\$([^$\n]+)\$\s*[.!]?\s*$/iu.exec(a);
+  const tail = only && !/\\approx|≈/.test(only[1]) ? /=\s*([-−+]?\d[\d\s.,{}\\]*)\s*(?:\\[,;:! ]\s*)?(?:\\(?:mathrm|text)\s*\{[^{}]*\}|€|\\%)?\s*$/.exec(only[1]) : null;
+  const m = BARE_ANSWER.exec(a) || RESULT_LINE.exec(a) || (tail && [tail[0], tail[1].replace(/\{,\}/g, ",").replace(/\\,|\\ |[{}\\]/g, "")]);
+  if (!m) return null;
+  const raw = joinThousands(m[1].trim()).replace(/\s+/g, "").replace(/[.,]$/, "");
+  if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(raw)) return null; // »1.000«: tisočice ali decimalke?
+  const x = num(raw);
+  const y = num(texToText(String(p.answerTex)));
+  if (x === null || y === null) return null;
+  const dec = /[.,](\d+)$/.exec(raw)?.[1].length ?? 0;
+  const tol = Math.max(0.5 * 10 ** -dec * (dec ? 1 : 0), 1e-9 * Math.max(1, Math.abs(y)));
+  if (Math.abs(x - y) <= tol * (1 + 1e-9)) return { checked: 1, issue: null };
+  return { checked: 1, issue: `the stated result ${m[1].trim()} is wrong: $${p.problemTex} = ${p.answerTex}$` };
+}
+
 /**
  * Preveri odgovor (brez vrstice META) s kodo.
  * @returns {{ checked: number, issue: string|null }} checked = koliko računov in vrednosti je koda preverila
@@ -273,6 +299,14 @@ export function codeFindings(answer, pre = null, question = "") {
     }
   } catch {
     // račun, ki ga ni mogoče prebrati, ni napaka
+  }
+  const ar = (pre?.problems || []).filter((p) => p.type === "arith");
+  if (ar.length === 1) {
+    const b = bareResultIssue(answer, ar[0]);
+    if (b) {
+      checked += b.checked;
+      if (b.issue) return { checked, issue: b.issue };
+    }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
   if (eq.length === 1) {

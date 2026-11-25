@@ -220,7 +220,8 @@ test("live check: extraction stays conservative and stated values are checked ag
   assert.equal(sol("Reši sistem x + y = 5 in x - y = 1"), "system:x = 3,\\quad y = 2");
   assert.equal(sol("Odvajaj x^3 + 2x"), "derivative:f'(x) = 3x^{2} + 2");
   assert.equal(sol("Reši $2x+3=11$, dobil sem $x = 5$"), "equation:x = 4", "učenčev odgovor ni naloga");
-  for (const t of ["Koliko je 7 · 8?", "x = 5", "Je $x = 5$?", "Imam 3 jabolka in 2 hruški, koliko je vseh?", "Reši 2x + 3 = 11 in povej, ali je rešitev soda", "x^2 < 4"]) assert.equal(presolve(t), null, t);
+  assert.equal(sol("Koliko je 7 · 8?"), "arith:56", "AUDIT-069: tudi ena sama operacija");
+  for (const t of ["x = 5", "Je $x = 5$?", "Imam 3 jabolka in 2 hruški, koliko je vseh?", "Reši 2x + 3 = 11 in povej, ali je rešitev soda", "x^2 < 4"]) assert.equal(presolve(t), null, t);
 
   const pre = presolve("Reši x^2 - 5x + 6 = 0");
   assert.equal(codeFindings("Rešitvi sta $x_1 = 2$ in $x_2 = 3$.", pre).issue, null);
@@ -1141,4 +1142,25 @@ test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil'
     delete process.env.EVKLID_LIVE_REVIEW_OS;
   }
   assert.equal((await run(null)).calls, 0, "brez stikala (privzeto v kodi) OŠ nima pregleda");
+});
+
+// AUDIT-069: gol rezultat (»**Rezultat:** 317«, »**54**«, ves odgovor »$… = 317$«) se primerja z rešitvijo presolve.
+test("AUDIT-069: napačen gol rezultat dobi issue, pravilen, zaokrožen in vodenje ne", () => {
+  const cases = [
+    ["Koliko je 59 · 5 + 12?", "**Rezultat:** 317", true],
+    ["Koliko je 59 · 5 + 12?", "**Rezultat:** 307", false],
+    ["Koliko je 7 · 8?", "**54**", true],
+    ["Koliko je 7 · 8?", "**56**", false],
+    ["Koliko je 144 : 12?", "**14**", true],
+    ["Koliko je 1000 - 1?", "**990**", true],
+    ["Izračunaj 81% od 300", "**Rezultat:** 242", true],
+    ["Izračunaj 81% od 300", "$81\\,\\% \\text{ od } 300 = 243$", false],
+    ["Izračunaj 81% od 300", "$81\\,\\% \\text{ od } 300 = 242$", true],
+    ["Koliko je 3/4 + 1/8?", "Rezultat: 0,875", false],
+    ["Koliko je 10 : 3?", "**Rezultat:** 3,33", false],
+    ["Koliko je 10 : 3?", "**Rezultat:** 3,4", true],
+    ["Koliko je 7 · 8?", "Kaj dobiš, če 8 sedemkrat sešteješ?", false],
+    ["Koliko je 7 · 8 + 2?", "Najprej izračunaj $7 \\cdot 8 = 56$, nato prištej 2.", false], // vmesni korak, ne rezultat
+  ];
+  for (const [q, a, bad] of cases) assert.equal(!!codeFindings(a, presolve(q, { first: true }), q).issue, bad, `${q} | ${a}`);
 });
