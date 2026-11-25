@@ -50,7 +50,8 @@ export function prep(text) {
     .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factor)\s*[:.]?\s*/i, "")
     .trim();
   // a/b z dvema celima številoma je ulomek: 3/4·2/5 = (3/4)·(2/5), ne ((3/4)·2)/5.
-  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!])/g, "($1/$2)");
+  // Ne pri znanstvenem zapisu v imenovalcu (»2/1e8« = 2/10⁸, ne (2/1)·10⁸; AUDIT-042).
+  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!]|[\d.,]*[eE][+\-−]?\d)/g, "($1/$2)");
   return s;
 }
 
@@ -67,7 +68,6 @@ export function splitSystem(text) {
 // Zapis drevesa v TeX (lepši od splošnega: ulomki Q, oklepaji pri vstavljanju, decimalna vejica)
 
 const unwrap = (n) => (n && n.k === "grp" ? unwrap(n.a) : n);
-const isLeafNum = (n) => n && (n.k === "num" || n.k === "q");
 const negLike = (n) => (n.k === "num" && n.v < 0) || (n.k === "q" && n.q.sign < 0) || n.k === "neg";
 
 export function tex(node, opt = {}) {
@@ -205,8 +205,6 @@ function decompose(node) {
 
 const grp = (a) => ({ k: "grp", a });
 const lines = (rows) => (rows.length > 1 ? `\\begin{gathered} ${rows.join(" \\\\ ")} \\end{gathered}` : rows[0]);
-const qn = (q, dec = false) => ({ k: "q", q: Q.of(q), dec });
-const mulN = (a, b) => ({ k: "*", a, b });
 
 // izpis člena {sign, c, f}
 function termNodeTex({ c, f }, first) {

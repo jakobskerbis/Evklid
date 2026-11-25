@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getClient, isMockMode, MODEL, MODEL_MID } from "./claude.js";
 import { generateTask } from "./practice/index.js";
-import { checkAnswer, parseNumberWithUnit } from "./practice/check.js";
+import { checkAnswer } from "./practice/check.js";
 import { speakMarkdown } from "./govor.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);

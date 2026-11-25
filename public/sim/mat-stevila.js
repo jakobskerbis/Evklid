@@ -1,5 +1,5 @@
 // Simulacije: števila, deljivost, ulomki, decimalna števila, odstotki, potence.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label, animate, rint } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
 
 // Številska premica: vrne { X, g } in nariše oznake.
 function numberLine(svg, { x0, x1, from, to, step, major = step, y = 60, labels = true, fmtL }) {

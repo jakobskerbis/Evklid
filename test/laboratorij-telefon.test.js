@@ -44,7 +44,7 @@ before(async () => {
 });
 
 const PUB = path.resolve("public");
-const TYPES = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html", ".woff2": "font/woff2" };
+const TYPES = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html", ".woff2": "font/woff2", ".webp": "image/webp", ".avif": "image/avif" };
 // Kot v aplikaciji: glava zgoraj, pod njo drsni pogled z odmikom, v njem kartica .lab-bench (overflow-x: auto).
 const PAGE = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/lab.css"><link rel="stylesheet" href="/textbook.css">
@@ -161,6 +161,19 @@ test("lab on a phone: the drawing stays visible while using the controls", { tim
 
   await t.test("»Povečaj risbo«: drawing over the whole screen, much taller; same button and Esc close it", async () => {
     const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+    // fotografija titracije (sim/foto.js) je pokončna (0,71 : 1) in že pripeta velika: v povečavi zraste, a jo omeji širina
+    {
+      const f = await run(ctx, "lab-titracija");
+      await f.p.waitForSelector("svg.lab-foto-on", { timeout: 15000 });
+      const vf = () => f.p.evaluate(() => { const r = document.querySelector(".demo-stage .demo-svg").getBoundingClientRect(); return { h: Math.round(r.height), cela: r.left >= -1 && r.right <= 361 && r.top >= -1 && r.bottom <= 741 }; });
+      const pf = await vf();
+      await f.p.locator(".lab-zoom").tap();
+      const zf = await vf();
+      assert.ok(zf.cela && zf.h >= pf.h * 1.2, `fotografija ${pf.h} → ${zf.h} px, cela ${zf.cela}`);
+      await f.p.close();
+    }
+    // mehanika povečave na risbi (izbran »Fotografski prikaz« izklopljen)
+    await ctx.addInitScript(() => localStorage.setItem("evklid.lab.foto", "0"));
     const { p } = await run(ctx, "lab-titracija");
     const visina = () => p.evaluate(() => Math.round(document.querySelector(".demo-stage .demo-svg").getBoundingClientRect().height));
     const prej = await visina();
@@ -179,6 +192,15 @@ test("lab on a phone: the drawing stays visible while using the controls", { tim
     await p.keyboard.press("Escape");
     assert.deepEqual(await p.evaluate(() => [document.querySelector(".demo-stage").classList.contains("lab-povecano"), document.querySelector(".demo-stage").getAttribute("role"), document.querySelectorAll("[inert]").length]), [false, null, 0]);
     // ležeča risba (Ohmov zakon) je v povečavi cela na zaslonu: na pokončnem telefonu se obrne
+    await ctx.addInitScript(() => localStorage.removeItem("evklid.lab.foto")); // spet privzeto: fotografija
+    // fotografija mize (sim/foto.js) se ne obrne: napisi in prizor ostanejo pokonci
+    const f = await run(ctx, "lab-ohm");
+    await f.p.waitForSelector("svg.lab-foto-on", { timeout: 15000 });
+    await f.p.locator(".lab-zoom").tap();
+    assert.equal(await f.p.evaluate(() => document.querySelector(".demo-stage").classList.contains("lab-lezi")), false);
+    await f.p.close();
+    // risana shema (izbran »Fotografski prikaz« izklopljen) se v ozkem povečanem oknu obrne
+    await ctx.addInitScript(() => localStorage.setItem("evklid.lab.foto", "0"));
     const o = await run(ctx, "lab-ohm");
     await o.p.locator(".lab-zoom").tap();
     const lezi = await o.p.evaluate(() => {

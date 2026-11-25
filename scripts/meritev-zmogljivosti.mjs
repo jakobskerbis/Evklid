@@ -489,15 +489,6 @@ const POTI = {
   lestvica: (u) => u.z(`/api/students/${u.sid}/league`),
   fotografija: (u) => u.z(`/api/students/${u.sid}/scan/read`, { method: "POST", body: { image: SLIKA } }),
 };
-const IME_POTI = {
-  prijava: "Prijava (POST /api/auth/login)",
-  pogovori: "Seznam pogovorov (GET /api/students/:id/conversations)",
-  pogovor: "Odpri pogovor, 20 sporočil (GET /api/conversations/:id)",
-  sporocilo: "Sporočilo inštruktorju, SSE do konca (POST /api/conversations/:id/messages)",
-  lekcija: "Lekcija (GET /api/students/:id/lesson)",
-  lestvica: "Lestvica (GET /api/students/:id/league)",
-  fotografija: "Fotografija 342 KB (POST /api/students/:id/scan/read)",
-};
 const steviloZahtev = (pot, c) => {
   const f = HITRO ? 0.2 : 1;
   const n = pot === "prijava" ? ({ 1: 20, 10: 60, 50: 150 }[c] ?? c * 3) : ({ 1: 50, 10: 200, 50: 500 }[c] ?? c * 10);

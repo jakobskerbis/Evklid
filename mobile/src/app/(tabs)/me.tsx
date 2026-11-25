@@ -141,6 +141,7 @@ export default function Me() {
         <Row title={t("lab.3dTitle")} subtitle={t("lab.3dText")} icon={{ ios: "cube", android: "view_in_ar" }} onPress={() => router.push("/atlas")} />
         <Row title={t("guide.title")} icon={{ ios: "questionmark.circle", android: "help" }} onPress={() => router.push("/vodic")} />
         <Row title={t("mob.privacy")} icon={{ ios: "hand.raised", android: "privacy_tip" }} onPress={() => WebBrowser.openBrowserAsync(webUrl("/zasebnost.html"))} />
+        <Row title={t("mob.exportData")} icon={{ ios: "square.and.arrow.down", android: "download" }} onPress={() => router.push("/export-data")} />
         <Row
           title={t("mob.signOut")}
           icon={{ ios: "rectangle.portrait.and.arrow.right", android: "logout" }}

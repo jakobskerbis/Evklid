@@ -39,6 +39,8 @@
 .lab-view.lab-open > .lab-h1 { display: none !important; }
 .lab-stage { display: flex; flex-direction: column; gap: 12px; }
 .lab-back { align-self: flex-start; min-height: 44px; }
+/* »Vprašaj inštruktorja« pod opisom poskusa: ne v pripetem delu z risbo (pripni, docs/laboratorij.md pravilo 7) */
+.lab-ask { align-self: flex-start; min-height: 44px; }
 /* Ikona ob prvi vrstici naslova (na telefonu gre naslov v dve vrstici). */
 .lab-title { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-size: 1.35rem; line-height: 1.3; }
 .lab-title svg.i { color: var(--accent); flex: none; margin-top: 0.075em; }
@@ -53,3 +55,9 @@
   .lab-bench { padding: 10px; }
   .lab-start { align-self: stretch; justify-content: center; }
 }
+
+/* »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici. */
+.lab-check { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; justify-content: space-between; }
+.lab-check p { display: flex; align-items: center; gap: 8px; margin: 0; flex: 1 1 220px; }
+.lab-check-go { display: flex; flex-wrap: wrap; gap: 8px; }
+.lab-check-go button { min-height: 44px; }

@@ -6,7 +6,7 @@ import { icon } from "./icons.js";
 import { mountSim } from "./sim/index.js";
 import { isStoreApp } from "./pay-ui.js";
 
-let D = null; // { api, escapeHtml, getStudent, openLesson }
+let D = null; // { api, escapeHtml, getStudent, openLesson, askTutor(text, oznaka) }
 let data = null; // { sid, myPath, experiments, offers }
 let openKey = null; // odprt poskus
 let shownKey = null; // poskus, ki je zdaj narisan
@@ -27,7 +27,23 @@ export function initLab(deps) {
     if (go) return openExperiment(go.dataset.labOpen);
     const topic = e.target.closest("[data-lab-topic]");
     if (topic) return D.openLesson(topic.dataset.labTopic);
+    const vaja = e.target.closest("[data-lab-practice]");
+    if (vaja) return D.practice?.(vaja.dataset.labPractice)?.catch?.(() => D.toast?.(t("lab.error")));
     if (e.target.closest("[data-lab-back]")) return labBack();
+    // »Vprašaj inštruktorja«: klepet z vpisanim začetkom vprašanja; poskus ostane odprt, vrnitev iz klepeta (app.js).
+    // Posnetek stanja (nastavitve, odčitki, zapisane meritve; public/sim/lab.js stanjePoskusa) gre z vprašanjem kot
+    // skrit kontekst (server/ucni-kontekst.js). Modul lab.js je že naložen, ker je poskus odprt.
+    if (e.target.closest("[data-lab-ask]")) {
+      const x = find(openKey);
+      if (!x || x.locked) return;
+      const mount = box().querySelector(".lab-mount");
+      const kontekst = { v: 1, sourceType: "lab", sourceId: x.key }; // temo izbere strežnik (učenčeva pot)
+      import("./sim/lab.js")
+        .then((m) => Object.assign(kontekst, m.stanjePoskusa(mount)))
+        .catch(() => {})
+        .then(() => D.askTutor?.(t("lab.askText", { title: x.title }), x.title, kontekst));
+      return;
+    }
     if (e.target.closest("[data-lab-upgrade]")) document.querySelector("#account-tab")?.click();
   });
   // Esc v odprtem poskusu: nazaj na seznam (ne, ko je odprt meni ali okno, ki Esc porabi samo).
@@ -97,6 +113,15 @@ const subjectName = (s) => {
   return name === `subj.${s}` ? s : name;
 };
 
+// Teme za »Preveri se« (C4): vse teme najbolje razvrščene poti (učenčeva pot najprej, server/laboratorij.js), največ 3.
+// Poskus, ki pokrije več tem iste poti (lab-lom: Odboj in Lom svetlobe), dobi gumb za vsako (pregled #1041).
+function vajaTeme(x) {
+  const teme = x.topics || [];
+  if (!teme.length) return [];
+  const pot = teme.some((tp) => tp.path === data.myPath) ? data.myPath : teme[0].path;
+  return teme.filter((tp) => tp.path === pot).slice(0, 3);
+}
+
 function topicsHtml(x) {
   return `<p class="lab-topics-label">${icon("book-open")}<span>${esc(t("lab.inTextbook"))}</span></p>
     <div class="lab-topics">${x.topics
@@ -156,6 +181,7 @@ function renderExperiment() {
     <button type="button" class="ghost back lab-back" data-lab-back>${icon("arrow-left")}<span>${esc(t("nav.lab"))}</span></button>
     <h2 class="lab-title" dir="auto">${icon("flask-conical")}<span>${esc(x.title)}</span></h2>
     <p class="lab-desc" dir="auto">${esc(x.desc)}</p>
+    ${x.locked || !D.askTutor ? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>${icon("message-circle")}<span>${esc(t("task.askTutor"))}</span></button>`}
     ${
       x.locked
         ? `<section class="card tb-locked lab-locked"><h2>${icon("lock")}<span>${esc(t("lab.lockedTitle", { title: x.title }))}</span></h2>
@@ -163,6 +189,9 @@ function renderExperiment() {
         ${showOffer ? `<button type="button" class="primary" data-lab-upgrade>${icon("sparkles")}<span>${esc(t("lab.packages"))}</span></button>` : ""}</section>`
         : `<section class="card lab-bench"><div class="lab-mount"></div></section>`
     }
+    ${x.locked || !D.practice || !vajaTeme(x).length ? "" : `<section class="card lab-check"><p dir="auto">${icon("circle-check")}<span>${esc(t("lab.checkText"))}</span></p><div class="lab-check-go">${vajaTeme(x)
+      .map((tp, i, all) => `<button type="button" class="${i ? "secondary" : "primary"}" data-lab-practice="${esc(tp.id)}">${icon("pencil")}<span dir="auto">${esc(all.length > 1 ? `${t("lab.check")}: ${tp.name}` : t("lab.check"))}</span></button>`)
+      .join("")}</div></section>`}
     <div class="lab-foot">${topicsHtml(x)}</div>
   </div>`;
   const m = box().querySelector(".lab-mount");

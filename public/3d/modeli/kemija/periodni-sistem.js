@@ -174,7 +174,6 @@ export const ELEMENTI = SIMBOLI.map((simbol, i) => {
   };
 });
 
-const vej = (x, d) => x.toFixed(d).replace(".", ",");
 const RIMSKE = { 1: "I. A", 2: "II. A", 13: "III. A", 14: "IV. A", 15: "V. A", 16: "VI. A", 17: "VII. A", 18: "VIII. A" };
 export const LASTNOSTI = [
   { id: "brez", ime: "Brez (ravno)", v: () => null },

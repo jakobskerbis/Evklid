@@ -4,6 +4,8 @@
 # ključev, brez klicev AI, Stripe ali e-pošte, brez .env. Ob napaki se naložijo dnevniki in posnetki
 # (Actions > zagon > Artifacts). Agenti berejo izid z
 #   gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs
+# Brskalniški del regresijske matrike urejevalnika (test/urejevalnik-matrika.test.js) tu ne teče (v CI se ne prijavi):
+# poln teče vsako noč v matrika-nocna.yml. Čiste funkcije matrike in mala brskalniška testa (dotik-znaki, brisanje-predlog) tečejo tu.
 # Repozitorij je javen: brez skrivnosti, samo pravica branja, nikoli pull_request_target,
 # akcije pripete na SHA (komentar = različica).
 name: Testi
@@ -13,10 +15,11 @@ on:
     branches: [main]
 permissions:
   contents: read
-# PR: nov push prekliče star zagon istega PR. main: vsak commit dobi svoj izid (brez preklica).
+# PR: nov push prekliče star zagon istega PR. main (j 2026-11-24: »star testni zagon se ustavi, ko pride nov«):
+# nov commit v main prekliče star zagon na main – objava (render-objava.js, ota.yml) potrebuje le izid zadnjega commita.
 concurrency:
-  group: testi-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: testi-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 # Izrecno bash: GitHub ga potem zažene z »-eo pipefail«, zato napaka pred »| tee« podre korak.
 defaults:
   run:
@@ -127,7 +130,8 @@ jobs:
           node --disable-warning=ExperimentalWarning --test $TEST_ZASTAVICE --test-shard=${{ matrix.del }}/4 test/*.test.js 2>&1 | tee test.log
           status=${PIPESTATUS[0]}
           if [ "$status" -ne 0 ]; then
-            files=$(grep -A8 -E '^\s*not ok' test.log | sed -n -E "s#.*location: '.*/(test/[^/:']+\.test\.js):.*#\1#p" | sort -u)
+            # »not ok … # TODO« ni napaka (node:test ga izpiše, a ne šteje): brez tega je bila datoteka lažno »nestabilna«
+            files=$(grep -v -E '^\s*not ok .*# TODO' test.log | grep -A8 -E '^\s*not ok' | sed -n -E "s#.*location: '.*/(test/[^/:']+\.test\.js):.*#\1#p" | sort -u)
             n=$(printf '%s' "$files" | grep -c . || true)
             if [ "$n" -ge 1 ] && [ "$n" -le 2 ]; then
               echo "::warning::Ponovitev (1x) padlih testov: $(echo $files)"

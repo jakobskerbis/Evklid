@@ -5,7 +5,7 @@
 
 import { t } from "./i18n-osnova.js";
 import { imaStopnjo, jeOs, jeSs, jeFaks } from "./stopnja.js";
-import { SCHOOL_SYSTEMS, isRegional, gradesOf, gradeInfo, trackForLevel } from "./regions.js";
+import { SCHOOL_SYSTEMS, isRegional, gradeInfo, trackForLevel } from "./regions.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

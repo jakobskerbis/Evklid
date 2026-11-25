@@ -1,7 +1,7 @@
 // Virtualni laboratorij, kemija. Učenec sam izbere snovi, količine in pripomočke, meri in vidi posledice.
 import { h, s, fmt, svgBox, slider, select, segmented, button, toggle, layout, label } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
-import { Co2Bench, ACIDS, M, BUCKA, VM_SOBA, POENOSTAVITVE } from "./lab-model.js";
+import { Co2Bench, ACIDS, M, VM_SOBA, POENOSTAVITVE } from "./lab-model.js";
 
 // Erlenmajerica 100 mL (ISO 1773): dno Ø 64 mm, stožec do višine 80 mm, vrat Ø 22 mm in 25 mm visok.
 const RB = 32, RN = 11, HC = 80, HN = 25, KB = (RB - RN) / HC;

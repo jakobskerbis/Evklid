@@ -3,23 +3,214 @@
  "vir": "HuBMAP Human Reference Atlas (CC BY 4.0; ovojnica, skorja, piramide, papile, ledvični sinus) in Z-Anatomy (CC BY-SA 4.0; sečevod, ledvični žili, nadledvična žleza); izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "ovojnica": {
-   "hrap": 0.34,
-   "lak": 0.7,
-   "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "hrap": 0.5,
+   "lak": 0.38,
+   "lakHrap": 0.34,
+   "sijaj": 0.22,
    "ao": 0.85,
    "zrno": 0.06,
    "f": 70,
-   "barva": "#8f3a2f",
+   "barva": "#8a372c",
    "sijajBarva": "#ffb0a0",
    "rob": 0.2,
    "robBarva": "#ff8070",
    "relief": 0.25,
-   "lise": 0.1,
+   "lise": 0.18,
    "liseBarva": "#c06050",
-   "rez": "#d9c2b0",
+   "rez": "#b8634a",
    "senca": 0.3,
-   "sencaBarva": "#4a1510"
+   "sencaBarva": "#4a1510",
+   "aoTekstura": 0.6,
+   "mapa": false,
+   "detajl": true,
+   "rezSum": 1,
+   "rezCelice": [
+    {
+     "mera": 0.0007,
+     "jedroMoc": 0.55,
+     "jedro": "#7c2a22",
+     "jedroR": 0.24,
+     "ton": 0.1
+    }
+   ],
+   "rezZarki": {
+    "sredisce": [
+     0.004,
+     -0.006,
+     -0.005
+    ],
+    "sredisce2": [
+     0.004,
+     0.026,
+     -0.005
+    ],
+    "gostota": 60,
+    "moc": 0.18,
+    "barva": "#d2917a",
+    "visina": 0.15
+   },
+   "zile": 0.4,
+   "zileSirina": 0.00022,
+   "zileBarva": "#5e1a18",
+   "rezPresek": {
+    "vrsta": -1,
+    "ovoj": true,
+    "rob": 0.0007,
+    "robBarva": "#e3cdb8"
+   },
+   "rezPiramide": {
+    "del": "piramide",
+    "osnovaDel": "skorja",
+    "seznam": [
+     [
+      0.00548,
+      0.03222,
+      -0.005,
+      -0.9903,
+      0.1392,
+      0,
+      0.0185,
+      0.5,
+      0.0022
+     ],
+     [
+      0.00808,
+      0.0322,
+      -0.005,
+      -0.4384,
+      0.8988,
+      0,
+      0.0139,
+      0.42,
+      0.0022
+     ],
+     [
+      0.01105,
+      0.03035,
+      -0.005,
+      0.3746,
+      0.9272,
+      0,
+      0.0122,
+      0.42,
+      0.0022
+     ],
+     [
+      0.00937,
+      0.02769,
+      -0.005,
+      0.9135,
+      0.4067,
+      0,
+      0.015,
+      0.42,
+      0.0022
+     ],
+     [
+      0.01461,
+      0.01589,
+      -0.005,
+      0.9945,
+      0.1045,
+      0,
+      0.0149,
+      0.55,
+      0.0022
+     ],
+     [
+      0.01067,
+      0.01081,
+      -0.005,
+      0.9135,
+      -0.4067,
+      0,
+      0.018,
+      0.55,
+      0.0022
+     ],
+     [
+      0.01161,
+      -0.00177,
+      -0.005,
+      0.6428,
+      -0.766,
+      0,
+      0.0164,
+      0.55,
+      0.0022
+     ],
+     [
+      0.01019,
+      -0.00751,
+      -0.005,
+      0.1045,
+      -0.9945,
+      0,
+      0.0171,
+      0.5,
+      0.0022
+     ],
+     [
+      0.00973,
+      -0.00762,
+      -0.005,
+      -0.6157,
+      -0.788,
+      0,
+      0.0114,
+      0.5,
+      0.0022
+     ]
+    ],
+    "barva": "#8a2f2c",
+    "notranja": "#d8a08a",
+    "proge": "#cf8a76",
+    "gostota": 46,
+    "moc": 0.55,
+    "zile": 0.3,
+    "zileBarva": "#6e2420",
+    "val": 0.0016,
+    "visina": 0.3,
+    "mehko": 0.0009,
+    "zaobljeno": 0.005,
+    "sinus": {
+     "del": "ovojnica",
+     "kapsule": [
+      [
+       0.004,
+       -0.006,
+       -0.005,
+       0.004,
+       0.026,
+       -0.005,
+       0.0088
+      ],
+      [
+       0.002,
+       0.005,
+       -0.005,
+       -0.02,
+       0.012,
+       -0.005,
+       0.0125
+      ]
+     ],
+     "barva": "#e0c27c",
+     "pretini": "#b89a5a",
+     "mera": 0.0016,
+     "zile": 0.55,
+     "zileMera": 0.0045
+    }
+   },
+   "celice": [
+    {
+     "mera": 0.0009,
+     "ton": 0.14,
+     "moc": 0.12,
+     "stena": "#a85444",
+     "sirina": 0.1
+    }
+   ]
   },
   "skorja": {
    "hrap": 0.34,
@@ -30,8 +221,157 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#9c4434",
-   "rez": "#b4553f",
-   "sijajBarva": "#ffb0a0"
+   "rez": "#b8634a",
+   "sijajBarva": "#ffb0a0",
+   "mapa": false,
+   "detajl": true,
+   "rezSum": 1,
+   "rezCelice": [
+    {
+     "mera": 0.0007,
+     "jedroMoc": 0.55,
+     "jedro": "#7c2a22",
+     "jedroR": 0.24,
+     "ton": 0.1
+    }
+   ],
+   "rezZarki": {
+    "sredisce": [
+     0.004,
+     -0.006,
+     -0.005
+    ],
+    "sredisce2": [
+     0.004,
+     0.026,
+     -0.005
+    ],
+    "gostota": 60,
+    "moc": 0.18,
+    "barva": "#d2917a",
+    "visina": 0.15
+   },
+   "rezPresek": {
+    "vrsta": 0,
+    "polno": true,
+    "rob": 0.0005
+   },
+   "rezPiramide": {
+    "del": "piramide",
+    "osnovaDel": "skorja",
+    "seznam": [
+     [
+      0.00548,
+      0.03222,
+      -0.005,
+      -0.9903,
+      0.1392,
+      0,
+      0.0185,
+      0.5,
+      0.0022
+     ],
+     [
+      0.00808,
+      0.0322,
+      -0.005,
+      -0.4384,
+      0.8988,
+      0,
+      0.0139,
+      0.42,
+      0.0022
+     ],
+     [
+      0.01105,
+      0.03035,
+      -0.005,
+      0.3746,
+      0.9272,
+      0,
+      0.0122,
+      0.42,
+      0.0022
+     ],
+     [
+      0.00937,
+      0.02769,
+      -0.005,
+      0.9135,
+      0.4067,
+      0,
+      0.015,
+      0.42,
+      0.0022
+     ],
+     [
+      0.01461,
+      0.01589,
+      -0.005,
+      0.9945,
+      0.1045,
+      0,
+      0.0149,
+      0.55,
+      0.0022
+     ],
+     [
+      0.01067,
+      0.01081,
+      -0.005,
+      0.9135,
+      -0.4067,
+      0,
+      0.018,
+      0.55,
+      0.0022
+     ],
+     [
+      0.01161,
+      -0.00177,
+      -0.005,
+      0.6428,
+      -0.766,
+      0,
+      0.0164,
+      0.55,
+      0.0022
+     ],
+     [
+      0.01019,
+      -0.00751,
+      -0.005,
+      0.1045,
+      -0.9945,
+      0,
+      0.0171,
+      0.5,
+      0.0022
+     ],
+     [
+      0.00973,
+      -0.00762,
+      -0.005,
+      -0.6157,
+      -0.788,
+      0,
+      0.0114,
+      0.5,
+      0.0022
+     ]
+    ],
+    "barva": "#8a2f2c",
+    "notranja": "#d8a08a",
+    "proge": "#cf8a76",
+    "gostota": 46,
+    "moc": 0.55,
+    "zile": 0.3,
+    "zileBarva": "#6e2420",
+    "val": 0.0016,
+    "visina": 0.3,
+    "mehko": 0.0009,
+    "zaobljeno": 0.005
+   }
   },
   "piramida": {
    "hrap": 0.34,
@@ -42,9 +382,10 @@
    "zrno": 0.06,
    "f": 70,
    "barva": "#6d2622",
-   "rez": "#7a2a28",
-   "rezVlakna": 900,
-   "sijajBarva": "#ff9a90"
+   "rez": "#8c302a",
+   "sijajBarva": "#ff9a90",
+   "mapa": false,
+   "detajl": true
   },
   "papila": {
    "hrap": 0.34,
@@ -56,7 +397,10 @@
    "f": 70,
    "barva": "#c48676",
    "rez": "#c48676",
-   "sijajBarva": "#ffd0c0"
+   "sijajBarva": "#ffd0c0",
+   "mapa": false,
+   "detajl": true,
+   "vrstni": -4
   },
   "secevod": {
    "hrap": 0.34,
@@ -68,35 +412,74 @@
    "f": 70,
    "barva": "#e3cdb0",
    "rez": "#d8bc98",
-   "sijajBarva": "#ffffff"
+   "sijajBarva": "#ffffff",
+   "mapa": false,
+   "detajl": true,
+   "rezVotlina": {
+    "barva": "#ead6c4",
+    "senca": "#6e4034",
+    "globina": 0.006
+   },
+   "rezPresek": {
+    "vrsta": 3,
+    "samoRob": true,
+    "rob": 0.0005,
+    "robBarva": "#f0e2cf"
+   }
   },
   "arterija": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#c4312e",
-   "rez": "#a92a28",
+   "barva": "#ad2521",
+   "rez": "#e58477",
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
-   "robBarva": "#ff6458"
+   "robBarva": "#ff6458",
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "relief": 0.25,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#7c1c18",
+    "rob": 0.0003,
+    "robBarva": "#e58477",
+    "stena": 0.0018
+   }
   },
   "vena": {
-   "hrap": 0.34,
+   "hrap": 0.36,
    "lak": 0.7,
    "lakHrap": 0.14,
-   "sijaj": 0.45,
+   "sijaj": 0.2,
    "ao": 0.85,
-   "zrno": 0.06,
+   "zrno": 0.05,
    "f": 70,
-   "barva": "#3b5ba8",
-   "rez": "#2f4b8c",
+   "barva": "#3f5298",
+   "rez": "#93a3dd",
    "sijajBarva": "#9db8ff",
    "rob": 0.18,
-   "robBarva": "#6f93ff"
+   "robBarva": "#6f93ff",
+   "mapa": false,
+   "detajl": true,
+   "aoTekstura": 0.5,
+   "relief": 0.25,
+   "rezSum": 0.4,
+   "rezLak": 0.4,
+   "rezPresek": {
+    "vrsta": 4,
+    "luknjaBarva": "#323f85",
+    "rob": 0.0002,
+    "robBarva": "#93a3dd",
+    "stena": 0.0018
+   }
   },
   "nadledvicna": {
    "hrap": 0.34,
@@ -110,7 +493,9 @@
    "rez": "#c9802c",
    "sijajBarva": "#ffe0a0",
    "lise": 0.2,
-   "liseBarva": "#e8b860"
+   "liseBarva": "#e8b860",
+   "mapa": false,
+   "detajl": true
   },
   "meh": {
    "hrap": 0.38,
@@ -121,10 +506,27 @@
    "zrno": 0.05,
    "f": 90,
    "barva": "#ead9b4",
-   "rez": "#f3e6c6",
+   "rez": "#eee0c6",
    "sijajBarva": "#ffffff",
    "rob": 0.15,
-   "robBarva": "#fff4dc"
+   "robBarva": "#fff4dc",
+   "mapa": false,
+   "detajl": true,
+   "rezVotlina": {
+    "barva": "#e2c9b6",
+    "senca": "#4a2820",
+    "sencaMoc": 0.92,
+    "globina": 0.006,
+    "hrap": 0.6,
+    "lak": 0.2,
+    "okolje": 0.3
+   },
+   "rezPresek": {
+    "vrsta": 3,
+    "samoRob": true,
+    "rob": 0.0006,
+    "robBarva": "#f0e2cf"
+   }
   }
  },
  "deli": [
@@ -133,7 +535,9 @@
    "ime": "Ledvična ovojnica",
    "la": "Capsula fibrosa",
    "barva": "#c08a7a",
+   "opisOs": "Tanka plast, ki ovija ledvico.",
    "opis": "Tanka, čvrsta vezivna plast, ki obdaja ledvico in jo varuje.",
+   "opisStudij": "Capsula fibrosa se pri zdravi ledvici lahko odlušči; zunaj nje sta capsula adiposa (perirenalna maščoba) in fascia renalis (Gerota), ki obdaja tudi nadledvično žlezo.",
    "vozlisca": [
     "kidney_capsule_L (HRA)"
    ]
@@ -144,7 +548,9 @@
    "ime": "Ledvična skorja",
    "la": "Cortex renalis",
    "barva": "#f08060",
+   "opisOs": "Zunanji del ledvice. Tu se kri čisti.",
    "opis": "Zunanja plast z ledvičnimi telesci, kjer se iz krvi precedi primarni seč.",
+   "opisStudij": "V skorji so ledvična telesca (glomerul in Bowmanova kapsula, okoli milijon nefronov na ledvico), proksimalne in distalne zvite cevke; columnae renales segajo med piramide. Glomerulna filtracija obeh ledvic je okoli 120 ml/min (180 l/dan).",
    "vozlisca": [
     "outer_cortex_of_kidney_L (HRA)",
     "renal_column_L (HRA)"
@@ -156,7 +562,9 @@
    "ime": "Ledvične piramide (sredica)",
    "la": "Pyramides renales",
    "barva": "#e04050",
+   "opisOs": "Notranji del ledvice s cevkami, po katerih teče seč.",
    "opis": "Progaste piramide sredice s cevkami, ki seč zgostijo in ga vodijo k papilam.",
+   "opisStudij": "8–18 piramid; v njih Henlejeve zanke, vasa recta in zbiralca. Protitočni mehanizem ustvari hipertonično intersticijsko tekočino (do okoli 1200 mOsm/kg), da ADH lahko zgosti seč. Piramida s pripadajočo skorjo je ledvični reženj.",
    "vozlisca": [
     "renal_pyramid_L_a (HRA)",
     "renal_pyramid_L_b (HRA)",
@@ -174,7 +582,9 @@
    "ime": "Ledvične papile",
    "la": "Papillae renales",
    "barva": "#f0b0a0",
+   "opisOs": "Konice, iz katerih kaplja seč.",
    "opis": "Vrhovi piramid, iz katerih kaplja seč v ledvične čašice.",
+   "opisStudij": "Na vrhu papile se odpirajo papilarni vodi (ductus papillares, Bellinijevi) v area cribrosa; vsako papilo objema mala čašica. Pri papilarni nekrozi (analgetiki, sladkorna bolezen) odmrejo.",
    "vozlisca": [
     "renal_papilla_L_a (HRA)",
     "renal_papilla_L_b (HRA)",
@@ -195,14 +605,18 @@
    "ime": "Ledvični meh in čašice",
    "la": "Pelvis renalis, calices renales",
    "barva": "#f2d060",
-   "opis": "Čašice objemajo papile in zbirajo seč, ki se steka v ledvični meh in naprej v sečevod."
+   "opisOs": "Votlina, ki zbira seč in ga pošlje naprej.",
+   "opis": "Čašice objemajo papile in zbirajo seč, ki se steka v ledvični meh in naprej v sečevod.",
+   "opisStudij": "7–13 malih čašic se združi v 2–3 velike, te v pelvis renalis; leži v sinus renalis, njegov del zunaj hilusa preide v sečevod na pieloureteričnem prehodu, prvi ozki točki za ledvične kamne."
   },
   {
    "id": "secevod",
    "ime": "Sečevod",
    "la": "Ureter",
    "barva": "#e8d8b0",
+   "opisOs": "Cevka, ki pelje seč iz ledvice v mehur.",
    "opis": "Mišična cev, ki seč iz ledvičnega meha s krčenjem potiska v sečni mehur.",
+   "opisStudij": "Dolg 25–30 cm, premer 3–5 mm; peristaltika 1–5 valov na minuto. Ožine: pieloureterični prehod, križanje z iliakalnimi žilami, prehod skozi steno mehurja (ventilni mehanizem proti refluksu). Pri ženskah ga križa a. uterina (»voda pod mostom«).",
    "vozlisca": [
     "Ureter.l"
    ]
@@ -212,7 +626,9 @@
    "ime": "Ledvična arterija",
    "la": "Arteria renalis",
    "barva": "#ff5a5a",
+   "opisOs": "Žila, ki prinese kri v ledvico.",
    "opis": "Pripelje kri iz aorte; skozi ledvici steče okoli petina vse krvi iz srca.",
+   "opisStudij": "Izhaja iz aorte v višini L1–L2; desna je daljša in poteka za spodnjo votlo veno. Pred hilusom se deli v segmentne arterije (končne arterije, brez anastomoz), naprej interlobarne, arkuatne, interlobularne in vas afferens. Pretok obeh ledvic okoli 1,1 l/min (20 % minutnega volumna).",
    "vozlisca": [
     "Anterior branch of renal artery.l",
     "Left renal artery",
@@ -224,7 +640,9 @@
    "ime": "Ledvična vena",
    "la": "Vena renalis",
    "barva": "#6e9bff",
+   "opisOs": "Žila, ki odvede kri iz ledvice.",
    "opis": "Odvede prečiščeno kri iz ledvice v spodnjo votlo veno.",
+   "opisStudij": "Leži pred arterijo; leva je daljša, poteka med aorto in a. mesenterica superior tik pod njenim izstopom (sindrom hrestača) in sprejme levo gonadno ter nadledvično veno. Leva gonadna vena se izliva pravokotno, zato je levostranska varikokela pogostejša.",
    "vozlisca": [
     "Left renal vein"
    ]
@@ -234,7 +652,9 @@
    "ime": "Nadledvična žleza",
    "la": "Glandula suprarenalis",
    "barva": "#ffb84a",
+   "opisOs": "Majhna žleza na vrhu ledvice. Ob strahu izloči adrenalin.",
    "opis": "Žleza z notranjim izločanjem na vrhu ledvice; izloča adrenalin in kortizol.",
+   "opisStudij": "Skorja: zona glomerulosa (aldosteron), fasciculata (kortizol), reticularis (androgeni); sredica iz celic nevralnega grebena (adrenalin, noradrenalin). Desna je piramidasta, leva polmesečasta; tri arterije, ena vena (desna v spodnjo votlo veno, leva v ledvično).",
    "vozlisca": [
     "Suprarenal gland.l"
    ]
@@ -250,10 +670,17 @@
     ],
     "d": -0.005
    }
+  ],
+  "brezPokrova": [
+   "piramide",
+   "papile"
   ]
  },
  "pogledi": {
   "celota": {
+   "okvir": {
+    "polmer": 1.12
+   },
    "pogled": [
     -0.35,
     0.1,
@@ -280,6 +707,9 @@
     "meh",
     "ovojnica",
     "secevod"
+   ],
+   "skrijDele": [
+    "papile"
    ]
   }
  },
@@ -310,8 +740,8 @@
  },
  "velikost": 0.1667,
  "trikotniki": {
-  "racunalnik": 199968,
-  "telefon": 75011
+  "racunalnik": 171573,
+  "telefon": 40837
  },
  "luci": [
   {
@@ -332,5 +762,32 @@
    "moc": 0.6,
    "barva": "#ffd6cc"
   }
- ]
+ ],
+ "mere": [
+  {
+   "ime": "Velikost",
+   "vrednost": "≈ 10–12 cm × 5–7 cm × 3 cm"
+  },
+  {
+   "ime": "Masa",
+   "vrednost": "≈ 120–170 g"
+  },
+  {
+   "ime": "Debelina skorje",
+   "vrednost": "≈ 1 cm"
+  },
+  {
+   "ime": "Nefronov",
+   "vrednost": "≈ 1 milijon v vsaki ledvici"
+  },
+  {
+   "ime": "Sečevod",
+   "vrednost": "≈ 25–30 cm"
+  },
+  {
+   "ime": "Glomerulna filtracija",
+   "vrednost": "≈ 120 ml/min (obe ledvici)"
+  }
+ ],
+ "pbr": true
 }

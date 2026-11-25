@@ -1,6 +1,7 @@
 // Kartica oznake (simbol ali enota) iz kode data-fx: { label, html }. Brez DOM, zato jo uporablja
 // tudi aplikacija na telefonu (mobile/src/lib/rich.ts). Prevode, jezik in KaTeX dobi s configureCard.
 import { lookupSymbol, lookupUnit, symbolsIn, symbolVariant, SYMBOLS, GREEK, SUBJECT_TABLES } from "./formula-data.js";
+import { izrisi } from "./mat/izris.js";
 
 let T = (k) => k;
 let LANG = () => "sl";
@@ -43,7 +44,7 @@ const plainText = (text) => String(text).replace(/\$([^$]+)\$/g, "$1");
 export function cardFor(code) {
   const [kind, ...rest] = code.split(":");
   const k = KX();
-  const tex = (s) => (k ? k.renderToString(s, { throwOnError: false, strict: "ignore" }) : s);
+  const tex = (s) => izrisi(s, { katex: k });
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   if (kind === "u") {
     const u = lookupUnit(rest.join(":"));

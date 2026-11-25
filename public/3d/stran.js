@@ -4,7 +4,8 @@ import { t, applyI18n } from "/i18n.js";
 import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
-import { vgrajeno, starsu } from "./vgrajeno.js";
+import { vgrajeno, starsu, vprasajInstruktorja } from "./vgrajeno.js";
+import { jsonAliNic } from "/odgovor.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
 
@@ -18,12 +19,6 @@ const mk = (tag, cls, text) => {
   if (cls) e.className = cls;
   if (text != null) e.textContent = text;
   return e;
-};
-const PREDMETI = { BIO: "subj.BIO", KEM: "subj.KEM", FIZ: "subj.FIZ", MAT: "subj.MAT", NAR: "subj.NAR" };
-const predmet = (p) => {
-  const k = PREDMETI[p];
-  const s = k ? t(k) : p;
-  return s === k ? p : s;
 };
 
 function razberi() {
@@ -503,6 +498,9 @@ async function model(id, param, moj) {
     const st = mk("span", "k3-model-stevec", t("a3.position", { i: sos.i + 1, n: sos.n }));
     desno.append(gumb(sos.prej, -1), st, gumb(sos.potem, 1));
   }
+  // »Lekcija« (v okvirju aplikacije, ?ucenec=): teme učbenika s tem modelom (server/laboratorij.js teme3d). Ena tema:
+  // gumb jo odpre; več tem: kratek seznam. Aplikacija zapre okvir in odpre lekcijo; Nazaj iz lekcije spet odpre model.
+  if (vgrajeno && UCENEC) desno.append(gumbLekcije(id, mod.info.naslov));
   const prepModela = preparatModela(id);
   if (prepModela) {
     const mb = mk("button", "a3-krog k3-mikroskop");
@@ -545,7 +543,73 @@ async function model(id, param, moj) {
   };
   // »Poglej z mikroskopom« v oknu dela: preparat za del (organi iz GLB) ali za model.
   const mikroskop = prepModela ? { za: (delId) => pogledDela(id, delId), odpri: odpriMikroskop } : null;
-  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop });
+  // »Vprašaj inštruktorja« v oknu dela (public/3d/vgrajeno.js): vrnitev iz klepeta odpre ta model z istim delom.
+  const vprasaj = (d) =>
+    vprasajInstruktorja(t("a3.askPartText", { naslov: mod.info.naslov, ime: d.la ? `${d.ime} (${d.la})` : d.ime }), {
+      vrni: `${id}?del=${encodeURIComponent(d.id)}`,
+      oznaka: `${d.ime} (${mod.info.naslov})`, // »Nazaj na: Jedro (Živalska celica)«, brez dveh dvopičij
+      kontekst: { v: 1, sourceType: "model3d", sourceId: id, selectedObject: { id: d.id, ime: d.ime } },
+    });
+  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop, vprasaj });
+}
+
+// Učenec iz okvirja aplikacije (public/uci-se.js open3d): za teme lekcij; samo številka.
+const UCENEC = (() => {
+  const v = new URLSearchParams(location.search).get("ucenec") || "";
+  return /^\d{1,12}$/.test(v) ? v : "";
+})();
+function gumbLekcije(id, naslov) {
+  const ovoj = mk("span", "k3-lekcije");
+  const b = mk("button", "a3-krog k3-lekcija");
+  b.type = "button";
+  b.hidden = true;
+  b.innerHTML = icon("book-open");
+  b.setAttribute("aria-label", t("a3.lesson"));
+  b.title = t("a3.lesson");
+  b.setAttribute("aria-expanded", "false");
+  const seznam = mk("div", "k3-lekcije-seznam");
+  seznam.hidden = true;
+  ovoj.append(b, seznam);
+  let teme = [];
+  const odpri = (tema) => starsu({ tip: "lekcija", id: tema.id, vrni: id, oznaka: naslov });
+  b.addEventListener("click", () => {
+    if (teme.length === 1) return odpri(teme[0]);
+    seznam.hidden = !seznam.hidden;
+    b.setAttribute("aria-expanded", String(!seznam.hidden));
+    if (!seznam.hidden) seznam.querySelector("button")?.focus();
+  });
+  seznam.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    e.preventDefault();
+    e.stopPropagation();
+    seznam.hidden = true;
+    b.setAttribute("aria-expanded", "false");
+    b.focus();
+  });
+  // Dotik ali klik zunaj seznama ga zapre (kot drugi spustni seznami); ob menjavi modela se poslušalec odstrani.
+  document.addEventListener("pointerdown", function zunaj(e) {
+    if (!ovoj.isConnected) return document.removeEventListener("pointerdown", zunaj, true);
+    if (seznam.hidden || ovoj.contains(e.target)) return;
+    seznam.hidden = true;
+    b.setAttribute("aria-expanded", "false");
+  }, true);
+  fetch(`/api/students/${UCENEC}/svet3d/${encodeURIComponent(id)}/teme`, { credentials: "same-origin" })
+    .then((r) => jsonAliNic(r, { teme: [] }))
+    .then((d) => {
+      teme = Array.isArray(d?.teme) ? d.teme : [];
+      if (!teme.length || !ovoj.isConnected) return;
+      for (const tema of teme) {
+        const v = mk("button", "k3-lekcije-vrstica");
+        v.type = "button";
+        v.append(mk("span", "", tema.name), mk("small", "", tema.level || ""));
+        v.dir = "auto";
+        v.addEventListener("click", () => odpri(tema));
+        seznam.append(v);
+      }
+      b.hidden = false;
+    })
+    .catch(() => {});
+  return ovoj;
 }
 
 async function usmeri() {

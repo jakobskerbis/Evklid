@@ -1,6 +1,6 @@
 // Hiperbola x²/a² − y²/b² = 1: drsnika a in b, vlečna točka T (tudi na drugo vejo), gorišči, asimptoti
 // y = ±(b/a)x in pravokotnik 2a × 2b. Vedno velja |r₁ − r₂| = 2a.
-import { st, crta, napis, vr } from "./skica.js";
+import { crta, napis, vr } from "./skica.js";
 import { s } from "../sim/kit.js";
 import { hiperbola, ravnina } from "./stoznice.js";
 

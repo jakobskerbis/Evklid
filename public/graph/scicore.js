@@ -1,6 +1,7 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots } from "./math.js";
+import { precise } from "./natancnost.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, calcText, calcRewrite, splitTop, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -14,40 +15,7 @@ export const HIDDEN_VARS = new Set([ANS_VAR, DEG_VAR, MIN_VAR, SEC_VAR]);
 // 30°15′20″ → (30° + 15′ + 20″), da ostane skupaj (−30°15′ = −30,25°, 2·30°15′ = 60,5°)
 const DMS_RUN = /\d+(?:\.\d+)?\s*[°′](?:\s*\d+(?:\.\d+)?\s*[′″])+/g;
 
-/** Razdeli besedilo na vrhnji ravni (zunaj oklepajev) pri znakih iz »seps«. */
-export function splitTop(s, seps = ";") {
-  const out = [];
-  let depth = 0;
-  let cur = "";
-  for (const c of String(s)) {
-    if ("([{".includes(c)) depth++;
-    else if (")]}".includes(c)) depth = Math.max(0, depth - 1);
-    if (depth === 0 && seps.includes(c)) {
-      out.push(cur);
-      cur = "";
-    } else cur += c;
-  }
-  out.push(cur);
-  return out;
-}
-
-// »∫(f; a; b)« → »∫_(a)^(b) (f) dx« (zapis, ki ga razume razčlenjevalnik)
-function rewriteIntegrals(s) {
-  for (let guard = 0; guard < 20; guard++) {
-    const i = s.indexOf("∫(");
-    if (i < 0) break;
-    let depth = 0;
-    let j = i + 1;
-    for (; j < s.length; j++) {
-      if (s[j] === "(") depth++;
-      else if (s[j] === ")" && --depth === 0) break;
-    }
-    const args = splitTop(s.slice(i + 2, j), ",");
-    if (args.length !== 3) break;
-    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) dx)${s.slice(j + 1)}`;
-  }
-  return s;
-}
+export { splitTop }; // skupno z grafičnim kalkulatorjem (math.js)
 
 /**
  * Besedilo s tipkovnice → izraz za razčlenjevalnik.
@@ -56,26 +24,23 @@ function rewriteIntegrals(s) {
  *   kotna minuta in sekunda (30°15′20″),
  * - 1,2E5 → 1,2·10^(5), manjkajoče zaklepaje dodamo na konec, ∫(f; a; b) je določeni integral.
  */
-export function prepare(text, { comma = true } = {}) {
+export function prepare(text, { comma = true, names = null } = {}) {
   // »1 000 000/4«: presledek med skupinami po 3 števke je ločilo tisočic, ne množenje
-  let s = joinThousands(String(text ?? "").trim());
-  // Nejasen zapis števila (»12 3456«, »1.2.3«) je napaka, ne tiho množenje (12 · 3456, 1,2 · 0,3).
-  if (digitGap(s)) throw new MathError("unexpected", { got: " " });
-  if (comma) s = joinDotThousands(s); // »1.234,5« = 1234,5
-  if (twoDots(s)) throw new MathError("unexpected", { got: "." });
-  s = s.replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
-  if (comma) s = s.replace(/(\d),(?=\d)/g, "$1.");
-  s = s.replace(/;/g, ",");
-  s = s.replace(/(\d|\.)[eE]([+\-−]?\d+)/g, "$1*10^($2)");
+  // »1.234,5« = 1234,5; nejasen zapis števila (»12 3456«, »1.2.3«) je napaka, ne tiho množenje (12 · 3456, 1,2 · 0,3).
+  // Isto pravilo kot grafični kalkulator in preverjanje odgovorov (numberText v math.js).
+  // Znanstveni zapis, ∫(f; a; b) in manjkajoči zaklepaji: skupna priprava z grafičnim kalkulatorjem (calcText).
+  let s = String(text ?? "").trim().replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
+  s = calcText(s, { comma, names, close: true });
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
-  s = s.replace(/°/g, `*${DEG}`).replace(/(\d|\.)\s*′/g, `$1*${MIN}`).replace(/(\d|\.)\s*″/g, `$1*${SEC}`);
-  let open = 0;
-  for (const c of s) {
-    if (c === "(") open++;
-    else if (c === ")") open = Math.max(0, open - 1);
-  }
-  return rewriteIntegrals(s + ")".repeat(open));
+  // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem
+  // kalkulatorju): sin 30° = sin(30°), 1/30° = 1/(30°), 30°^2 = (30°)². Prej je bil »sin 30°« (sin 30)·° (AUDIT-025).
+  s = s
+    .replace(/(\d+(?:\.\d+)?|(?<![A-Za-z_{])[A-Za-zα-ωπθ](?![A-Za-z_(]))\s*°/g, `($1 ${DEG})`)
+    .replace(/°/g, ` ${DEG}`)
+    .replace(/(\d+(?:\.\d+)?)\s*′/g, `($1 ${MIN})`)
+    .replace(/(\d+(?:\.\d+)?)\s*″/g, `($1 ${SEC})`);
+  return s;
 }
 
 /** Je besedilo prirejanje »a = 5«? Vrne ime spremenljivke ali null. */
@@ -90,28 +55,24 @@ function assignment(ast) {
 // - round(x; n) zaokroži na n decimalk,
 // - d/dx(f; a) je odvod v točki a.
 function rewrite(n, ctx) {
-  if (!n || typeof n !== "object") return n;
-  const r = (x) => rewrite(x, ctx);
-  if ((n.k === "+" || n.k === "-") && n.b?.k === "pct") {
-    const one = { k: "num", v: 1 };
-    const part = { k: "/", a: r(n.b.a), b: { k: "num", v: 100 } };
-    return { k: "*", a: r(n.a), b: { k: "grp", a: { k: n.k, a: one, b: part } } };
-  }
-  if (n.k === "call" && n.f === "round" && n.args.length === 2) {
-    const p = { k: "^", a: { k: "num", v: 10 }, b: r(n.args[1]) };
-    return { k: "/", a: { k: "call", f: "round", args: [{ k: "*", a: r(n.args[0]), b: p }] }, b: p };
-  }
-  if (n.k === "der" && n.a?.k === "tuple" && n.a.items.length === 2) {
-    const d = simplify(diff(r(n.a.items[0]), n.v, ctx));
-    return { k: "grp", a: substitute(d, { [n.v]: r(n.a.items[1]) }) };
-  }
-  const out = { ...n };
-  for (const key of ["a", "b", "other"]) if (n[key]) out[key] = r(n[key]);
-  for (const key of ["args", "terms", "items"]) if (Array.isArray(n[key])) out[key] = n[key].map(r);
-  if (n.cases) out.cases = n.cases.map(([c, v]) => [r(c), r(v)]);
-  if (n.lo) out.lo = r(n.lo);
-  if (n.hi) out.hi = r(n.hi);
-  return out;
+  // odstotki in round(x; n): skupno z grafičnim kalkulatorjem (calcRewrite v math.js)
+  return calcRewrite(n, (m, r) => {
+    if (m.k === "der" && m.a?.k === "tuple" && m.a.items.length === 2) {
+      // Simbolni odvod v točki a ne zadošča (AUDIT-017, AUDIT-018): ln x ima pri x = −1 »odvod« −1, |x| pri 0
+      // »odvod« 0. __ODVOD_V_TOCKI (math.js) zato preveri še, da je f v a definirana in da se levi in desni odvod
+      // ujemata z njim. Gnezden odvod (d/dx(d/dx(…; x); 2)) in odvod za simbolno računanje ostaneta navadna.
+      const plain = { ...ctx, plainDer: true };
+      const f = rewrite(m.a.items[0], plain);
+      const a = r(m.a.items[1]);
+      // odvod v točki je v radianih (AUDIT-055): odvod, točka in preverjanje v vozlu »rad« (math.js compile)
+      const rad = ctx.calcRad ? { ...ctx, deg: false, grad: false } : ctx;
+      const d = simplify(diff(f, m.v, rad));
+      const at = substitute(d, { [m.v]: a });
+      if (ctx.plainDer) return { k: "grp", a: at };
+      const call = { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: m.v };
+      return ctx.calcRad && (ctx.deg || ctx.grad) ? { k: "rad", a: call } : call;
+    }
+  });
 }
 
 /** Zapis TeX za zgodovino: ° namesto pomožne spremenljivke, Ans, odvod v točki. */
@@ -122,9 +83,12 @@ export function lineTex(ast, comma = true) {
   }
   return toTex(ast, { comma, sep: comma ? ";" : "," })
     .replaceAll(ANS, "\\mathrm{Ans}")
+    // potenca s stopinjami (Ans²°): drugi eksponent na prazni osnovi, sicer je dvojni eksponent napaka KaTeX (AUDIT-020)
+    .replace(/(\^\{(?:[^{}]|\{[^{}]*\})*\})\s*(?:\\cdot\s*)?G_\{(deg|min|sec)\}/g, (_, sup, u) => `${sup}{}^{${{ deg: "\\circ", min: "\\prime", sec: "\\prime\\prime" }[u]}}`)
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
     .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
+    .replace(/(?<=^|[{\s+\-=(,])\\left\(([\d{},.]+|[A-Za-z]|\\(?:pi|theta|alpha|beta|gamma|varphi|phi))\^\{(\\circ|\\prime|\\prime\\prime)\}\\right\)(?!\s*\^)/g, "$1^{$2}") // (30°) → 30° (ne za funkcijo, števko ali pred potenco)
     .replace(/(\^\{\\circ\}|\^\{\\prime\})\s*\+\s*(?=[\d{},.]+\^\{\\prime(?:\\prime)?\}(?!\s*(?:\\cdot|\^|\\times)))/g, "$1") // 30° + 15′ → 30°15′ (ne 30° + 15′·2)
     .replace(/\\cdot\s*10\^/g, "\\cdot 10^");
 }
@@ -143,16 +107,18 @@ export function functionDef(text) {
  * funcs: { f: { param, body } } (besedilo telesa, kot ga je vpisal učenec)
  */
 export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = false, comma = true, funcs = {} } = {}) {
-  const src = prepare(text, { comma });
+  const known = new Set([...Object.keys(vars), ...Object.keys(funcs)]); // spremenljivka E: »3E-2« je 3·E − 2
+  const src = prepare(text, { comma, names: known });
   if (!src) return null;
   const names = new Set(Object.keys(funcs));
   const one = grad ? 200 / 180 : deg ? 1 : Math.PI / 180; // 1° v trenutni enoti kota
   const scope = Object.assign(Object.create(null), vars, { [ANS_VAR]: ans, [DEG_VAR]: one, [MIN_VAR]: one / 60, [SEC_VAR]: one / 3600 });
   const defs = {};
-  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope };
+  // calcRad: ∫ in d/dx v radianih tudi v DEG/GRA (math.js compile, AUDIT-055); ° je tam π/180
+  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope, derCheck: true, calcRad: true, degUnits: { [DEG_VAR]: Math.PI / 180, [MIN_VAR]: Math.PI / 10800, [SEC_VAR]: Math.PI / 648000 } };
   for (const [name, f] of Object.entries(funcs)) {
     try {
-      defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma }), { funcs: names }), ctx), body: null };
+      defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma, names: known }), { funcs: names }), ctx), body: null };
     } catch {}
   }
   for (const d of Object.values(defs)) {
@@ -164,6 +130,124 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   }
   const ast = parse(src, { funcs: names });
   return { src, ast, scope, ctx, rw: (node) => rewrite(node, ctx), run: (node) => compile(rewrite(node, ctx), ctx) };
+}
+
+/** v zaokrožen na mesta, ki jih napaka err še dopušča (vsaj 1, največ 15 značilnih mest). */
+export function reliable(v, err) {
+  if (!Number.isFinite(v) || v === 0 || !(err > 0)) return v;
+  const d = Math.max(1, Math.min(15, Math.floor(Math.log10(Math.abs(v) / err))));
+  return Number(v.toPrecision(d));
+}
+
+/** Podatki integrateInfo za vsak določeni integral v drevesu (ne znotraj drugega integrala). */
+export function integralsOf(node, ctx, scope) {
+  const all = [];
+  walk(node, (n) => n.k === "int" && all.push(n));
+  const nested = new Set();
+  for (const n of all) [n.a, n.lo, n.hi].forEach((c) => walk(c, (m) => m.k === "int" && nested.add(m)));
+  const out = [];
+  for (const n of all) {
+    if (nested.has(n) || !n.lo || !n.hi) continue;
+    try {
+      const f = compile(n.a, ctx);
+      const a = compile(n.lo, ctx)(scope);
+      const b = compile(n.hi, ctx)(scope);
+      const sc = Object.create(scope);
+      const g = (t) => {
+        sc[n.v] = t;
+        const y = f(sc);
+        return Array.isArray(y) ? y[0] : y;
+      };
+      out.push(integrateInfo(g, a, b));
+    } catch {}
+  }
+  return out;
+}
+
+const INT_LIVE_MS = 50; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
+const INT_MS = 1000; // integrali ob Izračunaj
+const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
+const hasIntegral = (node) => {
+  let yes = false;
+  walk(node, (n) => {
+    if (n.k === "int" && n.lo) yes = true;
+    if (n.k === "sum" && unwrapGrp(n.hi)?.k === "const" && unwrapGrp(n.hi).name === "inf") yes = true; // neskončna vrsta: ista pot (ocena napake)
+  });
+  return yes;
+};
+/**
+ * Vrednost integrala (integrateInfo), kolikor jo podpira ocena napake: { value, est: true, digits } — številski izid je
+ * vedno približek (»≈«; »=« le za točno, simbolno vrednost), value zaokrožen na zanesljiva mesta (največ 12).
+ * null: ocena napake ne podpira niti enega mesta.
+ */
+export function zanesljivaMesta(info) {
+  const { value: v, err } = info;
+  if (!Number.isFinite(v) || !(err >= 0) || !Number.isFinite(err)) return null;
+  if (err === 0) return { value: v, est: true, digits: 12 };
+  const a = Math.abs(v);
+  // ∫(sin x; −π; π): vrednost je v šumu, a ta je zanemarljiv proti ∫|f|
+  if (a <= err) return err <= 1e-12 * (info.abs || 0) ? { value: 0, est: true, digits: 1 } : null;
+  const d = Math.floor(Math.log10(a / err));
+  if (d < 1) return null;
+  const digits = Math.min(12, d);
+  return { value: Number(v.toPrecision(digits)), est: true, digits };
+}
+
+/** Zunanji določeni integrali v drevesu po vrsti računanja (ne znotraj drugega integrala). */
+function topIntegrals(node) {
+  const all = [];
+  walk(node, (n) => n.k === "int" && all.push(n));
+  const nested = new Set();
+  for (const n of all) [n.a, n.lo, n.hi].forEach((c) => walk(c, (m) => m !== n && m.k === "int" && nested.add(m)));
+  return all.filter((n) => n.lo && n.hi && !nested.has(n));
+}
+/**
+ * Ali je integrand v x zunaj definicijskega območja: v drevesu je vozel, katerega vrednost je NaN, čeprav so vsi
+ * njegovi argumenti končna števila (√ negativnega, ln negativnega, arcsin 2). ∞/∞ ali ∞ − ∞ (preliv) ne šteje.
+ */
+function domainViolation(intNode, ctx, scope, x) {
+  const sc = Object.create(scope);
+  sc[intNode.v] = x;
+  let found = false;
+  const val = (n) => {
+    try {
+      const y = compile(n, { ...ctx, tolerant: true })(sc); // isti šum zaokrožitve kot v integralu
+      return typeof y === "number" ? y : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const visit = (n) => {
+    if (found || !n || typeof n !== "object" || n.k === "int") return undefined;
+    const kids = [];
+    for (const k in n) {
+      if (k === "k") continue;
+      const c = n[k];
+      if (Array.isArray(c)) c.forEach((z) => z && typeof z === "object" && z.k && kids.push(z));
+      else if (c && typeof c === "object" && c.k) kids.push(c);
+    }
+    const kv = kids.map(visit);
+    if (found) return undefined;
+    const y = val(n);
+    if (Number.isNaN(y) && kv.every((z) => typeof z === "number" && Number.isFinite(z))) found = true;
+    return y;
+  };
+  visit(intNode.a);
+  return found;
+}
+
+// Ali drevo vsebuje nCr/nPr z neceloštevilskim n in k > 1000 (math.js genBinom: pot z ln Γ, ne točen produkt)
+function gammaBinom(node, ctx, scope) {
+  let yes = false;
+  walk(node, (n) => {
+    if (yes || n.k !== "call" || (n.f !== "nCr" && n.f !== "nPr") || n.args.length !== 2) return;
+    try {
+      const a = compile(n.args[0], ctx)(scope);
+      const k = compile(n.args[1], ctx)(scope);
+      if (typeof a === "number" && typeof k === "number" && !Number.isInteger(a) && k > 1000) yes = true;
+    } catch {}
+  });
+  return yes;
 }
 
 /** Neznanke v drevesu (brez znanih spremenljivk in pomožnih imen). */
@@ -186,11 +270,106 @@ export function evaluate(text, env = {}) {
     if (ast.k === "cmp" && !name) return { error: { code: "notCalc", info: {} } };
     const fv = unknownsOf(rw(expr), vars);
     if (fv.length) return { error: { code: "missing", info: { names: fv } } };
-    let value = run(expr)(scope);
+    // določeni integrali: s časovno mejo in s podatki o vsakem (ne obstaja, ni zanesljiv, ocena napake)
+    const rwe = rw(expr);
+    const withInt = hasIntegral(rwe);
+    let value;
+    let infos = [];
+    if (withInt) ({ result: value, infos } = withIntegralBudget(env.live ? INT_LIVE_MS : INT_MS, () => integralTrace(() => run(expr)(scope))));
+    else value = run(expr)(scope);
     if (Array.isArray(value)) value = value.length === 1 ? value[0] : NaN;
     if (typeof value === "boolean") value = value ? 1 : 0;
+    // Plavajoča vejica ima ~16 mest (AUDIT-049): √(10¹⁶ + 1) − 10⁸ = 0, 1 − cos(10⁻⁸) = 0, ln(e¹⁰⁰⁰) = ∞.
+    // Isto drevo izračunamo še z večjo natančnostjo; če se rezultat razlikuje, velja natančnejši.
+    let precision = false;
+    let hp = null;
+    if (!withInt && typeof value === "number") {
+      hp = precise(rwe, scope, { unit: env.grad ? "grad" : env.deg ? "deg" : "rad", ms: env.live ? 15 : 40 });
+      if (hp && Number.isFinite(hp.value) && (hp.value !== 0 || hp.zero)) {
+        const H = hp.value;
+        const off = !Number.isFinite(value) || Math.abs(value - H) > 1e-14 * Math.abs(H) || (H === 0 && value !== 0);
+        if (off) {
+          // opomba le, kadar bi učenec videl drugo število (0,1 + 0,2 = 0,30000000000000004 ni vredno opombe)
+          precision = formatNumber(value).text !== formatNumber(H).text;
+          value = H;
+        }
+      }
+    }
+    let est = false;
+    let single = null; // podatki edinega integrala (scisolve: točna vrednost iz nedoločenega integrala)
+    let digits; // zanesljiva mesta edinega integrala
+    if (withInt) {
+      if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
+      // neskončna vrsta ali produkt (AUDIT-002): divergira ali je ne znamo zanesljivo sešteti – povemo, ne izmislimo
+      if (infos.some((r) => r.series && r.diverges)) return { error: { code: "sumDiverge", info: { prod: unwrapGrp(rwe).k === "sum" && unwrapGrp(rwe).f === "prod" } } };
+      if (infos.some((r) => r.series && r.unknown)) return { error: { code: "sumUnknown", info: {} } };
+      // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
+      const div = infos.find((r) => r.diverges);
+      // ∫(1/x; 1; ∞): divergira zaradi neskončnega intervala (inf), ne zaradi pola
+      if (div && !Number.isFinite(value)) return { error: { code: "intDiverge", info: div.pv !== undefined ? { pv: div.pv } : Number.isFinite(div.at) ? {} : { inf: true } } };
+      // √(x − 5) na [0, 10⁴]: f na delu intervala ni definirana (pove to, ne »—«); NaN zaradi preliva
+      // (sinh x / cosh x pri 10⁴: ∞/∞) pa ni nedefiniranost, ampak »ni mogoče zanesljivo izračunati«
+      const iNan = infos.findIndex((r) => !Number.isFinite(r.value) && !r.diverges && r.at !== undefined);
+      if (iNan >= 0 && !Number.isFinite(value)) {
+        const ints = topIntegrals(rwe);
+        const node = ints.length === infos.length ? ints[iNan] : null;
+        if (node && domainViolation(node, line.ctx, scope, infos[iNan].at)) return { error: { code: "intUndefined", info: {} } };
+        return { error: { code: "intUnknown", info: {} } };
+      }
+      if (infos.some((r) => r.undef) && !Number.isFinite(value)) return { error: { code: "intUnknown", info: {} } };
+      const zm = infos.map((r) => (Number.isFinite(r.value) ? zanesljivaMesta(r) : null));
+      // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
+      if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !zm[i]))) return { error: { code: "intUnknown", info: {} } };
+      if (Number.isFinite(value) && infos.length) {
+        if (infos.length === 1 && ["int", "sum"].includes(unwrapGrp(rwe).k)) {
+          ({ value, est, digits } = zm[0]);
+          single = infos[0];
+        }
+        else {
+          // sestavljen izraz (∫(…)·2 + 1): napako vsakega integrala prenesemo skozi račun (izraz z vrednostjo ± err)
+          const num = (y) => (Array.isArray(y) ? (y.length === 1 ? y[0] : NaN) : typeof y === "boolean" ? +y : y);
+          const at = (vs) => num(withIntegralValues(vs, () => run(expr)(scope)));
+          const vals = infos.map((r) => r.value);
+          let err = 1e-15 * Math.abs(value);
+          if (infos.length <= 8)
+            infos.forEach((r, i) => {
+              const vs = vals.slice();
+              vs[i] += r.err;
+              err += Math.abs(at(vs) - value);
+            });
+          else err += Math.max(Math.abs(at(vals.map((v, i) => v + infos[i].err)) - value), Math.abs(at(vals.map((v, i) => v - infos[i].err)) - value));
+          const z = zanesljivaMesta({ value, err, abs: Math.abs(value) + vals.reduce((t, v) => t + Math.abs(v), 0) });
+          if (!z || !Number.isFinite(err)) return { error: { code: "intUnknown", info: {} } };
+          ({ value, est, digits } = z);
+        }
+      }
+    }
+    // nCr/nPr z neceloštevilskim n in k > 1000: računano z ln Γ (~12 mest, zadnje včasih napačno), zato »≈« in 11 mest
+    if (!est && Number.isFinite(value) && value !== 0 && gammaBinom(rw(expr), line.ctx, scope)) {
+      est = true;
+      digits = 11;
+      value = Number(value.toPrecision(11));
+    }
     const tex = lineTex(ast, comma);
-    return name ? { value, tex, assign: name } : { value, tex };
+    const out = name ? { value, tex, assign: name } : { value, tex };
+    // est: številski približek, v vmesniku z »≈« namesto »=« (in samo decimalno, ne ulomek)
+    if (est) Object.assign(out, { approx: true, est: true });
+    if (precision) out.precision = true;
+    // Celo število nad 2⁵³ ima v plavajoči vejici le ~16 mest (AUDIT-050): nCr(100; 50) = 1,0089…·10²⁹ ni »=«.
+    // Točne števke (BigInt), če jih natančni račun pozna, sicer je rezultat le približek.
+    if (typeof value === "number" && Number.isInteger(value) && Math.abs(value) > Number.MAX_SAFE_INTEGER) {
+      // 100! v plavajoči vejici zgreši zadnje mesto (…441 namesto …4415): velja točna vrednost
+      // Ans in spremenljivke so shranjene kot double: Ans = nCr(100; 50) ima le ~16 mest, Ans + 1 zato nima točnih števk
+      const exactVars = [...freeVars(rwe)].every((n) => n === DEG_VAR || n === MIN_VAR || n === SEC_VAR || typeof scope[n] !== "number" || Number.isSafeInteger(scope[n]));
+      // vpisano število z več kot 15 mesti natančni račun prebere točno iz zapisa (raw, AUDIT-030)
+      if (exactVars && typeof hp?.int === "bigint" && Math.abs(Number(hp.int) - value) <= 1e-12 * Math.abs(value)) {
+        out.value = Number(hp.int);
+        out.big = hp.int.toString();
+      } else out.bigApprox = true;
+    }
+    if (single) Object.defineProperty(out, "int", { value: single, enumerable: false });
+    if (digits) Object.defineProperty(out, "digits", { value: digits, enumerable: false });
+    return out;
   } catch (e) {
     if (e instanceof MathError) return { error: { code: e.code, info: e.info || {} } };
     return { error: { code: "other", info: {} } };
@@ -237,6 +416,17 @@ const fracTex = (p, q, inner = "") => {
  * Točna oblika števila v TeX (npr. \frac{1}{3}, \frac{\sqrt{3}}{2}, \frac{3\pi}{4}) ali null,
  * kadar je število celo ali točne oblike ne najdemo.
  */
+/** Kot exactTex, a še z vrednostjo oblike (p/q, m√n/q, pπ/q kot število), da jo lahko preverimo v enačbi. */
+export function exactForm(v) {
+  const tex = exactTex(v);
+  if (!tex) return null;
+  const f = toFraction(v, 1000);
+  if (f) return { tex, value: f.p / f.q };
+  const sq = toFraction(v * v, 1000);
+  if (sq && sq.p > 0 && sq.p * sq.q <= 1e6) return { tex, value: Math.sign(v) * Math.sqrt(sq.p / sq.q) };
+  const pi = toFraction(v / Math.PI, 24);
+  return pi ? { tex, value: (pi.p * Math.PI) / pi.q } : null;
+}
 export function exactTex(v) {
   if (!Number.isFinite(v) || Math.abs(v - Math.round(v)) < 1e-9 * Math.max(1, Math.abs(v)) || Math.abs(v) > 1e9 || Math.abs(v) < 1e-9) return null;
   const f = toFraction(v, 1000);
@@ -369,6 +559,7 @@ export const CONSTANTS = [
   { id: "e0", sym: "e_0", value: 1.602176634e-19, unit: "A\\,s" },
   { id: "me", sym: "m_e", value: 9.1093837015e-31, unit: "kg" },
   { id: "mp", sym: "m_p", value: 1.67262192369e-27, unit: "kg" },
+  { id: "mn", sym: "m_n", value: 1.67492749804e-27, unit: "kg" }, // CODATA 2018
   { id: "u", sym: "u", value: 1.6605390666e-27, unit: "kg" },
   { id: "NA", sym: "N_A", value: 6.02214076e23, unit: "mol^{-1}" },
   { id: "kB", sym: "k_B", value: 1.380649e-23, unit: "J/K" },

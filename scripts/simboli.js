@@ -5,9 +5,8 @@
 // Pisec iz povzetka napiše blok :::simboli na konec lekcije (ne bere cele lekcije).
 import fs from "node:fs";
 import path from "node:path";
-import { LESSONS_DIR, parseLesson } from "../server/textbook.js";
+import { LESSONS_DIR } from "../server/textbook.js";
 import { getTopic } from "../server/curriculum.js";
-import { checkSymbols } from "../server/lesson-check.js";
 import { symbolsIn, lookupSymbol, SYMBOLS_BLOCK_RE } from "../public/formula-data.js";
 
 const args = process.argv.slice(2);
@@ -23,11 +22,6 @@ if (!files.length || (listOnly && files.every((f) => !f.endsWith(".md")))) {
   }
 }
 
-const missingOf = (body) => {
-  const warns = [];
-  checkSymbols(body, () => {}, (w) => warns.push(w));
-  return warns;
-};
 const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
 
 for (const file of files) {

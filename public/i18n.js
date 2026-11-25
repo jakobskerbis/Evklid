@@ -7,5 +7,7 @@ import SL from "./i18n/sl.js";
 import { dodajSlovenscino } from "./i18n-osnova.js";
 
 dodajSlovenscino(SL);
+// Dodatna izvirna besedila dela strani, ki se naloži kasneje (public/i18n/sl-3d.js na strani /3d).
+export const dodajIzvirnik = (d) => Object.assign(SL, d);
 
 export * from "./i18n-osnova.js";

@@ -1,7 +1,7 @@
 // Indija: izpitne naloge iz fizike (CBSE/NCERT, ICSE/ISC, državne šole, JEE, NEET), angleško in hindijsko.
 // Vsak generator ima langs: ["en", "hi"] in gen(level, r, topic, lang); besedila z L = bi(lang).
 // Vse naključne izbire so narejene pred izbiro besedil, zato da isto seme v obeh jezikih isto nalogo.
-import { en, num, numM, task as baseTask, choiceWhy, bi, roundToL, fracTex, fraction, fractionM } from "./exam-util.js";
+import { en, numM, task as baseTask, choiceWhy, bi, roundToL, fracTex, fraction, fractionM } from "./exam-util.js";
 
 const T = (slug) => `FIZ-EXB/${slug}`;
 const NAMES = [

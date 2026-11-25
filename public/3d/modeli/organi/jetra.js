@@ -5,7 +5,7 @@ export const info = {
   naslov: "Jetra z žolčnikom",
   podrocje: "organi",
   predmet: "BIO",
-  opis: "Jetrni režnji, žolčnik, žolčevod, portalna vena in jetrne žile; prerez pokaže notranjost režnjev in meje med jetrnimi segmenti.",
+  opis: "Jetrni režnji, žolčnik, žolčevod, portalna vena in jetrne žile; prerez pokaže notranjost jeter s prerezanimi vejami portalne vene in jetrnih ven.",
   merilo: { m: 0.22, oznaka: "22 cm" },
 };
 export const organ = "jetra";

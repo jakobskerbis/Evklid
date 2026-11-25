@@ -126,3 +126,12 @@ test("kvasovka: vrat brsta je brez luknje, na koncu ga zapre pregrada", { skip }
     assert.match(faza.vrednost(), /pregrado/);
   }
 });
+
+test("ovoji: pri skupini delov ostanejo vidni samo člani", { skip }, () => {
+  const g = new THREE.Group();
+  const kocka = (v, x) => { const m = new THREE.Mesh(new THREE.BoxGeometry(v, v, v), new THREE.MeshBasicMaterial()); m.position.set(x, 0, 0); g.add(m); return m; };
+  const a = del("a", kocka(0.2, -0.5)), b = del("b", kocka(0.2, 0.5)), stena = del("stena", kocka(1, 0.5)), zila = del("zila", kocka(0.05, 2));
+  g.updateMatrixWorld(true);
+  const skupina = { id: "skupina-x", skupinaDelov: true, meshes: [...a.meshes, ...b.meshes], clani: [a, b] };
+  assert.deepEqual(skrijeId([a, b, stena, zila], skupina, g), ["stena", "zila"]);
+});
