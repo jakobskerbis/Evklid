@@ -13,7 +13,8 @@ export const imaVodeno = (key) => Object.hasOwn(KORAKI, key);
 const besedilo = (el) => (el?.textContent || "").replace(/\s+/g, " ").trim();
 const nizko = (s) => String(s || "").toLocaleLowerCase("sl");
 
-// Kontekst za `done(c)` v lab-vodeno-koraki.js: nastavitve, meritve, dnevnik od začetka vodenja, odgovorjeni sklepi.
+// Kontekst za `done(c)` v lab-vodeno-koraki.js in vodeno/*.js: nastavitve, meritve, dnevnik od začetka vodenja,
+// odgovorjeni sklepi, napovedi.
 export function kontekst(root, dnevnik) {
   const st = stanjePoskusa(root, { parametri: 60, odcitki: 0, vrstice: 500 });
   const par = new Map();
@@ -25,6 +26,7 @@ export function kontekst(root, dnevnik) {
     num: (ime) => stevilo(par.get(nizko(ime))),
     bilo: (re, vrsta) => dnevnik.some((d) => re.test(d.t) && (!vrsta || d.k === vrsta)),
     vrstice,
+    dnevnik: dnevnik.map((d) => d.t), // vse vrstice dnevnika od začetka vodenja, najstarejša prva
     // Kateri od vzorcev se ujema z najnovejšo vrstico dnevnika, ki se ujema s katerim od njih (-1: noben).
     zadnji: (...res) => {
       for (let k = dnevnik.length - 1; k >= 0; k--) {

@@ -17,7 +17,8 @@ import { LAB_INFO } from "../public/sim/katalog.js";
 import { migrateLab, labUporaba, mountLab, NACINI, DOGODKI } from "../server/laboratorij.js";
 
 test("every guided experiment is a real lab experiment with complete steps", async () => {
-  assert.deepEqual(Object.keys(KORAKI).sort(), ["lab-ohm", "lab-prosti-pad", "lab-titracija"]);
+  // Vsak vodeni poskus ima igro (spodaj IGRA ali test/vodeno/<ključ>.js), ki ga v brskalniku odigra do konca.
+  assert.deepEqual(Object.keys(KORAKI).sort(), Object.keys(IGRA).sort());
   for (const [key, def] of Object.entries(KORAKI)) {
     assert.ok(LAB_INFO[key] && ENGINES[key], `${key}: ni v katalogu laboratorija`);
     for (const f of ["naslov", "cilj", "konec"]) assert.ok(def[f]?.length > 20, `${key}: manjka ${f}`);
@@ -55,7 +56,7 @@ test("step checks: a done() reads only what the student did", () => {
     }
     return -1;
   };
-  const c = (o) => ({ par: () => "", num: () => NaN, bilo: () => false, zadnji: () => -1, vrstice: [], sklep: () => false, napoved: () => false, ...o });
+  const c = (o) => ({ par: () => "", num: () => NaN, bilo: () => false, zadnji: () => -1, dnevnik: [], vrstice: [], sklep: () => false, napoved: () => false, ...o });
   const tit = KORAKI["lab-titracija"].koraki;
   assert.equal(tit[0].done(c({ par: (n) => (n === "zaščitna očala" ? "ne" : "") })), false);
   assert.equal(tit[0].done(c({ par: (n) => (n === "zaščitna očala" ? "da" : "") })), true);
@@ -65,6 +66,19 @@ test("step checks: a done() reads only what the student did", () => {
   assert.equal(tit[2].done(c({ zadnji: zadnji([POLN, SPRAL, POLN]) })), true);
   assert.equal(tit[3].done(c({ zadnji: zadnji([SPRAL, POLN, ZRAK]) })), true);
   assert.equal(tit[3].done(c({ zadnji: zadnji([SPRAL, ZRAK, POLN]) })), false, "zrak izpuščen pred polnjenjem");
+  // AUDIT-075: pipetiranje in indikator štejeta le pravilno izbiro (mokra pipeta, erlenmajerica z vzorcem, metiloranž ne).
+  const PIP = "S propipeto si v polnilno pipeto posrkal vzorec do oznake in ga izpustil v erlenmajerico: 25,00 mL. Vzorec: klorovodikova kislina HCl.";
+  const MOKRA = "Pipeta je bila še mokra od pomivanja z vodo: voda v njej je vzorec malo razredčila.";
+  const ERL = "Erlenmajerico si splaknil z vzorcem: kapljice vzorca, ki so ostale v njej, dodajo kislino.";
+  assert.equal(tit[4].done(c({ dnevnik: [PIP] })), true);
+  assert.equal(tit[4].done(c({ dnevnik: [MOKRA, PIP] })), false, "mokra pipeta");
+  assert.equal(tit[4].done(c({ dnevnik: [ERL, PIP] })), false, "erlenmajerica, splaknjena z vzorcem");
+  assert.equal(tit[4].done(c({ dnevnik: [MOKRA, PIP, "Nadel si …", PIP] })), true, "drugo pipetiranje pravilno");
+  assert.equal(tit[4].done(c({ dnevnik: [PIP.replace("klorovodikova kislina HCl", "ocetna kislina CH₃COOH")] })), false, "napačen vzorec");
+  const IND = (x) => `V erlenmajerico si dodal 2 kapljici indikatorja: ${x} (prehod …).`;
+  assert.equal(tit[5].done(c({ zadnji: zadnji([PIP, IND("fenolftalein")]) })), true);
+  assert.equal(tit[5].done(c({ zadnji: zadnji([PIP, IND("metiloranž")]) })), false, "metiloranž");
+  assert.equal(tit[5].done(c({ zadnji: zadnji([IND("fenolftalein"), PIP]) })), false, "indikator pred novim vzorcem");
   const ohm = KORAKI["lab-ohm"].koraki;
   const vr = (U, I, p = "100 Ω") => ({ porabnik: p, "U [V]": U, "I [mA]": I, "U/I [Ω]": "100" });
   const pet = ["2,0", "4,0", "6,0", "8,0", "10,0"].map((U) => vr(U, String(stevilo(U) * 10)));
@@ -303,34 +317,43 @@ const IGRA = {
     await sklep(1);
   },
 };
+// Faza 2: igra vsakega poskusa v svoji datoteki (export default async () => { … }), da jih lahko piše več avtorjev hkrati.
+const IGRE_DIR = new URL("./vodeno/", import.meta.url);
+for (const f of fs.existsSync(IGRE_DIR) ? fs.readdirSync(IGRE_DIR).filter((x) => x.endsWith(".js")).sort() : [])
+  IGRA[path.basename(f, ".js")] = (await import(new URL(f, IGRE_DIR))).default;
+// VODENO_SAMO=lab-hooke,lab-lom: odigra le te (med pisanjem korakov).
+const SAMO = (process.env.VODENO_SAMO || "").split(",").filter(Boolean);
 
-test("guided experiments play through to the end in a real browser", { timeout: 300000 }, async (t) => {
+test("guided experiments play through to the end in a real browser", { timeout: 900000 }, async (t) => {
   if (!browser) return t.skip("Playwright/Chromium ni nameščen");
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}`;
   t.after(() => server.close());
   // Zmanjšano gibanje: pipetiranje v titraciji je takojšnje (sicer 3 s, med katerimi pipa birete ne teče).
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce", locale: "sl-SI" });
   const page = await ctx.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(`${base}/t-vod.html`);
   await page.waitForFunction(() => window.ready);
   for (const [key, play] of Object.entries(IGRA)) {
-    await page.evaluate((k) => mount(k), key);
-    const s0 = await page.evaluate(() => stanje());
-    const n = KORAKI[key].koraki.length;
-    assert.equal(s0.korak, 0, `${key}: začne pri prvem koraku`);
-    assert.equal(s0.oznaka.startsWith(`Korak 1 od ${n}`), true, `${key}: ${s0.oznaka}`);
-    assert.equal(s0.prvi, "lab-vod-wrap", `${key}: kartica je na vrhu kontrol`);
-    if (KORAKI[key].koraki[0].poudari) assert.ok(s0.cilji >= 1, `${key}: prvi korak obkroži kontrolo`);
-    await page.evaluate(`(${play.toString()})()`);
-    await page.waitForTimeout(900);
-    const s = await page.evaluate(() => stanje());
-    assert.equal(s.korak, n, `${key}: obstal pri koraku ${s.korak + 1} »${s.naslov}«`);
-    assert.equal(s.konec, 1, `${key}: konec javljen enkrat`);
-    assert.match(s.oznaka, /opravljeno/);
-    assert.equal(s.cilji, 0);
+    if (SAMO.length && !SAMO.includes(key)) continue;
+    await t.test(key, async () => {
+      await page.evaluate((k) => mount(k), key);
+      const s0 = await page.evaluate(() => stanje());
+      const n = KORAKI[key].koraki.length;
+      assert.equal(s0.korak, 0, `${key}: začne pri prvem koraku`);
+      assert.equal(s0.oznaka.startsWith(`Korak 1 od ${n}`), true, `${key}: ${s0.oznaka}`);
+      assert.equal(s0.prvi, "lab-vod-wrap", `${key}: kartica je na vrhu kontrol`);
+      if (KORAKI[key].koraki[0].poudari) assert.ok(s0.cilji >= 1, `${key}: prvi korak obkroži kontrolo`);
+      await page.evaluate(`(${play.toString()})()`);
+      await page.waitForTimeout(900);
+      const s = await page.evaluate(() => stanje());
+      assert.equal(s.korak, n, `${key}: obstal pri koraku ${s.korak + 1} »${s.naslov}«`);
+      assert.equal(s.konec, 1, `${key}: konec javljen enkrat`);
+      assert.match(s.oznaka, /opravljeno/);
+      assert.equal(s.cilji, 0);
+    });
   }
   assert.deepEqual(errors, []);
 });
@@ -340,7 +363,7 @@ test("Prosto hides the card; Ponastavi starts the guide again; phone: no sideway
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}`;
   t.after(() => server.close());
-  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1, locale: "sl-SI" });
   const page = await ctx.newPage();
   await page.goto(`${base}/t-vod.html`);
   await page.waitForFunction(() => window.ready);
