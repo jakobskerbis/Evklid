@@ -30,9 +30,13 @@ export function Web3D({ hash = "" }: { hash?: string }) {
   const [failed, setFailed] = useState<LoadError | null>(null);
   const [attempt, setAttempt] = useState(0);
   // Sistem je ugasnil proces strani (iOS: premalo pomnilnika, aplikacija dolgo v ozadju): stran naložimo znova; ob
-  // tretjem padcu (do ročnega »Poskusi znova«) pokažemo napako, sicer bi se nalagala v nedogled.
+  // tretjem zaporednem padcu pokažemo napako, sicer bi se nalagala v nedogled. Števec se ponastavi, ko je stran po
+  // uspešnem nalaganju živela vsaj minuto (padec čez dolgo ni več »zaporeden«) ali ob ročnem »Poskusi znova«.
   const crashes = useRef(0);
+  const loadedAt = useRef(0);
   const reloadAfterCrash = () => {
+    if (loadedAt.current && Date.now() - loadedAt.current > 60_000) crashes.current = 0;
+    loadedAt.current = 0;
     crashes.current += 1;
     if (crashes.current > 2) setFailed({ kind: "memory", code: "" });
     else setAttempt((a) => a + 1);
@@ -85,6 +89,7 @@ export function Web3D({ hash = "" }: { hash?: string }) {
         applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"} ${CHANNEL}`}
         onError={(ev: { nativeEvent: { code?: number; description?: string } }) => setFailed(loadErrorOf(ev.nativeEvent.code, ev.nativeEvent.description))}
         onHttpError={(ev: { nativeEvent: { statusCode: number } }) => ev.nativeEvent.statusCode >= 500 && setFailed({ kind: "other", code: `HTTP ${ev.nativeEvent.statusCode}` })}
+        onLoad={() => (loadedAt.current = Date.now())}
         onContentProcessDidTerminate={reloadAfterCrash}
         onRenderProcessGone={reloadAfterCrash}
         onShouldStartLoadWithRequest={(req: { url: string }) => {

@@ -2,6 +2,7 @@
 // povezavo«, tudi star Safari (SyntaxError), premalo pomnilnika na iPadu in napaka v naši kodi, zato učenec ni vedel,
 // kaj storiti. Brez three.js (preizkus v Node: test/3d-napake.test.js).
 import { kakovostNaprave } from "./modeli.js";
+import { jsonAliNic, zavrzi } from "../odgovor.js";
 
 // Sporočila brskalnikov, ko modul ali datoteka ne pride čez omrežje (Chrome, Safari, Firefox).
 const OMREZJE = /failed to fetch|load failed|networkerror|network error|importing a module script failed|error loading dynamically imported module|failed to fetch dynamically imported module|network connection was lost|internet connection appears to be offline|err_internet_disconnected/i;
@@ -11,6 +12,11 @@ const UVOZ = /importing a module script failed|dynamically imported module|modul
 // zato ga moramo ločiti od starega brskalnika.
 const NESKLADJE = /does not provide an export named|importing binding name|binding name .* (is )?not found|ambiguous indirect export|no such export|doesn't provide an export/i;
 const POMNILNIK = /out of memory|memory|allocation|allocate|context lost|context_lost|contextlost/i;
+// RangeError pomeni pomnilnik samo s takim sporočilom (»Array buffer allocation failed«); prirezan GLB (»Offset is outside
+// the bounds of the DataView«) ni pomanjkanje pomnilnika.
+const RANGE_POMNILNIK = /memory|allocation|buffer/i;
+// SyntaxError, ki ni star brskalnik: HTML namesto JSON (prestrezna stran omrežja, posrednik), neveljaven izbirnik (DOMException).
+const NI_BRSKALNIK = /JSON|Unrecognized token|token '<'|token <|selector/i;
 
 const statusNapake = (err) => {
   const s = err?.status ?? err?.response?.status ?? err?.statusCode;
@@ -26,31 +32,35 @@ export function tehnicno(err) {
   if (err.koda === "brskalnik" && err.cause) return tehnicno(err.cause); // preveriPodporo: pravi vzrok brskalnika
   const ime = String(err?.name || (typeof err === "string" ? "Error" : typeof err)).slice(0, 40);
   let s = String(err?.message ?? (typeof err === "string" ? err : "")).split("\n")[0].trim();
-  s = s.replace(/\b(?:https?|blob|file):\/\/[^\s"'<>)]+/gi, (u) => {
+  s = s.replace(/[^\s"'<>@]+@[^\s"'<>@]+\.[a-z]{2,}/gi, "[e-pošta]");
+  // Naslov do presledka ali narekovaja (tudi z oklepaji v poti ali poizvedbi): ostane samo pot.
+  s = s.replace(/\b(?:https?|blob|file):\/\/[^\s"'<>]+/gi, (u) => {
     try {
       return new URL(u).pathname;
     } catch {
       return "[naslov]";
     }
   });
-  s = s.replace(/[?#][^\s"'<>)]*/g, (q) => (/[=&]/.test(q) ? "" : q)); // poizvedba brez izvora (…/a.js?t=x)
+  s = s.replace(/\?[^\s"'<>]*[=&][^\s"'<>]*/g, ""); // poizvedba brez izvora (…/a.js?t=x&y=1)
   s = s.replace(/[A-Za-z0-9_-]{32,}/g, "…");
   const v = s ? `${ime}: ${s}` : ime;
   return v.length > 120 ? `${v.slice(0, 119)}…` : v;
 }
 
 // Vrsta napake in ključ besedila: { vrsta, key, detail, modul }. detail: HTTP status ali ime napake. modul: napaka uvoza
-// modula, zato »Poskusi znova« osveži stran mimo starih kopij service workerja (osveziMimoStarih).
+// modula, zato »Poskusi znova« osveži stran mimo starih kopij service workerja (osveziMimoStarih). Napaka s
+// `povezava: true` (npr. naloziModel brez povezave) je napaka povezave.
 export function napakaBesedilo(err, { naVoljo = typeof navigator !== "undefined" ? navigator.onLine !== false : true } = {}) {
   if (err?.koda === "webgl") return { vrsta: "webgl", key: "a3.noWebgl", detail: null, modul: false };
   if (err?.koda === "brskalnik") return { vrsta: "brskalnik", key: "a3.oldBrowser", detail: null, modul: false };
   if (err?.koda === "pomnilnik") return { vrsta: "pomnilnik", key: "a3.lowMemory", detail: null, modul: false };
   const ime = String(err?.name || "");
   const sporocilo = String(err?.message ?? err ?? "");
-  if (!naVoljo) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
+  if (!naVoljo || err?.povezava === true) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
   if (NESKLADJE.test(sporocilo)) return { vrsta: "posodobitev", key: "a3.updated", detail: null, modul: true };
-  if (ime === "SyntaxError") return { vrsta: "brskalnik", key: "a3.oldBrowser", detail: null, modul: false };
-  if (ime === "RangeError" || POMNILNIK.test(sporocilo)) return { vrsta: "pomnilnik", key: "a3.lowMemory", detail: null, modul: false };
+  if (ime === "SyntaxError" && /JSON|Unrecognized token|token '<'|token </i.test(sporocilo)) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
+  if (ime === "SyntaxError" && !NI_BRSKALNIK.test(sporocilo)) return { vrsta: "brskalnik", key: "a3.oldBrowser", detail: null, modul: false };
+  if ((ime === "RangeError" && RANGE_POMNILNIK.test(sporocilo)) || POMNILNIK.test(sporocilo)) return { vrsta: "pomnilnik", key: "a3.lowMemory", detail: null, modul: false };
   const status = statusNapake(err);
   if (status >= 400) return { vrsta: "povezava", key: "a3.loadError", detail: `HTTP ${status}`, modul: false };
   if (OMREZJE.test(sporocilo)) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: UVOZ.test(sporocilo) };
@@ -62,7 +72,7 @@ export function napakaBesedilo(err, { naVoljo = typeof navigator !== "undefined"
 export async function osveziMimoStarih({ okno = typeof window !== "undefined" ? window : null } = {}) {
   try {
     const sw = okno?.navigator?.serviceWorker?.controller;
-    const stanje = sw ? await fetch("/healthz/stanje", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)) : null;
+    const stanje = sw ? await fetch("/healthz/stanje", { cache: "no-store" }).then((r) => jsonAliNic(r)) : null;
     if (sw && stanje?.datoteke) {
       const ch = new MessageChannel();
       let rok;
@@ -81,15 +91,35 @@ export async function osveziMimoStarih({ okno = typeof window !== "undefined" ? 
 // Pred three.js (stran.js, sim.js): ali brskalnik prebere statični blok razreda (podpora.js). Star Safari uvoza z
 // neznano sintakso ne loči od napake povezave (»Importing a module script failed«), zato preverimo, ali se datoteka
 // prenese: če se, je kriv brskalnik ({ koda: "brskalnik" } → a3.oldBrowser), sicer ostane napaka povezave.
-export async function razlogPodpore(err, prenese = () => fetch(new URL("./podpora.js", import.meta.url), { cache: "no-store" }).then((r) => r.ok, () => false)) {
+const prenesePodporo = () =>
+  fetch(new URL("./podpora.js", import.meta.url), { cache: "no-store" }).then(
+    (r) => (zavrzi(r), r.ok), // samo status; telo zavržemo (public/odgovor.js)
+    () => false,
+  );
+export async function razlogPodpore(err, prenese = prenesePodporo) {
   if (err?.name === "SyntaxError" || (await prenese())) return Object.assign(new Error("Brskalnik ne prebere statičnega bloka razreda", { cause: err }), { koda: "brskalnik" });
   return err;
 }
+// Pred odločitvijo »prestar brskalnik« uvoz enkrat ponovimo (kratek izpad povezave na sodobnem brskalniku); drugi poskus
+// ima drug naslov, ker si brskalnik spodleteli uvoz lahko zapomni. SyntaxError je dokončen (brskalnik datoteko je prebral).
+export async function preveriPodporoZ({ uvozi = (n) => (n ? import("./podpora.js?znova=1") : import("./podpora.js")), prenese, cakaj = 400 } = {}) {
+  try {
+    return await uvozi(0);
+  } catch (err) {
+    if (err?.name !== "SyntaxError") {
+      await new Promise((r) => setTimeout(r, cakaj));
+      try {
+        return await uvozi(1);
+      } catch {}
+    }
+    throw await razlogPodpore(err, prenese);
+  }
+}
 let podpora = null;
 export function preveriPodporo() {
-  podpora ||= import("./podpora.js").catch(async (err) => {
+  podpora ||= preveriPodporoZ().catch((err) => {
     podpora = null; // ob napaki povezave naslednji poskus znova
-    throw await razlogPodpore(err);
+    throw err;
   });
   return podpora;
 }
