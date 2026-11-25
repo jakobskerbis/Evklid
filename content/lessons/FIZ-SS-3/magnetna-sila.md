@@ -239,6 +239,18 @@ neodvisen od hitrosti. Hitrejši delec opiše večji krog v enakem času. To izk
 + $9{,}6\cdot10^{-14}\,\mathrm{N}$
 > $F = e v B = 1{,}6\cdot10^{-19} \cdot 3\cdot10^6 \cdot 0{,}2\,\mathrm{N} = 9{,}6\cdot10^{-14}\,\mathrm{N}$.
 
+? Proton ($m = 1{,}67\cdot10^{-27}\,\mathrm{kg}$, $e = 1{,}6\cdot10^{-19}\,\mathrm{A\,s}$) prileti s hitrostjo $3{,}0\cdot10^6\,\mathrm{m/s}$ pravokotno v magnetno polje z gostoto $0{,}50\,\mathrm{T}$. Kolikšen je polmer njegovega kroga? Rezultat vpiši v centimetrih na desetinko.
+= 6,3 cm | 0,1
+~ 0,063 | To je polmer v metrih. Pretvori ga v centimetre.
+~ 16,0 | Ulomek si obrnil: $r = \dfrac{m v}{e B}$.
+> $r = \dfrac{m v}{e B} = \dfrac{1{,}67\cdot10^{-27}\,\mathrm{kg} \cdot 3{,}0\cdot10^6\,\mathrm{m/s}}{1{,}6\cdot10^{-19}\,\mathrm{A\,s} \cdot 0{,}50\,\mathrm{T}} \approx 0{,}063\,\mathrm{m} = 6{,}3\,\mathrm{cm}$.
+
+? Vodoravna žica z dolžino $20\,\mathrm{cm}$ in maso $6{,}0\,\mathrm{g}$ je v vodoravnem magnetnem polju $0{,}15\,\mathrm{T}$, pravokotnem na žico. Kolikšen tok mora teči po žici, da magnetna sila ravno uravnoteži njeno težo? Vzemi $g = 9{,}81\,\mathrm{m/s^2}$.
+= 1,96 A | 0,02
+~ 1962 | Maso moraš vstaviti v kilogramih: $6{,}0\,\mathrm{g} = 0{,}0060\,\mathrm{kg}$.
+~ 0,0196 | Dolžino moraš vstaviti v metrih: $20\,\mathrm{cm} = 0{,}20\,\mathrm{m}$.
+> Ravnovesje: $I l B = m g$, torej $I = \dfrac{m g}{l B} = \dfrac{0{,}0060\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2}}{0{,}20\,\mathrm{m} \cdot 0{,}15\,\mathrm{T}} \approx 1{,}96\,\mathrm{A}$.
+
 :::simboli
 F | magnetna sila | F = I\, l\, B\, \sin\alpha | N | na naboj F = e v B sin α
 I | električni tok | | A

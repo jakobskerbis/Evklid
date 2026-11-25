@@ -242,6 +242,18 @@ Sevanje te analogije nima: njegov tok ni sorazmeren z razliko temperatur, ampak 
 + Zavije ga v svetlečo reševalno folijo in ga položi v prostor s toplimi stenami.
 > Folija odbije sevanje kože nazaj k telesu, tople stene (višja $T_o$) pa zmanjšajo razliko $T^4 - T_o^4$.
 
+? Okenska šipa ima ploščino $1{,}2\,\mathrm{m^2}$ in debelino $4\,\mathrm{mm}$, steklo ima $\lambda = 0{,}8\,\mathrm{W/(m\,K)}$. Notranja površina šipe ima $15\,^\circ\mathrm{C}$, zunanja $5\,^\circ\mathrm{C}$. Kolikšen toplotni tok teče skozi šipo?
+= 2400 W | 10
+~ 2,4 | Debelino moraš pretvoriti v metre: $4\,\mathrm{mm} = 0{,}004\,\mathrm{m}$.
+~ 9,6 | Pozabil si deliti z debelino: $P = \dfrac{\lambda S \Delta T}{d}$.
+> $P = \dfrac{\lambda S \Delta T}{d} = \dfrac{0{,}8\,\mathrm{W/(m\,K)} \cdot 1{,}2\,\mathrm{m^2} \cdot 10\,\mathrm{K}}{0{,}004\,\mathrm{m}} = 2400\,\mathrm{W}$. Tanka plast stekla slabo izolira, zato imajo okna dvojne šipe z zrakom vmes.
+
+? Kovinska ploščica s površino $0{,}010\,\mathrm{m^2}$ ima temperaturo $227\,^\circ\mathrm{C}$ in seva kot črno telo. Kolikšen toplotni tok izseva? (Na desetinko vata.)
+= 35,4 W | 0,2
+~ 1,5 | Temperatura mora biti v kelvinih: $T = 227 + 273 = 500\,\mathrm{K}$.
+~ 3544 | Pozabil si pomnožiti s površino $S = 0{,}010\,\mathrm{m^2}$: to je gostota toka $j$ v $\mathrm{W/m^2}$.
+> $T = 500\,\mathrm{K}$, $P = \sigma S T^4 = 5{,}67 \cdot 10^{-8}\,\mathrm{W/(m^2\,K^4)} \cdot 0{,}010\,\mathrm{m^2} \cdot (500\,\mathrm{K})^4 \approx 35{,}4\,\mathrm{W}$.
+
 :::simboli
 P | toplotni tok | P = \frac{Q}{t} | W | pri sevanju $P = \sigma S T^4$
 Q | toplota | | J

@@ -240,6 +240,18 @@ Vidiš: ista leča da manjšo, enako, večjo ali navidezno sliko. Odloča samo, 
 + Pod ribo, ker je riba globlje, kot se zdi.
 > Svetloba od ribe se ob izhodu iz vode lomi od pravokotnice. Oko podaljša žarek naravnost nazaj in vidi ribo više, kot je, zato mora ribič meriti pod njeno sliko.
 
+? Žarek pade iz zraka na steklo ($n = 1{,}50$) pod vpadnim kotom $30^\circ$. Kolikšen je lomni kot? Rezultat vpiši v stopinjah na desetinko.
+= 19,5 ° | 0,1
+~ 20,0 | Lomni kot ni sorazmeren vpadnemu: z $n$ deliš sinus kota, ne kota.
+~ 48,6 | Količnika si zamenjal: pri prehodu v steklo se žarek lomi k pravokotnici, zato je $\beta < \alpha$.
+> $\sin\beta = \dfrac{n_1 \sin\alpha}{n_2} = \dfrac{1{,}00 \cdot 0{,}500}{1{,}50} = 0{,}333$, torej $\beta = 19{,}5^\circ$.
+
+? Diapozitiv z višino $4{,}0\,\mathrm{cm}$ je $10{,}2\,\mathrm{cm}$ pred lečo projektorja z goriščno razdaljo $10\,\mathrm{cm}$. Kako visoka je slika na platnu? Rezultat vpiši v centimetrih.
+= 200 cm | 2
+~ 510 | To je razdalja slike $b$. Višino slike dobiš iz povečave $\dfrac{S}{P} = \dfrac{b}{a}$.
+~ 0,08 | Povečavo si obrnil: $\dfrac{S}{P} = \dfrac{b}{a}$, ne $\dfrac{a}{b}$.
+> $\dfrac{1}{b} = \dfrac{1}{10\,\mathrm{cm}} - \dfrac{1}{10{,}2\,\mathrm{cm}}$, $b = 510\,\mathrm{cm}$. $S = P \dfrac{b}{a} = 4{,}0\,\mathrm{cm} \cdot \dfrac{510}{10{,}2} = 200\,\mathrm{cm}$. Predmet je malo dlje od $f$, zato je slika daleč in zelo povečana.
+
 :::simboli
 \alpha | vpadni kot | | ° | merjen od pravokotnice
 \alpha' | odbojni kot | \alpha' = \alpha | °

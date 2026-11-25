@@ -234,6 +234,18 @@ Koeficienta nista povsem stalna: z naraščanjem temperature se malo spreminjata
 + Pokrovček za kratek čas držiš pod toplo vodo.
 > Kovina ima večji $\alpha$ kot steklo. Pokrovček se segreje prvi in razširi bolj, njegova odprtina se poveča, zato se ohlapneje prilega grlu.
 
+? Jeklene tirnice ($\alpha = 12 \cdot 10^{-6}\,\mathrm{K^{-1}}$) so pri $0\,^\circ\mathrm{C}$ dolge $25\,\mathrm{m}$. Kolikšna mora biti reža med dvema tirnicama, da se pri $40\,^\circ\mathrm{C}$ ravno stakneta? Rezultat vpiši v milimetrih.
+= 12 mm | 0,1
+~ 0,012 | To je rezultat v metrih. Pretvori ga v milimetre: $1\,\mathrm{m} = 1000\,\mathrm{mm}$.
+~ 36 | Za dolžino velja linearni koeficient $\alpha$; $3\alpha$ je le za prostornino.
+> $\Delta L = \alpha L_0 \Delta T = 12 \cdot 10^{-6}\,\mathrm{K^{-1}} \cdot 25\,\mathrm{m} \cdot 40\,\mathrm{K} = 0{,}012\,\mathrm{m} = 12\,\mathrm{mm}$.
+
+? Rezervoar avtomobila do vrha napolnimo s $50\,\mathrm{L}$ bencina s temperaturo $10\,^\circ\mathrm{C}$ ($\beta = 1{,}0 \cdot 10^{-3}\,\mathrm{K^{-1}}$). Za koliko litrov se poveča prostornina bencina, ko se segreje na $30\,^\circ\mathrm{C}$? Raztezanje rezervoarja zanemari.
+= 1,0 L | 0,01
+~ 3,0 | Kapljevine imajo samo prostorninski koeficient $\beta$, zato ga ne množiš s $3$.
+~ 1,5 | $\Delta T$ je razlika temperatur, $30 - 10 = 20\,\mathrm{K}$, ne končna temperatura.
+> $\Delta V = \beta V_0 \Delta T = 1{,}0 \cdot 10^{-3}\,\mathrm{K^{-1}} \cdot 50\,\mathrm{L} \cdot 20\,\mathrm{K} = 1{,}0\,\mathrm{L}$. Ta liter bi iztekel iz polnega rezervoarja.
+
 :::simboli
 \Delta L | podaljšek | \Delta L = \alpha L_0 \Delta T | m
 \alpha | linearni razteznostni koeficient | \alpha = \frac{\Delta L}{L_0 \Delta T} | K^{-1} | za trdnine reda $10^{-5}\,\mathrm{K^{-1}}$

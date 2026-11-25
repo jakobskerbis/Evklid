@@ -245,6 +245,18 @@ V drugem intervalu je polje največje, napetosti pa ni. Tudi tu šteje le spreme
 + $6\,\mathrm{V}$
 > $U_2 = 230\,\mathrm{V} \cdot \dfrac{60}{2300} = 6\,\mathrm{V}$.
 
+? Kvadratna zanka s stranico $10\,\mathrm{cm}$ leži pravokotno na magnetno polje $0{,}50\,\mathrm{T}$. Polje v $0{,}020\,\mathrm{s}$ enakomerno pade na nič. Kolikšna napetost se inducira v zanki?
+= 0,25 V | 0,005
+~ 2,5 | Ploščina kvadrata je stranica na kvadrat: $S = (0{,}10\,\mathrm{m})^2 = 0{,}010\,\mathrm{m^2}$.
+~ 2500 | Ploščino moraš vstaviti v $\mathrm{m^2}$: $100\,\mathrm{cm^2} = 0{,}010\,\mathrm{m^2}$.
+> $\Delta\Phi = S\,\Delta B = 0{,}010\,\mathrm{m^2} \cdot 0{,}50\,\mathrm{T} = 5{,}0\cdot10^{-3}\,\mathrm{V\,s}$, $U_i = \dfrac{\Delta\Phi}{\Delta t} = \dfrac{5{,}0\cdot10^{-3}\,\mathrm{V\,s}}{0{,}020\,\mathrm{s}} = 0{,}25\,\mathrm{V}$.
+
+? Idealni transformator zniža omrežno napetost $230\,\mathrm{V}$ na $11{,}5\,\mathrm{V}$ za halogensko svetilko z močjo $46\,\mathrm{W}$. Kolikšen tok teče skozi primarno tuljavo?
+= 0,20 A | 0,005
+~ 4 | To je tok v sekundarni tuljavi, $\dfrac{46\,\mathrm{W}}{11{,}5\,\mathrm{V}}$. Primarna stran ima višjo napetost in zato manjši tok.
+~ 80 | Pri znižanju napetosti se tok na sekundarni strani poveča, na primarni pa je manjši: $I_1 = \dfrac{P}{U_1}$.
+> Idealni transformator ne izgublja moči: $U_1 I_1 = P$, torej $I_1 = \dfrac{46\,\mathrm{W}}{230\,\mathrm{V}} = 0{,}20\,\mathrm{A}$.
+
 :::simboli
 \Phi | magnetni pretok | \Phi = B S | V\,s | enota weber, Wb
 B | gostota magnetnega polja | | T

@@ -250,6 +250,18 @@ Za tuljavo postopek ponovi v treh korakih:
 + $5{,}0\,\mathrm{mT}$
 > $B = \dfrac{4\pi\cdot10^{-7} \cdot 500 \cdot 2}{0{,}25}\,\mathrm{T} \approx 5{,}0\cdot10^{-3}\,\mathrm{T} = 5{,}0\,\mathrm{mT}$.
 
+? Kolikšen tok teče po ravni žici, če je $2{,}0\,\mathrm{cm}$ od nje gostota magnetnega polja $100\,\mu\mathrm{T}$?
+= 10 A | 0,1
+~ 1000 | Razdaljo moraš vstaviti v metrih: $2{,}0\,\mathrm{cm} = 0{,}020\,\mathrm{m}$.
+~ 1,6 | Pozabil si na $2\pi$: $I = \dfrac{2\pi r B}{\mu_0}$.
+> $I = \dfrac{2\pi r B}{\mu_0} = \dfrac{2\pi \cdot 0{,}020\,\mathrm{m} \cdot 1{,}0\cdot10^{-4}\,\mathrm{T}}{4\pi\cdot10^{-7}\,\mathrm{V\,s/(A\,m)}} = 10\,\mathrm{A}$.
+
+? Tuljava ima $1000$ ovojev in je dolga $31{,}4\,\mathrm{cm}$. Kolikšen tok mora teči skoznjo, da je v njej gostota polja $8{,}0\,\mathrm{mT}$?
+= 2,0 A | 0,02
+~ 200 | Dolžino tuljave moraš vstaviti v metrih: $31{,}4\,\mathrm{cm} = 0{,}314\,\mathrm{m}$.
+~ 2000 | Gostoto polja moraš vstaviti v teslah: $8{,}0\,\mathrm{mT} = 8{,}0\cdot10^{-3}\,\mathrm{T}$.
+> $I = \dfrac{B l}{\mu_0 N} = \dfrac{8{,}0\cdot10^{-3}\,\mathrm{T} \cdot 0{,}314\,\mathrm{m}}{4\pi\cdot10^{-7}\,\mathrm{V\,s/(A\,m)} \cdot 1000} \approx 2{,}0\,\mathrm{A}$.
+
 :::simboli
 B | gostota magnetnega polja | B = \dfrac{\mu_0\, I}{2\pi\, r} | T | v tuljavi B = μ₀ N I / l
 \mu_0 | indukcijska konstanta | | V\,s/(A\,m) | 4π · 10⁻⁷ V s/(A m)

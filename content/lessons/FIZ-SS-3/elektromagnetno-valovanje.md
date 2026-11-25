@@ -238,6 +238,18 @@ Elektromagnetno valovanje te obkroža ves dan, le z različnimi valovnimi dolži
 ~ Hitrosti si zamenjal. Svetloba prepotuje kilometer v milijoninkah sekunde.
 > Svetloba: $t = \dfrac{1000\,\mathrm{m}}{3{,}00\cdot10^{8}\,\mathrm{m/s}} \approx 3{,}3\cdot10^{-6}\,\mathrm{s}$. Zvok: $t = \dfrac{1000\,\mathrm{m}}{340\,\mathrm{m/s}} \approx 2{,}9\,\mathrm{s}$. Blisk vidimo praktično takoj.
 
+? Mikrovalovna pečica deluje s frekvenco $2{,}45\,\mathrm{GHz}$. Kolikšna je valovna dolžina mikrovalov? Rezultat vpiši v centimetrih na desetinko.
+= 12,2 cm | 0,1
+~ 0,122 | To je rezultat v metrih. Pretvori ga v centimetre.
+~ 8,17 | Formulo si obrnil: $\lambda = \dfrac{c}{\nu}$, ne $\dfrac{\nu}{c}$.
+> $\lambda = \dfrac{c}{\nu} = \dfrac{3{,}00\cdot10^{8}\,\mathrm{m/s}}{2{,}45\cdot10^{9}\,\mathrm{Hz}} = 0{,}122\,\mathrm{m} = 12{,}2\,\mathrm{cm}$.
+
+? Radar na letališču pošlje kratek sunek valovanja. Odboj od letala se vrne po $0{,}20\,\mathrm{ms}$. Kako daleč je letalo? Rezultat vpiši v kilometrih.
+= 30 km | 0,1
+~ 60 | To je pot tja in nazaj. Do letala je le polovica te poti.
+~ 30000 | To je razdalja v metrih. Pretvori jo v kilometre.
+> Valovanje prepotuje $c t = 3{,}00\cdot10^{8}\,\mathrm{m/s} \cdot 2{,}0\cdot10^{-4}\,\mathrm{s} = 6{,}0\cdot10^{4}\,\mathrm{m}$ tja in nazaj, zato je $d = \dfrac{c t}{2} = 3{,}0\cdot10^{4}\,\mathrm{m} = 30\,\mathrm{km}$.
+
 :::simboli
 c | hitrost svetlobe v vakuumu | c = \lambda \nu | m/s | $3{,}00\cdot10^{8}\,\mathrm{m/s}$ za vsa EM valovanja
 \lambda | valovna dolžina | \lambda = \frac{c}{\nu} | m | razdalja med sosednjima vrhovoma

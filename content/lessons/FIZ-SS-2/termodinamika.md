@@ -275,6 +275,18 @@ Analogija ima mejo: pri mlinu voda ostane voda, pri toplotnem stroju pa se del e
 ~ $25\,\%$ ni $25$ €; izkoristek je delež cene.
 > V delo gre $\eta \cdot 50$ € $= 0{,}25 \cdot 50$ € $= 12{,}50$ €, preostanek odide kot toplota.
 
+? Plin v valju se pri stalnem tlaku $1{,}0 \cdot 10^5\,\mathrm{Pa}$ razširi z $2{,}0\,\mathrm{L}$ na $5{,}0\,\mathrm{L}$ in pri tem prejme $800\,\mathrm{J}$ toplote. Kolikšna je sprememba njegove notranje energije?
+= 500 J | 1
+~ 1100 | Delo si prištel. Plin se razširi, zato je $A > 0$ in $\Delta W_n = Q - A$.
+~ 300 | To je delo plina $A = p\,\Delta V$, ne sprememba notranje energije.
+> $A = p\,\Delta V = 1{,}0 \cdot 10^5\,\mathrm{Pa} \cdot 3{,}0 \cdot 10^{-3}\,\mathrm{m^3} = 300\,\mathrm{J}$, $\Delta W_n = Q - A = 800\,\mathrm{J} - 300\,\mathrm{J} = 500\,\mathrm{J}$.
+
+? Parna turbina dela med temperaturama $527\,^\circ\mathrm{C}$ in $27\,^\circ\mathrm{C}$. Kolikšen je njen največji mogoči izkoristek v odstotkih?
+= 62,5 % | 0,2
+~ 94,9 | Temperature morajo biti v kelvinih: $T_1 = 800\,\mathrm{K}$, $T_2 = 300\,\mathrm{K}$.
+~ 37,5 | To je $\dfrac{T_2}{T_1}$, delež toplote, ki odide v hladnejše telo. Izkoristek je $1 - \dfrac{T_2}{T_1}$.
+> $\eta_{\max} = 1 - \dfrac{T_2}{T_1} = 1 - \dfrac{300\,\mathrm{K}}{800\,\mathrm{K}} = 0{,}625 = 62{,}5\,\%$. Prava turbina doseže manj.
+
 :::simboli
 \Delta W_n | sprememba notranje energije | \Delta W_n = Q - A | J | pozitivna, ko temperatura naraste
 W_n | notranja energija | | J
