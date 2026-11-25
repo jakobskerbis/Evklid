@@ -4545,6 +4545,7 @@ export default {
   "vr.vir.scan": "pri skeniranih nalogah",
   "vr.vir.lab": "v laboratoriju",
   "vr.vir.atlas": "v 3D atlasu",
+  "vr.vir.ustno": "pri ustnem spraševanju",
   "vr.vadi": "Vadi",
   "vr.lekcija": "Ponovi lekcijo",
   "vr.prazno": "Zdaj nimaš šibkih tem. Ko se pri kateri temi večkrat zmotiš, jo najdeš tukaj, skupaj z vajo zanjo.",

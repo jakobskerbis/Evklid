@@ -3,6 +3,7 @@
 // spraševanje šteje kot USTNO_QUESTIONS vprašanj na dan (accounts: brezplačni paket 3 od 10). Ne gre v lige, učitelj
 // ga ne vidi; prepis se hrani kot pogovor (šifrirano, kot drugi pogovori). Ugovor »Ne strinjam se« gre v prijave napak.
 import { AI_JSON } from "./ai-oznaka.js";
+import { recordUstno } from "./weaknesses.js";
 import { getTopic, pathKeyFor } from "./curriculum.js";
 import { loadLesson } from "./textbook.js";
 import { hasGenerator } from "./practice/index.js";
@@ -441,6 +442,9 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     if (!row.koncano_at) {
       db.prepare("UPDATE ustno_seje SET koncano_at = datetime('now'), stanje = ? WHERE id = ?").run(sealJson(st), row.id);
       addMsg(row.conversation_id, "assistant", `Dobro si znal ${dobro} od ${qs.length} vprašanj.`);
+      // Šibke točke (P1-4): samo vprašanja, ki jih je ocenilo spraševanje, ne samoocena in ne »Ne vem« ali »Preskoči«
+      // (oboje pošlje preskoci in se ne loči). Ugovor po koncu šibkih točk ne spremeni več.
+      recordUstno(db, s.id, row.id, per.filter((x) => x.r && !st.odgovori[x.i].samoocena && !st.odgovori[x.i].preskoceno).map((x) => ({ topicId: x.q.topicId, ok: x.r.dobro })));
     }
     res.json({
       dobro,
