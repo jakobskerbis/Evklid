@@ -23,7 +23,8 @@ export const STATUSES = ["verified", "partial", "numeric", "unverified", "wrong"
  *             | "numeric" (iskanje na omejenem območju) | "unknown" (ni preverjena) | false (katera rešitev manjka)
  */
 export function statusOf({ holds = null, how = "numeric", complete = "unknown" } = {}) {
-  return vSkener(statusIzDokazov({ holds, how, complete }));
+  // Skener ne pozna Leana: »formal« šteje kot doslej (neznana vrednost = numerično), da je izid za vsak vhod enak.
+  return vSkener(statusIzDokazov({ holds, how: how === "exact" ? "exact" : "numeric", complete: complete === "formal" ? "numeric" : complete }));
 }
 
 // Ali rezultat sme biti prikazan kot odgovor (napačen in nepreverjen lastni rezultat gre k AI).

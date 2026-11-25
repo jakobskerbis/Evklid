@@ -9,7 +9,7 @@
 //   delno         Delno preverjeno      del trditve ali odgovora preverjen, del ne (npr. popolnost množice rešitev)
 //   v_teku        Preverjanje v teku    počasnejši motor (Lean) še dela; začasno
 //   napaka        Zaznana napaka        preverjanje je pokazalo, da trditev ne velja
-//   nepreverjeno  Nepreverjeno          noben motor trditve ne zna preveriti
+//   nepreverjeno  Nepreverjeno          noben motor trditve ne zna preveriti ali pa se motorja ne strinjata
 export const STATUSI = ["dokazano", "izracunano", "numericno", "delno", "v_teku", "napaka", "nepreverjeno"];
 
 // Moč dokaza statusov, ki jih lahko uredimo po gotovosti. »napaka« in »v_teku« nista na tej lestvici.
@@ -48,7 +48,7 @@ export function statusIzDokazov({ holds = null, how = "numeric", complete = "unk
  * Neznan status šteje kot »nepreverjeno«.
  */
 export function statusOdgovora(statusi = []) {
-  const s = [...statusi].map((x) => (jeStatus(x) ? x : "nepreverjeno"));
+  const s = (Array.isArray(statusi) ? statusi : []).map((x) => (jeStatus(x) ? x : "nepreverjeno"));
   if (s.includes("napaka")) return "napaka";
   if (s.includes("v_teku")) return "v_teku";
   if (!s.length || s.every((x) => x === "nepreverjeno")) return "nepreverjeno";

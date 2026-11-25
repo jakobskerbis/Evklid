@@ -5,7 +5,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { STATUSI, statusIzDokazov, statusOdgovora, jePotrjeno, vSkener, izSkenerja } from "../public/preverjanje/statusi.js";
-import { novaTrditev, napakeZapisa, statusTrditve, VRSTE } from "../public/preverjanje/trditev.js";
+import { novaTrditev, napakeZapisa, statusTrditve, izidTrditve, VRSTE } from "../public/preverjanje/trditev.js";
 import { statusOf, STATUSES } from "../public/scan/status.js";
 
 // Pravila skenerja, kot so bila pred PV-01 (public/scan/status.js na main ead79d5), prepisana dobesedno.
@@ -18,8 +18,8 @@ function staroSkener({ holds = null, how = "numeric", complete = "unknown" } = {
 }
 
 const HOLDS = [true, false, null, undefined, 0, "da"];
-const HOW = ["exact", "numeric", undefined, "sympy", ""];
-const COMPLETE = ["exact", "na", "numeric", "unknown", false, undefined, null, "x"];
+const HOW = ["exact", "numeric", "formal", undefined, "sympy", "", null];
+const COMPLETE = ["exact", "na", "numeric", "unknown", "formal", false, undefined, null, "x", 0];
 
 test("skener: za vsak vhod enak status kot pred PV-01", () => {
   let n = 0;
@@ -34,6 +34,7 @@ test("skener: za vsak vhod enak status kot pred PV-01", () => {
         n++;
       }
   assert.equal(statusOf(), "unverified");
+  assert.equal(statusOf({ holds: true, how: "formal", complete: "formal" }), "numeric"); // skener Leana ne pozna
   assert.equal(n, HOLDS.length * HOW.length * COMPLETE.length);
   assert.deepEqual(STATUSES, ["verified", "partial", "numeric", "unverified", "wrong"]);
 });
@@ -93,20 +94,49 @@ test("statusOdgovora: najšibkejši člen", () => {
 });
 
 test("statusTrditve: več dokazov za isto trditev", () => {
+  const izrek = { izrek: "Evklid.Primer.x", sha256: "ab" };
   const sympyDa = { motor: "sympy", holds: true, how: "exact", complete: "exact" };
   const leanDa = { motor: "lean", holds: true, how: "formal", complete: "formal" };
   const stevilaDa = { motor: "stevila", holds: true, how: "numeric", complete: "na" };
   const stevilaNe = { motor: "stevila", holds: false, how: "numeric", complete: "na" };
   const sympyNe = { motor: "sympy", holds: false, how: "exact", complete: "na" };
   assert.equal(statusTrditve([]), "nepreverjeno");
-  assert.equal(statusTrditve([stevilaDa, sympyDa]), "izracunano"); // najmočnejši dokaz
-  assert.equal(statusTrditve([sympyDa, leanDa]), "dokazano");
-  assert.equal(statusTrditve([leanDa, sympyNe]), "napaka"); // točen protiprimer vedno zmaga
-  assert.equal(statusTrditve([stevilaNe]), "napaka");
-  assert.equal(statusTrditve([stevilaNe, sympyDa]), "nepreverjeno"); // motorja se ne strinjata: ne potrdimo
-  assert.equal(statusTrditve([{ motor: "ai", holds: true, how: "exact", complete: "exact" }]), "nepreverjeno"); // AI ni dokaz
-  assert.equal(statusTrditve([{ motor: "ai", holds: false, how: "exact", complete: "na" }]), "nepreverjeno");
-  assert.equal(statusTrditve([null, undefined]), "nepreverjeno");
+  assert.equal(statusTrditve([stevilaDa, sympyDa], "racun"), "izracunano"); // najmočnejši dokaz
+  assert.equal(statusTrditve([sympyDa, leanDa], "racun", izrek), "dokazano");
+  assert.equal(statusTrditve([sympyDa, leanDa], "racun"), "izracunano"); // Lean brez imena izreka ne šteje
+  assert.equal(statusTrditve([sympyNe], "racun"), "napaka");
+  // SymPy »ne drži« je lahko iz naključnih točk: ob dokazu Lean motorja se ne strinjata
+  assert.equal(statusTrditve([leanDa, sympyNe], "racun", izrek), "nepreverjeno");
+  assert.equal(statusTrditve([{ motor: "lean", holds: false, how: "formal", complete: "na" }, sympyDa], "racun", izrek), "napaka");
+  assert.equal(statusTrditve([stevilaNe], "racun"), "napaka");
+  assert.equal(statusTrditve([stevilaNe, sympyDa], "racun"), "nepreverjeno"); // motorja se ne strinjata: ne potrdimo
+  // manjkajoča rešitev (številsko) ostane napaka, če točen motor popolnosti ni preveril
+  const manjka = { motor: "stevila", holds: true, how: "numeric", complete: false };
+  assert.equal(statusTrditve([manjka, { motor: "sympy", holds: true, how: "exact", complete: "unknown" }], "enacba"), "napaka");
+  assert.equal(statusTrditve([manjka, sympyDa], "enacba"), "nepreverjeno");
+  // »ne drži« ovrže samo »drži« močnejšega motorja, ne dokaz popolnosti
+  assert.equal(statusTrditve([{ motor: "stevila", holds: false, how: "numeric", complete: "exact" }, { motor: "sympy", holds: null, how: "exact", complete: "exact" }], "enacba"), "napaka");
+});
+
+test("statusTrditve: motor ne more navesti več, kot zmore", () => {
+  const izrek = { izrek: "Evklid.Primer.x" };
+  const formal = { holds: true, how: "formal", complete: "formal" };
+  assert.equal(statusTrditve([{ ...formal, motor: "ai" }], "racun", izrek), "nepreverjeno"); // mnenje AI ni dokaz
+  assert.equal(statusTrditve([{ ...formal, motor: "chatgpt" }], "racun", izrek), "nepreverjeno"); // neznan motor
+  assert.equal(statusTrditve([{ ...formal, motor: "AI" }], "racun", izrek), "nepreverjeno");
+  assert.equal(statusTrditve([formal], "racun", izrek), "nepreverjeno"); // brez motorja
+  assert.equal(statusTrditve([{ ...formal, motor: "__proto__" }], "racun", izrek), "nepreverjeno");
+  assert.equal(statusTrditve([{ ...formal, motor: "sympy" }], "racun", izrek), "izracunano"); // SymPy ni Lean
+  assert.equal(statusTrditve([{ ...formal, motor: "stevila" }], "racun", izrek), "numericno"); // števila niso dokaz
+  assert.equal(statusTrditve([{ motor: "ai", holds: false, how: "exact", complete: "na" }], "racun"), "nepreverjeno");
+  // pri enačbi popolnost ne more biti »na«: brez dokaza popolnosti je trditev le delno preverjena
+  assert.equal(statusTrditve([{ motor: "sympy", holds: true, how: "exact", complete: "na" }], "enacba"), "delno");
+  assert.equal(statusTrditve([{ motor: "sympy", holds: true, how: "exact", complete: "na" }], "identiteta"), "izracunano");
+  // slab vhod ne podre ničesar
+  for (const x of [null, undefined, {}, "dokazano", 5, [null, 1, "x"]]) assert.equal(statusTrditve(x), "nepreverjeno");
+  assert.equal(statusOdgovora(null), "nepreverjeno");
+  assert.equal(statusOdgovora("dokazano"), "nepreverjeno");
+  assert.equal(novaTrditev(null).izid, "nepreverjeno");
 });
 
 test("zapis trditve: polja in preverjanje oblike", () => {
@@ -127,6 +157,13 @@ test("zapis trditve: polja in preverjanje oblike", () => {
   assert.ok(napakeZapisa(novaTrditev({ id: "r1", besedilo: "7 · 8 = 56", vrsta: "racun" })).some((e) => e.startsWith("zapis")));
   assert.ok(napakeZapisa({ id: "", besedilo: "", vrsta: "x", dokazi: [{ motor: "?", holds: 1 }] }).length >= 4);
   assert.deepEqual(napakeZapisa(null), ["trditev ni predmet"]);
+  // izid, ki ga je vir nastavil sam, se mora ujemati z dokazi
+  assert.ok(napakeZapisa({ ...t, izid: "dokazano" }).some((e) => e.startsWith("izid dokazano")));
+  assert.equal(izidTrditve(t), "izracunano");
+  const slab = napakeZapisa({ ...t, dokazi: [{ motor: "ai", holds: true, how: "formal" }, { motor: "sympy", holds: true, how: "exact", complete: "na" }, { motor: "lean", holds: true, how: "formal", complete: "formal" }] });
+  assert.ok(slab.some((e) => e.includes("motor ai ne sme")));
+  assert.ok(slab.some((e) => e.includes("popolnost del trditve")));
+  assert.ok(slab.some((e) => e.includes("Lean brez imena izreka")));
   // vhodni predmet se ne spremeni (dokazi se kopirajo)
   const d = [{ motor: "sympy", holds: true, how: "exact", complete: "na" }];
   novaTrditev({ id: "x", besedilo: "1+1=2", zapis: "1+1 | 2", vrsta: "racun", dokazi: d }).dokazi[0].holds = false;
