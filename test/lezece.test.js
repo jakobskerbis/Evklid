@@ -84,6 +84,22 @@ test("obrat: klepet na dnu ostane na dnu (pokončno → ležeče → pokončno)"
   });
 });
 
+// Kratek pogovor gre pokončno cel na zaslon (brez drsenja), ležeče pa ne: odgovor je ostal skrit pod vrstico za pisanje.
+test("obrat: kratek pogovor, ki pokončno ne drsi, po obratu pokaže zadnje sporočilo", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, P);
+    await p.waitForTimeout(500);
+    const prej = await p.evaluate(() => { const m = document.querySelector("#messages"); return { st: m.scrollTop, dno: m.scrollHeight - m.clientHeight - m.scrollTop }; });
+    assert.ok(prej.st === 0 && prej.dno <= 1, `pokončno pogovor ne drsi (${JSON.stringify(prej)})`);
+    await obrni(p, L);
+    const vec = await p.evaluate(() => { const m = document.querySelector("#messages"); return m.scrollHeight - m.clientHeight; });
+    assert.ok(vec > 20, `ležeče pogovor drsi (${vec} px), sicer preizkus nič ne pove`);
+    assert.ok((await doDna(p)) <= 8, `po obratu na dnu (${await doDna(p)} px do dna)`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
 test("navigacija: kazalo učbenika ohrani položaj (drugi zavihek in nazaj, lekcija in nazaj)", opts, async () => {
   await withApp(async (base) => {
     const { ctx, p, errors } = await phone(base, P);

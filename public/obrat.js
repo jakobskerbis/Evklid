@@ -6,6 +6,8 @@
 // (app.js drži dno samo za nova sporočila v klepetu, textbook.js samo za lekcijo).
 const sledeni = new Map(); // drsni element → { dno, sidro, odmik }
 const NA_DNU = 8; // px: »na dnu« (app.js za nova sporočila uporablja 80 px, tu je strožje, da obrat ne premakne bralca)
+// Drsni deli z najnovejšim spodaj (klepet): ko gre vsebina cela na zaslon (ne drsi), so tudi »na dnu«.
+const DNO_NAJPREJ = "#messages";
 
 // Element na vrhu vidnega dela: med otroki prvi, ki sega pod zgornji rob; v visok vsebnik se spustimo.
 function sidroV(sc) {
@@ -30,8 +32,9 @@ function sidroV(sc) {
 
 function zapomni(sc) {
   if (!sc.isConnected || !sc.clientHeight) return sledeni.delete(sc);
-  const dno = sc.scrollHeight - sc.clientHeight - sc.scrollTop <= NA_DNU && sc.scrollTop > 0;
+  const dno = sc.scrollHeight - sc.clientHeight - sc.scrollTop <= NA_DNU && (sc.scrollTop > 0 || sc.matches(DNO_NAJPREJ));
   const sidro = dno || sc.scrollTop <= 0 ? null : sidroV(sc);
+  sledeni.delete(sc); // na konec: pri več kot 12 odpade najdlje nedrsani, ne prvi sledeni
   sledeni.set(sc, { dno, sidro, odmik: sidro ? sidro.getBoundingClientRect().top - sc.getBoundingClientRect().top : 0 });
   if (sledeni.size > 12) sledeni.delete(sledeni.keys().next().value); // samo nedavni drsni deli
 }
@@ -65,7 +68,12 @@ export function initObrat() {
     const obrat = innerWidth > innerHeight !== w > h || Math.abs(innerWidth - w) > 80;
     w = innerWidth;
     h = innerHeight;
-    if (!obrat || !sledeni.size) return;
+    if (!obrat) return;
+    // Kratek pogovor, ki pred obratom ni drsel (scrollTop 0, zato ni sprožil drsenja in ni sleden), je bil cel na
+    // zaslonu z zadnjim sporočilom vred: po obratu naj bo zadnje sporočilo spet vidno, ne skrito pod vrstico za pisanje.
+    for (const el of document.querySelectorAll(DNO_NAJPREJ))
+      if (!sledeni.has(el) && el.scrollTop <= 0 && el.querySelector(".msg")) sledeni.set(el, { dno: true, sidro: null, odmik: 0 });
+    if (!sledeni.size) return;
     // Drsenje, ki ga sproži sam obrat (brskalnik obreže scrollTop), ne prepiše zapomnjenega položaja.
     obracam = true;
     requestAnimationFrame(obnovi);
@@ -74,7 +82,7 @@ export function initObrat() {
     t = setTimeout(() => {
       obnovi();
       obracam = false;
-      for (const sc of sledeni.keys()) zapomni(sc);
+      for (const sc of [...sledeni.keys()]) zapomni(sc); // kopija: zapomni premakne vnos na konec
     }, 300);
   });
 }
