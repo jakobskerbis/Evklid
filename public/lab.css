@@ -57,7 +57,7 @@
 }
 
 /* Vodeni poskus (public/sim/lab-vodeno.js): izbira »Vodeno | Prosto« in kartica s trenutnim korakom na vrhu kontrol. */
-.lab-vod-wrap { display: grid; gap: 10px; margin: 0 0 12px; min-width: 0; grid-column: 1 / -1; column-span: all; }
+.lab-vod-wrap { position: relative; display: grid; gap: 10px; margin: 0 0 12px; min-width: 0; grid-column: 1 / -1; column-span: all; }
 .lab-vod-nacin { justify-self: start; }
 .lab-vod { border: 1px solid var(--accent); border-left-width: 4px; border-radius: 10px; padding: 10px 12px; background: var(--surface); min-width: 0; overflow-wrap: anywhere; }
 .lab-vod[hidden] { display: none; }
@@ -73,8 +73,8 @@
 .lab-vod-namig summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 40px; display: flex; align-items: center; }
 .lab-vod-kje { margin: 4px 0 2px; }
 .lab-vod-kje[hidden] { display: none; }
-/* Samo za bralnik zaslona (napoved novega koraka). */
-.lab-vod-glas { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Samo za bralnik zaslona (napoved novega koraka). Položen v .lab-vod-wrap: sicer bi se meril od cele strani in jo na telefonu podaljšal. */
+.lab-vod-glas { position: absolute; top: 0; inset-inline-start: 0; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* »Pokaži, kje« pri vprašanju »Sklep«: pod pripeto risbo, ne podnjo (--lab-pin-h, lab.js → pripni). */
 .demo.lab .lab-q { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
 /* Kontrola, ki jo trenutni korak zahteva. */
