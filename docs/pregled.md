@@ -48,6 +48,8 @@ feature in the running app (test mode, throwaway `EVKLID_DB`). Checklist: does e
 input do what it says; state refreshes after the action; back/close/Esc work; empty, error, offline
 and slow states; another profile's data never visible; invalid API input returns 4xx not 5xx; no
 regression in the flows next to it; a test exists for each server change.
+A change that shows a maths claim uses the shared statuses and claim record (`docs/preverjanje.md`) and
+never adds its own meaning of »verified« (j, 2026-11-25).
 
 **Pass 3 – look, phone, language and content (reviewer agent 2):** screenshots of every changed screen
 at 360×740 and 1280×800, light and dark, Slovenian plus one RTL language (Arabic); the reviewer looks
