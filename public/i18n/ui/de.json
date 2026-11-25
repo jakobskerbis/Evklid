@@ -4564,6 +4564,7 @@
   "meja.sub": "Mit einem Abo bekommst du:",
   "meja.price": "{price} pro Monat",
   "meja.more": "Mehr Fragen an den Tutor jeden Tag und jeden Monat",
+  "meja.moreN": "Bis zu {n} Fragen an den Tutor pro Tag statt {free}",
   "meja.deep": "Ausführlichere Erklärungen",
   "meja.lessons": "Interaktive Lektionsteile in allen Themen deiner Stufe",
   "meja.btnParent": "Link an ein Elternteil senden",
