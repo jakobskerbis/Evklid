@@ -426,21 +426,22 @@ T tkivo(vec2 p, float px) {
     if (c.x < 0.0) { t.dye.x = 0.95; t.snov = S_JEDRO; t.jedro = c.x; }
     return t;
   }
-  // stroma: goste vretenaste celice v vrtincih. Smer celic je stalna v vsakem snopu (~70 µm), sosednji snopi imajo
+  // stroma: goste vretenaste celice v vrtincih. Smer celic je stalna v vsakem snopu (~100 µm), sosednji snopi imajo
   // podobno smer (fbm v središču snopa), na meji se snopa stakneta kot v pravi stromi. Celice se računajo v sistemu
   // snopa (p − P.c), zato so toge: prej se je smer vrtela okoli izhodišča preparata in je pri |p| ~1000 µm celice pri
   // TEM raztegnila v proge (Jacobi ~4–7).
-  Vor P = vor(p, 70.0, vec2(1.0), 0.0, 0.9);
-  float kot = 6.28 * fbm(P.c / 220.0, 2);
-  Vor v = vor(p - P.c, 4.5, vec2(5.0, 1.0), kot, 0.9);
+  Vor P = vor(p, 100.0, vec2(1.0), 0.0, 0.9);
+  float kot = 6.28 * fbm(P.c / 300.0, 2);
+  Vor v = vor(p - P.c, 4.0, vec2(5.0, 1.0), kot, 0.9);
   v.c += P.c;
-  vec4 h = h42(v.id + 37.0 * P.id);
-  t.snov = S_CITO; t.tip = C_FIBROBLAST; t.meja = min(v.rob, P.rob); t.cc = v.c; t.jc = v.c; t.cid = v.id + 37.0 * P.id;
+  vec4 h = h42(v.id + 97.0 * P.id);
+  t.snov = S_CITO; t.tip = C_FIBROBLAST; t.meja = min(v.rob, P.rob); t.cc = v.c; t.jc = v.c; t.cid = v.id + 97.0 * P.id;
   t.dye = vec3(0.12, 0.35, 0.0);
   vec2 q = rot(kot) * (p - v.c);
-  float dj = sdKapsula(q, 3.0 + 1.5 * h.x, 1.2);
+  float dj = sdKapsula(q, 4.0 + 1.5 * h.x, 1.5);
   t.jedro = dj;
-  float jk = pokrij(dj, px) * step(h.y, 0.85);
+  // jedro le, če je sredina celice dovolj daleč od meje snopa (sicer bi ga meja odrezala v klin)
+  float jk = pokrij(dj, px) * step(h.y, 0.95) * step(2.0, P.rob - dot(v.c - p, P.nb));
   t.dye.x = mix(t.dye.x, 0.9 * kromatin(q, h.zw, px), jk);
   if (jk > 0.5) t.snov = S_JEDRO;
   return t;
