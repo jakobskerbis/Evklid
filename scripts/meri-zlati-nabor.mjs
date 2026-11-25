@@ -7,20 +7,20 @@
 //   preizkus3  – vsaka 5. od 150 nalog Preizkusa 3 (šifrirane, PREIZKUS3_KLJUC); uradnih rešitev v repozitoriju ni, zato
 //                ocenjevalec rešuje sam in vrstica nosi oznako »brez reference«; izid se šifrira, v dnevniku ni besedil
 // Vsak primer gre skozi PRAVO aplikacijo (server/app.js v istem procesu, začasna baza, nov učenec za vsak primer), z
-// vsemi varovali kot v produkciji. Nato ga slepo ocenita dva neodvisna ocenjevalca (MODEL_DEEP, Opus) z znano referenco;
+// vsemi varovali kot v produkciji. Nato ga slepo ocenita dva ločena klica ocenjevalca (MODEL_DEEP, Opus) z znano referenco;
 // ob razhajanju še tretji, odloči večina (scripts/zlati-nabor-ocena.mjs). Ocenjevalec ne ve, katera različica je
 // odgovorila. Referenca gre samo ocenjevalcu, inštruktorju nikoli.
 // Ne piše v pravo bazo in ne v docs/. Ustavi se, preden bi strošek (aplikacija + ocenjevalci) presegel --max-usd.
 //   node scripts/meri-zlati-nabor.mjs [--max-usd 2] [--skupine bio,kem] [--primeri id1,id2] [--del 1-3] [--hkrati 3]
 //                                     [--nacin think|chat] [--kandidat] [--suho] [--preizkus] [--p3-datoteka <pot>]
 //   --skupine   privzeto vse javne (bio, kem, predstave, astra, pedagogika, matura); preizkus3 samo izrecno
-//   --del 1-3   le vsak tretji primer (1., 4., 7. …), da gre cel nabor v več zagonov po 2 $; nato 2-3 in 3-3
+//   --del 1-4   le vsak četrti primer (1., 5., 9. …), da gre cel nabor v več zagonov po 2 $; nato 2-4, 3-4 in 4-4
 //   --kandidat  kandidat prompta (EVKLID_INSTRUKTOR_KANDIDAT=1), izid z »-kandidat« v imenu; primerjava pred/po:
 //               node scripts/zlati-nabor-ocena.mjs --primerjaj <prej.json> <potem.json>
 //   --suho      samo izbor in najslabši strošek, brez klica (0 $); --preizkus preizkusni odgovori brez ključa (0 $)
 //   --p3-datoteka  lokalno (ne v GitHub Actions) naloge Preizkusa 3 v čistem besedilu namesto šifrirane datoteke
 // Zagon: GitHub Actions > Meritev, skripta scripts/meri-zlati-nabor.mjs (docs/zlati-nabor.md). Izid:
-// data/meri-zlati-nabor*.json (artefakt »meritev«), tabela v povzetku zagona.
+// data/meri-zlati-nabor*.json (artefakt »meritev«), tabela na koncu dnevnika (in v povzetku zagona).
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -124,7 +124,10 @@ const { callMaxUsd } = await import("../server/meje-ai.js");
 const { normalizeSettings } = await import("../server/settings.js");
 const { lessonForQuestion, lessonNote } = await import("../server/lekcija-za-vprasanje.js");
 
-const OCENA_MAX_TOKENS = 1500;
+// Opus 5.5 razmišljanja ne dovoli izklopiti (server/claude.js quickParams): prostor za razmislek in JSON, napor »medium« kot
+// pri preverjanju kartic (server/verify.js).
+const OCENA_MAX_TOKENS = 6000;
+const OCENA_NAPOR = "medium";
 const { model, max_tokens } = modeParams(NACIN);
 const izhod = Math.max(max_tokens, MAX_TOKENS.think);
 const nastavitve = (p) => normalizeSettings(p.profil);
@@ -141,7 +144,7 @@ const poSkupini = Object.fromEntries(IZBRANE.map((s) => [s, primeri.filter((p) =
 const sporocil = primeri.reduce((a, p) => a + p.krogi.length, 0);
 console.log(`Različica: ${KANDIDAT ? "KANDIDAT" : "trenutni inštruktor"} (${path.basename(templatePath())}); izid ${OUT}`);
 console.log(`${primeri.length} primerov (${Object.entries(poSkupini).map(([s, n]) => `${s} ${n}`).join(", ")}), ${sporocil} sporočil; način ${NACIN} (${model}); ocenjevalci ${MODEL_DEEP}.`);
-console.log(`Rezerva pred vsakim sporočilom ${naSporocilo.toFixed(3)} $ (najslabši primer), pred oceno 4 klici ocenjevalca po dolžini pogovora; meja ${MAX_USD} $. Ob meji se ustavi in zapiše, kar je ocenjeno.`);
+console.log(`Rezerva pred vsakim sporočilom ${naSporocilo.toFixed(3)} $ (najslabši primer), pred vsakim klicem ocenjevalca po dolžini pogovora; meja ${MAX_USD} $. Ob meji se ustavi in zapiše, kar je ocenjeno.`);
 if (SUHO) process.exit(0);
 if (PREIZKUS !== isMockMode()) napaka(PREIZKUS ? "--preizkus deluje samo brez ključa API (sicer bi klical pravi model)." : "Ni ključa API (GitHub Actions: manjka skrivnost ANTHROPIC_API_KEY).");
 
@@ -156,9 +159,12 @@ let ustavljeno = false;
 // Rezervacija pred vsakim klicem: porabljeno + rezervirano v teku + nova rezerva ne sme preseči meje. Če ne gre, počaka, da
 // se končajo klici v teku (njihova dejanska cena je navadno precej nižja od rezerve); brez klicev v teku se ustavi.
 let vTeku = 0;
-async function rezerviraj(znesek) {
+// nov: prvo sporočilo novega primera; po ustavitvi se novi primeri ne začnejo, začeti (že plačani pogovori) pa še počakajo
+// na prostor za oceno.
+async function rezerviraj(znesek, { nov = false } = {}) {
+  if (nov && ustavljeno) return false;
   while (porabljeno() + vTeku + znesek > MAX_USD) {
-    if (vTeku <= 1e-9 || ustavljeno) {
+    if (vTeku <= 1e-9) {
       ustavljeno = true;
       return false;
     }
@@ -171,13 +177,15 @@ const aplikacijaUsd = () => store.db.prepare("SELECT COALESCE(SUM(cost_usd), 0) 
 const porabljeno = () => aplikacijaUsd() + ocenjevalciUsd;
 const META = (s) => `\n<<META subject=${s.subject} topic="${s.subject}" error=0 mode=${s.solving_mode} flag=none done=0>>`;
 
-// Eno sporočilo učenca skozi pravo pot aplikacije; vrne besedilo, kot ga vidi učenec (dogodek done).
+// Eno sporočilo učenca skozi pravo pot aplikacije; vrne besedilo, kot ga vidi učenec (dogodek done). Napaka nosi
+// odlomek toka (lahko z odgovorom) v .podrobno, sporočilo pa samo vrsto (za dnevnik pri Preizkusu 3).
 async function poslji(convId, text) {
-  const res = await fetch(`${base}/api/conversations/${convId}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+  const res = await fetch(`${base}/api/conversations/${convId}/messages`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }), signal: AbortSignal.timeout(300000) });
   const body = await res.text();
-  if (!res.ok) throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
+  const napaka = (m, podrobno) => Object.assign(new Error(m), { podrobno });
+  if (!res.ok) throw napaka(`HTTP ${res.status}`, body.slice(0, 200));
   const done = [...body.matchAll(/event: done\ndata: (.*)\n/g)].at(-1);
-  if (!done) throw new Error(`brez dogodka done: ${body.slice(-200)}`);
+  if (!done) throw napaka("brez dogodka done", body.slice(-200));
   return JSON.parse(done[1]).text;
 }
 
@@ -194,45 +202,57 @@ async function pogovor(p) {
   }
   const prepis = [];
   for (const k of p.krogi) {
-    if (!(await rezerviraj(naSporocilo))) return null;
+    if (!(await rezerviraj(naSporocilo, { nov: !prepis.length }))) return prepis.length ? { prepis, nedokoncan: true } : null;
     try {
       prepis.push({ ucenec: k, evklid: await poslji(conv.id, k) });
     } finally {
       vTeku -= naSporocilo;
     }
   }
-  return prepis;
+  return { prepis };
 }
 
-// En ocenjevalec; null, če odgovor ni veljaven (manjka merilo, ni JSON, odrezan).
+// En ocenjevalec z lastno rezervo; null, če odgovor ni veljaven (manjka merilo, ni JSON, odrezan), klic pade ali ni
+// prostora pod mejo. --preizkus: EVKLID_ZLATI_PREIZKUS=razhajanje (drugi ocenjevalec da NE pri prvem merilu) ali
+// =napaka (prvi klic vrže napako) preizkusi tretjega ocenjevalca in ponovni poskus brez modela.
+let preizkusKlicev = 0;
+const neveljavne = {};
 async function ocenjevalec(p, prepis, obrni) {
-  if (PREIZKUS) return { merila: Object.fromEntries(p.merila.map((m) => [m, "DA"])), pedagogika: p.pedagogika ? 8 : null, napake: [] };
-  const r = await getClient().messages.create({ model: MODEL_DEEP, max_tokens: OCENA_MAX_TOKENS, system: NAVODILA, messages: [{ role: "user", content: vprasanjeOcenjevalcu(p, prepis, { obrni }) }] });
-  ocenjevalciUsd += costUsd(r.model || MODEL_DEEP, r.usage || {});
-  if (r.stop_reason !== "end_turn") return null;
-  return preberiOceno((r.content || []).filter((b) => b.type === "text").map((b) => b.text).join(""), p.merila, p.pedagogika);
-}
-
-async function oceni(p, prepis) {
-  const z = 4 * ocenaUsd(p, prepis);
+  if (PREIZKUS) {
+    const nacin = process.env.EVKLID_ZLATI_PREIZKUS || "";
+    if (nacin === "napaka" && preizkusKlicev++ === 0) return null;
+    const merila = Object.fromEntries(p.merila.map((m, i) => [m, nacin === "razhajanje" && obrni && i === 0 ? "NE" : "DA"]));
+    return { merila, pedagogika: p.pedagogika ? 8 : null, napake: [] };
+  }
+  const z = ocenaUsd(p, prepis);
   if (!(await rezerviraj(z))) return null;
   try {
-    return await oceniZRezervo(p, prepis);
+    const r = await getClient().messages.create({ model: MODEL_DEEP, max_tokens: OCENA_MAX_TOKENS, output_config: { effort: OCENA_NAPOR }, system: NAVODILA, messages: [{ role: "user", content: vprasanjeOcenjevalcu(p, prepis, { obrni }) }] });
+    ocenjevalciUsd += costUsd(r.model || MODEL_DEEP, r.usage || {});
+    const o = r.stop_reason === "end_turn" ? preberiOceno((r.content || []).filter((b) => b.type === "text").map((b) => b.text).join(""), p.merila, p.pedagogika) : null;
+    if (!o) neveljavne[r.stop_reason === "end_turn" ? "neveljaven JSON" : `stop ${r.stop_reason}`] = (neveljavne[r.stop_reason === "end_turn" ? "neveljaven JSON" : `stop ${r.stop_reason}`] || 0) + 1;
+    return o;
+  } catch (e) {
+    // Plačan del klica, ki je padel, SDK ne vrne; vrsta napake brez besedila (lahko navaja nalogo).
+    const k = `napaka ${e?.status || e?.name || "klica"}`;
+    neveljavne[k] = (neveljavne[k] || 0) + 1;
+    return null;
   } finally {
     vTeku -= z;
   }
 }
 
-async function oceniZRezervo(p, prepis) {
+// Dva ocenjevalca hkrati (drugi z obrnjenim vrstnim redom meril), ob razhajanju tretji; en ponovni poskus na primer za
+// neveljavno oceno.
+async function oceni(p, prepis) {
   let poskusov = 0;
   const ena = async (obrni) => {
     let o = await ocenjevalec(p, prepis, obrni);
-    if (!o && poskusov++ < 1) o = await ocenjevalec(p, prepis, obrni); // en ponovni poskus na primer
+    if (!o && poskusov++ < 1) o = await ocenjevalec(p, prepis, obrni);
     return o;
   };
-  const [a, b] = await Promise.all([ena(false), ena(true)]);
-  const ocene = [a, b];
-  if (potrebenTretji(a, b, p.merila)) ocene.push(await ena(false));
+  const ocene = await Promise.all([ena(false), ena(true)]);
+  if (potrebenTretji(ocene[0], ocene[1], p.merila)) ocene.push(await ena(false));
   if (ocene.filter(Boolean).length < 2) return { ocene, koncna: null };
   return { ocene, koncna: zdruziOcene(ocene, p.merila) };
 }
@@ -248,20 +268,24 @@ async function delavec() {
   while (vrsta.length && !ustavljeno) {
     const p = vrsta.shift();
     try {
-      const prepis = await pogovor(p);
-      const ocena = prepis && (await oceni(p, prepis));
-      if (!ocena) {
+      const pog = await pogovor(p);
+      if (!pog) {
         console.log(`${p.id}: ustavljeno pred mejo ${MAX_USD} $ (porabljeno ${porabljeno().toFixed(3)} $)`);
         continue;
       }
-      const { ocene, koncna } = ocena;
-      izid.push({ id: p.id, skupina: p.skupina, prepis, ocene, koncna });
-      const opis = koncna ? Object.entries(koncna.merila).map(([m, v]) => `${m} ${v}`).join(", ") + (koncna.pedagogika != null ? `, pedagogika ${koncna.pedagogika}` : "") : "ocena ni uspela";
+      const { prepis, nedokoncan } = pog;
+      // Nedokončan pogovor (meja sredi primera) se zapiše, a ne oceni: ocena dela pogovora bi bila zavajajoča.
+      const { ocene, koncna } = nedokoncan ? { ocene: [], koncna: null } : await oceni(p, prepis);
+      izid.push({ id: p.id, skupina: p.skupina, prepis, ocene, koncna, ...(nedokoncan && { nedokoncan: true }) });
+      const opis = koncna ? Object.entries(koncna.merila).map(([m, v]) => `${m} ${v}`).join(", ") + (koncna.pedagogika != null ? `, pedagogika ${koncna.pedagogika}` : "") : nedokoncan ? "nedokončan pogovor (meja), brez ocene" : "ocena ni uspela";
       // Pri Preizkusu 3 brez navedkov ocenjevalca (lahko navajajo nalogo).
       const napake = p.skupina === "preizkus3" ? [] : [...new Set(ocene.filter(Boolean).flatMap((o) => o.napake))].slice(0, 3);
       console.log(`${p.id}: ${opis} (${ocene.filter(Boolean).length} ocenjevalci)${napake.length ? ` – ${napake.join(" | ")}` : ""}; skupaj ${porabljeno().toFixed(3)} $`);
     } catch (e) {
-      console.log(`${p.id}: napaka ${String(e?.message || e).slice(0, 200)}`);
+      // Pri Preizkusu 3 samo vrsta napake (odlomek toka lahko navaja nalogo); podrobnosti v šifriranem izidu.
+      const podrobno = String(e?.podrobno || e?.stack || "").slice(0, 500);
+      izid.push({ id: p.id, skupina: p.skupina, prepis: [], ocene: [], koncna: null, napaka: `${e?.message || e}`, ...(podrobno && { podrobno }) });
+      console.log(`${p.id}: napaka ${p.skupina === "preizkus3" ? String(e?.message || e?.name || "").slice(0, 40) : `${String(e?.message || e).slice(0, 120)} ${String(e?.podrobno || "").slice(0, 200)}`}`);
     }
     zapisi(false);
   }
@@ -274,7 +298,7 @@ zapisi(true);
 const pov = povzetek(izid);
 const md = `### Zlati nabor${KANDIDAT ? " (kandidat)" : ""}${DEL ? `, del ${DEL}` : ""}\n\n${tabela(pov)}\n\nOcenjenih ${izid.filter((r) => r.koncna).length}/${primeri.length}; strošek aplikacija ${aplikacijaUsd().toFixed(3)} $, ocenjevalci ${ocenjevalciUsd.toFixed(3)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}.`;
 console.log(`\n${md}`);
-if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${md}\n`);
+if (Object.keys(neveljavne).length) console.log(`Neveljavne ocene ocenjevalcev: ${Object.entries(neveljavne).map(([k, n]) => `${k} ${n}`).join(", ")}`);
 console.log(`Izid: ${OUT}${S_P3 && KLJUC ? " (šifriran)" : ""}`);
 fs.rmSync(tmp, { recursive: true, force: true });
 process.exit(izid.some((r) => r.koncna) ? 0 : 1);

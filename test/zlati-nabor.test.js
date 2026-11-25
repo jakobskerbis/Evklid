@@ -17,7 +17,13 @@ const env = { ...process.env, ANTHROPIC_API_KEY: "", EVKLID_DATA_KEY: "", PREIZK
 const skripta = "scripts/meri-zlati-nabor.mjs";
 const beri = (p) => JSON.parse(fs.readFileSync(new URL(p, import.meta.url), "utf8"));
 const novi = beri("./fixtures/zlati-nabor/novi.json").primeri;
-const tmpDir = () => fs.mkdtempSync(path.join(os.tmpdir(), "evklid-zlati-test-"));
+const zacasne = [];
+const tmpDir = () => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-zlati-test-"));
+  zacasne.push(d);
+  return d;
+};
+test.after(() => zacasne.forEach((d) => fs.rmSync(d, { recursive: true, force: true })));
 
 test("novi del nabora: 11 BIO, 11 KEM, 14 napačnih predstav; znana merila, veljaven profil, referenca", () => {
   const st = {};
@@ -62,7 +68,10 @@ test("reference s številkami: preračunane neodvisno s kodo", () => {
   ima("pr-ulomki-sestevanje", "5/6");
   ima("pr-odstotki-osnova", z(1.2 * 0.8, 2), `${Math.round((1 - 1.2 * 0.8) * 100)} %`);
   ima("pr-ohm-obratno", `${12 / 4} A`);
-  ima("pr-kineticna-polovica", `${0.5 * 2 * 3 ** 2} J`);
+  for (const p of novi) for (const k of p.krogi) assert.doesNotMatch(k, /[A-Z]{2,}\s*[:=]/, p.id);
+  ima("pr-kineticna-polovica", `${0.5 * 4 * 3 ** 2} J`, `(${4 * 3 ** 2} J je m v²)`);
+  // m · v² in ½ (m v)² se morata razlikovati, sicer napačna predstava ni enolična (pregled #1087).
+  assert.notEqual(4 * 3 ** 2, 0.5 * (4 * 3) ** 2);
   ima("pr-kmh-ms", `${72 / 3.6} m/s`);
   ima("pr-gostota-enote", `${500 / 250} g/cm³`, `${(500 / 250) * 1000} kg/m³`);
   ima("pr-pospesek-predznak", `−${(20 - 10) / 5} m/s²`);
@@ -93,6 +102,13 @@ test("sestava: stalen vzorec maturitetnih korakov zajame vse vrste; referenca ni
   assert.match(q, /REFERENCE \(teacher\)/);
   for (const m of Object.keys(MERILA)) assert.equal(q.includes(`- ${m}:`), mat.merila.includes(m), m);
   assert.doesNotMatch(q, /kandidat|haiku|sonnet|opus|system_prompt/i);
+  // Id-ji morajo prestati filter argumentov delovnega toka (male črke), da jih --primeri lahko izbere.
+  for (const p of vsi) assert.match(p.id, /^[a-z0-9-]+$/, p.id);
+  // Pedagogika: tretje sporočilo je prošnja za preprostejšo razlago ali naslednji korak; referenca to pove pravilno.
+  const ped = vsi.filter((p) => p.skupina === "pedagogika");
+  assert.ok(ped.some((p) => /asks for a simpler explanation/.test(p.referenca)));
+  assert.ok(ped.some((p) => /next step .*poenostavi is NR/.test(p.referenca)));
+  for (const p of ped) assert.equal(/simpler explanation/.test(p.referenca), /^Ne razumem/.test(p.krogi[2]), p.id);
   const obrnjeno = vprasanjeOcenjevalcu(mat, [], { obrni: true });
   assert.ok(obrnjeno.indexOf("- raven:") < obrnjeno.indexOf("- napaka:"));
   // Preizkus 3 nima reference: ocenjevalec rešuje sam.
@@ -119,6 +135,8 @@ test("združevanje: tretji ocenjevalec ob razhajanju, odloči večina; ujemanje 
   assert.equal(potrebenTretji(o("DA", "DA", 9), o("DA", "DA", 5), m), true, "pedagogika za več kot 2");
   assert.equal(potrebenTretji(o("DA", "DA"), null, m), true);
   assert.deepEqual(zdruziOcene([o("DA", "DA", 9), o("DA", "NE", 7), o("DA", "NE", 8)], m), { merila: { rezultat: "DA", trditve: "NE" }, pedagogika: 8 });
+  assert.equal(zdruziOcene([o("DA", "DA", 9), o("DA", "DA", 2), o("DA", "DA", 8)], m).pedagogika, 8, "mediana");
+  assert.equal(zdruziOcene([o("DA", "DA", 9), o("DA", "DA", 6)], m).pedagogika, 7.5);
   assert.equal(zdruziOcene([o("DA", "DA"), o("NE", "DA"), o("NR", "DA")], m).merila.rezultat, "NEODLOCENO");
   const izid = [
     { id: "a", skupina: "kem", ocene: [o("DA", "DA"), o("DA", "DA")], koncna: { merila: { rezultat: "DA", trditve: "DA" }, pedagogika: null } },
@@ -131,30 +149,44 @@ test("združevanje: tretji ocenjevalec ob razhajanju, odloči večina; ujemanje 
   const pov = povzetek(izid);
   assert.deepEqual(pov.skupine.kem.merila.rezultat, { DA: 1, NE: 1, NR: 0, NEODLOCENO: 0 });
   assert.deepEqual(pov.skupine.kem.zNapako, ["b"]);
+  assert.equal(ujemanje([izid[0]]).kapa, null, "vsi enaki: kapa ni določen");
 });
 
-test("primerjava pred/po: slabše, če ima katero merilo na istih primerih več NE ali pade pedagogika", () => {
+test("primerjava pred/po: slabše ob več NE ali »brez večine« ali nižji pedagogiki; nepopolna primerjava ni »ni slabše«", () => {
   const r = (id, merila, pedagogika = null) => ({ id, koncna: { merila, pedagogika } });
-  const prej = { izid: [r("a", { rezultat: "DA", trditve: "NE" }, 8), r("b", { rezultat: "DA", trditve: "DA" }, 8), r("c", { rezultat: "NE" })] };
-  const enako = { izid: [r("a", { rezultat: "DA", trditve: "DA" }, 8), r("b", { rezultat: "DA", trditve: "DA" }, 9)] };
+  const prej = { nacin: "think", izid: [r("a", { rezultat: "DA", trditve: "NE" }, 8), r("b", { rezultat: "DA", trditve: "DA" }, 8)] };
+  const enako = { nacin: "think", izid: [r("a", { rezultat: "DA", trditve: "DA" }, 8), r("b", { rezultat: "DA", trditve: "DA" }, 9), r("c", { rezultat: "NE" })] };
   const p1 = primerjaj(prej, enako);
   assert.equal(p1.primerov, 2, "samo skupni primeri");
+  assert.deepEqual(p1.manjka, { prej: ["c"], potem: [] });
   assert.deepEqual(p1.slabse, []);
   assert.deepEqual(p1.izboljsani, ["a:trditve"]);
-  const slabse = { izid: [r("a", { rezultat: "NE", trditve: "DA" }, 8), r("b", { rezultat: "DA", trditve: "DA" }, 6)] };
+  const slabse = { nacin: "think", izid: [r("a", { rezultat: "NE", trditve: "DA" }, 8), r("b", { rezultat: "DA", trditve: "NEODLOCENO" }, 6)] };
   const p2 = primerjaj(prej, slabse);
+  // trditve: a NE → DA, b DA → brez večine: skupaj enako (1 → 1), b je med poslabšanimi.
   assert.deepEqual(p2.slabse, ["rezultat", "pedagogika"]);
-  assert.deepEqual(p2.poslabsani, ["a:rezultat"]);
-  // Ukazna vrstica: izhod 0 brez poslabšanja, 2 s poslabšanjem.
+  assert.deepEqual(p2.poslabsani, ["a:rezultat", "b:trditve"]);
+  assert.deepEqual(primerjaj(prej, { ...enako, nacin: "chat" }).razlike, ["nacin"]);
+  // Ukazna vrstica: 0 brez poslabšanja, 2 s poslabšanjem, 3 nepopolna (ni skupnih, manjka primer ali drug način).
   const d = tmpDir();
-  const pot = (ime, v) => (fs.writeFileSync(path.join(d, ime), JSON.stringify(v)), path.join(d, ime));
-  const cli = (b) => spawnSync(process.execPath, ["scripts/zlati-nabor-ocena.mjs", "--primerjaj", pot("a.json", prej), pot("b.json", b)], { encoding: "utf8" });
-  const ok = cli(enako);
+  let n = 0;
+  const pot = (v) => {
+    const f = path.join(d, `${n++}.json`);
+    fs.writeFileSync(f, JSON.stringify(v));
+    return f;
+  };
+  const cli = (a, b) => spawnSync(process.execPath, ["scripts/zlati-nabor-ocena.mjs", "--primerjaj", pot(a), pot(b)], { encoding: "utf8" });
+  const ok = cli(prej, enako);
   assert.equal(ok.status, 0, ok.stderr);
   assert.match(ok.stdout, /IZID: ni slabše v nobenem merilu/);
-  const slabo = cli(slabse);
+  const slabo = cli(prej, slabse);
   assert.equal(slabo.status, 2);
   assert.match(slabo.stdout, /rezultat: 0 → 1 {2}SLABŠE/);
+  assert.equal(cli(prej, { nacin: "think", izid: [r("x", { rezultat: "DA" })] }).status, 3, "brez skupnih primerov");
+  assert.equal(cli(prej, { nacin: "think", izid: [r("a", { rezultat: "DA", trditve: "DA" }, 8)] }).status, 3, "primer b manjka potem");
+  const drug = cli(prej, { ...enako, nacin: "chat" });
+  assert.equal(drug.status, 3);
+  assert.match(drug.stdout, /nista primerljiva \(razlika v: nacin\)/);
 });
 
 test("meri-zlati-nabor: --suho brez klica; neveljavni argumenti in preizkus3 brez ključa končajo z 1", () => {
@@ -181,18 +213,33 @@ test("meri-zlati-nabor: --suho brez klica; neveljavni argumenti in preizkus3 bre
 
 test("meri-zlati-nabor --preizkus: pravi pogovor skozi aplikacijo, dva ocenjevalca, povzetek v datoteki (0 $)", () => {
   const out = path.join(tmpDir(), "izid.json");
-  const r = spawnSync(process.execPath, [skripta, "--preizkus", "--skupine", "predstave,pedagogika,matura", "--primeri", "pr-ohm-obratno,ped-P01-kvadratna,mat-minus-pred-oklepajem"], { encoding: "utf8", env: { ...env, EVKLID_MERI_IZID: out }, timeout: 180000 });
+  const r = spawnSync(process.execPath, [skripta, "--preizkus", "--skupine", "predstave,pedagogika,matura", "--primeri", "pr-ohm-obratno,ped-p01-kvadratna,mat-minus-pred-oklepajem"], { encoding: "utf8", env: { ...env, EVKLID_MERI_IZID: out }, timeout: 180000 });
   assert.equal(r.status, 0, r.stderr + r.stdout.slice(-500));
   const izid = JSON.parse(fs.readFileSync(out, "utf8"));
   assert.equal(izid.koncano, true);
   assert.equal(izid.ustavljeno, false);
-  assert.deepEqual(izid.izid.map((x) => x.id), ["pr-ohm-obratno", "ped-P01-kvadratna", "mat-minus-pred-oklepajem"]);
+  assert.deepEqual(izid.izid.map((x) => x.id), ["pr-ohm-obratno", "ped-p01-kvadratna", "mat-minus-pred-oklepajem"]);
   const ped = izid.izid[1];
   assert.equal(ped.prepis.length, 3);
   assert.equal(ped.ocene.length, 2);
   assert.equal(ped.koncna.pedagogika, 8);
   assert.equal(izid.povzetek.skupine.predstave.merila.predstava.DA, 1);
   assert.match(r.stdout, /\| predstave \| 1 \|/);
+});
+
+test("meri-zlati-nabor --preizkus: razhajanje pokliče tretjega ocenjevalca; neveljavna ocena dobi en ponovni poskus", () => {
+  const zagon = (nacin) => {
+    const out = path.join(tmpDir(), "izid.json");
+    const r = spawnSync(process.execPath, [skripta, "--preizkus", "--skupine", "kem", "--primeri", "kem-ph-hcl"], { encoding: "utf8", env: { ...env, EVKLID_MERI_IZID: out, EVKLID_ZLATI_PREIZKUS: nacin }, timeout: 60000 });
+    assert.equal(r.status, 0, r.stderr + r.stdout.slice(-300));
+    return JSON.parse(fs.readFileSync(out, "utf8")).izid[0];
+  };
+  const raz = zagon("razhajanje");
+  assert.equal(raz.ocene.length, 3);
+  assert.equal(raz.koncna.merila.rezultat, "DA", "večina 2 : 1");
+  const nap = zagon("napaka");
+  assert.equal(nap.ocene.length, 2);
+  assert.ok(nap.ocene.every(Boolean), "ponovni poskus je nadomestil neveljavno oceno");
 });
 
 test("meri-zlati-nabor: rezerva pred sporočilom nad mejo → ustavi se brez klica in konča z 1", () => {

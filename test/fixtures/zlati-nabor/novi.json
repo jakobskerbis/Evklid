@@ -1,5 +1,5 @@
 {
-  "opis": "Zlati nabor inštruktorja (P1-10, j 25. 11. 2026), novi del: biologija, kemija in napačne predstave. Vsak primer ima znan pravilen odgovor (referenca), ki ga ocenjevalec dobi, model inštruktorja pa nikoli. Številke pri kemiji so preračunane z Ar iz periodnega sistema (H 1,008, C 12,011, N 14,007, O 15,999, Ca 40,08); šolske zaokrožene vrednosti (H 1, O 16) dajo isti rezultat na dve mesti. merila: rezultat (končni odgovor ustreza referenci), trditve (nobene napačne strokovne trditve), celota (odgovor ni odrezan in odgovori na vse dele), raven (primerno stopnji učenca), napaka (učenčev napačen odgovor ni potrjen, pravilen ni zavrnjen), predstava (inštruktor pokaže vzrok napake, ne samo da je napačno). Opis meril: scripts/zlati-nabor-ocena.mjs.",
+  "opis": "Zlati nabor inštruktorja (P1-10, j 25. 11. 2026), novi del: biologija, kemija in napačne predstave. Vsak primer ima znan pravilen odgovor (referenca), ki ga ocenjevalec dobi, model inštruktorja pa nikoli. Številke pri kemiji so preračunane z Ar iz periodnega sistema (H 1,008, C 12,011, N 14,007, O 15,999, Ca 40,08); šolske zaokrožene vrednosti (H 1, O 16) dajo isti rezultat na dve veljavni mesti. merila: rezultat (končni odgovor ustreza referenci), trditve (nobene napačne strokovne trditve), celota (odgovor ni odrezan in odgovori na vse dele), raven (primerno stopnji učenca), napaka (učenčev napačen odgovor ni potrjen, pravilen ni zavrnjen), predstava (inštruktor pokaže vzrok napake, ne samo da je napačno). Opis meril: scripts/zlati-nabor-ocena.mjs.",
   "primeri": [
     {
       "id": "bio-fotosinteza",
@@ -78,7 +78,7 @@
       "skupina": "bio",
       "profil": { "educational_track": "OSNOVNA_SOLA", "curriculum_level": "8. razred", "subject": "BIO", "solving_mode": "B" },
       "krogi": ["Ali antibiotiki pomagajo pri gripi?"],
-      "referenca": "Ne. Gripo povzroča virus, antibiotiki pa delujejo na bakterije. Pri gripi pomagajo počitek in lajšanje simptomov; v nekaterih primerih zdravnik predpiše protivirusno zdravilo; cepljenje gripo preprečuje. Antibiotik pri gripi ne pomaga in povečuje odpornost bakterij. (Izjema: zdravnik ga lahko predpiše za bakterijski zaplet, npr. pljučnico.)",
+      "referenca": "Ne. Gripo povzroča virus, antibiotiki pa delujejo na bakterije. Pri gripi pomagajo počitek in lajšanje simptomov; v nekaterih primerih zdravnik predpiše protivirusno zdravilo; cepljenje zmanjša tveganje za gripo in težji potek. Antibiotik pri gripi ne pomaga, nepotrebna raba pa prispeva k odpornosti bakterij proti antibiotikom. (Izjema: zdravnik ga lahko predpiše za bakterijski zaplet, npr. pljučnico.)",
       "merila": ["rezultat", "trditve", "celota", "raven"]
     },
     {
@@ -218,8 +218,8 @@
       "skupina": "predstave",
       "predstava": "faktor 2 (pozabljena ½ v Wk = ½ m v²)",
       "profil": { "educational_track": "SREDNJA_SOLA", "curriculum_level": "1. letnik", "subject": "FIZ" },
-      "krogi": ["Telo z maso 2 kg se giblje s hitrostjo 3 m/s. Kinetična energija mi je prišla 18 J. Je prav?"],
-      "referenca": "Ni prav: Wk = ½ m v² = ½ · 2 kg · (3 m/s)² = 9 J. Pozabljen faktor ½ (18 J je m v²).",
+      "krogi": ["Telo z maso 4 kg se giblje s hitrostjo 3 m/s. Kinetična energija mi je prišla 36 J. Je prav?"],
+      "referenca": "Ni prav: Wk = ½ m v² = ½ · 4 kg · (3 m/s)² = 18 J. Pozabljen faktor ½ (36 J je m v²).",
       "merila": ["napaka", "predstava", "trditve", "raven"]
     },
     {
@@ -246,7 +246,7 @@
       "predstava": "predznak (pojemek zapisan kot pozitiven pospešek)",
       "profil": { "educational_track": "SREDNJA_SOLA", "curriculum_level": "1. letnik", "subject": "FIZ" },
       "krogi": ["Avto v 5 s zmanjša hitrost z 20 m/s na 10 m/s. Kolikšen je pospešek? Dobil sem 2 m/s². Je prav?"],
-      "referenca": "Ni čisto prav: a = (10 m/s − 20 m/s) / 5 s = −2 m/s² (negativen, ker se hitrost manjša; velikost pojemka je 2 m/s²). Sprejemljivo je tudi »pojemek 2 m/s²«, če je izrecno rečeno, da hitrost pada.",
+      "referenca": "Ni čisto prav: a = (10 m/s − 20 m/s) / 5 s = −2 m/s² (negativen, ker se hitrost manjša; velikost pojemka je 2 m/s²). Sprejemljivo je tudi »pojemek 2 m/s²«, če je izrecno rečeno, da hitrost pada. Merilo napaka: DA, če inštruktor pove, da je velikost prava, pospešek pa negativen (ali da gre za pojemek); NE, če reče samo »prav«.",
       "merila": ["napaka", "predstava", "trditve", "raven"]
     },
     {
@@ -255,7 +255,7 @@
       "predstava": "sila v smeri gibanja (gibanje navzgor potrebuje silo navzgor)",
       "profil": { "educational_track": "SREDNJA_SOLA", "curriculum_level": "1. letnik", "subject": "FIZ" },
       "krogi": ["Žogo vržem navpično navzgor. Mislim, da med dviganjem nanjo deluje sila navzgor, ki jo nosi, dokler se ne porabi. Je tako?"],
-      "referenca": "Ni tako: ko žoga zapusti roko, nanjo deluje samo teža navzdol (in upor zraka, ki je med dviganjem tudi usmerjen navzdol). Žoga se giblje navzgor zaradi začetne hitrosti, ne zaradi sile; sila navzdol jo enakomerno ustavlja. Za gibanje ni potrebna sila v smeri gibanja (1. Newtonov zakon).",
+      "referenca": "Ni tako: ko žoga zapusti roko, nanjo deluje samo teža navzdol (in upor zraka, ki je med dviganjem tudi usmerjen navzdol). Žoga se giblje navzgor zaradi začetne hitrosti, ne zaradi sile; teža jo zavira (brez upora zraka enakomerno). Za gibanje ni potrebna sila v smeri gibanja (1. Newtonov zakon).",
       "merila": ["napaka", "predstava", "trditve", "raven"]
     },
     {

@@ -14,32 +14,36 @@ sprememba poziva ali izbire modela, pred in po, slepo. Sprememba gre naprej samo
 | predstave | 14 | nov: učenčev napačen rezultat z znano napačno predstavo (MAT, FIZ, KEM) | napaka, predstava, trditve, raven |
 | astra | 10 | `test/fixtures/astra-vprasanja.json` | pricakovano, trditve, celota, raven + pedagogika 1–10 |
 | pedagogika | 12 × 3 sporočila | `test/fixtures/pedagogika-12.json` | ne_izda, napaka, poenostavi, trditve, raven + pedagogika 1–10 |
-| matura | 20 od 121 (vsak 8. v vsaki vrsti napake) | `test/fixtures/napacni-koraki-matura.json` | napaka, trditve, raven |
+| matura | 20 od 121 (vsak 8. v vsaki vrsti koraka, tudi pravilnih) | `test/fixtures/napacni-koraki-matura.json` | napaka, trditve, raven |
 | preizkus3 | 30 od 150 (vsaka 5.), samo izrecno | `scripts/preizkus3-naloge.enc` | rezultat, trditve, celota, raven; **brez reference** |
 
 Pomen meril je v `scripts/zlati-nabor-ocena.mjs` (`MERILA`). »Odgovor z napako« = NE pri rezultatu, trditvah ali
 celoti (mera iz načrta: Preizkus 3 je imel 7 od 150, cilj največ 1).
 
 Preizkus 3 nima uradnih rešitev v repozitoriju, zato ocenjevalec nalogo reši sam; vrstica v tabeli ima oznako »brez
-reference« in ni enakovredna ostalim. Naloge in izid sta šifrirana s `PREIZKUS3_KLJUC`.
+reference« in ni enakovredna ostalim. Naloge in izid sta šifrirana s `PREIZKUS3_KLJUC`. Zagon teče z privzetimi
+nastavitvami aplikacije (sprotni pregled kot v produkciji), zato ni neposredno primerljiv s številko »7 od 150« iz
+`meri-preizkus3-vse.mjs` (tam brez pregleda odgovora).
 
 ## Kako teče
 
 1. Vsak primer gre skozi pravo aplikacijo (`server/app.js` v istem procesu, začasna baza, nov učenec), z vsemi
    varovali kot v produkciji; privzeto plačljivi paket (`think`), `--nacin chat` je brezplačni.
-2. Pogovor slepo ocenita dva neodvisna ocenjevalca (`MODEL_DEEP`, Opus) z referenco; drugi dobi merila v obratnem
-   vrstnem redu. Ocenjevalec ne ve, katera različica ali model je odgovoril. Ob razhajanju (merilo ali pedagogika za
-   več kot 2) oceni še tretji, odloči večina; brez večine »neodločeno«.
+2. Pogovor slepo ocenita dva ločena klica istega modela (`MODEL_DEEP`, Opus; ne neodvisna človeška ocenjevalca) z
+   referenco; drugi dobi merila v obratnem vrstnem redu. Ocenjevalec ne ve, katera različica ali model je odgovoril. Ob razhajanju (merilo ali pedagogika za
+   več kot 2) oceni še tretji, odloči večina; brez večine »neodločeno«. Pedagogika je mediana ocen.
 3. Izid: `data/meri-zlati-nabor*.json` (prepisi, vse ocene, povzetek) in tabela v povzetku zagona. Pod tabelo je
    ujemanje prvih dveh ocenjevalcev (delež in Cohenov kapa): nizko ujemanje pomeni, da je merilo nejasno, ne da je
-   inštruktor slab.
+   inštruktor slab. Ker gre za isti model, je ujemanje višje, kot bi bilo med ljudmi.
 
 ## Zagon
 
 GitHub Actions > Meritev > Run workflow, skripta `scripts/meri-zlati-nabor.mjs`, max_usd `2`. Cel nabor ne gre v en
-zagon po 2 $, zato v treh: argumenti `--del 1-3`, nato `--del 2-3` in `--del 3-3`. Ocena stroška celega nabora je
+zagon po 2 $, zato v štirih: argumenti `--del 1-4`, nato `2-4`, `3-4` in `4-4`. Ocena stroška celega nabora je
 4–6 $ (aplikacija ~1–2 $, ocenjevalci ~3–4 $); prvi zagon jo potrdi. Pred vsakim sporočilom skripta rezervira
-najslabši primer (~0,5 $), pred oceno štiri klice ocenjevalca; ob meji se ustavi in zapiše, kar je ocenjeno.
+najslabši primer (~0,5 $), pred vsakim klicem ocenjevalca njegov najslabši primer po dolžini pogovora, zato se zagon
+ustavi že pri ~1,2–1,5 $ porabe. Ob meji ne začne novih primerov, začete oceni do konca, če gre pod mejo, in zapiše, kar je
+ocenjeno; nedokončani primeri so v izidu brez ocene. Če del ostane nedokončan, ga ponovi z `--primeri id1,id2`.
 
 Drugi argumenti: `--skupine bio,kem` (izbor skupin; `preizkus3` samo izrecno), `--primeri id1,id2`, `--kandidat`
 (kandidat poziva, izid z »-kandidat« v imenu), `--hkrati 3`. Brezplačno: `--suho` (izbor in rezerva), `--preizkus`
@@ -53,4 +57,5 @@ node scripts/zlati-nabor-ocena.mjs --primerjaj data/meri-zlati-nabor-1-3.json da
 
 Primerja samo skupne primere. Za vsako merilo izpiše število ocen NE prej in potem, poslabšane in izboljšane primere
 ter povprečje pedagogike. Konča z »IZID: ni slabše v nobenem merilu« (izhod 0) ali s seznamom slabših meril (izhod 2).
-Primerjati je smiselno le zagone z istim `--del`, istim načinom in isto skupino ocenjevalcev.
+Ocena »brez večine« šteje kot neuspeh. Če se zagona razlikujeta v načinu, delu nabora ali ocenjevalcu ali če je kak
+primer ocenjen samo prej, je izid »primerjava ni popolna« (izhod 3).

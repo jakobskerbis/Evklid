@@ -11,10 +11,10 @@ import fs from "node:fs";
 export const MERILA = {
   rezultat: "The tutor's final answer or core content agrees with the reference. If the tutor, appropriately for the conversation, gave no final answer yet, answer NR.",
   trditve: "Every factual, mathematical, numerical, unit and terminology claim in the tutor's replies is correct. Check against the reference and by your own careful calculation. One wrong claim, even a side remark, is NE.",
-  celota: "Every tutor reply is complete: not cut off mid-sentence or mid-formula, and it addresses every part the student asked.",
+  celota: "Every tutor reply is complete: not cut off mid-sentence or mid-formula, and it addresses every part the student asked. In guided mode, a hint or question that deliberately withholds the solution counts as addressing the request.",
   raven: "Language, notation and depth fit the student's school level and grade given in the profile.",
   napaka: "If the student's answer or step is wrong (see reference), the tutor does not confirm, praise or silently build on it and makes clear that something is wrong. If it is right, the tutor does not reject it. NR if the student made no claim.",
-  predstava: "The tutor addresses the cause of the student's error (the misconception named in the reference), not only that the answer is wrong.",
+  predstava: "The tutor addresses the cause of the student's error (the misconception named in the reference), not only that the answer is wrong. A targeted question or hint that points the student to this cause counts as DA.",
   ne_izda: "The student wants to solve it alone: the tutor does not reveal the final result in its replies before the student reached it (hints and questions are fine).",
   poenostavi: "In reply to the student's \"I don't understand\" message, the explanation is genuinely simpler or different, not a repeat of the earlier one.",
   pricakovano: "The tutor's behaviour matches the expected behaviour described in the reference.",
@@ -50,12 +50,12 @@ export function sestaviPrimere({ novi = [], astra = [], pedagogika = [], matura 
   for (const p of astra) out.push({ id: `astra-${p.id}`, skupina: "astra", profil: { ...p.profil, solving_mode: "A" }, krogi: p.krogi, referenca: `Expected behaviour: ${p.pricakovano}`, merila: ["pricakovano", "trditve", "celota", "raven"], pedagogika: true });
   for (const p of pedagogika) {
     out.push({
-      id: `ped-${p.id}`,
+      id: `ped-${p.id.toLowerCase()}`, // male črke: filter argumentov v .github/workflows/meri.yml
       skupina: "pedagogika",
       profil: { educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik OR", subject: "MAT", solving_mode: "A" },
       // Isto kot scripts/meri-pedagogika.mjs: prošnja za pomoč brez prošnje za rešitev, korak, »ne razumem«.
       krogi: [`Pomagaj mi pri tej nalogi, rada bi jo rešila sama.\n\n${p.naloga}`, p.korak, p.tretje],
-      referenca: `Correct final result: ${p.rezultat}. The student's step (2nd message) is ${p.korak_pravilen ? "RIGHT" : `WRONG: ${p.napaka}`}. The 3rd message asks for a simpler explanation. The student wants to solve it alone.`,
+      referenca: `Correct final result: ${p.rezultat}. The student's step (2nd message) is ${p.korak_pravilen ? "RIGHT" : `WRONG: ${p.napaka}`}. ${/^Ne razumem/.test(p.tretje) ? "The 3rd message asks for a simpler explanation." : "The 3rd message is the student's next step (check it yourself); poenostavi is NR."} The student wants to solve it alone.`,
       merila: ["ne_izda", "napaka", "poenostavi", "trditve", "raven"],
       pedagogika: true,
     });
@@ -80,6 +80,7 @@ export function sestaviPrimere({ novi = [], astra = [], pedagogika = [], matura 
 
 export const NAVODILA = `You are one of several independent graders of an AI tutor (Evklid) for Slovenian students. You see one conversation: the student's profile, the student's messages and the tutor's replies, and usually a reference written by a teacher (the correct answer, the error in the student's step, or the expected behaviour). The tutor never saw the reference.
 Grade each listed criterion with DA (met), NE (not met) or NR (does not apply in this conversation). Be strict and concrete: recompute every number the tutor states. Judge only what is written; do not reward length.
+Only the core answer to what the student asked is required; further detail in the reference is optional. Items after »Napačno:« in the reference are claims the tutor must not make, not content it must cover.
 If there is no reference, solve the task yourself carefully before judging "rezultat" and "trditve".
 If asked for "pedagogika", give one integer 1–10 for the teaching quality of the whole conversation (10 = an excellent human tutor: guides with questions, catches errors kindly, adapts, checks understanding; 1 = harmful).
 Reply with one JSON object only, no other text:
@@ -146,8 +147,10 @@ export function zdruziOcene(ocene, merila) {
     const [v, n] = Object.entries(st).sort((x, y) => y[1] - x[1])[0] || [];
     koncna[m] = v && n > veljavne.length / 2 ? v : "NEODLOCENO";
   }
-  const ped = veljavne.map((o) => o.pedagogika).filter((x) => x != null);
-  return { merila: koncna, pedagogika: ped.length ? Math.round((ped.reduce((a, b) => a + b, 0) / ped.length) * 10) / 10 : null };
+  // Pedagogika: mediana (pri dveh povprečje), da en odstopajoči ocenjevalec ne premakne ocene.
+  const ped = veljavne.map((o) => o.pedagogika).filter((x) => x != null).sort((a, b) => a - b);
+  const sredina = ped.length % 2 ? ped[(ped.length - 1) / 2] : (ped[ped.length / 2 - 1] + ped[ped.length / 2]) / 2;
+  return { merila: koncna, pedagogika: ped.length ? Math.round(sredina * 10) / 10 : null };
 }
 
 // Ujemanje prvih dveh ocenjevalcev po merilih: delež in Cohenov kapa (DA/NE/NR), ker »samo ocena modela« ni dokaz.
@@ -163,7 +166,7 @@ export function ujemanje(izid) {
   const po = enaki / pari.length;
   let pe = 0;
   for (const v of VREDNOSTI) pe += (pari.filter(([x]) => x === v).length / pari.length) * (pari.filter(([, y]) => y === v).length / pari.length);
-  return { parov: pari.length, delez: po, kapa: pe < 1 ? (po - pe) / (1 - pe) : 1 };
+  return { parov: pari.length, delez: po, kapa: pe < 1 ? (po - pe) / (1 - pe) : null }; // vsi enaki: kapa ni določen
 }
 
 // Povzetek: po skupini in merilu štetje DA/NE/NR/NEODLOCENO, primeri z napako, povprečje pedagogike.
@@ -199,16 +202,19 @@ export function tabela(pov) {
     vrst.push(`| ${ime}${ime === "preizkus3" ? " (brez reference)" : ""} | ${s.primerov} | ${celice.join(" | ")} | ${s.zNapako.length} | ${s.pedagogika ?? "–"} |`);
   }
   const u = pov.ujemanje;
-  vrst.push("", `Merila: DA/(DA+NE); NR ne šteje; »(n?)« = ocenjevalci brez večine. Ujemanje prvih dveh ocenjevalcev: ${u.parov ? `${Math.round(u.delez * 100)} % (kapa ${u.kapa.toFixed(2)}, ${u.parov} ocen)` : "–"}.`);
+  vrst.push("", `Merila: DA/(DA+NE); NR ne šteje; »(n?)« = ocenjevalci brez večine. Ocenjevalci so ločeni klici istega modela, ne neodvisni ljudje. Ujemanje prvih dveh: ${u.parov ? `${Math.round(u.delez * 100)} % (kapa ${u.kapa == null ? "ni določen" : u.kapa.toFixed(2)}, ${u.parov} ocen)` : "–"}.`);
   return vrst.join("\n");
 }
 
-// Primerjava dveh izidov po istih primerih (po id): za vsako merilo število NE prej in potem in primeri, ki so se
-// poslabšali (DA → NE). »slabse« je seznam meril z več NE kot prej; prazen pomeni »ni slabše v nobenem merilu«.
+// Primerjava dveh izidov po istih primerih (po id): za vsako merilo število ocen NE ali brez večine (NEODLOCENO), prej in
+// potem, in primeri, ki so se poslabšali. »slabse« je seznam meril z več takimi ocenami kot prej; prazen pomeni »ni slabše
+// v nobenem merilu«. Primeri, ocenjeni samo v enem izidu, so v »manjka«: primerjava brez njih ni popolna.
+const slabo = (v) => v === "NE" || v === "NEODLOCENO";
 export function primerjaj(prej, potem) {
   const a = new Map(prej.izid.filter((r) => r.koncna).map((r) => [r.id, r]));
   const b = new Map(potem.izid.filter((r) => r.koncna).map((r) => [r.id, r]));
   const skupni = [...a.keys()].filter((id) => b.has(id));
+  const manjka = { prej: [...b.keys()].filter((id) => !a.has(id)), potem: [...a.keys()].filter((id) => !b.has(id)) };
   const merila = {};
   const poslabsani = [];
   const izboljsani = [];
@@ -216,10 +222,10 @@ export function primerjaj(prej, potem) {
     for (const [m, v] of Object.entries(a.get(id).koncna.merila)) {
       const w = b.get(id).koncna.merila[m];
       const c = (merila[m] ||= { prej: 0, potem: 0 });
-      if (v === "NE") c.prej++;
-      if (w === "NE") c.potem++;
-      if (v === "DA" && w === "NE") poslabsani.push(`${id}:${m}`);
-      if (v === "NE" && w === "DA") izboljsani.push(`${id}:${m}`);
+      if (slabo(v)) c.prej++;
+      if (slabo(w)) c.potem++;
+      if (!slabo(v) && slabo(w)) poslabsani.push(`${id}:${m}`);
+      if (slabo(v) && !slabo(w)) izboljsani.push(`${id}:${m}`);
     }
   }
   const pedagogika = (m) => {
@@ -230,7 +236,9 @@ export function primerjaj(prej, potem) {
   const pPrej = pedagogika(a);
   const pPotem = pedagogika(b);
   if (pPrej != null && pPotem != null && pPotem < pPrej) slabse.push("pedagogika");
-  return { primerov: skupni.length, merila, pedagogika: { prej: pPrej, potem: pPotem }, poslabsani, izboljsani, slabse };
+  // Zagona morata biti primerljiva: isti način, isti del nabora, isti ocenjevalec.
+  const razlike = ["nacin", "del", "ocenjevalci"].filter((k) => (prej[k] ?? null) !== (potem[k] ?? null));
+  return { primerov: skupni.length, manjka, razlike, merila, pedagogika: { prej: pPrej, potem: pPotem }, poslabsani, izboljsani, slabse };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
@@ -241,11 +249,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const beri = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
   const r = primerjaj(beri(process.argv[i + 1]), beri(process.argv[i + 2]));
-  console.log(`Primerjava na ${r.primerov} skupnih primerih (število ocen NE prej → potem):`);
+  console.log(`Primerjava na ${r.primerov} skupnih primerih (število ocen NE ali brez večine, prej → potem):`);
   for (const [m, c] of Object.entries(r.merila)) console.log(`  ${m}: ${c.prej} → ${c.potem}${c.potem > c.prej ? "  SLABŠE" : ""}`);
   console.log(`  pedagogika (povprečje): ${r.pedagogika.prej ?? "–"} → ${r.pedagogika.potem ?? "–"}`);
   if (r.poslabsani.length) console.log(`Poslabšani: ${r.poslabsani.join(", ")}`);
   if (r.izboljsani.length) console.log(`Izboljšani: ${r.izboljsani.join(", ")}`);
-  console.log(r.slabse.length ? `IZID: slabše v merilih ${r.slabse.join(", ")}` : "IZID: ni slabše v nobenem merilu");
-  process.exit(r.slabse.length ? 2 : 0);
+  if (r.manjka.prej.length || r.manjka.potem.length) console.log(`Ocenjeni samo v enem izidu (primerjava ni popolna): prej manjka ${r.manjka.prej.join(", ") || "nič"}; potem manjka ${r.manjka.potem.join(", ") || "nič"}`);
+  if (r.razlike.length) console.log(`Zagona nista primerljiva (razlika v: ${r.razlike.join(", ")}).`);
+  const nepopolno = !r.primerov || r.manjka.potem.length || r.razlike.length;
+  console.log(r.slabse.length ? `IZID: slabše v merilih ${r.slabse.join(", ")}` : nepopolno ? "IZID: primerjava ni popolna (glej zgoraj)" : "IZID: ni slabše v nobenem merilu");
+  process.exit(r.slabse.length ? 2 : nepopolno ? 3 : 0);
 }
