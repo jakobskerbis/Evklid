@@ -44,7 +44,7 @@ test("tema z vajo: dvoumna ali neznana poizvedba ne da gumba (nikoli napačna te
   assert.equal(temaZVajo("", SS2), null);
   assert.equal(temaZVajo("xyzzy blabla", SS2), null);
   // Ena sama splošna beseda ni ime teme: brez gumba (prej bi našla naključno lekcijo s to besedo).
-  for (const [q, s] of [["enačba", SS2], ["kvadratna", SS2], ["kvadratna", OS6], ["ulomki", OS6], ["integral", SS2], ["celica", SS2B], ["mitoza", SS2B]])
+  for (const [q, s] of [["enačba", SS2], ["kvadratna", SS2], ["kvadratna", OS6], ["ulomki", OS6], ["integral", SS2], ["celica", SS2B], ["mitoza", SS2B], ["sistem enačb", st("OSNOVNA_SOLA", "9. razred", "BIO")]])
     assert.equal(temaZVajo(q, s), null, q);
   // Brez slovenske stopnje (tuji šolski sistem) ni iskanja po lekcijah.
   assert.equal(temaZVajo("kvadratna enačba", normalizeSettings({ ...SS2, school_system: "GB" })), null);

@@ -7,7 +7,7 @@
 // Tema se išče strožje kot pri gumbu za lekcijo (pregled #1088): najprej natančno ime teme učenčeve stopnje
 // (topicForName); sicer, le pri poizvedbi z vsaj dvema besedama, prva lekcija, ki ima v naslovu VSE besede poizvedbe in
 // nobena druga lekcija ne (ali jo prehiti za MIN_LEAD). Ena sama beseda (»enačba«, »kvadratna«, »ulomki«) brez
-// natančnega imena teme ne da gumba. Tema brez generatorja → nič. Nikoli napačna tema: raje brez gumba.
+// natančnega imena teme ne da gumba. Na koncu morajo biti vse besede poizvedbe v imenu teme. Tema brez generatorja → nič. Nikoli napačna tema: raje brez gumba.
 // Nadomesti: nič. Podobne naloge si je do zdaj izmislil model v odgovoru; ta modul jih ne podvaja, ampak preusmeri v
 // obstoječo Vadnico (progress.nextPractice), ki ostane edino mesto za naloge.
 import { rankLessons, topicForName, terms } from "./lekcija-za-vprasanje.js";
@@ -30,5 +30,9 @@ export function temaZVajo(q, settings) {
   }
   if (!id || !hasGenerator(id)) return null;
   const tema = getTopic(id);
-  return tema ? { topicId: id, title: tema.name || tema.title || id } : null;
+  if (!tema) return null;
+  const title = tema.name || tema.title || id;
+  // Zadnja varovalka: vse besede poizvedbe morajo biti v imenu teme (»sistem enačb« pri BIO ni »Sistematika«).
+  const vNaslovu = new Set(terms(title));
+  return [...besede].every((b) => vNaslovu.has(b)) ? { topicId: id, title } : null;
 }
