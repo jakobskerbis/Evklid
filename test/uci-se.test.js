@@ -170,7 +170,7 @@ test("3D world: the /3d page in a frame closes itself and asks the tutor through
   assert.match(read("public/3d/pregledovalnik.js"), /typeof opts\.vprasaj === "function"/);
   const uci = read("public/uci-se.js");
   assert.match(uci, /e\.origin !== location\.origin \|\| e\.source !== full\.frame\.contentWindow/);
-  assert.match(uci, /frame\.src = `\/3d\?vgrajeno=1&raven=\$\{ravenProfila\(\)\}#/);
+  assert.match(uci, /frame\.src = `\/3d\?vgrajeno=1&raven=\$\{ravenProfila\(\)\}\$\{sid \? `&ucenec=\$\{sid\}` : ""\}#/);
   assert.match(read("public/3d/vgrajeno.js"), /window\.parent\.location\.origin === location\.origin/);
 });
 
@@ -315,4 +315,53 @@ test("3D return address from the frame is checked: only a model id and short sim
   assert.equal(typeof ok.open, "function");
   assert.equal(u.vrnitev3d("atlas?izberi=Femur.r", "  Stegnenica ").oznaka, "Stegnenica");
   for (const bad of ["../x", "Celica", "a b", "", 5, null, "x".repeat(400)]) assert.equal(u.vrnitev3d(bad, "x"), null, String(bad));
+});
+
+test("Lekcija iz 3D modela: odpre lekcijo, Nazaj iz iste lekcije spet odpre model (#A4)", async () => {
+  mem.clear();
+  const u = await load(31);
+  const odprte = [];
+  u.initUci({ showTextbook() {}, showLab() {}, stopReading() {}, openLesson: (id) => odprte.push(id) });
+  let model = 0;
+  assert.equal(u.lekcijaIz3d("../x", () => model++), false, "le pravi id lekcije");
+  assert.equal(u.lekcijaIz3d("BIO-OS-8/celicni-organeli", () => model++), true);
+  assert.deepEqual(odprte, ["BIO-OS-8/celicni-organeli"]);
+  // Teme fakultet in tekmovanj (teme3d jih vrne) se tudi odprejo.
+  for (const id of ["UNI-ULBF-ABIOCEL/celicni-organeli", "FIZ-TEK-SS/elektrostatika"]) assert.equal(u.lekcijaIz3d(id), true, id);
+  odprte.length = 0;
+  u.lekcijaIz3d("BIO-OS-8/celicni-organeli", () => model++);
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => true, labBack: () => false, lessonId: "BIO-OS-8/celicni-organeli" }), true);
+  assert.equal(model, 1, "model se odpre znova");
+  assert.equal(u.uciBack({ textbookBack: () => false, labBack: () => false, lessonId: null }), false, "oznaka je porabljena");
+  // Druga lekcija (prek kazala) samo zapre; odhod iz Uči se pozabi oznako.
+  u.lekcijaIz3d("BIO-OS-8/celicni-organeli", () => model++);
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => true, labBack: () => false, lessonId: "MAT-OS-9/linearna-funkcija" }), true);
+  assert.equal(model, 1);
+  u.lekcijaIz3d("BIO-OS-8/celicni-organeli", () => model++);
+  u.leaveUci();
+  u.setUciTab("textbook");
+  assert.equal(u.uciBack({ textbookBack: () => false, labBack: () => false }), false);
+  // Stran /3d: gumb le v okvirju aplikacije z učencem, sporočilo »lekcija« z id-jem teme.
+  const stran = read("public/3d/stran.js");
+  assert.match(stran, /if \(vgrajeno && UCENEC\) desno\.append\(gumbLekcije\(id, mod\.info\.naslov\)\)/);
+  assert.match(stran, /starsu\(\{ tip: "lekcija", id: tema\.id, vrni: id, oznaka: naslov \}\)/);
+  assert.match(read("public/uci-se.js"), /&ucenec=\$\{sid\}/);
+  assert.ok(SL["a3.lesson"]);
+});
+
+test("teme3d: teme, ki uporabljajo 3D model, najprej učenčeva pot; vsak 3D model iz kataloga ima vsaj eno temo", async () => {
+  const { teme3d } = await import("../server/laboratorij.js");
+  const t = teme3d("celica-zivalska", "BIO-OS-8");
+  assert.ok(t.length >= 2 && t.length <= 8);
+  assert.ok(t[0].id.startsWith("BIO-OS-8/"));
+  assert.ok(t.every((x) => x.id && x.name && !("rank" in x)));
+  assert.deepEqual(teme3d("../etc"), []);
+  assert.deepEqual(teme3d("ni-takega-modela"), []);
+  // Vsaka vrnjena tema mora skozi preverjanje id-ja v public/uci-se.js (sicer vrstica v seznamu ne naredi nič).
+  const u = await load(32);
+  for (const x of Object.keys(SIM_TOPICS)) assert.ok(u.lekcijaIz3d(x), x);
+  const modeli = new Set(Object.keys(SIM_TOPICS).flatMap((id) => simsForTopic(id).map((d) => d.id)).filter((x) => x.startsWith("3d-")));
+  for (const m of modeli) assert.ok(teme3d(m.slice(3)).length >= 1, m);
 });

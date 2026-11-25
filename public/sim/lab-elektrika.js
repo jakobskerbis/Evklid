@@ -27,7 +27,7 @@ export function labVezava(el) {
     { key: "U", label: "<i>U</i> [V]" },
   ]);
   const summary = h("div", { class: "lab-vez-sum", "aria-live": "polite" });
-  const graph = dataGraph({ x: [0, 1500], y: [0, 1500], xStep: 250, yStep: 250, xLabel: "izračunani R [Ω]", yLabel: "izmerjeni U/I [Ω]", title: "Izmerjena skupna upornost v odvisnosti od izračunane" });
+  const graph = dataGraph({ x: [0, 1500], y: [0, 1500], xStep: 250, yStep: 250, xLabel: "izračunani R [Ω]", yLabel: "izmerjeni U/I [Ω]", title: "Izmerjena skupna upornost v odvisnosti od izračunane", formula: tex(String.raw`R = \frac{U}{I}`) });
   const qBox = h("div");
   const asked = new Set();
   const sets = new Map(); // podpis vezja → { I: {glavni, 1, 2, 3}, U: {…} }
