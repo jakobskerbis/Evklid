@@ -24,7 +24,27 @@ env:
   PLAYWRIGHT_VERSION: "1.63.0"
   AXE_VERSION: "4.11.0"
 jobs:
+  # Neznano ime naprave (tipkarska napaka) ustavi zagon, namesto da bi vsi posli preskočili in bi bil ZIP prazen.
+  izbor:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Preveri imena naprav
+        env:
+          IZBOR: ${{ inputs.naprave }}
+        run: |
+          IZBOR="${IZBOR// /}"
+          [ -z "$IZBOR" ] && exit 0
+          IFS=, read -ra imena <<< "$IZBOR"
+          for i in "${imena[@]}"; do
+            case "$i" in
+              tel-360|tel-390|tel-430|ipad-820|ipad-1024|pc-1280|pc-1440|pc-1920) ;;
+              *) echo "::error::Neznana naprava »$i«. Dovoljene: tel-360, tel-390, tel-430, ipad-820, ipad-1024, pc-1280, pc-1440, pc-1920"; exit 1 ;;
+            esac
+          done
+
   naprava:
+    needs: izbor
     name: naprava (${{ matrix.naprava }})
     runs-on: ubuntu-24.04
     timeout-minutes: 75
@@ -39,6 +59,7 @@ jobs:
           IZBOR: ${{ inputs.naprave }}
           NAPRAVA: ${{ matrix.naprava }}
         run: |
+          IZBOR="${IZBOR// /}"
           if [ -z "$IZBOR" ] || [[ ",$IZBOR," == *",$NAPRAVA,"* ]]; then echo "tece=1" >> "$GITHUB_OUTPUT"; else echo "tece=0" >> "$GITHUB_OUTPUT"; fi
       - if: steps.izbira.outputs.tece == '1'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -92,7 +113,7 @@ jobs:
 
   kazalo:
     needs: naprava
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -110,9 +131,18 @@ jobs:
           pattern: del-*
           path: posnetki-naprav
           merge-multiple: true
-      # Kazalo brez odvisnosti (samo node:fs); izhod 1 ob težavah ne ustavi nalaganja ZIP.
+      # Kazalo brez odvisnosti (samo node:fs). Izbrana naprava brez rezultata je v povzetku težava. Izhod 1 ob težavah
+      # ne ustavi nalaganja ZIP; posel »kazalo« pa je rdeč, da je vidno, da nekaj ni v redu.
       - name: Kazalo
-        run: node scripts/posnetki-naprave.cjs --kazalo --mapa posnetki-naprav || echo "::warning::Dimni test je na napravah našel težave (POVZETEK.md)"
+        id: kazalo
+        env:
+          IZBOR: ${{ inputs.naprave }}
+        run: |
+          IZBOR="${IZBOR// /}"
+          mkdir -p posnetki-naprav
+          set +e
+          if [ -n "$IZBOR" ]; then node scripts/posnetki-naprave.cjs --kazalo --mapa posnetki-naprav --naprave "$IZBOR"; else node scripts/posnetki-naprave.cjs --kazalo --mapa posnetki-naprav; fi
+          echo "izhod=$?" >> "$GITHUB_OUTPUT"
       - name: Povzetek v poročilo posla
         run: cat posnetki-naprav/POVZETEK.md >> "$GITHUB_STEP_SUMMARY" || true
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -121,3 +151,8 @@ jobs:
           name: posnetki-naprav-${{ github.sha }}
           path: posnetki-naprav/
           retention-days: 30
+      - name: Izid
+        if: steps.kazalo.outputs.izhod != '0'
+        run: |
+          echo "::error::Na napravah so težave ali manjkajoči rezultati (POVZETEK.md v ZIP)"
+          exit 1

@@ -319,45 +319,60 @@ async function screen(p, name) {
     if (MERITVE) await meritve(p, path.basename(file, ".png"));
   }
 }
-// Meritve za zunanji pregled (scripts/posnetki-naprave.cjs): cilji pod 24 × 24 px (WCAG 2.2, 2.5.8), na dotik še
-// pod 44 px, besedilo, ki ga rob odreže brez tropičja, in kršitve axe-core (wcag2a/aa, wcag22aa).
+// Meritve za zunanji pregled (scripts/posnetki-naprave.cjs). To so kandidati za ročni pregled, ne napake:
+// - cilji pod 24 × 24 px brez izjem WCAG 2.2 (2.5.8): izjema za razmik (krog s premerom 24 px okoli cilja ne seka
+//   kroga drugega cilja) in za cilje v vrstici besedila; dokončno sodbo da axe-core (pravilo target-size, wcag22aa);
+// - na dotik (--dotik) cilji pod 40 px (docs/pregled.md: »touch targets ≥ 40 px«), štetje različnih elementov;
+// - besedilo, ki ga rob odreže (overflow hidden/clip, brez tropičja), brez .sr-only in brez namenoma drsnih vrstic;
+// - kršitve axe-core (wcag2a, wcag21a, wcag2aa, wcag21aa, wcag22aa), če je axe-core nameščen.
 async function meritve(p, posnetek) {
   const m = await p
-    .evaluate(() => {
+    .evaluate((dotik) => {
       const vis = (el) => {
         const r = el.getBoundingClientRect();
-        return r.width > 0 && r.height > 0 && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth && getComputedStyle(el).visibility !== "hidden" && !el.closest("[hidden],[inert],[aria-hidden=true]");
+        return r.width > 2 && r.height > 2 && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth && getComputedStyle(el).visibility !== "hidden" && !el.closest("[hidden],[inert],[aria-hidden=true],.sr-only");
       };
       const ime = (el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : el.classList[0] ? "." + el.classList[0] : ""}${(el.getAttribute("aria-label") || el.innerText || "").trim() ? ` »${(el.getAttribute("aria-label") || el.innerText).trim().slice(0, 24)}«` : ""}`;
       const cilji = [...document.querySelectorAll("button, a[href], input:not([type=hidden]), select, [role=button], [role=tab], [role=switch]")].filter(vis);
-      const pod24 = [];
-      const pod44 = [];
-      for (const el of cilji) {
+      const sredisca = cilji.map((el) => {
         const r = el.getBoundingClientRect();
+        return { el, x: r.left + r.width / 2, y: r.top + r.height / 2, r };
+      });
+      // Cilj v vrstici besedila (povezava v stavku): izjema 2.5.8.
+      const vBesedilu = (el) => getComputedStyle(el).display === "inline" && [...(el.parentElement?.childNodes || [])].some((n) => n.nodeType === 3 && n.textContent.trim());
+      const pod24 = [];
+      const pod40 = [];
+      for (const c of sredisca) {
+        const { el, r } = c;
         if (el.matches("input[type=checkbox], input[type=radio]") && el.closest("label")) continue; // cilj je oznaka
-        if (r.width < 24 || r.height < 24) pod24.push(`${ime(el)} ${Math.round(r.width)}×${Math.round(r.height)}`);
-        else if (r.width < 44 || r.height < 44) pod44.push(ime(el));
+        if (r.width < 24 || r.height < 24) {
+          if (vBesedilu(el)) continue;
+          // Izjema za razmik: krog s premerom 24 px okoli središča ne seka kroga (24 px) nobenega drugega cilja pod 24 px.
+          const majhen = (d) => d.r.width < 24 || d.r.height < 24;
+          const blizu = sredisca.some((d) => d !== c && !d.el.contains(el) && !el.contains(d.el) && Math.hypot(d.x - c.x, d.y - c.y) < (majhen(d) ? 24 : 12 + Math.min(d.r.width, d.r.height) / 2));
+          if (blizu) pod24.push(`${ime(el)} ${Math.round(r.width)}×${Math.round(r.height)}`);
+        } else if (dotik && (r.width < 40 || r.height < 40)) pod40.push(ime(el));
       }
       const odrezano = [];
       for (const el of document.querySelectorAll("body *")) {
         if (el.children.length || !vis(el) || !(el.textContent || "").trim()) continue;
         const cs = getComputedStyle(el);
-        if (cs.overflowX === "visible" || cs.textOverflow === "ellipsis" || cs.webkitLineClamp !== "none") continue;
+        if (!/hidden|clip/.test(cs.overflowX) || cs.textOverflow === "ellipsis" || cs.webkitLineClamp !== "none") continue;
         if (el.scrollWidth > el.clientWidth + 2) odrezano.push(ime(el));
       }
-      return { cilji: cilji.length, pod24: [...new Set(pod24)].slice(0, 15), pod44: pod44.length, odrezano: [...new Set(odrezano)].slice(0, 10) };
-    })
+      return { cilji: cilji.length, pod24: [...new Set(pod24)].slice(0, 15), pod40: [...new Set(pod40)], odrezano: [...new Set(odrezano)].slice(0, 10) };
+    }, DOTIK || p.label === "tel")
     .catch((e) => ({ napaka: e.message.slice(0, 120) }));
   if (AXE) {
     m.axe = await p
       .evaluate(async (src) => {
         if (!window.axe) (0, eval)(src);
-        const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] });
+        const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag21a", "wcag2aa", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] });
         return r.violations.map((v) => ({ id: v.id, vpliv: v.impact, n: v.nodes.length, primer: v.nodes[0]?.target?.join(" ") }));
       }, AXE)
       .catch((e) => [{ id: "axe-napaka", primer: e.message.slice(0, 120) }]);
   }
-  fs.appendFileSync(path.join(SHOTS, "meritve.jsonl"), JSON.stringify({ posnetek, sirina: p.viewportSize().width, ...m }) + "\n");
+  fs.appendFileSync(path.join(SHOTS, "meritve.jsonl"), JSON.stringify({ posnetek, sirina: p.viewportSize().width, axeTekel: !!AXE, ...m }) + "\n");
 }
 // Mehurček inštruktorja (public/okna.js) ne sme prekriti gumba, povezave ali polja (primerjava z Astro 24. 11. 2026:
 // prekrit X na pasu, gumb za pripenjanje v poskusu). Mesto popravi v 400 ms po menjavi pogleda, zato počakamo.
@@ -1670,10 +1685,9 @@ async function desktop(browser, app) {
     const id = await p.evaluate(() => localStorage.getItem("studentId"));
     // Tuji sistem velja samo za ta korak: telefonski del nadaljuje z istim profilom (prej so bili telefonski
     // posnetki zato v indijskem učnem načrtu, zunanji pregled 25. 11. 2026). Prejšnje nastavitve vrnemo v finally.
-    p.prejsnjiSistem = await p.evaluate(async (id) => {
-      const s = (await (await fetch(`/api/students/${id}`)).json()).settings || {};
-      return { school_system: s.school_system ?? "SI", educational_track: s.educational_track, curriculum_level: s.curriculum_level, language: s.language };
-    }, id);
+    // Cele nastavitve: preklop na IN-CBSE počisti tudi study_program, study_course in subject (server/settings.js).
+    p.prejsnjiId = id;
+    p.prejsnjiSistem = await p.evaluate(async (id) => (await (await fetch(`/api/students/${id}`)).json()).settings || null, id);
     await p.evaluate(async (id) => {
       await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { school_system: "IN-CBSE", educational_track: "SREDNJA_SOLA", curriculum_level: "Class 11", language: "sl" } }) });
     }, id);
@@ -1700,7 +1714,7 @@ async function desktop(browser, app) {
     await p
       .evaluate(async ([id, settings]) => {
         await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings }) });
-      }, [await p.evaluate(() => localStorage.getItem("studentId")), p.prejsnjiSistem])
+      }, [p.prejsnjiId, p.prejsnjiSistem])
       .catch((e) => problem("pc izpiti", `nastavitev šolskega sistema ni vrnjena: ${e.message.slice(0, 100)}`));
   await p.context().close();
 }
@@ -2206,7 +2220,9 @@ async function accounts(browser, app) {
   sqlite = require("node:sqlite");
   KEYS = Object.keys((await import(pathToFileURL(path.join(ROOT, "public/i18n/sl.js")))).default);
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
-  const browser = await chromium.launch();
+  // Z --zaslon (scripts/posnetki-naprave.cjs) teče Chromium v slovenščini: sicer polje za datum kaže mm/dd/llll
+  // in zunanji recenzent to prijavi kot napako lokalizacije (pregled 3, PR #1079). Brez --zaslon kot prej.
+  const browser = await chromium.launch(ZASLON ? { args: ["--lang=sl-SI"] } : {});
   try {
     if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
     const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik
