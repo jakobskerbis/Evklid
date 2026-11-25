@@ -1462,3 +1462,5 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-okvir h4 { margin: 0 0 4px; }
 .demo.lab .lab-okvir { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
 .lab-okvir.lab-napoved { margin: 0 0 10px; }
+/* Ohm: pet stolpcev (zadnji U/I žarnice) pri 360 px brez drsenja vstran, tudi z drugo pisavo (CI). */
+@media (max-width: 480px) { .demo-lab-ohm .lab-table { font-size: 0.82rem; } .demo-lab-ohm .lab-table :is(th, td) { padding: 6px 5px; } }
