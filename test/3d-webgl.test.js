@@ -32,6 +32,7 @@ test("scena: po izgubi konteksta WebGL kartica »Znova naloži«, po obnovi spet
     const p = await ctx.newPage();
     const napake = [];
     p.on("pageerror", (e) => napake.push(String(e)));
+    p.on("console", (m) => /sprostitev/.test(m.text()) && napake.push(m.text())); // sprostitev starih virov po obnovi
     await p.goto(`${base}/3d#celica-zivalska`, { waitUntil: "load" });
     await p.waitForSelector("canvas.k3-platno", { timeout: 60000 });
     // Namig na odru izgine po 9 s (sprememba slike, ki ni del prizora): skrijemo ga.
@@ -88,4 +89,13 @@ test("scena: po izgubi konteksta WebGL kartica »Znova naloži«, po obnovi spet
     await browser.close();
     server.close();
   }
+});
+
+// Pregled #1066: po obnovi se stari PMREM, njegov cilj izrisa in studijska tekstura sprostijo (tudi brez Chromiuma).
+test("scena: obnova konteksta sprosti stari PMREM, okolje in studijsko teksturo", async () => {
+  const src = (await import("node:fs")).readFileSync(new URL("../public/3d/scena.js", import.meta.url), "utf8");
+  const obnovi = src.slice(src.indexOf("function obnoviKontekst()"), src.indexOf('canvas.addEventListener("webglcontextlost"'));
+  assert.match(obnovi, /const staro = \{ pmrem, okoljeRT, studioRT: studio\?\.rt \};/);
+  assert.match(obnovi, /sprostiRT\(staro\.studioRT\);\s*sprostiRT\(staro\.okoljeRT\);\s*staro\.pmrem\.dispose\(\);/);
+  assert.match(src, /const sprostiRT = \(rt\) => \{\s*rt\?\.texture\.dispose\(\);\s*rt\?\.dispose\(\);/);
 });

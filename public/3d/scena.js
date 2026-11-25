@@ -176,10 +176,16 @@ export function ustvariSceno(el, opts = {}) {
 
   const scene = new THREE.Scene();
   let pmrem = new THREE.PMREMGenerator(renderer);
-  let okolje = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; // ob obnovi konteksta WebGL nova (obnoviKontekst)
+  let okoljeRT = pmrem.fromScene(new RoomEnvironment(), 0.04); // ob obnovi konteksta WebGL nova (obnoviKontekst)
+  let okolje = okoljeRT.texture;
   const jakostSobe = opts.okolje ?? 0.72;
   let aktivnoOkolje = okolje; // RoomEnvironment ali studijski HDRI (nastaviOkolje)
-  let studio = null; // { tex, jakost } ali obljuba med nalaganjem
+  let studio = null; // { tex, rt, jakost } ali obljuba med nalaganjem
+  // Cilj izrisa PMREM sprostimo skupaj z njegovo teksturo (dispose teksture sam ne sprosti cilja).
+  const sprostiRT = (rt) => {
+    rt?.texture.dispose();
+    rt?.dispose();
+  };
   scene.environment = okolje;
   scene.environmentIntensity = jakostSobe;
   // Rahla usmerjena luč od zgoraj spredaj: oblika dobi globino tudi brez senc.
@@ -211,9 +217,9 @@ export function ustvariSceno(el, opts = {}) {
         .then(({ HDRLoader }) => new HDRLoader().setDataType(THREE.HalfFloatType).loadAsync(STUDIO_HDR))
         .then((hdr) => {
           hdr.mapping = THREE.EquirectangularReflectionMapping;
-          const tex = unicen ? null : pmrem.fromEquirectangular(hdr).texture;
+          const rt = unicen ? null : pmrem.fromEquirectangular(hdr);
           hdr.dispose();
-          return (studio = { tex, jakost: opts.okoljeStudio ?? 0.7 });
+          return (studio = { tex: rt?.texture ?? null, rt, jakost: opts.okoljeStudio ?? 0.7 });
         })
         .catch((err) => {
           console.warn("studijsko okolje:", err);
@@ -975,12 +981,23 @@ export function ustvariSceno(el, opts = {}) {
     karticaIzgube?.remove();
     karticaIzgube = null;
     const bilStudio = !!studio?.tex && aktivnoOkolje === studio.tex && studio.tex !== okolje;
+    const staro = { pmrem, okoljeRT, studioRT: studio?.rt };
     pmrem = new THREE.PMREMGenerator(renderer); // stari je imel vire v izgubljenem kontekstu
-    okolje = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    okoljeRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    okolje = okoljeRT.texture;
     studio = null;
     aktivnoOkolje = okolje;
     if (scene.environment) scene.environment = okolje;
     if (bilStudio) nastaviOkolje("studio");
+    // Stare predmete sprostimo (njihovi viri GPU so z izgubljenim kontekstom že izginili, ostali so poslušalci in
+    // zapisi v izrisovalniku); napaka pri tem ne sme ustaviti obnove.
+    try {
+      sprostiRT(staro.studioRT);
+      sprostiRT(staro.okoljeRT);
+      staro.pmrem.dispose();
+    } catch (err) {
+      console.warn("3d: sprostitev po obnovi konteksta:", err);
+    }
     casi.length = 0;
     prejRisal = false;
     velikost(true);
@@ -1004,8 +1021,8 @@ export function ustvariSceno(el, opts = {}) {
     canvas.removeEventListener("webglcontextrestored", obnoviKontekst);
     ro.disconnect();
     controls.dispose();
-    okolje.dispose();
-    if (studio?.tex && studio.tex !== okolje) studio.tex.dispose();
+    sprostiRT(okoljeRT);
+    sprostiRT(studio?.rt);
     pmrem.dispose();
     composer?.dispose?.();
     renderer.dispose();
