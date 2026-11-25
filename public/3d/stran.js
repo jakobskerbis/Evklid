@@ -5,7 +5,7 @@ import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
 import { napakaVsebina, napakaBesedilo, preveriPodporo } from "./napake.js";
-import { vgrajeno, starsu, vprasajInstruktorja } from "./vgrajeno.js";
+import { vgrajeno, starsu, vprasajInstruktorja, javiStarsu } from "./vgrajeno.js";
 import { jsonAliNic } from "/odgovor.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
@@ -656,6 +656,9 @@ async function usmeri() {
     if (id) await preveriPodporo();
     const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : id === "mikroskop" ? await mikroskop(param, moj) : await model(id, param, moj);
     if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
+    // Okvir aplikacije skrije svoj »Zapri« (uci-se.js cuvaj3d); kartica brez prizora (niPovezave, »ne obstaja«) je napaka:
+    // »Zapri« ostane, sicer bi učenec v okvirju brez povezave ostal ujet.
+    if (moj === zaporedje) javiStarsu(glavni.querySelector(":scope > .k3-napaka") ? "napaka" : "pripravljen");
   } catch (err) {
     console.error("3D:", err);
     if (moj !== zaporedje) return;
@@ -670,6 +673,7 @@ async function usmeri() {
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);
+    javiStarsu("napaka"); // okvir aplikacije pokaže »Zapri«, tudi če kartica nima poti nazaj
   }
 }
 
