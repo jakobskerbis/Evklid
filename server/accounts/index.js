@@ -1944,7 +1944,7 @@ export function mountAccounts(app, store, opts = {}) {
     const options = plan.family
       ? level === "FAKS" ? [] : [familyPlanFor(true, plan.interval)]
       : STOPNJE.filter((l) => rang(l) > rang(level)).map((l) => levelPlanFor(l, plan.interval)).filter((o) => o && o.amount > plan.amount);
-    // Višja stopnja po isti ceni (OŠ → SŠ letno, oboje 99 € od 2026-11-19) ni nadgradnja z doplačilom 0 €: profil za en sedež
+    // Višja stopnja po isti ceni (npr. OŠ → SŠ letno 19.–25. 11. 2026, oboje 99 €) ni nadgradnja z doplačilom 0 €: profil za en sedež
     // ima stopnjo odprto že zdaj (pravice.js grace), paket se zamenja ob podaljšanju (billing.js levelChanges).
     return options.length ? { from: plan.key, options: options.map((o) => ({ key: o.key, level: o.level, family: !!o.family, label: o.label, amount: o.amount, interval: o.interval, currency: "EUR" })) } : null;
   }

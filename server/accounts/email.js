@@ -184,7 +184,7 @@ export function renewalEmail(dateText, amountText, appUrl) {
 
 // Nova cena ob prehodu stopnje (j 2026-11-01): 30 dni pred podaljšanjem, ko velja nova cena.
 // up: nova cena je višja (prehod navzgor), sicer nižja (prehod navzdol ali konec starega paketa).
-// same: cena ostane enaka (OŠ in SŠ letno sta od 2026-11-19 oba 99 €), zamenja se le paket; ne »nova cena« ne »cenejša«.
+// same: cena ostane enaka (npr. OŠ in SŠ letno 19.–25. 11. 2026, oba 99 €), zamenja se le paket; ne »nova cena« ne »cenejša«.
 // higher (le pri same): paket višje stopnje (OŠ → SŠ), sicer nižje (SŠ → OŠ).
 export function planChangeEmail({ planText, amountText, dateText, up, same = false, higher = false }, appUrl) {
   const n = BRAND.name;
