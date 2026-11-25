@@ -6,7 +6,7 @@
 // (public/scan/verify.js); vsaka rešitev dobi enega od petih statusov (public/scan/status.js), »Preverjeno« samo z dokazom.
 import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
-import { verifyAi } from "../public/scan/verify.js";
+import { verifyAi, normalizeSet } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { casCheck } from "./cas.js";
 import { STATUSES } from "../public/scan/status.js";
@@ -23,8 +23,11 @@ export async function verifyAiFull(text, sol, { cas = true } = {}) {
   const num = verifyAi(text, sol);
   const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
   if (c.ok === true) {
-    // SymPy pri periodičnih rešitvah preveri popolnost samo na [−20, 20] (worker.py solve_one): »delno«
-    const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : "verified";
+    // SymPy pri periodičnih rešitvah preveri popolnost samo na [−20, 20] (worker.py solve_one): »delno«.
+    // Zaokroženo decimalno število (1.414) SymPy sprejme s toleranco (worker.py decimals_tol): to je približek,
+    // »Preverjeno« ostane le, če ga točna algebra potrdi kot točno vrednost (2.5).
+    const rounded = /\d\.\d/.test(JSON.stringify([sol?.solutions, sol?.value])) && num.status !== "verified";
+    const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded ? "numeric" : "verified";
     return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
   }
   if (c.ok === false) {
@@ -115,7 +118,7 @@ async function casScan(text, sol) {
   if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [casText(prep(text)), casText(prep(sol.value))]);
   // Neenačba (P3-3): obstoječa operacija »ineq« primerja množico rešitev s SymPy solveset (worker.py op_ineq).
   // Dvojne neenačbe (1 < x < 5) worker ne razčleni in vrne null (velja verify.js).
-  if (sol?.kind === "inequality" && sol.value) return casCheck("ineq", [casText(prep(text)), v, casText(String(sol.value))]);
+  if (sol?.kind === "inequality" && sol.value) return casCheck("ineq", [casText(prep(text)), v, casText(normalizeSet(sol.value))]);
   if (sol?.kind === "derivative" && sol.value) {
     const f = String(text).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
     return casCheck("diff", [casText(prep(f)), v, casText(prep(sol.value))]);

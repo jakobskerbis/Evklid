@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { statusOf, STATUSES } from "../public/scan/status.js";
 import { solve } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
-import { Q, Surd, polyEquationProof, inequalityProof, sturmChain, sturmCount, exactRoots, surdOf } from "../public/scan/algebra.js";
+import { Q, Surd, polyEquationProof, inequalityProof, inequalityCheck, sturmChain, sturmCount, exactRoots, surdOf, isolateRoots } from "../public/scan/algebra.js";
 import { parse } from "../public/graph/math.js";
 import { verifyAiFull } from "../server/scan.js";
 import { casAvailable } from "../server/cas.js";
@@ -102,8 +102,12 @@ test("algebra: Sturmov izrek, točni koreni in neenačbe", () => {
   assert.equal(inequalityProof([{ cs: c12, op: "<" }], [{ lo: s(1), hi: s(2), loClosed: true }]), false);
   assert.equal(inequalityProof([{ cs: [q(1), q(-2), q(1)], op: ">=" }], [{ lo: null, hi: null }]), true);
   assert.equal(inequalityProof([{ cs: [q(1), q(-2), q(1)], op: ">" }], [{ lo: null, hi: null }]), false);
-  // stopnja > 2: točnih kritičnih točk ne znamo, zato null (ostane numerično)
-  assert.equal(inequalityProof([{ cs: [q(-2), q(0), q(0), q(1)], op: "<" }], [{ lo: null, hi: s(1) }]), null);
+  // stopnja > 2: ničle kot Sturmovi izolirajoči intervali (x³ < 2 je (−∞, ∛2), ne (−∞, 1))
+  assert.equal(inequalityProof([{ cs: [q(-2), q(0), q(0), q(1)], op: "<" }], [{ lo: null, hi: s(1) }]), false);
+  assert.equal(inequalityProof([{ cs: [q(-8), q(0), q(0), q(1)], op: "<" }], [{ lo: null, hi: s(2) }]), true);
+  // krajišče ∛2 kot zaokroženo decimalno število: drži le približno
+  assert.deepEqual(inequalityCheck([{ cs: [q(-2), q(0), q(0), q(1)], op: "<" }], [{ lo: null, hi: { s: new Surd(new Q(126n, 100n)), tol: 0.005 } }]), { holds: true, exact: false });
+  assert.equal(inequalityProof([{ cs: [q(-2), q(0), q(0), q(1)], op: "<" }], [{ lo: null, hi: { s: new Surd(new Q(126n, 100n)), tol: 0.005 } }]), null);
 });
 
 // Psevdonaključna števila z zrnom (ponovljiv test).
@@ -179,7 +183,7 @@ test("AI neenačbe (P3-3): točno, numerično ali napačno; nikoli lažno »Prev
     ["1/x>2", "(0, 1/2)", "numeric"], // brez SymPy: ni polinom, mreža točk
     ["1/x>2", "(0, 1)", "wrong"],
     ["log(x)<1", "(0, 10)", "numeric"],
-    ["x^3<8", "(-oo, 2)", "numeric"], // stopnja 3: kritičnih točk ne zapišemo točno
+    ["x^3<8", "(-oo, 2)", "verified"], // stopnja 3: Sturm (izolirane ničle) in točno krajišče 2
   ];
   for (const [t, value, st] of cases) {
     const ai = { kind: "inequality", variable: "x", value };
@@ -198,4 +202,73 @@ test("SymPy pri periodičnih rešitvah da največ »Delno preverjeno«", async (
   const r = await verifyAiFull("sin(x)=0", { kind: "equation", variable: "x", solutions: ["k*pi"] });
   assert.equal(r.status, "partial");
   assert.equal(r.verified, false);
+});
+
+test("pregled 2: verige, zaokrožene rešitve, majhne ničle, velika števila, imenovalci", async () => {
+  const eq = (t, sols) => verifyAi(t, { kind: "equation", variable: "x", solutions: sols });
+  // veriga a = b = c: rešitev je samo skupna ničla (1), −1 ne drži
+  assert.equal(eq("x^2 - 1 = 0 = x - 1", ["1", "-1"]).status, "wrong");
+  assert.equal(eq("x^2 - 1 = 0 = x - 1", ["1"]).status, "verified");
+  // zaokrožena decimalna rešitev je približek: »Numerično preverjeno«, ne »Napačno« in ne »Preverjeno«
+  assert.equal(eq("x^3 - x - 1 = 0", ["1.324718"]).status, "numeric");
+  assert.equal(eq("x^2 = 2", ["1.41421356", "-1.41421356"]).status, "numeric");
+  assert.equal(eq("x^2 = 2", ["1.41421356"]).status, "wrong");
+  assert.equal(eq("x^2 = 2", ["1.5", "-1.41421356"]).status, "wrong");
+  assert.equal(eq("x^2 = 6.25", ["2.5", "-2.5"]).status, "verified"); // točna decimalka ostane točna
+  // ničli 10⁻⁶ in 2·10⁻⁶ nista ena ničla
+  assert.equal(eq("(x-0.000001)*(x-0.000002) = 0", ["1*10^(-6)", "2*10^(-6)"]).status, "verified");
+  const one = eq("(x-0.000001)*(x-0.000002) = 0", ["0.000001"]);
+  assert.equal(one.reason, "missing");
+  assert.ok(Math.abs(one.missing[0] - 2e-6) < 1e-12);
+  // število, ki ga double ne zapiše točno: lokalno ne odločamo (SymPy dobi besedilo)
+  assert.equal(eq("x - 12345678901234567 = 0", ["12345678901234567"]).status, "unverified");
+  assert.equal(solve("x - 12345678901234567 = 0").ok, false);
+  assert.equal(solve("2x = 12345678901234567").ok, false);
+  // imenovalec x² − 2 je pri ±√2 enak 0: rešitev ni (prej ±√2 »numerično«)
+  assert.equal(solve("x^2/(x^2-2) = 2/(x^2-2)").ok, false);
+  assert.equal(solve("1/(x^2-2) = 1").status, "verified");
+  // hitrost: visoka stopnja brez trditev in velik koren ne zadržita strežnika
+  const W = Array.from({ length: 16 }, (_, i) => `(x-${i + 1})`).join("*") + "=0";
+  let t = Date.now();
+  assert.equal(eq(W, []).status, "wrong");
+  assert.equal(eq(W, ["1"]).status, "wrong");
+  assert.equal(eq(W, Array.from({ length: 16 }, (_, i) => String(i + 1))).status, "verified");
+  assert.ok(Date.now() - t < 1500, `${Date.now() - t} ms`);
+  t = Date.now();
+  solve("x^2 - 99999999999999999999999999 < 0");
+  solve("x^2 - 9999999999999 < 0");
+  assert.ok(Date.now() - t < 1500, `${Date.now() - t} ms`);
+});
+
+test("pregled 2: neenačbe višje stopnje in nepolinomske – krajišča in izolirane točke", () => {
+  const iq = (t, value) => verifyAi(t, { kind: "inequality", variable: "x", value }).status;
+  const cases = [
+    ["x^3>8", "[2,oo)", "wrong"],
+    ["x^3>8", "(2,oo)", "verified"],
+    ["x^3>=8", "(2,oo)", "wrong"],
+    ["x^4>=1", "(-oo,-1)U(1,oo)", "wrong"],
+    ["x^4>=1", "(-oo,-1]U[1,oo)", "verified"],
+    ["(x-1)^2*(x-2)>=0", "[2,oo)", "wrong"], // manjka izolirana rešitev x = 1
+    ["(x-1)^2*(x-2)>=0", "{1} U [2,oo)", "verified"],
+    ["x^3-2x<0", "(-oo,-sqrt(2)) U (0, sqrt(2))", "verified"],
+    ["x^3-2x<0", "(-oo,-1.414) U (0, 1.414)", "numeric"],
+    ["x^3-x-1>0", "(1.3247, oo)", "numeric"],
+    ["x^3-x-1>0", "(1.4, oo)", "wrong"],
+    ["1/x>1", "(0,1]", "wrong"],
+    ["1/x>1", "(0,1)", "numeric"],
+    ["sqrt(x)<2", "(0,4)", "wrong"],
+    ["sqrt(x)<2", "[0,4)", "numeric"],
+    // zapisi množic
+    ["x^2<=4", "x ∈ [-2,2]", "verified"],
+    ["x^2<4", "]-2,2[", "verified"],
+    ["x^2>0", "R \\ {0}", "verified"],
+  ];
+  for (const [t, value, st] of cases) assert.equal(iq(t, value), st, `${t} ${value}`);
+});
+
+test("isolateRoots: sosednja ničla v levem krajišču intervala ne pokvari iskanja", () => {
+  const q = (n) => new Q(BigInt(n));
+  // (x − 1)²(x − 2): ločena intervala okoli 1 in 2 (prej sta bila oba pri 1)
+  const r = isolateRoots([q(-2), q(5), q(-4), q(1)]);
+  assert.deepEqual(r.map((x) => Math.round(x.x * 1e6) / 1e6), [1, 2]);
 });

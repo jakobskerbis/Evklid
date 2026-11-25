@@ -156,11 +156,14 @@ export async function casAvailable() {
 }
 
 // Stanje za /healthz/stanje in Stražo (skener P3-3): brez SymPy noben rezultat AI ne more biti »Preverjeno«.
-// Ne čaka: če preverjevalnik še ni bil zagnan, ga zažene v ozadju in vrne deluje: null (naslednji klic ve več).
+// Ne čaka. Proces teče → deluje: true. Sicer ga zažene v ozadju (po neuspehu največ enkrat na minuto) in vrne izid
+// zadnjega zagona: false, če zadnji zagon ni uspel (alarm Straže), null, če še ni bil zagnan ali se je proces ustavil
+// po uspešnem zagonu (naslednji klic ve več). Ko popravljen zagon uspe, alarm sam izgine.
 export function casStanje() {
   if (!casOn()) return { vklopljen: false, deluje: null };
-  if (lastStart === null) start().catch(() => {});
-  return { vklopljen: true, deluje: lastStart };
+  if (proc && lastStart === true) return { vklopljen: true, deluje: true };
+  start().catch(() => {});
+  return { vklopljen: true, deluje: lastStart === false ? false : null };
 }
 
 export function casStop() {

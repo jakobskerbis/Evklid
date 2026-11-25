@@ -4,8 +4,8 @@
 // izraze primerjamo v naključnih točkah, odvode z numeričnim odvodom, nedoločene integrale z odvajanjem.
 // Vsak izid ima status iz public/scan/status.js; numerična potrditev nikoli ni »Preverjeno« (AUDIT-001).
 import { parse, compile, integrate } from "../graph/math.js";
-import { prep, splitSystem, satisfies, equalNumerically } from "./solvecore.js";
-import { tryPoly, withLimit, surdOf, polyEquationProof, inequalityProof } from "./algebra.js";
+import { prep, splitSystem, satisfies, equalNumerically, bigLiteral } from "./solvecore.js";
+import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat } from "./algebra.js";
 import { statusOf } from "./status.js";
 
 const fin = Number.isFinite;
@@ -123,6 +123,15 @@ function sidesPoly(a, b, v) {
   }
 }
 
+// Zaokroženo decimalno število (»1.324718«): toleranca pol zadnjega mesta; drug zapis z decimalno piko: majhna
+// toleranca (vrednost je približek); brez decimalk 0 (vrednost je točna).
+function decimalTol(text) {
+  const t = String(text ?? "").trim();
+  const m = /^[+-]?\d*\.(\d+)$/.exec(t);
+  if (m) return 0.5 * 10 ** -m[1].length * 1.0001;
+  return /\d\.\d/.test(t) ? 1e-12 : 0;
+}
+
 // »2«, »-1/3«, »(1+sqrt(5))/2« → točno (Surd); sicer null
 function exactValue(text) {
   try {
@@ -136,7 +145,7 @@ function exactValue(text) {
 // null = zapisa ne razumemo.
 const INF = /^\s*([+-]?)\s*(oo|inf(inity)?|∞|\\infty)\s*$/i;
 export function parseSet(text) {
-  const src = String(text ?? "").replace(/\\left|\\right/g, "").replace(/−/g, "-").trim();
+  const src = normalizeSet(text);
   if (/^(\{\s*\}|∅|\\emptyset|none|ni rešitve|no solution)$/i.test(src)) return [];
   if (/^(R|ℝ|\\mathbb\{R\}|all|reals)$/i.test(src)) return [{ lo: null, hi: null }];
   const end = (e) => {
@@ -144,7 +153,7 @@ export function parseSet(text) {
     if (m) return m[1] === "-" ? { inf: -1 } : { inf: 1 };
     const x = compileValue(e);
     if (!Number.isFinite(x)) return null;
-    return { s: exactValue(e), x };
+    return { s: exactValue(e), x, tol: decimalTol(e) };
   };
   const out = [];
   for (const part of src.split(/\s*(?:\bU\b|∪|\\cup)\s*/)) {
@@ -169,6 +178,38 @@ export function parseSet(text) {
   }
   return out;
 }
+// Zapis množice v obliki, ki jo razumeta parseSet in SymPy (op ineq): »x ∈ [-2, 2]« → »[-2, 2]«,
+// »]-2, 2[« (slovenski zapis) → »(-2, 2)«, »R \ {0}« → »(-oo, 0) U (0, oo)«.
+export function normalizeSet(text) {
+  let src = String(text ?? "")
+    .replace(/\\left|\\right/g, "")
+    .replace(/−/g, "-")
+    .trim()
+    .replace(/^[a-zA-Z]\s*(?:∈|\\in\b|in\b)\s*/, "")
+    .trim();
+  const minus = /^(R|ℝ|\\mathbb\{R\})\s*(?:\\|\\setminus|−|-)\s*\{(.*)\}$/.exec(src);
+  if (minus) {
+    const pts = minus[2]
+      .split(/[,;]/)
+      .map((t) => ({ t: t.trim(), x: compileValue(t) }))
+      .filter((p) => p.t);
+    if (!pts.length || pts.some((p) => !Number.isFinite(p.x))) return src;
+    pts.sort((a, b) => a.x - b.x);
+    const b = ["-oo", ...pts.map((p) => p.t), "oo"];
+    return b
+      .slice(1)
+      .map((hi, i) => `(${b[i]}, ${hi})`)
+      .join(" U ");
+  }
+  return src
+    .split(/\s*(?:\bU\b|∪|\\cup)\s*/)
+    .map((part) => {
+      const m = /^([\]\[(])(.*),(.*)([\]\[)])$/.exec(part.trim());
+      if (!m) return part.trim();
+      return `${m[1] === "]" ? "(" : m[1]}${m[2].trim()}, ${m[3].trim()}${m[4] === "[" ? ")" : m[4]}`;
+    })
+    .join(" U ");
+}
 function compileValue(e) {
   try {
     return compile(parse(prep(e)))({});
@@ -184,6 +225,8 @@ function compileValue(e) {
  * periodične rešitve). status: public/scan/status.js.
  */
 export function verifyAi(problemText, ai) {
+  // prevelika števila: prebrana vrednost ni vrednost iz naloge, odloči SymPy (status »unverified«)
+  if (bigLiteral(problemText) || bigLiteral(JSON.stringify([ai?.solutions, ai?.value]))) return { verified: false, reason: "big", status: "unverified" };
   const r = check(problemText, ai);
   const ev = r.evidence || (r.verified ? { holds: true, how: "numeric", complete: r.partial ? "unknown" : "numeric" } : { holds: r.reason === "wrong" || r.reason === "missing" ? false : null });
   const status = statusOf(ev);
@@ -218,28 +261,36 @@ function check(problemText, ai) {
       // »x = 2« ali »x_1 = 2« → »2«
       const sols = (ai.solutions || []).flatMap((s) => values(String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "")));
       const periodic = (ai.solutions || []).some((s) => /\bk\b/.test(s));
-      // Polinomska enačba: točen preizkus in Sturmov izrek (popolnost na vsej realni osi, ne le do ±10⁶; AUDIT-001)
+      // Polinomska enačba: točen preizkus in Sturmov izrek (popolnost na vsej realni osi, ne le do ±10⁶; AUDIT-001).
+      // Veriga a = b = c: rešitve so skupne ničle vseh parov, torej ničle njihovega največjega skupnega delitelja.
       const ast = parse(prep(problemText));
-      const cs = periodic ? null : sidesPoly(ast.terms[0], ast.terms[1], v);
+      const pairs = periodic ? [] : ast.terms.slice(1).map((t, i) => sidesPoly(ast.terms[i], t, v));
+      const cs = pairs.length && pairs.every(Boolean) ? (pairs.length === 1 ? pairs[0] : polyGcd(pairs)) : null;
+      if (cs && cs.length === 1 && !cs[0].zero && !(ai.solutions || []).length) {
+        // skupnih ničel ni (npr. x = x + 1 ali veriga brez skupne ničle): »ni rešitve« je dokazano
+        return { verified: true, evidence: { holds: true, how: "exact", complete: "exact" } };
+      }
       if (cs && cs.length > 1) {
         const raw = (ai.solutions || []).map((s) => String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, ""));
         const claims = raw.map((s) => {
           const e = exactValue(s);
-          return e ? { s: e } : { num: values(s)[0] };
+          const tol = decimalTol(s);
+          const num = values(s)[0];
+          return e ? { s: e, ...(tol ? { num, tol } : {}) } : { num, tol };
         });
         if (claims.some((c) => !c.s && !Number.isFinite(c.num))) return { verified: false, reason: "parse" };
         const pe = polyEquationProof(cs, claims);
         if (pe) {
           if (!pe.holds) return { verified: false, reason: "wrong" };
           if (pe.complete === false) return { verified: false, reason: "missing", missing: pe.missing };
-          return { verified: true, evidence: { holds: true, how: pe.exact ? "exact" : "numeric", complete: pe.complete === true ? "exact" : "numeric" } };
+          return { verified: true, evidence: { holds: true, how: pe.exact ? "exact" : "numeric", complete: pe.complete === true ? "exact" : "unknown" } };
         }
       }
       if (!(ai.solutions || []).length) {
         // »ni rešitve«: preverimo, da numerično res ni ničle. Iskanje seže le do ±10⁶, zato prazen izid
         // ni dokaz, da rešitve ni (numerično, AUDIT-001).
         const r = scanRoots(problemText, v);
-        return r.length ? { verified: false, reason: "missing", missing: r } : { verified: true, reason: null, missing: r };
+        return r.length ? { verified: false, reason: "missing", missing: r } : { verified: true, reason: null, missing: r, ...(ast.terms.length > 2 ? { partial: true } : {}) };
       }
       if (!sols.length) return { verified: false, reason: "parse" };
       for (const s of sols) if (satisfies(problemText, { [v]: s }) !== true) return { verified: false, reason: "wrong" };
@@ -249,8 +300,9 @@ function check(problemText, ai) {
       }
       // Pri periodičnih rešitvah (k) popolnosti numerično ne preverimo: manjkajoča družina ali »2+0·k«
       // namesto dveh rešitev bi sicer veljala za preverjeno (AUDIT-001).
-      // Brez periodičnih rešitev je popolnost preverjena numerično (iskanje ničel do ±10⁶).
-      return periodic ? { verified: true, partial: true } : { verified: true };
+      // Brez periodičnih rešitev je popolnost preverjena numerično (iskanje ničel do ±10⁶); verige a = b = c
+      // iskanje ne zajame, zato je tam popolnost nepreverjena.
+      return periodic || ast.terms.length > 2 ? { verified: true, partial: true } : { verified: true };
     }
     if (kind === "inequality") return checkInequality(problemText, ai, v);
     if (kind === "expression" || kind === "arith") {
@@ -300,8 +352,9 @@ function check(problemText, ai) {
   return { verified: false, reason: "kind" };
 }
 
-// Neenačba (AI navede množico v ai.value, npr. »(-oo, 2) U [3, oo)«): polinomska s točnimi krajišči točno
-// (kritične točke), sicer v mnogo točkah do ±10⁶ (numerično, brez krajišč, kjer odloča zaokroževanje).
+// Neenačba (AI navede množico v ai.value, npr. »(-oo, 2) U [3, oo)«). Polinomska: točno (kritične točke; ničle višje
+// stopnje kot Sturmovi izolirajoči intervali, algebra.js inequalityCheck). Sicer numerično: v krajiščih (enakost odloči
+// strogost znaka, zunaj definicijskega območja ni rešitve) in v mnogo točkah do ±10⁶.
 function checkInequality(problemText, ai, v) {
   let ast;
   try {
@@ -314,16 +367,45 @@ function checkInequality(problemText, ai, v) {
   if (!ivs) return { verified: false, reason: "parse" };
   const ends = ivs.flatMap((iv) => [iv.lo, iv.hi, iv.point]).filter(Boolean);
   const rels = ast.ops.map((op, i) => ({ cs: sidesPoly(ast.terms[i], ast.terms[i + 1], v), op }));
-  if (rels.every((r) => r.cs) && ends.every((e) => e.s)) {
-    const toS = (e) => (e ? e.s : null);
-    const proved = inequalityProof(
-      rels,
-      ivs.map((iv) => ({ ...iv, lo: toS(iv.lo), hi: toS(iv.hi), point: toS(iv.point) })),
-    );
-    if (proved !== null) return { verified: proved, reason: "wrong", evidence: proved ? { holds: true, how: "exact", complete: "exact" } : { holds: false } };
+  if (rels.every((r) => r.cs)) {
+    // krajišče brez točne vrednosti (npr. sqrt(2)+sqrt(3)) je približek z majhno toleranco
+    const endOf = (e) => (e ? (e.s ? { s: e.s, tol: e.tol || 0 } : { s: qFromFloatSafe(e.x), tol: 1e-9 * Math.max(1, Math.abs(e.x)) }) : null);
+    const ok = ends.every((e) => e.s || qFromFloatSafe(e.x));
+    const r = ok ? inequalityCheck(rels, ivs.map((iv) => ({ ...iv, lo: endOf(iv.lo), hi: endOf(iv.hi), point: endOf(iv.point) }))) : null;
+    if (r) return r.holds ? { verified: true, evidence: { holds: true, how: r.exact ? "exact" : "numeric", complete: r.exact ? "exact" : "numeric" } } : { verified: false, reason: "wrong", evidence: { holds: false } };
   }
   const inSet = (x) =>
     ivs.some((iv) => (iv.point ? x === iv.point.x : (iv.lo == null || x > iv.lo.x || (iv.loClosed && x === iv.lo.x)) && (iv.hi == null || x < iv.hi.x || (iv.hiClosed && x === iv.hi.x))));
+  const fs = ast.terms.map((t) => compile(t));
+  // resničnost v x: true / false / null (skoraj enako, a ne v krajišču: ne odločamo); undefined = zunaj območja
+  const truthAt = (x, atEnd) => {
+    const vals = fs.map((f) => f({ [v]: x }));
+    if (vals.some((y) => !Number.isFinite(y))) return undefined;
+    let truth = true;
+    for (let i = 0; i < ast.ops.length; i++) {
+      const [a, b] = [vals[i], vals[i + 1]];
+      const tol = 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+      const op = ast.ops[i];
+      if (Math.abs(a - b) <= tol) {
+        if (!atEnd) return null;
+        if (op === "<" || op === ">") truth = false; // v krajišču, kjer sta strani enaki, odloči strogost znaka
+        continue;
+      }
+      if ((op === "<" || op === "<=") !== a < b) truth = false;
+    }
+    return truth;
+  };
+  // krajišča: zaokroženo krajišče (decimalke) ne odloča, sicer mora pripadnost ustrezati resničnosti
+  for (const e of ends) {
+    if (e.tol > 1e-12) continue;
+    const t = truthAt(e.x, true);
+    const member = inSet(e.x);
+    if (t === undefined) {
+      if (member) return { verified: false, reason: "wrong" }; // zunaj definicijskega območja ne more biti rešitev
+      continue;
+    }
+    if (t !== null && t !== member) return { verified: false, reason: "wrong" };
+  }
   const xs = [];
   for (let i = 0; i <= 4000; i++) xs.push(-50 + i / 40 + 0.0013);
   for (let i = 1; i <= 400; i++) {
@@ -331,31 +413,26 @@ function checkInequality(problemText, ai, v) {
     xs.push(x, -x);
   }
   for (const e of ends) for (const d of [1e-4, 1e-2]) xs.push(e.x - d * Math.max(1, Math.abs(e.x)), e.x + d * Math.max(1, Math.abs(e.x)));
-  const fs = ast.terms.map((t) => compile(t));
   let tested = 0;
   for (const x of xs) {
     if (ends.some((e) => Math.abs(x - e.x) < 1e-5 * Math.max(1, Math.abs(e.x)))) continue;
-    const vals = fs.map((f) => f({ [v]: x }));
-    if (vals.some((y) => !Number.isFinite(y))) {
-      if (inSet(x)) return { verified: false, reason: "wrong" }; // zunaj definicijskega območja ne more biti rešitev
+    const truth = truthAt(x, false);
+    if (truth === undefined) {
+      if (inSet(x)) return { verified: false, reason: "wrong" };
       continue;
-    }
-    let truth = true;
-    for (let i = 0; i < ast.ops.length; i++) {
-      const [a, b] = [vals[i], vals[i + 1]];
-      const tol = 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
-      if (Math.abs(a - b) <= tol) {
-        truth = null; // skoraj enako: o tej točki ne odločamo
-        break;
-      }
-      const op = ast.ops[i];
-      if ((op === "<" || op === "<=") !== a < b) truth = false;
     }
     if (truth === null) continue;
     tested++;
     if (truth !== inSet(x)) return { verified: false, reason: "wrong" };
   }
   return tested ? { verified: true, evidence: { holds: true, how: "numeric", complete: "numeric" } } : { verified: false, reason: "parse" };
+}
+function qFromFloatSafe(x) {
+  try {
+    return qFromFloat(x);
+  } catch {
+    return null;
+  }
 }
 
 function compareFns(f, g) {

@@ -10,7 +10,7 @@
 // se ne pokaže kot rešitev (vrne ok:false in vmesnik ponudi AI rešitev, ki se preveri enako).
 
 import { parse, compile, diff, simplify, toTex as mathTex, normalize, joinThousands, joinDotThousands, digitGap, twoDots } from "../graph/math.js";
-import { Q, P, AlgebraError, polyOf, tryPoly, constQ, termsTex, termTex, isqrt, lcmInt, gcdInt, approxTex, monoKey, Surd, polyEquationProof, inequalityProof } from "./algebra.js";
+import { Q, P, AlgebraError, polyOf, tryPoly, constQ, termsTex, termTex, isqrt, lcmInt, gcdInt, approxTex, monoKey, Surd, polyEquationProof, inequalityProof, squareFree, evalCs } from "./algebra.js";
 import { statusOf, statusShows } from "./status.js";
 
 export { Q, P };
@@ -491,19 +491,8 @@ function linearSteps(pl, pr, v, op = "=") {
 // ---------------------------------------------------------------------------
 // Kvadratna enačba
 
-function sqfree(n) {
-  // n = k² · r
-  n = BigInt(n);
-  let k = 1n;
-  let r = n;
-  for (let p = 2n; p * p <= r; p++) {
-    while (r % (p * p) === 0n) {
-      r /= p * p;
-      k *= p;
-    }
-  }
-  return { k, r };
-}
+// n = k² · r (algebra.js: delitelji do 10⁵ in predpomnilnik; brez meje je pri n ≈ 10²⁹ trajalo več sekund)
+const sqfree = squareFree;
 
 // rešitev (−b ± k√r)/den v najkrajši obliki
 function surdSolutions(a, b, D) {
@@ -850,7 +839,7 @@ function solveOneVar(ast, v, opt = {}) {
         graph: graphFor([polyNode(poly), { k: "num", v: 0 }], v, qm.sols),
         verified: chk.ok || !qm.sols.length,
         // poly ima iste ničle kot naloga, razen izločenih (te so v allSols); Sturm prešteje vse realne ničle
-        evidence: equationEvidence(chk.ok || !qm.sols.length, poly, v, allSols, { numericHolds: !!opt.domainOpen }),
+        evidence: equationEvidence(chk.ok || !qm.sols.length, poly, v, allSols, { denoms: opt.denoms, shown: qm.sols }),
       });
     }
     // kvadratna neenačba: ničle + parabola
@@ -947,7 +936,7 @@ function solveOneVar(ast, v, opt = {}) {
     verified: chk.ok,
     // numerične ničle (bisekcija) potrdi Sturmov izrek: če katera manjka (npr. dvojna ničla brez spremembe predznaka),
     // je status »napačno« in nalogo reši AI (AUDIT-001)
-    evidence: equationEvidence(chk.ok, poly, v, allSols, { numericHolds: !!opt.domainOpen }),
+    evidence: equationEvidence(chk.ok, poly, v, allSols, { denoms: opt.denoms, shown: uniq }),
   });
 }
 
@@ -1090,8 +1079,9 @@ function solveRational(ast, v, opt) {
       .join("") || "0";
   const newAst = parse(`${sideText(mulTerms[0])} = ${sideText(mulTerms[1])}`);
   pre.push(step(T("scan.s.mulLcd", { d: lcdTex }), tex(newAst), { note: `/ \\cdot ${lcdTex}`, why: T("scan.w.mulLcd") }));
-  const domainOpen = [...lcd.values()].some(({ f }) => f.degree(v) >= 2);
-  return solveOneVar(newAst, v, { ...opt, pre, orig: { ast, sides: ast.terms, ops: ast.ops }, exclude: excluded, domainOpen });
+  const denoms = [...lcd.values()].filter(({ f }) => f.degree(v) >= 2).map(({ f }) => f.coeffs(v));
+  const domainOpen = denoms.length > 0;
+  return solveOneVar(newAst, v, { ...opt, pre, orig: { ast, sides: ast.terms, ops: ast.ops }, exclude: excluded, domainOpen, denoms });
 }
 
 function hornerTable(cs, r) {
@@ -2203,13 +2193,31 @@ function exactOf(e) {
 }
 const proofSol = (s) => (exactOf(s) ? { s: exactOf(s) } : { num: s.num });
 // enačba z eno neznanko: poly ima iste realne ničle kot naloga (brez izločenih vrednosti), sols so rešitve pred izločanjem
-function equationEvidence(holds, poly, v, sols, { numericHolds = false } = {}) {
+// denoms: imenovalci stopnje ≥ 2 (racionalna enačba), shown: prikazane rešitve. Vsako točno vstavimo v vsak imenovalec:
+// rešitev, pri kateri je imenovalec 0, je napačna (x²/(x² − 2) = 2/(x² − 2) nima rešitve); brez točnih rešitev le numerično.
+function equationEvidence(holds, poly, v, sols, { denoms = null, shown = sols } = {}) {
+  let numericHolds = false;
+  if (denoms?.length) {
+    for (const s of shown) {
+      const x = exactOf(s);
+      if (!x) {
+        numericHolds = true;
+        continue;
+      }
+      try {
+        if (denoms.some((cs) => evalCs(cs, x).sign === 0)) return { holds: false };
+      } catch (err) {
+        if (!(err instanceof AlgebraError)) throw err;
+        numericHolds = true;
+      }
+    }
+  }
   const pe = polyEquationProof(poly.coeffs(v), sols.map(proofSol));
   if (!pe) return { holds, how: "numeric", complete: "numeric" };
   return {
     holds: holds && pe.holds,
     how: pe.exact && !numericHolds ? "exact" : "numeric",
-    complete: pe.complete === true ? "exact" : pe.complete === false ? false : "numeric",
+    complete: pe.complete === true ? "exact" : pe.complete === false ? false : "unknown",
   };
 }
 // neenačba (tudi dvojna): točen dokaz na kritičnih točkah (algebra.js inequalityProof), sicer mreža točk (numerično)
@@ -2278,9 +2286,24 @@ export function parseTask(text) {
   return liftFracs(parse(prep(text)));
 }
 
+// Število z več kot 15 mesti (12345678901234567, 10²³ izpisano) ali več kot 15 veljavnimi mesti: razčlenjevalnik ga
+// zaokroži na double, zato točen račun s tako prebrano vrednostjo ne dokazuje ničesar o nalogi. Lastni reševalnik ga
+// prepusti AI, preverjanje AI odločitev prepusti SymPy (dobi besedilo).
+export function bigLiteral(text) {
+  for (const m of String(text ?? "").matchAll(/\d+(?:[.,]\d+)?/g)) {
+    const [int, frac = ""] = m[0].split(/[.,]/);
+    const whole = int.replace(/^0+/, "");
+    const sig = (whole + frac).replace(/^0+/, "").replace(/0+$/, "");
+    if (whole.length > 15 || sig.length > 15) return true;
+  }
+  return false;
+}
+
 // Glavni vstop. Vrne { ok:false, reason } kadar naloge ne znamo rešiti po korakih (takrat pomaga AI).
+
 export function solve(text, { goal = null, complex = false } = {}) {
   if (unclearNumber(text)) return { ok: false, reason: "parse", goals: [], goal: null, type: "error" };
+  if (bigLiteral(text)) return { ok: false, reason: "unsupported", goals: [], goal: null, type: "big" };
   const info = analyze(text);
   const g = goal && info.goals.includes(goal) ? goal : info.goals[0];
   const base = { goals: info.goals, goal: g ?? null };
