@@ -1,0 +1,96 @@
+// Priprava na test PR 4: tematski zemljevid (server/priprava/teme.js) – izseki → Evklidove teme, obseg testa,
+// pokritost, predznanje; brez AI. Izseki iz testnega nabora test/fixtures/priprava/.
+import test from "node:test";
+import assert from "node:assert/strict";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import { openDb } from "../server/db.js";
+import { createApp } from "../server/app.js";
+import { preberiVir } from "../server/priprava/uvoz.js";
+import { razrezi } from "../server/priprava/izseki.js";
+import { zemljevid, temeObsega, PREDZNANJE } from "../server/priprava/teme.js";
+
+process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
+const SS4 = { curriculum_level: "4. letnik", educational_track: "SREDNJA_SOLA" };
+const vir = (f) => fs.readFileSync(new URL(`./fixtures/priprava/${f}`, import.meta.url));
+const izsekiIz = async (f) => razrezi((await preberiVir("besedilo", vir(f))).strani).map((x, i) => ({ ...x, id: i + 1 }));
+const imena = (z) => z.teme.map((t) => t.ime);
+
+test("zapiski o integralih: teme po vrsti učnega načrta, izseki brez jasne teme ostanejo samo v zapiskih", async () => {
+  const iz = await izsekiIz("mat-integrali.md");
+  const z = zemljevid({ predmet: "MAT" }, iz, SS4);
+  assert.equal(z.iskanje, true);
+  assert.ok(imena(z).includes("Nedoločeni integral") && imena(z).includes("Določeni integral"), imena(z).join(", "));
+  // Vrstni red učnega načrta: nedoločeni pred določenim.
+  assert.ok(imena(z).indexOf("Nedoločeni integral") < imena(z).indexOf("Določeni integral"));
+  // Vsak izsek je natanko enkrat: pri eni temi ali samo v zapiskih.
+  const vsi = [...z.teme.flatMap((t) => t.izseki), ...z.samoVZapiskih].sort((a, b) => a - b);
+  assert.deepEqual(vsi, iz.map((i) => i.id));
+  assert.equal(z.obseg, null);
+  assert.equal(z.pokritost, null);
+  assert.deepEqual(z.predznanje, []);
+});
+
+test("obseg testa iz načrta: pokritost, teme zunaj obsega, predznanje pred prvim sklopom", async () => {
+  const iz = await izsekiIz("mat-integrali.md");
+  const z = zemljevid({ pot: "MAT-SS-4", sklopi: [2] }, iz, SS4);
+  assert.deepEqual(z.obseg.map((t) => t.ime), ["Nedoločeni integral", "Integracija per partes in racionalnih funkcij", "Določeni integral"]);
+  assert.equal(z.pokritost.vseh, 3);
+  assert.equal(z.pokritost.pokrite, z.obseg.filter((t) => t.izsekov > 0).length);
+  assert.ok(z.pokritost.pokrite >= 2);
+  assert.ok(z.teme.filter((t) => t.ime.includes("integral")).every((t) => t.vObsegu));
+  assert.ok(z.teme.filter((t) => !t.ime.includes("integral")).every((t) => !t.vObsegu));
+  // Predznanje: zadnjih PREDZNANJE tem pred sklopom »Integral« (sklop »Odvod«).
+  assert.equal(z.predznanje.length, PREDZNANJE);
+  assert.ok(z.predznanje.every((t) => t.sklop === "Odvod"), JSON.stringify(z.predznanje));
+  assert.equal(z.predznanje.at(-1).ime, "Drugi odvod, prevoj in konveksnost");
+  // Neveljavni sklopi in neznana pot: brez obsega.
+  assert.deepEqual(temeObsega("MAT-SS-4", [99, "x"]), []);
+  assert.deepEqual(temeObsega("NI-POTI", [0]), []);
+});
+
+test("brez ugibanja: druga snov in predmeti brez kazala ostanejo samo v zapiskih; navodilo v zapiskih ni tema", async () => {
+  const zgo = await izsekiIz("zgo-prva-svetovna.md");
+  const z = zemljevid({ predmet: "ZGO" }, zgo, SS4);
+  assert.deepEqual(z.teme, []);
+  assert.equal(z.samoVZapiskih.length, zgo.length);
+  const napad = zemljevid({ predmet: "MAT" }, await izsekiIz("napad.md"), SS4);
+  assert.deepEqual(imena(napad), ["Pitagorov izrek"]);
+  // Fakulteta: iskanje po kazalu tem ni na voljo, vse ostane v zapiskih.
+  const faks = zemljevid({ predmet: "MAT" }, await izsekiIz("mat-integrali.md"), { curriculum_level: "1. letnik", educational_track: "UNIVERZA" });
+  assert.equal(faks.iskanje, false);
+  assert.deepEqual(faks.teme, []);
+});
+
+test("formula pove snov: integral z mejama je določeni integral", async () => {
+  const z = zemljevid({ predmet: "MAT" }, await izsekiIz("star-test.md"), SS4);
+  assert.ok(imena(z).includes("Določeni integral"), imena(z).join(", "));
+  assert.ok(!imena(z).includes("Nedoločeni integral"));
+});
+
+test("API: GET …/priprave/:pid/teme samo za lastnika, z obsegom iz načrta testa", async () => {
+  const store = openDb(":memory:");
+  const app = createApp(store, { scheduler: false, log: { log() {}, info() {}, warn() {}, error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const req = async (method, p, body) => {
+    const r = await fetch(base + p, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+    return { status: r.status, body: await r.json() };
+  };
+  try {
+    const s = (await req("POST", "/api/students", { name: "Eva", settings: { ...SS4, subject: "MAT" } })).body;
+    const p = (await req("POST", `/api/students/${s.id}/priprave`, { naslov: "Integrali", predmet: "MAT" })).body.priprava;
+    const v = await req("POST", `/api/students/${s.id}/priprave/${p.id}/viri`, { besedilo: vir("mat-integrali.md").toString("utf8") });
+    assert.equal(v.status, 201, JSON.stringify(v.body));
+    store.db.prepare("UPDATE priprave SET pot = 'MAT-SS-4', sklopi = '[2]' WHERE id = ?").run(p.id);
+    const r = await req("GET", `/api/students/${s.id}/priprave/${p.id}/teme`);
+    assert.equal(r.status, 200);
+    assert.equal(r.body.pokritost.vseh, 3);
+    assert.ok(r.body.teme.some((t) => t.ime === "Določeni integral" && t.vObsegu && t.izseki.length));
+    const tuj = (await req("POST", "/api/students", { name: "Ana", settings: {} })).body;
+    assert.equal((await req("GET", `/api/students/${tuj.id}/priprave/${p.id}/teme`)).status, 404);
+  } finally {
+    await new Promise((r) => server.close(r));
+    store.db.close();
+  }
+});

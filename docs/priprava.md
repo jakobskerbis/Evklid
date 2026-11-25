@@ -132,6 +132,18 @@ ponovna obdelava ne kliče modela znova; fotografijo prebere znova `?znova=1`, s
 zamenja dobrega prepisa. Izseki iz prepisa imajo stolpec `ai` in v odgovoru oznako `ai_generated`. Vir PDF ostane
 »branje«, dokler ima neprebrane skenirane strani. Test: `test/priprava-branje.test.js`.
 
+### PR 4 (tematski zemljevid, 25. 11. 2026)
+
+`server/priprava/teme.js`, pot `GET …/priprave/:pid/teme`. Brez AI: tema izseka je iskanje po kazalu tem
+(`server/lekcija-za-vprasanje.js` `rankLessons`, ista pravila kot `topicForName`: beseda iz naslova teme, najmanjša
+ocena, prednost pred drugo temo). Najprej začetek besedila izseka, nato naslov razdelka; formule dajo besede
+(`\int` z mejama → določeni integral, `\det` → determinanta …). Izsek brez jasne teme ostane `samoVZapiskih` (ne
+ugibamo). Obseg testa so teme sklopov iz načrta testa (`pot`, `sklopi`); tema iz obsega ima prednost, če ima vsaj 80 %
+ocene najboljše. Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
+`pokritost` (pokrite / vse teme obsega) in `predznanje` (5 tem poti pred prvim sklopom testa, brez trditev o znanju).
+Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
+false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

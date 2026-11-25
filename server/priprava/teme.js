@@ -1,0 +1,112 @@
+// Tematski zemljevid priprave (docs/priprava.md, PR 4): izseki → Evklidove teme, obseg testa, pokritost in predznanje.
+// Brez AI: tema izseka je iskanje po kazalu tem (server/lekcija-za-vprasanje.js, IDF po naslovih, ciljih in lekcijah),
+// isto kot pri »Mojih zapiskih« in šibkih točkah. Izsek, ki se z nobeno temo ne ujema dovolj jasno, ostane »samo v
+// zapiskih« (ne ugibamo). Obseg testa je iz načrta testa (pot in sklopi); brez načrta obsega ni, so samo teme zapiskov.
+// Predznanje: teme iste poti pred prvim sklopom testa (učni načrt gre od lažjega k težjemu); brez trditev o znanju.
+import { getPath, getTopic } from "../curriculum.js";
+import { rankLessons, searchOn } from "../lekcija-za-vprasanje.js";
+
+const MIN_SCORE = 4.5; // kot lessonForQuestion / topicForName
+const MIN_LEAD = 1.2;
+const OBSEG_DELEZ = 0.8; // tema iz obsega testa ima prednost, če ima vsaj 80 % ocene najboljše
+export const PREDZNANJE = 5;
+const IZSEK_ZNAKOV = 400;
+
+// Formula v iskanju: ukazi LaTeX, ki povedo snov, postanejo besede (\\int → integral), ostalo odpade.
+const LATEX_BESEDE = { int: "integral", iint: "integral", oint: "integral", det: "determinanta", lim: "limita", sum: "vsota", sqrt: "koren", log: "logaritem", ln: "logaritem", sin: "kotne funkcije", cos: "kotne funkcije", tan: "kotne funkcije", vec: "vektor", binom: "binomski", prod: "produkt" };
+const brezFormul = (t) =>
+  String(t || "").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g, (f) => {
+    // Integral z mejama je določeni, brez mej nedoločeni.
+    const int = /\\int\s*_/.test(f) ? "določeni integral" : /\\int\b/.test(f) ? "nedoločeni integral" : "";
+    return ` ${int} ${[...new Set([...f.matchAll(/\\([a-z]+)/g)].map((m) => LATEX_BESEDE[m[1]]).filter(Boolean))].join(" ")} `;
+  });
+
+/**
+ * Tema enega izseka ali null. Najprej besedilo izseka (začetek), nato naslov razdelka (»Integrali«), ki velja za vse
+ * izseke razdelka brez jasne lastne teme. obseg: Set id-jev tem testa ali null; tema iz obsega dobi prednost pred
+ * sosednjo temo drugega sklopa z malo boljšo oceno.
+ */
+export function temaIzseka(izsek, settings, obseg = null, predpomnilnik = new Map()) {
+  const iz = temaBesedila(brezFormul(izsek.besedilo).slice(0, IZSEK_ZNAKOV), settings, obseg);
+  if (iz) return iz;
+  const naslov = brezFormul(izsek.naslov).trim();
+  if (!naslov) return null;
+  if (!predpomnilnik.has(naslov)) predpomnilnik.set(naslov, temaBesedila(naslov, settings, obseg));
+  return predpomnilnik.get(naslov);
+}
+
+function temaBesedila(tekst, settings, obseg) {
+  const hits = rankLessons(tekst, settings).slice(0, 8);
+  const [best, second] = hits;
+  if (!best || !best.inTitle || best.score < MIN_SCORE) return null;
+  if (obseg) {
+    const v = hits.find((h) => obseg.has(h.d.id) && h.inTitle && h.score >= best.score * OBSEG_DELEZ);
+    if (v) return v.d.id;
+  }
+  const whole = best.inTitle === best.d.title.size;
+  if (!whole && (best.inTitle === 1 || (second && best.score < second.score * MIN_LEAD))) return null;
+  return best.d.id;
+}
+
+// Teme sklopov poti (sklopi so indeksi sklopov, kot v načrtu testa).
+export function temeObsega(pot, sklopi) {
+  const path = pot ? getPath(pot) : null;
+  if (!path || !Array.isArray(sklopi)) return [];
+  return [...new Set(sklopi)].filter((i) => Number.isInteger(i) && path.units[i]).sort((a, b) => a - b).flatMap((i) => path.units[i].topics);
+}
+
+const temaVen = (id) => {
+  const t = getTopic(id);
+  return t ? { id, ime: t.name, sklop: t.unit, pot: t.path } : null;
+};
+
+/**
+ * Zemljevid priprave iz izsekov ([{ id, naslov, besedilo }], že odšifrirani).
+ * Vrne { iskanje, obseg: [{ id, ime, sklop, izsekov }] | null, pokritost: { pokrite, vseh } | null,
+ *        teme: [{ id, ime, sklop, pot, izseki: [id], vObsegu }], samoVZapiskih: [id izseka], predznanje: [...] }.
+ */
+export function zemljevid({ pot = null, sklopi = null, predmet = null }, izseki, settings = {}) {
+  const obsegTeme = temeObsega(pot, sklopi);
+  const path = pot ? getPath(pot) : null;
+  const st = { ...settings, subject: path?.subject || predmet || settings.subject };
+  const iskanje = searchOn(st) && !!st.subject;
+  const obseg = obsegTeme.length ? new Set(obsegTeme.map((t) => t.id)) : null;
+  const poTemi = new Map();
+  const samoVZapiskih = [];
+  const pp = new Map();
+  for (const i of izseki) {
+    const id = iskanje ? temaIzseka(i, st, obseg, pp) : null;
+    if (!id) {
+      samoVZapiskih.push(i.id);
+      continue;
+    }
+    if (!poTemi.has(id)) poTemi.set(id, []);
+    poTemi.get(id).push(i.id);
+  }
+  // Teme v vrstnem redu učnega načrta (pot, sklop, tema), sicer po imenu.
+  const red = (id) => {
+    const t = getTopic(id);
+    const p = getPath(t.path);
+    const ui = t.unitIndex ?? 0;
+    return [t.path, ui, p ? p.units[ui].topics.findIndex((x) => x.id === id) : 0];
+  };
+  const primerjaj = (a, b) => {
+    const [x, y] = [red(a), red(b)];
+    return x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : x[1] - y[1] || x[2] - y[2];
+  };
+  const teme = [...poTemi.keys()].sort(primerjaj).map((id) => ({ ...temaVen(id), izseki: poTemi.get(id), vObsegu: !!obseg?.has(id) }));
+  let predznanje = [];
+  if (path && obsegTeme.length) {
+    const vse = path.units.flatMap((u) => u.topics);
+    const prva = vse.findIndex((t) => obseg.has(t.id));
+    predznanje = vse.slice(Math.max(0, prva - PREDZNANJE), prva).map((t) => temaVen(t.id));
+  }
+  return {
+    iskanje,
+    obseg: obseg ? obsegTeme.map((t) => ({ ...temaVen(t.id), izsekov: poTemi.get(t.id)?.length || 0 })) : null,
+    pokritost: obseg ? { pokrite: obsegTeme.filter((t) => poTemi.has(t.id)).length, vseh: obsegTeme.length } : null,
+    teme,
+    samoVZapiskih,
+    predznanje,
+  };
+}
