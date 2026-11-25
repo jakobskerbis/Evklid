@@ -82,11 +82,11 @@ test("povezave C3: graf meritev izpiše formulo iz lekcije (prvih 5 poskusov)", 
   assert.match(read("lab-optika.js"), /formula: "1\/<i>f<\/i> = 1\/<i>a<\/i> \+ 1\/<i>b<\/i>"/);
 });
 
-test("povezave C3: druga skupina formul (gostota, vzgon, tlak, sila na vodnik)", () => {
+test("povezave C3: druga skupina formul (gostota, vzgon, tlak, sila na vodnik), oznake kot v poskusu", () => {
   const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
   const sile = read("lab-sile.js");
-  assert.match(sile, /formula: "<i>m<\/i> = <i>ρ<\/i> · <i>V<\/i>"/);
-  assert.match(sile, /formula: "<i>F<\/i><sub>vz<\/sub> = <i>ρ<\/i><sub>t<\/sub> · <i>g<\/i> · <i>V<\/i>"/);
-  assert.match(sile, /formula: "<i>p<\/i> = <i>ρ<\/i> · <i>g<\/i> · <i>h<\/i>"/);
-  assert.equal((read("lab-magnetizem.js").match(/formula: "<i>F<\/i> = <i>I<\/i> · <i>l<\/i> · <i>B<\/i>"/g) || []).length, 2);
+  assert.ok(sile.includes('formula: "<i>m</i> = ρ · <i>V</i>"'));
+  assert.ok(sile.includes('formula: "<i>F</i><sub>vzg</sub> = ρ<sub>tek</sub> · <i>g</i> · <i>V</i><sub>izp</sub>"'));
+  assert.ok(sile.includes('formula: "<i>p</i> = ρ · <i>g</i> · <i>h</i> = ρ<sub>v</sub> · <i>g</i> · Δ<i>h</i>"'));
+  assert.equal(read("lab-magnetizem.js").split('formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>"').length - 1, 2);
 });
