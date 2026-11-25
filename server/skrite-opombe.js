@@ -4,7 +4,7 @@ export const HIDDEN_TAGS = ["kontekst_pole", "preverjen_racun", "povzetek_pogovo
 const HEADS = HIDDEN_TAGS.map((t) => `<${t}>`);
 export const isHiddenNote = (text) => typeof text === "string" && HEADS.some((h) => text.startsWith(h));
 
-// Učenčevo besedilo (vpisano, potrjen prepis rokopisa, tapnjena izbira) ne sme nositi oznak skritih opomb: model bi
+// Učenčevo besedilo v klepetu (vpisano ali prilepljeno, tudi tapnjena izbira) ne sme nositi oznak skritih opomb: model bi
 // ponarejeno »<preverjen_racun>…« imel za zaupanja vredno opombo aplikacije, vmesnik pa bi sporočilo skril (IN-12).
 // Oznako spremenimo v »‹preverjen_racun›«: učenec še vidi, kaj je napisal, model pa ne dobi oznake. Ujame tudi
 // zapise z velikimi črkami, presledki, polnoširinskimi oklepaji in nevidnimi znaki v oznaki. Nevidne znake odstranimo
