@@ -259,10 +259,10 @@ function valueIssue(answer, p) {
 
 // Znan odvod (presolve) proti zadnjemu »f'(x) = …« ali »y' = …« v odgovoru (AUDIT-063): primerjava vrednosti v več
 // točkah (brez SymPy). Prej se je končna vrednost preverjala le pri enačbah: »Odvajaj x³« → »f'(x) = 2x« je šlo mimo.
-const DERIV_LHS = /^(?:[a-zA-Z]\s*(?:'|\^\{?\\prime\}?|′)+\s*\(\s*x\s*\)|y\s*(?:'|\^\{?\\prime\}?|′)+|\\frac\s*\{\s*d\s*[a-zA-Z]?\s*\}\s*\{\s*dx\s*\}(?:\s*\\left)?\s*\(?.*)$/;
+const DERIV_LHS = /^(?:[a-zA-Z]\s*(?:'|\^\{?\\prime\}?|′)(?!\s*(?:'|\^|′))\s*\(\s*x\s*\)|y\s*(?:'|\^\{?\\prime\}?|′)(?!\s*(?:'|\^|′))|\\frac\s*\{\s*d\s*[a-zA-Z]?\s*\}\s*\{\s*dx\s*\}(?:\s*\\left)?\s*\(?.*)$/; // le prvi odvod (f'' je drugi)
 const derivFn = (tex) => {
   try {
-    const f = compile(parse(calcText(prep(texToText(tex)), { comma: false })));
+    const f = compile(parse(calcText(prep(texToText(String(tex).replace(/\\(?:mathrm|operatorname|text)\s*\{\s*e\s*\}/g, "e"))), { comma: false })));
     return (x) => {
       const v = f({ x });
       return typeof v === "number" ? v : NaN;
@@ -282,25 +282,31 @@ function derivativeIssue(answer, p) {
       if (/\\approx|≈|\\pm|±/.test(tex)) continue;
       const parts = tex.split("=");
       if (parts.length < 2 || !DERIV_LHS.test(parts[0].trim())) continue;
-      const rhs = parts.at(-1).trim().replace(/[.,;]$/, "");
-      if (rhs && /x|\d/.test(rhs)) last = { tex: tex.trim(), rhs };
+      // »f'(x) = 0« (iskanje stacionarnih točk) ni odvod; v verigi »f'(x) = 3x^2 - 3 = 0« šteje vsak del razen 0
+      const rhs = parts.slice(1).map((x) => x.trim().replace(/[.,;]$/, "")).filter((x) => x && /x|\d/.test(x) && !/^0$/.test(x));
+      if (rhs.length) last = { tex: tex.trim(), rhs };
     }
   }
   if (!last) return null;
-  const got = derivFn(last.rhs);
-  if (!got) return { checked: 0, issue: null };
   const xs = [0.37, 1.3, 2.1, -0.8, 3.7];
-  let n = 0;
-  for (const x of xs) {
-    const a = want(x);
-    const b = got(x);
-    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
-    n++;
-    if (Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) {
-      return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$` };
+  // Vrednost enaka odvodu v vseh točkah: »match«; v kateri točki drugačna: »diff«; ni mogoče prebrati: null.
+  const judge = (rhs) => {
+    const got = derivFn(rhs);
+    if (!got) return null;
+    let n = 0;
+    for (const x of xs) {
+      const a = want(x);
+      const b = got(x);
+      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+      n++;
+      if (Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return "diff";
     }
-  }
-  return { checked: n ? 1 : 0, issue: null };
+    return n ? "match" : null;
+  };
+  const verdicts = last.rhs.map(judge);
+  if (verdicts.includes("match")) return { checked: 1, issue: null };
+  if (!verdicts.length || verdicts.some((v) => v === null)) return { checked: 0, issue: null };
+  return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$` };
 }
 
 /**

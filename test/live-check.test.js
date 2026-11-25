@@ -1164,3 +1164,13 @@ test("AUDIT-063: napačen odvod dobi issue, pravilen in učenčev zapis ne", () 
     assert.equal(!!f.issue, bad, `${q} | ${a} | ${f.issue}`);
   }
 });
+
+test("AUDIT-063 (pregled): drugi odvod, f'(x) = 0 in \\mathrm{e} niso napačen odvod", () => {
+  const R = String.raw;
+  const q = "Odvajaj x^3 - 3x";
+  for (const a of [R`$f'(x) = 3x^2 - 3$. Drugi odvod je $f''(x) = 6x$.`, R`$f'(x) = 3x^2 - 3$. Stacionarne točke: $f'(x) = 0$.`, R`$f'(x) = 3x^2 - 3 = 0$, torej $x = \pm 1$.`, "$f'(x) = 3x^2 - 3$\nPostavimo $f'(x) = 0$ in rešimo."]) {
+    assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+  }
+  assert.equal(codeFindings(R`$f'(x) = 3\mathrm{e}^{3x}$`, presolve("Odvajaj f(x) = e^{3x}", { first: true }), "").issue, null);
+  assert.ok(codeFindings(R`$f'(x) = 3x^2$`, presolve(q, { first: true }), q).issue, "napačen odvod ostane ujet");
+});
