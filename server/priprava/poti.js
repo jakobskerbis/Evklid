@@ -9,6 +9,7 @@ import { cleanText } from "../settings.js";
 import { danIzbrisa } from "./ciscenje.js";
 import { uvoziVNiti, preberiVir, NapakaUvoza } from "./uvoz.js";
 import { shraniIzseke, razrezi, VRSTE } from "./izseki.js";
+import { zemljevid } from "./teme.js";
 import { readNotePhoto, readReserveUsd, pageLimit, pagesUsed, takePage, givePage, nextMonth } from "../zapiski.js";
 import { nujnoZa } from "../nujno.js";
 import { AI_JSON } from "../ai-oznaka.js";
@@ -597,6 +598,30 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const rows = db.prepare(`SELECT * FROM priprava_izseki WHERE ${where.join(" AND ")} ORDER BY vir_id, zaporedje`).all(...args);
     uporabljena(p);
     res.set("Cache-Control", "no-store").json({ izseki: rows.map(izsekVen) });
+  });
+
+  // Tematski zemljevid priprave (PR 4, teme.js): izseki → Evklidove teme, obseg testa iz načrta (pot, sklopi),
+  // pokritost obsega z zapiski in predznanje. Brez AI; računa se sproti iz trenutnih izsekov.
+  // Zadnji izračuni (ključ: izseki, načrt, raven), da ponovno odpiranje ne računa znova.
+  const zemljevidi = new Map();
+  app.get("/api/students/:id/priprave/:pid/teme", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    const settings = typeof s.settings === "string" ? jsonIz(s.settings, {}) : s.settings || {};
+    const sled = db.prepare("SELECT COUNT(*) AS n, MAX(id) AS m FROM priprava_izseki WHERE priprava_id = ? AND student_id = ?").get(p.id, s.id);
+    const kljuc = JSON.stringify([p.id, sled.n, sled.m, p.pot, p.sklopi, p.predmet, settings?.subject, settings?.curriculum_level, settings?.educational_track, settings?.school_system]);
+    uporabljena(p);
+    if (zemljevidi.has(kljuc)) return res.set("Cache-Control", "no-store").json(zemljevidi.get(kljuc));
+    const izseki = db
+      .prepare("SELECT id, naslov, besedilo FROM priprava_izseki WHERE priprava_id = ? AND student_id = ? ORDER BY vir_id, zaporedje")
+      .all(p.id, s.id)
+      .map((r) => ({ id: r.id, naslov: r.naslov == null ? null : unseal(r.naslov), besedilo: unseal(r.besedilo) }));
+    const z = await zemljevid({ pot: p.pot, sklopi: sklopiIz(p.sklopi), predmet: p.predmet }, izseki, settings || {});
+    zemljevidi.set(kljuc, z);
+    while (zemljevidi.size > 50) zemljevidi.delete(zemljevidi.keys().next().value);
+    res.set("Cache-Control", "no-store").json(z);
   });
 
   app.delete("/api/students/:id/priprave/:pid/viri/:vid", (req, res) => {
