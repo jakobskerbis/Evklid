@@ -9,6 +9,7 @@ import { solve, analyze, prep, tex as exprTex, parseTask, izvorOznak, oznakaGraf
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
+import { STATUSES } from "./status.js";
 import { plottableFromText } from "../graph/math.js";
 import { izrisi } from "../mat/izris.js";
 
@@ -891,7 +892,7 @@ async function solveAi() {
     S.method = 0;
     S.shown = 1;
     S.ai = null;
-    remember(S.result);
+    if (S.result.status !== "wrong") remember(S.result);
     render();
   } catch (err) {
     if (seq !== aiSeq || S.mode !== "solution") return;
@@ -919,6 +920,9 @@ function fromAi(sol) {
     answer: { tex: sol.answer_tex },
     methods: sol.methods.map((m, i) => ({ id: `ai${i}`, name: m.name, steps: m.steps.map((s) => ({ title: s.title, tex: s.tex, whyText: s.why })) })),
     verified: !!sol.verified,
+    // status s strežnika (public/scan/status.js); starejši strežnik pošlje samo verified
+    status: STATUSES.includes(sol.status) ? sol.status : sol.verified ? "verified" : "unverified",
+    attempts: Number.isInteger(sol.attempts) ? sol.attempts : 1, // klici AI (samodejne ponovitve na strežniku)
     graph: graphOfProblem(sol.problem_tex, S.text),
   };
 }
@@ -939,6 +943,9 @@ function graphOfProblem(tex, text) {
   return null;
 }
 
+const STATUS_CLASS = { verified: "ok", partial: "mid", numeric: "mid", unverified: "warn", wrong: "bad" };
+const STATUS_ICON = { verified: "badge-check", partial: "circle-check", numeric: "circle-check", unverified: "circle-help", wrong: "circle-x" };
+
 function renderSolution(box) {
   const r = S.result;
   const head = `
@@ -958,14 +965,30 @@ function renderSolution(box) {
   const steps = m.steps;
   const shown = Math.min(S.shown, steps.length);
   const izvori = izvorOznak(steps, r.problemTex);
-  const badge = r.verified
-    ? `<span class="scan-badge ok" title="${esc(t(r.ai ? "scan.aiResultTip" : "scan.resultTip"))}">${icon("badge-check")}${esc(r.ai ? t("scan.aiResultVerified") : t("scan.verified"))}</span>`
-    : `<span class="scan-badge warn">${icon("info")}${esc(t("scan.aiUnverified"))}</span>`;
+  // Pet statusov (public/scan/status.js); razlaga je vidno besedilo (na telefonu ni namigov ob prehodu z miško).
+  const status = STATUSES.includes(r.status) ? r.status : r.verified ? "verified" : "unverified";
+  // Pri »napačno« brez oznake »Rešil Evklid AI« (bi se brala kot »AI je rešil: napačno«); razlaga pove, da gre za odgovor AI.
+  const badge = `${r.ai && status !== "wrong" ? `<span class="scan-badge ai">${icon("sparkles")}${esc(t("scan.st.ai"))}</span>` : ""}<span class="scan-badge ${STATUS_CLASS[status]}" data-status="${status}">${icon(STATUS_ICON[status])}${esc(t(`scan.st.${status}`))}</span>`;
+  const tipKey = status === "wrong" && r.attempts > 1 ? "scan.st.wrongTipRetried" : `scan.st.${status}Tip`;
+  const note = `<p class="scan-status-note">${esc(t(tipKey))}${r.ai && status !== "wrong" && status !== "unverified" ? ` ${esc(t("scan.st.aiSteps"))}` : ""}</p>`;
+  if (status === "wrong") {
+    // Napačna rešitev se ne pokaže kot odgovor (ne rezultat ne koraki). Strežnik je že sam poskusil večkrat
+    // (server/scan.js SOLVE_ATTEMPTS), zato učenca ne prosimo za nov poskus: ostane inštruktor.
+    box.innerHTML = `${head}
+    <section class="card scan-answer" aria-label="${esc(t("scan.answer"))}" data-ai-generated="true">
+      <div class="scan-answer-head"><span class="scan-label">${esc(t("scan.answer"))}</span><span class="scan-badges">${badge}</span></div>
+      ${note}
+      <div class="scan-actions"><button type="button" class="secondary" data-act="new">${icon("scan-line")}${esc(t("scan.new"))}</button><button type="button" class="primary" data-act="ask">${icon("message-circle")}${esc(t("scan.askAll"))}</button></div>
+    </section>
+    ${S.ai?.loading ? `<div class="card scan-ai-state"><span class="spinner"></span><p>${esc(t("scan.solvingAi"))}</p></div>` : S.ai?.error ? `<p class="scan-err">${esc(S.ai.error)}</p>` : ""}`;
+    bindSolution(box);
+    return;
+  }
   box.innerHTML = `${head}
     <section class="card scan-answer" aria-label="${esc(t("scan.answer"))}"${r.ai ? ' data-ai-generated="true"' : ""}>
-      <div class="scan-answer-head"><span class="scan-label">${esc(t("scan.answer"))}</span>${badge}</div>
+      <div class="scan-answer-head"><span class="scan-label">${esc(t("scan.answer"))}</span><span class="scan-badges">${badge}</span></div>
       <div class="scan-answer-tex">${r.answer.key ? `<p>${esc(t(r.answer.key))}</p>` : ""}${answerTex(r.answer.tex)}</div>
-      ${r.answer.approx ? `<div class="scan-approx">${math(r.answer.approx)}</div>` : ""}${r.ai && aio ? aio.opombaHtml(D.getStudent()?.settings, "resitev") : ""}
+      ${r.answer.approx ? `<div class="scan-approx">${math(r.answer.approx)}</div>` : ""}${status === "verified" && !r.ai ? "" : note}${r.ai && aio ? aio.opombaHtml(D.getStudent()?.settings, "resitev") : ""}
     </section>
     ${r.methods.length > 1 ? `<div class="scan-methods"><span class="scan-label">${esc(t("scan.method"))}</span><div class="seg" role="tablist">${r.methods.map((mm, i) => `<button type="button" role="tab" data-method="${i}" class="${i === S.method ? "active" : ""}" aria-selected="${i === S.method}">${esc(mm.name || t(`scan.m.${mm.id}`))}</button>`).join("")}</div></div>` : ""}
     <section class="scan-steps" aria-label="${esc(t("scan.steps"))}"${r.ai ? ' data-ai-generated="true"' : ""}>

@@ -19,7 +19,7 @@ const OLD = LEGACY.map((l) => new RegExp(l.match || l.slug, "i"));
 // Prejšnje ime repozitorija na GitHubu je v brand.json → legacy[].repo.
 const ALLOW = [];
 const SKIP_FILES = new Set(["brand.json", "test/ime.test.js", "scripts/preimenuj.js"]);
-const SKIP_DIRS = new Set([".git", ".claude", "node_modules", "data", "vendor"]);
+const SKIP_DIRS = new Set([".git", ".claude", "node_modules", "data", "vendor", ".lake"]);
 const TEXT = /\.(js|cjs|mjs|json|md|html|css|bat|cmd|command|yaml|yml|txt|svg|webmanifest|py|csv)$|^(Dockerfile|\.env\.example|\.gitattributes)$/;
 
 function* walk(dir) {

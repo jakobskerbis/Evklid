@@ -182,8 +182,9 @@ const CONFIG = "evklid.config";
 // zgodovina skenerja (scan.), zapis postopka (work.), kalkulatorja (graph., sci.), ogledani cilji (goalSeen.),
 // opomniki urnika (schedule…), točke na lastnih polah (ours.), pozdrav ob novem letniku (levelup.),
 // zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js),
-// meritve v laboratoriju (lab.meritve.<profil>.<poskus>, public/sim/lab.js → shramba).
-const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|lab\.meritve\.|zadnji-zaslon$|zadnji-posnetek$)/;
+// meritve v laboratoriju (lab.meritve.<profil>.<poskus>, public/sim/lab.js → shramba) in najboljši rezultati
+// maturitetnega poskusa (lab.matura.<profil>, public/sim/lab-matura.js).
+const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|lab\.meritve\.|lab\.matura\.|zadnji-zaslon$|zadnji-posnetek$)/;
 // Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
 // priporočilna koda iz povezave, koda vabila v pilot (public/vabilo.js), izbrani profil.
 const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref", "evklid.vabilo"]);
@@ -217,7 +218,7 @@ export function offlineBootApi(url, opts = {}) {
 // zgodovina skenerja, neposlani odgovori, kalkulatorja, zapisi postopka pri nalogah in meritve v laboratoriju.
 export function deviceData(ids = []) {
   const own = new Set(ids.map(String));
-  const out = { scanner_history: {}, offline_answers: {}, calculator: {}, task_work: {}, lab_measurements: {} };
+  const out = { scanner_history: {}, offline_answers: {}, calculator: {}, task_work: {}, lab_measurements: {}, lab_matura: {} };
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
@@ -233,6 +234,9 @@ export function deviceData(ids = []) {
       // Meritve v laboratoriju: evklid.lab.meritve.<profil>.<poskus> (public/sim/lab.js → shramba).
       const l = /^evklid\.lab\.meritve\.([^.]+)\.(.+)$/.exec(k);
       if (l && own.has(l[1])) (out.lab_measurements[l[1]] ||= {})[l[2]] = read(k, null);
+      // Najboljši rezultati maturitetnega poskusa: evklid.lab.matura.<profil> (public/sim/lab-matura.js).
+      const mt = /^evklid\.lab\.matura\.([^.]+)$/.exec(k);
+      if (mt && own.has(mt[1])) out.lab_matura[mt[1]] = read(k, null);
     }
   } catch {}
   return out;
@@ -275,7 +279,7 @@ function dropDrafts(re) {
 // Izbris enega profila: pobrišejo se njegovi podatki na napravi (paket, vrsta, skener, kalkulator, cilji, meritve v laboratoriju …).
 export function clearProfile(sid) {
   const id = String(sid);
-  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|offline\\.limit|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup|lab\\.meritve)\\.${id}\\.`);
+  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|offline\\.limit|scan|graph|sci|goalSeen|lab\\.matura)\\.${id}$|^evklid\\.(ours|levelup|lab\\.meritve)\\.${id}\\.`);
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));

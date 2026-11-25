@@ -5,7 +5,7 @@ import { preveriRacun } from "../lab.js";
 import { naklon } from "../lab-model-optika.js";
 
 const RAD = Math.PI / 180;
-const alfa = (r) => stevilo(celica(r, /^α/));
+export const alfa = (r) => stevilo(celica(r, /^α/));
 const beta = (r) => stevilo(celica(r, /^β/));
 // Pravilno izmerjen lom (od vpadne pravokotnice): iz zraka v snov je β < α, iz snovi v zrak β > α. Kot od ploskve
 // (90° − kot, lab-model-optika.js → odcitaj) obrne neenakost, zato taka vrstica ne šteje.

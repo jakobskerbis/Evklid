@@ -3,7 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, snell, mejniKot, fresnel, sledi, naklon, slika, nejasnost, fIzMeritev, POENOSTAVITVE_OPTIKA,
+  LomBench, LecaBench, SNOVI, NX, DISK, KLOP, LECE, N_ZRAK, snell, mejniKot, fresnel, sledi, naklon, slika, nejasnost, fIzMeritev, POENOSTAVITVE_OPTIKA,
 } from "../public/sim/lab-model-optika.js";
 
 const near = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol, `${msg}: ${a} ni ${b} ± ${tol}`);
@@ -105,8 +105,46 @@ test("mistakes: laser off the centre changes the reading; measuring from the sur
   assert.ok(Math.max(...p) - Math.min(...p) > 0.3, "od ploskve razmerje ni stalno");
 });
 
+// Neznana snov X (maturitetni poskus): n iz semena (NX = 1,42–1,62), v sledenju žarkov enaka kot druge trdne snovi.
+test("unknown material X: seeded n, refraction both ways, critical angle and total internal reflection like a solid", () => {
+  const ns = new Set();
+  for (let seed = 1; seed <= 40; seed++) {
+    const b = new LomBench({ seed });
+    ns.add(b.nX);
+    b.snov = "x";
+    assert.equal(b.n, b.nX);
+    assert.ok(b.nX >= NX[0] && b.nX <= NX[1]);
+    const n = b.nX;
+    // iz zraka v snov X (Snell) in iz snovi X v zrak
+    near(sledi({ snov: "x", alfa: 30, n }).lom.kot, snell(N_ZRAK, n, 30), 1e-6, `zrak → X ${seed}`);
+    near(sledi({ snov: "x", smer: "snov", alfa: 25, n }).lom.kot, snell(n, N_ZRAK, 25), 1e-6, `X → zrak ${seed}`);
+    near(sledi({ snov: "x", alfa: 40, n }).odboj.kot, 40, 1e-6, "odboj");
+    // mejni kot: tik pod njim se lomi, nad njim popolni odboj
+    const mk = mejniKot(n);
+    assert.ok(sledi({ snov: "x", smer: "snov", alfa: mk - 0.3, n }).lom, `pod mejnim kotom ${mk}`);
+    assert.equal(sledi({ snov: "x", smer: "snov", alfa: mk + 0.3, n }).lom, null, `nad mejnim kotom ${mk}`);
+    b.smer = "snov";
+    b.laser = true;
+    b.nastavi(Math.ceil(mk + 1));
+    assert.equal(b.odcitaj().popolni, true);
+    // naklon iz meritev učenca: 1/n ± 2 %
+    near(naklon(serija(seed, { snov: "x" })) * n, 1, 0.02, `naklon X ${seed}`);
+  }
+  assert.ok(ns.size > 30, "različna semena, različne snovi");
+  assert.throws(() => sledi({ snov: "x", alfa: 30 }), /potrebuje lomni količnik/);
+  // Snov X ne spremeni drugih naključnih zaporedij: odčitki akrila pri istem semenu so neodvisni od izbire snovi prej.
+  const a = new LomBench({ seed: 11 }), c = new LomBench({ seed: 11 });
+  c.snov = "x";
+  c.snov = "pmma";
+  for (const k of [a, c]) Object.assign(k, { laser: true });
+  a.nastavi(35);
+  c.nastavi(35);
+  assert.deepEqual(a.odcitaj(), c.odcitaj());
+});
+
 test("deterministic seeds", () => {
   assert.deepEqual(serija(7).map((p) => p[2]), serija(7).map((p) => p[2]));
+  assert.equal(new LomBench({ seed: 7 }).nX, new LomBench({ seed: 7 }).nX);
   const a = new LecaBench({ seed: 9 }), b = new LecaBench({ seed: 9 });
   assert.deepEqual(a.fPravi, b.fPravi);
   assert.deepEqual(a.odcitaj(), b.odcitaj());
