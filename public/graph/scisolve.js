@@ -7,8 +7,8 @@ import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prep
 import { antiderivativeAst } from "./calculus.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
 import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
-import { polyRootsMult, polyRootsExact } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
-import { exactPolyIn, zeroAtExact } from "./cas.js";
+import { polyRootsMult, polyRootsExact, polyRootsSym } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
+import { exactPolyIn, symbolPolyIn, zeroAtExact } from "./cas.js";
 import { walk, fromTex } from "./math.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE] gosto,
@@ -304,6 +304,14 @@ function polyRootsOf(L, R, v, scope, run, unit = "rad") {
     let rs = null;
     const fe = exactPolyIn(node, ZERO_NODE, scope, v);
     if (fe && fe.length > 1) rs = polyRootsExact(fe)?.roots || null;
+    // koeficienti s π ali e: razcep nad ℚ[π, e] (cas.js), ničle faktorjev pri π na 32 mest (AUDIT-044)
+    if (!rs) {
+      const sp = symbolPolyIn(node, ZERO_NODE, scope, v);
+      if (sp) {
+        rs = polyRootsSym(sp);
+        if (rs) exactAll = false;
+      }
+    }
     if (!rs) {
       exactAll = false;
       const bp = ballPoly(node, v, val);
@@ -322,7 +330,7 @@ function polyRootsOf(L, R, v, scope, run, unit = "rad") {
     for (const r of rs) {
       const same = all.find((q) => sameRoot(q, r));
       if (same) same.m += r.m * m;
-      else all.push({ re: r.re, im: r.im, m: r.m * m, exact: !!r.exact, lin: !!r.lin, qex: !!r.qex, form: r.form, ver: r.ver, vk: r.vk });
+      else all.push({ ...r, m: r.m * m, exact: !!r.exact }); // z oznakami unc, err, qex
     }
   }
   return finish(all, null, exactAll);
@@ -735,7 +743,9 @@ export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) 
     if (m === 1) return `${v}_{${k}}`;
     return m <= 3 ? `${v}_{${Array.from({ length: m }, (_, t) => k + t).join(",")}}` : `${v}_{${k},\\ldots,${k + m - 1}}`;
   };
-  const tag = (i) => (!r.exact && ms[i] > 1 ? `\\;(\\text{${multText(ms[i]).replace(/[{}\\$&#%_^~]/g, "")}})` : "");
+  // nepotrjena (številsko združena) ničla: brez oznake kratnosti
+  const unsure = (i) => (i < r.roots.length ? r.runc?.[i] : (r.cerr?.[i - r.roots.length] || 0) !== 0);
+  const tag = (i) => (!r.exact && ms[i] > 1 && !unsure(i) ? `\\;(\\text{${multText(ms[i]).replace(/[{}\\$&#%_^~]/g, "")}})` : "");
   const dec = decimalsFor(r.roots);
   const decAll = decimalsFor([...r.roots, ...(r.complex || []).map((z) => z[0])]);
   if (r.exact)

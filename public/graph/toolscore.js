@@ -345,10 +345,10 @@ function bigRatio(a, b) {
 }
 // Newtonovi koraki za realno ničlo enostavnega celoštevilskega polinoma t, s točnim ostankom (z je točen ulomek):
 // ničla na ~1 ulp tudi pri bližnjih ničlah (1 in 1,000001), da jo nato prepoznamo kot ulomek
-function exactNewton(t, z) {
+function exactNewton(t, z, steps = 4) {
   const dt = derivB(t);
   const n = t.length - 1;
-  for (let k = 0; k < 4; k++) {
+  for (let k = 0; k < steps; k++) {
     if (!Number.isFinite(z)) return z;
     const [num, den] = dyadic(z);
     let s = 0n;
@@ -471,7 +471,7 @@ function mergeClusters(c, zs, rad = 0.05, r = c.map((x) => 2 ** -53 * Math.abs(x
     const z = newton(dm, cen, 30);
     let ok = C.abs(C.sub(z, cen)) < rad * Math.max(1, C.abs(cen));
     for (let j = 0; j < g.length - 1 && ok; j++) ok = indistinct(c, r, j, z);
-    if (ok) out.push({ z, m: g.length });
+    if (ok) out.push({ z, m: g.length, unc: true }); // kratnost le »neločljivo od«: v zapisu ≈ brez oznake
     else if (rad > 1e-9) out.push(...mergeClusters(c, g, rad / 10, r));
     else out.push(...g.map((w) => ({ z: newton(c, w), m: 1 })));
   }
@@ -942,6 +942,44 @@ function radicalForm(P, x) {
     }
   }
   return null;
+}
+
+/**
+ * Ničle polinoma, razstavljenega nad ℚ[π, e] (cas.js symbolPolyIn: [{ terms, m, sym }], terms od najvišje potence,
+ * vsak koeficient [{ n, d, pi, e }]). Faktorji so brez kvadratov in med seboj tuji, zato ima vsak enostavne ničle s
+ * kratnostjo m. π in e vstavimo na 32 mest (ulomek) in ničle iščemo kot pri točni poti (Sturm za realne, točen Newton
+ * za kompleksne): napaka vstavitve (~10⁻³²) premakne enostavne ničle zanemarljivo. Vrne [{ re, im, m }] ali null.
+ */
+export function polyRootsSym(factors) {
+  const PI = [314159265358979323846264338327950n, 10n ** 32n];
+  const E = [271828182845904523536028747135266n, 10n ** 32n];
+  const found = [];
+  for (const { terms, m, sym } of factors) {
+    const coef = terms.map((ts) =>
+      ts.reduce(
+        (acc, t) => {
+          const num = t.n * PI[0] ** BigInt(t.pi) * E[0] ** BigInt(t.e);
+          const den = t.d * PI[1] ** BigInt(t.pi) * E[1] ** BigInt(t.e);
+          return [acc[0] * den + num * acc[1], acc[1] * den];
+        },
+        [0n, 1n],
+      ),
+    );
+    const L = coef.reduce((l, [, d]) => (l * d) / bGcd(l, d), 1n);
+    const F = primB(coef.map(([p, q]) => (p * L) / q).reverse());
+    if (F.length < 2) continue;
+    const part = [];
+    solveSquarefree(F, m, part);
+    for (const r of part) {
+      // ničla faktorja s π ni ulomek (ulomek je le ničla vstavitve π ≈ 32 mest): realna, a ne točna
+      if (sym && r.exact) found.push({ z: r.z, m: r.m, real: true });
+      else found.push(r);
+    }
+  }
+  const out = pairUp(found);
+  const n = factors.reduce((s, f) => s + f.m * (f.terms.length - 1), 0);
+  if (!out || out.reduce((s, r) => s + r.m, 0) !== n) return null;
+  return out.sort((x, y) => x.re - y.re || x.im - y.im);
 }
 
 /** Ničle polinoma s koeficienti od najvišje potence. Vrne [[re, im], …], vsako tolikokrat, kolikor je kratna. */

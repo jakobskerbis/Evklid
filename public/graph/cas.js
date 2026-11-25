@@ -449,7 +449,7 @@ function rat0(node, ctx) {
     case "num": {
       if (!Number.isInteger(node.v)) ctx.dec = true;
       try {
-        return new R(P.num(node.raw ? qOfText(node.raw) : Q.of(node.v)));
+        return new R(P.num(node.raw ? qOfText(node.raw) : ctx.longDec ? qOfLiteral(node.v) : Q.of(node.v)));
       } catch {
         throw fail("unsupported");
       }
@@ -525,6 +525,17 @@ function rat0(node, ctx) {
     default:
       if (ctx.ext) return ctx.ext(node, ctx); // 3. faza: koreni, kotne funkcije, logaritmi (casalg.js)
       throw fail("unsupported");
+  }
+}
+// vpisano število kot točen ulomek: do 9 decimalk kot Q.of, sicer do 15 veljavnih mest (toliko jih double
+// zapiše točno, 883,858272900516), nikoli izračunan približek (0,1 + 0,2 = 0,30000000000000004 ima 17 mest)
+function qOfLiteral(v) {
+  try {
+    return Q.of(v);
+  } catch (e) {
+    const m = /^(-?)(\d+)\.(\d+)$/.exec(String(v));
+    if (!m || (m[2].replace(/^0+/, "") + m[3]).replace(/^0+/, "").length > 15) throw e;
+    return new Q(BigInt(m[1] + m[2] + m[3]), 10n ** BigInt(m[3].length));
   }
 }
 // točen ulomek iz vpisanega besedila števila (166381621938133156, 1,0000000001)
@@ -902,6 +913,41 @@ export function exactPolyIn(L, Rn, scope, v, ms = LIVE_MS) {
         out.push({ n: q.n, d: q.d });
       }
       return out;
+    });
+  } catch {
+    return null;
+  } finally {
+    deadline = saved;
+  }
+}
+
+/**
+ * Kot exactPolyIn, a s π in e kot simboloma: L − R ∈ ℚ[π, e][v]. Vrne koeficiente od najvišje potence, vsak kot
+ * seznam členov [{ n, d, pi, e }] (n/d·π^pi·e^e), ali null. Za AUDIT-044 (toolscore polyRootsSym).
+ */
+export function symbolPolyIn(L, Rn, scope, v, ms = 800) {
+  const saved = deadline;
+  try {
+    deadline = Date.now() + ms;
+    return withLimit(10n ** 2000n, () => {
+      const ctx = { scope, dens: [], dec: false, longDec: true }; // vpisane decimalke do 15 mest točno
+      const a = rat(L, ctx);
+      const b = rat(Rn, ctx);
+      if (ctx.dens.length || !a.d.isConst() || !b.d.isConst()) return null;
+      const N = a.n.mul(b.d).sub(b.n.mul(a.d));
+      const vs = N.vars();
+      if (!vs.includes(v) || vs.some((w) => w !== v && !(w in SYMBOLS)) || vs.length < 2) return null;
+      if (N.degree(v) > 60) return null;
+      // razcep nad ℚ[π, e]: faktorji so brez kvadratov in tuji, kratnost je kratnost faktorja (π je transcendentno)
+      const out = [];
+      for (const f of factorP(N).fs) {
+        const deg = f.p.degree(v);
+        if (!deg) continue;
+        const terms = [];
+        for (let k = deg; k >= 0; k--) terms.push(coefIn(f.p, v, k).terms().map(({ m, c }) => ({ n: c.n, d: c.d, pi: m["π"] || 0, e: m.e || 0 })));
+        out.push({ terms, m: f.e, sym: f.p.vars().some((w) => w in SYMBOLS) });
+      }
+      return out.length ? out : null;
     });
   } catch {
     return null;
