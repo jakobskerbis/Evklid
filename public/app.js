@@ -4657,6 +4657,7 @@ initOpen({
   },
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
+  openPractice: (id) => (setBack("path"), openTopic(id).then((x) => !x && currentView === "topic" && state.topic?.id === id && $("#t-practice") && nextPractice())), // »Podobna naloga« (vr.vaja): kot »Preveri se« v laboratoriju
 });
 
 // ---------- zagon ----------

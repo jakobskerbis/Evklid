@@ -5,7 +5,7 @@
 import { mountSim } from "./sim/index.js";
 import { zadrziFokus } from "./fokus-okna.js";
 
-let D = null; // { t, icon, escapeHtml, renderMath, openLesson, open3d, openGames, openLab, openFormulas, openGraph }
+let D = null; // { t, icon, escapeHtml, renderMath, openLesson, open3d, openGames, openLab, openFormulas, openGraph, openPractice }
 export function initOpen(deps) {
   D = deps;
 }
@@ -48,12 +48,13 @@ const KIND = {
   "3d": ["box", "open.3d"],
   lesson: ["book-open", "open.lesson"],
   game: ["gamepad-2", "open.game"],
+  practice: ["pencil", "vr.vaja"], // podobna naloga iz Vadnice (server/vaja-po-razlagi.js)
 };
 // Ključ poskusa kot v laboratoriju (public/sim/katalog.js labKey), brez uvoza celega kataloga.
 const labKljuc = (x) => (x.opts && Object.keys(x.opts).length ? `${x.id}:${JSON.stringify(x.opts)}` : x.id);
 function button(x) {
   const k = KIND[x.kind];
-  if (!k) return null;
+  if (!k || (x.kind === "practice" && !D.openPractice)) return null;
   const b = el("button", "secondary small open-btn");
   b.type = "button";
   // Poskus, iz katerega je učenec prišel, z »nastavi« (povezave C1): »Nastavi v poskusu«, vrne ga v isti poskus.
@@ -71,6 +72,7 @@ function button(x) {
     if (x.kind === "3d") return D.open3d(x.id, x.title, x.id === "atlas" ? { izberi: x.izberi } : x.del ? { del: x.del } : null);
     if (x.kind === "lesson") return D.openLesson(x.id);
     if (x.kind === "game") return D.openGames(x.concepts);
+    if (x.kind === "practice") return D.openPractice(x.id);
   });
   return b;
 }
