@@ -209,13 +209,16 @@ export function labGrelnik(el) {
     const T1 = zac.T, T2 = Math.max(...po.map((m) => m.T)), m = mStud / 1000, t = B.tekla ? B.tOn : tOn0 ?? B.tOn;
     const r = izkoristek({ m, T1, T2, U, I, t });
     const dT = T2 - T1;
-    const izracun = `${texBlock(String.raw`W = UIt = ${fixed(U, 2)}${en("V")} \cdot ${fixed(I, 2)}${en("A")} \cdot ${fixed(t, 1)}${en("s")} = ${rez(fixed(r.W / 1000, 2), "kJ")}`)}
-      ${texBlock(String.raw`Q = mc\,\Delta T = ${fixed(m, 4)}${en("kg")} \cdot 4182${en("J/(kg·K)")} \cdot (${fixed(T2, 1)} - ${fixed(T1, 1)})${en("K")} = ${rez(fixed(r.Q / 1000, 2), "kJ")}`)}
-      ${texBlock(String.raw`\eta = \dfrac{Q}{W} = ${rez(fmt(100 * r.eta, 0), "%")}`)}`;
+    // vsak korak v svoji vrstici: na telefonu (360 px) cela vrstica W = UIt = … ne gre v okvir
+    const izracun = `${texBlock(String.raw`\begin{aligned} W &= UIt \\ &= ${fixed(U, 2)}${en("V")} \cdot ${fixed(I, 2)}${en("A")} \cdot ${fixed(t, 1)}${en("s")} \\ &= ${rez(fixed(r.W / 1000, 2), "kJ")} \end{aligned}`)}
+      ${texBlock(String.raw`\begin{aligned} \Delta T &= ${fixed(T2, 1)}${en("°C")} - ${fixed(T1, 1)}${en("°C")} \\ &= ${fixed(dT, 1)}${en("K")} \\[4pt] Q &= mc\,\Delta T \\ &= ${fixed(m, 4)}${en("kg")} \cdot 4182\,\tfrac{\mathrm{J}}{\mathrm{kg\,K}} \cdot ${fixed(dT, 1)}${en("K")} \\ &= ${rez(fixed(r.Q / 1000, 2), "kJ")} \end{aligned}`)}
+      ${texBlock(String.raw`\eta = \dfrac{Q}{W} = ${rez(fixed(100 * r.eta, 1), "%")}`)}`;
     const opozorila = `${dT < 3 ? `<p class="lab-top-warn">Δ<i>T</i> je samo ${fixed(dT, 1)} K. Napaka razlike dveh odčitkov je ~0,2 K, to je že ${fmt((100 * 0.2) / Math.max(dT, 0.1), 0)} %. Manj vode ali daljše segrevanje da natančnejši rezultat.</p>` : ""}
       ${po.every((x) => !x.mes) ? `<p class="lab-top-warn">Končne temperature nisi zapisal med mešanjem. Voda brez mešanja ni enako topla povsod.</p>` : ""}`;
     Rr.nastavi([{ key: "eta", ime: "izkoristek", kaj: "Iz svojih meritev izračunaj delo <i>W</i>, toploto <i>Q</i> in izkoristek grelca η (v odstotkih).", vrednost: 100 * r.eta }]);
-    const podatki = `<p>Tvoji podatki: <i>m</i> = ${fixed(m, 4)}\u00a0kg, <i>T</i>₁ = ${fixed(T1, 1)}\u00a0°C, <i>T</i>₂ = ${fixed(T2, 1)}\u00a0°C (najvišja po izklopu), <i>U</i> = ${fixed(U, 2)}\u00a0V in <i>I</i> = ${fixed(I, 2)}\u00a0A (povprečje med segrevanjem), <i>t</i> = ${fixed(t, 1)}\u00a0s, <i>c</i> = 4182\u00a0J/(kg·K).</p>`;
+    // podatki za račun so za namigom: najprej jih poišče v tabeli sam (pregled A3)
+    const odprt = calc.querySelector("details.lab-top-podatki")?.open ? " open" : "";
+    const podatki = `<details class="lab-top-podatki"${odprt}><summary>Namig: podatki iz tvojih meritev</summary><p><i>m</i> = ${fixed(m, 4)}\u00a0kg, <i>T</i>₁ = ${fixed(T1, 1)}\u00a0°C, <i>T</i>₂ = ${fixed(T2, 1)}\u00a0°C (najvišja po izklopu), <i>U</i> = ${fixed(U, 2)}\u00a0V in <i>I</i> = ${fixed(I, 2)}\u00a0A (povprečje med segrevanjem), <i>t</i> = ${fixed(t, 1)}\u00a0s, <i>c</i> = 4182\u00a0J/(kg·K).</p></details>`;
     calc.innerHTML = (Rr.odkrito("eta") ? izracun : podatki) + opozorila;
     if (!asked && r.eta > 0 && r.eta < 1.2) {
       asked = true;

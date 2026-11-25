@@ -32,7 +32,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     { key: "p", label: "porabnik" },
     { key: "U", label: "<i>U</i> [V]" },
     { key: "I", label: "<i>I</i> [mA]" },
-    { key: "R", label: "<i>U</i>/<i>I</i> [Ω]" },
+    { key: "R", label: "<i>U</i>/<i>I</i> žarnice [Ω]" }, // pri uporniku bi stolpec izdal upor, ki ga učenec izračuna iz naklona
   ]);
   const graph = dataGraph({ x: [0, 12], y: [0, YMAX[B.load]], xStep: 2, xLabel: "U [V]", yLabel: "I [mA]", title: "Graf toka v odvisnosti od napetosti" });
   const fitOut = h("p", { class: "lab-fitout", "aria-live": "polite" });
@@ -91,7 +91,7 @@ export function labOhm(el, { load = "R100" } = {}) {
       Ishow = fixed(ImA, Math.max(0, r.dec - (r.unit === "A" ? 3 : 0)));
     } else if (Ir?.over) Ishow = "OL";
     const ok = Uv && !Uv.over && ImA != null;
-    const R = ok && Math.abs(ImA) > 1e-9 ? fixed((Uv.value / ImA) * 1000, (Uv.value / ImA) * 1000 >= 100 ? 0 : 1) : "–";
+    const R = LOADS[p].type === "L" && ok && Math.abs(ImA) > 1e-9 ? fixed((Uv.value / ImA) * 1000, (Uv.value / ImA) * 1000 >= 100 ? 0 : 1) : "–";
     table.add({ p: LOADS[p].name.replace("upornik ", "").replace(" / 0,1 A", ""), U: Ushow, I: Ishow, R });
     if (ok) (series[p] ||= []).push([Uv.value, ImA]);
     else log.push("Ta meritev ni popolna: za graf potrebuješ odčitek obeh merilnikov.", "warn");
@@ -106,7 +106,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     });
     graph.draw(list);
     const fit = list.find((S) => S.id === cur && Number.isFinite(S.k));
-    Rr.nastavi(list.filter((S) => Number.isFinite(S.k)).map((S) => ({ key: S.id, ime: LOADS[S.id].name, kaj: `Iz naklona premice na grafu izračunaj upor (${LOADS[S.id].name}).`, vrednost: 1000 / S.k })));
+    Rr.nastavi(list.filter((S) => Number.isFinite(S.k)).map((S) => ({ key: S.id, ime: LOADS[S.id].name, kaj: "Iz naklona premice na grafu izračunaj upor.", vrednost: 1000 / S.k, nazivno: [{ v: LOADS[S.id].nom, kaj: "napis na uporniku" }] })));
     fitOut.innerHTML = fit && !Rr.odkrito(fit.id)
       ? "Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Iz njenega naklona izračunaj upor in ga preveri spodaj."
       : fit

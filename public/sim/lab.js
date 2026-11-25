@@ -398,15 +398,30 @@ export function napoved(o) {
 // Račun iz meritev (profil A, 2026-11-25): končni rezultat (upor iz naklona, izkoristek, g …) izračuna učenec sam.
 // Aplikacija ga preveri z vrednostjo iz učenčevih meritev (ne s podatkom iz učbenika) in pokaže svoj izračun šele
 // po pravilnem računu ali po »Pokaži rešitev«. Primerjava je lokalna (ne server/practice/check.js).
-// preveriRacun(vnos, pricakovano, { tol, abs }) → null (ni število) ali { ok, x, odmik }; tol relativno (0,05 = 5 %), abs absolutno.
-export function preveriRacun(vnos, pricakovano, { tol = 0.05, abs = 0 } = {}) {
-  const x = parseStevilo(vnos);
+// preveriRacun(vnos, pricakovano, { tol, abs, enota, nazivno }) → null (ni število) ali { ok, x, p, odmik, nazivno? };
+// tol relativno (0,05 = 5 %), abs absolutno; za številom je lahko enota poskusa (»97 Ω«).
+// nazivno: [{ v, kaj }] napis na sestavnem delu ali vrednost iz učbenika (upornik 100 Ω, leča 100 mm, g = 9,81 m/s²).
+// Če je vnos v 0,5 % od take vrednosti, meritve pa se od nje razlikujejo za več kot 1 %, to ni rezultat meritev: ok = false.
+export function preveriRacun(vnos, pricakovano, { tol = 0.05, abs = 0, enota = "", nazivno = [] } = {}) {
+  const x = parseStevilo(vnos, enota);
   if (x == null || !Number.isFinite(pricakovano)) return null;
-  const d = Math.abs(x - pricakovano);
-  return { ok: d <= Math.max(abs, tol * Math.abs(pricakovano)) + 1e-12, x, odmik: pricakovano ? d / Math.abs(pricakovano) : d };
+  const d = Math.abs(x - pricakovano), odmik = pricakovano ? d / Math.abs(pricakovano) : d;
+  const n = nazivno.find((q) => Number.isFinite(q?.v) && q.v && Math.abs(x / q.v - 1) <= 0.005 && Math.abs(pricakovano / q.v - 1) > 0.01);
+  if (n) return { ok: false, x, p: pricakovano, odmik, nazivno: n };
+  return { ok: d <= Math.max(abs, tol * Math.abs(pricakovano)) + 1e-12, x, p: pricakovano, odmik };
+}
+// Odziv brez številke (sicer učenec iz »razlikuje se za 15 %« v dveh poskusih izračuna rešitev): le približno, koliko je daleč.
+export function odzivRacuna(r, tol = 0.05) {
+  if (r.nazivno) return `To je ${r.nazivno.kaj}, ne rezultat tvojih meritev. Izračunaj ga iz svojih meritev.`;
+  const n = faktorDeset(r.x, r.p);
+  if (n) return `Tvoj rezultat se razlikuje za faktor ~${10 ** n}: preveri pretvorbo enot.`;
+  if (r.odmik <= Math.max(2 * tol, 0.06)) return "Tvoj rezultat je blizu, a še ne dovolj natančen. Preveri zaokroževanje in račun.";
+  if (r.odmik <= 0.3) return "Tvoj rezultat se precej razlikuje od vrednosti iz tvojih meritev. Preveri račun in enote.";
+  return "Tvoj rezultat je daleč od vrednosti iz tvojih meritev. Preveri, katere količine si vzel, in enote.";
 }
 // racun({ enota, tol, abs, dec, onOdkrij }) → { el, nastavi(cilji), odkrito(key), stanje(), obnovi(s) }
-//   cilji: [{ key, kaj (HTML: kaj izračunaš), vrednost (iz meritev) }] (prazno: okvir je skrit); privzeto zadnji cilj
+//   cilji: [{ key, kaj (HTML: kaj izračunaš), vrednost (iz meritev), nazivno? }] (prazno: okvir je skrit); privzeto zadnji cilj.
+//   Cilj, ki ga ni več med cilji (meritve izbrisane), ni več odkrit.
 //   onOdkrij(key): poskus ponovno nariše izračun (zdaj s številko)
 export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {}) {
   let cilji = [], izbran = null;
@@ -418,6 +433,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
   const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoj rezultat${enota ? ` v ${enota}` : ""}` });
   vnos.addEventListener("keydown", (e) => e.key === "Enter" && preveri());
   const odziv = h("p", { class: "lab-why", "aria-live": "polite", hidden: true });
+  vnos.addEventListener("input", () => odziv.className.includes("bad") && (odziv.hidden = true)); // star odziv ne velja za nov vnos
   const el = h("section", { class: "lab-q lab-racun", hidden: true },
     h("h4", {}, "Tvoj račun"),
     izbiraVrsta, kaj,
@@ -425,7 +441,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     h("div", { class: "demo-buttons" }, button("Preveri moj račun", () => preveri(), "primary small"), button("Pokaži rešitev", () => odkrij(false))),
     odziv);
   const cilj = () => cilji.find((c) => c.key === izbran);
-  const izpis = (x) => `${fmt(x, dec)}${enota ? ` ${enota}` : ""}`;
+  const izpis = (x) => `${fixed(x, dec)}${enota ? `\u00a0${enota}` : ""}`; // fixed: 15,0 N/m, 9,80 m/s² (ne 15 in 9,8)
   function pokazi() {
     const c = cilj();
     if (!c) return;
@@ -446,22 +462,25 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
   function preveri() {
     const c = cilj();
     if (!c) return;
-    const r = preveriRacun(vnos.value, c.vrednost, { tol, abs });
+    const r = preveriRacun(vnos.value, c.vrednost, { tol, abs, enota, nazivno: c.nazivno || [] });
     odziv.hidden = false;
-    if (!r) return (odziv.className = "lab-why"), (odziv.textContent = "Vpiši število (npr. 98,5).");
+    if (!r) return (odziv.className = "lab-why"), (odziv.textContent = `Vpiši število${enota ? ` v ${enota}` : ""} (npr. 98,5).`);
     if (r.ok) return odkrij(true);
     odziv.className = "lab-why bad";
-    odziv.innerHTML = `<b>Ne čisto.</b> Tvoj rezultat se od vrednosti iz tvojih meritev razlikuje za ${fmt(100 * r.odmik, 0)} %. Preveri odčitke z grafa, račun in enote.`;
+    odziv.innerHTML = `<b>Ne čisto.</b> ${odzivRacuna(r, tol)}`;
   }
   return {
     el,
     odkrito: (key) => odkrito.has(key),
     // cilji iz meritev; okvir je viden, ko je kaj računati. Izbira ostane, dokler je med cilji, sicer zadnji cilj.
     nastavi(list) {
-      const prej = JSON.stringify(cilji.map((c) => [c.key, c.kaj]));
+      const prej = JSON.stringify(cilji.map((c) => [c.key, c.kaj])), prejV = cilj()?.vrednost;
+      // izbrisane meritve: rešitev ni več odkrita (nove meritve istega poskusa spet računaš sam)
+      for (const k of [...odkrito]) if (!list.some((c) => c.key === k)) odkrito.delete(k);
       cilji = list.filter((c) => Number.isFinite(c.vrednost));
+      if (cilj() && cilj().vrednost !== prejV && !odkrito.has(izbran)) odziv.hidden = true; // nova meritev: star odziv ne velja
       el.hidden = !cilji.length;
-      if (!cilji.length) return;
+      if (!cilji.length) return (vnos.value = ""), (odziv.hidden = true);
       if (!cilji.some((c) => c.key === izbran)) (izbran = cilji.at(-1).key), (vnos.value = "");
       if (prej !== JSON.stringify(cilji.map((c) => [c.key, c.kaj]))) {
         izbira.replaceChildren(...cilji.map((c) => h("option", { value: c.key }, c.ime || c.key)));

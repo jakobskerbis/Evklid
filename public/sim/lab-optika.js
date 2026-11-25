@@ -3,6 +3,8 @@
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
 import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, mejniKot, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
+// lomni količniki iz učbenika: če učenec vpiše tega, ne pa izmerjenega, ga račun zavrne (lab.js → preveriRacun, nazivno)
+const UCBENIK_N = { pmma: [1.49, 1.5], bk7: [1.5, 1.52], voda: [1.33] };
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const RAD = Math.PI / 180;
@@ -126,10 +128,11 @@ export function labLom(el) {
   function sync() {
     const out = [];
     const cilji = []; // kaj učenec izračuna sam (Rr)
-    for (const x of serije.values()) {
+    for (const [kljuc, x] of serije) {
       if (x.pts.length < 2) continue;
       const kk = naklon(x.pts), n = x.smer === "zrak" ? 1 / kk : kk;
-      cilji.push({ key: x.name, ime: x.name, kaj: `Iz naklona premice na grafu izračunaj lomni količnik <i>n</i> (${x.name}).`, vrednost: n });
+      const ucbenik = (UCBENIK_N[kljuc.split(":")[0]] || []).map((v) => ({ v, kaj: "vrednost iz učbenika" }));
+      cilji.push({ key: x.name, ime: x.name, kaj: `Iz naklona premice na grafu izračunaj lomni količnik <i>n</i> (${x.name}).`, vrednost: n, nazivno: ucbenik });
       out.push(Rr.odkrito(x.name) ? `<p>${x.name}: naklon ${tex(String.raw`\frac{\sin\beta}{\sin\alpha} = ${fixed(kk, 3)}`)} → ${tex(String.raw`n = ${x.smer === "zrak" ? String.raw`\frac{1}{${fixed(kk, 3)}} = ` : ""}${rez(fixed(n, 2))}`)} (iz ${x.pts.length} meritev).</p>` : `<p>${x.name}: ${x.pts.length} meritev. Iz naklona premice izračunaj lomni količnik <i>n</i> in ga preveri spodaj.</p>`);
     }
     calc.innerHTML = out.join("") + (out.length ? `<p class="muted">Iz zraka v snov je naklon 1/<i>n</i>, iz snovi v zrak pa <i>n</i>.</p>` : "");
@@ -262,7 +265,7 @@ export function labLeca(el) {
   });
   el.classList.add("lab");
   // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
-  const Rr = racun({ enota: "mm", dec: 1, tol: 0.03, onOdkrij: () => (sync(), zap.shrani()) });
+  const Rr = racun({ enota: "mm", dec: 1, tol: 0.015, onOdkrij: () => (sync(), zap.shrani()) });
   calc.after(Rr.el);
 
   function move(kaj, v) {
@@ -314,7 +317,7 @@ export function labLeca(el) {
     const ser = [];
     for (const [f, rows] of meritve) {
       const fm = fIzMeritev(rows), cls = RAZREDI[i % 3];
-      cilji.push({ key: `f${f}`, ime: `f = ${f} mm`, kaj: `Iz svojih meritev <i>a</i> in <i>b</i> izračunaj goriščno razdaljo leče z napisom ${f}${NB}mm.`, vrednost: fm });
+      cilji.push({ key: `f${f}`, ime: `f = ${f} mm`, kaj: `Iz svojih meritev <i>a</i> in <i>b</i> izračunaj goriščno razdaljo leče z napisom ${f}${NB}mm.`, vrednost: fm, nazivno: [{ v: f, kaj: "napis na leči" }] });
       out.push(Rr.odkrito(`f${f}`) ? `<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} ${tex(String.raw`f = \text{povprečje } \frac{ab}{a + b} = ${rez(fixed(fm, 1), "mm")}`)}, ${tex(String.raw`\frac{1}{f} = ${fixed(1000 / fm, 2)}${en("m⁻¹")}`)}.</p>` : `<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} izračunaj goriščno razdaljo in jo preveri spodaj.</p>`);
       ser.push({ id: `f${f}`, pts: rows.map((r) => [1000 / r.a, 1000 / r.b]), cls, shape: i % 2 ? "^" : "o", label: `f = ${f}${NB}mm`, line: (x) => 1000 / fm - x });
       i++;

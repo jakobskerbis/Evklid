@@ -1451,3 +1451,5 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-primerjava-vrednosti > div { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); }
 .lab-primerjava-vrednosti dt { font-size: 0.85rem; color: var(--muted); }
 .lab-primerjava-vrednosti dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+/* Grelnik: izračun W, Q in η v vrsticah (lab-toplota.js); na telefonu malo manjša pisava, da vrstica ne drsi. */
+@media (max-width: 480px) { .lab-top-calc .demo-eq { font-size: 1rem; } }
