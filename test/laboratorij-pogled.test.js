@@ -75,9 +75,9 @@ test("lab view: tab in »Uči se«, i18n and the tutor's open-window command", (
 test("povezave C3: graf meritev izpiše formulo iz lekcije (prvih 5 poskusov)", () => {
   const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
   assert.match(read("lab.js"), /if \(formula\) wrap\.append\(h\("p", \{ class: "lab-graph-formula", html: `Formula: \$\{formula\}` \}\)\)/);
-  assert.match(read("lab-fiz.js"), /formula: "<i>I<\/i> = <i>U<\/i> \/ <i>R<\/i>"/);
-  assert.match(read("lab-elektrika.js"), /formula: "<i>R<\/i> = <i>U<\/i> \/ <i>I<\/i>"/);
+  assert.ok(read("lab-fiz.js").includes("formula: tex(String.raw`I = \\frac{U}{R}`)"));
+  assert.ok(read("lab-elektrika.js").includes("formula: tex(String.raw`R = \\frac{U}{I}`)"));
   assert.match(read("lab-sile.js"), /formula: "<i>F<\/i> = <i>k<\/i> · <i>x<\/i>"/);
   assert.match(read("lab-optika.js"), /formula: "<i>n<\/i>₁ sin α = <i>n<\/i>₂ sin β"/);
-  assert.match(read("lab-optika.js"), /formula: "1\/<i>f<\/i> = 1\/<i>a<\/i> \+ 1\/<i>b<\/i>"/);
+  assert.ok(read("lab-optika.js").includes("formula: tex(String.raw`\\frac{1}{f} = \\frac{1}{a} + \\frac{1}{b}`)"));
 });
