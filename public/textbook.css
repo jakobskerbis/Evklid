@@ -1455,3 +1455,8 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-primerjava-vrednosti > div { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); }
 .lab-primerjava-vrednosti dt { font-size: 0.85rem; color: var(--muted); }
 .lab-primerjava-vrednosti dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+/* Okvir napovedi, primerjave in računa: kot .lab-q (vprašanje »Sklep«), a ni sklep (vodeni način šteje sklepe po .lab-q). */
+.lab-okvir { margin-top: 14px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+.lab-okvir h4 { margin: 0 0 4px; }
+.demo.lab .lab-okvir { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
+.lab-okvir.lab-napoved { margin: 0 0 10px; }

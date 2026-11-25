@@ -319,10 +319,11 @@ export function napoved(o) {
   const polje = stevilo
     ? h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoja napoved${enota ? ` [${enota}]` : ""}`), vnos, zapisi)
     : h("div", { class: "lab-opts", role: "group", "aria-label": "tvoja napoved" });
-  const el = h("section", { class: "lab-q lab-napoved", "data-napoved": o.id || "" }, h("h4", {}, "Napoved"), tekst, polje, moja);
+  // okvir kot vprašanje »Sklep«, a ne .lab-q: vodeni način (lab-vodeno.js) in njegov test štejeta sklepe po .lab-q
+  const el = h("section", { class: "lab-okvir lab-napoved", "data-napoved": o.id || "" }, h("h4", {}, "Napoved"), tekst, polje, moja);
   const prim = h("dl", { class: "lab-primerjava-vrednosti" });
   const sodba = h("p", { class: "lab-why" });
-  const primerjava = h("section", { class: "lab-q lab-primerjava", hidden: true }, h("h4", {}, "Tvoja napoved · Izmerjeno"), prim, sodba);
+  const primerjava = h("section", { class: "lab-okvir lab-primerjava", hidden: true }, h("h4", {}, "Tvoja napoved · Izmerjeno"), prim, sodba);
   const zEnoto = (x) => `${fmt(x, o.dec ?? 1)}${!o.enota ? "" : o.enota.startsWith("-") ? o.enota : ` ${o.enota}`}`;
   const izpis = (x) => (stevilo ? zEnoto(x) : txt);
   const zdaj = () => (o.kljuc ? String(o.kljuc()) : null);
