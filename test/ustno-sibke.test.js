@@ -1,12 +1,13 @@
 // P1-4 (načrt kakovosti pred obsegom, j 25. 11. 2026): ustno spraševanje posodobi šibke točke. Šteje samo vprašanje,
 // ki ga je ocenilo spraševanje (koda ali model s pregledom), nikoli samoocena; eno spraševanje v enem dnevu samo ne
-// naredi šibke teme (TOOL_DAY_MAX.ustno < MIN_ERRORS_ONE_DAY); dvakratni »konec« ne šteje dvakrat.
+// naredi šibke teme (TOOL_DAY_MAX.ustno < MIN_ERRORS_ONE_DAY, napake sorazmerno); dvakratni »konec« ne šteje dvakrat;
+// »Ne vem« in »Preskoči« ne štejeta.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { REVIEW_SYSTEM } from "../server/ustno.js";
-import { skillStats, TOOL_DAY_MAX, MIN_ERRORS_ONE_DAY, SOURCES } from "../server/weaknesses.js";
+import { skillStats, TOOL_DAY_MAX, MIN_ERRORS_ONE_DAY, SOURCES, recordUstno } from "../server/weaknesses.js";
 import { sourceWords } from "../server/accounts/weekly.js";
 
 const OHM = "FIZ-OS-9/upor-in-ohmov-zakon";
@@ -78,5 +79,25 @@ test("samoocena (celo spraševanje ali eno vprašanje po vzorcu) ne gre v šibke
     self[j] = "neznam";
     await call(`/api/students/${sid}/ustno/${r.body.id}/konec`, { samoocena: self });
     assert.equal(ustno(store, sid), undefined, "neodgovorjena in samoocenjena vprašanja ne štejejo");
+  });
+});
+
+test("meja na temo na dan: napake sorazmerno, ne po vrstnem redu; ena seja enkrat", () => {
+  const store = openDb(":memory:");
+  const sid = store.createStudent("Ana").id;
+  const r = [true, true, false, false, false].map((ok) => ({ topicId: OHM, ok }));
+  assert.equal(recordUstno(store.db, sid, 1, r), 2);
+  assert.deepEqual(ustno(store, sid), { n: 2, wrong: 1 }, "3 od 5 napačnih → 1 od 2");
+  assert.equal(recordUstno(store.db, sid, 1, r), 0, "ista seja ne šteje dvakrat");
+  assert.equal(recordUstno(store.db, sid, 2, r), 0, "dnevna meja je polna");
+  assert.equal(recordUstno(store.db, sid, 3, [{ topicId: "X/y", ok: false }, { topicId: OHM, ok: "da" }]), 0, "neveljavna tema ali ok");
+});
+
+test("»Ne vem« in »Preskoči« (preskoci) nista napaka", async () => {
+  await local(async ({ call, store, sid }) => {
+    const r = await call(`/api/students/${sid}/ustno/zacni`, { tema: OHM, n: 3, nacin: "tipkanje" });
+    for (const q of r.body.vprasanja) assert.equal((await call(`/api/students/${sid}/ustno/${r.body.id}/odgovor`, { i: q.i, besedilo: "", preskoci: true, nacin: "tipkanje" })).status, 200);
+    await call(`/api/students/${sid}/ustno/${r.body.id}/konec`, {});
+    assert.equal(ustno(store, sid), undefined);
   });
 });
