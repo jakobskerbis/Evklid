@@ -95,6 +95,37 @@ test("step checks: a done() reads only what the student did", () => {
   const h = (x) => ({ predmet: "kroglica", "h [m]": x, "t [s]": "0,3", "t² [s²]": "0,09", "v [m/s]": "–" });
   assert.equal(pad[2].done(c({ vrstice: ["0,20", "0,50", "1,00", "1,50", "2,00"].map(h) })), true);
   assert.equal(pad[2].done(c({ vrstice: ["0,20", "0,20", "0,50", "1,00", "1,50"].map(h) })), false, "ista višina dvakrat");
+
+  // ---- lab-elektroliza (public/sim/vodeno/lab-elektroliza.js)
+  const el = KORAKI["lab-elektroliza"].koraki;
+  const NAL = (x = "razredčena žveplova(VI) kislina 0,5 mol/L") => `V aparat si natočil tekočino: ${x}. Ko je tekočina do pip, pipi zapri.`;
+  const UJET = "Natočil si tekočino (razredčena žveplova(VI) kislina 0,5 mol/L), a obe pipi sta bili zaprti: zrak je ostal ujet v cevi. Odpri pipo, da zrak uide, in jo nato zapri.";
+  const PRAZ = "Aparat je prazen in spran.", MEH = "Na elektrodah se pojavijo mehurčki (napetost na aparatu 2,10 V, tok 120,0 mA).";
+  const zaprti = (n) => (/^pipa/.test(n) ? "ne" : "");
+  assert.equal(el[0].done(c({ dnevnik: [NAL()], par: zaprti })), true);
+  assert.equal(el[0].done(c({ dnevnik: [NAL()], par: (n) => (n === "pipa levo odprta" ? "da" : "ne") })), false, "pipa odprta");
+  assert.equal(el[0].done(c({ dnevnik: [NAL("razredčena žveplova(VI) kislina 1,0 mol/L")], par: zaprti })), false, "napačna koncentracija");
+  assert.equal(el[0].done(c({ dnevnik: [NAL(), PRAZ], par: zaprti })), false, "aparat izpraznjen");
+  assert.equal(el[0].done(c({ dnevnik: [UJET], par: zaprti })), false, "zrak ujet");
+  assert.equal(el[0].done(c({ dnevnik: [UJET, "Pipa levo je odprta: plin je ušel, tekočina se je dvignila do pipe."], par: zaprti })), false, "zrak ujet še v desni cevi");
+  assert.equal(el[0].done(c({ dnevnik: [UJET, "Pipa levo je odprta: plin je ušel, …", "Pipa desno je odprta: plin je ušel, …"], par: zaprti })), true);
+  // Mehurčki pred praznjenjem ne štejejo za novo polnjenje.
+  assert.equal(el[1].done(c({ dnevnik: [NAL(), MEH], zadnji: zadnji([NAL(), MEH]) })), true);
+  assert.equal(el[1].done(c({ dnevnik: [NAL(), MEH, PRAZ, NAL()], zadnji: zadnji([NAL(), MEH, PRAZ, NAL()]) })), false, "mehurčki prejšnjega polnjenja");
+  const vk = (t, I, V) => ({ "t [s]": t, "I [mA]": I, "V katoda (−) [mL]": V, "V anoda (+) [mL]": "–" });
+  assert.equal(el[2].done(c({ dnevnik: [NAL()], vrstice: [vk("60", "120,3", "1,0"), vk("300", "120,5", "4,6"), vk("660", "120,8", "10,1")] })), true);
+  assert.equal(el[2].done(c({ dnevnik: [NAL()], vrstice: [vk("60", "120,3", "1,0"), vk("300", "0,0", "4,6"), vk("660", "120,8", "10,1")] })), false, "pregorela varovalka: tok 0");
+  assert.equal(el[2].done(c({ dnevnik: [NAL()], vrstice: [vk("60", "120,3", "1,0"), vk("300", "120,5", "4,6"), vk("600", "120,8", "9,2")] })), false, "manj kot 10 mL");
+  // Zamenjava polov šteje le z vklopljenim napajalnikom in polnim aparatom (praznjenje napajalnik izklopi).
+  const POL = "Leva elektroda je zdaj na pozitivnem polu (anoda), desna na negativnem (katoda).", ON = "Napajalnik je vklopljen.";
+  const pol = (log) => el[6].done(c({ dnevnik: log, zadnji: zadnji(log) }));
+  assert.equal(pol([NAL(), ON, POL]), true);
+  assert.equal(pol([NAL(), ON, POL, "Leva elektroda je na negativnem polu (katoda), desna na pozitivnem (anoda)."]), false, "pola vrnjena");
+  assert.equal(pol([NAL(), ON, POL, "Napajalnik je izklopljen."]), false, "napajalnik izklopljen");
+  assert.equal(pol([NAL(), ON, POL, PRAZ]), false, "aparat prazen");
+  // Preskusa plina štejeta le izid v pravi cevi (goreča trska v kisiku ne dokaže vodika).
+  assert.equal(el[4].done(c({ bilo: (re) => re.test("Trska zagori svetleje: plin podpira gorenje (kisik).") })), false);
+  assert.equal(el[4].done(c({ bilo: (re) => re.test("Plin ob goreči trski poči (pisk): v cevi je vodik.") })), true);
 });
 
 test("usage counter: anonymous daily counts per experiment, mode and event; only known values", () => {
