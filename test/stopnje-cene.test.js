@@ -698,7 +698,7 @@ test("prehod navzdol: nižja cena že ob naslednjem podaljšanju; zamujena izved
 
 test("prehod navzgor: brez poslane e-pošte nova cena ne začne veljati; letni opomnik navede novo ceno", async () => {
   await withAccounts(async ({ db, api, stripe, kid, subscribe, pid }) => {
-    // Faks: OŠ in SŠ letno sta od 2026-11-19 enako dragi (99 €), zato višja cena le pri faksu (199 €).
+    // Faks (199 €): višja cena kot OŠ letno (99 €).
     kid("Ana", "FAKS", YEAR - 20);
     subscribe("evklid_1_year", iso(20));
     const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
@@ -735,6 +735,53 @@ test("prehod OŠ → SŠ letno (99 → 129 €, j 2026-11-25): nova cena z e-po�
     const post = stripe.calls.find((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
     assert.equal(post.body["items[0][price]"], "price_evklid_ss_year");
     assert.equal(post.body.proration_behavior, "none");
+  });
+});
+
+test("prehod OŠ → SŠ letno s podaljšanjem čez 20 dni: nova cena šele ob podaljšanju leto pozneje (30 dni)", async () => {
+  await withAccounts(async ({ db, api, kid, subscribe, pid }) => {
+    kid("Ana", "SS");
+    const end = iso(20);
+    subscribe("evklid_1_year", end);
+    await api.billing.billingDaily(new Date(), { force: true });
+    const row = db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(pid);
+    const next = new Date(end);
+    next.setUTCFullYear(next.getUTCFullYear() + 1);
+    assert.equal(row.effective_at, next.toISOString(), "manj kot 30 dni do podaljšanja: šele naslednje");
+  });
+});
+
+test("prehod, zapisan pri isti ceni (OŠ = SŠ letno 99 €, 19.–25. 11.), se po podražitvi izračuna znova z rokom 30 dni", async () => {
+  await withAccounts(async ({ db, api, stripe, kid, subscribe, pid }) => {
+    kid("Ana", "SS");
+    const end = iso(20);
+    subscribe("evklid_1_year", end);
+    // Star zapis: ob podaljšanju čez 20 dni, brez 30-dnevnega roka (takrat cena enaka).
+    db.prepare("INSERT INTO plan_changes (parent_id, sub_id, from_key, to_key, effective_at, notified_at) VALUES (?, 'sub_a', 'evklid_1_year', 'evklid_ss_year', ?, ?)").run(pid, end, iso(-1));
+    const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
+    assert.equal((await run()).plan_notified, 1, "nova e-pošta z novo ceno");
+    const row = db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(pid);
+    assert.ok(Date.parse(row.effective_at) - Date.now() >= 30 * day - 1000, row.effective_at);
+    const mail = stripe.calls.filter((c) => c.host === "api.resend.com" && /nova cena/.test(c.body.subject)).at(-1).body;
+    assert.match(mail.text, /129,00/);
+    // Ob starem podaljšanju se cena v Stripu ne zamenja.
+    await run(new Date(Date.parse(end) - 2 * day));
+    assert.equal(stripe.calls.filter((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST").length, 0);
+    assert.equal((await run()).plan_notified, 0, "izračunan zapis ostane");
+  });
+});
+
+test("opomnik o obnovitvi: naročnina po stari, nižji ceni (SŠ letno 99 €) navede 99 €, ne današnjih 129 €", async () => {
+  await withAccounts(async ({ api, stripe, kid, subscribe }) => {
+    kid("Ana", "SS");
+    subscribe("evklid_ss_year", iso(20));
+    stripe.subs.sub_a.items.data[0].price = { id: "price_staro", lookup_key: null, nickname: "SŠ, šolsko leto", currency: "eur", recurring: { interval: "year" }, unit_amount: 9900 };
+    const out = await api.billing.billingDaily(new Date(), { force: true });
+    assert.equal(out.renewal, 1);
+    assert.equal(out.price_dropped, 0, "višja današnja cena se stari naročnini ne zaračuna");
+    const renewal = stripe.calls.filter((c) => c.host === "api.resend.com" && /obnovila/.test(c.body.text)).at(-1);
+    assert.match(renewal.body.text, /99,00/);
+    assert.doesNotMatch(renewal.body.text, /129,00/);
   });
 });
 

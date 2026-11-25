@@ -147,7 +147,7 @@ const planBody = (v) => {
   return a === "s" ? { school: true, interval } : { seats: Number(a), interval };
 };
 
-// Darilna koda: polnoletna oseba kupi eno leto za en profil izbrane stopnje (letna cena stopnje: 99 / 99 / 199 €).
+// Darilna koda: polnoletna oseba kupi eno leto za en profil izbrane stopnje (letna cena stopnje: 99 / 129 / 199 €).
 function giftBox(acc) {
   if (!acc.billing || acc.parent.minor || acc.parent.guest || acc.parent.birth_missing) return "";
   const list = (acc.gifts || [])

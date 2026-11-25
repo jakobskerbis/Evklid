@@ -329,7 +329,7 @@ Najslabši primer je vrednost paketa (meja + brezplačni rep), izračunana iz de
 | Paket pred testom faks 7 dni | 6,99 | 5,50 | 27 % | 7 dni | 1,100 | 18,4 % |
 | Paket pred testom faks 14 dni | 11,49 | 9,05 | 27 % | 14 dni | 2,300 | 23,4 % |
 | Darilna koda OS (1 leto, na mesec) | 8,25 | 6,50 | 27 % | mesec | 1,700 | 24,1 % |
-| Darilna koda SS (1 leto, na mesec) | 11,58 | 9,12 | 27 % | mesec | 2,478 | 25,0 % |
+| Darilna koda SS (1 leto, na mesec) | 10,75 | 8,46 | 27 % | mesec | 2,300 | 25,0 % |
 | Darilna koda FAKS (1 leto, na mesec) | 16,58 | 13,06 | 27 % | mesec | 3,548 | 25,0 % |
 | Darilna koda (stara, 49 €) | 4,08 | 3,22 | 27 % | mesec | 0,600 | 17,2 % |
 | Šolska licenca class (na učenca) | 1,67 | 1,37 | 22 % | mesec | 0,370 | 24,9 % |

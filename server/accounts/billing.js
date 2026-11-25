@@ -901,7 +901,20 @@ export function mountBilling(app, ctx) {
       const pend = changeOf(p.id);
       const next = pend && !pend.applied_at && pend.sub_id === p.sub_id && Math.abs(Date.parse(pend.effective_at) - Date.parse(p.sub_period_end)) <= 86400000 ? planByKey(pend.to_key) : null;
       const bill = next || plan;
-      out.renewal += await remind(p, "renewal", p.sub_period_end.slice(0, 10), renewalEmail(fmtDate(p.sub_period_end), fmtMoney(bill.amount, bill.currency || "EUR"), appUrl));
+      const period = p.sub_period_end.slice(0, 10);
+      // Naročnina po stari, nižji (arhivirani) ceni ostane pri njej (višja cena velja le za nove, npr. SŠ letno 99 → 129 €,
+      // j 2026-11-25): opomnik navede znesek iz Stripa. Samo enkrat na obdobje (pred e-pošto), ne vsak dan.
+      let amount = bill.amount;
+      if (!next && stripe.enabled && String(p.sub_id).startsWith("sub_") && !db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = 'renewal' AND period = ?").get(p.id, period)) {
+        try {
+          const price = (await stripe.request("GET", `/subscriptions/${p.sub_id}`)).items?.data?.[0]?.price;
+          const ua = Number(price?.unit_amount);
+          if (planOfPrice(price)?.key === plan.key && ua > 0 && ua < plan.amount) amount = ua;
+        } catch (err) {
+          log.error?.("[evklid] opomnik o obnovitvi, cena iz Stripa:", p.id, err.message);
+        }
+      }
+      out.renewal += await remind(p, "renewal", period, renewalEmail(fmtDate(p.sub_period_end), fmtMoney(amount, bill.currency || "EUR"), appUrl));
     }
     return out;
   }
@@ -929,7 +942,10 @@ export function mountBilling(app, ctx) {
         }
         // Zamujena izvedba (strežnik ugasnjen ali napaka Stripa ves čas pred podaljšanjem): izračunaj znova.
         const stale = !!row && !row.applied_at && Date.parse(row.effective_at) < now.getTime() - 86400000;
-        if (!row || stale || row.to_key !== to.key || row.sub_id !== p.sub_id || row.from_key !== plan.key) {
+        // Cena se je od zapisa spremenila (npr. OŠ in SŠ letno 19.–25. 11. 2026 oba 99 €, nato SŠ 129 €): dražji prehod,
+        // zapisan brez 30 dni od e-pošte, se izračuna znova (nova e-pošta z novo ceno, rok vsaj 30 dni).
+        const unwarned = !!row && !row.applied_at && to.amount > plan.amount && Date.parse(row.effective_at) - Date.parse(row.notified_at) < 30 * 86400000;
+        if (!row || stale || unwarned || row.to_key !== to.key || row.sub_id !== p.sub_id || row.from_key !== plan.key) {
           // Dražje: podaljšanje vsaj 30 dni po e-pošti. Ceneje (prehod navzdol): že naslednje podaljšanje, da
           // naročnik nižje stopnje ne plača še enega obdobja po višji ceni.
           const up = to.amount > plan.amount;
