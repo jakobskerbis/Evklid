@@ -2908,7 +2908,7 @@
   "scan.verified": "Überprüft",
   "scan.verifiedTip": "Evklid hat die Lösung überprüft: Er hat sie in die ursprüngliche Aufgabe eingesetzt.",
   "scan.aiVerified": "Gelöst von Evklid AI · überprüft",
-  "zap.aiReviewed": "Von KI geprüft",
+  "zap.aiReviewed": "Von KI durchgesehen",
   "scan.resultTip": "Evklid hat das Ergebnis mit Code überprüft.",
   "scan.aiResultVerified": "Gelöst von Evklid AI · Ergebnis überprüft",
   "scan.aiResultTip": "Evklid hat das Endergebnis mit Code überprüft. Die von der KI geschriebenen Schritte wurden nicht überprüft.",
