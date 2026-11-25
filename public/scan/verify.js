@@ -5,7 +5,7 @@
 // Vsak izid ima status iz public/scan/status.js; numerična potrditev nikoli ni »Preverjeno« (AUDIT-001).
 import { parse, compile, integrate } from "../graph/math.js";
 import { prep, splitSystem, satisfies, equalNumerically, bigLiteral } from "./solvecore.js";
-import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs } from "./algebra.js";
+import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs, P, Q } from "./algebra.js";
 import { statusOf } from "./status.js";
 
 const fin = Number.isFinite;
@@ -231,10 +231,15 @@ export function verifyAi(problemText, ai) {
   const ev = r.evidence || (r.verified ? { holds: true, how: "numeric", complete: r.partial ? "unknown" : "numeric" } : { holds: r.reason === "wrong" || r.reason === "missing" ? false : null });
   const status = statusOf(ev);
   const out = { ...r, partial: ev.complete === "unknown" || undefined, status };
+  // točen protiprimer (ulomki, Sturm): strežnik ga ne sme preglasiti s SymPy (server/scan.js verifyAiFull)
+  if (ev.holds === false && ev.how === "exact") out.exact = true;
   delete out.evidence;
   if (!out.partial) delete out.partial;
   return r.verified ? { ...out, reason: null } : out;
 }
+
+// odvod polinoma po spremenljivki v (druge črke so konstante)
+const polyDiff = (p, v) => new P(p.terms().filter(({ m }) => m[v]).map(({ m, c }) => ({ m: { ...m, [v]: m[v] - 1 }, c: c.mul(Q.of(m[v])) })));
 
 function check(problemText, ai) {
   const kind = ai?.kind;
@@ -281,7 +286,7 @@ function check(problemText, ai) {
         if (claims.some((c) => !c.s && !Number.isFinite(c.num))) return { verified: false, reason: "parse" };
         const pe = polyEquationProof(cs, claims);
         if (pe) {
-          if (!pe.holds) return { verified: false, reason: "wrong" };
+          if (!pe.holds) return { verified: false, reason: "wrong", evidence: { holds: false, how: "exact" } };
           if (pe.complete === false) return { verified: false, reason: "missing", missing: pe.missing };
           return { verified: true, evidence: { holds: true, how: pe.exact ? "exact" : "numeric", complete: pe.complete === true ? "exact" : "unknown" } };
         }
@@ -337,6 +342,13 @@ function check(problemText, ai) {
         const y = [0.3, 1.7, -2.1].map((t) => f({ [v]: t }));
         if (y.every((w) => fin(w) && Math.abs(w - y[0]) < 1e-9)) return { verified: false, reason: "kind" };
       }
+      // polinom odvajamo točno (ulomki); numerični odvod v točkah ne loči koeficienta 5999999 od 6000000 (PV-02)
+      const ok = withLimit(POLY_LIMIT, () => {
+        const pf = tryPoly(parse(prep(izraz)));
+        const pg = tryPoly(parse(prep(ai.value)));
+        return pf && pg ? polyDiff(pf, v).eq(pg) : null;
+      });
+      if (ok !== null) return { verified: ok, reason: "wrong", evidence: { holds: ok, how: "exact", complete: "na" } };
       return { verified: compareFns((x) => (f({ [v]: x + 1e-5 }) - f({ [v]: x - 1e-5 })) / 2e-5, (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {

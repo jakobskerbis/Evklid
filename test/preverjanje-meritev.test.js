@@ -1,6 +1,6 @@
 // PV-02 (docs/preverjanje.md, »Meritev«): referenčni nabor in meritev preverjanja. Glavna metrika je 0 napačno
-// potrjenih trditev v vsem, kar vidi učenec. Znane izjeme spodaj so izmerjeno izhodišče 25. 11. 2026 in čakajo na
-// popravek; test pade ob vsaki NOVI napačni potrditvi, novem lažnem alarmu ali izjemi, in kadar motor ujame ali
+// potrjenih trditev v vsem, kar vidi učenec. Znane izjeme spodaj so izmerjeno izhodišče (25. 11. 2026, po popravku skenerja) in
+// čakajo na popravek; test pade ob vsaki NOVI napačni potrditvi, novem lažnem alarmu ali izjemi, in kadar motor ujame ali
 // potrdi manj kot ob izhodišču (pokvarjen preverjevalnik se ne sme skriti med »nepreverjeno«).
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
@@ -16,16 +16,15 @@ const IZHODISCE = {
   "skener-lokalno": {
     potrjene: [],
     previsoki: [],
-    sibke: ["periodicna-004", "periodicna-006", "periodicna-010", "skoraj-006", "druge-017"],
+    sibke: ["periodicna-004", "periodicna-006", "periodicna-010", "druge-017"],
     alarmi: LOKALNO_ALARMI,
-    ujete: 172,
-    potrjena: 101,
+    ujete: 173,
+    potrjena: 105,
   },
   // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
   skener: {
-    // velika koeficienta (vzorčenje v worker.py is_zero) in znanstveni zapis (decimals_tol): docs/preverjanje.md
-    potrjene: ["skoraj-002", "skoraj-006", "skoraj-008", "skoraj-010"],
-    previsoki: ["skoraj-013"],
+    potrjene: [],
+    previsoki: [],
     sibke: [],
     alarmi: ["integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022", ...LOKALNO_ALARMI],
     ujete: 178,
