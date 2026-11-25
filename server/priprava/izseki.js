@@ -7,6 +7,7 @@
 // - nedvoumne kemijske formule brez indeksov (H2SO4) se dopolnijo (H₂SO₄), a z oznako [?], da učenec vidi popravek;
 // - formula ($…$), ki je KaTeX ne izriše, ostane z oznako [?].
 import katex from "katex";
+import { zVarnimBrisanjem } from "./shramba.js";
 
 export const VRSTE = ["definicija", "izrek", "postopek", "formula", "primer", "naloga", "teorija"];
 export const IZSEK_MAX = 1200; // znakov na izsek; daljši odstavek se razdeli po povedih
@@ -64,19 +65,32 @@ export function oznaciNegotovo(t) {
       negotovo.push({ vrsta: "formula", izvirno: d.surovo });
       return `${d.surovo} ${NEGOTOVO}`;
     }
-    // Pred besedo sme biti števka: koeficient (3x2, 2H2O) ne skrije negotovega zapisa.
-    return d.tekst.replace(/(?<![\p{L}_\\])([\p{L}()][\p{L}\p{N}()]*\d[\p{L}\p{N}()]*)(?![\p{L}\p{N}_])/gu, (w) => {
+    // Celi nizi črk, števk in oklepajev (linearno); števke na začetku so koeficient (3x2, 2H2O) in ostanejo.
+    return d.tekst.replace(/[\p{L}\p{N}_()\\]+/gu, (run, off, cel) => {
+      if (run.includes("\\") || run.includes("_")) return run;
+      const koef = /^\d*/.exec(run)[0];
+      const w = run.slice(koef.length);
+      if (!w || !/\d/.test(w) || !/^[\p{L}(]/u.test(w)) return run;
+      const za = cel[off + run.length] || "";
+      // Naboj iona (SO42-, PO43−) ali potenca, ki sledi: števk ne spreminjamo, samo oznaka.
+      const naboj = /^[+\-−⁺⁻^]/.test(za);
       if (kemijska(w)) {
-        const p = vPodpis(w);
-        negotovo.push({ vrsta: "kemija", izvirno: w, prepis: p });
-        return `${p} ${NEGOTOVO}`;
-      }
-      // Ena ali dve črki + številka brez presledka (x2, ab2, x12, x2y): lahko potenca, produkt ali indeks.
-      if (/^(?:\p{Ll}{1,2}\d{1,2})+\p{Ll}{0,2}$/u.test(w)) {
+        // Dopolnimo samo v kemijski enačbi (puščica) in brez naboja; sicer (BC2 v geometriji) samo oznaka.
+        if (!naboj && /→|->|⟶|⇌|⇄/.test(cel)) {
+          const p = vPodpis(w);
+          negotovo.push({ vrsta: "kemija", izvirno: w, prepis: p });
+          return `${koef}${p} ${NEGOTOVO}`;
+        }
         negotovo.push({ vrsta: "zapis", izvirno: w });
-        return `${w} ${NEGOTOVO}`;
+        return `${run} ${NEGOTOVO}`;
       }
-      return w;
+      // Ena do tri črke + številka brez presledka (x2, ab2, x12, x2y, AB2): lahko potenca, produkt ali indeks.
+      // En sam velik simbol z indeksom (F2, R1) ostane brez oznake.
+      if (/^(?:\p{L}{1,3}\d{1,2})+\p{L}{0,2}$/u.test(w) && !/^\p{Lu}\d+$/u.test(w)) {
+        negotovo.push({ vrsta: "zapis", izvirno: w });
+        return `${run} ${NEGOTOVO}`;
+      }
+      return run;
     });
   });
   // Formula iz Worda, ki je uvoz ni mogel prebrati (uvoz.js omml): ostane oznaka.
@@ -86,7 +100,8 @@ export function oznaciNegotovo(t) {
 
 // Vrsta izseka po besedilu (brez AI). Vrstni red pravil je pomemben: najprej izrecne oznake.
 export function vrstaIzseka(t, { alineje = false } = {}) {
-  const s = t.trim();
+  // Vrsta se bere iz začetka bloka (oznake so na začetku); tudi omeji čas regularnih izrazov.
+  const s = t.trim().slice(0, 300);
   const z = s.toLowerCase();
   if (/^(definicija|def\.)\b|^definition\b/.test(z) || /\b(imenujemo|pravimo|definiramo)\b/.test(z) || /\bje (tisti|tista|tisto)\b/.test(z)) return "definicija";
   if (/^(izrek|zakon|pravilo|lastnost|trditev|lema|posledica)\b/.test(z) || /\b(izrek|zakon)\b.*:/.test(z) || /^[\p{L} -]{3,40}(formula|zakon|izrek)\s*:/u.test(z)) return "izrek";
@@ -177,7 +192,11 @@ export function razrezi(strani) {
  * Vir je lahko med branjem PDF izginil (izbris, čiščenje): takrat ne zapiše ničesar in vrne false.
  * seal: crypto-polje.js seal (podan, da modul ostane brez stanja).
  */
-export function shraniIzseke(db, { vir, izseki, strani, opozorila = [], stanje = "obdelan", seal }) {
+export function shraniIzseke(db, args) {
+  // Stari izseki (ponovna obdelava) se izbrišejo s secure_delete, kot vsi podatki priprave.
+  return zVarnimBrisanjem(db, () => shrani(db, args));
+}
+function shrani(db, { vir, izseki, strani, opozorila = [], stanje = "obdelan", seal }) {
   db.exec("BEGIN IMMEDIATE");
   try {
     if (!db.prepare("SELECT 1 FROM priprava_viri WHERE id = ? AND student_id = ?").get(vir.id, vir.student_id)) {

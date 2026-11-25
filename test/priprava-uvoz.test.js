@@ -9,7 +9,7 @@ import fs from "node:fs";
 import zlib from "node:zlib";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { preberiVir, beriWord, beriPowerpoint, NapakaUvoza, MEJE_UVOZA } from "../server/priprava/uvoz.js";
+import { preberiVir, beriWord, beriPowerpoint, uvoziVNiti, NapakaUvoza, MEJE_UVOZA } from "../server/priprava/uvoz.js";
 import { razrezi, oznaciNegotovo, vrstaIzseka, izrise, NEGOTOVO } from "../server/priprava/izseki.js";
 import { SEALED } from "../server/crypto-polje.js";
 
@@ -113,7 +113,9 @@ function pdf(strani) {
   const pagesId = obj.length + 1 + strani.length * 2;
   const kids = [];
   for (const vrstice of strani) {
-    const tok = `BT /F1 11 Tf 14 TL 50 780 Td ${vrstice.map((v) => `(${esc(v)}) Tj T*`).join(" ")} ET`;
+    // Vrstica je niz ali seznam kosov { t, dvig } (dvig v točkah: nadpisano > 0, podpisano < 0, manjša pisava).
+    const kos = (k) => (typeof k === "string" ? `(${esc(k)}) Tj` : `/F1 ${k.dvig ? 7 : 11} Tf ${k.dvig || 0} Ts (${esc(k.t)}) Tj /F1 11 Tf 0 Ts`);
+    const tok = `BT /F1 11 Tf 14 TL 50 780 Td ${vrstice.map((v) => `${(Array.isArray(v) ? v : [v]).map(kos).join(" ")} T*`).join(" ")} ET`;
     const c = add(`<< /Length ${Buffer.byteLength(tok, "latin1")} >>\nstream\n${tok}\nendstream`);
     kids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${font} 0 R >> >> /Contents ${c} 0 R >>`));
   }
@@ -182,7 +184,7 @@ test("negotovo branje: x2 ostane z [?] (brez ugibanja), kemijski indeksi dopolnj
   // Pravilno zapisane kemijske formule v $\mathrm{…}$ ostanejo nedotaknjene.
   assert.ok(kem.some((x) => x.besedilo.includes("$\\mathrm{SO_4^{2-}}$") && !x.negotovo.length));
 
-  assert.deepEqual(oznaciNegotovo("Velja $\\frac{1}{$ in 2x + 3 = 7, leto 2024, 4. letnik, CO2.").negotovo.map((n) => n.vrsta), ["formula", "kemija"]);
+  assert.deepEqual(oznaciNegotovo("Velja $\\frac{1}{$ in 2x + 3 = 7, leto 2024, 4. letnik, CO2.").negotovo.map((n) => n.vrsta), ["formula", "zapis"]);
   // En simbol z indeksom (sila F2, upor R1) ni negotov in se ne spremeni.
   assert.deepEqual(oznaciNegotovo("Sila F2 deluje na upor R1."), { besedilo: "Sila F2 deluje na upor R1.", negotovo: [] });
   // Koeficient pred zapisom ga ne skrije (3x2 je lahko 3x², 6x ali 3x₂); x2y je enako negotov.
@@ -398,4 +400,72 @@ test("API: nalaganje obdela vir (besedilo, Word, PDF), izseki šifrirani, filtri
     await a.call(`/api/students/${a.sid}/priprave/${p.id}`, { method: "DELETE" });
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM priprava_izseki").get().n, 0);
   });
+});
+
+// ---------- popravki po pregledih ----------
+
+test("negotovo: naboj iona in geometrija se ne prepišeta; dopolnitev indeksov samo v kemijski enačbi", () => {
+  const ion = oznaciNegotovo("Sulfatni ion SO42- in fosfatni PO43−.");
+  assert.ok(ion.besedilo.includes(`SO42 ${NEGOTOVO}-`) && ion.besedilo.includes(`PO43 ${NEGOTOVO}−`), ion.besedilo);
+  assert.ok(ion.negotovo.every((n) => !n.prepis));
+  const geo = oznaciNegotovo("Velja AB2 + BC2 = AC2.");
+  assert.equal(geo.besedilo, `Velja AB2 ${NEGOTOVO} + BC2 ${NEGOTOVO} = AC2 ${NEGOTOVO}.`);
+  assert.ok(geo.negotovo.every((n) => !n.prepis));
+  const enacba = oznaciNegotovo("2H2 + O2 → 2H2O");
+  // En sam element z indeksom (H2, O2) ostane brez oznake, spojina v enačbi se dopolni.
+  assert.equal(enacba.besedilo, `2H2 + O2 → 2H₂O ${NEGOTOVO}`);
+  assert.equal(oznaciNegotovo("$\\frac{x2}{2}$ in a_1, \\alpha2").negotovo.length, 0, "LaTeX in indeksi z _ ostanejo");
+  assert.ok(oznaciNegotovo("3x2 + 2x - 1 = 0").besedilo.startsWith(`3x2 ${NEGOTOVO}`));
+});
+
+test("hitrost: dolgi nizi in dolgi bloki ostanejo linearni", () => {
+  let t0 = Date.now();
+  razrezi([{ stran: 1, vrstice: Array.from({ length: 37 }, () => ({ besedilo: `${"a1".repeat(599)}_ ` })) }]);
+  assert.ok(Date.now() - t0 < 1500, `${Date.now() - t0} ms`);
+  t0 = Date.now();
+  vrstaIzseka(`x ${"zakon ".repeat(40000)}`);
+  assert.ok(Date.now() - t0 < 200, `${Date.now() - t0} ms`);
+});
+
+test("ločena nit: zlonameren Word (kvadratni čas) se ustavi po meji časa, strežnik ne čaka", async () => {
+  const zlo = zip({ "[Content_Types].xml": CT, "word/document.xml": `<w:document><w:body>${"<w:p ".repeat(60000)}</w:body></w:document>` });
+  const t0 = Date.now();
+  await assert.rejects(uvoziVNiti("word", zlo, { ms: 800 }), (e) => e instanceof NapakaUvoza && e.code === "uvoz_cas");
+  assert.ok(Date.now() - t0 < 3000);
+  // Navaden vir gre skozi nit enako kot neposredno.
+  const r = await uvoziVNiti("besedilo", Buffer.from(vir("kem-reakcije.md")));
+  assert.deepEqual(r.izseki, razrezi((await preberiVir("besedilo", Buffer.from(vir("kem-reakcije.md")))).strani));
+});
+
+test("Word: nadpisano in podpisano (10⁻⁶, H₂O), polje z besedilom, <w:cr/>", async () => {
+  const sup = (t) => `<w:r><w:rPr><w:vertAlign w:val="superscript"/></w:rPr><w:t>${t}</w:t></w:r>`;
+  const sub = (t) => `<w:r><w:rPr><w:vertAlign w:val="subscript"/></w:rPr><w:t>${t}</w:t></w:r>`;
+  const r = (t) => `<w:r><w:t xml:space="preserve">${t}</w:t></w:r>`;
+  const okvir = `<w:r><mc:AlternateContent><mc:Choice><w:drawing><w:txbxContent><w:p>${r("Okvir")}</w:p></w:txbxContent></w:drawing></mc:Choice><mc:Fallback><w:pict><w:txbxContent><w:p>${r("Okvir")}</w:p></w:txbxContent></w:pict></mc:Fallback></mc:AlternateContent></w:r>`;
+  const extra = `<w:p>${r("q = 2·10")}${sup("-6")}${r(" C, voda H")}${sub("2")}${r("O, x")}${sup("n+1")}</w:p><w:p>${r("Pred ")}${okvir}${r("Po")}</w:p><w:p>${r("a")}<w:r><w:cr/></w:r>${r("b")}</w:p>`;
+  const st = beriWord(docx("# A", { omml: extra }));
+  const vse = st.flatMap((x) => x.vrstice.map((v) => v.besedilo));
+  assert.ok(vse.includes("q = 2·10⁻⁶ C, voda H₂O, xⁿ⁺¹"), JSON.stringify(vse));
+  assert.ok(vse.includes("Pred Po") && vse.filter((v) => v === "Okvir").length === 1, JSON.stringify(vse));
+  assert.ok(vse.includes("a b"));
+  // Pravilno podpisan H₂O ni negotov.
+  assert.equal(oznaciNegotovo("voda H₂O").negotovo.length, 0);
+});
+
+test("PDF: nadpisano z dvigom ostane v vrstici (3x², H₂O)", async () => {
+  const r = await preberiVir("pdf", pdf([[["f(x) = 3x", { t: "2", dvig: 5 }, " + 2x - 1"], ["Voda H", { t: "2", dvig: -3 }, "O in naslov"]]]));
+  // pdfjs izpusti presledek na začetku kosa za nadpisanim delom; pomen (3x², ne 3x2) ostane.
+  assert.deepEqual(r.strani[0].vrstice.map((v) => v.besedilo.replace("²+", "² +")), ["f(x) = 3x² + 2x - 1", "Voda H₂O in naslov"]);
+});
+
+test("PDF: stran z malo besedila (naslovna) obdrži besedilo in je označena", async () => {
+  const r = await preberiVir("pdf", pdf([["Integrali"], ["Newton-Leibnizova formula: F(b) - F(a) je ploscina."]]));
+  assert.deepEqual(r.brezBesedila, [1]);
+  assert.equal(r.strani[0].vrstice[0].besedilo, "Integrali");
+});
+
+test("PowerPoint: <a:br/> je presledek, številka prosojnice in noga nista besedilo", () => {
+  const sl = `<p:sld xmlns:p="p" xmlns:a="a"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>Prva</a:t></a:r><a:br/><a:r><a:t>druga</a:t></a:r></a:p></p:txBody></p:sp><p:sp><p:nvSpPr><p:nvPr><p:ph type="sldNum"/></p:nvPr></p:nvSpPr><p:txBody><a:p><a:r><a:t>7</a:t></a:r></a:p></p:txBody></p:sp><p:sp><p:nvSpPr><p:nvPr><p:ph type="ftr"/></p:nvPr></p:nvSpPr><p:txBody><a:p><a:r><a:t>Gimnazija X</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>`;
+  const st = beriPowerpoint(zip({ "[Content_Types].xml": CT, "ppt/presentation.xml": "<p:presentation/>", "ppt/slides/slide1.xml": sl }));
+  assert.deepEqual(st[0].vrstice.filter((v) => v.besedilo).map((v) => v.besedilo), ["Prva druga"]);
 });

@@ -17,7 +17,8 @@ export const MEJE_UVOZA = {
   znakov: 200_000, // največ znakov besedila na vir (več se odreže z opozorilom)
   zipVnos: 20 * MB, // razširjen en vnos ZIP
   zipSkupaj: 60 * MB, // vsi prebrani vnosi skupaj
-  pdfMs: 20_000, // čas za branje PDF
+  ms: 20_000, // čas za uvoz enega vira (ločena nit)
+  mb: 500, // največja rast pomnilnika procesa med uvozom
 };
 
 export class NapakaUvoza extends Error {
@@ -246,10 +247,20 @@ function omml(xml, g = 0) {
 
 // ---------- Word ----------
 
+// Teki z nadpisanim ali podpisanim besedilom (10⁻⁶, H₂O) se pretvorijo pred branjem, da se pomen ne izgubi.
+function dvigniTeke(xml) {
+  return xml.replace(/<w:r(?:\s[^>]*)?>([\s\S]*?)<\/w:r>/g, (m, notranje) => {
+    const v = /<w:vertAlign w:val="(superscript|subscript)"/.exec(notranje)?.[1];
+    if (!v) return m;
+    return m.replace(/(<w:t\b[^>]*>)([^<]*)(<\/w:t>)/g, (_, a, t, b) => `${a}${dvignjeno(odkodiraj(t), v === "superscript").replace(/&/g, "&amp;").replace(/</g, "&lt;")}${b}`);
+  });
+}
+
 function odstavek(xml) {
   // Besedilo in formule v vrstnem redu; tabulator in prelom vrstice kot presledek.
+  xml = dvigniTeke(xml);
   let s = "";
-  const re = /<m:oMath\b[^>]*>[\s\S]*?<\/m:oMath>|<w:t\b[^>]*>([^<]*)<\/w:t>|<w:tab\/>|<w:br\b[^>]*\/>|<w:sym\b[^>]*\/>/g;
+  const re = /<m:oMath\b[^>]*>[\s\S]*?<\/m:oMath>|<w:t\b[^>]*>([^<]*)<\/w:t>|<w:tab\/>|<w:cr\/>|<w:br\b[^>]*\/>|<w:sym\b[^>]*\/>/g;
   let m;
   while ((m = re.exec(xml))) {
     if (m[0].startsWith("<m:oMath")) {
@@ -272,7 +283,15 @@ export function beriWord(buf) {
   const zip = zipBralnik(buf);
   const doc = zip.beri("word/document.xml");
   if (!doc) throw new NapakaUvoza("uvoz_word", "V dokumentu ni besedila.");
-  const telo = /<w:body>([\s\S]*)<\/w:body>/.exec(doc)?.[1] ?? doc;
+  let telo = /<w:body>([\s\S]*)<\/w:body>/.exec(doc)?.[1] ?? doc;
+  // Polja z besedilom: nadomestna oblika (mc:Fallback) bi besedilo podvojila; vsebina polja gre za odstavek, v katerem
+  // je polje, da notranji </w:p> ne prekine zunanjega odstavka.
+  telo = telo.replace(/<mc:Fallback>[\s\S]*?<\/mc:Fallback>/g, "");
+  const okvirji = [];
+  telo = telo.replace(/<w:txbxContent>([\s\S]*?)<\/w:txbxContent>/g, (_, n) => {
+    okvirji.push(n);
+    return `<w:okvir w:n="${okvirji.length - 1}"/>`;
+  });
   const strani = [{ stran: 1, vrstice: [] }];
   const dodaj = (v) => strani[strani.length - 1].vrstice.push(v);
   const novaStran = () => strani[strani.length - 1].vrstice.length && strani.push({ stran: strani.length + 1, vrstice: [] });
@@ -293,6 +312,7 @@ export function beriWord(buf) {
     const slog = atribut(/<w:pStyle\b[^>]*\/>/.exec(x)?.[0] || "", "w:val") || "";
     const raven = /^(?:Heading|Naslov|heading)\s*(\d)$/i.exec(slog.replace(/[^A-Za-z0-9 ]/g, ""))?.[1] ?? (/^Title$/i.test(slog) ? "1" : null);
     const alineja = /<w:numPr>/.test(x) || /^List/i.test(slog);
+    const vOkvirjih = [...x.matchAll(/<w:okvir w:n="(\d+)"\/>/g)].flatMap((o) => okvirji[Number(o[1])].match(/<w:p(?:\s[^>]*[^/])?>[\s\S]*?<\/w:p>/g) || []);
     const deli = odstavek(x).split("\f");
     deli.forEach((d, i) => {
       if (i > 0) novaStran();
@@ -300,6 +320,10 @@ export function beriWord(buf) {
       if (!t) return dodaj({ besedilo: "" });
       dodaj({ besedilo: t, ...(raven ? { naslov: Number(raven) } : {}), ...(alineja ? { alineja: true } : {}) });
     });
+    for (const o of vOkvirjih) {
+      const t = odstavek(o).replace(/[\f\s]+/g, " ").trim();
+      if (t) dodaj({ besedilo: t });
+    }
   }
   return strani.filter((s) => s.vrstice.some((v) => v.besedilo));
 }
@@ -310,9 +334,14 @@ function prosojnica(xml, { brezSlike = false } = {}) {
   const vrstice = [];
   for (const sp of xml.match(/<p:sp\b[\s\S]*?<\/p:sp>|<a:tbl\b[\s\S]*?<\/a:tbl>/g) || []) {
     if (brezSlike && /type="sldImg"/.test(sp)) continue; // sličica prosojnice na strani z opombami
+    if (/<p:ph\b[^>]*type="(?:sldNum|ftr|dt|hdr)"/.test(sp)) continue; // številka prosojnice, noga, datum, glava
     const naslov = /<p:ph\b[^>]*type="(?:title|ctrTitle)"/.test(sp);
     for (const p of sp.match(/<a:p\b[\s\S]*?<\/a:p>/g) || []) {
-      const t = (p.match(/<a:t>([^<]*)<\/a:t>|<a:t [^>]*>([^<]*)<\/a:t>/g) || []).map((x) => odkodiraj(x.replace(/<\/?a:t[^>]*>/g, ""))).join("").replace(/\s+/g, " ").trim();
+      const t = (p.match(/<a:t>[^<]*<\/a:t>|<a:t [^>]*>[^<]*<\/a:t>|<a:br\b[^>]*\/>/g) || [])
+        .map((x) => (x.startsWith("<a:br") ? " " : odkodiraj(x.replace(/<\/?a:t[^>]*>/g, ""))))
+        .join("")
+        .replace(/\s+/g, " ")
+        .trim();
       if (t) vrstice.push({ besedilo: t, ...(naslov ? { naslov: 2 } : {}), ...(/<a:buChar|<a:buAutoNum/.test(p) ? { alineja: true } : {}) });
     }
     vrstice.push({ besedilo: "" });
@@ -343,57 +372,111 @@ export function beriPowerpoint(buf) {
   return strani.filter((s) => s.vrstice.some((v) => v.besedilo));
 }
 
-// ---------- PDF (v ločeni niti) ----------
+// ---------- PDF ----------
 
-const PDF_NIT = `
-const { parentPort, workerData } = require("node:worker_threads");
-(async () => {
-  const pdfjs = await import(workerData.modul);
-  const doc = await pdfjs.getDocument({ data: new Uint8Array(workerData.podatki), isEvalSupported: false, disableFontFace: true, useSystemFonts: false, stopAtErrors: false, verbosity: 0 }).promise;
-  const n = Math.min(doc.numPages, workerData.najvec);
-  const strani = [];
-  for (let i = 1; i <= n; i++) {
-    const page = await doc.getPage(i);
-    const tc = await page.getTextContent();
-    const vrstice = [];
-    let cur = "";
-    let y = null;
-    for (const it of tc.items) {
-      if (typeof it.str !== "string") continue;
-      const iy = it.transform ? Math.round(it.transform[5]) : y;
-      if (y !== null && iy !== null && Math.abs(iy - y) > 2 && cur) { vrstice.push(cur); cur = ""; }
+// Nadpisano in podpisano v besedilu (PDF in Word izgubita oblikovanje): števke in znaki z Unicode različico, sicer ^(…)/_(…).
+const NAD = { 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹", "+": "⁺", "-": "⁻", "−": "⁻", "=": "⁼", "(": "⁽", ")": "⁾", n: "ⁿ", i: "ⁱ" };
+const POD = { 0: "₀", 1: "₁", 2: "₂", 3: "₃", 4: "₄", 5: "₅", 6: "₆", 7: "₇", 8: "₈", 9: "₉", "+": "₊", "-": "₋", "−": "₋", "=": "₌", "(": "₍", ")": "₎" };
+export function dvignjeno(t, gor) {
+  const map = gor ? NAD : POD;
+  const c = [...t.trim()];
+  if (!c.length) return "";
+  return c.every((x) => map[x]) ? c.map((x) => map[x]).join("") : `${gor ? "^" : "_"}(${t.trim()})`;
+}
+
+// Vrstice ene strani iz elementov pdfjs: nova vrstica ob hasEOL ali ko se osnovna črta premakne za več kot višino
+// pisave; manjši dvig ali spust je nadpisano oziroma podpisano besedilo (3x², H₂O), ne nova vrstica.
+export function vrsticePdf(items) {
+  const vrstice = [];
+  let cur = "";
+  let y0 = null;
+  let h0 = 0;
+  for (const it of items) {
+    if (typeof it.str !== "string") continue;
+    const y = it.transform ? it.transform[5] : y0;
+    const h = Math.abs(it.height || (it.transform ? it.transform[3] : 0)) || h0 || 10;
+    if (y0 === null || !cur) {
+      y0 = y;
+      h0 = h;
       cur += it.str;
-      y = iy;
-      if (it.hasEOL) { vrstice.push(cur); cur = ""; }
+    } else {
+      const dy = y - y0;
+      if (Math.abs(dy) <= 0.25 * h0) cur += it.str;
+      else if (dy > 0 && dy < 0.9 * h0 && it.str.trim().length <= 12) cur += dvignjeno(it.str, true);
+      else if (dy < 0 && -dy < 0.6 * h0 && it.str.trim().length <= 12) cur += dvignjeno(it.str, false);
+      else {
+        vrstice.push(cur);
+        cur = it.str;
+        y0 = y;
+        h0 = h;
+      }
     }
-    if (cur) vrstice.push(cur);
-    strani.push({ stran: i, vrstice });
-    page.cleanup();
+    if (it.hasEOL) {
+      vrstice.push(cur);
+      cur = "";
+      y0 = null;
+    }
   }
-  parentPort.postMessage({ ok: true, strani, skupaj: doc.numPages });
-  await doc.destroy();
-})().catch((e) => parentPort.postMessage({ ok: false, napaka: String(e && e.name || e) }));
-`;
+  if (cur) vrstice.push(cur);
+  return vrstice;
+}
 
-export function beriPdf(buf, { ms = MEJE_UVOZA.pdfMs } = {}) {
-  const modul = new URL("../../node_modules/pdfjs-dist/legacy/build/pdf.mjs", import.meta.url).href;
+export async function beriPdf(buf) {
+  const pdfjs = await import(import.meta.resolve("pdfjs-dist/legacy/build/pdf.mjs"));
+  let doc;
+  const naloga = pdfjs.getDocument({ data: new Uint8Array(buf), isEvalSupported: false, disableFontFace: true, useSystemFonts: false, stopAtErrors: false, verbosity: 0 });
+  try {
+    doc = await naloga.promise;
+  } catch (e) {
+    await naloga.destroy();
+    const geslo = /Password/i.test(String(e?.name || e));
+    throw new NapakaUvoza(geslo ? "uvoz_pdf_geslo" : "uvoz_pdf", geslo ? "PDF je zaklenjen z geslom." : "PDF je poškodovan ali ga ni mogoče prebrati.");
+  }
+  try {
+    const n = Math.min(doc.numPages, MEJE_UVOZA.strani);
+    const strani = [];
+    for (let i = 1; i <= n; i++) {
+      const page = await doc.getPage(i);
+      const tc = await page.getTextContent();
+      strani.push({ stran: i, vrstice: vrsticePdf(tc.items).map((t) => ({ besedilo: t.replace(/\s+/g, " ").trim() })) });
+      page.cleanup();
+    }
+    return { strani, skupaj: doc.numPages };
+  } catch (e) {
+    if (e instanceof NapakaUvoza) throw e;
+    throw new NapakaUvoza("uvoz_pdf", "PDF je poškodovan ali ga ni mogoče prebrati.");
+  } finally {
+    await naloga.destroy();
+  }
+}
+
+// ---------- ločena nit za cel uvoz ----------
+
+/**
+ * Uvoz in razrez v ločeni niti (server/priprava/nit-uvoza.js), da poškodovan ali zlonameren dokument (kvadratni čas
+ * regularnih izrazov, PDF, ki se razširi v gigabajte) ne ustavi strežnika: meja časa in rasti pomnilnika procesa,
+ * nato se nit ustavi. Vrne { izseki, strani, opozorila, brezBesedila } ali vrže NapakaUvoza.
+ */
+export function uvoziVNiti(vrsta, buf, { ms = MEJE_UVOZA.ms, mb = MEJE_UVOZA.mb } = {}) {
   return new Promise((resolve, reject) => {
-    const w = new Worker(PDF_NIT, { eval: true, workerData: { modul, podatki: buf, najvec: MEJE_UVOZA.strani }, resourceLimits: { maxOldGenerationSizeMb: 256 } });
-    const ura = setTimeout(() => {
-      w.terminate();
-      reject(new NapakaUvoza("uvoz_pdf_cas", "Branje PDF je trajalo predolgo."));
-    }, ms);
-    w.once("message", (m) => {
+    const zacetek = process.memoryUsage().rss;
+    const w = new Worker(new URL("./nit-uvoza.js", import.meta.url), { workerData: { vrsta, podatki: buf }, resourceLimits: { maxOldGenerationSizeMb: 256 } });
+    let konec = false;
+    const koncaj = (fn) => {
+      if (konec) return;
+      konec = true;
       clearTimeout(ura);
+      clearInterval(straza);
       w.terminate();
-      if (!m.ok) return reject(new NapakaUvoza(/Password/i.test(m.napaka) ? "uvoz_pdf_geslo" : "uvoz_pdf", /Password/i.test(m.napaka) ? "PDF je zaklenjen z geslom." : "PDF je poškodovan ali ga ni mogoče prebrati."));
-      const strani = m.strani.map((s) => ({ stran: s.stran, vrstice: s.vrstice.map((t) => ({ besedilo: t.replace(/\s+/g, " ").trim() })) }));
-      resolve({ strani, skupaj: m.skupaj });
-    });
-    w.once("error", () => {
-      clearTimeout(ura);
-      reject(new NapakaUvoza("uvoz_pdf", "PDF je poškodovan ali ga ni mogoče prebrati."));
-    });
+      fn();
+    };
+    const ura = setTimeout(() => koncaj(() => reject(new NapakaUvoza("uvoz_cas", "Branje datoteke je trajalo predolgo."))), ms);
+    const straza = setInterval(() => {
+      if (process.memoryUsage().rss - zacetek > mb * 1024 * 1024) koncaj(() => reject(new NapakaUvoza("uvoz_pomnilnik", "Datoteka je pri branju prevelika.")));
+    }, 100);
+    w.once("message", (m) => koncaj(() => (m.ok ? resolve(m.rezultat) : reject(new NapakaUvoza(m.code || "uvoz_napaka", m.message || "Datoteke ni mogoče prebrati.")))));
+    w.once("error", () => koncaj(() => reject(new NapakaUvoza("uvoz_napaka", "Datoteke ni mogoče prebrati."))));
+    w.once("exit", () => koncaj(() => reject(new NapakaUvoza("uvoz_napaka", "Datoteke ni mogoče prebrati."))));
   });
 }
 
@@ -427,9 +510,10 @@ export async function preberiVir(vrsta, buf) {
   else if (vrsta === "pdf") {
     const r = await beriPdf(buf);
     if (r.skupaj > MEJE_UVOZA.strani) opozorila.push({ koda: "uvoz_strani", strani: r.skupaj, prebrano: MEJE_UVOZA.strani });
-    // Stran z manj kot 20 znaki je verjetno skenirana: prebere jo branje fotografij (PR 3b).
+    // Stran z manj kot 20 znaki je verjetno skenirana (prebere jo branje fotografij, PR 3b); njeno malo besedila
+    // (naslovna stran, ena formula) vseeno ostane.
     brezBesedila = r.strani.filter((s) => s.vrstice.map((v) => v.besedilo).join("").replace(/\s/g, "").length < 20).map((s) => s.stran);
-    strani = r.strani.filter((s) => !brezBesedila.includes(s.stran));
+    strani = r.strani;
   } else throw new NapakaUvoza("uvoz_slika", "Fotografije prebere branje zapiskov.");
   // Meja znakov: odreže zadnje vrstice.
   let znakov = 0;

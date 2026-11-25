@@ -7,8 +7,8 @@ import express from "express";
 import { seal, unseal } from "../crypto-polje.js";
 import { cleanText } from "../settings.js";
 import { danIzbrisa } from "./ciscenje.js";
-import { preberiVir, NapakaUvoza } from "./uvoz.js";
-import { razrezi, shraniIzseke, VRSTE } from "./izseki.js";
+import { uvoziVNiti, NapakaUvoza } from "./uvoz.js";
+import { shraniIzseke, VRSTE } from "./izseki.js";
 import {
   preveriDatoteko, shraniIzvirnik, preberiIzvirnik, lahkoShranim, zVarnimBrisanjem,
   MEJE, MIME, NAJVEC_BAJTOV, NAJVEC_VIROV, NAJVEC_PRIPRAV, NAJVEC_SKUPAJ, NAJVEC_HKRATI, zasedeno, prostorVsi,
@@ -146,12 +146,12 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (obdelujem >= OBDELAVE_HKRATI) return;
     obdelujem++;
     try {
-      const r = await preberiVir(vir.vrsta, buf);
-      const izseki = razrezi(r.strani);
+      const r = await uvoziVNiti(vir.vrsta, buf);
+      const izseki = r.izseki;
       const opozorila = [...r.opozorila, ...(r.brezBesedila.length ? [{ koda: "uvoz_brez_besedila", strani: r.brezBesedila.slice(0, 100) }] : [])];
       // Samo skenirane strani (PDF brez besedila): čaka na branje fotografij.
       const stanje = !izseki.length && r.brezBesedila.length ? "branje" : "obdelan";
-      shraniIzseke(db, { vir, izseki, strani: r.strani.length, opozorila, stanje, seal });
+      shraniIzseke(db, { vir, izseki, strani: r.strani, opozorila, stanje, seal });
     } catch (e) {
       if (!(e instanceof NapakaUvoza)) throw e;
       napakaVira(vir, e.code);
@@ -318,6 +318,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       log.error?.(`[evklid] obdelava vira priprave: ${e?.name || "napaka"}`);
     }
     const vir = viriOd(p).find((v) => v.id === virId);
+    // Vir ali priprava je bila med branjem izbrisana (drug zavihek, čiščenje).
+    if (!vir) return niVira(res);
     res.status(201).json({ vir });
   });
 
