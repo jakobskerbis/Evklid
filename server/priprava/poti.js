@@ -667,7 +667,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       }
       return { id, ime: t?.name || id, sklop: t?.unit || null, red: i, izsekov: izsekov.get(id) || 0, ocena, vaja: vse.some((x) => hasGenerator(x)), danesNalog, zadnjic, ponovitev, prebrano: prebrano.get(id) || null };
     });
-    return { z, teme, danes, ids: new Set(ids) };
+    return { z, teme, danes };
   }
   app.get("/api/students/:id/priprave/:pid/nacrt", async (req, res) => {
     const s = loadStudent(req, res);
@@ -676,7 +676,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!p) return niPriprave(res);
     const { z, teme, danes } = await temeNacrta(s, p);
     // Poskusni test samo, ko ga /test-prep res sestavi: aktivna priprava z načrtom testa in vsaj eno temo z nalogami.
-    const poskusniTest = p.aktivna === 1 && !!p.pot && sklopiIz(p.sklopi).length > 0 && teme.some((t) => t.vaja);
+    const poskusniTest = p.aktivna === 1 && !!p.pot && sklopiIz(p.sklopi).length > 0 && teme.some((t) => hasGenerator(t.id));
     uporabljena(p);
     res.set("Cache-Control", "no-store").json({ ...sestaviNacrt({ danes, datum: p.datum_testa || null, teme, poskusniTest }), obsegIzNacrta: !!z.obseg });
   });
@@ -687,8 +687,9 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const p = ena(s, req);
     if (!p) return niPriprave(res);
     const tema = String(req.body?.tema_id || "");
-    const { ids, danes } = await temeNacrta(s, p);
-    if (!ids.has(tema)) return res.status(400).json({ error: "Tema ni v načrtu te priprave.", code: "tema_ni_v_nacrtu" });
+    const z = await zemljevidZa(s, p);
+    const danes = nowParts(new Date(now())).date;
+    if (!(z.obseg || z.teme).some((t) => t.id === tema)) return res.status(400).json({ error: "Tema ni v načrtu te priprave.", code: "tema_ni_v_nacrtu" });
     if (req.body?.prebrano === false) db.prepare("DELETE FROM priprava_prebrano WHERE priprava_id = ? AND tema_id = ?").run(p.id, tema);
     else
       db.prepare(

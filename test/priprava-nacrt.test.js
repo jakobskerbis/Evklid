@@ -93,6 +93,27 @@ test("razmiki veljajo med dnevi: vaja po razmiku od zadnje vaje, ponovitev po Ev
   assert.deepEqual(danes.nePrideNaVrsto, []);
 });
 
+test("osvežitev obvladane teme enkrat in samo v prostor, ki ostane; današnja opravljena enota ostane v »Danes«", () => {
+  // Test 5. 12., poskusni test 4. 12.: osvežitev 1. 12.; vadena 1. 12. → 2. 12. je ni več.
+  const m = (o) => tema("m1", 1, o);
+  const d1 = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-05", teme: [m()] });
+  assert.deepEqual(vseNaloge(d1).filter((x) => x.tema).map((x) => x.vrsta), ["ponovitev"]);
+  const d2 = sestaviNacrt({ danes: "2026-12-02", datum: "2026-12-05", teme: [m({ zadnjic: "2026-12-01" })] });
+  assert.deepEqual(vseNaloge(d2).filter((x) => x.tema), []);
+  // Neobvezne osvežitve ne izrinejo obveznih enot šibkih tem.
+  const sibke = Array.from({ length: 6 }, (_, i) => tema(`a${i + 1}`, 0));
+  const obvl = Array.from({ length: 9 }, (_, i) => tema(`m${i + 10}`, 1));
+  const n = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-10", teme: [...sibke, ...obvl] });
+  const brez = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-10", teme: sibke });
+  assert.deepEqual(n.nePrideNaVrsto, brez.nePrideNaVrsto);
+  // Tema, danes ponovljena in spet obvladana, ostane danes kot opravljena; druge enote se ne premaknejo v danes.
+  const pred = [0, 1, 2, 3].map((i) => tema(`p${i}`, 0.8));
+  const prej = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-10", teme: pred });
+  const potem = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-10", teme: pred.map((t, i) => (i === 0 ? { ...t, ocena: 1, zadnjic: "2026-12-01", danesNalog: 2 } : t)) });
+  assert.deepEqual(potem.dnevi[0].naloge.map((x) => x.tema.id), prej.dnevi[0].naloge.map((x) => x.tema.id));
+  assert.equal(potem.dnevi[0].naloge.find((x) => x.tema.id === "p0").opravljeno, true);
+});
+
 test("zapiski: največ ena enota na dan, za preverljivimi; prebrani ne pridejo znova", () => {
   const teme = [tema("z1", 0, { vaja: false }), tema("z2", 0, { vaja: false }), tema("z3", 0, { vaja: false }), tema("a", 0.6), tema("b", 0.8)];
   const n = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-08", teme });
@@ -154,6 +175,17 @@ test("API: načrt iz obsega testa in rešenih nalog (vaja, ne test); označeno n
     assert.deepEqual(vse.filter((x) => x.tema.id === "MAT-SS-4/doloceni-integral").map((x) => x.vrsta), ["ponovitev"]);
     assert.equal(r.body.pripravljenost.obvladanih, 1);
     assert.equal(r.body.dnevi[0].naloge.find((x) => x.tema?.id === "MAT-SS-4/nedoloceni-integral").opravljeno, false);
+    // Ročna oznaka se potrdi z nalogami po oznaki (2 pravilni ponovitvi).
+    const pp = "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij";
+    const ponovi = store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, mode, first_try_correct, created_at) VALUES (?, ?, 1, '{}', 1, 'review', ?, datetime('now', '+1 second'))");
+    ponovi.run(s.id, pp, 1);
+    ponovi.run(s.id, pp, 1);
+    assert.equal((await req("GET", `/api/students/${s.id}/priprave/${p.id}/nacrt`)).body.pripravljenost.obvladanih, 2);
+    // Zgrešena ponovitev: 0,6, dokler je tema spet pravilno rešena.
+    ponovi.run(s.id, pp, 0);
+    assert.equal((await req("GET", `/api/students/${s.id}/priprave/${p.id}/nacrt`)).body.pripravljenost.obvladanih, 1);
+    store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, mode, first_try_correct, created_at) VALUES (?, ?, 1, '{}', 1, 'practice', 1, datetime('now', '+1 second'))").run(s.id, pp);
+    assert.equal((await req("GET", `/api/students/${s.id}/priprave/${p.id}/nacrt`)).body.pripravljenost.obvladanih, 2);
     // Vaja danes šteje.
     for (let i = 0; i < 3; i++) naloga.run(s.id, "practice");
     const r2 = await req("GET", `/api/students/${s.id}/priprave/${p.id}/nacrt`);

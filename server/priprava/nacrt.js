@@ -63,11 +63,11 @@ export function sestaviNacrt({ danes, datum = null, teme, naDan = NA_DAN, poskus
   const vec = (t) => ({ id: t.id, ime: t.ime, sklop: t.sklop, izsekov: t.izsekov, vaja: t.vaja });
   const dan = (d) => (d ? razlika(danes, d) : null); // dan glede na danes (negativen = v preteklosti)
   // Tema brez nalog nima izkazanega znanja: v vrstnem redu je sredi (0,5), ne pred preverjeno šibko temo. En sam učni dan:
-  // najprej utrjevanje tem v učenju, nova snov za njimi.
-  const kljuc = (t) => (!t.vaja ? 0.5 : ucni <= 1 && t.ocena <= 0 ? 0.7 : t.ocena);
+  // najprej utrjevanje tem v učenju, nova snov za njimi. Teme, vadene danes, so prve: »Danes« ostane, kar učenec dela.
+  const kljuc = (t) => (t.vaja && t.danesNalog > 0 && t.zadnjic === danes ? -1 : !t.vaja ? 0.5 : ucni <= 1 && t.ocena <= 0 ? 0.7 : t.ocena);
   const red = [...teme].sort((a, b) => kljuc(a) - kljuc(b) || a.red - b.red);
   const nePrideNaVrsto = [];
-  const zacetekOsvezitve = Math.max(0, ucni - OSVEZITEV_DNI);
+  const zacetekOsvezitve = ucni - OSVEZITEV_DNI; // lahko negativen: osvežitev je že stekla, če je bila tema vadena od tedaj
   const enote = [];
   for (const t of red) {
     const zadnjic = dan(t.zadnjic);
@@ -81,22 +81,27 @@ export function sestaviNacrt({ danes, datum = null, teme, naDan = NA_DAN, poskus
     } else if (e.length && !vadenaDanes && e[0] !== "nova" && t.ocena < 0.8 && zadnjic !== null) {
       // Tema v učenju: naslednja vaja šele po razmiku od zadnje vaje.
       od = Math.max(0, zadnjic + razmikPred(e[0], ucni - zadnjic));
+    } else if (!e.length && t.vaja && vadenaDanes && t.danesNalog > 0) {
+      // Tema, obvladana ali ponovljena danes: današnja enota ostane (opravljena), da se v »Danes« ne premakne druga.
+      e = ["ponovitev"];
     } else if (!e.length && t.vaja && t.ocena >= 1 && !vadenaDanes) {
       // Obvladana tema: ponovitev, ko je na vrsti v Evklidu, sicer osvežitev tik pred testom.
       const p = dan(t.ponovitev);
       if (p !== null && p >= 0 && p < ucni) e = ["ponovitev"], (od = p);
-      else if (datum && (zadnjic === null || zadnjic < zacetekOsvezitve)) e = ["ponovitev"], (od = zacetekOsvezitve), (neobvezno = true);
+      else if (datum && (zadnjic === null || zadnjic < zacetekOsvezitve)) e = ["ponovitev"], (od = Math.max(0, zacetekOsvezitve)), (neobvezno = true);
     }
     if (e.length) enote.push({ t, e, od, neobvezno, dan: 0 });
   }
   const zapiskov = (d) => dnevi[d].naloge.filter((n) => n.vrsta === "zapiski").length;
   const prostor = (d, vrsta) => dnevi[d].naloge.length < naDan && (vrsta !== "zapiski" || zapiskov(d) < ZAPISKI_NA_DAN);
-  // Najprej prve enote vseh tem (vsaka šibka tema pride na vrsto), nato druge, nato tretje.
-  for (let k = 0; k < 3 && ucni > 0; k++) {
+  // Najprej prve enote vseh tem (vsaka šibka tema pride na vrsto), nato druge, nato tretje; neobvezne osvežitve na koncu,
+  // samo kjer je še prostor.
+  for (let k = 0; k < 4 && ucni > 0; k++) {
     for (const x of enote) {
-      const vrsta = x.e[k];
+      if (x.neobvezno !== (k === 3)) continue;
+      const vrsta = x.e[x.neobvezno ? 0 : k];
       if (!vrsta) continue;
-      let d = k === 0 ? x.od : x.dan + razmikPred(vrsta, ucni - x.dan);
+      let d = k === 0 || x.neobvezno ? x.od : x.dan + razmikPred(vrsta, ucni - x.dan);
       while (d < ucni && !prostor(d, vrsta)) d++;
       if (d >= ucni) {
         if (!x.neobvezno) nePrideNaVrsto.push({ vrsta, tema: vec(x.t) });
