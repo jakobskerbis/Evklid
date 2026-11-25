@@ -209,7 +209,7 @@ Danes ista ideja teče v tvojem telefonu: atomske ure v satelitih štejejo nihaj
 > Razlike: $-1 - (-4) = 3\,\mathrm{eV}$, $-4 - (-10) = 6\,\mathrm{eV}$, $-1 - (-10) = 9\,\mathrm{eV}$. Vsak par nivojev da svojo črto.
 
 ? Elektron v vodikovem atomu preskoči z nivoja $n = 3$ na $n = 2$. Kolikšna je valovna dolžina izsevanega fotona? Vzemi $hc = 1240\,\mathrm{eV\,nm}$ in rezultat vpiši v nanometrih.
-= 656 nm | 2
+= 656 nm | 4
 ~ 1,89 | To je energija fotona v eV. Valovno dolžino dobiš iz $\lambda = \dfrac{hc}{W_f}$.
 ~ 365 | Uporabil si samo energijo nivoja $n = 2$. Foton nosi razliko $E_3 - E_2$.
 > $E_3 = -\dfrac{13{,}6}{9}\,\mathrm{eV} = -1{,}51\,\mathrm{eV}$, $E_2 = -3{,}40\,\mathrm{eV}$, $W_f = 1{,}89\,\mathrm{eV}$. $\lambda = \dfrac{1240\,\mathrm{eV\,nm}}{1{,}89\,\mathrm{eV}} \approx 656\,\mathrm{nm}$: rdeča Balmerjeva črta.

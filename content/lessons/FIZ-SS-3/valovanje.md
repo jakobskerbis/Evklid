@@ -262,7 +262,7 @@ Pri interferenci sta pravili z razliko poti točni le za izvira, ki nihata v ena
 ~ 18 | Valovno dolžino si pomnožil s številom vrhov, ne s frekvenco. Frekvenca je število vrhov v eni sekundi.
 > $\nu = \dfrac{15}{30\,\mathrm{s}} = 0{,}5\,\mathrm{Hz}$, $c = \lambda \nu = 1{,}2\,\mathrm{m} \cdot 0{,}5\,\mathrm{Hz} = 0{,}6\,\mathrm{m/s}$.
 
-? Dva oddajnika v sondi nihata v fazi s frekvenco $2\,\mathrm{MHz}$, hitrost ultrazvoka v tkivu je $1540\,\mathrm{m/s}$. Za koliko milimetrov mora biti pot od enega oddajnika do točke daljša od poti od drugega, da je v točki prva (najmanjša) oslabitev?
+? Dva oddajnika v sondi nihata v fazi s frekvenco $2\,\mathrm{MHz}$, hitrost ultrazvoka v tkivu je $1540\,\mathrm{m/s}$. Kolikšna je najmanjša razlika poti od obeh oddajnikov do točke, pri kateri je v točki oslabitev? Rezultat vpiši v milimetrih.
 = 0,385 mm | 0,005
 ~ 0,77 | To je cela valovna dolžina; razlika poti $\lambda$ da ojačitev. Za oslabitev je potrebna polovica.
 ~ 0,000385 | To je rezultat v metrih. Pretvori ga v milimetre.

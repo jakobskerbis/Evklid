@@ -247,10 +247,11 @@ Vidiš: ista leča da manjšo, enako, večjo ali navidezno sliko. Odloča samo, 
 > $\sin\beta = \dfrac{n_1 \sin\alpha}{n_2} = \dfrac{1{,}00 \cdot 0{,}500}{1{,}50} = 0{,}333$, torej $\beta = 19{,}5^\circ$.
 
 ? Diapozitiv z višino $4{,}0\,\mathrm{cm}$ je $10{,}2\,\mathrm{cm}$ pred lečo projektorja z goriščno razdaljo $10\,\mathrm{cm}$. Kako visoka je slika na platnu? Rezultat vpiši v centimetrih.
-= 200 cm | 2
+= 200 cm | 5
 ~ 510 | To je razdalja slike $b$. Višino slike dobiš iz povečave $\dfrac{S}{P} = \dfrac{b}{a}$.
 ~ 0,08 | Povečavo si obrnil: $\dfrac{S}{P} = \dfrac{b}{a}$, ne $\dfrac{a}{b}$.
-> $\dfrac{1}{b} = \dfrac{1}{10\,\mathrm{cm}} - \dfrac{1}{10{,}2\,\mathrm{cm}}$, $b = 510\,\mathrm{cm}$. $S = P \dfrac{b}{a} = 4{,}0\,\mathrm{cm} \cdot \dfrac{510}{10{,}2} = 200\,\mathrm{cm}$. Predmet je malo dlje od $f$, zato je slika daleč in zelo povečana.
+~ 1,98 | Predznak: $\dfrac{1}{b} = \dfrac{1}{f} - \dfrac{1}{a}$, ne $\dfrac{1}{f} + \dfrac{1}{a}$. Predmet je za goriščem, zato je slika realna in daleč za lečo.
+> $\dfrac{1}{b} = \dfrac{1}{10\,\mathrm{cm}} - \dfrac{1}{10{,}2\,\mathrm{cm}}$, $b = 510\,\mathrm{cm}$. $S = P \dfrac{b}{a} = 4{,}0\,\mathrm{cm} \cdot \dfrac{510}{10{,}2} = 200\,\mathrm{cm}$. Brez vmesnega zaokroževanja: $b = \dfrac{a f}{a - f} = 510\,\mathrm{cm}$, $\dfrac{S}{P} = \dfrac{f}{a - f} = 50$. Predmet je malo dlje od $f$, zato je slika daleč in zelo povečana.
 
 :::simboli
 \alpha | vpadni kot | | ° | merjen od pravokotnice

@@ -230,7 +230,7 @@ Polna in črtkana črta vodita od vsake reže do istega svetlega pasu. Črtkana 
 ~ 4 | Pri $N = 4$ bi bil $\sin\varphi = 1{,}04 > 1$, zato četrtega reda ni.
 > $d = \dfrac{1\,\mathrm{mm}}{400} = 2{,}5\,\mathrm{\mu m}$. Iz $\dfrac{N\lambda}{d} \le 1$ sledi $N \le \dfrac{2{,}5\cdot10^{-6}\,\mathrm{m}}{6{,}5\cdot10^{-7}\,\mathrm{m}} = 3{,}85$, torej je najvišji red $N = 3$.
 
-? Nepolarizirana svetloba z gostoto toka $80\,\mathrm{W/m^2}$ gre skozi dva polarizatorja. Njuni prepustni smeri oklepata $60^\circ$. Kolikšna gostota toka pride skozi oba?
+? Nepolarizirana svetloba z jakostjo $80\,\mathrm{W/m^2}$ gre skozi dva polarizatorja. Njuni prepustni smeri oklepata $60^\circ$. Kolikšna jakost pride skozi oba?
 = 10 W/m² | 0,1
 ~ 20 | Upoštevati moraš oboje: prvi polarizator prepusti polovico nepolarizirane svetlobe, drugi pa delež $\cos^2\theta$ (ne $\cos\theta$).
 ~ 30 | Uporabil si $\sin^2\theta$. Za polarizirano svetlobo velja $j = j_0 \cos^2\theta$.

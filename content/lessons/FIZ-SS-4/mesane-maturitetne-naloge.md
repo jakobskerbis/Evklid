@@ -232,11 +232,12 @@ Ker je $T \propto g^{-1/2}$, je $g$ manjši za kvadrat tega faktorja: $1{,}62^2 
 + Četrtina prejšnje.
 > $P \propto U^2$, zato $\left(\tfrac12\right)^2 = \tfrac14$. Metoda razmerij deluje tudi pri elektriki, ne le v vesolju.
 
-? Astronavt ima maso $60\,\mathrm{kg}$. Kolikšna gravitacijska sila deluje nanj na višini $h = R_Z$ nad površjem Zemlje? Vzemi $g = 9{,}81\,\mathrm{m/s^2}$. (Na cel newton.)
-= 147 N | 1
-~ 294 | Sila pada s kvadratom razdalje: $\left(\tfrac12\right)^2 = \tfrac14$, ne $\tfrac12$.
-~ 589 | To je teža na površju. Na višini $R_Z$ je astronavt dvakrat dlje od središča.
-> $r_2 = R_Z + R_Z = 2R_Z$, zato $F_2 = m g \left(\dfrac{R_Z}{2R_Z}\right)^2 = \dfrac{60\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2}}{4} \approx 147\,\mathrm{N}$.
+? Astronavt ima maso $60\,\mathrm{kg}$. Kolikšna gravitacijska sila deluje nanj na višini $h = \tfrac12 R_Z$ nad površjem Zemlje? Vzemi $g = 9{,}81\,\mathrm{m/s^2}$. (Na cel newton.)
+= 262 N | 1
+~ 392 | Sila pada s kvadratom razdalje: $\left(\tfrac{1}{1{,}5}\right)^2 = \tfrac{1}{2{,}25}$, ne $\tfrac{1}{1{,}5}$.
+~ 589 | To je teža na površju. Na višini $\tfrac12 R_Z$ je astronavt $1{,}5$-krat dlje od središča.
+~ 2354 | Razdaljo si meril od površja ($r = \tfrac12 R_Z$). Gravitacijski zakon meri od središča: $r = R_Z + \tfrac12 R_Z$.
+> $r_2 = R_Z + \tfrac12 R_Z = 1{,}5\,R_Z$, zato $F_2 = m g \left(\dfrac{R_Z}{1{,}5\,R_Z}\right)^2 = \dfrac{60\,\mathrm{kg} \cdot 9{,}81\,\mathrm{m/s^2}}{2{,}25} \approx 262\,\mathrm{N}$.
 
 ? Nihalo ima na Zemlji nihajni čas $1{,}2\,\mathrm{s}$. Dolžino nihala povečamo za faktor $9$ in ga odnesemo na planet s štirikrat večjim težnim pospeškom. Kolikšen je nihajni čas tam?
 = 1,8 s | 0,01

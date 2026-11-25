@@ -259,7 +259,7 @@ Za tuljavo postopek ponovi v treh korakih:
 ? Tuljava ima $1000$ ovojev in je dolga $31{,}4\,\mathrm{cm}$. Kolikšen tok mora teči skoznjo, da je v njej gostota polja $8{,}0\,\mathrm{mT}$?
 = 2,0 A | 0,02
 ~ 200 | Dolžino tuljave moraš vstaviti v metrih: $31{,}4\,\mathrm{cm} = 0{,}314\,\mathrm{m}$.
-~ 2000 | Gostoto polja moraš vstaviti v teslah: $8{,}0\,\mathrm{mT} = 8{,}0\cdot10^{-3}\,\mathrm{T}$.
+~ 2,0·10^3 | Gostoto polja moraš vstaviti v teslah: $8{,}0\,\mathrm{mT} = 8{,}0\cdot10^{-3}\,\mathrm{T}$.
 > $I = \dfrac{B l}{\mu_0 N} = \dfrac{8{,}0\cdot10^{-3}\,\mathrm{T} \cdot 0{,}314\,\mathrm{m}}{4\pi\cdot10^{-7}\,\mathrm{V\,s/(A\,m)} \cdot 1000} \approx 2{,}0\,\mathrm{A}$.
 
 :::simboli
