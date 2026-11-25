@@ -612,6 +612,12 @@ async function textbook(p, label) {
     await screen(p, `lekcija-gradiva-${label}`);
     await p.keyboard.press("Escape");
     if ((await p.locator("#tb-gradiva-list").isVisible()) || (await p.locator("#tb-gradiva-btn").getAttribute("aria-expanded")) !== "false") throw new Error("Esc ne zapre seznama »Gradiva«");
+    // Nazaj (tipka telefona) z odprtim seznamom zapre seznam, lekcija ostane odprta.
+    await click(p, "#tb-gradiva-btn", { wait: 50 });
+    await p.goBack();
+    await p.waitForTimeout(150);
+    if (!(await p.locator("#view-textbook .tb-title").isVisible())) throw new Error("Nazaj z odprtim »Gradiva« je zaprl lekcijo");
+    if (await p.locator("#tb-gradiva-list").isVisible()) throw new Error("Nazaj ne zapre seznama »Gradiva«");
   }
   if (p.viewportSize().width <= 400) {
     const g = await p.evaluate(() => {

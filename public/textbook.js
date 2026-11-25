@@ -187,6 +187,9 @@ const esc = (s) => ctx.escapeHtml(String(s ?? ""));
 // Odpre učbenik (kazalo ali zadnjo odprto lekcijo).
 // Tipka Nazaj (telefon): iz odprte lekcije nazaj na seznam lekcij. Vrne true, če je bila lekcija odprta.
 export function textbookBack() {
+  // Odprt seznam »Gradiva ▾« zapre Nazaj najprej sam (lekcija ostane odprta).
+  const gr = document.querySelector(".tb-gr-menu.open");
+  if (gr) return setGradiva(gr, false, gr.contains(document.activeElement)), true;
   if (!tb.topicId || !$("#view-textbook") || $("#view-textbook").closest("[hidden]")) return false;
   tb.topicId = null;
   renderHome();
@@ -884,7 +887,7 @@ async function renderLesson(topicId, name = "") {
 }
 
 // ---------- Gradiva lekcije: spustni seznam »Gradiva ▾« ----------
-// Gumb z aria-expanded odpre seznam povezav (Tab gre po njih). Zapre ga izbira, Esc ali Nazaj (app.js pošlje Esc),
+// Gumb z aria-expanded odpre seznam povezav (Tab gre po njih). Zapre ga izbira, Esc ali Nazaj (textbookBack),
 // dotik ali klik zunaj in fokus, ki zapusti seznam. Enako na računalniku in telefonu.
 function setGradiva(menu, open, refocus = false) {
   const btn = menu.querySelector(".tb-gr-toggle");
@@ -896,7 +899,7 @@ function setGradiva(menu, open, refocus = false) {
 function wireGradivaMenu(menu) {
   if (!menu) return;
   menu.querySelector(".tb-gr-toggle").addEventListener("click", () => setGradiva(menu, !menu.classList.contains("open")));
-  menu.querySelector(".tb-gr-list").addEventListener("click", (e) => e.target.closest("a, button") && setGradiva(menu, false));
+  menu.querySelector(".tb-gr-list").addEventListener("click", (e) => e.target.closest("a, button") && setGradiva(menu, false, e.detail === 0)); // s tipkovnico fokus nazaj na gumb
   menu.addEventListener("focusout", (e) => e.relatedTarget && !menu.contains(e.relatedTarget) && setGradiva(menu, false));
 }
 // Zajem: Esc zapre seznam, preden ga dobi premično okno (okna.js bi zaprlo celo okno).
