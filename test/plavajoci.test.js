@@ -227,6 +227,33 @@ test("telefon 390 × 844: prijava napake v lekciji, površina data-ne-prekrij in
       return dno - document.querySelector("#toast").getBoundingClientRect().bottom;
     });
     assert.ok(spodaj >= 12 && spodaj <= 40, `obvestilo stoji tik nad spodnjo vrstico (${spodaj} px)`);
+    // Drsenje (brez nove vsebine) pripelje gumb pod obvestilo: obvestilo se umakne (dimni test računov 25. 11.).
+    // Obvestilo se po nekaj sekundah samo skrije: pred drsenjem ga pokažemo znova.
+    await p.evaluate(() => {
+      const t = document.querySelector("#toast");
+      t.hidden = false;
+      t.dataset.at = Date.now() + 2;
+    });
+    await p.waitForTimeout(50);
+    const zamik = await p.evaluate(() => {
+      const v = document.querySelector("main.view:not([hidden])");
+      // Drsni del pogleda (lekcija): tisti z največ vsebine pod robom.
+      const sc = [v, ...v.querySelectorAll("*")]
+        .filter((e) => /auto|scroll/.test(getComputedStyle(e).overflowY) && e.clientHeight > 200)
+        .sort((x, y) => y.scrollHeight - y.clientHeight - (x.scrollHeight - x.clientHeight))[0];
+      const g = document.createElement("button");
+      g.id = "gumb-v-vsebini";
+      g.textContent = "Ustvari profil";
+      g.style.cssText = "display:block;width:100%;height:48px;margin:0 0 1200px";
+      sc.append(g);
+      const t = document.querySelector("#toast").getBoundingClientRect();
+      sc.scrollBy({ top: g.getBoundingClientRect().top - t.top, behavior: "instant" });
+      return Math.round(g.getBoundingClientRect().top - t.top);
+    });
+    assert.ok(Math.abs(zamik) < 4, `gumb je po drsenju na mestu obvestila (${zamik} px)`);
+    await p.waitForTimeout(100);
+    assert.equal(await p.evaluate(() => document.querySelector("#toast").hidden), false, "obvestilo je še vidno");
+    assert.deepEqual(await pokrito(p, "#toast"), [], "po drsenju obvestilo prekrije gumb");
     assert.deepEqual(errors, []);
     await ctx.close();
   });

@@ -875,6 +875,17 @@ export function initOkna(opts) {
   // Zadetki pridejo s strežnika pozneje kot 450 ms po vnosu (iskanje v učbeniku na iPadu, dimni test 25. 11.): nova vsebina
   // v odprtem pogledu sproži isto preverjanje, ko se neha spreminjati (med pretakanjem odgovora se ne kliče vsakič).
   new MutationObserver(preveriMesto).observe(document.body, { childList: true, subtree: true });
+  // Drsenje premakne polja pod obvestilo brez spremembe vsebine (obrazec za otroka, dimni test računov 25. 11.):
+  // vidno obvestilo gre ob vsakem drsenju na prosto mesto, skrito ne stane nič.
+  let drsi = 0;
+  document.addEventListener(
+    "scroll",
+    () => {
+      if (drsi || $("#toast")?.hidden !== false) return;
+      drsi = requestAnimationFrame(() => ((drsi = 0), placeToast()));
+    },
+    { capture: true, passive: true },
+  );
   // Obvestilo (#toast, pišejo ga app.js, account.js, leagues.js, kalkulator.js): ob prikazu in novem besedilu na prosto mesto.
   const obvestilo = document.getElementById("toast");
   // Isto dejanje pogosto še spremeni stran (zapre obrazec, izriše odgovor): mesto preverimo še po 250 in 800 ms.
