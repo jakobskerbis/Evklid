@@ -404,7 +404,7 @@ test("starši: samo otrok pod 15 let, potrjen in odrasel imetnik, ne gost", () =
 test("starši: e-mail z imenom, časom in vrsto, brez vsebine; tuja država brez slovenskih linij", () => {
   const m = starsEmail({ ime: "Miha", vrsta: "zdravje", ob: "2026-11-25T09:00:00Z", settings: {} });
   assert.match(m.subject, /profilu Miha/);
-  assert.match(m.text, /25\. 11\. 2026 10\.00/);
+  assert.match(m.text, /25\. 11\. 2026 ob 10\.00/);
   assert.match(m.text, /nujen zdravstveni primer/);
   assert.match(m.text, /116 111/);
   assert.match(m.text, /Vsebine pogovora vam ne pošiljamo/);

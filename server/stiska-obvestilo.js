@@ -128,9 +128,9 @@ export function starsEmail({ ime, vrsta, ob, settings } = {}, env = process.env)
   const st = stevilke(settings || {});
   const profil = ime ? `»${ime}«` : "vašega otroka";
   const nujno = `Če je otrok v nevarnosti ali se je poškodoval, takoj pokličite ${st.sos || "112"}.`;
-  const linija = st.si ? " Za pogovor je otrokom in mladostnikom brezplačno na voljo TOM telefon 116 111." : "";
-  const uvod = `${BRAND.name} je ${cas(ob)} v pogovoru profila ${profil} zaznal sporočilo, ki kaže na ${kaj}. Otroku je takoj pokazal številke za pomoč.`;
-  const nasvet = `Poiščite miren trenutek in otroka vprašajte, kako je. Poslušajte ga brez obtoževanja in mu povejte, da ste ob njem. ${nujno}${linija} Pomagajo vam lahko tudi šolska svetovalna služba ali osebni zdravnik.`;
+  const linija = st.si ? " Za pogovor je otrokom in mladostnikom brezplačno na voljo TOM telefon 116 111 (vsak dan od 12. do 20. ure)." : "";
+  const uvod = `${BRAND.name} je ${cas(ob).replace(/ (\d\d\.\d\d)$/, " ob $1")} v pogovoru profila ${profil} zaznal sporočilo, ki kaže na ${kaj}. Otroku je takoj pokazal številke za pomoč.`;
+  const nasvet = `${nujno} Sicer poiščite miren trenutek in otroka vprašajte, kako je. Poslušajte ga brez obtoževanja in mu povejte, da ste ob njem.${linija} Pomagajo vam lahko tudi šolska svetovalna služba ali osebni zdravnik.`;
   const opomba = `Vsebine pogovora vam ne pošiljamo. To obvestilo dobite, ker ste odprli račun za otroka, mlajšega od ${STARS_DO_LET} let. Največ eno takšno obvestilo na profil v ${STARS_OKNO_MS / 3600000} urah.`;
   const subject = `${BRAND.name}: obvestilo o stiski pri profilu ${ime || "vašega otroka"}`;
   const text = `${uvod}\n\n${nasvet}\n\n${opomba}`;
