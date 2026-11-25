@@ -1,5 +1,6 @@
 // Starševski računi, soglasja, naročnine (Stripe), priporočila in tedenska poročila (Resend).
 // Vklop: EVKLID_ACCOUNTS=1. Brez tega aplikacija deluje kot prej (brez prijave).
+import { neprimernoIme, NEPRIMERNO_IME } from "../ime-oznaka.js";
 import crypto from "node:crypto";
 import "../env.js";
 import { BRAND, LEGACY } from "../brand.js";
@@ -2495,6 +2496,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     const name = cleanText(req.body?.name, 40);
     if (!name) return res.status(400).json({ error: "Vpiši ime ali vzdevek otroka." });
+    if (neprimernoIme(name)) return res.status(400).json({ error: NEPRIMERNO_IME, code: "ime_neprimerno" }); // #754
     const minor = isMinor(p);
     // Mladoletni imetnik (dijak, ki je račun ustvaril sam) ima samo svoj profil; za otroke soglaša starš.
     if (minor && childIds(p.id).length) {

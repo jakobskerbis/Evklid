@@ -1488,7 +1488,7 @@ async function onboard(name = "") {
       try {
         s = await api("/api/students", { method: "POST", body: { name: f.name.value, settings, vir: currentSource() } });
       } catch (ex) {
-        err.textContent = ex.message;
+        err.textContent = ex.body?.code === "ime_neprimerno" ? t("set.nameBad") : ex.message; // #754
         err.hidden = false;
         busy = false;
         btn.disabled = false;
@@ -4548,6 +4548,7 @@ initLab({
 initUci({
   escapeHtml,
   getStudent: () => state.student,
+  openLesson, // »Lekcija« v 3D modelu (uci-se.js): Nazaj iz lekcije spet odpre model
   showTextbook,
   showLab,
   stopReading,
