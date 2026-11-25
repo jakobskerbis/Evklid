@@ -22,8 +22,9 @@ test("every guided experiment is a real lab experiment with complete steps", asy
     assert.ok(LAB_INFO[key] && ENGINES[key], `${key}: ni v katalogu laboratorija`);
     for (const f of ["naslov", "cilj", "konec"]) assert.ok(def[f]?.length > 20, `${key}: manjka ${f}`);
     assert.ok(def.koraki.length >= 5 && def.koraki.length <= 12, `${key}: ${def.koraki.length} korakov`);
-    // Kontrole poskusa so v motorju, skupne (napoved) v lab.js.
-    const src = (fs.readFileSync(`public/sim/${ENGINES[key][0]}`, "utf8") + fs.readFileSync("public/sim/lab.js", "utf8")).toLocaleLowerCase("sl");
+    // Kontrole poskusa so v motorju; napoved (lab.js → napoved) le, če jo motor uporablja.
+    const motor = fs.readFileSync(`public/sim/${ENGINES[key][0]}`, "utf8");
+    const src = (motor + (motor.includes("napoved(") ? fs.readFileSync("public/sim/lab.js", "utf8") : "")).toLocaleLowerCase("sl");
     for (const [i, k] of def.koraki.entries()) {
       for (const f of ["naslov", "kaj", "zakaj"]) assert.ok(k[f]?.length > 5, `${key} korak ${i + 1}: manjka ${f}`);
       assert.equal(typeof k.done, "function");

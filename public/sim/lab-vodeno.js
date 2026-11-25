@@ -38,7 +38,8 @@ export function kontekst(root, dnevnik) {
     // Napoved pred meritvijo (lab.js → napoved): zapisana ali že zaprta. Brez okvirja (poskus je nima) korak ne ustavi vodenja.
     napoved: (id) => {
       const el = [...root.querySelectorAll("[data-napoved]")].find((x) => x.dataset.napoved === id);
-      return !el || /^(Tvoja napoved:|Napovedi nisi zapisal)/.test(besedilo(el.querySelector(".lab-napoved-moja")));
+      const moja = el?.querySelector(".lab-napoved-moja");
+      return !el || !!moja?.querySelector("b") || /^Napovedi nisi zapisal/.test(besedilo(moja)); // <b> = zapisana vrednost
     },
   };
 }

@@ -143,8 +143,8 @@ export const KORAKI = {
         naslov: "Napovej tok, preden meriš",
         kaj: "Kolikšen tok bo tekel skozi upornik 100\u00a0Ω pri 6\u00a0V? Vpiši napoved v miliamperih in pritisni »Zapiši napoved«.",
         namig: "Po Ohmovem zakonu je I = U/R. Pazi na enote: 1\u00a0A = 1000\u00a0mA.",
-        zakaj: "Ko izmeriš tok pri 6\u00a0V, se pod grafom pokaže primerjava tvoje napovedi z meritvijo.",
-        poudari: ["tvoja napoved", "Zapiši napoved"],
+        zakaj: "Napoved pred meritvijo pokaže, ali zakon res razumeš. Ko imaš dovolj meritev, se pod grafom pokaže primerjava tvoje napovedi z izmerjenim tokom pri 6\u00a0V.",
+        poudari: ["tvoja napoved"],
         done: (c) => c.napoved("tok-6V"),
       },
       {
