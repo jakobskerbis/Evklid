@@ -177,7 +177,7 @@ $x + 2 = x - (-2)$, zato Horner z $a = -2$; ostanek $r = p(-2)$.
 
 **Rešitev:**
 
-1. Na levo napišemo $-2$, zgoraj koeficiente $2, 1, -8, 1$.
+1. Vzamemo $a = -2$, v zgornjo vrstico napišemo koeficiente $2, 1, -8, 1$.
 2. Prepišemo $2$, nato $2 \cdot (-2) + 1 = -3$.
 3. Zadnja dva koraka naredi sam, nato preveri:
 
@@ -382,7 +382,7 @@ Produkt je zaporedoma negativen, pozitiven, negativen in pozitiven. Graf torej p
 > Izrek o ostanku: $p(3) = 27 - 6 + 4 = 25$.
 
 ? Ana deli $2x^3 - 5x + 3$ z $x - 2$. V Hornerjevo shemo napiše koeficiente $2, -5, 3$ in dobi ostanek $1$. Kje je napaka?
-- Na levo bi morala napisati $-2$.
+- Množiti bi morala z $a = -2$.
 ~ Pri $x - 2$ je $a = 2$; minus bi potrebovala pri $x + 2$.
 + Za manjkajoči člen $x^2$ bi morala vpisati koeficient $0$.
 - Koeficiente bi morala pisati od najnižje potence navzgor.

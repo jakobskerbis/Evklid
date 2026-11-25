@@ -238,7 +238,7 @@ $c_2 = \dfrac{0{,}10 \cdot 15{,}0}{500}\,\text{mol/L} = 0{,}0030\,\text{mol/L}$ 
 
 ## Drugače: Na sliki
 
-Predstavljaj si pH lestvico kot stopnice. Vsaka stopnica više pomeni **desetkrat manj** oksonijevih ionov:
+Predstavljaj si pH lestvico kot stopnice. Vsaka stopnica više pomeni **desetkrat manj** oksonijevih ionov. Stolpci kažejo koncentracijo v milimolih na liter ($1\,\text{mmol/L} = 0{,}001\,\text{mol/L}$):
 
 :::risba stolpci
 opis: Stolpčni prikaz koncentracije oksonijevih ionov v milimolih na liter pri petih vrednostih pH. pH 1: 100 mmol/L, pH 2: 10 mmol/L, pH 3: 1 mmol/L, pH 4: 0,1 mmol/L, pH 7 (nevtralno): 0,0001 mmol/L. Vsak naslednji stolpec je desetkrat nižji, od pH 3 naprej se skoraj ne vidijo več.
