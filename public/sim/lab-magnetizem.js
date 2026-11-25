@@ -731,7 +731,7 @@ export function labSilaVodnik(el) {
   });
   el.classList.add("lab");
   // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
-  const Rr = racun({ enota: "T", dec: 3, tol: 0.05, onOdkrij: () => (redraw(), zap.shrani()) });
+  const Rr = racun({ enota: "mT", dec: 1, tol: 0.05, onOdkrij: () => (redraw(), zap.shrani()) });
   calc.after(Rr.el);
 
   function events() {
@@ -775,15 +775,15 @@ export function labSilaVodnik(el) {
     for (const [name, pts] of gr1) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), L = parseFloat(name) / 100;
-      cilji.push({ key: `I:${name}`, ime: `F(I), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>I</i>) izračunaj gostoto magnetnega polja <i>B</i> (${name}).`, vrednost: k / 1000 / L });
-      out.push(Rr.odkrito(`I:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je ${tex(String.raw`B = \frac{k}{L} = \frac{${num(k / 1000, 5)}${en("N/A")}}{${num(L, 2)}${en("m")}} = ${rez(num(k / 1000 / L, 3), "T")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>I</i>) in ga preveri spodaj.</p>`);
+      cilji.push({ key: `I:${name}`, ime: `F(I), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>I</i>) izračunaj gostoto magnetnega polja <i>B</i> v militeslih (${name}).`, vrednost: k / L }); // mN/(A·m) = mT
+      out.push(Rr.odkrito(`I:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je ${tex(String.raw`B = \frac{k}{L} = \frac{${num(k / 1000, 5)}${en("N/A")}}{${num(L, 2)}${en("m")}} = ${num(k / 1000 / L, 4)}${en("T")} = ${rez(fixed(k / L, 1), "mT")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>I</i>) in ga preveri spodaj.</p>`);
     }
     for (const [name, pts] of gr2) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), I = parseFloat(name.replace(",", "."));
       if (I > 0) {
-        cilji.push({ key: `L:${name}`, ime: `F(L), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>L</i>) izračunaj gostoto magnetnega polja <i>B</i> (${name}).`, vrednost: (k * 100) / 1000 / I });
-        out.push(Rr.odkrito(`L:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je ${tex(String.raw`B = \frac{k}{I} = ${rez(num((k * 100) / 1000 / I, 3), "T")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>L</i>) in ga preveri spodaj.</p>`);
+        cilji.push({ key: `L:${name}`, ime: `F(L), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>L</i>) izračunaj gostoto magnetnega polja <i>B</i> v militeslih (${name}).`, vrednost: (k * 100) / I }); // mN/m na A = mT
+        out.push(Rr.odkrito(`L:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je ${tex(String.raw`B = \frac{k}{I} = \frac{${num(k / 10, 4)}${en("N/m")}}{${num(I, 1)}${en("A")}} = ${rez(fixed((k * 100) / I, 1), "mT")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>L</i>) in ga preveri spodaj.</p>`);
       }
     }
     calc.innerHTML = out.join("");

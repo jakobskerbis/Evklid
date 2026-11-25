@@ -1495,3 +1495,5 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-svg .lab-boy-sila { fill: none; stroke: #c0392b; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .dark .demo-svg .lab-boy-sila { stroke: #ff8a7a; }
 .demo-svg .lab-boy-silatxt { fill: var(--text); font-size: 11px; font-weight: 700; }
+/* Grelnik: izračun W, Q in η v vrsticah (lab-toplota.js); na telefonu malo manjša pisava, da vrstica ne drsi. */
+@media (max-width: 480px) { .lab-top-calc .demo-eq { font-size: 1rem; } }

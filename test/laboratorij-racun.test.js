@@ -3,7 +3,7 @@
 import test, { before } from "node:test";
 import assert from "node:assert/strict";
 import { ENGINES } from "../public/sim/index.js";
-import { preveriRacun } from "../public/sim/lab.js";
+import { preveriRacun, odzivRacuna } from "../public/sim/lab.js";
 import { naklonSkoziIzhodisce } from "../public/sim/lab-model-sile.js";
 import { naklon, fIzMeritev } from "../public/sim/lab-model-optika.js";
 import { izkoristek } from "../public/sim/lab-model-toplota.js";
@@ -35,6 +35,36 @@ test("local numeric check: decimal comma, relative and absolute tolerance", () =
   assert.equal(preveriRacun("5", NaN), null);
 });
 
+test("unit after the number, nominal and textbook values, feedback without the answer", () => {
+  // enota poskusa za številom (pregled A3): »97 Ω« je število, »97 V« ni
+  assert.equal(preveriRacun("97 Ω", 96, { enota: "Ω" }).ok, true);
+  assert.equal(preveriRacun("97Ω", 96, { enota: "Ω" }).ok, true);
+  assert.equal(preveriRacun("97 V", 96, { enota: "Ω" }), null);
+  assert.equal(preveriRacun("9,79 m/s2", 9.75, { enota: "m/s²", tol: 0.03 }).ok, true);
+  assert.equal(preveriRacun("76 mT", 75.9, { enota: "mT" }).ok, true);
+  // napis na sestavnem delu / vrednost iz učbenika ni rezultat meritev, ko se meritve od nje razlikujejo za več kot 1 %
+  const R = [{ v: 100, kaj: "napis na uporniku" }];
+  const nap = preveriRacun("100", 96.2, { tol: 0.04, nazivno: R });
+  assert.equal(nap.ok, false, "100 Ω z napisa, meritve dajo 96,2 Ω");
+  assert.equal(nap.nazivno.kaj, "napis na uporniku");
+  assert.match(odzivRacuna(nap), /To je napis na uporniku, ne rezultat tvojih meritev/);
+  assert.equal(preveriRacun("100,3", 96.2, { tol: 0.04, nazivno: R }).ok, false, "v 0,5 % od napisa");
+  assert.equal(preveriRacun("99", 96.2, { tol: 0.04, nazivno: R }).ok, true, "1 % od napisa, v 4 % od meritev: lasten račun");
+  assert.equal(preveriRacun("100", 99.5, { tol: 0.04, nazivno: R }).ok, true, "meritve so same blizu napisa");
+  const g = [9.81, 9.8].map((v) => ({ v, kaj: "vrednost iz učbenika" }));
+  assert.equal(preveriRacun("9,81", 9.62, { tol: 0.03, nazivno: g }).ok, false);
+  assert.equal(preveriRacun("9,8", 9.62, { tol: 0.03, nazivno: g }).ok, false);
+  assert.equal(preveriRacun("9,8", 9.79, { tol: 0.03, nazivno: g }).ok, true);
+  // odziv ne izda rešitve: ne odstotka ne številke, le približno (blizu, precej, daleč) ali faktor 10ⁿ
+  const odz = (x, p, tol = 0.04) => odzivRacuna(preveriRacun(String(x), p, { tol }), tol);
+  assert.match(odz(105, 96.2), /blizu/);
+  assert.match(odz(110, 96.2), /precej/);
+  assert.match(odz(150, 96.2), /daleč/);
+  assert.match(odz(9.62, 96.2), /faktor ~10\b.*enot/);
+  assert.match(odz(0.0962, 96.2), /faktor ~1000\b/);
+  for (const x of [105, 110, 150, 9.62]) assert.doesNotMatch(odz(x, 96.2), /\d+\s?%|96/, `odziv za ${x}`);
+});
+
 // Shranjene meritve (kot jih zapiše vsak poskus, lab.js → shramba) in vrednost, ki jo mora učenec izračunati iz njih.
 const pts = (list) => list.map(([x, y]) => [x, y]);
 const HOOKE = pts([[0, 0], [6.4, 0.981], [13.3, 1.962], [19.6, 2.943]]);
@@ -58,16 +88,16 @@ const PRIMERI = {
     vrednost: 2 * naklonSkoziIzhodisce(PAD.map(([h, t]) => [t * t, h])), tol: 0.03,
   },
   "lab-lom": {
-    data: { rows: [{ snov: "zrak → akril", a: "10°", r: "10°", b: "6,7°", sa: "0,174", sb: "0,117" }], serije: [["akril:zrak", { name: "zrak → akril", smer: "zrak", n: 1.488, pts: LOM }]] },
+    data: { rows: [{ snov: "zrak → akril", a: "10°", r: "10°", b: "6,7°", sa: "0,174", sb: "0,117" }], serije: [["pmma:zrak", { name: "zrak → akril", smer: "zrak", n: 1.488, pts: LOM }]] },
     vrednost: 1 / naklon(LOM), tol: 0.03,
   },
   "lab-leca": {
     data: { rows: [{ f: "100 mm", a: "200", b: "202", y: "20,2, obrnjena", ia: "5,00", ib: "4,95" }], meritve: [[100, LECA]] },
-    vrednost: fIzMeritev(LECA), tol: 0.03,
+    vrednost: fIzMeritev(LECA), tol: 0.015,
   },
   "lab-sila-vodnik": {
     data: { rows: [{ n: "3", L: "4", I: "1,00", dm: "0,32", F: "3,10" }], meas: VODNIK.map(([I, F]) => ({ n: 3, L: 4, I, dm: F / 9.81, F, vis: 0, kot: "precno" })) },
-    vrednost: naklonSkoziIzhodisce(VODNIK) / 1000 / 0.04, tol: 0.05,
+    vrednost: naklonSkoziIzhodisce(VODNIK) / 0.04, tol: 0.05, // mT
   },
   "lab-grelnik": {
     data: {
@@ -111,14 +141,29 @@ test("student's own calculation in a browser", { timeout: 180000 }, async (t) =>
       skrito: document.querySelector(".lab-racun").hidden,
       fit: document.querySelector(".lab-fitout").textContent,
       tocke: [...document.querySelectorAll(".lab-table tbody tr")].map((tr) => [tr.children[2].textContent, tr.children[3].textContent]),
+      ui: [...document.querySelectorAll(".lab-table tbody tr")].map((tr) => tr.children[4].textContent),
+      kaj: document.querySelector(".lab-racun .lab-q-text").textContent,
     }));
     assert.equal(st.skrito, false);
+    assert.deepEqual(st.ui, ["–", "–", "–"], "stolpec U/I pri uporniku ne izda upora");
+    assert.doesNotMatch(st.kaj, /Ω|100/, "naloga ne pove napisa na uporniku");
     assert.doesNotMatch(st.fit, /Ω|R =/, "upora aplikacija ne pove, dokler ga učenec ne izračuna");
     // pričakovano iz točk v tabeli (zaokroženi odčitki): premica skozi izhodišče
     const R = 1000 / fitOrigin(st.tocke.map(([U, I]) => [stevilo(U), stevilo(I)]));
     const slabo = await vpisi(p, (R * 1.12).toFixed(1));
     assert.equal(slabo.c, "lab-why bad");
-    assert.match(slabo.t, /razlikuje za 1\d\s?%/);
+    assert.match(slabo.t, /precej razlikuje/);
+    assert.doesNotMatch(slabo.t, /\d/, "odziv ne izda rešitve");
+    // star odziv izgine, ko učenec vpiše nov rezultat
+    await p.locator(".lab-racun input").fill("9");
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-racun .lab-why").hidden), true);
+    // vrednost z napisa na uporniku ni rezultat meritev (ko se meritve od nje razlikujejo za več kot 1 %)
+    if (Math.abs(R / 100 - 1) > 0.01) {
+      const napis = await vpisi(p, "100 Ω");
+      assert.equal(napis.c, "lab-why bad");
+      assert.match(napis.t, /napis na uporniku/);
+    }
+    assert.match((await vpisi(p, (R * 10).toFixed(0))).t, /faktor ~10\b/);
     assert.doesNotMatch(await p.evaluate(() => document.querySelector(".lab-fitout").textContent), /Ω/);
     const dobro = await vpisi(p, (R * 1.02).toFixed(1));
     assert.equal(dobro.c, "lab-why ok");
@@ -127,6 +172,12 @@ test("student's own calculation in a browser", { timeout: 180000 }, async (t) =>
     const fit = await p.evaluate(() => document.querySelector(".lab-fitout").textContent);
     assert.match(fit, /Na uporniku piše 100/, "po pravilnem računu je izračun viden");
     assert.ok(fit.replace(/\{,\}/g, ",").replace(/\s/g, "").includes(String(prikaz).replace(".", ",")), `izračun pod grafom kaže isto: ${fit}`); // brez KaTeX v testu: 95{,}9
+    // Izbriši meritve: rešitev ni več odkrita, nove meritve istega upornika spet računa sam
+    await p.getByRole("button", { name: "Izbriši meritve" }).click();
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-racun").hidden), true);
+    await meriOhm(p, [3, 5, 7]);
+    assert.doesNotMatch(await p.evaluate(() => document.querySelector(".lab-fitout").textContent), /Ω/, "po brisanju je izračun spet skrit");
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-racun input").value), "");
     assert.deepEqual(errs, []);
     await ctx.close();
   });

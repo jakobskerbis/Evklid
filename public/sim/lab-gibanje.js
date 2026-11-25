@@ -535,7 +535,7 @@ export function labProstiPad(el) {
       const lahek = vt < 4, upor = !lahek && vt < 12, hMax = Math.max(...pts.map((p) => p[1]));
       // delež upora ob vratih pri največji višini: F/(mg) = (v/v_t)², v² = v_t²(1 − e^(−2gh/v_t²)) (upor ∝ v²)
       const delez = 1 - Math.exp((-2 * G_SOLA * hMax) / (vt * vt)), zamik = id === "jeklo" && 2 * k < 9.75 ? " Manj kot 9,81: časovnik začne teči ob izklopu magneta, kroglica pa se odlepi nekaj milisekund pozneje (zamik je največji delež pri majhnih višinah)." : "";
-      cilji.push({ key: name, ime: name, kaj: `Iz naklona premice <i>h</i>(<i>t</i>²) izračunaj težni pospešek <i>g</i> (${name}).`, vrednost: lahek || upor ? NaN : 2 * k });
+      cilji.push({ key: name, ime: name, kaj: `Iz naklona premice <i>h</i>(<i>t</i>²) izračunaj težni pospešek <i>g</i> (${name}).`, vrednost: lahek || upor ? NaN : 2 * k, nazivno: [9.81, 9.8].map((v) => ({ v, kaj: "vrednost iz učbenika" })) });
       out.push(Rr.odkrito(name) || lahek || upor ? `<p><b>${name}</b>: ${lahek || upor ? "2<i>k</i>" : "<i>g</i> = 2<i>k</i>"} = <b>${num(2 * k, 2)}${nb}m/s²</b>${pts.length >= 3 ? ` (premica, ki ni nujno skozi izhodišče: ${num(2 * L.a, 2)}${nb}m/s²)` : ""}.${lahek ? ` To ni težni pospešek: zaradi zračnega upora točke ne ležijo na premici. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : upor ? ` To ni težni pospešek: zračni upor jo močno zavira. Pri padcu z ${num(hMax, 2)}${nb}m je upor ob vratih že ~${Math.round(delez * 20) * 5}${nb}% njene teže, zato žogica pospešuje vse manj in 2<i>k</i> je manjši od <i>g</i>. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : ""}${zamik}</p>` : `<p><b>${name}</b>: izračunaj <i>g</i> iz naklona grafa <i>h</i>(<i>t</i>²) in ga preveri spodaj.</p>`);
     }
     calc.innerHTML = out.join("");
@@ -1035,7 +1035,7 @@ export function labNihalo(el) {
     for (const [name, p] of skupine(pts, "ime", "l", "t2")) {
       if (new Set(p.map((q) => q[0])).size < 3) continue;
       const k = naklonSkoziIzhodisce(p), g = (4 * Math.PI ** 2) / k, velik = pts.some((r) => r.ime === name && r.kot > 15);
-      cilji.push({ key: name, ime: name, kaj: `Iz naklona premice <i>t</i>₀²(<i>l</i>) izračunaj težni pospešek <i>g</i> (${name}).`, vrednost: g });
+      cilji.push({ key: name, ime: name, kaj: `Iz naklona premice <i>t</i>₀²(<i>l</i>) izračunaj težni pospešek <i>g</i> (${name}).`, vrednost: g, nazivno: [9.81, 9.8].map((v) => ({ v, kaj: "vrednost iz učbenika" })) });
       out.push(Rr.odkrito(name)
         ? `<p><b>${name}</b>: naklon <i>k</i> = ${num(k, 3)}${nb}s²/m, ${tex(String.raw`g = \frac{4\pi^2}{k}`)} = <b>${num(g, 2)}${nb}m/s²</b>.${velik ? " Nekatere meritve so pri odmiku nad 15°: tam je nihajni čas daljši, zato je <i>g</i> iz njih malo premajhen." : ""}</p>`
         : `<p><b>${name}</b>: iz ${tex(String.raw`t_0^2 = \frac{4\pi^2}{g}\,l`)} je naklon premice ${tex(String.raw`\frac{4\pi^2}{g}`)}. Izračunaj <i>g</i> in ga preveri spodaj.</p>`);

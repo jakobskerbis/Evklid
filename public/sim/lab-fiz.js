@@ -32,7 +32,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     { key: "p", label: "porabnik" },
     { key: "U", label: "<i>U</i> [V]" },
     { key: "I", label: "<i>I</i> [mA]" },
-    { key: "R", label: "<i>U</i>/<i>I</i> [Ω]" },
+    { key: "R", label: "<i>U</i>/<i>I</i> žarnice [Ω]" }, // pri uporniku bi stolpec izdal upor, ki ga učenec izračuna iz naklona
   ]);
   const graph = dataGraph({ x: [0, 12], y: [0, YMAX[B.load]], xStep: 2, xLabel: "U [V]", yLabel: "I [mA]", title: "Graf toka v odvisnosti od napetosti" });
   const fitOut = h("p", { class: "lab-fitout", "aria-live": "polite" });
@@ -73,6 +73,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     id: "tok-6V",
     vprasanje: `Kolikšen tok bo tekel skozi ${LOADS[L0].name} pri napetosti 6 V? Napovej, preden začneš meriti.`,
     enota: "mA",
+    primer: "npr. 25",
     odprto: () => table.rows.length === 0,
     izmerjeno: () => tokPri(series[L0], 6),
   });
@@ -90,7 +91,7 @@ export function labOhm(el, { load = "R100" } = {}) {
       Ishow = fixed(ImA, Math.max(0, r.dec - (r.unit === "A" ? 3 : 0)));
     } else if (Ir?.over) Ishow = "OL";
     const ok = Uv && !Uv.over && ImA != null;
-    const R = ok && Math.abs(ImA) > 1e-9 ? fixed((Uv.value / ImA) * 1000, (Uv.value / ImA) * 1000 >= 100 ? 0 : 1) : "–";
+    const R = LOADS[p].type === "L" && ok && Math.abs(ImA) > 1e-9 ? fixed((Uv.value / ImA) * 1000, (Uv.value / ImA) * 1000 >= 100 ? 0 : 1) : "–";
     table.add({ p: LOADS[p].name.replace("upornik ", "").replace(" / 0,1 A", ""), U: Ushow, I: Ishow, R });
     if (ok) (series[p] ||= []).push([Uv.value, ImA]);
     else log.push("Ta meritev ni popolna: za graf potrebuješ odčitek obeh merilnikov.", "warn");
@@ -105,7 +106,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     });
     graph.draw(list);
     const fit = list.find((S) => S.id === cur && Number.isFinite(S.k));
-    Rr.nastavi(list.filter((S) => Number.isFinite(S.k)).map((S) => ({ key: S.id, ime: LOADS[S.id].name, kaj: `Iz naklona premice na grafu izračunaj upor (${LOADS[S.id].name}).`, vrednost: 1000 / S.k })));
+    Rr.nastavi(list.filter((S) => Number.isFinite(S.k)).map((S) => ({ key: S.id, ime: LOADS[S.id].name, kaj: "Iz naklona premice na grafu izračunaj upor.", vrednost: 1000 / S.k, nazivno: [{ v: LOADS[S.id].nom, kaj: "napis na uporniku" }] })));
     fitOut.innerHTML = fit && !Rr.odkrito(fit.id)
       ? "Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Iz njenega naklona izračunaj upor in ga preveri spodaj."
       : fit
@@ -165,7 +166,9 @@ export function labOhm(el, { load = "R100" } = {}) {
     last.I = B.readA();
     last.U = B.readV();
     const ar = AM_RANGES[B.amRange], vr = VM_RANGES[B.vmRange];
-    if (last.I) am.set(last.I.text, last.I.over ? "" : ar.unit, `območje ${ar.max * ar.k}\u00a0${ar.unit}`);
+    // do napovedi (ali prve zapisane meritve) ampermeter ne izda odgovora
+    if (last.I && N.caka) am.set("", "", "najprej napovej tok");
+    else if (last.I) am.set(last.I.text, last.I.over ? "" : ar.unit, `območje ${ar.max * ar.k}\u00a0${ar.unit}`);
     else am.set("", "", "ni priključen");
     if (last.U) vm.set(last.U.text, last.U.over ? "" : "V", `območje ${vr.max}\u00a0V`);
     else vm.set("", "", "ni priključen");
@@ -181,8 +184,9 @@ export function labOhm(el, { load = "R100" } = {}) {
     partBtn.hidden = !p.burnt;
     partBtn.textContent = L.type === "R" ? "Vzemi nov upornik" : "Vzemi novo žarnico";
     // Fotografski prikaz (foto.js): vezava, območja in odčitki iz modela na izrisanih slojih.
+    // Ampermeter na fotografiji kaže tok šele po napovedi (kot zaslon merilnika, readMeters).
     if (foto.risi((o, meta) => risiKrog(o, meta, { breme: B.load, tip: L.type, nom: L.nom, zgorel: p.burnt, T: p.T, svetlost: L.type === "L" ? B.brightness() : 0, amPos: B.amPos, vmPos: B.vmPos,
-      obmocjeA: B.amRange, obmocjeV: B.vmRange, varovalka: B.fuseOf().blown, cc: B.state.cc, U: Math.max(0, B.state.Usup).toFixed(1), I: last.I ? last.I.text : "", V: last.U ? last.U.text : "", dim: drawSmoke }))) return;
+      obmocjeA: B.amRange, obmocjeV: B.vmRange, varovalka: B.fuseOf().blown, cc: B.state.cc, U: Math.max(0, B.state.Usup).toFixed(1), I: last.I && !N.caka ? last.I.text : "", V: last.U ? last.U.text : "", dim: drawSmoke }))) return;
     const wire = (d) => s("path", { d, class: "lab-wire" }, svg);
     const dot = (x, y) => s("circle", { cx: x, cy: y, r: 3.5, class: "lab-node" }, svg);
     // zanka
