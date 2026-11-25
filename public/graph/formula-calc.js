@@ -3,7 +3,8 @@
 // neznanko (public/graph/scisolve.js). Formul, ki jih kalkulator ne zna (integrali, vsote, limite, ±, vektorski
 // produkti, enote …), ne pretvorimo: vrne null in gumba »V kalkulator« ni. Preverjeno v test/formula-calc.test.js.
 import { fromTex } from "./math.js";
-import { evaluate } from "./scicore.js";
+import { evaluate, CONSTANTS } from "./scicore.js";
+import { lookupSymbol } from "../formula-data.js";
 
 const GREEK = {
   alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", varepsilon: "ε", zeta: "ζ", eta: "η", theta: "θ", vartheta: "θ",
@@ -195,12 +196,65 @@ export function formulaToCalc(tex, subject = "MAT", { surovo = false } = {}) {
   return out;
 }
 
+// Znane konstante v formuli (j, 25. 11. 2026): na grafu dobijo pravo vrednost iz tabele konstant znanstvenega
+// kalkulatorja (scicore.js CONSTANTS, CODATA 2018 in SI 2019), ne drsnika 1. Kaj je konstanta, pove najprej zbirka
+// sama: blok :::simboli razdelka (content/formulas/*.md) da vsaki črki ime (»G | gravitacijska konstanta«,
+// »c | specifična toplota«, »h | višina«); ta pomen velja. Šele črka brez vrstice v razdelku gre na slovar oznak
+// (formula-data.js) in pravila za fotone, c² in gravitacijski zakon.
+const CONST_KEYS = { N_A: "NA", k_B: "kB", ε_0: "eps0", μ_0: "mu0", m_e: "me", m_p: "mp", m_n: "mn", V_m: "Vm" };
+const CONST_NAMES = [
+  // »težni pospešek na površju« (Zemlje) je 9,81; »na razdalji r od središča planeta« je spremenljivka
+  [/^(?:težni|gravitacijski) pospešek(?! na (?!površju(?! (?!zemlje)\S)|površini zemlje|zemlji))/, "g"],
+  [/^hitrost svetlobe(?: v vakuumu| v praznem prostoru)?$/, "c"],
+  [/^gravitacijska konstanta/, "G"],
+  [/^planckova konstanta/, "h"],
+  [/plinska konstanta/, "R"],
+  [/^avogadrov/, "NA"],
+  [/^boltzmannov/, "kB"],
+  [/^influenčna konstanta|^dielektričnost vakuuma|^električna konstanta/, "eps0"],
+  [/^indukcijska konstanta|^permeabilnost vakuuma|^magnetna konstanta/, "mu0"],
+  [/^osnovni naboj|^naboj elektrona|^elementarni naboj/, "e0"],
+  [/^masa elektrona/, "me"],
+  [/^masa protona/, "mp"],
+  [/^masa nevtrona/, "mn"],
+  [/^stefanova konstanta|^stefan-boltzmannova/, "sigma"],
+  [/^molska prostornina/, "Vm"],
+];
+const constById = (id) => CONSTANTS.find((c) => c.id === id) || null;
+const byName = (n) => {
+  const hit = CONST_NAMES.find(([re]) => re.test(String(n || "").toLowerCase().trim()));
+  return hit ? constById(hit[1]) : null;
+};
+/**
+ * Konstanta za ime iz formule (»g«, »N_A«, »ε_0«) v formuli tex predmeta subject ali null. glossary: vrstice
+ * :::simboli razdelka ({ keys, n } iz parseSymbolsBlock); kadar ima črka vrstico, odloča njeno ime.
+ */
+export function formulaConstant(name, tex = "", subject = "FIZ", glossary = null) {
+  const row = glossary?.find((r) => r.keys?.includes(name));
+  // oznaka z indeksom (m_n, N_A): konstanta po oznaki, če jo vrstica razdelka ima za konstanto (»m_p, m_n | masa
+  // protona in nevtrona« velja za obe) ali vrstice ni
+  if (CONST_KEYS[name] && (!row || byName(row.n))) return constById(CONST_KEYS[name]);
+  if (row) return byName(row.n);
+  if (!/^[gcGhR]$/.test(name)) return null;
+  // formule, kjer slovar oznak pomena ne določi (sozvočje z drugimi konstantami): gravitacijski zakon, c², fotoni
+  const T = String(tex || "");
+  const has = (re) => re.test(T);
+  if (name === "G" && has(/m_\{?1\}?/) && has(/m_\{?2\}?/)) return constById("G");
+  if (name === "c" && has(/(?<![A-Za-z\\])c\s*\^\s*\{?\s*2|\\varepsilon_\{?0|\\mu_\{?0|m_\{?e\b|\\gamma/)) return constById("c");
+  if (name === "h" && !has(/(?<![A-Za-z\\])g(?![A-Za-z])/) && has(/\\nu|\\lambda|m_\{?e\b|\\hbar/)) return constById("h");
+  let n = "";
+  try {
+    n = String(lookupSymbol(name, subject, T).n || "");
+  } catch {}
+  return byName(n);
+}
+
 /**
  * Formula z eno izraženo količino (»s = v₀ t + (a t²)/2«) za graf: { lhs, rhs, v } – v je spremenljivka na osi x
  * (ena črka brez indeksa; najprej t, x, r, nato male črke), ostale črke grafični kalkulator ponudi kot drsnike.
  * null, če leva stran ni ena količina ali desna nima primerne spremenljivke (»1/f = 1/a + 1/b«, »F = m a« z m, a).
  */
-export function formulaPlot(text) {
+export function formulaPlot(text, { tex = "", subject = "FIZ", glossary = null } = {}) {
   const s = String(text ?? "");
   const i = s.indexOf("=");
   if (i < 0 || s.indexOf("=", i + 1) >= 0) return null;
@@ -214,9 +268,15 @@ export function formulaPlot(text) {
   } catch {
     return null;
   }
-  const single = names.filter((n) => /^[A-Za-zα-ωθ]$/.test(n) && n !== "e" && n !== "π" && n !== "y");
+  // znane konstante (g, c, N_A …) niso na osi x; na grafu dobijo pravo vrednost
+  const consts = {};
+  for (const n of names) {
+    const c = formulaConstant(n, tex, subject, glossary);
+    if (c) consts[n] = c.value;
+  }
+  const single = names.filter((n) => /^[A-Za-zα-ωθ]$/.test(n) && n !== "e" && n !== "π" && n !== "y" && !(n in consts));
   if (!single.length) return null;
   // čas in razdalja sta najpogosteje na osi x; nato male črke (velike so pogosto konstante: G, R)
   const v = ["t", "x", "r"].find((n) => single.includes(n)) || single.find((n) => n === n.toLowerCase()) || single[0];
-  return { lhs, rhs, v };
+  return Object.keys(consts).length ? { lhs, rhs, v, consts } : { lhs, rhs, v };
 }

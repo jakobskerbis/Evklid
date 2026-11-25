@@ -132,7 +132,8 @@ export function texPlain(tex) {
  * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), showOnGraph?({ text, env, message, simple }),
  *   stage?() (»OS«, »SS«, »FAKS«), steps?(text, goal), canSteps?(),
  *   recent?() / addRecent?({ text, src }) (skupna zgodovina zavihkov),
- *   convert?(value) (»Pretvori enote«: Orodja → pretvornik z vrednostjo; v fiziki in kemiji) }
+ *   convert?(value) (»Pretvori enote«: Orodja → pretvornik z vrednostjo; v fiziki in kemiji),
+ *   sharedGraph?() ({ vars, funcs } grafičnega kalkulatorja: »Iz grafa: a = 2«) }
  */
 let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
@@ -355,6 +356,10 @@ export function createScientific(root, opts) {
         return t("sc.errEquation");
       case "sumLimit":
         return t("sc.errSumLimit");
+      case "sumDiverge":
+        return t(e.info?.prod ? "sc.errProdDiverge" : "sc.errSumDiverge");
+      case "sumUnknown":
+        return t("sc.errSumUnknown");
       case "ncrK":
         return t("sc.errNcrK", { f: e.info.f || "nCr" });
       case "intDiverge":
@@ -783,6 +788,7 @@ export function createScientific(root, opts) {
         live.insertAdjacentHTML("beforeend", grafBtn(-1));
         live.querySelector(".sc-h-graf").addEventListener("click", () => showOnGraph(text, ans, msg));
       }
+      if (r.error?.code === "missing") fromGraph(live, text);
       return;
     }
     const ansBefore = st.ans;
@@ -878,6 +884,11 @@ export function createScientific(root, opts) {
       acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="taylor"${v} data-i="${i}" title="${esc(t("sc.cas.taylorPoly"))}">${icon("sigma")}<span>${esc(t("sc.cas.taylor"))}</span></button>`);
     }
     if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
+    // črke, ki jih definira graf (k = 3, g(x)): »Iz grafa: …« (skupne vrednosti)
+    if (["sym", "expr", "symeq", "plot", "solve", "ineq"].includes(e.kind)) {
+      const fg = fromGraphOf(namesIn(e.text));
+      if (fg) acts.push(fromGraphBtn(fg, i));
+    }
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
@@ -939,6 +950,41 @@ export function createScientific(root, opts) {
     new ResizeObserver(() => {
       if (priDnu) hist.scrollTop = hist.scrollHeight;
     }).observe(hist);
+
+  // Skupne vrednosti z grafičnim kalkulatorjem (opts.sharedGraph: { vars, funcs }): črka, ki je kalkulator ne
+  // pozna, graf pa jo definira (drsnik k = 3, g(x) = …), ponudi gumb »Iz grafa: …«; ob dotiku se shrani in vrstica
+  // izračuna znova. Nič se ne prenese tiho.
+  function fromGraphOf(names) {
+    names = [...names];
+    const sh = names.length && opts.sharedGraph ? opts.sharedGraph() : null;
+    if (!sh) return null;
+    // funkcija grafa s kotnimi funkcijami pri drugi enoti kota (graf RAD, kalkulator DEG) bi pomenila drugo: ne ponudimo
+    const trigOk = (f) => !/(?<![A-Za-z])(?:sin|cos|tan|cot|sec|csc|tg|ctg|arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg)(?![a-z])/.test(f.body) || (sh.angle || "rad") === st.angle;
+    const known = names.filter((n) => !(n in st.vars) && !st.funcs[n] && (Number.isFinite(sh.vars?.[n]) || (sh.funcs?.[n] && trigOk(sh.funcs[n]))));
+    if (!known.length) return null;
+    return {
+      label: known.map((n) => (sh.funcs?.[n] ? `${n}(${sh.funcs[n].param})` : `${n} = ${fmt(sh.vars[n]).text}`)).join(", "),
+      apply() {
+        for (const n of known) {
+          if (sh.funcs?.[n]) st.funcs[n] = { param: sh.funcs[n].param, body: sh.funcs[n].body };
+          else st.vars[n] = sh.vars[n];
+        }
+        save();
+        renderVars();
+      },
+    };
+  }
+  const fromGraphBtn = (fg, i) => `<button type="button" class="sc-act sc-from-graph" data-act="fromgraph" data-i="${i}">${icon("chart-spline")}<span>${esc(t("sc.fromGraph", { names: fg.label }))}</span></button>`;
+  function fromGraph(live, text) {
+    const fg = fromGraphOf(namesIn(text));
+    if (!fg) return;
+    live.insertAdjacentHTML("beforeend", fromGraphBtn(fg, -1));
+    live.querySelector(".sc-from-graph").addEventListener("click", () => {
+      fg.apply();
+      input.value = text;
+      compute();
+    });
+  }
 
   function renderVars() {
     const vs = Object.entries(st.vars);
@@ -1158,6 +1204,11 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
+      else if (act === "fromgraph") {
+        fromGraphOf(namesIn(it.text))?.apply();
+        input.value = it.text;
+        compute();
+      }
       else if (act === "convert") {
         let txt = String(Number(it.value.toPrecision(12)));
         if (/e/.test(txt)) txt = it.value.toExponential(11).replace(/\.?0+e/, "e");

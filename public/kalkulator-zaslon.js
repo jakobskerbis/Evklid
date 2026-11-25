@@ -34,6 +34,7 @@ function calcSlot() {
   return calcOverlayOpen() ? $("#graph-overlay-body") : $("#graph-slot");
 }
 
+let graphShown = null; // grafični kalkulator, ko je ustvarjen (skupne vrednosti za znanstveni)
 function graphCalc() {
   // Kalkulator izriše formule s KaTeX (rich.js naloziKnjiznice), ki ni del prvega izrisa.
   if (!calcP) vzporedno("graph/calc.js"); // vse odvisnosti hkrati, ne raven za ravnijo (kliki.js)
@@ -44,7 +45,7 @@ function graphCalc() {
     const host = document.createElement("div");
     host.id = "graph-host";
     queueMicrotask(() => makeSplitter(host, splitOpts("gc")));
-    return createCalculator(host, {
+    return (graphShown = createCalculator(host, {
       t,
       icon,
       locale,
@@ -52,6 +53,15 @@ function graphCalc() {
       toast: (m) => toast(m, "check"),
       storageKey: () => `evklid.graph.${state.student?.id ?? 0}`,
       studentId: () => state.student?.id,
+      // skupne vrednosti: spremenljivke in funkcije znanstvenega kalkulatorja istega učenca
+      shared: () => {
+        try {
+          const s = JSON.parse(localStorage.getItem(`evklid.sci.${state.student?.id ?? 0}`) || "null");
+          return s ? { vars: s.vars || {}, funcs: s.funcs || {}, angle: s.angle || (s.deg === false ? "rad" : "deg") } : null;
+        } catch {
+          return null;
+        }
+      },
       recent: izidi,
       // »Uporabi v računu«: vrednost točke ali ∫(f; a; b) v znanstveni kalkulator (zavihek Znanstveni)
       useInCalc: (text) => insertIntoCalc(text),
@@ -60,7 +70,7 @@ function graphCalc() {
         showView("chat");
         fillInput(text);
       },
-    });
+    }));
   });
   return calcP;
 }
@@ -112,6 +122,8 @@ function calcTool(mode) {
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
+        // skupne vrednosti: definicije grafa (drsniki, f(x)), če je bil grafični kalkulator že odprt
+        sharedGraph: () => graphShown?.shared() || null,
         recent: izidi,
         addRecent: dodajIzid,
         // »Pretvori enote«: zavihek Orodja, pretvornik z vrednostjo izida

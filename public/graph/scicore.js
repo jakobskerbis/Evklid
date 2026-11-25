@@ -172,7 +172,8 @@ const hasIntegral = (node, funcs = null, depth = 0) => {
   let yes = false;
   walk(node, (n) => {
     if (n.k === "int" && n.lo) yes = true;
-    else if (n.k === "ufn" && depth < 10 && funcs?.[n.f]?.ast && hasIntegral(funcs[n.f].ast, funcs, depth + 1)) yes = true;
+    if (n.k === "sum" && unwrapGrp(n.hi)?.k === "const" && unwrapGrp(n.hi).name === "inf") yes = true; // neskončna vrsta: ista pot (ocena napake)
+    if (n.k === "ufn" && depth < 10 && funcs?.[n.f]?.ast && hasIntegral(funcs[n.f].ast, funcs, depth + 1)) yes = true;
   });
   return yes;
 };
@@ -301,6 +302,9 @@ export function evaluate(text, env = {}) {
     let digits; // zanesljiva mesta edinega integrala
     if (withInt) {
       if (infos.some((r) => r.timeout)) return { error: { code: "intTimeout", info: {} } };
+      // neskončna vrsta ali produkt (AUDIT-002): divergira ali je ne znamo zanesljivo sešteti – povemo, ne izmislimo
+      if (infos.some((r) => r.series && r.diverges)) return { error: { code: "sumDiverge", info: { prod: unwrapGrp(rwe).k === "sum" && unwrapGrp(rwe).f === "prod" } } };
+      if (infos.some((r) => r.series && r.unknown)) return { error: { code: "sumUnknown", info: {} } };
       // ∫(1/x; 0; 1): integral, ki ne obstaja, pove, zakaj (ne le »ni definirano«)
       const div = infos.find((r) => r.diverges);
       // ∫(1/x; 1; ∞): divergira zaradi neskončnega intervala (inf), ne zaradi pola
@@ -319,7 +323,7 @@ export function evaluate(text, env = {}) {
       // ∫(sin(1/x)/x; 0; 1): ne izmislimo števila
       if (infos.some((r, i) => r.unknown || (Number.isFinite(r.value) && !zm[i]))) return { error: { code: "intUnknown", info: {} } };
       if (Number.isFinite(value) && infos.length) {
-        if (infos.length === 1 && unwrapGrp(rwe).k === "int") {
+        if (infos.length === 1 && ["int", "sum"].includes(unwrapGrp(rwe).k)) {
           ({ value, est, digits } = zm[0]);
           single = infos[0];
         }
@@ -557,6 +561,7 @@ export const CONSTANTS = [
   { id: "e0", sym: "e_0", value: 1.602176634e-19, unit: "A\\,s" },
   { id: "me", sym: "m_e", value: 9.1093837015e-31, unit: "kg" },
   { id: "mp", sym: "m_p", value: 1.67262192369e-27, unit: "kg" },
+  { id: "mn", sym: "m_n", value: 1.67492749804e-27, unit: "kg" }, // CODATA 2018
   { id: "u", sym: "u", value: 1.6605390666e-27, unit: "kg" },
   { id: "NA", sym: "N_A", value: 6.02214076e23, unit: "mol^{-1}" },
   { id: "kB", sym: "k_B", value: 1.380649e-23, unit: "J/K" },

@@ -3,6 +3,7 @@
 import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
 import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
+import { fitModelView } from "./okno.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
@@ -17,7 +18,8 @@ const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: n
  * Ustvari kalkulator v elementu root.
  * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field),
  *   useInCalc?(text) (»Uporabi v računu«: vrednost ali ∫(f; a; b) v znanstveni kalkulator),
- *   recent?() (skupna zgodovina zavihkov: [{ text, src }]) }
+ *   recent?() (skupna zgodovina zavihkov: [{ text, src }]),
+ *   shared?() ({ vars, funcs } znanstvenega kalkulatorja: »Iz kalkulatorja: a = 5«) }
  * Brez api ni »Moji grafi« (stran /kalkulator brez prijave), brez askTutor ni »Vprašaj inštruktorja«.
  */
 export function createCalculator(root, opts) {
@@ -335,11 +337,38 @@ export function createCalculator(root, opts) {
     if (o.kind === "param" || o.kind === "polar") bindDomain(o, extra);
   }
 
+  // Skupne vrednosti z znanstvenim kalkulatorjem (opts.shared: { vars, funcs } istega učenca). Graf jih ne bere
+  // tiho: vrstica z neznanim imenom ponudi »Iz kalkulatorja: a = 5«, ki doda vrstico z enakim pomenom.
+  const sciNum = (v) => {
+    let s = String(Number(v.toPrecision(15)));
+    if (/e/.test(s)) s = s.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+    return comma() ? s.replace(".", ",") : s;
+  };
+  const TRIG_FN = /(?<![A-Za-z])(?:sin|cos|tan|cot|sec|csc|tg|ctg|arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg)(?![a-z])/;
+  function fromSci(names) {
+    const sh = (names?.length && opts.shared?.()) || null;
+    if (!sh || state.zapis !== 3) return [];
+    const out = [];
+    for (const n of names) {
+      const v = sh.vars?.[n];
+      const f = sh.funcs?.[n];
+      if (typeof v === "number" && Number.isFinite(v)) out.push({ name: n, label: `${n} = ${fmt(v, 8)}`, text: `${n} = ${sciNum(v)}` });
+      // funkcija iz kalkulatorja (zapis je isti); Ans in ° pomenita v grafu drugo, zato teh ne prenesemo
+      // kotne funkcije pri različni enoti kota (kalkulator DEG, graf RAD) bi pomenile drugo: take funkcije ne ponudimo
+      else if (f && typeof f.body === "string" && /^[A-Za-z]$/.test(f.param || "") && !/Ans|°|′|″/.test(f.body) && !(TRIG_FN.test(f.body) && (sh.angle || "deg") !== (state.settings.deg ? "deg" : "rad"))) out.push({ name: n, label: `${n}(${f.param})`, text: `${n}(${f.param}) = ${f.body}` });
+    }
+    return out;
+  }
+
   function extraHtml(o) {
     const it = o.src;
     if (o.kind === "error") {
-      const add = o.missing?.length ? `<button type="button" class="gc-chip" data-act="sliders">${icon("sliders-horizontal")}${esc(t("gc.addSliders", { names: o.missing.join(", ") }))}</button>` : "";
-      return `<div class="gc-err">${icon("info")}<span>${esc(errorText(o.error))}</span></div>${add}`;
+      // imena, ki jih pozna znanstveni kalkulator (a = 5, f(x) = …): ponudimo njihove vrednosti (skupne vrednosti)
+      const known = fromSci(o.missing);
+      const rest = (o.missing || []).filter((n) => !known.some((k) => k.name === n));
+      const sci = known.length ? `<button type="button" class="gc-chip" data-act="fromsci">${icon("calculator")}${esc(t("gc.fromCalc", { names: known.map((k) => k.label).join(", ") }))}</button>` : "";
+      const add = rest.length ? `<button type="button" class="gc-chip" data-act="sliders">${icon("sliders-horizontal")}${esc(t("gc.addSliders", { names: rest.join(", ") }))}</button>` : "";
+      return `<div class="gc-err">${icon("info")}<span>${esc(errorText(o.error))}</span></div>${sci}${add}`;
     }
     if (o.kind === "value" || o.kind === "define" || o.kind === "list") {
       if (o.kind === "list" && Array.isArray(o.value) && o.value.length > 30) return `<div class="gc-val">= ${esc(fmt(o.value))}</div>`;
@@ -647,10 +676,14 @@ export function createCalculator(root, opts) {
       return;
     }
     if (act === "menu") return openRowMenu(id, e.target.closest("[data-act]"));
-    if (act === "sliders") {
+    if (act === "sliders" || act === "fromsci") {
       const o = modelItem(id);
       const at = state.items.indexOf(it);
-      const add = (o.missing || []).map((n) => ({ id: newId(), type: "expr", text: `${n} = 1`, color: 0 }));
+      const known = fromSci(o.missing);
+      const add =
+        act === "fromsci"
+          ? known.map((k) => ({ id: newId(), type: "expr", text: k.text, color: nextColor() }))
+          : (o.missing || []).filter((n) => !known.some((k) => k.name === n)).map((n) => ({ id: newId(), type: "expr", text: `${n} = 1`, color: 0 }));
       state.items.splice(at, 0, ...add);
       commit();
       renderList();
@@ -1058,6 +1091,20 @@ export function createCalculator(root, opts) {
     return t(p.note.key, v);
   }
 
+  // Znana konstanta formule (g, c, G, N_A …; formula-calc.js formulaConstant): drsnik s pravo vrednostjo na sredini
+  // (od 0 do dvakratne vrednosti). Zelo majhne (h = 6,6·10⁻³⁴) ne gredo v drsnik brez zapisa z »e«: stalna vrednost.
+  function constRow(n, v) {
+    if (typeof v !== "number" || !Number.isFinite(v) || v === 0) return null;
+    const dec = (x) => (comma() ? x.replace(".", ",") : x);
+    const e = Math.floor(Math.log10(Math.abs(v)));
+    if (e < -11) {
+      const m = Number((v / 10 ** e).toPrecision(12));
+      return { id: newId(), type: "expr", text: `${n} = ${dec(String(m))}·10^(${e})` };
+    }
+    const step = 10 ** (e - 3);
+    return { id: newId(), type: "expr", text: `${n} = ${dec(sliderText(v, 10 ** Math.max(e - 9, -20)))}`, slider: { min: Number(sliderText(v - Math.abs(v), step)), max: Number(sliderText(v + Math.abs(v), step)), step } };
+  }
+
   // shranjeni grafi na strežniku (po učencu)
   async function openGraphs(anchor) {
     const sid = opts.studentId?.();
@@ -1364,14 +1411,28 @@ export function createCalculator(root, opts) {
         view.draw();
       }
     },
+    /** Definicije grafa za znanstveni kalkulator (»Iz grafa: a = 2, f(x)«): drsniki in vrednosti, funkcije ene črke. */
+    shared() {
+      const vars = {};
+      const funcs = {};
+      if (state.zapis !== 3) return { vars, funcs }; // drug zapis bi v kalkulatorju pomenil drugo
+      for (const o of model?.items || []) {
+        if ((o.kind === "slider" || o.kind === "define") && typeof o.value === "number" && Number.isFinite(o.value)) vars[o.name] = o.value;
+        if (o.kind === "func" && o.params?.length === 1 && /^[A-Za-z]$/.test(o.fname) && /^[A-Za-z]$/.test(o.params[0])) {
+          const m = /=(?!=)\s*(.*)$/s.exec(String(o.src.text || ""));
+          if (m && m[1].trim()) funcs[o.fname] = { param: o.params[0], body: m[1].trim() };
+        }
+      }
+      return { vars, funcs, angle: state.settings.deg ? "deg" : "rad" };
+    },
     /**
      * Formula iz zbirke na grafu ({ lhs, rhs, v } iz formula-calc.js formulaPlot): vrstica »s(t) = v₀ t + …«
      * (ime je leva stran, če je prosta črka) in drsniki za ostale količine (vrednost 1). Doda k trenutnemu grafu.
      */
-    addFormula({ lhs, rhs, v }) {
+    addFormula({ lhs, rhs, v, consts = {} }) {
       const used = new Set(state.items.map((x) => /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*[(=]/.exec(String(x.text || ""))?.[1]).filter(Boolean));
       const ok = (n) => /^[A-Za-zα-ωΑ-Ω]$/.test(n) && !["x", "y", "r", "θ", "e", v].includes(n) && !used.has(n) && !new RegExp(`(^|[^\\p{L}_])${n}(?![\\p{L}_₀-₉])`, "u").test(rhs);
-      const name = [lhs, "f", "g", "h", "p", "q"].find(ok);
+      const name = [lhs, "f", "g", "h", "p", "q", "u", "w", "F", "G", "H"].find(ok);
       if (!name) return false;
       const next = clone(state);
       next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
@@ -1382,7 +1443,7 @@ export function createCalculator(root, opts) {
       const o = modelItem(fid);
       if (o?.missing?.length) {
         const at = state.items.findIndex((x) => x.id === fid);
-        state.items.splice(at, 0, ...o.missing.map((n) => ({ id: newId(), type: "expr", text: `${n} = 1` })));
+        state.items.splice(at, 0, ...o.missing.map((n) => constRow(n, consts[n]) || { id: newId(), type: "expr", text: `${n} = 1` }));
         renderList();
         refresh();
       }
@@ -1390,10 +1451,13 @@ export function createCalculator(root, opts) {
       it.color = nextColor();
       commit();
       refresh();
-      const fit = view.fitBounds();
+      // okno kot pri grafih v odgovorih (okno.js): ničle, ekstremi, asimptote; premica skozi izhodišče ni 1 enota velika
+      const fit = fitModelView(model, { W: view.W, H: view.H }) || view.fitBounds();
       if (fit) {
-        state.view = view.squared(fit, "y");
-        view.view = state.view;
+        state.view = fit;
+        state.settings = { ...state.settings, square: false };
+        view.view = fit;
+        commit();
         view.draw();
       }
       return true;

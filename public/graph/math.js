@@ -1309,7 +1309,34 @@ export function compile(node, ctx = {}) {
         const from = Math.ceil(lo(s));
         let to = Math.floor(hi(s));
         if (!Number.isFinite(from)) return NaN;
-        if (to === Infinity) to = from + 99999; // približek za neskončno vrsto
+        // neskončna vrsta ali produkt (AUDIT-002): konvergenca in vrednost z oceno napake, ne delna vsota 100 000 členov
+        if (to === Infinity) {
+          if (OVERRIDE && NEST === 0) return OVERRIDE.values[OVERRIDE.i++] ?? NaN;
+          const sc = Object.create(s);
+          const term = (k) => {
+            sc[v] = k;
+            const t = a(sc);
+            return typeof t === "number" ? t : NaN;
+          };
+          // ∏(1 + bₙ): ln(1 + bₙ) z log1p(bₙ) – faktor 1 + 1/n² ima v plavajoči vejici le ~16 mest skupaj (bₙ bi se izgubil)
+          let r;
+          const body = node.a?.k === "grp" ? node.a.a : node.a;
+          const one = (n) => n?.k === "num" && n.v === 1;
+          const bNode = isProd && body && (body.k === "+" || body.k === "-") ? (one(body.a) ? body.b : body.k === "+" && one(body.b) ? body.a : null) : null;
+          if (bNode) {
+            const bf = c(bNode);
+            const minus = body.k === "-";
+            const lt = (k) => {
+              sc[v] = k;
+              const b = bf(sc);
+              return typeof b === "number" ? Math.log1p(minus ? -b : b) : NaN;
+            };
+            const q = seriesInfo(lt, from, false);
+            r = q.diverges || q.unknown || !Number.isFinite(q.value) ? { ...q, value: NaN } : { series: true, value: Math.exp(q.value), err: Math.exp(q.value) * (Math.expm1(q.err) || q.err), abs: Math.exp(q.value) };
+          } else r = seriesInfo(term, from, isProd);
+          if (TRACE && NEST === 0) TRACE.push(r);
+          return r.value;
+        }
         if (!Number.isFinite(to)) return NaN;
         if (to - from >= 100000) throw new MathError("sumLimit"); // največ 100 000 členov
         const sc = Object.create(s);
@@ -1325,6 +1352,168 @@ export function compile(node, ctx = {}) {
     default:
       throw new MathError("unknown", { k: node.k });
   }
+}
+
+// ---------- neskončne vrste in produkti (AUDIT-002) ----------
+// Prej: delna vsota 100 000 členov kot vrednost (∑1/n = 12,09, ∑n = 5000050000, ∑(−1)ⁿ = 0, ∑1/n² = 1,6449241 z napačno
+// 5. decimalko). Zdaj (pregled #1004): predznak in padanje členov ugotovimo na oknih zaporednih členov (posamezni
+// ničelni členi, (1 + (−1)ⁿ)/n², ne zmotijo), in sicer pri n ≤ 10⁶, kjer člen še ima dovolj mest (ln(1 + 1/n²) pri
+// 10¹² je 0). »Divergira« le z dokazom:
+//  - členi ne gredo proti 0 (največji |aₙ| v oknu se ne zmanjšuje): ∑(−1)ⁿ, ∑sin n, ∑n/(n + 1);
+//  - enak predznak in |aₙ| ~ C·n^(−p) s p < 0,9 ali n·aₙ → C ≠ 0 (primerjava z ∑1/n).
+// Vrednost: izmenična vrsta → pospešek Cohen–Villegas–Zagier (napaka = razlika dveh redov); enak predznak in hitro
+// padanje → neposredna vsota do zanemarljivih členov; enak predznak in potenčno padanje (p > 1,15) → Richardsonova
+// ekstrapolacija delnih vsot S_N (N = 2520·2^k, poravnano s periodami) z redovi p − 1, p, p + 1; napaka je razlika
+// zadnjih dveh stopenj. Nepravilni predznaki (∑cos n / n), mejni p in neskladna ocena p → »unknown« (ne izmislimo).
+// Produkt ∏aₙ je exp(∑ ln aₙ) (∏(1 ± bₙ) prek log1p, compile »sum«).
+const WIN = 64; // členov v oknu
+function seriesWindow(term, k, n = WIN) {
+  let max = 0;
+  let pos = 0;
+  let neg = 0;
+  let alt = true;
+  let prev = 0;
+  let bad = false;
+  for (let i = 0; i < n; i++) {
+    const y = term(k + i);
+    if (!Number.isFinite(y)) bad = true;
+    const a = Math.abs(y);
+    if (a > max) max = a;
+    if (y > 0) pos++;
+    else if (y < 0) neg++;
+    const sg = Math.sign(y);
+    if (i && (sg === 0 || sg === prev)) alt = false;
+    prev = sg;
+  }
+  return { max, pos, neg, alt: alt && pos + neg === n, bad };
+}
+export function seriesInfo(term, from, isProd = false) {
+  const out = (o) => ({ series: true, ...o });
+  const unknown = () => out({ value: NaN, unknown: true });
+  if (isProd) {
+    for (let k = from; k < from + 1000; k++) if (term(k) === 0) return out({ value: 0, err: 0, abs: 0 });
+    if ([from + 1000, from + 1e5].some((k) => seriesWindow(term, k).neg)) return unknown();
+    const r = seriesInfo((k) => Math.log(term(k)), from, false);
+    if (r.diverges || r.unknown || !Number.isFinite(r.value)) return { ...r, value: NaN };
+    const value = Math.exp(r.value);
+    return out({ value, err: value * (Math.expm1(r.err) || r.err), abs: value });
+  }
+  if (!Number.isFinite(term(from))) return unknown();
+  const at = [1e3, 1e4, 1e5, 1e6].map((d) => seriesWindow(term, from + d));
+  if (at.some((w) => w.max === Infinity)) return out({ value: NaN, diverges: true }); // 2ⁿ, n!
+  // n!, 2ⁿ/n! … pri n = 10³ ni več števil (∞/∞): neposredna vsota, če členi prej padejo pod zaokrožitev
+  if (at.some((w) => w.bad)) return seriesDirect(term, from, out);
+  const M = at.map((w) => w.max);
+  // členi ne gredo proti 0: divergira (ne glede na predznak)
+  if (M[3] > 1e-12 && M[3] >= 0.995 * M[1] && M[2] >= 0.995 * M[0]) return out({ value: NaN, diverges: true });
+  // eksponent padanja |aₙ| ~ C·n^(−p) iz lege oken (največji člen okna je na njegovem začetku)
+  const pos = [1e3, 1e4, 1e5, 1e6].map((d) => from + d);
+  const pAt = (i, j) => -Math.log(M[j] / M[i]) / Math.log(pos[j] / pos[i]);
+  const head = seriesWindow(term, from, 32).max;
+  const pE = pAt(0, 1);
+  const pL = pAt(2, 3);
+  // hitro padanje (geometrijsko ali hitreje): členi pri 10⁶ so 0 ali zanemarljivi, ali se padanje pospešuje; vrsta
+  // absolutno konvergira, predznak ni pomemben ((−0,5)ⁿ, 0,5ⁿ·cos n, n/2ⁿ)
+  if (M[3] === 0 || M[3] <= 1e-30 * head || pL > pE + 1) return seriesDirect(term, from, out);
+  const alt = at.every((w) => w.alt);
+  const same = at.every((w) => w.neg === 0) || at.every((w) => w.pos === 0);
+  if (alt) return seriesAlt(term, from, out);
+  const stable = Math.abs(pE - pL) <= 0.05;
+  // absolutna konvergenca (|aₙ| ≤ C/n^p, p > 1,15 stalen): vsota tudi pri nepravilnem predznaku (sin n / n²)
+  if (stable && pE > 1.15 && pL > 1.15) return seriesRichardson(term, from, pL, out);
+  if (!same) return unknown(); // ∑cos(n)/n, ∑sin(2n)/n, ∑(−1)^⌊n/2⌋/n: pogojna konvergenca, ne znamo zanesljivo
+  if (!(M[3] > 0)) return unknown();
+  // n·aₙ → C ≠ 0 (harmonična vrsta, 2/(n + 1), 1/(n + 1000)) ali stalen p < 1: primerjava z ∑1/n^p – divergira
+  const na = (i) => pos[i] * M[i];
+  if (Math.abs(na(3) / na(2) - 1) < 0.01) return out({ value: NaN, diverges: true });
+  if ((pE < 0.9 && pL < 0.9) || (stable && Math.abs(pE - pL) < 5e-3 && pL < 0.998)) return out({ value: NaN, diverges: true });
+  return unknown(); // 1/(n·ln n), 1/(n·ln² n), 1/n^1,1: p blizu 1 ali ni stalen
+}
+// neposredna vsota (Kahan) do členov pod 10⁻¹⁸ vsote v celem oknu
+function seriesDirect(term, from, out) {
+  let sum = 0;
+  let comp = 0;
+  let k = from;
+  let lastMax = 0;
+  for (; k < from + 2e6; k += WIN) {
+    let wmax = 0;
+    for (let i = 0; i < WIN; i++) {
+      const y = term(k + i);
+      if (!Number.isFinite(y)) return out({ value: NaN, unknown: true });
+      const z = y - comp;
+      const tt = sum + z;
+      comp = tt - sum - z;
+      sum = tt;
+      if (Math.abs(y) > wmax) wmax = Math.abs(y);
+    }
+    lastMax = wmax;
+    if (k > from + 64 && wmax <= 1e-18 * Math.abs(sum)) break;
+  }
+  if (lastMax > 1e-18 * Math.abs(sum) && lastMax > 1e-300) return out({ value: NaN, unknown: true });
+  // + zaokrožitev vsakega člena (pri ln faktorja produkta blizu 1 je absolutna, ~10⁻¹⁶ na člen)
+  return out({ value: sum, err: lastMax * WIN + 4e-16 * Math.abs(sum) + 1.2e-16 * (k - from), abs: Math.abs(sum) });
+}
+// izmenična vrsta: CVZ na repu od m, začetek neposredno
+function seriesAlt(term, from, out) {
+  const m = from + 20;
+  let head = 0;
+  for (let k = from; k < m; k++) head += term(k);
+  const sign0 = Math.sign(term(m));
+  const cvz = (n) => {
+    let d = (3 + Math.sqrt(8)) ** n;
+    d = (d + 1 / d) / 2;
+    let b = -1;
+    let c = -d;
+    let sum = 0;
+    for (let k = 0; k < n; k++) {
+      c = b - c;
+      sum += c * Math.abs(term(m + k));
+      b = ((k + n) * (k - n) * b) / ((k + 0.5) * (k + 1));
+    }
+    return sign0 * (sum / d);
+  };
+  const A = cvz(30);
+  const B = cvz(42);
+  const value = head + B;
+  if (!Number.isFinite(value)) return out({ value: NaN, unknown: true });
+  return out({ value, err: Math.abs(A - B) + 1e-14 * (Math.abs(head) + Math.abs(B)), abs: Math.abs(head) + Math.abs(B) });
+}
+// enak predznak, |aₙ| ~ C·n^(−p): Richardson na delnih vsotah S_N, S − S_N ≈ Σ c_j N^(−(p − 1 + j))
+function seriesRichardson(term, from, p, out) {
+  const N0 = 2520; // deljivo z 1 … 10: periodični vzorci (1 + (−1)ⁿ, cos(nπ/2)) so v vsakem S_N poravnani
+  const L = 6;
+  const S = [];
+  let sum = 0;
+  let comp = 0;
+  let k = from;
+  for (let l = 0; l < L; l++) {
+    const N = from + N0 * 2 ** l;
+    for (; k < N; k++) {
+      const z = term(k) - comp;
+      const tt = sum + z;
+      comp = tt - sum - z;
+      sum = tt;
+    }
+    S.push(sum);
+  }
+  // Richardsonova tabela z eksponenti q = p − 1, p, p + 1; isto še brez zadnje delne vsote: razlika je ocena napake
+  const rich = (vals) => {
+    let row = vals.slice();
+    for (let j = 0; j < 3; j++) {
+      const f = 2 ** (p - 1 + j);
+      const nxt = [];
+      for (let i = 1; i < row.length; i++) nxt.push((f * row[i] - row[i - 1]) / (f - 1));
+      row = nxt;
+    }
+    return row[row.length - 1];
+  };
+  const value = rich(S);
+  const prev = rich(S.slice(0, -1));
+  // ojačanje zaokrožitve: delitelji (2^q − 1) pri majhnem q
+  const amp = [0, 1, 2].reduce((a, j) => a * (2 ** (p - 1 + j) + 1) / (2 ** (p - 1 + j) - 1), 1);
+  const err = 2 * Math.abs(value - prev) + amp * (2e-16 * Math.sqrt(k) * Math.max(...S.map(Math.abs)) + 1.2e-16 * (k - from)) + 1e-14 * Math.abs(value);
+  if (!Number.isFinite(value)) return out({ value: NaN, unknown: true });
+  return out({ value, err, abs: Math.abs(value) });
 }
 
 // ---------- integral ----------
