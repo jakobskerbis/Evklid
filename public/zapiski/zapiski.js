@@ -54,9 +54,11 @@ const esc = (s) => D.escapeHtml(String(s ?? ""));
 const sid = () => D.getStudent()?.id;
 const base = () => `/api/students/${sid()}/zapiski`;
 const v = () => D.box();
-const tag = (ok) =>
+// Kviz iz naših nalog je preverjen s kodo (»Preverjeno«); kartico iz zapiskov pregleda le en model AI (+ račun s kodo),
+// zato »Pregledal AI«, ne »Preverjeno« (audit AI-inštruktorja 25. 11. 2026, IN-10).
+const tag = (ok, ai = false) =>
   ok
-    ? `<span class="zap-tag zap-ok">${icon("badge-check")} ${esc(t("scan.verified"))}</span>`
+    ? `<span class="zap-tag zap-ok">${icon("badge-check")} ${esc(t(ai ? "zap.aiReviewed" : "scan.verified"))}</span>`
     : `<span class="zap-tag zap-unchecked">${icon("info")} ${esc(t("cards.notesUnchecked"))}</span>`;
 export const errText = (err) => {
   const c = err?.body?.code;
@@ -369,6 +371,6 @@ function cardsHtml(cards, note, aiOff) {
   if (!cards) return note.cards ? `<p class="muted">${esc(t("zap.cardsAdded", { title: note.set }))}</p>` : `<p class="muted">${esc(t("zap.noCards"))}</p>`;
   return `<p class="muted">${esc(t("zap.cardsAdded", { title: note.set }))}</p>
     <ul class="zap-card-list">${cards
-      .map((c) => `<li class="card"><div class="zap-q-top">${tag(c.checked)}</div><div class="zap-front" dir="auto">${D.renderRich(c.front)}</div><div class="muted" dir="auto">${D.renderRich(c.back)}</div></li>`)
+      .map((c) => `<li class="card"><div class="zap-q-top">${tag(c.checked, true)}</div><div class="zap-front" dir="auto">${D.renderRich(c.front)}</div><div class="muted" dir="auto">${D.renderRich(c.back)}</div></li>`)
       .join("")}</ul>`;
 }

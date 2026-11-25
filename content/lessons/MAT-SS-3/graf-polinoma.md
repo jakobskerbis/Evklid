@@ -174,9 +174,13 @@ Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}
 
 Po zaužitju tablete merijo koncentracijo zdravila v krvi $C$ (v $\mathrm{mg/l}$) ob času $t$ (v urah):
 
-| $t$ | $0$ | $1$ | $2$ | $3$ | $4$ |
-|---|---|---|---|---|---|
-| $C$ | $0$ | $25$ | $32$ | $27$ | $16$ |
+| $t$ | $C$ |
+|---|---|
+| $0$ | $0$ |
+| $1$ | $25$ |
+| $2$ | $32$ |
+| $3$ | $27$ |
+| $4$ | $16$ |
 
 Iz prvih štirih meritev sestavi model s polinomom tretje stopnje, ga preveri s peto in ugotovi, kdaj po modelu zdravila v krvi ni več.
 

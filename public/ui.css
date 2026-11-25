@@ -200,7 +200,7 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   /* Učna pot: levo izbira, trening in načini (ostanejo vidni), desno sklopi in teme. */
   #view-path { display: grid; grid-template-columns: var(--split-path, minmax(360px, 440px)) minmax(0, 1fr); gap: 0 28px; align-items: start; align-content: start; }
   /* Na nizkem zaslonu stolpec ne sme biti višji od okna, sicer zadnja kartica ni dosegljiva: dobi svoj drsnik. */
-  #view-path > .path-side { position: sticky; top: 0; max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; margin: -6px; padding: 6px; }
+  #view-path > .path-side { position: sticky; top: 0; max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; margin: -6px; padding: 6px; }
   #view-path .hero { grid-template-columns: auto 1fr; }
   #view-path .hero button.primary { grid-column: 1 / -1; width: 100%; }
   #view-path .modes { grid-template-columns: 1fr; gap: 8px; }

@@ -3,7 +3,7 @@
 /* Predmeti z enim poskusom stojijo drug ob drugem (auto-fit: brez prazne tretje kolone), predmet z več poskusi čez vso širino (kartice v mreži). */
 .lab-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 26px 14px; align-items: start; }
 .lab-group { min-width: 0; }
-.lab-group.many { grid-column: 1 / -1; }
+.lab-group.many { grid-column: 1 / -1; column-span: all; }
 .lab-group:not(.many) .lab-grid { grid-template-columns: 1fr; }
 .lab-group > h2 { font-size: 1.15rem; margin: 0 0 10px; }
 .lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; }
@@ -55,3 +55,34 @@
   .lab-bench { padding: 10px; }
   .lab-start { align-self: stretch; justify-content: center; }
 }
+
+/* Vodeni poskus (public/sim/lab-vodeno.js): izbira »Vodeno | Prosto« in kartica s trenutnim korakom na vrhu kontrol. */
+.lab-vod-wrap { display: grid; gap: 10px; margin: 0 0 12px; min-width: 0; grid-column: 1 / -1; column-span: all; }
+.lab-vod-nacin { justify-self: start; }
+.lab-vod { border: 1px solid var(--accent); border-left-width: 4px; border-radius: 10px; padding: 10px 12px; background: var(--surface); min-width: 0; overflow-wrap: anywhere; }
+.lab-vod[hidden] { display: none; }
+.lab-vod h3 { margin: 6px 0 4px; font-size: 1.02rem; }
+.lab-vod p { margin: 4px 0; }
+.lab-vod-head { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 600; color: var(--muted); }
+.lab-vod-oznaka { flex: none; }
+.lab-vod-proga { flex: 1; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; min-width: 40px; }
+.lab-vod-proga > span { display: block; height: 100%; background: var(--accent); transition: width 0.3s; }
+.lab-vod-cilj-poskusa { color: var(--muted); }
+.lab-vod-zakaj { font-size: 0.9rem; color: var(--muted); }
+.lab-vod-zakaj b { color: var(--ok); }
+.lab-vod-namig summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 40px; display: flex; align-items: center; }
+.lab-vod-kje { margin: 4px 0 2px; }
+.lab-vod-kje[hidden] { display: none; }
+/* Samo za bralnik zaslona (napoved novega koraka). */
+.lab-vod-glas { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* »Pokaži, kje« pri vprašanju »Sklep«: pod pripeto risbo, ne podnjo (--lab-pin-h, lab.js → pripni). */
+.demo.lab .lab-q { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
+/* Kontrola, ki jo trenutni korak zahteva. */
+.lab-vod-cilj { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) { .lab-vod-proga > span { transition: none; } }
+
+/* »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici. */
+.lab-check { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; justify-content: space-between; }
+.lab-check p { display: flex; align-items: center; gap: 8px; margin: 0; flex: 1 1 220px; }
+.lab-check-go { display: flex; flex-wrap: wrap; gap: 8px; }
+.lab-check-go button { min-height: 44px; }

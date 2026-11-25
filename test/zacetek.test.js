@@ -782,7 +782,7 @@ test("plasti v app.js: okno <dialog>, Evklidova tipkovnica (samo prek API) in pl
   const graphLayer = at('if (currentView === "graph" && calcBack({ tabs: true })) return true;');
   assert.ok(at("isOpen3d()") < graphLayer && at("setSidebar(false)") < graphLayer && graphLayer < views);
   assert.ok(views < at("closeByEsc()") && at("closeByEsc()") < at('if (currentView === "path") return false;'));
-  assert.match(step, /currentView === "topic" && \["competition", "exams"\]\.includes\(state\.backTo\) \? state\.backTo : "path"/);
+  assert.match(step, /currentView === "topic" && \["competition", "exams", "uci"\]\.includes\(state\.backTo\) \? state\.backTo : "path"/);
   // Tipkovnice se dotaknemo samo prek izvoženih funkcij (PR #543 spreminja public/tipkovnica.js), ob zagonu prek
   // lene različice (tipkovnica-lena.js: tipkovnica ni del prvega izrisa Učne poti).
   assert.match(app, /import \{[^}]*\bhideKeyboard\b[^}]*\bkeyboardOpenFor\b[^}]*\} from "\.\/tipkovnica-lena\.js";/);
