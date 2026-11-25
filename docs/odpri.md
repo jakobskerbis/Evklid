@@ -22,8 +22,9 @@ sredi pogovora pokaže Evklidova orodja.
   krivulji ali območju ostane običajno okno.
 - **Kalkulator** (P1-9, del A; j 25. 11. 2026, načrt treh prioritet): `<<ODPRI kalkulator="znanstveni">>` → gumb
   »Kalkulator: Znanstveni«, ki odpre kalkulator v tem načinu (`openFromTutor`, kot gumb v glavi pogovora; na
-  računalniku z okni v oknu desno). `findCalc` v `server/odpri.js` prepozna znanstveni/računalo, grafični/graf,
-  orodja/enote/pretvornik, periodni sistem/PSE, formule/zbirka; samo »kalkulator« → zadnji uporabljeni način. Neznana
+  računalniku z okni v oknu desno). `findCalc` v `server/odpri.js` prepozna znanstveni/funkcijski, grafični/graf,
+  orodja/enote/pretvornik, periodni sistem/PSE, formule/zbirka; samo »kalkulator« ali »računalo« → zadnji uporabljeni
+  način (pri kemiji periodni sistem, kot gumb v glavi pogovora). Neznana
   beseda ali dva načina hkrati → ni gumba. Kalkulatorja samega to ne spreminja (lastnik kalkulatorja je druga seja).
   Kdaj inštruktor blok napiše, doda profil B v pozivu (#539); do tedaj ga model ne pozna in gumba ni.
 - **Podobna naloga** (P1-3, del A; j 25. 11. 2026, načrt treh prioritet): `<<ODPRI vaja="kvadratna enačba">>` →

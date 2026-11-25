@@ -4658,7 +4658,7 @@ initOpen({
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
   openPractice: (id) => (setBack("path"), openTopic(id).then((x) => !x && currentView === "topic" && state.topic?.id === id && $("#t-practice") && nextPractice())), // »Podobna naloga« (vr.vaja): kot »Preveri se« v laboratoriju
-  openCalc: (mode) => openFromTutor({ view: "graph", mode }), // kalkulator iz pogovora (P1-9 A); brez načina zadnji uporabljeni
+  openCalc: (mode) => openFromTutor({ view: "graph", mode: mode || (calcSubject() === "KEM" ? "pse" : null) }), // kalkulator iz pogovora (P1-9 A); brez načina kot gumb v glavi
 });
 
 // ---------- zagon ----------

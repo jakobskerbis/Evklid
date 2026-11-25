@@ -9,7 +9,10 @@ import { stripMeta } from "../server/meta.js";
 test("kalkulator: način iz besed, kot jih piše model", () => {
   const nacin = (q) => findCalc(q)?.mode;
   assert.equal(nacin("znanstveni"), "sci");
-  assert.equal(nacin("računalo"), "sci");
+  assert.equal(nacin("funkcijski kalkulator"), "sci");
+  assert.equal(nacin("grafično računalo"), "graph");
+  assert.equal(nacin("s kalkulatorjem"), null);
+  assert.ok(findCalc("s kalkulatorjem"));
   assert.equal(nacin("grafični"), "graph");
   assert.equal(nacin("odpri v grafičnem načinu"), "graph");
   assert.equal(nacin("pretvornik enot"), "tools");
@@ -17,12 +20,13 @@ test("kalkulator: način iz besed, kot jih piše model", () => {
   assert.equal(nacin("periodni sistem"), "pse");
   assert.equal(nacin("PSE"), "pse");
   assert.equal(nacin("zbirka formul"), "formulas");
-  // Samo »kalkulator« → zadnji uporabljeni način (mode null), gumb »Kalkulator«.
+  // Samo »kalkulator« ali »računalo« → zadnji uporabljeni način (mode null), gumb »Kalkulator«.
   assert.deepEqual(findCalc("kalkulator"), { kind: "calc", id: "calc", mode: null });
+  assert.deepEqual(findCalc("računalo"), { kind: "calc", id: "calc", mode: null });
 });
 
 test("kalkulator: neznana ali dvoumna poizvedba ne da gumba", () => {
-  for (const q of ["Ohmov zakon", "sistem enačb", "graf formule", "znanstveni in grafični", "xyz"]) assert.equal(findCalc(q), null, q);
+  for (const q of ["Ohmov zakon", "sistem enačb", "graf formule", "znanstveni in grafični", "enotski krog", "xyz"]) assert.equal(findCalc(q), null, q);
 });
 
 test("ODPRI kalkulator: gumb pod sporočilom, enak blok enkrat, blok učenec ne vidi", async () => {
@@ -40,7 +44,7 @@ test("odjemalec: gumb s kalkulatorjem odpre kalkulator v načinu; imena načinov
   assert.match(odpri, /if \(x\.kind === "calc"\) return D\.openCalc\(/);
   const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   const vrstica = app.split("\n").find((l) => /^\s*openCalc: \(mode\) =>/.test(l)) || "";
-  assert.ok(vrstica.includes('openFromTutor({ view: "graph", mode })'), vrstica);
+  assert.ok(vrstica.includes('openFromTutor({ view: "graph", mode: mode || (calcSubject() === "KEM" ? "pse" : null) })'), vrstica);
   const sl = fs.readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8");
   const kljuci = ["nav.graph", "sc.modeSci", "sc.modeGraph", "sc.toolsMode", "sc.pseMode", "sc.formMode"];
   for (const k of kljuci) assert.match(sl, new RegExp(`"${k.replace(".", "\\.")}": "`), k);

@@ -374,21 +374,23 @@ function findFormula(q, settings) {
 }
 
 // Kalkulator kot cilj (P1-9, del A; j 25. 11. 2026): način iz besed poizvedbe, kot jih piše model. Neznana beseda →
-// ni gumba (nikoli napačen način); prazno ali samo »kalkulator« → kalkulator v zadnjem načinu (mode null).
+// ni gumba (nikoli napačen način); samo »kalkulator« ali »računalo« → zadnji način (pri KEM periodni sistem, kot gumb v glavi).
 // Načini kot CALC_MODES v public/app.js; kalkulatorja samega ta modul ne spreminja.
 const CALC_WORDS = [
-  [/^(znanstven|racun|izracun)/, "sci"],
-  [/^(grafic|graf|funkcij|risanj)/, "graph"],
-  [/^(orodj|enot|pretvor|pretvorb)/, "tools"],
-  [/^(periodn|pse$|element|sistem)/, "pse"],
+  [/^(znanstven|funkcijsk)/, "sci"], // »funkcijski kalkulator« je v slovenščini znanstveni
+  [/^(grafic|graf$|grafa$|grafu$|grafe$|risanj)/, "graph"],
+  [/^(orodj|enot[aeiou]?$|pretvor)/, "tools"],
+  [/^(periodn|pse$|element)/, "pse"],
   [/^(formul|zbirk)/, "formulas"],
 ];
-const CALC_FILLER = new Set(["v", "na", "za", "in", "s", "z", "kalkulator", "kalkulatorju", "kalkulatorja", "nacin", "nacinu", "odpri", "tabela", "tabelo"]);
+// Besede brez načina: naprava (kalkulator, računalo v vseh sklonih), predlogi, »sistem« iz »periodni sistem«.
+const CALC_FILLER = new Set(["v", "na", "za", "in", "s", "z", "nacin", "nacinu", "odpri", "tabela", "tabelo", "sistem", "sistemu"]);
+const CALC_DEVICE = /^(kalkulator|racunal)/;
 export function findCalc(q) {
   const words = fold(q).split(/[^a-z]+/).filter(Boolean);
   const modes = new Set();
   for (const w of words) {
-    if (CALC_FILLER.has(w)) continue;
+    if (CALC_FILLER.has(w) || CALC_DEVICE.test(w)) continue;
     const hit = CALC_WORDS.find(([re]) => re.test(w));
     if (!hit) return null; // neznana beseda: raje brez gumba
     modes.add(hit[1]);
