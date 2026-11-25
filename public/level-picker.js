@@ -40,7 +40,7 @@ function regionSteps(v) {
 }
 function regionToSettings(v) {
   const g = v.grade && gradeInfo(v.sys, v.grade);
-  return g ? { school_system: v.sys, educational_track: trackForLevel(g.level), study_program: "", curriculum_level: g.label } : null;
+  return g ? { school_system: v.sys, educational_track: trackForLevel(g.level, v.sys), study_program: "", curriculum_level: g.label } : null;
 }
 
 // Iz shranjenih nastavitev sestavi korake izbire.
@@ -194,7 +194,9 @@ export function schoolSystemOptions(selected = "SI") {
 }
 
 // Prikaz ravni v izbranem jeziku: »8. razred« → »Grade 8«, »2. letnik VR« → »Year 2 VR«. Shranjena vrednost ostane slovenska.
-export function levelLabel(level) {
+// Razred drugega šolskega sistema (system) ostane, kot je (»1. razred SŠ« ni slovenski 1. razred).
+export function levelLabel(level, system) {
+  if (isRegional(system)) return String(level || "");
   const m = /^(\d+)\. (razred|letnik)(.*)$/.exec(String(level || ""));
   if (!m) return String(level || "");
   return t(m[2] === "razred" ? "lp.grade" : "path.year", { n: m[1] }) + m[3];

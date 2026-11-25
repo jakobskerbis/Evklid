@@ -4638,5 +4638,7 @@
   "a3.grp.encimi": "Enzimek",
   "a3.grp.ovoji-virusa": "A vírus rétegei",
   "a3.grp.rep": "Farok",
-  "a3.grp.gostitelj": "Gazdabaktérium"
+  "a3.grp.gostitelj": "Gazdabaktérium",
+  "path.noCurriculum": "Az országod tanterve{country} még nem érhető el, ezért a szlovén tantervet használod, iskolai évek szerint rendezve. Az osztályok a saját iskolarendszeredet követik; a tutor mindent elmagyaráz a nyelveden.",
+  "path.noExam": "A záróvizsgára ({exam}) való felkészítés még nem érhető el."
 }

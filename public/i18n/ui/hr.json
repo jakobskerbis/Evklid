@@ -4672,5 +4672,7 @@
   "a3.grp.encimi": "Enzimi",
   "a3.grp.ovoji-virusa": "Slojevi virusa",
   "a3.grp.rep": "Rep",
-  "a3.grp.gostitelj": "Bakterija domaćin"
+  "a3.grp.gostitelj": "Bakterija domaćin",
+  "path.noCurriculum": "Kurikul tvoje zemlje{country} još nije dostupan, zato koristiš slovenski kurikul, raspoređen po godinama školovanja. Razredi su iz tvog školskog sustava; instruktor ti sve objašnjava na tvom jeziku.",
+  "path.noExam": "Priprema za završni ispit ({exam}) još nije dostupna."
 }

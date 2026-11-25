@@ -368,29 +368,106 @@ export const SCHOOL_SYSTEMS = {
     exams: "GCSE (Year 11) and A-level (Year 13)",
     help: "Childline 0800 1111, Samaritans 116 123, emergency 999",
   },
+  // Države z živim jezikom vmesnika (j, 25. 11. 2026: najprej Slovenija, nato AT, DE, HR, IT; HU zaradi madžarščine).
+  // Lastnega učnega načrta še nimajo: syllabus "INT" je slovenski učni načrt po letih šolanja, zato učenec na Učni poti
+  // vidi obvestilo path.noCurriculum. Dodatni podatki (samo podatki, vsebine izpitov še ni):
+  //   lang      jezik sistema; subjects: imena predmetov v šolah te države (ime poti, server/curriculum.js pathLabelFor)
+  //   finalExam zaključni izpit: { name, after: razred, months: običajni meseci glavnega (pisnega) roka }
+  //   marks     ocenjevalna lestvica: { scale, best, pass, note }
+  //   ssFrom    prvo leto šolanja srednje šole (privzeto 10, kot v Sloveniji); šola (OŠ/SŠ) odloča o cenah in mejah AI
+  //   finalExam.prep: aplikacija že ima pripravo na ta izpit (server/exam-data.js, systems; test/regions.test.js)
   DE: {
     name: "Deutschland",
     country: "DE",
+    lang: "de",
     yearStart: 8,
     syllabus: "INT",
+    // Poenostavljeno: splošna gimnazija G9 (Abitur po 13 letih). Dežele se razlikujejo (G8 z Abiturjem po 12 letih,
+    // začetek šolskega leta od avgusta do septembra, roki Abiturja); posebej še niso vpisane. Klasse 10 in
+    // Einführungsphase imata isto snov (leto 10), šola SŠ od Klasse 10 naprej (kot pred 25. 11. 2026).
     stages: [
-      ["Sekundarstufe I", g("Klasse ", 6, 10, 6)],
+      ["Sekundarstufe I", g("Klasse ", 5, 10, 5)],
       ["Oberstufe", [["Klasse 11 (Einführungsphase)", 10], ["Klasse 12 (Q1)", 11], ["Klasse 13 (Q2)", 12]]],
     ],
+    subjects: { MAT: "Mathematik", FIZ: "Physik", KEM: "Chemie" },
+    finalExam: { name: "Abitur", after: "Klasse 13 (Q2)", months: [3, 4, 5], prep: true },
+    marks: { scale: "1–6", best: "1 (sehr gut)", pass: "4 (ausreichend)", note: "Oberstufe: 0–15 Punkte, bestanden ab 5 Punkten" },
     exams: "Abitur (end of the Oberstufe)",
     help: "Nummer gegen Kummer 116 111, emergency 112",
   },
   AT: {
     name: "Österreich",
     country: "AT",
+    lang: "de",
     yearStart: 9,
     syllabus: "INT",
+    // 1. Klasse (MS / AHS) je 5. leto šolanja, 8. Klasse AHS 12. leto (Matura). Poenostavljeno: BHS (HTL, HAK; 5 let do
+    // Reife- und Diplomprüfung, razredi »Jahrgang«) še nima svojih razredov; učenec izbere razred po letu šolanja.
     stages: [
-      ["Unterstufe (MS / AHS)", [["1. Klasse", 6], ["2. Klasse", 7], ["3. Klasse", 8], ["4. Klasse", 9]]],
-      ["Oberstufe (AHS / BHS)", [["5. Klasse", 10], ["6. Klasse", 11], ["7. Klasse", 11], ["8. Klasse", 12]]],
+      ["Unterstufe (MS / AHS)", [["1. Klasse", 5], ["2. Klasse", 6], ["3. Klasse", 7], ["4. Klasse", 8]]],
+      ["Oberstufe (AHS)", [["5. Klasse", 9], ["6. Klasse", 10], ["7. Klasse", 11], ["8. Klasse", 12]]],
     ],
+    subjects: { MAT: "Mathematik", FIZ: "Physik", KEM: "Chemie" },
+    finalExam: { name: "Reifeprüfung (Matura, SRDP)", after: "8. Klasse", months: [5], prep: true },
+    ssFrom: 9,
+    marks: { scale: "1–5", best: "1 (Sehr gut)", pass: "4 (Genügend)" },
     exams: "standardised Matura (SRDP)",
     help: "Rat auf Draht 147, emergency 112",
+  },
+  HR: {
+    name: "Hrvatska",
+    country: "HR",
+    lang: "hr",
+    yearStart: 9,
+    syllabus: "INT",
+    // Poenostavljeno: osnovna škola od 5. razreda (predmetna nastava) in gimnazija; strokovne šole še niso posebej.
+    stages: [
+      ["Osnovna škola", g("", 5, 8, 5, ". razred")],
+      ["Srednja škola (gimnazija)", g("", 1, 4, 9, ". razred SŠ")],
+    ],
+    subjects: { MAT: "Matematika", FIZ: "Fizika", KEM: "Kemija" },
+    finalExam: { name: "državna matura", after: "4. razred SŠ", months: [6] },
+    ssFrom: 9,
+    marks: { scale: "1–5", best: "5 (odličan)", pass: "2 (dovoljan)" },
+    exams: "državna matura (end of the 4th year of secondary school)",
+    help: "Hrabri telefon 116 111, police 192, emergency 112",
+  },
+  IT: {
+    name: "Italia",
+    country: "IT",
+    countries: ["IT", "SM", "VA"],
+    lang: "it",
+    yearStart: 9,
+    syllabus: "INT",
+    // Poenostavljeno: scuola media in liceo (5 let do esame di Stato); 4º in 5º anno imata isto snov (zadnje leto poti).
+    stages: [
+      ["Scuola secondaria di primo grado", [["1ª media", 6], ["2ª media", 7], ["3ª media", 8]]],
+      ["Scuola secondaria di secondo grado (liceo)", [["1º anno", 9], ["2º anno", 10], ["3º anno", 11], ["4º anno", 12], ["5º anno", 12]]],
+    ],
+    subjects: { MAT: "Matematica", FIZ: "Fisica", KEM: "Chimica" },
+    finalExam: { name: "esame di Stato (maturità)", after: "5º anno", months: [6, 7] },
+    ssFrom: 9,
+    marks: { scale: "1–10", best: "10", pass: "6 (sufficiente)", note: "esame di Stato: 60–100 punti (centesimi)" },
+    exams: "esame di Stato conclusivo del primo ciclo (3ª media) and esame di Stato / maturità (5º anno)",
+    help: "emergency 112",
+  },
+  HU: {
+    name: "Magyarország",
+    country: "HU",
+    lang: "hu",
+    yearStart: 9,
+    syllabus: "INT",
+    // Poenostavljeno: általános iskola od 5. razreda in štiriletna gimnazija (šest- in osemletne še niso posebej).
+    stages: [
+      ["Általános iskola (felső tagozat)", g("", 5, 8, 5, ". osztály")],
+      ["Gimnázium", g("", 9, 12, 9, ". osztály")],
+    ],
+    subjects: { MAT: "Matematika", FIZ: "Fizika", KEM: "Kémia" },
+    finalExam: { name: "érettségi vizsga", after: "12. osztály", months: [5, 6] },
+    ssFrom: 9,
+    marks: { scale: "1–5", best: "5 (jeles)", pass: "2 (elégséges)" },
+    exams: "érettségi (end of grade 12)",
+    help: "emergency 112",
   },
   CH: {
     name: "Schweiz / Suisse",
@@ -447,8 +524,11 @@ export const SCHOOL_SYSTEMS = {
 export const SYSTEM_IDS = Object.keys(SCHOOL_SYSTEMS);
 export const DEFAULT_SYSTEM = "SI";
 export const isRegional = (id) => !!SCHOOL_SYSTEMS[id] && id !== "SI";
+// Sistem brez lastnega učnega načrta (slovenski načrt po letih šolanja, obvestilo path.noCurriculum).
+export const brezUcnegaNacrta = (id) => SCHOOL_SYSTEMS[id]?.syllabus === "INT";
 
 // Država (ISO 3166) → šolski sistem; brez ujemanja ostane Slovenija (dosedanje vedenje).
+// Vse države z živim jezikom vmesnika (SI, AT, DE, HR, IT, HU, GB, US) imajo svoj sistem (test/regions.test.js).
 export const COUNTRY_SYSTEM = {};
 for (const [id, s] of Object.entries(SCHOOL_SYSTEMS)) {
   for (const c of s.countries || [s.country]) if (c && !COUNTRY_SYSTEM[c]) COUNTRY_SYSTEM[c] = id;
@@ -464,8 +544,9 @@ export function gradesOf(id) {
 
 export const gradeInfo = (id, label) => gradesOf(id).find((x) => x.label === label) || null;
 
-// Razredi do 9. leta šolanja so »osnovna šola«, od 10. »srednja šola« (lige, tekmovanja, prompt).
-export const trackForLevel = (level) => (level <= 9 ? "OSNOVNA_SOLA" : "SREDNJA_SOLA");
+// Razredi do 9. leta šolanja so »osnovna šola«, od 10. »srednja šola« (lige, tekmovanja, prompt, cene); sistem s
+// srednjo šolo od 9. leta (AT, HR, IT, HU) ima ssFrom.
+export const trackForLevel = (level, system) => (level < (SCHOOL_SYSTEMS[system]?.ssFrom ?? 10) ? "OSNOVNA_SOLA" : "SREDNJA_SOLA");
 
 // Privzeti razred: tisti, ki je najbližje 8. letu šolanja (kot slovenski 8. razred).
 export function defaultGrade(id) {

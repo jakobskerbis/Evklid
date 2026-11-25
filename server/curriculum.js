@@ -187,15 +187,17 @@ function pickPath(syllabus, subject, level) {
   return all.find((p) => p.grade === level) || all.find((p) => p.grade > level) || all[all.length - 1] || null;
 }
 
-// Ime poti v šolskem sistemu: INT poti dobijo imena razredov sistema.
+// Ime poti v šolskem sistemu: INT poti dobijo imena razredov sistema, ki jim pot pripada (pickPath; najnižja pot tudi
+// mlajših razredov, npr. »Mathematik, 1. Klasse / 2. Klasse«), in ime predmeta v jeziku sistema (subjects).
 export function pathLabelFor(key, system = "SI") {
   const p = BUILT[key];
   if (!p) return "";
   if (p.school !== "INT" || !isRegional(system)) return p.label;
-  const grades = gradesOf(system).filter((g) => g.level === p.grade).map((g) => g.label);
-  if (grades.length) return `${SUBJECT_EN[p.subject]}, ${grades.join(" / ")}`;
+  const subject = SCHOOL_SYSTEMS[system].subjects?.[p.subject] || SUBJECT_EN[p.subject];
+  const grades = gradesOf(system).filter((g) => pickPath("INT", p.subject, g.level)?.key === key).map((g) => g.label);
+  if (grades.length) return `${subject}, ${grades.length > 2 ? `${grades[0]} – ${grades.at(-1)}` : grades.join(" / ")}`;
   const below = gradesOf(system).filter((g) => g.level < p.grade).pop();
-  return below ? `${SUBJECT_EN[p.subject]}, ${below.label}+` : p.label;
+  return below ? `${subject}, ${below.label}+` : p.label;
 }
 
 // ---------- fakultete ----------

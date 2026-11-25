@@ -4613,4 +4613,6 @@ export default {
   "povabi.later": "Ne zdaj",
   "povabi.link": "Povezava za prijatelja",
   "povabi.shareText": "Učim se z Evklidom. Poskusi še ti:",
+  "path.noCurriculum": "Učni načrt tvoje države{country} še ni na voljo, zato uporabljaš slovenski učni načrt, razporejen po letih šolanja. Razredi so iz tvojega šolskega sistema; inštruktor ti vse razloži v tvojem jeziku.",
+  "path.noExam": "Priprava na zaključni izpit ({exam}) še ni na voljo.",
 };

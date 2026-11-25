@@ -6,7 +6,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion, naloziVse } from "./i18n-osnova.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba, ogrej as ogrejNujno } from "./nujno.js";
-import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
+import { systemForCountry, isRegional, SCHOOL_SYSTEMS, brezUcnegaNacrta } from "./regions.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -1601,7 +1601,7 @@ initProfileMenu({
   describe: (s) => {
     const st = s.settings || {};
     const program = isUni(st) ? programsCache().find((p) => p.id === st.study_program)?.label : null;
-    return [program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level)].filter(Boolean).join(" · ");
+    return [program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level, st.school_system)].filter(Boolean).join(" · ");
   },
 });
 
@@ -1754,10 +1754,10 @@ function renderState(convState) {
     program && `<span class="chip">${escapeHtml(program)}</span>`,
     // Zadnja izbira »Druga šola ali stopnja …« odpre Jaz → Šola in letnik (prehod OŠ ↔ SŠ ↔ fakulteta, drug sistem; #792).
     // SŠ: letnik in raven matematike v enem seznamu (»3. letnik OR«), da glava na telefonu (360 px) ne gre čez rob.
-    levelLabel(s.curriculum_level) &&
+    levelLabel(s.curriculum_level, s.school_system) &&
       // Ime seznama pove tudi raven; trenutna raven ima kljukico (data-checked), pred »Druga šola …« je črta (data-sep; dropdown.js).
       pick("level", ravni.length ? `${t("set.school")}, ${t("tbk.level")}` : t("set.school"), (() => {
-        const years = levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level), true);
+        const years = levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level, s.school_system), true);
         const grp = (label, html) => `<optgroup label="${escapeHtml(label)}">${html}</optgroup>`;
         const raven = (x, i) => opt(`r${i}`, x.label, false, x.current ? " data-checked" : "");
         return (ravni.length ? grp(t("tbk.year"), years) + grp(t("tbk.level"), ravni.map(raven).join("")) : years) + opt("other", t("chat.levelOther"), false, " data-sep");
@@ -3352,7 +3352,7 @@ async function applyLevel(settings) {
   state.pathKey = null;
   const up = stageUp(before, updated.settings);
   if (up) state.welcome = { stage: up };
-  else toast(t("path.levelNow", { level: levelLabel(updated.settings.curriculum_level) }), "circle-arrow-up");
+  else toast(t("path.levelNow", { level: levelLabel(updated.settings.curriculum_level, updated.settings.school_system) }), "circle-arrow-up");
   showView("path");
 }
 
@@ -3385,7 +3385,7 @@ $("#delete-student").addEventListener("click", async () => {
 
 // Cilj: vrstica na Učni poti, značka v zgornji vrstici in dnevni opomnik (public/goal.js, OPOMNIK_URA).
 function goalLevelText(st) {
-  return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
+  return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level, st.school_system)].filter(Boolean).join(" ");
 }
 function renderGoal() {
   const st = state.student;
@@ -3928,7 +3928,7 @@ async function loadPath(key = state.pathKey) {
   $("#path-note").hidden = !prog && !isRegional(sys) && !early;
   if (early) $("#path-note").textContent = t("path.earlyNote", { grade: levelLabel(st.curriculum_level) });
   // Regijski šolski sistem: učna pot je preslikana na snov te države (osnutek).
-  if (!prog && isRegional(sys)) $("#path-note").textContent = t("path.regionNote", { system: SCHOOL_SYSTEMS[sys].name });
+  if (!prog && isRegional(sys)) $("#path-note").textContent = brezUcnegaNacrta(sys) ? obvestiloBrezNacrta(SCHOOL_SYSTEMS[sys]) : t("path.regionNote", { system: SCHOOL_SYSTEMS[sys].name });
   $("#lang-note").hidden = currentLang() === "sl" || isRegional(sys);
   if (prog) {
     $("#path-note").innerHTML = `${t(prog.degree === "EMŠ" ? "path.emsNote" : "path.uniNote", { faculty: escapeHtml(prog.facultyName), program: escapeHtml(prog.name), year: escapeHtml(prog.sourceYear || "") })} ${prog.source ? `<a href="${escapeHtml(prog.source)}" target="_blank" rel="noopener">${t("path.uniSource")}</a>.` : ""}`;
@@ -4002,6 +4002,16 @@ const regionalExams = () => !!state.student && isRegional(state.student.settings
 const siExams = () => !!state.student && !regionalExams() && Object.hasOwn(SI_EXAMS, state.student.settings.educational_track || "");
 // Izpitni naslovi (trening, poskusni izpit, rezultat): regijski »Izpiti« ali serija iz razdelka »NPZ in matura«.
 const examMode = () => regionalExams() || state.backTo === "exams";
+// Država brez lastnega učnega načrta (public/regions.js brezUcnegaNacrta): odkrito obvestilo, da učenec uporablja slovenski
+// učni načrt po letih šolanja, in da priprave na zaključni izpit (finalExam brez prep) še ni. Ime države v jeziku vmesnika (Intl).
+function obvestiloBrezNacrta(s) {
+  let ime = "";
+  try {
+    ime = s.country ? new Intl.DisplayNames([locale()], { type: "region" }).of(s.country) || "" : "";
+  } catch {}
+  return [t("path.noCurriculum", { country: ime ? ` (${ime})` : "" }), s.finalExam && !s.finalExam.prep ? t("path.noExam", { exam: s.finalExam.name }) : ""].filter(Boolean).join(" ");
+}
+
 const prepLabel = () => (regionalExams() ? t("nav.exams") : t("nav.competition"));
 const prepBack = () => (examMode() ? t("exam.back") : t("result.toCompetitions"));
 // Telefon: četrto mesto po cilju (public/goal-data.js → goalTabbarView): »NPZ« ali »Matura«, ko je cilj NPZ ali

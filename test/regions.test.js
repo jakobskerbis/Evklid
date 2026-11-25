@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import zlib from "node:zlib";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { SYSTEM_IDS, gradesOf, systemForCountry, defaultGrade } from "../public/regions.js";
+import { SYSTEM_IDS, SCHOOL_SYSTEMS, gradesOf, gradeInfo, systemForCountry, defaultGrade, brezUcnegaNacrta } from "../public/regions.js";
+import { LIVE_UI_LANGUAGES } from "../public/i18n/languages.js";
 import { listPaths, pathKeyFor, getTopic, topicOrder, baseTopicIds, pathLabelFor } from "../server/curriculum.js";
 import { hasGenerator, generateTask } from "../server/practice/index.js";
 import { normalizeSettings } from "../server/settings.js";
@@ -85,7 +86,9 @@ test("default system from the device country; next grade and school-year start p
   assert.equal(systemForCountry("DE"), "DE");
   assert.equal(systemForCountry("LI"), "CH");
   assert.equal(systemForCountry("BR"), "BR");
-  assert.equal(systemForCountry("IT"), "SI");
+  assert.equal(systemForCountry("IT"), "IT");
+  assert.equal(systemForCountry("HR"), "HR");
+  assert.equal(systemForCountry("AT"), "AT");
   assert.equal(nextLevel({ school_system: "NG", curriculum_level: "JSS 3" }).label, "SS 1");
   assert.equal(nextLevel({ school_system: "NG", curriculum_level: "SS 3" }), null);
   // Indija: šolsko leto se začne aprila, predlog konec marca.
@@ -177,4 +180,82 @@ test("compression: brotli for static files and API JSON, plain when not accepted
   } finally {
     server.close();
   }
+});
+
+// Države z živim jezikom vmesnika (j, 25. 11. 2026: najprej SI, nato AT, DE, HR, IT): vsaka ima svoj šolski sistem, nobena
+// ne postane tiho Slovenija. Brez lastnega učnega načrta dobi slovenski načrt po letih šolanja in obvestilo path.noCurriculum.
+test("every country with a live UI language has its own school system with grades, exam and grading scale", () => {
+  const DRZAVE = { sl: ["SI"], en: ["GB", "US"], de: ["DE", "AT"], hr: ["HR"], it: ["IT"], hu: ["HU"] };
+  assert.deepEqual(Object.keys(DRZAVE).sort(), [...LIVE_UI_LANGUAGES].sort());
+  for (const [lang, countries] of Object.entries(DRZAVE)) {
+    for (const c of countries) {
+      const id = systemForCountry(c);
+      assert.equal(SCHOOL_SYSTEMS[id].country, c, `${c} → ${id}`);
+      if (c === "SI" || lang === "en") continue;
+      const s = SCHOOL_SYSTEMS[id];
+      assert.equal(s.lang, lang, c);
+      assert.ok(s.finalExam?.name && gradeInfo(id, s.finalExam.after), `${c}: zaključni izpit`);
+      assert.ok(s.finalExam.months.every((m) => m >= 1 && m <= 12), c);
+      assert.ok(s.marks?.scale && s.marks.best && s.marks.pass, `${c}: ocene`);
+      assert.ok(s.subjects?.MAT && s.subjects.FIZ && s.subjects.KEM, `${c}: predmeti`);
+      // Razredi po letih šolanja naraščajo, zadnji razred je 12. leto (zaključni izpit).
+      const levels = gradesOf(id).map((g) => g.level);
+      assert.deepEqual(levels, [...levels].sort((a, b) => a - b), c);
+      assert.equal(levels.at(-1), 12, c);
+      assert.equal(new Set(gradesOf(id).map((g) => g.label)).size, levels.length, `${c}: podvojeno ime razreda`);
+      // Lastnega učnega načrta še ni: obvestilo na Učni poti (public/app.js obvestiloBrezNacrta).
+      assert.ok(brezUcnegaNacrta(id), c);
+    }
+  }
+  assert.equal(brezUcnegaNacrta("SI"), false);
+  assert.equal(brezUcnegaNacrta("IN-CBSE"), false);
+});
+
+test("Austria: 1. Klasse is the 5th year of school, 8. Klasse the 12th; path names in German", () => {
+  assert.deepEqual(gradesOf("AT").map((g) => [g.label, g.level]), [
+    ["1. Klasse", 5], ["2. Klasse", 6], ["3. Klasse", 7], ["4. Klasse", 8],
+    ["5. Klasse", 9], ["6. Klasse", 10], ["7. Klasse", 11], ["8. Klasse", 12],
+  ]);
+  assert.equal(pathKeyFor({ school_system: "AT", curriculum_level: "1. Klasse", subject: "MAT" }), "MAT-INT-6");
+  assert.equal(pathKeyFor({ school_system: "AT", curriculum_level: "3. Klasse", subject: "MAT" }), "MAT-INT-7");
+  assert.equal(pathKeyFor({ school_system: "AT", curriculum_level: "8. Klasse", subject: "MAT" }), "MAT-INT-12");
+  assert.equal(pathLabelFor("MAT-INT-6", "AT"), "Mathematik, 1. Klasse / 2. Klasse");
+  assert.equal(pathLabelFor("FIZ-INT-8", "AT"), "Physik, 1. Klasse – 4. Klasse");
+  assert.equal(pathLabelFor("MAT-INT-12", "AT"), "Mathematik, 8. Klasse");
+  assert.equal(gradeInfo("DE", "Klasse 5").level, 5);
+  assert.equal(pathLabelFor("MAT-INT-10", "DE"), "Mathematik, Klasse 10 / Klasse 11 (Einführungsphase)");
+  assert.equal(pathLabelFor("MAT-INT-8", "HR"), "Matematika, 8. razred");
+  assert.equal(pathLabelFor("KEM-INT-12", "IT"), "Chimica, 4º anno / 5º anno");
+});
+
+test("school track follows each system's secondary-school start; exam prep flag matches the exam data; back to SI resets foreign grades", async () => {
+  const { EXAMS } = await import("../server/exam-data.js");
+  const track = (sys, level) => normalizeSettings({ school_system: sys, curriculum_level: level }).educational_track;
+  // Isto kot pred 25. 11. 2026 za AT in DE: AT 5. Klasse in DE Klasse 10 sta srednja šola.
+  assert.equal(track("AT", "4. Klasse"), "OSNOVNA_SOLA");
+  assert.equal(track("AT", "5. Klasse"), "SREDNJA_SOLA");
+  assert.equal(track("DE", "Klasse 9"), "OSNOVNA_SOLA");
+  assert.equal(track("DE", "Klasse 10"), "SREDNJA_SOLA");
+  assert.equal(track("HR", "8. razred"), "OSNOVNA_SOLA");
+  assert.equal(track("HR", "1. razred SŠ"), "SREDNJA_SOLA");
+  assert.equal(track("IT", "1º anno"), "SREDNJA_SOLA");
+  assert.equal(track("HU", "9. osztály"), "SREDNJA_SOLA");
+  assert.equal(nextLevel({ school_system: "HR", curriculum_level: "8. razred" }).settings.educational_track, "SREDNJA_SOLA");
+  for (const id of SYSTEM_IDS) {
+    const fe = SCHOOL_SYSTEMS[id].finalExam;
+    if (fe) assert.equal(!!fe.prep, Object.values(EXAMS).some((e) => e.systems?.includes(id)), `${id}: finalExam.prep`);
+  }
+  for (const level of ["1. razred SŠ", "Klasse 5", "1. Klasse", "9. osztály", "1ª media", "1º anno"]) {
+    assert.equal(normalizeSettings({ school_system: "SI", curriculum_level: level }).curriculum_level, "8. razred", level);
+  }
+  assert.equal(normalizeSettings({ school_system: "SI", curriculum_level: "5. razred" }).curriculum_level, "5. razred");
+  assert.equal(normalizeSettings({ school_system: "SI", educational_track: "SREDNJA_SOLA", curriculum_level: "2. letnik VR" }).curriculum_level, "2. letnik VR");
+});
+
+test("path heading keeps the grade names of the student's own system", async () => {
+  const { pathLevelText } = await import("../public/zacetna.js");
+  const t = (k, v) => (k === "lp.grade" ? `Grade ${v.n}` : k === "subj.MAT" ? "Mathematics" : k);
+  const own = listPaths("MAT", "HR").find((p) => p.key === "MAT-INT-9");
+  assert.equal(pathLevelText(t, own, {}), "Matematika, 1. razred SŠ");
+  assert.equal(pathLevelText(t, { label: "Matematika, 8. razred", subject: "MAT", school: "OS" }, {}), "Mathematics, Grade 8");
 });

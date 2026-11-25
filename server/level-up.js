@@ -33,7 +33,7 @@ export function nextLevel(settings) {
     const i = list.findIndex((g) => g.label === s.curriculum_level);
     const next = i >= 0 ? list[i + 1] : null;
     if (!next) return null;
-    return { label: next.label, settings: { educational_track: trackForLevel(next.level), curriculum_level: next.label } };
+    return { label: next.label, settings: { educational_track: trackForLevel(next.level, s.school_system), curriculum_level: next.label } };
   }
   const n = num(s.curriculum_level);
   const stage = stageOf(s);

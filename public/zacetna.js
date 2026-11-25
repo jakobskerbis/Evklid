@@ -163,7 +163,8 @@ export function xpStatsHtml(t, x, prev = null) {
 // Napis poti v jeziku učenca: »Matematika, 2. letnik« → »Mathematics, Year 2« (oznaka poti s strežnika je slovenska).
 // own: pot iz seznama poti (/api/paths), p: učna pot (/api/students/:id/path), rtl: pisava od desne proti levi.
 export function pathLevelText(t, own, p, rtl = false) {
-  const lvl = /^(.+), (\d+\. (?:razred|letnik).*)$/.exec(own?.label || "");
+  // Mednarodna pot ima imena razredov in predmeta iz učenčevega šolskega sistema (»Matematika, 1. razred SŠ«): ostanejo.
+  const lvl = own?.school === "INT" ? null : /^(.+), (\d+\. (?:razred|letnik).*)$/.exec(own?.label || "");
   if (!lvl) return own?.label || p.label || "";
   const subj = own.subject && ["MAT", "FIZ", "KEM", "NAR", "BIO", "GEO", "RAC", "EKO"].includes(own.subject) ? t(`subj.${own.subject}`) : lvl[1];
   return [subj || lvl[1], levelLabel(t, lvl[2])].join(rtl ? "، " : ", ");

@@ -4641,5 +4641,7 @@
   "a3.grp.encimi": "Enzimi",
   "a3.grp.ovoji-virusa": "Strati del virus",
   "a3.grp.rep": "Coda",
-  "a3.grp.gostitelj": "Batterio ospite"
+  "a3.grp.gostitelj": "Batterio ospite",
+  "path.noCurriculum": "Il programma scolastico del tuo paese{country} non è ancora disponibile, quindi usi il programma sloveno, ordinato per anno di scuola. Le classi sono quelle del tuo sistema scolastico; il tutor ti spiega tutto nella tua lingua.",
+  "path.noExam": "La preparazione all'esame finale ({exam}) non è ancora disponibile."
 }

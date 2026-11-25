@@ -105,7 +105,7 @@ export function applyDeviceSettings(changes = {}) {
 
 function describe(d) {
   const track = { OSNOVNA_SOLA: t("lp.os"), SREDNJA_SOLA: t("lp.ss"), UNIVERZA: t("lp.uni") }[d.track];
-  return [d.system, d.system ? null : track, levelLabel(d.level), d.program].filter(Boolean).join(" · ");
+  return [d.system, d.system ? null : track, d.system ? d.level : levelLabel(d.level), d.program].filter(Boolean).join(" · ");
 }
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

@@ -4640,5 +4640,7 @@
   "a3.grp.encimi": "Enzyme",
   "a3.grp.ovoji-virusa": "Virushüllen",
   "a3.grp.rep": "Schwanz",
-  "a3.grp.gostitelj": "Wirtsbakterium"
+  "a3.grp.gostitelj": "Wirtsbakterium",
+  "path.noCurriculum": "Der Lehrplan deines Landes{country} ist noch nicht verfügbar, deshalb lernst du nach dem slowenischen Lehrplan, geordnet nach Schuljahren. Die Klassen sind die deines Schulsystems; der Tutor erklärt dir alles in deiner Sprache.",
+  "path.noExam": "Die Vorbereitung auf die Abschlussprüfung ({exam}) gibt es noch nicht."
 }

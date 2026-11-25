@@ -4640,5 +4640,7 @@
   "a3.grp.encimi": "Enzymes",
   "a3.grp.ovoji-virusa": "Virus layers",
   "a3.grp.rep": "Tail",
-  "a3.grp.gostitelj": "Host bacterium"
+  "a3.grp.gostitelj": "Host bacterium",
+  "path.noCurriculum": "Your country's curriculum{country} is not available yet, so you are using the Slovenian curriculum, arranged by year of school. The grades are those of your school system; the tutor explains everything in your language.",
+  "path.noExam": "Preparation for the final exam ({exam}) is not available yet."
 }
