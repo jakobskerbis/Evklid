@@ -578,7 +578,9 @@ function syncChatReturn() {
 // gumb »Nazaj na: …« vrnejo na isto mesto (back = { view, open, oznaka }).
 // back.kontekst: posnetek stanja (sourceType, sourceId, …), ki gre z naslednjim vpisanim sporočilom kot skrit blok.
 function askTutorFrom(text, back = null) {
-  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "" } : null;
+  // poskus: ključ odprtega poskusa (povezave C1): inštruktorjev gumb za isti poskus ga nastavi, ne odpre znova.
+  const poskus = back?.kontekst?.sourceType === "lab" && typeof back.kontekst.sourceId === "string" ? back.kontekst.sourceId : "";
+  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "", poskus } : null;
   showView("chat");
   ucniKontekstConv = state.conversationId ?? "nov";
   state.ucniKontekst = back?.kontekst && typeof back.kontekst === "object" ? back.kontekst : null;
@@ -768,6 +770,7 @@ function showView(name) {
   currentView = name;
   syncCompetitionTab();
   if (name === "path" || name === "competition" || name === "exams") setBack(name);
+  else if (name === "uci" && state.backTo === "uci") setBack("path"); // vrnitev v poskus porabi »← Laboratorij« (tema iz lekcije ne vodi v Laboratorij)
   if (name !== "topic") stopContestTimer();
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
@@ -1231,7 +1234,7 @@ function backStep(wasOverlay) {
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
   // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
   // Urnik, NPZ/matura, Tekmovanja: tja, od koder je učenec prišel (kot gumb »←«, meBackTarget).
-  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? (BACK_ORIGIN.includes(currentView) ? meBackTarget(currentView) : "me") : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? (BACK_ORIGIN.includes(currentView) ? meBackTarget(currentView) : "me") : currentView === "topic" && ["competition", "exams", "uci"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {
     showView(up); // zapis v zgodovini doda showView (syncHistory)
     return true;
@@ -1488,7 +1491,7 @@ async function onboard(name = "") {
       try {
         s = await api("/api/students", { method: "POST", body: { name: f.name.value, settings, vir: currentSource() } });
       } catch (ex) {
-        err.textContent = ex.message;
+        err.textContent = ex.body?.code === "ime_neprimerno" ? t("set.nameBad") : ex.message; // #754
         err.hidden = false;
         busy = false;
         btn.disabled = false;
@@ -4099,7 +4102,7 @@ const takePractice = vadi.take;
 // Gumb »nazaj« na temi oziroma pri seriji nalog vodi tja, od koder je učenec prišel.
 function setBack(view) {
   state.backTo = view;
-  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : view === "zapiski" ? t("cards.notes") : t("nav.path")}`;
+  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : view === "zapiski" ? t("cards.notes") : view === "uci" ? t("nav.lab") : t("nav.path")}`;
 }
 
 // Seje modulov, ki se naložijo šele ob odprtju (»Vaja iz testa«, public/zapiski/vaja.js): modul doda naslov, uvod,
@@ -4534,10 +4537,18 @@ initPilot({
 initLab({
   api,
   escapeHtml,
+  toast,
   getStudent: () => state.student,
   openLesson: (id) => {
     lessonFromLab(id);
     openLesson(id);
+  },
+  // »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici; ← in Nazaj vrneta v isti poskus.
+  practice: async (id) => {
+    const testPredznanja = await openTopic(id); // nova tema: najprej test predznanja (kot »Vadi« v lekciji)
+    if (currentView !== "topic" || state.topic?.id !== id) return; // medtem odprto kaj drugega
+    setBack("uci");
+    if (!testPredznanja && $("#t-practice")) nextPractice();
   },
   askTutor: (text, oznaka, kontekst) => {
     const izLekcije = labIsFromLesson();
@@ -4548,6 +4559,7 @@ initLab({
 initUci({
   escapeHtml,
   getStudent: () => state.student,
+  openLesson, // »Lekcija« v 3D modelu (uci-se.js): Nazaj iz lekcije spet odpre model
   showTextbook,
   showLab,
   stopReading,
@@ -4592,6 +4604,17 @@ initOpen({
     loadGames().then((m) => m.openReward(concepts)).catch(() => null);
   },
   openLab: () => openFromTutor({ view: "lab" }),
+  // Povezave C1: inštruktorjev gumb s »nastavi« za poskus, iz katerega je učenec prišel: vrne ga v ta odprti poskus
+  // (meritve ostanejo) in vrne okvir poskusa, da odpri.js premakne drsnike; sicer null (poskus v oknu kot doslej).
+  odprtiPoskus: (key, { vrni = false } = {}) => {
+    const r = state.chatReturn;
+    if (!key || !r || r.view !== "lab" || r.poskus !== key || !returnConvOk(r)) return null;
+    // Klepet v oknu: učenec je medtem morda odprl drug poskus ali seznam; drsnike premaknemo le v istem poskusu.
+    const mount = document.querySelector("#lab-content .lab-mount");
+    if (mount?.dataset.labKey !== key) return null;
+    if (!vrni) return true;
+    return chatReturnBack({ okno: true }) ? mount : null;
+  },
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
 });

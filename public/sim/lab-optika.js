@@ -36,7 +36,7 @@ export function labLom(el) {
     { key: "sa", label: "sin α" },
     { key: "sb", label: "sin β" },
   ], { empty: "Še ni meritev. Vklopi laser, nastavi vpadni kot, odčitaj odbojni in lomni kot in pritisni »Zapiši meritev«." });
-  const graph = dataGraph({ x: [0, 1], y: [0, 1], xStep: 0.2, yStep: 0.2, xLabel: "sin α", yLabel: "sin β", title: "sin β v odvisnosti od sin α" });
+  const graph = dataGraph({ x: [0, 1], y: [0, 1], xStep: 0.2, yStep: 0.2, xLabel: "sin α", yLabel: "sin β", title: "sin β v odvisnosti od sin α", formula: "<i>n</i>₁ sin α = <i>n</i>₂ sin β" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const serije = new Map(); // ključ snov:smer → { pts, ... }
@@ -205,7 +205,7 @@ export function labLeca(el) {
     { key: "ia", label: "1/<i>a</i> [m⁻¹]" },
     { key: "ib", label: "1/<i>b</i> [m⁻¹]" },
   ], { empty: "Še ni meritev. Postavi predmet, lečo in zaslon, poišči ostro sliko in pritisni »Zapiši meritev«." });
-  const graph = dataGraph({ x: [0, 25], y: [0, 25], xStep: 5, yStep: 5, xLabel: "1/a [m⁻¹]", yLabel: "1/b [m⁻¹]", title: "1/b v odvisnosti od 1/a" });
+  const graph = dataGraph({ x: [0, 25], y: [0, 25], xStep: 5, yStep: 5, xLabel: "1/a [m⁻¹]", yLabel: "1/b [m⁻¹]", title: "1/b v odvisnosti od 1/a", formula: tex(String.raw`\frac{1}{f} = \frac{1}{a} + \frac{1}{b}`) });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meritve = new Map(); // f → [{ a, b }]

@@ -322,6 +322,28 @@ float cIdx(float y) {
   if (y < -500.0) return y / 14.0;
   return -500.0 / 14.0 + (log(14.0 + 0.09 * (y + 500.0)) - log(14.0)) / 0.09;
 }
+// koordinate vrst korenine: x = u (čez vrste, širina vrste 13), y = zaporedna številka celice v vrsti (cc)
+// šum dolžine celic teče po indeksu celice (cIdx / 2,5): enakomerno po vsej vrsti, cc tudi v coni podaljševanja monoton
+vec2 korenUC(vec2 p, float fi, vec4 hf) {
+  float R = 420.0 * sqrt(clamp((p.y + 1300.0) / 420.0, 0.0, 1.0));
+  float u = p.x * 420.0 / max(R, 40.0) + 5.0 * (sum(vec2(p.y / 70.0, p.x / 90.0)) - 0.5) + 2.0 * (sum(vec2(p.y / 23.0, p.x / 31.0) + 4.0) - 0.5);
+  float lu0 = u / 13.0 - fi - 0.5;
+  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, cIdx(p.y) / 2.5)) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
+  return vec2(u, cc);
+}
+// sredina celice (fi, ci) v µm: Newtonova metoda na korenUC. Rezultat je v vsej celici enak, zato je sistem p − cc za
+// TEM tog (prej p − (lu, lv), ki se je v coni podaljševanja raztegnil, srediste ~0,7 %).
+vec2 korenSredina(vec2 p, float fi, float ci, vec4 hf) {
+  vec2 cilj = vec2((fi + 0.5) * 13.0, ci + 0.5);
+  vec2 c = p;
+  for (int k = 0; k < 4; k++) {
+    vec2 f = korenUC(c, fi, hf);
+    vec2 fx = (korenUC(c + vec2(0.25, 0.0), fi, hf) - f) / 0.25;
+    vec2 fy = (korenUC(c + vec2(0.0, 0.25), fi, hf) - f) / 0.25;
+    c -= inverse(mat2(fx, fy)) * (f - cilj);
+  }
+  return c;
+}
 T stenaK(T t, float dw, vec2 sm) { t.snov = S_STENA; t.smer = sm; t.r1 = dw; t.dye = vec3(0.05, 0.3, 0.0); return t; }
 T tkivo(vec2 p, float px) {
   T t = prazno();
@@ -381,7 +403,7 @@ T tkivo(vec2 p, float px) {
   vec4 hf = h42(vec2(fi, 3.0));
   // prečne stene so rahlo poševne in ukrivljene, celice v vrsti so različno dolge
   float lu0 = (fract(u / fw) - 0.5);
-  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, p.y / 35.0)) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
+  float cc = cIdx(p.y) + hf.x + 0.55 * (sum(vec2(fi * 1.7, cIdx(p.y) / 2.5)) - 0.5) + (0.12 + 0.1 * hf.y) * lu0 * (hf.z < 0.5 ? 1.0 : -1.0) + 0.06 * lu0 * lu0;
   float ci = floor(cc);
   float hh = p.y < -500.0 ? 14.0 : 14.0 + 0.09 * (p.y + 500.0);
   float lv = (fract(cc) - 0.5) * hh;
@@ -389,7 +411,9 @@ T tkivo(vec2 p, float px) {
   float dw = min(dx, dy);
   vec2 cid = vec2(fi, ci);
   vec4 h = h42(cid);
-  t.cid = cid; t.tip = C_SPLOSNA; t.cc = p - vec2(lu, lv); t.jc = t.cc;
+  t.cid = cid; t.tip = C_SPLOSNA;
+  // sredina celice je potrebna le za TEM (organeli, kromatin) in sondo; svetlobni mikroskop in SEM je ne rabita
+  t.cc = uNacin == 0 || uNacin == 3 ? p - vec2(lu, lv) : korenSredina(p, fi, ci, hf); t.jc = t.cc;
   if (dw < 0.3) return stenaK(t, dw, dx < dy ? vec2(0.0, 1.0) : vec2(1.0, 0.0));
   t.snov = S_CITO; t.meja = dw - 0.3;
   t.dye = vec3(0.07 + 0.04 * sumL(p, 1.2, px), 0.09, 0.0);
@@ -408,7 +432,12 @@ T tkivo(vec2 p, float px) {
       float k = pokrij(dj, px);
       // orcein obarva vse jedro zrnato vijolično; jedrce je le malo temnejše
       t.dye.x = mix(t.dye.x, 0.32 + 0.45 * kromatin(qn, h.xy, px) + 0.25 * pokrij(length(qn - vec2(0.8, 0.6)) - 1.1, px), k);
-      if (k > 0.5) { t.snov = S_JEDRO; t.jedro = dj; t.jc = t.cc + vec2(min(1.6, 0.3 * cw) * (h.y - 0.5) * mer, 0.25 * hh * (h.w - 0.5) * (1.0 - mer) + min(1.6, 0.3 * cw) * (h.w - 0.5) * mer); }
+      if (k > 0.5) {
+        // odmik jedra z merami v sredini celice (ne v p), da je jc v vsem jedru enak
+        float yc = t.cc.y, hc = yc < -500.0 ? 14.0 : 14.0 + 0.09 * (yc + 500.0), mc = 1.0 - smoothstep(-640.0, -420.0, yc);
+        float wc = 0.5 * fw * sqrt(clamp((yc + 1300.0) / 420.0, 0.0, 1.0));
+        t.snov = S_JEDRO; t.jedro = dj; t.jc = t.cc + vec2(min(1.6, 0.3 * wc) * (h.y - 0.5) * mc, 0.25 * hc * (h.w - 0.5) * (1.0 - mc) + min(1.6, 0.3 * wc) * (h.w - 0.5) * mc);
+      }
     }
     return t;
   }

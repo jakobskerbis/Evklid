@@ -1401,3 +1401,33 @@ test("A2: promocijska koda Stripa – meja iz plačanega obdobja; 100 % popust =
     assert.ok(cap()[0].usd <= aiCapFromEur(2, VAT_RATE) + 0.002, `po vračilu 90 %: ${cap()[0].usd}`);
   });
 });
+
+test("#759 strežnik: konec preizkusa z namigom ponudbe, offer_reason pod 15, cenik v valuti računa, plačljiva dnevna meja", async () => {
+  await withAccounts(async ({ db, api, call, kid, pid, subscribe }) => {
+    // Preizkus (nopay »trial«): 16-letnik dobi namig za starša, 12-letnik ne (pod 15 brez cene), le razlog.
+    db.prepare("UPDATE parents SET trial_ends_at = ? WHERE id = ?").run(new Date(Date.now() + 3 * 86400000).toISOString(), pid);
+    const teen = kid("Tim", "SS", YEAR - 17);
+    const young = kid("Ana", "OS", YEAR - 12);
+    const t = api.aiUsage.blockFor(teen, "block.freeTail");
+    assert.equal(t.code, "block.trialOut");
+    assert.equal(t.hint, "block.hintParent");
+    assert.equal(t.offer_reason, undefined);
+    const y = api.aiUsage.blockFor(young, "block.freeTail");
+    assert.equal(y.code, "block.trialOut");
+    assert.equal(y.hint, undefined);
+    assert.equal(y.offer_reason, "under_15");
+    // Cenik za prijavljen račun: valuta (pretekle) naročnine kot pay-link (currencyOf), ne ?country=.
+    assert.equal((await call("/api/account/prices?country=SI")).body.currency, "EUR");
+    db.prepare("UPDATE parents SET sub_plan = 'evklid_1_month_inr', sub_status = 'canceled' WHERE id = ?").run(pid);
+    const p = (await call("/api/account/prices?country=SI")).body;
+    assert.equal(p.currency, "INR");
+    // Število na kartici je meja, ki jo plačan paket res da (rightsFor po stopnji profila).
+    db.prepare("UPDATE students SET parent_id = NULL WHERE id IN (?, ?)").run(teen, young);
+    for (const level of ["OS", "SS", "FAKS"]) {
+      const sid = kid(level, level, YEAR - 20);
+      subscribe({ OS: "evklid_1_month", SS: "evklid_ss_month", FAKS: "evklid_faks_month" }[level]);
+      assert.equal(api.rightsFor(sid).dailyQuestions, p.paid_daily_questions[level], level);
+      db.prepare("UPDATE students SET parent_id = NULL WHERE id = ?").run(sid);
+    }
+  });
+});

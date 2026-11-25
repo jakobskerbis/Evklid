@@ -432,6 +432,29 @@ Table: sample, colour (student), lines read (SŠ), ion (student), ✓/✗; E = h
 Mistakes: dirty loop (yellow masks everything), luminous flame (salt share < 20 %), loop not dipped in HCl (weak colour), K with Na without cobalt glass, no goggles.
 Tests: lines within 0,1 nm of NIST and the reading within 1,5 nm; hues (Li/Sr red, Na yellow-orange, Ca orange, Ba green, Cu blue-green, K violet); Na share > 95 % in Na + K, K > 60 % through cobalt glass; dirty loop Na > 60 %, 2–4 cleanings, clean Li > 70 %, luminous flame < 20 %; no HCl dip; K evaporates first; unknowns contain one Na + K (20 seeds); E(Na D) = 2,105 eV; fuzz (no NaN) for all three engines, also for a paused step (dt = 0).
 
+## Vodeni poskus (guided mode) and usage counts
+
+Plan: j 21. 11. 2026 (doc https://claude.ai/artifact/PsKsB3QjtVqVHf76UXjMme), phase 1 started 25. 11. 2026. In the
+Laboratorij tab (`public/laboratorij.js` → `zazeni`) an experiment with steps in `public/sim/lab-vodeno-koraki.js`
+gets a »Vodeno | Prosto« switch and, in »Vodeno«, a step card at the top of `.demo-controls`
+(`public/sim/lab-vodeno.js` → `vodi`). First open is »Vodeno«; the choice is remembered per device
+(`localStorage` `evklid.lab.nacin`). »Prosto« is the lab as before. Guided now: `lab-titracija` (10 steps), `lab-ohm` (8),
+`lab-prosti-pad` (7). Not in lessons (sims embedded in a lesson stay free).
+- A step unlocks itself from what the student really did, read from the DOM like the tutor snapshot
+  (`lab.js` → `stanjePoskusa`): settings, the measurement table, every event-log line since the guide started (kept by a
+  MutationObserver, the log itself shows only 5) and the number of correctly answered »Sklep« questions. Engines need no
+  code for it. `poudari` outlines the control the step needs (`.lab-vod-cilj`); `zakaj` is shown after the step.
+- »↺ Ponastavi« rebuilds the engine, so the guide starts again at step 1 (new `.demo-controls` element).
+- A new guided experiment = a `KORAKI` entry. `test/laboratorij-vodeno.test.js` checks every `poudari` text exists in
+  the engine and plays every guided experiment to the end in Chromium with the clicks a student would make, so a
+  changed engine that breaks a step fails the test.
+- Prediction before measuring, a locked conclusion and »Preveri moj račun« are profil A's shared parts in `lab.js`
+  (A1–A3); the guide will use the prediction as a step once it is on main.
+- Usage counts (`server/laboratorij.js`): `POST /api/students/:id/lab/uporaba` `{ key, nacin: vodeno|prosto|brez,
+  dogodek: odprt|preklop|koncano }` → table `lab_uporaba (dan, poskus, nacin, dogodek, n)`, only daily counts, no student,
+  device or IP (not personal data); the same event of the same student and experiment counts once per 10 s. Read:
+  `GET /api/admin/laboratorij?days=30` (admin, or local without accounts).
+
 ## Next (from j's list)
 FIZ: pendulum and stopwatch; motion part B: collisions of two carts on the track (momentum, magnets/Velcro), uniform motion with a motion sensor, nested coffee filters (v_t ∝ √m), a(θ) on the incline to find μr; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: electroplating (copper on a key, mass vs charge, reuses `ElektrolizaBench` kinetics), corrosion of iron (nails in water, salt water, oil, with zinc/copper contact), Daniell cell with a Zn | Cu series battery for an LED, electrolysis of CuSO₄ with copper electrodes (mass change).
 NAR: the same engines on more NAR-OS-6/7 topics. Indicators: enzyme pH dependence (amylase at pH 4/7/9, reuses `SlinaBench`), the 0 °C tube warmed to 37 °C, a home version of `lab-ph` with only red cabbage, Sudan III for fats, pH meter alkaline error. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),

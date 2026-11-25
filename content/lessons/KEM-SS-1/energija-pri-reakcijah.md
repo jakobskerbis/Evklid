@@ -260,6 +260,18 @@ V tabelah je reakcijska entalpija pogosto podana v $\mathrm{kJ/mol}$, kar pomeni
 + $112\,\mathrm{g}$
 > $n = \dfrac{130}{65}\,\mathrm{mol} = 2\,\mathrm{mol}$, $m = 2\,\mathrm{mol} \cdot 56\,\mathrm{g/mol} = 112\,\mathrm{g}$.
 
+? Plinski gorilnik kuri propan: $\mathrm{C_3H_8(g) + 5\,O_2(g) \rightarrow 3\,CO_2(g) + 4\,H_2O(l)}$, $\Delta H = -2220\,\mathrm{kJ}$. Koliko toplote se sprosti, ko zgori $22\,\mathrm{g}$ propana ($M = 44\,\mathrm{g/mol}$)? Rezultat vpiši v kJ.
+= 1110 kJ | 5
+~ 48840 | Entalpije ne množiš z maso. $\Delta H$ velja za množino iz enačbe, zato najprej izračunaj $n = \dfrac{m}{M}$.
+~ 4440 | Množino si izračunal obratno. Velja $n = \dfrac{m}{M} = \dfrac{22}{44}\,\mathrm{mol}$, ne $\dfrac{M}{m}$.
+> $n = \dfrac{22\,\mathrm{g}}{44\,\mathrm{g/mol}} = 0{,}50\,\mathrm{mol}$, $Q = \dfrac{n}{\nu} \cdot |\Delta H| = \dfrac{0{,}50}{1} \cdot 2220\,\mathrm{kJ} = 1110\,\mathrm{kJ}$.
+
+? Za sintezo amoniaka velja $\mathrm{N_2(g) + 3\,H_2(g) \rightarrow 2\,NH_3(g)}$, $\Delta H = -92\,\mathrm{kJ}$. Koliko toplote moramo dovesti, da razpade $6{,}8\,\mathrm{g}$ amoniaka ($M = 17\,\mathrm{g/mol}$) na dušik in vodik? Rezultat vpiši v kJ.
+= 18,4 kJ | 0,1
+~ 36,8 | Pozabil si deliti s koeficientom: $\Delta H$ velja za $2\,\mathrm{mol}$ amoniaka.
+~ -18,4 | Pri razpadu toploto dovajamo; obratna reakcija ima $\Delta H = +92\,\mathrm{kJ}$, zato je dovedena toplota pozitivna.
+> Razpad je obratna reakcija z $\Delta H = +92\,\mathrm{kJ}$ za $2\,\mathrm{mol}$ $\mathrm{NH_3}$. $n = \dfrac{6{,}8\,\mathrm{g}}{17\,\mathrm{g/mol}} = 0{,}40\,\mathrm{mol}$, $Q = \dfrac{0{,}40}{2} \cdot 92\,\mathrm{kJ} = 18{,}4\,\mathrm{kJ}$.
+
 :::simboli
 \Delta H | reakcijska entalpija | \Delta H = H(\text{produkti}) - H(\text{reaktanti}) | kJ | velja za množine iz enačbe; $< 0$ eksotermna
 H | entalpija (energija, shranjena v snovi) | | kJ

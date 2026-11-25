@@ -129,6 +129,7 @@ function Root() {
           <Stack.Screen name="calculator" options={{ title: t("nav.graph"), presentation: "modal" }} />
           <Stack.Screen name="atlas" options={{ title: t("a3.title") }} />
           <Stack.Screen name="delete-account" options={{ title: t("mob.deleteAccount"), presentation: "modal" }} />
+          <Stack.Screen name="export-data" options={{ title: t("mob.exportData"), presentation: "modal" }} />
           <Stack.Screen name="vodic" options={{ title: t("guide.title") }} />
         </Stack.Protected>
       </Stack>

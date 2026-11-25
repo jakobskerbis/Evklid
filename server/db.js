@@ -8,6 +8,7 @@ import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessLi
 import { privzetiCilj } from "../public/goal-data.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
+import { migratePriprava } from "./priprava/shema.js";
 
 // Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
 export const SKILL_KEEP_DAYS = 365;
@@ -442,6 +443,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       throw err;
     }
   }
+  // Priprava na test iz zapiskov (server/priprava/shema.js, docs/priprava.md): tabele priprave, viri, izvirniki.
+  migratePriprava(db);
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
@@ -606,6 +609,10 @@ export class Store {
       // Pregled ob vsaki oznaki razen »none« (enako dolg), da iz baze ni vidno, katera je stiska.
       .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, flag === "distress" ? null : e.topic, e.error, e.mode, sealFlag(flag), flag === "distress" ? null : (e.topic_id ?? null), flag === "none" ? null : sealPregled({}));
     return Number(info.lastInsertRowid);
+  }
+  // Varnostno okno brez oznake inštruktorja (IN-14): dogodek odgovora postane oznaka stiske, brez teme (kot addEvent).
+  markDistress(eventId) {
+    this.db.prepare("UPDATE events SET flag = ?, topic = NULL, topic_id = NULL, pregled = COALESCE(pregled, ?) WHERE id = ?").run(sealFlag("distress"), sealPregled({}), eventId);
   }
   // Oznaka je šifrirana (razen »none«); neberljiva šteje kot opozorilo (»unknown«), ne kot navaden odgovor.
   lastEvent(conversationId) {

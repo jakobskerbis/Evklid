@@ -293,6 +293,18 @@ Ker se atomi pri reakciji ne ustvarjajo in ne uničujejo, je vsota mas vseh snov
 + $112\,\text{g}$
 > $n(\mathrm{CaCO_3}) = 200/100 = 2{,}0\,\text{mol}$, nastane $2{,}0\,\text{mol}$ $\mathrm{CaO}$, torej $m = 2{,}0 \cdot 56 = 112\,\text{g}$. Odgovor $56\,\text{g}$ bi veljal za $1\,\text{mol}$, $88\,\text{g}$ pa je masa nastalega $\mathrm{CO_2}$.
 
+? Metan zgoreva po enačbi $\mathrm{CH_4} + 2\,\mathrm{O_2} \rightarrow \mathrm{CO_2} + 2\,\mathrm{H_2O}$. Koliko gramov vode nastane pri popolnem zgorevanju $8{,}0\,\text{g}$ metana? ($A_\mathrm{r}(\mathrm{C}) = 12$, $A_\mathrm{r}(\mathrm{H}) = 1$, $A_\mathrm{r}(\mathrm{O}) = 16$)
+= 18 g | 0,1
+~ 9 | Pozabil si na koeficient $2$ pred vodo: iz $1\,\text{mol}$ metana nastaneta $2\,\text{mol}$ vode.
+~ 8 | Masa se ohranja za vse snovi skupaj, ne med posameznima snovema. Računaj prek množin.
+> $n(\mathrm{CH_4}) = \dfrac{8{,}0\,\text{g}}{16\,\text{g/mol}} = 0{,}50\,\text{mol}$, $n(\mathrm{H_2O}) = 2 \cdot 0{,}50\,\text{mol} = 1{,}0\,\text{mol}$, $m = 1{,}0\,\text{mol} \cdot 18\,\text{g/mol} = 18\,\text{g}$.
+
+? Za reakcijo $2\,\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\,\mathrm{H_2O}$ zmešamo $4{,}0\,\text{g}$ vodika in $16\,\text{g}$ kisika. Koliko gramov vode nastane? ($A_\mathrm{r}(\mathrm{H}) = 1$, $A_\mathrm{r}(\mathrm{O}) = 16$)
+= 18 g | 0,1
+~ 36 | To bi nastalo, če bi bil omejitveni reaktant vodik. Primerjaj količnika $n/\nu$: kisika je premalo.
+~ 20 | Seštel si maso obeh reaktantov, a ne zreagira ves vodik: $2{,}0\,\text{g}$ ga ostane.
+> $n(\mathrm{H_2}) = 2{,}0\,\text{mol}$, $\dfrac{n}{\nu} = 1{,}0$; $n(\mathrm{O_2}) = 0{,}50\,\text{mol}$, $\dfrac{n}{\nu} = 0{,}50$. Omejitveni je kisik: nastane $2 \cdot 0{,}50 = 1{,}0\,\text{mol}$ vode, to je $18\,\text{g}$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol
 m | masa snovi | m = n \cdot M | g

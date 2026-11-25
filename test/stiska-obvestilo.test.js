@@ -181,7 +181,7 @@ test("stiska e-mail: pregled, zapisan brez ključa, se ob vklopu ključa zašifr
   store.db.close();
 });
 
-async function withServer(store, fn, { fetchFail = false } = {}) {
+async function withServer(store, fn, { fetchFail = false, varnost = "NE" } = {}) {
   const calls = [];
   const app = createApp(store, {
     accounts: true,
@@ -190,11 +190,11 @@ async function withServer(store, fn, { fetchFail = false } = {}) {
     fetchFn: async (url, init = {}) => {
       const body = init.body ? JSON.parse(init.body) : null;
       calls.push({ url, body });
-      if (fetchFail && /stisk/.test(body?.subject || "")) return { ok: false, status: 503, json: async () => ({ message: "napaka" }) };
+      if (fetchFail && /stisk|varnostno obvestilo/.test(body?.subject || "")) return { ok: false, status: 503, json: async () => ({ message: "napaka" }) };
       return { ok: true, status: 200, json: async () => ({ id: "m" }) };
     },
     log: { error() {}, info() {}, warn() {} },
-    varnostFn: async () => ({ content: [{ type: "text", text: "NE" }] }),
+    varnostFn: async () => ({ content: [{ type: "text", text: varnost }] }),
     streamFn: async ({ onText }) => {
       onText(DISTRESS_REPLY);
       return { text: DISTRESS_REPLY, stopReason: "end_turn" };
@@ -251,8 +251,16 @@ test("stiska e-mail v aplikaciji: oznaka → en e-mail skrbniku brez imena in vs
       assert.match(r.body, /event: nujno/);
       assert.match(r.body, /event: done/);
       await tick();
-      const maili = calls.filter((x) => String(x.url).includes("resend") && /stisk/.test(x.body.subject));
+      const vsiStiska = calls.filter((x) => String(x.url).includes("resend") && /stisk|varnostno obvestilo/.test(x.body.subject));
+      const maili = vsiStiska.filter((m) => m.body.to[0] !== "ana@primer.si");
       assert.equal(maili.length, 2, "skrbnik in namestnik, vsak en e-mail");
+      // Starš otroka pod 15 let (j 25. 11.): en e-mail z imenom profila, brez vsebine pogovora.
+      const starsu = vsiStiska.filter((m) => m.body.to[0] === "ana@primer.si");
+      assert.equal(starsu.length, 1);
+      assert.match(starsu[0].body.subject, /varnostno obvestilo za profil Miha/);
+      for (const prepovedano of ["Zvezdoslav", "skrivnost", "Ne morem", "Slišim te", ADMIN]) assert.equal(JSON.stringify(starsu[0].body).includes(prepovedano), false, prepovedano);
+      assert.match(starsu[0].body.text, /hudo stisko/);
+      assert.match(starsu[0].body.text, /112/);
       assert.deepEqual(maili.map((m) => m.body.to[0]).sort(), [ADMIN, NAMESTNIK].sort());
       for (const m of maili) {
         const vse = JSON.stringify(m.body);
@@ -265,7 +273,7 @@ test("stiska e-mail v aplikaciji: oznaka → en e-mail skrbniku brez imena in vs
       // Drugo sporočilo takoj za tem: v 10 minutah ni novega e-maila.
       await starš(`/api/conversations/${c.body.id}/messages`, { method: "POST", body: { text: "Še vedno." } });
       await tick();
-      assert.equal(calls.filter((x) => String(x.url).includes("resend") && /stisk/.test(x.body.subject)).length, 2);
+      assert.equal(calls.filter((x) => String(x.url).includes("resend") && /stisk|varnostno obvestilo/.test(x.body.subject)).length, 3, "tudi staršu ne v 12 urah");
 
       // Starš ni skrbnik: stran je zaprta.
       assert.equal((await starš(`${POT}?json=1`)).status, 403);
@@ -304,7 +312,7 @@ test("stiska e-mail v aplikaciji: oznaka → en e-mail skrbniku brez imena in vs
       const o = l2.body.oznake.find((x) => x.id === ev);
       assert.equal(o.v_roku, true);
       assert.ok(o.ur_do_pregleda >= 0 && o.ur_do_pregleda < 1);
-    });
+    }, { varnost: "STISKA" });
     store.db.close();
   });
 });
@@ -324,9 +332,10 @@ test("stiska e-mail v aplikaciji: Resend ne dela → učenec vseeno dobi varnost
         assert.match(r.body, /event: nujno/);
         assert.match(r.body, /event: done/);
         await tick();
-        assert.equal(calls.filter((x) => /stisk/.test(x.body?.subject || "")).length, 1, "poskus je bil, ni uspel");
+        assert.equal(calls.filter((x) => /stisk|varnostno obvestilo/.test(x.body?.subject || "") && x.body.to[0] === ADMIN).length, 1, "poskus je bil, ni uspel");
+        assert.equal(calls.filter((x) => /stisk|varnostno obvestilo/.test(x.body?.subject || "") && x.body.to[0] === "ana@primer.si").length, 1, "poskus staršu, ni uspel");
       },
-      { fetchFail: true },
+      { fetchFail: true, varnost: "STISKA" },
     );
     store.db.close();
   });
@@ -340,7 +349,9 @@ test("stiska e-mail v aplikaciji: Resend ne dela → učenec vseeno dobi varnost
       const r = await starš(`/api/conversations/${c.body.id}/messages`, { method: "POST", body: { text: SKRITO } });
       assert.match(r.body, /event: done/);
       await tick();
-      assert.equal(calls.filter((x) => /stisk/.test(x.body?.subject || "")).length, 0);
+      assert.equal(calls.filter((x) => /stisk|varnostno obvestilo/.test(x.body?.subject || "") && x.body.to[0] === ADMIN).length, 0);
+      // Vrsto je izpeljal samo odgovor inštruktorja (pregled B: NE): staršu ne pišemo, lahko bi šlo za nasilje doma.
+      assert.equal(calls.filter((x) => /stisk|varnostno obvestilo/.test(x.body?.subject || "") && x.body.to[0] === "ana@primer.si").length, 0);
     });
     store.db.close();
   });
@@ -373,4 +384,89 @@ test("stiska e-mail: stare oznake brez pregleda ga dobijo ob zagonu (iz baze se 
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+// ---------- j 25. 11. 2026: oznaka ob vsakem varnostnem oknu (IN-14) in obvestilo staršem ----------
+import { prejemnikStarsa, starsEmail, STARS_OKNO_MS } from "../server/stiska-obvestilo.js";
+
+test("starši: samo otrok pod 15 let, potrjen in odrasel imetnik, ne gost", () => {
+  const p = { email: "ana@primer.si", email_verified_at: "2026-01-01", is_guest: 0, birth_date: ADULT };
+  const acc = (age, parent = p) => ({ ageOfStudent: () => age, ownerOf: () => 1, getParent: () => parent });
+  assert.deepEqual(prejemnikStarsa(acc(12), 5), { email: "ana@primer.si" });
+  assert.equal(prejemnikStarsa(acc(15), 5), null, "15 let in več: ne");
+  assert.equal(prejemnikStarsa(acc(null), 5), null, "neznana starost: ne");
+  assert.equal(prejemnikStarsa(acc(12, { ...p, email_verified_at: null }), 5), null, "nepotrjen naslov");
+  assert.equal(prejemnikStarsa(acc(12, { ...p, is_guest: 1 }), 5), null, "gost");
+  assert.equal(prejemnikStarsa(acc(12, { ...p, birth_date: "2013-03-01" }), 5), null, "mladoleten imetnik");
+  assert.equal(prejemnikStarsa(acc(12, { ...p, birth_date: null }), 5), null, "imetnik brez datuma rojstva");
+  assert.equal(prejemnikStarsa(null, 5), null);
+});
+
+test("starši: e-mail z imenom, časom in vrsto, brez vsebine; tuja država brez slovenskih linij", () => {
+  const m = starsEmail({ ime: "Miha", vrsta: "zdravje", ob: "2026-11-25T09:00:00Z", settings: {} });
+  assert.match(m.subject, /profil Miha/);
+  assert.match(m.text, /25\. 11\. 2026 ob 10\.00/);
+  assert.match(m.text, /nujen zdravstveni primer/);
+  assert.match(m.text, /116 111/);
+  assert.match(m.text, /Vsebine pogovora vam ne pošiljamo/);
+  const tuj = starsEmail({ ime: "Miha", vrsta: "stiska", ob: "2026-11-25T09:00:00Z", settings: { school_system: "AT" } });
+  assert.doesNotMatch(tuj.text, /TOM telefon/);
+});
+
+test("starši: samo zdravje, nevarnost in stiska; največ en e-mail na profil v 12 urah; stikalo", async () => {
+  const store = openDb(":memory:");
+  let ura = new Date("2026-11-25T09:00:00Z");
+  const mailer = postar();
+  const starsi = { prejemnik: (id) => (id === 7 ? { email: "ana@primer.si" } : null), profil: () => ({ ime: "Miha", settings: {} }) };
+  const o = startStiskaObvestila(store.db, { scheduler: false, env: {}, mailer, log: belezka(), now: () => ura, starsi });
+  assert.equal(await o.obvestiStarsa(7, "nasilje"), "ne", "pri nasilju ne");
+  assert.equal(await o.obvestiStarsa(7, "pogovor"), "ne", "blažje okno ne");
+  assert.equal(await o.obvestiStarsa(8, "stiska"), "ne", "brez starša");
+  assert.equal(await o.obvestiStarsa(7, "stiska"), "poslano");
+  assert.equal(await o.obvestiStarsa(7, "zdravje"), "nedavno");
+  ura = new Date(ura.getTime() + STARS_OKNO_MS);
+  assert.equal(await o.obvestiStarsa(7, "nevarnost"), "poslano");
+  assert.equal(mailer.poslano.length, 2);
+  assert.ok(mailer.poslano.every((m) => m.to === "ana@primer.si"));
+  const off = startStiskaObvestila(store.db, { scheduler: false, env: { EVKLID_STISKA_STARSI: "0" }, mailer: postar(), log: belezka(), now: () => new Date("2027-01-01T00:00:00Z"), starsi });
+  assert.equal(await off.obvestiStarsa(7, "stiska"), "ne");
+  store.db.close();
+});
+
+test("oznaka ob vsakem varnostnem oknu: lokalni zaznavalnik brez oznake inštruktorja → oznaka in e-mail skrbniku", async () => {
+  await withEnv({ EVKLID_ADMIN_EMAILS: ADMIN, EVKLID_STISKA_EMAIL: "", RESEND_API_KEY: "re_x" }, async () => {
+    const store = openDb(":memory:");
+    const calls = [];
+    const NAVADEN = 'Razumem. Kako ti lahko pomagam?\n<<META subject=MAT topic="-" error=0 mode=A flag=none done=0>>';
+    const app = createApp(store, {
+      scheduler: false,
+      resendKey: "re_x",
+      fetchFn: async (url, init = {}) => {
+        calls.push({ url, body: init.body ? JSON.parse(init.body) : null });
+        return { ok: true, status: 200, json: async () => ({ id: "m" }) };
+      },
+      log: { error() {}, info() {}, warn() {} },
+      varnostFn: async () => ({ content: [{ type: "text", text: "NE" }] }),
+      streamFn: async ({ onText }) => {
+        onText(NAVADEN);
+        return { text: NAVADEN, stopReason: "end_turn" };
+      },
+    });
+    const server = app.listen(0);
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const call = (method, p, body) => fetch(base + p, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    try {
+      const s = await (await call("POST", "/api/students", { name: "Eva", settings: { curriculum_level: "9. razred" } })).json();
+      const c = await (await call("POST", `/api/students/${s.id}/conversations`, {})).json();
+      const r = await (await call("POST", `/api/conversations/${c.id}/messages`, { text: "Hočem se ubiti." })).text();
+      assert.match(r, /event: nujno/, "lokalni zaznavalnik odpre okno");
+      await tick();
+      const rows = store.db.prepare("SELECT flag FROM events WHERE student_id = ?").all(s.id);
+      assert.equal(seznamStisk(store.db).length >= 1, true, "oznaka je na strani skrbnika");
+      assert.equal(calls.filter((x) => /stisk|varnostno obvestilo/.test(x.body?.subject || "") && x.body.to[0] === ADMIN).length, 1);
+    } finally {
+      server.close();
+      store.db.close();
+    }
+  });
 });

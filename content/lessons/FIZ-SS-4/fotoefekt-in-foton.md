@@ -235,6 +235,17 @@ Za hitro računanje v eV si zapomni $hc \approx 1240\,\mathrm{eV\,nm}$. Tako je 
 + Ne, ker ima en foton premalo energije.
 > $W_f \approx \dfrac{1240\,\mathrm{eV\,nm}}{940\,\mathrm{nm}} \approx 1{,}3\,\mathrm{eV} < 2{,}0\,\mathrm{eV}$. Fotoefekta ni pri nobeni jakosti.
 
+? Na kalij z izstopnim delom $2{,}3\,\mathrm{eV}$ posvetimo z UV-svetlobo valovne dolžine $310\,\mathrm{nm}$. Kolikšna je največja kinetična energija izbitih elektronov? Vzemi $hc = 1240\,\mathrm{eV\,nm}$ in rezultat vpiši v eV.
+= 1,7 eV | 0,05
+~ 4 | To je energija fotona. Del je porabi elektron za izstop: odšteti moraš izstopno delo.
+~ 6,3 | Izstopno delo si prištel. Elektron ga porabi, zato ga odštejemo.
+> $W_f = \dfrac{1240\,\mathrm{eV\,nm}}{310\,\mathrm{nm}} = 4{,}0\,\mathrm{eV}$, $W_k = W_f - A_i = 4{,}0\,\mathrm{eV} - 2{,}3\,\mathrm{eV} = 1{,}7\,\mathrm{eV}$.
+
+? Kovina ima izstopno delo $2{,}48\,\mathrm{eV}$. Kolikšna je mejna valovna dolžina za fotoefekt? Vzemi $hc = 1240\,\mathrm{eV\,nm}$ in rezultat vpiši v nanometrih.
+= 500 nm | 1
+~ 0,002 | Ulomek si obrnil: $\lambda_m = \dfrac{hc}{A_i}$.
+> $\lambda_m = \dfrac{hc}{A_i} = \dfrac{1240\,\mathrm{eV\,nm}}{2{,}48\,\mathrm{eV}} = 500\,\mathrm{nm}$. Svetloba z daljšo valovno dolžino (rumena, rdeča) elektronov ne izbije.
+
 :::simboli
 W_f | energija fotona | W_f = h\nu = \frac{hc}{\lambda} | J | pogosto v eV; 1 eV = 1,60 · 10⁻¹⁹ J
 h | Planckova konstanta | | J\,s | h = 6,63 · 10⁻³⁴ J s
