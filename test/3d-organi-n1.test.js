@@ -177,7 +177,8 @@ test("n6: možgani – parasagitalna ravnina reza, risba 2048 px brez šuma, pre
   // r1 (ocena 20. nov): 4. prekat in reža do velike cisterne kot likvor (sivo modra, ne črna), globoki pas samo iz sredinske
   // ravnine, zaprte luknje ob deblu so cisterne, dno 3. prekata s križiščem, lijakom in mamilarnim telesom, hrbtenjača
   for (const n of ["REZ_SREDINA", "cisterne", "neozn", "REZ_PX", "zrast", "globoko", "reza", "c_lik", "mam", "lijak", "hrbtenjaca"]) assert.ok(rez.includes(n), n);
-  assert.ok(m.pogledi.prerez.skrijMreze.includes("senceni") && m.prerez.brezPokrova.includes("deblo"), "r1: senčni reženj za rezom skrit, deblo brez pokrova");
+  // r2 (ocena r1: »medial temporal lobe missing in the cut«): senčni in limbični reženj sta v prerezu narisana (odrezana na ravnini)
+  assert.ok(!m.pogledi.prerez.skrijMreze.some((d) => d === "senceni" || d === "limbicni") && m.prerez.brezPokrova.includes("deblo"), "r2: senčni in limbični reženj v prerezu vidna, deblo brez pokrova");
   assert.ok(m.prerez.hrbtenjaca?.os?.length > 5, "r1: os hrbtenjače za risbo");
   assert.ok(beri("public", "3d", "organ.js").includes("rezSlika?.gladko"));
 });

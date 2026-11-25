@@ -160,6 +160,7 @@ def main():
     Cb = gl(Ps[K["maliSiva"]] + Ps[K["maliBela"]], 0.6) > 0.5
     T3 = gl(Ps[K["tretji"]], 0.5) > 0.5
     V4 = np.zeros((n, n), bool); AQ = np.zeros((n, n), bool); tektum = np.zeros((n, n), bool)
+    CM = np.zeros((n, n), bool); vermis = np.zeros((n, n), bool)
     q_ap = np.zeros((n, n), np.float32); w_most = np.zeros(n, np.float32); w_sred = np.zeros(n, np.float32); w_podalj = np.zeros(n, np.float32)
     spredaj = -1.0
     if B.any() and Cb.any():
@@ -177,45 +178,80 @@ def main():
         o1 = okno(-18, -9); most_zg = o1[0] + int(np.argmin(spredaj * a_g[o1[0] - r_lo:o1[1] - r_lo]))
         o2 = okno(9, 18); most_sp = o2[0] + int(np.argmin(spredaj * a_g[o2[0] - r_lo:o2[1] - r_lo]))
         obeks = min(r_hi, most_sp + mm(float(os.environ.get('REZ_OBEKS', 8))))
-        # 4. prekat: temna vrzel med deblom in malimi možgani
-        vrzel = zapri(B | Cb, 7.0) & ~(B | Cb) & (Im < 72)
-        # spodnji rob plošče štirih gričev: zadnji rob debla tam skoči naprej (pod ploščo se začne 4. prekat); reža med
-        # ploščo in malimi možgani nad tem ni prekat
+        # spodnji rob plošče štirih gričev: zadnji rob debla tam skoči naprej (pod ploščo se začne 4. prekat)
         dz = mm(1.5); zg = np.arange(r_lo + dz, max(r_lo + dz + 1, r_most - r_lo and r_most))
         skok = spredaj * (p_g[zg + dz - r_lo] - p_g[zg - dz - r_lo])
         r_tek = int(zg[int(np.argmax(skok))]) + dz if len(zg) else most_zg
-        vrzel &= (vrstice >= r_tek - mm(0.5)) & (vrstice <= obeks)
-        ozn, st_ = ndimage.label(vrzel)
-        if st_:
-            cet0 = Ps[K["cetrti"]] > 0.3
-            vel = ndimage.sum(vrzel & cet0, ozn, range(1, st_ + 1)) + 1e-3 * ndimage.sum(vrzel, ozn, range(1, st_ + 1))
-            V4 = ozn == 1 + int(np.argmax(vel))
-            # šotor: najširši je pri vrhu (fastigij), od tam se proti akveduktu in proti obeksu enakomerno oži (od dna ob deblu)
-            sirina = V4.sum(1); vr4 = np.flatnonzero(sirina)
-            r_f = int(np.argmax(ndimage.gaussian_filter1d(sirina.astype(float), mm(1.0)))); w_f = float(sirina[r_f])
-            for r in vr4:
-                c = np.flatnonzero(V4[r])
-                d_ = (r_f - r) / max(1, r_f - vr4.min()) if r < r_f else (r - r_f) / max(1, obeks - r_f)
-                w = max(mm(0.9) if r < r_f else 1, int(w_f * (1 - min(1.0, d_)) ** 0.85))
-                if len(c) > w:
-                    if spredaj < 0:
-                        V4[r, c.min() + w:] = False
-                    else:
-                        V4[r, :c.max() - w + 1] = False
-            V4 = gl(V4, 0.4) > 0.5
-        # akvedukt: od vrha šotora do zadnjega spodnjega konca 3. prekata
-        if V4.any() and T3.any():
-            r4 = int(np.flatnonzero(V4.any(1)).min()); c4 = np.flatnonzero(V4[r4])
-            p4 = np.array([r4 + mm(0.8), (c4.min() if spredaj < 0 else c4.max()) - spredaj * mm(0.6)])  # ob dnu (deblu)
+        # r2 (ocena r1: »one flat grey-blue polygon with straight edges merges the 4th ventricle with the cisterns«):
+        # 4. prekat je ozek šotor po učbeniški obliki: dno je zadnja ploskev mostu in podaljšane hrbtenjače (romboidna
+        # jama) od akvedukta do obeksa, streha iz dveh rahlo usločenih jader (zgornje medularno jadro do vrha, spodnja
+        # streha s tela choroidea od vrha do obeksa, vbočena zaradi noduleusa), vrh (fastigij) kaže nazaj v male možgane.
+        # Globina REZ_SOTOR mm (6). Ostanek reže med deblom in malimi možgani je vermis (tkivo malih možganov), pod
+        # spodnjo streho in za podaljšano hrbtenjačo ločena cisterna magna.
+        from PIL import Image as _Im, ImageDraw as _Dr
+        dno = lambda r: float(p_g[int(np.clip(r, r_lo, r_hi)) - r_lo])
+        r_top = r_tek; r_ob = obeks
+        r_fa = r_top + 0.42 * (r_ob - r_top)
+        h_s = min(mm(float(os.environ.get("REZ_SOTOR", 6.0))), 0.36 * (r_ob - r_top))
+        zad = -spredaj  # smer nazaj v stolpcih
+        def bez(a, b, upog, k=60):
+            a = np.asarray(a, float); b = np.asarray(b, float); d = b - a
+            nrm = np.array([-d[1], d[0]]) / (np.hypot(*d) + 1e-9)
+            c = 0.5 * (a + b) + nrm * upog
+            t = np.linspace(0, 1, k)[:, None]
+            return (1 - t) ** 2 * a + 2 * (1 - t) * t * c + t ** 2 * b
+        A_ = np.array([r_top, dno(r_top) + zad * mm(0.5)])
+        F_ = np.array([r_fa, dno(r_fa) + zad * h_s])
+        O_ = np.array([r_ob, dno(r_ob)])
+        # usločenost proti notranjosti šotora: notranjost leži na strani dna (spredaj)
+        def upog_proti_dnu(a, b, mag):
+            d = b - a; nrm = np.array([-d[1], d[0]]); m = 0.5 * (a + b)
+            return mag if (np.sign(nrm[1]) == np.sign(spredaj)) else -mag
+        zg_s = bez(A_, F_, upog_proti_dnu(A_, F_, mm(1.3)))
+        sp_s = bez(F_, O_, upog_proti_dnu(F_, O_, mm(2.2)))
+        tla = np.array([[r, dno(r) - zad * mm(0.3)] for r in np.linspace(r_ob, r_top, 80)])
+        obris = np.concatenate([zg_s, sp_s, tla])
+        slk = _Im.new("L", (n, n), 0); _Dr.Draw(slk).polygon([(float(c), float(r)) for r, c in obris], fill=255)
+        V4 = (np.asarray(slk) > 127) & ~B
+        V4 = gl(V4, 0.3) > 0.5
+        sotor = (F_, A_, O_)
+        print(f"4. prekat: vrh {r_top}, fastigij {r_fa:.0f} (globina {h_s / mm(1.0):.1f} mm), obeks {r_ob}; {V4.sum()} px")
+        # akvedukt: rahlo upognjen kanal (izbočen nazaj) od zadnjega spodnjega konca 3. prekata do vrha šotora; na
+        # začetku lijak, v sredini najožji (≈ 0,8 mm), proti 4. prekatu se razširi
+        if T3.any():
             t3 = np.argwhere(T3); p3 = t3[np.argmax(-spredaj * t3[:, 1] + 0.8 * t3[:, 0])].astype(float)  # zadaj spodaj
-            sred = 0.5 * (p3 + p4) + np.array([-mm(0.5), -spredaj * mm(0.5)])
-            tt = np.linspace(0, 1, 300)[:, None]
-            kriv = (1 - tt) ** 2 * p3 + 2 * (1 - tt) * tt * sred + tt ** 2 * p4
-            crta = np.zeros((n, n), bool); crta[np.clip(kriv[:, 0].astype(int), 0, n - 1), np.clip(kriv[:, 1].astype(int), 0, n - 1)] = True
-            AQ = ndimage.distance_transform_edt(~crta) <= mm(0.55)
+            p4 = A_ + np.array([-mm(0.4), 0.0])
+            d = p4 - p3; L = np.hypot(*d); nrm = np.array([-d[1], d[0]]) / (L + 1e-9)
+            if np.sign(nrm[1]) != np.sign(zad):
+                nrm = -nrm
+            tt = np.linspace(0, 1, 240)[:, None]
+            c1 = p3 + d / 3 + nrm * mm(1.6); c2 = p3 + 2 * d / 3 + nrm * mm(1.4)
+            kriv = (1 - tt) ** 3 * p3 + 3 * (1 - tt) ** 2 * tt * c1 + 3 * (1 - tt) * tt ** 2 * c2 + tt ** 3 * p4
+            u = tt[:, 0]
+            pol = mm(1.0) * (0.42 + 0.38 * np.exp(-(u / 0.12) ** 2) + 0.55 * np.exp(-((1 - u) / 0.14) ** 2))
+            AQ = np.zeros((n, n), bool)
+            for (r_, c_), rr_ in zip(kriv, pol):
+                r0_, c0_ = int(r_), int(c_); k_ = int(rr_) + 2
+                sl = (slice(max(0, r0_ - k_), r0_ + k_ + 1), slice(max(0, c0_ - k_), c0_ + k_ + 1))
+                AQ[sl] |= (vrstice[sl] - r_) ** 2 + (stolpci[sl] - c_) ** 2 <= rr_ ** 2
+            AQ = gl(AQ, 0.12) > 0.5
             c_aq = np.interp(np.arange(n), kriv[:, 0] if kriv[0, 0] < kriv[-1, 0] else kriv[::-1, 0], kriv[:, 1] if kriv[0, 0] < kriv[-1, 0] else kriv[::-1, 1])
             v_od, v_do = int(min(p3[0], p4[0])) - mm(3), int(max(p3[0], p4[0])) + mm(1)
             tektum = B & (spredaj * (stolpci - c_aq[:, None]) < -mm(0.5)) & (vrstice >= v_od) & (vrstice <= v_do)
+        # reža med deblom in malimi možgani zunaj šotora: zgoraj in za šotorom vermis, spodaj cisterna magna
+        reza0 = zapri(B | Cb, 9.0) & ~(B | Cb)
+        reza0 &= (vrstice >= r_top - mm(1.0)) & (vrstice <= int(np.flatnonzero(Cb.any(1)).max()))
+        reza0 &= zad * (stolpci - np.array([dno(r) for r in range(n)])[:, None]) > -mm(0.3)
+        V4d = ndimage.binary_dilation(V4, iterations=mm(0.45))
+        cm_vrh = r_ob - mm(2.5)
+        CM = reza0 & ~V4d & (vrstice >= cm_vrh) & (zad * (stolpci - np.array([dno(r) for r in range(n)])[:, None]) < mm(6.0))
+        CM = gl(ndimage.binary_opening(CM, iterations=mm(0.6)), 0.8) > 0.5
+        CM &= reza0 & ~V4d
+        _o, _st = ndimage.label(CM)
+        if _st > 1:
+            CM = _o == 1 + int(np.argmax(ndimage.sum(CM, _o, range(1, _st + 1))))
+        vermis = reza0 & ~V4 & ~CM & ~AQ & ~B
+        print(f"cisterna magna {CM.sum()} px, vermis v reži {vermis.sum()} px")
         # lega v deblu: q 0 zadaj → 1 spredaj; uteži odsekov po višini
         sir = np.where(np.abs(a_rob - p_rob) > 1, a_rob - p_rob, 1.0)
         q_ap = np.clip((stolpci - p_rob[:, None]) / sir[:, None], 0, 1).astype(np.float32)
@@ -232,6 +268,13 @@ def main():
     cet = Pk[K["cetrti"]] > 0.5
     Pk[K["likvor"]] = np.where(cet & ~V4, 1.0, Pk[K["likvor"]]); Pk[K["cetrti"]] = np.where(cet & ~V4, 0.0, Pk[K["cetrti"]])
     Pk[:, V4 | AQ] = 0.0; Pk[K["cetrti"]][V4 | AQ] = 1.0
+    # r2: cisterna magna je likvor; vermis v reži iz parasagitalne rezine (listi malih možganov), kjer je tam tkivo malih
+    # možganov, sicer siva skorja malih možganov
+    Pk[:, CM] = 0.0; Pk[K["likvor"]][CM] = 1.0
+    p_mali = (p["P"][K["maliSiva"]] + p["P"][K["maliBela"]]) > 0.5
+    vp = vermis & p_mali; vs = vermis & ~p_mali
+    Pk[:, vp] = p["P"][:, vp]; I = np.where(vp, p["I"], I)
+    Pk[:, vs] = 0.0; Pk[K["maliSiva"]][vs] = 1.0; I = np.where(vs, 82.0 + 4.0 * np.sin(vrstice / mm(0.9)), I)
     skupina = np.argmax(Pk, 0)
     trdno = (Pk.sum(0) - Pk[K["likvor"]]) > 0.5
     trdno = ndimage.binary_opening(trdno, iterations=mm(0.25))
@@ -241,7 +284,7 @@ def main():
         trdno = np.isin(oznake, 1 + np.flatnonzero(vel > 0.002 * trdno.sum()))
     # cisterne ob sredinskih strukturah (za ploščo štirih gričev, med deblom in malimi možgani, pod hipotalamusom): mehko
     # senčene vdolbine z zaobljenim robom (skozi okna bi se videle rezne ploskve mrež 6 mm globlje)
-    r_z = mm(float(os.environ.get('REZ_CISTERNE', 5.0)))  # r1: 5 mm (cisterna nad malimi možgani ni bila zaprta – črna luknja)
+    r_z = mm(float(os.environ.get('REZ_CISTERNE', 3.0)))  # r2: 3 mm (medpedunkularna jama odprta, skozi njo unkus); r1: 5 mm (cisterna nad malimi možgani ni bila zaprta – črna luknja)
     zaprto = ndimage.distance_transform_edt(ndimage.distance_transform_edt(~trdno) <= r_z) > r_z
     cisterne = zaprto & ~trdno & ndimage.binary_dilation(jedro | ((s["P"][K["maliSiva"]] + s["P"][K["maliBela"]]) > 0.5), iterations=mm(8))
     _o, _st = ndimage.label(cisterne)  # r1: drobne zaprte reže (brazde ob žuljevem telesu) niso cisterne – modre pike
@@ -249,15 +292,9 @@ def main():
         cisterne = np.isin(_o, 1 + np.flatnonzero(ndimage.sum(cisterne, _o, range(1, _st + 1)) > mm(1.8) ** 2))
     cisterne = gl(ndimage.binary_opening(cisterne, iterations=mm(0.3)), 0.5) > 0.5
     cisterne &= ~trdno
-    # r1 (ocena 20. nov: »black triangular straight-edged hole«): reža med deblom in malimi možgani od vrha 4. prekata do
-    # spodnjega roba malih možganov (4. prekat, pod obeksom velika cisterna) je likvor, sivo modra kot prekati, ne okno
-    if B.any() and Cb.any():
-        reza = zapri(B | Cb, 9.0) & ~(B | Cb) & ~trdno
-        vrh = int(np.flatnonzero(V4.any(1)).min()) if V4.any() else int(np.flatnonzero(B.any(1)).min())
-        reza &= (vrstice >= vrh) & (vrstice <= int(np.flatnonzero(Cb.any(1)).max()))
-        reza &= spredaj * (stolpci - np.where(B.any(1), np.array([np.flatnonzero(B[r]).mean() if B[r].any() else 0 for r in range(n)]), 0)[:, None]) > 0
-        reza = gl(ndimage.binary_opening(reza, iterations=mm(0.3)), 0.4) > 0.5
-        cisterne |= reza & ~trdno
+    # r2: reža med deblom in malimi možgani je razdeljena na 4. prekat (šotor), vermis in ločeno cisterno magno (prej ena
+    # velika sivo modra ploskev z ravnimi robovi, ocena r1)
+    cisterne |= CM & ~trdno
     # r1: zaprte luknje (ne segajo do zunanjega praznega prostora) ob deblu in medmožganih so cisterne (prej črne luknje
     # nad malimi možgani in pred lamino terminalis: za njimi je v prerezu skrit limbični reženj in se vidi ozadje)
     _o, _st = ndimage.label(~(trdno | cisterne))
@@ -339,21 +376,23 @@ def main():
     if B.any():
         baz = gladko(0.40, 0.52, q_ap)  # bazalni (sprednji) del
         vl = gladko(0.35, 0.65, 0.5 + 0.5 * np.sin(2 * np.pi * (vrstice / mm(1.5)) + 0.5 * sum_ + 0.002 * stolpci))
-        # most: bazalni del svetel s prečnimi vlakni in sivimi jedri, tegmentum sivo rožnat
-        c_most = mesaj(np.broadcast_to(hexrgb("#f3e9da"), rgb.shape).copy(), "#d9bcae", (0.14 * vl * baz + (1 - baz) * 0.8).astype(np.float32))
+        # most: bazalni del svetel s prečnimi vlakni in sivimi jedri, tegmentum sivo rožnat (r2: vse deblo nekoliko bolj
+        # rožnato sivo kot skorja ob njem, prej kremno bel steber)
+        c_most = mesaj(np.broadcast_to(hexrgb("#ead8cb"), rgb.shape).copy(), "#cfaa9e", (0.14 * vl * baz + (1 - baz) * 0.8).astype(np.float32))
         # srednji možgani: kraka spredaj svetla, tegmentum siv, tektum (griča) sivo rožnat
         kr = gladko(0.62, 0.78, q_ap)
-        c_sred = mesaj(np.broadcast_to(hexrgb("#d6b8ab"), rgb.shape).copy(), "#f0e4d4", kr.astype(np.float32))
+        c_sred = mesaj(np.broadcast_to(hexrgb("#cdab9f"), rgb.shape).copy(), "#e8d5c7", kr.astype(np.float32))
         c_sred = mesaj(c_sred, "#cfa99d", gl(tektum, 0.25))
         if tektum.any():  # brazda med zgornjim in spodnjim gričem
             tk = np.argwhere(tektum); os_t = np.linalg.svd(tk - tk.mean(0), full_matrices=False)[2][0]
             u_t = ((np.stack([vrstice, stolpci], -1) - tk.mean(0)) @ os_t) / mm(1.0)
             c_sred = c_sred * (1 - 0.16 * (np.exp(-(u_t / 0.45) ** 2) * gl(tektum, 0.2))[..., None])
         # podaljšana hrbtenjača: piramida spredaj svetla, zadaj sivo rožnata
-        c_pod = mesaj(np.broadcast_to(hexrgb("#e2cbbd"), rgb.shape).copy(), "#f2e7d8", gladko(0.5, 0.7, q_ap).astype(np.float32))
+        c_pod = mesaj(np.broadcast_to(hexrgb("#d6b5a8"), rgb.shape).copy(), "#e9d6c8", gladko(0.5, 0.7, q_ap).astype(np.float32))
         c_deb = c_most * w_most[:, None, None] + c_sred * w_sred[:, None, None] + c_pod * w_podalj[:, None, None]
         c_deb = c_deb * (1 + 0.008 * sum_[..., None])
         c_deb = 0.72 * c_deb + 0.28 * rgb  # nekaj prave slike T1 (jedra, prehodi)
+        c_deb = c_deb * np.array([0.98, 0.93, 0.92])  # r2: rožnato siv odtenek kot skorja ob deblu (prej kremno bel steber)
         rgb = rgb * (1 - Bm[..., None]) + c_deb * Bm[..., None]
         rob_b = gl(B & ~ndimage.binary_erosion(B, iterations=mm(0.35)), 0.15)
         rgb = rgb * (1 - 0.10 * rob_b[..., None])

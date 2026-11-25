@@ -78,12 +78,12 @@
    }
   },
   "deblo": {
-   "barva": "#e3c4b4",
+   "barva": "#d4aa9f",
    "hrap": 0.4,
    "lak": 0.25,
    "lakHrap": 0.16,
    "sijaj": 0.28,
-   "sijajBarva": "#ffd0c4",
+   "sijajBarva": "#ffcfc4",
    "rob": 0.2,
    "robBarva": "#ffa898",
    "ao": 0.85,
@@ -446,7 +446,7 @@
    ],
    "sum": 0,
    "gladko": true,
-   "visina": 0
+   "visina": 0.0
   },
   "brezPokrova": [
    "deblo"
@@ -644,14 +644,12 @@
    "skrijMreze": [
     "hipotalamus",
     "krizisce",
-    "zuljevo",
-    "senceni",
-    "limbicni"
+    "zuljevo"
    ],
    "okvir": {
     "sredisce": [
      0.006,
-     0.00003,
+     3e-05,
      0
     ],
     "polmer": 0.9625
