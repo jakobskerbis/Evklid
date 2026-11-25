@@ -253,6 +253,18 @@ $$n = \frac{m}{M}: \quad \frac{\mathrm{g}}{\mathrm{g/mol}} = \mathrm{mol}, \qqua
 + $1{,}2044 \cdot 10^{24}$
 > $N = n \cdot N_A = 2 \cdot 6{,}022 \cdot 10^{23} = 12{,}044 \cdot 10^{23} = 1{,}2044 \cdot 10^{24}$.
 
+? Kolikšna je masa $0{,}25\,\mathrm{mol}$ glukoze $\mathrm{C_6H_{12}O_6}$? ($A_r(\mathrm{C}) = 12$, $A_r(\mathrm{H}) = 1$, $A_r(\mathrm{O}) = 16$)
+= 45 g | 0,1
+~ 720 | Molsko maso si delil z množino. Velja $m = n \cdot M$.
+~ 7,25 | Molsko maso si izračunal brez indeksov ($12 + 1 + 16 = 29\,\mathrm{g/mol}$). Upoštevaj vse atome: $M = 180\,\mathrm{g/mol}$.
+> $M(\mathrm{C_6H_{12}O_6}) = 6 \cdot 12 + 12 \cdot 1 + 6 \cdot 16 = 180\,\mathrm{g/mol}$, $m = n \cdot M = 0{,}25\,\mathrm{mol} \cdot 180\,\mathrm{g/mol} = 45\,\mathrm{g}$.
+
+? Koliko atomov kisika je v $0{,}10\,\mathrm{mol}$ ogljikovega dioksida $\mathrm{CO_2}$? ($N_A = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$)
+= 1,20·10^23 | 0,01·10^23
+~ 6,02·10^22 | To je število molekul $\mathrm{CO_2}$. Vsaka molekula ima $2$ atoma kisika.
+~ 0,2 | To je množina atomov kisika v molih. Pomnoži jo še z $N_A$.
+> $n(\mathrm{O}) = 2 \cdot 0{,}10\,\mathrm{mol} = 0{,}20\,\mathrm{mol}$, $N(\mathrm{O}) = 0{,}20\,\mathrm{mol} \cdot 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}} \approx 1{,}20 \cdot 10^{23}$.
+
 :::simboli
 n | množina snovi | n = \frac{m}{M} | mol | tudi n = N : N_A
 m | masa vzorca | m = n \cdot M | g
