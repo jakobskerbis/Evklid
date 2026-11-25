@@ -175,7 +175,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const prebrane = new Set(rows.map((x) => x.stran));
     const brez = r.brezBesedila.slice(0, 100);
     const opozorila = [...r.opozorila, ...(brez.length ? [{ koda: "uvoz_brez_besedila", strani: brez }] : [])];
-    const brezSlike = rows.filter((x) => x.stanje === "sken_ni_slike").map((x) => x.stran);
+    const brezSlike = rows.filter((x) => x.stanje === "sken_ni_slike" || x.stanje === "sken_napaka").map((x) => x.stran);
     if (brezSlike.length) opozorila.push({ koda: "sken_ni_slike", strani: brezSlike });
     const stanje = brez.some((n) => !prebrane.has(n)) ? "branje" : "obdelan";
     return shraniIzseke(db, { vir, izseki: r.izseki.map((i) => ({ ...i, ai: ai.has(i.stran) })), strani: r.strani, opozorila, stanje, seal });
@@ -398,6 +398,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const v = enVir(s, p, req);
     if (!v) return niVira(res);
     if (v.vrsta === "slika") return res.status(409).json({ error: "Fotografijo prebere …/preberi.", code: "priprava_branje" });
+    if (berem.has(v.id)) return res.status(409).json({ error: "Vir se že bere.", code: "priprava_zasedeno" });
     if (obdelujem >= OBDELAVE_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Obdelava že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
     const buf = preberiIzvirnik(db, v.id);
     if (!buf) return res.status(404).json({ error: "Izvirnika ni več.", code: "priprava_ni_izvirnika" });
@@ -460,6 +461,20 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     }
   }
 
+  // Slike skeniranih strani v ločeni niti. Če nit pade (čas, pomnilnik, poškodovana stran), poskusi strani eno po eno;
+  // stran, ki tudi sama pade, dobi »sken_napaka« in se ne poskuša znova (vir lahko konča obdelavo).
+  async function slikeZaStrani(buf, strani) {
+    try {
+      return (await uvoziVNiti("pdf", buf, { sken: { strani, najvec: strani.length } })).slike;
+    } catch (e) {
+      if (!(e instanceof NapakaUvoza)) throw e;
+      if (strani.length === 1) return [{ stran: strani[0], napaka: "sken_napaka" }];
+      const out = [];
+      for (const n of strani) out.push(...(await slikeZaStrani(buf, [n])));
+      return out;
+    }
+  }
+
   app.post("/api/students/:id/priprave/:pid/viri/:vid/preberi", async (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -476,16 +491,18 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const sestaviBrez = !cilji.length && v.stanje !== "obdelan" && rows.some((r) => r.stanje === "ok");
     if (!cilji.length && !sestaviBrez) return res.json({ vir: vir(), pages: straniInfo(s) });
     if (berem.has(v.id)) return res.status(409).json({ error: "Vir se že bere.", code: "priprava_zasedeno" });
-    if (v.vrsta === "pdf" && obdelujem >= OBDELAVE_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Obdelava že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
     const buf = preberiIzvirnik(db, v.id);
     if (!buf) return res.status(404).json({ error: "Izvirnika ni več.", code: "priprava_ni_izvirnika" });
+    // Ločena nit (skenirane strani PDF, zmanjšanje prevelike fotografije JPEG) šteje v mejo hkratnih obdelav.
+    const nit = v.vrsta === "pdf" || (cilji.length > 0 && v.mime === MIME.jpeg && Math.ceil(buf.length / 3) * 4 > SLIKA_MODEL_B64);
+    if (nit && obdelujem >= OBDELAVE_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Obdelava že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
     if (cilji.length) {
       const blocked = usage?.blockInfo?.(s.id);
       if (blocked) return res.status(429).json(blocked);
       if (straniInfo(s).left < 1) return res.status(429).json({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: straniInfo(s) });
     }
     berem.add(v.id);
-    if (v.vrsta === "pdf") obdelujem++;
+    if (nit) obdelujem++;
     const st = { nujno: null };
     const dodatno = () => (st.nujno ? { nujno: st.nujno } : {});
     const prebrano = [];
@@ -500,22 +517,24 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
             // Prevelika fotografija JPEG se zmanjša (sivine, 1568 točk) v ločeni niti.
             const r = await uvoziVNiti("slika", buf, { sken: { strani: [1], najvec: 1, jpeg: true } }).catch(() => null);
             if (r?.slike?.[0]?.png) [b64, mime] = [r.slike[0].png, "image/png"];
+            else if (r?.slike?.[0]?.prazna) b64 = null;
           }
-          if (b64.length > SLIKA_MODEL_B64) {
+          if (b64 && b64.length > SLIKA_MODEL_B64) {
             if (!prej.has(1)) napakaVira(v, "branje_velika");
             return res.status(413).json({ error: "Fotografija je prevelika za branje. Fotografiraj znova ali jo zmanjšaj.", code: "priprava_slika_velika", vir: vir() });
           }
-          slike = [{ stran: 1, b64, mime }];
+          slike = [b64 ? { stran: 1, b64, mime } : { stran: 1, prazna: true }];
         } else {
           const k = Math.min(SKEN_NAENKRAT, cilji.length, straniInfo(s).left);
-          const r = await uvoziVNiti("pdf", buf, { sken: { strani: cilji.slice(0, k), najvec: k } });
-          slike = r.slike.map((x) => (x.png ? { stran: x.stran, b64: x.png, mime: "image/png" } : x));
+          slike = (await slikeZaStrani(buf, cilji.slice(0, k))).map((x) => (x.png ? { stran: x.stran, b64: x.png, mime: "image/png" } : x));
         }
         for (const sl of slike) {
           if (!obstaja(v.id)) break;
-          if (sl.napaka || sl.b64.length > SLIKA_MODEL_B64) {
-            shraniPrepis(v, sl.stran, "sken_ni_slike");
-            prebrano.push({ stran: sl.stran, stanje: "sken_ni_slike" });
+          // Brez klica modela (in brez strani iz meje): prazna stran, stran brez slike, stran, ki je nit ni prebrala.
+          const brez = sl.prazna ? "prazno" : sl.napaka || (sl.b64.length > SLIKA_MODEL_B64 ? "sken_ni_slike" : null);
+          if (brez) {
+            if (brez !== "prazno" || prej.get(sl.stran) !== "ok") shraniPrepis(v, sl.stran, brez);
+            prebrano.push({ stran: sl.stran, stanje: brez });
             continue;
           }
           const o = await preberiSliko(s, sl.b64, sl.mime, st);
@@ -552,7 +571,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       });
     } finally {
       berem.delete(v.id);
-      if (v.vrsta === "pdf") obdelujem--;
+      if (nit) obdelujem--;
     }
   });
 

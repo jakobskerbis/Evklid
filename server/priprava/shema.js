@@ -80,7 +80,7 @@ export function migratePriprava(db) {
       priprava_id INTEGER NOT NULL REFERENCES priprave(id) ON DELETE CASCADE,
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
       stran INTEGER NOT NULL,                    -- fotografija: 1; PDF: številka skenirane strani
-      stanje TEXT NOT NULL,                      -- ok | neucno | prazno | sken_ni_slike
+      stanje TEXT NOT NULL,                      -- ok | neucno | prazno | sken_ni_slike | sken_napaka
       besedilo TEXT,                             -- prepis modela, šifrirano (samo ok)
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (vir_id, stran)

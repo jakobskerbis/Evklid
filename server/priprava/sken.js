@@ -82,6 +82,40 @@ export function zasukaj({ sivo, w, h }, stopinj) {
   return { sivo: out, w: nw, h: nh };
 }
 
+// Delež temnih točk (sivina pod 160); pod PRAG_CRNILA je stran prazna (ena kratka vrstica je ~0,3 %).
+const PRAG_CRNILA = 0.0002;
+export function crnila(sivo) {
+  let n = 0;
+  for (let i = 0; i < sivo.length; i++) if (sivo[i] < 160) n++;
+  return sivo.length ? n / sivo.length : 0;
+}
+
+// Usmerjenost fotografije iz EXIF (APP1): 3 → 180°, 6 → 90°, 8 → 270° v smeri urinega kazalca; sicer 0.
+export function exifZasuk(jpg) {
+  for (let i = 2; i + 4 < jpg.length; ) {
+    if (jpg[i] !== 0xff) return 0;
+    const m = jpg[i + 1];
+    if (m === 0xda || m === 0xd9) return 0;
+    const dol = jpg.readUInt16BE(i + 2);
+    if (m === 0xe1 && jpg.toString("latin1", i + 4, i + 10) === "Exif\0\0") {
+      const t = i + 10;
+      const le = jpg.toString("latin1", t, t + 2) === "II";
+      const u16 = (o) => (le ? jpg.readUInt16LE(o) : jpg.readUInt16BE(o));
+      const u32 = (o) => (le ? jpg.readUInt32LE(o) : jpg.readUInt32BE(o));
+      const ifd = t + u32(t + 4);
+      if (ifd + 2 > i + 2 + dol) return 0;
+      const n = u16(ifd);
+      for (let k = 0; k < n && ifd + 2 + 12 * (k + 1) <= i + 2 + dol; k++) {
+        const e = ifd + 2 + 12 * k;
+        if (u16(e) === 0x0112) return { 3: 180, 6: 90, 8: 270 }[u16(e + 8)] || 0;
+      }
+      return 0;
+    }
+    i += 2 + dol;
+  }
+  return 0;
+}
+
 // Fotografija JPEG, prevelika za model (PR 3b), se zmanjša po isti poti: zavije se v PDF z eno stranjo (pdfjs sam
 // dekodira JPEG) in prebere kot skenirana stran. Vrne null, če velikosti ali barvnega prostora ni mogoče prebrati.
 export function jpegVPdf(jpg) {
@@ -140,7 +174,7 @@ export function jpegVPdf(jpg) {
  * Slike skeniranih strani PDF: [{ stran, png }] (png je Buffer) ali [{ stran, napaka: "sken_ni_slike" }]. Strani so
  * številke od 1; prebere jih največ `najvec`.
  */
-export async function slikeStrani(buf, strani, { najvec = 5 } = {}) {
+export async function slikeStrani(buf, strani, { najvec = 5, zasuk = 0 } = {}) {
   const pdfjs = await import(import.meta.resolve("pdfjs-dist/legacy/build/pdf.mjs"));
   const naloga = pdfjs.getDocument({
     data: new Uint8Array(buf),
@@ -150,6 +184,7 @@ export async function slikeStrani(buf, strani, { najvec = 5 } = {}) {
     isOffscreenCanvasSupported: false,
     isImageDecoderSupported: false,
     stopAtErrors: false,
+    maxImageSize: MAX_TOCK, // večje slike pdfjs sploh ne dekodira (pomnilnik)
     verbosity: 0,
   });
   let doc;
@@ -178,8 +213,10 @@ export async function slikeStrani(buf, strani, { najvec = 5 } = {}) {
       // Majhna slika (logotip, ikona) ni skenirana stran.
       if (!naj || Math.max(naj.width, naj.height) < 300) out.push({ stran: n, napaka: "sken_ni_slike" });
       else {
-        const s = zasukaj(zmanjsajSivo(naj), page.rotate || 0);
-        out.push({ stran: n, png: pngSivine(s.sivo, s.w, s.h) });
+        const s = zasukaj(zmanjsajSivo(naj), (page.rotate || 0) + zasuk);
+        // Prazna stran (hrbtna stran pri obojestranskem skeniranju) se ne pošlje modelu.
+        if (crnila(s.sivo) < PRAG_CRNILA) out.push({ stran: n, prazna: true });
+        else out.push({ stran: n, png: pngSivine(s.sivo, s.w, s.h) });
       }
       page.cleanup();
     }

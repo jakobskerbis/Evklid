@@ -6,6 +6,7 @@ import crypto from "node:crypto";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import fs from "node:fs";
+import zlib from "node:zlib";
 import { cleanRead } from "../server/zapiski.js";
 
 process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
@@ -201,7 +202,8 @@ function jpegVelikost(jpg) {
   }
   return null;
 }
-// PDF s stranmi: niz = stran z besedilom, Buffer = skenirana stran (ena slika JPEG čez celo stran).
+// PDF s stranmi: niz = stran z besedilom, Buffer = skenirana stran (ena slika JPEG čez celo stran),
+// { siva, w, h } = slika v sivinah (FlateDecode).
 function pdfSken(strani) {
   const obj = [];
   const kids = [];
@@ -214,8 +216,8 @@ function pdfSken(strani) {
     let vir = "";
     if (typeof st === "string") vsebina = `BT /F1 12 Tf 50 780 Td (${st}) Tj ET`;
     else {
-      const { w, h } = jpegVelikost(st);
-      const im = dodaj({ slika: st, w, h });
+      const { w, h } = Buffer.isBuffer(st) ? jpegVelikost(st) : st;
+      const im = dodaj(Buffer.isBuffer(st) ? { slika: st, w, h } : { slika: zlib.deflateSync(st.siva), w, h, siva: true });
       vir = ` /XObject << /Im1 ${im} 0 R >>`;
       vsebina = "q 595 0 0 842 0 0 cm /Im1 Do Q";
     }
@@ -231,7 +233,7 @@ function pdfSken(strani) {
     const b =
       typeof o === "string"
         ? Buffer.from(`${i + 1} 0 obj\n${o}\nendobj\n`, "latin1")
-        : Buffer.concat([Buffer.from(`${i + 1} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${o.w} /Height ${o.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${o.slika.length} >>\nstream\n`), o.slika, Buffer.from("\nendstream\nendobj\n")]);
+        : Buffer.concat([Buffer.from(`${i + 1} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${o.w} /Height ${o.h} /ColorSpace ${o.siva ? "/DeviceGray" : "/DeviceRGB"} /BitsPerComponent 8 /Filter ${o.siva ? "/FlateDecode" : "/DCTDecode"} /Length ${o.slika.length} >>\nstream\n`), o.slika, Buffer.from("\nendstream\nendobj\n")]);
     deli.push(b);
     dol += b.length;
   });
@@ -314,5 +316,73 @@ test("prevelika fotografija JPEG se pred branjem zmanjša (PNG v sivinah)", asyn
     assert.equal(klici[0].mediaType, "image/png");
     assert.ok(klici[0].imageBase64.length < 2 * 1024 * 1024);
     assert.equal(r.body.vir.stanje, "obdelan");
+  });
+});
+
+test("skenirane strani: prazna stran brez klica modela, prevelika slika se ne dekodira", async () => {
+  let n = 0;
+  const readFn = async () => ({ ...cleanRead({ text: `Stran ${++n}` }), usage: usageOf(), model: "claude-sonnet-5-5" });
+  await withApp(readFn, async ({ db, req, s, p, nalozi, beri }) => {
+    const bela = { siva: Buffer.alloc(800 * 1100, 250), w: 800, h: 1100 };
+    // 7000 × 7000 točk (49 milijonov) je nad mejo: pdfjs je sploh ne dekodira.
+    const ogromna = { siva: Buffer.alloc(7000 * 7000, 0), w: 7000, h: 7000 };
+    const vir = await nalozi(pdfSken(["Naslovna stran zapiskov iz kemije za prvi letnik.", bela, ogromna, IKONA]));
+    const t0 = Date.now();
+    const r = await beri(vir.id);
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assert.ok(Date.now() - t0 < 10000);
+    // Na zahtevek največ toliko strani, kolikor jih je še v meji (2); prazna in prevelika nista plačani.
+    assert.deepEqual(r.body.prebrano, [{ stran: 2, stanje: "prazno" }, { stran: 3, stanje: "sken_ni_slike" }]);
+    assert.equal(n, 0);
+    assert.equal(r.body.pages.used, 0);
+    assert.equal(r.body.vir.stanje, "branje");
+    const r2 = await beri(vir.id);
+    assert.deepEqual(r2.body.prebrano, [{ stran: 4, stanje: "ok" }]);
+    assert.equal(n, 1);
+    assert.equal(r2.body.pages.used, 1);
+    assert.equal(r2.body.vir.stanje, "obdelan");
+    assert.ok(r2.body.vir.opozorila.some((o) => o.koda === "sken_ni_slike" && o.strani.includes(3)));
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM usage WHERE kind = 'priprava'").get().n, 1);
+  });
+});
+
+test("obdelava istega vira med branjem vrne 409", async () => {
+  let spusti;
+  const zapora = new Promise((x) => (spusti = x));
+  const readFn = async () => {
+    await zapora;
+    return { ...cleanRead({ text: "Počasno branje" }), usage: usageOf(), model: "claude-sonnet-5-5" };
+  };
+  await withApp(readFn, async ({ req, s, p, nalozi, beri }) => {
+    const vir = await nalozi(pdfSken(["Zapiski iz biologije o celici in celičnih organelih.", IKONA]));
+    const prvo = beri(vir.id);
+    await new Promise((x) => setTimeout(x, 300));
+    const o = await req("POST", `/api/students/${s.id}/priprave/${p.id}/viri/${vir.id}/obdelaj`);
+    assert.equal(o.status, 409);
+    assert.equal(o.body.code, "priprava_zasedeno");
+    spusti();
+    assert.equal((await prvo).status, 200);
+  });
+});
+
+test("prevelika pokončna fotografija (EXIF 6) se zmanjša in zasuka", async () => {
+  const klici = [];
+  const readFn = async (a) => {
+    klici.push(a);
+    return { ...cleanRead({ text: "Pokončna stran" }), usage: usageOf(), model: "claude-sonnet-5-5" };
+  };
+  await withApp(readFn, async ({ nalozi, beri }) => {
+    // APP1 Exif (big-endian) z enim vnosom: Orientation (0x0112) = 6.
+    const tiff = Buffer.from([0x4d, 0x4d, 0, 42, 0, 0, 0, 8, 0, 1, 0x01, 0x12, 0, 3, 0, 0, 0, 1, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0]);
+    const app1 = Buffer.concat([Buffer.from([0xff, 0xe1]), Buffer.from([0, 0]), Buffer.from("Exif\0\0", "latin1"), tiff]);
+    app1.writeUInt16BE(app1.length - 2, 2);
+    const kom = Buffer.concat([Buffer.from([0xff, 0xfe, 0xff, 0xff]), Buffer.alloc(65533, 0x20)]);
+    const velik = Buffer.concat([IKONA.subarray(0, 2), app1, ...Array(64).fill(kom), IKONA.subarray(2)]);
+    const vir = await nalozi(velik);
+    const r = await beri(vir.id);
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const png = Buffer.from(klici[0].imageBase64, "base64");
+    const [w, h] = [png.readUInt32BE(16), png.readUInt32BE(20)];
+    assert.ok(h > w, `${w}×${h}: ikona 1200×630 mora biti zasukana v pokončno`);
   });
 });

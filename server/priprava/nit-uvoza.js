@@ -4,7 +4,7 @@
 import { parentPort, workerData } from "node:worker_threads";
 import { preberiVir, vstaviPrepise, NapakaUvoza } from "./uvoz.js";
 import { razrezi } from "./izseki.js";
-import { slikeStrani, jpegVPdf } from "./sken.js";
+import { slikeStrani, jpegVPdf, exifZasuk } from "./sken.js";
 
 try {
   const buf = Buffer.from(workerData.podatki.buffer, workerData.podatki.byteOffset, workerData.podatki.byteLength);
@@ -12,7 +12,7 @@ try {
     // Prevelika fotografija JPEG: zavita v PDF z eno stranjo in zmanjšana kot skenirana stran.
     const pdf = workerData.sken.jpeg ? jpegVPdf(buf) : buf;
     if (!pdf) throw new NapakaUvoza("uvoz_slika", "Fotografije ni mogoče zmanjšati.");
-    const slike = await slikeStrani(pdf, workerData.sken.strani, { najvec: workerData.sken.najvec });
+    const slike = await slikeStrani(pdf, workerData.sken.strani, { najvec: workerData.sken.najvec, zasuk: workerData.sken.jpeg ? exifZasuk(buf) : 0 });
     parentPort.postMessage({ ok: true, rezultat: { slike: slike.map((s) => (s.png ? { stran: s.stran, png: s.png.toString("base64") } : s)) } });
   } else {
     const r = await preberiVir(workerData.vrsta, buf);
