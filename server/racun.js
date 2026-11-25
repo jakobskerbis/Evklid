@@ -15,7 +15,7 @@ import { casCheck } from "./cas.js";
 import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
-import { parse, compile } from "../public/graph/math.js";
+import { parse, compile, calcText } from "../public/graph/math.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -156,9 +156,13 @@ export function claimIssue(res) {
 // Blok RACUN preveri le sebe (AUDIT-064): model zapiše trditve dvakrat, vidno in v bloku. Če vidno besedilo navede
 // drugo vrednost neznanke kot blok (»$x = 5$«, v bloku »resi: 2*x+3=11 | x | 4«), je »potrjen« le blok, učenec pa vidi
 // napačno vrednost. Zato se rešitve (»resi«) primerjajo z vrednostmi iste neznanke v vidnem besedilu.
+// Število po istem pravilu kot kalkulatorja (calcText: decimalna vejica, »1 000«); »1.000« (tisočice ali decimalke?)
+// ni jasno in se ne bere (pregled #1016).
 const numOf = (t) => {
+  const raw = String(t).trim();
+  if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(raw)) return null;
   try {
-    const v = compile(parse(String(t).replace(/(\d),(?=\d)/g, "$1.")))({});
+    const v = compile(parse(calcText(raw, { comma: true })))({});
     return typeof v === "number" && Number.isFinite(v) ? v : null;
   } catch {
     return null;
@@ -172,11 +176,15 @@ function visibleValues(text, v) {
   for (const m of plain.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
     const tex = m[1] ?? m[2];
     if (/\\pm|\\mp|[±∓]|\\approx|≈|\\neq|≠|<|>|\\le|\\ge/.test(tex)) continue;
-    for (const piece of texToText(tex).split(/,|;|\bin\b/)) {
+    // ločila med vrednostmi: », « (z presledkom), »;«, »in«, \quad; »2,5« je eno število
+    for (const piece of texToText(tex).split(/,\s+|;|\bin\b/)) {
       const parts = piece.split("=").map((x) => x.trim());
       if (parts.length < 2 || !new RegExp(`^${v}(?:_?\\(?\\d\\)?)?$`).test(parts[0])) continue;
-      const n = numOf(parts.at(-1));
-      if (n !== null) out.push(n);
+      const last = parts.at(-1).replace(/[.]$/, "");
+      const n = numOf(last);
+      // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
+      const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
+      if (n !== null) out.push({ n, tol: dec === null ? 0 : 0.5 * 10 ** -dec });
     }
   }
   return out;
@@ -188,8 +196,9 @@ export function visibleIssue(text, claims) {
     if (!claimed.length) continue;
     const seen = visibleValues(text, c.args[1]);
     // le kadar besedilo vrednost neznanke navede (način A rezultata ne pove): vsaka rešitev iz bloka mora biti v besedilu
-    if (seen.length && claimed.some((y) => !seen.some((x) => close(x, y)))) {
-      return `the answer text states ${c.args[1]} = ${seen.map((x) => String(+x.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${c.args[1]} = ${c.args[2]}`;
+    const near = (x, y) => close(x.n, y) || Math.abs(x.n - y) <= x.tol * (1 + 1e-9);
+    if (seen.length && claimed.some((y) => !seen.some((x) => near(x, y)))) {
+      return `the answer text states ${c.args[1]} = ${seen.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${c.args[1]} = ${c.args[2]}`;
     }
   }
   return null;

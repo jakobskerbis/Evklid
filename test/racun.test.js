@@ -267,3 +267,13 @@ test("AUDIT-064: vidna »x = 5« ob bloku »| x | 4« je napaka; brez navedene v
   ];
   for (const [t, bad] of cases) assert.equal(!!visibleIssue(t, parseClaims(t)), bad, t);
 });
+
+test("AUDIT-064 (pregled): zaokrožene vrednosti in zapis števil kot v kalkulatorjih", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  for (const t of [R`$x = 1{,}41$ (zaokroženo)` + block("resi: x^2=2 | x | sqrt(2)"), R`$x = 0{,}33$` + block("resi: 3*x=1 | x | 1/3"), R`$x = 2,5$` + block("resi: 2*x=5 | x | 5/2"), R`$x = 1\,000$` + block("resi: log10(x)=3 | x | 1000"), R`$x = 1.000$` + block("resi: log10(x)=3 | x | 1000"), R`$x = 7{,}39$` + block("resi: ln(x)=2 | x | exp(2)")]) {
+    assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  }
+  assert.ok(visibleIssue(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"), parseClaims(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"))));
+});
