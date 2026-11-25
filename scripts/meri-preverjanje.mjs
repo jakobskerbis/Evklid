@@ -35,9 +35,10 @@ export function razvrsti(p, status) {
   if (p.pravilno && status === "napaka") return "lazni_alarm";
   if (!p.pravilno && status === "napaka") return "ujeta_napaka";
   if (p.najvec && MOC[status] > MOC[p.najvec]) return "previsok_status";
+  if (!p.pravilno && (status === "numericno" || status === "delno")) return "napacna_sibko"; // učenec vidi »delno«/»numerično«
   if (p.pravilno && jePotrjeno(status)) return "potrjena";
   if (status === "nepreverjeno" || status === "v_teku") return "nepreverjena";
-  return "sibkejsi_status"; // pravilna z numericno/delno, napačna z nepotrjenim statusom
+  return "sibkejsi_status"; // pravilna z numericno/delno
 }
 
 export const MOTORJI = {
@@ -81,13 +82,15 @@ export async function izmeri(primeri, { motorji = Object.keys(MOTORJI) } = {}) {
     const stevci = { vse: 0 };
     const vrstice = [];
     for (const p of primeri.filter(m.zna)) {
-      let status;
+      let status, razred;
       try {
         status = await m.status(p, orodja);
+        razred = razvrsti(p, status);
       } catch (e) {
-        status = "nepreverjeno";
+        // izjema ni »nepreverjeno«: pokvarjen preverjevalnik se ne sme skriti med nepreverjene trditve
+        status = `izjema: ${e?.message || e}`;
+        razred = "izjema";
       }
-      const razred = razvrsti(p, status);
       stevci.vse++;
       stevci[razred] = (stevci[razred] || 0) + 1;
       vrstice.push({ id: p.id, skupina: p.skupina, pravilno: p.pravilno, status, razred });
@@ -97,7 +100,7 @@ export async function izmeri(primeri, { motorji = Object.keys(MOTORJI) } = {}) {
   return izid;
 }
 
-const RAZREDI = ["napacno_potrjena", "previsok_status", "lazni_alarm", "ujeta_napaka", "potrjena", "sibkejsi_status", "nepreverjena"];
+const RAZREDI = ["napacno_potrjena", "previsok_status", "lazni_alarm", "napacna_sibko", "izjema", "ujeta_napaka", "potrjena", "sibkejsi_status", "nepreverjena"];
 
 function natisni(izid) {
   console.log(["motor", "vse", ...RAZREDI].join("\t"));
@@ -109,7 +112,7 @@ function natisni(izid) {
     console.log([ime, r.stevci.vse, ...RAZREDI.map((k) => r.stevci[k] || 0)].join("\t"));
   }
   for (const [ime, r] of Object.entries(izid)) {
-    for (const v of r.primeri || []) if (["napacno_potrjena", "previsok_status", "lazni_alarm"].includes(v.razred)) console.log(`  ${ime}: ${v.razred} ${v.id} (${v.status})`);
+    for (const v of r.primeri || []) if (["napacno_potrjena", "previsok_status", "lazni_alarm", "napacna_sibko", "izjema"].includes(v.razred)) console.log(`  ${ime}: ${v.razred} ${v.id} (${v.status})`);
   }
 }
 
@@ -120,7 +123,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   natisni(izid);
   const j = a.indexOf("--json");
   if (j >= 0 && a[j + 1]) writeFileSync(a[j + 1], JSON.stringify(izid, null, 1));
-  const slabo = Object.entries(izid).some(([k, r]) => !MOTORJI[k].surovo && r.stevci && (r.stevci.napacno_potrjena || r.stevci.previsok_status));
+  const slabo = Object.entries(izid).some(([k, r]) => !MOTORJI[k].surovo && r.stevci && (r.stevci.napacno_potrjena || r.stevci.previsok_status || r.stevci.izjema));
   const { casStop } = await import("../server/cas.js");
   casStop();
   process.exit(slabo ? 1 : 0);

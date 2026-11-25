@@ -91,17 +91,15 @@
   {
    "id": "polinom-004",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: odvec",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "odvec",
+   "napaka": "manjka",
    "naloga": "4*x^2-3*x-27=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "4",
-     "3",
-     "-9/4"
+     "3"
     ]
    },
    "racun": [
@@ -109,7 +107,7 @@
     [
      "4*x^2-3*x-27=0",
      "x",
-     "4, 3, -9/4"
+     "3"
     ]
    ],
    "resnica": [
@@ -122,58 +120,57 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "8*x^3+6*x^2-203*x-396=0",
+   "naloga": "2*x^3+23*x^2+78*x+72=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
      "-4",
-     "-9/4",
-     "11/2"
+     "-6",
+     "-3/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "8*x^3+6*x^2-203*x-396=0",
+     "2*x^3+23*x^2+78*x+72=0",
      "x",
-     "-4, -9/4, 11/2"
+     "-4, -6, -3/2"
     ]
    ],
    "resnica": [
-    "-4",
-    "-9/4",
-    "11/2"
+    "-3/2",
+    "-6",
+    "-4"
    ]
   },
   {
    "id": "polinom-006",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "8*x^3+6*x^2-203*x-396=0",
+   "napaka": "manjka",
+   "naloga": "2*x^3+23*x^2+78*x+72=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "4",
-     "11/2",
-     "-9/4"
+     "-6",
+     "-4"
     ]
    },
    "racun": [
     "solve",
     [
-     "8*x^3+6*x^2-203*x-396=0",
+     "2*x^3+23*x^2+78*x+72=0",
      "x",
-     "4, 11/2, -9/4"
+     "-6, -4"
     ]
    ],
    "resnica": [
-    "-4",
-    "-9/4",
-    "11/2"
+    "-3/2",
+    "-6",
+    "-4"
    ]
   },
   {
@@ -181,62 +178,61 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "10*x^4+73*x^3-461*x^2-3213*x-3969=0",
+   "naloga": "45*x^4+399*x^3-478*x^2-3496*x+2880=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-9/5",
-     "-7/2",
-     "7",
+     "-10/3",
+     "4/5",
+     "8/3",
      "-9"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^4+73*x^3-461*x^2-3213*x-3969=0",
+     "45*x^4+399*x^3-478*x^2-3496*x+2880=0",
      "x",
-     "-9/5, -7/2, 7, -9"
+     "-10/3, 4/5, 8/3, -9"
     ]
    ],
    "resnica": [
-    "-9",
-    "7",
-    "-7/2",
-    "-9/5"
+    "-10/3",
+    "4/5",
+    "8/3",
+    "-9"
    ]
   },
   {
    "id": "polinom-008",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "10*x^4+73*x^3-461*x^2-3213*x-3969=0",
+   "napaka": "manjka",
+   "naloga": "45*x^4+399*x^3-478*x^2-3496*x+2880=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-8",
-     "-7/2",
-     "7",
-     "-9/5"
+     "-9",
+     "8/3",
+     "4/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^4+73*x^3-461*x^2-3213*x-3969=0",
+     "45*x^4+399*x^3-478*x^2-3496*x+2880=0",
      "x",
-     "-8, -7/2, 7, -9/5"
+     "-9, 8/3, 4/5"
     ]
    ],
    "resnica": [
-    "-9",
-    "7",
-    "-7/2",
-    "-9/5"
+    "-10/3",
+    "4/5",
+    "8/3",
+    "-9"
    ]
   },
   {
@@ -244,50 +240,51 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "5*x+3=0",
+   "naloga": "2*x+7=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-3/5"
+     "-7/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x+3=0",
+     "2*x+7=0",
      "x",
-     "-3/5"
+     "-7/2"
     ]
    ],
    "resnica": [
-    "-3/5"
+    "-7/2"
    ]
   },
   {
    "id": "polinom-010",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "5*x+3=0",
+   "napaka": "odvec",
+   "naloga": "2*x+7=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2/5"
+     "-7/2",
+     "-2"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x+3=0",
+     "2*x+7=0",
      "x",
-     "2/5"
+     "-7/2, -2"
     ]
    ],
    "resnica": [
-    "-3/5"
+    "-7/2"
    ]
   },
   {
@@ -295,26 +292,26 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 2. stopnje",
    "pravilno": true,
-   "naloga": "x^2+9*x+18=0",
+   "naloga": "10*x^2+21*x+9=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-3",
-     "-6"
+     "-3/2",
+     "-3/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2+9*x+18=0",
+     "10*x^2+21*x+9=0",
      "x",
-     "-3, -6"
+     "-3/2, -3/5"
     ]
    ],
    "resnica": [
-    "-3",
-    "-6"
+    "-3/5",
+    "-3/2"
    ]
   },
   {
@@ -323,27 +320,27 @@
    "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
    "napaka": "odvec",
-   "naloga": "x^2+9*x+18=0",
+   "naloga": "10*x^2+21*x+9=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-6",
-     "-3",
-     "-2"
+     "-3/5",
+     "-3/2",
+     "0"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2+9*x+18=0",
+     "10*x^2+21*x+9=0",
      "x",
-     "-6, -3, -2"
+     "-3/5, -3/2, 0"
     ]
    ],
    "resnica": [
-    "-3",
-    "-6"
+    "-3/5",
+    "-3/2"
    ]
   },
   {
@@ -351,58 +348,59 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "32*x^3-64*x^2-182*x+49=0",
+   "naloga": "60*x^3-53*x^2-704*x+1089=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/4",
-     "7/2",
-     "-7/4"
+     "9/5",
+     "-11/3",
+     "11/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "32*x^3-64*x^2-182*x+49=0",
+     "60*x^3-53*x^2-704*x+1089=0",
      "x",
-     "1/4, 7/2, -7/4"
+     "9/5, -11/3, 11/4"
     ]
    ],
    "resnica": [
-    "1/4",
-    "-7/4",
-    "7/2"
+    "11/4",
+    "-11/3",
+    "9/5"
    ]
   },
   {
    "id": "polinom-014",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "32*x^3-64*x^2-182*x+49=0",
+   "napaka": "odvec",
+   "naloga": "60*x^3-53*x^2-704*x+1089=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "7/2",
-     "-7/4",
-     "-1/4"
+     "11/4",
+     "9/5",
+     "4",
+     "-11/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "32*x^3-64*x^2-182*x+49=0",
+     "60*x^3-53*x^2-704*x+1089=0",
      "x",
-     "7/2, -7/4, -1/4"
+     "11/4, 9/5, 4, -11/3"
     ]
    ],
    "resnica": [
-    "1/4",
-    "-7/4",
-    "7/2"
+    "11/4",
+    "-11/3",
+    "9/5"
    ]
   },
   {
@@ -410,62 +408,63 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "180*x^5-681*x^4-2098*x^3+4300*x^2+3454*x+605=0",
+   "naloga": "150*x^5+65*x^4-2884*x^3-5307*x^2-3128*x-560=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-11/4",
-     "11/5",
+     "-7/2",
      "5",
-     "-1/3"
+     "-1/3",
+     "-4/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "180*x^5-681*x^4-2098*x^3+4300*x^2+3454*x+605=0",
+     "150*x^5+65*x^4-2884*x^3-5307*x^2-3128*x-560=0",
      "x",
-     "-11/4, 11/5, 5, -1/3"
+     "-7/2, 5, -1/3, -4/5"
     ]
    ],
    "resnica": [
+    "-4/5",
+    "-7/2",
     "-1/3",
-    "5",
-    "11/5",
-    "-11/4"
+    "5"
    ]
   },
   {
    "id": "polinom-016",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "180*x^5-681*x^4-2098*x^3+4300*x^2+3454*x+605=0",
+   "napaka": "odvec",
+   "naloga": "150*x^5+65*x^4-2884*x^3-5307*x^2-3128*x-560=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2/3",
-     "-11/4",
-     "11/5",
+     "-7/2",
+     "-1/3",
+     "-4/5",
+     "6",
      "5"
     ]
    },
    "racun": [
     "solve",
     [
-     "180*x^5-681*x^4-2098*x^3+4300*x^2+3454*x+605=0",
+     "150*x^5+65*x^4-2884*x^3-5307*x^2-3128*x-560=0",
      "x",
-     "2/3, -11/4, 11/5, 5"
+     "-7/2, -1/3, -4/5, 6, 5"
     ]
    ],
    "resnica": [
+    "-4/5",
+    "-7/2",
     "-1/3",
-    "5",
-    "11/5",
-    "-11/4"
+    "5"
    ]
   },
   {
@@ -473,50 +472,50 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "4*x-1=0",
+   "naloga": "3*x-10=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/4"
+     "10/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "4*x-1=0",
+     "3*x-10=0",
      "x",
-     "1/4"
+     "10/3"
     ]
    ],
    "resnica": [
-    "1/4"
+    "10/3"
    ]
   },
   {
    "id": "polinom-018",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: predznak",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "4*x-1=0",
+   "napaka": "predznak",
+   "naloga": "3*x-10=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5/4"
+     "-10/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "4*x-1=0",
+     "3*x-10=0",
      "x",
-     "5/4"
+     "-10/3"
     ]
    ],
    "resnica": [
-    "1/4"
+    "10/3"
    ]
   },
   {
@@ -524,55 +523,54 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "x^4+3*x^3-39*x^2+3*x-40=0",
+   "naloga": "2*x^4+7*x^3-70*x^2+7*x-72=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
      "-8",
-     "5"
+     "9/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^4+3*x^3-39*x^2+3*x-40=0",
+     "2*x^4+7*x^3-70*x^2+7*x-72=0",
      "x",
-     "-8, 5"
+     "-8, 9/2"
     ]
    ],
    "resnica": [
-    "-8",
-    "5"
+    "9/2",
+    "-8"
    ]
   },
   {
    "id": "polinom-020",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: odvec",
+   "opis": "polinomska enačba, napaka: predznak",
    "pravilno": false,
-   "napaka": "odvec",
-   "naloga": "x^4+3*x^3-39*x^2+3*x-40=0",
+   "napaka": "predznak",
+   "naloga": "2*x^4+7*x^3-70*x^2+7*x-72=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "6",
-     "5",
-     "-8"
+     "-8",
+     "-9/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^4+3*x^3-39*x^2+3*x-40=0",
+     "2*x^4+7*x^3-70*x^2+7*x-72=0",
      "x",
-     "6, 5, -8"
+     "-8, -9/2"
     ]
    ],
    "resnica": [
-    "-8",
-    "5"
+    "9/2",
+    "-8"
    ]
   },
   {
@@ -580,12 +578,12 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "18*x^3-15*x^2-172*x-55=0",
+   "naloga": "9*x^3-66*x^2+109*x+44=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-5/2",
+     "4",
      "11/3",
      "-1/3"
     ]
@@ -593,15 +591,15 @@
    "racun": [
     "solve",
     [
-     "18*x^3-15*x^2-172*x-55=0",
+     "9*x^3-66*x^2+109*x+44=0",
      "x",
-     "-5/2, 11/3, -1/3"
+     "4, 11/3, -1/3"
     ]
    ],
    "resnica": [
+    "4",
     "-1/3",
-    "11/3",
-    "-5/2"
+    "11/3"
    ]
   },
   {
@@ -610,28 +608,28 @@
    "opis": "polinomska enačba, napaka: predznak",
    "pravilno": false,
    "napaka": "predznak",
-   "naloga": "18*x^3-15*x^2-172*x-55=0",
+   "naloga": "9*x^3-66*x^2+109*x+44=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
+     "-4",
      "11/3",
-     "-5/2",
-     "1/3"
+     "-1/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "18*x^3-15*x^2-172*x-55=0",
+     "9*x^3-66*x^2+109*x+44=0",
      "x",
-     "11/3, -5/2, 1/3"
+     "-4, 11/3, -1/3"
     ]
    ],
    "resnica": [
+    "4",
     "-1/3",
-    "11/3",
-    "-5/2"
+    "11/3"
    ]
   },
   {
@@ -639,12 +637,12 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "12*x^4-7*x^3-946*x^2-283*x+5544=0",
+   "naloga": "60*x^4-527*x^3-507*x^2+3587*x-693=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-8",
+     "1/5",
      "-11/4",
      "9",
      "7/3"
@@ -653,31 +651,31 @@
    "racun": [
     "solve",
     [
-     "12*x^4-7*x^3-946*x^2-283*x+5544=0",
+     "60*x^4-527*x^3-507*x^2+3587*x-693=0",
      "x",
-     "-8, -11/4, 9, 7/3"
+     "1/5, -11/4, 9, 7/3"
     ]
    ],
    "resnica": [
+    "1/5",
     "9",
     "-11/4",
-    "7/3",
-    "-8"
+    "7/3"
    ]
   },
   {
    "id": "polinom-024",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: predznak",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "12*x^4-7*x^3-946*x^2-283*x+5544=0",
+   "napaka": "predznak",
+   "naloga": "60*x^4-527*x^3-507*x^2+3587*x-693=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "10",
-     "-8",
+     "9",
+     "-1/5",
      "7/3",
      "-11/4"
     ]
@@ -685,16 +683,16 @@
    "racun": [
     "solve",
     [
-     "12*x^4-7*x^3-946*x^2-283*x+5544=0",
+     "60*x^4-527*x^3-507*x^2+3587*x-693=0",
      "x",
-     "10, -8, 7/3, -11/4"
+     "9, -1/5, 7/3, -11/4"
     ]
    ],
    "resnica": [
+    "1/5",
     "9",
     "-11/4",
-    "7/3",
-    "-8"
+    "7/3"
    ]
   },
   {
@@ -702,24 +700,24 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "3*x+4=0",
+   "naloga": "3*x+2=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-4/3"
+     "-2/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x+4=0",
+     "3*x+2=0",
      "x",
-     "-4/3"
+     "-2/3"
     ]
    ],
    "resnica": [
-    "-4/3"
+    "-2/3"
    ]
   },
   {
@@ -728,24 +726,24 @@
    "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "3*x+4=0",
+   "naloga": "3*x+2=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-1/3"
+     "1/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x+4=0",
+     "3*x+2=0",
      "x",
-     "-1/3"
+     "1/3"
     ]
    ],
    "resnica": [
-    "-4/3"
+    "-2/3"
    ]
   },
   {
@@ -753,55 +751,54 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 2. stopnje",
    "pravilno": true,
-   "naloga": "25*x^2-16=0",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "4/5",
-     "-4/5"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "25*x^2-16=0",
-     "x",
-     "4/5, -4/5"
-    ]
-   ],
-   "resnica": [
-    "-4/5",
-    "4/5"
-   ]
-  },
-  {
-   "id": "polinom-028",
-   "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: odvec",
-   "pravilno": false,
-   "napaka": "odvec",
-   "naloga": "25*x^2-16=0",
+   "naloga": "10*x^2+63*x+44=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
      "-4/5",
-     "4/5",
-     "2"
+     "-11/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "25*x^2-16=0",
+     "10*x^2+63*x+44=0",
      "x",
-     "-4/5, 4/5, 2"
+     "-4/5, -11/2"
     ]
    ],
    "resnica": [
-    "-4/5",
-    "4/5"
+    "-11/2",
+    "-4/5"
+   ]
+  },
+  {
+   "id": "polinom-028",
+   "skupina": "polinom",
+   "opis": "polinomska enačba, napaka: vrednost",
+   "pravilno": false,
+   "napaka": "vrednost",
+   "naloga": "10*x^2+63*x+44=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-4/5",
+     "-9/2"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "10*x^2+63*x+44=0",
+     "x",
+     "-4/5, -9/2"
+    ]
+   ],
+   "resnica": [
+    "-11/2",
+    "-4/5"
    ]
   },
   {
@@ -809,58 +806,58 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "10*x^3-79*x^2-11*x+24=0",
+   "naloga": "75*x^3-160*x^2-63*x+36=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/2",
-     "-3/5",
-     "8"
+     "1/3",
+     "12/5",
+     "-3/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^3-79*x^2-11*x+24=0",
+     "75*x^3-160*x^2-63*x+36=0",
      "x",
-     "1/2, -3/5, 8"
+     "1/3, 12/5, -3/5"
     ]
    ],
    "resnica": [
-    "-3/5",
-    "8",
-    "1/2"
+    "1/3",
+    "12/5",
+    "-3/5"
    ]
   },
   {
    "id": "polinom-030",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "10*x^3-79*x^2-11*x+24=0",
+   "napaka": "vrednost",
+   "naloga": "75*x^3-160*x^2-63*x+36=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/2",
-     "3/5",
-     "8"
+     "12/5",
+     "-3/5",
+     "4/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^3-79*x^2-11*x+24=0",
+     "75*x^3-160*x^2-63*x+36=0",
      "x",
-     "1/2, 3/5, 8"
+     "12/5, -3/5, 4/3"
     ]
    ],
    "resnica": [
-    "-3/5",
-    "8",
-    "1/2"
+    "1/3",
+    "12/5",
+    "-3/5"
    ]
   },
   {
@@ -868,30 +865,30 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "48*x^4+56*x^3-377*x^2-266*x+539=0",
+   "naloga": "15*x^4+19*x^3-321*x^2+581*x-294=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-11/4",
      "7/3",
      "1",
-     "-7/4"
+     "-6",
+     "7/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "48*x^4+56*x^3-377*x^2-266*x+539=0",
+     "15*x^4+19*x^3-321*x^2+581*x-294=0",
      "x",
-     "-11/4, 7/3, 1, -7/4"
+     "7/3, 1, -6, 7/5"
     ]
    ],
    "resnica": [
+    "7/5",
+    "-6",
     "7/3",
-    "1",
-    "-7/4",
-    "-11/4"
+    "1"
    ]
   },
   {
@@ -900,30 +897,30 @@
    "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "48*x^4+56*x^3-377*x^2-266*x+539=0",
+   "naloga": "15*x^4+19*x^3-321*x^2+581*x-294=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-7/4",
+     "-6",
+     "12/5",
      "1",
-     "-11/4",
-     "10/3"
+     "7/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "48*x^4+56*x^3-377*x^2-266*x+539=0",
+     "15*x^4+19*x^3-321*x^2+581*x-294=0",
      "x",
-     "-7/4, 1, -11/4, 10/3"
+     "-6, 12/5, 1, 7/3"
     ]
    ],
    "resnica": [
+    "7/5",
+    "-6",
     "7/3",
-    "1",
-    "-7/4",
-    "-11/4"
+    "1"
    ]
   },
   {
@@ -931,24 +928,24 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "2*x-7=0",
+   "naloga": "x+5=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "7/2"
+     "-5"
     ]
    },
    "racun": [
     "solve",
     [
-     "2*x-7=0",
+     "x+5=0",
      "x",
-     "7/2"
+     "-5"
     ]
    ],
    "resnica": [
-    "7/2"
+    "-5"
    ]
   },
   {
@@ -957,24 +954,24 @@
    "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "2*x-7=0",
+   "naloga": "x+5=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "9/2"
+     "-4"
     ]
    },
    "racun": [
     "solve",
     [
-     "2*x-7=0",
+     "x+5=0",
      "x",
-     "9/2"
+     "-4"
     ]
    ],
    "resnica": [
-    "7/2"
+    "-5"
    ]
   },
   {
@@ -982,55 +979,53 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 2. stopnje",
    "pravilno": true,
-   "naloga": "80*x^3+392*x^2+605*x+300=0",
+   "naloga": "125*x^3-125*x^2-40*x+48=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-12/5",
-     "-5/4"
+     "4/5",
+     "-3/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "80*x^3+392*x^2+605*x+300=0",
+     "125*x^3-125*x^2-40*x+48=0",
      "x",
-     "-12/5, -5/4"
+     "4/5, -3/5"
     ]
    ],
    "resnica": [
-    "-5/4",
-    "-12/5"
+    "4/5",
+    "-3/5"
    ]
   },
   {
    "id": "polinom-036",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: odvec",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "odvec",
-   "naloga": "80*x^3+392*x^2+605*x+300=0",
+   "napaka": "manjka",
+   "naloga": "125*x^3-125*x^2-40*x+48=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "0",
-     "-12/5",
-     "-5/4"
+     "-3/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "80*x^3+392*x^2+605*x+300=0",
+     "125*x^3-125*x^2-40*x+48=0",
      "x",
-     "0, -12/5, -5/4"
+     "-3/5"
     ]
    ],
    "resnica": [
-    "-5/4",
-    "-12/5"
+    "4/5",
+    "-3/5"
    ]
   },
   {
@@ -1038,58 +1033,57 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "5*x^3-8*x^2-5*x+8=0",
+   "naloga": "6*x^3-17*x^2-311*x-198=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1",
-     "-1",
-     "8/5"
+     "-11/2",
+     "-2/3",
+     "9"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x^3-8*x^2-5*x+8=0",
+     "6*x^3-17*x^2-311*x-198=0",
      "x",
-     "1, -1, 8/5"
+     "-11/2, -2/3, 9"
     ]
    ],
    "resnica": [
-    "-1",
-    "8/5",
-    "1"
+    "-11/2",
+    "-2/3",
+    "9"
    ]
   },
   {
    "id": "polinom-038",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "5*x^3-8*x^2-5*x+8=0",
+   "napaka": "manjka",
+   "naloga": "6*x^3-17*x^2-311*x-198=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-1",
-     "-8/5",
-     "1"
+     "-2/3",
+     "9"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x^3-8*x^2-5*x+8=0",
+     "6*x^3-17*x^2-311*x-198=0",
      "x",
-     "-1, -8/5, 1"
+     "-2/3, 9"
     ]
    ],
    "resnica": [
-    "-1",
-    "8/5",
-    "1"
+    "-11/2",
+    "-2/3",
+    "9"
    ]
   },
   {
@@ -1097,62 +1091,61 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 6. stopnje",
    "pravilno": true,
-   "naloga": "10*x^6+109*x^5+346*x^4+316*x^3+66*x^2+207*x-270=0",
+   "naloga": "5*x^6-51*x^5+148*x^4-72*x^3-77*x^2-21*x-220=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-6",
-     "-3",
-     "3/5",
-     "-5/2"
+     "4",
+     "5",
+     "11/5",
+     "-1"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^6+109*x^5+346*x^4+316*x^3+66*x^2+207*x-270=0",
+     "5*x^6-51*x^5+148*x^4-72*x^3-77*x^2-21*x-220=0",
      "x",
-     "-6, -3, 3/5, -5/2"
+     "4, 5, 11/5, -1"
     ]
    ],
    "resnica": [
-    "3/5",
-    "-3",
-    "-5/2",
-    "-6"
+    "11/5",
+    "-1",
+    "4",
+    "5"
    ]
   },
   {
    "id": "polinom-040",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "10*x^6+109*x^5+346*x^4+316*x^3+66*x^2+207*x-270=0",
+   "napaka": "manjka",
+   "naloga": "5*x^6-51*x^5+148*x^4-72*x^3-77*x^2-21*x-220=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "8/5",
-     "-3",
-     "-5/2",
-     "-6"
+     "-1",
+     "5",
+     "4"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^6+109*x^5+346*x^4+316*x^3+66*x^2+207*x-270=0",
+     "5*x^6-51*x^5+148*x^4-72*x^3-77*x^2-21*x-220=0",
      "x",
-     "8/5, -3, -5/2, -6"
+     "-1, 5, 4"
     ]
    ],
    "resnica": [
-    "3/5",
-    "-3",
-    "-5/2",
-    "-6"
+    "11/5",
+    "-1",
+    "4",
+    "5"
    ]
   },
   {
@@ -1160,50 +1153,51 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "3*x-2=0",
+   "naloga": "5*x-12=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2/3"
+     "12/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x-2=0",
+     "5*x-12=0",
      "x",
-     "2/3"
+     "12/5"
     ]
    ],
    "resnica": [
-    "2/3"
+    "12/5"
    ]
   },
   {
    "id": "polinom-042",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "3*x-2=0",
+   "napaka": "odvec",
+   "naloga": "5*x-12=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5/3"
+     "12/5",
+     "3"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x-2=0",
+     "5*x-12=0",
      "x",
-     "5/3"
+     "12/5, 3"
     ]
    ],
    "resnica": [
-    "2/3"
+    "12/5"
    ]
   },
   {
@@ -1211,26 +1205,26 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 2. stopnje",
    "pravilno": true,
-   "naloga": "5*x^2+7*x-12=0",
+   "naloga": "20*x^2+x-1=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-12/5",
-     "1"
+     "1/5",
+     "-1/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x^2+7*x-12=0",
+     "20*x^2+x-1=0",
      "x",
-     "-12/5, 1"
+     "1/5, -1/4"
     ]
    ],
    "resnica": [
-    "-12/5",
-    "1"
+    "-1/4",
+    "1/5"
    ]
   },
   {
@@ -1239,27 +1233,27 @@
    "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
    "napaka": "odvec",
-   "naloga": "5*x^2+7*x-12=0",
+   "naloga": "20*x^2+x-1=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
      "1",
-     "2",
-     "-12/5"
+     "-1/4",
+     "1/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x^2+7*x-12=0",
+     "20*x^2+x-1=0",
      "x",
-     "1, 2, -12/5"
+     "1, -1/4, 1/5"
     ]
    ],
    "resnica": [
-    "-12/5",
-    "1"
+    "-1/4",
+    "1/5"
    ]
   },
   {
@@ -1267,58 +1261,59 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "6*x^3+19*x^2-45*x-100=0",
+   "naloga": "6*x^3+7*x^2-24*x=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-4",
-     "-5/3",
-     "5/2"
+     "0",
+     "3/2",
+     "-8/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "6*x^3+19*x^2-45*x-100=0",
+     "6*x^3+7*x^2-24*x=0",
      "x",
-     "-4, -5/3, 5/2"
+     "0, 3/2, -8/3"
     ]
    ],
    "resnica": [
-    "5/2",
-    "-4",
-    "-5/3"
+    "3/2",
+    "-8/3",
+    "0"
    ]
   },
   {
    "id": "polinom-046",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "6*x^3+19*x^2-45*x-100=0",
+   "napaka": "odvec",
+   "naloga": "6*x^3+7*x^2-24*x=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-5/2",
-     "-4",
-     "-5/3"
+     "0",
+     "3",
+     "3/2",
+     "-8/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "6*x^3+19*x^2-45*x-100=0",
+     "6*x^3+7*x^2-24*x=0",
      "x",
-     "-5/2, -4, -5/3"
+     "0, 3, 3/2, -8/3"
     ]
    ],
    "resnica": [
-    "5/2",
-    "-4",
-    "-5/3"
+    "3/2",
+    "-8/3",
+    "0"
    ]
   },
   {
@@ -1326,62 +1321,63 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "10*x^4-63*x^3-128*x^2-63*x-8=0",
+   "naloga": "64*x^4+256*x^3-164*x^2-84*x+27=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-1/5",
-     "8",
-     "-1",
+     "-9/2",
+     "1/4",
+     "3/4",
      "-1/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^4-63*x^3-128*x^2-63*x-8=0",
+     "64*x^4+256*x^3-164*x^2-84*x+27=0",
      "x",
-     "-1/5, 8, -1, -1/2"
+     "-9/2, 1/4, 3/4, -1/2"
     ]
    ],
    "resnica": [
-    "-1/2",
-    "-1",
-    "8",
-    "-1/5"
+    "-9/2",
+    "1/4",
+    "3/4",
+    "-1/2"
    ]
   },
   {
    "id": "polinom-048",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "10*x^4-63*x^3-128*x^2-63*x-8=0",
+   "napaka": "odvec",
+   "naloga": "64*x^4+256*x^3-164*x^2-84*x+27=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/2",
-     "-1",
-     "-1/5",
-     "8"
+     "3/4",
+     "-1/2",
+     "2",
+     "1/4",
+     "-9/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^4-63*x^3-128*x^2-63*x-8=0",
+     "64*x^4+256*x^3-164*x^2-84*x+27=0",
      "x",
-     "1/2, -1, -1/5, 8"
+     "3/4, -1/2, 2, 1/4, -9/2"
     ]
    ],
    "resnica": [
-    "-1/2",
-    "-1",
-    "8",
-    "-1/5"
+    "-9/2",
+    "1/4",
+    "3/4",
+    "-1/2"
    ]
   },
   {
@@ -1389,50 +1385,50 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "2*x+1=0",
+   "naloga": "3*x-8=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-1/2"
+     "8/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "2*x+1=0",
+     "3*x-8=0",
      "x",
-     "-1/2"
+     "8/3"
     ]
    ],
    "resnica": [
-    "-1/2"
+    "8/3"
    ]
   },
   {
    "id": "polinom-050",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: predznak",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "2*x+1=0",
+   "napaka": "predznak",
+   "naloga": "3*x-8=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/2"
+     "-8/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "2*x+1=0",
+     "3*x-8=0",
      "x",
-     "1/2"
+     "-8/3"
     ]
    ],
    "resnica": [
-    "-1/2"
+    "8/3"
    ]
   },
   {
@@ -1440,55 +1436,54 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 2. stopnje",
    "pravilno": true,
-   "naloga": "9*x^2+9*x-28=0",
+   "naloga": "9*x^2+24*x+7=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "4/3",
+     "-1/3",
      "-7/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "9*x^2+9*x-28=0",
+     "9*x^2+24*x+7=0",
      "x",
-     "4/3, -7/3"
+     "-1/3, -7/3"
     ]
    ],
    "resnica": [
-    "-7/3",
-    "4/3"
+    "-1/3",
+    "-7/3"
    ]
   },
   {
    "id": "polinom-052",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: odvec",
+   "opis": "polinomska enačba, napaka: predznak",
    "pravilno": false,
-   "napaka": "odvec",
-   "naloga": "9*x^2+9*x-28=0",
+   "napaka": "predznak",
+   "naloga": "9*x^2+24*x+7=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2",
      "-7/3",
-     "4/3"
+     "1/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "9*x^2+9*x-28=0",
+     "9*x^2+24*x+7=0",
      "x",
-     "2, -7/3, 4/3"
+     "-7/3, 1/3"
     ]
    ],
    "resnica": [
-    "-7/3",
-    "4/3"
+    "-1/3",
+    "-7/3"
    ]
   },
   {
@@ -1496,28 +1491,28 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "2*x^3+x^2-11*x-10=0",
+   "naloga": "5*x^3-9*x^2-20*x+36=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5/2",
+     "2",
      "-2",
-     "-1"
+     "9/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "2*x^3+x^2-11*x-10=0",
+     "5*x^3-9*x^2-20*x+36=0",
      "x",
-     "5/2, -2, -1"
+     "2, -2, 9/5"
     ]
    ],
    "resnica": [
-    "-2",
-    "5/2",
-    "-1"
+    "9/5",
+    "2",
+    "-2"
    ]
   },
   {
@@ -1526,28 +1521,28 @@
    "opis": "polinomska enačba, napaka: predznak",
    "pravilno": false,
    "napaka": "predznak",
-   "naloga": "2*x^3+x^2-11*x-10=0",
+   "naloga": "5*x^3-9*x^2-20*x+36=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2",
-     "-1",
-     "5/2"
+     "-2",
+     "-9/5",
+     "2"
     ]
    },
    "racun": [
     "solve",
     [
-     "2*x^3+x^2-11*x-10=0",
+     "5*x^3-9*x^2-20*x+36=0",
      "x",
-     "2, -1, 5/2"
+     "-2, -9/5, 2"
     ]
    ],
    "resnica": [
-    "-2",
-    "5/2",
-    "-1"
+    "9/5",
+    "2",
+    "-2"
    ]
   },
   {
@@ -1555,62 +1550,62 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "6*x^5+29*x^4-208*x^3-958*x^2+1770*x+7425=0",
+   "naloga": "144*x^5+504*x^4-2407*x^3-5940*x^2+3387*x-440=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "11/3",
+     "1/4",
      "-5",
-     "9/2",
-     "-3"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "6*x^5+29*x^4-208*x^3-958*x^2+1770*x+7425=0",
-     "x",
-     "11/3, -5, 9/2, -3"
-    ]
-   ],
-   "resnica": [
-    "-5",
-    "11/3",
-    "9/2",
-    "-3"
-   ]
-  },
-  {
-   "id": "polinom-056",
-   "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
-   "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "6*x^5+29*x^4-208*x^3-958*x^2+1770*x+7425=0",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "9/2",
-     "-3",
-     "-4",
+     "-8/3",
      "11/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "6*x^5+29*x^4-208*x^3-958*x^2+1770*x+7425=0",
+     "144*x^5+504*x^4-2407*x^3-5940*x^2+3387*x-440=0",
      "x",
-     "9/2, -3, -4, 11/3"
+     "1/4, -5, -8/3, 11/3"
     ]
    ],
    "resnica": [
+    "1/4",
+    "-8/3",
     "-5",
-    "11/3",
-    "9/2",
-    "-3"
+    "11/3"
+   ]
+  },
+  {
+   "id": "polinom-056",
+   "skupina": "polinom",
+   "opis": "polinomska enačba, napaka: predznak",
+   "pravilno": false,
+   "napaka": "predznak",
+   "naloga": "144*x^5+504*x^4-2407*x^3-5940*x^2+3387*x-440=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-1/4",
+     "-8/3",
+     "-5",
+     "11/3"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "144*x^5+504*x^4-2407*x^3-5940*x^2+3387*x-440=0",
+     "x",
+     "-1/4, -8/3, -5, 11/3"
+    ]
+   ],
+   "resnica": [
+    "1/4",
+    "-8/3",
+    "-5",
+    "11/3"
    ]
   },
   {
@@ -1618,24 +1613,24 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "x-1=0",
+   "naloga": "5*x+2=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1"
+     "-2/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "x-1=0",
+     "5*x+2=0",
      "x",
-     "1"
+     "-2/5"
     ]
    ],
    "resnica": [
-    "1"
+    "-2/5"
    ]
   },
   {
@@ -1644,24 +1639,24 @@
    "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "x-1=0",
+   "naloga": "5*x+2=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2"
+     "3/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "x-1=0",
+     "5*x+2=0",
      "x",
-     "2"
+     "3/5"
     ]
    ],
    "resnica": [
-    "1"
+    "-2/5"
    ]
   },
   {
@@ -1669,55 +1664,54 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "20*x^4+53*x^3+55*x^2+53*x+35=0",
+   "naloga": "5*x^4+7*x^3-7*x^2+7*x-12=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-7/5",
-     "-5/4"
+     "1",
+     "-12/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "20*x^4+53*x^3+55*x^2+53*x+35=0",
+     "5*x^4+7*x^3-7*x^2+7*x-12=0",
      "x",
-     "-7/5, -5/4"
+     "1, -12/5"
     ]
    ],
    "resnica": [
-    "-7/5",
-    "-5/4"
+    "1",
+    "-12/5"
    ]
   },
   {
    "id": "polinom-060",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: odvec",
+   "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
-   "napaka": "odvec",
-   "naloga": "20*x^4+53*x^3+55*x^2+53*x+35=0",
+   "napaka": "vrednost",
+   "naloga": "5*x^4+7*x^3-7*x^2+7*x-12=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-5/4",
-     "0",
-     "-7/5"
+     "-12/5",
+     "2"
     ]
    },
    "racun": [
     "solve",
     [
-     "20*x^4+53*x^3+55*x^2+53*x+35=0",
+     "5*x^4+7*x^3-7*x^2+7*x-12=0",
      "x",
-     "-5/4, 0, -7/5"
+     "-12/5, 2"
     ]
    ],
    "resnica": [
-    "-7/5",
-    "-5/4"
+    "1",
+    "-12/5"
    ]
   },
   {
@@ -1725,58 +1719,58 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "12*x^3-13*x^2+3*x=0",
+   "naloga": "16*x^3-80*x^2+119*x-55=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/3",
-     "0",
-     "3/4"
+     "5/4",
+     "1",
+     "11/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "12*x^3-13*x^2+3*x=0",
+     "16*x^3-80*x^2+119*x-55=0",
      "x",
-     "1/3, 0, 3/4"
+     "5/4, 1, 11/4"
     ]
    ],
    "resnica": [
-    "3/4",
-    "1/3",
-    "0"
+    "11/4",
+    "1",
+    "5/4"
    ]
   },
   {
    "id": "polinom-062",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "12*x^3-13*x^2+3*x=0",
+   "napaka": "vrednost",
+   "naloga": "16*x^3-80*x^2+119*x-55=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-3/4",
-     "1/3",
-     "0"
+     "1",
+     "5/4",
+     "15/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "12*x^3-13*x^2+3*x=0",
+     "16*x^3-80*x^2+119*x-55=0",
      "x",
-     "-3/4, 1/3, 0"
+     "1, 5/4, 15/4"
     ]
    ],
    "resnica": [
-    "3/4",
-    "1/3",
-    "0"
+    "11/4",
+    "1",
+    "5/4"
    ]
   },
   {
@@ -1784,30 +1778,30 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "200*x^4-2010*x^3+6059*x^2-5973*x+968=0",
+   "naloga": "180*x^4-1503*x^3+4399*x^2-5468*x+2464=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "8/5",
-     "1/5",
-     "11/4",
-     "11/2"
+     "11/3",
+     "4/3",
+     "7/4",
+     "8/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "200*x^4-2010*x^3+6059*x^2-5973*x+968=0",
+     "180*x^4-1503*x^3+4399*x^2-5468*x+2464=0",
      "x",
-     "8/5, 1/5, 11/4, 11/2"
+     "11/3, 4/3, 7/4, 8/5"
     ]
    ],
    "resnica": [
-    "8/5",
-    "11/2",
-    "11/4",
-    "1/5"
+    "4/3",
+    "11/3",
+    "7/4",
+    "8/5"
    ]
   },
   {
@@ -1816,30 +1810,30 @@
    "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "200*x^4-2010*x^3+6059*x^2-5973*x+968=0",
+   "naloga": "180*x^4-1503*x^3+4399*x^2-5468*x+2464=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "13/5",
-     "11/4",
-     "1/5",
-     "11/2"
+     "7/3",
+     "8/5",
+     "7/4",
+     "11/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "200*x^4-2010*x^3+6059*x^2-5973*x+968=0",
+     "180*x^4-1503*x^3+4399*x^2-5468*x+2464=0",
      "x",
-     "13/5, 11/4, 1/5, 11/2"
+     "7/3, 8/5, 7/4, 11/3"
     ]
    ],
    "resnica": [
-    "8/5",
-    "11/2",
-    "11/4",
-    "1/5"
+    "4/3",
+    "11/3",
+    "7/4",
+    "8/5"
    ]
   },
   {
@@ -1847,24 +1841,24 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "5*x-2=0",
+   "naloga": "2*x+1=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2/5"
+     "-1/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x-2=0",
+     "2*x+1=0",
      "x",
-     "2/5"
+     "-1/2"
     ]
    ],
    "resnica": [
-    "2/5"
+    "-1/2"
    ]
   },
   {
@@ -1873,24 +1867,24 @@
    "opis": "polinomska enačba, napaka: vrednost",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "5*x-2=0",
+   "naloga": "2*x+1=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "7/5"
+     "1/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "5*x-2=0",
+     "2*x+1=0",
      "x",
-     "7/5"
+     "1/2"
     ]
    ],
    "resnica": [
-    "2/5"
+    "-1/2"
    ]
   },
   {
@@ -1898,55 +1892,53 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 2. stopnje",
    "pravilno": true,
-   "naloga": "4*x^2+8*x-45=0",
+   "naloga": "25*x^2+10*x-8=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5/2",
-     "-9/2"
+     "2/5",
+     "-4/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "4*x^2+8*x-45=0",
+     "25*x^2+10*x-8=0",
      "x",
-     "5/2, -9/2"
+     "2/5, -4/5"
     ]
    ],
    "resnica": [
-    "-9/2",
-    "5/2"
+    "-4/5",
+    "2/5"
    ]
   },
   {
    "id": "polinom-068",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: odvec",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "odvec",
-   "naloga": "4*x^2+8*x-45=0",
+   "napaka": "manjka",
+   "naloga": "25*x^2+10*x-8=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-9/2",
-     "4",
-     "5/2"
+     "2/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "4*x^2+8*x-45=0",
+     "25*x^2+10*x-8=0",
      "x",
-     "-9/2, 4, 5/2"
+     "2/5"
     ]
    ],
    "resnica": [
-    "-9/2",
-    "5/2"
+    "-4/5",
+    "2/5"
    ]
   },
   {
@@ -1954,58 +1946,57 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "10*x^3-59*x^2+36*x+45=0",
+   "naloga": "8*x^3-34*x^2+41*x-15=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-3/5",
-     "5",
-     "3/2"
+     "5/2",
+     "1",
+     "3/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^3-59*x^2+36*x+45=0",
+     "8*x^3-34*x^2+41*x-15=0",
      "x",
-     "-3/5, 5, 3/2"
+     "5/2, 1, 3/4"
     ]
    ],
    "resnica": [
-    "-3/5",
-    "3/2",
-    "5"
+    "5/2",
+    "3/4",
+    "1"
    ]
   },
   {
    "id": "polinom-070",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "10*x^3-59*x^2+36*x+45=0",
+   "napaka": "manjka",
+   "naloga": "8*x^3-34*x^2+41*x-15=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5",
-     "3/5",
-     "3/2"
+     "1",
+     "3/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "10*x^3-59*x^2+36*x+45=0",
+     "8*x^3-34*x^2+41*x-15=0",
      "x",
-     "5, 3/5, 3/2"
+     "1, 3/4"
     ]
    ],
    "resnica": [
-    "-3/5",
-    "3/2",
-    "5"
+    "5/2",
+    "3/4",
+    "1"
    ]
   },
   {
@@ -2013,62 +2004,61 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 4. stopnje",
    "pravilno": true,
-   "naloga": "45*x^4-81*x^3-47*x^2+113*x-30=0",
+   "naloga": "100*x^4-285*x^3-1091*x^2+69*x+55=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5/3",
-     "1",
-     "1/3",
-     "-6/5"
+     "-1/5",
+     "5",
+     "-11/5",
+     "1/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "45*x^4-81*x^3-47*x^2+113*x-30=0",
+     "100*x^4-285*x^3-1091*x^2+69*x+55=0",
      "x",
-     "5/3, 1, 1/3, -6/5"
+     "-1/5, 5, -11/5, 1/4"
     ]
    ],
    "resnica": [
-    "1/3",
-    "1",
-    "-6/5",
-    "5/3"
+    "5",
+    "1/4",
+    "-1/5",
+    "-11/5"
    ]
   },
   {
    "id": "polinom-072",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: manjka",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "45*x^4-81*x^3-47*x^2+113*x-30=0",
+   "napaka": "manjka",
+   "naloga": "100*x^4-285*x^3-1091*x^2+69*x+55=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "4/3",
-     "5/3",
-     "-6/5",
-     "1"
+     "1/4",
+     "-11/5",
+     "-1/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "45*x^4-81*x^3-47*x^2+113*x-30=0",
+     "100*x^4-285*x^3-1091*x^2+69*x+55=0",
      "x",
-     "4/3, 5/3, -6/5, 1"
+     "1/4, -11/5, -1/5"
     ]
    ],
    "resnica": [
-    "1/3",
-    "1",
-    "-6/5",
-    "5/3"
+    "5",
+    "1/4",
+    "-1/5",
+    "-11/5"
    ]
   },
   {
@@ -2076,50 +2066,51 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 1. stopnje",
    "pravilno": true,
-   "naloga": "3*x-1=0",
+   "naloga": "4*x+7=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1/3"
+     "-7/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x-1=0",
+     "4*x+7=0",
      "x",
-     "1/3"
+     "-7/4"
     ]
    ],
    "resnica": [
-    "1/3"
+    "-7/4"
    ]
   },
   {
    "id": "polinom-074",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "3*x-1=0",
+   "napaka": "odvec",
+   "naloga": "4*x+7=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "4/3"
+     "-1",
+     "-7/4"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x-1=0",
+     "4*x+7=0",
      "x",
-     "4/3"
+     "-1, -7/4"
     ]
    ],
    "resnica": [
-    "1/3"
+    "-7/4"
    ]
   },
   {
@@ -2127,26 +2118,26 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 2. stopnje",
    "pravilno": true,
-   "naloga": "25*x^3+105*x^2-441*x+343=0",
+   "naloga": "45*x^3+219*x^2-40*x-900=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "7/5",
-     "-7"
+     "9/5",
+     "-10/3"
     ]
    },
    "racun": [
     "solve",
     [
-     "25*x^3+105*x^2-441*x+343=0",
+     "45*x^3+219*x^2-40*x-900=0",
      "x",
-     "7/5, -7"
+     "9/5, -10/3"
     ]
    ],
    "resnica": [
-    "7/5",
-    "-7"
+    "-10/3",
+    "9/5"
    ]
   },
   {
@@ -2155,27 +2146,27 @@
    "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
    "napaka": "odvec",
-   "naloga": "25*x^3+105*x^2-441*x+343=0",
+   "naloga": "45*x^3+219*x^2-40*x-900=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-7",
-     "7/5",
-     "2"
+     "-10/3",
+     "9/5",
+     "3"
     ]
    },
    "racun": [
     "solve",
     [
-     "25*x^3+105*x^2-441*x+343=0",
+     "45*x^3+219*x^2-40*x-900=0",
      "x",
-     "-7, 7/5, 2"
+     "-10/3, 9/5, 3"
     ]
    ],
    "resnica": [
-    "7/5",
-    "-7"
+    "-10/3",
+    "9/5"
    ]
   },
   {
@@ -2183,58 +2174,59 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 3. stopnje",
    "pravilno": true,
-   "naloga": "3*x^3-4*x^2-7*x=0",
+   "naloga": "5*x^3+13*x^2-133*x+147=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-1",
-     "7/3",
-     "0"
+     "3",
+     "-7",
+     "7/5"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x^3-4*x^2-7*x=0",
+     "5*x^3+13*x^2-133*x+147=0",
      "x",
-     "-1, 7/3, 0"
+     "3, -7, 7/5"
     ]
    ],
    "resnica": [
-    "0",
-    "7/3",
-    "-1"
+    "7/5",
+    "-7",
+    "3"
    ]
   },
   {
    "id": "polinom-078",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: predznak",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "3*x^3-4*x^2-7*x=0",
+   "napaka": "odvec",
+   "naloga": "5*x^3+13*x^2-133*x+147=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-1",
-     "-7/3",
-     "0"
+     "4",
+     "-7",
+     "7/5",
+     "3"
     ]
    },
    "racun": [
     "solve",
     [
-     "3*x^3-4*x^2-7*x=0",
+     "5*x^3+13*x^2-133*x+147=0",
      "x",
-     "-1, -7/3, 0"
+     "4, -7, 7/5, 3"
     ]
    ],
    "resnica": [
-    "0",
-    "7/3",
-    "-1"
+    "7/5",
+    "-7",
+    "3"
    ]
   },
   {
@@ -2242,62 +2234,63 @@
    "skupina": "polinom",
    "opis": "polinomska enačba 6. stopnje",
    "pravilno": true,
-   "naloga": "225*x^6-720*x^5-328*x^4-68*x^3-685*x^2+652*x-132=0",
+   "naloga": "90*x^6-993*x^5+3253*x^4-2621*x^3-709*x^2-1628*x-3872=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-6/5",
+     "8/3",
+     "-4/5",
      "11/3",
-     "1/3",
-     "2/5"
+     "11/2"
     ]
    },
    "racun": [
     "solve",
     [
-     "225*x^6-720*x^5-328*x^4-68*x^3-685*x^2+652*x-132=0",
+     "90*x^6-993*x^5+3253*x^4-2621*x^3-709*x^2-1628*x-3872=0",
      "x",
-     "-6/5, 11/3, 1/3, 2/5"
+     "8/3, -4/5, 11/3, 11/2"
     ]
    ],
    "resnica": [
-    "11/3",
-    "1/3",
-    "2/5",
-    "-6/5"
+    "-4/5",
+    "8/3",
+    "11/2",
+    "11/3"
    ]
   },
   {
    "id": "polinom-080",
    "skupina": "polinom",
-   "opis": "polinomska enačba, napaka: vrednost",
+   "opis": "polinomska enačba, napaka: odvec",
    "pravilno": false,
-   "napaka": "vrednost",
-   "naloga": "225*x^6-720*x^5-328*x^4-68*x^3-685*x^2+652*x-132=0",
+   "napaka": "odvec",
+   "naloga": "90*x^6-993*x^5+3253*x^4-2621*x^3-709*x^2-1628*x-3872=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-6/5",
-     "14/3",
-     "1/3",
-     "2/5"
+     "11/2",
+     "11/3",
+     "8/3",
+     "-4/5",
+     "7"
     ]
    },
    "racun": [
     "solve",
     [
-     "225*x^6-720*x^5-328*x^4-68*x^3-685*x^2+652*x-132=0",
+     "90*x^6-993*x^5+3253*x^4-2621*x^3-709*x^2-1628*x-3872=0",
      "x",
-     "-6/5, 14/3, 1/3, 2/5"
+     "11/2, 11/3, 8/3, -4/5, 7"
     ]
    ],
    "resnica": [
-    "11/3",
-    "1/3",
-    "2/5",
-    "-6/5"
+    "-4/5",
+    "8/3",
+    "11/2",
+    "11/3"
    ]
   },
   {
@@ -2305,7 +2298,89 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2-2*x-4=0",
+   "naloga": "x^2+4*x-1=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-2+sqrt(5)",
+     "-2-sqrt(5)"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2+4*x-1=0",
+     "x",
+     "-2+sqrt(5), -2-sqrt(5)"
+    ]
+   ],
+   "resnica": [
+    "-2+sqrt(5)",
+    "-2-sqrt(5)"
+   ]
+  },
+  {
+   "id": "koren-nicle-002",
+   "skupina": "koren-nicle",
+   "opis": "iracionalni ničli, napaka: manjka",
+   "pravilno": false,
+   "napaka": "manjka",
+   "naloga": "x^2+4*x-1=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-2+sqrt(5)"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2+4*x-1=0",
+     "x",
+     "-2+sqrt(5)"
+    ]
+   ],
+   "resnica": [
+    "-2+sqrt(5)",
+    "-2-sqrt(5)"
+   ]
+  },
+  {
+   "id": "koren-nicle-003",
+   "skupina": "koren-nicle",
+   "opis": "kvadratna enačba z iracionalnima ničlama",
+   "pravilno": true,
+   "naloga": "x^2+2*x-4=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-1+sqrt(5)",
+     "-1-sqrt(5)"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2+2*x-4=0",
+     "x",
+     "-1+sqrt(5), -1-sqrt(5)"
+    ]
+   ],
+   "resnica": [
+    "-1+sqrt(5)",
+    "-1-sqrt(5)"
+   ]
+  },
+  {
+   "id": "koren-nicle-004",
+   "skupina": "koren-nicle",
+   "opis": "iracionalni ničli, napaka: predznak",
+   "pravilno": false,
+   "napaka": "predznak",
+   "naloga": "x^2+2*x-4=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
@@ -2317,96 +2392,14 @@
    "racun": [
     "solve",
     [
-     "x^2-2*x-4=0",
+     "x^2+2*x-4=0",
      "x",
      "1+sqrt(5), 1-sqrt(5)"
     ]
    ],
    "resnica": [
-    "1+sqrt(5)",
-    "1-sqrt(5)"
-   ]
-  },
-  {
-   "id": "koren-nicle-002",
-   "skupina": "koren-nicle",
-   "opis": "iracionalni ničli, napaka: manjka",
-   "pravilno": false,
-   "napaka": "manjka",
-   "naloga": "x^2-2*x-4=0",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "1+sqrt(5)"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "x^2-2*x-4=0",
-     "x",
-     "1+sqrt(5)"
-    ]
-   ],
-   "resnica": [
-    "1+sqrt(5)",
-    "1-sqrt(5)"
-   ]
-  },
-  {
-   "id": "koren-nicle-003",
-   "skupina": "koren-nicle",
-   "opis": "kvadratna enačba z iracionalnima ničlama",
-   "pravilno": true,
-   "naloga": "x^2+8*x+14=0",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "-4+sqrt(2)",
-     "-4-sqrt(2)"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "x^2+8*x+14=0",
-     "x",
-     "-4+sqrt(2), -4-sqrt(2)"
-    ]
-   ],
-   "resnica": [
-    "-4+sqrt(2)",
-    "-4-sqrt(2)"
-   ]
-  },
-  {
-   "id": "koren-nicle-004",
-   "skupina": "koren-nicle",
-   "opis": "iracionalni ničli, napaka: predznak",
-   "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "x^2+8*x+14=0",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "4+sqrt(2)",
-     "4-sqrt(2)"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "x^2+8*x+14=0",
-     "x",
-     "4+sqrt(2), 4-sqrt(2)"
-    ]
-   ],
-   "resnica": [
-    "-4+sqrt(2)",
-    "-4-sqrt(2)"
+    "-1+sqrt(5)",
+    "-1-sqrt(5)"
    ]
   },
   {
@@ -2414,26 +2407,26 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2-6=0",
+   "naloga": "x^2+6*x+3=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "sqrt(6)",
-     "-sqrt(6)"
+     "-3+sqrt(6)",
+     "-3-sqrt(6)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-6=0",
+     "x^2+6*x+3=0",
      "x",
-     "sqrt(6), -sqrt(6)"
+     "-3+sqrt(6), -3-sqrt(6)"
     ]
    ],
    "resnica": [
-    "sqrt(6)",
-    "-sqrt(6)"
+    "-3+sqrt(6)",
+    "-3-sqrt(6)"
    ]
   },
   {
@@ -2442,26 +2435,26 @@
    "opis": "iracionalni ničli, napaka: brez-korena",
    "pravilno": false,
    "napaka": "brez-korena",
-   "naloga": "x^2-6=0",
+   "naloga": "x^2+6*x+3=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "6",
-     "-6"
+     "3",
+     "-9"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-6=0",
+     "x^2+6*x+3=0",
      "x",
-     "6, -6"
+     "3, -9"
     ]
    ],
    "resnica": [
-    "sqrt(6)",
-    "-sqrt(6)"
+    "-3+sqrt(6)",
+    "-3-sqrt(6)"
    ]
   },
   {
@@ -2469,26 +2462,26 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2+4*x+1=0",
+   "naloga": "x^2+2*x-1=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-2+sqrt(3)",
-     "-2-sqrt(3)"
+     "-1+sqrt(2)",
+     "-1-sqrt(2)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2+4*x+1=0",
+     "x^2+2*x-1=0",
      "x",
-     "-2+sqrt(3), -2-sqrt(3)"
+     "-1+sqrt(2), -1-sqrt(2)"
     ]
    ],
    "resnica": [
-    "-2+sqrt(3)",
-    "-2-sqrt(3)"
+    "-1+sqrt(2)",
+    "-1-sqrt(2)"
    ]
   },
   {
@@ -2497,25 +2490,25 @@
    "opis": "iracionalni ničli, napaka: manjka",
    "pravilno": false,
    "napaka": "manjka",
-   "naloga": "x^2+4*x+1=0",
+   "naloga": "x^2+2*x-1=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-2+sqrt(3)"
+     "-1+sqrt(2)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2+4*x+1=0",
+     "x^2+2*x-1=0",
      "x",
-     "-2+sqrt(3)"
+     "-1+sqrt(2)"
     ]
    ],
    "resnica": [
-    "-2+sqrt(3)",
-    "-2-sqrt(3)"
+    "-1+sqrt(2)",
+    "-1-sqrt(2)"
    ]
   },
   {
@@ -2523,35 +2516,7 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2-8*x+10=0",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "4+sqrt(6)",
-     "4-sqrt(6)"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "x^2-8*x+10=0",
-     "x",
-     "4+sqrt(6), 4-sqrt(6)"
-    ]
-   ],
-   "resnica": [
-    "4+sqrt(6)",
-    "4-sqrt(6)"
-   ]
-  },
-  {
-   "id": "koren-nicle-010",
-   "skupina": "koren-nicle",
-   "opis": "iracionalni ničli, napaka: predznak",
-   "pravilno": false,
-   "napaka": "predznak",
-   "naloga": "x^2-8*x+10=0",
+   "naloga": "x^2+8*x+10=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
@@ -2563,14 +2528,42 @@
    "racun": [
     "solve",
     [
-     "x^2-8*x+10=0",
+     "x^2+8*x+10=0",
      "x",
      "-4+sqrt(6), -4-sqrt(6)"
     ]
    ],
    "resnica": [
-    "4+sqrt(6)",
-    "4-sqrt(6)"
+    "-4+sqrt(6)",
+    "-4-sqrt(6)"
+   ]
+  },
+  {
+   "id": "koren-nicle-010",
+   "skupina": "koren-nicle",
+   "opis": "iracionalni ničli, napaka: predznak",
+   "pravilno": false,
+   "napaka": "predznak",
+   "naloga": "x^2+8*x+10=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "4+sqrt(6)",
+     "4-sqrt(6)"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2+8*x+10=0",
+     "x",
+     "4+sqrt(6), 4-sqrt(6)"
+    ]
+   ],
+   "resnica": [
+    "-4+sqrt(6)",
+    "-4-sqrt(6)"
    ]
   },
   {
@@ -2578,26 +2571,26 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2-6*x+7=0",
+   "naloga": "x^2-3=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "3+sqrt(2)",
-     "3-sqrt(2)"
+     "sqrt(3)",
+     "-sqrt(3)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-6*x+7=0",
+     "x^2-3=0",
      "x",
-     "3+sqrt(2), 3-sqrt(2)"
+     "sqrt(3), -sqrt(3)"
     ]
    ],
    "resnica": [
-    "3+sqrt(2)",
-    "3-sqrt(2)"
+    "sqrt(3)",
+    "-sqrt(3)"
    ]
   },
   {
@@ -2606,26 +2599,26 @@
    "opis": "iracionalni ničli, napaka: brez-korena",
    "pravilno": false,
    "napaka": "brez-korena",
-   "naloga": "x^2-6*x+7=0",
+   "naloga": "x^2-3=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5",
-     "1"
+     "3",
+     "-3"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-6*x+7=0",
+     "x^2-3=0",
      "x",
-     "5, 1"
+     "3, -3"
     ]
    ],
    "resnica": [
-    "3+sqrt(2)",
-    "3-sqrt(2)"
+    "sqrt(3)",
+    "-sqrt(3)"
    ]
   },
   {
@@ -2633,26 +2626,26 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2-2*x-5=0",
+   "naloga": "x^2+4*x-6=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1+sqrt(6)",
-     "1-sqrt(6)"
+     "-2+sqrt(10)",
+     "-2-sqrt(10)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-2*x-5=0",
+     "x^2+4*x-6=0",
      "x",
-     "1+sqrt(6), 1-sqrt(6)"
+     "-2+sqrt(10), -2-sqrt(10)"
     ]
    ],
    "resnica": [
-    "1+sqrt(6)",
-    "1-sqrt(6)"
+    "-2+sqrt(10)",
+    "-2-sqrt(10)"
    ]
   },
   {
@@ -2661,25 +2654,25 @@
    "opis": "iracionalni ničli, napaka: manjka",
    "pravilno": false,
    "napaka": "manjka",
-   "naloga": "x^2-2*x-5=0",
+   "naloga": "x^2+4*x-6=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1+sqrt(6)"
+     "-2+sqrt(10)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-2*x-5=0",
+     "x^2+4*x-6=0",
      "x",
-     "1+sqrt(6)"
+     "-2+sqrt(10)"
     ]
    ],
    "resnica": [
-    "1+sqrt(6)",
-    "1-sqrt(6)"
+    "-2+sqrt(10)",
+    "-2-sqrt(10)"
    ]
   },
   {
@@ -2687,26 +2680,26 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2+6*x+7=0",
+   "naloga": "x^2-2*x-6=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-3+sqrt(2)",
-     "-3-sqrt(2)"
+     "1+sqrt(7)",
+     "1-sqrt(7)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2+6*x+7=0",
+     "x^2-2*x-6=0",
      "x",
-     "-3+sqrt(2), -3-sqrt(2)"
+     "1+sqrt(7), 1-sqrt(7)"
     ]
    ],
    "resnica": [
-    "-3+sqrt(2)",
-    "-3-sqrt(2)"
+    "1+sqrt(7)",
+    "1-sqrt(7)"
    ]
   },
   {
@@ -2715,26 +2708,26 @@
    "opis": "iracionalni ničli, napaka: predznak",
    "pravilno": false,
    "napaka": "predznak",
-   "naloga": "x^2+6*x+7=0",
+   "naloga": "x^2-2*x-6=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "3+sqrt(2)",
-     "3-sqrt(2)"
+     "-1+sqrt(7)",
+     "-1-sqrt(7)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2+6*x+7=0",
+     "x^2-2*x-6=0",
      "x",
-     "3+sqrt(2), 3-sqrt(2)"
+     "-1+sqrt(7), -1-sqrt(7)"
     ]
    ],
    "resnica": [
-    "-3+sqrt(2)",
-    "-3-sqrt(2)"
+    "1+sqrt(7)",
+    "1-sqrt(7)"
    ]
   },
   {
@@ -2742,26 +2735,26 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2-10=0",
+   "naloga": "x^2-2*x-2=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "sqrt(10)",
-     "-sqrt(10)"
+     "1+sqrt(3)",
+     "1-sqrt(3)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-10=0",
+     "x^2-2*x-2=0",
      "x",
-     "sqrt(10), -sqrt(10)"
+     "1+sqrt(3), 1-sqrt(3)"
     ]
    ],
    "resnica": [
-    "sqrt(10)",
-    "-sqrt(10)"
+    "1+sqrt(3)",
+    "1-sqrt(3)"
    ]
   },
   {
@@ -2770,26 +2763,26 @@
    "opis": "iracionalni ničli, napaka: brez-korena",
    "pravilno": false,
    "napaka": "brez-korena",
-   "naloga": "x^2-10=0",
+   "naloga": "x^2-2*x-2=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "10",
-     "-10"
+     "4",
+     "-2"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-10=0",
+     "x^2-2*x-2=0",
      "x",
-     "10, -10"
+     "4, -2"
     ]
    ],
    "resnica": [
-    "sqrt(10)",
-    "-sqrt(10)"
+    "1+sqrt(3)",
+    "1-sqrt(3)"
    ]
   },
   {
@@ -2797,26 +2790,26 @@
    "skupina": "koren-nicle",
    "opis": "kvadratna enačba z iracionalnima ničlama",
    "pravilno": true,
-   "naloga": "x^2-4*x-1=0",
+   "naloga": "x^2+8*x+11=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2+sqrt(5)",
-     "2-sqrt(5)"
+     "-4+sqrt(5)",
+     "-4-sqrt(5)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-4*x-1=0",
+     "x^2+8*x+11=0",
      "x",
-     "2+sqrt(5), 2-sqrt(5)"
+     "-4+sqrt(5), -4-sqrt(5)"
     ]
    ],
    "resnica": [
-    "2+sqrt(5)",
-    "2-sqrt(5)"
+    "-4+sqrt(5)",
+    "-4-sqrt(5)"
    ]
   },
   {
@@ -2825,25 +2818,25 @@
    "opis": "iracionalni ničli, napaka: manjka",
    "pravilno": false,
    "napaka": "manjka",
-   "naloga": "x^2-4*x-1=0",
+   "naloga": "x^2+8*x+11=0",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "2+sqrt(5)"
+     "-4+sqrt(5)"
     ]
    },
    "racun": [
     "solve",
     [
-     "x^2-4*x-1=0",
+     "x^2+8*x+11=0",
      "x",
-     "2+sqrt(5)"
+     "-4+sqrt(5)"
     ]
    ],
    "resnica": [
-    "2+sqrt(5)",
-    "2-sqrt(5)"
+    "-4+sqrt(5)",
+    "-4-sqrt(5)"
    ]
   },
   {
@@ -2877,6 +2870,34 @@
   {
    "id": "priblizek-002",
    "skupina": "priblizek",
+   "opis": "napaka: napačno zaokrožena ničla",
+   "pravilno": false,
+   "napaka": "zaokrozitev",
+   "naloga": "x^2-2*x-1=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "2.415",
+     "-0.414"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2-2*x-1=0",
+     "x",
+     "2.415, -0.414"
+    ]
+   ],
+   "resnica": [
+    "1+sqrt(2)",
+    "1-sqrt(2)"
+   ]
+  },
+  {
+   "id": "priblizek-003",
+   "skupina": "priblizek",
    "opis": "ničli, zaokroženi na 3 decimalke",
    "pravilno": true,
    "najvec": "numericno",
@@ -2903,7 +2924,35 @@
    ]
   },
   {
-   "id": "priblizek-003",
+   "id": "priblizek-004",
+   "skupina": "priblizek",
+   "opis": "napaka: napačno zaokrožena ničla",
+   "pravilno": false,
+   "napaka": "zaokrozitev",
+   "naloga": "x^2-3=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "1.733",
+     "-1.732"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2-3=0",
+     "x",
+     "1.733, -1.732"
+    ]
+   ],
+   "resnica": [
+    "sqrt(3)",
+    "-sqrt(3)"
+   ]
+  },
+  {
+   "id": "priblizek-005",
    "skupina": "priblizek",
    "opis": "ničli, zaokroženi na 3 decimalke",
    "pravilno": true,
@@ -2931,7 +2980,35 @@
    ]
   },
   {
-   "id": "priblizek-004",
+   "id": "priblizek-006",
+   "skupina": "priblizek",
+   "opis": "napaka: napačno zaokrožena ničla",
+   "pravilno": false,
+   "napaka": "zaokrozitev",
+   "naloga": "x^2+4*x-1=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "0.237",
+     "-4.236"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2+4*x-1=0",
+     "x",
+     "0.237, -4.236"
+    ]
+   ],
+   "resnica": [
+    "-2+sqrt(5)",
+    "-2-sqrt(5)"
+   ]
+  },
+  {
+   "id": "priblizek-007",
    "skupina": "priblizek",
    "opis": "ničli, zaokroženi na 3 decimalke",
    "pravilno": true,
@@ -2959,11 +3036,39 @@
    ]
   },
   {
+   "id": "priblizek-008",
+   "skupina": "priblizek",
+   "opis": "napaka: napačno zaokrožena ničla",
+   "pravilno": false,
+   "napaka": "zaokrozitev",
+   "naloga": "x^2-6*x+2=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "5.647",
+     "0.354"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2-6*x+2=0",
+     "x",
+     "5.647, 0.354"
+    ]
+   ],
+   "resnica": [
+    "3+sqrt(7)",
+    "3-sqrt(7)"
+   ]
+  },
+  {
    "id": "luknja-001",
    "skupina": "luknja",
    "opis": "racionalna enačba brez rešitve (luknja)",
    "pravilno": true,
-   "naloga": "(x^2-1)/(x-1)=2",
+   "naloga": "(x^2-36)/(x-6)=12",
    "sol": {
     "kind": "equation",
     "variable": "x",
@@ -2972,7 +3077,7 @@
    "racun": [
     "solve",
     [
-     "(x^2-1)/(x-1)=2",
+     "(x^2-36)/(x-6)=12",
      "x",
      "none"
     ]
@@ -2985,26 +3090,123 @@
    "opis": "napaka: izključena vrednost kot rešitev",
    "pravilno": false,
    "napaka": "obmocje",
-   "naloga": "(x^2-1)/(x-1)=2",
+   "naloga": "(x^2-36)/(x-6)=12",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1"
+     "6"
     ]
    },
    "racun": [
     "solve",
     [
-     "(x^2-1)/(x-1)=2",
+     "(x^2-36)/(x-6)=12",
      "x",
-     "1"
+     "6"
     ]
    ],
    "resnica": []
   },
   {
    "id": "luknja-003",
+   "skupina": "luknja",
+   "opis": "racionalna enačba z luknjo",
+   "pravilno": true,
+   "naloga": "(x^2-9)/(x+3)=5",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "8"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-9)/(x+3)=5",
+     "x",
+     "8"
+    ]
+   ],
+   "resnica": [
+    "8"
+   ]
+  },
+  {
+   "id": "luknja-004",
+   "skupina": "luknja",
+   "opis": "napaka: izključena vrednost kot rešitev",
+   "pravilno": false,
+   "napaka": "obmocje",
+   "naloga": "(x^2-9)/(x+3)=5",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "8",
+     "-3"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-9)/(x+3)=5",
+     "x",
+     "8, -3"
+    ]
+   ],
+   "resnica": [
+    "8"
+   ]
+  },
+  {
+   "id": "luknja-005",
+   "skupina": "luknja",
+   "opis": "racionalna enačba brez rešitve (luknja)",
+   "pravilno": true,
+   "naloga": "(x^2-25)/(x-5)=10",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": []
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-25)/(x-5)=10",
+     "x",
+     "none"
+    ]
+   ],
+   "resnica": []
+  },
+  {
+   "id": "luknja-006",
+   "skupina": "luknja",
+   "opis": "napaka: izključena vrednost kot rešitev",
+   "pravilno": false,
+   "napaka": "obmocje",
+   "naloga": "(x^2-25)/(x-5)=10",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "5"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-25)/(x-5)=10",
+     "x",
+     "5"
+    ]
+   ],
+   "resnica": []
+  },
+  {
+   "id": "luknja-007",
    "skupina": "luknja",
    "opis": "racionalna enačba z luknjo",
    "pravilno": true,
@@ -3029,7 +3231,7 @@
    ]
   },
   {
-   "id": "luknja-004",
+   "id": "luknja-008",
    "skupina": "luknja",
    "opis": "napaka: izključena vrednost kot rešitev",
    "pravilno": false,
@@ -3056,108 +3258,11 @@
    ]
   },
   {
-   "id": "luknja-005",
-   "skupina": "luknja",
-   "opis": "racionalna enačba brez rešitve (luknja)",
-   "pravilno": true,
-   "naloga": "(x^2-36)/(x-6)=12",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": []
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-36)/(x-6)=12",
-     "x",
-     "none"
-    ]
-   ],
-   "resnica": []
-  },
-  {
-   "id": "luknja-006",
-   "skupina": "luknja",
-   "opis": "napaka: izključena vrednost kot rešitev",
-   "pravilno": false,
-   "napaka": "obmocje",
-   "naloga": "(x^2-36)/(x-6)=12",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "6"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-36)/(x-6)=12",
-     "x",
-     "6"
-    ]
-   ],
-   "resnica": []
-  },
-  {
-   "id": "luknja-007",
-   "skupina": "luknja",
-   "opis": "racionalna enačba z luknjo",
-   "pravilno": true,
-   "naloga": "(x^2-1)/(x+1)=-5",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "-4"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-1)/(x+1)=-5",
-     "x",
-     "-4"
-    ]
-   ],
-   "resnica": [
-    "-4"
-   ]
-  },
-  {
-   "id": "luknja-008",
-   "skupina": "luknja",
-   "opis": "napaka: izključena vrednost kot rešitev",
-   "pravilno": false,
-   "napaka": "obmocje",
-   "naloga": "(x^2-1)/(x+1)=-5",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "-4",
-     "-1"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-1)/(x+1)=-5",
-     "x",
-     "-4, -1"
-    ]
-   ],
-   "resnica": [
-    "-4"
-   ]
-  },
-  {
    "id": "luknja-009",
    "skupina": "luknja",
    "opis": "racionalna enačba brez rešitve (luknja)",
    "pravilno": true,
-   "naloga": "(x^2-1)/(x-1)=2",
+   "naloga": "(x^2-1)/(x+1)=-2",
    "sol": {
     "kind": "equation",
     "variable": "x",
@@ -3166,7 +3271,7 @@
    "racun": [
     "solve",
     [
-     "(x^2-1)/(x-1)=2",
+     "(x^2-1)/(x+1)=-2",
      "x",
      "none"
     ]
@@ -3179,6 +3284,200 @@
    "opis": "napaka: izključena vrednost kot rešitev",
    "pravilno": false,
    "napaka": "obmocje",
+   "naloga": "(x^2-1)/(x+1)=-2",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-1"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-1)/(x+1)=-2",
+     "x",
+     "-1"
+    ]
+   ],
+   "resnica": []
+  },
+  {
+   "id": "luknja-011",
+   "skupina": "luknja",
+   "opis": "racionalna enačba z luknjo",
+   "pravilno": true,
+   "naloga": "(x^2-4)/(x+2)=3",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "5"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-4)/(x+2)=3",
+     "x",
+     "5"
+    ]
+   ],
+   "resnica": [
+    "5"
+   ]
+  },
+  {
+   "id": "luknja-012",
+   "skupina": "luknja",
+   "opis": "napaka: izključena vrednost kot rešitev",
+   "pravilno": false,
+   "napaka": "obmocje",
+   "naloga": "(x^2-4)/(x+2)=3",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "5",
+     "-2"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-4)/(x+2)=3",
+     "x",
+     "5, -2"
+    ]
+   ],
+   "resnica": [
+    "5"
+   ]
+  },
+  {
+   "id": "luknja-013",
+   "skupina": "luknja",
+   "opis": "racionalna enačba brez rešitve (luknja)",
+   "pravilno": true,
+   "naloga": "(x^2-36)/(x+6)=-12",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": []
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-36)/(x+6)=-12",
+     "x",
+     "none"
+    ]
+   ],
+   "resnica": []
+  },
+  {
+   "id": "luknja-014",
+   "skupina": "luknja",
+   "opis": "napaka: izključena vrednost kot rešitev",
+   "pravilno": false,
+   "napaka": "obmocje",
+   "naloga": "(x^2-36)/(x+6)=-12",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-6"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-36)/(x+6)=-12",
+     "x",
+     "-6"
+    ]
+   ],
+   "resnica": []
+  },
+  {
+   "id": "luknja-015",
+   "skupina": "luknja",
+   "opis": "racionalna enačba z luknjo",
+   "pravilno": true,
+   "naloga": "(x^2-16)/(x-4)=-1",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-5"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-16)/(x-4)=-1",
+     "x",
+     "-5"
+    ]
+   ],
+   "resnica": [
+    "-5"
+   ]
+  },
+  {
+   "id": "luknja-016",
+   "skupina": "luknja",
+   "opis": "napaka: izključena vrednost kot rešitev",
+   "pravilno": false,
+   "napaka": "obmocje",
+   "naloga": "(x^2-16)/(x-4)=-1",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "-5",
+     "4"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-16)/(x-4)=-1",
+     "x",
+     "-5, 4"
+    ]
+   ],
+   "resnica": [
+    "-5"
+   ]
+  },
+  {
+   "id": "luknja-017",
+   "skupina": "luknja",
+   "opis": "racionalna enačba brez rešitve (luknja)",
+   "pravilno": true,
+   "naloga": "(x^2-1)/(x-1)=2",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": []
+   },
+   "racun": [
+    "solve",
+    [
+     "(x^2-1)/(x-1)=2",
+     "x",
+     "none"
+    ]
+   ],
+   "resnica": []
+  },
+  {
+   "id": "luknja-018",
+   "skupina": "luknja",
+   "opis": "napaka: izključena vrednost kot rešitev",
+   "pravilno": false,
+   "napaka": "obmocje",
    "naloga": "(x^2-1)/(x-1)=2",
    "sol": {
     "kind": "equation",
@@ -3198,222 +3497,28 @@
    "resnica": []
   },
   {
-   "id": "luknja-011",
-   "skupina": "luknja",
-   "opis": "racionalna enačba z luknjo",
-   "pravilno": true,
-   "naloga": "(x^2-36)/(x+6)=2",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "8"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-36)/(x+6)=2",
-     "x",
-     "8"
-    ]
-   ],
-   "resnica": [
-    "8"
-   ]
-  },
-  {
-   "id": "luknja-012",
-   "skupina": "luknja",
-   "opis": "napaka: izključena vrednost kot rešitev",
-   "pravilno": false,
-   "napaka": "obmocje",
-   "naloga": "(x^2-36)/(x+6)=2",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "8",
-     "-6"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-36)/(x+6)=2",
-     "x",
-     "8, -6"
-    ]
-   ],
-   "resnica": [
-    "8"
-   ]
-  },
-  {
-   "id": "luknja-013",
-   "skupina": "luknja",
-   "opis": "racionalna enačba brez rešitve (luknja)",
-   "pravilno": true,
-   "naloga": "(x^2-16)/(x+4)=-8",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": []
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-16)/(x+4)=-8",
-     "x",
-     "none"
-    ]
-   ],
-   "resnica": []
-  },
-  {
-   "id": "luknja-014",
-   "skupina": "luknja",
-   "opis": "napaka: izključena vrednost kot rešitev",
-   "pravilno": false,
-   "napaka": "obmocje",
-   "naloga": "(x^2-16)/(x+4)=-8",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "-4"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-16)/(x+4)=-8",
-     "x",
-     "-4"
-    ]
-   ],
-   "resnica": []
-  },
-  {
-   "id": "luknja-015",
-   "skupina": "luknja",
-   "opis": "racionalna enačba z luknjo",
-   "pravilno": true,
-   "naloga": "(x^2-1)/(x-1)=-2",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "-3"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-1)/(x-1)=-2",
-     "x",
-     "-3"
-    ]
-   ],
-   "resnica": [
-    "-3"
-   ]
-  },
-  {
-   "id": "luknja-016",
-   "skupina": "luknja",
-   "opis": "napaka: izključena vrednost kot rešitev",
-   "pravilno": false,
-   "napaka": "obmocje",
-   "naloga": "(x^2-1)/(x-1)=-2",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "-3",
-     "1"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-1)/(x-1)=-2",
-     "x",
-     "-3, 1"
-    ]
-   ],
-   "resnica": [
-    "-3"
-   ]
-  },
-  {
-   "id": "luknja-017",
-   "skupina": "luknja",
-   "opis": "racionalna enačba brez rešitve (luknja)",
-   "pravilno": true,
-   "naloga": "(x^2-9)/(x+3)=-6",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": []
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-9)/(x+3)=-6",
-     "x",
-     "none"
-    ]
-   ],
-   "resnica": []
-  },
-  {
-   "id": "luknja-018",
-   "skupina": "luknja",
-   "opis": "napaka: izključena vrednost kot rešitev",
-   "pravilno": false,
-   "napaka": "obmocje",
-   "naloga": "(x^2-9)/(x+3)=-6",
-   "sol": {
-    "kind": "equation",
-    "variable": "x",
-    "solutions": [
-     "-3"
-    ]
-   },
-   "racun": [
-    "solve",
-    [
-     "(x^2-9)/(x+3)=-6",
-     "x",
-     "-3"
-    ]
-   ],
-   "resnica": []
-  },
-  {
    "id": "luknja-019",
    "skupina": "luknja",
    "opis": "racionalna enačba z luknjo",
    "pravilno": true,
-   "naloga": "(x^2-9)/(x+3)=1",
+   "naloga": "(x^2-9)/(x+3)=-1",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "4"
+     "2"
     ]
    },
    "racun": [
     "solve",
     [
-     "(x^2-9)/(x+3)=1",
+     "(x^2-9)/(x+3)=-1",
      "x",
-     "4"
+     "2"
     ]
    ],
    "resnica": [
-    "4"
+    "2"
    ]
   },
   {
@@ -3422,25 +3527,25 @@
    "opis": "napaka: izključena vrednost kot rešitev",
    "pravilno": false,
    "napaka": "obmocje",
-   "naloga": "(x^2-9)/(x+3)=1",
+   "naloga": "(x^2-9)/(x+3)=-1",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "4",
+     "2",
      "-3"
     ]
    },
    "racun": [
     "solve",
     [
-     "(x^2-9)/(x+3)=1",
+     "(x^2-9)/(x+3)=-1",
      "x",
-     "4, -3"
+     "2, -3"
     ]
    ],
    "resnica": [
-    "4"
+    "2"
    ]
   },
   {
@@ -3448,24 +3553,24 @@
    "skupina": "koren",
    "opis": "korenska enačba √(x − a) = b",
    "pravilno": true,
-   "naloga": "sqrt(x+1)=4",
+   "naloga": "sqrt(x+2)=2",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "15"
+     "2"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x+1)=4",
+     "sqrt(x+2)=2",
      "x",
-     "15"
+     "2"
     ]
    ],
    "resnica": [
-    "15"
+    "2"
    ]
   },
   {
@@ -3474,24 +3579,24 @@
    "opis": "korenska enačba, napaka: b namesto b²",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "sqrt(x+1)=4",
+   "naloga": "sqrt(x+2)=2",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "3"
+     "0"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x+1)=4",
+     "sqrt(x+2)=2",
      "x",
-     "3"
+     "0"
     ]
    ],
    "resnica": [
-    "15"
+    "2"
    ]
   },
   {
@@ -3499,24 +3604,24 @@
    "skupina": "koren",
    "opis": "korenska enačba √(x − a) = b",
    "pravilno": true,
-   "naloga": "sqrt(x+4)=3",
+   "naloga": "sqrt(x-1)=3",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "5"
+     "10"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x+4)=3",
+     "sqrt(x-1)=3",
      "x",
-     "5"
+     "10"
     ]
    ],
    "resnica": [
-    "5"
+    "10"
    ]
   },
   {
@@ -3525,24 +3630,24 @@
    "opis": "korenska enačba, napaka: b namesto b²",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "sqrt(x+4)=3",
+   "naloga": "sqrt(x-1)=3",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "-1"
+     "4"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x+4)=3",
+     "sqrt(x-1)=3",
      "x",
-     "-1"
+     "4"
     ]
    ],
    "resnica": [
-    "5"
+    "10"
    ]
   },
   {
@@ -3550,24 +3655,24 @@
    "skupina": "koren",
    "opis": "korenska enačba √(x − a) = b",
    "pravilno": true,
-   "naloga": "sqrt(x-4)=5",
+   "naloga": "sqrt(x-2)=2",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "29"
+     "6"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x-4)=5",
+     "sqrt(x-2)=2",
      "x",
-     "29"
+     "6"
     ]
    ],
    "resnica": [
-    "29"
+    "6"
    ]
   },
   {
@@ -3576,24 +3681,24 @@
    "opis": "korenska enačba, napaka: b namesto b²",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "sqrt(x-4)=5",
+   "naloga": "sqrt(x-2)=2",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "9"
+     "4"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x-4)=5",
+     "sqrt(x-2)=2",
      "x",
-     "9"
+     "4"
     ]
    ],
    "resnica": [
-    "29"
+    "6"
    ]
   },
   {
@@ -3601,24 +3706,24 @@
    "skupina": "koren",
    "opis": "korenska enačba √(x − a) = b",
    "pravilno": true,
-   "naloga": "sqrt(x+1)=2",
+   "naloga": "sqrt(x+1)=5",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "3"
+     "24"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x+1)=2",
+     "sqrt(x+1)=5",
      "x",
-     "3"
+     "24"
     ]
    ],
    "resnica": [
-    "3"
+    "24"
    ]
   },
   {
@@ -3627,24 +3732,24 @@
    "opis": "korenska enačba, napaka: b namesto b²",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "sqrt(x+1)=2",
+   "naloga": "sqrt(x+1)=5",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "1"
+     "4"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x+1)=2",
+     "sqrt(x+1)=5",
      "x",
-     "1"
+     "4"
     ]
    ],
    "resnica": [
-    "3"
+    "24"
    ]
   },
   {
@@ -3652,24 +3757,24 @@
    "skupina": "koren",
    "opis": "korenska enačba √(x − a) = b",
    "pravilno": true,
-   "naloga": "sqrt(x-6)=5",
+   "naloga": "sqrt(x-6)=3",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "31"
+     "15"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x-6)=5",
+     "sqrt(x-6)=3",
      "x",
-     "31"
+     "15"
     ]
    ],
    "resnica": [
-    "31"
+    "15"
    ]
   },
   {
@@ -3678,24 +3783,24 @@
    "opis": "korenska enačba, napaka: b namesto b²",
    "pravilno": false,
    "napaka": "vrednost",
-   "naloga": "sqrt(x-6)=5",
+   "naloga": "sqrt(x-6)=3",
    "sol": {
     "kind": "equation",
     "variable": "x",
     "solutions": [
-     "11"
+     "9"
     ]
    },
    "racun": [
     "solve",
     [
-     "sqrt(x-6)=5",
+     "sqrt(x-6)=3",
      "x",
-     "11"
+     "9"
     ]
    ],
    "resnica": [
-    "31"
+    "15"
    ]
   },
   {
@@ -3963,21 +4068,21 @@
    "skupina": "neenacba",
    "opis": "kvadratna neenačba",
    "pravilno": true,
-   "naloga": "x^2+2*x-3<0",
+   "naloga": "x^2+3*x-4<0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(-3, 1)"
+    "value": "(-4, 1)"
    },
    "racun": [
     "ineq",
     [
-     "x^2+2*x-3<0",
+     "x^2+3*x-4<0",
      "x",
-     "(-3, 1)"
+     "(-4, 1)"
     ]
    ],
-   "resnica": "(-3, 1)"
+   "resnica": "(-4, 1)"
   },
   {
    "id": "neenacba-002",
@@ -3985,42 +4090,42 @@
    "opis": "napaka: komplement množice",
    "pravilno": false,
    "napaka": "komplement",
-   "naloga": "x^2+2*x-3<0",
+   "naloga": "x^2+3*x-4<0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(-oo, -3) U (1, oo)"
+    "value": "(-oo, -4) U (1, oo)"
    },
    "racun": [
     "ineq",
     [
-     "x^2+2*x-3<0",
+     "x^2+3*x-4<0",
      "x",
-     "(-oo, -3) U (1, oo)"
+     "(-oo, -4) U (1, oo)"
     ]
    ],
-   "resnica": "(-3, 1)"
+   "resnica": "(-4, 1)"
   },
   {
    "id": "neenacba-003",
    "skupina": "neenacba",
    "opis": "kvadratna neenačba",
    "pravilno": true,
-   "naloga": "x^2+x<=0",
+   "naloga": "x^2-8*x+15<=0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "[-1, 0]"
+    "value": "[3, 5]"
    },
    "racun": [
     "ineq",
     [
-     "x^2+x<=0",
+     "x^2-8*x+15<=0",
      "x",
-     "[-1, 0]"
+     "[3, 5]"
     ]
    ],
-   "resnica": "[-1, 0]"
+   "resnica": "[3, 5]"
   },
   {
    "id": "neenacba-004",
@@ -4028,265 +4133,28 @@
    "opis": "napaka: zaprt in odprt interval zamenjana",
    "pravilno": false,
    "napaka": "krajisca",
-   "naloga": "x^2+x<=0",
+   "naloga": "x^2-8*x+15<=0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(-1, 0)"
+    "value": "(3, 5)"
    },
    "racun": [
     "ineq",
     [
-     "x^2+x<=0",
+     "x^2-8*x+15<=0",
      "x",
-     "(-1, 0)"
+     "(3, 5)"
     ]
    ],
-   "resnica": "[-1, 0]"
+   "resnica": "[3, 5]"
   },
   {
    "id": "neenacba-005",
    "skupina": "neenacba",
    "opis": "kvadratna neenačba",
    "pravilno": true,
-   "naloga": "x^2-4>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, -2) U (2, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2-4>0",
-     "x",
-     "(-oo, -2) U (2, oo)"
-    ]
-   ],
-   "resnica": "(-oo, -2) U (2, oo)"
-  },
-  {
-   "id": "neenacba-006",
-   "skupina": "neenacba",
-   "opis": "napaka: komplement množice",
-   "pravilno": false,
-   "napaka": "komplement",
-   "naloga": "x^2-4>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-2, 2)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2-4>0",
-     "x",
-     "(-2, 2)"
-    ]
-   ],
-   "resnica": "(-oo, -2) U (2, oo)"
-  },
-  {
-   "id": "neenacba-007",
-   "skupina": "neenacba",
-   "opis": "kvadratna neenačba",
-   "pravilno": true,
-   "naloga": "x^2-8*x+12>=0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, 2] U [6, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2-8*x+12>=0",
-     "x",
-     "(-oo, 2] U [6, oo)"
-    ]
-   ],
-   "resnica": "(-oo, 2] U [6, oo)"
-  },
-  {
-   "id": "neenacba-008",
-   "skupina": "neenacba",
-   "opis": "napaka: zaprt in odprt interval zamenjana",
-   "pravilno": false,
-   "napaka": "krajisca",
-   "naloga": "x^2-8*x+12>=0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, 2) U (6, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2-8*x+12>=0",
-     "x",
-     "(-oo, 2) U (6, oo)"
-    ]
-   ],
-   "resnica": "(-oo, 2] U [6, oo)"
-  },
-  {
-   "id": "neenacba-009",
-   "skupina": "neenacba",
-   "opis": "kvadratna neenačba",
-   "pravilno": true,
-   "naloga": "x^2+x-6<0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-3, 2)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2+x-6<0",
-     "x",
-     "(-3, 2)"
-    ]
-   ],
-   "resnica": "(-3, 2)"
-  },
-  {
-   "id": "neenacba-010",
-   "skupina": "neenacba",
-   "opis": "napaka: komplement množice",
-   "pravilno": false,
-   "napaka": "komplement",
-   "naloga": "x^2+x-6<0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, -3) U (2, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2+x-6<0",
-     "x",
-     "(-oo, -3) U (2, oo)"
-    ]
-   ],
-   "resnica": "(-3, 2)"
-  },
-  {
-   "id": "neenacba-011",
-   "skupina": "neenacba",
-   "opis": "kvadratna neenačba",
-   "pravilno": true,
-   "naloga": "x^2+2*x<=0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "[-2, 0]"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2+2*x<=0",
-     "x",
-     "[-2, 0]"
-    ]
-   ],
-   "resnica": "[-2, 0]"
-  },
-  {
-   "id": "neenacba-012",
-   "skupina": "neenacba",
-   "opis": "napaka: zaprt in odprt interval zamenjana",
-   "pravilno": false,
-   "napaka": "krajisca",
-   "naloga": "x^2+2*x<=0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-2, 0)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2+2*x<=0",
-     "x",
-     "(-2, 0)"
-    ]
-   ],
-   "resnica": "[-2, 0]"
-  },
-  {
-   "id": "neenacba-013",
-   "skupina": "neenacba",
-   "opis": "kvadratna neenačba",
-   "pravilno": true,
-   "naloga": "x^2+5*x+6>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, -3) U (-2, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2+5*x+6>0",
-     "x",
-     "(-oo, -3) U (-2, oo)"
-    ]
-   ],
-   "resnica": "(-oo, -3) U (-2, oo)"
-  },
-  {
-   "id": "neenacba-014",
-   "skupina": "neenacba",
-   "opis": "napaka: komplement množice",
-   "pravilno": false,
-   "napaka": "komplement",
-   "naloga": "x^2+5*x+6>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-3, -2)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2+5*x+6>0",
-     "x",
-     "(-3, -2)"
-    ]
-   ],
-   "resnica": "(-oo, -3) U (-2, oo)"
-  },
-  {
-   "id": "neenacba-015",
-   "skupina": "neenacba",
-   "opis": "kvadratna neenačba",
-   "pravilno": true,
-   "naloga": "x^2-3*x>=0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, 0] U [3, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2-3*x>=0",
-     "x",
-     "(-oo, 0] U [3, oo)"
-    ]
-   ],
-   "resnica": "(-oo, 0] U [3, oo)"
-  },
-  {
-   "id": "neenacba-016",
-   "skupina": "neenacba",
-   "opis": "napaka: zaprt in odprt interval zamenjana",
-   "pravilno": false,
-   "napaka": "krajisca",
-   "naloga": "x^2-3*x>=0",
+   "naloga": "x^2-3*x>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
@@ -4295,58 +4163,123 @@
    "racun": [
     "ineq",
     [
-     "x^2-3*x>=0",
+     "x^2-3*x>0",
      "x",
      "(-oo, 0) U (3, oo)"
     ]
    ],
-   "resnica": "(-oo, 0] U [3, oo)"
+   "resnica": "(-oo, 0) U (3, oo)"
   },
   {
-   "id": "neenacba-017",
-   "skupina": "neenacba",
-   "opis": "kvadratna neenačba",
-   "pravilno": true,
-   "naloga": "x^2-10*x+21<0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(3, 7)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "x^2-10*x+21<0",
-     "x",
-     "(3, 7)"
-    ]
-   ],
-   "resnica": "(3, 7)"
-  },
-  {
-   "id": "neenacba-018",
+   "id": "neenacba-006",
    "skupina": "neenacba",
    "opis": "napaka: komplement množice",
    "pravilno": false,
    "napaka": "komplement",
-   "naloga": "x^2-10*x+21<0",
+   "naloga": "x^2-3*x>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(-oo, 3) U (7, oo)"
+    "value": "(0, 3)"
    },
    "racun": [
     "ineq",
     [
-     "x^2-10*x+21<0",
+     "x^2-3*x>0",
      "x",
-     "(-oo, 3) U (7, oo)"
+     "(0, 3)"
     ]
    ],
-   "resnica": "(3, 7)"
+   "resnica": "(-oo, 0) U (3, oo)"
   },
   {
-   "id": "neenacba-019",
+   "id": "neenacba-007",
+   "skupina": "neenacba",
+   "opis": "kvadratna neenačba",
+   "pravilno": true,
+   "naloga": "x^2+9*x+18>=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -6] U [-3, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2+9*x+18>=0",
+     "x",
+     "(-oo, -6] U [-3, oo)"
+    ]
+   ],
+   "resnica": "(-oo, -6] U [-3, oo)"
+  },
+  {
+   "id": "neenacba-008",
+   "skupina": "neenacba",
+   "opis": "napaka: zaprt in odprt interval zamenjana",
+   "pravilno": false,
+   "napaka": "krajisca",
+   "naloga": "x^2+9*x+18>=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -6) U (-3, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2+9*x+18>=0",
+     "x",
+     "(-oo, -6) U (-3, oo)"
+    ]
+   ],
+   "resnica": "(-oo, -6] U [-3, oo)"
+  },
+  {
+   "id": "neenacba-009",
+   "skupina": "neenacba",
+   "opis": "kvadratna neenačba",
+   "pravilno": true,
+   "naloga": "x^2-6*x+5<0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(1, 5)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2-6*x+5<0",
+     "x",
+     "(1, 5)"
+    ]
+   ],
+   "resnica": "(1, 5)"
+  },
+  {
+   "id": "neenacba-010",
+   "skupina": "neenacba",
+   "opis": "napaka: komplement množice",
+   "pravilno": false,
+   "napaka": "komplement",
+   "naloga": "x^2-6*x+5<0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, 1) U (5, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2-6*x+5<0",
+     "x",
+     "(-oo, 1) U (5, oo)"
+    ]
+   ],
+   "resnica": "(1, 5)"
+  },
+  {
+   "id": "neenacba-011",
    "skupina": "neenacba",
    "opis": "kvadratna neenačba",
    "pravilno": true,
@@ -4367,7 +4300,7 @@
    "resnica": "[1, 3]"
   },
   {
-   "id": "neenacba-020",
+   "id": "neenacba-012",
    "skupina": "neenacba",
    "opis": "napaka: zaprt in odprt interval zamenjana",
    "pravilno": false,
@@ -4389,11 +4322,269 @@
    "resnica": "[1, 3]"
   },
   {
+   "id": "neenacba-013",
+   "skupina": "neenacba",
+   "opis": "kvadratna neenačba",
+   "pravilno": true,
+   "naloga": "x^2-10*x+24>0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, 4) U (6, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2-10*x+24>0",
+     "x",
+     "(-oo, 4) U (6, oo)"
+    ]
+   ],
+   "resnica": "(-oo, 4) U (6, oo)"
+  },
+  {
+   "id": "neenacba-014",
+   "skupina": "neenacba",
+   "opis": "napaka: komplement množice",
+   "pravilno": false,
+   "napaka": "komplement",
+   "naloga": "x^2-10*x+24>0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(4, 6)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2-10*x+24>0",
+     "x",
+     "(4, 6)"
+    ]
+   ],
+   "resnica": "(-oo, 4) U (6, oo)"
+  },
+  {
+   "id": "neenacba-015",
+   "skupina": "neenacba",
+   "opis": "kvadratna neenačba",
+   "pravilno": true,
+   "naloga": "x^2+4*x+3>=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -3] U [-1, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2+4*x+3>=0",
+     "x",
+     "(-oo, -3] U [-1, oo)"
+    ]
+   ],
+   "resnica": "(-oo, -3] U [-1, oo)"
+  },
+  {
+   "id": "neenacba-016",
+   "skupina": "neenacba",
+   "opis": "napaka: zaprt in odprt interval zamenjana",
+   "pravilno": false,
+   "napaka": "krajisca",
+   "naloga": "x^2+4*x+3>=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -3) U (-1, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2+4*x+3>=0",
+     "x",
+     "(-oo, -3) U (-1, oo)"
+    ]
+   ],
+   "resnica": "(-oo, -3] U [-1, oo)"
+  },
+  {
+   "id": "neenacba-017",
+   "skupina": "neenacba",
+   "opis": "kvadratna neenačba",
+   "pravilno": true,
+   "naloga": "x^2+7*x+10<0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-5, -2)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2+7*x+10<0",
+     "x",
+     "(-5, -2)"
+    ]
+   ],
+   "resnica": "(-5, -2)"
+  },
+  {
+   "id": "neenacba-018",
+   "skupina": "neenacba",
+   "opis": "napaka: komplement množice",
+   "pravilno": false,
+   "napaka": "komplement",
+   "naloga": "x^2+7*x+10<0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -5) U (-2, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2+7*x+10<0",
+     "x",
+     "(-oo, -5) U (-2, oo)"
+    ]
+   ],
+   "resnica": "(-5, -2)"
+  },
+  {
+   "id": "neenacba-019",
+   "skupina": "neenacba",
+   "opis": "kvadratna neenačba",
+   "pravilno": true,
+   "naloga": "x^2-3*x-4<=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "[-1, 4]"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2-3*x-4<=0",
+     "x",
+     "[-1, 4]"
+    ]
+   ],
+   "resnica": "[-1, 4]"
+  },
+  {
+   "id": "neenacba-020",
+   "skupina": "neenacba",
+   "opis": "napaka: zaprt in odprt interval zamenjana",
+   "pravilno": false,
+   "napaka": "krajisca",
+   "naloga": "x^2-3*x-4<=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-1, 4)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "x^2-3*x-4<=0",
+     "x",
+     "(-1, 4)"
+    ]
+   ],
+   "resnica": "[-1, 4]"
+  },
+  {
    "id": "neenacba-021",
    "skupina": "neenacba",
    "opis": "linearna neenačba z negativnim koeficientom",
    "pravilno": true,
-   "naloga": "-2*x-2>0",
+   "naloga": "-5*x+5>0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, 1)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "-5*x+5>0",
+     "x",
+     "(-oo, 1)"
+    ]
+   ],
+   "resnica": "(-oo, 1)"
+  },
+  {
+   "id": "neenacba-022",
+   "skupina": "neenacba",
+   "opis": "napaka: pri deljenju z negativnim številom znak ni obrnjen",
+   "pravilno": false,
+   "napaka": "obrat",
+   "naloga": "-5*x+5>0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(1, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "-5*x+5>0",
+     "x",
+     "(1, oo)"
+    ]
+   ],
+   "resnica": "(-oo, 1)"
+  },
+  {
+   "id": "neenacba-023",
+   "skupina": "neenacba",
+   "opis": "linearna neenačba z negativnim koeficientom",
+   "pravilno": true,
+   "naloga": "-3*x-8>0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -8/3)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "-3*x-8>0",
+     "x",
+     "(-oo, -8/3)"
+    ]
+   ],
+   "resnica": "(-oo, -8/3)"
+  },
+  {
+   "id": "neenacba-024",
+   "skupina": "neenacba",
+   "opis": "napaka: pri deljenju z negativnim številom znak ni obrnjen",
+   "pravilno": false,
+   "napaka": "obrat",
+   "naloga": "-3*x-8>0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-8/3, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "-3*x-8>0",
+     "x",
+     "(-8/3, oo)"
+    ]
+   ],
+   "resnica": "(-oo, -8/3)"
+  },
+  {
+   "id": "neenacba-025",
+   "skupina": "neenacba",
+   "opis": "linearna neenačba z negativnim koeficientom",
+   "pravilno": true,
+   "naloga": "-3*x-3>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
@@ -4402,7 +4593,7 @@
    "racun": [
     "ineq",
     [
-     "-2*x-2>0",
+     "-3*x-3>0",
      "x",
      "(-oo, -1)"
     ]
@@ -4410,12 +4601,12 @@
    "resnica": "(-oo, -1)"
   },
   {
-   "id": "neenacba-022",
+   "id": "neenacba-026",
    "skupina": "neenacba",
    "opis": "napaka: pri deljenju z negativnim številom znak ni obrnjen",
    "pravilno": false,
    "napaka": "obrat",
-   "naloga": "-2*x-2>0",
+   "naloga": "-3*x-3>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
@@ -4424,7 +4615,7 @@
    "racun": [
     "ineq",
     [
-     "-2*x-2>0",
+     "-3*x-3>0",
      "x",
      "(-1, oo)"
     ]
@@ -4432,111 +4623,25 @@
    "resnica": "(-oo, -1)"
   },
   {
-   "id": "neenacba-023",
-   "skupina": "neenacba",
-   "opis": "linearna neenačba z negativnim koeficientom",
-   "pravilno": true,
-   "naloga": "-3*x-2>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, -2/3)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "-3*x-2>0",
-     "x",
-     "(-oo, -2/3)"
-    ]
-   ],
-   "resnica": "(-oo, -2/3)"
-  },
-  {
-   "id": "neenacba-024",
-   "skupina": "neenacba",
-   "opis": "napaka: pri deljenju z negativnim številom znak ni obrnjen",
-   "pravilno": false,
-   "napaka": "obrat",
-   "naloga": "-3*x-2>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-2/3, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "-3*x-2>0",
-     "x",
-     "(-2/3, oo)"
-    ]
-   ],
-   "resnica": "(-oo, -2/3)"
-  },
-  {
-   "id": "neenacba-025",
-   "skupina": "neenacba",
-   "opis": "linearna neenačba z negativnim koeficientom",
-   "pravilno": true,
-   "naloga": "-4*x+8>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(-oo, 2)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "-4*x+8>0",
-     "x",
-     "(-oo, 2)"
-    ]
-   ],
-   "resnica": "(-oo, 2)"
-  },
-  {
-   "id": "neenacba-026",
-   "skupina": "neenacba",
-   "opis": "napaka: pri deljenju z negativnim številom znak ni obrnjen",
-   "pravilno": false,
-   "napaka": "obrat",
-   "naloga": "-4*x+8>0",
-   "sol": {
-    "kind": "inequality",
-    "variable": "x",
-    "value": "(2, oo)"
-   },
-   "racun": [
-    "ineq",
-    [
-     "-4*x+8>0",
-     "x",
-     "(2, oo)"
-    ]
-   ],
-   "resnica": "(-oo, 2)"
-  },
-  {
    "id": "neenacba-027",
    "skupina": "neenacba",
    "opis": "linearna neenačba z negativnim koeficientom",
    "pravilno": true,
-   "naloga": "-2*x+1>0",
+   "naloga": "-3*x+1>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(-oo, 1/2)"
+    "value": "(-oo, 1/3)"
    },
    "racun": [
     "ineq",
     [
-     "-2*x+1>0",
+     "-3*x+1>0",
      "x",
-     "(-oo, 1/2)"
+     "(-oo, 1/3)"
     ]
    ],
-   "resnica": "(-oo, 1/2)"
+   "resnica": "(-oo, 1/3)"
   },
   {
    "id": "neenacba-028",
@@ -4544,42 +4649,42 @@
    "opis": "napaka: pri deljenju z negativnim številom znak ni obrnjen",
    "pravilno": false,
    "napaka": "obrat",
-   "naloga": "-2*x+1>0",
+   "naloga": "-3*x+1>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(1/2, oo)"
+    "value": "(1/3, oo)"
    },
    "racun": [
     "ineq",
     [
-     "-2*x+1>0",
+     "-3*x+1>0",
      "x",
-     "(1/2, oo)"
+     "(1/3, oo)"
     ]
    ],
-   "resnica": "(-oo, 1/2)"
+   "resnica": "(-oo, 1/3)"
   },
   {
    "id": "neenacba-029",
    "skupina": "neenacba",
    "opis": "linearna neenačba z negativnim koeficientom",
    "pravilno": true,
-   "naloga": "-3*x+6>0",
+   "naloga": "-5*x-15>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(-oo, 2)"
+    "value": "(-oo, -3)"
    },
    "racun": [
     "ineq",
     [
-     "-3*x+6>0",
+     "-5*x-15>0",
      "x",
-     "(-oo, 2)"
+     "(-oo, -3)"
     ]
    ],
-   "resnica": "(-oo, 2)"
+   "resnica": "(-oo, -3)"
   },
   {
    "id": "neenacba-030",
@@ -4587,21 +4692,21 @@
    "opis": "napaka: pri deljenju z negativnim številom znak ni obrnjen",
    "pravilno": false,
    "napaka": "obrat",
-   "naloga": "-3*x+6>0",
+   "naloga": "-5*x-15>0",
    "sol": {
     "kind": "inequality",
     "variable": "x",
-    "value": "(2, oo)"
+    "value": "(-3, oo)"
    },
    "racun": [
     "ineq",
     [
-     "-3*x+6>0",
+     "-5*x-15>0",
      "x",
-     "(2, oo)"
+     "(-3, oo)"
     ]
    ],
-   "resnica": "(-oo, 2)"
+   "resnica": "(-oo, -3)"
   },
   {
    "id": "identiteta-001",
@@ -6222,20 +6327,65 @@
    ]
   },
   {
+   "id": "integral-021",
+   "skupina": "integral",
+   "opis": "pravilen določeni integral",
+   "pravilno": true,
+   "naloga": "∫_1^10 1/x dx",
+   "sol": {
+    "kind": "integral",
+    "variable": "x",
+    "value": "ln(10)"
+   },
+   "racun": [
+    "int",
+    [
+     "1/x",
+     "x",
+     "1",
+     "10",
+     "ln(10)"
+    ]
+   ]
+  },
+  {
+   "id": "integral-022",
+   "skupina": "integral",
+   "opis": "napačen določeni integral",
+   "pravilno": false,
+   "napaka": "vrednost",
+   "naloga": "∫_1^10 1/x dx",
+   "sol": {
+    "kind": "integral",
+    "variable": "x",
+    "value": "1"
+   },
+   "racun": [
+    "int",
+    [
+     "1/x",
+     "x",
+     "1",
+     "10",
+     "1"
+    ]
+   ]
+  },
+  {
    "id": "racun-001",
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "3/4+1/2",
+   "naloga": "5/4+8/4",
    "sol": {
     "kind": "arith",
-    "value": "5/4"
+    "value": "13/4"
    },
    "racun": [
     "value",
     [
-     "3/4+1/2",
-     "5/4"
+     "5/4+8/4",
+     "13/4"
     ]
    ]
   },
@@ -6245,16 +6395,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "3/4+1/2",
+   "naloga": "5/4+8/4",
    "sol": {
     "kind": "arith",
-    "value": "4/6"
+    "value": "13/8"
    },
    "racun": [
     "value",
     [
-     "3/4+1/2",
-     "4/6"
+     "5/4+8/4",
+     "13/8"
     ]
    ]
   },
@@ -6263,16 +6413,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "2/2+7/8",
+   "naloga": "4/2+1/3",
    "sol": {
     "kind": "arith",
-    "value": "15/8"
+    "value": "7/3"
    },
    "racun": [
     "value",
     [
-     "2/2+7/8",
-     "15/8"
+     "4/2+1/3",
+     "7/3"
     ]
    ]
   },
@@ -6282,16 +6432,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "2/2+7/8",
+   "naloga": "4/2+1/3",
    "sol": {
     "kind": "arith",
-    "value": "9/10"
+    "value": "5/5"
    },
    "racun": [
     "value",
     [
-     "2/2+7/8",
-     "9/10"
+     "4/2+1/3",
+     "5/5"
     ]
    ]
   },
@@ -6300,16 +6450,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "2/9+9/2",
+   "naloga": "1/7+8/2",
    "sol": {
     "kind": "arith",
-    "value": "85/18"
+    "value": "29/7"
    },
    "racun": [
     "value",
     [
-     "2/9+9/2",
-     "85/18"
+     "1/7+8/2",
+     "29/7"
     ]
    ]
   },
@@ -6319,16 +6469,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "2/9+9/2",
+   "naloga": "1/7+8/2",
    "sol": {
     "kind": "arith",
-    "value": "11/11"
+    "value": "9/9"
    },
    "racun": [
     "value",
     [
-     "2/9+9/2",
-     "11/11"
+     "1/7+8/2",
+     "9/9"
     ]
    ]
   },
@@ -6337,16 +6487,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "4/2+2/7",
+   "naloga": "9/9+1/5",
    "sol": {
     "kind": "arith",
-    "value": "16/7"
+    "value": "6/5"
    },
    "racun": [
     "value",
     [
-     "4/2+2/7",
-     "16/7"
+     "9/9+1/5",
+     "6/5"
     ]
    ]
   },
@@ -6356,16 +6506,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "4/2+2/7",
+   "naloga": "9/9+1/5",
    "sol": {
     "kind": "arith",
-    "value": "6/9"
+    "value": "10/14"
    },
    "racun": [
     "value",
     [
-     "4/2+2/7",
-     "6/9"
+     "9/9+1/5",
+     "10/14"
     ]
    ]
   },
@@ -6374,16 +6524,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "7/7+1/9",
+   "naloga": "1/3+7/7",
    "sol": {
     "kind": "arith",
-    "value": "10/9"
+    "value": "4/3"
    },
    "racun": [
     "value",
     [
-     "7/7+1/9",
-     "10/9"
+     "1/3+7/7",
+     "4/3"
     ]
    ]
   },
@@ -6393,16 +6543,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "7/7+1/9",
+   "naloga": "1/3+7/7",
    "sol": {
     "kind": "arith",
-    "value": "8/16"
+    "value": "8/10"
    },
    "racun": [
     "value",
     [
-     "7/7+1/9",
-     "8/16"
+     "1/3+7/7",
+     "8/10"
     ]
    ]
   },
@@ -6411,16 +6561,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "3/2+5/8",
+   "naloga": "7/2+9/4",
    "sol": {
     "kind": "arith",
-    "value": "17/8"
+    "value": "23/4"
    },
    "racun": [
     "value",
     [
-     "3/2+5/8",
-     "17/8"
+     "7/2+9/4",
+     "23/4"
     ]
    ]
   },
@@ -6430,16 +6580,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "3/2+5/8",
+   "naloga": "7/2+9/4",
    "sol": {
     "kind": "arith",
-    "value": "8/10"
+    "value": "16/6"
    },
    "racun": [
     "value",
     [
-     "3/2+5/8",
-     "8/10"
+     "7/2+9/4",
+     "16/6"
     ]
    ]
   },
@@ -6448,16 +6598,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "9/6+5/8",
+   "naloga": "1/5+7/9",
    "sol": {
     "kind": "arith",
-    "value": "17/8"
+    "value": "44/45"
    },
    "racun": [
     "value",
     [
-     "9/6+5/8",
-     "17/8"
+     "1/5+7/9",
+     "44/45"
     ]
    ]
   },
@@ -6467,16 +6617,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "9/6+5/8",
+   "naloga": "1/5+7/9",
    "sol": {
     "kind": "arith",
-    "value": "14/14"
+    "value": "8/14"
    },
    "racun": [
     "value",
     [
-     "9/6+5/8",
-     "14/14"
+     "1/5+7/9",
+     "8/14"
     ]
    ]
   },
@@ -6485,16 +6635,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "4/8+4/9",
+   "naloga": "6/5+8/5",
    "sol": {
     "kind": "arith",
-    "value": "17/18"
+    "value": "14/5"
    },
    "racun": [
     "value",
     [
-     "4/8+4/9",
-     "17/18"
+     "6/5+8/5",
+     "14/5"
     ]
    ]
   },
@@ -6504,16 +6654,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "4/8+4/9",
+   "naloga": "6/5+8/5",
    "sol": {
     "kind": "arith",
-    "value": "8/17"
+    "value": "14/10"
    },
    "racun": [
     "value",
     [
-     "4/8+4/9",
-     "8/17"
+     "6/5+8/5",
+     "14/10"
     ]
    ]
   },
@@ -6522,16 +6672,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "6/5+1/7",
+   "naloga": "7/5+9/6",
    "sol": {
     "kind": "arith",
-    "value": "47/35"
+    "value": "29/10"
    },
    "racun": [
     "value",
     [
-     "6/5+1/7",
-     "47/35"
+     "7/5+9/6",
+     "29/10"
     ]
    ]
   },
@@ -6541,16 +6691,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "6/5+1/7",
+   "naloga": "7/5+9/6",
    "sol": {
     "kind": "arith",
-    "value": "7/12"
+    "value": "16/11"
    },
    "racun": [
     "value",
     [
-     "6/5+1/7",
-     "7/12"
+     "7/5+9/6",
+     "16/11"
     ]
    ]
   },
@@ -6559,16 +6709,16 @@
    "skupina": "racun",
    "opis": "seštevanje ulomkov",
    "pravilno": true,
-   "naloga": "8/5+5/9",
+   "naloga": "4/2+6/9",
    "sol": {
     "kind": "arith",
-    "value": "97/45"
+    "value": "8/3"
    },
    "racun": [
     "value",
     [
-     "8/5+5/9",
-     "97/45"
+     "4/2+6/9",
+     "8/3"
     ]
    ]
   },
@@ -6578,16 +6728,16 @@
    "opis": "napaka: števca in imenovalca seštejemo",
    "pravilno": false,
    "napaka": "pravilo",
-   "naloga": "8/5+5/9",
+   "naloga": "4/2+6/9",
    "sol": {
     "kind": "arith",
-    "value": "13/14"
+    "value": "10/11"
    },
    "racun": [
     "value",
     [
-     "8/5+5/9",
-     "13/14"
+     "4/2+6/9",
+     "10/11"
     ]
    ]
   },
@@ -7205,6 +7355,7 @@
    "skupina": "enote",
    "opis": "fizikalni račun z enotami",
    "pravilno": true,
+   "najvec": "numericno",
    "naloga": "3.2*kg*9.81*m/s^2",
    "racun": [
     "units",
@@ -7321,6 +7472,7 @@
    "skupina": "enote",
    "opis": "fizikalni račun z enotami",
    "pravilno": true,
+   "najvec": "numericno",
    "naloga": "1500*g",
    "racun": [
     "units",
@@ -7342,6 +7494,21 @@
     [
      "1500*g",
      "15*kg"
+    ]
+   ]
+  },
+  {
+   "id": "enote-011",
+   "skupina": "enote",
+   "opis": "napaka: napačno zaokrožena vrednost",
+   "pravilno": false,
+   "napaka": "zaokrozitev",
+   "naloga": "3.2*kg*9.81*m/s^2",
+   "racun": [
+    "units",
+    [
+     "3.2*kg*9.81*m/s^2",
+     "31.5*N"
     ]
    ]
   },
@@ -7506,9 +7673,9 @@
   {
    "id": "periodicna-008",
    "skupina": "periodicna",
-   "opis": "napaka: manjka del rešitev",
+   "opis": "napaka: odvečne rešitve",
    "pravilno": false,
-   "napaka": "manjka",
+   "napaka": "tuja",
    "naloga": "sin(x)=1",
    "sol": {
     "kind": "equation",
@@ -7731,6 +7898,917 @@
    "resnica": [
     "1000000",
     "-1000000"
+   ]
+  },
+  {
+   "id": "skoraj-001",
+   "skupina": "skoraj",
+   "opis": "identiteta z velikimi koeficienti",
+   "pravilno": true,
+   "naloga": "(x+1000000)^2",
+   "sol": {
+    "kind": "expression",
+    "variable": "x",
+    "value": "x^2+2000000*x+1000000000000"
+   },
+   "racun": [
+    "equal",
+    [
+     "(x+1000000)^2",
+     "x^2+2000000*x+1000000000000"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-002",
+   "skupina": "skoraj",
+   "opis": "identiteta z velikimi koeficienti, koeficient za 1 premajhen",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "(x+1000000)^2",
+   "sol": {
+    "kind": "expression",
+    "variable": "x",
+    "value": "x^2+1999999*x+1000000000000"
+   },
+   "racun": [
+    "equal",
+    [
+     "(x+1000000)^2",
+     "x^2+1999999*x+1000000000000"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-003",
+   "skupina": "skoraj",
+   "opis": "kub z velikimi koeficienti",
+   "pravilno": true,
+   "naloga": "(x+1000)^3",
+   "sol": {
+    "kind": "expression",
+    "variable": "x",
+    "value": "x^3+3000*x^2+3000000*x+1000000000"
+   },
+   "racun": [
+    "equal",
+    [
+     "(x+1000)^3",
+     "x^3+3000*x^2+3000000*x+1000000000"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-004",
+   "skupina": "skoraj",
+   "opis": "kub z velikimi koeficienti, koeficient za 1 prevelik",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "(x+1000)^3",
+   "sol": {
+    "kind": "expression",
+    "variable": "x",
+    "value": "x^3+3000*x^2+3000001*x+1000000000"
+   },
+   "racun": [
+    "equal",
+    [
+     "(x+1000)^3",
+     "x^3+3000*x^2+3000001*x+1000000000"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-005",
+   "skupina": "skoraj",
+   "opis": "odvod z velikimi koeficienti",
+   "pravilno": true,
+   "naloga": "f(x) = (x+1000000)^3",
+   "sol": {
+    "kind": "derivative",
+    "variable": "x",
+    "value": "3*(x+1000000)^2"
+   },
+   "racun": [
+    "diff",
+    [
+     "(x+1000000)^3",
+     "x",
+     "3*(x+1000000)^2"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-006",
+   "skupina": "skoraj",
+   "opis": "odvod z velikimi koeficienti, koeficient za 1 premajhen",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "f(x) = (x+1000000)^3",
+   "sol": {
+    "kind": "derivative",
+    "variable": "x",
+    "value": "3*x^2+5999999*x+3000000000000"
+   },
+   "racun": [
+    "diff",
+    [
+     "(x+1000000)^3",
+     "x",
+     "3*x^2+5999999*x+3000000000000"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-007",
+   "skupina": "skoraj",
+   "opis": "ničla v znanstvenem zapisu (točna)",
+   "pravilno": true,
+   "naloga": "(x-2)*(x-2400000)=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "2",
+     "2.4*10^6"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x-2)*(x-2400000)=0",
+     "x",
+     "2, 2.4*10^6"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-008",
+   "skupina": "skoraj",
+   "opis": "ničla v znanstvenem zapisu, napačna mantisa",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "(x-2)*(x-2400000)=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "2",
+     "2*10^6"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "(x-2)*(x-2400000)=0",
+     "x",
+     "2, 2*10^6"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-009",
+   "skupina": "skoraj",
+   "opis": "ničla v zapisu e (točna)",
+   "pravilno": true,
+   "naloga": "x-1400000=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "1.4e6"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x-1400000=0",
+     "x",
+     "1.4e6"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-010",
+   "skupina": "skoraj",
+   "opis": "ničla v zapisu e, napačna mantisa",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "x-1400000=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "1e6"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x-1400000=0",
+     "x",
+     "1e6"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-011",
+   "skupina": "skoraj",
+   "opis": "ničli z »≈«, zaokroženi",
+   "pravilno": true,
+   "najvec": "numericno",
+   "naloga": "x^2=2000000",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "≈1414.2",
+     "≈-1414.2"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2=2000000",
+     "x",
+     "≈1414.2, ≈-1414.2"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-012",
+   "skupina": "skoraj",
+   "opis": "ničli z »≈«, napačno zaokroženi",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "x^2=2000000",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "≈1414.3",
+     "≈-1414.3"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2=2000000",
+     "x",
+     "≈1414.3, ≈-1414.3"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-013",
+   "skupina": "skoraj",
+   "opis": "ničli z »≈«, zaokroženi na cela števila",
+   "pravilno": true,
+   "najvec": "numericno",
+   "naloga": "x^2=2000000",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "≈1414",
+     "≈-1414"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2=2000000",
+     "x",
+     "≈1414, ≈-1414"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-014",
+   "skupina": "skoraj",
+   "opis": "ničla, zaokrožena na 2 decimalki",
+   "pravilno": true,
+   "najvec": "numericno",
+   "naloga": "7*x=100",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "≈14.29"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "7*x=100",
+     "x",
+     "≈14.29"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-015",
+   "skupina": "skoraj",
+   "opis": "ničla, odrezana namesto zaokrožena",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "7*x=100",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "≈14.28"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "7*x=100",
+     "x",
+     "≈14.28"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-016",
+   "skupina": "skoraj",
+   "opis": "račun, zaokrožen na 3 decimalke",
+   "pravilno": true,
+   "najvec": "numericno",
+   "naloga": "1/3+1/7",
+   "sol": {
+    "kind": "arith",
+    "value": "0.476"
+   },
+   "racun": [
+    "value",
+    [
+     "1/3+1/7",
+     "0.476"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-017",
+   "skupina": "skoraj",
+   "opis": "račun, napačno zaokrožen",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "1/3+1/7",
+   "sol": {
+    "kind": "arith",
+    "value": "0.477"
+   },
+   "racun": [
+    "value",
+    [
+     "1/3+1/7",
+     "0.477"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-018",
+   "skupina": "skoraj",
+   "opis": "koren, zaokrožen",
+   "pravilno": true,
+   "najvec": "numericno",
+   "naloga": "sqrt(2)",
+   "sol": {
+    "kind": "arith",
+    "value": "1.414"
+   },
+   "racun": [
+    "value",
+    [
+     "sqrt(2)",
+     "1.414"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-019",
+   "skupina": "skoraj",
+   "opis": "koren, napačno zaokrožen",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "sqrt(2)",
+   "sol": {
+    "kind": "arith",
+    "value": "1.415"
+   },
+   "racun": [
+    "value",
+    [
+     "sqrt(2)",
+     "1.415"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-020",
+   "skupina": "skoraj",
+   "opis": "obratna vrednost ulomka",
+   "pravilno": true,
+   "naloga": "1/(4/3)",
+   "sol": {
+    "kind": "arith",
+    "value": "3/4"
+   },
+   "racun": [
+    "value",
+    [
+     "1/(4/3)",
+     "3/4"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-021",
+   "skupina": "skoraj",
+   "opis": "obratna vrednost: ulomek ni obrnjen",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "1/(4/3)",
+   "sol": {
+    "kind": "arith",
+    "value": "4/3"
+   },
+   "racun": [
+    "value",
+    [
+     "1/(4/3)",
+     "4/3"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-022",
+   "skupina": "skoraj",
+   "opis": "ulomek kot zaokroženo decimalno število",
+   "pravilno": true,
+   "najvec": "numericno",
+   "naloga": "1/3",
+   "sol": {
+    "kind": "arith",
+    "value": "0.33"
+   },
+   "racun": [
+    "value",
+    [
+     "1/3",
+     "0.33"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-023",
+   "skupina": "skoraj",
+   "opis": "ulomek, napačno zaokrožen",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "1/3",
+   "sol": {
+    "kind": "arith",
+    "value": "0.34"
+   },
+   "racun": [
+    "value",
+    [
+     "1/3",
+     "0.34"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-024",
+   "skupina": "skoraj",
+   "opis": "zmnožek velikih števil",
+   "pravilno": true,
+   "naloga": "123456789*987654321",
+   "sol": {
+    "kind": "arith",
+    "value": "121932631112635269"
+   },
+   "racun": [
+    "value",
+    [
+     "123456789*987654321",
+     "121932631112635269"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-025",
+   "skupina": "skoraj",
+   "opis": "zmnožek velikih števil, napaka za 9",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "123456789*987654321",
+   "sol": {
+    "kind": "arith",
+    "value": "121932631112635260"
+   },
+   "racun": [
+    "value",
+    [
+     "123456789*987654321",
+     "121932631112635260"
+    ]
+   ]
+  },
+  {
+   "id": "skoraj-026",
+   "skupina": "skoraj",
+   "opis": "zmnožek velikih števil v znanstvenem zapisu, napaka za 9",
+   "pravilno": false,
+   "napaka": "skoraj",
+   "naloga": "123456789*987654321",
+   "sol": {
+    "kind": "arith",
+    "value": "1.2193263111263526*10^17"
+   },
+   "racun": [
+    "value",
+    [
+     "123456789*987654321",
+     "1.2193263111263526*10^17"
+    ]
+   ]
+  },
+  {
+   "id": "druge-001",
+   "skupina": "druge",
+   "opis": "logaritemska enačba",
+   "pravilno": true,
+   "naloga": "ln(x)+ln(x-3)=ln(4)",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "4"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "ln(x)+ln(x-3)=ln(4)",
+     "x",
+     "4"
+    ]
+   ]
+  },
+  {
+   "id": "druge-002",
+   "skupina": "druge",
+   "opis": "logaritemska enačba, tuja rešitev ni izločena",
+   "pravilno": false,
+   "napaka": "tuja",
+   "naloga": "ln(x)+ln(x-3)=ln(4)",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "4",
+     "-1"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "ln(x)+ln(x-3)=ln(4)",
+     "x",
+     "4, -1"
+    ]
+   ]
+  },
+  {
+   "id": "druge-003",
+   "skupina": "druge",
+   "opis": "enačba z absolutno vrednostjo",
+   "pravilno": true,
+   "naloga": "abs(x-2)=3",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "5",
+     "-1"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "abs(x-2)=3",
+     "x",
+     "5, -1"
+    ]
+   ]
+  },
+  {
+   "id": "druge-004",
+   "skupina": "druge",
+   "opis": "enačba z absolutno vrednostjo, manjka negativni primer",
+   "pravilno": false,
+   "napaka": "manjka",
+   "naloga": "abs(x-2)=3",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "5"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "abs(x-2)=3",
+     "x",
+     "5"
+    ]
+   ]
+  },
+  {
+   "id": "druge-005",
+   "skupina": "druge",
+   "opis": "neenačba z absolutno vrednostjo",
+   "pravilno": true,
+   "naloga": "abs(x-1)<2",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-1, 3)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "abs(x-1)<2",
+     "x",
+     "(-1, 3)"
+    ]
+   ]
+  },
+  {
+   "id": "druge-006",
+   "skupina": "druge",
+   "opis": "neenačba z absolutno vrednostjo, en primer pozabljen",
+   "pravilno": false,
+   "napaka": "manjka",
+   "naloga": "abs(x-1)<2",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, 3)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "abs(x-1)<2",
+     "x",
+     "(-oo, 3)"
+    ]
+   ]
+  },
+  {
+   "id": "druge-007",
+   "skupina": "druge",
+   "opis": "racionalna neenačba",
+   "pravilno": true,
+   "naloga": "(x-1)/(x+2)>=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -2) U [1, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "(x-1)/(x+2)>=0",
+     "x",
+     "(-oo, -2) U [1, oo)"
+    ]
+   ]
+  },
+  {
+   "id": "druge-008",
+   "skupina": "druge",
+   "opis": "racionalna neenačba, izključena točka vključena",
+   "pravilno": false,
+   "napaka": "obmocje",
+   "naloga": "(x-1)/(x+2)>=0",
+   "sol": {
+    "kind": "inequality",
+    "variable": "x",
+    "value": "(-oo, -2] U [1, oo)"
+   },
+   "racun": [
+    "ineq",
+    [
+     "(x-1)/(x+2)>=0",
+     "x",
+     "(-oo, -2] U [1, oo)"
+    ]
+   ]
+  },
+  {
+   "id": "druge-009",
+   "skupina": "druge",
+   "opis": "eksponentna enačba",
+   "pravilno": true,
+   "naloga": "2^(x+1)=8",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "2"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "2^(x+1)=8",
+     "x",
+     "2"
+    ]
+   ]
+  },
+  {
+   "id": "druge-010",
+   "skupina": "druge",
+   "opis": "eksponentna enačba, pozabljen +1 v eksponentu",
+   "pravilno": false,
+   "napaka": "pravilo",
+   "naloga": "2^(x+1)=8",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "3"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "2^(x+1)=8",
+     "x",
+     "3"
+    ]
+   ]
+  },
+  {
+   "id": "druge-011",
+   "skupina": "druge",
+   "opis": "kvadratna enačba",
+   "pravilno": true,
+   "naloga": "x^2-4=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "2",
+     "-2"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2-4=0",
+     "x",
+     "2, -2"
+    ]
+   ]
+  },
+  {
+   "id": "druge-012",
+   "skupina": "druge",
+   "opis": "»ni rešitve«, čeprav rešitvi obstajata",
+   "pravilno": false,
+   "napaka": "manjka",
+   "naloga": "x^2-4=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": []
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2-4=0",
+     "x",
+     "none"
+    ]
+   ]
+  },
+  {
+   "id": "druge-013",
+   "skupina": "druge",
+   "opis": "kvadratna enačba brez realnih rešitev",
+   "pravilno": true,
+   "naloga": "x^2+1=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": []
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2+1=0",
+     "x",
+     "none"
+    ]
+   ]
+  },
+  {
+   "id": "druge-014",
+   "skupina": "druge",
+   "opis": "kompleksni rešitvi navedeni kot realni",
+   "pravilno": false,
+   "napaka": "obmocje",
+   "naloga": "x^2+1=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "i",
+     "-i"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "x^2+1=0",
+     "x",
+     "i, -i"
+    ]
+   ]
+  },
+  {
+   "id": "druge-015",
+   "skupina": "druge",
+   "opis": "periodična rešitev s prekratko periodo (odvečne rešitve)",
+   "pravilno": false,
+   "napaka": "tuja",
+   "naloga": "sin(x)=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "k*pi/2"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "sin(x)=0",
+     "x",
+     "k*pi/2"
+    ]
+   ]
+  },
+  {
+   "id": "druge-016",
+   "skupina": "druge",
+   "opis": "periodična enačba",
+   "pravilno": true,
+   "naloga": "cos(x)=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "pi/2+k*pi"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "cos(x)=0",
+     "x",
+     "pi/2+k*pi"
+    ]
+   ]
+  },
+  {
+   "id": "druge-017",
+   "skupina": "druge",
+   "opis": "periodična rešitev s predolgo periodo",
+   "pravilno": false,
+   "napaka": "manjka",
+   "naloga": "cos(x)=0",
+   "sol": {
+    "kind": "equation",
+    "variable": "x",
+    "solutions": [
+     "pi/2+2*k*pi"
+    ]
+   },
+   "racun": [
+    "solve",
+    [
+     "cos(x)=0",
+     "x",
+     "pi/2+2*k*pi"
+    ]
    ]
   }
  ]
