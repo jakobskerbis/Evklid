@@ -1013,6 +1013,7 @@
   "sc.say.at": "{a}, an der Stelle {b}",
   "sc.say.sqrt": "Wurzel aus {a}",
   "sc.say.root": "{k}-te Wurzel aus {a}",
+  "sc.keyRefused": "Diese Taste passt hier nicht.",
   "sc.say.abs": "Betrag von {a}",
   "sc.say.absLong": "Betrag von {a}, Ende des Betrags",
   "sc.say.binom": "{a} über {b}",

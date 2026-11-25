@@ -1013,6 +1013,7 @@
   "sc.say.at": "{a}, at {b}",
   "sc.say.sqrt": "square root of {a}",
   "sc.say.root": "root of index {k} of {a}",
+  "sc.keyRefused": "That key can't go here.",
   "sc.say.abs": "absolute value of {a}",
   "sc.say.absLong": "absolute value of {a}, end absolute value",
   "sc.say.binom": "{a} choose {b}",

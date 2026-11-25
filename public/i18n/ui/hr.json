@@ -1019,6 +1019,7 @@
   "sc.say.at": "{a}, u {b}",
   "sc.say.sqrt": "korijen iz {a}",
   "sc.say.root": "{k}. korijen iz {a}",
+  "sc.keyRefused": "Ta tipka ovdje ne ide.",
   "sc.say.abs": "apsolutna vrijednost {a}",
   "sc.say.absLong": "apsolutna vrijednost {a}, kraj apsolutne vrijednosti",
   "sc.say.binom": "{a} povrh {b}",

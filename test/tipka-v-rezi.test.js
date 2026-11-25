@@ -126,6 +126,39 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
         assert.equal(s.v, want, `${where}: vnos`);
         assert.ok(!s.raw && !s.shown.includes(";") && s.caret, `${where}: zapis ${JSON.stringify(s)}`);
       }
+      // AUDIT-071: zavrnjena tipka da vidno in bralniku dostopno sporočilo; ukaz sredi izraza je zapis, ne besedilo
+      const press = async (k) => {
+        const key = page.locator(`.sc-key[data-ins="${k}"]`).first();
+        if (opt.hasTouch && engine !== "webkit") await key.tap();
+        else await key.click();
+      };
+      const setAt = (text, p) =>
+        page.evaluate(([text, p]) => {
+          const i = document.querySelector(".sc-input");
+          i.focus({ preventScroll: true });
+          i.value = text;
+          i.dispatchEvent(new Event("input"));
+          i.setSelectionRange(p, p);
+          i.dispatchEvent(new KeyboardEvent("keyup"));
+        }, [text, p]);
+      await setAt("sin(x)", 5);
+      await press(";");
+      const fb = await page.evaluate(() => ({
+        v: document.querySelector(".sc-input").value,
+        live: document.querySelector(".sc-live").textContent,
+        polite: document.querySelector(".sc-live").getAttribute("aria-live"),
+        shake: document.querySelector(".sc-entry").classList.contains("sc-zavrni"),
+      }));
+      assert.deepEqual(fb, { v: "sin(x)", live: "sc.keyRefused", polite: "polite", shake: true }, `${engine} ${vw}: zavrnjena tipka`);
+      await setAt("limita(x; x; 0)", 0);
+      await press("2");
+      await press("×");
+      const st = await page.evaluate(() => {
+        const prev = document.querySelector(".sc-preview");
+        return { v: document.querySelector(".sc-input").value, shown: prev.textContent, raw: !!prev.querySelector(".text, .katex-error"), caret: !!prev.querySelector(".sc-caret") };
+      });
+      assert.equal(st.v, "2×limita(x; x; 0)");
+      assert.ok(!st.raw && !st.shown.includes(";") && !/limita/.test(st.shown) && st.caret, `${engine} ${vw}: ukaz sredi izraza ${JSON.stringify(st)}`);
       assert.deepEqual(errors, [], `${engine} ${vw}: napake na strani`);
     });
   }

@@ -290,6 +290,40 @@ test("zaporedja tipk v predlogah: lastni oklepaji in ; (AUDIT-067)", () => {
   }
 });
 
+// AUDIT-071: ukaz CAS (limita, integriraj, det, inverz, taylor, reši …) ali odvod z redom sredi izraza se izriše kot
+// matematika (prej »2·l i m i t a(x; x; 0)«, »1d/dx((x³; 2))«), s kazalcem na vsakem mestu; števke, črke in operatorji
+// z zaslonske tipkovnice na vsakem mestu vsake predloge: čist zapis ali pa se tipka ne zgodi.
+const COMPOSED = [
+  "2·limita(x; x; 0)", "1d/dx(x³;2)", "√(integriraj(x²))", "2+det([[1; 2]; [3; 4]])", "x·inverz([[1; 2]; [3; 4]])",
+  "3·limita(; x; )", "1+integriraj(t²; t)", "2·taylor(sin(x); x; 0; 5)", "poenostavi(x+x)+1", "2reši(x²=4; x)",
+  "limita(x; x; 0)+limita(x; x; 1)", "(limita(1/x; x; ∞))²", "2·d/dx(x³;2)+1", "−det([[; ]; [; ]])", "1limita(",
+  "2+integriraj(", "x+razvij((x+1)²)", "taylor(sin(x); x; 0; 5)",
+];
+test("ukazi sredi izraza: zapis brez surovih ločil in imen, kazalec povsod (AUDIT-071)", () => {
+  for (const t of COMPOSED) {
+    const b = entryBase(t, env);
+    assert.ok(b?.ok, `${t}: ne izriše`);
+    assert.equal(texSemi(b.tex), 0, `${t}: surovo ločilo v ${b.tex}`);
+    assert.doesNotMatch(b.tex, /\b[a-zčšž] [a-zčšž] [a-zčšž]\b/, `${t}: ime ukaza kot črke v ${b.tex}`);
+    for (let p = 0; p <= t.length; p++) {
+      const c = caretTex(b, p);
+      assert.ok(katexOk(c), `${t} @${p}: KaTeX`);
+      assert.equal((c.match(/sc-caret/g) || []).length, 1, `${t} @${p}: en kazalec`);
+    }
+  }
+  for (const T of [...TEMPLATES, ...COMPOSED]) {
+    const b0 = entryBase(T, env);
+    if (!b0?.ok) continue;
+    for (const p of new Set([...stopsTex(b0).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1]))))
+      for (const k of ["1", "x", "+", "−", "×", "=", ",", "π"]) {
+        const r = pressKey(T, p, k, env, { check: katexOk });
+        if (!r) continue;
+        const b = entryBase(r.text, env);
+        assert.ok(b?.ok && katexOk(caretTex(b, r.pos)) && texSemi(b.tex) <= texSemi(b0.tex), `${T} @${p} ${k} → ${r.text}`);
+      }
+  }
+});
+
 test("vnos, zapis in izračun se ujemajo (decimalna vejica, predloge)", () => {
   for (const [t, v] of VALUES) {
     const r = analyze(t, env);

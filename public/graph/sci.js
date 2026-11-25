@@ -284,7 +284,7 @@ export function createScientific(root, opts) {
         }
       },
     });
-    if (!r) return showEntry();
+    if (!r) return refused();
     input.value = r.text;
     const pos = r.pos;
     input.setSelectionRange(pos, pos);
@@ -296,6 +296,19 @@ export function createScientific(root, opts) {
       live.className = "sc-live muted";
       live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
     }
+  }
+  // tipka, ki se tu ne more zgoditi (; v sin(x), x² na začetku meje …): kratek tresljaj vrstice in sporočilo v
+  // aria-live, da ni videti, kot da tipka ne dela (AUDIT-071)
+  function refused() {
+    showEntry();
+    const live = $(".sc-live");
+    live.className = "sc-live muted";
+    live.innerHTML = `<span class="sc-live-hint">${esc(t("sc.keyRefused"))}</span>`;
+    const box = $(".sc-entry");
+    box?.classList.remove("sc-zavrni");
+    void box?.offsetWidth; // ponovni začetek animacije ob ponovljeni tipki
+    box?.classList.add("sc-zavrni");
+    setTimeout(() => box?.classList.remove("sc-zavrni"), 400);
   }
   // ⌫ (zaslonska in strojna tipka) in Delete: ime funkcije, ukaz in predloga gredo kot celota (sci-vnos.js, AUDIT-004)
   function edit(fn) {

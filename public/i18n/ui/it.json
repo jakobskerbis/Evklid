@@ -1013,6 +1013,7 @@
   "sc.say.at": "{a}, in {b}",
   "sc.say.sqrt": "radice quadrata di {a}",
   "sc.say.root": "radice di indice {k} di {a}",
+  "sc.keyRefused": "Questo tasto qui non va.",
   "sc.say.abs": "valore assoluto di {a}",
   "sc.say.absLong": "valore assoluto di {a}, fine valore assoluto",
   "sc.say.binom": "{a} su {b}",

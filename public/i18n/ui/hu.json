@@ -1013,6 +1013,7 @@
   "sc.say.at": "{a}, ahol {b}",
   "sc.say.sqrt": "négyzetgyök {a}",
   "sc.say.root": "{k}. gyök {a}",
+  "sc.keyRefused": "Ez a gomb itt nem használható.",
   "sc.say.abs": "{a} abszolút értéke",
   "sc.say.absLong": "abszolút érték: {a}, abszolút érték vége",
   "sc.say.binom": "{a} alatt a {b}",

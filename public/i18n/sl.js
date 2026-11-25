@@ -1308,6 +1308,7 @@ export default {
   "sc.say.at": "{a}, pri {b}",
   "sc.say.sqrt": "koren iz {a}",
   "sc.say.root": "koren stopnje {k} iz {a}",
+  "sc.keyRefused": "Ta tipka tukaj ne gre.",
   "sc.say.abs": "absolutna vrednost {a}",
   "sc.say.absLong": "absolutna vrednost {a}, konec absolutne vrednosti",
   "sc.say.binom": "{a} nad {b}",

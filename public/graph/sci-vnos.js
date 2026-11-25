@@ -37,6 +37,11 @@ export function analyzeLive(text, env = {}) {
   // limita(f; x; a), taylor(f; x; a; n), det([[a; b]; [c; d]]): podpičje loči argumente oziroma elemente
   const cmd = parseCommand(text);
   if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env, live: true });
+  // ukaz sredi izraza (2·limita(…)): CAS ga ne izračuna, zapis pa mora biti matematika, ne »l i m i t a(x; x; 0)« (AUDIT-071)
+  if (!cmd && embeddedCmd(text)) {
+    const tex = embeddedTex(String(text), env);
+    if (tex) return { kind: "solve", tex };
+  }
   if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
     const r = withChem(text, evaluate, env);
     // ∫(1/√x; 0; 1): v predogledu isto kot ob Izračunaj (»= 2«, ne »≈ 2«)
@@ -48,7 +53,72 @@ export function analyzeLive(text, env = {}) {
 }
 
 /** TeX besedila po poti predogleda; null, če ga ni mogoče razčleniti. */
+// ukaz CAS (limita, integriraj, det …) ali odvod z redom sredi izraza: zapis brez ukaza bi bil surov
+// (»2·limita(x; x; 0)« → l i m i t a(x; x; 0), »1d/dx(x³;2)« → ((x³; 2))). AUDIT-071
+const EMBED = new RegExp(`(?:d\\/dx|${COMMAND_NAMES.map((n) => n.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")).join("|")})\\s*\\(`, "giu");
+function embeddedTex(text, env) {
+  const parts = [];
+  let out = "";
+  let i = 0;
+  const base = ["86420", "97531", "75319", "64208"].find((h) => !text.includes(h));
+  if (!base) return null;
+  for (const m of text.matchAll(EMBED)) {
+    if (m.index < i) continue;
+    const o = m.index + m[0].length - 1;
+    const c = closeAt(text, o);
+    const end = c < 0 ? text.length : c + 1;
+    // cel vnos je ukaz: to zna liveTex sam
+    if (m.index === 0 && end === text.length) return null;
+    const seg = text.slice(m.index, end);
+    const tex = liveTex(seg, env);
+    if (!tex) return null;
+    out += text.slice(i, m.index) + `(${base}${parts.length})`;
+    parts.push(tex);
+    i = end;
+  }
+  if (!parts.length) return null;
+  out += text.slice(i);
+  let tex = null;
+  try {
+    tex = withChem(out, previewTex, env) || null;
+  } catch {}
+  if (!tex) return null;
+  for (let k = parts.length - 1; k >= 0; k--) {
+    if (!tex.includes(`${base}${k}`)) return null;
+    // za ukazom eksponent ((limita(…))²): oklepaj ostane, da je jasno, kaj je na kvadrat
+    const at = tex.indexOf(`${base}${k}`);
+    const pow = tex[at + base.length + String(k).length] === "^";
+    tex = tex.replace(`${base}${k}`, pow ? `\\left(${parts[k]}\\right)` : `{${parts[k]}}`);
+  }
+  return tex;
+}
+
 export function liveTex(text, env = {}) {
+  const tex = liveTexAll(text, env);
+  // ukaz, ki ga CAS izriše kot ime z argumenti (taylor(sin(x); x; 0; 5)): argumente loči vejica, ne surovo »;«
+  return typeof tex === "string" && /^\\operatorname\{[^}]+\}\\left\(/.test(tex) ? tex.replace(/;\\ /g, ",\\ ") : tex;
+}
+
+function liveTexAll(text, env = {}) {
+  if (embeddedCmd(text)) {
+    const t = embeddedTex(String(text ?? ""), env);
+    if (t) return t;
+  }
+  return liveTexPlain(text, env);
+}
+// ukaz CAS sredi izraza (√(integriraj(x²)) bi bil √(int e g r …)); odvod le z redom (d/dx(x³;2)+1), brez reda ga
+// zapis že zna
+function embeddedCmd(text) {
+  for (const m of String(text ?? "").matchAll(EMBED)) {
+    if (!/^d\/dx/i.test(m[0])) return true;
+    const o = m.index + m[0].length - 1;
+    const c = closeAt(String(text), o);
+    if (/;/.test(String(text).slice(o, c < 0 ? undefined : c))) return true;
+  }
+  return false;
+}
+
+function liveTexPlain(text, env = {}) {
   let r = null;
   try {
     r = analyzeLive(text, env);
@@ -361,11 +431,6 @@ function visualOrder(s, A) {
     }
     return g;
   };
-  const cm = /^\s*([A-Za-zčšž]+)\s*\(/.exec(s);
-  let cmd = null;
-  try {
-    cmd = cm && parseCommand(s);
-  } catch {}
   const out = [];
   let moved = false;
   const walk = (lo, hi) => {
@@ -411,11 +476,20 @@ function visualOrder(s, A) {
           continue;
         }
       }
-      if (i === cm?.index + cm?.[0].search(/\S/) && cmd && (cmd.op === "limit" || cmd.op === "integrate")) {
-        const o = cm.index + cm[0].length - 1;
+      // limita in integriraj: tudi sredi izraza (2·limita(…), AUDIT-071), ne le kot cel vnos
+      const lm = /^(?:limita|limit|integriraj|integrate)\s*\(/i.exec(s.slice(i, hi));
+      let cmd = null;
+      if (lm && !/[A-Za-zčšž]/.test(s[i - 1] || "")) {
+        const cc = closeOf(i + lm[0].length - 1);
+        try {
+          cmd = parseCommand(s.slice(i, cc > 0 ? cc + 1 : hi));
+        } catch {}
+      }
+      if (cmd && (cmd.op === "limit" || cmd.op === "integrate")) {
+        const o = i + lm[0].length - 1;
         const c = closeOf(o);
         const g = c > 0 && c < hi ? slots(o, c) : null;
-        const ne = i + cm[1].length;
+        const ne = i + lm[0].replace(/\s*\($/, "").length;
         // v imenu ukaza ali tik pred oklepajem = začetek prve reže (ime se ne razbije)
         const inName = () => { for (let q = i + 1; q <= o; q++) alias.set(q, o + 1); };
         if (g && cmd.op === "limit" && g.length === 3) {
@@ -1258,7 +1332,8 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
     if (!semiAllowed(t, s)) return next.outer >= 0 ? { text: t, pos: next.outer } : null;
   }
   const r = insertKey(t, s, ins);
-  if (!TEMPLATE_KEY(ins)) return r;
+  // števka, črka ali operator: le varovalo izrisa (»0|,5« + x → 0x,5 ni zapis; AUDIT-071), reže se ne preverjajo
+  if (!TEMPLATE_KEY(ins)) return keyGuard(t, r, env, render, check);
   const g = keyGuard(t, r, env, render, check);
   if (g && ins !== ";" && (groupsAt(t, s) !== groupsAt(r.text, s) || topSemis(t) !== topSemis(r.text))) return null;
   return g;
