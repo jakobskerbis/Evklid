@@ -325,3 +325,39 @@ test("samodejne ponovitve: strežnik sam poskusi znova (do SOLVE_ATTEMPTS), uče
   assert.equal(r.usage.length, 2);
   assert.equal(afford, 2);
 });
+
+test("ponovni pregled: tisočice s presledki, poli v iracionalnih krajiščih, zaokrožena krajišča, nepolinomski približki", () => {
+  // skupine tisočic razčlenjevalnik združi v eno število nad 2⁵³: lokalno ne odločamo
+  assert.equal(solve("2x = 12 345 678 901 234 567").ok, false);
+  assert.equal(solve("x + 1 = 9 007 199 254 740 993").ok, false);
+  assert.equal(verifyAi("x - 1 = 9 007 199 254 740 993", { kind: "equation", variable: "x", solutions: ["9 007 199 254 740 994"] }).status, "unverified");
+  assert.match(solve("x^2 = 30001800027").answer.tex, /100003\\sqrt\{3\}/);
+  const iq = (t, value) => verifyAi(t, { kind: "inequality", variable: "x", value }).status;
+  const cases = [
+    // pol v iracionalnem krajišču: v zaokroženi točki je imenovalec le skoraj 0 (prej lažno »napačno«)
+    ["1/(x^2 - 2) > 0", "(-oo, -sqrt(2)) U (sqrt(2), oo)", "numeric"],
+    ["(x+1)/(x^2 - 5) < 0", "(-oo, -sqrt(5)) U (-1, sqrt(5))", "numeric"],
+    ["1/(49x-1) < 0", "(-oo, 1/49)", "numeric"],
+    ["(x-300)^3*(x^2-2) >= 0", "[-sqrt(2), sqrt(2)] U [300, oo)", "verified"],
+    // zaokroženo krajišče: oklepaj in izolirana točka se preverita v ničli
+    ["(x^2-2)^2 < 0", "{1.414}", "wrong"],
+    ["x^2 - 2 < 0", "[-1.414, 1.414]", "wrong"],
+    ["x^2 - 2 < 0", "(-1.414, 1.414)", "numeric"],
+    ["x^3 - 2 >= 0", "(1.259921, oo)", "wrong"],
+    ["x^3 - 2 >= 0", "[1.259921, oo)", "numeric"],
+    // iracionalno krajišče, ki je ničla višje stopnje: manjkajoča izolirana točka 5
+    ["(x^2-3)*(x-5)^2 <= 0", "[-sqrt(3), sqrt(3)]", "wrong"],
+    ["(x^2-3)*(x-5)^2 <= 0", "[-sqrt(3), sqrt(3)] U {5}", "verified"],
+  ];
+  for (const [t, value, st] of cases) assert.equal(iq(t, value), st, `${t} ${value}`);
+  // visoka stopnja: brez sekund čakanja
+  const t0 = Date.now();
+  iq(Array.from({ length: 16 }, (_, i) => `(x-${i})`).join("*") + " > 0", "(15, oo)");
+  iq(Array.from({ length: 8 }, (_, i) => `(x^2-${i + 2})`).join("*") + " > 0", "(3, oo)");
+  assert.ok(Date.now() - t0 < 1500, `${Date.now() - t0} ms`);
+  // nepolinomska enačba z zaokroženo rešitvijo: približek, ne »napačno«
+  const eq = (t, s) => verifyAi(t, { kind: "equation", variable: "x", solutions: s }).status;
+  assert.equal(eq("2^x = 3", ["1.585"]), "numeric");
+  assert.equal(eq("cos(x) = x", ["0.739"]), "numeric");
+  assert.equal(eq("2^x = 3", ["2"]), "wrong");
+});

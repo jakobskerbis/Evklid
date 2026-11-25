@@ -226,7 +226,7 @@ function compileValue(e) {
  */
 export function verifyAi(problemText, ai) {
   // prevelika števila: prebrana vrednost ni vrednost iz naloge, odloči SymPy (status »unverified«)
-  if (bigLiteral(problemText) || bigLiteral(JSON.stringify([ai?.solutions, ai?.value]))) return { verified: false, reason: "big", status: "unverified" };
+  if (bigLiteral(problemText) || [...(ai?.solutions || []), ai?.value].some((x) => bigLiteral(x))) return { verified: false, reason: "big", status: "unverified" };
   const r = check(problemText, ai);
   const ev = r.evidence || (r.verified ? { holds: true, how: "numeric", complete: r.partial ? "unknown" : "numeric" } : { holds: r.reason === "wrong" || r.reason === "missing" ? false : null });
   const status = statusOf(ev);
@@ -293,9 +293,18 @@ function check(problemText, ai) {
         return r.length ? { verified: false, reason: "missing", missing: r } : { verified: true, reason: null, missing: r, ...(ast.terms.length > 2 ? { partial: true } : {}) };
       }
       if (!sols.length) return { verified: false, reason: "parse" };
-      for (const s of sols) if (satisfies(problemText, { [v]: s }) !== true) return { verified: false, reason: "wrong" };
+      // zaokroženo decimalno število (2^x = 3 → 1.585): drži, če je ničla L − D v oknu pol zadnjega mesta
+      const tols = (ai.solutions || []).flatMap((s) => {
+        const raw = String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "");
+        return values(raw).map(() => decimalTol(raw));
+      });
+      const tolOf = (i) => (tols.length === sols.length ? tols[i] : 0);
+      for (let i = 0; i < sols.length; i++) {
+        if (satisfies(problemText, { [v]: sols[i] }) === true) continue;
+        if (!(tolOf(i) > 1e-12 && rootNear(ast, v, sols[i], tolOf(i)))) return { verified: false, reason: "wrong" };
+      }
       if (!periodic) {
-        const missing = scanRoots(problemText, v).filter((r) => !sols.some((s) => Math.abs(s - r) < 1e-5 * Math.max(1, Math.abs(r))));
+        const missing = scanRoots(problemText, v).filter((r) => !sols.some((s, i) => Math.abs(s - r) < Math.max(1e-5 * Math.max(1, Math.abs(r)), tolOf(i) * 1.0001)));
         if (missing.length) return { verified: false, reason: "missing", missing };
       }
       // Pri periodičnih rešitvah (k) popolnosti numerično ne preverimo: manjkajoča družina ali »2+0·k«
@@ -352,6 +361,24 @@ function check(problemText, ai) {
   return { verified: false, reason: "kind" };
 }
 
+// Ali ima L − D ničlo na [x − tol, x + tol] (sprememba predznaka ali vrednost ≈ 0 v kateri od točk mreže)
+function rootNear(ast, v, x, tol) {
+  if (ast.k !== "cmp" || ast.terms.length !== 2) return false;
+  const L = compile(ast.terms[0]);
+  const R = compile(ast.terms[1]);
+  const g = (t) => L({ [v]: t }) - R({ [v]: t });
+  let prev = null;
+  for (let i = 0; i <= 20; i++) {
+    const t = x - tol + (2 * tol * i) / 20;
+    const y = g(t);
+    if (!fin(y)) return false;
+    if (Math.abs(y) <= 1e-12 * Math.max(1, Math.abs(L({ [v]: t })))) return true;
+    if (prev !== null && Math.sign(prev) !== Math.sign(y)) return true;
+    prev = y;
+  }
+  return false;
+}
+
 // Neenačba (AI navede množico v ai.value, npr. »(-oo, 2) U [3, oo)«). Polinomska: točno (kritične točke; ničle višje
 // stopnje kot Sturmovi izolirajoči intervali, algebra.js inequalityCheck). Sicer numerično: v krajiščih (enakost odloči
 // strogost znaka, zunaj definicijskega območja ni rešitve) in v mnogo točkah do ±10⁶.
@@ -395,9 +422,11 @@ function checkInequality(problemText, ai, v) {
     }
     return truth;
   };
-  // krajišča: zaokroženo krajišče (decimalke) ne odloča, sicer mora pripadnost ustrezati resničnosti
+  // krajišča: samo tista, ki jih double zapiše točno (cela števila, 0,5 …); pri √2 ali 1/49 je imenovalec v
+  // zaokroženi točki le skoraj 0 in vrednost »končna«, zato tam ne odločamo (prej lažno »napačno«)
+  const exactFloat = (e) => e.s?.rational && !e.tol && (e.s.u.d & (e.s.u.d - 1n)) === 0n && (e.s.u.n < 0n ? -e.s.u.n : e.s.u.n) < 2n ** 53n;
   for (const e of ends) {
-    if (e.tol > 1e-12) continue;
+    if (!exactFloat(e)) continue;
     const t = truthAt(e.x, true);
     const member = inSet(e.x);
     if (t === undefined) {

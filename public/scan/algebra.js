@@ -468,7 +468,8 @@ export function squareFree(n) {
   if (hit) return hit;
   let k = 1n;
   let r = n;
-  for (let p = 2n; p * p <= r && p < 100000n; p++) {
+  // do 10⁵ (pri manjših n do konca: √(3·100003²) = 100003√3)
+  for (let p = 2n; p * p <= r && (p < 100000n || r < 10n ** 12n); p++) {
     while (r % (p * p) === 0n) {
       r /= p * p;
       k *= p;
@@ -928,34 +929,43 @@ export function inequalityCheck(rels, ivs) {
       if (p.length - 1 > MAX_PROOF_DEG) return null;
       const ex = exactRoots(p);
       if (ex) {
-        for (const r of ex) items.push({ kind: "point", a: r, b: r });
+        for (const r of ex) items.push({ kind: "point", rel: i, a: r, b: r });
         continue;
       }
+      // višja stopnja: izolacija ničel stane, nad 8 raje numerično (strežnik ne sme čakati sekund)
+      if (p.length - 1 > 8) return null;
       const chain = sturmChain(p);
       const iso = isolateRoots(p, 2000);
       if (!chain || !iso) return null;
       for (const r of iso) {
         let { lo, hi } = r;
         if (evalQcs(p, hi).sign === 0) {
-          items.push({ kind: "point", a: new Surd(hi), b: new Surd(hi) });
+          items.push({ kind: "point", rel: i, a: new Surd(hi), b: new Surd(hi) });
           continue;
         }
         // ničla je v odprtem (lo, hi). Krajišče, ki je točno ta ničla, postane točka; drugo racionalno krajišče
         // v intervalu ga razdeli (ničla je na eni strani).
         let hit = null;
         for (const e of ends) {
-          if (!e.s.rational) continue;
+          if (!e.s.rational) {
+            // iracionalno krajišče (√3), ki je točno ta ničla
+            if (cmpS(e.s, new Surd(lo)) > 0 && cmpS(e.s, new Surd(hi)) < 0 && evalCs(p, e.s).sign === 0) {
+              hit = e.s;
+              break;
+            }
+            continue;
+          }
           const q = e.s.u;
           if (q.cmp(lo) <= 0 || q.cmp(hi) >= 0) continue;
           if (evalQcs(p, q).sign === 0) {
-            hit = q;
+            hit = e.s;
             break;
           }
           if (countIn(chain, lo, q) === 1) hi = q;
           else lo = q;
         }
         if (hit) {
-          items.push({ kind: "point", a: new Surd(hit), b: new Surd(hit) });
+          items.push({ kind: "point", rel: i, a: hit, b: hit });
           continue;
         }
         // interval skrčimo strogo v notranjost (lo, hi): ne dotika se krajišč ne sosednjih intervalov
@@ -969,7 +979,7 @@ export function inequalityCheck(rels, ivs) {
           if (countIn(chain, lo, m) === 1) hi = m;
           else lo = m;
         }
-        if (hit) items.push({ kind: "point", a: new Surd(hit), b: new Surd(hit) });
+        if (hit) items.push({ kind: "point", rel: i, a: new Surd(hit), b: new Surd(hit) });
         else if (lo.cmp(lo0) > 0 && hi.cmp(hi0) < 0) items.push({ kind: "root", rel: i, a: new Surd(lo), b: new Surd(hi) });
         else return null;
       }
@@ -982,15 +992,18 @@ export function inequalityCheck(rels, ivs) {
         const lo = e.s.sub(new Surd(qFromFloat(e.tol)));
         const hi = e.s.add(new Surd(qFromFloat(e.tol)));
         const near = items.filter((it) => cmpS(it.b, lo) >= 0 && cmpS(it.a, hi) <= 0);
-        if (near.length === 1) {
+        if (near.length === 1 && near[0].rel != null) {
+          // zaokroženo krajišče ničle: ničla je v razponu [a, b] skupaj s krajiščem; preverimo, ali naj bo
+          // ničla vključena (relacija v ničli) proti oklepaju krajišča (pripadnost v krajišču)
           const it = near[0];
           if (cmpS(e.s, it.a) < 0) it.a = e.s;
           if (cmpS(e.s, it.b) > 0) it.b = e.s;
           it.kind = "fuzzy";
+          (it.ends ||= []).push(e.s);
           exact = false;
           continue;
         }
-        if (near.length > 1) return null;
+        if (near.length) return null;
       }
       items.push({ kind: "point", a: e.s, b: e.s });
     }
@@ -1005,7 +1018,10 @@ export function inequalityCheck(rels, ivs) {
     const inSetAt = (x) => inSet(norm, x);
     const tests = [];
     for (const it of uniq) {
-      if (it.kind === "point") tests.push([truthAt(it.a), it.a]);
+      if (it.kind === "fuzzy") {
+        // druge relacije so na [a, b] brez ničel (prekrivanje bi vrnilo null): predznak v krajišču
+        for (const e of it.ends || []) tests.push([rels.every((r, i) => relHoldsSign(i === it.rel ? 0 : evalCs(ps[i], e).sign, r.op)), e]);
+      } else if (it.kind === "point") tests.push([truthAt(it.a), it.a]);
       else if (it.kind === "root") {
         // v ničli je relacija »= 0«, druge relacije in pripadnost so na [a, b] stalne (drugih kritičnih točk tam ni)
         const truth = rels.every((r, i) => relHoldsSign(i === it.rel ? 0 : evalCs(ps[i], it.b).sign, r.op));

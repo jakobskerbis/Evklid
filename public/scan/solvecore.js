@@ -2290,7 +2290,12 @@ export function parseTask(text) {
 // zaokroži na double, zato točen račun s tako prebrano vrednostjo ne dokazuje ničesar o nalogi. Lastni reševalnik ga
 // prepusti AI, preverjanje AI odločitev prepusti SymPy (dobi besedilo).
 export function bigLiteral(text) {
-  for (const m of String(text ?? "").matchAll(/\d+(?:[.,]\d+)?/g)) {
+  // tudi po združitvi skupin tisočic (»12 345 678 901 234 567« razčlenjevalnik bere kot eno število)
+  let joined = "";
+  try {
+    joined = prep(String(text ?? ""));
+  } catch {}
+  for (const m of `${String(text ?? "")} ${joined}`.matchAll(/\d+(?:[.,]\d+)?/g)) {
     const [int, frac = ""] = m[0].split(/[.,]/);
     const whole = int.replace(/^0+/, "");
     const sig = (whole + frac).replace(/^0+/, "").replace(/0+$/, "");

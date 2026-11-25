@@ -30,6 +30,11 @@ export async function verifyAiFull(text, sol, { cas = true } = {}) {
     const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded ? "numeric" : "verified";
     return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
   }
+  // Zaokrožena krajišča neenačbe SymPy primerja točno in zavrne; lokalno preverjanje z oknom zaokrožitve odloči
+  // med »numerično« in »napačno« (nikoli »preverjeno«).
+  if (c.ok === false && sol?.kind === "inequality" && /\d\.\d/.test(String(sol.value || "")) && num.status === "numeric") {
+    return { verified: false, reason: "unknown", status: "numeric" };
+  }
   if (c.ok === false) {
     const missing = num.reason === "missing" || /^manjka rešitev/.test(c.why || "");
     return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why, status: "wrong" };
