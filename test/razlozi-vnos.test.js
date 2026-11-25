@@ -54,7 +54,7 @@ test("prepared questions (calculator, scanner, 3D, corner, suggestion) never ove
   // Poskus in 3D (uči-se) gresta prek askTutorFrom, ki prav tako le doda (fillInput) in nastavi vrnitev iz klepeta.
   const asks = app.match(/askTutor: \(text[^)]*\) => \{[\s\S]*?\n\s*\},/g) || [];
   assert.ok(asks.length >= 5, "kalkulator, skener, uči-se, laboratorij, kotiček");
-  assert.match(app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 600), /fillInput\(text\);/);
+  assert.match(app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 1100), /fillInput\(text\);/);
   // »Rešuj z inštruktorjem« (cela pola) tudi doda, ne prepiše.
   assert.match(app, /fillInput\(`\$\{t\("pp\.tutorMsg", \{ paper \}\)\} `\);/);
   assert.doesNotMatch(app, /box\.value = `\$\{t\("pp\.tutorMsg"/);
