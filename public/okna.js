@@ -671,18 +671,26 @@ export function placeToast() {
   // 4 px razmika do vsake ovire, da obvestilo ne sede tik na rob vrstice za pisanje.
   const pokrije = (y) => ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom + 4) - Math.max(y, o.top - 4) > 0).length;
   let best = { y: r.top, n: pokrije(r.top) };
+  const mesta = [r.top];
   for (let y = r.top - 8; best.n && y >= vrh + 8; y -= 8) {
+    mesta.push(y);
     const n = pokrije(y);
     if (n < best.n) best = { y, n };
   }
-  // Ni prostega mesta v vsebini (npr. simulacija čez ves zaslon): čez glavo, če tam prekrije manj gumbov; tapi gredo skozi.
+  // Ni prostega mesta (npr. simulacija čez ves zaslon ali ležeč klepet z odprtim obrazcem): tja, kjer dejansko prekrije
+  // najmanj kontrolnikov (vsaj 6 × 6 px, kot dimni test); ob izenačenju čez glavo, ki ni del naloge. Tapi gredo skozi.
   if (best.n) {
-    const y = Math.max(8, Math.min(vrh, window.innerHeight) - h - 8);
-    const vGlavi = [...document.querySelectorAll(CONTROLS)]
+    const vsi = [...document.querySelectorAll(TOAST_OVIRE)]
       .filter((o) => !el.contains(o) && !o.closest("[hidden], [inert]"))
-      .map((o) => o.getBoundingClientRect())
-      .filter((o) => o.width > 0 && Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom) - Math.max(y, o.top) > 0).length;
-    if (vGlavi <= best.n) best = { y };
+      .map((o) => vidni(o, o.getBoundingClientRect()))
+      .filter((o) => o.right > o.left && o.bottom > o.top);
+    const prava = (y) => vsi.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) >= 6 && Math.min(y + h, o.bottom) - Math.max(y, o.top) >= 6).length;
+    const glava = Math.max(8, Math.min(vrh, window.innerHeight) - h - 8);
+    best = { y: glava, n: prava(glava) };
+    for (const y of mesta) {
+      const n = prava(y);
+      if (n < best.n) best = { y, n };
+    }
   }
   if (best.y === r.top) return;
   el.style.bottom = "auto";
