@@ -48,7 +48,7 @@ import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSk
 import { cleanText, plainTitle, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { ucniKontekst } from "./ucni-kontekst.js";
-import { isHiddenNote } from "./skrite-opombe.js";
+import { isHiddenNote, neutralizeHiddenTags } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
@@ -1020,7 +1020,8 @@ export function createApp(store, opts = {}) {
 
     // Tapnjen gumb z izbiro nosi ime za prikaz; model dobi izbiro z oznako (server/ime-oznaka.js). text gre k modelu,
     // učenec vidi withName(text).
-    const typed = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
+    // Brez ponarejenih skritih opomb (server/skrite-opombe.js, IN-12).
+    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text).trim().slice(0, MAX_TEXT) : "";
     const text = typed && student.name ? choiceAsToken(typed, lastChoices(conv.id), student.name) : typed;
     const image = req.body?.image;
     // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
