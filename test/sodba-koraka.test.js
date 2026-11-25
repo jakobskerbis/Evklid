@@ -248,3 +248,9 @@ test("AUDIT-059: »x = 5?«, »je 7 · 8 = 54?«, »mogoče 12?« so trditve, pr
   assert.ok(plain >= 3, `»x = 5« sproži ponovni odgovor (${plain})`);
   assert.equal(await run("x = 5?"), plain);
 });
+
+// AUDIT-059, pregled: trditev z vprašajem je le sporočilo, ki je v celoti predlog vrednosti.
+test("AUDIT-059 (pregled): prava vprašanja z vrednostjo niso trditve", () => {
+  for (const t of ["x=5 ?", "x = -3?", "x = 1/2?", "x = 0,5?", "morda 12?", "12 cm?", "-3?", "3,5?", "7·8=56, prav?", "Ali je rezultat 56?", "torej 56?", "x = 4, ne?", "x je 4?", "Je x = 4?", "y = 7?", "a = 3 cm?", "v = 20 m/s?", "F = 6 N?", "potem 8?", "rezultat je 8?", "x1 = 2?", "x = 2 ali x = 3?", "2x = 8?"]) assert.equal(isClaim(t, ""), true, t);
+  for (const t of ["Koliko je x, če je y = 3?", "Kaj je 2 + 2 = ?", "Kako rešim x^2 = 9?", "Kaj pomeni a = 5 v nalogi?", "Kaj dobim, če je x = 5?", "Kdaj velja a = b?", "Lahko narediš še eno z x = 2?", "A mi lahko daš nalogo 5?", "Kaj je naloga 12?", "Koliko je 15 % od 80?", "Kaj, če je g = 10?", "Ali lahko vzamem g = 10 m/s²?", "Kateri je naslednji korak pri 2x = 8?", "Kaj pomeni f(x) = 2x?"]) assert.equal(isClaim(t, ""), false, t);
+});

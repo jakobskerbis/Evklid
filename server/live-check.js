@@ -925,13 +925,20 @@ export function noteReviewSkip(db, stopnja, reason) {
 
 // Učenčevo sporočilo je rezultat ali trditev, o kateri bo inštruktor sodil: število, enačba, zapis
 // z »=«, ali odgovor (ne vprašanje) na inštruktorjevo vprašanje.
+const CQ_NUM = String.raw`[-−+]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?(?:\s*(?:[A-Za-zµΩ]{1,4}(?:\/[A-Za-z]{1,3})?[²³]?))?`;
+const CQ_LHS = String.raw`(?:[a-zA-Z](?:_?\{?\d\}?)?|\d+[a-zA-Z]|[\d(][\d.,\s+\-−*·×:/()^]*)`;
+const CQ_VAL = String.raw`(?:${CQ_LHS}\s*(?:=|je)\s*${CQ_NUM}|${CQ_NUM})`;
+const CLAIM_QUESTION = new RegExp(
+  String.raw`^\s*(?:(?:a|ali)\s+)?(?:je\s+)?(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)?\s*${CQ_VAL}(?:\s*,?\s*(?:ali|ne|prav|kajne|a ne|res|right)\s*(?:${CQ_VAL})?)*\s*\?+\s*$`,
+  "iu",
+);
 export function isClaim(text, prevTutor = "") {
   const t = String(text || "").trim();
   if (!t || t.length > 1500) return false;
-  // Vprašanje ni trditev, razen če predlaga vrednost ali rezultat (»x = 5?«, »je 7 · 8 = 54?«, »mogoče 12?«): tak
-  // negotov odgovor je trditev, o kateri inštruktor sodi, zato mora biti sodba preverjena (AUDIT-059).
-  // »Kaj pa 3x = 15?« je nova naloga: vrednost predlaga le gola neznanka ali račun brez črk pred »=«.
-  if (/\?\s*$/.test(t)) return /(?:(?<![\p{L}\d])[a-zA-Z](?:_?\{?\d\}?)?|(?:^|\s)[\d(][\d.,\s+\-−*·×:/()^]*)\s*=\s*[-−+]?\s*\(?\s*[\d.,]*\d[^=]*\?\s*$/u.test(t) || /^(?:(?:a|ali)\s+)?(?:je\s+)?(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)?\s*[-−]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?\s*\p{L}{0,4}\s*\?+\s*$/iu.test(t);
+  // Vprašanje ni trditev, razen če je VSE sporočilo predlog vrednosti ali rezultata (»x = 5?«, »je 7 · 8 = 54?«,
+  // »mogoče 12?«, »x = 4, ne?«): tak negotov odgovor je trditev, o kateri inštruktor sodi (AUDIT-059). Vprašanje z
+  // drugimi besedami (»Kaj dobim, če je x = 5?«, »Lahko narediš še eno z x = 2?«, »Kaj pa 3x = 15?«) ostane vprašanje.
+  if (/\?\s*$/.test(t)) return CLAIM_QUESTION.test(t);
   if (/\d|=/.test(t)) return true;
   return /\?\s*$/.test(String(prevTutor || "").trim()) && /\p{L}{2,}/u.test(t);
 }
