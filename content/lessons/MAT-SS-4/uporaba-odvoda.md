@@ -51,7 +51,7 @@ Pri $f'(a) = 0$ je normala navpična premica $x = a$.
 
 $$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
 
-in $0^\circ \le \varphi \le 90^\circ$. Pri $k_1 k_2 = -1$ se krivulji sekata **pravokotno**, pri $k_1 = k_2$ se dotikata ($\varphi = 0^\circ$).
+kjer je $1 + k_1 k_2 \ne 0$ in $0^\circ \le \varphi < 90^\circ$. Pri $k_1 k_2 = -1$ formula ne velja: krivulji se sekata **pravokotno** ($\varphi = 90^\circ$). Pri $k_1 = k_2$ se dotikata ($\varphi = 0^\circ$).
 
 **Naraščanje in padanje.** Predznak odvoda pove smer grafa:
 
