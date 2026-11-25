@@ -92,7 +92,7 @@ import { mountPriprave } from "./priprava/poti.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { landingPage } from "./pristajalna-takoj.js";
-import { zacetniPodatki } from "./zacetni-podatki.js";
+import { zacetniPodatki, zacetniPodatkiKlic } from "./zacetni-podatki.js";
 import { potTakoj } from "./pot-takoj.js";
 // Moduli drugih zaslonov, ki jih app.js naloži po prvem izrisu (public/app.js lenModul): stisnemo jih ob zagonu kot igre.
 // Tudi knjižnice za izris formul (public/rich.js naloziKnjiznice) in moduli Učbenika, oznak formul, preverjanja, cel slovar (i18n.js) in tipkovnica.
@@ -454,6 +454,8 @@ export function createApp(store, opts = {}) {
   // Prijavljen učenec dobi začetne podatke Učne poti v strani (server/zacetni-podatki.js), brez verige klicev API po
   // zagonu app.js. EVKLID_ZACETNI_PODATKI=0 jih izklopi (primerjava hitrosti).
   const seja = accounts && process.env.EVKLID_ZACETNI_PODATKI !== "0" ? zacetniPodatki(app) : null;
+  // Isti podatki v enem klicu za stran iz service workerja (ponovni obisk, public/zacetek.js); brez njih 404 kot prej.
+  if (seja) app.get("/api/zacetni-podatki", zacetniPodatkiKlic(app));
   // Učna pot v prvem odgovoru strani (server/pot-takoj.js); EVKLID_POT_STREZNIK=0: okostje kot prej (izklop, primerjava).
   const pot = seja && process.env.EVKLID_POT_STREZNIK !== "0" ? potTakoj({ publicDir }) : null;
   app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing, seja, pot })); // =0: brez seznama (primerjava)
