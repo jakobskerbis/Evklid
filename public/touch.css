@@ -100,6 +100,32 @@
   .composer-row #input { padding-inline: 6px; }
 }
 
+/* Ležeč telefon (UX PR 2, UX-100/101): nizek zaslon ima za klepet le ~360 px. Glava v eni vrstici (oznake pogovora ob
+   naslovu, ne pod njim), obrazec za prijavo napake ali predlog funkcije ne podaljša strani (drsi sam, največ 30 %
+   višine), da sporočila ostanejo vidna in stran ne drsi pod vrstico za pisanje. Pod 700 px širine se oznake prelomijo
+   kot prej (v eno vrstico ne gredo cele, j 2026-11-04: brez »Mat…«). */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 700px) {
+  /* Seznam pogovorov kot na telefonu (gumb ☰ v glavi): ob 270 px stolpcu bi bile oznake v glavi odrezane (»…matika«). */
+  .chat-view:not(.in-okno) { grid-template-columns: minmax(0, 1fr); position: relative; }
+  .chat-view:not(.in-okno) > .sidebar:not(.open) { display: none; }
+  .chat-view:not(.in-okno) > .sidebar.open { display: block; position: absolute; inset: 0; z-index: 5; padding-top: 60px; border-inline-end: 0; }
+  .chat-view:not(.in-okno) #toggle-sidebar { display: inline-grid; place-items: center; border-color: transparent; background: none; box-shadow: none; }
+  .chat-head { flex-wrap: nowrap; position: relative; z-index: 6; }
+  .chat-view:has(.sidebar.open) #chat-state { display: none; }
+  body > #view-chat:not(.in-okno) .chat-head { padding-block: max(4px, var(--varno-zg, env(safe-area-inset-top, 0px))) 4px; }
+  .chat-head h1 { flex: 1 1 0; min-width: 48px; }
+  .chat-head #chat-state { order: 0; flex: none; flex-wrap: nowrap; margin-inline: 0; padding: 0; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Dolgo vprašanje (npr. iz 3D sveta ali poskusa) ne vzame sporočil: polje največ tri vrstice, nato drsi samo. */
+  #view-chat .composer textarea { max-height: 72px; }
+  #view-chat .chat > .bug-box { flex: none; max-height: 30dvh; overflow-y: auto; overscroll-behavior: contain; grid-template-columns: minmax(0, 1fr) auto; }
+  /* Gumba Pošlji in Prekliči desno ob polju (ne pod njim), da je obrazec na 360 px visokem zaslonu viden cel. */
+  #view-chat .chat > .bug-box > :is(p, .rep-err) { grid-column: 1 / -1; }
+  #view-chat .chat > .bug-box > textarea { grid-column: 1; grid-row: 2; min-height: 48px; }
+  #view-chat .chat > .bug-box > .rep-actions { grid-column: 2; grid-row: 2; align-self: end; flex-wrap: nowrap; }
+}
+
 /* ---------- Spodnja vrstica se umakne pri branju in gledanju (j, 2026-10-31) ----------
    Telefon in tablica na dotik, vsi slogi: v klepetu z inštruktorjem (prazen ali s sporočili), v temi (lekcija, naloge,
    vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika, v odprtem poskusu Laboratorija (več prostora

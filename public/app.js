@@ -16,6 +16,7 @@ import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { nastaviNogo } from "./noga.js";
+import { initObrat } from "./obrat.js";
 import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH, setTabbarH } from "./okna.js";
 import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profile-menu.js";
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
@@ -4428,6 +4429,7 @@ async function openFromTutor({ view, mode } = {}) {
   }
   calc();
 }
+initObrat(); // bralni položaj ob obratu zaslona (UX PR 2)
 initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
