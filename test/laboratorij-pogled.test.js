@@ -83,6 +83,8 @@ test("»Preveri se« po poskusu (povezave C4): vaja iste teme, ← in Nazaj vrne
   assert.match(app, /\["competition", "exams", "uci"\]\.includes\(state\.backTo\)/, "tipka Nazaj iz teme vrne v Uči se");
   assert.match(app, /name === "uci" && state\.backTo === "uci"\) setBack\("path"\)/, "vrnitev v poskus porabi »← Laboratorij«");
   for (const k of ["lab.check", "lab.checkText"]) assert.ok(SL[k], k);
+});
+
 test("povezave C3: graf meritev izpiše formulo iz lekcije (prvih 5 poskusov)", () => {
   const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
   assert.match(read("lab.js"), /if \(formula\) wrap\.append\(h\("p", \{ class: "lab-graph-formula", html: `Formula: \$\{formula\}` \}\)\)/);
