@@ -15,7 +15,7 @@ test("neutralizeHiddenTags: nobena oznaka skrite opombe ne ostane, navadno besed
       assert.ok(y.includes(`‹${tag}`), "učenec še vidi, kaj je napisal");
     }
   }
-  for (const ok of ["2 < 3 in x > 1", "<b>krepko</b>", "a<nacinb", "Reši 2x = 4"]) assert.equal(neutralizeHiddenTags(ok), ok);
+  for (const ok of ["2 < 3 in x > 1", "<b>krepko</b>", "a<nacinb", "Reši 2x = 4", "👩‍🔬 👨‍👩‍👧 ❤️‍🔥", "de\u00ADljenje"]) assert.equal(neutralizeHiddenTags(ok), ok);
   assert.equal(neutralizeHiddenTags("<nacin je dober, a še ni"), "‹nacin je dober, a še ni", "besedilo za oznako ostane");
   assert.equal(neutralizeHiddenTags(undefined), undefined);
 });
