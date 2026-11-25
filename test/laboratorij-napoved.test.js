@@ -248,4 +248,25 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     }
     await ctx.close();
   });
+
+  // Pregled #1053 (3. krog): napoved pri mešanju velja za nastavljeno mešanico; pri ohlajanju jo obnova ne pobriše.
+  await t.test("mesanje: moving a water slider clears the prediction; ohlajanje: a restore keeps the prediction for the restored cups", async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const { p, errs } = await odpri(ctx, base, "lab-mesanje");
+    await p.locator(".lab-napoved input").fill("45");
+    await p.locator(".lab-napoved").getByRole("button", { name: "Zapiši napoved" }).click();
+    assert.match(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), /45/);
+    await nastavi(p, "topla voda m₁", 120);
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), "", "druga mešanica: napoved pobrisana");
+    const shranjeno = { v: 1, seed: 3, rows: [], meas: [[], [], []], imena: [null, null, null], vrste: ["kovina", "porcelanP", "termovka"], napoved: { v: 60, t: "60 °C", zaprto: false, k: "0:kovina" } };
+    await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.0.lab-ohlajanje", JSON.stringify(d)), shranjeno);
+    await p.evaluate(() => window.mount("lab-ohlajanje"));
+    await p.waitForTimeout(200);
+    const o = await p.evaluate(() => ({ moja: document.querySelector(".lab-napoved-moja").textContent, posoda: document.querySelector('select[aria-label="posoda 1"]')?.value }));
+    assert.equal(o.posoda, "kovina");
+    assert.match(o.moja, /60/, "obnova posod ne pobriše napovedi");
+    await p.evaluate(() => localStorage.removeItem("evklid.lab.meritve.0.lab-ohlajanje"));
+    assert.deepEqual(errs, []);
+    await ctx.close();
+  });
 });
