@@ -4548,7 +4548,7 @@
   "meja.label": "Elfogytak az ingyenes kérdések",
   "meja.sub": "Előfizetéssel ezt kapod:",
   "meja.price": "{price} havonta",
-  "meja.more": "Több kérdés a tanárnak minden nap és minden hónapban",
+  "meja.more": "Több kérdés az oktatónak minden nap és minden hónapban",
   "meja.moreN": "Napi {free} helyett legfeljebb {n} kérdés az oktatónak",
   "meja.whyUnder15": "Ha több kérdésre van szükséged, beszélj a szüleiddel.",
   "meja.deep": "Részletesebb magyarázatok",
