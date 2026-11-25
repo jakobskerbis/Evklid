@@ -472,7 +472,7 @@ test("migracija na obstoječi bazi: tabele nastanejo, ponoven zagon ne spremeni 
     let store = openDb(file);
     store.db.prepare("INSERT INTO students (id, name, settings) VALUES (1, 'A', '{}')").run();
     // Starejša baza brez tabel priprave, z načrtom testa v test_plans (pred PR 2b).
-    store.db.exec("DROP TABLE priprava_prepisi; DROP TABLE priprava_izseki; DROP TABLE priprava_izvirniki; DROP TABLE priprava_viri; DROP TABLE priprave;");
+    store.db.exec("DROP TABLE priprava_prebrano; DROP TABLE priprava_prepisi; DROP TABLE priprava_izseki; DROP TABLE priprava_izvirniki; DROP TABLE priprava_viri; DROP TABLE priprave;");
     store.db.exec("CREATE TABLE test_plans (student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE, path_key TEXT NOT NULL, units TEXT NOT NULL, test_date TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')), event_id TEXT)");
     store.db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (1, 'MAT-SS-4', '[1]', '2026-12-01')").run();
     store.db.close();

@@ -148,6 +148,31 @@ zadnji izračuni so v predpomnilniku. Vrne teme v vrstnem redu učnega načrta (
 Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
 false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.
 
+### PR 5 (načrtovalnik, 25. 11. 2026)
+
+`server/priprava/nacrt.js`, poti `GET …/priprave/:pid/nacrt` in `POST …/priprave/:pid/nacrt/prebrano` (`{ tema_id,
+prebrano? }`, tabela `priprava_prebrano`). Koda, ne model; brez napovedi ocen. Teme so obseg testa (brez načrta testa
+teme iz zapiskov, PR 4; na osnovni ravni mature brez tem samo za višjo raven, `exams.js ravenProfila`).
+Ocena teme: `progress.js topicScore` (ista lestvica kot pripravljenost na izpit; velja boljša od teme in njenih osnovnih
+tem): nova 0, v učenju 0,2–0,6, za ponovitev 0,8, obvladana 1. Strogo izkazano: samo ročna oznaka »obvladano« šteje 0,4
+(dokler je ne potrdita 2 pravilni ponovitvi ali 8 pravilnih nalog), obvladana tema z zgrešeno ponovitvijo brez poznejše
+pravilne naloge 0,6 (pripravljenost na izpit zaenkrat ostaja brez tega; odloči j).
+Enote: nova → nova snov, vaja, ponovitev; v učenju → vaja, ponovitev; za ponovitev → ponovitev; obvladana → ponovitev na
+dan ponovitve Evklida (`review_due`), sicer neobvezna osvežitev v zadnjih 3 učnih dneh (enkrat, samo v prostor, ki ostane po obveznih enotah); tema
+brez nalog v Vadnici → »zapiski« (ni preverljiva, največ ena na dan, za preverljivimi enotami, opravljena, ko je
+označena kot prebrana; ne šteje v pripravljenost).
+Razmiki veljajo med dnevi, ker se načrt vsak dan računa znova iz zgodovine: tema v učenju dobi naslednjo vajo 1–2 dni
+po zadnji vaji (ne vsak dan), ponovitev pride tretjino preostalega časa pozneje, največ 7 dni. Najšibkejše prve; najprej
+prve enote vseh tem, nato druge in tretje; samo en učni dan → najprej teme v učenju. Največ 3 enote na dan; kar ne gre,
+je v `nePrideNaVrsto` (`stisnjeno`). Zadnji dan pred testom (tudi, ko je to danes) poskusni test (obstoječi `/test-prep`: aktivna priprava,
+izbrani sklopi in vsaj ena tema z nalogami). Brez datuma en teden; test mimo → `mimo`; test danes → prazen načrt.
+Danes: šteje samo vaja, ponavljanje in vaja iz lista (ne test, uvrstitev ali tekmovanje); nova snov in vaja sta opravljeni
+po 3 odgovorjenih nalogah teme ta dan (tudi napačnih) (slovenski dan izdaje naloge), ponovitev po 2 (kot ponavljanje Evklida); `naslednja` je
+prva neopravljena preverljiva enota (»Nadaljuj učenje«); teme, vadene danes, ostanejo danes (opravljene), druge enote se ne
+premaknejo v danes. Tabela `priprava_nacrti` ni potrebna.
+`pripravljenost`: povprečje ocen preverljivih tem, število obvladanih, preverljivih in nepreverljivih. Test:
+`test/priprava-nacrt.test.js`.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

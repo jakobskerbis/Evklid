@@ -44,6 +44,10 @@ test("obseg testa iz načrta: pokritost, teme zunaj obsega, predznanje pred prvi
   assert.equal(z.predznanje.length, PREDZNANJE);
   assert.ok(z.predznanje.every((t) => t.sklop === "Odvod"), JSON.stringify(z.predznanje));
   assert.equal(z.predznanje.at(-1).ime, "Drugi odvod, prevoj in konveksnost");
+  // Osnovna raven mature (»4. letnik OR«): teme samo za višjo raven niso v obsegu, kot na Učni poti in v testu.
+  const or = await zemljevid({ pot: "MAT-SS-4", sklopi: [2] }, iz, { ...SS4, curriculum_level: "4. letnik OR" });
+  assert.deepEqual(or.obseg.map((t) => t.ime), ["Nedoločeni integral", "Določeni integral"]);
+  assert.equal(or.pokritost.vseh, 2);
   // Neveljavni sklopi in neznana pot: brez obsega.
   assert.deepEqual(temeObsega("MAT-SS-4", [99, "x"]), []);
   assert.deepEqual(temeObsega("NI-POTI", [0]), []);

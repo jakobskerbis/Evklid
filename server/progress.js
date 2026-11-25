@@ -9,7 +9,7 @@ import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/in
 import { checkAnswer } from "./practice/check.js";
 import * as MATH from "../public/graph/math.js";
 import { CONTEST, TRAINING_TASKS, isCompetitionPath, topicsForYear } from "./competition.js";
-import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps } from "./exams.js";
+import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps, ravenProfila } from "./exams.js";
 import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
@@ -77,6 +77,36 @@ function shuffle(a) {
   return b;
 }
 
+// Ocena teme (0–1), ena za pripravljenost na izpit (examReadiness) in načrt priprave na test (priprava/nacrt.js):
+// obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0. izkazano (priprava na test: »pripravljenost mora
+// temeljiti na dejansko izkazanem znanju«): tema, ki jo je učenec samo označil kot obvladano (source manual), šteje 0,4,
+// dokler je ne potrdi z nalogami po oznaki (manual_proven); obvladana tema, ki je zgrešila ponovitev in je od tedaj ni
+// pravilno rešila (review_failed), 0,6. Pripravljenost na izpit zaenkrat ostaja brez tega (ročna oznaka na Učni poti tam
+// šteje; odloči j). s: vrstica iz STANJE_OCENE (ali null), now: datetime v UTC (nowSql).
+export function topicScore(s, now, { izkazano = false } = {}) {
+  if (!s) return 0;
+  if (s.status === "mastered") {
+    if (izkazano && s.source === "manual" && !s.manual_proven) return 0.4;
+    if (izkazano && s.review_failed) return 0.6;
+    return s.review_due && s.review_due <= now ? 0.8 : 1;
+  }
+  if (s.status === "learning") return 0.2 * Math.min(3, s.level || 1);
+  return 0;
+}
+// Stanje teme za topicScore (samo obvladane teme z mastered_at sprožijo podpoizvedbi; naloge vaje, ponavljanja in lista):
+// - review_failed: obstaja zgrešena ponovitev po obvladanju, po kateri ni nobene pravilne naloge teme v prvem poskusu;
+// - manual_proven: po ročni oznaki vsaj reviewPerTopic pravilnih ponovitev ali masteryCorrect pravilnih nalog.
+const PO_OBVLADANJU = "u.student_id = ts.student_id AND u.topic_id = ts.topic_id AND u.created_at >= ts.mastered_at AND u.mode IN ('practice','review','list')";
+export const STANJE_OCENE = `SELECT ts.status, ts.level, ts.review_due, ts.source, ts.mastered_at,
+  CASE WHEN ts.status = 'mastered' AND ts.mastered_at IS NOT NULL THEN EXISTS (
+    SELECT 1 FROM tasks u WHERE ${PO_OBVLADANJU} AND u.mode = 'review' AND u.first_try_correct = 0
+      AND NOT EXISTS (SELECT 1 FROM tasks v WHERE v.student_id = u.student_id AND v.topic_id = u.topic_id AND v.id > u.id
+        AND v.mode IN ('practice','review','list') AND v.first_try_correct = 1)) END AS review_failed,
+  CASE WHEN ts.status = 'mastered' AND ts.source = 'manual' AND ts.mastered_at IS NOT NULL THEN (
+    SELECT SUM(u.mode = 'review') >= ${RULES.reviewPerTopic} OR COUNT(*) >= ${RULES.masteryCorrect}
+    FROM tasks u WHERE ${PO_OBVLADANJU} AND u.first_try_correct = 1) END AS manual_proven
+  FROM topic_state ts WHERE ts.student_id = ? AND ts.topic_id = ?`;
+
 export class Progress {
   constructor(store) {
     this.store = store;
@@ -102,7 +132,7 @@ export class Progress {
   // »NPZ in matura« (#891). Druge poti in »še ne vem«: null (vse teme).
   profileRaven(studentId, pathKey) {
     if (!/^MAT-SS-\d$/.test(String(pathKey || ""))) return null;
-    return / (VR|OR)$/.exec(String(this.store.getStudent?.(studentId)?.settings?.curriculum_level || "").trim())?.[1] || null;
+    return ravenProfila(pathKey, this.store.getStudent?.(studentId)?.settings?.curriculum_level);
   }
 
   // ---------- stanje teme ----------
@@ -660,17 +690,16 @@ export class Progress {
 
   // Pripravljenost na izpit (NPZ, matura): delež snovi izpita, ki jo učenec že zna, in tri najšibkejše teme.
   // Tema izpita šteje kot njena osnovna tema na Učni poti (MAT-EX-NPZ9/… ↔ MAT-OS-8/…): velja boljše stanje.
-  // Ocena teme: obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0.
-  // Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
+  // Ocena teme: topicScore (brez strogega načina; ročna oznaka šteje). Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
   examReadiness(studentId, pathKey, raven = null) {
     if (!isExamPath(pathKey)) return null;
     const path = getPath(pathKey);
     const forRaven = ravenKeeps(raven);
     const now = nowSql();
-    const stateOf = this.db.prepare("SELECT status, level, review_due FROM topic_state WHERE student_id = ? AND topic_id = ?");
+    const stateOf = this.db.prepare(STANJE_OCENE);
     const tries = this.db.prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN first_try_correct = 0 THEN 1 ELSE 0 END) AS wrong FROM tasks WHERE student_id = ? AND topic_id = ? AND first_try_correct IS NOT NULL");
     const ui = this.uiLang(studentId);
-    const scoreOf = (s) => (!s ? 0 : s.status === "mastered" ? (s.review_due && s.review_due <= now ? 0.8 : 1) : s.status === "learning" ? 0.2 * Math.min(3, s.level || 1) : 0);
+    const scoreOf = (s) => topicScore(s, now);
     const topics = [];
     path.units.forEach((u, ui0) =>
       u.topics.forEach((t0, ti) => {
