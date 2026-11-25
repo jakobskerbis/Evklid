@@ -438,12 +438,15 @@ Plan: j 21. 11. 2026 (doc https://claude.ai/artifact/PsKsB3QjtVqVHf76UXjMme), ph
 Laboratorij tab (`public/laboratorij.js` → `zazeni`) an experiment with steps in `public/sim/lab-vodeno-koraki.js`
 gets a »Vodeno | Prosto« switch and, in »Vodeno«, a step card at the top of `.demo-controls`
 (`public/sim/lab-vodeno.js` → `vodi`). First open is »Vodeno«; the choice is remembered per device
-(`localStorage` `evklid.lab.nacin`). »Prosto« is the lab as before. Guided now: `lab-titracija` (10 steps), `lab-ohm` (8),
+(`localStorage` `evklid.lab.nacin`). »Prosto« is the lab as before. Guided now: `lab-titracija` (10 steps), `lab-ohm` (9),
 `lab-prosti-pad` (7). Not in lessons (sims embedded in a lesson stay free).
 - A step unlocks itself from what the student really did, read from the DOM like the tutor snapshot
   (`lab.js` → `stanjePoskusa`): settings, the measurement table, every event-log line since the guide started (kept by a
   MutationObserver, the log itself shows only 5) and the number of correctly answered »Sklep« questions. Engines need no
   code for it. `poudari` outlines the control the step needs (`.lab-vod-cilj`); `zakaj` is shown after the step.
+- A prediction (`lab.js` → `napoved`, `data-napoved=<id>`) is a step with `done: (c) => c.napoved(id)`: true once the
+  student wrote one or measured first (box closed), and true when the engine has no such box. Now: `lab-ohm` step 2
+  (`tok-6V`). The titration prediction is about acetic acid, which the guided HCl titration does not use.
 - »↺ Ponastavi« rebuilds the engine, so the guide starts again at step 1 (new `.demo-controls` element).
 - A new guided experiment = a `KORAKI` entry. `test/laboratorij-vodeno.test.js` checks every `poudari` text exists in
   the engine and plays every guided experiment to the end in Chromium with the clicks a student would make, so a

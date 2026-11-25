@@ -22,7 +22,9 @@ test("every guided experiment is a real lab experiment with complete steps", asy
     assert.ok(LAB_INFO[key] && ENGINES[key], `${key}: ni v katalogu laboratorija`);
     for (const f of ["naslov", "cilj", "konec"]) assert.ok(def[f]?.length > 20, `${key}: manjka ${f}`);
     assert.ok(def.koraki.length >= 5 && def.koraki.length <= 12, `${key}: ${def.koraki.length} korakov`);
-    const src = fs.readFileSync(`public/sim/${ENGINES[key][0]}`, "utf8").toLocaleLowerCase("sl");
+    // Kontrole poskusa so v motorju; napoved (lab.js → napoved) le, če jo motor uporablja.
+    const motor = fs.readFileSync(`public/sim/${ENGINES[key][0]}`, "utf8");
+    const src = (motor + (motor.includes("napoved(") ? fs.readFileSync("public/sim/lab.js", "utf8") : "")).toLocaleLowerCase("sl");
     for (const [i, k] of def.koraki.entries()) {
       for (const f of ["naslov", "kaj", "zakaj"]) assert.ok(k[f]?.length > 5, `${key} korak ${i + 1}: manjka ${f}`);
       assert.equal(typeof k.done, "function");
@@ -53,7 +55,7 @@ test("step checks: a done() reads only what the student did", () => {
     }
     return -1;
   };
-  const c = (o) => ({ par: () => "", num: () => NaN, bilo: () => false, zadnji: () => -1, vrstice: [], sklep: () => false, ...o });
+  const c = (o) => ({ par: () => "", num: () => NaN, bilo: () => false, zadnji: () => -1, vrstice: [], sklep: () => false, napoved: () => false, ...o });
   const tit = KORAKI["lab-titracija"].koraki;
   assert.equal(tit[0].done(c({ par: (n) => (n === "zaščitna očala" ? "ne" : "") })), false);
   assert.equal(tit[0].done(c({ par: (n) => (n === "zaščitna očala" ? "da" : "") })), true);
@@ -66,12 +68,15 @@ test("step checks: a done() reads only what the student did", () => {
   const ohm = KORAKI["lab-ohm"].koraki;
   const vr = (U, I, p = "100 Ω") => ({ porabnik: p, "U [V]": U, "I [mA]": I, "U/I [Ω]": "100" });
   const pet = ["2,0", "4,0", "6,0", "8,0", "10,0"].map((U) => vr(U, String(stevilo(U) * 10)));
-  assert.equal(ohm[2].done(c({ vrstice: pet.slice(0, 4) })), false, "4 napetosti niso dovolj");
-  assert.equal(ohm[2].done(c({ vrstice: pet })), true);
-  assert.equal(ohm[2].done(c({ vrstice: [...pet.slice(0, 4), vr("10,0", "–")] })), false, "meritev brez toka ne šteje");
+  // Napoved pred meritvijo (lab.js → napoved, profil A): korak čaka na zapisano ali zaprto napoved.
+  assert.equal(ohm[1].done(c({ napoved: () => false })), false);
+  assert.equal(ohm[1].done(c({ napoved: (id) => id === "tok-6V" })), true);
+  assert.equal(ohm[3].done(c({ vrstice: pet.slice(0, 4) })), false, "4 napetosti niso dovolj");
+  assert.equal(ohm[3].done(c({ vrstice: pet })), true);
+  assert.equal(ohm[3].done(c({ vrstice: [...pet.slice(0, 4), vr("10,0", "–")] })), false, "meritev brez toka ne šteje");
   // Sklep šteje le pravo vprašanje: odgovor o žarnici ne opravi koraka o uporniku.
-  assert.equal(ohm[3].done(c({ sklep: (re) => re.test("Kaj kažejo tvoje meritve za žarnico?") })), false);
-  assert.equal(ohm[3].done(c({ sklep: (re) => re.test("Kaj kažejo tvoje meritve za upornik?") })), true);
+  assert.equal(ohm[4].done(c({ sklep: (re) => re.test("Kaj kažejo tvoje meritve za žarnico?") })), false);
+  assert.equal(ohm[4].done(c({ sklep: (re) => re.test("Kaj kažejo tvoje meritve za upornik?") })), true);
   const pad = KORAKI["lab-prosti-pad"].koraki;
   const h = (x) => ({ predmet: "kroglica", "h [m]": x, "t [s]": "0,3", "t² [s²]": "0,09", "v [m/s]": "–" });
   assert.equal(pad[2].done(c({ vrstice: ["0,20", "0,50", "1,00", "1,50", "2,00"].map(h) })), true);
@@ -260,6 +265,14 @@ const IGRA = {
       await dokler(() => Math.abs(volt() - U) < 0.3);
       await klik("Zapiši meritev");
     };
+    await drsnik("napetost napajalnika", 2);
+    // Napoved pred prvo meritvijo (lab.js → napoved): 6 V / 100 Ω = 60 mA. Brez nje vodenje ne gre naprej.
+    await wait(300);
+    if (vod.korak !== 1) throw new Error("pred napovedjo korak " + (vod.korak + 1));
+    await vpisi("tvoja napoved v mA", "60");
+    await klik("Zapiši napoved");
+    await wait(300);
+    if (vod.korak !== 2) throw new Error("po napovedi korak " + (vod.korak + 1));
     for (const U of [2, 4, 6, 8, 10]) await meri(U);
     await sklep(0);
     await drsnik("napetost napajalnika", 1);

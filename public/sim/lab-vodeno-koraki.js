@@ -3,7 +3,8 @@
 // naredil. `c` je kontekst iz lab-vodeno.js → kontekst(): par(ime) besedilo nastavitve, num(ime) število iz nje,
 // bilo(re, vrsta?) ali je bilo v dnevniku tako sporočilo (od začetka vodenja), vrstice (meritve iz tabele, ključ je
 // glava stolpca brez oznak), zadnji(...re) kateri od vzorcev se ujema z najnovejšo takšno vrstico dnevnika (-1: noben),
-// sklep(re) ali je vprašanje »Sklep« z besedilom, ki se ujema z `re`, pravilno odgovorjeno.
+// sklep(re) ali je vprašanje »Sklep« z besedilom, ki se ujema z `re`, pravilno odgovorjeno, napoved(id) ali je učenec
+// zapisal napoved z data-napoved=id (lab.js → napoved) ali je ta že zaprta (meril je pred napovedjo).
 // `pokazi`: besedilo vprašanja »Sklep«, do katerega skoči »Pokaži, kje« (sicer prva obkrožena kontrola).
 // `poudari`: začetek besedila gumba, stikala ali oznake kontrole, ki jo korak obkroži. `zakaj` se pokaže, ko je korak
 // opravljen. Besedila so slovenska kot vse besedilo poskusov (lab-*.js).
@@ -137,6 +138,14 @@ export const KORAKI = {
         zakaj: "Skozi ampermeter mora teči isti tok kot skozi upornik, zato je zaporedno. Voltmeter meri razliko napetosti med krajišči upornika, zato je vzporedno.",
         poudari: ["napetost napajalnika"],
         done: (c) => c.num("napetost napajalnika") >= 1.5,
+      },
+      {
+        naslov: "Napovej tok, preden meriš",
+        kaj: "Kolikšen tok bo tekel skozi upornik 100\u00a0Ω pri 6\u00a0V? Vpiši napoved v miliamperih in pritisni »Zapiši napoved«.",
+        namig: "Po Ohmovem zakonu je I = U/R. Pazi na enote: 1\u00a0A = 1000\u00a0mA.",
+        zakaj: "Napoved pred meritvijo pokaže, ali zakon res razumeš. Ko imaš dovolj meritev, se pod grafom pokaže primerjava tvoje napovedi z izmerjenim tokom pri 6\u00a0V.",
+        poudari: ["tvoja napoved"],
+        done: (c) => c.napoved("tok-6V"),
       },
       {
         naslov: "Zapiši prvo meritev",
