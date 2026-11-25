@@ -52,6 +52,8 @@ function graphCalc() {
       toast: (m) => toast(m, "check"),
       storageKey: () => `evklid.graph.${state.student?.id ?? 0}`,
       studentId: () => state.student?.id,
+      // »Uporabi v računu«: vrednost točke ali ∫(f; a; b) v znanstveni kalkulator (zavihek Znanstveni)
+      useInCalc: (text) => insertIntoCalc(text),
       askTutor: (text) => {
         closeCalcOverlay();
         showView("chat");
@@ -88,6 +90,8 @@ function calcTool(mode) {
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
+        // »Pretvori enote«: zavihek Orodja, pretvornik z vrednostjo izida
+        convert: async (v) => (await setCalcMode("tools"))?.units?.(v),
         // »Pokaži na grafu«: rezultat z orodji grafičnega kalkulatorja, doda se trenutnemu grafu (graph/v-graf.js)
         showOnGraph: async (req) => (await setCalcMode("graph"))?.showPlan(req),
         stage: () => (imaStopnjo(state.student) ? stopnja(state.student) : null), // brez zapisane stopnje vse
@@ -103,7 +107,8 @@ function calcTool(mode) {
       });
     if (mode === "tools") return m.createTools(host, { ...base, subject: calcSubject });
     if (mode === "pse") return m.createPse(host, { ...base, lang: currentLang });
-    return m.createFormulas(host, { ...base, api, renderRich, withSymbols: withFormulaSubject, bookKey: formulaBook });
+    // »Nariši«: formula na grafu (zavihek Grafični, doda se k trenutnemu grafu)
+    return m.createFormulas(host, { ...base, api, renderRich, withSymbols: withFormulaSubject, bookKey: formulaBook, onGraph: async (f) => (await setCalcMode("graph"))?.addFormula(f) });
   });
   return calcTools[mode];
 }

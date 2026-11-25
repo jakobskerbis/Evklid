@@ -194,3 +194,29 @@ export function formulaToCalc(tex, subject = "MAT", { surovo = false } = {}) {
   if (istovetnost(out)) return null;
   return out;
 }
+
+/**
+ * Formula z eno izraženo količino (»s = v₀ t + (a t²)/2«) za graf: { lhs, rhs, v } – v je spremenljivka na osi x
+ * (ena črka brez indeksa; najprej t, x, r, nato male črke), ostale črke grafični kalkulator ponudi kot drsnike.
+ * null, če leva stran ni ena količina ali desna nima primerne spremenljivke (»1/f = 1/a + 1/b«, »F = m a« z m, a).
+ */
+export function formulaPlot(text) {
+  const s = String(text ?? "");
+  const i = s.indexOf("=");
+  if (i < 0 || s.indexOf("=", i + 1) >= 0) return null;
+  const lhs = s.slice(0, i).trim();
+  const rhs = s.slice(i + 1).trim();
+  if (!/^(?:Δ?[\p{L}][₀-₉]*(?:_\([\p{L}\d]+\)|_[\p{L}\d])?)$/u.test(lhs) || !rhs) return null;
+  let names;
+  try {
+    const r = evaluate(rhs, { vars: {}, funcs: {} });
+    names = r?.error?.code === "missing" ? r.error.info.names : [];
+  } catch {
+    return null;
+  }
+  const single = names.filter((n) => /^[A-Za-zα-ωθ]$/.test(n) && n !== "e" && n !== "π" && n !== "y");
+  if (!single.length) return null;
+  // čas in razdalja sta najpogosteje na osi x; nato male črke (velike so pogosto konstante: G, R)
+  const v = ["t", "x", "r"].find((n) => single.includes(n)) || single.find((n) => n === n.toLowerCase()) || single[0];
+  return { lhs, rhs, v };
+}
