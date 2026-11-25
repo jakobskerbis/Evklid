@@ -4454,6 +4454,7 @@ export default {
   "auth.showPassword": "Pokaži geslo",
   "open.group": "Odpri v aplikaciji",
   "open.sim": "Poskus",
+  "open.simSet": "Nastavi v poskusu",
   "open.3d": "3D",
   "open.lesson": "Učbenik",
   "open.game": "Igra",
