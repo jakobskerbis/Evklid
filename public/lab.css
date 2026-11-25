@@ -61,7 +61,7 @@
 .lab-vod-nacin { justify-self: start; }
 .lab-vod { border: 1px solid var(--accent); border-left-width: 4px; border-radius: 10px; padding: 10px 12px; background: var(--surface); min-width: 0; overflow-wrap: anywhere; }
 .lab-vod[hidden] { display: none; }
-.lab-vod h4 { margin: 6px 0 4px; font-size: 1.02rem; }
+.lab-vod h3 { margin: 6px 0 4px; font-size: 1.02rem; }
 .lab-vod p { margin: 4px 0; }
 .lab-vod-head { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 600; color: var(--muted); }
 .lab-vod-oznaka { flex: none; }
@@ -70,7 +70,13 @@
 .lab-vod-cilj-poskusa { color: var(--muted); }
 .lab-vod-zakaj { font-size: 0.9rem; color: var(--muted); }
 .lab-vod-zakaj b { color: var(--ok); }
-.lab-vod-namig summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 32px; display: flex; align-items: center; }
+.lab-vod-namig summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 40px; display: flex; align-items: center; }
+.lab-vod-kje { margin: 4px 0 2px; }
+.lab-vod-kje[hidden] { display: none; }
+/* Samo za bralnik zaslona (napoved novega koraka). */
+.lab-vod-glas { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* »Pokaži, kje« pri vprašanju »Sklep«: pod pripeto risbo, ne podnjo (--lab-pin-h, lab.js → pripni). */
+.demo.lab .lab-q { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
 /* Kontrola, ki jo trenutni korak zahteva. */
 .lab-vod-cilj { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 6px; }
 @media (prefers-reduced-motion: reduce) { .lab-vod-proga > span { transition: none; } }

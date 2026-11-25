@@ -2,7 +2,9 @@
 // Brez DOM: vsak korak pove, kaj naj učenec naredi, in s funkcijo `done(c)` iz stanja poskusa ugotovi, ali je to res
 // naredil. `c` je kontekst iz lab-vodeno.js → kontekst(): par(ime) besedilo nastavitve, num(ime) število iz nje,
 // bilo(re, vrsta?) ali je bilo v dnevniku tako sporočilo (od začetka vodenja), vrstice (meritve iz tabele, ključ je
-// glava stolpca brez oznak), sklepi (koliko vprašanj »Sklep« je pravilno odgovorjenih).
+// glava stolpca brez oznak), zadnji(...re) kateri od vzorcev se ujema z najnovejšo takšno vrstico dnevnika (-1: noben),
+// sklep(re) ali je vprašanje »Sklep« z besedilom, ki se ujema z `re`, pravilno odgovorjeno.
+// `pokazi`: izbirnik elementa, do katerega skoči »Pokaži, kje« (sicer prva obkrožena kontrola).
 // `poudari`: začetek besedila gumba, stikala ali oznake kontrole, ki jo korak obkroži. `zakaj` se pokaže, ko je korak
 // opravljen. Besedila so slovenska kot vse besedilo poskusov (lab-*.js).
 
@@ -33,6 +35,9 @@ export function ujemanje(vrstice) {
   return false;
 }
 
+// Dnevnik titracije: spiranje izprazni bireto (lab-model-titracija.js → rinse), zato šteje le polnjenje po njem.
+const SPRAL = /Bireto si trikrat spral/, NAPOLNIL = /Bireto si (z lijakom )?napolnil|Bireto si dopolnil/, ZRAK = /zračni mehurček je odšel iz konice|zraka v konici ni bilo/;
+
 export const KORAKI = {
   "lab-titracija": {
     naslov: "Titracija: koliko kisline je v vzorcu?",
@@ -53,14 +58,14 @@ export const KORAKI = {
         namig: "Bireta je po pomivanju še mokra od vode.",
         zakaj: "Voda v bireti bi raztopino NaOH razredčila. Potem bi je porabil več in dobil prevelik rezultat.",
         poudari: ["Speri bireto"],
-        done: (c) => c.bilo(/Bireto si trikrat spral/),
+        done: (c) => c.bilo(SPRAL),
       },
       {
         naslov: "Napolni bireto z NaOH",
         kaj: "Pritisni »Napolni bireto z NaOH«.",
         zakaj: "Bireta je zdaj napolnjena malo pod ničlo. Odčitek bereš na spodnjem robu meniska.",
         poudari: ["Napolni bireto"],
-        done: (c) => c.bilo(/Bireto si (z lijakom )?napolnil|Bireto si dopolnil/),
+        done: (c) => c.zadnji(SPRAL, NAPOLNIL) === 1,
       },
       {
         naslov: "Izpusti zrak iz konice",
@@ -68,43 +73,43 @@ export const KORAKI = {
         namig: "V konici pod pipo je po polnjenju pogosto zračni mehurček.",
         zakaj: "Če mehurček uide med titracijo, bireta pokaže več porabljenega NaOH, kot ga je res steklo v erlenmajerico.",
         poudari: ["Izpusti zrak"],
-        done: (c) => c.bilo(/zračni mehurček je odšel iz konice|zraka v konici ni bilo/),
+        done: (c) => c.zadnji(SPRAL, NAPOLNIL, ZRAK) === 2,
       },
       {
         naslov: "Odpipetiraj vzorec",
-        kaj: "Pri »vzorec« pusti klorovodikovo kislino, vklopi »pipeto prej speri z vzorcem«, erlenmajerico speri z destilirano vodo in pritisni »Odpipetiraj 25,00 mL v erlenmajerico«.",
-        namig: "Pipeto speri z vzorcem, erlenmajerico pa z vodo. Zakaj ravno obratno? Voda v erlenmajerici ne spremeni količine kisline, ostanek vzorca pa bi jo povečal.",
-        zakaj: "Polnilna pipeta odmeri natanko 25,00 mL. To prostornino vzorca potrebuješ v računu.",
-        poudari: ["pipeto prej speri", "Odpipetiraj"],
+        kaj: "Pri »vzorec« pusti klorovodikovo kislino, vklopi »pipeto prej speri z vzorcem«, pri »erlenmajerico speri« pusti »z destilirano vodo« in pritisni »Odpipetiraj 25,00\u00a0mL v erlenmajerico«.",
+        namig: "Voda v pipeti bi vzorec razredčila, zato pipeto spereš z vzorcem. Voda v erlenmajerici ne spremeni množine kisline, ostanek vzorca pa bi jo povečal.",
+        zakaj: "Polnilna pipeta odmeri natanko 25,00\u00a0mL. To prostornino vzorca potrebuješ v računu.",
+        poudari: ["pipeto prej speri", "erlenmajerico speri", "Odpipetiraj"],
         done: (c) => c.bilo(/S propipeto si/),
       },
       {
         naslov: "Dodaj indikator",
         kaj: "Izberi fenolftalein in pritisni »Dodaj 2 kapljici indikatorja«.",
         namig: "Fenolftalein je v kislini brezbarven, v bazi rožnat.",
-        zakaj: "Indikator s spremembo barve pokaže končno točko: takrat je NaOH ravno toliko, kolikor je bilo kisline.",
+        zakaj: "Indikator s spremembo barve pokaže končno točko: takrat si dodal ravno toliko NaOH, kolikor je bilo v vzorcu kisline.",
         poudari: ["indikator", "Dodaj 2 kapljici"],
         done: (c) => c.bilo(/dodal 2 kapljici indikatorja/),
       },
       {
         naslov: "Zapiši začetni odčitek",
-        kaj: "V povečavi preberi gladino v bireti (spodnji rob meniska), vpiši jo na 0,05 mL natančno in pritisni »Zapiši začetni odčitek«.",
-        namig: "Oči imej v višini meniska. Bireta šteje od zgoraj navzdol, zato je število zgoraj manjše.",
+        kaj: "V povečavi preberi gladino v bireti (spodnji rob meniska), vpiši jo na 0,05\u00a0mL natančno in pritisni »Zapiši začetni odčitek«.",
+        namig: "V oknu »menisk, povečano 15×« imej oči v višini meniska in beri spodnji rob. Črtice so na 0,1 mL; če je menisk med dvema, zapiši še pol razdelka (npr. 0,35). Bireta šteje od zgoraj navzdol.",
         zakaj: "Porabo NaOH dobiš kot razliko končnega in začetnega odčitka.",
         poudari: ["odčitek birete", "Zapiši"],
         done: (c) => c.bilo(/Začetni odčitek(:| popravljen)/),
       },
       {
         naslov: "Titriraj do končne točke",
-        kaj: "Odpri pipo, sproti mešaj in blizu konca dodajaj po eno kapljico. Ko rožnata barva ostane, zapri pipo, preberi bireto in zapiši končni odčitek.",
+        kaj: "Odpri pipo in blizu konca dodajaj po eno kapljico. Ko bledo rožnata barva ostane vsaj pol minute, zapri pipo, preberi bireto in zapiši končni odčitek.",
         namig: "Prva titracija je lahko groba: iz nje izveš približno porabo. Pri naslednji odpri curek samo do nekaj mL pred tem.",
-        zakaj: "Ena kapljica je okoli 0,05 mL. Zato se blizu končne točke splača iti po kapljicah.",
+        zakaj: "Ena kapljica je okoli 0,05\u00a0mL. Zato se blizu končne točke splača iti po kapljicah.",
         poudari: ["pipa birete", "1 kapljica", "Zapiši"],
         done: (c) => c.vrstice.length >= 1,
       },
       {
         naslov: "Ponovi, da se titraciji ujemata",
-        kaj: "Odpipetiraj nov vzorec in titriraj znova, dokler se dve titraciji istega vzorca ne ujemata na 0,10 mL.",
+        kaj: "Odpipetiraj nov vzorec in titriraj znova, dokler se dve titraciji istega vzorca ne ujemata na 0,10\u00a0mL.",
         namig: "Za novo titracijo znova odpipetiraj vzorec in dodaj indikator. Bireto po potrebi dopolni in zapiši nov začetni odčitek.",
         zakaj: "Ena meritev lahko vsebuje napako. Dve ujemajoči se titraciji pokažeta, da je poraba res taka.",
         done: (c) => ujemanje(c.vrstice),
@@ -112,7 +117,7 @@ export const KORAKI = {
       {
         naslov: "Izračunaj koncentracijo",
         kaj: "Iz povprečne porabe izračunaj koncentracijo kisline, jo vpiši in pritisni »Preveri koncentracijo«.",
-        namig: "HCl in NaOH reagirata 1 : 1, zato je c(kisline) · 25,00 mL = 0,1000 mol/L · V(NaOH).",
+        namig: "HCl in NaOH reagirata 1\u00a0:\u00a01, zato je c(kisline) · 25,00\u00a0mL = 0,1000\u00a0mol/L · V(NaOH).",
         zakaj: "To je osnovni račun vsake titracije: iz znane množine NaOH sklepaš na množino kisline v vzorcu.",
         poudari: ["c(kisline)", "Preveri koncentracijo"],
         done: (c) => c.bilo(/Račun je pravilen/),
@@ -123,11 +128,11 @@ export const KORAKI = {
   "lab-ohm": {
     naslov: "Ohmov zakon: kako je tok odvisen od napetosti?",
     cilj: "Izmeril boš tok skozi upornik pri več napetostih, iz grafa določil upor in ugotovil, zakaj se žarnica obnaša drugače.",
-    konec: "Pokazal si, da je pri uporniku tok premo sorazmeren z napetosti (Ohmov zakon), pri žarnici pa ne. Preklopi na »Prosto« in preizkusi upornik 47 Ω: kaj se zgodi pri 12 V?",
+    konec: "Pokazal si, da je pri uporniku tok premo sorazmeren z napetostjo (Ohmov zakon), pri žarnici pa ne. Preklopi na »Prosto« in preizkusi upornik 47\u00a0Ω: kaj se zgodi pri 12\u00a0V?",
     koraki: [
       {
         naslov: "Poglej vezje",
-        kaj: "Ampermeter je vezan zaporedno, voltmeter vzporedno z upornikom 100 Ω. Napetost napajalnika povečaj na približno 2 V.",
+        kaj: "Ampermeter je vezan zaporedno, voltmeter vzporedno z upornikom 100\u00a0Ω. Napetost napajalnika povečaj na približno 2\u00a0V.",
         namig: "Drsnik »napetost napajalnika« je na vrhu kontrol.",
         zakaj: "Skozi ampermeter mora teči isti tok kot skozi upornik, zato je zaporedno. Voltmeter meri razliko napetosti med krajišči upornika, zato je vzporedno.",
         poudari: ["napetost napajalnika"],
@@ -142,8 +147,8 @@ export const KORAKI = {
       },
       {
         naslov: "Izmeri še pri drugih napetostih",
-        kaj: "Spreminjaj napetost (npr. 4, 6, 8 in 10 V) in vsakič zapiši meritev. Potrebuješ vsaj 5 različnih napetosti.",
-        namig: "Pri 100 Ω in 10 V teče 100 mA, zato je območje 200 mA ampermetra prav.",
+        kaj: "Spreminjaj napetost (npr. 4, 6, 8 in 10\u00a0V) in vsakič zapiši meritev. Potrebuješ vsaj 5 različnih napetosti.",
+        namig: "Pri 100\u00a0Ω in 10\u00a0V teče 100\u00a0mA, zato je območje ampermetra 200\u00a0mA primerno.",
         zakaj: "Več točk pokaže, ali ležijo na premici. Ena točka tega ne more pokazati.",
         poudari: ["napetost napajalnika", "Zapiši meritev"],
         done: (c) => {
@@ -156,11 +161,12 @@ export const KORAKI = {
         kaj: "Pod grafom je vprašanje »Sklep«. Poglej točke in črtkano premico ter izberi pravilen odgovor.",
         namig: "Če napetost podvojiš, kaj se zgodi s tokom?",
         zakaj: "Naklon premice je 1/R. Iz njega izračunaš upor in ga primerjaš z oznako na uporniku.",
-        done: (c) => c.sklepi >= 1,
+        pokazi: ".lab-q",
+        done: (c) => c.sklep(/za upornik/),
       },
       {
         naslov: "Kaj, če ampermeter vežeš narobe?",
-        kaj: "Napetost znižaj na približno 1 V in ampermeter za trenutek priključi vzporedno. Opazuj, kaj se zgodi.",
+        kaj: "Napetost znižaj na približno 1\u00a0V in ampermeter za trenutek priključi vzporedno. Opazuj, kaj se zgodi. To naredi samo tukaj, v pravem laboratoriju nikoli.",
         namig: "Pri »ampermeter« izberi »vzporedno«.",
         zakaj: "Ampermeter ima zelo majhen upor. Vzporedno priključen naredi skoraj kratek stik, zato steče velik tok in varovalka pregori.",
         poudari: ["ampermeter"],
@@ -175,8 +181,8 @@ export const KORAKI = {
       },
       {
         naslov: "Izmeri še žarnico",
-        kaj: "Pri »porabnik« izberi žarnico 6 V in zapiši meritve pri vsaj 4 napetostih, od majhnih do približno 6 V.",
-        namig: "Nad 6 V se nitka lahko pretrga. Žarnica rabi največ 0,1 A, zato je območje 200 mA dovolj.",
+        kaj: "Pri »porabnik« izberi žarnico 6\u00a0V in zapiši meritve pri vsaj 4 napetostih, od majhnih do približno 6\u00a0V.",
+        namig: "Nad 6\u00a0V se nitka lahko pretrga. Skozi žarnico teče največ 100\u00a0mA, zato je območje 200\u00a0mA dovolj.",
         zakaj: "Pri žarnici se z napetostjo spreminja temperatura nitke in z njo upor.",
         poudari: ["porabnik", "Zapiši meritev"],
         done: (c) => {
@@ -187,9 +193,10 @@ export const KORAKI = {
       {
         naslov: "Odgovori na vprašanje o žarnici",
         kaj: "Pod grafom je novo vprašanje »Sklep« za žarnico. Izberi pravilen odgovor.",
-        namig: "Primerjaj U/I v tabeli pri 2 V in pri 6 V.",
+        namig: "Primerjaj U/I v tabeli pri 2\u00a0V in pri 6\u00a0V.",
         zakaj: "Upor kovine raste s temperaturo. Zato graf žarnice ni premica.",
-        done: (c) => c.sklepi >= 2,
+        pokazi: ".lab-q",
+        done: (c) => c.sklep(/za žarnico/),
       },
     ],
   },
@@ -197,11 +204,11 @@ export const KORAKI = {
   "lab-prosti-pad": {
     naslov: "Prosti pad: kolikšen je težni pospešek?",
     cilj: "S svetlobnimi vrati boš meril čas padanja jeklene kroglice z različnih višin, iz grafa h(t²) določil g in ga primerjal s padanjem filtra za kavo.",
-    konec: "Iz svojih meritev si določil težni pospešek in videl, kako zračni upor zavre lahek predmet. Preklopi na »Prosto« in poskusi pero ali papirnati stožec.",
+    konec: "Iz svojih meritev si določil težni pospešek in videl, kako zračni upor zavira lahek predmet. Preklopi na »Prosto« in poskusi pero ali papirnati stožec.",
     koraki: [
       {
-        naslov: "Postavi vrata 20 cm pod kroglico",
-        kaj: "Predmet je jeklena kroglica na elektromagnetu. Drsnik »vrata pod predmetom« nastavi na 20 cm.",
+        naslov: "Postavi vrata 20\u00a0cm pod kroglico",
+        kaj: "Predmet je jeklena kroglica na elektromagnetu. Drsnik »vrata pod predmetom« nastavi na 20\u00a0cm.",
         zakaj: "h je razdalja od spodnjega roba kroglice do žarka. Časovnik meri čas od izklopa magneta do zatemnitve žarka.",
         poudari: ["vrata pod predmetom"],
         done: (c) => Math.abs(c.num("vrata pod predmetom") - 20) <= 2 && /jeklena/.test(c.par("predmet")),
@@ -209,14 +216,14 @@ export const KORAKI = {
       {
         naslov: "Spusti kroglico in zapiši čas",
         kaj: "Pritisni »Spusti«, počakaj, da kroglica pade, in pritisni »Zapiši meritev«.",
-        namig: "Če kroglica gre mimo žarka, premik vrat naprej–nazaj vrni na 0 mm.",
+        namig: "Če gre kroglica mimo žarka, drsnik »premik vrat naprej–nazaj« vrni na 0\u00a0mm.",
         zakaj: "Iz višine in časa lahko izračunaš pospešek, a ena meritev ima lahko napako. Zato meriš z več višin.",
         poudari: ["Spusti", "Zapiši meritev"],
         done: (c) => kjer(c, /^predmet/, /kroglica/).length >= 1,
       },
       {
         naslov: "Izmeri pri več višinah",
-        kaj: "Ponovi pri 50, 100, 150 in 200 cm. Skupaj potrebuješ vsaj 5 različnih višin.",
+        kaj: "Ponovi pri 50, 100, 150 in 200\u00a0cm. Skupaj potrebuješ vsaj 5 različnih višin.",
         zakaj: "Graf h(t²) z več točkami pokaže, ali je odvisnost res premica.",
         poudari: ["vrata pod predmetom", "Spusti", "Zapiši meritev"],
         done: (c) => {
@@ -228,8 +235,9 @@ export const KORAKI = {
         naslov: "Iz grafa določi g",
         kaj: "Poglej graf h(t²) in račun pod njim, nato odgovori na vprašanje »Sklep«.",
         namig: "Iz h = ½gt² sledi, da je naklon premice h(t²) enak ½g.",
-        zakaj: "Ker so točke na premici, je pospešek stalen. Dvakratnik naklona je težni pospešek, približno 9,8 m/s².",
-        done: (c) => c.sklepi >= 1,
+        zakaj: "Ker so točke na premici, je pospešek stalen. Dvakratnik naklona je težni pospešek, približno 9,8\u00a0m/s².",
+        pokazi: ".lab-q",
+        done: (c) => c.sklep(/naklon premice/),
       },
       {
         naslov: "Zamenjaj predmet s filtrom za kavo",
@@ -242,7 +250,7 @@ export const KORAKI = {
       {
         naslov: "Izmeri filter pri več višinah",
         kaj: "Spusti filter z vsaj treh različnih višin in vsakič zapiši meritev.",
-        zakaj: "Na grafu primerjaj točke filtra s premico kroglice.",
+        zakaj: "Točke filtra so desno od premice kroglice: za isto višino filter potrebuje več časa, ker ga zavira zrak.",
         poudari: ["vrata pod predmetom", "Spusti", "Zapiši meritev"],
         done: (c) => razlicne(kjer(c, /^predmet/, /filter/), /^h\b/, 2).size >= 3,
       },
@@ -251,7 +259,8 @@ export const KORAKI = {
         kaj: "Odgovori na drugo vprašanje »Sklep«.",
         namig: "Kaj se zgodi s silo zračnega upora, ko hitrost raste?",
         zakaj: "Ko je upor enak teži, filter ne pospešuje več in pada s stalno končno hitrostjo.",
-        done: (c) => c.sklepi >= 2,
+        pokazi: ".lab-q",
+        done: (c) => c.sklep(/filter za kavo/),
       },
     ],
   },

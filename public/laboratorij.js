@@ -206,7 +206,7 @@ function stej(key, nacin, dogodek) {
   D.api(`/api/students/${s.id}/lab/uporaba`, { method: "POST", body: { key, nacin, dogodek } }).catch(() => {});
 }
 async function zazeni(x, m) {
-  await mountSim(x.id, m, x.opts);
+  if (!(await mountSim(x.id, m, x.opts))) return;
   const { imaVodeno, vodi } = await import("./sim/lab-vodeno.js");
   if (!m.isConnected) return;
   if (!imaVodeno(x.key)) return stej(x.key, "brez", "odprt");

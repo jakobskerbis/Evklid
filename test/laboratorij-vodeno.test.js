@@ -45,16 +45,33 @@ test("helpers: numbers with a decimal comma, table columns, concordant titration
 });
 
 test("step checks: a done() reads only what the student did", () => {
-  const c = (o) => ({ par: () => "", num: () => NaN, bilo: () => false, vrstice: [], sklepi: 0, ...o });
+  // Dnevnik kot v lab-vodeno.js → kontekst (zadnji: kateri vzorec se ujema z najnovejšo vrstico).
+  const zadnji = (log) => (...res) => {
+    for (let k = log.length - 1; k >= 0; k--) {
+      const i = res.findIndex((re) => re.test(log[k]));
+      if (i >= 0) return i;
+    }
+    return -1;
+  };
+  const c = (o) => ({ par: () => "", num: () => NaN, bilo: () => false, zadnji: () => -1, vrstice: [], sklep: () => false, ...o });
   const tit = KORAKI["lab-titracija"].koraki;
   assert.equal(tit[0].done(c({ par: (n) => (n === "zaščitna očala" ? "ne" : "") })), false);
   assert.equal(tit[0].done(c({ par: (n) => (n === "zaščitna očala" ? "da" : "") })), true);
+  // Najprej napolnil, nato spral: spiranje bireto izprazni, zato korak »Napolni« ni opravljen (pregled 2).
+  const SPRAL = "Bireto si trikrat spral z nekaj mL raztopine NaOH", POLN = "Bireto si z lijakom napolnil z NaOH nekoliko pod ničlo.", ZRAK = "Iz konice je izteklo malo raztopine v čašo za odpadke; zraka v konici ni bilo.";
+  assert.equal(tit[2].done(c({ zadnji: zadnji([POLN, SPRAL]) })), false);
+  assert.equal(tit[2].done(c({ zadnji: zadnji([POLN, SPRAL, POLN]) })), true);
+  assert.equal(tit[3].done(c({ zadnji: zadnji([SPRAL, POLN, ZRAK]) })), true);
+  assert.equal(tit[3].done(c({ zadnji: zadnji([SPRAL, ZRAK, POLN]) })), false, "zrak izpuščen pred polnjenjem");
   const ohm = KORAKI["lab-ohm"].koraki;
   const vr = (U, I, p = "100 Ω") => ({ porabnik: p, "U [V]": U, "I [mA]": I, "U/I [Ω]": "100" });
   const pet = ["2,0", "4,0", "6,0", "8,0", "10,0"].map((U) => vr(U, String(stevilo(U) * 10)));
   assert.equal(ohm[2].done(c({ vrstice: pet.slice(0, 4) })), false, "4 napetosti niso dovolj");
   assert.equal(ohm[2].done(c({ vrstice: pet })), true);
   assert.equal(ohm[2].done(c({ vrstice: [...pet.slice(0, 4), vr("10,0", "–")] })), false, "meritev brez toka ne šteje");
+  // Sklep šteje le pravo vprašanje: odgovor o žarnici ne opravi koraka o uporniku.
+  assert.equal(ohm[3].done(c({ sklep: (re) => re.test("Kaj kažejo tvoje meritve za žarnico?") })), false);
+  assert.equal(ohm[3].done(c({ sklep: (re) => re.test("Kaj kažejo tvoje meritve za upornik?") })), true);
   const pad = KORAKI["lab-prosti-pad"].koraki;
   const h = (x) => ({ predmet: "kroglica", "h [m]": x, "t [s]": "0,3", "t² [s²]": "0,09", "v [m/s]": "–" });
   assert.equal(pad[2].done(c({ vrstice: ["0,20", "0,50", "1,00", "1,50", "2,00"].map(h) })), true);
@@ -120,6 +137,16 @@ import { vodi } from "/sim/lab-vodeno.js";
 const m = document.getElementById("m");
 const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 window.wait = (ms) => new Promise((r) => setTimeout(r, ms));
+// Čaka, dokler pogoj ne velja (najdlje ms): počasen strežnik v CI ne sme podreti igre.
+window.dokler = async (f, ms = 15000) => {
+  const t0 = performance.now();
+  while (!f()) {
+    if (performance.now() - t0 > ms) throw new Error("ni dočakal: " + f.toString().slice(0, 80));
+    await wait(50);
+  }
+};
+window.vrstic = () => m.querySelectorAll("table.lab-table tbody tr").length;
+window.zadnjiDnevnik = () => (m.querySelector(".lab-log li")?.textContent || "");
 window.mount = async (id, nacin = "vodeno") => {
   await mountSim(id, m, {});
   window.konec = 0;
@@ -182,7 +209,7 @@ window.sklep = async (n) => {
   }
   await wait(120);
 };
-window.stanje = () => ({ korak: vod.korak, konec, oznaka: txt(m.querySelector(".lab-vod-oznaka") || {}), naslov: txt(m.querySelector(".lab-vod h4") || {}), skrita: !!m.querySelector(".lab-vod")?.hidden, cilji: m.querySelectorAll(".lab-vod-cilj").length, prvi: ctl()?.firstElementChild?.className });
+window.stanje = () => ({ korak: vod.korak, konec, oznaka: txt(m.querySelector(".lab-vod-oznaka") || {}), naslov: txt(m.querySelector(".lab-vod h3") || {}), skrita: !!m.querySelector(".lab-vod")?.hidden, cilji: m.querySelectorAll(".lab-vod-cilj").length, prvi: ctl()?.firstElementChild?.className });
 window.ready = true;
 </script>`;
 
@@ -207,24 +234,33 @@ const IGRA = {
     await stikalo("pipeto prej speri");
     for (const [r1, r2] of [["0,50", "20,50"], ["0,55", "20,60"]]) {
       await klik("Odpipetiraj");
-      await wait(3300); // pipetiranje traja 3 s, med njim pipa birete ne teče
+      await dokler(() => /S propipeto si/.test(zadnjiDnevnik()));
       await klik("Dodaj 2 kapljici");
       await vpisi("odčitek birete v mililitrih", r1);
       await klik("Zapiši");
-      await klik("1 kapljica");
-      await wait(400);
-      await vpisi("odčitek birete v mililitrih", r2);
-      await klik("Zapiši");
+      await dokler(() => /Začetni odčitek/.test(document.querySelector(".lab-log").textContent));
+      const n = vrstic();
+      for (let k = 0; k < 20 && vrstic() === n; k++) {
+        // kapljica mora v erlenmajerico, preden je končni odčitek veljaven
+        await klik("1 kapljica");
+        await wait(400);
+        await vpisi("odčitek birete v mililitrih", r2);
+        await klik("Zapiši");
+      }
     }
     await vpisi("izračunana koncentracija kisline v mol na liter", "0,0801"); // 0,1000 · 20,025 / 25,00
     await klik("Preveri koncentracijo");
   },
   "lab-ohm": async () => {
-    for (const U of [2, 4, 6, 8, 10]) {
+    // Merilnika odčitata vsakih 0,4 s simuliranega časa: počakaj, da voltmeter kaže novo napetost.
+    const volt = () => stevilo([...document.querySelectorAll(".lab-lcd")].find((x) => /voltmeter/.test(x.textContent))?.querySelector(".lab-lcd-val")?.textContent);
+    const stevilo = (t) => Number(String(t || "").replace(",", "."));
+    const meri = async (U) => {
       await drsnik("napetost napajalnika", U);
-      await wait(500); // merilnika odčitata vsakih 0,4 s
+      await dokler(() => Math.abs(volt() - U) < 0.3);
       await klik("Zapiši meritev");
-    }
+    };
+    for (const U of [2, 4, 6, 8, 10]) await meri(U);
     await sklep(0);
     await drsnik("napetost napajalnika", 1);
     await izbira("ampermeter", "vzporedno");
@@ -232,29 +268,25 @@ const IGRA = {
     await izbira("ampermeter", "zaporedno");
     if ([...document.querySelectorAll(".lab-ev")].some((x) => /pregorela varovalka/.test(x.textContent))) await klik("Zamenjaj varovalko");
     await izbira("porabnik", "žarnica");
-    for (const U of [1, 2, 4, 6]) {
-      await drsnik("napetost napajalnika", U);
-      await wait(500);
-      await klik("Zapiši meritev");
-    }
+    for (const U of [1, 2, 4, 6]) await meri(U);
     await sklep(1);
   },
   "lab-prosti-pad": async () => {
-    for (const cm of [20, 50, 100, 150, 200]) {
+    // Zapiše, ko je predmet padel (»Počakaj, da predmet pade« = še ne): ponavlja, dokler ni nove vrstice.
+    const spusti = async (cm) => {
       await drsnik("vrata pod predmetom", cm);
       await klik("Spusti");
-      await wait(1100);
-      await klik("Zapiši meritev");
-    }
+      const n = vrstic();
+      for (let k = 0; k < 100 && vrstic() === n; k++) {
+        await wait(200);
+        await klik("Zapiši meritev");
+      }
+    };
+    for (const cm of [20, 50, 100, 150, 200]) await spusti(cm);
     await sklep(0);
     await izbira("predmet", "filter");
     await izbira("spust", "klešče");
-    for (const cm of [50, 100, 150]) {
-      await drsnik("vrata pod predmetom", cm);
-      await klik("Spusti");
-      await wait(3300); // filter pade do tal (stojalo ~2 m) s končno hitrostjo ~1 m/s
-      await klik("Zapiši meritev");
-    }
+    for (const cm of [50, 100, 150]) await spusti(cm); // filter pade do tal s končno hitrostjo ~1 m/s
     await sklep(1);
   },
 };
@@ -264,7 +296,8 @@ test("guided experiments play through to the end in a real browser", { timeout: 
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}`;
   t.after(() => server.close());
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  // Zmanjšano gibanje: pipetiranje v titraciji je takojšnje (sicer 3 s, med katerimi pipa birete ne teče).
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
   const page = await ctx.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -306,6 +339,15 @@ test("Prosto hides the card; Ponastavi starts the guide again; phone: no sideway
   assert.ok(over <= 0, `vodoravno drsenje ${over} px`);
   // risba ostane pripeta (lab.js → pripni) tudi s kartico na vrhu kontrol
   assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector(".lab-tit-top > .demo-stage")).position), "sticky");
+  // »Pokaži, kje«: obkrožena kontrola pride v pogled pod pripeto risbo, ne podnjo.
+  await page.evaluate(() => document.querySelector(".lab-vod-kje").click());
+  await page.waitForTimeout(900);
+  const kje = await page.evaluate(() => {
+    const el = document.querySelector(".lab-vod-cilj"), st = document.querySelector(".lab-tit-top > .demo-stage"), v = document.getElementById("v");
+    const r = el.getBoundingClientRect(), s = st.getBoundingClientRect(), p = v.getBoundingClientRect();
+    return { pod: r.top >= s.bottom - 2, vidno: r.bottom <= p.bottom + 1, txt: el.textContent.trim().slice(0, 30) };
+  });
+  assert.ok(kje.pod && kje.vidno, `»Pokaži, kje« (${kje.txt}): ${JSON.stringify(kje)}`);
   await page.click(".lab-vod-nacin .seg-btn[data-v=prosto]");
   await page.waitForTimeout(200);
   let s = await page.evaluate(() => stanje());
