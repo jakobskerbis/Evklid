@@ -3,10 +3,10 @@ vir: content/lessons/MAT-SS-4/mesane-maturitetne-naloge.md
 sha256: 7022ccdf1a410a1ae1a700993134a2645d363bb5cf52b5732a90b4643b92b183
 Ni v Leanu: seznam »ključna beseda → orodje«, štirje splošni koraki, analogija s trenerjem in postopki
 (napotki za reševanje, ne matematične trditve); simulacija; trditvi »vsak par je nova priložnost« in
-»ljudje štejemo osebe, verjetnost pa šteje pare« (razlaga); premisli o kolesarju (izbira orodja); verjetnostni
-model zaporednih metov oziroma žarnic (meti, žarnice, rojstni dnevi so dokazani kot računi s formulami
-lekcije, ne kot dogodki v verjetnostnem prostoru; pri nalogi 3 d je dokazana vsota, ne nezdružljivost
-dogodkov); pogosta napaka o integralu negativne hitrosti (ni konkretne funkcije); kviza o naklonu in o
+»ljudje štejemo osebe, verjetnost pa šteje pare« (razlaga); premisli o kolesarju (izbira orodja); zapis
+zaporednih metov oziroma žarnic kot dogodkov v verjetnostnem prostoru (zahtevno, še ni dokazano: meti,
+žarnice, rojstni dnevi so dokazani kot računi s formulami lekcije; pri nalogi 3 d je dokazana vsota, ne
+nezdružljivost dogodkov); pogosta napaka o integralu negativne hitrosti (ni konkretne funkcije); kviza o naklonu in o
 vrstnem redu korakov razen računov; točkovanje. Približki »≈« so dokazani kot |vrednost − približek| ≤ pol
 enote zadnjega mesta, zapisi »0,664832…« kot spodnja in zgornja meja na zapisano število decimalk.
 -/
@@ -175,6 +175,25 @@ theorem primer2_vrh :
     fun t => ?_⟩
   unfold h₂
   nlinarith [sq_nonneg (t - 1)]
+
+/-- Formula iz primera 2 v splošni obliki: za `a ≠ 0` in `D = b² − 4ac ≥ 0` je `ax² + bx + c = 0`
+natanko pri `x = (−b ± √D)/(2a)`; pri `D < 0` realne rešitve ni. -/
+theorem kvadratna_formula (a b c : ℝ) (ha : a ≠ 0) :
+    discrim a b c = b ^ 2 - 4 * a * c ∧
+    (0 ≤ b ^ 2 - 4 * a * c → ∀ x : ℝ, a * x ^ 2 + b * x + c = 0 ↔
+      x = (-b + Real.sqrt (b ^ 2 - 4 * a * c)) / (2 * a) ∨
+        x = (-b - Real.sqrt (b ^ 2 - 4 * a * c)) / (2 * a)) ∧
+    (b ^ 2 - 4 * a * c < 0 → ∀ x : ℝ, a * x ^ 2 + b * x + c ≠ 0) := by
+  refine ⟨rfl, fun hD x => ?_, fun hD x => ?_⟩
+  · have h : discrim a b c = Real.sqrt (b ^ 2 - 4 * a * c) * Real.sqrt (b ^ 2 - 4 * a * c) := by
+      rw [Real.mul_self_sqrt hD, discrim]
+    rw [← quadratic_eq_zero_iff ha h x, show a * x ^ 2 = a * (x * x) by ring]
+  · rw [show a * x ^ 2 = a * (x * x) by ring]
+    exact quadratic_ne_zero_of_discrim_ne_sq (fun s hs => by
+      rw [discrim] at hs; nlinarith [sq_nonneg s]) x
+
+/-- Predpostavka trditve `kvadratna_formula` se da izpolniti (`a = 5` iz primera 2). -/
+example : (5:ℝ) ≠ 0 := by norm_num
 
 /-- Primer 2, koraki 4 in 5: `−5t² + 10t + 1 = 0` ⇔ `5t² − 10t − 1 = 0` ⇔ `t = (10 ± √120)/10`,
 diskriminanta `D = 100 + 20 = 120`. -/
@@ -457,6 +476,23 @@ example : (0:ℝ) ∈ Set.Ioo (-1) 1 ∧ IsMaxOn (fun x : ℝ => -x ^ 2) (Set.Ic
     HasDerivAt (fun x : ℝ => -x ^ 2) 0 0 := by
   refine ⟨⟨by norm_num, by norm_num⟩, fun x _ => by simp; positivity, ?_⟩
   exact (hasDerivAt_pow 2 (0:ℝ)).neg.congr_deriv (by norm_num)
+
+/-- Ustno vprašanje 2, obstoj: zvezna funkcija na `[a, b]` doseže največjo vrednost v neki točki `c`;
+ta je krajišče `a` ali `b` ali pa notranja točka, kjer je (če je `f` tam odvedljiva) `f'(c) = 0`. -/
+theorem maksimum_na_intervalu (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : ContinuousOn f (Icc a b)) :
+    ∃ c ∈ Icc a b, IsMaxOn f (Icc a b) c ∧
+      (c = a ∨ c = b ∨ (c ∈ Ioo a b ∧ (DifferentiableAt ℝ f c → deriv f c = 0))) := by
+  obtain ⟨c, hc, hmax⟩ := isCompact_Icc.exists_isMaxOn (nonempty_Icc.2 hab) hf
+  refine ⟨c, hc, hmax, ?_⟩
+  rcases eq_or_lt_of_le hc.1 with h1 | h1
+  · exact Or.inl h1.symm
+  rcases eq_or_lt_of_le hc.2 with h2 | h2
+  · exact Or.inr (Or.inl h2)
+  exact Or.inr (Or.inr ⟨⟨h1, h2⟩, fun hd => notranji_maksimum f a b c _ ⟨h1, h2⟩ hmax hd.hasDerivAt⟩)
+
+/-- Predpostavke trditve `maksimum_na_intervalu` se dajo izpolniti (`f(x) = −x²` na `[−1, 1]`). -/
+example : (-1:ℝ) ≤ 1 ∧ ContinuousOn (fun x : ℝ => -x ^ 2) (Set.Icc (-1) 1) :=
+  ⟨by norm_num, by fun_prop⟩
 
 /-! ## Preveri se -/
 

@@ -4,14 +4,16 @@ sha256: 112d369ecf5696dbf79f4fc14d2c2416ba66f88bd2e24f79256ea787a493d70f
 Ni v Leanu: zgradba mature, delež ocene, priloga, vrstni red reševanja, pravilo preskoka, točkovanje in
 pravila za zapis (organizacija izpita, ne matematične trditve; dokazani so le računi minut in točk);
 risbe in simulacija razen ničel in temena; zgodba o Neži; ključne besede razen izreka o ostanku in
-vrednosti `sin 60°`; ustno vprašanje 2 v splošni obliki (dokazano za funkcijo iz naloge 10). Numerične
-vrednosti kotnih in krožnih funkcij, ki jih Mathlib ne zna dovolj natančno oceniti: kot `71,9°` (naloga 17),
-stranica, ploščina in delež devetkotnika (`sin 20°`, `sin 40°`, naloga 21; dokazani sta formuli), kot
-`74,7°` (naloga 23; dokazan je `cos φ = 5/19`), vsa števila naloge 25 (`cos 58°`, `sin 58°`; dokazani
-sta pretvorba v are in `v_a = 2S/a`), kot `38,7°` (naloga 27; dokazan je `tan φ = 0,8`), kot `109,5°`
-(naloga 29; dokazan je `tan(φ/2) = √2`), koti `143,13°`, `71,57°`, radiani `2,49809…` in ploščina
-odseka `23,73` (naloga 31; dokazani so `cos φ = −0,8`, `sin φ = 0,6`, `tan δ = 3` in `δ = φ/2`).
-Odklon pri deljenju z `N − 1` (`2,82`) je dokazan, štetje »5 podatkov« pri njem pa ne; »4 podatki« pri
+vrednosti `sin 60°`. Numerične vrednosti kotov in kotnih funkcij (zahtevno, še ni dokazano; ocene bi
+šle prek `Real.sin_bound`/`Real.cos_bound`, mej za `π` in adicijskih formul): kot `71,9°` (naloga 17),
+kot `74,7°` (naloga 23; dokazan je `cos φ = 5/19`), števila naloge 25 (`74,1 m`, `0,71003`, `45,2°`,
+`2234,6 m²`, `60,4 m`; dokazani so kosinusni in sinusni izrek s simboloma `cos 58°`, `sin 58°`, ostrost
+`β`, `S = 2635·sin 58°`, pretvorba v are in `v_a = 2S/a`), kot `38,7°` (naloga 27; dokazan je
+`tan φ = 0,8`), kot `109,5°` (naloga 29; dokazan je `tan(φ/2) = √2`), koti `143,13°`, `71,57°`, radiani
+`2,49809…` in ploščina odseka `23,73` (naloga 31; dokazani so `cos φ = −0,8`, `sin φ = 0,6`, `tan δ = 3`
+in `δ = φ/2`). Števila naloge 21 (`3,42`, `72,31`, `92,07 %`) so dokazana.
+Odklon pri deljenju z `N − 1` (`2,82`) in »5 podatkov« pri njem sta dokazana kot pripadnost `12, …, 16`
+intervalu in nepripadnost ostalih treh; »4 podatki« pri
 `σ` so dokazani kot pripadnost `13, 14, 15, 16` intervalu in nepripadnost ostalih štirih. Pri
 nalogi 28 so verjetnosti dokazane kot ulomki iz binomskih koeficientov (ne kot dogodki v verjetnostnem
 prostoru). Približki »≈« so dokazani kot |vrednost − približek| ≤ pol enote zadnjega mesta, zapisi
@@ -380,12 +382,16 @@ theorem naloga8 :
 
 /-- Naloga 9 a): definicijsko območje `x + 2 > 0`, tj. `x > −2`; ničla `log₂(x + 2) = 0` ⇔ `x + 2 = 1` ⇔
 `x = −1`. -/
-theorem naloga9_a (x : ℝ) (hx : -2 < x) :
-    0 < x + 2 ∧ (Real.logb 2 (x + 2) = 0 ↔ x + 2 = 1) ∧ (Real.logb 2 (x + 2) = 0 ↔ x = -1) := by
+theorem naloga9_a :
+    (∀ x : ℝ, 0 < x + 2 ↔ -2 < x) ∧ {x : ℝ | 0 < x + 2} = Set.Ioi (-2) ∧
+      ∀ x : ℝ, -2 < x →
+        (Real.logb 2 (x + 2) = 0 ↔ x + 2 = 1) ∧ (Real.logb 2 (x + 2) = 0 ↔ x = -1) := by
+  have hd : ∀ x : ℝ, 0 < x + 2 ↔ -2 < x := fun x => by constructor <;> intro h <;> linarith
+  refine ⟨hd, Set.ext fun x => hd x, fun x hx => ?_⟩
   have h : Real.logb 2 (x + 2) = 0 ↔ x + 2 = 1 := by
     rw [Real.logb_eq_iff_rpow_eq (by norm_num) (by norm_num) (by linarith), Real.rpow_zero]
     exact eq_comm
-  refine ⟨by linarith, h, ?_⟩
+  refine ⟨h, ?_⟩
   rw [h]; constructor <;> intro h <;> linarith
 
 /-- Predpostavka trditve `naloga9_a` se da izpolniti. -/
@@ -635,6 +641,52 @@ theorem naloga13_abc :
 /-- Naloga 13 d): v paralelogramu `ABDC` je `CD⃗ = AB⃗`, zato `D = C + AB⃗ = (2, 4, 1)`. -/
 theorem naloga13_d : ((1:ℝ) + 1, (3:ℝ) + 1, (1:ℝ) + 0) = (2, 4, 1) ∧
     ((2:ℝ) - 1, (4:ℝ) - 3, (1:ℝ) - 1) = ((2:ℝ) - 1, (3:ℝ) - 2, (0:ℝ) - 0) := by norm_num
+
+/-- Točke naloge 13 kot vektorji v `ℝ³`. -/
+def A₁₃ : Fin 3 → ℝ := ![1, 2, 0]
+/-- Točka `B` naloge 13. -/
+def B₁₃ : Fin 3 → ℝ := ![2, 3, 0]
+/-- Točka `C` naloge 13. -/
+def C₁₃ : Fin 3 → ℝ := ![1, 3, 1]
+/-- Točka `D = C + AB⃗` naloge 13. -/
+def D₁₃ : Fin 3 → ℝ := C₁₃ + (B₁₃ - A₁₃)
+
+/-- Skalarni produkt v `ℝ³`. -/
+def skal (u v : Fin 3 → ℝ) : ℝ := ∑ i, u i * v i
+
+/-- Dolžina vektorja v `ℝ³`. -/
+noncomputable def dolz (u : Fin 3 → ℝ) : ℝ := Real.sqrt (skal u u)
+
+/-- Naloga 13 s točkami `A(1, 2, 0)`, `B(2, 3, 0)`, `C(1, 3, 1)`: `AB⃗ = (1, 1, 0)`, `AC⃗ = (0, 1, 1)`,
+`BC⃗ = (−1, 0, 1)`; `|AB⃗| = |AC⃗| = |BC⃗| = √2` (trikotnik je enakostraničen);
+`cos α = AB⃗·AC⃗/(|AB⃗||AC⃗|) = 1/2`, `α = 60°`; `D = C + AB⃗ = (2, 4, 1)` in `CD⃗ = AB⃗`. -/
+theorem naloga13_tocke :
+    B₁₃ - A₁₃ = ![1, 1, 0] ∧ C₁₃ - A₁₃ = ![0, 1, 1] ∧ C₁₃ - B₁₃ = ![-1, 0, 1] ∧
+      dolz (B₁₃ - A₁₃) = Real.sqrt 2 ∧ dolz (C₁₃ - A₁₃) = Real.sqrt 2 ∧
+      dolz (C₁₃ - B₁₃) = Real.sqrt 2 ∧
+      skal (B₁₃ - A₁₃) (C₁₃ - A₁₃) / (dolz (B₁₃ - A₁₃) * dolz (C₁₃ - A₁₃)) = 1 / 2 ∧
+      Real.arccos (skal (B₁₃ - A₁₃) (C₁₃ - A₁₃) / (dolz (B₁₃ - A₁₃) * dolz (C₁₃ - A₁₃))) =
+        60 * (π / 180) ∧
+      D₁₃ = ![2, 4, 1] ∧ D₁₃ - C₁₃ = B₁₃ - A₁₃ := by
+  have e1 : B₁₃ - A₁₃ = ![1, 1, 0] := by
+    funext i; fin_cases i <;> norm_num [A₁₃, B₁₃]
+  have e2 : C₁₃ - A₁₃ = ![0, 1, 1] := by
+    funext i; fin_cases i <;> norm_num [A₁₃, C₁₃]
+  have e3 : C₁₃ - B₁₃ = ![-1, 0, 1] := by
+    funext i; fin_cases i <;> norm_num [B₁₃, C₁₃]
+  have d1 : dolz (B₁₃ - A₁₃) = Real.sqrt 2 := by
+    rw [e1, dolz, skal]; simp [Fin.sum_univ_three]; norm_num
+  have d2 : dolz (C₁₃ - A₁₃) = Real.sqrt 2 := by
+    rw [e2, dolz, skal]; simp [Fin.sum_univ_three]; norm_num
+  have d3 : dolz (C₁₃ - B₁₃) = Real.sqrt 2 := by
+    rw [e3, dolz, skal]; simp [Fin.sum_univ_three]; norm_num
+  have c : skal (B₁₃ - A₁₃) (C₁₃ - A₁₃) / (dolz (B₁₃ - A₁₃) * dolz (C₁₃ - A₁₃)) = 1 / 2 := by
+    rw [d1, d2, Real.mul_self_sqrt (by norm_num), e1, e2, skal]; simp [Fin.sum_univ_three]
+  have dD : D₁₃ = ![2, 4, 1] := by
+    rw [D₁₃, e1]; funext i; fin_cases i <;> simp [C₁₃] <;> norm_num
+  refine ⟨e1, e2, e3, d1, d2, d3, c, ?_, dD, by rw [D₁₃]; abel⟩
+  rw [c, show 60 * (π / 180) = π / 3 by ring, ← Real.cos_pi_div_three,
+    Real.arccos_cos (by positivity) (by linarith [Real.pi_pos])]
 
 /-- Naloga 14 a): splošni člen `C(6, k)·(x²)⁶⁻ᵏ·(−2/x)ᵏ = C(6, k)·(−2)ᵏ·x¹²⁻³ᵏ` za `k = 0, …, 6`
 (`x ≠ 0`) in razvoj `(x² − 2/x)⁶ = Σₖ C(6, k)(−2)ᵏ x¹²⁻³ᵏ`. -/
@@ -944,6 +996,30 @@ theorem naloga20 :
     simp only [mem_insert_iff, mem_singleton_iff] at hv
     rcases hv with rfl | rfl | rfl | rfl <;> linarith [h.1, h.2]
 
+/-- Naloga 20, točkovanje: z `s = √(55,5/7) ≈ 2,82` je interval `(x̄ − s, x̄ + s)` zaokroženo
+`(11,93; 17,57)`; v njem leži natanko `5` podatkov (`12`, `13`, `14`, `15`, `16`), ne pa `11`, `18`, `19`
+(podatki so prav teh osem števil). -/
+theorem naloga20_s :
+    |14.75 - Real.sqrt (55.5 / 7) - 11.93| ≤ 0.005 ∧ |14.75 + Real.sqrt (55.5 / 7) - 17.57| ≤ 0.005 ∧
+      (∀ v ∈ ({12, 13, 14, 15, 16} : Set ℝ),
+        14.75 - Real.sqrt (55.5 / 7) < v ∧ v < 14.75 + Real.sqrt (55.5 / 7)) ∧
+      (∀ v ∈ ({11, 18, 19} : Set ℝ),
+        ¬ (14.75 - Real.sqrt (55.5 / 7) < v ∧ v < 14.75 + Real.sqrt (55.5 / 7))) ∧
+      sklece.length = 8 ∧ sklece.Nodup ∧
+      ∀ v : ℝ, v ∈ sklece ↔ v ∈ ({12, 13, 14, 15, 16, 11, 18, 19} : Set ℝ) := by
+  obtain ⟨t1, t2⟩ := koren2 (55.5 / 7) 2.8157 2.8158 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  refine ⟨blizu (by linarith) (by linarith), blizu (by linarith) (by linarith), ?_, ?_, rfl, ?_, ?_⟩
+  · intro v hv
+    simp only [mem_insert_iff, mem_singleton_iff] at hv
+    rcases hv with rfl | rfl | rfl | rfl | rfl <;> constructor <;> linarith
+  · intro v hv h
+    simp only [mem_insert_iff, mem_singleton_iff] at hv
+    rcases hv with rfl | rfl | rfl <;> linarith [h.1, h.2]
+  · simp [sklece]
+  · intro v
+    simp only [sklece, List.mem_cons, List.not_mem_nil, mem_insert_iff, mem_singleton_iff, or_false]
+    tauto
+
 /-- Naloga 21: kot ob središču `360°/9 = 40°`; iz `a/2 = r sin 20°` sledi `a = 10 sin 20°`;
 `S = 9·r² sin 40°/2 = 225 sin 40°/2`; delež je `S/(πr²)`. -/
 theorem naloga21 (a S : ℝ) :
@@ -954,8 +1030,66 @@ theorem naloga21 (a S : ℝ) :
   refine ⟨by norm_num, fun h => by linarith, by ring, fun h => ?_⟩
   rw [h]; field_simp; ring
 
+/-- Naloga 21, števila: `a = 10 sin 20° = 3,4202… ≈ 3,42`, `S = 225 sin 40°/2 = 72,3136… ≈ 72,31`,
+delež `S/(πr²) = 9 sin 40°/(2π) = 0,920725… ≈ 92,07 %`. Meje za `s = sin 20°` dobimo iz
+`3s − 4s³ = sin 60° = √3/2` (funkcija `3s − 4s³` narašča na `[0, 1/2]`, `0 < s < sin 30° = 1/2`),
+nato `sin² 40° = 4s²(1 − s²)`. -/
+theorem naloga21_stevila :
+    (3.4202:ℝ) ≤ 10 * Real.sin (20 * (π / 180)) ∧ 10 * Real.sin (20 * (π / 180)) < 3.4203 ∧
+      |10 * Real.sin (20 * (π / 180)) - 3.42| ≤ 0.005 ∧
+      (72.3136:ℝ) ≤ 225 * Real.sin (40 * (π / 180)) / 2 ∧
+      225 * Real.sin (40 * (π / 180)) / 2 < 72.3137 ∧
+      |225 * Real.sin (40 * (π / 180)) / 2 - 72.31| ≤ 0.005 ∧
+      (0.920725:ℝ) ≤ 9 * Real.sin (40 * (π / 180)) / (2 * π) ∧
+      9 * Real.sin (40 * (π / 180)) / (2 * π) < 0.920726 ∧
+      |100 * (9 * Real.sin (40 * (π / 180)) / (2 * π)) - 92.07| ≤ 0.005 := by
+  rw [show 20 * (π / 180) = π / 9 by ring, show 40 * (π / 180) = 2 * (π / 9) by ring]
+  have hp := Real.pi_pos
+  have p1 := Real.pi_gt_d6
+  have p2 := Real.pi_lt_d6
+  set s := Real.sin (π / 9) with hs
+  have s0 : 0 < s := Real.sin_pos_of_pos_of_lt_pi (by positivity) (by linarith)
+  have s12 : s < 1 / 2 := by
+    rw [← Real.sin_pi_div_six]
+    exact Real.sin_lt_sin_of_lt_of_le_pi_div_two (by linarith) (by linarith) (by linarith)
+  have h3 : 3 * s - 4 * s ^ 3 = Real.sqrt 3 / 2 := by
+    rw [hs, ← Real.sin_three_mul, ← Real.sin_pi_div_three]; congr 1; ring
+  obtain ⟨r1, r2⟩ := koren2 3 1.7320508075 1.7320508076 (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
+  have sl : (0.34202014:ℝ) < s := by
+    by_contra h
+    replace h := not_lt.mp h
+    have m : 0 ≤ ((0.34202014:ℝ) - s) * (3 - 4 * ((0.34202014:ℝ) ^ 2 + 0.34202014 * s + s ^ 2)) :=
+      mul_nonneg (by linarith) (by nlinarith)
+    have key : 3 * s - 4 * s ^ 3 ≤ 3 * 0.34202014 - 4 * (0.34202014:ℝ) ^ 3 := by nlinarith [m]
+    norm_num at key
+    linarith
+  have su : s < (0.34202015:ℝ) := by
+    by_contra h
+    replace h := not_lt.mp h
+    have m : 0 ≤ (s - (0.34202015:ℝ)) * (3 - 4 * (s ^ 2 + s * 0.34202015 + (0.34202015:ℝ) ^ 2)) :=
+      mul_nonneg (by linarith) (by nlinarith)
+    have key : 3 * 0.34202015 - 4 * (0.34202015:ℝ) ^ 3 ≤ 3 * s - 4 * s ^ 3 := by nlinarith [m]
+    norm_num at key
+    linarith
+  set t := Real.sin (2 * (π / 9)) with ht
+  have t2 : t ^ 2 = 4 * s ^ 2 * (1 - s ^ 2) := by
+    rw [ht, Real.sin_two_mul, mul_pow, mul_pow, Real.cos_sq']; ring
+  have t0 : 0 < t := Real.sin_pos_of_pos_of_lt_pi (by positivity) (by linarith)
+  have a1 : (0.34202014:ℝ) ^ 2 < s ^ 2 := by nlinarith
+  have a2 : s ^ 2 < (0.34202015:ℝ) ^ 2 := by nlinarith
+  obtain ⟨tl, tu⟩ := koren_meje t (4 * s ^ 2 * (1 - s ^ 2)) 0.6427876 0.6427877 2 t0.le (by norm_num) t2
+    (by nlinarith [mul_pos (sub_pos.2 a1) (show 0 < 1 - s ^ 2 - (0.34202014:ℝ) ^ 2 by nlinarith)])
+    (by nlinarith [mul_pos (sub_pos.2 a2) (show 0 < 1 - s ^ 2 - (0.34202015:ℝ) ^ 2 by nlinarith)])
+  have q1 : (0.920725:ℝ) ≤ 9 * t / (2 * π) := by rw [le_div_iff₀ (by positivity)]; nlinarith
+  have q2 : 9 * t / (2 * π) < 0.920726 := by rw [div_lt_iff₀ (by positivity)]; nlinarith
+  refine ⟨by linarith, by linarith, blizu (by linarith) (by linarith), by linarith, by linarith,
+    blizu (by linarith) (by linarith), q1, q2, blizu (by linarith) (by linarith)⟩
+
 /-- Naloga 22: diagonala `√89 ≈ 9,43 > 3 + 3`, zato se četrtini ne prekrivata; ugodna ploščina
-`2·π·3²/4 = 9π/2 = 14,137…`; `P = (9π/2)/(8·5) = 9π/80 = 0,353429… ≈ 0,3534`. -/
+`2·π·3²/4 = 9π/2 = 14,137…`; `P = (9π/2)/(8·5) = 9π/80 = 0,353429… ≈ 0,3534`.
+Ni v Leanu: model geometrijske verjetnosti (enakomerna porazdelitev na pravokotniku, ugodna množica kot
+unija četrtin kroga in njena mera); dokazan je le račun ploščin in količnika. -/
 theorem naloga22 :
     (8:ℝ) ^ 2 + 5 ^ 2 = 89 ∧ |Real.sqrt 89 - 9.43| ≤ 0.005 ∧ (3 + 3 : ℝ) < Real.sqrt 89 ∧
       2 * (π * 3 ^ 2 / 4) = 9 * π / 2 ∧ (14.137:ℝ) ≤ 9 * π / 2 ∧ 9 * π / 2 < 14.138 ∧
@@ -1045,6 +1179,49 @@ theorem naloga25 (S a v : ℝ) (ha : a ≠ 0) : (2234.606:ℝ) / 100 = 22.34606 
 
 /-- Predpostavka trditve `naloga25` se da izpolniti. -/
 example : (74.05:ℝ) ≠ 0 := by norm_num
+
+/-- Naloga 25 simbolno (z `cos 58°`, `sin 58°`): a) kosinusni izrek `a² = 62² + 85² − 2·62·85·cos 58°` za
+`a = √(…)`, izraz pod korenom je pozitiven; b) `b = 62 < a` (ker je `cos 58° = sin 32° < 32° < 85/124`), zato je
+`cos β = (a² + 85² − 62²)/(2·a·85) > 0` in kot `β ∈ (0, π)` je oster, torej `β = arcsin(sin β)`; sinusni izrek
+`a/sin 58° = 62/sin β` ⇔ `sin β = 62·sin 58°/a`; c) `S = b·c·sin α/2 = 62·85·sin 58°/2 = 2635·sin 58°`. -/
+theorem naloga25_simbolno :
+    let α : ℝ := 58 * (π / 180)
+    let a : ℝ := Real.sqrt (62 ^ 2 + 85 ^ 2 - 2 * 62 * 85 * Real.cos α)
+    0 < 62 ^ 2 + 85 ^ 2 - 2 * 62 * 85 * Real.cos α ∧
+      a ^ 2 = 62 ^ 2 + 85 ^ 2 - 2 * 62 * 85 * Real.cos α ∧ (62:ℝ) < a ∧
+      (∀ β : ℝ, 0 < β → β < π → Real.cos β = (a ^ 2 + 85 ^ 2 - 62 ^ 2) / (2 * a * 85) →
+        0 < Real.cos β ∧ β < π / 2 ∧ β = Real.arcsin (Real.sin β)) ∧
+      (∀ β : ℝ, 0 < β → β < π →
+        (a / Real.sin α = 62 / Real.sin β ↔ Real.sin β = 62 * Real.sin α / a)) ∧
+      (62:ℝ) * 85 * Real.sin α / 2 = 2635 * Real.sin α := by
+  intro α a
+  have hp := Real.pi_pos
+  have p2 := Real.pi_lt_d6
+  have hc : Real.cos α < 85 / 124 := by
+    have : Real.cos α = Real.sin (32 * (π / 180)) := by
+      rw [← Real.sin_pi_div_two_sub]; congr 1; ring
+    rw [this]
+    have := Real.sin_lt (show 0 < 32 * (π / 180) by positivity)
+    linarith
+  have hc1 := Real.neg_one_le_cos α
+  have hpos : 0 < 62 ^ 2 + 85 ^ 2 - 2 * 62 * 85 * Real.cos α := by nlinarith
+  have ha2 : a ^ 2 = 62 ^ 2 + 85 ^ 2 - 2 * 62 * 85 * Real.cos α := Real.sq_sqrt hpos.le
+  have ha0 : 0 < a := Real.sqrt_pos.mpr hpos
+  have hba : (62:ℝ) < a := by nlinarith
+  have hsa : 0 < Real.sin α := Real.sin_pos_of_pos_of_lt_pi (show (0:ℝ) < 58 * (π / 180) by positivity)
+    (show 58 * (π / 180) < π by linarith)
+  refine ⟨hpos, ha2, hba, fun β h0 hπ hcos => ?_, fun β h0 hπ => ?_, by ring⟩
+  · have hc0 : 0 < Real.cos β := by
+      rw [hcos]; apply div_pos _ (by positivity); nlinarith
+    have hlt : β < π / 2 := by
+      by_contra h
+      replace h := not_lt.mp h
+      have := Real.cos_nonpos_of_pi_div_two_le_of_le h (by linarith)
+      linarith
+    exact ⟨hc0, hlt, (Real.arcsin_sin (by linarith) hlt.le).symm⟩
+  · have hsb : 0 < Real.sin β := Real.sin_pos_of_pos_of_lt_pi h0 hπ
+    rw [div_eq_div_iff hsa.ne' hsb.ne', eq_div_iff ha0.ne']
+    constructor <;> intro h <;> linarith
 
 /-- Konstanta ohlajanja iz naloge 26: `k = ln(68/38)/10`. -/
 noncomputable def k₂₆ : ℝ := Real.log (68 / 38) / 10
@@ -1160,6 +1337,7 @@ noncomputable def V₂₉ (h : ℝ) : ℝ := π / 3 * (400 * h - h ^ 3)
 `V'(h) = π/3·(400 − 3h²)`, za `h > 0` je `V' = 0` natanko pri `h = 20/√3 = 11,547… ≈ 11,55`; pred tem
 `V' > 0`, za tem `V' < 0`; pri `h₀ = 20/√3` je prostornina največja (`V(h) ≤ V(h₀)` za vsak `h ≥ 0`). -/
 theorem naloga29_ab :
+    (∀ h : ℝ, (0 < h ∧ 0 < 400 - h ^ 2) ↔ (0 < h ∧ h < 20)) ∧
     (∀ h r : ℝ, h ^ 2 + r ^ 2 = 400 → r ^ 2 = 400 - h ^ 2 ∧ π * r ^ 2 * h / 3 = V₂₉ h) ∧
       (∀ h, HasDerivAt V₂₉ (π / 3 * (400 - 3 * h ^ 2)) h) ∧
       (∀ h : ℝ, 0 < h → (π / 3 * (400 - 3 * h ^ 2) = 0 ↔ h = 20 / Real.sqrt 3)) ∧
@@ -1181,7 +1359,9 @@ theorem naloga29_ab :
     have e : r ^ 2 = 400 - h ^ 2 := by linarith
     refine ⟨e, ?_⟩
     unfold V₂₉; rw [e]; ring
-  refine ⟨hv, fun h => ?_, fun h hh => ⟨fun e => ?_, fun e => ?_⟩, fun h hh hl => ?_, fun h hl => ?_,
+  have hdom : ∀ h : ℝ, (0 < h ∧ 0 < 400 - h ^ 2) ↔ (0 < h ∧ h < 20) := fun h =>
+    ⟨fun ⟨a, b⟩ => ⟨a, by nlinarith⟩, fun ⟨a, b⟩ => ⟨a, by nlinarith⟩⟩
+  refine ⟨hdom, hv, fun h => ?_, fun h hh => ⟨fun e => ?_, fun e => ?_⟩, fun h hh hl => ?_, fun h hl => ?_,
     fun h hh => ?_, hb1, hb2, blizu (by linarith) (by linarith)⟩
   · unfold V₂₉
     exact ((((hasDerivAt_id' h).const_mul 400).sub (hasDerivAt_pow 3 h)).const_mul (π / 3)).congr_deriv
@@ -1493,6 +1673,31 @@ theorem ustno1 (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 
 /-- Predpostavke trditve `ustno1` se dajo izpolniti (`a = 2`). -/
 example : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 := by norm_num
+
+/-- Ustno vprašanje 2 v splošni obliki: za polinoma `P`, `Q` je pri manjši stopnji števca
+`P(x)/Q(x) → 0` (asimptota `y = 0`), pri enakih stopnjah `P(x)/Q(x) → a/b` (vodilna koeficienta), pri večji
+stopnji števca pa `|P(x)/Q(x)| → ∞` (vodoravne asimptote ni); vse za `x → ∞` in `x → −∞`. -/
+theorem ustno2 (P Q : Polynomial ℝ) :
+    (P.degree < Q.degree → Tendsto (fun x => P.eval x / Q.eval x) atTop (𝓝 0) ∧
+      Tendsto (fun x => P.eval x / Q.eval x) atBot (𝓝 0)) ∧
+    (P.degree = Q.degree →
+      Tendsto (fun x => P.eval x / Q.eval x) atTop (𝓝 (P.leadingCoeff / Q.leadingCoeff)) ∧
+      Tendsto (fun x => P.eval x / Q.eval x) atBot (𝓝 (P.leadingCoeff / Q.leadingCoeff))) ∧
+    (Q.degree < P.degree → Q ≠ 0 → Tendsto (fun x => |P.eval x / Q.eval x|) atTop atTop ∧
+      Tendsto (fun x => |P.eval x / Q.eval x|) atBot atTop) :=
+  ⟨fun h => ⟨Polynomial.div_tendsto_atTop_zero_of_degree_lt h,
+      Polynomial.div_tendsto_atBot_zero_of_degree_lt h⟩,
+    fun h => ⟨Polynomial.div_tendsto_atTop_leadingCoeff_div_of_degree_eq h,
+      Polynomial.div_tendsto_atBot_leadingCoeff_div_of_degree_eq h⟩,
+    fun h hQ => ⟨Polynomial.abs_div_tendsto_atTop_atTop_of_degree_gt h hQ,
+      Polynomial.abs_div_tendsto_atBot_atTop_of_degree_gt h hQ⟩⟩
+
+/-- Predpostavke trditve `ustno2` se dajo izpolniti: `P = 1`, `Q = X` (manjša stopnja), `P = Q = X`
+(enaki stopnji), `P = X`, `Q = 1` (večja stopnja). -/
+example : (1 : Polynomial ℝ).degree < (Polynomial.X : Polynomial ℝ).degree ∧
+    (Polynomial.X : Polynomial ℝ).degree = (Polynomial.X : Polynomial ℝ).degree ∧
+    (1 : Polynomial ℝ).degree < (Polynomial.X : Polynomial ℝ).degree ∧ (1 : Polynomial ℝ) ≠ 0 := by
+  refine ⟨?_, rfl, ?_, one_ne_zero⟩ <;> simp [Polynomial.degree_X]
 
 /-- Ustno vprašanje 3: istoležna člena `aᵢ + aₙ₋₁₋ᵢ = a₁ + aₙ`, zato `2Sₙ = n(a₁ + aₙ)`,
 `Sₙ = n/2·(a₁ + aₙ) = n/2·(2a₁ + (n − 1)d)`. -/

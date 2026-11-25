@@ -432,7 +432,8 @@ theorem primer2_vrednosti :
 theorem primer2_koraki :
     bisekcija f₂ 1 2 1 = (1, 1.5) ∧ bisekcija f₂ 1 2 2 = (1, 1.25) ∧
       bisekcija f₂ 1 2 3 = (1.125, 1.25) ∧ bisekcija f₂ 1 2 4 = (1.1875, 1.25) ∧
-      bisekcija f₂ 1 2 5 = (1.1875, 1.21875) ∧ (1.21875:ℝ) - 1.1875 = 1 / 32 ∧ (1:ℝ) / 32 = 0.03125 := by
+      bisekcija f₂ 1 2 5 = (1.1875, 1.21875) ∧ (1.25:ℝ) - 1.1875 = 0.0625 ∧
+      (1.21875:ℝ) - 1.1875 = 1 / 32 ∧ (1:ℝ) / 32 = 0.03125 := by
   have k1 : bisekcija f₂ 1 2 1 = (1, 1.5) :=
     korak_levo f₂ 1 2 1.5 (by norm_num) (by norm_num [f₂])
   have k2 : bisekcija f₂ 1 2 2 = (1, 1.25) := by
@@ -447,7 +448,19 @@ theorem primer2_koraki :
   have k5 : bisekcija f₂ 1 2 5 = (1.1875, 1.21875) := by
     show korak f₂ (bisekcija f₂ 1 2 4) = _
     rw [k4]; exact korak_levo f₂ 1.1875 1.25 1.21875 (by norm_num) (by norm_num [f₂])
-  exact ⟨k1, k2, k3, k4, k5, by norm_num, by norm_num⟩
+  exact ⟨k1, k2, k3, k4, k5, by norm_num, by norm_num, by norm_num⟩
+
+/-- Pogoste napake (»napačna polovica«): v prvem koraku primera 2 je `f(1,5) > 0`; kdor obdrži polovico
+`[1,5; 2]` (kjer je `f(c) > 0`), ne pa `[1; 1,5]` z različnima predznakoma na krajiščih, na njej nima
+ničle: `f` je naraščajoča, zato je `f(x) ≥ f(1,5) > 0` za `x ≥ 1,5`; ničla leži v `(1; 1,5)`. -/
+theorem napacna_polovica :
+    0 < f₂ 1.5 ∧ 0 < f₂ 2 ∧ (∀ x ∈ Set.Icc (1.5:ℝ) 2, 0 < f₂ x) ∧ ∃ x ∈ Set.Ioo (1:ℝ) 1.5, f₂ x = 0 := by
+  have hc : Continuous f₂ := by unfold f₂; fun_prop
+  refine ⟨by norm_num [f₂], by norm_num [f₂], fun x hx => ?_, ?_⟩
+  · have y : 0 ≤ x - 1.5 := by linarith [hx.1]
+    unfold f₂; nlinarith [mul_nonneg (mul_nonneg y y) y, mul_nonneg y y]
+  · have h0 : (0:ℝ) ∈ Set.Ioo (f₂ 1) (f₂ 1.5) := by norm_num [f₂]
+    exact intermediate_value_Ioo (by norm_num) hc.continuousOn h0
 
 /-- Primer 2, korak 4: krajišči `1,1875` in `1,21875` se na eno decimalko zaokrožita na `1,2`, po
 četrtem koraku pa `1,25` na `1,3`. -/
