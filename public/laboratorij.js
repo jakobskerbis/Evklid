@@ -223,16 +223,18 @@ function stej(key, nacin, dogodek) {
   if (!s) return;
   D.api(`/api/students/${s.id}/lab/uporaba`, { method: "POST", body: { key, nacin, dogodek } }).catch(() => {});
 }
-// Šibke točke (docs/sibke-tocke.md, #1094): prvo preverjanje napovedi, sklepa ali računa v poskusu (public/sim/lab.js →
-// LAB_PREVERJENO, sibkaTocka) gre kot rezultat orodja k temi poskusa, ki je najbližje učenčevi poti (x.topics[0]).
+// Šibke točke (docs/sibke-tocke.md, #1094): prvo preverjanje sklepa ali računa v poskusu (public/sim/lab.js →
+// LAB_PREVERJENO, sibkaTocka) gre kot rezultat orodja k temi poskusa na učenčevi ravni šolanja (SIBKE_TEME).
 async function zazeni(x, m) {
+  // Profil ob odprtju poskusa: po menjavi profila (app.js selectStudent, poskus je lahko še odprt) se nič ne pošlje.
+  const sid = D?.getStudent()?.id;
   m.addEventListener("evklid:lab-preverjeno", (e) => {
     const s = D?.getStudent();
-    if (!s) return;
+    if (!s || s.id !== sid) return;
     // lab.js je že naložen (dogodek prihaja iz njega)
     import("./sim/lab.js")
       .then(({ sibkaTocka }) => {
-        const body = sibkaTocka(x, m, e.detail, e.target);
+        const body = sibkaTocka(x, e.detail);
         if (body) return D.api(`/api/students/${s.id}/tool-check`, { method: "POST", body });
       })
       .catch(() => {});
