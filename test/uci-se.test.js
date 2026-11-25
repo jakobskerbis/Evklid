@@ -326,6 +326,10 @@ test("Lekcija iz 3D modela: odpre lekcijo, Nazaj iz iste lekcije spet odpre mode
   assert.equal(u.lekcijaIz3d("../x", () => model++), false, "le pravi id lekcije");
   assert.equal(u.lekcijaIz3d("BIO-OS-8/celicni-organeli", () => model++), true);
   assert.deepEqual(odprte, ["BIO-OS-8/celicni-organeli"]);
+  // Teme fakultet in tekmovanj (teme3d jih vrne) se tudi odprejo.
+  for (const id of ["UNI-ULBF-ABIOCEL/celicni-organeli", "FIZ-TEK-SS/elektrostatika"]) assert.equal(u.lekcijaIz3d(id), true, id);
+  odprte.length = 0;
+  u.lekcijaIz3d("BIO-OS-8/celicni-organeli", () => model++);
   u.setUciTab("textbook");
   assert.equal(u.uciBack({ textbookBack: () => true, labBack: () => false, lessonId: "BIO-OS-8/celicni-organeli" }), true);
   assert.equal(model, 1, "model se odpre znova");
@@ -355,6 +359,9 @@ test("teme3d: teme, ki uporabljajo 3D model, najprej učenčeva pot; vsak 3D mod
   assert.ok(t.every((x) => x.id && x.name && !("rank" in x)));
   assert.deepEqual(teme3d("../etc"), []);
   assert.deepEqual(teme3d("ni-takega-modela"), []);
+  // Vsaka vrnjena tema mora skozi preverjanje id-ja v public/uci-se.js (sicer vrstica v seznamu ne naredi nič).
+  const u = await load(32);
+  for (const x of Object.keys(SIM_TOPICS)) assert.ok(u.lekcijaIz3d(x), x);
   const modeli = new Set(Object.keys(SIM_TOPICS).flatMap((id) => simsForTopic(id).map((d) => d.id)).filter((x) => x.startsWith("3d-")));
   for (const m of modeli) assert.ok(teme3d(m.slice(3)).length >= 1, m);
 });

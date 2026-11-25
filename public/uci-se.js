@@ -174,7 +174,8 @@ export function uciBack({ textbookBack, labBack, lessonId = undefined }) {
   return false;
 }
 
-const LEKCIJA_ID = /^[A-Z]+-[A-Z]+-\d+\/[a-z0-9-]+$/;
+// Id teme: »BIO-OS-8/…«, tudi fakultete in tekmovanja (»UNI-ULBF-ABIOCEL/…«, »FIZ-TEK-SS/…«), kot server/gradiva.js.
+const LEKCIJA_ID = /^[A-Z0-9]+(-[A-Z0-9]+)+\/[a-z0-9-]+$/;
 /** »Lekcija« v 3D modelu: odpre lekcijo; odpri (iz vrnitev3d) ob tipki Nazaj iz te lekcije spet odpre model. */
 export function lekcijaIz3d(id, odpri = null) {
   if (!LEKCIJA_ID.test(id || "")) return false;
