@@ -4,7 +4,7 @@ import { t, applyI18n } from "/i18n.js";
 import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
-import { napakaVsebina, napakaBesedilo } from "./napake.js";
+import { napakaVsebina, napakaBesedilo, preveriPodporo } from "./napake.js";
 import { vgrajeno, starsu, vprasajInstruktorja } from "./vgrajeno.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
@@ -558,6 +558,8 @@ async function usmeri() {
   aktivno = null;
   const { id, param } = razberi();
   try {
+    // Atlas, model in mikroskop rabijo three.js (Safari 16.4+): star brskalnik dobi »posodobi« namesto prazne strani.
+    if (id) await preveriPodporo();
     const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : id === "mikroskop" ? await mikroskop(param, moj) : await model(id, param, moj);
     if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
   } catch (err) {

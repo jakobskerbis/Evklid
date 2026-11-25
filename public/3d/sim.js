@@ -32,6 +32,8 @@ export function sim3d(el, opts = {}) {
   let box = null;
   const nalozi = () =>
     (async () => {
+      // three.js rabi Safari 16.4+: star brskalnik dobi »posodobi« (napake.js) namesto praznega okvirja
+      await (await import("./napake.js")).preveriPodporo();
       const [{ naloziModel }, { odpriModel }, { t }] = await Promise.all([import("./modeli.js"), import("./pregledovalnik.js"), import("/i18n.js")]);
       p.textContent = t("a3.loading");
       const mod = opts.model ? await naloziModel(opts.model) : null;

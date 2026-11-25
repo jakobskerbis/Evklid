@@ -5,7 +5,16 @@
 
 // Ime pove tkivo (arterija, kost, mišica …) ali je površinska regija kože: velja material, ne organ v imenu
 // (»Renal artery« je arterija, ne ledvica; »Lacrimal bone« kost, ne požiralnik; »Thyroid cartilage« hrustanec).
-const TKIVO_V_IMENU = /\b(arter(y|ies)|veins?|bones?|cartilages?|muscles?|(?<!round )ligaments?|nerves?|fascia)\b/i; // okrogla vez maternice: gladke mišice (pravilo spodaj)
+// Okrogla vez maternice (»round ligament«) ni vezivo: gladke mišice (pravilo spodaj). Brez pogleda nazaj ((?<! …)),
+// ki ga Safari pred 16.4 ne pozna: ta datoteka je statični uvoz strani /3d, ki bi sicer ostala prazna (docs/3d.md).
+const TKIVO = /\b(arter(y|ies)|veins?|bones?|cartilages?|muscles?|ligaments?|nerves?|fascia)\b/gi;
+export function tkivoVImenu(ime) {
+  for (const m of ime.matchAll(TKIVO)) {
+    if (/^ligament/i.test(m[1]) && /round $/i.test(ime.slice(Math.max(0, m.index - 6), m.index))) continue;
+    return true;
+  }
+  return false;
+}
 
 // [vzorec imena, preparat]: prvo ujemanje velja.
 const IMENA = [
@@ -112,7 +121,7 @@ export function preparatAtlasa(r) {
   const ime = String(r?.ime || "");
   const m = osnova(r?.material);
   const izMateriala = MISICE.has(m) ? "skeletna-misica" : (MATERIALI[m] ?? null);
-  if (izMateriala && (TKIVO_V_IMENU.test(ime) || m === "Skin" || m === "Skin-in")) return izMateriala;
+  if (izMateriala && (tkivoVImenu(ime) || m === "Skin" || m === "Skin-in")) return izMateriala;
   for (const [re, p] of IMENA) if (re.test(ime)) return p;
   return izMateriala;
 }

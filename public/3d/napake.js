@@ -23,6 +23,7 @@ const statusNapake = (err) => {
 // iz naslovov ostane le pot (brez poizvedbe in izvora, kjer bi bil žeton), dolga zaporedja črk in številk (žetoni) skrita.
 export function tehnicno(err) {
   if (err == null) return "";
+  if (err.koda === "brskalnik" && err.cause) return tehnicno(err.cause); // preveriPodporo: pravi vzrok brskalnika
   const ime = String(err?.name || (typeof err === "string" ? "Error" : typeof err)).slice(0, 40);
   let s = String(err?.message ?? (typeof err === "string" ? err : "")).split("\n")[0].trim();
   s = s.replace(/\b(?:https?|blob|file):\/\/[^\s"'<>)]+/gi, (u) => {
@@ -75,6 +76,22 @@ export async function osveziMimoStarih({ okno = typeof window !== "undefined" ? 
     }
   } catch {} // brez povezave ali brez service workerja: samo osvežitev
   okno?.location.reload();
+}
+
+// Pred three.js (stran.js, sim.js): ali brskalnik prebere statični blok razreda (podpora.js). Star Safari uvoza z
+// neznano sintakso ne loči od napake povezave (»Importing a module script failed«), zato preverimo, ali se datoteka
+// prenese: če se, je kriv brskalnik ({ koda: "brskalnik" } → a3.oldBrowser), sicer ostane napaka povezave.
+export async function razlogPodpore(err, prenese = () => fetch(new URL("./podpora.js", import.meta.url), { cache: "no-store" }).then((r) => r.ok, () => false)) {
+  if (err?.name === "SyntaxError" || (await prenese())) return Object.assign(new Error("Brskalnik ne prebere statičnega bloka razreda", { cause: err }), { koda: "brskalnik" });
+  return err;
+}
+let podpora = null;
+export function preveriPodporo() {
+  podpora ||= import("./podpora.js").catch(async (err) => {
+    podpora = null; // ob napaki povezave naslednji poskus znova
+    throw await razlogPodpore(err);
+  });
+  return podpora;
 }
 
 // Vsebina kartice z napako: odstavek z besedilom, drobna vrstica »Tehnično: …«, pri pomanjkanju pomnilnika povezava na
