@@ -1089,6 +1089,7 @@
   "sc.true": "Igaz",
   "sc.false": "Hamis",
   "sc.plot": "Grafikon rajzolása",
+  "sc.fmGraph": "Grafikon rajzolása ({v} az x tengelyen)",
   "sc.showOnGraph": "Mutasd a grafikonon",
   "gc.fromSci.none": "Ezt az eredményt nem tudom grafikonon megmutatni.",
   "gc.fromSci.partArea": "Csak a(z) {a} és {b} közötti rész van besatírozva. A teljes integrál {v}.",

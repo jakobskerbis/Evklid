@@ -1384,6 +1384,7 @@ export default {
   "sc.true": "Drži",
   "sc.false": "Ne drži",
   "sc.plot": "Nariši graf",
+  "sc.fmGraph": "Nariši graf ({v} na osi x)",
   "sc.showOnGraph": "Pokaži na grafu",
   "gc.fromSci.none": "Tega rezultata ne znam pokazati na grafu.",
   "gc.fromSci.partArea": "Osenčen je le del od {a} do {b}. Celoten integral je {v}.",

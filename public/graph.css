@@ -903,7 +903,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .fm-fx > .fm-f { flex: 0 1 auto; padding-inline-end: 6px; } /* prostor za nagnjene črke KaTeX, sicer bi drsniki.js videl pomik */
 /* na telefonu so gumbi v stolpcu ob desnem robu, na širšem zaslonu tik za formulo */
 @media (max-width: 640px) { .fm-fx > .fm-f { flex: 1 1 auto; } }
-.fm-calc { flex: none; width: 36px; height: 36px; color: var(--muted); }
-.fm-calc:hover, .fm-calc:focus-visible { color: var(--accent); }
-@media (pointer: coarse) { .fm-calc { width: 44px; height: 44px; } .pse-act button { min-height: 44px; } }
+.fm-calc, .fm-graph { flex: none; width: 36px; height: 36px; color: var(--muted); }
+.fm-calc:hover, .fm-calc:focus-visible, .fm-graph:hover, .fm-graph:focus-visible { color: var(--accent); }
+@media (pointer: coarse) { .fm-calc, .fm-graph { width: 44px; height: 44px; } .pse-act button { min-height: 44px; } }
 .pse-mm-res { margin: 8px 0 4px; }

@@ -1089,6 +1089,7 @@
   "sc.true": "Wahr",
   "sc.false": "Falsch",
   "sc.plot": "Graph zeichnen",
+  "sc.fmGraph": "Graph zeichnen ({v} auf der x-Achse)",
   "sc.showOnGraph": "Im Graphen zeigen",
   "gc.fromSci.none": "Dieses Ergebnis kann ich nicht im Graphen zeigen.",
   "gc.fromSci.partArea": "Schattiert ist nur der Teil von {a} bis {b}. Das ganze Integral ist {v}.",

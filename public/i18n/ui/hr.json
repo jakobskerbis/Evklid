@@ -1095,6 +1095,7 @@
   "sc.true": "Točno",
   "sc.false": "Netočno",
   "sc.plot": "Nacrtaj graf",
+  "sc.fmGraph": "Nacrtaj graf ({v} na osi x)",
   "sc.showOnGraph": "Prikaži na grafu",
   "gc.fromSci.none": "Ovaj rezultat ne mogu prikazati na grafu.",
   "gc.fromSci.partArea": "Osjenčan je samo dio od {a} do {b}. Cijeli integral je {v}.",
