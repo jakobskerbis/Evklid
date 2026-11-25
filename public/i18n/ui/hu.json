@@ -4640,7 +4640,7 @@
   "a3.grp.rep": "Farok",
   "a3.grp.gostitelj": "Gazdabaktérium",
   "scan.imgFormat": "Ezt a képet nem tudom megnyitni, mert a böngésző nem ismeri a formátumát (pl. HEIC). Mentsd el JPG vagy PNG formátumban, vagy készíts képernyőképet.",
-  "scan.camDenied": "A kamera használata le van tiltva. Engedélyezd a böngészőben (ikon az oldal címe mellett), és próbáld újra, vagy válassz egy képet.",
+  "scan.camDenied": "A kamera használata le van tiltva. Engedélyezd a böngészőben (ikon a webcím mellett), és próbáld újra, vagy válassz egy képet.",
   "scan.camBusy": "A kamerát már egy másik alkalmazás használja. Zárd be (pl. a videohívást), és próbáld újra.",
   "scan.camNone": "Ezen az eszközön nincs kamera. Válassz képet a feladatról a „{btn}” gombbal, vagy írd be.",
   "scan.frameKeys": "A nyilak mozgatják a keretet, a Shift + nyilak a méretét változtatják."

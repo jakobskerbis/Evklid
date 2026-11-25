@@ -136,7 +136,10 @@ export function showScan({ text = null, goal = null } = {}) {
     S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
   }
-  if (S.mode === "reading") S.mode = "capture";
+  if (S.mode === "reading") {
+    S.mode = "capture";
+    setImage(null);
+  }
   render();
 }
 
@@ -686,6 +689,7 @@ function renderTutorConfirm(box) {
   box.querySelector('[data-act="retake"]').addEventListener("click", () => {
     S.mode = "capture";
     S.note = null;
+    setImage(null); // sprosti URL prejšnje slike
     S.text = "";
     frame = { ...TUTOR_FRAME };
     render();
@@ -781,6 +785,7 @@ function renderConfirm(box) {
   box.querySelector('[data-act="retake"]').addEventListener("click", () => {
     S.mode = "capture";
     S.note = null;
+    setImage(null); // sprosti URL prejšnje slike
     frame = tutorMode ? { ...TUTOR_FRAME } : { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
     render();
   });
@@ -1045,6 +1050,7 @@ function bindSolution(box) {
   on('[data-act="new"]', () => {
     S.mode = "capture";
     S.result = null;
+    setImage(null);
     S.problems = [];
     S.given = [];
     S.sought = "";
