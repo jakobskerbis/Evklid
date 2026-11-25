@@ -251,7 +251,7 @@ test("telefon 390 × 844: prijava napake v lekciji, površina data-ne-prekrij in
       return Math.round(g.getBoundingClientRect().top - t.top);
     });
     assert.ok(Math.abs(zamik) < 4, `gumb je po drsenju na mestu obvestila (${zamik} px)`);
-    await p.waitForTimeout(100);
+    await p.waitForTimeout(300); // mesto vidnega obvestila se preveri vsakih 200 ms
     assert.equal(await p.evaluate(() => document.querySelector("#toast").hidden), false, "obvestilo je še vidno");
     assert.deepEqual(await pokrito(p, "#toast"), [], "po drsenju obvestilo prekrije gumb");
     assert.deepEqual(errors, []);
@@ -347,7 +347,7 @@ test("telefon 390 × 844: obvestilo brez prostega mesta – novo ostane vidno, s
         t.dataset.at = Date.now();
       }, besedilo);
     const skrito = () => p.evaluate(() => document.querySelector("#toast").hidden);
-    // Staro obvestilo (vidno > 1 s), nato stanje brez prostega mesta: se skrije in ne prekriva gumbov.
+    // Obvestilo s prostim mestom, nato stanje brez prostega mesta (list čez ves zaslon): se skrije, ne prekriva gumbov.
     await pokazi("Zahteva je zapisana");
     await p.waitForTimeout(1100);
     await mreza();
@@ -355,8 +355,44 @@ test("telefon 390 × 844: obvestilo brez prostega mesta – novo ostane vidno, s
     assert.equal(await skrito(), true, "staro obvestilo se umakne, ko mu novo stanje vzame ves prostor");
     // Novo obvestilo v stanju brez prostega mesta: uporabnik ga vidi (ne izgine takoj).
     await pokazi("Shranjeno");
-    await p.waitForTimeout(300);
-    assert.equal(await skrito(), false, "novo obvestilo ostane vidno");
+    await p.waitForTimeout(1500);
+    assert.equal(await skrito(), false, "obvestilo, ki se pokaže brez prostega mesta, ostane vidno (ne le sekundo)");
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
+test("hitrost: ura, ki menja le besedilo, ne sproža iskanja mesta za mehurček in obvestilo (pregled 2)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 390, height: 844 });
+    await p.evaluate(() => window.evklid.showView("path"));
+    await p.waitForTimeout(800);
+    const klici = await p.evaluate(async () => {
+      const ura = document.createElement("span");
+      document.querySelector("main.view:not([hidden])").append(ura);
+      // Počakamo, da se pogled umiri (izris poti, mesto mehurčka po menjavi pogleda) in obvestilo izgine.
+      await new Promise((r) => setTimeout(r, 1500));
+      await new Promise((r) => {
+        const t = document.querySelector("#toast");
+        const go = () => (t.hidden ? r() : setTimeout(go, 100));
+        go();
+      });
+      await new Promise((r) => setTimeout(r, 600));
+      let n = 0;
+      const prej = Document.prototype.querySelectorAll;
+      Document.prototype.querySelectorAll = function (sel) {
+        if (String(sel).includes("[role=switch]")) n++;
+        return prej.call(this, sel);
+      };
+      for (let i = 0; i < 10; i++) {
+        ura.textContent = `0:${String(i).padStart(2, "0")}`;
+        await new Promise((r) => setTimeout(r, 150));
+      }
+      await new Promise((r) => setTimeout(r, 300));
+      Document.prototype.querySelectorAll = prej;
+      return n;
+    });
+    assert.equal(klici, 0, "besedilo ure ne sproži postavljanja");
     assert.deepEqual(errors, []);
     await ctx.close();
   });

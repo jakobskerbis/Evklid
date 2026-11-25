@@ -652,7 +652,7 @@ function placeBubble() {
 const OKNA_KONTROLE = ".okno:not([hidden]) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch], .composer-row, .answer-row)";
 const TOAST_OVIRE = `${CONTROLS}, ${OKNA_KONTROLE}, ${NE_PREKRIJ}, body > main.view:not([hidden]):not(.in-okno) :is(.composer-row, .answer-row), #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
 const GLAVE = "body > :is(.topbar, #mock-banner, #test-notice):not([hidden]), body > main.view:not([hidden]):not(.in-okno) :is(.chat-head, .topic-top)";
-let toastOd = 0; // kdaj se je obvestilo pokazalo ali dobilo novo besedilo (opazovalec v initOkna)
+let toastProst = false; // obvestilo je od prikaza (opazovalec v initOkna) že imelo prosto mesto
 export function placeToast() {
   const el = $("#toast");
   if (!el || el.hidden) return;
@@ -673,7 +673,9 @@ export function placeToast() {
     .map((o) => vidni(o, o.getBoundingClientRect()))
     .filter((r) => r.right > r.left && r.bottom > r.top && r.bottom > vrh && r.top < dno);
   el.style.top = "";
-  el.style.bottom = `${Math.max(16, window.innerHeight - dno + 16)}px`;
+  // Brez spodnje vrstice ostane nad varnim območjem (domača črta na iPhonu), kot v style.css.
+  const odDna = window.innerHeight - dno;
+  el.style.bottom = odDna > 1 ? `${odDna + 16}px` : "calc(16px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))";
   const r = el.getBoundingClientRect();
   const h = r.height;
   // 4 px razmika do vsake ovire, da obvestilo ne sede tik na rob vrstice za pisanje.
@@ -699,13 +701,15 @@ export function placeToast() {
       const n = prava(y);
       if (n < best.n) best = { y, n };
     }
-    // Obvestilo, ki je bilo že vidno vsaj sekundo, nato pa mu je novo stanje vzelo vsak prost prostor (npr. list kalkulatorja
-    // čez ves zaslon), se skrije prej, namesto da bi prekrivalo gumbe novega stanja (dimni test 25. 11.: PSE v listu).
-    if (best.n && Date.now() - toastOd >= 1000) {
+    // Obvestilo, ki je imelo prosto mesto, nato pa mu je novo stanje vzelo vsakega (npr. list kalkulatorja čez ves zaslon),
+    // se skrije prej, namesto da bi prekrivalo gumbe novega stanja (dimni test 25. 11.: PSE v listu). Obvestilo, ki se pokaže
+    // že v takem stanju, ostane ves čas na mestu z najmanj prekrivanji (pregled 2: sicer bi bilo vidno le sekundo).
+    if (best.n && toastProst) {
       el.hidden = true;
       return;
     }
   }
+  if (!best.n) toastProst = true;
   if (best.y === r.top) return;
   el.style.bottom = "auto";
   el.style.top = `${Math.round(best.y)}px`;
@@ -898,32 +902,27 @@ export function initOkna(opts) {
   // v odprtem pogledu sproži isto preverjanje 120 ms po zadnji spremembi (med pretakanjem odgovora se ne kliče vsakič),
   // da mehurček ne obstane vidno na novih zadetkih (dimni test 25. 11.: posnetek 500 ms po vnosu).
   let poVsebini = 0;
-  new MutationObserver(() => {
+  // Ure in števci (dnevna igra 200 ms, preverjanje 250 ms) menjajo le besedilo: to ne premakne gumbov, zato ne šteje.
+  const pomembna = (m) =>
+    !m.target.closest?.("#chat-bubble, #toast, .tk") &&
+    [...m.addedNodes, ...m.removedNodes].some((n) => n.nodeType === 1);
+  new MutationObserver((zapisi) => {
+    if (!zapisi.some(pomembna)) return;
     clearTimeout(poVsebini);
     poVsebini = setTimeout(() => {
       if (bubble && !bubble.hidden && !bubble.classList.contains("dragging")) placeBubble();
       placeToast();
     }, 120);
   }).observe(document.body, { childList: true, subtree: true });
-  // Drsenje premakne polja pod obvestilo brez spremembe vsebine (obrazec za otroka, dimni test računov 25. 11.):
-  // vidno obvestilo gre ob vsakem drsenju na prosto mesto, skrito ne stane nič.
-  let drsi = 0;
-  document.addEventListener(
-    "scroll",
-    () => {
-      if (drsi || $("#toast")?.hidden !== false) return;
-      drsi = requestAnimationFrame(() => ((drsi = 0), placeToast()));
-    },
-    { capture: true, passive: true },
-  );
   // Obvestilo (#toast, pišejo ga app.js, account.js, leagues.js, kalkulator.js): ob prikazu in novem besedilu na prosto mesto.
   const obvestilo = document.getElementById("toast");
   // Isto dejanje pogosto še spremeni stran (zapre obrazec, izriše odgovor, odpre list): dokler je obvestilo vidno (nekaj
-  // sekund), mesto preverimo vsakih 200 ms; spremembe velikosti in sloga ne sprožijo nobenega dogodka (dimni test 25. 11.).
+  // sekund), mesto preverimo vsakih 200 ms: tudi po drsenju (obrazec za otroka) in spremembah velikosti ali sloga, ki ne
+  // sprožijo nobenega dogodka (dimni test 25. 11.). Med drsenjem ne računamo v vsakem okvirju (pregled 2: zatikanje).
   let straza = 0;
   if (obvestilo)
     new MutationObserver(() => {
-      toastOd = Date.now();
+      toastProst = false;
       placeToast();
       clearInterval(straza);
       straza = obvestilo.hidden ? 0 : setInterval(() => (obvestilo.hidden ? (clearInterval(straza), (straza = 0)) : placeToast()), 200);
