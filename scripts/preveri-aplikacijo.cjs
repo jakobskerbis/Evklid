@@ -336,6 +336,8 @@ async function screen(p, name) {
   if (r.mini?.length) problem(`${p.label} ${name}`, `mali navpični drsnik (▲▼) v: ${r.mini.slice(0, 5).join(", ")} (docs/oblikovanje.md)`);
   const pokrito = await bubbleCovers(p);
   if (pokrito.length) problem(`${p.label} ${name}`, `mehurček inštruktorja prekriva: ${pokrito.join(", ")}`);
+  const obvestilo = await toastCovers(p);
+  if (obvestilo.length) problem(`${p.label} ${name}`, `obvestilo prekriva: ${obvestilo.join(", ")}`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
@@ -426,6 +428,25 @@ async function bubbleCovers(p) {
         out.push(`${el.nodeName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : ""}${el.getAttribute("aria-label") ? ` »${el.getAttribute("aria-label").slice(0, 30)}«` : ""}`);
       }
       return [...new Set(out)].slice(0, 4);
+    })
+    .catch(() => []);
+}
+// Obvestilo (#toast, UX PR 1): ne sme prekriti polja, gumba ali površine data-ne-prekrij. Tapi gredo skozenj
+// (pointer-events: none), zato elementsFromPoint ne pomaga: šteje presek pravokotnikov z vidnimi kontrolniki.
+async function toastCovers(p) {
+  return p
+    .evaluate(() => {
+      const t = document.querySelector("#toast");
+      if (!t || t.hidden || !t.getClientRects().length) return [];
+      const r = t.getBoundingClientRect();
+      const sel = "main.view:not([hidden]) :is(button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch]), [data-ne-prekrij]";
+      return [...new Set([...document.querySelectorAll(sel)]
+        .filter((el) => !el.closest("[hidden], [inert], .in-okno") && el.checkVisibility())
+        .filter((el) => {
+          const s = el.getBoundingClientRect();
+          return Math.min(r.right, s.right) - Math.max(r.left, s.left) >= 6 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) >= 6;
+        })
+        .map((el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : ""}`))].slice(0, 4);
     })
     .catch(() => []);
 }
