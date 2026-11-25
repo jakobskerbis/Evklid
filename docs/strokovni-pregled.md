@@ -54,7 +54,7 @@ ocen. Pregledovalca ne vidita ocen drug drugega, dokler oba ne oddata obrazca.
 5. Pri nalogah Vadnice in delih pol: ali je besedilo jasno, ali je odgovor pravilen in pravilno zaokrožen, ali je
    rešitev (točkovnik) pravilna.
 
-Obrazec ima za vsak del vzorca eno vrstico s temi polji; oddan obrazec je PDF ali preglednica.
+Obrazec ima za vsak del vzorca eno vrstico s temi polji in seznam najdenih napak (Claude Doc »Obrazec za strokovni pregled vsebine Evklida«, https://claude.ai/artifact/WvkhE3oYGrxNLvb2BfkV8S; učitelj dobi kopijo ali izvoz v PDF/Word). Oddan obrazec je PDF ali preglednica.
 
 ## Kaj naredimo z rezultatom
 
