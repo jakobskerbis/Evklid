@@ -91,7 +91,7 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
   });
 
   await t.test("component: number and choice, closes before measuring, compares at the end", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 360, height: 740 } });
     const { p, errs } = await odpri(ctx, base);
     const r = await p.evaluate(() => {
       const st = { odprto: true, iz: null, moz: [["a", "prva"], ["b", "druga"]] };
@@ -148,7 +148,7 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
 
   // Pregled #1053: fokus ostane na izbrani možnosti, odstopanje v enoti (°C), namig »preveri enote«, napoved za drugo posodo izgine.
   await t.test("component: focus stays on the chosen option, absolute tolerance, unit hint, key change clears", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 360, height: 740 } });
     const { p, errs } = await odpri(ctx, base);
     await p.evaluate(() => {
       const st = (window.st = { iz: null, k: "a" });
@@ -195,7 +195,7 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
   });
 
   await t.test("lab-ohm: predict, measure, compare; the prediction survives reopening", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
     const { p, errs } = await odpri(ctx, base, "lab-ohm");
     assert.equal(await p.evaluate(() => document.querySelector(".demo-controls > .lab-napoved")?.dataset.napoved), "tok-6V");
     // napoved in primerjava nista .lab-q: vodeni način (lab-vodeno.js, test laboratorij-vodeno) šteje sklepe po .lab-q
@@ -237,7 +237,7 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
   });
 
   await t.test("titracija, mesanje, ohlajanje: prediction in the controls (mesanje: below the water sliders), no page errors", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 1280, height: 800 } });
     for (const id of ["lab-titracija", "lab-mesanje", "lab-ohlajanje"]) {
       const { p, errs } = await odpri(ctx, base, id);
       const r = await p.evaluate(() => ({
@@ -257,7 +257,7 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
 
   // Pregled #1053 (3. krog): napoved pri mešanju velja za nastavljeno mešanico; pri ohlajanju jo obnova ne pobriše.
   await t.test("mesanje: moving a water slider clears the prediction; ohlajanje: a restore keeps the prediction for the restored cups", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 360, height: 740 } });
     const { p, errs } = await odpri(ctx, base, "lab-mesanje");
     await p.locator(".lab-napoved input").fill("45");
     await p.locator(".lab-napoved").getByRole("button", { name: "Zapiši napoved" }).click();

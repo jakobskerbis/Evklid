@@ -46,6 +46,8 @@ Na kocki se $AB$ in $BC$ sekata, $AB$ in $HG$ sta vzporedni, $AB$ in $CG$ pa mim
 
 Kot med mimobežnicama izmerimo tako, da eno vzporedno premaknemo, da seka drugo. Premica $CG$ je vzporedna z $BF$, ta pa je pravokotna na $AB$. Zato sta $AB$ in $CG$ **pravokotni mimobežnici**.
 
+V simulaciji spodaj (»Robovi in ploskve teles«) izberi prizmo s $4$ oglišči osnove in jo z vlečenjem zavrti. Poišči rob spodnje osnove in stranski rob, ki se ne sekata in nista vzporedna: taka robova sta mimobežna.
+
 **3. Premica in ravnina, dve ravnini.** Premica lahko leži v ravnini (rob $AB$ v ploskvi $ABCD$), jo seka v eni točki (rob $AE$ seka $ABCD$ v $A$) ali je z njo vzporedna (rob $EF$ in ploskev $ABCD$). Dve ravnini sta vzporedni ($ABCD$ in $EFGH$) ali pa se sekata v premici ($ABCD$ in $BCGF$ v premici $BC$).
 
 **4. Premica, pravokotna na ravnino.** Premica je **pravokotna na ravnino**, če je pravokotna na vsako premico te ravnine. Vseh premic ne moremo preveriti, zato velja kriterij: dovolj je, da je pravokotna na **dve sekajoči se** premici ravnine. Rob $AE$ je pravokoten na $AB$ in na $AD$, zato je pravokoten na celo ploskev $ABCD$. Tako je pravokoten tudi na diagonalo $BD$, čeprav je ne seka.

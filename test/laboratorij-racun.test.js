@@ -140,7 +140,7 @@ test("student's own calculation in a browser", { timeout: 180000 }, async (t) =>
   };
 
   await t.test("lab-ohm: R from the slope of the student's own points; hidden until solved", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 360, height: 740 } });
     const { p, errs } = await odpri(ctx, base, "lab-ohm");
     assert.equal(await p.evaluate(() => document.querySelector(".lab-racun").hidden), true, "brez meritev ni kaj računati");
     await meriOhm(p, [2, 4, 6]);
@@ -196,7 +196,7 @@ test("student's own calculation in a browser", { timeout: 180000 }, async (t) =>
   });
 
   await t.test("every experiment: expected = value from the stored measurements; in tolerance passes, outside fails; »Pokaži rešitev«", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 1280, height: 800 } });
     const { p, errs } = await odpri(ctx, base);
     for (const [id, x] of Object.entries(PRIMERI)) {
       await p.evaluate(([id, data]) => localStorage.setItem(`evklid.lab.meritve.0.${id}`, JSON.stringify({ v: 1, seed: 7, ...data })), [id, x.data]);

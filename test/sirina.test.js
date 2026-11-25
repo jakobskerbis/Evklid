@@ -45,7 +45,10 @@ test("fits already: size is left alone (and an old size is cleared)", () => {
 
 test("lesson and »Razloži drugače« both get fitted", () => {
   const js = pub("textbook.js");
-  assert.match(js, /wireFormulas\(box\);\n\s+prilagodiSirino\(box\);/);
+  // Lekcija in vsak korak, ki se izriše pozneje (#9: wireContent(box), nato wireContent(korak)).
+  assert.match(js, /const wireContent = \(root\) => \{\n\s+wireFormulas\(root\);\n\s+prilagodiSirino\(root\);/);
+  assert.match(js, /wireContent\(box\);/);
+  assert.match(js, /stepInner\(Number\(el\.dataset\.step\)\)\);\n\s+wireContent\(el\);/);
   assert.match(js, /wireFormulas\(altBody\);\n\s+prilagodiSirino\(altBody\);/);
 });
 
@@ -222,8 +225,10 @@ test("decimal comma in sim formulas has no gap (»0,041«, not »0, 041«); list
   assert.equal(decVejica("10^{2,5}"), "10^{2{,}5}");
   for (const t of ["1{,}5", "x_{1,2} = 3", "\\{1,2,3\\}", "\\{1,5\\}", "(1,2,3)", "T(1, 2)", "5\\,000"]) assert.equal(decVejica(t), t);
   // Izris s skupnim pravilom za vejico (public/mat/izris.js, vejica: true; enoten matematični zapis F1).
-  assert.match(pub("sim/kit.js"), /izrisi\(t, \{ vejica: true \}\)/);
-  assert.match(pub("demos.js"), /izrisi\(t, \{ vejica: true \}\)/);
+  // Ločilo jezika vmesnika najprej (decTeX: pri angleščini pika), nato skupno pravilo za vejico; demos.js uporablja isti tex.
+  assert.match(pub("sim/kit.js"), /izrisi\(decTeX\(t\), \{ vejica: true \}\)/);
+  assert.match(pub("demos.js"), /import \{[^}]*\btex\b[^}]*\} from "\.\/sim\/kit\.js"/);
+  assert.doesNotMatch(pub("demos.js"), /izrisi\(/);
 });
 
 // Pregled 4. 11.: zložena formula ostane za bralnik zaslona in kopiranje izvirna (MathML in njegov TeX); klepet

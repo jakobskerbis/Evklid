@@ -7,6 +7,7 @@ import { t } from "./i18n-osnova.js";
 import { stopnja } from "./stopnja.js";
 import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
+import { cuvaj3d } from "./3d/vgrajeno.js";
 
 export const UCI_TABS = ["textbook", "lab", "3d"];
 const KEY = "evklid.uciZavihek";
@@ -115,6 +116,8 @@ export function initUci(deps) {
     if (!full || e.origin !== location.origin || e.source !== full.frame.contentWindow) return;
     const msg = e.data || {};
     if (msg.tip === "zapri3d") close3d();
+    if (msg.tip === "pripravljen") full.cuvaj.pripravljen();
+    if (msg.tip === "napaka") full.cuvaj.napaka();
     // »Lekcija« v modelu: zapre okvir in odpre lekcijo; Nazaj iz nje znova odpre isti model (vrni = id modela).
     if (msg.tip === "lekcija" && LEKCIJA_ID.test(msg.id || "")) {
       close3d();
@@ -255,6 +258,14 @@ function ikoneVrhaVnaprej() {
   }, 1500);
 }
 
+// »Poskusi znova« na kartici brez napake.js: neuspel uvoz modula ostane v brskalnikovem seznamu modulov (specifikacija;
+// Safari, Firefox, Chromium na CI), zato nov import() ne pomaga in stran osvežimo (kot napake.js pri modul: true);
+// druge napake samo naložijo znova (public/3d/sim.js enako).
+export function poskusiZnova3d(err, znova, osvezi = () => location.reload()) {
+  const uvoz = /importing a module script failed|dynamically imported module|module script/i.test(String(err?.message ?? ""));
+  return uvoz ? () => osvezi() : () => znova();
+}
+
 async function show3d() {
   const box = document.getElementById("uci-3d-content");
   if (!box) return;
@@ -266,8 +277,18 @@ async function show3d() {
     const [{ seznamModelov }, d] = await Promise.all([import("./3d/modeli.js"), drevoMod || import("./3d/drevo.js")]);
     drevoMod = d;
     modeli = await seznamModelov();
-  } catch {
-    box.innerHTML = `<p class="muted">${esc(t("a3.loadError"))}</p>`;
+  } catch (err) {
+    // Besedilo po vrsti napake (public/3d/napake.js) in »Poskusi znova«; če se še ta modul ne naloži, ostane »Preveri povezavo«.
+    const { napakaVsebina } = await import("./3d/napake.js").catch(() => ({}));
+    const kartica = document.createElement("div");
+    kartica.className = "uci-3d-napaka";
+    kartica.setAttribute("role", "alert");
+    if (napakaVsebina) kartica.append(...napakaVsebina(err, { t, znova: () => show3d(), razredGumba: "secondary" }));
+    else {
+      kartica.innerHTML = `<p>${esc(t("a3.loadError"))}</p><button type="button" class="secondary">${esc(t("a3.retry"))}</button>`;
+      kartica.querySelector("button").addEventListener("click", poskusiZnova3d(err, () => show3d()), { once: true });
+    }
+    box.replaceChildren(kartica);
     return;
   }
   const { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, ikoneVnaprej } = drevoMod;
@@ -372,16 +393,19 @@ export function open3d(id, title = "", param = null) {
   prilagodi();
   vv?.addEventListener("resize", prilagodi);
   vv?.addEventListener("scroll", prilagodi); // iOS premakne vidni del (tipkovnica): okvir mu sledi
-  full = { el, frame, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
+  // Okvir se v 8 s ne oglasi (»pripravljen«): gumb »Zapri« čez okvir (public/3d/vgrajeno.js cuvaj3d).
+  const cuvaj = cuvaj3d(el, { zapri: close3d, t });
+  full = { el, frame, cuvaj, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
   D?.onOverlay?.(true);
   frame.focus();
 }
 
 function close3d() {
   if (!full) return false;
-  const { el, from, odjavi } = full;
+  const { el, from, odjavi, cuvaj } = full;
   full = null;
   odjavi();
+  cuvaj.ustavi();
   el.remove(); // okvir se uniči skupaj s prizorom (pomnilnik grafične kartice)
   document.body.classList.remove("uci-3d-odprto");
   D?.onOverlay?.(false);

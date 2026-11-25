@@ -11,7 +11,7 @@ import {
 } from "../public/mikroskop/optika.js";
 import { BARVANJA, matrikaBarvil } from "../public/mikroskop/barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "../public/mikroskop/preparati/index.js";
-import { preparatAtlasa, preparatModela, pogledDela, MODELI_Z_MIKROSKOPOM } from "../public/mikroskop/mapa.js";
+import { preparatAtlasa, preparatModela, pogledDela, MODELI_Z_MIKROSKOPOM, tkivoVImenu } from "../public/mikroskop/mapa.js";
 import { fragmentPreparata } from "../public/mikroskop/glsl.js";
 import { povecava, izracunajPogled, ZACETNO, najblizjaMolekula, fino } from "../public/mikroskop/pogled.js";
 import sl from "../public/i18n/sl.js";
@@ -156,6 +156,23 @@ test("mikroskop: vsaka struktura atlasa telesa ima preparat", () => {
   assert.equal(preparatAtlasa({ ime: "Lacrimal bone", material: "Bone-6" }), "kost");
   assert.equal(preparatAtlasa({ ime: "Thyroid cartilage", material: "Cartilage" }), "hrustanec");
   assert.equal(preparatAtlasa({ ime: "Uvula of vermis", material: "Cerebellum" }), "mali-mozgani");
+});
+
+// mapa.js je statični uvoz strani /3d: brez pogleda nazaj ((?<!round )ligaments?), ki ga Safari pred 16.4 ne pozna.
+// Nova funkcija mora ujemati natanko tako kot stari izraz (Node pogled nazaj pozna, zato ga tu lahko primerjamo).
+test("mikroskop: tkivo v imenu brez pogleda nazaj ujema enako kot prej (round ligament ni vez)", () => {
+  const STARI = new RegExp("\\b(arter(y|ies)|veins?|bones?|cartilages?|muscles?|(?<!round )ligaments?|nerves?|fascia)\\b", "i");
+  const imena = [...json("public/3d/atlas-strukture.json"), ...(json("public/3d/atlas-zenski.json").strukture || [])].map((r) => String(r.ime || ""));
+  const primeri = ["Round ligament of uterus", "round ligaments", "ROUND LIGAMENT", "Patellar ligament", "Ligament", "ligaments of liver", "Round ligament of liver and falciform ligament", "around ligament", "round  ligament", "roundligament", "Xround ligament", "round ligamentous", "musclesround ligament", "round ligament bone", "Ligamentum teres", "nerve", "Fascia lata", "arteries", "artery"];
+  let razlik = 0;
+  for (const s of [...imena, ...primeri]) {
+    if (STARI.test(s) !== tkivoVImenu(s)) razlik++, assert.fail(`${s}: prej ${STARI.test(s)}, zdaj ${tkivoVImenu(s)}`);
+  }
+  assert.equal(razlik, 0);
+  assert.equal(tkivoVImenu("Round ligament of uterus"), false);
+  assert.equal(tkivoVImenu("Patellar ligament"), true);
+  assert.equal(preparatAtlasa({ ime: "Round ligament of uterus", material: "Ligament" }), "gladka-misica");
+  assert.equal(preparatAtlasa({ ime: "Patellar ligament", material: "Ligament" }), "kita");
 });
 
 test("mikroskop: vsak model celice in organa ter vsak del iz preslikave obstaja", async () => {
@@ -666,7 +683,19 @@ test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spre
     assert.ok(!resnica.includes(sl["mk.truth.model"]) && !resnica.includes(sl["mk.truth.crystal"]), "namig o ponazoritvi z dogovorjenimi barvami nad sliko brez molekul");
     assert.deepEqual(resnica, [sl["mk.truth.tem"]]);
     // stanje »napaka« ne riše ob vsaki sličici znova (prej ~60 izrisov na sekundo brez konca)
-    await p.waitForTimeout(3000); // polna slika po pasovih se konča
+    // polna slika po pasovih se konča: na CI (programski WebGL, štiri testne datoteke hkrati) traja to več kot nekdanjih
+    // slepih 3 s, zato je test štel še pasove (16–30 sličic v 1 s). Počakamo, da mikroskop 0,5 s ne zahteva nobene sličice;
+    // če riše brez konca (napaka, ki jo test lovi), se to ne zgodi in test pade z istim sporočilom.
+    await pocakaj(
+      () => {
+        const z = (window.__mir ||= { n: -1, t: 0 });
+        if (z.n !== window.__raf) Object.assign(z, { n: window.__raf, t: performance.now() });
+        return performance.now() - z.t >= 500;
+      },
+      null,
+      "slika miruje, a se riše znova (izris po pasovih se ni končal)",
+      60000,
+    );
     const raf0 = await p.evaluate(() => window.__raf);
     await p.waitForTimeout(1000);
     const sliciceNaSekundo = (await p.evaluate(() => window.__raf)) - raf0;

@@ -235,6 +235,18 @@ V simulaciji spodaj »Dušikove organske spojine« uvrsti spojine v skupine. Pri
 ~ Trimetilamin nastaja v ribah, ki razpadajo, in ni glavna dušikova spojina urina.
 > Sečnina $\mathrm{(NH_2)_2CO}$ je amid. Bakterijski encim ureaza jo hidrolizira: $\mathrm{(NH_2)_2CO + H_2O \rightarrow 2\,NH_3 + CO_2}$.
 
+? Kolikšen je masni delež dušika v glicinu $\mathrm{H_2N{-}CH_2{-}COOH}$? ($A_r$: C $12$, H $1$, N $14$, O $16$) Rezultat vpiši v odstotkih na desetinko.
+= 18,7 % | 0,1
+~ 14,0 | To je relativna atomska masa dušika. Deliti jo moraš z molsko maso glicina.
+~ 23,7 | V glicinu sta dva atoma kisika, ne en. Preštej vse atome: $\mathrm{C_2H_5NO_2}$.
+> $\mathrm{C_2H_5NO_2}$: $M = 2 \cdot 12 + 5 \cdot 1 + 14 + 2 \cdot 16 = 75\,\mathrm{g/mol}$, $w(\mathrm{N}) = \dfrac{14}{75} = 0{,}187 = 18{,}7\,\%$.
+
+? Koliko gramov etanamina $\mathrm{CH_3CH_2NH_2}$ ($M = 45\,\mathrm{g/mol}$) nevtralizira $50\,\mathrm{mL}$ klorovodikove kisline s koncentracijo $0{,}20\,\mathrm{mol/L}$? Amin in kislina reagirata v razmerju $1 : 1$.
+= 0,45 g | 0,01
+~ 450 | Prostornino moraš pretvoriti v litre: $50\,\mathrm{mL} = 0{,}050\,\mathrm{L}$.
+~ 0,01 | To je množina v molih. Pomnoži jo še z molsko maso amina.
+> $n(\mathrm{HCl}) = 0{,}20\,\mathrm{mol/L} \cdot 0{,}050\,\mathrm{L} = 0{,}010\,\mathrm{mol} = n(\text{amin})$, $m = 0{,}010\,\mathrm{mol} \cdot 45\,\mathrm{g/mol} = 0{,}45\,\mathrm{g}$.
+
 :::simboli
 n | množina snovi | n = \frac{m}{M} | mol | amina ali $\mathrm{HCl}$, razmerje $1 : 1$
 m | masa | | g | pri sečnini in dušiku v kg
