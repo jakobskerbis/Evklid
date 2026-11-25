@@ -2,7 +2,7 @@
 // ali prilepljeno besedilo. Vrsta se prepozna po vsebini (magična števila, pri Wordu in PowerPointu imenik ZIP), nikoli
 // po končnici ali glavi Content-Type. Izvirnik se shrani šifriran (crypto-polje.js sealBytes); brez ključa
 // EVKLID_DATA_KEY ga ne sprejmemo. Brez razčlenjevanja in brez AI (to pride v PR 3, server/priprava/uvoz.js).
-import { sealBytes, unsealBytes, encryptionOn } from "../crypto-polje.js";
+import { sealBytes, unsealBytes, encryptionOn, currentKeyId } from "../crypto-polje.js";
 
 const MB = 1024 * 1024;
 // Meje (odloči j; docs/priprava.md). Fotografija iz telefona po izrezu je ~1–3 MB, PDF zapiskov redko nad 10 MB.
@@ -11,17 +11,18 @@ export const MEJE = {
   pdf: 15 * MB,
   word: 15 * MB,
   powerpoint: 15 * MB,
-  besedilo: 50_000, // znakov prilepljenega besedila
+  besedilo: 90_000, // bajtov (UTF-8) prilepljenega besedila; telo JSON gre skozi splošno mejo 100 kb (server/app.js)
 };
 export const NAJVEC_BAJTOV = 15 * MB; // telo zahteve z datoteko
 export const NAJVEC_VIROV = 20; // na pripravo
 export const NAJVEC_PRIPRAV = 20; // na profil
 export const NAJVEC_SKUPAJ = 50 * MB; // vsi izvirniki enega profila
+export const NAJVEC_HKRATI = 3; // hkratna nalaganja datotek na strežniku (vsako drži do ~2 × 15 MB pomnilnika)
 // Vsi izvirniki na strežniku (disk pri Renderju je majhen, dnevna kopija potrebuje še dvakratno velikost baze;
 // server/kopije.js makeBackup). EVKLID_PRIPRAVA_PROSTOR_MB ga spremeni.
 export const prostorVsi = () => {
   const n = Number(process.env.EVKLID_PRIPRAVA_PROSTOR_MB);
-  return (Number.isFinite(n) && n > 0 ? n : 200) * MB;
+  return (Number.isFinite(n) && n > 0 ? n : 100) * MB;
 };
 // Bajti shranjenih izvirnikov (vsi ali enega profila). Vir brez izvirnika (po obnovi iz kopije) ne šteje.
 export function zasedeno(db, studentId = null) {
@@ -134,6 +135,35 @@ export function zVarnimBrisanjem(db, fn) {
     try {
       if (prev !== null) db.exec(`PRAGMA secure_delete = ${Number(prev) ? "ON" : "OFF"}`);
     } catch {}
+  }
+}
+
+/**
+ * Menjava ključa (server/zasebnost.js encryptionSteps, scripts/kljuc-podatkov.js): izvirnike s starim ključem
+ * (EVKLID_DATA_KEYS_OLD) zašifrira znova s sedanjim, enega po enega (do 15 MB). Neberljive pusti. Klicatelj vklopi
+ * secure_delete. Vrača { table, changed } po vsakem paketu.
+ */
+export function* presifrirajIzvirnike(db, paket = 20) {
+  const cur = currentKeyId();
+  if (!cur || !db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'priprava_izvirniki'").get()) return;
+  const glava = Buffer.from(`enc1:${cur}:`, "latin1");
+  const izberi = db.prepare("SELECT vir_id FROM priprava_izvirniki WHERE vir_id > ? AND substr(podatki, 1, ?) <> ? ORDER BY vir_id LIMIT ?");
+  const ena = db.prepare("SELECT podatki FROM priprava_izvirniki WHERE vir_id = ?");
+  const vpisi = db.prepare("UPDATE priprava_izvirniki SET podatki = ? WHERE vir_id = ?");
+  let zadnji = 0;
+  for (;;) {
+    const ids = izberi.all(zadnji, glava.length, glava, paket);
+    if (!ids.length) return;
+    let changed = 0;
+    for (const { vir_id } of ids) {
+      zadnji = vir_id;
+      const r = ena.get(vir_id);
+      const odprt = r ? unsealBytes(r.podatki) : null;
+      if (!odprt) continue;
+      vpisi.run(sealBytes(odprt), vir_id);
+      changed++;
+    }
+    yield { table: "priprava_izvirniki", changed };
   }
 }
 

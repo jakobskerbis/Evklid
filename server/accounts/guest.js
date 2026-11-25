@@ -8,6 +8,7 @@ import { randomBytes } from "node:crypto";
 import { sha256 } from "./auth.js";
 import { detachAudit } from "../dnevnik-dostopov.js";
 import { netHash } from "../crypto-polje.js";
+import { zVarnimBrisanjem } from "../priprava/shramba.js";
 
 export const GUEST_SESSION_DAYS = 365;
 
@@ -189,7 +190,7 @@ export class GuestQuota {
       .all();
     for (const { id } of stale) {
       this.snapshotParent(id);
-      this.db.prepare("DELETE FROM students WHERE parent_id = ?").run(id);
+      zVarnimBrisanjem(this.db, () => this.db.prepare("DELETE FROM students WHERE parent_id = ?").run(id)); // izvirniki priprav
       this.db.prepare("DELETE FROM parents WHERE id = ?").run(id);
       detachAudit(this.db, id); // id se lahko ponovno uporabi: dnevnik ne sme preiti na nov račun
     }

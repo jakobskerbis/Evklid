@@ -241,6 +241,14 @@ test("poti: ustvari, seznam, spremeni, viri vseh vrst, šifrirano v bazi, prenos
     assert.equal((await a.call(`/api/students/${a.sid}/priprave/${p.id}`, { method: "PUT", body: { datum_testa: "2001-01-01" } })).status, 400);
     assert.equal((await a.call(`/api/students/${a.sid}/priprave`, { method: "POST", body: { naslov: "" } })).status, 400);
     assert.equal((await a.call(`/api/students/${a.sid}/priprave`, { method: "POST", body: { naslov: "x", predmet: "mat; drop" } })).status, 400);
+    assert.equal((await a.call(`/api/students/${a.sid}/priprave`, { method: "POST", body: { naslov: "x", predmet: { toString: 1 } } })).status, 400);
+    assert.equal((await a.call(`/api/students/${a.sid}/priprave`, { method: "POST", body: { naslov: "x", predmet: ["MAT"] } })).status, 400);
+    assert.equal((await a.call(`/api/students/${a.sid}/priprave/${p.id}`, { method: "PUT", body: [1] })).status, 400);
+    assert.equal((await a.call(`/api/students/${a.sid}/priprave/${p.id}`, { method: "PUT", body: {} })).status, 400);
+    // Prilepljeno besedilo: meja v bajtih (pod splošno mejo JSON 100 kb), koda priprava_velikost.
+    const dolgo = await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", body: { besedilo: "č".repeat(46_000) } });
+    assert.equal(dolgo.status, 413);
+    assert.equal(dolgo.body.code, "priprava_velikost");
     assert.equal((await a.call(`/api/students/${a.sid}/priprave/abc`)).status, 404);
   });
 });
@@ -385,7 +393,20 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
         await nalozi(a, p.id, PDF, { ime: "zapiski.pdf" });
         await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", body: { besedilo: `Besedilo ${MARKER}` } });
         const pb = await nova(b, { naslov: "Bor" });
-        await nalozi(b, pb.id, JPEG);
+        // Večji izvirnik (strani s prelivom v SQLite), da izbris preveri tudi proste strani.
+        const vb = (await nalozi(b, pb.id, Buffer.concat([PDF, crypto.randomBytes(200_000)]))).body.vir;
+        const kos = (vir) => {
+          const blob = Buffer.from(db.prepare("SELECT podatki FROM priprava_izvirniki WHERE vir_id = ?").get(vir.id).podatki);
+          return blob.subarray(blob.length >> 1, (blob.length >> 1) + 32);
+        };
+        const kosB = kos(vb);
+        const vA = db.prepare("SELECT id FROM priprava_viri WHERE student_id = ? AND vrsta = 'pdf'").get(a.sid);
+        const kosA = kos(vA);
+        const vDatoteki = (k) => {
+          db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
+          return fs.readFileSync(file).indexOf(k) >= 0;
+        };
+        assert.equal(vDatoteki(kosB), true);
         // test_plans ostane nedotaknjen (selitev pride pozneje).
         db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (?, 'p', '[0]', '2026-12-15')").run(a.sid);
 
@@ -403,6 +424,9 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
         const bytes = fs.readFileSync(copy);
         assert.equal(bytes.indexOf(MARKER), -1);
         assert.equal(bytes.indexOf("%PDF"), -1);
+        // Tudi šifrirani bajti izvirnikov niso v kopiji (ne v prostih straneh).
+        assert.equal(bytes.indexOf(kosA), -1);
+        assert.equal(bytes.indexOf(kosB), -1);
 
         // Izvoz podatkov: priprava in metapodatki virov (odšifrirani), brez izvirnikov.
         const ex = await a.call("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
@@ -420,10 +444,14 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
         const delB = await b.call(`/api/students/${b.sid}`, { method: "DELETE", body: { password: "geslo1234" } });
         assert.ok([200, 204].includes(delB.status), JSON.stringify(delB.body));
         assert.deepEqual(stej(db), { priprave: 1, viri: 2, izvirniki: 2 });
-        // Izbris računa: vse priprave, viri in izvirniki.
+        // secure_delete: šifrirani izvirnik izbrisanega profila ne ostane v prostih straneh baze.
+        assert.equal(vDatoteki(kosB), false);
+        // Izbris računa: vse priprave, viri in izvirniki, tudi iz prostih strani.
+        assert.equal(vDatoteki(kosA), true);
         const del = await a.call("/api/account", { method: "DELETE", body: { password: "geslo1234" } });
         assert.equal(del.status, 200, JSON.stringify(del.body));
         assert.deepEqual(stej(db), { priprave: 0, viri: 0, izvirniki: 0 });
+        assert.equal(vDatoteki(kosA), false);
       },
       { file },
     );
@@ -459,4 +487,31 @@ test("migracija na obstoječi bazi: tabele nastanejo, ponoven zagon ne spremeni 
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("menjava ključa: izvirniki se zašifrirajo znova s sedanjim ključem, stari ključ nato ni več potreben", async () => {
+  const { migrateEncryption, encryptionStats } = await import("../server/zasebnost.js");
+  const k1 = process.env.EVKLID_DATA_KEY;
+  await withServer(async ({ client, store, db }) => {
+    const a = await account(client, store, "menjava@priprava.si");
+    const p = await nova(a);
+    const v = (await nalozi(a, p.id, PDF)).body.vir;
+    const k2 = crypto.randomBytes(32).toString("base64");
+    process.env.EVKLID_DATA_KEY = k2;
+    process.env.EVKLID_DATA_KEYS_OLD = `staro:${k1}`;
+    try {
+      assert.equal(encryptionStats(db).find((x) => x.table === "priprava_izvirniki").oldKey, 1);
+      assert.equal(migrateEncryption(db).priprava_izvirniki, 1);
+      const st = encryptionStats(db).find((x) => x.table === "priprava_izvirniki");
+      assert.deepEqual([st.encrypted, st.oldKey, st.unreadable], [1, 0, 0]);
+      delete process.env.EVKLID_DATA_KEYS_OLD;
+      const dl = await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri/${v.id}/izvirnik`);
+      assert.equal(dl.status, 200);
+      assert.deepEqual(dl.body, PDF);
+      assert.equal(migrateEncryption(db).priprava_izvirniki, undefined); // nič več za menjavo
+    } finally {
+      process.env.EVKLID_DATA_KEY = k1;
+      delete process.env.EVKLID_DATA_KEYS_OLD;
+    }
+  });
 });

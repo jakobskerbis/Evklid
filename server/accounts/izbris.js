@@ -8,6 +8,7 @@
 import { detachAudit, audit } from "../dnevnik-dostopov.js";
 import { GuestQuota } from "./guest.js";
 import { dodajIzbrise, beriIzbrise, brezPrezrtih } from "../kopije.js";
+import { zVarnimBrisanjem } from "../priprava/shramba.js";
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
 // Datoteka baze (prazno za :memory:); seznam izbrisov leži ob njej.
@@ -39,7 +40,8 @@ export function zapisiIzbris(db, z, log = console) {
 // nepotrjenega računa ne da nove brezplačne kvote. Vrne število izbrisanih profilov.
 export function eraseProfiles(db, parentId, { guests = null } = {}) {
   (guests || new GuestQuota(db)).snapshotParent(parentId);
-  return Number(db.prepare("DELETE FROM students WHERE parent_id = ?").run(parentId).changes);
+  // secure_delete: šifrirani izvirniki priprav na test (kaskada) ne ostanejo v prostih straneh baze.
+  return zVarnimBrisanjem(db, () => Number(db.prepare("DELETE FROM students WHERE parent_id = ?").run(parentId).changes));
 }
 
 // Ves račun: profili, račun, povezava dnevnika dostopov. before(): dodatni koraki v isti transakciji (pilot).

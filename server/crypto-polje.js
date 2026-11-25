@@ -268,5 +268,21 @@ export function encryptionStats(db) {
       out.push(s);
     }
   }
+  // Izvirniki priprave na test (binarno, sealBytes): po glavi ključa; neberljiv = ključa ni med sedanjimi in starimi.
+  if (hasTable(db, "priprava_izvirniki")) {
+    const s = { table: "priprava_izvirniki", col: "podatki", encrypted: 0, plain: 0, unreadable: 0, oldKey: 0 };
+    const cur = currentKeyId();
+    const all = keys()?.all;
+    for (const r of db.prepare("SELECT substr(podatki, 1, 14) AS h FROM priprava_izvirniki").iterate()) {
+      const h = Buffer.from(r.h ?? []).toString("latin1");
+      if (!h.startsWith(PREFIX) || h[13] !== ":") s.plain++;
+      else if (!all?.has(h.slice(5, 13))) s.unreadable++;
+      else {
+        s.encrypted++;
+        if (cur && h.slice(5, 13) !== cur) s.oldKey++;
+      }
+    }
+    out.push(s);
+  }
   return out;
 }

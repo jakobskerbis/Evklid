@@ -7,7 +7,6 @@ import { zVarnimBrisanjem } from "./shramba.js";
 export const ROK_DNI = 30;
 
 const DAN = 86400000;
-const sqlCas = (ms) => new Date(ms).toISOString().replace("T", " ").slice(0, 19);
 const sqlDan = (ms) => new Date(ms).toISOString().slice(0, 10);
 
 // Dan samodejnega izbrisa (YYYY-MM-DD, UTC) za vrstico priprave: datum_testa + 30 dni ali zadnja_uporaba + 30 dni.
@@ -18,17 +17,17 @@ export function danIzbrisa({ datum_testa, zadnja_uporaba }) {
 
 /**
  * Izbriše priprave z iztečenim rokom (z viri in izvirniki, ON DELETE CASCADE). Vrne število izbrisanih priprav.
- * Z datumom testa: izbris na dan datum_testa + 30 (UTC) ali pozneje. Brez datuma: ko je od zadnje uporabe minilo 30 dni.
+ * Z datumom testa: izbris na dan datum_testa + 30 (UTC) ali pozneje. Brez datuma: na dan zadnje uporabe + 30 (UTC).
  */
 export function pocistiPriprave(db, { now = Date.now() } = {}) {
   if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'priprave'").get()) return 0;
+  // Oba roka po dnevih (UTC), da se izbris ujema z izbris_dne, ki ga vidi učenec.
   const mejaDan = sqlDan(now - ROK_DNI * DAN);
-  const mejaCas = sqlCas(now - ROK_DNI * DAN);
   return zVarnimBrisanjem(db, () =>
     Number(
       db
-        .prepare("DELETE FROM priprave WHERE (datum_testa IS NOT NULL AND datum_testa <= ?) OR (datum_testa IS NULL AND zadnja_uporaba <= ?)")
-        .run(mejaDan, mejaCas).changes,
+        .prepare("DELETE FROM priprave WHERE (datum_testa IS NOT NULL AND datum_testa <= ?) OR (datum_testa IS NULL AND substr(zadnja_uporaba, 1, 10) <= ?)")
+        .run(mejaDan, mejaDan).changes,
     ),
   );
 }

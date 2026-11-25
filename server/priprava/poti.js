@@ -9,7 +9,7 @@ import { cleanText } from "../settings.js";
 import { danIzbrisa } from "./ciscenje.js";
 import {
   preveriDatoteko, shraniIzvirnik, preberiIzvirnik, lahkoShranim, zVarnimBrisanjem,
-  MEJE, MIME, NAJVEC_BAJTOV, NAJVEC_VIROV, NAJVEC_PRIPRAV, NAJVEC_SKUPAJ, zasedeno, prostorVsi,
+  MEJE, MIME, NAJVEC_BAJTOV, NAJVEC_VIROV, NAJVEC_PRIPRAV, NAJVEC_SKUPAJ, NAJVEC_HKRATI, zasedeno, prostorVsi,
 } from "./shramba.js";
 
 const NASLOV_MAX = 120;
@@ -71,6 +71,10 @@ const pripravaVen = (r) => ({
  */
 export function mountPriprave(app, store, { loadStudent, now = () => Date.now() }) {
   const db = store.db;
+  // Izbris profila (DELETE /api/students/:id, store.deleteStudent) odnese priprave s kaskado; s secure_delete, da
+  // šifrirani izvirniki ne ostanejo v prostih straneh baze (izbris računa: server/accounts/izbris.js).
+  const izbrisiProfil = store.deleteStudent.bind(store);
+  store.deleteStudent = (id) => zVarnimBrisanjem(db, () => izbrisiProfil(id));
   const niPriprave = (res) => res.status(404).json({ error: "Priprava ne obstaja." });
   const niVira = (res) => res.status(404).json({ error: "Vir ne obstaja." });
   const ena = (s, req) => {
@@ -103,7 +107,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
     const b = req.body || {};
     const naslov = cleanText(b.naslov, NASLOV_MAX);
     if (!naslov) return res.status(400).json({ error: "Vpiši naslov priprave." });
-    const predmet = b.predmet == null || b.predmet === "" ? null : String(b.predmet).toUpperCase();
+    if (b.predmet != null && typeof b.predmet !== "string") return res.status(400).json({ error: "Napačen predmet." });
+    const predmet = b.predmet == null || b.predmet === "" ? null : b.predmet.toUpperCase();
     if (predmet !== null && !PREDMET.test(predmet)) return res.status(400).json({ error: "Napačen predmet." });
     const d = preveriDatum(b.datum_testa ?? null, now());
     if (!d.ok) return res.status(400).json({ error: "Napačen datum testa." });
@@ -133,7 +138,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
     if (!s) return;
     const p = ena(s, req);
     if (!p) return niPriprave(res);
-    const b = req.body || {};
+    const b = req.body;
+    if (!b || typeof b !== "object" || Array.isArray(b) || (b.naslov === undefined && b.datum_testa === undefined)) return res.status(400).json({ error: "Ni sprememb." });
     const set = [];
     const args = [];
     if (b.naslov !== undefined) {
@@ -167,14 +173,30 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
   // Nov vir: datoteka kot telo zahteve (fotografija, PDF, .docx, .pptx; vrsta po vsebini, ime v glavi X-Ime-Datoteke)
   // ali JSON { besedilo, ime } za prilepljeno besedilo (prek splošnega razčlenjevalnika JSON, 100 kb).
   const surovo = express.raw({ type: () => true, limit: NAJVEC_BAJTOV });
+  // Hkratna nalaganja (pomnilnik: vsako drži telo do 15 MB in šifrirano kopijo): največ eno na profil in nekaj vseh.
+  const vTeku = new Set();
+  const preveriProstor = (s, p, bajtov) => {
+    if (db.prepare("SELECT COUNT(*) AS n FROM priprava_viri WHERE priprava_id = ?").get(p.id).n >= NAJVEC_VIROV)
+      return [409, { error: `Priprava ima že ${NAJVEC_VIROV} virov.`, code: "priprava_viri_polno" }];
+    if (zasedeno(db, s.id) + bajtov > NAJVEC_SKUPAJ) return [409, { error: "Za vire ni več prostora. Izbriši stare priprave ali vire.", code: "priprava_prostor" }];
+    if (zasedeno(db) + bajtov > prostorVsi()) return [507, { error: "Prostor za vire je trenutno poln. Poskusi pozneje.", code: "priprava_prostor_streznik" }];
+    return null;
+  };
   app.post("/api/students/:id/priprave/:pid/viri", (req, res, next) => {
-    // Lastništvo pred branjem telesa: tuj ali neobstoječ id ne porabi 15 MB pomnilnika.
+    // Lastništvo, meje in prostor pred branjem telesa: tuj ali neobstoječ id in poln prostor ne porabijo 15 MB pomnilnika.
     const s = loadStudent(req, res);
     if (!s) return;
     const p = ena(s, req);
     if (!p) return niPriprave(res);
     req.priprava = { s, p };
     if (req.is("application/json")) return next();
+    const dolzina = Number(req.get("content-length"));
+    if (Number.isFinite(dolzina) && dolzina > NAJVEC_BAJTOV) return res.status(413).json({ error: "Datoteka je prevelika.", code: "priprava_velikost" });
+    const polno = preveriProstor(s, p, Number.isFinite(dolzina) ? dolzina : 0);
+    if (polno) return res.status(polno[0]).json(polno[1]);
+    if (vTeku.has(s.id) || vTeku.size >= NAJVEC_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Nalaganje že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
+    vTeku.add(s.id);
+    res.on("close", () => vTeku.delete(s.id));
     surovo(req, res, next);
   }, (req, res) => {
     // Znova po branju telesa: priprava je bila med nalaganjem morda izbrisana (drug zavihek, dnevno čiščenje).
@@ -188,7 +210,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
     if (req.is("application/json")) {
       const b = req.body || {};
       if (typeof b.besedilo !== "string" || !b.besedilo.trim()) return res.status(400).json({ error: "Besedilo manjka." });
-      if (b.besedilo.length > MEJE.besedilo) return res.status(413).json({ error: "Besedilo je predolgo.", code: "priprava_velikost" });
+      if (Buffer.byteLength(b.besedilo, "utf8") > MEJE.besedilo) return res.status(413).json({ error: "Besedilo je predolgo.", code: "priprava_velikost" });
       buf = Buffer.from(b.besedilo.replace(/\u0000/g, ""), "utf8");
       t = { vrsta: "besedilo", mime: MIME.besedilo };
       ime = cleanText(typeof b.ime === "string" ? b.ime : "", IME_MAX) || null;
@@ -199,10 +221,9 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
       t = v;
       ime = imeIz(req);
     }
-    if (db.prepare("SELECT COUNT(*) AS n FROM priprava_viri WHERE priprava_id = ?").get(p.id).n >= NAJVEC_VIROV)
-      return res.status(409).json({ error: `Priprava ima že ${NAJVEC_VIROV} virov.`, code: "priprava_viri_polno" });
-    if (zasedeno(db, s.id) + buf.length > NAJVEC_SKUPAJ) return res.status(409).json({ error: "Za vire ni več prostora. Izbriši stare priprave ali vire.", code: "priprava_prostor" });
-    if (zasedeno(db) + buf.length > prostorVsi()) return res.status(507).json({ error: "Prostor za vire je trenutno poln. Poskusi pozneje.", code: "priprava_prostor_streznik" });
+    // Znova z dejansko velikostjo (Content-Length morda manjka); sinhrono do vpisa, zato brez tekme.
+    const polno = preveriProstor(s, p, buf.length);
+    if (polno) return res.status(polno[0]).json(polno[1]);
     let virId;
     db.exec("BEGIN IMMEDIATE");
     try {
