@@ -23,7 +23,10 @@ v Mathlibu pravilo (npr. `integral_pow`), sicer ne.
 - Ena datoteka na vir (`lean/Evklid/<Vir>.lean`), uvožena v `lean/Evklid.lean`. Docstring vsake trditve pove
   vir (datoteka, primer) in trditev v besedah.
 - Večkoračen račun je veriga `calc`: vsak korak iz vira je svoja vrstica, da Lean preveri tudi korake.
-- Prepovedano: `sorry`, `admit`, `axiom`, `native_decide` (preveri `.github/workflows/lean.yml`).
+- Trditev s predpostavkami ima ob sebi `example`, ki pokaže, da se predpostavke dajo izpolniti. Sicer bi
+  nasprotujoče si predpostavke »dokazale« karkoli (pregled L1: `∀ n, aₙ₊₁ = 2aₙ` velja tudi za n = 0).
+- Prepovedano: `sorry`, `admit`, `axiom`, `native_decide`; `lake build --wfail` (vsako opozorilo je napaka) in
+  vsaka datoteka v `Evklid/` mora biti uvožena v `Evklid.lean` (preveri `.github/workflows/lean.yml`).
 - Trditev je zapisana tako, kot je v viru (ista števila, isti vrstni red). Lean dokaže samo to, kar je zapisano:
   napačen prevod je napačna trditev, zato pregledovalec primerja trditev z virom.
 
@@ -35,5 +38,6 @@ lake exe cache get   # prevedeni Mathlib (~7 GB)
 lake build           # preveri vse
 ```
 
-Brez Leana na stroju preverjanje teče samo v GitHubu (`lean.yml`, ob spremembi `lean/`, lekcij ali pol).
+Brez Leana na stroju preverjanje teče samo v GitHubu (`lean.yml`, ob spremembi `lean/`; L2 in L3 dodata lekcije
+in pole). elan je zaklenjen na v4.4.0 s preverjenim sha256.
 Ne zadrži objave na evklid.app.

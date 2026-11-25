@@ -11,7 +11,8 @@ namespace Evklid.Zapiski
 
 open intervalIntegral
 
-/-- mat-integrali.md: ∫₀³ x² dx = 9 (pravilo za potenco, nato Newton-Leibniz). -/
+/-- mat-integrali.md: ∫₀³ x² dx = 9 (pravilo za potenco, nato Newton-Leibniz); hkrati star-test.md, naloga 3
+(ploščina pod y = x² na [0, 3] je 9). -/
 theorem ploscina_x2 : ∫ x in (0:ℝ)..3, x ^ 2 = 9 := by
   calc ∫ x in (0:ℝ)..3, x ^ 2 = (3 ^ (2 + 1) - 0 ^ (2 + 1)) / (2 + 1) := integral_pow 2
     _ = 9 := by norm_num
@@ -28,6 +29,7 @@ theorem primer_doloceni : ∫ x in (0:ℝ)..2, (3 * x ^ 2 - 2 * x) = 4 := by
         rw [integral_const_mul, integral_const_mul]
     _ = 3 * ((2 ^ 3 - 0 ^ 3) / 3) - 2 * ((2 ^ 2 - 0 ^ 2) / 2) := by
         rw [integral_pow, integral_id]; norm_num
+    _ = ((2:ℝ) ^ 3 - 2 ^ 2) - (0 ^ 3 - 0 ^ 2) := by norm_num
     _ = 8 - 4 := by norm_num
     _ = 4 := by norm_num
 
@@ -48,10 +50,16 @@ theorem sistem (x y : ℝ) : (2 * x + y = 5 ∧ x - y = 1) ↔ (x = 2 ∧ y = 1)
     norm_num
 
 /-- mat-integrali.md: a₁ = 3, aₙ₊₁ = 2aₙ ⇒ a₄ = 24 (vsak člen posebej). -/
-theorem zaporedje (a : ℕ → ℤ) (h1 : a 1 = 3) (h : ∀ n, a (n + 1) = 2 * a n) : a 4 = 24 := by
-  have a2 : a 2 = 6 := by rw [h 1, h1]; norm_num
-  have a3 : a 3 = 12 := by rw [h 2, a2]; norm_num
-  rw [h 3, a3]; norm_num
+theorem zaporedje (a : ℕ → ℤ) (h1 : a 1 = 3) (h : ∀ n, 1 ≤ n → a (n + 1) = 2 * a n) : a 4 = 24 := by
+  have a2 : a 2 = 6 := by rw [h 1 le_rfl, h1]; norm_num
+  have a3 : a 3 = 12 := by rw [h 2 (by norm_num), a2]; norm_num
+  rw [h 3 (by norm_num), a3]; norm_num
+
+/-- Predpostavke trditve `zaporedje` se dajo izpolniti (aₙ = 3·2ⁿ⁻¹), da trditev ni prazna. -/
+example : ∃ a : ℕ → ℤ, a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) = 2 * a n :=
+  ⟨fun n => 3 * 2 ^ (n - 1), by norm_num, fun n hn => by
+    obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+    simp [pow_succ]; ring⟩
 
 /-- star-test.md, naloga 1: ∫₁² 2x dx = 3. -/
 theorem test_naloga1 : ∫ x in (1:ℝ)..2, 2 * x = 3 := by
@@ -60,12 +68,19 @@ theorem test_naloga1 : ∫ x in (1:ℝ)..2, 2 * x = 3 := by
     _ = 3 := by norm_num
 
 /-- star-test.md, naloga 2: x + y = 4, x − y = 2 ⇒ x = 3, y = 1. -/
-theorem test_naloga2 (x y : ℝ) (h1 : x + y = 4) (h2 : x - y = 2) : x = 3 ∧ y = 1 := by
-  constructor <;> linarith
+theorem test_naloga2 (x y : ℝ) : (x + y = 4 ∧ x - y = 2) ↔ (x = 3 ∧ y = 1) := by
+  constructor
+  · rintro ⟨h1, h2⟩
+    constructor <;> linarith
+  · rintro ⟨rfl, rfl⟩
+    norm_num
 
 /-- napad.md: kateti 3 cm in 4 cm ⇒ hipotenuza 5 cm (c² = a² + b², c > 0). -/
 theorem hipotenuza (c : ℝ) (hc : 0 < c) (h : c ^ 2 = 3 ^ 2 + 4 ^ 2) : c = 5 := by
   nlinarith [sq_nonneg (c - 5), sq_nonneg (c + 5)]
+
+/-- Predpostavke trditve `hipotenuza` se dajo izpolniti (c = 5). -/
+example : (0:ℝ) < 5 ∧ (5:ℝ) ^ 2 = 3 ^ 2 + 4 ^ 2 := by norm_num
 
 /-- fiz-elektricno-polje.md: E = F/q = 0,01 N / (2·10⁻⁶ C) = 5000 N/C. -/
 theorem jakost_polja : (0.01 : ℝ) / (2 * 10 ^ (-6 : ℤ)) = 5000 := by
