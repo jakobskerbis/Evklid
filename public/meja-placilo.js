@@ -87,8 +87,7 @@ export function limitCardHtml(v, body) {
   const facts = v.kind === "offer" && v.payOn
     ? [v.daily ? t("meja.moreN", v.daily) : t("meja.more"), t("meja.deep"), t("meja.lessons")]
     : [];
-  // Brez ponudbe (#759): pod 15 let je naročnina stvar starša (brez cene in gumba, server/placila/ponudbe.js).
-  const why = v.kind === "plain" && body.offer_reason === "under_15" ? `<p class="meja-sub">${esc(t("meja.whyUnder15"))}</p>` : "";
+
   // Cena je posebna vrstica pod seznamom, ne alineja s kljukico (»Z naročnino dobiš: 9,99 € na mesec« bi bilo narobe).
   const price = v.kind === "offer" && v.price ? `<p class="meja-price">${esc(t("meja.price", { price: v.price }))}</p>` : "";
   // Namig strežnika (»ustvari račun«, »naj starš izbere naročnino«) ostane, ko ni gumba, ki ga nadomesti,
@@ -100,7 +99,7 @@ export function limitCardHtml(v, body) {
       ? `<button type="button" class="primary" data-meja-account>${icon("wallet")} <span>${esc(t("meja.btnAdult"))}</span></button>`
       : "";
   return `<div class="meja-head">${icon("info")}<p>${esc(reason(body))}${hint ? ` ${esc(hint)}` : ""}</p></div>
-    ${why}${facts.length ? `<div class="meja-plus"><p class="meja-sub">${esc(t("meja.sub"))}</p><ul>${facts.map((f) => `<li>${icon("check")}<span>${esc(f)}</span></li>`).join("")}</ul>${price}</div>` : ""}
+    ${facts.length ? `<div class="meja-plus"><p class="meja-sub">${esc(t("meja.sub"))}</p><ul>${facts.map((f) => `<li>${icon("check")}<span>${esc(f)}</span></li>`).join("")}</ul>${price}</div>` : ""}
     <div class="meja-out"></div>
     <div class="meja-actions">${btn}<button type="button" class="text-btn" data-meja-practice>${esc(t("meja.practice"))} ${icon("chevron-right")}</button></div>
     <p class="form-error" role="alert" hidden></p>`;

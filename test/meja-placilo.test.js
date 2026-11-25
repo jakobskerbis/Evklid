@@ -112,8 +112,8 @@ test("brez temnih vzorcev: brez odštevanja, popustov in značk", () => {
 
 test("vsi novi napisi so v sl.js in prevedeni (živi jeziki vsi, zamrznjeni prvih 9; j 24. 11.)", async () => {
   const keys = Object.keys(SL).filter((k) => k.startsWith("meja."));
-  assert.equal(keys.length, 11);
-  const NOVI = ["meja.moreN", "meja.whyUnder15"]; // #759, po zamrznitvi jezikov
+  assert.equal(keys.length, 10);
+  const NOVI = ["meja.moreN"]; // #759, po zamrznitvi jezikov
   const { LIVE_UI_LANGUAGES } = await import("../public/i18n/languages.js");
   const dir = new URL("../public/i18n/ui/", import.meta.url);
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
@@ -190,7 +190,7 @@ test("kartica se ne vstavi, če se profil ali pogovor zamenja med nalaganjem sta
   }
 });
 
-test("#759: plačljiva dnevna meja na kartici, razlog brez ponudbe pod 15", () => {
+test("#759: plačljiva dnevna meja na kartici; pod 15 brez poziva k staršu (UCPD priloga I, 28)", () => {
   const p = { ...prices, free_daily_questions: 10, paid_daily_questions: { OS: 60, SS: 60, FAKS: 100 } };
   const v = limitVariant({ body: daily("block.hintAdult"), status: status(), prices: p, level: "FAKS" });
   assert.deepEqual(v.daily, { n: 100, free: 10 });
@@ -199,8 +199,5 @@ test("#759: plačljiva dnevna meja na kartici, razlog brez ponudbe pod 15", () =
   assert.match(limitCardHtml(limitVariant({ body: daily("block.hintAdult"), status: status(), prices, level: "OS" }), daily("block.hintAdult")), /Več vprašanj za inštruktorja/);
   const body = { ...daily(), offer_reason: "under_15" };
   const html = limitCardHtml(limitVariant({ body, status: status({ minor: true }), prices }), body);
-  assert.match(html, /pogovori s staršem/);
-  assert.doesNotMatch(html, /Z naročnino dobiš|€|data-meja-link/);
-  const lesson = { ...daily(), offer_reason: "lesson" };
-  assert.doesNotMatch(limitCardHtml(limitVariant({ body: lesson, status: status({ minor: true }), prices }), lesson), /pogovori s staršem/);
+  assert.doesNotMatch(html, /starš|Z naročnino dobiš|€|data-meja-link/);
 });

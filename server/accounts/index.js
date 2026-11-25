@@ -964,7 +964,8 @@ export function mountAccounts(app, store, opts = {}) {
     guests.netOf(studentId) ? (getParent(ownerOf(studentId))?.is_guest ? "block.hintGuest" : "block.hintVerify") : upsell(studentId) ? ((ageOfStudent(studentId) ?? 0) >= 18 ? "block.hintAdult" : "block.hintParent") : null;
   // Odgovor 429 za brezplačni paket: { error, code, params?, hint? }; error je slovenska rezerva (razlog + namig).
   // offer_reason (#759): zakaj ni ponudbe s ceno (ponudbe.js: lesson, school_hours, teacher_off, under_15; »school«
-  // za učenca iz šole), da kartica (public/meja-placilo.js) pove pravo stvar; z namigom ponudbe ga ni.
+  // za učenca iz šole). Kartica ga otroku ne pokaže kot poziv (pod 15 nič o staršu, pregled #1042); za podporo in
+  // poznejša besedila.
   function freeBlock(studentId, code, params) {
     const hint = moreHintCode(studentId);
     const text = params ? BLOCK_TEXT[code].replace("{n}", params.n) : BLOCK_TEXT[code];
