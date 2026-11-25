@@ -34,13 +34,15 @@ function veljavenDokaz(d, vrsta, dokaz) {
   if (!d || typeof d !== "object") return null;
   const meja = MOTORJI[d.motor];
   if (!meja || !Object.hasOwn(MOTORJI, d.motor)) return null;
-  // Lean šteje samo z imenovanim izrekom (izvor dokaza), sicer ga ne moremo izslediti.
-  if (d.motor === "lean" && !(dokaz && niz(dokaz.izrek) && dokaz.izrek)) return null;
+  // Leanov »drži« šteje samo z imenovanim izrekom (izvor dokaza), sicer ga ne moremo izslediti. Leanov »ne drži«
+  // (protiprimer) šteje tudi brez izreka: napake ne skrijemo.
+  if (d.motor === "lean" && d.holds === true && !(dokaz && niz(dokaz.izrek) && dokaz.izrek)) return null;
   const how = (MOC_NACINA[d.how] || 1) > MOC_NACINA[meja] ? meja : MOC_NACINA[d.how] ? d.how : "numeric";
   let complete = d.complete;
   if (complete === "formal" && d.motor !== "lean") complete = "exact";
   if (complete === "exact" && how === "numeric") complete = "numeric";
-  if (complete === "na" && S_POPOLNOSTJO.includes(vrsta)) complete = "unknown";
+  // Brez znane vrste ne vemo, ali popolnost obstaja, zato »na« tam ne velja.
+  if (complete === "na" && (!VRSTE.includes(vrsta) || S_POPOLNOSTJO.includes(vrsta))) complete = "unknown";
   return { ...d, how, complete };
 }
 
@@ -53,7 +55,7 @@ function veljavenDokaz(d, vrsta, dokaz) {
  *     »drži«, manjkajočo rešitev (complete: false) samo močnejši dokaz popolnosti. Takrat »nepreverjeno«.
  *   - Sicer najmočnejši status med dokazi.
  */
-export function statusTrditve(dokazi = [], vrsta = "beseda", dokaz = null) {
+export function statusTrditve(dokazi = [], vrsta = null, dokaz = null) {
   const d = (Array.isArray(dokazi) ? dokazi : []).map((x) => veljavenDokaz(x, vrsta, dokaz)).filter(Boolean);
   const s = d.map((x) => ({ x, s: statusIzDokazov(x) }));
   const moc = (x) => MOC_NACINA[x.how] || 1;
@@ -62,7 +64,8 @@ export function statusTrditve(dokazi = [], vrsta = "beseda", dokaz = null) {
     const ovrzena = (n) => {
       const vecji = d.filter((x) => moc(x) > moc(n.x));
       if (n.x.holds === false && !vecji.some((x) => x.holds === true)) return false;
-      if (n.x.complete === false && !vecji.some((x) => x.holds === true && ["formal", "exact", "na"].includes(x.complete))) return false;
+      // complete: false pomeni, da popolnost pri tej trditvi obstaja; »na« je zato ne ovrže.
+      if (n.x.complete === false && !vecji.some((x) => x.holds === true && ["formal", "exact"].includes(x.complete))) return false;
       return true;
     };
     if (napake.some((n) => !ovrzena(n))) return "napaka";
@@ -113,7 +116,7 @@ export function napakeZapisa(t) {
       const meja = MOTORJI[d.motor];
       if (MOC_NACINA[d.how] && (!meja || MOC_NACINA[d.how] > MOC_NACINA[meja])) e.push(`dokaz ${i}: motor ${d.motor} ne sme navesti načina ${d.how}`);
       if (d.complete === "na" && S_POPOLNOSTJO.includes(t.vrsta)) e.push(`dokaz ${i}: pri vrsti ${t.vrsta} je popolnost del trditve (ne »na«)`);
-      if (d.motor === "lean" && !(t.dokaz && t.dokaz.izrek)) e.push(`dokaz ${i}: Lean brez imena izreka`);
+      if (d.motor === "lean" && d.holds === true && !(t.dokaz && t.dokaz.izrek)) e.push(`dokaz ${i}: Lean brez imena izreka`);
     });
   if (t.dokaz != null && !(t.dokaz && niz(t.dokaz.izrek) && t.dokaz.izrek)) e.push("dokaz brez imena izreka");
   if (t.izid !== undefined && Array.isArray(t.dokazi) && t.izid !== izidTrditve(t)) e.push(`izid ${t.izid} se ne ujema z dokazi (${izidTrditve(t)})`);

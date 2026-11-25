@@ -116,6 +116,16 @@ test("statusTrditve: več dokazov za isto trditev", () => {
   assert.equal(statusTrditve([manjka, sympyDa], "enacba"), "nepreverjeno");
   // »ne drži« ovrže samo »drži« močnejšega motorja, ne dokaz popolnosti
   assert.equal(statusTrditve([{ motor: "stevila", holds: false, how: "numeric", complete: "exact" }, { motor: "sympy", holds: null, how: "exact", complete: "exact" }], "enacba"), "napaka");
+  // manjkajoče rešitve ne ovrže močnejši »na« (popolnost pri tej trditvi obstaja), tudi pri vrstah brez popolnosti
+  const sympyNa = { motor: "sympy", holds: true, how: "exact", complete: "na" };
+  for (const v of ["korak", "racun", "beseda", undefined]) assert.equal(statusTrditve([manjka, sympyNa], v), "napaka");
+  // Leanov protiprimer šteje tudi brez imena izreka
+  const leanNe = { motor: "lean", holds: false, how: "formal", complete: "na" };
+  assert.equal(statusTrditve([sympyNa, leanNe], "racun"), "napaka");
+  assert.deepEqual(napakeZapisa(novaTrditev({ id: "a", besedilo: "2+2=5", zapis: "2+2=5", vrsta: "racun", dokazi: [leanNe] })), []);
+  // brez vrste »na« ne velja kot popolnost
+  assert.equal(statusTrditve([sympyNa]), "delno");
+  assert.equal(statusTrditve([sympyNa], "racun"), "izracunano");
 });
 
 test("statusTrditve: motor ne more navesti več, kot zmore", () => {
