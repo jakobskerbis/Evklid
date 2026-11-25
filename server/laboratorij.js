@@ -66,7 +66,67 @@ export function teme3d(modelId, myPath = "") {
     .map(({ rank, ...x }) => x);
 }
 
-export function mountLab(app, { loadStudent, accounts }) {
+// Štetje uporabe laboratorija (načrt laboratorija, faza 1): koliko poskusov je bilo odprtih, v katerem načinu in koliko
+// vodenih poskusov je bilo opravljenih. Samo števci na dan in poskus, brez učenca, naprave ali IP (kot obiski strani
+// v server/pilot.js), zato niso osebni podatki. Branje: GET /api/admin/laboratorij?days=30 (skrbnik).
+export const NACINI = ["vodeno", "prosto", "brez"];
+export const DOGODKI = ["odprt", "preklop", "koncano"];
+const MAX_DNI = 120;
+export function migrateLab(db) {
+  db.exec(`CREATE TABLE IF NOT EXISTS lab_uporaba (
+    dan TEXT NOT NULL,
+    poskus TEXT NOT NULL,
+    nacin TEXT NOT NULL,
+    dogodek TEXT NOT NULL,
+    n INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (dan, poskus, nacin, dogodek)
+  )`);
+}
+const isoDan = (t) => new Date(t).toISOString().slice(0, 10);
+export function labUporaba(db, { days = 30, now = Date.now() } = {}) {
+  migrateLab(db);
+  const n = Math.min(MAX_DNI, Math.max(1, Math.floor(Number(days)) || 30));
+  const od = isoDan(now - (n - 1) * 86400000), _do = isoDan(now);
+  const vrstice = db.prepare("SELECT poskus, nacin, dogodek, SUM(n) AS n FROM lab_uporaba WHERE dan >= ? AND dan <= ? GROUP BY poskus, nacin, dogodek").all(od, _do);
+  const po = new Map();
+  for (const r of vrstice) {
+    const x = po.get(r.poskus) || { poskus: r.poskus, odprt: 0, vodeno: 0, prosto: 0, preklopi: 0, koncano: 0 };
+    if (r.dogodek === "odprt") (x.odprt += r.n), r.nacin !== "brez" && (x[r.nacin] += r.n);
+    else if (r.dogodek === "preklop") x.preklopi += r.n;
+    else if (r.dogodek === "koncano") x.koncano += r.n;
+    po.set(r.poskus, x);
+  }
+  const poskusi = [...po.values()].sort((a, b) => b.odprt - a.odprt || a.poskus.localeCompare(b.poskus));
+  return { od, do: _do, days: n, poskusi, skupaj: poskusi.reduce((a, x) => a + x.odprt, 0) };
+}
+
+export function mountLab(app, { loadStudent, accounts, db = null, isAdmin = () => false }) {
+  const inc = db ? (migrateLab(db), db.prepare("INSERT INTO lab_uporaba (dan, poskus, nacin, dogodek, n) VALUES (?, ?, ?, ?, 1) ON CONFLICT(dan, poskus, nacin, dogodek) DO UPDATE SET n = n + 1")) : null;
+  const kljuci = new Set(labExperiments().map((x) => x.key));
+  // Isti dogodek istega učenca pri istem poskusu se v 10 s šteje enkrat (dvojni klik, ponovni izris). Samo v pomnilniku.
+  const nedavno = new Map();
+  app.post("/api/students/:id/lab/uporaba", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const { key, nacin, dogodek } = req.body || {};
+    if (!kljuci.has(key) || !NACINI.includes(nacin) || !DOGODKI.includes(dogodek)) return res.status(400).json({ error: "Neznan poskus ali dogodek." });
+    const id = `${s.id}|${key}|${nacin}|${dogodek}`, t = Date.now();
+    if (nedavno.size > 5000) nedavno.clear();
+    if (t - (nedavno.get(id) || 0) > 10000) {
+      nedavno.set(id, t);
+      try {
+        inc?.run(isoDan(t), key, nacin, dogodek);
+      } catch {}
+    }
+    res.json({ ok: true });
+  });
+  if (db)
+    app.get("/api/admin/laboratorij", (req, res) => {
+      if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
+      const days = typeof req.query.days === "string" && /^\d{1,3}$/.test(req.query.days) ? Number(req.query.days) : 30;
+      res.json(labUporaba(db, { days }));
+    });
+
   app.get("/api/students/:id/lab", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;

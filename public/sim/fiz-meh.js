@@ -692,7 +692,7 @@ export function prostiPad(el) {
     s("line", { x1: px, y1: ground - 0.85 * k, x2: px - 0.18 * k, y2: ground, class: "graph-line stroke-a", "stroke-width": lw }, svg);
     s("line", { x1: px, y1: ground - 0.85 * k, x2: px + 0.18 * k, y2: ground, class: "graph-line stroke-a", "stroke-width": lw }, svg);
     s("line", { x1: px - 0.3 * k, y1: ground - 1.3 * k, x2: px + 0.3 * k, y2: ground - 1.3 * k, class: "graph-line stroke-a", "stroke-width": lw }, svg);
-    if (hu < 26) label(svg, px, ground - hu - 6, "1,7 m", "tick small");
+    if (hu < 26) label(svg, px, ground - hu - 6, `${fmt(1.7, 1)} m`, "tick small");
     // stroboskopske sence (vsakih dt sekund) in krogla
     const bxBall = bx + bw + 16, r = Math.max(2, R * k), dts = strobe();
     for (let i = 1; i * dts < tt - 1e-9; i++) {

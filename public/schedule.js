@@ -9,14 +9,15 @@ import { jeFaks } from "./stopnja.js";
 
 // Stanje urnika in kartica na Učni poti: public/urnik-kartica.js (del prvega odprtja). Ta stran se naloži ob odprtju.
 import { D, data, nastaviUrnik, REMIND_KEY, ls, sid, esc, TEST_KINDS, when, load } from "./urnik-kartica.js";
+import { LOCILO, celDatum, zdruzi } from "./datum.js";
 let preview = null; // uvoz, ki ga učenec še preverja { lessons, events, source }
 
 const box = () => document.querySelector("#view-schedule .sch-body");
 const KINDS = ["test", "kolokvij", "izpit", "ustno", "naloga", "drugo"];
 const dayName = (d, style = "long") => new Intl.DateTimeFormat(locale(), { weekday: style }).format(new Date(Date.UTC(2024, 0, d, 12)));
 // Mesec s številko: »čet., 30. 10.« (dolgo ime meseca bi bilo v slovenščini v napačnem sklonu).
-const fmtDate = (s) => new Date(`${s}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" });
-const lessonLabel = (l) => [l.kind, l.group ? t("sch.group", { g: l.group }) : ""].filter(Boolean).join(" · ");
+const fmtDate = (s) => celDatum(new Date(`${s}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" }));
+const lessonLabel = (l) => zdruzi([l.kind, l.group ? t("sch.group", { g: l.group }) : ""]);
 
 async function save(body) {
   const id = sid();
@@ -117,7 +118,7 @@ function gridHtml(s, days) {
         html += `<div class="sch-g-cell ${d === s.now.day ? "today" : ""}" style="grid-row:${gr} / span ${span};grid-column:${ci + 2}">${c.items
           .sort((a, b) => toMin(a.start) - toMin(b.start))
           .map((l) => `<button type="button" class="sch-lesson" data-lesson="${l.id}"><b>${esc(l.name)}</b><span class="sch-time">${l.start}–${l.end}</span>${
-            lessonLabel(l) || l.room ? `<small class="muted">${esc([lessonLabel(l), l.room].filter(Boolean).join(" · "))}</small>` : ""
+            lessonLabel(l) || l.room ? `<small class="muted">${esc(zdruzi([lessonLabel(l), l.room]))}</small>` : ""
           }</button>`)
           .join("")}</div>`;
       } else if (r > covered) {
@@ -141,7 +142,7 @@ function render() {
               .filter((l) => l.day === d)
               .map(
                 (l) => `<button type="button" class="sch-lesson" data-lesson="${l.id}"><span class="sch-time">${l.start}–${l.end}</span><b>${esc(l.name)}</b>${
-                  lessonLabel(l) || l.room ? `<small class="muted">${esc([lessonLabel(l), l.room].filter(Boolean).join(" · "))}</small>` : ""
+                  lessonLabel(l) || l.room ? `<small class="muted">${esc(zdruzi([lessonLabel(l), l.room]))}</small>` : ""
                 }</button>`,
               )
               .join("") || `<p class="muted sch-free">–</p>`
@@ -153,7 +154,7 @@ function render() {
   const evList = events.length
     ? `<div class="card list-card">${events
         .map(
-          (e) => `<button type="button" class="list-row" data-event="${e.id}"><span class="ic">${icon(TEST_KINDS.includes(e.kind) ? "clipboard-check" : "calendar")}</span><span class="lr-text"><b>${esc(e.name)}</b><small>${esc(fmtDate(e.date))}${e.time ? ` · ${e.time}` : ""} · ${when(e.daysLeft)}</small></span>${icon("chevron-right")}</button>`,
+          (e) => `<button type="button" class="list-row" data-event="${e.id}"><span class="ic">${icon(TEST_KINDS.includes(e.kind) ? "clipboard-check" : "calendar")}</span><span class="lr-text"><b>${esc(e.name)}</b><small>${esc(fmtDate(e.date))}${e.time ? `${LOCILO}${e.time}` : ""}${LOCILO}${when(e.daysLeft)}</small></span>${icon("chevron-right")}</button>`,
         )
         .join("")}</div>`
     : `<p class="muted">${t("sch.noEvents")}</p>`;

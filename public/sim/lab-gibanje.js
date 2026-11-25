@@ -4,7 +4,7 @@
 // Gibljivi deli (voziček, obešalo, krogla) so skupine, ki jim v vsaki sličici spremenimo le transform; ostala risba se
 // nariše znova samo, ko se spremeni postavitev.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
 import {
   ProgaBench, PadBench, PROGA, VOZICEK, SKRIPEC, PREDMETI, PAD, G_SOLA, naklonSkoziIzhodisce, premica, koncnaHitrost, zastira, POENOSTAVITVE_GIBANJE,
 } from "./lab-model-gibanje.js";
@@ -230,7 +230,8 @@ function porociloPoteka(B, log, { newton = false, konec = false } = {}) {
 
 // ================================================================ klanec
 export function labKlanec(el) {
-  const B = new ProgaBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new ProgaBench({ seed: zap.seed });
   B.kvadri = 2;
   const W = 400, H = 172, P = 300, X0 = 10, yMiza = 162;
   const svg = svgBox(W, H, "lab-bench lab-gib lab-gib-klanec");
@@ -391,6 +392,13 @@ export function labKlanec(el) {
   }
   draw();
   redraw();
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }
 
 // Povečan prerez pri vratih (pogled vzdolž proge): profil proge, voziček, zastavica, krak vrat in žarek.
@@ -416,7 +424,8 @@ function lupaPrerez(svg, x, y, w, hh, zarek, newton) {
 
 // ================================================================ prosti pad
 export function labProstiPad(el) {
-  const B = new PadBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new PadBench({ seed: zap.seed });
   const W = 400, H = 300, P = 120, yTla = 292, y0 = yTla - PAD.visina * P, xs = 80;
   const svg = svgBox(W, H, "lab-bench lab-gib lab-gib-pad");
   const log = eventLog();
@@ -574,7 +583,7 @@ export function labProstiPad(el) {
     const xc = 150, hc = 1.7 * P, yc = yTla - hc;
     s("path", { d: `M${xc},${yc + 0.13 * hc} v${0.42 * hc} M${xc},${yc + 0.55 * hc} l-9,${0.45 * hc} M${xc},${yc + 0.55 * hc} l9,${0.45 * hc} M${xc},${yc + 0.2 * hc} l-12,${0.3 * hc} M${xc},${yc + 0.2 * hc} l12,${0.3 * hc}`, class: "lab-gib-clovek" }, svg);
     s("circle", { cx: xc, cy: yc + 0.065 * hc, r: 0.065 * hc, class: "lab-gib-clovek-g" }, svg);
-    label(svg, xc + 16, yc + 6, "1,70 m", "lab-gib-cm", "start");
+    label(svg, xc + 16, yc + 6, `${fixed(1.7, 2)} m`, "lab-gib-cm", "start");
     // stojalo: podnožje, drog, roka z elektromagnetom ali kleščami
     s("rect", { x: 30, y: yTla - 6, width: 70, height: 6, rx: 2, fill: u(svg, "crno") }, svg);
     s("rect", { x: 44, y: yTla - 2.38 * P, width: 5, height: 2.38 * P - 6, fill: u(svg, "jeklo"), class: "lab-gib-drog-st" }, svg);
@@ -622,6 +631,13 @@ export function labProstiPad(el) {
   }
   draw();
   redraw();
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }
 
 // kratka imena za tabelo (šest stolpcev mora iti na telefon brez vodoravnega drsenja)
@@ -646,7 +662,8 @@ function lupaZgoraj(svg, x, y, w, hh, B, Pr) {
 
 // ================================================================ drugi Newtonov zakon
 export function labNewton2(el) {
-  const B = new ProgaBench({ seed: seme(), skripec: true });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new ProgaBench({ seed: zap.seed, skripec: true });
   B.nacin = "vrata";
   const W = 400, H = 326, P = 270, X0 = 20, yMiza = 74, yTla = yMiza + SKRIPEC.miza * P, yPolica = yMiza + 120;
   const svg = svgBox(W, H, "lab-bench lab-gib lab-gib-newton");
@@ -855,4 +872,11 @@ export function labNewton2(el) {
   syncUt();
   draw();
   redraw();
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }

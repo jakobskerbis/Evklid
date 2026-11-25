@@ -6,11 +6,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import crypto from "node:crypto";
-import { spawn } from "node:child_process";
 import { jeProdukcija, zagonBrezKljuca } from "../server/crypto-polje.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { presojaStanja } from "../scripts/straza.mjs";
+import { zazeniStreznik } from "./zagon-streznika.js";
 
 test("zagon brez ključa: produkcija po RENDER, NODE_ENV ali https; izjema samo izrecno", () => {
   assert.equal(jeProdukcija({}), false);
@@ -27,26 +27,16 @@ test("zagon brez ključa: produkcija po RENDER, NODE_ENV ali https; izjema samo 
 // Zažene server/index.js; vrne { code } ob koncu procesa ali { stanje } (/healthz/stanje), ko odgovori.
 async function zazeni(extra) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-sifriranje-"));
-  const port = 39000 + Math.floor(Math.random() * 900);
-  const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_PDF: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_BACKUPS: "0", ...extra };
+  const env = { ...process.env, EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_PDF: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_BACKUPS: "0", ...extra };
   for (const k of ["EVKLID_DATA_KEY", "EVKLID_ALLOW_PLAINTEXT", "NODE_ENV", "EVKLID_BASE_URL"]) if (!(k in extra)) delete env[k];
-  const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { env, stdio: ["ignore", "ignore", "pipe"] });
-  let stderr = "";
-  srv.stderr.on("data", (d) => (stderr += d));
-  const konec = new Promise((resolve) => srv.on("exit", (code) => resolve({ code, stderr })));
+  let srv, konec;
   try {
-    for (let i = 0; i < 150; i++) {
-      const r = await Promise.race([konec, new Promise((res) => setTimeout(res, 100))]);
-      if (r) return r;
-      try {
-        return { stanje: await (await fetch(`http://127.0.0.1:${port}/healthz/stanje`)).json() };
-      } catch {
-        // še se zaganja
-      }
-    }
-    throw new Error("strežnik se ni zagnal");
+    let base;
+    ({ srv, base, konec } = await zazeniStreznik(env));
+    if (!base) return await konec;
+    return { stanje: await (await fetch(`${base}/healthz/stanje`)).json() };
   } finally {
-    srv.kill();
+    srv?.kill();
     await konec;
     fs.rmSync(dir, { recursive: true, force: true });
   }

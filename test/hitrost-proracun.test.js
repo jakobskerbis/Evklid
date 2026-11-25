@@ -77,3 +77,97 @@ test("strežnik pošlje vstopno stran z modulepreload, stisnjeno in s 304", asyn
     server.close();
   }
 });
+
+// Odprtje lekcije (#9, profil A): lekcija je po korakih (»1/20«), zato prvi izris naredi samo korak na zaslonu in
+// naslednjega; ostale (KaTeX, klikljivi simboli) izriše v ozadju po kosih, skok na korak ali tisk pa takoj. Meritev s
+// CPU 4× (MAT-SS-4/odvod, 23 korakov, telefon): prva formula 1530 → 329 ms, najdaljša dolga naloga 1437 → 209 ms.
+// Preverjanje je strukturno (ni odvisno od hitrosti stroja): koliko korakov in klicev renderRich naredi prvi izris.
+const LESSON_STEPS_NOW = 2;
+test("lekcija: prvi izris naredi največ 2 koraka, ostali se izrišejo v ozadju ali ob skoku", async (t) => {
+  const { createRequire } = await import("node:module");
+  const http = await import("node:http");
+  const { lessonView } = await import("../server/textbook.js");
+  let playwright = null;
+  try {
+    playwright = createRequire(import.meta.url)("playwright");
+  } catch {}
+  const browser = await playwright?.chromium.launch().catch(() => null);
+  if (!browser) return t.skip("Playwright/Chromium ni nameščen");
+  const ID = "MAT-SS-4/odvod";
+  const page = `<!doctype html><meta charset="utf-8"><main class="view"><div id="view-textbook" class="textbook"></div></main>
+<script type="module">
+import { initTextbook, openLesson, showTextbook } from "/textbook.js";
+window.rr = 0;
+const api = async (url) => {
+  const u = new URL(url, location.href);
+  if (u.pathname.endsWith("/lesson")) return (await fetch("/t-lesson.json")).json();
+  throw Object.assign(new Error("?"), { status: 404 });
+};
+initTextbook({ api, renderRich: (s) => (window.rr++, "<p>" + s + "</p>"), escapeHtml: (s) => String(s), getStudent: () => ({ id: 1, settings: {} }),
+  openTopic: async () => true, nextPractice() {}, learnWithTutor() {}, showView: () => (window.shown = showTextbook()), openLab() {}, open3d() {}, toast() {} });
+window.odpri = async (k) => {
+  if (k != null) sessionStorage.setItem("tb-step:${ID}", String(k));
+  window.rr = 0;
+  await openLesson("${ID}");
+  await window.shown;
+  const steps = [...document.querySelectorAll(".tb-step")];
+  return { n: steps.length, now: steps.filter((s) => !s.hasAttribute("data-lazy")).map((s) => Number(s.dataset.step)), rr: window.rr,
+    shown: Number(steps.find((s) => !s.hidden)?.dataset.step) };
+};
+window.ready = true;
+</script>`;
+  const lesson = JSON.stringify(lessonView(ID));
+  const server = http.createServer((req, res) => {
+    const url = req.url.split("?")[0];
+    if (url === "/t-lesson.json") return res.writeHead(200, { "content-type": "application/json" }).end(lesson);
+    if (url === "/t.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(page);
+    const file = path.join(pub, path.normalize(url));
+    if (!file.startsWith(pub) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
+    const type = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json" }[path.extname(file)] || "application/octet-stream";
+    res.writeHead(200, { "content-type": type }).end(fs.readFileSync(file));
+  });
+  await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
+  t.after(async () => {
+    await browser.close();
+    server.close();
+  });
+  const p = await browser.newPage({ viewport: { width: 360, height: 740 } });
+  const errors = [];
+  p.on("pageerror", (e) => errors.push(e.message));
+  await p.goto(`http://127.0.0.1:${server.address().port}/t.html`);
+  await p.waitForFunction(() => window.ready, null, { timeout: 15000 });
+  const lazyLeft = () => p.evaluate(() => document.querySelectorAll(".tb-step[data-lazy]").length);
+
+  // Prvo odprtje: korak 1 in 2, ostali prazni; nato se v ozadju izrišejo vsi.
+  const a = await p.evaluate(() => window.odpri());
+  assert.ok(a.n > 10, `lekcija ${ID} ima ${a.n} korakov`);
+  assert.deepEqual(a.now, [0, 1], "prvi izris: samo korak na zaslonu in naslednji");
+  assert.ok(a.now.length <= LESSON_STEPS_NOW);
+  await p.waitForFunction(() => !document.querySelector(".tb-step[data-lazy]"), null, { timeout: 15000 });
+  const total = await p.evaluate(() => window.rr);
+  assert.ok(a.rr * 4 < total, `prvi izris ${a.rr} od ${total} klicev renderRich`);
+  assert.ok(await p.evaluate(() => [...document.querySelectorAll(".tb-step")].every((s) => s.querySelector(".tb-section, .tb-checks"))), "vsak korak izrisan");
+
+  // Skok na korak (shranjen v seji, kot ob vrnitvi v lekcijo): ta korak je viden in izrisan takoj.
+  const b = await p.evaluate(() => window.odpri(9));
+  assert.equal(b.shown, 9);
+  assert.deepEqual(b.now, [9, 10]);
+  // »Naprej« večkrat hitro zapored: vsak pokazan korak ima vsebino že ob kliku.
+  const empty = await p.evaluate(() => {
+    const out = [];
+    for (let i = 0; i < 6; i++) {
+      document.querySelector("#tb-step-next").click();
+      const s = document.querySelector(".tb-step:not([hidden])");
+      if (!s.querySelector(".tb-section, .tb-checks")) out.push(s.dataset.step);
+    }
+    return out;
+  });
+  assert.deepEqual(empty, [], "koraki brez vsebine ob kliku »Naprej«");
+  // Tisk (Ctrl+P) takoj po odprtju: vsi koraki izrisani.
+  await p.evaluate(async () => {
+    await window.odpri(0);
+    window.dispatchEvent(new Event("beforeprint"));
+  });
+  assert.equal(await lazyLeft(), 0, "tisk: vsi koraki izrisani");
+  assert.deepEqual(errors, []);
+});

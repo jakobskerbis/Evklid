@@ -10,6 +10,7 @@ import { jeFaks, jeSs } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
 import { isStoreApp } from "./pay-ui.js"; // aplikacija iz trgovine: brez ponudbe paketov mimo trgovine
+import { LOCILO, zdruzi } from "./datum.js";
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -187,6 +188,9 @@ const esc = (s) => ctx.escapeHtml(String(s ?? ""));
 // Odpre učbenik (kazalo ali zadnjo odprto lekcijo).
 // Tipka Nazaj (telefon): iz odprte lekcije nazaj na seznam lekcij. Vrne true, če je bila lekcija odprta.
 export function textbookBack() {
+  // Odprt seznam »Gradiva ▾« zapre Nazaj najprej sam (lekcija ostane odprta).
+  const gr = document.querySelector(".tb-gr-menu.open");
+  if (gr) return setGradiva(gr, false, gr.contains(document.activeElement)), true;
   if (!tb.topicId || !$("#view-textbook") || $("#view-textbook").closest("[hidden]")) return false;
   tb.topicId = null;
   renderHome();
@@ -302,7 +306,7 @@ async function renderHome() {
           .join("")}</div>` : ""}
       </div>
       ${book ? `<div class="tb-book card">
-        <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)} · ${esc(book.schoolName)}</h2>
+        <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)}${LOCILO}${esc(book.schoolName)}</h2>
         <p class="muted">${esc(t(book.lessons < book.topics ? "tbk.countMore" : "tbk.count", { done: book.lessons, total: book.topics }))}</p></div>
         <div class="tb-book-actions">
           <a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
@@ -383,7 +387,7 @@ async function renderBody() {
           .map(
             (h) => `<li><button type="button" class="tb-topic" data-lesson="${esc(h.id)}">
               <span class="tb-name">${esc(h.name)}</span>
-              <span class="tb-sub">${esc(h.pathLabel)} · ${esc(h.unit)}</span>
+              <span class="tb-sub">${esc(h.pathLabel)}${LOCILO}${esc(h.unit)}</span>
               ${h.snippet ? `<span class="tb-snip">${esc(h.snippet)}</span>` : ""}
             </button></li>`,
           )
@@ -645,7 +649,7 @@ async function renderLesson(topicId, name = "") {
     : "";
   const SLOT = '<div class="tb-demo-slot"></div>';
   const sectionCls = (title) => (/povzetek/i.test(title) ? "tb-summary" : /napak/i.test(title) ? "tb-mistakes" : /zakaj/i.test(title) ? "tb-why" : "");
-  const sectionHtml = sections
+  const sectionHtml = () => sections
     .map((s, i) => {
       return `<section class="card tb-section ${sectionCls(s.title)}">${s.title ? `<h2>${esc(s.title)}</h2>` : ""}<div class="explanation">${R(s.md)}</div>${
         i === altAt ? altHtml : ""
@@ -685,7 +689,7 @@ async function renderLesson(topicId, name = "") {
         : `<ol start="${idx[0] + 1}">${idx.map((qi) => staticItem(lesson.checks[qi], qi)).join("")}</ol>`
     }</section>`;
   const nChecks = lesson?.checks?.length || 0;
-  const checksHtml = nChecks ? checksCard(lesson.checks.map((_, i) => i)) : "";
+  const checksHtml = () => (nChecks ? checksCard(lesson.checks.map((_, i) => i)) : "");
 
   // Vedno po korakih (j, 15. 11. 2026; prej izbira »Vse naenkrat«): kratke kartice, vmes vprašanje, spodaj Nazaj / Naprej.
   const stepMode = !!lesson && sections.length > 0;
@@ -694,15 +698,27 @@ async function renderLesson(topicId, name = "") {
   const onStep = steps.map(() => []);
   if (steps.length) demoSteps(steps, demos.length ? demos : locked ? [{ title: L.locked.demo }] : [], demoAfter).forEach((ks, i) => ks.forEach((k) => onStep[k]?.push(i)));
   const stepSlot = (k) => (onStep[k].length ? `<div class="tb-demo-slot" data-demos="${onStep[k].join(",")}"></div>` : "");
+  // Vsebina koraka brez mesta za simulacijo (to je v koraku že od začetka, da simulacija ne skoči drugam).
+  const stepInner = (k) => {
+    const st = steps[k];
+    return st.type === "check"
+      ? checksCard(st.checks, st.final ? "Preveri se" : t("tb.steps.quick"))
+      : `<section class="card tb-section ${sectionCls(st.title)}">${st.title ? `<h2>${esc(st.title)}</h2>` : ""}<div class="explanation">${R(st.md)}</div>${
+          st.last && st.section === altAt ? altHtml : ""
+        }</section>`;
+  };
+  // Hitrost (#9): ob odprtju izrišemo le korak, ki bo na zaslonu (shranjen v seji ali prvi), in naslednjega; ostale
+  // (KaTeX in klikljivi simboli) izriše renderRest po kosih, ko je glavna nit prosta, korak, na katerega učenec skoči,
+  // pa takoj (ensureStep). Prazen korak ima data-lazy.
+  let startStep = 0;
+  try {
+    startStep = Number(sessionStorage.getItem(`tb-step:${L.id}`)) || 0;
+  } catch {}
+  if (!(startStep < steps.length)) startStep = 0;
   const stepsHtml = steps
     .map((st, k) => {
-      const body =
-        st.type === "check"
-          ? checksCard(st.checks, st.final ? "Preveri se" : t("tb.steps.quick"))
-          : `<section class="card tb-section ${sectionCls(st.title)}">${st.title ? `<h2>${esc(st.title)}</h2>` : ""}<div class="explanation">${R(st.md)}</div>${
-              st.last && st.section === altAt ? altHtml : ""
-            }</section>${stepSlot(k)}`;
-      return `<div class="tb-step" data-step="${k}"${k ? " hidden" : ""}>${body}</div>`;
+      const now = k === startStep || k === startStep + 1;
+      return `<div class="tb-step" data-step="${k}"${k === startStep ? "" : " hidden"}${now ? "" : " data-lazy"}>${now ? stepInner(k) : ""}${stepSlot(k)}</div>`;
     })
     .join("");
   const stepper = stepMode
@@ -726,6 +742,14 @@ async function renderLesson(topicId, name = "") {
     : "";
   // »Prijavi napako« v vsaki lekciji (tudi brez besedila lekcije): prijava gre skrbniku (server/reports.js).
   const reportBtn = `<button type="button" class="ghost tb-report-btn" id="tb-report" aria-expanded="false">${ic("flag")}<span>${esc(t("rep.btn"))}</span></button>`;
+  // Gradiva (PDF lekcije in poglavja, povzetek, delovni list, video) pod enim gumbom »Gradiva ▾« (#10, profil A): na
+  // telefonu je bilo nad besedilom lekcije pet povezav v treh vrsticah. Seznam plava pod gumbom (wireGradivaMenu).
+  const gradivaMenu = `<div class="tb-gr-menu">
+      <button type="button" class="ghost tb-gr-toggle" id="tb-gradiva-btn" aria-expanded="false" aria-controls="tb-gradiva-list">${ic("download")}<span>${esc(t("tbk.gradiva"))}</span>${ic("chevron-down")}</button>
+      <div class="tb-gr-list" id="tb-gradiva-list" hidden>
+        <a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}<span class="tb-gradiva"></span>
+      </div>
+    </div>`;
   // »Kaj zdaj?«: po korakih je del zadnjega koraka, nad krogi Nazaj · 1/12 · Naprej (ti plavajo na dnu nad
   // vsebino; vrstica zavzame svojo višino na koncu, zato zadnje vrstice odpeljemo nadnjo). Krogi so za mrežo,
   // ne v levem stolpcu: na računalniku s poskusi desno je ← levo spodaj, številka na sredini in → desno spodaj.
@@ -743,15 +767,15 @@ async function renderLesson(topicId, name = "") {
   </section>`;
   box.innerHTML = `<div class="tb-lesson-grid${demoHtml ? " has-side" : ""}"><div class="tb-main">
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
-    <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
+    <p class="muted tb-crumb">${esc(L.pathLabel)}${LOCILO}${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
-    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
+    <div class="tb-tools">${lesson ? gradivaMenu : ""}${reportBtn}</div>
     ${linkHtml}
     ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
     ${!lesson || lesson.status === "pregledano" ? "" : lesson.status === "preverjeno" ? `<p class="tb-draft tb-checked">Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. Če opaziš napako, pritisni »Prijavi napako«.</p>` : `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, pritisni »Prijavi napako«.</p>`}
-    ${stepMode ? `<div class="tb-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${steps.length}"><span></span></div>${stepsHtml}${nextHtml}` : `${sectionHtml}${fallback}${checksHtml}${nextHtml}`}
+    ${stepMode ? `<div class="tb-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${steps.length}"><span></span></div>${stepsHtml}${nextHtml}` : `${sectionHtml()}${fallback}${checksHtml()}${nextHtml}`}
     </div><aside class="tb-side">${demoHtml}</aside></div>${stepper}`;
   placeDemos(box);
   window.scrollTo(0, 0);
@@ -762,7 +786,11 @@ async function renderLesson(topicId, name = "") {
     gradivaHtml(sid, L.id).then((html) => {
       if (!gr.isConnected || current?.id !== L.id) return;
       gr.innerHTML = html;
-      wireGradiva(gr, sid);
+      // Sporočilo gradiv (napaka, okno blokirano) je pod vrstico orodij, ne v zaprtem seznamu.
+      const tools = gr.closest(".tb-tools");
+      const msg = gr.querySelector(".tb-gr-msg");
+      if (msg && tools) tools.append(msg);
+      wireGradiva(tools || gr, sid);
     });
   }
   box.scrollTop = 0;
@@ -773,9 +801,7 @@ async function renderLesson(topicId, name = "") {
     tb.topicId = null;
     renderHome();
   });
-  wireFormulas(box);
-  prilagodiSirino(box);
-  oziviRisbe(box);
+  wireGradivaMenu(box.querySelector(".tb-gr-menu"));
   wireLessonReport($("#tb-report"), {
     api: ctx.api,
     studentId: ctx.getStudent().id,
@@ -799,21 +825,6 @@ async function renderLesson(topicId, name = "") {
   });
   // Zavihek Račun se izriše ob kliku nanj (account.js); sam showView bi pokazal prazen pogled.
   $("#tb-upgrade")?.addEventListener("click", () => document.querySelector("#account-tab")?.click());
-  // Razloži drugače
-  const altBody = $("#tb-alt-body");
-  const showAlt = (i) => {
-    box.querySelectorAll("[data-alt]").forEach((b) => b.classList.toggle("active", Number(b.dataset.alt) === i));
-    altBody.innerHTML = `<div class="explanation">${R(lesson.alternatives[i].md)}</div>`;
-    wireFormulas(altBody);
-    prilagodiSirino(altBody);
-    oziviRisbe(altBody);
-  };
-  $("#tb-alt-btn")?.addEventListener("click", () => {
-    const altBox = $("#tb-alt-box");
-    altBox.hidden = !altBox.hidden;
-    if (!altBox.hidden) showAlt(0);
-  });
-  box.querySelectorAll("[data-alt]").forEach((b) => b.addEventListener("click", () => showAlt(Number(b.dataset.alt))));
   // Preveri se. Prvi odgovor na vsako vprašanje gre tudi med šibke točke (strežnik sam preveri pravilnost).
   const answered = new Set();
   const sendFirst = (qi, body) => {
@@ -823,11 +834,39 @@ async function renderLesson(topicId, name = "") {
       ctx.api(`/api/students/${sid}/lesson-check`, { method: "POST", body: { topic: L.id, q: qi, ...body } }).catch(() => {});
     }
   };
-  if (box.querySelector(".tb-typed"))
-    import("./preveri-se-ziv.js")
-      .then((m) => current?.id === L.id && m.oziviPreveri(box, { checks: lesson.checks, interactive: !!L.interactive, R, esc, ic, send: sendFirst, fit: prilagodiSirino }))
-      .catch(() => {});
-  if (L.interactive) box.querySelectorAll(".tb-check:not(.tb-typed)").forEach((el) => {
+  // Formule, risbe, »Razloži drugače« in »Preveri se« v delu lekcije: ob odprtju v vsem izrisanem, nato v vsakem
+  // koraku, ko se izriše (ensureStep).
+  const wireContent = (root) => {
+    wireFormulas(root);
+    prilagodiSirino(root);
+    oziviRisbe(root);
+    wireAlt(root);
+    if (root.querySelector(".tb-typed"))
+      import("./preveri-se-ziv.js")
+        .then((m) => current?.id === L.id && m.oziviPreveri(root, { checks: lesson.checks, interactive: !!L.interactive, R, esc, ic, send: sendFirst, fit: prilagodiSirino }))
+        .catch(() => {});
+    if (L.interactive) root.querySelectorAll(".tb-check:not(.tb-typed)").forEach(wireCheck);
+  };
+  // Razloži drugače
+  const wireAlt = (root) => {
+    const btn = root.querySelector("#tb-alt-btn");
+    if (!btn) return;
+    const altBody = root.querySelector("#tb-alt-body");
+    const showAlt = (i) => {
+      root.querySelectorAll("[data-alt]").forEach((b) => b.classList.toggle("active", Number(b.dataset.alt) === i));
+      altBody.innerHTML = `<div class="explanation">${R(lesson.alternatives[i].md)}</div>`;
+      wireFormulas(altBody);
+      prilagodiSirino(altBody);
+      oziviRisbe(altBody);
+    };
+    btn.addEventListener("click", () => {
+      const altBox = root.querySelector("#tb-alt-box");
+      altBox.hidden = !altBox.hidden;
+      if (!altBox.hidden) showAlt(0);
+    });
+    root.querySelectorAll("[data-alt]").forEach((b) => b.addEventListener("click", () => showAlt(Number(b.dataset.alt))));
+  };
+  const wireCheck = (el) => {
     const qi = Number(el.dataset.q);
     const c = lesson.checks[qi];
     el.querySelectorAll(".tb-opt").forEach((b) =>
@@ -857,8 +896,19 @@ async function renderLesson(topicId, name = "") {
         }
       }),
     );
-  });
-  if (stepMode) wireSteps(box, L.id, steps.length);
+  };
+  wireContent(box);
+  // Korak, ki še ni izrisan: izriši ga zdaj (skok nanj, tisk); renderRest izriše ostale po kosih v ozadju.
+  const ensureStep = (el) => {
+    if (!el?.hasAttribute("data-lazy")) return;
+    el.removeAttribute("data-lazy");
+    el.insertAdjacentHTML("afterbegin", stepInner(Number(el.dataset.step)));
+    wireContent(el);
+  };
+  if (stepMode) {
+    wireSteps(box, L.id, steps.length, ensureStep);
+    renderRest(box, ensureStep);
+  }
   $("#tb-practice")?.addEventListener("click", async () => {
     if (!(await ctx.openTopic(L.id))) ctx.nextPractice();
   });
@@ -870,8 +920,70 @@ async function renderLesson(topicId, name = "") {
   $("#tb-ask-topic")?.addEventListener("click", () => ctx.learnWithTutor({ id: L.id, name: L.name }));
 }
 
+// ---------- Gradiva lekcije: spustni seznam »Gradiva ▾« ----------
+// Gumb z aria-expanded odpre seznam povezav (Tab gre po njih). Zapre ga izbira, Esc ali Nazaj (textbookBack),
+// dotik ali klik zunaj in fokus, ki zapusti seznam. Enako na računalniku in telefonu.
+function setGradiva(menu, open, refocus = false) {
+  const btn = menu.querySelector(".tb-gr-toggle");
+  menu.querySelector(".tb-gr-list").hidden = !open;
+  menu.classList.toggle("open", open);
+  btn.setAttribute("aria-expanded", String(open));
+  if (!open && refocus) btn.focus();
+}
+function wireGradivaMenu(menu) {
+  if (!menu) return;
+  menu.querySelector(".tb-gr-toggle").addEventListener("click", () => setGradiva(menu, !menu.classList.contains("open")));
+  menu.querySelector(".tb-gr-list").addEventListener("click", (e) => e.target.closest("a, button") && setGradiva(menu, false, e.detail === 0)); // s tipkovnico fokus nazaj na gumb
+  menu.addEventListener("focusout", (e) => e.relatedTarget && !menu.contains(e.relatedTarget) && setGradiva(menu, false));
+}
+// Zajem: Esc zapre seznam, preden ga dobi premično okno (okna.js bi zaprlo celo okno).
+document.addEventListener(
+  "keydown",
+  (e) => {
+    const menu = e.key === "Escape" && !e.defaultPrevented && document.querySelector(".tb-gr-menu.open");
+    if (!menu) return;
+    e.preventDefault();
+    setGradiva(menu, false, menu.contains(document.activeElement));
+  },
+  true,
+);
+document.addEventListener(
+  "pointerdown",
+  (e) => {
+    const menu = document.querySelector(".tb-gr-menu.open");
+    if (menu && !menu.contains(e.target)) setGradiva(menu, false);
+  },
+  true,
+);
+
 // ---------- Lekcija po korakih ----------
-function wireSteps(box, lessonId, n) {
+// Hitrost (#9): koraki, ki ob odprtju niso izrisani (data-lazy), se izrišejo po eden v ozadju: najprej tisti za
+// trenutnim, nato tisti pred njim. Med kosi brskalnik nariše zaslon in sprejme dotik (scheduler.yield, sicer
+// requestIdleCallback ali setTimeout). Začnemo po prvi sliki lekcije. Pred tiskom
+// (beforeprint, npr. scripts/preveri-videz-lekcij.cjs) se izriše vse naenkrat; zaprta lekcija poslušalca odstrani.
+const naslednjiKos = () =>
+  globalThis.scheduler?.yield ? globalThis.scheduler.yield() : new Promise((ok) => (window.requestIdleCallback ? requestIdleCallback(ok, { timeout: 300 }) : setTimeout(ok, 0)));
+function renderRest(box, ensure) {
+  const steps = [...box.querySelectorAll(".tb-step")];
+  const lazy = () => steps.filter((el) => el.hasAttribute("data-lazy"));
+  const live = () => !!steps[0]?.isConnected; // druga lekcija (ali ista znova) ima nove korake
+  const all = () => live() && lazy().forEach(ensure);
+  window.addEventListener("beforeprint", all, { once: true });
+  requestAnimationFrame(() =>
+    setTimeout(async () => {
+      for (;;) {
+        if (!live()) return window.removeEventListener("beforeprint", all); // zaprta lekcija ne sme ostati v pomnilniku
+        const rest = lazy();
+        if (!rest.length) return window.removeEventListener("beforeprint", all);
+        const shown = Number(steps.find((el) => !el.hidden)?.dataset.step || 0);
+        ensure(rest.find((el) => Number(el.dataset.step) > shown) || rest[0]);
+        await naslednjiKos();
+      }
+    }, 0),
+  );
+}
+
+function wireSteps(box, lessonId, n, ensure) {
   const key = `tb-step:${lessonId}`;
   const all = [...box.querySelectorAll(".tb-step")];
   const bar = box.querySelector(".tb-progress");
@@ -882,6 +994,9 @@ function wireSteps(box, lessonId, n) {
   let cur = 0;
   const go = (k, scroll) => {
     cur = Math.max(0, Math.min(n - 1, k));
+    // Korak, ki ga renderRest še ni izrisal, izrišemo takoj (in naslednjega, da je »Naprej« spet takojšen).
+    ensure(all[cur]);
+    ensure(all[cur + 1]);
     all.forEach((el, i) => (el.hidden = i !== cur));
     placeDemos(box);
     count.innerHTML = `<b>${cur + 1}</b><small>/${n}</small>`;
@@ -941,7 +1056,7 @@ const refRow = (it) => `<a class="list-row ref-row" href="${esc(it.url)}" target
     <span class="ic">${ic(REF_ICONS[it.type] || "file-text")}</span>
     <span class="lr-text">
       <b>${esc(it.title)}</b>
-      <small>${esc([it.source, it.author].filter(Boolean).join(" · "))}</small>
+      <small>${esc(zdruzi([it.source, it.author]))}</small>
       ${it.desc ? `<span class="ref-desc">${esc(it.desc)}</span>` : ""}
       <span class="tb-badges ref-badges">
         <span class="tb-badge">${esc(t(`refs.type.${it.type}`))}</span>

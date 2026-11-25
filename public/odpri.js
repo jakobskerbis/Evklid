@@ -49,16 +49,24 @@ const KIND = {
   lesson: ["book-open", "open.lesson"],
   game: ["gamepad-2", "open.game"],
 };
+// Ključ poskusa kot v laboratoriju (public/sim/katalog.js labKey), brez uvoza celega kataloga.
+const labKljuc = (x) => (x.opts && Object.keys(x.opts).length ? `${x.id}:${JSON.stringify(x.opts)}` : x.id);
 function button(x) {
   const k = KIND[x.kind];
   if (!k) return null;
   const b = el("button", "secondary small open-btn");
   b.type = "button";
-  const label = `${D.t(k[1])}: ${x.title}`;
+  // Poskus, iz katerega je učenec prišel, z »nastavi« (povezave C1): »Nastavi v poskusu«, vrne ga v isti poskus.
+  const vIstem = x.kind === "sim" && x.set && !x.locked && D.odprtiPoskus?.(labKljuc(x)) === true;
+  const label = `${D.t(vIstem ? "open.simSet" : k[1])}: ${x.title}`;
   b.innerHTML = `${D.icon(x.locked ? "lock" : k[0])}<span dir="auto">${D.escapeHtml(label)}</span>`;
   b.setAttribute("aria-label", x.locked ? `${label} (${D.t("open.locked")})` : label);
   b.addEventListener("click", (e) => {
     e.stopPropagation();
+    if (x.kind === "sim" && vIstem) {
+      const mount = D.odprtiPoskus(labKljuc(x), { vrni: true });
+      if (mount) return requestAnimationFrame(() => applySet(mount, x.set));
+    }
     if (x.kind === "sim") return x.locked ? D.openLab() : openSim(x, b);
     if (x.kind === "3d") return D.open3d(x.id, x.title, x.id === "atlas" ? { izberi: x.izberi } : x.del ? { del: x.del } : null);
     if (x.kind === "lesson") return D.openLesson(x.id);

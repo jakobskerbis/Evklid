@@ -363,6 +363,7 @@ import { jeFaks, jeSs, jeOs, stopnja, brezUvoda } from "./stopnja.js";
 import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { GUIDE } from "./vodic.js";
 import { FREE_LIMIT_CODES, showLimitCard } from "./meja-placilo.js";
+import { LOCILO, celDatum, zdruzi } from "./datum.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
@@ -578,7 +579,9 @@ function syncChatReturn() {
 // gumb »Nazaj na: …« vrnejo na isto mesto (back = { view, open, oznaka }).
 // back.kontekst: posnetek stanja (sourceType, sourceId, …), ki gre z naslednjim vpisanim sporočilom kot skrit blok.
 function askTutorFrom(text, back = null) {
-  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "" } : null;
+  // poskus: ključ odprtega poskusa (povezave C1): inštruktorjev gumb za isti poskus ga nastavi, ne odpre znova.
+  const poskus = back?.kontekst?.sourceType === "lab" && typeof back.kontekst.sourceId === "string" ? back.kontekst.sourceId : "";
+  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "", poskus } : null;
   showView("chat");
   ucniKontekstConv = state.conversationId ?? "nov";
   state.ucniKontekst = back?.kontekst && typeof back.kontekst === "object" ? back.kontekst : null;
@@ -777,6 +780,8 @@ function showView(name) {
   else if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
   // Računalnik: kar ni med glavnimi zavihki zgoraj, je pod »Jaz« (j, 17. 11. 2026).
   if (podJazZgoraj(name)) $("#me-tab-top").classList.add("active");
+  // Bralnik zaslona: izbrani zavihek obeh menijev je trenutna stran (aria-current, ne vloga tab; A9).
+  document.querySelectorAll(".topbar .tabs .tab, #tabbar .tab").forEach((t) => (t.classList.contains("active") ? t.setAttribute("aria-current", "page") : t.removeAttribute("aria-current")));
   pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
     if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
@@ -1346,7 +1351,7 @@ async function loadMeOverview() {
       ${
         events.length
           ? `<div class="list-card">${events
-              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" }))} · ${when(e.daysLeft)}`))
+              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(celDatum(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" })))}${LOCILO}${when(e.daysLeft)}`))
               .join("")}</div>`
           : `<p class="muted">${t("sch.noEvents")}</p><button type="button" class="secondary" data-me="schedule">${icon("plus")} ${t("sch.addTest")}</button>`
       }
@@ -1382,12 +1387,38 @@ document.querySelectorAll("#view-me [data-go], #settings-account [data-go]").for
 // Klik na kartico s profilom (in »Druga šola ali stopnja …« v glavi Inštruktorja): Nastavitve, na mestu šole in
 // letnika (pod njimi je povezava na Račun). Tam veljajo vsa pravila izbire (stopnja, program, šolski sistem).
 $("#me-head")?.addEventListener("click", () => openSchoolSettings());
+// Nastavitve v skupinah (<details data-skupina>, index.html): odprta je Učenje, druge skupine si naprava zapomni
+// (localStorage evklid.nastavitveSkupine). Pred skokom na polje se odprejo vse skupine nad njim.
+const SKUPINE_KEY = "evklid.nastavitveSkupine";
+function odpriNastavitev(el) {
+  for (let d = el?.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true;
+  return el;
+}
+(() => {
+  let shranjeno = {};
+  try {
+    shranjeno = JSON.parse(localStorageGet(SKUPINE_KEY) || "{}");
+  } catch {}
+  if (!shranjeno || typeof shranjeno !== "object") shranjeno = {};
+  document.querySelectorAll("#view-settings details[data-skupina]").forEach((d) => {
+    if (typeof shranjeno[d.dataset.skupina] === "boolean") d.open = shranjeno[d.dataset.skupina];
+    // Shrani le, kar odpre ali zapre učenec (dotik ali tipka na glavi), ne skoka iz povezave (odpriNastavitev).
+    d.querySelector(":scope > summary").addEventListener("click", () =>
+      setTimeout(() => {
+        shranjeno[d.dataset.skupina] = d.open;
+        localStorageSet(SKUPINE_KEY, JSON.stringify(shranjeno));
+      }),
+    );
+  });
+  // Neveljavno polje v zaprti skupini (npr. prazno ime): skupina se odpre, da brskalnik lahko pokaže napako.
+  $("#settings-form").addEventListener("invalid", (e) => odpriNastavitev(e.target), true);
+})();
 function openSchoolSettings() {
   showView("settings");
-  const el = $("#settings-form .level-field") || $("#settings-form");
+  const el = odpriNastavitev($("#settings-form .level-field")) || $("#settings-form");
   requestAnimationFrame(() => {
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
-    const card = $("#settings-form");
+    const card = $('#settings-form [data-skupina="sola"]') || $("#settings-form");
     card?.classList.remove("flash-target");
     void card?.offsetWidth;
     card?.classList.add("flash-target");
@@ -1602,7 +1633,7 @@ initProfileMenu({
   describe: (s) => {
     const st = s.settings || {};
     const program = isUni(st) ? programsCache().find((p) => p.id === st.study_program)?.label : null;
-    return [program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level)].filter(Boolean).join(" · ");
+    return zdruzi([program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level)]);
   },
 });
 
@@ -3179,7 +3210,7 @@ async function fillSettingsForm() {
   if (state.pickUniversity) {
     state.pickUniversity = false;
     levelPicker.set({ ...s, educational_track: "UNIVERZA", study_program: "", curriculum_level: "" });
-    $("#settings-level").scrollIntoView({ block: "center" });
+    odpriNastavitev($("#settings-level")).scrollIntoView({ block: "center" });
   }
 }
 // Jezik aplikacije in inštruktorja: shrani se v profil učenca in na napravo.
@@ -3399,7 +3430,7 @@ function renderGoal() {
   chip.hidden = !hasGoal(s);
   if (hasGoal(s)) {
     // V zgornji vrstici le cilj in odštevanje (datum je v vrstici na Učni poti).
-    chip.querySelector("b").textContent = [goalName(s.goal), countdown(s.goal_date)].filter(Boolean).join(" · ");
+    chip.querySelector("b").textContent = zdruzi([goalName(s.goal), countdown(s.goal_date)]);
     chip.title = t("goal.change");
   }
   const rem = $("#goal-reminder");
@@ -3446,6 +3477,7 @@ $("#goal-modes")?.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-goal-edit], #goal-chip")) {
     showView("settings");
+    odpriNastavitev($("#settings-goal"));
     setTimeout(() => $("#settings-goal")?.closest("fieldset")?.scrollIntoView({ block: "center", behavior: "smooth" }), 60);
     return;
   }
@@ -4602,6 +4634,17 @@ initOpen({
     loadGames().then((m) => m.openReward(concepts)).catch(() => null);
   },
   openLab: () => openFromTutor({ view: "lab" }),
+  // Povezave C1: inštruktorjev gumb s »nastavi« za poskus, iz katerega je učenec prišel: vrne ga v ta odprti poskus
+  // (meritve ostanejo) in vrne okvir poskusa, da odpri.js premakne drsnike; sicer null (poskus v oknu kot doslej).
+  odprtiPoskus: (key, { vrni = false } = {}) => {
+    const r = state.chatReturn;
+    if (!key || !r || r.view !== "lab" || r.poskus !== key || !returnConvOk(r)) return null;
+    // Klepet v oknu: učenec je medtem morda odprl drug poskus ali seznam; drsnike premaknemo le v istem poskusu.
+    const mount = document.querySelector("#lab-content .lab-mount");
+    if (mount?.dataset.labKey !== key) return null;
+    if (!vrni) return true;
+    return chatReturnBack({ okno: true }) ? mount : null;
+  },
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
 });
