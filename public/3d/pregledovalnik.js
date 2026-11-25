@@ -158,6 +158,7 @@ export function odpriModel(el, mod, opts = {}) {
   btnPonastavi.addEventListener("click", () => zgradiVse(true));
   const btnTeci = mk("button", "k3-krog");
   btnTeci.type = "button";
+  btnTeci.hidden = true; // pokaže ga dokoncaj, ko ima model korak (sicer ob napaki prazen krog v orodni vrstici)
   btnTeci.addEventListener("click", () => nastaviTek(!tece));
   // Povečava z gumbi (poleg koleščka in prstov): miška brez koleščka, sledilna ploščica, dostopnost.
   const povecava = (f, ikona, kljuc) => {
@@ -1060,6 +1061,7 @@ export function odpriModel(el, mod, opts = {}) {
       nalagEl = null;
       return;
     }
+    if (nalagEl?.classList.contains("napaka")) return; // pozen napredek ne prepiše kartice z napako
     if (!nalagEl) {
       nalagEl = mk("div", "k3-nalaganje");
       nalagEl.setAttribute("role", "status");
@@ -1073,8 +1075,28 @@ export function odpriModel(el, mod, opts = {}) {
     console.error("3D model", err);
     nalaganje(0);
     nalagEl.classList.add("napaka");
-    nalagEl.firstChild.textContent = t("a3.loadError");
-    nalagEl.lastChild.hidden = true;
+    nalagEl.setAttribute("role", "alert");
+    // Brez modela ni kaj vrteti: namig »Povleci za vrtenje …« skrijemo.
+    oder.querySelector(".k3-namig")?.remove();
+    oder.classList.remove("k3-namig-viden");
+    // Besedilo po vrsti napake (napake.js); »Poskusi znova« zgradi model še enkrat (prizor ostane). napake.js uvozimo šele
+    // tu: brez njega (izpad povezave) se pregledovalnik vseeno naloži (sim.js), kartica pa ima vsaj a3.loadError in gumb.
+    const kartica = nalagEl;
+    const znova = () => {
+      nalaganje(null);
+      zgradiVse(false);
+    };
+    import("./napake.js")
+      .then(
+        ({ napakaVsebina }) => napakaVsebina(err, { t, znova, razredGumba: "a3-pill a3-mali" }),
+        () => {
+          const b = mk("button", "a3-pill a3-mali", t("a3.retry"));
+          b.type = "button";
+          b.addEventListener("click", znova, { once: true });
+          return [mk("p", "", t("a3.loadError")), b];
+        },
+      )
+      .then((vsebina) => nalagEl === kartica && kartica.replaceChildren(...vsebina));
   }
 
   // »Podrobnosti organa«: gumb pod odrom in list z besedilom (model.podrobnosti = { naslov, odseki: [{ naslov, besedilo }] }).
