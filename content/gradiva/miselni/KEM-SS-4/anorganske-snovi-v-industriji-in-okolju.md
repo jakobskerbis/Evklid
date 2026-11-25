@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kloralkalna elektroliza
+  - slanica da $\mathrm{Cl_2}$, $\mathrm{H_2}$ in $\mathrm{NaOH}$
+  - talina da natrij, slanica vodik
+- Klorove oksokisline
+  - $\mathrm{HClO}$ +1 do $\mathrm{HClO_4}$ +7
+  - varikina $\mathrm{NaClO}$; ne mešaj s kisom
+- Aluminij
+  - boksit, Bayerjev postopek, $\mathrm{Al_2O_3}$
+  - elektroliza taline v kriolitu, okoli 950 °C
+  - napaka: kriolit ni ruda
+- Kisline in amoniak
+  - kontaktni postopek: $\mathrm{SO_3}$ v oleum, $\mathrm{V_2O_5}$
+  - Haber–Bosch: visok tlak, 450 °C kompromis
+  - Ostwald: $\mathrm{NH_3}$ v $\mathrm{HNO_3}$ na Pt/Rh
+  - konc. $\mathrm{H_2SO_4}$ higroskopna, $\mathrm{HNO_3}$ oksidira baker
+- Gnojila in voda
+  - NPK podaja N, $\mathrm{P_2O_5}$, $\mathrm{K_2O}$
+  - presežek N in P: evtrofikacija
+- Promet in zrak
+  - $\mathrm{NO_x}$: kisli dež, smog
+  - katalizator: $\mathrm{CO}$ v $\mathrm{CO_2}$, $\mathrm{NO_x}$ v $\mathrm{N_2}$
+- Silikati in nano
+  - steklo je amorfno, brez ostrega tališča
+  - silicij je polprevodnik
+  - cement: kalcijevi silikati, sprošča $\mathrm{CO_2}$
+  - nanodelci 1–100 nm, velika površina
