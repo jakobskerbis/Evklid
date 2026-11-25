@@ -4745,7 +4745,7 @@
   "path.noExam": "Preparation for the final exam ({exam}) is not available yet.",
   "oz.kaj": "What does this mean?",
   "oz.osnutek": "Draft",
-  "oz.osnutekTip": "This lesson has not finished all its reviews yet, or the program found a mistake in how it is written.",
+  "oz.osnutekTip": "This lesson has not finished all its reviews yet, or the program found a mistake in a calculation or in how it is written.",
   "oz.osnutekTipPola": "This paper has not finished all its reviews yet, or the program found a mistake in it.",
   "oz.pregledalAi": "Reviewed by AI",
   "oz.pregledalAiTip": "The content was reviewed by AI models. It contains no calculations the program could recompute on its own.",

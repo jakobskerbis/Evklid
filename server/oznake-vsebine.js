@@ -20,7 +20,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { checkLessonSource, veljavenDatumPregleda } from "./lesson-check.js";
 import { lessonSource, parseLesson } from "./textbook.js";
-import { validatePaper, loadOurPaper, ourPaperIds } from "./our-papers.js";
+import { validatePaper, ourPaperIds } from "./our-papers.js";
 import { PAPER_STRUCTURES } from "./our-paper-structures.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -112,21 +112,36 @@ export function leanDokazi(dir = LEAN_DIR) {
   return idx;
 }
 
+// Datoteka se odpre enkrat; velikost, čas spremembe in vsebina so iz istega odprtega deskriptorja (brez tekme med
+// stat in read, CodeQL js/file-system-race). Zadetek v predpomnilniku velja, dokler se mtime in velikost ne spremenita.
+// Manjkajoča datoteka: null.
+function izDatoteke(file, cache, key, zgradi) {
+  let fd;
+  try {
+    fd = fs.openSync(file, "r");
+  } catch {
+    return null;
+  }
+  try {
+    const st = fs.fstatSync(fd);
+    let hit = cache.get(key);
+    if (!hit || hit.mtime !== st.mtimeMs || hit.size !== st.size) {
+      hit = { mtime: st.mtimeMs, size: st.size, ...zgradi(fs.readFileSync(fd)) };
+      cache.set(key, hit);
+    }
+    return hit;
+  } finally {
+    fs.closeSync(fd);
+  }
+}
+
 // Oznake lekcije teme. Program preveri besedilo, ki ga učenec vidi, enkrat na različico datoteke (~25 ms); oznake se
 // iz dokazov sestavijo ob vsakem klicu (datum pregleda, svežina dokaza Lean).
 const lessonCache = new Map(); // datoteka -> { mtime, size, meta, preverjanje, sha }
 export function oznakeLekcije(topicId, { danes = new Date(), lean = leanDokazi() } = {}) {
   const src = lessonSource(topicId);
   if (!src) return null;
-  let st;
-  try {
-    st = fs.statSync(src.file);
-  } catch {
-    return null;
-  }
-  let hit = lessonCache.get(src.file);
-  if (!hit || hit.mtime !== st.mtimeMs || hit.size !== st.size) {
-    const buf = fs.readFileSync(src.file);
+  const hit = izDatoteke(src.file, lessonCache, src.file, (buf) => {
     const text = buf.toString("utf8");
     let preverjanje = null;
     try {
@@ -135,9 +150,9 @@ export function oznakeLekcije(topicId, { danes = new Date(), lean = leanDokazi()
     } catch {
       preverjanje = null; // program ni mogel preveriti: brez oznake »strojno«
     }
-    hit = { mtime: st.mtimeMs, size: st.size, meta: parseLesson(text).meta, preverjanje, sha: sha256(buf) };
-    lessonCache.set(src.file, hit);
-  }
+    return { meta: parseLesson(text).meta, preverjanje, sha: sha256(buf) };
+  });
+  if (!hit) return null;
   const rel = path.relative(ROOT, src.file).split(path.sep).join("/");
   const l = lean.get(rel);
   const { meta } = hit;
@@ -153,18 +168,10 @@ export function oznakeLekcije(topicId, { danes = new Date(), lean = leanDokazi()
 const paperCache = new Map(); // pola -> { mtime, size, preverjanje, pregledal, pregledano }
 export function oznakePole(id, { danes = new Date() } = {}) {
   const file = ourPaperIds().get(String(id));
-  let st = null;
-  try {
-    st = file ? fs.statSync(file) : null;
-  } catch {
-    st = null;
-  }
-  if (!st) return null;
-  let hit = paperCache.get(id);
-  // Ob spremembi datoteke pola znova skozi program (loadOurPaper jo bere ob vsakem klicu): oznaka ni starejša od vsebine.
-  if (!hit || hit.mtime !== st.mtimeMs || hit.size !== st.size) {
-    const paper = loadOurPaper(id);
-    if (!paper) return null;
+  if (!file) return null;
+  // Ob spremembi datoteke pola znova skozi program: oznaka ni starejša od vsebine.
+  const hit = izDatoteke(file, paperCache, id, (buf) => {
+    const paper = JSON.parse(buf.toString("utf8")); // kot loadOurPaper, a iz iste odprte datoteke
     let preverjanje = null;
     try {
       const r = validatePaper(paper, PAPER_STRUCTURES[id] || null);
@@ -172,9 +179,9 @@ export function oznakePole(id, { danes = new Date() } = {}) {
     } catch {
       preverjanje = null;
     }
-    hit = { mtime: st.mtimeMs, size: st.size, preverjanje, pregledal: paper.pregledal || null, pregledano: paper.pregledano || null };
-    paperCache.set(id, hit);
-  }
+    return { preverjanje, pregledal: paper.pregledal || null, pregledano: paper.pregledano || null };
+  });
+  if (!hit) return null;
   return oznakeIzDokazov({ stanje: hit.pregledal ? "pregledano" : "preverjeno", pregledal: hit.pregledal, pregledano: hit.pregledano, preverjanje: hit.preverjanje }, danes);
 }
 

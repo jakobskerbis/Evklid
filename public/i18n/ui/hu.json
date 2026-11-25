@@ -4743,7 +4743,7 @@
   "path.noExam": "A záróvizsgára ({exam}) való felkészítés még nem érhető el.",
   "oz.kaj": "Mit jelent ez?",
   "oz.osnutek": "Vázlat",
-  "oz.osnutekTip": "A lecke még nem ment át minden ellenőrzésen, vagy a program hibát talált a leírásában.",
+  "oz.osnutekTip": "A lecke még nem ment át minden ellenőrzésen, vagy a program hibát talált egy számításában vagy a leírásában.",
   "oz.osnutekTipPola": "A feladatlap még nem ment át minden ellenőrzésen, vagy a program hibát talált benne.",
   "oz.pregledalAi": "MI által átnézve",
   "oz.pregledalAiTip": "A tartalmat MI-modellek nézték át. Nincs benne olyan számítás, amelyet a program maga újra tudna számolni.",
