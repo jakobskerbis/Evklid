@@ -12,7 +12,8 @@ import { getTopic } from "./curriculum.js";
 
 export const SIM_PER_DAY = 20; // varovalka pred zlorabo (pola traja vsaj 45 minut)
 
-// Rezultat: { points, maxPoints, percent, topics: [{ id, name, got, max }] } (šibkejše teme najprej, »Drugo« na koncu).
+// Rezultat: { points, maxPoints, percent, topics: [{ id, name, got, max }], parts (ocenjeni deli) } (šibkejše teme
+// najprej, »Drugo« na koncu). Točke so cela števila (JSON number), ne besedilo.
 export function gradeSim(paperId, paper, pola, given) {
   const scope = simScope(paper, pola);
   if (!scope) return null;
@@ -24,11 +25,13 @@ export function gradeSim(paperId, paper, pola, given) {
     for (const p of tk.parts) {
       const key = partKey(tk, p);
       const raw = given?.[key];
-      if (raw === undefined || raw === null) continue;
-      const got = Number(raw);
-      if (!Number.isInteger(got) || got < 0 || got > p.points) return { error: `Neveljavne točke pri ${key}.` };
+      // Neocenjen del: pri izbirnih nalogah ga učenec ni izbral (ne šteje nikamor), sicer šteje 0 točk tudi pri temi.
+      if (raw === undefined || raw === null) {
+        if (scope.choice) continue;
+      } else if (typeof raw !== "number" || !Number.isInteger(raw) || raw < 0 || raw > p.points) return { error: `Neveljavne točke pri ${key}.` };
+      const got = raw ?? 0;
       points += got;
-      parts.push({ key, got, max: p.points });
+      if (raw !== undefined && raw !== null) parts.push({ key, got, max: p.points });
       const id = map.get(key) || "";
       const row = byTopic.get(id) || { id, got: 0, max: 0 };
       row.got += got;
@@ -48,7 +51,7 @@ export function simHistory(db, studentId, exam, subject, limit = 5) {
   return db
     .prepare("SELECT params, created_at FROM sessions WHERE student_id = ? AND kind = 'pola' AND finished = 1 ORDER BY created_at DESC, rowid DESC LIMIT 200")
     .all(studentId)
-    .map((r) => ({ ...JSON.parse(r.params), date: r.created_at.slice(0, 10) }))
+    .map((r) => ({ ...JSON.parse(r.params), date: `${r.created_at.replace(" ", "T")}Z` })) // čas UTC; odjemalec izpiše lokalni dan
     .filter((r) => r.exam === exam && r.subject === subject)
     .slice(0, limit)
     .map(({ paper, pola, points, maxPoints, percent, seconds, topics, date }) => ({ paper, pola, points, maxPoints, percent, seconds, date, weak: weakOf(topics) }));

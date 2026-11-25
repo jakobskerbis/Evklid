@@ -293,3 +293,12 @@ html.pv-open, html.pv-open body { overflow: hidden; }
   .sim-row .bar { grid-column: 1 / -1; }
 }
 .er-official { display: block; font-weight: 400; font-size: 0.82rem; color: var(--muted); }
+/* Točke »7 / 60« ostanejo v tem vrstnem redu tudi v RTL (arabščina). */
+.op-sim .op-score, .op-sim-topics b, .sim-row b { unicode-bidi: isolate; direction: ltr; }
+.op-sim-topics { max-width: 760px; }
+.op-more { margin-top: 8px; }
+.op-more > summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; font-weight: 600; color: var(--accent); }
+.op-sim-end .text-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
+.exam-sims:focus { outline: none; }
+.exam-sims:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 560px) { .op-pick > span { flex-basis: 100%; } }

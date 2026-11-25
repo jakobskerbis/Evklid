@@ -866,14 +866,14 @@ function simsHtml(sims = []) {
   const raven = (id) => (/-VR-/.test(id) ? `${LOCILO}${t("lp.vr")}` : /-OR-/.test(id) ? `${LOCILO}${t("lp.or")}` : "");
   const rows = sims
     .map(
-      (r) => `<li><div class="sim-row"><span>${escapeHtml(new Date(r.date).toLocaleDateString(locale()))}</span><span class="sim-paper">${escapeHtml(`${year(r.paper)}${raven(r.paper)}${r.pola ? `${LOCILO}${t("pp.oursPola", { n: r.pola })}` : ""}`)}</span><b>${r.points} / ${r.maxPoints}</b><span class="bar"><i style="width:${Math.max(0, Math.min(100, r.percent))}%"></i></span></div>${
+      (r) => `<li><div class="sim-row"><span>${escapeHtml(new Date(r.date).toLocaleDateString(locale()))}</span><span class="sim-paper">${escapeHtml(`${year(r.paper)}${raven(r.paper)}${r.pola ? `${LOCILO}${t("pp.oursPola", { n: r.pola }).replace(/ /g, "\u00a0")}` : ""}`)}</span><b>${r.points} / ${r.maxPoints}</b><span class="bar"><i style="width:${Math.max(0, Math.min(100, r.percent))}%"></i></span></div>${
         r.weak.length
           ? `<div class="sim-weak">${r.weak.map((w) => `<button type="button" class="secondary small" data-er-practice="${escapeHtml(w.id)}">${icon("pencil")}<span>${escapeHtml(w.name)}${LOCILO}${w.got}/${w.max}</span></button>`).join("")}</div>`
           : ""
       }</li>`,
     )
     .join("");
-  return `<section class="card exam-sims"><h2>${icon("timer")}${t("pi.histTitle")}</h2>${rows ? `<ul class="sim-list">${rows}</ul>` : `<p class="muted small-note">${t("pi.histEmpty")}</p>`}</section>`;
+  return `<section class="card exam-sims" tabindex="-1"><h2>${icon("clock")}${t("pi.histTitle")}</h2>${rows ? `<ul class="sim-list">${rows}</ul>` : `<p class="muted small-note">${t("pi.histEmpty")}</p>`}</section>`;
 }
 
 // Raven mature iz matematike na strani »NPZ in matura« (j, 20. 11.): izbira pri Preteklih polah velja za celo stran
@@ -1101,6 +1101,7 @@ async function openSim(entry, subjectName) {
         }
       },
       onPractice: (topicId) => practiceTopic(topicId),
+      fokusPo: () => $("#exams-content .exam-sims"),
     });
   } catch (err) {
     toast(err.message);

@@ -81,7 +81,7 @@ function rowHtml(e, i, tutor, local, ours, sim) {
   const expl = e.ours ? "" : `<span class="pp-expl">${icon("notebook-pen")}${esc(t("pp.oursSoon"))}</span>`;
   const oursBtn = e.ours && ours ? `<button type="button" class="secondary small pp-ours" data-pp-ours="${i}">${icon("notebook-pen")}<span>${esc(t("pp.oursOpen"))}</span></button>` : "";
   // »Poskusni izpit«: ista naša pola s pravim časom, brez rešitev, nato ocena po točkovniku (public/our-paper.js openExamSim).
-  const simBtn = e.ours && sim ? `<button type="button" class="secondary small pp-sim" data-pp-sim="${i}">${icon("timer")}<span>${esc(t("pi.open"))}</span></button>` : "";
+  const simBtn = e.ours && sim ? `<button type="button" class="secondary small pp-sim" data-pp-sim="${i}">${icon("clock")}<span>${esc(t("pi.open"))}</span></button>` : "";
   // »Rešuj z inštruktorjem«: pogovor z inštruktorjem, ki ve, katero polo učenec rešuje (nalogo pošlje s fotografijo ali prepisom).
   const help = tutor ? `<button type="button" class="secondary small pp-tutor" data-pp-tutor="${i}">${icon("message-circle")}<span>${esc(t("pp.tutor"))}</span></button>` : "";
   // »Odpri preneseno polo«: PDF, ki ga je učenec prenesel z ric.si, ostane v napravi (public/paper-viewer.js).

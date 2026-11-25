@@ -55,6 +55,18 @@ test("gradeSim: točke po delih in temah, napačne točke in tuji deli so napaka
   assert.match(gradeSim(MAT, p, 1, { [parts[0].key]: parts[0].max + 1 }).error, /Neveljavne/);
   assert.match(gradeSim(MAT, p, 1, { [parts[0].key]: 0.5 }).error, /Neveljavne/);
   assert.match(gradeSim(MAT, p, 1, { [parts[0].key]: -1 }).error, /Neveljavne/);
+  assert.match(gradeSim(MAT, p, 1, { [parts[0].key]: "" }).error, /Neveljavne/);
+  assert.match(gradeSim(MAT, p, 1, { [parts[0].key]: "1" }).error, /Neveljavne/);
+  assert.match(gradeSim(MAT, p, 1, { [parts[0].key]: false }).error, /Neveljavne/);
+  // Neocenjeni deli štejejo 0 točk tudi pri temah (max teme = vse točke pole); pri izbirnih nalogah ne štejejo.
+  const one = gradeSim(MAT, p, 1, { [parts[0].key]: parts[0].max });
+  assert.equal(one.points, parts[0].max);
+  assert.equal(one.topics.reduce((a, x) => a + x.max, 0), 60);
+  assert.equal(one.parts.length, 1);
+  const pm = loadOurPaper("POKLICNA-MAT-2026-spomladanski");
+  const [tk0] = simScope(pm, null).tasks;
+  const pmOne = gradeSim("POKLICNA-MAT-2026-spomladanski", pm, null, { [partKey(tk0, tk0.parts[0])]: 0 });
+  assert.equal(pmOne.topics.reduce((a, x) => a + x.max, 0), tk0.parts[0].points);
   // Del pole 2 pri poli 1 se ne šteje; brez ocenjenega dela je napaka.
   const p2 = simScope(p, 2).tasks[0];
   assert.match(gradeSim(MAT, p, 1, { [partKey(p2, p2.parts[0])]: 1 }).error, /vsaj en del/);

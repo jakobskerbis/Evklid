@@ -67,9 +67,14 @@ export function izrisPole(paper, rich) {
         ${p.scoring ? `<div class="op-note"><b>${esc(t("pp.oursScoring"))}</b> ${rich(p.scoring)}</div>` : ""}
         ${p.mistake ? `<div class="op-note op-mistake"><b>${esc(t("pp.oursMistake"))}</b> ${rich(p.mistake)}</div>` : ""}`;
   };
+  // Poskusni izpit (ocena na telefonu): odgovor in točkovanje pred točkami, postopek (načini, pogosta napaka) zložen.
+  const kratko = (tk, p) =>
+    `<div class="op-answer"><b>${esc(t("pp.oursAnswer"))}</b> ${rich(p.answer)}</div>${fig(p.solutionFigure)}${p.scoring ? `<div class="op-note"><b>${esc(t("pp.oursScoring"))}</b> ${rich(p.scoring)}</div>` : ""}`;
+  const postopek = (tk, p) =>
+    `${(p.ways || []).map((w, i) => `<section class="op-way"><h4>${esc(w.title || t("pp.oursWay", { n: i + 1 }))}</h4>${rich(w.text)}</section>`).join("")}${p.mistake ? `<div class="op-note op-mistake"><b>${esc(t("pp.oursMistake"))}</b> ${rich(p.mistake)}</div>` : ""}`;
   // Naloga z naslovom, uvodom in sliko; parts = HTML seznama delov.
   const task = (tk, i, parts) => `<article class="op-task" data-op-i="${i}"><h3>${esc(t("pp.oursTask", { n: `${tk.section || ""}${tk.n}` }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${parts}</ol></article>`;
-  return { fig, minutes, headings, question, solution, task };
+  return { fig, minutes, headings, question, solution, kratko, postopek, task };
 }
 
 let current = null;
@@ -199,9 +204,9 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
 // tudi, ko je pola zaprta), nato ocenjevanje po točkovniku (0 … točke dela), nato rezultat po temah z gumbom Vadi.
 // paper, title, rich kot zgoraj (izpitne pole za uvod: simPolas, public/our-paper-key.js); store: { get() → stanje
 // | null, set(stanje), clear() } (naprava); onSave({ pola, points, seconds }) → Promise<{ points, maxPoints, percent,
-// topics, weak }>; onPractice(topicId).
+// topics, weak }>; onPractice(topicId); fokusPo() → element za fokus po zaprtju, če gumba, ki je polo odprl, ni več.
 // Stanje: { pola, start (ms), phase: "write" | "grade", pts: { ključ: točke }, spent (s, ob koncu pisanja) }.
-export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
+export function openExamSim(paper, { title, rich, store, onSave, onPractice, fokusPo = null }) {
   closeOurPaper();
   const polas = simPolas(paper).map((x) => ({ ...x, points: x.maxPoints }));
   const back = document.activeElement;
@@ -210,6 +215,7 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
   if (st && !polas.some((x) => x.pola === st.pola)) st = null;
   let timer = 0;
   let saving = false;
+  let reset = false; // »Začni znova« zahteva drugi pritisk (brez okna brskalnika)
   const el = document.createElement("div");
   el.className = "pv op op-sim";
   el.setAttribute("role", "dialog");
@@ -225,7 +231,7 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
   const save = () => store.set(st);
   const bar = (right) => `<header class="pv-bar">
       <button type="button" class="ghost pv-ic" data-op-close aria-label="${esc(t("pp.viewerClose"))}" title="${esc(t("pp.viewerClose"))}">${icon("x")}</button>
-      <div class="pv-title"><b>${esc(title)}</b><small>${esc(st?.pola ? t("pp.oursPola", { n: st.pola }) : t("pi.title"))}</small></div>
+      <div class="pv-title"><b>${esc(title)}</b><small>${esc(st?.pola ? t("pp.oursPola", { n: st.pola }) : st ? t("pi.whole") : t("pp.oursInfo", { minutes: paper.minutes, points: polas.reduce((a, x) => a + x.points, 0) }))}</small></div>
       ${right}
     </header>`;
   const body = (html) => `<div class="pv-scroll"><div class="op-body">${html}</div></div>`;
@@ -235,6 +241,7 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
     return list.map((tk, i) => `${r.headings(tk, list[i - 1])}${r.task(tk, paper.tasks.indexOf(tk), tk.parts.map((p) => part(tk, p, label(tk, p))).join(""))}`).join("");
   };
   const show = (html) => {
+    reset = false;
     el.innerHTML = html;
     prilagodiSirino(el, { vrstice: false });
     el.querySelector(".pv-scroll")?.scrollTo?.(0, 0);
@@ -250,7 +257,7 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
           (x) => `<li class="card"><div><h2>${esc(x.pola ? t("pp.oursPola", { n: x.pola }) : t("pi.whole"))}</h2>
             <p class="muted">${esc(t("pi.polaInfo", { minutes: r.minutes(x.minutes), points: x.points }))}</p>
             ${x.tools ? `<p class="op-tools">${esc(x.tools)}</p>` : ""}${x.choice ? `<p class="op-tools">${esc(t("pi.choice"))}</p>` : ""}</div>
-            <button type="button" class="primary" data-sim-start="${x.pola ?? ""}">${icon("timer")}<span>${esc(t("pi.start"))}</span></button></li>`,
+            <button type="button" class="primary" data-sim-start="${x.pola ?? ""}">${icon("clock")}<span>${esc(t("pi.start"))}</span></button></li>`,
         )
         .join("")}</ul>`)}`);
   };
@@ -259,7 +266,7 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
     show(`${bar(`<span class="op-timer" role="timer" aria-live="off"></span>`)}${body(`
       <p class="op-about">${icon("notebook-pen")}<span>${esc(t("pi.writeNote"))}</span></p>
       ${tasksHtml((tk, p, key) => `<li class="op-part" data-op="${esc(key)}">${r.question(tk, p)}</li>`)}
-      <div class="op-sim-end"><button type="button" class="primary big" data-sim-finish>${icon("check")}<span>${esc(t("pi.finish"))}</span></button></div>`)}`);
+      <div class="op-sim-end"><button type="button" class="primary big" data-sim-finish>${icon("check")}<span>${esc(t("pi.finish"))}</span></button>${resetBtn}</div>`)}`);
     const tick = () => {
       const s = left();
       const out = el.querySelector(".op-timer");
@@ -289,21 +296,26 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
     for (let n = 0; n <= p.points; n++) b += `<button type="button" class="op-pt${cur === n ? " on" : ""}" data-sim-pt="${n}" aria-pressed="${cur === n}">${n}</button>`;
     return `<div class="op-pick" role="group" aria-label="${esc(t("pi.pickLabel", { n: key.replace(/^\d+-/, "") }))}"><span>${esc(t("pi.pick"))}</span>${b}</div>`;
   };
+  const resetBtn = `<button type="button" class="text-btn" data-sim-reset>${icon("rotate-ccw")}<span>${esc(t("pi.reset"))}</span></button>`;
   const graded = () => partsOf(st.pola).filter((x) => st.pts[x.key] !== undefined).length;
-  const gradeHead = () => t("pi.gradeScore", { got: sum(), max: info().points, done: graded(), all: partsOf(st.pola).length });
+  const gradeHead = () => t("pp.oursScore", { got: sum(), max: info().points });
 
   const grade = (timeUp = false) => {
     show(`${bar(`<span class="op-score" aria-live="polite">${esc(gradeHead())}</span>`)}${body(`
       ${timeUp ? `<p class="op-about op-timeup">${icon("timer")}<span>${esc(t("pi.timeUp"))}</span></p>` : ""}
       <p class="op-about">${icon("info")}<span>${esc(t("pi.gradeNote"))}</span></p>
-      ${tasksHtml((tk, p, key) => `<li class="op-part" data-op="${esc(key)}">${r.question(tk, p)}<div class="op-sol">${r.solution(tk, p)}</div>${picker(p, key)}</li>`)}
-      <div class="op-sim-end"><p class="muted small-note" data-sim-rest></p><button type="button" class="primary big" data-sim-save>${icon("check")}<span>${esc(t("pi.save"))}</span></button></div>`)}`);
+      ${tasksHtml((tk, p, key) => {
+        const more = r.postopek(tk, p);
+        return `<li class="op-part" data-op="${esc(key)}">${r.question(tk, p)}<div class="op-sol">${r.kratko(tk, p)}</div>${picker(p, key)}${more ? `<details class="op-more"><summary>${esc(t("pi.more"))}</summary><div class="op-sol">${more}</div></details>` : ""}</li>`;
+      })}
+      <div class="op-sim-end"><p class="muted small-note" data-sim-rest></p><button type="button" class="primary big" data-sim-save>${icon("check")}<span>${esc(t("pi.save"))}</span></button>${resetBtn}</div>`)}`);
     updateRest();
   };
   const updateRest = () => {
-    const n = partsOf(st.pola).length - graded();
+    const all = partsOf(st.pola).length;
+    const n = all - graded();
     const rest = el.querySelector("[data-sim-rest]");
-    if (rest) rest.textContent = n ? t("pi.ungraded", { n }) : "";
+    if (rest) rest.textContent = [t("pi.gradeScore", { done: graded(), all }), n ? t(info().choice ? "pi.ungradedChoice" : "pi.ungraded", { n }) : ""].filter(Boolean).join(" ");
     const sc = el.querySelector(".op-score");
     if (sc) sc.textContent = gradeHead();
   };
@@ -338,6 +350,18 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
       return write();
     }
     if (e.target.closest("[data-sim-finish]")) return finish(false);
+    const rs = e.target.closest("[data-sim-reset]");
+    if (rs) {
+      if (!reset) {
+        reset = true;
+        rs.querySelector("span").textContent = t("pi.resetSure");
+        return;
+      }
+      clearInterval(timer);
+      store.clear();
+      st = null;
+      return intro();
+    }
     const pt = e.target.closest("[data-sim-pt]");
     if (pt) {
       const key = pt.closest("[data-op]").dataset.op;
@@ -390,7 +414,7 @@ export function openExamSim(paper, { title, rich, store, onSave, onPractice }) {
     sprosti({ vrni: false });
     el.remove();
     document.documentElement.classList.remove("pv-open");
-    back?.focus?.();
+    (back?.isConnected ? back : fokusPo?.())?.focus?.();
   };
   current = { close, el };
   document.body.append(el);
