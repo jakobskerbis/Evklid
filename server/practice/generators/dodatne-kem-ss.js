@@ -2481,7 +2481,7 @@ const genTopnost = {
         const V = r.pick([100, 200, 250, 500]);
         const gam = (m * 1000) / V;
         return mk(
-          r.pick([`V merilni bučki za $${V}\\ \\mathrm{mL}$ raztopimo $${tx(m)}\\ \\mathrm{g}$ ${gen} in dopolnimo z vodo do oznake. Kolikšna je masna koncentracija $\\gamma$? ${zaokr(1)}`, `${name} ${g(name, "je raztopil", "je raztopila")} $${tx(m)}\\ \\mathrm{g}$ ${gen} in ${g(name, "pripravil", "pripravila")} $${V}\\ \\mathrm{mL}$ raztopine. Kolikšna je masna koncentracija v $\\mathrm{g/L}$? ${zaokr(1)}`]),
+          r.pick([`V merilni bučki za $${V}\\ \\mathrm{mL}$ raztopimo $${tx(m)}\\ \\mathrm{g}$ ${gen} in dopolnimo z vodo do oznake. Kolikšna je masna koncentracija $\\gamma$ v $\\mathrm{g/L}$? ${zaokr(1)}`, `${name} ${g(name, "je raztopil", "je raztopila")} $${tx(m)}\\ \\mathrm{g}$ ${gen} in ${g(name, "pripravil", "pripravila")} $${V}\\ \\mathrm{mL}$ raztopine. Kolikšna je masna koncentracija v $\\mathrm{g/L}$? ${zaokr(1)}`]),
           num(gam, "g/L", 1, [[m / V, "Prostornino pretvori v litre: γ je masa topljenca v enem litru."], [m / M / (V / 1000), "To je množinska koncentracija v mol/L; iščemo masno koncentracijo."]], { unitAlternatives: ["g/l", "g/dm3", "g/dm³"] }),
           "Masna koncentracija je masa topljenca v enem litru raztopine; mL pretvori v L.",
           [dat("m_\\mathrm{t}", tx(m), "g"), dat("V", V, "mL")], ["\\gamma"], ["\\gamma = \\dfrac{m_\\mathrm{t}}{V}"],
@@ -2530,11 +2530,11 @@ const genTopnost = {
         );
       }
       if (k === 2) {
-        const S = r.dec(20, 80, 1);
-        const w = roundHalfUp((100 * S) / (S + 100), 1);
+        // Resnične topnosti iz SOLUB (kot diagram v lekciji), da podatki niso v nasprotju z njo.
+        const s = r.pick(SOLUB);
+        const t = r.pick(solT(s));
+        const w = roundHalfUp((100 * s.S[t]) / (s.S[t] + 100), 1);
         const Sx = (100 * w) / (100 - w);
-        const s = r.pick(SOLUB.concat([{ gen: "kalijevega sulfata" }, { gen: "bakrovega(II) sulfata" }, { gen: "magnezijevega sulfata" }]));
-        const t = r.pick([20, 25, 30, 40, 50]);
         return mk(
           `Nasičena raztopina ${s.gen} ima pri $${t}\\ {}^\\circ\\mathrm{C}$ masni delež $${tx(w)}\\ \\%$. Kolikšna je topnost soli pri tej temperaturi v gramih na $100\\ \\mathrm{g}$ vode? ${zaokr(1)}`,
           num(Sx, "g", 1, [[w, "To je masa soli v 100 g raztopine, ne v 100 g vode."], [100 - w, "To je masa vode v 100 g raztopine."]]),
@@ -2637,7 +2637,7 @@ const genTopnost = {
       const c = roundHalfUp((1000 * rho * (w0 / 100)) / M, 2);
       const w = (100 * c * M) / (1000 * rho);
       return mk(
-        `Koncentrirana raztopina $${sp(F)}$ ima množinsko koncentracijo $${tx(c, 2)}\\ \\mathrm{mol/L}$ in gostoto $${tx(rho, 2)}\\ \\mathrm{g/mL}$. Kolikšen je masni delež $${sp(F)}$ (v %)? $M = ${Mtx(M)}\\ \\mathrm{g/mol}$. ${zaokr(1)}`,
+        `Raztopina $${sp(F)}$ ima množinsko koncentracijo $${tx(c, 2)}\\ \\mathrm{mol/L}$ in gostoto $${tx(rho, 2)}\\ \\mathrm{g/mL}$. Kolikšen je masni delež $${sp(F)}$ (v %)? $M = ${Mtx(M)}\\ \\mathrm{g/mol}$. ${zaokr(1)}`,
         num(w, "%", 1, [[(c * M) / 10, "Upoštevaj gostoto: liter raztopine nima mase 1000 g."], [(c * M) / rho, "Gostoto pretvori v g/L (1 L = 1000 mL)."], [c * M, "γ = c · M je masa v litru; deli jo še z maso litra raztopine."]]),
         "Vzemi liter raztopine: izračunaj maso topljenca ($c \\cdot M$) in maso raztopine ($\\rho \\cdot 1000\\ \\mathrm{mL}$).",
         [dat("c", tx(c, 2), "mol/L"), dat("\\rho", tx(rho, 2), "g/mL"), dat("M", Mtx(M), "g/mol")], ["w"], ["\\gamma = c \\cdot M", "w = \\dfrac{\\gamma}{\\rho}"],
@@ -2873,7 +2873,7 @@ const genElektroliti = {
       const CASE = r.pick([
         { ion: "SO4^2-", Mi: 96.06, p: "BaSO4", Mp: 233.39, re: "BaCl2", what: "mineralne vode", unit: "mg/L" },
         { ion: "Cl^-", Mi: 35.45, p: "AgCl", Mp: 143.32, re: "AgNO3", what: "vode iz vodnjaka", unit: "mg/L" },
-        { ion: "Ag^+", Mi: 107.87, p: "AgCl", Mp: 143.32, re: "NaCl", what: "raztopine iz starih telefonov", unit: "mol/L" },
+        { ion: "Ag^+", Mi: 107.87, p: "AgCl", Mp: 143.32, re: "NaCl", what: "odpadne raztopine iz fotografskega laboratorija", unit: "mol/L" },
       ]);
       const V = r.pick(CASE.unit === "mol/L" ? [100, 200, 250] : [100, 200, 250, 500]);
       const mp = CASE.unit === "mol/L" ? r.dec(0.5, 3, 3) : r.dec(0.05, 0.4, 3);
@@ -3171,12 +3171,13 @@ const genPrehodni = {
     const wrE = r.shuffle(COLORED).slice(0, 3);
     const wr = wrE.map(([io, e, qq]) => [spU(io), `${spU(io)} ima 3d${sup(String(dOf(e, qq)))} – delno zapolnjeno podlupino, zato vpija vidno svetlobo in je obarvan.`]);
     return concept(r, {
-      q: r.pick(["Raztopina katerega iona je brezbarvna?", `${name} ${g(name, "pripravi", "pripravi")} raztopine štirih sulfatov ali kloridov. Katera raztopina bo brezbarvna?`]),
+      // Cu⁺ v vodi disproporcionira (CuCl je netopen), zato pri njem ne govorimo o raztopinah sulfatov ali kloridov.
+      q: ion === "Cu^+" ? "Kateri ion ima brezbarvne spojine?" : r.pick(["Raztopina katerega iona je brezbarvna?", `${name} ${g(name, "pripravi", "pripravi")} raztopine štirih sulfatov ali kloridov. Katera raztopina bo brezbarvna?`]),
       ok: spU(ion),
       wrong: wr,
       hint: "Zapiši konfiguracijo elektronov 3d vsakega iona: barvo da le delno zapolnjena podlupina.",
       given: [`\\text{ioni} = ${[ion, ...wrE.map((w) => w[0])].sort().map(sp).join(",\\ ")}`], find: [T("brezbarvna raztopina")], formula: [T("barva: delno zapolnjena 3d; 3d⁰ ali 3d¹⁰ → brezbarvno")],
-      sol: [`$${sp(ion)}$: $${cfgTex(di, 0)}$`, di === 0 ? "Podlupina 3d je prazna – ni elektrona, ki bi vpil svetlobo." : "Podlupina 3d je polna – elektron ne more preskočiti na višjo raven.", "Raztopina je brezbarvna."],
+      sol: [`$${sp(ion)}$: $${cfgTex(di, 0)}$`, di === 0 ? "Podlupina 3d je prazna – ni elektrona, ki bi vpil svetlobo." : "Podlupina 3d je polna – elektron ne more preskočiti na višjo raven.", ion === "Cu^+" ? "Spojine so brezbarvne." : "Raztopina je brezbarvna."],
     });
   },
 };
@@ -3188,7 +3189,7 @@ const PROC = [
   { p: "kontaktni postopek", loc: "kontaktnem postopku", prod: "žveplova(VI) kislina (H₂SO₄)", acc: "žveplovo(VI) kislino", cat: "vanadijev(V) oksid (V₂O₅)", raw: "žveplo, zrak in voda" },
   { p: "Ostwaldov postopek", loc: "Ostwaldovem postopku", prod: "dušikova(V) kislina (HNO₃)", acc: "dušikovo(V) kislino", cat: "platina z rodijem (Pt/Rh)", raw: "amoniak, zrak in voda" },
   { p: "kloralkalna elektroliza", loc: "kloralkalni elektrolizi", prod: "natrijev hidroksid, klor in vodik", acc: "natrijev hidroksid, klor in vodik", cat: null, raw: "slanica (raztopina NaCl)" },
-  { p: "Bayerjev postopek z elektrolizo taline", loc: "Bayerjevem postopku z elektrolizo taline", prod: "aluminij", acc: "aluminij", cat: null, raw: "boksit, NaOH in kriolit" },
+  { p: "Bayerjev postopek, nato elektroliza taline", loc: "Bayerjevem postopku in elektrolizi taline", prod: "aluminij", acc: "aluminij", cat: null, raw: "boksit, NaOH in kriolit" },
   { p: "žganje v cementarni", loc: "žganju apnenca in gline v cementarni", prod: "cement", acc: "cement", cat: null, raw: "apnenec in glina" },
   { p: "taljenje v steklarni", loc: "taljenju surovin v steklarni", prod: "okensko steklo", acc: "okensko steklo", cat: null, raw: "pesek, soda in apnenec" },
   { p: "redukcija v električni peči", loc: "redukciji kremena s koksom v električni peči", prod: "silicij", acc: "silicij", cat: null, raw: "kremenov pesek in koks" },
@@ -3209,8 +3210,7 @@ const HB = [
   ["zvišamo temperaturo", "Z", "Reakcija je eksotermna; višja temperatura premakne ravnotežje k reaktantom (reakcija pa je hitrejša)."],
   ["znižamo temperaturo", "P", "Reakcija je eksotermna; nižja temperatura premakne ravnotežje k produktu."],
   ["dodamo boljši katalizator", "N", "Katalizator ravnotežja ne premakne, le hitreje ga doseže."],
-  ["sproti odstranjujemo amoniak", "P", "Ko produkt odstranjujemo, sistem nastaja novega."],
-  ["dovajamo več dušika", "P", "Več reaktanta premakne ravnotežje k produktu."],
+  ["sproti odstranjujemo amoniak", "P", "Ko produkt sproti odstranjujemo, se ravnotežje premika k produktu in nastaja nov amoniak."],
 ];
 const YLD = { P: "se poveča", Z: "se zmanjša", N: "se ne spremeni" };
 const YLD2 = { P: "Poveča se.", Z: "Zmanjša se.", N: "Ne spremeni se." };
@@ -3344,7 +3344,7 @@ const genAnorganske = {
         const w = (100 * nN * 14.01) / M;
         return mk(
           r.pick([`Kolikšen je masni delež dušika v gnojilu ${ime} ($${sp(F)}$)? $M = ${Mtx(M)}\\ \\mathrm{g/mol}$, $A_r(\\mathrm{N}) = 14{,}01$. ${zaokr(1)}`, `${name} ${g(name, "primerja", "primerja")} dušikova gnojila. Koliko odstotkov dušika vsebuje $${sp(F)}$ (${ime})? $M = ${Mtx(M)}\\ \\mathrm{g/mol}$, $A_r(\\mathrm{N}) = 14{,}01$. ${zaokr(1)}`]),
-          num(w, "%", 1, [[(100 * 14.01) / M, `V formuli ${spU(F)} ${nN === 2 ? "sta 2 atoma" : "je 1 atom"} N.`], [(100 * nN) / Object.values(parseFormula(F)).reduce((a, b) => a + b, 0), "Masni delež ne računamo iz števila atomov, ampak iz mas."], [(nN * 14.01) / M, "Rezultat pomnoži s 100 %."]]),
+          num(w, "%", 1, [[(100 * 14.01) / M, `V formuli ${spU(F)} ${nN === 2 ? "sta 2 atoma" : "je 1 atom"} N.`], [(100 * nN) / Object.values(parseFormula(F)).reduce((a, b) => a + b, 0), "Masnega deleža ne računamo iz števila atomov, ampak iz mas."], [(nN * 14.01) / M, "Rezultat pomnoži s 100 %."]]),
           "Preštej atome dušika v formuli in njihovo maso deli z molsko maso spojine.",
           [dat("M", Mtx(M), "g/mol"), "A_r(\\mathrm{N}) = 14{,}01"], ["w(\\mathrm{N})"], ["w(\\mathrm{N}) = \\dfrac{N(\\mathrm{N}) \\cdot A_r(\\mathrm{N})}{M}"],
           [`V $${sp(F)}$ ${nN === 2 ? "sta 2 atoma" : "je 1 atom"} N: $${nN} \\cdot 14{,}01 = ${tx(nN * 14.01, 2)}$`, `$w = \\dfrac{${tx(nN * 14.01, 2)}}{${Mtx(M)}} \\cdot 100\\ \\% ${res(w, 1, "\\%")}$`]
@@ -3419,7 +3419,7 @@ const genAnorganske = {
       let ok, why;
       if (ch.includes("tlak")) {
         const up = ch.startsWith("poveč");
-        if (gl === gr) { ok = "N"; why = `Na obeh straneh je ${gl} molekul plina, zato tlak ravnotežja ne premakne.`; }
+        if (gl === gr) { ok = "N"; why = `Na obeh straneh je enako molekul plina (levo ${gl}, desno ${gr}), zato tlak ravnotežja ne premakne.`; }
         else {
           const toProd = up ? gr < gl : gr > gl;
           ok = toProd ? "P" : "Z";
