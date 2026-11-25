@@ -148,6 +148,21 @@ zadnji izračuni so v predpomnilniku. Vrne teme v vrstnem redu učnega načrta (
 Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
 false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.
 
+### PR 5 (načrtovalnik, 25. 11. 2026)
+
+`server/priprava/nacrt.js`, pot `GET …/priprave/:pid/nacrt`. Koda, ne model; brez napovedi ocen. Teme so obseg
+testa (brez načrta testa teme iz zapiskov, PR 4). Ocena teme iz izkazanega znanja (`topic_state`, kot pripravljenost
+na izpit; velja boljša od teme in njenih osnovnih tem): nova 0, v učenju 0,2–0,6, za ponovitev 0,8, obvladana 1.
+Enote: nova → nova snov, vaja, ponovitev; v učenju → vaja, ponovitev; za ponovitev → ponovitev; obvladana → nič (zajame
+jo poskusni test); tema brez nalog v Vadnici → »zapiski« (ni preverljiva, v vrstnem redu kot ocena 0,5, ne šteje v
+pripravljenost). Najšibkejše prve; najprej prve enote vseh tem, nato druge in tretje, razmaknjene za tretjino učnih dni;
+največ 3 enote na dan; kar ne gre, je v `nePrideNaVrsto` (`stisnjeno`). Zadnji dan pred testom poskusni test (obstoječi
+`/test-prep`, samo aktivna priprava). Brez datuma en teden; test mimo → `mimo`. Danes: enota vaje ali ponovitve je
+opravljena po 3 rešenih nalogah teme ta dan (slovenski dan); `naslednja` je prva neopravljena (»Nadaljuj učenje«).
+Načrt se računa vsak dan znova iz trenutnega znanja, zato se prilagaja sam; tabela `priprava_nacrti` ni potrebna.
+`pripravljenost`: povprečje ocen preverljivih tem, število obvladanih, preverljivih in nepreverljivih. Test:
+`test/priprava-nacrt.test.js`.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

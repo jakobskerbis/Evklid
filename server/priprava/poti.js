@@ -10,6 +10,10 @@ import { danIzbrisa } from "./ciscenje.js";
 import { uvoziVNiti, preberiVir, NapakaUvoza } from "./uvoz.js";
 import { shraniIzseke, razrezi, VRSTE } from "./izseki.js";
 import { zemljevid } from "./teme.js";
+import { sestaviNacrt, ocenaTeme } from "./nacrt.js";
+import { getTopic } from "../curriculum.js";
+import { hasGenerator } from "../practice/index.js";
+import { nowParts } from "../schedule.js";
 import { readNotePhoto, readReserveUsd, pageLimit, pagesUsed, takePage, givePage, nextMonth } from "../zapiski.js";
 import { nujnoZa } from "../nujno.js";
 import { AI_JSON } from "../ai-oznaka.js";
@@ -604,16 +608,11 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
   // pokritost obsega z zapiski in predznanje. Brez AI; računa se sproti iz trenutnih izsekov.
   // Zadnji izračuni (ključ: izseki, načrt, raven), da ponovno odpiranje ne računa znova.
   const zemljevidi = new Map();
-  app.get("/api/students/:id/priprave/:pid/teme", async (req, res) => {
-    const s = loadStudent(req, res);
-    if (!s) return;
-    const p = ena(s, req);
-    if (!p) return niPriprave(res);
+  async function zemljevidZa(s, p) {
     const settings = typeof s.settings === "string" ? jsonIz(s.settings, {}) : s.settings || {};
     const sled = db.prepare("SELECT COUNT(*) AS n, MAX(id) AS m FROM priprava_izseki WHERE priprava_id = ? AND student_id = ?").get(p.id, s.id);
     const kljuc = JSON.stringify([p.id, sled.n, sled.m, p.pot, p.sklopi, p.predmet, settings?.subject, settings?.curriculum_level, settings?.educational_track, settings?.school_system]);
-    uporabljena(p);
-    if (zemljevidi.has(kljuc)) return res.set("Cache-Control", "no-store").json(zemljevidi.get(kljuc));
+    if (zemljevidi.has(kljuc)) return zemljevidi.get(kljuc);
     const izseki = db
       .prepare("SELECT id, naslov, besedilo FROM priprava_izseki WHERE priprava_id = ? AND student_id = ? ORDER BY vir_id, zaporedje")
       .all(p.id, s.id)
@@ -621,7 +620,53 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const z = await zemljevid({ pot: p.pot, sklopi: sklopiIz(p.sklopi), predmet: p.predmet }, izseki, settings || {});
     zemljevidi.set(kljuc, z);
     while (zemljevidi.size > 50) zemljevidi.delete(zemljevidi.keys().next().value);
-    res.set("Cache-Control", "no-store").json(z);
+    return z;
+  }
+  app.get("/api/students/:id/priprave/:pid/teme", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    uporabljena(p);
+    res.set("Cache-Control", "no-store").json(await zemljevidZa(s, p));
+  });
+
+  // Načrt priprave (PR 5, nacrt.js): teme obsega testa (brez načrta testa teme iz zapiskov), izkazano znanje iz
+  // rešenih nalog (topic_state, osnovne teme kot pri pripravljenosti na izpit) in rešene naloge danes.
+  app.get("/api/students/:id/priprave/:pid/nacrt", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    const z = await zemljevidZa(s, p);
+    const izsekov = new Map(z.teme.map((t) => [t.id, t.izseki.length]));
+    const ids = z.obseg ? z.obseg.map((t) => t.id) : z.teme.map((t) => t.id);
+    const danes = nowParts(new Date(now())).date;
+    const zdaj = sqlCas(now());
+    const stanje = db.prepare("SELECT status, level, review_due FROM topic_state WHERE student_id = ? AND topic_id = ?");
+    // Naloge zadnjih 30 ur, nato slovenski dan (created_at je UTC).
+    const nedavne = db.prepare("SELECT topic_id, created_at FROM tasks WHERE student_id = ? AND solved = 1 AND created_at >= ?").all(s.id, sqlCas(now() - 30 * 3600000));
+    const danesNalog = new Map();
+    for (const r of nedavne) if (nowParts(new Date(`${r.created_at.replace(" ", "T")}Z`)).date === danes) danesNalog.set(r.topic_id, (danesNalog.get(r.topic_id) || 0) + 1);
+    const teme = ids.map((id, i) => {
+      const t = getTopic(id);
+      const vse = [id, ...(t?.base || [])];
+      return {
+        id,
+        ime: t?.name || id,
+        sklop: t?.unit || null,
+        red: i,
+        izsekov: izsekov.get(id) || 0,
+        ocena: Math.max(...vse.map((x) => ocenaTeme(stanje.get(s.id, x), zdaj))),
+        vaja: vse.some((x) => hasGenerator(x)),
+        danesNalog: vse.reduce((a, x) => a + (danesNalog.get(x) || 0), 0),
+      };
+    });
+    uporabljena(p);
+    res.set("Cache-Control", "no-store").json({
+      ...sestaviNacrt({ danes, datum: p.datum_testa || null, teme, poskusniTest: p.aktivna === 1 && !!p.pot }),
+      obsegIzNacrta: !!z.obseg,
+    });
   });
 
   app.delete("/api/students/:id/priprave/:pid/viri/:vid", (req, res) => {
