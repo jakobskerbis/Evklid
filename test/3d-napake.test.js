@@ -141,12 +141,23 @@ test("HTML namesto JSON (prestrezna stran) je povezava s ponovnim poskusom, neve
   assert.equal(na(new SyntaxError("Unexpected token '{'. Expected a ')' or a ',' after a parameter declaration.")).vrsta, "brskalnik");
 });
 
-test("RangeError je pomnilnik samo s sporočilom o pomnilniku ali medpomnilniku", () => {
+test("pomnilnik samo ob pravem pomanjkanju; prirezan medpomnilnik (prekinjen prenos GLB) je napaka nalaganja", () => {
   assert.equal(na(new RangeError("Array buffer allocation failed")).vrsta, "pomnilnik");
   assert.equal(na(new RangeError("Out of memory")).vrsta, "pomnilnik");
-  const prirezan = na(new RangeError("Offset is outside the bounds of the DataView"));
-  assert.deepEqual([prirezan.vrsta, prirezan.detail], ["drugo", "RangeError"]);
+  assert.equal(na(new Error("GL_OUT_OF_MEMORY")).vrsta, "pomnilnik");
+  for (const m of [
+    "Offset is outside the bounds of the DataView", // Chrome, Firefox
+    "Length out of range of buffer", // Safari
+    "attempting to construct out-of-bounds Float32Array on ArrayBuffer", // Firefox
+    "Invalid typed array length: 4096", // Chrome
+  ]) {
+    const r = na(new RangeError(m));
+    assert.deepEqual([r.vrsta, r.key], ["povezava", "a3.loadError"], m);
+  }
   assert.equal(na(new RangeError("Maximum call stack size exceeded")).vrsta, "drugo");
+  // »memory« brez pomanjkanja ni pomnilnik
+  assert.equal(na(new TypeError("Cannot read properties of undefined (reading 'memory')")).vrsta, "drugo");
+  assert.equal(na(new RangeError("WebAssembly.Memory(): could not grow memory")).vrsta, "drugo");
 });
 
 test("napaka z povezava: true (naloziModel brez povezave) je napaka povezave", () => {
@@ -159,6 +170,22 @@ test("tehnični razlog: naslov z oklepaji ne pušča poizvedbe, e-pošta je skri
   assert.equal(tehnicno(new Error("(at https://x/b.js?t=1&u=2)")), "Error: (at /b.js");
   assert.equal(tehnicno(new Error("napaka za ana.novak@primer.si pri /a.js?k=1&m=2")), "Error: napaka za [e-pošta] pri /a.js");
   assert.equal(tehnicno(new SyntaxError("Unexpected token '?'")), "SyntaxError: Unexpected token '?'");
+});
+
+test("tehnični razlog: Bearer, dolge vrednosti za »=« in »; « za odstranjeno poizvedbo; kartica »Ni povezave« brez njega", () => {
+  assert.equal(tehnicno(new Error("401 Bearer abc zavrnjen")), "Error: 401 Bearer [žeton] zavrnjen");
+  assert.equal(tehnicno(new Error("napaka token=0123456789abcdef0 pri nalaganju")), "Error: napaka token=[žeton] pri nalaganju");
+  assert.equal(tehnicno(new Error("kratko n=12345 ostane")), "Error: kratko n=12345 ostane");
+  assert.equal(tehnicno(new Error("napaka /a.js?t=1&u=2 ; naprej")), "Error: napaka /a.js naprej");
+  assert.equal(tehnicno(new Error("napaka /a.js?t=1&u=2 ;")), "Error: napaka /a.js");
+  const prejDoc = globalThis.document;
+  globalThis.document = { createElement: (tag) => ({ tag, className: "", textContent: "", dataset: {}, addEventListener() {} }) };
+  try {
+    const deli = napakaVsebina(Object.assign(new Error("povezava"), { povezava: true }), { t: (k) => k, znova() {} });
+    assert.deepEqual(deli.map((d) => d.className || d.textContent), ["a3.noConnection", "a3-pill"]);
+  } finally {
+    globalThis.document = prejDoc;
+  }
 });
 
 test("aplikacija (Web3D.tsx): števec padcev procesa strani se ponastavi po uspešnem nalaganju", () => {

@@ -119,7 +119,7 @@ html:has(body.uci-3d-odprto), body.uci-3d-odprto { overflow: hidden; overscroll-
 .uci-3d-napaka { padding: 16px 0; color: var(--muted); }
 .uci-3d-napaka p { margin: 0 0 10px; }
 .uci-3d-napaka .k3-napaka-koda { font-size: 0.85rem; }
-.uci-3d-napaka .k3-napaka-povezava { display: inline-block; margin: 0 12px 10px 0; color: var(--accent); font-weight: 600; }
+.uci-3d-napaka .k3-napaka-povezava { display: inline-flex; align-items: center; min-height: 44px; margin: 0 12px 6px 0; color: var(--accent); font-weight: 600; }
 /* 3D čez cel zaslon se ne oglasi (uci-se.js open3d, public/3d/vgrajeno.js cuvaj3d): sporočilo in »Zapri« spodaj. */
 .uci-3d-zastoj {
   position: absolute; z-index: 1; left: 12px; right: 12px; bottom: calc(12px + var(--varno-sp, env(safe-area-inset-bottom, 0px)));
