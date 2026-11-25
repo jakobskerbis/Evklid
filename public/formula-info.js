@@ -56,6 +56,7 @@ function open(el, { again = false, focus = false } = {}) {
   if (el.dataset.fxTone) pop.dataset.tone = el.dataset.fxTone;
   else delete pop.dataset.tone;
   pop.innerHTML = `${card.html}<button type="button" class="fx-close" aria-label="${t("fx.close")}">×</button>`;
+  pop.style.transform = pop.style.transition = ""; // ostanek potega, če se je okno med njim zaprlo drugače
   pop.hidden = false;
   openEl = el;
   el.setAttribute("aria-expanded", "true");
@@ -90,7 +91,7 @@ function swipe(p) {
   }, { passive: false });
   const end = () => {
     y0 = NaN;
-    if (!drag) return;
+    if (!drag || p.hidden) return void (drag = false);
     drag = false;
     const fast = dy > 20 && dy / Math.max(1, performance.now() - t0) > 0.5;
     const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
