@@ -1,6 +1,6 @@
 // Elipsa x²/a² + y²/b² = 1: drsnika a in b (b ≤ a), vlečna točka T po elipsi, gorišči F₁ in F₂,
 // razdalji r₁ in r₂ ter temena. Vedno velja r₁ + r₂ = 2a.
-import { st, crta, napis, vr } from "./skica.js";
+import { crta, napis, vr } from "./skica.js";
 import { s } from "../sim/kit.js";
 import { elipsa, ravnina } from "./stoznice.js";
 

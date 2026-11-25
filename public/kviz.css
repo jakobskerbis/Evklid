@@ -16,6 +16,15 @@
 .kv-q { font-size: 1.25rem; line-height: 1.5; }
 .kv-q p { margin: 0 0 8px; }
 .kv-q .katex, .kv-opts .katex, .kv-ans .katex { direction: ltr; unicode-bidi: isolate; }
+/* Projektor (ucitelj.html) nima ui.css: ista pravila za formule kot v aplikaciji (ui.css »Klikljive formule«), da se
+   dolga formula ne prelomi sredi izraza, zložena (sirina.js) stoji v svoji vrstici, preširoka drsi, neizrisljiva je
+   okvirček. V Ligah (index.html) so enaka kot v ui.css. Enoten matematični zapis F2 (24. 11. 2026). */
+.kv .mat-napaka { display: inline-block; color: var(--muted, #888); font-family: KaTeX_Main, serif; }
+.kv .katex:not(svg .katex) { white-space: nowrap; }
+.kv :is(p, li, .kv-q, .kv-opt, .kv-ans) .katex:not(.katex-display > .katex, svg .katex, .katex .katex) { display: inline-block; text-indent: 0; margin-block: -0.15em; }
+.kv .katex.tb-zlozena:not(.katex-display > .katex, svg .katex) { display: block; width: fit-content; max-width: 100%; margin: 6px 0; padding-right: 2px; }
+.kv .katex.tb-dolga { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; padding: 2px 0 4px; }
+.kv .katex-display { overflow-x: auto; overflow-y: hidden; }
 .kv-big { font-size: 1.4rem; font-weight: 700; text-align: center; margin: 24px 0 12px; }
 .kv-big.ok { color: var(--ok); }
 .kv-big.bad { color: var(--danger); }

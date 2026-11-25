@@ -181,3 +181,12 @@ test("reši brez drugih črk in 3. stopnje: številski reševalnik", () => {
   assert.ok(Math.abs(r.roots[0] - Math.cbrt(2)) < 1e-9);
   assert.equal(analyze("reši(x³+ax=1; x)").error.code, "casDegree");
 });
+
+test("razstavi: minus pred veččlenskim faktorjem ostane pred oklepajem (AUDIT-016)", () => {
+  assert.equal(res("razstavi(3−x)"), "-\\left(x - 3\\right)");
+  assert.equal(res("razstavi(−x−3)"), "-\\left(x + 3\\right)");
+  assert.equal(res("razstavi(b−a)"), "-\\left(a - b\\right)");
+  assert.equal(res("razstavi(−x²−1)"), "-\\left(x^{2} + 1\\right)");
+  assert.equal(res("razstavi(−x)"), "-x");
+  assert.equal(res("razstavi(6−2x)"), "-2\\left(x - 3\\right)");
+});

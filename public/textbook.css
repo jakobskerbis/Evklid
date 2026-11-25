@@ -710,6 +710,19 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-pin[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: var(--accent-soft); }
 .lab-pin[aria-pressed="false"] svg.i { transform: rotate(45deg); }
 .lab-pin:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Fotografski prikaz (sim/foto.js): stikalo na vrhu kontrol, ne čez sliko */
+.demo .lab-foto-gumb {
+  display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 44px; padding: 6px 14px; margin: 0 0 10px;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font: inherit; cursor: pointer;
+}
+/* Na telefonu sta gumba »Povečaj« in »Pripni« (44 px, zgoraj desno) nad fotografijo prekrila zaslon voltmetra, naslov
+   povečave meniska in merilo: pri fotografiji jima naredimo prostor nad sliko (risba ima ta prostor že v sebi). */
+@container labtit (max-width: 799.98px) {
+  .demo.lab.lab .lab-tit-top > .demo-stage:not(.lab-povecano):has(svg.lab-foto-on) { padding-top: 50px !important; } /* nad »padding: 8px !important« iz sim/materiali.js */
+}
+.lab-foto-gumb svg.i { width: 18px; height: 18px; }
+.lab-foto-gumb[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: var(--accent-soft); }
+.lab-foto-gumb:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 @media not ((orientation: landscape) and (max-height: 560px)) {
 @container labtit (max-width: 799.98px) {
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage {

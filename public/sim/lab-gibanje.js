@@ -121,8 +121,6 @@ function casovnikNaprava(g, svg, x, y, w, n, napis = "ČASOVNIK") {
   s("rect", { x: x + 5, y: y + 12, width: w - 10, height: n * 11 + 2, rx: 2, class: "lab-gib-lcdbg" }, g);
   return Array.from({ length: n }, (_, i) => s("text", { x: x + w - 9, y: y + 21 + i * 11, class: "lab-gib-lcdtxt", "text-anchor": "end" }, g, ""));
 }
-const fmtT = (t) => (t == null ? "– – – –" : num(t, 4));
-const fmtMs = (t) => (t == null ? "– – –" : num(t * 1000, 1));
 const kaj = { proga: "žarek zadene profil proge", telo: "žarek zastre telo vozička", zastavica: "žarek seka zastavico", nic: "žarek je nad zastavico" };
 
 // ---------------------------------------------------------------- proga z vozičkom (klanec in Newtonov zakon)

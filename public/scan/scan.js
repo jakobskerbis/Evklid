@@ -10,6 +10,7 @@ import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } fro
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
 import { plottableFromText } from "../graph/math.js";
+import { izrisi } from "../mat/izris.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
 const fresh = () => ({
@@ -82,7 +83,7 @@ function answerTex(tex) {
 }
 function math(tx, display = false) {
   try {
-    return window.katex.renderToString(String(tx ?? ""), { throwOnError: false, strict: "ignore", displayMode: display, macros: sideMacros() });
+    return izrisi(tx, { blok: display, makri: sideMacros() });
   } catch {
     return esc(tx);
   }

@@ -155,7 +155,7 @@ do: 3
 ```
 
 - `opis:` je obvezen: besedilo, ki sliko nadomesti slepemu učencu, inštruktorju in branju na glas (kaj je na sliki, s števili). Opis bere bralnik zaslona dobesedno, zato indekse in eksponente piši z besedami ali znaki Unicode (F₁, x², »Theveninova napetost«), nikoli z `_` ali `^` (check-lesson to javi). Enako velja za `podnapis:`, ki je neobvezen napis pod sliko.
-- Števila piši z decimalno vejico, točko kot `x; y`, polja loči z `|`. Indeks in eksponent v napisih: `F_1`, `x^2`, `a_12`, `10^-3` (celo število s predznakom), več črk v zavitih oklepajih `U_{Th}` (`U_Th` je napaka).
+- Števila piši z decimalno vejico, točko kot `x; y`, polja loči z `|`. Tudi v izrazih (`f:`, `drsnik`) je vejica med števkami decimalna, tudi v oklepaju (`sin(0,63*x)` = sin(0,63·x)); vrednosti v funkciji z več vrednostmi loči s `;` ali z vejico in presledkom (`max(x; 2)`, `max(x, 2)`). Indeks in eksponent v napisih: `F_1`, `x^2`, `a_12`, `10^-3` (celo število s predznakom), več črk v zavitih oklepajih `U_{Th}` (`U_Th` je napaka).
 - Slog (zadnje polje): barve `modra`, `oranžna`, `zelena`, `rdeča`, `siva` (pomenijo vlogo, ne odtenka; pomen naj nikoli ne bo samo v barvi), `črtkano`, `debelo`, `puščica`, `polno`, `ozadje`, `zaprto`. Lega napisa: `nad`, `pod`, `levo`, `desno`, `sredina` (tudi `nad levo`).
 
 | Vrsta | Ključi |

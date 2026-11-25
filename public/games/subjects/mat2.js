@@ -71,8 +71,6 @@ function bank(items) {
     return out(q, a, ws);
   };
 }
-// predlog s/z pred številom (izgovorjeno: z dvema, s tremi, … z osmimi)
-const zs = (n) => ([2, 8, 9, 10, 11, 12].includes(n) ? "z" : "s");
 const divisors = (n) => [...Array(n).keys()].map((i) => i + 1).filter((d) => n % d === 0);
 const deg = (x) => `${x}°`;
 const piS = (ctx, k) => (k === 1 ? "π" : `${ctx.num(k)}π`); // k·π

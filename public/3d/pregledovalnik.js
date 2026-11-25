@@ -9,6 +9,7 @@ import { mrezeOvojev, okvirDela as okvirDelaVSvetu } from "./ovoji.js";
 import { t } from "/i18n.js";
 import { napisPoskusa } from "../sim/napis-poskusa.js";
 import { icon } from "/icons.js";
+import { izrisi } from "/mat/izris.js";
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -43,7 +44,7 @@ export function izpisHtml(v) {
     d[i] = `${pred ? "\\text{(}" : ""}${d[i]}${za ? `\\text{${za[0]}}` : ""}`;
   }
   // \n: vsaka formula v svoji vrstici
-  return d.map((x, i) => (i % 2 ? globalThis.katex.renderToString(x, { throwOnError: false }) : esc(x).replace(/\n/g, "<br>"))).join("");
+  return d.map((x, i) => (i % 2 ? izrisi(x) : esc(x).replace(/\n/g, "<br>"))).join("");
 }
 // Brez KaTeX (ni povezave): formula kot berljivo besedilo, (a)/(b) in √(x).
 const brezTex = (v) => {
@@ -445,6 +446,15 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => opts.mikroskop.odpri(prep));
       infoEl.append(b);
     }
+    // »Vprašaj inštruktorja« o tem delu (stran /3d da opts.vprasaj): klepet z vpisanim vprašanjem, vrnitev na isti del.
+    if (typeof opts.vprasaj === "function") {
+      const b = mk("button", "k3-pill k3-povecava-gumb k3-vprasaj");
+      b.type = "button";
+      b.innerHTML = `${icon("message-circle")}<span></span>`;
+      b.lastChild.textContent = t("a3.ask");
+      b.addEventListener("click", () => opts.vprasaj(d));
+      infoEl.append(b);
+    }
     // Stran /3d: plošča se drsi sama in okno je na njenem vrhu. Tap na model: plošča takoj na vrh (gladko drsenje se je
     // na počasnih napravah ustavilo pred vrhom). Izbira iz seznama: le toliko, da je okno vidno (seznam ne skoči).
     // Lekcija: okno je pod odrom; če je pod robom zaslona, se stran pomakne do njega.
@@ -644,9 +654,10 @@ export function odpriModel(el, mod, opts = {}) {
         inp.setAttribute("aria-label", c.oznaka);
         const sd = { c, zadnja: c.vrednost, nastavi: (v) => ((inp.value = v), (out.textContent = stevilo(v, c.korak))) };
         sinh.push(sd);
-        // Med vlečenjem drsnika ostaneta vidna le njegov gumb in tirnica (j, 4. 11.: »da vidiš, kje ustaviti«): plošča,
-        // orodja, točke in napisi postanejo prosojni, ob spustu se vrnejo.
-        inp.addEventListener("pointerdown", (e) => {
+        // Med vlečenjem drsnika prereza (c.prerez) ostaneta vidna le njegov gumb in tirnica (j, 4. 11.: »da vidiš, kje
+        // ustaviti«): plošča, orodja, točke in napisi postanejo prosojni, ob spustu se vrnejo. Drugi drsniki pustijo
+        // okna vidna (j, 24. 11.: »samo pri prerezih«).
+        if (c.prerez) inp.addEventListener("pointerdown", (e) => {
           if (e.button !== 0) return; // desni klik: kontekstni meni pogoltne spust
           const id = e.pointerId;
           const koren = lab.closest(".k3-pregled") || lab;

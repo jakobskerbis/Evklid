@@ -69,6 +69,7 @@ export function createPlot3d(canvas, opts) {
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.direction = "ltr"; // števila in oznake osi (−5, x, y, z) od leve proti desni tudi v RTL (AUDIT-057)
     ctx.clearRect(0, 0, w, h);
     const { pts, zmin, zmax } = grid;
     const n = o.n;

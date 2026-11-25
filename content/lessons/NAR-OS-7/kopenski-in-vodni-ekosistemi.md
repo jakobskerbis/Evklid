@@ -234,7 +234,7 @@ napis: 3; 2,5 | travnik | sredina
 napis: 3; 1 | 4 cm | pod
 napis: 5; 2,5 | 3 cm | desno
 :::
-= 1200 m^2 | 0
+= 1200 $\mathrm{m^2}$ | 0
 ~ 12 | To je površina na zemljevidu v $\mathrm{cm^2}$. Najprej obe stranici pretvori v metre.
 ~ 120 | Z $10$ si pomnožil le enkrat. Pretvoriti moraš obe stranici: $40\,\mathrm{m}$ in $30\,\mathrm{m}$.
 ~ 140 | To je obseg, $2 \cdot (40 + 30)$. Površina je produkt stranic.

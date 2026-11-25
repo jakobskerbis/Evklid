@@ -81,7 +81,6 @@ export const SCHEDULE_SETTINGS = {
   events: { desc: "tests and deadlines: date 'YYYY-MM-DD', optional time 'HH:MM', kind test|kolokvij|izpit|ustno|naloga|drugo, name e.g. 'Kontrolna naloga iz matematike', optional note (material)" },
 };
 
-export const ALL_SETTING_KEYS = [...Object.keys(PROFILE_SETTINGS), ...Object.keys(DEVICE_SETTINGS), ...Object.keys(SCHEDULE_SETTINGS).map((k) => `schedule_${k}`)];
 export const HEX = /^#[0-9a-f]{6}$/i;
 
 // Preveri vrednost nastavitve naprave; vrne normalizirano vrednost ali null.

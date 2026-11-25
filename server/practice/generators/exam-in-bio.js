@@ -9,7 +9,7 @@
 //    »koliko trditev je pravilnih«, »koliko parov je pravilno prirejenih« (številski odgovor);
 //  - računski (exi-bio-<tema>-calc …): razmerja, verjetnosti, števila kromosomov, energija ipd.
 // Naključna števila in izbire so v obeh jezikih enake (r.* nikoli znotraj veje, ki je odvisna od jezika).
-import { en, num, numM, task as baseTask, bi, roundToL, fracTex, fraction, fractionM } from "./exam-util.js";
+import { en, numM, task as baseTask, bi, roundToL, fracTex, fraction, fractionM } from "./exam-util.js";
 
 // Hindijska rešitev, ki je samo račun, dobi uvodno vrstico »हल:« (kot v učbenikih NCERT v hindijščini).
 const DEV = /[\u0900-\u097F]/;

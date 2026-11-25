@@ -377,7 +377,6 @@ function texLuna(w, h) {
 
 // ---------------------------------------------------------------- scene helpers (same in letni-casi, lunine-mene, mrki)
 const stevilo = (x, d) => (Math.abs(x) < 0.5 * 10 ** -d ? 0 : x).toFixed(d).replace(".", ",").replace("-", "−");
-const MESECI = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
 function zaobljen(c2, x, y, w, h, r) {
   c2.beginPath(); c2.moveTo(x + r, y); c2.arcTo(x + w, y, x + w, y + h, r); c2.arcTo(x + w, y + h, x, y + h, r);
   c2.arcTo(x, y + h, x, y, r); c2.arcTo(x, y, x + w, y, r); c2.closePath();
@@ -642,7 +641,6 @@ float mrkLeca(float S, float B) {
   return clamp(A / 3.14159265, 0.0, 1.0);
 }
 `;
-const stevilka = (x) => Math.round(x).toLocaleString("sl-SI").replace(/\./g, " ").replace(/ /g, " ");
 const tisoc = (x) => String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
 // ---------------------------------------------------------------- builder

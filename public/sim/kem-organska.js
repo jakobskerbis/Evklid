@@ -1,5 +1,5 @@
 // Simulacije pri kemiji: organske spojine in poimenovanje, izomerija, destilacija nafte, polimeri, organske reakcije.
-import { s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, clamp, label, animate, playButton, rnd } from "./kit.js";
+import { s, svgBox, slider, select, segmented, button, buttons, readout, layout, texBlock, clamp, label, animate, playButton, rnd } from "./kit.js";
 import { sub, drawMolecule } from "./kem-skupno.js";
 
 const ROOT = ["met", "et", "prop", "but", "pent", "heks", "hept", "okt", "non", "dek"];

@@ -16,7 +16,17 @@ function bgcd(a, b) {
   while (b) [a, b] = [b, a % b];
   return a;
 }
-const LIMIT = 10n ** 40n;
+let LIMIT = 10n ** 40n;
+/** fn z višjo mejo velikosti ulomkov (cas.js exactPolyIn: koeficienti do 10⁴³ v vpisani enačbi; čas omejuje tick). */
+export function withLimit(lim, fn) {
+  const old = LIMIT;
+  LIMIT = lim;
+  try {
+    return fn();
+  } finally {
+    LIMIT = old;
+  }
+}
 
 // ---------- ulomek ----------
 

@@ -282,6 +282,8 @@
       </div>
       <div id="chat-off" class="chat-off" role="status" data-i18n="chat.off" hidden></div>
       <form id="composer" class="composer">
+        <button type="button" id="chat-return" class="secondary small chat-return" hidden></button>
+        <p id="chat-kontekst" class="muted chat-kontekst" hidden></p>
         <div id="image-preview" class="image-preview" hidden>
           <img alt="Predogled fotografije" data-i18n-alt="chat.photoPreview">
           <button type="button" id="remove-image" aria-label="Odstrani sliko" data-i18n-aria="chat.removeImage">×</button>
@@ -289,7 +291,7 @@
         <div class="composer-row">
           <button type="button" id="photo-btn" class="icon-btn" title="Fotografiraj nalogo" aria-label="Fotografiraj nalogo" data-i18n-title="chat.photo" data-i18n-aria="chat.photo"><i data-icon="camera"></i></button>
           <button type="button" id="sym-btn" class="icon-btn" title="Simboli: √, π, ∫, H₂O …" aria-label="Simboli" aria-pressed="false" data-i18n-title="chat.symbolsTitle" data-i18n-aria="chat.symbols"><i data-icon="sigma"></i></button>
-          <textarea id="input" rows="1" data-izris-v-polju placeholder="Napiši nalogo ali vprašanje …" aria-label="Napiši nalogo ali vprašanje …" data-i18n-ph="chat.placeholder" data-i18n-aria="chat.placeholder"></textarea>
+          <textarea id="input" aria-describedby="chat-kontekst" rows="1" data-izris-v-polju placeholder="Napiši nalogo ali vprašanje …" aria-label="Napiši nalogo ali vprašanje …" data-i18n-ph="chat.placeholder" data-i18n-aria="chat.placeholder"></textarea>
           <button type="button" id="mic-btn" class="icon-btn mic-btn" hidden title="Povej vprašanje" aria-label="Povej vprašanje" aria-pressed="false" data-i18n-title="chat.mic" data-i18n-aria="chat.mic"><i data-icon="mic"></i></button>
           <button id="send" class="primary send" type="submit" aria-label="Pošlji" data-i18n-aria="chat.send"><i data-icon="send"></i><span data-i18n="chat.send">Pošlji</span></button>
         </div>
@@ -513,8 +515,12 @@
       <button type="button" class="list-row" data-go="games"><span class="ic"><i data-icon="gamepad-2"></i></span><span class="lr-text"><b data-i18n="nav.games">Igre</b><small data-i18n="games.meSub">Učenje z igrami</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="corner"><span class="ic"><i data-icon="newspaper"></i></span><span class="lr-text"><b data-i18n="corner.title">Moj kotiček</b><small data-i18n="corner.meSub">Novice o tem, kar te zanima</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="graph"><span class="ic"><i data-icon="calculator"></i></span><span class="lr-text"><b data-i18n="nav.graph">Kalkulator</b><small data-i18n="sc.meSub">Znanstveni, grafični in pretvornik enot</small></span><i data-icon="chevron-right"></i></button>
+    </div>
+    <div class="card list-card">
       <button type="button" class="list-row" data-go="progress"><span class="ic"><i data-icon="chart-column"></i></span><span class="lr-text"><b data-i18n="nav.progress">Napredek</b><small data-i18n="me.progressSub">Šibke točke, aktivnost in teme</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="league"><span class="ic"><i data-icon="trophy"></i></span><span class="lr-text"><b data-i18n="nav.league">Lige</b><small data-i18n="me.leagueSub">Tedenska lestvica, razred in prijatelji</small></span><i data-icon="chevron-right"></i></button>
+    </div>
+    <div class="card list-card">
       <button type="button" class="list-row" data-go="settings"><span class="ic"><i data-icon="settings"></i></span><span class="lr-text"><b data-i18n="nav.settings">Nastavitve</b><small data-i18n="me.settingsSub">Profil, šola, jezik, videz in barve</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="feedback" id="me-feedback" hidden><span class="ic"><i data-icon="message-square-heart"></i></span><span class="lr-text"><b data-i18n="nav.feedback">Povratne informacije</b><small data-i18n="me.feedbackSub">Povej, kaj je dobro in kaj ne</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" id="me-install" hidden><span class="ic"><i data-icon="smartphone"></i></span><span class="lr-text"><b data-i18n="inst.btn">Namesti aplikacijo</b><small data-i18n="inst.meSub">Na začetni zaslon telefona</small></span><i data-icon="chevron-right"></i></button>

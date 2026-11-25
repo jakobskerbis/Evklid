@@ -82,12 +82,14 @@ function place(el) {
   const sheet = window.innerWidth <= SHEET_MAX;
   pop.classList.toggle("fx-sheet", sheet);
   if (sheet) {
+    // Plavajoča kartica z odmikom od robov (j 2026-11-25: list, prilepljen na dno, je bil videti kot noga strani).
+    // Nad spodnjim menijem 8 px nad njim; brez menija odmik in varni rob da CSS (.fx-sheet bottom).
     pop.style.width = "";
-    pop.style.left = "0px";
+    pop.style.left = "";
     pop.style.top = "";
-    pop.style.bottom = `${Math.max(0, window.innerHeight - barTop)}px`;
-    pop.style.paddingBottom = barTop < window.innerHeight ? "14px" : ""; // nad menijem varni rob ni potreben
-    const sheetTop = barTop - pop.offsetHeight;
+    pop.style.bottom = barTop < window.innerHeight ? `${window.innerHeight - barTop + 8}px` : "";
+    pop.style.paddingBottom = "";
+    const sheetTop = pop.getBoundingClientRect().top;
     const r = line();
     if (r.bottom + 8 > sheetTop) {
       // Formula pod listom: zdrsni jo nad list (drsni ovoj pogleda ali cela stran).
