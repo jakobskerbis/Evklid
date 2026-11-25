@@ -644,34 +644,36 @@ function placeBubble() {
 
 // ---------- obvestila (#toast) ----------
 // Obvestilo stoji nad spodnjo vrstico, krogi lekcije in varnim območjem. Če bi tam prekrilo polje, gumb ali površino
-// data-ne-prekrij (npr. odgovor naloge, PSE), gre pod zgornjo vrstico, kadar je tam manj prekritega (UX-105).
-// Tapi gredo skozenj (pointer-events: none, style.css), zato nikoli ne zapre poti do gumba pod njim.
-const TOAST_OVIRE = `${CONTROLS}, ${NE_PREKRIJ}, #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
+// data-ne-prekrij (npr. vrstico za pisanje, odgovor naloge, simulacijo), gre višje, na prvo mesto brez njih, do glave
+// pogleda; če takega mesta ni, tja, kjer prekrije najmanj (UX-105). Tapi gredo skozenj (pointer-events: none, style.css).
+// Vrstica za pisanje in vrstica odgovora štejeta v celoti (ne le polje v njej), da obvestilo ne sede na njun rob.
+const TOAST_OVIRE = `${CONTROLS}, ${NE_PREKRIJ}, body > main.view:not([hidden]):not(.in-okno) :is(.composer-row, .answer-row), #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
+const GLAVE = "body > :is(.topbar, #mock-banner, #test-notice):not([hidden]), body > main.view:not([hidden]):not(.in-okno) :is(.chat-head, .topic-top)";
 export function placeToast() {
   const el = $("#toast");
   if (!el || el.hidden) return;
   const a = area();
   const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
   const dno = Math.min(a.bottom, st?.offsetParent ? st.getBoundingClientRect().top : Infinity);
-  const banners = [...document.querySelectorAll(BANNERS)].map((b) => b.getBoundingClientRect()).filter((r) => r.height > 0);
-  const vrh = Math.max(a.top, ...banners.map((r) => r.bottom));
+  const glave = [...document.querySelectorAll(GLAVE)].map((g) => g.getBoundingClientRect()).filter((r) => r.height > 0 && r.top < window.innerHeight / 2);
+  const vrh = Math.max(0, ...glave.map((r) => r.bottom));
   const ovire = [...document.querySelectorAll(TOAST_OVIRE)]
     .filter((o) => !el.contains(o) && !o.closest("[hidden], [inert]"))
     .map((o) => o.getBoundingClientRect())
-    .filter((r) => r.width > 0 && r.height > 0);
-  const pokrije = () => {
-    const r = el.getBoundingClientRect();
-    return ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(r.bottom, o.bottom) - Math.max(r.top, o.top) > 2).length;
-  };
+    .filter((r) => r.width > 0 && r.height > 0 && r.bottom > vrh && r.top < dno);
   el.style.top = "";
   el.style.bottom = `${Math.max(16, window.innerHeight - dno + 16)}px`;
-  const spodaj = pokrije();
-  if (!spodaj) return;
+  const r = el.getBoundingClientRect();
+  const h = r.height;
+  const pokrije = (y) => ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom) - Math.max(y, o.top) > 2).length;
+  let best = { y: r.top, n: pokrije(r.top) };
+  for (let y = r.top - 8; best.n && y >= vrh + 8; y -= 8) {
+    const n = pokrije(y);
+    if (n < best.n) best = { y, n };
+  }
+  if (best.y === r.top) return;
   el.style.bottom = "auto";
-  el.style.top = `${vrh + 12}px`;
-  if (pokrije() < spodaj) return;
-  el.style.top = "";
-  el.style.bottom = `${Math.max(16, window.innerHeight - dno + 16)}px`;
+  el.style.top = `${Math.round(best.y)}px`;
 }
 
 function hidePreview() {

@@ -203,3 +203,24 @@ test("telefon 390 × 844: prijava napake v lekciji, površina data-ne-prekrij in
     await ctx.close();
   });
 });
+
+test("telefon 360 × 740, klepet: obvestilo ne prekrije vrstice za pisanje in gumbov glave (dimni test 25. 11.)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 360, height: 740 });
+    await p.evaluate(() => {
+      const t = document.querySelector("#toast");
+      t.textContent = "Napaka je zapisana. Najdeš jo v Računu pod »Prijave napak«.";
+      t.hidden = false;
+      t.dataset.at = Date.now();
+    });
+    await p.waitForTimeout(100);
+    assert.deepEqual(await pokrito(p, "#toast"), [], "obvestilo prekrije kontrolnik klepeta");
+    const r = await p.evaluate(() => {
+      const t = document.querySelector("#toast").getBoundingClientRect();
+      return { top: t.top, bottom: t.bottom, head: document.querySelector("#view-chat .chat-head").getBoundingClientRect().bottom, comp: document.querySelector("#view-chat .composer").getBoundingClientRect().top };
+    });
+    assert.ok(r.top >= r.head && r.bottom <= r.comp, `obvestilo je med glavo in vrstico za pisanje: ${JSON.stringify(r)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
