@@ -86,7 +86,7 @@ export function labHooke(el) {
     { key: "r", label: "odčitek [cm]" },
     { key: "x", label: "podaljšek <i>x</i> [cm]" },
   ], { empty: "Še ni meritev. Najprej zapiši odčitek kazalca brez uteži, nato obešaj uteži." });
-  const graph = dataGraph({ x: [0, 40], y: [0, 4], xStep: 5, yStep: 0.5, xLabel: "x [cm]", yLabel: "F [N]", title: "Sila v odvisnosti od podaljška vzmeti" });
+  const graph = dataGraph({ x: [0, 40], y: [0, 4], xStep: 5, yStep: 0.5, xLabel: "x [cm]", yLabel: "F [N]", title: "Sila v odvisnosti od podaljška vzmeti", formula: "<i>F</i> = <i>k</i> · <i>x</i>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = []; // { g: ime vzmeti, x [cm], y = F [N] }

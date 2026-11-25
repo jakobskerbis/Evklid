@@ -83,4 +83,12 @@ test("»Preveri se« po poskusu (povezave C4): vaja iste teme, ← in Nazaj vrne
   assert.match(app, /\["competition", "exams", "uci"\]\.includes\(state\.backTo\)/, "tipka Nazaj iz teme vrne v Uči se");
   assert.match(app, /name === "uci" && state\.backTo === "uci"\) setBack\("path"\)/, "vrnitev v poskus porabi »← Laboratorij«");
   for (const k of ["lab.check", "lab.checkText"]) assert.ok(SL[k], k);
+test("povezave C3: graf meritev izpiše formulo iz lekcije (prvih 5 poskusov)", () => {
+  const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
+  assert.match(read("lab.js"), /if \(formula\) wrap\.append\(h\("p", \{ class: "lab-graph-formula", html: `Formula: \$\{formula\}` \}\)\)/);
+  assert.ok(read("lab-fiz.js").includes("formula: tex(String.raw`I = \\frac{U}{R}`)"));
+  assert.ok(read("lab-elektrika.js").includes("formula: tex(String.raw`R = \\frac{U}{I}`)"));
+  assert.match(read("lab-sile.js"), /formula: "<i>F<\/i> = <i>k<\/i> · <i>x<\/i>"/);
+  assert.match(read("lab-optika.js"), /formula: "<i>n<\/i>₁ sin α = <i>n<\/i>₂ sin β"/);
+  assert.ok(read("lab-optika.js").includes("formula: tex(String.raw`\\frac{1}{f} = \\frac{1}{a} + \\frac{1}{b}`)"));
 });
