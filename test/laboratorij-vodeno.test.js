@@ -174,6 +174,39 @@ test("step checks: a done() reads only what the student did", () => {
   assert.equal(lr("1,45"), true);
   assert.equal(lr("1,49"), false, "vrednost iz učbenika");
   assert.equal(lr("1,45", "akril → zrak"), false, "računa drugo serijo");
+    // lab-newton2: preizkus trenja šteje le najnovejši izid po libeli; a(F) le pri isti skupni masi, a(1/m) le pri isti sili.
+    const nw = KORAKI["lab-newton2"].koraki;
+    const LIB = "Progo si izravnal z libelo (brez podložke).", TOK = "Preizkus trenja: … Hitrost je skoraj enaka: trenje je izravnano.", TMAL = "Preizkus trenja: … Voziček se ustavlja: podložka je premajhna.";
+    assert.equal(nw[2].done(c({ zadnji: zadnji([LIB, TOK]) })), true);
+    assert.equal(nw[2].done(c({ zadnji: zadnji([TOK, LIB]) })), false, "izid pred izravnavo z libelo");
+    assert.equal(nw[2].done(c({ zadnji: zadnji([LIB, TOK, TMAL]) })), false, "podložko je nato spremenil");
+    const nv = (m, F) => ({ "m [g]": m, "F [N]": F, "v₁ [m/s]": "0,3", "v₂ [m/s]": "0,7", "a [m/s²]": "0,6" });
+    assert.equal(nw[5].done(c({ vrstice: [nv("320", "0,196"), nv("320", "0,294"), nv("320", "0,392"), nv("320", "0,490")] })), true);
+    assert.equal(nw[5].done(c({ vrstice: [nv("320", "0,196"), nv("330", "0,294"), nv("340", "0,392"), nv("350", "0,490")] })), false, "utežice iz škatle: masa se spreminja");
+    assert.equal(nw[7].done(c({ vrstice: [nv("320", "0,490"), nv("570", "0,490"), nv("820", "0,490")] })), true);
+    assert.equal(nw[7].done(c({ vrstice: [nv("320", "0,490"), nv("570", "0,490"), nv("820", "0,588")] })), false, "sila ni stalna");
+  }
+  {
+    // lab-hooke: začetni odčitek brez paralakse, vrsta na premici (ponovljena masa nadomesti napačno), vpisani k.
+    const hk = KORAKI["lab-hooke"].koraki;
+    const Z = "Začetni odčitek: 5,2 cm. Podaljšek je odčitek z utežmi minus ta odčitek.", PAR = "Gledal si od zgoraj: zaradi paralakse je odčitek za ~2 mm prevelik.";
+    const hv = (m, x, vz = "mehka") => ({ vzmet: vz, "m [g]": String(m), "F = mg [N]": "", "odčitek [cm]": "", "podaljšek x [cm]": x });
+    const mehka = (o) => c({ par: (n) => (n === "vzmet" ? "mehka" : ""), vrstice: [hv(0, "0,0")], ...o });
+    assert.equal(hk[1].done(mehka({ dnevnik: [Z] })), true);
+    assert.equal(hk[1].done(mehka({ dnevnik: [PAR, Z] })), false, "začetni odčitek s paralakso");
+    assert.equal(hk[1].done(mehka({ dnevnik: [PAR, Z, "Nova vzmet je na stojalu. Znova zapiši odčitek brez uteži.", Z] })), true, "nova vzmet, odčitek znova");
+    // k = 15 N/m: x = m g / k
+    const vrsta = [50, 100, 150, 200, 250].map((m) => hv(m, ((m / 1000) * 9.81 / 0.15).toFixed(1).replace(".", ",")));
+    assert.equal(hk[3].done(c({ vrstice: vrsta })), true);
+    assert.equal(hk[3].done(c({ vrstice: [...vrsta.slice(0, 4), hv(250, "17,4")] })), false, "odčitek pri nihajoči vzmeti (1 cm narobe)");
+    assert.equal(hk[3].done(c({ vrstice: [...vrsta.slice(0, 4), hv(250, "17,4"), vrsta[4]] })), true, "masa izmerjena znova");
+    assert.equal(hk[3].done(c({ vrstice: vrsta.map((r) => ({ ...r, vzmet: "trda" })) })), false, "druga vzmet");
+    const racun = (v, izbira = "", ok = true) => c({ vrstice: vrsta, racun: () => ok, par: (n) => (n === "tvoj rezultat [N/m]" ? v : n === "kaj računaš" ? izbira : "") });
+    assert.equal(hk[5].done(racun("15,0")), true);
+    assert.equal(hk[5].done(racun("15,0", "", false)), false, "ni pritisnil »Preveri moj račun« (ali je le odkril rešitev)");
+    assert.equal(hk[5].done(racun("0,15")), false, "N/cm namesto N/m");
+    assert.equal(hk[5].done(racun("15,0", "trda vzmet")), false, "izbran račun za drugo vzmet");
+    assert.equal(hk[7].done(c({ zadnji: zadnji(["Brez uteži … trajno raztegnjena, ker si jo obremenil prek meje prožnosti.", "Nova vzmet je na stojalu. Znova zapiši odčitek brez uteži."]) })), true);
   }
 });
 

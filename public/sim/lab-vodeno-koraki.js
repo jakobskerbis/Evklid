@@ -13,11 +13,15 @@ import { stevilo, celica, kjer, razlicne, ujemanje } from "./lab-vodeno-pomoc.js
 // Vodeni poskusi faze 2 (docs/laboratorij.md »Vodeni poskus«): vsak v svoji datoteki public/sim/vodeno/<ključ>.js.
 import labElektroliza from "./vodeno/lab-elektroliza.js";
 import labGrelnik from "./vodeno/lab-grelnik.js";
+import labHooke from "./vodeno/lab-hooke.js";
 import labLom from "./vodeno/lab-lom.js";
+import labNewton2 from "./vodeno/lab-newton2.js";
 const FAZA2 = {
   "lab-elektroliza": labElektroliza,
   "lab-grelnik": labGrelnik,
+  "lab-hooke": labHooke,
   "lab-lom": labLom,
+  "lab-newton2": labNewton2,
 };
 
 export { stevilo, celica, ujemanje };
