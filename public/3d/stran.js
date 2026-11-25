@@ -586,6 +586,13 @@ function gumbLekcije(id, naslov) {
     b.setAttribute("aria-expanded", "false");
     b.focus();
   });
+  // Dotik ali klik zunaj seznama ga zapre (kot drugi spustni seznami); ob menjavi modela se poslušalec odstrani.
+  document.addEventListener("pointerdown", function zunaj(e) {
+    if (!ovoj.isConnected) return document.removeEventListener("pointerdown", zunaj, true);
+    if (seznam.hidden || ovoj.contains(e.target)) return;
+    seznam.hidden = true;
+    b.setAttribute("aria-expanded", "false");
+  }, true);
   fetch(`/api/students/${UCENEC}/svet3d/${encodeURIComponent(id)}/teme`, { credentials: "same-origin" })
     .then((r) => (r.ok ? r.json() : { teme: [] }))
     .then((d) => {
