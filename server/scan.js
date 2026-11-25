@@ -3,30 +3,48 @@
 //   POST /api/students/:id/scan/solve  { text, goal?, given?, sought? } → { solution }       AI rešitev po korakih
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
-// (public/scan/verify.js); nepreverjena se pokaže z opozorilom, nikoli kot »preverjeno«.
+// (public/scan/verify.js); vsaka rešitev dobi enega od petih statusov (public/scan/status.js), »Preverjeno« samo z dokazom.
 import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
-import { verifyAi } from "../public/scan/verify.js";
+import { verifyAi, normalizeSet } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { casCheck } from "./cas.js";
+import { STATUSES } from "../public/scan/status.js";
 
-// AI rešitev preverita dve neodvisni kodi: numerična (public/scan/verify.js) in SymPy (server/cas.js).
-// SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja numerično preverjanje.
+// AI rešitev preverita dve neodvisni kodi: public/scan/verify.js (točna algebra za polinome, sicer numerika) in
+// SymPy (server/cas.js). SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja verify.js.
 // Ujame tudi rešitve izven numeričnega iskanja (|x| > 10⁶) in točne vrednosti (√2 proti 1,414).
-// Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam SymPy ne odloča.
-// Kjer numerika popolnosti ne more preveriti (partial: sistem, periodične rešitve, »ni rešitve«), brez
-// odločitve SymPy rešitev ni »preverjena«, ampak nepreverjena (reason "unknown"; AUDIT-001).
+// Status (public/scan/status.js): »verified« samo, ko SymPy ali točna algebra dokaže celotno množico rešitev;
+// numerična potrditev je največ »numeric«, sistem in periodične rešitve brez dokaza popolnosti »partial« (AUDIT-001).
+// verified: true samo pri statusu »verified« (stari odjemalci prikažejo značko »preverjeno« le takrat).
+// Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam ne odloča nobena koda (status »unverified«).
+const periodicClaim = (sol) => (sol?.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(String(s)));
 export async function verifyAiFull(text, sol, { cas = true } = {}) {
   const num = verifyAi(text, sol);
   const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
-  if (c.ok === true) return { verified: true, reason: null };
+  if (c.ok === true) {
+    // SymPy pri periodičnih rešitvah preveri popolnost samo na [−20, 20] (worker.py solve_one): »delno«.
+    // Zaokroženo decimalno število (1.414) SymPy sprejme s toleranco (worker.py decimals_tol): to je približek,
+    // »Preverjeno« ostane le, če ga točna algebra potrdi kot točno vrednost (2.5).
+    const rounded = /\d\.\d/.test(JSON.stringify([sol?.solutions, sol?.value])) && num.status !== "verified";
+    const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded ? "numeric" : "verified";
+    return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
+  }
+  // Zaokrožena krajišča neenačbe SymPy primerja točno in zavrne. Kadar je lokalni dokaz (Sturm) vse drugo dokazal in
+  // je numeričen le zaradi zaokroženih krajišč (num.rounded), velja »numerično«; izid same mreže točk ne prevlada.
+  if (c.ok === false && sol?.kind === "inequality" && num.rounded && num.status === "numeric") {
+    return { verified: false, reason: "unknown", status: "numeric" };
+  }
   if (c.ok === false) {
     const missing = num.reason === "missing" || /^manjka rešitev/.test(c.why || "");
-    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why, status: "wrong" };
   }
-  if (num.verified && num.partial) return { verified: false, reason: "unknown" };
-  return num;
+  const status = num.status || (num.verified ? "numeric" : "unverified");
+  if (status === "verified") return { verified: true, reason: null, status };
+  return { verified: false, reason: num.verified ? "unknown" : num.reason, ...(num.missing ? { missing: num.missing } : {}), status };
 }
+// boljši status prej (za izbiro med prvim in ponovljenim odgovorom)
+const statusRank = (s) => STATUSES.length - STATUSES.indexOf(s || "unverified");
 
 // Zapis za SymPy (server/cas/worker.py). Tam je log brez osnove ln, v šoli in v public/graph/math.js pa desetiški,
 // zato log(x) → lg(x); log_b(x), log_(b)(x), log_{b}(x) → log(x, b) (tako ga piše READ_PROMPT); √2 → sqrt(2).
@@ -103,6 +121,9 @@ async function casScan(text, sol) {
     return casCheck("solve", [eqs.join(", "), names.join(", "), claim]);
   }
   if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [casText(prep(text)), casText(prep(sol.value))]);
+  // Neenačba (P3-3): obstoječa operacija »ineq« primerja množico rešitev s SymPy solveset (worker.py op_ineq).
+  // Dvojne neenačbe (1 < x < 5) worker ne razčleni in vrne null (velja verify.js).
+  if (sol?.kind === "inequality" && sol.value) return casCheck("ineq", [casText(prep(text)), v, casText(normalizeSet(sol.value))]);
   if (sol?.kind === "derivative" && sol.value) {
     const f = String(text).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
     return casCheck("diff", [casText(prep(f)), v, casText(prep(sol.value))]);
@@ -226,6 +247,14 @@ const GOAL_TEXT = {
   solve: "Task: solve it.",
 };
 
+// Povratna informacija za ponovni poskus: en niz ali seznam (en vnos za vsak neuspel poskus).
+function feedbackText(feedback) {
+  const list = [].concat(feedback || []).filter(Boolean);
+  if (!list.length) return "";
+  if (list.length === 1) return `Your previous answer failed an automatic check (${list[0]}). Find the mistake and answer again.`;
+  return `Your previous answers failed an automatic check:\n${list.map((f, i) => `- attempt ${i + 1}: ${f}`).join("\n")}\nFind the mistake and answer again; do not repeat a rejected answer.`;
+}
+
 export function solvePrompt(text, lang, feedback = null, goal = null, given = [], sought = "") {
   return (
     `A student wants a step-by-step solution of this maths problem (calculator syntax): ${text}\n` +
@@ -237,9 +266,9 @@ export function solvePrompt(text, lang, feedback = null, goal = null, given = []
     "Return only JSON:\n" +
     '{"kind":"equation|inequality|system|expression|arith|derivative|integral|limit|other","variable":"x","problem_tex":"LaTeX",' +
     '"answer_tex":"LaTeX of the final answer","solutions":["values in calculator syntax, one per solution (equations); for periodic solutions use k, e.g. pi/6+2*k*pi; for a system one string like x=2; y=-1"],' +
-    '"value":"final result in calculator syntax (expression, arith, derivative, integral without +C, limit)",' +
+    '"value":"final result in calculator syntax (expression, arith, derivative, integral without +C, limit; for an inequality its solution set as intervals joined by U, e.g. (-oo, -2) U [3, oo), {} if none, R if all)",' +
     '"methods":[{"name":"short method name","steps":[{"title":"what we do, one sentence","tex":"LaTeX of the line after this step","why":"why this step is allowed or how to do it, 1–3 sentences; inline maths in $...$"}]}]}' +
-    (feedback ? `\nYour previous answer failed an automatic check (${feedback}). Find the mistake and answer again.` : "")
+    (feedbackText(feedback) ? `\n${feedbackText(feedback)}` : "")
   );
 }
 
@@ -265,43 +294,83 @@ export function cleanSolution(s) {
   };
 }
 
-export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "" }) {
+// Največ toliko klicev AI za eno nalogo: ko preverjanje pokaže napačno ali manjkajočo rešitev (ali odgovor ni
+// berljiv), strežnik sam poskusi znova s povratno informacijo vseh prejšnjih poskusov; učenec ne pritiska ničesar
+// (j, 25. 11. 2026: »Naj preverjanje avtomatsko poskusi znova brez obremenjevanja učenca«).
+export const SOLVE_ATTEMPTS = 3;
+
+// Kaj je bilo narobe s poskusom (za naslednji poziv AI): navedeni odgovor in izid preverjanja.
+export function retryFeedback(sol, check, { cut = false } = {}) {
+  if (cut) return "your answer was cut off because it was too long: give fewer, shorter steps and only one method";
+  if (!sol) return "the answer was not the requested JSON";
+  const vals = (sol.solutions || []).map(String).filter(Boolean);
+  const said = sol.kind === "inequality" && sol.value ? `your solution set was ${sol.value}` : vals.length ? `your solutions were ${vals.join("; ")}` : sol.value ? `your result was ${sol.value}` : "you gave no solution";
+  const miss = (check.missing || []).filter(Number.isFinite);
+  const why = check.cas
+    ? `an exact check says: ${check.cas}`
+    : check.reason === "missing"
+      ? miss.length
+        ? `x ≈ ${miss.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation`
+        : "a solution is missing"
+      : "substituting your result back does not give the original";
+  return `${said}; ${why}`.slice(0, 600); // dolžina omejena: rezerva poti računa z ~400 bajti na poskus
+}
+
+/**
+ * Reševanje s samodejnimi ponovitvami. ask(feedback[], { cut }) → { sol, usage, model, cut }, verify(sol) → izid preverjanja.
+ * canAfford(): rezervira strošek naslednjega klica (meje porabe učenca); false → brez nadaljnjih ponovitev.
+ * Ponovi, dokler je zadnji poskus napačen (wrong / missing) ali neberljiv, največ attempts klicev. Pri nalogi s podatki
+ * (canRetry: false) preverjanje vidi le predlogo, zato napačnost ne sproži ponovitve (neberljiv odgovor jo).
+ * Obdrži najboljši poskus po statusu (prvi pri enakem).
+ */
+export async function solveWithRetries({ ask, verify, canRetry = true, attempts = SOLVE_ATTEMPTS, canAfford = () => true }) {
+  const bad = (c) => c.reason === "wrong" || c.reason === "missing";
+  let out = await ask([]);
+  const usage = [out.usage];
+  let check = out.sol ? await verify(out.sol) : { verified: false, reason: "parse", status: "unverified" };
+  let last = { sol: out.sol, check, cut: !!out.cut };
+  const notes = [];
+  while (usage.length < attempts && (!last.sol || (canRetry && bad(last.check)))) {
+    if (!canAfford()) break; // za naslednji klic ni več prostora v mejah porabe: ostane najboljši poskus
+    notes.push(retryFeedback(last.sol, last.check, { cut: last.cut }));
+    let again;
+    try {
+      again = await ask([...notes], { cut: last.cut });
+    } catch (err) {
+      // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane najboljša rešitev.
+      console.warn(`[evklid] reševanje: ponovitev ni uspela (${err?.message || err}), ostane najboljša rešitev`);
+      break;
+    }
+    usage.push(again.usage);
+    const c2 = again.sol ? await verify(again.sol) : { verified: false, reason: "parse", status: "unverified" };
+    last = { sol: again.sol, check: c2, cut: !!again.cut };
+    if (again.sol && (!out.sol || statusRank(c2.status) > statusRank(check.status))) {
+      out = again;
+      check = c2;
+    }
+  }
+  return { out, check, usage };
+}
+
+export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "", canAfford }) {
   const model = SOLVE_MODEL();
   if (isMockMode()) return { mock: true, solution: null, usage: null, model };
-  const ask = async (feedback) => {
+  const ask = async (feedback, { cut = false } = {}) => {
     const final = await getClient().messages.create({
       model,
       max_tokens: 8000,
       thinking: { type: "adaptive" },
-      output_config: { effort: "medium" },
+      // ponovitev po napaki: več razmisleka (meja izhodnih žetonov ostane ista); po odrezanem odgovoru ne,
+      // ker bi daljše razmišljanje odgovor spet odrezalo
+      output_config: { effort: feedback.length && !cut ? "high" : "medium" },
       messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given, sought) }],
     });
-    return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model };
+    return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model, cut: final.stop_reason === "max_tokens" };
   };
-  let out = await ask(null);
-  let usage = [out.usage];
-  let check = out.sol ? await verifyAiFull(text, out.sol, { cas: !given.length }) : { verified: false, reason: "parse" };
-  // Ena ponovitev, kadar preverjanje pokaže napačno ali manjkajočo rešitev. Pri nalogi s podatki (parametri)
-  // preverjanje vidi le predlogo f(x) = …, zato ponovitve ne sproži (rešitev ostane označena kot nepreverjena).
-  if (out.sol && !given.length && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
-    const fb = check.cas ? `an exact check says: ${check.cas}` : check.reason === "missing" ? `x ≈ ${check.missing.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation` : "substituting your result back does not give the original";
-    // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane prva rešitev.
-    let again = null;
-    try {
-      again = await ask(fb);
-    } catch (err) {
-      console.warn(`[evklid] reševanje: ponovitev ni uspela (${err?.message || err}), ostane prva rešitev`);
-    }
-    if (again) {
-      usage.push(again.usage);
-      const c2 = again.sol ? await verifyAiFull(text, again.sol, { cas: !given.length }) : { verified: false };
-      if (again.sol && (c2.verified || !out.sol)) {
-        out = again;
-        check = c2;
-      }
-    }
-  }
-  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null } : null, usage, model: out.model };
+  // Naloga s podatki: besedilo je le predloga, preverjanje ne odloča (status »unverified«, ne »napačno«)
+  const verify = async (sol) => (given.length ? { verified: false, reason: "given", status: "unverified" } : await verifyAiFull(text, sol));
+  const { out, check, usage } = await solveWithRetries({ ask, verify, canRetry: !given.length, ...(canAfford ? { canAfford } : {}) });
+  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null, status: check.status || "unverified", attempts: usage.length } : null, usage, model: out.model || model };
 }
 
 // Branje naloge za Inštruktorja: vse predmete (matematika, fizika, kemija, biologija), besedilo kot na listu, formule
@@ -410,12 +479,15 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const sought = cleanSought(rawSought);
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
-    // Do dva klica (ponovitev ob napačni rešitvi), vsak z navodili, nalogo in podatki ter do 8000 izhodnimi žetoni.
-    const input = 6000 + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
-    const hold = usage?.guard ? usage.guard(s.id, 2 * callMaxUsd(SOLVE_MODEL(), input, 8000)) : null;
+    // Do SOLVE_ATTEMPTS klicev (samodejne ponovitve ob napačni rešitvi), vsak z navodili, nalogo, podatki,
+    // povratno informacijo prejšnjih poskusov (do 600 znakov na poskus) ter do 8000 izhodnimi žetoni.
+    // Rezerviramo en klic; vsako ponovitev posebej, šele ko je potrebna (meja ni strožja kot pred ponovitvami).
+    const input = 6000 + 600 * SOLVE_ATTEMPTS + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
+    const perCall = callMaxUsd(SOLVE_MODEL(), input, 8000);
+    const hold = usage?.guard ? usage.guard(s.id, perCall) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
-      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl" });
+      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl", canAfford: () => !hold || hold.take(perCall) });
       if (out.mock) return res.json({ solution: null, mock: true });
       for (const u of [].concat(out.usage || [])) if (u) usage?.log(s.id, out.model, u, "skeniranje");
       if (!out.solution) return res.status(502).json({ error: "Rešitve ni bilo mogoče sestaviti. Poskusi znova ali vprašaj inštruktorja." });

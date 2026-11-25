@@ -7,6 +7,8 @@
 import { h, segmented } from "./kit.js";
 import { stanjePoskusa } from "./lab.js";
 import { KORAKI, stevilo } from "./lab-vodeno-koraki.js";
+import { MATURA } from "./lab-matura-naloge.js";
+import { maturaKartica } from "./lab-matura.js";
 
 export const imaVodeno = (key) => Object.hasOwn(KORAKI, key);
 
@@ -63,12 +65,14 @@ function najdi(root, t) {
 }
 
 // Priklop na nameščen poskus. `mount` je element, v katerega je mountSim narisal poskus.
-// nacin: "vodeno" | "prosto"; onNacin(n) ob preklopu; onKonec() enkrat, ko so opravljeni vsi koraki.
-export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
+// nacin: "vodeno" | "prosto" | "matura" (le poskusi z nalogo v lab-matura-naloge.js); onNacin(n) ob preklopu;
+// onKonec() enkrat, ko so opravljeni vsi koraki; onMatura(dogodek, ocena?) ob »zacetek« in »oddano« (lab-matura.js).
+export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec, onMatura } = {}) {
   const def = KORAKI[key];
   mount?._vodi?.stop(); // isti element z novim poskusom: prejšnje vodenje se ustavi
   if (!def || !mount) return null;
-  let mode = nacin === "prosto" ? "prosto" : "vodeno";
+  const mat = MATURA[key] || null;
+  let mode = nacin === "prosto" || (nacin === "matura" && mat) ? nacin : "vodeno";
   let i = 0; // trenutni korak
   let dnevnik = []; // { t, k } vsa sporočila dnevnika od začetka vodenja
   let controls = null; // .demo-controls, v katerega je kartica vstavljena (nov element = poskus zgrajen znova)
@@ -76,7 +80,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
   const opazovani = new WeakSet();
   const cilji = new Set();
 
-  const bar = segmented({ options: [["vodeno", "Vodeno"], ["prosto", "Prosto"]], value: mode, onChange: (v) => setMode(v) });
+  const bar = segmented({ options: [["vodeno", "Vodeno"], ["prosto", "Prosto"], ...(mat ? [["matura", "Matura"]] : [])], value: mode, onChange: (v) => setMode(v) });
   bar.classList.add("lab-vod-nacin");
   bar.setAttribute("aria-label", "način poskusa");
   const card = h("section", { class: "lab-vod", "aria-label": "vodeni poskus" });
@@ -91,7 +95,11 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
     el.scrollIntoView({ block: "start" });
     el.querySelector?.("button, input, select")?.focus?.({ preventScroll: true });
   });
-  const ui = h("div", { class: "lab-vod-wrap" }, bar, card, glas);
+  // Maturitetni poskus: kartica naloge namesto kartice korakov (meritve sam, rezultat oceni program).
+  const matK = mat
+    ? maturaKartica({ mount, key, def: mat, kontekst: () => kontekst(mount, dnevnik), onZacni: () => (onMatura?.("zacetek"), tick()), onOddaj: (o) => onMatura?.("oddano", o) })
+    : null;
+  const ui = h("div", { class: "lab-vod-wrap" }, bar, card, ...(matK ? [matK.el] : []), glas);
   const cilj = () => {
     const k = mode === "vodeno" ? def.koraki[i] : null;
     if (!k) return null;
@@ -101,6 +109,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
 
   function setMode(n) {
     if (n === mode) return;
+    if (mode === "matura") matK?.pokazi();
     mode = n;
     onNacin?.(n);
     render(true);
@@ -111,7 +120,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
     if (!c) return false;
     if (c !== controls) {
       // Prvi priklop ali poskus zgrajen znova (»Ponastavi«): vodenje od začetka.
-      if (controls) (i = 0), (dnevnik = []), (konecJavljen = false), (shown = -1);
+      if (controls) (i = 0), (dnevnik = []), (konecJavljen = false), (shown = -1), matK?.znova();
       controls = c;
     }
     // Samo dnevniki (lab.js → eventLog), ne cela risba: ta se med animacijo spreminja vsako sličico.
@@ -146,6 +155,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
       const c = kontekst(mount, dnevnik);
       while (i < def.koraki.length && safe(() => def.koraki[i].done(c))) i++;
     }
+    if (mode === "matura") matK?.tick();
     render();
   }
   const safe = (f) => {
@@ -174,7 +184,9 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
     shown = i;
     shownMode = mode;
     card.hidden = mode !== "vodeno";
-    if (mode !== "vodeno") return card.replaceChildren(), (glas.textContent = "");
+    if (matK) matK.el.hidden = mode !== "matura";
+    if (mode === "matura") matK.tick();
+    if (mode !== "vodeno") return card.replaceChildren(), (glas.textContent = mode === "matura" ? "Maturitetni poskus" : "");
     const n = def.koraki.length;
     const done = i >= n;
     const prej = i > 0 ? def.koraki[i - 1] : null;
@@ -204,6 +216,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
   function stop() {
     if (mount._vodi === api) delete mount._vodi;
     ui.remove();
+    matK?.pokazi();
     for (const el of cilji) el.classList.remove("lab-vod-cilj");
     clearInterval(timer);
     clearTimeout(sched);

@@ -396,7 +396,7 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
         const b = await account(client, store, "drugi@priprava.si");
         const p = await nova(a, { naslov: "Kopija TAJNO" });
         await nalozi(a, p.id, PDF, { ime: "zapiski.pdf" });
-        await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", body: { besedilo: `Besedilo ${MARKER}` } });
+        await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", body: { besedilo: "Besedilo IZSEK-V-IZVOZU" } });
         const pb = await nova(b, { naslov: "Bor" });
         // Večji izvirnik (strani s prelivom v SQLite), da izbris preveri tudi proste strani.
         const vb = (await nalozi(b, pb.id, Buffer.concat([PDF, crypto.randomBytes(200_000)]))).body.vir;
@@ -439,6 +439,8 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
         assert.equal(ex.body.other.priprava_viri.length, 2);
         assert.equal(ex.body.other.priprava_viri.find((v) => v.vrsta === "pdf").ime, "zapiski.pdf");
         assert.equal(ex.body.other.priprava_izvirniki, undefined);
+        // Izseki (PR 3a) so učenčevi podatki: v izvozu odšifrirani; izvirniki ne.
+        assert.ok(ex.body.other.priprava_izseki.some((z) => z.besedilo === "Besedilo IZSEK-V-IZVOZU"));
         assert.ok(!json.includes(MARKER));
         assert.ok(!json.includes(PDF.toString("base64").slice(0, 24)));
         assert.ok(!json.includes("Bor"));
@@ -470,13 +472,13 @@ test("migracija na obstoječi bazi: tabele nastanejo, ponoven zagon ne spremeni 
     let store = openDb(file);
     store.db.prepare("INSERT INTO students (id, name, settings) VALUES (1, 'A', '{}')").run();
     // Starejša baza brez tabel priprave, z načrtom testa v test_plans (pred PR 2b).
-    store.db.exec("DROP TABLE priprava_izvirniki; DROP TABLE priprava_viri; DROP TABLE priprave;");
+    store.db.exec("DROP TABLE priprava_prepisi; DROP TABLE priprava_izseki; DROP TABLE priprava_izvirniki; DROP TABLE priprava_viri; DROP TABLE priprave;");
     store.db.exec("CREATE TABLE test_plans (student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE, path_key TEXT NOT NULL, units TEXT NOT NULL, test_date TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')), event_id TEXT)");
     store.db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (1, 'MAT-SS-4', '[1]', '2026-12-01')").run();
     store.db.close();
     store = openDb(file);
     const t = (n) => !!store.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(n);
-    assert.ok(t("priprave") && t("priprava_viri") && t("priprava_izvirniki"));
+    assert.ok(t("priprave") && t("priprava_viri") && t("priprava_izvirniki") && t("priprava_izseki"));
     assert.equal(t("test_plans"), false);
     assert.deepEqual({ ...store.db.prepare("SELECT student_id, pot, sklopi, datum_testa, aktivna FROM priprave").get() }, { student_id: 1, pot: "MAT-SS-4", sklopi: "[1]", datum_testa: "2026-12-01", aktivna: 1 });
     const fk = store.db.prepare("PRAGMA foreign_key_list(priprava_izvirniki)").all();

@@ -289,7 +289,6 @@ test("casText: zapis za SymPy (log desetiški, log_b, √, implicitno množenje 
 
 test("AUDIT-001: without SymPy an unproven complete solution set is not »verified«", async () => {
   const partial = [
-    ["x=10000000", { kind: "equation", variable: "x", solutions: [] }],
     ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2+0*k"] }],
     ["x^2=1; y=0", { kind: "system", solutions: ["x=1; y=0"] }],
     ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi"] }],
@@ -300,20 +299,28 @@ test("AUDIT-001: without SymPy an unproven complete solution set is not »verifi
     const n = verifyAi(t, sol);
     assert.equal(n.verified, true, `${t}: dane rešitve držijo`);
     assert.equal(n.partial, true, `${t}: popolnost ni preverjena`);
-    assert.deepEqual(await verifyAiFull(t, sol, { cas: false }), { verified: false, reason: "unknown" }, t);
+    assert.equal(n.status, "partial", t);
+    assert.deepEqual(await verifyAiFull(t, sol, { cas: false }), { verified: false, reason: "unknown", status: "partial" }, t);
   }
+  // »Ni rešitve« pri x = 10⁷: numerično iskanje (±10⁶) ničle ne najde, Sturmov izrek pa jo prešteje (P3-2).
+  const far = await verifyAiFull("x=10000000", { kind: "equation", variable: "x", solutions: [] }, { cas: false });
+  assert.equal(far.reason, "missing");
+  assert.equal(far.status, "wrong");
   // Napačna ali manjkajoča rešitev ostane »wrong« / »missing« (inštruktor jo popravi), ne »unknown«.
   assert.equal((await verifyAiFull("x^2=1; y=0", { kind: "system", solutions: ["x=2; y=0"] }, { cas: false })).reason, "wrong");
   assert.equal((await verifyAiFull("x^2-1=0", { kind: "equation", variable: "x", solutions: [] }, { cas: false })).reason, "missing");
-  // Kjer numerika popolnost preveri (navadna enačba, vse ničle v iskanem območju), ostane preverjeno.
-  for (const [t, sol] of [
-    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2", "x=-2"] }],
-    ["x^2-5x+6=0", { kind: "equation", variable: "x", solutions: ["2", "3"] }],
-    ["x=3", { kind: "equation", variable: "x", solutions: ["3"] }],
-    ["x*e^x", { kind: "derivative", value: "e^x + x*e^x" }],
+  // Polinomske enačbe dokaže točna algebra (Sturm) tudi brez SymPy; numerična potrditev je le »numeric«.
+  for (const [t, sol, status] of [
+    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2", "x=-2"] }, "verified"],
+    ["x^2-5x+6=0", { kind: "equation", variable: "x", solutions: ["2", "3"] }, "verified"],
+    ["x=3", { kind: "equation", variable: "x", solutions: ["3"] }, "verified"],
+    ["x*e^x", { kind: "derivative", value: "e^x + x*e^x" }, "numeric"],
+    ["sqrt(x+3)=x-3", { kind: "equation", variable: "x", solutions: ["6"] }, "numeric"],
   ]) {
     assert.equal(verifyAi(t, sol).partial, undefined, t);
-    assert.equal((await verifyAiFull(t, sol, { cas: false })).verified, true, t);
+    const full = await verifyAiFull(t, sol, { cas: false });
+    assert.equal(full.status, status, t);
+    assert.equal(full.verified, status === "verified", t);
   }
 });
 
@@ -462,7 +469,7 @@ test("AI solve: sought alone keeps the check and retry on (given switches them o
   process.env.ANTHROPIC_API_KEY = "test-ni-pravi";
   delete process.env.EVKLID_MOCK;
   const prompts = [];
-  // napačna rešitev x=5 za x+1=3: s preverjanjem (given prazen) sledi ponovitev, brez njega ne
+  // napačna rešitev x=5 za x+1=3: s preverjanjem (given prazen) sledijo ponovitve, brez njega ne
   setClient({
     messages: {
       create: async (req) => (prompts.push(req.messages[0].content), {
@@ -474,7 +481,9 @@ test("AI solve: sought alone keeps the check and retry on (given switches them o
   });
   try {
     const a = await solveWithAi({ text: "x+1=3", sought: "\\text{rešitev}" });
-    assert.equal(prompts.length, 2, "sought ne sme izklopiti preverjanja");
+    // napačen odgovor: strežnik sam poskusi znova do SOLVE_ATTEMPTS (3) klicev
+    assert.equal(prompts.length, 3, "sought ne sme izklopiti preverjanja");
+    assert.match(prompts[2], /attempt 2: your solutions were 5/);
     assert.equal(a.solution.verified, false);
     assert.match(prompts[0], /asks to find.*\\text\{rešitev\}/);
     prompts.length = 0;
@@ -523,7 +532,7 @@ test("sought is shown as plain text (breaks between words) and a plain expressio
 
 test("konstantna naloga brez d/dx kot »derivative« z 0 ni preverjena (meritev skenerja s11), drugo ostane", () => {
   const t = "∫_0^2 (3*x^2-2*x+1) dx";
-  assert.deepEqual(verifyAi(t, { kind: "derivative", value: "0" }), { verified: false, reason: "kind" });
+  assert.deepEqual(verifyAi(t, { kind: "derivative", value: "0" }), { verified: false, reason: "kind", status: "unverified" });
   assert.equal(verifyAi(t, { kind: "expression", value: "0" }).verified, false);
   assert.equal(verifyAi(t, { kind: "integral", value: "0" }).verified, false);
   assert.equal(verifyAi(t, { kind: "integral", value: "6" }).verified, true);

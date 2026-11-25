@@ -33,7 +33,7 @@ export { stevilo, celica, ujemanje };
 // Zadnje pipetiranje (lab-titracija.js → pipette): vzorec HCl, pipeta sprana z vzorcem, erlenmajerica ne z vzorcem.
 // Opozorili o mokri pipeti in erlenmajerici, splaknjeni z vzorcem, sta v dnevniku tik pred vrstico »S propipeto si …«
 // (AUDIT-075: prej je korak štel katerokoli pipetiranje).
-const PIPETIRAL = /S propipeto si/, NAROBE = /Pipeta je bila še mokra|Erlenmajerico si splaknil z vzorcem/;
+export const PIPETIRAL = /S propipeto si/, NAROBE = /Pipeta je bila še mokra|Erlenmajerico si splaknil z vzorcem/;
 function pravilnoPipetiral(dn) {
   let k = dn.length - 1;
   while (k >= 0 && !PIPETIRAL.test(dn[k])) k--;
@@ -43,7 +43,7 @@ function pravilnoPipetiral(dn) {
 }
 
 // Dnevnik titracije: spiranje izprazni bireto (lab-model-titracija.js → rinse), zato šteje le polnjenje po njem.
-const SPRAL = /Bireto si trikrat spral/, NAPOLNIL = /Bireto si (z lijakom )?napolnil|Bireto si dopolnil/, ZRAK = /zračni mehurček je odšel iz konice|zraka v konici ni bilo/;
+export const SPRAL = /Bireto si trikrat spral/, NAPOLNIL = /Bireto si (z lijakom )?napolnil|Bireto si dopolnil/, ZRAK = /zračni mehurček je odšel iz konice|zraka v konici ni bilo/;
 
 export const KORAKI = {
   "lab-titracija": {

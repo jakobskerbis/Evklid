@@ -89,6 +89,49 @@ urniku sam odpre pripravo z naslovom testa. Novo: tudi načrt testa se
 samodejno izbriše 30 dni po testu (prej je načrt v `test_plans` ostal do zamenjave). `/priprave` vrne `aktivna`, `pot`,
 `sklopi`, `dogodek_id`. Test: `test/priprava-nacrt-testa.test.js`.
 
+### PR 3a (uvoz brez AI in izseki, 25. 11. 2026)
+
+PR 3 je razdeljen: 3a uvozi brez AI, 3b doda branje fotografij in skeniranih strani PDF (obstoječe branje zapiskov,
+`server/zapiski.js`, meja `STRANI`, `server/meje-ai.js`). Cel uvoz enega vira (branje in razrez) teče v ločeni niti
+(`nit-uvoza.js`, `uvoziVNiti`): 20 s in največ 500 MB rasti pomnilnika procesa, nato se nit ustavi (`uvoz_cas`,
+`uvoz_pomnilnik`), zato zlonameren dokument ne ustavi strežnika. `uvoz.js`: prilepljeno besedilo (naslovi `#`,
+alineje); Word (slogi naslovov, alineje, tabele po vrsticah, polja z besedilom brez podvojitve `mc:Fallback`, `<w:cr/>`,
+nadpisano in podpisano kot 10⁻⁶, H₂O ali `^(…)`, formule OMML → LaTeX do globine 12 z oklepaji iz dokumenta,
+matrikami, sistemi, limitami in naglasi; pregloboka formula ali neznan oklepaj, operator ali naglas da `[formula] [?]`;
+prelomi strani); PowerPoint (prosojnice v vrstnem redu iz `presentation.xml`, `<a:br/>`, opombe govorca; številka
+prosojnice, noga, datum in glava niso besedilo); PDF z besedilom (`pdfjs-dist` brez JavaScripta in pisav, 80 strani;
+vrstice po osnovni črti, manjši dvig ali spust je nadpisano oziroma podpisano v isti vrstici, 3x², H₂O; stran z manj
+kot 20 znaki obdrži besedilo in je označena za 3b). ZIP bere sam (meja 20 MB na vnos, 60 MB skupaj,
+`maxOutputLength`), XML brez razčlenjevalnika; največ 200 000 znakov na vir. `izseki.js`: bloki do 1200 znakov z
+naslovom razdelka, stranjo in zaporedjem; vrsto določi koda iz začetka bloka (definicija, izrek, postopek, formula,
+primer, naloga, teorija; oštevilčena naloga s točkami je svoj izsek). Negotovo (linearen pregled nizov): »x2« (tudi
+»3x2«, »x2y«, »AB2«) ostane z `[?]`; kemijska formula z vsaj dvema elementoma se dopolni (H2SO4 → H₂SO₄) z `[?]` samo
+v enačbi s puščico in brez naboja, sicer (naboj iona SO42-, BC2 v geometriji) samo `[?]`; en simbol z indeksom (F2,
+R1), LaTeX in indeksi z `_` se ne označijo; formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
+(besedilo, naslov in seznam negotovih mest šifrirani, v `SEALED`, v izvozu odšifrirani, kaskada z virom in pripravo;
+ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, obdelan, branje, napaka), `strani`,
+`napaka`, `opozorila`. Vir se obdela ob nalaganju (hkrati največ 2 obdelavi, sicer ostane »caka«; če je vir med
+branjem izbrisan, 404); poti `POST …/viri/:vid/obdelaj` in `GET …/priprave/:pid/izseki[?vir=&vrsta=]`. Strošek AI 0.
+Test: `test/priprava-uvoz.test.js`.
+
+### PR 3b (branje fotografij in skeniranih strani, 25. 11. 2026)
+
+`POST …/priprave/:pid/viri/:vid/preberi` prebere fotografijo vira ali skenirane strani PDF (strani z manj kot 20 znaki
+iz PR 3a, največ 5 na zahtevek) z istim branjem kot »Moji zapiski« (`server/zapiski.js` `readNotePhoto`: prepis brez
+popravkov, imena → `[ime]`, zavrnitev neučnih fotografij, zastavica stiske odpre okno nujne pomoči in pride v vsak
+odgovor, tudi ob napaki ali izbrisu med branjem). Ista mesečna meja strani `STRANI` (ena slika = ena stran, skupaj z
+zapiski) in trda meja AI (`readReserveUsd`, `usage.guard`); strošek se zapiše kot `priprava`; neuspel klic ali način
+brez ključa strani ne porabi. Stran PDF: `sken.js` v ločeni niti vzame največjo sliko strani, jo pretvori v sivine,
+zmanjša na 1568 točk in zapiše kot PNG; slike nad 40 milijonov točk pdfjs ne dekodira (`maxImageSize`). Stran brez
+slike (`sken_ni_slike`) in prazna stran (manj kot 0,02 % temnih točk, `prazno`) gresta brez klica modela in brez strani
+iz meje; če nit pade, se strani poskusijo ena po ena in stran, ki pade tudi sama, dobi `sken_napaka`. Fotografija JPEG
+nad mejo modela (5 MB base64) se zmanjša po isti poti (zavita v PDF z eno stranjo, zasukana po EXIF); druga prevelika
+slika 413 (`branje_velika`). Obdelava vira, ki se ravno bere, vrne 409.
+Prepisi strani se hranijo šifrirano (`priprava_prepisi`, v `SEALED`, kaskada z virom), zato ponovno branje ali
+ponovna obdelava ne kliče modela znova; fotografijo prebere znova `?znova=1`, slabši izid (neučno, prazno) pa ne
+zamenja dobrega prepisa. Izseki iz prepisa imajo stolpec `ai` in v odgovoru oznako `ai_generated`. Vir PDF ostane
+»branje«, dokler ima neprebrane skenirane strani. Test: `test/priprava-branje.test.js`.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

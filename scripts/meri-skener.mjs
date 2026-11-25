@@ -73,7 +73,7 @@ const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
 const { isMockMode, MODEL, MODEL_MID } = await import("../server/claude.js");
 const { callMaxUsd, imageCallReserveUsd } = await import("../server/meje-ai.js");
-const { READ_PROMPT, TASK_READ_PROMPT, readLangLine } = await import("../server/scan.js");
+const { READ_PROMPT, TASK_READ_PROMPT, readLangLine, SOLVE_ATTEMPTS } = await import("../server/scan.js");
 const { normalizeSettings } = await import("../server/settings.js");
 const { solve, prep } = await import("../public/scan/solvecore.js");
 const { soughtNeedsAi } = await import("../public/scan/odgovor.js");
@@ -87,8 +87,9 @@ const REZERVA = {
   prepis: imageCallReserveUsd(MODELI.prepis, 1200, 1, bajti(TASK_READ_PROMPT) + 300),
   // Navodila branja + vrstica jezika (v poti je v rezervi 500 bajtov prostora zanjo).
   branje: imageCallReserveUsd(MODELI.branje, 2000, 1, bajti(READ_PROMPT) + 500 + bajti(readLangLine("sl"))),
-  // Do dva klica (ponovitev ob napačni rešitvi), vsak z navodili, nalogo in podatki ter do 8000 izhodnimi žetoni.
-  resevanje: (body) => 2 * callMaxUsd(MODELI.resevanje, 6000 + bajti(body.text + (body.given || []).join("") + (body.sought || "")), 8000),
+  // Do SOLVE_ATTEMPTS klicev (samodejne ponovitve ob napačni rešitvi), vsak z navodili, nalogo, podatki in
+  // povratno informacijo prejšnjih poskusov ter do 8000 izhodnimi žetoni.
+  resevanje: (body) => SOLVE_ATTEMPTS * callMaxUsd(MODELI.resevanje, 6000 + 600 * SOLVE_ATTEMPTS + bajti(body.text + (body.given || []).join("") + (body.sought || "")), 8000),
 };
 // Najslabši primer slike: največja naloga (600 znakov), 10 podatkov po 160 znakov in iskano.
 const RESEVANJE_NAJVEC = REZERVA.resevanje({ text: "x".repeat(600), given: Array(10).fill("x".repeat(160)), sought: "x".repeat(160) });
