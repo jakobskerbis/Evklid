@@ -148,6 +148,51 @@ zadnji izračuni so v predpomnilniku. Vrne teme v vrstnem redu učnega načrta (
 Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
 false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.
 
+### PR 5 (načrtovalnik, 25. 11. 2026)
+
+`server/priprava/nacrt.js`, poti `GET …/priprave/:pid/nacrt` in `POST …/priprave/:pid/nacrt/prebrano` (`{ tema_id,
+prebrano? }`, tabela `priprava_prebrano`). Koda, ne model; brez napovedi ocen. Teme so obseg testa (brez načrta testa
+teme iz zapiskov, PR 4; na osnovni ravni mature brez tem samo za višjo raven, `exams.js ravenProfila`).
+Ocena teme: `progress.js topicScore` (ista lestvica kot pripravljenost na izpit; velja boljša od teme in njenih osnovnih
+tem): nova 0, v učenju 0,2–0,6, za ponovitev 0,8, obvladana 1. Strogo izkazano: samo ročna oznaka »obvladano« šteje 0,4
+(dokler je ne potrdita 2 pravilni ponovitvi ali 8 pravilnih nalog), obvladana tema z zgrešeno ponovitvijo brez poznejše
+pravilne naloge 0,6 (pripravljenost na izpit zaenkrat ostaja brez tega; odloči j).
+Enote: nova → nova snov, vaja, ponovitev; v učenju → vaja, ponovitev; za ponovitev → ponovitev; obvladana → ponovitev na
+dan ponovitve Evklida (`review_due`), sicer neobvezna osvežitev v zadnjih 3 učnih dneh (enkrat, samo v prostor, ki ostane po obveznih enotah); tema
+brez nalog v Vadnici → »zapiski« (ni preverljiva, največ ena na dan, za preverljivimi enotami, opravljena, ko je
+označena kot prebrana; ne šteje v pripravljenost).
+Razmiki veljajo med dnevi, ker se načrt vsak dan računa znova iz zgodovine: tema v učenju dobi naslednjo vajo 1–2 dni
+po zadnji vaji (ne vsak dan), ponovitev pride tretjino preostalega časa pozneje, največ 7 dni. Najšibkejše prve; najprej
+prve enote vseh tem, nato druge in tretje; samo en učni dan → najprej teme v učenju. Največ 3 enote na dan; kar ne gre,
+je v `nePrideNaVrsto` (`stisnjeno`). Zadnji dan pred testom (tudi, ko je to danes) poskusni test (obstoječi `/test-prep`: aktivna priprava,
+izbrani sklopi in vsaj ena tema z nalogami). Brez datuma en teden; test mimo → `mimo`; test danes → prazen načrt.
+Danes: šteje samo vaja, ponavljanje in vaja iz lista (ne test, uvrstitev ali tekmovanje); nova snov in vaja sta opravljeni
+po 3 odgovorjenih nalogah teme ta dan (tudi napačnih) (slovenski dan izdaje naloge), ponovitev po 2 (kot ponavljanje Evklida); `naslednja` je
+prva neopravljena preverljiva enota (»Nadaljuj učenje«); teme, vadene danes, ostanejo danes (opravljene), druge enote se ne
+premaknejo v danes. Tabela `priprava_nacrti` ni potrebna.
+`pripravljenost`: povprečje ocen preverljivih tem, število obvladanih, preverljivih in nepreverljivih. Test:
+`test/priprava-nacrt.test.js`.
+
+### PR 6a (kviz in napredek, 25. 11. 2026)
+
+Brez AI. `POST …/priprave/:pid/kviz` (`{ dolzina: 6 | 12 | 20, teme? }`): obstoječa seja »list« (`progress.js startList`,
+naloge Vadnice, ki jih preveri koda; namigi, povzetek po temah) s parametrom `priprava`. Ob koncu kviza izkazano znanje
+premakne stanje teme (`listSummary`): »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu) → stopnja višje (nova → učim se,
+stopnja 2), »few« → nova tema »učim se«, »more« pri novi temi nič (ostane nova snov; napačen odgovor ne dvigne
+pripravljenosti), pri obvladani kot doslej ponovitev; obvladanje ostane
+pravilo `checkMastery`. Tako kviz spremeni načrt in pripravljenost. Privzeto najšibkejše teme obsega (obvladane samo,
+če drugih ni), največ `dolzina/2` tem, da ima vsaka vsaj dve nalogi; `teme` mora biti neprazen seznam id-jev iz načrta
+te priprave z nalogami, največ 20 (sicer 400 `kviz_teme`; od izbranih gre v kviz prvih `dolzina/2`); tema brez lastnih
+nalog vzame naloge osnovne teme (ena veščina na osnovno temo). Nedokončan kviz z istim izborom (samodejno ali iste
+teme) in dolžino istega slovenskega dne se nadaljuje; največ 20 novih kvizov na profil v 10 minutah (429
+`kviz_hitro`). Kviz ostane v zgodovini vaje profila tudi po izbrisu priprave (samo id-ji tem, kot vsa vaja).
+`GET …/priprave/:pid/napredek`: pripravljenost (kot načrt), posnetki po dnevih (tabela `priprava_napredek`, en na dan,
+zapiše se ob odprtju načrta ali napredka, do dneva testa; kaskadni izbris; odprtje šteje kot uporaba priprave za
+samodejni izbris) in stanje vsake teme (`nova | ucim | ponovitev | obvladana | zapiski`, vse odgovorjene naloge vaje,
+ponavljanja in lista, tudi osnovnih tem, pravilne v prvem poskusu). Vmesnik pokaže posnetke samo kot izkazano znanje
+po dnevih, nikoli kot trend do testa ali napoved ocene (odstotek ni ocena in lahko pade, ko pridejo ponovitve).
+Test: `test/priprava-kviz.test.js`. Razlaga z izvorom (AI) je PR 6b.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

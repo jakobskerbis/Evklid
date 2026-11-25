@@ -4,6 +4,7 @@
 // zapiskih« (ne ugibamo). Obseg testa je iz načrta testa (pot in sklopi); brez načrta obsega ni, so samo teme zapiskov.
 // Predznanje: teme iste poti pred prvim sklopom testa (učni načrt gre od lažjega k težjemu); brez trditev o znanju.
 import { getPath, getTopic, listPaths } from "../curriculum.js";
+import { ravenKeeps, ravenProfila } from "../exams.js";
 import { rankLessons, searchOn, levelOf, terms } from "../lekcija-za-vprasanje.js";
 
 const MIN_SCORE = 4.5; // kot lessonForQuestion / topicForName
@@ -89,7 +90,9 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null }, i
   const path = pot ? getPath(pot) : null;
   // Obseg samo za šolske poti (OŠ, SŠ); tekmovalne poti niso v kazalu tem, zato zanje ni pokritosti.
   const sola = !!path && (path.school === "OS" || path.school === "SS");
-  const obsegTeme = sola ? temeObsega(pot, sklopi) : [];
+  // Teme samo za višjo raven gredo iz obsega učenca na osnovni ravni (»4. letnik OR«), kot na Učni poti in v testu.
+  const zaRaven = ravenKeeps(ravenProfila(pot, settings?.curriculum_level));
+  const obsegTeme = sola ? temeObsega(pot, sklopi).filter(zaRaven) : [];
   const st = { ...(settings || {}), subject: path?.subject || predmet || settings?.subject };
   // Kazalo tem je do učenčeve ravni; test višje poti (ali zastarela raven v profilu) išče do ravni poti.
   if (sola) {
@@ -132,7 +135,7 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null }, i
   const teme = [...poTemi.keys()].sort(primerjaj).map((id) => ({ ...temaVen(id), izseki: poTemi.get(id), vObsegu: !!obseg?.has(id) }));
   let predznanje = [];
   if (path && obsegTeme.length) {
-    const vse = path.units.flatMap((u) => u.topics);
+    const vse = path.units.flatMap((u) => u.topics).filter(zaRaven);
     const prva = vse.findIndex((t) => obseg.has(t.id));
     predznanje = vse.slice(Math.max(0, prva - PREDZNANJE), prva).map((t) => temaVen(t.id));
   }

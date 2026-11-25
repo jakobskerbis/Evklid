@@ -1,0 +1,22 @@
+{
+  "paper": "POKLICNA-MAT-2025-spomladanski",
+  "parts": {
+    "A1": "MAT-SS-2/koreni",
+    "A2": "MAT-SS-1/sistemi-linearnih-enacb",
+    "A3": "MAT-OS-7/odstotni-racun",
+    "A4": "MAT-SS-2/kvadratna-enacba",
+    "A5": "MAT-SS-1/stirikotniki-in-krog",
+    "A6": "MAT-SS-4/zaporedja",
+    "A7": "MAT-SS-3/sinusni-in-kosinusni-izrek",
+    "A8": "MAT-SS-4/odvod",
+    "A9": "MAT-SS-4/uporaba-odvoda",
+    "A10": "MAT-SS-1/naravna-in-cela-stevila",
+    "A11": "MAT-SS-2/eksponentne-enacbe",
+    "B1a": "MAT-SS-1/enacbe-premice-in-kot-med-premicama",
+    "B1b": "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini",
+    "B2a": "MAT-SS-1/obdelava-podatkov",
+    "B2b": "MAT-SS-4/verjetnost",
+    "B3a": "MAT-SS-3/racionalne-funkcije",
+    "B3b": "MAT-SS-2/kvadratna-enacba"
+  }
+}
