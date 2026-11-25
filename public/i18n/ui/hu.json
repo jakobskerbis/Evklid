@@ -3651,6 +3651,7 @@
   "a3.hide": "Elrejtés",
   "a3.only": "Csak ezt mutasd",
   "a3.ask": "Kérdezd az oktatót",
+  "a3.lesson": "Lecke a tankönyvben",
   "a3.askText": "Magyarázd el, mi az a(z) {ime}, és mi a feladata a testben.",
   "a3.askPartText": "A(z) „{naslov}” 3D-modellben: magyarázd el, mi a(z) {ime}, és mi a szerepe.",
   "a3.layers": "Rétegek",

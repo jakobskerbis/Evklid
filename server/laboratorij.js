@@ -1,7 +1,7 @@
 // Virtualni laboratorij kot svoj zavihek (public/laboratorij.js, docs/laboratorij.md): vsi poskusi iz
 // public/sim/katalog.js, vsak enkrat, s temami učbenika. Zaklep je isti kot v učbeniku (GET /api/students/:id/lesson):
 // poskus je odklenjen, če bi bil interaktivni del lekcije odklenjen pri vsaj eni njegovi temi.
-import { labExperiments } from "../public/sim/katalog.js";
+import { labExperiments, SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
 import { hasEngine } from "../public/sim/index.js";
 import { getTopic, getPath, pathKeyFor } from "./curriculum.js";
 
@@ -40,6 +40,32 @@ export function labList(myPath = "") {
   return list.sort((a, b) => mine(a.subject) - mine(b.subject) || best(a.subject) - best(b.subject) || order(a.subject) - order(b.subject) || a.rank - b.rank);
 }
 
+// Teme učbenika, ki uporabljajo 3D model (3d-<id> v katalogu): gumb »Lekcija« v modelu (public/3d/stran.js), obratno
+// kot »V 3D svetu« v lekciji. Vrstni red kot pri poskusih (najprej učenčeva pot). Lekcije niso zaklenjene.
+export function teme3d(modelId, myPath = "") {
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(modelId || "")) return [];
+  const [, mySubj, mySchool, myGrade] = parts(myPath);
+  const rank = (path) => {
+    const [, subj, school, grade] = parts(path);
+    if (path === myPath) return 0;
+    if (school === mySchool && grade === myGrade) return 1;
+    if (subj === mySubj && school === mySchool) return 2;
+    return school === mySchool ? 3 : 4;
+  };
+  return Object.keys(SIM_TOPICS)
+    .filter((id) => simsForTopic(id).some((d) => d.id === `3d-${modelId}`))
+    .map((id) => {
+      const t = getTopic(id);
+      if (!t) return null;
+      const label = getPath(t.path)?.label || t.path;
+      return { id: t.id, name: t.name, level: label.split(",").slice(1).join(",").trim() || label, rank: rank(t.path) };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 8)
+    .map(({ rank, ...x }) => x);
+}
+
 export function mountLab(app, { loadStudent, accounts }) {
   app.get("/api/students/:id/lab", (req, res) => {
     const s = loadStudent(req, res);
@@ -51,5 +77,10 @@ export function mountLab(app, { loadStudent, accounts }) {
     const anyLocked = experiments.some((x) => x.locked);
     // Pravila ponudb kot v učbeniku: gumb »Poglej pakete« le, ko ponudba s ceno sme biti prikazana.
     res.json({ myPath, experiments, ...(anyLocked ? { offers: accounts.offersFor(s.id) } : {}) });
+  });
+  app.get("/api/students/:id/svet3d/:model/teme", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    res.json({ teme: teme3d(String(req.params.model || ""), pathKeyFor(s.settings) || "") });
   });
 }

@@ -3653,6 +3653,7 @@
   "a3.hide": "Hide",
   "a3.only": "Show only this",
   "a3.ask": "Ask the tutor",
+  "a3.lesson": "Lesson in the textbook",
   "a3.askText": "Explain what {ime} is and what job it does in the body.",
   "a3.askPartText": "In the 3D model “{naslov}”: explain what {ime} is and what role it has.",
   "a3.layers": "Layers",

@@ -3903,6 +3903,7 @@ export default {
   "a3.hide": "Skrij",
   "a3.only": "Pokaži samo to",
   "a3.ask": "Vprašaj inštruktorja",
+  "a3.lesson": "Lekcija v učbeniku",
   "a3.askText": "Razloži mi, kaj je {ime} in kakšno nalogo ima v telesu.",
   "a3.askPartText": "V 3D svetu, pri »{naslov}«: razloži mi del »{ime}«. Kaj je in kakšno vlogo ima?",
   "a3.layers": "Plasti",

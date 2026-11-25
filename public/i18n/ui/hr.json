@@ -3683,6 +3683,7 @@
   "a3.hide": "Sakrij",
   "a3.only": "Prikaži samo ovo",
   "a3.ask": "Pitaj instruktora",
+  "a3.lesson": "Lekcija u udžbeniku",
   "a3.askText": "Objasni mi što je {ime} i kakvu ulogu ima u tijelu.",
   "a3.askPartText": "U 3D modelu »{naslov}«: objasni mi što je {ime} i kakvu ulogu ima.",
   "a3.layers": "Slojevi",
