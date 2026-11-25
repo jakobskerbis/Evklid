@@ -8,12 +8,13 @@ import { seal, unseal } from "../crypto-polje.js";
 import { cleanText } from "../settings.js";
 import { danIzbrisa } from "./ciscenje.js";
 import { uvoziVNiti, preberiVir, NapakaUvoza } from "./uvoz.js";
-import { shraniIzseke, razrezi, VRSTE } from "./izseki.js";
+import { shraniIzseke, razrezi, VRSTE, izbrisiPostavkeVira } from "./izseki.js";
 import { zemljevid } from "./teme.js";
 import { sestaviNacrt, ocenaTeme } from "./nacrt.js";
 import { STANJE_OCENE, LIST } from "../progress.js";
 import { rateLimiter } from "../vaja-iz-lista.js";
-import { razloziTemo, preveriRazlago, izberiIzseke, rezervaRazlage } from "./postavke.js";
+import { razloziTemo, preveriRazlago, izberiIzseke, rezervaRazlage, odtisIzsekov, sporociloRazlage } from "./postavke.js";
+import { lokalnaVrsta } from "../nujno.js";
 import { getTopic } from "../curriculum.js";
 import { hasGenerator } from "../practice/index.js";
 import { nowParts } from "../schedule.js";
@@ -613,8 +614,11 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
   const zemljevidi = new Map();
   async function zemljevidZa(s, p) {
     const settings = typeof s.settings === "string" ? jsonIz(s.settings, {}) : s.settings || {};
-    const sled = db.prepare("SELECT COUNT(*) AS n, MAX(id) AS m FROM priprava_izseki WHERE priprava_id = ? AND student_id = ?").get(p.id, s.id);
-    const kljuc = JSON.stringify([p.id, sled.n, sled.m, p.pot, p.sklopi, p.predmet, settings?.subject, settings?.curriculum_level, settings?.educational_track, settings?.school_system]);
+    // Sled izsekov: število, največji id, skupna dolžina in zadnji čas vpisa (id-ji se po izbrisu vira lahko ponovijo).
+    const sled = db
+      .prepare("SELECT COUNT(*) AS n, MAX(id) AS m, SUM(LENGTH(besedilo)) AS d, MAX(created_at) AS c FROM priprava_izseki WHERE priprava_id = ? AND student_id = ?")
+      .get(p.id, s.id);
+    const kljuc = JSON.stringify([p.id, sled.n, sled.m, sled.d, sled.c, p.pot, p.sklopi, p.predmet, settings?.subject, settings?.curriculum_level, settings?.educational_track, settings?.school_system]);
     if (zemljevidi.has(kljuc)) return zemljevidi.get(kljuc);
     const izseki = db
       .prepare("SELECT id, naslov, besedilo FROM priprava_izseki WHERE priprava_id = ? AND student_id = ? ORDER BY vir_id, zaporedje")
@@ -790,20 +794,26 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
   });
 
   // Razlaga teme z izvorom (PR 6b, postavke.js): model razloži temo samo iz izsekov te teme (način A), koda obdrži le
-  // odstavke z dobesednim navedkom iz navedenega izseka. Shrani se šifrirano (priprava_postavke) in se ne kliče znova,
-  // dokler se izseki teme ne spremenijo (znova: true za novo razlago). Strošek: ena stran iz mesečne meje zapiskov
-  // (STRANI), trda meja AI (usage.guard), zapis porabe »priprava«. Oznaka AI.
+  // odstavke, podprte z zapiski (navedek, formule, števila, račun). Shrani se šifrirano (priprava_postavke) z odtisom
+  // izsekov in se ne kliče znova, dokler se izseki ne spremenijo (znova: true za novo razlago); izbris ali ponovna obdelava
+  // vira izbriše razlage iz njegovih izsekov. Strošek: ena stran iz mesečne meje zapiskov (STRANI), trda meja AI
+  // (usage.guard z rezervo iz dejanskega sporočila), zapis porabe »priprava«. Oznaka AI; stiska v zapiskih → nujno.
   const razlagam = new Set();
-  const razlagaVen = (row, izsekiPoId) => {
-    const v = JSON.parse(unseal(row.vsebina));
+  function razlagaVen(row, t) {
+    const surovo = unseal(row.vsebina);
+    if (!surovo) return null;
+    const v = JSON.parse(surovo);
+    const zastarela = !t || row.odtis !== t.odtis;
     return {
       tema_id: row.tema_id,
       ...v,
-      odstavki: v.odstavki.map((o) => ({ ...o, viri: o.viri.map((id) => izsekiPoId.get(id) || { id }) })),
+      // Vir (vir, stran) samo, dokler je razlaga sveža: id-ji izsekov se po izbrisu lahko ponovijo.
+      odstavki: v.odstavki.map((o) => ({ ...o, viri: o.viri.map((id) => (!zastarela && t.izsekiPoId.get(id)) || { id }) })),
       ustvarjeno: row.created_at,
+      zastarela,
       ...AI_JSON,
     };
-  };
+  }
   async function izsekiTeme(s, p, tema) {
     const z = await zemljevidZa(s, p);
     const t = z.teme.find((x) => x.id === tema);
@@ -813,10 +823,10 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       .all(p.id, s.id, ...t.izseki);
     const poId = new Map(vrstice.map((r) => [r.id, r]));
     const izseki = izberiIzseke(
-      t.izseki.filter((id) => poId.has(id)).map((id) => ({ id, naslov: poId.get(id).naslov == null ? null : unseal(poId.get(id).naslov), besedilo: unseal(poId.get(id).besedilo) })),
+      t.izseki.filter((id) => poId.has(id)).map((id) => ({ id, naslov: poId.get(id).naslov == null ? null : unseal(poId.get(id).naslov), besedilo: unseal(poId.get(id).besedilo) || "" })),
     );
     const izsekiPoId = new Map(izseki.map((i) => [i.id, { id: i.id, vir_id: poId.get(i.id).vir_id, stran: poId.get(i.id).stran }]));
-    return { ime: t.ime, izseki, izsekiPoId };
+    return { ime: t.ime, izseki, izsekiPoId, odtis: odtisIzsekov(izseki) };
   }
   const shranjenaRazlaga = (p, tema) => db.prepare("SELECT * FROM priprava_postavke WHERE priprava_id = ? AND vrsta = 'razlaga' AND tema_id = ?").get(p.id, tema);
   app.get("/api/students/:id/priprave/:pid/razlaga", async (req, res) => {
@@ -826,10 +836,10 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!p) return niPriprave(res);
     const tema = typeof req.query.tema_id === "string" ? req.query.tema_id : "";
     const row = tema ? shranjenaRazlaga(p, tema) : null;
-    if (!row) return res.status(404).json({ error: "Razlage te teme še ni.", code: "razlaga_ni" });
-    const t = await izsekiTeme(s, p, tema);
+    const out = row ? razlagaVen(row, await izsekiTeme(s, p, tema)) : null;
+    if (!out) return res.status(404).json({ error: "Razlage te teme še ni.", code: "razlaga_ni" });
     uporabljena(p);
-    res.set("Cache-Control", "no-store").json({ ...razlagaVen(row, t?.izsekiPoId || new Map()), zastarela: !t || row.izseki !== JSON.stringify(t.izseki.map((i) => i.id)) });
+    res.set("Cache-Control", "no-store").json(out);
   });
   app.post("/api/students/:id/priprave/:pid/razlaga", async (req, res) => {
     const s = loadStudent(req, res);
@@ -839,29 +849,35 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const tema = typeof req.body?.tema_id === "string" ? req.body.tema_id : "";
     const t = tema ? await izsekiTeme(s, p, tema) : null;
     if (!t || !t.izseki.length) return res.status(400).json({ error: "Tema nima izsekov v zapiskih te priprave.", code: "razlaga_tema" });
-    const kljuc = JSON.stringify(t.izseki.map((i) => i.id));
+    // Stiska v zapiskih (npr. dnevnik med snovjo): lokalni zaznavalnik brez AI, kot pri zapiskih.
+    const nujno = nujnoZa(lokalnaVrsta(t.izseki.map((i) => i.besedilo).join("\n")), s.settings);
+    const zNujno = (o) => (nujno ? { ...o, nujno } : o);
     const prej = shranjenaRazlaga(p, tema);
-    if (prej && prej.izseki === kljuc && req.body?.znova !== true) {
-      uporabljena(p);
-      return res.json({ ...razlagaVen(prej, t.izsekiPoId), zastarela: false });
+    if (prej && prej.odtis === t.odtis && req.body?.znova !== true) {
+      const out = razlagaVen(prej, t);
+      if (out) {
+        uporabljena(p);
+        return res.json(zNujno(out));
+      }
     }
-    if (razlagam.has(s.id)) return res.status(409).json({ error: "Razlaga se že pripravlja.", code: "razlaga_poteka" });
+    if (razlagam.has(s.id)) return res.status(409).json(zNujno({ error: "Razlaga se že pripravlja.", code: "razlaga_poteka" }));
     const blocked = usage?.blockInfo?.(s.id);
-    if (blocked) return res.status(429).json(blocked);
+    if (blocked) return res.status(429).json(zNujno(blocked));
     if (!takePage(db, s.id, pageLimit(rightsFor ? rightsFor(s.id) : null, s.settings)))
-      return res.status(429).json({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: straniInfo(s) });
-    const hold = usage?.guard ? usage.guard(s.id, rezervaRazlage(t.izseki)) : null;
+      return res.status(429).json(zNujno({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: straniInfo(s) }));
+    const sporocilo = sporociloRazlage(t.ime, t.izseki);
+    const hold = usage?.guard ? usage.guard(s.id, rezervaRazlage(sporocilo)) : null;
     if (usage?.guard && !hold) {
       givePage(db, s.id);
-      return res.status(429).json(usage.guardBlock(s.id));
+      return res.status(429).json(zNujno(usage.guardBlock(s.id)));
     }
     razlagam.add(s.id);
     let placano = false;
     try {
-      const out = await razlagaFn({ ime: t.ime, izseki: t.izseki });
+      const out = await razlagaFn({ sporocilo, izseki: t.izseki });
       if (out.mock) {
         givePage(db, s.id);
-        return res.status(503).json({ error: "Razlaga v preizkusnem načinu ni na voljo.", code: "razlaga_mock" });
+        return res.status(503).json(zNujno({ error: "Razlaga v preizkusnem načinu ni na voljo.", code: "razlaga_mock" }));
       }
       if (out.usage) {
         placano = true;
@@ -872,19 +888,23 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
         }
       }
       const r = preveriRazlago(out.data, t.izseki);
-      if (!r.odstavki.length) return res.status(422).json({ error: "Razlage ni bilo mogoče preveriti z zapiski. Poskusi znova ali dodaj zapiske.", code: "razlaga_nepreverjena", zavrnjenih: r.zavrnjenih, ...AI_JSON });
-      const vsebina = seal(JSON.stringify({ nacin: "A", odstavki: r.odstavki, zavrnjenih: r.zavrnjenih, manjka: r.manjka }));
-      if (!db.prepare("SELECT 1 FROM priprave WHERE id = ? AND student_id = ?").get(p.id, s.id)) return niPriprave(res);
+      if (!r.odstavki.length)
+        return res
+          .status(422)
+          .json(zNujno({ error: "Razlage ni bilo mogoče preveriti z zapiski. Poskusi znova ali dodaj zapiske.", code: "razlaga_nepreverjena", zavrnjenih: r.zavrnjenih, pages: straniInfo(s), ...AI_JSON }));
+      const vsebina = seal(JSON.stringify({ nacin: "A", preverjeno: "zapiski", odstavki: r.odstavki, zavrnjenih: r.zavrnjenih }));
+      // Priprava še obstaja (in je ista: id-ji se po izbrisu lahko ponovijo).
+      if (!db.prepare("SELECT 1 FROM priprave WHERE id = ? AND student_id = ? AND created_at = ?").get(p.id, s.id, p.created_at)) return niPriprave(res);
       db.prepare(
-        `INSERT INTO priprava_postavke (priprava_id, student_id, vrsta, tema_id, izseki, vsebina, created_at) VALUES (?, ?, 'razlaga', ?, ?, ?, ?)
-         ON CONFLICT(priprava_id, vrsta, tema_id) DO UPDATE SET izseki = excluded.izseki, vsebina = excluded.vsebina, created_at = excluded.created_at`,
-      ).run(p.id, s.id, tema, kljuc, vsebina, sqlCas(now()));
+        `INSERT INTO priprava_postavke (priprava_id, student_id, vrsta, tema_id, izseki, odtis, vsebina, created_at) VALUES (?, ?, 'razlaga', ?, ?, ?, ?, ?)
+         ON CONFLICT(priprava_id, vrsta, tema_id) DO UPDATE SET izseki = excluded.izseki, odtis = excluded.odtis, vsebina = excluded.vsebina, created_at = excluded.created_at`,
+      ).run(p.id, s.id, tema, JSON.stringify(t.izseki.map((i) => i.id)), t.odtis, vsebina, sqlCas(now()));
       uporabljena(p);
-      res.status(201).json({ ...razlagaVen(shranjenaRazlaga(p, tema), t.izsekiPoId), zastarela: false });
+      res.status(201).json(zNujno({ ...razlagaVen(shranjenaRazlaga(p, tema), t), pages: straniInfo(s) }));
     } catch (e) {
       if (!placano) givePage(db, s.id);
       log.warn?.(`[priprava] razlaga ni uspela: ${e?.message || e}`);
-      res.status(502).json({ error: "Razlaga ni uspela. Poskusi znova.", code: "razlaga_napaka" });
+      res.status(502).json(zNujno({ error: "Razlaga ni uspela. Poskusi znova.", code: "razlaga_napaka" }));
     } finally {
       razlagam.delete(s.id);
       hold?.release();
@@ -898,7 +918,10 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!p) return niPriprave(res);
     const v = enVir(s, p, req);
     if (!v) return niVira(res);
-    zVarnimBrisanjem(db, () => db.prepare("DELETE FROM priprava_viri WHERE id = ? AND student_id = ?").run(v.id, s.id));
+    zVarnimBrisanjem(db, () => {
+      izbrisiPostavkeVira(db, { id: v.id, priprava_id: p.id });
+      db.prepare("DELETE FROM priprava_viri WHERE id = ? AND student_id = ?").run(v.id, s.id);
+    });
     uporabljena(p);
     res.json({ ok: true });
   });
