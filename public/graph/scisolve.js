@@ -285,7 +285,16 @@ function polyRootsOf(L, R, v, scope, run, unit = "rad") {
   // 1) cel polinom točno
   const ex = exactPolyIn(L, R, scope, v);
   if (ex && ex.length > 1) {
-    const e = polyRootsExact(ex);
+    let e = polyRootsExact(ex);
+    // AUDIT-068: v gruči ima kompleksna ničla celega polinoma lahko velik polmer napake (((x − 9/2)⁴ + 10⁻²⁶)(x³ − 3x + 1):
+    // Im ±1,06·10⁻⁷). Pri zmnožku točnih faktorjev rešimo še vsakega posebej; vzamemo ožje polmere, če je zgradba
+    // enaka (isto število različnih ničel in ista skupna kratnost).
+    if (e && e.roots.some((r) => r.unc || r.err > 0)) {
+      const alt = exactByFactors(L, R, scope, v, val);
+      const worst = (rs) => Math.max(0, ...rs.map((r) => (r.unc ? Infinity : r.err || 0)));
+      const deg = (rs) => rs.reduce((t, r) => t + r.m, 0);
+      if (alt && alt.length === e.roots.length && deg(alt) === deg(e.roots) && worst(alt) < worst(e.roots)) e = { ...e, roots: alt };
+    }
     if (e) {
       const out = finish(verifyIn(L, R, e.roots.map((r) => ({ ...r }))), e.poly, true);
       out.ex = ex; // točni koeficienti za quadraticExact
@@ -397,6 +406,32 @@ function verifiedForm(L, R, scope, v, re, im, tri = false, unit = "rad") {
     }
   }
   return null;
+}
+
+// Ničle zmnožka, ko je vsak faktor točen polinom (AUDIT-068); ista ničla iz več faktorjev se sešteje. null, če ne gre.
+function exactByFactors(L, R, scope, v, val) {
+  const zeroSide = (n) => !dependsOn(n, v) && val(n) === 0;
+  const prod = zeroSide(R) ? L : zeroSide(L) ? R : null;
+  if (!prod) return null;
+  const fs = factorList(prod, v, val);
+  if (!fs || fs.length < 2) return null;
+  const all = [];
+  for (const { node, m } of fs) {
+    const fe = exactPolyIn(node, ZERO_NODE, scope, v);
+    if (!fe) return null;
+    if (fe.length < 2) continue;
+    const rs = polyRootsExact(fe)?.roots;
+    if (!rs) return null;
+    for (const r of rs) {
+      const same = all.find((q) => sameRoot(q, r));
+      if (same) {
+        // ista ničla v dveh faktorjih le, če je točna v obeh; sicer zgradbe ne poznamo
+        if (!(same.exact && r.exact)) return null;
+        same.m += r.m * m;
+      } else all.push({ ...r, m: r.m * m });
+    }
+  }
+  return all.sort((a, b) => a.re - b.re || a.im - b.im);
 }
 
 // ---------- numerične rešitve ----------
@@ -752,7 +787,9 @@ export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) 
       const d = ce > 0 && !r.cex?.[i] ? Math.max(1, Math.min(decAll, Math.floor(-Math.log10(2 * ce)))) : decAll;
       // AUDIT-053: nepreverjena kompleksna ničla brez ugibanih ulomkov in korenov (≈ 0,333333 − 0,942809i, ne ≈ 1/3 − 2√2/3 i)
       const raw = r.cex ? !r.cex[i] : !!r.gx || ce > 0;
-      const small = (x) => formatNumber(Number(x.toPrecision(6)), { mode, comma }).tex;
+      // majhno število na 6 veljavnih mest, a ne več, kot jih dopušča napaka ce (AUDIT-068)
+      const sig = (x) => (ce > 0 && !r.cex?.[i] ? Math.max(1, Math.min(6, Math.floor(Math.log10(Math.abs(x) / (2 * ce))) + 1)) : 6);
+      const small = (x) => formatNumber(Number(x.toPrecision(sig(x))), { mode, comma }).tex;
       // preverjena: točna oblika (1/3 ± 10⁻⁷ i, ne 0,3333333 ± 10⁻⁷ i)
       const part = (x) => (Math.abs(x) < 1e-6 ? small(x) : r.cex?.[i] ? plainTex(x, comma, mode) : raw || decAll > 6 ? decTex(x, comma, mode, d) : plainTex(x, comma, mode));
       const a = re === 0 ? "" : part(re);
