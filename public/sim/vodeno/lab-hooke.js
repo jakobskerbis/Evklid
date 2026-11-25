@@ -101,7 +101,9 @@ export default {
       kaj: "Iz naklona premice F(x) izračunaj k mehke vzmeti v N/m. Vpiši ga v polje »tvoj rezultat« pod grafom in pritisni »Preveri moj račun«.",
       namig: "Vzemi točko na premici daleč od izhodišča: k = F/x. Podaljšek pretvori v metre (1 cm = 0,01 m).",
       zakaj: "k pove, kolikšna sila podaljša vzmet za 1 m. Mehka vzmet ima majhen k, trda velik.",
-      done: (c) => pravilenK(c),
+      poudari: ["tvoj rezultat", "Preveri moj račun"],
+      // Pritisnil je »Preveri moj račun« in račun je bil pravilen (»Pokaži rešitev« ne šteje), vpisan pa je k mehke vzmeti.
+      done: (c) => c.racun() && pravilenK(c),
     },
     {
       naslov: "Obremeni vzmet prek meje prožnosti",
