@@ -17,6 +17,7 @@ const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: n
  * Ustvari kalkulator v elementu root.
  * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field),
  *   useInCalc?(text) (»Uporabi v računu«: vrednost ali ∫(f; a; b) v znanstveni kalkulator),
+ *   recent?() (skupna zgodovina zavihkov: [{ text, src }]),
  *   shared?() ({ vars, funcs } znanstvenega kalkulatorja: »Iz kalkulatorja: a = 5«) }
  * Brez api ni »Moji grafi« (stran /kalkulator brez prijave), brez askTutor ni »Vprašaj inštruktorja«.
  */
@@ -953,12 +954,23 @@ export function createCalculator(root, opts) {
     });
   }
 
+  // 6,02214076E23 → 6,02214076 · 10²³ (napis; vrednost vrstice ostane v zapisu kalkulatorja)
+  const SUPD = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
+  const recentLabel = (x) => String(x).replace(/E(-?\d+)$/, (m, e) => ` · 10${[...e].map((c) => SUPD[c]).join("")}`).replace(/^-/, "−");
+  // skupna zgodovina zavihkov (opts.recent): zadnji številski izidi kot vrstice menija »Dodaj«
+  function recentRows() {
+    const src = { sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" };
+    const rec = (opts.recent?.() || []).filter((r) => /^-?[\d.,]+(?:E-?\d+)?$/.test(r.text)).slice(0, 4);
+    if (!rec.length || state.zapis !== 3) return "";
+    return `<div class="gc-pop-h">${esc(t("gc.addRecent"))}</div>` + rec.map((r) => `<button type="button" class="gc-menu-row" data-add="recent" data-v="${esc(r.text)}">${icon("calculator")}<span>${esc(recentLabel(r.text))} <span class="muted">· ${esc(t(src[r.src] || "sc.modeSci"))}</span></span></button>`).join("");
+  }
+
   function openAddMenu(anchor) {
     const html = `
       <button type="button" class="gc-menu-row" data-add="expr">${icon("square-function")}<span>${esc(t("gc.addExpr"))}</span></button>
       <button type="button" class="gc-menu-row" data-add="slider">${icon("sliders-horizontal")}<span>${esc(t("gc.addSlider"))}</span></button>
       <button type="button" class="gc-menu-row" data-add="table">${icon("table")}<span>${esc(t("gc.addTable"))}</span></button>
-      <button type="button" class="gc-menu-row" data-add="note">${icon("text")}<span>${esc(t("gc.addNote"))}</span></button>`;
+      <button type="button" class="gc-menu-row" data-add="note">${icon("text")}<span>${esc(t("gc.addNote"))}</span></button>${recentRows()}`;
     openPop(html, anchor, (e) => {
       const b = e.target.closest("[data-add]");
       if (!b) return;
@@ -966,10 +978,11 @@ export function createCalculator(root, opts) {
       const idx = state.items.length - 1;
       const kind = b.dataset.add;
       if (kind === "expr") insertAfter(idx);
-      if (kind === "slider") {
+      if (kind === "slider" || kind === "recent") {
         const used = new Set(state.items.map((x) => /^\s*([a-wz])\s*=/.exec(x.text || "")?.[1]));
         const name = "abcdkmnpqsuvw".split("").find((c) => !used.has(c)) || "a";
-        insertAfter(idx, { text: `${name} = 1` });
+        // izid iz drugega zavihka (skupna zgodovina): drsnik z vrednostjo izida
+        insertAfter(idx, { text: `${name} = ${kind === "recent" ? b.dataset.v : 1}` });
       }
       if (kind === "table") {
         const n = state.items.filter((x) => x.type === "table").length + 1;
