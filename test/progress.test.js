@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { Progress, RULES } from "../server/progress.js";
+import { getTopic } from "../server/curriculum.js";
 import { roundHalfUp, fmt } from "../server/practice/check.js";
 import { windowHistory } from "../server/usage.js";
 import { nowParts } from "../server/schedule.js";
@@ -493,4 +494,63 @@ test("level: an older database gets the wrong_streak column on open", async () =
     store.db.close();
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+// Audit #8 (25. 11. 2026): »Najprej vadi« (stran NPZ in matura) in kartica Danes na Učni poti imata en vir priporočila.
+const SS4 = { educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik OR", subject: "MAT" };
+const baseOf = (id) => getTopic(id).base[0];
+
+test("exam readiness: a new matura student's »practise first« starts with the learning path's next topic (Danes card)", () => {
+  const store = openDb(":memory:");
+  const p = new Progress(store);
+  const s = store.createStudent("Eva", SS4);
+  assert.equal(s.settings.goal, "matura");
+  const view = p.pathView(s.id, "MAT-SS-4");
+  const r = p.examReadiness(s.id, "MAT-EX-MATURA", "OR");
+  assert.equal(r.weakestTried, null);
+  // Ista tema kot kartica Danes (server/app.js danesMatura: weakestTried || view.next), ne prva tema 1. letnika.
+  assert.equal(baseOf(r.weakest[0].id), view.next.id, JSON.stringify(r.weakest));
+  assert.equal(r.weakest[0].name, view.next.name);
+  // Naprej po vrstnem redu Učne poti.
+  const order = view.units.flatMap((u) => u.topics.map((t) => t.id));
+  const at = r.weakest.map((w) => order.indexOf(baseOf(w.id)));
+  assert.ok(at.every((i, k) => i >= 0 && (k === 0 || i > at[k - 1])), JSON.stringify(at));
+  // Brez teme na vrsti na poti tega izpita (osnovnošolski profil): vrstni red kataloga kot prej.
+  const os = store.createStudent("Bor");
+  assert.equal(p.examReadiness(os.id, "MAT-EX-MATURA").weakest[0].id, "MAT-EX-MATURA/osnove-logike");
+});
+
+test("exam readiness with practice: weakest practised topic first (= weakestTried), ties in learning-path order", () => {
+  const store = openDb(":memory:");
+  const p = new Progress(store);
+  const s = store.createStudent("Eva", SS4);
+  const ins = store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, first_try_correct) VALUES (?, ?, 1, '{}', ?)");
+  const tries = (sid, topic, ok, bad) => {
+    for (let i = 0; i < ok; i++) ins.run(sid, topic, 1);
+    for (let i = 0; i < bad; i++) ins.run(sid, topic, 0);
+  };
+  // Trikotnik: nov, a vaden z napakami (0); kvadratna enačba: v učenju (0,2), pol napačnih; logaritem: v učenju, brez napak.
+  p.setStatus(s.id, "MAT-SS-2/kvadratna-enacba", "learning");
+  p.setStatus(s.id, "MAT-SS-2/logaritem", "learning");
+  tries(s.id, "MAT-SS-2/kvadratna-enacba", 1, 1);
+  tries(s.id, "MAT-SS-2/logaritem", 2, 0);
+  tries(s.id, "MAT-SS-1/trikotnik", 0, 2);
+  let r = p.examReadiness(s.id, "MAT-EX-MATURA", "OR");
+  assert.deepEqual(
+    r.weakest.map((w) => w.id),
+    ["MAT-EX-MATURA/trikotnik", "MAT-EX-MATURA/kvadratna-enacba", "MAT-EX-MATURA/logaritem"],
+  );
+  assert.equal(r.weakestTried.id, r.weakest[0].id);
+  // Ena sama vadena tema: prva, nato nevadene od teme na vrsti na Učni poti naprej.
+  const s2 = store.createStudent("Ana", SS4);
+  const next = p.pathView(s2.id, "MAT-SS-4").next;
+  tries(s2.id, "MAT-SS-1/mnozice", 1, 0);
+  r = p.examReadiness(s2.id, "MAT-EX-MATURA", "OR");
+  assert.equal(r.weakest[0].id, "MAT-EX-MATURA/mnozice");
+  assert.equal(baseOf(r.weakest[1].id), next.id);
+  // Enako šibki vadeni temi: najprej tista, ki je na Učni poti na vrsti, nato tema 1. letnika.
+  tries(s2.id, next.id, 1, 0);
+  r = p.examReadiness(s2.id, "MAT-EX-MATURA", "OR");
+  assert.deepEqual([baseOf(r.weakest[0].id), r.weakest[1].id], [next.id, "MAT-EX-MATURA/mnozice"]);
+  assert.equal(r.weakestTried.id, r.weakest[0].id);
 });

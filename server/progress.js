@@ -1,7 +1,7 @@
 // Napredovanje: prilagodljiva težavnost, obvladanje tem, odklepanje sklopov,
 // preizkus znanja, razmaknjeno ponavljanje, XP in lestvica.
 import crypto from "node:crypto";
-import { getPath, getTopic, localTopic, localUnitTitle, baseTopicIds } from "./curriculum.js";
+import { getPath, getTopic, localTopic, localUnitTitle, baseTopicIds, pathKeyFor } from "./curriculum.js";
 import { conceptsOfTopics } from "../public/games/learn-link.js";
 import { sameSubject } from "./subjects.js";
 import { uiLanguage } from "../public/i18n/languages.js";
@@ -685,19 +685,44 @@ export class Progress {
           wrong += r.wrong || 0;
         }
         const t = localTopic(t0, ui);
-        topics.push({ id: t0.id, name: t.name, unit: localUnitTitle(u, ui), score, tried: n, wrongRate: n ? wrong / n : 0, order: ui0 * 1000 + ti });
+        topics.push({ id: t0.id, ids, name: t.name, unit: localUnitTitle(u, ui), score, tried: n, wrongRate: n ? wrong / n : 0, order: ui0 * 1000 + ti });
       }),
     );
     if (!topics.length) return { percent: 0, weakest: [] };
     const percent = Math.round((100 * topics.reduce((s, t) => s + t.score, 0)) / topics.length);
     const out = ({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" });
+    // En vir priporočila (audit #8, 25. 11. 2026): »Najprej vadi« se začne s temo, ki jo ponudi kartica Danes na Učni
+    // poti (server/app.js danesMatura). Najprej vadene teme, najšibkejša prva (= weakestTried); neizvadena tema o
+    // šibkosti ne pove nič, zato nevadene sledijo v vrstnem redu Učne poti od teme na vrsti naprej (pathView.next),
+    // ostale po katalogu. Ob enaki šibkosti velja isti vrstni red Učne poti.
+    const plan = this.planOrder(studentId);
+    for (const t of topics) t.plan = Math.min(...t.ids.map((id) => plan.get(id) ?? Infinity));
+    const vaden = (t) => t.tried > 0 || t.score > 0;
     const sorted = topics
       .filter((t) => t.score < 1)
-      .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order);
+      .sort(
+        (a, b) =>
+          vaden(b) - vaden(a) ||
+          (vaden(a) ? a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried : 0) ||
+          (a.plan === b.plan ? 0 : a.plan < b.plan ? -1 : 1) ||
+          a.order - b.order,
+      );
     const weakest = sorted.slice(0, 3).map(out);
-    // Najšibkejša med temami, ki jih je učenec že vadil (kartica Danes): neizvadena tema o šibkosti ne pove nič.
-    const vadena = sorted.find((t) => t.tried > 0 || t.score > 0);
+    // Najšibkejša med temami, ki jih je učenec že vadil (kartica Danes).
+    const vadena = sorted.find(vaden);
     return { percent, weakest, weakestTried: vadena ? out(vadena) : null };
+  }
+
+  // Vrstni red Učne poti učenca od teme na vrsti (pathView.next, ista kot kartica Danes, Današnji trening in
+  // »Naslednja«) naprej, s sklopi »naprej« vred: id teme → mesto (0 = na vrsti). Teme pred njo in pot brez teme na
+  // vrsti: brez mesta.
+  planOrder(studentId) {
+    const settings = this.store.getStudent?.(studentId)?.settings;
+    const key = settings && pathKeyFor(settings);
+    const view = key && this.pathView(studentId, key);
+    if (!view?.next) return new Map();
+    const ids = view.units.flatMap((u) => u.topics.map((t) => t.id));
+    return new Map(ids.slice(Math.max(0, ids.indexOf(view.next.id))).map((id, i) => [id, i]));
   }
 
   // Zadnji rezultati poskusnih tekmovanj na tej poti.
