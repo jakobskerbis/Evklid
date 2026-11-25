@@ -6,6 +6,7 @@ import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
 import { napakaVsebina, napakaBesedilo, preveriPodporo } from "./napake.js";
 import { vgrajeno, starsu, vprasajInstruktorja, javiStarsu } from "./vgrajeno.js";
+import { jsonAliNic } from "/odgovor.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
 
@@ -448,9 +449,40 @@ async function mikroskop(param, moj) {
   return m;
 }
 
+// Izpad povezave (npr. minuta med objavo): »Ni povezave« z gumbom »Poskusi znova« in en samodejni poskus čez 4 s
+// (en na naslov do naslednjega uspeha, da daljši izpad ne sproži poskusa vsake 4 s v nedogled).
+let poskusiZnova = null;
+let samodejnoZa = null;
+function niPovezave(moj) {
+  const p = mk("div", "k3-napaka");
+  p.setAttribute("role", "alert");
+  p.append(mk("p", "", t("a3.noConnection")));
+  const b = mk("button", "a3-pill");
+  b.type = "button";
+  b.textContent = t("a3.retry");
+  b.addEventListener("click", () => usmeri());
+  p.append(b);
+  glavni.replaceChildren(p);
+  clearTimeout(poskusiZnova);
+  if (samodejnoZa === location.hash) return;
+  samodejnoZa = location.hash;
+  poskusiZnova = setTimeout(() => moj === zaporedje && usmeri(), 4000);
+}
+
 async function model(id, param, moj) {
-  const mod = await naloziModel(id);
+  let mod;
+  try {
+    mod = await naloziModel(id);
+  } catch (e) {
+    if (moj !== zaporedje) return null;
+    if (e?.povezava) {
+      niPovezave(moj);
+      return null;
+    }
+    throw e;
+  }
   if (moj !== zaporedje) return null;
+  samodejnoZa = null;
   if (!mod) {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t("a3.notFound")));
@@ -498,6 +530,9 @@ async function model(id, param, moj) {
     const st = mk("span", "k3-model-stevec", t("a3.position", { i: sos.i + 1, n: sos.n }));
     desno.append(gumb(sos.prej, -1), st, gumb(sos.potem, 1));
   }
+  // »Lekcija« (v okvirju aplikacije, ?ucenec=): teme učbenika s tem modelom (server/laboratorij.js teme3d). Ena tema:
+  // gumb jo odpre; več tem: kratek seznam. Aplikacija zapre okvir in odpre lekcijo; Nazaj iz lekcije spet odpre model.
+  if (vgrajeno && UCENEC) desno.append(gumbLekcije(id, mod.info.naslov));
   const prepModela = preparatModela(id);
   if (prepModela) {
     const mb = mk("button", "a3-krog k3-mikroskop");
@@ -550,6 +585,65 @@ async function model(id, param, moj) {
   return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop, vprasaj });
 }
 
+// Učenec iz okvirja aplikacije (public/uci-se.js open3d): za teme lekcij; samo številka.
+const UCENEC = (() => {
+  const v = new URLSearchParams(location.search).get("ucenec") || "";
+  return /^\d{1,12}$/.test(v) ? v : "";
+})();
+function gumbLekcije(id, naslov) {
+  const ovoj = mk("span", "k3-lekcije");
+  const b = mk("button", "a3-krog k3-lekcija");
+  b.type = "button";
+  b.hidden = true;
+  b.innerHTML = icon("book-open");
+  b.setAttribute("aria-label", t("a3.lesson"));
+  b.title = t("a3.lesson");
+  b.setAttribute("aria-expanded", "false");
+  const seznam = mk("div", "k3-lekcije-seznam");
+  seznam.hidden = true;
+  ovoj.append(b, seznam);
+  let teme = [];
+  const odpri = (tema) => starsu({ tip: "lekcija", id: tema.id, vrni: id, oznaka: naslov });
+  b.addEventListener("click", () => {
+    if (teme.length === 1) return odpri(teme[0]);
+    seznam.hidden = !seznam.hidden;
+    b.setAttribute("aria-expanded", String(!seznam.hidden));
+    if (!seznam.hidden) seznam.querySelector("button")?.focus();
+  });
+  seznam.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    e.preventDefault();
+    e.stopPropagation();
+    seznam.hidden = true;
+    b.setAttribute("aria-expanded", "false");
+    b.focus();
+  });
+  // Dotik ali klik zunaj seznama ga zapre (kot drugi spustni seznami); ob menjavi modela se poslušalec odstrani.
+  document.addEventListener("pointerdown", function zunaj(e) {
+    if (!ovoj.isConnected) return document.removeEventListener("pointerdown", zunaj, true);
+    if (seznam.hidden || ovoj.contains(e.target)) return;
+    seznam.hidden = true;
+    b.setAttribute("aria-expanded", "false");
+  }, true);
+  fetch(`/api/students/${UCENEC}/svet3d/${encodeURIComponent(id)}/teme`, { credentials: "same-origin" })
+    .then((r) => jsonAliNic(r, { teme: [] }))
+    .then((d) => {
+      teme = Array.isArray(d?.teme) ? d.teme : [];
+      if (!teme.length || !ovoj.isConnected) return;
+      for (const tema of teme) {
+        const v = mk("button", "k3-lekcije-vrstica");
+        v.type = "button";
+        v.append(mk("span", "", tema.name), mk("small", "", tema.level || ""));
+        v.dir = "auto";
+        v.addEventListener("click", () => odpri(tema));
+        seznam.append(v);
+      }
+      b.hidden = false;
+    })
+    .catch(() => {});
+  return ovoj;
+}
+
 async function usmeri() {
   const moj = ++zaporedje;
   try {
@@ -562,7 +656,9 @@ async function usmeri() {
     if (id) await preveriPodporo();
     const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : id === "mikroskop" ? await mikroskop(param, moj) : await model(id, param, moj);
     if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
-    if (moj === zaporedje) javiStarsu("pripravljen"); // okvir aplikacije skrije svoj »Zapri« (uci-se.js cuvaj3d)
+    // Okvir aplikacije skrije svoj »Zapri« (uci-se.js cuvaj3d); kartica brez prizora (niPovezave, »ne obstaja«) je napaka:
+    // »Zapri« ostane, sicer bi učenec v okvirju brez povezave ostal ujet.
+    if (moj === zaporedje) javiStarsu(glavni.querySelector(":scope > .k3-napaka") ? "napaka" : "pripravljen");
   } catch (err) {
     console.error("3D:", err);
     if (moj !== zaporedje) return;

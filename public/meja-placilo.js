@@ -26,7 +26,8 @@ const OFFER_HINTS = new Set(["block.hintParent", "block.hintAdult"]);
 
 // Valuta naročnine na računu iz ključa paketa (server/accounts/plans.js: regijski paketi končajo z _inr, _ngn …,
 // evrski brez pripone). Neznana oblika ključa → null. Strežnik povezavo za plačilo naredi v valuti obstoječe
-// (tudi pretekle) naročnine (currencyOf), cenik /api/account/prices pa brez računa, zato se lahko razlikujeta.
+// (tudi pretekle) naročnine (currencyOf); /api/account/prices za prijavljen račun od #759 enako, preverba ostane za
+// odgovor brez računa ali star strežnik.
 export const planCurrency = (key) => {
   const k = String(key ?? "");
   const m = /_([a-z]{3})$/.exec(k);
@@ -66,7 +67,10 @@ export function limitVariant({ body, status = null, prices = null, level = "OS",
     if (!parentPays) action = "account";
     else if (single) action = "link";
   }
-  return { kind: "offer", price, action, payOn };
+  // Plačljiva dnevna meja na stopnji profila (#759): »Do 60 vprašanj na dan namesto 10«.
+  const paidN = Number(prices?.paid_daily_questions?.[level]) || 0;
+  const freeN = Number(prices?.free_daily_questions) || 0;
+  return { kind: "offer", price, action, payOn, ...(paidN > freeN && freeN > 0 ? { daily: { n: paidN, free: freeN } } : {}) };
 }
 
 // Besedilo razloga v jeziku vmesnika (kot public/app.js serverError, brez namiga).
@@ -82,8 +86,9 @@ const hintText = (body) => {
 export function limitCardHtml(v, body) {
   // Brez delujočih plačil seznama ni (j 2026-11-16): nakup ni mogoč, zato ostaneta sporočilo in »Vadi naprej«.
   const facts = v.kind === "offer" && v.payOn
-    ? [t("meja.more"), t("meja.deep"), t("meja.lessons")]
+    ? [v.daily ? t("meja.moreN", v.daily) : t("meja.more"), t("meja.deep"), t("meja.lessons")]
     : [];
+
   // Cena je posebna vrstica pod seznamom, ne alineja s kljukico (»Z naročnino dobiš: 9,99 € na mesec« bi bilo narobe).
   const price = v.kind === "offer" && v.price ? `<p class="meja-price">${esc(t("meja.price", { price: v.price }))}</p>` : "";
   // Namig strežnika (»ustvari račun«, »naj starš izbere naročnino«) ostane, ko ni gumba, ki ga nadomesti,

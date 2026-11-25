@@ -333,7 +333,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-napaka .a3-pill { text-decoration: none; margin: 4px; }
 /* Kartica z napako (napake.js): koda neznane napake, povezava na nižjo kakovost, »Poskusi znova«. */
 .k3-napaka-koda { margin: 4px 0 8px; font-size: 0.85rem; opacity: 0.8; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.k3-napaka-povezava { display: block; width: fit-content; margin: 6px auto 10px; color: var(--k3-accent, #6e9bff); font-weight: 600; }
+.k3-napaka-povezava { display: flex; align-items: center; justify-content: center; width: fit-content; min-height: 44px; padding: 0 14px; margin: 2px auto 6px; color: var(--k3-accent, #6e9bff); font-weight: 600; }
 .k3-nalaganje.napaka .a3-pill { margin-top: 12px; }
 
 /* ---------- atlas ---------- */
@@ -705,3 +705,10 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .a3-drsam .a3-vrh, .a3-drsam .a3-dno, .a3-drsam .a3-list, .a3-drsam .a3-lebdi, .a3-drsam .k3-hoja { visibility: hidden; }
 .a3-drsam .a3-list { box-shadow: none; }
 .a3-drsam input.a3-aktiven { visibility: visible; }
+
+/* »Lekcija« v glavi modela (public/3d/stran.js gumbLekcije): ena tema odpre lekcijo, več tem kratek seznam. */
+.k3-lekcije { position: relative; display: inline-flex; }
+.k3-lekcije-seznam { position: absolute; inset-inline-end: 0; top: calc(100% + 6px); z-index: 20; min-width: 220px; max-width: min(320px, 86vw); padding: 6px; border-radius: 14px; background: var(--k3-povrsina); border: 1px solid var(--k3-povrsina-2); box-shadow: 0 8px 24px rgb(0 0 0 / 0.25); display: grid; gap: 2px; }
+.k3-lekcije-vrstica { display: grid; gap: 2px; text-align: start; min-height: 44px; padding: 8px 10px; border: 0; border-radius: 10px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.k3-lekcije-vrstica:hover, .k3-lekcije-vrstica:focus-visible { background: var(--k3-povrsina-2); }
+.k3-lekcije-vrstica small { opacity: 0.75; }

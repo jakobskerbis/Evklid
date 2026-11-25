@@ -32,8 +32,10 @@ export function sim3d(el, opts = {}) {
   let box = null;
   const nalozi = () =>
     (async () => {
-      // three.js rabi Safari 16.4+: star brskalnik dobi »posodobi« (napake.js) namesto praznega okvirja
-      await (await import("./napake.js")).preveriPodporo();
+      // three.js rabi Safari 16.4+: star brskalnik dobi »posodobi« (napake.js) namesto praznega okvirja. Če se napake.js
+      // ne naloži (izpad povezave), preverjanje preskočimo in nalagamo naprej; napako pokaže catch spodaj.
+      const napake = await import("./napake.js").catch(() => null);
+      await napake?.preveriPodporo();
       const [{ naloziModel }, { odpriModel }, { t }] = await Promise.all([import("./modeli.js"), import("./pregledovalnik.js"), import("/i18n.js")]);
       p.textContent = t("a3.loading");
       const mod = opts.model ? await naloziModel(opts.model) : null;
@@ -51,26 +53,30 @@ export function sim3d(el, opts = {}) {
     })().catch(async (err) => {
       console.error("3D simulacija:", err);
       // Napaka: sporočilo po vrsti napake (povezava, star brskalnik, pomnilnik …) namesto praznega okvirja; p je ob gradnji
-      // že odstranjen. »Poskusi znova« naloži model še enkrat.
-      const [{ t }, { napakaVsebina }] = await Promise.all([import("/i18n.js").catch(() => ({ t: () => "3D" })), import("./napake.js")]).catch(() => [{ t: () => "3D" }, { napakaVsebina: null }]);
+      // že odstranjen. »Poskusi znova« naloži model še enkrat. i18n in napake.js uvozimo ločeno: brez povezave se
+      // napake.js morda ne naloži, besedilo (i18n.js je navadno že naložen) in gumb pa morata ostati (kot uci-se.js show3d).
+      // Izpad povezave pri modelu (naloziModel vrže povezava: true) gre po isti poti: a3.noConnection in en »Poskusi znova«.
+      const t = await import("/i18n.js").then((m) => m.t, () => () => "3D");
+      const { napakaVsebina } = await import("./napake.js").catch(() => ({}));
       box?.remove();
       box = null;
       poskusi?.remove();
       poskusi = null;
-      if (!napakaVsebina) {
-        p.textContent = t("a3.loadError");
-      } else {
-        p.replaceChildren(
-          ...napakaVsebina(err, {
-            t,
-            znova: () => {
-              p.replaceChildren();
-              dodajPoskusi(opts.poskusi);
-              nalozi();
-            },
-            razredGumba: "secondary",
-          }),
-        );
+      const znova = () => {
+        p.replaceChildren();
+        dodajPoskusi(opts.poskusi);
+        nalozi();
+      };
+      if (napakaVsebina) p.replaceChildren(...napakaVsebina(err, { t, znova, razredGumba: "secondary" }));
+      else {
+        const s = document.createElement("p");
+        s.textContent = t(err?.povezava ? "a3.noConnection" : "a3.loadError");
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "secondary";
+        b.textContent = t("a3.retry");
+        b.addEventListener("click", znova, { once: true });
+        p.replaceChildren(s, b);
       }
       if (el.isConnected) el.append(p);
     });

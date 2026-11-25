@@ -170,3 +170,18 @@ test("chat route: the note goes to the model once, never into the shown text; wi
     assert.ok(!b3.some((b) => b.startsWith("<kontekst_ucenja>")));
   });
 });
+
+test("povezave C1: opomba poskusa dovoli ODPRI z »nastavi« za isti poskus, napoved najprej; gumb vrne v odprt poskus", async () => {
+  const fs = await import("node:fs");
+  const note = await ucniKontekst({ v: 1, sourceType: "lab", sourceId: "lab-ohm", parameters: [{ ime: "napetost", vrednost: "3", enota: "V" }] });
+  assert.match(note, /do not add ODPRI only to open it/);
+  assert.match(note, /ODPRI for this same experiment with nastavi/);
+  assert.match(note, /first ask only for the prediction, with no ODPRI in that reply/);
+  assert.match(note, /Only in a later reply, after the student has given the prediction/);
+  const odpri = fs.readFileSync(new URL("../public/odpri.js", import.meta.url), "utf8");
+  const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(odpri, /x\.kind === "sim" && x\.set && !x\.locked && D\.odprtiPoskus\?\.\(labKljuc\(x\)\) === true/);
+  assert.match(odpri, /requestAnimationFrame\(\(\) => applySet\(mount, x\.set\)\)/);
+  assert.match(app, /r\.view !== "lab" \|\| r\.poskus !== key \|\| !returnConvOk\(r\)/);
+  assert.match(app, /back\?\.kontekst\?\.sourceType === "lab"/);
+});

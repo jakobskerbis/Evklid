@@ -42,7 +42,7 @@ test("WebGL ostane svoje sporočilo, neznana napaka dobi splošno besedilo in im
 test("vsak ključ ima besedilo v slovenščini in v živih jezikih", async () => {
   const { default: SL } = await import("../public/i18n/sl.js");
   const { LIVE_UI_LANGUAGES } = await import("../public/i18n/languages.js");
-  const kljuci = ["a3.oldBrowser", "a3.lowMemory", "a3.lowQuality", "a3.otherError", "a3.errorTech", "a3.updated", "a3.retry", "a3.loadError", "a3.noWebgl"];
+  const kljuci = ["a3.oldBrowser", "a3.lowMemory", "a3.lowQuality", "a3.otherError", "a3.errorTech", "a3.updated", "a3.retry", "a3.loadError", "a3.noWebgl", "a3.noConnection"];
   for (const k of kljuci) assert.ok(SL[k], `sl: ${k}`);
   for (const jezik of LIVE_UI_LANGUAGES.filter((j) => j !== "sl")) {
     const ui = JSON.parse(fs.readFileSync(new URL(`../public/i18n/ui/${jezik}.json`, import.meta.url), "utf8"));
@@ -150,7 +150,8 @@ test("RangeError je pomnilnik samo s sporočilom o pomnilniku ali medpomnilniku"
 });
 
 test("napaka z povezava: true (naloziModel brez povezave) je napaka povezave", () => {
-  assert.equal(na(Object.assign(new Error("model ni na voljo"), { povezava: true })).vrsta, "povezava");
+  const r = na(Object.assign(new Error("povezava"), { povezava: true }));
+  assert.deepEqual([r.vrsta, r.key], ["povezava", "a3.noConnection"]);
 });
 
 test("tehnični razlog: naslov z oklepaji ne pušča poizvedbe, e-pošta je skrita", () => {
@@ -165,4 +166,22 @@ test("aplikacija (Web3D.tsx): števec padcev procesa strani se ponastavi po uspe
   assert.match(src, /onLoad=\{\(\) => \(loadedAt\.current = Date\.now\(\)\)\}/);
   assert.match(src, /if \(loadedAt\.current && Date\.now\(\) - loadedAt\.current > 60_000\) crashes\.current = 0;/);
   assert.match(src, /onContentProcessDidTerminate=\{reloadAfterCrash\}/);
+});
+
+// Pregled z napravo (3D sklad): žetoni s pikami in ws(s):// naslovi; kartica organa brez praznega gumba in namiga.
+test("tehnični razlog: žeton JWT in naslov ws:// sta skrita", () => {
+  const jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0In0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+  assert.equal(tehnicno(new Error(`neveljaven ${jwt} konec`)), "Error: neveljaven [žeton] konec");
+  assert.equal(tehnicno(new Error("Bearer abcdefghij1.klmnopqrst2.uvwxyz3 zavrnjen")), "Error: Bearer [žeton] zavrnjen");
+  assert.equal(tehnicno(new Error("WebSocket wss://x.si/v?k=1 zaprt")), "Error: WebSocket /v zaprt");
+  assert.equal(tehnicno(new Error("ws://127.0.0.1:9/a/b")), "Error: /a/b");
+  // imena datotek s pikami ostanejo
+  assert.equal(tehnicno(new Error("three.module.js ni naložen")), "Error: three.module.js ni naložen");
+});
+
+test("pregledovalnik: gumb Predvajaj skrit do modela s korakom, kartica z napako odstrani namig", () => {
+  const src = fs.readFileSync(new URL("../public/3d/pregledovalnik.js", import.meta.url), "utf8");
+  assert.match(src, /btnTeci\.type = "button";\n\s*btnTeci\.hidden = true;/);
+  const napaka = src.slice(src.indexOf("function napaka(err)"), src.indexOf("napakaVsebina(err", src.indexOf("function napaka(err)")));
+  assert.match(napaka, /oder\.querySelector\("\.k3-namig"\)\?\.remove\(\);/);
 });
