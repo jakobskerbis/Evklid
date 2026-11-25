@@ -26,7 +26,8 @@ const OFFER_HINTS = new Set(["block.hintParent", "block.hintAdult"]);
 
 // Valuta naročnine na računu iz ključa paketa (server/accounts/plans.js: regijski paketi končajo z _inr, _ngn …,
 // evrski brez pripone). Neznana oblika ključa → null. Strežnik povezavo za plačilo naredi v valuti obstoječe
-// (tudi pretekle) naročnine (currencyOf), cenik /api/account/prices pa brez računa, zato se lahko razlikujeta.
+// (tudi pretekle) naročnine (currencyOf); /api/account/prices za prijavljen račun od #759 enako, preverba ostane za
+// odgovor brez računa ali star strežnik.
 export const planCurrency = (key) => {
   const k = String(key ?? "");
   const m = /_([a-z]{3})$/.exec(k);
