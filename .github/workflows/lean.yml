@@ -1,0 +1,43 @@
+# Lean preverjanje vsebine (docs/lean.md, j 25. 11. 2026: »povsod, kjer bi pomagalo pri natančnosti, programsko
+# preverjanje z Lean, tudi vmesni koraki«). Teče v GitHubu, brez strežnika in brez stroška AI. Ni med testi, ki
+# jih čaka objava (scripts/render-objava.js), zato ne zadrži objave na evklid.app.
+name: lean
+
+on:
+  pull_request:
+    paths: ["lean/**", "content/lessons/**", "content/exam-papers/**", ".github/workflows/lean.yml"]
+  push:
+    branches: [main]
+    paths: ["lean/**", "content/lessons/**", "content/exam-papers/**", ".github/workflows/lean.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lean-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: lean
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Namesti elan (Lean, različica iz lean/lean-toolchain)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/75160ec0ffe6b1b93c9e5312809ababc9878b48f/elan-init.sh -o /tmp/elan-init.sh
+          sh /tmp/elan-init.sh -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Prenesi prevedeno knjižnico Mathlib
+        run: lake exe cache get
+      - name: Preveri vse dokaze
+        run: lake build
+      - name: Brez nedokazanih trditev (sorry, admit, axiom, native_decide)
+        run: |
+          if grep -rnwE "sorry|admit|axiom|native_decide" Evklid Evklid.lean; then
+            echo "::error::Nedokazana trditev ali dodaten aksiom v lean/ (docs/lean.md)"; exit 1
+          fi
