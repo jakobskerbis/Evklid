@@ -47,8 +47,8 @@ class Unsure(Exception):
     """Koda tega ne zna zanesljivo preveriti (ok = null)."""
 
 
-class Timeout(Exception):
-    pass
+class Timeout(BaseException):
+    """BaseException, da ga širok »except Exception« v SymPy ne pogoltne (pregled PV-03: ukaz je tekel do 58 s)."""
 
 
 def _alarm(signum, frame):
@@ -227,13 +227,19 @@ def is_zero(expr, syms=None):
     return r
 
 
+def _racionalno(e):
+    """Vsako decimalko zamenja z ulomkom njenega desetiškega zapisa (0.1 → 1/10)."""
+    return e.xreplace({f: sp.Rational(str(f)) for f in e.atoms(sp.Float)})
+
+
 def _je_nic(z):
     """0 ali Piecewise, ki je 0 povsod razen v posameznih točkah, kjer izraz ni definiran (nan/zoo pri Eq(x, a))."""
     if z == 0:
         return True
     if isinstance(z, sp.Piecewise):
-        deli = z.args
-        return any(e == 0 for e, _ in deli) and all(e == 0 or (e in (sp.nan, sp.zoo) and isinstance(c, sp.Eq)) for e, c in deli)
+        *luknje, (zadnji, pogoj) = z.args
+        tocka = lambda c: isinstance(c, sp.Eq) and any(a.is_Symbol for a in c.args) and any(a.is_number for a in c.args)
+        return zadnji == 0 and pogoj is sp.true and all(e in (sp.nan, sp.zoo) and tocka(c) for e, c in luknje)
     return False
 
 
@@ -247,14 +253,14 @@ def _simbolno_nic(z, meja=1.5):
     rob, da počasen prepis ne pokvari celotnega ukaza; ob izteku vrne False (ostane številska pot)."""
     for prepis in (sp.expand_trig, lambda e: e.rewrite(sp.exp), _koreni_razstavljeni):
         ostane = signal.getitimer(signal.ITIMER_REAL)[0]
-        if ostane and ostane < meja + 1.5:
-            return False
+        if not ostane or ostane < meja + 1.5:
+            return False  # handle vedno nastavi alarm: brez njega je čas ukaza že porabljen
         zacetek = time.monotonic()
         signal.setitimer(signal.ITIMER_REAL, meja)
         try:
             if _je_nic(sp.simplify(prepis(z))):
                 return True
-        except Exception:  # vključno z notranjim Timeout
+        except (Exception, Timeout):  # vključno z notranjim časovnim robom
             pass
         finally:
             signal.setitimer(signal.ITIMER_REAL, max(0.01, ostane - (time.monotonic() - zacetek)) if ostane else 0)
@@ -571,6 +577,8 @@ def solve_system(eqs, vs, claim_text, names):
     sols = sp.solve(eqs, vs, dict=True)
     if not sols:
         raise Unsure("reševalnik ne najde rešitev")
+    if any(e.atoms(sp.sin, sp.cos, sp.tan, sp.cot, sp.sec, sp.csc) for e in eqs):
+        oslabi("numeric")  # sp.solve pri kotnih funkcijah vrne le glavne rešitve: popolnost ni dokazana
     vset = set(vs)
     param = any(set(s) != vset or any(val.free_symbols & vset for val in s.values()) for s in sols)
     claimed_param = any(val.free_symbols for pt in exact for val in pt.values())
@@ -744,9 +752,10 @@ def op_ineq(text, var, claimed):
     if not m:
         raise Unsure("ni neenačba")
     rel = {"<": sp.Lt, ">": sp.Gt, "<=": sp.Le, ">=": sp.Ge}[m.group(2)]
-    ineq = rel(parse(m.group(1), [str(x)]), parse(m.group(3), [str(x)]))
+    ineq = rel(_racionalno(parse(m.group(1), [str(x)])), _racionalno(parse(m.group(3), [str(x)])))
     truth = sp.solveset(ineq, x, sp.S.Reals)
     claim = parse_set(claimed, x)
+    claim = _racionalno(claim)  # decimalke kot ulomki: meje intervalov primerjamo točno
     ok = truth == claim or sp.simplify(sp.Complement(truth, claim)) == sp.S.EmptySet and sp.simplify(sp.Complement(claim, truth)) == sp.S.EmptySet
     return ok, "" if ok else f"rešitev je {sp.sstr(truth)}"
 
@@ -808,6 +817,22 @@ def op_units(expr, claimed):
 OPS = {"solve": op_solve, "equal": op_equal, "diff": op_diff, "int": op_int, "limit": op_limit, "value": op_value, "ineq": op_ineq, "units": op_units}
 
 
+DECIMALKA = re.compile(r"(?<![\w.])\d+\.\d+(?:[eE][+-]?\d+)?(?![\w.])")
+
+
+def _z_ulomki(op, args):
+    """Decimalke SymPy hrani kot 53-bitna števila: Float(100000000.05) · 100000001 se zaokroži na 10000000105000000,
+    zato bi napačen odgovor dobil »symbolic« (pregled PV-03). Ukaz ponovimo z decimalkami kot ulomki (0.05 → 1/20);
+    »symbolic« ostane le, če tudi točen račun drži simbolno, sicer je izid številski."""
+    tocni = [DECIMALKA.sub(lambda m: "(" + str(sp.Rational(m.group(0))) + ")", a) for a in args]
+    _nacin[0] = "symbolic"
+    try:
+        ok, _ = op(*tocni)
+    except (Exception, Timeout):  # prvi izid ostane, a le kot številski
+        return "numeric"
+    return "symbolic" if ok and _nacin[0] == "symbolic" else "numeric"
+
+
 def handle(req):
     op = OPS.get(req.get("op"))
     if not op:
@@ -815,8 +840,12 @@ def handle(req):
     signal.alarm(TIME_LIMIT)
     _nacin[0] = "symbolic"
     try:
-        ok, why = op(*[str(a) for a in req.get("args", [])])
-        return {"ok": bool(ok), "why": why or "", "how": _nacin[0]}
+        args = [str(a) for a in req.get("args", [])]
+        ok, why = op(*args)
+        how = _nacin[0]
+        if ok and how == "symbolic" and any(DECIMALKA.search(a) for a in args):
+            how = _z_ulomki(op, args)
+        return {"ok": bool(ok), "why": why or "", "how": how}
     except Unsure as e:
         return {"ok": None, "why": str(e)}
     except Timeout:

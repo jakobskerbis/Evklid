@@ -28,6 +28,16 @@ test("worker: način preverjanja", { skip: !HAVE && "SymPy ni na voljo" }, async
   assert.equal(await nacin("diff", ["abs(x)", "x", "x/abs(x)"]), "true/symbolic");
   assert.equal(await nacin("diff", ["ln(abs(x))", "x", "1/x"]), "true/symbolic");
   assert.equal(await nacin("equal", ["ln(2)/(ln(3)-ln(2))", "log(2)/log(3/2)"]), "true/symbolic");
+  // decimalke: točen račun z ulomki ostane simbolen, 53-bitno zaokroževanje, ki skrije napako, pa ne (pregled PV-03)
+  assert.equal(await nacin("value", ["0.05*240", "12"]), "true/symbolic");
+  assert.equal(await nacin("value", ["100000000.05*100000001", "10000000105000000"]), "true/numeric");
+  assert.equal(await nacin("solve", ["x/100000001=100000000.05", "x", "10000000105000000"]), "true/numeric");
+  assert.equal(await nacin("ineq", ["x/3 < 0.1", "x", "x < 0.3"]), "true/symbolic");
+  assert.equal((await casCheck("ineq", ["x/100000001 < 100000000.05", "x", "x < 10000000105000000"])).ok, false);
+  // sistem s kotnimi funkcijami: sp.solve vrne le glavne rešitve, popolnost ni dokazana
+  assert.equal(await nacin("solve", ["sin(x)=y, cos(x)=y", "x, y", "x=pi/4, y=sqrt(2)/2"]), "true/numeric");
+  assert.equal(await nacin("solve", ["x^2+y^2=25, x+y=7", "x, y", "x=3, y=4; x=4, y=3"]), "true/symbolic");
+  assert.equal(await nacin("solve", ["sin(x)=0, y=x", "x, y", "x=0, y=0; x=pi, y=pi"]), "true/numeric");
   // vzorčeno: velik koeficient, napačen za 1, sprejme le preizkus v točkah
   assert.equal(await nacin("equal", ["(x+1000000)^2", "x^2+1999999*x+1000000000000"]), "true/sampled");
   // številsko: toleranca zapisa, decimalke, popolnost periodičnih rešitev le na odseku

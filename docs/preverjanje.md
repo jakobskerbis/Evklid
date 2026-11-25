@@ -62,6 +62,14 @@ Worker (`server/cas/worker.py`) v vsakem odgovoru vrne `how`, najšibkejši nač
   realnost korenov in logaritmov, ki je SymPy ne dokaže, in popolnost periodičnih rešitev samo na [−20, 20];
 - `sampled`: `is_zero` je odločil s preizkusom v naključnih točkah.
 
+Dve pravili iz pregleda: (1) ukaz z decimalkami, ki je izšel `symbolic`, worker ponovi z decimalkami kot ulomki
+(0.05 → 1/20); `symbolic` ostane le, če tudi točen račun drži simbolno, sicer je `numeric` (53-bitni `Float` je
+`100000000.05 · 100000001` zaokrožil na `10000000105000000`); `ineq` meje z decimalkami primerja kot ulomke.
+(2) Sistem s kotnimi funkcijami je največ `numeric`, ker `sp.solve` vrne le glavne rešitve
+(`sin x = y, cos x = y` brez −3π/4 in periodičnih rešitev).
+`Timeout` je `BaseException`, da ga širok `except Exception` v SymPy ne pogoltne: ukaz se konča v 6 s, prej je
+lahko tekel do roba 9 s v `cas.js`, ki proces ubije (na trditvah iz lekcij se `ok` zato ni spremenil).
+
 `server/cas.js` `casCheck` vrne `how`, kadar ga worker pošlje. Pravilo: SymPy »drži« je `izracunano` samo pri
 `how: "symbolic"`, sicer (tudi brez `how`) največ `numericno`. Meja motorja `sympy` v `trditev.js` ostane `exact`;
 vir v `dokazi` preslika besednjak workerja: `symbolic` → `exact`, `numeric` in `sampled` → `numeric`.
