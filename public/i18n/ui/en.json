@@ -730,6 +730,8 @@
   "ready.weakTitle": "Practise these first",
   "ready.weakNone": "You have mastered every exam topic. Try the mock exam!",
   "ready.practice": "Practise",
+  "ready.official": "official NPZ date",
+  "ready.officialMatura": "start of the spring matura term (official calendar)",
   "ready.saved": "Exam date saved.",
   "pp.title": "Past papers",
   "pp.text": "Official papers and marking schemes are published by the Slovenian National Examinations Centre (RIC), which holds all rights to them. We do not copy them: each link opens the document on ric.si.",

@@ -730,6 +730,8 @@
   "ready.weakTitle": "Ezeket gyakorold először",
   "ready.weakNone": "Minden vizsgatémát elsajátítottál. Próbáld ki a próbavizsgát!",
   "ready.practice": "Gyakorlás",
+  "ready.official": "hivatalos NPZ-időpont",
+  "ready.officialMatura": "az érettségi tavaszi vizsgaidőszakának kezdete (hivatalos naptár)",
   "ready.saved": "A vizsga dátuma elmentve.",
   "pp.title": "Korábbi feladatsorok",
   "pp.text": "A hivatalos feladatlapokat és értékelési útmutatókat a Szlovén Állami Vizsgaközpont (RIC) teszi közzé, amelyé minden jog. Nem másoljuk őket: minden hivatkozás a ric.si oldalon nyitja meg a dokumentumot.",

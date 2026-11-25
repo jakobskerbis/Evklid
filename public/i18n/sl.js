@@ -1185,6 +1185,8 @@ export default {
   "ready.weakTitle": "Najprej vadi",
   "ready.weakNone": "Vse teme izpita že obvladaš. Preizkusi se v poskusnem izpitu!",
   "ready.practice": "Vadi",
+  "ready.official": "uradni datum NPZ",
+  "ready.officialMatura": "začetek spomladanskega roka mature (uradni koledar)",
   "ready.saved": "Datum izpita je shranjen.",
   "pp.title": "Pretekle pole",
   "pp.text": "Uradne pole in navodila za ocenjevanje objavlja Državni izpitni center (RIC), ki ima nanje vse pravice. Ne kopiramo jih: vsaka povezava odpre dokument na ric.si.",

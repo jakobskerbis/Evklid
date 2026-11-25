@@ -15,7 +15,7 @@ import { accountsOn, accountStatus } from "./account.js";
 import { povabiPoUspehu } from "./povabi.js";
 import { SUBJECT_NAMES } from "./programs.js";
 import { jeOs, TRACK, stopnja } from "./stopnja.js";
-import { validDate } from "./goal-data.js";
+import { validDate, uradniDatum } from "./goal-data.js";
 import { matLevel, examName as siExamName, SI_EXAMS, loadPapers, mountPapers, paperLabel } from "./exam-papers.js";
 import { levelLabel } from "./level-picker.js";
 import { fmtDate, countdown } from "./goal.js";
@@ -823,7 +823,10 @@ const siGoal = () => (jeOs(state.student?.settings) ? "npz" : "matura");
 function readinessHtml(c) {
   const s = state.student.settings;
   const r = c.readiness || { percent: 0, weakest: [] };
-  const date = s.goal === siGoal() && validDate(s.goal_date) ? s.goal_date : "";
+  // Brez lastnega datuma velja uradni datum izpita (goal-data.js uradniDatum), dokler učenec ne shrani svojega.
+  const own = s.goal === siGoal() && validDate(s.goal_date) ? s.goal_date : "";
+  const official = own ? "" : uradniDatum(c.exam, c.subject);
+  const date = own || official;
   const d = new Date();
   const min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   // Raven mature iz matematike (izbrana ob profilu, »4. letnik VR«) se vidi ob imenu izpita (Geminijev pregled 17. 11.).
@@ -848,7 +851,7 @@ function readinessHtml(c) {
       <div class="er-text"><span class="eyebrow">${t("ready.title")}</span><h2>${escapeHtml(name)}</h2><p class="muted small-note">${t("ready.pctNote")}</p></div>
     </div>
     <div class="er-date">
-      ${date ? `<p class="er-when">${icon("calendar")}<span><b>${escapeHtml(fmtDate(date))}</b>${LOCILO}${escapeHtml(countdown(date))}</span><button type="button" class="text-btn" data-er-edit>${t("ready.changeDate")}</button></p>` : ""}
+      ${date ? `<p class="er-when">${icon("calendar")}<span><b>${escapeHtml(fmtDate(date))}</b>${LOCILO}${escapeHtml(countdown(date))}${official ? `<small class="muted er-official">${t(c.exam === "MATURA" || c.exam === "POKLICNA" ? "ready.officialMatura" : "ready.official")}</small>` : ""}</span><button type="button" class="text-btn" data-er-edit>${t("ready.changeDate")}</button></p>` : ""}
       ${dateForm}
     </div>
     <h3 class="er-weak-title">${t("ready.weakTitle")}</h3>

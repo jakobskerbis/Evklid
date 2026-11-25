@@ -736,6 +736,8 @@
   "ready.weakTitle": "Prvo vježbaj",
   "ready.weakNone": "Svladao si sve teme ispita. Okušaj se u probnom ispitu!",
   "ready.practice": "Vježbaj",
+  "ready.official": "službeni datum NPZ-a",
+  "ready.officialMatura": "početak proljetnog roka mature (službeni kalendar)",
   "ready.saved": "Datum ispita je spremljen.",
   "pp.title": "Prošli ispiti",
   "pp.text": "Službene ispitne listove i upute za ocjenjivanje objavljuje Državni ispitni centar Slovenije (RIC), koji ima sva prava na njih. Ne kopiramo ih: svaka poveznica otvara dokument na ric.si.",

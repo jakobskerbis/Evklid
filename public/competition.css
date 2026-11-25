@@ -292,3 +292,4 @@ html.pv-open, html.pv-open body { overflow: hidden; }
   .sim-row { grid-template-columns: auto minmax(0, 1fr) auto; }
   .sim-row .bar { grid-column: 1 / -1; }
 }
+.er-official { display: block; font-weight: 400; font-size: 0.82rem; color: var(--muted); }

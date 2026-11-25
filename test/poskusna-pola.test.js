@@ -116,3 +116,16 @@ test("API: shrani poskusno polo, šibke točke, zgodovina na strani NPZ in matur
     server.close();
   }
 });
+
+test("uradni datum izpita: NPZ matematika in tretji predmet, matura od začetka roka, mimo roka prazno", async () => {
+  const { uradniDatum } = await import("../public/goal-data.js");
+  const nov = "2026-11-25";
+  assert.equal(uradniDatum("NPZ9", "MAT", nov), "2027-04-01");
+  assert.equal(uradniDatum("NPZ6", "MAT", nov), "2027-04-01");
+  assert.equal(uradniDatum("NPZ9", "FIZ", nov), "2027-03-24");
+  assert.equal(uradniDatum("NPZ6", "FIZ", nov), "");
+  assert.equal(uradniDatum("MATURA", "MAT", nov), "2027-05-29");
+  assert.equal(uradniDatum("POKLICNA", "MAT", nov), "2027-05-29");
+  assert.equal(uradniDatum("SAT", "MAT", nov), "");
+  assert.equal(uradniDatum("NPZ9", "MAT", "2027-04-02"), "");
+});
