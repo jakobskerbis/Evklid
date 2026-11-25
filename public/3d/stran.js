@@ -656,7 +656,9 @@ async function usmeri() {
     if (id) await preveriPodporo();
     const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : id === "mikroskop" ? await mikroskop(param, moj) : await model(id, param, moj);
     if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
-    if (moj === zaporedje) javiStarsu("pripravljen"); // okvir aplikacije skrije svoj »Zapri« (uci-se.js cuvaj3d)
+    // Okvir aplikacije skrije svoj »Zapri« (uci-se.js cuvaj3d); kartica brez prizora (niPovezave, »ne obstaja«) je napaka:
+    // »Zapri« ostane, sicer bi učenec v okvirju brez povezave ostal ujet.
+    if (moj === zaporedje) javiStarsu(glavni.querySelector(":scope > .k3-napaka") ? "napaka" : "pripravljen");
   } catch (err) {
     console.error("3D:", err);
     if (moj !== zaporedje) return;

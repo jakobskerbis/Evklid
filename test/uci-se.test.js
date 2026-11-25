@@ -387,7 +387,7 @@ test("3D v okvirju: stran /3d javi »pripravljen« in »napaka«, open3d ima ču
   assert.match(uci, /msg\.tip === "napaka"\) full\.cuvaj\.napaka\(\)/);
   assert.match(uci, /cuvaj\.ustavi\(\);/);
   const stran = read("public/3d/stran.js");
-  assert.match(stran, /javiStarsu\("pripravljen"\)/);
+  assert.match(stran, /javiStarsu\(glavni\.querySelector\(":scope > \.k3-napaka"\) \? "napaka" : "pripravljen"\)/);
   assert.match(stran, /javiStarsu\("napaka"\)/);
   assert.match(read("public/uci.css"), /\.uci-3d-zastoj \{/);
   for (const k of ["a3.slow", "a3.close", "a3.contextLost", "a3.reload"]) assert.ok(SL[k], k);
