@@ -18,8 +18,11 @@ function zazeni(dir, extra = {}) {
   srv.stderr.on("data", (d) => (izpis += d));
   const konec = new Promise((resolve) => srv.on("exit", (code, signal) => resolve({ code, signal, izpis })));
   const base = `http://127.0.0.1:${port}`;
+  // Do 40 s: na zasedenem CI (4 vzporedni deli) je tretji zagon po SIGKILL včasih trajal več kot 15 s (PR #1029).
+  let koncan = false;
+  konec.then(() => (koncan = true));
   const pripravljen = (async () => {
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 400 && !koncan; i++) {
       try {
         return await (await fetch(`${base}/healthz/stanje`)).json();
       } catch {

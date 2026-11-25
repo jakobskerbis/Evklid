@@ -65,7 +65,7 @@ import { slZasloni } from "./i18n-jedro.js";
 import { startupFiles, moduleDeps } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
-import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pupilGender, IME_OZNAKA } from "./ime-oznaka.js";
+import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pupilGender, IME_OZNAKA, neprimernoIme, NEPRIMERNO_IME } from "./ime-oznaka.js";
 import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
@@ -835,6 +835,7 @@ export function createApp(store, opts = {}) {
   app.post("/api/students", (req, res) => {
     const name = cleanText(req.body?.name, 40);
     if (!name) return res.status(400).json({ error: "Vpiši ime." });
+    if (neprimernoIme(name)) return res.status(400).json({ error: NEPRIMERNO_IME, code: "ime_neprimerno" }); // #754
     const dup = store.recentDuplicate(name, req.body?.settings);
     if (dup) return res.status(200).json(dup);
     const s = store.createStudent(name, req.body?.settings);
@@ -849,6 +850,7 @@ export function createApp(store, opts = {}) {
     const s = loadStudent(req, res);
     if (!s) return;
     const name = req.body?.name !== undefined ? cleanText(req.body.name, 40) || s.name : undefined;
+    if (name !== undefined && name !== s.name && neprimernoIme(name)) return res.status(400).json({ error: NEPRIMERNO_IME, code: "ime_neprimerno" }); // #754
     if (req.body?.settings) accounts?.pilotBeforeLevelChange(s.id);
     res.json(
       store.updateStudent(s.id, {
