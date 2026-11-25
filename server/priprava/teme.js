@@ -3,14 +3,15 @@
 // isto kot pri »Mojih zapiskih« in šibkih točkah. Izsek, ki se z nobeno temo ne ujema dovolj jasno, ostane »samo v
 // zapiskih« (ne ugibamo). Obseg testa je iz načrta testa (pot in sklopi); brez načrta obsega ni, so samo teme zapiskov.
 // Predznanje: teme iste poti pred prvim sklopom testa (učni načrt gre od lažjega k težjemu); brez trditev o znanju.
-import { getPath, getTopic } from "../curriculum.js";
-import { rankLessons, searchOn } from "../lekcija-za-vprasanje.js";
+import { getPath, getTopic, listPaths } from "../curriculum.js";
+import { rankLessons, searchOn, levelOf } from "../lekcija-za-vprasanje.js";
 
 const MIN_SCORE = 4.5; // kot lessonForQuestion / topicForName
 const MIN_LEAD = 1.2;
 const OBSEG_DELEZ = 0.8; // tema iz obsega testa ima prednost, če ima vsaj 80 % ocene najboljše
 export const PREDZNANJE = 5;
 const IZSEK_ZNAKOV = 400;
+export const MAX_IZSEKOV = 5000; // več izsekov (zelo dolgi viri) zemljevid ne pregleda: delno
 
 // Formula v iskanju: ukazi LaTeX, ki povedo snov, postanejo besede (\\int → integral), ostalo odpade.
 const LATEX_BESEDE = { int: "integral", iint: "integral", oint: "integral", det: "determinanta", lim: "limita", sum: "vsota", sqrt: "koren", log: "logaritem", ln: "logaritem", sin: "kotne funkcije", cos: "kotne funkcije", tan: "kotne funkcije", vec: "vektor", binom: "binomski", prod: "produkt" };
@@ -65,16 +66,31 @@ const temaVen = (id) => {
  * Vrne { iskanje, obseg: [{ id, ime, sklop, izsekov }] | null, pokritost: { pokrite, vseh } | null,
  *        teme: [{ id, ime, sklop, pot, izseki: [id], vObsegu }], samoVZapiskih: [id izseka], predznanje: [...] }.
  */
-export function zemljevid({ pot = null, sklopi = null, predmet = null }, izseki, settings = {}) {
-  const obsegTeme = temeObsega(pot, sklopi);
+export async function zemljevid({ pot = null, sklopi = null, predmet = null }, izseki, settings = {}) {
   const path = pot ? getPath(pot) : null;
-  const st = { ...settings, subject: path?.subject || predmet || settings.subject };
-  const iskanje = searchOn(st) && !!st.subject;
+  // Obseg samo za šolske poti (OŠ, SŠ); tekmovalne poti niso v kazalu tem, zato zanje ni pokritosti.
+  const sola = !!path && (path.school === "OS" || path.school === "SS");
+  const obsegTeme = sola ? temeObsega(pot, sklopi) : [];
+  const st = { ...(settings || {}), subject: path?.subject || predmet || settings?.subject };
+  // Kazalo tem je do učenčeve ravni; test višje poti (ali zastarela raven v profilu) išče do ravni poti.
+  if (sola) {
+    const lv = levelOf(st);
+    const rang = (sol, raz) => (sol === "SS" ? 100 : 0) + raz;
+    if (!lv || rang(path.school, path.grade) > rang(lv.school, lv.grade)) {
+      st.educational_track = path.school === "SS" ? "SREDNJA_SOLA" : "OSNOVNA_SOLA";
+      st.curriculum_level = path.school === "SS" ? `${path.grade}. letnik` : `${path.grade}. razred`;
+    }
+  }
+  const iskanje = !!st.subject && searchOn(st) && listPaths(st.subject).some((x) => x.school === "OS" || x.school === "SS");
   const obseg = obsegTeme.length ? new Set(obsegTeme.map((t) => t.id)) : null;
   const poTemi = new Map();
   const samoVZapiskih = [];
   const pp = new Map();
-  for (const i of izseki) {
+  const delno = izseki.length > MAX_IZSEKOV;
+  let n = 0;
+  for (const i of izseki.slice(0, MAX_IZSEKOV)) {
+    // Ne zadrži strežnika: po vsakih 200 izsekih prepusti zanko drugim zahtevkom.
+    if (++n % 200 === 0) await new Promise((r) => setImmediate(r));
     const id = iskanje ? temaIzseka(i, st, obseg, pp) : null;
     if (!id) {
       samoVZapiskih.push(i.id);
@@ -103,6 +119,7 @@ export function zemljevid({ pot = null, sklopi = null, predmet = null }, izseki,
   }
   return {
     iskanje,
+    ...(delno ? { delno: true, pregledanih: MAX_IZSEKOV } : {}),
     obseg: obseg ? obsegTeme.map((t) => ({ ...temaVen(t.id), izsekov: poTemi.get(t.id)?.length || 0 })) : null,
     pokritost: obseg ? { pokrite: obsegTeme.filter((t) => poTemi.has(t.id)).length, vseh: obsegTeme.length } : null,
     teme,

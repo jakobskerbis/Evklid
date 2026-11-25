@@ -8,7 +8,7 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { preberiVir } from "../server/priprava/uvoz.js";
 import { razrezi } from "../server/priprava/izseki.js";
-import { zemljevid, temeObsega, PREDZNANJE } from "../server/priprava/teme.js";
+import { zemljevid, temeObsega, PREDZNANJE, MAX_IZSEKOV } from "../server/priprava/teme.js";
 
 process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
 const SS4 = { curriculum_level: "4. letnik", educational_track: "SREDNJA_SOLA" };
@@ -18,7 +18,7 @@ const imena = (z) => z.teme.map((t) => t.ime);
 
 test("zapiski o integralih: teme po vrsti učnega načrta, izseki brez jasne teme ostanejo samo v zapiskih", async () => {
   const iz = await izsekiIz("mat-integrali.md");
-  const z = zemljevid({ predmet: "MAT" }, iz, SS4);
+  const z = await zemljevid({ predmet: "MAT" }, iz, SS4);
   assert.equal(z.iskanje, true);
   assert.ok(imena(z).includes("Nedoločeni integral") && imena(z).includes("Določeni integral"), imena(z).join(", "));
   // Vrstni red učnega načrta: nedoločeni pred določenim.
@@ -33,7 +33,7 @@ test("zapiski o integralih: teme po vrsti učnega načrta, izseki brez jasne tem
 
 test("obseg testa iz načrta: pokritost, teme zunaj obsega, predznanje pred prvim sklopom", async () => {
   const iz = await izsekiIz("mat-integrali.md");
-  const z = zemljevid({ pot: "MAT-SS-4", sklopi: [2] }, iz, SS4);
+  const z = await zemljevid({ pot: "MAT-SS-4", sklopi: [2] }, iz, SS4);
   assert.deepEqual(z.obseg.map((t) => t.ime), ["Nedoločeni integral", "Integracija per partes in racionalnih funkcij", "Določeni integral"]);
   assert.equal(z.pokritost.vseh, 3);
   assert.equal(z.pokritost.pokrite, z.obseg.filter((t) => t.izsekov > 0).length);
@@ -51,19 +51,19 @@ test("obseg testa iz načrta: pokritost, teme zunaj obsega, predznanje pred prvi
 
 test("brez ugibanja: druga snov in predmeti brez kazala ostanejo samo v zapiskih; navodilo v zapiskih ni tema", async () => {
   const zgo = await izsekiIz("zgo-prva-svetovna.md");
-  const z = zemljevid({ predmet: "ZGO" }, zgo, SS4);
+  const z = await zemljevid({ predmet: "ZGO" }, zgo, SS4);
   assert.deepEqual(z.teme, []);
   assert.equal(z.samoVZapiskih.length, zgo.length);
-  const napad = zemljevid({ predmet: "MAT" }, await izsekiIz("napad.md"), SS4);
+  const napad = await zemljevid({ predmet: "MAT" }, await izsekiIz("napad.md"), SS4);
   assert.deepEqual(imena(napad), ["Pitagorov izrek"]);
   // Fakulteta: iskanje po kazalu tem ni na voljo, vse ostane v zapiskih.
-  const faks = zemljevid({ predmet: "MAT" }, await izsekiIz("mat-integrali.md"), { curriculum_level: "1. letnik", educational_track: "UNIVERZA" });
+  const faks = await zemljevid({ predmet: "MAT" }, await izsekiIz("mat-integrali.md"), { curriculum_level: "1. letnik", educational_track: "UNIVERZA" });
   assert.equal(faks.iskanje, false);
   assert.deepEqual(faks.teme, []);
 });
 
 test("formula pove snov: integral z mejama je določeni integral", async () => {
-  const z = zemljevid({ predmet: "MAT" }, await izsekiIz("star-test.md"), SS4);
+  const z = await zemljevid({ predmet: "MAT" }, await izsekiIz("star-test.md"), SS4);
   assert.ok(imena(z).includes("Določeni integral"), imena(z).join(", "));
   assert.ok(!imena(z).includes("Nedoločeni integral"));
 });
@@ -93,4 +93,31 @@ test("API: GET …/priprave/:pid/teme samo za lastnika, z obsegom iz načrta tes
     await new Promise((r) => server.close(r));
     store.db.close();
   }
+});
+
+test("test višje poti, kot je raven v profilu, išče do ravni poti; tekmovalna pot nima pokritosti", async () => {
+  const iz = [{ id: 1, naslov: "Nedoločeni integral", besedilo: "Nedoločeni integral je družina primitivnih funkcij: $\\int f(x)\\,dx = F(x) + C$." }];
+  const z = await zemljevid({ pot: "MAT-SS-4", sklopi: [2] }, iz, { curriculum_level: "2. letnik", educational_track: "SREDNJA_SOLA" });
+  assert.equal(z.pokritost.pokrite, 1, JSON.stringify(z));
+  const os = await zemljevid({ pot: "MAT-SS-4", sklopi: [2] }, iz, { curriculum_level: "8. razred" });
+  assert.equal(os.pokritost.pokrite, 1);
+  const tek = await zemljevid({ pot: "MAT-TEK-SS", sklopi: [0] }, iz, SS4);
+  assert.equal(tek.obseg, null);
+  assert.equal(tek.pokritost, null);
+  // Predmet brez kazala tem (neznan) in nastavitve null.
+  const x = await zemljevid({ predmet: "XYZ" }, iz, null);
+  assert.equal(x.iskanje, false);
+});
+
+test("zelo veliko izsekov: zemljevid pregleda največ MAX_IZSEKOV in ne zadrži strežnika", async () => {
+  const iz = Array.from({ length: MAX_IZSEKOV + 50 }, (_, i) => ({ id: i + 1, naslov: "Določeni integral", besedilo: `Primer ${i}: izračunaj $\\int_0^1 x\\,dx$.` }));
+  let tik = 0;
+  const ura = setInterval(() => tik++, 5);
+  const t0 = Date.now();
+  const z = await zemljevid({ predmet: "MAT" }, iz, SS4);
+  clearInterval(ura);
+  assert.equal(z.delno, true);
+  assert.equal(z.teme.reduce((a, t) => a + t.izseki.length, 0) + z.samoVZapiskih.length, MAX_IZSEKOV);
+  assert.ok(tik > 0, "zanka dogodkov mora med računanjem teči");
+  assert.ok(Date.now() - t0 < 15000);
 });
