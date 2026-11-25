@@ -740,6 +740,7 @@ export default {
   "set.tourAgain": "Ponovi uvodni ogled",
   "set.newStudent": "Dodaj profil",
   "set.newStudentText": "Nov profil za drugega učenca: vsak ima svojo učno pot, napredek in pogovore.",
+  "set.nameBad": "Tega imena ne moremo uporabiti. Izberi drugo ime ali vzdevek.",
   "set.namePh": "Ime",
   "set.deleteTitle": "Izbriši profil",
   "set.deleteText": "Trajno izbriše profil »{name}«: učno pot, napredek, nastavitve in vse pogovore. Tega ni mogoče razveljaviti.",

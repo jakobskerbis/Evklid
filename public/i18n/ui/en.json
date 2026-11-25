@@ -479,6 +479,7 @@
   "set.tourAgain": "Replay the intro tour",
   "set.newStudent": "Add profile",
   "set.newStudentText": "A new profile for another learner: each one has its own learning path, progress and conversations.",
+  "set.nameBad": "We can't use this name. Please choose a different name or nickname.",
   "set.namePh": "Name",
   "set.deleteTitle": "Delete profile",
   "set.deleteText": "Permanently deletes the profile “{name}”: its learning path, progress, settings and all conversations. This cannot be undone.",

@@ -6,6 +6,66 @@
 
 export const IME_OZNAKA = "{{IME}}";
 
+// ---------- Neprimerna imena profila (#754, j 15. 11. 2026) ----------
+// Ob ustvarjanju in preimenovanju profila strežnik zavrne kletvice, spolne izraze in žaljivke (sl, en, de, hr, it, hu).
+// Normalizacija: male črke, brez šumnikov, »številke namesto črk« med črkami (l1lek, f4ck), podvojene črke (fuuuck),
+// razmaknjene posamezne črke (l u l e k, f.u.c.k). Ime se preverja po besedah: cela beseda v BESEDE ali začetek
+// besede v ZACETKI (oboje po isti normalizaciji). Prava imena ostanejo (Ana-Maria, Rita, Mona, Kurt, Nigel, As, Fuks, Tit, Bob, Ćazim);
+// pred popolnostjo ima prednost, da otroka s pravim imenom nikoli ne zavrnemo. Začetek z dvojno črko se po
+// normalizaciji skrajša (titt → tit, boob → bob), zato takih začetkov v ZACETKI ni. Inštruktor neprimernega imena ne uporabi (withName).
+const LEET = { 0: "o", 1: "i", 3: "e", 4: "a", 5: "s", 7: "t", 8: "b", "@": "a", $: "s", "!": "i" };
+const norma = (s) =>
+  String(s ?? "")
+    .normalize("NFD")
+    .replace(/\p{M}+/gu, "")
+    .toLowerCase()
+    .replace(/ß/g, "ss")
+    .replace(/(?<=\p{L})[013457@$!8](?=[013457@$!8]*\p{L})/gu, (c) => LEET[c] || c)
+    .replace(/(\p{L})\1+/gu, "$1");
+const BESEDE = new Set(
+  [
+    // sl, hr
+    "rit", "fuk", "fukat", "fukam", "fukas", "drek", "srat", "scat", "scanje", "joske", "peder", "pedri", "buzi", "debil", "kreten", "butec", "bedak", "cipa", "sisa", "sise", "cigan", "cefur", "govno", "supak", "glupan", "kurva", "seks",
+    // en
+    "dick", "cock", "sex", "tits", "fag", "niga", "nigas", "slut", "whore", "twat", "nazi", "hitler", "bastard", "bollocks", "porn",
+    // de
+    "arsch", "fick", "ficken", "fotze", "hure", "titten", "schwanz",
+    // it
+    "merda", "culo", "figa", "troia", "cazzo", "cazzi",
+    // hu
+    "fasz", "geci", "szar", "neger",
+  ].map(norma),
+);
+const ZACETKI = [
+  "kurc", "kurac", "kurce", "pizd", "picka", "picke", "pickic", "jebem", "jebat", "jeban", "jebot", "jebac", "jebi", "jebo", "kurb", "kurv", "sranj", "lulek", "lulc", "buzer", "drka", "pedof", "retard",
+  "fuck", "shit", "bitch", "cunt", "pussy", "asshole", "faggot", "wank", "niger", "penis", "vagin", "porno",
+  "arschl", "scheis", "ficke", "schlamp", "wichs", "hurens", "missgeb",
+  "stronz", "puttan", "vaffan", "cogli", "minch",
+  "picsa", "bazm", "baszd",
+].map(norma);
+// Besede imena; zaporedje posameznih črk (»l u l e k«, »f.u.c.k«) postane ena beseda.
+function besedeImena(name) {
+  const deli = norma(name).split(/[^\p{L}]+/u).filter(Boolean);
+  const out = [];
+  let crke = "";
+  for (const d of deli) {
+    if (d.length === 1) crke += d;
+    else {
+      if (crke) out.push(crke);
+      crke = "";
+      out.push(d);
+    }
+  }
+  if (crke) out.push(crke);
+  return out.map((b) => b.replace(/(\p{L})\1+/gu, "$1"));
+}
+/** Ali je ime profila neprimerno (kletvica, spolni izraz, žaljivka). */
+export function neprimernoIme(name = "") {
+  return besedeImena(name).some((b) => BESEDE.has(b) || ZACETKI.some((z) => b.startsWith(z)));
+}
+export const NEPRIMERNO_IME = "Tega imena ne moremo uporabiti. Izberi drugo ime ali vzdevek.";
+
+
 // Oznaka, tudi v skoraj pravi obliki (»{{ IME }}«, »{{Ime}}«), z morebitno končnico, ki jo je model prilepil
 // nanjo (»{{IME}}u«, »{{IME}}-ju«). Model naj je ne sklanja (server/prompt.js); če jo, glej withName.
 const OZNAKA = "\\{\\{\\s*IME\\s*\\}\\}";
@@ -24,7 +84,8 @@ const plain = (s) => String(s).normalize("NFD").replace(/\p{M}+/gu, "").toLowerC
 export function withName(text, name = "") {
   const s = String(text ?? "");
   if (!OZNAKA_IN.test(s)) return s;
-  const n = String(name || "").trim();
+  // Star profil z neprimernim imenom (pred #754): nagovor brez imena.
+  const n = neprimernoIme(name) ? "" : String(name || "").trim();
   if (!n) return s.replace(PRAZNO_RE, "");
   const soglasnik = /[a-z]$/.test(plain(n)) && !/[aeiouy]$/.test(plain(n));
   return s.replace(OZNAKA_RE, (m) => {
@@ -43,6 +104,7 @@ const KONEC_ZACETEK = /\{\{?\s*I?M?E?\s*\}?$/iu;
  * push(kos) → besedilo, ki je varno za pošiljanje; end() → preostanek; reset() → zavrže zadržano (umik besedila).
  */
 export function createNameStream(name = "") {
+  if (neprimernoIme(name)) name = "";
   const prazno = !String(name || "").trim();
   let buf = "";
   const hold = (s) => {

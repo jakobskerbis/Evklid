@@ -485,6 +485,7 @@
   "set.tourAgain": "Ponovi uvodni obilazak",
   "set.newStudent": "Dodaj profil",
   "set.newStudentText": "Novi profil za drugog učenika: svaki ima svoj put učenja, napredak i razgovore.",
+  "set.nameBad": "Ovo ime ne možemo koristiti. Odaberi drugo ime ili nadimak.",
   "set.namePh": "Ime",
   "set.deleteTitle": "Izbriši profil",
   "set.deleteText": "Trajno briše profil „{name}”: put učenja, napredak, postavke i sve razgovore. To se ne može poništiti.",
