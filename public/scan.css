@@ -89,8 +89,8 @@
 .scan-badge.warn { color: var(--text); background: color-mix(in srgb, var(--gold) 22%, var(--surface)); border-radius: var(--radius-sm); }
 /* pet statusov preverjanja (public/scan/status.js): delno in numerično sta »vmes«, napačno je rdeče */
 .scan-badges { display: inline-flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
-.scan-badge.mid { color: var(--text); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border-radius: var(--radius-sm); }
-.scan-badge.bad { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, var(--surface)); border-radius: var(--radius-sm); }
+.scan-badge.mid { color: var(--text); background: color-mix(in srgb, var(--accent) 22%, var(--surface)); border-radius: var(--radius-sm); }
+.scan-badge.bad { color: color-mix(in srgb, var(--danger) 80%, var(--text)); background: color-mix(in srgb, var(--danger) 12%, var(--surface)); border-radius: var(--radius-sm); }
 .scan-badge.ai { color: var(--muted); background: color-mix(in srgb, var(--muted) 12%, var(--surface)); border-radius: var(--radius-sm); font-weight: 600; }
 .scan-status-note { color: var(--muted); font-size: 0.88rem; margin: 8px 0 0; }
 .scan-methods .seg { max-width: 100%; }

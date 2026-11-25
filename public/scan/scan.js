@@ -966,7 +966,8 @@ function renderSolution(box) {
   const izvori = izvorOznak(steps, r.problemTex);
   // Pet statusov (public/scan/status.js); razlaga je vidno besedilo (na telefonu ni namigov ob prehodu z miško).
   const status = STATUSES.includes(r.status) ? r.status : r.verified ? "verified" : "unverified";
-  const badge = `${r.ai ? `<span class="scan-badge ai">${icon("sparkles")}${esc(t("scan.st.ai"))}</span>` : ""}<span class="scan-badge ${STATUS_CLASS[status]}" data-status="${status}">${icon(STATUS_ICON[status])}${esc(t(`scan.st.${status}`))}</span>`;
+  // Pri »napačno« brez oznake »Rešil Evklid AI« (bi se brala kot »AI je rešil: napačno«); razlaga pove, da gre za odgovor AI.
+  const badge = `${r.ai && status !== "wrong" ? `<span class="scan-badge ai">${icon("sparkles")}${esc(t("scan.st.ai"))}</span>` : ""}<span class="scan-badge ${STATUS_CLASS[status]}" data-status="${status}">${icon(STATUS_ICON[status])}${esc(t(`scan.st.${status}`))}</span>`;
   const note = `<p class="scan-status-note">${esc(t(`scan.st.${status}Tip`))}${r.ai && status !== "wrong" && status !== "unverified" ? ` ${esc(t("scan.st.aiSteps"))}` : ""}</p>`;
   if (status === "wrong") {
     // Napačna rešitev se ne pokaže kot odgovor (ne rezultat ne koraki): ponoven poskus ali inštruktor.
