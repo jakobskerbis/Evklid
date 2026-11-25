@@ -568,7 +568,6 @@ function gumbLekcije(id, naslov) {
   b.setAttribute("aria-expanded", "false");
   const seznam = mk("div", "k3-lekcije-seznam");
   seznam.hidden = true;
-  seznam.setAttribute("role", "menu");
   ovoj.append(b, seznam);
   let teme = [];
   const odpri = (tema) => starsu({ tip: "lekcija", id: tema.id, vrni: id, oznaka: naslov });
@@ -601,7 +600,6 @@ function gumbLekcije(id, naslov) {
       for (const tema of teme) {
         const v = mk("button", "k3-lekcije-vrstica");
         v.type = "button";
-        v.setAttribute("role", "menuitem");
         v.append(mk("span", "", tema.name), mk("small", "", tema.level || ""));
         v.dir = "auto";
         v.addEventListener("click", () => odpri(tema));

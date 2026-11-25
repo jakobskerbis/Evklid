@@ -704,7 +704,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 
 /* »Lekcija« v glavi modela (public/3d/stran.js gumbLekcije): ena tema odpre lekcijo, več tem kratek seznam. */
 .k3-lekcije { position: relative; display: inline-flex; }
-.k3-lekcije-seznam { position: absolute; inset-inline-end: 0; top: calc(100% + 6px); z-index: 20; min-width: 220px; max-width: min(320px, 86vw); padding: 6px; border-radius: 14px; background: var(--k3-povrsina); box-shadow: 0 8px 24px rgb(0 0 0 / 0.25); display: grid; gap: 2px; }
+.k3-lekcije-seznam { position: absolute; inset-inline-end: 0; top: calc(100% + 6px); z-index: 20; min-width: 220px; max-width: min(320px, 86vw); padding: 6px; border-radius: 14px; background: var(--k3-povrsina); border: 1px solid var(--k3-povrsina-2); box-shadow: 0 8px 24px rgb(0 0 0 / 0.25); display: grid; gap: 2px; }
 .k3-lekcije-vrstica { display: grid; gap: 2px; text-align: start; min-height: 44px; padding: 8px 10px; border: 0; border-radius: 10px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
 .k3-lekcije-vrstica:hover, .k3-lekcije-vrstica:focus-visible { background: var(--k3-povrsina-2); }
 .k3-lekcije-vrstica small { opacity: 0.75; }
