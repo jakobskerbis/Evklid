@@ -68,13 +68,16 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
 
 // Graf meritev s stalnimi osmi. draw(series): [{ pts: [[x, y]], shape: "o" | "^", cls: "a", label, line?: f(x) }]
 // origin: false postavi časovno os na spodnji rob (pri negativnih vrednostih, npr. Δm), da se oznake ne prekrivajo.
-export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep, title, origin = true }) {
+// formula (povezave C3, j 25. 11. 2026): zakon iz lekcij te teme, ki ga kaže graf (HTML, kot oznake osi), pod legendo.
+// Napis »Formula:«, ne »iz lekcije«: vse OŠ lekcije z istim poskusom je nimajo (pregled #1047).
+export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep, title, origin = true, formula = "" }) {
   const svg = svgBox(W, H, "lab-graph");
   svg.setAttribute("aria-label", title || "Graf meritev");
   const wrap = h("figure", { class: "lab-graph-wrap" }, svg);
   // Legenda je hkrati vklop in izklop: vsaka vrsta meritev, njena premica in mreža (public/sim/prikaz.js za ostale grafe).
   const legend = h("figcaption", { class: "lab-legend", role: "group" });
   wrap.append(legend);
+  if (formula) wrap.append(h("p", { class: "lab-graph-formula", html: `Formula: ${formula}` }));
   let A = null, last = [], legSig = "";
   const off = new Set();
   wrap.setAxes = (ax) => Object.assign(opts, ax);

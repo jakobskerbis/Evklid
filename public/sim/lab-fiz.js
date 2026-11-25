@@ -34,7 +34,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     { key: "I", label: "<i>I</i> [mA]" },
     { key: "R", label: "<i>U</i>/<i>I</i> [Ω]" },
   ]);
-  const graph = dataGraph({ x: [0, 12], y: [0, YMAX[B.load]], xStep: 2, xLabel: "U [V]", yLabel: "I [mA]", title: "Graf toka v odvisnosti od napetosti" });
+  const graph = dataGraph({ x: [0, 12], y: [0, YMAX[B.load]], xStep: 2, xLabel: "U [V]", yLabel: "I [mA]", title: "Graf toka v odvisnosti od napetosti", formula: tex(String.raw`I = \frac{U}{R}`) });
   const fitOut = h("p", { class: "lab-fitout", "aria-live": "polite" });
   const qBox = h("div");
   const series = {}; // id porabnika → [[U, I_mA]]

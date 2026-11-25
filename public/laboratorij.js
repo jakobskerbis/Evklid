@@ -27,6 +27,8 @@ export function initLab(deps) {
     if (go) return openExperiment(go.dataset.labOpen);
     const topic = e.target.closest("[data-lab-topic]");
     if (topic) return D.openLesson(topic.dataset.labTopic);
+    const vaja = e.target.closest("[data-lab-practice]");
+    if (vaja) return D.practice?.(vaja.dataset.labPractice)?.catch?.(() => D.toast?.(t("lab.error")));
     if (e.target.closest("[data-lab-back]")) return labBack();
     // »Vprašaj inštruktorja«: klepet z vpisanim začetkom vprašanja; poskus ostane odprt, vrnitev iz klepeta (app.js).
     // Posnetek stanja (nastavitve, odčitki, zapisane meritve; public/sim/lab.js stanjePoskusa) gre z vprašanjem kot
@@ -111,6 +113,15 @@ const subjectName = (s) => {
   return name === `subj.${s}` ? s : name;
 };
 
+// Teme za »Preveri se« (C4): vse teme najbolje razvrščene poti (učenčeva pot najprej, server/laboratorij.js), največ 3.
+// Poskus, ki pokrije več tem iste poti (lab-lom: Odboj in Lom svetlobe), dobi gumb za vsako (pregled #1041).
+function vajaTeme(x) {
+  const teme = x.topics || [];
+  if (!teme.length) return [];
+  const pot = teme.some((tp) => tp.path === data.myPath) ? data.myPath : teme[0].path;
+  return teme.filter((tp) => tp.path === pot).slice(0, 3);
+}
+
 function topicsHtml(x) {
   return `<p class="lab-topics-label">${icon("book-open")}<span>${esc(t("lab.inTextbook"))}</span></p>
     <div class="lab-topics">${x.topics
@@ -178,9 +189,46 @@ function renderExperiment() {
         ${showOffer ? `<button type="button" class="primary" data-lab-upgrade>${icon("sparkles")}<span>${esc(t("lab.packages"))}</span></button>` : ""}</section>`
         : `<section class="card lab-bench"><div class="lab-mount"></div></section>`
     }
+    ${x.locked || !D.practice || !vajaTeme(x).length ? "" : `<section class="card lab-check"><p dir="auto">${icon("circle-check")}<span>${esc(t("lab.checkText"))}</span></p><div class="lab-check-go">${vajaTeme(x)
+      .map((tp, i, all) => `<button type="button" class="${i ? "secondary" : "primary"}" data-lab-practice="${esc(tp.id)}">${icon("pencil")}<span dir="auto">${esc(all.length > 1 ? `${t("lab.check")}: ${tp.name}` : t("lab.check"))}</span></button>`)
+      .join("")}</div></section>`}
     <div class="lab-foot">${topicsHtml(x)}</div>
   </div>`;
   const m = box().querySelector(".lab-mount");
-  if (m) mountSim(x.id, m, x.opts);
+  if (m) zazeni(x, m);
   box().querySelector("[data-lab-back]")?.focus({ preventScroll: true });
+}
+
+// Vodeni poskus (public/sim/lab-vodeno.js): pri poskusih s koraki izbira »Vodeno | Prosto«, zapomnjena na napravi.
+// Ob prvem odprtju je izbrano »Vodeno«. Uporaba laboratorija se šteje brez učenca (server/laboratorij.js → lab_uporaba).
+const NACIN = "evklid.lab.nacin";
+const beriNacin = () => {
+  try {
+    return localStorage.getItem(NACIN) === "prosto" ? "prosto" : "vodeno";
+  } catch {
+    return "vodeno";
+  }
+};
+const shraniNacin = (n) => {
+  try {
+    localStorage.setItem(NACIN, n);
+  } catch {}
+};
+function stej(key, nacin, dogodek) {
+  const s = D?.getStudent();
+  if (!s) return;
+  D.api(`/api/students/${s.id}/lab/uporaba`, { method: "POST", body: { key, nacin, dogodek } }).catch(() => {});
+}
+async function zazeni(x, m) {
+  if (!(await mountSim(x.id, m, x.opts))) return;
+  const { imaVodeno, vodi } = await import("./sim/lab-vodeno.js");
+  if (!m.isConnected) return;
+  if (!imaVodeno(x.key)) return stej(x.key, "brez", "odprt");
+  const nacin = beriNacin();
+  stej(x.key, nacin, "odprt");
+  vodi(m, x.key, {
+    nacin,
+    onNacin: (n) => (shraniNacin(n), stej(x.key, n, "preklop")),
+    onKonec: () => stej(x.key, "vodeno", "koncano"),
+  });
 }

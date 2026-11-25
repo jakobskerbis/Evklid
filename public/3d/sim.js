@@ -32,10 +32,17 @@ export function sim3d(el, opts = {}) {
   (async () => {
     const [{ naloziModel }, { odpriModel }, { t }] = await Promise.all([import("./modeli.js"), import("./pregledovalnik.js"), import("/i18n.js")]);
     p.textContent = t("a3.loading");
-    const mod = opts.model ? await naloziModel(opts.model) : null;
+    // Izpad povezave (naloziModel vrže povezava: true): »Ni povezave«, ne »ne obstaja«.
+    let mod = null, brezPovezave = false;
+    try {
+      mod = opts.model ? await naloziModel(opts.model) : null;
+    } catch (e) {
+      if (!e?.povezava) throw e;
+      brezPovezave = true;
+    }
     if (!el.isConnected) return;
     if (!mod) {
-      p.textContent = t("a3.notFound");
+      p.textContent = t(brezPovezave ? "a3.noConnection" : "a3.notFound");
       poskusi?.remove(); // brez modela ni kaj poskusiti
       return;
     }
