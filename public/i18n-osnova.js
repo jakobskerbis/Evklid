@@ -8,7 +8,7 @@
 // zato so njegovi t() pravilni že ob nalaganju. Brez top-level await: Safari ima z njim napako, ko modul uvaža več modulov
 // hkrati (WebKit 242740, aplikacija na iPadu se ni izrisala).
 import { zavrzi } from "./odgovor.js";
-import { DEFAULT_LANGUAGE, LANGUAGES, isLanguage, langInfo, uiChain, UI_LANGUAGES, detectLanguage, homeLanguage } from "./i18n/languages.js";
+import { DEFAULT_LANGUAGE, LANGUAGES, isLanguage, langInfo, uiDicts, UI_LANGUAGES, LIVE_UI_LANGUAGES, detectLanguage, homeLanguage } from "./i18n/languages.js";
 
 const KEY = "evklid.lang";
 let lang = DEFAULT_LANGUAGE;
@@ -99,12 +99,17 @@ async function fetchDict(code) {
 
 async function load(code) {
   lang = isLanguage(code) ? code : DEFAULT_LANGUAGE;
-  // Slovenščina je izvirnik in vedno zadnja; po njej ne iščemo več (za »sl« torej samo izvirnik).
-  const all = uiChain(lang);
-  const chain = all.slice(0, all.indexOf("sl"));
+  // Slovenščina je izvirnik in vedno zadnja (za »sl« torej samo izvirnik); za živim jezikom (vsi ključi) ne iščemo več.
+  const chain = uiDicts(lang);
   const jedro = beriJedro();
-  // Slovenščina z jedrom: brez čakanja (cel slovar pride po prvem izrisu); sicer cel slovar skupaj s prevodi.
-  const [loaded] = await Promise.all([Promise.all(chain.map(fetchDict)), jedro && lang === "sl" ? null : naloziVse()]);
+  // Slovenščina z jedrom: brez čakanja (cel slovar pride po prvem izrisu); sicer cel slovar skupaj s prevodi. Živ jezik
+  // vmesnika (de, hr, it, hu, en) ima vse ključe: prvi izris ne čaka slovenskega izvirnika (~84 KB), ta se naloži v ozadju
+  // (kot nadomestek in za module, ki uvozijo public/i18n.js). Če prevod ne pride (napaka omrežja), počakamo izvirnik.
+  const izvirnik = jedro && lang === "sl" ? null : naloziVse();
+  izvirnik?.catch(() => {}); // napaka v ozadju ni napaka zagona, kadar prevod ima vse ključe; sicer jo dobi await spodaj
+  const loaded = await Promise.all(chain.map(fetchDict));
+  const poln = chain.length > 0 && LIVE_UI_LANGUAGES.includes(chain.at(-1)) && !!loaded.at(-1);
+  if (izvirnik && !poln) await izvirnik;
   prevodi = loaded.filter(Boolean);
   if (!vse) zamenjajSL(jedro || {});
   else dicts = [...prevodi, SL, DEL];

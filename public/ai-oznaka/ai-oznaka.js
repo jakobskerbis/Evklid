@@ -5,7 +5,7 @@
 // Podporni metapodatki (ne celotna izpolnitev čl. 50(2)): data-ai-generated="true" na besedilu AI (in ai_generated v odgovorih API,
 // server/ai-oznaka.js). Modul se naloži z import() ob odprtju klepeta: prvo odprtje aplikacije ne raste.
 import { t as tGlobal, currentLang, srToLatin } from "../i18n-osnova.js"; // vsa besedila oznake so v ./sl.js: cel slovar (75 KB) ni potreben
-import { uiChain, UI_LANGUAGES } from "../i18n/languages.js";
+import { uiDicts, UI_LANGUAGES } from "../i18n/languages.js";
 import { mlad } from "./mlad.js";
 import { icon } from "../icons.js";
 import { zavrzi } from "../odgovor.js";
@@ -24,8 +24,7 @@ export function nalozi() {
   const lang = currentLang();
   if (dictsLang === lang) return Promise.resolve();
   if (loading?.lang === lang) return loading.p;
-  const chain = uiChain(lang);
-  const want = chain.slice(0, Math.max(0, chain.indexOf("sl")));
+  const want = uiDicts(lang); // do prvega živega jezika (ta ima vse ključe), brez slovenščine (SL)
   const p = Promise.all(
     want.map(async (code) => {
       const file = code === "sr-Latn" ? "sr" : code;
