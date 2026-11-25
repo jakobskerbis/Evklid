@@ -9,8 +9,9 @@ pogoj `cos x ≠ 0`, ker je v Leanu `tan x = sin x / cos x` in `x/0 = 0` (sicer 
 `tan x = 0`). Numerične vrednosti (arccos 0,3, arcsin(1/3), arcsin 0,8, arccos 0,1 …) so dokazane s
 Taylorjevim polinomom stopnje 9 z ostankom (`Complex.exp_bound`, n = 10), mejo |π − 3,1415926536| ≤ 10⁻¹⁰
 in monotonostjo arcsin/arccos; »≈« je ocena |x − približek| < pol enote zadnjega mesta. Razlaga napačnega
-odgovora v Preveri se 3 (»na [0°, 360°) imata obe enačbi po dve rešitvi«) kot štetje rešitev: zahtevno, še ni
-dokazano (dokazani sta splošni rešitvi `sin_splosna`, `tan_splosna`).
+odgovora v Preveri se 3 (»na [0°, 360°) imata obe enačbi po dve rešitvi«) kot štetje rešitev: ni
+dokazano, ker gre le za razlago napačnega odgovora (izbira obsega; isti postopek kot v `primer2`,
+ki dokaže natanko dve rešitvi na [0, 2π); dokazani sta tudi splošni rešitvi `sin_splosna`, `tan_splosna`).
 -/
 module
 
