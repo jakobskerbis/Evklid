@@ -33,7 +33,7 @@ export function tehnicno(err) {
   let s = String(err?.message ?? (typeof err === "string" ? err : "")).split("\n")[0].trim();
   s = s.replace(/[^\s"'<>@]+@[^\s"'<>@]+\.[a-z]{2,}/gi, "[e-pošta]");
   // Naslov do presledka ali narekovaja (tudi z oklepaji v poti ali poizvedbi): ostane samo pot.
-  s = s.replace(/\b(?:https?|blob|file):\/\/[^\s"'<>]+/gi, (u) => {
+  s = s.replace(/\b(?:https?|wss?|blob|file):\/\/[^\s"'<>]+/gi, (u) => {
     try {
       return new URL(u).pathname;
     } catch {
@@ -41,6 +41,8 @@ export function tehnicno(err) {
     }
   });
   s = s.replace(/\?[^\s"'<>]*[=&][^\s"'<>]*/g, ""); // poizvedba brez izvora (…/a.js?t=x&y=1)
+  // Žeton s pikami (JWT »eyJ….….…« ali tri dolge kose): pred dolgimi nizi, sicer bi ostale pike in kratki kosi.
+  s = s.replace(/\beyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]*)?|\b[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{6,}\b/g, "[žeton]");
   s = s.replace(/[A-Za-z0-9_-]{32,}/g, "…");
   const v = s ? `${ime}: ${s}` : ime;
   return v.length > 120 ? `${v.slice(0, 119)}…` : v;
