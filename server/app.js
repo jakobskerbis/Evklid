@@ -53,6 +53,7 @@ import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
+import { mountPoskusnaPola, simHistory } from "./poskusna-pola.js";
 import { mountAccounts } from "./accounts/index.js";
 import { emailList } from "./accounts/pilot-meja.js";
 import { passwordGate, gateNeeded } from "./gate.js";
@@ -2178,8 +2179,9 @@ export function createApp(store, opts = {}) {
     if (!key) return res.json({ key: null });
     const lang = taskLanguage(s.settings.language);
     const raven = examRaven(key, s.settings, String(req.query.raven || ""));
+    const info = examInfo(key, s.settings.school_system, lang);
     res.json({
-      ...examInfo(key, s.settings.school_system, lang),
+      ...info,
       ...localizeExamView(progress.pathView(s.id, key, null, raven), lang),
       defaultKey,
       defaultExam: examOf(defaultKey),
@@ -2187,6 +2189,8 @@ export function createApp(store, opts = {}) {
       openContest: progress.openContest(s.id, key),
       readiness: progress.examReadiness(s.id, key, raven),
       raven,
+      // Poskusne pole (server/poskusna-pola.js): zadnji rezultati za ta izpit in predmet.
+      sims: simHistory(store.db, s.id, info.exam, info.subject),
     });
   });
   // Pretekle pole NPZ in mature: samo povezave na ric.si (server/exam-papers-si.js), brez besedila pol.
@@ -2391,6 +2395,7 @@ export function createApp(store, opts = {}) {
   mountGradiva(app, store, { loadStudent, accounts, leagues }); // povzetek na eni strani, zvočni povzetek, delovni listi
   mountKviz(app, store, { loadStudent, leagues }); // kviz v živo za razred
   mountSkillChecks(app, store, { loadStudent }); // šibke točke: »Preveri se« v učbeniku in naše pole
+  mountPoskusnaPola(app, store, { loadStudent }); // poskusni izpit na naši poli (čas, točkovnik, rezultat po temah)
   mountGraphs(app, store, { loadStudent });
   mountGames(app, store, { loadStudent, progress, avatars, knowledge });
   mountDailyPuzzle(app, store, { loadStudent, leagues, ...(opts.dailyNow ? { now: opts.dailyNow } : {}) }); // dnevna uganka in lestvica po času
