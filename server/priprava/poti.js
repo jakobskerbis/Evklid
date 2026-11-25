@@ -828,6 +828,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const izsekiPoId = new Map(izseki.map((i) => [i.id, { id: i.id, vir_id: poId.get(i.id).vir_id, stran: poId.get(i.id).stran }]));
     return { ime: t.ime, izseki, izsekiPoId, odtis: odtisIzsekov(izseki) };
   }
+  // Stiska v zapiskih (npr. dnevnik med snovjo): lokalni zaznavalnik brez AI, kot pri zapiskih; tudi ob branju shranjene.
+  const nujnoIzsekov = (s, t) => (t?.izseki.length ? nujnoZa(lokalnaVrsta(t.izseki.map((i) => i.besedilo).join("\n")), s.settings) : null);
   const shranjenaRazlaga = (p, tema) => db.prepare("SELECT * FROM priprava_postavke WHERE priprava_id = ? AND vrsta = 'razlaga' AND tema_id = ?").get(p.id, tema);
   app.get("/api/students/:id/priprave/:pid/razlaga", async (req, res) => {
     const s = loadStudent(req, res);
@@ -836,10 +838,12 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!p) return niPriprave(res);
     const tema = typeof req.query.tema_id === "string" ? req.query.tema_id : "";
     const row = tema ? shranjenaRazlaga(p, tema) : null;
-    const out = row ? razlagaVen(row, await izsekiTeme(s, p, tema)) : null;
+    const t = row ? await izsekiTeme(s, p, tema) : null;
+    const out = row ? razlagaVen(row, t) : null;
     if (!out) return res.status(404).json({ error: "Razlage te teme še ni.", code: "razlaga_ni" });
     uporabljena(p);
-    res.set("Cache-Control", "no-store").json(out);
+    const nujno = nujnoIzsekov(s, t);
+    res.set("Cache-Control", "no-store").json(nujno ? { ...out, nujno } : out);
   });
   app.post("/api/students/:id/priprave/:pid/razlaga", async (req, res) => {
     const s = loadStudent(req, res);
@@ -849,8 +853,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const tema = typeof req.body?.tema_id === "string" ? req.body.tema_id : "";
     const t = tema ? await izsekiTeme(s, p, tema) : null;
     if (!t || !t.izseki.length) return res.status(400).json({ error: "Tema nima izsekov v zapiskih te priprave.", code: "razlaga_tema" });
-    // Stiska v zapiskih (npr. dnevnik med snovjo): lokalni zaznavalnik brez AI, kot pri zapiskih.
-    const nujno = nujnoZa(lokalnaVrsta(t.izseki.map((i) => i.besedilo).join("\n")), s.settings);
+    const nujno = nujnoIzsekov(s, t);
     const zNujno = (o) => (nujno ? { ...o, nujno } : o);
     const prej = shranjenaRazlaga(p, tema);
     if (prej && prej.odtis === t.odtis && req.body?.znova !== true) {
@@ -893,8 +896,14 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
           .status(422)
           .json(zNujno({ error: "Razlage ni bilo mogoče preveriti z zapiski. Poskusi znova ali dodaj zapiske.", code: "razlaga_nepreverjena", zavrnjenih: r.zavrnjenih, pages: straniInfo(s), ...AI_JSON }));
       const vsebina = seal(JSON.stringify({ nacin: "A", preverjeno: "zapiski", odstavki: r.odstavki, zavrnjenih: r.zavrnjenih }));
+      // Izseki so se med klicem modela lahko spremenili (vir izbrisan ali znova obdelan): razlaga iz izbrisanih zapiskov
+      // se ne shrani. Odtis se preveri znova tik pred zapisom; med preverjanjem in zapisom ni čakanja (await), zato ga
+      // izbris ne more prehiteti.
+      const zdaj = await izsekiTeme(s, p, tema);
       // Priprava še obstaja (in je ista: id-ji se po izbrisu lahko ponovijo).
       if (!db.prepare("SELECT 1 FROM priprave WHERE id = ? AND student_id = ? AND created_at = ?").get(p.id, s.id, p.created_at)) return niPriprave(res);
+      if (!zdaj || zdaj.odtis !== t.odtis)
+        return res.status(409).json(zNujno({ error: "Zapiski so se med razlago spremenili. Poskusi znova.", code: "razlaga_zapiski_spremenjeni", pages: straniInfo(s), ...AI_JSON }));
       db.prepare(
         `INSERT INTO priprava_postavke (priprava_id, student_id, vrsta, tema_id, izseki, odtis, vsebina, created_at) VALUES (?, ?, 'razlaga', ?, ?, ?, ?, ?)
          ON CONFLICT(priprava_id, vrsta, tema_id) DO UPDATE SET izseki = excluded.izseki, odtis = excluded.odtis, vsebina = excluded.vsebina, created_at = excluded.created_at`,

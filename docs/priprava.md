@@ -200,17 +200,26 @@ model (`EVKLID_PRIPRAVA_RAZLAGA_MODEL`, privzeto srednji model) dobi samo izseke
 očiščene kot zapiski: nevidni znaki, oznake `<izseki>`, ponarejene glave izsekov) v oznakah kot podatek, brez orodij,
 odgovor samo JSON. Koda obdrži odstavek le, če: navaja samo poslane izseke; ima dobeseden navedek (20–200 znakov, vsaj 3
 besede ali cela formula; enoten zapis presledkov, narekovajev in pomišljajev, NFC; velike črke štejejo; vsak navedek
-enkrat) iz enega od navedenih izsekov; je vsaka njegova formula (brez razmikov) in vsako število v navedenih izsekih; se
-formule izrišejo s KaTeX (brez nezaprtih `$`, `\(`, `\[`); `codeCheck` ne najde računske napake. Izhod brez oznak HTML in
-povezav. `viri` so samo izseki, ki odstavek res podpirajo; `negotovo`, ko podporni izsek ima `[?]`, odstavek pa ne. To je
+enkrat) iz enega od navedenih izsekov, ki je o istem kot odstavek (vsaj polovica njegovih vsebinskih besed, njegova
+formula ali vsa njegova števila so v odstavku); je vsaka njegova formula cela v navedenih izsekih (primerjava po žetonih:
+`500` ni začetek `5000`, `E = 5` ni začetek `E = 5 \cdot 10^3`; meja formule ali vrstice v zapiskih je meja izraza; brez
+besed v formuli, npr. `$Definicija$`); je vsako število, tudi v formulah, v navedenih izsekih (NFKC, nadpisane števke kot
+potenca, predznak in potenca sta del števila: `-2`, `10^-6`; števke zunaj ASCII → odstavek odpade); ne razreši negotovega
+branja `x2 [?]` (zapis `x^2`, `x_2`, `x²`, `H2SO4` brez `[?]` odpade, razen če je zapis tudi v navedenem izseku in odstavek
+ne ponovi vrstice z negotovim branjem); se formule izrišejo s KaTeX (brez nezaprtih `$`, `\(`, `\[`); `codeCheck` ne najde
+računske napake (vsak stavek posebej, računi v besedilu, npr. `8 - 4 = 5` ali `12 : 4 = 4`, se preverijo kot formule).
+Izhod brez oznak HTML (samo prave oznake; `a<b in b>c` ostane) in povezav; odjemalec ga izriše kot besedilo s KaTeX, ne kot
+HTML. `viri` so samo izseki, ki odstavek res podpirajo (navedek ali formula z vsaj tremi žetoni); `negotovo`, ko podporni
+izsek ima `[?]`, odstavek pa ne. To je
 »podprto z zapiski« (`preverjeno: "zapiski"`), ne »pravilno«: napačna vrstica v zapiskih lahko ostane, če je koda ne
 preračuna (vmesnik ne sme pisati »pravilno«). Brez preverljivega odstavka 422 (`razlaga_nepreverjena`, s stanjem strani),
 nič se ne shrani. Shramba: šifrirano (`priprava_postavke`, SEALED; kaskadni izbris), z id-ji izsekov in odtisom
 (id-ji, naslovi in besedila); drugačen odtis = `zastarela` (id-ji izsekov se po izbrisu ponovijo), model se ne kliče znova,
 dokler je odtis enak (`znova: true` za novo razlago). Izbris ali ponovna obdelava vira izbriše razlage iz njegovih
-izsekov. Strošek: ena stran iz mesečne meje zapiskov (`STRANI`; ob napaki modela se vrne, ob 422 ostane, ker je klic
+izsekov; če se izseki spremenijo med klicem modela, se odtis tik pred zapisom preveri znova in razlaga se ne shrani (409
+`razlaga_zapiski_spremenjeni`, stran ostane porabljena, ker je klic plačan). Strošek: ena stran iz mesečne meje zapiskov (`STRANI`; ob napaki modela se vrne, ob 422 ostane, ker je klic
 plačan), trda meja AI (`usage.guard` z rezervo iz dejanskega sporočila po pravilu `meje-ai.js`), zapis porabe »priprava«;
-hkrati ena razlaga na profil (409). Stiska v izsekih (lokalni zaznavalnik, brez AI) → `nujno` v odgovoru. Odgovor nosi
+hkrati ena razlaga na profil (409). Stiska v izsekih (lokalni zaznavalnik, brez AI) → `nujno` v odgovoru, tudi ob branju shranjene razlage (GET). Odgovor nosi
 oznako AI, vire (izsek, vir, stran) in navedek. Ključ predpomnilnika zemljevida ima zdaj tudi dolžino in čas izsekov.
 Test: `test/priprava-razlaga.test.js` (model nadomeščen; tudi `napad.md` in stiska).
 
