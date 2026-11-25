@@ -84,6 +84,7 @@ function ura0(el, B, { speed, auto, running, record, tick }) {
 export function labGrelnik(el) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js); nov vklop grelca jih zamenja z novimi
   const B = new GrelnikBench({ seed: zap.seed });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): pravi izkoristek iz B.m0, B.T0, B.Tvrh in B.E
   const W = 400, H = 282;
   const svg = svgBox(W, H, "lab-bench lab-top lab-top-grel");
   const log = eventLog();

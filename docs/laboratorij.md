@@ -465,6 +465,26 @@ helpers: `public/sim/lab-vodeno-pomoc.js`. Not in lessons (sims embedded in a le
   device or IP (not personal data); the same event of the same student and experiment counts once per 10 s. Read:
   `GET /api/admin/laboratorij?days=30` (admin, or local without accounts).
 
+## Maturitetni poskus (matura mode)
+
+Plan phase 3 (25. 11. 2026). An experiment with a task in `public/sim/lab-matura-naloge.js` (one file per experiment in
+`public/sim/matura/<key>.js`) gets a third button »Matura« in the switch; its card (`public/sim/lab-matura.js` →
+`maturaKartica`) replaces the step card. »Začni nalogo« forgets the measurements and rebuilds the engine with a new seed
+(`mount._labZnova`), so every task has a new unknown (e.g. the HCl concentration). The student measures without steps
+and submits a number, a unit and an absolute uncertainty. The program scores it (`oceni`), no AI:
+- measurements, 4 points: `meritve: [{ kaj, tock, ok(c) }]`, read from the same context as guided steps (`c.dnevnik`,
+  `c.vrstice`, …), counted only since the task started;
+- result, 4 points by relative error to the true value: ≤ tol 4, ≤ 2·tol 3, ≤ 3·tol 2, ≤ 5·tol 1. The true value comes
+  from the engine's model (`el._labBench = B` in the engine, `resnica(B)` in the task). `tol` is calibrated: a careful
+  student simulated in the model must land within tol in ≥ 95 % of seeds (`test/laboratorij-matura.test.js`);
+- unit, 1 point (`enote: [[name, factor to the right unit | null], …]`, first is right; mmol/L is converted);
+- uncertainty, 1 point: the true value lies in result ± Δ and Δ ≤ 4·tol of the result.
+During the task `.lab-racun`, `.lab-q` and the task's `skrij` selectors (anything showing a computed result or the true
+value) get `.lab-mat-skrito`; after submitting everything shows again with the points, the true value and the student's
+result. The method (equations, averaging, graph) is not scored: that is the tutor's job in phase 4 (profil B, j's card).
+The best score stays on the device (`localStorage` `evklid.lab.matura`); the server only counts submissions
+(`nacin: matura`, `dogodek: oddano`, no points, no student). »Matura« is not remembered as the default mode.
+
 ## Next (from j's list)
 FIZ: pendulum and stopwatch; motion part B: collisions of two carts on the track (momentum, magnets/Velcro), uniform motion with a motion sensor, nested coffee filters (v_t ∝ √m), a(θ) on the incline to find μr; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: electroplating (copper on a key, mass vs charge, reuses `ElektrolizaBench` kinetics), corrosion of iron (nails in water, salt water, oil, with zinc/copper contact), Daniell cell with a Zn | Cu series battery for an LED, electrolysis of CuSO₄ with copper electrodes (mass change).
 NAR: the same engines on more NAR-OS-6/7 topics. Indicators: enzyme pH dependence (amylase at pH 4/7/9, reuses `SlinaBench`), the 0 °C tube warmed to 37 °C, a home version of `lab-ph` with only red cabbage, Sudan III for fats, pH meter alkaline error. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),

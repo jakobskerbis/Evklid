@@ -27,6 +27,7 @@ const RAZREDI = ["a", "b", "c"];
 export function labLom(el) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
   const B = new LomBench({ seed: zap.seed });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): lomni količnik akrila iz modela (SNOVI.pmma.n)
   const W = 400, H = 400, cx = 200, cy = 200, k = 160 / DISK.Rs; // 1 mm = 1,33 px
   const svg = svgBox(W, H, "lab-bench lab-opt lab-opt-disk");
   const log = eventLog();
@@ -69,7 +70,7 @@ export function labLom(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table, calc,
       h("h4", { class: "lab-h" }, "Graf: sin β v odvisnosti od sin α"), graph, qBox,
-      notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon ${tex(String.raw`n_1\sin\alpha = n_2\sin\beta`)}; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,488 (Sultanova in sod. 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ${tex(String.raw`\left(\frac{n - 1}{n + 1}\right)^2 = 3{,}8${en("%")}`)} za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`),
+      Object.assign(notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon ${tex(String.raw`n_1\sin\alpha = n_2\sin\beta`)}; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,488 (Sultanova in sod. 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ${tex(String.raw`\left(\frac{n - 1}{n + 1}\right)^2 = 3{,}8${en("%")}`)} za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`), { className: "lab-notes lab-opt-viri" }), // viri z lomnimi količniki: med maturitetnim poskusom skriti
     ],
     tryText: "Izberi akrilni polvalj in izmeri lomni kot pri vpadnih kotih 10°, 20° … 80°. Iz naklona grafa izračunaj lomni količnik. Nato obrni smer (iz snovi v zrak) in poišči kot, pri katerem lomljeni žarek izgine.",
   });
@@ -150,6 +151,8 @@ export function labLom(el) {
 
   // ---------------------------------------------------------------- risba (1 mm = 1,33 px)
   const P = ([x, y]) => [cx + x * k, cy - y * k];
+  // Napis snovi z lomnim količnikom ostane isti element čez risanja, da ga maturitetni poskus lahko skrije (.lab-mat-skrito).
+  const nLbl = label(svg, W - 6, H - 6, "", "tick small lab-opt-n", "end");
   function draw() {
     svg.replaceChildren();
     const S = SNOVI[B.snov], Rs = DISK.Rs * k;
@@ -190,7 +193,8 @@ export function labLom(el) {
       }
     }
     s("text", { x: 0, y: 0, class: "tick small lab-opt-lbl", "text-anchor": "middle", transform: `translate(${cx - 5},${cy - Rs / 2 - 10}) rotate(-90)` }, svg, "vpadna pravokotnica");
-    label(svg, W - 6, H - 6, S.n ? `${S.kratko}, n = ${fixed(S.n, 3)}` : "ravno zrcalo", "tick small", "end");
+    nLbl.textContent = S.n ? `${S.kratko}, n = ${fixed(S.n, 3)}` : "ravno zrcalo";
+    svg.append(nLbl);
     const yb = H - 10;
     s("path", { d: `M8,${yb - 4} V${yb} H${8 + 20 * k} V${yb - 4}`, class: "lab-scale" }, svg);
     label(svg, 8 + 10 * k, yb - 7, "2 cm", "tick small");
