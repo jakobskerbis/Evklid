@@ -888,8 +888,16 @@ export function initOkna(opts) {
   document.addEventListener("input", preveriMesto, { capture: true, passive: true });
   document.addEventListener("click", preveriMesto, { capture: true, passive: true });
   // Zadetki pridejo s strežnika pozneje kot 450 ms po vnosu (iskanje v učbeniku na iPadu, dimni test 25. 11.): nova vsebina
-  // v odprtem pogledu sproži isto preverjanje, ko se neha spreminjati (med pretakanjem odgovora se ne kliče vsakič).
-  new MutationObserver(preveriMesto).observe(document.body, { childList: true, subtree: true });
+  // v odprtem pogledu sproži isto preverjanje 120 ms po zadnji spremembi (med pretakanjem odgovora se ne kliče vsakič),
+  // da mehurček ne obstane vidno na novih zadetkih (dimni test 25. 11.: posnetek 500 ms po vnosu).
+  let poVsebini = 0;
+  new MutationObserver(() => {
+    clearTimeout(poVsebini);
+    poVsebini = setTimeout(() => {
+      if (bubble && !bubble.hidden && !bubble.classList.contains("dragging")) placeBubble();
+      placeToast();
+    }, 120);
+  }).observe(document.body, { childList: true, subtree: true });
   // Drsenje premakne polja pod obvestilo brez spremembe vsebine (obrazec za otroka, dimni test računov 25. 11.):
   // vidno obvestilo gre ob vsakem drsenju na prosto mesto, skrito ne stane nič.
   let drsi = 0;

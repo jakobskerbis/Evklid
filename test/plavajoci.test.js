@@ -151,7 +151,7 @@ test("iPad 820 × 1180: zadetki, ki pridejo pozneje (brez vnosa ali klika), ne o
       }
       document.querySelector("#view-textbook").append(box);
     });
-    await p.waitForTimeout(900);
+    await p.waitForTimeout(400); // brez vnosa in klika: mesto se popravi kmalu po spremembi vsebine
     assert.deepEqual(await pokrito(p, "#chat-bubble"), []);
     assert.deepEqual(errors, []);
     await ctx.close();
