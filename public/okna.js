@@ -675,8 +675,15 @@ export function placeToast() {
     const n = pokrije(y);
     if (n < best.n) best = { y, n };
   }
-  // Ni prostega mesta v vsebini (npr. simulacija čez ves zaslon): čez glavo, ki ni del naloge; tapi gredo skozi.
-  if (best.n) best = { y: Math.max(8, Math.min(vrh, window.innerHeight) - h - 8) };
+  // Ni prostega mesta v vsebini (npr. simulacija čez ves zaslon): čez glavo, če tam prekrije manj gumbov; tapi gredo skozi.
+  if (best.n) {
+    const y = Math.max(8, Math.min(vrh, window.innerHeight) - h - 8);
+    const vGlavi = [...document.querySelectorAll(CONTROLS)]
+      .filter((o) => !el.contains(o) && !o.closest("[hidden], [inert]"))
+      .map((o) => o.getBoundingClientRect())
+      .filter((o) => o.width > 0 && Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom) - Math.max(y, o.top) > 0).length;
+    if (vGlavi <= best.n) best = { y };
+  }
   if (best.y === r.top) return;
   el.style.bottom = "auto";
   el.style.top = `${Math.round(best.y)}px`;
@@ -865,6 +872,9 @@ export function initOkna(opts) {
   };
   document.addEventListener("input", preveriMesto, { capture: true, passive: true });
   document.addEventListener("click", preveriMesto, { capture: true, passive: true });
+  // Zadetki pridejo s strežnika pozneje kot 450 ms po vnosu (iskanje v učbeniku na iPadu, dimni test 25. 11.): nova vsebina
+  // v odprtem pogledu sproži isto preverjanje, ko se neha spreminjati (med pretakanjem odgovora se ne kliče vsakič).
+  new MutationObserver(preveriMesto).observe(document.body, { childList: true, subtree: true });
   // Obvestilo (#toast, pišejo ga app.js, account.js, leagues.js, kalkulator.js): ob prikazu in novem besedilu na prosto mesto.
   const obvestilo = document.getElementById("toast");
   // Isto dejanje pogosto še spremeni stran (zapre obrazec, izriše odgovor): mesto preverimo še po 250 in 800 ms.

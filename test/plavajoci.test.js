@@ -130,6 +130,34 @@ test("ležeč telefon 740 × 360: mehurček je jeziček ob robu in ne prekrije i
   });
 });
 
+test("iPad 820 × 1180: zadetki, ki pridejo pozneje (brez vnosa ali klika), ne ostanejo pod mehurčkom (dimni test 25. 11.)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 1180, height: 820 });
+    await p.evaluate(() => window.evklid.showView("textbook"));
+    await p.waitForSelector("#tb-q", { state: "visible" });
+    await p.waitForSelector("#chat-bubble:not([hidden])");
+    await p.waitForTimeout(900);
+    assert.deepEqual(await pokrito(p, "#chat-bubble"), []);
+    // Kot zadetki iskanja s strežnika: gumbi čez vso širino pogleda pod mehurčkom, dodani brez vnosa ali klika.
+    await p.evaluate(() => {
+      const r = document.querySelector("#chat-bubble .cb-main").getBoundingClientRect();
+      const box = document.createElement("div");
+      box.style.cssText = `position:fixed;left:24px;right:24px;top:${r.top - 60}px`;
+      for (let i = 0; i < 4; i++) {
+        const b = document.createElement("button");
+        b.textContent = "Zadetek " + i;
+        b.style.cssText = "display:block;width:100%;height:44px;margin:0 0 4px";
+        box.append(b);
+      }
+      document.querySelector("#view-textbook").append(box);
+    });
+    await p.waitForTimeout(900);
+    assert.deepEqual(await pokrito(p, "#chat-bubble"), []);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
 test("telefon 390 × 844: prijava napake v lekciji, površina data-ne-prekrij in obvestilo – nič prekrito (UX-104, UX-105)", opts, async () => {
   await withApp(async (base) => {
     const { ctx, p, errors } = await phone(base, { width: 390, height: 844 });
