@@ -10,9 +10,10 @@ import vm from "node:vm";
 const src = fs.readFileSync(new URL("../public/zacetek.js", import.meta.url), "utf8");
 
 // Najmanjša lažna stran za zacetek.js (brez posnetka in zapisa: Učna pot z okostjem, kot ob ponovnem obisku po 12 urah).
-function zagon({ odgovori = {}, sw = true, studentId = "7", zacetni = null } = {}) {
+function zagon({ odgovori = {}, sw = true, studentId = "7", zacetni = null, racun = true } = {}) {
   const store = new Map();
   if (studentId != null) store.set("studentId", studentId);
+  if (racun) store.set("evklid.racun", "1"); // public/account.js: naprava je bila prijavljena v račun
   const klici = [];
   const el = () => ({ attrs: {}, setAttribute() {}, removeAttribute() {}, querySelectorAll: () => [], hidden: true });
   const podatki = zacetni && { textContent: JSON.stringify(zacetni), parentNode: { removeChild: (x) => (x.removed = true) } };
@@ -119,4 +120,10 @@ test("prvi obisk (brez service workerja) in stran s podatki: brez paketa, kot pr
   assert.deepEqual(zagon({ zacetni: { s: 7, d: D } }).klici, []);
   assert.deepEqual(zagon({ studentId: null }).klici, ["/api/account/status", "/api/config"], "brez profila samo javna klica");
   assert.deepEqual(zagon({ studentId: "7;x" }).klici, ["/api/account/status", "/api/config"]);
+});
+
+// Pregled 2 (#1124): brez računov (domači strežnik, EVKLID_ACCOUNTS izklopljen) poti ni (404 v konzoli ob vsakem
+// ponovnem obisku in en krog več). Naprava, ki ni bila nikoli prijavljena (ni evklid.racun), kliče kot prej.
+test("ponovni obisk brez računov (naprava ni bila prijavljena): brez paketa, isti štirje klici kot prej", () => {
+  assert.deepEqual(zagon({ racun: false }).klici, ["/api/account/status", "/api/config", "/api/students", "/api/students/7/conversations"]);
 });

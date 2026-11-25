@@ -728,7 +728,9 @@
     try {
       swStran = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
     } catch (e) {}
-    if (!zp && swStran && sid && /^\d+$/.test(sid)) {
+    // evklid.racun (public/account.js): ta naprava je bila prijavljena v račun. Brez računov (domači strežnik) klica ni:
+    // vrnil bi 404 (napaka v konzoli ob vsakem ponovnem obisku) in en krog pred istimi štirimi klici.
+    if (!zp && swStran && sid && /^\d+$/.test(sid) && shramba("evklid.racun")) {
       vnaprejPaket(sid);
       stanje = podatek("/api/account/status");
       profili = podatek("/api/students");

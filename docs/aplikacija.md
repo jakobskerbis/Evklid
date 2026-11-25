@@ -83,8 +83,8 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
   Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
 - Ponovni obisk prijavljenega (N-08, 25. 11. 2026): service worker postreže shranjeno vstopno stran (brez začetnih
-  podatkov, ker je osebna stran `no-store`), zato `zacetek.js` (`vnaprejPaket`, samo ko stran nadzira service worker in
-  podatkov v strani ni) iste podatke zahteva v enem klicu `GET /api/zacetni-podatki` (`zacetniPodatkiKlic`: isti
+  podatkov, ker je osebna stran `no-store`), zato `zacetek.js` (`vnaprejPaket`, samo ko stran nadzira service worker,
+  podatkov v strani ni in je bila naprava že prijavljena, `evklid.racun`; brez računov ni klica) iste podatke zahteva v enem klicu `GET /api/zacetni-podatki` (`zacetniPodatkiKlic`: isti
   `zberi` kot za stran; samo `Sec-Fetch-Site: same-origin` ali brez, ne navigacija, ne `X-App-Client`, ne predhodno
   nalaganje, piškotka seje in naprave; `no-store`, brez ETag; brez podatkov 204). Klic app.js za naslov iz paketa
   (`PAKET`) počaka paket; česar v paketu ni, gre na strežnik. Neuspeh paketa (204, napaka, star strežnik) → isti štirje
