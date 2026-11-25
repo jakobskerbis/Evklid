@@ -120,7 +120,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec, onMatura 
     if (!c) return false;
     if (c !== controls) {
       // Prvi priklop ali poskus zgrajen znova (»Ponastavi«): vodenje od začetka.
-      if (controls) (i = 0), (dnevnik = []), (konecJavljen = false), (shown = -1);
+      if (controls) (i = 0), (dnevnik = []), (konecJavljen = false), (shown = -1), matK?.znova();
       controls = c;
     }
     // Samo dnevniki (lab.js → eventLog), ne cela risba: ta se med animacijo spreminja vsako sličico.

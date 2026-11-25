@@ -28,7 +28,7 @@ function silePoMasi(c) {
 export default {
   naslov: "Masa iz grafa a(F)",
   naloga: "Določi maso m, ki jo pospešuje sila obešala. Progo izravnaj z libelo, nato s podložko izravnaj kotalni upor (preizkus brez vrvice s potiskom). Časovnik nastavi na »od spusta« in voziček spuščaj z elektromagnetom. Palic ne dodajaj. Utežice samo prestavljaj z vozička na obešalo, da ostane skupna masa enaka. Izmeri pospešek pri vsaj petih različnih silah, od največ 0,2 N do vsaj 0,5 N. Nariši graf a(F) in iz naklona premice izračunaj m. Oceni napako meritve.",
-  kolicina: "masa m",
+  kolicina: "m",
   zgled: "0,335",
   dec: 3,
   enote: [["kg", 1], ["g", 1e-3], ["N", null], ["1/kg", null]],

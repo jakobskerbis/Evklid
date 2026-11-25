@@ -14,7 +14,7 @@ export const PREGRET = /Upornik se greje|Upornik je zgorel/, VAROVALKA = /pregor
 export default {
   naslov: "Upor upornika iz grafa I(U)",
   naloga: "Določi upor upornika z oznako 100 Ω. Ampermeter veži zaporedno, voltmeter vzporedno z upornikom. Izmeri tok pri vsaj petih različnih napetostih, od največ 2 V do vsaj 5 V. Upornik zdrži le 0,5 W, zato napetosti ne povečaj nad 7 V. Nariši graf I(U) in iz naklona premice izračunaj upor. Oceni napako meritve.",
-  kolicina: "upor R",
+  kolicina: "R",
   zgled: "101,3",
   dec: 1,
   enote: [["Ω", 1], ["kΩ", 1e3], ["A/V", null], ["W", null]],

@@ -25,7 +25,8 @@ import { ElektrolizaBench, barometerRead } from "../public/sim/lab-model-elektro
 test("every matura task is complete: 10 points, the right unit first, a calibrated tolerance", () => {
   for (const [key, def] of Object.entries(MATURA)) {
     assert.ok(KORAKI[key] && ENGINES[key], `${key}: matura le pri vodenem poskusu`);
-    for (const f of ["naslov", "naloga", "kolicina"]) assert.ok(def[f]?.length > 2, `${key}: manjka ${f}`);
+    for (const f of ["naslov", "naloga"]) assert.ok(def[f]?.length > 2, `${key}: manjka ${f}`);
+    assert.ok(def.kolicina?.length >= 1 && def.kolicina.length <= 12, `${key}: kolicina je simbol (npr. g, c(HCl))`);
     assert.ok(def.naloga.length > 60, `${key}: naloga prekratka`);
     assert.equal(def.enote[0][1], 1, `${key}: prva enota je prava (faktor 1)`);
     assert.ok(def.enote.some((e) => e[1] == null), `${key}: med enotami je vsaj ena napačna količina`);
@@ -407,6 +408,12 @@ test("in a browser: the titration matura task from start to points", async (t) =
     // Najboljši rezultat ostane 5.
     assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura"))["lab-titracija"].tocke), 5);
 
+    // »↺ Ponastavi« med nalogo: poskus zgrajen znova, naloga teče naprej (nov vzorec, priprava znova).
+    await page.evaluate(() => gumb("Nova naloga", true));
+    await page.evaluate(() => dokler(() => m.querySelector(".lab-mat .lab-mat-polja")));
+    await page.evaluate(async () => (m.querySelector(".demo-reset").click(), await wait(900)));
+    assert.equal(await page.evaluate(() => !!m.querySelector(".lab-mat .lab-mat-polja") && m.querySelector(".lab-vod-wrap")?.isConnected), true);
+    assert.equal(await page.evaluate(() => [...m.querySelectorAll("select")].find((x) => x.getAttribute("aria-label") === "vzorec").value), "hcl");
     // Na telefonu kartica ne povzroči vodoravnega drsenja.
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
     // »Prosto« skrije kartico naloge.

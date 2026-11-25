@@ -97,6 +97,8 @@ function shraniNajboljsi(key, r) {
 // faza: "uvod" (naloga in »Začni nalogo«), "tece" (meritve, oddaja), "oddano" (točke, prava vrednost, »Nova naloga«).
 export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
   let faza = "uvod", ocena = null, resnica = NaN, zaganjam = false;
+  let ctl = null; // kontrole poskusa po zadnji pripravi: drug element pomeni, da je poskus zgrajen znova
+  const kontrole = () => mount.querySelector(".lab-tit-top .demo-controls") || mount.querySelector(".demo-controls");
   const el = h("section", { class: "lab-vod lab-mat", "aria-label": "maturitetni poskus" });
   const rez = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `rezultat ${def.kolicina}` });
   const nap = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": "napaka meritve (absolutna, ±)" });
@@ -104,7 +106,7 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
   const opozorilo = h("p", { class: "lab-why", "aria-live": "polite", hidden: true });
 
   // Med nalogo so skriti izračunani rezultati poskusa (račun, preverjanje, sklepi), po oddaji spet vidni.
-  const SPLOSNO = [".lab-racun", ".lab-q"];
+  const SPLOSNO = [".lab-racun", ".lab-q", ".lab-notes"]; // opombe navajajo vrednosti iz literature (n, F, Eₐ …)
   function skrij() {
     const naj = faza === "tece";
     for (const sel of [...SPLOSNO, ...(def.skrij || [])])
@@ -123,6 +125,7 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
       opozorilo.hidden = true;
       onZacni?.();
       def.priprava?.(mount);
+      ctl = kontrole();
     } finally {
       zaganjam = false;
     }
@@ -198,6 +201,13 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
     },
     // Ob vsakem pregledu (lab-vodeno.js → tick): poskus lahko kontrole nariše znova, zato skrivanje ponovimo.
     tick: skrij,
+    // Poskus je zgrajen znova (»↺ Ponastavi« med nalogo): nov vzorec, zato znova priprava (npr. vzorec X, odtehtan vzorec).
+    znova: () => {
+      const c = kontrole();
+      if (faza !== "tece" || zaganjam || c === ctl) return;
+      ctl = c;
+      def.priprava?.(mount);
+    },
     // Ob odhodu iz načina »Matura«: vse spet vidno, naloga ostane, kot je.
     pokazi: () => mount.querySelectorAll(".lab-mat-skrito").forEach((x) => x.classList.remove("lab-mat-skrito")),
     render,

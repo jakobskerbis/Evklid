@@ -18,7 +18,7 @@ const prviVklop = (dn) => {
 export default {
   naslov: "Izkoristek potopnega grelca",
   naloga: "V čaši je približno 200 g vode. Stehtaj jo. Grelec za 12 V naj bo ves pod vodo, napajalnik nastavi na 12 V. Vklopi grelec in med segrevanjem zapisuj napetost, tok in temperaturo. Ko se voda segreje za 10 do 20 °C, grelec izklopi, vodo premešaj in zapiši najvišjo temperaturo. Izračunaj izkoristek grelca v odstotkih in oceni napako meritve.",
-  kolicina: "η grelca",
+  kolicina: "η",
   zgled: "78,5",
   dec: 1,
   enote: [["%", 1], ["delež (brez enote)", 100], ["J", null], ["W", null]],
