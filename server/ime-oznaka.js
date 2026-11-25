@@ -26,6 +26,7 @@ const BESEDE = new Set(
   [
     // sl, hr
     "rit", "fuk", "fukat", "fukam", "fukas", "drek", "srat", "scat", "scanje", "joske", "peder", "pedri", "buzi", "debil", "kreten", "butec", "bedak", "cipa", "sisa", "sise", "cigan", "cefur", "govno", "supak", "glupan", "kurva", "seks",
+    "kurba", "kurbe", "kurbi", "kurbo", "kurbin", "kurbica", "picka", "picke", "picki", "picko", "picku", "pickin", "drkat", "drkam", "drkas", "drkal", "drkanje",
     // en
     "dick", "cock", "sex", "tits", "fag", "niga", "nigas", "slut", "whore", "twat", "nazi", "hitler", "bastard", "bollocks", "porn",
     // de
@@ -37,7 +38,7 @@ const BESEDE = new Set(
   ].map(norma),
 );
 const ZACETKI = [
-  "kurc", "kurac", "kurce", "pizd", "picka", "picke", "pickic", "jebem", "jebat", "jeban", "jebot", "jebac", "jebi", "jebo", "kurb", "kurv", "sranj", "lulek", "lulc", "buzer", "drka", "pedof", "retard",
+  "kurc", "kurac", "kurce", "pizd", "pickic", "jebem", "jebat", "jeban", "jebot", "jebac", "jebi", "jebo", "kurv", "sranj", "lulek", "lulc", "buzer", "pedof", "retard",
   "fuck", "shit", "bitch", "cunt", "pussy", "asshole", "faggot", "wank", "niger", "penis", "vagin", "porno",
   "arschl", "scheis", "ficke", "schlamp", "wichs", "hurens", "missgeb",
   "stronz", "puttan", "vaffan", "cogli", "minch",
