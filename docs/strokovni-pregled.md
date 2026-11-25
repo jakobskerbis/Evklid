@@ -26,15 +26,16 @@ pridejo v naslednji krog. Izbor je zapisan v `docs/strokovni-pregled-vzorec.md` 
 vzorec ne pridejo (ponovni zagon skripte po dodanih lekcijah da drug izbor); za nov krog se izbere nov vzorec z novim
 semenom (commit main tistega dne).
 
-**Kaj je slepo.** Učitelj ne ve, katere lekcije so po njegovem mnenju »lahke«, ker jih ni izbral nihče. Vsebino vidi
-kot učenec (povezave `https://evklid.app/ucbenik/<pot>/<tema>`), brez poročil AI pregledovalcev in brez naših
+**Kaj je slepo.** Lekcij ni izbral nihče, zato v vzorcu ne morejo prevladovati »lahke« ali že preverjene. Učitelj
+vsebino vidi kot učenec (povezave `https://evklid.app/ucbenik/<pot>/<tema>`), brez poročil AI pregledovalcev in brez naših
 ocen. Pregledovalca ne vidita ocen drug drugega, dokler oba ne oddata obrazca.
 
 ## Kdo in koliko
 
 - Dva učitelja: matematika (A1–A16, B1–B6, C1–C2) ter fizika in kemija (A17–A32, B7–B12, C3–C6); če je za FIZ in
   KEM na voljo vsak svoj učitelj, si delo razdelita po predmetu.
-- Ocena časa: lekcija 20–30 min, naloga 3–5 min, del pole 5 min, skupaj 13–18 ur za oba. Ocena plačila
+- Ocena časa: lekcija 20–30 min, naloga 3–5 min, del pole 5 min, skupaj 12–18 ur za oba (6–9 ur na učitelja).
+  Z branjem navodil, izpolnjevanjem obrazca in potrditvijo popravkov računamo 10–15 ur na učitelja. Ocena plačila
   500–1.050 € (2 × 10–15 ur × 25–35 €; ocena, ne tržna cena). Plačilo šele po prvem plačilu uporabnika (j).
 - Pogoj: učitelj predmeta v gimnaziji (pri OŠ lekcijah zadošča učitelj OŠ), ni povezan z Evklidom.
 
@@ -62,9 +63,12 @@ Obrazec ima za vsak del vzorca eno vrstico s temi polji in seznam najdenih napak
   popravek), po `docs/pregled.md`.
 - Lekcija s sodbo »sprejeto« ali s potrjenimi popravki dobi v glavi `stanje: pregledano`, `pregledal: <ime>` in
   `pregledano: LLLL-MM-DD`; šele takrat učbenik pokaže »Strokovno pregledano« (N-03). Lekcija, ki je učitelj ni
-  pregledal, te oznake nikoli ne dobi, tudi če je iz iste plasti kot pregledane.
+  pregledal, te oznake nikoli ne dobi, tudi če je iz iste plasti kot pregledane. Pregledan del pole ne da oznake
+  vsej poli: pola dobi »pregledal« in »pregledano« šele, ko učitelj pregleda vso polo.
 - Poročilo: število napak po vrsti in plasti, delež lekcij s kritično napako z intervalom zaupanja. Pri 0 kritičnih
   napakah na 32 lekcijah je zgornja meja 95-odstotnega intervala za delež lekcij s kritično napako približno 9 %
-  (pravilo treh: 3/32), zato tak rezultat ne pomeni »brez napak«, ampak »manj kot ~9 % lekcij«.
+  (pravilo treh: 3/32), zato tak rezultat ne pomeni »brez napak«, ampak »manj kot ~9 % lekcij«. Plasti so v vzorcu
+  zastopane neenako (MAT SŠ več, OŠ manj), zato se delež za vse lekcije teh plasti izračuna z utežmi (število
+  lekcij v plasti) in je interval širši.
 - Napake, ki jih je program ali AI spregledal, gredo v referenčni nabor preverjanja (N-01) kot primeri, ki jih mora
   preverjanje ujeti.

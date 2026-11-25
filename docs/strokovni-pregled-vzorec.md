@@ -54,7 +54,7 @@ Vsaka naloga je izdelana s programom (generator, seme); učitelj preveri besedil
 **B2.** Kotne funkcije v pravokotnem trikotniku (`dod-mat-ss12-kotne-funkcije`, seme 53456)
 
 - Naloga: Drog, visok $22{,}3\ \mathrm{m}$, meče senco, dolgo $12{,}9\ \mathrm{m}$. Pod kolikšnim kotom glede na tla padajo sončni žarki? Zaokroži na eno decimalko stopinje.
-- Odgovor Evklida: 60,0 ° (zaokroženo na 1 dec.)
+- Odgovor Evklida: 60,0° (zaokroženo na 1 decimalko)
 - Rešitev Evklida: $\tan \alpha = \dfrac{22{,}3}{12{,}9} \approx 1{,}7287$ $\alpha \approx 60^\circ$
 
 **B3.** Presečišča parabol in sistemi kvadratnih neenačb (`mat-ss2-matura-presecisca-sistemi`, seme 63441)
@@ -84,25 +84,25 @@ Vsaka naloga je izdelana s programom (generator, seme); učitelj preveri besedil
 **B7.** Delo in moč (`energija`, seme 67786)
 
 - Naloga: Kolikšna je kinetična energija telesa z maso $15{,}6\ \mathrm{kg}$, ki se giblje s hitrostjo $9{,}7\ \mathrm{m/s}$? Zaokroži na celo število.
-- Odgovor Evklida: 734 J (zaokroženo na 0 dec.)
+- Odgovor Evklida: 734 J (zaokroženo na celo število)
 - Rešitev Evklida: $v^2 = (9{,}7\ \mathrm{m/s})^2 = 94{,}09\ \mathrm{m^2/s^2}$ $W_k = \dfrac{m \cdot v^2}{2}$ $W_k = \dfrac{15{,}6\ \mathrm{kg} \cdot 94{,}09\ \mathrm{m^2/s^2}}{2}$ $W_k \approx 734\ \mathrm{J}$
 
 **B8.** Merske napake (`dod-fiz-ss-merske-napake`, seme 64550)
 
 - Naloga: Ana je petkrat izmerila čas padanja kroglice z mize: $0{,}48\ \mathrm{s}$; $0{,}47\ \mathrm{s}$; $0{,}48\ \mathrm{s}$; $0{,}48\ \mathrm{s}$; $0{,}44\ \mathrm{s}$. Kolikšna je absolutna napaka, če jo oceniš kot največji odmik meritve od povprečja? Zaokroži na 3 decimalke.
-- Odgovor Evklida: 0,030 s (zaokroženo na 3 dec.)
+- Odgovor Evklida: 0,030 s (zaokroženo na 3 decimalke)
 - Rešitev Evklida: $\bar{t} = \dfrac{0{,}48 + 0{,}47 + 0{,}48 + 0{,}48 + 0{,}44}{5}\ \mathrm{s} = 0{,}470\ \mathrm{s}$ Odmiki od povprečja: $0{,}010$; $0{,}000$; $0{,}010$; $0{,}010$; $0{,}030$ s $\Delta t = 0{,}030\ \mathrm{s}$ (največji odmik)
 
 **B9.** Magnetno polje (`dod-fiz-ss-magnetno-polje`, seme 99089)
 
 - Naloga: Po dovodnem kablu električne peči teče tok $174\ \mathrm{A}$. Kolikšna je gostota magnetnega polja $31\ \mathrm{cm}$ od kabla? ($\mu_0 = 4\pi \cdot 10^{-7}\ \mathrm{Vs/Am}$) Rezultat zapiši v µT in zaokroži na eno decimalko.
-- Odgovor Evklida: 112,3 µT (zaokroženo na 1 dec.)
+- Odgovor Evklida: 112,3 µT (zaokroženo na 1 decimalko)
 - Rešitev Evklida: $r = 0{,}31\ \mathrm{m}$ $B = \dfrac{2 \cdot 10^{-7} \cdot 174}{0{,}31}\ \mathrm{T} \approx 112{,}3\ \mathrm{\mu T}$
 
 **B10.** Energija pri reakcijah (`dod-kem-ss-energija-pri-reakcijah`, seme 36942)
 
 - Naloga: Termokemijska enačba je $$2\,\mathrm{Al}\,\mathrm{(s)} + \mathrm{Fe_{2}O_{3}}\,\mathrm{(s)} \rightarrow \mathrm{Al_{2}O_{3}}\,\mathrm{(s)} + 2\,\mathrm{Fe}\,\mathrm{(s)},\quad \Delta H = -852\ \mathrm{kJ}$$ Koliko toplote se sprosti, ko zreagira $85{,}9\ \mathrm{g}$ aluminija? $M(\mathrm{Al}) = 26{,}98\ \mathrm{g/mol}$. Zaokroži na celo število.
-- Odgovor Evklida: 1356 kJ (zaokroženo na 0 dec.)
+- Odgovor Evklida: 1356 kJ (zaokroženo na celo število)
 - Rešitev Evklida: $n = \dfrac{85{,}9}{26{,}98}\ \mathrm{mol} \approx 3{,}1838\ \mathrm{mol}$ V enačbi je koeficient 2: $-852\ \mathrm{kJ}$ velja za 2 mol. $Q = \dfrac{3{,}1838}{2} \cdot 852\ \mathrm{kJ} \approx 1356\ \mathrm{kJ}$ (se sprosti)
 
 **B11.** Alkalijske kovine in halogeni (`vrz-alkalijske`, seme 20116)

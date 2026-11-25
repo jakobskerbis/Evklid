@@ -2,7 +2,7 @@
 // Reprezentativni vzorec vsebine za neodvisen strokovni pregled učiteljev (N-06, načrt »Kakovost pred obsegom«;
 // j 25. 11. 2026: »Vzorec zdaj, plačilo po 1. plačilu«). Navodila in obrazec: docs/strokovni-pregled.md.
 //
-// Slepi izbor: vzorec ni izbran na roko. Iz seme (privzeto zgoščena vrednost commita main, na katerem je bil vzorec
+// Slepi izbor: vzorec ni izbran na roko. Iz semena (privzeto zgoščena vrednost commita main, na katerem je bil vzorec
 // prvič izbran) ga določi ponovljivo naključje (mulberry32), po plasteh (predmet, raven, letnik), zato ga nihče ne more
 // »olepšati« z lažjimi lekcijami, vsak pa ga lahko ponovi z istim semenom.
 //
@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { makeRng } from "../server/practice/rng.js";
+import { makeRng, nOf } from "../server/practice/rng.js";
 import { generateTask, hasGenerator } from "../server/practice/index.js";
 import { ourPaperIds, loadOurPaper } from "../server/our-papers.js";
 import { getTopic } from "../server/curriculum.js";
@@ -90,13 +90,17 @@ export function izberiVzorec(seme = PRIVZETO_SEME) {
 
 // Odgovor generatorja, kot ga učenec vidi ob preverjanju (zaokrožen na zahtevane decimalke, z decimalno vejico).
 const vejica = (x) => String(x).replace(".", ",");
-const stevilo = (v, d) => (typeof v === "number" && Number.isInteger(d) ? vejica(v.toFixed(d)) : typeof v === "number" ? vejica(Math.round(v * 1e6) / 1e6) : String(v));
+// Brez decimalk: 12 veljavnih mest (0,1 + 0,2 → 0,3), majhne vrednosti (1,6e-19) ostanejo.
+const stevilo = (v, d) => (typeof v === "number" && Number.isInteger(d) ? vejica(v.toFixed(d)) : typeof v === "number" ? vejica(Number(v.toPrecision(12))) : String(v));
+const enota = (u) => (!u ? "" : /^[°′″]$/.test(u) ? u : ` ${u}`); // 60,0° brez presledka, 5 % in 734 J s presledkom
+const zaokrozeno = (d) => (!Number.isInteger(d) ? "" : d === 0 ? " (zaokroženo na celo število)" : ` (zaokroženo na ${nOf(d, "decimalko", "decimalki", "decimalke", "decimalk")})`);
 export function odg(a) {
   if (a == null) return "";
   if (typeof a === "string") return a;
   if (a.type === "choice" && Array.isArray(a.options)) return String(a.options[a.index] ?? "");
   if (a.type === "fraction") return `${a.num}/${a.den}`;
-  if (a.value != null) return `${[].concat(a.value).map((v) => stevilo(v, a.decimals)).join("; ")}${a.unit ? ` ${a.unit}` : ""}${Number.isInteger(a.decimals) ? ` (zaokroženo na ${a.decimals} dec.)` : ""}`;
+  if (a.type === "coefficients" && Array.isArray(a.values)) return a.values.join(", ");
+  if (a.value != null) return `${[].concat(a.value).map((v) => stevilo(v, a.decimals)).join("; ")}${enota(a.unit)}${zaokrozeno(a.decimals)}`;
   return JSON.stringify(a);
 }
 const ena = (s) => String(s || "").replace(/\s*\n\s*/g, " ").replace(/\|/g, "&#124;");

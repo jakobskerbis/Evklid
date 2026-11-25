@@ -14,7 +14,9 @@ test("vzorec: ponovljiv iz semena, po plasteh, brez ponovitev, samo obstoječe l
   for (const l of a.lekcije) assert.ok(fs.existsSync(`content/lessons/${l.id}.md`), l.id);
   assert.equal(a.naloge.length, Object.values(NALOGE).reduce((x, y) => x + y, 0));
   for (const n of a.naloge) assert.ok(n.besedilo && odg(n.odgovor), n.tema);
+  assert.equal(new Set(a.naloge.map((n) => n.tema)).size, a.naloge.length);
   assert.equal(a.pole.length, Object.values(POLE).reduce((x, y) => x + y, 0));
+  assert.equal(new Set(a.pole.map((p) => p.kljuc)).size, a.pole.length);
   // drugo seme da drug vzorec (izbor ni vezan na vrstni red datotek)
   assert.notDeepEqual(izberiVzorec("drugo-seme").lekcije.map((l) => l.id), a.lekcije.map((l) => l.id));
 });
@@ -27,7 +29,11 @@ test("vzorec: zapisani izbor v docs (velja ta zapis) kaže na obstoječe lekcije
 });
 
 test("odg: odgovor kot ga vidi učenec", () => {
-  assert.equal(odg({ type: "number", value: 733.902, unit: "J", decimals: 0 }), "734 J (zaokroženo na 0 dec.)");
+  assert.equal(odg({ type: "number", value: 733.902, unit: "J", decimals: 0 }), "734 J (zaokroženo na celo število)");
+  assert.equal(odg({ type: "number", value: 60, unit: "°", decimals: 1 }), "60,0° (zaokroženo na 1 decimalko)");
+  assert.equal(odg({ type: "number", value: [1.5, -2], decimals: 2 }), "1,50; -2,00 (zaokroženo na 2 decimalki)");
+  assert.equal(odg({ type: "number", value: 1.6e-19, unit: "C" }), "1,6e-19 C");
+  assert.equal(odg({ type: "coefficients", values: [1, 3, 2] }), "1, 3, 2");
   assert.equal(odg({ type: "fraction", num: 240, den: 289 }), "240/289");
   assert.equal(odg({ type: "choice", options: ["a", "b"], index: 1 }), "b");
   assert.equal(odg({ type: "number", value: 0.1 + 0.2 }), "0,3");
