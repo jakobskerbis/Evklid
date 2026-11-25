@@ -131,6 +131,11 @@ test("prepoznava po vsebini: podprte vrste, končnica in Content-Type ne štejet
   assert.equal(prepoznaj(Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1, 0, 0])), null);
   assert.equal(prepoznaj(Buffer.concat([Buffer.from([0, 0, 0, 0x18]), Buffer.from("ftypheic"), Buffer.alloc(8)])), null);
   assert.equal(prepoznaj(Buffer.alloc(0)), null);
+  // Niz ali polje namesto Buffer (podtaknjeno telo zahteve): nikoli prepoznano.
+  for (const x of ["%PDF-1.4 xxxxxxxx", ["%PDF-"], [0xff, 0xd8, 0xff, 0, 0, 0, 0, 0], { length: 20 }, null]) {
+    assert.equal(prepoznaj(x), null);
+    assert.equal(preveriDatoteko(x).status, 400);
+  }
   // Pokvarjen ZIP (imenik kaže izven datoteke, odrezan konec): brez napake, samo null.
   const bad = Buffer.from(DOCX);
   bad.writeUInt32LE(0xfffffff0, bad.length - 6);

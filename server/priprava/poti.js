@@ -35,7 +35,7 @@ export function preveriDatum(v, now = Date.now()) {
 // Ime datoteke iz glave X-Ime-Datoteke (encodeURIComponent), brez poti in kontrolnih znakov.
 function imeIz(req) {
   let v = req.get("x-ime-datoteke");
-  if (!v) return null;
+  if (typeof v !== "string" || !v) return null;
   try {
     v = decodeURIComponent(v);
   } catch {
@@ -215,9 +215,12 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now() 
       t = { vrsta: "besedilo", mime: MIME.besedilo };
       ime = cleanText(typeof b.ime === "string" ? b.ime : "", IME_MAX) || null;
     } else {
-      const v = preveriDatoteko(Buffer.isBuffer(req.body) ? req.body : null);
+      // Telo mora biti Buffer iz express.raw (ne niz, polje ali predmet iz drugega razčlenjevalnika).
+      const telo = req.body;
+      if (Array.isArray(telo) || typeof telo !== "object" || !Buffer.isBuffer(telo)) return res.status(400).json({ error: "Datoteka manjka.", code: "priprava_prazno" });
+      const v = preveriDatoteko(telo);
       if (!v.ok) return res.status(v.status).json({ error: v.error, code: v.code });
-      buf = req.body;
+      buf = telo;
       t = v;
       ime = imeIz(req);
     }

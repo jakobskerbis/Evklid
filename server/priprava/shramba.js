@@ -41,12 +41,14 @@ export const MIME = {
   besedilo: "text/plain; charset=utf-8",
 };
 
-const zacne = (buf, bytes, off = 0) => buf.length >= off + bytes.length && bytes.every((b, i) => buf[off + i] === b);
+// Samo Buffer (ne niz ali polje iz telesa zahteve): vsi vhodi v ta modul gredo skozi jeBuffer.
+const jeBuffer = (buf) => !Array.isArray(buf) && typeof buf === "object" && Buffer.isBuffer(buf);
+const zacne = (buf, bytes, off = 0) => jeBuffer(buf) && buf.length >= off + bytes.length && bytes.every((b, i) => buf[off + i] === b);
 
 // Imena datotek v imeniku ZIP (samo branje glav, nič razširjanja). null, če ZIP ni cel ali je nenavaden (ZIP64,
 // več diskov, imenik zunaj datoteke).
 export function zipImena(buf, najvec = 5000) {
-  if (!zacne(buf, [0x50, 0x4b, 0x03, 0x04]) || buf.length < 22) return null;
+  if (!jeBuffer(buf) || buf.length < 22 || !zacne(buf, [0x50, 0x4b, 0x03, 0x04])) return null;
   let eocd = -1;
   for (let i = buf.length - 22; i >= Math.max(0, buf.length - 22 - 0xffff); i--) {
     if (buf.readUInt32LE(i) === 0x06054b50) {
@@ -79,7 +81,7 @@ export function zipImena(buf, najvec = 5000) {
  * PowerPoint (.pptx). Stari .doc/.ppt (OLE), HEIC, ZIP brez Wordovega ali PowerPointovega dela in ostalo: null.
  */
 export function prepoznaj(buf) {
-  if (!Buffer.isBuffer(buf) || buf.length < 8) return null;
+  if (!jeBuffer(buf) || buf.length < 8) return null;
   if (zacne(buf, [0xff, 0xd8, 0xff])) return { vrsta: "slika", mime: MIME.jpeg };
   if (zacne(buf, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return { vrsta: "slika", mime: MIME.png };
   if (buf.length >= 12 && buf.toString("latin1", 0, 4) === "RIFF" && buf.toString("latin1", 8, 12) === "WEBP") return { vrsta: "slika", mime: MIME.webp };
@@ -96,7 +98,7 @@ export function prepoznaj(buf) {
  * Preveri datoteko: { ok: true, vrsta, mime } ali { ok: false, status, error, code }. Meja velikosti po vrsti.
  */
 export function preveriDatoteko(buf) {
-  if (!Buffer.isBuffer(buf) || !buf.length) return { ok: false, status: 400, error: "Datoteka manjka.", code: "priprava_prazno" };
+  if (!jeBuffer(buf) || !buf.length) return { ok: false, status: 400, error: "Datoteka manjka.", code: "priprava_prazno" };
   if (buf.length > NAJVEC_BAJTOV) return { ok: false, status: 413, error: "Datoteka je prevelika.", code: "priprava_velikost" };
   const t = prepoznaj(buf);
   if (!t) return { ok: false, status: 415, error: "Ta vrsta datoteke ni podprta. Naloži fotografijo (JPEG, PNG, WebP), PDF, Word (.docx) ali PowerPoint (.pptx).", code: "priprava_vrsta" };
@@ -108,6 +110,7 @@ export const lahkoShranim = () => encryptionOn();
 
 // Shrani šifriran izvirnik vira. Klicatelj je v transakciji in je preveril lastništvo. Brez ključa vrže napako.
 export function shraniIzvirnik(db, virId, buf) {
+  if (!jeBuffer(buf)) throw new TypeError("izvirnik mora biti Buffer");
   const sealed = sealBytes(buf);
   if (!sealed) throw Object.assign(new Error("ni ključa za šifriranje"), { code: "BREZ_KLJUCA" });
   db.prepare("INSERT INTO priprava_izvirniki (vir_id, podatki) VALUES (?, ?)").run(virId, sealed);
