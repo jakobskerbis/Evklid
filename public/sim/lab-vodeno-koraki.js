@@ -10,8 +10,13 @@
 // opravljen. Besedila so slovenska kot vse besedilo poskusov (lab-*.js).
 
 import { stevilo, celica, kjer, razlicne, ujemanje } from "./lab-vodeno-pomoc.js";
+import labHooke from "./vodeno/lab-hooke.js";
+import labNewton2 from "./vodeno/lab-newton2.js";
 // Vodeni poskusi faze 2 (docs/laboratorij.md »Vodeni poskus«): vsak v svoji datoteki public/sim/vodeno/<ključ>.js.
-const FAZA2 = {};
+const FAZA2 = {
+  "lab-hooke": labHooke,
+  "lab-newton2": labNewton2,
+};
 
 export { stevilo, celica, ujemanje };
 
