@@ -578,7 +578,9 @@ function syncChatReturn() {
 // gumb »Nazaj na: …« vrnejo na isto mesto (back = { view, open, oznaka }).
 // back.kontekst: posnetek stanja (sourceType, sourceId, …), ki gre z naslednjim vpisanim sporočilom kot skrit blok.
 function askTutorFrom(text, back = null) {
-  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "" } : null;
+  // poskus: ključ odprtega poskusa (povezave C1): inštruktorjev gumb za isti poskus ga nastavi, ne odpre znova.
+  const poskus = back?.kontekst?.sourceType === "lab" && typeof back.kontekst.sourceId === "string" ? back.kontekst.sourceId : "";
+  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "", poskus } : null;
   showView("chat");
   ucniKontekstConv = state.conversationId ?? "nov";
   state.ucniKontekst = back?.kontekst && typeof back.kontekst === "object" ? back.kontekst : null;
@@ -4602,6 +4604,17 @@ initOpen({
     loadGames().then((m) => m.openReward(concepts)).catch(() => null);
   },
   openLab: () => openFromTutor({ view: "lab" }),
+  // Povezave C1: inštruktorjev gumb s »nastavi« za poskus, iz katerega je učenec prišel: vrne ga v ta odprti poskus
+  // (meritve ostanejo) in vrne okvir poskusa, da odpri.js premakne drsnike; sicer null (poskus v oknu kot doslej).
+  odprtiPoskus: (key, { vrni = false } = {}) => {
+    const r = state.chatReturn;
+    if (!key || !r || r.view !== "lab" || r.poskus !== key || !returnConvOk(r)) return null;
+    // Klepet v oknu: učenec je medtem morda odprl drug poskus ali seznam; drsnike premaknemo le v istem poskusu.
+    const mount = document.querySelector("#lab-content .lab-mount");
+    if (mount?.dataset.labKey !== key) return null;
+    if (!vrni) return true;
+    return chatReturnBack({ okno: true }) ? mount : null;
+  },
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
 });

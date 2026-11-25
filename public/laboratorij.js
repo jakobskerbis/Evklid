@@ -195,6 +195,7 @@ function renderExperiment() {
     <div class="lab-foot">${topicsHtml(x)}</div>
   </div>`;
   const m = box().querySelector(".lab-mount");
+  if (m) m.dataset.labKey = x.key; // app.js odprtiPoskus: »Nastavi v poskusu« le v istem poskusu
   if (m) zazeni(x, m);
   box().querySelector("[data-lab-back]")?.focus({ preventScroll: true });
 }
