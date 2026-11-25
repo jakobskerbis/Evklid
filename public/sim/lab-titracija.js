@@ -2,7 +2,7 @@
 // Učenec spere in napolni bireto, izpusti zrak iz konice, odpipetira vzorec, izbere indikator, titrira po kapljicah,
 // sam odčita bireto, ponavlja do ujemanja in izračuna koncentracijo. Napake imajo posledice kot v pravem laboratoriju.
 import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, beriStevilo } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, shramba } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, shramba, napoved } from "./lab.js";
 import { flaskLevel } from "./lab-kem.js";
 import { fotoPoskus, risiTitracijo, OKNA_TITRACIJA } from "./foto.js";
 import { TitrBench, VZORCI, INDIKATORJI, BIRETA, PIPETA, colourName, indicatorColor, POENOSTAVITVE_TITRACIJA } from "./lab-model-titracija.js";
@@ -18,6 +18,21 @@ const flaskH = flaskLevel; // višina tekočine (mm) za prostornino (mL)
 const flR = (hh) => (hh <= FL.Hc ? FL.R - ((FL.R - FL.r) * hh) / FL.Hc : FL.r);
 const rgb = (c) => `rgb(${c.join(",")})`;
 const mL = (x, d = 2) => `${fixed(x, d)} mL`;
+
+// Kateri indikator je pri šibki kislini dal pravi rezultat: pri istem vzorcu (ocetna kislina in kis imata različni
+// koncentraciji) pri vsakem indikatorju titracija, ki je končala najbližje ekvivalentni točki (over = dodani NaOH −
+// ekvivalentna prostornina). Za napoved in sklep; null, dokler noben vzorec ni titriran z obema.
+export function indikatorIzMeritev(rs) {
+  for (const id of [...new Set(rs.map((r) => r.id))]) {
+    const naj = (ind) => rs.filter((r) => r.id === id && r.indId === ind && Number.isFinite(r.V)).sort((a, b) => Math.abs(a.over) - Math.abs(b.over))[0];
+    const f = naj("fenolftalein"), m = naj("metiloranz");
+    if (!f || !m) continue;
+    const vrednost = Math.abs(f.V - m.V) < 0.2 ? "enako" : Math.abs(f.over) < Math.abs(m.over) ? "fenolftalein" : "metiloranz";
+    const kdo = { enako: "obe titraciji sta enaki", fenolftalein: "ekvivalentni točki je bližje fenolftalein", metiloranz: "ekvivalentni točki je bližje metiloranž" }[vrednost];
+    return { id, vrednost, besedilo: `${VZORCI[id]?.short ?? id}: s fenolftaleinom ${fixed(f.V, 2)}\u00a0mL, z metiloranžem ${fixed(m.V, 2)}\u00a0mL; ${kdo}` };
+  }
+  return null;
+}
 
 export function labTitracija(el) {
   const zap = shramba(el); // titracije in krivulja ostanejo ob vrnitvi (lab.js); isto seme: ista neznana koncentracija
@@ -100,6 +115,19 @@ export function labTitracija(el) {
   let pts = [], prevPts = [], last = null, pipR = 0; // točke pH(V) in odčitek ob pipetiranju
   let lastColour = "", colourT = 0, lastFlowWarn = 0;
   const rows = [];
+  // Napoved pred prvo titracijo šibke kisline (Preizkusi: »Napovej, kateri da pravi rezultat«).
+  const N = napoved({
+    id: "indikator",
+    vprasanje: "Ocetno kislino boš titriral enkrat z metiloranžem in enkrat s fenolftaleinom. S katerim indikatorjem dobiš pravi rezultat?",
+    moznosti: [["fenolftalein", "s fenolftaleinom"], ["metiloranz", "z metiloranžem"], ["enako", "z obema enako"]],
+    odprto: () => !rows.some((r) => !VZORCI[r.id].mocna),
+    izmerjeno: () => indikatorIzMeritev(rows.filter((r) => !VZORCI[r.id].mocna)),
+  });
+  el.querySelector(".demo-controls")?.prepend(N.el);
+  qBox.before(N.primerjava);
+  const namigInd = h("p", { class: "lab-tit-hint", "aria-live": "polite" }); // »Za primerjavo titriraj še z …«, dokler šibka kislina ni titrirana z obema indikatorjema
+  namigInd.hidden = true;
+  qBox.before(namigInd);
   const need = () => (B.goggles ? true : (log.push("Natrijev hidroksid je jedek, tudi razredčen škoduje očem; kisline prav tako. Najprej si nadeni zaščitna očala.", "warn"), false));
 
   function rinse() {
@@ -209,6 +237,7 @@ export function labTitracija(el) {
         indId: f.ind, over: f.added - Veq, mehur: cur.mehur > 0 && B.bur.mehur === 0 ? cur.mehur : 0, razr: 1 - B.bur.c / B.cNaOH, read: cur.wrongRead || off, pipeta: f.pipeta, erlenmajerica: f.erlenmajerica };
       rows.push(row);
       table.add(row);
+      N.osvezi();
       log.push(`Končni odčitek: ${mL(v)}. Porabil si ${mL(v - cur.R1)} NaOH.`, "ok");
       cur = null;
       readIn.value = "";
@@ -267,8 +296,19 @@ export function labTitracija(el) {
     askIndicator();
     askOvershoot();
   }
+  // Sklep o indikatorju šele, ko je isti šibki vzorec titriran s fenolftaleinom in z metiloranžem; do takrat namig.
   function askIndicator() {
     if (said.has("q1")) return;
+    const sibke = rows.filter((r) => !VZORCI[r.id].mocna);
+    if (!sibke.length) return;
+    if (!indikatorIzMeritev(sibke)) {
+      const z = sibke.at(-1), ima = new Set(sibke.filter((r) => r.id === z.id).map((r) => r.indId));
+      const manjka = [!ima.has("fenolftalein") && "s fenolftaleinom", !ima.has("metiloranz") && "z metiloranžem"].filter(Boolean).join(" in ");
+      namigInd.innerHTML = `Za primerjavo titriraj ${VZORCI[z.id].short} še ${manjka}: tako vidiš, kateri indikator da pravi rezultat.`;
+      namigInd.hidden = false;
+      return;
+    }
+    namigInd.hidden = true;
     said.add("q1");
     qBox.append(conclusion({
       text: "Kateri indikator je primeren za titracijo ocetne kisline z natrijevim hidroksidom in zakaj?",
@@ -558,8 +598,9 @@ export function labTitracija(el) {
   }
 
   zap.vezi(table, {
-    get: () => ({ pts, prevPts }),
+    get: () => ({ pts, prevPts, napoved: N.stanje() }),
     set: (d) => {
+      N.obnovi(d?.napoved);
       const ok = (a) => (Array.isArray(a) ? a.filter((q) => Array.isArray(q) && q.length === 2 && q.every(Number.isFinite)) : []);
       pts = ok(d?.pts);
       prevPts = ok(d?.prevPts);
@@ -568,6 +609,7 @@ export function labTitracija(el) {
       calc.hidden = false;
       summarize();
       if (rows.some((r) => !VZORCI[r.id].mocna)) askIndicator();
+      N.osvezi();
     },
   });
   sync();
