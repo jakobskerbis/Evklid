@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `3e2a78dbc742b3c2b0f174ed42ac57be4591d212` (25. 11. 2026)
-**Naslednji prosti ID:** AUDIT-079
+**Naslednji prosti ID:** AUDIT-080
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -78,6 +78,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-075 | P3 | Laboratorij, vodeni poskus | Titracija: koraka »Odpipetiraj vzorec« in »Dodaj indikator« se zaključita ob katerikoli izbiri (mokra pipeta, metiloranž), ker `done` preveri le besedilo dnevnika (`lab-vodeno-koraki.js:85`, `:93`). ChatGPT P2. Profil A | POTRJENO | `3e2a78d` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168171449), [Claude](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168695050) | – |
 | AUDIT-077 | P3 | Infrastruktura, zagon | Neuspel `listen` (zasedena vrata): Express 5 pokliče povratni klic z napako, `server.address()` je null → `TypeError … 'port'` zakrije `EADDRINUSE` (`server/index.js:59–61`). ChatGPT P2 | ČAKA NA MOJO ODOBRITEV | `3e2a78d` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168195931), [Claude](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168697266) | – |
 | AUDIT-078 | P3 | Vadnica, enote | `sameUnit` sprejme `37,2 PF` za `pF` (loči le m/M, `check.js:35–49`); število pravilno, napačen le zapis predpone. ChatGPT P1. Seja kalkulatorja | POTRJENO | `3e2a78d` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168651032), [Claude](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168699608) | – |
+| AUDIT-079 | P3 | Generatorji, testi | `test/generators.test.js` (»vsi generatorji …«) ne preizkusi 6 od 688 generatorjev (`tek-mladi-*`, `maxYear=4`), ker `generateTask` brez razreda izbere drugega; ti so neposredno pokriti v `test/tekmovanja-razred.test.js`, manjkajo le strukturne trditve. Samo test. ChatGPT P2 | POTRJENO | `3e2a78d` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168657132), Claude | – |
 
 ## Zgodovina statusov
 
@@ -121,3 +122,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 25. 11. 2026: AUDIT-072, AUDIT-073, AUDIT-074 NOVO (Claude, seja povezav): issues #735, #736, #737 predani seji kalkulatorja.
 - 25. 11. 2026: AUDIT-076 NOVO (Claude, seja povezav): čipov »Nedavno« v znanstvenem kalkulatorju ni mogoče odstraniti (prijava j).
 - 25. 11. 2026: ChatGPT ponovni pregled na `3e2a78d`: POTRJUJEM POPRAVEK za AUDIT-002, 005–013, 015–018, 024, 025, 027, 028, 033, 048–055; AUDIT-002, 009, 053, 054, 055 → ZAKLJUČENO (popravki v `main`). AUDIT-001: POPRAVEK NE ZADOŠČA brez SymPy (Claude potrdil, odloči j). Nove: AUDIT-075, 077, 078 POTRJENO (Claude, prioritete znižane na P3 z razlogi v komentarjih); AUDIT-076 je vpisala druga seja.
+- 25. 11. 2026: AUDIT-079 POTRJENO (Claude): vrzel v testu generatorjev, ne napaka aplikacije; P3.
