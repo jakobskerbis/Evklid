@@ -7,6 +7,7 @@ import * as THREE from "/vendor/three/build/three.module.js";
 import { OrbitControls } from "/vendor/three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "/vendor/three/examples/jsm/environments/RoomEnvironment.js";
 import { zavrtiOkoli } from "./vrtenje.js";
+import { kakovostNaprave, locljivostPlatna, MSAA_DO_TOCK } from "./modeli.js";
 
 export { THREE };
 
@@ -28,20 +29,9 @@ const shramba = {
 // Manj gibanja (sistemska nastavitev): brez samodejnega vrtenja, preleti so takojšnji.
 export const gibanje = () => !(typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-// Kakovost: »visoka« samo na računalniku ali močni tablici; telefon dobi »nizka« (60 sličic na sekundo pred lepoto).
-// Ročna izbira: ?kakovost=nizka|visoka ali shramba evklid.3d.kakovost.
-export function kakovostNaprave() {
-  const q = typeof location !== "undefined" ? new URLSearchParams(location.search).get("kakovost") : null;
-  const izbrana = q || shramba.get("evklid.3d.kakovost");
-  if (izbrana === "nizka" || izbrana === "visoka") return izbrana;
-  const nav = typeof navigator !== "undefined" ? navigator : {};
-  const dotik = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
-  const jedra = nav.hardwareConcurrency || 4;
-  const pomnilnik = nav.deviceMemory || 8;
-  const lahki = nav.connection?.saveData === true;
-  if (lahki || dotik || jedra < 4 || pomnilnik < 4) return "nizka";
-  return "visoka";
-}
+// Kakovost (»visoka« samo na računalniku brez zaslona na dotik) in meja točk platna: modeli.js (brez three.js, zato jo
+// preveri test v Node).
+export { kakovostNaprave };
 
 // Studijski videz organov (IBL iz HDRI, moker lak, presevnost): povsod razen na šibkih napravah (deviceMemory ≤ 2,
 // varčevanje s podatki, varčni način aplikacije »lite«). Tam ostanejo RoomEnvironment in prejšnji materiali.
@@ -178,8 +168,9 @@ export function ustvariSceno(el, opts = {}) {
   el.style.backgroundColor = `#${new THREE.Color(opts.ozadje ?? 0x0e131c).getHexString()}`;
   renderer.localClippingEnabled = true;
   const najvecjaLocljivost = Math.min(window.devicePixelRatio || 1, visoka ? 2 : 1.5);
-  let locljivost = najvecjaLocljivost;
-  renderer.setPixelRatio(locljivost);
+  let locljivost = najvecjaLocljivost; // želena gostota; dejanska je lahko nižja zaradi meje točk (locljivostPlatna)
+  let gostota = locljivost;
+  renderer.setPixelRatio(gostota);
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -488,7 +479,7 @@ export function ustvariSceno(el, opts = {}) {
           this.kvad.dispose();
         }
       }
-      const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+      const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: vzorciMSAA() });
       composer = new EffectComposer(renderer, rt);
       composer.addPass(new NeprosojniPass(scene, camera));
       gtao = new OkluzijaPass(scene, camera, 1, 1);
@@ -525,6 +516,7 @@ export function ustvariSceno(el, opts = {}) {
   let w = 0;
   let h = 1;
   let zamikZg = 0;
+  const vzorciMSAA = () => (w * h * gostota * gostota > MSAA_DO_TOCK ? 0 : 4);
   // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
   function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
@@ -533,6 +525,8 @@ export function ustvariSceno(el, opts = {}) {
     if (nw === w && nh === h && prisilno !== true) return;
     w = nw;
     h = nh;
+    gostota = locljivostPlatna(locljivost, w, h, kakovost);
+    renderer.setPixelRatio(gostota);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     // zamik slike navzdol (px): na telefonu lebdijo gumbi in stikala organa levo zgoraj čez oder; model narišemo nižje in
@@ -540,8 +534,17 @@ export function ustvariSceno(el, opts = {}) {
     if (zamikZg > 0 && h > 200) camera.setViewOffset(w, h + 2 * zamikZg, 0, 0, w, h);
     else camera.clearViewOffset();
     camera.updateProjectionMatrix();
-    composer?.setPixelRatio(locljivost);
-    composer?.setSize(w, h);
+    if (composer) {
+      // Veliko platno: brez MSAA (štirikrat manj pomnilnika); vzorci se uporabijo ob ponovni pripravi ciljev v setSize.
+      const n = vzorciMSAA();
+      if (composer.renderTarget1.samples !== n) {
+        composer.renderTarget1.samples = composer.renderTarget2.samples = n;
+        composer.renderTarget1.dispose();
+        composer.renderTarget2.dispose();
+      }
+      composer.setPixelRatio(gostota);
+      composer.setSize(w, h);
+    }
     narisi();
   }
   const ro = new ResizeObserver(() => velikost());
@@ -923,9 +926,8 @@ export function ustvariSceno(el, opts = {}) {
           if (aoVkljucen) {
             aoVkljucen = false;
             composer = null;
-          } else if (locljivost > 1) {
-            locljivost = Math.max(1, locljivost - 0.25);
-            renderer.setPixelRatio(locljivost);
+          } else if (gostota > 1) {
+            locljivost = Math.max(1, gostota - 0.25);
             velikost(true);
           }
         }
