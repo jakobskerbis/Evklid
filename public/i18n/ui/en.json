@@ -1088,6 +1088,7 @@
   "sc.true": "True",
   "sc.false": "False",
   "sc.plot": "Draw graph",
+  "sc.fmGraph": "Draw graph ({v} on the x-axis)",
   "sc.showOnGraph": "Show on graph",
   "gc.fromSci.none": "I can't show this result on a graph.",
   "gc.fromSci.partArea": "Only the part from {a} to {b} is shaded. The whole integral is {v}.",

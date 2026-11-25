@@ -107,7 +107,8 @@ function calcTool(mode) {
       });
     if (mode === "tools") return m.createTools(host, { ...base, subject: calcSubject });
     if (mode === "pse") return m.createPse(host, { ...base, lang: currentLang });
-    return m.createFormulas(host, { ...base, api, renderRich, withSymbols: withFormulaSubject, bookKey: formulaBook });
+    // »Nariši«: formula na grafu (zavihek Grafični, doda se k trenutnemu grafu)
+    return m.createFormulas(host, { ...base, api, renderRich, withSymbols: withFormulaSubject, bookKey: formulaBook, onGraph: async (f) => (await setCalcMode("graph"))?.addFormula(f) });
   });
   return calcTools[mode];
 }

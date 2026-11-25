@@ -9,7 +9,7 @@ import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
 import { chemTools } from "./tools-chem.js";
-import { formulaToCalc, vRadianih } from "./formula-calc.js";
+import { formulaToCalc, vRadianih, formulaPlot } from "./formula-calc.js";
 import { chemText } from "./molska.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
@@ -732,6 +732,18 @@ export function createFormulas(root, opts) {
     btn.setAttribute("aria-label", `${t("sc.toCalc")}: ${text}`);
     btn.innerHTML = opts.icon("calculator");
     box.append(f, btn);
+    // »Nariši«: formula z izraženo količino na grafu (os x: t, x, r …; ostale črke drsniki)
+    const plot = opts.onGraph && formulaPlot(vejica(text));
+    if (plot) {
+      const g = document.createElement("button");
+      g.type = "button";
+      g.className = "ghost icon-only fm-graph";
+      g.dataset.plot = JSON.stringify(plot);
+      g.title = t("sc.fmGraph", { v: plot.v });
+      g.setAttribute("aria-label", `${t("sc.fmGraph", { v: plot.v })}: ${text}`);
+      g.innerHTML = opts.icon("chart-spline");
+      box.append(g);
+    }
   }
 
   // decimalna vejica, kjer jo jezik uporablja (1,22 λ/D); v oklepaju je vejica ločilo, tam ostane pika
@@ -844,6 +856,8 @@ export function createFormulas(root, opts) {
     show(b.closest(".fm-subj") ? `${b.dataset.k}-${l}` : `${s}-${b.dataset.k}`);
   });
   body.addEventListener("click", (e) => {
+    const g = e.target.closest(".fm-graph");
+    if (g) return opts.onGraph?.(JSON.parse(g.dataset.plot));
     const b = e.target.closest(".fm-calc");
     if (!b) return;
     const rad = vRadianih(b.dataset.calc);
