@@ -484,7 +484,11 @@ and submits a number, a unit and an absolute uncertainty. The program scores it 
   »Iz tvojih meritev« next to the true value. lab-elektroliza reads p and T only from the displays, which `kontekst` does
   not include, so its `izMeritev` uses the lab's average p and T (≤ 4 % shift, inside the 2·tol window);
 - unit, 1 point (`enote: [[name, factor to the right unit | null], …]`, first is right; mmol/L is converted);
-- uncertainty, 1 point: the true value lies in result ± Δ and Δ ≤ 4·tol of the result.
+- uncertainty, 1 point: the true value lies within result ± max(Δ, tol·result) (the model's hidden systematic errors,
+  such as the magnet delay or pipette calibration, are not the student's fault) and Δ ≤ 4·tol of the result.
+Unit and uncertainty count only when the result comes from the student's own data (not more than 2·tol from `izMeritev`), so a
+guess without measurements scores nothing. Optional task fields: `zgledNap` (example uncertainty on the card), `merOpomba`
+(printed after »Iz tvojih meritev«, e.g. the lab-average p and T in lab-elektroliza).
 During the task `.lab-racun`, `.lab-q` and the task's `skrij` selectors (anything showing a computed result or the true
 value) get `.lab-mat-skrito`; after submitting everything shows again with the points, the true value and the student's
 result. The method (equations, averaging, graph) is not scored: that is the tutor's job in phase 4 (profil B, j's card).
