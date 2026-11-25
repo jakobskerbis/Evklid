@@ -1826,11 +1826,18 @@ export function createApp(store, opts = {}) {
       // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
       // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
+      // Vrsta, izpeljana iz besedila inštruktorja (vrstaIzOdgovora), nikoli ni »nasilje«: o takem oknu staršu ne pišemo,
+      // dobi ga samo skrbnik (pregled #1033: zloraba doma, pregled B nič ne najde, odgovor ima 112 in TOM → »stiska«).
+      let samoSkrbniku = false;
       if (meta?.flag === "distress") {
         const okno = nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings);
         // Mesto je že zasedlo pozno okno prejšnjega sporočila druge vrste: okno tega sporočila pride ob naslednjem odgovoru.
         if (nujnoPoslano && zaostalo && oknoVrsta === zaostalo.vrsta && okno?.vrsta && okno.vrsta !== oknoVrsta) poznaOkna.dodaj(student, { vrsta: okno.vrsta });
-        else posljiNujno(okno);
+        else {
+          const prej = nujnoPoslano;
+          posljiNujno(okno);
+          if (!prej && nujnoPoslano && !vrstaB) samoSkrbniku = true;
+        }
       }
       oddajZaostalo(); // pozno okno prejšnjega sporočila pred blažjim oknom tega (server/nujno.js)
       posljiNujno(blagoLokalno);
@@ -1845,7 +1852,7 @@ export function createApp(store, opts = {}) {
         } catch (err) {
           console.warn(`[evklid] oznaka stiske ni zapisana (${err?.message || err})`);
         }
-        stiskaObvestila?.nova(eventId, nujnoVrsta, student.id);
+        stiskaObvestila?.nova(eventId, nujnoVrsta, samoSkrbniku ? null : student.id);
       }
       finished = true;
       send("done", {

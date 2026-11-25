@@ -109,7 +109,7 @@ export const starsemVklopljeno = (env = process.env) => !IZKLOP.test(String(env.
 
 /**
  * Starš, ki dobi obvestilo za profil, ali null. accounts: { ageOfStudent, ownerOf, getParent } (server/accounts).
- * Samo otrok pod 15 let z znano starostjo; starš s potrjenim e-naslovom, ne gost in ne mladoleten imetnik.
+ * Samo otrok pod 15 let z znano starostjo; starš s potrjenim e-naslovom in znanim datumom rojstva (odrasel), ne gost.
  */
 export function prejemnikStarsa(accounts, studentId) {
   if (!accounts || !studentId) return null;
@@ -117,8 +117,8 @@ export function prejemnikStarsa(accounts, studentId) {
   if (typeof age !== "number" || !(age < STARS_DO_LET)) return null;
   const p = accounts.getParent?.(accounts.ownerOf?.(studentId));
   if (!p?.email || !p.email_verified_at || p.is_guest) return null;
-  // Imetnik računa mora biti odrasel (ne najstnik z lastnim računom); brez datuma rojstva velja starš, ki je račun odprl.
-  if (p.birth_date && Date.now() - Date.parse(p.birth_date) < 18 * 365.25 * 864e5) return null;
+  // Imetnik računa mora biti znano odrasel: star račun brez datuma rojstva je lahko otrokov lasten (pregled #1033).
+  if (!p.birth_date || !(Date.now() - Date.parse(p.birth_date) >= 18 * 365.25 * 864e5)) return null;
   return { email: p.email };
 }
 
@@ -132,9 +132,9 @@ export function starsEmail({ ime, vrsta, ob, settings } = {}, env = process.env)
   const uvod = `${BRAND.name} je ${cas(ob).replace(/ (\d\d\.\d\d)$/, " ob $1")} v pogovoru profila ${profil} zaznal sporočilo, ki kaže na ${kaj}. Otroku je takoj pokazal številke za pomoč.`;
   const nasvet = `${nujno} Sicer poiščite miren trenutek in otroka vprašajte, kako je. Poslušajte ga brez obtoževanja in mu povejte, da ste ob njem.${linija} Pomagajo vam lahko tudi šolska svetovalna služba ali osebni zdravnik.`;
   const opomba = `Vsebine pogovora vam ne pošiljamo. To obvestilo dobite, ker ste odprli račun za otroka, mlajšega od ${STARS_DO_LET} let. Največ eno takšno obvestilo na profil v ${STARS_OKNO_MS / 3600000} urah.`;
-  const subject = `${BRAND.name}: obvestilo o stiski pri profilu ${ime || "vašega otroka"}`;
+  const subject = `${BRAND.name}: varnostno obvestilo za profil ${ime || "vašega otroka"}`;
   const text = `${uvod}\n\n${nasvet}\n\n${opomba}`;
-  const html = layout("Obvestilo o stiski", `<p>${esc(uvod)}</p><p>${esc(nasvet)}</p><p style="font-size:13px;color:#5f6779">${esc(opomba)}</p>`);
+  const html = layout("Varnostno obvestilo", `<p>${esc(uvod)}</p><p>${esc(nasvet)}</p><p style="font-size:13px;color:#5f6779">${esc(opomba)}</p>`);
   return { subject, text, html };
 }
 

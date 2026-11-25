@@ -477,7 +477,7 @@
   "set.help": "Hilfe",
   "set.helpText": "Eine kurze Tour zeigt, wo sich was in der App befindet.",
   "set.safety": "Sicherheit",
-  "set.safetyText": "Wenn du im Chat schreibst, dass es dir schlecht geht oder du in Gefahr bist, zeigt dir Evklid sofort Nummern, unter denen du Hilfe bekommst. Bei Schülerinnen und Schülern unter 15 Jahren bekommt auch der Elternteil, der das Konto eröffnet hat, eine E-Mail (ohne Inhalt des Chats).",
+  "set.safetyText": "Wenn Evklid im Chat bemerkt, dass es dir schlecht geht oder du in Gefahr bist, zeigt es dir sofort Nummern, unter denen du Hilfe bekommst. Bei Schülerinnen und Schülern unter 15 Jahren bekommt auch der Elternteil, der das Konto eröffnet hat, eine E-Mail (ohne Inhalt des Chats). Wenn du über Gewalt schreibst, schreiben wir deinen Eltern nicht.",
   "set.tourAgain": "Einführung wiederholen",
   "set.newStudent": "Profil hinzufügen",
   "set.newStudentText": "Ein neues Profil für einen weiteren Lernenden: Jedes hat einen eigenen Lernpfad, eigenen Fortschritt und eigene Gespräche.",
