@@ -4548,6 +4548,7 @@ initLab({
 initUci({
   escapeHtml,
   getStudent: () => state.student,
+  openLesson, // »Lekcija« v 3D modelu (uci-se.js): Nazaj iz lekcije spet odpre model
   showTextbook,
   showLab,
   stopReading,

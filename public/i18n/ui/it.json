@@ -3640,6 +3640,7 @@
   "a3.hide": "Nascondi",
   "a3.only": "Mostra solo questo",
   "a3.ask": "Chiedi al tutor",
+  "a3.lesson": "Lezione su questo modello",
   "a3.askText": "Spiegami cos’è {ime} e che funzione ha nel corpo.",
   "a3.askPartText": "Nel modello 3D «{naslov}»: spiegami che cos’è {ime} e che ruolo ha.",
   "a3.layers": "Strati",
