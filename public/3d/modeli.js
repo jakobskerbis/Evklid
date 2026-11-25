@@ -75,13 +75,18 @@ export function kakovostNaprave() {
   return "visoka";
 }
 
-// Največ slikovnih točk platna (širina × višina v točkah naprave): 12,9-palčni iPad z gostoto 2 bi imel 2732 × 2048 = 5,6 M
-// točk, z učinki (HalfFloat, 4× MSAA, GTAO) več kot 500 MB grafičnega pomnilnika. Gostoto zato znižamo, da platno ostane
-// pod mejo, nikoli pa pod 1 (pod točko zaslona bi bila slika zamegljena).
+// Največ slikovnih točk platna (širina × višina v točkah naprave) na napravi na dotik: 12,9-palčni iPad z gostoto 2 bi
+// imel 2732 × 2048 = 5,6 M točk, z učinki (HalfFloat, 4× MSAA, GTAO) več kot 500 MB grafičnega pomnilnika. Gostoto zato
+// znižamo, da platno ostane pod mejo, nikoli pa pod 1 (pod točko zaslona bi bila slika zamegljena). Računalnik (dotik
+// false) ostane kot prej: polna gostota in MSAA (j: videz na računalniku se ne spremeni).
 export const NAJVEC_TOCK = { visoka: 2.5e6, nizka: 1.6e6 };
-// Nad tem številom točk sestavljalnik učinkov (scena.js pripraviAO) riše brez glajenja MSAA (4× pomnilnik).
+// Nad tem številom točk sestavljalnik učinkov (scena.js pripraviAO) na napravi na dotik riše brez glajenja MSAA (4× pomnilnik).
 export const MSAA_DO_TOCK = 2.1e6;
-export function locljivostPlatna(gostota, w, h, kakovost = "nizka") {
+export function vzorciMSAA(tock, dotik = true) {
+  return dotik && tock > MSAA_DO_TOCK ? 0 : 4;
+}
+export function locljivostPlatna(gostota, w, h, kakovost = "nizka", dotik = true) {
+  if (!dotik) return gostota;
   const meja = NAJVEC_TOCK[kakovost] || NAJVEC_TOCK.nizka;
   const ploscina = Math.max(1, w) * Math.max(1, h);
   const g = Math.min(gostota, Math.sqrt(meja / ploscina));

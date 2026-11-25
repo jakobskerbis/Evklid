@@ -128,3 +128,41 @@ test("osvežitev mimo starih kopij: service worker dobi »app-stale« z različi
     globalThis.fetch = prej;
   }
 });
+
+// Pregled #1064: SyntaxError iz JSON ali izbirnika ni »prestar brskalnik«; RangeError ni vedno pomnilnik.
+test("HTML namesto JSON (prestrezna stran) je povezava s ponovnim poskusom, neveljaven izbirnik je druga napaka", () => {
+  for (const m of [`Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, "JSON Parse error: Unrecognized token '<'", "JSON.parse: unexpected character at line 1 column 1 of the JSON data"]) {
+    const r = na(new SyntaxError(m));
+    assert.deepEqual([r.vrsta, r.key], ["povezava", "a3.loadError"], m);
+  }
+  const izbirnik = na(Object.assign(new Error("'#3d' is not a valid selector."), { name: "SyntaxError" }));
+  assert.deepEqual([izbirnik.vrsta, izbirnik.key], ["drugo", "a3.otherError"]);
+  // pravi star brskalnik ostane
+  assert.equal(na(new SyntaxError("Unexpected token '{'. Expected a ')' or a ',' after a parameter declaration.")).vrsta, "brskalnik");
+});
+
+test("RangeError je pomnilnik samo s sporočilom o pomnilniku ali medpomnilniku", () => {
+  assert.equal(na(new RangeError("Array buffer allocation failed")).vrsta, "pomnilnik");
+  assert.equal(na(new RangeError("Out of memory")).vrsta, "pomnilnik");
+  const prirezan = na(new RangeError("Offset is outside the bounds of the DataView"));
+  assert.deepEqual([prirezan.vrsta, prirezan.detail], ["drugo", "RangeError"]);
+  assert.equal(na(new RangeError("Maximum call stack size exceeded")).vrsta, "drugo");
+});
+
+test("napaka z povezava: true (naloziModel brez povezave) je napaka povezave", () => {
+  assert.equal(na(Object.assign(new Error("model ni na voljo"), { povezava: true })).vrsta, "povezava");
+});
+
+test("tehnični razlog: naslov z oklepaji ne pušča poizvedbe, e-pošta je skrita", () => {
+  assert.equal(tehnicno(new Error("x https://x/a(b)?k=s(x)&y=1 konec")), "Error: x /a(b) konec");
+  assert.equal(tehnicno(new Error("(at https://x/b.js?t=1&u=2)")), "Error: (at /b.js");
+  assert.equal(tehnicno(new Error("napaka za ana.novak@primer.si pri /a.js?k=1&m=2")), "Error: napaka za [e-pošta] pri /a.js");
+  assert.equal(tehnicno(new SyntaxError("Unexpected token '?'")), "SyntaxError: Unexpected token '?'");
+});
+
+test("aplikacija (Web3D.tsx): števec padcev procesa strani se ponastavi po uspešnem nalaganju", () => {
+  const src = fs.readFileSync(new URL("../mobile/src/components/Web3D.tsx", import.meta.url), "utf8");
+  assert.match(src, /onLoad=\{\(\) => \(loadedAt\.current = Date\.now\(\)\)\}/);
+  assert.match(src, /if \(loadedAt\.current && Date\.now\(\) - loadedAt\.current > 60_000\) crashes\.current = 0;/);
+  assert.match(src, /onContentProcessDidTerminate=\{reloadAfterCrash\}/);
+});
