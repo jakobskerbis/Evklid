@@ -81,5 +81,6 @@ test("»Preveri se« po poskusu (povezave C4): vaja iste teme, ← in Nazaj vrne
   assert.match(lab, /teme\.some\(\(tp\) => tp\.path === data\.myPath\) \? data\.myPath/, "najprej učenčeva pot");
   assert.match(app, /practice: async \(id\) => \{[\s\S]*?setBack\("uci"\);[\s\S]*?nextPractice\(\);/);
   assert.match(app, /\["competition", "exams", "uci"\]\.includes\(state\.backTo\)/, "tipka Nazaj iz teme vrne v Uči se");
+  assert.match(app, /name === "uci" && state\.backTo === "uci"\) setBack\("path"\)/, "vrnitev v poskus porabi »← Laboratorij«");
   for (const k of ["lab.check", "lab.checkText"]) assert.ok(SL[k], k);
 });

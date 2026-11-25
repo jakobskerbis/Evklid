@@ -768,6 +768,7 @@ function showView(name) {
   currentView = name;
   syncCompetitionTab();
   if (name === "path" || name === "competition" || name === "exams") setBack(name);
+  else if (name === "uci" && state.backTo === "uci") setBack("path"); // vrnitev v poskus porabi »← Laboratorij« (tema iz lekcije ne vodi v Laboratorij)
   if (name !== "topic") stopContestTimer();
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
