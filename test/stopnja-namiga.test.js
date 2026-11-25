@@ -53,7 +53,24 @@ test("vsebina API in že prebrana META", () => {
   assert.equal(stopnjaNamiga([u("x = 1"), { role: "assistant", meta: { error: 1, mode: "A", flag: "none", done: 0, topic: null } }]).zatikov, 1);
 });
 
-test("prošnja za pomoč: kratka sporočila, šumniki, ne del daljšega poskusa", () => {
-  for (const s of ["ne vem", "nevem", "Ne vem.", "namig prosim", "pomagaj", "Potrebujem pomoč", "ne razumem tega", "kako naprej?", "zataknil sem se", "hint"]) assert.ok(prosiZaPomoc(s), s);
-  for (const s of ["x = 3", "pomočnik je rekel 5", "ne vem, če je prav: x = 3", "ne vem, če je prav, ampak najprej odštejem tri na obeh straneh in delim z dve, tako dobim rešitev"]) assert.ok(!prosiZaPomoc(s), s);
+test("prošnja za pomoč: le izrecna prošnja, ne zahvala ali poskus (pregled 2 in 3)", () => {
+  for (const x of ["ne vem", "nevem", "Ne vem.", "ne vem več", "ne štekam", "ne kapiram", "nimam pojma", "namig prosim", "pomagaj", "Pomagaj mi prosim", "Daj mi namig", "rabim pomoč", "a lahko pomagaš?", "ne razumem", "kako naprej?", "zataknil sem se", "hint"]) assert.ok(prosiZaPomoc(x), x);
+  for (const x of ["x = 3", "pomočnik je rekel 5", "Hvala za pomoč!", "Super, hvala za pomoč, razumem", "Vem, da ne gre tako.", "Ne vidim napake, mislim da je prav", "Ne znam si predstavljati, a mislim da je sila teže", "ne vem ali je prav, mislim da je rezultat dve tretjini", "ne vem, če je prav: x = 3", "ne vem, če je prav, ampak najprej odštejem tri na obeh straneh in delim z dve, tako dobim rešitev"]) assert.ok(!prosiZaPomoc(x), x);
+});
+
+test("nova naloga ustavi štetje (pregled 2)", () => {
+  const conv = [u("Reši 2x + 3 = 7"), a(), u("x = 9"), a({ error: 1 }), u("ne vem"), a(), u("x = 1"), a({ error: 1 })];
+  assert.equal(stopnjaNamiga(conv).zatikov, 3);
+  const nova = [...conv, u("Nova naloga: 3x - 1 = 8. x = 2"), a({ error: 1 })];
+  const r = stopnjaNamiga(nova);
+  assert.deepEqual([r.zatikov, r.stopnicka], [1, 2], "prvi poskus nove naloge šteje, prejšnja naloga ne");
+  assert.equal(stopnjaNamiga(conv, { besedilo: "Naslednja naloga: reši 5x = 20" }), null);
+  const slika = [...conv, { role: "user", content: [{ type: "image" }, { type: "text", text: "to" }] }, a({ error: 1 })];
+  assert.equal(stopnjaNamiga(slika).zatikov, 1);
+});
+
+test("skrite opombe strežnika ne štejejo k učenčevemu besedilu", () => {
+  const opomba = "<nacin>" + "x".repeat(300) + "</nacin>";
+  const api = [{ role: "user", content: [{ type: "text", text: opomba }, { type: "text", text: "ne vem" }] }, { role: "assistant", content: [{ type: "text", text: `Hm.\n${meta()}` }] }];
+  assert.equal(stopnjaNamiga(api)?.zatikov, 1);
 });
