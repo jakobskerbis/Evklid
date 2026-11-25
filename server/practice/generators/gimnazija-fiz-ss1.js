@@ -475,7 +475,7 @@ const GENS = [
           const h = (v0 * v0) / (2 * GZ);
           const what = r.pick(["Žogo", "Kamen", "Teniško žogico", "Ključe"]);
           return T(
-            `${what} vržemo navpično navzgor z začetno hitrostjo $${qty(v0, "m/s")}$. Kako visoko nad metiščem pride? ${noAir} Zaokroži na dve decimalki.`,
+            `${what} vržemo navpično navzgor z začetno hitrostjo $${qty(v0, "m/s")}$. Kako visoko nad mestom meta pride? ${noAir} Zaokroži na dve decimalki.`,
             num(h, 2, [M((v0 * v0) / GZ, "Iz v₀² = 2gh sledi h = v₀²/(2g): ne pozabi faktorja 2."), M(v0 / GZ, "To je čas vzpona, ne višina."), M(v0 / (2 * GZ), "Hitrost moraš kvadrirati.")], "m"),
             "V najvišji točki je hitrost $0$; uporabi zvezo med hitrostjo in potjo brez časa.",
             [dat("v_0", v0, "m/s"), gD()],
@@ -488,7 +488,7 @@ const GENS = [
         const t = v0 / GZ;
         return T(
           `Puščico izstrelimo navpično navzgor s hitrostjo $${qty(tx(v0), "m/s")}$. Koliko časa se dviga, preden se ustavi v najvišji točki? ${noAir} Zaokroži na dve decimalki.`,
-          num(t, 2, [M((2 * v0) / GZ, "To je čas leta do vrnitve na metišče; vzpon traja polovico tega."), M(v0 * GZ, "Iz v = v₀ − g t pri v = 0 sledi t = v₀/g: deli, ne množi.")], "s"),
+          num(t, 2, [M((2 * v0) / GZ, "To je čas leta do vrnitve na mesto meta; vzpon traja polovico tega."), M(v0 * GZ, "Iz v = v₀ − g t pri v = 0 sledi t = v₀/g: deli, ne množi.")], "s"),
           "Hitrost se vsako sekundo zmanjša za $g$; v najvišji točki je $v = 0$.",
           [dat("v_0", tx(v0), "m/s"), gD()],
           ["t"],
@@ -910,7 +910,7 @@ const GENS = [
         const al = r.pick([30, 40, 50, 60, 70]);
         const v = Math.sqrt(v0 * v0 - 2 * GZ * h);
         return T(
-          `${n} vrže kamen s hitrostjo $${qty(v0, "m/s")}$ poševno navzgor pod kotom $${al}^\\circ$. Kolikšna je hitrost kamna, ko je $${qty(tx(h), "m")}$ nad metiščem? Zračni upor zanemari. Zaokroži na dve decimalki.`,
+          `${n} vrže kamen s hitrostjo $${qty(v0, "m/s")}$ poševno navzgor pod kotom $${al}^\\circ$. Kolikšna je hitrost kamna, ko je $${qty(tx(h), "m")}$ nad mestom meta? Zračni upor zanemari. Zaokroži na dve decimalki.`,
           num(v, 2, [M(Math.sqrt(v0 * v0 + 2 * GZ * h), "Kamen se dviga, zato se kinetična energija zmanjšuje: v² = v₀² − 2gh."), M(v0 - Math.sqrt(2 * GZ * h), "Energije odštevaš, hitrosti ne: najprej v², potem koren."), M(Math.sqrt(v0 * v0 - GZ * h), "Iz m v₀²/2 = m v²/2 + m g h sledi v² = v₀² − 2gh.")], "m/s"),
           "Uporabi ohranitev mehanske energije; smer meta (kot) pri tem ni pomembna.",
           [dat("v_0", v0, "m/s"), dat("h", tx(h), "m"), gD()],
