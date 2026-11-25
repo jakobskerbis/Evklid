@@ -246,6 +246,18 @@ Ura z nihalom, ki niha z $10°$ namesto z $1°$, bi na dan zaostala skoraj tri m
 + Ostane približno enak, ker dolžina vrvi ostane enaka.
 > Gugalnica je približno matematično nihalo: $t_0 = 2\pi\sqrt{\dfrac{l}{g}}$ je odvisen le od dolžine in $g$, ne od mase.
 
+? Kolikšen je nihajni čas matematičnega nihala z dolžino $2{,}25\,\mathrm{m}$ pri majhnih odmikih? Vzemi $g = 9{,}81\,\mathrm{m/s^2}$. (Na stotinko sekunde.)
+= 3,01 s | 0,02
+~ 0,48 | Pozabil si pomnožiti z $2\pi$.
+~ 1,44 | Pozabil si koreniti: $t_0 = 2\pi\sqrt{\dfrac{l}{g}}$.
+> $t_0 = 2\pi\sqrt{\dfrac{2{,}25\,\mathrm{m}}{9{,}81\,\mathrm{m/s^2}}} \approx 2\pi \cdot 0{,}479\,\mathrm{s} \approx 3{,}01\,\mathrm{s}$.
+
+? Utež z maso $0{,}40\,\mathrm{kg}$ niha na vzmeti z amplitudo $10\,\mathrm{cm}$. Skozi ravnovesno lego gre s hitrostjo $1{,}0\,\mathrm{m/s}$. Kolikšen je koeficient vzmeti?
+= 40 N/m | 0,5
+~ 4 | Amplitudo moraš kvadrirati: $k = \dfrac{m v_0^2}{x_0^2}$.
+~ 0,004 | Amplitudo moraš vstaviti v metrih: $10\,\mathrm{cm} = 0{,}10\,\mathrm{m}$.
+> Energija se ohranja: $\dfrac{1}{2} k x_0^2 = \dfrac{1}{2} m v_0^2$, zato $k = \dfrac{m v_0^2}{x_0^2} = \dfrac{0{,}40\,\mathrm{kg} \cdot (1{,}0\,\mathrm{m/s})^2}{(0{,}10\,\mathrm{m})^2} = 40\,\mathrm{N/m}$.
+
 :::simboli
 t_0 | nihajni čas | | s | čas enega celega nihaja
 \nu | frekvenca | \nu = \frac{1}{t_0} | Hz

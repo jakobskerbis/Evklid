@@ -2576,7 +2576,7 @@
  "MAT-SS-3/mesane-naloge-3-letnika#n3": "Pogosta napaka pri tej snovi: »Množenje neenačbe z imenovalcem«. Pojasni, kaj je tu narobe in kako je prav.",
  "MAT-SS-3/mesane-naloge-3-letnika#n4": "Pogosta napaka pri tej snovi: »Pol višine, pol prostornine«. Pojasni, kaj je tu narobe in kako je prav.",
  "MAT-SS-3/mesane-naloge-3-letnika#s": "Povej, kaj veš o temi »Mešane naloge 3. letnika«. Omeni glavne stvari.",
- "MAT-SS-3/polinomi#p1": "Pri Hornerjevem algoritmu za deljenje z $x + 3$ moraš na levo napisati neko število. Katero in zakaj?",
+ "MAT-SS-3/polinomi#p1": "Pri Hornerjevem algoritmu za deljenje z $x + 3$ moraš izbrati število $a$, s katerim množiš. Katero in zakaj?",
  "MAT-SS-3/polinomi#p3": "Kaj pove izrek o deljenju polinomov in kaj iz njega sledi pri deljenju polinoma z linearnim polinomom $x - a$?",
  "MAT-SS-3/polinomi#p4": "Dokaži, da je vsaka cela ničla polinoma s celimi koeficienti delitelj njegovega prostega člena.",
  "MAT-SS-3/polinomi#p5": "Navedi primer polinoma tretje stopnje z eno samo realno ničlo in pojasni, zakaj ima polinom stopnje $n$ največ $n$ ničel.",

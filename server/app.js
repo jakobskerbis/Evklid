@@ -87,6 +87,7 @@ import { mountUstno } from "./ustno-api.js";
 import { mountScan } from "./scan.js";
 import { mountZapiski } from "./zapiski.js";
 import { mountVajaIzLista } from "./vaja-iz-lista.js";
+import { mountPriprave } from "./priprava/poti.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { landingPage } from "./pristajalna-takoj.js";
@@ -926,10 +927,11 @@ export function createApp(store, opts = {}) {
   };
 
   // Gumbi za orodja aplikacije pod odgovorom; zaklep interaktivnih delov kot v učbeniku.
-  const openOf = async (raw, student) => {
+  // prefer: poskus, iz katerega je klepet odprt (povezave C1, server/odpri.js findSim).
+  const openOf = async (raw, student, prefer = "") => {
     if (!/<<\s*(?:ODPRI|GRAF|SKICA)\b/.test(raw || "")) return undefined;
     const canOpen = accounts ? (topicId) => accounts.lessonInteractive(student.id, topicId) : null;
-    const list = await resolveOpen(raw, student.settings, { canOpen });
+    const list = await resolveOpen(raw, student.settings, { canOpen, prefer });
     return list.length ? list : undefined;
   };
   // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
@@ -1874,7 +1876,7 @@ export function createApp(store, opts = {}) {
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
         choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
-        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
+        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student, kontekstNote && req.body?.kontekst?.sourceType === "lab" ? String(req.body.kontekst.sourceId || "") : "") : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();
@@ -2404,6 +2406,7 @@ export function createApp(store, opts = {}) {
   mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });
   // Vaja iz testa ali domače naloge (faza 1): veščine nalog → naše naloge iz Vadnice; strani iz iste meje kot zapiski.
   mountVajaIzLista(app, store, { loadStudent, usage, progress, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, ...(opts.vajaPickFn ? { pickFn: opts.vajaPickFn } : {}) });
+  mountPriprave(app, store, { loadStudent, ...(opts.pripravaNow ? { now: opts.pripravaNow } : {}) }); // priprava na test iz zapiskov (server/priprava/)
 
   // --- poraba AI ---
   // Poraba AI za vse profile: brez računov samo na računalniku, kjer teče strežnik

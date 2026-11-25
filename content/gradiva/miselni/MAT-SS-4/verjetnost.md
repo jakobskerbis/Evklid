@@ -15,14 +15,14 @@ stanje: osnutek
   - $P(A + B) = P(A) + P(B)$
   - nista neodvisna
 - Pogojna verjetnost
-  - $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)}$
+  - $P(A/B) = \dfrac{P(A \cdot B)}{P(B)}$
   - pogoj zoži svet na $B$
-  - napaka: zamenjava $P(A \mid B)$ in $P(B \mid A)$
+  - napaka: zamenjava $P(A/B)$ in $P(B/A)$
 - Produkt dogodkov
-  - $P(A \cdot B) = P(B) \cdot P(A \mid B)$
+  - $P(A \cdot B) = P(B) \cdot P(A/B)$
   - dve celi jajci: $\frac{10}{12} \cdot \frac{9}{11}$
 - Neodvisna dogodka
-  - $P(A \mid B) = P(A)$
+  - $P(A/B) = P(A)$
   - $P(A \cdot B) = P(A) \cdot P(B)$
   - napaka: množenje pri jemanju brez vračanja
 - Verjetnostno drevo

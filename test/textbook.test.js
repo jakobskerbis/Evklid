@@ -293,6 +293,18 @@ test("lesson: »Premisli« blocks and per-option feedback »~«", () => {
   assert.equal(expandFormulaBlocks(md, "plain"), "Vprašanje: Kaj je $2+2$?\nOdgovor: Je $4$.");
 });
 
+test("check-lesson: lekcija s simulacijo pove, kaj naj učenec v njej naredi (kakovost §1.9)", () => {
+  const id = "MAT-SS-1/mnozice";
+  assert.ok(simsFor(id).length, "tema ima simulacijo");
+  const base = fs.readFileSync(path.join(LESSONS_DIR, "FIZ-OS-9/upor-in-ohmov-zakon.md"), "utf8").replace(/^.*simulacij.*$/gim, "");
+  const sim = (src, topic = id) => checkLessonSource(src, topic).warnings.filter((w) => /kaj naj učenec v njej naredi/.test(w));
+  assert.equal(sim(base).length, 1, "brez stavka o simulaciji je opozorilo");
+  assert.ok(sim(base)[0].includes(`»${simsForTopic(id)[0].title}«`), "opozorilo imenuje simulacijo iz kataloga, ne »Interaktivni poskus« iz glave");
+  const s = base.replace(/\n## Rešeni primeri/, "\nV simulaciji spodaj izberi A = soda števila in opazuj presek.\n\n## Rešeni primeri");
+  assert.equal(sim(s).length, 0, "stavek »V simulaciji spodaj …« zadošča");
+  assert.equal(sim(base, null).length, 0, "brez teme ni znano, ali je simulacija");
+});
+
 test("university lessons: check-lesson asks for the exam-oriented structure", () => {
   const base = fs.readFileSync(path.join(LESSONS_DIR, "FIZ-OS-9/upor-in-ohmov-zakon.md"), "utf8");
   const id = fs.readdirSync(LESSONS_DIR).filter((d) => d.startsWith("UNI-")).flatMap((d) => fs.readdirSync(path.join(LESSONS_DIR, d)).map((f) => `${d}/${f.replace(/\.md$/, "")}`))[0];
