@@ -2388,4 +2388,1061 @@ const genRacunanje = {
     );
   },
 };
-export const DODATNE_KEM_SS = [...SS12, ...SS3, genSplosna, genOrganska, genRacunanje];
+// =====================================================================
+// Nove teme (lekcije 2026-11): topnost, elektroliti, prehodni elementi, industrija
+// =====================================================================
+
+// ---------- topnost in sestava raztopin ----------
+// Topnost v g na 100 g vode pri t (°C); vrednosti kot v diagramu lekcije (KNO₃, NaCl).
+const SOLUB = [
+  { F: "KNO3", gen: "kalijevega nitrata", acc: "kalijev nitrat", M: 101.1, S: { 0: 13.3, 10: 20.9, 20: 31.6, 30: 45.8, 40: 63.9, 50: 85.5, 60: 110, 70: 138, 80: 169 } },
+  { F: "NaCl", gen: "natrijevega klorida", acc: "natrijev klorid", M: 58.44, S: { 0: 35.7, 20: 36.0, 40: 36.6, 60: 37.3, 80: 38.4 } },
+  { F: "KCl", gen: "kalijevega klorida", acc: "kalijev klorid", M: 74.55, S: { 0: 27.6, 20: 34.0, 40: 40.0, 60: 45.5, 80: 51.1 } },
+  { F: "NH4Cl", gen: "amonijevega klorida", acc: "amonijev klorid", M: 53.49, S: { 0: 29.4, 20: 37.2, 40: 45.8, 60: 55.3, 80: 65.6 } },
+];
+const solT = (s) => Object.keys(s.S).map(Number);
+// Razredčene raztopine: [formula, rodilnik, M, w v %, gostota v g/mL]
+const DIL = [
+  ["NaCl", "natrijevega klorida", 58.44, 3.5, 1.025], ["NaCl", "natrijevega klorida", 58.44, 10, 1.071], ["NaCl", "natrijevega klorida", 58.44, 20, 1.148],
+  ["KCl", "kalijevega klorida", 74.55, 10, 1.063], ["KNO3", "kalijevega nitrata", 101.1, 10, 1.063], ["C6H12O6", "glukoze", 180.16, 5, 1.017],
+  ["C6H12O6", "glukoze", 180.16, 10, 1.038], ["CuSO4", "bakrovega(II) sulfata", 159.61, 10, 1.107], ["NaOH", "natrijevega hidroksida", 40.0, 10, 1.109],
+  ["HCl", "klorovodikove kisline", 36.46, 10, 1.048], ["H2SO4", "žveplove(VI) kisline", 98.08, 20, 1.139], ["Na2CO3", "natrijevega karbonata", 105.99, 10, 1.103],
+];
+const O2_SOL = { 0: 14.6, 10: 11.3, 20: 9.1, 30: 7.6 };
+const GAS_C = [
+  { gv: ["\\text{plin} = \\mathrm{O_2}", "t_1 = 10\\ {}^\\circ\\mathrm{C}", "t_2 = 30\\ {}^\\circ\\mathrm{C}"], q: "Voda v ribniku se poleti segreje z $10$ na $30\\ {}^\\circ\\mathrm{C}$. Kaj se zgodi s topnostjo kisika v njej?", ok: "Zmanjša se.", wrong: [["Poveča se.", "Tako se obnaša večina trdnih snovi; topnost plinov s temperaturo pada."], ["Ne spremeni se.", "Topnost plinov je odvisna od temperature: pri 30 °C je v litru vode le 7,6 mg kisika, pri 10 °C 11,3 mg."]], find: "sprememba topnosti kisika", sol: ["Topnost plinov se z višjo temperaturo zmanjša.", "Topla voda zadrži manj kisika, zato ga ribam poleti zmanjkuje."] },
+  { gv: ["\\text{plin} = \\mathrm{CO_2}", "\\text{tlak} = \\text{povečan}"], q: "Gazirane pijače polnijo pod povečanim tlakom $\\mathrm{CO_2}$. Kako večji tlak plina nad vodo vpliva na topnost $\\mathrm{CO_2}$?", ok: "Topnost se poveča.", wrong: [["Topnost se zmanjša.", "Obratno: pri večjem tlaku plina se ga raztopi več (Henryjev zakon)."], ["Tlak na topnost plina ne vpliva.", "Ko odpreš plastenko, tlak pade in CO₂ uhaja – tlak torej vpliva."]], find: "vpliv tlaka na topnost", sol: ["Večji tlak plina nad vodo topnost plina poveča (Henryjev zakon).", "Pri dvakrat večjem tlaku se raztopi približno dvakrat več plina."] },
+  { gv: ["\\text{plin} = \\mathrm{CO_2}", "\\text{plastenki} = \\text{hladna in topla}"], q: "Odpreš dve plastenki iste gazirane pijače: eno iz hladilnika, drugo s sonca. Iz katere bolj šumi?", ok: "iz tople plastenke", wrong: [["iz hladne plastenke", "Hladna voda zadrži več CO₂, zato ga iz nje uide manj."], ["iz obeh enako", "Tlak pade v obeh, a topla pijača zadrži manj CO₂."]], find: "katera plastenka bolj šumi", sol: ["Topnost plinov se z višjo temperaturo zmanjša.", "Topla pijača zadrži manj CO₂, zato ga ob odprtju uide več."] },
+  { gv: ["\\text{plin} = \\mathrm{O_2}", "V = 1\\ \\mathrm{L}"], q: "Pri kateri temperaturi se v $1\\ \\mathrm{L}$ vode raztopi največ kisika iz zraka?", ok: "pri 0 °C", wrong: [["pri 30 °C", "Pri plinih je obratno kot pri večini trdnih snovi: topla voda raztopi manj plina."], ["pri 20 °C", "Pri 20 °C se raztopi 9,1 mg/L, pri nižji temperaturi več."]], find: "temperatura največje topnosti", sol: ["Topnost plinov se s temperaturo zmanjšuje.", "Največ kisika ($14{,}6\\ \\mathrm{mg/L}$) je v najhladnejši vodi, pri $0\\ {}^\\circ\\mathrm{C}$."] },
+];
+
+const genTopnost = {
+  id: "dod-kem-ss-1-topnost-raztopin",
+  topics: ["KEM-SS-1/topnost-in-sestava-raztopin"],
+  gen(level, r) {
+    const name = nm(r);
+    if (level === 1) {
+      const k = r.pick([0, 0, 1, 1, 2, 2, 3, 4]);
+      if (k === 0) {
+        const s = r.pick(SOLUB);
+        const t = r.pick(solT(s));
+        const S = s.S[t];
+        const w = (100 * S) / (S + 100);
+        return mk(
+          r.pick([`Topnost ${s.gen} pri $${t}\\ {}^\\circ\\mathrm{C}$ je $${tx(S)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Kolikšen je masni delež soli v nasičeni raztopini (v %)? ${zaokr(1)}`, `${name} ${g(name, "je pripravil", "je pripravila")} nasičeno raztopino ${s.gen} pri $${t}\\ {}^\\circ\\mathrm{C}$, kjer je topnost $${tx(S)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Kolikšen je masni delež soli v %? ${zaokr(1)}`]),
+          num(w, "%", 1, [[S, "Topnost se nanaša na 100 g vode, masni delež pa na raztopino (voda + sol)."], [(100 * 100) / (S + 100), "To je delež vode v raztopini."]]),
+          "Iz $100\\ \\mathrm{g}$ vode nastane $S + 100\\ \\mathrm{g}$ raztopine; tudi sol prispeva k masi raztopine.",
+          [`S = ${tx(S)}\\ \\mathrm{g} \\text{ na } 100\\ \\mathrm{g} \\text{ vode}`], ["w"], ["w = \\dfrac{S}{S + 100\\ \\mathrm{g}}"],
+          [`Masa nasičene raztopine: $${tx(S)} + 100 = ${qty(tx(S + 100), "g")}$`, `$w = \\dfrac{${tx(S)}}{${tx(S + 100)}} ${res(w / 100, 4)}$`, `$w ${res(w, 1, "\\%")}$`]
+        );
+      }
+      if (k === 1) {
+        const s = r.pick(SOLUB);
+        const t = r.pick(solT(s));
+        const S = s.S[t];
+        const mw = r.pick([25, 50, 150, 200, 250, 300, 400, 500]);
+        const m = (S * mw) / 100;
+        return mk(
+          r.pick([`Topnost ${s.gen} pri $${t}\\ {}^\\circ\\mathrm{C}$ je $${tx(S)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Koliko gramov soli se pri tej temperaturi največ raztopi v $${mw}\\ \\mathrm{g}$ vode? ${zaokr(1)}`, `${name} ima $${mw}\\ \\mathrm{g}$ vode s temperaturo $${t}\\ {}^\\circ\\mathrm{C}$. Koliko gramov ${s.gen} lahko največ raztopi, če je topnost $${tx(S)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode? ${zaokr(1)}`]),
+          num(m, "g", 1, [[S, "Topnost velja za 100 g vode; preračunaj jo na dano maso vode."], [(S * 100) / mw, "Si obrnil razmerje? Več vode raztopi več soli."]]),
+          "Masa soli, ki se raztopi, je sorazmerna z maso vode.",
+          [`S = ${tx(S)}\\ \\mathrm{g} \\text{ na } 100\\ \\mathrm{g} \\text{ vode}`, dat("m(\\text{voda})", mw, "g")], ["m_\\mathrm{t}"], ["m_\\mathrm{t} = S \\cdot \\dfrac{m(\\text{voda})}{100\\ \\mathrm{g}}"],
+          [`Vode je $\\dfrac{${mw}}{100} = ${tx(mw / 100)}$-krat toliko kot $100\\ \\mathrm{g}$.`, `$m_\\mathrm{t} = ${tx(mw / 100)} \\cdot ${tx(S)}\\ \\mathrm{g} ${res(m, 1, "g")}$`]
+        );
+      }
+      if (k === 2) {
+        const s = r.pick(SOLUB);
+        const t = r.pick(solT(s));
+        const S = s.S[t];
+        const mw = r.pick([50, 100, 150, 200]);
+        const max = (S * mw) / 100;
+        const over = r.next() < 0.5;
+        const ms = Math.round(max * (over ? r.dec(1.2, 1.6, 2) : r.dec(0.4, 0.8, 2)));
+        const OK = over ? "nasičena, neraztopljena sol ostane na dnu" : "nenasičena";
+        const opts = {
+          nenasičena: `V ${mw} g vode se raztopi največ ${tx(max, 1).replace("{,}", ",")} g soli; dodali smo več, zato je raztopina nasičena.`,
+          "nasičena, neraztopljena sol ostane na dnu": `V ${mw} g vode se lahko raztopi ${tx(max, 1).replace("{,}", ",")} g soli, dodali smo manj – vse se raztopi.`,
+          "prenasičena, vsa sol se raztopi": "Prenasičena raztopina nastane le pri mirnem ohlajanju vroče nasičene raztopine, ne z dodajanjem soli in mešanjem.",
+        };
+        return concept(r, {
+          q: `Pri $${t}\\ {}^\\circ\\mathrm{C}$ v $${mw}\\ \\mathrm{g}$ vode stresemo $${ms}\\ \\mathrm{g}$ ${s.gen} in dobro premešamo. Topnost je $${tx(S)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Kakšna je raztopina?`,
+          ok: OK,
+          wrong: Object.keys(opts).filter((o) => o !== OK).map((o) => [o, opts[o]]),
+          hint: "Izračunaj, koliko soli se največ raztopi v dani masi vode, in primerjaj z dodano soljo.",
+          given: [dat("m(\\text{voda})", mw, "g"), dat(`m(${sp(s.F)})`, ms, "g"), `S = ${tx(S)}\\ \\mathrm{g} \\text{ na } 100\\ \\mathrm{g} \\text{ vode}`],
+          find: [T("vrsta raztopine")],
+          formula: ["m_\\mathrm{max} = S \\cdot \\dfrac{m(\\text{voda})}{100\\ \\mathrm{g}}"],
+          sol: [`$m_\\mathrm{max} = ${tx(S)} \\cdot \\dfrac{${mw}}{100} ${res(max, 1, "g")}$`, `Dodali smo $${ms}\\ \\mathrm{g}$, kar je ${over ? "več" : "manj"} od $m_\\mathrm{max}$.`, `Raztopina je ${OK}.`],
+        });
+      }
+      if (k === 3) {
+        const [F, gen, M] = r.pick(DIL);
+        const m = r.dec(0.5, 30, 1);
+        const V = r.pick([100, 200, 250, 500]);
+        const gam = (m * 1000) / V;
+        return mk(
+          r.pick([`V merilni bučki za $${V}\\ \\mathrm{mL}$ raztopimo $${tx(m)}\\ \\mathrm{g}$ ${gen} in dopolnimo z vodo do oznake. Kolikšna je masna koncentracija $\\gamma$? ${zaokr(1)}`, `${name} ${g(name, "je raztopil", "je raztopila")} $${tx(m)}\\ \\mathrm{g}$ ${gen} in ${g(name, "pripravil", "pripravila")} $${V}\\ \\mathrm{mL}$ raztopine. Kolikšna je masna koncentracija v $\\mathrm{g/L}$? ${zaokr(1)}`]),
+          num(gam, "g/L", 1, [[m / V, "Prostornino pretvori v litre: γ je masa topljenca v enem litru."], [m / M / (V / 1000), "To je množinska koncentracija v mol/L; iščemo masno koncentracijo."]], { unitAlternatives: ["g/l", "g/dm3", "g/dm³"] }),
+          "Masna koncentracija je masa topljenca v enem litru raztopine; mL pretvori v L.",
+          [dat("m_\\mathrm{t}", tx(m), "g"), dat("V", V, "mL")], ["\\gamma"], ["\\gamma = \\dfrac{m_\\mathrm{t}}{V}"],
+          [`$V = ${V}\\ \\mathrm{mL} = ${qty(tx(V / 1000), "L")}$`, `$\\gamma = \\dfrac{${tx(m)}\\ \\mathrm{g}}{${tx(V / 1000)}\\ \\mathrm{L}} ${res(gam, 1, "g/L")}$`]
+        );
+      }
+      const c = r.pick(GAS_C);
+      return concept(r, { q: c.q, ok: c.ok, wrong: c.wrong, hint: "Topnost plinov se s temperaturo obnaša drugače kot topnost večine trdnih snovi.", given: c.gv, find: [T(c.find)], formula: [T("topnost plinov: višja temperatura → manjša, večji tlak → večja")], sol: c.sol });
+    }
+    if (level === 2) {
+      const k = r.int(0, 5);
+      if (k === 0) {
+        const [F, gen, M, w, rho] = r.pick(DIL);
+        const gam = (w / 100) * rho * 1000;
+        const askC = r.next() < 0.5;
+        const c = gam / M;
+        const text = `Raztopina ${gen} ima masni delež $${tx(w)}\\ \\%$ in gostoto $${tx(rho, 3)}\\ \\mathrm{g/mL}$. Kolikšna je ${askC ? `množinska koncentracija? $M(${sp(F)}) = ${Mtx(M)}\\ \\mathrm{g/mol}$. ${zaokr(3)}` : `masna koncentracija $\\gamma$? ${zaokr(1)}`}`;
+        const given = [`w = ${tx(w)}\\ \\%`, dat("\\rho", tx(rho, 3), "g/mL")];
+        if (askC) given.push(dat(`M(${sp(F)})`, Mtx(M), "g/mol"));
+        const sol = [`$\\rho = ${tx(rho, 3)}\\ \\mathrm{g/mL} = ${qty(tx(rho * 1000, 0), "g/L")}$`, `$\\gamma = w \\cdot \\rho = ${tx(w / 100)} \\cdot ${tx(rho * 1000, 0)} ${res(gam, 1, "g/L")}$`];
+        if (askC) sol.push(`$c = \\dfrac{\\gamma}{M} = \\dfrac{${tx(gam, 2)}}{${Mtx(M)}} ${res(c, 3, "mol/L")}$`);
+        return mk(
+          text,
+          askC
+            ? num(c, "mol/L", 3, [[gam, "To je masna koncentracija v g/L; deli jo še z molsko maso."], [(w * rho) / M, "Si vstavil w v odstotkih in gostoto v g/mL? Gostoto pretvori v g/L, w v decimalno število."], [c / 1000, "Gostoto vstavi v g/L, ne v g/mL."]], U_CONC)
+            : num(gam, "g/L", 1, [[w * rho, "Gostoto pretvori v g/L in w zapiši kot decimalno število."], [gam / 1000, "Gostoto vstavi v g/L: 1 L raztopine ima maso ρ · 1000 mL."], [w * 10, "Upoštevaj gostoto: liter raztopine nima mase točno 1000 g."]], { unitAlternatives: ["g/l", "g/dm3", "g/dm³"] }),
+          "Vzemi liter raztopine: njegova masa je $\\rho \\cdot 1\\ \\mathrm{L}$, delež $w$ te mase je topljenec.",
+          given, [askC ? "c" : "\\gamma"], askC ? ["\\gamma = w \\cdot \\rho", "c = \\dfrac{\\gamma}{M}"] : ["\\gamma = w \\cdot \\rho"],
+          sol
+        );
+      }
+      if (k === 1) {
+        const s = r.pick(SOLUB.filter((x) => x.F !== "NaCl"));
+        const ts = solT(s);
+        const i1 = r.int(1, ts.length - 1), i2 = r.int(0, i1 - 1);
+        const t1 = ts[i1], t2 = ts[i2];
+        const S1 = s.S[t1], S2 = s.S[t2];
+        const mw = r.pick([50, 100, 150, 200, 250]);
+        const m = ((S1 - S2) * mw) / 100;
+        return mk(
+          r.pick([`Nasičeno raztopino ${s.gen} v $${mw}\\ \\mathrm{g}$ vode pri $${t1}\\ {}^\\circ\\mathrm{C}$ ohladimo na $${t2}\\ {}^\\circ\\mathrm{C}$. Topnost: $${tx(S1)}\\ \\mathrm{g}$ oz. $${tx(S2)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Koliko gramov kristalov se izloči? ${zaokr(1)}`, `${name} ${g(name, "čisti", "čisti")} ${s.acc} s prekristalizacijo: v $${mw}\\ \\mathrm{g}$ vode pri $${t1}\\ {}^\\circ\\mathrm{C}$ pripravi nasičeno raztopino in jo ohladi na $${t2}\\ {}^\\circ\\mathrm{C}$. Topnosti sta $${tx(S1)}\\ \\mathrm{g}$ in $${tx(S2)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Koliko gramov kristalov dobi? ${zaokr(1)}`]),
+          num(m, "g", 1, [[S1 - S2, "Topnosti veljata za 100 g vode; preračunaj na dano maso vode."], [(S1 * mw) / 100, "Del soli ostane raztopljen tudi pri nižji temperaturi."], [(S2 * mw) / 100, "To je masa soli, ki ostane raztopljena, ne kristalov."]]),
+          "Izračunaj, koliko soli je raztopljene pri višji in koliko pri nižji temperaturi; razlika se izloči.",
+          [dat("m(\\text{voda})", mw, "g"), `S(${t1}\\ {}^\\circ\\mathrm{C}) = ${qty(tx(S1), "g")}`, `S(${t2}\\ {}^\\circ\\mathrm{C}) = ${qty(tx(S2), "g")}`], ["m(\\text{kristali})"], ["m = (S_1 - S_2) \\cdot \\dfrac{m(\\text{voda})}{100\\ \\mathrm{g}}"],
+          [`Pri $${t1}\\ {}^\\circ\\mathrm{C}$ je raztopljenih $${tx(S1)} \\cdot ${tx(mw / 100)} ${res((S1 * mw) / 100, 1, "g")}$`, `Pri $${t2}\\ {}^\\circ\\mathrm{C}$ ostane raztopljenih $${tx(S2)} \\cdot ${tx(mw / 100)} ${res((S2 * mw) / 100, 1, "g")}$`, `$m(\\text{kristali}) ${res(m, 1, "g")}$`]
+        );
+      }
+      if (k === 2) {
+        const S = r.dec(20, 80, 1);
+        const w = roundHalfUp((100 * S) / (S + 100), 1);
+        const Sx = (100 * w) / (100 - w);
+        const s = r.pick(SOLUB.concat([{ gen: "kalijevega sulfata" }, { gen: "bakrovega(II) sulfata" }, { gen: "magnezijevega sulfata" }]));
+        const t = r.pick([20, 25, 30, 40, 50]);
+        return mk(
+          `Nasičena raztopina ${s.gen} ima pri $${t}\\ {}^\\circ\\mathrm{C}$ masni delež $${tx(w)}\\ \\%$. Kolikšna je topnost soli pri tej temperaturi v gramih na $100\\ \\mathrm{g}$ vode? ${zaokr(1)}`,
+          num(Sx, "g", 1, [[w, "To je masa soli v 100 g raztopine, ne v 100 g vode."], [100 - w, "To je masa vode v 100 g raztopine."]]),
+          "Vzemi $100\\ \\mathrm{g}$ raztopine: koliko je v njej soli in koliko vode? Nato preračunaj na $100\\ \\mathrm{g}$ vode.",
+          [`w = ${tx(w)}\\ \\%`, `t = ${t}\\ {}^\\circ\\mathrm{C}`], ["S"], ["S = \\dfrac{m_\\mathrm{t}}{m(\\text{voda})} \\cdot 100\\ \\mathrm{g}"],
+          [`V $100\\ \\mathrm{g}$ raztopine: $${qty(tx(w), "g")}$ soli in $${qty(tx(100 - w, 1), "g")}$ vode.`, `$S = \\dfrac{${tx(w)}}{${tx(100 - w, 1)}} \\cdot 100\\ \\mathrm{g} ${res(Sx, 1, "g")}$`]
+        );
+      }
+      if (k === 3) {
+        const unit = r.pick(["kg", "g"]);
+        const m1 = unit === "kg" ? r.int(5, 40) * 10 : r.int(4, 30) * 10;
+        const m2 = unit === "kg" ? r.int(5, 40) * 10 : r.int(4, 30) * 10;
+        const w1 = r.int(15, 25), w2 = r.int(1, 12);
+        const w = (w1 * m1 + w2 * m2) / (m1 + m2);
+        const ctx = unit === "kg" ? r.pick(["slanice za ceste", "slanice za razsoljevanje", "slanice za vlaganje sira"]) : r.pick(["raztopine sladkorja", "raztopine soli", "raztopine za laboratorijsko vajo"]);
+        return mk(
+          `Zmešamo $${m1}\\ \\mathrm{${unit}}$ ${ctx} z masnim deležem $${w1}\\ \\%$ in $${m2}\\ \\mathrm{${unit}}$ z masnim deležem $${w2}\\ \\%$. Kolikšen je masni delež topljenca v zmesi (v %)? ${zaokr(1)}`,
+          num(w, "%", 1, [[(w1 + w2) / 2, "Povprečje odstotkov velja le pri enakih masah; seštej mase topljenca."], [w1 + w2, "Odstotkov ne seštevaš; seštej mase topljenca in mase raztopin."]]),
+          "Izračunaj maso topljenca v vsaki raztopini, ju seštej in deli s skupno maso.",
+          [dat("m_1", m1, unit), `w_1 = ${w1}\\ \\%`, dat("m_2", m2, unit), `w_2 = ${w2}\\ \\%`], ["w"], ["w = \\dfrac{w_1 m_1 + w_2 m_2}{m_1 + m_2}"],
+          [`$m_\\mathrm{t} = ${tx(w1 / 100)} \\cdot ${m1} + ${tx(w2 / 100)} \\cdot ${m2} = ${qty(tx((w1 * m1 + w2 * m2) / 100), unit)}$`, `$m = ${m1} + ${m2} = ${qty(m1 + m2, unit)}$`, `$w = \\dfrac{${tx((w1 * m1 + w2 * m2) / 100)}}{${m1 + m2}} ${res(w, 1, "\\%")}$`]
+        );
+      }
+      if (k === 4) {
+        const m1 = r.int(4, 40) * 10;
+        const w1 = r.int(2, 15);
+        const ms = r.int(1, 10) * 5;
+        const w = (100 * ((w1 / 100) * m1 + ms)) / (m1 + ms);
+        const unit = r.pick(["g", "kg"]);
+        return mk(
+          r.pick([`V $${m1}\\ \\mathrm{${unit}}$ raztopine soli z masnim deležem $${w1}\\ \\%$ raztopimo še $${ms}\\ \\mathrm{${unit}}$ soli. Kolikšen je nov masni delež soli (v %)? ${zaokr(1)}`, `${name} ${g(name, "ima", "ima")} $${m1}\\ \\mathrm{${unit}}$ slanice z $w = ${w1}\\ \\%$ in vanjo ${g(name, "strese", "strese")} še $${ms}\\ \\mathrm{${unit}}$ soli, ki se vsa raztopi. Kolikšen je nov masni delež soli v %? ${zaokr(1)}`]),
+          num(w, "%", 1, [[(100 * ((w1 / 100) * m1 + ms)) / m1, "Dodana sol poveča tudi maso raztopine, ne le maso topljenca."], [(100 * ms) / (m1 + ms), `Upoštevaj tudi sol, ki je bila v raztopini že prej.`]]),
+          "Sol je kot »raztopina« s $w = 100\\ \\%$: prišteje se k topljencu in k masi raztopine.",
+          [dat("m_1", m1, unit), `w_1 = ${w1}\\ \\%`, dat("m(\\text{sol})", ms, unit)], ["w"], ["w = \\dfrac{w_1 m_1 + m(\\text{sol})}{m_1 + m(\\text{sol})}"],
+          [`Sol prej: $${tx(w1 / 100)} \\cdot ${m1} = ${qty(tx((w1 * m1) / 100), unit)}$`, `Sol po: $${tx((w1 * m1) / 100)} + ${ms} = ${qty(tx((w1 * m1) / 100 + ms), unit)}$, raztopina: $${m1 + ms}\\ \\mathrm{${unit}}$`, `$w = \\dfrac{${tx((w1 * m1) / 100 + ms)}}{${m1 + ms}} ${res(w, 1, "\\%")}$`]
+        );
+      }
+      const m1 = r.int(5, 50) * 10;
+      const w1 = r.int(2, 12);
+      const dm = Math.round(m1 * r.dec(0.2, 0.5, 2) / 10) * 10;
+      const w2 = (w1 * m1) / (m1 - dm);
+      return mk(
+        `Iz $${m1}\\ \\mathrm{g}$ raztopine z masnim deležem soli $${w1}\\ \\%$ izhlapi $${dm}\\ \\mathrm{g}$ vode. Kolikšen je masni delež soli po izparevanju (v %)? ${zaokr(1)}`,
+        num(w2, "%", 1, [[(w1 * m1) / dm, "Deli s preostalo maso raztopine, ne z maso izhlapele vode."], [(w1 * (m1 - dm)) / m1, "Pri izparevanju se w poveča, ne zmanjša."]]),
+        "Sol ne izhlapi: masa topljenca ostane enaka, raztopina pa postane lažja.",
+        [dat("m_1", m1, "g"), `w_1 = ${w1}\\ \\%`, dat("m(\\text{izhlapela voda})", dm, "g")], ["w_2"], ["w_1 m_1 = w_2 m_2"],
+        [`$m_\\mathrm{t} = ${tx(w1 / 100)} \\cdot ${m1} = ${qty(tx((w1 * m1) / 100), "g")}$`, `$m_2 = ${m1} - ${dm} = ${qty(m1 - dm, "g")}$`, `$w_2 = \\dfrac{${tx((w1 * m1) / 100)}}{${m1 - dm}} ${res(w2, 1, "\\%")}$`]
+      );
+    }
+    // Raven 3
+    const k = r.int(0, 4);
+    if (k === 0) {
+      const m1 = r.int(5, 30) * 100;
+      const w1 = r.pick([3.0, 3.5, 3.8]);
+      const t = r.pick([20, 40]);
+      const S = SOLUB[1].S[t];
+      const ws = S / (S + 100);
+      const m2 = ((w1 / 100) * m1) / ws;
+      const ev = m1 - m2;
+      return mk(
+        `V solinski bazen spustijo $${m1}\\ \\mathrm{kg}$ morske vode z $w(\\mathrm{NaCl}) = ${tx(w1, 1)}\\ \\%$. Topnost $\\mathrm{NaCl}$ pri $${t}\\ {}^\\circ\\mathrm{C}$ je $${tx(S, 1)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Koliko kg vode mora izhlapeti, preden začne sol kristalizirati? Druge snovi zanemari. ${zaokr(0)}`,
+        num(ev, "kg", 0, [[m1 - ((w1 / 100) * m1) / (S / 100), "Topnost ni masni delež: nasičena raztopina ima w = S/(S + 100 g)."], [m2, "To je masa nasičene raztopine, ki ostane; iščemo izhlapelo vodo."]]),
+        "Najprej iz topnosti izračunaj masni delež nasičene raztopine; masa soli se pri izparevanju ohrani.",
+        [dat("m_1", m1, "kg"), `w_1 = ${tx(w1, 1)}\\ \\%`, `S = ${tx(S, 1)}\\ \\mathrm{g} \\text{ na } 100\\ \\mathrm{g} \\text{ vode}`], ["m(\\text{izhlapela voda})"], ["w_\\text{nas} = \\dfrac{S}{S + 100\\ \\mathrm{g}}", "w_1 m_1 = w_2 m_2"],
+        [`$w_\\text{nas} = \\dfrac{${tx(S, 1)}}{${tx(S + 100, 1)}} \\approx ${tx(ws, 4)}$`, `Sol: $${tx(w1 / 100, 3)} \\cdot ${m1} = ${qty(tx((w1 * m1) / 100, 1), "kg")}$`, `$m_2 = \\dfrac{${tx((w1 * m1) / 100, 1)}}{${tx(ws, 4)}} ${res(m2, 1, "kg")}$`, `Izhlapi $${m1} - ${tx(m2, 1)} ${res(ev, 0, "kg")}$`]
+      );
+    }
+    if (k === 1) {
+      const CASES = [[SOLUB[0], 60, [35, 40, 45, 50], [0, 10, 20]], [SOLUB[2], 80, [28, 30, 32], [0, 20]], [SOLUB[3], 80, [32, 35, 38], [0, 20]]];
+      const [s, t1, ws, t2s] = r.pick(CASES);
+      const w = r.pick(ws), t2 = r.pick(t2s);
+      const m = r.int(3, 8) * 50;
+      const ms = (w / 100) * m, mw = m - ms;
+      const S2 = s.S[t2];
+      const stay = (S2 * mw) / 100;
+      const cr = ms - stay;
+      return mk(
+        `${name} ${g(name, "ima", "ima")} $${m}\\ \\mathrm{g}$ raztopine ${s.gen} z masnim deležem $${w}\\ \\%$ pri $${t1}\\ {}^\\circ\\mathrm{C}$ in jo ${g(name, "ohladi", "ohladi")} na $${t2}\\ {}^\\circ\\mathrm{C}$, kjer je topnost $${tx(S2)}\\ \\mathrm{g}$ na $100\\ \\mathrm{g}$ vode. Koliko gramov kristalov se izloči? ${zaokr(1)}`,
+        num(cr, "g", 1, [[ms - S2, "Topnost velja za 100 g vode; preračunaj jo na maso vode v raztopini."], [ms - (S2 * m) / 100, "Topnost se nanaša na maso vode, ne na maso raztopine."], [stay, "To je masa soli, ki ostane raztopljena."]].filter(([v]) => v > 0)),
+        "Razdeli raztopino na sol in vodo; nato izračunaj, koliko soli ta voda zadrži pri nižji temperaturi.",
+        [dat("m", m, "g"), `w = ${w}\\ \\%`, `S(${t2}\\ {}^\\circ\\mathrm{C}) = ${qty(tx(S2), "g")}`], ["m(\\text{kristali})"], ["m_\\mathrm{t} = w \\cdot m", "m_\\text{raztopljeno} = S \\cdot \\dfrac{m(\\text{voda})}{100\\ \\mathrm{g}}"],
+        [`Sol: $${tx(w / 100)} \\cdot ${m} = ${qty(tx(ms), "g")}$, voda: $${m} - ${tx(ms)} = ${qty(tx(mw), "g")}$`, `Pri $${t2}\\ {}^\\circ\\mathrm{C}$ ostane raztopljenih $${tx(S2)} \\cdot ${tx(mw / 100)} ${res(stay, 2, "g")}$`, `$m(\\text{kristali}) = ${tx(ms)} - ${tx(stay, 2)} ${res(cr, 1, "g")}$`]
+      );
+    }
+    if (k === 2) {
+      const [t1, t2] = r.pick([[0, 20], [0, 30], [10, 20], [10, 30], [20, 30], [0, 10]]);
+      const V = r.int(5, 50) * 100;
+      const d = O2_SOL[t1] - O2_SOL[t2];
+      const kg = (d * V) / 1000;
+      return mk(
+        `Ribnik vsebuje $${V}\\ \\mathrm{m^3}$ vode, ki se segreje z $${t1}$ na $${t2}\\ {}^\\circ\\mathrm{C}$. Topnost kisika je pri $${t1}\\ {}^\\circ\\mathrm{C}$ $${tx(O2_SOL[t1])}\\ \\mathrm{mg/L}$, pri $${t2}\\ {}^\\circ\\mathrm{C}$ $${tx(O2_SOL[t2])}\\ \\mathrm{mg/L}$. Koliko kg kisika lahko največ uide, če je bila voda nasičena? ${zaokr(1)}`,
+        num(kg, "kg", 1, [[kg * 1000, "To so grami; 1 kg = 1000 g."], [(O2_SOL[t1] * V) / 1000, "Uide le razlika med topnostma, ne ves kisik."], [kg / 1000, "1 m³ je 1000 L."]]),
+        "Uide razlika topnosti na liter; prostornino pretvori v litre, mg v kg.",
+        [dat("V", V, "m^3"), `\\Delta = ${tx(O2_SOL[t1])} - ${tx(O2_SOL[t2])}\\ \\mathrm{mg/L}`], ["m(\\mathrm{O_2})"], ["m = \\Delta \\cdot V", "1\\ \\mathrm{m^3} = 1000\\ \\mathrm{L}"],
+        [`Na liter uide $${tx(O2_SOL[t1])} - ${tx(O2_SOL[t2])} = ${qty(tx(d, 1), "mg")}$.`, `$V = ${V}\\ \\mathrm{m^3} = ${qty(V * 1000, "L")}$`, `$m = ${tx(d, 1)} \\cdot ${V * 1000}\\ \\mathrm{mg} = ${qty(tx(d * V, 0), "g")} ${res(kg, 1, "kg")}$`]
+      );
+    }
+    if (k === 3) {
+      const [F, M, w0, rho] = r.pick(CONC);
+      const c = roundHalfUp((1000 * rho * (w0 / 100)) / M, 2);
+      const w = (100 * c * M) / (1000 * rho);
+      return mk(
+        `Koncentrirana raztopina $${sp(F)}$ ima množinsko koncentracijo $${tx(c, 2)}\\ \\mathrm{mol/L}$ in gostoto $${tx(rho, 2)}\\ \\mathrm{g/mL}$. Kolikšen je masni delež $${sp(F)}$ (v %)? $M = ${Mtx(M)}\\ \\mathrm{g/mol}$. ${zaokr(1)}`,
+        num(w, "%", 1, [[(c * M) / 10, "Upoštevaj gostoto: liter raztopine nima mase 1000 g."], [(c * M) / rho, "Gostoto pretvori v g/L (1 L = 1000 mL)."], [c * M, "γ = c · M je masa v litru; deli jo še z maso litra raztopine."]]),
+        "Vzemi liter raztopine: izračunaj maso topljenca ($c \\cdot M$) in maso raztopine ($\\rho \\cdot 1000\\ \\mathrm{mL}$).",
+        [dat("c", tx(c, 2), "mol/L"), dat("\\rho", tx(rho, 2), "g/mL"), dat("M", Mtx(M), "g/mol")], ["w"], ["\\gamma = c \\cdot M", "w = \\dfrac{\\gamma}{\\rho}"],
+        [`$\\gamma = ${tx(c, 2)} \\cdot ${Mtx(M)} ${res(c * M, 1, "g/L")}$`, `$\\rho = ${qty(tx(rho * 1000, 0), "g/L")}$`, `$w = \\dfrac{${tx(c * M, 1)}}{${tx(rho * 1000, 0)}} ${res(w / 100, 4)} ${res(w, 1, "\\%")}$`]
+      );
+    }
+    const m1 = r.int(4, 40) * 25;
+    const addWater = r.next() < 0.5;
+    if (addWater) {
+      const w1 = r.int(15, 30), w2 = r.pick([2, 4, 5, 8, 10, 12].filter((x) => x < w1 - 2));
+      const x = m1 * (w1 / w2 - 1);
+      return mk(
+        `Koliko gramov vode moramo dodati k $${m1}\\ \\mathrm{g}$ raztopine z masnim deležem $${w1}\\ \\%$, da dobimo raztopino z masnim deležem $${w2}\\ \\%$? ${zaokr(1)}`,
+        num(x, "g", 1, [[m1 * (w1 / w2), "To je masa nove raztopine; iščemo le dodano vodo."], [m1 * ((w1 - w2) / 100), "Masa topljenca se pri redčenju ohrani: w₁m₁ = w₂m₂."]]),
+        "Masa topljenca se ne spremeni. Izračunaj maso nove raztopine, nato razliko.",
+        [dat("m_1", m1, "g"), `w_1 = ${w1}\\ \\%`, `w_2 = ${w2}\\ \\%`], ["m(\\text{voda})"], ["w_1 m_1 = w_2 m_2", "m(\\text{voda}) = m_2 - m_1"],
+        [`$m_\\mathrm{t} = ${tx(w1 / 100)} \\cdot ${m1} = ${qty(tx((w1 * m1) / 100), "g")}$`, `$m_2 = \\dfrac{${tx((w1 * m1) / 100)}}{${tx(w2 / 100)}} ${res((w1 * m1) / w2, 1, "g")}$`, `$m(\\text{voda}) = ${tx((w1 * m1) / w2, 1)} - ${m1} ${res(x, 1, "g")}$`]
+      );
+    }
+    const w1 = r.int(2, 10), w2 = r.int(w1 + 5, 25);
+    const x = (m1 * (w2 - w1)) / (100 - w2);
+    return mk(
+      `${name} ${g(name, "želi", "želi")} $${m1}\\ \\mathrm{g}$ raztopine soli z masnim deležem $${w1}\\ \\%$ okrepiti do $${w2}\\ \\%$. Koliko gramov soli mora še raztopiti? ${zaokr(1)}`,
+      num(x, "g", 1, [[(m1 * (w2 - w1)) / 100, "Dodana sol poveča tudi maso raztopine; upoštevaj jo v imenovalcu."], [(m1 * w2) / 100, "Del soli je v raztopini že na začetku."]]),
+      "Neznano maso soli označi z $x$: prišteje se k topljencu in k masi raztopine.",
+      [dat("m_1", m1, "g"), `w_1 = ${w1}\\ \\%`, `w_2 = ${w2}\\ \\%`], ["m(\\text{sol})"], ["w_2 = \\dfrac{w_1 m_1 + x}{m_1 + x}"],
+      [`$${tx(w2 / 100)}(${m1} + x) = ${tx((w1 * m1) / 100)} + x$`, `$${tx((w2 * m1) / 100)} - ${tx((w1 * m1) / 100)} = x(1 - ${tx(w2 / 100)})$`, `$x = \\dfrac{${tx((m1 * (w2 - w1)) / 100)}}{${tx(1 - w2 / 100)}} ${res(x, 1, "g")}$`]
+    );
+  },
+};
+
+// ---------- elektroliti in ionske reakcije ----------
+const eqU = (s) => s.split(" ").map((tk) => { if (tk === "->") return "→"; if (tk === "+") return "+"; const m = tk.match(/^(\d*)(.+?)(\((?:s|aq|g|l)\))?$/); return `${m[1] ? `${m[1]} ` : ""}${spU(m[2])}${m[3] || ""}`; }).join(" ");
+// Oborina: reagenta (formula, rodilnik), oborina, molska masa, barva, skrajšana in molekulska enačba, iona opazovalca kot »sol«.
+const PREC = [
+  { a: "AgNO3", an: "srebrovega nitrata", b: "NaCl", bn: "natrijevega klorida", p: "AgCl", M: 143.32, col: "bela", net: "Ag^+ + Cl^- -> AgCl(s)", ka: 1, kb: 1, mol: "AgNO3 + NaCl -> AgCl(s) + NaNO3", spN: "Na^+ + NO3^- -> NaNO3(s)", spS: "NaNO3", spW: "Natrijeve soli in nitrati so topni." },
+  { a: "AgNO3", an: "srebrovega nitrata", b: "KI", bn: "kalijevega jodida", p: "AgI", M: 234.77, col: "rumena", net: "Ag^+ + I^- -> AgI(s)", ka: 1, kb: 1, mol: "AgNO3 + KI -> AgI(s) + KNO3", spN: "K^+ + NO3^- -> KNO3(s)", spS: "KNO3", spW: "Kalijeve soli in nitrati so topni." },
+  { a: "AgNO3", an: "srebrovega nitrata", b: "NaBr", bn: "natrijevega bromida", p: "AgBr", M: 187.77, col: "svetlo rumena", net: "Ag^+ + Br^- -> AgBr(s)", ka: 1, kb: 1, mol: "AgNO3 + NaBr -> AgBr(s) + NaNO3", spN: "Na^+ + NO3^- -> NaNO3(s)", spS: "NaNO3", spW: "Natrijeve soli in nitrati so topni." },
+  { a: "BaCl2", an: "barijevega klorida", b: "Na2SO4", bn: "natrijevega sulfata", p: "BaSO4", M: 233.39, col: "bela", net: "Ba^2+ + SO4^2- -> BaSO4(s)", ka: 1, kb: 1, mol: "BaCl2 + Na2SO4 -> BaSO4(s) + 2NaCl", spN: "Na^+ + Cl^- -> NaCl(s)", spS: "NaCl", spW: "Natrijeve soli so topne." },
+  { a: "Pb(NO3)2", an: "svinčevega(II) nitrata", b: "KI", bn: "kalijevega jodida", p: "PbI2", M: 461.01, col: "rumena", net: "Pb^2+ + 2I^- -> PbI2(s)", ka: 1, kb: 2, mol: "Pb(NO3)2 + 2KI -> PbI2(s) + 2KNO3", spN: "K^+ + NO3^- -> KNO3(s)", spS: "KNO3", spW: "Kalijeve soli in nitrati so topni." },
+  { a: "Pb(NO3)2", an: "svinčevega(II) nitrata", b: "Na2SO4", bn: "natrijevega sulfata", p: "PbSO4", M: 303.26, col: "bela", net: "Pb^2+ + SO4^2- -> PbSO4(s)", ka: 1, kb: 1, mol: "Pb(NO3)2 + Na2SO4 -> PbSO4(s) + 2NaNO3", spN: "Na^+ + NO3^- -> NaNO3(s)", spS: "NaNO3", spW: "Natrijeve soli in nitrati so topni." },
+  { a: "CuSO4", an: "bakrovega(II) sulfata", b: "NaOH", bn: "natrijevega hidroksida", p: "Cu(OH)2", M: 97.56, col: "modra", net: "Cu^2+ + 2OH^- -> Cu(OH)2(s)", ka: 1, kb: 2, mol: "CuSO4 + 2NaOH -> Cu(OH)2(s) + Na2SO4", spN: "2Na^+ + SO4^2- -> Na2SO4(s)", spS: "Na2SO4", spW: "Natrijeve soli so topne." },
+  { a: "FeCl3", an: "železovega(III) klorida", b: "NaOH", bn: "natrijevega hidroksida", p: "Fe(OH)3", M: 106.87, col: "rjava", net: "Fe^3+ + 3OH^- -> Fe(OH)3(s)", ka: 1, kb: 3, mol: "FeCl3 + 3NaOH -> Fe(OH)3(s) + 3NaCl", spN: "Na^+ + Cl^- -> NaCl(s)", spS: "NaCl", spW: "Natrijeve soli so topne." },
+  { a: "FeSO4", an: "železovega(II) sulfata", b: "Na2S", bn: "natrijevega sulfida", p: "FeS", M: 87.91, col: "črna", net: "Fe^2+ + S^2- -> FeS(s)", ka: 1, kb: 1, mol: "FeSO4 + Na2S -> FeS(s) + Na2SO4", spN: "2Na^+ + SO4^2- -> Na2SO4(s)", spS: "Na2SO4", spW: "Natrijeve soli so topne." },
+  { a: "CaCl2", an: "kalcijevega klorida", b: "Na2CO3", bn: "natrijevega karbonata", p: "CaCO3", M: 100.09, col: "bela", net: "Ca^2+ + CO3^2- -> CaCO3(s)", ka: 1, kb: 1, mol: "CaCl2 + Na2CO3 -> CaCO3(s) + 2NaCl", spN: "Na^+ + Cl^- -> NaCl(s)", spS: "NaCl", spW: "Natrijeve soli so topne." },
+  { a: "MgCl2", an: "magnezijevega klorida", b: "NaOH", bn: "natrijevega hidroksida", p: "Mg(OH)2", M: 58.32, col: "bela", net: "Mg^2+ + 2OH^- -> Mg(OH)2(s)", ka: 1, kb: 2, mol: "MgCl2 + 2NaOH -> Mg(OH)2(s) + 2NaCl", spN: "Na^+ + Cl^- -> NaCl(s)", spS: "NaCl", spW: "Natrijeve soli so topne." },
+  { a: "ZnSO4", an: "cinkovega sulfata", b: "Na2S", bn: "natrijevega sulfida", p: "ZnS", M: 97.45, col: "bela", net: "Zn^2+ + S^2- -> ZnS(s)", ka: 1, kb: 1, mol: "ZnSO4 + Na2S -> ZnS(s) + Na2SO4", spN: "2Na^+ + SO4^2- -> Na2SO4(s)", spS: "Na2SO4", spW: "Natrijeve soli so topne." },
+  { a: "BaCl2", an: "barijevega klorida", b: "Na2CO3", bn: "natrijevega karbonata", p: "BaCO3", M: 197.34, col: "bela", net: "Ba^2+ + CO3^2- -> BaCO3(s)", ka: 1, kb: 1, mol: "BaCl2 + Na2CO3 -> BaCO3(s) + 2NaCl", spN: "Na^+ + Cl^- -> NaCl(s)", spS: "NaCl", spW: "Natrijeve soli so topne." },
+];
+const NOPREC = [
+  ["NaCl", "natrijevega klorida", "KNO3", "kalijevega nitrata", [["NaNO3", "Nitrati so topni."], ["KCl", "Kalijeve soli so topne."]]],
+  ["K2SO4", "kalijevega sulfata", "NaNO3", "natrijevega nitrata", [["KNO3", "Kalijeve soli in nitrati so topni."], ["Na2SO4", "Natrijeve soli so topne."]]],
+  ["CuSO4", "bakrovega(II) sulfata", "NaCl", "natrijevega klorida", [["CuCl2", "Kloridi so topni, razen s srebrom in svincem."], ["Na2SO4", "Natrijeve soli so topne."]]],
+  ["MgSO4", "magnezijevega sulfata", "KCl", "kalijevega klorida", [["MgCl2", "Kloridi so topni, razen s srebrom in svincem."], ["K2SO4", "Kalijeve soli so topne."]]],
+  ["BaCl2", "barijevega klorida", "NaNO3", "natrijevega nitrata", [["Ba(NO3)2", "Nitrati so topni."], ["NaCl", "Natrijeve soli so topne."]]],
+  ["FeCl3", "železovega(III) klorida", "KNO3", "kalijevega nitrata", [["Fe(NO3)3", "Nitrati so topni."], ["KCl", "Kalijeve soli so topne."]]],
+  ["ZnCl2", "cinkovega klorida", "NaNO3", "natrijevega nitrata", [["Zn(NO3)2", "Nitrati so topni."], ["NaCl", "Natrijeve soli so topne."]]],
+  ["NH4Cl", "amonijevega klorida", "NaNO3", "natrijevega nitrata", [["NH4NO3", "Amonijeve soli in nitrati so topni."], ["NaCl", "Natrijeve soli so topne."]]],
+  ["CaCl2", "kalcijevega klorida", "KNO3", "kalijevega nitrata", [["Ca(NO3)2", "Nitrati so topni."], ["KCl", "Kalijeve soli so topne."]]],
+  ["Na2CO3", "natrijevega karbonata", "KCl", "kalijevega klorida", [["NaCl", "Natrijeve soli so topne."], ["K2CO3", "Karbonati Na⁺, K⁺ in NH₄⁺ so topni."]]],
+];
+// [formula, ime, vrsta: M/S/N, razlaga]
+const ELYT = [
+  ["NaCl", "natrijev klorid", "M", "sol: že v kristalu je iz ionov, v raztopini so vsi ioni prosti"], ["KNO3", "kalijev nitrat", "M", "sol: v raztopini v celoti razpade na ione"], ["NaOH", "natrijev hidroksid", "M", "močna baza: v raztopini v celoti razpade na ione"],
+  ["HCl", "klorovodik", "M", "močna kislina: skoraj vse molekule oddajo proton vodi"], ["HNO3", "dušikova(V) kislina", "M", "močna kislina: skoraj vse molekule oddajo proton"], ["KOH", "kalijev hidroksid", "M", "močna baza: v raztopini v celoti razpade na ione"],
+  ["CH3COOH", "ocetna kislina", "S", "šibka kislina: le majhen del molekul odda proton"], ["NH3", "amoniak", "S", "šibka baza: le majhen del molekul sprejme proton"], ["HF", "fluorovodikova kislina", "S", "šibka kislina: le majhen del molekul odda proton"],
+  ["C6H12O6", "glukoza", "N", "raztopi se kot cele molekule, ionov ne tvori"], ["C2H5OH", "etanol", "N", "raztopi se kot cele molekule, ionov ne tvori"], ["C12H22O11", "saharoza", "N", "raztopi se kot cele molekule, ionov ne tvori"],
+];
+const ELYT_T = { M: "močan elektrolit", S: "šibek elektrolit", N: "neelektrolit" };
+// [formula sol, ion, število ionov, ime soli]
+const IONC = [["CaCl2", "Cl^-", 2, "kalcijevega klorida"], ["Na2SO4", "Na^+", 2, "natrijevega sulfata"], ["AlCl3", "Cl^-", 3, "aluminijevega klorida"], ["K3PO4", "K^+", 3, "kalijevega fosfata"], ["Al2(SO4)3", "SO4^2-", 3, "aluminijevega sulfata"], ["Al2(SO4)3", "Al^3+", 2, "aluminijevega sulfata"], ["MgCl2", "Cl^-", 2, "magnezijevega klorida"], ["Fe2(SO4)3", "SO4^2-", 3, "železovega(III) sulfata"], ["(NH4)2SO4", "NH4^+", 2, "amonijevega sulfata"], ["Na3PO4", "Na^+", 3, "natrijevega fosfata"], ["Ba(NO3)2", "NO3^-", 2, "barijevega nitrata"]];
+// Disociacija: [sol, rodilnik, kation, število, anion, število]
+const DISS = [["CaCl2", "kalcijevega klorida", "Ca^2+", 1, "Cl^-", 2], ["Na2SO4", "natrijevega sulfata", "Na^+", 2, "SO4^2-", 1], ["AlCl3", "aluminijevega klorida", "Al^3+", 1, "Cl^-", 3], ["K3PO4", "kalijevega fosfata", "K^+", 3, "PO4^3-", 1], ["Al2(SO4)3", "aluminijevega sulfata", "Al^3+", 2, "SO4^2-", 3], ["Fe2(SO4)3", "železovega(III) sulfata", "Fe^3+", 2, "SO4^2-", 3], ["(NH4)2SO4", "amonijevega sulfata", "NH4^+", 2, "SO4^2-", 1], ["Ba(NO3)2", "barijevega nitrata", "Ba^2+", 1, "NO3^-", 2], ["KNO3", "kalijevega nitrata", "K^+", 1, "NO3^-", 1], ["Na2CO3", "natrijevega karbonata", "Na^+", 2, "CO3^2-", 1], ["Ca(NO3)2", "kalcijevega nitrata", "Ca^2+", 1, "NO3^-", 2]];
+// Sol z ionom, ki se obori s prebitkom reagenta: [sol, rodilnik, M(sol), reagent, oborina, M(oborina), ionov na formulsko enoto]
+const PMASS = [["CaCl2", "kalcijevega klorida", 110.98, "AgNO3", "AgCl", 143.32, 2], ["AlCl3", "aluminijevega klorida", 133.33, "AgNO3", "AgCl", 143.32, 3], ["MgCl2", "magnezijevega klorida", 95.21, "AgNO3", "AgCl", 143.32, 2], ["NaCl", "natrijevega klorida", 58.44, "AgNO3", "AgCl", 143.32, 1], ["Na2SO4", "natrijevega sulfata", 142.04, "BaCl2", "BaSO4", 233.39, 1], ["Al2(SO4)3", "aluminijevega sulfata", 342.15, "BaCl2", "BaSO4", 233.39, 3], ["FeCl3", "železovega(III) klorida", 162.2, "AgNO3", "AgCl", 143.32, 3], ["BaCl2", "barijevega klorida", 208.23, "Na2SO4", "BaSO4", 233.39, 1]];
+// Sol → kislost raztopine: [sol, K/N/B, ion, ki reagira, razlaga]
+const SALT_PH = [
+  ["NH4Cl", "K", "NH4^+", "NH₄⁺ je kation šibke baze NH₃ in odda proton vodi"], ["NH4NO3", "K", "NH4^+", "NH₄⁺ je kation šibke baze NH₃ in odda proton vodi"], ["(NH4)2SO4", "K", "NH4^+", "NH₄⁺ je kation šibke baze NH₃ in odda proton vodi"],
+  ["NaCl", "N", null, "Na⁺ in Cl⁻ izhajata iz močne baze in močne kisline"], ["KNO3", "N", null, "K⁺ in NO₃⁻ izhajata iz močne baze in močne kisline"], ["KCl", "N", null, "K⁺ in Cl⁻ izhajata iz močne baze in močne kisline"], ["NaNO3", "N", null, "Na⁺ in NO₃⁻ izhajata iz močne baze in močne kisline"], ["KBr", "N", null, "K⁺ in Br⁻ izhajata iz močne baze in močne kisline"],
+  ["CH3COONa", "B", "CH3COO^-", "CH₃COO⁻ je anion šibke ocetne kisline in sprejme proton od vode"], ["Na2CO3", "B", "CO3^2-", "CO₃²⁻ je anion šibke kisline in sprejme proton od vode"], ["K2CO3", "B", "CO3^2-", "CO₃²⁻ je anion šibke kisline in sprejme proton od vode"], ["NaHCO3", "B", "HCO3^-", "HCO₃⁻ bolj sprejema kot oddaja protone"], ["Na3PO4", "B", "PO4^3-", "PO₄³⁻ je anion šibke kisline in sprejme proton od vode"], ["CH3COOK", "B", "CH3COO^-", "CH₃COO⁻ je anion šibke ocetne kisline in sprejme proton od vode"],
+];
+const PH_T = { K: "kisla (pH < 7)", N: "nevtralna (pH = 7)", B: "bazična (pH > 7)" };
+const ION_EQ = {
+  "NH4^+": "NH4^+ + H2O <=> NH3 + H3O^+", "CH3COO^-": "CH3COO^- + H2O <=> CH3COOH + OH^-", "CO3^2-": "CO3^2- + H2O <=> HCO3^- + OH^-",
+  "HCO3^-": "HCO3^- + H2O <=> H2CO3 + OH^-", "PO4^3-": "PO4^3- + H2O <=> HPO4^2- + OH^-",
+};
+const ELYT_C3 = [
+  { gv: ["\\text{snovi} = \\text{ocetna kislina, sladkor, voda, } \\mathrm{BaSO_4}"], q: "Katera trditev o elektrolitih je pravilna?", ok: "Barijev sulfat je močan elektrolit, čeprav je v vodi zelo slabo topen.", wrong: [["Ocetna kislina je šibek elektrolit, ker se v vodi slabo raztaplja.", "Ocetna kislina se z vodo meša v vsakem razmerju; šibka je, ker le majhen del molekul odda proton."], ["Raztopina sladkorja prevaja tok, ker je sladkor dobro topen.", "Topnost ni prevodnost: sladkor se raztopi kot cele molekule, ionov ni."], ["Destilirana voda dobro prevaja tok, ker so njene molekule polarne.", "Tok prenašajo ioni, teh je v destilirani vodi izredno malo."]], find: "pravilna trditev", sol: ["Jakost elektrolita pove, kolikšen del raztopljene snovi je v obliki ionov.", "Malo BaSO₄, ki se raztopi, je v celoti kot ioni: močan elektrolit."] },
+  { gv: ["\\text{delci} = \\mathrm{HCO_3^-,\\ CO_3^{2-},\\ NH_4^+,\\ Cl^-}"], q: "Kateri delec je amfiprotičen (proton lahko odda ali sprejme)?", ok: "HCO₃⁻", wrong: [["CO₃²⁻", "Karbonatni ion protona nima več; lahko ga le sprejme."], ["NH₄⁺", "Amonijev ion proton le odda (nastane NH₃)."], ["Cl⁻", "Kloridni ion je anion močne kisline; protona ne sprejme in ga nima."]], find: "amfiprotičen delec", sol: ["$\\mathrm{HCO_3^- + H_2O \\rightleftharpoons CO_3^{2-} + H_3O^+}$ (odda)", "$\\mathrm{HCO_3^- + H_2O \\rightleftharpoons H_2CO_3 + OH^-}$ (sprejme)"] },
+  { gv: ["c = 0{,}1\\ \\mathrm{mol/L}"], q: "Raztopine s koncentracijo $0{,}1\\ \\mathrm{mol/L}$: $\\mathrm{NH_4Cl}$, $\\mathrm{NaCl}$, $\\mathrm{CH_3COONa}$, $\\mathrm{Na_2CO_3}$. Katera ima najvišji pH?", ok: "Na₂CO₃", wrong: [["CH₃COONa", "Acetat je bazičen, a karbonat močneje sprejema protone, ker je HCO₃⁻ veliko šibkejša kislina kot ocetna."], ["NaCl", "Ioni NaCl z vodo ne izmenjajo protona; raztopina je nevtralna."], ["NH₄Cl", "NH₄⁺ odda proton, raztopina je kisla."]], find: "najbolj bazična raztopina", sol: ["Kislo: NH₄Cl; nevtralno: NaCl; bazično: CH₃COONa in Na₂CO₃.", "Čim šibkejša je kislina, tem močnejša je njena konjugirana baza: HCO₃⁻ je šibkejša kislina od CH₃COOH, zato je CO₃²⁻ močnejša baza."] },
+  { gv: ["\\text{produkt} = \\text{plin}"], q: "Pri katerem mešanju raztopin poteče ionska reakcija, pri kateri nastane plin?", ok: "Na₂CO₃ in HCl", wrong: [["NaCl in KNO₃", "Vse nove kombinacije so topne, ne nastane plin ne voda: reakcije ni."], ["NaOH in HCl", "Reakcija poteče, a nastane voda, ne plin."], ["AgNO₃ in NaCl", "Reakcija poteče, a nastane oborina AgCl, ne plin."]], find: "reakcija s plinom", sol: ["$\\mathrm{CO_3^{2-} + 2\\,H_3O^+ \\rightarrow CO_2(g) + 3\\,H_2O}$", "Ion karbonat s kislino da plin CO₂."] },
+];
+
+const genElektroliti = {
+  id: "dod-kem-ss-2-elektroliti-ionske-reakcije",
+  topics: ["KEM-SS-2/elektroliti-in-ionske-reakcije"],
+  gen(level, r) {
+    const name = nm(r);
+    if (level === 1) {
+      const k = r.pick([0, 0, 1, 2, 2, 3, 3]);
+      if (k === 0) {
+        if (r.next() < 0.6) {
+          const P = r.pick(PREC);
+          return concept(r, {
+            q: r.pick([`Zmešamo raztopini ${P.an} in ${P.bn}. Kaj opazimo?`, `${name} ${g(name, "zlije", "zlije")} skupaj raztopini $${sp(P.a)}$ in $${sp(P.b)}$. Kaj ${g(name, "opazi", "opazi")}?`]),
+            ok: `Nastane oborina ${spU(P.p)}.`,
+            wrong: [[`Nastane oborina ${spU(P.spS)}.`, `${P.spW} Ioni ostanejo raztopljeni.`], ["Oborina ne nastane.", `Nova kombinacija ${spU(P.p)} je po pravilih topnosti netopna.`], [`Nastane plin.`, "Nobena kombinacija ionov tu ne da plina; nastane oborina."]],
+            hint: "Zapiši ione obeh raztopin, »zamenjaj partnerje« in po pravilih topnosti preveri novi kombinaciji.",
+            given: [`\\text{raztopina 1} = ${sp(P.a)}(\\mathrm{aq})`, `\\text{raztopina 2} = ${sp(P.b)}(\\mathrm{aq})`], find: [T("ali nastane oborina")], formula: [T("pravila topnosti")],
+            sol: [`Novi kombinaciji: $${sp(P.p)}$ in $${sp(P.spS)}$.`, `$${sp(P.spS)}$ je topen; $${sp(P.p)}$ je netopen.`, `Nastane ${P.col} oborina $${sp(P.p)}$.`],
+          });
+        }
+        const [a, an, b, bn, nw] = r.pick(NOPREC);
+        return concept(r, {
+          q: r.pick([`Zmešamo raztopini ${an} in ${bn}. Kaj se zgodi?`, `${name} ${g(name, "zmeša", "zmeša")} raztopini $${sp(a)}$ in $${sp(b)}$. Ali nastane oborina?`]),
+          ok: "Oborina ne nastane, ioni ostanejo raztopljeni.",
+          wrong: nw.map(([f, why]) => [`Nastane oborina ${spU(f)}.`, `${why} Zato ${spU(f)} ne izpade.`]),
+          hint: "Zapiši ione obeh raztopin, »zamenjaj partnerje« in po pravilih topnosti preveri novi kombinaciji.",
+          given: [`\\text{raztopina 1} = ${sp(a)}(\\mathrm{aq})`, `\\text{raztopina 2} = ${sp(b)}(\\mathrm{aq})`], find: [T("ali nastane oborina")], formula: [T("pravila topnosti")],
+          sol: [`Novi kombinaciji: $${sp(nw[0][0])}$ in $${sp(nw[1][0])}$.`, `${nw[0][1]} ${nw[1][1]}`, "Ne nastane oborina, plin ali voda: reakcije ni."],
+        });
+      }
+      if (k === 1) {
+        const [F, ime, t, why] = r.pick(ELYT);
+        const OK = ELYT_T[t];
+        const WH = `${ime[0].toUpperCase() + ime.slice(1)}: ${why}.`;
+        return concept(r, {
+          q: r.pick([`Kakšen elektrolit je ${ime} ($${sp(F)}$) v vodni raztopini?`, `${name} ${g(name, "meri", "meri")} prevodnost vodne raztopine snovi $${sp(F)}$ (${ime}). V katero skupino spada snov?`]),
+          ok: OK,
+          wrong: Object.keys(ELYT_T).filter((x) => x !== t).map((x) => [ELYT_T[x], WH]),
+          hint: "Ali snov v vodi tvori ione, in ali razpade v celoti ali le v majhnem delu?",
+          given: [`\\text{snov} = ${sp(F)}`], find: [T("jakost elektrolita")], formula: [T("močan: skoraj vse v ionih; šibek: le majhen del; neelektrolit: brez ionov")],
+          sol: [`${ime[0].toUpperCase() + ime.slice(1)}: ${why}.`, `Zato je ${OK}.`],
+        });
+      }
+      const ione = (n) => (n === 1 ? "ion" : n === 2 ? "iona" : n < 5 ? "ione" : "ionov");
+      if (k === 2) {
+        const [F, ion, n, gen] = r.pick(IONC);
+        const c = r.pick([0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5]);
+        const ci = n * c;
+        return mk(
+          r.pick([`Kolikšna je koncentracija ionov $${sp(ion)}$ v raztopini ${gen} s koncentracijo $${tx(c)}\\ \\mathrm{mol/L}$? Sol je močan elektrolit.`, `${name} ${g(name, "je pripravil", "je pripravila")} raztopino $${sp(F)}$ s koncentracijo $${tx(c)}\\ \\mathrm{mol/L}$. Kolikšna je koncentracija ionov $${sp(ion)}$?`]),
+          num(ci, "mol/L", 2, [[c, `Ne spreglej indeksa: ena formulska enota ${spU(F)} da ${n} ${ione(n)} ${spU(ion)}.`], [c / n, "Ionov je več kot formulskih enot, ne manj."]], U_CONC),
+          "Zapiši enačbo disociacije in poglej, koliko ionov da ena formulska enota.",
+          [dat(`c(${sp(F)})`, tx(c), "mol/L")], [`c(${sp(ion)})`], [`c(${sp(ion)}) = ${n} \\cdot c(${sp(F)})`],
+          [`Ena formulska enota $${sp(F)}$ da ${n} ${ione(n)} $${sp(ion)}$.`, `$c(${sp(ion)}) = ${n} \\cdot ${tx(c)} = ${qty(tx(ci), "mol/L")}$`]
+        );
+      }
+      // Skupna množina ionov iz dane množine soli.
+      const [F, gen, cat, nc, an, na] = r.pick(DISS);
+      const n0 = r.pick([0.1, 0.2, 0.25, 0.5, 1, 2, 3]);
+      const tot = n0 * (nc + na);
+      const atoms = Object.values(parseFormula(F)).reduce((a, b) => a + b, 0);
+      return mk(
+        r.pick([`Koliko molov ionov skupaj nastane, ko v vodi raztopimo $${tx(n0)}\\ \\mathrm{mol}$ ${gen} ($${sp(F)}$)?`, `${name} ${g(name, "raztopi", "raztopi")} $${tx(n0)}\\ \\mathrm{mol}$ $${sp(F)}$ v vodi. Koliko molov ionov je v raztopini?`]),
+        num(tot, "mol", null, [[n0, "Ena formulska enota razpade na več ionov."], [n0 * atoms, "Šteješ ione, ne atomov: večatomni ion (npr. SO₄²⁻) je en delec."], [n0 * nc, "Prištej še anione."]]),
+        "Zapiši enačbo disociacije in preštej ione na desni strani.",
+        [dat(`n(${sp(F)})`, tx(n0), "mol")], [T("n(ioni)")], [`${sp(F)} \\rightarrow ${nc > 1 ? nc : ""}\\,${sp(cat)} + ${na > 1 ? na : ""}\\,${sp(an)}`],
+        [`$${sp(F)} \\rightarrow ${nc > 1 ? `${nc}\\,` : ""}${sp(cat)} + ${na > 1 ? `${na}\\,` : ""}${sp(an)}$: ena formulska enota da ${nc + na} ${ione(nc + na)}.`, `$n(\\text{ioni}) = ${nc + na} \\cdot ${tx(n0)}\\ \\mathrm{mol} = ${qty(tx(tot), "mol")}$`]
+      );
+    }
+    if (level === 2) {
+      const k = r.pick([0, 1, 1, 2]);
+      if (k === 0) {
+        const P = r.pick(PREC);
+        const wrong = [[eqU(P.mol), "To je molekulska enačba; v skrajšani ionski zapišemo le ione, ki reagirajo."], [eqU(P.spN), `To sta iona opazovalca: ${P.spW} Ostaneta raztopljena.`]];
+        if (P.kb > 1) wrong.push([eqU(P.net.replace(/^(\S+) \+ \d/, "$1 + ")), "Enačba ni urejena: naboj in število atomov morata biti na obeh straneh enaka."]);
+        else wrong.push(["Reakcija ne poteče, ker sta obe raztopini topni.", `Nova kombinacija ${spU(P.p)} je netopna, zato ioni zapustijo raztopino kot oborina.`]);
+        return concept(r, {
+          q: `Zmešamo raztopini $${sp(P.a)}$ in $${sp(P.b)}$. Katera je skrajšana ionska enačba reakcije?`,
+          ok: eqU(P.net),
+          wrong,
+          hint: "Ione opazovalce, ki so na obeh straneh enaki, izpusti; oborino zapiši kot formulo s (s).",
+          given: [`\\text{raztopina 1} = ${sp(P.a)}(\\mathrm{aq})`, `\\text{raztopina 2} = ${sp(P.b)}(\\mathrm{aq})`], find: [T("skrajšana ionska enačba")], formula: [T("ioni opazovalci se izpustijo; oborina s (s); urejena naboj in atomi")],
+          sol: [`Molekulska: $${eqTex(P.mol)}$`, `Oborina je $${sp(P.p)}$, $${sp(P.spS)}$ je topen (iona opazovalca).`, `Skrajšana ionska: $${eqTex(P.net)}$`],
+        });
+      }
+      if (k === 1) {
+        const [S, gen, Ms, ex, p, Mp, kk] = r.pick(PMASS);
+        const V = r.int(4, 50) * 5;
+        const c = r.pick([0.05, 0.1, 0.12, 0.15, 0.2, 0.25, 0.3]);
+        const n = (c * V) / 1000;
+        const m = n * kk * Mp;
+        const ions = kk === 1 ? "iona" : kk === 2 ? "iona" : "ione";
+        return mk(
+          r.pick([`Raztopini ${gen} s prostornino $${V}\\ \\mathrm{mL}$ in koncentracijo $${tx(c)}\\ \\mathrm{mol/L}$ dodamo prebitek raztopine $${sp(ex)}$. Koliko gramov $${sp(p)}$ nastane? $M(${sp(p)}) = ${Mtx(Mp)}\\ \\mathrm{g/mol}$. ${zaokr(3)}`, `${name} ${g(name, "doda", "doda")} prebitek $${sp(ex)}$ k $${V}\\ \\mathrm{mL}$ raztopine $${sp(S)}$ s koncentracijo $${tx(c)}\\ \\mathrm{mol/L}$. Kolikšna je masa oborine $${sp(p)}$? $M(${sp(p)}) = ${Mtx(Mp)}\\ \\mathrm{g/mol}$. ${zaokr(3)}`]),
+          num(m, "g", 3, [[n * Mp, `Vsaka formulska enota ${spU(S)} da ${kk} ${ions}, ki se oborijo.`], [n * Ms, `To je masa ${spU(S)} v raztopini, ne masa oborine.`], [c * V * kk * Mp, "Prostornino pretvori v litre."]]),
+          kk === 1 ? "Izračunaj množino soli; ioni, ki se oborijo, so v razmerju 1 : 1 z oborino." : "Izračunaj množino soli, nato množino ionov, ki se oborijo (indeks!), in maso oborine.",
+          [dat("V", V, "mL"), dat("c", tx(c), "mol/L"), dat(`M(${sp(p)})`, Mtx(Mp), "g/mol")], [`m(${sp(p)})`], ["n = c \\cdot V", "m = n \\cdot M"],
+          [`$n(${sp(S)}) = ${tx(c)} \\cdot ${tx(V / 1000)} = ${qty(tx(n, 5), "mol")}$`, kk === 1 ? `$n(${sp(p)}) = n(${sp(S)}) = ${qty(tx(n, 5), "mol")}$` : `Ena formulska enota da ${kk} ${ions}: $n(${sp(p)}) = ${kk} \\cdot ${tx(n, 5)} = ${qty(tx(kk * n, 5), "mol")}$`, `$m = ${tx(kk * n, 5)} \\cdot ${Mtx(Mp)} ${res(m, 3, "g")}$`]
+        );
+      }
+      const [S, t, ion, why] = r.pick(SALT_PH);
+      const WRONG = {
+        K: { N: `Raztopina ni nevtralna: ${why}.`, B: `V soli ni aniona šibke kisline; ${why}, zato je raztopina kisla.` },
+        N: { K: `${why}; z vodo ne izmenjata protona.`, B: `${why}; z vodo ne izmenjata protona.` },
+        B: { K: `${why}, zato nastanejo ioni OH⁻, ne H₃O⁺.`, N: `Sol ni nevtralna, čeprav nima skupine OH: ${why}.` },
+      };
+      const litmus = r.next() < 0.4;
+      const LIT = { K: "moder lakmus pordeči", N: "lakmus se ne spremeni", B: "rdeč lakmus pomodri" };
+      return concept(r, {
+        q: litmus ? `${name} ${g(name, "raztopi", "raztopi")} sol $${sp(S)}$ v vodi in ${g(name, "preizkusi", "preizkusi")} raztopino z lakmusovim papirjem. Kaj ${g(name, "opazi", "opazi")}?` : r.pick([`Je vodna raztopina soli $${sp(S)}$ kisla, nevtralna ali bazična?`, `Kakšen pH ima vodna raztopina soli $${sp(S)}$?`]),
+        ok: litmus ? LIT[t] : PH_T[t],
+        wrong: Object.keys(PH_T).filter((x) => x !== t).map((x) => [litmus ? LIT[x] : PH_T[x], WRONG[t][x]]),
+        hint: "Razstavi sol na ione. Je kateri ion kation šibke baze ali anion šibke kisline?",
+        given: [`\\text{sol} = ${sp(S)}`], find: [T(litmus ? "barva lakmusa" : "kislost raztopine")], formula: [T("kation šibke baze → kislo; anion šibke kisline → bazično; ioni močnih kislin in baz → nevtralno")],
+        sol: [ion ? `$${eqTex(ION_EQ[ion])}$` : "Noben ion soli ne izmenja protona z vodo.", `${why[0].toUpperCase() + why.slice(1)}.`, `Raztopina je ${PH_T[t]}${litmus ? `: ${LIT[t]}` : ""}.`],
+      });
+    }
+    // Raven 3
+    const k = r.pick([0, 0, 1, 1, 2]);
+    if (k === 0) {
+      const P = r.pick(PREC);
+      let Va, Vb, ca, cb, na, nb;
+      do {
+        Va = r.int(4, 12) * 5; Vb = r.int(4, 12) * 5;
+        ca = r.pick([0.1, 0.15, 0.2, 0.25, 0.3]); cb = r.pick([0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5]);
+        na = (ca * Va) / 1000; nb = (cb * Vb) / 1000;
+      } while (Math.abs(na / P.ka - nb / P.kb) < 1e-4);
+      const np = Math.min(na / P.ka, nb / P.kb);
+      const limA = na / P.ka < nb / P.kb;
+      const m = np * P.M;
+      const ionA = P.net.split(" ")[0], ionB = P.net.split(" ")[2].replace(/^\d/, "");
+      return mk(
+        `Zmešamo $${Va}\\ \\mathrm{mL}$ raztopine ${P.an} ($${tx(ca)}\\ \\mathrm{mol/L}$) in $${Vb}\\ \\mathrm{mL}$ raztopine ${P.bn} ($${tx(cb)}\\ \\mathrm{mol/L}$). Koliko gramov oborine $${sp(P.p)}$ nastane? $M = ${Mtx(P.M)}\\ \\mathrm{g/mol}$. ${zaokr(3)}`,
+        num(m, "g", 3, [[(limA ? nb / P.kb : na / P.ka) * P.M, "Količino oborine določa reaktant, ki ga zmanjka (omejitveni reaktant)."], [Math.min(na, nb) * P.M, `Upoštevaj razmerje ionov v skrajšani ionski enačbi.`], [np * P.M * 1000, "Prostornine pretvori v litre."]]),
+        "Zapiši skrajšano ionsko enačbo, izračunaj množini obeh ionov in poišči omejitveni reaktant.",
+        [dat(`V(${sp(P.a)})`, Va, "mL"), dat(`c(${sp(P.a)})`, tx(ca), "mol/L"), dat(`V(${sp(P.b)})`, Vb, "mL"), dat(`c(${sp(P.b)})`, tx(cb), "mol/L"), dat(`M(${sp(P.p)})`, Mtx(P.M), "g/mol")], [`m(${sp(P.p)})`], [eqTex(P.net), "n = c \\cdot V", "m = n \\cdot M"],
+        [`$${eqTex(P.net)}$`, `$n(${sp(ionA)}) = ${tx(ca)} \\cdot ${tx(Va / 1000)} = ${qty(tx(na, 5), "mol")}$, $n(${sp(ionB)}) = ${tx(cb)} \\cdot ${tx(Vb / 1000)} = ${qty(tx(nb, 5), "mol")}$`, `Omejitveni reaktant: $${sp(limA ? ionA : ionB)}$${P.kb > 1 ? ` (razmerje 1 : ${P.kb})` : ""} → $n(${sp(P.p)}) = ${qty(tx(np, 5), "mol")}$`, `$m = ${tx(np, 5)} \\cdot ${Mtx(P.M)} ${res(m, 3, "g")}$`]
+      );
+    }
+    if (k === 1) {
+      const CASE = r.pick([
+        { ion: "SO4^2-", Mi: 96.06, p: "BaSO4", Mp: 233.39, re: "BaCl2", what: "mineralne vode", unit: "mg/L" },
+        { ion: "Cl^-", Mi: 35.45, p: "AgCl", Mp: 143.32, re: "AgNO3", what: "vode iz vodnjaka", unit: "mg/L" },
+        { ion: "Ag^+", Mi: 107.87, p: "AgCl", Mp: 143.32, re: "NaCl", what: "raztopine iz starih telefonov", unit: "mol/L" },
+      ]);
+      const V = r.pick(CASE.unit === "mol/L" ? [100, 200, 250] : [100, 200, 250, 500]);
+      const mp = CASE.unit === "mol/L" ? r.dec(0.5, 3, 3) : r.dec(0.05, 0.4, 3);
+      const n = mp / CASE.Mp;
+      const c = n / (V / 1000);
+      const gam = c * CASE.Mi * 1000;
+      if (CASE.unit === "mol/L") {
+        return mk(
+          `Vzorcu ${CASE.what} s prostornino $${V}\\ \\mathrm{mL}$ dodajo prebitek $${sp(CASE.re)}$. Posušena oborina $${sp(CASE.p)}$ ima maso $${tx(mp, 3)}\\ \\mathrm{g}$. Kolikšna je koncentracija ionov $${sp(CASE.ion)}$ v vzorcu? $M(${sp(CASE.p)}) = ${Mtx(CASE.Mp)}\\ \\mathrm{g/mol}$. ${zaokr(4)}`,
+          num(c, "mol/L", 4, [[n, "To je množina; deli jo še s prostornino v litrih."], [mp / CASE.Mi / (V / 1000), "Uporabi molsko maso oborine AgCl, ne srebra."], [n / V, "Prostornino pretvori v litre."]], U_CONC),
+          "Oborijo se vsi ioni srebra: $n(\\mathrm{Ag^+}) = n(\\mathrm{AgCl})$.",
+          [dat("V", V, "mL"), dat(`m(${sp(CASE.p)})`, tx(mp, 3), "g"), dat(`M(${sp(CASE.p)})`, Mtx(CASE.Mp), "g/mol")], [`c(${sp(CASE.ion)})`], ["n = \\dfrac{m}{M}", "c = \\dfrac{n}{V}"],
+          [`$n(${sp(CASE.p)}) = \\dfrac{${tx(mp, 3)}}{${Mtx(CASE.Mp)}} \\approx ${qty(tx(n, 6), "mol")} = n(${sp(CASE.ion)})$`, `$c = \\dfrac{${tx(n, 6)}}{${tx(V / 1000)}} ${res(c, 4, "mol/L")}$`]
+        );
+      }
+      return mk(
+        `Vzorcu ${CASE.what} s prostornino $${V}\\ \\mathrm{mL}$ dodamo prebitek $${sp(CASE.re)}$ in dobimo $${tx(mp, 3)}\\ \\mathrm{g}$ oborine $${sp(CASE.p)}$. Kolikšna je masna koncentracija ionov $${sp(CASE.ion)}$ v $\\mathrm{mg/L}$? $M(${sp(CASE.p)}) = ${Mtx(CASE.Mp)}$, $M(${sp(CASE.ion)}) = ${Mtx(CASE.Mi)}\\ \\mathrm{g/mol}$. ${zaokr(0)}`,
+        num(gam, "mg/L", 0, [[(mp / (V / 1000)) * 1000, "To je masa oborine na liter; preračunaj na ione z molsko maso."], [n * CASE.Mi * 1000, "Maso ionov deli še s prostornino v litrih."], [gam / 1000, "Grame pretvori v miligrame."]], { unitAlternatives: ["mg/l", "mg/dm3", "mg/dm³"] }),
+        "Iz mase oborine izračunaj množino; toliko je ionov v vzorcu. Nato maso ionov na liter.",
+        [dat("V", V, "mL"), dat(`m(${sp(CASE.p)})`, tx(mp, 3), "g"), dat(`M(${sp(CASE.p)})`, Mtx(CASE.Mp), "g/mol"), dat(`M(${sp(CASE.ion)})`, Mtx(CASE.Mi), "g/mol")], [`\\gamma(${sp(CASE.ion)})`], ["n = \\dfrac{m}{M}", "\\gamma = \\dfrac{n \\cdot M}{V}"],
+        [`$n = \\dfrac{${tx(mp, 3)}}{${Mtx(CASE.Mp)}} \\approx ${qty(tx(n, 6), "mol")} = n(${sp(CASE.ion)})$`, `$m(${sp(CASE.ion)}) = ${tx(n, 6)} \\cdot ${Mtx(CASE.Mi)} \\approx ${qty(tx(n * CASE.Mi * 1000, 2), "mg")}$`, `$\\gamma = \\dfrac{${tx(n * CASE.Mi * 1000, 2)}\\ \\mathrm{mg}}{${tx(V / 1000)}\\ \\mathrm{L}} ${res(gam, 0, "mg/L")}$`]
+      );
+    }
+    const c = r.pick(ELYT_C3);
+    return concept(r, { q: c.q, ok: c.ok, wrong: c.wrong, hint: "Razmisli, kateri delci so v raztopini in kaj naredijo s protoni ali drug z drugim.", given: c.gv, find: [T(c.find)], formula: [T("Brønsted: kislina odda proton, baza ga sprejme")], sol: c.sol });
+  },
+};
+
+// ---------- prehodni elementi in koordinacijske spojine ----------
+// Elektronske konfiguracije atomov: [d, s] zunaj [Ar].
+const DS = { Sc: [1, 2], Ti: [2, 2], V: [3, 2], Cr: [5, 1], Mn: [5, 2], Fe: [6, 2], Co: [7, 2], Ni: [8, 2], Cu: [10, 1], Zn: [10, 2] };
+const TM_IONS = [["Fe", 2], ["Fe", 3], ["Cu", 2], ["Cu", 1], ["Mn", 2], ["Co", 2], ["Co", 3], ["Ni", 2], ["Zn", 2], ["Cr", 3], ["V", 3], ["Ti", 3]];
+const cfg = (d, s) => `[Ar] 3d${sup(String(d))}${s ? ` 4s${sup(String(s))}` : ""}`;
+const cfgTex = (d, s) => `[\\mathrm{Ar}]\\,3d^{${d}}${s ? `\\,4s^{${s}}` : ""}`;
+const ionS = (El, q) => `${El}^${q === 1 ? "+" : `${q}+`}`;
+// Ligandi: [formula, naboj, ime v kompleksu]
+const LIG = { NH3: [0, "amin"], H2O: [0, "akva"], CN: [-1, "ciano"], Cl: [-1, "klorido"], OH: [-1, "hidroksido"], SCN: [-1, "tiocianato"] };
+const LIG_TEX = { NH3: "NH3", H2O: "H2O", CN: "CN", Cl: "Cl", OH: "OH", SCN: "SCN" };
+const MET_ADJ = { Cu: "bakrov", Ag: "srebrov", Ni: "nikljev", Fe: "železov", Co: "kobaltov", Cr: "kromov", Zn: "cinkov" };
+const MET_AN = { Fe: "ferat", Ag: "argentat", Cu: "kuprat" };
+const C_PREF = { 1: "", 2: "di", 3: "tri", 4: "tetra", 5: "penta", 6: "heksa" };
+const ROM = ["0", "I", "II", "III", "IV", "V", "VI", "VII"];
+// Kompleksni ioni: [kovina, ox. število, [[ligand, število], ...]]
+const CPLX = [
+  ["Cu", 2, [["NH3", 4]]], ["Ag", 1, [["NH3", 2]]], ["Fe", 3, [["CN", 6]]], ["Fe", 2, [["CN", 6]]], ["Ni", 2, [["H2O", 6]]], ["Fe", 3, [["H2O", 6]]],
+  ["Co", 3, [["NH3", 6]]], ["Cr", 3, [["H2O", 6]]], ["Zn", 2, [["NH3", 4]]], ["Cu", 2, [["H2O", 6]]], ["Ag", 1, [["CN", 2]]], ["Cu", 2, [["Cl", 4]]],
+  ["Zn", 2, [["OH", 4]]], ["Ni", 2, [["CN", 4]]], ["Co", 3, [["Cl", 1], ["NH3", 5]]], ["Co", 3, [["Cl", 2], ["NH3", 4]]], ["Fe", 3, [["SCN", 1], ["H2O", 5]]], ["Pt", 4, [["Cl", 6]]], ["Pt", 2, [["Cl", 4]]], ["Al", 3, [["OH", 4]]],
+];
+const cz = (c) => c[1] + c[2].reduce((s, [L, n]) => s + n * LIG[L][0], 0);
+const cks = (c) => c[2].reduce((s, [, n]) => s + n, 0);
+const qStr = (z) => (z === 0 ? "" : `^${Math.abs(z) === 1 ? "" : Math.abs(z)}${z > 0 ? "+" : "-"}`);
+const cBody = (c) => `${c[0]}${c[2].map(([L, n]) => (L === "Cl" ? `Cl${n > 1 ? n : ""}` : `(${LIG_TEX[L]})${n > 1 ? n : ""}`)).join("")}`;
+const MET_AN_ALL = { ...MET_AN, Ni: "nikljat", Co: "kobaltat", Cr: "kromat", Zn: "cinkat" };
+const nKl = (n) => (n === 1 ? "je 1 klorid" : n === 2 ? "sta 2 klorida" : `so ${n} kloridi`);
+const wTex = (z) => { const [a, b] = z.split("·"); const m = b.match(/^(\d*)(.*)$/); return `${sp(a)} \\cdot ${m[1] ? `${m[1]}\\,` : ""}${sp(m[2])}`; };
+const cIon = (c) => `[${cBody(c)}]${qStr(cz(c))}`;
+const cName = (c, x = c[1], n0 = c[2][0][1]) => {
+  const z = cz(c);
+  if (c[2].length > 1 || !(z < 0 ? MET_AN[c[0]] : MET_ADJ[c[0]])) return null;
+  const L = c[2][0][0];
+  return `${C_PREF[n0]}${LIG[L][1]}${z < 0 ? MET_AN[c[0]] : MET_ADJ[c[0]]}(${ROM[x]}) ion`;
+};
+// Soli: [formula, kompleks (indeks v CPLX), protiion, število protiionov, naboj protiiona]
+const CSALT = [
+  ["[Cu(NH3)4]SO4", 0, "SO4^2-", 1, -2], ["K3[Fe(CN)6]", 2, "K^+", 3, 1], ["K4[Fe(CN)6]", 3, "K^+", 4, 1], ["[Co(NH3)6]Cl3", 6, "Cl^-", 3, -1], ["[CoCl(NH3)5]Cl2", 14, "Cl^-", 2, -1],
+  ["[Ag(NH3)2]Cl", 1, "Cl^-", 1, -1], ["[Ni(H2O)6]Cl2", 4, "Cl^-", 2, -1], ["[Cr(H2O)6]Cl3", 7, "Cl^-", 3, -1], ["K2[PtCl6]", 17, "K^+", 2, 1], ["Na[Al(OH)4]", 19, "Na^+", 1, 1],
+  ["K[Ag(CN)2]", 10, "K^+", 1, 1], ["[CoCl2(NH3)4]Cl", 15, "Cl^-", 1, -1], ["K2[Ni(CN)4]", 13, "K^+", 2, 1], ["Na2[Zn(OH)4]", 12, "Na^+", 2, 1], ["[Zn(NH3)4](NO3)2", 8, "NO3^-", 2, -1],
+];
+// Wernerjeve spojine: [zapis, M, prostih Cl⁻, formula kompleksa, barva]
+const WERNER = [
+  ["CoCl3·6NH3", 267.46, 3, "[Co(NH3)6]Cl3", "rumeno oranžne"], ["CoCl3·5NH3", 250.43, 2, "[CoCl(NH3)5]Cl2", "vijolične"], ["CoCl3·4NH3", 233.4, 1, "[CoCl2(NH3)4]Cl", "zelene"],
+  ["CrCl3·6H2O", 266.47, 3, "[Cr(H2O)6]Cl3", "vijolične"], ["CrCl3·6H2O", 266.47, 2, "[CrCl(H2O)5]Cl2·H2O", "svetlo zelene"], ["CrCl3·6H2O", 266.47, 1, "[CrCl2(H2O)4]Cl·2H2O", "temno zelene"],
+];
+const AGCL_SALT = [["[Co(NH3)6]Cl3", 267.46, 3, 3], ["[CoCl(NH3)5]Cl2", 250.43, 2, 3], ["[CoCl2(NH3)4]Cl", 233.4, 1, 3], ["[Cr(H2O)6]Cl3", 266.47, 3, 3], ["[Ni(H2O)6]Cl2", 237.71, 2, 2], ["[Zn(NH3)4]Cl2", 204.4, 2, 2]];
+// Zaporedne ionizacijske energije (kJ/mol) in največje oksidacijsko število.
+const IE = [["kalcij", "Ca", [590, 1145, 4912, 6491], 2], ["titan", "Ti", [659, 1310, 2653, 4175, 9581], 4], ["vanadij", "V", [651, 1414, 2830, 4507, 6299, 12363], 5], ["skandij", "Sc", [633, 1235, 2389, 7091, 8843], 3], ["krom", "Cr", [653, 1591, 2987, 4743, 6702, 8744, 15455], 6], ["magnezij", "Mg", [738, 1451, 7733, 10543], 2], ["aluminij", "Al", [578, 1817, 2745, 11577], 3]];
+// [ion, reagent v besedilu, reagent za podatke (TeX), opažanje]
+const TEST_ION = [
+  ["Fe^3+", "raztopino $\\mathrm{KSCN}$", "\\mathrm{KSCN}", "raztopina postane krvavo rdeča"], ["Cu^2+", "prebitek amoniaka", "\\mathrm{NH_3}", "najprej nastane bledo modra oborina, nato temno modra raztopina"],
+  ["Fe^2+", "raztopino $\\mathrm{K_3[Fe(CN)_6]}$", "\\mathrm{K_3[Fe(CN)_6]}", "nastane temno modra oborina"], ["Fe^3+", "raztopino $\\mathrm{K_4[Fe(CN)_6]}$", "\\mathrm{K_4[Fe(CN)_6]}", "nastane temno modra oborina (berlinsko modro)"],
+  ["Ag^+", "kloridne ione, nato amoniak", "\\mathrm{Cl^-},\\ \\mathrm{NH_3}", "nastane bela oborina, ki se v amoniaku raztopi"],
+];
+const TEST_WHY = { "Fe^3+": "Fe³⁺ dokažemo s KSCN (krvavo rdeče) ali s K₄[Fe(CN)₆].", "Cu^2+": "Cu²⁺ dokažemo s prebitkom NH₃ (temno modra raztopina).", "Fe^2+": "Fe²⁺ dokažemo s K₃[Fe(CN)₆] (temno modra oborina).", "Ag^+": "Ag⁺ dokažemo s Cl⁻ (bela oborina AgCl, topna v NH₃).", "Zn^2+": "Zn²⁺ ima 3d¹⁰ in ne daje obarvanih kompleksov." };
+const LIG_C = [
+  { gv: ["\\text{delci} = \\mathrm{NH_3,\\ CN^-,\\ NH_4^+,\\ H_2O}"], q: "Kateri delec od naštetih ne more biti ligand?", ok: "NH₄⁺", wrong: [["NH₃", "Amoniak ima na dušiku prost elektronski par; je ligand v [Cu(NH₃)₄]²⁺."], ["CN⁻", "Cianidni ion ima prost elektronski par; šest jih je v [Fe(CN)₆]³⁻."], ["H₂O", "Voda ima na kisiku dva prosta elektronska para."]], sol: ["Ligand mora imeti prost elektronski par, ki ga da centralnemu ionu.", "NH₄⁺ je svoj prosti par že porabil za vez s H⁺."] },
+  { gv: ["\\text{vez} = \\text{koordinativna}"], q: "Kaj je koordinativna vez v kompleksnem ionu?", ok: "Ligand da centralnemu ionu svoj prosti elektronski par.", wrong: [["Centralni ion in ligand vsak prispevata po en elektron.", "To je navadna kovalentna vez; pri koordinativni da oba elektrona ligand."], ["Centralni ion odda elektrone ligandu.", "Kovinski kation elektronov ne oddaja ligandu, ampak sprejme par."], ["Ligand in centralni ion se privlačita le zaradi nasprotnih nabojev.", "Tudi nevtralni ligandi (NH₃, H₂O) se vežejo – preko prostega para."]], sol: ["Ligand ima prost elektronski par.", "Ta par da centralnemu ionu: nastane koordinativna vez."] },
+  { gv: ["\\text{ion} = \\mathrm{Cu^{2+}}", "\\text{barva} = \\text{modra}"], q: "Zakaj je raztopina $\\mathrm{Cu^{2+}}$ modra?", ok: "Vpija oranžno rdečo svetlobo, modro prepusti.", wrong: [["Vpija modro svetlobo.", "Vidimo svetlobo, ki jo raztopina prepusti, ne tisto, ki jo vpije."], ["Ima polno podlupino 3d.", "Cu²⁺ ima 3d⁹ – delno zapolnjeno; polna podlupina ne da barve."], ["Ker ima ion naboj 2+.", "Zn²⁺ ima enak naboj, a je brezbarven; barvo določajo elektroni d."]], sol: ["Cu²⁺ ima 3d⁹: elektron d lahko vpije svetlobo in preskoči na višjo raven.", "Vpija oranžno rdečo, vidimo dopolnilno barvo – modro."] },
+];
+const COLORLESS = [["Zn^2+", "Zn", 2], ["Sc^3+", "Sc", 3], ["Cu^+", "Cu", 1]];
+const COLORED = [["Cu^2+", "Cu", 2], ["Fe^3+", "Fe", 3], ["Ni^2+", "Ni", 2], ["Fe^2+", "Fe", 2], ["Cr^3+", "Cr", 3], ["Co^2+", "Co", 2]];
+const dOf = (El, q) => DS[El][0] + DS[El][1] - q;
+
+const genPrehodni = {
+  id: "dod-kem-ss-4-prehodni-elementi",
+  topics: ["KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine"],
+  gen(level, r) {
+    const name = nm(r);
+    if (level === 1) {
+      const k = r.pick([0, 0, 1, 1, 2, 2, 3]);
+      if (k === 0) {
+        const c = r.pick(CPLX);
+        const ks = cks(c), z = cz(c);
+        const mis = [[2 * Math.abs(c[1]), "Koordinacijsko število ni dvakratnik naboja: preštej vezi (ligande) okoli centralnega iona."], [c[2].length, "Šteje število ligandov, ne število vrst ligandov."]];
+        if (c[2].length === 1 && c[2][0][0].length > 2) mis.push([c[2][0][1] * (c[2][0][0] === "H2O" ? 3 : 4), "Šteje ligande (vezi), ne atomov v ligandih."]);
+        return mk(
+          r.pick([`Kolikšno je koordinacijsko število centralnega iona v kompleksnem ionu $${sp(cIon(c))}$?`, `${name} ${g(name, "riše", "riše")} kompleksni ion $${sp(cIon(c))}$. Koliko vezi ${g(name, "mora narisati", "mora narisati")} okoli centralnega iona (koordinacijsko število)?`]),
+          num(ks, null, null, mis),
+          "Preštej ligande v oglatem oklepaju; vsak tvori eno vez s centralnim ionom.",
+          [`\\text{ion} = ${sp(cIon(c))}`], [T("KŠ")], [T("KŠ = število vezi (ligandov) okoli centralnega iona")],
+          [`Ligandi: ${c[2].map(([L, n]) => `${n} × $${sp(LIG_TEX[L] + (LIG[L][0] ? "^-" : ""))}$`).join(", ")}`, c[2].length > 1 ? `$\\text{KŠ} = ${c[2].map(([, n]) => n).join(" + ")} = ${ks}$` : `Vsak ligand tvori eno vez: $\\text{KŠ} = ${ks}$`]
+        );
+      }
+      if (k === 1) {
+        const pool = CPLX.filter((c) => c[2].length === 1);
+        const c = r.pick(pool);
+        const z = cz(c), x = c[1];
+        const [L, n] = c[2][0];
+        const zl = LIG[L][0];
+        return mk(
+          r.pick([`Kolikšno je oksidacijsko število kovine v kompleksnem ionu $${sp(cIon(c))}$?`, `Določi oksidacijsko število centralnega iona v $${sp(cIon(c))}$.`]),
+          num(x, null, null, [[z, "Naboj kompleksa ni oksidacijsko število: upoštevaj še naboje ligandov."], [-x, "Preveri predznak."], [z + n * zl, "Naboje ligandov odštej od naboja kompleksa, ne prištej."]]),
+          `Naboj kompleksa je vsota oksidacijskega števila in nabojev ligandov. Naboj liganda $${sp(LIG_TEX[L] + (zl ? "^-" : ""))}$ je $${zl}$.`,
+          [`\\text{ion} = ${sp(cIon(c))}`], ["x"], ["z_\\mathrm{k} = x + \\sum z_\\mathrm{L}"],
+          [`$x + ${n} \\cdot (${zl}) = ${sgn(z)}$`, `$x = ${sgn(z)} - (${n * zl}) = ${sgn(x)}$`]
+        );
+      }
+      if (k === 2) {
+        const [El, q] = r.pick(TM_IONS);
+        const [d, s] = DS[El];
+        const di = dOf(El, q);
+        return mk(
+          r.pick([`Atom $\\mathrm{${El}}$ ima konfiguracijo $${cfgTex(d, s)}$. Koliko elektronov 3d ima ion $${sp(ionS(El, q))}$?`, `${name} ${g(name, "piše", "piše")} konfiguracijo iona $${sp(ionS(El, q))}$. Atom ima $${cfgTex(d, s)}$. Koliko elektronov bo ${g(name, "zapisal", "zapisala")} v podlupini 3d?`]),
+          num(di, null, null, [[d - q, "Pri tvorbi iona atom najprej odda elektrone 4s, šele nato 3d."], [d, "Ion ima manj elektronov kot atom; odvzemi jih (najprej iz 4s)."], [d + s, "Elektroni 4s niso v podlupini 3d; najprej odidejo prav oni."]]),
+          "Najprej odvzemi elektrone 4s, šele preostale iz 3d.",
+          [`${sp(El)} = ${cfgTex(d, s)}`, `\\text{ion} = ${sp(ionS(El, q))}`], [T("število elektronov 3d")], [T("pri tvorbi iona najprej odidejo elektroni 4s")],
+          [`Ion odda ${q} elektron${q === 1 ? "" : q === 2 ? "a" : "e"}: ${q <= s ? (q === 1 ? "elektron iz 4s" : "oba iz 4s") : `${s} iz 4s, ${q - s} iz 3d`}.`, `$${sp(ionS(El, q))}$: $${cfgTex(di, 0)}$ → ${di} elektron${di === 1 ? "" : di === 2 ? "a" : di === 3 || di === 4 ? "i" : "ov"} 3d.`]
+        );
+      }
+      const c = r.pick(LIG_C);
+      return concept(r, { q: c.q, ok: c.ok, wrong: c.wrong, hint: "Ligand ima prost elektronski par, ki ga da centralnemu ionu; barvo vidimo kot prepuščeno svetlobo.", given: c.gv, find: [T("pravilna trditev")], formula: [T("koordinativna vez: ligand da elektronski par")], sol: c.sol });
+    }
+    if (level === 2) {
+      const k = r.pick([0, 0, 0, 1, 2, 3, 4, 4]);
+      if (k === 0) {
+        const [F, ci, ion, cnt, zc] = r.pick(CSALT);
+        const c = CPLX[ci];
+        const z = cz(c), x = c[1];
+        const sumL = c[2].reduce((s, [L, n]) => s + n * LIG[L][0], 0);
+        const askKS = r.next() < 0.35;
+        if (askKS) {
+          const ks = cks(c);
+          return mk(
+            `Kolikšno je koordinacijsko število centralnega iona v spojini $${sp(F)}$?`,
+            num(ks, null, null, [[ks + cnt, "Ioni zunaj oglatega oklepaja niso ligandi; le uravnovesijo naboj."], [2 * Math.abs(x), "Koordinacijsko število ni dvakratnik naboja: preštej ligande."]]),
+            "Ligandi so samo v oglatem oklepaju; ioni zunaj so protiioni.",
+            [`\\text{spojina} = ${sp(F)}`], [T("KŠ")], [T("KŠ = število ligandov v oglatem oklepaju")],
+            [`Zunaj oklepaja: ${cnt} × $${sp(ion)}$ (protiion, ni ligand).`, `V oklepaju: ${c[2].map(([L, n]) => `${n} × $${sp(LIG_TEX[L] + (LIG[L][0] ? "^-" : ""))}$`).join(", ")} → KŠ $= ${ks}$`]
+          );
+        }
+        return mk(
+          r.pick([`Kolikšno je oksidacijsko število centralnega iona v spojini $${sp(F)}$?`, `${name} ${g(name, "je dobil", "je dobila")} reagent $${sp(F)}$. Določi oksidacijsko število kovine v kompleksu.`]),
+          num(x, null, null, [[z, "To je naboj kompleksa; upoštevaj še naboje ligandov."], [-sumL, "Spojina je nevtralna, kompleks pa ne: najprej iz protiionov določi naboj kompleksa."], [-x, "Preveri predznake."]]),
+          "Spojina je nevtralna: iz protiionov zunaj oklepaja določi naboj kompleksa, nato oksidacijsko število.",
+          [`\\text{spojina} = ${sp(F)}`], ["x"], ["z_\\mathrm{k} = -\\sum z(\\text{protiioni})", "z_\\mathrm{k} = x + \\sum z_\\mathrm{L}"],
+          [`Protiioni: $${cnt} \\cdot (${sgn(zc)}) = ${sgn(cnt * zc)}$, zato $z_\\mathrm{k} = ${sgn(z)}$.`, `$x + (${sumL}) = ${sgn(z)}$`, `$x = ${sgn(x)}$`]
+        );
+      }
+      if (k === 1) {
+        const pool = CPLX.filter((c) => cName(c));
+        const c = r.pick(pool);
+        const z = cz(c), x = c[1];
+        const [L, n] = c[2][0];
+        const ok = cName(c);
+        const altN = n === 6 ? 4 : n === 4 ? 6 : 4;
+        const alt = [c[0], x, [[L, altN]]];
+        if (r.next() < 0.5) {
+          // ime → formula
+          const zWrong = LIG[L][0] === 0 ? x + 1 : x;
+          const cands = [
+            [cIon(alt), `»${C_PREF[n]}« pomeni ${n} ligandov, ne ${altN}.`],
+            [`[${cBody(c)}]${qStr(zWrong)}`, LIG[L][0] === 0 ? "Rimska številka je oksidacijsko število; nevtralni ligandi ga ne spremenijo, zato je naboj kompleksa enak oksidacijskemu številu." : "Naboj kompleksa vključuje tudi naboje ligandov, ne le oksidacijsko število."],
+          ];
+          const swapL = { NH3: "H2O", H2O: "OH", CN: "Cl", Cl: "CN" }[L];
+          const sw = [c[0], x, [[swapL, n]]];
+          cands.push([cIon(sw), `»${LIG[L][1]}« je ${spU(LIG_TEX[L] + (LIG[L][0] ? "^-" : ""))}, ne ${spU(LIG_TEX[swapL] + (LIG[swapL][0] ? "^-" : ""))}.`]);
+          return concept(r, {
+            q: `Katera formula ustreza imenu ${ok}?`,
+            ok: spU(cIon(c)),
+            wrong: cands.filter((w) => w[0] !== cIon(c)).map(([f, why]) => [spU(f), why]),
+            hint: "Predpona pove število ligandov, ime liganda njegovo formulo, rimska številka oksidacijsko število kovine.",
+            given: [`\\text{ime} = \\text{${ok}}`], find: [T("formula kompleksnega iona")], formula: ["z_\\mathrm{k} = x + \\sum z_\\mathrm{L}"],
+            sol: [`${C_PREF[n]} = ${n}, ${LIG[L][1]} = $${sp(LIG_TEX[L] + (LIG[L][0] ? "^-" : ""))}$, (${ROM[x]}) → $x = ${sgn(x)}$`, `$z_\\mathrm{k} = ${sgn(x)} + ${n} \\cdot (${LIG[L][0]}) = ${sgn(z)}$`, `Formula: $${sp(cIon(c))}$`],
+          });
+        }
+        // formula → ime
+        const cands = [
+          [cName(c, x, altN), `V formuli je ${n} ligandov, zato »${C_PREF[n]}«.`],
+          [cName(c, x < 3 ? x + 1 : x - 1), `Rimska številka je oksidacijsko število kovine; iz naboja kompleksa in ligandov sledi ${sgn(x)}.`],
+          [`${C_PREF[n]}${LIG[L][1]}${z < 0 ? MET_ADJ[c[0]] : MET_AN_ALL[c[0]]}(${ROM[x]}) ion`, z < 0 ? "Kompleks je anion, zato kovina dobi latinski koren s končnico -at." : "Kompleks je kation, zato ima kovina pridevniško obliko (npr. bakrov)."],
+        ];
+        if (z !== x && Math.abs(z) !== x && Math.abs(z) < ROM.length) cands.push([cName(c, Math.abs(z)), "Rimska številka je oksidacijsko število, ne naboj kompleksa."]);
+        return concept(r, {
+          q: `Kako se imenuje kompleksni ion $${sp(cIon(c))}$?`,
+          ok,
+          wrong: cands.filter((w) => w[0] && w[0] !== ok).filter((w, i, a) => a.findIndex((v) => v[0] === w[0]) === i),
+          hint: "Ime: število ligandov, ime liganda, kovina z oksidacijskim številom v rimskih številkah.",
+          given: [`\\text{ion} = ${sp(cIon(c))}`], find: [T("ime iona")], formula: ["z_\\mathrm{k} = x + \\sum z_\\mathrm{L}"],
+          sol: [`${n} × $${sp(LIG_TEX[L] + (LIG[L][0] ? "^-" : ""))}$ → ${C_PREF[n]}${LIG[L][1]}`, `$x + ${n} \\cdot (${LIG[L][0]}) = ${sgn(z)}$ → $x = ${sgn(x)}$; ${z < 0 ? "anion → končnica -at" : "kation → pridevniška oblika"}`, `Ime: ${ok}`],
+        });
+      }
+      if (k === 2) {
+        const [ion, reTxt, reTex, obs] = r.pick(TEST_ION);
+        const others = ["Fe^3+", "Cu^2+", "Fe^2+", "Ag^+", "Zn^2+"].filter((x) => x !== ion);
+        return concept(r, {
+          q: r.pick([`${name} ${g(name, "doda", "doda")} vzorcu ${reTxt}: ${obs}. Kateri ion je v vzorcu?`, `Pri laboratorijski vaji vzorcu dodamo ${reTxt} in opazimo: ${obs}. Kateri kation smo dokazali?`]),
+          ok: spU(ion),
+          wrong: r.shuffle(others).slice(0, 3).map((x) => [spU(x), TEST_WHY[x]]),
+          hint: "Spomni se tabele dokaznih reakcij kationov s kompleksi.",
+          given: [`\\text{reagent} = ${reTex}`, `\\text{opažanje} = \\text{${obs}}`], find: [T("ion v vzorcu")], formula: [T("dokaz kationov z nastankom kompleksa ali oborine")],
+          sol: [`Reagent: $${reTex}$; ${obs}.`, `${TEST_WHY[ion]}`, `V vzorcu je $${sp(ion)}$.`],
+        });
+      }
+      if (k === 3) {
+        const [El, q] = r.pick(TM_IONS.filter(([e]) => e !== "Ti" && e !== "V"));
+        const [d, s] = DS[El];
+        const di = dOf(El, q);
+        const wrongD = d - q >= 0 ? [cfg(d - q, s), "Pri tvorbi iona najprej odidejo elektroni 4s, šele nato 3d."] : null;
+        const cands = [wrongD, [cfg(d, s), "To je konfiguracija atoma; ion ima manj elektronov."], [cfg(di - 1, 0), `To je konfiguracija iona z enim elektronom manj.`], [cfg(di, 1), "Elektroni 4s odidejo pred elektroni 3d; v ionu ne ostanejo."]].filter(Boolean).filter((w) => w[0] !== cfg(di, 0));
+        return concept(r, {
+          q: `Atom $\\mathrm{${El}}$ ima $${cfgTex(d, s)}$. Katera je elektronska konfiguracija iona $${sp(ionS(El, q))}$?`,
+          ok: cfg(di, 0),
+          wrong: cands.filter((w, i, a) => a.findIndex((v) => v[0] === w[0]) === i),
+          hint: "Pri tvorbi iona atom najprej izgubi elektrone 4s.",
+          given: [`${sp(El)} = ${cfgTex(d, s)}`, `\\text{ion} = ${sp(ionS(El, q))}`], find: [T("konfiguracija iona")], formula: [T("najprej odidejo elektroni 4s, nato 3d")],
+          sol: [`Odvzamemo ${q} elektron${q === 1 ? "" : q === 2 ? "a" : "e"}: najprej ${Math.min(q, s)} iz 4s${q > s ? `, nato ${q - s} iz 3d` : ""}.`, `$${sp(ionS(El, q))}$: $${cfgTex(di, 0)}$`],
+        });
+      }
+      // Elektroni d centralnega iona v soli: najprej oksidacijsko število, nato konfiguracija.
+      const [F, ci, ion, cnt, zc] = r.pick(CSALT.filter((s) => DS[CPLX[s[1]][0]]));
+      const c = CPLX[ci];
+      const El = c[0], x = c[1], z = cz(c);
+      const [d, s] = DS[El];
+      const di = dOf(El, x);
+      const sumL = z - x;
+      return mk(
+        r.pick([`Koliko elektronov 3d ima centralni ion v spojini $${sp(F)}$? Atom $\\mathrm{${El}}$: $${cfgTex(d, s)}$.`, `${name} ${g(name, "napove", "napove")} barvo spojine $${sp(F)}$. Koliko elektronov 3d ima centralni ion? Atom $\\mathrm{${El}}$ ima $${cfgTex(d, s)}$.`]),
+        num(di, null, null, [[d - x, "Pri tvorbi iona najprej odidejo elektroni 4s, šele nato 3d."], [d, "To je število elektronov 3d v atomu; ion jih ima manj."], [dOf(El, Math.abs(z)) >= 0 ? dOf(El, Math.abs(z)) : NaN, "Naboj kompleksa ni oksidacijsko število kovine."]]),
+        "Najprej iz protiionov in ligandov določi oksidacijsko število kovine, nato odvzemi elektrone (najprej 4s).",
+        [`\\text{spojina} = ${sp(F)}`, `${sp(El)} = ${cfgTex(d, s)}`], [T("število elektronov 3d")], ["z_\\mathrm{k} = x + \\sum z_\\mathrm{L}", T("najprej odidejo elektroni 4s")],
+        [`Protiioni: $${cnt} \\cdot (${sgn(zc)})$, zato $z_\\mathrm{k} = ${sgn(z)}$.`, `$x + (${sumL}) = ${sgn(z)}$ → $x = ${sgn(x)}$`, `$${sp(ionS(El, x))}$: $${cfgTex(di, 0)}$ → ${di} ${di === 1 ? "elektron" : di === 2 ? "elektrona" : di === 3 || di === 4 ? "elektroni" : "elektronov"} 3d`]
+      );
+    }
+    // Raven 3
+    const k = r.pick([0, 0, 1, 1, 2, 2, 3]);
+    if (k === 0) {
+      const [zap, M, free, formula, col] = r.pick(WERNER);
+      const m = r.dec(1, 3, 2);
+      const mAg = roundHalfUp((m / M) * free * 143.32, 2);
+      const ratio = mAg / 143.32 / (m / M);
+      const askLig = r.next() < 0.4;
+      const ans = askLig ? 3 - free : free;
+      return mk(
+        `Raztopini $${tx(m)}\\ \\mathrm{g}$ ${col} spojine $${wTex(zap)}$ ($M = ${tx(M, 2)}\\ \\mathrm{g/mol}$) dodamo prebitek $\\mathrm{AgNO_3}$; nastane $${tx(mAg)}\\ \\mathrm{g}$ $\\mathrm{AgCl}$ ($M = 143{,}32\\ \\mathrm{g/mol}$). Koliko kloridov na formulsko enoto je ${askLig ? "vezanih kot ligandi" : "zunaj oglatega oklepaja"}?`,
+        num(ans, null, null, [[askLig ? 0 : 3, askLig ? "Del kloridov se ni oboril: ti so vezani na kovino kot ligandi." : "Obori se le klorid zunaj oklepaja; ligandi so vezani na kovino."], [askLig ? free : 3 - free, askLig ? "To je število prostih kloridov; ligandi so ostali." : "To je število kloridov, vezanih kot ligandi."]]),
+        "Izračunaj množino spojine in množino $\\mathrm{AgCl}$; razmerje pove, koliko prostih $\\mathrm{Cl^-}$ ima formulska enota.",
+        [dat("m(\\text{spojina})", tx(m), "g"), dat("M(\\text{spojina})", tx(M, 2), "g/mol"), dat("m(\\mathrm{AgCl})", tx(mAg), "g")], [askLig ? T("število Cl kot ligandov") : T("število prostih Cl⁻")], ["n = \\dfrac{m}{M}", "N(\\mathrm{Cl^-}) = \\dfrac{n(\\mathrm{AgCl})}{n(\\text{spojina})}"],
+        [`$n(\\text{spojina}) = \\dfrac{${tx(m)}}{${tx(M, 2)}} \\approx ${qty(tx(m / M, 5), "mol")}$`, `$n(\\mathrm{AgCl}) = \\dfrac{${tx(mAg)}}{143{,}32} \\approx ${qty(tx(mAg / 143.32, 5), "mol")}$`, `Razmerje $\\approx ${tx(ratio, 2)} \\approx ${free}$: zunaj oklepaja ${nKl(free)}; formula $${sp(formula.split("·")[0])}$.`, askLig ? `Kot ligandi: $3 - ${free} = ${3 - free}$.` : `Odgovor: ${free}.`]
+      );
+    }
+    if (k === 1) {
+      const [F, M, free, tot] = r.pick(AGCL_SALT);
+      const m = r.dec(0.5, 3, 2);
+      const n = m / M;
+      const mAg = n * free * 143.32;
+      return mk(
+        r.pick([`Raztopini $${tx(m)}\\ \\mathrm{g}$ $${sp(F)}$ ($M = ${tx(M, 2)}\\ \\mathrm{g/mol}$) dodamo prebitek $\\mathrm{AgNO_3}$. Koliko gramov $\\mathrm{AgCl}$ nastane? $M(\\mathrm{AgCl}) = 143{,}32\\ \\mathrm{g/mol}$. ${zaokr(2)}`, `${name} ${g(name, "raztopi", "raztopi")} $${tx(m)}\\ \\mathrm{g}$ spojine $${sp(F)}$ ($M = ${tx(M, 2)}\\ \\mathrm{g/mol}$) in ${g(name, "doda", "doda")} prebitek srebrovega nitrata. Kolikšna je masa oborine $\\mathrm{AgCl}$ ($M = 143{,}32\\ \\mathrm{g/mol}$)? ${zaokr(2)}`]),
+        num(mAg, "g", 2, [[n * tot * 143.32, "Obori se le klorid zunaj oklepaja; kloridi v oklepaju so ligandi."], [n * 143.32, `Zunaj oklepaja ${nKl(free)}; vsak da en AgCl.`], [m * free, "Maso pretvori v množino z molsko maso."]]),
+        "Ugotovi, koliko kloridov je zunaj oglatega oklepaja; le ti se oborijo.",
+        [dat("m", tx(m), "g"), dat("M", tx(M, 2), "g/mol"), dat("M(\\mathrm{AgCl})", "143{,}32", "g/mol")], ["m(\\mathrm{AgCl})"], ["n = \\dfrac{m}{M}", "n(\\mathrm{AgCl}) = N_\\text{prosti} \\cdot n(\\text{spojina})"],
+        [`Zunaj oklepaja: ${free} × $\\mathrm{Cl^-}$.`, `$n = \\dfrac{${tx(m)}}{${tx(M, 2)}} \\approx ${qty(tx(n, 5), "mol")}$`, `$n(\\mathrm{AgCl}) = ${free} \\cdot ${tx(n, 5)} \\approx ${qty(tx(free * n, 5), "mol")}$`, `$m = ${tx(free * n, 5)} \\cdot 143{,}32 ${res(mAg, 2, "g")}$`]
+      );
+    }
+    if (k === 2) {
+      const [ime, El, E, mx] = r.pick(IE);
+      return mk(
+        r.pick([`Zaporedne ionizacijske energije elementa $\\mathrm{${El}}$ (${ime}) v kJ/mol so: ${E.join("; ")}. Kolikšno je največje oksidacijsko število tega elementa v spojinah?`, `${name} ${g(name, "je našel", "je našla")} zaporedne ionizacijske energije elementa $\\mathrm{${El}}$: ${E.join("; ")} kJ/mol. Kolikšno je največje oksidacijsko število $\\mathrm{${El}}$?`]),
+        num(mx, null, null, [[mx + 1, "Pri velikem skoku je elektron že iz notranje lupine; tega atom ne odda."], [2, "Ne le elektroni 4s: energija raste postopno še naprej, do skoka."], [E.length, "Šteje, pred katerim elektronom je velik skok, ne koliko vrednosti je podanih."]]),
+        "Poišči, med katerima zaporednima energijama je velik skok.",
+        [`E_1 \\ldots E_${E.length} = ${E.join(";\\ ")}\\ \\mathrm{kJ/mol}`], [T("največje oksidacijsko število")], [T("velik skok: naslednji elektron je iz notranje lupine")],
+        [`Prirastki: ${E.slice(1).map((v, i) => `$E_${i + 2} - E_${i + 1} = ${v - E[i]}$`).join(", ")}`, `Največji skok je med $E_${mx}$ in $E_${mx + 1}$.`, `Atom odda največ ${mx} elektron${mx === 2 ? "a" : mx < 5 ? "e" : "ov"}: oksidacijsko število $+${mx}$.`]
+      );
+    }
+    const [ion, El, q] = r.pick(COLORLESS);
+    const di = dOf(El, q);
+    const wrE = r.shuffle(COLORED).slice(0, 3);
+    const wr = wrE.map(([io, e, qq]) => [spU(io), `${spU(io)} ima 3d${sup(String(dOf(e, qq)))} – delno zapolnjeno podlupino, zato vpija vidno svetlobo in je obarvan.`]);
+    return concept(r, {
+      q: r.pick(["Raztopina katerega iona je brezbarvna?", `${name} ${g(name, "pripravi", "pripravi")} raztopine štirih sulfatov ali kloridov. Katera raztopina bo brezbarvna?`]),
+      ok: spU(ion),
+      wrong: wr,
+      hint: "Zapiši konfiguracijo elektronov 3d vsakega iona: barvo da le delno zapolnjena podlupina.",
+      given: [`\\text{ioni} = ${[ion, ...wrE.map((w) => w[0])].sort().map(sp).join(",\\ ")}`], find: [T("brezbarvna raztopina")], formula: [T("barva: delno zapolnjena 3d; 3d⁰ ali 3d¹⁰ → brezbarvno")],
+      sol: [`$${sp(ion)}$: $${cfgTex(di, 0)}$`, di === 0 ? "Podlupina 3d je prazna – ni elektrona, ki bi vpil svetlobo." : "Podlupina 3d je polna – elektron ne more preskočiti na višjo raven.", "Raztopina je brezbarvna."],
+    });
+  },
+};
+
+// ---------- anorganske snovi v industriji in okolju ----------
+// Postopki: ime (orodnik za »s/z …«), izdelek, katalizator, surovine.
+const PROC = [
+  { p: "Haber–Boschev postopek", loc: "Haber–Boschevem postopku", prod: "amoniak (NH₃)", acc: "amoniak", cat: "železo (Fe)", raw: "dušik iz zraka in vodik" },
+  { p: "kontaktni postopek", loc: "kontaktnem postopku", prod: "žveplova(VI) kislina (H₂SO₄)", acc: "žveplovo(VI) kislino", cat: "vanadijev(V) oksid (V₂O₅)", raw: "žveplo, zrak in voda" },
+  { p: "Ostwaldov postopek", loc: "Ostwaldovem postopku", prod: "dušikova(V) kislina (HNO₃)", acc: "dušikovo(V) kislino", cat: "platina z rodijem (Pt/Rh)", raw: "amoniak, zrak in voda" },
+  { p: "kloralkalna elektroliza", loc: "kloralkalni elektrolizi", prod: "natrijev hidroksid, klor in vodik", acc: "natrijev hidroksid, klor in vodik", cat: null, raw: "slanica (raztopina NaCl)" },
+  { p: "Bayerjev postopek z elektrolizo taline", loc: "Bayerjevem postopku z elektrolizo taline", prod: "aluminij", acc: "aluminij", cat: null, raw: "boksit, NaOH in kriolit" },
+  { p: "žganje v cementarni", loc: "žganju apnenca in gline v cementarni", prod: "cement", acc: "cement", cat: null, raw: "apnenec in glina" },
+  { p: "taljenje v steklarni", loc: "taljenju surovin v steklarni", prod: "okensko steklo", acc: "okensko steklo", cat: null, raw: "pesek, soda in apnenec" },
+  { p: "redukcija v električni peči", loc: "redukciji kremena s koksom v električni peči", prod: "silicij", acc: "silicij", cat: null, raw: "kremenov pesek in koks" },
+];
+const IND_C = [
+  { gv: ["\\text{naprava} = \\text{avtomobilski katalizator}"], q: "Katera trditev o avtomobilskem katalizatorju drži?", ok: "CO pretvori v CO₂, dušikove okside pa v dušik.", wrong: [["Iz izpušnih plinov odstrani ogljikov dioksid.", "CO₂ je produkt katalizatorja, ne snov, ki jo odstrani."], ["Med delovanjem se porablja, zato ga je treba dolivati.", "Katalizator se pri reakciji ne porablja."], ["Dušikovi oksidi nastanejo iz dušika v bencinu.", "NOₓ nastanejo iz dušika in kisika iz zraka pri visoki temperaturi v motorju."]], f: "2CO + O₂ → 2CO₂; 2NO + 2CO → N₂ + 2CO₂", sol: ["Pt, Pd in Rh pospešijo pretvorbo CO v CO₂ in NOₓ v N₂.", "Ostanke goriva oksidirajo v CO₂ in vodo."] },
+  { gv: ["\\text{snov} = \\text{kriolit, } \\mathrm{Na_3AlF_6}"], q: "Kakšna je vloga kriolita pri pridobivanju aluminija?", ok: "Je topilo, ki zniža temperaturo taline na okoli 950 °C.", wrong: [["Je ruda, iz katere dobimo aluminij.", "Aluminij prihaja iz boksita; kriolit je le topilo."], ["Je katalizator, ki pospeši redukcijo z ogljikom.", "Aluminija ne reduciramo z ogljikom, ampak z elektrolizo taline."], ["Veže kisik, ki nastaja na anodi.", "Kisik na anodi sežiga ogljikove anode v CO₂."]], f: "Al₂O₃ se tali pri okoli 2050 °C", sol: ["Čisti Al₂O₃ se tali pri okoli 2050 °C.", "Raztopljen v kriolitu je tekoč že pri okoli 950 °C: kriolit je topilo."] },
+  { gv: ["\\text{oznaka} = \\text{NPK 10-20-10}"], q: "Kaj pomeni srednja številka 20 na vreči gnojila NPK 10-20-10?", ok: "20 % mase gnojila je P₂O₅.", wrong: [["V gnojilu je 20 % fosforja.", "Oznaka podaja fosfor kot P₂O₅; fosforja je le okoli 44 % tega."], ["V gnojilu je 20 % dušika.", "Dušik podaja prva številka."], ["V gnojilu je 20 % kalija.", "Kalij (kot K₂O) podaja tretja številka."]], f: "NPK: w(N) – w(P₂O₅) – w(K₂O)", sol: ["Oznaka NPK podaja masne deleže N, P₂O₅ in K₂O v odstotkih.", "Srednja številka je delež P₂O₅."] },
+  { gv: ["\\text{kovina} = \\text{aluminij}"], q: "Zakaj aluminija ne pridobivajo z redukcijo oksida z ogljikom kot železo?", ok: "Aluminij je preveč reaktiven; ogljik mu ne odvzame kisika.", wrong: [["Ker ogljik z aluminijem tvori zlitino.", "Težava ni zlitina: ogljik je premalo reaktiven, da bi izpodrinil aluminij."], ["Ker je boksit preveč onesnažen z železom.", "Železo odstranijo že v Bayerjevem postopku (rdeče blato)."], ["Ker bi nastajalo preveč CO₂.", "CO₂ nastaja tudi pri elektrolizi (anode). Razlog je reaktivnost aluminija."]], f: "reaktivnost: Al > C (za kisik)", sol: ["Aluminij je mnogo bolj reaktiven od železa.", "Potrebna je elektroliza taline Al₂O₃."] },
+  { gv: ["\\text{onesnaženje} = \\text{dušikova in fosforjeva gnojila}"], q: "Kaj povzroči presežek dušikovih in fosforjevih gnojil v jezeru?", ok: "Evtrofikacijo: alge se razbohotijo, ob njihovem razkroju zmanjka kisika.", wrong: [["Kisli dež nad jezerom.", "Kisli dež povzročajo NOₓ in SO₂ v zraku, ne gnojila v vodi."], ["Več kisika v vodi zaradi rasti alg.", "Ob razkroju odmrlih alg bakterije porabijo kisik; ribe se zadušijo."], ["Ozonsko luknjo.", "Ozonski plašč tanjšajo predvsem klorofluoroogljiki, ne gnojila."]], f: "N in P → rast alg → razkroj → poraba O₂", sol: ["Presežek N in P pospeši rast alg.", "Ob razkroju odmrlih alg bakterije porabijo kisik: evtrofikacija."] },
+  { gv: ["\\text{snovi} = \\text{varikina, kis}"], q: "Kaj se zgodi, če zmešamo varikino (NaClO) in kis?", ok: "Sprošča se strupen klor.", wrong: [["Nič posebnega, nastane le slana voda.", "Hipoklorit in klorid v kislem tvorita klor."], ["Kis varikino nevtralizira in čistilo je varno.", "Ne gre le za nevtralizacijo: v kislem nastaja plinasti klor."], ["Nastane kisik, ki bolje čisti.", "Produkt je klor, ne kisik."]], f: "ClO⁻ + Cl⁻ + 2H⁺ → Cl₂ + H₂O", sol: ["V kislem reagirata ClO⁻ in Cl⁻ iz varikine.", "Nastane Cl₂, ki draži dihala: mešanje je nevarno."] },
+  { gv: ["\\text{postopka} = \\text{elektroliza taline in slanice}"], q: "V čem se razlikujeta elektroliza taline NaCl in elektroliza slanice?", ok: "Na katodi pri talini nastaja natrij, pri slanici vodik.", wrong: [["Na anodi pri talini nastaja klor, pri slanici kisik.", "Pri koncentrirani slanici na anodi nastaja klor, tako kot pri talini."], ["Pri obeh v posodi ostane natrijev hidroksid.", "V talini ni vode, zato ne nastanejo ioni OH⁻ in ne NaOH."], ["Pri slanici na katodi nastaja natrij.", "V slanici se na katodi laže reducira voda kot Na⁺."]], f: "slanica: katoda 2H₂O + 2e⁻ → H₂ + 2OH⁻", sol: ["V slanici se na katodi reducira voda: H₂ in OH⁻.", "V talini vode ni, zato se reducira Na⁺ v natrij."] },
+];
+// Le Chatelier za Haber–Bosch: [sprememba, odgovor (P/Z/N), razlaga]
+const HB = [
+  ["povečamo tlak", "P", "Višji tlak premakne ravnotežje na stran z manj molekulami plina: iz 4 nastaneta 2."],
+  ["znižamo tlak", "Z", "Nižji tlak premakne ravnotežje na stran z več molekulami plina – k reaktantom."],
+  ["zvišamo temperaturo", "Z", "Reakcija je eksotermna; višja temperatura premakne ravnotežje k reaktantom (reakcija pa je hitrejša)."],
+  ["znižamo temperaturo", "P", "Reakcija je eksotermna; nižja temperatura premakne ravnotežje k produktu."],
+  ["dodamo boljši katalizator", "N", "Katalizator ravnotežja ne premakne, le hitreje ga doseže."],
+  ["sproti odstranjujemo amoniak", "P", "Ko produkt odstranjujemo, sistem nastaja novega."],
+  ["dovajamo več dušika", "P", "Več reaktanta premakne ravnotežje k produktu."],
+];
+const YLD = { P: "se poveča", Z: "se zmanjša", N: "se ne spremeni" };
+const YLD2 = { P: "Poveča se.", Z: "Zmanjša se.", N: "Ne spremeni se." };
+// Druge ravnotežne reakcije: [enačba, ΔH, molekul plina levo, desno, produkt, kje]
+const EQ_IND = [
+  ["2SO2(g) + O2(g) <=> 2SO3(g)", -198, 3, 2, "SO₃", "pri kontaktnem postopku"],
+  ["N2(g) + O2(g) <=> 2NO(g)", 181, 2, 2, "NO", "v valju motorja"],
+  ["CaCO3(s) <=> CaO(s) + CO2(g)", 178, 0, 1, "CaO", "v cementarni"],
+  ["CO(g) + 2H2(g) <=> CH3OH(g)", -91, 3, 1, "metanola", "pri sintezi metanola"],
+];
+const FERT = [["NH4NO3", "amonijev nitrat", 80.04, 2], ["(NH4)2SO4", "amonijev sulfat", 132.14, 2], ["CO(NH2)2", "sečnina", 60.06, 2], ["KNO3", "kalijev nitrat", 101.1, 1], ["Ca(NO3)2", "kalcijev nitrat", 164.09, 2], ["NH4Cl", "amonijev klorid", 53.49, 1], ["(NH4)2HPO4", "diamonijev hidrogenfosfat", 132.06, 2], ["NH4H2PO4", "amonijev dihidrogenfosfat", 115.03, 1]];
+const CL_OX = [["HClO", 1], ["HClO2", 3], ["HClO3", 5], ["HClO4", 7], ["NaClO", 1], ["NaClO2", 3], ["KClO3", 5], ["KClO4", 7]];
+
+const genAnorganske = {
+  id: "dod-kem-ss-4-anorganske-industrija",
+  topics: ["KEM-SS-4/anorganske-snovi-v-industriji-in-okolju"],
+  gen(level, r) {
+    const name = nm(r);
+    if (level === 1) {
+      const k = r.pick([0, 0, 1, 1, 2, 2, 3]);
+      if (k === 0) {
+        const kind = r.pick(["prod", "prod", "cat", "raw"]);
+        const pool = kind === "cat" ? PROC.filter((x) => x.cat) : PROC;
+        // Pri vprašanju po izdelku ime postopka ne sme izdati odgovora (cement, steklo, silicij).
+        const P = r.pick(kind === "prod" ? PROC.slice(0, 5) : pool);
+        const others = r.shuffle(pool.filter((x) => x !== P)).slice(0, 3);
+        const Q = { prod: r.pick([`Kaj pridobivajo pri ${P.loc}?`, `${name} ${g(name, "si je ogledal", "si je ogledala")} tovarno, kjer poteka ${P.p}. Kaj tam izdelujejo?`]), cat: `Kateri katalizator uporabljajo pri ${P.loc}?`, raw: `Iz katerih surovin izdelujejo ${P.acc}?` }[kind];
+        const ok = kind === "raw" ? P.raw : P[kind];
+        return concept(r, {
+          q: Q,
+          ok,
+          wrong: others.map((o) => [kind === "raw" ? o.raw : o[kind], kind === "raw" ? `Iz teh surovin izdelujejo ${o.acc}.` : `To ${kind === "cat" ? "je katalizator" : "je izdelek"} postopka »${o.p}«.`]),
+          hint: "Spomni se tabele velikih industrijskih postopkov: izdelek, surovine, pot in pogoji.",
+          given: [kind === "raw" ? `\\text{izdelek} = \\text{${P.prod}}` : `\\text{postopek} = \\text{${P.p}}`], find: [T(kind === "prod" ? "izdelek" : kind === "cat" ? "katalizator" : "surovine")], formula: [T("tabela industrijskih postopkov")],
+          sol: [`${P.p[0].toUpperCase() + P.p.slice(1)}: surovine ${P.raw} → ${P.prod}${P.cat ? `, katalizator ${P.cat}` : ""}.`, `Odgovor: ${ok}.`],
+        });
+      }
+      if (k === 1) {
+        const fromN2 = r.next() < 0.6;
+        const V = fromN2 ? r.int(2, 40) * 5 : r.int(2, 40) * 10;
+        const ask = fromN2 ? r.pick(["H2", "NH3"]) : r.pick(["N2", "H2"]);
+        const coef = { N2: 1, H2: 3, NH3: 2 };
+        const giv = fromN2 ? "N2" : "NH3";
+        const ans = (V * coef[ask]) / coef[giv];
+        return mk(
+          `V reaktorju za sintezo amoniaka $\\mathrm{N_2 + 3H_2 \\rightleftharpoons 2NH_3}$ ${fromN2 ? `porabimo $${V}\\ \\mathrm{L}$ dušika` : `želimo dobiti $${V}\\ \\mathrm{L}$ amoniaka`} (popolna pretvorba, vsi plini pri istih pogojih). Koliko litrov $${sp(ask)}$ ${fromN2 && ask === "NH3" ? "nastane" : "potrebujemo"}?`,
+          num(ans, "L", null, [[V, "Prostornine so v razmerju koeficientov v enačbi, ne enake."], [(V * coef[giv]) / coef[ask], "Si obrnil razmerje koeficientov?"]], { unitAlternatives: ["l", "dm3", "dm³"] }),
+          "Pri enakih pogojih je razmerje prostornin plinov enako razmerju koeficientov v enačbi.",
+          [dat(`V(${sp(giv)})`, V, "L")], [`V(${sp(ask)})`], [`V(${sp(ask)}) = \\dfrac{${coef[ask]}}{${coef[giv]}} \\cdot V(${sp(giv)})`],
+          [`Razmerje $${sp(giv)} : ${sp(ask)} = ${coef[giv]} : ${coef[ask]}$`, `$V(${sp(ask)}) = \\dfrac{${coef[ask]}}{${coef[giv]}} \\cdot ${V}\\ \\mathrm{L} = ${qty(tx(ans), "L")}$`]
+        );
+      }
+      if (k === 2) {
+        const N = r.pick([5, 10, 12, 15, 20, 25]), Pp = r.pick([5, 10, 15, 20]), K = r.pick([5, 10, 15, 20, 25]);
+        const m = r.pick([50, 100, 200, 250, 500, 1000, 2000]);
+        const mN = (N / 100) * m;
+        return mk(
+          r.pick([`Koliko gramov dušika je v $${m}\\ \\mathrm{g}$ gnojila z oznako NPK ${N}-${Pp}-${K}?`, `${name} ${g(name, "pognoji", "pognoji")} vrt z $${m}\\ \\mathrm{g}$ gnojila NPK ${N}-${Pp}-${K}. Koliko gramov dušika dobijo rastline?`]),
+          num(mN, "g", null, [[(Pp / 100) * m, "Dušik podaja prva številka oznake."], [N * m, "Odstotke deli s 100."], [(K / 100) * m, "Dušik podaja prva številka oznake."]]),
+          "Prva številka oznake NPK je masni delež dušika v odstotkih.",
+          [dat("m(\\text{gnojilo})", m, "g"), `w(\\mathrm{N}) = ${N}\\ \\%`], ["m(\\mathrm{N})"], ["m(\\mathrm{N}) = w(\\mathrm{N}) \\cdot m(\\text{gnojilo})"],
+          [`Prva številka: $w(\\mathrm{N}) = ${N}\\ \\% = ${tx(N / 100)}$`, `$m(\\mathrm{N}) = ${tx(N / 100)} \\cdot ${m}\\ \\mathrm{g} = ${qty(tx(mN), "g")}$`]
+        );
+      }
+      const [F, x] = r.pick(CL_OX);
+      const comp = parseFormula(F);
+      const nO = comp.O;
+      const metal = F.startsWith("H") ? "H" : F[0] === "N" ? "Na" : "K";
+      return mk(
+        r.pick([`Kolikšno je oksidacijsko število klora v $${sp(F)}$?`, `${name} ${g(name, "bere", "bere")} nalepko z $${sp(F)}$. Kolikšno je oksidacijsko število klora v tej spojini?`]),
+        num(x, null, null, [[-1, "Klor ima −1 le v kloridih; v oksokislinah in njihovih solih je pozitiven."], [nO, "Število kisikovih atomov ni oksidacijsko število; vsak O ima −2."], [2 * nO, "Upoštevaj še vodik ali kovino (+1)."]]),
+        "Vsota oksidacijskih števil v spojini je 0; O ima −2, H in alkalijske kovine +1.",
+        [`\\text{spojina} = ${sp(F)}`], ["x(\\mathrm{Cl})"], ["\\sum \\text{OŠ} = 0", `\\mathrm{O}: -2,\\ \\mathrm{${metal}}: +1`],
+        [`$+1 + x + ${nO} \\cdot (-2) = 0$`, `$x = ${2 * nO} - 1 = +${x}$`]
+      );
+    }
+    if (level === 2) {
+      const k = r.pick([0, 0, 1, 2, 3, 4, 5]);
+      if (k === 0) {
+        const [ch, ok, why] = r.pick(HB);
+        return concept(r, {
+          q: r.pick([`Sinteza amoniaka $\\mathrm{N_2 + 3H_2 \\rightleftharpoons 2NH_3}$, $\\Delta H = -92\\ \\mathrm{kJ/mol}$. Kako se spremeni ravnotežni izkoristek amoniaka, če ${ch}?`, `${name} ${g(name, "razmišlja", "razmišlja")} o Haber–Boschevi sintezi ($\\Delta H = -92\\ \\mathrm{kJ/mol}$). Kaj se zgodi z ravnotežnim izkoristkom $\\mathrm{NH_3}$, če ${ch}?`]),
+          ok: `Izkoristek ${YLD[ok]}.`,
+          wrong: Object.keys(YLD).filter((x) => x !== ok).map((x) => [`Izkoristek ${YLD[x]}.`, why]),
+          hint: "Uporabi Le Chatelierjevo načelo: sistem se upre spremembi. Preštej molekule plina in poglej predznak ΔH.",
+          given: ["\\Delta H = -92\\ \\mathrm{kJ/mol}"], find: [T("sprememba izkoristka")], formula: ["\\mathrm{N_2 + 3H_2 \\rightleftharpoons 2NH_3}", T("Le Chatelierjevo načelo")],
+          sol: ["Levo 4 molekule plina, desno 2; reakcija je eksotermna.", why, `Izkoristek ${YLD[ok]}.`],
+        });
+      }
+      if (k === 1) {
+        const m = r.int(2, 50) * 10;
+        const mNH3 = (m / 28.02) * 2 * 17.03;
+        return mk(
+          r.pick([`Koliko kg amoniaka bi nastalo iz $${m}\\ \\mathrm{kg}$ dušika pri popolni pretvorbi? $M(\\mathrm{N_2}) = 28{,}02$, $M(\\mathrm{NH_3}) = 17{,}03\\ \\mathrm{g/mol}$. ${zaokr(1)}`, `Tovarna v reaktor dovede $${m}\\ \\mathrm{kg}$ dušika. Koliko kg $\\mathrm{NH_3}$ dobi pri popolni pretvorbi? $M(\\mathrm{N_2}) = 28{,}02\\ \\mathrm{g/mol}$, $M(\\mathrm{NH_3}) = 17{,}03\\ \\mathrm{g/mol}$. ${zaokr(1)}`]),
+          num(mNH3, "kg", 1, [[(m / 28.02) * 17.03, "Iz 1 mol N₂ nastaneta 2 mol NH₃."], [m, "Mase se ne ohranjajo v razmerju 1 : 1; računaj z množinami."], [(m / 28.02) * 3 * 17.03, "Koeficient 3 velja za vodik, za amoniak 2."]]),
+          "Zapiši urejeno enačbo, maso dušika pretvori v množino in uporabi razmerje $1 : 2$.",
+          [dat("m(\\mathrm{N_2})", m, "kg"), dat("M(\\mathrm{N_2})", "28{,}02", "g/mol"), dat("M(\\mathrm{NH_3})", "17{,}03", "g/mol")], ["m(\\mathrm{NH_3})"], ["\\mathrm{N_2 + 3H_2 \\rightarrow 2NH_3}", "n = \\dfrac{m}{M}", "m = n \\cdot M"],
+          [`$n(\\mathrm{N_2}) = \\dfrac{${m}\\ \\mathrm{kg}}{28{,}02\\ \\mathrm{g/mol}} \\approx ${qty(tx(m / 28.02, 3), "kmol")}$`, `$n(\\mathrm{NH_3}) = 2 \\cdot n(\\mathrm{N_2}) \\approx ${qty(tx((2 * m) / 28.02, 3), "kmol")}$`, `$m(\\mathrm{NH_3}) = ${tx((2 * m) / 28.02, 3)} \\cdot 17{,}03 ${res(mNH3, 1, "kg")}$`]
+        );
+      }
+      if (k === 2) {
+        const m = r.dec(0.5, 20, 1);
+        const askCl = r.next() < 0.5;
+        const n = (m * 1000) / 58.44;
+        const ans = askCl ? (n / 2) * 70.9 / 1000 : (n * 40.0) / 1000;
+        return mk(
+          `Koliko kg ${askCl ? "klora" : "natrijevega hidroksida"} nastane s kloralkalno elektrolizo iz $${tx(m)}\\ \\mathrm{kg}$ kuhinjske soli? $\\mathrm{2NaCl + 2H_2O \\rightarrow 2NaOH + H_2 + Cl_2}$; $M(\\mathrm{NaCl}) = 58{,}44$, $M(${askCl ? "\\mathrm{Cl_2}) = 70{,}90" : "\\mathrm{NaOH}) = 40{,}00"}\\ \\mathrm{g/mol}$. ${zaokr(2)}`,
+          num(ans, "kg", 2, askCl ? [[(n * 70.9) / 1000, "Dva klorida dasta eno molekulo Cl₂: klora je pol manj molov."], [(n * 35.45) / 1000, "Računaj z molsko maso Cl₂ (70,90 g/mol) in razmerjem 2 : 1."]] : [[(n / 2) * 40 / 1000, "Iz enačbe je n(NaOH) = n(NaCl)."], [m, "Mase se ne ohranjajo v razmerju 1 : 1; računaj z množinami."]]),
+          "Maso soli pretvori v množino, nato uporabi razmerje iz enačbe.",
+          [dat("m(\\mathrm{NaCl})", tx(m), "kg"), dat("M(\\mathrm{NaCl})", "58{,}44", "g/mol"), askCl ? dat("M(\\mathrm{Cl_2})", "70{,}90", "g/mol") : dat("M(\\mathrm{NaOH})", "40{,}00", "g/mol")], [askCl ? "m(\\mathrm{Cl_2})" : "m(\\mathrm{NaOH})"], ["n = \\dfrac{m}{M}", askCl ? "n(\\mathrm{Cl_2}) = \\dfrac{n(\\mathrm{NaCl})}{2}" : "n(\\mathrm{NaOH}) = n(\\mathrm{NaCl})"],
+          [`$n(\\mathrm{NaCl}) = \\dfrac{${tx(m * 1000)}\\ \\mathrm{g}}{58{,}44\\ \\mathrm{g/mol}} \\approx ${qty(tx(n, 2), "mol")}$`, askCl ? `$n(\\mathrm{Cl_2}) = \\dfrac{${tx(n, 2)}}{2} \\approx ${qty(tx(n / 2, 2), "mol")}$` : `$n(\\mathrm{NaOH}) = n(\\mathrm{NaCl}) \\approx ${qty(tx(n, 2), "mol")}$`, `$m = ${askCl ? `${tx(n / 2, 2)} \\cdot 70{,}90` : `${tx(n, 2)} \\cdot 40{,}00`}\\ \\mathrm{g} ${res(ans, 2, "kg")}$`]
+        );
+      }
+      if (k === 3) {
+        const N = r.pick([5, 10, 15, 20]), Pp = r.pick([5, 10, 15, 20, 30]), K = r.pick([5, 10, 15, 20, 25, 30]);
+        const m = r.pick([50, 100, 250, 500, 1000]);
+        const isP = r.next() < 0.5;
+        const [el, ox, Ma, Mo, w] = isP ? ["P", "P_2O_5", 30.97, 141.94, Pp] : ["K", "K_2O", 39.1, 94.2, K];
+        const mo = (w / 100) * m;
+        const me = mo * ((2 * Ma) / Mo);
+        return mk(
+          `Koliko gramov ${isP ? "fosforja" : "kalija"} je v $${m}\\ \\mathrm{g}$ gnojila NPK ${N}-${Pp}-${K}? $M(\\mathrm{${el}}) = ${tx(Ma, 2)}$, $M(\\mathrm{${ox}}) = ${tx(Mo, 2)}\\ \\mathrm{g/mol}$. ${zaokr(1)}`,
+          num(me, "g", 1, [[mo, `To je masa ${isP ? "P₂O₅" : "K₂O"}; del mase pripada kisiku.`], [mo * (Ma / Mo), `V ${isP ? "P₂O₅" : "K₂O"} sta dva atoma ${el}.`], [(isP ? N : Pp) / 100 * m * ((2 * Ma) / Mo), `${isP ? "Fosfor (kot P₂O₅)" : "Kalij (kot K₂O)"} podaja ${isP ? "srednja" : "tretja"} številka.`]]),
+          `${isP ? "Srednja" : "Tretja"} številka je masni delež $\\mathrm{${ox}}$; nato izračunaj delež ${isP ? "fosforja" : "kalija"} v oksidu.`,
+          [dat("m(\\text{gnojilo})", m, "g"), `w(\\mathrm{${ox}}) = ${w}\\ \\%`, dat(`M(\\mathrm{${el}})`, tx(Ma, 2), "g/mol"), dat(`M(\\mathrm{${ox}})`, tx(Mo, 2), "g/mol")], [`m(\\mathrm{${el}})`], [`m(\\mathrm{${ox}}) = w \\cdot m`, `m(\\mathrm{${el}}) = m(\\mathrm{${ox}}) \\cdot \\dfrac{2M(\\mathrm{${el}})}{M(\\mathrm{${ox}})}`],
+          [`$m(\\mathrm{${ox}}) = ${tx(w / 100)} \\cdot ${m} = ${qty(tx(mo), "g")}$`, `$\\dfrac{2 \\cdot ${tx(Ma, 2)}}{${tx(Mo, 2)}} \\approx ${tx((2 * Ma) / Mo, 4)}$`, `$m(\\mathrm{${el}}) = ${tx(mo)} \\cdot ${tx((2 * Ma) / Mo, 4)} ${res(me, 1, "g")}$`]
+        );
+      }
+      if (k === 4) {
+        const [F, ime, M, nN] = r.pick(FERT);
+        const w = (100 * nN * 14.01) / M;
+        return mk(
+          r.pick([`Kolikšen je masni delež dušika v gnojilu ${ime} ($${sp(F)}$)? $M = ${Mtx(M)}\\ \\mathrm{g/mol}$, $A_r(\\mathrm{N}) = 14{,}01$. ${zaokr(1)}`, `${name} ${g(name, "primerja", "primerja")} dušikova gnojila. Koliko odstotkov dušika vsebuje $${sp(F)}$ (${ime})? $M = ${Mtx(M)}\\ \\mathrm{g/mol}$, $A_r(\\mathrm{N}) = 14{,}01$. ${zaokr(1)}`]),
+          num(w, "%", 1, [[(100 * 14.01) / M, `V formuli ${spU(F)} ${nN === 2 ? "sta 2 atoma" : "je 1 atom"} N.`], [(100 * nN) / Object.values(parseFormula(F)).reduce((a, b) => a + b, 0), "Masni delež ne računamo iz števila atomov, ampak iz mas."], [(nN * 14.01) / M, "Rezultat pomnoži s 100 %."]]),
+          "Preštej atome dušika v formuli in njihovo maso deli z molsko maso spojine.",
+          [dat("M", Mtx(M), "g/mol"), "A_r(\\mathrm{N}) = 14{,}01"], ["w(\\mathrm{N})"], ["w(\\mathrm{N}) = \\dfrac{N(\\mathrm{N}) \\cdot A_r(\\mathrm{N})}{M}"],
+          [`V $${sp(F)}$ ${nN === 2 ? "sta 2 atoma" : "je 1 atom"} N: $${nN} \\cdot 14{,}01 = ${tx(nN * 14.01, 2)}$`, `$w = \\dfrac{${tx(nN * 14.01, 2)}}{${Mtx(M)}} \\cdot 100\\ \\% ${res(w, 1, "\\%")}$`]
+        );
+      }
+      const m = r.dec(1, 50, 1);
+      const mAl = (m / 101.96) * 2 * 26.98;
+      return mk(
+        r.pick([`Koliko ton aluminija dobijo z elektrolizo iz $${tx(m)}\\ \\mathrm{t}$ čistega $\\mathrm{Al_2O_3}$? $M(\\mathrm{Al_2O_3}) = 101{,}96$, $M(\\mathrm{Al}) = 26{,}98\\ \\mathrm{g/mol}$. ${zaokr(2)}`, `Iz Bayerjevega postopka dobijo $${tx(m)}\\ \\mathrm{t}$ $\\mathrm{Al_2O_3}$. Koliko ton aluminija lahko iz njega dobijo z elektrolizo taline? $M(\\mathrm{Al_2O_3}) = 101{,}96$, $M(\\mathrm{Al}) = 26{,}98\\ \\mathrm{g/mol}$. ${zaokr(2)}`]),
+        num(mAl, "t", 2, [[(m / 101.96) * 26.98, "V Al₂O₃ sta dva atoma Al: n(Al) = 2 · n(Al₂O₃)."], [m, "Masa se ne ohrani; del mase je kisik."]]),
+        "Pretvori maso oksida v množino; iz ene formulske enote nastaneta dva atoma Al.",
+        [dat("m(\\mathrm{Al_2O_3})", tx(m), "t"), dat("M(\\mathrm{Al_2O_3})", "101{,}96", "g/mol"), dat("M(\\mathrm{Al})", "26{,}98", "g/mol")], ["m(\\mathrm{Al})"], ["n(\\mathrm{Al}) = 2 \\cdot n(\\mathrm{Al_2O_3})", "m = n \\cdot M"],
+        [`$n(\\mathrm{Al_2O_3}) = \\dfrac{${tx(m)}}{101{,}96} \\approx ${tx(m / 101.96, 4)} \\cdot 10^6\\ \\mathrm{mol}$`, `$n(\\mathrm{Al}) = 2 \\cdot ${tx(m / 101.96, 4)} \\approx ${tx((2 * m) / 101.96, 4)} \\cdot 10^6\\ \\mathrm{mol}$`, `$m(\\mathrm{Al}) = ${tx((2 * m) / 101.96, 4)} \\cdot 26{,}98 ${res(mAl, 2, "t")}$`]
+      );
+    }
+    // Raven 3
+    const k = r.pick([0, 0, 1, 1, 2, 3, 4, 5]);
+    if (k === 0) {
+      const I = r.int(5, 30) * 10;
+      const t = r.int(1, 24);
+      const mAl = ((I * 1000 * t * 3600) / (3 * F_CONST)) * 26.98 / 1000;
+      return mk(
+        r.pick([`Skozi celico za elektrolizo taline $\\mathrm{Al_2O_3}$ teče tok $${I}\\ \\mathrm{kA}$ ${t} ${t === 1 ? "uro" : t === 2 ? "uri" : t < 5 ? "ure" : "ur"}. Koliko kg aluminija nastane? $\\mathrm{Al^{3+} + 3e^- \\rightarrow Al}$, $F = 96\\,500\\ \\mathrm{C/mol}$, $M(\\mathrm{Al}) = 26{,}98\\ \\mathrm{g/mol}$. ${zaokr(1)}`, `V tovarni aluminija teče skozi eno celico tok $${I}\\ \\mathrm{kA}$. Koliko kg aluminija se izloči v $${t}\\ \\mathrm{h}$? $F = 96\\,500\\ \\mathrm{C/mol}$, $M(\\mathrm{Al}) = 26{,}98\\ \\mathrm{g/mol}$. ${zaokr(1)}`]),
+        num(mAl, "kg", 1, [[mAl * 3, "Za en atom Al so potrebni 3 elektroni: n(Al) = n(e⁻)/3."], [mAl / 3600, "Čas pretvori v sekunde."], [mAl * 1.5, "Al³⁺ sprejme 3 elektrone, ne 2."]]),
+        "Izračunaj naboj $Q = I \\cdot t$ (v sekundah), nato množino elektronov in množino aluminija.",
+        [dat("I", I, "kA"), dat("t", t, "h"), `F = 96\\,500\\ \\mathrm{C/mol}`, dat("M(\\mathrm{Al})", "26{,}98", "g/mol")], ["m(\\mathrm{Al})"], ["Q = I \\cdot t", "n(e^-) = \\dfrac{Q}{F}", "n(\\mathrm{Al}) = \\dfrac{n(e^-)}{3}"],
+        [`$Q = ${I * 1000}\\ \\mathrm{A} \\cdot ${t * 3600}\\ \\mathrm{s} = ${qty(tx((I * 1000 * t * 3600) / 1e6, 1), "MC")}$`, `$n(e^-) = \\dfrac{Q}{F} \\approx ${qty(tx((I * 1000 * t * 3600) / F_CONST, 0), "mol")}$`, `$n(\\mathrm{Al}) = \\dfrac{n(e^-)}{3} \\approx ${qty(tx((I * 1000 * t * 3600) / (3 * F_CONST), 0), "mol")}$`, `$m = n \\cdot 26{,}98\\ \\mathrm{g} ${res(mAl, 1, "kg")}$`]
+      );
+    }
+    if (k === 1) {
+      const [w, rho] = r.pick([[96, 1.84], [70, 1.61], [50, 1.4], [20, 1.14]]);
+      const V = r.pick([0.5, 1, 2, 5, 10, 25]);
+      const mR = V * 1000 * rho;
+      const mA = (mR * w) / 100;
+      const nA = mA / 98.07;
+      const mS = nA * 32.06;
+      return mk(
+        `Koliko gramov žvepla porabi kontaktni postopek za $${tx(V)}\\ \\mathrm{L}$ $${w}\\ \\%$ žveplove kisline z gostoto $${tx(rho, 2)}\\ \\mathrm{g/mL}$? $M(\\mathrm{H_2SO_4}) = 98{,}07$, $M(\\mathrm{S}) = 32{,}06\\ \\mathrm{g/mol}$. ${zaokr(0)}`,
+        num(mS, "g", 0, [[(V * 1000 * rho) / 98.07 * 32.06, "Le del raztopine je kislina: upoštevaj masni delež."], [((V * 1000 * w) / 100 / 98.07) * 32.06, "Masa raztopine je ρ · V, ne V v mL."], [mA, "To je masa kisline; iščemo maso žvepla."]]),
+        "Vsak atom S konča v eni molekuli $\\mathrm{H_2SO_4}$: $n(\\mathrm{S}) = n(\\mathrm{H_2SO_4})$. Najprej izračunaj maso čiste kisline.",
+        [dat("V", tx(V), "L"), `w = ${w}\\ \\%`, dat("\\rho", tx(rho, 2), "g/mL"), dat("M(\\mathrm{H_2SO_4})", "98{,}07", "g/mol"), dat("M(\\mathrm{S})", "32{,}06", "g/mol")], ["m(\\mathrm{S})"], ["m = \\rho \\cdot V", "m(\\mathrm{H_2SO_4}) = w \\cdot m", "n(\\mathrm{S}) = n(\\mathrm{H_2SO_4})"],
+        [`$m = ${tx(rho, 2)} \\cdot ${tx(V * 1000)} = ${qty(tx(mR), "g")}$`, `$m(\\mathrm{H_2SO_4}) = ${tx(w / 100)} \\cdot ${tx(mR)} = ${qty(tx(mA, 1), "g")}$`, `$n = \\dfrac{${tx(mA, 1)}}{98{,}07} \\approx ${qty(tx(nA, 3), "mol")}$`, `$m(\\mathrm{S}) = ${tx(nA, 3)} \\cdot 32{,}06 ${res(mS, 0, "g")}$`]
+      );
+    }
+    if (k === 2) {
+      const m = r.int(2, 40) * 5;
+      const w = r.int(40, 60);
+      const mAl = (m * (w / 100) * 2 * 26.98) / 101.96;
+      return mk(
+        `Boksit vsebuje $${w}\\ \\%$ $\\mathrm{Al_2O_3}$. Koliko ton aluminija lahko največ dobijo iz $${m}\\ \\mathrm{t}$ boksita? $M(\\mathrm{Al_2O_3}) = 101{,}96$, $M(\\mathrm{Al}) = 26{,}98\\ \\mathrm{g/mol}$. ${zaokr(2)}`,
+        num(mAl, "t", 2, [[(m * (w / 100) * 26.98) / 101.96, "V Al₂O₃ sta dva atoma Al."], [(m * 2 * 26.98) / 101.96, "Boksit ni čisti Al₂O₃: upoštevaj masni delež."], [m * (w / 100), "To je masa Al₂O₃, ne aluminija."]]),
+        "Najprej izračunaj maso $\\mathrm{Al_2O_3}$ v boksitu, nato maso aluminija v njem.",
+        [`w(\\mathrm{Al_2O_3}) = ${w}\\ \\%`, dat("m(\\text{boksit})", m, "t"), dat("M(\\mathrm{Al_2O_3})", "101{,}96", "g/mol"), dat("M(\\mathrm{Al})", "26{,}98", "g/mol")], ["m(\\mathrm{Al})"], ["m(\\mathrm{Al_2O_3}) = w \\cdot m", "m(\\mathrm{Al}) = m(\\mathrm{Al_2O_3}) \\cdot \\dfrac{2M(\\mathrm{Al})}{M(\\mathrm{Al_2O_3})}"],
+        [`$m(\\mathrm{Al_2O_3}) = ${tx(w / 100)} \\cdot ${m} = ${qty(tx((m * w) / 100), "t")}$`, `$\\dfrac{2 \\cdot 26{,}98}{101{,}96} \\approx 0{,}5292$`, `$m(\\mathrm{Al}) = ${tx((m * w) / 100)} \\cdot 0{,}5292 ${res(mAl, 2, "t")}$`]
+      );
+    }
+    if (k === 3) {
+      const m = r.int(2, 40) * 5;
+      const w = r.pick([50, 55, 60, 65, 68]);
+      const mNH3 = ((m * (w / 100)) / 63.01) * 17.03;
+      return mk(
+        `Koliko ton amoniaka porabi Ostwaldov postopek za $${m}\\ \\mathrm{t}$ dušikove kisline z masnim deležem $${w}\\ \\%$? Vsak atom N iz $\\mathrm{NH_3}$ konča v $\\mathrm{HNO_3}$. $M(\\mathrm{HNO_3}) = 63{,}01$, $M(\\mathrm{NH_3}) = 17{,}03\\ \\mathrm{g/mol}$. ${zaokr(2)}`,
+        num(mNH3, "t", 2, [[(m / 63.01) * 17.03, "Raztopina ni čista HNO₃: upoštevaj masni delež."], [m * (w / 100), "To je masa HNO₃; mase se ne ohranjajo v razmerju 1 : 1."], [((m * (w / 100)) / 17.03) * 63.01, "Si obrnil razmerje molskih mas?"]]),
+        "Izračunaj maso čiste $\\mathrm{HNO_3}$, njeno množino; amoniaka je enako molov.",
+        [dat("m(\\text{raztopina})", m, "t"), `w = ${w}\\ \\%`, dat("M(\\mathrm{HNO_3})", "63{,}01", "g/mol"), dat("M(\\mathrm{NH_3})", "17{,}03", "g/mol")], ["m(\\mathrm{NH_3})"], ["m(\\mathrm{HNO_3}) = w \\cdot m", "n(\\mathrm{NH_3}) = n(\\mathrm{HNO_3})"],
+        [`$m(\\mathrm{HNO_3}) = ${tx(w / 100)} \\cdot ${m} = ${qty(tx((m * w) / 100), "t")}$`, `$n = \\dfrac{${tx((m * w) / 100)}}{63{,}01} \\approx ${tx((m * w) / 100 / 63.01, 4)} \\cdot 10^6\\ \\mathrm{mol}$`, `$m(\\mathrm{NH_3}) = ${tx((m * w) / 100 / 63.01, 4)} \\cdot 17{,}03 ${res(mNH3, 2, "t")}$`]
+      );
+    }
+    if (k === 4) {
+      const [eq, dH, gl, gr, prod, kje] = r.pick(EQ_IND);
+      const ch = r.pick(["povečamo tlak", "zvišamo temperaturo", "znižamo temperaturo", "znižamo tlak"]);
+      let ok, why;
+      if (ch.includes("tlak")) {
+        const up = ch.startsWith("poveč");
+        if (gl === gr) { ok = "N"; why = `Na obeh straneh je ${gl} molekul plina, zato tlak ravnotežja ne premakne.`; }
+        else {
+          const toProd = up ? gr < gl : gr > gl;
+          ok = toProd ? "P" : "Z";
+          why = `${up ? "Višji" : "Nižji"} tlak premakne ravnotežje na stran z ${up ? "manj" : "več"} molekulami plina (levo ${gl}, desno ${gr}) – ${toProd ? "k produktom" : "k reaktantom"}.`;
+        }
+      } else {
+        const up = ch.startsWith("zviš");
+        const toProd = up ? dH > 0 : dH < 0;
+        ok = toProd ? "P" : "Z";
+        why = `Reakcija je ${dH < 0 ? "eksotermna" : "endotermna"}; ${up ? "višja" : "nižja"} temperatura premakne ravnotežje ${toProd ? "k produktom" : "k reaktantom"}.`;
+      }
+      return concept(r, {
+        q: `Ravnotežje ${kje}: $${eqTex(eq)}$, $\\Delta H = ${dH > 0 ? "+" : "-"}${Math.abs(dH)}\\ \\mathrm{kJ/mol}$. Kako se spremeni ravnotežna količina ${prod}, če ${ch}?`,
+        ok: YLD2[ok],
+        wrong: Object.keys(YLD).filter((x) => x !== ok).map((x) => [YLD2[x], why]),
+        hint: "Preštej molekule plina na vsaki strani (trdnin ne štej) in poglej predznak ΔH; nato uporabi Le Chatelierjevo načelo.",
+        given: [`\\Delta H = ${dH > 0 ? "+" : "-"}${Math.abs(dH)}\\ \\mathrm{kJ/mol}`], find: [T("sprememba ravnotežja")], formula: [eqTex(eq), T("Le Chatelierjevo načelo")],
+        sol: [`Molekule plina: levo ${gl}, desno ${gr}; reakcija je ${dH < 0 ? "eksotermna" : "endotermna"}.`, why, `Količina ${prod} ${YLD[ok]}.`],
+      });
+    }
+    const c = r.pick(IND_C);
+    return concept(r, { q: c.q, ok: c.ok, wrong: c.wrong, hint: "Poveži snov z njeno vlogo v postopku ali okolju; preveri vsako možnost.", given: c.gv, find: [T("pravilna trditev")], formula: [T(c.f)], sol: c.sol });
+  },
+};
+
+export const DODATNE_KEM_SS = [...SS12, ...SS3, genSplosna, genOrganska, genRacunanje, genTopnost, genElektroliti, genPrehodni, genAnorganske];
