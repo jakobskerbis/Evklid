@@ -3,7 +3,7 @@ vir: content/lessons/MAT-SS-4/limita-in-zveznost-funkcije.md
 sha256: 3de9ce4407b607965e69f5202c1d5536ba47954ae2df786bd728dace7bd75d75
 Ni v Leanu: zvočnik in akustika v uvodu, »Drugače: Z analogijo« (praska, skok tona, piskanje) in
 simulacija; tabela v razlagi, vrstici x = 0,5 in x = 0,1 (ocena `Real.sin_bound`
-|sin x − (x − x³/6)| ≤ |x|⁴ · 5/96 za šest decimalk pri teh x ni dovolj natančna, natančnejša ocena je
+|sin x − (x − x³/6)| ≤ |x|⁵/100 za šest decimalk pri teh x ni dovolj natančna, natančnejša ocena je
 zahtevna, še ni dokazano; vrstici 0,01 in 0,001 sta dokazani);
 karakterizacija limite z zaporedji (Heine) kot splošna trditev; geometrijski dokaz sin x < x < tan x s
 ploščinami (neenakosti so dokazane z Mathlibom, ne s ploščinami); trditev »√x nima leve limite v 0«
