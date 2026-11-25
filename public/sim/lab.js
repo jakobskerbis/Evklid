@@ -206,7 +206,8 @@ const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return nu
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
 const lsDel = (k) => { try { localStorage.removeItem(k); } catch {} };
 export const kljucMeritev = (labId) => (labId ? `${MER}${lsGet("studentId") || "0"}.${labId}` : null);
-export const pozabiMeritve = (labId) => { const k = kljucMeritev(labId); if (k) lsDel(k); };
+// kljuc: ključ, ki ga je shramba določila ob postavitvi (el._labKljuc); po menjavi profila ne pobriše meritev drugega profila.
+export const pozabiMeritve = (labId, kljuc) => { const k = kljuc || kljucMeritev(labId); if (k) lsDel(k); };
 // JSON bi NaN (npr. »OL« na merilniku) zapisal kot null, ta pa bi bil na grafu točka pri 0: zapišemo ga kot "#NaN".
 const NEKONCNO = { "#NaN": NaN, "#Infinity": Infinity, "#-Infinity": -Infinity };
 export const vJson = (x) => JSON.stringify(x, (k, v) => (typeof v === "number" && !Number.isFinite(v) ? `#${v}` : v));
@@ -214,6 +215,7 @@ export const izJsona = (t) => JSON.parse(t, (k, v) => (typeof v === "string" && 
 
 export function shramba(el) {
   const key = kljucMeritev(el?.dataset?.labId), profil = lsGet("studentId") || "0";
+  if (el) el._labKljuc = key; // »Ponastavi« (sim/index.js) pozabi ta ključ, ne ključa profila, ki je izbran zdaj
   let data = null;
   try { data = key ? izJsona(lsGet(key) || "null") : null; } catch {}
   if (!data || data.v !== 1 || !Array.isArray(data.rows)) data = null;
