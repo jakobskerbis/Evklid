@@ -2454,7 +2454,14 @@ export function createApp(store, opts = {}) {
   nastaviOpazovalcaAi(zdravje.aiIzid);
   app.locals.zdravje = zdravje;
   // Staršem: samo otrok pod 15 let s potrjenim e-naslovom starša (prejemnikStarsa); ime profila in nastavitve za številke.
-  const starsi = accounts ? { prejemnik: (id) => prejemnikStarsa({ ageOfStudent: accounts.ageOfStudent, ownerOf: accounts.ownerOf, getParent: (pid) => (pid ? store.db.prepare("SELECT email, email_verified_at, is_guest, birth_date FROM parents WHERE id = ?").get(pid) : null) }, id), profil: (id) => { const st = store.getStudent(id); return st ? { ime: st.name, settings: st.settings } : null; } } : null;
+  // Starost iz letnice je spodnja meja (leto − letnica − 1): otrok, rojen pred 15 leti, je lahko že 15, zato tu zgornja
+  // meja (leto − letnica), da e-mail nikoli ne gre pri 15+.
+  const starostNajvec = (id) => {
+    const a = accounts?.ageOfStudent(id);
+    const y = store.db.prepare("SELECT birth_year FROM students WHERE id = ?").get(id)?.birth_year;
+    return typeof a === "number" && y ? Math.max(a, new Date().getFullYear() - Number(y)) : a;
+  };
+  const starsi = accounts ? { prejemnik: (id) => prejemnikStarsa({ ageOfStudent: starostNajvec, ownerOf: accounts.ownerOf, getParent: (pid) => (pid ? store.db.prepare("SELECT email, email_verified_at, is_guest, birth_date FROM parents WHERE id = ?").get(pid) : null) }, id), profil: (id) => { const st = store.getStudent(id); return st ? { ime: st.name, settings: st.settings } : null; } } : null;
   stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn, starsi });
   app.use(notFound); // neznana pot: stran v slogu aplikacije namesto »Cannot GET« (server/ni-strani.js)
   return app;
