@@ -29,8 +29,8 @@ Primerjaj jo z gorenjem plina v kuhinji:
 
 **Ohranitveni zakoni.** Pri vsaki jedrski reakciji se ohranijo štiri količine:
 
-1. **število nukleonov**: vsota masnih števil levo je enaka vsoti desno;
-2. **naboj**: vsota vrstnih števil levo je enaka vsoti desno (elektron šteje kot $-1$);
+1. **število nukleonov**: vsota masnih števil $A$ (zgornjih indeksov) levo je enaka vsoti desno;
+2. **naboj**: vsota vrstnih števil $Z$ (spodnjih indeksov) levo je enaka vsoti desno (elektron šteje kot $-1$);
 3. **energija**, če štejemo tudi mirovno energijo $mc^2$;
 4. **gibalna količina**.
 
@@ -54,7 +54,7 @@ Tabele navajajo mase **atomov**, ne golih jeder. To ne moti, če je elektronov n
 
 $${}^{14}_{6}\mathrm{C} \rightarrow {}^{14}_{7}\mathrm{N} + {}^{0}_{-1}\mathrm{e} + \bar{\nu}$$
 
-Atom ogljika ima 6 elektronov, atom dušika 7. Izsevani elektron je ravno ta sedmi. Zato vzameš kar razliko atomskih mas, elektrona ne odšteješ še enkrat:
+Atom ogljika ima 6 elektronov, atom dušika 7. Desno so jedro dušika, šest elektronov, ki jih je imel ogljik, in izsevani elektron: skupaj ravno atom dušika. Zato vzameš kar razliko atomskih mas, elektrona ne odšteješ še enkrat:
 
 $$\Delta m = 14{,}003242\,\mathrm{u} - 14{,}003074\,\mathrm{u}$$
 
@@ -67,7 +67,7 @@ V simulaciji spodaj (»Razpad jeder in razpolovni čas«) izberi ogljik-14: v en
 **Odboj pri razpadu alfa.** Jedro pred razpadom miruje. Po razpadu imata delec alfa in novo jedro enako veliki gibalni količini v nasprotnih smereh, kot puška in krogla pri strelu. Kinetična energija je $W = p^2/(2m)$, zato pri enakem $p$ dobi lažji delec več energije.
 
 :::premisli
-Novo jedro je pri razpadu radija okoli 55-krat težje od delca alfa. Zakaj potem skoraj vsa sproščena energija odide z delcem alfa in ne z jedrom?
+Novo jedro je pri razpadu radija okoli 55-krat težje od delca alfa. Oceni, kolikšen del sproščene energije dobi jedro, preden pogledaš odgovor.
 ---
 Gibalni količini sta enako veliki, kinetična energija pa je $p^2/(2m)$. Pri enakem $p$ ima delec s 55-krat manjšo maso 55-krat večjo kinetično energijo. Jedro dobi le okoli $2\,\%$ energije.
 :::

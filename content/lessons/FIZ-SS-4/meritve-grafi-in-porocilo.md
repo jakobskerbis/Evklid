@@ -40,7 +40,7 @@ interval: 79,6 .. 80,4 | l = (80,0 ± 0,4) cm
 točka: 80 | 80,0
 :::
 
-Napaki sta se **sešteli**, čeprav smo višini odšteli. To velja za vsoto in razliko: absolutna napaka rezultata je vsota absolutnih napak. Za $x = a + b$ ali $x = a - b$ je
+Napaki sta se **sešteli**, čeprav smo višini odšteli. To velja za vsoto in razliko: **absolutna napaka** rezultata (napaka v enotah količine, tu $0{,}4\,\mathrm{cm}$) je vsota absolutnih napak. Za $x = a + b$ ali $x = a - b$ je
 
 $$\Delta x = \Delta a + \Delta b$$
 
@@ -61,13 +61,11 @@ napis: 4; 2,3 | a · b | sredina
 napis: 4; 4,75 | a · Δb | sredina
 :::
 
-Desni pas ima ploščino $\Delta a \cdot b$, zgornji $a \cdot \Delta b$; kvadratek v kotu je zanemarljiv. Delež, za katerega se ploščina poveča, je $\Delta a / a + \Delta b / b$. Pri produktu in količniku se torej seštejejo **relativne** napake $\delta = \Delta x / x$.
-
-Kvadrat je produkt dveh enakih faktorjev: $T^2 = T \cdot T$. Relativna napaka kvadrata je zato dvakratna, kuba trikratna. Na kratko: za $x = a \cdot b$ ali $x = a / b$ je
+Desni pas ima ploščino $\Delta a \cdot b$, zgornji $a \cdot \Delta b$; kvadratek v kotu je zanemarljiv. Oba pasova deliš s ploščino $a \cdot b$ in dobiš delež, za katerega se ploščina poveča: $\Delta a / a + \Delta b / b$. Pri produktu in količniku se torej seštejejo **relativne** napake $\delta = \Delta x / x$. Za $x = a \cdot b$ ali $x = a / b$ je
 
 $$\delta_x = \delta_a + \delta_b$$
 
-za potenco $x = a^n$ pa
+Kvadrat je produkt dveh enakih faktorjev: $T^2 = T \cdot T$. Relativna napaka kvadrata je zato dvakratna, kuba trikratna. Za potenco $x = a^n$ je
 
 $$\delta_x = n\,\delta_a$$
 

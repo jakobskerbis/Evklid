@@ -22,7 +22,7 @@ stanje: osnutek
 - Verižna reakcija
   - faktor množenja $k = N_2 / N_1$
   - reaktor $k = 1$, bomba $k > 1$
-  - kritična masa: premalo nevtronov uide
+  - kritična masa: najmanjša masa za $k = 1$
 - Jedrski reaktor
   - gorivo: obogateni uran, okoli $4\,\%$ urana-235
   - moderator upočasni, kontrolne palice vpijejo
