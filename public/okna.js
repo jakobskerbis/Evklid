@@ -671,6 +671,8 @@ export function placeToast() {
     const n = pokrije(y);
     if (n < best.n) best = { y, n };
   }
+  // Ni prostega mesta v vsebini (npr. simulacija čez ves zaslon): čez glavo, ki ni del naloge; tapi gredo skozi.
+  if (best.n) best = { y: Math.max(8, Math.min(vrh, window.innerHeight) - h - 8) };
   if (best.y === r.top) return;
   el.style.bottom = "auto";
   el.style.top = `${Math.round(best.y)}px`;
@@ -696,6 +698,7 @@ function openChat() {
 /** Pokaže ali skrije mehurček glede na stanje klepeta (kliče app.js ob spremembi pogleda in pogovora). */
 export function refreshBubble() {
   if (!ctx) return;
+  requestAnimationFrame(placeToast); // obvestilo, ki ostane ob menjavi pogleda, na prosto mesto novega pogleda
   // Zavihek je za ta profil skrit (npr. NPZ in matura po menjavi profila): njegovo okno se zapre.
   for (const name of [...wins.keys()]) if (!canFloat(name)) closeWindow(name);
   const info = ctx.chatInfo();
@@ -836,6 +839,7 @@ export function initOkna(opts) {
     raf = requestAnimationFrame(() => {
       for (const w of wins.values()) if (!w.el.classList.contains("okno-sheet")) place(w, layout.geo[w.name] || defaultGeo());
       if (bubble && !bubble.hidden) placeBubble();
+      placeToast();
     });
   });
   window.addEventListener("evklid:stepper", () => bubble && !bubble.hidden && placeBubble());
@@ -845,6 +849,18 @@ export function initOkna(opts) {
     const el = document.getElementById(id);
     if (el) pasovi.observe(el, { attributes: true, attributeFilter: ["hidden"] });
   }
+  // Vsebina pod mehurčkom se spremeni po vnosu ali kliku (zadetki iskanja, razprt odgovor): mesto preverimo znova,
+  // ko se izriše (sicer je mehurček ostal na novih gumbih, dimni test 25. 11.: iskanje v učbeniku na iPadu).
+  let poVnosu = 0;
+  const preveriMesto = () => {
+    clearTimeout(poVnosu);
+    poVnosu = setTimeout(() => {
+      if (bubble && !bubble.hidden && !bubble.classList.contains("dragging")) placeBubble();
+      placeToast();
+    }, 450);
+  };
+  document.addEventListener("input", preveriMesto, { capture: true, passive: true });
+  document.addEventListener("click", preveriMesto, { capture: true, passive: true });
   // Obvestilo (#toast, pišejo ga app.js, account.js, leagues.js, kalkulator.js): ob prikazu in novem besedilu na prosto mesto.
   const obvestilo = document.getElementById("toast");
   if (obvestilo) new MutationObserver(() => placeToast()).observe(obvestilo, { attributes: true, attributeFilter: ["hidden", "data-at"], childList: true });
