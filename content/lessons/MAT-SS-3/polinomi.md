@@ -64,18 +64,17 @@ Od tod sledi najpomembnejša posledica: **$a$ je ničla polinoma natanko tedaj, 
 
 **Hitri test:** kolikšen je ostanek pri deljenju $x^2 + 1$ z $x - 3$? *Odgovor: $3^2 + 1 = 10$, deliti ni treba.*
 
-**Blok 5: Hornerjev algoritem.** Deljenje z $x - a$ gre krajše. Napišemo le koeficiente (manjkajočo potenco nadomesti $0$), levo pa $a$. Prvi koeficient prepišemo v spodnjo vrstico. Nato ponavljamo: zadnje spodnje število pomnožimo z $a$, zmnožek zapišemo v srednjo vrstico pod naslednji koeficient in ju seštejemo. Za isti primer, $a = 2$:
+**Blok 5: Hornerjev algoritem.** Deljenje z $x - a$ gre krajše. V zgornjo vrstico napišemo le koeficiente (manjkajočo potenco nadomesti $0$). Prvi koeficient prepišemo v spodnjo vrstico. Nato ponavljamo: zadnje spodnje število pomnožimo z $a$, zmnožek zapišemo v srednjo vrstico pod naslednji koeficient in ju seštejemo. Za isti primer, $a = 2$:
 
-```
-     |  2   -3    4   -5
-  2  |       4    2   12
-     |  2    1    6 |  7
-```
+| $2$ | $-3$ | $4$ | $-5$ |
+|---|---|---|---|
+| | $4$ | $2$ | $12$ |
+| $2$ | $1$ | $6$ | $\mathbf{7}$ |
 
 Spodnja vrstica so koeficienti količnika $2x^2 + x + 6$, zadnje število je ostanek $7$, torej tudi $p(2)$. En postopek da hkrati vrednost, ostanek in količnik.
 
 :::premisli
-Pri Hornerjevem algoritmu za deljenje z $x + 3$ moraš na levo napisati neko število. Katero in zakaj?
+Pri Hornerjevem algoritmu za deljenje z $x + 3$ moraš izbrati število $a$, s katerim množiš. Katero in zakaj?
 ---
 Število $-3$, ker je $x + 3 = x - (-3)$. Algoritem vedno računa vrednost v točki $a$ iz zapisa $x - a$.
 :::

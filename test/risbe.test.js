@@ -350,3 +350,16 @@ test("slike iz znakov: ograje ``` se parijo po vrsti, blok z oznako jezika ni sl
   assert.equal(warns("# T\n\n```vb\nx = 1\n```\n\n| a | b |\n|---|---|\n\n```vb\ny = 2\n```\n").length, 0);
   assert.equal(warns("# T\n\n```\n[A] --> [B]\n```\n").length, 1);
 });
+
+test("blok ``` brez oznake jezika je opozorilo, tudi brez znakov za črte (Hornerjeva shema, pravilnostna tabela)", () => {
+  const warns = (src) => checkLessonSource(src, "x").warnings.filter((w) => /Slike iz znakov|brez oznake jezika/.test(w));
+  // Hornerjeva shema s presledki: stara zaznava (črte, okvirji) je ni ujela.
+  assert.deepEqual(warns("# T\n\n```\n   1   -3    0    4\n2       2   -2   -4\n   1   -1   -2    0\n```\n").map((w) => /brez oznake jezika \(1\)/.test(w)), [true]);
+  // Blok z oznako jezika je koda: brez opozorila.
+  assert.equal(warns("# T\n\n```python\nprint(1)\n```\n").length, 0);
+  // Slika iz znakov dobi samo svoje opozorilo, ne obeh; drug blok brez oznake se šteje posebej.
+  const w = warns("# T\n\n```\n[A] --> [B]\n```\n\n```\np  q\n1  0\n```\n");
+  assert.equal(w.length, 2, w.join(" | "));
+  assert.match(w.join(" | "), /Slike iz znakov v blokih \(1\)/);
+  assert.match(w.join(" | "), /brez oznake jezika \(1\)/);
+});

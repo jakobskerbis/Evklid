@@ -14,9 +14,13 @@ Zakaj? Ker vsak porabnik toku **nasprotuje**. Tej lastnosti rečemo **upor**. Oh
 
 **1. Poskus.** Na upornik priključimo vir, katerega napetost lahko spreminjamo. Ampermeter vežemo zaporedno, voltmeter vzporedno z upornikom. Merimo:
 
-| $U$ [V] | 0 | 2 | 4 | 6 | 8 |
-|---|---|---|---|---|---|
-| $I$ [A] | 0 | 0,1 | 0,2 | 0,3 | 0,4 |
+| $U$ [V] | $I$ [A] |
+|---|---|
+| 0 | 0 |
+| 2 | 0,1 |
+| 4 | 0,2 |
+| 6 | 0,3 |
+| 8 | 0,4 |
 
 Ko napetost podvojimo, se podvoji tudi tok. **Tok je premo sorazmeren z napetostjo.** Graf $I(U)$ je premica skozi izhodišče.
 

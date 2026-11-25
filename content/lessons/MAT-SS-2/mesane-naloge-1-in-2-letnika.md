@@ -15,9 +15,13 @@ V tem vprašanju se srečajo tri poglavja: **eksponentna funkcija** (model razgr
 
 **Najprej rešimo primer iz farmacije.** Zapišimo, kaj se dogaja vsakih $6$ ur:
 
-| čas $t$ [h] | $0$ | $6$ | $12$ | $18$ | $24$ |
-|---|---|---|---|---|---|
-| $c$ [mg/L] | $80$ | $40$ | $20$ | $10$ | $5$ |
+| čas $t$ [h] | $c$ [mg/L] |
+|---|---|
+| $0$ | $80$ |
+| $6$ | $40$ |
+| $12$ | $20$ |
+| $18$ | $10$ |
+| $24$ | $5$ |
 
 V vsakem koraku se koncentracija pomnoži z $\frac{1}{2}$. Po $t$ urah je takih korakov $\frac{t}{6}$, zato je
 

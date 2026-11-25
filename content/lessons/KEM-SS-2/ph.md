@@ -39,9 +39,9 @@ Minus je tam zato, da so vrednosti pozitivne: $-\log 10^{-3} = -(-3) = 3$. V log
 
 *Preizkus:* $[\mathrm{H_3O^+}] = 10^{-5}\,\text{mol/L}$. Koliko je pH? *Odgovor: $5$.*
 
-**3. kos: lestvica in faktor deset.** Oglej si, kaj se dogaja vzdolž lestvice:
+**3. kos: lestvica in faktor deset.** Oglej si, kaj se dogaja vzdolž lestvice (koncentracije so v $\text{mol/L}$):
 
-| pH | $[\mathrm{H_3O^+}]$ v $\text{mol/L}$ | vrsta raztopine |
+| pH | $[\mathrm{H_3O^+}]$ | raztopina |
 |---|---|---|
 | $1$ | $10^{-1} = 0{,}1$ | močno kisla |
 | $2$ | $10^{-2} = 0{,}01$ | kisla |
@@ -240,13 +240,17 @@ $c_2 = \dfrac{0{,}10 \cdot 15{,}0}{500}\,\text{mol/L} = 0{,}0030\,\text{mol/L}$ 
 
 Predstavljaj si pH lestvico kot stopnice. Vsaka stopnica više pomeni **desetkrat manj** oksonijevih ionov:
 
-```
-pH 1   | 0,1 mol/L        ##########
-pH 2   | 0,01 mol/L       #
-pH 3   | 0,001 mol/L      (desetina vrstice višje)
-  ⋮
-pH 7   | 0,0000001 mol/L  nevtralno
-```
+:::risba stolpci
+opis: Stolpčni prikaz koncentracije oksonijevih ionov v milimolih na liter pri petih vrednostih pH. pH 1: 100 mmol/L, pH 2: 10 mmol/L, pH 3: 1 mmol/L, pH 4: 0,1 mmol/L, pH 7 (nevtralno): 0,0001 mmol/L. Vsak naslednji stolpec je desetkrat nižji, od pH 3 naprej se skoraj ne vidijo več.
+podnapis: Koncentracija oksonijevih ionov pri različnem pH
+os: koncentracija (mmol/L)
+korak: 20
+stolpec: pH 1 | 100
+stolpec: pH 2 | 10
+stolpec: pH 3 | 1
+stolpec: pH 4 | 0,1
+stolpec: pH 7 | 0,0001
+:::
 
 Stolpec za pH $2$ je že desetkrat krajši od stolpca za pH $1$, stolpca za pH $3$ pa skoraj ne vidiš več. Na navadni lestvici bi bilo vse od pH $3$ naprej stisnjeno v ničlo. Logaritem stopnice razporedi enakomerno, da lahko na isti trak spraviš želodčni sok in bazično vodo Enkelada.
 
