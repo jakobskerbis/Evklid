@@ -91,10 +91,11 @@ async function casScan(text, sol) {
     // Vse rešitve naenkrat (»x=3, y=4; x=4, y=3«), da SymPy preveri tudi popolnost; prej je sistem z več
     // rešitvami SymPy preskočil in odločila je numerika, ki popolnosti ne preveri (AUDIT-001).
     // »ni rešitve« / »no solution« kot besedilo je isto kot prazen seznam (worker: »none«).
-    const given = (sol.solutions || []).filter((x) => !/^\s*(ni rešitev|ni rešitve|nima rešitve|no solutions?|none|∅|\{\s*\})\s*$/i.test(String(x)));
+    const given = (sol.solutions || []).filter((x) => !/^\s*((sistem\s+)?(ni|nima)\s+rešit(ev|ve)|(the\s+system\s+has\s+)?no\s+solutions?|none|∅|\{\s*\})\s*\.?\s*$/i.test(String(x)));
     const groups = systemGroups(given);
-    // Periodične rešitve v sistemu worker vstavi s prostim k in jih zavrne: tu ne odloča (numerika: partial).
-    if (!raw.length || !groups || given.some((s) => /\bk\b/.test(s))) return { ok: null };
+    // Periodične rešitve v sistemu (k ob π ali °, tudi »2k«) worker vstavi s prostim k in jih zavrne: tu ne odloča
+    // (numerika: partial). Prost parameter k brez π ostane workerju.
+    if (!raw.length || !groups || given.some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(s) && /pi|π|°/.test(s))) return { ok: null };
     // Imena: iz rešitev in iz enačb (tudi »2x«, »4y«; ne »e«).
     const names = [...new Set([...groups.flatMap((g) => [...g.keys()]), ...(raw.join(" ").match(/(?<![A-Za-z_])[a-z](?![A-Za-z_(])/g) || [])])].filter((n) => n !== "e");
     const eqs = raw.map((e) => casText(e, names));

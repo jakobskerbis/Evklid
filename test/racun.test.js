@@ -190,6 +190,8 @@ cas("AUDIT-001 pregled: log, implicitno množenje, √, »2x«, več rešitev v 
     ["x+y=7; x*y=12", { kind: "system", solutions: ["x=3, y=4; x=4, y=3"] }],
     ["x+y=2; 2*x+2*y=5", { kind: "system", solutions: [] }],
     ["x-y=1; 2x-2y=3", { kind: "system", solutions: ["ni rešitve"] }],
+    ["x-y=1; 2x-2y=3", { kind: "system", solutions: ["Sistem nima rešitve."] }],
+    ["x+y=2; 2x+2y=4", { kind: "system", solutions: ["x=k; y=2-k"] }],
     ["log_10(x)=1", { kind: "equation", variable: "x", solutions: ["10"] }],
     ["log_2(x)+log_2(x-2)=3", { kind: "equation", variable: "x", solutions: ["4"] }],
     ["log(x)+log(x-3)=1", { kind: "equation", variable: "x", solutions: ["5"] }],
@@ -205,6 +207,7 @@ cas("AUDIT-001 pregled: log, implicitno množenje, √, »2x«, več rešitev v 
   assert.equal(plane.reason, "missing");
   // Periodične rešitve v sistemu: SymPy ne odloča, numerika jih ne potrdi (nepreverjeno, ne »napačno«).
   assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2*k*pi; y=1/2", "x=5*pi/6+2*k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
+  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2k*pi; y=1/2", "x=5pi/6+2k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
   // Nepopolno ostane nepopolno tudi z log in implicitnim množenjem.
   assert.equal((await verifyAiFull("x^2+y^2=13; xy=6", { kind: "system", solutions: ["x=2; y=3", "x=3; y=2"] })).reason, "missing");
 });
