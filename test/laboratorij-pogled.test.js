@@ -103,3 +103,9 @@ test("povezave C3: druga skupina formul (gostota, vzgon, tlak, sila na vodnik), 
   assert.ok(sile.includes('formula: "<i>p</i> = ρ · <i>g</i> · <i>h</i> = ρ<sub>v</sub> · <i>g</i> · Δ<i>h</i>"'));
   assert.equal(read("lab-magnetizem.js").split('formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>"').length - 1, 2);
 });
+
+test("povezave C3: tretja skupina formul (galvanski člen, tuljava)", () => {
+  const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
+  assert.ok(read("lab-elektrokemija.js").includes("formula: tex(String.raw`E^\\circ_\\text{člen} = E^\\circ_\\text{katoda} - E^\\circ_\\text{anoda}`)"));
+  assert.equal(read("lab-magnetizem.js").split("formula: tex(String.raw`B = \\frac{\\mu_0 N I}{l}`)").length - 1, 2);
+});
