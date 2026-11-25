@@ -1,7 +1,7 @@
 // Virtualni laboratorij, toplota: grelec in izkoristek (lab-grelnik), mešanje tople in hladne vode (lab-mesanje),
 // taljenje ledu in vrenje vode (lab-faze), ohlajanje čaja v različnih posodah (lab-ohlajanje).
 // Modeli: lab-model-toplota.js (brez DOM). Čas teče v realnem času, učenec ga lahko pospeši.
-import { h, s, fmt, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
+import { h, s, fmt, decZapis, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
 import { drawMeter } from "./lab-fiz.js";
 import { GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, izkoristek, geometrija, POSODE, VODA, GRELEC, NAPAJALNIK_T, KRAJI, SKODELICE, CAJ, T_IDEALNA, tlakNaVisini, vrelisce, POENOSTAVITVE_TOPLOTA } from "./lab-model-toplota.js";
@@ -20,7 +20,7 @@ const hint = (text) => h("p", { class: "lab-tit-hint", html: text });
 const ura = (t) => {
   const m = Math.floor(t / 60), sec = t - 60 * m;
   if (m >= 10) return `${m}:${String(Math.floor(sec)).padStart(2, "0")}`; // po 10 min brez desetink, da gre na zaslon
-  return `${m}:${sec.toFixed(1).padStart(4, "0").replace(".", ",")}`;
+  return `${m}:${decZapis(sec.toFixed(1).padStart(4, "0"))}`;
 };
 const minSek = (t) => ((t = Math.round(t)), `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`); // najprej zaokroži, sicer 22:60
 // Barva vode po temperaturi (od modrikaste hladne do rožnate vroče).
@@ -143,7 +143,7 @@ export function labGrelnik(el) {
     const r = B.readM();
     mStud = r.value;
     balL.set(r.text, "g", "masa vode");
-    log.push(`Tehtnica: ${r.text.replace(".", ",")} g vode.`, "ok");
+    log.push(`Tehtnica: ${decZapis(r.text)} g vode.`, "ok");
     if (B.voda.m < 0.14) log.push("Voda komaj pokrije grelno spiralo. Natoči je več.", "warn");
     sync();
   }

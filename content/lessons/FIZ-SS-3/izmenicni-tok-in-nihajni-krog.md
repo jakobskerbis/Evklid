@@ -254,6 +254,18 @@ in od tod $\omega^2 = \dfrac{1}{LC}$ ter $t_0 = \dfrac{2\pi}{\omega} = 2\pi\sqrt
 ~ Povprečna napetost je res nič, a moč je sorazmerna z $U^2$ in je vedno pozitivna.
 > Izmenična napetost s temensko vrednostjo $12\,\mathrm{V}$ ima $U_{\mathrm{ef}} \approx 8{,}5\,\mathrm{V}$. Moč je sorazmerna s kvadratom napetosti, zato je pri izmenični napetosti povprečna moč polovica moči pri enosmernih $12\,\mathrm{V}$.
 
+? Nihajni krog ima tuljavo z $L = 2{,}0\,\mathrm{mH}$ in kondenzator s $C = 50\,\mathrm{nF}$. Kolikšna je lastna frekvenca? Rezultat vpiši v kilohercih na desetinko.
+= 15,9 kHz | 0,1
+~ 100 | Pozabil si na $2\pi$: $\nu_0 = \dfrac{1}{2\pi\sqrt{LC}}$.
+~ 0,0628 | To je nihajni čas $t_0$ v milisekundah. Frekvenca je njegova obratna vrednost.
+> $LC = 2{,}0\cdot10^{-3}\,\mathrm{H} \cdot 5{,}0\cdot10^{-8}\,\mathrm{F} = 1{,}0\cdot10^{-10}\,\mathrm{s^2}$, $\nu_0 = \dfrac{1}{2\pi \cdot 1{,}0\cdot10^{-5}\,\mathrm{s}} \approx 1{,}59\cdot10^{4}\,\mathrm{Hz} = 15{,}9\,\mathrm{kHz}$.
+
+? Na nalepki sušilnika za lase piše $1150\,\mathrm{W}$, $230\,\mathrm{V}$. Kolikšen je temenski tok skozi sušilnik? (Na stotinko ampera.)
+= 7,07 A | 0,02
+~ 5 | To je efektivni tok. Temenski tok je $\sqrt{2}$-krat večji.
+~ 3,54 | Efektivni tok si delil s $\sqrt{2}$. Temenski tok je večji od efektivnega: $I_0 = \sqrt{2}\, I_{\mathrm{ef}}$.
+> $I_{\mathrm{ef}} = \dfrac{\bar P}{U_{\mathrm{ef}}} = \dfrac{1150\,\mathrm{W}}{230\,\mathrm{V}} = 5{,}0\,\mathrm{A}$, $I_0 = \sqrt{2} \cdot 5{,}0\,\mathrm{A} \approx 7{,}07\,\mathrm{A}$.
+
 :::simboli
 U | trenutna napetost | U = U_0 \sin(\omega t) | V
 U_0 | temenska napetost | U_0 = \sqrt{2}\, U_{\mathrm{ef}} | V | največja vrednost napetosti
