@@ -5,7 +5,7 @@
 //    (KaTeX, throwOnError), na vsakem položaju je natanko en kazalec in zapis brez kazalca je zapis besedila;
 //    merilne točke za dotik niso nikoli sredi imena ali odpirala; ⌫ in Delete pred in za vsakim mestom ne pustita
 //    ostankov (»;;)«, »undefined«, pol imena); ◀ ▶ prideta od začetka do konca; izračunana vrednost je prava.
-// 2. Pravi brskalnik (Playwright: Chromium, WebKit, Firefox, kar je nameščeno; CI ima Chromium in WebKit), stran
+// 2. Pravi brskalnik (Playwright: Chromium, WebKit, Firefox, kar je nameščeno; v CI vsako noč, ne ob PR), stran
 //    /kalkulator.html v slovenščini, 1280 px z miško in 360 px z dotikom: klik/dotik na vsako mesto postavi kazalec
 //    točno tja, zaslonska ⌫, strojni Backspace in Delete na vsakem mestu, ◀ ▶ in puščici, hitro tipkanje, preklop
 //    znanstveni ↔ grafični, decimalna vejica, samo tipkovnica, osnovne oznake ARIA.
@@ -230,17 +230,25 @@ const VIEWS = [
   ["360", { viewport: { width: 360, height: 740 }, hasTouch: true, isMobile: true }],
 ];
 const ALL = process.env.MATRIKA_VSE === "1";
-// izbor v CI (Chromium in WebKit, ~3 min skupaj): vsaka n-ta predloga; vse: MATRIKA_VSE=1 (lokalno, ~4 min na brskalnik in širino)
+// brskalniški del ni v CI ob vsakem PR (~76 s): teče vsako noč v .github/workflows/matrika-nocna.yml, poln (MATRIKA_VSE=1)
+// in po brskalnikih (MATRIKA_BRSKALNIK=chromium|webkit|firefox). Lokalno brez CI teče kot prej (vsi nameščeni brskalniki).
+const ONLY = (process.env.MATRIKA_BRSKALNIK || "").split(",").map((x) => x.trim()).filter(Boolean);
+const SKIP_CI = !!process.env.CI && !ONLY.length;
+// izbor (brez MATRIKA_VSE): vsaka n-ta predloga; vse: MATRIKA_VSE=1 (~7–11 min na brskalnik za obe širini)
 const EVERY = { chromium: { 1280: 3, 360: 6 }, webkit: { 1280: 6, 360: 12 }, firefox: { 1280: 6, 360: 12 } };
 const browsers = [];
-for (const engine of ["chromium", "webkit", "firefox"]) {
+// v CI ob PR brskalniških testov ne prijavimo (preskočeni hitri testi s --test-force-exit so odrezali izpis: manj testov, izhod 0)
+for (const engine of SKIP_CI ? [] : ["chromium", "webkit", "firefox"]) {
   for (const [vw, opt0] of VIEWS) {
     const opt = engine === "firefox" ? { ...opt0, isMobile: undefined } : opt0;
     test(`brskalnik ${engine} ${vw}: dotik na znake, ⌫, Backspace, Delete, puščice, tipkanje, preklop, vejica, tipkovnica, ARIA`, { timeout: ALL ? 3600000 : 600000 }, async (t) => {
+      if (ONLY.length && !ONLY.includes(engine)) return t.skip(`samo ${ONLY.join(", ")}`);
       let browser = null;
       try {
         browser = playwright && (await playwright[engine].launch());
       } catch {}
+      // nočna matrika izrecno zahteva ta brskalnik: brez njega mora pasti, ne tiho preskočiti
+      if (!browser && ONLY.length) assert.fail(`${engine} ni nameščen (MATRIKA_BRSKALNIK=${ONLY.join(",")})`);
       if (!browser) return t.skip(`${engine} ni nameščen`);
       browsers.push(browser);
       const url = await base();
@@ -459,4 +467,7 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
 test.after(async () => {
   for (const b of browsers) await b.close();
   server?.close();
+  // --test-force-exit konča proces takoj po zadnjem testu; brez tega premora poročilo o ~280 hitrih testih pogosto ne pride
+  // v celoti do glavnega procesa (manj testov v izpisu, izhod 0). Z brskalniki na koncu je bil premor naraven.
+  await new Promise((r) => setTimeout(r, 1000));
 });
