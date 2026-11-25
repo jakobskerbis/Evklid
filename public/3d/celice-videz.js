@@ -131,36 +131,42 @@ vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine p
   // luknje: { f: gostota, prag: 0 … 1 } = okrogle odprtine (fenestracije ER, pore) z odrezom fragmentov po šumu }.
   // Komplet izbrani del obarva na kopiji materiala, zato kopija dobi isti dodatek (clone sicer izgubi onBeforeCompile).
   function sencilo(m, o) {
-    const rf = o.rf || 30, Fr = F(rf), K = F(0.1 * (o.k ?? 0.6) / rf), B = F(o.b ?? 0.16), S = F(o.s ?? 0.14);
-    const sk = o.vr === 3 ? `vec3(${F(rf * 0.14)}, ${Fr}, ${Fr})` : Fr;
+    // Številke (gostota, moč reliefa, senca, presevnost roba) so enotne spremenljivke (uniform), ne del besedila
+    // senčilnika: deli celice z isto vrsto površine si delijo en program (čašasta celica 53 → manj programov, j 25. 11.:
+    // počasno nalaganje na prenosniku z Windows, kjer je prevajanje programov drago). Vrednosti so zaokrožene enako kot
+    // prej v besedilu (F), zato je slika ista.
+    const rf = o.rf || 30, K = +F(0.1 * (o.k ?? 0.6) / rf), B = +F(o.b ?? 0.16), S = +F(o.s ?? 0.14);
+    const sk = o.vr === 3 ? new THREE.Vector3(+F(rf * 0.14), +F(rf), +F(rf)) : new THREE.Vector3(+F(rf), +F(rf), +F(rf));
     const osnova = o.vr === 1 ? "(1.0 - abs(2.0 * zvS(zp) - 1.0))" : "zvS(zp)";
     const st = o.steklo;
     const brez = !!o.brez, lu = o.luknje;
+    const enotne = { zvSk: { value: sk }, zvK: { value: K }, zvB: { value: B }, zvPr: { value: S } };
     m.onBeforeCompile = (sh) => {
+      Object.assign(sh.uniforms, enotne);
       sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vZp;")
         .replace("#include <begin_vertex>", "#include <begin_vertex>\nvZp = transformed;\n#ifdef USE_INSTANCING\nvZp = (instanceMatrix * vec4(transformed, 1.0)).xyz;\n#endif");
-      let fs = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vZp;" + GLSL);
+      let fs = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vZp;\nuniform vec3 zvSk;\nuniform float zvK, zvB, zvPr;" + GLSL);
       if (lu) fs = fs.replace("#include <clipping_planes_fragment>", `#include <clipping_planes_fragment>
           if (zvS(vZp * ${F(lu.f)}) * 0.7 + zvS(vZp * ${F(lu.f * 2.3)} + 4.0) * 0.3 > ${F(lu.prag)}) discard;`);
       if (!brez) {
         fs = fs.replace("#include <color_fragment>", `#include <color_fragment>
-          vec3 zp = vZp * ${sk};
+          vec3 zp = vZp * zvSk;
           float zw = length(fwidth(zp));
           float zn = mix(0.5, ${osnova}, clamp(1.6 - zw * 1.8, 0.0, 1.0));
           ${hi ? "zn = zn * 0.62 + mix(0.5, zvS(mat3(0.8, 0.36, -0.48, -0.6, 0.48, -0.64, 0.0, 0.8, 0.6) * zp * 2.7 + 7.0), clamp(1.6 - zw * 4.9, 0.0, 1.0)) * 0.38;" : ""}
-          diffuseColor.rgb *= 1.0 - ${B} + ${B} * 1.35 * zn;`)
+          diffuseColor.rgb *= 1.0 - zvB + zvB * 1.35 * zn;`)
           .replace("#include <roughnessmap_fragment>", "#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor + (zn - 0.5) * 0.18, 0.04, 1.0);")
-          .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>\nnormal = zvRelief(normal, zn * ${K}, faceDirection);`);
+          .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>\nnormal = zvRelief(normal, zn * zvK, faceDirection);`);
       }
       fs = fs.replace("#include <opaque_fragment>", `float zfr = 1.0 - abs(dot(normal, normalize(vViewPosition)));
-          outgoingLight += diffuseColor.rgb * ${S} * pow(zfr, 1.6);
+          outgoingLight += diffuseColor.rgb * zvPr * pow(zfr, 1.6);
           ${st ? `float zrb = pow(1.0 - abs(dot(nonPerturbedNormal, normalize(vViewPosition))), ${F(st.re ?? 2.2)});
           outgoingLight += ${V3(st.rob)} * zrb * ${F(st.rk ?? 1.1)};
           diffuseColor.a = clamp(${F(st.a)} + (1.0 - ${F(st.a)}) * zrb * 0.85, 0.0, 1.0);` : ""}
           #include <opaque_fragment>`);
       sh.fragmentShader = fs;
     };
-    const kl = `cv|${sk}|${o.vr || 0}|${K}|${B}|${S}|${hi}|${brez}|${lu ? lu.f + "," + lu.prag : ""}|${st ? [st.a, st.rob, st.rk, st.re].join(",") : ""}`;
+    const kl = `cv2|${o.vr || 0}|${hi}|${brez}|${lu ? lu.f + "," + lu.prag : ""}|${st ? [st.a, st.rob, st.rk, st.re].join(",") : ""}`;
     m.customProgramCacheKey = () => kl;
     m.clone = function () { const c = new this.constructor().copy(this); sencilo(c, o); return c; };
     m.userData.cv = o;

@@ -1145,7 +1145,9 @@ export function odpriModel(el, mod, opts = {}) {
 
   function dokoncaj(m, ponastavi) {
     model = m;
-    nalaganje(null);
+    // Model iz datoteke (organ): plast »Nalaganje« ostane, dokler se senčilniki ne prevedejo (kit.pripravi spodaj).
+    const nalagal = !!nalagEl && !nalagEl.classList.contains("napaka");
+    if (!nalagal) nalaganje(null);
     el.classList.toggle("k3-organ", model.postavitev === "organ");
     // Celice (oder: "celica"): temno vijoličen oder kot v ciljnem videzu celic (public/3d/celice-videz.js).
     el.classList.toggle("k3-celica", model.oder === "celica");
@@ -1196,6 +1198,12 @@ export function odpriModel(el, mod, opts = {}) {
       if (model.postavitev === "organ" && !ponastavi) requestAnimationFrame(() => requestAnimationFrame(() => !unicen && model === m && leti()));
     }
     kit.narisi();
+    // Senčilniki vseh delov se prevedejo hkrati, preden se model prvič nariše (scena.js pripravi): stran ne zamrzne.
+    const pripravljen = kit.pripravi ? kit.pripravi() : Promise.resolve();
+    if (nalagal) {
+      nalaganje(1);
+      pripravljen.then(() => !unicen && model === m && nalaganje(null));
+    }
     // Del iz naslova (»#organ-srce?del=levi prekat«, gumb inštruktorja public/odpri.js): po id-ju ali imenu.
     if (zacetek.del && !ponastavi) {
       // del (tudi »membrana« → Celična membrana, sinonimi »mitralna zaklopka«) pred skupino (»zaklopke«, »organeli« …;
