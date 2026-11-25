@@ -28,23 +28,83 @@ export async function verifyAiFull(text, sol, { cas = true } = {}) {
   return num;
 }
 
+// Zapis za SymPy (server/cas/worker.py). Tam je log brez osnove ln, v šoli in v public/graph/math.js pa desetiški,
+// zato log(x) → lg(x); log_b(x), log_(b)(x), log_{b}(x) → log(x, b) (tako ga piše READ_PROMPT); √2 → sqrt(2).
+// Z imeni spremenljivk sistema še implicitno množenje (xy → x*y; worker bi »xy« prebral kot eno ime). Pregled #935.
+export function casText(text, names = []) {
+  let t = String(text).replace(/√\s*\(/g, "sqrt(").replace(/√\s*([0-9]+(?:[.,][0-9]+)?|[a-zA-Z])/g, "sqrt($1)");
+  const head = /(?<![A-Za-z_])log(?:_(?:\{([^{}]+)\}|\(([^()]+)\)|([0-9]+|[a-zA-Z])))?\s*\(/y;
+  let out = "";
+  for (let i = 0; i < t.length; ) {
+    head.lastIndex = i;
+    const m = head.exec(t);
+    if (!m) {
+      out += t[i++];
+      continue;
+    }
+    let depth = 1;
+    let j = head.lastIndex;
+    for (; j < t.length && depth; j++) depth += t[j] === "(" ? 1 : t[j] === ")" ? -1 : 0;
+    if (depth) return t; // brez zaklepaja: pustimo, SymPy javi napako (ok: null)
+    const inner = casText(t.slice(head.lastIndex, j - 1), names);
+    const base = m[1] ?? m[2] ?? m[3];
+    let d = 0;
+    const comma = [...inner].some((c) => ((d += c === "(" ? 1 : c === ")" ? -1 : 0), c === "," && d === 0));
+    out += base ? `log(${inner}, ${base})` : comma ? `log(${inner})` : `lg(${inner})`;
+    i = j;
+  }
+  if (names.length) out = out.replace(/(?<![A-Za-z_])[a-z]{2,3}(?![A-Za-z_(])/g, (w) => ([...w].every((c) => names.includes(c)) ? [...w].join("*") : w));
+  return out;
+}
+
+// Rešitve sistema kot skupine »x=3, y=4«: ena rešitev na niz ali več v enem nizu (»x=3, y=4; x=4, y=3«);
+// nova skupina se začne, ko se ime ponovi. null = zapisa ne razumemo.
+function systemGroups(solutions) {
+  const groups = [];
+  for (const s of solutions) {
+    let cur = null;
+    let d = 0;
+    let part = "";
+    const parts = [];
+    for (const c of String(s)) {
+      d += c === "(" || c === "[" || c === "{" ? 1 : c === ")" || c === "]" || c === "}" ? -1 : 0;
+      if (d === 0 && (c === ";" || c === ",")) (parts.push(part), (part = ""));
+      else part += c;
+    }
+    parts.push(part);
+    for (const p of parts.map((x) => x.trim()).filter(Boolean)) {
+      const m = /^([a-zA-Z])\s*=(?!=)\s*(.+)$/.exec(p);
+      if (!m) return null;
+      if (!cur || cur.has(m[1])) groups.push((cur = new Map()));
+      cur.set(m[1], m[2].trim());
+    }
+  }
+  return groups;
+}
+
 async function casScan(text, sol) {
   const v = /^[a-zA-Z]$/.test(sol?.variable || "") ? sol.variable : "x";
   const sols = (sol?.solutions || []).map((x) => String(x).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "").trim()).filter(Boolean);
-  if (sol?.kind === "equation") return casCheck("solve", [prep(text), v, sols.length ? sols.join(", ") : "none"]);
+  if (sol?.kind === "equation") return casCheck("solve", [casText(prep(text)), v, sols.length ? sols.map((x) => casText(x)).join(", ") : "none"]);
   if (sol?.kind === "system") {
-    const eqs = (splitSystem(text) || String(text).split(/;|\n/).filter((x) => x.includes("="))).map((e) => prep(e));
-    const names = [...new Set(eqs.join(" ").match(/\b[a-z]\b/g) || [])].filter((n) => n !== "e");
+    const raw = (splitSystem(text) || String(text).split(/;|\n/).filter((x) => x.includes("="))).map((e) => prep(e));
     // Vse rešitve naenkrat (»x=3, y=4; x=4, y=3«), da SymPy preveri tudi popolnost; prej je sistem z več
     // rešitvami SymPy preskočil in odločila je numerika, ki popolnosti ne preveri (AUDIT-001).
-    const claims = (sol.solutions || []).map((s) => String(s).replace(/;/g, ",").trim()).filter(Boolean);
-    if (!eqs.length || !claims.length) return { ok: null };
-    return casCheck("solve", [eqs.join(", "), names.join(", "), claims.join("; ")]);
+    // »ni rešitve« / »no solution« kot besedilo je isto kot prazen seznam (worker: »none«).
+    const given = (sol.solutions || []).filter((x) => !/^\s*(ni rešitev|ni rešitve|nima rešitve|no solutions?|none|∅|\{\s*\})\s*$/i.test(String(x)));
+    const groups = systemGroups(given);
+    // Periodične rešitve v sistemu worker vstavi s prostim k in jih zavrne: tu ne odloča (numerika: partial).
+    if (!raw.length || !groups || given.some((s) => /\bk\b/.test(s))) return { ok: null };
+    // Imena: iz rešitev in iz enačb (tudi »2x«, »4y«; ne »e«).
+    const names = [...new Set([...groups.flatMap((g) => [...g.keys()]), ...(raw.join(" ").match(/(?<![A-Za-z_])[a-z](?![A-Za-z_(])/g) || [])])].filter((n) => n !== "e");
+    const eqs = raw.map((e) => casText(e, names));
+    const claim = groups.length ? groups.map((g) => [...g].map(([n, x]) => `${n}=${casText(x)}`).join(", ")).join("; ") : "none";
+    return casCheck("solve", [eqs.join(", "), names.join(", "), claim]);
   }
-  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [prep(text), prep(sol.value)]);
+  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [casText(prep(text)), casText(prep(sol.value))]);
   if (sol?.kind === "derivative" && sol.value) {
     const f = String(text).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
-    return casCheck("diff", [prep(f), v, prep(sol.value)]);
+    return casCheck("diff", [casText(prep(f)), v, casText(prep(sol.value))]);
   }
   return { ok: null };
 }

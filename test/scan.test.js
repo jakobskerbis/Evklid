@@ -5,7 +5,7 @@ import path from "node:path";
 import SL from "../public/i18n/sl.js";
 import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
-import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, solveWithAi, READ_PROMPT, readLangLine, verifyAiFull } from "../server/scan.js";
+import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, solveWithAi, READ_PROMPT, readLangLine, verifyAiFull, casText } from "../server/scan.js";
 import { setClient } from "../server/claude.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
@@ -273,6 +273,20 @@ test("AI solutions are verified: substitution, missing roots, derivatives, integ
 // AUDIT-001 (neodvisni pregled, PR #934): numerika ne sme trditi, da je množica rešitev popolna, kadar tega ne
 // preveri (sistem, periodične rešitve, »ni rešitve«). Brez SymPy (cas: false, npr. naloga s podatki ali izpad)
 // taka rešitev ni »preverjena«; ko jo SymPy potrdi, je (test/racun.test.js).
+test("casText: zapis za SymPy (log desetiški, log_b, √, implicitno množenje imen)", () => {
+  assert.equal(casText("log_10(x)+log_10(y)=1"), "log(x, 10)+log(y, 10)=1");
+  assert.equal(casText("log_(2)(x-1)=3"), "log(x-1, 2)=3");
+  assert.equal(casText("log(x)+log(x-3)=1"), "lg(x)+lg(x-3)=1");
+  assert.equal(casText("log(x, 2)=3"), "log(x, 2)=3");
+  assert.equal(casText("log(log(x))=0"), "lg(lg(x))=0");
+  assert.equal(casText("ln(x)=2"), "ln(x)=2");
+  assert.equal(casText("x=√2"), "x=sqrt(2)");
+  assert.equal(casText("√(x+2)=x"), "sqrt(x+2)=x");
+  assert.equal(casText("xy=6", ["x", "y"]), "x*y=6");
+  assert.equal(casText("xy=6"), "xy=6", "brez imen ne ugibamo");
+  assert.equal(casText("sin(x)+xy", ["x", "y"]), "sin(x)+x*y");
+});
+
 test("AUDIT-001: without SymPy an unproven complete solution set is not »verified«", async () => {
   const partial = [
     ["x=10000000", { kind: "equation", variable: "x", solutions: [] }],

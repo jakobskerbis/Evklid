@@ -508,6 +508,11 @@ def solve_system(eqs, vs, claim_text, names):
     claimed_param = any(val.free_symbols for pt in exact for val in pt.values())
     if param:
         if claimed_param and not approx:
+            # Trditev z manj parametri kot rešitev (premica v ravnini) je le del množice rešitev (pregled #935).
+            dim_s = max(len(vset - set(s)) for s in sols)
+            dim_c = min(len(set().union(*(val.free_symbols for val in pt.values()))) for pt in exact)
+            if dim_c < dim_s:
+                return False, f"manjka rešitev (rešitev ima {dim_s} parametra, trditev {dim_c})"
             return True, ""
         return False, "sistem ima neskončno rešitev"
     if claimed_param:
