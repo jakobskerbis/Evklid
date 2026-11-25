@@ -6,6 +6,8 @@
 // prijavo, Račun in stran za starše. Beleži napake strani in konzole, neuspele zahteve in odgovore
 // ≥ 400, vodoravno drsenje in vidne neprevedene ključe (npr. »nav.path«).
 // Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon|racuni]
+//   [--zaslon ŠxV] [--dotik] [--mobilno] [--tema temna] [--meritve] (druge naprave)
+//   [--naprave [seznam]] (vse naprave in legi naenkrat, s kazalom: scripts/posnetki-naprave.cjs)
 // (--samo: en del, CI jih zažene tri hkrati; računi tečejo samo brez --samo ali z --samo racuni).
 // Izhod 1, če je kaj narobe. Potrebuje Playwright s Chromiumom (require("playwright")).
 const { spawn } = require("node:child_process");
@@ -19,6 +21,14 @@ const { tinyPdf, SAMPLE } = require("../test/fixtures/tiny-pdf.cjs");
 
 const ROOT = path.join(__dirname, "..");
 const args = process.argv.slice(2);
+// --naprave [tel-390,ipad-820,…]: vse naprave in obe legi naenkrat (scripts/posnetki-naprave.cjs), z istimi preverjanji.
+if (args.includes("--naprave")) {
+  const i = args.indexOf("--naprave");
+  const izbor = args[i + 1] && !args[i + 1].startsWith("--") ? ["--naprave", args[i + 1]] : [];
+  const ostalo = args.filter((a, j) => j !== i && !(izbor.length && j === i + 1));
+  const r = require("node:child_process").spawnSync(process.execPath, [path.join(__dirname, "posnetki-naprave.cjs"), ...izbor, ...ostalo], { stdio: "inherit" });
+  process.exit(r.status ?? 1);
+}
 const arg = (name) => {
   const i = args.indexOf(name);
   return i >= 0 ? args[i + 1] : null;
@@ -26,6 +36,26 @@ const arg = (name) => {
 const SHOTS = arg("--posnetki") ? path.resolve(arg("--posnetki")) : null;
 const ONLY = arg("--samo");
 const ACCOUNTS = !args.includes("--brez-racunov");
+// Druge naprave (scripts/posnetki-naprave.cjs, zunanji pregled 25. 11. 2026): --zaslon ŠxV zamenja velikost okna
+// obeh tokov, --dotik vklopi dotik, --mobilno mobilni pogled (meta viewport). Brez njih ostane 1280×800 in 360×740.
+const ZASLON = (() => {
+  const m = /^(\d{3,4})x(\d{3,4})$/.exec(arg("--zaslon") || "");
+  return m ? { width: Number(m[1]), height: Number(m[2]) } : null;
+})();
+if (arg("--zaslon") && !ZASLON) throw new Error("--zaslon: npr. 390x844");
+const DOTIK = args.includes("--dotik");
+const MOBILNO = args.includes("--mobilno");
+// --tema temna: sistemska temna tema (privzeti način videza je »system«, public/theme.js).
+const TEMNA = arg("--tema") === "temna";
+// --meritve: ob vsakem posnetku zapiše v <posnetki>/meritve.jsonl premajhne cilje za dotik, odrezano besedilo in
+// kršitve axe-core (če je nameščen). To so opombe za pregled, ne napake: izhod testa se zaradi njih ne spremeni.
+const MERITVE = args.includes("--meritve") && SHOTS;
+let AXE = null;
+if (MERITVE) {
+  try {
+    AXE = fs.readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
+  } catch {}
+}
 const T0 = Date.now();
 
 const problems = []; // { where, what }
@@ -138,9 +168,10 @@ function answersFor(a) {
 let KEYS = [];
 async function newPage(browser, phone, label, base) {
   const ctx = await browser.newContext({
-    viewport: phone ? { width: 360, height: 740 } : { width: 1280, height: 800 },
-    hasTouch: phone,
-    isMobile: phone,
+    viewport: ZASLON || (phone ? { width: 360, height: 740 } : { width: 1280, height: 800 }),
+    hasTouch: phone || DOTIK,
+    isMobile: phone || MOBILNO,
+    colorScheme: TEMNA ? "dark" : "light",
     deviceScaleFactor: 1,
     locale: "sl-SI",
     timezoneId: "Europe/Ljubljana",
@@ -285,7 +316,48 @@ async function screen(p, name) {
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
+    if (MERITVE) await meritve(p, path.basename(file, ".png"));
   }
+}
+// Meritve za zunanji pregled (scripts/posnetki-naprave.cjs): cilji pod 24 × 24 px (WCAG 2.2, 2.5.8), na dotik še
+// pod 44 px, besedilo, ki ga rob odreže brez tropičja, in kršitve axe-core (wcag2a/aa, wcag22aa).
+async function meritve(p, posnetek) {
+  const m = await p
+    .evaluate(() => {
+      const vis = (el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth && getComputedStyle(el).visibility !== "hidden" && !el.closest("[hidden],[inert],[aria-hidden=true]");
+      };
+      const ime = (el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : el.classList[0] ? "." + el.classList[0] : ""}${(el.getAttribute("aria-label") || el.innerText || "").trim() ? ` »${(el.getAttribute("aria-label") || el.innerText).trim().slice(0, 24)}«` : ""}`;
+      const cilji = [...document.querySelectorAll("button, a[href], input:not([type=hidden]), select, [role=button], [role=tab], [role=switch]")].filter(vis);
+      const pod24 = [];
+      const pod44 = [];
+      for (const el of cilji) {
+        const r = el.getBoundingClientRect();
+        if (el.matches("input[type=checkbox], input[type=radio]") && el.closest("label")) continue; // cilj je oznaka
+        if (r.width < 24 || r.height < 24) pod24.push(`${ime(el)} ${Math.round(r.width)}×${Math.round(r.height)}`);
+        else if (r.width < 44 || r.height < 44) pod44.push(ime(el));
+      }
+      const odrezano = [];
+      for (const el of document.querySelectorAll("body *")) {
+        if (el.children.length || !vis(el) || !(el.textContent || "").trim()) continue;
+        const cs = getComputedStyle(el);
+        if (cs.overflowX === "visible" || cs.textOverflow === "ellipsis" || cs.webkitLineClamp !== "none") continue;
+        if (el.scrollWidth > el.clientWidth + 2) odrezano.push(ime(el));
+      }
+      return { cilji: cilji.length, pod24: [...new Set(pod24)].slice(0, 15), pod44: pod44.length, odrezano: [...new Set(odrezano)].slice(0, 10) };
+    })
+    .catch((e) => ({ napaka: e.message.slice(0, 120) }));
+  if (AXE) {
+    m.axe = await p
+      .evaluate(async (src) => {
+        if (!window.axe) (0, eval)(src);
+        const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] });
+        return r.violations.map((v) => ({ id: v.id, vpliv: v.impact, n: v.nodes.length, primer: v.nodes[0]?.target?.join(" ") }));
+      }, AXE)
+      .catch((e) => [{ id: "axe-napaka", primer: e.message.slice(0, 120) }]);
+  }
+  fs.appendFileSync(path.join(SHOTS, "meritve.jsonl"), JSON.stringify({ posnetek, sirina: p.viewportSize().width, ...m }) + "\n");
 }
 // Mehurček inštruktorja (public/okna.js) ne sme prekriti gumba, povezave ali polja (primerjava z Astro 24. 11. 2026:
 // prekrit X na pasu, gumb za pripenjanje v poskusu). Mesto popravi v 400 ms po menjavi pogleda, zato počakamo.
@@ -1596,6 +1668,12 @@ async function desktop(browser, app) {
   // preveri tudi, da zgodovina ne odpelje iz aplikacije.
   await step(p, "izpiti", async () => {
     const id = await p.evaluate(() => localStorage.getItem("studentId"));
+    // Tuji sistem velja samo za ta korak: telefonski del nadaljuje z istim profilom (prej so bili telefonski
+    // posnetki zato v indijskem učnem načrtu, zunanji pregled 25. 11. 2026). Prejšnje nastavitve vrnemo v finally.
+    p.prejsnjiSistem = await p.evaluate(async (id) => {
+      const s = (await (await fetch(`/api/students/${id}`)).json()).settings || {};
+      return { school_system: s.school_system ?? "SI", educational_track: s.educational_track, curriculum_level: s.curriculum_level, language: s.language };
+    }, id);
     await p.evaluate(async (id) => {
       await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { school_system: "IN-CBSE", educational_track: "SREDNJA_SOLA", curriculum_level: "Class 11", language: "sl" } }) });
     }, id);
@@ -1618,6 +1696,12 @@ async function desktop(browser, app) {
     const title = (await p.locator("#view-textbook .tb-title").innerText()).trim();
     if (title !== topic) throw new Error(`»Celotna lekcija« odpre »${title}« namesto »${topic}«`);
   });
+  if (p.prejsnjiSistem)
+    await p
+      .evaluate(async ([id, settings]) => {
+        await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings }) });
+      }, [await p.evaluate(() => localStorage.getItem("studentId")), p.prejsnjiSistem])
+      .catch((e) => problem("pc izpiti", `nastavitev šolskega sistema ni vrnjena: ${e.message.slice(0, 100)}`));
   await p.context().close();
 }
 
