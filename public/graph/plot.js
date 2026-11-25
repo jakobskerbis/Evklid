@@ -654,10 +654,19 @@ export class GraphView {
           ctx.globalAlpha = 1;
           this.handles.push({ kind: "point", id: o.id, x: px, y: py, r: 22 });
         }
-        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(px, py, sel ? 6.5 : 5.5, 0, 2 * Math.PI);
-        ctx.fill();
+        if (o.src?.open) {
+          // prazen krožec (limita, kjer funkcija ni definirana; v-graf.js)
+          ctx.fillStyle = C.bg;
+          ctx.fill();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
         if (o.src?.label !== false && pts.length <= 12) this.pointLabel(ctx, C, px, py, `(${this.hooks.fmt(x, 4)}; ${this.hooks.fmt(y, 4)})`, color);
       }
       this.polylines.set(o.id, [pts.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y)).map(([x, y]) => [this.X(x), this.Y(y)])]);
@@ -1423,6 +1432,10 @@ export class GraphView {
       if (!tap && this.trace?.types) this.shown.push({ x: this.trace.x, y: this.trace.y });
       this.trace = tap ? this.trace : null;
     }
+    // označena točka (posebna točka ali točka na krivulji) → calc.js »Uporabi v računu«
+    if (m?.type === "poi" && tap) this.hooks.onMark?.(this.shown.includes(m.poi) ? m.poi : null);
+    else if (m?.type === "trace") this.hooks.onMark?.(this.trace || this.shown[this.shown.length - 1] || null);
+    else if (m?.type === "pan" && !m.moved) this.hooks.onMark?.(null);
     if (m?.type === "pan" && !m.moved) {
       // dotik praznega dela: počistimo izbiro
       this.trace = null;

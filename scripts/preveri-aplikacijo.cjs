@@ -817,7 +817,16 @@ async function calculator(p, label) {
     if ((await currentView(p)) !== "view-graph") throw new Error(`tipka Nazaj ob odprti plasti »${what}« zapre kalkulator (${await currentView(p)})`);
     if (await p.locator(open).count()) throw new Error(`tipka Nazaj ne zapre plasti »${what}«`);
   }
+  // Nazaj se vrne na prejšnji zavihek kalkulatorja z nedotaknjenim stanjem (j, 24. 11. 2026: povezani zavihki)
   await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
+  await p.locator("#view-graph .sc-input").fill("12 + 30");
+  await click(p, '#view-graph [data-calc-mode="tools"]', { wait: 400 });
+  await p.goBack();
+  await settle(p, 400);
+  const active = await p.locator("#view-graph .calc-modes [data-calc-mode].active").getAttribute("data-calc-mode");
+  if ((await currentView(p)) !== "view-graph" || active !== "sci") throw new Error(`Nazaj iz Orodij ni vrnil na Znanstveni (${await currentView(p)}, ${active})`);
+  if ((await p.locator("#view-graph .sc-input").inputValue()) !== "12 + 30") throw new Error("Nazaj na Znanstveni: vnos se je izgubil");
+  await p.locator("#view-graph .sc-input").fill("");
 }
 
 // Premična okna (public/okna.js): ukaz inštruktorju odpre kalkulator v oknu (telefon: spodnji list),
