@@ -191,7 +191,7 @@ export const SIBKE_TEME = {
 // Kratek stalen id iz besedila vprašanja (vrstni red sklepov je odvisen od učenčevih meritev).
 const kratekId = (t) => {
   let x = 5381;
-  for (const ch of String(t).replace(/<[^>]*>/g, "")) x = ((x * 33) ^ ch.codePointAt(0)) >>> 0;
+  for (const ch of String(t)) x = ((x * 33) ^ ch.codePointAt(0)) >>> 0; // besedilo z oznakami HTML, kot ga piše poskus
   return x.toString(36);
 };
 // Telo za tool-check iz dogodka: x = poskus s seznama Laboratorija ({ key, topics: [{ id, rank }] }, najbližja tema prva).
