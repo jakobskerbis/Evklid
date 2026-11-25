@@ -19,6 +19,19 @@
   font-family: var(--k3-font);
   -webkit-tap-highlight-color: transparent;
 }
+/* Brez drsnikov s puščicama ▲▼ (j 2026-11-04, docs/oblikovanje.md; 25. 11. plošča celice na prenosniku z Windows):
+   plošče, seznami in kartice 3D sveta in mikroskopa, ki se pomikajo navzdol, imajo tanek drsnik brez puščic v barvi
+   napisov, kot vrstice v drsniki.css. Chromium in Safari: ::-webkit-scrollbar (Chromium ga upošteva le, dokler
+   element nima scrollbar-width/-color, zato ti dve samo za Firefox, ki puščic nima). Pravila brez teže (:where), da
+   »scrollbar-width: none« vrstic gumbov ostane. */
+:where(.k3-stran, .k3, .mk, .k3-stran *, .k3 *, .mk *)::-webkit-scrollbar { width: 6px; height: 6px; }
+:where(.k3-stran, .k3, .mk, .k3-stran *, .k3 *, .mk *)::-webkit-scrollbar-track,
+:where(.k3-stran, .k3, .mk, .k3-stran *, .k3 *, .mk *)::-webkit-scrollbar-corner { background: transparent; }
+:where(.k3-stran, .k3, .mk, .k3-stran *, .k3 *, .mk *)::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--k3-muted, #9aa6ba) 45%, transparent); border-radius: 3px; }
+:where(.k3-stran, .k3, .mk, .k3-stran *, .k3 *, .mk *)::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+@supports not selector(::-webkit-scrollbar) {
+  :where(.k3-stran, .k3, .mk, .k3-stran *, .k3 *, .mk *) { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--k3-muted, #9aa6ba) 45%, transparent) transparent; }
+}
 /* pridržana povezava: brez oblačka s povezavo (public/dotik.js, style.css) */
 html { -webkit-tap-highlight-color: transparent; }
 @media (pointer: coarse) { .k3 a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; } }

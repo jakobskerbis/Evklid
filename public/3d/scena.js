@@ -236,7 +236,7 @@ export function ustvariSceno(el, opts = {}) {
   camera.position.set(0, 0, 3.6);
   const controls = new OrbitControls(camera, canvas);
   // Preizkusi (scripts/atlas/posnetki-organa.cjs MERE=1: merilne črte čez prerez): kamera in scena, samo s ?preizkus=1
-  if (typeof location !== "undefined" && /[?&]preizkus=1(&|$)/.test(location.search)) globalThis.__scena = { camera, scene, canvas };
+  if (typeof location !== "undefined" && /[?&]preizkus=1(&|$)/.test(location.search)) globalThis.__scena = { camera, scene, canvas, renderer };
   controls.enableDamping = gib;
   controls.dampingFactor = 0.09;
   controls.rotateSpeed = 0.85;
@@ -248,6 +248,43 @@ export function ustvariSceno(el, opts = {}) {
 
   let dirty = true;
   const narisi = () => (dirty = true);
+  // Prevajanje senčilnikov pred prvim izrisom novega modela (prenosnik z Windows, j 25. 11.: »počasno je nalaganje
+  // modelov«). Organ ima do ~27 programov (vsako tkivo svoj); prvi izris jih je prevajal enega za drugim in ves ta čas
+  // držal stran. compileAsync jih pošlje gonilniku hkrati (KHR_parallel_shader_compile: vzporedno na več jedrih, stran
+  // med tem teče), izris počaka, da so nared. Videz je enak, samo vrstni red dela je drug. Brez razširitve (ali ob
+  // napaki) three počaka na programe po vrsti kot prej. Vrne obljubo, ko lahko rišemo.
+  let pripravljam = 0;
+  function pripravi() {
+    if (unicen || typeof renderer.compileAsync !== "function") return Promise.resolve();
+    pripravljam++;
+    const konec = () => {
+      pripravljam = Math.max(0, pripravljam - 1);
+      narisi();
+    };
+    // Varovalka: če gonilnik nikoli ne javi konca, po 20 s rišemo vseeno (kot prej, prvi izris počaka na prevajanje).
+    // Z okluzijo (GTAO) riše composer v svoj cilj (brez preslikave tonov): programi morajo biti za isti cilj.
+    const prejCilj = renderer.getRenderTarget();
+    renderer.setRenderTarget(aoVkljucen && composer ? composer.readBuffer : null);
+    // three prevede tudi skrite dele (pokrovi reza, skrite plasti); ti se prevedejo šele, ko se pokažejo (kot prej),
+    // zato jim material za čas klica odvzamemo: tako je dela točno toliko kot pri prvem izrisu, le hkrati.
+    const vidni = new Set();
+    scene.traverseVisible((o) => vidni.add(o));
+    const skriti = [];
+    scene.traverse((o) => {
+      if (!o.material) return;
+      const m = Array.isArray(o.material) ? o.material.some((x) => x.visible) : o.material.visible;
+      if (!vidni.has(o) || !m) skriti.push([o, o.material]);
+    });
+    let p;
+    try {
+      for (const [o] of skriti) o.material = null;
+      p = renderer.compileAsync(scene, camera).catch((err) => console.warn("3D senčilniki:", err));
+    } finally {
+      for (const [o, m] of skriti) o.material = m;
+      renderer.setRenderTarget(prejCilj);
+    }
+    return Promise.race([p, new Promise((r) => setTimeout(r, 20000))]).then(konec);
+  }
   controls.addEventListener("change", narisi);
 
   // Prosto vrtenje (opts.prostoVrtenje, j 4. 11.: »okoli točke, ne osi«): model se obrača okoli središča v vse smeri
@@ -908,6 +945,11 @@ export function ustvariSceno(el, opts = {}) {
       prejRisal = false;
       return;
     }
+    // Senčilniki novega modela se še prevajajo (pripravi): risanje bi čakalo nanje in ustavilo stran, zato počakamo.
+    if (pripravljam > 0) {
+      prejRisal = false;
+      return;
+    }
     dirty = false;
     if (aoVkljucen && composer) composer.render(dt);
     else renderer.render(scene, camera);
@@ -972,6 +1014,7 @@ export function ustvariSceno(el, opts = {}) {
     canvas,
     plast,
     narisi,
+    pripravi,
     poleti,
     nacinVrtenja,
     hodi: (n) => (gumbHoje = Math.sign(n) || 0),

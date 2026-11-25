@@ -106,6 +106,17 @@ a { color: var(--accent); }
 /* Dotik (j 2026-11-13): brez modrega bliska ob vsakem dotiku in brez oblačka s povezavo, ko pridržiš kartico ali
    gumb-povezavo (Android, iPhone; JS del v public/dotik.js; namerno za vse povezave, tudi v besedilu lekcij). Odziv na pritisk dajo kartice same (a.card:active). */
 html { -webkit-tap-highlight-color: transparent; }
+/* Brez drsnikov s puščicama ▲▼ (j 2026-11-04, docs/oblikovanje.md): vsak navpični in vodoravni drsnik je tanek, brez
+   puščic, v barvi napisov (Windows sicer nariše 15 px drsnik s puščicama). Chromium in Safari: ::-webkit-scrollbar
+   (Chromium ga upošteva le, dokler element nima scrollbar-width/-color, zato ti dve samo za Firefox, ki puščic nima).
+   Vrstice z »scrollbar-width: none« ali lastnim drsnikom (drsniki.css) ostanejo, kot so. Enako za 3D svet v 3d/3d.css. */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 55%, transparent); border-radius: 3px; }
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+@supports not selector(::-webkit-scrollbar) {
+  :where(html, body, body *) { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--muted) 55%, transparent) transparent; }
+}
 @media (pointer: coarse) { a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; } }
 a.card { transition: transform 0.08s, border-color 0.15s; }
 a.card:active { transform: scale(0.985); }

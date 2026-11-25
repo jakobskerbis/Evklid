@@ -684,6 +684,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         sloj.nalozen = true;
         uporabiRazmik();
         uporabiVidnost();
+        await kit.pripravi?.(); // senčilniki plasti hkrati, preden se nariše (scena.js): stran med tem ne zamrzne
       } catch (err) {
         console.error(`3D atlas: plast ${id}`, err);
         sloj.napaka = true;

@@ -63,3 +63,16 @@ test("vrstica oznak pogovora se ob odprtju ne premakne, a ostane drsna", () => {
   assert.match(src, /x > 0 && x <= cilj \+ 2\) el\.scrollTo/);
   for (const d of ["touchmove", "pointermove", "pointerdown", "touchstart", "wheel"]) assert.ok(src.includes(`"${d}"`), d);
 });
+
+// j, 25. 11. (posnetek plošče čašaste celice na prenosniku z Windows): navpični drsniki plošč so bili sistemski, s
+// puščicama ▲▼. Vsa aplikacija in 3D svet z mikroskopom imata tanek drsnik brez puščic (Firefox: scrollbar-width thin).
+test("navpični drsniki plošč so tanki in brez puščic (aplikacija, 3D svet, mikroskop)", () => {
+  for (const f of ["style.css", "3d/3d.css"]) {
+    const css = readFileSync(new URL(f, pub), "utf8");
+    assert.match(css, /::-webkit-scrollbar-button \{ display: none;/, `${f}: brez puščic`);
+    assert.match(css, /::-webkit-scrollbar \{ width: 6px; height: 6px; \}/, `${f}: tanek drsnik`);
+    assert.match(css, /@supports not selector\(::-webkit-scrollbar\)/, `${f}: Firefox`);
+  }
+  // Chromium ne upošteva ::-webkit-scrollbar, če ima element scrollbar-width: plošča učne poti ga zato nima več.
+  assert.doesNotMatch(readFileSync(new URL("ui.css", pub), "utf8"), /path-side \{[^}]*scrollbar-width: thin/);
+});
