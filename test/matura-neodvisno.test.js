@@ -1,20 +1,21 @@
 // Neodvisno preverjanje odgovorov maturitetnih generatorjev MAT (revizija #6). scripts/preveri-generatorje.js
-// preveri le, da naloga sprejme svoj odgovor, zato napačna formula v generatorju tam ne pade. Tu:
-// 1) za vse generatorje matura-mat-ss* preračunamo vsak čisto številski korak rešitve (test/matura-koraki-pomoc.js);
-// 2) za družine nalog odgovor izračunamo znova iz podatkov naloge, z lastno formulo, in ga primerjamo z ocenjenim:
-//    Bernoullijevo zaporedje (binomska verjetnost), srednje vrednosti (povprečje, mediana, modus), Heronova formula
-//    s polmeroma R in r, anuitete in sedanja vrednost, drugi odvod (vrednost, prevoj, vrsta točke, konveksnost) ter
-//    predznak korelacije. Podatke beremo iz data.given (vsako število iz podatkov je tudi v besedilu, test/generators).
+// preveri le, da naloga sprejme svoj odgovor, zato napačna formula v generatorju tam ne pade. Tu za družine nalog
+// odgovor izračunamo znova iz podatkov naloge, z lastno formulo, in ga primerjamo z ocenjenim: Bernoullijevo
+// zaporedje (binomska verjetnost), srednje vrednosti (povprečje, mediana), Heronova formula s polmeroma R in r,
+// anuitete in sedanja vrednost, drugi odvod (vrednost, prevoj, vrsta točke, konveksnost), predznak korelacije ter
+// pogojna verjetnost in verjetnost produkta. Podatke beremo iz data.given (vsako število iz podatkov je tudi v
+// besedilu, test/generators). Številske korake rešitev preverja test/matura-zaokrozevanje.test.js.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { MATURA_MAT, naloga, neskladni, roundHalfUp } from "./matura-koraki-pomoc.js";
+import { MATURA_MAT, naloga, roundHalfUp } from "./matura-koraki-pomoc.js";
 
 const SEEDS = 40;
 const LEVELS = [1, 2, 3];
 
 // ---------- branje podatkov ----------
 // »p = 0{,}7«, »G_0 = 6500\ \text{€}«, »p = 2\ \%« → { p: 0.7, G_0: 6500, ... }; seznami »x_i = 8, 29, 34« → [8, 29, 34].
-const num = (s) => Number(String(s).replace(/\{,\}/g, ".").replace(/\\[,;!]|\\ /g, "").replace(/\\text\{[^}]*\}|\\mathrm\{[^}]*\}|\\%|%|€/g, "").replace(/−/g, "-").trim());
+const num = (s) => (/^\s*\\d?frac\{\d+\}\{\d+\}\s*$/.test(s) ? ((m) => m[1] / m[2])(s.match(/\{(\d+)\}\{(\d+)\}/)) : numDec(s));
+const numDec = (s) => Number(String(s).replace(/\{,\}/g, ".").replace(/\\[,;!]|\\ /g, "").replace(/\\text\{[^}]*\}|\\mathrm\{[^}]*\}|\\%|%|€/g, "").replace(/−/g, "-").trim());
 function podatki(t) {
   const d = {};
   for (const gv of t.data?.given || []) {
@@ -22,7 +23,9 @@ function podatki(t) {
     if (!m) continue;
     const key = m[1].replace(/\s+/g, "");
     const raw = m[2];
-    if (/^\s*-?\d[\d{},.\s]*,\s*-?\d/.test(raw.replace(/\{,\}/g, "#"))) d[key] = raw.split(/,\s+/).map(num);
+    // Seznam: števila, ločena z vejico (decimalna vejica je »{,}«, tudi na začetku: »1{,}5, 2{,}5, 3«).
+    const z = raw.replace(/\{,\}/g, "#");
+    if (/^\s*-?\d[\d#.]*\s*,\s*-?\d/.test(z)) d[key] = z.split(/\s*,\s*/).map((s) => num(s.replace(/#/g, "{,}")));
     else d[key] = num(raw);
   }
   return d;
@@ -113,6 +116,7 @@ function sredine(t) {
     const h = s.length >> 1;
     mine = s.length % 2 ? s[h] : (s[h - 1] + s[h]) / 2;
   } else if (/^\\mathrm\{Mo\}$/.test(f) && Array.isArray(d.x_i)) {
+    // Modus: zdaj ga noben maturitetni generator MAT ne sprašuje (veja je za prihodnje naloge).
     const cnt = new Map();
     for (const x of d.x_i) cnt.set(x, (cnt.get(x) || 0) + 1);
     const max = Math.max(...cnt.values());
@@ -290,8 +294,85 @@ function korelacija(t) {
   return null;
 }
 
-const DRUZINE = { bernoulli, sredine, heron, anuitete, drugiOdvod, korelacija };
-const DOM = { bernoulli: "bernoulli", sredine: "statisticna-naloga", heron: "heronova-formula", anuitete: "anuitete", drugiOdvod: "drugi-odvod", korelacija: "statisticna-naloga" };
+// Pogojna verjetnost, verjetnost produkta in vsote: P(A | B) = P(A · B)/P(B), neodvisni dogodki, vlečenje brez
+// vračanja, dve kocki, kontingenčna tabela, popolna verjetnost in Bayesova formula.
+const KOCKE = [
+  [/enaki/, (a, b) => a === b],
+  [/več pik/, (a, b) => a > b],
+  [/šestic/, (a, b) => a === 6 || b === 6],
+  [/sodo/, (a) => a % 2 === 0],
+  [/enic/, (a, b) => a === 1 || b === 1],
+];
+function pogojna(t) {
+  const f = find(t).replace(/\s+/g, "");
+  const given = t.data?.given || [];
+  const d = podatki(t);
+  for (const g of given) if (/%/.test(g)) d[g.split("=")[0].replace(/\s+/g, "")] /= 100; // »P(A) = 75 %«
+  const x = t.text;
+  const P = (k) => d[`P(${k})`];
+  const neodv = /neodvisn/.test(x);
+  const R = d["n_{\\text{rdeče}}"];
+  const M = d["n_{\\text{modre}}"];
+  const C2 = (n) => (n * (n - 1)) / 2;
+  let mine;
+  let m;
+  if (f === "P(A\\midB)" && P("A\\cdotB") != null && P("B")) mine = P("A\\cdotB") / P("B");
+  else if (f === "P(A\\midB)" && (m = given.join(" ").match(/vsota pik je \} ?(\d+)/))) {
+    // Dve kocki: med izidi z dano vsoto preštejemo ugodne; dogodek A mora biti isti v podatkih in besedilu.
+    const ga = given.find((g) => /^A = /.test(g)) || "";
+    const pred = KOCKE.find(([re]) => re.test(ga));
+    if (!pred || !pred[0].test(x)) return { ok: false, zakaj: `dogodek A: ${ga}` };
+    const izidi = [];
+    for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) if (a + b === Number(m[1])) izidi.push([a, b]);
+    mine = izidi.filter((p) => pred[1](...p)).length / izidi.length;
+  } else if (f === "P(A\\midB)" && R && M && /Hkrati izvlečemo/.test(x) && /vsaj ena rdeča/.test(x) && /obe rdeči/.test(x)) {
+    mine = C2(R) / (C2(R + M) - C2(M));
+  } else if (f === "P(R_1\\midR_2)" && R && M && /ne vrnemo/.test(x)) {
+    const n = R + M;
+    const oba = (R / n) * ((R - 1) / (n - 1));
+    mine = oba / (oba + (M / n) * (R / (n - 1)));
+  } else if (f === "P(A\\cdotB)" && R && M && /ne vrnemo/.test(x)) {
+    const n = R + M;
+    const barva = (s) => (/rdeč/.test(s) ? R : M);
+    if ((m = x.match(/da (?:je )?prva (\S+), druga pa (\S+)\?/))) mine = (barva(m[1]) * (barva(m[2]) - (barva(m[1]) === barva(m[2]) ? 1 : 0))) / (n * (n - 1));
+    else if ((m = x.match(/sta obe (\S+)\?/))) mine = (barva(m[1]) * (barva(m[1]) - 1)) / (n * (n - 1));
+    else return { ok: false, zakaj: "katera barva?" };
+  } else if (neodv && P("A") != null && P("B") != null && f === "P(A\\cdotB)") mine = P("A") * P("B");
+  else if (neodv && P("A") != null && P("B") != null && f === "P(\\overline{A}\\cdot\\overline{B})") mine = (1 - P("A")) * (1 - P("B"));
+  else if (neodv && P("A") != null && P("B") != null && f === "P(A\\cdot\\overline{B})") mine = P("A") * (1 - P("B"));
+  else if (neodv && P("A") != null && P("B") != null && f === "P(A\\cdot\\overline{B}+\\overline{A}\\cdotB)") mine = P("A") * (1 - P("B")) + (1 - P("A")) * P("B");
+  else if (neodv && P("A") != null && P("A+B") != null && f === "P(B)") mine = (P("A+B") - P("A")) / (1 - P("A"));
+  else if (neodv && f === "P(\\text{vsajeden})" && P("A_1") != null) {
+    mine = 1;
+    for (let i = 1; P(`A_${i}`) != null; i++) mine *= 1 - P(`A_${i}`);
+    mine = 1 - mine;
+  } else if (f === "P(\\overline{A+B})" && P("A\\cdotB") != null) mine = 1 - (P("A") + P("B") - P("A\\cdotB"));
+  else if (f === "P(\\text{natankoeden})" && P("A\\cdotB") != null) mine = P("A") + P("B") - 2 * P("A\\cdotB");
+  else if (f === "P(R)" && d.r_1 && d.m_1 && d.r_2 && d.m_2 && /kovan/.test(x)) mine = 0.5 * (d.r_1 / (d.r_1 + d.m_1)) + 0.5 * (d.r_2 / (d.r_2 + d.m_2));
+  else if (/^P\(D_[12](\\midD_2)?\)$/.test(f) && P("D_1") != null) {
+    const pD2 = P("D_1") * P("D_2\\midD_1") + (1 - P("D_1")) * P("D_2\\mid\\overline{D_1}");
+    mine = f === "P(D_2)" ? pD2 : f === "P(D_1\\midD_2)" ? (P("D_1") * P("D_2\\midD_1")) / pD2 : NaN;
+  } else if (f === "P(A\\midN)" && P("A") != null) {
+    const pN = P("A") * P("N\\midA") + (1 - P("A")) * P("N\\midB");
+    mine = (P("A") * P("N\\midA")) / pN;
+  } else if ((m = f.match(/^P\((\w+)\\mid(\w+)\)$/))) {
+    // Kontingenčna tabela: n_{G} je velikost skupine, n(L · G) število v skupini z lastnostjo L.
+    const [, X, Y] = m;
+    const presek = (a, b) => d[`n(${a}\\cdot${b})`];
+    if (d[`n_{${Y}}`] != null && presek(X, Y) != null) mine = presek(X, Y) / d[`n_{${Y}}`];
+    else if (d[`n_{${X}}`] != null && presek(Y, X) != null) {
+      const vsi = Object.entries(d).filter(([k]) => k.startsWith(`n(${Y}\\cdot`)).reduce((s, [, v]) => s + v, 0);
+      mine = presek(Y, X) / vsi;
+    } else return null;
+  } else if (/odnosmed/.test(f) && P("A") != null && P("B") != null && P("A\\cdotB") != null) {
+    const want = Math.abs(P("A\\cdotB") - P("A") * P("B")) < 1e-9 ? "Dogodka sta neodvisna." : P("A\\cdotB") === 0 ? "Dogodka sta nezdružljiva." : "Dogodka sta odvisna, a se lahko zgodita hkrati.";
+    return { ok: izbrana(t) === want, zakaj: `→ ${want}, izbrano ${izbrana(t)}` };
+  } else return null;
+  return { ok: enak(t, mine), zakaj: `${f} = ${mine}` };
+}
+
+const DRUZINE = { bernoulli, sredine, heron, anuitete, drugiOdvod, korelacija, pogojna };
+const DOM = { bernoulli: "bernoulli", sredine: "statisticna-naloga", heron: "heronova-formula", anuitete: "anuitete", drugiOdvod: "drugi-odvod", korelacija: "statisticna-naloga", pogojna: "pogojna-verjetnost" };
 
 // Vse naloge enkrat (~40 semen × 3 ravni × vsi generatorji).
 const NALOGE = [];
@@ -301,12 +382,23 @@ for (const g of MATURA_MAT) for (const level of LEVELS) for (let seed = 1; seed 
 }
 const kje = (t) => `${t.generator} L${t.level} s${t.seed}`;
 
-test("vsi MAT matura generatorji: čisto številski koraki rešitev se izidejo", () => {
+// Številske korake rešitev preverja test/matura-zaokrozevanje.test.js; tu le, da so naloge res iz vseh generatorjev.
+test("vsak MAT matura generator ima naloge", () => {
   assert.ok(NALOGE.length > 3500, `${NALOGE.length} nalog`);
-  assert.ok(new Set(NALOGE.map((t) => t.generator)).size === MATURA_MAT.length, "vsak generator ima naloge");
-  const napake = NALOGE.flatMap((t) => neskladni(t).map((s) => `${kje(t)}: ${s.tex} (izračun ${s.a.value}, izpisano ${s.b.value})`));
-  assert.deepEqual(napake.slice(0, 20), [], `${napake.length} neskladnih korakov`);
+  const brezNalog = MATURA_MAT.map((g) => g.id).filter((id) => !NALOGE.some((t) => t.generator === id));
+  assert.deepEqual(brezNalog, []);
 });
+
+// Iskane količine, ki jih mora družina preveriti (sicer bi sprememba zapisa tiho izklopila del preverjanja).
+const POTREBNO = {
+  bernoulli: [/^P_\{\d+\}\(\d+\)$/, /^P\(X \\ge \d+\)$/],
+  heron: [/^S$/, /^R$/, /^r$/],
+  anuitete: [/^a$/, /^R_1$/, /^R_\d+$/, /^o_\d+$/, /^o$/, /^G_0$/, /^D_\{\d+\}$/, /^X$/, /^x$/],
+  drugiOdvod: [/^f''\(/, /^x_0$/, /^y_0$/, /konveksnost/, /vrsta točke/],
+  pogojna: [/^P\(A \\mid B\)$/, /^P\(A \\cdot B\)$/, /^P\(A \\cdot \\overline\{B\}\)$/, /vsaj eden/, /^P\(V \\mid F\)$|^P\(D \\mid V\)$/, /^P\(R\)$/, /^P\(R_1 \\mid R_2\)$/, /^P\(D_1 \\mid D_2\)$/, /^P\(A \\mid N\)$/, /odnos/],
+};
+// Družine, pri katerih mora preverjanje zajeti vse naloge domačega generatorja.
+const VSE = ["bernoulli", "heron", "anuitete", "drugiOdvod", "pogojna"];
 
 for (const [ime, fn] of Object.entries(DRUZINE)) {
   test(`neodvisni izračun odgovora: ${ime}`, (tc) => {
@@ -314,16 +406,23 @@ for (const [ime, fn] of Object.entries(DRUZINE)) {
     let n = 0;
     const gens = new Set();
     const brez = new Map(); // naloge domačega generatorja družine, ki jih preverjanje ne zajame (po iskani količini)
+    const zajete = new Set(); // preverjene iskane količine
     for (const t of NALOGE) {
       const r = fn(t);
       if (!r) {
         if (t.generator.endsWith(DOM[ime]) && !Object.values(DRUZINE).some((g) => g(t))) brez.set(find(t), (brez.get(find(t)) || 0) + 1);
         continue;
       }
-      // Samopreverjanje: pokvarjen odgovor (drugo število, druga možnost) mora pasti.
+      zajete.add(find(t));
+      // Samopreverjanje: pokvarjen odgovor (drugo število, ena enota zadnjega ocenjenega mesta več, druga možnost) mora pasti.
       const a = t.answer;
-      const pokvarjen = a.type === "number" ? { ...a, value: a.value * 1.07 + 1 } : a.type === "fraction" ? { ...a, num: a.num + 1 } : { ...a, index: (a.index + 1) % a.options.length };
-      if (fn({ ...t, answer: pokvarjen }).ok) napake.push(`${kje(t)}: pokvarjen odgovor ${JSON.stringify(pokvarjen.value ?? pokvarjen.num ?? pokvarjen.index)} je sprejet`);
+      const pokvarjeni =
+        a.type === "number"
+          ? [{ ...a, value: a.value * 1.07 + 1 }, ...(a.decimals != null ? [{ ...a, value: a.value + 10 ** -a.decimals }] : [])]
+          : a.type === "fraction"
+            ? [{ ...a, num: a.num + 1 }]
+            : [{ ...a, index: (a.index + 1) % a.options.length }];
+      for (const p of pokvarjeni) if (fn({ ...t, answer: p }).ok) napake.push(`${kje(t)}: pokvarjen odgovor ${JSON.stringify(p.value ?? p.num ?? p.index)} je sprejet`);
       n++;
       gens.add(t.generator.replace(/^mat-ss\d-(geo-)?matura-/, ""));
       if (!r.ok) napake.push(`${kje(t)}: ${r.zakaj}; ocenjeno ${JSON.stringify({ ...t.answer, mistakes: undefined, why: undefined })}`);
@@ -331,6 +430,9 @@ for (const [ime, fn] of Object.entries(DRUZINE)) {
     // Preverjanje mora res zajeti družino (sprememba zapisa podatkov ga ne sme tiho izklopiti).
     tc.diagnostic(`${ime}: ${n} nalog (${[...gens].join(", ")}); ne zajame: ${JSON.stringify(Object.fromEntries(brez))}`);
     assert.ok(n >= 30, `${ime}: preverjenih le ${n} nalog`);
+    const manjka = (POTREBNO[ime] || []).filter((re) => ![...zajete].some((f) => re.test(f)));
+    assert.deepEqual(manjka.map(String), [], `${ime}: ne preveri iskanih količin`);
+    if (VSE.includes(ime)) assert.deepEqual(Object.fromEntries(brez), {}, `${ime}: naloge brez neodvisnega preverjanja`);
     assert.deepEqual(napake.slice(0, 15), [], `${ime}: ${napake.length} od ${n} napačnih`);
   });
 }
@@ -344,6 +446,11 @@ test("branje podatkov in polinomov", () => {
     x_i: [8, 29, 34],
     "\\barx": 19.5,
   });
+  assert.deepEqual(podatki({ data: { given: ["x = 1{,}5, 2{,}5, 3", "y = -0{,}5, 4"] } }), { x: [1.5, 2.5, 3], y: [-0.5, 4] });
+  // Pogojna verjetnost: P(A · B) · P(B) namesto P(A · B)/P(B) pade.
+  const pg = { generator: "x", text: "…", data: { given: ["P(B) = 0{,}4", "P(A \\cdot B) = 0{,}2"], find: ["P(A \\mid B)"] }, answer: { type: "number", value: 0.5, decimals: null } };
+  assert.equal(pogojna(pg).ok, true);
+  assert.equal(pogojna({ ...pg, answer: { ...pg.answer, value: 0.08 } }).ok, false);
   // Bernoulli: napačen odgovor pade.
   const t = { generator: "x", text: "… natanko …", data: { given: ["n = 4", "k = 2", "p = 0{,}5"], find: ["P_{4}(2)"] }, answer: { type: "number", value: 0.375, decimals: 4 } };
   assert.equal(bernoulli(t).ok, true);
