@@ -349,7 +349,12 @@
       if (p && p.srv && potSrv && p.hd) glavaStreznik(p.hd);
       var tb = p && typeof p.tb === "string" && IME.test(p.tb) ? p.tb : "";
       var tabs = bar ? bar.querySelectorAll(".tab") : [];
-      for (var j = 0; tb && j < tabs.length; j++) tabs[j].classList.toggle("active", tabs[j].getAttribute("data-view") === tb);
+      for (var j = 0; tb && j < tabs.length; j++) {
+        var izbran = tabs[j].getAttribute("data-view") === tb;
+        tabs[j].classList.toggle("active", izbran);
+        if (izbran) tabs[j].setAttribute("aria-current", "page");
+        else tabs[j].removeAttribute("aria-current");
+      }
       if (!p || glavaZa === p || pozabljen) return;
       glavaZa = p;
       var b = p && Array.isArray(p.b) ? p.b : [];

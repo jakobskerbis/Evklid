@@ -10,6 +10,7 @@ import { jeFaks, jeSs } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
 import { isStoreApp } from "./pay-ui.js"; // aplikacija iz trgovine: brez ponudbe paketov mimo trgovine
+import { LOCILO, zdruzi } from "./datum.js";
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -305,7 +306,7 @@ async function renderHome() {
           .join("")}</div>` : ""}
       </div>
       ${book ? `<div class="tb-book card">
-        <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)} · ${esc(book.schoolName)}</h2>
+        <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)}${LOCILO}${esc(book.schoolName)}</h2>
         <p class="muted">${esc(t(book.lessons < book.topics ? "tbk.countMore" : "tbk.count", { done: book.lessons, total: book.topics }))}</p></div>
         <div class="tb-book-actions">
           <a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
@@ -386,7 +387,7 @@ async function renderBody() {
           .map(
             (h) => `<li><button type="button" class="tb-topic" data-lesson="${esc(h.id)}">
               <span class="tb-name">${esc(h.name)}</span>
-              <span class="tb-sub">${esc(h.pathLabel)} · ${esc(h.unit)}</span>
+              <span class="tb-sub">${esc(h.pathLabel)}${LOCILO}${esc(h.unit)}</span>
               ${h.snippet ? `<span class="tb-snip">${esc(h.snippet)}</span>` : ""}
             </button></li>`,
           )
@@ -772,7 +773,7 @@ async function renderLesson(topicId, name = "") {
   </section>`;
   box.innerHTML = `<div class="tb-lesson-grid${demoHtml ? " has-side" : ""}"><div class="tb-main">
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
-    <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
+    <p class="muted tb-crumb">${esc(L.pathLabel)}${LOCILO}${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
     <div class="tb-tools">${lesson ? gradivaMenu : ""}${reportBtn}</div>
     ${linkHtml}
@@ -1061,7 +1062,7 @@ const refRow = (it) => `<a class="list-row ref-row" href="${esc(it.url)}" target
     <span class="ic">${ic(REF_ICONS[it.type] || "file-text")}</span>
     <span class="lr-text">
       <b>${esc(it.title)}</b>
-      <small>${esc([it.source, it.author].filter(Boolean).join(" · "))}</small>
+      <small>${esc(zdruzi([it.source, it.author]))}</small>
       ${it.desc ? `<span class="ref-desc">${esc(it.desc)}</span>` : ""}
       <span class="tb-badges ref-badges">
         <span class="tb-badge">${esc(t(`refs.type.${it.type}`))}</span>

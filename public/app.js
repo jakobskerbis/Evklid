@@ -363,6 +363,7 @@ import { jeFaks, jeSs, jeOs, stopnja, brezUvoda } from "./stopnja.js";
 import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { GUIDE } from "./vodic.js";
 import { FREE_LIMIT_CODES, showLimitCard } from "./meja-placilo.js";
+import { LOCILO, celDatum, zdruzi } from "./datum.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
@@ -779,6 +780,8 @@ function showView(name) {
   else if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
   // Računalnik: kar ni med glavnimi zavihki zgoraj, je pod »Jaz« (j, 17. 11. 2026).
   if (podJazZgoraj(name)) $("#me-tab-top").classList.add("active");
+  // Bralnik zaslona: izbrani zavihek obeh menijev je trenutna stran (aria-current, ne vloga tab; A9).
+  document.querySelectorAll(".topbar .tabs .tab, #tabbar .tab").forEach((t) => (t.classList.contains("active") ? t.setAttribute("aria-current", "page") : t.removeAttribute("aria-current")));
   pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
     if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
@@ -1348,7 +1351,7 @@ async function loadMeOverview() {
       ${
         events.length
           ? `<div class="list-card">${events
-              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" }))} · ${when(e.daysLeft)}`))
+              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(celDatum(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" })))}${LOCILO}${when(e.daysLeft)}`))
               .join("")}</div>`
           : `<p class="muted">${t("sch.noEvents")}</p><button type="button" class="secondary" data-me="schedule">${icon("plus")} ${t("sch.addTest")}</button>`
       }
@@ -1604,7 +1607,7 @@ initProfileMenu({
   describe: (s) => {
     const st = s.settings || {};
     const program = isUni(st) ? programsCache().find((p) => p.id === st.study_program)?.label : null;
-    return [program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level)].filter(Boolean).join(" · ");
+    return zdruzi([program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level)]);
   },
 });
 
@@ -3401,7 +3404,7 @@ function renderGoal() {
   chip.hidden = !hasGoal(s);
   if (hasGoal(s)) {
     // V zgornji vrstici le cilj in odštevanje (datum je v vrstici na Učni poti).
-    chip.querySelector("b").textContent = [goalName(s.goal), countdown(s.goal_date)].filter(Boolean).join(" · ");
+    chip.querySelector("b").textContent = zdruzi([goalName(s.goal), countdown(s.goal_date)]);
     chip.title = t("goal.change");
   }
   const rem = $("#goal-reminder");
