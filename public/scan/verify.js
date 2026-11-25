@@ -461,7 +461,9 @@ function checkInequality(problemText, ai, v) {
     if (ends.some((e) => Math.abs(x - e.x) < 1e-5 * Math.max(1, Math.abs(e.x)))) continue;
     const truth = truthAt(x, false);
     if (truth === undefined) {
-      if (inSet(x)) return { verified: false, reason: "wrong" };
+      // daleč od izhodišča je ±∞ (ne NaN) lahko le prekoračitev (10^x pri x = 400), ne meja definicijskega območja
+      const overflow = Math.abs(x) > 100 && fs.some((f) => Math.abs(f({ [v]: x })) === Infinity);
+      if (!overflow && inSet(x)) return { verified: false, reason: "wrong" };
       continue;
     }
     if (truth === null) continue;

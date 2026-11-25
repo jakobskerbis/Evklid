@@ -367,6 +367,11 @@ test("ponovni pregled 2: stopnja 9 točno v krajiščih, časovni rok, SymPy pre
   assert.equal(iq("-54x^9 - 1134x^8 - 10224x^7 - 51640x^6 - 160210x^5 - 317194x^4 - 412696x^3 - 377280x^2 - 262656x - 110592 < 0", "(-4, -3) U (-8/3, oo)"), "verified");
   assert.equal(iq("-1458x^9 - 2187x^8 + 22113x^7 + 34074x^6 - 103302x^5 - 164457x^4 + 100683x^3 + 169722x^2 + 227556x + 370440 < 0", "(-5/2, -2) U [7/3, oo)"), "wrong");
   assert.equal(iq("(x - 7.5)^2*(x^9 - 3) <= 0", "(-oo, 1.1298]"), "wrong");
+  // eksponentne neenačbe brez SymPy: prekoračitev daleč na mreži ni »zunaj območja«
+  assert.equal(iq("10^x > 1000000", "(6, oo)"), "numeric");
+  assert.equal(iq("2^x >= 0.125", "[-3, oo)"), "numeric");
+  assert.equal(iq("10^x > 1000000", "(5, oo)"), "wrong");
+  assert.equal(iq("sqrt(x) > 2", "(-oo, -200) U (4, oo)"), "wrong"); // NaN daleč na mreži ostane »zunaj območja«
   // časovni rok točnega dokaza: stopnja 16 v manj kot sekundi
   const t0 = Date.now();
   iq(Array.from({ length: 16 }, (_, i) => `(1000x-${1000 + i})`).join("*") + " > 0", "(1.015, oo)");
