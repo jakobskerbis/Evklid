@@ -188,6 +188,7 @@ function answersFor(a) {
 
 // ---------- brskalnik ----------
 let KEYS = [];
+let NEIZRISANO = null; // scripts/popis-formul.js neizrisanoVDom (iskanje neizrisane matematike na zaslonu)
 async function newPage(browser, phone, label, base) {
   const ctx = await browser.newContext({
     viewport: ZASLON || (phone ? { width: 360, height: 740 } : { width: 1280, height: 800 }),
@@ -334,6 +335,13 @@ async function screen(p, name) {
   if (r.down > 1) problem(`${p.label} ${name}`, `cela stran je za ${r.down} px višja od zaslona (drsi stran namesto pogleda)`);
   if (r.raw.length) problem(`${p.label} ${name}`, `neprevedeni ključi: ${r.raw.join(", ")}`);
   if (r.mini?.length) problem(`${p.label} ${name}`, `mali navpični drsnik (▲▼) v: ${r.mini.slice(0, 5).join(", ")} (docs/oblikovanje.md)`);
+  // Neizrisana matematika (N-07, j 25. 11. 2026: vsa matematika v KaTeX): napaka izrisa, surov LaTeX ali $…$ zunaj formul.
+  // V kalkulatorju (lastnik je druga seja, CLAUDE.md) samo opozorilo za register AUDIT.
+  for (const z of NEIZRISANO ? await p.evaluate(NEIZRISANO).catch(() => []) : []) {
+    const what = `neizrisana matematika (${z.vrsta}) v ${z.kje}: »${z.odlomek}«`;
+    if (z.kalk) opozorila.push({ where: `${p.label} ${name}`, what: `${what} – za register AUDIT (kalkulator)` });
+    else problem(`${p.label} ${name}`, what);
+  }
   const pokrito = await bubbleCovers(p);
   if (pokrito.length) problem(`${p.label} ${name}`, `mehurček inštruktorja prekriva: ${pokrito.join(", ")}`);
   if (SHOTS) {
@@ -2478,6 +2486,7 @@ async function tujJezik(browser, app, phone) {
   process.removeAllListeners("warning");
   sqlite = require("node:sqlite");
   KEYS = Object.keys((await import(pathToFileURL(path.join(ROOT, "public/i18n/sl.js")))).default);
+  NEIZRISANO = (await import(pathToFileURL(path.join(ROOT, "scripts/popis-formul.js")))).neizrisanoVDom;
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
   if (!["chromium", "webkit"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium ali webkit (ne »${BRSKALNIK}«)`);
   if (!NAPRAVA[JEZIK]) throw new Error(`--jezik: ${Object.keys(NAPRAVA).join(", ")} (ne »${JEZIK}«)`);

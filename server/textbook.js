@@ -650,11 +650,16 @@ function snippet(lesson, words) {
   if (!lesson) return "";
   let cached = plainLessons.get(lesson);
   if (!cached) {
+    // Formule ostanejo cele kot $…$ (tudi $$…$$, \[…\], \(…\) in bloki :::formula), odjemalec jih izriše s KaTeX
+    // (public/textbook.js). Prej je odlomek iz formule pobral oklepaje in pustil surov LaTeX (»F = k\,\frac{q1 q2}{r^2}«;
+    // N-07, j 25. 11. 2026: vsa matematika v KaTeX). Oznake Markdowna odstranimo samo zunaj formul.
     const plain = lesson.sections
-      .map((s) => expandDrawings(s.md, "plain"))
+      .map((s) => expandFormulaBlocks(expandDrawings(s.md, "plain"), "plain"))
       .join(" ")
-      .replace(/\$([^$]*)\$/g, (_, t) => t.replace(/\\(mathrm|text|,)/g, "").replace(/[{}\\]/g, ""))
-      .replace(/[#*_>`|]/g, "")
+      .replace(/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)/g, (_, a, b, c) => `$${(a ?? b ?? c).trim()}$`)
+      .split(/(\$[^$]+\$)/)
+      .map((p, i) => (i % 2 ? p : p.replace(/[#*_>`|]/g, "")))
+      .join("")
       .replace(/\s+/g, " ");
     cached = { plain, f: fold(plain) };
     plainLessons.set(lesson, cached);
@@ -662,8 +667,16 @@ function snippet(lesson, words) {
   const { plain, f } = cached;
   const at = Math.min(...words.map((w) => f.indexOf(w)).filter((i) => i >= 0));
   if (!Number.isFinite(at)) return "";
-  const start = Math.max(0, at - 50);
-  return (start ? "…" : "") + plain.slice(start, start + 140).trim() + "…";
+  // Meji odlomka nikoli sredi formule: začetek na njen začetek, konec za njen konec (zelo dolga formula ostane zunaj).
+  const vFormuli = (i) => (plain.slice(0, i).match(/\$/g) || []).length % 2 === 1;
+  let start = Math.max(0, at - 50);
+  let end = Math.min(plain.length, start + 140);
+  if (vFormuli(start)) start = plain.lastIndexOf("$", start - 1);
+  if (vFormuli(end)) {
+    const konec = plain.indexOf("$", end) + 1;
+    end = konec > 0 && konec - start <= 260 ? konec : plain.lastIndexOf("$", end - 1);
+  }
+  return (start ? "…" : "") + plain.slice(start, end).trim() + (end < plain.length ? "…" : "");
 }
 
 // Razlaga teme iz lekcije, kadar vnaprej pripravljene razlage (explanations.json) ni:

@@ -24,7 +24,7 @@ const pdfHref = (path, { topic = "", unit = "" } = {}) => {
   return `/ucbenik/${path}/${topic}?${q}#natisni`;
 };
 
-let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
+let ctx = null; // { api, renderRich, renderMath, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
 const $ = (sel) => document.querySelector(sel);
 // Zaporedni številki prikaza: odgovor starejše zahteve (prejšnja poizvedba iskanja, prej kliknjena lekcija,
 // domača stran po »Nazaj«) ne sme prepisati novejšega, ki je prišel prej.
@@ -184,6 +184,12 @@ function wireSelectionAsk() {
 }
 
 const esc = (s) => ctx.escapeHtml(String(s ?? ""));
+// Odlomek zadetka iskanja: besedilo ubežano, formule $…$ (strežnik jih ne odreže na pol) izrisane s KaTeX (N-07).
+const snipHtml = (s) =>
+  String(s)
+    .split(/(\$[^$\n]+\$)/)
+    .map((p, i) => (i % 2 && ctx.renderMath ? ctx.renderMath(p.slice(1, -1), false, false) : esc(p)))
+    .join("");
 
 // Odpre učbenik (kazalo ali zadnjo odprto lekcijo).
 // Tipka Nazaj (telefon): iz odprte lekcije nazaj na seznam lekcij. Vrne true, če je bila lekcija odprta.
@@ -388,7 +394,7 @@ async function renderBody() {
             (h) => `<li><button type="button" class="tb-topic" data-lesson="${esc(h.id)}">
               <span class="tb-name">${esc(h.name)}</span>
               <span class="tb-sub">${esc(h.pathLabel)}${LOCILO}${esc(h.unit)}</span>
-              ${h.snippet ? `<span class="tb-snip">${esc(h.snippet)}</span>` : ""}
+              ${h.snippet ? `<span class="tb-snip">${snipHtml(h.snippet)}</span>` : ""}
             </button></li>`,
           )
           .join("")}</ul>`
