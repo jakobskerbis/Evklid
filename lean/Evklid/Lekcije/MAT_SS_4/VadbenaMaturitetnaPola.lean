@@ -6,12 +6,15 @@ pravila za zapis (organizacija izpita, ne matematične trditve; dokazani so le r
 risbe in simulacija razen ničel in temena; zgodba o Neži; ključne besede razen izreka o ostanku in
 vrednosti `sin 60°`. Numerične vrednosti kotov in kotnih funkcij (zahtevno, še ni dokazano; ocene bi
 šle prek `Real.sin_bound`/`Real.cos_bound`, mej za `π` in adicijskih formul): kot `71,9°` (naloga 17),
-kot `74,7°` (naloga 23; dokazan je `cos φ = 5/19`), števila naloge 25 (`74,1 m`, `0,71003`, `45,2°`,
+kot `74,7°` (naloga 23; dokazan je `cos φ = 5/19`), vsa števila naloge 25 (`5483,65…`, `74,0516…`, `45,237…`, `4469,21…`, `60,352…` in zaokroženi `74,1 m`, `0,71003`, `45,2°`,
 `2234,6 m²`, `60,4 m`; dokazani so kosinusni in sinusni izrek s simboloma `cos 58°`, `sin 58°`, ostrost
 `β`, `S = 2635·sin 58°`, pretvorba v are in `v_a = 2S/a`), kot `38,7°` (naloga 27; dokazan je
 `tan φ = 0,8`), kot `109,5°` (naloga 29; dokazan je `tan(φ/2) = √2`), koti `143,13°`, `71,57°`, radiani
 `2,49809…` in ploščina odseka `23,73` (naloga 31; dokazani so `cos φ = −0,8`, `sin φ = 0,6`, `tan δ = 3`
-in `δ = φ/2`). Števila naloge 21 (`3,42`, `72,31`, `92,07 %`) so dokazana.
+in `δ = φ/2`). Števila naloge 21 (`3,42`, `72,31`, `92,07 %`) so dokazana, ploščina kroga `25π = 78,5398…` pa ne
+(zahtevno, še ni dokazano). Ustno vprašanje 2: dokazane so tri limite racionalne funkcije v neskončnosti
+(`ustno2`), ne pa »pri stopnji, večji za 1, je asimptota poševna premica« in »graf vodoravno asimptoto
+lahko seka« (zahtevno, še ni dokazano).
 Odklon pri deljenju z `N − 1` (`2,82`) in »5 podatkov« pri njem sta dokazana kot pripadnost `12, …, 16`
 intervalu in nepripadnost ostalih treh; »4 podatki« pri
 `σ` so dokazani kot pripadnost `13, 14, 15, 16` intervalu in nepripadnost ostalih štirih. Pri
