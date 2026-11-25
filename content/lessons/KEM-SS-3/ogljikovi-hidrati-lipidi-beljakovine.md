@@ -241,6 +241,18 @@ Tri skupine kot tri nize:
 ~ Beljakovina se s kislino ne spremeni v maščobo, saj ima peptidne vezi in dušik, maščoba pa estrske vezi in dušika nima.
 > Kislina poruši vezi, ki držijo obliko (denaturacija); primarna zgradba ostane.
 
+? Kolikšen je masni delež ogljika v glukozi $\mathrm{C_6H_{12}O_6}$? ($A_r$: C $12$, H $1$, O $16$) Rezultat vpiši v odstotkih.
+= 40,0 % | 0,1
+~ 6,7 | V molekuli glukoze je $6$ atomov ogljika: v števec spada $6 \cdot 12$.
+~ 53,3 | To je masni delež kisika.
+> $M = 6 \cdot 12 + 12 \cdot 1 + 6 \cdot 16 = 180\,\mathrm{g/mol}$, $w(\mathrm{C}) = \dfrac{6 \cdot 12}{180} = 0{,}400 = 40{,}0\,\%$.
+
+? Čokoladica vsebuje $12\,\mathrm{g}$ maščob ($37\,\mathrm{kJ/g}$) in $30\,\mathrm{g}$ ogljikovih hidratov ($17\,\mathrm{kJ/g}$). Koliko kilojoulov energije da? (Beljakovine zanemari.)
+= 954 kJ | 1
+~ 1314 | Energijski vrednosti si zamenjal: maščobe dajo $37\,\mathrm{kJ/g}$, ogljikovi hidrati $17\,\mathrm{kJ/g}$.
+~ 444 | To je le energija maščob. Prištej še energijo ogljikovih hidratov.
+> Maščobe: $12\,\mathrm{g} \cdot 37\,\mathrm{kJ/g} = 444\,\mathrm{kJ}$. Ogljikovi hidrati: $30\,\mathrm{g} \cdot 17\,\mathrm{kJ/g} = 510\,\mathrm{kJ}$. Skupaj $954\,\mathrm{kJ}$.
+
 :::simboli
 w | masni delež kisika | | – |
 x | število atomov kisika v molekuli | | – |

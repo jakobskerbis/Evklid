@@ -253,6 +253,18 @@ Da tekočina zavre, mora vsaka molekula pretrgati te povezave. Več in močnejš
 + Ker so pri tleh nereaktivni in netopni v vodi; šele močna UV svetloba pretrga vez C–Cl.
 > Dež freonov ne spere, zato pridejo do stratosfere. Tam UV svetloba sprosti atome klora, ki razgrajujejo ozon.
 
+? Klorometan ($M = 50{,}5\,\mathrm{g/mol}$) z vodno raztopino NaOH popolnoma pretvorimo v metanol ($M = 32\,\mathrm{g/mol}$): $\mathrm{CH_3Cl + OH^- \rightarrow CH_3OH + Cl^-}$. Koliko gramov metanola nastane iz $10{,}1\,\mathrm{g}$ klorometana?
+= 6,4 g | 0,05
+~ 10,1 | Masa se ohranja za vse snovi skupaj, ne za en reaktant in en produkt. Računaj prek množine.
+~ 0,2 | To je množina v molih. Pomnoži jo z molsko maso metanola.
+> $n = \dfrac{10{,}1\,\mathrm{g}}{50{,}5\,\mathrm{g/mol}} = 0{,}200\,\mathrm{mol}$, razmerje $1 : 1$, $m(\mathrm{CH_3OH}) = 0{,}200\,\mathrm{mol} \cdot 32\,\mathrm{g/mol} = 6{,}4\,\mathrm{g}$.
+
+? Etanol gori: $\mathrm{C_2H_5OH + 3\,O_2 \rightarrow 2\,CO_2 + 3\,H_2O}$. Koliko litrov ogljikovega dioksida pri normalnih pogojih ($V_m = 22{,}4\,\mathrm{L/mol}$) nastane, ko zgori $4{,}6\,\mathrm{g}$ etanola ($M = 46\,\mathrm{g/mol}$)?
+= 4,48 L | 0,02
+~ 2,24 | Pozabil si na koeficient $2$: iz ene molekule etanola nastaneta dve molekuli $\mathrm{CO_2}$.
+~ 6,72 | Uporabil si koeficient kisika ($3$). Za $\mathrm{CO_2}$ je razmerje $1 : 2$.
+> $n(\mathrm{C_2H_5OH}) = 0{,}100\,\mathrm{mol}$, $n(\mathrm{CO_2}) = 0{,}200\,\mathrm{mol}$, $V = 0{,}200\,\mathrm{mol} \cdot 22{,}4\,\mathrm{L/mol} = 4{,}48\,\mathrm{L}$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol
 m | masa | m = n \cdot M | g

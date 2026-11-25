@@ -231,6 +231,18 @@ Nov primer: $1{,}2\,\mathrm{g}$ magnezija ($M = 24{,}31\,\mathrm{g/mol}$) v $50\
 ~ To dobiš, če vzameš $n(\mathrm{H_2O}) = n(\mathrm{O_2})$. Po enačbi da en mol kisika dva mola vode.
 > $n(\mathrm{O_2}) = \dfrac{16}{32{,}00} = 0{,}50\,\mathrm{mol}$ je omejitveni reaktant; $n(\mathrm{H_2O}) = 2 \cdot 0{,}50 = 1{,}0\,\mathrm{mol}$, $m = 1{,}0 \cdot 18{,}02 = 18\,\mathrm{g}$.
 
+? Kolikšna je masa $2{,}00\,\mathrm{L}$ ogljikovega dioksida ($M = 44{,}01\,\mathrm{g/mol}$) pri $25\,\mathrm{°C}$ in $101{,}3\,\mathrm{kPa}$? ($R = 8{,}314\,\mathrm{kPa\,L/(mol\,K)}$) Rezultat vpiši na stotinko grama.
+= 3,60 g | 0,02
+~ 42,9 | Temperatura mora biti v kelvinih: $T = 25 + 273 = 298\,\mathrm{K}$.
+~ 0,082 | To je množina v molih. Pomnoži jo še z molsko maso.
+> $n = \dfrac{pV}{RT} = \dfrac{101{,}3 \cdot 2{,}00}{8{,}314 \cdot 298}\,\mathrm{mol} = 0{,}0818\,\mathrm{mol}$, $m = 0{,}0818\,\mathrm{mol} \cdot 44{,}01\,\mathrm{g/mol} \approx 3{,}60\,\mathrm{g}$.
+
+? Koliko mililitrov klorovodikove kisline s koncentracijo $2{,}0\,\mathrm{mol/L}$ potrebuješ, da popolnoma raztopiš $3{,}27\,\mathrm{g}$ cinka ($M = 65{,}38\,\mathrm{g/mol}$)? $\mathrm{Zn + 2\,HCl \rightarrow ZnCl_2 + H_2}$
+= 50 mL | 0,5
+~ 25 | Pozabil si na koeficient $2$: en mol cinka porabi dva mola $\mathrm{HCl}$.
+~ 0,05 | To je prostornina v litrih. Pretvori jo v mililitre.
+> $n(\mathrm{Zn}) = \dfrac{3{,}27}{65{,}38}\,\mathrm{mol} = 0{,}0500\,\mathrm{mol}$, $n(\mathrm{HCl}) = 0{,}100\,\mathrm{mol}$, $V = \dfrac{0{,}100\,\mathrm{mol}}{2{,}0\,\mathrm{mol/L}} = 0{,}050\,\mathrm{L} = 50\,\mathrm{mL}$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol | število delcev, izraženo v molih
 m | masa | m = n \cdot M | g

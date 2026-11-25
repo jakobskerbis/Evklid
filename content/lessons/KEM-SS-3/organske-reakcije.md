@@ -250,6 +250,18 @@ $$\mathrm{2\,CH_2{=}CH_2 + 4\,HCl + O_2 \to 2\,CH_2Cl{-}CH_2Cl + 2\,H_2O}$$
 + $58\,\%$
 > $E_{\mathrm{at}} = \dfrac{50{,}48}{16{,}04 + 70{,}90} = 0{,}581$, torej $58\,\%$. Pri substituciji del mase vedno odide v stranski produkt.
 
+? Kolikšna je atomska ekonomičnost eliminacije $\mathrm{C_2H_5Cl \to C_2H_4 + HCl}$ za eten? ($M$: $\mathrm{C_2H_5Cl}$ $64{,}51$; $\mathrm{C_2H_4}$ $28{,}05\,\mathrm{g/mol}$) Rezultat vpiši v odstotkih na desetinko.
+= 43,5 % | 0,1
+~ 230 | Ulomek si obrnil. Atomska ekonomičnost je masa želenega produkta deljena z maso reaktantov in ne more preseči $100\,\%$.
+~ 56,5 | To je delež mase, ki odide v stranski produkt $\mathrm{HCl}$.
+> $E_{\mathrm{at}} = \dfrac{28{,}05}{64{,}51} = 0{,}435$, torej $43{,}5\,\%$. Več kot polovica mase odide v $\mathrm{HCl}$.
+
+? Na $5{,}61\,\mathrm{g}$ etena ($28{,}05\,\mathrm{g/mol}$) se adira brom v presežku. Koliko gramov 1,2-dibromoetana ($187{,}86\,\mathrm{g/mol}$) nastane? (Na desetinko grama.)
+= 37,6 g | 0,1
+~ 5,6 | Masa produkta ni enaka masi etena: vsaka molekula etena veže še dva atoma broma.
+~ 0,2 | To je množina v molih. Pomnoži jo z molsko maso produkta.
+> $n = \dfrac{5{,}61}{28{,}05}\,\mathrm{mol} = 0{,}200\,\mathrm{mol}$, razmerje $1 : 1$, $m = 0{,}200 \cdot 187{,}86\,\mathrm{g} \approx 37{,}6\,\mathrm{g}$.
+
 :::simboli
 E_{\mathrm{at}} | atomska ekonomičnost | E_{\mathrm{at}} = \dfrac{m_{\mathrm{p}}}{m_{\mathrm{r}}} | – | pri adiciji $100\,\%$
 m_{\mathrm{p}} | masa želenega produkta | | g

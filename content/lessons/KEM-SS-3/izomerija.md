@@ -262,6 +262,17 @@ Vsako vrsto izomerije si lahko predstavljaš kot preprosto sliko.
 ~ Enantiomera imata enako formulo in enaka vrelišča. Razlikujeta se le po razporeditvi v prostoru.
 > Srednji ogljik nosi štiri različne skupine, zato je kiralen. Alanin obstaja kot dva enantiomera, v beljakovine pa živa bitja vgrajujejo le enega.
 
+? Alkan ima molsko maso $86\,\mathrm{g/mol}$ ($A_r(\mathrm{C}) = 12$, $A_r(\mathrm{H}) = 1$). Koliko atomov ogljika je v njegovi molekuli?
+= 6
+~ 7,2 | Molsko maso si delil le z $12$, vodik pa si izpustil. Alkani imajo formulo $\mathrm{C}_n\mathrm{H}_{2n+2}$.
+> $\mathrm{C}_n\mathrm{H}_{2n+2}$: $12n + 2n + 2 = 86$, $14n = 84$, $n = 6$. To je $\mathrm{C_6H_{14}}$ (heksan in njegovi izomeri).
+
+? Koliko različnih alkenov s formulo $\mathrm{C_4H_8}$ obstaja, če cis in trans izomer štejemo kot dve spojini? (Cikloalkanov ne štej.)
+= 4
+~ 3 | But-2-en ima cis in trans izomer, ki sta dve različni spojini.
+~ 2 | Upoštevaj še razvejano verigo (2-metilpropen) in geometrijska izomera but-2-ena.
+> But-1-en, cis-but-2-en, trans-but-2-en in 2-metilpropen: $4$ alkeni.
+
 :::simboli
 n | število atomov ogljika v molekuli | | – | alkan CₙH₂ₙ₊₂
 M | molska masa alkana | M = 14n + 2 | g/mol | iz A_r(C) = 12 in A_r(H) = 1

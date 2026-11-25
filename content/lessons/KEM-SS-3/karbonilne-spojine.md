@@ -240,6 +240,18 @@ Baker se reducira iz $+2$ na $+1$, aldehid pa se oksidira v anion karboksilne ki
 + Ker med molekulami acetona ni vodikovih vezi, med molekulami vode pa so.
 > Aceton ima le dipol-dipol sile in vre pri $56\,^\circ\mathrm{C}$. Voda ima vodikove vezi in vre pri $100\,^\circ\mathrm{C}$.
 
+? Koliko gramov metanala ($M = 30\,\mathrm{g/mol}$) nastane z oksidacijo $8{,}0\,\mathrm{g}$ metanola ($M = 32\,\mathrm{g/mol}$), če se oksidira ves?
+= 7,5 g | 0,05
+~ 8,0 | Masa ostane enaka le za vse snovi skupaj. Metanal ima manjšo molsko maso, ker sta se odcepila dva atoma vodika.
+~ 0,25 | To je množina v molih. Pomnoži jo z molsko maso metanala.
+> $n = \dfrac{8{,}0\,\mathrm{g}}{32\,\mathrm{g/mol}} = 0{,}25\,\mathrm{mol}$, iz enega mola metanola nastane en mol metanala: $m = 0{,}25\,\mathrm{mol} \cdot 30\,\mathrm{g/mol} = 7{,}5\,\mathrm{g}$.
+
+? S Tollensovim reagentom en mol aldehida izloči dva mola srebra. Koliko gramov srebra ($M = 107{,}9\,\mathrm{g/mol}$) izloči $2{,}2\,\mathrm{g}$ etanala ($M = 44\,\mathrm{g/mol}$)? (Na stotinko grama.)
+= 10,79 g | 0,05
+~ 5,4 | Pozabil si, da en mol aldehida izloči dva mola srebra.
+~ 0,1 | To je množina srebra v molih. Pomnoži jo z molsko maso srebra.
+> $n(\mathrm{CH_3CHO}) = \dfrac{2{,}2\,\mathrm{g}}{44\,\mathrm{g/mol}} = 0{,}050\,\mathrm{mol}$, $n(\mathrm{Ag}) = 0{,}100\,\mathrm{mol}$, $m = 0{,}100\,\mathrm{mol} \cdot 107{,}9\,\mathrm{g/mol} = 10{,}79\,\mathrm{g}$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol
 m | masa | m = n \cdot M | g

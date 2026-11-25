@@ -251,6 +251,17 @@ Koliko etil etanoata dobiš iz $30\,\mathrm{g}$ etanojske kisline pri izkoristku
 ~ Deljenje je obrnjeno. Izkoristek ne more biti večji od $100\,\%$: dobljeno maso deliš s teoretično.
 > $n = \dfrac{6{,}0}{60{,}05} = 0{,}100\,\mathrm{mol}$, $m_{\mathrm{teor}} = 0{,}100 \cdot 88{,}10 = 8{,}81\,\mathrm{g}$, $\eta = \dfrac{5{,}3}{8{,}81} = 0{,}60$, torej $60\,\%$.
 
+? Iz $3{,}0\,\mathrm{g}$ etanojske kisline ($60{,}05\,\mathrm{g/mol}$) in presežka metanola nastaja metil etanoat ($74{,}08\,\mathrm{g/mol}$). Izkoristek je $80\,\%$. Koliko gramov estra dobimo? (Na stotinko grama.)
+= 2,96 g | 0,02
+~ 3,70 | To je teoretična masa pri $100\,\%$ izkoristku. Pomnoži jo še z $0{,}80$.
+~ 4,63 | Teoretično maso si delil z izkoristkom. Dejanska masa je manjša od teoretične, zato množiš z $0{,}80$.
+> $n = \dfrac{3{,}0}{60{,}05}\,\mathrm{mol} = 0{,}0500\,\mathrm{mol}$, $m_\mathrm{teor} = 0{,}0500 \cdot 74{,}08\,\mathrm{g} = 3{,}70\,\mathrm{g}$, $m = 0{,}80 \cdot 3{,}70\,\mathrm{g} = 2{,}96\,\mathrm{g}$.
+
+? Koliko mililitrov raztopine NaOH s koncentracijo $0{,}10\,\mathrm{mol/L}$ nevtralizira $0{,}60\,\mathrm{g}$ etanojske kisline ($M = 60\,\mathrm{g/mol}$)?
+= 100 mL | 1
+~ 0,1 | To je prostornina v litrih. Pretvori jo v mililitre.
+> $n = \dfrac{0{,}60\,\mathrm{g}}{60\,\mathrm{g/mol}} = 0{,}010\,\mathrm{mol}$, razmerje $1 : 1$, $V = \dfrac{0{,}010\,\mathrm{mol}}{0{,}10\,\mathrm{mol/L}} = 0{,}10\,\mathrm{L} = 100\,\mathrm{mL}$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol
 m | masa (dobljena masa produkta) | m = \eta \cdot m_{\mathrm{teor}} | g

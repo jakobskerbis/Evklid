@@ -275,6 +275,18 @@ Redoks si nariši kot podajo žoge. Elektron je žoga. Kdor jo poda, se oksidira
 ~ Oksidacijska števila določamo tudi v molekulah s kovalentnimi vezmi. Sprememba z $0$ na $+2$ je oksidacija.
 > V $\mathrm{NO}$ ima kisik $-2$, zato dušik $+2$. Dušik se oksidira, kisik se reducira; $\mathrm{NO}$ nato prispeva k kislemu dežju.
 
+? Kisli dež ima pH $4{,}6$. Kolikšna je množinska koncentracija oksonijevih ionov v mol/L?
+= 2,5·10^-5 | 0,1·10^-5
+~ 4,6 | To je pH. Koncentracija je $10^{-\mathrm{pH}}$.
+~ 3,98·10^4 | Pozabil si na minus v eksponentu: $c(\mathrm{H_3O^+}) = 10^{-4{,}6}$.
+> $c(\mathrm{H_3O^+}) = 10^{-\mathrm{pH}} = 10^{-4{,}6}\,\mathrm{mol/L} \approx 2{,}5 \cdot 10^{-5}\,\mathrm{mol/L}$.
+
+? En liter kislega dežja s pH $3{,}0$ steče po marmornem kipu in vsi oksonijevi ioni zreagirajo: $\mathrm{CaCO_3 + 2\,H_3O^+} \rightarrow \mathrm{Ca^{2+} + CO_2 + 3\,H_2O}$. Koliko miligramov $\mathrm{CaCO_3}$ ($M = 100{,}1\,\mathrm{g/mol}$) se raztopi?
+= 50 mg | 0,5
+~ 100 | Pozabil si na razmerje: en mol $\mathrm{CaCO_3}$ porabi dva mola $\mathrm{H_3O^+}$.
+~ 0,05 | To je masa v gramih. Pretvori jo v miligrame.
+> $n(\mathrm{H_3O^+}) = 10^{-3}\,\mathrm{mol/L} \cdot 1{,}0\,\mathrm{L} = 1{,}0 \cdot 10^{-3}\,\mathrm{mol}$, $n(\mathrm{CaCO_3}) = 5{,}0 \cdot 10^{-4}\,\mathrm{mol}$, $m = 5{,}0 \cdot 10^{-4} \cdot 100{,}1\,\mathrm{g} \approx 0{,}050\,\mathrm{g} = 50\,\mathrm{mg}$.
+
 :::simboli
 n | množina snovi | n = \frac{m}{M} | mol | v raztopini tudi n = c · V
 m | masa snovi | m = n \cdot M | g

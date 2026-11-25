@@ -218,6 +218,17 @@ Torej $84{,}2\,\%$; ostalo je voda.
 + $84\,\mathrm{kg}$
 > Adicijska polimerizacija ima atomsko ekonomičnost $100\,\%$: vsi atomi propena so v polimeru.
 
+? Polistiren ima molsko maso $312\,000\,\mathrm{g/mol}$, monomer stiren $\mathrm{C_8H_8}$ pa $104\,\mathrm{g/mol}$. Kolikšna je stopnja polimerizacije?
+= 3000 | 1
+~ 0,00033 | Ulomek si obrnil: $n = \dfrac{M_\mathrm{p}}{M_\mathrm{m}}$.
+> $n = \dfrac{312\,000\,\mathrm{g/mol}}{104\,\mathrm{g/mol}} = 3000$. Pri adicijski polimerizaciji se nič ne odcepi, zato delimo kar z maso monomera.
+
+? Kolikšen je masni delež ogljika v polietenu $\mathrm{({-}CH_2{-}CH_2{-})_n}$? ($A_r(\mathrm{C}) = 12$, $A_r(\mathrm{H}) = 1$) Rezultat vpiši v odstotkih na desetinko.
+= 85,7 % | 0,1
+~ 14,3 | To je masni delež vodika.
+~ 50,0 | Atomov C in H ni enako: na vsak ogljik prideta dva vodika, pa tudi atomi so različno težki. Računaj z masami.
+> Delež ni odvisen od $n$, zato računaš z eno enoto $\mathrm{C_2H_4}$: $w(\mathrm{C}) = \dfrac{2 \cdot 12}{28} = 0{,}857 = 85{,}7\,\%$.
+
 :::simboli
 n | stopnja polimerizacije | n = \frac{M_\mathrm{p}}{M_\mathrm{e}} | – | število ponavljajočih se enot v verigi
 M_\mathrm{p} | molska masa verige polimera | M_\mathrm{p} = n \cdot M_\mathrm{e} | g/mol |

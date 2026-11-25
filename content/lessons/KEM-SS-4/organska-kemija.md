@@ -230,6 +230,18 @@ Postopek za molekulsko formulo na drugi snovi iz kuhinje, ki ima oster kisel von
 ~ To je $m \cdot M$. Masa se z molsko maso deli, ne množi.
 > $n = \dfrac{m}{M} = \dfrac{30\,\mathrm{g}}{60\,\mathrm{g/mol}} = 0{,}50\,\mathrm{mol}$; cena ne vpliva na račun.
 
+? Ogljikovodik vsebuje $85{,}7\,\%$ ogljika in $14{,}3\,\%$ vodika, njegova molska masa je $42\,\mathrm{g/mol}$ ($M(\mathrm{C}) = 12\,\mathrm{g/mol}$, $M(\mathrm{H}) = 1\,\mathrm{g/mol}$). Koliko atomov ogljika ima molekula?
+= 3
+~ 1 | To velja za empirično formulo $\mathrm{CH_2}$. Molekulsko dobiš, ko z $M$ izračunaš, kolikokrat je empirična enota v molekuli.
+~ 7 | Masni delež si delil z $12$ in dobil le razmerje množin v $100\,\mathrm{g}$, ne število atomov v molekuli.
+> V $100\,\mathrm{g}$: $n(\mathrm{C}) = \dfrac{85{,}7}{12} = 7{,}14\,\mathrm{mol}$, $n(\mathrm{H}) = 14{,}3\,\mathrm{mol}$; razmerje $1 : 2$, empirična formula $\mathrm{CH_2}$ ($14\,\mathrm{g/mol}$). $\dfrac{42}{14} = 3$, molekula je $\mathrm{C_3H_6}$.
+
+? Koliko litrov kisika pri normalnih pogojih ($V_m = 22{,}4\,\mathrm{L/mol}$) porabi popolno gorenje $8{,}0\,\mathrm{g}$ metana ($M = 16\,\mathrm{g/mol}$)? $\mathrm{CH_4 + 2\,O_2 \rightarrow CO_2 + 2\,H_2O}$
+= 22,4 L | 0,1
+~ 11,2 | Pozabil si na koeficient $2$: en mol metana porabi dva mola kisika.
+~ 1 | To je množina kisika v molih. Pomnoži jo z molsko prostornino.
+> $n(\mathrm{CH_4}) = 0{,}50\,\mathrm{mol}$, $n(\mathrm{O_2}) = 1{,}0\,\mathrm{mol}$, $V = 1{,}0\,\mathrm{mol} \cdot 22{,}4\,\mathrm{L/mol} = 22{,}4\,\mathrm{L}$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol | v CₙH₂ₙ₊₂ pa število atomov ogljika
 m | masa snovi | m = n \cdot M | g
