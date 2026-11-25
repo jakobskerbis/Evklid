@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-4/mesane-maturitetne-naloge.md
-sha256: 7022ccdf1a410a1ae1a700993134a2645d363bb5cf52b5732a90b4643b92b183
+sha256: 35f5676aaa05819c9e148eecb61dff0362e461fd65c89c66e1e0df74778408cf
 Ni v Leanu: seznam »ključna beseda → orodje«, štirje splošni koraki, analogija s trenerjem in postopki
 (napotki za reševanje, ne matematične trditve); simulacija; trditvi »vsak par je nova priložnost« in
 »ljudje štejemo osebe, verjetnost pa šteje pare« (razlaga); premisli o kolesarju (izbira orodja); zapis
@@ -387,8 +387,8 @@ theorem naloga2_ploscina :
 
 /-! ## Za maturo, naloga 3 -/
 
-/-- Naloga 3 a): `P = C(10, 1)·0,04·0,96⁹ = 10·0,04·0,96⁹`; `0,96⁹ = 0,692533…` (lekcija zapiše
-`0,692534…`, kar je zaokroženo, ne odrezano), `P = 0,277013… ≈ 0,2770`. -/
+/-- Naloga 3 a): `P = C(10, 1)·0,04·0,96⁹ = 10·0,04·0,96⁹`; `0,96⁹ = 0,692533…`,
+`P = 0,277013… ≈ 0,2770`. -/
 theorem naloga3_a :
     (Nat.choose 10 1 : ℝ) * 0.04 * 0.96 ^ 9 = 10 * 0.04 * 0.96 ^ 9 ∧
       (0.692533:ℝ) ≤ 0.96 ^ 9 ∧ (0.96:ℝ) ^ 9 < 0.692534 ∧ |(0.96:ℝ) ^ 9 - 0.692534| ≤ 0.0000005 ∧
