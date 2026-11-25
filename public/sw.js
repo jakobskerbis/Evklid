@@ -320,8 +320,13 @@ async function modelFirst(req) {
     const path = new URL(req.url).pathname;
     const keep = res.clone();
     (async () => {
+      // telo je že razpakirano (brotli s strežnika): glavi stiskanja odstranimo kot v put() (Safari bi kopijo zavrnil)
+      const headers = new Headers(keep.headers);
+      headers.delete("content-encoding");
+      headers.delete("content-length");
+      const kopija = new Response(await keep.blob(), { status: keep.status, statusText: keep.statusText, headers });
       for (const old of await cache.keys()) if (new URL(old.url).pathname === path) await cache.delete(old);
-      await cache.put(req, keep);
+      await cache.put(req, kopija);
     })().catch(() => null);
   }
   return res;

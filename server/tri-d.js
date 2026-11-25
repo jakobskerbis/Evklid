@@ -132,8 +132,11 @@ const brMapa = () =>
 
 export function brModeli({ root = modelsDir, mapa = brMapa(), seznam = () => listCache.body, osvezi = modelList, kakovost = 5 } = {}) {
   const nared = new Set(); // različice (v), ki imajo stisnjeno datoteko na disku
-  const posiljatelj = express.static(mapa, { cacheControl: false, index: false, redirect: false, dotfiles: "ignore" });
+  // acceptRanges: false: delne zahteve (Range) gredo nestisnjene po navadni poti (spodaj), zato jih tu ne oglašujemo
+  const posiljatelj = express.static(mapa, { cacheControl: false, index: false, redirect: false, dotfiles: "ignore", acceptRanges: false });
   let tece = null;
+  let znova = false; // seznam se je spremenil med obdelavo: po njej še enkrat
+  let zagnan = false; // stiskamo šele po prvem klicu warm() (server/index.js, minuto po zagonu), ne ob prvem seznamu
   async function stisni() {
     const datoteke = (osvezi(), seznam())?.datoteke || {};
     await fs.promises.mkdir(mapa, { recursive: true });
@@ -164,12 +167,27 @@ export function brModeli({ root = modelsDir, mapa = brMapa(), seznam = () => lis
     for (const f of obstojece) if (!zive.has(f)) await fs.promises.rm(path.join(mapa, f), { force: true }).catch(() => {});
     return n;
   }
-  // Ena obdelava naenkrat; zahteva med obdelavo počaka nanjo in nato še enkrat preveri seznam.
+  // Ena obdelava naenkrat. Nov seznam med obdelavo (nova različica modela) sproži še eno obdelavo po njej.
+  const obSeznamu = () => {
+    if (tece) znova = true;
+    else setImmediate(() => warm().catch(() => {}));
+  };
   const warm = () => {
-    if (!tece) tece = stisni().finally(() => (tece = null));
+    if (process.env.EVKLID_COMPRESS === "0") return Promise.resolve(0);
+    if (!zagnan) {
+      zagnan = true;
+      obNovemSeznamu.add(obSeznamu); // ena kljuka na zagnan strežnik (testi, ki warm ne kličejo, ne stiskajo)
+    }
+    if (!tece)
+      tece = stisni().finally(() => {
+        tece = null;
+        if (znova) {
+          znova = false;
+          setImmediate(() => warm().catch(() => {}));
+        }
+      });
     return tece;
   };
-  obNovemSeznamu.add(() => tece || setImmediate(() => warm().catch(() => {})));
   const middleware = (req, res, next) => {
     if ((req.method !== "GET" && req.method !== "HEAD") || req.headers.range || process.env.EVKLID_COMPRESS === "0") return next();
     if (pickEncoding(req.headers["accept-encoding"]) !== "br") return next(); // gzip modelov skoraj ne zmanjša
@@ -183,7 +201,7 @@ export function brModeli({ root = modelsDir, mapa = brMapa(), seznam = () => lis
     if (!d || !nared.has(d.v)) return next(); // še ni stisnjena: tokrat nestisnjena
     const url = req.url;
     res.setHeader("Vary", "Accept-Encoding");
-    res.setHeader("Cache-Control", req.query?.v ? "public, max-age=31536000, immutable" : "no-cache");
+    res.setHeader("Cache-Control", req.query?.v === d.v ? "public, max-age=31536000, immutable" : "no-cache");
     res.setHeader("Content-Type", "model/gltf-binary");
     res.setHeader("Content-Encoding", "br");
     res.setHeader("X-File-Size", d.b);

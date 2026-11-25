@@ -1,4 +1,4 @@
-// 3D modeli (GLB, HDR) stisnjeni z brotli brez izgube (j 25. 11. 2026: »Stisni vse kar je smiselno«): server/tri-d.js brModeli.
+// 3D modeli (GLB) stisnjeni z brotli brez izgube (j 25. 11. 2026: »Stisni vse kar je smiselno«): server/tri-d.js brModeli.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -53,7 +53,7 @@ test("GLB: prvič nestisnjen in v vrsti, po stiskanju brotli z isto vsebino, X-F
   assert.deepEqual(prvi.body, vsebina);
   assert.equal(await mw.warm(), 1);
   assert.deepEqual(fs.readdirSync(mapa).filter((f) => f.endsWith(".br")).length, 1, "stara kopija pobrisana, nova shranjena");
-  const r = await get(`${url}?v=abc`, { "accept-encoding": "gzip, deflate, br" });
+  const r = await get(`${url}?v=${vsebina.length}`, { "accept-encoding": "gzip, deflate, br" });
   assert.equal(r.status, 200);
   assert.equal(r.h["content-encoding"], "br");
   assert.equal(r.h["content-type"], "model/gltf-binary");
@@ -62,6 +62,9 @@ test("GLB: prvič nestisnjen in v vrsti, po stiskanju brotli z isto vsebino, X-F
   assert.ok(r.body.length < vsebina.length / 10);
   assert.deepEqual(zlib.brotliDecompressSync(r.body), vsebina, "brez izgube");
   assert.match(r.h["cache-control"], /immutable/, "?v= je zgoščena vrednost vsebine");
+  assert.equal(r.h["accept-ranges"], undefined, "delne zahteve gredo nestisnjene: brez Accept-Ranges");
+  const drugaV = await get(`${url}?v=stara`, { "accept-encoding": "br" });
+  assert.equal(drugaV.h["cache-control"], "no-cache", "immutable samo za trenutno različico");
   assert.match(r.h.vary, /Accept-Encoding/);
   const brezV = await get(url, { "accept-encoding": "br" });
   assert.equal(brezV.h["cache-control"], "no-cache");
