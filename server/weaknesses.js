@@ -4,8 +4,8 @@
 //
 // Viri (vsi lokalno, brez dodatnih klicev modela):
 // - klepet z inštruktorjem (META vrstica) in naloge v Vadnici: tabela events (kot doslej, zdaj s topic_id);
-// - igre, vprašanja »Preveri se« v učbeniku, naše pole NPZ/mature (»Imam prav«), kartice in kviz v razredu:
-//   tabela skill_results, samo dnevne vsote po temi (brez odgovorov, brez časov posameznih nalog).
+// - igre, vprašanja »Preveri se« v učbeniku, naše pole NPZ/mature (»Imam prav«), kartice, kviz v razredu ter
+//   orodja (skener, laboratorij, kviz atlasa; recordToolResult): tabela skill_results, samo dnevne vsote po temi (brez odgovorov, brez časov posameznih nalog).
 // Vse gre pod isti ključ: id teme učne poti (npr. MAT-OS-8/linearne-enacbe). Prosto ime iz klepeta ali
 // kartice se preslika na temo z lokalnim iskanjem po imenih tem (lekcija-za-vprasanje.js); kar se ne
 // preslika, ostane pod svojim imenom.
@@ -16,6 +16,7 @@ import { loadLesson, legacyChecks, legacyClient } from "./textbook.js";
 import { checkNumber, orderOk } from "../public/preveri-se.js";
 import { loadOurPaper } from "./our-papers.js";
 import { partKey } from "../public/our-paper-key.js";
+import { hasGenerator } from "./practice/index.js";
 
 const SUBJECT_LABEL = { MAT: "MAT", FIZ: "FIZ", KEM: "KEM", BIO: "BIO", GEO: "GEO", RAC: "RAČ", EKO: "EKO" };
 
@@ -31,7 +32,18 @@ export const DAYS = 60;
 // Ena igra prinese veliko hitrih odgovorov; da igre ne preglasijo nalog in klepeta, šteje ena igra
 // največ GAME_MAX odgovorov (napake sorazmerno).
 export const GAME_MAX = 4;
-export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz"];
+export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"];
+// Orodja (P1-8, načrt treh prioritet, j 25. 11. 2026): skener (napaka v učenčevem rezultatu, ki jo potrdi preverjanje),
+// laboratorij (napoved, sklep, »Preveri moj račun«) in kviz atlasa. Vsako vprašanje šteje enkrat na dan, ena tema iz
+// enega orodja največ TOOL_DAY_MAX odgovorov na dan: kviz atlasa ima veliko hitrih vprašanj, ki jih oceni brskalnik,
+// zato sam v enem dnevu ne naredi šibke teme (potrebna je še napaka drug dan ali drugje). Iz brskalnika največ
+// TOOL_STUDENT_DAY_MAX zapisov na učenca na dan (skupaj, vse teme).
+export const TOOL_SOURCES = ["scan", "lab", "atlas"];
+// lab 2 (pregled 3, #1094 laboratorij): sklepa in račun enega poskusa v enem dnevu sama ne naredita šibke teme.
+export const TOOL_DAY_MAX = { scan: 4, lab: 2, atlas: 2 };
+export const TOOL_STUDENT_DAY_MAX = 60;
+// Id vprašanja ali naloge, nikoli učenčevo besedilo ali vrednost (skill_seen hrani le, kaj je bilo šteto).
+const TOOL_ITEM = /^[A-Za-z0-9_:.\/-]{1,80}$/;
 
 const fold = (s) =>
   String(s || "")
@@ -212,6 +224,19 @@ export function answerOk(check, body) {
   return o === check.correct;
 }
 
+// Rezultat iz orodja (skener, laboratorij, kviz atlasa): ok = true/false, item = stalen id vprašanja ali naloge
+// (TOOL_ITEM, npr. »ohm:racun«; dvakrat isto vprašanje isti dan šteje enkrat). Vrne true, če je bil rezultat zapisan. Skener kliče to funkcijo
+// na strežniku (samo za status, ki ga potrdi preverjanje, nikoli za »Nepreverjeno«); laboratorij in atlas prek
+// POST /api/students/:id/tool-check.
+export function recordToolResult(db, studentId, { source, topicId, item, ok }) {
+  if (!TOOL_SOURCES.includes(source) || typeof ok !== "boolean" || typeof item !== "string" || !TOOL_ITEM.test(item) || !getTopic(String(topicId || ""))) return false;
+  const day = new Date().toISOString().slice(0, 10);
+  const today = db.prepare("SELECT n FROM skill_results WHERE student_id = ? AND day = date('now') AND source = ? AND key = ?").get(studentId, source, topicId);
+  if ((today?.n || 0) >= TOOL_DAY_MAX[source]) return false;
+  if (!firstTime(db, studentId, `T|${source}|${topicId}|${item}|${day}`)) return false;
+  return recordSkill(db, studentId, { source, topicId, n: 1, wrong: ok ? 0 : 1 });
+}
+
 // ---------- Zapis iz brskalnika: »Preveri se« v učbeniku in »Imam prav« na naši poli ----------
 export function mountSkillChecks(app, store, { loadStudent }) {
   const db = store.db;
@@ -262,5 +287,38 @@ export function mountSkillChecks(app, store, { loadStudent }) {
       if (recordSkill(db, s.id, { source: "paper", topicId, n: 1, wrong: ok ? 0 : 1 })) counted++;
     }
     res.json({ counted });
+  });
+  // »Kaj še ne znam« (P1-8, 2. del; j 25. 11. 2026: na vrhu Napredka): šibke teme z dokazom (napake, kje) in tem, kaj
+  // učenec lahko naredi (vaja iz generatorja, ki jo preveri koda; lekcija). Ročno vnesene ostanejo kot oznake.
+  app.get("/api/students/:id/vrzeli", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const teme = detectWeakTopics(skillStats(store, s)).map((w) => ({
+      topic_id: w.topic_id,
+      topic: w.topic,
+      subject: w.subject,
+      turns: w.turns,
+      errors: w.errors,
+      // Viri z napakami, od največ napak (največ trije), kot v tedenskem poročilu.
+      viri: Object.entries(w.sources || {}).filter(([, v]) => v.wrong > 0).sort((a, b) => b[1].wrong - a[1].wrong).slice(0, 3).map(([k]) => k),
+      vaja: !!w.topic_id && hasGenerator(w.topic_id),
+      lekcija: !!w.topic_id && !!loadLesson(w.topic_id),
+    }));
+    res.json({ teme, rocne: s.manual_weaknesses || [] });
+  });
+  // Orodja v brskalniku (P1-8): laboratorij in kviz atlasa. { source: "lab" | "atlas", topic: id teme, item, ok }.
+  // Pravilnost preveri orodje samo (izmerjena vrednost v poskusu, izbrani del v atlasu), kot pri igrah; skener
+  // zapisuje na strežniku (recordToolResult), zato ga ta pot ne sprejme.
+  app.post("/api/students/:id/tool-check", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const source = String(req.body?.source || "");
+    const topicId = String(req.body?.topic || "");
+    const item = req.body?.item;
+    const ok = req.body?.ok;
+    if (!["lab", "atlas"].includes(source) || !getTopic(topicId) || typeof item !== "string" || !TOOL_ITEM.test(item) || typeof ok !== "boolean") return res.status(400).json({ error: "Neveljaven rezultat." });
+    const danes = db.prepare("SELECT COALESCE(SUM(n), 0) AS n FROM skill_results WHERE student_id = ? AND day = date('now') AND source IN ('lab', 'atlas')").get(s.id).n;
+    if (danes >= TOOL_STUDENT_DAY_MAX) return res.json({ counted: false });
+    res.json({ counted: recordToolResult(db, s.id, { source, topicId, item, ok }) });
   });
 }

@@ -1,0 +1,52 @@
+# Lean preverjanje vsebine (docs/lean.md, j 25. 11. 2026: »povsod, kjer bi pomagalo pri natančnosti, programsko
+# preverjanje z Lean, tudi vmesni koraki«). Teče v GitHubu, brez strežnika in brez stroška AI. Ni med testi, ki
+# jih čaka objava (scripts/render-objava.js), zato ne zadrži objave na evklid.app.
+name: lean
+
+on:
+  pull_request:
+    paths: ["lean/**", ".github/workflows/lean.yml"]
+  push:
+    branches: [main]
+    paths: ["lean/**", ".github/workflows/lean.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lean-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: lean
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Namesti elan v4.4.0 (preverjen sha256; Lean iz lean/lean-toolchain)
+        run: |
+          curl -sSfL -o /tmp/elan.tgz https://github.com/leanprover/elan/releases/download/v4.4.0/elan-x86_64-unknown-linux-gnu.tar.gz
+          echo "0e8250aa2be86c7af929ade68db617af9edc8b9ccf6eaf5ece228250d0d032e2  /tmp/elan.tgz" | sha256sum -c -
+          tar xzf /tmp/elan.tgz -C /tmp
+          /tmp/elan-init -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Prenesi prevedeno knjižnico Mathlib
+        run: lake exe cache get
+      - name: Preveri vse dokaze (opozorilo, npr. »declaration uses 'sorry'«, je napaka)
+        run: lake build --wfail
+      - name: Brez dodatnih aksiomov (axiom, native_decide) in vsaka datoteka v Evklid/ je uvožena
+        run: |
+          set +e
+          grep -rnwE "axiom|native_decide|sorry|admit" --include=*.lean Evklid Evklid.lean
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then echo "::error::sorry, admit, axiom ali native_decide v lean/ (docs/lean.md)"; exit 1; fi
+          if [ "$rc" -ge 2 ]; then echo "::error::grep ni mogel prebrati lean/"; exit 1; fi
+          for f in $(find Evklid -name '*.lean'); do
+            m=$(echo "${f%.lean}" | tr / .)
+            grep -qx "import $m" Evklid.lean || { echo "::error::$f ni uvožen v lean/Evklid.lean"; exit 1; }
+          done

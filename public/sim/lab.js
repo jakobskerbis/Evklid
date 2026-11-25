@@ -169,6 +169,43 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
   return wrap;
 }
 
+// Šibke točke učenca (docs/sibke-tocke.md, #1094): prvi izbor pri »Sklep« in prvi številčni »Preveri moj račun« javita
+// dogodek »evklid:lab-preverjeno« { vrsta, ok } z elementa (mehurček do poskusa); public/laboratorij.js ga pošlje na
+// POST /api/students/:id/tool-check. Napovedi ne štejejo (napačna napoved pred meritvijo je namen napovedi, ne šibkost).
+// Nikoli vpisana vrednost, nikoli po »Pokaži rešitev«, ponovni poskusi ne štejejo.
+export const LAB_PREVERJENO = "evklid:lab-preverjeno";
+// Tema za šibke točke po poskusu: le teme, kjer sklep in račun res preverjata snov teme (pregled 3); poskus brez vnosa
+// ali učenec, ki nobene teh tem nima na svoji ravni šolanja (rang > 2, server/laboratorij.js), ne pošlje nič.
+export const SIBKE_TEME = {
+  "lab-titracija": ["KEM-SS-2/titracija", "KEM-OS-8/nevtralizacija-in-soli"],
+  "lab-ohm": ["FIZ-OS-9/upor-in-ohmov-zakon", "FIZ-SS-2/elektricni-tok"],
+  "lab-prosti-pad": ["FIZ-OS-9/prosti-pad", "FIZ-SS-1/prosti-pad-in-navpicni-met"],
+  "lab-newton2": ["FIZ-OS-9/newtonovi-zakoni", "FIZ-SS-1/newtonovi-zakoni"],
+  "lab-co2": ["KEM-SS-1/stehiometrija", "KEM-OS-9/racunanje-z-mnozino-snovi"],
+  "lab-hooke": ["FIZ-SS-1/proznost", "FIZ-OS-8/sila-in-merjenje-sile"],
+  "lab-grelnik": ["FIZ-OS-9/moc-in-izkoristek"],
+  "lab-elektroliza": ["KEM-SS-2/galvanski-cleni-in-elektroliza"],
+  "lab-lom": ["FIZ-OS-8/lom-svetlobe", "FIZ-SS-3/geometrijska-optika"],
+  "lab-hitrost": ["KEM-SS-2/hitrost-reakcij"],
+};
+// Kratek stalen id iz besedila vprašanja (vrstni red sklepov je odvisen od učenčevih meritev).
+const kratekId = (t) => {
+  let x = 5381;
+  for (const ch of String(t)) x = ((x * 33) ^ ch.codePointAt(0)) >>> 0; // besedilo z oznakami HTML, kot ga piše poskus
+  return x.toString(36);
+};
+// Telo za tool-check iz dogodka: x = poskus s seznama Laboratorija ({ key, topics: [{ id, rank }] }, najbližja tema prva).
+// item je stalen id vprašanja (»ohm:sklep:1x2y3z«, »ohm:racun«) v znakih TOOL_ITEM (server/weaknesses.js).
+export function sibkaTocka(x, detail) {
+  const dovoljene = SIBKE_TEME[x?.key], ok = detail?.ok;
+  if (!dovoljene || typeof ok !== "boolean") return null;
+  const tema = (x.topics || []).filter((t) => dovoljene.includes(t.id) && t.rank <= 2).sort((a, b) => a.rank - b.rank || dovoljene.indexOf(a.id) - dovoljene.indexOf(b.id))[0];
+  if (!tema) return null;
+  const item = `${x.key.replace(/^lab-/, "")}:${String(detail?.vrsta || "")}`.replace(/[^A-Za-z0-9_:./-]/g, "_").slice(0, 80);
+  return { source: "lab", topic: tema.id, item, ok };
+}
+const javi = (el, vrsta, ok) => el.isConnected && (el.dispatchEvent(new CustomEvent(LAB_PREVERJENO, { bubbles: true, detail: { vrsta, ok } })), true);
+
 // Vprašanje o sklepu: ena pravilna možnost, pri vsaki razlaga.
 // Po prvi izbiri so možnosti zaklenjene (učenec ne more klikati vseh po vrsti in brati vseh razlag); »Poskusi znova«
 // pod razlago jih spet odklene. Zaklenjene ostanejo dosegljive s tipko Tab (aria-disabled, ne disabled), da bralnik prebere izbiro.
@@ -182,9 +219,11 @@ export function conclusion(q) {
   const again = button("Poskusi znova", () => reset());
   again.classList.add("lab-again");
   again.hidden = true;
+  let javljeno = false; // le prva izbira (po »Poskusi znova« učenec že pozna razlago)
   const pick = (b, o) => {
     if (list.classList.contains("lab-zaklenjeno")) return;
     list.classList.add("lab-zaklenjeno");
+    if (!javljeno) javljeno = javi(b, `sklep:${kratekId(q.id || q.text)}`, !!o.ok);
     for (const x of opts) x.setAttribute("aria-disabled", "true");
     b.classList.add(o.ok ? "ok" : "bad");
     b.setAttribute("aria-pressed", "true");
@@ -446,6 +485,8 @@ export function odzivRacuna(r, tol = 0.05) {
 export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {}) {
   let cilji = [], izbran = null;
   const odkrito = new Set();
+  const javljeno = new Set(); // cilji, pri katerih je bilo prvo preverjanje (ali »Pokaži rešitev«) že
+
   const izbira = h("select", { class: "lab-racun-sel", "aria-label": "kaj računaš" });
   izbira.addEventListener("change", () => ((izbran = izbira.value), pokazi()));
   const izbiraVrsta = h("label", { class: "demo-slider", hidden: true }, h("span", { class: "demo-slider-label" }, "kaj računaš"), izbira);
@@ -473,6 +514,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     const c = cilj();
     if (!c) return;
     odkrito.add(c.key);
+    javljeno.add(c.key); // po »Pokaži rešitev« preverjanje ne šteje več
     zacasen = false;
     odziv.hidden = false;
     odziv.className = `lab-why ${pravilno ? "ok" : ""}`;
@@ -488,6 +530,9 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     odziv.hidden = false;
     zacasen = true;
     if (!r) return (odziv.className = "lab-why"), (odziv.textContent = `Vpiši število${enota ? ` v ${enota}` : ""} (npr. 98,5).`);
+    // Šibke točke: en »racun« na poskus (cilji so isti račun pri drugem uporniku, seriji …); zdrs za faktor 10ⁿ (enote,
+    // odstotki) je zapis, ne snov, zato ne šteje; po »Pokaži rešitev« (tudi obnovljeni) ne šteje.
+    if (!javljeno.has(c.key) && !odkrito.has(c.key) && (r.ok || !faktorDeset(r.x, r.p)) && javi(el, "racun", r.ok)) javljeno.add(c.key);
     if (r.ok) return odkrij(true);
     odziv.className = "lab-why bad";
     odziv.innerHTML = `<b>Ne čisto.</b> ${odzivRacuna(r, tol)}`;
@@ -514,7 +559,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     },
     get pricakovano() { return cilj()?.vrednost ?? null; },
     stanje: () => [...odkrito],
-    obnovi: (s) => Array.isArray(s) && s.forEach((k) => typeof k === "string" && odkrito.add(k)),
+    obnovi: (s) => Array.isArray(s) && s.forEach((k) => typeof k === "string" && (odkrito.add(k), javljeno.add(k))),
   };
 }
 

@@ -175,7 +175,13 @@ cas("AUDIT-001: SymPy rejects incomplete solution sets, accepts complete ones", 
     ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi", "x=5*pi/6+2*k*pi"] }],
     ["x^2+1=0", { kind: "equation", variable: "x", solutions: [] }],
   ];
-  for (const [t, sol] of right) assert.equal((await verifyAiFull(t, sol)).verified, true, t);
+  // Periodične rešitve SymPy preveri samo na [−20, 20]: status »delno preverjeno«, ne »preverjeno« (skener P3-1).
+  for (const [t, sol] of right) {
+    const r = await verifyAiFull(t, sol);
+    const periodic = t.startsWith("sin");
+    assert.equal(r.status, periodic ? "partial" : "verified", t);
+    assert.equal(r.verified, !periodic, t);
+  }
 });
 
 // Pregled #935 (oba pregledovalca): pravilni odgovori, ki jih je SymPy po spremembi zavrnil ali ni odločil.
@@ -205,9 +211,9 @@ cas("AUDIT-001 pregled: log, implicitno množenje, √, »2x«, več rešitev v 
   const plane = await verifyAiFull("x+y+z=1; 2*x+2*y+2*z=2; 3*x+3*y+3*z=3", { kind: "system", solutions: ["x=t; y=1-t; z=0"] });
   assert.equal(plane.verified, false);
   assert.equal(plane.reason, "missing");
-  // Periodične rešitve v sistemu: SymPy ne odloča, numerika jih ne potrdi (nepreverjeno, ne »napačno«).
-  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2*k*pi; y=1/2", "x=5*pi/6+2*k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
-  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2k*pi; y=1/2", "x=5pi/6+2k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
+  // Periodične rešitve v sistemu: SymPy ne odloča, numerika potrdi le dane rešitve (»delno preverjeno«, ne »napačno«).
+  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2*k*pi; y=1/2", "x=5*pi/6+2*k*pi; y=1/2"] }), { verified: false, reason: "unknown", status: "partial" });
+  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2k*pi; y=1/2", "x=5pi/6+2k*pi; y=1/2"] }), { verified: false, reason: "unknown", status: "partial" });
   // Nepopolno ostane nepopolno tudi z log in implicitnim množenjem.
   assert.equal((await verifyAiFull("x^2+y^2=13; xy=6", { kind: "system", solutions: ["x=2; y=3", "x=3; y=2"] })).reason, "missing");
 });
