@@ -6,7 +6,7 @@
 import { g } from "../rng.js";
 import { gcd, roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { fr, num, frA, ft, sg, pickAns, name, wrapGens, decimalke } from "./matura-util.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens, decimalke, ap } from "./matura-util.js";
 
 const P = "mat-ss3-matura-";
 const T = (s) => `MAT-SS-3/${s}`;
@@ -37,7 +37,6 @@ function comb(terms) {
   return s || "0";
 }
 const le = (a, b, v = "x") => comb([[a, v], [b, ""]]);
-const ap = (x, d) => (Math.abs(roundHalfUp(x, d) - x) < 1e-9 ? "=" : "\\approx");
 const dg = (x, d = 1) => `${tx(x, d)}^\\circ`;
 const cm = (x) => `${tx(x)}\\ \\mathrm{cm}`;
 const sub3 = (p, q) => p.map((v, i) => v - q[i]);
@@ -256,6 +255,7 @@ const GENS = [
           ]);
           const phi = Math.atan(c / pv) * RAD;
           const dT = decimalke(c / pv, 4, (x) => Math.atan(x) * RAD, 1);
+          if (dT == null) return null;
           return {
             text: `Kvader $ABCDEFGH$ (oglišča $E$, $F$, $G$, $H$ ležijo po vrsti nad $A$, $B$, $C$, $D$) ima osnovno ploskev $ABCD$ z robovoma $|AB| = ${cm(a)}$ in $|BC| = ${cm(b)}$ ter višino $|AE| = ${cm(c)}$. Izračunaj kot med diagonalo $${diag}$ stranske ploskve $${face}$ in osnovno ploskvijo $ABCD$. Rezultat v stopinjah zaokroži na desetinko.`,
             answer: num(phi, 1, [
@@ -306,7 +306,9 @@ const GENS = [
           const d = Math.hypot(a, b);
           const phi = Math.atan(c / d) * RAD;
           const dT = decimalke(c / d, 4, (x) => Math.atan(x) * RAD, 1);
+          if (dT == null) return null;
           const dd = decimalke(d, 3, (x) => c / x, dT);
+          if (dd == null) return null;
           const U = `\\ \\mathrm{${u}}`;
           return {
             text: `${obj} ima obliko kvadra z dolžino $${a}${U}$, širino $${b}${U}$ in višino $${c}${U}$. Pod kakšnim kotom je telesna diagonala nagnjena proti dnu? Rezultat v stopinjah zaokroži na desetinko.`,
@@ -409,7 +411,9 @@ const GENS = [
         const V = a * b * c;
         // Vmesna rezultata z dovolj mesti, da se veriga izide v isti desetinki kot odgovor.
         const dc = decimalke(c, 3, (x) => a * b * x, 1);
+        if (dc == null) return null;
         const dd = decimalke(d, 3, (x) => x * Math.tan(f * DEG), dc);
+        if (dd == null) return null;
         return {
           text: `Osnovna ploskev kvadra je pravokotnik s stranicama $${cm(a)}$ in $${cm(b)}$. Telesna diagonala kvadra oklepa z osnovno ploskvijo kot $${f}^\\circ$. Izračunaj prostornino kvadra. Zaokroži na desetinko.`,
           answer: num(V, 1, [
@@ -435,7 +439,9 @@ const GENS = [
         const phi = Math.atan(opp / adj) * RAD;
         const edgeLen = face === "ABFE" ? a : b;
         const dTan = decimalke(opp / adj, 4, (x) => Math.atan(x) * RAD, 1);
+        if (dTan == null) return null;
         const dAdj = decimalke(adj, 3, (x) => opp / x, dTan);
+        if (dAdj == null) return null;
         return {
           text: `Kvader $ABCDEFGH$ (osnovna ploskev $ABCD$, oglišča $E$, $F$, $G$, $H$ po vrsti nad $A$, $B$, $C$, $D$) ima robove $|AB| = ${cm(a)}$, $|BC| = ${cm(b)}$ in $|AE| = ${cm(c)}$. Izračunaj kot med telesno diagonalo $AG$ in stransko ploskvijo $${face}$. Rezultat v stopinjah zaokroži na desetinko.`,
           answer: num(phi, 1, [
@@ -499,6 +505,7 @@ const GENS = [
           const v = s * Math.sin(al * DEG);
           const V = O * v;
           const dv = decimalke(v, 3, (x) => O * x, 1);
+          if (dv == null) return null;
           const intro = r.pick([
             "Poševna prizma ima osnovno ploskev s ploščino",
             "Sklad enakih ploščic, ki ga porinemo vstran, ima obliko poševne prizme. Osnovna ploskev ima ploščino",
@@ -524,6 +531,7 @@ const GENS = [
           const v = s * Math.sin(al * DEG);
           const V = Math.PI * rr * rr * v;
           const dv = decimalke(v, 3, (x) => Math.PI * rr * rr * x, 1);
+          if (dv == null) return null;
           const intro = r.pick(["Poševni valj ima polmer osnovne ploskve", "Nagnjen stolpič kovancev ima obliko poševnega valja s polmerom osnovne ploskve", "Nagnjen sklad okroglih podstavkov za kozarce ima obliko poševnega valja s polmerom osnovne ploskve"]);
           return {
             text: `${intro} $${cm(rr)}$. Tvorilka je dolga $${cm(s)}$ in z osnovno ploskvijo oklepa kot $${al}^\\circ$. Izračunaj prostornino. Zaokroži na desetinko.`,
@@ -569,6 +577,7 @@ const GENS = [
           const v = s * Math.sin(al * DEG);
           const V = O * v;
           const dk = decimalke([O, v], 3, (x, y) => x * y, 1);
+          if (dk == null) return null;
           const Otex = kind === 0 ? `O = ${a}^2 = ${a * a}\\ \\mathrm{cm^2}` : kind === 1 ? `O = ${a} \\cdot ${b} = ${a * b}\\ \\mathrm{cm^2}` : `O = \\dfrac{${a}^2\\sqrt{3}}{4} \\approx ${txr(O, dk)}\\ \\mathrm{cm^2}`;
           return {
             text: `Osnovna ploskev poševne prizme je ${shape}. Stranski rob je dolg $${cm(s)}$ in z ravnino osnovne ploskve oklepa kot $${al}^\\circ$. Izračunaj prostornino prizme. Zaokroži na desetinko.`,
@@ -648,6 +657,7 @@ const GENS = [
         if (r.next() < 0.5) {
           const V = (Math.PI * rr * rr * c) / 3;
           const dr = decimalke(rr, 4, (x) => (Math.PI * x * x * c) / 3, 1);
+          if (dr == null) return null;
           return {
             text: `Pravokotni trikotnik s katetama $${cm(a)}$ in $${cm(b)}$ zavrtimo okoli hipotenuze. Izračunaj prostornino nastalega dvojnega stožca. Zaokroži na desetinko.`,
             answer: num(V, 1, [
@@ -719,7 +729,9 @@ const GENS = [
       const sn = V / (Math.PI * rr * rr * s);
       const al = Math.asin(sn) * RAD;
       const dS = decimalke(sn, 4, (x) => Math.asin(x) * RAD, 1);
+      if (dS == null) return null;
       const dH = decimalke(sn * s, 3, (x) => x / s, dS);
+      if (dH == null) return null;
       const nm = name(r);
       return {
         text: `${nm} je ${g(nm, "izmeril", "izmerila")} poševni valj s polmerom osnovne ploskve $${cm(rr)}$ in tvorilko $${cm(s)}$. Prostornina valja je $${tx(V)}\\ \\mathrm{cm^3}$. Pod kakšnim kotom je tvorilka nagnjena proti osnovni ploskvi? Rezultat v stopinjah zaokroži na desetinko.`,
@@ -1876,6 +1888,7 @@ const TELESA = [
           const va = Math.hypot(v, a / 2);
           const Pp = a * a + 2 * a * va;
           const dva = decimalke(va, 3, (x) => a * a + 2 * a * x, 1);
+          if (dva == null) return null;
           return {
             text: `Pravilna štiristrana piramida ima osnovni rob $a = ${uT(a, "cm")}$ in višino $v = ${uT(v, "cm")}$. Izračunaj njeno površino. Zaokroži na desetinko.`,
             answer: num(cl(Pp), 1, [
@@ -1920,6 +1933,7 @@ const TELESA = [
           const O = (six ? 6 : 1) * ((a * a * S3) / 4);
           const V = O * v;
           const dO = decimalke(O, 3, (x) => x * v, 1);
+          if (dO == null) return null;
           return {
             text: `Pravilna ${six ? "šeststrana" : "tristrana"} prizma ima osnovni rob $a = ${uT(a, "cm")}$ in višino $v = ${uT(v, "cm")}$. Izračunaj njeno prostornino. Zaokroži na desetinko.`,
             answer: num(cl(V), 1, [
@@ -1938,6 +1952,7 @@ const TELESA = [
         const V = Math.round((4 / 3) * Math.PI * rr ** 3);
         const rc = Math.cbrt((3 * V) / (4 * Math.PI));
         const d3 = decimalke((3 * V) / (4 * Math.PI), 3, Math.cbrt, 2);
+        if (d3 == null) return null;
         return {
           text: `Kovinska krogla ima prostornino $${uT(V, "cm^3")}$. Kolikšen je njen polmer? Zaokroži na stotinko.`,
           answer: num(cl(rc), 2, [
@@ -1999,6 +2014,7 @@ const TELESA = [
         if (v < 4 || v > 60) return null;
         const Po = Math.PI * rr * rr + 2 * Math.PI * rr * v;
         const dv = decimalke(v, 3, (x) => Math.PI * rr * rr + 2 * Math.PI * rr * x, 0);
+        if (dv == null) return null;
         return {
           text: `Valjasta posoda brez pokrova ima notranji polmer $${uT(rr, "cm")}$ in drži natanko $${uT(Lt, "l")}$. Koliko pločevine potrebujemo zanjo (dno in plašč)? Debelino pločevine zanemari. Zaokroži na cel $\\mathrm{cm^2}$.`,
           answer: num(cl(Po), 0, [
@@ -2054,6 +2070,7 @@ const TELESA = [
         const v = Math.sqrt(v2);
         const V = (a * a * v) / 3;
         const dv = decimalke(v, 3, (x) => (a * a * x) / 3, 1);
+        if (dv == null) return null;
         return {
           text: `Pravilna štiristrana piramida ima osnovni rob $a = ${uT(a, "cm")}$ in stranski rob $s = ${uT(s, "cm")}$. Izračunaj njeno prostornino. Zaokroži na desetinko.`,
           answer: num(cl(V), 1, [
@@ -2072,6 +2089,7 @@ const TELESA = [
         const a = r.int(4, 20);
         const W = a ** 3 * (1 - Math.PI / 4);
         const dVv = decimalke((Math.PI * a ** 3) / 4, 1, (x) => a ** 3 - x, 1);
+        if (dVv == null) return null;
         return {
           text: `Iz lesene kocke z robom $${uT(a, "cm")}$ izstružimo največji možni valj. Koliko lesa odpade? Zaokroži na desetinko.`,
           answer: num(cl(W), 1, [
@@ -2091,6 +2109,7 @@ const TELESA = [
       const Vm = Math.PI * (d / 200) ** 2 * h;
       const m = Vm * rho;
       const dVm = decimalke(Vm, 4, (x) => x * rho, 0);
+      if (dVm == null) return null;
       return {
         text: `Betonski steber ima obliko valja s premerom $${uT(d, "cm")}$ in višino $${uT(h, "m")}$. Gostota betona je $${rho}\\ \\mathrm{kg/m^3}$. Kolikšna je masa stebra? Zaokroži na cel kilogram.`,
         answer: num(cl(m), 0, [

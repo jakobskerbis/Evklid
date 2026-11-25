@@ -5,21 +5,23 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { MATURA_MAT, naloga, neskladni, skorajOdgovor, koraki, besedilo, formule } from "./matura-koraki-pomoc.js";
+import { decimalke, ap } from "../server/practice/generators/matura-util.js";
 
-// Generatorji, kjer so vmesni rezultati prej imeli premalo mest: več semen.
+// Generatorji, kjer so vmesni rezultati prej imeli premalo mest ali rezultat pade na mejo zaokrožanja: več semen
+// (napake pri približkih so se pokazale šele pri semenih 600–2800).
 const PRIZADETI = ["anuitete", "posevna-telesa-vrtenine", "premice-ravnine", "matura-telesa", "priblizki-napake", "iracionalne-enacbe"];
-const semena = (g) => (PRIZADETI.some((p) => g.id.endsWith(p)) ? 300 : 100);
+const semena = (g) => (PRIZADETI.some((p) => g.id.endsWith(p)) ? 3200 : 100);
 
-function* naloge() {
-  for (const g of MATURA_MAT) {
-    for (const level of [1, 2, 3]) {
-      for (let seed = 1; seed <= semena(g); seed++) {
-        const t = naloga(g, level, seed);
-        if (t) yield t;
-      }
+const NALOGE = [];
+for (const g of MATURA_MAT) {
+  for (const level of [1, 2, 3]) {
+    for (let seed = 1; seed <= semena(g); seed++) {
+      const t = naloga(g, level, seed);
+      if (t) NALOGE.push(t);
     }
   }
 }
+const naloge = () => NALOGE;
 const kje = (t) => `${t.generator} L${t.level} s${t.seed}`;
 
 test("rešitve: vsak čisto številski korak se izide iz izpisanih števil, noben izpisan rezultat ni za zadnjo števko mimo odgovora", () => {
@@ -61,11 +63,22 @@ test("pomoč: zazna prejšnje napake (premalo mest v vmesnem rezultatu, verigo �
   // Izpisan rezultat, ki je za cent mimo odgovora.
   assert.equal(skorajOdgovor(t("$G_0 \\approx 7980{,}21$ €")).length, 1);
   assert.equal(skorajOdgovor(t("$G_0 \\approx 7980{,}22$ €")).length, 0);
+  // Druga količina z drugo enoto (r = 12,5 cm pri odgovoru 12,3 l) ni zgrešen odgovor.
+  assert.equal(skorajOdgovor({ solution: "$r = 12{,}5\\ \\mathrm{cm}$", answer: { type: "number", value: 12.3, decimals: 1, unit: "l" } }).length, 0);
+  // decimalke: nikoli manj kot d mest, null, ko nobeno število mest ne zadošča; ap: »=« le pri natančni vrednosti.
+  assert.equal(decimalke(1.21550625, 6, (x) => 9700 / x, 2), 7); // 9700/1,215506 ≈ 7980,2156 → 7 mest
+  assert.equal(decimalke(2, 6, (x) => x, 2), 6);
+  assert.equal(decimalke(1 / 3, 2, (x) => x * 3, 5, 3), null);
+  assert.equal(ap(1.025 ** 5, 9), "\\approx");
+  assert.equal(ap(1.055 ** 3, 9), "=");
 });
 
 // »1x«, »- 1m«, »x^{1}«: koeficient 1 in potenco 1 pišemo brez enice (revizija #5: odvedljivost, vsota potenc).
 const KOEF_1 = /(?<![\d}.,\\_^{])1[a-zA-Z](?![a-zA-Z])/;
-const POTENCA_1_SPREMENLJIVKE = /[a-zA-Z]\^\{?1\}?(?![\d.,{])/;
+// Tudi število ali oklepaj na potenco 1 (»3700 · 1,03^{1}«, »0,6^{1}«); izjema so mestne vrednosti v dvojiškem
+// zapisu (2^5 + 2^3 + 2^1 + 2^0), kjer je 2^1 namenoma zapisan.
+const POTENCA_1_SPREMENLJIVKE = /[a-zA-Z\d})]\^\{?1\}?(?![\d.,{])/;
+const IZJEME_POTENCA_1 = ["dvojiski-sestav"];
 const POTENCA_1 = /(?<!_(?:\{[^{}]*\}|\w))\^\{?1\}?(?![\d.,{])/; // meja integrala \int_{-1}^{1} ni potenca
 
 test("besedila: brez koeficienta 1 (»1x«) in brez potence 1 (»x^{1}«)", () => {
@@ -73,9 +86,11 @@ test("besedila: brez koeficienta 1 (»1x«) in brez potence 1 (»x^{1}«)", () =
   for (const t of naloge()) {
     for (const f of formule(t.text)) if (POTENCA_1.test(f)) napake.push(`${kje(t)} (besedilo): ${f}`);
     for (const f of formule(besedilo(t))) {
-      if (KOEF_1.test(f) || POTENCA_1_SPREMENLJIVKE.test(f)) napake.push(`${kje(t)}: ${f}`);
+      const pot1 = POTENCA_1_SPREMENLJIVKE.test(f.replace(/_(?:\{[^{}]*\}|\w)\^\{?1\}?/g, "")) && !IZJEME_POTENCA_1.some((x) => t.generator.endsWith(x));
+      if (KOEF_1.test(f) || pot1) napake.push(`${kje(t)}: ${f}`);
     }
   }
   assert.deepEqual(napake.slice(0, 20), [], `${napake.length} zapisov z odvečno enico`);
   assert.ok(KOEF_1.test("\\lvert x^3 - 1x \\rvert") && POTENCA_1.test("koeficient pri x^{1}") && !POTENCA_1.test("\\int_{-1}^{1} x\\,dx"));
+  assert.ok(POTENCA_1_SPREMENLJIVKE.test("3700 \\cdot 1{,}03^{1}") && POTENCA_1_SPREMENLJIVKE.test("\\right)^{1}") && !POTENCA_1_SPREMENLJIVKE.test("x^{12}"));
 });

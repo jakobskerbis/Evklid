@@ -1,4 +1,4 @@
-// Pomoč za teste maturitetnih generatorjev (test/matura-zaokrozevanje.test.js, test/matura-neodvisno.test.js):
+// Pomoč za teste maturitetnih generatorjev MAT (test/matura-zaokrozevanje.test.js in drugi testi teh generatorjev):
 // naloga iz generatorja z danim semenom in preračun čisto številskih korakov rešitve (»a · b ≈ c«).
 // Branje TeX-a je iz server/lesson-math.js (normalizeTex, evaluate), primerjava pa je strožja kot pri
 // lekcijah: izpisani rezultat se mora od izračuna iz izpisanih števil razlikovati za največ pol enote
@@ -105,7 +105,10 @@ export function skorajOdgovor(t) {
   if (a?.type !== "number" || a.decimals == null) return [];
   const u = 10 ** -a.decimals;
   const prav = roundHalfUp(a.value, a.decimals);
+  // Enota: »r = 12,5 cm« ni odgovor »12,3 l«. Primerjamo le števila brez enote ali z enoto odgovora.
+  const enota = (u) => String(u || "").replace(/\^|\{|\}|\s/g, "").replace(/²/g, "2").replace(/³/g, "3");
   return rezultati(t).filter((b) => {
+    if (b.units.length && (!a.unit || !b.units.some((x) => enota(x) === enota(a.unit)))) return false;
     if (Math.abs(b.ulp / u - 1) > 1e-9) return false; // zapisan z drugim številom decimalk kot odgovor
     if (Math.abs(b.value - prav) > 0.2 * Math.abs(prav)) return false; // druga količina
     const d = Math.abs(roundHalfUp(b.value, a.decimals) - prav);
