@@ -94,3 +94,12 @@ test("povezave C3: graf meritev izpiše formulo iz lekcije (prvih 5 poskusov)", 
   assert.match(read("lab-optika.js"), /formula: "<i>n<\/i>₁ sin α = <i>n<\/i>₂ sin β"/);
   assert.ok(read("lab-optika.js").includes("formula: tex(String.raw`\\frac{1}{f} = \\frac{1}{a} + \\frac{1}{b}`)"));
 });
+
+test("povezave C3: druga skupina formul (gostota, vzgon, tlak, sila na vodnik), oznake kot v poskusu", () => {
+  const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
+  const sile = read("lab-sile.js");
+  assert.ok(sile.includes('formula: "<i>m</i> = ρ · <i>V</i>"'));
+  assert.ok(sile.includes('formula: "<i>F</i><sub>vzg</sub> = ρ<sub>tek</sub> · <i>g</i> · <i>V</i><sub>izp</sub>"'));
+  assert.ok(sile.includes('formula: "<i>p</i> = ρ · <i>g</i> · <i>h</i> = ρ<sub>v</sub> · <i>g</i> · Δ<i>h</i>"'));
+  assert.equal(read("lab-magnetizem.js").split('formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>"').length - 1, 2);
+});
