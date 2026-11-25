@@ -169,6 +169,23 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
   return wrap;
 }
 
+// Šibke točke učenca (docs/sibke-tocke.md, #1094): prvo preverjanje napovedi, sklepa ali računa javi dogodek
+// »evklid:lab-preverjeno« { vrsta, ok } z elementa (mehurček do poskusa); public/laboratorij.js ga pošlje na
+// POST /api/students/:id/tool-check. Nikoli vpisana vrednost, nikoli po »Pokaži rešitev«, ponovni poskusi ne štejejo.
+export const LAB_PREVERJENO = "evklid:lab-preverjeno";
+// Telo za tool-check iz dogodka: x = poskus s seznama Laboratorija ({ key, topics: [{ id }] }, najbližja tema prva),
+// root = element poskusa (sklep: zaporedna številka med .lab-q). item je stalen id vprašanja (»ohm:sklep0«,
+// »ohm:napoved:tok-6V«, »ohm:racun:R«) v znakih TOOL_ITEM (server/weaknesses.js).
+export function sibkaTocka(x, root, detail, target) {
+  const topic = x?.topics?.[0]?.id, ok = detail?.ok;
+  if (!topic || typeof ok !== "boolean" || !x.key) return null;
+  let vrsta = String(detail?.vrsta || "");
+  if (vrsta === "sklep") vrsta += [...(root?.querySelectorAll?.(".lab-q") || [])].indexOf(target?.closest?.(".lab-q"));
+  const item = `${String(x.key).replace(/^lab-/, "")}:${vrsta}`.replace(/[^A-Za-z0-9_:./-]/g, "_").slice(0, 80);
+  return { source: "lab", topic, item, ok };
+}
+const javi = (el, vrsta, ok) => el.isConnected && (el.dispatchEvent(new CustomEvent(LAB_PREVERJENO, { bubbles: true, detail: { vrsta, ok } })), true);
+
 // Vprašanje o sklepu: ena pravilna možnost, pri vsaki razlaga.
 // Po prvi izbiri so možnosti zaklenjene (učenec ne more klikati vseh po vrsti in brati vseh razlag); »Poskusi znova«
 // pod razlago jih spet odklene. Zaklenjene ostanejo dosegljive s tipko Tab (aria-disabled, ne disabled), da bralnik prebere izbiro.
@@ -182,9 +199,11 @@ export function conclusion(q) {
   const again = button("Poskusi znova", () => reset());
   again.classList.add("lab-again");
   again.hidden = true;
+  let javljeno = false; // le prva izbira (po »Poskusi znova« učenec že pozna razlago)
   const pick = (b, o) => {
     if (list.classList.contains("lab-zaklenjeno")) return;
     list.classList.add("lab-zaklenjeno");
+    if (!javljeno) javljeno = javi(b, "sklep", !!o.ok);
     for (const x of opts) x.setAttribute("aria-disabled", "true");
     b.classList.add(o.ok ? "ok" : "bad");
     b.setAttribute("aria-pressed", "true");
@@ -321,7 +340,7 @@ export function napoved(o) {
   const moznosti = () => (typeof o.moznosti === "function" ? o.moznosti() : o.moznosti) || [];
   const enota = (o.enota || "").replace(/^-/, ""); // »-krat«: brez presledka za številom (2-krat), v oznaki polja »krat«
   const vprasanje = () => (typeof o.vprasanje === "function" ? o.vprasanje() : o.vprasanje);
-  let v = null, txt = "", zaprto = false, kljuc = null;
+  let v = null, txt = "", zaprto = false, kljuc = null, javljeno = false;
   const tekst = h("p", { class: "lab-q-text", html: vprasanje() });
   const moja = h("p", { class: "lab-napoved-moja", "aria-live": "polite" });
   const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoja napoved${enota ? ` v ${enota}` : ""}`, placeholder: o.primer || "" });
@@ -395,6 +414,8 @@ export function napoved(o) {
     const cls = `lab-why ${ok ? "ok" : "bad"}`, sod = ok ? "<b>Napoved se ujema z meritvijo.</b>" : `<b>Napoved se ne ujema z meritvijo.</b> ${razlika}Razmisli, kaj si pri napovedi spregledal.`;
     if (sodba.className !== cls) sodba.className = cls;
     pisi(sodba, "sod", sod);
+    // prva primerjava napovedi z meritvijo (šibke točke); ostane javljena tudi po obnovi (stanje().j)
+    if (!javljeno) javljeno = javi(primerjava, `napoved:${o.id || "napoved"}`, !!ok);
   }
   osvezi();
   return {
@@ -402,11 +423,12 @@ export function napoved(o) {
     get vrednost() { return v; },
     // učenec še ni napovedal, a lahko (poskus lahko do napovedi skrije odčitek, ki bi napoved izdal)
     get caka() { return !zaprto && v == null; },
-    stanje: () => ({ v, t: txt, zaprto, k: kljuc }),
+    stanje: () => ({ v, t: txt, zaprto, k: kljuc, j: javljeno }),
     obnovi(s) {
       if (!s || typeof s !== "object") return;
       if ((stevilo && Number.isFinite(s.v)) || (!stevilo && typeof s.v === "string")) (v = s.v), (txt = typeof s.t === "string" ? s.t : izpis(s.v)), (kljuc = typeof s.k === "string" ? s.k : zdaj());
       zaprto = !!s.zaprto;
+      javljeno = javljeno || s.j === true;
       osvezi();
     },
   };
@@ -446,6 +468,8 @@ export function odzivRacuna(r, tol = 0.05) {
 export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {}) {
   let cilji = [], izbran = null;
   const odkrito = new Set();
+  const javljeno = new Set(); // cilji, pri katerih je bilo prvo preverjanje (ali »Pokaži rešitev«) že
+
   const izbira = h("select", { class: "lab-racun-sel", "aria-label": "kaj računaš" });
   izbira.addEventListener("change", () => ((izbran = izbira.value), pokazi()));
   const izbiraVrsta = h("label", { class: "demo-slider", hidden: true }, h("span", { class: "demo-slider-label" }, "kaj računaš"), izbira);
@@ -473,6 +497,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     const c = cilj();
     if (!c) return;
     odkrito.add(c.key);
+    javljeno.add(c.key); // po »Pokaži rešitev« preverjanje ne šteje več
     zacasen = false;
     odziv.hidden = false;
     odziv.className = `lab-why ${pravilno ? "ok" : ""}`;
@@ -488,6 +513,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     odziv.hidden = false;
     zacasen = true;
     if (!r) return (odziv.className = "lab-why"), (odziv.textContent = `Vpiši število${enota ? ` v ${enota}` : ""} (npr. 98,5).`);
+    if (!javljeno.has(c.key) && javi(el, `racun:${c.key}`, r.ok)) javljeno.add(c.key);
     if (r.ok) return odkrij(true);
     odziv.className = "lab-why bad";
     odziv.innerHTML = `<b>Ne čisto.</b> ${odzivRacuna(r, tol)}`;

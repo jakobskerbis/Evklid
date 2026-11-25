@@ -141,7 +141,7 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     assert.equal(r.ujema, "lab-why ok");
     assert.deepEqual(r.izbira, ["a", "true,false"]);
     assert.equal(r.ni, null);
-    assert.deepEqual(r.izbiraPrim, [false, "lab-why ok", { v: "b", t: "druga", zaprto: true, k: null }]);
+    assert.deepEqual(r.izbiraPrim, [false, "lab-why ok", { v: "b", t: "druga", zaprto: true, k: null, j: true }]);
     assert.deepEqual(errs, []);
     await ctx.close();
   });
