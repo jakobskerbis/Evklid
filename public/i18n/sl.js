@@ -3819,6 +3819,8 @@ export default {
   "lab.intro": "Poskuse sestaviš in izvedeš sam: pribor, meritve, tabela, graf in zaključek. Napake imajo posledice, tako kot v pravem laboratoriju.",
   "lab.start": "Začni poskus",
   "lab.inTextbook": "Odpri temo v učbeniku",
+  "lab.check": "Preveri se",
+  "lab.checkText": "Preveri, ali razumeš: reši nalogo iz te snovi.",
   "lab.askText": "Pri poskusu »{title}« me zanima: ",
   "lab.locked": "Zaklenjeno",
   "lab.lockedTitle": "Poskus »{title}«",

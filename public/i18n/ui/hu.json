@@ -3509,6 +3509,8 @@
   "lab.intro": "A kísérleteket te magad állítod össze és méred: eszközök, mérések, táblázat, grafikon és következtetés. A hibáknak következményei vannak, mint egy igazi laborban.",
   "lab.start": "Kísérlet indítása",
   "lab.inTextbook": "Téma megnyitása a tankönyvben",
+  "lab.check": "Ellenőrizd magad",
+  "lab.checkText": "Nézd meg, érted-e: oldj meg egy feladatot ebből a témából.",
   "lab.askText": "A(z) „{title}” kísérletről: ",
   "lab.locked": "Zárolva",
   "lab.lockedTitle": "Kísérlet: {title}",

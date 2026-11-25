@@ -27,6 +27,8 @@ export function initLab(deps) {
     if (go) return openExperiment(go.dataset.labOpen);
     const topic = e.target.closest("[data-lab-topic]");
     if (topic) return D.openLesson(topic.dataset.labTopic);
+    const vaja = e.target.closest("[data-lab-practice]");
+    if (vaja) return D.practice?.(vaja.dataset.labPractice);
     if (e.target.closest("[data-lab-back]")) return labBack();
     // »Vprašaj inštruktorja«: klepet z vpisanim začetkom vprašanja; poskus ostane odprt, vrnitev iz klepeta (app.js).
     // Posnetek stanja (nastavitve, odčitki, zapisane meritve; public/sim/lab.js stanjePoskusa) gre z vprašanjem kot
@@ -111,6 +113,9 @@ const subjectName = (s) => {
   return name === `subj.${s}` ? s : name;
 };
 
+// Tema za »Preveri se« (C4): učenčeva pot, sicer prva tema poskusa (teme so že razvrščene, server/laboratorij.js).
+const vajaTema = (x) => x.topics?.find((tp) => tp.path === data.myPath) || x.topics?.[0] || null;
+
 function topicsHtml(x) {
   return `<p class="lab-topics-label">${icon("book-open")}<span>${esc(t("lab.inTextbook"))}</span></p>
     <div class="lab-topics">${x.topics
@@ -178,6 +183,7 @@ function renderExperiment() {
         ${showOffer ? `<button type="button" class="primary" data-lab-upgrade>${icon("sparkles")}<span>${esc(t("lab.packages"))}</span></button>` : ""}</section>`
         : `<section class="card lab-bench"><div class="lab-mount"></div></section>`
     }
+    ${x.locked || !D.practice || !vajaTema(x) ? "" : `<section class="card lab-check"><p dir="auto">${icon("circle-check")}<span>${esc(t("lab.checkText"))}</span></p><button type="button" class="primary lab-check-go" data-lab-practice="${esc(vajaTema(x).id)}">${icon("pencil")}<span>${esc(t("lab.check"))}</span></button></section>`}
     <div class="lab-foot">${topicsHtml(x)}</div>
   </div>`;
   const m = box().querySelector(".lab-mount");

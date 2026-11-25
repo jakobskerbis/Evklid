@@ -3541,6 +3541,8 @@
   "lab.intro": "Pokuse sastavljaš i mjeriš sam: pribor, mjerenja, tablica, graf i zaključak. Pogreške imaju posljedice kao u pravom laboratoriju.",
   "lab.start": "Započni pokus",
   "lab.inTextbook": "Otvori temu u udžbeniku",
+  "lab.check": "Provjeri se",
+  "lab.checkText": "Provjeri razumiješ li: riješi zadatak iz ovog gradiva.",
   "lab.askText": "O pokusu »{title}«: ",
   "lab.locked": "Zaključano",
   "lab.lockedTitle": "Pokus: {title}",

@@ -3511,6 +3511,8 @@
   "lab.intro": "Du baust die Experimente selbst auf und misst: Geräte, Messungen, Tabelle, Diagramm und Schlussfolgerung. Fehler haben Folgen wie im echten Labor.",
   "lab.start": "Experiment starten",
   "lab.inTextbook": "Thema im Lehrbuch öffnen",
+  "lab.check": "Teste dich",
+  "lab.checkText": "Prüfe, ob du es verstanden hast: Löse eine Aufgabe zu diesem Thema.",
   "lab.askText": "Zum Versuch „{title}“: ",
   "lab.locked": "Gesperrt",
   "lab.lockedTitle": "Experiment: {title}",
