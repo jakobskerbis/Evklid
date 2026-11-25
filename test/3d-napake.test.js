@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { napakaBesedilo } from "../public/3d/napake.js";
+import { napakaBesedilo, napakaVsebina, tehnicno, osveziMimoStarih } from "../public/3d/napake.js";
 
 const na = (err) => napakaBesedilo(err, { naVoljo: true });
 
@@ -42,10 +42,89 @@ test("WebGL ostane svoje sporočilo, neznana napaka dobi splošno besedilo in im
 test("vsak ključ ima besedilo v slovenščini in v živih jezikih", async () => {
   const { default: SL } = await import("../public/i18n/sl.js");
   const { LIVE_UI_LANGUAGES } = await import("../public/i18n/languages.js");
-  const kljuci = ["a3.oldBrowser", "a3.lowMemory", "a3.lowQuality", "a3.otherError", "a3.errorCode", "a3.retry", "a3.loadError", "a3.noWebgl"];
+  const kljuci = ["a3.oldBrowser", "a3.lowMemory", "a3.lowQuality", "a3.otherError", "a3.errorTech", "a3.updated", "a3.retry", "a3.loadError", "a3.noWebgl"];
   for (const k of kljuci) assert.ok(SL[k], `sl: ${k}`);
   for (const jezik of LIVE_UI_LANGUAGES.filter((j) => j !== "sl")) {
     const ui = JSON.parse(fs.readFileSync(new URL(`../public/i18n/ui/${jezik}.json`, import.meta.url), "utf8"));
     for (const k of kljuci) assert.ok(ui[k], `${jezik}: ${k}`);
+  }
+});
+
+test("star modul ob novem (service worker): manjkajoč izvoz ni star brskalnik, ampak posodobitev z osvežitvijo", () => {
+  for (const m of ["The requested module './scena.js' does not provide an export named 'locljivostPlatna'", "Importing binding name 'napakaVsebina' is not found.", "ambiguous indirect export: x"]) {
+    const r = na(new SyntaxError(m));
+    assert.deepEqual([r.vrsta, r.key, r.modul], ["posodobitev", "a3.updated", true], m);
+  }
+  // uvoz modula prek omrežja: besedilo o povezavi, »Poskusi znova« pa osveži mimo starih kopij
+  assert.equal(na(new TypeError("Importing a module script failed.")).modul, true);
+  assert.equal(na(new TypeError("Failed to fetch dynamically imported module: https://x/3d/a.js")).modul, true);
+  assert.equal(na(new TypeError("Failed to fetch")).modul, false);
+});
+
+test("tehnični razlog: ime in prva vrstica, največ 120 znakov, brez poizvedbe v naslovu in brez žetonov", () => {
+  assert.equal(tehnicno(new RangeError("Array buffer allocation failed\n    at x (y.js:1:2)")), "RangeError: Array buffer allocation failed");
+  assert.equal(tehnicno(new TypeError("Failed to fetch dynamically imported module: https://evklid.si/3d/modeli/celice/a.js?v=123&token=abc")), "TypeError: Failed to fetch dynamically imported module: /3d/modeli/celice/a.js");
+  assert.ok(!tehnicno(new Error("napaka abcdefghijklmnopqrstuvwxyz0123456789ABCDEF")).includes("abcdefghij"));
+  assert.ok(tehnicno(new Error("x".repeat(400))).length <= 120);
+  assert.equal(tehnicno(null), "");
+  assert.equal(tehnicno({ name: "SyntaxError" }), "SyntaxError");
+});
+
+// Najmanjši DOM za kartico (Node nima document).
+function lazniDokument() {
+  const el = (tag) => ({
+    tag,
+    className: "",
+    textContent: "",
+    dataset: {},
+    href: "",
+    type: "",
+    poslusalci: {},
+    addEventListener(d, f) {
+      this.poslusalci[d] = f;
+    },
+  });
+  return { createElement: el };
+}
+const t = (k, v) => (v ? `${k} ${JSON.stringify(v)}` : k);
+
+test("kartica: besedilo, »Tehnično«, gumb pokliče znova; pri uvozu modula osveži mimo starih kopij", () => {
+  globalThis.document = lazniDokument();
+  try {
+    let klici = 0;
+    const [p, teh, b] = napakaVsebina(new TypeError("x is not a function"), { t, znova: () => klici++ });
+    assert.equal(p.textContent, "a3.otherError");
+    assert.match(teh.textContent, /^a3\.errorTech .*TypeError: x is not a function/);
+    assert.equal(b.dataset.znova, "znova");
+    b.poslusalci.click();
+    assert.equal(klici, 1);
+    // star brskalnik: brez gumba (ponovni poskus ne pomaga)
+    assert.ok(!napakaVsebina(new SyntaxError("Unexpected token '{'"), { t, znova: () => klici++ }).some((x) => x.tag === "button"));
+    // napaka uvoza: gumb je tudi brez znova (mikroskop) in osveži stran
+    const brez = napakaVsebina(new SyntaxError("does not provide an export named 'x'"), { t });
+    assert.equal(brez.at(-1).dataset.znova, "osvezi");
+  } finally {
+    delete globalThis.document;
+  }
+});
+
+test("osvežitev mimo starih kopij: service worker dobi »app-stale« z različico strežnika, nato reload", async () => {
+  const prej = globalThis.fetch;
+  const sporocila = [];
+  let osvezeno = 0;
+  globalThis.fetch = async (u) => ({ ok: String(u).includes("/healthz/stanje"), json: async () => ({ datoteke: "abc123" }) });
+  try {
+    const okno = {
+      navigator: { serviceWorker: { controller: { postMessage: (m, [port]) => (sporocila.push(m), port.postMessage("ok")) } } },
+      location: { reload: () => osvezeno++ },
+    };
+    await osveziMimoStarih({ okno });
+    assert.deepEqual(sporocila, [{ type: "app-stale", app: "abc123" }]);
+    assert.equal(osvezeno, 1);
+    // brez service workerja: samo osvežitev
+    await osveziMimoStarih({ okno: { navigator: {}, location: { reload: () => osvezeno++ } } });
+    assert.equal(osvezeno, 2);
+  } finally {
+    globalThis.fetch = prej;
   }
 });

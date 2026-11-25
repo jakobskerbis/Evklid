@@ -22,7 +22,7 @@ const OFFLINE_TEXT = /internet_disconnected|name_not_resolved|address_unreachabl
 type LoadError = { kind: "offline" | "memory" | "other"; code: string };
 export function loadErrorOf(code?: number, description?: string): LoadError {
   if ((typeof code === "number" && OFFLINE_CODES.has(code)) || OFFLINE_TEXT.test(description || "")) return { kind: "offline", code: "" };
-  return { kind: "other", code: [code, description].filter((x) => x !== undefined && x !== "").join(" ") };
+  return { kind: "other", code: [code, description].filter((x) => x !== undefined && x !== "").join(" ").slice(0, 120) };
 }
 
 export function Web3D({ hash = "" }: { hash?: string }) {
@@ -61,7 +61,7 @@ export function Web3D({ hash = "" }: { hash?: string }) {
         ? t("a3.offline")
         : failed.kind === "memory"
           ? t("a3.lowMemory")
-          : `${t("a3.otherError")}${failed.code ? `\n${t("a3.errorCode", { koda: failed.code })}` : ""}`;
+          : `${t("a3.otherError")}${failed.code ? `\n${t("a3.errorTech", { koda: failed.code })}` : ""}`;
     const retry = () => {
       crashes.current = 0;
       setFailed(null);
