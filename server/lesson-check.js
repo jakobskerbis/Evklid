@@ -149,8 +149,12 @@ export function checkLessonSource(src, topicId) {
   const stripped = expandFormulaBlocks(body, "plain");
   for (const e of drawingErrors(body)) err(e);
   // Slika iz znakov v bloku ``` brez oznake jezika je v aplikaciji in PDF videti kot surov izpis (j, 10. 11. 2026).
-  const ascii = untaggedFences(body).filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
+  const untagged = untaggedFences(body);
+  const ascii = untagged.filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
   if (ascii) warn(`Slike iz znakov v blokih (${ascii}): \`\`\` – zamenjaj jih z risbo »:::risba« (content/lessons/README.md, razdelek Risbe)`);
+  // Blok ``` je samo za kodo in izpis ukazov, vedno z oznako jezika (README, Risbe); vsak drug blok brez oznake je
+  // risba, tabela ali shema iz znakov, ki se izpiše kot surovo besedilo.
+  if (untagged.length > ascii) warn(`Bloki \`\`\` brez oznake jezika (${untagged.length - ascii}): risbo zapiši z »:::risba«, preglednico kot tabelo Markdown, kodo z oznako jezika (\`\`\`python)`);
   if (/^[ \t]*:::/m.test(stripped)) err("nezaprt ali napačno zapisan blok »:::formula … :::« ali »:::premisli … :::« (vsak začetek in konec v svoji vrstici)");
   // Merila docs/kakovost.md §1: vmesna vprašanja v razlagi in razlaga vsakega napačnega odgovora.
   const thinks = bodyLesson.match(/^[ \t]*:::[ \t]*premisli[ \t]*$/gm) || [];
