@@ -319,8 +319,10 @@ jobs:
 
   # Peti posel (#7): vse lekcije skozi scripts/check-lesson.js -q --strogo (oblika, LaTeX, vsak številski korak in vsaka
   # trditev <<RACUN s SymPy; brez SymPy pade, ne le opozori). Učitelji lahko lekcije urejajo neposredno, zato ne zadošča
-  # ročni zagon iz docs/pregled.md. Preverja samo, ko PR ali push spremeni lekcije ali preverjevalnik (~2 min, ves korpus);
-  # sicer uspe v ~15 s, da je posel vedno prisoten (objava ga bere). Ves korpus tudi vsako noč (matrika-nocna.yml).
+  # ročni zagon iz docs/pregled.md. Push v main: vedno ves korpus (~2 min, hkrati z drugimi posli). Filter po spremembah bi
+  # zgrešil odvisnosti preverjevalnika, preklican zagon na main (cancel-in-progress) pa bi naslednjemu commitu pustil
+  # nepreverjene lekcije pred objavo. PR: samo, ko spremeni lekcije, preverjevalnik ali njegove neposredne uvoze; sicer
+  # posel samo prevzame kodo in izračuna razliko (~15 s), da je vedno prisoten (objava ga bere). Ves korpus tudi vsako noč.
   lekcije:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -330,23 +332,21 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 2
-      # PR: GitHub preveri združitveni commit, njegov prvi starš je vrh osnovne veje. Push: od prejšnjega vrha (event.before).
-      # Če razlike ni mogoče izračunati (nova veja, prisilni push), preveri vse.
-      - name: Ali so se spremenile lekcije ali preverjevalnik
+      # PR: GitHub preveri združitveni commit, njegov prvi starš je vrh osnovne veje. Če razlike ni mogoče izračunati, preveri vse.
+      - name: Ali je treba preveriti lekcije
         id: spremembe
         timeout-minutes: 3
         env:
           DOGODEK: ${{ github.event_name }}
-          PREJ: ${{ github.event.before }}
         run: |
-          if [ "$DOGODEK" = "pull_request" ]; then osnova=HEAD^1; else osnova="$PREJ"; fi
-          if [ "$DOGODEK" != "pull_request" ] && ! git cat-file -e "$osnova^{commit}" 2>/dev/null; then
-            git fetch --no-tags --depth=1 origin "$osnova" 2>/dev/null || osnova=""
+          if [ "$DOGODEK" != "pull_request" ]; then
+            echo "$DOGODEK: preverim vse lekcije."; echo "da=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
-          if [ -z "$osnova" ] || ! datoteke=$(git diff --name-only "$osnova" HEAD); then
+          if ! datoteke=$(git diff --name-only HEAD^1 HEAD); then
             echo "Razlike ni mogoče izračunati: preverim vse lekcije."; echo "da=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
-          vzorec='^(content/lessons/|scripts/(check-lesson\.js|namesti-sympy\.cjs)$|server/(lesson-check|lesson-math|lesson-identity|racun|cas|textbook)\.js$|server/cas/|\.github/workflows/testi\.yml$)'
+          # Lekcije, preverjevalnik in njegovi neposredni uvozi (server/lesson-check.js, racun.js, textbook.js) ter paketi (katex).
+          vzorec='^(content/lessons/|scripts/(check-lesson\.js|namesti-sympy\.cjs)$|server/(lesson-check|lesson-math|lesson-identity|racun|cas|textbook|risbe|nastevanje|curriculum[^/]*|region-curricula)\.js$|server/cas/|public/(mat/izris|risbe-izris|preveri-se|formula-data|graph/chemcore|graph/pse-data)\.js$|package(-lock)?\.json$|\.github/workflows/testi\.yml$)'
           zadetki=$(printf '%s\n' "$datoteke" | grep -E "$vzorec" || true)
           if [ -n "$zadetki" ]; then
             echo "Spremenjeno ($(printf '%s\n' "$zadetki" | wc -l) datotek), npr.:"; printf '%s\n' "$zadetki" | head -5
@@ -371,6 +371,7 @@ jobs:
             PYTHONPATH=.pylib python3 -c "import sympy" 2>/dev/null && exit 0
             echo "::warning::SymPy ni nameščen, poskus $poskus"; sleep 15; node scripts/namesti-sympy.cjs
           done
+          PYTHONPATH=.pylib python3 -c "import sympy" || { echo "::error::SymPy ni nameščen niti po 3 poskusih (scripts/namesti-sympy.cjs)"; exit 1; }
       - name: Vse lekcije (check-lesson --strogo)
         if: steps.spremembe.outputs.da == 'true'
         timeout-minutes: 10

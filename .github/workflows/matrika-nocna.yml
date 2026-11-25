@@ -47,6 +47,7 @@ jobs:
             PYTHONPATH=.pylib python3 -c "import sympy" 2>/dev/null && exit 0
             echo "::warning::SymPy ni nameščen, poskus $poskus"; sleep 15; node scripts/namesti-sympy.cjs
           done
+          PYTHONPATH=.pylib python3 -c "import sympy" || { echo "::error::SymPy ni nameščen niti po 3 poskusih (scripts/namesti-sympy.cjs)"; exit 1; }
       - name: Vse lekcije (check-lesson --strogo)
         timeout-minutes: 10
         run: node scripts/check-lesson.js -q --strogo

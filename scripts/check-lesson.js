@@ -17,7 +17,9 @@ import { checkLessonSource } from "../server/lesson-check.js";
 const strict = process.argv.includes("--strict"); // tudi opozorila so napake
 const quiet = process.argv.includes("-q") || process.argv.includes("--tiho"); // varčno z izhodom (docs/token-rules.md)
 const strogo = process.argv.includes("--strogo") || process.env.CI === "true"; // preverjevalnik SymPy mora delati
-const NI_PREVERJEVALNIKA = "preverjevalnik ni na voljo"; // why iz server/cas.js
+// why iz server/cas.js, ko preverjevalnika ni ali se je med tekom ustavil. »prepočasno« (rok ene trditve) ostane le opozorilo:
+// tam preverjevalnik dela, le ta izraz je pretežak, naslednji klic zažene nov proces.
+const NI_PREVERJEVALNIKA = new Set(["preverjevalnik ni na voljo", "preverjevalnik se je ustavil"]);
 function brezPreverjevalnika(kje) {
   console.log(`NAPAKA: preverjevalnik računov (SymPy, server/cas.js) ni na voljo ${kje}, zato trditve <<RACUN niso preverjene.`);
   console.log("  Namesti ga z `node scripts/namesti-sympy.cjs` (Python 3 + pip; teče tudi ob npm ci). Brez --strogo (in brez CI=true) so to samo opozorila.");
@@ -35,7 +37,7 @@ if (!files.length) {
 let bad = 0;
 let calcChecked = 0; // številskih korakov, ki jih je preračunal server/lesson-math.js
 let casPreverjen = false; // --strogo: ali je preverjevalnik že potrjen (enkrat, pred prvo lekcijo s trditvami)
-let brezCas = 0; // --strogo: trditve, ki jih preverjevalnik med tekom ni mogel preveriti, ker se je ustavil
+let brezCas = 0; // --strogo: trditve, ki jih preverjevalnik med tekom ni preveril, ker se je ustavil ali ga ni bilo več
 for (const file of files) {
   const abs = path.resolve(file);
   const id = `${path.basename(path.dirname(abs))}/${path.basename(abs, ".md")}`;
@@ -59,7 +61,7 @@ for (const file of files) {
     r.calcChecked += c.checked;
     for (const f of c.failed) r.errors.push(`RACUN: ${f.line} – ${f.why}`);
     for (const u of c.unsure) r.warnings.push(`RACUN ni preverjen: ${u.line} – ${u.why}`);
-    if (strogo) brezCas += c.unsure.filter((u) => u.why === NI_PREVERJEVALNIKA).length;
+    if (strogo) brezCas += c.unsure.filter((u) => NI_PREVERJEVALNIKA.has(u.why)).length;
   }
   const fail = r.errors.length || (strict && r.warnings.length);
   if (fail) bad++;
@@ -70,6 +72,6 @@ for (const file of files) {
   for (const w of r.warnings) console.log(`  opozorilo: ${w}`);
 }
 console.log(`${files.length - bad}/${files.length} lekcij v redu; ${calcChecked} številskih korakov preračunanih.`);
-if (brezCas) brezPreverjevalnika(`za ${brezCas} trditev (ustavil se je med preverjanjem)`);
+if (brezCas) brezPreverjevalnika(`za ${brezCas} trditev (med preverjanjem se je ustavil)`);
 casStop();
 process.exit(bad ? 1 : 0);
