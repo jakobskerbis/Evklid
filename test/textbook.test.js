@@ -5,7 +5,8 @@ import path from "node:path";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { getTopic, listPaths, topicOrder, sameTopics } from "../server/curriculum.js";
-import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions, formulaSheetSections } from "../server/textbook.js";
+import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions, formulaSheetSections, hideQuickAnswers, splitQuickAnswer } from "../server/textbook.js";
+import { printPage } from "../server/textbook-print.js";
 import { checkLessonSource } from "../server/lesson-check.js";
 import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
 import { hasEngine } from "../public/sim/index.js";
@@ -317,4 +318,76 @@ test("worked example »zadnji korak je tvoj«: steps stay open, only the last st
   // fraza v zadnjem koraku (KEM-TEK-SS, kemijska vez, Primer 3)
   const kem = hideSolutions("### Primer 3: voda\nIzračunaj.\n\n**Rešitev:**\n\n1. Prvi.\n2. Zadnji korak je tvoj: vstavi.\n\n<div class=\"tb-think\">x</div>\n");
   assert.match(kem, /<details class="tb-solution" open><summary>Skrij rešitev<\/summary>/);
+});
+
+// A5 (profil A): odgovor hitrega vprašanja »Preveri: … ? (…)« je v aplikaciji za gumbom, v PDF-ju in tisku ostane izpisan.
+test("quick checks »Preveri: …?«: answer hidden behind »Pokaži odgovor« in the app, visible in print/PDF", async () => {
+  const ans = (html) => [...html.matchAll(/<details class="tb-ans"><summary>Pokaži odgovor<\/summary>\n\n([\s\S]*?)\n\n<\/details>/g)].map((m) => m[1]);
+  const md = [
+    "Preveri: kaj je nasprotni dogodek dogodka »vsaj eno jajce je počeno«? (Obe jajci sta celi.)",
+    "*Preveri:* koliko je $|-7| + (-7)$? *(Odgovor: $0$.)*",
+    "**Preveri:** Ali je reakcija eksotermna? *Odgovor: da, toplota gre iz sistema.*",
+    "*Preveri:* kolikšna je osnovna perioda $y = \\tan 2x$? *Odgovor:* $\\frac{\\pi}{2}$.",
+    "*Preveri:* ali iz $f'(c) = 0$ sledi ekstrem? *Ne: $f(x) = x^3$ ima $f'(0) = 0$.*",
+    "*Hitro preveri:* kako zapišeš $x \\le 7$? ($(-\\infty, 7]$.)",
+    "*Preveri:* reši $x^2 = 5x$. (Iz $x(x - 5) = 0$ sledi $x_1 = 0$ in $x_2 = 5$.)",
+  ].join("\n\n");
+  const html = hideQuickAnswers(md);
+  assert.deepEqual(ans(html), [
+    "Obe jajci sta celi.",
+    "*Odgovor: $0$.*",
+    "*Odgovor: da, toplota gre iz sistema.*",
+    "*Odgovor:* $\\frac{\\pi}{2}$.",
+    "*Ne: $f(x) = x^3$ ima $f'(0) = 0$.*",
+    "$(-\\infty, 7]$.",
+    "Iz $x(x - 5) = 0$ sledi $x_1 = 0$ in $x_2 = 5$.",
+  ]);
+  // vprašanje (z oklepaji v formuli) ostane vidno nad gumbom
+  assert.match(html, /^\*Preveri:\* koliko je \$\|-7\| \+ \(-7\)\$\?\n<details class="tb-ans">/m);
+  assert.match(html, /^Preveri: kaj je nasprotni dogodek dogodka »vsaj eno jajce je počeno«\?\n<details/m);
+  // oklepaji, ki niso odgovor, ostanejo (točke naloge, opomba za trditvijo, namig, »Preveri« sredi vrstice ali v koraku,
+  // odgovor brez oklepaja ali oznake, vprašanje brez odgovora)
+  const keep = [
+    "b) Koliko evrov znaša takrat mesečni račun? (1 točka)",
+    "*Preizkus:* za ploščati kondenzator dobiš $C = \\varepsilon S/d$. (Znano iz elektrostatike.)",
+    "*Preveri:* koliko je $3 \\cdot 4$? (Namig: štej po tri.)",
+    "5. Preveri: brez faktorja bi dobil $0{,}18$ (dvakrat preveč).",
+    "Kje je podpora? Preveri, ali je res na sredini (enako daleč).",
+    "*Preizkus:* katere črke imajo navpično os? Vse tri: T, A in T.",
+    "*Hiter preizkus:* kolikšna je rezultanta na sliki?",
+  ].join("\n\n");
+  assert.equal(hideQuickAnswers(keep), keep);
+  assert.equal(splitQuickAnswer("izračunaj ploščino trikotnika (s Heronovo formulo)."), null, "oklepaj sredi naloge ni odgovor");
+  assert.equal(splitQuickAnswer("izračunaj ploščino. (Heron: $S = 6$.)")?.ans, "Heron: $S = 6$.");
+  // PDF in tutor: besedilo je nespremenjeno; v aplikaciji (lessonView) je skrito
+  assert.doesNotMatch(expandFormulaBlocks(md, "print"), /tb-ans/);
+  assert.match(expandFormulaBlocks(md, "print"), /\? \(Obe jajci sta celi\.\)/);
+  const view = lessonView("MAT-SS-4/verjetnost").lesson.sections.map((s) => s.md).join("\n");
+  assert.match(view, /»vsaj eno od dveh jajc je počeno«\?\n<details class="tb-ans"><summary>Pokaži odgovor<\/summary>\n\nObe jajci sta celi\.\n\n<\/details>/);
+  assert.doesNotMatch(view, /\? \(Obe jajci sta celi\.\)/);
+  const pdf = printPage("MAT-SS-4", "verjetnost");
+  assert.match(pdf, /Obe jajci sta celi\./);
+  assert.doesNotMatch(pdf, /tb-ans|Pokaži odgovor/);
+});
+
+// Vse lekcije: vsaka vrstica z oznako hitrega vprašanja in izrecnim »Odgovor:« je skrita; nobeno besedilo se ne izgubi
+// (razen oklepajev okoli odgovora).
+test("quick checks in all lessons: every explicit »Odgovor:« is hidden and no text is lost", () => {
+  const LABEL = /^(?:\*\*|\*)?(?:Preveri|Hitro preveri|Preveri v eni vrstici|Hitro preverjanje|Preverba|Preizkus|Hitri preizkus|Hiter preizkus|Hitra preizkušnja|Hitri test|Hiter test|Hitro vprašanje|Kratko vprašanje|Vprašanje za sproti):/;
+  const bare = (s) => s.replace(/<details class="tb-ans"><summary>Pokaži odgovor<\/summary>|<\/details>|[\s()*]/g, "");
+  let hidden = 0;
+  const missed = [];
+  for (const d of fs.readdirSync(LESSONS_DIR).filter((d) => fs.statSync(path.join(LESSONS_DIR, d)).isDirectory())) {
+    for (const f of fs.readdirSync(path.join(LESSONS_DIR, d)).filter((f) => f.endsWith(".md"))) {
+      const src = fs.readFileSync(path.join(LESSONS_DIR, d, f), "utf8");
+      assert.equal(bare(hideQuickAnswers(src)), bare(src), `${d}/${f}: besedilo se ne sme izgubiti`);
+      src.split("\n").forEach((line, i) => {
+        if (!LABEL.test(line)) return;
+        if (hideQuickAnswers(line) !== line) hidden++;
+        else if (/Odgovor:|Rešitev:/.test(line)) missed.push(`${d}/${f}:${i + 1}`);
+      });
+    }
+  }
+  assert.deepEqual(missed, [], "vrstica z »Odgovor:« mora imeti odgovor za gumbom");
+  assert.ok(hidden >= 550, `skritih odgovorov: ${hidden}`);
 });

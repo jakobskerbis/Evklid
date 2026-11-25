@@ -571,6 +571,12 @@ function wireFormulas(root) {
       d.querySelector("summary").textContent = d.open ? "Skrij rešitev" : "Pokaži rešitev";
     }),
   );
+  // Odgovor hitrega vprašanja »Preveri: …?« (A5, server/textbook.js hideQuickAnswers).
+  root.querySelectorAll("details.tb-ans").forEach((d) =>
+    d.addEventListener("toggle", () => {
+      d.querySelector("summary").textContent = d.open ? "Skrij odgovor" : "Pokaži odgovor";
+    }),
+  );
 }
 
 async function renderLesson(topicId, name = "") {

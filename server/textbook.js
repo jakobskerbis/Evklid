@@ -280,8 +280,52 @@ export function expandThinkBlocks(md, mode = "html") {
     }</div>`;
   });
 }
+// Hitro vprašanje v razlagi z odgovorom v isti vrstici (»*Preveri:* … ? *(Odgovor: …)*«, profil A, A5): v aplikaciji je
+// odgovor skrit za gumbom »Pokaži odgovor«, da učenec najprej poskusi sam; tisk, PDF in tutor ga vidijo kot prej. Vrstica
+// se začne z oznako, odgovor je na koncu: zadnji oklepaj (oklepaji v $…$ se ne štejejo), »Odgovor: …« / »Rešitev: …« ali
+// ležeči del. Pred odgovorom mora biti vprašaj, ukaz (»reši«, »oceni« …) ali prazno mesto »(\ldots)«, sicer odgovor začne
+// z »Odgovor«/»Rešitev«.
+// »(Namig …)« ni odgovor. Česar ne prepozna (npr. »… ? Vse tri.« brez oklepaja), ostane vidno.
+const QUICK_LABELS = "Preveri|Hitro preveri|Preveri v eni vrstici|Hitro preverjanje|Preverba|Preizkus|Hitri preizkus|Hiter preizkus|Hitra preizkušnja|Hitri test|Hiter test|Hitro vprašanje|Kratko vprašanje|Vprašanje za sproti";
+const QUICK_RE = new RegExp(`^((?:\\*\\*|\\*)?(?:${QUICK_LABELS}):(?:\\*\\*|\\*)?[ \\t]+)(\\S.*?)[ \\t]*$`, "gm");
+const QUICK_TASK = /^[*_]*(?:do konca )?(?:reši|izračunaj|oceni|uredi|zapiši|skrajšaj|poenostavi|razstavi|določi|poišči|pretvori|izrazi|odvajaj|integriraj)\b/i;
+const outsideMath = (s) => s.replace(/\\\$/g, "  ").replace(/\$\$?[^$]*\$\$?/g, (m) => " ".repeat(m.length));
+export function splitQuickAnswer(rest) {
+  let q, ans;
+  const said = rest.match(/^(.*?[?.!»«*$)])[ \t]+(\*{0,2}(?:Odgovor|Rešitev):\*{0,2}[ \t]*\S.*)$/);
+  const tail = rest.match(/\)\.?(\*{0,2})\.?$/);
+  if (said) [, q, ans] = said;
+  else if (tail) {
+    const flat = outsideMath(rest);
+    const end = rest.length - tail[0].length;
+    let o = end;
+    for (let d = 1; d > 0 && o > 0; ) d += { ")": 1, "(": -1 }[flat[--o]] || 0;
+    const stars = tail[1];
+    const pre = rest.slice(0, o - stars.length);
+    if (flat[o] !== "(" || !rest.slice(0, o).endsWith(stars) || !/[ \t]$/.test(pre)) return null;
+    q = pre.trimEnd();
+    const inner = rest.slice(o + 1, end).trim();
+    ans = stars ? `${stars}${inner}${stars}` : inner;
+  } else {
+    const it = rest.match(/^(.*?[?.][*_»«]*)[ \t]+\*([^*\s][^*]*[^*\s])\*$/);
+    if (!it) return null;
+    [, q] = it;
+    ans = `*${it[2]}*`;
+  }
+  const plain = ans.replace(/^[*_]+/, "");
+  if (!q || !plain || /^Namig\b/i.test(plain)) return null;
+  const task = (QUICK_TASK.test(q) || /\\ldots\)/.test(q)) && /[.:][*_$]*$/.test(q) && !q.includes("?");
+  if (!/\?[*_»«"]*$/.test(q) && !/^(?:Odgovor|Rešitev)\b/i.test(plain) && !task) return null;
+  return { q, ans };
+}
+export function hideQuickAnswers(md) {
+  return String(md ?? "").replace(QUICK_RE, (line, lead, rest) => {
+    const hit = splitQuickAnswer(rest);
+    return hit ? `${lead}${hit.q}\n<details class="tb-ans"><summary>Pokaži odgovor</summary>\n\n${hit.ans}\n\n</details>\n` : line;
+  });
+}
 const withFormulas = (parts, mode) =>
-  parts.map((x) => ({ ...x, md: mode === "html" ? hideSolutions(expandFormulaBlocks(x.md, mode)) : expandFormulaBlocks(x.md, mode) }));
+  parts.map((x) => ({ ...x, md: mode === "html" ? hideSolutions(hideQuickAnswers(expandFormulaBlocks(x.md, mode))) : expandFormulaBlocks(x.md, mode) }));
 
 function lessonFile(topicId) {
   const [pathKey, slug] = topicId.split("/");

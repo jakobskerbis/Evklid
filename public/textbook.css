@@ -1457,3 +1457,17 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 /* Krogi Nazaj · 1/12 · Naprej plavajo na dnu: Tab ali skok na element ga ne pusti pod njimi. */
 #view-textbook:has(> .tb-stepper) { scroll-padding-bottom: calc(92px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
 @media (prefers-reduced-motion: reduce) { .tb-gr-toggle > svg.i:last-child { transition: none; } }
+
+/* profil A: skriti odgovori (A5) */
+/* Odgovor hitrega vprašanja »Preveri: … ?« je za gumbom »Pokaži odgovor« (server/textbook.js, hideQuickAnswers), da
+   učenec najprej poskusi sam. V PDF-ju je izpisan v vrstici (način print); pri tisku strani je odprt. */
+.tb-ans, .explanation .tb-ans { margin: 4px 0 12px; padding: 0; background: none; border-radius: 0; }
+.tb-ans > summary { display: inline-flex; align-items: center; min-height: 40px; padding: 4px 14px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--accent); background: var(--accent-soft); list-style: none; }
+.tb-ans > summary::-webkit-details-marker { display: none; }
+.tb-ans > summary:hover { filter: brightness(0.97); }
+.tb-ans[open] > summary { margin-bottom: 6px; }
+.tb-ans > :not(summary) { margin: 0; padding: 6px 12px; background: var(--surface-2); border-inline-start: 3px solid var(--accent); border-start-end-radius: 8px; border-end-end-radius: 8px; }
+@media print {
+  .tb-ans > summary { display: none; }
+  .tb-ans::details-content { content-visibility: visible; }
+}

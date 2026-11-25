@@ -13,7 +13,7 @@ import path from "node:path";
 import katex from "katex";
 import { marked } from "marked";
 import { createRenderer } from "../public/rich.js";
-import { parseLesson, expandFormulaBlocks, hideSolutions, viewCheck, stripRacunBlocks } from "../server/textbook.js";
+import { parseLesson, expandFormulaBlocks, hideSolutions, hideQuickAnswers, viewCheck, stripRacunBlocks } from "../server/textbook.js";
 
 const args = process.argv.slice(2);
 const json = args.includes("--json");
@@ -71,7 +71,7 @@ for (const f of datoteke) {
   // :::premisli, :::risba (:::simboli so podatki za klikljive oznake, niso vidni) in rešitvami za gumbom; »Preveri se«
   // po delih, kot jih izriše public/preveri-se-ziv.js (vprašanje, možnosti, enota, odgovor, namigi, razlaga).
   const L = parseLesson(stripRacunBlocks(fs.readFileSync(f, "utf8")));
-  const deli = [...(L.sections || []), ...(L.alternatives || [])].map((x) => hideSolutions(expandFormulaBlocks(x.md, "html")));
+  const deli = [...(L.sections || []), ...(L.alternatives || [])].map((x) => hideSolutions(hideQuickAnswers(expandFormulaBlocks(x.md, "html"))));
   for (const c0 of L.checks || []) {
     const c = viewCheck(c0);
     deli.push(c.q, ...(c.options || []), ...(c.items || []).map((x) => (typeof x === "string" ? x : x?.text ?? x?.t ?? "")), c.unit, c.answer, c.why, ...(c.wrong || []).map((w) => w.why));
