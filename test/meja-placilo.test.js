@@ -110,15 +110,18 @@ test("brez temnih vzorcev: brez odštevanja, popustov in značk", () => {
   assert.doesNotMatch(html, /pill|popust|priljublj|samo še|zadnja|%/i);
 });
 
-test("vsi novi napisi so v sl.js in prevedeni v vseh 32 jezikih", () => {
+test("vsi novi napisi so v sl.js in prevedeni (živi jeziki vsi, zamrznjeni prvih 9; j 24. 11.)", async () => {
   const keys = Object.keys(SL).filter((k) => k.startsWith("meja."));
-  assert.equal(keys.length, 9);
+  assert.equal(keys.length, 10);
+  const NOVI = ["meja.moreN"]; // #759, po zamrznitvi jezikov
+  const { LIVE_UI_LANGUAGES } = await import("../public/i18n/languages.js");
   const dir = new URL("../public/i18n/ui/", import.meta.url);
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
   assert.equal(files.length, 32);
   for (const f of files) {
     const j = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
-    for (const k of keys) {
+    const live = LIVE_UI_LANGUAGES.includes(f.replace(/\.json$/, ""));
+    for (const k of keys.filter((k) => live || !NOVI.includes(k))) {
       assert.ok(j[k], `${f} ${k}`);
       assert.notEqual(j[k], SL[k], `${f} ${k} ostal v slovenščini`);
       if (k === "meja.price") assert.match(j[k], /\{price\}/, `${f} ${k}`);
@@ -185,4 +188,16 @@ test("kartica se ne vstavi, če se profil ali pogovor zamenja med nalaganjem sta
   } finally {
     globalThis.document.createElement = oldCreate;
   }
+});
+
+test("#759: plačljiva dnevna meja na kartici; pod 15 brez poziva k staršu (UCPD priloga I, 28)", () => {
+  const p = { ...prices, free_daily_questions: 10, paid_daily_questions: { OS: 60, SS: 60, FAKS: 100 } };
+  const v = limitVariant({ body: daily("block.hintAdult"), status: status(), prices: p, level: "FAKS" });
+  assert.deepEqual(v.daily, { n: 100, free: 10 });
+  assert.match(limitCardHtml(v, daily("block.hintAdult")), /Do 100 vprašanj za inštruktorja na dan namesto 10/);
+  // Brez števil v ceniku: splošna vrstica kot prej.
+  assert.match(limitCardHtml(limitVariant({ body: daily("block.hintAdult"), status: status(), prices, level: "OS" }), daily("block.hintAdult")), /Več vprašanj za inštruktorja/);
+  const body = { ...daily(), offer_reason: "under_15" };
+  const html = limitCardHtml(limitVariant({ body, status: status({ minor: true }), prices }), body);
+  assert.doesNotMatch(html, /starš|Z naročnino dobiš|€|data-meja-link/);
 });

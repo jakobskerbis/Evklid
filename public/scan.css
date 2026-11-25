@@ -84,7 +84,7 @@
 .scan-approx { color: var(--muted); overflow-x: auto; }
 .scan-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
 .scan-badge .i { width: 16px; height: 16px; flex: none; }
-.scan-badge.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--surface)); }
+.scan-badge.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--surface)); border-radius: var(--radius-sm); }
 .scan-badge.warn { color: var(--text); background: color-mix(in srgb, var(--gold) 22%, var(--surface)); border-radius: var(--radius-sm); }
 .scan-methods .seg { max-width: 100%; }
 
