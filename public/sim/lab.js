@@ -195,6 +195,9 @@ export function conclusion(q) {
 // Shrani se seme naključnih odstopanj (isti upornik, ista vzmet), vrstice tabele in stanje, ki ga poda poskus (točke grafa …).
 // Uporaba: const zap = shramba(el); new Bench({ seed: zap.seed }); … na koncu zap.vezi(table, { get, set }); po spremembi zap.shrani().
 // »Začni znova« (pri obnovljenih meritvah) in »Ponastavi« meritve pozabita. Shramba brskalnika je lahko zaprta (zasebno okno): try/catch.
+// Meritve so osebni podatki profila (public/offline.js PRIVATE_KEYS, clearProfile, deviceData). Ključ velja za profil, ki je bil
+// izbran ob postavitvi poskusa: ob menjavi profila se Laboratorij nariše znova (app.js selectStudent → showLab: seznam), tema
+// pa se zapre (Učna pot). Če bi poskus vseeno ostal na zaslonu, po menjavi ne shrani nič več (meritve ne gredo drugemu profilu).
 const MER = "evklid.lab.meritve.";
 const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
@@ -207,17 +210,18 @@ export const vJson = (x) => JSON.stringify(x, (k, v) => (typeof v === "number" &
 export const izJsona = (t) => JSON.parse(t, (k, v) => (typeof v === "string" && v in NEKONCNO ? NEKONCNO[v] : v));
 
 export function shramba(el) {
-  const key = kljucMeritev(el?.dataset?.labId);
+  const key = kljucMeritev(el?.dataset?.labId), profil = lsGet("studentId") || "0";
   let data = null;
   try { data = key ? izJsona(lsGet(key) || "null") : null; } catch {}
   if (!data || data.v !== 1 || !Array.isArray(data.rows)) data = null;
+  else data.rows = data.rows.filter((r) => r && typeof r === "object" && !Array.isArray(r));
   let table = null, get = () => ({}), vezano = false, cakam = false, bar = null;
   const zap = {
     data,
     seed: Number.isInteger(data?.seed) ? data.seed : (Math.random() * 2 ** 31) | 0,
     obnovljeno: false, // vrstice s prejšnjega obiska so v tabeli (poskus jih ob novem nizu meritev pobriše)
     shrani() {
-      if (!key || !vezano || cakam) return;
+      if (!key || !vezano || cakam || (lsGet("studentId") || "0") !== profil) return;
       cakam = true; // več sprememb v istem kliku (vrstica, nato točke grafa) zapiše enkrat, ko je stanje celo
       queueMicrotask(() => {
         cakam = false;
@@ -230,19 +234,31 @@ export function shramba(el) {
     vezi(t, { get: g, set } = {}) {
       table = t;
       if (g) get = g;
-      if (data && data.rows.length) {
-        t.obnovi?.(data.rows);
-        zap.obnovljeno = true;
-        const znova = button("Začni znova", () => {
-          zap.pozabi();
-          if (typeof el._labZnova === "function") return el._labZnova();
-          t.clear();
-          set?.(null);
-        });
-        bar = h("p", { class: "lab-obnova", role: "status" }, h("span", {}, "Meritve s prejšnjega obiska so obnovljene."), znova);
-        t.before?.(bar);
+      try {
+        if (data && data.rows.length) {
+          t.obnovi?.(data.rows);
+          zap.obnovljeno = true;
+          // mountSim (sim/index.js) vedno poda el._labZnova: poskus se postavi znova brez meritev. Brez njega (poskus zunaj
+          // mountSim) pozabimo shranjeno in tabelo pobrišemo, a stanja poskusa (točke grafa) ne moremo vrniti: ne shranjujemo več.
+          const znova = button("Začni znova", () => {
+            zap.pozabi();
+            if (typeof el._labZnova === "function") return el._labZnova();
+            vezano = false;
+            t.clear();
+            bar?.remove();
+          });
+          bar = h("p", { class: "lab-obnova", role: "status" }, h("span", {}, "Meritve s prejšnjega obiska so obnovljene."), znova);
+          t.before?.(bar);
+        }
+        if (data) set?.(data);
+      } catch (err) {
+        // Pokvarjen ali star zapis (druga oblika podatkov) ne sme ustaviti poskusa: pozabimo ga in poskus postavimo znova.
+        console.error("Laboratorij: shranjenih meritev ni bilo mogoče obnoviti", err);
+        zap.pozabi();
+        bar?.remove();
+        setTimeout(() => (typeof el._labZnova === "function" ? el._labZnova() : t.clear?.()));
+        return zap;
       }
-      if (data) set?.(data);
       const add = t.add, clear = t.clear;
       t.add = (...a) => { const r = add(...a); zap.shrani(); return r; };
       t.clear = (...a) => { const r = clear(...a); zap.obnovljeno = false; bar?.remove(); zap.shrani(); return r; };

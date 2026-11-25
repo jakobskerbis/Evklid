@@ -181,8 +181,9 @@ const CONFIG = "evklid.config";
 // Osebni podatki na napravi: paketi vaj, vrsta odgovorov, seznam profilov, lastnik naprave (offline.),
 // zgodovina skenerja (scan.), zapis postopka (work.), kalkulatorja (graph., sci.), ogledani cilji (goalSeen.),
 // opomniki urnika (schedule…), točke na lastnih polah (ours.), pozdrav ob novem letniku (levelup.),
-// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js).
-const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$|zadnji-posnetek$)/;
+// zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js),
+// meritve v laboratoriju (lab.meritve.<profil>.<poskus>, public/sim/lab.js → shramba).
+const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|lab\.meritve\.|zadnji-zaslon$|zadnji-posnetek$)/;
 // Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
 // priporočilna koda iz povezave, koda vabila v pilot (public/vabilo.js), izbrani profil.
 const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref", "evklid.vabilo"]);
@@ -213,10 +214,10 @@ export function offlineBootApi(url, opts = {}) {
 }
 
 // Podatki, ki so samo na tej napravi (za izvoz vseh podatkov), samo za profile tega računa (ids):
-// zgodovina skenerja, neposlani odgovori, kalkulatorja in zapisi postopka pri nalogah.
+// zgodovina skenerja, neposlani odgovori, kalkulatorja, zapisi postopka pri nalogah in meritve v laboratoriju.
 export function deviceData(ids = []) {
   const own = new Set(ids.map(String));
-  const out = { scanner_history: {}, offline_answers: {}, calculator: {}, task_work: {} };
+  const out = { scanner_history: {}, offline_answers: {}, calculator: {}, task_work: {}, lab_measurements: {} };
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
@@ -229,6 +230,9 @@ export function deviceData(ids = []) {
       // Zapis postopka je vezan na nalogo, ne na profil; po prijavi drugega računa se pobriše (checkOwner).
       const w = /^evklid\.work\.(.+)$/.exec(k);
       if (w) out.task_work[w[1]] = localStorage.getItem(k);
+      // Meritve v laboratoriju: evklid.lab.meritve.<profil>.<poskus> (public/sim/lab.js → shramba).
+      const l = /^evklid\.lab\.meritve\.([^.]+)\.(.+)$/.exec(k);
+      if (l && own.has(l[1])) (out.lab_measurements[l[1]] ||= {})[l[2]] = read(k, null);
     }
   } catch {}
   return out;
@@ -268,10 +272,10 @@ function dropDrafts(re) {
   } catch {}
 }
 
-// Izbris enega profila: pobrišejo se njegovi podatki na napravi (paket, vrsta, skener, kalkulator, cilji …).
+// Izbris enega profila: pobrišejo se njegovi podatki na napravi (paket, vrsta, skener, kalkulator, cilji, meritve v laboratoriju …).
 export function clearProfile(sid) {
   const id = String(sid);
-  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|offline\\.limit|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup)\\.${id}\\.`);
+  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|offline\\.limit|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup|lab\\.meritve)\\.${id}\\.`);
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
