@@ -278,7 +278,8 @@ figcaption{font-size:12px;word-break:break-all}.nap li{color:#a00}.mer{color:#55
 <details open><summary>Omejitve</summary><ul>${OMEJITVE.map((o) => `<li>${esc(o.replace(/`/g, ""))}</li>`).join("")}</ul></details>
 <nav>${rez.map((r) => `<a href="#${r.id}">${r.id}</a>`).join("")}</nav>${deli.join("")}</html>`;
 }
-const celica = (s) => String(s).replace(/\|/g, "\\|");
+// Celica tabele Markdown: najprej poševnica nazaj, nato »|« (sicer »\|« v vhodu pokvari ubežanje; CodeQL).
+const celica = (s) => String(s).replace(/\\/g, "\\\\").replace(/\|/g, "\\|");
 function povzetek(rez) {
   const v = [
     "# Evklid – hitri preizkus in posnetki na napravah",
