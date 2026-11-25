@@ -291,7 +291,8 @@ yellow-brown vs temperature; conclusion after 15 min. Tests: 37 °C in 5 ± 1 mi
 ### `lab-lom` – reflection and refraction on the optical disc (FIZ-OS-8 odboj svetlobe, lom svetlobe; FIZ-SS-3 geometrijska optika)
 Optical disc with a 1° scale (radius 120 mm, ocena), red 650 nm class 2 laser (safety note on switch-on: never into the eye), plane mirror (R 90 %, ocena) or a
 semicircular block (radius 50 mm, ocena) of acrylic PMMA n = 1,4881 (Sultanova 2009), glass N-BK7 1,5145 (Schott) or water 1,3314 (Daimon & Masumura 2007), air 1,00028
-(Ciddor 1996; all at 650 nm, refractiveindex.info). Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
+(Ciddor 1996; all at 650 nm, refractiveindex.info), or the unknown material X (matura task »Lomni količnik neznane snovi«): its n is drawn from the bench seed, uniformly
+1,42–1,62 and rounded to 4 decimals (`nNeznane`, `LomBench.nX`, a separate rng so the other draws of a seed stay the same); the disc label shows only »snov X«, no note or source names its n. Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
 Every ray is traced in 2D and split by the Fresnel equations (unpolarised), so the weak reflected ray (3,85 % at normal incidence for PMMA) is drawn faint and its share is shown.
 Reading: the disc is set to a mark within ±0,25° (ocena), angles are read to 0,5° with an eye error ≤ 0,24° (total ±0,5°). Table α, odbojni, β, sin α, sin β; graph sin β vs sin α
 with a fit through the origin, slope 1/n (air → block) or n (block → air); total internal reflection above the critical angle (PMMA 42,2°). Mistakes: angles measured from the surface,
@@ -464,6 +465,54 @@ helpers: `public/sim/lab-vodeno-pomoc.js`. Not in lessons (sims embedded in a le
   dogodek: odprt|preklop|koncano }` → table `lab_uporaba (dan, poskus, nacin, dogodek, n)`, only daily counts, no student,
   device or IP (not personal data); the same event of the same student and experiment counts once per 10 s. Read:
   `GET /api/admin/laboratorij?days=30` (admin, or local without accounts).
+
+## Šibke točke (weak points)
+The first »Sklep« pick and the first numeric »Preveri moj račun« dispatch `evklid:lab-preverjeno` { vrsta, ok }
+(public/sim/lab.js `LAB_PREVERJENO`; retries, »Poskusi znova«, a factor-10ⁿ slip and anything after »Pokaži rešitev«,
+also a restored one, do not). Predictions never count. public/laboratorij.js turns it into
+`POST /api/students/:id/tool-check` (`sibkaTocka`: source `lab`, a topic from `SIBKE_TEME` on the student's own school
+level, item `ohm:racun` or `ohm:sklep:<hash of the question>`, never the typed value) for the profile that opened the
+experiment; limits (lab 2 per topic per day) in docs/sibke-tocke.md. Only the 10 main experiments are listed.
+
+## Maturitetni poskus (matura mode)
+
+Plan phase 3 (25. 11. 2026). An experiment with a task in `public/sim/lab-matura-naloge.js` (one file per experiment in
+`public/sim/matura/<key>.js`) gets a third button »Matura« in the switch; its card (`public/sim/lab-matura.js` →
+`maturaKartica`) replaces the step card. »Začni nalogo« forgets the measurements and rebuilds the engine with a new seed
+(`mount._labZnova`), so every task has a new unknown (e.g. the HCl concentration). The student measures without steps
+and submits a number, a unit and an absolute uncertainty. The program scores it (`oceni`), no AI:
+- measurements, 4 points: `meritve: [{ kaj, tock, ok(c) }]`, read from the same context as guided steps (`c.dnevnik`,
+  `c.vrstice`, …), counted only since the task started;
+- result, 4 points by relative error to the true value: ≤ tol 4, ≤ 2·tol 3, ≤ 3·tol 2, ≤ 5·tol 1. The true value comes
+  from the engine's model (`el._labBench = B` in the engine, `resnica(B)` in the task). `tol` is calibrated: a careful
+  student simulated in the model must land within tol in ≥ 95 % of seeds (`test/laboratorij-matura.test.js`);
+- the result counts only if it comes from the student's own data: `izMeritev(c)` computes the same quantity from the
+  table/log by the task's method; a result more than 2·tol away from it (or no usable data) scores 0 for the result, so a
+  known value (g, F, Eₐ, a resistor label) typed without measuring earns nothing. Where the true value is a model
+  constant (`stalnica: true`: prosti-pad g, elektroliza F, hitrost Eₐ) the window is tol, so typing the textbook value
+  after any run does not beat honest work. After submitting, the card shows »Iz tvojih meritev« next to the true value.
+  `izMeritev(c)` also gets `c.B` (the bench): lab-elektroliza takes p and T from it, because `kontekst` does not read
+  the displays (without B, e.g. in unit tests, the lab's average 98,0 kPa and 22 °C);
+- unit, 1 point (`enote: [[name, factor to the right unit | null], …]`, first is right; mmol/L is converted);
+- uncertainty, 1 point: the true value lies within result ± max(Δ, tol·result) (the model's hidden systematic errors,
+  such as the magnet delay or pipette calibration, are not the student's fault) and 0,2·tol ≤ Δ/result ≤ 4·tol
+  (a leading ± is accepted).
+Unit and uncertainty count only when the result comes from the student's own data (not more than 2·tol from `izMeritev`), so a
+guess without measurements scores nothing. Optional task fields: `zgledNap` (example uncertainty on the card), `merOpomba`
+(printed after »Iz tvojih meritev«). Leaving »Matura« while a task runs abandons it (the next start gives a new sample),
+so the free mode cannot be used to see computed results or the true value. While a task runs, »Vprašaj inštruktorja« is
+hidden (`mount.dataset.matura`, public/lab.css). The best score per task is stored per profile in
+`evklid.lab.matura.<studentId>` (personal data: cleared with `clearPrivate`/`clearProfile`, included in `deviceData`).
+During the task `.lab-racun`, `.lab-q` and the task's `skrij` selectors (anything showing a computed result or the true
+value) get `.lab-mat-skrito`; after submitting everything shows again with the points, the true value and the student's
+result. The method (equations, averaging, graph) is not scored: that is the tutor's job in phase 4 (profil B, j's card).
+Tasks (unknown, tol): titracija c(HCl) from the seed (2,5 %), ohm R of the 100 Ω resistor (1 %), prosti-pad g (2,5 %),
+newton2 accelerated mass (2,5 %), hooke k of the soft spring (1 %), lom n of »snov X« drawn 1,42–1,62 from the seed
+(1 %), grelnik efficiency of the student's own run (2 %), co2 mass of a hidden NaHCO₃ sample (8 %), hitrost Eₐ of the
+thiosulfate reaction (3 %), elektroliza F (4,5 %). Each task's simulation and browser play: `test/matura/<key>.js`
+(loaded by `test/laboratorij-matura.test.js`). »↺ Ponastavi« during a task keeps the task running and reruns `priprava`.
+The best score stays on the device (`localStorage` `evklid.lab.matura.<studentId>`); the server only counts submissions
+(`nacin: matura`, `dogodek: oddano`, no points, no student). »Matura« is not remembered as the default mode.
 
 ## Next (from j's list)
 FIZ: pendulum and stopwatch; motion part B: collisions of two carts on the track (momentum, magnets/Velcro), uniform motion with a motion sensor, nested coffee filters (v_t ∝ √m), a(θ) on the incline to find μr; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: electroplating (copper on a key, mass vs charge, reuses `ElektrolizaBench` kinetics), corrosion of iron (nails in water, salt water, oil, with zinc/copper contact), Daniell cell with a Zn | Cu series battery for an LED, electrolysis of CuSO₄ with copper electrodes (mass change).

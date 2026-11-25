@@ -4,11 +4,11 @@
 import { stevilo, celica } from "../lab-vodeno-pomoc.js";
 import { preveriRacun } from "../lab.js";
 
-const NALIL = /^V čaši je sveža voda/, TEHTAL = /^Tehtnica:/, VKLOP = /^Grelec je vklopljen/, IZKLOP = /^Grelec je izklopljen/, NEPREMESANA = /^Voda ni premešana/;
+export const NALIL = /^V čaši je sveža voda/, TEHTAL = /^Tehtnica:/, VKLOP = /^Grelec je vklopljen/, IZKLOP = /^Grelec je izklopljen/, NEPREMESANA = /^Voda ni premešana/;
 const C_VODE = 4182; // J/(kg·K), kot VODA.c v lab-model-toplota.js
 
 // Indeks najnovejše vrstice dnevnika, ki se ujema z `re` (od `od` naprej), sicer -1.
-const zadnja = (dn, re, od = 0) => {
+export const zadnja = (dn, re, od = 0) => {
   for (let k = dn.length - 1; k >= od; k--) if (re.test(dn[k])) return k;
   return -1;
 };
@@ -24,10 +24,10 @@ export function izklopljen(dn) {
   return p >= 0 && on > p && off > on && stevilo(dn[off].replace(/^[^(]*\(/, "")) >= 240;
 }
 
-const t = (r) => stevilo(celica(r, /^t\b/));
+export const t = (r) => stevilo(celica(r, /^t\b/));
 const U = (r) => stevilo(celica(r, /^U\b/));
 const I = (r) => stevilo(celica(r, /^I\b/));
-const T = (r) => stevilo(celica(r, /^T\b/));
+export const T = (r) => stevilo(celica(r, /^T\b/));
 // Med segrevanjem teče okoli 4 A. Izklopljen ampermeter zaradi zamika ničle kaže do nekaj stotink ampera (lab-model.js →
 // meterRead), zato tok pod 0,2 A pomeni, da je grelec izklopljen.
 const tece = (r) => I(r) > 0.2;

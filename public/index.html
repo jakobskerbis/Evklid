@@ -494,6 +494,13 @@
   <main id="view-progress" class="view narrow" hidden>
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 data-i18n="prog.title">Napredek</h1>
+    <div class="card vrzeli-card">
+      <h2 data-i18n="prog.weak">Kaj še ne znam</h2>
+      <p class="muted" data-i18n="prog.weakNote">Samodejno zaznane iz vseh nalog (pogovori, vaje, igre, učbenik, pole, kartice, kviz; vsaj 3 odgovori, vsaj 40 % napak v zadnjih 60 dneh) in ročno vnesene. Evklid jih upošteva pri razlagi.</p>
+      <ul id="weak-list" class="pill-list"></ul>
+      <button type="button" class="secondary" id="weak-sheet" hidden><i data-icon="clipboard-check"></i><span data-i18n="gr.weakSheet">Delovni list iz šibkih tem</span></button>
+      <p class="muted" id="weak-sheet-msg" role="status" hidden></p>
+    </div>
     <div id="prog-goal" class="card goal-card" hidden></div>
     <div class="card prog-akt">
       <h2 data-i18n="akt.title">Aktivnost v zadnjem letu</h2>
@@ -502,13 +509,6 @@
     <div class="card">
       <h2 data-i18n="akt.weeks">XP po tednih</h2>
       <div id="prog-weeks"></div>
-    </div>
-    <div class="card">
-      <h2 data-i18n="prog.weak">Šibke točke</h2>
-      <p class="muted" data-i18n="prog.weakNote">Samodejno zaznane iz vseh nalog (pogovori, vaje, igre, učbenik, pole, kartice, kviz; vsaj 3 odgovori, vsaj 40 % napak v zadnjih 60 dneh) in ročno vnesene. Evklid jih upošteva pri razlagi.</p>
-      <ul id="weak-list" class="pill-list"></ul>
-      <button type="button" class="secondary" id="weak-sheet" hidden><i data-icon="clipboard-check"></i><span data-i18n="gr.weakSheet">Delovni list iz šibkih tem</span></button>
-      <p class="muted" id="weak-sheet-msg" role="status" hidden></p>
     </div>
     <div class="card" id="prog-turns">
       <h2 data-i18n="prog.activity">Aktivnost (30 dni)</h2>

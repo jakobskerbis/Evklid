@@ -4,9 +4,9 @@
 import { stevilo, celica } from "../lab-vodeno-pomoc.js";
 
 // Dnevnik motorja: izravnava z libelo in izid preizkusa trenja (porociloPoteka/frame v lab-gibanje.js).
-const LIBELA = /Progo si izravnal z libelo/;
-const IZRAVNANO = /trenje je izravnano/;
-const NI_IZRAVNANO = /podložka je premajhna|proga je preveč nagnjena/;
+export const LIBELA = /Progo si izravnal z libelo/;
+export const IZRAVNANO = /trenje je izravnano/;
+export const NI_IZRAVNANO = /podložka je premajhna|proga je preveč nagnjena/;
 
 // Zapisane meritve (record zapiše le, če je bila vrvica pripeta in sta obe vrati izmerili zatemnitev).
 const meritve = (c) => c.vrstice.filter((r) => Number.isFinite(stevilo(celica(r, /^a\b/))));

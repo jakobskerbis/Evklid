@@ -18,6 +18,7 @@ const rAt = (hmm) => (hmm <= HC ? RB - KB * hmm : RN);
 // Dokaz CO₂: soda bikarbona in kislina v bučki na tehtnici, plin skozi cevko v apnico ali trska v vratu bučke.
 export function labCo2(el) {
   const B = new Co2Bench({ seed: (Math.random() * 2 ** 31) | 0 });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): matura/lab-co2.js v bučko stresi vzorec sode in bere njegovo maso
   const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const svg = svgBox(400, 300, "lab-bench");
   svg.setAttribute("aria-label", "Bučka na tehtnici, cevka in epruveta");

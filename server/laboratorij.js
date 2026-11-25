@@ -69,8 +69,8 @@ export function teme3d(modelId, myPath = "") {
 // Štetje uporabe laboratorija (načrt laboratorija, faza 1): koliko poskusov je bilo odprtih, v katerem načinu in koliko
 // vodenih poskusov je bilo opravljenih. Samo števci na dan in poskus, brez učenca, naprave ali IP (kot obiski strani
 // v server/pilot.js), zato niso osebni podatki. Branje: GET /api/admin/laboratorij?days=30 (skrbnik).
-export const NACINI = ["vodeno", "prosto", "brez"];
-export const DOGODKI = ["odprt", "preklop", "koncano"];
+export const NACINI = ["vodeno", "prosto", "brez", "matura"];
+export const DOGODKI = ["odprt", "preklop", "koncano", "oddano"];
 const MAX_DNI = 120;
 export function migrateLab(db) {
   db.exec(`CREATE TABLE IF NOT EXISTS lab_uporaba (
@@ -90,10 +90,11 @@ export function labUporaba(db, { days = 30, now = Date.now() } = {}) {
   const vrstice = db.prepare("SELECT poskus, nacin, dogodek, SUM(n) AS n FROM lab_uporaba WHERE dan >= ? AND dan <= ? GROUP BY poskus, nacin, dogodek").all(od, _do);
   const po = new Map();
   for (const r of vrstice) {
-    const x = po.get(r.poskus) || { poskus: r.poskus, odprt: 0, vodeno: 0, prosto: 0, preklopi: 0, koncano: 0 };
+    const x = po.get(r.poskus) || { poskus: r.poskus, odprt: 0, vodeno: 0, prosto: 0, matura: 0, preklopi: 0, koncano: 0, oddano: 0 };
     if (r.dogodek === "odprt") (x.odprt += r.n), r.nacin !== "brez" && (x[r.nacin] += r.n);
     else if (r.dogodek === "preklop") x.preklopi += r.n;
     else if (r.dogodek === "koncano") x.koncano += r.n;
+    else if (r.dogodek === "oddano") x.oddano += r.n; // oddani maturitetni poskusi (brez točk in brez učenca)
     po.set(r.poskus, x);
   }
   const poskusi = [...po.values()].sort((a, b) => b.odprt - a.odprt || a.poskus.localeCompare(b.poskus));

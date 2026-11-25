@@ -21,3 +21,19 @@ test("straža: inštruktor v preizkusnem načinu (mock) podre Stražo", async ()
   assert.deepEqual(presojaStanja({ ...osnova, mock: false }).napake, []);
   assert.match(presojaStanja({ ...osnova, mock: true }).napake.join(), /preizkusnem načinu/);
 });
+
+test("straža: SymPy ne teče → napaka (skener P3-3); izklopljen ali še v zagonu ni napaka", async () => {
+  const { presojaStanja } = await import("../scripts/straza.mjs");
+  const osnova = { id: "x", razlicica: "1" };
+  assert.match(presojaStanja({ ...osnova, cas: { vklopljen: true, deluje: false } }).napake.join(), /SymPy/);
+  assert.deepEqual(presojaStanja({ ...osnova, cas: { vklopljen: true, deluje: true } }).napake, []);
+  assert.deepEqual(presojaStanja({ ...osnova, cas: { vklopljen: true, deluje: null } }).napake, []);
+  assert.deepEqual(presojaStanja({ ...osnova, cas: { vklopljen: false, deluje: null } }).napake, []);
+});
+
+test("/healthz/stanje: polje cas pove, ali SymPy teče", async () => {
+  const { casStanje } = await import("../server/cas.js");
+  const s = casStanje();
+  assert.equal(typeof s.vklopljen, "boolean");
+  assert.ok([true, false, null].includes(s.deluje));
+});

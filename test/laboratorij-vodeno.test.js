@@ -303,12 +303,15 @@ test("usage counter: anonymous daily counts per experiment, mode and event; only
   call({ key: "lab-ohm", nacin: "vodeno", dogodek: "odprt" }, 2);
   call({ key: "lab-ohm", nacin: "vodeno", dogodek: "koncano" }, 2);
   call({ key: "lab-co2", nacin: "brez", dogodek: "odprt" });
+  // Maturitetni poskus: odprt v načinu »matura« šteje k maturi, oddaja kot dogodek »oddano«.
+  call({ key: "lab-ohm", nacin: "matura", dogodek: "odprt" }, 3);
+  call({ key: "lab-ohm", nacin: "matura", dogodek: "oddano" }, 3);
   assert.equal(call({ key: "lab-ne-obstaja", nacin: "vodeno", dogodek: "odprt" }).code, 400);
   assert.equal(call({ key: "lab-ohm", nacin: "x", dogodek: "odprt" }).code, 400);
   assert.equal(call({ key: "lab-ohm", nacin: "vodeno", dogodek: "x" }).code, 400);
   const r = labUporaba(db);
-  assert.equal(r.skupaj, 3);
-  assert.deepEqual(r.poskusi[0], { poskus: "lab-ohm", odprt: 2, vodeno: 2, prosto: 0, preklopi: 0, koncano: 1 });
+  assert.equal(r.skupaj, 4);
+  assert.deepEqual(r.poskusi[0], { poskus: "lab-ohm", odprt: 3, vodeno: 2, prosto: 0, matura: 1, preklopi: 0, koncano: 1, oddano: 1 });
   // Brez stolpca z učencem: tabela nima osebnih podatkov.
   const cols = db.prepare("PRAGMA table_info(lab_uporaba)").all().map((x) => x.name);
   assert.deepEqual(cols, ["dan", "poskus", "nacin", "dogodek", "n"]);
@@ -316,8 +319,8 @@ test("usage counter: anonymous daily counts per experiment, mode and event; only
   routes["GET /api/admin/laboratorij"]({ query: {} }, { status: (c) => ((code = c), { json() {} }), json() {} });
   assert.equal(code, 403);
   migrateLab(db); // drugič brez napake
-  assert.deepEqual(NACINI, ["vodeno", "prosto", "brez"]);
-  assert.deepEqual(DOGODKI, ["odprt", "preklop", "koncano"]);
+  assert.deepEqual(NACINI, ["vodeno", "prosto", "brez", "matura"]);
+  assert.deepEqual(DOGODKI, ["odprt", "preklop", "koncano", "oddano"]);
 });
 
 // ---------------------------------------------------------------- v brskalniku
