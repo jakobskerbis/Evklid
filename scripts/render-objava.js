@@ -21,7 +21,7 @@ export const NOC_DO = 5 * 60;
 export const NOC_ZADNJIH_MIN = 30;
 export const NUJNO = /^\s*\[nujno\]/i; // na začetku naslova PR (prva vrstica sporočila združitve)
 export const TESTI_WORKFLOW = "testi.yml";
-export const POTREBNI_TESTI = ["testi", "preveri", "hrosci", "tipi"]; // posli v testi.yml
+export const POTREBNI_TESTI = ["testi", "preveri", "hrosci", "tipi", "lekcije"]; // posli v testi.yml
 export const TESTI_NAJDLJE_MIN = 75; // ročni zagon počaka na teste največ toliko (posel testi ima omejitev 75 min)
 
 const URA_LJ = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Ljubljana", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });

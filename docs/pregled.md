@@ -19,7 +19,9 @@ commands below and the checklist of their lens.
   `testi` (`npm test`, Chromium + WebKit, in 4 parallel parts `testi (N/4)`, j 2026-11-21), `preveri`
   (`node scripts/preveri-aplikacijo.cjs`, in 3 parallel parts `preveri (racunalnik|telefon|racuni)`),
   `hrosci` (`node scripts/najdi-hrosce.mjs`: duplicate keys in code and translations, no AI) and `tipi`
-  (mobile TypeScript), in test mode with no secrets. `testi` and `preveri` are summary jobs: green only when all
+  (mobile TypeScript) and `lekcije` (`node scripts/check-lesson.js -q --strogo` over all lessons with SymPy, only when
+  lessons or the checker changed, else green in seconds; also nightly in `matrika-nocna.yml`; `--strogo`/`CI=true` = exit 2
+  when SymPy is missing), in test mode with no secrets. `testi` and `preveri` are summary jobs: green only when all
   their parts are. Read the result with
   `gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs -q '.check_runs[]|"\(.name) \(.status) \(.conclusion) \(.output.annotations_count) \(.id)"'`
   (all `completed success`); on failure the run's artifacts hold the log and screenshots per part

@@ -22,6 +22,35 @@ env:
   EVKLID_MOCK: "1"
   PLAYWRIGHT_VERSION: "1.63.0"
 jobs:
+  # Vse lekcije vsako noč (#7): scripts/check-lesson.js -q --strogo s SymPy (~2 min). V testi.yml teče samo, ko PR
+  # spremeni lekcije ali preverjevalnik; tu ujame še lekcije, ki jih je pokvarila sprememba drugje (npr. formula-data,
+  # risbe, curriculum). Ob napaki je delovni tok rdeč (e-pošta lastniku); zadeve ne odpira (ta je samo za matriko).
+  lekcije:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
+        with:
+          node-version: 22
+          cache: npm
+      # npm ci namesti tudi SymPy (postinstall: scripts/namesti-sympy.cjs v .pylib), a ob napaki pip ne pade; tu še 2 poskusa.
+      - name: npm ci in SymPy
+        timeout-minutes: 10
+        run: |
+          npm ci --no-audit --no-fund
+          for poskus in 1 2; do
+            PYTHONPATH=.pylib python3 -c "import sympy" 2>/dev/null && exit 0
+            echo "::warning::SymPy ni nameščen, poskus $poskus"; sleep 15; node scripts/namesti-sympy.cjs
+          done
+      - name: Vse lekcije (check-lesson --strogo)
+        timeout-minutes: 10
+        run: node scripts/check-lesson.js -q --strogo
+
   matrika:
     name: matrika (${{ matrix.brskalnik }})
     runs-on: ubuntu-24.04

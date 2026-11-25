@@ -6,7 +6,7 @@
 # Pravila v scripts/render-objava.js: v oknu miren strežnik → takoj, zadnjih 30 min okna v vsakem primeru;
 # [nujno] na začetku naslova ali ročni zagon → takoj; med objavama vsaj 1 ura.
 # Nikoli pred zelenimi testi (j, 20. 11. 2026): objavi se samo commit, za katerega so vsi posli testi.yml
-# (testi, preveri, hrosci, tipi) uspeli. Ko se Testi za main končajo (workflow_run), se tek zažene znova,
+# (testi, preveri, hrosci, tipi, lekcije) uspeli. Ko se Testi za main končajo (workflow_run), se tek zažene znova,
 # zato [nujno] pride na Render nekaj minut po zelenih testih. Padli testi: ta commit se ne objavi.
 # Deluje, ko je v GitHubu nastavljena skrivnost RENDER_DEPLOY_HOOK (Render > evklid > Settings > Deploy Hook).
 # Ročni zagon (Actions > Render > Run workflow) objavi takoj, ko so testi zeleni; »brez_testov« (privzeto izklopljeno)

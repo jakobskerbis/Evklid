@@ -1,5 +1,5 @@
 # Posodobitev aplikacije brez nove gradnje (EAS Update) – samo po zelenih testih (j, 20. 11. 2026).
-# Zažene se, ko se Testi (testi.yml) za združitev v main končajo uspešno (vsi štirje posli). Če je od zadnje
+# Zažene se, ko se Testi (testi.yml) za združitev v main končajo uspešno (vseh pet poslov). Če je od zadnje
 # objave kakšen commit spremenil kodo aplikacije ali skupne datoteke s spletom (POTI), objavi novo različico
 # JavaScripta na kanal "direct" (APK s strani /prenesi). Telefoni jo prenesejo ob zagonu (src/lib/updates.ts).
 # Dobijo jo samo gradnje z enako domorodno kodo (runtimeVersion: fingerprint); za novo domorodno kodo je potreben nov APK.
