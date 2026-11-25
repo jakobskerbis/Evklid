@@ -90,11 +90,13 @@
 .chip-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; }
 .chip-row::-webkit-scrollbar { display: none; }
 .chip-row > a, .chip-row > button {
-  flex: none; display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px !important;
+  flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 6px 14px !important;
   border: 1.5px solid var(--border) !important; border-radius: 999px !important; background: var(--surface) !important;
   color: var(--text); font-weight: 700; font-size: 0.9rem; text-decoration: none; white-space: nowrap;
 }
 .chip-row > a:hover, .chip-row > button:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)) !important; }
+/* Kalkulator ima svojega lastnika (CLAUDE.md): žetoni v njem ostanejo 36 px, dokler o 40 px ne odloči on. */
+:is(#graph-slot, #graph-overlay-body) .chip-row > :is(a, button) { min-height: 36px; }
 .chip-row > a.active, .chip-row > button.active { border-color: var(--accent) !important; background: var(--accent-soft) !important; color: var(--accent); }
 
 /* ---------- izbrana možnost (kartica / potrditveno polje) ---------- */
@@ -863,14 +865,16 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .goal-countdown:empty { display: none; }
 .goal-reminder-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
 .goal-reminder-row .gr-text { display: grid; gap: 2px; }
-/* Stikalo (vklop/izklop): <button class="switch" role="switch" aria-checked> */
-.switch { flex: none; position: relative; width: 52px !important; height: 30px; min-height: 30px !important; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background: var(--border) !important; transition: background 0.2s; }
+/* Stikalo (vklop/izklop): <button class="switch" role="switch" aria-checked>. Vidno 52 × 30 px, površina dotika 52 × 40 px
+   (prozoren rob zgoraj in spodaj, ozadje samo pod robom; A9). */
+.switch { flex: none; position: relative; width: 52px !important; height: 40px; min-height: 40px !important; padding: 0 !important; border: 0 !important; border-block: 5px solid transparent !important; border-radius: 999px !important; background: var(--border) !important; background-clip: padding-box !important; transition: background 0.2s; }
 .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); transition: transform 0.2s; }
-.switch[aria-checked="true"] { background: var(--accent) !important; }
+.switch[aria-checked="true"] { background: var(--accent) !important; background-clip: padding-box !important; }
+@media (forced-colors: active) { .switch { border-block-width: 0 !important; height: 30px; min-height: 30px !important; margin-block: 5px; } }
 .switch[aria-checked="true"]::after { transform: translateX(22px); }
 .goal-line { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 8px; margin: 0 0 12px; font-weight: 700; line-height: 1.35; }
 .goal-line .gl-ic { color: var(--accent); display: inline-flex; }
-.goal-line .gl-edit { margin: 0; padding: 4px 0; font-size: 0.92rem; }
+.goal-line .gl-edit { margin: 0; padding: 4px 0; min-height: 40px; font-size: 0.92rem; }
 .goal-reminder { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 12px; border: 1.5px solid color-mix(in srgb, var(--accent) 35%, var(--border)); background: var(--accent-soft); }
 .goal-reminder .gr-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-text); }
 .goal-reminder .gr-body { flex: 1; display: grid; gap: 4px; min-width: 0; }
@@ -948,6 +952,35 @@ body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 /* Nastavitve: največ trije stolpci, na širokem zaslonu na sredini skupaj z naslovom (j, 4. 11. 2026). */
 .set-cols { columns: 400px 3; }
 #view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
+/* Skupine Nastavitev (j 25. 11. 2026: na telefonu je bilo 8,9 zaslona): kartica <details class="card set-grp"> z glavo kot
+   vrstica seznama v »Jaz« (ikona, naslov, podnaslov, puščica); kartice v skupini so njeni deli, ločeni s črto. Podskupine
+   v obrazcu (<details class="set-sub">) so vrstica s puščico. Odpre in zapre se takoj (brez animacije). */
+/* Dva stalna stolpca (Učenje | ostale skupine in Varnost); na ozkem zaslonu eden pod drugim. */
+#view-settings .set-cols { columns: auto; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 20px; }
+.set-col { flex: 1 1 400px; min-width: 0; }
+.set-grp { padding: 0; }
+.set-grp-head:focus-visible, .set-sub-head:focus-visible { outline-offset: -3px; }
+.set-grp > summary, .set-sub > summary { margin: 0; list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
+.set-grp > summary::-webkit-details-marker, .set-sub > summary::-webkit-details-marker { display: none; }
+.set-grp-head { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 10px 16px; border-radius: var(--radius); color: var(--text); }
+.set-grp-head:hover { background: var(--surface-2); }
+.set-grp[open] > .set-grp-head { border-radius: var(--radius) var(--radius) 0 0; }
+.set-grp-head .ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
+.set-grp-head .ic svg.i { width: 22px; height: 22px; }
+.set-grp-head .lr-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.set-grp-head .lr-text b { font-size: 1.05rem; font-weight: 800; }
+.set-grp-head .lr-text small { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+:is(.set-grp-head, .set-sub-head) > svg.i:last-child { flex: none; color: var(--muted); }
+:is(.set-grp[open] > .set-grp-head, .set-sub[open] > .set-sub-head) > svg.i:last-child { transform: rotate(180deg); }
+#view-settings .set-grp > :not(summary) { margin: 0; padding: 20px; border: 0; border-top: 1px solid var(--border); border-radius: 0; box-shadow: none; background: none; }
+#view-settings .set-grp > .list-card { padding: 6px; }
+@media (max-width: 760px) { #view-settings .set-grp > :not(summary, .list-card) { padding: 16px; } }
+/* Naslov skupine že pove, kaj je v kartici (Videz, Pomoč). */
+.set-grp > #appearance > h2:first-child, .set-grp > .card > h2[data-i18n="set.help"] { display: none; }
+.set-sub { border: 1.5px solid var(--border); border-radius: var(--radius-sm); }
+.set-sub-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 8px 14px; color: var(--text); font-weight: 800; font-size: 0.92rem; border-radius: var(--radius-sm); }
+.set-sub-head:hover { background: var(--surface-2); }
+.set-sub-body { display: flex; flex-direction: column; gap: 14px; padding: 4px 14px 14px; }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
 /* Učna pot: sklopi po vrsticah (1, 2, 3 v prvi vrsti, nato 4, 5, 6), ne po stolpcih (j, 17. 11. 2026); stolpci kot zgoraj

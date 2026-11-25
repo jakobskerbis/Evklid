@@ -5,6 +5,7 @@ import { t, locale } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { odstevanje } from "./zacetna.js";
 import { goalsFor, daysUntil, validDate, DEFAULT_GOAL, hasGoal, privzetiCilj, ciljObrazca, OPOMNIK_URA } from "./goal-data.js";
+import { celDatum, zdruzi } from "./datum.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const goalName = (g) => t(`goal.${g || DEFAULT_GOAL}`);
@@ -13,9 +14,9 @@ export function fmtDate(s) {
   if (!validDate(s)) return "";
   const [y, m, d] = s.split("-").map(Number);
   try {
-    return new Intl.DateTimeFormat(locale(), { day: "numeric", month: "numeric", year: "numeric" }).format(new Date(y, m - 1, d));
+    return celDatum(new Intl.DateTimeFormat(locale(), { day: "numeric", month: "numeric", year: "numeric" }).format(new Date(y, m - 1, d)));
   } catch {
-    return `${d}. ${m}. ${y}`;
+    return celDatum(`${d}. ${m}. ${y}`);
   }
 }
 
@@ -26,7 +27,7 @@ export const countdown = (date) => odstevanje(t, date);
 export function goalSummary(settings = {}) {
   const parts = [goalName(settings.goal)];
   if (validDate(settings.goal_date)) parts.push(fmtDate(settings.goal_date), countdown(settings.goal_date));
-  return parts.join(" · ");
+  return zdruzi(parts);
 }
 export { hasGoal }; // public/goal-data.js (tudi strežnik: server/pot-takoj.js)
 
@@ -48,7 +49,7 @@ export function goalFieldsHtml(settings = {}, { withReminder = false, idPrefix =
       </label>
       ${withReminder ? `<button type="button" class="secondary goal-clear" ${date ? "" : "hidden"}>${icon("trash-2")}${esc(t("goal.clear"))}</button>` : ""}
     </div>
-    <p class="goal-countdown" aria-live="polite">${esc(date ? `${goalName(cur)} · ${countdown(date)}` : "")}</p>
+    <p class="goal-countdown" aria-live="polite">${esc(date ? zdruzi([goalName(cur), countdown(date)]) : "")}</p>
     ${withReminder ? `
     <div class="goal-reminder-row" ${date ? "" : "hidden"}>
       <span class="gr-text"><b id="${idPrefix}-rem-label">${esc(t("goal.reminder", { h: OPOMNIK_URA }))}</b><small class="muted">${esc(t("goal.reminderNote", { date: fmtDate(date) }))}</small></span>
@@ -65,7 +66,7 @@ export function wireGoalFields(box) {
   const refresh = () => {
     const date = box.querySelector("input[name=goal_date]").value;
     const goal = box.querySelector("input[name=goal]").value;
-    box.querySelector(".goal-countdown").textContent = validDate(date) ? `${goalName(goal)} · ${countdown(date)}` : "";
+    box.querySelector(".goal-countdown").textContent = validDate(date) ? zdruzi([goalName(goal), countdown(date)]) : "";
     const clear = box.querySelector(".goal-clear");
     if (clear) clear.hidden = !date;
     const rem = box.querySelector(".goal-reminder-row");
@@ -117,8 +118,8 @@ export function readGoalFields(box) {
 // brezDni: brez »še N dni« (na Učni poti pri cilju matura odštevanje že kaže kartica »Danes«; j, 20. 11. 2026).
 export function goalLineHtml(student, levelText = "", brezDni = false) {
   const s = student?.settings || {};
-  const sum = brezDni ? [goalName(s.goal), fmtDate(s.goal_date)].filter(Boolean).join(" · ") : goalSummary(s);
-  const parts = [levelText, sum].filter(Boolean).join(" · ");
+  const sum = brezDni ? zdruzi([goalName(s.goal), fmtDate(s.goal_date)]) : goalSummary(s);
+  const parts = zdruzi([levelText, sum]);
   return `<span class="gl-ic" aria-hidden="true">${icon("target")}</span><span class="gl-text">${esc(parts)}</span>
     <button type="button" class="text-btn gl-edit" data-view="settings" data-goal-edit>${esc(t("goal.change"))}</button>`;
 }

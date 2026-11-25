@@ -115,7 +115,7 @@ test("kartica na vrhu Učne poti (skupna app.js in strežniku): Današnji trenin
   const leto = new Date().getFullYear() + 1;
   const danes = xpCardHtml(t, { p: { ...p, danes: { due: 2, review: 6, next: { id: "t9", name: "Funkcije" }, minutes: 9, odsoten: 4 } }, done: false, scan: true, games: true, goalDate: `${leto}-05-29` });
   assert.match(danes, /class="hero danes"[^]*data-danes-review/);
-  assert.match(danes, /Matura · še \d+ dni/);
+  assert.match(danes, /Matura\u00a0· še \d+ dni/);
   assert.match(danes, /class="danes-back"/, "po vsaj 3 dneh odsotnosti pozdrav");
   assert.match(danes, /data-scan-home[^]*class="next-row" data-daily[^]*data-dnevna[^]*xp-stats/, "Današnji trening kot vrstica pod skenerjem");
   assert.doesNotMatch(danes, /data-open="t1"/);

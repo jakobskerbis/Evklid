@@ -4660,5 +4660,17 @@
   "scan.camDenied": "Camera access is blocked. Allow it in your browser (icon next to the page address) and try again, or choose a picture.",
   "scan.camBusy": "Another app is already using the camera. Close it (e.g. a video call) and try again.",
   "scan.camNone": "This device has no camera. Choose a picture of the problem with “{btn}” or type it in.",
-  "scan.frameKeys": "Arrow keys move the frame; Shift + arrow keys change its size."
+  "scan.frameKeys": "Arrow keys move the frame; Shift + arrow keys change its size.",
+  "set.grpLearn": "Learning",
+  "set.grpLearnSub": "Subject, goal, solving mode, tutor, school",
+  "set.grpTutor": "Tutor and data use",
+  "set.grpSchool": "School, year and name",
+  "set.grpLook": "Appearance",
+  "set.grpLookSub": "Style, colours, full screen, movable windows",
+  "set.grpInput": "Input and language",
+  "set.grpInputSub": "Evklid keyboard and app language",
+  "set.grpProfiles": "Account and profiles",
+  "set.grpProfilesSub": "Account and pupil profiles",
+  "set.grpHelp": "Help",
+  "set.grpHelpSub": "Intro tour and app guide"
 }
