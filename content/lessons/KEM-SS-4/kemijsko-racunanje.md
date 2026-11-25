@@ -237,11 +237,11 @@ Nov primer: $1{,}2\,\mathrm{g}$ magnezija ($M = 24{,}31\,\mathrm{g/mol}$) v $50\
 ~ 0,082 | To je množina v molih. Pomnoži jo še z molsko maso.
 > $n = \dfrac{pV}{RT} = \dfrac{101{,}3 \cdot 2{,}00}{8{,}314 \cdot 298}\,\mathrm{mol} = 0{,}0818\,\mathrm{mol}$, $m = 0{,}0818\,\mathrm{mol} \cdot 44{,}01\,\mathrm{g/mol} \approx 3{,}60\,\mathrm{g}$.
 
-? Koliko mililitrov klorovodikove kisline s koncentracijo $2{,}0\,\mathrm{mol/L}$ potrebuješ, da popolnoma raztopiš $3{,}27\,\mathrm{g}$ cinka ($M = 65{,}38\,\mathrm{g/mol}$)? $\mathrm{Zn + 2\,HCl \rightarrow ZnCl_2 + H_2}$
-= 50 mL | 0,5
-~ 25 | Pozabil si na koeficient $2$: en mol cinka porabi dva mola $\mathrm{HCl}$.
-~ 0,05 | To je prostornina v litrih. Pretvori jo v mililitre.
-> $n(\mathrm{Zn}) = \dfrac{3{,}27}{65{,}38}\,\mathrm{mol} = 0{,}0500\,\mathrm{mol}$, $n(\mathrm{HCl}) = 0{,}100\,\mathrm{mol}$, $V = \dfrac{0{,}100\,\mathrm{mol}}{2{,}0\,\mathrm{mol/L}} = 0{,}050\,\mathrm{L} = 50\,\mathrm{mL}$.
+? Koliko mililitrov klorovodikove kisline s koncentracijo $0{,}50\,\mathrm{mol/L}$ potrebuješ, da popolnoma raztopiš $1{,}31\,\mathrm{g}$ cinka ($M = 65{,}38\,\mathrm{g/mol}$)? $\mathrm{Zn + 2\,HCl \rightarrow ZnCl_2 + H_2}$
+= 80 mL | 1
+~ 40 | Pozabil si na koeficient $2$: en mol cinka porabi dva mola $\mathrm{HCl}$.
+~ 0,08 | To je prostornina v litrih. Pretvori jo v mililitre.
+> $n(\mathrm{Zn}) = \dfrac{1{,}31}{65{,}38}\,\mathrm{mol} = 0{,}0200\,\mathrm{mol}$, $n(\mathrm{HCl}) = 0{,}0400\,\mathrm{mol}$, $V = \dfrac{0{,}0400\,\mathrm{mol}}{0{,}50\,\mathrm{mol/L}} = 0{,}080\,\mathrm{L} = 80\,\mathrm{mL}$.
 
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol | število delcev, izraženo v molih

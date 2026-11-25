@@ -257,11 +257,11 @@ Primerjava ima mejo: žoga ne spremeni naboja igralca, proton pa vsakemu delcu, 
 ~ Po Brønstedu ioni $\mathrm{OH^-}$ niso potrebni; baza je delec, ki sprejme proton.
 > $\mathrm{HCO_3^-}$ sprejme proton in postane $\mathrm{H_2CO_3}$, zato je baza. Ion je amfoteren, a tu ob močni kislini nastopa kot baza.
 
-? Kolikšen je naboj konjugirane kisline sulfatnega iona $\mathrm{SO_4^{2-}}$?
-= -1 | 0,1
-~ -3 | Konjugirana kislina ima en proton več, zato je njen naboj za $1$ višji, ne nižji.
-~ 0 | Sulfatni ion sprejme le en proton. Nenabito $\mathrm{H_2SO_4}$ bi nastalo šele po drugem protonu.
-> Konjugirana kislina ima en $\mathrm{H^+}$ več: $\mathrm{SO_4^{2-}} + \mathrm{H^+} \to \mathrm{HSO_4^-}$, naboj $-2 + 1 = -1$.
+? Pri zgagi pomaga soda bikarbona: $\mathrm{HCO_3^-} + \mathrm{H_3O^+} \to \mathrm{H_2CO_3} + \mathrm{H_2O}$. Koliko milimolov oksonijevih ionov veže $0{,}84\,\mathrm{g}$ natrijevega hidrogenkarbonata $\mathrm{NaHCO_3}$ ($M = 84\,\mathrm{g/mol}$)?
+= 10 mmol | 0,1
+~ 0,01 | To je množina v molih. Pretvori jo v milimole: $1\,\mathrm{mol} = 1000\,\mathrm{mmol}$.
+~ 20 | Razmerje je $1 : 1$: en ion $\mathrm{HCO_3^-}$ sprejme le en proton, ko nastane $\mathrm{H_2CO_3}$.
+> $n(\mathrm{NaHCO_3}) = \dfrac{0{,}84\,\mathrm{g}}{84\,\mathrm{g/mol}} = 0{,}010\,\mathrm{mol}$. Vsak ion $\mathrm{HCO_3^-}$ kot baza sprejme en proton, zato veže $0{,}010\,\mathrm{mol} = 10\,\mathrm{mmol}$ oksonijevih ionov.
 
 ? Karbonatni ion $\mathrm{CO_3^{2-}}$ v Enkeladovem oceanu sprejema protone, dokler ne nastane ogljikova kislina $\mathrm{H_2CO_3}$. Koliko molov protonov lahko sprejme $0{,}10\,\mathrm{mol}$ karbonatnih ionov?
 = 0,20 mol | 0,005

@@ -246,9 +246,9 @@ Baker se reducira iz $+2$ na $+1$, aldehid pa se oksidira v anion karboksilne ki
 ~ 0,25 | To je množina v molih. Pomnoži jo z molsko maso metanala.
 > $n = \dfrac{8{,}0\,\mathrm{g}}{32\,\mathrm{g/mol}} = 0{,}25\,\mathrm{mol}$, iz enega mola metanola nastane en mol metanala: $m = 0{,}25\,\mathrm{mol} \cdot 30\,\mathrm{g/mol} = 7{,}5\,\mathrm{g}$.
 
-? S Tollensovim reagentom en mol aldehida izloči dva mola srebra. Koliko gramov srebra ($M = 107{,}9\,\mathrm{g/mol}$) izloči $2{,}2\,\mathrm{g}$ etanala ($M = 44\,\mathrm{g/mol}$)? (Na stotinko grama.)
+? S Tollensovim reagentom en mol etanala izloči dva mola srebra. Koliko gramov srebra ($M = 107{,}9\,\mathrm{g/mol}$) izloči $2{,}2\,\mathrm{g}$ etanala ($M = 44\,\mathrm{g/mol}$)? (Na stotinko grama.)
 = 10,79 g | 0,05
-~ 5,4 | Pozabil si, da en mol aldehida izloči dva mola srebra.
+~ 5,4 | Pozabil si, da en mol etanala izloči dva mola srebra.
 ~ 0,1 | To je množina srebra v molih. Pomnoži jo z molsko maso srebra.
 > $n(\mathrm{CH_3CHO}) = \dfrac{2{,}2\,\mathrm{g}}{44\,\mathrm{g/mol}} = 0{,}050\,\mathrm{mol}$, $n(\mathrm{Ag}) = 0{,}100\,\mathrm{mol}$, $m = 0{,}100\,\mathrm{mol} \cdot 107{,}9\,\mathrm{g/mol} = 10{,}79\,\mathrm{g}$.
 

@@ -267,7 +267,7 @@ Elektroni v členu sami od sebe tečejo od leve točke (anoda) proti desni (kato
 
 ? Galvanski člen s cinkovo anodo ($E^\circ = -0{,}76\,\mathrm{V}$) ima standardno napetost $1{,}56\,\mathrm{V}$. Kolikšen je standardni potencial katode v voltih?
 = 0,80 V | 0,01
-~ 2,32 | Potenciala si seštel. Iz $E^\circ_\text{člen} = E^\circ_\text{katoda} - E^\circ_\text{anoda}$ sledi $E^\circ_\text{katoda} = 1{,}56 + (-0{,}76)$.
+~ 2,32 | Anodni potencial si odštel. Iz $E^\circ_\text{člen} = E^\circ_\text{katoda} - E^\circ_\text{anoda}$ sledi $E^\circ_\text{katoda} = E^\circ_\text{člen} + E^\circ_\text{anoda} = 1{,}56 + (-0{,}76)$.
 ~ -2,32 | Napetost člena je razlika potencialov, katoda ima višji potencial od anode.
 > $E^\circ_\text{katoda} = E^\circ_\text{člen} + E^\circ_\text{anoda} = 1{,}56\,\mathrm{V} - 0{,}76\,\mathrm{V} = 0{,}80\,\mathrm{V}$. To je srebro.
 

@@ -303,6 +303,7 @@ Paulingova lestvica je zasnovana tako, da elektronegativnost povezuje z energijo
 ? Element je v 4. periodi in 2. skupini. Kolikšno je njegovo vrstno število $Z$?
 = 20
 ~ 12 | To je magnezij, ki je v 3. periodi. V 4. periodi so atomi z eno lupino več.
+~ 30 | To je cink v 12. skupini. Kalcij je v 2. skupini, torej drugi element 4. periode.
 > Prve tri periode imajo $2 + 8 + 8 = 18$ elementov. V 4. periodi sta kalij ($19$) in kalcij ($20$), zato je element kalcij, $Z = 20$.
 
 :::simboli

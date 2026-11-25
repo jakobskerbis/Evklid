@@ -232,11 +232,11 @@ Vrelišča od zgoraj navzdol: $-162\,°\mathrm{C}$, $-85\,°\mathrm{C}$, $100\,�
 ~ 0,04 | Ulomek si obrnil: deli večjo energijo z manjšo.
 > $\dfrac{926\,\mathrm{kJ}}{41\,\mathrm{kJ}} \approx 23$. Kemijske vezi so več kot dvajsetkrat močnejše, zato pri vrenju molekule vode ostanejo cele.
 
-? Koliko vodikovih vezi lahko ena molekula vode največ tvori s sosednjimi molekulami (kot v ledu)?
-= 4
-~ 2 | To so le vezi prek njenih dveh vodikovih atomov. Kisik ima še dva prosta elektronska para, vsak lahko sprejme vodik sosednje molekule.
-~ 1 | Ena molekula vode ima dva vodika in dva prosta elektronska para na kisiku.
-> Molekula vode ima $2$ vodika na kisiku (vsak tvori vez s sosedom) in $2$ prosta elektronska para na kisiku (vsak privlači vodik soseda): skupaj $4$ vodikove vezi.
+? Za izparevanje $1\,\mathrm{mol}$ vode porabimo okoli $41\,\mathrm{kJ}$. Koliko energije porabimo, da izpari $9{,}0\,\mathrm{g}$ vode ($M = 18\,\mathrm{g/mol}$)? Rezultat vpiši v kJ.
+= 20,5 kJ | 0,1
+~ 369 | Energije ne množiš z maso. $41\,\mathrm{kJ}$ velja za $1\,\mathrm{mol}$, zato najprej izračunaj množino $n = \dfrac{m}{M}$.
+~ 82 | Množino si izračunal obratno: $n = \dfrac{m}{M} = \dfrac{9{,}0}{18}\,\mathrm{mol}$, ne $\dfrac{18}{9{,}0}$.
+> $n = \dfrac{9{,}0\,\mathrm{g}}{18\,\mathrm{g/mol}} = 0{,}50\,\mathrm{mol}$, $Q = 0{,}50\,\mathrm{mol} \cdot 41\,\mathrm{kJ/mol} = 20{,}5\,\mathrm{kJ}$. Toliko energije gre le za premagovanje medmolekulskih sil, molekule vode ostanejo cele.
 
 :::simboli
 M_r | relativna molekulska masa | | – | vsota A_r vseh atomov v molekuli

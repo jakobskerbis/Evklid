@@ -260,7 +260,7 @@ $$c_1 V_1 = c_2 V_2$$
 ? Fiziološka raztopina ima masni delež natrijevega klorida $0{,}90\,\%$. Koliko gramov soli je v $250\,\text{g}$ te raztopine?
 = 2,25 g | 0,01
 ~ 225 | $0{,}90\,\%$ je $0{,}0090$, ne $0{,}90$. Odstotek pred računanjem deli s $100$.
-~ 277,8 | Maso raztopine si delil z masnim deležem. Velja $m(\text{topljenec}) = w \cdot m(\text{raztopina})$.
+~ 277,8 | Maso raztopine si delil z $0{,}90$. Velja $m(\text{topljenec}) = w \cdot m(\text{raztopina})$, pri tem je $w = 0{,}0090$.
 > $m(\mathrm{NaCl}) = w \cdot m(\text{raztopina}) = 0{,}0090 \cdot 250\,\text{g} = 2{,}25\,\text{g}$.
 
 :::simboli

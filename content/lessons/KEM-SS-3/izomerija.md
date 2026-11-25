@@ -269,7 +269,7 @@ Vsako vrsto izomerije si lahko predstavljaš kot preprosto sliko.
 
 ? Koliko različnih alkenov s formulo $\mathrm{C_4H_8}$ obstaja, če cis in trans izomer štejemo kot dve spojini? (Cikloalkanov ne štej.)
 = 4
-~ 3 | But-2-en ima cis in trans izomer, ki sta dve različni spojini.
+~ 3 | Eno spojino si izpustil: cis- in trans-but-2-en sta dve različni spojini, šteje pa tudi razvejani 2-metilpropen.
 ~ 2 | Upoštevaj še razvejano verigo (2-metilpropen) in geometrijska izomera but-2-ena.
 > But-1-en, cis-but-2-en, trans-but-2-en in 2-metilpropen: $4$ alkeni.
 

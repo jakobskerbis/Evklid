@@ -256,11 +256,12 @@ Kislost oksida je odvisna tudi od oksidacijskega števila. Isti element ima lahk
 ~ 12,00 | Žveplov trioksid je kisel oksid nekovine, zato je raztopina kisla, pH pod $7$.
 > $\mathrm{SO_3 + H_2O \rightarrow H_2SO_4}$, $[\mathrm{H_3O^+}] = 2 \cdot 0{,}0050\,\text{mol/L} = 0{,}010\,\text{mol/L}$, $\mathrm{pH} = -\log 0{,}010 = 2{,}00$.
 
-? V vodi raztopimo $0{,}15\,\text{g}$ litijevega oksida $\mathrm{Li_2O}$ ($M = 30\,\text{g/mol}$) in razredčimo do $500\,\text{mL}$. Kolikšen je pH pri $25\,^\circ\mathrm{C}$?
-= 12,30 | 0,01
-~ 12,00 | Prostornina je $0{,}500\,\text{L}$, ne $1\,\text{L}$: $[\mathrm{OH^-}] = \dfrac{0{,}010\,\text{mol}}{0{,}500\,\text{L}}$.
-~ 1,70 | To je pOH. pH je $14 - \mathrm{pOH}$.
-> $n(\mathrm{Li_2O}) = 0{,}0050\,\text{mol}$, iz $\mathrm{Li_2O + H_2O \rightarrow 2\,LiOH}$ nastane $0{,}010\,\text{mol}$ $\mathrm{LiOH}$. $[\mathrm{OH^-}] = 0{,}020\,\text{mol/L}$, $\mathrm{pOH} = 1{,}70$, $\mathrm{pH} = 12{,}30$.
+? V vodi raztopimo $0{,}30\,\text{g}$ litijevega oksida $\mathrm{Li_2O}$ ($M = 30\,\text{g/mol}$) in razredčimo do $500\,\text{mL}$. Kolikšen je pH pri $25\,^\circ\mathrm{C}$?
+= 12,60 | 0,01
+~ 12,30 | Ena od dveh napak: iz enega $\mathrm{Li_2O}$ nastaneta dva $\mathrm{LiOH}$, prostornina pa je $0{,}500\,\text{L}$, ne $1\,\text{L}$.
+~ 12,00 | Upoštevaj oboje: iz enega $\mathrm{Li_2O}$ nastaneta dva $\mathrm{LiOH}$, prostornina je $0{,}500\,\text{L}$.
+~ 1,40 | To je pOH. pH je $14 - \mathrm{pOH}$.
+> $n(\mathrm{Li_2O}) = 0{,}010\,\text{mol}$, iz $\mathrm{Li_2O + H_2O \rightarrow 2\,LiOH}$ nastane $0{,}020\,\text{mol}$ $\mathrm{LiOH}$. $[\mathrm{OH^-}] = \dfrac{0{,}020\,\text{mol}}{0{,}500\,\text{L}} = 0{,}040\,\text{mol/L}$, $\mathrm{pOH} = 1{,}40$, $\mathrm{pH} = 12{,}60$.
 
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol

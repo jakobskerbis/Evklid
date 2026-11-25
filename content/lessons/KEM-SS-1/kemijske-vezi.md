@@ -258,7 +258,7 @@ Postopek za katerikoli par atomov, na primeru kalija ($\mathrm{EN} = 0{,}8$), br
 
 ? Koliko skupnih (veznih) elektronskih parov je v molekuli $\mathrm{CO_2}$ ($\mathrm{O{=}C{=}O}$)?
 = 4
-~ 2 | Vezi sta dve, a vsaka je dvojna: vsaka dvojna vez sta dva skupna para.
+~ 2 | Vezi sta dve, a vsaka je dvojna: vsako dvojno vez tvorita dva skupna para.
 ~ 8 | To je število veznih elektronov, ne parov. En par sta dva elektrona.
 > Ogljik ima $4$ valenčne elektrone in mu do okteta manjkajo $4$, zato tvori $4$ vezi: dve dvojni vezi s kisikom, skupaj $4$ skupne pare ($8$ elektronov).
 
