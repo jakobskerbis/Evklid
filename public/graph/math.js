@@ -305,7 +305,21 @@ export function splitTop(s, seps = ";") {
 }
 
 // »∫(f, a, b)« (po argSeparators) → »∫_(a)^(b) (f) dx« (zapis, ki ga razume razčlenjevalnik)
-function rewriteIntegrals(s) {
+// AUDIT-070: spremenljivka integrala v ∫(f; a; b): x, sicer edina enočrkovna spremenljivka v f (∫(sin(t); 0; x) je po t)
+// (∫(x·t; 0; x): x je v meji, zato je spremenljivka t)
+function intVar(f, names, lims = "") {
+  const known = (c) => names && (names.has ? names.has(c) : c in names);
+  const letters = (u) => new Set((u.match(/(?<![A-Za-zα-ωΑ-Ω_\d])[A-Za-zα-ωΑ-Ω](?![A-Za-zα-ωΑ-Ω_\d(])/g) || []).filter((c) => !"eiπ".includes(c) && !known(c)));
+  const ids = letters(f);
+  const inLims = letters(lims);
+  const free = [...ids].filter((c) => !inLims.has(c));
+  if (ids.has("x") && !inLims.has("x")) return "x";
+  if (free.length === 1) return free[0];
+  // k(t) = ∫(sin(t); 0; t): edina črka je tudi v meji – po njej (kot ∫_0^x f(x) dx)
+  if (ids.size === 1) return [...ids][0];
+  return "x";
+}
+function rewriteIntegrals(s, names = null) {
   for (let guard = 0; guard < 20; guard++) {
     const i = s.indexOf("∫(");
     if (i < 0) break;
@@ -317,7 +331,7 @@ function rewriteIntegrals(s) {
     }
     const args = splitTop(s.slice(i + 2, j), ",");
     if (args.length !== 3) break;
-    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) dx)${s.slice(j + 1)}`;
+    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) d${intVar(args[0], names, `${args[1]} ${args[2]}`)})${s.slice(j + 1)}`;
   }
   return s;
 }
@@ -348,7 +362,7 @@ export function calcText(s, { comma = true, names = null, close = false } = {}) 
     }
     out += ")".repeat(open);
   }
-  return rewriteIntegrals(out);
+  return rewriteIntegrals(out, names);
 }
 
 /**
@@ -2588,9 +2602,22 @@ export function diff(node, v, ctx = {}) {
       return { k: "pw", cases: n.cases.map(([c, x]) => [c, d(x)]), other: n.other ? d(n.other) : null };
     case "der":
       return d(simplify(diff(n.a, n.v, ctx)));
-    case "int":
-      if (!n.lo && n.v === v) return n.a; // osnovni izrek analize
-      throw new MathError("noDiff", { f: "∫" });
+    case "int": {
+      if (!n.lo) {
+        if (n.v === v) return n.a; // osnovni izrek analize
+        throw new MathError("noDiff", { f: "∫" });
+      }
+      // AUDIT-070: Leibnizovo pravilo d/dv ∫_a(v)^b(v) f(t, v) dt = f(b, v)·b′ − f(a, v)·a′ + ∫_a^b ∂f/∂v dt
+      // (d/dx ∫_0^x sin t dt = sin x; meje g(x) po verižnem pravilu)
+      const t = n.v;
+      const at = (lim) => substitute(n.a, { [t]: lim });
+      let out = null;
+      const plus = (x) => (out = out ? add(out, x) : x);
+      if (depends(n.hi, v)) plus(isNum(simplify(d(n.hi)), 1) ? at(n.hi) : mulN(at(n.hi), d(n.hi)));
+      if (depends(n.lo, v)) plus(neg(isNum(simplify(d(n.lo)), 1) ? at(n.lo) : mulN(at(n.lo), d(n.lo))));
+      if (t !== v && depends(n.a, v)) plus({ k: "int", a: d(n.a), v: t, lo: n.lo, hi: n.hi });
+      return out || N(0);
+    }
     default:
       throw new MathError("noDiff", { f: n.k });
   }
