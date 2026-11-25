@@ -4742,5 +4742,20 @@
   "set.grpHelp": "Hilfe",
   "set.grpHelpSub": "Einführung und App-Anleitung",
   "path.noCurriculum": "Der Lehrplan deines Landes{country} ist noch nicht verfügbar, deshalb lernst du nach dem slowenischen Lehrplan, geordnet nach Schuljahren. Die Klassen sind die deines Schulsystems; der Tutor erklärt dir alles in deiner Sprache.",
-  "path.noExam": "Die Vorbereitung auf die Abschlussprüfung ({exam}) gibt es noch nicht."
+  "path.noExam": "Die Vorbereitung auf die Abschlussprüfung ({exam}) gibt es noch nicht.",
+  "oz.kaj": "Was bedeutet das?",
+  "oz.osnutek": "Entwurf",
+  "oz.osnutekTip": "Diese Lektion hat noch nicht alle Prüfungen durchlaufen, oder das Programm hat darin einen Fehler in der Schreibweise gefunden.",
+  "oz.osnutekTipPola": "Dieser Prüfungsbogen hat noch nicht alle Prüfungen durchlaufen, oder das Programm hat darin einen Fehler gefunden.",
+  "oz.pregledalAi": "Von KI geprüft",
+  "oz.pregledalAiTip": "Der Inhalt wurde von KI-Modellen geprüft. Er enthält keine Rechnungen, die das Programm selbst nachrechnen könnte.",
+  "oz.strojno": "Maschinell geprüft",
+  "oz.strojnoTip": "Das Programm hat die Rechnungen und Umformungen selbst nachgerechnet ({n} Schritte geprüft) und keinen Fehler gefunden. Der Inhalt wurde von KI-Modellen geprüft. Das Programm prüft nur, was es nachrechnen kann.",
+  "oz.strokovno": "Fachlich geprüft",
+  "oz.strokovnoTip": "Eine Lehrkraft hat den Inhalt am {datum} geprüft.",
+  "oz.formalno": "Formal bewiesen: {n}",
+  "oz.formalnoTip": "Das Beweisprogramm Lean hat Aussagen aus dieser Lektion bewiesen ({n} bewiesen). Die übrigen Aussagen sind nicht formal bewiesen.",
+  "oz.niStrokovno": "Noch keine Lehrkraft hat diese Lektion geprüft. Wenn dir ein Fehler auffällt, tippe auf „Fehler melden“.",
+  "oz.niStrokovnoPola": "Noch keine Lehrkraft hat diesen Prüfungsbogen geprüft.",
+  "oz.niStrokovnoCip": "Ohne Prüfung durch eine Lehrkraft"
 }

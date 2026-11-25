@@ -359,6 +359,25 @@ export function loadLesson(topicId) {
   return null;
 }
 
+// Tema, katere datoteko lekcije uporabi loadLesson (regijska tema → osnovna, fakultetna → prva z lekcijo), in pot do
+// nje; null, če lekcije ni. Za oznake vsebine (server/oznake-vsebine.js), ki berejo izvirno besedilo datoteke.
+export function lessonSource(topicId) {
+  const t = getTopic(topicId);
+  if (t?.base) {
+    for (const id of t.base) {
+      const s = lessonSource(id);
+      if (s) return s;
+    }
+    return null;
+  }
+  const ids = [topicId, ...(t ? sameTopics(topicId).filter((id) => id !== topicId) : [])];
+  for (const id of ids) {
+    const file = lessonFile(id);
+    if (file && fs.existsSync(file)) return { id, file };
+  }
+  return null;
+}
+
 function readLesson(file) {
   if (!file) return null;
   // Brez izjeme za manjkajočo lekcijo: iskanje preveri vse teme (~200 jih lekcije še nima), izjema s skladom

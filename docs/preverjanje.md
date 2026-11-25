@@ -68,3 +68,19 @@ PV-03 doda v odgovor workerja način preverjanja (`symbolic` ali `sampled`), dog
 
 Vsak nov del aplikacije, ki prikaže matematično trditev, jo odda v zapisu trditve in prikaže status iz
 `statusi.js`; svojega pomena besede »preverjeno« ne uvaja. Pregledovalec (`docs/pregled.md`, prehod 2) to preveri.
+
+## Oznake vsebine (N-03, `server/oznake-vsebine.js`)
+
+Lekcije učbenika in naše pole imajo oznako izvora in pregleda celote, ločeno od statusa posamezne trditve:
+
+| Oznaka | Dokaz v podatkih |
+|---|---|
+| Osnutek | pregledi niso končani ali program v besedilu najde napako |
+| Pregledal AI | pregledi AI končani, program nima česa preračunati |
+| Strojno preverjeno | pregledi AI končani in program ob prikazu preračuna vsaj en račun ali identiteto brez napake (`server/lesson-check.js`, pri polah `validatePaper`) |
+| Strokovno pregledano | `stanje: pregledano`, `pregledal:` ime človeka, `pregledano:` datum, ki ni v prihodnosti |
+| Formalno dokazano: N | dokaz Lean z glavo `vir:` in `sha256:`, ki se ujema s trenutnim besedilom; vedno s številom N dokazanih trditev |
+
+»Strojno preverjeno« lekcije ni status `izracunano` njenih trditev: pomeni le, da program ni našel napake v računih,
+ki jih zna preračunati. Ko PV-08 lekcije pretvori v trditve s statusi, oznaka »Strojno preverjeno« dodatno zahteva, da
+nobena trditev nima statusa `napaka`. Oznako izriše samo `public/oznake-vsebine.js`; neznane oznake se ne izrišejo.
