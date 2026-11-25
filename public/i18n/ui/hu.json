@@ -3655,6 +3655,9 @@
   "a3.errorTech": "Technikai részlet: {koda}",
   "a3.updated": "Az Evklidnek új verziója van. Próbáld újra a betöltéshez.",
   "a3.retry": "Újra",
+  "a3.contextLost": "Az eszköz leállította a 3D-nézetet, hogy grafikus memóriát szabadítson fel. Várj egy kicsit, vagy töltsd be újra.",
+  "a3.reload": "Újratöltés",
+  "a3.slow": "A 3D-világ a szokásosnál lassabban töltődik be. Várhatsz, vagy bezárhatod.",
   "a3.noConnection": "Megszakadt a kapcsolat. Próbáld újra néhány másodperc múlva.",
   "a3.left": "bal",
   "a3.right": "jobb",
@@ -4658,5 +4661,17 @@
   "scan.camDenied": "A kamera használata le van tiltva. Engedélyezd a böngészőben (ikon a webcím mellett), és próbáld újra, vagy válassz egy képet.",
   "scan.camBusy": "A kamerát már egy másik alkalmazás használja. Zárd be (pl. a videohívást), és próbáld újra.",
   "scan.camNone": "Ezen az eszközön nincs kamera. Válassz képet a feladatról a „{btn}” gombbal, vagy írd be.",
-  "scan.frameKeys": "A nyilak mozgatják a keretet, a Shift + nyilak a méretét változtatják."
+  "scan.frameKeys": "A nyilak mozgatják a keretet, a Shift + nyilak a méretét változtatják.",
+  "set.grpLearn": "Tanulás",
+  "set.grpLearnSub": "Tantárgy, cél, megoldási mód, oktató, iskola",
+  "set.grpTutor": "Oktató és adatforgalom",
+  "set.grpSchool": "Iskola, évfolyam és név",
+  "set.grpLook": "Megjelenés",
+  "set.grpLookSub": "Stílus, színek, teljes képernyő, mozgatható ablakok",
+  "set.grpInput": "Bevitel és nyelv",
+  "set.grpInputSub": "Evklid-billentyűzet és az alkalmazás nyelve",
+  "set.grpProfiles": "Fiók és profilok",
+  "set.grpProfilesSub": "Fiók és tanulói profilok",
+  "set.grpHelp": "Súgó",
+  "set.grpHelpSub": "Bemutató és útmutató az alkalmazáshoz"
 }

@@ -144,6 +144,7 @@ test("ključi prejšnje oblike: zaklenjen profil (brez created_at) obdrži odgov
 const SAMPLE = [
   `${S}.offline.pack.7`, `${S}.offline.queue.7`, `${S}.offline.students`, `${S}.offline.owner`, `${S}.scan.7`, `${S}.work.12`,
   `${S}.graph.7`, `${S}.sci.7`, `${S}.goalSeen.7`, `${S}.scheduleReminders`, `${S}.ours.7.x`, `${S}.levelup.7.8`,
+  `${S}.lab.meritve.7.lab-ohm`, `${S}.lab.meritve.0.lab-hooke`, `${S}.lab.meritveX`,
   `${S}.zadnji-zaslon`, `${S}.zadnji-posnetek`, `${S}.zadnji-zaslonX`, "teacherClasses", "studentId", `${S}_invite_name`, `${S}_koda`,
   `${S}_ref`, `${S}.vabilo`, `${S}.lang`, `${S}.theme`, `${S}.units`, `${S}.config`, "lang", "theme", `${S}.racun`,
 ];

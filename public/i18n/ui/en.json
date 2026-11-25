@@ -3658,6 +3658,9 @@
   "a3.updated": "Evklid has a new version. Try again to load it.",
   "a3.noConnection": "The connection was interrupted. Try again in a few seconds.",
   "a3.retry": "Try again",
+  "a3.contextLost": "Your device paused the 3D view to free graphics memory. Wait a moment or reload it.",
+  "a3.reload": "Reload",
+  "a3.slow": "The 3D world is taking longer than usual to load. You can wait or close it.",
   "a3.left": "left",
   "a3.right": "right",
   "a3.breadcrumb": "Groups",
@@ -4660,5 +4663,17 @@
   "scan.camDenied": "Camera access is blocked. Allow it in your browser (icon next to the page address) and try again, or choose a picture.",
   "scan.camBusy": "Another app is already using the camera. Close it (e.g. a video call) and try again.",
   "scan.camNone": "This device has no camera. Choose a picture of the problem with “{btn}” or type it in.",
-  "scan.frameKeys": "Arrow keys move the frame; Shift + arrow keys change its size."
+  "scan.frameKeys": "Arrow keys move the frame; Shift + arrow keys change its size.",
+  "set.grpLearn": "Learning",
+  "set.grpLearnSub": "Subject, goal, solving mode, tutor, school",
+  "set.grpTutor": "Tutor and data use",
+  "set.grpSchool": "School, year and name",
+  "set.grpLook": "Appearance",
+  "set.grpLookSub": "Style, colours, full screen, movable windows",
+  "set.grpInput": "Input and language",
+  "set.grpInputSub": "Evklid keyboard and app language",
+  "set.grpProfiles": "Account and profiles",
+  "set.grpProfilesSub": "Account and pupil profiles",
+  "set.grpHelp": "Help",
+  "set.grpHelpSub": "Intro tour and app guide"
 }
