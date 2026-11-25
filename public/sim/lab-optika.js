@@ -27,7 +27,10 @@ const RAZREDI = ["a", "b", "c"];
 export function labLom(el) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
   const B = new LomBench({ seed: zap.seed });
-  el._labBench = B; // maturitetni poskus (lab-matura.js): lomni količnik akrila iz modela (SNOVI.pmma.n)
+  // Maturitetni poskus (lab-matura.js, matura/lab-lom.js): prava vrednost je lomni količnik neznane snovi X iz modela (B.nX).
+  // Njen n ne sme biti nikjer na zaslonu (napis na disku, viri, opombe, posnetek za inštruktorja); pokaže ga le račun iz
+  // učenčevih meritev (»Pokaži rešitev«).
+  el._labBench = B;
   const W = 400, H = 400, cx = 200, cy = 200, k = 160 / DISK.Rs; // 1 mm = 1,33 px
   const svg = svgBox(W, H, "lab-bench lab-opt lab-opt-disk");
   const log = eventLog();
@@ -46,7 +49,7 @@ export function labLom(el) {
   const serije = new Map(); // ključ snov:smer → { pts, ... }
   let odPloskve = false, cur = null, asked = false, rekliTIR = false;
 
-  const snovSel = select({ label: "snov na disku", options: Object.entries(SNOVI).map(([k2, v]) => [k2, v.name]), value: B.snov, onChange: (v) => ((B.snov = v), (smerRow.hidden = !SNOVI[v].n), change()) });
+  const snovSel = select({ label: "snov na disku", options: Object.entries(SNOVI).map(([k2, v]) => [k2, v.name]), value: B.snov, onChange: (v) => ((B.snov = v), (smerRow.hidden = !B.n), change()) });
   const smerSeg = seg("smer svetlobe", [["zrak", "iz zraka v snov"], ["snov", "iz snovi v zrak"]], B.smer, (v) => ((B.smer = v), change()));
   const smerRow = row("smer svetlobe", smerSeg);
   const laserT = toggle("laser vklopljen", false, (v) => {
@@ -92,23 +95,24 @@ export function labLom(el) {
     const lab = odPloskve ? "od ploskve" : "od pravokotnice";
     aL.set(B.laser ? fixed(cur.alfa, 0) : "", "°", B.laser ? lab : "laser je izklopljen");
     rL.set(cur ? fixed(cur.odboj, 1) : "", "°", cur ? `${Math.round(cur.Iodboj * 100)}${NB}% svetlobe` : "");
-    const zrc = !SNOVI[B.snov].n;
+    const zrc = !B.n;
     bL.set(cur && cur.lom != null ? fixed(cur.lom, 1) : "", "°", !cur ? "" : zrc ? "zrcalo ne lomi" : cur.popolni ? "popolni odboj" : `${Math.round(cur.Ilom * 100)}${NB}% svetlobe`);
   }
   function record() {
     if (!B.laser) return log.push("Najprej vklopi laser.", "warn");
-    const S = SNOVI[B.snov], smer = S.n ? B.smer : "zrak";
+    const S = SNOVI[B.snov], trdna = !!B.n, smer = trdna ? B.smer : "zrak";
     const key = `${B.snov}:${smer}`;
-    const name = S.n ? (smer === "zrak" ? `zrak → ${S.kratko}` : `${S.kratko} → zrak`) : "zrcalo";
+    const name = trdna ? (smer === "zrak" ? `zrak → ${S.kratko}` : `${S.kratko} → zrak`) : "zrcalo";
     const sa = Math.sin(cur.alfa * RAD), sb = cur.lom != null ? Math.sin(cur.lom * RAD) : null;
-    table.add({ snov: name, a: kot(cur.alfa, 0), r: kot(cur.odboj), b: !S.n ? "–" : cur.popolni ? "popolni odboj" : kot(cur.lom), sa: fixed(sa, 3), sb: sb == null ? "–" : fixed(sb, 3) });
+    table.add({ snov: name, a: kot(cur.alfa, 0), r: kot(cur.odboj), b: !trdna ? "–" : cur.popolni ? "popolni odboj" : kot(cur.lom), sa: fixed(sa, 3), sb: sb == null ? "–" : fixed(sb, 3) });
     if (odPloskve) log.push("Kote si meril od ploskve. Vpadni, odbojni in lomni kot merimo od <b>vpadne pravokotnice</b>, sicer Snellov zakon ne velja.", "bad");
     if (B.zamik > 0) log.push(`Laser je ${fixed(B.zamik, 1)}${NB}mm mimo središča: žarek ne zadene sredine ravne ploskve, zato se lomi še na okrogli ploskvi in odčitek je napačen. Zamik nastavi na 0.`, "bad");
-    if (S.n && sb != null) {
-      if (!serije.has(key)) serije.set(key, { name, smer, n: S.n, pts: [] });
+    // Serija ne hrani lomnega količnika snovi (shramba v brskalniku): n izračuna le račun iz izmerjenih točk.
+    if (trdna && sb != null) {
+      if (!serije.has(key)) serije.set(key, { name, smer, pts: [] });
       serije.get(key).pts.push([sa, sb]);
     }
-    if (!S.n && Math.abs(cur.odboj - cur.alfa) <= 0.5) log.push("Odbojni kot je enak vpadnemu (v okviru napake odčitka ±0,5°).", "ok");
+    if (!trdna && Math.abs(cur.odboj - cur.alfa) <= 0.5) log.push("Odbojni kot je enak vpadnemu (v okviru napake odčitka ±0,5°).", "ok");
     sync();
     vprasaj();
   }
@@ -152,10 +156,11 @@ export function labLom(el) {
   // ---------------------------------------------------------------- risba (1 mm = 1,33 px)
   const P = ([x, y]) => [cx + x * k, cy - y * k];
   // Napis snovi z lomnim količnikom ostane isti element čez risanja, da ga maturitetni poskus lahko skrije (.lab-mat-skrito).
+  // Neznana snov X ima napis brez lomnega količnika.
   const nLbl = label(svg, W - 6, H - 6, "", "tick small lab-opt-n", "end");
   function draw() {
     svg.replaceChildren();
-    const S = SNOVI[B.snov], Rs = DISK.Rs * k;
+    const S = SNOVI[B.snov], nS = B.n, Rs = DISK.Rs * k;
     s("circle", { cx, cy, r: Rs + 14, class: "lab-opt-disc" }, svg);
     // skala: razdelki po 1°, daljši po 5° in 10°, številke 0–90 v vsaki četrtini (od pravokotnice)
     for (let d = 0; d < 360; d++) {
@@ -170,8 +175,8 @@ export function labLom(el) {
     // vpadna pravokotnica in ploskev
     s("line", { x1: cx, y1: cy - Rs, x2: cx, y2: cy + Rs, class: "lab-opt-normal" }, svg);
     s("line", { x1: cx - Rs, y1: cy, x2: cx + Rs, y2: cy, class: "lab-opt-axis" }, svg);
-    const R = (S.n ? DISK.R : DISK.Rz) * k;
-    if (S.n) s("path", { d: `M${cx - R},${cy} A${R},${R} 0 0 0 ${cx + R},${cy} Z`, class: `lab-opt-block ${B.snov}` }, svg);
+    const R = (nS ? DISK.R : DISK.Rz) * k;
+    if (nS) s("path", { d: `M${cx - R},${cy} A${R},${R} 0 0 0 ${cx + R},${cy} Z`, class: `lab-opt-block ${B.snov}` }, svg);
     else {
       s("rect", { x: cx - R, y: cy, width: 2 * R, height: 5, class: "lab-opt-mirror-back" }, svg);
       s("line", { x1: cx - R, y1: cy, x2: cx + R, y2: cy, class: "lab-opt-mirror" }, svg);
@@ -193,12 +198,12 @@ export function labLom(el) {
       }
     }
     s("text", { x: 0, y: 0, class: "tick small lab-opt-lbl", "text-anchor": "middle", transform: `translate(${cx - 5},${cy - Rs / 2 - 10}) rotate(-90)` }, svg, "vpadna pravokotnica");
-    nLbl.textContent = S.n ? `${S.kratko}, n = ${fixed(S.n, 3)}` : "ravno zrcalo";
+    nLbl.textContent = S.neznana ? S.kratko : nS ? `${S.kratko}, n = ${fixed(nS, 3)}` : "ravno zrcalo";
     svg.append(nLbl);
     const yb = H - 10;
     s("path", { d: `M8,${yb - 4} V${yb} H${8 + 20 * k} V${yb - 4}`, class: "lab-scale" }, svg);
     label(svg, 8 + 10 * k, yb - 7, "2 cm", "tick small");
-    const zr = !S.n, smer = zr ? "zrak" : B.smer;
+    const zr = !nS, smer = zr ? "zrak" : B.smer;
     svg.setAttribute("aria-label", `Optični disk s skalo po 1°. ${S.name}${zr ? "" : smer === "zrak" ? ", svetloba iz zraka v snov" : ", svetloba iz snovi v zrak"}. ${B.laser ? `Vpadni kot ${B.alfa}°${cur?.popolni ? ", popolni odboj" : ""}.` : "Laser je izklopljen."}`);
   }
   change();

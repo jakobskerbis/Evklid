@@ -291,7 +291,8 @@ yellow-brown vs temperature; conclusion after 15 min. Tests: 37 °C in 5 ± 1 mi
 ### `lab-lom` – reflection and refraction on the optical disc (FIZ-OS-8 odboj svetlobe, lom svetlobe; FIZ-SS-3 geometrijska optika)
 Optical disc with a 1° scale (radius 120 mm, ocena), red 650 nm class 2 laser (safety note on switch-on: never into the eye), plane mirror (R 90 %, ocena) or a
 semicircular block (radius 50 mm, ocena) of acrylic PMMA n = 1,4881 (Sultanova 2009), glass N-BK7 1,5145 (Schott) or water 1,3314 (Daimon & Masumura 2007), air 1,00028
-(Ciddor 1996; all at 650 nm, refractiveindex.info). Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
+(Ciddor 1996; all at 650 nm, refractiveindex.info), or the unknown material X (matura task »Lomni količnik neznane snovi«): its n is drawn from the bench seed, uniformly
+1,42–1,62 and rounded to 4 decimals (`nNeznane`, `LomBench.nX`, a separate rng so the other draws of a seed stay the same); the disc label shows only »snov X«, no note or source names its n. Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
 Every ray is traced in 2D and split by the Fresnel equations (unpolarised), so the weak reflected ray (3,85 % at normal incidence for PMMA) is drawn faint and its share is shown.
 Reading: the disc is set to a mark within ±0,25° (ocena), angles are read to 0,5° with an eye error ≤ 0,24° (total ±0,5°). Table α, odbojni, β, sin α, sin β; graph sin β vs sin α
 with a fit through the origin, slope 1/n (air → block) or n (block → air); total internal reflection above the critical angle (PMMA 42,2°). Mistakes: angles measured from the surface,
