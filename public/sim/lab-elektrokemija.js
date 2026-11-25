@@ -583,7 +583,7 @@ export function labGalvanski(el) {
     { key: "U", label: "<i>U</i> [V]" },
     { key: "E", label: "Δ<i>E</i>° [V]" },
   ], { empty: "Še ni meritev. Sestavi člen, poveži ga s solnim mostom in zapiši napetost." });
-  const graph = dataGraph({ x: [-1, 3.5], y: [-1, 3.5], xStep: 0.5, yStep: 0.5, xLabel: "ΔE° [V]", yLabel: "U [V]", title: "Izmerjena napetost v odvisnosti od razlike standardnih elektrodnih potencialov (rdeči minus črni vodnik)" });
+  const graph = dataGraph({ x: [-1, 3.5], y: [-1, 3.5], xStep: 0.5, yStep: 0.5, xLabel: "ΔE° [V]", yLabel: "U [V]", title: "Izmerjena napetost v odvisnosti od razlike standardnih elektrodnih potencialov (rdeči minus črni vodnik)", formula: tex(String.raw`U \approx \Delta E^\circ = E^\circ_\text{rdeči} - E^\circ_\text{črni}`) + `; za člen ${tex(String.raw`E^\circ_\text{člen} = E^\circ_\text{katoda} - E^\circ_\text{anoda}`)} (rdeči na katodi)` });
   const graphK = dataGraph({ x: [-3, 3], y: [-120, 120], xStep: 1, yStep: 20, xLabel: "lg(c rdeči / c črni)", yLabel: "U [mV]", title: "Koncentracijski členi: napetost v odvisnosti od desetiškega logaritma razmerja koncentracij" });
   const qBox = h("div");
   const pts = [], ptsK = [];

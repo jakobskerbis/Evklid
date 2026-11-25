@@ -307,8 +307,8 @@ export function labElektromagnet(el, opts = {}) {
     { key: "B", label: "<i>B</i> [mT]" },
     { key: "n", label: "sponke" },
   ], { empty: "Še ni meritev. Sestavi krog, nastavi teslameter na nič, vklopi napajalnik in zapisuj tok in gostoto polja." });
-  const gBI = dataGraph({ x: [0, 3], y: [0, 50], xStep: 0.5, yStep: 10, xLabel: "I [A]", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od toka" });
-  const gBN = dataGraph({ x: [0, 1000], y: [0, 50], xStep: 200, yStep: 10, xLabel: "N", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od števila ovojev" });
+  const gBI = dataGraph({ x: [0, 3], y: [0, 50], xStep: 0.5, yStep: 10, xLabel: "I [A]", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od toka", formula: OS ? "" : tex(String.raw`B \propto N I`) + ` (dolga tuljava: ${tex(String.raw`B = \frac{\mu_0 N I}{l}`)}; ta je kratka, polje v sredini je manjše)` });
+  const gBN = dataGraph({ x: [0, 1000], y: [0, 50], xStep: 200, yStep: 10, xLabel: "N", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od števila ovojev", formula: OS ? "" : tex(String.raw`B \propto N I`) + ` (dolga tuljava: ${tex(String.raw`B = \frac{\mu_0 N I}{l}`)}; ta je kratka, polje v sredini je manjše)` });
   const gBz = dataGraph({ x: [-10, 15], y: [0, 50], xStep: 5, yStep: 10, xLabel: "z [cm]", yLabel: "B [mT]", title: "Gostota magnetnega polja vzdolž osi tuljave", origin: false });
   const calc = h("div", { class: "lab-mag-calc", "aria-live": "polite" });
   const qBox = h("div");
