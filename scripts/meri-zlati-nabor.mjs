@@ -285,7 +285,7 @@ async function delavec() {
       // Pri Preizkusu 3 samo vrsta napake (odlomek toka lahko navaja nalogo); podrobnosti v šifriranem izidu.
       const podrobno = String(e?.podrobno || e?.stack || "").slice(0, 500);
       izid.push({ id: p.id, skupina: p.skupina, prepis: [], ocene: [], koncna: null, napaka: `${e?.message || e}`, ...(podrobno && { podrobno }) });
-      console.log(`${p.id}: napaka ${p.skupina === "preizkus3" ? String(e?.message || e?.name || "").slice(0, 40) : `${String(e?.message || e).slice(0, 120)} ${String(e?.podrobno || "").slice(0, 200)}`}`);
+      console.log(`${p.id}: napaka ${p.skupina === "preizkus3" ? String(e?.name || "Error") : `${String(e?.message || e).slice(0, 120)} ${String(e?.podrobno || "").slice(0, 200)}`}`);
     }
     zapisi(false);
   }
