@@ -52,6 +52,13 @@ test("kviz: seja »list« iz najšibkejših tem obsega; obvladana tema ne, tuje 
     const prej = sej();
     assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/kviz`, { dolzina: 6 })).status, 200);
     assert.equal(sej(), prej);
+    // Tema kviza postane med kvizom obvladana: isti zahtevek nadaljuje isti kviz.
+    const prvaTema = JSON.parse(store.db.prepare("SELECT params FROM sessions WHERE student_id = ? ORDER BY rowid DESC LIMIT 1").get(s.id).params).skills[0];
+    store.db
+      .prepare("INSERT INTO topic_state (student_id, topic_id, level, streak, status, source, mastered_at, review_due) VALUES (?, ?, 3, 3, 'mastered', 'practice', datetime('now'), datetime('now', '+30 days'))")
+      .run(s.id, prvaTema);
+    assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/kviz`, { dolzina: 6 })).status, 200);
+    assert.equal(sej(), prej);
     // Izbrane teme: neprazen seznam nizov iz načrta te priprave; dolžina mora biti število s seznama.
     for (const teme of [["MAT-OS-8/pitagorov-izrek"], ["MAT-SS-4/doloceni-integral", "MAT-OS-8/pitagorov-izrek"], [], "MAT-SS-4/doloceni-integral", [{ toString: 1 }]])
       assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/kviz`, { dolzina: 6, teme })).status, 400, JSON.stringify(teme));
@@ -90,7 +97,13 @@ test("napredek: en posnetek na dan, stanje tem iz rešenih nalog vaje (ne testa)
     const tuj = (await req("POST", "/api/students", { name: "Ana", settings: {} })).body;
     assert.equal((await req("GET", `/api/students/${tuj.id}/priprave/${p.id}/napredek`)).status, 404);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM priprava_napredek WHERE student_id = ?").get(tuj.id).n, 0);
+    // Po dnevu testa ni novih posnetkov.
+    store.db.prepare("UPDATE priprave SET datum_testa = '2020-01-01' WHERE id = ?").run(p.id);
+    store.db.prepare("DELETE FROM priprava_napredek").run();
+    await req("GET", `/api/students/${s.id}/priprave/${p.id}/napredek`);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM priprava_napredek").get().n, 0);
     // Posnetek se izbriše s pripravo.
+    store.db.prepare("INSERT INTO priprava_napredek (priprava_id, student_id, datum, odstotek, obvladanih, preverljivih) VALUES (?, ?, '2019-12-31', 10, 0, 3)").run(p.id, s.id);
     assert.equal((await req("DELETE", `/api/students/${s.id}/priprave/${p.id}`)).status, 200);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM priprava_napredek").get().n, 0);
   } finally {
@@ -98,7 +111,7 @@ test("napredek: en posnetek na dan, stanje tem iz rešenih nalog vaje (ne testa)
   }
 });
 
-test("kviz priprave premakne stanje tem: dobro rešen → učim se (stopnja 2), slabo → učim se; vaja iz lista brez tega", () => {
+test("kviz priprave premakne stanje tem: dobro rešen → učim se (stopnja 2), zgrešena nova ostane nova; vaja iz lista brez tega", () => {
   const store = openDb(":memory:");
   try {
     const pr = new Progress(store);
@@ -119,7 +132,7 @@ test("kviz priprave premakne stanje tem: dobro rešen → učim se (stopnja 2), 
     const sum = odgovori(zadnja(), (id) => id === A);
     assert.deepEqual(sum.map((x) => [x.id, x.status]).sort(), [[A, "ok"], [B, "more"]].sort());
     assert.deepEqual([pr.state(s.id, A).status, pr.state(s.id, A).level], ["learning", 2]);
-    assert.deepEqual([pr.state(s.id, B).status, pr.state(s.id, B).level], ["learning", 1]);
+    assert.equal(pr.state(s.id, B).status, "new", "zgrešena nova tema ostane nova");
     // Vaja iz lista (brez priprave): dobro rešena nova tema ostane nova, kot doslej.
     const s2 = store.createStudent("Ana", {});
     pr.startList(s2.id, [A], 6);

@@ -739,7 +739,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     let izbrane;
     if (body.teme !== undefined) {
       // Izbrane teme: neprazen seznam nizov, vse iz načrta te priprave in z nalogami.
-      const zelene = Array.isArray(body.teme) ? body.teme.slice(0, LIST.maxSkills) : [];
+      const zelene = Array.isArray(body.teme) && body.teme.length <= LIST.maxSkills ? body.teme : [];
       const poId = new Map(zKvizom.map((t) => [t.id, t]));
       if (!zelene.length || !zelene.every((x) => typeof x === "string" && poId.has(x)))
         return res.status(400).json({ error: "Izberi teme iz načrta te priprave, ki imajo naloge.", code: "kviz_teme" });
@@ -752,14 +752,19 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     // Ena tema na nalogo osnovne teme (dve temi z isto osnovno temo nista dve veščini).
     const skills = [...new Set(izbrane.map((t) => t.kviz))].slice(0, Math.max(1, naTemo));
     if (!skills.length) return res.status(400).json({ error: "V tej pripravi ni tem z nalogami za kviz.", code: "kviz_brez_tem" });
-    // Isti nedokončani kviz danes (iste teme in dolžina) se nadaljuje; novih sej ne more biti brez meje.
-    const isti = (x) =>
-      x.params.priprava === p.id && x.plan.length === dolzina && x.created_at.slice(0, 10) === new Date(now()).toISOString().slice(0, 10) &&
-      [...(x.params.skills || [])].sort().join() === [...skills].sort().join();
+    // Isti nedokončani kviz istega (slovenskega) dne se nadaljuje: enak izbor (samodejno ali iste izbrane teme) in
+    // dolžina. Izbor, ne izračunane teme: te se med kvizom lahko spremenijo (tema postane obvladana). Novih sej ne more
+    // biti brez meje.
+    const izbor = body.teme === undefined ? "auto" : [...new Set(body.teme)].sort().join("|");
+    const danes = nowParts(new Date(now())).date;
+    const isti = (x) => x.params.priprava === p.id && x.params.izbor === izbor && x.plan.length === dolzina && danLj(x.created_at) === danes;
     const odprt = progress.openSession(s.id, "list", isti);
-    if (odprt) return res.json(progress.sessionNext(odprt.id));
+    if (odprt) {
+      uporabljena(p);
+      return res.json(progress.sessionNext(odprt.id));
+    }
     if (!kvizHitro(s.id)) return res.status(429).json({ error: "Preveč kvizov naenkrat. Poskusi čez nekaj minut.", code: "kviz_hitro" });
-    const out = progress.startList(s.id, skills, dolzina, { priprava: p.id });
+    const out = progress.startList(s.id, skills, dolzina, { priprava: p.id, izbor });
     if (!out) return res.status(400).json({ error: "V tej pripravi ni tem z nalogami za kviz.", code: "kviz_brez_tem" });
     uporabljena(p);
     res.json(out);

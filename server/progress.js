@@ -858,16 +858,20 @@ export class Progress {
       const before = st.status === "mastered" && st.mastered_at && st.mastered_at < sess.created_at;
       if (apply && rows.length && status === "more") {
         if (before) this.advanceReview(sess.student_id, id, false);
-        else if (st.status === "new") {
+        // Kviz priprave: zgrešena nova tema ostane nova (v načrtu ostane nova snov; napačen odgovor ne dvigne pripravljenosti).
+        else if (st.status === "new" && !sess.params.priprava) {
           st.status = "learning";
           this.saveState(st);
         }
       } else if (apply && rows.length && sess.params.priprava && st.status !== "mastered") {
         // Kviz priprave na test: izkazano znanje premakne stanje teme (načrt in pripravljenost), obvladanje pa ostane
-        // pravilo checkMastery. »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu): stopnja višje (nova → učim se, stopnja 2);
-        // »few« (ena pravilna): nova → učim se.
-        if (status === "ok") Object.assign(st, { status: "learning", level: st.status === "new" ? 2 : Math.min(3, (st.level || 1) + 1) });
-        else if (st.status === "new") st.status = "learning";
+        // pravilo checkMastery. »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu): stopnja višje (nova → učim se, vsaj
+        // stopnja 2; števca zaporednih odgovorov od začetka, kot ob vsaki spremembi stopnje); »few« (ena pravilna): nova →
+        // učim se.
+        if (status === "ok") {
+          const level = st.status === "new" ? Math.max(2, st.level || 1) : Math.min(3, (st.level || 1) + 1);
+          Object.assign(st, { status: "learning", ...(level !== st.level ? { level, streak: 0, wrong_streak: 0 } : {}) });
+        } else if (st.status === "new") st.status = "learning";
         this.saveState(st);
       }
       return { id, name: localTopic(getTopic(id), lang)?.name || getTopic(id)?.name || id, correct, total: rows.length, status, ok: status === "ok", review: status === "more" && !!before };
