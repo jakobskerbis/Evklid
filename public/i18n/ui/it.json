@@ -476,6 +476,8 @@
   "set.usage": "Uso dell'IA questo mese",
   "set.help": "Aiuto",
   "set.helpText": "Un breve tour mostra dove si trova cosa nell'app.",
+  "set.safety": "Sicurezza",
+  "set.safetyText": "Se nella chat scrivi che sei in difficoltà o in pericolo, Evklid ti mostra subito i numeri di aiuto. Per gli studenti sotto i 15 anni riceve un’e-mail anche il genitore che ha aperto l’account (senza il contenuto della chat).",
   "set.tourAgain": "Ripeti il tour iniziale",
   "set.newStudent": "Aggiungi profilo",
   "set.newStudentText": "Un nuovo profilo per un altro studente: ognuno ha il proprio percorso, i propri progressi e le proprie conversazioni.",

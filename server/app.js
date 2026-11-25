@@ -116,7 +116,7 @@ import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
 import { createZdravje, razlogiAlarma } from "./zdravje.js";
-import { startStiskaObvestila, mountStiske } from "./stiska-obvestilo.js";
+import { startStiskaObvestila, mountStiske, prejemnikStarsa } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 import { createVrsta } from "./vrsta-ai.js";
 
@@ -1048,7 +1048,18 @@ export function createApp(store, opts = {}) {
     };
     // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
     // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
-    const nujnoPred = async () => zZaostalim(await nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn, pozna: poznaOkna, casi: opts.varnostCasi }));
+    // Okno ob zavrnitvi (meja, izklopljen klepet) je tudi varnostno okno: oznaka in obvestilo kot v odgovoru (IN-14).
+    const oznaciZavrnitev = (n) => {
+      if (n?.vrsta) {
+        try {
+          stiskaObvestila?.nova(store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: null, subject: null, topic: null, error: 0, mode: null, flag: "distress" }), n.vrsta, student.id);
+        } catch (err) {
+          console.warn(`[evklid] oznaka stiske ni zapisana (${err?.message || err})`);
+        }
+      }
+      return n;
+    };
+    const nujnoPred = async () => oznaciZavrnitev(zZaostalim(await nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn, pozna: poznaOkna, casi: opts.varnostCasi })));
     if (dnevna) {
       const nujno = await nujnoPred();
       return res.status(429).json({ ...dnevna, nujno: nujno || undefined });
@@ -1823,9 +1834,19 @@ export function createApp(store, opts = {}) {
       }
       oddajZaostalo(); // pozno okno prejšnjega sporočila pred blažjim oknom tega (server/nujno.js)
       posljiNujno(blagoLokalno);
-      // Oznaka stiske → e-mail skrbniku (brez vsebine in imena, največ en na 10 min). Sinhrono zapiše vrsto, pošta teče
-      // v ozadju; napaka nikoli ne ustavi odgovora učencu.
-      if (meta?.flag === "distress" && eventId) stiskaObvestila?.nova(eventId, nujnoVrsta);
+      // Oznaka stiske → e-mail skrbniku (brez vsebine in imena, največ en na 10 min), pri otroku pod 15 let tudi staršu
+      // (server/stiska-obvestilo.js). Ob vsakem varnostnem oknu tega odgovora (IN-14): oznaka inštruktorja, lokalni
+      // zaznavalnik, pregled B, blažje ali pozno okno. Brez META se zapiše samostojna oznaka. Sinhrono zapiše vrsto,
+      // pošta teče v ozadju; napaka nikoli ne ustavi odgovora učencu.
+      if (meta?.flag === "distress" || nujnoVrsta) {
+        try {
+          if (eventId && meta?.flag !== "distress") store.markDistress(eventId);
+          else if (!eventId) eventId = store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, subject: null, topic: null, error: 0, mode: null, flag: "distress" });
+        } catch (err) {
+          console.warn(`[evklid] oznaka stiske ni zapisana (${err?.message || err})`);
+        }
+        stiskaObvestila?.nova(eventId, nujnoVrsta, student.id);
+      }
       finished = true;
       send("done", {
         ...AI_JSON, // podporni metapodatki: besedilo je ustvarila AI (server/ai-oznaka.js)
@@ -2432,7 +2453,9 @@ export function createApp(store, opts = {}) {
   zdravje = createZdravje(store.db, { dbFile: store.file, scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
   nastaviOpazovalcaAi(zdravje.aiIzid);
   app.locals.zdravje = zdravje;
-  stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
+  // Staršem: samo otrok pod 15 let s potrjenim e-naslovom starša (prejemnikStarsa); ime profila in nastavitve za številke.
+  const starsi = accounts ? { prejemnik: (id) => prejemnikStarsa({ ageOfStudent: accounts.ageOfStudent, ownerOf: accounts.ownerOf, getParent: (pid) => (pid ? store.db.prepare("SELECT email, email_verified_at, is_guest, birth_date FROM parents WHERE id = ?").get(pid) : null) }, id), profil: (id) => { const st = store.getStudent(id); return st ? { ime: st.name, settings: st.settings } : null; } } : null;
+  stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn, starsi });
   app.use(notFound); // neznana pot: stran v slogu aplikacije namesto »Cannot GET« (server/ni-strani.js)
   return app;
 }

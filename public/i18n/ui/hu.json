@@ -476,6 +476,8 @@
   "set.usage": "MI-használat ebben a hónapban",
   "set.help": "Súgó",
   "set.helpText": "Egy rövid bemutató megmutatja, mi hol található az alkalmazásban.",
+  "set.safety": "Biztonság",
+  "set.safetyText": "Ha a beszélgetésben azt írod, hogy bajban vagy veszélyben vagy, az Evklid azonnal megmutatja a segélyvonalak számait. A 15 évnél fiatalabb tanulóknál a fiókot megnyitó szülő is kap e-mailt (a beszélgetés tartalma nélkül).",
   "set.tourAgain": "Bemutató újra",
   "set.newStudent": "Profil hozzáadása",
   "set.newStudentText": "Új profil egy másik tanulónak: mindegyiknek saját tanulási útja, haladása és beszélgetései vannak.",

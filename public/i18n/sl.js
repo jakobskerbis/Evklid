@@ -737,6 +737,8 @@ export default {
   "set.usage": "Poraba AI ta mesec",
   "set.help": "Pomoč",
   "set.helpText": "Kratek ogled pokaže, kje je kaj v aplikaciji.",
+  "set.safety": "Varnost",
+  "set.safetyText": "Če v pogovoru napišeš, da si v stiski ali v nevarnosti, ti Evklid takoj pokaže številke za pomoč. Pri učencih, mlajših od 15 let, dobi e-mail tudi starš, ki je odprl račun (brez vsebine pogovora).",
   "set.tourAgain": "Ponovi uvodni ogled",
   "set.newStudent": "Dodaj profil",
   "set.newStudentText": "Nov profil za drugega učenca: vsak ima svojo učno pot, napredek in pogovore.",

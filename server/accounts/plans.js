@@ -16,7 +16,9 @@ export const MAX_CHILDREN = 4;
 // podatkov razreda, šifrirana kopija v EU (R2), študenti.
 // 2026-11-21 (j 21. 11., kartica »Da, v aplikaciji«, brez e-pošte): urnik in zgoščeni IP (#908), tabela piškotkov (#916),
 // ogledi pogovora v dnevniku dostopov (#924).
-export const PRIVACY_VERSION = "2026-11-21";
+// 2026-11-25 (j 25. 11., obvestilo v aplikaciji kot 21. 11.): alineja »Varnost ob stiski« (e-mail skrbniku ob vsakem
+// varnostnem oknu, staršu otroka pod 15 let brez nasilja in blažjega okna; IN-14).
+export const PRIVACY_VERSION = "2026-11-25";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
