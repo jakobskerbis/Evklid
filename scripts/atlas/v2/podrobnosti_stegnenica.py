@@ -67,7 +67,7 @@ print("[v2] glava: meja vira (st)", np.degrees(a_m).round(0).tolist(), "dodano",
 # fovea capitis: plitva skledica malo pod in za medialnim polom glavice (vir: izvrtan valj)
 u_f = med - np.tan(np.radians(9)) * osd + np.tan(np.radians(13)) * zad; u_f /= np.linalg.norm(u_f)
 rho = R * np.arccos(np.clip(u_h1 @ u_f, -1, 1))  # razdalja po glavici od središča fovee
-FOV_R, FOV_D, FOV_GOLO = 7.0e-3, 1.0e-3, 0.5  # ena plitva skledica Ø 14 mm, 1 mm, širok poševen rob; gola kost Ø 7 mm
+FOV_R, FOV_D, FOV_GOLO = 7.0e-3, 2.2e-3, 0.65  # skledica Ø 14 mm, globina 2,2 mm (v4s4: 1 mm obeh ocenjevalcev ni videl), gola kost Ø 9 mm
 na_glavici = (d_h1 < 1.25 * R) & (u_h1 @ a_gl > 0)
 hr_b[na_glavici & (rho < FOV_GOLO * FOV_R)] = 0.0
 # facies patellaris naj sega višje spredaj (vir: le ~12 mm nad kondili, v resnici ~35 mm): polje hrustanca na sprednji
