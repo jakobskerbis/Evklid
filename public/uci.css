@@ -120,3 +120,12 @@ html:has(body.uci-3d-odprto), body.uci-3d-odprto { overflow: hidden; overscroll-
 .uci-3d-napaka p { margin: 0 0 10px; }
 .uci-3d-napaka .k3-napaka-koda { font-size: 0.85rem; }
 .uci-3d-napaka .k3-napaka-povezava { display: inline-block; margin: 0 12px 10px 0; color: var(--accent); font-weight: 600; }
+/* 3D čez cel zaslon se ne oglasi (uci-se.js open3d, public/3d/vgrajeno.js cuvaj3d): sporočilo in »Zapri« spodaj. */
+.uci-3d-zastoj {
+  position: absolute; z-index: 1; left: 12px; right: 12px; bottom: calc(12px + var(--varno-sp, env(safe-area-inset-bottom, 0px)));
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px 14px; max-width: 560px; margin: 0 auto;
+  padding: 12px 14px; border-radius: var(--radius); background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+.uci-3d-zastoj p { flex: 1 1 220px; margin: 0; line-height: 1.4; }
+.uci-3d-zastoj button { min-height: 44px; }

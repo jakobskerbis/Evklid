@@ -316,3 +316,79 @@ test("3D return address from the frame is checked: only a model id and short sim
   assert.equal(u.vrnitev3d("atlas?izberi=Femur.r", "  Stegnenica ").oznaka, "Stegnenica");
   for (const bad of ["../x", "Celica", "a b", "", 5, null, "x".repeat(400)]) assert.equal(u.vrnitev3d(bad, "x"), null, String(bad));
 });
+
+// 3D čez cel zaslon: okvir, ki se ne oglasi, ne sme ujeti učenca (iPad: črn zaslon brez gumba). Po 8 s gumb »Zapri«.
+test("3D v okvirju: brez »pripravljen« v 8 s se pokaže »Zapri«, ki zapre okvir; »pripravljen« ga skrije", async (t) => {
+  const { cuvaj3d } = await import("../public/3d/vgrajeno.js");
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const prejDoc = globalThis.document;
+  const el = (tag) => {
+    const x = {
+      tag,
+      className: "",
+      textContent: "",
+      otroci: [],
+      isConnected: true,
+      poslusalci: {},
+      setAttribute() {},
+      append(...o) {
+        for (const c of o) (c.stars = x), x.otroci.push(c);
+      },
+      remove() {
+        if (x.stars) x.stars.otroci = x.stars.otroci.filter((c) => c !== x);
+      },
+      addEventListener(d, f) {
+        x.poslusalci[d] = f;
+      },
+    };
+    return x;
+  };
+  globalThis.document = { createElement: el };
+  try {
+    const tr = (k) => k;
+    // okvir, ki nikoli ne odgovori
+    const okvir = el("div");
+    let zaprto = 0;
+    const c = cuvaj3d(okvir, { zapri: () => zaprto++, t: tr });
+    t.mock.timers.tick(7999);
+    assert.equal(okvir.otroci.length, 0, "pred 8 s ni gumba");
+    t.mock.timers.tick(1);
+    const plast = okvir.otroci[0];
+    assert.equal(plast?.className, "uci-3d-zastoj");
+    assert.deepEqual(plast.otroci.map((o) => o.textContent), ["a3.slow", "a3.close"]);
+    plast.otroci[1].poslusalci.click();
+    assert.equal(zaprto, 1, "»Zapri« zapre okvir");
+    // pozni »pripravljen« skrije sporočilo
+    c.pripravljen();
+    assert.equal(okvir.otroci.length, 0);
+    // okvir, ki odgovori pravočasno: gumba ni
+    const hiter = el("div");
+    cuvaj3d(hiter, { zapri() {}, t: tr }).pripravljen();
+    t.mock.timers.tick(20000);
+    assert.equal(hiter.otroci.length, 0);
+    // napaka v okvirju: takoj samo gumb »Zapri«
+    const napaka = el("div");
+    cuvaj3d(napaka, { zapri() {}, t: tr }).napaka();
+    assert.deepEqual(napaka.otroci[0].otroci.map((o) => o.textContent), ["a3.close"]);
+    // zaprt okvir (ustavi): nič več
+    const zaprt = el("div");
+    cuvaj3d(zaprt, { zapri() {}, t: tr }).ustavi();
+    t.mock.timers.tick(20000);
+    assert.equal(zaprt.otroci.length, 0);
+  } finally {
+    globalThis.document = prejDoc;
+  }
+});
+
+test("3D v okvirju: stran /3d javi »pripravljen« in »napaka«, open3d ima čuvaja, zapiranje ga ustavi", () => {
+  const uci = read("public/uci-se.js");
+  assert.match(uci, /const cuvaj = cuvaj3d\(el, \{ zapri: close3d, t \}\);/);
+  assert.match(uci, /msg\.tip === "pripravljen"\) full\.cuvaj\.pripravljen\(\)/);
+  assert.match(uci, /msg\.tip === "napaka"\) full\.cuvaj\.napaka\(\)/);
+  assert.match(uci, /cuvaj\.ustavi\(\);/);
+  const stran = read("public/3d/stran.js");
+  assert.match(stran, /javiStarsu\("pripravljen"\)/);
+  assert.match(stran, /javiStarsu\("napaka"\)/);
+  assert.match(read("public/uci.css"), /\.uci-3d-zastoj \{/);
+  for (const k of ["a3.slow", "a3.close", "a3.contextLost", "a3.reload"]) assert.ok(SL[k], k);
+});

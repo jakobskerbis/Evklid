@@ -29,3 +29,48 @@ export function vprasajInstruktorja(besedilo, { vrni = "", oznaka = "", kontekst
   }
   location.href = `/?pogled=chat&vprasaj=${encodeURIComponent(besedilo)}`;
 }
+
+// Okvir je pripravljen (stran /3d je pokazala zbirko, model ali atlas) ali je pokazal napako: starš (uci-se.js) skrije
+// oziroma pokaže svoj gumb »Zapri« (cuvaj3d). Brez okvirja nič.
+export function javiStarsu(tip) {
+  if (vgrajeno) starsu({ tip });
+}
+
+// Starš: okvir s stranjo /3d prekrije cel zaslon in ima svoj »Nazaj« šele, ko se stran naloži. Če se v `cas` ms ne
+// oglasi (»pripravljen« ali »napaka«; počasna povezava, star brskalnik, napaka pred prvim izrisom), čez okvir pokažemo
+// kratko sporočilo in gumb »Zapri«, da učenec ni ujet. Ob »napaka« samo gumb (okvir sam pove, kaj je narobe).
+// Videz: public/uci.css .uci-3d-zastoj. Vrne { pripravljen, napaka, ustavi }.
+export function cuvaj3d(el, { zapri, t, cas = 8000 } = {}) {
+  let plast = null;
+  const pokazi = (besedilo) => {
+    if (plast || !el.isConnected) return;
+    plast = document.createElement("div");
+    plast.className = "uci-3d-zastoj";
+    plast.setAttribute("role", "alert");
+    if (besedilo) {
+      const p = document.createElement("p");
+      p.textContent = t("a3.slow");
+      plast.append(p);
+    }
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "secondary";
+    b.textContent = t("a3.close");
+    b.addEventListener("click", () => zapri());
+    plast.append(b);
+    el.append(plast);
+  };
+  const rok = setTimeout(() => pokazi(true), cas);
+  return {
+    pripravljen() {
+      clearTimeout(rok);
+      plast?.remove();
+      plast = null;
+    },
+    napaka() {
+      clearTimeout(rok);
+      pokazi(false);
+    },
+    ustavi: () => clearTimeout(rok),
+  };
+}
