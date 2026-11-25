@@ -926,7 +926,7 @@ export function labBoyle(el) {
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = []; // { s, ime, V, p, nestalno }
-  let graf = "p1V", poskus = 0, asked = false, odcitek = B.read(), prejsnji = odcitek, doOdcitka = 0, mejaJavljena = false;
+  let graf = "p1V", poskus = 0, asked = false, odcitek = B.read(), doOdcitka = 0, mejaJavljena = false;
   let bat, zrak, puscica, silaTxt, lcdTxt;
 
   const vSl = slider({ label: "prostornina na skali", min: 5, max: 60, step: 1, value: 60, unit: "mL", onInput: (v) => premakni(v) });
@@ -1057,9 +1057,8 @@ export function labBoyle(el) {
     doOdcitka -= dt;
     if (doOdcitka > 0) return;
     doOdcitka = 0.5;
-    prejsnji = odcitek;
     odcitek = B.read();
-    const spr = !odcitek.over && !prejsnji.over && Math.abs(odcitek.value - prejsnji.value) >= 0.25;
+    const spr = !odcitek.over && !B.ustaljeno; // isto merilo kot opozorilo ob »Zapiši meritev«
     pL.set(odcitek.text, odcitek.over ? "" : "kPa", odcitek.over ? "nad 210 kPa" : spr ? "se spreminja" : B.zaprto ? "ventil zaprt" : "ventil odprt");
     pisi(lcdTxt, zaslon());
     sila();
@@ -1126,9 +1125,9 @@ export function labBoyle(el) {
     get: () => ({ racun: Rr.stanje(), meas, poskus, napoved: N.stanje() }),
     set: (d) => {
       Rr.obnovi(d?.racun);
-      N.obnovi(d?.napoved);
       meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object" && Number.isFinite(m.V) && Number.isFinite(m.p) && typeof m.ime === "string"));
       poskus = Number.isInteger(d?.poskus) ? d.poskus : poskus;
+      N.obnovi(d?.napoved); // zadnja, ko so meritve že obnovljene
       redraw();
     },
   });

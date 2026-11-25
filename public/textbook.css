@@ -1465,7 +1465,7 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo:is(.demo-lab-nihalo, .demo-lab-boyle) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 .demo:is(.demo-lab-nihalo, .demo-lab-boyle) .lab-table-wrap { max-width: 100%; contain: inline-size; }
 .demo-lab-nihalo .lab-table :is(th, td) { white-space: normal; }
-.demo-lab-nihalo .lab-table td:first-child { text-align: left; }
+.demo-lab-nihalo .lab-table td:nth-child(2) { text-align: left; } /* stolpec »kroglica« (prvi je #) */
 .demo:is(.demo-lab-nihalo, .demo-lab-boyle) .lab-lcd-screen { direction: ltr; }
 .demo:is(.demo-lab-nihalo, .demo-lab-boyle) .demo-svg :is(.lab-gib-lcdtxt, .lab-gib-cm) { direction: ltr; unicode-bidi: plaintext; }
 @media (max-width: 480px) {

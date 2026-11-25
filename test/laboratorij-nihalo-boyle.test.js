@@ -128,11 +128,31 @@ test("Boyle: fast compression heats the air briefly; force and sensor limits", (
   B.zapri();
   B.premakni(20);
   const takoj = B.read().value;
-  assert.ok(B.T > B.Tsoba + 5, "takoj po stisku je zrak toplejši (delno adiabatno)");
+  assert.ok(B.T > B.Tsoba + 7 && B.T < B.Tsoba + 15, `takoj po stisku je zrak toplejši (delno adiabatno, brizga v roki): +${(B.T - B.Tsoba).toFixed(1)} K`);
+  assert.equal(B.ustaljeno, false);
+  // isto merilo za zaslon (»se spreminja«) in »Zapiši meritev«: ustaljeno, ko se tlak spremeni še za manj kot 0,2 kPa
+  let t = 0;
+  while (!B.ustaljeno && t < 60) B.step(0.1), (t += 0.1);
+  const ust = B.p;
+  assert.ok(t > 3 && t < 7, `tlak se ustali v ${t.toFixed(1)} s`);
   for (let i = 0; i < 300; i++) B.step(0.1);
+  assert.ok(Math.abs(ust - B.p) < PLIN_STISK.ustaljen, "po »ustaljeno« se tlak spremeni še za manj kot 0,2 kPa");
   const pozneje = B.read().value;
-  assert.ok(takoj > pozneje * 1.03, `tlak pade, ko se zrak ohladi: ${takoj} → ${pozneje} kPa`);
+  assert.ok(takoj > pozneje * 1.02 && takoj < pozneje * 1.06, `tlak »še malo pade«, ko se zrak ohladi: ${takoj} → ${pozneje} kPa`);
   assert.ok(B.T - B.Tsoba < 0.1 && PLIN_STISK.tau < 3);
+  // odprt ventil izenači zrak z zunanjim: ponovno zapiranje takoj po stisku ne da tlaka, ki bi nato lezel (pregled #1075)
+  const O = new BoyleBench({ seed: 3 });
+  O.premakni(40);
+  O.zapri();
+  O.premakni(20);
+  for (let i = 0; i < 10; i++) O.step(0.1); // 1 s: zrak je še topel
+  O.odpri();
+  O.premakni(40);
+  O.zapri();
+  const p0 = O.p;
+  for (let i = 0; i < 300; i++) O.step(0.1);
+  assert.ok(Math.abs(O.p - p0) < 0.05 && Math.abs(p0 - O.p0) < 1e-9, `zaprto pri 40 mL: ${p0.toFixed(2)} → ${O.p.toFixed(2)} kPa`);
+  assert.equal(O.ustaljeno, true);
   // od 60 mL bata ne potisneš do 5 mL: sila bi bila nad 150 N
   const C = new BoyleBench({ seed: 3 });
   C.premakni(60);

@@ -567,14 +567,14 @@ export class OhlajanjeBench {
 // senzor absolutnega tlaka. Ko je ventil odprt proti zraku, je v brizgi zračni tlak; ko ga zapreš, ostane množina zraka stalna.
 // Zrak je idealen plin: p = nRT/V, V = k·V_skala + V_mrtvi (zrak v nastavku, cevki in senzorju, ~1,5 mL, ocena;
 // skala brizge ima napako ~1 %, ocena). Ko bat hitro premakneš, se zrak skoraj adiabatno segreje ali ohladi
-// (T·V^(γ−1) = konst., γ = 1,4); ker premik traja ~1 s in del toplote med njim že uide, vzamemo 30 % adiabatne spremembe
-// (ocena). Nato se temperatura vrne na sobno s časovno konstanto τ ≈ r²/(5,8·a) ≈ 1,5 s (prevajanje toplote v valju zraka
+// (T·V^(γ−1) = konst., γ = 1,4); ker premik z roko traja ~1–2 s in večina toplote med njim že uide v steno, vzamemo 12 %
+// adiabatne spremembe (ocena): stisk s 40 na 20 mL zrak segreje za ~11 K, tlak je za ~4 % nad ustaljenim. Nato se temperatura vrne na sobno s časovno konstanto τ ≈ r²/(5,8·a) ≈ 1,5 s (prevajanje toplote v valju zraka
 // s polmerom 13 mm, a = 2,2·10⁻⁵ m²/s; stena brizge ostane pri sobni temperaturi). Senzor: 0–210 kPa (nad tem OL),
 // ločljivost 0,1 kPa, odmik ničle do ±0,5 kPa, šum ~0,04 kPa (ocene za šolske senzorje tlaka). Bat z rokami potisneš
 // z največ ~150 N (ocena). Zračni tlak v Ljubljani ~98 kPa (standardna atmosfera za 295 m), z vremenom ±1 kPa.
 export const BRIZGA = { Vmax: 60, Vmin: 5, mrtvi: 1.5, skala: 0.01, D: 0.0267, sila: 150 };
 export const SENZOR_P = { max: 210, res: 0.1, off: 0.5, jit: 0.04 };
-export const PLIN_STISK = { gama: 1.4, delez: 0.3, tau: 1.5 };
+export const PLIN_STISK = { gama: 1.4, delez: 0.12, tau: 1.5, ustaljen: 0.2 }; // ustaljen: tlak se spremeni še za manj kot 0,2 kPa
 export const ploscinaBata = () => (Math.PI * BRIZGA.D ** 2) / 4;
 export class BoyleBench {
   constructor({ seed = 1, idealno = false } = {}) {
@@ -601,17 +601,21 @@ export class BoyleBench {
   get sila() {
     return (this.p - this.p0) * 1000 * ploscinaBata();
   }
+  // Tlak se do sobne temperature spremeni še za manj kot 0,2 kPa (dve števki senzorja). Isto merilo uporabljata zaslon
+  // (»se spreminja«) in »Zapiši meritev« (opozorilo »Tlak se še spreminja«), lab-toplota.js.
   get ustaljeno() {
-    return Math.abs(this.T - this.Tsoba) < 0.1; // tlak se spremeni še za manj kot 0,04 % (manj kot ločljivost senzorja)
+    return !this.zaprto || Math.abs(this.p * (1 - this.Tsoba / this.T)) < PLIN_STISK.ustaljen;
   }
   zapri() {
     if (this.zaprto) return;
     this.zaprto = true;
     this.c = (this.p0 * this.Vplin()) / this.T;
   }
+  // Odprt ventil: zrak se izenači z zunanjim (tlak in temperatura); sicer bi zapri() vzel še toplo T in tlak bi nato lezel.
   odpri() {
     this.zaprto = false;
     this.c = null;
+    this.T = this.Tsoba;
   }
   // Premakni bat na oznako V (mL). Vrne doseženo oznako (bat ne gre dlje, kot ga zmoreš potisniti ali izvleči).
   premakni(V) {
@@ -680,7 +684,7 @@ export const POENOSTAVITVE_TOPLOTA = {
     "Zrak je idealen plin. Pri sobni temperaturi in tlakih do ~350 kPa se pravi zrak od enačbe pV = nRT razlikuje za največ ~0,1 %.",
     "Brizga ne pušča in bat drsi brez trenja; senzor meri tlak zraka v brizgi, ne sile na bat.",
     "V nastavku brizge, cevki in senzorju je ~1,5 mL zraka, ki ga skala ne pokaže (ocena). Skala brizge ima napako ~1 % (ocena).",
-    "Ko bat premakneš, se zrak segreje ali ohladi za 30 % adiabatne spremembe (ocena), nato se v nekaj sekundah vrne na sobno temperaturo (časovna konstanta ~1,5 s).",
+    "Ko bat premakneš, se zrak segreje ali ohladi za 12 % adiabatne spremembe (ocena; s 40 na 20 mL za ~11 K), nato se v nekaj sekundah vrne na sobno temperaturo (časovna konstanta ~1,5 s). Tlak je ustaljen, ko se do konca spremeni še za manj kot 0,2 kPa.",
     "Senzor: 0–210 kPa, ločljivost 0,1 kPa, odmik ničle do ±0,5 kPa, šum ~0,04 kPa (ocene za šolske senzorje). Bat potisneš z največ ~150 N (ocena).",
   ],
 };

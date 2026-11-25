@@ -6,7 +6,7 @@
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved, racun, lepaOs } from "./lab.js";
 import {
-  ProgaBench, PadBench, NihaloBench, PROGA, VOZICEK, SKRIPEC, PREDMETI, PAD, KROGLICE, G_SOLA, naklonSkoziIzhodisce, premica, koncnaHitrost, zastira, POENOSTAVITVE_GIBANJE,
+  ProgaBench, PadBench, NihaloBench, NIHALO, PROGA, VOZICEK, SKRIPEC, PREDMETI, PAD, KROGLICE, G_SOLA, naklonSkoziIzhodisce, premica, koncnaHitrost, zastira, POENOSTAVITVE_GIBANJE,
 } from "./lab-model-gibanje.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -994,7 +994,7 @@ export function labNihalo(el) {
     const m = B.meritev();
     if (m && !sporoceno) {
       sporoceno = true;
-      log.push(`Štoparica je ustavljena: ${n === 1 ? "en nihaj" : `${m.n} nihajev`} v ${num(m.t, 2)}${nb}s, <i>t</i>₀ = ${num(m.t0, 3)}${nb}s. Zapiši meritev.`, "info");
+      log.push(`Štoparica je ustavljena: ${m.n === 1 ? "en nihaj" : `${m.n} nihajev`} v ${num(m.t, 2)}${nb}s, <i>t</i>₀ = ${num(m.t0, 3)}${nb}s. Zapiši meritev.`, "info");
     }
   }
   function record() {
@@ -1005,7 +1005,7 @@ export function labNihalo(el) {
     const K = KROGLICE[B.kroglica];
     table.add({ kr: K.kratko, l: num(B.lNom * 100, 0), kot: num(B.kotNom, 0), n: String(m.n), t: num(m.t, 2), t0: num(m.t0, 3) });
     meas.push({ kr: B.kroglica, ime: K.kratko, l: B.lNom, kot: B.kotNom, n: m.n, t: m.t, t0: m.t0 });
-    if (m.n === 1) log.push(`En nihaj traja le ~${num(m.t0, 1)}${nb}s: napaka štoparice (~0,05${nb}s ob vsakem pritisku) je nekaj odstotkov nihajnega časa. Izmeri raje 10 ali 20 nihajev.`, "warn");
+    if (m.n === 1) log.push(`En nihaj traja le ~${num(m.t0, 1)}${nb}s: napaka štoparice (~${num(NIHALO.reakcija, 2)}${nb}s ob vsakem pritisku) je nekaj odstotkov nihajnega časa. Izmeri raje 10 ali 20 nihajev.`, "warn");
     if (B.kotNom > 15) log.push("Odmik je velik: nihajni čas je pri njem malo daljši kot pri majhnem odmiku. Za <i>g</i> iz grafa uporabi odmike do ~10°.", "info");
     redraw();
   }
@@ -1103,9 +1103,9 @@ export function labNihalo(el) {
     nit = s("g", {}, svg);
     s("line", { x1: px, y1: py, x2: px, y2: py + L - rr, class: "lab-gib-nit" }, nit);
     s("circle", { cx: px, cy: py + L, r: rr, fill: u(svg, B.kroglica === "les" ? "les" : "krogla"), class: "lab-gib-krogla" }, nit);
-    // štoparica na mizi
-    lcdTxt = casovnikNaprava(svg, svg, W - 118, yTla - 44, 112, 1, "ŠTOPARICA");
-    merilo(svg, W - 112, yTla - 58, 0.5 * P, "50 cm");
+    // štoparica in merilo desno zgoraj: zunaj loka kroglice (do 30° in 150 cm sega lok do y ≈ 260 na x 97–367, pregled #1075)
+    lcdTxt = casovnikNaprava(svg, svg, W - 106, 40, 100, 1, "ŠTOPARICA");
+    merilo(svg, W - 98, 96, 0.5 * P, "50 cm");
     upd();
     svg.setAttribute("aria-label", `Nihalo: ${K.name} na niti, dolžina ${Math.round(B.lNom * 100)} cm, odmik ${B.kotNom}°. ${B.tece ? "Niha." : "Miruje v odmaknjeni legi."}`);
   }
@@ -1115,8 +1115,8 @@ export function labNihalo(el) {
     get: () => ({ racun: Rr.stanje(), meas, napoved: N.stanje() }),
     set: (d) => {
       Rr.obnovi(d?.racun);
-      N.obnovi(d?.napoved);
       meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object" && Number.isFinite(m.t0) && Number.isFinite(m.l)));
+      N.obnovi(d?.napoved); // zadnja, ko so meritve že obnovljene
       redraw();
     },
   });
