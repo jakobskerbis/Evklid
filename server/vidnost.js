@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
+import { PAPERS_SI } from "./exam-papers-si.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS, freeDailyQuestions } from "./accounts/plans.js";
 import { personalDailyQuestions } from "./placila/pravice.js";
 import { icon } from "../public/icons.js";
@@ -20,6 +21,29 @@ import { latestMeasurement, measurementError, pctText, slDate } from "../scripts
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
+
+// Izpiti za llms.txt: povezave na pretekle izpite RIC (server/exam-papers-si.js) in naši izpiti v slogu preteklih
+// (content/exam-papers, server/our-papers.js: naloge niso prepisane, ista zgradba, rešitev in razlaga za vsak del).
+// Zunanji pomočniki AI so 21. 11. 2026 pisali, da je pri maturi in NPZ boljša druga aplikacija, ker »je učena na
+// preteklih maturah«; številke iz vsebine povedo, kaj ima Evklid.
+function izpitnePole() {
+  let imena = [];
+  try {
+    imena = fs.readdirSync(path.join(here, "..", "content", "exam-papers")).filter((f) => f.endsWith(".json"));
+  } catch {}
+  const nasi = (re) => imena.filter((f) => re.test(f)).length;
+  const ric = (re) => PAPERS_SI.filter((e) => re.test(e.id)).length;
+  return {
+    ric: PAPERS_SI.length, ricMatura: ric(/^MATURA-/), ricPoklicna: ric(/^POKLICNA-/), ricNpz: ric(/^NPZ\d/),
+    nasi: imena.length, matura: nasi(/^MATURA-/), poklicna: nasi(/^POKLICNA-/), npz: nasi(/^NPZ\d/), maturaMat: nasi(/^MATURA-MAT-/),
+  };
+}
+const POLE = izpitnePole();
+// »1 izpit, 2 izpita, 3 izpiti, 5 izpitov« (po zadnjih dveh števkah: 101 izpit, 31 izpitov).
+const izpit = (n) => {
+  const r = n % 100;
+  return `${n} ${r === 1 ? "izpit" : r === 2 ? "izpita" : r === 3 || r === 4 ? "izpiti" : "izpitov"}`;
+};
 const PAGE = path.join(publicDir, "o-evklidu.html");
 const WHY_PAGE = path.join(publicDir, "zakaj-evklid.html");
 
@@ -59,12 +83,24 @@ export function accuracy(m = latestMeasurement()) {
     return null;
   }
 }
+// 95-% interval zaupanja (Wilsonov) za delež k od n, v odstotkih z decimalno vejico (točka 16 izboljšav): pri majhnem
+// vzorcu pove, kako negotov je odstotek (3 od 91 → približno 1–9 %).
+export function wilson(k, n, z = 1.96) {
+  if (!(n > 0) || !(k >= 0) || k > n) return null;
+  const p = k / n, d = 1 + (z * z) / n;
+  const c = (p + (z * z) / (2 * n)) / d, h = (z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) / d;
+  const f = (x) => { const v = Math.round(Math.min(1, Math.max(0, x)) * 1000) / 10; return String(v).replace(".", ","); };
+  return [f(c - h), f(c + h)];
+}
+
 function accuracyOf(m) {
   const rows = m.vrstice.map((r) => ({ ...r, pct: pctText(r), counted: Number.isFinite(r.napake) }));
   const part = (r, en) =>
     en
       ? `${r.ime_en || r.ime}: ${r.pct.replace(",", ".")}% of answers had an error (${r.primeri} tasks${r.opomba_en ? `, ${r.opomba_en}` : ""})`
       : `${r.ime}: ${r.pct} % odgovorov z napako (${r.primeri} nalog${r.opomba ? `, ${r.opomba}` : ""})`;
+  // Interval v svoji vrstici celice (.why-ci), da tabela pri 360 px ne preseže širine; nedeljivi presledek pred %.
+  const ci = (r) => { const w = wilson(r.napake, r.primeri); return w ? ` <small class="why-ci">95-% interval ${w[0]}–${w[1]}\u00a0%</small>` : ""; };
   const app = m.vrsta === "aplikacija";
   const realCap = m.meja_pregledov === "resnicna";
   const date = slDate(m.datum);
@@ -75,7 +111,7 @@ function accuracyOf(m) {
     date,
     rows,
     rowsHtml: rows
-      .map((r) => `<tr><th scope="row">${esc(r.ime)}${r.opomba ? `<small>${esc(r.opomba)}</small>` : ""}</th><td>${r.pct} %${r.counted ? ` <small>${r.napake} od ${r.primeri}</small>` : ""}</td><td>${r.primeri}</td></tr>`)
+      .map((r) => `<tr><th scope="row">${esc(r.ime)}${r.opomba ? `<small>${esc(r.opomba)}</small>` : ""}</th><td>${r.pct} %${r.counted ? ` <small>${r.napake} od ${r.primeri}</small>${ci(r)}` : ""}</td><td>${r.primeri}</td></tr>`)
       .join("\n          "),
     sentence:
       `Meritev ${date}, ${m.primeri} rešenih primerov iz lekcij. ${rows.map((r) => part(r, false)).join(". ")}. ` +
@@ -108,6 +144,7 @@ export function facts(measurement = OBJAVI_MERITEV ? latestMeasurement() : null)
     accAny: !!acc,
     accApp: !!acc?.app,
     accModel: !!acc && !acc.app,
+    accCi: !!acc?.rows.some((r) => r.counted), // »X od N« in z njim 95-% interval (Wilson) v tabeli
     accNoCap: !!acc?.app && !acc.realCap,
     accRealCap: !!acc?.app && !!acc.realCap,
     accPairs: !!acc?.app && Number.isInteger(acc.pari?.bolje) && Number.isInteger(acc.pari?.slabse),
@@ -163,7 +200,7 @@ export function llmsTxt(measurement) {
 - Skener nalog: učenec nalogo fotografira s kamero ali jo napiše z roko, ${f.name} jo prebere.
 - Odgovore inštruktorja pripravijo modeli Claude podjetja Anthropic; račune v enačbah, odvodih in daljših izračunih preveri Evklidov program.
 ${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orodij nismo merili. Podrobno: ${ORIGIN}${WHY_PATH}\n` : `- Natančnosti inštruktorja še nismo neodvisno izmerili, zato številk o napakah ne objavljamo. Pri besedni razlagi se umetna inteligenca lahko zmoti.\n`}- Učbenik s kratkimi lekcijami, učna pot po razredih, vaje z vedno novimi številkami, simulacije, laboratorij, 3D atlas, več kot 30 učnih iger.
-- Priprava na NPZ in maturo s preteklimi izpitnimi polami ter naloge v slogu tekmovanj.
+- Priprava na NPZ in maturo: povezave na ${izpit(POLE.ric).replace(" ", " preteklih ")} Državnega izpitnega centra (RIC: ${POLE.ricMatura} splošne mature, ${POLE.ricPoklicna} poklicne mature, ${POLE.ricNpz} NPZ) in ${izpit(POLE.nasi)} v slogu preteklih z lastnimi nalogami, rešitvijo in razlago (${POLE.matura} splošne mature, od tega ${POLE.maturaMat} iz matematike na osnovni in višji ravni, ${POLE.poklicna} poklicne mature, ${POLE.npz} NPZ); naloge v slogu tekmovanj.
 - Naprave: spletni brskalnik in aplikacija za Android.
 - Cena: ${f.trialDays} dni brezplačno brez kartice; nato brezplačni paket (${f.freeDaily} vprašanj inštruktorju na dan) ali naročnina: osnovna šola ${f.osM} na mesec (${f.osY} na leto), srednja šola ${f.ssM} (${f.ssY}), fakulteta ${f.faksM} (${f.faksY}), družina (2–4 profili) ${f.famM} (${f.famY}), družina s študentom (2–4 profili) ${f.famsM} (${f.famsY}). Učiteljski račun je brezplačen. ${f.name} je plačljiva aplikacija z brezplačnim paketom; ni odprtokodni ali študentski projekt.
 - Zasebnost: brez oglasov, podatkov ne prodajamo; strežnik in baza podatkov sta v EU (Frankfurt). Anthropic (ZDA) podatkov ne uporablja za učenje modelov. Podrobno: ${ORIGIN}/zasebnost.html
@@ -176,7 +213,7 @@ ${f.accAny ? `- Izmerjena natančnost. ${f.accSentence} Natančnosti drugih orod
 - The tutor does not hand out the solution: it guides the student step by step with hints and questions.
 - Students can photograph a task with the camera or write it by hand.
 - The tutor's answers are written by Anthropic's Claude models; calculations in equations, derivatives and longer computations are checked by Evklid's own program code.
-${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measured.\n` : `- The tutor's accuracy has not been independently measured yet, so no error rates are published. The AI can make mistakes in verbal explanations.\n`}- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, past national exam papers (NPZ, matura) and competition-style tasks.
+${f.accAny ? `- Measured accuracy. ${f.accSentenceEn} Other tools were not measured.\n` : `- The tutor's accuracy has not been independently measured yet, so no error rates are published. The AI can make mistakes in verbal explanations.\n`}- It also has a textbook with short lessons, a learning path by grade, practice with fresh numbers, simulations, a virtual laboratory, a 3D atlas, more than 30 learning games, links to ${POLE.ric} past national exams by RIC (${POLE.ricMatura} general matura, ${POLE.ricPoklicna} vocational matura, ${POLE.ricNpz} NPZ), ${POLE.nasi} of its own exams in the same style with original tasks, solutions and explanations (${POLE.matura} general matura, ${POLE.maturaMat} of them in mathematics at basic and higher level, ${POLE.poklicna} vocational matura, ${POLE.npz} NPZ) and competition-style tasks.
 - Platforms: web browser and an Android app.
 - Pricing: ${f.trialDays}-day free trial without a card; then a free plan (${f.freeDaily} tutor questions per day) or a subscription from ${dec(LEVEL_PRICES.OS.month)} EUR per month (primary school), ${dec(LEVEL_PRICES.SS.month)} EUR (secondary school), ${dec(LEVEL_PRICES.FAKS.month)} EUR (university). Teacher accounts are free. It is a commercial app with a free plan, not an open-source or student project.
 - Privacy: no ads, data is not sold; the server and database are in the EU (Frankfurt). Anthropic (USA) does not use the data to train models.
@@ -197,7 +234,8 @@ export function structuredData() {
   const offer = (name, cents, extra = {}) => ({ "@type": "Offer", name, price: dec(cents), priceCurrency: "EUR", ...extra });
   const month = { "@type": "UnitPriceSpecification", priceCurrency: "EUR", billingDuration: "P1M" };
   const sub = (name, cents) => offer(name, cents, { priceSpecification: { ...month, price: dec(cents) } });
-  const org = { "@type": "Organization", "@id": `${ORIGIN}/#organizacija`, name: BRAND.name, url: `${ORIGIN}/`, logo: `${ORIGIN}/icons/icon-512.png`, sameAs: [`${ORIGIN}/prenesi`] };
+  // Brez »sameAs«: ta je za zunanje profile (npr. Instagram, GitHub), ne za lastne strani (P11, 21. 11. 2026); dodaj ga, ko bodo.
+  const org = { "@type": "Organization", "@id": `${ORIGIN}/#organizacija`, name: BRAND.name, url: `${ORIGIN}/`, logo: `${ORIGIN}/icons/icon-512.png` };
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -287,8 +325,42 @@ export const aboutPage = (store = false) => staticPage(PAGE, undefined, store);
 // measurement: samo za teste (stran z meritvijo); strežnik meritev pokaže le, če je OBJAVI_MERITEV (zdaj ne).
 export const whyPage = (measurement, store = false) => staticPage(WHY_PAGE, measurement, store);
 
+// Prijavljene napake na /zakaj-evklid (točka 47 izboljšav): koliko odgovorov inštruktorja in korakov lekcij so učenci
+// prijavili kot napačne in koliko jih je že rešenih (skrbnik jih zapre kot »Popravljeno«; stanja »ni napaka« ni, zato »rešene«, ne »popravljene«). Samo števila (brez besedil, učencev ali datumov prijav);
+// skrbnikove prijave iz klepeta (bug_reports kind = app) ne štejejo. Brez tabel (stara baza) → null.
+const sl4 = (n, [one, two, few, many]) => {
+  const m = Math.abs(n) % 100;
+  return m === 1 ? one : m === 2 ? two : m === 3 || m === 4 ? few : many;
+};
+export function reportStats(db) {
+  try {
+    const q = (sql) => db.prepare(sql).get();
+    const msg = q("SELECT COUNT(*) AS n, COALESCE(SUM(status = 'fixed'), 0) AS f FROM message_reports");
+    const les = q("SELECT COUNT(*) AS n, COALESCE(SUM(status = 'fixed'), 0) AS f FROM bug_reports WHERE kind = 'lesson'");
+    return { total: msg.n + les.n, fixed: msg.f + les.f };
+  } catch {
+    return null;
+  }
+}
+export function reportStatsHtml(st) {
+  if (!st) return "";
+  if (!st.total) return `<p class="about-text">Prijav doslej še ni bilo.</p>`;
+  const prijav = `${st.total} ${sl4(st.total, ["prijava", "prijavi", "prijave", "prijav"])}`;
+  // Naslonki pred številom: »od tega sta 2 že rešeni«, »od tega jih je 5 že rešenih«.
+  const [pred, part] = sl4(st.fixed, [["je", "rešena"], ["sta", "rešeni"], ["so", "rešene"], ["jih je", "rešenih"]]);
+  const popr = st.fixed === 0 ? "še nobena ni rešena" : `${pred} <b>${st.fixed}</b> že ${part}`;
+  return `<p class="about-text">Doslej: <b>${prijav}</b>, od tega ${popr}.</p>`;
+}
+
 // Pred statičnimi datotekami (server/app.js), da predloga /o-evklidu.html ne gre ven s spremenljivkami {{…}}.
-export function mountVidnost(app) {
+// store: baza za števec prijav na /zakaj-evklid (osveži se največ vsakih 10 minut); brez nje razdelek ostane brez števil.
+export function mountVidnost(app, store = null) {
+  let stats = { at: 0, html: "" };
+  const statsHtml = () => {
+    if (!store?.db) return "";
+    if (Date.now() - stats.at > 600_000) stats = { at: Date.now(), html: reportStatsHtml(reportStats(store.db)) };
+    return stats.html;
+  };
   const text = (type, make) => {
     let body = null;
     return (_req, res) => {
@@ -299,16 +371,16 @@ export function mountVidnost(app) {
   app.get("/robots.txt", text("text/plain; charset=utf-8", robotsTxt));
   app.get("/sitemap.xml", text("application/xml; charset=utf-8", sitemapXml));
   app.get("/llms.txt", text("text/plain; charset=utf-8", () => llmsTxt()));
-  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, (store) => whyPage(undefined, store)]]) {
+  for (const [route, make] of [[ABOUT_PATH, aboutPage], [WHY_PATH, (inStore) => whyPage(undefined, inStore)]]) {
     const page = {}; // splet in aplikacija iz trgovine (brez cen in /prenesi)
     app.get(route, (req, res) => {
-      const store = storeAppRequest(req) ? "trgovina" : "splet";
-      const html = page[store] || make(store === "trgovina");
-      if (process.env.NODE_ENV === "production") page[store] = html; // v razvoju brez predpomnjenja (datoteko urejamo)
+      const variant = storeAppRequest(req) ? "trgovina" : "splet"; // ne zasenči store (baza za števec prijav)
+      const html = page[variant] || make(variant === "trgovina");
+      if (process.env.NODE_ENV === "production") page[variant] = html; // v razvoju brez predpomnjenja (datoteko urejamo)
       res.set("Cache-Control", "no-cache");
       res.vary("User-Agent");
       res.vary("X-App-Channel");
-      res.type("html").send(html);
+      res.type("html").send(html.replace("<!--prijave-->", () => statsHtml()));
     });
     app.get(`${route}.html`, (_req, res) => res.redirect(301, route));
   }

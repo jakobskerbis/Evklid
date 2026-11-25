@@ -1,0 +1,1377 @@
+{
+ "datum": "2026-11-19T18:18:15.601Z",
+ "opis": "P1 prijavljen učenec (scripts/meritev-zmogljivosti.mjs --samo prijavljen): http2 = privzeto (posrednik HTTP/2), http1 = --http1",
+ "okolje": {
+  "node": "v22.23.5",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "jeder": 4,
+  "taskset": true,
+  "stopnje": [
+   1,
+   10,
+   50
+  ],
+  "uporabnikov": 50,
+  "hitro": false
+ },
+ "http2": {
+  "nastavitve": {
+   "cpu": 0.5,
+   "pomnilnikMB": 512,
+   "mockZamikMs": 15,
+   "taskset": true,
+   "naprave": [
+    "telefon",
+    "racunalnik"
+   ],
+   "sporocilo": "Kako rešim enačbo 3(x − 2) = 2x + 5? Ne vem, kaj naredim z oklepajem."
+  },
+  "ucenec": {
+   "pot": "MAT-OS-8",
+   "dni": 21,
+   "obvladanihTem": 6,
+   "temVUcenju": 4,
+   "resenihNalog": 120,
+   "xp": 2039,
+   "pogovorov": 40,
+   "sporocil": 676,
+   "dolgiPogovor": 120
+  },
+  "cgroup": {
+   "pomnilnikMB": 512,
+   "kvotaUs": 50000,
+   "periodaUs": 100000,
+   "opombe": [],
+   "maxPorabaMB": 234.5,
+   "dusenje": {
+    "nr_periods": 337,
+    "nr_throttled": 126,
+    "throttled_time": 5059497600,
+    "nr_bursts": 0,
+    "burst_time": 0
+   }
+  },
+  "zagonMs": 3224,
+  "protokol": "HTTP/2 (TLS, posrednik pred strežnikom)",
+  "naprave": {
+   "telefon": {
+    "naprava": "telefon",
+    "razlicica": "157.0.8103.78",
+    "viewport": {
+     "width": 390,
+     "height": 844
+    },
+    "omejitve": "CPU 4×, Slow 4G (CDP; tudi service worker)",
+    "protokol": "HTTP/2 (TLS)",
+    "obiski": {
+     "prvi": {
+      "potMs": 11361.4,
+      "loadMs": 7864.5,
+      "ttiMs": 11377,
+      "fcpMs": 2496,
+      "lcpMs": 11384,
+      "lcpElement": "span",
+      "clsOdpiranje": 0.619,
+      "cls": 0.637,
+      "dolgihOdpiranje": 4,
+      "dolgeOdpiranjeMs": 1060,
+      "najdaljsaOdpiranjeMs": 837,
+      "inpMs": 1504,
+      "interakcije": [
+       [
+        "pointerdown",
+        56,
+        14008
+       ],
+       [
+        "pointerup",
+        56,
+        14009
+       ],
+       [
+        "click",
+        56,
+        14009
+       ],
+       [
+        "pointerdown",
+        40,
+        14908
+       ],
+       [
+        "pointerup",
+        120,
+        14908
+       ],
+       [
+        "click",
+        120,
+        14908
+       ],
+       [
+        "pointerdown",
+        16,
+        16426
+       ],
+       [
+        "pointerup",
+        16,
+        16426
+       ],
+       [
+        "click",
+        72,
+        16426
+       ],
+       [
+        "pointerdown",
+        40,
+        17407
+       ],
+       [
+        "pointerup",
+        40,
+        17407
+       ],
+       [
+        "click",
+        40,
+        17407
+       ],
+       [
+        "pointerdown",
+        32,
+        30422
+       ],
+       [
+        "pointerup",
+        32,
+        30422
+       ],
+       [
+        "click",
+        1504,
+        30422
+       ]
+      ],
+      "dolgih": 16,
+      "najdaljsaMs": 10264,
+      "odpiranje": {
+       "zahtev": 173,
+       "izSw": 10,
+       "mreznih": 163,
+       "prenosKB": 1083,
+       "suroviKB": 3528,
+       "swZahtev": 160,
+       "swKB": 30
+      },
+      "instruktorZahteve": {
+       "zahtev": 11,
+       "izSw": 4,
+       "mreznih": 7,
+       "prenosKB": 6,
+       "suroviKB": 91,
+       "swZahtev": 2,
+       "swKB": 42
+      },
+      "vnos": {
+       "pripravljeno": 96,
+       "interaktivno": 96
+      },
+      "pogovor": {
+       "pripravljeno": 11211,
+       "interaktivno": 11337
+      },
+      "znak": {
+       "pripravljeno": 3737,
+       "interaktivno": 3737
+      },
+      "premiki": [
+       {
+        "t": 11371,
+        "v": 0.425,
+        "izvor": [
+         "div#xp-card.card",
+         "nav#modebar.modes"
+        ]
+       },
+       {
+        "t": 11415,
+        "v": 0.102,
+        "izvor": [
+         "main#view-path.view",
+         "div#test-notice.banner",
+         "div#mock-banner.banner"
+        ]
+       },
+       {
+        "t": 9517,
+        "v": 0.086,
+        "izvor": [
+         "main#view-path.view"
+        ]
+       },
+       {
+        "t": 8020,
+        "v": 0.005,
+        "izvor": [
+         "nav#modebar.modes",
+         "div#xp-card.card"
+        ]
+       },
+       {
+        "t": 6004,
+        "v": 0,
+        "izvor": [
+         "span.m-name"
+        ]
+       }
+      ],
+      "swZahteve": [
+       "/sw.js 29 ms",
+       "/ 3 ms",
+       "/theme.js 29 ms",
+       "/zacetek.js 44 ms",
+       "/lab.css 39 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/app-links",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/students/1/path",
+       "/api/students/1/xp",
+       "/api/students/1/pilot",
+       "/api/usage",
+       "/api/students/1/modes",
+       "/api/students/1/level-up",
+       "/api/students/1/schedule",
+       "/api/students/1/daily",
+       "/api/students/1/offline-pack",
+       "/api/students/1/anketa-teden"
+      ]
+     },
+     "ponovni": {
+      "potMs": 1432.9,
+      "loadMs": 1791.2,
+      "ttiMs": 2934,
+      "fcpMs": 1452,
+      "lcpMs": 1452,
+      "lcpElement": "span",
+      "clsOdpiranje": 0,
+      "cls": 0.043,
+      "dolgihOdpiranje": 6,
+      "dolgeOdpiranjeMs": 1406,
+      "najdaljsaOdpiranjeMs": 970,
+      "inpMs": 1360,
+      "interakcije": [
+       [
+        "pointerdown",
+        192,
+        6069
+       ],
+       [
+        "pointerup",
+        192,
+        6069
+       ],
+       [
+        "click",
+        192,
+        6069
+       ],
+       [
+        "pointerdown",
+        112,
+        7091
+       ],
+       [
+        "pointerup",
+        112,
+        7091
+       ],
+       [
+        "click",
+        1360,
+        7091
+       ],
+       [
+        "pointerdown",
+        264,
+        10500
+       ],
+       [
+        "pointerup",
+        264,
+        10500
+       ],
+       [
+        "click",
+        264,
+        10500
+       ],
+       [
+        "pointerdown",
+        304,
+        11704
+       ],
+       [
+        "pointerup",
+        304,
+        11704
+       ],
+       [
+        "click",
+        304,
+        11704
+       ],
+       [
+        "pointerdown",
+        1312,
+        24091
+       ],
+       [
+        "pointerup",
+        1312,
+        24091
+       ],
+       [
+        "click",
+        1312,
+        24091
+       ]
+      ],
+      "dolgih": 34,
+      "najdaljsaMs": 10549,
+      "odpiranje": {
+       "zahtev": 158,
+       "izSw": 151,
+       "mreznih": 7,
+       "prenosKB": 7,
+       "suroviKB": 3465,
+       "swZahtev": 1,
+       "swKB": 0
+      },
+      "instruktorZahteve": {
+       "zahtev": 25,
+       "izSw": 10,
+       "mreznih": 15,
+       "prenosKB": 11,
+       "suroviKB": 132,
+       "swZahtev": 1,
+       "swKB": 0
+      },
+      "vnos": {
+       "pripravljeno": 1223,
+       "interaktivno": 1883
+      },
+      "pogovor": {
+       "pripravljeno": 234,
+       "interaktivno": 303
+      },
+      "znak": {
+       "pripravljeno": 2512,
+       "interaktivno": 2512
+      },
+      "premiki": [],
+      "swZahteve": [
+       "/ 571 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/app-links",
+       "/api/conversations/12"
+      ]
+     }
+    },
+    "swPredpomnilnik": {
+     "vnosov": 161,
+     "nadzor": true
+    },
+    "napake": [],
+    "serviceWorker": {
+     "omejenih": 2,
+     "napaka": null
+    }
+   },
+   "racunalnik": {
+    "naprava": "racunalnik",
+    "razlicica": "157.0.8103.78",
+    "viewport": {
+     "width": 1280,
+     "height": 800
+    },
+    "omejitve": "CPU 4×, Slow 4G (CDP; tudi service worker)",
+    "protokol": "HTTP/2 (TLS)",
+    "obiski": {
+     "prvi": {
+      "potMs": 11520.8,
+      "loadMs": 7842.8,
+      "ttiMs": 11550,
+      "fcpMs": 2360,
+      "lcpMs": 11584,
+      "lcpElement": "p",
+      "clsOdpiranje": 0.169,
+      "cls": 0.183,
+      "dolgihOdpiranje": 4,
+      "dolgeOdpiranjeMs": 1178,
+      "najdaljsaOdpiranjeMs": 984,
+      "inpMs": 1272,
+      "interakcije": [
+       [
+        "pointerdown",
+        104,
+        14239
+       ],
+       [
+        "pointerup",
+        104,
+        14239
+       ],
+       [
+        "click",
+        104,
+        14239
+       ],
+       [
+        "pointerdown",
+        16,
+        15782
+       ],
+       [
+        "pointerup",
+        16,
+        15782
+       ],
+       [
+        "click",
+        16,
+        15782
+       ],
+       [
+        "pointerdown",
+        1272,
+        29312
+       ],
+       [
+        "pointerup",
+        1272,
+        29313
+       ],
+       [
+        "click",
+        1272,
+        29313
+       ]
+      ],
+      "dolgih": 14,
+      "najdaljsaMs": 10729,
+      "odpiranje": {
+       "zahtev": 173,
+       "izSw": 10,
+       "mreznih": 163,
+       "prenosKB": 1083,
+       "suroviKB": 3528,
+       "swZahtev": 160,
+       "swKB": 30
+      },
+      "instruktorZahteve": {
+       "zahtev": 11,
+       "izSw": 4,
+       "mreznih": 7,
+       "prenosKB": 6,
+       "suroviKB": 92,
+       "swZahtev": 2,
+       "swKB": 42
+      },
+      "vnos": {
+       "pripravljeno": 80,
+       "interaktivno": 80
+      },
+      "pogovor": {
+       "pripravljeno": 11688,
+       "interaktivno": 11825
+      },
+      "znak": {
+       "pripravljeno": 2304,
+       "interaktivno": 2304
+      },
+      "premiki": [
+       {
+        "t": 11540,
+        "v": 0.094,
+        "izvor": [
+         "div#xp-card.card",
+         "nav#modebar.modes"
+        ]
+       },
+       {
+        "t": 9651,
+        "v": 0.065,
+        "izvor": [
+         "main#view-path.view"
+        ]
+       },
+       {
+        "t": 11623,
+        "v": 0.004,
+        "izvor": [
+         "nav.tabs"
+        ]
+       },
+       {
+        "t": 8002,
+        "v": 0.003,
+        "izvor": [
+         "nav#modebar.modes",
+         "div#xp-card.card"
+        ]
+       },
+       {
+        "t": 10869,
+        "v": 0.003,
+        "izvor": [
+         "button#competition-tab.tab",
+         "button.tab",
+         "div#xp-badge.xp-badge"
+        ]
+       }
+      ],
+      "swZahteve": [
+       "/sw.js 43 ms",
+       "/ 4 ms",
+       "/theme.js 3 ms",
+       "/zacetek.js 14 ms",
+       "/style.css 15 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/app-links",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/students/1/path",
+       "/api/students/1/xp",
+       "/api/students/1/pilot",
+       "/api/usage",
+       "/api/students/1/modes",
+       "/api/students/1/level-up",
+       "/api/students/1/schedule",
+       "/api/students/1/daily",
+       "/api/students/1/offline-pack",
+       "/api/students/1/anketa-teden"
+      ]
+     },
+     "ponovni": {
+      "potMs": 1326.3,
+      "loadMs": 1611.2,
+      "ttiMs": 2593,
+      "fcpMs": 1356,
+      "lcpMs": 1356,
+      "lcpElement": "p",
+      "clsOdpiranje": 0.006,
+      "cls": 0.006,
+      "dolgihOdpiranje": 10,
+      "dolgeOdpiranjeMs": 2384,
+      "najdaljsaOdpiranjeMs": 1011,
+      "inpMs": 1360,
+      "interakcije": [
+       [
+        "pointerdown",
+        960,
+        5357
+       ],
+       [
+        "pointerup",
+        960,
+        5358
+       ],
+       [
+        "click",
+        960,
+        5358
+       ],
+       [
+        "pointerdown",
+        120,
+        8276
+       ],
+       [
+        "pointerup",
+        120,
+        8276
+       ],
+       [
+        "click",
+        120,
+        8276
+       ],
+       [
+        "pointerdown",
+        1360,
+        19873
+       ],
+       [
+        "pointerup",
+        1360,
+        19873
+       ],
+       [
+        "click",
+        1360,
+        19873
+       ]
+      ],
+      "dolgih": 26,
+      "najdaljsaMs": 9891,
+      "odpiranje": {
+       "zahtev": 167,
+       "izSw": 156,
+       "mreznih": 11,
+       "prenosKB": 10,
+       "suroviKB": 3502,
+       "swZahtev": 2,
+       "swKB": 0
+      },
+      "instruktorZahteve": {
+       "zahtev": 16,
+       "izSw": 5,
+       "mreznih": 11,
+       "prenosKB": 8,
+       "suroviKB": 98,
+       "swZahtev": 0,
+       "swKB": 0
+      },
+      "vnos": {
+       "pripravljeno": 827,
+       "interaktivno": 951
+      },
+      "pogovor": {
+       "pripravljeno": 69,
+       "interaktivno": 69
+      },
+      "znak": {
+       "pripravljeno": 2469,
+       "interaktivno": 2469
+      },
+      "premiki": [
+       {
+        "t": 2596,
+        "v": 0.006,
+        "izvor": [
+         "nav.tabs",
+         "span",
+         "svg"
+        ]
+       }
+      ],
+      "swZahteve": [
+       "/ 571 ms",
+       "/api/paths 568 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/app-links",
+       "/api/conversations/12",
+       "/api/students/1/path",
+       "/api/students/1/xp",
+       "/api/students/1/pilot",
+       "/api/usage"
+      ]
+     }
+    },
+    "swPredpomnilnik": {
+     "vnosov": 161,
+     "nadzor": true
+    },
+    "napake": [],
+    "serviceWorker": {
+     "omejenih": 2,
+     "napaka": null
+    }
+   }
+  },
+  "rssKonecMB": 258.2
+ },
+ "http1": {
+  "nastavitve": {
+   "cpu": 0.5,
+   "pomnilnikMB": 512,
+   "mockZamikMs": 15,
+   "taskset": true,
+   "naprave": [
+    "telefon",
+    "racunalnik"
+   ],
+   "sporocilo": "Kako rešim enačbo 3(x − 2) = 2x + 5? Ne vem, kaj naredim z oklepajem."
+  },
+  "ucenec": {
+   "pot": "MAT-OS-8",
+   "dni": 21,
+   "obvladanihTem": 6,
+   "temVUcenju": 4,
+   "resenihNalog": 120,
+   "xp": 2039,
+   "pogovorov": 40,
+   "sporocil": 676,
+   "dolgiPogovor": 120
+  },
+  "cgroup": {
+   "pomnilnikMB": 512,
+   "kvotaUs": 50000,
+   "periodaUs": 100000,
+   "opombe": [],
+   "maxPorabaMB": 242.7,
+   "dusenje": {
+    "nr_periods": 572,
+    "nr_throttled": 123,
+    "throttled_time": 5049899505,
+    "nr_bursts": 0,
+    "burst_time": 0
+   }
+  },
+  "zagonMs": 3243,
+  "protokol": "HTTP/1.1",
+  "naprave": {
+   "telefon": {
+    "naprava": "telefon",
+    "razlicica": "157.0.8103.78",
+    "viewport": {
+     "width": 390,
+     "height": 844
+    },
+    "omejitve": "CPU 4×, Slow 4G (CDP; tudi service worker)",
+    "protokol": "HTTP/1.1",
+    "obiski": {
+     "prvi": {
+      "potMs": 20753.5,
+      "loadMs": 17084.3,
+      "ttiMs": 20771,
+      "fcpMs": 4264,
+      "lcpMs": 20776,
+      "lcpElement": "span",
+      "clsOdpiranje": 0.588,
+      "cls": 0.605,
+      "dolgihOdpiranje": 7,
+      "dolgeOdpiranjeMs": 1412,
+      "najdaljsaOdpiranjeMs": 940,
+      "inpMs": 1328,
+      "interakcije": [
+       [
+        "pointerdown",
+        64,
+        23333
+       ],
+       [
+        "pointerup",
+        64,
+        23333
+       ],
+       [
+        "click",
+        80,
+        23333
+       ],
+       [
+        "pointerdown",
+        136,
+        24232
+       ],
+       [
+        "pointerup",
+        136,
+        24233
+       ],
+       [
+        "click",
+        136,
+        24233
+       ],
+       [
+        "pointerdown",
+        16,
+        25691
+       ],
+       [
+        "pointerup",
+        16,
+        25691
+       ],
+       [
+        "click",
+        56,
+        25691
+       ],
+       [
+        "pointerdown",
+        40,
+        26661
+       ],
+       [
+        "pointerup",
+        40,
+        26661
+       ],
+       [
+        "click",
+        40,
+        26661
+       ],
+       [
+        "pointerdown",
+        40,
+        39753
+       ],
+       [
+        "pointerup",
+        40,
+        39754
+       ],
+       [
+        "click",
+        1328,
+        39754
+       ]
+      ],
+      "dolgih": 17,
+      "najdaljsaMs": 10466,
+      "odpiranje": {
+       "zahtev": 174,
+       "izSw": 10,
+       "mreznih": 164,
+       "prenosKB": 1267,
+       "suroviKB": 3528,
+       "swZahtev": 160,
+       "swKB": 197
+      },
+      "instruktorZahteve": {
+       "zahtev": 11,
+       "izSw": 4,
+       "mreznih": 7,
+       "prenosKB": 14,
+       "suroviKB": 91,
+       "swZahtev": 2,
+       "swKB": 44
+      },
+      "vnos": {
+       "pripravljeno": 106,
+       "interaktivno": 106
+      },
+      "pogovor": {
+       "pripravljeno": 11420,
+       "interaktivno": 11557
+      },
+      "znak": {
+       "pripravljeno": 3581,
+       "interaktivno": 3581
+      },
+      "premiki": [
+       {
+        "t": 20764,
+        "v": 0.425,
+        "izvor": [
+         "div#xp-card.card",
+         "nav#modebar.modes"
+        ]
+       },
+       {
+        "t": 18820,
+        "v": 0.086,
+        "izvor": [
+         "main#view-path.view"
+        ]
+       },
+       {
+        "t": 20789,
+        "v": 0.07,
+        "izvor": [
+         "main#view-path.view",
+         "div#test-notice.banner",
+         "div#mock-banner.banner"
+        ]
+       },
+       {
+        "t": 17207,
+        "v": 0.005,
+        "izvor": [
+         "nav#modebar.modes",
+         "div#xp-card.card"
+        ]
+       },
+       {
+        "t": 4838,
+        "v": 0,
+        "izvor": [
+         "span.m-name"
+        ]
+       }
+      ],
+      "swZahteve": [
+       "/sw.js 27 ms",
+       "/ 3 ms",
+       "/theme.js 4 ms",
+       "/zacetek.js 4 ms",
+       "/account.css 3 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/app-links",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/students/1/xp",
+       "/api/students/1/pilot",
+       "/api/students/1/path",
+       "/api/usage",
+       "/api/students/1/modes",
+       "/api/students/1/modes",
+       "/api/students/1/level-up",
+       "/api/students/1/schedule",
+       "/api/students/1/daily",
+       "/api/students/1/offline-pack",
+       "/api/students/1/anketa-teden"
+      ]
+     },
+     "ponovni": {
+      "potMs": 1513,
+      "loadMs": 1769.9,
+      "ttiMs": 2860,
+      "fcpMs": 1532,
+      "lcpMs": 1532,
+      "lcpElement": "span",
+      "clsOdpiranje": 0,
+      "cls": 0.045,
+      "dolgihOdpiranje": 4,
+      "dolgeOdpiranjeMs": 1273,
+      "najdaljsaOdpiranjeMs": 917,
+      "inpMs": 1568,
+      "interakcije": [
+       [
+        "pointerdown",
+        1192,
+        5817
+       ],
+       [
+        "pointerup",
+        1192,
+        5817
+       ],
+       [
+        "click",
+        1192,
+        5817
+       ],
+       [
+        "pointerdown",
+        264,
+        8904
+       ],
+       [
+        "pointerup",
+        264,
+        8904
+       ],
+       [
+        "click",
+        264,
+        8904
+       ],
+       [
+        "pointerdown",
+        280,
+        10105
+       ],
+       [
+        "pointerup",
+        280,
+        10105
+       ],
+       [
+        "click",
+        280,
+        10105
+       ],
+       [
+        "pointerdown",
+        104,
+        21829
+       ],
+       [
+        "pointerup",
+        104,
+        21829
+       ],
+       [
+        "click",
+        1568,
+        21829
+       ]
+      ],
+      "dolgih": 31,
+      "najdaljsaMs": 10054,
+      "odpiranje": {
+       "zahtev": 158,
+       "izSw": 151,
+       "mreznih": 7,
+       "prenosKB": 14,
+       "suroviKB": 3465,
+       "swZahtev": 1,
+       "swKB": 1
+      },
+      "instruktorZahteve": {
+       "zahtev": 25,
+       "izSw": 10,
+       "mreznih": 15,
+       "prenosKB": 26,
+       "suroviKB": 132,
+       "swZahtev": 1,
+       "swKB": 1
+      },
+      "vnos": {
+       "pripravljeno": 1053,
+       "interaktivno": 1587
+      },
+      "pogovor": {
+       "pripravljeno": 190,
+       "interaktivno": 278
+      },
+      "znak": {
+       "pripravljeno": 2818,
+       "interaktivno": 2818
+      },
+      "premiki": [],
+      "swZahteve": [
+       "/ 570 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/app-links",
+       "/api/conversations/12"
+      ]
+     }
+    },
+    "swPredpomnilnik": {
+     "vnosov": 161,
+     "nadzor": true
+    },
+    "napake": [],
+    "serviceWorker": {
+     "omejenih": 2,
+     "napaka": null
+    }
+   },
+   "racunalnik": {
+    "naprava": "racunalnik",
+    "razlicica": "157.0.8103.78",
+    "viewport": {
+     "width": 1280,
+     "height": 800
+    },
+    "omejitve": "CPU 4×, Slow 4G (CDP; tudi service worker)",
+    "protokol": "HTTP/1.1",
+    "obiski": {
+     "prvi": {
+      "potMs": 20240.1,
+      "loadMs": 16712.7,
+      "ttiMs": 20270,
+      "fcpMs": 4028,
+      "lcpMs": 20292,
+      "lcpElement": "p",
+      "clsOdpiranje": 0.173,
+      "cls": 0.186,
+      "dolgihOdpiranje": 5,
+      "dolgeOdpiranjeMs": 1115,
+      "najdaljsaOdpiranjeMs": 868,
+      "inpMs": 1328,
+      "interakcije": [
+       [
+        "pointerdown",
+        96,
+        22903
+       ],
+       [
+        "pointerup",
+        96,
+        22903
+       ],
+       [
+        "click",
+        96,
+        22903
+       ],
+       [
+        "pointerdown",
+        16,
+        24401
+       ],
+       [
+        "pointerup",
+        16,
+        24401
+       ],
+       [
+        "click",
+        16,
+        24401
+       ],
+       [
+        "pointerdown",
+        1328,
+        37533
+       ],
+       [
+        "pointerup",
+        1328,
+        37533
+       ],
+       [
+        "click",
+        1328,
+        37533
+       ]
+      ],
+      "dolgih": 15,
+      "najdaljsaMs": 10358,
+      "odpiranje": {
+       "zahtev": 174,
+       "izSw": 10,
+       "mreznih": 164,
+       "prenosKB": 1267,
+       "suroviKB": 3529,
+       "swZahtev": 160,
+       "swKB": 197
+      },
+      "instruktorZahteve": {
+       "zahtev": 11,
+       "izSw": 4,
+       "mreznih": 7,
+       "prenosKB": 14,
+       "suroviKB": 92,
+       "swZahtev": 2,
+       "swKB": 44
+      },
+      "vnos": {
+       "pripravljeno": 68,
+       "interaktivno": 68
+      },
+      "pogovor": {
+       "pripravljeno": 11331,
+       "interaktivno": 11482
+      },
+      "znak": {
+       "pripravljeno": 2402,
+       "interaktivno": 2402
+      },
+      "premiki": [
+       {
+        "t": 20251,
+        "v": 0.098,
+        "izvor": [
+         "div#xp-card.card",
+         "nav#modebar.modes",
+         "div#xp-badge.xp-badge"
+        ]
+       },
+       {
+        "t": 18349,
+        "v": 0.065,
+        "izvor": [
+         "main#view-path.view"
+        ]
+       },
+       {
+        "t": 20257,
+        "v": 0.004,
+        "izvor": [
+         "nav.tabs"
+        ]
+       },
+       {
+        "t": 16810,
+        "v": 0.003,
+        "izvor": [
+         "nav#modebar.modes",
+         "div#xp-card.card"
+        ]
+       },
+       {
+        "t": 19566,
+        "v": 0.003,
+        "izvor": [
+         "button#competition-tab.tab",
+         "button.tab",
+         "div#xp-badge.xp-badge"
+        ]
+       }
+      ],
+      "swZahteve": [
+       "/sw.js 43 ms",
+       "/ 2 ms",
+       "/theme.js 2 ms",
+       "/zacetek.js 3 ms",
+       "/ui.css 9 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/app-links",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/students/1/xp",
+       "/api/students/1/pilot",
+       "/api/students/1/path",
+       "/api/usage",
+       "/api/students/1/modes",
+       "/api/students/1/modes",
+       "/api/students/1/level-up",
+       "/api/students/1/schedule",
+       "/api/students/1/daily",
+       "/api/students/1/offline-pack",
+       "/api/students/1/anketa-teden"
+      ]
+     },
+     "ponovni": {
+      "potMs": 1602,
+      "loadMs": 1699,
+      "ttiMs": 2869,
+      "fcpMs": 1632,
+      "lcpMs": 1632,
+      "lcpElement": "p",
+      "clsOdpiranje": 0.006,
+      "cls": 0.006,
+      "dolgihOdpiranje": 8,
+      "dolgeOdpiranjeMs": 2376,
+      "najdaljsaOdpiranjeMs": 1016,
+      "inpMs": 1264,
+      "interakcije": [
+       [
+        "pointerdown",
+        976,
+        5518
+       ],
+       [
+        "pointerup",
+        976,
+        5518
+       ],
+       [
+        "click",
+        976,
+        5518
+       ],
+       [
+        "pointerdown",
+        88,
+        8226
+       ],
+       [
+        "pointerup",
+        88,
+        8226
+       ],
+       [
+        "click",
+        88,
+        8226
+       ],
+       [
+        "pointerdown",
+        1264,
+        20184
+       ],
+       [
+        "pointerup",
+        1264,
+        20184
+       ],
+       [
+        "click",
+        1264,
+        20184
+       ]
+      ],
+      "dolgih": 22,
+      "najdaljsaMs": 10368,
+      "odpiranje": {
+       "zahtev": 167,
+       "izSw": 156,
+       "mreznih": 11,
+       "prenosKB": 21,
+       "suroviKB": 3502,
+       "swZahtev": 2,
+       "swKB": 2
+      },
+      "instruktorZahteve": {
+       "zahtev": 17,
+       "izSw": 5,
+       "mreznih": 12,
+       "prenosKB": 21,
+       "suroviKB": 98,
+       "swZahtev": 0,
+       "swKB": 0
+      },
+      "vnos": {
+       "pripravljeno": 828,
+       "interaktivno": 971
+      },
+      "pogovor": {
+       "pripravljeno": 48,
+       "interaktivno": 48
+      },
+      "znak": {
+       "pripravljeno": 2358,
+       "interaktivno": 2358
+      },
+      "premiki": [
+       {
+        "t": 2872,
+        "v": 0.006,
+        "izvor": [
+         "nav.tabs",
+         "span",
+         "svg"
+        ]
+       }
+      ],
+      "swZahteve": [
+       "/ 570 ms",
+       "/api/paths 570 ms"
+      ],
+      "poZahtevah": [
+       "/api/account/status",
+       "/api/config",
+       "/api/students",
+       "/api/students/1/conversations",
+       "/api/app-links",
+       "/api/conversations/12",
+       "/api/students/1/xp",
+       "/api/students/1/pilot",
+       "/api/students/1/path",
+       "/api/usage"
+      ]
+     }
+    },
+    "swPredpomnilnik": {
+     "vnosov": 161,
+     "nadzor": true
+    },
+    "napake": [],
+    "serviceWorker": {
+     "omejenih": 2,
+     "napaka": null
+    }
+   }
+  },
+  "rssKonecMB": 258.9
+ }
+}

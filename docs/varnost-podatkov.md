@@ -9,11 +9,13 @@ odgovor, ki je zakrožil): [krizni-nacrt.md](krizni-nacrt.md).
 | Kaj | Zaščita | Koda |
 |---|---|---|
 | Pogovori (besedilo, fotografije nalog), naslovi in sprotni povzetki pogovorov, prijave napak, mnenja testerjev, urniki, kartice | šifrirano v bazi (AES-256-GCM) | `server/crypto-polje.js`, `server/zasebnost.js` |
+| Urnik v poročilu rasti (točka 8, 19. 11. 2026) | skrbniško poročilo (`/api/admin/rast`, samo skrbnik) iz urnika prebere le datum in vrsto dogodkov vrste test in vrne samo vsote (koliko testov, pred koliko jih je bil učenec aktiven); posameznega učenca, dogodka ali datuma ne pokaže. Pri filtru na šolo z enim ali dvema učencema so vsote blizu podatkom posameznika, zato se jih ne deli naprej | `server/rast.js` (`vedenjeReport`) |
+| Prijave napak na javni strani (točka 47, 19. 11. 2026) | /zakaj-evklid pokaže samo dve števili: koliko prijav napak (odgovori inštruktorja in koraki lekcij) je bilo in koliko jih je rešenih (zaprtih); brez besedil, učencev, predmetov ali datumov. Skrbnikove prijave iz klepeta ne štejejo. Osvežitev največ vsakih 10 minut | `server/vidnost.js` (`reportStats`) |
 | Gesla računov in profilov | scrypt (N = 2^17, r = 8, p = 1); stari zapisi se ob prijavi tiho zamenjajo | `server/accounts/auth.js` |
 | Seje | v bazi le zgoščena vrednost žetona; piškotek HttpOnly, SameSite=Lax, Secure prek https | `server/accounts/auth.js` |
 | Ugibanje gesel | omejitve: e-naslov + IP (10 / 15 min), e-naslov (30 / uro), IP (100 / 15 min), profil in račun (30 / uro), izbris računa | `server/accounts/index.js` |
 | E-naslov še ni potrjen (#747) | učenje z lastnim profilom takoj (brezplačni paket, kvota omrežja kot pri nekdanjih gostih, IPv6 /56, skupna dnevna meja vseh nepotrjenih `EVKLID_UNVERIFIED_DAY_USD`), profil za otroka in drugi profil, plačila (`/api/billing/*`), izvoz, gesla profilov, aktivacijska koda (shrani se ob registraciji, porabi ob potrditvi), poročilo na e-pošto, pridružitev razredu, šoli, skupini prijateljev in kvizu ter prenos profila šele po potrditvi (403 `verify`; šolska licenca za tak profil ne velja); ponovno pošiljanje povezave: račun 3 / 15 min, omrežje 10 / 15 min (429 `retry_after`). **Prevzem naslova** (»Računa nisem ustvaril jaz«, novo geslo prek e-pošte, prijava z Apple na nepotrjen račun): profili iz časa pred potrditvijo in shranjena koda se izbrišejo kot pri izbrisu računa (`dropPreConfirm`, dnevnik `unverified_takeover_cleared`), koda vabila v pilot odpade (`dropPilotInvite`, dnevnik `pilot_invite_rejected`), poraba ostane šteta za omrežje. Nepotrjen račun s profilom se izbriše po 30 dneh brez dejavnosti (`server/zasebnost.js`). | `server/accounts/index.js` (`UNVERIFIED_BLOCKED`) |
-| Ugibanje kod vabila v pilot (`/api/vabilo`) | IP (10 / 15 min), vse napačne kode skupaj (200 / uro); koda samo v telesu POST (ne v naslovu in dnevnikih), odgovor samo da/ne (in »porabljena«), seznama kod ne vrne nič; v bazi samo zgoščena koda na računu in porabljene kode (`pilot_vabila`, ob izbrisu računa brez povezave na račun), izidi v dnevniku dostopov (`pilot_invite_*`) | `server/vabila.js`, `server/vabila-kode.js` |
+| Ugibanje kod vabila v pilot (`/api/vabilo`) | IP (10 / 15 min), vse napačne kode skupaj (200 / uro); registracija s kodo z omrežja nad dnevno mejo računov (`/api/auth/register`, ki veljavno kodo spusti mimo meje) največ 10 napačnih, poteklih ali porabljenih kod na omrežje na dan (veljavne ne štejejo, da se razred z enega šolskega Wi-Fi registrira v eni uri; po 10 napačnih tudi veljavna ne obide meje; ob neveljavnem obrazcu enak odgovor za veljavno in napačno kodo) in z eno kodo največ 3 registracije mimo meje na dan, izidi te poti niso v dnevniku dostopov; koda samo v telesu POST (ne v naslovu in dnevnikih), odgovor samo da/ne (in »porabljena«), seznama kod ne vrne nič; v bazi samo zgoščena koda na računu in porabljene kode (`pilot_vabila`, ob izbrisu računa brez povezave na račun), izidi v dnevniku dostopov (`pilot_invite_*`) | `server/vabila.js`, `server/vabila-kode.js` |
 | Brskalnik | varnostne glave (helmet): CSP brez vrinjenih skript, HSTS, nosniff, COOP, Permissions-Policy (kamera, mikrofon in senzorji le za Evklid; lokacija, plačila in USB izklopljeni), API brez predpomnjenja | `server/app.js` |
 | Moji zapiski (`zapiski`: naslov, prepis rokopisa, prilepljeno besedilo samo z izbiro »To so moji zapiski – shrani«) | šifrirano v bazi (brez `EVKLID_DATA_KEY` se prepis ne shrani); fotografija se ne shrani, prepis tiskanih strani tudi ne; sklop kartic (`flashcards.topic`, nešifriran) je ime teme ali »Zapiski«, nikoli naslov; izbris posameznega zapiska izbriše tudi njegove kartice (`flashcards.zapisek_id`, ON DELETE CASCADE); v izvozu pod `other.zapiski` | `server/zapiski.js`, `server/crypto-polje.js` |
 | Oznaka dogodka učenja (`events.flag`: stiska `distress`, nevarna vsebina, poskus vrivanja, tema zunaj predmetov, zavrnjena fotografija; j 18. 11. 2026, pregled #846) | šifrirano v bazi razen `none`, pred šifriranjem dopolnjeno na 12 znakov (iz baze se po vsebini ali dolžini ne vidi, katera oznaka je stiska); ob stiski se tema dogodka ne shrani (`topic`, `topic_id` = NULL); varnostni odgovor se ne shrani v `answer_cache` (ne ob `flag=distress`, ne ob zadetku lokalnega zaznavalnika ali pregleda B); Napredek, izvoz in `najdi-sporocilo.js` jo odšifrirajo | `server/crypto-polje.js` (`sealFlag`, `SEALED`), `server/db.js`, `server/app.js` |
@@ -37,8 +39,8 @@ profilov), e-naslov starša (prijava), `answer_cache` (skupni preverjeni odgovor
 - **Prvi vklop:** ob naslednjem zagonu strežnik v ozadju zašifrira vse obstoječe vrstice (po paketih, aplikacija med tem deluje).
 - **Preverjanje:** v Render → Shell `node scripts/kljuc-podatkov.js --preveri` izpiše, koliko vrstic je šifriranih,
   nešifriranih in neberljivih.
-- **Brez ključa** (lokalno, testi) se podatki shranjujejo nešifrirani; na javnem strežniku (https ali `NODE_ENV=production`)
-  strežnik ob zagonu to zapiše kot opozorilo. Datoteka `povratne-informacije.json` se s ključem ne piše več
+- **Brez ključa** (lokalno, testi) se podatki shranjujejo nešifrirani; v produkciji (Render, https ali
+  `NODE_ENV=production`) se strežnik brez ključa ne zažene, razen z `EVKLID_ALLOW_PLAINTEXT=1` (spodaj »Spremenljivke okolja«). Datoteka `povratne-informacije.json` se s ključem ne piše več
   (mnenja so v bazi; `node scripts/povzetek-povratnih.js` jih prebere od tam).
 
 ### Menjava ključa
@@ -95,6 +97,8 @@ naslov. Ob izbrisu računa vrstice ostanejo brez povezave na račun. Branje: `no
 
 ## Spremenljivke okolja
 
-- `EVKLID_DATA_KEY` – ključ za šifriranje (obvezno na javnem strežniku).
+- `EVKLID_DATA_KEY` – ključ za šifriranje (obvezno na javnem strežniku: v produkciji, tj. `RENDER`, `NODE_ENV=production`
+  ali `EVKLID_BASE_URL` s https, se strežnik brez njega ne zažene; `/healthz/stanje` → `sifriranje`, Straža pade ob `false`).
+- `EVKLID_ALLOW_PLAINTEXT=1` – samo izrecna izjema: produkcija brez ključa se vseeno zažene (podatki nešifrirani).
 - `EVKLID_DATA_KEYS_OLD` – stari ključi med menjavo (`id:ključ,id:ključ`).
 - `EVKLID_IMAGE_DAYS` – koliko dni ostanejo fotografije nalog (privzeto 7).

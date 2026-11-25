@@ -254,6 +254,8 @@ test("splet v aplikaciji: trgovina brez nakupov, APK osveži Račun ob vrnitvi s
       const out = {};
       for (const sel of sels) out[sel] = await x.page.locator(sel).count();
       out.pass = await passCard(x.page);
+      // Nagrada za povabilo velja samo ob plačilu na spletu (maybeRewardReferral), zato je trgovina ne obljublja.
+      out.reward = /mesec brezplačno/.test(await x.page.locator("#view-account").innerText());
       out.errors = x.errors;
       await x.ctx.close();
       return out;
@@ -270,6 +272,8 @@ test("splet v aplikaciji: trgovina brez nakupov, APK osveži Račun ob vrnitvi s
     assert.equal(storeFree["#plan-link"], 0);
     assert.equal(storeFree[".podari-card"], 0, "trgovina: brez kartice Podari");
     assert.ok(apkFree[".podari-card"] > 0);
+    assert.equal(apkFree.reward, true, "APK: obljuba nagrade za povabilo");
+    assert.equal(storeFree.reward, false, "trgovina: brez obljube nagrade za povabilo");
     assert.deepEqual([...apkFree.errors, ...storeFree.errors], []);
 
     const end = new Date(Date.now() + 30 * 86400000).toISOString();

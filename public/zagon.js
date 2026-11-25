@@ -11,8 +11,9 @@ const mods = (tag?.dataset.moduli || "").split(/\s+/).filter(Boolean).map((m) =>
 // Pristajalna stran s strežnika (public/zacetek.js): moduli se začnejo prenašati šele po njenem prvem izrisu, da na
 // počasni povezavi ne jemljejo pasovne širine slogom in pisavam. Sicer takoj. (Brez top-level await, glej zgoraj.)
 const zacni = () => {
-  // Če zacetek.js ni tekel: slogi za druge zaslone in moduli iz <template> (server/vstopna-stran.js withLanding).
-  for (const t of document.querySelectorAll("template[data-evklid-slogi]")) t.replaceWith(t.content);
+  // Če zacetek.js ni tekel: slogi za druge zaslone in moduli iz <template> (server/vstopna-stran.js withLanding). Sicer
+  // slogov tu ne vstavimo: zacetek.js jih vstavi sam (konec zagona Učne poti), da ne jemljejo pasovne širine prvemu izrisu.
+  if (!window.evklidZacetek) for (const t of document.querySelectorAll("template[data-evklid-slogi]")) t.replaceWith(t.content);
   const tpl = document.getElementById("evklid-moduli");
   if (tpl) {
     tpl.remove();
@@ -33,10 +34,15 @@ const zacni = () => {
         throw e;
       });
     });
-  return import("./i18n.js")
+  return import("./i18n-osnova.js")
     .then((m) => m.ready)
     .catch(() => null)
-    .then(() => mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve()));
+    .then(() => {
+      // Obiskovalec na /#registracija, #prijava ali #pozabljeno-geslo (public/zacetek.js obrazec): obrazec izriše account.js,
+      // ko so preneseni njegovi moduli (strežnik jih da na začetek seznama), ne šele za celo aplikacijo; app.js ga prevzame.
+      if (window.evklidZacetek?.obrazec) import("./account.js").then((m) => m.obrazecVnaprej()).catch(() => {});
+      return mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve());
+    });
 };
 const izris = window.evklidZacetek?.poIzrisu;
 if (izris) izris.then(zacni, zacni);

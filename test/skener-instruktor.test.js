@@ -28,7 +28,7 @@ test("glava: brez ikone skenerja, »Vprašaj me« z ikono vprašanja, mikrofon s
   assert.match(html, /id="mic-btn"[^>]*><i data-icon="mic">/);
   assert.match(html, /<button type="button" id="photo-btn" class="icon-btn"[^>]*data-i18n-aria="chat\.photo"><i data-icon="camera"><\/i><\/button>/);
   // Drugje »Vprašaj me« z isto ikono (urnik, lekcija).
-  assert.match(read("public/schedule.js"), /data-ustno="test">\$\{icon\("speech"\)\}/);
+  assert.match(read("public/zacetna.js"), /data-ustno="test">\$\{icon\("speech"\)\}/); // kartica urnika (urnik-kartica.js)
   assert.match(read("public/textbook.js"), /data-ustno="\$\{esc\(L\.id\)\}">\$\{ic\("speech"\)\}/);
   assert.match(read("public/icons.js"), /"speech":"<path/);
   // Zaslon Skeniraj zunaj Inštruktorja ostane (Jaz → Skeniraj nalogo).

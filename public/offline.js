@@ -4,8 +4,26 @@
 // in jih preverja v brskalniku (isti check.js kot strežnik). Odgovori čakajo v vrsti in
 // se ob ponovni povezavi pošljejo strežniku, ki vsako nalogo iz semena ustvari znova,
 // odgovor preveri še enkrat in podeli XP.
-import { checkAnswer } from "/practice/check.js";
-import { isStalePack, offlineTask } from "./enote-izbira.js";
+
+// Preverjanje (check.js) in razčlenjevalnik izrazov za cel zapis (»5√7« pri iskanem b) nista del prvega izrisa Učne poti
+// (~30 KB stisnjeno): app.js ju naloži po njem (zasloniPozneje), da ju service worker shrani za delo brez povezave.
+// Klic iz paketa pred tem ju počaka (offlineApi vrne obljubo). Brez razčlenjevalnika preverjanje dela kot prej.
+let checkAnswer = null;
+let offlineTask = null; // enote pri nalogi iz paketa (public/enote-izbira.js), skupaj s check.js
+let MATH = null;
+let preverjanje = null;
+export const pripraviPreverjanje = () =>
+  (preverjanje ||= Promise.all([import("/practice/check.js"), import("./graph/math.js").catch(() => null), import("./enote-izbira.js")]).then(
+    ([c, m, e]) => {
+      checkAnswer = c.checkAnswer;
+      MATH = m;
+      offlineTask = e.offlineTask;
+    },
+    (err) => {
+      preverjanje = null; // brez povezave in brez kopije: naslednji klic poskusi znova
+      throw err;
+    },
+  ));
 
 // Enako kot hintSteps v server/practice/index.js: podatki → formula → namig.
 function hintSteps(t) {
@@ -24,6 +42,10 @@ const QUEUE = (sid) => `evklid.offline.queue.${sid}`;
 const LIMIT = (sid) => `evklid.offline.limit.${sid}`;
 const LIMIT_MS = 6 * 3600e3;
 const DAY = 86400000;
+// Paket iz različice pred PR 786 ima pri nalogi z enoto le »unit« (brez hasUnit in units): naloga bi skrila
+// enote, preverjanje pa bi enoto zahtevalo. Tak paket je zastarel (osveži ga, ko je povezava).
+export const isStalePack = (pack) =>
+  Object.values(pack?.tasks || {}).some((list) => Array.isArray(list) && list.some((x) => x?.task && x.task.hasUnit === undefined && !!(x.task.unit || x.answer?.unit)));
 
 const read = (key, fallback) => {
   try {
@@ -101,6 +123,11 @@ export function offlineApi(sid, url, opts = {}) {
   if (!pack) return undefined;
   const u = new URL(url, location.origin);
   const p = u.pathname;
+  // Naloga ali odgovor iz paketa potrebuje check.js: če še ni naložen, počakamo nanj (app.js fromPack počaka obljubo;
+  // undefined ali neuspel uvoz tam postane prevedeno sporočilo brez povezave).
+  if (!checkAnswer && (p === `/api/students/${sid}/practice/next` || /^\/api\/students\/\d+\/tasks\/off-[^/]+\/answer$/.test(p))) {
+    return pripraviPreverjanje().then(() => offlineApi(sid, url, opts));
+  }
   const body = typeof opts.body === "string" ? JSON.parse(opts.body || "{}") : opts.body || {};
 
   if (p === "/api/topic") {
@@ -127,7 +154,7 @@ export function offlineApi(sid, url, opts = {}) {
       return { steps: steps.slice(0, Math.max(1, Number(body.step) || 1)), total: steps.length, offline: true };
     }
     if (m[2] !== "answer") throw new OfflineError();
-    const res = checkAnswer(lastTask.answer, body.answer, { convert: true, text: lastTask.task?.text });
+    const res = checkAnswer(lastTask.answer, body.answer, { convert: true, text: lastTask.task?.text, find: lastTask.task?.data?.find, math: MATH });
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}), offline: true };
     if (["format", "unit", "simplify"].includes(res.kind)) return { ...out, retry: true };
     lastTask.attempts += 1;
@@ -219,6 +246,7 @@ export async function clearPrivate() {
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
     for (const k of keys) if (isPrivateKey(k)) localStorage.removeItem(k);
   } catch {}
+  dropDrafts(/^evklid\.(osnutek|odgovor)\./); // osnutki vprašanj in odgovorov v tem zavihku (app.js, vadnica.js)
   try {
     navigator.serviceWorker?.controller?.postMessage({ type: "clear-private" });
   } catch {}
@@ -227,6 +255,16 @@ export async function clearPrivate() {
       const names = await caches.keys();
       await Promise.all(names.filter((n) => /-api(-|$)/.test(n)).map((n) => caches.delete(n)));
     }
+  } catch {}
+}
+
+// Osnutki (vprašanje inštruktorju po pogovoru, odgovor naloge po nalogi) so v sessionStorage zavihka:
+// »evklid.osnutek.<profil>.<pogovor>«, »evklid.odgovor.<profil>.<naloga>«. Odjava in izbris profila ju pobrišeta.
+function dropDrafts(re) {
+  try {
+    const keys = [];
+    for (let i = 0; i < sessionStorage.length; i++) keys.push(sessionStorage.key(i));
+    for (const k of keys) if (re.test(k)) sessionStorage.removeItem(k);
   } catch {}
 }
 
@@ -243,6 +281,7 @@ export function clearProfile(sid) {
     // Zadnji zaslon in njegov posnetek (public/zacetek.js), če sta od tega profila.
     for (const k of ["evklid.zadnji-zaslon", "evklid.zadnji-posnetek"]) if (String(read(k, null)?.s) === id) localStorage.removeItem(k);
   } catch {}
+  dropDrafts(new RegExp(`^evklid\\.(osnutek|odgovor)\\.${id}\\.`));
 }
 
 // Ali so na napravi osebni podatki (brez zapisa o lastniku).

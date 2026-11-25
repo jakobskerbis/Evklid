@@ -15,14 +15,21 @@
   <meta property="og:url" content="https://evklid.app/o-evklidu">
   <meta property="og:title" content="O Evklidu – slovenski AI inštruktor za šolo | evklid.app">
   <meta property="og:description" content="Kaj je Evklid, za koga je, kaj zna<!--ce:!trgovina-->, koliko stane<!--/ce:!trgovina--> in kako varuje podatke.">
-  <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://evklid.app/icons/deljenje.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Evklid · evklid.app · slovenski AI inštruktor">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
   <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <!-- Pisavi takoj s slogi (kot pristajalna stran, server/vstopna-stran.js PISAVE): sicer prideta po prvem izrisu in
+       zamenjava pisave premakne vsebino ob sidrih cen in mature (CLS 0,20 na telefonu, meritev 21. 11. 2026). -->
+  <link rel="preload" href="/vendor/instrument-sans/files/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/vendor/instrument-sans/files/instrument-sans-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/vendor/instrument-sans/index.css">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/predstavitev.css">
@@ -159,6 +166,7 @@
     <section class="land-sec about-matura" aria-labelledby="h-matura">
       <h2 id="h-matura">Priprava na maturo iz matematike, fizike, kemije in biologije</h2>
       <p class="about-text">Pretekle pole mature je mogoče prenesti z ric.si in jih odpreti v Evklidu. Pri vsaki nalogi je mogoče vprašati inštruktorja, ki z namigi vodi do rešitve. Evklidove pole v slogu mature imajo enako zgradbo in točkovanje kot izvirne, naloge pa so nove in imajo razložene rešitve.</p>
+      <p class="about-text">Lekcije v učbeniku pokrivajo vso snov mature iz matematike. Pri fiziki in kemiji so lekcije za 3. in 4.&nbsp;letnik še delne (v 4.&nbsp;letniku ima fizika 6 lekcij, kemija 3); pri snovi, ki je v lekcijah še ni, pomaga inštruktor.</p>
       <p class="about-text">Nalogo iz zvezka je mogoče fotografirati. Prvih {{trialDays}} dni je brezplačnih, brez kartice.</p>
     </section>
 
@@ -172,7 +180,7 @@
       <h2 id="h-koga">Za koga je</h2>
       <ul class="land-grid land-levels about-who">
         <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:pencil}}</span><h3>Osnovna šola</h3><p>Od 6. do 9. razreda: učna pot po razredih, inštruktor, igre in priprava na NPZ. V nižjih razredih sta na voljo inštruktor in igre.</p></li>
-        <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:notebook-pen}}</span><h3>Gimnazija</h3><p>Vsi letniki: urnik s testi, priprava nanje in na maturo.</p></li>
+        <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:notebook-pen}}</span><h3>Gimnazija</h3><p>Vsi letniki: urnik s testi, priprava nanje in na maturo. Lekcije so pri matematiki popolne, pri fiziki in kemiji pa v višjih letnikih še delne.</p></li>
         <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:graduation-cap}}</span><h3>Fakulteta</h3><p>Začetni izbor za nekatere fakultetne predmete (v razvoju). Urnik s kolokviji in izpiti.</p></li>
         <li class="card land-level"><span class="land-ic" aria-hidden="true">{{i:heart}}</span><h3>Starši in učitelji</h3><p>Starš vidi, kaj otrok dela in kje potrebuje pomoč. Učitelj odpre razred in dodeli teme; učiteljski račun je brezplačen.</p></li>
       </ul>
@@ -220,7 +228,7 @@
           <li>Podrobne razlage imajo mesečni obseg. Ko je porabljen, inštruktor pomaga naprej v hitrejšem načinu, nato do konca mesečnega obdobja naročnine vsak dan kot v brezplačnem paketu (do {{freeDaily}} vprašanj na dan). Ko so vprašanja za tisti dan porabljena, jih spet dobite naslednji dan ali pa takoj nadaljujete z dokupom pogovorov. Preostanek vidite v zavihku Račun.</li>
         </ul>
         <p class="land-note">Ko profil preide na višjo stopnjo, na primer iz srednje šole na fakulteto, ima pri naročnini za en profil novo stopnjo odprto takoj in brez doplačila, najmanj do konca plačanega obdobja. Če se zato cena naročnine zviša, vas po e-pošti obvestimo najmanj 30 dni pred podaljšanjem, s katerim začne veljati.</p>
-        <p class="land-note">Naročnino lahko kadar koli prekličete. Učiteljski račun je brezplačen; ponudba za šole je na strani <a href="/sole">Za učitelje in šole</a>.</p>
+        <p class="land-note">Naročnino lahko kadar koli prekličete. Učiteljski račun je brezplačen, več na strani <a href="/sole">Za učitelje in šole</a>.</p>
       </section>
 <!--/ce:!trgovina-->
 

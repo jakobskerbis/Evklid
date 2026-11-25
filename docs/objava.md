@@ -65,6 +65,17 @@ Vse lahko spremeniš v Render → Environment.
 
 **Šifriranje podatkov:** nastavi tudi `EVKLID_DATA_KEY` (navodila v [varnost-podatkov.md](varnost-podatkov.md)).
 
+## Glas za ustno spraševanje (storitev evklid-glas)
+
+Evklid bere vprašanja ustnega spraševanja na glas z odprtim slovenskim glasom Piper (glas »artur«, CC BY 4.0), ker
+glas naprave slovenščino pozna skoraj samo v Edgu. Glas ustvari ločena zasebna storitev `evklid-glas` iz
+`render.yaml` (Python, `glas/streznik.py`, Starter ≈ 7 $ na mesec; j 19. 11. 2026). Nastane ob sinhronizaciji
+Blueprinta (Render → Blueprints → evklid → **Manual Sync**, če se ne pojavi sama). Glavni strežnik jo najde prek
+`EVKLID_GLAS_URL` (`fromService`, ime:vrata). Brez nje Evklid uporabi glas naprave kot prej. Sinhronizacija
+Blueprinta, ki doda spremenljivko, lahko glavni strežnik takoj znova objavi, zato jo zaženi v nočnem oknu objav
+(03:00–05:00, scripts/render-objava.js). Preverjanje:
+v Render Shell glavnega strežnika `curl -s http://$EVKLID_GLAS_URL/healthz` vrne `ok`.
+
 ## Varnostna kopija
 
 Render → Disks naredi dnevni posnetek diska samodejno (hrani se 7 dni).

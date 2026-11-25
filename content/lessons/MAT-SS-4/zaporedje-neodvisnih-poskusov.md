@@ -171,9 +171,20 @@ $P_5(5) = 0{,}8^5 = 0{,}32768$, skupaj $0{,}4096 + 0{,}32768 = 0{,}73728$. Sprej
 
 ## Povzetek
 
-- Zaporedje neodvisnih poskusov: isti poskus $n$-krat, dva izida ($A$ ali ne $A$), $P(A) = p$ je vsakič enaka, poskusi so neodvisni; $q = 1 - p$.
-- Bernoullijeva formula: $P_n(k) = \binom{n}{k}p^k q^{n-k}$; $\binom{n}{k}$ šteje poteke, $p^k q^{n-k}$ je verjetnost enega poteka.
-- »Vsaj en uspeh«: $1 - q^n$. Pri »vsaj« in »največ« izberi krajšo pot: neposredno seštej ali uporabi nasprotni dogodek.
+**Zaporedje neodvisnih poskusov:**
+
+- isti poskus $n$-krat;
+- dva izida: $A$ ali ne $A$;
+- $P(A) = p$ je vsakič enaka, $q = 1 - p$;
+- poskusi so neodvisni.
+
+**Bernoullijeva formula:**
+
+$$P_n(k) = \binom{n}{k}p^k q^{n-k}$$
+
+- $\binom{n}{k}$ šteje poteke, $p^k q^{n-k}$ je verjetnost enega poteka.
+- **»Vsaj en uspeh«:** $1 - q^n$.
+- Pri »vsaj« in »največ« izberi krajšo pot: neposredno seštej ali uporabi nasprotni dogodek.
 - Vse verjetnosti $P_n(0)$ do $P_n(n)$ so členi razvoja $(q+p)^n$, zato je njihova vsota $1$.
 - Pri vlečenju brez vračanja formula ne velja.
 

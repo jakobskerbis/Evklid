@@ -10,6 +10,7 @@
 // Vrednost polja ostane nespremenjena (preverjanje odgovora dobi točno to, kar je napisano). Prazno mesto (»()/()«) je
 // okvirček. Kalkulator (sprotni izračun) ima svoje.
 import { splitFormulas, hasFormula, varnaMesta, delisKazalcem, brisiNazaj, brisiNaprej, OZNAKA } from "./vnos-formul.js";
+import { izrisi as izrisiTex } from "./mat/izris.js";
 
 // Polja s svojim izrisom: kalkulator (sprotni izračun pod vnosom), skeniraj (.scan-preview);
 // iskalnik spustnega seznama (ikona kljukice je sosed polja: .dd-search input + .dd-check).
@@ -21,14 +22,16 @@ const zadnje = new WeakMap(); // polje → zadnji položaj kazalca (smer pomika 
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 // \vphantom: prazno mesto s kazalcem (števec »()/()«) dobi višino števke, da ulomek ne zleze skupaj.
 const KAZALEC = "\\htmlClass{vnos-kazalka}{\\vphantom{1}}";
-const zaupaj = (c) => c.command === "\\htmlClass" && c.class === "vnos-kazalka";
+// Kazalec (\htmlClass vnos-kazalka) dovoli skupni izris: public/mat/izris.js ZAUPAJ.kazalec.
 const tex = (t) => {
   try {
     // Prazno mesto iz tipke (ulomek, koren, potenca, ki ga učenec še ni izpolnil) kot okvirček, da se vidi, kam pišeš.
     const src = t.replace(/\{\}/g, "{\\square}").split(OZNAKA).join(KAZALEC);
-    return globalThis.katex.renderToString(`\\displaystyle ${src}`, { throwOnError: false, strict: "ignore", trust: zaupaj });
+    return izrisiTex(`\\displaystyle ${src}`, { zaupaj: "kazalec", napaka: "vrzi" });
   } catch {
-    return esc(t.split(OZNAKA).join(""));
+    // Napol napisan izraz, ki ga KaTeX ne razbere: besedilo, kot je napisano, s kazalcem na mestu (nikoli okvirček
+    // namesto vnosa, nikoli rdeč surov LaTeX).
+    return t.split(OZNAKA).map(esc).join('<span class="vnos-kazalka"></span>');
   }
 };
 const html = (deli) =>
@@ -261,12 +264,14 @@ function tap(f, o, e) {
 }
 
 // Polje s predogledom ali izrisom: tudi vrednost ali kazalec, ki ju nastavi koda brez dogodka (plošča Piši: enota,
-// prebrani zapis, Popravi; puščici tipkovnice; nastavitve ob menjavi profila), osveži izris.
+// prebrani zapis, Popravi; puščici tipkovnice; nastavitve ob menjavi profila), osveži izris. Polje, ki že ima svoj
+// nastavljalec (klepet: app.js z njim poveča polje), ga obdrži: izris se doda zraven (prej je bil tam izpuščen, zato je
+// po »Pošlji« v praznem polju ostal izris zadnjega ulomka).
 function sledi(f) {
   if (sledeno.has(f)) return;
   sledeno.add(f);
-  const d = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(f), "value");
-  if (d?.set && !Object.getOwnPropertyDescriptor(f, "value")) {
+  const d = Object.getOwnPropertyDescriptor(f, "value") || Object.getOwnPropertyDescriptor(Object.getPrototypeOf(f), "value");
+  if (d?.get && d?.set && d.configurable) {
     Object.defineProperty(f, "value", {
       configurable: true,
       get: () => d.get.call(f),

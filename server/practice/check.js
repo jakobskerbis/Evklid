@@ -118,12 +118,83 @@ function parseQuotient(input, { dot = false } = {}) {
   const a = parseNumberWithUnit(l, { dot });
   const b = parseNumberWithUnit(r, { dot });
   // »12:3=4«: zapisan je cel račun, ne količnik (ni ga mogoče preveriti kot količnik).
-  if (!a || !b || a.unit || !/^[+-]?\s*\d/.test(r) || b.unit.includes("=")) return null;
+  // »2/1e8«: e za številom je znanstveni zapis, ne enota (izraz prebere exprValue)
+  if (!a || !b || a.unit || !/^[+-]?\s*\d/.test(r) || b.unit.includes("=") || /^[eE][+-]?\d/.test(b.unit)) return null;
   return { value: a.value / b.value, unit: b.unit };
+}
+
+// Znanstveni zapis: »2,5·10^3«, »2,5 × 10^(-3) m«, »1,2*10⁻⁴ kg«, »3x10^8 m/s« (tipka ×10ⁿ na tipkovnici).
+const SUPER = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
+// Ostanek za znanstvenim zapisom je enota (»m/s«, »°C«, »eV«) ali nič. Operator, potenca, √, π, e, »)«, »!«, »%« ali
+// števka pomenijo, da je zapis izraz (»2e3+1«, »2·10^3 + 500«, »2e3²«): takega prebere exprValue, ne kot število z enoto.
+// Pri nalogi z enoto je enota tudi znak (»8·10^3 €«, »9,75·10^1 %«, »2·10^3 ‰«); pri nalogi brez enote je »2e3%« izraz.
+const unitRest = (r, ans) =>
+  r === "" ||
+  /^\)+$/.test(r) || // odvečen zaklepaj (»2·10^3)«) kot doslej ne spremeni števila
+  (/^[\p{L}°µ]/u.test(r) && !/^(?:π|[eE](?![\p{L}]))/u.test(r)) ||
+  (!!ans?.unit && !/^[\d+\-−*/·×:÷^²³⁰¹⁴⁵⁶⁷⁸⁹⁻√∛π()!=.,\[\]{}|]/u.test(r));
+function parseScientific(input, ans = null) {
+  const s = westernDigits(String(input).trim()).replace(/[−–]/g, "-");
+  // »1e8«, »2,5e-3 m«, »3E2« (zapis kalkulatorja): isto pravilo za e kot calcText v math.js (za njim ni črke ali oklepaja)
+  const e = s.match(/^((?:[+-]\s*)?\d+(?:[.,]\d+)?)[eE]([+-]?\d+)(?![\d.,(A-Za-z])\s*([\s\S]*)$/);
+  if (e) {
+    const value = Number(`${e[1].replace(/\s/g, "").replace(",", ".")}e${e[2]}`);
+    if (!unitRest(e[3].trim(), ans)) return null;
+    if (Number.isFinite(value)) return { value, decimals: effDecimals(value), unit: e[3].trim() };
+  }
+  // Brez dveh zaporednih delov, ki oba sprejmeta presledke (»[+-]?\s*« za »\s*«, »\s*(.*)«): sicer kvadratni čas pri dolgem nizu presledkov.
+  const m = s.match(/^((?:[+-]\s*)?\d+(?:[.,]\d+)?)\s*[·*×xX]\s*10\s*(?:\^\s*(?:\(\s*((?:[+-]\s*)?\d+)\s*\)|\{\s*((?:[+-]\s*)?\d+)\s*\}|((?:[+-]\s*)?\d+))|([⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+))(?![\d⁰¹²³⁴⁵⁶⁷⁸⁹])([\s\S]*)$/);
+  if (!m) return null;
+  const exp = (m[2] ?? m[3] ?? m[4] ?? [...m[5]].map((c) => SUPER[c]).join("")).replace(/\s/g, "");
+  const value = Number(`${m[1].replace(/\s/g, "").replace(",", ".")}e${exp}`);
+  if (!Number.isFinite(value) || !unitRest(m[6].trim(), ans)) return null;
+  return { value, decimals: effDecimals(value), unit: m[6].trim() };
+}
+
+// Izraz namesto števila (»5√7«, »√(49)«, »3 + 4«): vrednost izraza brez spremenljivk ali null.
+// math: { parse, compile } iz public/graph/math.js (strežnik in vaje brez povezave ga podata v opts.math).
+const MATH_TAIL = /^(?:[√∛^²³(*·×+\-−/]|π\s*\S|\\?(?:sqrt|root|log|ln|sin|cos|tan)\b)/;
+function constNode(n) {
+  if (!n || typeof n !== "object") return true;
+  if (n.k === "var") return false;
+  if (n.k === "const") return n.name === "π" || n.name === "pi" || n.name === "e";
+  return Object.values(n).every((v) => (Array.isArray(v) ? v.every(constNode) : typeof v !== "object" || constNode(v)));
+}
+// Učenčev zapis → besedilo za parse() po istem pravilu kot kalkulatorja (math.numberText): »sin(0,5)« je sin 0,5,
+// »1 000« je tisoč, »max(1,5; 2)« ima dve vrednosti. Brez tega je »sin(0,5)« veljal kot sin(0) ali napaka (AUDIT-024).
+// dot: naloga z decimalno piko (vejica v oklepaju loči vrednosti).
+function studentText(input, math, dot = false) {
+  const s = westernDigits(String(input).trim());
+  // calcText: še znanstveni zapis »1e8«, »2,5e-3« kot v kalkulatorjih (AUDIT-041)
+  if (math.calcText) return math.calcText(s, { comma: !dot });
+  return math.numberText ? math.numberText(s, !dot) : s;
+}
+// own: false za zapis iz naloge (decimalna pika), ne za učenčev odgovor.
+function exprValue(input, math, { own = true, dot = false } = {}) {
+  if (!math) return null;
+  try {
+    const node = math.parse(own ? studentText(input, math, dot) : String(input).trim());
+    if (!constNode(node) || node.k === "num" || node.k === "cmp") return null;
+    const v = math.compile(node)({});
+    return typeof v === "number" && Number.isFinite(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+// Je vrednost enaka pravemu rezultatu (točno ali, pri zahtevanem zaokroževanju, zaokroženo enako)?
+function sameValue(ans, v) {
+  const d = ans.decimals;
+  return [ans.value, ...(ans.alsoAccept || [])].some(
+    (e) => Math.abs(v - e) <= (ans.tolerance ?? 1e-9) * Math.max(1, Math.abs(e)) || (d !== undefined && d !== null && Math.abs(roundHalfUp(v, d) - roundHalfUp(e, d)) < 1e-9),
+  );
 }
 
 function checkNumber(ans, input, opts = {}) {
   const s = westernDigits(String(input).trim());
+  // Znanstveni zapis je število (prej je »2,5·10^3« veljal kot 2,5 z namigom »1000-krat premajhen«).
+  const sci = parseScientific(input, ans);
+  if (sci) return checkParsed(ans, sci, opts);
   const q = clockLike(ans, s) ? null : parseQuotient(input, { dot: !!ans.dot });
   if (q) {
     // Količnik je zapisan prav, a število je treba še izračunati (»Izračunaj 5 : 4« z odgovorom »5 : 4« ne velja).
@@ -146,6 +217,19 @@ function checkNumber(ans, input, opts = {}) {
     return { kind: "wrong", ...diagnose(ans, { value: q.value, decimals: 6, unit: "" }) };
   }
   const p = parseNumberWithUnit(input, { dot: !!ans.dot });
+  // Izraz namesto enega števila (»5√7«, »√(49)«): prej je »5√7« veljal kot 5 (ostanek je bil kot enota prezrt).
+  // Prava vrednost: zapis še ni končan (ne šteje kot poskus); napačna: poskus z razlago, da se išče eno število.
+  // »2e3/2«: e z eksponentom za številom je znanstveni zapis v izrazu, ne enota
+  if (!ans.unit && !ans.dot && (!p || MATH_TAIL.test(p.unit) || /^[eE][+-]?\d/.test(p.unit))) {
+    const v = exprValue(input, opts.math);
+    if (v !== null) {
+      // S π je točen zapis pravilen kot pri »2π« (»2π/3«, »π/4«).
+      if (/π|\\pi/.test(s) && sameValue(ans, v)) return checkConverted(ans, { value: v, decimals: effDecimals(v), unit: "" });
+      if (sameValue(ans, v)) return { kind: "format", code: "chk.calcFully", message: "Vrednost je prava. Izračunaj jo še do konca in vpiši eno samo število." };
+      // Tudi brez števila na začetku (»(8)«, »√50«): sicer bi učenec brez poskusov ugibal, dokler ne dobi »Vrednost je prava«.
+      return { kind: "wrong", mistake: { code: "chk.expression", params: {}, message: "Naloga sprašuje po enem številu, ti pa si vpisal izraz. Preveri, katero število iščemo, in vpiši samo to število." } };
+    }
+  }
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
   // »2:3:4« pri nalogi brez enote: znak za deljenje ni enota (prej je veljalo kot 2).
   if (!ans.unit && /^[:÷∶/]/.test(p.unit)) return { kind: "format", code: "chk.oneNumber", message: "Vpiši eno samo število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
@@ -447,9 +531,254 @@ function checkCoefficients(ans, input) {
   return { kind: "wrong" };
 }
 
+// ---------- iskani del namesto celega zapisa (j, 19. 11. 2026) ----------
+// Naloga »√175 = a√b, koliko je b?«: učenec pogosto vpiše cel zapis (»5√7«) ali »b = 7«.
+// answer.form = { expr, vals, ask }: expr je oblika v zapisu tipkovnice (»a√(b)«, »y = k*x + n«, »k*π«), vals
+// prave vrednosti črk v obliki, ask iskana črka. Pravilen cel zapis ne šteje kot poskus (učenec izve, da vpiše
+// samo iskano število); cel zapis z napako je napačen poskus z isto razlago.
+
+// Iskana količina pred enačajem (»b = 7«, »x=4«, »n = −3«): odstrani jo, če je to res iskana črka.
+const symKey = (s) => String(s ?? "").replace(/\\(?:mathrm|text|rm)\b/g, "").replace(/\\([a-zA-Z]+)/g, "$1").replace(/[\s${}_\\]/g, "");
+function askedSymbols(answer, opts) {
+  return new Set([answer.form?.ask, askedLetter(opts), ...[].concat(opts.find || [])].filter(Boolean).map(symKey).filter(Boolean));
+}
+function stripAsked(input, answer, opts) {
+  // Brez »\s*« ob razredu, ki tudi sprejme presledke (kvadratni čas pri »A=« + mnogo presledkov).
+  const m = String(input).trim().match(/^([A-Za-zͰ-Ͽ][A-Za-z0-9_Ͱ-Ͽ']*)\s*=([\s\S]*)$/);
+  if (!m || m[2].includes("=") || !m[2].trim()) return input;
+  return askedSymbols(answer, opts).has(symKey(m[1])) ? m[2].trim() : input;
+}
+
+const ungrp = (n) => (n && n.k === "grp" ? ungrp(n.a) : n);
+// Vrednost številskega poddrevesa (−3, 1/2, 2,5) ali null.
+function constVal(n) {
+  n = ungrp(n);
+  if (!n) return null;
+  if (n.k === "num") return n.v;
+  if (n.k === "neg") return constVal(n.a) === null ? null : -constVal(n.a);
+  if (n.k === "*" || n.k === "/") {
+    const a = constVal(n.a);
+    const b = constVal(n.b);
+    if (a === null || b === null || (n.k === "/" && b === 0)) return null;
+    return n.k === "*" ? a * b : a / b;
+  }
+  return null;
+}
+const close = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+function bind(b, name, v) {
+  if (v === null || !Number.isFinite(v)) return false;
+  if (name in b) return close(b[name], v);
+  b[name] = v;
+  return true;
+}
+// Seštevanci s predznakom: a − b + (−c) → [+a, −b, −c].
+function addends(n, sign = 1, out = []) {
+  n = ungrp(n);
+  if (n.k === "+") return addends(n.b, sign, addends(n.a, sign, out));
+  if (n.k === "-" && n.b) return addends(n.b, -sign, addends(n.a, sign, out));
+  if (n.k === "neg") return addends(n.a, -sign, out);
+  out.push({ sign, node: n });
+  return out;
+}
+// Člen → { coef (število), ph (črka iz oblike kot koeficient ali null), rest [faktorji] }.
+function factorize(n, P, t = { coef: 1, ph: null, rest: [] }, inv = false) {
+  n = ungrp(n);
+  const c = constVal(n);
+  if (c !== null) {
+    t.coef = inv ? t.coef / c : t.coef * c;
+    return t;
+  }
+  if (n.k === "neg") {
+    t.coef = -t.coef;
+    return factorize(n.a, P, t, inv);
+  }
+  if (n.k === "*") return factorize(n.b, P, factorize(n.a, P, t, inv), inv);
+  if (n.k === "/" && constVal(n.b) !== null) return factorize(n.b, P, factorize(n.a, P, t, inv), !inv);
+  if (n.k === "var" && P.has(n.name) && !t.ph && !inv) {
+    t.ph = n.name;
+    return t;
+  }
+  t.rest.push(inv ? { k: "/", a: { k: "num", v: 1 }, b: n } : n);
+  return t;
+}
+// Ujemanje dela oblike (z mesti za črke) z učenčevim izrazom; b dobi vrednosti črk.
+function unify(T, I, P, b) {
+  T = ungrp(T);
+  I = ungrp(I);
+  if (T.k === "var" && P.has(T.name)) return bind(b, T.name, constVal(I));
+  // x^m z m = 1: učenec napiše samo x.
+  if (T.k === "^" && ungrp(T.b).k === "var" && P.has(ungrp(T.b).name) && I.k !== "^") return unify(T.a, I, P, b) && bind(b, ungrp(T.b).name, 1);
+  if (T.k !== I.k) return false;
+  switch (T.k) {
+    case "num":
+      return close(T.v, I.v);
+    case "var":
+    case "const":
+      return T.name === I.name;
+    case "call":
+      return T.f === I.f && T.args.length === I.args.length && T.args.every((a, i) => unify(a, I.args[i], P, b));
+    case "^":
+    case "/":
+      return unify(T.a, I.a, P, b) && unify(T.b, I.b, P, b);
+    case "+":
+    case "-":
+    case "*":
+      return sumMatch(T, I, P, b);
+    case "neg":
+      return unify(T.a, I.a, P, b);
+    default:
+      return false;
+  }
+}
+// Vsi vrstni redi kratkega seznama (do 4 elementi).
+function perms(a) {
+  if (a.length <= 1) return [a];
+  return a.flatMap((x, i) => perms([...a.slice(0, i), ...a.slice(i + 1)]).map((p) => [x, ...p]));
+}
+function restMatch(Tr, Ir, P, b) {
+  if (Tr.length !== Ir.length || Tr.length > 4) return false;
+  return perms(Ir).some((order) => {
+    const trial = { ...b };
+    if (!Tr.every((f, i) => unify(f, order[i], P, trial))) return false;
+    Object.assign(b, trial);
+    return true;
+  });
+}
+// Vsota iz oblike proti vsoti učenca v poljubnem vrstnem redu; manjkajoč prosti člen s črko je 0 (y = −9x pri n = 0).
+function sumMatch(T, I, P, b) {
+  const tt = addends(T).map((x) => ({ ...factorize(x.node, P), sign: x.sign }));
+  const it = addends(I).map((x) => ({ ...factorize(x.node, P), sign: x.sign }));
+  if (tt.length > 4 || it.length > 4) return false;
+  const tryFrom = (ti, used, cur) => {
+    if (ti === tt.length) {
+      if (used.size !== it.length) return null;
+      return cur;
+    }
+    const t = tt[ti];
+    for (let j = 0; j < it.length; j++) {
+      if (used.has(j)) continue;
+      const u = it[j];
+      if (u.ph) continue; // učenec ne piše črk iz oblike
+      const trial = { ...cur };
+      if (!restMatch(t.rest, u.rest, P, trial)) continue;
+      const v = u.sign * u.coef;
+      if (t.ph ? !bind(trial, t.ph, v / (t.sign * t.coef)) : !close(v, t.sign * t.coef)) continue;
+      const done = tryFrom(ti + 1, new Set([...used, j]), trial);
+      if (done) return done;
+    }
+    // Prosti člen s črko, ki ga učenec ni napisal: vrednost 0.
+    if (t.ph && !t.rest.length) {
+      const trial = { ...cur };
+      if (bind(trial, t.ph, 0)) return tryFrom(ti + 1, used, trial);
+    }
+    return null;
+  };
+  const res = tryFrom(0, new Set(), { ...b });
+  if (!res) return false;
+  Object.assign(b, res);
+  return true;
+}
+const isVar = (n, name) => ungrp(n)?.k === "var" && ungrp(n).name === name;
+const fnSide = (n) => isVar(n, "y") || (n.k === "*" && isVar(n.a, "f") && isVar(n.b, "x")) || (n.k === "call" && n.f === "f" && n.args.length === 1 && isVar(n.args[0], "x"));
+// Enačba: »y = k*x + n« proti »y = −9x + 6« ali samo desni strani »−9x + 6«.
+function formValues(form, input, math, dot = false) {
+  let T;
+  let I;
+  try {
+    T = math.parse(form.expr);
+    I = math.parse(studentText(input, math, dot));
+  } catch {
+    return null;
+  }
+  const P = new Set([...Object.keys(form.vals), ...(form.free || [])]);
+  const sides = (n) => (n.k === "cmp" ? (n.ops.length === 1 && n.ops[0] === "=" ? n.terms : null) : [n]);
+  let ts = sides(T);
+  const is = sides(I);
+  if (!ts || !is) return null;
+  if (ts.length === 2 && is.length === 1) ts = [ts[1]];
+  if (ts.length !== is.length) return null;
+  const b = {};
+  // »y = …« in »f(x) = …« sta ista leva stran.
+  if (ts.length === 2 && fnSide(ts[0]) && fnSide(is[0])) {
+    ts = [ts[1]];
+    is.shift();
+  }
+  if (!ts.every((t, i) => sumMatch(t, is[i], P, b))) return null;
+  return [...P].every((k) => k in b) ? b : null;
+}
+// Oblika brez answer.form, prepoznana iz besedila naloge (vse take naloge naenkrat, tudi prihodnje):
+// »v obliki $k\pi$«, »tangenta $y = kx + n$ … vpiši $n$«, »vodnica $x = m$«, »faktor $x + c$«, »$z = x + yi$«, »$= e^k$«.
+// Iz besedila poznamo le vrednost iskane črke; druge črke oblike so proste (free).
+const IMPLIED = [
+  [/\$k\s*\\pi\$/, () => "k*π"],
+  [/\$(y|f\(x\)) = ([a-z])x \+ ([a-z])\$/, (m) => `${m[1]} = ${m[2]}*x + ${m[3]}`],
+  [/\$y = x \+ ([a-z])\$/, (m) => `y = x + ${m[1]}`],
+  [/\$x = ([a-z])\$/, (m) => `x = ${m[1]}`],
+  [/\$x \+ ([a-z])\$/, (m) => `x + ${m[1]}`],
+  [/\$z = x \+ yi\$/, () => "z = x + y*i"],
+  [/= e\^k\$/, () => "e^k"],
+];
+// Iskana črka: edina v »Iščemo« ali zadnja v »Koliko je $n$?«, »Vpiši $k$«, »find k«.
+function askedLetter(opts) {
+  const find = [].concat(opts.find || []).map(symKey).filter(Boolean);
+  if (find.length === 1 && /^[a-zA-Z]$/.test(find[0])) return find[0];
+  const all = [...String(opts.text || "").matchAll(/(?:Koliko je|Vpiši|Izračunaj|Določi)\s+\$([a-zA-Z])\$|\bfind\s+\$?([a-zA-Z])\$?(?![\w{(\\])/g)];
+  // V slovenskem besedilu je črka v $…$ (»Koliko je v posodi« ni črka v).
+  return all.length ? all[all.length - 1][1] || all[all.length - 1][2] : null;
+}
+function impliedForm(answer, opts) {
+  if (answer.form) return answer.form;
+  const value = answer.type === "fraction" ? answer.num / answer.den : answer.value;
+  const ask = askedLetter(opts);
+  if (!Number.isFinite(value) || !ask) return null;
+  const text = String(opts.text || "");
+  for (const [re, make] of IMPLIED) {
+    const m = text.match(re);
+    if (!m) continue;
+    const expr = make(m);
+    const letters = new Set([...(expr.replace(/\b(?:x|y|z|f|i|e)\b/g, " ").match(/\b[a-zA-Z]\b/g) || []), ...(expr === "z = x + y*i" ? ["x", "y"] : [])]);
+    if (!letters.has(ask)) continue;
+    return { expr, vals: { [ask]: value }, ask, free: [...letters].filter((l) => l !== ask) };
+  }
+  return null;
+}
+// Izid za cel zapis ali null (vnos ni v obliki naloge).
+function checkForm(answer, input, opts) {
+  const f = impliedForm(answer, opts);
+  if (!f || !opts.math || !/[A-Za-zͰ-Ͽ√∛^=π⁰¹²³⁴⁵⁶⁷⁸⁹]/.test(String(input))) return null;
+  // »3,2x10^4«: x je tu znak za množenje (kot v parseScientific), ne spremenljivka.
+  const inp = /10\^/.test(f.expr) ? String(input).replace(/(\d)\s*[xX]\s*(?=10)/g, "$1*") : input;
+  const got = formValues(f, inp, opts.math, !!answer.dot);
+  if (!got) return null;
+  const sym = f.ask;
+  // Iskana vrednost mora biti tudi enaka odgovoru naloge (če bi se form.vals in answer kdaj razšla, ne izdamo »pravilno«).
+  const want = answer.type === "fraction" ? answer.num / answer.den : answer.value;
+  if (sym in got && close(got[sym], want) && Object.entries(f.vals).every(([k, v]) => close(got[k], v))) {
+    // Drugih črk ne poznamo (oblika iz besedila): ne trdimo, da je cel zapis pravilen.
+    if (f.free?.length) return { kind: "format", code: "chk.partOnlyAsk", params: { sym }, message: `Naloga sprašuje samo po ${sym}, ne po celem zapisu. Vpiši le to število.` };
+    return { kind: "format", code: "chk.partOnly", params: { sym }, message: `Celoten zapis je pravilen, naloga pa sprašuje samo po ${sym}. Vpiši le to število.` };
+  }
+  // »√175« pri obliki a√b: vrednost je prava, zapis pa še ni v zahtevani obliki (ni »napaka v zapisu«).
+  if (!f.free?.length && !Object.entries(f.vals).every(([k, v]) => close(got[k], v))) {
+    const whole = exprValue(f.expr.replace(/\b[a-zA-Z]\b/g, (c) => (c in f.vals ? `(${f.vals[c]})` : c)), opts.math, { own: false });
+    const own = exprValue(inp, opts.math, { dot: !!answer.dot });
+    if (whole !== null && own !== null && close(whole, own)) {
+      return { kind: "wrong", mistake: { code: "chk.partOnlyForm", params: { sym }, message: `Vrednost je prava, a zapis še ni v zahtevani obliki. Naloga sprašuje samo po ${sym}: vpiši le to število.` } };
+    }
+  }
+  return { kind: "wrong", mistake: { code: "chk.partOnlyWrong", params: { sym }, message: `Vpisal si celoten zapis, v njem pa je napaka. Naloga sprašuje samo po ${sym}: vpiši le to število.` } };
+}
+
 export function checkAnswer(answer, input, opts = {}) {
   if (input === undefined || input === null || String(input).trim() === "") {
     return { kind: "format", code: "chk.empty", message: "Najprej vpiši odgovor." };
+  }
+  if (answer.type === "number" || answer.type === "fraction") {
+    // »7e0«, »-5e0«: število v znanstvenem zapisu z vrednostjo rešitve je odgovor, ne zapis oblike a·10^n
+    const sci = answer.type === "number" && /\d[eE][+\-−]?\d/.test(String(input)) ? parseScientific(input, answer) : null;
+    const form = sci && !sci.unit && sameValue(answer, sci.value) ? null : checkForm(answer, input, opts);
+    if (form) return form;
+    input = stripAsked(input, answer, opts);
   }
   switch (answer.type) {
     case "number":

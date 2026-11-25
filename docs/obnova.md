@@ -56,7 +56,27 @@ V Render → evklid → **Shell**:
 6. Če je obnova slabša od prej: `node scripts/obnovi-kopijo.js --razveljavi` in še en Restart service (mogoče
    14 dni po obnovi).
 
-Izgubi se vse, kar se je zgodilo po izbrani kopiji.
+Izgubi se vse, kar se je zgodilo po izbrani kopiji. Računi in profili, izbrisani po kopiji, se ob zagonu izbrišejo
+znova (seznam izbrisov, `docs/izbris-izvoz.md`; Logs: »po obnovi znova izbrisano«); nič ni treba narediti ročno.
+
+### Namerna obnova pomotoma izbrisanih računov
+
+Če so bili računi izbrisani pomotoma (napaka v kodi ali skrbnika) in jih želiš vrniti iz kopije, jih seznam izbrisov
+po obnovi sicer izbriše znova. Za te račune ga izklopiš z nastavitvijo `EVKLID_IZBRISI_PREZRI`:
+
+1. Številke računov poišči v kopiji izpred izbrisa (Shell; pot kopije izpiše `node scripts/obnovi-kopijo.js`):
+   `node -e "const {DatabaseSync}=require('node:sqlite');console.log(new DatabaseSync(process.argv[1],{readOnly:true}).prepare('SELECT id, email FROM parents WHERE email = ?').all(process.argv[2]))" /var/data/kopije/<kopija>.db <e-naslov>`
+2. Render → evklid → Environment: `EVKLID_IZBRISI_PREZRI` = številke z vejicami (npr. `12,34`), Save (strežnik se
+   ponovno zažene).
+3. Obnova po postopku A (koraki 1–5). V Logs je za vsak račun vrstica »izbris računa 12 se ne ponovi in se odstrani
+   s seznama izbrisov«.
+4. Če je nastavljena kopija zunaj strežnika (R2): počakaj na vrstico »seznam izbrisov naložen v shrambo zunaj
+   strežnika« (najkasneje ~70 min po zagonu), sicer bi se zapisi od tam vrnili.
+5. Odstrani `EVKLID_IZBRISI_PREZRI` (Save). Zapisi teh računov so s seznama odstranjeni in se ne vrnejo; poznejši
+   izbris istega računa se zapiše kot običajno.
+
+Velja za račune skupaj s profili, ki so jih imeli ob izbrisu (profil, izbrisan posamič, se po obnovi izbriše znova).
+Stranka v Stripu in preklicana naročnina se z obnovo ne vrneta.
 
 ## Postopek B: izgubljen cel strežnik ali disk (nova namestitev)
 
@@ -90,6 +110,21 @@ Izgubi se vse, kar se je zgodilo po izbrani kopiji.
 - Kar so napisali po kopiji (novi pogovori, XP, nakupi), v bazi manjka. Dogodkov Stripe, ki jih je stari strežnik
   že prejel, Stripe sam ne pošlje znova: po obnovi v Stripe → Developers → Events poišči dogodke po času kopije in
   jih pošlji znova (Resend); dvojnih ne obdela dvakrat (tabela `billing_events`).
+
+## Izpad med maturo
+
+Pisni deli spomladanskega roka mature so maja in junija. Takrat izpad najbolj škodi, zato (točka 40 načrta izboljšav, 19. 11. 2026):
+
+1. **Dva tedna pred prvim pisnim delom:** v `main` gredo samo popravki napak (vsaka združitev objavi novo različico in
+   ponovno zažene strežnik). Na Renderju naredi vajo obnove (spodaj, »Vaja«) in preveri, da UptimeRobot in Straža
+   pošiljata e-pošto (`docs/spremljanje.md`).
+2. **Strežnik ne odgovarja:** Render → Events in Logs. Pokvarjena baza: postopek A (~5 min). Izgubljen strežnik:
+   postopek B (~20–30 min).
+3. **Ne dela samo AI** (status.anthropic.com, napake v dnevniku pri klicih inštruktorja): lekcije, vaje, pole mature
+   in učbenik PDF delajo brez AI. Če inštruktor daje napačne odgovore, ga izklopi z `EVKLID_CHAT_OFF=1`
+   (`docs/krizni-nacrt.md`).
+4. **Obvestilo učencem:** j pošlje kratko sporočilo uporabnikom pilota (kaj ne dela, kaj dela, kdaj bo spet delovalo).
+   Pred maturo jim priporoči, naj si učbenik PDF prenesejo vnaprej.
 
 ## Vaja
 

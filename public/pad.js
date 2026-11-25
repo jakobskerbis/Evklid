@@ -2,8 +2,8 @@
 // plošča »Piši« je risalna površina. Na telefonu se plošča odpre spodaj (besedilo naloge ostane pripeto zgoraj),
 // na širšem zaslonu ob strani, tako da je naloga ves čas vidna.
 import { icon } from "./icons.js";
-import { t as tr, currentLang } from "./i18n.js";
-import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, keyboardPrefs, initKeyboard } from "./tipkovnica.js";
+import { t as tr, currentLang } from "./i18n-osnova.js";
+import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, initKeyboard, naloziTipkovnico } from "./tipkovnica-lena.js";
 import { unitAtEnd, withUnit } from "./enote-izbira.js";
 
 const LS_KEY = "evklid.pad";
@@ -250,7 +250,8 @@ export function attachPad(opts) {
   if (auto && prefs.tab === "draw") openPad("draw");
   else {
     hideDraw();
-    if (auto && isTouch() && keyboardPrefs().mode !== "never") openKeyboard(opts.input);
+    // Tipkovnica (tipkovnica-lena.js) je navadno že naložena; sicer se odpre, ko pride, če je naloga še ista.
+    if (auto && isTouch()) naloziTipkovnico().then((k) => cur === opts && k.keyboardPrefs().mode !== "never" && openKeyboard(opts.input), () => {});
   }
 }
 
@@ -286,11 +287,6 @@ function hideDraw() {
 export function closePad() {
   hideDraw();
   if (cur && keyboardOpenFor(cur.input)) hideKeyboard();
-}
-
-// Po oddanem odgovoru: pri pravilnem odgovoru plošča izgine, da je vidna razlaga.
-export function padAfterAnswer(correctOrDone) {
-  if (correctOrDone) closePad();
 }
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 // Faza 0 – izhodiščne meritve zmogljivosti (docs/meritve/zmogljivost-2026-11-13.md).
 // Ista skripta da številke »prej« in »potem« za vsak PR, ki spreminja hitrost ali pomnilnik.
 //
-// Deli (--samo zagon,poti,sql,prvo,instruktor,velika,obremenitev; privzeto vsi razen obremenitev):
+// Deli (--samo zagon,poti,sql,prvo,instruktor,velika,obremenitev,prijavljen,kliki; privzeto vsi razen obremenitev, prijavljen in kliki):
 //   zagon      0.1 čas do prvega /healthz 200 in RSS/kopica po uvozih, createApp, warmStatic, tiskPredgrej
 //   poti       0.2 p50/p95/p99 in zamik zanke dogodkov pri 1, 10 in 50 hkratnih uporabnikih
 //   sql        0.3 EXPLAIN QUERY PLAN za vsak stavek SQL na teh poteh (SCAN brez indeksa)
@@ -14,6 +14,16 @@
 //              Samo z --samo obremenitev (traja ~10 min, potrebuje koren za /sys/fs/cgroup; podrobnosti pri
 //              merjenjeObremenitve). Zastavice: --pomnilnik 512, --cpu 0.5, --trajanje 120, --premor 0 (ms med dejanji
 //              učenca), --mock-zamik 15 (EVKLID_MOCK_DELAY_MS), --stopnje 20,40,60,80; --hitro skrajša stopnjo na 20 s.
+//   prijavljen P1 prijavljen učenec (21 dni napredka, 40 pogovorov, zadnji s 120 sporočili) na strežniku z mejo kot
+//              Render starter (cgroup, --cpu/--pomnilnik) za posrednikom HTTP/2, Chromium CPU 4× + Slow 4G, telefon in
+//              računalnik, prvi in ponovni obisk (service worker): Učna pot uporabna, LCP, CLS, INP, prenos; Inštruktor:
+//              polje uporabno, dolgi pogovor, prvi znak odgovora (--mock-zamik, brez časa pravega modela). Zastavice:
+//              --naprave, --velika-baza, --brez-cgroup, --http1, --slike <mapa>. Potrebuje koren za cgroup (sicer samo
+//              taskset) in openssl. Podrobnosti pri merjenjePrijavljenega.
+//   kliki      P2 isti učenec in strežnik kot »prijavljen«, telefon 390×844 s CPU 4× in Slow 4G, ponovni obisk (service
+//              worker): pravi tap na vsak glavni zavihek in dejanje (tema, Vadi, Preveri, pogovor, menjava profila, meni,
+//              Nazaj …) – INP tega klika in čas do uporabne vsebine. Zastavice kot pri »prijavljen« (--naprave telefon),
+//              --kroga 2 (še drugo odprtje istega zaslona). Podrobnosti pri klikiVBrskalniku.
 // Zastavice: --json <datoteka> (vsi rezultati), --md <datoteka> (povzetek v Markdown), --brskalnik chromium,webkit,
 //   --stopnje 1,10,50, --uporabniki 50, --brez-taskset, --hitro (manj ponovitev, za preizkus skripte),
 //   --obdrzi (začasna mapa z bazami ostane, npr. za scripts/meritev-produkcija.mjs na sintetični bazi).
@@ -36,6 +46,7 @@ import { createRequire } from "node:module";
 import { performance } from "node:perf_hooks";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { DOLGI_POGOVOR, MERILNIK_PRIJAVLJEN, nacrtUcenca, povzemiZahteve, zazeniHttp2Posrednik } from "./meritev-prijavljen.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -44,9 +55,9 @@ const hitrost = require("./meri-hitrost.cjs"); // DEVICES, SLOW_4G, cdpSetup, fr
 
 const args = process.argv.slice(2);
 const arg = (n) => (args.indexOf(n) >= 0 ? args[args.indexOf(n) + 1] : null);
-const DELI = ["zagon", "poti", "sql", "prvo", "instruktor", "velika", "obremenitev"];
+const DELI = ["zagon", "poti", "sql", "prvo", "instruktor", "velika", "obremenitev", "prijavljen", "kliki"];
 const SAMO = new Set(
-  (arg("--samo") || DELI.filter((d) => d !== "obremenitev").join(","))
+  (arg("--samo") || DELI.filter((d) => d !== "obremenitev" && d !== "prijavljen" && d !== "kliki").join(","))
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
@@ -477,15 +488,6 @@ const POTI = {
   lekcija: (u) => u.z(`/api/students/${u.sid}/lesson?id=${encodeURIComponent(LEKCIJA)}`),
   lestvica: (u) => u.z(`/api/students/${u.sid}/league`),
   fotografija: (u) => u.z(`/api/students/${u.sid}/scan/read`, { method: "POST", body: { image: SLIKA } }),
-};
-const IME_POTI = {
-  prijava: "Prijava (POST /api/auth/login)",
-  pogovori: "Seznam pogovorov (GET /api/students/:id/conversations)",
-  pogovor: "Odpri pogovor, 20 sporočil (GET /api/conversations/:id)",
-  sporocilo: "Sporočilo inštruktorju, SSE do konca (POST /api/conversations/:id/messages)",
-  lekcija: "Lekcija (GET /api/students/:id/lesson)",
-  lestvica: "Lestvica (GET /api/students/:id/league)",
-  fotografija: "Fotografija 342 KB (POST /api/students/:id/scan/read)",
 };
 const steviloZahtev = (pot, c) => {
   const f = HITRO ? 0.2 : 1;
@@ -1511,6 +1513,743 @@ async function merjenjeObremenitve() {
   return out;
 }
 
+// ---------------------------------------------------------------------------------------------------------------
+// Prijavljen učenec na počasnem telefonu (--samo prijavljen): Učna pot in inštruktor za učenca z nekaj tedni napredka
+// in dolgo zgodovino klepeta, strežnik omejen kot Render starter (cgroup --cpu 0,5 / --pomnilnik 512 MB, pripet na
+// jedro 0), Chromium s CPU 4× in Slow 4G (CDP) na telefonu in računalniku. Za vsako napravo prvi obisk (prazen
+// predpomnilnik, service worker se šele namesti) in ponovni obisk (nova stran v istem profilu: predpomnilnik HTTP in
+// service workerja). Na vsakem obisku: Učna pot uporabna, LCP, CLS, INP, dolge naloge, prenos in zahteve; nato tap na
+// Inštruktor (polje uporabno), odpiranje zadnjega dolgega pogovora in eno sporočilo (prvi izpisani znak) v preizkusnem
+// načinu z EVKLID_MOCK_DELAY_MS = --mock-zamik: čas do prvega znaka NE vključuje časa pravega modela do prvega žetona.
+// Zastavice: --naprave telefon,racunalnik, --velika-baza (najprej sintetična baza iz dela »velika«), --brez-cgroup,
+//   --http1 (brez posrednika HTTP/2; privzeto HTTP/2 kot v produkciji),
+//   --slike <mapa> (posnetki zaslona po korakih).
+// Učenec se pripravi na strežniku brez omejitev (scrypt pri registraciji), meri se na omejenem.
+const P_NAPRAVE = (arg("--naprave") || "telefon,racunalnik").split(",").map((s) => s.trim());
+const P_SLIKE = arg("--slike"); // mapa za posnetke zaslona po korakih (za preverjanje poteka)
+const P_SPOROCILO = "Kako rešim enačbo 3(x − 2) = 2x + 5? Ne vem, kaj naredim z oklepajem.";
+
+// Učenec z napredkom (scripts/meritev-prijavljen.mjs nacrtUcenca): nastavitve (vprašalnik in ogled opravljena),
+// prave naloge iz generatorja (rešene), stanje tem (obvladane in v učenju), XP po dnevih, pogovori z dogodki.
+async function napolniUcenca(s, u) {
+  const r0 = await u.z(`/api/students/${u.sid}`, { method: "PUT", body: { settings: { interests: [], game_childhood: [], tour_version: 99 } } });
+  if (r0.status !== 200) throw new Error(`nastavitve ${r0.status}`);
+  // Tedenska anketa (server/anketa-teden.js) se po tednu uporabe enkrat odpre čez Učno pot: kot da jo je učenec že odložil.
+  await u.z(`/api/students/${u.sid}/anketa-teden/pozneje`, { method: "POST", body: {} });
+  const pot = (await u.z(`/api/students/${u.sid}/path`)).json();
+  const teme = pot.units.flatMap((x) => x.topics).filter((t) => t.practice);
+  const nacrt = nacrtUcenca();
+  const obvladanih = Math.min(10, Math.floor(teme.length / 3));
+  const vUcenju = teme.slice(obvladanih, obvladanih + 4);
+  // Prave naloge (payload iz generatorja): prvi klic pokaže zgled, naslednji ustvarijo naloge.
+  const nalogeTem = [...teme.slice(0, obvladanih), ...vUcenju];
+  for (let i = 0; i < nacrt.naloge.length; i++) {
+    const t = nalogeTem[i % nalogeTem.length];
+    let r = (await u.z(`/api/students/${u.sid}/practice/next`, { method: "POST", body: { topic_id: t.id } })).json();
+    if (r.example) r = (await u.z(`/api/students/${u.sid}/practice/next`, { method: "POST", body: { topic_id: t.id } })).json();
+    nacrt.naloge[i].id = r.task?.id;
+  }
+  const { seal, sealJson } = await import(pathToFileURL(path.join(ROOT, "server", "crypto-polje.js")).href);
+  const db = new DatabaseSync(s.dbFile);
+  db.exec("PRAGMA busy_timeout = 10000");
+  try {
+    db.exec("BEGIN");
+    const nal = db.prepare(`UPDATE tasks SET solved = 1, attempts = 1, first_try_correct = ?, created_at = datetime('now', ?) WHERE id = ? AND student_id = ?`);
+    for (const n of nacrt.naloge) if (n.id) nal.run(n.pravilno ? 1 : 0, `-${n.dniNazaj * 24 + 2} hours`, n.id, u.sid);
+    const st = db.prepare(
+      `INSERT INTO topic_state (student_id, topic_id, level, streak, status, source, mastered_at, review_stage, review_due, seen_example, updated_at)
+       VALUES (?, ?, ?, ?, ?, 'practice', ?, ?, ?, 1, datetime('now', ?))
+       ON CONFLICT (student_id, topic_id) DO UPDATE SET level = excluded.level, streak = excluded.streak, status = excluded.status,
+         mastered_at = excluded.mastered_at, review_stage = excluded.review_stage, review_due = excluded.review_due, updated_at = excluded.updated_at`,
+    );
+    teme.slice(0, obvladanih).forEach((t, i) => {
+      const d = Math.max(1, nacrt.dni - 2 * i);
+      st.run(u.sid, t.id, 3, 0, "mastered", `${new Date(Date.now() - d * 86400_000).toISOString().replace("T", " ").slice(0, 19)}`, 2, i % 3 ? null : new Date(Date.now() + (i - 4) * 86400_000).toISOString().replace("T", " ").slice(0, 19), `-${d} days`);
+    });
+    vUcenju.forEach((t, i) => st.run(u.sid, t.id, 1 + (i % 2), i, "learning", null, 0, null, `-${i} days`));
+    const xp = db.prepare(`INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, ?, ?, datetime('now', ?))`);
+    for (const x of nacrt.xp) xp.run(u.sid, x.amount, x.reason, `-${x.dniNazaj * 24 + 2} hours`);
+    const conv = db.prepare(`INSERT INTO conversations (student_id, title, created_at, updated_at) VALUES (?, ?, datetime('now', ?), datetime('now', ?))`);
+    const msg = db.prepare(`INSERT INTO messages (conversation_id, role, api_content, display_text, created_at) VALUES (?, ?, ?, ?, datetime('now', ?))`);
+    const ev = db.prepare(
+      `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, created_at, topic_id) VALUES (?, ?, ?, 'MAT', ?, ?, 'A', 'none', datetime('now', ?), ?)`,
+    );
+    let sporocil = 0;
+    for (const p of nacrt.pogovori) {
+      const kdaj = p.dniNazaj ? `-${p.dniNazaj * 24 + 3} hours` : "+0 seconds";
+      const id = Number(conv.run(u.sid, seal(p.naslov), kdaj, kdaj).lastInsertRowid);
+      if (p === nacrt.pogovori[0]) u.dolgi = { id, sporocil: p.sporocila.length, odgovorov: p.sporocila.length / 2 };
+      const tema = teme[sporocil % teme.length];
+      for (const m of p.sporocila) {
+        const api = m.role === "assistant" ? `${m.text}\n<<META subject=MAT topic="${tema.name}" error=0 mode=A flag=none>>` : m.text;
+        const mid = Number(msg.run(id, m.role, sealJson([{ type: "text", text: api }]), seal(m.text), kdaj).lastInsertRowid);
+        if (m.role === "assistant") ev.run(u.sid, id, mid, tema.name, sporocil % 5 === 0 ? 1 : 0, kdaj, tema.id);
+        sporocil++;
+      }
+    }
+    db.exec("COMMIT");
+    const xpSkupaj = db.prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ?").get(u.sid).s;
+    return {
+      pot: pot.key,
+      dni: nacrt.dni,
+      obvladanihTem: obvladanih,
+      temVUcenju: vUcenju.length,
+      resenihNalog: nacrt.naloge.filter((n) => n.id).length,
+      xp: xpSkupaj,
+      pogovorov: nacrt.pogovori.length + 10, // + 10 kratkih iz pripraviUporabnike
+      sporocil: sporocil + 200,
+      dolgiPogovor: u.dolgi.sporocil,
+    };
+  } finally {
+    db.close();
+  }
+}
+
+// Obljuba z rokom: CDP in Playwright lahko čakata v nedogled (cilj, ki je medtem izginil; telo toka, ki se ne konča).
+const zRokom = (p, ms, privzeto = null) => Promise.race([Promise.resolve(p).catch(() => privzeto), pocakaj(ms).then(() => privzeto)]);
+
+// Omejitev omrežja še za service workerje (CDP strani jih ne zajame: njihove zahteve bi šle mimo Slow 4G).
+// Prek seje brskalnika: vsak cilj »service_worker«, ki obstaja ali se pozneje zažene (worker se ustavi in ob naslednji
+// zahtevi znova zažene kot nov cilj), dobi isto omejitev kot stran. Vrne { omejenih, napaka, vsem() }.
+
+async function omejujServiceWorkerje(browser) {
+  const stanje = { omejenih: 0, napaka: null };
+  const bc = await browser.newBrowserCDPSession();
+  const omeji = async (t) => {
+    if (t.type !== "service_worker") return;
+    try {
+      const pripni = await zRokom(bc.send("Target.attachToTarget", { targetId: t.targetId, flatten: false }), 5000);
+      if (!pripni) return;
+      const { sessionId } = pripni;
+      let id = 0;
+      for (const [method, params] of [
+        ["Network.enable", {}],
+        ["Network.emulateNetworkConditions", hitrost.SLOW_4G],
+      ])
+        await zRokom(bc.send("Target.sendMessageToTarget", { sessionId, message: JSON.stringify({ id: ++id, method, params }) }), 5000);
+      stanje.omejenih++;
+    } catch (e) {
+      stanje.napaka = String(e.message).split("\n")[0].slice(0, 120);
+    }
+  };
+  bc.on("Target.targetCreated", ({ targetInfo }) => omeji(targetInfo));
+  await bc.send("Target.setDiscoverTargets", { discover: true });
+  // Pred vsakim obiskom še enkrat vsem obstoječim (omejitev, dana med namestitvijo, se ne obdrži).
+  stanje.vsem = async () => {
+    for (const t of (await zRokom(bc.send("Target.getTargets"), 5000, { targetInfos: [] })).targetInfos) await omeji(t);
+  };
+  await stanje.vsem();
+  return stanje;
+}
+
+async function prijavljenVBrskalniku(vhod, u, naprava) {
+  const pw = require("playwright");
+  // Posrednik HTTP/2: samopodpisanemu potrdilu brskalnik zaupa po odtisu ključa (service worker tako deluje).
+  const browser = await pw.chromium.launch({ args: vhod.spki ? [`--ignore-certificate-errors-spki-list=${vhod.spki}`] : [] });
+  const dev = { ...hitrost.DEVICES[naprava], cpu: 4, net: true }; // obe napravi s CPU 4× in Slow 4G (kot zahteva meritev)
+  const out = { naprava, razlicica: browser.version(), viewport: dev.viewport, omejitve: "CPU 4×, Slow 4G (CDP; tudi service worker)", protokol: vhod.spki ? "HTTP/2 (TLS)" : "HTTP/1.1", obiski: {} };
+  const ctx = await browser.newContext({
+    viewport: dev.viewport,
+    hasTouch: dev.hasTouch,
+    isMobile: dev.isMobile,
+    deviceScaleFactor: dev.isMobile ? 2 : 1,
+    locale: "sl-SI",
+    timezoneId: "Europe/Ljubljana",
+    serviceWorkers: "allow",
+  });
+  await ctx.addInitScript(VITALI);
+  await ctx.addInitScript(hitrost.PAGE_MERI); // window.__long (dolge naloge) za interaktivnost
+  await ctx.addInitScript(MERILNIK_PRIJAVLJEN);
+  await ctx.addInitScript((slug) => localStorage.setItem(`${slug}.tour`, "done"), BRAND.slug);
+  await ctx.addCookies(Object.entries(u.jar).map(([name, value]) => ({ name, value, url: vhod.base })));
+  let faza = null;
+  const zahteve = [];
+  ctx.on("requestfinished", (req) => {
+    const f = faza;
+    zahteve.push(
+      (async () => {
+        const sizes = await req.sizes().catch(() => null);
+        const res = await req.response().catch(() => null);
+        const body = res ? await res.body().catch(() => null) : null;
+        return {
+          faza: f,
+          url: req.url().replace(vhod.base, ""),
+          prenos: sizes ? sizes.responseBodySize + sizes.responseHeadersSize : null,
+          surovo: body ? body.length : null,
+          izSw: !!res?.fromServiceWorker(),
+          odSw: !!req.serviceWorker?.(),
+          ms: Math.round(req.timing().responseEnd), // za preverjanje omejitve: zahteve service workerja ≥ ~0,56 s
+        };
+      })(),
+    );
+  });
+  const sw = await omejujServiceWorkerje(browser);
+  const napake = [];
+  const tapni = async (page, sel) => {
+    await page
+      .locator(sel)
+      .first()
+      [dev.hasTouch ? "tap" : "click"]({ timeout: 30_000 })
+      .catch((e) => napake.push(`tap ${sel}: ${String(e.message).split("\n")[0]}`));
+  };
+  // Zavihek: na telefonu spodnja vrstica (#tabbar), ki se po 3 s mirovanja skrije pod rob (public/noga.js); učenec jo
+  // vrne z dotikom ob spodnjem robu (ta dotik se pogoltne), zato najprej ta dotik, nato tap na zavihek.
+  const zavihek = async (page, view) => {
+    const spodaj = await page.evaluate(() => getComputedStyle(document.querySelector("#tabbar")).display !== "none").catch(() => false);
+    if (!spodaj) return `.topbar .tab[data-view="${view}"]`;
+    if (await page.evaluate(() => document.body.classList.contains("tb-mir")).catch(() => false)) {
+      await page.touchscreen.tap(dev.viewport.width / 2, dev.viewport.height - 12);
+      await page.waitForTimeout(600);
+    }
+    // Premik kazalca je uporaba (noga.js): 3 s do skritja začnejo teči znova, zato vrstica med tapom ne zdrsne pod rob.
+    await page.mouse.move(2, 2 + Math.random() * 10);
+    return `#tabbar .tab[data-view="${view}"]`;
+  };
+  const slika = (page, ime) => (P_SLIKE ? page.screenshot({ path: path.join(P_SLIKE, `${ime}.png`) }).catch(() => {}) : null);
+  // Meritev enega koraka: merilnik v strani čaka na tap, nato tap.
+  const korak = async (page, ime, o, dejanje) => {
+    const p = page.evaluate(([i, oo]) => window.__cakaj(i, oo), [ime, o]);
+    await pocakaj(50);
+    await dejanje();
+    return p.catch((e) => ({ napaka: String(e.message).split("\n")[0] }));
+  };
+  try {
+    for (const obisk of ["prvi", "ponovni"]) {
+      faza = `${obisk}:odpiranje`;
+      const page = await ctx.newPage();
+      page.on("pageerror", (e) => napake.push(`${obisk}: ${String(e.stack || e.message).split("\n").slice(0, 3).join(" | ").replaceAll(vhod.base, "").slice(0, 300)}`));
+      page.on("requestfailed", (r) => napake.push(`${obisk}: zahteva ni uspela ${r.url().replace(vhod.base, "")} (${r.failure()?.errorText})`));
+      await hitrost.cdpSetup(page, dev);
+      await zRokom(sw.vsem(), 15_000);
+      await page.goto(vhod.base + "/", { waitUntil: "commit", timeout: 180_000 });
+      await page.waitForSelector("#view-path #xp-card .hero", { timeout: 180_000 }).catch(() => napake.push(`${obisk}: Učna pot ni uporabna v 180 s`));
+      const potMs = await page.evaluate(() => window.__tPot).catch(() => null);
+      // app.js zagnan (Učna pot s strežnika ali posnetek je pred tem že na zaslonu, dotiki se izvedejo ob zagonu).
+      await page.waitForFunction(() => window.__tApp !== null, null, { timeout: 180_000 }).catch(() => napake.push(`${obisk}: app.js ni zagnan v 180 s`));
+      const appMs = await page.evaluate(() => window.__tApp).catch(() => null);
+      // Datoteke, prenesene do uporabne Učne poti (za iskanje, kaj jo še zadržuje): pot, KB po omrežju, konec v ms.
+      const viri = await page
+        .evaluate(() =>
+          performance
+            .getEntriesByType("resource")
+            .filter((e) => e.responseEnd <= (window.__tPot ?? Infinity))
+            .map((e) => [new URL(e.name).pathname, Math.round(e.transferSize / 102.4) / 10, Math.round(e.responseEnd)]),
+        )
+        .catch(() => []);
+      const okno = await page.evaluate(() => document.querySelector("dialog[open]")?.id || document.querySelector("dialog[open] h2")?.textContent || null).catch(() => null);
+      if (okno) napake.push(`${obisk}: odprto okno čez Učno pot (${okno})`);
+      log(`prijavljen ${naprava} ${obisk}: Učna pot po ${r1(potMs)} ms`);
+      await page.waitForLoadState("load", { timeout: 120_000 }).catch(() => {});
+      const loadMs = await page.evaluate(() => performance.getEntriesByType("navigation")[0]?.loadEventEnd || null).catch(() => null);
+      // Interaktivno: 500 ms brez dolgih nalog po uporabni Učni poti.
+      const ttiMs = await page.evaluate(
+        (od) =>
+          new Promise((res) => {
+            const loop = () => {
+              const last = Math.max(od || 0, ...window.__long);
+              if (performance.now() - last > 500 || performance.now() > 120_000) return res(Math.round(last));
+              setTimeout(loop, 50);
+            };
+            loop();
+          }),
+        potMs,
+      );
+      await page.waitForLoadState("networkidle", { timeout: 60_000 }).catch(() => {});
+      await page.waitForTimeout(2000);
+      const v0 = await page.evaluate(() => JSON.parse(JSON.stringify(window.__vitali)));
+      const premiki = await page.evaluate(() => [...window.__premiki].sort((a, b) => b.v - a.v).slice(0, 5)).catch(() => []);
+      // Inštruktor: tap na zavihek, polje uporabno.
+      faza = `${obisk}:instruktor`;
+      await slika(page, `${naprava}-${obisk}-pot`);
+      const tabInstruktor = await zavihek(page, "chat"); // pred merilnikom: dotik ob robu ni tap na zavihek
+      const vnos = await korak(page, "vnos", { rok: 60_000 }, () => tapni(page, tabInstruktor));
+      await slika(page, `${naprava}-${obisk}-instruktor`);
+      // Zadnji (dolgi) pogovor s seznama pogovorov; na telefonu je seznam v stranskem meniju.
+      await page.waitForTimeout(1000);
+      if (!(await page.locator("#conversation-list li").first().isVisible().catch(() => false))) {
+        await tapni(page, "#toggle-sidebar");
+        await page.waitForTimeout(800);
+      }
+      const pogovor = await korak(page, "pogovor", { min: Math.min(10, u.dolgi.odgovorov), rok: 90_000 }, () =>
+        tapni(page, `#conversation-list li:has(span:text-is("${DOLGI_POGOVOR}"))`),
+      );
+      await page.waitForTimeout(1000);
+      // Eno sporočilo: prvi izpisani znak odgovora (preizkusni model, brez časa pravega modela).
+      await slika(page, `${naprava}-${obisk}-pogovor`);
+      await page.locator("#input").fill(P_SPOROCILO, { timeout: 30_000 }).catch((e) => napake.push(`vnos: ${String(e.message).split("\n")[0]}`));
+      const prej = await page.evaluate(() => document.querySelectorAll("#messages .msg.assistant").length);
+      const znak = await korak(page, "znak", { prej, rok: 60_000 }, () => tapni(page, "#send"));
+      await slika(page, `${naprava}-${obisk}-odgovor`);
+      await page.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 60_000 }).catch(() => {});
+      await page.waitForTimeout(1500);
+      const v = await page.evaluate(() => JSON.parse(JSON.stringify(window.__vitali)));
+      // Nazaj na Učno pot: ponovni obisk se začne na zadnjem zaslonu (public/zacetek.js), merimo pa Učno pot. Klik v strani
+      // (ni meritev): v klepetu je spodnja vrstica na telefonu umaknjena.
+      await page.evaluate(() => [...document.querySelectorAll('.tab[data-view="path"]')].find((b) => b.offsetParent)?.click() ?? document.querySelector('.tab[data-view="path"]')?.click());
+      await page.waitForTimeout(1500);
+      if (obisk === "prvi") {
+        // Service worker nameščen in predpomnjenje končano (število vnosov v predpomnilnikih 3 s enako).
+        out.swPredpomnilnik = await page
+          .evaluate(async () => {
+            await Promise.race([navigator.serviceWorker.ready, new Promise((r) => setTimeout(r, 30_000))]);
+            let prej = -1;
+            for (let i = 0; i < 60; i++) {
+              let n = 0;
+              for (const k of await caches.keys()) n += (await (await caches.open(k)).keys()).length;
+              if (n === prej && n > 0) return { vnosov: n, nadzor: !!navigator.serviceWorker.controller };
+              prej = n;
+              await new Promise((r) => setTimeout(r, 3000));
+            }
+            return { vnosov: prej, nadzor: !!navigator.serviceWorker.controller, rok: true };
+          })
+          .catch((e) => ({ napaka: String(e.message).slice(0, 120) }));
+      }
+      await page.close();
+      const z = (await Promise.all(zahteve.splice(0).map((x) => zRokom(x, 15_000)))).filter(Boolean);
+      const dolge = v.dolge;
+      const dolge0 = v0.dolge;
+      out.obiski[obisk] = {
+        potMs: r1(potMs),
+        appMs: r1(appMs),
+        viriDoPoti: viri,
+        loadMs: r1(loadMs),
+        ttiMs,
+        fcpMs: r1(v0.fcp),
+        lcpMs: r1(v0.lcp),
+        lcpElement: v0.lcpEl,
+        clsOdpiranje: Math.round(v0.cls * 1000) / 1000,
+        cls: Math.round(v.cls * 1000) / 1000,
+        dolgihOdpiranje: dolge0.length,
+        dolgeOdpiranjeMs: dolge0.reduce((a, x) => a + x[1], 0),
+        najdaljsaOdpiranjeMs: dolge0.length ? Math.max(...dolge0.map((x) => x[1])) : 0,
+        inpMs: v.interakcije.length ? Math.max(...v.interakcije.map((x) => x[1])) : null,
+        interakcije: v.interakcije,
+        dolgih: dolge.length,
+        najdaljsaMs: dolge.length ? Math.max(...dolge.map((x) => x[1])) : 0,
+        odpiranje: povzemiZahteve(z.filter((x) => x.faza === `${obisk}:odpiranje`)),
+        instruktorZahteve: povzemiZahteve(z.filter((x) => x.faza === `${obisk}:instruktor`)),
+        vnos,
+        pogovor,
+        znak,
+        premiki,
+        swZahteve: z.filter((x) => x.faza === `${obisk}:odpiranje` && x.odSw).slice(0, 5).map((x) => `${x.url.split("?")[0]} ${x.ms} ms`),
+        poZahtevah: z
+          .filter((x) => x.faza === `${obisk}:odpiranje` && !x.izSw && !x.odSw)
+          .map((x) => x.url.split("?")[0])
+          .filter((x) => x.startsWith("/api/"))
+          .slice(0, 40),
+      };
+      const o = out.obiski[obisk];
+      log(
+        `prijavljen ${naprava} ${obisk}: Učna pot ${o.potMs} ms, LCP ${o.lcpMs} (${o.lcpElement}), CLS ${o.clsOdpiranje}/${o.cls}, INP ${o.inpMs}, dolgih ${o.dolgihOdpiranje} (najd. ${o.najdaljsaOdpiranjeMs}), ${o.odpiranje.zahtev} zahtev (${o.odpiranje.mreznih} po omrežju, ${o.odpiranje.prenosKB} KB; service worker ${o.odpiranje.swZahtev} / ${o.odpiranje.swKB} KB); vnos ${JSON.stringify(vnos)}, pogovor ${JSON.stringify(pogovor)}, prvi znak ${JSON.stringify(znak)}`,
+      );
+    }
+  } finally {
+    out.napake = [...new Set(napake)].slice(0, 8);
+    out.serviceWorker = { omejenih: sw.omejenih, napaka: sw.napaka };
+    await ctx.close().catch(() => {});
+    await browser.close();
+  }
+  return out;
+}
+
+// Drugi profil istega računa (za menjavo profila): dva profila vklopita gesla profilov, zato oba dobita geslo in sta na
+// tej napravi (piškotek naprave, ki ga dobi tudi brskalnik) odklenjena.
+async function drugiProfil(s, u) {
+  const db = new DatabaseSync(s.dbFile);
+  try {
+    db.prepare("UPDATE parents SET sub_seats = 2 WHERE email = ?").run(u.email);
+  } finally {
+    db.close();
+  }
+  const r = await u.z("/api/students", { method: "POST", body: { name: "Bor", birth_year: 2012, consent: true } });
+  if (r.status !== 201) return { napaka: `profil ${r.status}: ${r.text().slice(0, 120)}` };
+  const id = r.json().id;
+  await u.z(`/api/students/${id}`, { method: "PUT", body: { settings: { interests: [], game_childhood: [], tour_version: 99 } } });
+  for (const sid of [u.sid, id]) {
+    const x = await u.z(`/api/students/${sid}/unlock`, { method: "POST", body: { password: "profil-1234", set: true } });
+    if (x.status !== 200) return { napaka: `geslo profila ${x.status}: ${x.text().slice(0, 120)}` };
+  }
+  return { id };
+}
+
+// Meritev klikov (--samo kliki): po zagonu aplikacije (ponovni obisk s service workerjem, kot ga učenec doživi vsak
+// dan) pravi tap na vsak glavni zaslon in dejanje. Za vsak korak: INP tega klika (najdaljši dogodek interakcije) in čas
+// od tapa do uporabne vsebine (ne do okostja ali »Nalagam …«). Pravilo hitrosti (j 15. 11.): vsebina takoj, INP < 200 ms.
+// Korak: { ime, opis, pred(k) (ni merjeno: pot do izhodišča), tap(k) (merjeno), stanje (MERILNIK_PRIJAVLJEN: sel, vse ali
+// ime), odZdaj (brez tapa), samo (pogoj v strani: sicer korak izpuščen) }.
+const P_KROGA = Number(arg("--kroga")) || 1;
+const P_KLIKI = arg("--kliki") ? new Set(arg("--kliki").split(",")) : null; // samo ti koraki (za ponovitev ene meritve)
+// --sled korak,korak --sled-mapa M: sled zmogljivosti (CDP Tracing) teh korakov, povzetek v M/<korak>.txt: opravila glavne
+// niti po tapu, vsiljen slog/postavitev s skladom, dolgi okvirji (long-animation-frame) s skripti.
+const P_SLED = arg("--sled") ? new Set(arg("--sled").split(",")) : null;
+const P_SLED_MAPA = arg("--sled-mapa") || ".";
+async function sledZacni(page) {
+  const cdp = await page.context().newCDPSession(page);
+  const ev = [];
+  cdp.on("Tracing.dataCollected", (d) => ev.push(...d.value));
+  await cdp.send("Tracing.start", { categories: "devtools.timeline,disabled-by-default-devtools.timeline,disabled-by-default-devtools.timeline.stack,disabled-by-default-devtools.timeline.invalidationTracking", transferMode: "ReportEvents" });
+  await page.evaluate(() => {
+    window.__loafSled = [];
+    try {
+      window.__loafObs = new PerformanceObserver((l) => window.__loafSled.push(...l.getEntries().map((e) => ({ d: Math.round(e.duration), blk: Math.round(e.blockingDuration), rs: Math.round(e.renderStart - e.startTime), sl: Math.round(e.styleAndLayoutStart - e.startTime), s: e.scripts.map((x) => `${x.invokerType} ${x.invoker} ${Math.round(x.duration)}ms (vsiljeno ${Math.round(x.forcedStyleAndLayoutDuration)}) ${String(x.sourceURL).split("/").pop()}:${x.sourceFunctionName}`) }))));
+      window.__loafObs.observe({ type: "long-animation-frame" });
+    } catch {}
+  });
+  return { cdp, ev };
+}
+async function sledKoncaj(page, { cdp, ev }, ime) {
+  await pocakaj(800);
+  const done = new Promise((r) => cdp.once("Tracing.tracingComplete", r));
+  await cdp.send("Tracing.end");
+  await done;
+  const loaf = await page.evaluate(() => (window.__loafObs?.disconnect(), window.__loafSled)).catch(() => []);
+  const X = ev.filter((e) => e.ph === "X");
+  const t0 = Math.min(...X.filter((e) => e.name === "EventDispatch" && /pointerdown|touchstart|click/.test(e.args?.data?.type || "")).map((e) => e.ts));
+  const ms = (us) => (us / 1000).toFixed(1);
+  const opis = (x) => `${x.name}${x.args?.data?.type ? ":" + x.args.data.type : x.args?.data?.functionName ? ":" + x.args.data.functionName : x.args?.data?.url ? ":" + x.args.data.url.split("/").pop() + ":" + x.args.data.lineNumber : ""}${x.args?.elementCount != null ? ` el=${x.args.elementCount}` : ""}`;
+  const vrstice = [`sled ${ime}`];
+  const KAJ = ["EventDispatch", "FunctionCall", "TimerFire", "FireAnimationFrame", "UpdateLayoutTree", "Layout", "Paint", "PrePaint", "Commit", "Layerize", "HitTest", "ParseHTML", "RunMicrotasks"];
+  for (const e of X.filter((e) => e.name === "RunTask" && e.dur > 3000 && e.ts >= t0 - 30000 && e.ts < t0 + 1500000)) {
+    const v = X.filter((x) => x.tid === e.tid && x.ts >= e.ts && x.ts + x.dur <= e.ts + e.dur && x !== e && x.dur > 1500 && KAJ.includes(x.name));
+    vrstice.push(`opravilo +${ms(e.ts - t0)} ${ms(e.dur)} ms: ${v.map((x) => `${opis(x)} ${ms(x.dur)}`).join(", ")}`);
+  }
+  for (const e of X.filter((e) => ["UpdateLayoutTree", "Layout"].includes(e.name) && e.dur > 2000 && e.ts >= t0 && e.ts < t0 + 1500000)) {
+    const st = (e.args?.beginData?.stackTrace || e.args?.data?.stackTrace || []).slice(0, 3).map((f) => `${f.functionName}@${f.url.split("/").pop()}:${f.lineNumber}`).join(" < ");
+    if (st) vrstice.push(`vsiljeno +${ms(e.ts - t0)} ${e.name} ${ms(e.dur)} ms el=${e.args?.elementCount ?? ""}: ${st}`);
+  }
+  // Razlogi za preračun sloga (invalidationTracking): kaj je sprožilo slog in na koliko elementih.
+  const razlogi = {};
+  for (const e of ev.filter((e) => /InvalidationTracking/.test(e.name) && e.ts >= t0 && e.ts < t0 + 600000)) {
+    const d = e.args?.data || {};
+    const k = `${e.name.replace("InvalidationTracking", "")} ${d.reason || ""} ${d.changedClass || d.changedAttribute || d.changedPseudo || d.selectors?.[0]?.selector || ""}`.trim();
+    razlogi[k] = (razlogi[k] || 0) + 1;
+  }
+  vrstice.push("razlogi sloga: " + JSON.stringify(Object.entries(razlogi).sort((a, b) => b[1] - a[1]).slice(0, 25)));
+  for (const f of loaf) vrstice.push(`LoAF ${f.d} ms (blok ${f.blk}, risanje @${f.rs}, slog @${f.sl}): ${f.s.join(" | ")}`);
+  fs.mkdirSync(P_SLED_MAPA, { recursive: true });
+  fs.writeFileSync(path.join(P_SLED_MAPA, `${ime}.txt`), vrstice.join("\n") + "\n");
+}
+const vStrani = (page, sel) =>
+  page.evaluate((s) => {
+    const el = [...document.querySelectorAll(s)].find((x) => x.offsetParent || x.getClientRects().length) || document.querySelector(s);
+    if (!el) return false;
+    el.click();
+    return true;
+  }, sel);
+// Počakaj, da se stran umiri: 600 ms brez dolge naloge (window.__long) in brez zahtev API v teku (do 20 s).
+const umiri = (page) =>
+  page
+    .evaluate(
+      () =>
+        new Promise((res) => {
+          const t = performance.now();
+          const loop = () => {
+            const zadnja = Math.max(0, ...(window.__long || []));
+            const zdaj = performance.now();
+            if ((zdaj - zadnja > 600 && zdaj - t > 600) || zdaj - t > 20_000) return res();
+            setTimeout(loop, 50);
+          };
+          loop();
+        }),
+    )
+    .catch(() => {});
+const KLIKI = [
+  { ime: "jaz", opis: "Jaz (spodnja vrstica)", pred: (k) => k.pojdi("path"), zavihek: "me", stanje: { sel: '#view-me [data-go="league"]' } },
+  { ime: "racun", opis: "Jaz → Račun", pred: (k) => k.pojdi("me"), tap: (k) => k.tapni('#view-me [data-go="account"]:visible'), stanje: { sel: "#view-account .card h2, #view-account .card h3" } },
+  { ime: "lige", opis: "Jaz → Lige", pred: (k) => k.pojdi("me"), tap: (k) => k.tapni('#view-me [data-go="league"]'), stanje: { sel: "#view-league li" } },
+  { ime: "nastavitve", opis: "Jaz → Nastavitve", pred: (k) => k.pojdi("me"), tap: (k) => k.tapni('#view-me [data-go="settings"]'), stanje: { sel: "#settings-form select" } },
+  { ime: "kalkulator", opis: "Jaz → Kalkulator", pred: (k) => k.pojdi("me"), tap: (k) => k.tapni('#view-me [data-go="graph"]'), stanje: { sel: "#graph-slot > * button" } },
+  { ime: "igre", opis: "Jaz → Igre", pred: (k) => k.pojdi("me"), tap: (k) => k.tapni('#view-me [data-go="games"]'), stanje: { sel: "#view-games .card button, #view-games .game-card, #view-games [data-game]" } },
+  { ime: "skener", opis: "Jaz → Skeniraj", pred: (k) => k.pojdi("me"), tap: (k) => k.tapni('#view-me [data-go="scan"]'), stanje: { sel: '#view-scan [data-act="type"]' } },
+  { ime: "zbirke", opis: "Jaz → Zbirke", pred: (k) => k.pojdi("me"), samo: () => !document.querySelector("#me-zbirke")?.hidden, tap: (k) => k.tapni("#me-zbirke"), stanje: { sel: "#view-zbirke .card, #view-zbirke li" } },
+  { ime: "pot", opis: "Učna pot (spodnja vrstica)", pred: (k) => k.pojdi("me"), zavihek: "path", stanje: { sel: "#view-path .node" } },
+  { ime: "kartice", opis: "Učna pot → Kartice", pred: (k) => k.pojdi("path"), tap: (k) => k.tapni('#modebar [data-mode="cards"]'), stanje: { sel: "#view-cards .card" } },
+  { ime: "tema", opis: "Učna pot → tema", pred: (k) => k.pojdi("path"), tap: (k) => k.tapni("#view-path .node.learning"), stanje: { sel: "#topic-content .topic-head h1" } },
+  { ime: "vadi", opis: "Tema → Vadi (prva naloga)", tap: (k) => k.tapni("#t-practice"), stanje: { sel: "#practice .task .task-text, #practice .example .task-text" } },
+  {
+    ime: "preveri",
+    opis: "Preveri odgovor",
+    pred: async (k) => {
+      if (await k.page.locator("#ex-next").isVisible().catch(() => false)) {
+        await vStrani(k.page, "#ex-next");
+        await k.page.waitForSelector("#practice .task:not(.example)", { timeout: 30_000 }).catch(() => {});
+        await umiri(k.page);
+      }
+      if (await k.page.locator("#answer").isVisible().catch(() => false)) await k.page.fill("#answer", "1");
+    },
+    tap: async (k) =>
+      (await k.page.locator("#answer").isVisible().catch(() => false)) ? k.tapni("#practice .answer-row button.primary") : k.tapni("#practice .choice"),
+    stanje: { sel: "#feedback .fb.ok, #feedback .fb.bad, #feedback #fb-next" },
+  },
+  {
+    ime: "naslednja",
+    opis: "Naslednja naloga",
+    pred: async (k) => {
+      // Napačen odgovor: »Poskusi znova« do rešenega zgleda, pod njim je »Podobna naloga« (#fb-next).
+      for (let i = 0; i < 4 && !(await k.page.locator("#fb-next").isVisible().catch(() => false)); i++) {
+        await vStrani(k.page, "#fb-retry");
+        await k.page.waitForTimeout(300);
+        if (await k.page.locator("#answer").isVisible().catch(() => false)) {
+          await k.page.fill("#answer", String(7 + i));
+          await vStrani(k.page, "#practice .answer-row button.primary");
+        } else await vStrani(k.page, "#practice .choice:not([disabled])");
+        await k.page.waitForSelector("#feedback .fb.bad, #feedback .fb.ok, #feedback #fb-next", { timeout: 30_000 }).catch(() => {});
+        await umiri(k.page);
+      }
+      await k.page.evaluate(() => document.querySelector("#practice .task")?.setAttribute("data-stara", ""));
+    },
+    tap: (k) => k.tapni("#fb-next"),
+    stanje: { sel: "#practice .task:not([data-stara]) .task-text" },
+  },
+  { ime: "nazaj", opis: "Nazaj (gumb na temi)", tap: (k) => k.tapni("#back-to-path"), stanje: { sel: "#view-path .node" } },
+  { ime: "uci", opis: "Uči se (spodnja vrstica)", pred: (k) => k.pojdi("path"), zavihek: "uci", stanje: { sel: "#view-uci [data-uci-tab]" } },
+  {
+    ime: "ucbenik",
+    opis: "Uči se → Učbenik",
+    pred: async (k) => {
+      // Izhodišče: drug podzavihek (Laboratorij), da je tap na Učbenik res odprtje.
+      await vStrani(k.page, '#view-uci [data-uci-tab="lab"]');
+      await umiri(k.page);
+    },
+    tap: (k) => k.tapni('#view-uci [data-uci-tab="textbook"]'),
+    stanje: { sel: "#view-textbook .tb-topic" },
+  },
+  { ime: "lekcija", opis: "Učbenik → lekcija", tap: (k) => k.tapni("#view-textbook .tb-topic:not(.pending)"), stanje: { sel: "#view-textbook .tb-lesson-grid" }, po: (k) => k.pojdi("path") },
+  { ime: "instruktor", opis: "Inštruktor (spodnja vrstica)", pred: (k) => k.pojdi("path"), zavihek: "chat", stanje: { ime: "vnos" } },
+  {
+    ime: "pogovor",
+    opis: "Pogovor s seznama (20 sporočil)",
+    pred: async (k) => {
+      if (!(await k.page.locator("#conversation-list li").first().isVisible().catch(() => false))) {
+        await vStrani(k.page, "#toggle-sidebar");
+        await k.page.waitForTimeout(800);
+      }
+    },
+    tap: (k) => k.tapni('#conversation-list li:has(span:text-is("Naloga 1: koliko je 1 + 1?"))'),
+    stanje: { vse: [{ sel: "#messages .msg.assistant", min: 5 }, { sel: "#messages .msg.user", besedilo: "Vprašanje 0:" }] },
+  },
+  { ime: "meni-profila", opis: "Meni profila", pred: (k) => k.pojdi("path"), tap: (k) => k.tapni("#profile-btn"), stanje: { sel: "#profile-pop .pm-item" } },
+  {
+    ime: "profil",
+    opis: "Menjava profila",
+    samo: () => !!document.querySelector("#profile-pop .pm-item[data-id]:not(:has(.pm-check))"),
+    tap: (k) => k.tapni("#profile-pop .pm-item[data-id]:not(:has(.pm-check))"),
+    // Učna pot drugega profila (Bor, brez napredka): vozlišča brez osvojenih tem prvega profila.
+    stanje: { vse: [{ sel: "#profile-btn .pm-avatar", besedilo: "B" }, { sel: "#view-path .node", brez: "#view-path .node.mastered" }] },
+    po: async (k) => {
+      // Nazaj na prvi profil (ni merjeno).
+      await vStrani(k.page, "#profile-btn");
+      await k.page.waitForTimeout(500);
+      await vStrani(k.page, "#profile-pop .pm-item[data-id]:not(:has(.pm-check))");
+      await k.page.waitForTimeout(1500);
+      await umiri(k.page);
+    },
+  },
+  { ime: "nadaljuj", opis: "Nadaljuj z učenjem (logotip)", pred: (k) => k.pojdi("path"), tap: (k) => k.tapni(".topbar .brand"), stanje: { sel: "#quick-pop .qs-row" }, po: (k) => vStrani(k.page, ".topbar .brand") },
+  {
+    ime: "nazaj-brskalnik",
+    opis: "Tipka Nazaj (brskalnik) iz teme",
+    pred: async (k) => {
+      await k.pojdi("path");
+      await vStrani(k.page, "#view-path .node.mastered, #view-path .node.learning");
+      await k.page.waitForSelector("#topic-content .topic-head h1", { timeout: 30_000 }).catch(() => {});
+      await umiri(k.page);
+    },
+    odZdaj: true,
+    tap: (k) => k.page.evaluate(() => history.back()).catch(() => {}), // kot tipka Nazaj telefona (popstate)
+    stanje: { sel: "#view-path .node" },
+  },
+];
+
+async function klikiVBrskalniku(vhod, u, naprava) {
+  const pw = require("playwright");
+  const browser = await pw.chromium.launch({ args: vhod.spki ? [`--ignore-certificate-errors-spki-list=${vhod.spki}`] : [] });
+  const dev = { ...hitrost.DEVICES[naprava], cpu: 4, net: true };
+  const out = { naprava, razlicica: browser.version(), viewport: dev.viewport, omejitve: "CPU 4×, Slow 4G (CDP; tudi service worker)", protokol: vhod.spki ? "HTTP/2 (TLS)" : "HTTP/1.1", koraki: {} };
+  const ctx = await browser.newContext({
+    viewport: dev.viewport,
+    hasTouch: dev.hasTouch,
+    isMobile: dev.isMobile,
+    deviceScaleFactor: dev.isMobile ? 2 : 1,
+    locale: "sl-SI",
+    timezoneId: "Europe/Ljubljana",
+    serviceWorkers: "allow",
+  });
+  await ctx.addInitScript(VITALI);
+  await ctx.addInitScript(hitrost.PAGE_MERI);
+  await ctx.addInitScript(MERILNIK_PRIJAVLJEN);
+  await ctx.addInitScript((slug) => localStorage.setItem(`${slug}.tour`, "done"), BRAND.slug);
+  await ctx.addCookies(Object.entries(u.jar).map(([name, value]) => ({ name, value, url: vhod.base })));
+  const sw = await omejujServiceWorkerje(browser);
+  const napake = [];
+  const zahteve = [];
+  let faza = null;
+  ctx.on("requestfinished", (req) => {
+    const url = req.url().replace(vhod.base, "");
+    if (faza && url.startsWith("/api/")) zahteve.push({ faza, url: url.split("?")[0], ms: Math.round(req.timing().responseEnd) });
+  });
+  try {
+    // Prvi obisk: service worker se namesti in predpomni (ni merjeno).
+    let page = await ctx.newPage();
+    await hitrost.cdpSetup(page, dev);
+    await zRokom(sw.vsem(), 15_000);
+    await page.goto(vhod.base + "/", { waitUntil: "commit", timeout: 180_000 });
+    await page.waitForSelector("#view-path #xp-card .hero", { timeout: 180_000 }).catch(() => napake.push("prvi obisk: Učna pot ni uporabna v 180 s"));
+    out.swPredpomnilnik = await page
+      .evaluate(async () => {
+        await Promise.race([navigator.serviceWorker.ready, new Promise((r) => setTimeout(r, 30_000))]);
+        let prej = -1;
+        for (let i = 0; i < 60; i++) {
+          let n = 0;
+          for (const k of await caches.keys()) n += (await (await caches.open(k)).keys()).length;
+          if (n === prej && n > 0) return { vnosov: n, nadzor: !!navigator.serviceWorker.controller };
+          prej = n;
+          await new Promise((r) => setTimeout(r, 3000));
+        }
+        return { vnosov: prej, rok: true };
+      })
+      .catch((e) => ({ napaka: String(e.message).slice(0, 120) }));
+    await page.close();
+    // Ponovni obisk: nova stran v istem profilu (predpomnilnik HTTP in service workerja).
+    page = await ctx.newPage();
+    page.on("pageerror", (e) => napake.push(String(e.stack || e.message).split("\n").slice(0, 3).join(" | ").replaceAll(vhod.base, "").slice(0, 300)));
+    page.on("requestfailed", (r) => /\/api\//.test(r.url()) && napake.push(`zahteva ni uspela ${r.url().replace(vhod.base, "")} (${r.failure()?.errorText})`));
+    await hitrost.cdpSetup(page, dev);
+    await zRokom(sw.vsem(), 15_000);
+    await page.goto(vhod.base + "/", { waitUntil: "commit", timeout: 180_000 });
+    await page.waitForSelector("#view-path #xp-card .hero", { timeout: 180_000 }).catch(() => napake.push("ponovni obisk: Učna pot ni uporabna"));
+    out.potMs = r1(await page.evaluate(() => window.__tPot).catch(() => null));
+    await page.waitForLoadState("networkidle", { timeout: 60_000 }).catch(() => {});
+    await umiri(page);
+    await page.waitForTimeout(2000);
+    const tapni = async (sel) => {
+      await page
+        .locator(sel)
+        .first()
+        [dev.hasTouch ? "tap" : "click"]({ timeout: 20_000 })
+        .catch((e) => napake.push(`tap ${sel}: ${String(e.message).split("\n")[0]}`));
+    };
+    // Zavihek spodnje vrstice: najprej dotik ob robu, če se je vrstica umaknila (kot pri »prijavljen«).
+    // Vrne izbirnik zavihka. Umaknjeno vrstico (public/noga.js) pred meritvijo vrne kolešček navzgor: dotik ob robu gre
+    // skozi, kadar je tam gumb (vozlišče poti, vrstica v »Jaz«), in bi odprl tisto.
+    const zavihek = async (view) => {
+      const spodaj = await page.evaluate(() => getComputedStyle(document.querySelector("#tabbar")).display !== "none").catch(() => false);
+      if (!spodaj) return `.topbar .tab[data-view="${view}"]`;
+      if (await page.evaluate(() => document.body.classList.contains("tb-mir")).catch(() => false)) {
+        await page.mouse.move(dev.viewport.width / 2, dev.viewport.height / 2);
+        await page.mouse.wheel(0, -60);
+        await page.waitForTimeout(600);
+      }
+      await page.mouse.move(2, 2 + Math.random() * 10);
+      return `#tabbar .tab[data-view="${view}"]`;
+    };
+    // Pot do izhodišča (ni merjeno): klik zavihka v strani, dokler pogled ni viden (zavihek Jaz na podstrani Jaz ne
+    // vodi vedno na Jaz, temveč nazaj).
+    const pojdi = async (view) => {
+      for (let i = 0; i < 4; i++) {
+        const ok = await page.evaluate((v) => {
+          const el = document.getElementById(`view-${v}`);
+          if (el && !el.hidden && el.offsetParent !== null) return true;
+          const tab = [...document.querySelectorAll(`.tab[data-view="${v}"]`)].find((x) => x.offsetParent) || document.querySelector(`.tab[data-view="${v}"]`);
+          tab?.click();
+          return false;
+        }, view);
+        if (ok) break;
+        await page.waitForTimeout(400);
+      }
+      await umiri(page);
+    };
+    const k = { page, tapni, pojdi };
+    for (let krog = 1; krog <= P_KROGA; krog++)
+      for (const x of KLIKI.filter((y) => !P_KLIKI || P_KLIKI.has(y.ime))) {
+        const kljuc = krog === 1 ? x.ime : `${x.ime}#${krog}`;
+        faza = kljuc;
+        try {
+          if (x.pred) await zRokom(x.pred(k), 90_000);
+          // Zavihek in meni po 3 s mirovanja (noga.js): premik kazalca, da vrstica ne zdrsne med tapom.
+          if (x.samo && !(await page.evaluate(x.samo).catch(() => false))) {
+            out.koraki[kljuc] = { opis: x.opis, izpuscen: true };
+            continue;
+          }
+          const selZavihka = x.zavihek ? await zavihek(x.zavihek) : null;
+          const ime = x.stanje.ime || (x.stanje.vse ? "vse" : "sel");
+          const p = page.evaluate(([i, oo]) => window.__cakaj(i, oo), [ime, { ...x.stanje, rok: 30_000, odZdaj: !!x.odZdaj }]);
+          const sled = P_SLED?.has(x.ime) ? await sledZacni(page) : null;
+          await pocakaj(50);
+          await zRokom(selZavihka ? tapni(selZavihka) : x.tap(k), 40_000);
+          const r = await zRokom(p, 45_000, { napaka: "merilnik ni odgovoril v 45 s" });
+          if (sled) await sledKoncaj(page, sled, kljuc).catch((e) => napake.push(`sled ${kljuc}: ${e.message}`));
+          out.koraki[kljuc] = { opis: x.opis, vsebina: r.pripravljeno ?? null, interaktivno: r.interaktivno ?? null, inp: r.inp ?? null, rok: r.rok || undefined, napaka: r.napaka };
+          if (P_SLIKE) await page.screenshot({ path: path.join(P_SLIKE, `${naprava}-${kljuc}.png`) }).catch(() => {});
+          await zRokom(umiri(page), 25_000);
+          if (x.po) await zRokom(x.po(k), 60_000);
+        } catch (e) {
+          out.koraki[kljuc] = { opis: x.opis, napaka: String(e.message).split("\n")[0].slice(0, 160) };
+        }
+        out.koraki[kljuc].api = zahteve.filter((z) => z.faza === kljuc).map((z) => `${z.url} ${z.ms}`);
+        const o = out.koraki[kljuc];
+        log(`kliki ${naprava} ${kljuc}: vsebina ${o.vsebina} ms, INP ${o.inp ?? "<16"} ms${o.rok ? " (ROK)" : ""}${o.napaka ? " " + o.napaka : ""}; API ${o.api.length}`);
+      }
+  } finally {
+    out.napake = [...new Set(napake)].slice(0, 12);
+    out.serviceWorker = { omejenih: sw.omejenih, napaka: sw.napaka };
+    await ctx.close().catch(() => {});
+    await browser.close();
+  }
+  return out;
+}
+
+async function merjenjePrijavljenega(kliki = false) {
+  const dbFile = path.join(TMP, "prijavljen", `${BRAND.slug}.db`);
+  fs.mkdirSync(path.dirname(dbFile), { recursive: true });
+  const out = { nastavitve: { cpu: O_CPU, pomnilnikMB: O_POMNILNIK_MB, mockZamikMs: Number(O_MOCK_ZAMIK), taskset: TASKSET, naprave: P_NAPRAVE, sporocilo: P_SPOROCILO } };
+  if (args.includes("--velika-baza")) out.baza = await napolniVelikoBazo(dbFile);
+  const s0 = await zazeniStreznik(dbFile, { predlog: false });
+  let u;
+  try {
+    [u] = await pripraviUporabnike(s0, 1);
+    out.ucenec = await napolniUcenca(s0, u);
+    if (kliki) out.drugiProfil = await drugiProfil(s0, u);
+  } finally {
+    await s0.ustavi();
+  }
+  log(`prijavljen: učenec ${JSON.stringify(out.ucenec)}`);
+  const cg = args.includes("--brez-cgroup") ? { napaka: "izklopljeno z --brez-cgroup" } : ustvariCgroup();
+  const omejitev = cg.napaka ? null : cg;
+  out.cgroup = omejitev ? { pomnilnikMB: O_POMNILNIK_MB, kvotaUs: Math.round(O_CPU * cg.perioda), periodaUs: cg.perioda, opombe: cg.opombe } : { napaka: cg.napaka };
+  if (!omejitev) log(`!!! prijavljen BREZ cgroup (${cg.napaka}): strežnik je samo pripet na eno jedro !!!`);
+  let s = null;
+  let posrednik = null;
+  try {
+    s = await zazeniStreznik(dbFile, { predlog: false, okolje: { EVKLID_MOCK_DELAY_MS: O_MOCK_ZAMIK }, cgroup: omejitev?.procs });
+    out.zagonMs = Math.round(s.tHealthz);
+    // Knjižnice (KaTeX, marked, DOMPurify, pisave) strežnik streže iz node_modules: brez njih bi stran naložila 404 in
+    // klepet ne bi izrisal nobenega odgovora (meritev bi bila napačna). Najprej npm ci.
+    const knj = await fetch(s.base + "/vendor/marked/lib/marked.umd.js").catch(() => null);
+    if (knj?.status !== 200) throw new Error(`/vendor/marked: ${knj?.status ?? "ni odgovora"} – ni node_modules? Najprej npm ci.`);
+    // Kot v produkciji: počakaj na predgretje stisnjenih datotek in učbenika za tisk (server/index.js).
+    const rok = performance.now() + 150_000;
+    while (performance.now() < rok && !s.vrstice.some((v) => /tisk: \d+ strani v predpomnilniku/.test(v.l))) await pocakaj(500);
+    if (omejitev) cgPisi(cg, "memory.max_usage_in_bytes", "0");
+    // Produkcija streže prek HTTP/2 (ena povezava za vse zahteve); --http1 meri neposredno (največ 6 povezav, kot 0.4).
+    if (!args.includes("--http1")) posrednik = await zazeniHttp2Posrednik({ cilj: s.base, mapa: path.dirname(dbFile) });
+    out.protokol = posrednik ? "HTTP/2 (TLS, posrednik pred strežnikom)" : "HTTP/1.1";
+    out.naprave = {};
+    for (const n of P_NAPRAVE) out.naprave[n] = await (kliki ? klikiVBrskalniku : prijavljenVBrskalniku)(posrednik || { base: s.base }, u, n);
+    out.rssKonecMB = MB(vmRss(s.pid));
+    if (omejitev) {
+      out.cgroup.maxPorabaMB = MB(Number(cgBeri(cg, "memory.max_usage_in_bytes")));
+      out.cgroup.dusenje = cgPolja(cgBeri(cg, "cpu.stat"));
+    }
+  } finally {
+    if (posrednik) await posrednik.ustavi();
+    if (s) await s.ustavi();
+    if (omejitev) odstraniCgroup(omejitev);
+  }
+  return out;
+}
+
 // Ena seja: strežnik z bazo, uporabniki, nato izbrani deli.
 async function seja(dbFile, { poti, sql, instruktor, prvo }) {
   const s = await zazeniStreznik(dbFile);
@@ -1694,6 +2433,36 @@ function povzetek(R) {
     const dn = o.stopnje.flatMap((r) => r.dnevnik.primeri.map((l) => `c=${r.c}: ${l}`));
     if (dn.length) L.push(`\nNapake v dnevniku strežnika:\n\n\`\`\`\n${dn.join("\n")}\n\`\`\``);
   }
+  if (R.prijavljen) {
+    const p = R.prijavljen;
+    const n = p.nastavitve;
+    L.push(`\n### P1 Prijavljen učenec na počasnem omrežju\n`);
+    L.push(
+      p.cgroup?.napaka
+        ? `**Brez cgroup** (${p.cgroup.napaka}); strežnik ${n.taskset ? "pripet na jedro 0" : "brez omejitev"}.`
+        : `Strežnik: cgroup ${p.cgroup.pomnilnikMB} MB, CPU ${p.cgroup.kvotaUs}/${p.cgroup.periodaUs} µs${n.taskset ? ", pripet na jedro 0" : ""}; največ ${p.cgroup.maxPorabaMB} MB, dušenje ${p.cgroup.dusenje?.nr_throttled ?? "–"}× (${Math.round((p.cgroup.dusenje?.throttled_time || 0) / 1e6)} ms).`,
+    );
+    L.push(`Protokol: ${p.protokol}.`);
+    L.push(`Učenec: ${JSON.stringify(p.ucenec)}${p.baza ? `; sintetična baza ${JSON.stringify(p.baza)}` : ""}. EVKLID_MOCK_DELAY_MS=${n.mockZamikMs} (prvi znak brez časa pravega modela).\n`);
+    L.push("| Naprava | obisk | Učna pot uporabna | app.js zagnan | interaktivno | FCP | LCP | CLS (odpiranje / skupaj) | INP | dolge naloge (najdaljša) | zahtev (po omrežju) | prenos KB (+ service worker) | Inštruktor: polje / interaktivno | dolgi pogovor / interaktivno | prvi znak |");
+    L.push("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|");
+    for (const [ime, x] of Object.entries(p.naprave || {}))
+      for (const [obisk, o] of Object.entries(x.obiski))
+        L.push(
+          `| ${ime} | ${obisk} | ${o.potMs} | ${o.appMs ?? "–"} | ${o.ttiMs} | ${o.fcpMs} | ${o.lcpMs} (${o.lcpElement}) | ${o.clsOdpiranje} / ${o.cls} | ${o.inpMs ?? "–"} | ${o.dolgihOdpiranje} (${o.najdaljsaOdpiranjeMs}) | ${o.odpiranje.zahtev} (${o.odpiranje.mreznih}) | ${o.odpiranje.prenosKB} (+${o.odpiranje.swKB}) | ${o.vnos?.pripravljeno ?? "–"} / ${o.vnos?.interaktivno ?? "–"} | ${o.pogovor?.pripravljeno ?? "–"} / ${o.pogovor?.interaktivno ?? "–"} | ${o.znak?.pripravljeno ?? "–"} |`,
+        );
+    for (const [ime, x] of Object.entries(p.naprave || {})) if (x.napake?.length) L.push(`\n${ime}: ${x.napake.join("; ")}`);
+  }
+  if (R.kliki) {
+    L.push("\n## Kliki (prijavljen učenec, ponovni obisk, CPU 4× + Slow 4G)\n");
+    L.push("INP: najdaljši dogodek tega tapa (»<16« = pod pragom Event Timing). Vsebina: ms od tapa do uporabne vsebine.\n");
+    L.push("| Naprava | klik | INP | vsebina | interaktivno | zahtev API |");
+    L.push("|---|---|---|---|---|---|");
+    for (const [ime, x] of Object.entries(R.kliki.naprave || {}))
+      for (const [k, o] of Object.entries(x.koraki))
+        L.push(`| ${ime} | ${o.opis}${k.includes("#") ? " (drugič)" : ""} | ${o.izpuscen ? "izpuščen" : o.inp ?? "<16"} | ${o.vsebina ?? (o.napaka ? "napaka" : "–")}${o.rok ? " (rok)" : ""} | ${o.interaktivno ?? "–"} | ${o.api?.length ?? 0} |`);
+    for (const [ime, x] of Object.entries(R.kliki.naprave || {})) if (x.napake?.length) L.push(`\n${ime}: ${x.napake.join("; ")}`);
+  }
   return L.join("\n");
 }
 
@@ -1718,6 +2487,8 @@ try {
     R.velika = { baza, ...(await seja(dbFile, { poti: true, sql: true })) };
   }
   if (SAMO.has("obremenitev")) R.obremenitev = await merjenjeObremenitve();
+  if (SAMO.has("prijavljen")) R.prijavljen = await merjenjePrijavljenega();
+  if (SAMO.has("kliki")) R.kliki = await merjenjePrijavljenega(true);
 } finally {
   if (args.includes("--obdrzi")) log(`začasna mapa ostane: ${TMP}`);
   else fs.rmSync(TMP, { recursive: true, force: true });

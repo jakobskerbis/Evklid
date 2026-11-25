@@ -161,14 +161,24 @@ $S_6 \approx 13\,604$ vstopnice v šestih sezonah.
 
 ## Povzetek
 
-- Mešana naloga je veriga orodij iz različnih letnikov; vsak člen reši in zapiši posebej.
-- Postopek: ključna beseda → orodje → račun → preverba smiselnosti.
+- **Mešana naloga** je veriga orodij iz različnih letnikov; vsak člen reši in zapiši posebej.
+- **Postopek:** ključna beseda → orodje → račun → preverba smiselnosti.
+
+**Ključna beseda → orodje:**
+
 - »Vsaj« → nasprotni dogodek $1 - P(\overline{A})$.
 - »Največ, najmanj« → $f'(x) = 0$, nato vrednost funkcije v tej točki.
 - »Pot iz hitrosti, ploščina« → določeni integral.
-- »Na koliko načinov« → osnovni izrek, $n!$, $V_n^k$, $\binom{n}{k}$; vprašaj, ali je vrstni red pomemben.
-- »Vsako leto za $p\,\%$« → $a_n = a_1 q^{n-1}$ in $S_n = a_1 \frac{q^n - 1}{q - 1}$.
-- Paradoks rojstnih dni: pri $23$ ljudeh je verjetnost skupnega rojstnega dne približno $0{,}507$.
+- »Na koliko načinov« → osnovni izrek, $n!$, $V_n^k$, $\binom{n}{k}$.
+- Pri štetju vprašaj, ali je vrstni red pomemben.
+
+**»Vsako leto za $p\,\%$«** → geometrijsko zaporedje:
+
+$$a_n = a_1 q^{n-1}$$
+
+$$S_n = a_1 \frac{q^n - 1}{q - 1}$$
+
+- **Paradoks rojstnih dni:** pri $23$ ljudeh je verjetnost skupnega rojstnega dne približno $0{,}507$.
 
 ## Ponovitev
 

@@ -228,12 +228,28 @@ Drži: $3\beta = 3 \cdot 3 = 9$. Torej je $\vec c = 2\vec a + 3\vec b$ in vsi tr
 
 ## Povzetek
 
-- Linearna kombinacija: $\vec v = \alpha\vec a + \beta\vec b$. Krajevni vektor $\vec r_A = \overrightarrow{OA}$, $\overrightarrow{AB} = \vec r_B - \vec r_A$.
-- Kolinearna vektorja: $\vec b = k\vec a$ (enaka razmerja komponent). Točke $A$, $B$, $C$ so na premici, ko je $\overrightarrow{AC} = k\,\overrightarrow{AB}$.
-- Koplanarni vektorji: $\vec c = \alpha\vec a + \beta\vec b$; pomembno le v prostoru.
-- (višja raven) Linearno neodvisni: $\alpha\vec a + \beta\vec b = \vec 0$ le pri $\alpha = \beta = 0$. Dva sta odvisna, ko sta kolinearna, trije, ko so koplanarni. Pri neodvisnih smemo primerjati koeficiente.
-- (višja raven) Delilno razmerje $AD : DB = m : n$: $\vec r_D = \frac{n\vec r_A + m\vec r_B}{m + n}$; razpolovišče $\frac{\vec r_A + \vec r_B}{2}$; težišče $\frac{\vec r_A + \vec r_B + \vec r_C}{3}$, deli težiščnico $2 : 1$.
-- (višja raven) Naloga »v kakšnem razmerju se sekata«: izberi neodvisna bazna vektorja, isti vektor zapiši na dva načina, primerjaj koeficiente. Diagonali paralelograma se razpolavljata.
+**Linearna kombinacija:**
+
+$$\vec v = \alpha\vec a + \beta\vec b$$
+
+- **Krajevni vektor** $\vec r_A = \overrightarrow{OA}$; velja $\overrightarrow{AB} = \vec r_B - \vec r_A$.
+- **Kolinearna** vektorja: $\vec b = k\vec a$ (enaka razmerja komponent).
+- Točke $A$, $B$, $C$ so na premici, ko je $\overrightarrow{AC} = k\,\overrightarrow{AB}$.
+- **Koplanarni** vektorji: $\vec c = \alpha\vec a + \beta\vec b$; pomembno le v prostoru.
+
+**Višja raven:**
+
+- **Linearno neodvisni**: $\alpha\vec a + \beta\vec b = \vec 0$ le pri $\alpha = \beta = 0$.
+- Dva sta odvisna, ko sta kolinearna, trije, ko so koplanarni.
+- Pri neodvisnih smemo primerjati koeficiente.
+- **Delilno razmerje** $AD : DB = m : n$:
+
+$$\vec r_D = \frac{n\vec r_A + m\vec r_B}{m + n}$$
+
+- **Razpolovišče**: $\frac{\vec r_A + \vec r_B}{2}$.
+- **Težišče**: $\frac{\vec r_A + \vec r_B + \vec r_C}{3}$; deli težiščnico $2 : 1$.
+- Naloga »v kakšnem razmerju se sekata«: izberi neodvisna bazna vektorja, isti vektor zapiši na dva načina, primerjaj koeficiente.
+- Diagonali paralelograma se razpolavljata.
 
 ## Ponovitev
 

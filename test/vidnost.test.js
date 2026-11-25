@@ -11,7 +11,7 @@ import { BRAND } from "../server/brand.js";
 import SL from "../public/i18n/sl.js";
 import { startupFiles } from "../server/startup-files.js";
 import { LEVEL_PRICES, FAMILY_PRICES, TRIAL_DAYS } from "../server/accounts/plans.js";
-import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, eur, OBJAVI_MERITEV, PUBLIC_PAGES, DRAFT_PAGES, NOINDEX_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
+import { structuredData, uiLanguages, robotsTxt, sitemapXml, llmsTxt, aboutPage, whyPage, accuracy, wilson, eur, OBJAVI_MERITEV, PUBLIC_PAGES, DRAFT_PAGES, NOINDEX_PAGES, PRIVATE_PATHS, ORIGIN } from "../server/vidnost.js";
 import { presolve, claimNote } from "../server/live-check.js";
 import { latestMeasurement, measurementError, pctText, slDate, summarize, tableMd, updateDoc, finalNumbers, codeResult, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 
@@ -57,7 +57,10 @@ test("vstopna stran: naslov, opis, canonical, Open Graph in Twitter", () => {
   assert.ok(meta(index, "property", "og:title") && meta(index, "property", "og:description") && meta(index, "property", "og:image"));
   assert.equal(meta(index, "name", "twitter:card"), "summary_large_image");
   // Opis za iskalnike in predogled povezave: naslov in uvod pristajalne strani (#750, land.title in land.lead v sl.js).
-  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo, vse šolsko leto."), desc);
+  // Matura v naslovu, opisu in predogledu (pregled javnih strani 21. 11. 2026, P1).
+  assert.ok(desc.startsWith(SL["land.title"]) && desc.includes("Za gimnazijo in maturo, vse šolsko leto."), desc);
+  assert.match(title, /maturo/);
+  assert.match(meta(index, "property", "og:title"), /maturo/);
   for (const k of ["og:description", "twitter:description"]) {
     const d = meta(index, k.startsWith("og") ? "property" : "name", k);
     assert.equal(d, `${SL["land.title"]} ${SL["land.lead"]}`, k);
@@ -187,13 +190,14 @@ test("stran /zakaj-evklid (predloga z meritvijo, podano izrecno): številke iz d
   assert.ok(m && m.datoteka.startsWith("docs/meritve/natancnost-"), "meritev obstaja");
   for (const r of m.vrstice) {
     assert.ok(Number.isFinite(r.napake) ? r.napake <= r.primeri : Number.isFinite(r.napake_pct), r.kljuc);
-    const cell = Number.isFinite(r.napake) ? `<td>${pctText(r)} % <small>${r.napake} od ${r.primeri}</small></td>` : `<td>${pctText(r)} %</td>`;
+    const cell = Number.isFinite(r.napake) ? `<td>${pctText(r)} % <small>${r.napake} od ${r.primeri}</small> <small class="why-ci">95-% interval ${wilson(r.napake, r.primeri).join("–")}\u00a0%</small></td>` : `<td>${pctText(r)} %</td>`;
     // Celica je vezana na ime svoje vrstice (ne samo »nekje na strani«).
     const head = `<tr><th scope="row">${r.ime}${r.opomba ? `<small>${r.opomba}</small>` : ""}</th>`;
     assert.ok(html.includes(`${head}${cell}<td>${r.primeri}</td></tr>`), `vrstica ${r.kljuc}`);
   }
   const allowed = m.vrstice.map(pctText);
-  const pcts = [...text.matchAll(/(\d+(?:,\d+)?) %/g)].map((x) => x[1]);
+  // Intervali zaupanja (točka 16) so izračunani iz »X od N«, ne iz meritve: iz preverjanja odstotkov jih izpustimo.
+  const pcts = [...text.replace(/95-% interval [\d,]+–[\d,]+ %/g, "").matchAll(/(\d+(?:,\d+)?) %/g)].map((x) => x[1]);
   assert.ok(pcts.length >= 2 * m.vrstice.length && pcts.every((p) => allowed.includes(p)), pcts.join(" "));
   // Števila »X od N« samo, če so res zapisana v meritvi (pregled #555).
   const counts = [...text.matchAll(/(\d+) od (\d+)/g)].map((x) => `${x[1]}/${x[2]}`);
@@ -327,8 +331,8 @@ test("meritev s preverjanjem: povzetek, tabela in stran iz istih številk; skrip
   assert.equal(updateDoc(updateDoc(doc, sum), sum), updateDoc(doc, sum));
   const html = whyPage(sum);
   const text = textOf(html);
-  assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40</small></td><td>40</td></tr>'));
-  assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40</small></td><td>40</td></tr>'));
+  assert.ok(html.includes('<tr><th scope="row">Sam model, brez preverjanja</th><td>12,5 % <small>5 od 40</small> <small class="why-ci">95-% interval 5,5–26,1\u00a0%</small></td><td>40</td></tr>'));
+  assert.ok(html.includes('<tr><th scope="row">Cel Evklidov odgovor, s preverjanjem</th><td>2,5 % <small>1 od 40</small> <small class="why-ci">95-% interval 0,4–12,9\u00a0%</small></td><td>40</td></tr>'));
   // Viden pripis, kaj je bilo merjeno: plačljivi paket brez dnevne meje pregledov; z --resnicna-meja drugo besedilo.
   assert.ok(text.includes("enkrat s preverjanjem (program preveri račune, pri delu nalog odgovor pregleda še zmogljivejši model), z nastavitvami plačljivega paketa") && !text.includes("kot odgovor vidi učenec"));
   assert.ok(text.includes("Merili smo plačljivi paket brez dnevne meje pregledov z zmogljivejšim modelom.") && !text.includes("z dnevno mejo pregledov z zmogljivejšim modelom, kot velja"));
@@ -445,7 +449,7 @@ test("javne strani (Za starše, Za šole, Zasebnost) imajo videz po napravi, bre
   assert.match(read("starsi.js"), /if \(q\.has\("prosnja"\) \|\| ime\) document\.getElementById\("ask"\)\.hidden = false;/);
   assert.ok(read("account.js").includes("/starsi.html?${name ? `ime=${encodeURIComponent(name)}&` : \"\"}prosnja=1"), "povezava v prošnji otroka");
   for (const href of ['href="/starsi.html?prosnja=1" target="_blank">${esc(t("birth.parents"))}', 'href: "/starsi.html?prosnja=1", target: "_blank", textContent: t("guest.parentLink")'])
-    assert.ok(read("account.js").includes(href), href);
+    assert.ok((read("account.js") + read("racun.js")).includes(href), href); // zavihek Račun in računi gostov: racun.js
   // V aplikaciji (WebView) brez dvojnega odmika, enako kot theme.js.
   const app = read("v-aplikaciji.js").match(/\(function \(\) \{[\s\S]*\}\)\(\);/)[0];
   assert.ok(read("theme.js").includes(app), "v-aplikaciji.js = blok iz theme.js");
@@ -533,4 +537,38 @@ test("javne strani: brez obljube »od 1. razreda do fakultete«", () => {
   for (const name of ["o-evklidu", "zakaj-evklid", "llms.txt", "schema.org", "starsi.html"]) assert.match(textOf(pages[name]), /6\.–9\. razred osnovne šole in gimnazij/, name);
   for (const name of ["o-evklidu", "llms.txt", "starsi.html"]) assert.match(textOf(pages[name]), /začetni izbor za nekatere fakultetne predmete \(v razvoju\)/, name);
   assert.match(pages["llms.txt"], /grades 6–9 of primary school and gimnazija/);
+});
+
+test("Wilsonov 95-% interval za delež napak (točka 16): 3 od 91 ≈ 1,1–9,2 %", () => {
+  assert.deepEqual(wilson(3, 91), ["1,1", "9,2"]);
+  assert.deepEqual(wilson(0, 50), ["0", "7,1"]);
+  assert.equal(wilson(1, 0), null);
+  assert.equal(wilson(5, 3), null);
+});
+
+test("/o-evklidu in /zakaj-evklid: pisavi Instrument Sans vnaprej (preload), da zamenjava pisave ne premakne vsebine ob sidru", () => {
+  // Meritev 21. 11. 2026 (telefon, 9 Mbit/s, 170 ms): brez tega CLS 0,20 ob /o-evklidu#cene, 0,10 ob #h-matura; s tem 0.
+  const css = readFileSync(new URL("../node_modules/@fontsource-variable/instrument-sans/index.css", import.meta.url), "utf8");
+  const files = [...css.matchAll(/url\(\.\/files\/([^)]+-wght-normal\.woff2)\)/g)].map((m) => `/vendor/instrument-sans/files/${m[1]}`);
+  assert.equal(files.length, 2, "latinica in razširjena latinica (č, š, ž)");
+  for (const [name, html] of [["/o-evklidu", aboutPage()], ["/zakaj-evklid", whyPage()]]) {
+    for (const f of files) {
+      const at = html.indexOf(`<link rel="preload" href="${f}" as="font" type="font/woff2" crossorigin>`);
+      assert.ok(at > 0, `${name}: preload ${f}`);
+      assert.ok(at < html.indexOf('<link rel="stylesheet"'), `${name}: preload pred slogi`);
+    }
+  }
+});
+
+test("llms.txt: povezave na izpite RIC in naši izpiti v slogu preteklih, s pravilno obliko (21. 11. 2026)", async () => {
+  const { llmsTxt } = await import("../server/vidnost.js");
+  const { PAPERS_SI } = await import("../server/exam-papers-si.js");
+  const imena = readdirSync(new URL("../content/exam-papers/", import.meta.url)).filter((f) => f.endsWith(".json"));
+  const t = llmsTxt(null);
+  assert.ok(PAPERS_SI.length > 0 && imena.length > 0);
+  assert.match(t, new RegExp(`povezave na ${PAPERS_SI.length} preteklih izpit(ov|a|i)? Državnega izpitnega centra`));
+  assert.match(t, new RegExp(`in ${imena.length} izpit(ov|a|i)? v slogu preteklih z lastnimi nalogami`));
+  assert.match(t, new RegExp(`links to ${PAPERS_SI.length} past national exams by RIC`));
+  // Naši izpiti niso pretekli izpiti (naloge so lastne, server/our-papers.js).
+  assert.doesNotMatch(t, /preteklimi izpitnimi polami \(\d/);
 });

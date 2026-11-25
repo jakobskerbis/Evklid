@@ -1,6 +1,6 @@
 // Simulacije za fizikalna tekmovanja: vzvod, škripci, kotaljenje, stoječe valovanje, Kirchhoffova pravila, dimenzijska analiza.
-import { s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, clamp, label, arrow, animate, playButton, handle, draggable } from "./kit.js";
-import { G, springPath } from "./fiz-skupno.js";
+import { s, svgBox, slider, select, segmented, button, buttons, readout, layout, texBlock, fmt, clamp, label, arrow, animate, playButton, handle, draggable } from "./kit.js";
+import { G } from "./fiz-skupno.js";
 
 // ------------------------------------------------------------ vzvod: vzvod, škripci, kotaljenje
 export function vzvod(el, { mode = "vzvod" } = {}) {

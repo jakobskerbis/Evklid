@@ -33,6 +33,13 @@ services:
       #   value: "1"
       - key: EVKLID_DB
         value: /var/data/evklid.db
+      # Slovenski glas za branje vprašanj na glas (ustno spraševanje): zasebna storitev evklid-glas spodaj
+      # (server/govor.js govorMp3). Brez nje Evklid uporabi glas naprave (slovensko zna skoraj samo Edge).
+      - key: EVKLID_GLAS_URL
+        fromService:
+          type: pserv
+          name: evklid-glas
+          property: hostport
       - key: ANTHROPIC_API_KEY
         sync: false
       - key: EVKLID_PASSWORD
@@ -93,3 +100,18 @@ services:
         sync: false
       - key: EVKLID_KOPIJE_S3_SECRET
         sync: false
+
+  # Glasovni strežnik (glas/streznik.py, j 19. 11. 2026 »Odprt glas na našem strežniku«): odprt slovenski glas Piper
+  # (sl_SI artur, CC BY 4.0) spremeni besedilo vprašanja v MP3. Zasebna storitev: dosegljiva samo iz strežnika evklid.
+  # Ločeno, ker model porabi ~220 MB, glavni strežnik pa ima 512 MB. Starter ≈ 7 $ na mesec.
+  - type: pserv
+    name: evklid-glas
+    runtime: python
+    region: frankfurt
+    plan: starter
+    buildCommand: pip install -r glas/requirements.txt && python glas/prenesi.py
+    startCommand: python glas/streznik.py
+    autoDeploy: false
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"

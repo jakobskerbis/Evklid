@@ -126,7 +126,7 @@ test("pregled 463-2 §5: p, q, a, S, e, α, β po kontekstu", () => {
 
 test("serija nalog iz več tem: vsaka naloga da svojo temo in predmet (app.js, §5.6)", async () => {
   const fs = await import("node:fs");
-  const src = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const src = ["app.js", "vadnica.js"].map((f) => fs.readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8")).join("\n"); // serije nalog: public/vadnica.js
   assert.match(src, /function renderTask\(task, ctx\) \{\n\s*setTaskFx\(task\);/);
   assert.match(src, /taskFxNow\(\)\?\.scope/);
   assert.match(src, /taskFxNow\(\)\?\.subject/);

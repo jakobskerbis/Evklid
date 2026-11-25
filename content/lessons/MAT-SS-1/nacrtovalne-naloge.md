@@ -206,11 +206,28 @@ $D$ je presečišče krožnic $k(A, 3\,\mathrm{cm})$ in $k(C, 5\,\mathrm{cm})$ n
 
 ## Povzetek
 
-- Načrtovalna naloga ima štiri dele: skica s podatki (analiza), opis načrtovanja, načrtovanje z ravnilom in šestilom, diskusija.
-- Osnovne konstrukcije: simetrala daljice in kota, pravokotnica, vzporednica, kot $60^\circ$ in njegove polovice ($30^\circ$, $15^\circ$), $90^\circ$, $45^\circ$, $120^\circ$.
-- Manjkajoče oglišče je presečišče dveh množic točk: krožnice $k(B, a)$, kraka kota, vzporednice na razdalji $v_c$, krožnice s polmerom $t_c$ ali $R$.
-- Diskusija: SSS zahteva $|a - b| < c < a + b$, KSK pa $\alpha + \beta < 180^\circ$; dve stranici in kot nasproti krajše dasta 0, 1 ali 2 rešitvi.
-- (višja raven) V programu za dinamično geometrijo dober načrt prestane test vlečenja; z drsnikom preveriš število rešitev.
+**Načrtovalna naloga** ima štiri dele:
+
+1. skica s podatki (analiza),
+2. opis načrtovanja,
+3. načrtovanje z ravnilom in šestilom,
+4. diskusija.
+
+- **Osnovne konstrukcije:** simetrala daljice in kota, pravokotnica, vzporednica.
+- **Osnovni koti:** $60^\circ$ in njegove polovice ($30^\circ$, $15^\circ$), $90^\circ$, $45^\circ$, $120^\circ$.
+- **Manjkajoče oglišče** je presečišče dveh množic točk.
+- Take množice so npr. krožnica $k(B, a)$, krak kota, vzporednica na razdalji $v_c$ ter krožnica s polmerom $t_c$ ali $R$.
+
+**Diskusija:**
+
+- **SSS** zahteva:
+
+$$|a - b| < c < a + b$$
+
+- **KSK** zahteva $\alpha + \beta < 180^\circ$.
+- Dve stranici in kot nasproti krajše dasta $0$, $1$ ali $2$ rešitvi.
+- (višja raven) V programu za dinamično geometrijo dober načrt prestane test vlečenja.
+- Z drsnikom tam preveriš število rešitev.
 
 ## Ponovitev
 

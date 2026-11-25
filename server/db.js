@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
+import { privzetiCilj } from "../public/goal-data.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
 
@@ -81,6 +82,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       topic_id TEXT NOT NULL,
       level INTEGER NOT NULL DEFAULT 1,          -- težavnost 1–3
       streak INTEGER NOT NULL DEFAULT 0,         -- zaporedni pravilni odgovori
+      wrong_streak INTEGER NOT NULL DEFAULT 0,   -- zaporedni napačni odgovori na trenutni ravni
       status TEXT NOT NULL DEFAULT 'new',        -- new | learning | mastered
       source TEXT,                               -- practice | chat | placement
       mastered_at TEXT,
@@ -326,6 +328,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Začetni test predznanja teme: koliko stopenj (0–3) je učenec rešil zapored od lažje proti težji.
   const stateCols = db.prepare("PRAGMA table_info(topic_state)").all().map((c) => c.name);
   if (!stateCols.includes("pretest")) db.exec("ALTER TABLE topic_state ADD COLUMN pretest INTEGER");
+  // Zaporedni napačni odgovori na trenutni ravni teme (raven se zniža šele po dveh, RULES.levelDownStreak).
+  if (!stateCols.includes("wrong_streak")) db.exec("ALTER TABLE topic_state ADD COLUMN wrong_streak INTEGER NOT NULL DEFAULT 0");
   const convCols = db.prepare("PRAGMA table_info(conversations)").all().map((c) => c.name);
   // Razred ob izdaji paketa brez povezave: sinhronizacija nalogo iz semena ustvari z istim razredom (tek-mladi-*).
   const issuedCols = db.prepare("PRAGMA table_info(offline_issued)").all().map((c) => c.name);
@@ -482,9 +486,15 @@ export class Store {
     return row ? parseStudent(row) : null;
   }
   createStudent(name, settings = DEFAULT_SETTINGS) {
+    // Maturant (4. letnik SŠ, matematika): brez izbranega cilja dobi cilj matura z datumom roka (public/goal-data.js);
+    // z izbranim ciljem je odločitev že sprejeta, zato mu Učna pot ponudbe ne pokaže.
+    const izbran = settings?.goal !== undefined;
+    let s = normalizeSettings(settings || {});
+    const matura = privzetiCilj(s);
+    if (matura.goal) s = izbran ? { ...s, matura_offer: 1 } : normalizeSettings({ ...s, ...matura });
     const r = this.db
       .prepare("INSERT INTO students (name, settings) VALUES (?, ?)")
-      .run(name, JSON.stringify(normalizeSettings(settings)));
+      .run(name, JSON.stringify(s));
     return this.getStudent(Number(r.lastInsertRowid));
   }
   updateStudent(id, { name, settings, manual_weaknesses }) {

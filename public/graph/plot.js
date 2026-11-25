@@ -2,7 +2,7 @@
 // Mreža z lepimi koraki (1, 2, 5 ali π), puščice na oseh, krivulje z zaznavo asimptot,
 // implicitne krivulje (marching squares), senčenje neenačb, posebne točke in sledenje krivulji.
 import { toNum, specialPoints, intersections } from "./model.js";
-import { integrate, niceNumber } from "./math.js";
+import { integrateInfo, withIntegralBudget, niceNumber } from "./math.js";
 import { verticalAsymptotes, endAsymptotes, asymptoteLabel } from "./okno.js";
 
 // barve krivulj (kot CSS spremenljivke v graph.css, da delujejo v temnem načinu)
@@ -193,6 +193,9 @@ export class GraphView {
     const model = this.hooks.getModel();
     const st = state.settings || {};
     ctx.save();
+    // Matematične oznake (točke »(2; 1)«, osi »−5«, naklon) so vedno od leve proti desni, tudi v arabščini in hebrejščini
+    // (AUDIT-056: platno je dedovalo dir="rtl" strani, zato je bila točka (2; 1) zapisana »(1;2)« in os »5−«).
+    ctx.direction = "ltr";
     ctx.fillStyle = C.bg;
     ctx.fillRect(0, 0, W, H);
     this.polylines = new Map();
@@ -651,10 +654,19 @@ export class GraphView {
           ctx.globalAlpha = 1;
           this.handles.push({ kind: "point", id: o.id, x: px, y: py, r: 22 });
         }
-        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(px, py, sel ? 6.5 : 5.5, 0, 2 * Math.PI);
-        ctx.fill();
+        if (o.src?.open) {
+          // prazen krožec (limita, kjer funkcija ni definirana; v-graf.js)
+          ctx.fillStyle = C.bg;
+          ctx.fill();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
         if (o.src?.label !== false && pts.length <= 12) this.pointLabel(ctx, C, px, py, `(${this.hooks.fmt(x, 4)}; ${this.hooks.fmt(y, 4)})`, color);
       }
       this.polylines.set(o.id, [pts.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y)).map(([x, y]) => [this.X(x), this.Y(y)])]);
@@ -926,7 +938,37 @@ export class GraphView {
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-    const val = integrate(f, a, b);
+    // številski integral: vedno »≈« in le mesta, ki jih podpira ocena napake (največ 5); med risanjem največ 30 ms,
+    // kar se ne izide, dokonča (do 2 s) takoj za risanjem in nato nariše znova (počasnejše naprave)
+    const key = `${o.id}|${a}|${b}`;
+    this._area ||= new Map();
+    // izid poznejšega izračuna uporabimo enkrat (v risanju, ki ga sproži); parametri se lahko vmes spremenijo
+    let info = this._area.get(key)?.fn === fn ? this._area.get(key).info : null;
+    this._area.delete(key);
+    if (!info) {
+      info = withIntegralBudget(30, () => integrateInfo(f, a, b));
+      // en čakajoč izračun na krivuljo: novejše meje (vlečenje) prekličejo starejšega; začne se šele, ko se meje
+      // za 150 ms umirijo, zato se na počasnih napravah izračuni ne nabirajo
+      this._areaJob ||= new Map();
+      const job = this._areaJob.get(o.id);
+      if (info.timeout && job?.key !== key) {
+        if (job) clearTimeout(job.timer);
+        const timer = setTimeout(() => {
+          if (this._areaJob.get(o.id)?.timer !== timer) return;
+          const full = withIntegralBudget(2000, () => integrateInfo(f, a, b));
+          if (this._areaJob.get(o.id)?.timer !== timer) return; // medtem zamenjan
+          this._areaJob.delete(o.id);
+          this._area.set(key, { fn, info: full });
+          this.draw();
+        }, 150);
+        this._areaJob.set(o.id, { key, timer });
+      } else if (!info.timeout && job) {
+        clearTimeout(job.timer);
+        this._areaJob.delete(o.id);
+      }
+    }
+    const val = info.value;
+    const digits = Number.isFinite(val) && info.err >= 0 && Number.isFinite(info.err) ? Math.min(5, Math.floor(Math.log10(Math.abs(val) / Math.max(info.err, 1e-300)))) : 0;
     // ročaja za meji
     for (const [which, x] of [
       [0, a],
@@ -947,7 +989,7 @@ export class GraphView {
     ctx.font = "800 13px 'Nunito Variable', Nunito, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const text = `∫ = ${this.hooks.fmt(val, 5)}`;
+    const text = digits >= 1 ? `∫ ≈ ${this.hooks.fmt(Number(val.toPrecision(digits)), digits)}` : Number.isFinite(val) && info.err <= 1e-9 * (info.abs || 0) ? "∫ ≈ 0" : info.timeout ? "∫ ≈ …" : "∫ ≈ ?";
     ctx.lineWidth = 4;
     ctx.strokeStyle = C.bg;
     ctx.strokeText(text, mx, Number.isFinite(my) ? Math.max(14, Math.min(this.H - 14, my)) : this.Y(0) - 20);
@@ -1390,6 +1432,10 @@ export class GraphView {
       if (!tap && this.trace?.types) this.shown.push({ x: this.trace.x, y: this.trace.y });
       this.trace = tap ? this.trace : null;
     }
+    // označena točka (posebna točka ali točka na krivulji) → calc.js »Uporabi v računu«
+    if (m?.type === "poi" && tap) this.hooks.onMark?.(this.shown.includes(m.poi) ? m.poi : null);
+    else if (m?.type === "trace") this.hooks.onMark?.(this.trace || this.shown[this.shown.length - 1] || null);
+    else if (m?.type === "pan" && !m.moved) this.hooks.onMark?.(null);
     if (m?.type === "pan" && !m.moved) {
       // dotik praznega dela: počistimo izbiro
       this.trace = null;
@@ -1459,6 +1505,7 @@ export class GraphView {
     c.width = W * scale;
     c.height = H * scale;
     const ctx = c.getContext("2d");
+    ctx.direction = "ltr"; // legenda z izrazi (AUDIT-056)
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     this.render(ctx, W, H, { exporting: true });
     const C = this.C;

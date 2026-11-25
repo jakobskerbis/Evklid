@@ -1,9 +1,10 @@
 // Cilj in datum cilja: vprašamo enkrat (nov profil), nato le vrstica z odštevanjem na Učni poti,
-// v Napredku in v zgornji vrstici. Spremeni ali izbriši se v Nastavitvah. Opomnik ob 12.00:
-// kartica v aplikaciji (ko jo odpreš po 12.00) in, z računom, e-pošta (server/accounts/goal-reminder.js).
-import { t, locale } from "./i18n.js";
+// v Napredku in v zgornji vrstici. Spremeni ali izbriši se v Nastavitvah. Opomnik ob OPOMNIK_URA (goal-data.js):
+// kartica v aplikaciji (ko jo odpreš po tej uri) in, z računom, e-pošta (server/accounts/goal-reminder.js).
+import { t, locale } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
-import { goalsFor, daysUntil, validDate, DEFAULT_GOAL } from "./goal-data.js";
+import { odstevanje } from "./zacetna.js";
+import { goalsFor, daysUntil, validDate, DEFAULT_GOAL, hasGoal, privzetiCilj, ciljObrazca, OPOMNIK_URA } from "./goal-data.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const goalName = (g) => t(`goal.${g || DEFAULT_GOAL}`);
@@ -18,14 +19,8 @@ export function fmtDate(s) {
   }
 }
 
-// »še 215 dni« / »danes« / »datum je že mimo« / "" brez datuma
-export function countdown(date) {
-  const n = daysUntil(date);
-  if (n === null) return "";
-  if (n < 0) return t("goal.past");
-  if (n === 0) return t("goal.today");
-  return t("goal.left", { n });
-}
+// »še 215 dni« / »danes« / »datum je že mimo« / "" brez datuma (public/zacetna.js, skupno s kartico »Danes«)
+export const countdown = (date) => odstevanje(t, date);
 
 // Kratek napis za vrstico in zgornjo vrstico: »Matura · 1. 6. 2027 · še 215 dni«
 export function goalSummary(settings = {}) {
@@ -33,7 +28,7 @@ export function goalSummary(settings = {}) {
   if (validDate(settings.goal_date)) parts.push(fmtDate(settings.goal_date), countdown(settings.goal_date));
   return parts.join(" · ");
 }
-export const hasGoal = (s = {}) => (s.goal && s.goal !== DEFAULT_GOAL) || validDate(s.goal_date);
+export { hasGoal }; // public/goal-data.js (tudi strežnik: server/pot-takoj.js)
 
 // Polja za obrazec (nov profil in Nastavitve). withReminder: stikalo za opomnik in gumb Izbriši datum.
 export function goalFieldsHtml(settings = {}, { withReminder = false, idPrefix = "goal" } = {}) {
@@ -56,11 +51,11 @@ export function goalFieldsHtml(settings = {}, { withReminder = false, idPrefix =
     <p class="goal-countdown" aria-live="polite">${esc(date ? `${goalName(cur)} · ${countdown(date)}` : "")}</p>
     ${withReminder ? `
     <div class="goal-reminder-row" ${date ? "" : "hidden"}>
-      <span class="gr-text"><b id="${idPrefix}-rem-label">${esc(t("goal.reminder"))}</b><small class="muted">${esc(t("goal.reminderNote", { date: fmtDate(date) }))}</small></span>
+      <span class="gr-text"><b id="${idPrefix}-rem-label">${esc(t("goal.reminder", { h: OPOMNIK_URA }))}</b><small class="muted">${esc(t("goal.reminderNote", { date: fmtDate(date) }))}</small></span>
       <button type="button" class="switch" role="switch" aria-checked="${settings.goal_reminder !== false}" aria-labelledby="${idPrefix}-rem-label" data-goal-reminder></button>
       <input type="hidden" name="goal_reminder" value="${settings.goal_reminder !== false ? "1" : "0"}">
     </div>
-    <p class="muted small-note goal-no-date" ${date ? "hidden" : ""}>${esc(t("goal.reminderNeedsDate"))}</p>` : ""}`;
+    <p class="muted small-note goal-no-date" ${date ? "hidden" : ""}>${esc(t("goal.reminderNeedsDate", { h: OPOMNIK_URA }))}</p>` : ""}`;
 }
 
 // Odzivnost polj: izbira cilja, datum, brisanje datuma, stikalo. Klic po vsakem izrisu polj.
@@ -118,25 +113,28 @@ export function readGoalFields(box) {
   };
 }
 
-// Vrstica na Učni poti / v Napredku: »Srednja šola · Matura · 1. 6. 2027 · še 215 dni · Spremeni«
-export function goalLineHtml(student, levelText = "") {
+// Vrstica na Učni poti / v Napredku: »Srednja šola · Matura · 1. 6. 2027 · še 215 dni · Spremeni«.
+// brezDni: brez »še N dni« (na Učni poti pri cilju matura odštevanje že kaže kartica »Danes«; j, 20. 11. 2026).
+export function goalLineHtml(student, levelText = "", brezDni = false) {
   const s = student?.settings || {};
-  const parts = [levelText, goalSummary(s)].filter(Boolean).join(" · ");
+  const sum = brezDni ? [goalName(s.goal), fmtDate(s.goal_date)].filter(Boolean).join(" · ") : goalSummary(s);
+  const parts = [levelText, sum].filter(Boolean).join(" · ");
   return `<span class="gl-ic" aria-hidden="true">${icon("target")}</span><span class="gl-text">${esc(parts)}</span>
     <button type="button" class="text-btn gl-edit" data-view="settings" data-goal-edit>${esc(t("goal.change"))}</button>`;
 }
 
-// Opomnik: danes po 12.00, do dneva cilja vključno, če je vključen in še ni bil skrit danes.
+// Opomnik: danes od OPOMNIK_URA, do dneva cilja vključno, če je vključen in še ni bil skrit danes.
 const todayKey = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 const seenKey = (id) => `evklid.goalSeen.${id}`;
-export function reminderDue(student, now = new Date()) {
+// vadil: učenec je danes že zbral XP – kartice ni, kot ne e-pošte in obvestila (vadilDanes, pregled #917).
+export function reminderDue(student, now = new Date(), { vadil = false } = {}) {
   const s = student?.settings || {};
-  if (!s.goal_reminder || !validDate(s.goal_date)) return false;
+  if (vadil || !s.goal_reminder || !validDate(s.goal_date)) return false;
   const n = daysUntil(s.goal_date);
-  if (n === null || n < 0 || now.getHours() < 12) return false;
+  if (n === null || n < 0 || now.getHours() < OPOMNIK_URA) return false;
   try {
     return localStorage.getItem(seenKey(student.id)) !== todayKey();
   } catch {
@@ -157,8 +155,43 @@ export function reminderText(settings = {}) {
 export function reminderCardHtml(student, { preview = false } = {}) {
   return `<span class="gr-ic" aria-hidden="true">${icon("bell")}</span>
     <div class="gr-body">
-      <div class="gr-head"><span>${esc(t("goal.remHead"))}</span><span>${esc(t("goal.remWhen"))}</span></div>
+      <div class="gr-head"><span>${esc(t("goal.remHead"))}</span><span>${esc(t("goal.remWhen", { h: OPOMNIK_URA }))}</span></div>
       <b>${esc(reminderText(student.settings))}</b>
       ${preview ? "" : `<div class="actions"><button type="button" class="primary small" data-goal-start>${icon("play")}${esc(t("goal.remStart"))}</button><button type="button" class="ghost small" data-goal-later>${esc(t("goal.remLater"))}</button></div>`}
     </div>`;
+}
+
+// Cilj v obrazcu ob prvem zagonu (app.js onboard). Dokler cilja ne izbere sam, velja privzeti cilj šole (4. letnik SŠ:
+// matura z datumom roka, goal-data.js privzetiCilj) in obrazec ga ne pošlje: strežnik ga določi po istem pravilu
+// (server/db.js createStudent). read() vrne polja za POST, draw() izriše znova ob spremembi šole ali letnika.
+export function onbGoal(box, f) {
+  let touched = false;
+  box.addEventListener("click", (e) => e.target.closest("[data-goal]") && (touched = true));
+  box.addEventListener("input", () => (touched = true));
+  const where = () => ({ school_system: f.school_system.value, educational_track: f.educational_track.value, curriculum_level: f.curriculum_level.value });
+  const draw = () => {
+    const w = where();
+    box.innerHTML = goalFieldsHtml({ ...(touched ? readGoalFields(box) : privzetiCilj(w)), ...w }, { idPrefix: "onb-goal" });
+  };
+  draw();
+  wireGoalFields(box);
+  return { draw, read: () => (touched ? ciljObrazca(readGoalFields(box), where()) : {}) };
+}
+
+// Gumbi kartice »Danes« in ponudbe »cilj matura« na Učni poti. o: state (state.student), start(mode) seja,
+// topic(id) odpre temo z vajo, save(student, settings, yes) shrani nastavitve.
+export function wireDanes(o) {
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-danes-review]")) o.start("review");
+    const dt = e.target.closest("[data-danes-topic]");
+    if (dt) o.topic(dt.dataset.danesTopic);
+    const mo = e.target.closest("[data-matura-offer]");
+    const st = o.state.student;
+    if (!mo || !st) return;
+    // Kartica izgine takoj, shrani se v ozadju (sprejeto ali zavrnjeno: ponudbe ni več).
+    document.getElementById("goal-reminder").hidden = true;
+    document.querySelector("#xp-card button")?.focus({ preventScroll: true }); // fokus s tipkovnico ne pade na začetek strani
+    const yes = mo.dataset.maturaOffer === "yes";
+    o.save(st, { matura_offer: 1, ...(yes ? privzetiCilj(st.settings) : {}) }, yes);
+  });
 }

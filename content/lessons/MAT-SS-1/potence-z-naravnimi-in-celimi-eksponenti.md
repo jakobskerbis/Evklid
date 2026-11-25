@@ -179,13 +179,39 @@ $2^{-2} = \dfrac{1}{4}$, $(a^4)^{-2} = a^{-8}$ in $(b^{-3})^{-2} = b^6$, torej $
 
 ## Povzetek
 
-- $a^n$ je zmnožek $n$ faktorjev $a$; $a$ je osnova, $n$ je eksponent. Predznak: negativna osnova in lih eksponent dasta negativen rezultat; $-2^4 \neq (-2)^4$.
-- Za $a \neq 0$ velja $a^0 = 1$ in $a^{-n} = \dfrac{1}{a^n}$; negativni eksponent pomeni obratno vrednost, ne negativnega števila. $\left(\dfrac{a}{b}\right)^{-n} = \left(\dfrac{b}{a}\right)^n$.
-- Isti osnovi: $a^m \cdot a^n = a^{m+n}$ in $a^m : a^n = a^{m-n}$ (eksponente seštevamo oziroma odštevamo).
-- Potenca potence: $(a^m)^n = a^{m \cdot n}$ (eksponente množimo).
-- Potenca zmnožka in količnika: $(a \cdot b)^n = a^n \cdot b^n$ in $\left(\dfrac{a}{b}\right)^n = \dfrac{a^n}{b^n}$. Za vsoto takega pravila ni: $(a + b)^n \neq a^n + b^n$.
-- Pravila veljajo za vsa cela števila $m$ in $n$, osnove pa morajo biti različne od $0$. Izraz $0^0$ ni definiran.
-- Znanstveni zapis: $a \cdot 10^n$ z $1 \le a < 10$ in celim $n$.
+**Potenca** $a^n$ je zmnožek $n$ faktorjev $a$; $a$ je **osnova**, $n$ **eksponent**.
+
+- Negativna osnova in lih eksponent dasta negativen rezultat.
+- $-2^4 \neq (-2)^4$.
+
+**Za $a, b \neq 0$:**
+
+$$a^0 = 1 \qquad a^{-n} = \dfrac{1}{a^n}$$
+
+$$\left(\dfrac{a}{b}\right)^{-n} = \left(\dfrac{b}{a}\right)^n$$
+
+- Negativni eksponent pomeni obratno vrednost, ne negativnega števila.
+
+**Isti osnovi** (eksponente seštevamo oziroma odštevamo):
+
+$$a^m \cdot a^n = a^{m+n}$$
+
+$$a^m : a^n = a^{m-n}$$
+
+**Potenca potence** (eksponente množimo):
+
+$$(a^m)^n = a^{m \cdot n}$$
+
+**Potenca zmnožka in količnika:**
+
+$$(a \cdot b)^n = a^n \cdot b^n$$
+
+$$\left(\dfrac{a}{b}\right)^n = \dfrac{a^n}{b^n}$$
+
+- Za vsoto takega pravila ni: $(a + b)^n \neq a^n + b^n$.
+- Pravila veljajo za vsa cela števila $m$ in $n$; osnove morajo biti različne od $0$.
+- Izraz $0^0$ ni definiran.
+- **Znanstveni zapis**: $a \cdot 10^n$ z $1 \le a < 10$ in celim $n$.
 
 ## Ponovitev
 

@@ -49,8 +49,6 @@ export function backupKey(id = null) {
 export const encryptionOn = () => !!keys();
 export const currentKeyId = () => keys()?.id ?? null;
 export const isEncrypted = (v) => typeof v === "string" && v.startsWith(PREFIX);
-// keyId šifriranega zapisa (ali null).
-export const keyIdOfValue = (v) => (isEncrypted(v) ? v.slice(PREFIX.length, PREFIX.length + 8) : null);
 
 // Zašifrira besedilo (null in undefined ostaneta). Brez ključa vrne besedilo nespremenjeno.
 export function seal(text) {
@@ -139,6 +137,14 @@ export function blindIndex(text) {
   return `h1:${k.id}:${crypto.createHmac("sha256", sub).update(String(text)).digest("base64url").slice(0, 32)}`;
 }
 
+// Zgoščena vrednost omrežja (naslova IP) za kvote gostov: HMAC s ključem, izpeljanim iz EVKLID_DATA_KEY, da je iz baze
+// ni mogoče obrniti s preizkušanjem vseh naslovov IPv4 (pregled DPIA, 21. 11. 2026). Brez ključa (razvoj, testi) sha256.
+export function netHash(text) {
+  const k = keys();
+  if (!k) return crypto.createHash("sha256").update(`evklid-guest-net|${text}`).digest("hex");
+  return crypto.createHmac("sha256", crypto.createHmac("sha256", k.key).update("evklid-gost-omrezje").digest()).update(String(text)).digest("hex");
+}
+
 // Skrivnost za HMAC naslovov IP v dnevniku dostopov: iz ključa podatkov ali naključna, shranjena v bazi.
 export function auditSecret(db) {
   const k = keys();
@@ -155,12 +161,29 @@ export function auditSecret(db) {
 
 export const newKey = () => crypto.randomBytes(32).toString("base64");
 
+// Produkcija: Render (sam nastavi RENDER=true), NODE_ENV=production ali javni naslov s https.
+export const jeProdukcija = (env = process.env) => env.NODE_ENV === "production" || (!!env.RENDER && env.RENDER !== "false" && env.RENDER !== "0") || /^https:/i.test(env.EVKLID_BASE_URL || "");
+
+/**
+ * Ob zagonu (server/index.js): v produkciji brez EVKLID_DATA_KEY se strežnik ne zažene, ker bi pogovori in druga
+ * osebna polja šli v bazo nešifrirani. Izjema samo izrecno z EVKLID_ALLOW_PLAINTEXT=1. Vrne besedilo napake ali null.
+ * Razvoj, testi in preizkusni način (brez produkcijskih znakov) delajo brez ključa kot prej.
+ */
+export function zagonBrezKljuca(env = process.env) {
+  if (!jeProdukcija(env) || env.EVKLID_ALLOW_PLAINTEXT === "1") return null;
+  if (String(env.EVKLID_DATA_KEY || "").trim()) return null; // napačno obliko ključa javi keys() ob prvi uporabi
+  return (
+    "[evklid] Strežnik se ne zažene: v produkciji ni nastavljen EVKLID_DATA_KEY, zato bi se pogovori in drugi osebni " +
+    "podatki v bazi shranjevali nešifrirani. Nastavi EVKLID_DATA_KEY (isti ključ kot doslej, iz upravitelja gesel; nov ključ: " +
+    "node scripts/kljuc-podatkov.js). Samo če nešifrirano shranjevanje res želiš: EVKLID_ALLOW_PLAINTEXT=1. Več: docs/varnost-podatkov.md."
+  );
+}
+
 // Opozorilo ob zagonu v produkciji brez ključa (enkrat).
 let warned = false;
 export function warnIfNoKey(log = console) {
   if (warned || keys()) return;
-  const prod = process.env.NODE_ENV === "production" || /^https:/i.test(process.env.EVKLID_BASE_URL || "");
-  if (!prod) return;
+  if (!jeProdukcija()) return;
   warned = true;
   log.warn?.("[evklid] OPOZORILO: EVKLID_DATA_KEY ni nastavljen, pogovori se v bazi shranjujejo nešifrirani (docs/varnost-podatkov.md).");
 }

@@ -53,6 +53,13 @@ $s = v \cdot t$
 
 ## Povzetek
 Nekaj vrstic. Tutor ga dobi v kontekst, da razlaga skladno z učbenikom.
+Ob temi se pokaže kot »Bistvo«, zato mora biti pregleden na telefonu (j, 19. 11. 2026):
+- v alineji je **ena trditev** (ena definicija, eno pravilo); ključni pojem je odebeljen (`**Tavtologija** je …`);
+- ključna formula ali veriga enakosti stoji v svoji vrstici `$$…$$`, ne sredi stavka; deli z ⇒ ali ∨ v oklepajih,
+  da se dolga veriga zloži le pri ≡ ali =;
+- primerjavo (vezniki, vrste, lastnosti) povzame majhna tabela: največ 5 kratkih stolpcev, na 360 px brez pomikanja;
+- najdaljši je 1150 znakov (tutor dobi prvih 1200), vsebina ostane enaka kot v lekciji.
+Zgled: `MAT-SS-1/osnove-logike.md`.
 
 ## Drugače: Na sliki
 ## Drugače: Iz vsakdanjega življenja
@@ -148,7 +155,7 @@ do: 3
 ```
 
 - `opis:` je obvezen: besedilo, ki sliko nadomesti slepemu učencu, inštruktorju in branju na glas (kaj je na sliki, s števili). Opis bere bralnik zaslona dobesedno, zato indekse in eksponente piši z besedami ali znaki Unicode (F₁, x², »Theveninova napetost«), nikoli z `_` ali `^` (check-lesson to javi). Enako velja za `podnapis:`, ki je neobvezen napis pod sliko.
-- Števila piši z decimalno vejico, točko kot `x; y`, polja loči z `|`. Indeks in eksponent v napisih: `F_1`, `x^2`, `a_12`, `10^-3` (celo število s predznakom), več črk v zavitih oklepajih `U_{Th}` (`U_Th` je napaka).
+- Števila piši z decimalno vejico, točko kot `x; y`, polja loči z `|`. Tudi v izrazih (`f:`, `drsnik`) je vejica med števkami decimalna, tudi v oklepaju (`sin(0,63*x)` = sin(0,63·x)); vrednosti v funkciji z več vrednostmi loči s `;` ali z vejico in presledkom (`max(x; 2)`, `max(x, 2)`). Indeks in eksponent v napisih: `F_1`, `x^2`, `a_12`, `10^-3` (celo število s predznakom), več črk v zavitih oklepajih `U_{Th}` (`U_Th` je napaka).
 - Slog (zadnje polje): barve `modra`, `oranžna`, `zelena`, `rdeča`, `siva` (pomenijo vlogo, ne odtenka; pomen naj nikoli ne bo samo v barvi), `črtkano`, `debelo`, `puščica`, `polno`, `ozadje`, `zaprto`. Lega napisa: `nad`, `pod`, `levo`, `desno`, `sredina` (tudi `nad levo`).
 
 | Vrsta | Ključi |

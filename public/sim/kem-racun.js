@@ -1,5 +1,5 @@
 // Simulacije pri kemiji: množina snovi, stehiometrija, omejitveni reaktant, koncentracija raztopin.
-import { s, svgBox, slider, select, segmented, button, buttons, readout, layout, texBlock, fmt, clamp, label, animate, rnd } from "./kit.js";
+import { s, svgBox, slider, select, button, buttons, readout, layout, texBlock, fmt, clamp, label, animate } from "./kit.js";
 import { parseFormula, molarMass, sub, texF, BY_SYM, NA, sci, sciTex, atomBall, beaker } from "./kem-skupno.js";
 
 // ------------------------------------------------------------ mol: množina snovi in molska masa

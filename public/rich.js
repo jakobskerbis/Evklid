@@ -2,8 +2,48 @@
 // Knjižnice (marked, KaTeX, DOMPurify) so v brskalniku globalne; testi jih podajo sami.
 
 import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabela.js";
+import { izrisi as izrisiTex, NAPAKA_HTML } from "./mat/izris.js";
 
 const lib = (name) => globalThis[name];
+
+// Knjižnice niso več del prvega izrisa (~95 KB stisnjeno; docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2):
+// app.js jih naloži po prvem izrisu Učne poti (naloziKnjiznice), ali prej ob prvi potrebi. Stran, ki jih ima v <script>
+// (kalkulator, učitelj, 3D), jih ima že, zato je naloziKnjiznice tam takoj izpolnjena.
+const KNJIZNICE = [
+  ["katex", "vendor/katex/katex.min.js"],
+  ["marked", "vendor/marked/lib/marked.umd.js"],
+  ["DOMPurify", "vendor/dompurify/purify.min.js"],
+];
+export const knjizniceNalozene = () => KNJIZNICE.every(([ime]) => lib(ime));
+let nalaganje = null;
+let poskusov = 0;
+const skripta = (src) =>
+  new Promise((ok, ne) => {
+    const el = document.createElement("script");
+    el.src = src;
+    el.onload = ok;
+    el.onerror = () => (el.remove(), ne(new Error(`ni naloženo: ${src}`)));
+    document.head.append(el);
+  });
+export function naloziKnjiznice() {
+  if (knjizniceNalozene()) return Promise.resolve();
+  if (typeof document === "undefined") return Promise.reject(new Error("brez knjižnic"));
+  if (nalaganje) return nalaganje;
+  // Ob neuspehu (brez povezave, nova različica) nov poskus z drugim naslovom, kot app.js lenModul.
+  const r = poskusov++ ? `?r=${poskusov}` : "";
+  return (nalaganje = Promise.all(KNJIZNICE.map(([ime, pot]) => lib(ime) || skripta(new URL(pot, import.meta.url).href + r)))
+    .then(() => {
+      if (!knjizniceNalozene()) throw new Error("knjižnice niso naložene");
+    })
+    .catch((err) => {
+      nalaganje = null;
+      throw err;
+    }));
+}
+
+// Izris pred prihodom knjižnic (dotik takoj po prvem izrisu): namesto izrisa kratek nadomestek z besedilom, ki ga
+// renderer zamenja s pravim izrisom, ko so knjižnice (in kar zahteva pripravi) naložene. Številka je enolična v strani.
+let nadomestkov = 0;
 
 // Točka A3: besedilo od modela in učencev (in vse drugo, kar gre skozi renderRich) ne sme nalagati ničesar z drugih
 // strani in ne sme vsebovati obrazcev ali vrinjenih slogov (style z url() bi naložil zunanjo sliko, gumb ali obrazec
@@ -142,8 +182,44 @@ export function potencaZOklepaji(tex) {
 
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
 // renderMath(tex, display, false) jih izpusti (npr. v gumbih z možnostmi odgovora).
-export function createRenderer({ marked = lib("marked"), katex = lib("katex"), sanitize, annotate = null } = {}) {
+// marked, katex: knjižnici (privzeto globalni, prebrani ob izrisu, ne ob nastanku); pripravljen(): dodatni pogoj za izris
+// (npr. modul oznak formul); pripravi(): obljuba, ki naloži vse za izris (privzeto naloziKnjiznice); kontekst() in
+// vKontekstu(ctx, fn): ob nadomestku shrani okoliščine izrisa (predmet formul) in jih ob pravem izrisu obnovi.
+export function createRenderer({ marked: markedLib, katex: katexLib, sanitize, annotate = null, pripravljen = null, pripravi = null, kontekst = null, vKontekstu = null } = {}) {
   const clean = sanitize || ((html) => ocistiStrogo(html));
+  let marked = markedLib;
+  let katex = katexLib;
+  const nared = () => {
+    marked = markedLib || lib("marked");
+    katex = katexLib || lib("katex");
+    return !!(marked && katex && (sanitize || lib("DOMPurify")) && (!pripravljen || pripravljen()));
+  };
+  const cakajo = new Map(); // številka nadomestka → { fn, ctx }
+  let cakanje = null;
+  const obnovi = () => {
+    cakanje = null;
+    if (!nared()) return;
+    for (const [n, { fn, ctx }] of [...cakajo]) {
+      cakajo.delete(n);
+      const el = typeof document !== "undefined" && document.querySelector(`[data-rich-caka="${n}"]`);
+      if (!el) continue;
+      try {
+        el.outerHTML = vKontekstu && ctx !== undefined ? vKontekstu(ctx, fn) : fn();
+      } catch (err) {
+        console.error("rich:", err);
+      }
+    }
+  };
+  const nadomestek = (fn, besedilo) => {
+    const n = ++nadomestkov;
+    cakajo.set(n, { fn, ctx: kontekst ? kontekst() : undefined });
+    cakanje ||= Promise.resolve()
+      .then(() => (pripravi ? pripravi() : naloziKnjiznice()))
+      .then(obnovi, () => {
+        cakanje = null; // brez povezave: nadomestek ostane, naslednji izris poskusi znova
+      });
+    return `<span class="rich-caka" data-rich-caka="${n}">${escHtml(besedilo)}</span>`;
+  };
   const plain = { throwOnError: false, strict: "ignore" };
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
   // D5: predpomnilnik izrisov KaTeX (isti TeX in iste možnosti → isti HTML). Med pretakanjem odgovora se iste formule
@@ -154,7 +230,8 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
     const kljuc = `${opts === trusted ? "t" : "p"}${display ? "D" : "i"}${tex}`;
     let h = izrisi.get(kljuc);
     if (h !== undefined) return h;
-    h = katex.renderToString(tex, { ...opts, ...(opts === trusted ? { throwOnError: true } : {}), displayMode: display });
+    // Skupni izris (public/mat/izris.js); napaka se vrže, renderMath spodaj poskusi brez oznak in nazadnje okvirček.
+    h = izrisiTex(tex, { blok: display, katex, zaupaj: opts === trusted ? "oznake" : undefined, napaka: "vrzi" });
     if (izrisi.size >= NAJVEC_IZRISOV) izrisi.delete(izrisi.keys().next().value);
     izrisi.set(kljuc, h);
     return h;
@@ -164,6 +241,7 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
   // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
   // (formula-data.js annotateTex): block je celo besedilo (kartica, naloga, razdelek) z definicijami oznak.
   function renderMath(tex, display, fx = true, ctx = "") {
+    if (!nared()) return nadomestek(() => renderMath(tex, display, fx, ctx), tex);
     tex = brezPraznihVrstic(potencaZOklepaji(tex));
     try {
       if (annotate && fx) {
@@ -177,17 +255,14 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       }
       return izris(tex, plain, display);
     } catch {
-      try {
-        return izris(tex, plain, display);
-      } catch {
-        // Ne ParseError (npr. RangeError ob zelo globokem gnezdenju): formula je bila skrita pred čiščenjem, zato
-        // gre surov TeX na stran samo kot izpisano besedilo (sicer bi bil v njem lahko poljuben HTML).
-        return escHtml(tex);
-      }
+      // Neveljaven ali nepopoln izraz (ali RangeError ob zelo globokem gnezdenju): nikoli rdeč surov LaTeX, ampak
+      // okvirček (public/mat/izris.js NAPAKA_HTML; j, 24. 11. 2026).
+      return NAPAKA_HTML;
     }
   }
 
   function renderRich(text) {
+    if (!nared()) return nadomestek(() => renderRich(text), String(text ?? ""));
     const math = [];
     const stash = (tex, display) => `@@MATH${math.push({ tex, display }) - 1}@@`;
     // Formule najprej skrijemo, da Markdown ne pokvari \frac, _ ali | v njih (| bi razdelil celico tabele).
@@ -231,7 +306,9 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
     });
   }
 
-  return { renderMath, renderRich };
+  // odlozi(fn, besedilo): fn() z izrisom formul, pred prihodom knjižnic nadomestek, ki ga fn() pozneje zamenja.
+  const odlozi = (fn, besedilo) => (nared() ? fn() : nadomestek(fn, besedilo));
+  return { renderMath, renderRich, nared, odlozi };
 }
 
 // Poved, v kateri stoji formula (do pike, klicaja, vprašaja ali nove vrstice), brez drugih formul in Markdowna.

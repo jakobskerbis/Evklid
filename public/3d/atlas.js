@@ -11,7 +11,7 @@ import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
-import { vgrajeno, starsu } from "./vgrajeno.js";
+import { vprasajInstruktorja } from "./vgrajeno.js";
 import { skoziLupino } from "./izbira.js";
 import { ravenProfila, razlaga } from "./raven.js";
 import { barvniNacin, nastaviBarvniNacin, ucnaBarvaTkiva } from "./barve.js";
@@ -45,8 +45,8 @@ const KOMPAS = [
   ["sp", [0, -1, 0]],
 ];
 const KVIZ_VPRASANJ = 10;
-// Med vlečenjem drsnika (prerez, razmik) ostaneta vidna le njegov gumb in tirnica, ostalo je prosojno, da se vidi
-// telo (j, 4. 11.). Brez pointercancel: iOS ga pošlje takoj, ko drsnik prevzame poteg; konec ujamemo s pointerup,
+// Med vlečenjem drsnika prereza ostaneta vidna le njegov gumb in tirnica, ostalo je prosojno, da se vidi
+// telo (j, 4. 11.). Razmik okna pusti vidna (j, 24. 11.: »samo pri prerezih«). Brez pointercancel: iOS ga pošlje takoj, ko drsnik prevzame poteg; konec ujamemo s pointerup,
 // touchend (iOS) ali change ob spustu.
 function prosojnoObVlecenju(inp, koren) {
   inp.addEventListener("pointerdown", (e) => {
@@ -940,16 +940,11 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
   // (WebView) sporočilo aplikaciji, na spletu klepet z vnaprej vpisanim vprašanjem.
   function vprasaj(r) {
     const ime = r.la ? `${r.prikaz} (${r.la})` : r.prikaz;
-    const besedilo = t("a3.askText", { ime });
-    if (vgrajeno) {
-      starsu({ tip: "vprasaj", besedilo });
-      return;
-    }
-    if (window.ReactNativeWebView?.postMessage) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ tip: "vprasaj", besedilo }));
-      return;
-    }
-    location.href = `/?pogled=chat&vprasaj=${encodeURIComponent(besedilo)}`;
+    vprasajInstruktorja(t("a3.askText", { ime }), {
+      vrni: `atlas?izberi=${encodeURIComponent(r.id)}`,
+      oznaka: r.prikaz,
+      kontekst: { v: 1, sourceType: "atlas", sourceId: "atlas", selectedObject: { id: r.id } },
+    });
   }
 
   // Tap na model: izbira (ali odgovor v kvizu »Najdi strukturo«).
@@ -1352,7 +1347,6 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       razIn.value = 0;
       razIn.dispatchEvent(new Event("input"));
     });
-    prosojnoObVlecenju(razIn, el);
     razVrsta.append(razIn, razPon);
     raz.append(razVrh, razVrsta);
     box.append(raz);
@@ -1675,6 +1669,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ game: `atlas:telo_${k.nacin}`, score: k.prav * 10, correct: k.prav, wrong: k.narobe, tier: raven }),
       });
+      dispatchEvent(new Event("evklid:sprememba")); // XP se je spremenil: vnaprej prenesena Liga (public/kliki.js topli) ni več sveža
       if (!r.ok) return 0;
       return (await r.json()).xp || 0;
     } catch {

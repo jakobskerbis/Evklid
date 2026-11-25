@@ -7,7 +7,7 @@
 // - največ enkrat na 7 dni na profil in ne 7 dni po »Ne zdaj« (localStorage evklid.povabi.<id>);
 // - nagrado (mesec brezplačno) omeni le, ko plačila delujejo (acc.billing), račun ni v pilotu in imetnik ni mladoleten.
 // Kartica se pokaže samo po končani nalogi ali preizkusu (app.js), nikoli med njima.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 
 export const POVABI_DNI = 7;
@@ -47,15 +47,16 @@ export function povabiSme({ acc, profileId, now = new Date(), storage, ua = "" }
   const profil = (acc.children || []).find((c) => String(c.id) === String(profileId));
   if (!profil || !odrasel15(profil.birth_year, now)) return null;
   if (acc.parent.birth_missing || !odrasel15(acc.parent.birth_year, now)) return null;
-  return { reward: !!acc.billing && !acc.pilot && !acc.parent.minor };
+  return { reward: !!acc.billing && !acc.pilot && !acc.parent.minor, zame: !!acc.self_only };
 }
 
-export function povabiHtml(url, { reward }) {
+// zame: račun »Zame« (učenec sam): nagrada z besedami za prijatelja, ne za družino (ponudba je ista).
+export function povabiHtml(url, { reward, zame = false }) {
   const share = typeof navigator !== "undefined" && navigator.share;
   return `<div class="povabi card" role="group" aria-labelledby="povabi-h">
     <div class="povabi-glava"><span class="povabi-ic" aria-hidden="true">${icon("user-plus")}</span>
       <div class="povabi-t"><b id="povabi-h">${esc(t("povabi.title"))}</b><small>${esc(t("povabi.text"))}</small></div></div>
-    ${reward ? `<p class="povabi-nagrada">${esc(t("povabi.reward"))}</p>` : ""}
+    ${reward ? `<p class="povabi-nagrada">${esc(t(zame ? "povabi.rewardZame" : "povabi.reward"))}</p>` : ""}
     <div class="povabi-vrsta"><input readonly dir="ltr" value="${esc(url)}" aria-label="${esc(t("povabi.link"))}">
       <button type="button" class="secondary" data-povabi-copy>${icon("copy")}${esc(t("pay.copy"))}</button>
       ${share ? `<button type="button" class="secondary" data-povabi-share>${icon("share")}${esc(t("pay.share"))}</button>` : ""}
@@ -67,7 +68,6 @@ export function povabiHtml(url, { reward }) {
 // Enkrat na nalaganje strani: isti klic kot zavihek Račun; napaka (brez računa, zaklenjen račun, brez povezave) = null.
 let accPromise = null;
 const naloziRacun = (api) => (accPromise ||= api("/api/account").catch(() => null));
-export const _ponastavi = () => (accPromise = null);
 
 // Pokaže kartico v `slot`, če pravila to dovolijo; vse napake tiho.
 export async function povabiPoUspehu(slot, opts) {

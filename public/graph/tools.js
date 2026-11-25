@@ -2,14 +2,15 @@
 // matrike, številski sistemi; periodni sistem z molsko maso; zbirka formul predmeta.
 // Vse računa brskalnik (toolscore.js, pse-data.js), brez API.
 import { skicaZa } from "../skice/index.js";
+import { plainTex } from "../formula-data.js";
 import { createUnits } from "./sci.js";
 import { formatNumber } from "./scicore.js";
-import { readList, evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber, solveRatio } from "./toolscore.js";
+import { evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber, solveRatio } from "./toolscore.js";
 import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
 import { chemTools } from "./tools-chem.js";
-import { formulaToCalc, vRadianih } from "./formula-calc.js";
+import { formulaToCalc, vRadianih, formulaPlot } from "./formula-calc.js";
 import { chemText } from "./molska.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
@@ -424,6 +425,11 @@ export function createTools(root, opts) {
       for (const k of toolOrder(lastSubj)) pick.append(pick.querySelector(`[data-tool="${k}"]`));
     },
     show,
+    /** »Pretvori enote« iz znanstvenega kalkulatorja: pretvornik z vpisano vrednostjo. */
+    units(v) {
+      show("units");
+      views.units?._api?.setValue?.(v);
+    },
   };
 }
 
@@ -709,6 +715,7 @@ export function createFormulas(root, opts) {
 
   // Gumb »V kalkulator« ob formuli, ki jo kalkulator zna (public/graph/formula-calc.js): formula se vpiše
   // v znanstveni kalkulator, učenec zamenja znane črke s števili in kalkulator izračuna neznanko.
+  let fmGlossary = null;
   function calcButton(item) {
     if (!opts.onInsert || item.classList.contains("fm-head")) return;
     const f = item.querySelector(".fm-f");
@@ -727,6 +734,18 @@ export function createFormulas(root, opts) {
     btn.setAttribute("aria-label", `${t("sc.toCalc")}: ${text}`);
     btn.innerHTML = opts.icon("calculator");
     box.append(f, btn);
+    // »Nariši«: formula z izraženo količino na grafu (os x: t, x, r …; ostale črke drsniki)
+    const plot = opts.onGraph && formulaPlot(vejica(text), { tex: plainTex(f.querySelector('.katex-mathml annotation[encoding="application/x-tex"]')?.textContent || ""), subject, glossary: fmGlossary });
+    if (plot) {
+      const g = document.createElement("button");
+      g.type = "button";
+      g.className = "ghost icon-only fm-graph";
+      g.dataset.plot = JSON.stringify(plot);
+      g.title = t("sc.fmGraph", { v: plot.v });
+      g.setAttribute("aria-label", `${t("sc.fmGraph", { v: plot.v })}: ${text}`);
+      g.innerHTML = opts.icon("chart-spline");
+      box.append(g);
+    }
   }
 
   // decimalna vejica, kjer jo jezik uporablja (1,22 λ/D); v oklepaju je vejica ločilo, tam ostane pika
@@ -799,6 +818,7 @@ export function createFormulas(root, opts) {
         await kos();
         if (my !== gen) return;
       }
+      fmGlossary = parts[i].symbols || null; // oznake razdelka: katere črke so konstante (»Nariši graf«)
       const kartice = layout(render(parts[i]), i ? body.children.length : 0).children;
       if (i) body.append(...kartice);
       else body.replaceChildren(...kartice);
@@ -839,6 +859,8 @@ export function createFormulas(root, opts) {
     show(b.closest(".fm-subj") ? `${b.dataset.k}-${l}` : `${s}-${b.dataset.k}`);
   });
   body.addEventListener("click", (e) => {
+    const g = e.target.closest(".fm-graph");
+    if (g) return opts.onGraph?.(JSON.parse(g.dataset.plot));
     const b = e.target.closest(".fm-calc");
     if (!b) return;
     const rad = vRadianih(b.dataset.calc);

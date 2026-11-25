@@ -2,7 +2,6 @@
 // z enkratnim plačilom in jo podari. Prejemnik jo vpiše v polje za aktivacijsko kodo v zavihku Račun.
 // Koda je ločena od aktivacijskih kod (te so ena na račun): darilo podaljša dostop parents.gift_until.
 // Vračilo ali spor pred vpisom kodo izklopi; po vpisu se dostop prejemnika konča.
-import express from "express";
 import { randomBytes } from "node:crypto";
 
 // Izjavi ob nakupu darilne kode (darilo se uporabi pozneje, zato drugače kot pri naročnini).
@@ -204,7 +203,7 @@ export function mountGifts(app, ctx) {
       return res
         .status(429)
         .json({ error: "Preveč odprtih nakupov. Poskusi jutri." });
-    // Stopnja darila: OŠ (privzeto), SŠ ali faks; cena je letna cena stopnje (99 / 139 / 199 €). Neznana stopnja
+    // Stopnja darila: OŠ (privzeto), SŠ ali faks; cena je letna cena stopnje (99 / 99 / 199 €). Neznana stopnja
     // je napaka (400), ne tiho OŠ, da kupec ne plača in dobi druge stopnje, kot jo je izbral.
     const want = req.body?.level ?? "OS";
     if (!STOPNJE.includes(want)) return res.status(400).json({ error: "Neznana stopnja darila." });

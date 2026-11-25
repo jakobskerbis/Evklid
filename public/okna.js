@@ -5,7 +5,7 @@
 // - Telefon in tablica na dotik: okno (iz ukaza inštruktorju ali mehurčka) je spodnji list.
 // - Mehurček: ko pogovor z inštruktorjem ni na zaslonu, ostane okrogel gumb, ki ga premakneš,
 //   tapneš (odpre klepet v oknu) ali odstraniš (× ali poteg na × spodaj). Nov odgovor pokaže predogled.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { makeRowSortable, resetRows, uciLayout } from "./vrstice.js";
 import { resetSplits, refreshSplitters } from "./razdelilnik.js";
@@ -71,12 +71,22 @@ function canFloat(name) {
 
 // Višina spodnje vrstice za liste (--tabbar-h). Pri branju se vrstica umakne (position: fixed, touch.css) in šteje
 // samo, ko je pokazana (body.tb-peek, app.js) ali se vrača po neuporabi (body.tb-vraca, noga.js).
+// Višina vrstice pride iz ResizeObserver (barH): offsetHeight ob vsaki menjavi pogleda je vsilil postavitev celega
+// novega pogleda sredi tapa (telefon, CPU 4×: do 100 ms INP); getComputedStyle sam preračuna le slog.
+let barH = null;
 export function syncTabbarH() {
   const bar = $("#tabbar");
   if (!bar) return;
   const cs = getComputedStyle(bar);
   const shown = cs.display !== "none" && (cs.position !== "fixed" || document.body.matches(".tb-peek, .tb-vraca"));
-  document.documentElement.style.setProperty("--tabbar-h", `${shown ? bar.offsetHeight : 0}px`);
+  const v = `${shown ? (barH ?? bar.offsetHeight) : 0}px`;
+  setTabbarH(v);
+  return v;
+}
+// Le ob spremembi: vsak zapis na :root preračuna slog cele strani.
+export function setTabbarH(v) {
+  const root = document.documentElement.style;
+  if (root.getPropertyValue("--tabbar-h") !== v) root.setProperty("--tabbar-h", v);
 }
 
 // Vsebinski del zaslona: pod zgornjo vrstico, nad spodnjo vrstico zavihkov.
@@ -549,14 +559,21 @@ function flyToDrop() {
 const KEEP_CLEAR = "body > main.view:not([hidden]):not(.in-okno) :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)";
 // Polja in gumbi glavnega pogleda (Nastavitve, Napredek, NPZ, Učbenik): mehurček jih ne prekrije, če ob robu najde
 // prosto mesto (ob koncu drsenja se premakne); sicer ostane kot prej (ne prekrije le oken in KEEP_CLEAR).
-const CONTROLS = "body > main.view:not([hidden]):not(.in-okno) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch])";
+// Tudi navodilo praznega znanstvenega kalkulatorja (»Vpiši račun …«), da ostane berljivo (primerjava z Astro 24. 11. 2026).
+const CONTROLS = "body > main.view:not([hidden]):not(.in-okno) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch], .sc-empty p)";
+// Obvestilni pasovi pod zgornjo vrstico (testna različica, preizkusni način) so zunaj pogleda: mehurček gre pod njih,
+// da ne prekrije njihovih gumbov (»Kaj še ne deluje«, X).
+const BANNERS = "#test-notice:not([hidden]), #mock-banner:not([hidden])";
+const HINT = "body > main.view:not([hidden]):not(.in-okno) .sc-empty :is(p, button)";
 // Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno) ne KEEP_CLEAR: najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
 function placeBubble() {
   const size = 56;
   const a = area();
   const pref = bstate.side === "left" ? "left" : "right";
-  const lo = a.top + 8;
+  const banners = [...document.querySelectorAll(BANNERS)].map((el) => el.getBoundingClientRect()).filter((r) => r.height > 0);
+  // Visok pas (npr. razprt seznam »Kaj še ne deluje«): mehurček ostane vsaj na dnu zaslona, ne pod njim.
+  const lo = Math.min(Math.max(a.top, ...banners.map((r) => r.bottom)) + 8, Math.max(a.top + 8, a.bottom - size - 8));
   let hi = Math.max(lo, a.bottom - size - 8);
   // Lekcija po korakih: krogi Nazaj · 1/12 · Naprej plavajo na dnu glavnega pogleda, mehurček ostane nad njimi.
   const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
@@ -581,11 +598,16 @@ function placeBubble() {
   // Trenutno mesto je prosto (tudi polj): mehurček ostane, ne skače ob vsakem drsenju.
   const cur = { side: bubble.dataset.side, y: parseFloat(bubble.style.top) };
   const keep = controls.length && cur.side === pref && cur.y >= lo && cur.y <= hi && !rects.concat(controls).some((r) => hit(r, xOf(pref), cur.y));
-  let spot = keep ? cur : (controls.length && find(rects.concat(controls))) || find(rects);
+  const prost = keep ? cur : controls.length ? find(rects.concat(controls)) : null;
+  let spot = prost || find(rects);
+  // Navodilo in zgledi praznega kalkulatorja (»Vpiši račun …«, »Preizkusi:«) ostanejo vidni: če jih edino prosto mesto prekrije, se mehurček umakne.
+  const hint = [...document.querySelectorAll(HINT)].map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0);
+  const hintCovered = !prost && !!spot && hint.some((r) => hit(r, xOf(spot.side), spot.y));
   // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah: mehurček se skrije, dokler
   // se to ne spremeni (obrat, drug način ali pogled; j 14. 11. 2026). Inštruktor ostane v spodnji vrstici.
   const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
-  const away = clear.length > 0 && (!spot || lowLandscape);
+  // V kalkulatorju se skrije tudi, kadar bi prekril navodilo praznega kalkulatorja (telefon, 24. 11. 2026).
+  const away = clear.length > 0 && (!spot || lowLandscape || hintCovered);
   bubble.classList.toggle("umaknjen", away);
   if (away) return;
   // Ni prostega mesta: mehurček ne gre na tipke kalkulatorja, raje na drugo okno.
@@ -630,7 +652,10 @@ export function refreshBubble() {
     hidePreview();
     b.classList.remove("show-x");
   } else {
-    placeBubble();
+    // Mesto v naslednjem okvirju pred risanjem: merjenje sredi tapa (menjava pogleda ali profila) je vsililo slog in
+    // postavitev novega pogleda (telefon, CPU 4×: ~40 ms; kliki 20. 11. 2026).
+    cancelAnimationFrame(refreshBubble.raf);
+    refreshBubble.raf = requestAnimationFrame(() => !b.hidden && placeBubble());
     // Vsebina novega pogleda (npr. Nastavitve) se izriše šele za tem: mesto preverimo še enkrat.
     clearTimeout(refreshBubble.t);
     refreshBubble.t = setTimeout(() => !b.hidden && placeBubble(), 400);
@@ -735,7 +760,14 @@ export function initOkna(opts) {
   makeRowSortable($("#tabbar"), "tabbar", { item: ".tab", idOf: (el) => (el.id === "competition-tab-m" ? "competition" : el.dataset.view) });
   // Spodnji list stoji nad spodnjo vrstico zavihkov, da navigacija ostane uporabna (okna.css, --tabbar-h).
   const tabbar = $("#tabbar");
-  if (tabbar && "ResizeObserver" in window) new ResizeObserver(syncTabbarH).observe(tabbar);
+  if (tabbar && "ResizeObserver" in window)
+    new ResizeObserver((e) => {
+      // Skrita vrstica (display: none) meri 0: obdržimo zadnjo pravo višino, sicer bi ob vrnitvi (Nazaj iz teme)
+      // tap zapisal 0 in šele opazovalec pred risanjem pravo višino, kar na :root preračuna slog cele strani še enkrat.
+      const b = e[0]?.borderBoxSize?.[0];
+      if (!b || b.blockSize > 0) barH = b ? Math.round(b.blockSize) : null;
+      syncTabbarH();
+    }).observe(tabbar);
   makeRowSortable($("#modebar"), "modebar", { item: "button" });
   document.querySelectorAll(".calc-modes").forEach((row) => makeRowSortable(row, "calc-modes", { item: "button" }));
   mountSetting(document.getElementById("okna-card"));
@@ -751,6 +783,12 @@ export function initOkna(opts) {
     });
   });
   window.addEventListener("evklid:stepper", () => bubble && !bubble.hidden && placeBubble());
+  // Pas se pokaže, zapre ali razpre (»Kaj še ne deluje«): mehurček takoj na novo mesto.
+  const pasovi = new MutationObserver(() => bubble && !bubble.hidden && placeBubble());
+  for (const id of ["test-notice", "mock-banner", "test-notice-list"]) {
+    const el = document.getElementById(id);
+    if (el) pasovi.observe(el, { attributes: true, attributeFilter: ["hidden"] });
+  }
   // Uvod, prijava in tekmovalna ura skrijejo mehurček (razredi na <body>).
   new MutationObserver(() => refreshBubble()).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 }

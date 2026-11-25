@@ -1,0 +1,113 @@
+{
+  "opis": "Pogovori za merjenje pedagoških mer inštruktorja (točka 25 načrta izboljšav, j 19. 11. 2026; po zgledu LearnLM in MathDial). Lastne naloge v slogu mature (nalog RIC ne prepisujemo). Učenec v načinu A prosi za pomoč brez prošnje za rešitev, nato pošlje korak (napačen ali pravilen) in na koncu prosi za preprostejšo razlago ali pošlje naslednji korak. rezultat in napaka sta samo za ocenjevalca; skripta ju ne pošilja.",
+  "pogovori": [
+    {
+      "id": "P01-kvadratna",
+      "naloga": "Reši kvadratno enačbo $x^2 - 5x + 6 = 0$.",
+      "korak": "Uporabim formulo: $x_{1,2} = \\dfrac{-5 \\pm \\sqrt{25 - 24}}{2}$, torej $x_1 = -2$ in $x_2 = -3$.",
+      "korak_pravilen": false,
+      "napaka": "Pred b je napačen predznak: $-b = 5$, ne $-5$.",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$x_1 = 2$, $x_2 = 3$"
+    },
+    {
+      "id": "P02-logaritem",
+      "naloga": "Reši enačbo $\\log_2 x + \\log_2 (x - 2) = 3$.",
+      "korak": "Logaritma seštejem: $\\log_2 x + \\log_2 (x-2) = \\log_2 (2x - 2)$, zato je $2x - 2 = 8$.",
+      "korak_pravilen": false,
+      "napaka": "Vsota logaritmov je logaritem produkta $x(x-2)$, ne vsote.",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$x = 4$ ($x = -2$ ne ustreza definicijskemu območju)"
+    },
+    {
+      "id": "P03-odvod",
+      "naloga": "Izračunaj odvod funkcije $f(x) = x^2 e^x$.",
+      "korak": "Odvajam vsak faktor posebej: $f'(x) = 2x \\cdot e^x$.",
+      "korak_pravilen": false,
+      "napaka": "Pozabljeno pravilo za odvod produkta.",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$f'(x) = (x^2 + 2x)e^x$"
+    },
+    {
+      "id": "P04-sinus",
+      "naloga": "Reši enačbo $\\sin x = \\dfrac{1}{2}$ na intervalu $[0, 2\\pi)$.",
+      "korak": "$x = \\dfrac{\\pi}{6}$ in to je edina rešitev na tem intervalu.",
+      "korak_pravilen": false,
+      "napaka": "Manjka druga rešitev $\\dfrac{5\\pi}{6}$.",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$x = \\dfrac{\\pi}{6}$ in $x = \\dfrac{5\\pi}{6}$"
+    },
+    {
+      "id": "P05-zaporedje",
+      "naloga": "Aritmetično zaporedje ima prvi člen $a_1 = 3$ in diferenco $d = 4$. Izračunaj vsoto prvih 10 členov.",
+      "korak": "Najprej deseti člen: $a_{10} = 3 + 9 \\cdot 4 = 39$.",
+      "korak_pravilen": true,
+      "napaka": "",
+      "tretje": "Potem je $s_{10} = \\dfrac{10 \\cdot (3 + 39)}{2} = 210$.",
+      "rezultat": "$s_{10} = 210$"
+    },
+    {
+      "id": "P06-integral",
+      "naloga": "Izračunaj določeni integral $\\displaystyle\\int_0^1 (3x^2 + 2x)\\,dx$.",
+      "korak": "Nedoločeni integral je $x^3 + 2x^2$.",
+      "korak_pravilen": false,
+      "napaka": "Integral $2x$ je $x^2$, ne $2x^2$.",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$2$"
+    },
+    {
+      "id": "P07-eksponentna",
+      "naloga": "Reši enačbo $2^{x+1} = 32$.",
+      "korak": "Ker je $32 = 2^5$, mora veljati $x + 1 = 5$.",
+      "korak_pravilen": true,
+      "napaka": "",
+      "tretje": "Torej je $x = 4$.",
+      "rezultat": "$x = 4$"
+    },
+    {
+      "id": "P08-skalarni",
+      "naloga": "Dana sta vektorja $\\vec a = (1, 2)$ in $\\vec b = (3, -1)$. Izračunaj skalarni produkt $\\vec a \\cdot \\vec b$.",
+      "korak": "$\\vec a \\cdot \\vec b = 1 \\cdot 3 + 2 \\cdot 1 = 5$.",
+      "korak_pravilen": false,
+      "napaka": "Druga komponenta vektorja $\\vec b$ je $-1$, zato je drugi člen $-2$.",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$1$"
+    },
+    {
+      "id": "P09-verjetnost",
+      "naloga": "Vržemo dve pošteni igralni kocki. Kolikšna je verjetnost, da je vsota pik enaka 7?",
+      "korak": "Ugodni izidi so $(1,6)$, $(2,5)$ in $(3,4)$, vseh izidov je 36, zato je $P = \\dfrac{3}{36} = \\dfrac{1}{12}$.",
+      "korak_pravilen": false,
+      "napaka": "Kocki sta razločljivi: ugodnih izidov je 6 (tudi $(6,1)$, $(5,2)$, $(4,3)$).",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$P = \\dfrac{1}{6}$"
+    },
+    {
+      "id": "P10-neenacba",
+      "naloga": "Reši neenačbo $\\dfrac{x - 1}{x + 2} \\ge 0$.",
+      "korak": "Pomnožim z $x + 2$ in dobim $x - 1 \\ge 0$, torej $x \\ge 1$.",
+      "korak_pravilen": false,
+      "napaka": "Množenje z $x + 2$, ki je lahko negativen, ni dovoljeno brez obravnave predznaka; manjka interval $x < -2$.",
+      "tretje": "Ne razumem čisto. Lahko razložiš bolj preprosto?",
+      "rezultat": "$x \\in (-\\infty, -2) \\cup [1, \\infty)$"
+    },
+    {
+      "id": "P11-ploscina",
+      "naloga": "Trikotnik ima stranici dolžin $5$ cm in $7$ cm, kot med njima meri $60^\\circ$. Izračunaj ploščino trikotnika.",
+      "korak": "Ploščina je $S = \\dfrac{1}{2} \\cdot 5 \\cdot 7 \\cdot \\sin 60^\\circ$.",
+      "korak_pravilen": true,
+      "napaka": "",
+      "tretje": "Ker je $\\sin 60^\\circ = \\dfrac{\\sqrt 3}{2}$, je $S = \\dfrac{35\\sqrt 3}{4}$ cm$^2$.",
+      "rezultat": "$S = \\dfrac{35\\sqrt 3}{4}\\ \\text{cm}^2 \\approx 15{,}16\\ \\text{cm}^2$"
+    },
+    {
+      "id": "P12-absolutna",
+      "naloga": "Izračunaj absolutno vrednost kompleksnega števila $z = 3 + 4i$.",
+      "korak": "$|z| = \\sqrt{3^2 + 4^2}$.",
+      "korak_pravilen": true,
+      "napaka": "",
+      "tretje": "Torej je $|z| = \\sqrt{25} = 5$.",
+      "rezultat": "$|z| = 5$"
+    }
+  ]
+}

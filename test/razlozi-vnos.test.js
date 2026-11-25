@@ -10,20 +10,22 @@ const langs = readdirSync(UI).filter((f) => f.endsWith(".json"));
 const KEYS = ["tbk.pending", "tbk.pendingDemoPractice", "tbk.pendingDemo", "tbk.pendingPractice", "tbk.pendingAsk", "tbk.askTopic", "block.hintAdult"];
 
 test("send: on a usage limit the input stays empty, on any other failure text and photo come back", () => {
-  const app = read("public/app.js");
+  const app = read("public/app.js") + read("public/vadnica.js"); // paperTask je v vadnica.js (naloga hitrost)
   const send = app.slice(app.indexOf("async function send(text"), app.indexOf("function checkReplyFits"));
   // Strežnik ob meji vrne 429 z limit: true (server/app.js); odjemalec to označi na napaki.
   assert.match(send, /limit: res\.status === 429 && err\.limit === true/);
   // Polje se izprazni ob pošiljanju iz polja; samodejno sporočilo (Razloži, izbire …) osnutka in fotografije ne pobriše.
   assert.match(send, /const fromInput = !attached && \(\$\("#input"\)\.value\.trim\(\) \|\| ""\) === \(text \|\| ""\)\.trim\(\);/);
   assert.match(send, /const image = attached \|\| \(fromInput \? state\.image : null\);/);
-  assert.match(send, /userEl = addMessage\("user", text, !!image\);\s*if \(fromInput\) \{\s*\$\("#input"\)\.value = "";\s*autoGrow\(\);\s*clearImage\(\);/);
+  // Višino polja izmeri naDno v naslednji sličici skupaj z mehurčkoma (test/klepet-zgodovina.test.js).
+  assert.match(send, /userEl = addMessage\("user", text, !!image, null, \{ meri: false \}\);\s*naDnoRaf = requestAnimationFrame\(naDno\);\s*if \(fromInput\) \{\s*\$\("#input"\)\.value = "";\s*clearImage\(\);/);
+  assert.match(send, /const naDno = \(\) => \{[\s\S]{0,160}if \(fromInput\) autoGrow\(true\);/);
   // V catch se besedilo in fotografija vrneta samo, kadar napaka ni meja porabe; nobena pot ne piše v polje mimo restoreDraft.
   const tail = send.slice(send.indexOf("const dropped"));
-  assert.match(tail, /if \(!err\.limit && !deep\) restoreDraft\(text, image\);/);
+  assert.match(tail, /if \(!err\.limit && !deep\) restoreDraft\(draft \?\? text, image\);/);
   // »Razloži podrobneje« se na nobeni poti napake ne vrne v polje (kot mobilna).
-  assert.equal((send.match(/restoreDraft\(text, image\);/g) || []).length, 3);
-  assert.equal((send.match(/!deep\) restoreDraft\(text, image\)/g) || []).length, 3);
+  assert.equal((send.match(/restoreDraft\(draft \?\? text, image\);/g) || []).length, 3); // draft: učenčevo besedilo namesto sestavljene naloge pole
+  assert.equal((send.match(/!deep\) restoreDraft\(draft \?\? text, image\)/g) || []).length, 3);
   assert.doesNotMatch(send, /\$\("#input"\)\.value = text/, "nobena pot ne prepiše polja z besedilom");
   // restoreDraft ne prepiše osnutka in vrne fotografijo v predogled.
   const restore = app.slice(app.indexOf("function restoreDraft("), app.indexOf("function checkReplyFits"));
@@ -45,17 +47,19 @@ test("send: on a usage limit the input stays empty, on any other failure text an
 });
 
 test("prepared questions (calculator, scanner, 3D, corner, suggestion) never overwrite a typed draft", () => {
-  const app = read("public/app.js");
+  const app = read("public/app.js") + read("public/kalkulator-zaslon.js") + read("public/vadnica.js"); // kalkulator in pole: kalkulator-zaslon.js, vadnica.js
   const fill = app.slice(app.indexOf("function fillInput("), app.indexOf("function restoreDraft("));
   assert.match(fill, /box\.value = typed \? `\$\{typed\}\\n\\n\$\{text\}` : text;/);
   // Vse poti askTutor in predlogi uporabijo fillInput.
-  const asks = app.match(/askTutor: \(text\) => \{[\s\S]*?\n\s*\},/g) || [];
-  assert.ok(asks.length >= 4, "kalkulator, skener, uči-se, kotiček");
+  // Poskus in 3D (uči-se) gresta prek askTutorFrom, ki prav tako le doda (fillInput) in nastavi vrnitev iz klepeta.
+  const asks = app.match(/askTutor: \(text[^)]*\) => \{[\s\S]*?\n\s*\},/g) || [];
+  assert.ok(asks.length >= 5, "kalkulator, skener, uči-se, laboratorij, kotiček");
+  assert.match(app.slice(app.indexOf("function askTutorFrom("), app.indexOf("function askTutorFrom(") + 600), /fillInput\(text\);/);
   // »Rešuj z inštruktorjem« (cela pola) tudi doda, ne prepiše.
   assert.match(app, /fillInput\(`\$\{t\("pp\.tutorMsg", \{ paper \}\)\} `\);/);
   assert.doesNotMatch(app, /box\.value = `\$\{t\("pp\.tutorMsg"/);
   for (const a of asks) {
-    assert.match(a, /fillInput\(text\)/);
+    assert.match(a, /fillInput\(text\)|askTutorFrom\(text,/);
     assert.doesNotMatch(a, /\.value = text/);
   }
   assert.match(app, /if \(!\$\("#input"\)\.value\.trim\(\) && !state\.image\) return send\(b\.dataset\.idea\);\s*fillInput\(b\.dataset\.idea\);/);
@@ -95,7 +99,7 @@ test("textbook: a topic without a lesson offers »ask the tutor about this topic
   assert.match(tb, /\$\{pending \? "" : `<button type="button" class="secondary" id="tb-ask">/, "brez »Prebral sem lekcijo …«");
   assert.match(tb, /\$\("#tb-ask-topic"\)\?\.addEventListener\("click", \(\) => ctx\.learnWithTutor\(\{ id: L\.id, name: L\.name \}\)\)/);
   // learnWithTutor brez sporočila pošlje »Začniva s temo: {name}.« (z imenom teme).
-  assert.match(read("public/app.js"), /async function learnWithTutor\(topic, firstMessage = t\("topic\.startMsg", \{ name: topic\.name \}\)\)/);
+  assert.match(read("public/vadnica.js"), /async function learnWithTutor\(topic, firstMessage = t\("topic\.startMsg", \{ name: topic\.name \}\)\)/);
   assert.match(sl["topic.startMsg"], /\{name\}/);
 });
 

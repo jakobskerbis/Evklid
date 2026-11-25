@@ -30,19 +30,50 @@ Windows Task Scheduler ni potreben.
 
 ## Render (evklid.app, od 30. 10. 2026)
 
-Ob vsaki združitvi v `main` GitHub zažene preverbo, ki počaka na miren trenutek in vmes preverja vsakih
-5 minut; novejša združitev jo zamenja. Urnik vsako uro je le rezerva, ker GitHub urnike pogosto zamakne za ure
-(`.github/workflows/render-posodobitev.yml`,
-pravila v `scripts/render-objava.js`; v `render.yaml` je `autoDeploy: false`). Ponovni zagon s trajnim
-diskom pomeni približno minuto izpada, zato (začasno do nedelje 15. 11. 2026 00:00, začetka pilota, se vsaka združitev objavi takoj, `TAKOJ_DO` v `scripts/render-objava.js`; j, 14. 11.):
+Ob vsaki združitvi v `main` GitHub zažene preverbo (`.github/workflows/render-posodobitev.yml`, pravila v
+`scripts/render-objava.js`; v `render.yaml` je `autoDeploy: false`). Ponovni zagon s trajnim diskom pomeni
+približno minuto izpada, zato se nove različice objavljajo **samo ponoči med 3. in 5. uro** po ljubljanskem
+času (j, 19. 11. 2026, »Noč zdaj, baza po pilotu«). Po pilotu (po 15. 12. 2026) se baza preseli izven
+Renderja; takrat objava ne bo več pomenila izpada in nočno okno ne bo več potrebno.
+
+**Do nadaljnjega (j, 24. 11. 2026): vsaka združitev v `main` se objavi takoj, ko so testi zeleni**, tudi
+podnevi in med uporabo (vsakič ~1 minuta izpada). Spodnja nočna pravila spet veljajo, ko v
+`scripts/render-objava.js` nastaviš `TAKOJ_DO = 0`.
 
 | Stanje | Kdaj se objavi |
 |---|---|
-| Nihče ne uporablja Evklida (10 minut nihče nič ne pošlje, nihče ne čaka na odgovor) | takoj (v nekaj minutah) |
-| Nekdo se ravno uči | počaka na miren trenutek, najdlje 3 ure od združitve spremembe |
-| Zadnja objava pred manj kot 1 uro | počaka (razen po 3 urah čakanja) |
+| Podnevi (izven 3.–5. ure) | počaka na naslednjo noč |
+| Ponoči, nihče ne uporablja Evklida (10 minut nihče nič ne pošlje, nihče ne čaka na odgovor) | takoj (v nekaj minutah) |
+| Ponoči, nekdo se ravno uči | počaka na miren trenutek, najkasneje ob 4.30 |
+| Zadnja objava pred manj kot 1 uro | počaka (tudi ob 4.30) |
 | Ista različica je bila že sprožena, a ne teče (objava ni uspela) | ne ponavlja 3 ure |
-| Ročno: GitHub → Actions → Render → Run workflow | takoj |
+| Nujen popravek: `[nujno]` na začetku naslova PR (prva vrstica sporočila združitve v `main`) | takoj, ko so testi zeleni, tudi podnevi (enkrat; naslednje združitve spet čakajo na noč) |
+| Ročno: GitHub → Actions → Render → Run workflow | takoj, ko so testi zeleni |
+| Testi za ta commit so padli | ne objavi; objavi se, ko so testi zeleni (ponovni zagon padlih testov ali naslednja združitev) |
+
+Tek ob združitvi počaka na okno le, če se odpre v naslednjih ~3 urah; sicer objavo opravi nočni urnik
+(0:47 in 1:47 UTC) ali urnik vsako uro. Ko velja nočno okno, se podnevi nič ne objavi, zato združitev med dnevom
+ne prekine testa v Render Shell (dokler velja »takoj«, ga lahko).
+
+### Objava samo po zelenih testih
+
+Od 20. 11. 2026 gre sprememba na evklid.app (Render) in na telefone (posodobitev aplikacije) šele, ko so za
+**točno ta commit** v `main` uspeli vsi štirje posli testov (`.github/workflows/testi.yml`): `testi`, `preveri`,
+`hrosci` in `tipi` (TypeScript mobilne aplikacije). Testi trajajo 10–30 minut.
+
+- Render (`scripts/render-objava.js`): dokler testi tečejo, čaka; ko se končajo, se preverba zažene znova, zato
+  `[nujno]` pride na strežnik nekaj minut po zelenih testih. Če je testom spodletelo, se ta commit ne objavi
+  (v dnevniku teka piše, kateri posel je padel). Render dobi točno preverjeni commit.
+- Telefoni (`.github/workflows/ota.yml`): posodobitev se objavi samo po uspešnih testih.
+- Samo v sili: Actions → Render → Run workflow → kljukica »brez_testov« objavi brez testov.
+
+Da v `main` sploh ne pride nič brez zelenih testov, enkrat vklopi zaščito veje (samo j, na GitHubu):
+1. github.com/jakobskerbis/Evklid → **Settings** → **Rules** → **Rulesets** → **New ruleset** → **New branch ruleset**
+   (ali Settings → **Branches** → **Add branch protection rule**). Ime npr. `main`, Enforcement status **Active**.
+2. Target branches → **Add target** → **Include default branch** (`main`).
+3. Vklopi **Require a pull request before merging** in **Require status checks to pass**; pod njim
+   **Add checks** in dodaj `testi`, `preveri`, `hrosci` in `tipi` (pokažejo se, ko so enkrat tekli na PR).
+4. **Create** (ali **Save changes**). Od zdaj gumb za združitev PR ostane siv, dokler vsi štirje niso zeleni.
 
 Strežnik pove svojo različico in zasedenost na `/healthz/stanje`. Enkratna nastavitev: v Renderju
 odpri storitev evklid > Settings > Deploy Hook in povezavo kopiraj v GitHub > Settings > Secrets and

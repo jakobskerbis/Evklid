@@ -16,7 +16,8 @@ export class Mailer {
   get enabled() {
     return !!this.key;
   }
-  async send({ to, subject, html, text }) {
+  // headers: dodatne glave sporočila (Resend »headers«), npr. List-Unsubscribe pri tedenskem poročilu.
+  async send({ to, subject, html, text, headers }) {
     if (!this.key) {
       // Na javnem strežniku brez e-naslova in vsebine (povezave za novo geslo so kot geslo); lokalno cela vsebina.
       const prod = process.env.NODE_ENV === "production" || /^https:/i.test(process.env.EVKLID_BASE_URL || "");
@@ -28,7 +29,7 @@ export class Mailer {
       res = await this.fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${this.key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from: this.from, to: [to], subject, html, text }),
+        body: JSON.stringify({ from: this.from, to: [to], subject, html, text, ...(headers ? { headers } : {}) }),
         signal: AbortSignal.timeout(30_000), // obdelava dogodka Stripe ne sme čakati na pošto dlje od prevzema (točka A7)
       });
     } catch (err) {
@@ -183,14 +184,19 @@ export function renewalEmail(dateText, amountText, appUrl) {
 
 // Nova cena ob prehodu stopnje (j 2026-11-01): 30 dni pred podaljšanjem, ko velja nova cena.
 // up: nova cena je višja (prehod navzgor), sicer nižja (prehod navzdol ali konec starega paketa).
-export function planChangeEmail({ planText, amountText, dateText, up }, appUrl) {
+// same: cena ostane enaka (OŠ in SŠ letno sta od 2026-11-19 oba 99 €), zamenja se le paket; ne »nova cena« ne »cenejša«.
+// higher (le pri same): paket višje stopnje (OŠ → SŠ), sicer nižje (SŠ → OŠ).
+export function planChangeEmail({ planText, amountText, dateText, up, same = false, higher = false }, appUrl) {
   const n = BRAND.name;
-  const body = up
-    ? `Od ${dateText} bo vaša naročnina na ${n} veljala za paket ${planText}: ${amountText}. Do takrat ostane stara cena, profil ima novo stopnjo odprto že zdaj. Napredek ostane.`
-    : `Od ${dateText} bo vaša naročnina na ${n} cenejša: paket ${planText}, ${amountText}. Do takrat ostane odprta tudi višja stopnja. Napredek ostane.`;
+  const body = same
+    ? `Od ${dateText} bo vaša naročnina na ${n} veljala za paket ${planText}. Cena se ne spremeni: ${amountText}. ${higher ? "Profil ima novo stopnjo odprto že zdaj." : "Do takrat ostane odprta tudi višja stopnja."} Napredek ostane.`
+    : up
+      ? `Od ${dateText} bo vaša naročnina na ${n} veljala za paket ${planText}: ${amountText}. Do takrat ostane stara cena, profil ima novo stopnjo odprto že zdaj. Napredek ostane.`
+      : `Od ${dateText} bo vaša naročnina na ${n} cenejša: paket ${planText}, ${amountText}. Do takrat ostane odprta tudi višja stopnja. Napredek ostane.`;
+  const title = same ? "Sprememba paketa" : "Nova cena naročnine";
   return {
-    subject: `${n}: nova cena naročnine od ${dateText}`,
-    html: layout("Nova cena naročnine", `<p>${esc(body)}</p><p>Če naročnine ne želite podaljšati, jo do takrat prekličite v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, `Odprite ${n}`)}`),
+    subject: same ? `${n}: sprememba paketa od ${dateText}` : `${n}: nova cena naročnine od ${dateText}`,
+    html: layout(title, `<p>${esc(body)}</p><p>Če naročnine ne želite podaljšati, jo do takrat prekličite v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, `Odprite ${n}`)}`),
     text: `${body} Naročnino prekličete v zavihku Račun: ${appUrl}`,
   };
 }
@@ -214,8 +220,10 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
 }
 
 // Enkratno obvestilo o spremenjeni politiki zasebnosti (scripts/obvestilo-zasebnost.js). Besedilo potrdi j, preden
-// se pošlje; skripta brez --poslji ničesar ne pošlje. Točke opisujejo trenutno različico (PRIVACY_VERSION 2026-11-18,
-// #817); prejšnja (6. 11. 2026) je v zgodovini git. dateText poda klicatelj (privacyDateText).
+// se pošlje; skripta brez --poslji ničesar ne pošlje. Točke opisujejo različico 2026-11-18 (#817); prejšnja (6. 11. 2026)
+// je v zgodovini git. Za 2026-11-21 (#908) e-pošte ni (j 21. 11., kartica »Da, v aplikaciji«): samo obvestilo v
+// aplikaciji, zato --poslji 2026-11-21 ne poganjaj, dokler točke spodaj ne opisujejo te različice.
+// dateText poda klicatelj (privacyDateText).
 const MESECI = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
 export const privacyDateText = (iso) => {
   const [y, m, d] = String(iso).split("-").map(Number);

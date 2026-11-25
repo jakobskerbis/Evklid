@@ -106,7 +106,7 @@ self.addEventListener("message", (e) => {
   e.waitUntil(done);
 });
 
-// Stran ob prvem obisku pošlje seznam že naloženih datotek, da jih shranimo za brez povezave.
+// Stran ob prvem obisku pošlje seznam že naloženih datotek (po kosih), da jih shranimo za brez povezave; »ok« ob koncu kosa.
 self.addEventListener("message", (e) => {
   if (e.data?.type !== "precache" || !Array.isArray(e.data.urls)) return;
   const same = e.data.urls.filter((u) => {
@@ -124,10 +124,15 @@ self.addEventListener("message", (e) => {
         const cache = new URL(u, self.location.origin).pathname.startsWith("/vendor/") ? await caches.open(VENDOR) : statics;
         const hit = await cache.match(u);
         if (hit && (cache !== statics || fresh(hit))) return;
-        const res = await fetch(u).catch(() => null);
+        // Stran je datoteko pravkar prenesla: kopija iz predpomnilnika brskalnika (force-cache) brez ponovnega klica
+        // strežnika. Prej je šel vsak naslov še enkrat na strežnik (ob prvem obisku ~190 zahtev; meritev 21. 11. 2026).
+        // Različico pove shranjena glava X-Evklid-App (put, fresh); česar brskalnik nima, pride z omrežja kot prej.
+        // Samo datoteke aplikacije: vstopno stran in drug HTML vedno preveri strežnik (stara kopija iz predpomnilnika
+        // brskalnika bi lahko prepisala kopijo vstopne strani; pregled PR #919).
+        const res = await fetch(u, APP_FILE.test(new URL(u, self.location.origin).pathname) ? { cache: "force-cache" } : undefined).catch(() => null);
         if (res?.ok) await put(cache, u, res);
       }),
-    ),
+    ).finally(() => e.ports?.[0]?.postMessage("ok")), // stran pošilja seznam po kosih (public/app.js predpomni)
   );
 });
 

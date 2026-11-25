@@ -1,5 +1,5 @@
 // Gradiva ob lekciji: povzetek na eni strani, kratek video in delovni list za tisk z rešitvami (strežnik: server/gradiva.js).
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { zavrzi } from "./odgovor.js";
 

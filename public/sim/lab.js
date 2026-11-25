@@ -259,7 +259,7 @@ export function pripni(el) {
       stage.classList.toggle("lab-povecano", on);
       // Obrne se le električna shema (napisi se zavrtijo nazaj pokonci); prizor na mizi (steklovina, tekočine) ostane
       // pokonci in cel na zaslonu, ker bi bil na boku fizikalno napačen. Večji je, ko učenec telefon obrne ležeče.
-      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
+      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit:not(.lab-foto-on)") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
       for (const [k, v] of [["role", "dialog"], ["aria-modal", "true"], ["aria-label", t("sim.lab.zoom")]]) on ? stage.setAttribute(k, v) : stage.removeAttribute(k);
       ozadje(on);
       // Poskus lahko izgine med odprto povečavo (drug pogled, »Ponastavi«, ukaz inštruktorja): ozadje ne sme ostati neodzivno.
@@ -389,3 +389,84 @@ const enTex = (u) => String(u).replace(/⁻¹|[ %°·²³Ω\\{}$_^~#&]/g, (c) =>
 export const en = (u) => `\\,\\mathrm{${enTex(u)}}`;
 // Število, ki ga ni (fmt da »–«), je v formuli \text{–}; µ v enoti ne gre (KaTeX ga piše ležeče): enoto z µ napiši za formulo.
 export const rez = (x, u) => `\\mathbf{${String(x).replace("–", "\\text{–}")}${u ? `\\,${enTex(u)}` : ""}}`;
+
+// Posnetek stanja odprtega poskusa za »Vprašaj inštruktorja« (server/ucni-kontekst.js, j 24. 11. 2026): iz DOM, zato
+// velja za vse poskuse brez kode v vsakem posebej. Kontrole: oznaka `.demo-slider-label` (kit.js slider, select, vrstice
+// `row` v lab-*.js) in vrednost v drsniku (izpis), izbranem gumbu, seznamu ali polju; skupine gumbov in polja z lastnim
+// `aria-label`; stikala `.demo-check`. Seznam, ki še kaže »izberi …«, ni nastavitev. Isto ime dvakrat (levi in desni
+// polčlen) dobi naslov svojega okvirja (`legend`). Odčitki: zasloni merilnikov (lcd). Meritve: samo vidna tabela meritev,
+// zadnjih 20 vrstic, celica »·« je prazna. Nič ne izračuna in nič ne ugiba: česar ni na zaslonu, v posnetku ni.
+const besedilo = (el) => (el?.textContent || "").replace(/\s+/g, " ").trim();
+const PRAZNO = /^(|·|–|-|—|izberi\b.*|– ?izberi.*|\.\.\.|…)$/i;
+const izbrano = (sel) => {
+  const o = sel.selectedOptions?.[0];
+  const v = besedilo(o) || sel.value;
+  return !sel.value || PRAZNO.test(v) ? "" : v;
+};
+export function stanjePoskusa(root, { parametri = 16, odcitki = 8, vrstice = 20 } = {}) {
+  const vidno = (el) => !el.closest("[hidden]");
+  const okvir = (el) => besedilo(el.closest("fieldset")?.querySelector("legend"));
+  const nabor = []; // { ime, vrednost, okvir }
+  const prebrano = new Set();
+  for (const lab of root?.querySelectorAll?.(".demo-slider-label") || []) {
+    const box = lab.parentElement;
+    // Vrstica (`row`) okoli drsnika ali seznama z lastno oznako: vrednost prebere notranja oznaka, ne obe.
+    if (!box || !vidno(box) || box.querySelectorAll(".demo-slider-label").length > 1) continue;
+    const ime = besedilo(lab);
+    const range = box.querySelector('input[type="range"]');
+    const on = box.querySelector('.seg-btn.on, .seg-btn[aria-checked="true"]');
+    const sel = box.querySelector("select");
+    const vnos = box.querySelector('input[type="text"], input[type="number"]');
+    let vrednost = "";
+    if (range && !range.hidden) vrednost = besedilo(box.querySelector("output")) || String(range.value);
+    else if (on) vrednost = besedilo(on);
+    else if (sel) vrednost = izbrano(sel);
+    else if (vnos) vrednost = vnos.value.trim();
+    box.querySelectorAll('[role="radiogroup"], select, input').forEach((x) => prebrano.add(x));
+    if (ime && vrednost) nabor.push({ ime, vrednost, okvir: okvir(box) });
+  }
+  // Skupine gumbov in polja brez vrstice z oznako (npr. pipa birete, odčitek birete, vrsta škroba).
+  for (const g of root?.querySelectorAll?.('[role="radiogroup"][aria-label], input[type="text"][aria-label], input[type="number"][aria-label]') || []) {
+    if (prebrano.has(g) || !vidno(g) || g.closest(".demo-slider, .lab-row")) continue;
+    const vrednost = g.matches("input") ? g.value.trim() : besedilo(g.querySelector('.seg-btn.on, [aria-checked="true"]'));
+    if (vrednost) nabor.push({ ime: g.getAttribute("aria-label").trim(), vrednost, okvir: okvir(g) });
+  }
+  for (const chk of root?.querySelectorAll?.(".demo-check") || []) {
+    const input = chk.querySelector('input[type="checkbox"]');
+    const ime = besedilo(chk);
+    if (input && ime && vidno(chk)) nabor.push({ ime, vrednost: input.checked ? "da" : "ne", okvir: okvir(chk) });
+  }
+  const stej = new Map();
+  for (const x of nabor) stej.set(x.ime, (stej.get(x.ime) || 0) + 1);
+  const parameters = nabor
+    .map((x) => ({ ime: stej.get(x.ime) > 1 && x.okvir ? `${x.okvir}: ${x.ime}` : x.ime, vrednost: x.vrednost }))
+    .slice(0, parametri);
+  const readings = [];
+  for (const el of root?.querySelectorAll?.(".lab-lcd") || []) {
+    if (readings.length >= odcitki) break;
+    if (!vidno(el) || el.classList.contains("off")) continue;
+    const v = besedilo(el.querySelector(".lab-lcd-val"));
+    if (!v || v === "–") continue;
+    readings.push({ ime: besedilo(el.querySelector(".lab-lcd-name")), vrednost: `${v} ${besedilo(el.querySelector(".lab-lcd-unit"))}`.trim() });
+  }
+  // Celica: izbira v celici (npr. skupina snovi) je izbrana možnost, sicer besedilo; »·« in »izberi …« sta prazna.
+  const celica = (td) => {
+    const sel = td.querySelector("select");
+    // Barvni vzorec brez besedila (npr. jodovica pri amilazi) ima ime v aria-label.
+    const v = sel ? izbrano(sel) : besedilo(td) || [...td.querySelectorAll("[aria-label]")].map((x) => x.getAttribute("aria-label").trim()).join(", ");
+    return PRAZNO.test(v) ? "" : v;
+  };
+  let measurements = null;
+  for (const table of root?.querySelectorAll?.("table.lab-table") || []) {
+    if (!vidno(table) || !table.getClientRects?.().length) continue; // skrita tabela drugega dela poskusa
+    const glava = [...table.querySelectorAll("thead th")].map(besedilo);
+    const od = glava[0] === "#" ? 1 : 0; // zaporedna številka, ki jo doda dataTable
+    const rows = [...table.querySelectorAll("tbody tr")]
+      .map((tr) => [...tr.children].slice(od).map(celica))
+      .filter((r) => r.slice(od ? 0 : 1).some(Boolean)); // vrstica s samo imenom (npr. »kovina« brez meritve) ni meritev
+    if (!rows.length) continue;
+    measurements = { stolpci: glava.slice(od), vrstice: rows.slice(-vrstice) };
+    break;
+  }
+  return { parameters, readings, ...(measurements ? { measurements } : {}) };
+}

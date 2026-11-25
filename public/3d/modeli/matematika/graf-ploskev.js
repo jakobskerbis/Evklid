@@ -13,7 +13,6 @@ export const info = {
 // viridis (barvno slepim prijazna zaporedna lestvica), sRGB
 const VIRIDIS = ["#440154", "#472d7b", "#3b528b", "#2c728e", "#21918c", "#28ae80", "#5ec962", "#addc30", "#fde725"];
 const PISAVA = '"Instrument Sans", system-ui, sans-serif';
-const NB = " ";
 
 // število v slovenskem zapisu z največ d decimalkami (odvečne ničle odrežemo)
 function st(x, d = 2) {
@@ -645,7 +644,7 @@ export function zgradi(THREE, ctx) {
       { tip: "stikalo", id: "plastnice", oznaka: "Plastnice", vrednost: S.plastnice, ob: ob("plastnice") },
       { tip: "izpis", id: "plastniceIzpis", oznaka: "Višine plastnic", vrednost: izpisPlastnic, vidno: () => S.plastnice },
       { tip: "stikalo", id: "prerez", oznaka: "Prerez y = c", vrednost: S.prerez, ob: ob("prerez") },
-      { tip: "drsnik", id: "c", oznaka: "c (lega prereza)", min: -6, max: 6, korak: 0.1, vrednost: S.c, ob: ob("c"), vidno: () => S.prerez },
+      { tip: "drsnik", id: "c", oznaka: "c (lega prereza)", prerez: true, min: -6, max: 6, korak: 0.1, vrednost: S.c, ob: ob("c"), vidno: () => S.prerez },
       { tip: "izpis", id: "prerezIzpis", oznaka: "Krivulja prereza", vrednost: izpisPrereza, vidno: () => S.prerez },
       { tip: "drsnik", id: "x0", oznaka: "x₀ (točka T)", min: -6, max: 6, korak: 0.1, vrednost: S.x0, ob: ob("x0") },
       { tip: "drsnik", id: "y0", oznaka: "y₀ (točka T)", min: -6, max: 6, korak: 0.1, vrednost: S.y0, ob: ob("y0"), vidno: () => !S.prerez },

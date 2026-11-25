@@ -9,15 +9,18 @@ import { cardFor, configureCard, claimMarks, createMarkPage, releaseMarks } from
 import type { Theme } from "./theme";
 import type { Fx } from "./formula-ctx";
 import { API_URL } from "./api";
+import { izrisPovezave } from "./povezave.js";
 import { t, currentLanguage } from "./i18n";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 // Vsebina strežnika (lekcije, naloge, rešitve) sme imeti HTML (npr. <details> »Pokaži formulo«).
 const trustedMarked = new Marked();
-// Odgovori inštruktorja (AI): surov HTML se izpiše kot besedilo.
-const safeMarked = new Marked({ renderer: { html: ({ text }: { text: string }) => esc(text) } });
+// Odgovori inštruktorja (AI): surov HTML se izpiše kot besedilo, povezava (tudi <…:…> in www.…) je <a> samo
+// za http(s), mailto in tel, drugače ostane besedilo (src/lib/povezave.js, test/mobile-rich-povezave.test.js).
+const safeMarked = new Marked({ renderer: { html: ({ text }: { text: string }) => esc(text), link: izrisPovezave } });
 
-// sanitize: vsebina je že varna (zaupanja vredna ali z izpisanim HTML), DOMPurify v aplikaciji ni potreben.
+// sanitize: vsebina je že varna (zaupanja vredna ali z izpisanim HTML in preverjenimi povezavami), DOMPurify
+// v aplikaciji ni potreben. RichText v WebView besedila odpre samo http(s), mailto in tel.
 const make = createRenderer as (o: object) => { renderRich: (s: string) => string };
 const trusted = make({ marked: trustedMarked, katex, sanitize: (h: string) => h });
 const untrusted = make({ marked: safeMarked, katex, sanitize: (h: string) => h });
@@ -105,7 +108,7 @@ p{margin:0 0 .7em}p:last-child{margin-bottom:0}
 h1,h2,h3,h4{line-height:1.25;margin:1em 0 .4em}
 h3,h4,.sub-head{font-size:1.12em;font-weight:800;line-height:1.3;margin:1.4em 0 .45em;padding-inline-start:10px;border-inline-start:3px solid ${th.accent}}
 #c>:first-child{margin-top:0}
-ul,ol{padding-inline-start:1.4em;margin:.3em 0 .8em}li{margin:.2em 0}
+ul,ol{padding-inline-start:1.4em;margin:.3em 0 .8em}li{margin:.2em 0}li+li{margin-top:.45em}
 a{color:${th.accent}}
 strong{font-weight:700}
 code{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:${th.surface2};padding:.1em .3em;border-radius:5px}

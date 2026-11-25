@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
 import { TOPIC_CONCEPTS } from "../public/games/learn-link.js";
-import { getTopic, getPath, pathKeyFor } from "./curriculum.js";
+import { getTopic, pathKeyFor } from "./curriculum.js";
 import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
 import { formulaSheet } from "./textbook.js";
 import { stopnja } from "../public/stopnja.js";
@@ -211,7 +211,7 @@ function findSim(q, settings, canOpen) {
 
 // 3D: modeli iz public/3d/modeli/<področje>/index.js (samo podatki) in imena struktur atlasa telesa.
 let MODELS = null;
-async function allModels() {
+export async function allModels() {
   if (MODELS) return MODELS;
   const dir = path.join(here, "..", "public", "3d", "modeli");
   const out = [];
@@ -227,7 +227,7 @@ async function allModels() {
   return out;
 }
 let ATLAS = null;
-function atlasNames() {
+export function atlasNames() {
   if (ATLAS) return ATLAS;
   try {
     const read = (f) => JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", f), "utf8"));
@@ -387,4 +387,4 @@ export async function resolveOpen(text, settings, { canOpen = null } = {}) {
   return out;
 }
 
-export const _test = { delAliSkupina, score, findSim, findModel, findLesson, findGame, findFormula, getPath };
+export const _test = { delAliSkupina };

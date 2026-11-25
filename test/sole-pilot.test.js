@@ -1,4 +1,6 @@
 // Šole (j 2026-11-04 »Vse da«): pilotna cena samo za prvih 10 šol in privzeta mesečna meja AI licence.
+// Naročila šol so privzeto zaprta (točka 37, server/sole.js soleNarocilaOdprta); ta test preverja odprta.
+process.env.EVKLID_SOLE_NAROCILA = "1";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";

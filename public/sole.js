@@ -19,6 +19,7 @@
   })();
   (function () {
     var f = document.getElementById("order-form");
+    if (!f) return; // naročila zaprta (server/sole.js soleNarocilaOdprta): na strani ni obrazca
     var prices = {};
     try { prices = JSON.parse(f.getAttribute("data-prices")); } catch (e) {}
     var fmt = function (x) { var w = Number.isInteger(x); return x.toLocaleString("sl-SI", { style: "currency", currency: "EUR", minimumFractionDigits: w ? 0 : 2, maximumFractionDigits: w ? 0 : 2 }); };

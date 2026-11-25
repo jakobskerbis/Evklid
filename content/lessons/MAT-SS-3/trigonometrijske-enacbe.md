@@ -211,15 +211,40 @@ $\sin\alpha + \sin\beta = 2\sin\dfrac{\alpha + \beta}{2}\cos\dfrac{\alpha - \bet
 
 ## Povzetek
 
-- Trigonometrijska enačba ima navadno neskončno mnogo rešitev; zapišemo jih s splošno rešitvijo, $k \in \mathbb{Z}$.
-- $\sin x = a$: $x = x_1 + k \cdot 360^\circ$ ali $x = 180^\circ - x_1 + k \cdot 360^\circ$, $x_1 = \arcsin a$.
-- $\cos x = a$: $x = \pm x_1 + k \cdot 360^\circ$, $x_1 = \arccos a$.
-- $\tan x = a$: $x = x_1 + k \cdot 180^\circ$, $x_1 = \arctan a$.
+- Trigonometrijska enačba ima navadno neskončno mnogo rešitev; zapišemo jih s **splošno rešitvijo**, $k \in \mathbb{Z}$.
+
+**$\sin x = a$**, $x_1 = \arcsin a$:
+
+$$x = x_1 + k \cdot 360^\circ$$
+
+ali
+
+$$x = 180^\circ - x_1 + k \cdot 360^\circ$$
+
+**$\cos x = a$**, $x_1 = \arccos a$:
+
+$$x = \pm x_1 + k \cdot 360^\circ$$
+
+**$\tan x = a$**, $x_1 = \arctan a$:
+
+$$x = x_1 + k \cdot 180^\circ$$
+
 - Za $|a| > 1$ enačbi s sinusom in kosinusom nimata rešitev.
-- Krožne funkcije: $\arcsin a$ in $\arctan a$ sta kota med $-90^\circ$ in $90^\circ$, $\arccos a$ je kot med $0^\circ$ in $180^\circ$. Velja $\arcsin(-a) = -\arcsin a$, $\arctan(-a) = -\arctan a$, $\arccos(-a) = 180^\circ - \arccos a$.
-- V radianih $360^\circ \to 2\pi$, $180^\circ \to \pi$. Pri $\sin(bx) = a$ najprej reši za $bx$, nato deli z $b$.
-- Kotnih funkcij ne krajšaj, ampak izpostavi.
-- (višja raven) Vsoto sinusov ali kosinusov spremeni v produkt in vsak faktor izenači z $0$. Pri kotih $x$ in $\frac{x}{2}$ vse zapiši s polovičnim kotom ($1 + \cos x = 2\cos^2\frac{x}{2}$).
+
+**Krožne funkcije:**
+
+- $\arcsin a$ in $\arctan a$ sta kota med $-90^\circ$ in $90^\circ$.
+- $\arccos a$ je kot med $0^\circ$ in $180^\circ$.
+- Velja $\arcsin(-a) = -\arcsin a$ in $\arctan(-a) = -\arctan a$.
+- Velja $\arccos(-a) = 180^\circ - \arccos a$.
+
+**Pri reševanju:**
+
+- V radianih $360^\circ \to 2\pi$, $180^\circ \to \pi$.
+- Pri $\sin(bx) = a$ najprej reši za $bx$, nato deli z $b$.
+- Kotnih funkcij ne krajšaj, ampak **izpostavi**.
+- (višja raven) Vsoto sinusov ali kosinusov spremeni v produkt in vsak faktor izenači z $0$.
+- (višja raven) Pri kotih $x$ in $\frac{x}{2}$ vse zapiši s polovičnim kotom, npr. $1 + \cos x = 2\cos^2\frac{x}{2}$.
 
 ## Ponovitev
 

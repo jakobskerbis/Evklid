@@ -1,0 +1,125 @@
+{
+ "opis": "20 nalog iz Evklidovih lastnih pol v slogu mature (content/exam-papers/MATURA-MAT-*.json) za slepo primerjavo z Astro, ChatGPT in Geminijem (točka 5 načrta izboljšav, 19. 11. 2026). Besedilo je enako kot na strani za primerjavo; rešitve so v polah.",
+ "naloge": [
+  {
+   "id": "OR-2023-spomladanski-p1-A2",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Dano je kompleksno število $z = 3 - 2i$. Izračunaj njegovo recipročno vrednost $\\dfrac{1}{z}$ in jo zapiši v obliki $a + bi$, kjer sta $a$ in $b$ realni števili."
+  },
+  {
+   "id": "OR-2023-spomladanski-p1-A4",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Poenostavi izraz $\\dfrac{2^{x+3} - 2^{x+1}}{2^{x+2} + 2^{x-1}}$, kjer je $x$ realno število."
+  },
+  {
+   "id": "OR-2023-spomladanski-p1-A8",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "V množici kompleksnih števil reši enačbo $4x^2 + 4x + 17 = 0$."
+  },
+  {
+   "id": "OR-2023-spomladanski-p1-B4",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Za kot $\\alpha$ velja $\\cos\\alpha = \\dfrac{8}{17}$ in $\\alpha \\in \\left(\\dfrac{3\\pi}{2}, 2\\pi\\right)$. Brez računala natančno izračunaj $\\sin\\alpha$ in $\\cos\\left(\\alpha + \\dfrac{\\pi}{6}\\right)$."
+  },
+  {
+   "id": "OR-2023-spomladanski-p2-A6",
+   "raven": "osnovna",
+   "racunalo": true,
+   "besedilo": "Na planinskem izletu se pet odraslih in trije otroci postavijo v vrsto pred kočo za skupinsko fotografijo. Na koliko načinov se lahko postavijo, če otroci stojijo skupaj (drug ob drugem)?"
+  },
+  {
+   "id": "OR-2023-spomladanski-p2-B2",
+   "raven": "osnovna",
+   "racunalo": true,
+   "besedilo": "Gorišči elipse sta točki $F_1(-6, 0)$ in $F_2(6, 0)$, eno od temen elipse pa je točka $B(0, -4)$.\n\na) Zapiši enačbo elipse.\n\nb) Zapiši enačbo krožnice s središčem v gorišču $F_2$, ki poteka skozi teme $B$."
+  },
+  {
+   "id": "OR-2023-spomladanski-p2-B3",
+   "raven": "osnovna",
+   "racunalo": true,
+   "besedilo": "Pred sedmimi leti je bil dedek Jože $11$-krat starejši od vnuka Tima. Čez osem let bo razmerje med Timovo in Jožetovo starostjo $2 : 7$. Koliko sta Tim in Jože stara danes?"
+  },
+  {
+   "id": "OR-2024-spomladanski-p1-B6",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Dana je funkcija $f(x) = \\log_{2}\\left(15 + 2x - x^{2}\\right)$. Določi njeno definicijsko območje $D_f$ in zalogo vrednosti $Z_f$."
+  },
+  {
+   "id": "OR-2024-spomladanski-p2-A4",
+   "raven": "osnovna",
+   "racunalo": true,
+   "besedilo": "Za koliko odstotkov moramo povečati število $320$, da dobimo $64\\,\\%$ števila $725$?"
+  },
+  {
+   "id": "OR-2025-spomladanski-p1-A4",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Premica z enačbo $x + 2y = 0$ seka krožnico z enačbo $x^{2} + y^{2} = 45$ v dveh točkah. Izračunaj abscisi teh dveh presečišč."
+  },
+  {
+   "id": "OR-2025-spomladanski-p1-B5",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Dana je funkcija $f(x) = \\dfrac{x^{2} + 3}{x - 1}$.\n\nIzračunaj koordinati stacionarnih točk funkcije $f$. Nato zapiši enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 2$."
+  },
+  {
+   "id": "OR-2026-spomladanski-p1-A6",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Izračunaj limiti\n\n$$\\lim_{x \\to 3} \\frac{2x - 6}{x^2 - x - 6} \\qquad \\text{in} \\qquad \\lim_{x \\to \\infty} \\frac{2x - 6}{x^2 - x - 6}.$$"
+  },
+  {
+   "id": "OR-2026-spomladanski-p1-A7",
+   "raven": "osnovna",
+   "racunalo": false,
+   "besedilo": "Izračunaj določeni integral $\\displaystyle\\int_0^2 \\left(4x - 1 + e^x\\right) dx$. Rezultat zapiši natančno."
+  },
+  {
+   "id": "VR-2024-spomladanski-p1-B5",
+   "raven": "višja",
+   "racunalo": false,
+   "besedilo": "Premica z enačbo $6x + 2y - 10 = 0$ je tangenta na graf funkcije $f(x) = a\\,e^{x} + b$ v točki z absciso $x_0 = 0$. Izračunaj realni števili $a$ in $b$. Nato izračunaj koordinati tiste točke na grafu funkcije $f$, v kateri je tangenta vzporedna s premico $y = -6x$."
+  },
+  {
+   "id": "VR-2024-spomladanski-p2-C2",
+   "raven": "višja",
+   "racunalo": true,
+   "besedilo": "Kovanec je nepošten: pri vsakem metu pade grb z verjetnostjo $0{,}4$, cifra pa z verjetnostjo $0{,}6$. Meti so med seboj neodvisni.\n\na) Kovanec vržemo $8$-krat. Izračunaj verjetnost, da pade\n\n- natanko $3$-krat grb,\n- vsaj $2$-krat grb.\n\nRezultata zaokroži na tri decimalna mesta.\n\nb) Urban in Pia igrata igro: izmenično mečeta ta kovanec, začne Urban. Zmaga tisti, ki prvi vrže grb.\n\n- Izračunaj verjetnost, da Urban zmaga že s svojim prvim metom, da Pia zmaga s svojim prvim metom in da Urban zmaga s svojim tretjim metom.\n- Izračunaj verjetnost, da igro zmaga Urban, in verjetnost, da jo zmaga Pia."
+  },
+  {
+   "id": "VR-2025-spomladanski-p2-C1",
+   "raven": "višja",
+   "racunalo": true,
+   "besedilo": "Dani sta zaporedji s splošnima členoma\n\n$$a_n = n^2 + 6n + 4 \\qquad \\text{in} \\qquad b_n = n + 2, \\qquad n \\in \\mathbb{N}.$$\n\na) Koliko členov zaporedja s splošnim členom $\\dfrac{1}{a_n}$ je večjih od $0{,}0005$?\n\nb) Izračunaj limito $\\displaystyle\\lim_{n \\to \\infty}\\left(\\sqrt{a_n} - b_n\\right)$.\n\nc) Zaporedje $(c_n)$ ima splošni člen $c_n = \\dfrac{b_n}{a_n}$. Dokaži, da je zaporedje $(c_n)$ padajoče, in določi njegovo natančno spodnjo in natančno zgornjo mejo."
+  },
+  {
+   "id": "VR-2026-spomladanski-p1-B4",
+   "raven": "višja",
+   "racunalo": false,
+   "besedilo": "Reši enačbi. Pri vsaki upoštevaj, kje so logaritmi definirani.\n\na) $\\log_2(4x + 5) = -1$\n\nb) $\\log(x - 2) + \\log(2x - 2) - 2\\log(x - 4) = 2\\log 2$"
+  },
+  {
+   "id": "VR-2026-spomladanski-p1-B5",
+   "raven": "višja",
+   "racunalo": false,
+   "besedilo": "V množici kompleksnih števil reši enačbo $|z|^2 - i\\,z = 10 + 2i$."
+  },
+  {
+   "id": "VR-2026-spomladanski-p2-B3",
+   "raven": "višja",
+   "racunalo": true,
+   "besedilo": "Dani so vektorji $\\vec{a} = (2, -1, 3)$, $\\vec{b} = (1, 4, -2)$ in $\\vec{c} = (2m, m - 3, 1)$, kjer je $m$ realno število.\n\na) Izračunaj velikost kota med vektorjema $\\vec{a}$ in $\\vec{b}$. Rezultat zaokroži na stotinko stopinje.\n\nb) Določi število $m$ tako, da bosta vektorja $\\vec{a}$ in $\\vec{c}$ pravokotna."
+  },
+  {
+   "id": "VR-2026-spomladanski-p2-B6",
+   "raven": "višja",
+   "racunalo": true,
+   "besedilo": "V škatli je $16$ bonbonov: $6$ čokoladnih in $10$ sadnih. Bonbone jemljemo naključno in brez vračanja.\n\na) Iz škatle naključno vzamemo $3$ bonbone. Izračunaj verjetnost, da je med njimi vsaj en čokoladni bonbon. Rezultat zapiši z okrajšanim ulomkom.\n\nb) Škatlo spet napolnimo s $6$ čokoladnimi in $10$ sadnimi bonboni. Nato $n$ sadnih bonbonov zamenjamo z $n$ čokoladnimi, tako da je v škatli še vedno $16$ bonbonov. Če zdaj naključno vzamemo $2$ bonbona, je verjetnost, da sta oba čokoladna, enaka $\\frac{3}{8}$. Izračunaj $n$."
+  }
+ ]
+}

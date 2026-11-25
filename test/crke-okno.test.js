@@ -115,7 +115,8 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     assert.ok(!overlap(r.pop, r.line), `${vp.width}: okno prekrije formulo ${JSON.stringify(r)}`);
     assert.ok(!overlap(r.pop, r.para), `${vp.width}: okno prekrije odstavek s formulo ${JSON.stringify(r)}`);
     assert.equal(r.sheet, phone, `${vp.width}: spodnji list samo na telefonu`);
-    if (phone) assert.ok(Math.abs(r.pop.bottom - r.h) < 2 && r.line.bottom <= r.pop.top, "list je spodaj, formula nad njim");
+    // Plavajoča kartica: 8 px od dna in od stranskih robov (ni prilepljena kot noga strani), formula nad njo.
+    if (phone) assert.ok(Math.abs(r.pop.bottom - (r.h - 8)) < 2 && r.pop.left >= 7 && r.line.bottom <= r.pop.top, `kartica plava nad dnom, formula nad njo ${JSON.stringify(r)}`);
     if (SHOTS) await p.screenshot({ path: path.join(SHOTS, `okno-${vp.width}.png`) });
 
     // 2) Tap v oknu ne obrne kartice in okna ne zapre.
@@ -219,6 +220,30 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
       assert.equal(await open(p), 0);
       assert.equal(await p.evaluate(() => !!document.activeElement?.closest("#vrstica [data-fx]")), true, "fokus nazaj na črki");
       assert.equal(await row.nth(0).getAttribute("aria-controls"), null);
+    }
+    // 10b) Telefon: kratek počasen poteg navzdol kartico vrne na mesto, poteg za 100 px jo zapre (j 2026-11-25).
+    if (phone) {
+      await p.$eval("#vrstica", (el) => el.scrollIntoView({ block: "center" }));
+      await settle();
+      await tap(row.nth(0));
+      await p.waitForTimeout(600);
+      const drag = (by, ms) => p.evaluate(async ([by, ms]) => {
+        const el = document.getElementById("fx-pop");
+        const b = el.getBoundingClientRect();
+        const x = b.left + 40, y = b.top + 10;
+        const tt = (cy) => [new Touch({ identifier: 1, target: el, clientX: x, clientY: cy })];
+        const fire = (type, cy) => el.dispatchEvent(new TouchEvent(type, { bubbles: true, cancelable: true, touches: type === "touchend" ? [] : tt(cy), changedTouches: tt(cy) }));
+        fire("touchstart", y);
+        for (let i = 1; i <= 5; i++) { await new Promise((r) => setTimeout(r, ms / 5)); fire("touchmove", y + (by * i) / 5); }
+        fire("touchend", y + by);
+      }, [by, ms]);
+      await drag(30, 400);
+      await p.waitForTimeout(250);
+      assert.equal(await open(p), 1, "kratek poteg navzdol okna ne zapre");
+      assert.equal(await p.$eval("#fx-pop", (el) => el.style.transform), "", "kartica se vrne na mesto");
+      await drag(100, 300);
+      await p.waitForFunction(() => document.getElementById("fx-pop").hidden, null, { timeout: 2000 });
+      assert.equal(await p.$eval("#fx-pop", (el) => el.style.transform), "", "zaprta kartica nima zamika");
     }
     // 11) Od desne proti levi (arabščina): okno ne prekrije formule in ostane na zaslonu.
     await p.evaluate(() => { document.documentElement.dir = "rtl"; });

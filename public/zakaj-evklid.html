@@ -15,14 +15,21 @@
   <meta property="og:url" content="https://evklid.app/zakaj-evklid">
   <meta property="og:title" content="Zakaj Evklid – preverjeni računi in kaj Evklid zna | evklid.app">
   <meta property="og:description" content="Kako Evklid skrbi za pravilne rezultate, kako preverjamo natančnost, kaj dobite in česa še ne zna.">
-  <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://evklid.app/icons/deljenje.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Evklid · evklid.app · slovenski AI inštruktor">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
   <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <!-- Pisavi takoj s slogi (kot pristajalna stran, server/vstopna-stran.js PISAVE): sicer prideta po prvem izrisu in
+       zamenjava pisave premakne vsebino ob sidrih cen in mature (CLS 0,20 na telefonu, meritev 21. 11. 2026). -->
+  <link rel="preload" href="/vendor/instrument-sans/files/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/vendor/instrument-sans/files/instrument-sans-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/vendor/instrument-sans/index.css">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/predstavitev.css">
@@ -68,6 +75,7 @@
     /* Stran »Zakaj Evklid«: tabele z daljšim besedilom (celice se lomijo) in podnaslovi. */
     .why-table td { white-space: normal; font-weight: 600; }
     .why-table td small { display: inline; white-space: nowrap; margin-inline-start: 6px; }
+    .why-table td small.why-ci { display: block; white-space: normal; margin-inline-start: 0; }
     .why-sub { margin: 20px 0 8px; font-size: 1.05rem; }
     .why-steps { margin-bottom: 4px; }
     /* Primer 3x + 5 = 20 kot pogovor (oblački iz pristajalne strani, account.css .land-msg); statično, brez animacije. */
@@ -191,7 +199,7 @@
       </table>
       <h3 class="why-sub">Kako brati te številke</h3>
       <ul class="about-list">
-        <li>Vzorec je majhen. Že nekaj nalog več ali manj številke opazno spremeni, zato so okvirne.</li>
+        <li>Vzorec je majhen. Že nekaj nalog več ali manj številke opazno spremeni, zato so okvirne.<!--ce:accCi--> Ob številu napak je zapisan še 95-odstotni interval zaupanja: pove, kako negotov je odstotek pri tako majhnem vzorcu. Če bi meritev z enako velikim vzorcem ponavljali, bi tako izračunani intervali v 95 odstotkih primerov zajeli pravi delež odgovorov z napako.<!--/ce:accCi--></li>
         <li>Manjših nenatančnosti, ki učenca ne zavedejo (na primer zaokroževanje ali nenatančen zapis), nismo šteli kot napako<!--ce:accMinor--> (takih odgovorov: brez preverjanja {{accMinorBrez}}, s preverjanjem {{accMinorS}})<!--/ce:accMinor-->. Odgovor, ki učenca samo vodi z vprašanji in rezultata ne pove, šteje kot odgovor brez napake.</li>
 <!--ce:accModel-->
         <li>Merili smo sam model, brez sprotnega preverjanja s programom. Meritev celega odgovora s preverjanjem še pripravljamo in jo bomo objavili tukaj.</li>
@@ -219,6 +227,12 @@
       <p class="about-text">Številke bomo objavili šele, ko bodo odgovore na prava vprašanja učencev ocenili ljudje. Račune v enačbah, odvodih in daljših izračunih že zdaj preveri program, pri besedni razlagi pa se umetna inteligenca lahko zmoti.</p>
     </section>
 <!--/ce:!accAny-->
+
+    <section class="land-sec" aria-labelledby="h-prijave">
+      <h2 id="h-prijave">Prijavljene napake</h2>
+      <p class="about-text">Pod vsakim odgovorom inštruktorja in v vsaki lekciji je gumb »Prijavi napako«, s katerim učenec sporoči, kaj je narobe. Prijave pregledamo in napake, ki jih najdemo, popravimo.</p>
+      <!--prijave-->
+    </section>
 
     <section class="land-sec" aria-labelledby="h-klepetalniki">
       <h2 id="h-klepetalniki">Evklid in splošni klepetalniki</h2>

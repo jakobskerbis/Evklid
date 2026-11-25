@@ -1,12 +1,12 @@
 // Laboratorij (zavihek v »Uči se«, public/uci-se.js): vsi virtualni poskusi na enem mestu, po predmetih,
 // najprej učenčev predmet in razred. Klik na poskus ga odpre čez celo širino; »← Laboratorij«, Esc ali
 // tipka Nazaj (labBack v app.js) vrnejo na seznam. Strežnik: server/laboratorij.js (zaklep kot v učbeniku).
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 import { mountSim } from "./sim/index.js";
 import { isStoreApp } from "./pay-ui.js";
 
-let D = null; // { api, escapeHtml, getStudent, openLesson }
+let D = null; // { api, escapeHtml, getStudent, openLesson, askTutor(text, oznaka) }
 let data = null; // { sid, myPath, experiments, offers }
 let openKey = null; // odprt poskus
 let shownKey = null; // poskus, ki je zdaj narisan
@@ -28,6 +28,20 @@ export function initLab(deps) {
     const topic = e.target.closest("[data-lab-topic]");
     if (topic) return D.openLesson(topic.dataset.labTopic);
     if (e.target.closest("[data-lab-back]")) return labBack();
+    // »Vprašaj inštruktorja«: klepet z vpisanim začetkom vprašanja; poskus ostane odprt, vrnitev iz klepeta (app.js).
+    // Posnetek stanja (nastavitve, odčitki, zapisane meritve; public/sim/lab.js stanjePoskusa) gre z vprašanjem kot
+    // skrit kontekst (server/ucni-kontekst.js). Modul lab.js je že naložen, ker je poskus odprt.
+    if (e.target.closest("[data-lab-ask]")) {
+      const x = find(openKey);
+      if (!x || x.locked) return;
+      const mount = box().querySelector(".lab-mount");
+      const kontekst = { v: 1, sourceType: "lab", sourceId: x.key }; // temo izbere strežnik (učenčeva pot)
+      import("./sim/lab.js")
+        .then((m) => Object.assign(kontekst, m.stanjePoskusa(mount)))
+        .catch(() => {})
+        .then(() => D.askTutor?.(t("lab.askText", { title: x.title }), x.title, kontekst));
+      return;
+    }
     if (e.target.closest("[data-lab-upgrade]")) document.querySelector("#account-tab")?.click();
   });
   // Esc v odprtem poskusu: nazaj na seznam (ne, ko je odprt meni ali okno, ki Esc porabi samo).
@@ -156,6 +170,7 @@ function renderExperiment() {
     <button type="button" class="ghost back lab-back" data-lab-back>${icon("arrow-left")}<span>${esc(t("nav.lab"))}</span></button>
     <h2 class="lab-title" dir="auto">${icon("flask-conical")}<span>${esc(x.title)}</span></h2>
     <p class="lab-desc" dir="auto">${esc(x.desc)}</p>
+    ${x.locked || !D.askTutor ? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>${icon("message-circle")}<span>${esc(t("task.askTutor"))}</span></button>`}
     ${
       x.locked
         ? `<section class="card tb-locked lab-locked"><h2>${icon("lock")}<span>${esc(t("lab.lockedTitle", { title: x.title }))}</span></h2>

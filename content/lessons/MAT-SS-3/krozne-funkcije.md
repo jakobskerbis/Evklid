@@ -227,13 +227,25 @@ $\frac{2\pi}{3}$. Velja $\cos\frac{2\pi}{3} = -\frac12$ in $\frac{2\pi}{3}$ lež
 
 ## Povzetek
 
-- Krožne funkcije so obratne funkcije zoženih kotnih funkcij: sinus na $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, kosinus na $[0, \pi]$, tangens na $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$.
-- $\arcsin$: $D = [-1, 1]$, $Z = \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, narašča, liha.
-- $\arccos$: $D = [-1, 1]$, $Z = [0, \pi]$, pada, ni ne soda ne liha; $\arccos(-x) = \pi - \arccos x$.
-- $\arctan$: $D = \mathbb{R}$, $Z = \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$, narašča, liha, vodoravni asimptoti $y = \pm\frac{\pi}{2}$.
-- Graf krožne funkcije je zrcalna slika zoženega dela kotne funkcije čez $y = x$.
-- $\sin(\arcsin x) = x$ za vse $x \in [-1, 1]$; $\arcsin(\sin x) = x$ samo za $x \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$.
-- $\sin^{-1}$ na kalkulatorju je $\arcsin$, ne $\frac{1}{\sin}$. Arkus da le eno rešitev enačbe; ostale dobiš s splošno rešitvijo.
+- **Krožne funkcije** so obratne funkcije zoženih kotnih funkcij: sinus na $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, kosinus na $[0, \pi]$, tangens na $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$.
+- Graf je zrcalna slika zoženega dela kotne funkcije čez $y = x$.
+
+| | $D$ | $Z$ |
+|:-:|:-:|:-:|
+| $\arcsin$ | $[-1, 1]$ | $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ |
+| $\arccos$ | $[-1, 1]$ | $[0, \pi]$ |
+| $\arctan$ | $\mathbb{R}$ | $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ |
+
+- $\arcsin$ in $\arctan$ naraščata in sta lihi.
+- $\arccos$ pada in ni ne soda ne liha.
+- $\arctan$ ima vodoravni asimptoti $y = \pm\frac{\pi}{2}$.
+
+$$\arccos(-x) = \pi - \arccos x$$
+
+- $\sin(\arcsin x) = x$ za vse $x \in [-1, 1]$.
+- $\arcsin(\sin x) = x$ samo za $x \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$.
+- $\sin^{-1}$ na kalkulatorju je $\arcsin$, ne $\frac{1}{\sin}$.
+- Arkus da le eno rešitev enačbe; ostale dobiš s splošno rešitvijo.
 
 ## Ponovitev
 

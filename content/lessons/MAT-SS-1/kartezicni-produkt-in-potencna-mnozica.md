@@ -215,11 +215,26 @@ Dva kraja: $\{\text{Piran}, \text{Bled}\}$, $\{\text{Piran}, \text{Ptuj}\}$, $\{
 
 ## Povzetek
 
-- Urejeni par $(a, b)$: $(a, b) = (c, d) \iff a = c \wedge b = d$; pri $a \neq b$ je $(a, b) \neq (b, a)$.
-- $A \times B = \{(a, b) \mid a \in A \wedge b \in B\}$; v splošnem $A \times B \neq B \times A$.
-- Moč: $|A \times B| = |A| \cdot |B|$ (katalog piše $m(A \times B) = m(A) \cdot m(B)$).
-- Graf: končni množici dasta posamezne točke, intervala pravokotnik, npr. $[1, 3] \times [0, 2]$.
-- Potenčna množica $\mathcal{P}(A)$ je množica vseh podmnožic $A$; vedno vsebuje $\emptyset$ in $A$; njeni elementi so množice.
+**Urejeni par:**
+
+$$(a, b) = (c, d) \iff a = c \wedge b = d$$
+
+- Pri $a \neq b$ je $(a, b) \neq (b, a)$.
+
+**Kartezični produkt:**
+
+$$A \times B = \{(a, b) \mid a \in A \wedge b \in B\}$$
+
+- V splošnem $A \times B \neq B \times A$.
+- **Moč** (katalog piše $m(A \times B) = m(A) \cdot m(B)$):
+
+$$|A \times B| = |A| \cdot |B|$$
+
+- **Graf:** končni množici dasta posamezne točke.
+- Intervala dasta pravokotnik, npr. $[1, 3] \times [0, 2]$.
+- **Potenčna množica** $\mathcal{P}(A)$ je množica vseh podmnožic $A$.
+- $\mathcal{P}(A)$ vedno vsebuje $\emptyset$ in $A$.
+- Elementi $\mathcal{P}(A)$ so množice.
 - (višja raven) Če ima $A$ $n$ elementov, je $|\mathcal{P}(A)| = 2^n$.
 
 ## Ponovitev

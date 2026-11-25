@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import zlib from "node:zlib";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { SCHOOL_SYSTEMS, SYSTEM_IDS, gradesOf, systemForCountry, defaultGrade } from "../public/regions.js";
+import { SYSTEM_IDS, gradesOf, systemForCountry, defaultGrade } from "../public/regions.js";
 import { listPaths, pathKeyFor, getTopic, topicOrder, baseTopicIds, pathLabelFor } from "../server/curriculum.js";
 import { hasGenerator, generateTask } from "../server/practice/index.js";
 import { normalizeSettings } from "../server/settings.js";

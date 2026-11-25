@@ -4,13 +4,16 @@
 // »Druge pretekle pole« odpre celotno izbiro (npr. pole druge šole).
 // Katalog (server/exam-papers-si.js) ima samo povezave na ric.si: pole so last Državnega izpitnega centra,
 // zato jih ne kopiramo in ne prenašamo; vsaka povezava odpre dokument na ric.si v novem zavihku.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 export const SI_EXAMS = { OSNOVNA_SOLA: ["NPZ6", "NPZ9"], SREDNJA_SOLA: ["MATURA", "POKLICNA"] };
 export const examName = (id) => t(`pp.exam.${id}`);
+// Raven matematike na splošni maturi iz profila (»4. letnik VR«): "VR", "OR" ali null (»še ne vem«). Isto pravilo
+// za Pripravljenost in Pretekle pole, da na isti strani ne pišeta različnih ravni.
+export const matLevel = (s) => / (VR|OR)$/.exec(String(s?.curriculum_level || "").trim())?.[1] || null;
 const SUBS = { MATURA: "pp.sub.MATURA", POKLICNA: "pp.sub.POKLICNA" };
 const SUBJECTS = ["MAT", "FIZ", "KEM", "BIO"];
 const SHOW = 8; // toliko rokov naenkrat, ostali za »Pokaži starejše«
@@ -27,7 +30,13 @@ export async function loadPapers(api) {
 const termText = (e) => [t(`pp.term.${e.term}`), e.session ? t("pp.session", { n: e.session }) : ""].filter(Boolean).join(" · ");
 // RIC pri NPZ: »preizkus znanja« in »navodila za vrednotenje«, pri maturi »izpitna pola« in »navodila za ocenjevanje«.
 const NPZ_FILE = { paper: "pp.file.test", scoring: "pp.file.scoringNpz" };
-const fileText = (f, e) => t((e.exam.startsWith("NPZ") && NPZ_FILE[f.kind]) || `pp.file.${f.kind}`);
+export const fileText = (f, e) => t((e.exam.startsWith("NPZ") && NPZ_FILE[f.kind]) || `pp.file.${f.kind}`);
+// Navodilo »Najprej prenesi polo …« imenuje prvi gumb za prenos v vrstici: NPZ »Preizkus znanja«, poklicna matura
+// »Izpitna pola«, splošna matura »Izpitna pola 1« (pregled #917, 3. prehod).
+export const firstFile = (e) => {
+  const f = e?.files.find((x) => x.kind.startsWith("paper")) || e?.files[0];
+  return f ? fileText(f, e) : t("pp.file.paper");
+};
 
 // Koraki izbire: [ključ, vprašanje, možnosti [vrednost, oznaka, opis], izbrana oznaka].
 function steps(v, papers, subjectName) {
@@ -78,7 +87,8 @@ function rowHtml(e, i, tutor, local, ours) {
 }
 
 // Namesti izbirnik v `box`. start: { track, exam, subject, level } (privzeto učenčeva raven).
-export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null, follow = false } = {}) {
+// onLevel(raven): učenec je izbral drugo raven (OR/VR) matematike na maturi.
+export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null, onLevel = null, follow = false } = {}) {
   const v = { ...start };
   // Neveljavna začetna izbira (npr. predmet, ki ga izpit nima) se izbriše od tam naprej.
   let cleared = null;
@@ -121,7 +131,7 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
           .map(([val, label, sub]) => `<button type="button" class="choice lp-opt ${val === v[current[0]] ? "on" : ""}" data-pp-key="${current[0]}" data-pp-val="${esc(val)}"><span>${esc(label)}</span>${sub ? `<small>${esc(sub)}</small>` : ""}</button>`)
           .join("")}</div>`
           : entries.length
-            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint"))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
+            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint", { file: firstFile(shown[0]) }))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
             : `<p class="muted">${esc(t("pp.empty"))}</p>`
       }${other}`;
   };
@@ -158,7 +168,9 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
       autofill(v, papers, subjectName);
       open = steps(v, papers, subjectName).find((s) => !s[3])?.[0] || null;
       all = false;
-      return render();
+      render();
+      if (key === "level") onLevel?.(val);
+      return;
     }
     if (e.target.closest("[data-pp-more]")) {
       all = true;

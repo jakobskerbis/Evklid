@@ -1,0 +1,123 @@
+# Posodobitev aplikacije brez nove gradnje (EAS Update) – samo po zelenih testih (j, 20. 11. 2026).
+# Zažene se, ko se Testi (testi.yml) za združitev v main končajo uspešno (vsi štirje posli). Če je od zadnje
+# objave kakšen commit spremenil kodo aplikacije ali skupne datoteke s spletom (POTI), objavi novo različico
+# JavaScripta na kanal "direct" (APK s strani /prenesi). Telefoni jo prenesejo ob zagonu (src/lib/updates.ts).
+# Dobijo jo samo gradnje z enako domorodno kodo (runtimeVersion: fingerprint); za novo domorodno kodo je potreben nov APK.
+# Prej je to delal EAS Workflow (mobile/.eas/workflows/posodobitev.yml) ob vsakem pushu, brez testov; ukaz je isti:
+# kanal direct, Android, okolje spremenljivk EAS "preview" (kot gradnja "direct", distribution internal),
+# EXPO_PUBLIC_CHANNEL=direct (sicer se prstni odtis razlikuje od gradnje in posodobitev ne pride na telefone).
+# Objavi se le commit, ki je še vrh main (starejši zagon, ki se konča za novejšim, ne povozi novejše objave).
+# Skrivnost EXPO_TOKEN (ista kot za apk.yml). Navodila: docs/mobilna-aplikacija.md
+name: Posodobitev telefonov
+on:
+  workflow_run:
+    workflows: [Testi]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  objavi:
+    name: Objava na kanal direct
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    # concurrency na poslu, ne na poteku: preskočen tek (npr. konec Testov za PR iz forka z vejo main)
+    # sicer zasede vrsto in nadomesti čakajoči pravi tek.
+    concurrency:
+      group: ota
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SHA: ${{ github.event.workflow_run.head_sha }}
+      EXPO_PUBLIC_CHANNEL: direct
+      EXPO_NO_TELEMETRY: "1"
+      # Kar pride v aplikacijo (od korena repozitorija): mobile/ in vse skupne datoteke, ki jih aplikacija uvozi
+      # (test/objava-po-testih.test.js preveri, da je seznam popoln).
+      POTI: >-
+        mobile
+        brand.json
+        public/i18n
+        public/ai-oznaka
+        public/check-progress.js
+        public/deli-most.js
+        public/enote-izbira.js
+        public/formula-card.js
+        public/formula-data.js
+        public/lesson-steps.js
+        public/nujno.js
+        public/preveri-se.js
+        public/regions.js
+        public/rich.js
+        public/mat/izris.js
+        public/stopnja.js
+        public/tisk-v-chromu.js
+        public/vodic.js
+        public/vodoravna-tabela.js
+        public/xp-levels.js
+        server/practice
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+      # Zadnji objavljeni commit (iz prejšnjega teka).
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.ota-objava
+          key: ota-objava-${{ github.run_id }}
+          restore-keys: ota-objava-
+      - name: Ali je kaj za objavo
+        id: kaj
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          vrh=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" -q .sha)
+          if [ "$vrh" != "$SHA" ]; then
+            echo "main je že na ${vrh:0:12}: objavi ga tek po njegovih testih (ta commit ${SHA:0:12} je vključen)."
+            echo "objavi=0" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          zadnja=$(cat ~/.ota-objava 2>/dev/null || true)
+          if [ -n "$zadnja" ] && git cat-file -e "$zadnja^{commit}" 2>/dev/null && git merge-base --is-ancestor "$zadnja" "$SHA"; then
+            spremembe=$(git diff --no-renames --name-only "$zadnja" "$SHA" -- $POTI)
+            if [ -z "$spremembe" ]; then
+              echo "Od zadnje objave (${zadnja:0:12}) ni sprememb aplikacije."
+              echo "objavi=0" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            echo "Spremembe od ${zadnja:0:12}:"; head -50 <<<"$spremembe" # brez cevi: SIGPIPE ob pipefail
+          else
+            echo "Zadnja objava ni znana: objavim (ponovna objava iste kode ne škodi)."
+          fi
+          echo "objavi=1" >> "$GITHUB_OUTPUT"
+      - if: steps.kaj.outputs.objavi == '1'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - if: steps.kaj.outputs.objavi == '1'
+        working-directory: mobile
+        run: npm ci --no-audit --no-fund
+      - name: EAS Update (kanal direct)
+        if: steps.kaj.outputs.objavi == '1'
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          SPOROCILO: ${{ github.event.workflow_run.head_commit.message }}
+        run: |
+          set -euo pipefail
+          test -n "$EXPO_TOKEN" || { echo "::error::Ni skrivnosti EXPO_TOKEN (docs/mobilna-aplikacija.md)"; exit 1; }
+          msg=$(printf '%s\n' "$SPOROCILO" | head -1 | cut -c1-200)
+          npx --yes eas-cli@latest update --channel direct --platform android --environment preview --non-interactive --message "$msg (${SHA:0:12})"
+          echo "$SHA" > ~/.ota-objava
+      - if: steps.kaj.outputs.objavi == '1'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.ota-objava
+          key: ota-objava-${{ github.run_id }}

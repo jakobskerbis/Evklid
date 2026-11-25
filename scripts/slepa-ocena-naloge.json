@@ -1,0 +1,965 @@
+{
+ "opis": "Slepa ocena inštruktorja, MAT matura (j, 19. 11. 2026). Javne naloge (j: brez skrivnosti); uradne rešitve niso v repozitoriju.",
+ "naloge": [
+  {
+   "id": 1,
+   "naslov": "MAT matura OR · Algebrski izrazi",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Algebrski izrazi",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Poenostavi izraz (a^2 - 9)/(a^2 + 6a + 9) : (a - 3)/(2a + 6)"
+  },
+  {
+   "id": 2,
+   "naslov": "MAT matura OR · Sistemi enačb",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Sistemi enačb",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "reši sistem enačb\n3x − 2y = 7\n5x + 4y = 19"
+  },
+  {
+   "id": 3,
+   "naslov": "MAT matura OR · Neenačbe",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Neenačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Reši neenačbo |2x − 3| < 5"
+  },
+  {
+   "id": 4,
+   "naslov": "MAT matura OR · Neenačbe",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Neenačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "x^2 − x − 6 ≥ 0 kako to rešim?"
+  },
+  {
+   "id": 5,
+   "naslov": "MAT matura OR · Kvadratna funkcija",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Kvadratna funkcija",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Imam f(x) = −2x^2 + 8x − 6. Določi teme, ničle in zalogo vrednosti."
+  },
+  {
+   "id": 6,
+   "naslov": "MAT matura OR · Eksponentne enačbe",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Eksponentne enačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Reši enačbo 4^x − 3·2^x − 4 = 0"
+  },
+  {
+   "id": 7,
+   "naslov": "MAT matura OR · Logaritemske enačbe",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Logaritemske enačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "log_2(x+1) + log_2(x−1) = 3, koliko je x?"
+  },
+  {
+   "id": 8,
+   "naslov": "MAT matura OR · Logaritmi",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Logaritmi",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunaj brez kalkulatorja: log_3 54 − log_3 2 + log_5 √5"
+  },
+  {
+   "id": 9,
+   "naslov": "MAT matura OR · Trigonometrične enačbe",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Trigonometrične enačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Reši enačbo 2 sin^2 x − sin x − 1 = 0"
+  },
+  {
+   "id": 10,
+   "naslov": "MAT matura OR · Trigonometrija",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Trigonometrija",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "sin α = 3/5 in α je v drugem kvadrantu. Izračunaj cos α, tg α in sin 2α."
+  },
+  {
+   "id": 11,
+   "naslov": "MAT matura OR · Trikotnik",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Trikotnik",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "V trikotniku je a = 7 cm, b = 8 cm in γ = 60°. Izračunaj stranico c in ploščino trikotnika."
+  },
+  {
+   "id": 12,
+   "naslov": "MAT matura OR · Aritmetično zaporedje",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Aritmetično zaporedje",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "V aritmetičnem zaporedju je a3 = 7 in a8 = 22. Izračunaj a1, d in vsoto prvih 20 členov."
+  },
+  {
+   "id": 13,
+   "naslov": "MAT matura OR · Geometrijsko zaporedje",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Geometrijsko zaporedje",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Geometrijsko zaporedje ima a1 = 3 in q = 2. Najmanj koliko členov moramo sešteti, da vsota preseže 3000?"
+  },
+  {
+   "id": 14,
+   "naslov": "MAT matura OR · Geometrijska vrsta",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Geometrijska vrsta",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunaj vsoto neskončne vrste 12 + 6 + 3 + 1,5 + ..."
+  },
+  {
+   "id": 15,
+   "naslov": "MAT matura OR · Obrestni račun",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Obrestni račun",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Na banko naložimo 5000 € po 3 % letni obrestni meri, obresti se pripisujejo letno (obrestno obrestovanje). Koliko denarja imamo po 8 letih?"
+  },
+  {
+   "id": 16,
+   "naslov": "MAT matura OR · Odvod",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Odvod",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Odvajaj f(x) = (x^2 + 1)e^(2x)"
+  },
+  {
+   "id": 17,
+   "naslov": "MAT matura OR · Tangenta",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Tangenta",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Zapiši enačbo tangente na graf funkcije f(x) = x^3 − 2x + 1 v točki z absciso x = 1."
+  },
+  {
+   "id": 18,
+   "naslov": "MAT matura OR · Ekstremi",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Ekstremi",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Poišči lokalne ekstreme funkcije f(x) = x^3 − 3x^2 − 9x + 2"
+  },
+  {
+   "id": 19,
+   "naslov": "MAT matura VR · Optimizacija",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Optimizacija",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Iz pravokotnega kosa pločevine 30 cm × 16 cm v vseh štirih vogalih izrežemo enake kvadrate in zapognemo škatlo brez pokrova. Kolikšna mora biti stranica izrezanih kvadratov, da bo prostornina škatle največja? Koliko je ta prostornina?"
+  },
+  {
+   "id": 20,
+   "naslov": "MAT matura OR · Določeni integral",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Določeni integral",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunaj ∫ od 0 do 2 (3x^2 − 2x + 1) dx"
+  },
+  {
+   "id": 21,
+   "naslov": "MAT matura OR · Ploščina med krivuljama",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Ploščina med krivuljama",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunaj ploščino lika, ki ga omejujeta parabola y = x^2 in premica y = x + 2."
+  },
+  {
+   "id": 22,
+   "naslov": "MAT matura VR · Nedoločeni integral",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Nedoločeni integral",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Kako izračunam ∫ x·cos x dx?"
+  },
+  {
+   "id": 23,
+   "naslov": "MAT matura OR · Kombinatorika",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Kombinatorika",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Na koliko načinov lahko iz razreda z 12 fanti in 10 dekleti izberemo 5-člansko skupino, v kateri sta natanko 2 dekleti?"
+  },
+  {
+   "id": 24,
+   "naslov": "MAT matura OR · Verjetnost",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Verjetnost",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Vržemo dve pošteni kocki. Kolikšna je verjetnost, da je vsota pik enaka 8?"
+  },
+  {
+   "id": 25,
+   "naslov": "MAT matura OR · Binomska verjetnost",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Binomska verjetnost",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Strelec zadene tarčo z verjetnostjo 0,7. Ustreli 5-krat. Kolikšna je verjetnost, da zadene natanko 3-krat?"
+  },
+  {
+   "id": 26,
+   "naslov": "MAT matura OR · Statistika",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Statistika",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Ocene v skupini so 5, 3, 4, 4, 2, 5, 3, 4. Izračunaj povprečje, mediano, modus in standardni odklon."
+  },
+  {
+   "id": 27,
+   "naslov": "MAT matura OR · Vektorji",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Vektorji",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "a = (2, −1, 3), b = (1, 4, −2). Izračunaj skalarni produkt in kot med vektorjema."
+  },
+  {
+   "id": 28,
+   "naslov": "MAT matura OR · Premica",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Premica",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Zapiši enačbo premice skozi točki A(1, 2) in B(4, −4) in izračunaj razdaljo koordinatnega izhodišča do te premice."
+  },
+  {
+   "id": 29,
+   "naslov": "MAT matura OR · Krožnica",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Krožnica",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Določi središče in polmer krožnice x^2 + y^2 − 6x + 4y − 12 = 0"
+  },
+  {
+   "id": 30,
+   "naslov": "MAT matura OR · Kompleksna števila",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Kompleksna števila",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunaj (2 + 3i)/(1 − i) in absolutno vrednost rezultata."
+  },
+  {
+   "id": 31,
+   "naslov": "MAT matura OR · Polinomi",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Polinomi",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Poišči vse ničle polinoma p(x) = x^3 − 2x^2 − 5x + 6"
+  },
+  {
+   "id": 32,
+   "naslov": "MAT matura VR · Racionalna funkcija",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Racionalna funkcija",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Določi ničle, pole in vodoravno asimptoto racionalne funkcije f(x) = (x^2 − 4)/(x^2 − x − 6)"
+  },
+  {
+   "id": 33,
+   "naslov": "MAT matura OR · Telesa",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Telesa",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Pravilna štiristrana piramida ima osnovni rob 6 cm in višino 4 cm. Izračunaj površino in prostornino."
+  },
+  {
+   "id": 34,
+   "naslov": "MAT matura OR · Telesa",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Telesa",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Pokončni stožec ima polmer osnovne ploskve 3 cm in stranico 5 cm. Izračunaj prostornino in kot ob vrhu osnega preseka."
+  },
+  {
+   "id": 35,
+   "naslov": "MAT matura OR · Inverzna funkcija",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Inverzna funkcija",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Poišči inverzno funkcijo k f(x) = (2x − 1)/(x + 3)"
+  },
+  {
+   "id": 36,
+   "naslov": "MAT matura OR · Definicijsko območje",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Definicijsko območje",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Določi definicijsko območje funkcije f(x) = ln(4 − x^2) + √(x + 1)"
+  },
+  {
+   "id": 37,
+   "naslov": "MAT matura VR · Limita",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Limita",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunaj limito lim x→2 (x^2 − 4)/(x^2 − 3x + 2)"
+  },
+  {
+   "id": 38,
+   "naslov": "MAT matura OR · Eksponentna rast",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Eksponentna rast",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Število bakterij se vsake 3 ure podvoji. Na začetku jih je 500. Čez koliko ur jih bo 20 000?"
+  },
+  {
+   "id": 39,
+   "naslov": "MAT matura VR · Trigonometrične identitete",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Trigonometrične identitete",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Dokaži, da velja (1 − cos 2x)/sin 2x = tg x"
+  },
+  {
+   "id": 40,
+   "naslov": "MAT matura OR · Odstotki",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Odstotki",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Cena izdelka se je najprej zvišala za 20 %, nato znižala za 20 %. Za koliko odstotkov se je spremenila glede na prvotno ceno?"
+  },
+  {
+   "id": 41,
+   "naslov": "MAT matura OR · Deljivost",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Deljivost",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Poišči največji skupni delitelj in najmanjši skupni večkratnik števil 84 in 126."
+  },
+  {
+   "id": 42,
+   "naslov": "MAT matura OR · Koreni",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Koreni",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Racionaliziraj imenovalec: 6/(√5 − √2)"
+  },
+  {
+   "id": 43,
+   "naslov": "MAT matura OR · Liki",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Liki",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Diagonali romba merita 10 cm in 24 cm. Izračunaj stranico, ploščino in višino romba."
+  },
+  {
+   "id": 44,
+   "naslov": "MAT matura VR · Logaritemske neenačbe",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Logaritemske neenačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Reši neenačbo log_(1/2)(x − 1) > −2"
+  },
+  {
+   "id": 45,
+   "naslov": "MAT matura OR · Kotne funkcije",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Kotne funkcije",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Določi amplitudo, osnovno periodo in ničle funkcije f(x) = 3 sin(2x − π/3)"
+  },
+  {
+   "id": 46,
+   "naslov": "MAT matura VR · Vektorski produkt",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Vektorski produkt",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Točke A(1, 0, 2), B(3, 1, 0) in C(0, 2, 1) so oglišča trikotnika. Izračunaj njegovo ploščino."
+  },
+  {
+   "id": 47,
+   "naslov": "MAT matura OR · Verjetnost",
+   "vrsta": "R",
+   "raven": "OR",
+   "tema": "Verjetnost",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "V škatli je 5 rdečih in 3 modre kroglice. Brez vračanja izvlečemo dve. Kolikšna je verjetnost, da sta različnih barv?"
+  },
+  {
+   "id": 48,
+   "naslov": "MAT matura VR · Zaporedja",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Zaporedja",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Ali je zaporedje a_n = (2n + 1)/(n + 3) naraščajoče? Izračunaj še njegovo limito."
+  },
+  {
+   "id": 49,
+   "naslov": "MAT matura VR · Prostornina vrtenine",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Prostornina vrtenine",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunaj prostornino vrtenine, ki nastane, ko lik pod grafom y = √x na intervalu [0, 4] zavrtimo okoli osi x."
+  },
+  {
+   "id": 50,
+   "naslov": "MAT matura VR · Kompleksna števila",
+   "vrsta": "R",
+   "raven": "VR",
+   "tema": "Kompleksna števila",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik VR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Reši enačbo z^2 + 2z + 5 = 0 v množici kompleksnih števil."
+  },
+  {
+   "id": 51,
+   "naslov": "MAT matura OR · Eksponentne enačbe",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Eksponentne enačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Reševal sem enačbo 2^(x+1) = 3^x in dobil x = 1. Je to prav?"
+  },
+  {
+   "id": 52,
+   "naslov": "MAT matura OR · Odvod",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Odvod",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "odvod od sin(x^2) mi je prišel cos(x^2). je pravilno?"
+  },
+  {
+   "id": 53,
+   "naslov": "MAT matura OR · Analitična geometrija",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Analitična geometrija",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Ploščina trikotnika z oglišči A(0,0), B(4,0) in C(1,3) mi je prišla 6. Ali je pravilno?"
+  },
+  {
+   "id": 54,
+   "naslov": "MAT matura OR · Iracionalne enačbe",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Iracionalne enačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Rešil sem √(x + 5) = x − 1 in dobil x = 4 in x = −1. Je prav?"
+  },
+  {
+   "id": 55,
+   "naslov": "MAT matura OR · Določeni integral",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Določeni integral",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Integral 1/x od 1 do e mi je prišel 1. Ali je to prav?"
+  },
+  {
+   "id": 56,
+   "naslov": "MAT matura OR · Verjetnost",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Verjetnost",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Izračunal sem verjetnost, da pri treh metih kovanca pade vsaj en grb, in dobil 3/8. Je pravilno?"
+  },
+  {
+   "id": 57,
+   "naslov": "MAT matura OR · Geometrijsko zaporedje",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Geometrijsko zaporedje",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Za zaporedje 2, 6, 18, ... sem izračunal vsoto prvih 6 členov in dobil 728. Prav?"
+  },
+  {
+   "id": 58,
+   "naslov": "MAT matura OR · Tangenta",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Tangenta",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Enačba tangente na y = x^2 v točki (3, 9): dobil sem y = 6x − 9. Je prav?"
+  },
+  {
+   "id": 59,
+   "naslov": "MAT matura OR · Trigonometrične enačbe",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Trigonometrične enačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Enačbo sin x = 1/2 sem rešil tako: x = π/6 + 2kπ. Ali je to vse?"
+  },
+  {
+   "id": 60,
+   "naslov": "MAT matura OR · Vektorji",
+   "vrsta": "P",
+   "raven": "OR",
+   "tema": "Vektorji",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Kot med vektorjema (1, 2) in (3, −1) sem izračunal in dobil 45°. Je prav?"
+  },
+  {
+   "id": 61,
+   "naslov": "MAT matura OR · Neenačbe",
+   "vrsta": "K",
+   "raven": "OR",
+   "tema": "Neenačbe",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Zakaj se pri neenačbi obrne znak, ko jo pomnožiš z negativnim številom? Ne razumem tega."
+  },
+  {
+   "id": 62,
+   "naslov": "MAT matura OR · Odvod",
+   "vrsta": "K",
+   "raven": "OR",
+   "tema": "Odvod",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Kaj je pravzaprav odvod? Za maturo hočem to razumet, ne samo znat formule."
+  },
+  {
+   "id": 63,
+   "naslov": "MAT matura OR · Logaritmi",
+   "vrsta": "K",
+   "raven": "OR",
+   "tema": "Logaritmi",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Zakaj logaritem negativnega števila ne obstaja?"
+  },
+  {
+   "id": 64,
+   "naslov": "MAT matura OR · Kombinatorika",
+   "vrsta": "K",
+   "raven": "OR",
+   "tema": "Kombinatorika",
+   "nastavitve": {
+    "educational_track": "SREDNJA_SOLA",
+    "curriculum_level": "4. letnik OR",
+    "subject": "MAT",
+    "solving_mode": "B",
+    "goal": "matura"
+   },
+   "q": "Kdaj uporabim permutacije in kdaj kombinacije? Vedno zamešam."
+  }
+ ]
+}

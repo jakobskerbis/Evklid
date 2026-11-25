@@ -161,7 +161,11 @@ test("an inline formula never overlaps the lines around it and keeps line spacin
 // j 2026-11-04: »Predolge zapise ustrezno prelomi v drugo vrstico. Če je mogoče, ne uporabljaj scrollanja. To naj velja
 // za vse enačbe.« Celoten videz v simulacijah, klepetu in nalogah preverja scripts/preveri-formule.cjs.
 test("every equation in the app is fitted: sims, chat, exercises, formula cards (not only lessons)", async () => {
-  for (const f of ["app.js", "kalkulator.js"]) assert.match(pub(f), /import \{ initSirina(?:, prilagodiZdaj)? \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/, f);
+  assert.match(pub("kalkulator.js"), /import \{ initSirina(?:, prilagodiZdaj)? \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/);
+  // app.js: sirina.js se naloži z izrisom formul (pripraviIzris, rich.js), ne pred Učno potjo (test/zacetek-leno.test.js).
+  assert.match(pub("app.js"), /const sirinaMod = lenModul\("\.\/sirina\.js", \(m\) => m\.initSirina\(\)\);/);
+  assert.match(pub("app.js"), /const pripraviIzris = \(\) => Promise\.all\(\[naloziKnjiznice\(\), fxMod\.load\(\), sirinaMod\.load\(\)\]\);/);
+  assert.match(pub("app.js"), /\ninitDrsniki\(\);/);
   const js = pub("sirina.js");
   assert.match(js, /mo\.observe\(document\.body, \{ childList: true, subtree: true \}\)/);
   // simulacija ob vsakem premiku drsnika: rešitev za isto obliko formule brez merjenja (drsnik ostane gladek)
@@ -217,8 +221,9 @@ test("decimal comma in sim formulas has no gap (»0,041«, not »0, 041«); list
   assert.equal(decVejica("2,5 + 3,75 = 6,25"), "2{,}5 + 3{,}75 = 6{,}25");
   assert.equal(decVejica("10^{2,5}"), "10^{2{,}5}");
   for (const t of ["1{,}5", "x_{1,2} = 3", "\\{1,2,3\\}", "\\{1,5\\}", "(1,2,3)", "T(1, 2)", "5\\,000"]) assert.equal(decVejica(t), t);
-  assert.match(pub("sim/kit.js"), /katex\.renderToString\(decVejica\(t\)/);
-  assert.match(pub("demos.js"), /katex\.renderToString\(decVejica\(t\)/);
+  // Izris s skupnim pravilom za vejico (public/mat/izris.js, vejica: true; enoten matematični zapis F1).
+  assert.match(pub("sim/kit.js"), /izrisi\(t, \{ vejica: true \}\)/);
+  assert.match(pub("demos.js"), /izrisi\(t, \{ vejica: true \}\)/);
 });
 
 // Pregled 4. 11.: zložena formula ostane za bralnik zaslona in kopiranje izvirna (MathML in njegov TeX); klepet
@@ -231,8 +236,10 @@ test("a folded formula keeps the original MathML; the chat scrolls to the bottom
   // D5 (#684): izris med tokom gre prek predpomnilnika blokov (izrisBlokov), končni prek chatRich; vrstni red ostane.
   // Napis med čakanjem (#790): HTML odgovora najprej v html, nato v mehurček (z napisom ali brez); vrstni red ostane.
   assert.match(app, /const html = koncno \? chatRich\(shown\) : izrisBlokov\(streamSafe\(shown\)\);/);
-  assert.match(app, /bubble\.innerHTML = \(html \? [^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
-  assert.match(app, /box\.appendChild\(el\);\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
+  assert.match(app, /bubble\.innerHTML = \(html \? [^\n]*\n\s*\};/);
+  assert.match(app, /narisi\(shown, koncno\);\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
+  // Sporočilo z meritvami (meri: false = klicatelj prilagodi in pomakne enkrat za vsa, test/klepet-zgodovina.test.js).
+  assert.match(app, /else box\.appendChild\(el\);\n\s*if \(!meri\) return el;\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
   // kemijska enačba: znak na začetku nadaljevanja ostane zunaj \mathrm (sicer predznak brez razmika)
   const { zlozTex } = await import("../public/sirina.js");
   const z = zlozTex("\\mathrm{2Mg + O_2 \\rightarrow 2MgO + 2H_2O + CO_2 + NaCl + KCl + HCl}", 3, 20);

@@ -171,12 +171,25 @@ $r = \dfrac{30}{15} = 2\,\text{km}$ in $R = \dfrac{5 \cdot 12 \cdot 13}{4 \cdot 
 
 ## Povzetek
 
-- Polobseg: $s = \dfrac{a + b + c}{2}$.
-- Heronova formula: $S = \sqrt{s(s - a)(s - b)(s - c)}$; ploščina iz treh stranic brez višine in kotov.
-- Polmer včrtane krožnice: $r = \dfrac{S}{s}$ (trikotnik razrežemo na tri trikotnike z višino $r$).
-- Polmer očrtane krožnice: $R = \dfrac{abc}{4S}$ (dokaz s sinusnim izrekom v 3. letniku).
-- Preizkus s $3$, $4$, $5$: $S = 6$, $r = 1$, $R = 2{,}5 = \dfrac{c}{2}$.
-- Pri merilu najprej pretvori dolžine; ploščina se poveča s kvadratom merila.
+**Polobseg:**
+
+$$s = \dfrac{a + b + c}{2}$$
+
+**Heronova formula** (ploščina iz treh stranic, brez višine in kotov):
+
+$$S = \sqrt{s(s - a)(s - b)(s - c)}$$
+
+**Polmer včrtane krožnice** (trikotnik razrežemo na tri trikotnike z višino $r$):
+
+$$r = \dfrac{S}{s}$$
+
+**Polmer očrtane krožnice** (dokaz s sinusnim izrekom v 3. letniku):
+
+$$R = \dfrac{abc}{4S}$$
+
+- **Preizkus** s $3$, $4$, $5$: $S = 6$, $r = 1$, $R = 2{,}5 = \dfrac{c}{2}$.
+- Pri **merilu** najprej pretvori dolžine.
+- Ploščina se poveča s kvadratom merila.
 
 ## Ponovitev
 

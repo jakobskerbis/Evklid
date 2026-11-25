@@ -1,7 +1,7 @@
 // Skupni deli plačilnih zaslonov: tri potrditve pred plačilom (polnoletnost, odstop, pogoji) in povezava »Prosi starše za plačilo«.
 // Uporabljajo jih zavihek Račun (account.js), kartica paketa pred testom (pass-offer.js) in stran za starše (placaj.js).
 // Spodaj še aplikacija iz trgovine (isStoreApp) in vrnitev v aplikacijo po plačilu (watchReturnFromPay).
-import { t, currentLang, locale } from "./i18n.js";
+import { t, currentLang, locale } from "./i18n-osnova.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 

@@ -329,14 +329,37 @@ Iz $2(x - 3)^2 = 2$ sledi $(x - 3)^2 = 1$ in $x - 3 = \pm 1$, torej $x_1 = 2$ in
 
 ## Povzetek
 
-- Kvadratna funkcija: $f(x) = ax^2 + bx + c$, $a \ne 0$; graf je parabola.
-- $a > 0$: odprta navzgor (minimum v temenu); $a < 0$: odprta navzdol (maksimum v temenu).
-- Temenska oblika $f(x) = a(x - p)^2 + q$, teme $T(p, q)$, simetrijska os $x = p$.
-- Iz splošne oblike: $p = -\dfrac{b}{2a}$, $q = f(p)$; presečišče z osjo $y$ je $(0, c)$.
-- Ničelna oblika $f(x) = a(x - x_1)(x - x_2)$; ničle so rešitve enačbe $f(x) = 0$.
-- Dve realni ničli, če sta $a$ in $q$ različnih predznakov; ena pri $q = 0$; nobene, če sta enakih predznakov.
-- Zaloga vrednosti: $[q, \infty)$ za $a > 0$, $(-\infty, q]$ za $a < 0$.
-- Ničli (in vsak par enako visokih točk) ležita simetrično glede na os: $p = \dfrac{x_1 + x_2}{2}$. Za $a > 0$ funkcija pada do $p$, nato narašča; za $a < 0$ obratno.
+- **Kvadratna funkcija**: $f(x) = ax^2 + bx + c$, $a \ne 0$; graf je **parabola**.
+
+**Temenska oblika** (teme $T(p, q)$, simetrijska os $x = p$):
+
+$$f(x) = a(x - p)^2 + q$$
+
+| | $a > 0$ | $a < 0$ |
+|:-:|:-:|:-:|
+| odprta | navzgor | navzdol |
+| teme | minimum | maksimum |
+| $Z_f$ | $[q, \infty)$ | $(-\infty, q]$ |
+| $x < p$ | pada | narašča |
+| $x > p$ | narašča | pada |
+
+**Iz splošne oblike:**
+
+$$p = -\frac{b}{2a}, \quad q = f(p)$$
+
+- Presečišče z osjo $y$ je $(0, c)$.
+
+**Ničelna oblika** (ničle so rešitve enačbe $f(x) = 0$):
+
+$$f(x) = a(x - x_1)(x - x_2)$$
+
+- $a$ in $q$ različnih predznakov: **dve** realni ničli.
+- $q = 0$: **ena** ničla.
+- $a$ in $q$ enakih predznakov: **nobene** realne ničle.
+
+Ničli (in vsak par enako visokih točk) ležita simetrično glede na os:
+
+$$p = \frac{x_1 + x_2}{2}$$
 
 ## Ponovitev
 

@@ -167,13 +167,25 @@ $x^2 - 2x - 8 = (x - 4)(x + 2) = 0$ da $x = 4$ ali $x = -2$. Pogoju $x > 2$ ustr
 
 ## Povzetek
 
-- Mešana naloga je veriga orodij iz več poglavij; vsak člen reši posebej.
-- Štirje koraki: prepoznaj orodje iz besed, razstavi verigo, zapisuj vmesne rezultate, preveri smisel in pogoje.
-- Razpolovitev ali stalni odstotek: eksponentna funkcija $c_0 \cdot q^t$; »kdaj« vodi do enačbe $q^t = b$ in logaritma.
-- Korene zapiši kot potence z ulomljenim eksponentom: $\sqrt[n]{a^m} = a^{m/n}$.
+- **Mešana naloga** je veriga orodij iz več poglavij; vsak člen reši posebej.
+
+**Štirje koraki:**
+
+1. Prepoznaj orodje iz besed.
+2. Razstavi verigo.
+3. Zapisuj vmesne rezultate.
+4. Preveri smisel in pogoje.
+
+- **Razpolovitev** ali stalni odstotek: eksponentna funkcija $c_0 \cdot q^t$.
+- Odstotek upadanja $p$ da faktor $q = 1 - \frac{p}{100}$.
+- »Kdaj« vodi do enačbe $q^t = b$ in logaritma.
+
+**Korene** zapiši kot potence z ulomljenim eksponentom:
+
+$$\sqrt[n]{a^m} = a^{m/n}$$
+
 - Enačbo z $a^{2x}$ in $a^x$ prevedeš na kvadratno z novo neznanko $s = a^x > 0$.
 - Pri logaritemskih enačbah zapiši pogoje na začetku in z njimi izloči tuje rešitve.
-- Odstotek upadanja $p$ da faktor $q = 1 - \frac{p}{100}$.
 
 ## Ponovitev
 

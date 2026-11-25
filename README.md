@@ -30,7 +30,7 @@ cp .env.example .env      # vpiši ANTHROPIC_API_KEY
 npm start                 # http://localhost:3000
 ```
 
-Brez ključa se aplikacija zažene v preizkusnem načinu. Teste zaženeš z `npm test`.
+V Windows namesto `npm start` uporabi `zagon-windows.bat` ali `node --env-file-if-exists=.env server/index.js` (skripta start uporablja `exec`, da strežnik na Renderju dobi signal za zaustavitev). Brez ključa se aplikacija zažene v preizkusnem načinu. Teste zaženeš z `npm test`.
 
 Brez ukazne vrstice: dvakrat klikni `zagon-windows.bat` (Windows) ali `zagon-mac.command` (Mac). Skript ob prvem zagonu vpraša za ključ, namesti knjižnice in odpre brskalnik. `ustvari-bliznjico.bat` / `ustvari-bliznjico-mac.command` naredi bližnjico Evklid na namizju.
 
@@ -57,6 +57,8 @@ Brez ukazne vrstice: dvakrat klikni `zagon-windows.bat` (Windows) ali `zagon-mac
 | `EVKLID_OCR_MODEL` | = `EVKLID_MODEL` | Model za branje rokopisa. |
 | `EVKLID_HISTORY_TURNS` | `10` | Koliko izmenjav zgodovine gre v API (starejše se odrežejo po kosih, da predpomnilnik deluje). |
 | `EVKLID_ANSWER_CACHE` | `1` | Enaka prva vprašanja dobijo shranjen odgovor brez klica API. |
+| `EVKLID_AI_SOCASNO` | `24` | Največ hkratnih odgovorov inštruktorja z modelom; ostali čakajo v vrsti in vidijo svoje mesto (0 = brez meje, `server/vrsta-ai.js`). |
+| `EVKLID_AI_VRSTA_MS` | `90000` | Najdaljše čakanje v vrsti za AI; nato napaka kot ob preobremenjenem ponudniku (koda 529). |
 | `EVKLID_DAILY_QUESTIONS` | `0` | Vprašanj za inštruktorja na učenca na dan (0 = brez omejitve). Vadnica je vedno neomejena. |
 | `EVKLID_MONTHLY_BUDGET_USD` | `0` | Skupni mesečni proračun v $; pri 80 % opozorilo, pri 100 % se klepet ustavi. |
 | `EVKLID_STUDENT_SOFT_USD` | `1` | Nad to mesečno porabo na učenca (v $) podrobne razlage pripravi hitri model. |
@@ -77,7 +79,7 @@ Vklopiš jih z `EVKLID_ACCOUNTS=1`. Brez tega aplikacija deluje kot prej (brez p
 
 - **Prijava staršev**: registracija z e-naslovom in geslom, potrditev e-naslova, pozabljeno geslo. Vsi klici `/api` zahtevajo prijavo; starš vidi samo svoje otroke in njihove pogovore.
 - **Soglasje (GDPR čl. 8, ZVOP-2)**: otroka doda starš z letnico rojstva in izjavo zakonitega zastopnika. Soglasje se shrani (različica, besedilo, e-naslov, čas). Obvestilo o zasebnosti je na `/zasebnost.html` (vpiši podatke upravljavca, označene rumeno).
-- **Paketi**: 7 dni brezplačnega preizkusa brez kartice (do 2 otroka), nato brezplačni paket (vadnica neomejeno, `EVKLID_FREE_DAILY_QUESTIONS` vprašanj na dan) ali naročnina po stopnji profila: OŠ 9,99 €/mesec ali 99 €/leto, SŠ 13,99 / 139 €, faks 19,99 / 199 €, Družina (2–4 profili OŠ/SŠ) 18,99 / 189 €, Družina s študentom 27,99 / 269 € (vsak paket ≥ 75 % dobička tudi, ko je porabljen ves zajamčeni AI; zneski in deleži v `server/accounts/plans.js`).
+- **Paketi**: 7 dni brezplačnega preizkusa brez kartice (do 2 otroka), nato brezplačni paket (vadnica neomejeno, `EVKLID_FREE_DAILY_QUESTIONS` vprašanj na dan) ali naročnina po stopnji profila: OŠ 9,99 €/mesec ali 99 €/leto, SŠ 13,99 / 99 €, faks 19,99 / 199 €, Družina (2–4 profili OŠ/SŠ) 18,99 / 189 €, Družina s študentom 27,99 / 269 € (vsak paket ≥ 75 % dobička tudi, ko je porabljen ves zajamčeni AI; zneski in deleži v `server/accounts/plans.js`).
 - **Aktivacijske kode** so v bazi (tabela `promo_codes`). Skrbnik jih v zavihku Račun ustvari, izklopi in vidi porabo (dni, število uporab, otroci, najzmogljivejši model, rok). Koda iz `.env` (`EVKLID_PROMO_CODE`, privzeto brez kode, z `EVKLID_PROMO_LIMIT`, `EVKLID_PROMO_DAYS`, `EVKLID_PROMO_SEATS`, `EVKLID_PROMO_MODEL`) se ob zagonu vpiše v bazo; če jo skrbnik izklopi, ostane izklopljena. Zagon brez nastavitve prej vpisano kodo iz `.env` izklopi in poznejša nastavitev je ne vklopi znova (vklopi jo skrbnik). Pri kodi z omejenim modelom (`sonnet`) gre druga zaporedna »Razloži podrobneje« k Sonnetu, Opus šele tretja. Vsak račun porabi eno kodo; preostanek se ob naročnini prenese v Stripe kot brezplačno obdobje.
 - **Stripe**: izdelek, cene in portal za stranke aplikacija ustvari sama ob prvem plačilu (`lookup_key` `evklid_1_month` …). Če se starš naroči med preizkusom, Stripe prvič zaračuna šele po koncu preizkusa. Paket, kartico, račune in odpoved ureja v portalu. Pred vsakim plačilom sta obvezni dve potrditvi (polnoletnost in takojšen začetek z vedenjem o 14-dnevnem odstopu); shranita se v `billing_consents`.
 - **Paketi pred testom** (`PASSES` v `server/accounts/plans.js`): enkratno plačilo za 7 ali 14 dni polnega dostopa (OŠ/SŠ 5,49 / 8,49 €, faks 6,99 / 11,49 €), vsak z lastno omejitvijo porabe AI. 30-dnevnega paketa ni več (j 2026-11-04); že kupljeni veljajo do konca. Kartica se pokaže v Urniku samo, če ima učenec v naslednjih 14 dneh test in nima aktivne naročnine (ali preizkusa oz. kode, ki pokrije dan testa). Vračilo ali spor v Stripu paket takoj konča.

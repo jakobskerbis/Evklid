@@ -4,6 +4,7 @@
 import { GENERATORS, generateTask } from "../server/practice/index.js";
 import { checkAnswer, roundHalfUp, fmt } from "../server/practice/check.js";
 import { getTopic } from "../server/curriculum.js";
+import * as MATH from "../public/graph/math.js";
 
 const prefix = process.argv[2] || "";
 const SEEDS = Number(process.env.SEEDS || 40);
@@ -52,11 +53,19 @@ for (const g of GENERATORS) {
           if (a.type === "number" && a.decimals != null && Math.abs(a.value) < 0.5 * 10 ** -a.decimals && a.value !== 0) {
             throw new Error(`odgovor ${a.value} se zaokroži na 0 pri ${a.decimals} decimalkah`);
           }
-          const res = checkAnswer(a, correctInput(a));
+          // Iste možnosti kot pri vaji (server/progress.js): cel zapis, »b = 7«, izraz namesto števila.
+          const opts = { convert: true, text: t.text, find: t.data?.find, math: MATH };
+          const res = checkAnswer(a, correctInput(a), opts);
           if (res.kind !== "correct") throw new Error(`lastni odgovor ${correctInput(a)} ni sprejet: ${JSON.stringify(res)}`);
           for (const m of a.mistakes || []) {
             if (!Number.isFinite(m.value) || !m.why) throw new Error(`napaka brez vrednosti ali razlage: ${JSON.stringify(m)}`);
-            if (checkAnswer(a, fmt(m.value) + (a.unit ? " " + a.unit : "")).kind === "correct") throw new Error(`tipična napaka ${m.value} je sprejeta kot pravilna`);
+            if (checkAnswer(a, fmt(m.value) + (a.unit ? " " + a.unit : ""), opts).kind === "correct") throw new Error(`tipična napaka ${m.value} je sprejeta kot pravilna`);
+          }
+          // Cel zapis s pravimi vrednostmi (»5√7« pri iskanem b) ni napačen poskus.
+          if (a.form) {
+            const whole = a.form.expr.replace(/\b[a-zA-Z]\b/g, (c) => (c in a.form.vals ? `(${a.form.vals[c]})` : c));
+            const w = checkAnswer(a, whole, opts);
+            if (w.code !== "chk.partOnly") throw new Error(`cel zapis ${whole} ni prepoznan: ${JSON.stringify(w)}`);
           }
           if (a.type === "choice" && a.why && a.why.length !== a.options.length) throw new Error("answer.why mora imeti razlago za vsako možnost (pri pravilni null)");
           const text = [t.text, t.hint, t.solution].join(" ");

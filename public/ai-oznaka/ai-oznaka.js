@@ -4,7 +4,7 @@
 // Besedilo je prilagojeno starosti: OŠ 1.–5. razred preprosteje (»računalniški pomočnik«).
 // Podporni metapodatki (ne celotna izpolnitev čl. 50(2)): data-ai-generated="true" na besedilu AI (in ai_generated v odgovorih API,
 // server/ai-oznaka.js). Modul se naloži z import() ob odprtju klepeta: prvo odprtje aplikacije ne raste.
-import { t as tGlobal, currentLang, srToLatin } from "../i18n.js";
+import { t as tGlobal, currentLang, srToLatin } from "../i18n-osnova.js"; // vsa besedila oznake so v ./sl.js: cel slovar (75 KB) ni potreben
 import { uiChain, UI_LANGUAGES } from "../i18n/languages.js";
 import { mlad } from "./mlad.js";
 import { icon } from "../icons.js";

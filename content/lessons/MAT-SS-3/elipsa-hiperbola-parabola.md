@@ -264,13 +264,37 @@ točka: 8; -5,196 | T_2 | desno
 
 ## Povzetek
 
-- Elipsa: vsota razdalj do gorišč je $2a$; enačba $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$; $e = \sqrt{a^2 - b^2}$, $\varepsilon = \frac{e}{a}$ med $0$ in $1$; pri $a = b$ krožnica.
-- Hiperbola: absolutna razlika razdalj do gorišč je $2a$; enačba $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$; $e = \sqrt{a^2 + b^2}$; asimptoti $y = \pm \frac{b}{a} x$; dve veji.
-- Parabola: točke so enako oddaljene od gorišča in vodnice; enačba $y^2 = 2px$, gorišče $\left(\frac{p}{2}, 0\right)$, vodnica $x = -\frac{p}{2}$. Odprta v levo: $y^2 = -2px$; navzgor ali navzdol: $x^2 = \pm 2py$.
-- Stožnice so krivulje drugega reda: $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$.
-- (višja raven) Konstrukcija po točkah: loka iz gorišč s polmeroma $r$ in $2a - r$ (elipsa) ali $r$ in $r + 2a$ (hiperbola). GeoGebra in Desmos rišeta iz enačbe.
-- Polosi preberi kot korena imenovalcev; večji imenovalec pove, na kateri osi sta gorišči elipse.
+**Elipsa:** vsota razdalj do gorišč je $2a$.
+
+$$\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$$
+
+- $e = \sqrt{a^2 - b^2}$; **numerična ekscentričnost** $\varepsilon = \frac{e}{a}$ je med $0$ in $1$.
+- Pri $a = b$ je elipsa krožnica.
+
+**Hiperbola:** absolutna razlika razdalj do gorišč je $2a$; ima dve veji.
+
+$$\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$$
+
+- $e = \sqrt{a^2 + b^2}$, asimptoti $y = \pm \frac{b}{a} x$.
+
+**Parabola:** točke so enako oddaljene od gorišča in vodnice.
+
+$$y^2 = 2px$$
+
+- Gorišče $\left(\frac{p}{2}, 0\right)$, vodnica $x = -\frac{p}{2}$.
+- Odprta v levo: $y^2 = -2px$; navzgor ali navzdol: $x^2 = \pm 2py$.
+
+**Stožnice** so krivulje drugega reda:
+
+$$Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$$
+
+- **Polosi** preberi kot korena imenovalcev; večji imenovalec pove, na kateri osi sta gorišči elipse.
 - Graf $y = \frac{c}{x}$ je zasukana hiperbola, graf kvadratne funkcije je parabola.
+
+**Risanje** (višja raven):
+
+- Po točkah: loka iz gorišč s polmeroma $r$ in $2a - r$ (elipsa) ali $r$ in $r + 2a$ (hiperbola).
+- GeoGebra in Desmos rišeta iz enačbe.
 
 ## Ponovitev
 

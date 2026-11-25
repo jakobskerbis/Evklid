@@ -1,0 +1,19 @@
+{
+  "np.ask.exam": "Który NPZ masz na myśli?",
+  "np.ask.subject": "Z jakiego przedmiotu jest zadanie?",
+  "np.ask.level": "Poziom podstawowy czy rozszerzony?",
+  "np.ask.year": "Z którego roku jest arkusz?",
+  "np.ask.pola": "Z którego arkusza jest zadanie {n}?",
+  "np.ask.session": "Który termin?",
+  "np.ask.section": "Z której części arkusza jest zadanie {n}?",
+  "np.plain": "Wyślij jako zwykłe pytanie",
+  "np.ours": "To jest zadanie Evklida w stylu arkusza „{paper}”, a nie oryginalne zadanie RIC. Oryginał jest bezpłatnie dostępny na ric.si.",
+  "np.figure": "Rysunek do zadania jest w arkuszu Evklida.",
+  "np.openOurs": "Otwórz w arkuszu Evklida",
+  "np.noOurs": "Nie mamy jeszcze wersji Evklida dla „{paper}”. Pobierz oryginał z ric.si, otwórz go tutaj i przy zadaniu {n} stuknij „{help}”.",
+  "np.missing": "Wersja Evklida arkusza „{paper}” nie ma zadania {n}. Sprawdź numer zadania.",
+  "np.download": "Pobierz oryginał: {file}",
+  "np.openOriginal": "Otwórz oryginał",
+  "np.pickHint": "Najpierw pobierz oryginał, a potem przy „Otwórz oryginał” wybierz plik {name}.",
+  "np.wrongFile": "To inny arkusz. Wybierz plik {name}."
+}

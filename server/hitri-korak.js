@@ -11,8 +11,9 @@ import { jeFaks } from "../public/stopnja.js";
 
 export const hitriKorakOn = () => process.env.EVKLID_HITRI_KORAK === "1";
 
-export function hitriKorak({ mode, settings = {}, pre = null, image = false, competition = false, isFirst = false }) {
-  if (!hitriKorakOn() || !isFirst) return false;
+// solveAsk: izrecna prošnja za rešitev v načinu A (server/nacin.js) zahteva celo rešitev, ne prvega koraka.
+export function hitriKorak({ mode, settings = {}, pre = null, image = false, competition = false, isFirst = false, solveAsk = false }) {
+  if (!hitriKorakOn() || !isFirst || solveAsk) return false;
   if (mode !== "chat" && mode !== "lite") return false;
   if (!pre?.problems?.length || image) return false;
   if (jeFaks(settings) || competition || settings.track === "COMPETITION") return false;

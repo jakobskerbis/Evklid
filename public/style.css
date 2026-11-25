@@ -109,7 +109,10 @@ html { -webkit-tap-highlight-color: transparent; }
 @media (pointer: coarse) { a[href] { -webkit-touch-callout: none; -webkit-user-drag: none; } }
 a.card { transition: transform 0.08s, border-color 0.15s; }
 a.card:active { transform: scale(0.985); }
-:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Obroba fokusa polne barve poudarka (WCAG 1.4.11: ≥ 3 : 1 ob ozadju; prej 45 % prosojna ≈ 2,1 : 1). Na modri podlagi
+   (kartica Danes, Današnji trening) je bela, da se ne zlije s podlago. test/fokus-kontrast.test.js */
+.hero :focus-visible { outline-color: #fff; }
 
 /* ---------- gumbi ---------- */
 button { cursor: pointer; }
@@ -166,10 +169,15 @@ button.danger { background: none; border: 1.5px solid var(--danger); color: var(
 /* Odprtje na zadnjem zaslonu (public/zacetek.js): dokler app.js ne pokaže prvega pogleda, Učna pot iz index.html in
    njen označeni zavihek ne utripneta. */
 html[data-zacetek]:not([data-zacetek-pod]) #view-path:not([data-posnetek]) { display: none; }
-html[data-zacetek] .tabs .tab.active { background: none; color: var(--muted); }
+html[data-zacetek]:not([data-zacetek-pot]) .tabs .tab.active { background: none; color: var(--muted); }
 /* Hiter zagon: posnetek zadnjega zaslona ali okostje (main[data-posnetek], vstavi ga zacetek.js) je samo slika. Ko
    app.js odkrije pravi pogled, je ta do zamenjave neviden na svojem mestu, posnetek pa pripet čezenj (app.js pinSnapshot). */
 main[data-posnetek] { pointer-events: none; user-select: none; }
+/* Učna pot s strežnika (server/pot-takoj.js) se dotika: zacetek.js dotik shrani, app.js ga izvede, ko je pripravljen. */
+main[data-posnetek][data-streznik] { pointer-events: auto; user-select: auto; }
+/* Dotik pred zagonom (public/zacetek.js): gumb kot pritisnjen, dokler ga app.js ne izvede. */
+[data-caka] { opacity: 0.7; }
+html[data-zacetek-caka], html[data-zacetek-caka] * { cursor: progress; }
 /* Do konca razčlenjene lupine (spodnja vrstica, zacetek.js) se stran ne izriše po kosih: prej se je ob dolgi strani
    za trenutek pokazala brez spodnje vrstice (utrip ob odprtju, j 16. 11. 2026). Varovalo: DOMContentLoaded, 3 s. */
 html[data-zacetek-lupina] body { visibility: hidden; }
@@ -185,6 +193,24 @@ html[data-zacetek-pod] main[data-posnetek] { position: absolute; z-index: 1; mar
 html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidden; }
 .zagon-okostje .card { box-shadow: none; border-color: transparent; background: var(--surface-2); min-height: 96px; animation: zagon-okostje 1.4s ease-in-out infinite; }
 .zagon-okostje .zo-a { min-height: 150px; }
+/* Okostje Učne poti ob prvem odprtju s podatki s strežnika (zacetek.js, server/zacetni-podatki.js): iste višine kot pravi
+   pogled (glava poti, kartica treninga, načini; na širokem zaslonu desno sklopi), da se ob zamenjavi nič ne premakne. */
+.zo-pot .zo-glava { display: flex; flex-direction: column; gap: 14px; min-height: 120px; margin-bottom: 16px; padding-top: 4px; box-sizing: border-box; }
+.zo-pot .zo-glava i { display: block; height: 14px; width: 30%; border-radius: 7px; background: var(--surface-2); }
+.zo-pot .zo-glava i:nth-child(2) { height: 22px; width: 62%; }
+.zo-pot .zo-glava i:nth-child(3) { width: 80%; }
+.zo-pot .card.zo-xp { min-height: 598px; }
+.zo-pot.zo-danes .card.zo-xp { min-height: 650px; } /* kartica »Danes« (cilj matura): ena vrstica več in Današnji trening v dveh */
+.zo-pot .card.zo-nacini { min-height: 124px; }
+.zo-pot .zo-vsebina { display: none; }
+.zo-pot .card.zo-sklop { min-height: 380px; }
+@media (min-width: 1200px), (min-width: 1000px) and (hover: none) and (pointer: coarse) {
+  .zagon-okostje.zo-pot { display: grid; grid-template-columns: var(--split-path, minmax(360px, 440px)) minmax(0, 1fr); gap: 0 28px; align-items: start; align-content: start; }
+  .zo-pot .zo-vsebina { display: block; padding-top: 34px; }
+  .zo-pot .card.zo-xp { min-height: 532px; }
+  .zo-pot.zo-danes .card.zo-xp { min-height: 558px; }
+  .zo-pot .card.zo-nacini { min-height: 272px; }
+}
 @keyframes zagon-okostje { 50% { opacity: 0.55; } }
 @media (prefers-reduced-motion: reduce) { .zagon-okostje .card { animation: none; } }
 .xp-badge { display: flex; gap: 8px; }
@@ -201,7 +227,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
   font: inherit; font-weight: 800; cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 .profile-btn:hover, .profile-btn[aria-expanded="true"] { border-color: var(--accent); }
-.profile-btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+.profile-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .profile-btn .pm-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .profile-btn > svg.i { flex: none; width: 18px; height: 18px; color: var(--muted); transition: transform 0.15s; }
 .profile-btn[aria-expanded="true"] > svg.i { transform: rotate(180deg); }
@@ -235,7 +261,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
 .pm-item[data-act="logout"] > svg.i { color: var(--danger); }
 /* Klik na klobuk: »Nadaljuj z učenjem« (quick-start.js). */
 .brand { cursor: pointer; border-radius: 12px; padding: 2px; margin: -2px; } /* 40 px za dotik */
-.brand:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 3px; }
+.brand:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .brand[aria-expanded="true"] .logo { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
 .quick-pop {
   position: fixed; z-index: 60; width: min(360px, calc(100vw - 16px)); max-height: calc(100dvh - 88px); overflow-y: auto;
@@ -455,7 +481,9 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .idea:hover { border-color: var(--accent); }
 .tutor-avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); }
 .tutor-avatar.big { width: 64px; height: 64px; border-radius: 20px; box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 35%, transparent); }
-.tutor-avatar.big svg.i { width: 30px; height: 30px; }
+/* Pravila s :has() velikost ikone nastavijo na avatarju (--ta-ic), ne na svg.i: Chrome vse, kar stoji za :has(), združi
+   v en nabor in ob vsaki spremembi strani znova preračuna vsak tak element, pri svg.i in span so to vse ikone (test/has-invalidacija.test.js). */
+.tutor-avatar.big svg.i { width: var(--ta-ic, 30px); height: var(--ta-ic, 30px); }
 .msg { max-width: 85%; width: fit-content; padding: 12px 16px; border-radius: 20px; overflow-wrap: anywhere; line-height: 1.6; animation: msg-in 0.2s ease; }
 @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .msg.user { align-self: flex-end; background: var(--user-bubble); color: var(--user-text); border-end-end-radius: 6px; white-space: pre-wrap; font-weight: 600; }
@@ -507,6 +535,17 @@ html[data-tutor-ic] .msg.assistant::after {
 .msg.assistant .wait-note { color: var(--muted); }
 .deep-btn.pressed { opacity: 0.7; cursor: progress; box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.15); }
 .choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+/* Naloga iz pretekle pole, omenjena v klepetu (app.js odpriNalogoPole): opomba z izvirnikom na ric.si. */
+.paper-note .np-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.paper-note .np-acts > * { min-height: 40px; max-width: 100%; white-space: normal; text-align: start; }
+.paper-note p > svg { width: 1.1em; height: 1.1em; vertical-align: -0.18em; }
+.paper-note .np-quote { color: var(--muted); font-size: 0.9em; overflow-wrap: anywhere; }
+.paper-note .np-hint { font-size: 0.86rem; margin: 8px 0 0; overflow-wrap: anywhere; }
+.paper-note .np-acts > button.small { min-height: 44px !important; padding: 10px 18px !important; font-weight: 800; }
+.paper-note .np-file { white-space: nowrap; unicode-bidi: isolate; }
+.np-open { position: relative; cursor: pointer; }
+.np-open input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.np-open:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .choice-row .choice-btn { min-height: 40px !important; max-width: 100%; white-space: normal; text-align: start; overflow-wrap: anywhere; background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); color: var(--text); } /* odgovori se ločijo od »Razloži podrobneje« */
 /* Pod odgovorom »Prijavi napako« (server/reports.js); koda sporočila (za preverjanje posnetkov zaslona) je v obrazcu prijave */
 .msg-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 8px; font-size: 0.78rem; color: var(--muted); }
@@ -547,6 +586,13 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .ai-note { font-size: 0.72rem; color: var(--muted); text-align: center; margin: 2px auto 0; }
 .chat-off { margin: 0 auto 8px; width: calc(100% - 32px); box-sizing: border-box; padding: 10px 14px; border: 1px solid var(--danger); border-radius: 12px; background: var(--danger-bg); color: var(--text); font-size: 0.9rem; text-align: center; } /* --danger na --danger-bg je v svetlem načinu 4,1 : 1 */
 .composer { padding: 2px 16px 6px; background: transparent; }
+/* »Nazaj na: …« nad vnosnim poljem (vrnitev v poskus ali 3D model, app.js syncChatReturn) */
+.chat-return { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin: 0 0 6px; }
+button.chat-return { min-height: 40px !important; } /* button.small ima 38 px (!important) */
+.chat-return[hidden] { display: none; }
+.chat-return span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-kontekst { margin: -2px 0 6px; font-size: 0.8rem; }
+.chat-kontekst[hidden] { display: none; }
 /* Vrstica za pisanje brez okna (j, 2026-11-04: »naj samo piše po strani brez okna«, več prostora za vsebino): pišeš
    naravnost na stran pod pogovorom, le tanka črta pokaže, kje; ob pisanju se obarva. */
 .composer-row { display: flex; gap: 6px; align-items: flex-end; margin: 0 auto; background: none; border: 0; border-top: 1px solid color-mix(in srgb, var(--muted) 55%, transparent); border-radius: 0; padding: 4px 0 0; }
@@ -604,6 +650,7 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .hero p { margin: 2px 0 0; opacity: 0.9; font-weight: 600; }
 .hero-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: rgba(255, 255, 255, 0.18); }
 .hero-icon svg.i { width: 28px; height: 28px; color: #ffe27a; fill: #ffe27a; }
+.hero.danes .hero-icon svg.i { fill: none; } /* tarča (cilj matura) kot obris, ne polna pika */
 .hero button.primary { background: #fff; color: var(--hero-a); box-shadow: 0 var(--press) 0 rgba(0, 0, 0, 0.18); }
 .next-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 14px 20px; border: 0; border-bottom: 1px solid var(--border); background: var(--surface); text-align: start; color: var(--text); }
 .next-row:hover { background: var(--surface-2); }
@@ -654,6 +701,20 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .node.new .node-dot { background: var(--surface); color: var(--accent); border-color: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent-soft); }
 .node.current .node-dot { animation: pulse 1.8s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 50% { box-shadow: 0 0 0 10px transparent; } }
+/* Isti utrip kot zgoraj, a na GPU (kliki 20. 11. 2026): animirana senca je vsak okvir znova risala Učno pot na glavni niti in
+   zavlekla vsak tap na njej. Krog pod piko se z enako krivuljo poveča 27 → 37 px in zbledi z 45 % na 0 – na zaslonu enako kot
+   senca 0 → 10 px. Ob »manj gibanja« ostane prvotno pravilo (brez utripa, s senco pritiska). */
+@media (prefers-reduced-motion: no-preference) {
+  .node.current { position: relative; }
+  .node.current .node-dot { animation: none; box-shadow: none; }
+  .node.current::before {
+    content: ""; position: absolute; inset-inline-start: 0; top: 50%; width: 54px; height: 54px; margin-top: -27px; border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 45%, transparent); pointer-events: none;
+    animation: pulse-krog 1.8s ease-in-out infinite; transition: scale 0.15s;
+  }
+  .node.current:hover:not(:disabled)::before { scale: 1.06; }
+}
+@keyframes pulse-krog { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3703704); opacity: 0; } }
 .node-text { display: flex; flex-direction: column; min-width: 0; }
 .node-name { font-weight: 800; }
 .node-sub { font-size: 0.82rem; color: var(--muted); font-weight: 700; }
@@ -675,6 +736,9 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
   margin: 1.4em 0 0.45em; padding-inline-start: 10px; border-inline-start: 3px solid var(--accent);
 }
 :is(.explanation, .msg.assistant) > :is(h3, h4, .sub-head):first-child { margin-top: 0.2em; }
+/* Alineje (npr. »Bistvo«): razmik med alinejami večji od razmika med vrsticami, da se vidi, kje se nova trditev začne
+   (j 2026-11-19: »naj bodo take stvari bolj pregledne«). Enako v aplikaciji (mobile/src/lib/rich.ts). */
+:is(.explanation, .msg.assistant) li + li { margin-top: 0.45em; }
 .explanation details { background: var(--surface-2); border-radius: 10px; padding: 6px 12px; margin: 6px 0; }
 .session-head { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
 .session-head h1 { margin: 0; }
@@ -734,7 +798,9 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .small-note { margin: 0; font-size: 0.85rem; }
 /* Podatki / Iščemo in formula v rešenem zgledu */
 .task-data { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 10px; }
-.task-data .data-col { min-width: 120px; }
+.task-data .data-col { min-width: 120px; max-width: 100%; }
+/* Podatek je ena vrstica (KaTeX bi sicer lomil pri + in =, s(t) = −t³ + 15t² + 2t v 4 vrstice); stolpca se raje zložita. */
+.task-data .data-list .katex { white-space: nowrap; }
 .task-data .data-list { display: flex; flex-direction: column; gap: 2px; font-size: 1.05rem; }
 .formula { margin-bottom: 10px; }
 .formula summary { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; padding: 6px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); font-weight: 700; font-size: 0.92rem; user-select: none; }
@@ -1365,3 +1431,6 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .open-sim-body { padding: 12px; min-width: 0; }
 .open-sim-note { margin: 0 12px 12px; font-size: 0.85rem; }
 @media (max-width: 600px) { .open-sim { padding: var(--varno-zg, env(safe-area-inset-top, 0px)) 0 var(--varno-sp, env(safe-area-inset-bottom, 0px)); } .open-sim-card { border-radius: 0; height: 100%; } }
+/* Gumbi z ikono in napisom (prej v leagues.css, ki se na vstopni strani prijavljenega učenca naloži po prvem izrisu,
+   server/vstopna-stran.js SEJA_POZNEJE; na koncu datoteke, da prevlada nad pravili zgoraj kot prej). */
+.row button, button.ghost.small, button.secondary { display: inline-flex; align-items: center; gap: 6px; }

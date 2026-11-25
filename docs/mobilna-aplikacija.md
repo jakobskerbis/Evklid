@@ -24,7 +24,13 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   gumbom »Vprašaj inštruktorja«. Vibracija ob pravilnem in napačnem odgovoru.
 - **Vaje brez povezave**: naloge učne poti se shranijo na telefon, odgovor preveri telefon (isto
   preverjanje kot strežnik, `server/practice/check.js`), ob povezavi strežnik odgovore preveri še
-  enkrat in podeli XP.
+  enkrat in podeli XP. Paket in vrsta odgovorov sta vezana na račun in profil (id profila se po izbrisu lahko ponovi).
+- **Odjava, izbris računa, potekla seja**: ob odjavi gredo neposlani odgovori najprej na strežnik (največ 6 s), nato
+  s telefona izgine vse od računa (izbrani profil, račun in profili, paketi vaj in odgovori, časi preverjanja, zavihek Uči, deljene slike in fotografije nalog),
+  spletna stran v aplikaciji pa pobriše svoje osebne podatke kot ob odjavi na spletu. Ostanejo nastavitve naprave
+  (tresljaji, ura opomnika, id naprave) — `mobile/src/lib/zasebnost.js`, `test/mobile-odjava-brisanje.test.js`.
+  Žeton potisnih obvestil se na strežniku odjavi samo ob odjavi (ob izbrisu računa ga pobriše strežnik); po potekli
+  seji ostane vezan na račun do naslednje prijave na tem telefonu.
 - **Lekcije** po korakih (kratke kartice z vprašanji »Preveri se« vmes, `public/lesson-steps.js`) ali vse
   naenkrat, »Razloži drugače«, formule in tabele kot na spletu.
   Vprašanja z vpisom števila in razvrščanjem (`public/preveri-se.js`) aplikacija dobi, ker pošlje glavo
@@ -147,7 +153,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 |---|---|---|
 | Kje | Android: APK na evklid.app/prenesi | App Store, Google Play |
 | Gradnja | `eas build --profile direct --platform android` | `eas build --profile production` |
-| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 99 €, SŠ 13,99 / 139 €, faks 19,99 / 199 €, Družina 18,99 / 189 €, Družina s študentom 27,99 / 269 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 101, 15,99 / 141, 21,99 / 201, 20,99 / 191, 29,99 / 271 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
+| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 99 €, SŠ 13,99 / 99 €, faks 19,99 / 199 €, Družina 18,99 / 189 €, Družina s študentom 27,99 / 269 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 101, 15,99 / 101, 21,99 / 201, 20,99 / 191, 29,99 / 271 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
 | Provizija | Stripe ~1,5 % + 0,25 € | 15 % (Apple Small Business Program, Google Play) |
 
 Cene v trgovinah so višje zaradi provizije. Aplikacija iz trgovine ne sme omenjati cenejših cen na
@@ -212,9 +218,10 @@ Vsakič:
    gradnje prilepi v **Račun → Aplikacija za Android (APK)** in tapni »Naloži APK«.
 
 **Posodobitve nameščene aplikacije** (`mobile/src/lib/updates.ts`):
-- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ob vsaki združitvi v `main`, ki spremeni
-  `mobile/` ali skupne datoteke s spletom, Expo (EAS Workflows, `mobile/.eas/workflows/posodobitev.yml`)
-  objavi posodobitev na kanal `direct`. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
+- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ko so testi za združitev v `main` zeleni
+  (vsi štirje posli v `testi.yml`, tudi `tipi`), GitHub (`.github/workflows/ota.yml`, skrivnost `EXPO_TOKEN`)
+  objavi posodobitev na kanal `direct`, če je kateri commit od zadnje objave spremenil `mobile/` ali skupne
+  datoteke s spletom (seznam `POTI` v `ota.yml`). Padli testi: nič ne gre na telefone. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
   ko je prenesena, aplikacija ponudi »Posodobi« (takojšen ponovni zagon). Dobijo jo samo gradnje z enako
   domorodno kodo (`runtimeVersion: fingerprint`). Brezplačni načrt Expo pokrije do 1.000 uporabnikov na mesec.
 - **Nova domorodna koda** (nov paket Expo, nova različica SDK, sprememba `app.config.ts`) potrebuje nov APK:

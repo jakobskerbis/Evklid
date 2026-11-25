@@ -187,12 +187,25 @@ V II. kvadrantu je kosinus negativen, zato $\cos\alpha = -\frac45$. Potem je $\t
 
 ## Povzetek
 
-- Enotska krožnica: središče v izhodišču, polmer $1$; kot merimo od pozitivnega poltraka osi $x$, pozitivno v nasprotni smeri urinega kazalca.
-- Gibljivi krak seka krožnico v $T(\cos\alpha, \sin\alpha)$; $\tan\alpha = \dfrac{\sin\alpha}{\cos\alpha}$ za $\cos\alpha \neq 0$.
-- Predznak dobiš iz kvadranta, absolutno vrednost iz pripadajočega ostrega kota.
-- $\sin^2\alpha + \cos^2\alpha = 1$; zato $-1 \le \sin\alpha \le 1$ in $-1 \le \cos\alpha \le 1$.
+- **Enotska krožnica** ima središče v izhodišču in polmer $1$.
+- Kot merimo od pozitivnega poltraka osi $x$, pozitivno v nasprotni smeri urinega kazalca.
+- Gibljivi krak seka krožnico v točki $T(\cos\alpha, \sin\alpha)$.
+
+$$\tan\alpha = \frac{\sin\alpha}{\cos\alpha},\quad \cos\alpha \neq 0$$
+
+- **Predznak** dobiš iz kvadranta, absolutno vrednost iz pripadajočega ostrega kota.
+
+$$\sin^2\alpha + \cos^2\alpha = 1$$
+
+- Zato $-1 \le \sin\alpha \le 1$ in $-1 \le \cos\alpha \le 1$.
 - Kota $\alpha$ in $\alpha + 360^\circ$ imata enake vrednosti kotnih funkcij.
-- $\pi\,\text{rad} = 180^\circ$, $1\,\text{rad} \approx 57{,}3^\circ$; pretvorba s $\dfrac{\pi}{180^\circ}$ oziroma $\dfrac{180^\circ}{\pi}$.
+
+**Radian:**
+
+$$\pi\,\text{rad} = 180^\circ,\quad 1\,\text{rad} \approx 57{,}3^\circ$$
+
+- Stopinje v radiane: pomnoži s $\dfrac{\pi}{180^\circ}$.
+- Radiane v stopinje: pomnoži s $\dfrac{180^\circ}{\pi}$.
 
 ## Ponovitev
 

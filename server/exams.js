@@ -10,6 +10,7 @@ import { gradeInfo } from "../public/regions.js";
 import { uiChain } from "../public/i18n/languages.js";
 import { EXAM_HI, NAMES_HI, COUNTRY_HI, SUBJECT_HI } from "./exam-hi.js";
 import { jeSs, stopnja } from "../public/stopnja.js";
+import { SUBJECT_NAMES } from "./subjects.js";
 
 // Jezik besedila pri dvojezičnih (angleško-hindijskih) nalogah in opisih izpitov: "hi", če je
 // hindijščina v verigi jezikov vmesnika pred angleščino (hi, bho, mai, mr …), sicer "en".
@@ -113,10 +114,11 @@ export function examInfo(key, system, lang = "en") {
 }
 
 // Izpit v jeziku učenca: hindijska imena in opis, kjer obstajajo (indijski izpiti), sicer angleško.
+// Slovenski izpiti (NPZ, matura) imajo slovenska imena predmetov, kot ime izpita.
 function localExam(id, lang) {
   const e = EXAMS[id];
   const hi = lang === "hi" && EXAM_HI[id];
-  if (!hi) return { ...e, lang: "en", subjectNames: SUBJECT_NAMES_EN };
+  if (!hi) return { ...e, lang: "en", subjectNames: e.systems?.includes("SI") ? SUBJECT_NAMES : SUBJECT_NAMES_EN };
   return { ...e, ...hi, name: hi.name || e.name, country: COUNTRY_HI[e.country] || e.country, lang: "hi", subjectNames: { ...SUBJECT_NAMES_EN, ...SUBJECT_HI } };
 }
 
@@ -145,13 +147,26 @@ const pickWeighted = (items, weight) => {
   return items[items.length - 1];
 };
 
+// Raven mature iz matematike (j, 20. 11.: izbira ravni pri Preteklih polah velja za celo stran »NPZ in matura«).
+// Teme samo za višjo raven imajo cilje, ki se končajo z »(višja raven)« (server/curriculum-data.js); na osnovni ravni
+// jih Pripravljenost, seznam tem, Vadba za izpit in Poskusni izpit izpustijo. asked: izbira na strani (OR/VR),
+// sicer raven iz profila (»4. letnik VR«); »še ne vem« (brez ravni) = vse teme kot prej. Drugi izpiti: null.
+const VR_ONLY = /\(višja raven\)\s*$/;
+export function examRaven(key, settings, asked = null) {
+  if (key !== "MAT-EX-MATURA") return null;
+  if (asked === "OR" || asked === "VR") return asked;
+  return / (VR|OR)$/.exec(String(settings?.curriculum_level || "").trim())?.[1] || null;
+}
+export const ravenKeeps = (raven) => (t) => raven !== "OR" || !VR_ONLY.test(String(t?.goals || ""));
+
 // Načrt poskusnega izpita: vprašanja po skupinah formata, teme po utežeh sklopov,
 // ista tema ne pride dvakrat zapored in se ne ponovi, dokler ni prišla vsaka.
-export function mockPlan(key) {
+export function mockPlan(key, raven = null) {
   const [subject, , id] = key.split("-");
   const def = EXAMS[id].subjects[subject];
+  const keep = ravenKeeps(raven);
   const units = getPath(key).units
-    .map((u, i) => ({ topics: u.topics.filter((t) => hasGenerator(t.id)).map((t) => t.id), weight: def.units[i][2] || 1 }))
+    .map((u, i) => ({ topics: u.topics.filter((t) => keep(t) && hasGenerator(t.id)).map((t) => t.id), weight: def.units[i][2] || 1 }))
     .filter((u) => u.topics.length);
   const used = new Map();
   const plan = [];

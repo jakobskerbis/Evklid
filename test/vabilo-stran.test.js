@@ -81,6 +81,9 @@ test("vabilo: telefon 360×740 – veljavna koda, gumb Ustvari račun, napačna 
     q.on("pageerror", (e) => napake.push(e.message));
     await q.goto(`${base}/vabilo`);
     await q.waitForSelector("#vab-koda");
+    // vabilo.js je nastavil naslov (prej bi dotik oddal obrazec brez skripte); stran p v istem kontekstu morda še nalaga
+    // aplikacijo za obrazcem (obrazec pred app.js, test/registracija-takoj.test.js), zato vabilo.js pride kasneje.
+    await q.waitForFunction(() => document.title === "Vabilo v pilot – Evklid");
     await q.tap("#vab-form button.primary");
     assert.match(await q.locator("#vab-out").innerText(), /Vpiši kodo iz vabila/);
     await q.fill("#vab-koda", "ne-obstaja");

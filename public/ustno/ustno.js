@@ -71,13 +71,82 @@ export function tt(key, vars = {}) {
 export const speechOk = () => typeof window !== "undefined" && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 const recLang = () => (currentLang() === "sl" ? "sl-SI" : locale());
 
-// --- branje na glas (glas naprave) ---
+// --- branje na glas ---
+// 1. Slovenski glas strežnika (server/govor.js govorMp3, odprt glas Piper): MP3 vprašanja te seje, na vseh napravah enak.
+//    Glas naprave slovenščino pozna skoraj samo v Edgu; Chrome, aplikacija za Android in iPhone ga nimajo (j, 19. 11.).
+// 2. Glas naprave (speechSynthesis), ko strežnik glasu nima (lokalno) ali ni povezave. 3. Obvestilo »ni glasu«.
+// En sam <audio> za vse branje: dotik v oknu ga odklene (iPhone in WebView v aplikaciji dovolita predvajanje brez
+// dotika le elementu, ki je že igral ob dotiku), zato vprašanje po »Začni« prebere sam.
+const SILENT = "/ustno/tiho.mp3"; // 0,25 s tišine (CSP media-src ne dovoli data:)
+let player = null;
+let unlocked = false;
+let serverVoice = true; // strežnik glasu nima (503, code »ni«): v tem odprtju ne poskušamo več
+let speakSeq = 0;
+const clips = new Map(); // »seja:i:dodatno« → Promise<objectURL | null>
+function audio() {
+  if (!player) {
+    player = new Audio();
+    player.preload = "auto";
+  }
+  return player;
+}
+function unlock() {
+  if (unlocked) return;
+  const a = audio();
+  if (!a.paused) return;
+  a.src = SILENT;
+  a.play()?.then(() => (unlocked = true), () => {});
+}
+function clip(i, dodatno) {
+  const key = `${run.id}:${i}:${dodatno ? 1 : 0}`;
+  if (!clips.has(key)) {
+    const p = fetch(`/api/students/${ctx.student.id}/ustno/${run.id}/govor`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ i, dodatno: !!dodatno }), signal: AbortSignal.timeout?.(12_000) })
+      .then(async (r) => {
+        if (r.status === 503 && (await r.clone().json().catch(() => ({}))).code === "ni") serverVoice = false;
+        if (!r.ok || !/audio\//.test(r.headers.get("content-type") || "")) return null;
+        return URL.createObjectURL(await r.blob());
+      })
+      .catch(() => null);
+    clips.set(key, p);
+    p.then((u) => u || clips.get(key) !== p || clips.delete(key)); // neuspelo branje se ob naslednjem dotiku poskusi znova
+  }
+  return clips.get(key);
+}
+function dropClips() {
+  for (const p of clips.values()) p.then((u) => u && URL.revokeObjectURL(u));
+  clips.clear();
+}
 function voiceFor(lang) {
   const vs = window.speechSynthesis?.getVoices() || [];
   const base = String(lang).split("-")[0].toLowerCase();
   return vs.find((v) => v.lang?.toLowerCase().replace("_", "-").startsWith(base)) || null;
 }
-function speak(text, onNoVoice) {
+// src: { i, dodatno } – vprašanje te seje, ki ga strežnik prebere s slovenskim glasom. Glavno vprašanje je iz slovenske
+// lekcije (vedno slovensko), dodatno vprašanje je v jeziku učenca: glas strežnika samo v slovenščini.
+async function speak(text, onNoVoice, src = null) {
+  stopSpeak();
+  const seq = ++speakSeq;
+  if (src && serverVoice && run?.id && (!src.dodatno || currentLang() === "sl")) {
+    const url = await clip(src.i, src.dodatno);
+    if (seq !== speakSeq) return; // medtem novo vprašanje ali konec
+    if (url) {
+      const a = audio();
+      a.src = url;
+      try {
+        await a.play();
+        unlocked = true;
+        return;
+      } catch (e) {
+        // AbortError: medtem ustavljeno (naslednje vprašanje, zaprto okno). NotAllowedError: brez dotika predvajanje ni
+        // dovoljeno, »Preberi vprašanje« ga prebere (dotik). Ne beremo z glasom naprave.
+        if (seq !== speakSeq || e?.name === "AbortError" || e?.name === "NotAllowedError") return;
+      }
+    }
+  }
+  if (seq !== speakSeq) return;
+  deviceSpeak(text, onNoVoice);
+}
+function deviceSpeak(text, onNoVoice) {
   const synth = window.speechSynthesis;
   if (!synth) return onNoVoice?.();
   synth.cancel();
@@ -96,7 +165,11 @@ function speak(text, onNoVoice) {
     setTimeout(() => synth.getVoices().length || onNoVoice?.(), 1500);
   }
 }
-const stopSpeak = () => window.speechSynthesis?.cancel();
+function stopSpeak() {
+  speakSeq++;
+  window.speechSynthesis?.cancel();
+  if (player && !player.paused) player.pause();
+}
 
 // --- »Si rekel …?«: strokovna beseda, ki je v prepisu skoraj (ne pa točno) zapisana ---
 const fold = (s) => String(s).toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
@@ -150,9 +223,12 @@ function sheet() {
   dlg = document.createElement("dialog");
   dlg.className = "us-okno";
   dlg.setAttribute("aria-labelledby", "us-title");
+  dlg.addEventListener("click", unlock, true);
   dlg.addEventListener("close", () => {
     stopRec();
     stopSpeak();
+    dropClips();
+    serverVoice = true; // ob naslednjem odprtju glas strežnika znova (morda je medtem nastavljen)
     hideKeyboard(); // tipkovnica je v oknu (tipkovnica.js): ob zaprtju se zapre, sicer ostane spodnji odmik
   });
   document.body.append(dlg);
@@ -314,7 +390,7 @@ function question(follow = null) {
   const area = d.querySelector("textarea");
   const result = d.querySelector('input[name="rezultat"]');
   const qEl = d.querySelector(".us-q");
-  const sayIt = () => speak(q.govor && !follow ? q.govor : String(text).replace(/\$/g, ""), () => qEl.isConnected && live(tt("u.niGlasu")));
+  const sayIt = () => speak(q.govor && !follow ? q.govor : String(text).replace(/\$/g, ""), () => qEl.isConnected && live(tt("u.niGlasu")), { i: run.i, dodatno: !!follow });
   if (run.beri) sayIt();
   d.querySelector('[data-us="read"]').addEventListener("click", sayIt);
   const mic = d.querySelector('[data-us="mic"]');
@@ -537,7 +613,7 @@ function selfQuestion(q, note = "") {
     { focus: ".us-q" },
   );
   const qEl = d.querySelector(".us-q");
-  const say = () => speak(q.govor, () => qEl.isConnected && live(tt("u.niGlasu")));
+  const say = () => speak(q.govor, () => qEl.isConnected && live(tt("u.niGlasu")), { i: run.i });
   if (run.beri) say();
   d.querySelector('[data-us="read"]').addEventListener("click", say);
   d.querySelector('[data-us="show"]').addEventListener("click", (e) => {

@@ -62,14 +62,26 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   prva vsebina).
 - `public/zacetek.js` po delih (komentarji so tu, ker datoteka šteje v proračun prvega odprtja): `izberi` (zadnji
   pogled ≤ 12 ur, zapis iz prihodnosti ne velja), `konec` (oznaki `data-zacetek`, `data-zacetek-pod` in posnetek
-  izginejo v istem izrisu; varovalo 8 s), `pozabi` (posnetek → okostje, izbris ključa, `lahkoShrani()` false do
+  izginejo v istem izrisu; varovalo 8 s, ob okostju Učne poti 20 s), `pozabi` (posnetek → okostje, izbris ključa, `lahkoShrani()` false do
   `znova()`), `lokalnoOdklenjen`/`seznamOdklenjen` (isti lastnik naprave, profil na seznamu brez `locked` in
   `needs_password`), `ociscen` (drugo čiščenje v `<template>`: brez nevarnih elementov, `on…`, `srcdoc`, `srcset`,
   tujih naslovov in `url()` v slogu), `posnetekZa` (isti profil, pogled, lekcija, tema, jezik, ≤ 12 ur; klepet nikoli),
   `koLupina` (ko je razčlenjena spodnja vrstica; prej ob vsaki spremembi), `pokazi` (najprej pred prvi pogled, nato
   pred `#tabbar`; različica `r` se preveri ob vstavitvi, ker je `meta` na koncu `<head>`; `nadgradi` za profil z
-  geslom po `/api/students`), `vnaprejZacni`/`vnaprej` (GET, 15 s, enkrat, brez roka; neuspeh → `null`), na koncu
-  sporočilo »izris« za APK.
+  geslom po `/api/students`), `vnaprejZacni`/`vnaprej` (GET, 15 s, enkrat, brez roka; neuspeh → `null`; najprej
+  `seme`: začetni podatki strežnika, kopija za vsak klic, 60 s ali do prvega klica, ki ni GET), `zacetni` (prebere in
+  odstrani `#evklid-zacetni`), okostje Učne poti (`zo-pot`, iste višine kot pravi pogled), na koncu sporočilo »izris« za APK.
+- Začetni podatki za prijavljenega (j 19. 11. 2026, `docs/meritve/prijavljen-mobilno-2026-11-19.md`): ob navigaciji
+  brskalnika (`Sec-Fetch-Dest: document`, `Sec-Fetch-Mode: navigate`, piškotek `sm_session`, ne `X-App-Client`)
+  strežnik iste odgovore API, kot bi jih app.js zahteval ob odprtju Učne poti (račun, nastavitve, profili; pri enem
+  odklenjenem profilu še pogovori, pot, XP, načini, urnik …), dobi z notranjimi klici GET skozi celo aplikacijo
+  (`server/zacetni-podatki.js`, ista prijava in preverjanja, rok 1,5 s na klic) in jih vstavi v
+  `<script type="application/json" id="evklid-zacetni">` (`<>&` U+2028 U+2029 ubeženi). Taka stran ima
+  `Cache-Control: no-store`, `Vary: Cookie` in nima ETag (je ne shrani noben predpomnilnik, tudi service worker ne);
+  zahteva service workerja ob namestitvi dobi navadno stran. Slogi zaslonov, ki jih Učna pot ne uporablja
+  (`SEJA_POZNEJE`), so v `<template data-evklid-slogi>` do konca zagona (`withSessionStyles`); skener, zbirke in lige
+  (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
+  Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
 - Pristajalna stran takoj (j 19. 11. 2026, zunanji pregled »LCP ~18 s na počasnem 4G«): obiskovalec brez seje
   (brez piškotka `sm_session`, ne aplikacija `EvklidApp/`, računi vklopljeni) dobi pristajalno stran že v HTML
   (`server/pristajalna-takoj.js landingPage`, `server/vstopna-stran.js withLanding`): isti izris kot v brskalniku
@@ -90,6 +102,24 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   in po `initAccount`). Moduli vstopne strani imajo `fetchpriority="low"` (ne tekmujejo s slogi). Izklop za primerjavo:
   `EVKLID_PRISTAJALNA_TAKOJ=0`. Meritev (Lighthouse 12, telefon, počasen 4G, lokalno): LCP 10,7 → 2,8 s (simulirano),
   21 → 2,2 s (pravo upočasnjevanje); test `test/pristajalna-takoj.test.js`.
+- Obiskovalec hitreje do obrazca, brez odvečnih prenosov (meritev hitrosti 21. 11. 2026, primerjava z Astra AI): slovenska
+  pristajalna stran nosi jedro besedil (`withSlJedro`, kot stran prijavljenega) namesto `modulepreload` celega slovarja; ob
+  sidru `#registracija`, `#prijava` ali `#pozabljeno-geslo` `zacetek.js` (`obrazecObiskovalca`) stran skrije do obrazca (prej
+  ~0,6 s okostje Učne poti) in sloge drugih zaslonov vklopi šele v `konec` (za obrazcem; varovalo 8 s; `.small` za namig je v
+  `account.css`). Zasloni, igre, orodja kalkulatorja in cel slovar (`zasloniPozneje`, ~90 modulov, ~0,8 MB) se obiskovalcu
+  prenesejo šele, ko začne izpolnjevati obrazec (`focusin`/`pointerdown` v `#view-auth form`), ali po prijavi za prvim
+  izrisom Učne poti (`app.js cakajObiskovalca`, `obiskovalecKonec`). Service worker ob prvem obisku shrani prenesene
+  datoteke iz predpomnilnika brskalnika (`fetch(u, { cache: "force-cache" })`), brez ponovne zahteve za vsako.
+- Obrazec pred aplikacijo (meritev 21. 11. 2026: gumb »Ustvari račun« je čakal ~50 modulov `app.js`): strežnik da module
+  obrazca (`OBRAZEC` v `server/vstopna-stran.js`: `zagon.js`, `account.js` z odvisnostmi, 18 datotek) na začetek seznama
+  `modulepreload`. Ko `zacetek.js` (`obrazecObiskovalca`) obrazec dovoli (brez poizvedbe razen oznak vira, brez lastnika
+  naprave), nastavi `evklidZacetek.obrazec`; `zagon.js` po jeziku uvozi `account.js` in `obrazecVnaprej` izriše obrazec,
+  pokaže pasici in stran. `initAccount` ga v `route` prevzame brez ponovnega izrisa (vpisano in fokus ostaneta);
+  `continueFlow` po prijavi ali registraciji počaka konec `initAccount` (`onReady` iz `app.js`; če ta v 15 s ne začne,
+  stran naloži znova), gumb za oddajo je ta čas zaseden (`busy`, brez druge registracije). Cel slovar (`/i18n.js`,
+  `/i18n/sl.js`, drugi jeziki brez jedra) je takoj za moduli obrazca (nemščina 3,1 → 1,8 s na telefonu). Lokalno (HTTP/1.1 kot meritev
+  iz ZDA, 5 hladnih zagonov, mediana): računalnik s 150 ms zakasnitve 2,42 → 1,16 s, telefon (9 Mbit/s, 170 ms, CPU 4×)
+  3,19 → 1,51 s; test `test/registracija-takoj.test.js`.
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).

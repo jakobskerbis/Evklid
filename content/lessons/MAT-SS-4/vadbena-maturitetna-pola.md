@@ -185,12 +185,18 @@ $3 \cdot 36 - \frac{216}{3} = 108 - 72 = 36$, vodostaj se dvigne za $36\,\mathrm
 
 ## Povzetek
 
-- Pola traja $90$ minut; pola 1 je brez računala, pola 2 z osnovnim računalom, obe imata prilogo s formulami.
-- Osnovna raven: $8$ kratkih nalog (skupaj $20$ točk) in $6$ krajših strukturiranih (skupaj $40$); višja raven: $6$ krajših strukturiranih in $2$ strukturirani nalogi po $9$ do $11$ točk.
-- Pravilo minute in pol: naloga s $k$ točkami ima približno $1{,}5 \cdot k$ minut; s $15$ minutami za pregled in preverjanje $1{,}25$ minute na točko.
-- Najprej preleti polo, reši naloge, ki jih znaš, po dvojnem času preskoči in se vrni.
-- Točke so za korake: nastavek, vmesni rezultat, rezultat, odgovor z enoto. Rezultat brez poti lahko izgubi večino točk ali vse.
-- Preverjanje: vstavi nazaj, preveri pogoje, oceni smiselnost. Ko obtičiš, zapiši nastavek.
+- Pola traja $90$ minut.
+- **Pola 1** je brez računala, **pola 2** z osnovnim računalom; obe imata prilogo s formulami.
+- **Osnovna raven:** $8$ kratkih nalog (skupaj $20$ točk) in $6$ krajših strukturiranih (skupaj $40$).
+- **Višja raven:** $6$ krajših strukturiranih in $2$ strukturirani nalogi po $9$ do $11$ točk.
+- **Pravilo minute in pol:** naloga s $k$ točkami ima približno $1{,}5 \cdot k$ minut.
+- S $15$ minutami za pregled in preverjanje imaš $1{,}25$ minute na točko.
+- Najprej preleti polo in reši naloge, ki jih znaš.
+- Po dvojnem času nalogo preskoči in se vrni.
+- **Točke so za korake:** nastavek, vmesni rezultat, rezultat, odgovor z enoto.
+- Rezultat brez poti lahko izgubi večino točk ali vse.
+- **Preverjanje:** vstavi nazaj, preveri pogoje, oceni smiselnost.
+- Ko obtičiš, zapiši nastavek.
 
 ## Ponovitev
 

@@ -4,7 +4,7 @@ import { t, applyI18n } from "/i18n.js";
 import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
-import { vgrajeno, starsu } from "./vgrajeno.js";
+import { vgrajeno, starsu, vprasajInstruktorja } from "./vgrajeno.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
 
@@ -18,12 +18,6 @@ const mk = (tag, cls, text) => {
   if (cls) e.className = cls;
   if (text != null) e.textContent = text;
   return e;
-};
-const PREDMETI = { BIO: "subj.BIO", KEM: "subj.KEM", FIZ: "subj.FIZ", MAT: "subj.MAT", NAR: "subj.NAR" };
-const predmet = (p) => {
-  const k = PREDMETI[p];
-  const s = k ? t(k) : p;
-  return s === k ? p : s;
 };
 
 function razberi() {
@@ -545,7 +539,14 @@ async function model(id, param, moj) {
   };
   // »Poglej z mikroskopom« v oknu dela: preparat za del (organi iz GLB) ali za model.
   const mikroskop = prepModela ? { za: (delId) => pogledDela(id, delId), odpri: odpriMikroskop } : null;
-  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop });
+  // »Vprašaj inštruktorja« v oknu dela (public/3d/vgrajeno.js): vrnitev iz klepeta odpre ta model z istim delom.
+  const vprasaj = (d) =>
+    vprasajInstruktorja(t("a3.askPartText", { naslov: mod.info.naslov, ime: d.la ? `${d.ime} (${d.la})` : d.ime }), {
+      vrni: `${id}?del=${encodeURIComponent(d.id)}`,
+      oznaka: `${d.ime} (${mod.info.naslov})`, // »Nazaj na: Jedro (Živalska celica)«, brez dveh dvopičij
+      kontekst: { v: 1, sourceType: "model3d", sourceId: id, selectedObject: { id: d.id, ime: d.ime } },
+    });
+  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, mikroskop, vprasaj });
 }
 
 async function usmeri() {

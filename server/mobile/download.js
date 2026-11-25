@@ -15,6 +15,7 @@ import { uiText, manifestLang } from "../webapp.js";
 import { RTL } from "../../public/i18n/languages.js";
 import { appLinkUrl } from "./app-link.js";
 import { IKONE_HEAD } from "../ikone.js";
+import { dateText } from "../../public/datum.js";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const httpsUrl = (u) => (/^https:\/\/[^\s"'<>]+$/.test(String(u || "")) ? u : null);
@@ -118,6 +119,8 @@ export function mountDownload(app, opts = {}) {
       testflight: httpsUrl(env.EVKLID_TESTFLIGHT_URL),
     };
   };
+  // Podatki o APK na tem strežniku za /prenesi (velikost, različica, datum); APK z drugega naslova: null.
+  const localApkStat = () => (httpsUrl(env.EVKLID_ANDROID_APK_URL) ? null : fs.statSync(apkFile, { throwIfNoEntry: false }));
   app.get("/api/app-links", (_req, res) => res.set("Cache-Control", "no-cache").json(links()));
 
   const admin = (req, res) => {
@@ -158,6 +161,19 @@ export function mountDownload(app, opts = {}) {
     const lang = manifestLang(req.query.lang, req.acceptsLanguages());
     const t = (k, v) => esc(uiText(lang, k, v));
     const { apk, play, appStore, testflight } = links();
+    // Velikost, različica in datum APK na tem strežniku (pregled javnih strani 21. 11. 2026, P5: na mobilnih podatkih
+    // dijak pred prenosom vidi, koliko prenaša). APK z drugega naslova (EVKLID_ANDROID_APK_URL): teh podatkov nimamo.
+    const st = apk ? localApkStat() : null;
+    const apkInfo = st
+      ? [
+          t("dl.apkSize", { mb: Math.max(1, Math.round(st.size / 1e6)) }),
+          fileVersion(st) ? t("dl.apkVersion", { version: fileVersion(st) }) : "",
+          // Datum z imenom meseca v jeziku strani (pregled 3, N1: »11/21/2026« je v angleščini dvoumen).
+          t("dl.apkDate", { date: dateText(st.mtime, lang, { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Ljubljana" }) }),
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : "";
     const ua = String(req.get("user-agent") || "");
     const first = /iPhone|iPad|Macintosh.*Mobile/.test(ua) ? "ios" : "android";
     // Uvod pove samo, kar res obstaja: brez App Store in TestFlight na iPhonu ni aplikacije, le »Dodaj na začetni zaslon«;
@@ -165,7 +181,7 @@ export function mountDownload(app, opts = {}) {
     const btn = (href, label, primary = true) => `<a class="btn${primary ? "" : " sec"}" href="${esc(href)}">${label}</a>`;
     const android = `<section><h2>${t("dl.android")}</h2>
       ${play ? btn(play, t("dl.play")) : ""}
-      ${apk ? `${btn(apk, t("dl.apk"), !play)}<p class="muted">${play ? "" : `${t("dl.apkWhy")} `}${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
+      ${apk ? `${btn(apk, t("dl.apk"), !play)}${apkInfo ? `<p class="muted" id="apk-info">${apkInfo}</p>` : ""}<p class="muted">${play ? "" : `${t("dl.apkWhy")} `}${t("dl.apkSteps")}</p>` : play ? "" : `<p class="muted">${t("dl.soon")}</p>`}
     </section>`;
     // Prijavljen v tem brskalniku na telefonu: enkratna povezava, ki odpre aplikacijo prijavljeno (app-link.js).
     // ?app=1: stran je odprla aplikacija (gumb na zaslonu za prijavo), zato je ta del na vrhu.
@@ -182,6 +198,8 @@ export function mountDownload(app, opts = {}) {
       ${!appStore && testflight ? `${btn(testflight, t("dl.testflight"))}<p class="muted">${t("dl.testflightSteps")}</p>` : ""}
       ${!appStore ? `<p class="muted">${t("dl.iosWeb")}</p>${btn("/", t("dl.openWeb"), false)}` : ""}
     </section>`;
+    // Uvod je tudi opis strani in predogleda povezave (pregled javnih strani 21. 11. 2026, P3).
+    const intro = t(appStore || testflight ? "dl.introApps" : apk || play ? "dl.intro" : "dl.introWeb");
     // Noga z javnimi stranmi, kot na pristajalni strani (strani so v slovenščini); ne v aplikaciji (?app=1).
     const footer = `<footer>${[["/", BRAND.name], ["/o-evklidu", t("land.what")], ["/zakaj-evklid", t("land.why")], ["/starsi.html", t("land.par.t")], ["/sole", t("land.sch.t")], ["/zasebnost.html", t("land.privacy")]]
       .map(([href, label]) => `<a href="${href}">${href === "/" ? esc(label) : label}</a>`)
@@ -190,6 +208,11 @@ export function mountDownload(app, opts = {}) {
     res.set("Cache-Control", appLink ? "no-store" : "no-cache").type("html").send(`<!doctype html>
 <html lang="${esc(lang)}" dir="${RTL.has(lang) ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(BRAND.name)} · ${t("dl.title")}</title>${IKONE_HEAD}
+<meta name="description" content="${intro}">
+<meta property="og:type" content="website"><meta property="og:site_name" content="${esc(BRAND.name)}"><meta property="og:url" content="https://${BRAND.domain}/prenesi">
+<meta property="og:title" content="${esc(BRAND.name)} · ${t("dl.title")}"><meta property="og:description" content="${intro}">
+<meta property="og:image" content="https://${BRAND.domain}/icons/deljenje.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 :root{--bg:#F6F7F9;--surface:#fff;--text:#0f172a;--muted:#5b6474;--accent:#2353D1;--accent-text:#fff;--border:#e3e7ee}
 @media (prefers-color-scheme:dark){:root{--bg:#0D1117;--surface:#161b22;--text:#e6edf3;--muted:#9aa4b2;--accent:#6E9BFF;--accent-text:#0D1117;--border:#30363d}}
@@ -206,7 +229,7 @@ footer a{color:var(--accent);min-height:40px;display:inline-flex;align-items:cen
 </style></head><body><main>
 <header><img src="/icons/icon-192.png" alt=""><div><h1>${esc(BRAND.name)}</h1><div class="muted">${t("dl.title")}</div></div></header>
 ${req.query.app ? appLink : ""}
-<p>${t(appStore || testflight ? "dl.introApps" : apk || play ? "dl.intro" : "dl.introWeb")}</p>
+<p>${intro}</p>
 ${first === "ios" ? ios + android : android + ios}
 ${req.query.app ? "" : appLink}
 ${req.query.app ? "" : footer}

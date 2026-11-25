@@ -12,8 +12,9 @@ import { seal, sealJson, unsealJson } from "./crypto-polje.js";
 import { callMaxUsd } from "./meje-ai.js";
 import { lokalnaVrsta, nujnoZa } from "./nujno.js";
 import { audit } from "./dnevnik-dostopov.js";
+import { speakMarkdown, govorMp3, glasUrl } from "./govor.js";
 import {
-  pickQuestions, publicQuestion, gradeUser, reviewUser, callModel, pointsFrom, resultStatus, score, better, cleanFollowup, cleanFeedback,
+  pickQuestions, publicQuestion, forSpeech, gradeUser, reviewUser, callModel, pointsFrom, resultStatus, score, better, cleanFollowup, cleanFeedback,
   GRADE_SYSTEM, REVIEW_SYSTEM, USTNO_MODEL, USTNO_REVIEW_MODEL, GRADE_MAX_TOKENS, REVIEW_MAX_TOKENS, USTNO_QUESTIONS, COUNTS, MAX_ANSWER, MAX_APPEALS, POINTS,
 } from "./ustno.js";
 
@@ -46,7 +47,7 @@ export function ustnoTables(db) {
     );`);
 }
 
-export function mountUstno(app, store, { loadStudent, usage, progress = null, accounts = null, createFn = null } = {}) {
+export function mountUstno(app, store, { loadStudent, usage, progress = null, accounts = null, createFn = null, glasFn = govorMp3 } = {}) {
   const db = store.db;
   ustnoTables(db);
   const intParam = (v) => (/^\d+$/.test(String(v)) ? Number(v) : NaN);
@@ -450,6 +451,37 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
       tocke: per.reduce((t, x) => t + (x.r?.tocke || 0), 0),
       max: qs.reduce((t, q) => t + q.pojmi.length, 0),
     });
+  });
+
+  // Branje na glas s slovenskim glasom strežnika (server/govor.js govorMp3): samo besedilo vprašanja te seje ali
+  // dodatnega vprašanja, ki ga je seja že dobila (nikoli poljubnega besedila iz zahteve). Brez glasovnega strežnika
+  // 503: odjemalec uporabi glas naprave. Ne gre v meje AI (ni klica modela); meja branj na uro varuje strežnik.
+  const reads = new Map(); // student → [časi branj v zadnji uri]
+  const READS_PER_HOUR = 240;
+  app.post("/api/students/:id/ustno/:sid/govor", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const ses = loadSession(req, res, s);
+    if (!ses) return;
+    const { qs, st } = ses;
+    const i = Number(req.body?.i);
+    const q = Number.isInteger(i) ? qs[i] : null;
+    if (!q) return res.status(400).json({ error: "Ni takega vprašanja." });
+    const follow = req.body?.dodatno === true ? st.odgovori[i]?.dodatno : null;
+    if (req.body?.dodatno === true && !follow) return res.status(400).json({ error: "Dodatnega vprašanja ni." });
+    const text = follow ? forSpeech(speakMarkdown(follow)) : publicQuestion(q, i).govor;
+    const now = Date.now();
+    const recent = (reads.get(s.id) || []).filter((t) => now - t < 3_600_000);
+    if (recent.length >= READS_PER_HOUR) return res.status(429).json({ error: "Preveč branj. Poskusi čez nekaj minut." });
+    recent.push(now);
+    if (reads.size > 2000) for (const [k, v] of reads) if (!v.some((t) => now - t < 3_600_000)) reads.delete(k);
+    reads.set(s.id, recent);
+    // Brez glasovnega strežnika (code »ni«) odjemalec v tem odprtju ne poskuša več; ob napaki ali gneči ob naslednjem branju.
+    if (!glasUrl() && glasFn === govorMp3) return res.status(503).json({ error: "Glas strežnika ni nastavljen.", code: "ni" });
+    const mp3 = await glasFn(text, { shrani: !follow });
+    if (!mp3) return res.status(503).json({ error: "Glas strežnika ni na voljo." });
+    res.set({ "Content-Type": "audio/mpeg", "Content-Length": String(mp3.length), "Cache-Control": "private, max-age=86400" });
+    res.end(mp3);
   });
 
   // Stikalo starša (odločitev 3; j 10. 11.: velja povsod, tudi za mikrofon v klepetu z inštruktorjem, server/app.js):

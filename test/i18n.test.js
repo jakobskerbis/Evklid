@@ -6,7 +6,7 @@ import SL0 from "../public/i18n/sl.js";
 import SL3D from "../public/i18n/sl-3d.js";
 
 const SL = { ...SL0, ...SL3D }; // izvirnik = sl.js + besedila strani /3d (dodajIzvirnik)
-import { LANGUAGES, LANGUAGE_CODES, UI_LANGUAGES, RTL, uiChain, uiLanguage, langInfo, detectLanguage, homeLanguage } from "../public/i18n/languages.js";
+import { LANGUAGES, LANGUAGE_CODES, UI_LANGUAGES, FROZEN_UI_LANGUAGES, RTL, uiChain, uiLanguage, langInfo, detectLanguage, homeLanguage } from "../public/i18n/languages.js";
 import { buildSystemPrompt, systemBlocks, languagePrompt } from "../server/prompt.js";
 import { normalizeSettings } from "../server/settings.js";
 
@@ -31,14 +31,17 @@ test("language list: unique codes, all over a million speakers, every fallback l
   assert.equal(langInfo("ar").rtl, true);
 });
 
-test("every UI translation has exactly the Slovenian keys and the same placeholders", () => {
+test("live UI translations have exactly the Slovenian keys; frozen ones only known keys; same placeholders", () => {
   const keys = Object.keys(SL).sort();
   for (const code of UI_LANGUAGES.filter((c) => c !== "sl")) {
     const file = path.join(UI_DIR, `${code}.json`);
     assert.ok(fs.existsSync(file), `manjka ${code}.json`);
     const d = JSON.parse(fs.readFileSync(file, "utf8"));
-    assert.deepEqual(Object.keys(d).sort(), keys, `${code}: ključi se ne ujemajo`);
-    for (const k of keys) {
+    // Zamrznjeni jeziki (j, 24. 11. 2026) smejo imeti manjkajoče ključe – vmesnik uporabi nadomestni jezik.
+    if (FROZEN_UI_LANGUAGES.includes(code)) {
+      for (const k of Object.keys(d)) assert.ok(k in SL, `${code}: odvečen ključ ${k}`);
+    } else assert.deepEqual(Object.keys(d).sort(), keys, `${code}: ključi se ne ujemajo`);
+    for (const k of keys.filter((x) => x in d)) {
       const want = vars(forms(SL[k])[0]).filter((v) => v !== "n");
       for (const f of forms(d[k])) {
         assert.equal(typeof f, "string", `${code} ${k}`);
@@ -124,4 +127,16 @@ test("region reaches the tutor prompt and is validated", () => {
   assert.equal(languagePrompt("sl", "SI"), "slovenščina (sl)");
   const p = buildSystemPrompt({ settings: normalizeSettings({ language: "pt", region: "BR" }), studentName: "Ana" });
   assert.match(systemBlocks(p)[1].text, /Jezik pogovora: Portuguese – Português \(pt\), regija: Brazil \(BR\)/);
+});
+
+// Navodilo pri preteklih polah imenuje prvi gumb za prenos v vrstici ({file}: NPZ »Preizkus znanja«, poklicna
+// »Izpitna pola«, matura »Izpitna pola 1«; pregled #917, 3. prehod), ne »prvega gumba« ali vedno »Izpitna pola 1«.
+test("past papers hint names the row's first download button via {file}, in every language", () => {
+  assert.match(SL["pp.openLocalHint"], /»\{file\}«/);
+  assert.doesNotMatch(SL["pp.openLocalHint"], /prvi gumb|Izpitna pola 1/);
+  for (const f of fs.readdirSync(UI_DIR).filter((x) => x.endsWith(".json"))) {
+    const ui = JSON.parse(fs.readFileSync(path.join(UI_DIR, f), "utf8"));
+    assert.equal(ui["pp.openLocalHint"].split("{file}").length, 2, `${f}: ${ui["pp.openLocalHint"]}`);
+    assert.ok(!ui["pp.openLocalHint"].includes(ui["pp.file.paper1"]), `${f}: še stara oznaka`);
+  }
 });
