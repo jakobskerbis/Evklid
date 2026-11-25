@@ -7,7 +7,7 @@ import { parseStevilo, faktorDeset } from "../public/sim/lab.js";
 import { tokPri } from "../public/sim/lab-fiz.js";
 import { indikatorIzMeritev } from "../public/sim/lab-titracija.js";
 import { poPolUre } from "../public/sim/lab-toplota.js";
-import { playwright, serve, odpri, meriOhm } from "./laboratorij-pomoc.js";
+import { playwright, serve, odpri, nastavi, meriOhm } from "./laboratorij-pomoc.js";
 
 const POZNEJE = new Set(["lab-kem.js", "lab-indikatorji.js", "lab-reakcije.js", "lab-elektrika.js", "lab-elektrokemija.js"]);
 
@@ -203,10 +203,18 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     await p.waitForTimeout(500);
     const am = () => p.evaluate(() => document.querySelector('[aria-label="ampermeter"]').textContent);
     assert.match(await am(), /najprej napovej tok/);
+    await nastavi(p, "napetost napajalnika", 3);
+    await p.waitForTimeout(700);
+    const risba = () => p.evaluate(() => document.querySelector(".demo-stage svg")?.textContent || "");
+    const prej = await risba();
     await p.locator(".lab-napoved input").fill("30");
     await p.locator(".lab-napoved").getByRole("button", { name: "Zapiši napoved" }).click();
-    await p.waitForTimeout(500);
+    await p.waitForTimeout(700);
     assert.doesNotMatch(await am(), /najprej napovej/);
+    // tudi zaslon ampermetra na fotografiji (foto.js) pokaže tok šele po napovedi
+    const tok = (await am()).match(/\d+,\d+/)?.[0];
+    if (tok && (await risba()).includes(tok)) assert.ok(!prej.includes(tok), `fotografija izda tok ${tok} pred napovedjo`);
+    await nastavi(p, "napetost napajalnika", 0);
     await meriOhm(p, [2, 4]);
     const vmes = await p.evaluate(() => [document.querySelector(".lab-napoved .lab-tit-field").hidden, document.querySelector(".lab-primerjava").hidden]);
     assert.deepEqual(vmes, [true, true], "po prvi meritvi napoved zaprta, primerjave še ni (ni meritve pri 6 V ne premice)");
