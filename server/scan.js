@@ -18,15 +18,20 @@ import { STATUSES } from "../public/scan/status.js";
 // numerična potrditev je največ »numeric«, sistem in periodične rešitve brez dokaza popolnosti »partial« (AUDIT-001).
 // verified: true samo pri statusu »verified« (stari odjemalci prikažejo značko »preverjeno« le takrat).
 // Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam ne odloča nobena koda (status »unverified«).
+const ROUNDED = /\d\.\d|≈|~|approx|\d\s*[eE][+-]?\d|[*·×]\s*10\s*\^|·\s*10[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/;
 const periodicClaim = (sol) => (sol?.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(String(s)));
 export async function verifyAiFull(text, sol, { cas = true } = {}) {
   const num = verifyAi(text, sol);
   const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
   if (c.ok === true) {
+    // Motorja se ne strinjata: točna lokalna algebra je trditev ovrgla, SymPy pa jo je sprejel (lahko le s preizkusom
+    // v točkah ali s toleranco zapisa, worker.py is_zero / decimals_tol). Ne potrdimo: »Nepreverjeno« (PV-02).
+    if (num.exact) return { verified: false, reason: "unknown", status: "unverified" };
     // SymPy pri periodičnih rešitvah preveri popolnost samo na [−20, 20] (worker.py solve_one): »delno«.
     // Zaokroženo decimalno število (1.414) SymPy sprejme s toleranco (worker.py decimals_tol): to je približek,
     // »Preverjeno« ostane le, če ga točna algebra potrdi kot točno vrednost (2.5).
-    const rounded = /\d\.\d/.test(JSON.stringify([sol?.solutions, sol?.value])) && num.status !== "verified";
+    // Približek je tudi »≈ 1414«, znanstveni zapis (2e6, 2*10^6, 2·10⁶) in »approx«: SymPy jih sprejme s toleranco.
+    const rounded = ROUNDED.test(JSON.stringify([sol?.solutions, sol?.value])) && num.status !== "verified";
     const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded ? "numeric" : "verified";
     return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
   }
