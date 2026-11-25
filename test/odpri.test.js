@@ -147,3 +147,20 @@ test("ODPRI 3d: ime posameznega dela celice ali virusa ostane del (ne postane sk
     }
   }
 });
+
+test("resolve: naslov poskusa iz Laboratorija (kot v opombi inštruktorju) najde ta poskus (povezave C1)", async () => {
+  const FIZ9 = { subject: "FIZ", curriculum_level: "9. razred", school_system: "SI" };
+  const [r] = await resolveOpen('<<ODPRI poskus="Ohmov zakon: tok in napetost" nastavi="napetost=6">>', FIZ9);
+  assert.equal(r.id, "lab-ohm");
+  assert.deepEqual(r.set, { napetost: 6 });
+  const [os] = await resolveOpen('<<ODPRI poskus="Elektromagnet (OŠ)">>', FIZ9);
+  assert.deepEqual([os.id, os.opts], ["lab-elektromagnet", { raven: "os" }]);
+});
+
+test("povezave C1: poskus, iz katerega je klepet odprt, ima prednost (»Ohmov zakon« → lab-ohm)", async () => {
+  const { resolveOpen: r } = await import("../server/odpri.js");
+  const s = { curriculum_level: "9. razred", subject: "FIZ" };
+  const blok = '<<ODPRI poskus="Ohmov zakon" nastavi="napetost=6">>';
+  assert.equal((await r(blok, s, { prefer: "lab-ohm" }))[0].id, "lab-ohm");
+  assert.notEqual((await r('<<ODPRI poskus="prosti pad">>', s, { prefer: "lab-ohm" }))[0]?.id, "lab-ohm", "drug poskus ostane drug");
+});

@@ -363,7 +363,7 @@ function busy(form, on) {
 }
 function showError(form, err) {
   const box = errorBox(form);
-  box.textContent = err.message;
+  box.textContent = err.data?.code === "ime_neprimerno" ? t("set.nameBad") : err.message; // #754
   box.hidden = false;
 }
 

@@ -1,6 +1,6 @@
 // Virtualni laboratorij, »Silomer in uteži«: Hookov zakon (lab-hooke), gostota (lab-gostota), vzgon (lab-vzgon),
 // hidrostatični tlak z manometrom (lab-tlak). Modeli: lab-model-sile.js (brez DOM). Odčitki analognih skal so v povečavi (lupa).
-import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, decZapis } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
 import { HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI, SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, POENOSTAVITVE_SILE } from "./lab-model-sile.js";
 
@@ -86,7 +86,7 @@ export function labHooke(el) {
     { key: "r", label: "odčitek [cm]" },
     { key: "x", label: "podaljšek <i>x</i> [cm]" },
   ], { empty: "Še ni meritev. Najprej zapiši odčitek kazalca brez uteži, nato obešaj uteži." });
-  const graph = dataGraph({ x: [0, 40], y: [0, 4], xStep: 5, yStep: 0.5, xLabel: "x [cm]", yLabel: "F [N]", title: "Sila v odvisnosti od podaljška vzmeti" });
+  const graph = dataGraph({ x: [0, 40], y: [0, 4], xStep: 5, yStep: 0.5, xLabel: "x [cm]", yLabel: "F [N]", title: "Sila v odvisnosti od podaljška vzmeti", formula: "<i>F</i> = <i>k</i> · <i>x</i>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = []; // { g: ime vzmeti, x [cm], y = F [N] }
@@ -214,9 +214,9 @@ export function labHooke(el) {
     oko(svg, xe, yEye);
     s("line", { x1: xe - 8, y1: yEye, x2: 238, y2: L.yc + dr, class: "lab-tit-sight" }, svg);
     const r = B.odcitek(pogled);
-    label(svg, 236 + 75, 232, `odčitek: ${r.text.replace(".", ",")}${nb}cm`, "tick b");
+    label(svg, 236 + 75, 232, `odčitek: ${decZapis(r.text)}${nb}cm`, "tick b");
     merilo(svg, 300, H - 20, 25, "5 cm");
-    svg.setAttribute("aria-label", `${VZMETI[B.izbrana].name} na stojalu z ravnilom, obešenih ${B.obesene.reduce((s, i) => s + B.utezi[i].n, 0)} g. Kazalec kaže ${r.text.replace(".", ",")} cm${B.nihanje() > VZMET.mirna ? ", vzmet niha" : ""}.`);
+    svg.setAttribute("aria-label", `${VZMETI[B.izbrana].name} na stojalu z ravnilom, obešenih ${B.obesene.reduce((s, i) => s + B.utezi[i].n, 0)} g. Kazalec kaže ${decZapis(r.text)} cm${B.nihanje() > VZMET.mirna ? ", vzmet niha" : ""}.`);
   }
   redraw();
   draw();
@@ -238,7 +238,7 @@ export function labGostota(el) {
     { key: "rho", label: "ρ [g/cm³]" },
     { key: "lit", label: "tabela" },
   ], { empty: "Še ni meritev. Stehtaj vzorec, odčitaj vodo v valju, potopi vzorec in odčitaj znova." });
-  const graph = dataGraph({ x: [0, 40], y: [0, 150], xStep: 5, yStep: 25, xLabel: "V [cm³]", yLabel: "m [g]", title: "Masa v odvisnosti od prostornine" });
+  const graph = dataGraph({ x: [0, 40], y: [0, 150], xStep: 5, yStep: 25, xLabel: "V [cm³]", yLabel: "m [g]", title: "Masa v odvisnosti od prostornine", formula: "<i>m</i> = ρ · <i>V</i>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = []; // { g: snov, x: V, y: m }
@@ -429,10 +429,10 @@ export function labGostota(el) {
       const yr = st.menisk === "dno" ? L.yc : L.yc - m;
       s("line", { x1: 252, y1: yr, x2: 372, y2: yr, class: "lab-tit-sight" }, svg);
       oko(svg, 380, yr);
-      label(svg, 320, 218, `odčitek: ${r.text.replace(".", ",")}${nb}mL`, "tick b");
+      label(svg, 320, 218, `odčitek: ${decZapis(r.text)}${nb}mL`, "tick b");
     }
     merilo(svg, 330, H - 14, 24, "2 cm");
-    svg.setAttribute("aria-label", `Merilni valj ${B.tek ? `s tekočino (${TEKOCINE[B.tek.id].name}, ${B.odcitekV(st.menisk).text.replace(".", ",")} mL)` : "je prazen"}${B.vzorec ? `, v njem je ${VZORCI[B.vzorec.id].name}${B.vzorec.plava ? ", ki plava" : ""}` : ""}. Tehtnica levo.`);
+    svg.setAttribute("aria-label", `Merilni valj ${B.tek ? `s tekočino (${TEKOCINE[B.tek.id].name}, ${decZapis(B.odcitekV(st.menisk).text)} mL)` : "je prazen"}${B.vzorec ? `, v njem je ${VZORCI[B.vzorec.id].name}${B.vzorec.plava ? ", ki plava" : ""}` : ""}. Tehtnica levo.`);
   }
   newSample("aluminij", 2);
   balL.set("0.0", "g", "tara");
@@ -456,7 +456,7 @@ export function labVzgon(el) {
     { key: "Fv", label: "<i>F</i><sub>vzg</sub> [N]" },
     { key: "Fa", label: "ρ<i>gV</i><sub>izp</sub> [N]" },
   ], { empty: "Še ni meritev. Zapiši silo, ko valj visi v zraku, nato ga spuščaj v tekočino." });
-  const graph = dataGraph({ x: [0, 100], y: [0, 1.2], xStep: 20, yStep: 0.2, xLabel: "V izp [cm³]", yLabel: "F vzg [N]", title: "Vzgon v odvisnosti od prostornine potopljenega dela" });
+  const graph = dataGraph({ x: [0, 100], y: [0, 1.2], xStep: 20, yStep: 0.2, xLabel: "V izp [cm³]", yLabel: "F vzg [N]", title: "Vzgon v odvisnosti od prostornine potopljenega dela", formula: "<i>F</i><sub>vzg</sub> = ρ<sub>tek</sub> · <i>g</i> · <i>V</i><sub>izp</sub>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = []; // { g: tekočina, x: Vizp, y: Fvzg }
@@ -506,14 +506,14 @@ export function labVzgon(el) {
     const vj = { aluminij: "aluminij", jeklo: "jeklo" }[B.valj] ?? VALJI[B.valj].name.split(" ")[0], d = Math.round(B.globina() * 1000) / 10, Vi = d * (B.a * 1e4);
     if (B.s <= 0 || d === 0) {
       zrak[B.valj] = r.value;
-      table.add({ vj, tek: "zrak", d: "0", Vi: "0", F: r.text.replace(".", ","), Fv: "–", Fa: "–" });
+      table.add({ vj, tek: "zrak", d: "0", Vi: "0", F: decZapis(r.text), Fv: "–", Fa: "–" });
       if (!B.nicla) log.push(`Ničla silomera ni naravnana: brez valja kaže ${fixed(B.nic0, 2)}${nb}N. Teža valja je zato prevelika. (Vzgon kot razlika dveh odčitkov bo vseeno pravilen.)`, "warn");
-      else log.push(`Teža valja v zraku: ${r.text.replace(".", ",")}${nb}N.`, "info");
+      else log.push(`Teža valja v zraku: ${decZapis(r.text)}${nb}N.`, "info");
       return;
     }
     if (zrak[B.valj] == null) return log.push("Najprej zapiši silo, ko valj visi v zraku (dvigni ga nad gladino).", "warn");
     const Fv = zrak[B.valj] - r.value, Fa = TEKOCINE[B.tek].rho * G_SOLA * Vi * 1e-3;
-    table.add({ vj, tek: TEKOCINE[B.tek].name, d: fixed(d, 1), Vi: fixed(Vi, 0), F: r.text.replace(".", ","), Fv: fixed(Fv, 3), Fa: fixed(Fa, 3) });
+    table.add({ vj, tek: TEKOCINE[B.tek].name, d: fixed(d, 1), Vi: fixed(Vi, 0), F: decZapis(r.text), Fv: fixed(Fv, 3), Fa: fixed(Fa, 3) });
     meas.push({ g: TEKOCINE[B.tek].name, x: Vi, y: Fv });
     if (B.dno()) log.push("Valj stoji na dnu čaše: del teže nosi dno, zato silomer kaže premalo in je »vzgon« prevelik. Valj dvigni, da prosto visi.", "bad");
     redraw(), sync();
@@ -578,11 +578,11 @@ export function labVzgon(el) {
     s("line", { x1: 240 + 70, y1: L.yc, x2: 240 + 126, y2: L.yc, class: "lab-tit-sight" }, svg);
     oko(svg, 240 + 136, L.yc);
     const r = B.odcitek();
-    label(svg, 240 + 75, 224, `odčitek: ${r.text.replace(".", ",")}${nb}N`, "tick b");
+    label(svg, 240 + 75, 224, `odčitek: ${decZapis(r.text)}${nb}N`, "tick b");
     label(svg, 240 + 75, 242, B.globina() > 0 ? `potopljeno ${fixed(B.globina() * 100, 1)}${nb}cm` : "valj je v zraku", "tick small");
     if (B.dno()) label(svg, cx, yT + 8, "valj stoji na dnu", "tick small");
     merilo(svg, 300, H - 18, 16, "2 cm");
-    svg.setAttribute("aria-label", `${VALJI[B.valj].name} visi na silomeru nad čašo s tekočino (${TEKOCINE[B.tek].name}). ${B.globina() > 0 ? `Potopljeno ${fixed(B.globina() * 100, 1)} cm` : "Valj je v zraku"}; silomer kaže ${r.text.replace(".", ",")} N.`);
+    svg.setAttribute("aria-label", `${VALJI[B.valj].name} visi na silomeru nad čašo s tekočino (${TEKOCINE[B.tek].name}). ${B.globina() > 0 ? `Potopljeno ${fixed(B.globina() * 100, 1)} cm` : "Valj je v zraku"}; silomer kaže ${decZapis(r.text)} N.`);
   }
   draw();
 }
@@ -604,7 +604,7 @@ export function labTlak(el) {
     { key: "pm", label: "<i>p</i> = ρ<sub>v</sub><i>g</i>Δ<i>h</i> [Pa]" },
     { key: "pt", label: "ρ<i>gh</i> [Pa]" },
   ], { empty: "Še ni meritev. Spusti sondo, počakaj, da se voda v manometru umiri, in zapiši oba kraka." });
-  const graph = dataGraph({ x: [0, 30], y: [0, 320], xStep: 5, yStep: 40, xLabel: "h [cm]", yLabel: "Δh [mm]", title: "Razlika višin v manometru v odvisnosti od globine sonde" });
+  const graph = dataGraph({ x: [0, 30], y: [0, 320], xStep: 5, yStep: 40, xLabel: "h [cm]", yLabel: "Δh [mm]", title: "Razlika višin v manometru v odvisnosti od globine sonde", formula: "<i>p</i> = ρ · <i>g</i> · <i>h</i> = ρ<sub>v</sub> · <i>g</i> · Δ<i>h</i>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = [];

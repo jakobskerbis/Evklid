@@ -1,0 +1,148 @@
+// 3D simulacija v lekciji (public/3d/sim.js) brez povezave: tudi ko se napake.js ne naloži, okvir pokaže sporočilo
+// »Preveri povezavo« in gumb »Poskusi znova« (pregled z napravo: prej je ostal samo napis »3D«). Po neuspelem uvozu modula
+// gumb osveži stran: neuspel modul ostane v brskalnikovem seznamu modulov (Chromium na CI ga ob novem import() ne prenese
+// znova, zato je preverjanje »nova zahteva za modeli.js« tam padlo, lokalno pa ne). Ob izpadu seznama modelov (fetch)
+// gumb naloži znova brez osvežitve.
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+import { createApp } from "../server/app.js";
+import { openDb } from "../server/db.js";
+
+const require = createRequire(import.meta.url);
+let playwright = null;
+for (const p of ["playwright", process.env.PLAYWRIGHT, "/opt/npm-tools/node_modules/playwright"].filter(Boolean)) {
+  try {
+    playwright = require(p);
+    break;
+  } catch {}
+}
+
+test("sim3d: brez napake.js in modelov sporočilo o povezavi in »Poskusi znova«", { skip: playwright ? false : "Playwright ni nameščen", timeout: 120000 }, async (t) => {
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, info() {}, warn() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", serviceWorkers: "block" });
+  try {
+    const p = await ctx.newPage();
+    const napake = [];
+    p.on("pageerror", (e) => napake.push(String(e)));
+    let modeli = 0;
+    await p.route("**/3d/napake.js", (r) => r.abort("internetdisconnected"));
+    await p.route("**/3d/modeli.js", (r) => (modeli++, r.abort("internetdisconnected")));
+    await p.goto(`${base}/healthz`);
+    const besedili = await p.evaluate(async () => {
+      const { t } = await import("/i18n.js");
+      const el = document.createElement("div");
+      el.id = "sim";
+      document.body.append(el);
+      const { sim3d } = await import("/3d/sim.js");
+      sim3d(el, { model: "celica-zivalska" });
+      return [t("a3.loadError"), t("a3.retry")];
+    });
+    await p.waitForSelector("#sim button", { timeout: 20000 });
+    assert.equal(await p.textContent("#sim p"), besedili[0]);
+    assert.equal(await p.textContent("#sim button"), besedili[1]);
+    assert.notEqual(besedili[0], "3D");
+    assert.ok(modeli >= 1);
+    const osvezena = p.waitForEvent("load", { timeout: 20000 });
+    await p.click("#sim button");
+    await osvezena;
+    assert.equal(await p.locator("#sim").count(), 0, "»Poskusi znova« po neuspelem uvozu modula osveži stran");
+    assert.deepEqual(napake, []);
+  } finally {
+    await ctx.close();
+    await browser.close();
+    server.close();
+  }
+});
+
+test("sim3d: brez napake.js in seznama modelov »Ni povezave«, »Poskusi znova« naloži znova", { skip: playwright ? false : "Playwright ni nameščen", timeout: 120000 }, async (t) => {
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, info() {}, warn() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", serviceWorkers: "block" });
+  try {
+    const p = await ctx.newPage();
+    const napake = [];
+    p.on("pageerror", (e) => napake.push(String(e)));
+    let seznam = 0;
+    await p.route("**/3d/napake.js", (r) => r.abort("internetdisconnected"));
+    await p.route("**/3d/modeli/seznam.json", (r) => (seznam++, r.abort("internetdisconnected")));
+    await p.goto(`${base}/healthz`);
+    const besedilo = await p.evaluate(async () => {
+      const { t } = await import("/i18n.js");
+      const el = document.createElement("div");
+      el.id = "sim";
+      document.body.append(el);
+      const { sim3d } = await import("/3d/sim.js");
+      sim3d(el, { model: "celica-zivalska" });
+      return t("a3.noConnection");
+    });
+    await p.waitForSelector("#sim button", { timeout: 20000 });
+    assert.equal(await p.textContent("#sim p"), besedilo);
+    const gumb = await p.$("#sim button");
+    const prej = seznam;
+    assert.ok(prej >= 1);
+    await p.click("#sim button");
+    // fetch seznama ni v seznamu modulov: nova zahteva in nova kartica (stari gumb ni več v dokumentu)
+    await p.waitForFunction((g) => !g.isConnected && document.querySelector("#sim button"), gumb, { timeout: 20000 });
+    assert.ok(seznam > prej, "»Poskusi znova« naloži znova");
+    assert.equal(await p.textContent("#sim p"), besedilo);
+    assert.deepEqual(napake, []);
+  } finally {
+    await ctx.close();
+    await browser.close();
+    server.close();
+  }
+});
+
+// Samo napake.js manjka (izpad med nalaganjem): pregledovalnik ga ne uvaža statično, zato se model vseeno naloži.
+test("sim3d: brez napake.js se model vseeno naloži (pregledovalnik ga uvozi šele ob napaki)", { skip: playwright ? false : "Playwright ni nameščen", timeout: 180000 }, async (t) => {
+  const src = (await import("node:fs")).readFileSync(new URL("../public/3d/pregledovalnik.js", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /^import [^\n]*"\.\/napake\.js"/m, "pregledovalnik.js: napake.js ni statičen uvoz");
+  let browser;
+  try {
+    browser = await playwright.chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, info() {}, warn() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", serviceWorkers: "block" });
+  try {
+    const p = await ctx.newPage();
+    const napake = [];
+    p.on("pageerror", (e) => napake.push(String(e)));
+    let blokiran = 0;
+    await p.route("**/3d/napake.js", (r) => (blokiran++, r.abort("internetdisconnected")));
+    await p.goto(`${base}/healthz`);
+    await p.evaluate(async () => {
+      const el = document.createElement("div");
+      el.id = "sim";
+      document.body.append(el);
+      const { sim3d } = await import("/3d/sim.js");
+      sim3d(el, { model: "celica-zivalska" });
+    });
+    await p.waitForSelector("#sim canvas", { timeout: 90000 });
+    assert.equal(await p.locator("#sim .k3-nalaganje.napaka, #sim button.secondary").count(), 0, "brez kartice z napako");
+    assert.deepEqual(napake, []);
+  } finally {
+    await ctx.close();
+    await browser.close();
+    server.close();
+  }
+});

@@ -304,9 +304,12 @@ Recept za risanje grafa in iskanje ničle pri $f(x) = -\tfrac{1}{2}x + 3$.
 1. Preberi $k = -\tfrac{1}{2}$ in $n = 3$.
 2. Tabela vrednosti:
 
-| $x$ | $-2$ | $0$ | $2$ | $6$ |
-|---|---|---|---|---|
-| $y = -\tfrac{1}{2}x + 3$ | $4$ | $3$ | $2$ | $0$ |
+| $x$ | $y = -\tfrac{1}{2}x + 3$ |
+|---|---|
+| $-2$ | $4$ |
+| $0$ | $3$ |
+| $2$ | $2$ |
+| $6$ | $0$ |
 
 3. Preveri izračune: $-\tfrac{1}{2}\cdot(-2) + 3 = 1 + 3 = 4$; $-\tfrac{1}{2}\cdot 2 + 3 = -1 + 3 = 2$; $-\tfrac{1}{2}\cdot 6 + 3 = -3 + 3 = 0$.
 4. Opaziš: ko se $x$ poveča za $2$, se $y$ zmanjša za $1$. Razmerje je $\dfrac{-1}{2} = -\dfrac{1}{2} = k$. Vrednosti v tabeli so torej skladne s smernim koeficientom.

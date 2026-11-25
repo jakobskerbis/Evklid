@@ -1,6 +1,6 @@
 // Gradniki virtualnega laboratorija: zaslon merilnika, tabela meritev, graf, vprašanje o sklepu, dnevnik dogodkov.
 // Modeli so v lab-model.js; tu je samo prikaz. Besedila so slovenska kot v ostalih simulacijah učbenika.
-import { h, s, fmt, svgBox, axes, tex } from "./kit.js";
+import { h, s, fmt, decZapis, svgBox, axes, tex } from "./kit.js";
 import SL from "../i18n/sl.js";
 import { icon } from "../icons.js";
 
@@ -33,7 +33,7 @@ export function lcd(name, { cls = "" } = {}) {
   const note = h("span", { class: "lab-lcd-note" });
   const el = h("div", { class: `lab-lcd ${cls}`, role: "group", "aria-label": name }, h("span", { class: "lab-lcd-name" }, name), h("span", { class: "lab-lcd-screen" }, val, unit), note);
   el.set = (text, u = "", n = "") => {
-    const t = String(text).replace(".", ",").replace("-", "−");
+    const t = decZapis(text);
     if (val.textContent !== t) val.textContent = t;
     if (unit.textContent !== u) unit.textContent = u;
     if (note.textContent !== n) note.textContent = n;
@@ -66,13 +66,16 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
 
 // Graf meritev s stalnimi osmi. draw(series): [{ pts: [[x, y]], shape: "o" | "^", cls: "a", label, line?: f(x) }]
 // origin: false postavi časovno os na spodnji rob (pri negativnih vrednostih, npr. Δm), da se oznake ne prekrivajo.
-export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep, title, origin = true }) {
+// formula (povezave C3, j 25. 11. 2026): zakon iz lekcij te teme, ki ga kaže graf (HTML, kot oznake osi), pod legendo.
+// Napis »Formula:«, ne »iz lekcije«: vse OŠ lekcije z istim poskusom je nimajo (pregled #1047).
+export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep, title, origin = true, formula = "" }) {
   const svg = svgBox(W, H, "lab-graph");
   svg.setAttribute("aria-label", title || "Graf meritev");
   const wrap = h("figure", { class: "lab-graph-wrap" }, svg);
   // Legenda je hkrati vklop in izklop: vsaka vrsta meritev, njena premica in mreža (public/sim/prikaz.js za ostale grafe).
   const legend = h("figcaption", { class: "lab-legend", role: "group" });
   wrap.append(legend);
+  if (formula) wrap.append(h("p", { class: "lab-graph-formula", html: `Formula: ${formula}` }));
   let A = null, last = [], legSig = "";
   const off = new Set();
   wrap.setAxes = (ax) => Object.assign(opts, ax);
@@ -377,7 +380,7 @@ export const num = (x, d) => fmt(x, d);
 // Število z vedno enakim številom decimalk (kot ga pokaže merilnik): 6,00 in ne 6.
 export const fixed = (x, d) => {
   const t = (Math.abs(x) < 0.5 * 10 ** -d ? 0 : x).toFixed(d);
-  return t.replace(".", ",").replace("-", "−");
+  return decZapis(t);
 };
 export { tex };
 // Formule v besedilu poskusov so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«), ne
