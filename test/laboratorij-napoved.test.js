@@ -198,6 +198,8 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
     const { p, errs } = await odpri(ctx, base, "lab-ohm");
     assert.equal(await p.evaluate(() => document.querySelector(".demo-controls > .lab-napoved")?.dataset.napoved), "tok-6V");
+    // napoved in primerjava nista .lab-q: vodeni način (lab-vodeno.js, test laboratorij-vodeno) šteje sklepe po .lab-q
+    assert.equal(await p.evaluate(() => document.querySelectorAll(".lab-q.lab-napoved, .lab-q.lab-primerjava").length), 0);
     // ampermeter do napovedi ne izda odgovora (pregled #1053, točka 7)
     await p.waitForTimeout(500);
     const am = () => p.evaluate(() => document.querySelector('[aria-label="ampermeter"]').textContent);
