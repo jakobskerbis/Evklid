@@ -665,7 +665,8 @@ export function placeToast() {
   el.style.bottom = `${Math.max(16, window.innerHeight - dno + 16)}px`;
   const r = el.getBoundingClientRect();
   const h = r.height;
-  const pokrije = (y) => ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom) - Math.max(y, o.top) > 2).length;
+  // 4 px razmika do vsake ovire, da obvestilo ne sede tik na rob vrstice za pisanje.
+  const pokrije = (y) => ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom + 4) - Math.max(y, o.top - 4) > 0).length;
   let best = { y: r.top, n: pokrije(r.top) };
   for (let y = r.top - 8; best.n && y >= vrh + 8; y -= 8) {
     const n = pokrije(y);
