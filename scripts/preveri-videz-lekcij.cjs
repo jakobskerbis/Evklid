@@ -238,6 +238,8 @@ async function odzivi() {
         }
         // Odpri »Razloži drugače« (prvi zavihek) in vse skrite odgovore (<details>), da se izmeri tudi njihova vsebina.
         await p.evaluate(() => {
+          // Koraki, ki se izrišejo šele v ozadju (textbook.js renderRest, #9): kot pri tisku izriši vse takoj.
+          window.dispatchEvent(new Event("beforeprint"));
           document.querySelector("#tb-alt-btn")?.click();
           document.querySelectorAll("#view-textbook details").forEach((d) => (d.open = true));
         });
