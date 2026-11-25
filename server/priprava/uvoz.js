@@ -457,10 +457,10 @@ export async function beriPdf(buf) {
  * regularnih izrazov, PDF, ki se razširi v gigabajte) ne ustavi strežnika: meja časa in rasti pomnilnika procesa,
  * nato se nit ustavi. Vrne { izseki, strani, opozorila, brezBesedila } ali vrže NapakaUvoza.
  */
-export function uvoziVNiti(vrsta, buf, { ms = MEJE_UVOZA.ms, mb = MEJE_UVOZA.mb } = {}) {
+export function uvoziVNiti(vrsta, buf, { ms = MEJE_UVOZA.ms, mb = MEJE_UVOZA.mb, prepisi = null, sken = null } = {}) {
   return new Promise((resolve, reject) => {
     const zacetek = process.memoryUsage().rss;
-    const w = new Worker(new URL("./nit-uvoza.js", import.meta.url), { workerData: { vrsta, podatki: buf }, resourceLimits: { maxOldGenerationSizeMb: 256 } });
+    const w = new Worker(new URL("./nit-uvoza.js", import.meta.url), { workerData: { vrsta, podatki: buf, prepisi, sken }, resourceLimits: { maxOldGenerationSizeMb: 256 } });
     let konec = false;
     const koncaj = (fn) => {
       if (konec) return;
@@ -494,6 +494,20 @@ export function beriBesedilo(str) {
       return { besedilo: t.trim() };
     });
   return [{ stran: 1, vrstice }];
+}
+
+/**
+ * Prepisi skeniranih strani (PR 3b-2, { stran: besedilo }) zamenjajo vrstice teh strani PDF (malo besedila naslovne
+ * strani je v prepisu že zajeto) ali vstavijo stran, ki je uvoz brez besedila izpusti. Strani ostanejo po vrsti.
+ */
+export function vstaviPrepise(strani, prepisi) {
+  const po = new Map(strani.map((s) => [s.stran, s]));
+  for (const [k, t] of Object.entries(prepisi || {})) {
+    const n = Number(k);
+    if (!Number.isInteger(n) || typeof t !== "string" || !t.trim()) continue;
+    po.set(n, { stran: n, vrstice: beriBesedilo(t)[0].vrstice });
+  }
+  return [...po.values()].sort((a, b) => a.stran - b.stran);
 }
 
 /**

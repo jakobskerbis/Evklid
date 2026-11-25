@@ -114,16 +114,20 @@ ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, 
 branjem izbrisan, 404); poti `POST …/viri/:vid/obdelaj` in `GET …/priprave/:pid/izseki[?vir=&vrsta=]`. Strošek AI 0.
 Test: `test/priprava-uvoz.test.js`.
 
-### PR 3b-1 (branje fotografij, 25. 11. 2026)
+### PR 3b (branje fotografij in skeniranih strani, 25. 11. 2026)
 
-`POST …/priprave/:pid/viri/:vid/preberi` prebere fotografijo vira z istim branjem kot »Moji zapiski«
-(`server/zapiski.js` `readNotePhoto`: prepis brez popravkov, imena → `[ime]`, zavrnitev neučnih fotografij, zastavica
-stiske odpre okno nujne pomoči). Ista mesečna meja strani `STRANI` (ena fotografija = ena stran, skupaj z zapiski) in
-trda meja AI (`readReserveUsd`, `usage.guard`); strošek se zapiše kot `priprava`. Neuspel klic ali način brez ključa
-strani ne porabi. Že prebrana fotografija se ne bere znova (brez stroška) razen z `?znova=1`; hkratno branje istega
-vira 409; slika nad 6 MB (base64) se ne pošlje (413, vir `napaka` `branje_velika`); neučna 422 (`branje_neucno`);
-prazna stran `branje_prazno`; vir, izbrisan med branjem, se ne shrani (404). Prepis se razreže kot prilepljeno
-besedilo in ima oznako AI (`ai_generated`). Skenirane strani PDF so PR 3b-2. Test: `test/priprava-branje.test.js`.
+`POST …/priprave/:pid/viri/:vid/preberi` prebere fotografijo vira ali skenirane strani PDF (strani z manj kot 20 znaki
+iz PR 3a, največ 5 na zahtevek) z istim branjem kot »Moji zapiski« (`server/zapiski.js` `readNotePhoto`: prepis brez
+popravkov, imena → `[ime]`, zavrnitev neučnih fotografij, zastavica stiske odpre okno nujne pomoči in pride v vsak
+odgovor, tudi ob napaki ali izbrisu med branjem). Ista mesečna meja strani `STRANI` (ena slika = ena stran, skupaj z
+zapiski) in trda meja AI (`readReserveUsd`, `usage.guard`); strošek se zapiše kot `priprava`; neuspel klic ali način
+brez ključa strani ne porabi. Stran PDF: `sken.js` v ločeni niti vzame največjo sliko strani, jo pretvori v sivine,
+zmanjša na 1568 točk in zapiše kot PNG; stran brez slike (`sken_ni_slike`) se ne plača. Fotografija JPEG nad mejo
+modela (5 MB base64) se zmanjša po isti poti (zavita v PDF z eno stranjo); druga prevelika slika 413 (`branje_velika`).
+Prepisi strani se hranijo šifrirano (`priprava_prepisi`, v `SEALED`, kaskada z virom), zato ponovno branje ali
+ponovna obdelava ne kliče modela znova; fotografijo prebere znova `?znova=1`, slabši izid (neučno, prazno) pa ne
+zamenja dobrega prepisa. Izseki iz prepisa imajo stolpec `ai` in v odgovoru oznako `ai_generated`. Vir PDF ostane
+»branje«, dokler ima neprebrane skenirane strani. Test: `test/priprava-branje.test.js`.
 
 ## Testni nabor
 

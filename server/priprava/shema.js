@@ -71,6 +71,22 @@ export function migratePriprava(db) {
   if (!virCols.includes("strani")) db.exec("ALTER TABLE priprava_viri ADD COLUMN strani INTEGER"); // prebrane strani
   if (!virCols.includes("napaka")) db.exec("ALTER TABLE priprava_viri ADD COLUMN napaka TEXT"); // koda uvoz_*
   if (!virCols.includes("opozorila")) db.exec("ALTER TABLE priprava_viri ADD COLUMN opozorila TEXT"); // JSON kod in številk, brez besedila
+  // PR 3b: izsek iz prepisa modela (fotografija, skenirana stran) ima oznako AI; prepisi strani se hranijo, da ponovna
+  // obdelava vira ne kliče modela znova.
+  if (!db.prepare("PRAGMA table_info(priprava_izseki)").all().some((c) => c.name === "ai")) db.exec("ALTER TABLE priprava_izseki ADD COLUMN ai INTEGER NOT NULL DEFAULT 0");
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS priprava_prepisi (
+      vir_id INTEGER NOT NULL REFERENCES priprava_viri(id) ON DELETE CASCADE,
+      priprava_id INTEGER NOT NULL REFERENCES priprave(id) ON DELETE CASCADE,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      stran INTEGER NOT NULL,                    -- fotografija: 1; PDF: številka skenirane strani
+      stanje TEXT NOT NULL,                      -- ok | neucno | prazno | sken_ni_slike
+      besedilo TEXT,                             -- prepis modela, šifrirano (samo ok)
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (vir_id, stran)
+    );
+    CREATE INDEX IF NOT EXISTS idx_priprava_prepisi_student ON priprava_prepisi(student_id);
+  `);
   preseliTestPlans(db);
 }
 

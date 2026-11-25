@@ -205,10 +205,10 @@ function shrani(db, { vir, izseki, strani, opozorila = [], stanje = "obdelan", s
     }
     db.prepare("DELETE FROM priprava_izseki WHERE vir_id = ?").run(vir.id);
     const vpis = db.prepare(
-      "INSERT INTO priprava_izseki (priprava_id, vir_id, student_id, stran, zaporedje, vrsta, naslov, besedilo, negotovo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO priprava_izseki (priprava_id, vir_id, student_id, stran, zaporedje, vrsta, naslov, besedilo, negotovo, ai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     );
     for (const i of izseki)
-      vpis.run(vir.priprava_id, vir.id, vir.student_id, i.stran ?? null, i.zaporedje, i.vrsta, i.naslov == null ? null : seal(i.naslov), seal(i.besedilo), i.negotovo?.length ? seal(JSON.stringify(i.negotovo)) : null);
+      vpis.run(vir.priprava_id, vir.id, vir.student_id, i.stran ?? null, i.zaporedje, i.vrsta, i.naslov == null ? null : seal(i.naslov), seal(i.besedilo), i.negotovo?.length ? seal(JSON.stringify(i.negotovo)) : null, i.ai ? 1 : 0);
     db.prepare("UPDATE priprava_viri SET stanje = ?, strani = ?, napaka = NULL, opozorila = ? WHERE id = ?").run(stanje, strani, opozorila.length ? JSON.stringify(opozorila) : null, vir.id);
     db.exec("COMMIT");
     return true;
