@@ -341,7 +341,94 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
   // (`aoPbr`, privzeto 0,35); `ao` tkiva (0,8–0,9) velja samo za modele brez pečenih tekstur.
   const rob = t.rob ?? 0.12;
   const ao = t.ao ?? 0.85;
+  // Številke in barve tkiva so enotne spremenljivke (uniform), ne besedilo senčilnika (j 25. 11.: počasno nalaganje na
+  // prenosniku z Windows, kjer je vsak program drag za prevajanje). Tkiva z istim besedilom senčilnika si delijo program
+  // (ključ je besedilo samo, brez številk). Vrednosti so zaokrožene kot prej v besedilu (fl, vec3), zato je slika ista.
+  // Žilice, mrežnica, šarenica, listi, celice in temnenje reza ostanejo zapečeni v besedilu (so v ključu).
+  const U = {};
+  const F = (ime, x) => ((U[ime] = { value: x }), ime);
+  const V = (ime, c) => {
+    const b = new THREE.Color(c);
+    U[ime] = { value: new THREE.Vector3(+b.r.toFixed(4), +b.g.toFixed(4), +b.b.toFixed(4)) };
+    return ime;
+  };
+  const vrhM = t.vrhMeja || [0.47, 0.3];
+  const brazdeM = t.brazdeMeja || [0.52, 0.68];
+  const l2f = t.lise2F ?? 9;
+  const masF = t.mascaF ?? 70;
+  const masM = t.mascaMeja ?? 0.8;
+  // lakSenca (0–1): v zasenčenih kotanjah (pečena senca okolice) vlažni lak oslabi. Navzdol obrnjene kotanje (spodnja
+  // ploskev pljuč, mediastinalna stran brez srca) so sicer zrcalile temno dno okolja: sive »steklene« lise (j 16. 11.).
+  const gLuci = t.lakSenca ? `\n#ifdef USE_CLEARCOAT\nmaterial.clearcoat *= mix( 1.0, smoothstep( 0.35, 0.9, vOrgAO ), ${F("orgLakS", t.lakSenca)} );\n#endif` : "";
+  const gBarva = `float orgAO = mix( 1.0, pow( vOrgAO, ${F("orgAoExp", t.aoExp ?? 1.6)} ), ${F("orgAo", ao)} );
+        diffuseColor.rgb *= orgAO;${t.znotraj ? ` if ( !gl_FrontFacing ) diffuseColor.rgb *= ${F("orgZnotraj", t.znotraj)}; // notranjost cevi (žile) temnejša` : ""} // barve oglišč so podatki (R senca okolice, G globina brazde), ne množilnik barve
+        float orgFw = length( fwidth( vOrgPos ) );
+        float orgLod = clamp( 1.5 - orgFw * ${F("orgF", f)} * 2.0, 0.0, 1.0 );
+        float orgZ = mix( 0.5, orgSum( vOrgPos * orgF ), orgLod ) * 0.6 + mix( 0.5, orgSum( vOrgPos * ${F("orgF2", f * 3.7)} ), clamp( 1.5 - orgFw * orgF2 * 2.0, 0.0, 1.0 ) ) * 0.4;
+        diffuseColor.rgb *= 1.0 - ${F("orgZrno", zrno)} * 0.5 + orgZrno * orgZ;
+        ${t.lise ? `float orgL = orgSum( vOrgPos * 2.6 + 3.1 ); diffuseColor.rgb *= mix( vec3( 1.0 ), ${V("orgLiseB", t.liseBarva || "#ffd9c8")}, ${F("orgLise", t.lise)} * smoothstep( 0.35, 0.8, orgL ) );` : ""}
+        ${t.lise2 ? `float orgM = orgSum( vOrgPos * ${F("orgL2F", l2f)} + 9.0 ) * 0.65 + orgSum( vOrgPos * ${F("orgL2F2", l2f * 2.7)} + 2.0 ) * 0.35; diffuseColor.rgb *= mix( vec3( 1.0 ), ${V("orgLise2B", t.lise2Barva || "#d9b0aa")}, ${F("orgLise2", t.lise2)} * smoothstep( 0.4, 0.75, orgM ) );` : ""}
+        ${t.vrh ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${V("orgVrhB", t.vrhBarva || "#ecc9bb")} * mix( 0.8, 1.0, vOrgAO ), ${F("orgVrh", t.vrh)} * smoothstep( ${F("orgVrh0", vrhM[0])}, ${F("orgVrh1", vrhM[1])}, vOrgD.y ) ); // krone vijug` : ""}
+        ${t.brazde ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${V("orgBrazdeB", t.brazdeBarva || "#7a2228")} * mix( 0.6, 1.0, vOrgAO ), ${F("orgBrazde", t.brazde)} * smoothstep( ${F("orgBrazde0", brazdeM[0])}, ${F("orgBrazde1", brazdeM[1])}, vOrgD.y ) ); // globoke brazde` : ""}
+        ${t.zile && !t.mreznicaZile ? zileGLSL(t, merilo) : ""}
+        ${t.mreznicaZile ? mreznicaGLSL(t, merilo, izh) : ""}
+        ${t.sarenica ? sarenicaGLSL(t, merilo, izh) : ""}
+        float orgListi = 0.0;
+        float orgCelH = 0.0;
+        ${celice}
+        ${t.listi ? listiGLSL(t, merilo, izh) : ""}
+        ${t.senca ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${V("orgSencaB", t.sencaBarva || "#6a1f1f")} * vOrgAO, ${F("orgSenca", t.senca)} * smoothstep( 0.95, 0.35, vOrgAO ) ); // topla globina v gubah` : ""}
+        ${
+          t.masca
+            ? `float orgLob = smoothstep( 0.35, 0.75, orgSum( vOrgPos * ${F("orgMasF", masF)} ) * 0.7 + orgSum( vOrgPos * ${F("orgMasF2", masF * 2.3)} + 5.0 ) * 0.3 ); // režnjiči maščobe
+        float orgMas = ${F("orgMasca", t.masca)} * smoothstep( ${F("orgMasM", masM)}, ${F("orgMasM2", masM - 0.35)}, vOrgAO ) * ( 0.75 + 0.5 * orgZ )${t.mascaZunaj ? " * smoothstep( 0.015, 0.1, vOrgD.x )" : ""};
+        diffuseColor.rgb = mix( diffuseColor.rgb, ${V("orgMasB", t.mascaBarva || "#e7c46e")} * mix( 0.75, 1.0, vOrgAO ) * ( 0.86 + 0.24 * orgLob ), clamp( orgMas, 0.0, 1.0 ) ); // maščoba v brazdah (samo zunaj: mascaZunaj)`
+            : ""
+        }
+        ${ravnine?.temnenje && !t.brezReza ? temnenjeGLSL(ravnine.temnenje, merilo, t.kljuc) : ""}`;
+  const gHrap = `#include <roughnessmap_fragment>
+        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * ${pbr ? "0.08" : "0.25"}, 0.04, 1.0 );`;
+  const gNormala = `#include <normal_fragment_maps>
+        ${
+          relief > 0
+            ? `{
+          float orgH = orgZ * ${F("orgRel", +(0.012 * relief / f).toExponential(3))} - orgListi * ${F("orgRelL", +((t.listiRazmik ?? 0.0025) * merilo * 0.12).toExponential(3))} - orgCelH;
+          vec3 orgDx = dFdx( -vViewPosition ); vec3 orgDy = dFdy( -vViewPosition );
+          vec3 orgR1 = cross( orgDy, normal ); vec3 orgR2 = cross( normal, orgDx );
+          float orgDet = dot( orgDx, orgR1 ) * faceDirection;
+          vec3 orgG = sign( orgDet ) * ( dFdx( orgH ) * orgR1 + dFdy( orgH ) * orgR2 );
+          normal = normalize( abs( orgDet ) * normal - orgG );
+        }`
+            : ""
+        }`;
+  const gSenca = `#include <aomap_fragment>
+        {
+          float orgNV = saturate( dot( geometryNormal, geometryViewDir ) );
+          float orgAOo = mix( 1.0, vOrgAO, ${F("orgAoOk", t.aoOkolje ?? 1)} ); // aoOkolje 0: brez zapečene sence v okolici (enakomerna mrežnica)
+          float orgSO = saturate( pow( orgNV + orgAOo, exp2( -16.0 * material.roughness - 1.0 ) ) - 1.0 + orgAOo );
+          reflectedLight.indirectSpecular *= orgSO;
+          reflectedLight.indirectDiffuse *= mix( 1.0, orgAOo, 0.5 );
+        }`;
+  const gIzhod = `float orgFr = 1.0 - saturate( abs( dot( normalize( normal ), normalize( vViewPosition ) ) ) );
+        outgoingLight += ${V("orgRobB", t.robBarva || t.barva || "#ffffff")} * ${F("orgRob", rob)} * pow( orgFr, 1.8 ) * mix( 1.0, vOrgAO, orgAoOk );
+        ${
+          presevnoList || presevnoMasca
+            ? `#ifdef USE_ENVMAP
+        { vec3 orgZadaj = getIBLIrradiance( -normal ) * RECIPROCAL_PI; // svetloba okolja z zadnje strani (presevnost)
+          ${presevnoList ? `outgoingLight += diffuseColor.rgb * ${V("orgPrListB", t.robBarva || "#fff2e8")} * ${F("orgPrList", presevnoList)} * orgZadaj * mix( 0.6, 1.0, vOrgAO );` : ""}
+          ${presevnoMasca ? `outgoingLight += ${V("orgPrMasB", t.mascaBarva || "#e7c46e")} * ${F("orgPrMas", presevnoMasca)} * clamp( orgMas, 0.0, 1.0 ) * ( orgZadaj * 0.7 + 0.3 * pow( orgFr, 1.5 ) );` : ""}
+        }
+        #endif`
+            : ""
+        }
+        ${t.fresnel ? `diffuseColor.a = mix( diffuseColor.a, 1.0, ${F("orgFresnel", t.fresnel)} * pow( orgFr, 2.5 ) );` : ""}
+        #include <opaque_fragment>`;
+  const enotne = Object.entries(U)
+    .map(([k, u]) => `uniform ${u.value.isVector3 ? "vec3" : "float"} ${k};`)
+    .join("\n");
+  const gGlava = `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${enotne}\n${GLSL_SUM}${celice ? GLSL_CEL : ""}`;
   m.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, U);
     sh.vertexShader = sh.vertexShader
       .replace("#include <common>", "#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;")
       .replace(
@@ -357,93 +444,17 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       )
       .replace("#include <begin_vertex>", "#include <begin_vertex>\nvOrgPos = position;");
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${GLSL_SUM}${celice ? GLSL_CEL : ""}`)
-      // lakSenca (0–1): v zasenčenih kotanjah (pečena senca okolice) vlažni lak oslabi. Navzdol obrnjene kotanje (spodnja
-      // ploskev pljuč, mediastinalna stran brez srca) so sicer zrcalile temno dno okolja: sive »steklene« lise (j 16. 11.).
-      .replace(
-        "#include <lights_physical_fragment>",
-        `#include <lights_physical_fragment>${t.lakSenca ? `\n#ifdef USE_CLEARCOAT\nmaterial.clearcoat *= mix( 1.0, smoothstep( 0.35, 0.9, vOrgAO ), ${fl(t.lakSenca)} );\n#endif` : ""}`,
-      )
-      .replace(
-        "#include <color_fragment>",
-        `float orgAO = mix( 1.0, pow( vOrgAO, ${fl(t.aoExp ?? 1.6)} ), ${fl(ao)} );
-        diffuseColor.rgb *= orgAO;${t.znotraj ? ` if ( !gl_FrontFacing ) diffuseColor.rgb *= ${fl(t.znotraj)}; // notranjost cevi (žile) temnejša` : ""} // barve oglišč so podatki (R senca okolice, G globina brazde), ne množilnik barve
-        float orgFw = length( fwidth( vOrgPos ) );
-        float orgLod = clamp( 1.5 - orgFw * ${fl(f)} * 2.0, 0.0, 1.0 );
-        float orgZ = mix( 0.5, orgSum( vOrgPos * ${fl(f)} ), orgLod ) * 0.6 + mix( 0.5, orgSum( vOrgPos * ${fl(f * 3.7)} ), clamp( 1.5 - orgFw * ${fl(f * 3.7)} * 2.0, 0.0, 1.0 ) ) * 0.4;
-        diffuseColor.rgb *= 1.0 - ${fl(zrno)} * 0.5 + ${fl(zrno)} * orgZ;
-        ${t.lise ? `float orgL = orgSum( vOrgPos * 2.6 + 3.1 ); diffuseColor.rgb *= mix( vec3( 1.0 ), ${vec3(t.liseBarva || "#ffd9c8")}, ${fl(t.lise)} * smoothstep( 0.35, 0.8, orgL ) );` : ""}
-        ${t.lise2 ? `float orgM = orgSum( vOrgPos * ${fl(t.lise2F ?? 9)} + 9.0 ) * 0.65 + orgSum( vOrgPos * ${fl((t.lise2F ?? 9) * 2.7)} + 2.0 ) * 0.35; diffuseColor.rgb *= mix( vec3( 1.0 ), ${vec3(t.lise2Barva || "#d9b0aa")}, ${fl(t.lise2)} * smoothstep( 0.4, 0.75, orgM ) );` : ""}
-        ${t.vrh ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(t.vrhBarva || "#ecc9bb")} * mix( 0.8, 1.0, vOrgAO ), ${fl(t.vrh)} * smoothstep( ${fl((t.vrhMeja || [0.47, 0.3])[0])}, ${fl((t.vrhMeja || [0.47, 0.3])[1])}, vOrgD.y ) ); // krone vijug` : ""}
-        ${t.brazde ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(t.brazdeBarva || "#7a2228")} * mix( 0.6, 1.0, vOrgAO ), ${fl(t.brazde)} * smoothstep( ${fl((t.brazdeMeja || [0.52, 0.68])[0])}, ${fl((t.brazdeMeja || [0.52, 0.68])[1])}, vOrgD.y ) ); // globoke brazde` : ""}
-        ${t.zile && !t.mreznicaZile ? zileGLSL(t, merilo) : ""}
-        ${t.mreznicaZile ? mreznicaGLSL(t, merilo, izh) : ""}
-        ${t.sarenica ? sarenicaGLSL(t, merilo, izh) : ""}
-        float orgListi = 0.0;
-        float orgCelH = 0.0;
-        ${celice}
-        ${t.listi ? listiGLSL(t, merilo, izh) : ""}
-        ${t.senca ? `diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(t.sencaBarva || "#6a1f1f")} * vOrgAO, ${fl(t.senca)} * smoothstep( 0.95, 0.35, vOrgAO ) ); // topla globina v gubah` : ""}
-        ${
-          t.masca
-            ? `float orgLob = smoothstep( 0.35, 0.75, orgSum( vOrgPos * ${fl(t.mascaF ?? 70)} ) * 0.7 + orgSum( vOrgPos * ${fl((t.mascaF ?? 70) * 2.3)} + 5.0 ) * 0.3 ); // režnjiči maščobe
-        float orgMas = ${fl(t.masca)} * smoothstep( ${fl(t.mascaMeja ?? 0.8)}, ${fl((t.mascaMeja ?? 0.8) - 0.35)}, vOrgAO ) * ( 0.75 + 0.5 * orgZ )${t.mascaZunaj ? " * smoothstep( 0.015, 0.1, vOrgD.x )" : ""};
-        diffuseColor.rgb = mix( diffuseColor.rgb, ${vec3(t.mascaBarva || "#e7c46e")} * mix( 0.75, 1.0, vOrgAO ) * ( 0.86 + 0.24 * orgLob ), clamp( orgMas, 0.0, 1.0 ) ); // maščoba v brazdah (samo zunaj: mascaZunaj)`
-            : ""
-        }
-        ${ravnine?.temnenje && !t.brezReza ? temnenjeGLSL(ravnine.temnenje, merilo, t.kljuc) : ""}`,
-      )
-      .replace(
-        "#include <roughnessmap_fragment>",
-        `#include <roughnessmap_fragment>
-        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * ${pbr ? "0.08" : "0.25"}, 0.04, 1.0 );`,
-      )
-      .replace(
-        "#include <normal_fragment_maps>",
-        `#include <normal_fragment_maps>
-        ${
-          relief > 0
-            ? `{
-          float orgH = orgZ * ${(0.012 * relief / f).toExponential(3)} - orgListi * ${((t.listiRazmik ?? 0.0025) * merilo * 0.12).toExponential(3)} - orgCelH;
-          vec3 orgDx = dFdx( -vViewPosition ); vec3 orgDy = dFdy( -vViewPosition );
-          vec3 orgR1 = cross( orgDy, normal ); vec3 orgR2 = cross( normal, orgDx );
-          float orgDet = dot( orgDx, orgR1 ) * faceDirection;
-          vec3 orgG = sign( orgDet ) * ( dFdx( orgH ) * orgR1 + dFdy( orgH ) * orgR2 );
-          normal = normalize( abs( orgDet ) * normal - orgG );
-        }`
-            : ""
-        }`,
-      )
-      .replace(
-        "#include <aomap_fragment>",
-        `#include <aomap_fragment>
-        {
-          float orgNV = saturate( dot( geometryNormal, geometryViewDir ) );
-          float orgAOo = mix( 1.0, vOrgAO, ${fl(t.aoOkolje ?? 1)} ); // aoOkolje 0: brez zapečene sence v okolici (enakomerna mrežnica)
-          float orgSO = saturate( pow( orgNV + orgAOo, exp2( -16.0 * material.roughness - 1.0 ) ) - 1.0 + orgAOo );
-          reflectedLight.indirectSpecular *= orgSO;
-          reflectedLight.indirectDiffuse *= mix( 1.0, orgAOo, 0.5 );
-        }`,
-      )
-      .replace(
-        "#include <opaque_fragment>",
-        `float orgFr = 1.0 - saturate( abs( dot( normalize( normal ), normalize( vViewPosition ) ) ) );
-        outgoingLight += ${vec3(t.robBarva || t.barva || "#ffffff")} * ${fl(rob)} * pow( orgFr, 1.8 ) * mix( 1.0, vOrgAO, ${fl(t.aoOkolje ?? 1)} );
-        ${
-          presevnoList || presevnoMasca
-            ? `#ifdef USE_ENVMAP
-        { vec3 orgZadaj = getIBLIrradiance( -normal ) * RECIPROCAL_PI; // svetloba okolja z zadnje strani (presevnost)
-          ${presevnoList ? `outgoingLight += diffuseColor.rgb * ${vec3(t.robBarva || "#fff2e8")} * ${fl(presevnoList)} * orgZadaj * mix( 0.6, 1.0, vOrgAO );` : ""}
-          ${presevnoMasca ? `outgoingLight += ${vec3(t.mascaBarva || "#e7c46e")} * ${fl(presevnoMasca)} * clamp( orgMas, 0.0, 1.0 ) * ( orgZadaj * 0.7 + 0.3 * pow( orgFr, 1.5 ) );` : ""}
-        }
-        #endif`
-            : ""
-        }
-        ${t.fresnel ? `diffuseColor.a = mix( diffuseColor.a, 1.0, ${fl(t.fresnel)} * pow( orgFr, 2.5 ) );` : ""}
-        #include <opaque_fragment>`,
-      );
+      .replace("#include <common>", gGlava)
+      .replace("#include <lights_physical_fragment>", `#include <lights_physical_fragment>${gLuci}`)
+      .replace("#include <color_fragment>", gBarva)
+      .replace("#include <roughnessmap_fragment>", gHrap)
+      .replace("#include <normal_fragment_maps>", gNormala)
+      .replace("#include <aomap_fragment>", gSenca)
+      .replace("#include <opaque_fragment>", gIzhod);
   };
-  m.customProgramCacheKey = () => `org-${t.lakSenca || 0}${t.orm === false ? "brezOrm" : ""}-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
+  // Ključ programa je besedilo dodatkov senčilnika: enako besedilo = isti program, številke so v enotnih spremenljivkah.
+  const kljucPrograma = ["org2", gGlava, gLuci, gBarva, gHrap, gNormala, gSenca, gIzhod].join("\u0001");
+  m.customProgramCacheKey = () => kljucPrograma;
   return ohraniSencilnik(m);
 }
 
@@ -864,7 +875,10 @@ ${pir.sinus.kapsule.map((c) => `   { vec3 sA = vec3( ${tm(c.slice(0, 3))} ); vec
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}-${vol && t.rezRavna ? "" : t.rez || t.barva}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
+  // Barva reza je v besedilu senčilnika samo pri volumnu brez rezRavna (orgMi) in pri robu prereza brez robBarva; sicer je
+  // le barva materiala (uniform), zato pokrovi različnih barv delijo program (srce: 7 pokrovov, j 25. 11. hitrost).
+  const barvaVBesedilu = vol ? !t.rezRavna : vr && !presek.robBarva;
+  m.customProgramCacheKey = () => `org-pokrov4-${st ? "s" : ""}-${barvaVBesedilu ? t.rez || t.barva : ""}-${(t.rezVlaknaOs || []).join("_")}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}-${n}-${relief}-${vol ? `v${t.rezMasca || ""}${(t.rezMascaMeja || []).join("_")}${vlCt}${t.rezRavna ? "r" : ""}${t.rezTkivoMoc ?? ""}${t.rezVlaknaMoc ?? ""}` : ""}-${sumMoc}${rezCelice ? `-c${JSON.stringify(t.rezCelice)}` : ""}${zarki ? `-z${JSON.stringify(zarki)}` : ""}${pir ? `-p${JSON.stringify(pir)}` : ""}${vr ? `-r${presek.robBarva || ""}${presek.luknjaBarva || ""}` : ""}${sl ? `-s${JSON.stringify([sl.c0, sl.lo, sl.mera, sl.U, sl.V, t.rezSlika?.visina, t.rezSlika?.izrez])}` : ""}`;
   return m;
 }
 

@@ -1,4 +1,5 @@
 // Učne poti: dostop do podatkov iz curriculum-data.js.
+import fs from "node:fs";
 import { PATHS } from "./curriculum-data.js";
 import { UNI_PATHS, PROGRAMS, FACULTIES, FAC_SHORT, UNIVERSITIES } from "./university-data.js";
 import { ALL_SUBJECTS, SUBJECT_NAMES } from "./subjects.js";
@@ -6,6 +7,7 @@ import { EN, EN_UNITS, INT_LEVELS, IN_PATHS, SUBJECT_EN } from "./region-curricu
 import { SCHOOL_SYSTEMS, isRegional, gradeInfo, gradesOf } from "../public/regions.js";
 import { BANK, EXAMS, SUBJECT_NAMES_EN } from "./exam-data.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
+import { uiChain } from "../public/i18n/languages.js";
 
 export function slugify(s) {
   return s
@@ -19,6 +21,7 @@ export function slugify(s) {
 // Razširjena oblika: vsaka tema dobi stalen id "<pot>/<slug-teme>".
 // Brez prototipa: ključ iz poizvedbe (npr. »toString«, »__proto__«) ne sme najti podedovane lastnosti.
 const BUILT = Object.create(null);
+const SL_SKLOPI = new WeakSet(); // sklopi slovenskih poti OŠ/SŠ (njihov naslov je slovenski, localUnitTitle)
 const TOPICS = Object.create(null);
 for (const [key, p] of Object.entries({ ...PATHS, ...UNI_PATHS })) {
   // OŠ/SŠ: "<predmet>-<OS|SS>-<razred>"; fakultete: podatki so zapisani v poti.
@@ -37,16 +40,51 @@ for (const [key, p] of Object.entries({ ...PATHS, ...UNI_PATHS })) {
     }),
   }));
   BUILT[key] = { key, label: p.label, subject, school, grade: Number(grade), units };
+  if (p.school !== "UNI") for (const u of units) SL_SKLOPI.add(u);
 }
 for (const t of Object.values(TOPICS)) {
   for (const b of t.base || []) if (!TOPICS[b] || TOPICS[b].base) throw new Error(`${t.id}: osnovna tema ${b} ne obstaja`);
 }
 
 // ---------- regijske poti (public/regions.js, server/region-curricula.js) ----------
-// Mednarodna pot ima angleška imena; v slovenskem vmesniku (ui = "sl") pokažemo imena
-// izvirnih slovenskih tem in sklopov, da v slovenski aplikaciji ni angleških naslovov.
-export const localTopic = (t, ui) => (ui === "sl" && t?.sl ? { ...t, name: t.sl.name, goals: t.sl.goals, unit: t.sl.unit ?? t.unit } : t);
-export const localUnitTitle = (u, ui) => (ui === "sl" && u?.sl?.title) || u?.title;
+// Imena tem in sklopov v jeziku vmesnika. Mednarodna pot (INT) ima angleška imena in pod »sl« izvirna slovenska,
+// slovenske poti OŠ/SŠ slovenska; prevodi veljajo za obe (učenec s slovenskim sistemom in drugim jezikom vmesnika vidi
+// prevedena imena, besedila lekcij in nalog pa ostanejo slovenska). Prevodi imen (server/imena-tem/<jezik>.json) so po id slovenske teme in po slovenskem
+// imenu sklopa; jezik se išče po verigi uiChain (npr. sr → hr → en → sl), zato nemški profil nikoli ne vidi
+// slovenskega imena, kadar obstaja angleško. Cilji tem so prevedeni samo v angleščino (EN, imena-tem/en.json).
+// Indijske, izpitne in fakultetne poti imajo eno samo ime in ostanejo, kot so.
+const IMENA = Object.fromEntries(
+  ["en", "de", "hr", "it", "hu"].map((l) => [l, JSON.parse(fs.readFileSync(new URL(`./imena-tem/${l}.json`, import.meta.url), "utf8"))]),
+);
+const enTema = (id) => (EN[id] || "").split("|").map((x) => x.trim());
+// id slovenske teme, po katerem so prevodi (null: tema nima prevodov)
+const slId = (t) => (t.sl ? t.base[0] : t.path && !BUILT[t.path]?.region && BUILT[t.path]?.school !== "UNI" ? t.id : null);
+export function localTopic(t, ui) {
+  const id = t && slId(t);
+  if (!id) return t;
+  const sl = t.sl ? { name: t.sl.name, goals: t.sl.goals, unit: t.sl.unit ?? t.unit } : { name: t.name, goals: t.goals, unit: t.unit };
+  const [enName, enGoals] = t.sl ? [t.name === sl.name ? null : t.name, t.goals === sl.goals ? null : t.goals] : enTema(id);
+  const en = { name: enName || IMENA.en.teme[id], goals: enGoals || IMENA.en.cilji[id], unit: EN_UNITS[sl.unit] };
+  const pick = (field) => {
+    for (const c of uiChain(ui)) {
+      if (c === "sl") return sl[field];
+      const v = c === "en" ? en[field] : field === "name" ? IMENA[c]?.teme[id] : field === "unit" ? IMENA[c]?.sklopi[sl.unit] : null;
+      if (v) return v;
+    }
+    return sl[field];
+  };
+  return { ...t, name: pick("name"), goals: pick("goals"), unit: pick("unit") };
+}
+export function localUnitTitle(u, ui) {
+  const sl = u?.sl?.title || (SL_SKLOPI.has(u) ? u.title : null);
+  if (!sl) return u?.title;
+  for (const c of uiChain(ui)) {
+    if (c === "sl") return sl;
+    const v = c === "en" ? EN_UNITS[sl] : IMENA[c]?.sklopi[sl];
+    if (v) return v;
+  }
+  return sl;
+}
 // Teme imajo »base«: osnovne teme, iz katerih vzamejo naloge, lekcije in simulacije.
 function addRegionPath(key, label, subject, school, grade, units, extra = {}) {
   BUILT[key] = {
