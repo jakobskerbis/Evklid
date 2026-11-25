@@ -447,8 +447,10 @@ async function mikroskop(param, moj) {
   return m;
 }
 
-// Izpad povezave (npr. minuta med objavo): »Ni povezave« z gumbom »Poskusi znova« in en samodejni poskus čez 4 s.
+// Izpad povezave (npr. minuta med objavo): »Ni povezave« z gumbom »Poskusi znova« in en samodejni poskus čez 4 s
+// (en na naslov do naslednjega uspeha, da daljši izpad ne sproži poskusa vsake 4 s v nedogled).
 let poskusiZnova = null;
+let samodejnoZa = null;
 function niPovezave(moj) {
   const p = mk("div", "k3-napaka");
   p.setAttribute("role", "alert");
@@ -460,6 +462,8 @@ function niPovezave(moj) {
   p.append(b);
   glavni.replaceChildren(p);
   clearTimeout(poskusiZnova);
+  if (samodejnoZa === location.hash) return;
+  samodejnoZa = location.hash;
   poskusiZnova = setTimeout(() => moj === zaporedje && usmeri(), 4000);
 }
 
@@ -476,6 +480,7 @@ async function model(id, param, moj) {
     throw e;
   }
   if (moj !== zaporedje) return null;
+  samodejnoZa = null;
   if (!mod) {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t("a3.notFound")));
