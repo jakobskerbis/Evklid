@@ -16,6 +16,7 @@ import { loadLesson, legacyChecks, legacyClient } from "./textbook.js";
 import { checkNumber, orderOk } from "../public/preveri-se.js";
 import { loadOurPaper } from "./our-papers.js";
 import { partKey } from "../public/our-paper-key.js";
+import { hasGenerator } from "./practice/index.js";
 
 const SUBJECT_LABEL = { MAT: "MAT", FIZ: "FIZ", KEM: "KEM", BIO: "BIO", GEO: "GEO", RAC: "RAČ", EKO: "EKO" };
 
@@ -285,6 +286,24 @@ export function mountSkillChecks(app, store, { loadStudent }) {
       if (recordSkill(db, s.id, { source: "paper", topicId, n: 1, wrong: ok ? 0 : 1 })) counted++;
     }
     res.json({ counted });
+  });
+  // »Kaj še ne znam« (P1-8, 2. del; j 25. 11. 2026: na vrhu Napredka): šibke teme z dokazom (napake, kje) in tem, kaj
+  // učenec lahko naredi (vaja iz generatorja, ki jo preveri koda; lekcija). Ročno vnesene ostanejo kot oznake.
+  app.get("/api/students/:id/vrzeli", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const teme = detectWeakTopics(skillStats(store, s)).map((w) => ({
+      topic_id: w.topic_id,
+      topic: w.topic,
+      subject: w.subject,
+      turns: w.turns,
+      errors: w.errors,
+      // Viri z napakami, od največ napak (največ trije), kot v tedenskem poročilu.
+      viri: Object.entries(w.sources || {}).filter(([, v]) => v.wrong > 0).sort((a, b) => b[1].wrong - a[1].wrong).slice(0, 3).map(([k]) => k),
+      vaja: !!w.topic_id && hasGenerator(w.topic_id),
+      lekcija: !!w.topic_id && !!loadLesson(w.topic_id),
+    }));
+    res.json({ teme, rocne: s.manual_weaknesses || [] });
   });
   // Orodja v brskalniku (P1-8): laboratorij in kviz atlasa. { source: "lab" | "atlas", topic: id teme, item, ok }.
   // Pravilnost preveri orodje samo (izmerjena vrednost v poskusu, izbrani del v atlasu), kot pri igrah; skener
