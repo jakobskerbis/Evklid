@@ -114,6 +114,17 @@ ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, 
 branjem izbrisan, 404); poti `POST …/viri/:vid/obdelaj` in `GET …/priprave/:pid/izseki[?vir=&vrsta=]`. Strošek AI 0.
 Test: `test/priprava-uvoz.test.js`.
 
+### PR 3b-1 (branje fotografij, 25. 11. 2026)
+
+`POST …/priprave/:pid/viri/:vid/preberi` prebere fotografijo vira z istim branjem kot »Moji zapiski«
+(`server/zapiski.js` `readNotePhoto`: prepis brez popravkov, imena → `[ime]`, zavrnitev neučnih fotografij, zastavica
+stiske odpre okno nujne pomoči). Ista mesečna meja strani `STRANI` (ena fotografija = ena stran, skupaj z zapiski) in
+trda meja AI (`readReserveUsd`, `usage.guard`); strošek se zapiše kot `priprava`. Neuspel klic ali način brez ključa
+strani ne porabi. Že prebrana fotografija se ne bere znova (brez stroška) razen z `?znova=1`; hkratno branje istega
+vira 409; slika nad 6 MB (base64) se ne pošlje (413, vir `napaka` `branje_velika`); neučna 422 (`branje_neucno`);
+prazna stran `branje_prazno`; vir, izbrisan med branjem, se ne shrani (404). Prepis se razreže kot prilepljeno
+besedilo in ima oznako AI (`ai_generated`). Skenirane strani PDF so PR 3b-2. Test: `test/priprava-branje.test.js`.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

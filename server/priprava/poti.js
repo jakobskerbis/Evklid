@@ -7,8 +7,11 @@ import express from "express";
 import { seal, unseal } from "../crypto-polje.js";
 import { cleanText } from "../settings.js";
 import { danIzbrisa } from "./ciscenje.js";
-import { uvoziVNiti, NapakaUvoza } from "./uvoz.js";
-import { shraniIzseke, VRSTE } from "./izseki.js";
+import { uvoziVNiti, preberiVir, NapakaUvoza } from "./uvoz.js";
+import { shraniIzseke, razrezi, VRSTE } from "./izseki.js";
+import { readNotePhoto, readReserveUsd, MAX_IMAGE, pageLimit, pagesUsed, takePage, givePage, nextMonth } from "../zapiski.js";
+import { nujnoZa } from "../nujno.js";
+import { AI_JSON } from "../ai-oznaka.js";
 import {
   preveriDatoteko, shraniIzvirnik, preberiIzvirnik, lahkoShranim, zVarnimBrisanjem,
   MEJE, MIME, NAJVEC_BAJTOV, NAJVEC_VIROV, NAJVEC_PRIPRAV, NAJVEC_SKUPAJ, NAJVEC_HKRATI, zasedeno, prostorVsi,
@@ -108,7 +111,7 @@ const pripravaVen = (r) => ({
  * Poti pod /api/students/:id/priprave. loadStudent iz app.js (404 za neobstoječ profil); lastništvo profila preverijo
  * računi pred potjo. now(): ura (testi).
  */
-export function mountPriprave(app, store, { loadStudent, now = () => Date.now(), log = console }) {
+export function mountPriprave(app, store, { loadStudent, now = () => Date.now(), log = console, usage = null, rightsFor = null, readFn = readNotePhoto }) {
   const db = store.db;
   // Izbris profila (DELETE /api/students/:id, store.deleteStudent) odnese priprave s kaskado; s secure_delete, da
   // šifrirani izvirniki ne ostanejo v prostih straneh baze (izbris računa: server/accounts/izbris.js).
@@ -132,8 +135,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       .map(virVen);
   const celotna = (p) => ({ ...pripravaVen(db.prepare("SELECT * FROM priprave WHERE id = ?").get(p.id)), viri: viriOd(p) });
 
-  // Obdelava vira brez AI (PR 3a): besedilo, Word, PowerPoint, PDF z besedilom → izseki. Fotografije in skenirane
-  // strani PDF čakajo na branje (PR 3b). PDF bere ločena nit; hkrati največ OBDELAVE_HKRATI, sicer vir ostane »caka«
+  // Obdelava vira brez AI (PR 3a): besedilo, Word, PowerPoint, PDF z besedilom → izseki. Fotografije prebere …/preberi (PR 3b),
+  // skenirane strani PDF čakajo na branje (PR 3b-2). PDF bere ločena nit; hkrati največ OBDELAVE_HKRATI, sicer vir ostane »caka«
   // in ga odjemalec obdela pozneje (POST …/viri/:vid/obdelaj).
   let obdelujem = 0;
   const OBDELAVE_HKRATI = 2;
@@ -350,7 +353,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     res.send(buf);
   });
 
-  // Ponovna obdelava vira (vir »caka« ali »napaka«, ali po izboljšanem uvozu). Fotografije: 409 (branje je PR 3b).
+  // Ponovna obdelava vira (vir »caka« ali »napaka«, ali po izboljšanem uvozu). Fotografije: 409 (preberi jih …/preberi).
   app.post("/api/students/:id/priprave/:pid/viri/:vid/obdelaj", async (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -358,7 +361,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!p) return niPriprave(res);
     const v = enVir(s, p, req);
     if (!v) return niVira(res);
-    if (v.vrsta === "slika") return res.status(409).json({ error: "Fotografije prebere branje zapiskov.", code: "priprava_branje" });
+    if (v.vrsta === "slika") return res.status(409).json({ error: "Fotografijo prebere …/preberi.", code: "priprava_branje" });
     if (obdelujem >= OBDELAVE_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Obdelava že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
     const buf = preberiIzvirnik(db, v.id);
     if (!buf) return res.status(404).json({ error: "Izvirnika ni več.", code: "priprava_ni_izvirnika" });
@@ -370,6 +373,80 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     }
     uporabljena(p);
     res.json({ vir: viriOd(p).find((x) => x.id === v.id) || null });
+  });
+
+  // Branje fotografije vira z modelom (PR 3b): isto branje kot »Moji zapiski« (server/zapiski.js readNotePhoto: prepis
+  // brez popravkov, imena → [ime], zavrnitev neučnih fotografij, zastavica stiske), ista mesečna meja strani (STRANI)
+  // in trda meja AI. Prepis se razreže na izseke kot prilepljeno besedilo; izvirnik ostane šifriran (odločitev j 1).
+  // Že prebrana fotografija se ne bere znova (brez stroška) razen z ?znova=1. Stran se ne porabi, če klica ni bilo.
+  const berem = new Set();
+  const straniInfo = (s) => {
+    const limit = pageLimit(rightsFor ? rightsFor(s.id) : null, s.settings);
+    const used = pagesUsed(db, s.id);
+    return { used, limit, left: Math.max(0, limit - used), renews: nextMonth() };
+  };
+  app.post("/api/students/:id/priprave/:pid/viri/:vid/preberi", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    const v = enVir(s, p, req);
+    if (!v) return niVira(res);
+    if (v.vrsta !== "slika") return res.status(409).json({ error: "Branje je samo za fotografije.", code: "priprava_ni_slika" });
+    const vir = () => viriOd(p).find((x) => x.id === v.id) || null;
+    if (v.stanje === "obdelan" && req.query.znova !== "1") return res.json({ vir: vir(), pages: straniInfo(s) });
+    if (berem.has(v.id)) return res.status(409).json({ error: "Fotografija se že bere.", code: "priprava_zasedeno" });
+    const buf = preberiIzvirnik(db, v.id);
+    if (!buf) return res.status(404).json({ error: "Izvirnika ni več.", code: "priprava_ni_izvirnika" });
+    const b64 = buf.toString("base64");
+    if (b64.length > MAX_IMAGE) {
+      napakaVira(v, "branje_velika");
+      return res.status(413).json({ error: "Fotografija je prevelika za branje. Fotografiraj znova ali jo zmanjšaj.", code: "priprava_slika_velika", vir: vir() });
+    }
+    const blocked = usage?.blockInfo?.(s.id);
+    if (blocked) return res.status(429).json(blocked);
+    if (!takePage(db, s.id, pageLimit(rightsFor ? rightsFor(s.id) : null, s.settings))) return res.status(429).json({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: straniInfo(s) });
+    const hold = usage?.guard ? usage.guard(s.id, readReserveUsd()) : null;
+    if (usage?.guard && !hold) {
+      givePage(db, s.id);
+      return res.status(429).json(usage.guardBlock(s.id));
+    }
+    berem.add(v.id);
+    let placano = false;
+    try {
+      const out = await readFn({ imageBase64: b64, mediaType: v.mime });
+      if (out.mock) {
+        givePage(db, s.id);
+        return res.json({ vir: vir(), pages: straniInfo(s), mock: true });
+      }
+      if (out.usage) {
+        placano = true;
+        usage?.log(s.id, out.model, out.usage, "priprava");
+      }
+      const nujno = out.distress ? nujnoZa(out.distress, s.settings) : null;
+      const dodatno = nujno ? { nujno } : {};
+      // Vir ali priprava je bila med branjem izbrisana: nič se ne shrani.
+      if (!db.prepare("SELECT 1 FROM priprava_viri WHERE id = ?").get(v.id)) return res.status(404).json({ error: "Vir ne obstaja.", ...dodatno });
+      if (out.unrelated) {
+        napakaVira(v, "branje_neucno");
+        return res.status(422).json({ error: "To niso zapiski za šolo.", code: "zapiski_neucno", vir: vir(), pages: straniInfo(s), ...dodatno });
+      }
+      if (!out.text) {
+        napakaVira(v, "branje_prazno");
+        return res.json({ vir: vir(), pages: straniInfo(s), ...dodatno });
+      }
+      const r = await preberiVir("besedilo", Buffer.from(out.text, "utf8"));
+      shraniIzseke(db, { vir: v, izseki: razrezi(r.strani), strani: 1, opozorila: [], stanje: "obdelan", seal });
+      uporabljena(p);
+      res.json({ vir: vir(), pages: straniInfo(s), ...AI_JSON, ...dodatno });
+    } catch (e) {
+      if (!placano) givePage(db, s.id);
+      log.error?.(`[evklid] branje fotografije priprave: ${e?.name || "napaka"}`);
+      res.status(502).json({ error: "Branje fotografije trenutno ne deluje. Poskusi znova.", code: "priprava_branje_napaka" });
+    } finally {
+      berem.delete(v.id);
+      hold?.release();
+    }
   });
 
   // Izseki priprave (vsi viri ali en vir: ?vir=<id>; ?vrsta=<vrsta>), v vrstnem redu virov in zaporedja.
