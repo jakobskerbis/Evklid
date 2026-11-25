@@ -817,14 +817,19 @@ def op_units(expr, claimed):
 OPS = {"solve": op_solve, "equal": op_equal, "diff": op_diff, "int": op_int, "limit": op_limit, "value": op_value, "ineq": op_ineq, "units": op_units}
 
 
-DECIMALKA = re.compile(r"(?<![\w.])\d+\.\d+(?:[eE][+-]?\d+)?(?![\w.])")
+DECIMALKA = re.compile(r"(?<![\w.])(?:\d+\.\d+(?:[eE][+-]?\d+)?|\d+[eE][+-]?\d+)(?![\w.])")
+
+
+def _vejica(s):
+    """Decimalna vejica kot v clean(): 1,5 → 1.5, kadar v besedilu ni drugih vejic."""
+    return re.sub(r"(?<=\d),(?=\d)", ".", s) if "," not in re.sub(r"(?<=\d),(?=\d)", "", s) else s
 
 
 def _z_ulomki(op, args):
     """Decimalke SymPy hrani kot 53-bitna števila: Float(100000000.05) · 100000001 se zaokroži na 10000000105000000,
-    zato bi napačen odgovor dobil »symbolic« (pregled PV-03). Ukaz ponovimo z decimalkami kot ulomki (0.05 → 1/20);
-    »symbolic« ostane le, če tudi točen račun drži simbolno, sicer je izid številski."""
-    tocni = [DECIMALKA.sub(lambda m: "(" + str(sp.Rational(m.group(0))) + ")", a) for a in args]
+    zato bi napačen odgovor dobil »symbolic« (pregled PV-03). Ukaz ponovimo z decimalkami kot ulomki (0.05 → 1/20,
+    tudi 0,05 in 5e-2); »symbolic« ostane le, če tudi točen račun drži simbolno, sicer je izid številski."""
+    tocni = [DECIMALKA.sub(lambda m: "(" + str(sp.Rational(m.group(0))) + ")", _vejica(a)) for a in args]
     _nacin[0] = "symbolic"
     try:
         ok, _ = op(*tocni)
@@ -843,7 +848,7 @@ def handle(req):
         args = [str(a) for a in req.get("args", [])]
         ok, why = op(*args)
         how = _nacin[0]
-        if ok and how == "symbolic" and any(DECIMALKA.search(a) for a in args):
+        if ok and how == "symbolic" and any(DECIMALKA.search(_vejica(a)) for a in args):
             how = _z_ulomki(op, args)
         return {"ok": bool(ok), "why": why or "", "how": how}
     except Unsure as e:

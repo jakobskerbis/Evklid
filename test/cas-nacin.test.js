@@ -32,6 +32,9 @@ test("worker: način preverjanja", { skip: !HAVE && "SymPy ni na voljo" }, async
   assert.equal(await nacin("value", ["0.05*240", "12"]), "true/symbolic");
   assert.equal(await nacin("value", ["100000000.05*100000001", "10000000105000000"]), "true/numeric");
   assert.equal(await nacin("solve", ["x/100000001=100000000.05", "x", "10000000105000000"]), "true/numeric");
+  assert.equal(await nacin("value", ["100000000,05*100000001", "10000000105000000"]), "true/numeric");
+  assert.equal(await nacin("value", ["(100000000+5e-2)*100000001", "10000000105000000"]), "true/numeric");
+  assert.equal(await nacin("value", ["0,05*240", "12"]), "true/symbolic");
   assert.equal(await nacin("ineq", ["x/3 < 0.1", "x", "x < 0.3"]), "true/symbolic");
   assert.equal((await casCheck("ineq", ["x/100000001 < 100000000.05", "x", "x < 10000000105000000"])).ok, false);
   // sistem s kotnimi funkcijami: sp.solve vrne le glavne rešitve, popolnost ni dokazana

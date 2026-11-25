@@ -63,7 +63,7 @@ Worker (`server/cas/worker.py`) v vsakem odgovoru vrne `how`, najšibkejši nač
 - `sampled`: `is_zero` je odločil s preizkusom v naključnih točkah.
 
 Dve pravili iz pregleda: (1) ukaz z decimalkami, ki je izšel `symbolic`, worker ponovi z decimalkami kot ulomki
-(0.05 → 1/20); `symbolic` ostane le, če tudi točen račun drži simbolno, sicer je `numeric` (53-bitni `Float` je
+(0.05 → 1/20, tudi 0,05 in 5e-2); `symbolic` ostane le, če tudi točen račun drži simbolno, sicer je `numeric` (53-bitni `Float` je
 `100000000.05 · 100000001` zaokrožil na `10000000105000000`); `ineq` meje z decimalkami primerja kot ulomke.
 (2) Sistem s kotnimi funkcijami je največ `numeric`, ker `sp.solve` vrne le glavne rešitve
 (`sin x = y, cos x = y` brez −3π/4 in periodičnih rešitev).
