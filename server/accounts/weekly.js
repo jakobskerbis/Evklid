@@ -139,7 +139,7 @@ export function childWeek(db, student, { now = Date.now() } = {}) {
     .filter((t) => t.judged >= 3 && t.rate < 0.5)
     .sort((a, b) => a.rate - b.rate)
     .map((t) => ({ name: t.name, topic_id: t.topic_id, detail: `${t.first_ok} od ${t.judged} pravilno v prvem poskusu` }));
-  // Šibke teme iz vseh drugih virov (klepet, igre, učbenik, pole, kartice, kviz; server/weaknesses.js).
+  // Šibke teme iz vseh drugih virov (klepet, igre, učbenik, pole, kartice, kviz, orodja; server/weaknesses.js).
   const hardChat = weakTopicsFor({ db }, student, 30)
     .filter((w) => !hardPractice.some((h) => (w.topic_id && h.topic_id === w.topic_id) || h.name.toLowerCase() === String(w.topic).toLowerCase()))
     .filter((w, i, all) => all.findIndex((x) => String(x.topic).toLowerCase() === String(w.topic).toLowerCase()) === i) // ista tema pri dveh predmetih

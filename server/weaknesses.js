@@ -34,9 +34,14 @@ export const GAME_MAX = 4;
 export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"];
 // Orodja (P1-8, načrt treh prioritet, j 25. 11. 2026): skener (napaka v učenčevem rezultatu, ki jo potrdi preverjanje),
 // laboratorij (napoved, sklep, »Preveri moj račun«) in kviz atlasa. Vsako vprašanje šteje enkrat na dan, ena tema iz
-// enega orodja največ TOOL_DAY_MAX odgovorov na dan (kviz atlasa ima veliko hitrih vprašanj, kot igre).
+// enega orodja največ TOOL_DAY_MAX odgovorov na dan: kviz atlasa ima veliko hitrih vprašanj, ki jih oceni brskalnik,
+// zato sam v enem dnevu ne naredi šibke teme (potrebna je še napaka drug dan ali drugje). Iz brskalnika največ
+// TOOL_STUDENT_DAY_MAX zapisov na učenca na dan (skupaj, vse teme).
 export const TOOL_SOURCES = ["scan", "lab", "atlas"];
-export const TOOL_DAY_MAX = 4;
+export const TOOL_DAY_MAX = { scan: 4, lab: 3, atlas: 2 };
+export const TOOL_STUDENT_DAY_MAX = 60;
+// Id vprašanja ali naloge, nikoli učenčevo besedilo ali vrednost (skill_seen hrani le, kaj je bilo šteto).
+const TOOL_ITEM = /^[A-Za-z0-9_:.\/-]{1,80}$/;
 
 const fold = (s) =>
   String(s || "")
@@ -218,15 +223,15 @@ export function answerOk(check, body) {
 }
 
 // Rezultat iz orodja (skener, laboratorij, kviz atlasa): ok = true/false, item = stalen id vprašanja ali naloge
-// (dvakrat isto vprašanje isti dan šteje enkrat). Vrne true, če je bil rezultat zapisan. Skener kliče to funkcijo
+// (TOOL_ITEM, npr. »ohm:racun«; dvakrat isto vprašanje isti dan šteje enkrat). Vrne true, če je bil rezultat zapisan. Skener kliče to funkcijo
 // na strežniku (samo za status, ki ga potrdi preverjanje, nikoli za »Nepreverjeno«); laboratorij in atlas prek
 // POST /api/students/:id/tool-check.
 export function recordToolResult(db, studentId, { source, topicId, item, ok }) {
-  if (!TOOL_SOURCES.includes(source) || typeof ok !== "boolean" || !getTopic(String(topicId || ""))) return false;
+  if (!TOOL_SOURCES.includes(source) || typeof ok !== "boolean" || typeof item !== "string" || !TOOL_ITEM.test(item) || !getTopic(String(topicId || ""))) return false;
   const day = new Date().toISOString().slice(0, 10);
   const today = db.prepare("SELECT n FROM skill_results WHERE student_id = ? AND day = date('now') AND source = ? AND key = ?").get(studentId, source, topicId);
-  if ((today?.n || 0) >= TOOL_DAY_MAX) return false;
-  if (!firstTime(db, studentId, `T|${source}|${topicId}|${String(item || "").slice(0, 120)}|${day}`)) return false;
+  if ((today?.n || 0) >= TOOL_DAY_MAX[source]) return false;
+  if (!firstTime(db, studentId, `T|${source}|${topicId}|${item}|${day}`)) return false;
   return recordSkill(db, studentId, { source, topicId, n: 1, wrong: ok ? 0 : 1 });
 }
 
@@ -289,9 +294,11 @@ export function mountSkillChecks(app, store, { loadStudent }) {
     if (!s) return;
     const source = String(req.body?.source || "");
     const topicId = String(req.body?.topic || "");
-    const item = String(req.body?.item || "");
+    const item = req.body?.item;
     const ok = req.body?.ok;
-    if (!["lab", "atlas"].includes(source) || !getTopic(topicId) || !item || typeof ok !== "boolean") return res.status(400).json({ error: "Neveljaven rezultat." });
+    if (!["lab", "atlas"].includes(source) || !getTopic(topicId) || typeof item !== "string" || !TOOL_ITEM.test(item) || typeof ok !== "boolean") return res.status(400).json({ error: "Neveljaven rezultat." });
+    const danes = db.prepare("SELECT COALESCE(SUM(n), 0) AS n FROM skill_results WHERE student_id = ? AND day = date('now') AND source IN ('lab', 'atlas')").get(s.id).n;
+    if (danes >= TOOL_STUDENT_DAY_MAX) return res.json({ counted: false });
     res.json({ counted: recordToolResult(db, s.id, { source, topicId, item, ok }) });
   });
 }
