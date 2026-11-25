@@ -11,6 +11,7 @@ export default {
   naloga: "V erlenmajerico odpipetiraj 25,00 mL vzorca klorovodikove kisline neznane koncentracije in ga titriraj z raztopino NaOH s koncentracijo 0,1000 mol/L. Titriraj, dokler se dve titraciji ne ujemata na 0,10 mL. Izračunaj koncentracijo HCl v vzorcu in oceni napako meritve.",
   kolicina: "c(HCl)",
   zgled: "0,0985",
+  zgledNap: "0,0010",
   dec: 4,
   enote: [["mol/L", 1], ["mmol/L", 1e-3], ["g/L", null], ["mol", null]],
   // Skrben dijak (spiranje, brez zraka, po kapljicah, odčitek na 0,05 mL) je zaradi napake pipete in umeritve birete

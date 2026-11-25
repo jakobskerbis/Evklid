@@ -20,6 +20,8 @@ import { parseStevilo, num } from "./lab.js";
 
 export const TOCKE = { rezultat: 4, enota: 1, napaka: 1 }; // + meritve (4) = 10
 const KLJUC = "evklid.lab.matura";
+// Tisočice ločene z nedeljivim presledkom od petih mest naprej (96\u00a0485), kot v slovenskem pravopisu.
+const tisoc = (t) => t.replace(/^(-?)(\d{5,})/, (_, m, d) => m + d.replace(/\B(?=(\d{3})+$)/g, "\u00a0"));
 
 // Točke za rezultat po relativnem odmiku: tol → 4, 2·tol → 3, 3·tol → 2, 5·tol → 1.
 export function tockeRezultata(odmik, tol) {
@@ -64,14 +66,22 @@ export function oceni(def, vnos, resnica, c) {
         ? Number.isFinite(mer) ? "Rezultat se ne ujema s tvojimi meritvami." : "Iz tvojih meritev tega rezultata še ni mogoče izračunati."
         : `Odmik od prave vrednosti ${num(odmik * 100, 1)}\u00a0%.`,
   });
-  postavke.push({ kaj: "Enota", tock: f != null ? TOCKE.enota : 0, max: TOCKE.enota, opomba: f != null ? "" : enota ? "Enota ne ustreza količini." : "Enota ni izbrana." });
-  // Napaka meritve: prava vrednost leži v intervalu x ± Δx in Δx ni nesmiselno velik (največ 4·tol rezultata).
-  const okNap = x != null && dx > 0 && Math.abs(x - resnica) <= dx * (1 + 1e-9) && dx <= 4 * def.tol * Math.abs(x);
+  // Enota in napaka štejeta le pri rezultatu iz učenčevih meritev (ugibanje brez meritev ne prinese točk).
+  const KMER = "Šteje le pri rezultatu iz tvojih meritev.";
+  postavke.push({
+    kaj: "Enota",
+    tock: f != null && !neujema ? TOCKE.enota : 0,
+    max: TOCKE.enota,
+    opomba: f == null ? (enota ? "Enota ne ustreza količini." : "Enota ni izbrana.") : neujema ? KMER : "",
+  });
+  // Napaka meritve: prava vrednost leži v intervalu x ± Δx ali v dovoljenem odmiku tol (sistematske napake pripomočkov,
+  // ki jih učenec ne more poznati), Δx pa ni nesmiselno velik (največ 4·tol rezultata).
+  const okNap = !neujema && x != null && dx > 0 && dx <= 4 * def.tol * Math.abs(x) && Math.abs(x - resnica) <= Math.max(dx, def.tol * Math.abs(x)) * (1 + 1e-9);
   postavke.push({
     kaj: "Napaka meritve",
     tock: okNap ? TOCKE.napaka : 0,
     max: TOCKE.napaka,
-    opomba: okNap ? "" : !(dx > 0) ? "Napake nisi zapisal." : dx > 4 * def.tol * Math.abs(x ?? 0) ? "Napaka je prevelika za tako meritev." : "Prava vrednost ni v intervalu rezultat ± napaka.",
+    opomba: okNap ? "" : !(dx > 0) ? "Napake nisi zapisal." : neujema ? KMER : dx > 4 * def.tol * Math.abs(x ?? 0) ? "Napaka je prevelika za tako meritev." : "Prava vrednost ni v intervalu rezultat ± napaka.",
   });
   return { postavke, tocke: postavke.reduce((a, p) => a + p.tock, 0), max: postavke.reduce((a, p) => a + p.max, 0), x, dx, odmik, mer };
 }
@@ -156,9 +166,9 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
     h("details", { class: "lab-vod-namig" }, h("summary", {}, "Točkovnik"),
       h("ul", { class: "lab-mat-tock" },
         ...def.meritve.map((m) => h("li", {}, `${m.kaj} (${m.tock}\u00a0t.)`)),
-        h("li", {}, `Rezultat: vse točke, če se od prave vrednosti razlikuje za največ ${num(def.tol * 100, 1)}\u00a0% (${TOCKE.rezultat}\u00a0t.)`),
+        h("li", {}, `Rezultat iz tvojih meritev: vse točke, če se od prave vrednosti razlikuje za največ ${num(def.tol * 100, 1)}\u00a0% prave vrednosti, pri večjem odmiku manj (do ${num(5 * def.tol * 100, 1)}\u00a0%). Rezultat, ki ga tvoja tabela ne da, ne dobi točk (${TOCKE.rezultat}\u00a0t.)`),
         h("li", {}, `Prava enota (${TOCKE.enota}\u00a0t.)`),
-        h("li", {}, `Napaka meritve: prava vrednost leži v intervalu rezultat ± napaka (${TOCKE.napaka}\u00a0t.)`)));
+        h("li", {}, `Napaka meritve: prava vrednost leži v intervalu rezultat ± napaka ali v dovoljenem odmiku, napaka pa ni večja od ${num(4 * def.tol * 100, 1)}\u00a0% rezultata (${TOCKE.napaka}\u00a0t.)`)));
 
   function render() {
     skrij();
@@ -176,18 +186,21 @@ export function maturaKartica({ mount, key, def, kontekst, onZacni, onOddaj }) {
           h("label", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `rezultat ${def.kolicina}`), rez),
           h("label", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, "enota"), enota),
           h("label", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, "napaka meritve ±"), nap)),
-        h("p", { class: "muted" }, "Napako zapiši v isti enoti kot rezultat, na primer 0,0985 ± 0,0010."),
+        h("p", { class: "muted" }, `Napako zapiši v isti enoti kot rezultat, na primer ${def.zgled} ± ${def.zgledNap}.`),
         h("div", { class: "demo-buttons" }, button("Oddaj rezultat", () => oddaj(), "primary small")), opozorilo);
     } else {
       const e = def.enote[0][0];
+      // Brezdimenzijska količina (enota v oklepaju, npr. »(brez enote)«) se izpiše brez enote.
+      const z = (u) => (u.startsWith("(") ? "" : `\u00a0${u}`);
+      const vred = (v) => `${tisoc(num(v, def.dec ?? 4))}${z(e)}`;
       kids.push(h("h3", {}, `${ocena.tocke} od ${ocena.max} točk`),
-        h("p", {}, `Tvoj rezultat: ${def.kolicina} = ${rez.value.trim()}${nap.value.trim() ? ` ± ${nap.value.trim()}` : ""}\u00a0${enota.value}.`),
-        ...(Number.isFinite(ocena.mer) ? [h("p", {}, `Iz tvojih meritev: ${def.kolicina} = ${num(ocena.mer, def.dec ?? 4)}\u00a0${e}.`)] : []),
-        h("p", {}, `Prava vrednost: ${def.kolicina} = ${num(resnica, def.dec ?? 4)}\u00a0${e}.`),
+        h("p", {}, `Tvoj rezultat: ${def.kolicina} = ${rez.value.trim()}${nap.value.trim() ? ` ± ${nap.value.trim()}` : ""}${z(enota.value)}.`),
+        ...(Number.isFinite(ocena.mer) ? [h("p", {}, `Iz tvojih meritev: ${def.kolicina} = ${vred(ocena.mer)}${def.merOpomba ? ` (${def.merOpomba})` : ""}.`)] : []),
+        h("p", {}, `Prava vrednost: ${def.kolicina} = ${vred(resnica)}.`),
         h("ul", { class: "lab-mat-ocena" },
           ...ocena.postavke.map((p) => h("li", { class: p.tock === p.max ? "ok" : p.tock ? "" : "bad" },
             h("b", {}, `${p.kaj}: ${p.tock}/${p.max}`), p.opomba ? ` ${p.opomba}` : ""))),
-        h("p", { class: "muted" }, "Postopek (enačbe, povprečje, graf) ta ocena ne zajame: na maturi ga oceni učitelj."),
+        h("p", { class: "muted" }, "Postopka (enačb, povprečja, grafa) ta ocena ne zajame. Na maturi ga oceni učitelj."),
         h("div", { class: "demo-buttons" }, button("Nova naloga", () => zacni(), "primary small")));
     }
     el.replaceChildren(...kids);

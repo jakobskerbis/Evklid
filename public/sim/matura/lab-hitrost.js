@@ -23,9 +23,10 @@ export function ponovljeno(c) {
 
 export default {
   naslov: "Aktivacijska energija reakcije tiosulfata",
-  naloga: `Določi aktivacijsko energijo reakcije natrijevega tiosulfata s klorovodikovo kislino. Izvedi poskus s tiosulfatom in križem. Čas, v katerem križ izgine, izmeri pri sobni temperaturi in v vodni kopeli, ki je vsaj ${DT_MIN} °C toplejša. Pri obeh temperaturah uporabi enako raztopino tiosulfata in pri vsaki izmeri vsaj dvakrat. Hitrost reakcije je obratno sorazmerna s časom. Z Arrheniusovo enačbo izračunaj aktivacijsko energijo in oceni napako meritve.`,
+  naloga: `Določi aktivacijsko energijo reakcije natrijevega tiosulfata s klorovodikovo kislino. Izvedi poskus s tiosulfatom in križem. Čas, v katerem križ izgine, izmeri pri sobni temperaturi in v vodni kopeli, ki je vsaj ${DT_MIN} °C toplejša. Pri obeh temperaturah uporabi enako raztopino tiosulfata in pri vsaki izmeri vsaj dvakrat, tako da se časa ujemata na 5 %. Hitrost reakcije je obratno sorazmerna s časom. Pri reakciji nastaja dražljiv SO₂, zato delaj v zračnem prostoru. Plinska konstanta je R = 8,314 J/(mol K). Z Arrheniusovo enačbo izračunaj aktivacijsko energijo in oceni napako meritve.`,
   kolicina: "Eₐ",
   zgled: "48,5",
+  zgledNap: "2,5",
   dec: 1,
   enote: [["kJ/mol", 1], ["J/mol", 1e-3], ["kJ", null], ["s⁻¹", null]],
   // Skrben dijak (50 mL raztopine, kopel 40 °C, dve meritvi pri vsaki temperaturi, povprečna časa in temperaturi iz tabele)

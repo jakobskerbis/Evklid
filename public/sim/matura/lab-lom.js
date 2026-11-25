@@ -15,9 +15,10 @@ const koti = (c) => lomZrakX(c).map(alfa).filter(Number.isFinite);
 
 export default {
   naslov: "Lomni količnik neznane snovi",
-  naloga: "Z laserjem in optičnim diskom določi lomni količnik neznane prozorne snovi X. Na disk postavi polvalj iz snovi X. Svetloba naj gre iz zraka v snov. Izmeri lomni kot pri vsaj šestih različnih vpadnih kotih od 10 ° do 80 °. Kote meri od vpadne pravokotnice, žarek naj gre skozi središče diska. Nariši graf sin β v odvisnosti od sin α in iz naklona premice izračunaj lomni količnik. Oceni napako meritve.",
+  naloga: "Z laserjem in optičnim diskom določi lomni količnik neznane prozorne snovi X. Na disk postavi polvalj iz snovi X. Svetloba naj gre iz zraka v snov. Izmeri lomni kot pri vsaj šestih različnih vpadnih kotih od 10° do 80°. Kote meri od vpadne pravokotnice, žarek naj gre skozi središče diska. Nariši graf sin β v odvisnosti od sin α in iz naklona premice izračunaj lomni količnik. Oceni napako meritve.",
   kolicina: "n",
   zgled: "1,35",
+  zgledNap: "0,02",
   dec: 3,
   enote: [["(brez enote)", 1], ["°", null], ["m/s", null]],
   // Skrben dijak (od pravokotnice, brez zamika, 10–80° po 10°, kot na pol stopinje, sinusi na tri decimalke) je pri
@@ -35,7 +36,7 @@ export default {
   meritve: [
     { kaj: "Lomni kot si izmeril pri vsaj šestih različnih vpadnih kotih (iz zraka v snov X)", tock: 1, ok: (c) => razlicne(lomZrakX(c), /^α/, 0).size >= 6 },
     {
-      kaj: "Vpadni koti segajo od največ 20 ° do vsaj 70 °",
+      kaj: "Vpadni koti segajo od največ 20° do vsaj 70°",
       tock: 1,
       ok: (c) => {
         const a = koti(c);

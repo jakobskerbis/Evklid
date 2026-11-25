@@ -14,9 +14,10 @@ export const PREGRET = /Upornik se greje|Upornik je zgorel/, VAROVALKA = /pregor
 
 export default {
   naslov: "Upor upornika iz grafa I(U)",
-  naloga: "Določi upor upornika z oznako 100 Ω. Ampermeter veži zaporedno, voltmeter vzporedno z upornikom. Izmeri tok pri vsaj petih različnih napetostih, od največ 2 V do vsaj 5 V. Upornik zdrži le 0,5 W, zato napetosti ne povečaj nad 7 V. Nariši graf I(U) in iz naklona premice izračunaj upor. Oceni napako meritve.",
+  naloga: "Določi upor upornika z oznako 100 Ω. Ampermeter veži zaporedno, voltmeter vzporedno z upornikom. Izmeri tok pri vsaj petih različnih napetostih, od največ 2 V do vsaj 5 V. Upornik zdrži le 0,5 W, zato napetosti ne povečaj nad 6,5 V. Nariši graf I(U) in iz naklona premice izračunaj upor. Oceni napako meritve.",
   kolicina: "R",
   zgled: "101,3",
+  zgledNap: "0,8",
   dec: 1,
   enote: [["Ω", 1], ["kΩ", 1e3], ["A/V", null], ["W", null]],
   // Skrben dijak (7 napetosti od 1 do 7 V, območji 200 mA in 20 V, premica skozi izhodišče) je zaradi stalne napake

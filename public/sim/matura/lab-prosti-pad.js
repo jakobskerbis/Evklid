@@ -29,9 +29,10 @@ export function razmerjeHitrosti(rows) {
 
 export default {
   naslov: "Težni pospešek s prostim padom",
-  naloga: "Določi težni pospešek g. Jekleno kroglico spuščaj z elektromagnetom. Najprej naravnaj vrata, da gre žarek skozi sredino kroglice (povečava od zgoraj). Izmeri čas padca pri vsaj petih različnih višinah, od največ 0,5 m do vsaj 1,5 m. Pri vsaj treh višinah meritev ponovi in vzemi povprečje. Nariši graf h(t²) in iz naklona premice izračunaj g. Oceni napako meritve.",
+  naloga: "Določi težni pospešek g. Jekleno kroglico spuščaj z elektromagnetom. Najprej naravnaj vrata, da gre žarek skozi sredino kroglice (pomagaj si s povečavo od zgoraj). Izmeri čas padca pri vsaj petih različnih višinah, od največ 0,5 m do vsaj 1,5 m. Pri vsaj treh višinah meritev ponovi in vzemi povprečje. Nariši graf h(t²) in iz naklona premice izračunaj g. Oceni napako meritve.",
   kolicina: "g",
   zgled: "9,72",
+  zgledNap: "0,15",
   dec: 3,
   enote: [["m/s²", 1], ["cm/s²", 0.01], ["m/s", null], ["N", null]],
   // Skrben dijak (naravnana vrata, 5 višin od 0,2 do 2,0 m, vsaka dvakrat, povprečje, premica h(t²) skozi izhodišče) dobi

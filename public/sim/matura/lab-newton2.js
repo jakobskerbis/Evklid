@@ -28,9 +28,10 @@ const silePoMasi = (c) => meritvePoMasi(c).map((v) => v.map(([F]) => F));
 
 export default {
   naslov: "Masa iz grafa a(F)",
-  naloga: "Določi maso m, ki jo pospešuje sila obešala. Progo izravnaj z libelo, nato s podložko izravnaj kotalni upor (preizkus brez vrvice s potiskom). Časovnik nastavi na »od spusta« in voziček spuščaj z elektromagnetom. Palic ne dodajaj. Utežice samo prestavljaj z vozička na obešalo, da ostane skupna masa enaka. Izmeri pospešek pri vsaj petih različnih silah, od največ 0,2 N do vsaj 0,5 N. Nariši graf a(F) in iz naklona premice izračunaj m. Oceni napako meritve.",
+  naloga: "Določi maso m, ki jo pospešuje sila obešala. Progo izravnaj z libelo, nato s podložko izravnaj kotalni upor (preizkus brez vrvice s potiskom). Časovnik nastavi na »od spusta« in voziček spuščaj z elektromagnetom. Masa vozička naj ostane 250 g. Utežice samo prestavljaj z vozička na obešalo, da ostane skupna masa enaka. Izmeri pospešek pri vsaj petih različnih silah, od največ 0,2 N do vsaj 0,5 N. Težni pospešek je g = 9,81 m/s². Nariši graf a(F) in iz naklona premice izračunaj m. Oceni napako meritve.",
   kolicina: "m",
   zgled: "0,335",
+  zgledNap: "0,010",
   dec: 3,
   enote: [["kg", 1], ["g", 1e-3], ["N", null], ["1/kg", null]],
   // Skrben dijak (libela, podložka na 0,5 mm, časovnik od spusta, 7 sil od 0,1 do 0,7 N, premica a(F) z odsekom) dobi
@@ -48,7 +49,7 @@ export default {
   },
   meritve: [
     { kaj: "Progo si izravnal z libelo", tock: 1, ok: (c) => c.dnevnik.some((t) => LIBELA.test(t)) },
-    { kaj: "Kotalni upor si izravnal s podložko (preizkus po libeli: »trenje je izravnano«)", tock: 1, ok: (c) => c.dnevnik.some((t) => LIBELA.test(t)) && zadnji(c.dnevnik, LIBELA, IZRAVNANO, NI_IZRAVNANO) === 1 },
+    { kaj: "Po libeli si s podložko izravnal kotalni upor (preizkus brez vrvice: »trenje je izravnano«)", tock: 1, ok: (c) => c.dnevnik.some((t) => LIBELA.test(t)) && zadnji(c.dnevnik, LIBELA, IZRAVNANO, NI_IZRAVNANO) === 1 },
     { kaj: "Pospešek si izmeril pri vsaj petih različnih silah pri isti skupni masi", tock: 1, ok: (c) => silPriMasi(c) >= 5 },
     {
       kaj: "Sile pri isti skupni masi segajo od največ 0,2 N do vsaj 0,5 N",

@@ -20,9 +20,12 @@ export const PT_LAB = { p: 98000, T: 22, pw: 2640 };
 
 export default {
   naslov: "Faradayeva konstanta z elektrolizo vode",
-  naloga: `Hofmannov aparat napolni z razredčeno žveplovo(VI) kislino, tako da v ceveh ne ostane zrak, in pipi zapri. Vklopi napajalnik in štoparico. Med elektrolizo zapisuj čas, tok in prostornino plina na katodi, dokler se na katodi ne nabere vsaj ${V_MIN} mL vodika. Odčitaj zračni tlak in temperaturo tekočine. Vodik je nasičen z vodno paro. Parni tlak vode je 2,33 kPa pri 20 °C, 2,64 kPa pri 22 °C, 2,97 kPa pri 24 °C, 3,35 kPa pri 26 °C in 3,77 kPa pri 28 °C. Na koncu dokaži oba plina. Izračunaj Faradayevo konstanto in oceni napako meritve.`,
+  naloga: `Nadeni si zaščitna očala: žveplova(VI) kislina je jedka. Hofmannov aparat napolni z razredčeno žveplovo(VI) kislino, tako da v ceveh ne ostane zrak, in pipi zapri. Vklopi napajalnik in štoparico. Med elektrolizo zapisuj čas, tok in prostornino plina na katodi, dokler se na katodi ne nabere vsaj ${V_MIN} mL vodika. Odčitaj zračni tlak in temperaturo tekočine. Vodik je nasičen z vodno paro. Parni tlak vode je 2,33 kPa pri 20 °C, 2,64 kPa pri 22 °C, 2,97 kPa pri 24 °C, 3,35 kPa pri 26 °C in 3,77 kPa pri 28 °C. Na koncu dokaži oba plina. Plinska konstanta je R = 8,314 J/(mol K). Izračunaj Faradayevo konstanto in oceni napako meritve.`,
   kolicina: "F",
-  zgled: "98500",
+  zgled: "98 500",
+  zgledNap: "3000",
+  // »Iz tvojih meritev« računa s povprečnim tlakom in temperaturo laboratorija, ne z učenčevim odčitkom.
+  merOpomba: "izračunano pri 98,0 kPa in 22 °C",
   dec: 0,
   enote: [["C/mol", 1], ["kC/mol", 1000], ["C", null], ["mol/C", null]],
   // Skrben dijak (5–8 V, vsaj 20 mL vodika, povprečni tok, tlak in temperatura z merilnikov, parni tlak iz tabele) je

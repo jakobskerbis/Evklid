@@ -14,9 +14,10 @@ export function naPremici(c) {
 
 export default {
   naslov: "Prožnostni koeficient vzmeti",
-  naloga: "Na stojalu je mehka vzmet z neznanim prožnostnim koeficientom. Najprej zapiši odčitek kazalca brez uteži. Nato obešaj uteži od 50 g do 250 g in izmeri podaljšek vzmeti pri vsaj petih različnih masah. Vzmeti ne obremeni z več kot 250 g. Nariši graf F(x) in iz naklona premice določi prožnostni koeficient vzmeti. Oceni napako meritve.",
+  naloga: "Na stojalu je mehka vzmet z neznanim prožnostnim koeficientom. Najprej zapiši odčitek kazalca brez uteži. Nato obešaj uteži od 50 g do 250 g in izmeri podaljšek vzmeti pri vsaj petih različnih masah. Vzmeti ne obremeni z več kot 250 g. Težni pospešek je g = 9,81 m/s². Nariši graf F(x) in iz naklona premice določi prožnostni koeficient vzmeti. Oceni napako meritve.",
   kolicina: "k",
   zgled: "14,6",
+  zgledNap: "0,3",
   dec: 2,
   enote: [["N/m", 1], ["N/cm", 100], ["N", null], ["m/N", null]],
   // Skrben dijak (začetni odčitek in vsi odčitki z očesom v višini kazalca pri mirni vzmeti, 50–250 g, odčitek na 1 mm)

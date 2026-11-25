@@ -63,7 +63,12 @@ test("scoring: result by relative error, unit, measurement uncertainty", () => {
   assert.deepEqual(gl.postavke.slice(2).map((p) => p.tock), [0, 0, 0]);
   // Napaka: prava vrednost mora biti v intervalu, interval ne sme biti nesmiselno širok.
   const nap = (n) => oceni(def, { rezultat: "0,0985", enota: "mol/L", napaka: n }, 0.0978, {}).postavke.at(-1).tock;
-  assert.equal(nap("0,0005"), 0, "prava vrednost ni v intervalu");
+  // Odmik 0,7 % je manjši od tol: napaka 0,0005 šteje (sistematska napaka pripomočkov, ki je učenec ne pozna).
+  assert.equal(nap("0,0005"), 1, "prava vrednost v dovoljenem odmiku");
+  const napX = (x, n) => oceni(def, { rezultat: x, enota: "mol/L", napaka: n }, 0.0978, {}).postavke.at(-1);
+  assert.equal(napX("0,1010", "0,0010").tock, 0, "odmik 3,3 % je večji od napake in od tol");
+  assert.match(napX("0,1010", "0,0010").opomba, /ni v intervalu/);
+  assert.equal(napX("0,1010", "0,0035").tock, 1);
   assert.equal(nap(""), 0, "brez napake");
   assert.equal(nap("0,02"), 0, "napaka 20 % je prevelika");
   assert.equal(nap("0,0008"), 1);
@@ -75,6 +80,13 @@ test("scoring: result by relative error, unit, measurement uncertainty", () => {
   assert.equal(rz(dm(0.0920)).postavke[2].tock, 0, "iz meritev 0,0920: rezultat ni iz meritev");
   assert.match(rz(dm(0.0920)).postavke[2].opomba, /ne ujema s tvojimi meritvami/);
   assert.equal(rz(dm(NaN)).postavke[2].tock, 0, "brez meritev");
+  // Brez meritev (ali z rezultatom, ki ni iz njih) tudi enota in napaka ne prineseta točk: ugibanje ne šteje.
+  for (const d of [dm(NaN), dm(0.092)]) {
+    const [en, na] = rz(d).postavke.slice(-2);
+    assert.deepEqual([en.tock, na.tock], [0, 0]);
+    assert.match(en.opomba + na.opomba, /^Šteje le pri rezultatu iz tvojih meritev\.Šteje le/);
+  }
+  assert.deepEqual(rz(dm(0.0990)).postavke.slice(-2).map((p) => p.tock), [1, 1]);
   assert.equal(rz(dm(0.0990)).mer, 0.099);
 });
 
@@ -479,18 +491,18 @@ test("in a browser: the titration matura task from start to points", async (t) =
     await page.evaluate(() => oddaj("0,1", "", ""));
     assert.match(await page.evaluate(() => txt(m.querySelector(".lab-mat .lab-why"))), /Izberi enoto/);
     // Prava vrednost v mmol/L z napako 1 %, a brez titracij: rezultat ne izhaja iz meritev, zato 0 točk (prava vrednost
-    // brez meritev ne šteje); enota 1, napaka 1, meritve 3 od 4 (titraciji se še ne ujemata).
+    // brez meritev ne šteje), tudi enota in napaka ne štejeta; meritve 3 od 4 (titraciji se še ne ujemata).
     const prava = await page.evaluate(() => m._labBench.c.hcl);
     const v = (x) => String(x).replace(".", ",");
     await page.evaluate(([a, b]) => oddaj(a, "mmol/L", b), [v((prava * 1000).toFixed(2)), v((prava * 10).toFixed(2))]);
     s = await page.evaluate(() => ({ h: txt(m.querySelector(".lab-mat h3")), li: [...m.querySelectorAll(".lab-mat-ocena li b")].map(txt), skrito: m.querySelectorAll(".lab-mat-skrito").length }));
-    assert.equal(s.h, "5 od 10 točk");
-    assert.deepEqual(s.li.slice(-3), ["Rezultat: 0/4", "Enota: 1/1", "Napaka meritve: 1/1"]);
+    assert.equal(s.h, "3 od 10 točk");
+    assert.deepEqual(s.li.slice(-3), ["Rezultat: 0/4", "Enota: 0/1", "Napaka meritve: 0/1"]);
     assert.match(await page.evaluate(() => txt(m.querySelector(".lab-mat-ocena"))), /Iz tvojih meritev tega rezultata še ni mogoče izračunati/);
     assert.equal(s.li.find((x) => x.startsWith("Dve titraciji")), "Dve titraciji HCl se ujemata na 0,10 mL: 0/1");
     assert.equal(s.skrito, 0, "po oddaji je vse spet vidno");
-    assert.deepEqual(await page.evaluate(() => dogodki.at(-1)), ["oddano", 5]);
-    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura"))["lab-titracija"].tocke), 5);
+    assert.deepEqual(await page.evaluate(() => dogodki.at(-1)), ["oddano", 3]);
+    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura"))["lab-titracija"].tocke), 3);
 
     // »Nova naloga«: meritve se pobrišejo, dnevnik naloge začne znova (spiranje ne šteje več).
     await page.evaluate(() => gumb("Nova naloga", true));
@@ -498,8 +510,8 @@ test("in a browser: the titration matura task from start to points", async (t) =
     await page.evaluate(() => oddaj("0,05", "mol/L", "0,001"));
     s = await page.evaluate(() => [...m.querySelectorAll(".lab-mat-ocena li b")].map(txt));
     assert.equal(s[0], "Bireto si pred polnjenjem spral s titrantom: 0/1");
-    // Najboljši rezultat ostane 5.
-    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura"))["lab-titracija"].tocke), 5);
+    // Najboljši rezultat ostane 3.
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.matura"))["lab-titracija"].tocke), 3);
 
     // »↺ Ponastavi« med nalogo: poskus zgrajen znova, naloga teče naprej (nov vzorec, priprava znova).
     await page.evaluate(() => gumb("Nova naloga", true));

@@ -22,6 +22,7 @@ export default {
   naloga: "V bučki na tehtnici je vzorec sode bikarbone (NaHCO₃) neznane mase, manjše od 1,5 g. Nadeni si zaščitna očala in v bučko nalij presežek kisline, na primer 30 mL kisa. Bučka naj ostane odprta. Maso bučke zapisuj, dokler se ne ustali, vsaj 5 minut po začetku reakcije. Iz izgube mase izračunaj maso NaHCO₃ v vzorcu in oceni napako meritve.",
   kolicina: "m(NaHCO₃)",
   zgled: "1,12",
+  zgledNap: "0,05",
   dec: 2,
   enote: [["g", 1], ["mg", 1e-3], ["mol", null], ["mL", null]],
   // Skrben dijak (30 mL kisa, odprta bučka, odčitek po 5 minutah) je zaradi raztopljenega CO₂ 2–8 % pod pravo vrednostjo
