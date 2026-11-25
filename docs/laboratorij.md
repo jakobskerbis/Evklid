@@ -466,6 +466,14 @@ helpers: `public/sim/lab-vodeno-pomoc.js`. Not in lessons (sims embedded in a le
   device or IP (not personal data); the same event of the same student and experiment counts once per 10 s. Read:
   `GET /api/admin/laboratorij?days=30` (admin, or local without accounts).
 
+## Šibke točke (weak points)
+The first »Sklep« pick and the first numeric »Preveri moj račun« dispatch `evklid:lab-preverjeno` { vrsta, ok }
+(public/sim/lab.js `LAB_PREVERJENO`; retries, »Poskusi znova«, a factor-10ⁿ slip and anything after »Pokaži rešitev«,
+also a restored one, do not). Predictions never count. public/laboratorij.js turns it into
+`POST /api/students/:id/tool-check` (`sibkaTocka`: source `lab`, a topic from `SIBKE_TEME` on the student's own school
+level, item `ohm:racun` or `ohm:sklep:<hash of the question>`, never the typed value) for the profile that opened the
+experiment; limits (lab 2 per topic per day) in docs/sibke-tocke.md. Only the 10 main experiments are listed.
+
 ## Maturitetni poskus (matura mode)
 
 Plan phase 3 (25. 11. 2026). An experiment with a task in `public/sim/lab-matura-naloge.js` (one file per experiment in

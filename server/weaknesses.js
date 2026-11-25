@@ -39,7 +39,8 @@ export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", 
 // zato sam v enem dnevu ne naredi šibke teme (potrebna je še napaka drug dan ali drugje). Iz brskalnika največ
 // TOOL_STUDENT_DAY_MAX zapisov na učenca na dan (skupaj, vse teme).
 export const TOOL_SOURCES = ["scan", "lab", "atlas"];
-export const TOOL_DAY_MAX = { scan: 4, lab: 3, atlas: 2 };
+// lab 2 (pregled 3, #1094 laboratorij): sklepa in račun enega poskusa v enem dnevu sama ne naredita šibke teme.
+export const TOOL_DAY_MAX = { scan: 4, lab: 2, atlas: 2 };
 export const TOOL_STUDENT_DAY_MAX = 60;
 // Id vprašanja ali naloge, nikoli učenčevo besedilo ali vrednost (skill_seen hrani le, kaj je bilo šteto).
 const TOOL_ITEM = /^[A-Za-z0-9_:.\/-]{1,80}$/;
