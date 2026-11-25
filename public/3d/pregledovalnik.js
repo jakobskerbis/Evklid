@@ -5,6 +5,7 @@
 import { THREE, ustvariSceno, kakovostNaprave, studioNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { skoziLupino } from "./izbira.js";
+import { napakaVsebina } from "./napake.js";
 import { mrezeOvojev, okvirDela as okvirDelaVSvetu } from "./ovoji.js";
 import { t, dodajIzvirnik } from "/i18n.js";
 import SL3D from "/i18n/sl-3d.js";
@@ -1060,6 +1061,7 @@ export function odpriModel(el, mod, opts = {}) {
       nalagEl = null;
       return;
     }
+    if (nalagEl?.classList.contains("napaka")) return; // pozen napredek ne prepiše kartice z napako
     if (!nalagEl) {
       nalagEl = mk("div", "k3-nalaganje");
       nalagEl.setAttribute("role", "status");
@@ -1073,8 +1075,18 @@ export function odpriModel(el, mod, opts = {}) {
     console.error("3D model", err);
     nalaganje(0);
     nalagEl.classList.add("napaka");
-    nalagEl.firstChild.textContent = t("a3.loadError");
-    nalagEl.lastChild.hidden = true;
+    nalagEl.setAttribute("role", "alert");
+    // Besedilo po vrsti napake (napake.js); »Poskusi znova« zgradi model še enkrat (prizor ostane).
+    nalagEl.replaceChildren(
+      ...napakaVsebina(err, {
+        t,
+        znova: () => {
+          nalaganje(null);
+          zgradiVse(false);
+        },
+        razredGumba: "a3-pill a3-mali",
+      }),
+    );
   }
 
   // »Podrobnosti organa«: gumb pod odrom in list z besedilom (model.podrobnosti = { naslov, odseki: [{ naslov, besedilo }] }).

@@ -239,8 +239,18 @@ async function show3d() {
     const [{ seznamModelov }, d] = await Promise.all([import("./3d/modeli.js"), drevoMod || import("./3d/drevo.js")]);
     drevoMod = d;
     modeli = await seznamModelov();
-  } catch {
-    box.innerHTML = `<p class="muted">${esc(t("a3.loadError"))}</p>`;
+  } catch (err) {
+    // Besedilo po vrsti napake (public/3d/napake.js) in »Poskusi znova«; če se še ta modul ne naloži, ostane »Preveri povezavo«.
+    const { napakaVsebina } = await import("./3d/napake.js").catch(() => ({}));
+    const kartica = document.createElement("div");
+    kartica.className = "uci-3d-napaka";
+    kartica.setAttribute("role", "alert");
+    if (napakaVsebina) kartica.append(...napakaVsebina(err, { t, znova: () => show3d(), razredGumba: "secondary" }));
+    else {
+      kartica.innerHTML = `<p>${esc(t("a3.loadError"))}</p><button type="button" class="secondary">${esc(t("a3.retry"))}</button>`;
+      kartica.querySelector("button").addEventListener("click", () => show3d(), { once: true });
+    }
+    box.replaceChildren(kartica);
     return;
   }
   const { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, ikoneVnaprej } = drevoMod;

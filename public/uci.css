@@ -115,3 +115,8 @@ html:has(body.uci-3d-odprto), body.uci-3d-odprto { overflow: hidden; overscroll-
 .tb-link small { color: var(--muted); font-size: 0.75rem; font-weight: 700; }
 .tb-link b { font-size: 0.92rem; overflow-wrap: anywhere; }
 @media (max-width: 480px) { .tb-link { flex: 1 1 100%; } }
+/* 3D svet se ni naložil (uci-se.js show3d, public/3d/napake.js): besedilo, po potrebi koda in »Poskusi znova«. */
+.uci-3d-napaka { padding: 16px 0; color: var(--muted); }
+.uci-3d-napaka p { margin: 0 0 10px; }
+.uci-3d-napaka .k3-napaka-koda { font-size: 0.85rem; }
+.uci-3d-napaka .k3-napaka-povezava { display: inline-block; margin: 0 12px 10px 0; color: var(--accent); font-weight: 600; }

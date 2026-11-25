@@ -330,7 +330,11 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 }
 @media (max-width: 359px) { .k3-cel-zaslon { display: none !important; } }
 .k3-napaka { max-width: 520px; margin: 0 auto; padding: 40px 16px; text-align: center; color: var(--k3-muted); line-height: 1.5; }
-.k3-napaka .a3-pill { text-decoration: none; }
+.k3-napaka .a3-pill { text-decoration: none; margin: 4px; }
+/* Kartica z napako (napake.js): koda neznane napake, povezava na nižjo kakovost, »Poskusi znova«. */
+.k3-napaka-koda { margin: 4px 0 8px; font-size: 0.85rem; opacity: 0.8; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.k3-napaka-povezava { display: block; width: fit-content; margin: 6px auto 10px; color: var(--k3-accent, #6e9bff); font-weight: 600; }
+.k3-nalaganje.napaka .a3-pill { margin-top: 12px; }
 
 /* ---------- atlas ---------- */
 .a3 { position: fixed; inset: 0; overflow: hidden; background: var(--k3-bg); }

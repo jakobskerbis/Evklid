@@ -9,6 +9,7 @@ import { svetlost, OBJEKTIVI, OKULAR, MIN_M, SVETLOBNI_MAX, MAX_M, TEM_MAX, SEM_
 import { BARVANJA } from "./barvila.js";
 import { PREPARATI, SKUPINE, ZACETNI, naloziPreparat } from "./preparati/index.js";
 import { t } from "/i18n.js";
+import { napakaVsebina } from "../3d/napake.js";
 import { icon as ikona } from "/icons.js";
 
 const CSS = ["/3d/3d.css", "/mikroskop/mikroskop.css"];
@@ -146,7 +147,10 @@ export async function odpriMikroskop(el, { preparat = null, cilj = null, zapri =
     upo = ustvariUpodobitev(platno, { temSonda: () => s.nacin === "tem" });
   } catch (e) {
     bIzberi.hidden = true; // glava z gumbom Nazaj ostane
-    el.replaceChildren(vrh, mk("p", "k3-napaka", t(e?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
+    const kartica = mk("div", "k3-napaka");
+    kartica.setAttribute("role", "alert");
+    kartica.append(...napakaVsebina(e, { t })); // brez WebGL, pomnilnik ali drugo (napake.js)
+    el.replaceChildren(vrh, kartica);
     return { unici() {} };
   }
   // Če telefon ponastavi grafiko (izgubljen kontekst WebGL, npr. po predolgem izrisu ali v ozadju), slika ne sme ostati

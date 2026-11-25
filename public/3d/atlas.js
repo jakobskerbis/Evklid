@@ -8,6 +8,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
 import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
+import { napakaBesedilo } from "./napake.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
@@ -686,9 +687,9 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         uporabiVidnost();
       } catch (err) {
         console.error(`3D atlas: plast ${id}`, err);
-        sloj.napaka = true;
+        sloj.napaka = napakaBesedilo(err).key; // povezava, pomnilnik, star brskalnik … (napake.js)
         sloj.viden = false;
-        sporocilo(t("a3.loadError"));
+        sporocilo(t(sloj.napaka));
       } finally {
         prenosi.delete(id);
         prikaziNapredek();
@@ -1167,7 +1168,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       row.classList.toggle("nalaga", !!s.nalaganje);
       const st = row.querySelector("small");
       const p = prenosi.get(s.id);
-      st.textContent = s.nalaganje ? (p ? t("a3.loadingMb", { n: mb(p.n), s: mb(p.s) }) : t("a3.loading")) : s.napaka ? t("a3.loadError") : t("a3.structures", { n: strukture.filter((r) => r.sistem === s.id).length });
+      st.textContent = s.nalaganje ? (p ? t("a3.loadingMb", { n: mb(p.n), s: mb(p.s) }) : t("a3.loading")) : s.napaka ? t(typeof s.napaka === "string" ? s.napaka : "a3.loadError") : t("a3.structures", { n: strukture.filter((r) => r.sistem === s.id).length });
     }
   }
   async function preklopiSloj(id, on) {

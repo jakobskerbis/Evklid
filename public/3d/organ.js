@@ -951,7 +951,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
   const studio = !!ctx.studio && !!ctx.okolje;
   const okolje = studio ? ctx.okolje("studio").catch(() => null) : null; // HDRI se nalaga hkrati z modelom
   const podatki = await fetch(`${BAZA}${ime}.json`).then((r) => {
-    if (!r.ok) throw new Error(`${ime}.json: ${r.status}`);
+    if (!r.ok) throw Object.assign(new Error(`${ime}.json: HTTP ${r.status}`), { status: r.status }); // napake.js: povezava
     return r.json();
   });
   let vir = await naslov(`${ime}${visoka ? "" : "-telefon"}.glb`);
