@@ -447,8 +447,34 @@ async function mikroskop(param, moj) {
   return m;
 }
 
+// Izpad povezave (npr. minuta med objavo): »Ni povezave« z gumbom »Poskusi znova« in en samodejni poskus čez 4 s.
+let poskusiZnova = null;
+function niPovezave(moj) {
+  const p = mk("div", "k3-napaka");
+  p.setAttribute("role", "alert");
+  p.append(mk("p", "", t("a3.noConnection")));
+  const b = mk("button", "a3-pill");
+  b.type = "button";
+  b.textContent = t("a3.retry");
+  b.addEventListener("click", () => usmeri());
+  p.append(b);
+  glavni.replaceChildren(p);
+  clearTimeout(poskusiZnova);
+  poskusiZnova = setTimeout(() => moj === zaporedje && usmeri(), 4000);
+}
+
 async function model(id, param, moj) {
-  const mod = await naloziModel(id);
+  let mod;
+  try {
+    mod = await naloziModel(id);
+  } catch (e) {
+    if (moj !== zaporedje) return null;
+    if (e?.povezava) {
+      niPovezave(moj);
+      return null;
+    }
+    throw e;
+  }
   if (moj !== zaporedje) return null;
   if (!mod) {
     const p = mk("div", "k3-napaka");

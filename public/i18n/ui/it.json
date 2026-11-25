@@ -3648,6 +3648,8 @@
   "a3.noWebgl": "Questo browser non può mostrare i modelli 3D (WebGL è disattivato o non supportato). Prova con un altro browser o dispositivo.",
   "a3.offline": "L’atlante 3D ha bisogno di internet la prima volta che lo apri.",
   "a3.notFound": "Questa vista 3D non esiste.",
+  "a3.noConnection": "La connessione si è interrotta. Riprova tra qualche secondo.",
+  "a3.retry": "Riprova",
   "a3.left": "sinistra",
   "a3.right": "destra",
   "a3.breadcrumb": "Gruppi",
