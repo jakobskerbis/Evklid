@@ -15,6 +15,7 @@ import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
 import { nowParts } from "./schedule.js";
 import { schoolYear } from "./games.js";
+import { aktivnaPriprava, nastaviTest, odstraniTest } from "./priprava/aktivna.js";
 
 // Tekmovalni trening in poskusno tekmovanje veljata tudi za priprave na izpite.
 const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
@@ -743,39 +744,43 @@ export class Progress {
   }
 
   // ---------- priprava na test ----------
+  // Načrt testa je aktivna priprava (server/priprava/aktivna.js, docs/priprava.md PR 2b).
   testPlan(studentId) {
-    const r = this.db.prepare("SELECT * FROM test_plans WHERE student_id = ?").get(studentId);
-    if (!r) return null;
-    const units = JSON.parse(r.units);
-    const path = getPath(r.path_key);
-    const daysLeft = Math.round((Date.parse(r.test_date) - Date.parse(nowParts().date)) / 86400000); // slovenski dan, kot v urniku
+    const r = aktivnaPriprava(this.db, studentId);
+    if (!r?.pot || !r.datum_testa) return null;
+    let units = [];
+    try {
+      units = JSON.parse(r.sklopi || "[]");
+    } catch {}
+    const path = getPath(r.pot);
+    const daysLeft = Math.round((Date.parse(r.datum_testa) - Date.parse(nowParts().date)) / 86400000); // slovenski dan, kot v urniku
     return {
-      path: r.path_key,
+      path: r.pot,
       subject: path?.subject || null,
       units,
       unitTitles: units.map((i) => path?.units[i]?.title).filter(Boolean),
-      date: r.test_date,
+      date: r.datum_testa,
       daysLeft,
       // Test iz urnika (server/schedule.js): priprava mu sledi sama, dokler je učenec ne spremeni.
-      eventId: r.event_id || null,
+      eventId: r.dogodek_id || null,
+      // Priprava, v katero gredo viri in izseki tega testa (/api/students/:id/priprave/:pid).
+      pripravaId: r.id,
     };
   }
-  setTestPlan(studentId, pathKey, units, date, eventId = null) {
+  // naslov: ime testa iz urnika (sicer ime učne poti); shrani se šifrirano kot naslov priprave.
+  setTestPlan(studentId, pathKey, units, date, eventId = null, naslov = null) {
     const path = getPath(pathKey);
-    const clean = [...new Set((units || []).map(Number))].filter((i) => Number.isInteger(i) && path?.units[i]);
-    if (!path || !clean.length || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) return null;
-    this.db
-      .prepare(
-        `INSERT INTO test_plans (student_id, path_key, units, test_date, event_id) VALUES (?, ?, ?, ?, ?)
-         ON CONFLICT(student_id) DO UPDATE SET path_key = excluded.path_key, units = excluded.units, test_date = excluded.test_date, event_id = excluded.event_id, created_at = datetime('now')`,
-      )
-      .run(studentId, pathKey, JSON.stringify(clean), date, eventId);
+    const clean = [...new Set((Array.isArray(units) ? units : []).map(Number))].filter((i) => Number.isInteger(i) && path?.units[i]);
+    // Pravi koledarski dan (2026-13-45 ne), kot pri /priprave.
+    const d = String(date);
+    if (!path || !clean.length || !/^\d{4}-\d{2}-\d{2}$/.test(d) || !(Date.parse(`${d}T00:00:00Z`) >= 0) || new Date(`${d}T00:00:00Z`).toISOString().slice(0, 10) !== d) return null;
+    nastaviTest(this.db, studentId, { pot: pathKey, sklopi: clean, datum: date, dogodek: eventId, naslov: naslov || path.label, predmet: path.subject || null });
     // Stare nedokončane seje priprave zapremo, nova upošteva nov načrt.
     this.db.prepare("UPDATE sessions SET finished = 1 WHERE student_id = ? AND kind = 'test' AND finished = 0").run(studentId);
     return this.testPlan(studentId);
   }
   clearTestPlan(studentId) {
-    this.db.prepare("DELETE FROM test_plans WHERE student_id = ?").run(studentId);
+    odstraniTest(this.db, studentId);
   }
   // Mešane naloge iz izbranih sklopov; bližje kot je test, težje so.
   startTest(studentId) {
