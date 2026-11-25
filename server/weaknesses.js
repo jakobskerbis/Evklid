@@ -4,8 +4,8 @@
 //
 // Viri (vsi lokalno, brez dodatnih klicev modela):
 // - klepet z inštruktorjem (META vrstica) in naloge v Vadnici: tabela events (kot doslej, zdaj s topic_id);
-// - igre, vprašanja »Preveri se« v učbeniku, naše pole NPZ/mature (»Imam prav«), kartice in kviz v razredu:
-//   tabela skill_results, samo dnevne vsote po temi (brez odgovorov, brez časov posameznih nalog).
+// - igre, vprašanja »Preveri se« v učbeniku, naše pole NPZ/mature (»Imam prav«), kartice, kviz v razredu ter
+//   orodja (skener, laboratorij, kviz atlasa; recordToolResult): tabela skill_results, samo dnevne vsote po temi (brez odgovorov, brez časov posameznih nalog).
 // Vse gre pod isti ključ: id teme učne poti (npr. MAT-OS-8/linearne-enacbe). Prosto ime iz klepeta ali
 // kartice se preslika na temo z lokalnim iskanjem po imenih tem (lekcija-za-vprasanje.js); kar se ne
 // preslika, ostane pod svojim imenom.
@@ -31,7 +31,12 @@ export const DAYS = 60;
 // Ena igra prinese veliko hitrih odgovorov; da igre ne preglasijo nalog in klepeta, šteje ena igra
 // največ GAME_MAX odgovorov (napake sorazmerno).
 export const GAME_MAX = 4;
-export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz"];
+export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"];
+// Orodja (P1-8, načrt treh prioritet, j 25. 11. 2026): skener (napaka v učenčevem rezultatu, ki jo potrdi preverjanje),
+// laboratorij (napoved, sklep, »Preveri moj račun«) in kviz atlasa. Vsako vprašanje šteje enkrat na dan, ena tema iz
+// enega orodja največ TOOL_DAY_MAX odgovorov na dan (kviz atlasa ima veliko hitrih vprašanj, kot igre).
+export const TOOL_SOURCES = ["scan", "lab", "atlas"];
+export const TOOL_DAY_MAX = 4;
 
 const fold = (s) =>
   String(s || "")
@@ -212,6 +217,19 @@ export function answerOk(check, body) {
   return o === check.correct;
 }
 
+// Rezultat iz orodja (skener, laboratorij, kviz atlasa): ok = true/false, item = stalen id vprašanja ali naloge
+// (dvakrat isto vprašanje isti dan šteje enkrat). Vrne true, če je bil rezultat zapisan. Skener kliče to funkcijo
+// na strežniku (samo za status, ki ga potrdi preverjanje, nikoli za »Nepreverjeno«); laboratorij in atlas prek
+// POST /api/students/:id/tool-check.
+export function recordToolResult(db, studentId, { source, topicId, item, ok }) {
+  if (!TOOL_SOURCES.includes(source) || typeof ok !== "boolean" || !getTopic(String(topicId || ""))) return false;
+  const day = new Date().toISOString().slice(0, 10);
+  const today = db.prepare("SELECT n FROM skill_results WHERE student_id = ? AND day = date('now') AND source = ? AND key = ?").get(studentId, source, topicId);
+  if ((today?.n || 0) >= TOOL_DAY_MAX) return false;
+  if (!firstTime(db, studentId, `T|${source}|${topicId}|${String(item || "").slice(0, 120)}|${day}`)) return false;
+  return recordSkill(db, studentId, { source, topicId, n: 1, wrong: ok ? 0 : 1 });
+}
+
 // ---------- Zapis iz brskalnika: »Preveri se« v učbeniku in »Imam prav« na naši poli ----------
 export function mountSkillChecks(app, store, { loadStudent }) {
   const db = store.db;
@@ -262,5 +280,18 @@ export function mountSkillChecks(app, store, { loadStudent }) {
       if (recordSkill(db, s.id, { source: "paper", topicId, n: 1, wrong: ok ? 0 : 1 })) counted++;
     }
     res.json({ counted });
+  });
+  // Orodja v brskalniku (P1-8): laboratorij in kviz atlasa. { source: "lab" | "atlas", topic: id teme, item, ok }.
+  // Pravilnost preveri orodje samo (izmerjena vrednost v poskusu, izbrani del v atlasu), kot pri igrah; skener
+  // zapisuje na strežniku (recordToolResult), zato ga ta pot ne sprejme.
+  app.post("/api/students/:id/tool-check", (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const source = String(req.body?.source || "");
+    const topicId = String(req.body?.topic || "");
+    const item = String(req.body?.item || "");
+    const ok = req.body?.ok;
+    if (!["lab", "atlas"].includes(source) || !getTopic(topicId) || !item || typeof ok !== "boolean") return res.status(400).json({ error: "Neveljaven rezultat." });
+    res.json({ counted: recordToolResult(db, s.id, { source, topicId, item, ok }) });
   });
 }

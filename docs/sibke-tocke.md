@@ -18,9 +18,12 @@ same word index as the textbook lesson search, clear matches only); unmapped nam
 | Our NPZ/matura papers | `POST /api/students/:id/paper-check` on close (`public/our-paper.js`): parts with the solution opened or »Imam prav« toggled; ok = ticked; an unticked part is wrong only if the student ticked at least one part in that sitting (only reading solutions counts nothing); once per part; max `PAPER_MAX` (3) parts per topic per sitting; part → topic by local search over task text and solution titles (`paperTopics`) | `skill_results` |
 | Flashcards | `server/app.js` review route: first grade of a card per day; »še ne znam« is wrong only for a card already known (box ≥ 1), not a new card still being learnt | `skill_results` |
 | Class live quiz | `server/kviz.js` answer route | `skill_results` |
+| Tools (P1-8, j 2026-11-25 three-priority plan): scanner, lab, 3D atlas quiz | `recordToolResult(db, studentId, { source, topicId, item, ok })` in `server/weaknesses.js`. Scanner (`scan`) calls it on the server, only for the student's own result with a status that checking confirmed (right or »Napačno«), never for »Nepreverjeno« or a solution the scanner wrote itself. Lab (`lab`: prediction, conclusion, »Preveri moj račun«) and atlas quiz (`atlas`) post `POST /api/students/:id/tool-check` `{ source, topic, item, ok }`; the tool itself judges right/wrong (measured value, chosen part), as games do. `topic` must be a path topic id (atlas parts need a mapping to BIO topics first). `item` is a stable question id: once per question per day; at most `TOOL_DAY_MAX` (4) answers per topic per tool per day | `skill_results` |
 
-Not sources (no right/wrong answer by the student): lab, calculator, scanner (solves for the student), daily
-puzzle (logic puzzles, no curriculum topic), 3D atlas quiz (no path topic for its concepts yet).
+Wiring status: the API is ready; the scanner (session A2, P3-9), lab and atlas owners add the calls in their own files.
+
+Not sources (no right/wrong answer by the student): calculator (computes, the student is not graded), scanner when
+it only solves for the student, daily puzzle (logic puzzles, no curriculum topic).
 
 Rule (`isWeak`): at least `MIN_TURNS` (3) answers in `DAYS` (60) days across all sources, error rate ≥ `MIN_RATE` (40 %), and errors on at least 2 days or at least `MIN_ERRORS_ONE_DAY` (3) errors (one lesson read with 2 wrong checks is not yet weak).
 Privacy: `skill_results` keeps only daily counts per topic, `skill_seen` only what was counted and the day (no answers,
