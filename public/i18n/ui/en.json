@@ -4675,5 +4675,7 @@
   "set.grpProfiles": "Account and profiles",
   "set.grpProfilesSub": "Account and pupil profiles",
   "set.grpHelp": "Help",
-  "set.grpHelpSub": "Intro tour and app guide"
+  "set.grpHelpSub": "Intro tour and app guide",
+  "path.noCurriculum": "Your country's curriculum{country} is not available yet, so you are using the Slovenian curriculum, arranged by year of school. The grades are those of your school system; the tutor explains everything in your language.",
+  "path.noExam": "Preparation for the final exam ({exam}) is not available yet."
 }

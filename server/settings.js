@@ -114,8 +114,11 @@ export function normalizeSettings(input = {}) {
   // Regijski sistem: razred mora biti iz tega sistema, šola sledi letu šolanja, fakultet ni.
   if (isRegional(out.school_system)) {
     if (!gradeInfo(out.school_system, out.curriculum_level)) out.curriculum_level = defaultGrade(out.school_system);
-    out.educational_track = trackForLevel(gradeInfo(out.school_system, out.curriculum_level).level);
-  } else if (/^(Class|Grade|JSS|SS|JHS|SHS|Form|S\d|Prep|Secondary|Kelas|Lớp|[1-6](e|re|nde)|Terminale)/.test(out.curriculum_level)) {
+    out.educational_track = trackForLevel(gradeInfo(out.school_system, out.curriculum_level).level, out.school_system);
+  } else if (
+    /^(Class|Grade|JSS|SS|JHS|SHS|Form|S\d|Prep|Secondary|Kelas|Lớp|[1-6](e|re|nde)|Terminale)/.test(out.curriculum_level) ||
+    (!/^[1-9]\. (razred|letnik)( OR| VR)?$/.test(out.curriculum_level) && SYSTEM_IDS.some((id) => isRegional(id) && gradeInfo(id, out.curriculum_level)))
+  ) {
     // Nazaj na Slovenijo z razredom iz drugega sistema: privzeti slovenski razred.
     out.educational_track = DEFAULT_SETTINGS.educational_track;
     out.curriculum_level = DEFAULT_SETTINGS.curriculum_level;

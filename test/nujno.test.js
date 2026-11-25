@@ -709,9 +709,11 @@ test("izsiljevanje: vrstica pod NASILJE (j potrdil 6. 11.), navodilo za Haiku, t
   assert.equal(opomba(ind, true), "nujno.opombaSosMeja");
   assert.equal(opomba(st, true), "nujno.opomba");
   assert.equal(opomba(stevilke({}, "HR"), false), "nujno.opombaKratka");
-  // Znana tuja država brez podatkov (telefon v Italiji): 112, brez TOM in Samarijana.
-  const it = stevilke({}, drzavaNaprave("Europe/Rome"));
-  assert.deepEqual(klici("stiska", it), ["112"]);
+  // Znana tuja država brez podatkov (telefon v Črni gori): 112, brez TOM in Samarijana.
+  const me = stevilke({}, drzavaNaprave("Europe/Podgorica"));
+  assert.deepEqual(klici("stiska", me), ["112"]);
+  // Italija ima od #1070 svojo linijo za otroke (j 25. 11.): Telefono Azzurro 19696 in 112.
+  assert.deepEqual(klici("stiska", stevilke({}, drzavaNaprave("Europe/Rome"))), ["19696", "112"]);
   assert.equal(drzavaNaprave("Europe/London", ["sl-SI"]), "GB");
   assert.deepEqual(klici("stiska", stevilke({}, "GB")), ["0800 1111", "116 123", "999"]);
   for (const k of ["nujno.nasilje.izsiljevanje", "nujno.linijaNeznano", "nujno.ime.otroci", "nujno.ime.mladi", "nujno.ime.samomor", "nujno.opombaSos", "nujno.opombaSosMeja"]) {

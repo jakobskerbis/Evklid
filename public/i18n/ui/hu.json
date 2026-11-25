@@ -4673,5 +4673,7 @@
   "set.grpProfiles": "Fiók és profilok",
   "set.grpProfilesSub": "Fiók és tanulói profilok",
   "set.grpHelp": "Súgó",
-  "set.grpHelpSub": "Bemutató és útmutató az alkalmazáshoz"
+  "set.grpHelpSub": "Bemutató és útmutató az alkalmazáshoz",
+  "path.noCurriculum": "Az országod tanterve{country} még nem érhető el, ezért a szlovén tantervet használod, iskolai évek szerint rendezve. Az osztályok a saját iskolarendszeredet követik; a tutor mindent elmagyaráz a nyelveden.",
+  "path.noExam": "A záróvizsgára ({exam}) való felkészítés még nem érhető el."
 }
