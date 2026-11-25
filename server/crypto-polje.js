@@ -79,6 +79,32 @@ export function unseal(value, fallback = UNREADABLE) {
   }
 }
 
+// Binarni zapis (izvirniki priprave na test, server/priprava/shramba.js): isti algoritem in ključi kot seal(), brez
+// base64, da 15 MB datoteka v bazi ne zraste za tretjino. Zapis: »enc1:<keyId>:« | iv 12 B | tag 16 B | šifrirano.
+// Brez ključa vrne null (nešifrirano ne shranimo); neberljiv zapis (manjka ključ, poškodba) odšifriranje vrne null.
+export function sealBytes(buf) {
+  const k = keys();
+  if (!k) return null;
+  const iv = crypto.randomBytes(12);
+  const c = crypto.createCipheriv("aes-256-gcm", k.key, iv);
+  const body = Buffer.concat([c.update(buf), c.final()]);
+  return Buffer.concat([Buffer.from(`${PREFIX}${k.id}:`, "latin1"), iv, c.getAuthTag(), body]);
+}
+export function unsealBytes(value) {
+  try {
+    const buf = Buffer.isBuffer(value) ? value : Buffer.from(value ?? []);
+    const head = PREFIX.length + 9;
+    if (buf.length < head + 28 || buf.subarray(0, PREFIX.length).toString("latin1") !== PREFIX || buf[head - 1] !== 0x3a) return null;
+    const key = keys()?.all.get(buf.subarray(PREFIX.length, head - 1).toString("latin1"));
+    if (!key) return null;
+    const d = crypto.createDecipheriv("aes-256-gcm", key, buf.subarray(head, head + 12));
+    d.setAuthTag(buf.subarray(head + 12, head + 28));
+    return Buffer.concat([d.update(buf.subarray(head + 28)), d.final()]);
+  } catch {
+    return null;
+  }
+}
+
 // Ali je zapis berljiv s trenutnimi ključi (za --preveri).
 export function canOpen(value) {
   if (!isEncrypted(value)) return true;
@@ -208,6 +234,10 @@ export const SEALED = [
   { table: "pilot_mnenja", cols: ["liked", "bothers"] },
   // Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa.
   { table: "zapiski", cols: ["naslov", "prepis"] },
+  // Priprava na test iz zapiskov (server/priprava/): naslov priprave in ime naložene datoteke. Izvirniki so šifrirani
+  // binarno (sealBytes) v priprava_izvirniki in jih ta seznam ne zajame.
+  { table: "priprave", cols: ["naslov"] },
+  { table: "priprava_viri", cols: ["ime"] },
   // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
   // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
   // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).

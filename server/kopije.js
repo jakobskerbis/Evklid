@@ -7,6 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { brezIzvirnikov } from "./priprava/shramba.js";
 
 export const KEEP_DAYS = 7;
 export const KEEP_MANUAL = 3;
@@ -55,14 +56,20 @@ export function checkFile(file) {
 
 // Fotografije iz nalog pilota ne gredo v kopije (lokalne ne in zato tudi ne v oblak): služijo le izboljšavi branja,
 // zato po izbrisu ali roku ne smejo živeti naprej v kopijah (server/pilot-naloge.js, zasebnost.html).
+// Enako izvirniki virov priprave na test (server/priprava/shramba.js, odločitev j 24. 11. 2026): ostanejo samo v živi
+// bazi do izbrisa ali roka, v kopije (lokalne in R2) ne gredo. Metapodatki virov ostanejo.
 export function withoutPilotPhotos(file) {
   const db = new DatabaseSync(file);
   try {
-    if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) return 0;
+    const izvirnikov = brezIzvirnikov(db);
+    if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) {
+      if (izvirnikov) db.exec("VACUUM");
+      return 0;
+    }
     const n = Number(db.prepare("DELETE FROM pilot_photos").run().changes);
     // Prepis naloge sodi k fotografiji (sprožilec pilot_photo_gone ga počisti tudi sam; tu še za stare kopije brez njega).
     if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_scans'").get()) db.exec("UPDATE pilot_scans SET problems = NULL");
-    if (n) db.exec("VACUUM"); // izbrisani bajti ne ostanejo v prostih straneh kopije
+    if (n || izvirnikov) db.exec("VACUUM"); // izbrisani bajti ne ostanejo v prostih straneh kopije
     return n;
   } finally {
     db.close();
