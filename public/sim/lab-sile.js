@@ -255,7 +255,7 @@ export function labGostota(el) {
     { key: "rho", label: "ρ [g/cm³]" },
     { key: "lit", label: "tabela" },
   ], { empty: "Še ni meritev. Stehtaj vzorec, odčitaj vodo v valju, potopi vzorec in odčitaj znova." });
-  const graph = dataGraph({ x: [0, 40], y: [0, 150], xStep: 5, yStep: 25, xLabel: "V [cm³]", yLabel: "m [g]", title: "Masa v odvisnosti od prostornine" });
+  const graph = dataGraph({ x: [0, 40], y: [0, 150], xStep: 5, yStep: 25, xLabel: "V [cm³]", yLabel: "m [g]", title: "Masa v odvisnosti od prostornine", formula: "<i>m</i> = ρ · <i>V</i>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = []; // { g: snov, x: V, y: m }
@@ -481,7 +481,7 @@ export function labVzgon(el) {
     { key: "Fv", label: "<i>F</i><sub>vzg</sub> [N]" },
     { key: "Fa", label: "ρ<i>gV</i><sub>izp</sub> [N]" },
   ], { empty: "Še ni meritev. Zapiši silo, ko valj visi v zraku, nato ga spuščaj v tekočino." });
-  const graph = dataGraph({ x: [0, 100], y: [0, 1.2], xStep: 20, yStep: 0.2, xLabel: "V izp [cm³]", yLabel: "F vzg [N]", title: "Vzgon v odvisnosti od prostornine potopljenega dela" });
+  const graph = dataGraph({ x: [0, 100], y: [0, 1.2], xStep: 20, yStep: 0.2, xLabel: "V izp [cm³]", yLabel: "F vzg [N]", title: "Vzgon v odvisnosti od prostornine potopljenega dela", formula: "<i>F</i><sub>vzg</sub> = ρ<sub>tek</sub> · <i>g</i> · <i>V</i><sub>izp</sub>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = []; // { g: tekočina, x: Vizp, y: Fvzg }
@@ -638,7 +638,7 @@ export function labTlak(el) {
     { key: "pm", label: "<i>p</i> = ρ<sub>v</sub><i>g</i>Δ<i>h</i> [Pa]" },
     { key: "pt", label: "ρ<i>gh</i> [Pa]" },
   ], { empty: "Še ni meritev. Spusti sondo, počakaj, da se voda v manometru umiri, in zapiši oba kraka." });
-  const graph = dataGraph({ x: [0, 30], y: [0, 320], xStep: 5, yStep: 40, xLabel: "h [cm]", yLabel: "Δh [mm]", title: "Razlika višin v manometru v odvisnosti od globine sonde" });
+  const graph = dataGraph({ x: [0, 30], y: [0, 320], xStep: 5, yStep: 40, xLabel: "h [cm]", yLabel: "Δh [mm]", title: "Razlika višin v manometru v odvisnosti od globine sonde", formula: "<i>p</i> = ρ · <i>g</i> · <i>h</i> = ρ<sub>v</sub> · <i>g</i> · Δ<i>h</i>" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = [];

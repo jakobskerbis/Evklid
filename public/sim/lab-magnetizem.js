@@ -689,8 +689,8 @@ export function labSilaVodnik(el) {
     { key: "dm", label: "Δ<i>m</i> [g]" },
     { key: "F", label: "<i>F</i> [mN]" },
   ], { empty: "Še ni meritev. Tariraj tehtnico, nastavi tok in zapiši spremembo odčitka." });
-  const gI = dataGraph({ x: [0, 5], y: [0, 20], xStep: 1, yStep: 5, xLabel: "I [A]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od toka" });
-  const gL = dataGraph({ x: [0, 8], y: [0, 20], xStep: 2, yStep: 5, xLabel: "L [cm]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od dolžine vodnika v polju" });
+  const gI = dataGraph({ x: [0, 5], y: [0, 20], xStep: 1, yStep: 5, xLabel: "I [A]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od toka", formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>" });
+  const gL = dataGraph({ x: [0, 8], y: [0, 20], xStep: 2, yStep: 5, xLabel: "L [cm]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od dolžine vodnika v polju", formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>" });
   const calc = h("div", { class: "lab-mag-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = [];
