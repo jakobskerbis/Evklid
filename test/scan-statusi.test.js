@@ -361,3 +361,18 @@ test("ponovni pregled: tisočice s presledki, poli v iracionalnih krajiščih, z
   assert.equal(eq("cos(x) = x", ["0.739"]), "numeric");
   assert.equal(eq("2^x = 3", ["2"]), "wrong");
 });
+
+test("ponovni pregled 2: stopnja 9 točno v krajiščih, časovni rok, SymPy prevlada nad mrežo", async () => {
+  const iq = (t, value) => verifyAi(t, { kind: "inequality", variable: "x", value }).status;
+  assert.equal(iq("-54x^9 - 1134x^8 - 10224x^7 - 51640x^6 - 160210x^5 - 317194x^4 - 412696x^3 - 377280x^2 - 262656x - 110592 < 0", "(-4, -3) U (-8/3, oo)"), "verified");
+  assert.equal(iq("-1458x^9 - 2187x^8 + 22113x^7 + 34074x^6 - 103302x^5 - 164457x^4 + 100683x^3 + 169722x^2 + 227556x + 370440 < 0", "(-5/2, -2) U [7/3, oo)"), "wrong");
+  assert.equal(iq("(x - 7.5)^2*(x^9 - 3) <= 0", "(-oo, 1.1298]"), "wrong");
+  // časovni rok točnega dokaza: stopnja 16 v manj kot sekundi
+  const t0 = Date.now();
+  iq(Array.from({ length: 16 }, (_, i) => `(1000x-${1000 + i})`).join("*") + " > 0", "(1.015, oo)");
+  assert.ok(Date.now() - t0 < 1000, `${Date.now() - t0} ms`);
+  // izid same mreže (ne zaokrožena krajišča) SymPy-jevega »napačno« ne povozi
+  if (!(await casAvailable())) return;
+  assert.equal((await verifyAiFull("sqrt(x) * (x - 2.5)^2 <= 0", { kind: "inequality", variable: "x", value: "{0.0}" })).status, "wrong");
+  assert.equal((await verifyAiFull("x^2 - 2 < 0", { kind: "inequality", variable: "x", value: "(-1.41421356, 1.41421356)" })).status, "numeric");
+});

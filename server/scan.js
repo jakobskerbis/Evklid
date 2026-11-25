@@ -30,9 +30,9 @@ export async function verifyAiFull(text, sol, { cas = true } = {}) {
     const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded ? "numeric" : "verified";
     return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
   }
-  // Zaokrožena krajišča neenačbe SymPy primerja točno in zavrne; lokalno preverjanje z oknom zaokrožitve odloči
-  // med »numerično« in »napačno« (nikoli »preverjeno«).
-  if (c.ok === false && sol?.kind === "inequality" && /\d\.\d/.test(String(sol.value || "")) && num.status === "numeric") {
+  // Zaokrožena krajišča neenačbe SymPy primerja točno in zavrne. Kadar je lokalni dokaz (Sturm) vse drugo dokazal in
+  // je numeričen le zaradi zaokroženih krajišč (num.rounded), velja »numerično«; izid same mreže točk ne prevlada.
+  if (c.ok === false && sol?.kind === "inequality" && num.rounded && num.status === "numeric") {
     return { verified: false, reason: "unknown", status: "numeric" };
   }
   if (c.ok === false) {

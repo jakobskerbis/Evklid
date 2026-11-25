@@ -5,7 +5,7 @@
 // Vsak izid ima status iz public/scan/status.js; numerična potrditev nikoli ni »Preverjeno« (AUDIT-001).
 import { parse, compile, integrate } from "../graph/math.js";
 import { prep, splitSystem, satisfies, equalNumerically, bigLiteral } from "./solvecore.js";
-import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat } from "./algebra.js";
+import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs } from "./algebra.js";
 import { statusOf } from "./status.js";
 
 const fin = Number.isFinite;
@@ -399,7 +399,8 @@ function checkInequality(problemText, ai, v) {
     const endOf = (e) => (e ? (e.s ? { s: e.s, tol: e.tol || 0 } : { s: qFromFloatSafe(e.x), tol: 1e-9 * Math.max(1, Math.abs(e.x)) }) : null);
     const ok = ends.every((e) => e.s || qFromFloatSafe(e.x));
     const r = ok ? inequalityCheck(rels, ivs.map((iv) => ({ ...iv, lo: endOf(iv.lo), hi: endOf(iv.hi), point: endOf(iv.point) }))) : null;
-    if (r) return r.holds ? { verified: true, evidence: { holds: true, how: r.exact ? "exact" : "numeric", complete: r.exact ? "exact" : "numeric" } } : { verified: false, reason: "wrong", evidence: { holds: false } };
+    // rounded: numerično samo zaradi zaokroženih krajišč (sicer dokazano), strežnik tu SymPy ne pusti prevladati
+    if (r) return r.holds ? { verified: true, ...(r.exact ? {} : { rounded: true }), evidence: { holds: true, how: r.exact ? "exact" : "numeric", complete: r.exact ? "exact" : "numeric" } } : { verified: false, reason: "wrong", evidence: { holds: false } };
   }
   const inSet = (x) =>
     ivs.some((iv) => (iv.point ? x === iv.point.x : (iv.lo == null || x > iv.lo.x || (iv.loClosed && x === iv.lo.x)) && (iv.hi == null || x < iv.hi.x || (iv.hiClosed && x === iv.hi.x))));
@@ -425,7 +426,20 @@ function checkInequality(problemText, ai, v) {
   // krajišča: samo tista, ki jih double zapiše točno (cela števila, 0,5 …); pri √2 ali 1/49 je imenovalec v
   // zaokroženi točki le skoraj 0 in vrednost »končna«, zato tam ne odločamo (prej lažno »napačno«)
   const exactFloat = (e) => e.s?.rational && !e.tol && (e.s.u.d & (e.s.u.d - 1n)) === 0n && (e.s.u.n < 0n ? -e.s.u.n : e.s.u.n) < 2n ** 53n;
+  // polinomske strani: krajišče s točno vrednostjo preverimo točno (ne v plavajoči vejici, kjer zaokrožitev v ničli
+  // obrne predznak)
+  const polyRels = rels.every((r) => r.cs) ? rels.map((r) => ({ cs: r.cs, op: r.op })) : null;
   for (const e of ends) {
+    if (polyRels && e.s && !e.tol) {
+      let t = null;
+      try {
+        t = polyRels.every((r) => relSign(evalCs(r.cs, e.s).sign, r.op));
+      } catch {}
+      if (t !== null) {
+        if (t !== inSet(e.x)) return { verified: false, reason: "wrong" };
+        continue;
+      }
+    }
     if (!exactFloat(e)) continue;
     const t = truthAt(e.x, true);
     const member = inSet(e.x);
@@ -456,6 +470,7 @@ function checkInequality(problemText, ai, v) {
   }
   return tested ? { verified: true, evidence: { holds: true, how: "numeric", complete: "numeric" } } : { verified: false, reason: "parse" };
 }
+const relSign = (s, op) => (op === "<" ? s < 0 : op === ">" ? s > 0 : op === "<=" ? s <= 0 : op === ">=" ? s >= 0 : s === 0);
 function qFromFloatSafe(x) {
   try {
     return qFromFloat(x);

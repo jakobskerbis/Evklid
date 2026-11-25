@@ -749,7 +749,7 @@ export function cauchyBound(cs) {
   return m.add(Q.ONE);
 }
 // Ločeni intervali (lo, hi], v vsakem natanko ena ničla, širine pod relativno 1e−10 (ali do 200 razpolovitev).
-export function isolateRoots(cs, maxSteps = 4000) {
+export function isolateRoots(cs, maxSteps = 4000, deadline = Infinity) {
   return proof(() => {
     const chain = sturmChain(cs);
     if (!chain) return null;
@@ -758,7 +758,7 @@ export function isolateRoots(cs, maxSteps = 4000) {
     const out = [];
     let steps = 0;
     while (todo.length) {
-      if (++steps > maxSteps) return null;
+      if (++steps > maxSteps || Date.now() > deadline) return null;
       const [lo, hi] = todo.pop();
       const n = countIn(chain, lo, hi);
       if (n === 0) continue;
@@ -906,7 +906,8 @@ export function inequalityProof(rels, ivs) {
  * Preverimo resničnost in pripadnost v vsaki kritični točki in v racionalni točki med vsakima sosednjima.
  * Vrne { holds, exact } (exact: false = krajišče je le približek ničle) ali null (ne znamo).
  */
-export function inequalityCheck(rels, ivs) {
+export function inequalityCheck(rels, ivs, { budgetMs = 300 } = {}) {
+  const deadline = Date.now() + budgetMs;
   return proof(() => {
     const ends = [];
     const norm = ivs.map((iv) => {
@@ -932,10 +933,10 @@ export function inequalityCheck(rels, ivs) {
         for (const r of ex) items.push({ kind: "point", rel: i, a: r, b: r });
         continue;
       }
-      // višja stopnja: izolacija ničel stane, nad 8 raje numerično (strežnik ne sme čakati sekund)
-      if (p.length - 1 > 8) return null;
+      // višja stopnja: izolacija ničel stane; čez časovni rok raje numerično (strežnik ne sme čakati sekund)
+      if (Date.now() > deadline) return null;
       const chain = sturmChain(p);
-      const iso = isolateRoots(p, 2000);
+      const iso = isolateRoots(p, 2000, deadline);
       if (!chain || !iso) return null;
       for (const r of iso) {
         let { lo, hi } = r;
@@ -971,6 +972,7 @@ export function inequalityCheck(rels, ivs) {
         // interval skrčimo strogo v notranjost (lo, hi): ne dotika se krajišč ne sosednjih intervalov
         const [lo0, hi0] = [lo, hi];
         for (let k = 0; k < 400 && (lo.cmp(lo0) <= 0 || hi.cmp(hi0) >= 0); k++) {
+          if (Date.now() > deadline) return null;
           const m = lo.add(hi).div(new Q(2n));
           if (evalQcs(p, m).sign === 0) {
             hit = m;
