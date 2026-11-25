@@ -1,6 +1,6 @@
 // Virtualni laboratorij, fizika. Učenec sam sestavi poskus, meri in vidi posledice napak.
 import { h, s, fmt, svgBox, slider, select, segmented, button, layout, label } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez, shramba } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez, shramba, napoved } from "./lab.js";
 import { fotoPoskus, risiKrog, OKNA_KROG } from "./foto.js";
 import { OhmBench, LOADS, AM_RANGES, VM_RANGES, NAPAJALNIK, UPOR, POENOSTAVITVE, fitOrigin } from "./lab-model.js";
 
@@ -9,6 +9,14 @@ export const BANDS = { R47: ["#f2c500", "#8e44ad", "#000", "#c9a227"], R100: ["#
 // Stalna os toka za vsak porabnik: največji tok pri 12 V, zaokrožen navzgor.
 const YMAX = { R47: 300, R100: 150, R220: 75, R470: 30, L6: 150 };
 const POS = [["zaporedno", "zaporedno"], ["vzporedno", "vzporedno"], ["brez", "odklopljen"]];
+
+// Tok pri napetosti U iz meritev [[U, I_mA]]: meritev v ±0,3 V od U, sicer s premice skozi izhodišče (vsaj 3 meritve). Za napoved.
+export function tokPri(pts = [], U = 6) {
+  const blizu = pts.filter((p) => Math.abs(p[0] - U) <= 0.3).sort((a, b) => Math.abs(a[0] - U) - Math.abs(b[0] - U))[0];
+  if (blizu) return { vrednost: blizu[1], besedilo: `${fmt(blizu[1], 1)}\u00a0mA pri ${fixed(blizu[0], 2)}\u00a0V` };
+  const k = pts.length >= 3 ? fitOrigin(pts) : NaN;
+  return Number.isFinite(k) ? { vrednost: k * U, besedilo: `${fmt(k * U, 1)}\u00a0mA (s premice skozi tvoje meritve)` } : null;
+}
 
 // Ohmov zakon: napajalnik, upornik ali žarnica, ampermeter in voltmeter.
 export function labOhm(el, { load = "R100" } = {}) {
@@ -56,6 +64,17 @@ export function labOhm(el, { load = "R100" } = {}) {
     tryText: "Napovej, kolikšen tok teče skozi upornik 100 Ω pri 6 V. Izmeri tok pri vsaj petih napetostih in iz naklona grafa določi upor. Potem priključi žarnico: ali je tudi njen graf premica? Kaj se zgodi, če ampermeter priključiš vzporedno?",
   });
   el.classList.add("lab");
+  // Napoved pred prvo meritvijo (Preizkusi: »Napovej, kolikšen tok teče skozi upornik 100 Ω pri 6 V«).
+  const L0 = LOADS[B.load].type === "R" ? B.load : "R100";
+  const N = napoved({
+    id: "tok-6V",
+    vprasanje: `Kolikšen tok bo tekel skozi ${LOADS[L0].name} pri napetosti 6 V? Napovej, preden začneš meriti.`,
+    enota: "mA",
+    odprto: () => table.rows.length === 0,
+    izmerjeno: () => tokPri(series[L0], 6),
+  });
+  el.querySelector(".demo-controls")?.prepend(N.el);
+  fitOut.after(N.primerjava);
 
   function record() {
     const p = B.load;
@@ -86,6 +105,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     fitOut.innerHTML = fit
       ? `Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Naklon: ${fmt(fit.k, 2)} mA/V = ${fmt(fit.k / 1000, 5)} A/V, zato ${tex(String.raw`R = \frac{1}{\text{naklon}} = ${rez(fmt(1000 / fit.k, 1), "Ω")}`)}. Na uporniku piše ${LOADS[cur].nom} Ω ± 5 %.`
       : LOADS[cur].type === "R" ? "Za premico in upor iz naklona potrebuješ vsaj 3 meritve." : `Žarnica: primerjaj ${tex(String.raw`\frac{U}{I}`)} pri različnih napetostih.`;
+    N.osvezi();
   }
   function maybeAsk(p) {
     const pts = series[p] || [];
@@ -196,8 +216,9 @@ export function labOhm(el, { load = "R100" } = {}) {
   const foto = fotoPoskus("krog", svg, el, () => draw(), OKNA_KROG);
   graph.setAxes({ y: [0, YMAX[B.load]] });
   zap.vezi(table, {
-    get: () => ({ series }),
+    get: () => ({ series, napoved: N.stanje() }),
     set: (d) => {
+      N.obnovi(d?.napoved);
       for (const [id, pts] of Object.entries(d?.series || {})) if (id in LOADS && Array.isArray(pts)) series[id] = pts;
       Object.keys(series).forEach(maybeAsk);
     },

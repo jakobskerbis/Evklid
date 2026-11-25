@@ -86,7 +86,7 @@ const MEASURE = async () => {
     const r = it.getBoundingClientRect(), s = stage.getBoundingClientRect();
     if (r.top < s.bottom - 2 && r.bottom > s.top + 2 && s.left < r.right && s.right > r.left) covered.push(it.textContent.trim().slice(0, 20));
   }
-  const q = demo.querySelector(".lab-q");
+  const q = demo.querySelector(".lab-q:not(.lab-napoved, .lab-primerjava)"); // sklep (napoved je med kontrolami, te so preverjene zgoraj)
   q?.scrollIntoView({ block: "center" });
   await frame();
   const qr = q?.getBoundingClientRect(), s = stage.getBoundingClientRect();

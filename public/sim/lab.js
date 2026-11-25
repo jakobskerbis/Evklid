@@ -253,6 +253,97 @@ export function shramba(el) {
   return zap;
 }
 
+// Napoved pred meritvijo (profil A, 2026-11-25): učenec napove, preden meri, na koncu vidi »Tvoja napoved · Izmerjeno«.
+// Skupni gradnik vseh poskusov (tudi vodenega načina). napoved(o) vrne { el, primerjava, osvezi, stanje, obnovi, vrednost }:
+//   o.id          ime napovedi v poskusu (ključ v shranjenem stanju), npr. "tok-6V"
+//   o.vprasanje   besedilo vprašanja (HTML)
+//   o.enota       število: enota za vnos (npr. "mA"); o.dec decimalke pri izpisu (privzeto 1)
+//   o.moznosti    izbira namesto števila: [[vrednost, besedilo]] ali funkcija, ki jih vrne (npr. izbrane posode)
+//   o.odprto()    ali učenec še lahko napove (privzeto vedno); ko vrne false, se okvir zapre: napoved ostane, vnos izgine
+//   o.izmerjeno() null ali { vrednost, besedilo (HTML), ujema? }; ujema privzeto: število ±10 %, izbira enaka vrednost
+// el gre na vrh kontrol (pred prvo meritvijo), primerjava k rezultatom. Poskus po vsaki spremembi pokliče osvezi().
+// Stanje za shrambo: stanje() → { v, t, zaprto }, obnovi(s). Ni odvisen od nobenega poskusa.
+export const parseStevilo = (x) => {
+  const t = String(x ?? "").trim().replace(/\s| /g, "").replace("−", "-").replace(",", ".").replace(/%$/, "");
+  if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(t)) return null;
+  const v = Number(t);
+  return Number.isFinite(v) ? v : null;
+};
+export function napoved(o) {
+  const stevilo = !o.moznosti;
+  const moznosti = () => (typeof o.moznosti === "function" ? o.moznosti() : o.moznosti) || [];
+  let v = null, txt = "", zaprto = false;
+  const tekst = h("p", { class: "lab-q-text", html: o.vprasanje });
+  const moja = h("p", { class: "lab-napoved-moja", "aria-live": "polite" });
+  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoja napoved${o.enota ? ` v ${o.enota}` : ""}`, placeholder: "npr. 50" });
+  const zapisi = button("Zapiši napoved", () => zapisiStevilo(), "primary small");
+  vnos.addEventListener("keydown", (e) => e.key === "Enter" && zapisiStevilo());
+  const polje = stevilo
+    ? h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoja napoved${o.enota ? ` [${o.enota}]` : ""}`), vnos, zapisi)
+    : h("div", { class: "lab-opts", role: "group", "aria-label": "tvoja napoved" });
+  const el = h("section", { class: "lab-q lab-napoved", "data-napoved": o.id || "" }, h("h4", {}, "Napoved"), tekst, polje, moja);
+  const prim = h("dl", { class: "lab-primerjava-vrednosti" });
+  const sodba = h("p", { class: "lab-why" });
+  const primerjava = h("section", { class: "lab-q lab-primerjava", hidden: true }, h("h4", {}, "Tvoja napoved · Izmerjeno"), prim, sodba);
+  const izpis = (x) => (stevilo ? `${fmt(x, o.dec ?? 1)}${o.enota ? ` ${o.enota}` : ""}` : txt);
+  function zapisiStevilo() {
+    const x = parseStevilo(vnos.value);
+    if (x == null) return (zadnje.moja = null), (moja.textContent = "Vpiši število (npr. 50 ali 4,5).");
+    v = x;
+    txt = izpis(x);
+    osvezi();
+  }
+  function izberi(val, label) {
+    v = val;
+    txt = label;
+    osvezi();
+  }
+  let sigMoz = "";
+  const zadnje = {};
+  function osvezi() {
+    if (!zaprto && (o.odprto ? !o.odprto() : false)) zaprto = true;
+    const m = zaprto ? null : o.izmerjeno?.();
+    if (m) zaprto = true; // meritev je že tu: napovedovati ni več smiselno
+    polje.hidden = zaprto;
+    if (!stevilo && !zaprto) {
+      const list = moznosti(), cur = v == null ? null : list.find(([val]) => val === v);
+      if (v != null) cur ? (txt = cur[1]) : (v = null); // izbrana posoda se je zamenjala ali je ni več
+      const sig = JSON.stringify([list, v]);
+      if (sig !== sigMoz) {
+        sigMoz = sig;
+        polje.replaceChildren(...list.map(([val, label]) => h("button", { type: "button", class: "lab-opt", "aria-pressed": String(val === v), onclick: () => izberi(val, label) }, label)));
+      }
+    }
+    const html = v != null ? `Tvoja napoved: <b>${txt}</b>${zaprto ? "" : ". Lahko jo še spremeniš, dokler ne začneš meriti."}` : zaprto ? "Napovedi nisi zapisal, preden si meril." : "";
+    // aria-live: pišemo le spremembe (poskus lahko kliče osvezi vsakih 100 ms); primerjamo z zadnjim zapisom, ne z innerHTML (&nbsp;)
+    const pisi = (x, k, val) => zadnje[k] !== val && ((zadnje[k] = val), (x.innerHTML = val));
+    pisi(moja, "moja", html);
+    const iz = o.izmerjeno?.();
+    primerjava.hidden = !iz || v == null;
+    if (primerjava.hidden) return;
+    const vr = `<div><dt>Tvoja napoved</dt><dd>${txt}</dd></div><div><dt>Izmerjeno</dt><dd>${iz.besedilo}</dd></div>`;
+    pisi(prim, "prim", vr);
+    const ok = iz.ujema ?? (stevilo ? Math.abs(v - iz.vrednost) <= 0.1 * Math.abs(iz.vrednost) + 1e-9 : v === iz.vrednost);
+    const cls = `lab-why ${ok ? "ok" : "bad"}`, sod = ok
+      ? "<b>Napoved se ujema z meritvijo.</b>"
+      : `<b>Napoved se ne ujema z meritvijo.</b> ${stevilo && Number.isFinite(iz.vrednost) && iz.vrednost ? `Razlika je ${fmt((100 * Math.abs(v - iz.vrednost)) / Math.abs(iz.vrednost), 0)} %. ` : ""}Razmisli, kaj si pri napovedi spregledal.`;
+    if (sodba.className !== cls) sodba.className = cls;
+    pisi(sodba, "sod", sod);
+  }
+  osvezi();
+  return {
+    el, primerjava, osvezi,
+    get vrednost() { return v; },
+    stanje: () => ({ v, t: txt, zaprto }),
+    obnovi(s) {
+      if (!s || typeof s !== "object") return;
+      if ((stevilo && Number.isFinite(s.v)) || (!stevilo && typeof s.v === "string")) (v = s.v), (txt = typeof s.t === "string" ? s.t : izpis(s.v));
+      zaprto = !!s.zaprto;
+      osvezi();
+    },
+  };
+}
+
 // Dnevnik dogodkov (kaj se je zgodilo v laboratoriju), najnovejši zgoraj.
 export function eventLog() {
   const ul = h("ul", { class: "lab-log", "aria-live": "polite" });

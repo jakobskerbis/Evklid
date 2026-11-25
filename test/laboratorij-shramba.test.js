@@ -136,7 +136,7 @@ test("lab in a browser: locked conclusion, measurements survive reopening and re
     assert.deepEqual(h, { rows: 3, pts: 3, bar: true });
     await p.evaluate(() => localStorage.setItem("evklid.lab.meritve.0.lab-mesanje", JSON.stringify({ v: 1, seed: 9, rows: [{ pos: "stiropor s pokrovom", w1: "100,0 g, 80,0 °C", w2: "100,0 g, 20,0 °C", Tm: "49,1", Tc: "50,0" }], trial: { pos: "stiropor", pokrov: true, m1: 100, T1: 80, m2: 100, T2: 20, m2w: true, done: { T: 49.1, Tc: 50, ok: true } }, pts: [[0, 30], [2, 45], [4, 49.1]] })));
     await p.evaluate(() => window.mount("lab-mesanje"));
-    const m = await p.evaluate(() => ({ rows: document.querySelectorAll(".lab-table tbody tr").length, pts: document.querySelectorAll(".lab-graph .lab-pt").length, q: document.querySelectorAll(".lab-q").length }));
+    const m = await p.evaluate(() => ({ rows: document.querySelectorAll(".lab-table tbody tr").length, pts: document.querySelectorAll(".lab-graph .lab-pt").length, q: [...document.querySelectorAll(".lab-q > h4")].filter((x) => x.textContent === "Sklep").length }));
     assert.equal(m.rows, 1);
     assert.ok(m.pts >= 2, `točke krivulje: ${m.pts}`);
     assert.equal(m.q, 1, "sklep po veljavni meritvi je spet na voljo");
