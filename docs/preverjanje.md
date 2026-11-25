@@ -111,8 +111,9 @@ Ugotovitve (popravki v ločenih PR-jih):
 - Skener: pravilen določeni integral z mejo iz več znakov (`∫_0^pi sin(x) dx = 2`, `∫_1^10 1/x dx = ln(10)`) dobi
   »Zaznana napaka«, ker `public/scan/verify.js` mejo prebere le do prvega znaka. Zaokrožen račun (`1/3+1/7 ≈ 0.476`,
   `sqrt(2) ≈ 1.414`) dobi »Zaznana napaka«, ker skener račun pošlje v `equal` (točno), ne v `value`.
-- Skener brez SymPy: luknja brez rešitev (`(x^2-1)/(x-1)=2`) in `1.4e6` dobita »Zaznana napaka«; trije napačni
-  periodični odgovori dobijo »Delno preverjeno«.
+- Skener brez SymPy: luknja brez rešitev (`(x^2-1)/(x-1)=2`) in `1.4e6` dobita »Zaznana napaka«; pet napačnih
+  odgovorov dobi šibek pozitiven status: trije periodični in napačna periodična rešitev s predolgo periodo
+  »Delno preverjeno«, napačen odvod z velikimi koeficienti »Numerično preverjeno«.
 - Surov SymPy: zaokrožene decimalke sprejme s toleranco (`decimals_tol`) in vrne `ok: true` (12 previsokih
   statusov); zmnožek velikih števil v zapisu `1.2193263111263526*10^17` (napaka 9) sprejme, ker `value` računa s
   plavajočo vejico. Kdor bi `ok: true` preslikal v `izracunano`, bi te precenil: PV-03 (worker vrne način preverjanja).

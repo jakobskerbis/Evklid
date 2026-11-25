@@ -13,12 +13,20 @@ after(() => casStop());
 
 const LOKALNO_ALARMI = ["luknja-009", "luknja-017", "integral-019", "integral-021", "skoraj-009", "skoraj-016", "skoraj-018", "skoraj-022"];
 const IZHODISCE = {
-  "skener-lokalno": { potrjene: [], previsoki: [], alarmi: LOKALNO_ALARMI, ujete: 172, potrjena: 101 },
+  "skener-lokalno": {
+    potrjene: [],
+    previsoki: [],
+    sibke: ["periodicna-004", "periodicna-006", "periodicna-010", "skoraj-006", "druge-017"],
+    alarmi: LOKALNO_ALARMI,
+    ujete: 172,
+    potrjena: 101,
+  },
   // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
   skener: {
     // velika koeficienta (vzorčenje v worker.py is_zero) in znanstveni zapis (decimals_tol): docs/preverjanje.md
     potrjene: ["skoraj-002", "skoraj-006", "skoraj-008", "skoraj-010"],
     previsoki: ["skoraj-013"],
+    sibke: [],
     alarmi: ["integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022", ...LOKALNO_ALARMI],
     ujete: 178,
     potrjena: 153,
@@ -60,8 +68,14 @@ for (const motor of ["skener-lokalno", "skener"]) {
     const id = (razred) => r.primeri.filter((v) => v.razred === razred).map((v) => v.id);
     const novi = (razred, znani) => id(razred).filter((x) => !znani.includes(x));
     assert.deepEqual(id("izjema"), []);
-    assert.deepEqual(novi("napacno_potrjena", z.potrjene), [], "nova napačno potrjena trditev");
-    assert.deepEqual(novi("previsok_status", z.previsoki), [], "nov previsok status");
+    // Nova napačno potrjena, previsoka ali napačna s šibkim statusom vedno pade. Lokalni motor (brez SymPy, vedno
+    // enak izid) pripnemo točno, da mora popravljena trditev s seznama in se ne vrne neopažena; pri skenerju le kot
+    // podmnožico, ker ob počasnem SymPy (rok 9 s) preide na lokalno preverjanje in izid posamezne trditve se lahko
+    // spremeni.
+    for (const [razred, znani] of [["napacno_potrjena", z.potrjene], ["previsok_status", z.previsoki], ["napacna_sibko", z.sibke]]) {
+      if (motor === "skener-lokalno") assert.deepEqual(id(razred), znani, `${razred} se ne ujema z izhodiščem`);
+      else assert.deepEqual(novi(razred, motor === "skener" && razred === "napacna_sibko" ? IZHODISCE["skener-lokalno"].sibke : znani), [], `nova: ${razred}`);
+    }
     assert.deepEqual(novi("lazni_alarm", z.alarmi), [], "nov lažni alarm");
     assert.ok((r.stevci.ujeta_napaka || 0) >= z.ujete, `ujetih napak ${r.stevci.ujeta_napaka} < ${z.ujete}`);
     assert.ok((r.stevci.potrjena || 0) >= z.potrjena, `potrjenih ${r.stevci.potrjena} < ${z.potrjena}`);
