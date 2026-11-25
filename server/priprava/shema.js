@@ -98,6 +98,19 @@ export function migratePriprava(db) {
     );
     CREATE INDEX IF NOT EXISTS idx_priprava_prebrano_student ON priprava_prebrano(student_id);
   `);
+  // PR 6: napredek priprave, en posnetek pripravljenosti na dan (izkazano znanje, brez napovedi ocene).
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS priprava_napredek (
+      priprava_id INTEGER NOT NULL REFERENCES priprave(id) ON DELETE CASCADE,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      datum TEXT NOT NULL,                       -- YYYY-MM-DD po slovenskem času
+      odstotek INTEGER NOT NULL,                 -- povprečje ocen preverljivih tem (0–100)
+      obvladanih INTEGER NOT NULL,
+      preverljivih INTEGER NOT NULL,
+      PRIMARY KEY (priprava_id, datum)
+    );
+    CREATE INDEX IF NOT EXISTS idx_priprava_napredek_student ON priprava_napredek(student_id);
+  `);
   preseliTestPlans(db);
 }
 

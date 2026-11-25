@@ -173,6 +173,16 @@ premaknejo v danes. Tabela `priprava_nacrti` ni potrebna.
 `pripravljenost`: povprečje ocen preverljivih tem, število obvladanih, preverljivih in nepreverljivih. Test:
 `test/priprava-nacrt.test.js`.
 
+### PR 6a (kviz in napredek, 25. 11. 2026)
+
+Brez AI. `POST …/priprave/:pid/kviz` (`{ dolzina: 6 | 12 | 20, teme? }`): obstoječa seja »list« (`progress.js startList`,
+naloge Vadnice, ki jih preveri koda; namigi, povzetek po temah, obvladanje), zato rezultat takoj spremeni načrt.
+Privzeto najšibkejše teme obsega (obvladane samo, če drugih ni), vsaka z vsaj dvema nalogama; `teme` samo iz načrta te
+priprave (sicer 400); tema brez lastnih nalog vzame naloge osnovne teme. `GET …/priprave/:pid/napredek`: pripravljenost
+(kot načrt), posnetki po dnevih (tabela `priprava_napredek`, en na dan, zapiše se ob odprtju načrta ali napredka;
+kaskadni izbris) in stanje vsake teme (`nova | ucim | ponovitev | obvladana | zapiski`, rešene naloge vaje, ponavljanja
+in lista, pravilne v prvem poskusu). Test: `test/priprava-kviz.test.js`. Razlaga z izvorom (AI) je PR 6b.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

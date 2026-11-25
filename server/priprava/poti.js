@@ -11,7 +11,7 @@ import { uvoziVNiti, preberiVir, NapakaUvoza } from "./uvoz.js";
 import { shraniIzseke, razrezi, VRSTE } from "./izseki.js";
 import { zemljevid } from "./teme.js";
 import { sestaviNacrt, ocenaTeme } from "./nacrt.js";
-import { STANJE_OCENE } from "../progress.js";
+import { STANJE_OCENE, LIST } from "../progress.js";
 import { getTopic } from "../curriculum.js";
 import { hasGenerator } from "../practice/index.js";
 import { nowParts } from "../schedule.js";
@@ -118,7 +118,7 @@ const pripravaVen = (r) => ({
  * Poti pod /api/students/:id/priprave. loadStudent iz app.js (404 za neobstoječ profil); lastništvo profila preverijo
  * računi pred potjo. now(): ura (testi).
  */
-export function mountPriprave(app, store, { loadStudent, now = () => Date.now(), log = console, usage = null, rightsFor = null, readFn = readNotePhoto }) {
+export function mountPriprave(app, store, { loadStudent, now = () => Date.now(), log = console, usage = null, rightsFor = null, readFn = readNotePhoto, progress = null }) {
   const db = store.db;
   // Izbris profila (DELETE /api/students/:id, store.deleteStudent) odnese priprave s kaskado; s secure_delete, da
   // šifrirani izvirniki ne ostanejo v prostih straneh baze (izbris računa: server/accounts/izbris.js).
@@ -677,8 +677,74 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const { z, teme, danes } = await temeNacrta(s, p);
     // Poskusni test samo, ko ga /test-prep res sestavi: aktivna priprava z načrtom testa in vsaj eno temo z nalogami.
     const poskusniTest = p.aktivna === 1 && !!p.pot && sklopiIz(p.sklopi).length > 0 && teme.some((t) => hasGenerator(t.id));
+    const nacrt = sestaviNacrt({ danes, datum: p.datum_testa || null, teme, poskusniTest });
+    zabeleziNapredek(s, p, danes, nacrt.pripravljenost);
     uporabljena(p);
-    res.set("Cache-Control", "no-store").json({ ...sestaviNacrt({ danes, datum: p.datum_testa || null, teme, poskusniTest }), obsegIzNacrta: !!z.obseg });
+    res.set("Cache-Control", "no-store").json({ ...nacrt, obsegIzNacrta: !!z.obseg });
+  });
+
+  // Napredek priprave (PR 6): pripravljenost po dnevih (posnetek ob vsakem odprtju načrta ali napredka, en na dan) in
+  // stanje vsake teme iz izkazanega znanja (rešene naloge vaje, ponavljanja in lista). Koda, brez AI in brez napovedi.
+  function zabeleziNapredek(s, p, danes, pr) {
+    if (pr.odstotek === null) return;
+    db.prepare(
+      `INSERT INTO priprava_napredek (priprava_id, student_id, datum, odstotek, obvladanih, preverljivih) VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT(priprava_id, datum) DO UPDATE SET odstotek = excluded.odstotek, obvladanih = excluded.obvladanih, preverljivih = excluded.preverljivih`,
+    ).run(p.id, s.id, danes, pr.odstotek, pr.obvladanih, pr.preverljivih);
+  }
+  const stanjeOcene = (t) => (!t.vaja ? "zapiski" : t.ocena >= 1 ? "obvladana" : t.ocena >= 0.8 ? "ponovitev" : t.ocena > 0 ? "ucim" : "nova");
+  app.get("/api/students/:id/priprave/:pid/napredek", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    const { teme, danes } = await temeNacrta(s, p);
+    const nacrt = sestaviNacrt({ danes, datum: p.datum_testa || null, teme, poskusniTest: false });
+    zabeleziNapredek(s, p, danes, nacrt.pripravljenost);
+    const naloge = db.prepare(
+      "SELECT COUNT(*) AS n, SUM(first_try_correct = 1) AS ok FROM tasks WHERE student_id = ? AND topic_id = ? AND solved = 1 AND mode IN ('practice','review','list')",
+    );
+    const dnevi = db.prepare("SELECT datum, odstotek, obvladanih, preverljivih FROM priprava_napredek WHERE priprava_id = ? AND student_id = ? ORDER BY datum").all(p.id, s.id);
+    uporabljena(p);
+    res.set("Cache-Control", "no-store").json({
+      pripravljenost: nacrt.pripravljenost,
+      dnevi,
+      teme: teme.map((t) => {
+        const vse = [t.id, ...(getTopic(t.id)?.base || [])];
+        const r = vse.map((x) => naloge.get(s.id, x)).reduce((a, x) => ({ n: a.n + (x.n || 0), ok: a.ok + (x.ok || 0) }), { n: 0, ok: 0 });
+        return { id: t.id, ime: t.ime, sklop: t.sklop, stanje: stanjeOcene(t), ocena: t.ocena, nalog: r.n, pravilnihVPrvo: r.ok, zadnjic: t.zadnjic };
+      }),
+    });
+  });
+
+  // Kviz priprave (PR 6): kratka vaja iz najšibkejših tem obsega z nalogami Vadnice (preveri koda), obstoječa seja
+  // »list« (progress.js startList: namigi, povzetek po temah, obvladanje), zato rezultat takoj spremeni načrt. Teme brez
+  // nalog niso v kvizu. Brez AI.
+  const temaKviza = (id) => (hasGenerator(id) ? id : (getTopic(id)?.base || []).find((x) => hasGenerator(x)) || null);
+  app.post("/api/students/:id/priprave/:pid/kviz", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    if (!progress) return res.status(503).json({ error: "Kviz ni na voljo." });
+    const body = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
+    const dolzina = typeof body.dolzina === "number" ? body.dolzina : LIST.lengths[0];
+    if (!LIST.lengths.includes(dolzina)) return res.status(400).json({ error: "Napačna dolžina kviza.", code: "kviz_dolzina" });
+    const { teme } = await temeNacrta(s, p);
+    const zKvizom = teme.map((t) => ({ ...t, kviz: temaKviza(t.id) })).filter((t) => t.kviz);
+    let izbrane;
+    if (Array.isArray(body.teme)) {
+      const zelene = new Set(body.teme.slice(0, LIST.maxSkills).map(String));
+      izbrane = zKvizom.filter((t) => zelene.has(t.id));
+    } else {
+      // Najšibkejše teme (obvladane samo, če drugih ni), vsaka vsaj z dvema nalogama, da povzetek pove kaj.
+      const sibke = zKvizom.filter((t) => t.ocena < 1);
+      izbrane = (sibke.length ? sibke : zKvizom).sort((a, b) => a.ocena - b.ocena || a.red - b.red).slice(0, Math.max(1, Math.floor(dolzina / 2)));
+    }
+    const out = izbrane.length ? progress.startList(s.id, izbrane.map((t) => t.kviz), dolzina) : null;
+    if (!out) return res.status(400).json({ error: "V tej pripravi ni tem z nalogami za kviz.", code: "kviz_brez_tem" });
+    uporabljena(p);
+    res.json(out);
   });
   // Zapiski teme brez nalog so prebrani (enota »zapiski« v načrtu je opravljena); prebrano: false oznako odstrani.
   app.post("/api/students/:id/priprave/:pid/nacrt/prebrano", async (req, res) => {
