@@ -1110,7 +1110,7 @@ export function texSpeech(tex, { say, words, greek = {}, parse }) {
 /**
  * Vstavi besedilo tipke na mesto s (»@« = mesto kazalca po vstavljanju). Odprt oklepaj tipke (»^(«, »√(«, »sin(«) se
  * zapre pred prvim »;«, »)« ali »]« zunanje predloge za kazalcem: sicer bi požrl njene reže (∫(|;0;1) + xʸ je dalo
- * ∫(^(;0;1), torej ∫ brez mej in eksponent »(□; 0; 1)«; AUDIT-059). Brez zunanje reže za kazalcem (konec vnosa,
+ * ∫(^(;0;1), torej ∫ brez mej in eksponent »(□; 0; 1)«; AUDIT-067). Brez zunanje reže za kazalcem (konec vnosa,
  * »sin(|x« na vrhu) ostane odprt kot prej: zajame, kar sledi, in complete ga zapre za prikaz.
  * Vrne { text, pos }.
  */
@@ -1210,16 +1210,62 @@ function semiAllowed(t, s) {
   return now + 1 <= max;
 }
 
+// mesto za naslednjim »;« najbolj notranje skupine (inner) ali prve zunanje skupine, ki ga ima (outer); −1, če ga ni
+function nextSlot(t, s) {
+  const out = { inner: -1, outer: -1 };
+  const depth = groupsAt(t, s).split(",").filter(Boolean).length; // odprte skupine okoli kazalca
+  let d = 0;
+  let level = 0; // 0 = najbolj notranja skupina, 1+ = zunanje
+  for (let j = s; j < t.length && level < depth; j++) {
+    const c = t[j];
+    if (OPENERS.includes(c)) d++;
+    else if (CLOSERS.includes(c)) {
+      if (d === 0) level++;
+      else d--;
+    } else if (c === ";" && d === 0) {
+      let p = j + 1;
+      while (t[p] === " ") p++;
+      if (level === 0) out.inner = p;
+      else out.outer = p;
+      break;
+    }
+  }
+  return out;
+}
+
 /**
  * Tipka na mestu s: insertKey in varovalo (kot pri ⌫, AUDIT-034). Tipka predloge (xʸ, √, sin, ∫, ;, x², !, …), po
  * kateri se zapis ne bi izrisal, bi pokazal surovo ločilo ali bi zunanji predlogi spremenil reže (∫ bi izgubil meje),
- * se ne zgodi: vrne null (AUDIT-059). Če zapis že prej ni bil čist, varovala ni (ne zaklene vnosa).
+ * se ne zgodi: vrne null (AUDIT-067). Če zapis že prej ni bil čist, varovala ni (ne zaklene vnosa).
  */
 export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
   const t = String(text ?? "");
+  s = Math.max(0, Math.min(t.length, s));
+  // zaklepaj: pred (samodejno vstavljenim) enakim zaklepajem kazalec stopi čez njega; zaklepaj, ki bi zaprl že zaprto
+  // skupino (∫(x+1|;;) → ∫(x+1);;) zapre ∫ prezgodaj), se ne zgodi (pregled #1017)
+  if (ins === ")" || ins === "]") {
+    if (t[s] === ins) return { text: t, pos: s + 1 };
+    const g = groupsAt(t, s).split(",").filter(Boolean).at(-1);
+    if (!g || g.endsWith(":true")) return null; // ni odprte skupine ali je že zaprta
+    if (t[Number(g.split(":")[0])] !== (ins === ")" ? "(" : "[")) return null; // ] ne zapre (
+    return keyGuard(t, insertKey(t, s, ins), env, render, check);
+  }
+  // »;« v predlogi: v naslednjo režo, če jo predloga že ima (∫(x|;;) → ∫(x;|;), kot ▶); sicer nova reža, kjer jo
+  // predloga sprejme (d/dx(x³|) → d/dx(x³;|)); iz gnezdene skupine (∫(sin(x|);0;1)) v naslednjo režo zunanje
+  if (ins === ";") {
+    const next = nextSlot(t, s);
+    if (next.inner >= 0) return { text: t, pos: next.inner };
+    if (!semiAllowed(t, s)) return next.outer >= 0 ? { text: t, pos: next.outer } : null;
+  }
   const r = insertKey(t, s, ins);
   if (!TEMPLATE_KEY(ins)) return r;
-  if (ins === ";" && !semiAllowed(t, s)) return null;
+  const g = keyGuard(t, r, env, render, check);
+  if (g && ins !== ";" && (groupsAt(t, s) !== groupsAt(r.text, s) || topSemis(t) !== topSemis(r.text))) return null;
+  return g;
+}
+
+// r, če se zapis po njem izriše brez surovih ločil (in ga je bilo pred njim mogoče izrisati); sicer null
+function keyGuard(t, r, env, render, check) {
   let b0 = null;
   let b = null;
   try {
@@ -1230,6 +1276,5 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
   if (!b?.ok || /;;\)|undefined/.test(b.tex) || texSemis(b.tex) > texSemis(b0?.tex)) return null;
   // izris v pravem KaTeX (kalkulator poda check): »(x+1)°^(2)« je dvojni eksponent
   if (check && !check(caretTex(b, r.pos))) return null;
-  if (ins !== ";" && (groupsAt(t, s) !== groupsAt(r.text, s) || topSemis(t) !== topSemis(r.text))) return null;
   return r;
 }

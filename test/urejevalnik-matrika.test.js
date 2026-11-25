@@ -184,10 +184,10 @@ const VALUES = [
   ["det([[1; 2]; [3; 4]])", -2], ["2,5+1", 3.5], ["0,1+0,2", 0.3], ["2^(10)", 1024], ["(1+2)/(3+4)", 3 / 7], ["1/(2/3)", 1.5], ["ln(e)", 1],
   ["log(100)", 2], ["5!", 120], ["12%", 0.12], ["gcd(12;18)", 6], ["lcm(4;6)", 12], ["mod(7;3)", 1], ["round(2,5)", 3], ["√(√(16))", 2],
 ];
-// AUDIT-059 (j, evklid.app): xʸ v praznem integrandu ∫(□;0;1) je dal ∫(^(;0;1) – »^(« je požrl ločili in meje.
+// AUDIT-067 (j, evklid.app): xʸ v praznem integrandu ∫(□;0;1) je dal ∫(^(;0;1) – »^(« je požrl ločili in meje.
 // Vsaka tipka predloge na vsakem mestu kazalca (prazne in polne reže) vsake predloge: zapis se izriše, brez surovih
 // ločil (»;« v zapisu), zunanje predloge ohranijo reže (število »;«, zaprtost); ali pa se tipka ne zgodi (null).
-const KEYS_T = ["²", "^(", "√(", "⁻¹", "sin(", "∫(@;;)", "d/dx(@)", ";", "×10^(", "!", "%", "°", "(", "abs(", "nCr(@;)"];
+const KEYS_T = ["²", "^(", "√(", "⁻¹", "sin(", "∫(@;;)", "d/dx(@)", ";", "×10^(", "!", "%", "°", "(", ")", "abs(", "nCr(@;)"];
 const katexOk = (tex) => {
   try {
     render(tex);
@@ -213,7 +213,7 @@ function slotsAt(t, p) {
   }).join(",");
 }
 const texSemi = (tex) => (tex.replace(/\\text\{[^}]*\}/g, "").match(/;/g) || []).length;
-test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT-059)`, () => {
+test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT-067)`, () => {
   let n = 0, done = 0;
   for (const T of TEMPLATES) {
     const b0 = entryBase(T, env);
@@ -229,7 +229,9 @@ test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT
         const b = entryBase(r.text, env);
         assert.ok(b?.ok && !BAD.test(b.tex) && katexOk(caretTex(b, r.pos)), `${w}: ne izriše`);
         assert.ok(texSemi(b.tex) <= texSemi(b0.tex), `${w}: surovo ločilo v ${b.tex}`);
-        if (k !== ";") assert.equal(slotsAt(r.text, p), slotsAt(T, p), `${w}: reže zunanje predloge`);
+        // ) sme zapreti le še odprto skupino (natipkan oklepaj); ; doda režo samo, kjer jo predloga sprejme
+        if (k === ")") assert.ok(r.text === T || !slotsAt(T, p).endsWith(":true"), `${w}: ) zapre že zaprto skupino`);
+        else if (k !== ";") assert.equal(slotsAt(r.text, p), slotsAt(T, p), `${w}: reže zunanje predloge`);
       }
   }
   assert.ok(n > 10000 && done > 0.85 * n, `${done}/${n} tipk izvedenih`);
@@ -240,8 +242,52 @@ test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT
     ["nCr(5;2)", 4, "√(", "nCr(√(5);2)"], ["d/dx(x³)", 7, ";", "d/dx(x³;)"], ["x+y=3; x−y=1", 4, "√(", "x+y=√(3); x−y=1"],
     ["sin(x)", 6, "²", "sin(x)²"], ["2+3", 1, "^(", "2^(+3"], ["", 0, "√(", "√("],
   ]) assert.equal(pressKey(t, p, k, env, { check: katexOk })?.text, want, `${t} @${p} ${k}`);
-  // ; v predlogi z določenim številom rež se ne zgodi
-  for (const [t, p] of [["∫(;0;1)", 2], ["sin(x)", 5], ["nCr(5;2)", 6], ["2^(5)", 3]]) assert.equal(pressKey(t, p, ";", env), null, `${t} @${p} ;`);
+  // ; v predlogi brez proste reže se ne zgodi
+  for (const [t, p] of [["sin(x)", 5], ["nCr(5;2)", 6], ["2^(5)", 3]]) assert.equal(pressKey(t, p, ";", env), null, `${t} @${p} ;`);
+});
+
+// Pregled #1017: naravna zaporedja tipk z lastnimi oklepaji in »;« (zaslonska tipka ali tipkovnica gre po isti poti):
+// ) stopi čez samodejni zaklepaj in nikoli ne zapre zunanje predloge, ; gre v naslednjo režo (kot ▶).
+test("zaporedja tipk v predlogah: lastni oklepaji in ; (AUDIT-067)", () => {
+  const run = (keys) => {
+    let t = "";
+    let p = 0;
+    for (const k of keys) {
+      const r = pressKey(t, p, k, env, { check: katexOk });
+      if (r) ({ text: t, pos: p } = r);
+      const b = t.trim() && entryBase(t, env);
+      assert.ok(!t.trim() || (b?.ok && katexOk(caretTex(b, p)) && texSemi(b.tex) === 0), `${keys.join(" ")}: po »${k}« ${t} @${p}`);
+    }
+    return t;
+  };
+  for (const [keys, want] of [
+    [["∫(@;;)", "(", "x", "+", "1", ")"], "∫((x+1);;)"],
+    [["∫(@;;)", "(", "x", "+", "1", ")", "×", "2"], "∫((x+1)×2;;)"],
+    [["d/dx(@)", "sin(", "x", ")", ";"], "d/dx(sin(x);)"],
+    [["∫(@;;)", "x", ";", "0", ";", "1"], "∫(x;0;1)"],
+    [["∫(@;;)", "sin(", "x", ")", ";", "0", ";", "π"], "∫(sin(x);0;π)"],
+    [["∫(@;;)", "sin(", "x", ";", "0", ";", "1"], "∫(sin(x);0;1)"],
+    [["∫(@;;)", "^(", "x", ")", ";", "0", ";", "1"], "∫(^(x);0;1)"],
+    [["∫(@;;)", "x", "^(", "2", ")", ";", "0", ";", "1"], "∫(x^(2);0;1)"],
+    [["(", "1", "+", "2", ")", "^(", "2", ")"], "(1+2)^(2)"],
+    [["nCr(@;)", "5", ";", "2", ")"], "nCr(5;2)"],
+    [["d/dx(@)", "x", "³", ";", "2"], "d/dx(x³;2)"],
+    [["√(", "x", "+", "1", ")", ")", ")"], "√(x+1)"],
+    [["2", "×", "(", "3", "+", "4", ")"], "2×(3+4)"],
+  ])
+    assert.equal(run(keys), want, keys.join(" "));
+  // ; in ) na vsakem mestu vsake predloge: nikoli surov zapis
+  for (const T of TEMPLATES) {
+    const b0 = entryBase(T, env);
+    if (!b0?.ok || texSemi(b0.tex)) continue;
+    for (const p of new Set([...stopsTex(b0).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1]))))
+      for (const k of [";", ")", "(", "]"]) {
+        const r = pressKey(T, p, k, env, { check: katexOk });
+        if (!r) continue;
+        const b = entryBase(r.text, env);
+        assert.ok(b?.ok && katexOk(caretTex(b, r.pos)) && texSemi(b.tex) === 0, `${T} @${p} ${k} → ${r.text}`);
+      }
+  }
 });
 
 test("vnos, zapis in izračun se ujemajo (decimalna vejica, predloge)", () => {

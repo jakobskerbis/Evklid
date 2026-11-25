@@ -1,4 +1,4 @@
-// AUDIT-059 (j, evklid.app, Android, 24. 11. 2026): v prazen integrand ∫(□;0;1) je tipka xʸ vstavila »^(«, ki je požrl
+// AUDIT-067 (j, evklid.app, Android, 24. 11. 2026): v prazen integrand ∫(□;0;1) je tipka xʸ vstavila »^(«, ki je požrl
 // ločili in meje integrala: zapis ∫_□^□ □^{(□; 0; 1)} dx (surova ločila, pomen uničen). Pravi brskalnik, stran s
 // kalkulatorjem, 1280 px z miško in 360 px z dotikom; tipke predlog v režah predlog. Brskalnik se zažene v testu.
 import test from "node:test";
@@ -46,7 +46,7 @@ const CASES = [
   ["∫(x;0;1)", 3, "^(", "∫(x^();0;1)"],
   ["∫(x;0;1)", 5, "√(", "∫(x;0√();1)"],
   ["nCr(5;2)", 4, "√(", "nCr(√(5);2)"],
-  ["∫(;0;1)", 2, ";", null], // ∫ ima tri reže
+  ["∫(;0;1)", 2, ";", "∫(;0;1)"], // ∫ ima tri reže: ; gre v naslednjo režo
   ["sin(x)", 5, ";", null],
 ];
 for (const engine of ["chromium", "webkit", "firefox"]) {
@@ -54,7 +54,7 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
     ["1280", { viewport: { width: 1280, height: 800 } }],
     ["360", { viewport: { width: 360, height: 740 }, hasTouch: true, isMobile: engine === "firefox" ? undefined : true }],
   ]) {
-    test(`${engine} ${vw}: tipka predloge v reži ne pokvari zunanje predloge (AUDIT-059)`, { timeout: 300000 }, async (t) => {
+    test(`${engine} ${vw}: tipka predloge v reži ne pokvari zunanje predloge (AUDIT-067)`, { timeout: 300000 }, async (t) => {
       let browser = null;
       try {
         browser = playwright && (await playwright[engine].launch());
@@ -93,6 +93,38 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
         assert.ok(!s.raw && !s.shown.includes(";"), `${where}: surov zapis ${JSON.stringify(s)}`);
         // meje integrala ostanejo vidne
         if (text.startsWith("∫(") && text.endsWith(";0;1)")) assert.match(s.shown, /∫\s*1\s*0|∫.*1.*0/su, `${where}: meje ${JSON.stringify(s.shown)}`);
+      }
+      // pregled #1017: zaporedja z lastnimi oklepaji in ; (zaslonske tipke; »kb:« = tipkovnica)
+      for (const [keys, want] of [
+        [["∫(@;;)", "(", "x", "+", "1", ")"], "∫((x+1);;)"],
+        [["∫(@;;)", "(", "x", "+", "1", ")", "×", "2"], "∫((x+1)×2;;)"],
+        [["d/dx(@)", "sin(", "x", ")", ";"], "d/dx(sin(x);)"],
+        [["∫(@;;)", "x", ";", "0", ";", "1"], "∫(x;0;1)"],
+        [["∫(@;;)", "x", "kb:;", "0", "kb:;", "1"], "∫(x;0;1)"],
+        [["∫(@;;)", "kb:(", "x", "+", "1", "kb:)"], "∫((x+1);;)"],
+      ]) {
+        await page.evaluate(() => {
+          const i = document.querySelector(".sc-input");
+          i.focus({ preventScroll: true });
+          i.value = "";
+          i.dispatchEvent(new Event("input"));
+        });
+        for (const k of keys) {
+          if (k.startsWith("kb:")) await page.keyboard.type(k.slice(3));
+          else {
+            const key = page.locator(`.sc-key[data-ins="${k}"]`).first();
+            if (opt.hasTouch && engine !== "webkit") await key.tap();
+            else await key.click();
+          }
+        }
+        await page.evaluate(() => new Promise((r) => setTimeout(r, 30)));
+        const s = await page.evaluate(() => {
+          const prev = document.querySelector(".sc-preview");
+          return { v: document.querySelector(".sc-input").value, shown: prev.textContent, raw: !!prev.querySelector(".text, .katex-error"), caret: !!prev.querySelector(".sc-caret") };
+        });
+        const where = `${engine} ${vw} ${keys.join(" ")}`;
+        assert.equal(s.v, want, `${where}: vnos`);
+        assert.ok(!s.raw && !s.shown.includes(";") && s.caret, `${where}: zapis ${JSON.stringify(s)}`);
       }
       assert.deepEqual(errors, [], `${engine} ${vw}: napake na strani`);
     });

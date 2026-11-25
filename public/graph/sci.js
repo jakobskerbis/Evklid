@@ -7,7 +7,7 @@ import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralError
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { graphable } from "./v-graf.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK, pressKey } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK, pressKey, insertKey } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -270,11 +270,13 @@ export function createScientific(root, opts) {
       }
     }
     // odprt oklepaj tipke se zapre pred ločilom zunanje predloge; tipka predloge, ki bi pokvarila zapis ali reže
-    // zunanje predloge (∫(|;0;1) + xʸ), se ne zgodi (AUDIT-059)
-    const r = pressKey(cur, s, ins, env(), {
+    // zunanje predloge (∫(|;0;1) + xʸ), se ne zgodi (AUDIT-067)
+    // varovalo velja za tipke kalkulatorja; besedilo od zunaj (formula iz zbirke, »Uporabi v računu« z grafa) gre noter
+    // kot prej, le odprt oklepaj se zapre pred ločilom
+    const r = o.ext || o.replace ? insertKey(cur, s, ins) : pressKey(cur, s, ins, env(), {
       check: (tex) => {
         try {
-          window.katex?.renderToString(tex, { throwOnError: true, strict: "ignore", trust: TRUST });
+          izrisi(tex, { napaka: "vrzi", zaupaj: TRUST });
           return true;
         } catch {
           return false;
@@ -1083,6 +1085,13 @@ export function createScientific(root, opts) {
       insert(e.data);
       return;
     }
+    // oklepaj, zaklepaj in »;« s tipkovnice gredo po poti zaslonskih tipk: ( se zapre pred režo zunanje predloge,
+    // ) stopi čez samodejni zaklepaj, ; gre v naslednjo režo (AUDIT-067)
+    if (e.inputType === "insertText" && /^[()[\];]$/.test(e.data || "")) {
+      e.preventDefault();
+      insert(e.data);
+      return;
+    }
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
       e.preventDefault();
       del();
@@ -1261,7 +1270,7 @@ export function createScientific(root, opts) {
       showPanel(null);
       return true;
     },
-    insert,
+    insert: (text, o = {}) => insert(text, { ...o, ext: true }),
     get state() {
       return st;
     },
