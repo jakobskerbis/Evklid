@@ -95,6 +95,50 @@ test("step checks: a done() reads only what the student did", () => {
   const h = (x) => ({ predmet: "kroglica", "h [m]": x, "t [s]": "0,3", "t² [s²]": "0,09", "v [m/s]": "–" });
   assert.equal(pad[2].done(c({ vrstice: ["0,20", "0,50", "1,00", "1,50", "2,00"].map(h) })), true);
   assert.equal(pad[2].done(c({ vrstice: ["0,20", "0,20", "0,50", "1,00", "1,50"].map(h) })), false, "ista višina dvakrat");
+
+  // lab-grelnik: nalivanje in tehtanje v pravem vrstnem redu, izklop po 4 min, premešana končna T, ponovitev z novo vodo.
+  const gre = KORAKI["lab-grelnik"].koraki;
+  const NAL = (g) => `V čaši je sveža voda iz pipe (približno ${g} g). Stehtaj jo.`, TEH = "Tehtnica: 201,3 g vode.", ON = "Grelec je vklopljen, štoparica teče.";
+  const OFF = (s) => `Grelec je izklopljen (segreval je ${s} s). Premešaj vodo in odčitaj najvišjo temperaturo.`, NEPR = "Voda ni premešana: termometer ob strani kaže manj od povprečne temperature.";
+  const gc = (dn, o = {}) => c({ dnevnik: dn, zadnji: zadnji(dn), ...o });
+  assert.equal(gre[0].done(gc([NAL(200), TEH])), true);
+  assert.equal(gre[0].done(gc([TEH, NAL(200)])), false, "stehtal pred nalivanjem");
+  assert.equal(gre[0].done(gc([NAL(300), TEH])), false, "300 g namesto 200 g");
+  assert.equal(gre[3].done(gc([NAL(200), TEH, ON, OFF("120,0")])), false, "izklopil po 2 min");
+  assert.equal(gre[3].done(gc([NAL(200), TEH, ON, OFF("120,0"), ON, OFF("305,2")])), true, "znova vklopil in izklopil po 5 min");
+  const gv = (t, U, I, T) => ({ "t [s]": t, "U [V]": U, "I [A]": I, "T [°C]": T });
+  const tek = [gv("0", "0,01", "-0,01", "15,0"), gv("30", "11,90", "4,10", "16,3"), gv("300", "11,90", "4,10", "29,0")];
+  const dn5 = [NAL(200), TEH, ON, OFF("300,0")];
+  assert.equal(gre[4].done(gc(dn5, { vrstice: [...tek, gv("330", "0,00", "0,02", "29,1")] })), false, "le samodejni zapis po izklopu");
+  assert.equal(gre[4].done(gc([...dn5, NEPR], { vrstice: [...tek, gv("312,4", "0,00", "0,00", "28,2")] })), false, "ročni zapis brez mešanja");
+  assert.equal(gre[4].done(gc([...dn5, NEPR], { vrstice: [...tek, gv("312,4", "0,00", "0,00", "28,2"), gv("320,6", "0,00", "0,00", "29,4")] })), true, "nato zapisal premešano");
+  // Izkoristek iz tabele in dnevnika: 0,2013 kg · 4182 · 14,4 K / (11,90 V · 4,10 A · 300,0 s) = 82,8 %.
+  const rac = (v) => gre[5].done(gc(dn5, { vrstice: [...tek, gv("320,6", "0,00", "0,00", "29,4")], par: (n) => (n === "tvoj rezultat [%]" ? v : "") }));
+  assert.equal(rac("82,8"), true);
+  assert.equal(rac("0,829"), false, "delež namesto odstotkov");
+  assert.equal(rac(""), false);
+  // Ponovitev: nova voda po prvem poskusu, pokrov in mešanje; samo ponovni vklop brez nove vode ni ponovitev.
+  const nast = { "grelec je potopljen v vodo": "da", "napetost napajalnika": "12 V", "omejitev toka": "5 A", "pokrov na čaši": "da", "mešaj z mešalno palčko": "da" };
+  const p8 = (dn) => gre[7].done(gc(dn, { par: (n) => nast[n] ?? "", num: (n) => stevilo(nast[n]) }));
+  assert.equal(p8([...dn5, NAL(200), TEH, ON]), true);
+  assert.equal(p8([...dn5, ON]), false, "brez nove vode");
+  assert.equal(p8([NAL(200), TEH, ON]), false, "prvi poskus ni ponovitev");
+
+  // lab-lom: kot od ploskve ne šteje, mejni kot ujet na 1°, račun lomnega količnika iz meritev (ne iz učbenika).
+  const lom = KORAKI["lab-lom"].koraki;
+  const lv = (smer, a, b) => ({ "snov, smer": smer, α: `${a} °`, odbojni: `${a} °`, β: typeof b === "number" ? `${String(b).replace(".", ",")} °` : b, "sin α": "", "sin β": "" });
+  const lc = (vrstice, o = {}) => c({ vrstice, par: (n) => (n === "kot merim od" ? "vpadne pravokotnice" : ""), ...o });
+  assert.equal(lom[1].done(lc([lv("zrak → akril", 10, 6.5)])), true);
+  assert.equal(lom[1].done(lc([lv("zrak → akril", 10, 83.5)])), false, "kot od ploskve: β > α");
+  assert.equal(lom[1].done(lc([lv("zrak → akril", 10, 6.5)], { par: () => "ploskve" })), false, "meri od ploskve");
+  assert.equal(lom[6].done(lc([lv("akril → zrak", 41, 78), lv("akril → zrak", 42, 85.5), lv("akril → zrak", 43, "popolni odboj")])), true);
+  assert.equal(lom[6].done(lc([lv("akril → zrak", 41, 78), lv("akril → zrak", 43, "popolni odboj")])), false, "mejni kot ujet le na 2°");
+  // Akril z n = 1,45 (izmerjeno): 1,45 šteje, 1,49 iz učbenika ne, prav tako ne izbrana druga serija.
+  const n145 = [10, 20, 30, 40, 50, 60, 70, 80].map((a) => lv("zrak → akril", a, (Math.asin(Math.sin((a * Math.PI) / 180) / 1.45) * 180) / Math.PI));
+  const lr = (v, izbira = "") => lom[4].done(lc(n145, { par: (n) => ({ "tvoj rezultat": v, "kaj računaš": izbira, "kot merim od": "vpadne pravokotnice" })[n] ?? "" }));
+  assert.equal(lr("1,45"), true);
+  assert.equal(lr("1,49"), false, "vrednost iz učbenika");
+  assert.equal(lr("1,45", "akril → zrak"), false, "računa drugo serijo");
 });
 
 test("usage counter: anonymous daily counts per experiment, mode and event; only known values", () => {

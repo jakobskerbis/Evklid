@@ -11,7 +11,12 @@
 
 import { stevilo, celica, kjer, razlicne, ujemanje } from "./lab-vodeno-pomoc.js";
 // Vodeni poskusi faze 2 (docs/laboratorij.md »Vodeni poskus«): vsak v svoji datoteki public/sim/vodeno/<ključ>.js.
-const FAZA2 = {};
+import labGrelnik from "./vodeno/lab-grelnik.js";
+import labLom from "./vodeno/lab-lom.js";
+const FAZA2 = {
+  "lab-grelnik": labGrelnik,
+  "lab-lom": labLom,
+};
 
 export { stevilo, celica, ujemanje };
 
