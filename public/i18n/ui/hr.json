@@ -2849,7 +2849,7 @@
   "mob.exportAppleHint": "Ako se prijavljuješ putem Applea i nemaš lozinku, preuzimanje potvrdi putem Applea.",
   "mob.exportNoPassword": "Tvoj račun nema lozinku (prijavljuješ se putem Applea). Za preuzimanje podataka trebaš lozinku: poveznicu za postavljanje lozinke poslat ćemo na e-adresu računa. Kad postaviš lozinku, sve će se naprave odjaviti.",
   "mob.exportSetPassword": "Pošalji poveznicu za lozinku",
-  "mob.exportLinkSent": "Poveznicu smo poslali na {email}. Kad postaviš lozinku, pokušaj ponovno.",
+  "mob.exportLinkSent": "Poveznicu smo poslali na {email}. Kad postaviš lozinku, ponovno se prijavi i pokušaj ponovno.",
   "mob.exportDone": "Datoteka je spremna.",
   "mob.exportUnavailable": "Na ovom uređaju dijeljenje datoteka nije moguće.",
   "mob.confirmApple": "Potvrdi putem Applea",

@@ -2762,7 +2762,7 @@ export default {
   "mob.exportAppleHint": "Če se prijavljaš z Apple in nimaš gesla, prenos potrdi z Apple.",
   "mob.exportNoPassword": "Tvoj račun nima gesla (prijavljaš se z Apple). Za prenos podatkov potrebuješ geslo: povezavo za nastavitev gesla pošljemo na e-naslov računa. Ko geslo nastaviš, bodo vse naprave odjavljene.",
   "mob.exportSetPassword": "Pošlji povezavo za geslo",
-  "mob.exportLinkSent": "Povezavo smo poslali na {email}. Ko nastaviš geslo, poskusi znova.",
+  "mob.exportLinkSent": "Povezavo smo poslali na {email}. Ko nastaviš geslo, se znova prijavi in poskusi znova.",
   "mob.exportDone": "Datoteka je pripravljena.",
   "mob.exportUnavailable": "Na tej napravi deljenje datotek ni mogoče.",
   "mob.confirmApple": "Potrdi z Apple",

@@ -2825,7 +2825,7 @@
   "mob.exportAppleHint": "If you sign in with Apple and don't have a password, confirm the download with Apple.",
   "mob.exportNoPassword": "Your account has no password (you sign in with Apple). You need a password to download your data: we'll send a link to set one to the account's email address. Once you set it, all devices will be signed out.",
   "mob.exportSetPassword": "Send password link",
-  "mob.exportLinkSent": "We sent the link to {email}. Once you've set a password, try again.",
+  "mob.exportLinkSent": "We sent the link to {email}. Once you've set a password, sign in again and try again.",
   "mob.exportDone": "The file is ready.",
   "mob.exportUnavailable": "File sharing isn't available on this device.",
   "mob.confirmApple": "Confirm with Apple",
