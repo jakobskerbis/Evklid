@@ -1181,6 +1181,7 @@
   "sc.c.e0": "Elementarladung",
   "sc.c.me": "Elektronenmasse",
   "sc.c.mp": "Protonenmasse",
+  "sc.c.mn": "Neutronenmasse",
   "sc.c.u": "Atomare Masseneinheit",
   "sc.c.NA": "Avogadro-Konstante",
   "sc.c.kB": "Boltzmann-Konstante",

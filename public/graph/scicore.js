@@ -559,6 +559,7 @@ export const CONSTANTS = [
   { id: "e0", sym: "e_0", value: 1.602176634e-19, unit: "A\\,s" },
   { id: "me", sym: "m_e", value: 9.1093837015e-31, unit: "kg" },
   { id: "mp", sym: "m_p", value: 1.67262192369e-27, unit: "kg" },
+  { id: "mn", sym: "m_n", value: 1.67492749804e-27, unit: "kg" }, // CODATA 2018
   { id: "u", sym: "u", value: 1.6605390666e-27, unit: "kg" },
   { id: "NA", sym: "N_A", value: 6.02214076e23, unit: "mol^{-1}" },
   { id: "kB", sym: "k_B", value: 1.380649e-23, unit: "J/K" },

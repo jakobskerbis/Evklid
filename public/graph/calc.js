@@ -3,6 +3,7 @@
 import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
 import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
+import { fitModelView } from "./okno.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
@@ -1090,6 +1091,20 @@ export function createCalculator(root, opts) {
     return t(p.note.key, v);
   }
 
+  // Znana konstanta formule (g, c, G, N_A …; formula-calc.js formulaConstant): drsnik s pravo vrednostjo na sredini
+  // (od 0 do dvakratne vrednosti). Zelo majhne (h = 6,6·10⁻³⁴) ne gredo v drsnik brez zapisa z »e«: stalna vrednost.
+  function constRow(n, v) {
+    if (typeof v !== "number" || !Number.isFinite(v) || v === 0) return null;
+    const dec = (x) => (comma() ? x.replace(".", ",") : x);
+    const e = Math.floor(Math.log10(Math.abs(v)));
+    if (e < -11) {
+      const m = Number((v / 10 ** e).toPrecision(12));
+      return { id: newId(), type: "expr", text: `${n} = ${dec(String(m))}·10^(${e})` };
+    }
+    const step = 10 ** (e - 3);
+    return { id: newId(), type: "expr", text: `${n} = ${dec(sliderText(v, 10 ** Math.max(e - 9, -20)))}`, slider: { min: Number(sliderText(v - Math.abs(v), step)), max: Number(sliderText(v + Math.abs(v), step)), step } };
+  }
+
   // shranjeni grafi na strežniku (po učencu)
   async function openGraphs(anchor) {
     const sid = opts.studentId?.();
@@ -1414,10 +1429,10 @@ export function createCalculator(root, opts) {
      * Formula iz zbirke na grafu ({ lhs, rhs, v } iz formula-calc.js formulaPlot): vrstica »s(t) = v₀ t + …«
      * (ime je leva stran, če je prosta črka) in drsniki za ostale količine (vrednost 1). Doda k trenutnemu grafu.
      */
-    addFormula({ lhs, rhs, v }) {
+    addFormula({ lhs, rhs, v, consts = {} }) {
       const used = new Set(state.items.map((x) => /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*[(=]/.exec(String(x.text || ""))?.[1]).filter(Boolean));
       const ok = (n) => /^[A-Za-zα-ωΑ-Ω]$/.test(n) && !["x", "y", "r", "θ", "e", v].includes(n) && !used.has(n) && !new RegExp(`(^|[^\\p{L}_])${n}(?![\\p{L}_₀-₉])`, "u").test(rhs);
-      const name = [lhs, "f", "g", "h", "p", "q"].find(ok);
+      const name = [lhs, "f", "g", "h", "p", "q", "u", "w", "F", "G", "H"].find(ok);
       if (!name) return false;
       const next = clone(state);
       next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
@@ -1428,7 +1443,7 @@ export function createCalculator(root, opts) {
       const o = modelItem(fid);
       if (o?.missing?.length) {
         const at = state.items.findIndex((x) => x.id === fid);
-        state.items.splice(at, 0, ...o.missing.map((n) => ({ id: newId(), type: "expr", text: `${n} = 1` })));
+        state.items.splice(at, 0, ...o.missing.map((n) => constRow(n, consts[n]) || { id: newId(), type: "expr", text: `${n} = 1` }));
         renderList();
         refresh();
       }
@@ -1436,10 +1451,13 @@ export function createCalculator(root, opts) {
       it.color = nextColor();
       commit();
       refresh();
-      const fit = view.fitBounds();
+      // okno kot pri grafih v odgovorih (okno.js): ničle, ekstremi, asimptote; premica skozi izhodišče ni 1 enota velika
+      const fit = fitModelView(model, { W: view.W, H: view.H }) || view.fitBounds();
       if (fit) {
-        state.view = view.squared(fit, "y");
-        view.view = state.view;
+        state.view = fit;
+        state.settings = { ...state.settings, square: false };
+        view.view = fit;
+        commit();
         view.draw();
       }
       return true;
