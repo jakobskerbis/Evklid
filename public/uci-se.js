@@ -255,6 +255,14 @@ function ikoneVrhaVnaprej() {
   }, 1500);
 }
 
+// »Poskusi znova« na kartici brez napake.js: neuspel uvoz modula ostane v brskalnikovem seznamu modulov (specifikacija;
+// Safari, Firefox, Chromium na CI), zato nov import() ne pomaga in stran osvežimo (kot napake.js pri modul: true);
+// druge napake samo naložijo znova (public/3d/sim.js enako).
+export function poskusiZnova3d(err, znova, osvezi = () => location.reload()) {
+  const uvoz = /importing a module script failed|dynamically imported module|module script/i.test(String(err?.message ?? ""));
+  return uvoz ? () => osvezi() : () => znova();
+}
+
 async function show3d() {
   const box = document.getElementById("uci-3d-content");
   if (!box) return;
@@ -275,7 +283,7 @@ async function show3d() {
     if (napakaVsebina) kartica.append(...napakaVsebina(err, { t, znova: () => show3d(), razredGumba: "secondary" }));
     else {
       kartica.innerHTML = `<p>${esc(t("a3.loadError"))}</p><button type="button" class="secondary">${esc(t("a3.retry"))}</button>`;
-      kartica.querySelector("button").addEventListener("click", () => show3d(), { once: true });
+      kartica.querySelector("button").addEventListener("click", poskusiZnova3d(err, () => show3d()), { once: true });
     }
     box.replaceChildren(kartica);
     return;
