@@ -19,7 +19,7 @@
     },
     {
       "sklop": "4.7 Geometrijski liki in telesa",
-      "topic": "MAT-SS-1/trikotnik",
+      "topic": "MAT-SS-3/povrsina-in-prostornina-teles",
       "level": 2
     },
     {
@@ -35,7 +35,7 @@
     {
       "sklop": "4.10.4 Kvadratna funkcija",
       "topic": "MAT-SS-2/kvadratna-funkcija",
-      "level": 3
+      "level": 2
     },
     {
       "sklop": "4.10.6 Logaritemska funkcija",
@@ -60,31 +60,31 @@
     {
       "sklop": "4.16 Verjetnostni račun",
       "topic": "MAT-SS-4/verjetnost",
-      "level": 3
+      "level": 2
     }
   ],
   "forms": {
     "A": [
       {
-        "text": "Dani sta racionalni števili $p = \\dfrac{1}{2}$ in $q = -\\dfrac{4}{5}$. Koliko je $p + q$? Rezultat okrajšaj.",
+        "text": "Dani sta racionalni števili $p = -\\dfrac{7}{4}$ in $q = \\dfrac{3}{4}$. Koliko je $p : q$? Rezultat okrajšaj.",
         "answer": {
           "type": "fraction",
-          "num": -3,
-          "den": 10
+          "num": -7,
+          "den": 3
         },
         "data": {
           "given": [
-            "p = \\dfrac{1}{2}",
-            "q = -\\dfrac{4}{5}"
+            "p = -\\dfrac{7}{4}",
+            "q = \\dfrac{3}{4}"
           ],
           "find": [
-            "p + q"
+            "p : q"
           ]
         },
         "topicId": "MAT-SS-1/racionalna-stevila",
         "level": 1,
         "generator": "dod-mat-ss12-racionalna",
-        "seed": 1000
+        "seed": 1001
       },
       {
         "text": "Temperaturo v stopinjah Fahrenheita izračunamo po obrazcu $F = 1{,}8\\,C + 32$, kjer je $C$ temperatura v stopinjah Celzija. Iz obrazca izrazi $C$ in izračunaj, koliko stopinj Celzija je $-22\\ ^\\circ\\mathrm{F}$.",
@@ -158,84 +158,95 @@
         "seed": 1200
       },
       {
-        "text": "Kje leži središče očrtane krožnice v topokotnem trikotniku?",
-        "answer": {
-          "type": "choice",
-          "options": [
-            "na stranici trikotnika",
-            "znotraj trikotnika",
-            "v oglišču trikotnika",
-            "zunaj trikotnika"
-          ],
-          "index": 3,
-          "why": [
-            "Na stranici (v razpolovišču hipotenuze) leži središče očrtane krožnice pravokotnega trikotnika.",
-            "Znotraj trikotnika leži le pri ostrokotnem trikotniku.",
-            "V oglišču pravega kota leži višinska točka pravokotnega trikotnika.",
-            null
-          ]
-        },
-        "data": false,
-        "topicId": "MAT-SS-1/trikotnik",
-        "level": 2,
-        "generator": "dod-mat-ss12-trikotnik",
-        "seed": 1300
-      },
-      {
-        "text": "Na načrtu parka so tri klopi v točkah $A(3, 0)$, $B(-3, 6)$ in $C(0, 0)$. Kolikšen je kot pri oglišču $A$ (kot $\\angle BAC$)? Zaokroži na eno decimalko.",
+        "text": "Stožec ima polmer osnovne ploskve $r = 6\\ \\mathrm{cm}$ in višino $v = 10\\ \\mathrm{cm}$. Izračunaj njegovo površino. Zaokroži na desetinko.",
         "answer": {
           "type": "number",
-          "value": 45,
+          "value": 332.919043165,
           "decimals": 1,
           "mistakes": [
             {
-              "value": 135,
-              "why": "Oba vektorja morata izhajati iz oglišča $A$: $\\vec{AB}$ in $\\vec{AC}$."
+              "value": 301.59289474462014,
+              "why": "V obrazec za plašč sodi stranica stožca $s$, ne višina $v$."
             },
             {
-              "value": 0.7853981633974483,
+              "value": 219.82170763537775,
+              "why": "To je le plašč; prištej še osnovno ploskev."
+            },
+            {
+              "value": 552.7407507999881,
+              "why": "Plašč stožca je $\\pi r s$, ne $2\\pi r s$."
+            }
+          ],
+          "unit": "cm²"
+        },
+        "data": {
+          "given": [
+            "r = 6\\ \\mathrm{cm}",
+            "v = 10\\ \\mathrm{cm}"
+          ],
+          "find": [
+            "P"
+          ]
+        },
+        "topicId": "MAT-SS-3/povrsina-in-prostornina-teles",
+        "level": 2,
+        "generator": "mat-ss3-matura-telesa",
+        "seed": 1304
+      },
+      {
+        "text": "Izračunaj kot med vektorjema $\\vec a = (1, 4, 4)$ in $\\vec b = (0, 5, -2)$. Rezultat v stopinjah zaokroži na eno decimalko.",
+        "answer": {
+          "type": "number",
+          "value": 67.1758005356692,
+          "decimals": 1,
+          "mistakes": [
+            {
+              "value": 112.8241994643308,
+              "why": "Preveri predznak skalarnega produkta."
+            },
+            {
+              "value": 1.172438897010398,
               "why": "To je kot v radianih; zapiši ga v stopinjah."
             }
           ]
         },
         "data": {
           "given": [
-            "A = (3, 0)",
-            "B = (-3, 6)",
-            "C = (0, 0)"
+            "\\vec a = (1, 4, 4)",
+            "\\vec b = (0, 5, -2)"
           ],
           "find": [
-            "\\angle BAC"
+            "\\varphi"
           ]
         },
         "topicId": "MAT-SS-3/skalarni-produkt",
         "level": 2,
         "generator": "dod-mat-ss34-skalarni-produkt",
-        "seed": 1416
+        "seed": 1400
       },
       {
-        "text": "Graf linearne funkcije $f$ poteka skozi točki $A(1, -7)$ in $B(5, -5)$. Izračunaj smerni koeficient $k$.",
+        "text": "Graf linearne funkcije $f$ poteka skozi točki $A(-3, -7)$ in $B(3, -3)$. Izračunaj smerni koeficient $k$. Rezultat zapiši kot okrajšan ulomek.",
         "answer": {
           "type": "fraction",
-          "num": 1,
-          "den": 2,
+          "num": 2,
+          "den": 3,
           "mistakes": [
             {
-              "value": 2,
+              "value": 1.5,
               "why": "V števcu je razlika $y$, v imenovalcu razlika $x$."
             },
             {
-              "value": -0.5,
+              "value": -0.6666666666666666,
               "why": "Obe razliki odštej v istem vrstnem redu."
             }
           ]
         },
         "data": {
           "given": [
-            "x_1 = 1",
+            "x_1 = -3",
             "y_1 = -7",
-            "x_2 = 5",
-            "y_2 = -5"
+            "x_2 = 3",
+            "y_2 = -3"
           ],
           "find": [
             "k"
@@ -244,39 +255,37 @@
         "topicId": "MAT-SS-1/linearna-funkcija",
         "level": 1,
         "generator": "mat-ss1-matura-linearna-funkcija",
-        "seed": 1500
+        "seed": 1508
       },
       {
-        "text": "Ob ravnem zidu želimo z $96\\ \\mathrm{m}$ ograje ograditi pravokotno ogrado (zid je četrta stranica). Kolikšna je največja možna ploščina ograde?",
+        "text": "Graf kvadratne funkcije ima ničli $x_1 = 4$ in $x_2 = 6$ ter seka ordinatno os v točki $N(0, -48)$. Koliko je vodilni koeficient $a$?",
         "answer": {
           "type": "number",
-          "value": 1152,
+          "value": -2,
           "decimals": null,
-          "unit": "m²",
           "mistakes": [
             {
-              "value": 576,
-              "why": "Ograja je le na treh stranicah – ob zidu je ni."
+              "value": 2,
+              "why": "Pri vstavljanju x = 0 v (x − x₁)(x − x₂) dobiš x₁ · x₂ – pazi na predznaka."
             },
             {
-              "value": 2304,
-              "why": "Vzporedna stranica je L − 2x; poišči teme parabole."
+              "value": -48,
+              "why": "Začetna vrednost ni vodilni koeficient; uporabi ničelno obliko."
             }
-          ],
-          "unitAlternatives": [
-            "m2"
           ]
         },
         "data": {
           "given": [
-            "L = 96\\ \\mathrm{m}"
+            "x_1 = 4",
+            "x_2 = 6",
+            "f(0) = -48"
           ],
           "find": [
-            "S_{\\max}"
+            "a"
           ]
         },
         "topicId": "MAT-SS-2/kvadratna-funkcija",
-        "level": 3,
+        "level": 2,
         "generator": "dod-mat-ss12-kvadratna-funkcija",
         "seed": 1600
       },
@@ -311,33 +320,35 @@
         "seed": 1700
       },
       {
-        "text": "Izračunaj natančno vrednost $\\tan 135^\\circ$.",
+        "text": "Izračunaj natančno vrednost $\\cos 300^\\circ$.",
         "answer": {
           "type": "choice",
           "options": [
-            "1",
-            "-1",
-            "-\\frac{\\sqrt{2}}{2}"
+            "\\frac{\\sqrt{3}}{2}",
+            "-\\frac{\\sqrt{3}}{2}",
+            "-\\frac{1}{2}",
+            "\\frac{1}{2}"
           ],
-          "index": 1,
+          "index": 3,
           "why": [
-            "Absolutna vrednost je prava, predznak pa ne. Kakšen predznak ima tangens v 2. kvadrantu?",
-            null,
-            "To je vrednost sinusa oz. kosinusa kota $45^\\circ$, tangens je njun količnik."
+            "Si zamenjal sinus in kosinus? Na enotski krožnici je kosinus abscisa, sinus pa ordinata točke.",
+            "Preveri referenčni kot (ostri kot do osi $x$) in predznak v kvadrantu.",
+            "Absolutna vrednost je prava, predznak pa ne. Kakšen predznak ima kosinus v 4. kvadrantu?",
+            null
           ]
         },
         "data": {
           "given": [
-            "\\alpha = 135^\\circ"
+            "\\alpha = 300^\\circ"
           ],
           "find": [
-            "\\tan\\alpha"
+            "\\cos\\alpha"
           ]
         },
         "topicId": "MAT-SS-3/kotne-funkcije-poljubnega-kota",
         "level": 2,
         "generator": "dod-mat-ss34-kotne-funkcije-poljubnega-kota",
-        "seed": 1800
+        "seed": 1804
       },
       {
         "text": "V geometrijskem zaporedju je $a_2 = -4$ in $a_5 = 32$. Izračunaj vsoto prvih šestih členov.",
@@ -402,58 +413,63 @@
         "seed": 2000
       },
       {
-        "text": "Računalnik naključno sestavi $5$-mestno kodo iz števk od $0$ do $9$ (števke se lahko ponavljajo, koda se lahko začne z ničlo). Kolikšna je verjetnost, da je v kodi vsaj ena sedmica? Zapiši kot decimalno število.",
+        "text": "Iz števil od $1$ do $50$ naključno izberemo eno. Kolikšna je verjetnost, da je izbrano število deljivo s $6$ ali s $7$? Vpiši okrajšan ulomek.",
         "answer": {
-          "type": "number",
-          "value": 0.40951,
-          "decimals": null,
+          "type": "fraction",
+          "num": 7,
+          "den": 25,
           "mistakes": [
             {
-              "value": 0.5,
-              "why": "Verjetnosti za posamezna mesta ne smeš seštevati; uporabi nasprotni dogodek."
+              "value": 0.3,
+              "why": "Števila, deljiva z obema (z $42$), si štel dvakrat: odštej $P(A \\cdot B)$."
             },
             {
-              "value": 0.59049,
-              "why": "To je verjetnost, da sedmice ni; odštej jo od $1$."
+              "value": 0.02,
+              "why": "To je verjetnost produkta (deljivo z obema), ne vsote."
+            },
+            {
+              "value": 0.0224,
+              "why": "Verjetnosti vsote ne dobiš z množenjem; uporabi formulo za verjetnost vsote."
             }
           ]
         },
         "data": {
           "given": [
-            "k = 5",
-            "\\text{števke} = 0, \\ldots, 9"
+            "N = 50",
+            "A = \\text{deljivo s } 6",
+            "B = \\text{deljivo s } 7"
           ],
           "find": [
-            "P(A)"
+            "P(A + B)"
           ]
         },
         "topicId": "MAT-SS-4/verjetnost",
-        "level": 3,
+        "level": 2,
         "generator": "mat-ss4-matura-verjetnost",
-        "seed": 2104
+        "seed": 2121
       }
     ],
     "B": [
       {
-        "text": "Dani sta racionalni števili $p = \\dfrac{7}{9}$ in $q = -\\dfrac{9}{8}$. Koliko je $p + q$? Rezultat okrajšaj.",
+        "text": "Dani sta racionalni števili $p = -\\dfrac{8}{3}$ in $q = -\\dfrac{1}{2}$. Koliko je $p : q$? Rezultat okrajšaj.",
         "answer": {
           "type": "fraction",
-          "num": -25,
-          "den": 72
+          "num": 16,
+          "den": 3
         },
         "data": {
           "given": [
-            "p = \\dfrac{7}{9}",
-            "q = -\\dfrac{9}{8}"
+            "p = -\\dfrac{8}{3}",
+            "q = -\\dfrac{1}{2}"
           ],
           "find": [
-            "p + q"
+            "p : q"
           ]
         },
         "topicId": "MAT-SS-1/racionalna-stevila",
         "level": 1,
         "generator": "dod-mat-ss12-racionalna",
-        "seed": 100002
+        "seed": 100004
       },
       {
         "text": "Temperaturo v stopinjah Fahrenheita izračunamo po obrazcu $F = 1{,}8\\,C + 32$, kjer je $C$ temperatura v stopinjah Celzija. Iz obrazca izrazi $C$ in izračunaj, koliko stopinj Celzija je $77\\ ^\\circ\\mathrm{F}$.",
@@ -523,84 +539,95 @@
         "seed": 102003
       },
       {
-        "text": "Kje leži središče očrtane krožnice v pravokotnem trikotniku?",
-        "answer": {
-          "type": "choice",
-          "options": [
-            "znotraj trikotnika",
-            "na stranici trikotnika",
-            "zunaj trikotnika",
-            "v oglišču trikotnika"
-          ],
-          "index": 1,
-          "why": [
-            "Znotraj trikotnika leži le pri ostrokotnem trikotniku.",
-            null,
-            "Zunaj trikotnika leži pri topokotnem trikotniku.",
-            "V oglišču pravega kota leži višinska točka pravokotnega trikotnika."
-          ]
-        },
-        "data": false,
-        "topicId": "MAT-SS-1/trikotnik",
-        "level": 2,
-        "generator": "dod-mat-ss12-trikotnik",
-        "seed": 103003
-      },
-      {
-        "text": "Na načrtu parka so tri klopi v točkah $A(2, 0)$, $B(2, 5)$ in $C(-2, -4)$. Kolikšen je kot pri oglišču $A$ (kot $\\angle BAC$)? Zaokroži na eno decimalko.",
+        "text": "Stožec ima polmer osnovne ploskve $r = 3\\ \\mathrm{cm}$ in višino $v = 4\\ \\mathrm{cm}$. Izračunaj njegovo površino. Zaokroži na desetinko.",
         "answer": {
           "type": "number",
-          "value": 135,
+          "value": 75.398223686,
           "decimals": 1,
           "mistakes": [
             {
-              "value": 45,
-              "why": "Oba vektorja morata izhajati iz oglišča $A$: $\\vec{AB}$ in $\\vec{AC}$."
+              "value": 65.97344572538566,
+              "why": "V obrazec za plašč sodi stranica stožca $s$, ne višina $v$."
             },
             {
-              "value": 2.356194490192345,
+              "value": 47.12388980384689,
+              "why": "To je le plašč; prištej še osnovno ploskev."
+            },
+            {
+              "value": 122.52211349000193,
+              "why": "Plašč stožca je $\\pi r s$, ne $2\\pi r s$."
+            }
+          ],
+          "unit": "cm²"
+        },
+        "data": {
+          "given": [
+            "r = 3\\ \\mathrm{cm}",
+            "v = 4\\ \\mathrm{cm}"
+          ],
+          "find": [
+            "P"
+          ]
+        },
+        "topicId": "MAT-SS-3/povrsina-in-prostornina-teles",
+        "level": 2,
+        "generator": "mat-ss3-matura-telesa",
+        "seed": 103005
+      },
+      {
+        "text": "Izračunaj kot med vektorjema $\\vec a = (-2, -2, 0)$ in $\\vec b = (3, 0, -4)$. Rezultat v stopinjah zaokroži na eno decimalko.",
+        "answer": {
+          "type": "number",
+          "value": 115.10409025022139,
+          "decimals": 1,
+          "mistakes": [
+            {
+              "value": 64.89590974977861,
+              "why": "Preveri predznak skalarnega produkta."
+            },
+            {
+              "value": 2.008945357379067,
               "why": "To je kot v radianih; zapiši ga v stopinjah."
             }
           ]
         },
         "data": {
           "given": [
-            "A = (2, 0)",
-            "B = (2, 5)",
-            "C = (-2, -4)"
+            "\\vec a = (-2, -2, 0)",
+            "\\vec b = (3, 0, -4)"
           ],
           "find": [
-            "\\angle BAC"
+            "\\varphi"
           ]
         },
         "topicId": "MAT-SS-3/skalarni-produkt",
         "level": 2,
         "generator": "dod-mat-ss34-skalarni-produkt",
-        "seed": 104175
+        "seed": 104000
       },
       {
-        "text": "Graf linearne funkcije $f$ poteka skozi točki $A(-4, -7)$ in $B(-1, -5)$. Izračunaj smerni koeficient $k$.",
+        "text": "Graf linearne funkcije $f$ poteka skozi točki $A(3, 3)$ in $B(6, 8)$. Izračunaj smerni koeficient $k$. Rezultat zapiši kot okrajšan ulomek.",
         "answer": {
           "type": "fraction",
-          "num": 2,
+          "num": 5,
           "den": 3,
           "mistakes": [
             {
-              "value": 1.5,
+              "value": 0.6,
               "why": "V števcu je razlika $y$, v imenovalcu razlika $x$."
             },
             {
-              "value": -0.6666666666666666,
+              "value": -1.6666666666666667,
               "why": "Obe razliki odštej v istem vrstnem redu."
             }
           ]
         },
         "data": {
           "given": [
-            "x_1 = -4",
-            "y_1 = -7",
-            "x_2 = -1",
-            "y_2 = -5"
+            "x_1 = 3",
+            "y_1 = 3",
+            "x_2 = 6",
+            "y_2 = 8"
           ],
           "find": [
             "k"
@@ -609,58 +636,60 @@
         "topicId": "MAT-SS-1/linearna-funkcija",
         "level": 1,
         "generator": "mat-ss1-matura-linearna-funkcija",
-        "seed": 105019
+        "seed": 105022
       },
       {
-        "text": "Ob ravnem zidu želimo z $36\\ \\mathrm{m}$ ograje ograditi pravokotno ogrado (zid je četrta stranica). Kolikšna je največja možna ploščina ograde?",
+        "text": "Graf kvadratne funkcije ima ničli $x_1 = -4$ in $x_2 = 2$ ter seka ordinatno os v točki $N(0, 8)$. Koliko je vodilni koeficient $a$?",
         "answer": {
           "type": "number",
-          "value": 162,
+          "value": -1,
           "decimals": null,
-          "unit": "m²",
           "mistakes": [
             {
-              "value": 81,
-              "why": "Ograja je le na treh stranicah – ob zidu je ni."
+              "value": 1,
+              "why": "Pri vstavljanju x = 0 v (x − x₁)(x − x₂) dobiš x₁ · x₂ – pazi na predznaka."
             },
             {
-              "value": 324,
-              "why": "Vzporedna stranica je L − 2x; poišči teme parabole."
+              "value": 8,
+              "why": "Začetna vrednost ni vodilni koeficient; uporabi ničelno obliko."
             }
-          ],
-          "unitAlternatives": [
-            "m2"
           ]
         },
         "data": {
           "given": [
-            "L = 36\\ \\mathrm{m}"
+            "x_1 = -4",
+            "x_2 = 2",
+            "f(0) = 8"
           ],
           "find": [
-            "S_{\\max}"
+            "a"
           ]
         },
         "topicId": "MAT-SS-2/kvadratna-funkcija",
-        "level": 3,
+        "level": 2,
         "generator": "dod-mat-ss12-kvadratna-funkcija",
         "seed": 106000
       },
       {
-        "text": "Izračunaj brez računala: $\\log_{10} 125 + \\log_{10} 8$.",
+        "text": "Izračunaj brez računala: $2\\log_{5} 10 - \\log_{5} 20$.",
         "answer": {
           "type": "number",
-          "value": 3,
+          "value": 1,
           "decimals": null,
           "mistakes": [
             {
-              "value": 2.123851641,
-              "why": "Vsota logaritmov je logaritem zmnožka, ne vsote."
+              "value": -0.430676558,
+              "why": "Koeficient 2 pred logaritmom je eksponent: 2 log A = log A^2."
+            },
+            {
+              "value": 0,
+              "why": "2 log A ni log(2A), ampak log A^2."
             }
           ]
         },
         "data": {
           "given": [
-            "x = \\log_{10} 125 + \\log_{10} 8"
+            "x = 2\\log_{5} 10 - \\log_{5} 20"
           ],
           "find": [
             "x"
@@ -669,27 +698,29 @@
         "topicId": "MAT-SS-2/logaritem",
         "level": 2,
         "generator": "dod-mat-ss12-logaritem",
-        "seed": 107000
+        "seed": 107022
       },
       {
-        "text": "Izračunaj natančno vrednost $\\cos 225^\\circ$.",
+        "text": "Izračunaj natančno vrednost $\\cos 150^\\circ$.",
         "answer": {
           "type": "choice",
           "options": [
             "-\\frac{1}{2}",
-            "\\frac{\\sqrt{2}}{2}",
-            "-\\frac{\\sqrt{2}}{2}"
+            "\\frac{\\sqrt{3}}{2}",
+            "-\\frac{\\sqrt{3}}{2}",
+            "\\frac{1}{2}"
           ],
           "index": 2,
           "why": [
-            "Si uporabil vrednost za kot $30^\\circ$? Referenčni kot je $45^\\circ$.",
-            "Absolutna vrednost je prava, predznak pa ne. Kakšen predznak ima kosinus v 3. kvadrantu?",
-            null
+            "Si zamenjal sinus in kosinus? Na enotski krožnici je kosinus abscisa, sinus pa ordinata točke.",
+            "Absolutna vrednost je prava, predznak pa ne. Kakšen predznak ima kosinus v 2. kvadrantu?",
+            null,
+            "Preveri referenčni kot (ostri kot do osi $x$) in predznak v kvadrantu."
           ]
         },
         "data": {
           "given": [
-            "\\alpha = 225^\\circ"
+            "\\alpha = 150^\\circ"
           ],
           "find": [
             "\\cos\\alpha"
@@ -698,28 +729,28 @@
         "topicId": "MAT-SS-3/kotne-funkcije-poljubnega-kota",
         "level": 2,
         "generator": "dod-mat-ss34-kotne-funkcije-poljubnega-kota",
-        "seed": 108000
+        "seed": 108024
       },
       {
-        "text": "V geometrijskem zaporedju je $a_2 = 2$ in $a_5 = 16$. Izračunaj vsoto prvih šestih členov.",
+        "text": "V geometrijskem zaporedju je $a_2 = -2$ in $a_5 = 16$. Izračunaj vsoto prvih šestih členov.",
         "answer": {
           "type": "number",
-          "value": 63,
+          "value": -21,
           "decimals": null,
           "mistakes": [
             {
-              "value": 32,
+              "value": -32,
               "why": "To je šesti člen, ne vsota."
             },
             {
-              "value": 126,
+              "value": 42,
               "why": "$a_2$ ni prvi člen; najprej izračunaj $a_1$."
             }
           ]
         },
         "data": {
           "given": [
-            "a_2 = 2",
+            "a_2 = -2",
             "a_5 = 16"
           ],
           "find": [
@@ -729,29 +760,29 @@
         "topicId": "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje",
         "level": 2,
         "generator": "dod-mat-ss34-aritmeticno-in-geometrijsko-zaporedje",
-        "seed": 109002
+        "seed": 109022
       },
       {
-        "text": "Za funkcijo $f(x) = ax^3 - 4x^2 - 2x$ velja $f'(1) = -16$. Koliko je $a$?",
+        "text": "Za funkcijo $f(x) = ax^3 + x^2 + 5x$ velja $f'(2) = -39$. Koliko je $a$?",
         "answer": {
           "type": "number",
-          "value": -2,
+          "value": -4,
           "decimals": null,
           "mistakes": [
             {
-              "value": -10,
+              "value": -6.625,
               "why": "Pogoj velja za odvod: najprej odvajaj, nato vstavi."
             },
             {
-              "value": -6,
+              "value": -12,
               "why": "Odvod $ax^3$ je $3ax^2$: ne pozabi na faktor 3."
             }
           ]
         },
         "data": {
           "given": [
-            "f(x) = ax^3 - 4x^2 - 2x",
-            "f'(1) = -16"
+            "f(x) = ax^3 + x^2 + 5x",
+            "f'(2) = -39"
           ],
           "find": [
             "a"
@@ -760,38 +791,39 @@
         "topicId": "MAT-SS-4/odvod",
         "level": 3,
         "generator": "dod-mat-ss34-odvod",
-        "seed": 110004
+        "seed": 110030
       },
       {
-        "text": "Računalnik naključno sestavi $3$-mestno kodo iz števk od $0$ do $9$ (števke se lahko ponavljajo, koda se lahko začne z ničlo). Kolikšna je verjetnost, da je v kodi vsaj ena sedmica? Zapiši kot decimalno število.",
+        "text": "Iz števil od $1$ do $24$ naključno izberemo eno. Kolikšna je verjetnost, da je izbrano število deljivo s $4$ ali s $5$? Vpiši okrajšan ulomek.",
         "answer": {
-          "type": "number",
-          "value": 0.271,
-          "decimals": null,
+          "type": "fraction",
+          "num": 3,
+          "den": 8,
           "mistakes": [
             {
-              "value": 0.3,
-              "why": "Verjetnosti za posamezna mesta ne smeš seštevati; uporabi nasprotni dogodek."
+              "value": 0.4166666666666667,
+              "why": "Števila, deljiva z obema (z $20$), si štel dvakrat: odštej $P(A \\cdot B)$."
             },
             {
-              "value": 0.729,
-              "why": "To je verjetnost, da sedmice ni; odštej jo od $1$."
+              "value": 0.041666666666666664,
+              "why": "To je verjetnost produkta (deljivo z obema), ne vsote."
             }
           ]
         },
         "data": {
           "given": [
-            "k = 3",
-            "\\text{števke} = 0, \\ldots, 9"
+            "N = 24",
+            "A = \\text{deljivo s } 4",
+            "B = \\text{deljivo s } 5"
           ],
           "find": [
-            "P(A)"
+            "P(A + B)"
           ]
         },
         "topicId": "MAT-SS-4/verjetnost",
-        "level": 3,
+        "level": 2,
         "generator": "mat-ss4-matura-verjetnost",
-        "seed": 111024
+        "seed": 111009
       }
     ]
   }

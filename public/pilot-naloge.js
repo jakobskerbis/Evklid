@@ -588,8 +588,10 @@ function impactHtml(im, { pc, few }) {
     : "";
   return `<h3>${esc(t("pilot.n.quiz"))}</h3>
     <ul class="pilot-sum"><li>${esc(t("pilot.n.quizPre", { n: q.nPre, avg: pc(q.pre) }))}</li>
-      <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff: pp(q.diff) }))}</li>${forms}${orders}</ul>
+      <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff: pp(q.diff) }))}</li>${forms}${orders}
+      ${q.ci95 ? `<li>${esc(t("pilot.n.quizCi", { lo: pp(q.ci95[0]), hi: pp(q.ci95[1]), bal: pp(q.diffBalanced) }))}</li>` : ""}</ul>
     ${slots}
+    ${q.pairedPre != null ? `<p class="muted small">${esc(t("pilot.n.quizNote"))}</p>` : ""}
     ${q.pairedPre == null ? `<p class="muted small">${few}</p>` : ""}
     ${q.allSkip ? `<p class="muted small">${esc(t("pilot.n.quizSkip", { n: q.allSkip }))}</p>` : ""}
     <h3>${esc(t("pilot.n.wtp"))} (${w.n})</h3>
@@ -599,9 +601,10 @@ function impactHtml(im, { pc, few }) {
 // Meritve pilota (N-09): vrnitev, samostojnost, strošek AI na učenca in napake po temah, vse šele od praga (5) učencev.
 function meritveHtml(m, { pc }) {
   if (!m) return "";
-  const head = `<h3>${esc(t("pilot.n.metrics", { n: m.n }))}</h3>`;
+  const date = m.asOf ? new Date(`${m.asOf}T00:00:00Z`).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric", timeZone: "UTC" }) : "–";
+  const head = `<h3>${esc(t("pilot.n.metrics", { n: m.n, date }))}</h3>`;
   if (m.few) return `${head}<p class="muted">${esc(t("pilot.n.few", { n: m.min }))}</p>`;
-  const eur = (x) => Number(x).toLocaleString(locale(), { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 3 });
+  const eur = (x) => (x == null ? "–" : Number(x).toLocaleString(locale(), { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 3 }));
   const ret = Object.entries(m.retention)
     .map(([k, v]) => `<li>${esc(t("pilot.n.ret", { d: k.slice(1), pct: pc(v.pct), a: v.returned ?? "–", b: v.eligible }))}</li>`)
     .join("");

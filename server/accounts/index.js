@@ -2160,7 +2160,7 @@ export function mountAccounts(app, store, opts = {}) {
         weak_points: q("SELECT day, source, topic_id, subject, topic, n, wrong FROM skill_results WHERE student_id = ?", c.id),
         weak_points_seen: q("SELECT item, created_at FROM skill_seen WHERE student_id = ?", c.id),
         topics: q("SELECT * FROM topic_state WHERE student_id = ?", c.id),
-        tasks: q("SELECT topic_id, mode, level, attempts, hint_used, solved, first_try_correct, last_answer, created_at FROM tasks WHERE student_id = ?", c.id),
+        tasks: q("SELECT topic_id, mode, level, attempts, hint_used, solved, first_try_correct, last_answer, created_at, answered_at FROM tasks WHERE student_id = ?", c.id),
         xp: q("SELECT amount, reason, created_at FROM xp_events WHERE student_id = ?", c.id),
         // Prijave napak (server/reports.js): tudi opomba učenca so njegovi podatki.
         reports: q("SELECT message_id, reason, note, question, answer, device, created_at FROM message_reports WHERE student_id = ?", c.id).map(openReport),

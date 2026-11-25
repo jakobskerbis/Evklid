@@ -49,8 +49,11 @@ export function migratePilotImpact(db) {
     );
   `);
   if (!db.prepare("PRAGMA table_info(pilot_quiz)").all().some((c) => c.name === "form")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN form TEXT");
-  // Prejšnji preizkus (pred N-10) se umakne pod pre-v1/post-v1: ostane v izvozu, nov preizkus začne znova.
-  db.prepare("UPDATE pilot_quiz SET phase = phase || '-v1' WHERE form IS NULL AND phase IN ('pre', 'post')").run();
+  // Prejšnji preizkus (pred N-10) se umakne pod pre-v1/post-v1: ostane v izvozu, nov preizkus začne znova. OR IGNORE:
+  // vrstica brez oblike, ki bi jo ob vrnitvi na staro različico napisala stara koda ob obstoječi pre-v1, ne ustavi
+  // zagona; dobi oznako s časom nastanka.
+  db.prepare("UPDATE OR IGNORE pilot_quiz SET phase = phase || '-v1' WHERE form IS NULL AND phase IN ('pre', 'post')").run();
+  db.prepare("UPDATE OR IGNORE pilot_quiz SET phase = phase || '-v1-' || created_at WHERE form IS NULL AND phase IN ('pre', 'post')").run();
   const hasParents = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get();
   if (hasParents)
     db.exec(`
@@ -148,35 +151,37 @@ export function impactReport(db, minGroup) {
   const avg = (xs) => (xs.length ? Math.round((xs.reduce((s, x) => s + x, 0) / xs.length) * 1000) / 1000 : null);
   // »Ne vem« pri vseh nalogah (-1): preizkus ni meritev znanja, zato ni v povprečjih; prikaže se samo število.
   const allSkip = (r) => parse(r.answers, []).every((a) => a === -1);
-  // Paket vzamemo iz VSEH končanih preizkusov po času in jih šele v paketu delimo (samo »Ne vem«, ostali, oblika):
-  // ločeno število po skupini, odvisni od rezultata, bi razkrilo rezultat zadnjega (pregled A4).
+  // Paketi: končane preizkuse vzamemo po času konca, LOČENO za vsako obliko (oz. vrstni red), v paketih po minGroup,
+  // in jih šele v paketu delimo (samo »Ne vem«, ostali). Skupne vrednosti so unija paketov po oblikah. Tako se vsaka
+  // prikazana skupina (skupaj, po obliki, po vrstnem redu, po sklopih) spremeni samo za cel paket ene oblike: iz
+  // razlike dveh poročil se ne da izračunati rezultata posameznika (pregled A4 in pregled 2 PR #1123).
   const preAll = rows.filter((r) => r.phase === "pre");
   const postBy = new Map(rows.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
-  const preBlock = block(preAll, minGroup);
   const order = new Map(rows.map((r, i) => [r, i])); // vrstni red po času konca
   const pairAll = preAll.filter((r) => postBy.has(r.student_id)).sort((a, b) => order.get(postBy.get(a.student_id)) - order.get(postBy.get(b.student_id)));
-  const pairBlock = block(pairAll, minGroup);
+  const preBlocks = Object.fromEntries(QUIZ_FORMS.map((f) => [f, block(preAll.filter((r) => r.form === f), minGroup)]));
+  const pairBlocks = Object.fromEntries(QUIZ_FORMS.map((f) => [f, block(pairAll.filter((r) => r.form === f), minGroup)]));
   const usable = (r) => !allSkip(r) && !allSkip(postBy.get(r.student_id) || r);
   // Pred in po samo pri istih učencih (sicer bi se primerjali različni ljudje).
-  const pre = preBlock.filter((r) => !allSkip(r));
-  const pairs = pairBlock.filter(usable);
+  const preOf = (f) => preBlocks[f].filter((r) => !allSkip(r));
+  const pairsOf = (f) => pairBlocks[f].filter(usable);
+  const pre = QUIZ_FORMS.flatMap(preOf);
+  const pairs = QUIZ_FORMS.flatMap(pairsOf);
+  const diffOf = (r) => pct(postBy.get(r.student_id)) - pct(r);
   const pairStats = (list) => ({
     pre: avg(list.map(pct)),
     post: avg(list.map((r) => pct(postBy.get(r.student_id)))),
-    diff: avg(list.map((r) => pct(postBy.get(r.student_id)) - pct(r))),
+    diff: avg(list.map(diffOf)),
   });
-  // Po obliki (začetni preizkus) in po vrstnem redu (A nato B, B nato A): samo skupine z vsaj minGroup učenci.
-  // Oblika je določena z vrstnim redom začetka, ne z rezultatom, zato to ne razkrije posameznika.
-  const enough = (list) => list.length >= minGroup;
   const byForm = Object.fromEntries(QUIZ_FORMS.map((f) => {
-    const g = pre.filter((r) => r.form === f);
-    return [f, enough(g) ? { n: g.length, avg: avg(g.map(pct)) } : null];
+    const g = preOf(f);
+    return [f, preBlocks[f].length ? { n: g.length, avg: avg(g.map(pct)) } : null];
   }));
   const byOrder = Object.fromEntries(QUIZ_FORMS.map((f) => {
-    const g = pairs.filter((r) => r.form === f);
-    return [`${f}${otherForm(f)}`, enough(g) ? { n: g.length, ...pairStats(g) } : null];
+    const g = pairsOf(f);
+    return [`${f}${otherForm(f)}`, pairBlocks[f].length && g.length ? { n: g.length, ...pairStats(g) } : null];
   }));
-  // Po sklopih kataloga: delež pravilnih na tem mestu prej in po (isti učenci, oba preizkusa).
+  // Po sklopih kataloga: delež pravilnih na tem mestu prej in po (isti učenci, oba preizkusa). Opisno (malo učencev).
   const share = (list, i) => avg(list.map((a) => (a[i] === 1 ? 1 : 0)));
   const slots = pairs.length
     ? QUIZ.slots.map((sl, i) => ({
@@ -185,8 +190,20 @@ export function impactReport(db, minGroup) {
         post: share(pairs.map((r) => parse(postBy.get(r.student_id).answers, [])), i),
       }))
     : null;
-  // Natančno je samo skupno število; štetja po skupinah so samo znotraj paketa.
   const ps = pairs.length ? pairStats(pairs) : { pre: null, post: null, diff: null };
+  // Negotovost: 95-% interval razlike (t ≈ 1,96·SE; pri malo parih je to spodnja meja negotovosti) in razlika kot
+  // povprečje obeh vrstnih redov (če osip naredi skupini A→B in B→A neenaki, razlika oblik ne vpliva nanjo).
+  let ci95 = null;
+  if (pairs.length >= 2) {
+    const d = pairs.map(diffOf);
+    const m = d.reduce((x, y) => x + y, 0) / d.length;
+    const sd = Math.sqrt(d.reduce((x, y) => x + (y - m) ** 2, 0) / (d.length - 1));
+    const h = (1.96 * sd) / Math.sqrt(d.length);
+    ci95 = [Math.round((m - h) * 1000) / 1000, Math.round((m + h) * 1000) / 1000];
+  }
+  const orders = Object.values(byOrder);
+  const diffBalanced = orders.every(Boolean) ? Math.round(((orders[0].diff + orders[1].diff) / 2) * 1000) / 1000 : null;
+  // Natančno je samo skupno število; štetja po skupinah so samo znotraj paketov.
   const quiz = {
     version: QUIZ.version,
     total: QUIZ_LEN,
@@ -198,10 +215,12 @@ export function impactReport(db, minGroup) {
     pairedPre: ps.pre,
     pairedPost: ps.post,
     diff: ps.diff,
+    ci95,
+    diffBalanced,
     byForm,
     byOrder,
     slots,
-    allSkip: preBlock.filter(allSkip).length + pairBlock.filter((r) => !allSkip(r) && allSkip(postBy.get(r.student_id))).length,
+    allSkip: QUIZ_FORMS.reduce((n, f) => n + preBlocks[f].filter(allSkip).length + pairBlocks[f].filter((r) => !allSkip(r) && allSkip(postBy.get(r.student_id))).length, 0),
   };
   let wtp = { n: 0, shown: 0, min: WTP_MIN, pay: null, amount: null };
   try {

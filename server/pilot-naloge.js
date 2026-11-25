@@ -374,8 +374,10 @@ export function pilotTasksMarkdown(r) {
       `## Preizkus znanja (matura MAT, ${q.total} nalog, obliki A in B)`,
       ``,
       `- začetni preizkusi skupaj: ${q.nPre}; povprečje ${pc(q.pre)}`,
-      `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${pp(q.diff)}`,
+      `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${pp(q.diff)}${q.ci95 ? ` (95 % interval ${pp(q.ci95[0])} do ${pp(q.ci95[1])})` : ""}`,
     );
+    if (q.diffBalanced != null) lines.push(`- razlika kot povprečje obeh vrstnih redov (izravna razliko med oblikama): ${pp(q.diffBalanced)}`);
+    lines.push(`- to je napredek udeležencev (vaja v aplikaciji, priprava na maturo, ponovljen preizkus skupaj), brez primerjalne skupine ni učinek samega Evklida; deleži po sklopih so samo opisni`);
     for (const f of Object.keys(q.byForm || {})) if (q.byForm[f]) lines.push(`- začetni preizkus z obliko ${f}: ${q.byForm[f].n}, povprečje ${pc(q.byForm[f].avg)}`);
     for (const k of Object.keys(q.byOrder || {})) if (q.byOrder[k]) lines.push(`- vrstni red ${k[0]} nato ${k[1]}: ${q.byOrder[k].n}, prej ${pc(q.byOrder[k].pre)}, po ${pc(q.byOrder[k].post)}, razlika ${pp(q.byOrder[k].diff)}`);
     if (q.allSkip) lines.push(`- preizkusi samo z »Ne vem« (niso v povprečjih): ${q.allSkip}`);
@@ -386,13 +388,13 @@ export function pilotTasksMarkdown(r) {
   }
   const m = r.meritve;
   if (m) {
-    lines.push(``, `## Meritve pilota (člani: ${m.n})`, ``);
+    lines.push(``, `## Meritve pilota (člani: ${m.n}; tedenski posnetek do ${m.asOf || "–"})`, ``);
     if (m.few) lines.push(`Premalo članov za prikaz (vsaj ${m.min}).`);
     else {
       for (const [k, v] of Object.entries(m.retention)) lines.push(`- vrnitev ${k.slice(1)}. dan in teden po njem: ${v.pct == null ? `– (${v.eligible} upravičenih)` : `${pc(v.pct)} (${v.returned} od ${v.eligible})`}`);
       const i = m.independence;
       lines.push(`- samostojnost (pravilno v 1. poskusu brez namiga in inštruktorja): ${i.pct == null ? `– (učencev ${i.students})` : `${pc(i.pct)} (${i.independent} od ${i.tasks} nalog, ${i.students} učencev)`}`);
-      if (m.ai) lines.push(`- strošek AI na učenca na 30 dni: povprečje ${m.ai.eurPerStudentMonth} €, mediana ${m.ai.medianEurPerStudentMonth} € (z AI ${m.ai.users} od ${m.ai.students})`);
+      if (m.ai) lines.push(`- strošek AI na učenca na 30 dni: povprečje ${m.ai.eurPerStudentMonth ?? "–"} €, mediana ${m.ai.medianEurPerStudentMonth ?? "–"} € (z AI ${m.ai.users} od ${m.ai.students})`);
       if (m.errors.length) {
         lines.push(``, `| Tema | Učencev | Nalog | Napačno v 1. poskusu |`, `|---|---|---|---|`);
         for (const e of m.errors) lines.push(`| ${e.topic} | ${e.students} | ${e.tasks} | ${pc(e.wrongPct)} |`);

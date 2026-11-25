@@ -178,9 +178,10 @@ test("preizkus znanja: odgovor brez enote pri nalogi z enoto šteje, prejšnji p
   assert.ok(i >= 0, "vsaj ena naloga z enoto");
   const t = QUIZ.forms.A[i];
   const opts = { find: t.data?.find, text: t.text, math: MATH };
-  const bare = checkAnswer(t.answer, String(t.answer.value), opts);
-  assert.equal(bare.code, "chk.addUnit", "strežnik doda enoto (kot v preizkusu)");
-  assert.equal(checkAnswer(t.answer, `${t.answer.value} ${t.answer.unit}`, opts).kind, "correct");
+  const v = t.answer.decimals != null ? Number(t.answer.value).toFixed(t.answer.decimals) : String(t.answer.value);
+  assert.equal(checkAnswer(t.answer, v, opts).code, "chk.addUnit", "strežnik doda enoto (kot v preizkusu)");
+  assert.equal(checkAnswer(t.answer, `${v} ${t.answer.unit}`, opts).kind, "correct");
+  assert.equal(rightInput(t), `${v} ${t.answer.unit}`);
   // Stara tabela brez stolpca form z začetim in končanim preizkusom.
   db.exec("DROP TABLE IF EXISTS pilot_quiz");
   db.exec(`CREATE TABLE pilot_quiz (student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE, phase TEXT NOT NULL, topic_id TEXT NOT NULL,
@@ -191,10 +192,15 @@ test("preizkus znanja: odgovor brez enote pri nalogi z enoto šteje, prejšnji p
   migratePilotImpact(db);
   migratePilotImpact(db); // dvakrat brez napake
   assert.deepEqual(db.prepare("SELECT phase, form FROM pilot_quiz ORDER BY phase").all().map((r) => [r.phase, r.form]), [["post-v1", null], ["pre-v1", null]]);
+  // Vrnitev na staro različico in nazaj: stara koda napiše novo »pre« brez oblike ob obstoječi pre-v1; zagon ne pade.
+  db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, created_at) VALUES (?, 'pre', 'x/t', '[]', '[null]', '2026-12-01 10:00:00')").run(sid);
+  migratePilotImpact(db);
+  assert.deepEqual(db.prepare("SELECT phase FROM pilot_quiz ORDER BY phase").all().map((r) => r.phase), ["post-v1", "pre-v1", "pre-v1-2026-12-01 10:00:00"]);
+  assert.equal(quizState(db, sid).pre.started, false);
   const st = quizState(db, sid);
   assert.equal(st.pre.started, false, "nov preizkus začne znova");
   assert.equal(impactReport(db, 1).quiz.nPre, 0, "prejšnji ni v poročilu");
-  assert.equal(exportOtherTables(db, { studentIds: [sid] }).pilot_quiz.length, 2, "prejšnji ostane v izvozu");
+  assert.equal(exportOtherTables(db, { studentIds: [sid] }).pilot_quiz.length, 3, "prejšnji ostane v izvozu");
 });
 
 test("preizkus znanja: skrbnik vidi povprečja, obliki, vrstni red in sklope šele od 5 učencev, pred in po samo pri istih", () => {

@@ -372,7 +372,8 @@ function growthHtml(g, loc) {
       <li><b>${pct(g.activation)}</b> ${esc(t("rast.activated", of(g.activation)))}</li>
       <li><b>${pct(g.d1)}</b> ${esc(t("rast.d1", of(g.d1)))}</li>
       <li><b>${pct(g.d7)}</b> ${esc(t("rast.d7", of(g.d7)))} · ${esc(t("rast.goal", { pct: pc(g.goal.target) }))} <b>${esc(t(`rast.goal.${g.goal.status}`))}</b></li>
-      ${g.d14 ? `<li><b>${pct(g.d14)}</b> ${esc(t("rast.d14", of(g.d14)))}</li><li><b>${pct(g.d30)}</b> ${esc(t("rast.d30", of(g.d30)))}</li>` : ""}
+      ${g.d14 ? `<li><b>${pct(g.d14)}</b> ${esc(t("rast.d14", of(g.d14)))}</li>` : ""}
+      ${g.d30 ? `<li><b>${pct(g.d30)}</b> ${esc(t("rast.d30", of(g.d30)))}</li>` : ""}
       <li><b>${nf(g.weeklyActive)}</b> ${esc(t("rast.wau"))}</li>
       ${g.activeProfiles != null ? `<li><b>${nf(g.activeProfiles)}</b> ${esc(t("rast.activeProfiles"))}</li>` : ""}
     </ul>

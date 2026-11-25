@@ -100,26 +100,48 @@ test("A4-2 starš z dvema profiloma (z gesli) v Računu izbriše fotografije otr
   });
 });
 
-test("A4-3 oblika in »Ne vem«: natančna števila po skupinah ne razkrijejo rezultata zadnjega učenca", () => {
+test("A4-3 oblika, vrstni red in »Ne vem«: iz dveh zaporednih poročil se rezultat posameznika ne da izračunati", () => {
   const db = openDb(":memory:").db;
-  impactReport(db, 3);
-  const add = (i, form, answers) => {
-    const sid = Number(db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run(`U${i}`).lastInsertRowid);
-    const score = answers.filter((x) => x === 1).length;
-    db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at, form) VALUES (?, 'pre', 't', '[]', ?, ?, datetime('now', ?), ?)").run(sid, JSON.stringify(answers), score, `+${i} seconds`, form);
+  impactReport(db, 5);
+  let i = 0;
+  const add = (form, k, phase = "pre", sid = null) => {
+    const id = sid ?? Number(db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run(`U${i}`).lastInsertRowid);
+    const answers = k < 0 ? Array(12).fill(-1) : Array.from({ length: 12 }, (_, j) => (j < k ? 1 : 0));
+    db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at, form) VALUES (?, ?, 't', '[]', ?, ?, datetime('now', ?), ?)").run(
+      id, phase, JSON.stringify(answers), Math.max(0, k), `+${i++} seconds`, form);
+    return id;
   };
-  const row = (k) => Array.from({ length: 12 }, (_, j) => (j < k ? 1 : 0));
-  add(1, "A", row(3));
-  add(2, "B", row(5));
-  add(3, "A", row(4));
-  const r0 = impactReport(db, 3).quiz;
-  add(4, "B", row(12)); // četrti: vse pravilno
-  const r1 = impactReport(db, 3).quiz;
-  assert.deepEqual(r1.byForm, r0.byForm, "iz skupin po obliki se ne vidi rezultat zadnjega");
-  add(5, "A", Array(12).fill(-1));
-  const r2 = impactReport(db, 3).quiz;
-  assert.equal(r2.allSkip, r1.allSkip, "»Ne vem« zadnjega se ne vidi, dokler ni nov paket");
-  assert.deepEqual([r1.shownPre, r2.shownPre], [r0.shownPre, r0.shownPre]);
+  const ids = [];
+  for (let j = 0; j < 10; j++) ids.push(add(j % 2 ? "B" : "A", 3 + (j % 4)));
+  const r0 = impactReport(db, 5).quiz;
+  assert.equal(r0.byForm.A.n, 5);
+  assert.equal(r0.byForm.B.n, 5);
+  // Naslednji štirje A in en B (ta reši vse): nobena prikazana vrednost se ne spremeni, dokler ena oblika nima novega paketa.
+  for (const [f, k] of [["A", 2], ["A", 4], ["A", 6], ["A", 1], ["B", 12]]) {
+    add(f, k);
+    const r = impactReport(db, 5).quiz;
+    assert.deepEqual([r.byForm, r.pre, r.shownPre, r.allSkip], [r0.byForm, r0.pre, r0.shownPre, r0.allSkip], `po ${f}${k}`);
+  }
+  add("A", -1); // peti nov A samo z »Ne vem«: paket A se poveča za pet naenkrat
+  const r1 = impactReport(db, 5).quiz;
+  assert.equal(r1.byForm.B.n, 5, "B se ne spremeni");
+  assert.equal(r1.shownPre - r0.shownPre, 4, "cel paket A (brez »Ne vem«)");
+  assert.equal(r1.allSkip - r0.allSkip, 1, "»Ne vem« se pokaže šele s paketom");
+  // Vrstni red: drugi preizkus prvih petih A in štirih B; B→A se pokaže šele s petim.
+  for (let j = 0; j < 10; j += 2) add("B", 8, "post", ids[j]);
+  const p0 = impactReport(db, 5).quiz;
+  assert.equal(p0.byOrder.AB.n, 5);
+  assert.equal(p0.byOrder.BA, null);
+  for (let j = 1; j < 8; j += 2) {
+    add("A", 9, "post", ids[j]);
+    const p = impactReport(db, 5).quiz;
+    assert.deepEqual([p.byOrder, p.diff, p.slots, p.shownPaired], [p0.byOrder, p0.diff, p0.slots, p0.shownPaired]);
+  }
+  add("A", 9, "post", ids[9]);
+  const p1 = impactReport(db, 5).quiz;
+  assert.equal(p1.byOrder.BA.n, 5);
+  assert.equal(p1.shownPaired, 10);
+  assert.ok(p1.diffBalanced != null && p1.ci95 && p1.ci95[0] <= p1.diff && p1.diff <= p1.ci95[1]);
 });
 
 test("A4-4 anketa: ponovna oddaja (API dovoli) premakne vrstico in razkrije odgovor novega", () => {
