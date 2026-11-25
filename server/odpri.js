@@ -11,7 +11,7 @@
 // Nič ne najde → gumba ni (nikoli napačen gumb). Učenec blokov nikoli ne vidi (meta.js stripMeta in MARKERS).
 import fs from "node:fs";
 import path from "node:path";
-import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
+import { SIM_TOPICS, simsForTopic, LAB_INFO, labKey } from "../public/sim/katalog.js";
 import { TOPIC_CONCEPTS } from "../public/games/learn-link.js";
 import { getTopic, pathKeyFor } from "./curriculum.js";
 import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
@@ -181,12 +181,17 @@ function allSims() {
       x.topics.push(topicId);
       if (!x.titles.includes(d.title)) x.titles.push(d.title);
       x.topicOf[d.title] ||= topicId;
+      // Laboratorij: naslov poskusa, kot ga vidi učenec in ga dobi inštruktor v opombi (server/ucni-kontekst.js).
+      const lab = d.id.startsWith("lab-") && (LAB_INFO[labKey(d.id, d.opts)] || LAB_INFO[d.id])?.title;
+      if (lab && !x.titles.includes(lab)) x.titles.push(lab);
     }
   SIMS = [...map.values()];
   return SIMS;
 }
 
-function findSim(q, settings, canOpen) {
+// prefer: ključ poskusa, iz katerega je učenec odprl klepet (povezave C1): ob ujemanju imena ima prednost pred
+// podobno simulacijo (»Ohmov zakon« → lab-ohm, ne ohm; pregled #1045).
+function findSim(q, settings, canOpen, prefer = "") {
   const my = pathOf(settings);
   let best = null;
   for (const x of allSims()) {
@@ -200,7 +205,7 @@ function findSim(q, settings, canOpen) {
     }
     if (!s0) continue;
     const near = Math.max(0, ...x.topics.map((id) => nearness(getTopic(id)?.path, my)));
-    const s = s0 + near;
+    const s = s0 + near + (prefer && labKey(x.id, x.opts) === prefer ? 3 : 0);
     if (!best || s > best.s) best = { s, x, title };
   }
   if (!best || best.s < 1.5) return null;
@@ -360,7 +365,7 @@ function findFormula(q, settings) {
  * Bloki → gumbi za odjemalca (največ OPEN_MAX, brez podvojenih). canOpen(topicId) pove, ali je interaktivni
  * del teme odklenjen (zaklep kot v učbeniku in Laboratoriju).
  */
-export async function resolveOpen(text, settings, { canOpen = null } = {}) {
+export async function resolveOpen(text, settings, { canOpen = null, prefer = "" } = {}) {
   const out = [];
   const seen = new Set();
   for (const b of parseOpenBlocks(text)) {
@@ -369,7 +374,7 @@ export async function resolveOpen(text, settings, { canOpen = null } = {}) {
     try {
       if (b.kind === "graph") r = { kind: "graph", exprs: b.exprs, ...(b.view && { view: b.view }) };
       else if (b.kind === "sketch") r = { kind: "sketch", spec: b.spec };
-      else if (b.kind === "sim") r = findSim(b.q, settings, canOpen);
+      else if (b.kind === "sim") r = findSim(b.q, settings, canOpen, prefer);
       else if (b.kind === "3d") r = await findModel(b.q, b.del);
       else if (b.kind === "lesson") r = findLesson(b.q, settings);
       else if (b.kind === "game") r = findGame(b.q, settings);
