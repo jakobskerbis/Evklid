@@ -144,3 +144,16 @@ export function loadOurPaper(id) {
   if (!file) return null;
   return JSON.parse(fs.readFileSync(file, "utf8"));
 }
+
+// Teme delov nalog (content/exam-papers/teme/<id>.json: { paper, parts: { "1-A3b": "MAT-SS-2/…" | null } }; označil
+// Opus po besedilu in rešitvi dela, pregledala dva ločena pregledovalca). Tema je tista, katere vaja bi učencu najbolj
+// pomagala, če je del rešil narobe; null = noben del učnega načrta ne ustreza (ne ugibaj po besedah). Brez datoteke {}.
+export function ourPaperTopicTags(id) {
+  if (!ourPaperIds().has(String(id))) return {};
+  try {
+    const j = JSON.parse(fs.readFileSync(path.join(OUR_PAPERS_DIR, "teme", `${id}.json`), "utf8"));
+    return j?.paper === id && j.parts && typeof j.parts === "object" ? j.parts : {};
+  } catch {
+    return {};
+  }
+}

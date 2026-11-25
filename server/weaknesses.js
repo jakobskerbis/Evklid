@@ -14,7 +14,7 @@ import { topicForName } from "./lekcija-za-vprasanje.js";
 import { stopnja } from "../public/stopnja.js";
 import { loadLesson, legacyChecks, legacyClient } from "./textbook.js";
 import { checkNumber, orderOk } from "../public/preveri-se.js";
-import { loadOurPaper } from "./our-papers.js";
+import { loadOurPaper, ourPaperTopicTags } from "./our-papers.js";
 import { partKey } from "../public/our-paper-key.js";
 import { hasGenerator } from "./practice/index.js";
 
@@ -194,12 +194,18 @@ export function paperTopics(id, paper) {
   if (paperMaps.has(id)) return paperMaps.get(id);
   const map = new Map();
   const lvl = PAPER_LEVEL[paper?.exam];
+  const tags = ourPaperTopicTags(id); // označene teme (content/exam-papers/teme) imajo prednost pred ugibanjem po besedah
   if (lvl && paper.subject)
     for (const tk of paper.tasks || [])
       for (const p of tk.parts || []) {
+        const key = partKey(tk, p);
+        if (Object.hasOwn(tags, key) && (tags[key] === null || getTopic(tags[key]))) {
+          if (tags[key]) map.set(key, tags[key]);
+          continue;
+        }
         const text = noMath(`${tk.intro || ""} ${p.text || ""} ${(p.ways || []).map((w) => `${w.title || ""} ${w.text || ""}`).join(" ")}`);
         const topicId = topicForName(text, { ...lvl, subject: paper.subject, school_system: "SI" });
-        if (topicId) map.set(partKey(tk, p), topicId);
+        if (topicId) map.set(key, topicId);
       }
   paperMaps.set(id, map);
   return map;
