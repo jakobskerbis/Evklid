@@ -67,6 +67,14 @@ const server = app.listen(port, () => {
   app.locals.warmStatic?.()
     .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
     .catch(() => {});
+  // 3D modeli stisnjeni z brotli (server/tri-d.js brModeli): enkrat, na disk ob bazi, minuto po zagonu (prednost imajo
+  // prvi obiski strani), ena datoteka naenkrat.
+  setTimeout(() => {
+    const t1 = Date.now();
+    app.locals.warmModeli?.()
+      .then((n) => console.log(`[evklid] 3D modeli stisnjeni (${n}) v ${Date.now() - t1} ms`))
+      .catch((e) => console.warn(`[evklid] brotli 3D: ${e?.message || e}`));
+  }, 60_000).unref();
   // Besedila zaslonov (/i18n/zasloni-sl.js): sestavljena takoj po zagonu, ne ob prvi zahtevi (prebere vse datoteke JS,
   // ~75 ms zasedene niti, ki bi sicer zadržala prvi klik po vsakem ponovnem zagonu).
   setImmediate(() => app.locals.pripraviZasloniSl?.().catch((e) => console.warn(`[evklid] besedila zaslonov: ${e?.message || e}`)));

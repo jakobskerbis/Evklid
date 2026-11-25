@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { pickEncoding } from "./compress.js";
 
@@ -116,6 +117,121 @@ function addonsHandler(root) {
   };
 }
 
+// 3D modeli (GLB) in studijsko okolje (HDR) stisnjeni z brotli (j 25. 11. 2026: »Stisni vse kar je smiselno«, »ali se
+// velikost lahko zmanjša brez izgube kvalitete«): brez izgube, brskalnik datoteko sam razširi v isto vsebino. Srce
+// 6,2 → 4,2 MB, telo-hd 30 → ~20 MB (−32 %). Stisnemo enkrat (kakovost 5: skoraj ista velikost kot 11, ~0,3 s in
+// ~20 MB pomnilnika za 7 MB namesto 20 s in 150 MB) in shranimo na disk ob bazi (Render: /var/data, ostane ob objavi),
+// zato pomnilnik strežnika ne raste. Dokler stisnjene ni, gre datoteka nestisnjena (express.static), stiskanje pa se
+// postavi v vrsto (ena naenkrat, v niti zlib). X-File-Size: prava velikost za trak nalaganja (three FileLoader jo bere
+// pred Content-Length, ki je pri stisnjeni datoteki manjši). Različica v naslovu (?v=, server/tri-d.js modelList) je
+// zgoščena vrednost vsebine, zato sme brskalnik tako datoteko hraniti brez vprašanja strežniku.
+const BR_DATOTEKE = /\.(glb|hdr)$/i;
+const brMapa = () =>
+  process.env.EVKLID_BR_DIR || (process.env.EVKLID_DB ? path.join(path.dirname(process.env.EVKLID_DB), "br-3d") : path.join(os.tmpdir(), "evklid-br-3d"));
+
+export function brModeli(root = modelsDir, { mapa = brMapa(), kakovost = 5 } = {}) {
+  const vrsta = new Map(); // ključ → { file, cilj }
+  let tece = null; // obljuba delavca, dokler vrsta ni prazna
+  const kljuc = (file, st) => crypto.createHash("sha1").update(`${path.relative(root, file)}:${st.size}:${st.mtimeMs}`).digest("hex").slice(0, 24);
+  const cilj = (k) => path.join(mapa, `${k}.br`);
+  function delaj() {
+    if (!tece) tece = obdelaj().finally(() => (tece = null));
+    return tece;
+  }
+  async function obdelaj() {
+    {
+      while (vrsta.size) {
+        const [k, { file, out }] = vrsta.entries().next().value;
+        try {
+          const raw = await fs.promises.readFile(file);
+          const body = await new Promise((res, rej) =>
+            zlib.brotliCompress(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: kakovost, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }, (e, o) => (e ? rej(e) : res(o))),
+          );
+          await fs.promises.mkdir(mapa, { recursive: true });
+          const tmp = `${out}.${process.pid}.tmp`;
+          await fs.promises.writeFile(tmp, body);
+          await fs.promises.rename(tmp, out);
+        } catch (e) {
+          console.warn(`[evklid] brotli 3D ${path.relative(root, file)}: ${e?.message || e}`);
+        }
+        vrsta.delete(k);
+      }
+    }
+  }
+  const postavi = (file, st) => {
+    const k = kljuc(file, st);
+    const out = cilj(k);
+    if (vrsta.has(k) || fs.existsSync(out)) return;
+    vrsta.set(k, { file, out });
+    delaj();
+  };
+  const middleware = (req, res, next) => {
+    if ((req.method !== "GET" && req.method !== "HEAD") || req.headers.range || process.env.EVKLID_COMPRESS === "0") return next();
+    let rel;
+    try {
+      rel = decodeURIComponent(req.path);
+    } catch {
+      return next();
+    }
+    if (!BR_DATOTEKE.test(rel)) return next();
+    const file = path.join(root, rel);
+    if (!file.startsWith(root + path.sep)) return next(); // ../ ven iz mape
+    let st;
+    try {
+      st = fs.statSync(file);
+    } catch {
+      return next();
+    }
+    if (!st.isFile()) return next();
+    if (pickEncoding(req.headers["accept-encoding"]) !== "br") return next(); // gzip modelov skoraj ne zmanjša
+    const k = kljuc(file, st);
+    let bst;
+    try {
+      bst = fs.statSync(cilj(k));
+    } catch {
+      postavi(file, st);
+      return next(); // še ni stisnjena: tokrat nestisnjena
+    }
+    const etag = `"${k}-br"`;
+    res.setHeader("Vary", "Accept-Encoding");
+    res.setHeader("ETag", etag);
+    res.setHeader("Cache-Control", req.query?.v ? "public, max-age=31536000, immutable" : "no-cache");
+    if (req.headers["if-none-match"] === etag) return res.status(304).end();
+    res.setHeader("Content-Type", /\.glb$/i.test(rel) ? "model/gltf-binary" : "application/octet-stream");
+    res.setHeader("Content-Encoding", "br");
+    res.setHeader("Content-Length", bst.size);
+    res.setHeader("X-File-Size", st.size);
+    if (req.method === "HEAD") return res.end();
+    const tok = fs.createReadStream(cilj(k));
+    tok.on("error", () => (res.headersSent ? res.destroy() : next()));
+    tok.pipe(res);
+  };
+  // Po zagonu: stisni vse modele (ki še niso) in pobriši stisnjene kopije starih različic. Vrne obljubo (število).
+  middleware.warm = async () => {
+    const vse = [];
+    const walk = (dir) => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        const p = path.join(dir, e.name);
+        if (e.isDirectory()) walk(p);
+        else if (BR_DATOTEKE.test(e.name)) vse.push(p);
+      }
+    };
+    walk(root);
+    const zive = new Set();
+    for (const f of vse) {
+      const st = fs.statSync(f);
+      zive.add(`${kljuc(f, st)}.br`);
+      postavi(f, st);
+    }
+    await delaj();
+    try {
+      for (const f of fs.readdirSync(mapa)) if (f.endsWith(".br") && !zive.has(f)) fs.rmSync(path.join(mapa, f), { force: true });
+    } catch {}
+    return vse.length;
+  };
+  return middleware;
+}
+
 export function mount3d(app, { csp, modules }) {
   const header = cspFor3d(csp);
   const send = (_req, res) => {
@@ -131,4 +247,7 @@ export function mount3d(app, { csp, modules }) {
   // three: samo izdelana knjižnica in dodatki (examples/jsm), ne cel paket. Izdelano knjižnico (/vendor/three/build)
   // streže server/app.js za stisnjenimi datotekami (brotli, en teden v predpomnilniku), kot ostale knjižnice.
   app.use("/vendor/three/examples/jsm", addonsHandler(path.join(modules, "three", "examples", "jsm")));
+  const modeli = brModeli();
+  app.use("/3d/modeli", modeli);
+  app.locals.warmModeli = () => modeli.warm();
 }
