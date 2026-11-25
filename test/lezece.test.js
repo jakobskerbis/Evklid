@@ -232,6 +232,32 @@ test("ležeč telefon 844 × 390, RTL: polje za odgovor je levo od tipkovnice, n
   });
 });
 
+// Dolg vnos v klepetu odpre okno s celim besedilom (razpri.js): ležeče z odprto tipkovnico je levo od nje, × je tapljiv.
+test("ležeč telefon 844 × 390: okno z dolgim vnosom ni pod tipkovnico", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, L);
+    await p.locator("#input").tap();
+    await p.waitForSelector(".tk:not([hidden])");
+    await p.evaluate(() => {
+      const i = document.querySelector("#input");
+      i.value = "Dolgo vprašanje o enačbah in funkcijah, ki ga je učenec prilepil iz poskusa. ".repeat(8);
+      i.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await p.waitForSelector(".razpri");
+    await p.waitForTimeout(300);
+    const m = await p.evaluate(() => {
+      const tk = document.querySelector(".tk:not([hidden])").getBoundingClientRect();
+      const r = document.querySelector(".razpri").getBoundingClientRect();
+      const x = document.querySelector(".razpri .razpri-x").getBoundingClientRect();
+      const top = document.elementFromPoint(x.left + x.width / 2, x.top + x.height / 2);
+      return { tk: Math.round(tk.left), okno: [Math.round(r.left), Math.round(r.right)], x: !!top?.closest(".razpri-x") };
+    });
+    assert.ok(m.okno[0] >= 0 && m.okno[1] <= m.tk + 1 && m.x, `okno levo od tipkovnice, × tapljiv: ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
 test("iPad 820 × 1180 pokončno: oznake klepeta so cele in izbira načina je tapljiva (UX-102)", opts, async () => {
   await withApp(async (base) => {
     const { ctx, p, errors } = await phone(base, { width: 820, height: 1180 });
