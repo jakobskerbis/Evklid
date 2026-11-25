@@ -4052,16 +4052,16 @@ export const DODATNE_FIZ_SS = [
           );
         }
         const S = r.pick([
-          { obj: "gugalnico", N: [3, 8], t0: [2, 3.5] },
-          { obj: "leseno brv", N: [10, 30], t0: [0.3, 0.7] },
-          { obj: "konec ravnila, vpetega na rob mize,", N: [20, 50], t0: [0.04, 0.1] },
-          { obj: "utež na vzmeti", N: [10, 20], t0: [0.4, 1.2] },
+          { obj: "gugalnico", pr: "jo", N: [3, 8], t0: [2, 3.5] },
+          { obj: "leseno brv", pr: "jo", N: [10, 30], t0: [0.3, 0.7] },
+          { obj: "konec ravnila, vpetega na rob mize,", pr: "ga", N: [20, 50], t0: [0.04, 0.1] },
+          { obj: "utež na vzmeti", pr: "jo", N: [10, 20], t0: [0.4, 1.2] },
         ]);
         const N = r.int(S.N[0], S.N[1]);
         const t = roundHalfUp(N * r.dec(S.t0[0], S.t0[1], 3), 1);
         const nu = N / t;
         return T(
-          `${nm} sune ${S.obj} in jo pusti prosto nihati. S štoparico izmeri, da naredi $${N}$ nihajev v $${qty(tx(t), "s")}$. Kolikšna je lastna frekvenca? Zaokroži na dve decimalki.`,
+          `${nm} sune ${S.obj} in ${S.pr} pusti prosto nihati. S štoparico izmeri, da naredi $${N}$ ${N <= 4 ? "nihaje" : "nihajev"} v $${qty(tx(t), "s")}$. Kolikšna je lastna frekvenca? Zaokroži na dve decimalki.`,
           num(nu, "Hz", 2, [M(t / N, "To je nihajni čas; frekvenca je njegova obratna vrednost."), M(N * t, "Frekvenca je število nihajev, deljeno s časom.")]),
           "Prosto nihalo niha s svojo lastno frekvenco. Frekvenca pove, koliko nihajev naredi v eni sekundi.",
           [`N = ${N}`, dat("t", tx(t), "s")],
@@ -4200,9 +4200,9 @@ export const DODATNE_FIZ_SS = [
         let nu;
         do nu = r.dec(0.3, 8, 1);
         while (Math.abs(nu - nu0) < 0.4);
-        const S = r.pick(["utež na vzmeti", "nitno nihalo", "kovinsko ploščico na vzmeti"]);
+        const [S, pr] = r.pick([["utež na vzmeti", "jo"], ["nitno nihalo", "ga"], ["kovinsko ploščico na vzmeti", "jo"]]);
         return T(
-          `${nm} pritrdi ${S} z lastno frekvenco $${qty(tx(nu0), "Hz")}$ na motorček, ki jo poganja s frekvenco $${qty(tx(nu), "Hz")}$. S kolikšno frekvenco niha nihalo, ko se nihanje ustali? Zaokroži na eno decimalko.`,
+          `${nm} pritrdi ${S} z lastno frekvenco $${qty(tx(nu0), "Hz")}$ na motorček, ki ${pr} poganja s frekvenco $${qty(tx(nu), "Hz")}$. S kolikšno frekvenco niha nihalo, ko se nihanje ustali? Zaokroži na eno decimalko.`,
           num(nu, "Hz", 1, [M(nu0, "Lastna frekvenca velja le za prosto nihalo; vsiljeno nihalo sledi vzbujevalniku."), M((nu + nu0) / 2, "Frekvenci se ne povprečita; ustaljeno nihanje ima frekvenco vzbujevalnika."), M(Math.abs(nu - nu0), "Razlika frekvenc vpliva le na amplitudo, ne na frekvenco nihanja.")]),
           "Razlikuj prosto in vsiljeno nihanje: kaj določa frekvenco, ko motorček ves čas poganja nihalo?",
           [dat("\\nu_0", tx(nu0), "Hz"), dat("\\nu_{vz}", tx(nu), "Hz")],
@@ -4341,7 +4341,7 @@ export const DODATNE_FIZ_SS = [
         if (r.next() < 0.6) {
           const S = r.pick([
             { what: "Struna kitare", L: [0.6, 0.66], Ld: 2, c: [120, 450] },
-            { what: "Struna violine", L: [0.31, 0.33], Ld: 2, c: [200, 900] },
+            { what: "Struna violine", L: [0.31, 0.33], Ld: 2, c: [130, 430] },
             { what: "Žica pašne ograje med drogovoma", L: [3, 8], Ld: 1, c: [40, 120] },
             { what: "Napeta vrv v telovadnici", L: [4, 10], Ld: 1, c: [10, 40] },
             { what: "Jeklenica vremenskega stolpa", L: [10, 30], Ld: 0, c: [60, 150] },
@@ -4520,7 +4520,7 @@ export const DODATNE_FIZ_SS = [
       const nu2 = roundHalfUp(nu1 * 2 ** (s / 12), 1);
       const L2 = ((L * nu1) / nu2) * 100;
       return T(
-        `Prosta struna kitare z nihajočo dolžino $${qty(tx(L), "m")}$ zveni s frekvenco $${nu1}\\ \\mathrm{Hz}$. ${nm} jo pritisne ob prečko, tako da se nihajoči del skrajša in struna zazveni s frekvenco $${qty(tx(nu2), "Hz")}$. Kako dolg je zdaj nihajoči del strune? Sila v struni se ne spremeni. Rezultat zapiši v cm in zaokroži na eno decimalko.`,
+        `Prazna struna kitare z nihajočo dolžino $${qty(tx(L), "m")}$ zveni s frekvenco $${nu1}\\ \\mathrm{Hz}$. ${nm} jo pritisne ob prečko, tako da se nihajoči del skrajša in struna zazveni s frekvenco $${qty(tx(nu2), "Hz")}$. Kako dolg je zdaj nihajoči del strune? Sila v struni se ne spremeni. Rezultat zapiši v cm in zaokroži na eno decimalko.`,
         num(L2, "cm", 1, [M(((L * nu2) / nu1) * 100, "Višji ton pomeni krajšo struno: frekvenca je obratno sorazmerna z dolžino."), M((L - (L * nu1) / nu2) * 100, "To je del strune med prečko in koncem, ki ne niha."), M((L * nu1) / nu2, "Rezultat pretvori v centimetre.")]),
         "Hitrost valovanja se ne spremeni, zato je frekvenca obratno sorazmerna z dolžino nihajočega dela.",
         [dat("L", tx(L), "m"), dat("\\nu_1", nu1, "Hz"), dat("\\nu_1'", tx(nu2), "Hz")],
@@ -4568,21 +4568,22 @@ export const DODATNE_FIZ_SS = [
         const lam = r.dec(S.l[0], S.l[1], S.ld || 1);
         const c = r.dec(S.c[0], S.c[1], S.ld ? 2 : 1);
         const t0 = lam / c;
+        const td = S.ld ? 3 : 2;
         return T(
-          `${nm} na posnetku ${S.what} odčita valovno dolžino $${qty(tx(lam), "m")}$. Valovi potujejo s hitrostjo $${qty(tx(c), "m/s")}$. S kolikšnim nihajnim časom niha ${S.obj}? Zaokroži na dve decimalki.`,
-          num(t0, "s", 2, [M(c / lam, "To je frekvenca; nihajni čas je njena obratna vrednost."), M(lam * c, "V enem nihajnem času val prepotuje eno valovno dolžino: $t_0 = \\lambda/c$.")]),
+          `${nm} na posnetku ${S.what} odčita valovno dolžino $${qty(tx(lam), "m")}$. Valovi potujejo s hitrostjo $${qty(tx(c), "m/s")}$. S kolikšnim nihajnim časom niha ${S.obj}? Zaokroži ${dw(td)}.`,
+          num(t0, "s", td, [M(c / lam, "To je frekvenca; nihajni čas je njena obratna vrednost."), M(lam * c, "V enem nihajnem času val prepotuje eno valovno dolžino: $t_0 = \\lambda/c$.")]),
           "V enem nihajnem času se oblika vala premakne za eno valovno dolžino.",
           [dat("\\lambda", tx(lam), "m"), dat("c", tx(c), "m/s")],
           ["t_0"],
           ["t_0 = \\dfrac{\\lambda}{c}"],
-          [`V času $t_0$ se oblika premakne za $\\lambda$: $c = \\dfrac{\\lambda}{t_0}$.`, `$t_0 = \\dfrac{${tx(lam)}}{${tx(c)}}\\ \\mathrm{s} ${res(t0, 2, "s")}$`],
+          [`V času $t_0$ se oblika premakne za $\\lambda$: $c = \\dfrac{\\lambda}{t_0}$.`, `$t_0 = \\dfrac{${tx(lam)}}{${tx(c)}}\\ \\mathrm{s} ${res(t0, td, "s")}$`],
         );
       }
       if (level === 2) {
         if (r.next() < 0.55) {
           const dir = r.pick(["desno", "levo"]);
           const side = r.pick(["desno", "levo", "vrh"]);
-          const obj = r.pick(["Račka", "Boja", "Plovec", "Odpadli list"]);
+          const obj = r.pick(["Rdeča pentlja", "Ščipalka", "Barvna pika", "Košček traku"]);
           const where = side === "vrh" ? "ravno na vrhu vala" : `malo ${side} od najbližjega vrha, na pobočju vala`;
           const front = side === dir;
           const up = "Dviga se.";
@@ -4596,11 +4597,11 @@ export const DODATNE_FIZ_SS = [
           };
           if (side === "vrh") why[up] = "Na vrhu je delec v skrajni legi in ta hip miruje.";
           const wrong = [up, down, rest].filter((x) => x !== ok).map((x) => [x, why[x]]);
-          wrong.push([`Premika se v ${dir} skupaj z valom.`, "Pri prečnem valovanju delci nihajo gor in dol; v smeri širjenja se premika oblika vala, ne voda."]);
+          wrong.push([`Premika se v ${dir} skupaj z valom.`, "Pri prečnem valovanju delci vrvi nihajo gor in dol; v smeri širjenja se premika oblika vala, ne vrv."]);
           return T(
-            `Valovi na jezeru potujejo v ${dir}. ${obj} je ta trenutek ${where}. Kako se ${obj.toLowerCase()} ta trenutek giblje?`,
+            `Po dolgi napeti vrvi potuje prečno valovanje v ${dir}. ${obj} na vrvi je ta trenutek ${where}. Kako se ${obj.toLowerCase()} ta trenutek giblje?`,
             choice(r, ok, wrong),
-            "Premakni obliko vala za malo v smeri širjenja in poglej, ali je na istem mestu gladina zdaj višje ali nižje.",
+            "Premakni obliko vala za malo v smeri širjenja in poglej, ali je vrv na istem mestu zdaj višje ali nižje.",
             [`\\text{smer širjenja} = \\text{v ${dir}}`, side === "vrh" ? "\\text{lega} = \\text{na vrhu}" : `\\text{lega} = \\text{${side} od vrha}`],
             ["\\text{smer gibanja}"],
             ["\\Delta x = c\\,\\Delta t"],
@@ -4693,7 +4694,7 @@ export const DODATNE_FIZ_SS = [
         const proj = R.L[1];
         const multi = R.R.find((p) => p.k > 1);
         const mist = askA
-          ? [M(ans - proj.A, "Na levi strani upoštevaj tudi vpadni delec."), multi ? M(ans + multi.k - 1, `Nastane ${multi.k} nevtronov; vsak ima masno število 1.`) : null]
+          ? [M(ans - proj.A, "Na levi strani upoštevaj tudi vpadni delec."), multi ? M(ans + multi.k - 1, `${multi.k === 2 ? "Nastaneta 2 nevtrona" : `Nastanejo ${multi.k} nevtroni`}; vsak ima masno število 1.`) : null]
           : [M(ans - proj.Z, "Na levi strani upoštevaj tudi naboj vpadnega delca."), M(X.A, "Vprašanje sprašuje po vrstnem (protonskem) številu, ne po masnem.")];
         return T(
           `${nm} v zapisu jedrske reakcije $${eqX(R)}$ ne prepozna delca $\\mathrm{X}$. Kolikšno je ${askA ? "masno število $A$" : "vrstno število $Z$"} delca $\\mathrm{X}$?`,
@@ -4795,9 +4796,9 @@ export const DODATNE_FIZ_SS = [
       const UMEV = "1\\ \\mathrm{u} \\cdot c^2 = 931{,}5\\ \\mathrm{MeV}";
       if (level === 1) {
         if (r.next() < 0.5) {
-          const dm = r.dec(0.0005, 0.02, 6);
+          const [ctx, lo, hi] = r.pick([["Pri neki jedrski reakciji z obstreljevanjem", 0.0005, 0.01], ["Pri zlitju dveh lahkih jeder", 0.003, 0.02], ["Pri razpadu alfa", 0.0045, 0.009], ["Pri reakciji, ki jo sproži počasen nevtron", 0.0025, 0.007]]);
+          const dm = r.dec(lo, hi, 6);
           const W = dm * U;
-          const ctx = r.pick(["Pri neki jedrski reakciji z obstreljevanjem", "Pri zlitju dveh lahkih jeder", "Pri razpadu alfa", "Pri reakciji, ki jo sproži počasen nevtron"]);
           return T(
             `${ctx} je skupna masa produktov za $${qty(fm(dm), "u")}$ manjša od mase začetnih delcev. Koliko energije se sprosti? ($1\\ \\mathrm{u}$ ustreza $931{,}5\\ \\mathrm{MeV}$.) Zaokroži na dve decimalki.`,
             num(W, "MeV", 2, [M(dm, "Masni primanjkljaj pretvori v energijo: pomnoži ga z $931{,}5\\ \\mathrm{MeV/u}$."), M(-W, "Produkti so lažji, zato se energija sprosti: rezultat je pozitiven.")]),
@@ -4881,7 +4882,7 @@ export const DODATNE_FIZ_SS = [
         const ans = askA ? Wa : Wy;
         const d = askA ? 2 : 3;
         return T(
-          `Mirujoče jedro ${A.name} razpade z razpadom alfa: $${nuc(...A.p)} \\rightarrow ${nuc(...A.d)} + ${nuc(4, 2, "He")}$. Atomske mase: $M(\\mathrm{${A.p[2]}}) = ${qty(fm(A.mp), "u")}$, $M(\\mathrm{${A.d[2]}}) = ${qty(fm(A.md), "u")}$, $M(\\mathrm{He}) = ${qty("4{,}002603", "u")}$; $1\\ \\mathrm{u}$ ustreza $931{,}5\\ \\mathrm{MeV}$. Kolikšno kinetično energijo dobi ${askA ? "delec alfa" : "odrinjeno jedro"}? Zaokroži na ${askA ? "dve" : "tri"} decimalke.`,
+          `Mirujoče jedro ${A.name} razpade z razpadom alfa: $${nuc(...A.p)} \\rightarrow ${nuc(...A.d)} + ${nuc(4, 2, "He")}$. Atomske mase: $M(\\mathrm{${A.p[2]}}) = ${qty(fm(A.mp), "u")}$, $M(\\mathrm{${A.d[2]}}) = ${qty(fm(A.md), "u")}$, $M(\\mathrm{He}) = ${qty("4{,}002603", "u")}$; $1\\ \\mathrm{u}$ ustreza $931{,}5\\ \\mathrm{MeV}$. Kolikšno kinetično energijo dobi ${askA ? "delec alfa" : "odrinjeno jedro"}? Zaokroži ${dw(d)}.`,
           num(ans, "MeV", d, askA ? [M(W, "Del sproščene energije dobi tudi odrinjeno jedro."), M(Wy, "To je energija jedra; lažji delec alfa dobi večji del.")] : [M(Wa, "To je energija delca alfa; težko jedro dobi le majhen del."), M(W, "Večino energije odnese lažji delec alfa."), M((W * 4) / A.d[0], "Deli z vsoto mas obeh produktov, ne le z maso jedra.")]),
           "Najprej izračunaj reakcijsko energijo. Gibalni količini produktov sta enako veliki, zato lažji delec dobi več kinetične energije.",
           [`M(\\mathrm{${A.p[2]}}) = ${qty(fm(A.mp), "u")}`, `M(\\mathrm{${A.d[2]}}) = ${qty(fm(A.md), "u")}`, "M(\\mathrm{He}) = 4{,}002603\\ \\mathrm{u}", UMEV],
@@ -4902,7 +4903,7 @@ export const DODATNE_FIZ_SS = [
       const mug = N * 3.9e-25 * 1e9;
       return T(
         `${nm} si zamisli, da bi $${qty(tx(mv), "kg")}$ vode segrel${g(nm, "", "a")} za $${dT}\\ \\mathrm{K}$ z energijo cepitve urana-235. Pri vsaki cepitvi se sprosti $${W1}\\ \\mathrm{MeV}$. Koliko urana-235 bi bilo treba razcepiti? ($c_v = 4200\\ \\mathrm{J/(kg\\,K)}$, $1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}$, masa jedra urana-235 je $3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg}$) Rezultat zapiši v µg in zaokroži na dve decimalki.`,
-        num(mug, "µg", 2, [M(mug * 1e6, "Energijo cepitve pretvori v J: $1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}$."), M(mug / 1000, "$1\\ \\mathrm{kg} = 10^9\\ \\mathrm{\\mu g}$.")]),
+        num(mug, "µg", 2, [M(mug * MEV_J, "Energijo cepitve pretvori v J: $1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}$."), M(mug / 1000, "$1\\ \\mathrm{kg} = 10^9\\ \\mathrm{\\mu g}$.")]),
         "Izračunaj toploto za vodo, nato število potrebnih cepitev in iz njega maso urana.",
         [dat("m_v", tx(mv), "kg"), dat("\\Delta T", dT, "K"), dat("W_1", W1, "MeV"), "c_v = 4200\\ \\mathrm{J/(kg\\,K)}", "1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}", "m_1 = 3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg}"],
         ["m_U"],
@@ -4939,6 +4940,7 @@ export const DODATNE_FIZ_SS = [
         const Q = r.pick([
           {
             q: "Kaj je naloga moderatorja (vode) v reaktorju v Krškem?",
+            h: "Pomisli, kako hitri so nevtroni, ki nastanejo pri cepitvi, in kakšni nevtroni najlažje razcepijo uran-235.",
             ok: "Upočasni hitre nevtrone, da lažje razcepijo uran-235.",
             wrong: [
               ["Vpija nevtrone in tako uravnava verižno reakcijo.", "Nevtrone vpijajo kontrolne palice in bor; moderator jih upočasnjuje."],
@@ -4948,6 +4950,7 @@ export const DODATNE_FIZ_SS = [
           },
           {
             q: "Kaj delajo kontrolne palice iz srebra, indija in kadmija?",
+            h: "Pomisli, kako palice, potisnjene globlje v sredico, zmanjšajo število cepitev v naslednji generaciji.",
             ok: "Vpijajo nevtrone.",
             wrong: [
               ["Upočasnjujejo nevtrone.", "To dela moderator (voda); palice nevtrone vpijajo."],
@@ -4957,6 +4960,7 @@ export const DODATNE_FIZ_SS = [
           },
           {
             q: "Reaktor deluje s stalno močjo. Kolikšen je faktor množenja $k$?",
+            h: "Faktor množenja pove, kolikokrat več cepitev je v naslednji generaciji kot v prejšnji.",
             ok: "k = 1",
             wrong: [
               ["k > 1", "Pri $k > 1$ število cepitev narašča in moč raste."],
@@ -4966,6 +4970,7 @@ export const DODATNE_FIZ_SS = [
           },
           {
             q: "Zakaj voda v primarnem krogu pri okoli 300 °C ne zavre?",
+            h: "Pomisli, od česa je odvisno vrelišče vode.",
             ok: "Ker je pod visokim tlakom, okoli 155 bar.",
             wrong: [
               ["Ker je v njej raztopljena borova kislina.", "Bor vpija nevtrone; vrelišča skoraj ne spremeni."],
@@ -4975,6 +4980,7 @@ export const DODATNE_FIZ_SS = [
           },
           {
             q: "Zakaj gorivo za reaktor obogatijo?",
+            h: "Pomisli, kateri izotop urana počasni nevtroni cepijo in koliko ga je v naravnem uranu.",
             ok: "Da vsebuje več urana-235 (okoli 4 % namesto 0,7 %), ki ga počasni nevtroni cepijo.",
             wrong: [
               ["Da vsebuje več urana-238, ki se lažje cepi.", "Počasni nevtroni cepijo uran-235, ne uran-238."],
@@ -4983,7 +4989,7 @@ export const DODATNE_FIZ_SS = [
             ],
           },
         ]);
-        return T(`${nm} se pripravlja na maturo. ${Q.q}`, choice(r, Q.ok, Q.wrong), "Ločuj: moderator upočasnjuje, kontrolne palice in bor vpijajo, hladilo odnaša toploto.", ["\\text{reaktor} = \\text{tlačnovodni}"], ["\\text{vloga dela}"], ["k = \\dfrac{N_2}{N_1}"], [`Pravilno: ${Q.ok}`, "Moderator upočasnjuje nevtrone, kontrolne palice in bor jih vpijajo, pri $k = 1$ je moč stalna."]);
+        return T(`${nm} se pripravlja na maturo. ${Q.q}`, choice(r, Q.ok, Q.wrong), Q.h, ["\\text{reaktor} = \\text{tlačnovodni}"], ["\\text{vloga dela}"], ["k = \\dfrac{N_2}{N_1}"], [`Pravilno: ${Q.ok}`, "Moderator upočasnjuje nevtrone, kontrolne palice in bor jih vpijajo, pri $k = 1$ je moč stalna."]);
       }
       if (level === 2) {
         if (r.next() < 0.5) {
@@ -5044,7 +5050,7 @@ export const DODATNE_FIZ_SS = [
       }
       const Pt = r.int(15, 35) * 100;
       const eta = r.dec(0.3, 0.36, 2);
-      const dT = r.dec(1, 3, 1);
+      const dT = r.dec(6, 12, 1);
       const Po = Pt * (1 - eta);
       const q = (Po * 1e6) / (4200 * dT) / 1000;
       return T(
