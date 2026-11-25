@@ -22,6 +22,7 @@ export function labOhm(el, { load = "R100" } = {}) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
   const B = new OhmBench({ seed: zap.seed });
   B.load = load in LOADS ? load : "R100";
+  el._labBench = B; // maturitetni poskus (lab-matura.js): pravi upor upornika 100 Ω (toleranca ±5 %, novo seme)
   const svg = svgBox(400, 250, "lab-circuit");
   svg.setAttribute("aria-label", "Električni krog");
   const log = eventLog();

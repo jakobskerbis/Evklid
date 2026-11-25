@@ -38,6 +38,19 @@ export const MATURA_SPOMLADI = ["2027-05-29"];
 // Prvi rok mature od danes naprej ali "" (za tisto leto datuma še ni).
 export const maturaDatum = (today = null) => MATURA_SPOMLADI.find((d) => daysUntil(d, today) >= 0) || "";
 
+// NPZ po navodilih ministrstva o šolskem koledarju (gov.si, »Navodila o šolskem koledarju 2026/27 – NPZ«): matematika
+// za 6. in 9. razred, tretji predmet 9. razreda (FIZ, KEM, BIO). 2026/27: četrtek 1. 4. 2027 in sreda 24. 3. 2027.
+// Vsako leto dopiši nov rok.
+export const NPZ_ROKI = [{ MAT: "2027-04-01", tretji: "2027-03-24" }];
+// Uradni datum izpita s strani »NPZ in matura« (od danes naprej) ali "": matura in poklicna matura = začetek
+// spomladanskega roka (točen dan predmeta objavi RIC pozneje), NPZ = dan predmeta.
+export function uradniDatum(exam, subject, today = null) {
+  if (exam === "MATURA" || exam === "POKLICNA") return maturaDatum(today);
+  const key = subject === "MAT" ? "MAT" : exam === "NPZ9" && ["FIZ", "KEM", "BIO"].includes(subject) ? "tretji" : "";
+  if ((exam !== "NPZ6" && exam !== "NPZ9") || !key) return "";
+  return NPZ_ROKI.map((r) => r[key]).find((d) => d && daysUntil(d, today) >= 0) || "";
+}
+
 // Maturant (j, 20. 11. 2026): 4. letnik srednje šole v Sloveniji pri matematiki ima cilj matura z datumom spomladanskega
 // roka (raven ostane v curriculum_level: »4. letnik OR/VR«, »še ne vem« = »4. letnik«). Opomnika (in e-pošte
 // staršu) samodejno ne vklopimo; vklopi ga učenec v Nastavitvah. Vrne popravek nastavitev ali {}.

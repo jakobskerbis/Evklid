@@ -295,6 +295,9 @@ test("Ask the tutor from an experiment or a 3D model: the chat opens with the qu
   const lab = read("public/laboratorij.js");
   assert.match(lab, /x\.locked \|\| !D\.askTutor \? "" : `<button type="button" class="secondary lab-ask" data-lab-ask>/);
   assert.match(lab, /if \(!x \|\| x\.locked\) return;/);
+  // Med maturitetnim poskusom (lab-matura.js → mount.dataset.matura) inštruktor ne pomaga: gumb skrit, klik ne odpre klepeta.
+  assert.match(lab, /if \(mount\?\.dataset\.matura === "tece"\) return;/);
+  assert.match(read("public/lab.css"), /\.lab-stage:has\(\.lab-mount\[data-matura="tece"\]\) \.lab-ask \{ display: none; \}/);
   assert.match(lab, /D\.askTutor\?\.\(t\("lab\.askText", \{ title: x\.title \}\), x\.title, kontekst\)/);
   // Sporočilo iz okvirja /3d: naslov za vrnitev gre v askTutor.
   const uci = read("public/uci-se.js");

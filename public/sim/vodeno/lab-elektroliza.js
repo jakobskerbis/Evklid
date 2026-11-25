@@ -20,7 +20,7 @@ export function polnilo(dn) {
 }
 
 // Ujet zrak (polnjenje z zaprto pipo): odpiranje pipe ga izpusti (»Pipa levo je odprta: plin je ušel …«).
-function zrakIzpuscen(dn, p) {
+export function zrakIzpuscen(dn, p) {
   if (!/zrak je ostal ujet/.test(p.t)) return true;
   const po = dn.slice(p.k + 1);
   const L = po.some((t) => /^Pipa levo je odprta: plin je ušel/.test(t)), D = po.some((t) => /^Pipa desno je odprta: plin je ušel/.test(t));
@@ -29,7 +29,7 @@ function zrakIzpuscen(dn, p) {
 
 // Dogodek po zadnjem polnjenju: dogodek iz prejšnjega polnjenja (npr. pomotoma natočena destilirana voda pred korakom 1)
 // ne sme kasneje sam opraviti koraka.
-function poPolnilu(c, re) {
+export function poPolnilu(c, re) {
   const p = polnilo(c.dnevnik);
   return !!p && c.dnevnik.slice(p.k + 1).some((t) => re.test(t));
 }

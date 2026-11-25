@@ -178,6 +178,7 @@ export function labHitrost(el, opts = {}) {
   const sd = seme();
   const T = new MarmorBench({ seed: sd }).lab.T; // ena učilnica: vsi štirje poskusi pri isti sobni temperaturi
   const Bs = { marmor: new MarmorBench({ seed: sd, T }), mg: new MagnezijBench({ seed: sd + 1, T }), tio: new TiosulfatBench({ seed: sd + 2, T }), h2o2: new PeroksidBench({ seed: sd + 3, T }) };
+  el._labBench = Bs; // maturitetni poskus (lab-matura.js): matura/lab-hitrost.js (aktivacijska energija tiosulfata, Bs.tio)
   let mode = "marmor", speed = 1, interval = 30, nextAuto = interval, asked = false;
   const W = 400, H = 300, S = 8, yB = 268;
   const svg = svgBox(W, H, "lab-bench lab-ek lab-rk lab-rk-hit");
@@ -274,6 +275,7 @@ export function labHitrost(el, opts = {}) {
       : "Izmeri izgubo mase marmorja v 0,5; 1 in 2 mol/L HCl in iz začetnih hitrosti določi red reakcije glede na kislino. Pri tiosulfatu izmeri čas izginotja križa pri petih koncentracijah in dveh temperaturah: je 1/t sorazmeren s c in kolikokrat se hitrost poveča pri 10 °C višji temperaturi?",
   });
   el.classList.add("lab");
+  el.querySelector(".lab-notes")?.classList.add("lab-rk-viri"); // viri povedo Ea: maturitetni poskus jih med nalogo skrije
 
   const B = () => Bs[mode];
   function sync() {

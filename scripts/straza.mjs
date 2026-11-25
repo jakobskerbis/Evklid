@@ -56,6 +56,9 @@ export function presojaStanja(j, now = Date.now()) {
   if (j.ai?.deluje === false) napake.push(`inštruktor AI ne dela (zadnja napaka: ${j.ai.vrsta}, zaporednih ${j.ai.zapored}; skrbnik dobi e-pošto)`);
   if (j.disk && j.disk.delez >= j.disk.opozorilo) napake.push(`disk z bazo je zaseden ${j.disk.delez} % (prosto ${j.disk.prostoMb} MB)`);
   if (j.zagoni?.zadnji && sveze(j.zagoni.zadnji)) napake.push(`strežnik se je nepričakovano znova zagnal ob ${j.zagoni.zadnji} (${j.zagoni.razlog})`);
+  // SymPy (server/cas.js) se ni zagnal: skener in inštruktor preverjata samo numerično, nobena AI rešitev ne more
+  // dobiti statusa »Preverjeno« (skener P3-3). Ob zagonu strežnika je deluje še null (se šele zaganja).
+  if (j.cas?.vklopljen && j.cas.deluje === false) napake.push("SymPy (točno preverjanje rešitev) na strežniku ne teče: skener lahko pokaže največ »Numerično preverjeno«");
   if (j.pdfUcbenika?.napaka) opozorila.push(`PDF učbenika: ${j.pdfUcbenika.napaka} (aplikacija ponudi tiskanje)`);
   if (j.kopije && !j.kopijeZunaj) opozorila.push("kopija baze zunaj Renderja (R2) ni nastavljena");
   return { napake, opozorila };
