@@ -1064,6 +1064,8 @@
   "sc.cas.symHint": "Term mit Buchstaben: wähle, was ich damit machen soll.",
   "sc.cas.eqHint": "Gleichung mit Buchstaben: wähle, nach welchem Buchstaben ich auflöse.",
   "sc.cas.radians": "Im Bogenmaß gerechnet.",
+  "sc.radiansPart": "∫ und d/dx werden im Bogenmaß berechnet, der Rest in Grad.",
+  "sc.radiansPartGrad": "∫ und d/dx werden im Bogenmaß berechnet, der Rest in Gon.",
   "sc.cas.cond": "Gilt für",
   "sc.cas.unsupported": "Diesen Term mit Buchstaben kann ich noch nicht vereinfachen. Ich rechne mit Polynomen und Brüchen, Wurzeln, Winkelfunktionen, Logarithmen und Exponentialfunktionen.",
   "sc.cas.singular": "Die Matrix ist singulär (ihre Determinante ist 0) und hat daher keine Inverse.",

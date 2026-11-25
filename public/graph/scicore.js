@@ -64,10 +64,13 @@ function rewrite(n, ctx) {
       const plain = { ...ctx, plainDer: true };
       const f = rewrite(m.a.items[0], plain);
       const a = r(m.a.items[1]);
-      const d = simplify(diff(f, m.v, ctx));
+      // odvod v točki je v radianih (AUDIT-055): odvod, točka in preverjanje v vozlu »rad« (math.js compile)
+      const rad = ctx.calcRad ? { ...ctx, deg: false, grad: false } : ctx;
+      const d = simplify(diff(f, m.v, rad));
       const at = substitute(d, { [m.v]: a });
       if (ctx.plainDer) return { k: "grp", a: at };
-      return { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: m.v };
+      const call = { k: "call", f: "__ODVOD_V_TOCKI", args: [at, a], fn: f, v: m.v };
+      return ctx.calcRad && (ctx.deg || ctx.grad) ? { k: "rad", a: call } : call;
     }
   });
 }
@@ -111,7 +114,8 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
   const one = grad ? 200 / 180 : deg ? 1 : Math.PI / 180; // 1° v trenutni enoti kota
   const scope = Object.assign(Object.create(null), vars, { [ANS_VAR]: ans, [DEG_VAR]: one, [MIN_VAR]: one / 60, [SEC_VAR]: one / 3600 });
   const defs = {};
-  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope, derCheck: true };
+  // calcRad: ∫ in d/dx v radianih tudi v DEG/GRA (math.js compile, AUDIT-055); ° je tam π/180
+  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope, derCheck: true, calcRad: true, degUnits: { [DEG_VAR]: Math.PI / 180, [MIN_VAR]: Math.PI / 10800, [SEC_VAR]: Math.PI / 648000 } };
   for (const [name, f] of Object.entries(funcs)) {
     try {
       defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma, names: known }), { funcs: names }), ctx), body: null };

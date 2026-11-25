@@ -1265,6 +1265,26 @@ export function integralOf(fText, a, b, { live = false } = {}) {
   return analyze(`∫(${fText};${num(a)};${num(b)})`, { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true, live });
 }
 
+/**
+ * Odvodi in integrali so vedno v radianih (d/dx sin x = cos x, ∫ sin x od 0 do π = 2), tudi v načinu DEG in GRA
+ * (dogovor kalkulatorja, docs/oblikovanje.md »Enota kota«). Isto okolje uporabljata izračun (analyze) in sproten predogled
+ * (sci-vnos.js analyzeLive), da predogled in rezultat nikoli ne pokažeta različnih števil (AUDIT-055).
+ */
+export function calculusEnv(text, env = {}) {
+  if (!(env.deg || env.grad)) return env;
+  const src = String(text ?? "");
+  const rad = { ...env, deg: false, grad: false };
+  if (!/d\/d|∫|'|′/.test(src)) return env;
+  // Cela vrstica je ∫ ali d/dx: v radianih (tudi točna vrednost iz nedoločenega integrala, simbolni odvod). Sicer
+  // (sin(30) + ∫(x; 0; 1)) le notranjost ∫ in d/dx (math.js compile, calcRad); ostanek ostane v izbrani enoti.
+  try {
+    let n = compileLine(src, env)?.ast;
+    while (n?.k === "grp") n = n.a;
+    if (n?.k === "int" || n?.k === "der" || (n?.k === "ufn" && n.d)) return rad;
+  } catch {}
+  return env;
+}
+
 export function analyze(text, env = {}) {
   const comma = env.comma !== false;
   const vars = env.vars || {};
@@ -1309,8 +1329,7 @@ export function analyze(text, env = {}) {
     }
   }
 
-  // odvodi in integrali so vedno v radianih (d/dx sin x = cos x, ∫ sin x od 0 do π = 2), tudi v načinu DEG in GRA
-  if ((env.deg || env.grad) && /d\/d|∫|'/.test(raw)) env = { ...env, deg: false, grad: false };
+  env = calculusEnv(raw, env);
   const pr = polRec(raw, env);
   if (pr) return pr;
   const r = evaluate(raw, env);

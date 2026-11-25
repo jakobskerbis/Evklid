@@ -1064,6 +1064,8 @@
   "sc.cas.symHint": "Betűs kifejezés: válaszd ki, mit csináljak vele.",
   "sc.cas.eqHint": "Betűs egyenlet: válaszd ki, melyik betűt fejezzem ki.",
   "sc.cas.radians": "Radiánban számolva.",
+  "sc.radiansPart": "A ∫ és a d/dx radiánban, a többi fokban számolva.",
+  "sc.radiansPartGrad": "A ∫ és a d/dx radiánban, a többi újfokban számolva.",
   "sc.cas.cond": "Érvényes, ha",
   "sc.cas.unsupported": "Ezt a betűs kifejezést még nem tudom egyszerűsíteni. Tudok számolni polinomokkal és törtekkel, gyökökkel, szögfüggvényekkel, logaritmusokkal és exponenciális függvényekkel.",
   "sc.cas.singular": "A mátrix szinguláris (determinánsa 0), ezért nincs inverze.",

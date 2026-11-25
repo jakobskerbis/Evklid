@@ -996,11 +996,20 @@ function tolerantArg(argNode, a, ctx, lo, hi) {
   };
 }
 
+// Znanstveni kalkulator (ctx.calcRad, AUDIT-055): odvod in integral sta vedno v radianih, tudi v načinu DEG/GRA, a
+// samo znotraj ∫(…) in d/dx(…); ostanek vrstice ostane v izbrani enoti (sin(30) + ∫(x; 0; 1) = 1 v DEG). Kotna
+// stopinja (°, pomožne spremenljivke ctx.degUnits) je znotraj π/180. Grafični kalkulator tega ne vklopi: tam sta
+// odvod in ploščina v enoti osi x (geometrijsko pravilen naklon).
+const radCtx = (ctx) => ({ ...ctx, deg: false, grad: false, inRad: true });
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
   const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
   const c = (n) => compile(n, ctx);
+  // tudi f′(a) (odvod uporabniške funkcije) je odvod: v radianih le on, ne cela vrstica
+  if (ctx.calcRad && (deg || ctx.grad) && (node.k === "der" || node.k === "nder" || node.k === "int" || (node.k === "ufn" && node.d))) return compile(node, radCtx(ctx));
   switch (node.k) {
+    case "rad":
+      return compile(node.a, radCtx(ctx));
     case "num": {
       const v = node.v;
       return () => v;
@@ -1011,6 +1020,10 @@ export function compile(node, ctx = {}) {
     }
     case "var": {
       const name = node.name;
+      if (ctx.inRad && ctx.degUnits && name in ctx.degUnits) {
+        const r = ctx.degUnits[name];
+        return () => r;
+      }
       return (s) => {
         const v = s[name];
         return v === undefined ? NaN : v;
@@ -1143,19 +1156,31 @@ export function compile(node, ctx = {}) {
       // f(2,5) pri f(x) = …: napačno število vrednosti je napaka, ne tiho f(2) (AUDIT-028)
       const known = ctx.funcs?.[name]?.params;
       if (Array.isArray(known) && known.length !== node.args.length) throw new MathError("arity", { f: name, n: known.length });
+      // znotraj ∫ in d/dx (ctx.inRad, AUDIT-055) je tudi telo uporabniške funkcije v radianih: f(x) = sin(x) v DEG
+      // je zunaj sin x°, v ∫(f(x); 0; π) pa sin x (prej je bilo telo vedno prevedeno v enoti vrstice)
+      const rad = !!ctx.inRad;
       return (s) => {
         const def = ctx.funcs?.[name];
         if (!def) return NaN;
+        const dkey = rad ? `r${d}` : d;
         if (d) {
-          const fn = def.derivs?.[d] || (def.derivs ||= {})[d] || null;
+          const fn = def.derivs?.[dkey] || (def.derivs ||= {})[dkey] || null;
           if (!fn) {
             // odvod pripravimo enkrat
             let body = def.ast;
             for (let k = 0; k < d; k++) body = simplify(diff(body, def.params[0], ctx));
-            def.derivs[d] = { body: compile(body, ctx), ast: body };
+            def.derivs[dkey] = { body: compile(body, ctx), ast: body };
           }
         }
-        const body = d ? def.derivs[d].body : def.body;
+        if (rad && !d && !def.radBody) {
+          try {
+            def.radBody = compile(def.ast, ctx);
+          } catch {
+            def.radBody = () => NaN;
+          }
+        }
+        const plain = rad ? def.radBody || def.body : def.body;
+        const body = d ? def.derivs[dkey].body : plain;
         if (depthGuard > 64) return NaN;
         const sc = Object.create(ctx.global || null);
         def.params.forEach((p, i) => (sc[p] = args[i] ? args[i](s) : NaN));
@@ -1168,7 +1193,8 @@ export function compile(node, ctx = {}) {
             return derivCheck((x) => {
               const s2 = Object.create(ctx.global || null);
               s2[p0] = x;
-              return def.body(s2);
+              if (rad && !def.radBody) def.radBody = compile(def.ast, ctx);
+              return (rad ? def.radBody : def.body)(s2);
             }, sc[p0], val);
           }
           return val;

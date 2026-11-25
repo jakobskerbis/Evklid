@@ -1064,6 +1064,8 @@
   "sc.cas.symHint": "Expression with letters: choose what to do with it.",
   "sc.cas.eqHint": "Equation with letters: choose which letter to solve for.",
   "sc.cas.radians": "Calculated in radians.",
+  "sc.radiansPart": "∫ and d/dx are computed in radians, the rest in degrees.",
+  "sc.radiansPartGrad": "∫ and d/dx are computed in radians, the rest in gradians.",
   "sc.cas.cond": "Valid for",
   "sc.cas.unsupported": "I can't simplify this expression with letters yet. I can work with polynomials and fractions, roots, trigonometric functions, logarithms and exponential functions.",
   "sc.cas.singular": "The matrix is singular (its determinant is 0), so it has no inverse.",
