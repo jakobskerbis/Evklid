@@ -28,7 +28,7 @@ const stevilo = (t) =>
     .replace(/(\d)[eE]([+-]?\d+)(?![\d.])/g, "$1*10^($2)");
 
 function values(expr) {
-  const f = fnOf(stevilo(expr).replace(/\bk\b/g, "k"));
+  const f = fnOf(stevilo(expr));
   if (!f) return [];
   const out = [];
   for (const k of [0, 1, -1]) {
