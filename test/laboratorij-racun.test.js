@@ -21,6 +21,9 @@ test("the eight experiments that computed the final result for the student now a
     assert.match(src, /Rr\.odkrito\(/, `${id}: izračun aplikacije ni skrit do rešitve`);
     assert.match(src, /racun: Rr\.stanje\(\)/, `${id}: rešen račun se ne shrani`);
   }
+  // popolni odboj: dnevnik ne pove mejnega kota (iz njega bi učenec dobil n brez računa)
+  const [file, name] = ENGINES["lab-lom"];
+  assert.doesNotMatch((await import(`../public/sim/${file}`))[name].toString(), /mejniKot\(/);
 });
 
 test("local numeric check: decimal comma, relative and absolute tolerance", () => {
@@ -55,6 +58,10 @@ test("unit after the number, nominal and textbook values, feedback without the a
   assert.equal(preveriRacun("9,81", 9.62, { tol: 0.03, nazivno: g }).ok, false);
   assert.equal(preveriRacun("9,8", 9.62, { tol: 0.03, nazivno: g }).ok, false);
   assert.equal(preveriRacun("9,8", 9.79, { tol: 0.03, nazivno: g }).ok, true);
+  // pošten račun blizu napisa ni zavrnjen: bližje meritvam ali v ozkem pasu (tol/2) okoli njih (pregled #1054, 3. krog)
+  assert.equal(preveriRacun("9,77", 9.7, { tol: 0.03, nazivno: g }).ok, true, "prosti pad: premica 9,70, učenec 9,77");
+  assert.equal(preveriRacun("99,6", 98.5, { tol: 0.04, nazivno: R }).ok, true, "Ohm: premica 98,5 Ω, učenec 99,6 Ω iz ene vrstice");
+  assert.equal(preveriRacun("100", 98.5, { tol: 0.04, nazivno: R }).ok, true, "100 Ω je v 1,5 % od meritev (pas 2 %)");
   // odziv ne izda rešitve: ne odstotka ne številke, le približno (blizu, precej, daleč) ali faktor 10ⁿ
   const odz = (x, p, tol = 0.04) => odzivRacuna(preveriRacun(String(x), p, { tol }), tol);
   assert.match(odz(102, 96.2), /blizu/);
@@ -156,11 +163,14 @@ test("student's own calculation in a browser", { timeout: 180000 }, async (t) =>
     assert.equal(slabo.c, "lab-why bad");
     assert.match(slabo.t, /precej razlikuje/);
     assert.doesNotMatch(slabo.t, /\d/, "odziv ne izda rešitve");
-    // star odziv izgine, ko učenec vpiše nov rezultat
+    // star odziv izgine, ko učenec vpiše nov rezultat (tudi »Vpiši število«)
+    await p.locator(".lab-racun input").fill("9");
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-racun .lab-why").hidden), true);
+    assert.match((await vpisi(p, "abc")).t, /Vpiši število/);
     await p.locator(".lab-racun input").fill("9");
     assert.equal(await p.evaluate(() => document.querySelector(".lab-racun .lab-why").hidden), true);
     // vrednost z napisa na uporniku ni rezultat meritev (ko se meritve od nje razlikujejo za več kot 1 %)
-    if (Math.abs(R / 100 - 1) > 0.01) {
+    if (Math.abs(100 / R - 1) > 0.02) {
       const napis = await vpisi(p, "100 Ω");
       assert.equal(napis.c, "lab-why bad");
       assert.match(napis.t, /napis na uporniku/);

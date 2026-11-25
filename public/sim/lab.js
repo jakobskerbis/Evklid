@@ -406,12 +406,15 @@ export function napoved(o) {
 // preveriRacun(vnos, pricakovano, { tol, abs, enota, nazivno }) → null (ni število) ali { ok, x, p, odmik, nazivno? };
 // tol relativno (0,05 = 5 %), abs absolutno; za številom je lahko enota poskusa (»97 Ω«).
 // nazivno: [{ v, kaj }] napis na sestavnem delu ali vrednost iz učbenika (upornik 100 Ω, leča 100 mm, g = 9,81 m/s²).
-// Če je vnos v 0,5 % od take vrednosti, meritve pa se od nje razlikujejo za več kot 1 %, to ni rezultat meritev: ok = false.
+// Vnos je taka vrednost (ok = false), če je v 0,5 % od nje, bližje njej kot vrednosti iz meritev, zunaj ozkega pasu okoli
+// vrednosti iz meritev (tol/2) in se meritve od nje razlikujejo za več kot 1 %. Pošten račun blizu napisa (npr. 99,6 Ω iz ene
+// vrstice ob premici 98,5 Ω, g = 9,77 ob 9,70) tako ni zavrnjen.
 export function preveriRacun(vnos, pricakovano, { tol = 0.05, abs = 0, enota = "", nazivno = [] } = {}) {
   const x = parseStevilo(vnos, enota);
   if (x == null || !Number.isFinite(pricakovano)) return null;
   const d = Math.abs(x - pricakovano), odmik = pricakovano ? d / Math.abs(pricakovano) : d;
-  const n = nazivno.find((q) => Number.isFinite(q?.v) && q.v && Math.abs(x / q.v - 1) <= 0.005 && Math.abs(pricakovano / q.v - 1) > 0.01);
+  const n = nazivno.find((q) => Number.isFinite(q?.v) && q.v && Math.abs(x / q.v - 1) <= 0.005 && Math.abs(pricakovano / q.v - 1) > 0.01 &&
+    Math.abs(x - q.v) < d && odmik > tol / 2);
   if (n) return { ok: false, x, p: pricakovano, odmik, nazivno: n };
   return { ok: d <= Math.max(abs, tol * Math.abs(pricakovano)) + 1e-12, x, p: pricakovano, odmik };
 }
@@ -438,7 +441,8 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
   const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoj rezultat${enota ? ` v ${enota}` : ""}` });
   vnos.addEventListener("keydown", (e) => e.key === "Enter" && preveri());
   const odziv = h("p", { class: "lab-why", "aria-live": "polite", hidden: true });
-  vnos.addEventListener("input", () => odziv.className.includes("bad") && (odziv.hidden = true)); // star odziv ne velja za nov vnos
+  let zacasen = false; // »Ne čisto« ali »Vpiši število«: ne velja več, ko učenec piše nov vnos (rešitev ostane)
+  vnos.addEventListener("input", () => zacasen && (odziv.hidden = true));
   const el = h("section", { class: "lab-q lab-racun", hidden: true },
     h("h4", {}, "Tvoj račun"),
     izbiraVrsta, kaj,
@@ -457,6 +461,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     const c = cilj();
     if (!c) return;
     odkrito.add(c.key);
+    zacasen = false;
     odziv.hidden = false;
     odziv.className = `lab-why ${pravilno ? "ok" : ""}`;
     odziv.innerHTML = pravilno
@@ -469,6 +474,7 @@ export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {
     if (!c) return;
     const r = preveriRacun(vnos.value, c.vrednost, { tol, abs, enota, nazivno: c.nazivno || [] });
     odziv.hidden = false;
+    zacasen = true;
     if (!r) return (odziv.className = "lab-why"), (odziv.textContent = `Vpiši število${enota ? ` v ${enota}` : ""} (npr. 98,5).`);
     if (r.ok) return odkrij(true);
     odziv.className = "lab-why bad";
