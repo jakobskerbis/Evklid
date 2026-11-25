@@ -449,7 +449,7 @@ export const SCHOOL_SYSTEMS = {
     ssFrom: 9,
     marks: { scale: "1–10", best: "10", pass: "6 (sufficiente)", note: "esame di Stato: 60–100 punti (centesimi)" },
     exams: "esame di Stato conclusivo del primo ciclo (3ª media) and esame di Stato / maturità (5º anno)",
-    help: "emergency 112",
+    help: "Telefono Azzurro 19696, emergency 112",
   },
   HU: {
     name: "Magyarország",
@@ -467,7 +467,7 @@ export const SCHOOL_SYSTEMS = {
     ssFrom: 9,
     marks: { scale: "1–5", best: "5 (jeles)", pass: "2 (elégséges)" },
     exams: "érettségi (end of grade 12)",
-    help: "emergency 112",
+    help: "Kék Vonal 116 111, emergency 112",
   },
   CH: {
     name: "Schweiz / Suisse",

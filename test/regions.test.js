@@ -259,3 +259,14 @@ test("path heading keeps the grade names of the student's own system", async () 
   assert.equal(pathLevelText(t, own, {}), "Matematika, 1. razred SŠ");
   assert.equal(pathLevelText(t, { label: "Matematika, 8. razred", subject: "MAT", school: "OS" }, {}), "Mathematics, Grade 8");
 });
+
+test("new European systems name a free child helpline next to 112 (j 25. 11.)", () => {
+  const help = { DE: "116 111", AT: "147", HR: "116 111", IT: "19696", HU: "116 111" };
+  for (const [id, number] of Object.entries(help)) {
+    const h = SCHOOL_SYSTEMS[id]?.help || "";
+    assert.ok(h.includes(number), `${id}: ${h}`);
+    assert.ok(h.includes("112"), `${id}: ${h}`);
+  }
+  assert.match(SCHOOL_SYSTEMS.IT.help, /Telefono Azzurro 19696/);
+  assert.match(SCHOOL_SYSTEMS.HU.help, /Kék Vonal 116 111/);
+});
