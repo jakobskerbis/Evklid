@@ -6,7 +6,7 @@
 import { icon } from "./icons.js";
 import { levelProgress } from "./xp-levels.js";
 import { goalShortcuts, daysUntil, ponudiMaturo } from "./goal-data.js";
-import { zdruzi } from "./datum.js";
+import { LOCILO, zdruzi } from "./datum.js";
 
 // Kartice med glavo učne poti in izbiro načina (#modebar), od zgoraj navzdol. Kartice, ki jih ni na seznamu
 // (cilj, predlog prehoda), ostanejo nad njimi; mnenje in namestitev gresta tik pod #xp-card (uvrstiKartice).
@@ -207,8 +207,8 @@ export function heroHtml(t, p, done = false, goalDate = "") {
   const min = escN(t("danes.min", { n: d.minutes }));
   const back = d.odsoten >= 3 ? `<p class="danes-back">${escN(t(d.due ? "danes.back" : "danes.backHi"))}</p>` : "";
   const step = d.due
-    ? `<p><b>${escN(t("mode.reviewBadge", { n: d.review }))}</b> · ${min}</p>${d.next ? `<p>${escN(t("danes.then", { topic: d.next.name }))}</p>` : ""}`
-    : `<p><b>${escN(t("danes.next", { topic: d.next.name }))}</b> · ${min}</p>`;
+    ? `<p><b>${escN(t("mode.reviewBadge", { n: d.review }))}</b>${LOCILO}${min}</p>${d.next ? `<p>${escN(t("danes.then", { topic: d.next.name }))}</p>` : ""}`
+    : `<p><b>${escN(t("danes.next", { topic: d.next.name }))}</b>${LOCILO}${min}</p>`;
   const btn = d.due
     ? `<button class="primary big" data-danes-review>${escN(t("danes.review"))}</button>`
     : `<button class="primary big" data-danes-topic="${escN(d.next.id)}">${escN(t("ready.practice"))}</button>`;
@@ -268,7 +268,7 @@ export function pathUnitsHtml(t, p) {
             .map((tp) => {
               const st = tp.due ? "due" : tp.status;
               const isNext = p.next && p.next.id === tp.id;
-              const sub = NODE[st][1] + (tp.practice && tp.status === "learning" ? ` · ${LEVEL_NAMES[tp.level]}` : "");
+              const sub = NODE[st][1] + (tp.practice && tp.status === "learning" ? `${LOCILO}${LEVEL_NAMES[tp.level]}` : "");
               return `<li><button class="node ${st} ${isNext ? "current" : ""}" data-open="${tp.id}">
                 <span class="node-dot">${icon(NODE[st][0])}</span>
                 <span class="node-text"><span class="node-name">${esc(tp.name)}</span><span class="node-sub">${isNext ? t("node.nextPrefix") : ""}${sub}</span></span>
@@ -327,7 +327,7 @@ export function scheduleCardHtml(t, s, { faks = false } = {}) {
     html: `<div class="card sch-card">
     ${rem
       .map(
-        (e) => `<div class="sch-remind-row"><span class="ic">${icon("bell")}</span><div><b>${t(e.daysLeft === 0 ? "sch.remindToday" : "sch.remindTomorrow", { name: escN(e.name) })}${e.time ? ` · ${e.time}` : ""}</b><p class="muted">${t("sch.remindText")}</p></div>${e.path && TEST_KINDS.includes(e.kind) ? `<button type="button" class="primary" data-prep>${t("sch.prepare")}</button><button type="button" class="secondary" data-ustno="test">${icon("speech")} ${t("ustno.vprasajMe")}</button>` : ""}</div>`,
+        (e) => `<div class="sch-remind-row"><span class="ic">${icon("bell")}</span><div><b>${t(e.daysLeft === 0 ? "sch.remindToday" : "sch.remindTomorrow", { name: escN(e.name) })}${e.time ? `${LOCILO}${e.time}` : ""}</b><p class="muted">${t("sch.remindText")}</p></div>${e.path && TEST_KINDS.includes(e.kind) ? `<button type="button" class="primary" data-prep>${t("sch.prepare")}</button><button type="button" class="secondary" data-ustno="test">${icon("speech")} ${t("ustno.vprasajMe")}</button>` : ""}</div>`,
       )
       .join("")}
     <button type="button" class="sch-card-head" data-go-schedule><span class="eyebrow">${t(showTomorrow ? "sch.cardTomorrow" : "sch.cardToday")}</span>${icon("chevron-right")}</button>

@@ -36,6 +36,14 @@ test("ločilo »·« med podatki gre skozi zdruzi (ne .join(\" · \"))", () => {
     assert.ok(!/join\(" · "\)/.test(src), `${f}: ločilo »·« prek zdruzi iz datum.js`);
     assert.match(src, /from "\.{1,2}\/datum\.js"/, `${f}: uvozi pomočnika iz datum.js`);
   }
+  // Tudi v predlogah (`${a} · ${b}`) je pred »·« nedeljiv presledek (LOCILO). Izjeme: komentarji, namig (title),
+  // kontekst formul in besedilo sporočila inštruktorju (vadnica.js pp.oursTask), ki ni prikazano v vrstici.
+  for (const f of ["goal.js", "exam-papers.js", "schedule.js", "ucitelj.js", "quick-start.js", "zacetna.js", "kviz.js", "chat-settings.js", "textbook.js", "corner.js", "mnenje.js", "vadnica.js", "app.js"]) {
+    const bad = read(f)
+      .split("\n")
+      .filter((l) => / · /.test(l) && !/^\s*\/\/|\/\/ .* · |const topicScope|withFormulaSubject\(lessonSubject|tab\.title = |pp\.oursPola|pp\.oursTask/.test(l));
+    assert.deepEqual(bad, [], `${f}: ločilo »·« z navadnim presledkom`);
+  }
   // Datum cilja (»29. 5. 2027«) se ne prelomi.
   assert.match(read("goal.js"), /return celDatum\(new Intl\.DateTimeFormat/);
 });
@@ -53,7 +61,11 @@ test("spodnja vrstica: napisi in značke vsaj 12 px; žetoni, »Spremeni«, izbi
   const css = read("style.css");
   const ui = read("ui.css");
   const rule = (src, sel) => src.match(new RegExp(`(^|\\n)\\s*${sel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\{([^}]*)\\}`))?.[2] || "";
-  const rem = (decl) => Number(decl.match(/font-size: ([\d.]+)rem/)?.[1] || 1) * 16;
+  const rem = (decl) => {
+    const v = Number(decl.match(/font-size: ([\d.]+)rem/)?.[1] ?? NaN) * 16;
+    assert.ok(Number.isFinite(v), `font-size v »${decl.trim().slice(0, 60)}«`);
+    return v;
+  };
   assert.ok(rem(rule(css, ".tabbar .tab")) >= 12, ".tabbar .tab font-size");
   assert.ok(rem(rule(css, ".modes .badge, .tabbar .badge")) >= 12, ".tabbar .badge font-size");
   assert.ok(!/\.tabbar \.tab span \{[^}]*font-size: 0\.(6|7[01])/.test(css), "napis zavihka ni manjši od 12 px");

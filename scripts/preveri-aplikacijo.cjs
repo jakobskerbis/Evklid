@@ -2142,7 +2142,7 @@ async function dostopnostTelefon(p) {
         const ime = (el) => `${el.nodeName.toLowerCase()}${el.id ? `#${el.id}` : ""}${[...el.classList].map((c) => `.${c}`).join("")} »${(el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 24)}«`;
         const tabs = [...document.querySelectorAll("#tabbar .tab")].filter(vis);
         const cur = tabs.filter((t) => t.getAttribute("aria-current") === "page");
-        const pogled = [...document.querySelectorAll("main.view:not(.in-okno)")].find((x) => !x.hidden);
+        const pogled = [...document.querySelectorAll("main.view:not(.in-okno):not([data-posnetek])")].find((x) => !x.hidden);
         const mali = [...(pogled?.querySelectorAll('button, [role="button"], [role="tab"], [role="switch"], [role="radio"]') || [])]
           .filter((el) => vis(el) && el.getBoundingClientRect().height < 39.5)
           .map((el) => `${ime(el)} ${Math.round(el.getBoundingClientRect().height)} px`);

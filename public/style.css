@@ -1252,7 +1252,10 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
   .tabbar .tab { padding-inline: 0; }
   .tabbar .tab span { letter-spacing: -0.015em; }
   /* Cirilica (Instrument Sans je nima): sistemska pisava je širša; »Инструктор« ostane cel tudi pri 12 px (A9: napis vsaj 12 px). */
-  :is(:lang(ru), :lang(uk), :lang(mk), :lang(sr), :lang(bg)) .tabbar .tab span { letter-spacing: -0.05em; } /* :lang(a, b) s seznamom Chromium ne pozna */
+  :is(:lang(ru), :lang(uk), :lang(mk), :lang(sr):not(:lang(sr-Latn))) .tabbar .tab span { letter-spacing: -0.05em; } /* :lang(a, b) s seznamom Chromium ne pozna */
+}
+@media (max-width: 340px) {
+  :is(:lang(ru), :lang(uk), :lang(mk), :lang(sr):not(:lang(sr-Latn))) .tabbar .tab span { letter-spacing: -0.07em; }
 }
 body.pad-open .tabbar { display: none; }
 .pad-tabs button { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }

@@ -7,14 +7,14 @@ import { zavrzi } from "./odgovor.js";
 import { openPrintable } from "./gradiva.js";
 import { hostQuiz } from "./kviz.js";
 import { nameHasContact } from "./ime-skupine.js";
-import { LOCILO, zdruzi } from "./datum.js";
+import { LOCILO, celDatum, zdruzi } from "./datum.js";
 
 applyI18n();
 hydrateIcons();
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const root = $("#teacher-root");
-const fmtDay = (s) => (s ? new Date(`${s}T12:00:00`).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric" }) : "");
+const fmtDay = (s) => (s ? celDatum(new Date(`${s}T12:00:00`).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric" })) : "");
 
 // Razredi brez računa (stara različica): koda in ključ v tem brskalniku.
 const KEY = "teacherClasses";
@@ -76,7 +76,7 @@ function schoolCard(s) {
   return `<div class="card">
     <div class="group-head"><h2 class="h-icon">${icon("house")} ${esc(s.name)}</h2>${s.place ? `<span class="muted">${esc(s.place)}</span>` : ""}</div>
     ${licenceHtml(s)}
-    <p class="muted">${esc(t("tc.teachers", { n: s.teachers }))} · ${esc(t(s.role === "admin" ? "tc.roleAdmin" : "tc.roleTeacher"))}</p>
+    <p class="muted">${esc(t("tc.teachers", { n: s.teachers }))}${LOCILO}${esc(t(s.role === "admin" ? "tc.roleAdmin" : "tc.roleTeacher"))}</p>
     <p>${esc(t("tc.inviteHint"))} <span class="code-chip">${esc(s.inviteCode)}</span></p>
     <button type="button" class="ghost small" data-leave-school="${s.id}">${icon("log-out")}<span>${esc(t("tc.leaveSchool"))}</span></button>
   </div>`;
@@ -147,7 +147,7 @@ function overviewHtml(c, v) {
   const list = v.assignments.length
     ? `<ol class="tc-assign">${v.assignments
         .map(
-          (a) => `<li><span><b>${esc(a.title)}</b>${a.due ? ` · ${esc(t("tc.due", { date: fmtDay(a.due) }))}` : ""}<br><span class="muted">${esc(t("tc.doneCount", { done: a.done, n: v.members.length }))}</span></span>
+          (a) => `<li><span><b>${esc(a.title)}</b>${a.due ? `${LOCILO}${esc(t("tc.due", { date: fmtDay(a.due) }))}` : ""}<br><span class="muted">${esc(t("tc.doneCount", { done: a.done, n: v.members.length }))}</span></span>
           <button type="button" class="ghost small" data-del-a="${a.id}" aria-label="${esc(t("tc.deleteAssignment"))}" title="${esc(t("tc.deleteAssignment"))}">${icon("x")}</button></li>`,
         )
         .join("")}</ol>`

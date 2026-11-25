@@ -2,7 +2,7 @@
 // celozaslonski pogled (časopis ali oglasna deska) in kratek vprašalnik ob prvem zagonu.
 // Novice da strežnik (server/corner.js), seznam področij je v public/interests.js.
 import { t, locale, currentLang } from "./i18n-osnova.js";
-import { dateText, zdruzi } from "./datum.js";
+import { LOCILO, dateText, zdruzi } from "./datum.js";
 import { icon } from "./icons.js";
 import { zadrziFokus } from "./fokus-okna.js";
 import { jeOs } from "./stopnja.js";
@@ -97,7 +97,7 @@ function newsCard(it, pins, cls = "") {
   const pinned = pins.has(it.id);
   const lang = it.lang && it.lang !== currentLang() ? `<span class="news-lang" title="${esc(it.lang)}">${esc(it.lang.toUpperCase())}</span>` : "";
   return `<article class="news-card ${cls} ${pinned ? "is-pinned" : ""}" data-id="${esc(it.id)}">
-    <div class="news-meta"><span class="news-int"><span aria-hidden="true">${emoji(it.interest)}</span> ${esc(interestName(it.interest))}</span><span class="news-src">${esc(it.source)}${it.date ? ` · ${esc(when(it.date))}` : ""}</span>${lang}</div>
+    <div class="news-meta"><span class="news-int"><span aria-hidden="true">${emoji(it.interest)}</span> ${esc(interestName(it.interest))}</span><span class="news-src">${esc(it.source)}${it.date ? `${LOCILO}${esc(when(it.date))}` : ""}</span>${lang}</div>
     <h3><a href="${esc(it.link)}" target="_blank" rel="noopener noreferrer">${esc(it.title)}</a></h3>
     ${it.summary ? `<p class="news-sum">${esc(it.summary)}</p>` : ""}
     <div class="news-actions">

@@ -363,7 +363,7 @@ import { jeFaks, jeSs, jeOs, stopnja, brezUvoda } from "./stopnja.js";
 import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { GUIDE } from "./vodic.js";
 import { FREE_LIMIT_CODES, showLimitCard } from "./meja-placilo.js";
-import { zdruzi } from "./datum.js";
+import { LOCILO, celDatum, zdruzi } from "./datum.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
@@ -1349,7 +1349,7 @@ async function loadMeOverview() {
       ${
         events.length
           ? `<div class="list-card">${events
-              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" }))} · ${when(e.daysLeft)}`))
+              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(celDatum(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" })))}${LOCILO}${when(e.daysLeft)}`))
               .join("")}</div>`
           : `<p class="muted">${t("sch.noEvents")}</p><button type="button" class="secondary" data-me="schedule">${icon("plus")} ${t("sch.addTest")}</button>`
       }

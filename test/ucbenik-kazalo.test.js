@@ -63,7 +63,7 @@ test("Učbenik: »Nalagam …« med čakanjem, kazala vnaprej, menjava ravni bre
       await p.waitForSelector("#tb-body .tb-part", { timeout: 1000 });
       assert.ok(Date.now() - t0 < 1000, `${izbira}: ${Date.now() - t0} ms`);
     }
-    assert.match(await p.locator("#view-textbook .tb-book h2").innerText(), /Matematika · osnovna šola/);
+    assert.match(await p.locator("#view-textbook .tb-book h2").innerText(), /Matematika\u00a0· osnovna šola/);
     assert.ok((await p.locator("#tb-body .tb-topic").count()) > 20, "seznam lekcij je viden");
     assert.equal(kazala.length, 12, "brez novih zahtev za kazala");
     assert.deepEqual(napake, []);

@@ -10,7 +10,7 @@ import { jeFaks, jeSs } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
 import { isStoreApp } from "./pay-ui.js"; // aplikacija iz trgovine: brez ponudbe paketov mimo trgovine
-import { zdruzi } from "./datum.js";
+import { LOCILO, zdruzi } from "./datum.js";
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -303,7 +303,7 @@ async function renderHome() {
           .join("")}</div>` : ""}
       </div>
       ${book ? `<div class="tb-book card">
-        <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)} · ${esc(book.schoolName)}</h2>
+        <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)}${LOCILO}${esc(book.schoolName)}</h2>
         <p class="muted">${esc(t(book.lessons < book.topics ? "tbk.countMore" : "tbk.count", { done: book.lessons, total: book.topics }))}</p></div>
         <div class="tb-book-actions">
           <a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
@@ -384,7 +384,7 @@ async function renderBody() {
           .map(
             (h) => `<li><button type="button" class="tb-topic" data-lesson="${esc(h.id)}">
               <span class="tb-name">${esc(h.name)}</span>
-              <span class="tb-sub">${esc(h.pathLabel)} · ${esc(h.unit)}</span>
+              <span class="tb-sub">${esc(h.pathLabel)}${LOCILO}${esc(h.unit)}</span>
               ${h.snippet ? `<span class="tb-snip">${esc(h.snippet)}</span>` : ""}
             </button></li>`,
           )
@@ -744,7 +744,7 @@ async function renderLesson(topicId, name = "") {
   </section>`;
   box.innerHTML = `<div class="tb-lesson-grid${demoHtml ? " has-side" : ""}"><div class="tb-main">
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
-    <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
+    <p class="muted tb-crumb">${esc(L.pathLabel)}${LOCILO}${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
     ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
     ${linkHtml}
