@@ -547,7 +547,9 @@ async function practiceTopic(p, db) {
     await screen(p, "test-predznanja");
     await click(p, "#pt-practice", { wait: 300 });
   } else await click(p, "#t-practice", { wait: 300 });
-  // Rešen zgled, nato prva naloga.
+  // Rešen zgled, nato prva naloga. Oba prideta z zahtevo practice/next: počakaj, da je eden izrisan. Sicer je na počasnem
+  // strežniku (CI) zgled še na poti, ko preverimo #ex-next, njegova kartica (.task .task-text) pa potem velja za nalogo.
+  await p.waitForFunction(() => document.querySelector("#ex-next, #practice .card.task[data-task-id]"), null, { timeout: 10000 }).catch(() => {});
   if (await p.locator("#ex-next").isVisible()) {
     await screen(p, "zgled");
     await click(p, "#ex-next", { wait: 300 });
