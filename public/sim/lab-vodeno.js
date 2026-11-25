@@ -37,6 +37,8 @@ export function kontekst(root, dnevnik) {
     },
     // Vprašanje »Sklep« z besedilom `re` je pravilno odgovorjeno (lab.js → conclusion).
     sklep: (re) => [...root.querySelectorAll(".lab-q")].some((q) => re.test(besedilo(q.querySelector(".lab-q-text"))) && q.querySelector(".lab-opt.ok")),
+    // »Preveri moj račun« (lab.js → racun) je pravilno odgovorjen: viden odziv ».lab-why.ok« (»Pokaži rešitev« ga nima).
+    racun: () => [...root.querySelectorAll(".lab-racun .lab-why.ok")].some((x) => !x.hidden && !x.closest("[hidden]")),
     // Napoved pred meritvijo (lab.js → napoved): zapisana ali že zaprta. Brez okvirja (poskus je nima) korak ne ustavi vodenja.
     napoved: (id) => {
       const el = [...root.querySelectorAll("[data-napoved]")].find((x) => x.dataset.napoved === id);
