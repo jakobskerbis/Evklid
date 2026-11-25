@@ -1,6 +1,6 @@
 // Gradniki virtualnega laboratorija: zaslon merilnika, tabela meritev, graf, vprašanje o sklepu, dnevnik dogodkov.
 // Modeli so v lab-model.js; tu je samo prikaz. Besedila so slovenska kot v ostalih simulacijah učbenika.
-import { h, s, fmt, svgBox, axes, tex } from "./kit.js";
+import { h, s, fmt, decZapis, svgBox, axes, tex } from "./kit.js";
 import SL from "../i18n/sl.js";
 import { icon } from "../icons.js";
 
@@ -33,7 +33,7 @@ export function lcd(name, { cls = "" } = {}) {
   const note = h("span", { class: "lab-lcd-note" });
   const el = h("div", { class: `lab-lcd ${cls}`, role: "group", "aria-label": name }, h("span", { class: "lab-lcd-name" }, name), h("span", { class: "lab-lcd-screen" }, val, unit), note);
   el.set = (text, u = "", n = "") => {
-    const t = String(text).replace(".", ",").replace("-", "−");
+    const t = decZapis(text);
     if (val.textContent !== t) val.textContent = t;
     if (unit.textContent !== u) unit.textContent = u;
     if (note.textContent !== n) note.textContent = n;
@@ -377,7 +377,7 @@ export const num = (x, d) => fmt(x, d);
 // Število z vedno enakim številom decimalk (kot ga pokaže merilnik): 6,00 in ne 6.
 export const fixed = (x, d) => {
   const t = (Math.abs(x) < 0.5 * 10 ** -d ? 0 : x).toFixed(d);
-  return t.replace(".", ",").replace("-", "−");
+  return decZapis(t);
 };
 export { tex };
 // Formule v besedilu poskusov so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«), ne

@@ -2,6 +2,7 @@
 // hidrostatični tlak z manometrom (lab-tlak). Modeli: lab-model-sile.js (brez DOM). Odčitki analognih skal so v povečavi (lupa).
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { decZapis } from "./kit.js";
 import { HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI, SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, POENOSTAVITVE_SILE } from "./lab-model-sile.js";
 
 const nb = " ";
@@ -214,9 +215,9 @@ export function labHooke(el) {
     oko(svg, xe, yEye);
     s("line", { x1: xe - 8, y1: yEye, x2: 238, y2: L.yc + dr, class: "lab-tit-sight" }, svg);
     const r = B.odcitek(pogled);
-    label(svg, 236 + 75, 232, `odčitek: ${r.text.replace(".", ",")}${nb}cm`, "tick b");
+    label(svg, 236 + 75, 232, `odčitek: ${decZapis(r.text)}${nb}cm`, "tick b");
     merilo(svg, 300, H - 20, 25, "5 cm");
-    svg.setAttribute("aria-label", `${VZMETI[B.izbrana].name} na stojalu z ravnilom, obešenih ${B.obesene.reduce((s, i) => s + B.utezi[i].n, 0)} g. Kazalec kaže ${r.text.replace(".", ",")} cm${B.nihanje() > VZMET.mirna ? ", vzmet niha" : ""}.`);
+    svg.setAttribute("aria-label", `${VZMETI[B.izbrana].name} na stojalu z ravnilom, obešenih ${B.obesene.reduce((s, i) => s + B.utezi[i].n, 0)} g. Kazalec kaže ${decZapis(r.text)} cm${B.nihanje() > VZMET.mirna ? ", vzmet niha" : ""}.`);
   }
   redraw();
   draw();
@@ -429,10 +430,10 @@ export function labGostota(el) {
       const yr = st.menisk === "dno" ? L.yc : L.yc - m;
       s("line", { x1: 252, y1: yr, x2: 372, y2: yr, class: "lab-tit-sight" }, svg);
       oko(svg, 380, yr);
-      label(svg, 320, 218, `odčitek: ${r.text.replace(".", ",")}${nb}mL`, "tick b");
+      label(svg, 320, 218, `odčitek: ${decZapis(r.text)}${nb}mL`, "tick b");
     }
     merilo(svg, 330, H - 14, 24, "2 cm");
-    svg.setAttribute("aria-label", `Merilni valj ${B.tek ? `s tekočino (${TEKOCINE[B.tek.id].name}, ${B.odcitekV(st.menisk).text.replace(".", ",")} mL)` : "je prazen"}${B.vzorec ? `, v njem je ${VZORCI[B.vzorec.id].name}${B.vzorec.plava ? ", ki plava" : ""}` : ""}. Tehtnica levo.`);
+    svg.setAttribute("aria-label", `Merilni valj ${B.tek ? `s tekočino (${TEKOCINE[B.tek.id].name}, ${decZapis(B.odcitekV(st.menisk).text)} mL)` : "je prazen"}${B.vzorec ? `, v njem je ${VZORCI[B.vzorec.id].name}${B.vzorec.plava ? ", ki plava" : ""}` : ""}. Tehtnica levo.`);
   }
   newSample("aluminij", 2);
   balL.set("0.0", "g", "tara");
@@ -506,14 +507,14 @@ export function labVzgon(el) {
     const vj = { aluminij: "aluminij", jeklo: "jeklo" }[B.valj] ?? VALJI[B.valj].name.split(" ")[0], d = Math.round(B.globina() * 1000) / 10, Vi = d * (B.a * 1e4);
     if (B.s <= 0 || d === 0) {
       zrak[B.valj] = r.value;
-      table.add({ vj, tek: "zrak", d: "0", Vi: "0", F: r.text.replace(".", ","), Fv: "–", Fa: "–" });
+      table.add({ vj, tek: "zrak", d: "0", Vi: "0", F: decZapis(r.text), Fv: "–", Fa: "–" });
       if (!B.nicla) log.push(`Ničla silomera ni naravnana: brez valja kaže ${fixed(B.nic0, 2)}${nb}N. Teža valja je zato prevelika. (Vzgon kot razlika dveh odčitkov bo vseeno pravilen.)`, "warn");
-      else log.push(`Teža valja v zraku: ${r.text.replace(".", ",")}${nb}N.`, "info");
+      else log.push(`Teža valja v zraku: ${decZapis(r.text)}${nb}N.`, "info");
       return;
     }
     if (zrak[B.valj] == null) return log.push("Najprej zapiši silo, ko valj visi v zraku (dvigni ga nad gladino).", "warn");
     const Fv = zrak[B.valj] - r.value, Fa = TEKOCINE[B.tek].rho * G_SOLA * Vi * 1e-3;
-    table.add({ vj, tek: TEKOCINE[B.tek].name, d: fixed(d, 1), Vi: fixed(Vi, 0), F: r.text.replace(".", ","), Fv: fixed(Fv, 3), Fa: fixed(Fa, 3) });
+    table.add({ vj, tek: TEKOCINE[B.tek].name, d: fixed(d, 1), Vi: fixed(Vi, 0), F: decZapis(r.text), Fv: fixed(Fv, 3), Fa: fixed(Fa, 3) });
     meas.push({ g: TEKOCINE[B.tek].name, x: Vi, y: Fv });
     if (B.dno()) log.push("Valj stoji na dnu čaše: del teže nosi dno, zato silomer kaže premalo in je »vzgon« prevelik. Valj dvigni, da prosto visi.", "bad");
     redraw(), sync();
@@ -578,11 +579,11 @@ export function labVzgon(el) {
     s("line", { x1: 240 + 70, y1: L.yc, x2: 240 + 126, y2: L.yc, class: "lab-tit-sight" }, svg);
     oko(svg, 240 + 136, L.yc);
     const r = B.odcitek();
-    label(svg, 240 + 75, 224, `odčitek: ${r.text.replace(".", ",")}${nb}N`, "tick b");
+    label(svg, 240 + 75, 224, `odčitek: ${decZapis(r.text)}${nb}N`, "tick b");
     label(svg, 240 + 75, 242, B.globina() > 0 ? `potopljeno ${fixed(B.globina() * 100, 1)}${nb}cm` : "valj je v zraku", "tick small");
     if (B.dno()) label(svg, cx, yT + 8, "valj stoji na dnu", "tick small");
     merilo(svg, 300, H - 18, 16, "2 cm");
-    svg.setAttribute("aria-label", `${VALJI[B.valj].name} visi na silomeru nad čašo s tekočino (${TEKOCINE[B.tek].name}). ${B.globina() > 0 ? `Potopljeno ${fixed(B.globina() * 100, 1)} cm` : "Valj je v zraku"}; silomer kaže ${r.text.replace(".", ",")} N.`);
+    svg.setAttribute("aria-label", `${VALJI[B.valj].name} visi na silomeru nad čašo s tekočino (${TEKOCINE[B.tek].name}). ${B.globina() > 0 ? `Potopljeno ${fixed(B.globina() * 100, 1)} cm` : "Valj je v zraku"}; silomer kaže ${decZapis(r.text)} N.`);
   }
   draw();
 }

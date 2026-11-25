@@ -10,7 +10,7 @@
 //     stikalo izklopljeno, ostane risana različica (motor nariše sam, ko risi() vrne false).
 // Stikalo: gumb »Fotografski prikaz« na vrhu kontrol (ne prekrije slike); izbira je v localStorage evklid.lab.foto
 // ("0" = risba, "1" ali brez ključa = fotografija). ?labfoto=0 / ?labfoto=1 jo nastavi.
-import { h, s, label } from "./kit.js";
+import { h, s, label, decZapis } from "./kit.js";
 import SL from "../i18n/sl.js";
 import { icon } from "../icons.js";
 import { jsonAliNic } from "../odgovor.js";
@@ -339,7 +339,7 @@ export function risiKrog(o, meta, st) {
     if (!txt) return;
     // enota = 1 mm na zaslonu: znaki so v ravnini zaslona in v pravem razmerju
     const m = `matrix(${(dz[0] - lz[0]) / w} ${(dz[1] - lz[1]) / w} ${(ls[0] - lz[0]) / hh} ${(ls[1] - lz[1]) / hh} ${lz[0]} ${lz[1]})`;
-    s("text", { transform: m, x: w - 3, y: hh * 0.8, "font-size": hh * 0.82, "text-anchor": "end", fill: barva, "font-family": "ui-monospace, Menlo, Consolas, monospace", "font-weight": 700, stroke: sij || null, "stroke-width": sij ? 1.2 : null, style: sij ? "paint-order:stroke" : null }, g, String(txt).replace(".", ",").replace("-", "−"));
+    s("text", { transform: m, x: w - 3, y: hh * 0.8, "font-size": hh * 0.82, "text-anchor": "end", fill: barva, "font-family": "ui-monospace, Menlo, Consolas, monospace", "font-weight": 700, stroke: sij || null, "stroke-width": sij ? 1.2 : null, style: sij ? "paint-order:stroke" : null }, g, decZapis(txt));
   };
   const Z = meta.zasloni || { psu: [62, 24], am: [52, 24], vm: [52, 24] }; // mere zaslonov v mm
   zaslon(K.psuZaslon, Z.psu, st.U, "rgb(255,84,60)", "rgba(255,60,40,0.3)");
@@ -377,5 +377,5 @@ export function risiKrog(o, meta, st) {
     if (sv > 0.02) o.slika("makro-L6-sveti", m, { opacity: sv.toFixed(2) });
   }
   m.okvir();
-  label(m.zunaj, 60, 74, st.tip === "R" ? `povečano ${Math.round(meta.merila.makro / meta.merila.krog)}×` : `povečano ${String(Math.round((meta.merila.makroL / meta.merila.krog) * 10) / 10).replace(".", ",")}×`, "lbl small");
+  label(m.zunaj, 60, 74, st.tip === "R" ? `povečano ${Math.round(meta.merila.makro / meta.merila.krog)}×` : `povečano ${decZapis(Math.round((meta.merila.makroL / meta.merila.krog) * 10) / 10)}×`, "lbl small");
 }

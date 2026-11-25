@@ -5,17 +5,30 @@
 import { okrasi, vstavi } from "./materiali.js";
 import { napisPoskusa } from "./napis-poskusa.js";
 import { izrisi, decVejica } from "../mat/izris.js";
+import { uiChain } from "../i18n/languages.js";
 
 export const NS = "http://www.w3.org/2000/svg";
 
-// Število s slovensko decimalno vejico.
-export function fmt(x, d = 2) {
+// Decimalno ločilo jezika vmesnika (<html lang>, nastavi ga i18n): sl, de, hr, it, hu vejica, en pika;
+// drugi jeziki po verigi uiChain (npr. sr → hr → vejica, fr → en → pika). Brez dokumenta (Node) slovensko.
+const LOCILO = { sl: ",", de: ",", hr: ",", it: ",", hu: ",", en: "." };
+const jezikVmesnika = () => (typeof document !== "undefined" && document.documentElement?.lang) || "sl";
+export const decLocilo = (lang = jezikVmesnika()) => LOCILO[uiChain(lang).find((c) => c in LOCILO)];
+// Niz števila s piko (toFixed, odčitek merilnika) za prikaz: ločilo jezika, minus »−«.
+export const decZapis = (t, lang) => String(t).replace(".", decLocilo(lang)).replace("-", "−");
+// Število, ki ga vpiše učenec: sprejme vejico ali piko in minus »−«; prazno ali neveljavno → null.
+export function beriStevilo(t) {
+  const v = String(t ?? "").trim().replace(",", ".").replace("−", "-");
+  return v === "" || !Number.isFinite(Number(v)) ? null : Number(v);
+}
+// Število z decimalnim ločilom jezika vmesnika in znakom minus »−«.
+export function fmt(x, d = 2, lang) {
   if (!Number.isFinite(x)) return "–";
   const r = Number(x.toFixed(d));
-  return String(Object.is(r, -0) ? 0 : r).replace(".", ",").replace("-", "−");
+  return decZapis(Object.is(r, -0) ? 0 : r, lang);
 }
 // Število za KaTeX (decimalna vejica brez presledka).
-export const tfmt = (x, d = 2) => fmt(x, d).replace("−", "-").replace(",", "{,}");
+export const tfmt = (x, d = 2, lang) => fmt(x, d, lang).replace("−", "-").replace(",", "{,}");
 
 // Kombinirajoča črta (x̄ = x + U+0304) se v pisavi aplikacije izriše zamaknjeno kot »x‾« (j, 2. 11.
 // 2026), zato črko s črto izrišemo kot črko s črto nad njo (razred ovl, text-decoration: overline).

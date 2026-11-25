@@ -1,7 +1,7 @@
 // Virtualni laboratorij, kemija: titracija kisline z NaOH ob indikatorju (model: lab-model-titracija.js).
 // Učenec spere in napolni bireto, izpusti zrak iz konice, odpipetira vzorec, izbere indikator, titrira po kapljicah,
 // sam odčita bireto, ponavlja do ujemanja in izračuna koncentracijo. Napake imajo posledice kot v pravem laboratoriju.
-import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
+import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, beriStevilo } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en } from "./lab.js";
 import { flaskLevel } from "./lab-kem.js";
 import { fotoPoskus, risiTitracijo, OKNA_TITRACIJA } from "./foto.js";
@@ -179,10 +179,7 @@ export function labTitracija(el) {
     drops.push({ y: 0 });
     draw();
   }
-  const parse = (str) => {
-    const v = Number(String(str).trim().replace(",", "."));
-    return String(str).trim() === "" || !Number.isFinite(v) ? null : v;
-  };
+  const parse = beriStevilo; // vejica ali pika
   function record() {
     const v = parse(readIn.value);
     if (!B.filled) return log.push("Bireta je prazna: ni kaj odčitati.", "warn");

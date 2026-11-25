@@ -1,5 +1,5 @@
 // Simulacije: števila, deljivost, ulomki, decimalna števila, odstotki, potence.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
+import { h, s, decZapis, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
 
 // Številska premica: vrne { X, g } in nariše oznake.
 function numberLine(svg, { x0, x1, from, to, step, major = step, y = 60, labels = true, fmtL }) {
@@ -871,7 +871,7 @@ export function znanstveni(el) {
     const value = m * 10 ** e;
     let long;
     if (e >= 0) long = Number(value.toPrecision(3)).toLocaleString("sl-SI", { maximumFractionDigits: 0 }).replace(/\./g, " ");
-    else long = value.toFixed(-e + 1).replace(".", ",");
+    else long = decZapis(value.toFixed(-e + 1));
     out.innerHTML = texBlock(`${tfmt(m, 1)}\\cdot 10^{${e}}\\ \\mathrm{m}`) +
       `<p>Daljši zapis: <b>${long} m</b>. Eksponent ${e} pove, za koliko mest premaknemo decimalno vejico ${e >= 0 ? "v desno" : "v levo"}.</p>
        <p>Podobna velikost: <b>${near[1]}</b>.</p>
@@ -1070,7 +1070,7 @@ export function enote(el, { set = "dolzina", sets } = {}) {
     const lo = Math.min(from, to), hi = Math.max(from, to);
     for (let i = lo; i < hi; i++) mult *= factor(i);
     const res = to > from ? v * mult : v / mult;
-    const str = (x) => (Math.abs(x) >= 1e-4 && Math.abs(x) < 1e9 ? fmt(x, 6) : x.toExponential(2).replace(".", ","));
+    const str = (x) => (Math.abs(x) >= 1e-4 && Math.abs(x) < 1e9 ? fmt(x, 6) : decZapis(x.toExponential(2)));
     out.innerHTML = `<div class="demo-eq">${str(v)} ${S.units[from]} = <b>${str(res)} ${S.units[to]}</b></div>
       <p>${from === to ? "Enoti sta enaki." : to > from ? `Gremo po stopnicah navzdol (v manjšo enoto) za ${hi - lo} ${hi - lo === 1 ? "stopnico" : hi - lo === 2 ? "stopnici" : hi - lo < 5 ? "stopnice" : "stopnic"}: <b>množimo</b> z ${mult}. Manjših enot je več.` : `Gremo po stopnicah navzgor (v večjo enoto): <b>delimo</b> z ${mult}. Večjih enot je manj.`}</p>
       <p class="muted">${S.factors ? "Pri času faktorji niso 10: 1 dan = 24 h, 1 h = 60 min, 1 min = 60 s." : `Vsaka stopnica pomeni faktor ${S.f}${S.f === 100 ? " (ploščinske enote: 10 · 10)" : S.f === 1000 && S.name === "prostornina" ? " (prostorninske enote: 10 · 10 · 10)" : ""}.`} ${S.extra || ""}</p>`;

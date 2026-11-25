@@ -4,6 +4,7 @@
 // sta označena v risbi). Risba se nariše znova ob vsakem koraku ure (10-krat na sekundo) ali sličici poskusa.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { decZapis } from "./kit.js";
 import { ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, HALL, TehtnicaBench, MAGNETI, VODNIKI, IndukcijaBench, MAGNET_IND, CEV, SENZOR, GALVANOMETER, G_SOLA, naklonSkoziIzhodisce, POENOSTAVITVE_MAGNETIZEM } from "./lab-model-magnetizem.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -167,7 +168,7 @@ function multimeter(g, svg, x, y, w, hh, { text = "", unit = "", kot = 0, ime = 
   s("rect", { x: x + w * 0.08, y: y + hh * 0.05, width: w * 0.84, height: hh * 0.9, rx: w * 0.08, fill: u(svg, "ohisje") }, g);
   const lx = x + w * 0.15, ly = y + hh * 0.1, lw = w * 0.7, lh = hh * 0.2;
   s("rect", { x: lx, y: ly, width: lw, height: lh, rx: 2, class: "lab-mag-lcdbg" }, g);
-  label(g, lx + lw - 3, ly + lh * 0.55, text.replace(".", ",").replace("-", "−"), "lab-mag-lcdtxt", "end").setAttribute("style", `font-size:${(w * 0.17).toFixed(1)}px`);
+  label(g, lx + lw - 3, ly + lh * 0.55, decZapis(text), "lab-mag-lcdtxt", "end").setAttribute("style", `font-size:${(w * 0.17).toFixed(1)}px`);
   if (unit) label(g, lx + lw - 3, ly + lh * 0.88, unit, "lab-mag-lcdunit", "end").setAttribute("style", `font-size:${(w * 0.09).toFixed(1)}px`);
   const cx = x + w / 2, cy = y + hh * 0.56, R = w * 0.25;
   s("circle", { cx, cy, r: R + 3, fill: "#20252a", stroke: "#59616a", "stroke-width": 1 }, g);
@@ -191,8 +192,8 @@ function napajalnik(g, svg, x, y, { on, U, I, cc, Uset, Umax, Iset, Imax, ime })
   s("rect", { x: x + 6, y: y + 8, width: 52, height: 22, rx: 2, fill: "#1a1d1a" }, g);
   s("rect", { x: x + 64, y: y + 8, width: 52, height: 22, rx: 2, fill: "#1a1d1a" }, g);
   if (on) {
-    label(g, x + 54, y + 20, U.toFixed(1).replace(".", ","), "lab-mag-seg red", "end");
-    label(g, x + 112, y + 20, I.toFixed(2).replace(".", ","), "lab-mag-seg grn", "end");
+    label(g, x + 54, y + 20, fixed(U, 1), "lab-mag-seg red", "end");
+    label(g, x + 112, y + 20, fixed(I, 2), "lab-mag-seg grn", "end");
   }
   label(g, x + 32, y + 37, "V", "lab-mag-panel");
   label(g, x + 90, y + 37, "A", "lab-mag-panel");
@@ -436,7 +437,7 @@ export function labElektromagnet(el, opts = {}) {
     const z = B.jedro === "u" ? `reža ${num(B.razmik, B.razmik < 1 ? 1 : 0)}${nb}mm` : `${num(B.sonda.z * 100, 1)}${nb}cm`;
     const Bv = ni || t.over ? NaN : t.value;
     const nS = B.sponke;
-    table.add({ N: String(B.coil.N), jedro: JED_KRATKO[B.jedro], z, I: a.over ? "OL" : num(I, rA.dec + (rA.unit === "mA" ? 3 : 0)), B: ni ? "–" : t.over ? "OL" : t.text.replace(".", ","), n: String(nS) });
+    table.add({ N: String(B.coil.N), jedro: JED_KRATKO[B.jedro], z, I: a.over ? "OL" : num(I, rA.dec + (rA.unit === "mA" ? 3 : 0)), B: ni ? "–" : t.over ? "OL" : decZapis(t.text), n: String(nS) });
     meas.push({ N: B.coil.N, jedro: B.jedro, z: B.jedro === "u" ? null : B.sonda.z * 100, I: Math.abs(I), B: Math.abs(Bv), n: nS });
     redraw();
   }
@@ -635,7 +636,7 @@ export function labElektromagnet(el, opts = {}) {
     label(g, x + 8, y + 9, "TESLAMETER", "lab-mag-panel-sv", "start");
     s("rect", { x: x + 8, y: y + 16, width: 84, height: 28, rx: 2, class: "lab-mag-lcdbg" }, g);
     const t = B.readT(), ni = B.jedro === "u" && !B.vReziMogoce;
-    label(g, x + 88, y + 31, ni ? "– – –" : t.over ? "OL" : t.text.replace(".", ",").replace("-", "−"), "lab-mag-lcdbig", "end");
+    label(g, x + 88, y + 31, ni ? "– – –" : t.over ? "OL" : decZapis(t.text), "lab-mag-lcdbig", "end");
     label(g, x + 88, y + 41, "mT", "lab-mag-lcdunit", "end");
     // izbirnik območja
     const kx = x + 118, ky = y + 30, idx = ["20", "200", "2000"].indexOf(B.sonda.range);
@@ -738,7 +739,7 @@ export function labSilaVodnik(el) {
   }
   function record() {
     const t = B.read(), a = B.readA(), rA = AM_RANGES[B.amRange];
-    if (!B.tarirano || Math.abs(t.value) > 20) once("tara", `Tehtnica ni tarirana: odčitek ${t.text.replace(".", ",")}${nb}g vsebuje maso nosilca z magneti. Tariraj, ko tok ne teče, in meri znova.`, "bad");
+    if (!B.tarirano || Math.abs(t.value) > 20) once("tara", `Tehtnica ni tarirana: odčitek ${decZapis(t.text)}${nb}g vsebuje maso nosilca z magneti. Tariraj, ko tok ne teče, in meri znova.`, "bad");
     const I = a.over ? NaN : a.value / rA.k;
     const dm = t.value, F = (dm / 1000) * G_SOLA * 1000; // mN
     table.add({ n: String(B.nMag), L: num(B.L * 100, 0), I: a.over ? "OL" : num(I, rA.unit === "A" ? 2 : 3), dm: num(dm, 2), F: num(F, 2) });
@@ -795,7 +796,7 @@ export function labSilaVodnik(el) {
     s("path", { d: `M${bx},${yMiza} L${bx + 4},${by} H${bx + bw - 4} L${bx + bw},${yMiza} Z`, fill: "url(#" + svg.uid + "-plosca)", stroke: "#7d858e", "stroke-width": 1 }, svg);
     s("rect", { x: bx + 30, y: by + 8, width: 60, height: 17, rx: 2, class: "lab-mag-lcdbg" }, svg);
     const tr = B.read();
-    label(svg, bx + 80, by + 17, tr.text.replace(".", ",").replace("-", "−"), "lab-mag-lcdbal", "end");
+    label(svg, bx + 80, by + 17, decZapis(tr.text), "lab-mag-lcdbal", "end");
     label(svg, bx + 83, by + 18, "g", "lab-mag-lcdunit", "start");
     for (const [x, t] of [[bx + 10, "ON"], [bx + bw - 22, "TARE"]]) {
       s("rect", { x, y: by + 11, width: 13, height: 9, rx: 2, fill: "#3a4148" }, svg);
@@ -1029,7 +1030,7 @@ export function labIndukcija(el) {
   function readouts() {
     const R = B.run;
     if (!R || R.galv) {
-      uL.set(R?.galv ? num(sample(R, R.t) * 100, 0) : "0,000", R?.galv ? "%" : "V", R?.galv ? "odklon galvanometra" : `±${B.range}${nb}V · ${B.fs >= 1000 ? `${B.fs / 1000}${nb}kHz` : `${B.fs}${nb}Hz`}`);
+      uL.set(R?.galv ? num(sample(R, R.t) * 100, 0) : num(0, 3), R?.galv ? "%" : "V", R?.galv ? "odklon galvanometra" : `±${B.range}${nb}V · ${B.fs >= 1000 ? `${B.fs / 1000}${nb}kHz` : `${B.fs}${nb}Hz`}`);
       p1L.set("–", "V");
       p2L.set("–", "V");
       return;
