@@ -567,6 +567,8 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-graph-wrap { margin: 10px 0 0; }
 /* Formula iz lekcije pod grafom meritev (public/sim/lab.js dataGraph formula, povezave C3). */
 .lab-graph-formula { margin: 6px 0 0; text-align: center; font-size: 0.95rem; color: var(--muted); }
+/* Ležeča črka se nagne v »=«/»/« (»I= U«): malo prostora za njo. */
+.lab-graph-formula i { padding-inline-end: 0.12em; }
 .lab-graph-note { margin: 6px 0 0; font-size: 0.88rem; }
 .lab-graph-note:empty { display: none; }
 .lab-graph { max-width: 420px; display: block; margin: 0 auto; }
