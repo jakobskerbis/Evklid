@@ -64,6 +64,37 @@ Vsi ukazi SymPy, ki gredo skozi `is_zero` (`server/cas/worker.py`: `equal`, vsta
 
 PV-03 doda v odgovor workerja način preverjanja (`symbolic` ali `sampled`), dogovor s profilom B na #539.
 
+## Meritev (PV-02)
+
+Referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (334 trditev, 169 pravilnih) ustvari
+`node scripts/nabor-preverjanje.mjs` iz fiksnega semena. Resnica je znana iz konstrukcije (enačbe iz izbranih ničel,
+korenske enačbe iz izbrane veljavne in tuje rešitve, neenačbe iz izbranih krajišč, znani odvodi in integrali),
+ne iz preverjevalnikov Evklida. Skupine: polinomske enačbe, iracionalne ničle, zaokroženi približki (meja
+`numericno`), luknje racionalnih enačb, korenske enačbe s tujimi rešitvami, neenačbe, identitete, odvodi, integrali,
+računi, limite, enote, periodične rešitve, velika števila. Napačne trditve so tipične učenčeve in AI napake
+(manjkajoča ali tuja rešitev, predznak, napačno pravilo, zaokrožitev).
+
+`node scripts/meri-preverjanje.mjs [--json pot]` izmeri tri motorje: `sympy` (surov izid workerja), `skener`
+(`verifyAiFull`, kot ga vidi učenec) in `skener-lokalno` (isto brez SymPy). `test/preverjanje-meritev.test.js`
+v CI zahteva 0 napačno potrjenih in nobenega novega lažnega alarma.
+
+Izhodišče 25. 11. 2026:
+
+| Motor | Trditev | Napačno potrjene | Ujete napake | Lažni alarmi | Pravilne potrjene |
+| --- | --- | --- | --- | --- | --- |
+| sympy (surovo) | 334 | 0 (4 previsoki statusi pri približkih) | 165/165 | 0 | 169/169 |
+| skener | 314 | 0 | 155/155 | 1 | 140/159 |
+| skener-lokalno | 314 | 0 | 152/155 | 4 | 95/159 |
+
+Ugotovitve:
+
+- Surov SymPy sprejme zaokrožene decimalke s toleranco (`decimals_tol`) in vrne `ok: true`: kdor bi ta izid
+  preslikal v `izracunano`, bi precenil približek. Skener to že loči (`rounded` → »numerično«); za blok RACUN to
+  reši PV-03 (worker vrne način preverjanja).
+- Skener: pravilen določeni integral z mejo iz več znakov (`∫_0^pi sin(x) dx = 2`, `∫_1^10 1/x dx = ln(10)`) dobi
+  »Zaznana napaka«, ker `public/scan/verify.js` mejo prebere le do prvega znaka. Lažni alarm, ne precenitev.
+- Skener brez SymPy: racionalna enačba z luknjo brez rešitev (`(x^2-1)/(x-1)=2`) dobi »Zaznana napaka«.
+
 ## Pravilo za nove dele aplikacije
 
 Vsak nov del aplikacije, ki prikaže matematično trditev, jo odda v zapisu trditve in prikaže status iz
