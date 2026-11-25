@@ -3,9 +3,10 @@
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
 import { arityExample } from "./math.js";
 import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
-import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey } from "./scisolve.js";
+import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey, calculusEnv } from "./scisolve.js";
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
+import { graphable } from "./v-graf.js";
 import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
@@ -128,7 +129,11 @@ export function texPlain(tex) {
 
 /**
  * Znanstveni kalkulator v elementu root.
- * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
+ * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), showOnGraph?({ text, env, message, simple }),
+ *   stage?() (»OS«, »SS«, »FAKS«), steps?(text, goal), canSteps?(),
+ *   recent?() / addRecent?({ text, src }) (skupna zgodovina zavihkov),
+ *   convert?(value) (»Pretvori enote«: Orodja → pretvornik z vrednostjo; v fiziki in kemiji),
+ *   sharedGraph?() ({ vars, funcs } grafičnega kalkulatorja: »Iz grafa: a = 2«) }
  */
 let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
@@ -355,6 +360,8 @@ export function createScientific(root, opts) {
         return t(e.info?.prod ? "sc.errProdDiverge" : "sc.errSumDiverge");
       case "sumUnknown":
         return t("sc.errSumUnknown");
+      case "ncrK":
+        return t("sc.errNcrK", { f: e.info.f || "nCr" });
       case "intDiverge":
       case "intUndefined":
       case "intUnknown":
@@ -464,7 +471,7 @@ export function createScientific(root, opts) {
         break;
       case "solve":
         e.res = solutionTex(r, c, st.format, multText);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched", "rex", "forms", "noPi", "mult", "cmult"]);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched", "rex", "forms", "noPi", "mult", "cmult", "runc", "cerr", "cex", "vx", "gx"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (r.searched) e.note = { key: "sc.searchedNone", tex: r.searched };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
@@ -752,7 +759,15 @@ export function createScientific(root, opts) {
     else if (r.kind === "cas" && !r.resTex && !r.none) live.innerHTML = ""; // samo zapis (predogled matrike z okvirčki)
     else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${matBreak(r.resTex)}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
+    // DEG/GRA: ∫ in d/dx sta v radianih (AUDIT-055) – opomba tudi v predogledu, kot pod rezultatom
+    if (radNote(text, r) && live.innerHTML) live.insertAdjacentHTML("beforeend", ` <span class="sc-live-hint">${esc(t(radKey(text)))}</span>`);
   }
+  const radNote = (text, r) => st.angle !== "rad" && ["value", "deriv"].includes(r?.kind) && /∫|d\/d|'/.test(text);
+  // cela vrstica je ∫ ali d/dx: »Računano v radianih«; sicer le ∫ in d/dx, ostanek v stopinjah ali gradih
+  const radKey = (text) => {
+    const e = env();
+    return calculusEnv(text, e) !== e ? "sc.cas.radians" : st.angle === "grad" ? "sc.radiansPartGrad" : "sc.radiansPart";
+  };
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
   const analyzeLive = (text) => analyzeLiveEnv(text, env());
 
@@ -764,16 +779,27 @@ export function createScientific(root, opts) {
     if (!r) return;
     const bad = r.error || (r.kind === "value" && !Number.isFinite(r.value));
     if (bad) {
+      const msg = r.error ? errorText(r.error) : t("sc.errUndefined");
       live.className = "sc-live sc-err";
-      live.innerHTML = `${icon("info")}<span>${esc(r.error ? errorText(r.error) : t("sc.errUndefined"))}</span>`;
+      live.innerHTML = `${icon("info")}<span>${esc(msg)}</span>`;
+      // divergenten integral, limita brez vrednosti: graf vseeno pokaže f in to sporočilo (brez osenčene vrednosti)
+      if (opts.showOnGraph && /∫|lim/.test(text) && !simple()) {
+        const ans = st.ans;
+        live.insertAdjacentHTML("beforeend", grafBtn(-1));
+        live.querySelector(".sc-h-graf").addEventListener("click", () => showOnGraph(text, ans, msg));
+      }
+      if (r.error?.code === "missing") fromGraph(live, text);
       return;
     }
+    const ansBefore = st.ans;
     if (r.kind === "value") {
       if (r.assign && !fromFormula?.has(r.assign)) st.vars[r.assign] = r.value;
       st.ans = r.value;
     } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
     else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
     const e = entryOf(text, r);
+    if (radNote(text, r) && !e.note) e.note = { key: radKey(text) }; // ∫, d/dx v DEG/GRA (AUDIT-055)
+    if (/Ans/.test(text)) e.ga = ansBefore; // graf iz te vrstice z Ans, kot je bil ob računu
     // vnos v minutah in sekundah (v DEG): tudi rezultat v °′″; f′(2) je odvod, ne minuta
     if (e.kind === "value" && st.angle === "deg" && /\d\s*[′″]/.test(text) && dmsOf(e.value)) e.dms = true;
     if (e.first !== undefined) {
@@ -781,6 +807,13 @@ export function createScientific(root, opts) {
       delete e.first;
     }
     fromFormula = null;
+    // skupna zgodovina zavihkov: številski izid (Grafični ga ponudi kot vrednost)
+    if (e.kind === "value" && Number.isFinite(e.value)) {
+      // 10 mest; zelo velika in majhna števila z ×10ˣ (»E« kot tipka ×10ˣ: v vnosu se izriše kot 6,022 · 10²³)
+      const a = Math.abs(e.value);
+      const txt = a && (a >= 1e10 || a < 1e-4) ? e.value.toExponential(9).replace(/\.?0+e/, "e").replace(/e\+?/, "E") : String(Number(e.value.toPrecision(10)));
+      opts.addRecent?.({ text: comma() ? txt.replace(".", ",") : txt, src: "sci" });
+    }
     st.history.push(e);
     if (st.history.length > MAX_HISTORY) st.history.splice(0, st.history.length - MAX_HISTORY);
     save();
@@ -829,10 +862,20 @@ export function createScientific(root, opts) {
     insert(m ? (m[1] === "°" ? "′" : "″") : "°");
   }
 
+  // ---------- »Pokaži na grafu« (public/graph/v-graf.js) ----------
+  const simple = () => opts.stage?.() === "OS"; // osnovna šola: brez analize (integral, odvod, limita, vsota)
+  const canGraph = (e) => !!opts.showOnGraph && graphable(e, { simple: simple() });
+  const grafBtn = (i) => `<button type="button" class="sc-act sc-h-graf" data-act="graf" data-i="${i}" title="${esc(t("sc.showOnGraph"))}" aria-label="${esc(t("sc.showOnGraph"))}">${icon("chart-spline")}</button>`;
+  function showOnGraph(text, ans, message) {
+    opts.showOnGraph?.({ text, message, simple: simple(), env: { vars: vars(), funcs: st.funcs, ans: Number.isFinite(ans) ? ans : st.ans, angle: st.angle, comma: comma() } });
+  }
+
   function actionsHtml(e, i) {
     const acts = [];
     const btn = (act, ic, label) => `<button type="button" class="sc-act" data-act="${act}" data-i="${i}">${icon(ic)}<span>${esc(t(label))}</span></button>`;
-    if (e.plot?.length && opts.openGraph) acts.push(btn("plot", "chart-spline", "sc.plot"));
+    // »Pokaži na grafu« (v-graf.js): graf z orodji grafičnega kalkulatorja; sicer star »Nariši graf« (le izrazi)
+    if (canGraph(e)) acts.push(btn("graf", "chart-spline", "sc.showOnGraph"));
+    else if (e.plot?.length && opts.openGraph) acts.push(btn("plot", "chart-spline", "sc.plot"));
     if (e.cas) for (const [op, ic] of [["simplify", "sparkles"], ["expand", "maximize-2"], ["factor", "blocks"]]) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="${op}" data-i="${i}">${icon(ic)}<span>${esc(t(`sc.cas.${op}`))}</span></button>`);
     if (e.ana) {
       // ∫ dx in Taylor: spremenljivko dopišemo le, če ni x
@@ -841,11 +884,18 @@ export function createScientific(root, opts) {
       acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="taylor"${v} data-i="${i}" title="${esc(t("sc.cas.taylorPoly"))}">${icon("sigma")}<span>${esc(t("sc.cas.taylor"))}</span></button>`);
     }
     if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
+    // črke, ki jih definira graf (k = 3, g(x)): »Iz grafa: …« (skupne vrednosti)
+    if (["sym", "expr", "symeq", "plot", "solve", "ineq"].includes(e.kind)) {
+      const fg = fromGraphOf(namesIn(e.text));
+      if (fg) acts.push(fromGraphBtn(fg, i));
+    }
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
     if ((e.kind || "value") === "value" && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
       acts.push(`<button type="button" class="sc-act" data-act="dms" data-i="${i}" aria-pressed="${!!e.dms}" title="${esc(t("sc.toDms"))}"><span aria-hidden="true">°′″</span><span class="sr-only">${esc(t("sc.toDms"))}</span></button>`);
+    // fizika in kemija: izid v pretvornik enot (Orodja), vrednost se vpiše tam (povezani zavihki)
+    if ((e.kind || "value") === "value" && opts.convert && Number.isFinite(e.value) && (profile === "fiz" || profile === "kem")) acts.push(btn("convert", "ruler", "sc.toUnits"));
     if (["value", "solve", "ineq", "system", "deriv", "complex", "pair", "cas"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
   }
@@ -866,7 +916,7 @@ export function createScientific(root, opts) {
           ${resultHtml(e) ? `<button type="button" class="sc-h-res" data-i="${i}" title="${esc(t("sc.useResult"))}">${resultHtml(e)}</button>` : ""}
           ${fact ? `<div class="sc-h-note muted">${texHtml(`${fmt(e.value).tex} = ${factorsTex(e.value, fact)}`)}</div>` : ""}
           ${last || !/^sc\.cas\.(symHint|eqHint)$/.test(e.note?.key || "") ? noteHtml(e) : ""}
-          ${last ? actionsHtml(e, i) : ""}
+          ${last ? actionsHtml(e, i) : canGraph(e) ? grafBtn(i) : ""}
         </div>`;
       })
       .join("");
@@ -901,17 +951,56 @@ export function createScientific(root, opts) {
       if (priDnu) hist.scrollTop = hist.scrollHeight;
     }).observe(hist);
 
+  // Skupne vrednosti z grafičnim kalkulatorjem (opts.sharedGraph: { vars, funcs }): črka, ki je kalkulator ne
+  // pozna, graf pa jo definira (drsnik k = 3, g(x) = …), ponudi gumb »Iz grafa: …«; ob dotiku se shrani in vrstica
+  // izračuna znova. Nič se ne prenese tiho.
+  function fromGraphOf(names) {
+    names = [...names];
+    const sh = names.length && opts.sharedGraph ? opts.sharedGraph() : null;
+    if (!sh) return null;
+    // funkcija grafa s kotnimi funkcijami pri drugi enoti kota (graf RAD, kalkulator DEG) bi pomenila drugo: ne ponudimo
+    const trigOk = (f) => !/(?<![A-Za-z])(?:sin|cos|tan|cot|sec|csc|tg|ctg|arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg)(?![a-z])/.test(f.body) || (sh.angle || "rad") === st.angle;
+    const known = names.filter((n) => !(n in st.vars) && !st.funcs[n] && (Number.isFinite(sh.vars?.[n]) || (sh.funcs?.[n] && trigOk(sh.funcs[n]))));
+    if (!known.length) return null;
+    return {
+      label: known.map((n) => (sh.funcs?.[n] ? `${n}(${sh.funcs[n].param})` : `${n} = ${fmt(sh.vars[n]).text}`)).join(", "),
+      apply() {
+        for (const n of known) {
+          if (sh.funcs?.[n]) st.funcs[n] = { param: sh.funcs[n].param, body: sh.funcs[n].body };
+          else st.vars[n] = sh.vars[n];
+        }
+        save();
+        renderVars();
+      },
+    };
+  }
+  const fromGraphBtn = (fg, i) => `<button type="button" class="sc-act sc-from-graph" data-act="fromgraph" data-i="${i}">${icon("chart-spline")}<span>${esc(t("sc.fromGraph", { names: fg.label }))}</span></button>`;
+  function fromGraph(live, text) {
+    const fg = fromGraphOf(namesIn(text));
+    if (!fg) return;
+    live.insertAdjacentHTML("beforeend", fromGraphBtn(fg, -1));
+    live.querySelector(".sc-from-graph").addEventListener("click", () => {
+      fg.apply();
+      input.value = text;
+      compute();
+    });
+  }
+
   function renderVars() {
     const vs = Object.entries(st.vars);
     const fs = Object.entries(st.funcs);
-    varsBar.hidden = !vs.length && !fs.length;
+    const rec = (opts.recent?.() || []).filter((r) => r.src !== "sci").slice(0, 4);
+    varsBar.hidden = !vs.length && !fs.length && !rec.length;
     if (varsBar.hidden) return (varsBar.innerHTML = "");
     const c = comma();
     varsBar.innerHTML =
-      `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` +
+      (vs.length || fs.length ? `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` : "") +
       vs.map(([n, v]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}" title="${esc(t("sc.insert"))}">${texHtml(`${n} = ${formatNumber(v, { mode: "auto", comma: c }).tex}`)}</button>`).join("") +
-      fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("");
+      fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("") +
+      (rec.length ? `<span class="sc-vars-l">${esc(t("sc.recent"))}</span>` + rec.map((r) => `<button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${texHtml(r.text.replace(/E(-?\d+)$/, "\\cdot 10^{$1}").replace(/(\d),(\d)/, "$1{,}$2"))}</button>`).join("") : "");
   }
+  // skupna zgodovina zavihkov (opts.recent): izidi iz Orodij, PSE, grafa … kot čipi »Nedavno«
+  const srcName = (src) => t({ sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" }[src] || "sc.modeSci");
 
   function syncBar() {
     root.querySelectorAll(".sc-angle button").forEach((b) => {
@@ -1115,6 +1204,17 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
+      else if (act === "fromgraph") {
+        fromGraphOf(namesIn(it.text))?.apply();
+        input.value = it.text;
+        compute();
+      }
+      else if (act === "convert") {
+        let txt = String(Number(it.value.toPrecision(12)));
+        if (/e/.test(txt)) txt = it.value.toExponential(11).replace(/\.?0+e/, "e");
+        opts.convert?.(comma() ? txt.replace(".", ",") : txt);
+      }
+      else if (act === "graf") showOnGraph(it.text, it.ga);
       else if (act === "steps") opts.steps?.(chemNumbers(it.stepsText || it.text), it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
       else if (act === "cas") {
         // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)
@@ -1232,6 +1332,7 @@ export function createScientific(root, opts) {
       return true;
     },
     insert,
+    renderVars, // skupna zgodovina zavihkov: čipi »Nedavno« ob preklopu na Znanstveni
     get state() {
       return st;
     },
@@ -1334,5 +1435,15 @@ export function createUnits(root, opts) {
     const r = calc();
     if (Number.isFinite(r)) opts.onInsert(show(r).text.replace(" · 10^", "E").replace("−", "-"));
   });
-  return { root, resize() {}, reload() {} };
+  return {
+    root,
+    resize() {},
+    reload() {},
+    /** Vrednost iz znanstvenega kalkulatorja (»Pretvori enote«): vpiše jo in preračuna, količina ostane izbrana. */
+    setValue(v) {
+      $(".un-val").value = String(v);
+      calc();
+      $(".un-val").focus({ preventScroll: true });
+    },
+  };
 }

@@ -1178,7 +1178,7 @@ function limitCmd(ast, v, cmd, env, S, wrapT) {
   if (Number.isNaN(r.v)) return err("casLimit");
   if (!verifyLimit(r.v, f, L)) return err("casUnverified");
   const vt = valueTex(r.v, r.q);
-  return { ...base, resTex: vt.tex, ...(vt.approx ? { approx: true } : {}) };
+  return { ...base, resTex: vt.tex, value: r.v, ...(vt.approx ? { approx: true } : {}) }; // value: »Pokaži na grafu« (v-graf.js)
 }
 
 function taylorCmd(ast, v, cmd, env, S, name, innerTex) {

@@ -31,6 +31,58 @@ const fallProd = (n, k, binom) => {
   for (let i = 1n; i <= BigInt(k); i++) r = binom ? (r * (N - BigInt(k) + i)) / i : r * (N - i + 1n);
   return Number(r);
 };
+// Splošni binomski koeficient in padajoča potenca (kot SymPy binomial, ff) za celo število k ≥ 0 in poljuben n:
+// nCr(n; k) = n(n − 1)…(n − k + 1)/k!, nPr(n; k) = n(n − 1)…(n − k + 1). nCr(−5; 2) = 15, nCr(5,5; 2) = 12,375.
+// k, ki ni celo nenegativno število, da NaN (scicore pove, zakaj: »ncrK«).
+function genBinom(n, k, binom) {
+  if (!Number.isInteger(k) || k < 0 || !Number.isFinite(n)) return NaN;
+  if (Number.isInteger(n)) {
+    if (n >= 0) return k > n ? 0 : fallProd(n, binom ? Math.min(k, n - k) : k, binom);
+    // negativen n: nCr(n; k) = (−1)^k·nCr(k − n − 1; k), nPr(n; k) = (−1)^k·(−n)(−n + 1)…(−n + k − 1)
+    const v = fallProd(k - n - 1, binom ? Math.min(k, -n - 1) : k, binom);
+    return k % 2 ? -v : v;
+  }
+  // do k = 1000 produkt (točen na ~k ulp); naprej logaritem gama (zanka do k = 10⁹ bi zamrznila vmesnik)
+  if (k <= 1000) {
+    let r = 1;
+    for (let i = 0; i < k && r !== 0 && Number.isFinite(r); i++) r *= binom ? (n - i) / (i + 1) : n - i;
+    return r;
+  }
+  // (−1)^k sin(π(n + 1)) brez izgube natančnosti pri velikem k (k je celo)
+  const sgnK = k % 2 ? -1 : 1;
+  if (binom) {
+    // nCr(n; k) = (−1)^k·Γ(k − n)/(Γ(−n)·Γ(k + 1))
+    const [lg, sg] = lnAbsGamma(-n);
+    // k − n = (k + 1) + d z d = −n − 1 točno: pri k ~ 10⁹ bi k − n v double izgubil ~7 mest
+    const ln = lnGammaRatio(k - n, k + 1, -n - 1) - lg;
+    return sgnK * sg * Math.exp(ln);
+  }
+  // nPr(n; k) = Γ(n + 1)/Γ(n − k + 1) = Γ(n + 1)·Γ(k − n)·sin(π(n − k + 1))/π
+  const [l1, s1] = lnAbsGamma(n + 1);
+  const sn = sgnK * Math.sin(Math.PI * (n + 1 - 2 * Math.floor((n + 1) / 2)));
+  const l2 = lnAbsGamma(k + 1)[0] + lnGammaRatio(k - n, k + 1, -n - 1);
+  return s1 * Math.sign(sn) * Math.exp(l1 + l2 + Math.log(Math.abs(sn)) - Math.log(Math.PI));
+}
+// ln|Γ(z)| in predznak Γ(z) (z ni celo ≤ 0)
+function lnAbsGamma(z) {
+  if (z < 0.5) {
+    const s = Math.sin(Math.PI * (z - 2 * Math.floor(z / 2)));
+    const [l, sg] = lnAbsGamma(1 - z);
+    return [Math.log(Math.PI) - Math.log(Math.abs(s)) - l, Math.sign(s) * sg];
+  }
+  if (z < 20) {
+    const g = gamma(z);
+    return [Math.log(Math.abs(g)), Math.sign(g)];
+  }
+  return [lnGammaRatio(z, 20) + Math.log(gamma(20)), 1];
+}
+// ln Γ(a) − ln Γ(b) za a, b > 10 po Stirlingu, brez odštevanja velikih števil (log1p)
+function lnGammaRatio(a, b, dExact) {
+  if (a < 10 || b < 10) return lnAbsGamma(a)[0] - lnAbsGamma(b)[0];
+  const S = (x) => 1 / (12 * x) - 1 / (360 * x ** 3) + 1 / (1260 * x ** 5) - 1 / (1680 * x ** 7);
+  const d = dExact ?? a - b; // a − b, če je znan točno (a je lahko zaokrožen)
+  return (b - 0.5) * Math.log1p(d / b) + d * Math.log(a) - d + (S(a) - S(b));
+}
 function gamma(z) {
   // Lanczos
   if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
@@ -142,8 +194,8 @@ const MULTI = {
   mod: (a, b) => ((a % b) + b) % b,
   gcd: (...a) => a.reduce(gcd2),
   lcm: (...a) => a.reduce((x, y) => Math.abs(Math.round(x) * Math.round(y)) / gcd2(x, y)),
-  nCr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, Math.min(k, n - k), true) : Math.round(fact(n) / (fact(k) * fact(n - k)))),
-  nPr: (n, k) => (k < 0 || k > n ? 0 : Number.isInteger(n) && Number.isInteger(k) ? fallProd(n, k, false) : Math.round(fact(n) / fact(n - k))),
+  nCr: (n, k) => genBinom(n, k, true),
+  nPr: (n, k) => genBinom(n, k, false),
   root: (x, n) => nthroot(x, n),
   logb: (x, b) => Math.log(x) / Math.log(b),
   // celo število na [a, b] (Casio RanInt#)
@@ -944,11 +996,20 @@ function tolerantArg(argNode, a, ctx, lo, hi) {
   };
 }
 
+// Znanstveni kalkulator (ctx.calcRad, AUDIT-055): odvod in integral sta vedno v radianih, tudi v načinu DEG/GRA, a
+// samo znotraj ∫(…) in d/dx(…); ostanek vrstice ostane v izbrani enoti (sin(30) + ∫(x; 0; 1) = 1 v DEG). Kotna
+// stopinja (°, pomožne spremenljivke ctx.degUnits) je znotraj π/180. Grafični kalkulator tega ne vklopi: tam sta
+// odvod in ploščina v enoti osi x (geometrijsko pravilen naklon).
+const radCtx = (ctx) => ({ ...ctx, deg: false, grad: false, inRad: true });
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
   const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
   const c = (n) => compile(n, ctx);
+  // tudi f′(a) (odvod uporabniške funkcije) je odvod: v radianih le on, ne cela vrstica
+  if (ctx.calcRad && (deg || ctx.grad) && (node.k === "der" || node.k === "nder" || node.k === "int" || (node.k === "ufn" && node.d))) return compile(node, radCtx(ctx));
   switch (node.k) {
+    case "rad":
+      return compile(node.a, radCtx(ctx));
     case "num": {
       const v = node.v;
       return () => v;
@@ -959,6 +1020,10 @@ export function compile(node, ctx = {}) {
     }
     case "var": {
       const name = node.name;
+      if (ctx.inRad && ctx.degUnits && name in ctx.degUnits) {
+        const r = ctx.degUnits[name];
+        return () => r;
+      }
       return (s) => {
         const v = s[name];
         return v === undefined ? NaN : v;
@@ -1050,6 +1115,11 @@ export function compile(node, ctx = {}) {
         };
       }
       if (f === "sort") return (s) => sorted([args.map((a) => a(s))].flat(2));
+      // nCr(5; 2,5), nPr(5; −1): k mora biti celo število ≥ 0 – povemo takoj, ne le »ni definirano«
+      if ((f === "nCr" || f === "nPr") && node.args[1] && !freeVars(node.args[1]).size) {
+        const kv = compile(node.args[1], ctx)({});
+        if (typeof kv === "number" && !(Number.isInteger(kv) && kv >= 0)) throw new MathError("ncrK", { f });
+      }
       if (f === "__ODVOD_V_TOCKI") {
         // odvod v točki (scicore.js, d/dx(f; a)): args = [f′(a), a], node.fn = f, node.v = spremenljivka
         const F = c(node.fn);
@@ -1086,19 +1156,31 @@ export function compile(node, ctx = {}) {
       // f(2,5) pri f(x) = …: napačno število vrednosti je napaka, ne tiho f(2) (AUDIT-028)
       const known = ctx.funcs?.[name]?.params;
       if (Array.isArray(known) && known.length !== node.args.length) throw new MathError("arity", { f: name, n: known.length });
+      // znotraj ∫ in d/dx (ctx.inRad, AUDIT-055) je tudi telo uporabniške funkcije v radianih: f(x) = sin(x) v DEG
+      // je zunaj sin x°, v ∫(f(x); 0; π) pa sin x (prej je bilo telo vedno prevedeno v enoti vrstice)
+      const rad = !!ctx.inRad;
       return (s) => {
         const def = ctx.funcs?.[name];
         if (!def) return NaN;
+        const dkey = rad ? `r${d}` : d;
         if (d) {
-          const fn = def.derivs?.[d] || (def.derivs ||= {})[d] || null;
+          const fn = def.derivs?.[dkey] || (def.derivs ||= {})[dkey] || null;
           if (!fn) {
             // odvod pripravimo enkrat
             let body = def.ast;
             for (let k = 0; k < d; k++) body = simplify(diff(body, def.params[0], ctx));
-            def.derivs[d] = { body: compile(body, ctx), ast: body };
+            def.derivs[dkey] = { body: compile(body, ctx), ast: body };
           }
         }
-        const body = d ? def.derivs[d].body : def.body;
+        if (rad && !d && !def.radBody) {
+          try {
+            def.radBody = compile(def.ast, ctx);
+          } catch {
+            def.radBody = () => NaN;
+          }
+        }
+        const plain = rad ? def.radBody || def.body : def.body;
+        const body = d ? def.derivs[dkey].body : plain;
         if (depthGuard > 64) return NaN;
         const sc = Object.create(ctx.global || null);
         def.params.forEach((p, i) => (sc[p] = args[i] ? args[i](s) : NaN));
@@ -1111,7 +1193,8 @@ export function compile(node, ctx = {}) {
             return derivCheck((x) => {
               const s2 = Object.create(ctx.global || null);
               s2[p0] = x;
-              return def.body(s2);
+              if (rad && !def.radBody) def.radBody = compile(def.ast, ctx);
+              return (rad ? def.radBody : def.body)(s2);
             }, sc[p0], val);
           }
           return val;

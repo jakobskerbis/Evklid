@@ -6,7 +6,7 @@ import { naloziKnjiznice } from "./rich.js";
 import { naloziVse, t, locale, currentLang } from "./i18n-osnova.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { icon } from "./icons.js";
-import { stageCode } from "./stopnja.js";
+import { stageCode, stopnja, imaStopnjo } from "./stopnja.js";
 import { hideKeyboard } from "./tipkovnica-lena.js";
 import { refreshBubble } from "./okna.js";
 import { backgroundLoadOk } from "./games/stage.js";
@@ -17,15 +17,24 @@ import { $, CALC_MODES, api, calcChapter, calcMode, nastaviCalcMode, calcOverlay
 const calcTools = {};
 let calcP = null; // grafični kalkulator
 let calcShownTool = null; // orodje, ki je trenutno prikazano (za tipko Nazaj)
-function calcBack() {
+// Prejšnji zavihki kalkulatorja (Znanstveni → Grafični → …): tipka Nazaj (tudi na Androidu) se vrne na prejšnjega,
+// z nedotaknjenim stanjem (orodja ostanejo ustvarjena). Ob zaprtju okna kalkulatorja se sklad počisti.
+const calcPrev = [];
+let calcShownMode = null;
+/** Nazaj v kalkulatorju: najprej plast v orodju (meni, plošča), nato (tabs) prejšnji zavihek. Vrne true, če je kaj naredil. */
+function calcBack({ tabs = false } = {}) {
   const tool = calcShownTool;
-  if (!tool?.back || !(calcOverlayOpen() || currentView === "graph")) return false;
-  return !!tool.root.isConnected && !tool.root.hidden && !!tool.back();
+  if (!(calcOverlayOpen() || currentView === "graph")) return false;
+  if (tool?.back && tool.root.isConnected && !tool.root.hidden && tool.back()) return true;
+  if (!tabs || !calcPrev.length) return false;
+  setCalcMode(calcPrev.pop(), { back: true });
+  return true;
 }
 function calcSlot() {
   return calcOverlayOpen() ? $("#graph-overlay-body") : $("#graph-slot");
 }
 
+let graphShown = null; // grafični kalkulator, ko je ustvarjen (skupne vrednosti za znanstveni)
 function graphCalc() {
   // Kalkulator izriše formule s KaTeX (rich.js naloziKnjiznice), ki ni del prvega izrisa.
   if (!calcP) vzporedno("graph/calc.js"); // vse odvisnosti hkrati, ne raven za ravnijo (kliki.js)
@@ -36,7 +45,7 @@ function graphCalc() {
     const host = document.createElement("div");
     host.id = "graph-host";
     queueMicrotask(() => makeSplitter(host, splitOpts("gc")));
-    return createCalculator(host, {
+    return (graphShown = createCalculator(host, {
       t,
       icon,
       locale,
@@ -44,12 +53,24 @@ function graphCalc() {
       toast: (m) => toast(m, "check"),
       storageKey: () => `evklid.graph.${state.student?.id ?? 0}`,
       studentId: () => state.student?.id,
+      // skupne vrednosti: spremenljivke in funkcije znanstvenega kalkulatorja istega učenca
+      shared: () => {
+        try {
+          const s = JSON.parse(localStorage.getItem(`evklid.sci.${state.student?.id ?? 0}`) || "null");
+          return s ? { vars: s.vars || {}, funcs: s.funcs || {}, angle: s.angle || (s.deg === false ? "rad" : "deg") } : null;
+        } catch {
+          return null;
+        }
+      },
+      recent: izidi,
+      // »Uporabi v računu«: vrednost točke ali ∫(f; a; b) v znanstveni kalkulator (zavihek Znanstveni)
+      useInCalc: (text) => insertIntoCalc(text),
       askTutor: (text) => {
         closeCalcOverlay();
         showView("chat");
         fillInput(text);
       },
-    });
+    }));
   });
   return calcP;
 }
@@ -58,7 +79,28 @@ function formulaBook() {
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
   return `${subj}-${stageCode(state.student?.settings)}`;
 }
+// Skupna zgodovina zavihkov (j, 24. 11. 2026): zadnji številski izidi Znanstvenega, Orodij, PSE … istega učenca.
+// Znanstveni jih (iz drugih zavihkov) pokaže kot čipe »Nedavno«, Grafični v meniju »Dodaj« kot vrednost drsnika.
+const izidiKey = () => `evklid.izidi.${state.student?.id ?? 0}`;
+const NUM_TEXT = /^-?[\d.,]+(?:E-?\d+)?$/; // 18,015 ali 6,02214076E23 (E je ×10ˣ kalkulatorja)
+function izidi() {
+  try {
+    const l = JSON.parse(localStorage.getItem(izidiKey()) || "[]");
+    return Array.isArray(l) ? l.filter((x) => x && typeof x.text === "string") : [];
+  } catch {
+    return [];
+  }
+}
+function dodajIzid({ text, src }) {
+  text = String(text ?? "").trim();
+  if (!NUM_TEXT.test(text)) return;
+  const l = [{ text, src }, ...izidi().filter((x) => !(x.text === text && x.src === src))].slice(0, 12);
+  try {
+    localStorage.setItem(izidiKey(), JSON.stringify(l));
+  } catch {}
+}
 async function insertIntoCalc(text, o) {
+  if (calcMode !== "sci" && !o?.replace) dodajIzid({ text, src: calcMode }); // vrednost iz Orodij, PSE, grafa
   const tool = await setCalcMode("sci");
   tool.insert(text, o);
 }
@@ -80,6 +122,15 @@ function calcTool(mode) {
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
+        // skupne vrednosti: definicije grafa (drsniki, f(x)), če je bil grafični kalkulator že odprt
+        sharedGraph: () => graphShown?.shared() || null,
+        recent: izidi,
+        addRecent: dodajIzid,
+        // »Pretvori enote«: zavihek Orodja, pretvornik z vrednostjo izida
+        convert: async (v) => (await setCalcMode("tools"))?.units?.(v),
+        // »Pokaži na grafu«: rezultat z orodji grafičnega kalkulatorja, doda se trenutnemu grafu (graph/v-graf.js)
+        showOnGraph: async (req) => (await setCalcMode("graph"))?.showPlan(req),
+        stage: () => (imaStopnjo(state.student) ? stopnja(state.student) : null), // brez zapisane stopnje vse
         // »Po korakih«: zaslon Skeniraj (public/scan/) ima reševalnik po korakih
         canSteps: () => !!document.getElementById("view-scan"),
         // goal: po »Razstavi« pokaže korake razstavljanja, ne poenostavljanja
@@ -92,13 +143,19 @@ function calcTool(mode) {
       });
     if (mode === "tools") return m.createTools(host, { ...base, subject: calcSubject });
     if (mode === "pse") return m.createPse(host, { ...base, lang: currentLang });
-    return m.createFormulas(host, { ...base, api, renderRich, withSymbols: withFormulaSubject, bookKey: formulaBook });
+    // »Nariši«: formula na grafu (zavihek Grafični, doda se k trenutnemu grafu)
+    return m.createFormulas(host, { ...base, api, renderRich, withSymbols: withFormulaSubject, bookKey: formulaBook, onGraph: async (f) => (await setCalcMode("graph"))?.addFormula(f) });
   });
   return calcTools[mode];
 }
 /** Pokaže izbrano orodje v zavihku ali v prekrivnem oknu. */
-async function setCalcMode(mode) {
+async function setCalcMode(mode, { back = false } = {}) {
   if (!CALC_MODES.includes(mode)) mode = "sci";
+  if (!back && calcShownMode && calcShownMode !== mode) {
+    calcPrev.push(calcShownMode);
+    if (calcPrev.length > 20) calcPrev.shift();
+  }
+  calcShownMode = mode;
   nastaviCalcMode(mode);
   try {
     localStorage.setItem("evklid.calcMode", mode);
@@ -116,7 +173,10 @@ async function setCalcMode(mode) {
     tool._student = state.student?.id;
   }
   if (mode === "formulas" || mode === "tools") tool.reload();
-  if (mode === "sci") tool.adapt?.();
+  if (mode === "sci") {
+    tool.adapt?.();
+    tool.renderVars?.(); // čipi »Nedavno« (skupna zgodovina zavihkov)
+  }
   // Velik razdelek (pripravljen list formul ima ~6000 elementov), ki še ni bil prikazan: najprej slika z izbranim
   // gumbom (takojšen odziv na tap), razdelek v naslednji sliki (prva postavitev lista sicer zadrži odziv).
   if (!calcShown.has(tool.root) && tool.root.getElementsByTagName("*").length > 2000) {
@@ -208,6 +268,10 @@ async function openCalcOverlay({ mode = calcMode, exprs = [], backLabel = t("nav
   if (zaprt) overlayOpened();
   $("#graph-overlay").hidden = false;
   if (zaprt) calcFokus = zadrziFokus($("#graph-overlay"), { zacetni: $("#graph-close") });
+  if (zaprt) {
+    calcPrev.length = 0; // okno kalkulatorja začne brez prejšnjih zavihkov (Nazaj ga zapre)
+    calcShownMode = null;
+  }
   document.body.classList.add("graph-open");
   const tool = await setCalcMode(mode);
   if (mode === "graph" && exprs.length) tool.show(exprs);
@@ -219,6 +283,8 @@ function closeCalcOverlay({ fromBack = false } = {}) {
   if (!calcOverlayOpen()) return;
   if (!fromBack) overlayClosed();
   $("#graph-overlay").hidden = true;
+  calcPrev.length = 0; // nova seja kalkulatorja začne brez prejšnjih zavihkov
+  calcShownMode = null;
   calcFokus?.();
   calcFokus = null;
   document.body.classList.remove("graph-open");
