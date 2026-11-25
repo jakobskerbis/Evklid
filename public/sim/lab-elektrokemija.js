@@ -5,6 +5,8 @@ import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label,
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en } from "./lab.js";
 import { AM_RANGES, VM_RANGES, R_PLIN } from "./lab-model.js";
 import { pNas } from "./lab-model-toplota.js";
+import { fotoPoskus } from "./foto.js";
+import { risiKovine, OKNA_KOVINE } from "./foto-kovine.js";
 import {
   ElektrolizaBench, TEKOCINE_EL, KONC_EL, HOFMANN, ELEKTRODE, F, barometerRead, prostorninaPlina,
   GalvanBench, KOVINE, SOLI, KONC_G, BREME, naklonDekada, barvaRaztopine,
@@ -25,6 +27,7 @@ const seg = (name, options, value, onChange) => {
 const hint = (text) => h("p", { class: "lab-tit-hint", html: text });
 const num = (x, d = 1) => fixed(x, d);
 const rgb = (c, a = 1) => `rgb(${c.join(" ")} / ${a})`;
+const hexRgb = (x) => [1, 3, 5].map((i) => parseInt(x.slice(i, i + 2), 16));
 const cFmt = (c) => (c >= 0.1 ? num(c, 1) : String(c).replace(".", ","));
 // Štoparica: minute:sekunde,desetinke.
 export const ura = (t) => {
@@ -973,11 +976,20 @@ export function labKovine(el) {
 
   // ---- risba (1 cm = 8 enot): erlenmajerica 100 mL (dno Ø 6,4 cm, višina 10,5 cm) ali čaša 100 mL, brizga 100 mL (bat 15 cm)
   const yB = 268;
+  const foto = fotoPoskus("kovine", svg, el, () => draw(), OKNA_KOVINE);
   function draw() {
     gD.replaceChildren();
     P.begin();
-    s("rect", { x: 0, y: yB, width: W, height: H - yB, fill: u(svg, "miza") }, gD);
     const t = B.tek, kis = t ? RAZTOPINE_K[t.id].kislina : rId in RAZTOPINE_K && RAZTOPINE_K[rId].kislina;
+    svg.setAttribute("aria-label", `${t ? `${RAZTOPINE_K[t.id].name} ${cFmt(t.c)} mol/L` : "Prazna posoda"}${B.kos ? `, v njej ${KOVINE[B.kos.kovina].name} (${OBLIKE[B.kos.oblika].name}), mehurčki: ${["ni", "posamezni", "zmerno", "živahno", "burno"][B.mehurcki()]}${B.prevleka() > 0.3 ? ", kovina je prevlečena" : ""}` : ""}${B.brizga && t ? (B.batIzpadel ? ", bat brizge je izpadel" : `, v brizgi ${B.odcitekBrizge().text.replace(".", ",")} mL`) : ""}.`);
+    // Fotografski prikaz (foto-kovine.js, privzeto vklopljen): posoda, barva, bat brizge, kovina in mehurčki iz modela.
+    const ion = t && !RAZTOPINE_K[t.id].kislina ? RAZTOPINE_K[t.id].ion : null;
+    if (foto.risi((o, meta) => risiKovine(o, meta, {
+      posoda: !t ? "prazna" : kis ? "bucka" : "casa", zamasek: !!(t && B.brizga), V: t ? t.V : 0, pena: B.pena, prelito: B.prelito, barva: t ? B.barva() : null,
+      brizga: !!(t && B.brizga), polozaj: t && B.brizga ? clamp(B.Vbrizga() + B.brizgaKal, 0, POSODA_K.izpade) : 0, batIzpadel: B.batIzpadel,
+      kos: B.kos, mehurcki: B.kos ? B.mehurcki() : 0, prevleka: B.kos ? B.prevleka() : 0, prevlekaBarva: ion && PREVLEKA[ion] ? hexRgb(PREVLEKA[ion]) : null, ocala: B.ocala, hitrost: speed,
+    }, P, mehurcki))) return P.commit();
+    s("rect", { x: 0, y: yB, width: W, height: H - yB, fill: u(svg, "miza") }, gD);
     const fx = 50, col = t ? B.barva() : null;
     const liqCol = col ? rgb(bistra(col), 0.85) : null;
     let liqTop = yB;
@@ -1047,7 +1059,6 @@ export function labKovine(el) {
     s("path", { d: `M${340},${H - 8} v-4 h${5 * S} v4`, class: "lab-scale lab-ek-mizacrta" }, gD);
     label(gD, 340 + 2.5 * S, H - 15, "5 cm", "lab-ek-miza");
     P.commit();
-    svg.setAttribute("aria-label", `${t ? `${RAZTOPINE_K[t.id].name} ${cFmt(t.c)} mol/L` : "Prazna posoda"}${B.kos ? `, v njej ${KOVINE[B.kos.kovina].name} (${OBLIKE[B.kos.oblika].name}), mehurčki: ${["ni", "posamezni", "zmerno", "živahno", "burno"][B.mehurcki()]}${B.prevleka() > 0.3 ? ", kovina je prevlečena" : ""}` : ""}${B.brizga && t ? `, v brizgi ${B.odcitekBrizge().text.replace(".", ",")} mL` : ""}.`);
   }
   // Kovina v posodi: trak (pri Mg ob burni reakciji priplava na gladino), granule ali prah; prevleka po izpodrivanju.
   function kos(x, yTop, w, casa = false) {

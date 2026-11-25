@@ -2,6 +2,8 @@
 import { h, s, fmt, svgBox, slider, select, segmented, button, toggle, layout, label } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
 import { Co2Bench, ACIDS, M, VM_SOBA, POENOSTAVITVE } from "./lab-model.js";
+import { fotoPoskus } from "./foto.js";
+import { risiCo2, OKNA_CO2 } from "./foto-co2.js";
 
 // Erlenmajerica 100 mL (ISO 1773): dno Ø 64 mm, stožec do višine 80 mm, vrat Ø 22 mm in 25 mm visok.
 const RB = 32, RN = 11, HC = 80, HN = 25, KB = (RB - RN) / HC;
@@ -36,7 +38,7 @@ export function labCo2(el) {
   const graph = dataGraph({ x: [0, 180], y: [-1, 0.1], xStep: 30, xLabel: "t [s]", yLabel: "Δm [g]", title: "Graf spremembe mase v odvisnosti od časa", origin: false });
   const qBox = h("div");
   const pts = [];
-  let m0 = null, auto = false, nextAuto = 0, nEv = 0, readT = 0;
+  let m0 = null, auto = false, nextAuto = 0, nEv = 0, readT = 0, masa = null, cas = 0;
   const said = new Set();
 
   const acidSel = select({ label: "tekočina", options: Object.entries(ACIDS).map(([k, A]) => [k, A.name]), value: "kis" });
@@ -136,8 +138,10 @@ export function labCo2(el) {
     draw();
   }
   function readOut() {
-    bal.set(B.readMass().toFixed(2), "g", "berljivost 0,01\u00a0g");
-    clock.set(B.t0 == null ? "0.0" : elapsed().toFixed(1), "s", B.t0 == null ? "čaka na reakcijo" : "od stika sode s kislino");
+    masa = B.readMass();
+    bal.set(masa.toFixed(2), "g", "berljivost 0,01\u00a0g");
+    cas = B.t0 == null ? 0 : elapsed();
+    clock.set(cas.toFixed(1), "s", B.t0 == null ? "čaka na reakcijo" : "od stika sode s kislino");
     const q = B.rate * VM_SOBA * 1e6; // mL/s
     const done = B.t0 != null && (B.soda < 1e-6 || (B.acid?.nH ?? 0) < 1e-6);
     status.textContent = B.t0 == null ? "" : q > 40 ? "Burno penjenje." : q > 5 ? "Mehurčki nastajajo." : q > 0.3 ? "Penjenje se umirja." : done ? `Reakcija je končana: porabila se je ${B.soda < 1e-6 ? "vsa soda" : "vsa kislina"}.` : "";
@@ -202,8 +206,21 @@ export function labCo2(el) {
       tubeBubbles = [];
     }
   }
+  // Stanje za fotografski prikaz (foto-co2.js): vse iz modela; mehurčki iz risbe preračunani v mm.
+  const stanje = () => ({
+    V: B.Vliq * 1000, tekocina: B.acid?.id ?? "voda", pena: B.foam * 1000, soda: B.soda * M.NaHCO3, zamasek: B.zamasek, epruveta: B.epruveta,
+    motnost: B.epruveta === "apnica" ? B.milky() : 0, masa, cas, razlito: B.spilled,
+    mehurcki: bubbles.map((b) => ({ h: (FB - b.y) / K, f: b.x / (rAt(0) * K), r: b.r / K })),
+    mehurckiEp: tubeBubbles.map((b) => ({ h: (TB - 14 - b.y) / K, s: (b.x - TX) / 4, r: b.r / K })),
+    trska: B.flame ? { faza: B.t - (B.flame.until - 3), out: B.flame.out, t: B.t } : null,
+  });
   function draw() {
     svg.replaceChildren();
+    if (stopSeg.get() !== B.zamasek) stopSeg.set(B.zamasek, true); // zamašek je izletel
+    splintBtn.disabled = false;
+    tubeSel.hidden = B.zamasek !== "cevka";
+    // Fotografski prikaz (foto-co2.js, privzeto vklopljen): gladina, pena, sode, apnica, zasloni in trska iz modela.
+    if (foto.risi((o, meta) => risiCo2(o, meta, stanje()))) return;
     // tehtnica
     s("rect", { x: FX - 72, y: FB + 2, width: 144, height: 30, rx: 5, class: "lab-box" }, svg);
     s("text", { x: FX, y: FB + 20, class: "tick", "text-anchor": "middle" }, svg, "tehtnica · 0,01 g");
@@ -278,11 +295,9 @@ export function labCo2(el) {
     // merilo
     s("line", { x1: 16, y1: 22, x2: 16 + 10 * K * 2, y2: 22, class: "lab-scale" }, svg);
     s("text", { x: 16 + 10 * K, y: 17, class: "tick small", "text-anchor": "middle" }, svg, "2 cm");
-    if (stopSeg.get() !== B.zamasek) stopSeg.set(B.zamasek, true); // zamašek je izletel
-    splintBtn.disabled = false;
-    tubeSel.hidden = B.zamasek !== "cevka";
   }
 
+  const foto = fotoPoskus("co2", svg, el, () => draw(), OKNA_CO2);
   readOut();
   redraw();
   draw();

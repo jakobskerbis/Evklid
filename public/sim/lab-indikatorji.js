@@ -3,6 +3,7 @@
 import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
 import { fotoPoskus, risiDokaz, OKNA_DOKAZ } from "./foto.js";
+import { risiPh, OKNA_PH, zaslonPh } from "./foto-ph.js";
 import {
   PhBench, PH_VZORCI, PAPIR, zeljePas, razvrstitevOk, SKUPINE, DokazBench, ZIVILA, PRESKUSI,
   SlinaBench, EPRUVETE, JOD_STOPNJE, POENOSTAVITVE_INDIKATORJI,
@@ -211,11 +212,17 @@ export function labPh(el) {
     B.step(dt);
     const v = B.readPH();
     meterL.set(v == null ? "" : num(v, 2), "pH", B.cal ? "umerjen" : "ni umerjen");
+    const z = svg.querySelector(".lab-foto-ph-lcd"); // zaslon pH-metra na fotografiji
+    if (z) z.textContent = zaslonPh(B.elektroda.v === cur ? v : null);
   }, 250);
 
   // ---------------------------------------------------------------- risba (1 cm = 10 px)
   function draw() {
     svg.replaceChildren();
+    const inS = B.elektroda.v === cur;
+    svg.setAttribute("aria-label", `Vzorec ${ime(cur)}. Epruveta z rdečim zeljem: ${show.zelje ? zeljePas(B.pH(cur)).ime : "prazna"}. Indikatorski papir ${show.papir ? "obarvan" : "suh"}. Elektroda ${inS ? "v vzorcu" : "zunaj"}.`);
+    // Fotografski prikaz (foto-ph.js, privzeto vklopljen): barve, gladini in odčitek iz modela na izrisanih slojih.
+    if (foto.risi((o, meta) => risiPh(o, meta, { vzorec: cur, zelje: show.zelje, papir: show.papir, elektroda: inS, cist: B.elektroda.cist, cal: !!B.cal, ocala: B.goggles, odcitek: B.readPH() }))) return;
     s("line", { x1: 0, y1: 176, x2: W, y2: 176, class: "lab-tit-bench" }, svg);
     const V = PH_VZORCI[cur], own = V.barva ? `rgb(${V.barva.join(" ")} / ${V.a})` : "rgb(220 235 248 / 0.6)";
     // čaša z vzorcem in pH-meter
@@ -223,7 +230,6 @@ export function labPh(el) {
     s("rect", { x: bx0 + 2, y: 134, width: bx1 - bx0 - 4, height: yB - 136, rx: 3, fill: own, class: "lab-ind-liq" }, svg);
     s("path", { d: `M${bx0 - 5},${yT - 2} Q${bx0},${yT} ${bx0},${yT + 5} V${yB - 5} Q${bx0},${yB} ${bx0 + 5},${yB} H${bx1 - 5} Q${bx1},${yB} ${bx1},${yB - 5} V${yT}`, class: "lab-glass" }, svg);
     label(svg, (bx0 + bx1) / 2, 190, "vzorec", "lbl small");
-    const inS = B.elektroda.v === cur;
     const ex = inS ? 272 : 346, ey = inS ? 166 : 150;
     s("rect", { x: ex - 5, y: ey - 76, width: 10, height: 64, rx: 4, class: "lab-tit-electrode" }, svg);
     s("ellipse", { cx: ex, cy: ey - 8, rx: 6, ry: 8, class: "lab-tit-bulb" }, svg);
@@ -244,8 +250,8 @@ export function labPh(el) {
     label(svg, 200, 252, "barvna lestvica indikatorskega papirja (pH)", "tick small");
     if (!B.goggles) label(svg, 180, 26, "brez zaščitnih očal", "lab-warn");
     merilo(svg, 166, 186, 20, "2 cm");
-    svg.setAttribute("aria-label", `Vzorec ${ime(cur)}. Epruveta z rdečim zeljem: ${show.zelje ? zeljePas(B.pH(cur)).ime : "prazna"}. Indikatorski papir ${show.papir ? "obarvan" : "suh"}. Elektroda ${inS ? "v vzorcu" : "zunaj"}.`);
   }
+  const foto = fotoPoskus("ph", svg, el, () => draw(), OKNA_PH);
   status();
   redraw();
   drawLine();

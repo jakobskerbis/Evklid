@@ -854,7 +854,45 @@ export function barvaSpektra(sp, { steklo = false } = {}) {
       for (const [l, a] of pts) add(l, (q.I * a) / norm);
     }
   }
-  return { rgb: Y > 0 || X > 0 || Z > 0 ? xyzRgb([X, Y, Z]) : [0, 0, 0], Y };
+  return { rgb: Y > 0 || X > 0 || Z > 0 ? xyzRgb([X, Y, Z]) : [0, 0, 0], Y, xyz: [X, Y, Z] };
+}
+// Ime barve plamena po prevladujoči valovni dolžini (premica od bele D65 skozi barvo do spektralnega roba v diagramu CIE xy) in
+// čistosti. Odtenek v sRGB ni primeren: spektralne barve so zunaj zaslona, razbarvanje premakne 589 nm (natrij) na odtenek 33°,
+// kar je bilo »oranžno rdeča«. Meje imen (nm): ocena po običajni delitvi spektra; natrijeva črta (589 nm) je rumena.
+const BELA = [0.3127, 0.329];
+const LOKUS = Array.from({ length: 321 }, (_, i) => {
+  const l = 380 + i, [x, y, z] = cmf(l), v = x + y + z;
+  return [l, x / v, y / v];
+});
+export function prevladujoca([X, Y, Z]) {
+  const v = X + Y + Z;
+  if (!(v > 0)) return null;
+  const px = X / v - BELA[0], py = Y / v - BELA[1], r = Math.hypot(px, py);
+  if (r < 1e-9) return { l: null, cistost: 0 };
+  // presečišče poltraka bela → barva z daljicami lokusa in s škrlatno premico (380–700 nm)
+  const seg = [...LOKUS.slice(1).map((q, i) => [LOKUS[i], q]), [LOKUS.at(-1), LOKUS[0]]];
+  for (const [a, b] of seg) {
+    const ax = a[1] - BELA[0], ay = a[2] - BELA[1], ex = b[1] - a[1], ey = b[2] - a[2];
+    const den = px * ey - py * ex;
+    if (Math.abs(den) < 1e-15) continue;
+    const t = (ax * ey - ay * ex) / den, u = (ax * py - ay * px) / den;
+    if (t > 0 && u >= 0 && u <= 1) {
+      const skrlatna = b === LOKUS[0];
+      return { l: skrlatna ? null : a[0] + u * (b[0] - a[0]), skrlatna: skrlatna ? 1 - u : 0, cistost: Math.min(1, 1 / t) };
+    }
+  }
+  return { l: null, cistost: 0 };
+}
+export function imeBarve(xyz) {
+  const d = prevladujoca(xyz);
+  if (!d) return "ni";
+  const l = d.l;
+  // škrlatne barve (zmes rdeče in vijolične; litij 671 nm in stroncij z modrim plamenom): »skrlatna« = 0 pri 380 nm, 1 pri 700 nm.
+  // Nad 0,6 je rdeča z modrim nadihom, v šolski kemiji »karminasto rdeča« (litij od 1 do ~0,15 na zanki; ko izhlapi, prevlada modri plamen); kalij skozi kobaltovo steklo ~0,3.
+  // Meje (nm): Cu 486–489 modro zelena tudi, ko sol izhlapeva; Ca 598–602 (s sledjo natrija) opečnato rdeča (j, 2026-11-24: kot v učbenikih in v seznamu); Ba z umazano zanko 571 rumeno zelena.
+  const ime = l == null ? (d.skrlatna > 0.6 ? "karminasto rdeča" : d.skrlatna > 0.35 ? "rožnato vijolična" : "vijolična")
+    : l < 450 ? "vijolična" : l < 482 ? "modra" : l < 500 ? "modro zelena" : l < 555 ? "zelena" : l < 575 ? "rumeno zelena" : l < 595 ? "rumena" : l < 597 ? "oranžna" : l < 620 ? "opečnato rdeča" : "rdeča";
+  return d.cistost < 0.3 ? `bledo ${ime}` : ime;
 }
 // Delež svetlosti (Y), ki ga prispeva posamezen element.
 export function delezSvetlosti(sp, el, o = {}) {

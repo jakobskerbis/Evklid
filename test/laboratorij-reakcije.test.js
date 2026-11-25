@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   MarmorBench, MagnezijBench, TiosulfatBench, PeroksidBench, KalorimeterBench, PlamenBench, Brizga, BRIZGA, MARMOR_OBLIKE, MARMOR_MASE, KONC_HCL,
-  TIO, TIO_VOLUMNI, casKriza, KATALIZATORJI, PEROKSID_V, TRDNE, DH, ekstrapolacija, entalpija, CRTE, IONI, spekterSoli, barvaSpektra, delezSvetlosti,
+  TIO, TIO_VOLUMNI, casKriza, KATALIZATORJI, PEROKSID_V, TRDNE, DH, ekstrapolacija, entalpija, CRTE, IONI, spekterSoli, barvaSpektra, delezSvetlosti, imeBarve, prevladujoca, spekterPlamena,
   cmf, valovRgb, kobalt, energijaFotona, reakcijskiCas, CLOVEK, tehtnicaR, tehtnicaBeri, TEHTNICA_R, POENOSTAVITVE_REAKCIJE, MG_TRAK,
 } from "../public/sim/lab-model-reakcije.js";
 import { M } from "../public/sim/lab-model.js";
@@ -521,4 +521,27 @@ test("mistake: stopping the stopwatch while the cross is still visible gives a m
 test("POENOSTAVITVE_REAKCIJE lists simplifications for every bench", () => {
   for (const k of ["hitrost", "energija", "plamenska"]) assert.ok(POENOSTAVITVE_REAKCIJE[k].length >= 3);
   assert.ok(Object.keys(KATALIZATORJI).length >= 8 && PEROKSID_V.includes(10));
+});
+
+// Ime barve plamena (napis »obarvan: …«) po prevladujoči valovni dolžini: natrij (589 nm) je rumen, tudi z modrim nesvetlim
+// plamenom in s sledjo kalija; prej je odtenek razbarvane spektralne barve v sRGB (33°) dal »oranžno rdeča«.
+test("flame colour name: sodium reads yellow, other ions keep their textbook colour", () => {
+  const ime = (sol, zrak = 1, o) => imeBarve(barvaSpektra([...spekterPlamena(zrak), ...spekterSoli(sol)], o).xyz);
+  const na = prevladujoca(barvaSpektra(spekterSoli({ Na: 1 })).xyz);
+  assert.ok(Math.abs(na.l - 589) < 1, `Na ${na.l} nm`);
+  for (const n of [1, 0.3, 0.05, 0.01]) assert.equal(ime({ Na: n }), "rumena", `Na ${n}`);
+  for (const zrak of [0.6, 0.3]) assert.equal(ime({ Na: 1 }, zrak), "rumena", `Na, zrak ${zrak}`); // z delom saj (le sled Na: oranžen, a takrat napisa ni, vidnost < 0,3)
+  assert.equal(ime({ Na: 0.3, K: 0.02 }), "rumena"); // umazana zanka
+  assert.equal(ime({ Na: 0.3, K: 1 }), "rumena"); // natrij prekrije kalij
+  assert.equal(ime({ Na: 0.3, K: 1 }, 1, { steklo: true }), "vijolična"); // skozi kobaltovo steklo samo kalij
+  for (const n of [1, 0.3]) assert.equal(ime({ Li: n }), "karminasto rdeča", `Li ${n}`);
+  assert.equal(ime({ Sr: 0.3 }), "karminasto rdeča");
+  assert.equal(ime({ Ca: 1, Na: 0.045, K: 0.003 }), "opečnato rdeča"); // po enem čiščenju umazane zanke
+  assert.equal(ime({ Ba: 1, Na: 0.3, K: 0.02 }), "rumeno zelena");
+  assert.equal(ime({ Cu: 0.05 }), "modro zelena");
+  assert.equal(ime({ Sr: 1 }), "rdeča");
+  assert.equal(ime({ Ca: 1 }), "opečnato rdeča");
+  assert.equal(ime({ Ba: 1 }), "zelena");
+  assert.equal(ime({ Cu: 1 }), "modro zelena");
+  assert.equal(ime({ K: 1 }), "vijolična");
 });

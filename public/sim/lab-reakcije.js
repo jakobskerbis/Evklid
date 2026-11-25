@@ -4,11 +4,13 @@
 // Mehurčki in plamen so v ločeni plasti (plastMehurckov), da animacija teče gladko, čeprav se risba obnovi 10-krat na sekundo.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { fotoPoskus } from "./foto.js";
+import { risiPlamensko, OKNA_PLAMENSKA } from "./foto-plamenska.js";
 import { gradienti, plastMehurckov, steklo, tekocina, mehurcki, stojalo, prijemalo, ura } from "./lab-elektrokemija.js";
 import {
   MarmorBench, MagnezijBench, TiosulfatBench, PeroksidBench, MARMOR, MARMOR_OBLIKE, MARMOR_MASE, KONC_HCL, MG_TRAK, TIO, TIO_VOLUMNI, KATALIZATORJI, PEROKSID_V,
   BRIZGA, KalorimeterBench, TRDNE, DH, TERMOMETRI, ekstrapolacija, entalpija,
-  PlamenBench, IONI, BARVE_PLAMENA, valovRgb, cmf, kobalt, energijaFotona, E_NAB, POENOSTAVITVE_REAKCIJE,
+  PlamenBench, IONI, imeBarve, BARVE_PLAMENA, valovRgb, cmf, kobalt, energijaFotona, E_NAB, POENOSTAVITVE_REAKCIJE,
 } from "./lab-model-reakcije.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -1137,6 +1139,10 @@ export function labPlamenska(el, opts = {}) {
   function draw() {
     gD.replaceChildren();
     P.begin();
+    svg.setAttribute("aria-label", `Plinski gorilnik ${B.prizgan ? (B.zrak < 0.3 ? "s svetlim plamenom" : "z nesvetlim plamenom") : "ne gori"}${B.vPlamenu ? ", zanka je v plamenu" : ""}; barva plamena ${rgbIme()}.`);
+    // Fotografski prikaz (foto-plamenska.js, privzeto vklopljen): plamen, barve in spekter iz modela nad izrisanimi sloji.
+    const V0 = B.vzorci[vz];
+    if (foto.risi((o, meta) => risiPlamensko(o, meta, { zrak: B.zrak, prizgan: B.prizgan, vPlamenu: B.vPlamenu, steklo: B.steklo, zanka: B.zanka, vid: B.vidnostSoli(), sestava: V0.sestava, imeVzorca: V0.neznan ? V0.name.replace("neznani vzorec", "vzorec X") : V0.name, ocala: B.ocala }, P.g, spek && ((g, x, y) => spektroskop(B.prizgan && B.vPlamenu, g, x, y))))) return P.commit();
     s("rect", { x: 0, y: yB, width: W, height: H - yB, fill: u(svg, "miza") }, gD);
     const bx = 90; // os gorilnika
     // podnožje Ø 9 cm, cev Ø 1,1 cm × 12 cm, zračna odprtina 3 cm nad podnožjem
@@ -1179,17 +1185,13 @@ export function labPlamenska(el, opts = {}) {
     if (spek) spektroskop(B.prizgan && B.vPlamenu);
     if (!B.ocala) label(gD, 210, 14, "brez zaščitnih očal", "lab-warn");
     merilo(gD, 12, 30, S);
-    svg.setAttribute("aria-label", `Plinski gorilnik ${B.prizgan ? (B.zrak < 0.3 ? "s svetlim plamenom" : "z nesvetlim plamenom") : "ne gori"}${B.vPlamenu ? ", zanka je v plamenu" : ""}; barva plamena ${rgbIme()}.`);
     P.commit();
   }
   function rgbIme() {
     if (!B.prizgan) return "ni";
     const vid = B.vidnostSoli();
     if (!B.vPlamenu || vid < 0.3) return B.zrak < 0.3 ? "rumena (saje)" : "bledo modra";
-    const [r, g, b] = B.barva().rgb, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn || 1;
-    const hue = (mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4) * 60;
-    const ime = hue < 15 || hue >= 340 ? "rdeča" : hue < 38 ? "oranžno rdeča" : hue < 52 ? "oranžna" : hue < 70 ? "rumena" : hue < 150 ? "zelena" : hue < 190 ? "modro zelena" : hue < 255 ? "modra" : hue < 300 ? "vijolična" : "rožnato vijolična";
-    return (mx - mn) / (mx || 1) < 0.3 ? `bledo ${ime}` : ime;
+    return imeBarve(B.barva().xyz); // po prevladujoči valovni dolžini (natrij 589 nm je rumena, ne »oranžno rdeča« kot odtenek v sRGB)
   }
   // Plamen: svetel (saje: rumeno oranžen, plapola) ali nesvetel (bledo vijoličasto moder z modrim notranjim stožcem); sol ga obarva.
   function plamen(bx, ct) {
@@ -1216,8 +1218,8 @@ export function labPlamenska(el, opts = {}) {
     }
   }
   // Ročni spektroskop: pogled skozi okular, lestvica 400–780 nm, črte v barvi valovne dolžine.
-  function spektroskop(on) {
-    const x0 = 150, y0 = 54, w = 232, hh = 74, X = (l) => x0 + 8 + ((l - 400) / 380) * (w - 16);
+  function spektroskop(on, gD = gDr, x0 = 150, y0 = 54) {
+    const w = 232, hh = 74, X = (l) => x0 + 8 + ((l - 400) / 380) * (w - 16);
     s("rect", { x: x0, y: y0, width: w, height: hh, rx: 8, fill: "#07080b", stroke: "#4a4f55", "stroke-width": 2 }, gD);
     // šibek zvezen spekter (sipana svetloba) in črte
     if (on) {
@@ -1243,5 +1245,7 @@ export function labPlamenska(el, opts = {}) {
   }
   // občutljivost očesa (CIE ȳ), spodaj omejena, da se temno rdeče kalijeve črte v spektroskopu še vidijo (kot v resnici)
   const eye = (l) => Math.max(0.004, cmf(l)[1]);
+  const gDr = gD;
+  const foto = fotoPoskus("plamenska", svg, el, () => draw(), OKNA_PLAMENSKA);
   draw();
 }

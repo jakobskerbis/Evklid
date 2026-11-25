@@ -56,6 +56,10 @@ export const PH_VZORCI = {
   odtok: { name: "čistilo za odtoke (~2 % NaOH)", sestava: { na: 0.5 }, lit: [13.0, 14.0], jedko: true }, // 20 g/L / 40,00 g/mol (ocena)
   hcl: { name: "klorovodikova kislina 0,1 mol/L", sestava: { cl: 0.1 }, lit: [0.9, 1.1], jedko: true },
 };
+// Količine na pultu (fotografski prikaz, docs/laboratorij.md): v čaši 250 mL je 100 mL vzorca (tudi po razredčitvi
+// 10 mL → 100 mL), v epruveti 2 mL vzorca in 2 mL izvlečka rdečega zelja; trak indikatorskega papirja 7 × 70 mm,
+// pomočen 25 mm globoko (ocena). Lastna barva vzorca (barva, a) velja za plast tekočine ~65 mm (premer čaše).
+export const PH_KOLICINE = { casaMl: 100, epruvetaMl: 4, papir: { sirina: 7, dolzina: 70, mokro: 25 } };
 // Razredčitev 1 : 10 pomnoži vse koncentracije z 0,1; CO₂ v destilirani vodi ostane v ravnotežju z zrakom.
 export function sestavaRazredcena(s, krat = 1) {
   const o = {};

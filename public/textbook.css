@@ -723,6 +723,9 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-foto-gumb svg.i { width: 18px; height: 18px; }
 .lab-foto-gumb[aria-pressed="true"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: var(--accent-soft); }
 .lab-foto-gumb:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Sivi napisi (.tick) in opozorila na fotografiji dobijo obrobo podlage kot .lbl: v temnem načinu so svetli in bi bili
+   na svetli fotografiji (stena, miza) skoraj nevidni (»ni umerjen«, »zrak«, »2 cm«, »čas teče ×10«). */
+.demo-svg .lab-foto :is(.tick, .lab-warn) { paint-order: stroke; stroke: var(--mat-ozadje, var(--surface)); stroke-width: 3px; stroke-linejoin: round; }
 @media not ((orientation: landscape) and (max-height: 560px)) {
 @container labtit (max-width: 799.98px) {
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage {
@@ -746,6 +749,18 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd-screen { min-height: 1.7em; padding: 1px 6px; }
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd-val { font-size: 1.08rem; }
   .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-lcd-note { font-size: 0.7rem; min-height: 1.25em; line-height: 1.25; overflow-wrap: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; } /* do tri vrstice: »porcelanska skodelica s pokrovčkom«, »območje 200 mA« se ne odrežeta */
+  /* natanko štirje merilniki (kovine: štoparica, plinska brizga, termometer, tehtnica; ohlajanje): dva stolpca, vsak merilnik
+     v eni nizki vrstici (ime in opomba levo, zaslon desno). Pripeti del je ~50 % zaslona (lab.js), risba dobi, kar merilniki
+     pustijo: pokončni merilniki (3 + 1) so vzeli ~130 px, fotografija je bila le ~190 px široka in »plinska briz…« odrezana. */
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) > .lab-lcd {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 1fr; align-items: center; column-gap: 5px; row-gap: 0; padding: 3px 4px 3px 7px;
+  }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-name { grid-area: 1 / 1; font-size: 0.68rem; white-space: normal; overflow-wrap: normal; text-overflow: clip; overflow: visible; line-height: 1.15; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-screen { grid-area: 1 / 2 / 3 / 3; min-height: 1.6em; padding: 1px 4px; gap: 2px; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-val { font-size: 0.92rem; letter-spacing: 0; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-unit { font-size: 0.72rem; }
+  .demo.lab:not(.lab-odpeto):not(.lab-nizko) .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(4)):not(:has(> :nth-child(5))) .lab-lcd-note { grid-area: 2 / 1; align-self: start; font-size: 0.64rem; line-height: 1.15; min-height: 0; -webkit-line-clamp: 3; } /* »porcelanska skodelica s pokrovčkom« (ohlajanje) ima v ~66 px tri vrstice */
 }
 }
 /* Telefon ležeče (nizek zaslon): risba levo pripeta in cela vidna, kontrole desno. */
@@ -1069,6 +1084,9 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-ek-risba { position: relative; width: 100%; max-width: 460px; }
 .lab-ek-risba > .demo-svg { display: block; width: 100%; max-width: none; }
 .lab-ek-risba > .lab-ek-ov { position: absolute; inset: 0; height: 100%; pointer-events: none; will-change: transform; }
+/* risba z razredom .lab-bench ima odmik (lab.css): plast nad njo (plamen, mehurčki) mora imeti enakega, sicer se zamakne */
+.lab-ek-risba > .lab-bench + .lab-ek-ov { padding: 14px; }
+@media (max-width: 480px) { .lab-ek-risba > .lab-bench + .lab-ek-ov { padding: 10px; } }
 .demo-svg .lab-ek-bubst { stroke: rgb(90 120 145 / 0.55); stroke-width: 0.3; }
 @keyframes lab-ek-up { from { transform: translate(0, 0); opacity: 0.95; } 85% { opacity: 0.95; } to { transform: translate(var(--dx, 0px), var(--d)); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .demo-svg .lab-ek-bub { animation: none; transform: translate(0, calc(var(--d) * var(--f))); } }
