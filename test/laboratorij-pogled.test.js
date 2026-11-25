@@ -76,9 +76,9 @@ test("lab view: tab in »Uči se«, i18n and the tutor's open-window command", (
 test("»Preveri se« po poskusu (povezave C4): vaja iste teme, ← in Nazaj vrneta v poskus", () => {
   const lab = fs.readFileSync(new URL("../public/laboratorij.js", import.meta.url), "utf8");
   const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(lab, /x\.locked \|\| !D\.practice \|\| !vajaTema\(x\) \? ""/, "zaklenjen poskus gumba nima");
-  assert.match(lab, /data-lab-practice="\$\{esc\(vajaTema\(x\)\.id\)\}"/);
-  assert.match(lab, /tp\.path === data\.myPath\) \|\| x\.topics\?\.\[0\]/, "najprej učenčeva pot");
+  assert.match(lab, /x\.locked \|\| !D\.practice \|\| !vajaTeme\(x\)\.length \? ""/, "zaklenjen poskus gumba nima");
+  assert.match(lab, /data-lab-practice="\$\{esc\(tp\.id\)\}"/);
+  assert.match(lab, /teme\.some\(\(tp\) => tp\.path === data\.myPath\) \? data\.myPath/, "najprej učenčeva pot");
   assert.match(app, /practice: async \(id\) => \{[\s\S]*?setBack\("uci"\);[\s\S]*?nextPractice\(\);/);
   assert.match(app, /\["competition", "exams", "uci"\]\.includes\(state\.backTo\)/, "tipka Nazaj iz teme vrne v Uči se");
   for (const k of ["lab.check", "lab.checkText"]) assert.ok(SL[k], k);

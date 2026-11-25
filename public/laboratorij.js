@@ -113,8 +113,14 @@ const subjectName = (s) => {
   return name === `subj.${s}` ? s : name;
 };
 
-// Tema za »Preveri se« (C4): učenčeva pot, sicer prva tema poskusa (teme so že razvrščene, server/laboratorij.js).
-const vajaTema = (x) => x.topics?.find((tp) => tp.path === data.myPath) || x.topics?.[0] || null;
+// Teme za »Preveri se« (C4): vse teme najbolje razvrščene poti (učenčeva pot najprej, server/laboratorij.js), največ 3.
+// Poskus, ki pokrije več tem iste poti (lab-lom: Odboj in Lom svetlobe), dobi gumb za vsako (pregled #1041).
+function vajaTeme(x) {
+  const teme = x.topics || [];
+  if (!teme.length) return [];
+  const pot = teme.some((tp) => tp.path === data.myPath) ? data.myPath : teme[0].path;
+  return teme.filter((tp) => tp.path === pot).slice(0, 3);
+}
 
 function topicsHtml(x) {
   return `<p class="lab-topics-label">${icon("book-open")}<span>${esc(t("lab.inTextbook"))}</span></p>
@@ -183,7 +189,9 @@ function renderExperiment() {
         ${showOffer ? `<button type="button" class="primary" data-lab-upgrade>${icon("sparkles")}<span>${esc(t("lab.packages"))}</span></button>` : ""}</section>`
         : `<section class="card lab-bench"><div class="lab-mount"></div></section>`
     }
-    ${x.locked || !D.practice || !vajaTema(x) ? "" : `<section class="card lab-check"><p dir="auto">${icon("circle-check")}<span>${esc(t("lab.checkText"))}</span></p><button type="button" class="primary lab-check-go" data-lab-practice="${esc(vajaTema(x).id)}">${icon("pencil")}<span>${esc(t("lab.check"))}</span></button></section>`}
+    ${x.locked || !D.practice || !vajaTeme(x).length ? "" : `<section class="card lab-check"><p dir="auto">${icon("circle-check")}<span>${esc(t("lab.checkText"))}</span></p><div class="lab-check-go">${vajaTeme(x)
+      .map((tp, i, all) => `<button type="button" class="${i ? "secondary" : "primary"}" data-lab-practice="${esc(tp.id)}">${icon("pencil")}<span dir="auto">${esc(all.length > 1 ? `${t("lab.check")}: ${tp.name}` : t("lab.check"))}</span></button>`)
+      .join("")}</div></section>`}
     <div class="lab-foot">${topicsHtml(x)}</div>
   </div>`;
   const m = box().querySelector(".lab-mount");
