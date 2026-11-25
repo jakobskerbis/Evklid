@@ -6,7 +6,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { sestaviNacrt, enoteTeme, ocenaTeme, NA_DAN, BREZ_DATUMA_DNI } from "../server/priprava/nacrt.js";
+import { sestaviNacrt, enoteTeme, ocenaTeme, NA_DAN, BREZ_DATUMA_DNI, NAJVEC_RAZMIK } from "../server/priprava/nacrt.js";
 
 process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
 const tema = (id, ocena, o = {}) => ({ id, ime: id, sklop: "S", red: Number(id.replace(/\D/g, "")) || 0, izsekov: 1, ocena, vaja: true, danesNalog: 0, ...o });
@@ -22,6 +22,9 @@ test("enote po izkazanem znanju; ocena teme kot pripravljenost na izpit", () => 
   assert.equal(ocenaTeme({ status: "learning", level: 2 }, "x"), 0.4);
   assert.equal(ocenaTeme({ status: "mastered", review_due: "2026-11-01 00:00:00" }, "2026-12-01 00:00:00"), 0.8);
   assert.equal(ocenaTeme({ status: "mastered", review_due: "2026-12-31 00:00:00" }, "2026-12-01 00:00:00"), 1);
+  // Samo označeno kot obvladano (ni izkazano) in zgrešena zadnja ponovitev nista obvladano.
+  assert.equal(ocenaTeme({ status: "mastered", source: "manual", review_due: "2026-12-31 00:00:00" }, "2026-12-01 00:00:00"), 0.4);
+  assert.equal(ocenaTeme({ status: "mastered", source: "practice", review_failed: 1, review_due: "2026-12-31 00:00:00" }, "2026-12-01 00:00:00"), 0.6);
 });
 
 test("načrt do testa: najšibkejše prve, razmik med enotami, največ NA_DAN na dan, poskusni test zadnji dan", () => {
@@ -31,9 +34,10 @@ test("načrt do testa: najšibkejše prve, razmik med enotami, največ NA_DAN na
   assert.equal(n.dnevi.at(-1).datum, "2026-12-10");
   assert.ok(n.dnevi.every((d) => d.naloge.length <= NA_DAN + (d === n.dnevi.at(-1) ? 1 : 0)));
   assert.deepEqual(n.dnevi.at(-1).naloge.map((x) => x.vrsta), ["poskusni_test"]);
-  // Obvladana tema nima enot; nova ima tri, razmaknjene vsaj za dan in vse pred poskusnim testom.
+  // Obvladana tema dobi samo osvežitev v zadnjih OSVEZITEV_DNI učnih dneh; nova ima tri enote, razmaknjene vsaj za dan
+  // in vse pred poskusnim testom.
   const vse = vseNaloge(n);
-  assert.ok(!vse.some((x) => x.tema?.id === "t1"));
+  assert.deepEqual(vse.filter((x) => x.tema?.id === "t1").map((x) => [x.vrsta, x.datum >= "2026-12-07" && x.datum < "2026-12-10"]), [["ponovitev", true]]);
   const t2 = vse.filter((x) => x.tema?.id === "t2");
   assert.deepEqual(t2.map((x) => x.vrsta), ["nova", "vaja", "ponovitev"]);
   assert.ok(t2[0].datum < t2[1].datum && t2[1].datum < t2[2].datum);
@@ -62,6 +66,47 @@ test("premalo časa: vsaka šibka tema pride na vrsto, odpadejo poznejše enote;
   assert.equal(mimo.naslednja, null);
 });
 
+test("razmiki veljajo med dnevi: vaja po razmiku od zadnje vaje, ponovitev po Evklidu, dolg rok konča blizu testa", () => {
+  // Tema v učenju, vadena včeraj: vaja ne danes, ampak čez razmik; tema, vadena danes, je danes (opravljena).
+  const n = sestaviNacrt({
+    danes: "2026-12-01",
+    datum: "2026-12-21",
+    teme: [tema("t1", 0.2, { zadnjic: "2026-11-30" }), tema("t2", 0.2, { zadnjic: "2026-12-01", danesNalog: 3 }), tema("t3", 1, { ponovitev: "2026-12-05" })],
+  });
+  const vse = vseNaloge(n);
+  const t1 = vse.filter((x) => x.tema?.id === "t1");
+  assert.ok(t1[0].datum > "2026-12-01" && t1[0].vrsta === "vaja", JSON.stringify(t1));
+  assert.deepEqual(n.dnevi[0].naloge.find((x) => x.tema?.id === "t2"), { vrsta: "vaja", tema: n.dnevi[0].naloge.find((x) => x.tema?.id === "t2").tema, opravljeno: true });
+  // Obvladana tema: ponovitev na dan Evklidove ponovitve.
+  assert.deepEqual(vse.filter((x) => x.tema?.id === "t3").map((x) => x.datum), ["2026-12-05"]);
+  // Dolg rok (90 dni): razmik največ NAJVEC_RAZMIK dni, obvladane teme se osvežijo v zadnjem tednu.
+  const d = sestaviNacrt({ danes: "2026-12-01", datum: "2027-03-01", teme: [tema("a1", 0), tema("a2", 1)] });
+  const a1 = vseNaloge(d).filter((x) => x.tema?.id === "a1").map((x) => x.datum);
+  for (let i = 1; i < a1.length; i++) assert.ok((Date.parse(a1[i]) - Date.parse(a1[i - 1])) / 86400000 <= NAJVEC_RAZMIK, a1.join());
+  assert.ok(vseNaloge(d).some((x) => x.tema?.id === "a2" && x.datum >= "2027-02-25"));
+  // En sam učni dan (test jutri): najprej utrjevanje tem v učenju, nova snov za njimi.
+  const jutri = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-02", teme: [tema("n1", 0), tema("n2", 0), tema("n3", 0), tema("l1", 0.4)] });
+  assert.equal(jutri.dnevi[0].naloge[0].tema.id, "l1");
+  // Test danes: nič ne »ne pride na vrsto«.
+  const danes = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-01", teme: [tema("n1", 0)] });
+  assert.equal(danes.stisnjeno, false);
+  assert.deepEqual(danes.nePrideNaVrsto, []);
+});
+
+test("zapiski: največ ena enota na dan, za preverljivimi; prebrani ne pridejo znova", () => {
+  const teme = [tema("z1", 0, { vaja: false }), tema("z2", 0, { vaja: false }), tema("z3", 0, { vaja: false }), tema("a", 0.6), tema("b", 0.8)];
+  const n = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-08", teme });
+  const prvi = n.dnevi[0].naloge;
+  assert.equal(prvi.filter((x) => x.vrsta === "zapiski").length, 1);
+  assert.ok(prvi.some((x) => x.tema.id === "a") && prvi.some((x) => x.tema.id === "b"), JSON.stringify(prvi));
+  assert.equal(prvi.at(-1).vrsta, "zapiski");
+  assert.notEqual(n.naslednja.vrsta, "zapiski");
+  const p = sestaviNacrt({ danes: "2026-12-02", datum: "2026-12-08", teme: teme.map((t) => (t.id === "z1" ? { ...t, prebrano: "2026-12-01" } : t)) });
+  assert.ok(!vseNaloge(p).some((x) => x.tema?.id === "z1"));
+  const d = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-08", teme: teme.map((t) => (t.id === "z1" ? { ...t, prebrano: "2026-12-01" } : t)) });
+  assert.equal(d.dnevi[0].naloge.find((x) => x.tema.id === "z1")?.opravljeno, true);
+});
+
 test("danes opravljeno po rešenih nalogah; tema brez nalog je »zapiski« in ne šteje v pripravljenost", () => {
   const n = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-08", teme: [tema("t1", 0.4, { danesNalog: 3 }), tema("t2", 0.2), tema("t3", 0, { vaja: false })] });
   const danes = n.dnevi[0].naloge;
@@ -73,7 +118,7 @@ test("danes opravljeno po rešenih nalogah; tema brez nalog je »zapiski« in ne
   assert.equal(n.pripravljenost.nepreverljivih, 1);
 });
 
-test("API: načrt iz obsega testa in rešenih nalog; tuj profil 404", async () => {
+test("API: načrt iz obsega testa in rešenih nalog (vaja, ne test); označeno ni izkazano; prebrano; tuj profil 404", async () => {
   const store = openDb(":memory:");
   const app = createApp(store, { scheduler: false, log: { log() {}, info() {}, warn() {}, error() {} } });
   const server = app.listen(0);
@@ -89,21 +134,41 @@ test("API: načrt iz obsega testa in rešenih nalog; tuj profil 404", async () =
     const zap = fs.readFileSync(new URL("./fixtures/priprava/mat-integrali.md", import.meta.url), "utf8");
     assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/viri`, { besedilo: zap })).status, 201);
     store.db.prepare("UPDATE priprave SET pot = 'MAT-SS-4', sklopi = '[2]' WHERE id = ?").run(p.id);
-    // Določeni integral je obvladan (izkazano z nalogami): v načrtu ga ni.
-    store.db
-      .prepare("INSERT INTO topic_state (student_id, topic_id, level, streak, status, mastered_at, review_due) VALUES (?, 'MAT-SS-4/doloceni-integral', 3, 3, 'mastered', datetime('now'), datetime('now', '+30 days'))")
-      .run(s.id);
+    // Določeni integral je obvladan (izkazano z nalogami): samo osvežitev pred testom. Per partes je le označen kot
+    // obvladan (ni izkazano): ostane v načrtu in ne šteje med obvladane.
+    const vpis = store.db.prepare(
+      "INSERT INTO topic_state (student_id, topic_id, level, streak, status, source, mastered_at, review_due) VALUES (?, ?, 3, 3, 'mastered', ?, datetime('now'), datetime('now', '+30 days'))",
+    );
+    vpis.run(s.id, "MAT-SS-4/doloceni-integral", "practice");
+    vpis.run(s.id, "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij", "manual");
+    // Naloge testa danes ne štejejo kot vaja teme.
+    const naloga = store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, mode) VALUES (?, 'MAT-SS-4/nedoloceni-integral', 1, '{}', 1, ?)");
+    for (let i = 0; i < 3; i++) naloga.run(s.id, "test");
     const r = await req("GET", `/api/students/${s.id}/priprave/${p.id}/nacrt`);
     assert.equal(r.status, 200, JSON.stringify(r.body));
     assert.equal(r.body.obsegIzNacrta, true);
-    const ids = r.body.dnevi.flatMap((d) => d.naloge.map((x) => x.tema?.id)).filter(Boolean);
+    const vse = r.body.dnevi.flatMap((d) => d.naloge.filter((x) => x.tema).map((x) => ({ ...x, datum: d.datum })));
+    const ids = vse.map((x) => x.tema.id);
     assert.ok(ids.includes("MAT-SS-4/nedoloceni-integral"));
-    assert.ok(!ids.includes("MAT-SS-4/doloceni-integral"));
+    assert.ok(ids.includes("MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij"));
+    assert.deepEqual(vse.filter((x) => x.tema.id === "MAT-SS-4/doloceni-integral").map((x) => x.vrsta), ["ponovitev"]);
     assert.equal(r.body.pripravljenost.obvladanih, 1);
+    assert.equal(r.body.dnevi[0].naloge.find((x) => x.tema?.id === "MAT-SS-4/nedoloceni-integral").opravljeno, false);
+    // Vaja danes šteje.
+    for (let i = 0; i < 3; i++) naloga.run(s.id, "practice");
+    const r2 = await req("GET", `/api/students/${s.id}/priprave/${p.id}/nacrt`);
+    assert.equal(r2.body.dnevi[0].naloge.find((x) => x.tema?.id === "MAT-SS-4/nedoloceni-integral").opravljeno, true);
+    // Prebrano: samo tema iz načrta te priprave.
+    assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: "MAT-OS-8/pitagorov-izrek" })).status, 400);
+    assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: "MAT-SS-4/doloceni-integral" })).status, 200);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM priprava_prebrano WHERE priprava_id = ?").get(p.id).n, 1);
+    assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: "MAT-SS-4/doloceni-integral", prebrano: false })).status, 200);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM priprava_prebrano WHERE priprava_id = ?").get(p.id).n, 0);
     // Priprava ni aktivna (ni načrta testa iz urnika): brez poskusnega testa.
     assert.ok(!r.body.dnevi.some((d) => d.naloge.some((x) => x.vrsta === "poskusni_test")));
     const tuj = (await req("POST", "/api/students", { name: "Ana", settings: {} })).body;
     assert.equal((await req("GET", `/api/students/${tuj.id}/priprave/${p.id}/nacrt`)).status, 404);
+    assert.equal((await req("POST", `/api/students/${tuj.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: "MAT-SS-4/doloceni-integral" })).status, 404);
   } finally {
     await new Promise((r) => server.close(r));
     store.db.close();

@@ -9,7 +9,7 @@ import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/in
 import { checkAnswer } from "./practice/check.js";
 import * as MATH from "../public/graph/math.js";
 import { CONTEST, TRAINING_TASKS, isCompetitionPath, topicsForYear } from "./competition.js";
-import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps } from "./exams.js";
+import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps, ravenProfila } from "./exams.js";
 import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
@@ -77,6 +77,28 @@ function shuffle(a) {
   return b;
 }
 
+// Ocena teme (0–1), ena za pripravljenost na izpit (examReadiness) in načrt priprave na test (priprava/nacrt.js):
+// obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0. izkazano (priprava na test: »pripravljenost mora
+// temeljiti na dejansko izkazanem znanju«): tema, ki jo je učenec samo označil kot obvladano (source manual), šteje 0,4;
+// obvladana tema, ki je zadnjo ponovitev zgrešila (review_failed), 0,6, dokler je ponovitev spet ne potrdi.
+// Pripravljenost na izpit zaenkrat ostaja brez tega (ročna oznaka na Učni poti tam šteje; odloči j).
+// s: vrstica iz STANJE_OCENE (ali null), now: datetime v UTC (nowSql).
+export function topicScore(s, now, { izkazano = false } = {}) {
+  if (!s) return 0;
+  if (s.status === "mastered") {
+    if (izkazano && s.source === "manual") return 0.4;
+    if (izkazano && s.review_failed) return 0.6;
+    return s.review_due && s.review_due <= now ? 0.8 : 1;
+  }
+  if (s.status === "learning") return 0.2 * Math.min(3, s.level || 1);
+  return 0;
+}
+// Stanje teme za topicScore: review_failed = zadnja ponovitev po obvladanju je imela napačen prvi odgovor.
+export const STANJE_OCENE = `SELECT ts.status, ts.level, ts.review_due, ts.source, ts.mastered_at,
+  (SELECT t.first_try_correct = 0 FROM tasks t WHERE t.student_id = ts.student_id AND t.topic_id = ts.topic_id AND t.mode = 'review'
+     AND t.first_try_correct IS NOT NULL AND t.created_at >= ts.mastered_at ORDER BY t.id DESC LIMIT 1) AS review_failed
+  FROM topic_state ts WHERE ts.student_id = ? AND ts.topic_id = ?`;
+
 export class Progress {
   constructor(store) {
     this.store = store;
@@ -102,7 +124,7 @@ export class Progress {
   // »NPZ in matura« (#891). Druge poti in »še ne vem«: null (vse teme).
   profileRaven(studentId, pathKey) {
     if (!/^MAT-SS-\d$/.test(String(pathKey || ""))) return null;
-    return / (VR|OR)$/.exec(String(this.store.getStudent?.(studentId)?.settings?.curriculum_level || "").trim())?.[1] || null;
+    return ravenProfila(pathKey, this.store.getStudent?.(studentId)?.settings?.curriculum_level);
   }
 
   // ---------- stanje teme ----------
@@ -660,17 +682,16 @@ export class Progress {
 
   // Pripravljenost na izpit (NPZ, matura): delež snovi izpita, ki jo učenec že zna, in tri najšibkejše teme.
   // Tema izpita šteje kot njena osnovna tema na Učni poti (MAT-EX-NPZ9/… ↔ MAT-OS-8/…): velja boljše stanje.
-  // Ocena teme: obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0.
-  // Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
+  // Ocena teme: topicScore (izkazano znanje). Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
   examReadiness(studentId, pathKey, raven = null) {
     if (!isExamPath(pathKey)) return null;
     const path = getPath(pathKey);
     const forRaven = ravenKeeps(raven);
     const now = nowSql();
-    const stateOf = this.db.prepare("SELECT status, level, review_due FROM topic_state WHERE student_id = ? AND topic_id = ?");
+    const stateOf = this.db.prepare(STANJE_OCENE);
     const tries = this.db.prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN first_try_correct = 0 THEN 1 ELSE 0 END) AS wrong FROM tasks WHERE student_id = ? AND topic_id = ? AND first_try_correct IS NOT NULL");
     const ui = this.uiLang(studentId);
-    const scoreOf = (s) => (!s ? 0 : s.status === "mastered" ? (s.review_due && s.review_due <= now ? 0.8 : 1) : s.status === "learning" ? 0.2 * Math.min(3, s.level || 1) : 0);
+    const scoreOf = (s) => topicScore(s, now);
     const topics = [];
     path.units.forEach((u, ui0) =>
       u.topics.forEach((t0, ti) => {

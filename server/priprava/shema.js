@@ -87,6 +87,17 @@ export function migratePriprava(db) {
     );
     CREATE INDEX IF NOT EXISTS idx_priprava_prepisi_student ON priprava_prepisi(student_id);
   `);
+  // PR 5: zapiski teme brez nalog, ki jih je učenec označil kot prebrane (enota »zapiski« v načrtu je opravljena).
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS priprava_prebrano (
+      priprava_id INTEGER NOT NULL REFERENCES priprave(id) ON DELETE CASCADE,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      tema_id TEXT NOT NULL,                     -- id teme učnega načrta
+      datum TEXT NOT NULL,                       -- YYYY-MM-DD po slovenskem času
+      PRIMARY KEY (priprava_id, tema_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_priprava_prebrano_student ON priprava_prebrano(student_id);
+  `);
   preseliTestPlans(db);
 }
 
