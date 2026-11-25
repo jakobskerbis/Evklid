@@ -10,6 +10,11 @@
 //    točno tja, zaslonska ⌫, strojni Backspace in Delete na vsakem mestu, ◀ ▶ in puščici, hitro tipkanje, preklop
 //    znanstveni ↔ grafični, decimalna vejica, samo tipkovnica, osnovne oznake ARIA.
 //
+// Poln zagon (MATRIKA_VSE=1, vse predloge na vseh mestih) traja ~27 min (Chromium ~7, WebKit ~10, Firefox ~11 min).
+// Poganjaj ga po brskalnikih, da ena ukazna meja ne ustavi celote:
+//   MATRIKA_VSE=1 node --test --test-force-exit --test-name-pattern="brskalnik chromium" test/urejevalnik-matrika.test.js
+//   (nato »brskalnik webkit« in »brskalnik firefox«; čiste funkcije: MATRIKA_VSE=1 … --test-name-pattern="matrika")
+//
 // Napake, ki jih je matrika našla (AUDIT-034 do AUDIT-040, #970–#974), so popravljene: brez oznak todo.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -87,8 +92,8 @@ const shows = (t) => {
   }
 };
 const RUN = /[A-Za-zčšž]{2,}/g;
-// odpiralo predloge: ime z oklepajem, ∫(, d/dx(, √(, ∑_( … (»×10^(« ne: kazalec sme ob vsako števko v 10, pregled #965)
-const OPENER = /[∑∏]_\(|d\/dx\(|[√∛∫]\(|[A-Za-zčšž]{2,}\s*\(/g;
+// odpiralo predloge: ime z oklepajem, ∫(, d/dx(, √(, ∑_(, ×10^( (enota: kazalec ne sme med števki 10, AUDIT-048)
+const OPENER = /×10\^\(|[∑∏]_\(|d\/dx\(|[√∛∫]\(|[A-Za-zčšž]{2,}\s*\(/g;
 // pol imena: niz črk, ki ga v izvirniku ni, in je del izvirnega imena ali ga vsebuje (integrira, si, sinx)
 function halfName(orig, res) {
   const before = new Set(orig.match(RUN) || []);
@@ -314,7 +319,7 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
         for (const g of glyphs) {
           if (/[()[\]|]/.test(g.ch) || cnt([...tx], g.ch) !== 1 || cnt(glyphs.map((x) => x.ch), g.ch) !== 1) continue;
           const i = [...tx].indexOf(g.ch);
-          if ([...tx.matchAll(/[A-Za-zčšž]{2,}(?=\s*\()/g)].some((m) => m.index <= i && i < m.index + m[0].length)) continue; // ime funkcije
+          if ([...tx.matchAll(/[A-Za-zčšž]{2,}(?=\s*\()|×10(?=\^\()/g)].some((m) => m.index <= i && i < m.index + m[0].length)) continue; // ime funkcije, ×10 (enota)
           await set(tx, i === 0 ? tx.length : 0);
           await tapAt(g.x, g.y);
           // kalkulator postavi kazalec v setTimeout po kliku: počakaj na naslednji krog (deterministično tudi pod obremenitvijo)

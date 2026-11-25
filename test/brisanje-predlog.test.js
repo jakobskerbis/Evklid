@@ -7,7 +7,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { backspace, deleteForward, stepCaret, entryBase, stopsTex } from "../public/graph/sci-vnos.js";
+import { backspace, deleteForward, stepCaret, entryBase, stopsTex, caretTex } from "../public/graph/sci-vnos.js";
 
 const env = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
 // »a|b« → besedilo in položaj kazalca
@@ -122,10 +122,25 @@ test("◀ ▶ gresta po mestih v zapisu: nikoli v ime funkcije ali ukaza (AUDIT-
     for (let k = 0; k < 40 && p > 0; k++) p = stepCaret(base, t, p, -1);
     assert.equal(p, 0, `${t}: ◀ pride do začetka`);
   }
-  // v številu 10 iz tipke ×10ˣ je kazalec lahko ob vsaki števki (pregled #965); dotik tudi (merilne točke)
+  // »×10« iz tipke ×10ˣ je enota: kazalec preskoči 10, ne more med števki (2×1|0^(5) + ⌫ → 2×0^(5) = 0; AUDIT-048)
   const b10 = entryBase("2×10^(5)", env);
-  assert.equal(stepCaret(b10, "2×10^(5)", 2, 1), 3);
-  assert.match(stopsTex(b10), /evk-p=3\b/);
+  assert.equal(stepCaret(b10, "2×10^(5)", 1, 1), 6);
+  assert.equal(stepCaret(b10, "2×10^(5)", 6, -1), 1);
+  assert.doesNotMatch(stopsTex(b10), /evk-p=[2-5]\b/);
+  // ⌫/Delete ob 10 vzame celo ×10 predlogo z eksponentom, ⌫ za njo gre v eksponent, ⌫ v njem briše števke
+  assert.equal(bs("2×1|0^(5)"), "2|");
+  assert.equal(bs("2×10|^(5)"), "2|");
+  assert.equal(bs("2×10^(|5)"), "2|");
+  assert.equal(bs("2×10^(5)|"), "2×10^(5|)");
+  assert.equal(bs("2×10^(5|)"), "2×10^(|)");
+  assert.equal(dl("2|×10^(5)"), "2|");
+  assert.equal(dl("2×10^(|5)"), "2×10^(|)");
+  // |x−1| iz abs(): kazalec za zadnjim znakom je zunaj črt (tam gre vnos), dotik pred |x−1| je mogoč (AUDIT-048)
+  const bA = entryBase("abs(x−1)", env);
+  assert.ok(caretTex(bA, 8).startsWith("\\left|x-1\\right|{"), caretTex(bA, 8));
+  assert.ok(caretTex(bA, 7).endsWith("}}}}\\right|"), caretTex(bA, 7));
+  assert.match(stopsTex(bA), /^\{\\htmlData\{evk-p=0\}/);
+  assert.match(stopsTex(bA), /\\right\|\{\\htmlData\{evk-p=8\}/);
   // brez zapisa (prazna vrstica) se kazalec ne premakne iz meja
   assert.equal(stepCaret(null, "", 0, -1), 0);
 });

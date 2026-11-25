@@ -1,7 +1,7 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis } from "./model.js";
-import { niceNumber, parse, compile, arityExample } from "./math.js";
+import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
+import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
@@ -16,6 +16,7 @@ const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: n
 /**
  * Ustvari kalkulator v elementu root.
  * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field),
+ *   useInCalc?(text) (»Uporabi v računu«: vrednost ali ∫(f; a; b) v znanstveni kalkulator),
  *   shared?() ({ vars, funcs } znanstvenega kalkulatorja: »Iz kalkulatorja: a = 5«) }
  * Brez api ni »Moji grafi« (stran /kalkulator brez prijave), brez askTutor ni »Vprašaj inštruktorja«.
  */
@@ -72,6 +73,7 @@ export function createCalculator(root, opts) {
         <button type="button" class="gc-fab" data-act="home" title="${esc(t("gc.home"))}" aria-label="${esc(t("gc.home"))}">${icon("house")}</button>
         <button type="button" class="gc-fab" data-act="fit" title="${esc(t("gc.fit"))}" aria-label="${esc(t("gc.fit"))}">${icon("maximize")}</button>
       </div>
+      <div class="gc-use" hidden></div>
       <button type="button" class="gc-fab gc-expand" data-act="expand" title="${esc(t("gc.fullGraph"))}" aria-label="${esc(t("gc.fullGraph"))}" aria-pressed="false">${icon("maximize-2")}</button>
     </section>
     <div class="gc-pop" hidden role="dialog"></div>`;
@@ -88,6 +90,7 @@ export function createCalculator(root, opts) {
       if (id) list.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: "nearest" });
     },
     onDrag: drag,
+    onMark: (p) => showUse(p),
     onDragEnd: () => commit(),
     label: (k) => t(`gc.poi.${k}`),
     fmt: (v, digits) => fmt(v, digits), // oznake točk: značilna mesta
@@ -405,6 +408,10 @@ export function createCalculator(root, opts) {
         parts.push(`<div class="gc-val">${icon("trending-up")}<span>${t("gc.tangent")}: ${tex(`y = ${num(k)}x${nTxt}`)}</span></div>`);
       }
     }
+    // ploščina: »Uporabi v računu« vpiše ∫(f; a; b) v znanstveni kalkulator (le funkcija samo od x, brez drsnikov)
+    if (opts.useInCalc && (o.kind === "y" || o.plot === "y") && Array.isArray(it.tools?.area) && areaText(o, it)) {
+      parts.push(`<div class="gc-val gc-use-area"><span>${tex(`\\int_{${fmt(it.tools.area[0], 4).replace(",", "{,}")}}^{${fmt(it.tools.area[1], 4).replace(",", "{,}")}}`)}</span><button type="button" class="sc-act gc-use-btn" data-act="use-area">${icon("calculator")}<span>${esc(t("gc.useInCalc"))}</span></button></div>`);
+    }
     parts.push(hintHtml(o));
     return parts.join("");
   }
@@ -661,6 +668,11 @@ export function createCalculator(root, opts) {
       return;
     }
     if (act === "del") return removeItem(id);
+    if (act === "use-area") {
+      const txt = areaText(modelItem(id), it);
+      if (txt) opts.useInCalc?.(txt);
+      return;
+    }
     if (act === "menu") return openRowMenu(id, e.target.closest("[data-act]"));
     if (act === "sliders" || act === "fromsci") {
       const o = modelItem(id);
@@ -1005,6 +1017,7 @@ export function createCalculator(root, opts) {
     view.selected = null;
     view.shown = [];
     view.trace = null;
+    $(".gc-use").hidden = true;
     renderList();
     refresh();
     view.view = view.squared(state.view);
@@ -1012,6 +1025,56 @@ export function createCalculator(root, opts) {
     updateBar();
     scheduleSave();
     if (state.items.some((x) => x.slider?.play)) animate();
+  }
+
+  // ---------- »Uporabi v računu« (graf → znanstveni kalkulator) ----------
+  // Število za vnos v kalkulator: 12 mest, zapis kalkulatorja (vejica ali pika), brez »e« in brez šuma 0,30000000004.
+  const numIn = (v) => {
+    let s = String(Number(v.toPrecision(12)));
+    if (/e/.test(s)) s = s.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+    return comma() ? s.replace(".", ",") : s;
+  };
+  // ∫(f; a; b) s telesom vrstice (zapis 3 je isti kot v znanstvenem kalkulatorju); null, če f uporablja drsnike
+  function areaText(o, it) {
+    if (!o || state.zapis !== 3) return null;
+    const body = o.ast2 || o.body;
+    const v = o.varName || "x";
+    if (!body || [...freeVars(body)].some((w) => w !== v)) return null;
+    const m = /=(?!=)\s*(.*)$/s.exec(String(it.text || ""));
+    const f = m ? m[1].trim() : String(it.text || "").trim();
+    let ufn = false;
+    walk(body, (n) => n.k === "ufn" && (ufn = true)); // klic funkcije grafa (f(x) + 1): kalkulator je ne pozna
+    if (!f || ufn) return null;
+    // graf v stopinjah: v kalkulatorju so integrali v radianih, zato sin(x) → sin((x)°) (isti pomen)
+    const sub = v !== "x" ? null : state.settings.deg ? degreesToCalc(f) : f;
+    if (!sub) return null;
+    const [a, b] = it.tools.area;
+    return `∫(${sub}; ${numIn(Math.min(a, b))}; ${numIn(Math.max(a, b))})${a > b ? "·(-1)" : ""}`;
+  }
+  // označena točka na grafu: gumba x = … in y = …
+  const useBox = $(".gc-use");
+  function showUse(p) {
+    if (!opts.useInCalc || !p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) {
+      useBox.hidden = true;
+      return;
+    }
+    const kind = p.types?.length ? `${p.types.map((k) => t(`gc.poi.${k}`)).join(", ")}: ` : "";
+    const b = (n, v) => `<button type="button" class="sc-act gc-use-btn" data-use="${esc(numIn(v))}" aria-label="${esc(t("gc.useValue", { v: `${n} = ${fmt(v, 8)}` }))}">${icon("calculator")}<span>${tex(`${n} = ${fmt(v, 8).replace("−", "-").replace(",", "{,}")}`)}</span></button>`;
+    useBox.innerHTML = `<span class="gc-use-h">${esc(kind)}${esc(t("gc.useInCalc"))}</span><span class="gc-use-row">${b("x", p.x)}${b("y", p.y)}</span>`;
+    useBox.hidden = false;
+  }
+  useBox.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-use]");
+    if (b) opts.useInCalc?.(b.dataset.use);
+  });
+  // opomba k grafu iz znanstvenega kalkulatorja: sporočilo kalkulatorja (divergenten integral) ali razlaga okna
+  function noteText(p, message) {
+    if (p.message && message) return message;
+    if (p.message && !p.note) return ""; // sporočilo napake brez besedila (npr. iz starejše vrstice): le graf
+    if (!p.note) return "";
+    const v = {};
+    for (const [k, x] of Object.entries(p.note.vars || {})) v[k] = typeof x === "number" ? (x === Infinity ? "∞" : x === -Infinity ? "−∞" : fmt(x)) : x;
+    return t(p.note.key, v);
   }
 
   // shranjeni grafi na strežniku (po učencu)
@@ -1333,6 +1396,95 @@ export function createCalculator(root, opts) {
         }
       }
       return { vars, funcs, angle: state.settings.deg ? "deg" : "rad" };
+    },
+    /**
+     * Formula iz zbirke na grafu ({ lhs, rhs, v } iz formula-calc.js formulaPlot): vrstica »s(t) = v₀ t + …«
+     * (ime je leva stran, če je prosta črka) in drsniki za ostale količine (vrednost 1). Doda k trenutnemu grafu.
+     */
+    addFormula({ lhs, rhs, v }) {
+      const used = new Set(state.items.map((x) => /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*[(=]/.exec(String(x.text || ""))?.[1]).filter(Boolean));
+      const ok = (n) => /^[A-Za-zα-ωΑ-Ω]$/.test(n) && !["x", "y", "r", "θ", "e", v].includes(n) && !used.has(n) && !new RegExp(`(^|[^\\p{L}_])${n}(?![\\p{L}_₀-₉])`, "u").test(rhs);
+      const name = [lhs, "f", "g", "h", "p", "q"].find(ok);
+      if (!name) return false;
+      const next = clone(state);
+      next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
+      const fid = newId();
+      next.items.push({ id: fid, type: "expr", text: `${name}(${v}) = ${rhs}`, color: 0 });
+      loadState(next);
+      // ostale količine formule: drsniki (kot gumb »Dodaj drsnik«)
+      const o = modelItem(fid);
+      if (o?.missing?.length) {
+        const at = state.items.findIndex((x) => x.id === fid);
+        state.items.splice(at, 0, ...o.missing.map((n) => ({ id: newId(), type: "expr", text: `${n} = 1` })));
+        renderList();
+        refresh();
+      }
+      const it = item(fid);
+      it.color = nextColor();
+      commit();
+      refresh();
+      const fit = view.fitBounds();
+      if (fit) {
+        state.view = view.squared(fit, "y");
+        view.view = state.view;
+        view.draw();
+      }
+      return true;
+    },
+    /**
+     * »Pokaži na grafu« iz znanstvenega kalkulatorja (public/graph/v-graf.js): doda vrstice k trenutnemu grafu
+     * (ne pobriše ga; v razveljavi), vključi orodja in okno pokaže zanimiv del. req: { text, env, message?, simple? }.
+     * Vrne true, če je graf narisan.
+     */
+    async showPlan(req) {
+      const { graphPlan } = await import("./v-graf.js");
+      view.resize();
+      const texts = state.items.filter((x) => x.type === "expr").map((x) => String(x.text || ""));
+      const p = graphPlan(req.text, req.env, { texts, deg: !!state.settings.deg, W: view.W, H: view.H, simple: !!req.simple });
+      if (!p) {
+        opts.toast?.(t("gc.fromSci.none"));
+        return false;
+      }
+      const next = clone(state);
+      next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
+      const used = next.items.map((x) => x.color);
+      let c = 0;
+      const color = () => {
+        while (used.includes(c % PALETTE.length) && c < PALETTE.length) c++;
+        used.push(c % PALETTE.length);
+        return c++ % PALETTE.length;
+      };
+      for (const it of p.items) {
+        const row = { id: newId(), color: color(), ...it };
+        if (row.label === undefined) delete row.label;
+        next.items.push(row);
+      }
+      // spremenjena nastavitev grafa: kratka opomba (učenec ve, zakaj se je graf spremenil; j, 24. 11. 2026)
+      const changed = [];
+      if (p.deg !== undefined && p.deg !== !!state.settings.deg) {
+        next.settings = { ...next.settings, deg: p.deg };
+        changed.push(t(p.deg ? "gc.fromSci.setDeg" : "gc.fromSci.setRad"));
+      }
+      if (p.view) {
+        next.view = p.view;
+        const wide = Math.abs(Math.log(((p.view.ymax - p.view.ymin) / view.H) / ((p.view.xmax - p.view.xmin) / view.W))) > Math.log(1.6);
+        if ((!p.square || wide) && state.settings.square !== false) {
+          next.settings = { ...next.settings, square: false };
+          changed.push(t("gc.fromSci.noSquare"));
+        }
+      }
+      const note = [noteText(p, req.message), ...changed].filter(Boolean).join(" ");
+      if (note) next.items.splice(next.items.length - p.items.length, 0, { id: newId(), type: "note", text: note });
+      loadState(next);
+      if (p.view) {
+        state.view = view.squared(p.view);
+        view.view = state.view;
+        view.draw();
+      }
+      list.querySelectorAll(".gc-note-in").forEach(autoGrow); // opomba v celoti (sicer ena vrstica)
+      const last = state.items[state.items.length - 1];
+      if (last) list.querySelector(`[data-id="${last.id}"]`)?.scrollIntoView({ block: "nearest" });
+      return true;
     },
     resize() {
       view.resize();

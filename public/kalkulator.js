@@ -30,11 +30,11 @@ function tool(m) {
   if (m === "graph") {
     host.id = "graph-host";
     tools.graph ||= import("./graph/calc.js").then(({ createCalculator }) =>
-      (graphNow = createCalculator(host, { ...base, toast, storageKey: () => "evklid.graph.0", studentId: () => null, canExport: false, shared: () => { try { return JSON.parse(localStorage.getItem("evklid.sci.0") || "null"); } catch { return null; } } })),
+      (graphNow = createCalculator(host, { ...base, toast, storageKey: () => "evklid.graph.0", studentId: () => null, canExport: false, useInCalc: base.onInsert, shared: () => { try { return JSON.parse(localStorage.getItem("evklid.sci.0") || "null"); } catch { return null; } } })),
     );
   } else if (m === "sci") {
     tools.sci ||= import("./graph/sci.js").then((mod) =>
-      mod.createScientific(host, { ...base, toast, storageKey: () => "evklid.sci.0", openGraph: async (exprs) => (await setMode("graph"))?.show(exprs), sharedGraph: () => graphNow?.shared() || null, canSteps: () => false }),
+      mod.createScientific(host, { ...base, toast, storageKey: () => "evklid.sci.0", openGraph: async (exprs) => (await setMode("graph"))?.show(exprs), showOnGraph: async (req) => (await setMode("graph"))?.showPlan(req), sharedGraph: () => graphNow?.shared() || null, canSteps: () => false }),
     );
   } else {
     tools[m] ||= import("./graph/tools.js").then((mod) => (m === "pse" ? mod.createPse(host, { ...base, lang: currentLang }) : mod.createTools(host, { ...base, subject: () => subject })));
