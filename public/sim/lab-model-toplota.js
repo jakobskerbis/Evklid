@@ -562,6 +562,88 @@ export class OhlajanjeBench {
   }
 }
 
+// ------------------------------------------------------------------ Boylov zakon: brizga in senzor tlaka (lab-boyle)
+// Plastična brizga 60 mL (skala 1 mL, notranji premer ~26,7 mm) je s kratko cevko in tripotnim ventilom priključena na
+// senzor absolutnega tlaka. Ko je ventil odprt proti zraku, je v brizgi zračni tlak; ko ga zapreš, ostane množina zraka stalna.
+// Zrak je idealen plin: p = nRT/V, V = k·V_skala + V_mrtvi (zrak v nastavku, cevki in senzorju, ~1,5 mL, ocena;
+// skala brizge ima napako ~1 %, ocena). Ko bat hitro premakneš, se zrak skoraj adiabatno segreje ali ohladi
+// (T·V^(γ−1) = konst., γ = 1,4); ker premik traja ~1 s in del toplote med njim že uide, vzamemo 30 % adiabatne spremembe
+// (ocena). Nato se temperatura vrne na sobno s časovno konstanto τ ≈ r²/(5,8·a) ≈ 1,5 s (prevajanje toplote v valju zraka
+// s polmerom 13 mm, a = 2,2·10⁻⁵ m²/s; stena brizge ostane pri sobni temperaturi). Senzor: 0–210 kPa (nad tem OL),
+// ločljivost 0,1 kPa, odmik ničle do ±0,5 kPa, šum ~0,04 kPa (ocene za šolske senzorje tlaka). Bat z rokami potisneš
+// z največ ~150 N (ocena). Zračni tlak v Ljubljani ~98 kPa (standardna atmosfera za 295 m), z vremenom ±1 kPa.
+export const BRIZGA = { Vmax: 60, Vmin: 5, mrtvi: 1.5, skala: 0.01, D: 0.0267, sila: 150 };
+export const SENZOR_P = { max: 210, res: 0.1, off: 0.5, jit: 0.04 };
+export const PLIN_STISK = { gama: 1.4, delez: 0.3, tau: 1.5 };
+export const ploscinaBata = () => (Math.PI * BRIZGA.D ** 2) / 4;
+export class BoyleBench {
+  constructor({ seed = 1, idealno = false } = {}) {
+    const r = (this.r = rng(seed)), e = (max) => (idealno ? 0 : gauss(r, max / 2, 2));
+    this.idealno = idealno;
+    this.p0 = 98 + e(1); // kPa
+    this.Tsoba = T_SOBA + 273.15 + e(1); // K
+    this.Vd = idealno ? 0 : BRIZGA.mrtvi * (1 + e(0.2)); // mL
+    this.k = 1 + e(BRIZGA.skala);
+    this.off = e(SENZOR_P.off);
+    this.T = this.Tsoba;
+    this.V = 60;
+    this.zaprto = false;
+    this.c = null; // p·V/T zaprtega zraka (kPa·mL/K)
+    this.t = 0;
+  }
+  Vplin(V = this.V) {
+    return this.k * V + this.Vd; // mL
+  }
+  get p() {
+    return this.zaprto ? (this.c * this.T) / this.Vplin() : this.p0; // kPa
+  }
+  // Sila, s katero držiš bat (N): razlika tlakov krat ploščina bata; + potiskaš, − vlečeš.
+  get sila() {
+    return (this.p - this.p0) * 1000 * ploscinaBata();
+  }
+  get ustaljeno() {
+    return Math.abs(this.T - this.Tsoba) < 0.1; // tlak se spremeni še za manj kot 0,04 % (manj kot ločljivost senzorja)
+  }
+  zapri() {
+    if (this.zaprto) return;
+    this.zaprto = true;
+    this.c = (this.p0 * this.Vplin()) / this.T;
+  }
+  odpri() {
+    this.zaprto = false;
+    this.c = null;
+  }
+  // Premakni bat na oznako V (mL). Vrne doseženo oznako (bat ne gre dlje, kot ga zmoreš potisniti ali izvleči).
+  premakni(V) {
+    V = Math.min(BRIZGA.Vmax, Math.max(BRIZGA.Vmin, V));
+    if (!this.zaprto) return (this.V = V);
+    const A = ploscinaBata(), pMax = this.p0 + BRIZGA.sila / (1000 * A), adiab = (V0, V1) => this.T * (this.Vplin(V0) / this.Vplin(V1)) ** (PLIN_STISK.gama - 1);
+    const Tn = (V1) => (this.idealno ? this.T : this.T + PLIN_STISK.delez * (adiab(this.V, V1) - this.T));
+    let V1 = V;
+    if ((this.c * Tn(V1)) / this.Vplin(V1) > pMax) {
+      let lo = V1, hi = this.V; // bisekcija: najmanjša oznaka, pri kateri je sila še 150 N
+      for (let i = 0; i < 40; i++) {
+        const m = (lo + hi) / 2;
+        (this.c * Tn(m)) / this.Vplin(m) > pMax ? (lo = m) : (hi = m);
+      }
+      V1 = Math.ceil(hi);
+    }
+    this.T = Tn(V1);
+    return (this.V = V1);
+  }
+  step(dt) {
+    this.t += dt;
+    this.T = this.Tsoba + (this.T - this.Tsoba) * Math.exp(-dt / PLIN_STISK.tau);
+  }
+  // Odčitek senzorja: { value [kPa], text, over }.
+  read() {
+    const p = this.p + this.off + (this.idealno ? 0 : gauss(this.r, SENZOR_P.jit, 3));
+    if (p > SENZOR_P.max) return { value: null, text: "OL", over: true };
+    const v = Math.max(0, Math.round(p / SENZOR_P.res) * SENZOR_P.res);
+    return { value: Number(v.toFixed(1)), text: v.toFixed(1), over: false };
+  }
+}
+
 // ------------------------------------------------------------------ poenostavitve (prikazane v simulaciji)
 export const POENOSTAVITVE_TOPLOTA = {
   grelnik: [
@@ -593,5 +675,12 @@ export const POENOSTAVITVE_TOPLOTA = {
     "Koliko toplote uide iz posode ter masa in debelina sten so ocene za običajne skodelice.",
     "Termovka izgubi ~10 °C v 6 urah, če je zaprta (ocena iz navodil proizvajalcev).",
     "Soba ima stalno temperaturo 20 °C in 50 % relativne vlage; ni prepiha.",
+  ],
+  boyle: [
+    "Zrak je idealen plin. Pri sobni temperaturi in tlakih do ~350 kPa se pravi zrak od enačbe pV = nRT razlikuje za največ ~0,1 %.",
+    "Brizga ne pušča in bat drsi brez trenja; senzor meri tlak zraka v brizgi, ne sile na bat.",
+    "V nastavku brizge, cevki in senzorju je ~1,5 mL zraka, ki ga skala ne pokaže (ocena). Skala brizge ima napako ~1 % (ocena).",
+    "Ko bat premakneš, se zrak segreje ali ohladi za 30 % adiabatne spremembe (ocena), nato se v nekaj sekundah vrne na sobno temperaturo (časovna konstanta ~1,5 s).",
+    "Senzor: 0–210 kPa, ločljivost 0,1 kPa, odmik ničle do ±0,5 kPa, šum ~0,04 kPa (ocene za šolske senzorje). Bat potisneš z največ ~150 N (ocena).",
   ],
 };

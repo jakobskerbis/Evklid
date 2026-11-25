@@ -1,12 +1,12 @@
 // Virtualni laboratorij, gibanje: pospešeno gibanje po klancu (lab-klanec), prosti pad s svetlobnimi vrati (lab-prosti-pad),
-// drugi Newtonov zakon z vozičkom in škripcem (lab-newton2). Modeli: lab-model-gibanje.js (brez DOM). CSS: predpona lab-gib-.
+// drugi Newtonov zakon z vozičkom in škripcem (lab-newton2), matematično nihalo s štoparico (lab-nihalo). Modeli: lab-model-gibanje.js (brez DOM). CSS: predpona lab-gib-.
 // Risbe so v stalnem merilu (merilna črta), oprema v pravih razmerjih; gibanje teče v realnem času (posnetek ×0,1 je označen).
 // Gibljivi deli (voziček, obešalo, krogla) so skupine, ki jim v vsaki sličici spremenimo le transform; ostala risba se
 // nariše znova samo, ko se spremeni postavitev.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
+import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved, racun, lepaOs } from "./lab.js";
 import {
-  ProgaBench, PadBench, PROGA, VOZICEK, SKRIPEC, PREDMETI, PAD, G_SOLA, naklonSkoziIzhodisce, premica, koncnaHitrost, zastira, POENOSTAVITVE_GIBANJE,
+  ProgaBench, PadBench, NihaloBench, PROGA, VOZICEK, SKRIPEC, PREDMETI, PAD, KROGLICE, G_SOLA, naklonSkoziIzhodisce, premica, koncnaHitrost, zastira, POENOSTAVITVE_GIBANJE,
 } from "./lab-model-gibanje.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -56,16 +56,7 @@ function poganjalnik(el, onFrame) {
   };
 }
 
-// Lepe meje osi: najmanjša »okrogla« zgornja meja nad max in korak (1, 2, 2,5 ali 5 · 10ⁿ), največ 6 razdelkov.
-function os(max) {
-  const m = Math.max(max, 1e-6) * 1.08;
-  const e = 10 ** Math.floor(Math.log10(m / 5));
-  for (const k of [1, 2, 2.5, 5, 10, 20]) {
-    const st = k * e;
-    if (m / st <= 6) return { top: Math.ceil(m / st) * st, step: st };
-  }
-  return { top: m, step: m / 5 };
-}
+const os = lepaOs;
 function serije(groups, { origin = true } = {}) {
   return [...groups.entries()].map(([name, pts], i) => {
     let line;
@@ -890,6 +881,242 @@ export function labNewton2(el) {
     get: () => ({ meas }),
     set: (d) => {
       meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
+}
+
+// ---------------------------------------------------------------- matematično nihalo (lab-nihalo)
+// Nihajni čas t₀ pri različnih dolžinah, kroglicah in odmikih; iz naklona grafa t₀²(l) učenec izračuna g.
+// Nihalo se giblje v realnem času (ali ×5); v risbi se v vsaki sličici spremeni le transform niti s kroglico.
+const RAZTROS_STOPARICE = 0.1; // s: ocena napake enega merjenja s štoparico (dva pritiska, zaokrožitev), za primerjavo napovedi
+
+// Napoved »2-krat težja kroglica«: povprečni t₀ kroglic 64 g in 128 g pri isti dolžini (in odmiku ±5°).
+// Razlika je »enaka«, če je manjša od 2 % ali od napake štoparice za obe meritvi skupaj. Za napoved.
+export function primerjavaMas(meas) {
+  for (const a of meas.filter((r) => r.kr === "jeklo64")) {
+    const b = meas.filter((r) => r.kr === "jeklo128" && Math.abs(r.l - a.l) < 0.005 && Math.abs(r.kot - a.kot) <= 5);
+    if (!b.length) continue;
+    const A = meas.filter((r) => r.kr === "jeklo64" && Math.abs(r.l - a.l) < 0.005 && Math.abs(r.kot - a.kot) <= 5);
+    const sr = (L) => L.reduce((s, r) => s + r.t0, 0) / L.length, ta = sr(A), tb = sr(b);
+    const nap = (L) => RAZTROS_STOPARICE / Math.min(...L.map((r) => r.n)) / ta;
+    const rel = (tb - ta) / ta, meja = Math.max(0.02, nap(A) + nap(b));
+    return { l: a.l, ta, tb, rel, vrednost: Math.abs(rel) <= meja ? "enak" : rel > 0 ? "daljsi" : "krajsi" };
+  }
+  return null;
+}
+
+export function labNihalo(el) {
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new NihaloBench({ seed: zap.seed });
+  const W = 400, H = 330, P = 180, px = 232, py = 26; // 180 px na meter; pritrdišče niti
+  const svg = svgBox(W, H, "lab-bench lab-gib lab-gib-nih");
+  const log = eventLog();
+  const swL = lcd("štoparica"), nL = lcd("nihaji");
+  const table = dataTable([
+    { key: "kr", label: "kroglica" },
+    { key: "l", label: "<i>l</i> [cm]" },
+    { key: "kot", label: "odmik [°]" },
+    { key: "n", label: "<i>n</i>" },
+    { key: "t", label: "<i>t</i> [s]" },
+    { key: "t0", label: "<i>t</i>₀ [s]" },
+  ], { empty: "Še ni meritev. Spusti nihalo, izmeri čas več nihajev in ga zapiši." });
+  const gL = dataGraph({ x: [0, 1.6], y: [0, 7], xStep: 0.2, yStep: 1, xLabel: "l [m]", yLabel: "t₀² [s²]", title: "Kvadrat nihajnega časa v odvisnosti od dolžine" });
+  const gK = dataGraph({ x: [0, 35], y: [0, 3], xStep: 5, yStep: 0.5, xLabel: "odmik [°]", yLabel: "t₀ [s]", title: "Nihajni čas v odvisnosti od odmika", origin: false });
+  const calc = h("div", { class: "lab-gib-calc", "aria-live": "polite" });
+  const qBox = h("div");
+  const meas = [];
+  let graf = "t2l", n = 10, hitrost = 1, asked = false, sporoceno = false, zapisano = false, lcdTxt, nit;
+  const run = poganjalnik(el, (dt) => frame(dt));
+  const reset = () => (run.stop(), (sporoceno = zapisano = false));
+
+  const krSel = select({ label: "kroglica", options: Object.entries(KROGLICE).map(([id, k]) => [id, `${k.name} (Ø ${num(k.D * 1000, 1)} mm)`]), value: B.kroglica, onChange: (v) => (B.izberi(v), reset(), draw()) });
+  const lSl = slider({ label: "dolžina l (do središča kroglice)", min: 20, max: 150, step: 1, value: 50, unit: "cm", onInput: (v) => (B.dolzina(v / 100), reset(), draw()) });
+  const kSl = slider({ label: "odmik", min: 5, max: 30, step: 5, value: 10, unit: "°", onInput: (v) => (B.odmik(v), reset(), draw()) });
+  const nSeg = seg("število nihajev", [["1", "1"], ["5", "5"], ["10", "10"], ["20", "20"]], "10", (v) => (n = +v));
+  const hSeg = seg("hitrost časa", [["1", "×1"], ["5", "×5"]], "1", (v) => ((hitrost = +v), run.on && run.start(hitrost)));
+  const goBtn = button("Spusti nihalo", () => spusti(), "primary small");
+  const stopBtn = button("Ustavi nihalo", () => (B.ustavi(), reset(), draw()));
+  const merBtn = button("Izmeri čas n nihajev", () => meri(), "primary small");
+  const recBtn = button("Zapiši meritev", () => record(), "primary small");
+  const clrBtn = button("Izbriši meritve", () => (table.clear(), (meas.length = 0), redraw()));
+  const grSeg = seg("graf", [["t2l", "t₀²(l)"], ["tk", "t₀(odmik)"]], "t2l", (v) => ((graf = v), redraw()));
+
+  layout(el, {
+    extra: [
+      h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, swL, nL)), controlsBox(
+        grp("1. Nihalo", krSel, lSl, kSl, hint(`Dolžino <i>l</i> meriš z metrom od pritrdišča niti do središča kroglice (1${nb}mm), odmik s kotomerom ob pritrdišču.`)),
+        grp("2. Merjenje", hint("Štoparico sprožiš, ko gre kroglica mimo oznake pod ravnovesno lego, in jo ustaviš, ko gre mimo n-tič v isto smer. Čas več nihajev deliš z njihovim številom."), row("število nihajev", nSeg), row("hitrost časa", hSeg), buttons(goBtn, stopBtn), buttons(merBtn), buttons(recBtn, clrBtn)),
+        log,
+      )),
+      h("h4", { class: "lab-h" }, "Meritve"), table,
+      h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gL, gK, calc, qBox,
+      notes(POENOSTAVITVE_GIBANJE.nihalo, `Nihajni čas matematičnega nihala ${tex(String.raw`t_0 = 2\pi\sqrt{\frac{l}{g}}`)} velja za majhne odmike; pri večjih je ${tex(String.raw`t_0 = 2\pi\sqrt{\frac{l}{g}}\big/\mathrm{AGM}\!\left(1, \cos\frac{\theta_0}{2}\right)`)} (Carvalhaes in Suppes, Am. J. Phys. 76, 1150, 2008): pri 10° daljši za 0,2 %, pri 30° za 1,7 %. Kroglica kot fizično nihalo: ${tex(String.raw`J = ml^2 + \frac{2}{5}mr^2`)}. Zračni upor ${tex(String.raw`F = \frac{1}{2}\rho cAv^2`)}. <i>g</i> = 9,806 m/s² (Ljubljana, GRS 80). Ocene: <i>c</i> = 0,5, dušenje v vpetju, napake odčitkov in reakcijski čas.`),
+    ],
+    tryText: "Izmeri čas 10 nihajev pri dolžinah 30, 50, 80, 110 in 140 cm (odmik 10°). Nariši t₀²(l) in iz naklona izračunaj g. Nato pri isti dolžini zamenjaj kroglico z 2-krat težjo in povečaj odmik na 30°: kaj se spremeni?",
+  });
+  el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "m/s²", dec: 2, tol: 0.03, onOdkrij: () => (redraw(), zap.shrani()) });
+  calc.after(Rr.el);
+  // Napoved pred prvo meritvijo (Preizkusi: »pri isti dolžini zamenjaj kroglico z 2-krat težjo«).
+  const MOZ = [["daljsi", "Nihajni čas se podaljša."], ["enak", "Nihajni čas ostane enak."], ["krajsi", "Nihajni čas se skrajša."]];
+  const N = napoved({
+    id: "nihalo-masa",
+    vprasanje: "Kaj se zgodi z nihajnim časom, če jekleno kroglico 64 g zamenjaš z 2-krat težjo (128 g), dolžina nihala pa ostane enaka? Napovej, preden začneš meriti.",
+    moznosti: MOZ,
+    odprto: () => meas.length === 0,
+    izmerjeno: () => {
+      const r = primerjavaMas(meas);
+      return r && { vrednost: r.vrednost, besedilo: `${MOZ.find((m) => m[0] === r.vrednost)[1]} Pri ${num(r.l * 100, 0)}${nb}cm: 64${nb}g ${num(r.ta, 3)}${nb}s, 128${nb}g ${num(r.tb, 3)}${nb}s.` };
+    },
+  });
+  el.querySelector(".demo-controls")?.prepend(N.el);
+  qBox.before(N.primerjava);
+
+  function spusti() {
+    B.spusti();
+    reset();
+    run.start(hitrost);
+    draw();
+  }
+  function meri() {
+    if (!B.tece) spusti();
+    B.meri(n);
+    sporoceno = zapisano = false;
+    if (!run.on) run.start(hitrost);
+    upd();
+  }
+  function frame(dt) {
+    if (!B.tece) return false;
+    B.step(dt);
+    upd();
+    const m = B.meritev();
+    if (m && !sporoceno) {
+      sporoceno = true;
+      log.push(`Štoparica je ustavljena: ${n === 1 ? "en nihaj" : `${m.n} nihajev`} v ${num(m.t, 2)}${nb}s, <i>t</i>₀ = ${num(m.t0, 3)}${nb}s. Zapiši meritev.`, "info");
+    }
+  }
+  function record() {
+    const m = B.meritev();
+    if (!m) return log.push(B.mer ? "Počakaj, da se štoparica ustavi." : "Najprej izmeri čas: pritisni »Izmeri čas n nihajev«.", "warn");
+    if (zapisano) return log.push("To meritev si že zapisal. Za novo spet izmeri čas.", "warn");
+    zapisano = true;
+    const K = KROGLICE[B.kroglica];
+    table.add({ kr: K.kratko, l: num(B.lNom * 100, 0), kot: num(B.kotNom, 0), n: String(m.n), t: num(m.t, 2), t0: num(m.t0, 3) });
+    meas.push({ kr: B.kroglica, ime: K.kratko, l: B.lNom, kot: B.kotNom, n: m.n, t: m.t, t0: m.t0 });
+    if (m.n === 1) log.push(`En nihaj traja le ~${num(m.t0, 1)}${nb}s: napaka štoparice (~0,05${nb}s ob vsakem pritisku) je nekaj odstotkov nihajnega časa. Izmeri raje 10 ali 20 nihajev.`, "warn");
+    if (B.kotNom > 15) log.push("Odmik je velik: nihajni čas je pri njem malo daljši kot pri majhnem odmiku. Za <i>g</i> iz grafa uporabi odmike do ~10°.", "info");
+    redraw();
+  }
+  function redraw() {
+    gL.hidden = graf !== "t2l";
+    gK.hidden = graf === "t2l";
+    const pts = meas.map((r) => ({ ...r, t2: r.t0 * r.t0 }));
+    const a1 = os(Math.max(0.6, ...pts.map((r) => r.l))), b1 = os(Math.max(2, ...pts.map((r) => r.t2)));
+    gL.setAxes({ x: [0, a1.top], y: [0, b1.top], xStep: a1.step, yStep: b1.step });
+    gL.draw(serije(skupine(pts, "ime", "l", "t2")));
+    // t₀(odmik): ena serija za vsako dolžino in kroglico, pri kateri si meril pri vsaj dveh odmikih
+    const poL = new Map();
+    for (const r of meas) {
+      const k = `${num(r.l * 100, 0)} cm, ${r.ime}`;
+      (poL.get(k) || poL.set(k, []).get(k)).push([r.kot, r.t0]);
+    }
+    const kSer = [...poL.entries()].filter(([, p]) => new Set(p.map((q) => q[0])).size >= 2);
+    const tk = kSer.flatMap(([, p]) => p.map((q) => q[1]));
+    if (tk.length) {
+      // os t₀ ne začne pri 0: razlika med odmiki je le nekaj stotink sekunde
+      const lo = Math.min(...tk), hi = Math.max(...tk), d = Math.max(0.05, 1.6 * (hi - lo)), b2 = os(d);
+      const y0 = Math.max(0, Math.floor((lo - 0.25 * d) / b2.step) * b2.step);
+      gK.setAxes({ x: [0, 35], y: [y0, y0 + b2.top + b2.step], xStep: 5, yStep: b2.step });
+    }
+    gK.draw(kSer.map(([name, p], i) => ({ id: name, pts: p.sort((a, b) => a[0] - b[0]), cls: "abc"[i % 3], shape: "o", label: name })));
+    const out = [], cilji = [];
+    for (const [name, p] of skupine(pts, "ime", "l", "t2")) {
+      if (new Set(p.map((q) => q[0])).size < 3) continue;
+      const k = naklonSkoziIzhodisce(p), g = (4 * Math.PI ** 2) / k, velik = pts.some((r) => r.ime === name && r.kot > 15);
+      cilji.push({ key: name, ime: name, kaj: `Iz naklona premice <i>t</i>₀²(<i>l</i>) izračunaj težni pospešek <i>g</i> (${name}).`, vrednost: g });
+      out.push(Rr.odkrito(name)
+        ? `<p><b>${name}</b>: naklon <i>k</i> = ${num(k, 3)}${nb}s²/m, ${tex(String.raw`g = \frac{4\pi^2}{k}`)} = <b>${num(g, 2)}${nb}m/s²</b>.${velik ? " Nekatere meritve so pri odmiku nad 15°: tam je nihajni čas daljši, zato je <i>g</i> iz njih malo premajhen." : ""}</p>`
+        : `<p><b>${name}</b>: iz ${tex(String.raw`t_0^2 = \frac{4\pi^2}{g}\,l`)} je naklon premice ${tex(String.raw`\frac{4\pi^2}{g}`)}. Izračunaj <i>g</i> in ga preveri spodaj.</p>`);
+    }
+    if (!out.length && meas.length) out.push("<p>Za premico in <i>g</i> iz naklona izmeri nihajni čas z isto kroglico pri vsaj treh dolžinah.</p>");
+    calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
+    N.osvezi();
+    const nl = new Set(meas.map((r) => r.l)).size;
+    if (!asked && meas.length >= 4 && nl >= 3) {
+      asked = true;
+      qBox.append(conclusion({
+        text: "Kako je nihajni čas matematičnega nihala odvisen od dolžine?",
+        options: [
+          { t: `${tex("t_0^2")} je sorazmeren z <i>l</i>: če nihalo podaljšaš 4-krat, se nihajni čas podvoji.`, ok: true, why: `Za majhne odmike je ${tex(String.raw`t_0 = 2\pi\sqrt{\frac{l}{g}}`)}, zato ${tex(String.raw`t_0^2 = \frac{4\pi^2}{g}\,l`)}: točke ${tex("t_0^2(l)")} ležijo na premici skozi izhodišče z naklonom ${tex(String.raw`\frac{4\pi^2}{g} \approx 4{,}0${en("s²/m")}`)}. Masa kroglice v enačbi ne nastopa.` },
+          { t: "<i>t</i>₀ je sorazmeren z <i>l</i>: 2-krat daljše nihalo ima 2-krat daljši nihajni čas.", ok: false, why: `Poglej svoje meritve: pri 2-krat daljšem nihalu je nihajni čas le ~1,4-krat (${tex(String.raw`\sqrt{2}`)}-krat) daljši. Premica je ${tex("t_0^2(l)")}, ne ${tex("t_0(l)")}.` },
+          { t: "Daljše nihalo niha hitreje, ker kroglica na daljši niti hitreje pade.", ok: false, why: "Daljše nihalo niha počasneje: nihajni čas se z dolžino podaljšuje (s korenom dolžine)." },
+          { t: "Od dolžine je odvisen le pri velikih odmikih; pri majhnih je za vse dolžine enak.", ok: false, why: "Od dolžine je odvisen pri vseh odmikih. Od odmika pa je odvisen le malo: pri 30° je nihajni čas za 1,7 % daljši kot pri majhnih odmikih." },
+        ],
+      }));
+    }
+  }
+
+  function upd() {
+    const deg = (B.kot * 180) / Math.PI;
+    nit?.setAttribute("transform", `rotate(${(-deg).toFixed(2)} ${px} ${py})`);
+    const c = B.stoparica();
+    swL.set(num(c.t, 2), "s", c.konec ? "ustavljena" : c.tece ? "teče" : B.mer ? "čaka na prehod" : "");
+    nL.set(B.mer ? `${c.k}/${c.n}` : "–", "", "");
+    setTxt(lcdTxt?.[0], `${num(c.t, 2)} s`);
+  }
+  function draw() {
+    svg.replaceChildren();
+    gradienti(svg);
+    const K = KROGLICE[B.kroglica], rr = Math.max(4.5, (K.D / 2) * P), L = B.lNom * P, yTla = H - 6; // kroglica vsaj 9 px, da jo vidiš
+    s("rect", { x: 0, y: yTla, width: W, height: H - yTla, class: "lab-gib-tla" }, svg);
+    // stojalo: podnožje, navpični drog, objemka in vodoravni drog do pritrdišča (ploščici, med katerima je vpeta nit)
+    s("rect", { x: 14, y: yTla - 7, width: 80, height: 7, rx: 2, fill: u(svg, "crno") }, svg);
+    s("rect", { x: 30, y: 10, width: 6, height: yTla - 17, fill: u(svg, "jeklo"), class: "lab-gib-drog-st" }, svg);
+    s("rect", { x: 26, y: py - 9, width: 14, height: 14, rx: 2, class: "lab-gib-objemka" }, svg);
+    s("rect", { x: 40, y: py - 4, width: px - 40 + 6, height: 5, rx: 1, fill: u(svg, "jeklo") }, svg);
+    s("rect", { x: px - 4, y: py - 8, width: 3, height: 9, class: "lab-gib-objemka" }, svg);
+    s("rect", { x: px + 1, y: py - 8, width: 3, height: 9, class: "lab-gib-objemka" }, svg);
+    // kotomer ob pritrdišču in odmik, iz katerega spustiš
+    const rk = 46;
+    s("path", { d: `M${px - rk},${py} A${rk},${rk} 0 0 0 ${px + rk},${py}`, class: "lab-gib-kotomer" }, svg);
+    for (let a = -60; a <= 60; a += 10) {
+      const q = (a * Math.PI) / 180, x1 = px + rk * Math.sin(q), y1 = py + rk * Math.cos(q), d = a % 30 ? 4 : 7;
+      s("line", { x1, y1, x2: px + (rk - d) * Math.sin(q), y2: py + (rk - d) * Math.cos(q), class: "lab-gib-crtica" }, svg);
+      if (a && a % 30 === 0) label(svg, px + (rk + 9) * Math.sin(q), py + (rk + 7) * Math.cos(q), `${Math.abs(a)}°`, "lab-gib-cm");
+    }
+    const q0 = (B.kotNom * Math.PI) / 180;
+    s("line", { x1: px, y1: py, x2: px + (L + rr) * Math.sin(q0), y2: py + (L + rr) * Math.cos(q0), class: "lab-gib-vodilo" }, svg);
+    // meter ob nihalu (od pritrdišča navzdol) in oznaka pod ravnovesno lego (tu sprožiš štoparico)
+    const xm = px - 56; // levo od kotomera
+    s("rect", { x: xm - 8, y: py, width: 8, height: 1.55 * P, class: "lab-gib-trak" }, svg);
+    for (let c = 0; c <= 150; c += 5) {
+      const yy = py + (c / 100) * P;
+      s("line", { x1: xm, y1: yy, x2: xm - (c % 10 ? 2.5 : 5), y2: yy, class: "lab-gib-crtica" }, svg);
+      if (c && c % 50 === 0) label(svg, xm - 11, yy, String(c), "lab-gib-cm", "end");
+    }
+    label(svg, xm - 11, py + 8, "cm", "lab-gib-cm", "end");
+    s("path", { d: `M${px},${py + L + rr + 4} l-4,7 h8 Z`, class: "lab-gib-oznaka" }, svg);
+    // nit in kroglica (gibljivo: le transform)
+    nit = s("g", {}, svg);
+    s("line", { x1: px, y1: py, x2: px, y2: py + L - rr, class: "lab-gib-nit" }, nit);
+    s("circle", { cx: px, cy: py + L, r: rr, fill: u(svg, B.kroglica === "les" ? "les" : "krogla"), class: "lab-gib-krogla" }, nit);
+    // štoparica na mizi
+    lcdTxt = casovnikNaprava(svg, svg, W - 118, yTla - 44, 112, 1, "ŠTOPARICA");
+    merilo(svg, W - 112, yTla - 58, 0.5 * P, "50 cm");
+    upd();
+    svg.setAttribute("aria-label", `Nihalo: ${K.name} na niti, dolžina ${Math.round(B.lNom * 100)} cm, odmik ${B.kotNom}°. ${B.tece ? "Niha." : "Miruje v odmaknjeni legi."}`);
+  }
+  draw();
+  redraw();
+  zap.vezi(table, {
+    get: () => ({ racun: Rr.stanje(), meas, napoved: N.stanje() }),
+    set: (d) => {
+      Rr.obnovi(d?.racun);
+      N.obnovi(d?.napoved);
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object" && Number.isFinite(m.t0) && Number.isFinite(m.l)));
       redraw();
     },
   });

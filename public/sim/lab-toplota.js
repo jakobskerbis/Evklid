@@ -1,10 +1,11 @@
 // Virtualni laboratorij, toplota: grelec in izkoristek (lab-grelnik), mešanje tople in hladne vode (lab-mesanje),
-// taljenje ledu in vrenje vode (lab-faze), ohlajanje čaja v različnih posodah (lab-ohlajanje).
+// taljenje ledu in vrenje vode (lab-faze), ohlajanje čaja v različnih posodah (lab-ohlajanje), Boylov zakon z brizgo (lab-boyle).
 // Modeli: lab-model-toplota.js (brez DOM). Čas teče v realnem času, učenec ga lahko pospeši.
 import { h, s, fmt, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved, racun } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved, racun, lepaOs } from "./lab.js";
 import { drawMeter } from "./lab-fiz.js";
-import { GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, izkoristek, geometrija, POSODE, VODA, GRELEC, NAPAJALNIK_T, KRAJI, SKODELICE, CAJ, T_IDEALNA, tlakNaVisini, vrelisce, POENOSTAVITVE_TOPLOTA } from "./lab-model-toplota.js";
+import { naklonSkoziIzhodisce } from "./lab-model-sile.js";
+import { GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, BoyleBench, BRIZGA, SENZOR_P, izkoristek, geometrija, POSODE, VODA, GRELEC, NAPAJALNIK_T, KRAJI, SKODELICE, CAJ, T_IDEALNA, tlakNaVisini, vrelisce, POENOSTAVITVE_TOPLOTA } from "./lab-model-toplota.js";
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const grp = (title, ...kids) => h("fieldset", { class: "lab-tit-grp" }, h("legend", {}, title), ...kids);
@@ -874,4 +875,239 @@ export function labOhlajanje(el) {
   });
   redraw();
   draw();
+}
+
+// ================================================================ Boylov zakon: brizga in senzor tlaka
+// Napoved »prostornino razpoloviš«: razmerje tlakov pri prvem paru meritev istega poskusa, pri katerem je
+// prostornina na skali natanko pol manjša (±2 %). Meritve, zapisane pred ustalitvijo, šele, če drugih ni. Za napoved.
+const pisi = (x, t) => x && x.textContent !== t && (x.textContent = t);
+export function razmerjeTlakov(meas) {
+  const pari = [];
+  for (const a of meas) for (const b of meas) if (a.s === b.s && Math.abs(a.V / b.V - 2) <= 0.04 && Number.isFinite(a.p) && Number.isFinite(b.p) && a.p > 0) pari.push({ a, b, r: b.p / a.p, ok: !a.nestalno && !b.nestalno });
+  const P = pari.find((x) => x.ok) || pari[0];
+  return P ? { V1: P.a.V, V2: P.b.V, p1: P.a.p, p2: P.b.p, vrednost: P.r } : null;
+}
+
+export function labBoyle(el) {
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new BoyleBench({ seed: zap.seed });
+  const W = 400, H = 250, S = 2.6, xb0 = 62, yc = 74, rb = 19.5; // 2,6 px na mL (≈ 1,46 px na mm), polmer valja brizge
+  const svg = svgBox(W, H, "lab-bench lab-top lab-boy");
+  const log = eventLog();
+  const pL = lcd("senzor tlaka"), vL = lcd("prostornina na skali");
+  const table = dataTable([
+    { key: "s", label: "poskus" },
+    { key: "V", label: "<i>V</i> [mL]" },
+    { key: "p", label: "<i>p</i> [kPa]" },
+  ], { empty: "Še ni meritev. Nastavi začetno prostornino, zapri ventil, nato premikaj bat in zapisuj tlak." });
+  const gV = dataGraph({ x: [0, 60], y: [0, 220], xStep: 10, yStep: 40, xLabel: "V [mL]", yLabel: "p [kPa]", title: "Tlak v odvisnosti od prostornine" });
+  const gI = dataGraph({ x: [0, 100], y: [0, 220], xStep: 20, yStep: 40, xLabel: "1/V [1/L]", yLabel: "p [kPa]", title: "Tlak v odvisnosti od obratne vrednosti prostornine" });
+  const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
+  const qBox = h("div");
+  const meas = []; // { s, ime, V, p, nestalno }
+  let graf = "p1V", poskus = 0, asked = false, odcitek = B.read(), prejsnji = odcitek, doOdcitka = 0, mejaJavljena = false;
+  let bat, zrak, puscica, silaTxt, lcdTxt;
+
+  const vSl = slider({ label: "prostornina na skali", min: 5, max: 60, step: 1, value: 60, unit: "mL", onInput: (v) => premakni(v) });
+  const ventBtn = button("Zapri ventil", () => ventil(), "primary small");
+  const recBtn = button("Zapiši meritev", () => record(), "primary small");
+  const clrBtn = button("Izbriši meritve", () => (table.clear(), (meas.length = 0), redraw()));
+  const grSeg = seg("graf", [["pV", "p(V)"], ["p1V", "p(1/V)"]], "p1V", (v) => ((graf = v), redraw()));
+
+  layout(el, {
+    extra: [
+      h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, pL, vL)), controlsBox(
+        grp("1. Brizga in ventil", hint("Ko je ventil odprt proti zraku, bat zrak le vleče v brizgo ali ga potiska ven. Nastavi začetno prostornino in zapri ventil: zrak v brizgi, cevki in senzorju je zdaj zaprt."), vSl, buttons(ventBtn)),
+        grp("2. Merjenje", hint("Bat premikaj po korakih in po vsakem počakaj nekaj sekund: zrak se ob stiskanju segreje, zato tlak še malo pada. Ko se ustali, ga zapiši."), buttons(recBtn, clrBtn)),
+        log,
+      )),
+      h("h4", { class: "lab-h" }, "Meritve"), table,
+      h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gV, gI, calc, qBox,
+      notes(POENOSTAVITVE_TOPLOTA.boyle, `Boylov zakon: pri stalni temperaturi in stalni množini plina je ${tex(String.raw`pV = \text{konst.}`)} (iz ${tex("pV = nRT")}). Hitra sprememba: ${tex(String.raw`TV^{\kappa - 1} = \text{konst.}`)}, κ = 1,40 za zrak. Toplotna difuzivnost zraka 2,2·10⁻⁵ m²/s (20 °C). Zračni tlak: standardna atmosfera (ISO 2533) za 295 m. 1 kPa · 1 L = 1 J. Ocene: zrak v cevki in senzorju, delež adiabatne spremembe, napaka skale in senzorja, največja sila roke.`),
+    ],
+    tryText: "Bat izvleci na 40 mL in zapri ventil. Zapiši tlak, nato bat po 5 mL potiskaj do 20 mL; po vsakem koraku počakaj, da se tlak ustali. Nariši p(1/V) in izračunaj pV. Kaj se zgodi s tlakom, ko bat izvlečeš na 60 mL?",
+  });
+  el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "J", dec: 2, tol: 0.03, onOdkrij: () => (redraw(), zap.shrani()) });
+  calc.after(Rr.el);
+  // Napoved pred prvo meritvijo (Preizkusi: od 40 mL do 20 mL).
+  const N = napoved({
+    id: "boyle-polovica",
+    vprasanje: "Zaprti zrak stisneš na pol manjšo prostornino (npr. s 40 mL na 20 mL) in počakaš, da se tlak ustali. Kolikokrat večji bo tlak? Napovej, preden začneš meriti.",
+    enota: "-krat",
+    dec: 2,
+    odprto: () => meas.length === 0,
+    izmerjeno: () => {
+      const r = razmerjeTlakov(meas);
+      return r && { vrednost: r.vrednost, besedilo: `${fmt(r.vrednost, 2)}-krat (${r.V1} mL → ${r.V2} mL: ${fixed(r.p1, 1)} kPa → ${fixed(r.p2, 1)} kPa)` };
+    },
+  });
+  el.querySelector(".demo-controls")?.prepend(N.el);
+  qBox.before(N.primerjava);
+
+  function premakni(v) {
+    const prej = B.V, V = B.premakni(v);
+    if (V !== v) {
+      vSl.set(V, true);
+      if (!mejaJavljena) log.push(`Bata ne moreš potisniti dlje kot do ${V}${" "}mL: sila nanj bi bila že ~${Math.round(BRIZGA.sila)}${" "}N. Senzor meri le do ${SENZOR_P.max}${" "}kPa.`, "warn");
+      mejaJavljena = true;
+    } else if (V > prej) mejaJavljena = false;
+    doOdcitka = 0;
+    drawBat();
+  }
+  function ventil() {
+    if (B.zaprto) {
+      B.odpri();
+      ventBtn.textContent = "Zapri ventil";
+      log.push("Ventil je odprt: v brizgi je spet zračni tlak.", "info");
+    } else {
+      B.zapri();
+      poskus++;
+      ventBtn.textContent = "Odpri ventil";
+      log.push(`Ventil je zaprt pri ${B.V}${" "}mL (poskus ${poskus}). Zdaj premikaj bat.`, "info");
+    }
+    doOdcitka = 0;
+    draw();
+  }
+  function record() {
+    if (!B.zaprto) return log.push("Ventil je odprt: v brizgi je zračni tlak, ne glede na prostornino. Zapri ventil, da bo zrak zaprt.", "warn");
+    const R = odcitek;
+    table.add({ s: String(poskus), V: String(B.V), p: R.over ? "OL" : fixed(R.value, 1) });
+    if (R.over) return log.push(`Senzor kaže OL: tlak je večji od ${SENZOR_P.max}${" "}kPa. Bata ne potisni tako daleč.`, "bad");
+    const nestalno = !B.ustaljeno;
+    if (nestalno) log.push("Tlak se še spreminja: zrak se je ob premiku bata segrel (ali ohladil) in se še vrača na sobno temperaturo. Počakaj nekaj sekund in zapiši znova.", "warn");
+    meas.push({ s: poskus, ime: `poskus ${poskus}`, V: B.V, p: R.value, nestalno });
+    redraw();
+  }
+  function redraw() {
+    gV.hidden = graf !== "pV";
+    gI.hidden = graf === "pV";
+    const top = lepaOs(Math.max(120, ...meas.map((r) => r.p)));
+    const ser = [...skupineP(meas).entries()];
+    gV.setAxes({ y: [0, top.top], yStep: top.step });
+    const xi = lepaOs(Math.max(30, ...meas.map((r) => 1000 / r.V)));
+    gI.setAxes({ x: [0, xi.top], xStep: xi.step, y: [0, top.top], yStep: top.step });
+    const out = [], cilji = [], sez = [];
+    ser.forEach(([ime, L], i) => {
+      const pv = L.map((r) => (r.p * r.V) / 1000), C = pv.reduce((a, b) => a + b, 0) / pv.length; // J
+      const dovolj = L.length >= 3 && new Set(L.map((r) => r.V)).size >= 3;
+      const k = dovolj ? naklonSkoziIzhodisce(L.map((r) => [1000 / r.V, r.p])) : NaN; // naklon p(1/V): kPa·L = J
+      sez.push({ ime, L, C, k, cls: "abc"[i % 3], shape: i % 6 < 3 ? "o" : "^" });
+      if (!dovolj) return;
+      cilji.push({ key: ime, ime, kaj: `Za vsako meritev (${ime}) izračunaj produkt <i>pV</i> in vzemi povprečje. Vpiši ga v J (1${" "}kPa · 1${" "}L = 1${" "}J).`, vrednost: C });
+      const Vs = [...L].sort((a, b) => a.V - b.V), mal = (Vs[0].p * Vs[0].V) / 1000, vel = (Vs[Vs.length - 1].p * Vs[Vs.length - 1].V) / 1000;
+      const trend = Vs[Vs.length - 1].V / Vs[0].V >= 1.5 && (vel - mal) / C > 0.015 ? ` <i>pV</i> je pri majhnih prostorninah malo manjši: zrak v nastavku, cevki in senzorju (~1,5${" "}mL) skala ne pokaže, zato je prava prostornina malo večja od odčitane.` : "";
+      const nest = L.some((r) => r.nestalno) ? " Meritve, ki si jih zapisal, preden se je tlak ustalil, odstopajo." : "";
+      out.push(Rr.odkrito(ime)
+        ? `<p><b>${ime}</b>: <i>pV</i> od ${fixed(Math.min(...pv), 2)} do ${fixed(Math.max(...pv), 2)}${" "}J, povprečje <b>${fixed(C, 2)}${" "}J</b>. Naklon premice <i>p</i>(1/<i>V</i>) je ${fixed(k, 2)}${" "}kPa·L = ${fixed(k, 2)}${" "}J.${trend}${nest}</p>`
+        : `<p><b>${ime}</b>: izračunaj povprečni produkt <i>pV</i> in ga preveri spodaj. Enako vrednost ima naklon premice <i>p</i>(1/<i>V</i>).</p>`);
+    });
+    gV.draw(sez.map((S) => ({ id: S.ime, pts: S.L.map((r) => [r.V, r.p]), cls: S.cls, shape: S.shape, label: S.ime, line: Number.isFinite(S.k) ? (x) => (x > 0 ? (S.C * 1000) / x : NaN) : null })));
+    gI.draw(sez.map((S) => ({ id: S.ime, pts: S.L.map((r) => [1000 / r.V, r.p]), cls: S.cls, shape: S.shape, label: S.ime, line: Number.isFinite(S.k) ? (x) => S.k * x : null })));
+    if (!out.length && meas.length) out.push("<p>Za graf in <i>pV</i> zapiši vsaj tri meritve pri različnih prostorninah z zaprtim ventilom.</p>");
+    calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
+    N.osvezi();
+    if (!asked && sez.some((S) => S.L.length >= 5 && Math.max(...S.L.map((r) => r.V)) / Math.min(...S.L.map((r) => r.V)) >= 1.8)) {
+      asked = true;
+      qBox.append(conclusion({
+        text: "Kaj pokažeta grafa <i>p</i>(<i>V</i>) in <i>p</i>(1/<i>V</i>)?",
+        options: [
+          { t: "Tlak je obratno sorazmeren s prostornino: točke <i>p</i>(1/<i>V</i>) ležijo na premici skozi izhodišče, produkt <i>pV</i> je stalen.", ok: true, why: `Pri stalni temperaturi in stalni množini plina velja Boylov zakon ${tex(String.raw`pV = \text{konst.}`)}: ko prostornino razpoloviš, se tlak podvoji. Graf <i>p</i>(<i>V</i>) je hiperbola, <i>p</i>(1/<i>V</i>) premica. Pri tvojih meritvah je <i>pV</i> stalen na nekaj odstotkov; malo manjši je pri majhnih prostorninah, ker zraka v cevki do senzorja skala ne pokaže.` },
+          { t: "Tlak je sorazmeren s prostornino: večja prostornina, večji tlak.", ok: false, why: "Ko si bat izvlekel (večja prostornina), je tlak padel. Tlak in prostornina se spreminjata nasprotno." },
+          { t: "Tlak narašča enakomerno: za vsak mililiter manj se poveča za enako vrednost.", ok: false, why: "To bi bila premica <i>p</i>(<i>V</i>). Tvoje točke na <i>p</i>(<i>V</i>) niso na premici: pri majhnih prostorninah tlak narašča vse hitreje. Premica je šele <i>p</i>(1/<i>V</i>)." },
+          { t: "Produkt <i>pV</i> raste, ko zrak stiskaš, ker se pri tem segreje.", ok: false, why: "Ob hitrem stiskanju se zrak res za kratek čas segreje in tlak je malo višji, a v nekaj sekundah se vrne na sobno temperaturo. Če počakaš, da se tlak ustali, je <i>pV</i> stalen." },
+        ],
+      }));
+    }
+  }
+  const zaslon = () => `${odcitek.text.replace(".", ",")}${odcitek.over ? "" : " kPa"}`;
+  function skupineP(list) {
+    const m = new Map();
+    for (const r of list) (m.get(r.ime) || m.set(r.ime, []).get(r.ime)).push(r);
+    return m;
+  }
+
+  // ura: zrak se vrača na sobno temperaturo; senzor se osveži dvakrat na sekundo (zadnja števka niha)
+  ticker(el, (dt) => {
+    B.step(dt);
+    doOdcitka -= dt;
+    if (doOdcitka > 0) return;
+    doOdcitka = 0.5;
+    prejsnji = odcitek;
+    odcitek = B.read();
+    const spr = !odcitek.over && !prejsnji.over && Math.abs(odcitek.value - prejsnji.value) >= 0.25;
+    pL.set(odcitek.text, odcitek.over ? "" : "kPa", odcitek.over ? "nad 210 kPa" : spr ? "se spreminja" : B.zaprto ? "ventil zaprt" : "ventil odprt");
+    pisi(lcdTxt, zaslon());
+    sila();
+  }, 100);
+
+  // Sila roke na ploščico bata: puščica z začetkom na ploščici, v levo (potiskaš) ali desno (vlečeš).
+  function sila() {
+    const F = B.sila, L = Math.abs(F) < 1.5 ? 0 : Math.min(50, 6 + Math.abs(F) * 0.3), xt = xb0 + B.V * S + 158, y = yc + rb + 8;
+    puscica?.setAttribute("d", !L ? "" : F > 0 ? `M${xt},${y} H${xt - L} m6,-4 l-6,4 l6,4` : `M${xt},${y} H${xt + L} m-6,-4 l6,4 l-6,4`);
+    if (silaTxt) pisi(silaTxt, L ? `${F > 0 ? "potiskaš" : "vlečeš"} bat s ~${Math.round(Math.abs(F))} N` : "");
+  }
+  function drawBat() {
+    const xs = xb0 + B.V * S;
+    bat?.setAttribute("transform", `translate(${(xs - xb0 - 60 * S).toFixed(1)},0)`);
+    zrak?.setAttribute("width", Math.max(0, xs - xb0 + 6).toFixed(1));
+    vL.set(String(B.V), "mL", B.zaprto ? "zrak zaprt" : "ventil odprt");
+    sila();
+  }
+  function draw() {
+    svg.replaceChildren();
+    const x60 = xb0 + 60 * S;
+    s("line", { x1: 0, y1: H - 8, x2: W, y2: H - 8, class: "lab-tit-bench" }, svg);
+    // nastavek brizge in cevka do ventila
+    s("rect", { x: 36, y: yc - 4, width: xb0 - 36 - 6, height: 8, rx: 2, class: "lab-boy-valj" }, svg);
+    s("path", { d: `M38,${yc} H24 V138`, class: "lab-boy-cevka" }, svg);
+    // valj brizge s skalo (1 mL, številke na 10 mL)
+    zrak = s("rect", { x: xb0 - 6, y: yc - rb + 1.5, width: 0, height: 2 * rb - 3, class: "lab-boy-zrak" }, svg);
+    s("rect", { x: xb0 - 6, y: yc - rb, width: x60 - xb0 + 16, height: 2 * rb, rx: 4, class: "lab-boy-valj" }, svg);
+    s("rect", { x: x60 + 10, y: yc - rb - 12, width: 6, height: 2 * rb + 24, rx: 2, class: "lab-boy-krilca" }, svg);
+    for (let v = 0; v <= 60; v++) {
+      const x = xb0 + v * S, d = v % 10 === 0 ? 9 : v % 5 === 0 ? 6 : 3.5;
+      s("line", { x1: x, y1: yc - rb, x2: x, y2: yc - rb + d, class: "lab-boy-crtica" }, svg);
+      if (v % 10 === 0) label(svg, x, yc - rb - 8, String(v), "tick small");
+    }
+    label(svg, x60 + 26, yc - rb - 8, "mL", "tick small", "start");
+    // bat: gumijasti čep, drog in ploščica za palec (gibljivo: le transform)
+    bat = s("g", {}, svg);
+    s("rect", { x: x60 - 2, y: yc - rb + 1.5, width: 8, height: 2 * rb - 3, rx: 2, class: "lab-boy-cep" }, bat);
+    s("rect", { x: x60 + 6, y: yc - 3, width: 150, height: 6, class: "lab-boy-drog" }, bat);
+    s("rect", { x: x60 + 156, y: yc - rb - 2, width: 5, height: 2 * rb + 4, rx: 1.5, class: "lab-boy-drog" }, bat);
+    puscica = s("path", { class: "lab-boy-sila" }, svg);
+    silaTxt = s("text", { x: W - 8, y: yc + rb + 30, class: "lab-boy-silatxt", "text-anchor": "end" }, svg, "");
+    // tripotni ventil: pot proti zraku je odprta ali zaprta
+    s("circle", { cx: 24, cy: 146, r: 9, class: "lab-boy-ventil" }, svg);
+    s("path", { d: `M24,137 V155${B.zaprto ? "" : " M24,146 H6"}`, class: "lab-boy-pot" }, svg);
+    s("path", { d: "M15,146 H4", class: "lab-boy-cevka" }, svg);
+    s("rect", { x: 30, y: 142, width: 22, height: 8, rx: 3, transform: B.zaprto ? "" : "rotate(60 24 146)", class: "lab-boy-rocka" }, svg); // ročka ventila
+    label(svg, 58, 146, B.zaprto ? "ventil zaprt" : "ventil odprt proti zraku", "tick small", "start");
+    // senzor tlaka z zaslonom
+    s("path", { d: "M24,155 V178", class: "lab-boy-cevka" }, svg);
+    s("rect", { x: 8, y: 178, width: 176, height: 52, rx: 5, class: "lab-boy-ohisje" }, svg);
+    label(svg, 16, 188, "SENZOR TLAKA 0–210 kPa", "lab-boy-panel", "start");
+    s("rect", { x: 16, y: 195, width: 160, height: 28, rx: 3, class: "lab-gib-lcdbg" }, svg);
+    lcdTxt = s("text", { x: 168, y: 215, class: "lab-gib-lcdtxt lab-boy-lcd", "text-anchor": "end" }, svg, "");
+    label(svg, W - 8, H - 18, `soba ~${Math.round(B.Tsoba - 273.15)} °C, zračni tlak ~98 kPa`, "tick small", "end");
+    merilo(svg, W - 60, H - 34, 29, "2 cm");
+    lcdTxt.textContent = zaslon();
+    drawBat();
+    svg.setAttribute("aria-label", `Brizga 60 mL, bat na ${B.V} mL, s cevko in ventilom na senzorju tlaka. Ventil je ${B.zaprto ? "zaprt" : "odprt proti zraku"}.`);
+  }
+  draw();
+  redraw();
+  zap.vezi(table, {
+    get: () => ({ racun: Rr.stanje(), meas, poskus, napoved: N.stanje() }),
+    set: (d) => {
+      Rr.obnovi(d?.racun);
+      N.obnovi(d?.napoved);
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object" && Number.isFinite(m.V) && Number.isFinite(m.p) && typeof m.ime === "string"));
+      poskus = Number.isInteger(d?.poskus) ? d.poskus : poskus;
+      redraw();
+    },
+  });
 }

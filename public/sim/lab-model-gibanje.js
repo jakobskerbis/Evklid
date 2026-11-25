@@ -469,6 +469,128 @@ export class PadBench {
   }
 }
 
+// ------------------------------------------------------------------ NihaloBench: matematično nihalo (lab-nihalo)
+// Nit (lahka, neraztegljiva) je vpeta med ploščici na stojalu, kroglica visi na njej. Dolžina l je od pritrdišča do
+// središča kroglice (meter, 1 mm). Gibanje je rešeno brez približka majhnih odmikov (RK4, korak 1 ms):
+//   I·θ'' = −(m − ρV)·g·l·sin θ − ½ρcA·l³·θ'|θ'| − I·θ'/τ,   I = (m + ½ρV)·l² + ⅖·m·r²
+// (fizično nihalo s kroglico polmera r, vzgon in pridružena masa zraka ½ρV kot pri prostem padu, upor ∝ v²).
+// Nihajni čas pri odmiku θ₀ brez upora: t₀ = 2π√(l/g) / AGM(1, cos(θ₀/2)) (točna rešitev z eliptičnim integralom;
+// G. G. Carvalhaes, P. Suppes, Am. J. Phys. 76, 1150 (2008)). Za majhne odmike t₀ = 2π√(l/g).
+// - Kroglici iz jekla (7,85 g/cm³) Ø 25 mm in Ø 31,5 mm: 64 g in 128 g (masa natanko 2-krat večja), lesena (bukev ~0,70 g/cm³) Ø 25 mm: 6 g.
+// - c = 0,5 (krogla pri Re ~ 10²–10³, ocena), dušenje v vpetju niti τ = 900 s (ocena).
+// - Napake: pritrdišče (kje se nit zares upogiba) ±2 mm, odčitek dolžine do središča kroglice ±1,5 mm, odmik na kotomeru ±1°
+//   (ocene). Štoparica kaže stotinke; reakcijski čas ob vsakem pritisku ima raztros 0,04 s (standardni odmik, ocena: ob
+//   prehodu kroglice skozi ravnovesno lego, ko jo pričakuješ, je raztros majhen; stalni zamik se pri razliki odšteje).
+export const KROGLICE = {
+  jeklo64: { name: "jeklena kroglica 64 g", kratko: "jeklo 64 g", D: 0.025, rho: 7850 },
+  jeklo128: { name: "jeklena kroglica 128 g", kratko: "jeklo 128 g", D: 0.0315, rho: 7850 },
+  les: { name: "lesena kroglica 6 g", kratko: "les 6 g", D: 0.025, rho: 700 },
+};
+for (const k of Object.values(KROGLICE)) k.m = krogla(k.D, k.rho);
+export const NIHALO = { lMin: 0.2, lMax: 1.5, pritrdisce: 0.002, odcitek: 0.0015, kot: 1, c: 0.5, tau: 900, reakcija: 0.04, stoparica: 0.01, h: 0.001 };
+// Točen nihajni čas (brez upora) za dolžino l [m] in odmik θ₀ [rad]: aritmetično-geometrijska sredina.
+export function nihajniCas(l, theta0 = 0, g = G_LJ) {
+  let a = 1, b = Math.cos(theta0 / 2);
+  for (let i = 0; i < 30 && Math.abs(a - b) > 1e-15; i++) [a, b] = [(a + b) / 2, Math.sqrt(a * b)];
+  return (2 * Math.PI * Math.sqrt(l / g)) / a;
+}
+export class NihaloBench {
+  constructor({ seed = 1, idealno = false } = {}) {
+    const r = (this.r = rng(seed));
+    this.idealno = idealno;
+    this.rhoZrak = idealno ? 0 : gostotaZraka(22 + napaka(r, 2), 98000 + napaka(r, 900));
+    this.ePritrdisce = idealno ? 0 : napaka(r, NIHALO.pritrdisce);
+    this.kroglica = "jeklo64";
+    this.run = null;
+    this.mer = null;
+    this.dolzina(0.5);
+    this.odmik(10);
+  }
+  // Učenec nastavi dolžino (odčitek na metru, m) in odmik (kotomer, °); prave vrednosti imajo napako odčitka.
+  dolzina(l) {
+    this.lNom = l;
+    this.l = l + (this.idealno ? 0 : this.ePritrdisce + napaka(this.r, NIHALO.odcitek));
+    this.ustavi();
+  }
+  odmik(stopinj) {
+    this.kotNom = stopinj;
+    this.theta0 = ((stopinj + (this.idealno ? 0 : napaka(this.r, NIHALO.kot))) * Math.PI) / 180;
+    this.ustavi();
+  }
+  izberi(k) {
+    this.kroglica = k;
+    this.ustavi();
+  }
+  ustavi() {
+    this.run = null;
+    this.mer = null;
+  }
+  get tece() {
+    return !!this.run;
+  }
+  // Nihajni čas brez upora za trenutno postavitev (fizično nihalo, vzgon), za preizkuse in razlago.
+  get t0() {
+    return nihajniCas(1, this.theta0, this._k().K);
+  }
+  _k() {
+    const P = KROGLICE[this.kroglica], rho = this.rhoZrak, V = krogla(P.D, 1), l = this.l;
+    const I = (P.m + 0.5 * rho * V) * l * l + 0.4 * P.m * (P.D / 2) ** 2;
+    return { K: (G_LJ * (P.m - rho * V) * l) / I, D: this.idealno ? 0 : (0.5 * rho * NIHALO.c * presek(P) * l ** 3) / I, L: this.idealno ? 0 : 1 / NIHALO.tau };
+  }
+  spusti() {
+    this.k = this._k();
+    this.run = { t: 0, th: this.theta0, w: 0 };
+    this.mer = null;
+    return this.run;
+  }
+  step(dt) {
+    const R = this.run;
+    if (!R || !(dt > 0)) return;
+    const { K, D, L } = this.k, f = (th, w) => -K * Math.sin(th) - D * w * Math.abs(w) - L * w;
+    const n = Math.max(1, Math.ceil(dt / NIHALO.h - 1e-9)), h = dt / n;
+    for (let i = 0; i < n; i++) {
+      const th = R.th, w = R.w;
+      const k1t = w, k1w = f(th, w);
+      const k2t = w + (h / 2) * k1w, k2w = f(th + (h / 2) * k1t, k2t);
+      const k3t = w + (h / 2) * k2w, k3w = f(th + (h / 2) * k2t, k3t);
+      const k4t = w + h * k3w, k4w = f(th + h * k3t, k4t);
+      const th1 = th + (h / 6) * (k1t + 2 * k2t + 2 * k3t + k4t), w1 = w + (h / 6) * (k1w + 2 * k2w + 2 * k3w + k4w);
+      if (th < 0 && th1 >= 0) this._prehod(R.t + (h * -th) / (th1 - th)); // skozi ravnovesno lego v smeri +
+      R.th = th1;
+      R.w = w1;
+      R.t += h;
+    }
+  }
+  get kot() {
+    return this.run ? this.run.th : this.theta0;
+  }
+  // Štoparica: učenec jo sproži ob prehodu skozi ravnovesno lego in ustavi po n nihajih, ob istem prehodu (v isto smer).
+  meri(n) {
+    if (!this.run) this.spusti();
+    const e = () => (this.idealno ? 0 : gauss(this.r, NIHALO.reakcija, 3));
+    this.mer = { n, k: 0, t0: null, t1: null, e0: e(), e1: e() };
+  }
+  _prehod(tc) {
+    const M = this.mer;
+    if (!M || M.t1 != null) return;
+    if (M.t0 == null) M.t0 = tc;
+    else if (++M.k === M.n) M.t1 = tc;
+  }
+  stoparica(t = this.run?.t ?? 0) {
+    const M = this.mer;
+    if (!M || M.t0 == null) return { t: 0, k: 0, n: M?.n ?? 0, tece: false, konec: false };
+    const a = M.t0 + M.e0, b = M.t1 != null ? M.t1 + M.e1 : Infinity;
+    const x = Math.max(0, Math.min(t, b) - a), st = NIHALO.stoparica;
+    return { t: Number((Math.round(x / st) * st).toFixed(2)), k: M.k, n: M.n, tece: t >= a && t < b, konec: t >= b };
+  }
+  meritev() {
+    const M = this.mer;
+    if (!M || M.t1 == null || this.run.t < M.t1 + M.e1) return null;
+    const t = this.stoparica(Infinity).t;
+    return { n: M.n, t, t0: t / M.n };
+  }
+}
+
 // ------------------------------------------------------------------ poenostavitve
 export const POENOSTAVITVE_GIBANJE = {
   klanec: [
@@ -494,5 +616,13 @@ export const POENOSTAVITVE_GIBANJE = {
     "Ko obešalo pristane na tleh, vrvica popusti in voziček se naprej giblje le še zaradi nagiba in upora.",
     "Ko voziček zadene odbijač, se ustavi (obešalo ga drži ob odbijaču); odboj ne vpliva na meritve pred njim.",
     "Uteži so v mejah razreda M3 (10 g ±20 mg); težni pospešek 9,806 m/s², ti računaš z 9,81 m/s².",
+  ],
+  nihalo: [
+    "Nit je lahka in se ne raztegne; vpeta je med ploščici, zato se upogiba v eni točki (kje točno, veš na ±2 mm, ocena).",
+    "Kroglica ni točka: nihalo je fizično nihalo z ⅖mr² vztrajnosti kroglice okoli njenega središča. Pri 20 cm in Ø 31,5 mm je zato nihajni čas daljši za ~0,1 %, pri 1 m za manj kot 0,01 %.",
+    "Zračni upor je ½ρcAv² s c = 0,5 (ocena), vzgon in zrak, ki se giblje s kroglico, sta upoštevana. Lesena kroglica zato hitreje izgublja odmik, nihajni čas pa ima skoraj enak.",
+    "Štoparica kaže stotinke sekunde. Ko jo sprožiš in ustaviš, se zmotiš za ~0,04 s (ocena); če meriš 10 nihajev, je ta napaka na en nihaj 10-krat manjša.",
+    "Kotomer odčitaš na ±1°, dolžino do središča kroglice na ±1,5 mm (ocene).",
+    "Težni pospešek je ljubljanski 9,806 m/s² (GRS 80); ti računaš z 9,81 m/s².",
   ],
 };

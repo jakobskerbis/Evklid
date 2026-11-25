@@ -42,6 +42,17 @@ export function lcd(name, { cls = "" } = {}) {
   return el;
 }
 
+// Lepe meje osi grafa: najmanjša »okrogla« zgornja meja nad max in korak (1, 2, 2,5 ali 5 · 10ⁿ), največ 6 razdelkov.
+export function lepaOs(max) {
+  const m = Math.max(max, 1e-6) * 1.08;
+  const e = 10 ** Math.floor(Math.log10(m / 5));
+  for (const k of [1, 2, 2.5, 5, 10, 20]) {
+    const st = k * e;
+    if (m / st <= 6) return { top: Math.ceil(m / st) * st, step: st };
+  }
+  return { top: m, step: m / 5 };
+}
+
 // Tabela meritev. cols: [{ key, label }]. add(row) doda vrstico (vrednosti so že nizi za prikaz).
 export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in pritisni »Zapiši meritev«." } = {}) {
   const tbody = h("tbody");
@@ -271,21 +282,22 @@ export const parseStevilo = (x) => {
 };
 export function napoved(o) {
   const stevilo = !o.moznosti;
+  const enota = (o.enota || "").replace(/^-/, ""); // »-krat«: brez presledka za številom (2-krat), v oznaki polja »krat«
   const moznosti = () => (typeof o.moznosti === "function" ? o.moznosti() : o.moznosti) || [];
   let v = null, txt = "", zaprto = false;
   const tekst = h("p", { class: "lab-q-text", html: o.vprasanje });
   const moja = h("p", { class: "lab-napoved-moja", "aria-live": "polite" });
-  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoja napoved${o.enota ? ` v ${o.enota}` : ""}`, placeholder: "npr. 50" });
+  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoja napoved${enota ? ` v ${enota}` : ""}`, placeholder: "npr. 50" });
   const zapisi = button("Zapiši napoved", () => zapisiStevilo(), "primary small");
   vnos.addEventListener("keydown", (e) => e.key === "Enter" && zapisiStevilo());
   const polje = stevilo
-    ? h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoja napoved${o.enota ? ` [${o.enota}]` : ""}`), vnos, zapisi)
+    ? h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoja napoved${enota ? ` [${enota}]` : ""}`), vnos, zapisi)
     : h("div", { class: "lab-opts", role: "group", "aria-label": "tvoja napoved" });
   const el = h("section", { class: "lab-q lab-napoved", "data-napoved": o.id || "" }, h("h4", {}, "Napoved"), tekst, polje, moja);
   const prim = h("dl", { class: "lab-primerjava-vrednosti" });
   const sodba = h("p", { class: "lab-why" });
   const primerjava = h("section", { class: "lab-q lab-primerjava", hidden: true }, h("h4", {}, "Tvoja napoved · Izmerjeno"), prim, sodba);
-  const izpis = (x) => (stevilo ? `${fmt(x, o.dec ?? 1)}${o.enota ? ` ${o.enota}` : ""}` : txt);
+  const izpis = (x) => (stevilo ? `${fmt(x, o.dec ?? 1)}${!o.enota ? "" : o.enota.startsWith("-") ? o.enota : ` ${o.enota}`}` : txt);
   function zapisiStevilo() {
     const x = parseStevilo(vnos.value);
     if (x == null) return (zadnje.moja = null), (moja.textContent = "Vpiši število (npr. 50 ali 4,5).");

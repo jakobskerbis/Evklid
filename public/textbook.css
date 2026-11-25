@@ -1451,3 +1451,47 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-primerjava-vrednosti > div { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); }
 .lab-primerjava-vrednosti dt { font-size: 0.85rem; color: var(--muted); }
 .lab-primerjava-vrednosti dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+/* Matematično nihalo (lab-nihalo, lab-gibanje.js) in Boylov zakon (lab-boyle, lab-toplota.js): isti okvir kot ostali poskusi z gibanjem in toploto. */
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) :is(button, select, .seg-btn, .demo-check, .layer-chip, input[type=range]) { min-height: 44px !important; }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) .seg-btn { min-width: 44px; }
+.lab-bench:has(> :is(.demo-lab-nihalo, .demo-lab-boyle)) { overflow-x: clip; }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo-lab-nihalo .lab-table :is(th, td) { white-space: normal; }
+.demo-lab-nihalo .lab-table td:first-child { text-align: left; }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) .lab-lcd-screen { direction: ltr; }
+.demo:is(.demo-lab-nihalo, .demo-lab-boyle) .demo-svg :is(.lab-gib-lcdtxt, .lab-gib-cm) { direction: ltr; unicode-bidi: plaintext; }
+@media (max-width: 480px) {
+  .demo-lab-nihalo .lab-table { font-size: 0.8rem; }
+  .demo-lab-nihalo .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.demo-svg .lab-gib-nit { stroke: #5b4a3a; stroke-width: 0.9; }
+.dark .demo-svg .lab-gib-nit { stroke: #d8c6b0; }
+.demo-svg .lab-gib-kotomer { fill: rgb(240 244 248 / 0.55); stroke: #6b737c; stroke-width: 0.8; }
+.dark .demo-svg .lab-gib-kotomer { fill: rgb(60 66 74 / 0.5); stroke: #aab2ba; }
+.dark .demo-svg .lab-gib-kotomer ~ .lab-gib-crtica { stroke: #c9d1d9; }
+.demo-svg .lab-gib-vodilo { stroke: var(--muted); stroke-width: 0.8; stroke-dasharray: 3 3; }
+.demo-svg .lab-gib-oznaka { fill: #e53935; }
+.demo-svg.lab-boy .lab-scale { fill: none; }
+.demo-svg .lab-boy-valj { fill: rgb(225 236 244 / 0.35); stroke: #6f8394; stroke-width: 1.2; }
+.demo-svg .lab-boy-zrak { fill: #cfe6f7; opacity: 0.75; }
+.dark .demo-svg .lab-boy-zrak { fill: #36556e; }
+.demo-svg .lab-boy-krilca { fill: #c3cfd9; stroke: #6f8394; stroke-width: 0.8; }
+.demo-svg .lab-boy-crtica { stroke: #1f2933; stroke-width: 0.6; }
+.dark .demo-svg .lab-boy-crtica { stroke: #d6dde3; }
+.demo-svg .lab-boy-cep { fill: #2b2f34; }
+.dark .demo-svg .lab-boy-cep { fill: #11151a; stroke: #8d959d; stroke-width: 0.6; }
+.demo-svg .lab-boy-drog { fill: #e9eef2; stroke: #6f8394; stroke-width: 0.8; }
+.demo-svg .lab-boy-cevka { fill: none; stroke: #9aa9b5; stroke-width: 4; stroke-linejoin: round; }
+.demo-svg .lab-boy-ventil { fill: #e8ebee; stroke: #4b525a; stroke-width: 1; }
+.demo-svg .lab-boy-pot { fill: none; stroke: #2b6cb0; stroke-width: 2.2; }
+.demo-svg .lab-boy-rocka { fill: #2f7d4f; }
+.demo-svg .lab-boy-ohisje { fill: #2b3036; stroke: #15181b; stroke-width: 0.6; }
+.demo-svg .lab-boy-panel { fill: #e8ebee; font-size: 8px; font-weight: 700; }
+.demo-svg .lab-boy-lcd { font-size: 16px; }
+.demo-svg .lab-boy-sila { fill: none; stroke: #c0392b; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.dark .demo-svg .lab-boy-sila { stroke: #ff8a7a; }
+.demo-svg .lab-boy-silatxt { fill: var(--text); font-size: 11px; font-weight: 700; }
