@@ -39,6 +39,10 @@ test("strežnik: SymPy ne preglasi točnega protiprimera, približek ni »Prever
   assert.equal(await s("(x-2)*(x-2400000)=0", eq(["2", "2400000"])), "verified");
   assert.equal(await s("(x+1000000)^2", { kind: "expression", variable: "x", value: "x^2+2000000*x+1000000000000" }), "verified");
   assert.equal(await s("x^2-5*x+6=0", eq(["2", "3"])), "verified");
+  // besedilo korakov (»i« = »in« v hrvaščini in italijanščini) ne izklopi točnega protiprimera
+  const koraki = { methods: [{ steps: [{ title: "Kvadriramo binom i sredimo", why: "i" }] }] };
+  assert.notEqual(await s("(x+1000000)^2", { kind: "expression", variable: "x", value: "x^2+1999999*x+1000000000000", ...koraki }), "verified");
+  assert.notEqual(await s("(x-2)*(x-2400000)=0", { ...eq(["2", "2*10^6"]), ...koraki }), "verified");
   // kompleksna števila: i je za SymPy imaginarna enota, lokalno spremenljivka; lokalni »ne drži« tu ni točen
   assert.equal(await s("(1+i)^2", { kind: "arith", value: "2*i" }), "verified");
   assert.equal(await s("(2+3*i)*(2-3*i)", { kind: "arith", value: "13" }), "verified");

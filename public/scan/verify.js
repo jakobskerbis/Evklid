@@ -240,8 +240,9 @@ export function verifyAi(problemText, ai) {
   const status = statusOf(ev);
   const out = { ...r, partial: ev.complete === "unknown" || undefined, status };
   // Točen protiprimer (ulomki, Sturm): strežnik ga ne sme preglasiti s SymPy (server/scan.js verifyAiFull). Ne, kadar
-  // naloga ali odgovor vsebuje i, I ali E: SymPy ju bere kot imaginarno enoto oz. konstanto, tryPoly pa kot spremenljivko.
-  if (ev.holds === false && ev.how === "exact" && !/(?<![A-Za-z])[iIE](?![A-Za-z])/.test(`${problemText} ${JSON.stringify(ai ?? {})}`)) out.exact = true;
+  // naloga ali odgovor vsebuje i, I ali E: SymPy ju bere kot imaginarno enoto oz. konstanto, tryPoly kot spremenljivko.
+  // Gledamo le rešitve in vrednost, ne besedila korakov (»i« je beseda v hrvaščini in italijanščini).
+  if (ev.holds === false && ev.how === "exact" && !/(?<![A-Za-z])[iIE](?![A-Za-z])/.test(`${problemText} ${JSON.stringify([ai?.solutions, ai?.value])}`)) out.exact = true;
   delete out.evidence;
   if (!out.partial) delete out.partial;
   return r.verified ? { ...out, reason: null } : out;
