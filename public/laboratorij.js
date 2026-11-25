@@ -195,6 +195,40 @@ function renderExperiment() {
     <div class="lab-foot">${topicsHtml(x)}</div>
   </div>`;
   const m = box().querySelector(".lab-mount");
-  if (m) mountSim(x.id, m, x.opts);
+  if (m) zazeni(x, m);
   box().querySelector("[data-lab-back]")?.focus({ preventScroll: true });
+}
+
+// Vodeni poskus (public/sim/lab-vodeno.js): pri poskusih s koraki izbira »Vodeno | Prosto«, zapomnjena na napravi.
+// Ob prvem odprtju je izbrano »Vodeno«. Uporaba laboratorija se šteje brez učenca (server/laboratorij.js → lab_uporaba).
+const NACIN = "evklid.lab.nacin";
+const beriNacin = () => {
+  try {
+    return localStorage.getItem(NACIN) === "prosto" ? "prosto" : "vodeno";
+  } catch {
+    return "vodeno";
+  }
+};
+const shraniNacin = (n) => {
+  try {
+    localStorage.setItem(NACIN, n);
+  } catch {}
+};
+function stej(key, nacin, dogodek) {
+  const s = D?.getStudent();
+  if (!s) return;
+  D.api(`/api/students/${s.id}/lab/uporaba`, { method: "POST", body: { key, nacin, dogodek } }).catch(() => {});
+}
+async function zazeni(x, m) {
+  if (!(await mountSim(x.id, m, x.opts))) return;
+  const { imaVodeno, vodi } = await import("./sim/lab-vodeno.js");
+  if (!m.isConnected) return;
+  if (!imaVodeno(x.key)) return stej(x.key, "brez", "odprt");
+  const nacin = beriNacin();
+  stej(x.key, nacin, "odprt");
+  vodi(m, x.key, {
+    nacin,
+    onNacin: (n) => (shraniNacin(n), stej(x.key, n, "preklop")),
+    onKonec: () => stej(x.key, "vodeno", "koncano"),
+  });
 }
