@@ -469,7 +469,7 @@ test("AI solve: sought alone keeps the check and retry on (given switches them o
   process.env.ANTHROPIC_API_KEY = "test-ni-pravi";
   delete process.env.EVKLID_MOCK;
   const prompts = [];
-  // napačna rešitev x=5 za x+1=3: s preverjanjem (given prazen) sledi ponovitev, brez njega ne
+  // napačna rešitev x=5 za x+1=3: s preverjanjem (given prazen) sledijo ponovitve, brez njega ne
   setClient({
     messages: {
       create: async (req) => (prompts.push(req.messages[0].content), {
@@ -481,7 +481,9 @@ test("AI solve: sought alone keeps the check and retry on (given switches them o
   });
   try {
     const a = await solveWithAi({ text: "x+1=3", sought: "\\text{rešitev}" });
-    assert.equal(prompts.length, 2, "sought ne sme izklopiti preverjanja");
+    // napačen odgovor: strežnik sam poskusi znova do SOLVE_ATTEMPTS (3) klicev
+    assert.equal(prompts.length, 3, "sought ne sme izklopiti preverjanja");
+    assert.match(prompts[2], /attempt 2: your solutions were 5/);
     assert.equal(a.solution.verified, false);
     assert.match(prompts[0], /asks to find.*\\text\{rešitev\}/);
     prompts.length = 0;

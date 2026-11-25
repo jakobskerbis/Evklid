@@ -2963,7 +2963,7 @@
   "scan.st.unverified": "Neprovjereno",
   "scan.st.unverifiedTip": "Evklid ovo nije mogao provjeriti. Provjeri rezultat uvrštavanjem ili pitaj instruktora.",
   "scan.st.wrong": "Netočno",
-  "scan.st.wrongTip": "Provjera je pokazala da odgovor AI-ja nije točan ili da u njemu nedostaje neko rješenje, pa ga ne prikazujemo. Pokušaj ponovno ili pitaj instruktora.",
+  "scan.st.wrongTip": "Evklid je zadatak sam riješio nekoliko puta, ali provjera nije potvrdila nijedan odgovor, pa ga ne prikazujemo. Pitaj instruktora.",
   "scan.method": "Način rješavanja",
   "scan.steps": "Postupak",
   "scan.stepN": "{n}. korak",

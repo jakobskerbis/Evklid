@@ -2939,7 +2939,7 @@
   "scan.st.unverified": "Nincs ellenőrizve",
   "scan.st.unverifiedTip": "Ezt az Evklid nem tudta ellenőrizni. Ellenőrizd az eredményt behelyettesítéssel, vagy kérdezd meg az oktatót.",
   "scan.st.wrong": "Hibás",
-  "scan.st.wrongTip": "Az ellenőrzés szerint az AI válasza nem helyes, vagy hiányzik belőle egy megoldás, ezért nem mutatjuk. Próbáld újra, vagy kérdezd meg az oktatót.",
+  "scan.st.wrongTip": "Az Evklid többször is magától megoldotta a feladatot, de az ellenőrzés egyik választ sem igazolta, ezért nem mutatjuk meg. Kérdezd az oktatót.",
   "scan.method": "Megoldási mód",
   "scan.steps": "Megoldás menete",
   "scan.stepN": "{n}. lépés",

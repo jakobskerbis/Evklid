@@ -2940,7 +2940,7 @@
   "scan.st.unverified": "Non verificato",
   "scan.st.unverifiedTip": "Evklid non ha potuto verificarlo. Verifica il risultato con la prova o chiedi al tutor.",
   "scan.st.wrong": "Sbagliato",
-  "scan.st.wrongTip": "La verifica ha mostrato che la risposta dell'IA è sbagliata o che manca una soluzione, quindi non la mostriamo. Riprova o chiedi al tutor.",
+  "scan.st.wrongTip": "Evklid ha risolto l'esercizio da solo più volte, ma la verifica non ha confermato nessuna risposta, quindi non la mostriamo. Chiedi al tutor.",
   "scan.method": "Metodo",
   "scan.steps": "Procedimento",
   "scan.stepN": "Passo {n}",

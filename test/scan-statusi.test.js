@@ -272,3 +272,47 @@ test("isolateRoots: sosednja ničla v levem krajišču intervala ne pokvari iska
   const r = isolateRoots([q(-2), q(5), q(-4), q(1)]);
   assert.deepEqual(r.map((x) => Math.round(x.x * 1e6) / 1e6), [1, 2]);
 });
+
+test("samodejne ponovitve: strežnik sam poskusi znova (do SOLVE_ATTEMPTS), učencu ni treba pritiskati", async () => {
+  const { solveWithRetries, SOLVE_ATTEMPTS, retryFeedback } = await import("../server/scan.js");
+  assert.equal(SOLVE_ATTEMPTS, 3);
+  const text = "sqrt(x+3)=x-3"; // pravilno samo x = 6 (x = 1 je lažna rešitev)
+  const run = async (answers, opt = {}) => {
+    const prompts = [];
+    let i = 0;
+    const ask = async (fb) => {
+      prompts.push(fb);
+      const a = answers[Math.min(i++, answers.length - 1)];
+      if (a instanceof Error) throw a;
+      return { sol: a && { kind: "equation", variable: "x", solutions: a }, usage: { n: i } };
+    };
+    const verify = (sol) => verifyAiFull(text, sol, { cas: false });
+    return { ...(await solveWithRetries({ ask, verify, ...opt })), prompts };
+  };
+  // dvakrat lažna rešitev, tretjič pravilno: tri klici, obdrži se pravilna
+  let r = await run([["1", "6"], ["1", "6"], ["6"]]);
+  assert.equal(r.usage.length, 3);
+  assert.deepEqual(r.out.sol.solutions, ["6"]);
+  assert.notEqual(r.check.status, "wrong");
+  // vsak ponovni poziv dobi vse prejšnje neuspehe in navedeni odgovor
+  assert.equal(r.prompts[0].length, 0);
+  assert.equal(r.prompts[2].length, 2);
+  assert.match(r.prompts[1][0], /1; 6/);
+  // pravilno že prvič: en klic
+  r = await run([["6"]]);
+  assert.equal(r.usage.length, 1);
+  // vedno napačno: največ SOLVE_ATTEMPTS klicev, nato »Napačno«
+  r = await run([["1"]]);
+  assert.equal(r.usage.length, SOLVE_ATTEMPTS);
+  assert.equal(r.check.status, "wrong");
+  // neberljiv odgovor sproži ponovitev tudi pri nalogi s podatki; napačnost tam ne
+  r = await run([null, ["6"]], { canRetry: false });
+  assert.equal(r.usage.length, 2);
+  r = await run([["1"]], { canRetry: false });
+  assert.equal(r.usage.length, 1);
+  // napaka ponovitve ne odnese plačanega prvega klica
+  r = await run([["1", "6"], new Error("529")]);
+  assert.equal(r.usage.length, 1);
+  assert.deepEqual(r.out.sol.solutions, ["1", "6"]);
+  assert.equal(retryFeedback(null, {}), "the answer was not the requested JSON");
+});

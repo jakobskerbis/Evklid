@@ -2939,7 +2939,7 @@
   "scan.st.unverified": "Not verified",
   "scan.st.unverifiedTip": "Evklid could not check this. Check the result by substituting it back, or ask the tutor.",
   "scan.st.wrong": "Wrong",
-  "scan.st.wrongTip": "The check showed that the AI's answer is wrong or is missing a solution, so we don't show it. Try again or ask the tutor.",
+  "scan.st.wrongTip": "Evklid solved the problem several times on its own, but the check confirmed none of the answers, so we don't show one. Ask the tutor.",
   "scan.method": "Method",
   "scan.steps": "Solution steps",
   "scan.stepN": "Step {n}",

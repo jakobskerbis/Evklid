@@ -2879,7 +2879,7 @@ export default {
   "scan.st.unverified": "Nepreverjeno",
   "scan.st.unverifiedTip": "Tega Evklid ni mogel preveriti. Rezultat preveri s preizkusom ali vprašaj inštruktorja.",
   "scan.st.wrong": "Napačno",
-  "scan.st.wrongTip": "Preverjanje je pokazalo, da odgovor AI ne drži ali da v njem manjka kakšna rešitev, zato ga ne prikažemo. Poskusi znova ali vprašaj inštruktorja.",
+  "scan.st.wrongTip": "Evklid je nalogo samodejno rešil večkrat, a preverjanje ni potrdilo nobenega odgovora, zato ga ne prikažemo. Vprašaj inštruktorja.",
   "scan.method": "Način reševanja",
   "scan.steps": "Postopek",
   "scan.stepN": "{n}. korak",

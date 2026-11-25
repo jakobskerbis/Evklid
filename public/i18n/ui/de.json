@@ -2939,7 +2939,7 @@
   "scan.st.unverified": "Nicht überprüft",
   "scan.st.unverifiedTip": "Evklid konnte das nicht überprüfen. Mach selbst die Probe oder frag den Tutor.",
   "scan.st.wrong": "Falsch",
-  "scan.st.wrongTip": "Die Überprüfung hat gezeigt, dass die Antwort der KI nicht stimmt oder eine Lösung fehlt, deshalb zeigen wir sie nicht. Versuch es noch einmal oder frag den Tutor.",
+  "scan.st.wrongTip": "Evklid hat die Aufgabe selbst mehrmals gelöst, aber die Überprüfung hat keine Antwort bestätigt, deshalb zeigen wir keine an. Frag den Tutor.",
   "scan.method": "Lösungsweg",
   "scan.steps": "Rechenweg",
   "scan.stepN": "Schritt {n}",
