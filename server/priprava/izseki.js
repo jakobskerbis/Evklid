@@ -7,6 +7,7 @@
 // - nedvoumne kemijske formule brez indeksov (H2SO4) se dopolnijo (H₂SO₄), a z oznako [?], da učenec vidi popravek;
 // - formula ($…$), ki je KaTeX ne izriše, ostane z oznako [?].
 import katex from "katex";
+import { napakaIzraza } from "../../public/mat/izris.js";
 import { zVarnimBrisanjem } from "./shramba.js";
 
 export const VRSTE = ["definicija", "izrek", "postopek", "formula", "primer", "naloga", "teorija"];
@@ -44,14 +45,8 @@ function deli(t) {
   return out;
 }
 
-export function izrise(latex, blok = false) {
-  try {
-    katex.renderToString(latex, { throwOnError: true, displayMode: blok, strict: "ignore", trust: false, maxExpand: 200 });
-    return true;
-  } catch {
-    return false;
-  }
-}
+// Izriše isto kot aplikacija (skupni izris public/mat/izris.js); false = formula se ne izriše.
+export const izrise = (latex, blok = false) => napakaIzraza(latex, { blok, katex }) === null;
 
 /**
  * Označi negotovo branje v enem izseku. Vrne { besedilo, negotovo: [{ vrsta, izvirno, prepis? }] }.
