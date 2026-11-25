@@ -156,15 +156,26 @@ const RE_REZULTAT_IZSEKA = new RegExp(PRED_REZULTATOM + String.raw`(?!\d|[.,]\d)
 const RE_REZULTAT = new RegExp(PRED_REZULTATOM + String.raw`(?!\d|[.,]\d|\s*[-+·⋅×*:/÷^]\s*\d)`, "gu");
 // Število z enoto (5000 N/C, 18 g/mol, 0,01 N): par mora biti tak tudi v izseku (sila 5000 N ni jakost 5000 N/C).
 // Enota se prebere brez vračanja regularnega izraza (sestavljene enote, npr. Nm^2/C^2, bi ga sicer razstrelile): deli
-// enote do 8 črk, vsak sestavljen iz znanih enot s predpono.
-const ENOTA = /^(?:[kmcdμnMG]?(?:mol|min|Hz|Pa|bar|m|g|s|N|C|J|W|V|A|Ω|L|l|h|T|K)|°C|%)+$/;
+// enote do 8 črk, vsak sestavljen iz znanih enot s predpono (preverba s tabelo dosegljivih mest, linearno).
+const OSNOVNE_ENOTE = ["mol", "min", "Hz", "Pa", "bar", "m", "g", "s", "N", "C", "J", "W", "V", "A", "Ω", "L", "l", "h", "T", "K", "°C", "%"];
+const PREDPONE = ["", "k", "m", "c", "d", "μ", "n", "M", "G"];
+function jeEnota(w) {
+  const dosegljivo = new Array(w.length + 1).fill(false);
+  dosegljivo[0] = true;
+  for (let i = 0; i < w.length; i++)
+    if (dosegljivo[i])
+      for (const p of PREDPONE)
+        if (w.startsWith(p, i))
+          for (const e of OSNOVNE_ENOTE) if (w.startsWith(e, i + p.length)) dosegljivo[i + p.length + e.length] = true;
+  return w.length > 0 && dosegljivo[w.length];
+}
 const RE_Z_ENOTO = new RegExp(String.raw`(?:(?<=^|[\s({[=^,;:$<>≤≥≈])-)?(` + STEVILO + String.raw`)(?:\s*|\\(?:mathrm|text|rm)\{)(?=([A-Za-zΩμ°%][^\n$]{0,40}))`, "gu");
 function enota(niz) {
   let out = "";
   let i = 0;
   for (;;) {
     const m = /^([A-Za-zΩμ°%]+)(?:\^?\{?(-?\d)\}?)?/.exec(niz.slice(i));
-    if (!m || m[1].length > 8 || !ENOTA.test(m[1])) break;
+    if (!m || m[1].length > 8 || !jeEnota(m[1])) break;
     out += m[1] + (m[2] || "");
     i += m[0].length;
     const loc = /^(?:\s|\\,|·|\*)?(\/)?\s?/.exec(niz.slice(i));
