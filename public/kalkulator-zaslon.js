@@ -114,6 +114,8 @@ function calcTool(mode) {
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
         recent: izidi,
         addRecent: dodajIzid,
+        // »Pretvori enote«: zavihek Orodja, pretvornik z vrednostjo izida
+        convert: async (v) => (await setCalcMode("tools"))?.units?.(v),
         // »Pokaži na grafu«: rezultat z orodji grafičnega kalkulatorja, doda se trenutnemu grafu (graph/v-graf.js)
         showOnGraph: async (req) => (await setCalcMode("graph"))?.showPlan(req),
         stage: () => (imaStopnjo(state.student) ? stopnja(state.student) : null), // brez zapisane stopnje vse

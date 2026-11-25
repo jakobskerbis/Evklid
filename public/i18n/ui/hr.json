@@ -1144,6 +1144,7 @@
   "sc.errNoDerivDomain": "Funkcija u ovoj točki nije definirana, pa derivacija ne postoji.",
   "sc.constants": "Konstante",
   "sc.toCalc": "U kalkulator",
+  "sc.toUnits": "Pretvori jedinice",
   "sc.input": "Unos",
   "sc.tool.units": "Jedinice",
   "sc.tool.stats": "Statistika",

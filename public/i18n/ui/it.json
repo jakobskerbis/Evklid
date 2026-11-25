@@ -1138,6 +1138,7 @@
   "sc.errNoDerivDomain": "La funzione non è definita in questo punto, quindi non c'è derivata.",
   "sc.constants": "Costanti",
   "sc.toCalc": "Nella calcolatrice",
+  "sc.toUnits": "Converti unità",
   "sc.input": "Inserimento",
   "sc.tool.units": "Unità",
   "sc.tool.stats": "Statistica",
