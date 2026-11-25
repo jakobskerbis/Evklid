@@ -726,6 +726,14 @@ async function renderLesson(topicId, name = "") {
     : "";
   // »Prijavi napako« v vsaki lekciji (tudi brez besedila lekcije): prijava gre skrbniku (server/reports.js).
   const reportBtn = `<button type="button" class="ghost tb-report-btn" id="tb-report" aria-expanded="false">${ic("flag")}<span>${esc(t("rep.btn"))}</span></button>`;
+  // Gradiva (PDF lekcije in poglavja, povzetek, delovni list, video) pod enim gumbom »Gradiva ▾« (#10, profil A): na
+  // telefonu je bilo nad besedilom lekcije pet povezav v treh vrsticah. Seznam plava pod gumbom (wireGradivaMenu).
+  const gradivaMenu = `<div class="tb-gr-menu">
+      <button type="button" class="ghost tb-gr-toggle" id="tb-gradiva-btn" aria-expanded="false" aria-controls="tb-gradiva-list">${ic("download")}<span>${esc(t("tbk.gradiva"))}</span>${ic("chevron-down")}</button>
+      <div class="tb-gr-list" id="tb-gradiva-list" hidden>
+        <a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}<span class="tb-gradiva"></span>
+      </div>
+    </div>`;
   // »Kaj zdaj?«: po korakih je del zadnjega koraka, nad krogi Nazaj · 1/12 · Naprej (ti plavajo na dnu nad
   // vsebino; vrstica zavzame svojo višino na koncu, zato zadnje vrstice odpeljemo nadnjo). Krogi so za mrežo,
   // ne v levem stolpcu: na računalniku s poskusi desno je ← levo spodaj, številka na sredini in → desno spodaj.
@@ -745,7 +753,7 @@ async function renderLesson(topicId, name = "") {
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
     <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
-    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
+    <div class="tb-tools">${lesson ? gradivaMenu : ""}${reportBtn}</div>
     ${linkHtml}
     ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
@@ -762,7 +770,11 @@ async function renderLesson(topicId, name = "") {
     gradivaHtml(sid, L.id).then((html) => {
       if (!gr.isConnected || current?.id !== L.id) return;
       gr.innerHTML = html;
-      wireGradiva(gr, sid);
+      // Sporočilo gradiv (napaka, okno blokirano) je pod vrstico orodij, ne v zaprtem seznamu.
+      const tools = gr.closest(".tb-tools");
+      const msg = gr.querySelector(".tb-gr-msg");
+      if (msg && tools) tools.append(msg);
+      wireGradiva(tools || gr, sid);
     });
   }
   box.scrollTop = 0;
@@ -773,6 +785,7 @@ async function renderLesson(topicId, name = "") {
     tb.topicId = null;
     renderHome();
   });
+  wireGradivaMenu(box.querySelector(".tb-gr-menu"));
   wireFormulas(box);
   prilagodiSirino(box);
   oziviRisbe(box);
@@ -869,6 +882,42 @@ async function renderLesson(topicId, name = "") {
   // Lekcija še nastaja: inštruktor začne s temo (»Začniva s temo: …«, z imenom teme).
   $("#tb-ask-topic")?.addEventListener("click", () => ctx.learnWithTutor({ id: L.id, name: L.name }));
 }
+
+// ---------- Gradiva lekcije: spustni seznam »Gradiva ▾« ----------
+// Gumb z aria-expanded odpre seznam povezav (Tab gre po njih). Zapre ga izbira, Esc ali Nazaj (app.js pošlje Esc),
+// dotik ali klik zunaj in fokus, ki zapusti seznam. Enako na računalniku in telefonu.
+function setGradiva(menu, open, refocus = false) {
+  const btn = menu.querySelector(".tb-gr-toggle");
+  menu.querySelector(".tb-gr-list").hidden = !open;
+  menu.classList.toggle("open", open);
+  btn.setAttribute("aria-expanded", String(open));
+  if (!open && refocus) btn.focus();
+}
+function wireGradivaMenu(menu) {
+  if (!menu) return;
+  menu.querySelector(".tb-gr-toggle").addEventListener("click", () => setGradiva(menu, !menu.classList.contains("open")));
+  menu.querySelector(".tb-gr-list").addEventListener("click", (e) => e.target.closest("a, button") && setGradiva(menu, false));
+  menu.addEventListener("focusout", (e) => e.relatedTarget && !menu.contains(e.relatedTarget) && setGradiva(menu, false));
+}
+// Zajem: Esc zapre seznam, preden ga dobi premično okno (okna.js bi zaprlo celo okno).
+document.addEventListener(
+  "keydown",
+  (e) => {
+    const menu = e.key === "Escape" && !e.defaultPrevented && document.querySelector(".tb-gr-menu.open");
+    if (!menu) return;
+    e.preventDefault();
+    setGradiva(menu, false, menu.contains(document.activeElement));
+  },
+  true,
+);
+document.addEventListener(
+  "pointerdown",
+  (e) => {
+    const menu = document.querySelector(".tb-gr-menu.open");
+    if (menu && !menu.contains(e.target)) setGradiva(menu, false);
+  },
+  true,
+);
 
 // ---------- Lekcija po korakih ----------
 function wireSteps(box, lessonId, n) {

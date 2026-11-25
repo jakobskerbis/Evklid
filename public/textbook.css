@@ -1433,3 +1433,27 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-rk-tab .lab-table td:first-child + td, .lab-rk-tab .lab-table th:first-child + th { min-width: 4.5em; }
 /* risba 4 : 3 na računalniku: zapolni levi stolpec (do 500 px) namesto splošnih 460 px */
 @container labtit (min-width: 800px) { .demo.lab .lab-tit-top > .demo-stage :is(.demo-svg.lab-rk, :has(> .demo-svg.lab-rk)) { max-width: none; } }
+
+/* profil A: glava lekcije (#10) */
+/* Gradiva lekcije (PDF lekcije in poglavja, povzetek, delovni list, video) so pod enim gumbom »Gradiva ▾«
+   (textbook.js, wireGradivaMenu); zraven je »Prijavi napako«. Glava lekcije ima tako eno vrstico orodij namesto
+   štirih (telefon 360 px). Seznam plava pod gumbom, enak na računalniku in telefonu (docs/oblikovanje.md). */
+.tb-lesson-grid .tb-tools { gap: 4px 8px; }
+.tb-gr-menu { position: relative; display: inline-flex; }
+.tb-tools .tb-gr-toggle { margin: 0; padding-inline: 8px 6px; color: var(--accent); font-weight: 600; font-size: 0.92rem; }
+.tb-tools .tb-gr-toggle:hover { color: var(--accent); }
+.tb-gr-toggle > svg.i:last-child { width: 18px; height: 18px; transition: transform 0.18s; }
+.tb-gr-menu.open > .tb-gr-toggle { background: var(--surface-2); }
+.tb-gr-menu.open > .tb-gr-toggle > svg.i:last-child { transform: rotate(180deg); }
+.tb-gr-list {
+  position: absolute; top: calc(100% + 4px); inset-inline-start: 0; z-index: 20;
+  display: flex; flex-direction: column; width: max-content; min-width: 220px; max-width: calc(100vw - 32px); padding: 6px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+}
+.tb-gr-list[hidden] { display: none; }
+.tb-gr-list .tb-pdf { min-height: 44px; margin: 0; padding: 0 10px; gap: 8px; border-radius: var(--radius-sm); text-align: start; }
+.tb-gr-list .tb-gr-btn { width: 100%; justify-content: flex-start; color: var(--accent); }
+.tb-gr-list .tb-pdf:is(:hover, :focus-visible) { background: var(--surface-2); text-decoration: none; }
+/* Krogi Nazaj · 1/12 · Naprej plavajo na dnu: Tab ali skok na element ga ne pusti pod njimi. */
+#view-textbook:has(> .tb-stepper) { scroll-padding-bottom: calc(92px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+@media (prefers-reduced-motion: reduce) { .tb-gr-toggle > svg.i:last-child { transition: none; } }

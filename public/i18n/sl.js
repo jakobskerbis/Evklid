@@ -2571,6 +2571,7 @@ export default {
   "tbk.pdfPart": "PDF tega dela",
   "tbk.pdfUnit": "PDF poglavja",
   "tbk.pdfLesson": "PDF lekcije",
+  "tbk.gradiva": "Gradiva",
   "tbk.pdfPrep": "Pripravljam učbenik …",
   "tbk.pdfProgress": "{done} od {total} lekcij",
   "tbk.pdfNoPrint": "Ta brskalnik ne zna shraniti PDF-ja. Odpri povezavo v Chromu ali Safariju.",

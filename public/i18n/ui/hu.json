@@ -2134,6 +2134,7 @@
   "tbk.pdfPart": "E rész PDF-je",
   "tbk.pdfUnit": "A fejezet PDF-je",
   "tbk.pdfLesson": "A lecke PDF-je",
+  "tbk.gradiva": "Anyagok",
   "tbk.pdfPrep": "A tankönyv előkészítése …",
   "tbk.pdfProgress": "{done} / {total} lecke",
   "tbk.pdfNoPrint": "Ez a böngésző nem tud PDF-et menteni. Nyisd meg a linket Chrome-ban vagy Safariban.",

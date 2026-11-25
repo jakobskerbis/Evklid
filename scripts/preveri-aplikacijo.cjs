@@ -604,6 +604,32 @@ async function textbook(p, label) {
   await settle(p, 400);
   await expectVisible(p, "#view-textbook .tb-title", "lekcija");
   await screen(p, `lekcija-${label}`);
+  // Glava lekcije (#10): gradiva pod enim gumbom »Gradiva ▾« (Esc ga zapre), orodja v eni vrstici, na telefonu noben
+  // gumb ob odprtju lekcije ni pod krogi Nazaj · 1/12 · Naprej.
+  if (await p.locator("#tb-gradiva-btn").count()) {
+    await click(p, "#tb-gradiva-btn", { wait: 50 });
+    await expectVisible(p, "#tb-gradiva-list .tb-pdf", "seznam »Gradiva« v lekciji");
+    await screen(p, `lekcija-gradiva-${label}`);
+    await p.keyboard.press("Escape");
+    if ((await p.locator("#tb-gradiva-list").isVisible()) || (await p.locator("#tb-gradiva-btn").getAttribute("aria-expanded")) !== "false") throw new Error("Esc ne zapre seznama »Gradiva«");
+  }
+  if (p.viewportSize().width <= 400) {
+    const g = await p.evaluate(() => {
+      const box = document.querySelector("#view-textbook");
+      const bar = box.querySelector(":scope > .tb-stepper")?.getBoundingClientRect();
+      const tools = box.querySelector(".tb-tools").getBoundingClientRect();
+      const pod = [];
+      if (bar)
+        for (const b of box.querySelectorAll(".tb-main :is(button, a[href], summary)")) {
+          const r = b.getBoundingClientRect();
+          if (r.width && r.height && b.checkVisibility() && r.bottom > bar.top && r.top < bar.bottom && r.right > bar.left && r.left < bar.right)
+            pod.push(b.id || b.textContent.trim().slice(0, 30));
+        }
+      return { pod, tools: Math.round(tools.height) };
+    });
+    if (g.pod.length) throw new Error(`gumb v lekciji je pod krogi Nazaj · Naprej: ${g.pod.join(", ")}`);
+    if (g.tools > 48) throw new Error(`orodja lekcije (Gradiva, Prijavi napako) niso v eni vrstici: ${g.tools} px`);
+  }
   // »Prijavi napako« v lekciji (public/prijave.js): brez razloga opozori, z razlogom pošlje.
   await click(p, "#tb-report", { wait: 150 });
   await expectVisible(p, "#view-textbook .tb-tools + .report-box", "okvir za prijavo napake v lekciji");

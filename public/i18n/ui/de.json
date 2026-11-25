@@ -2134,6 +2134,7 @@
   "tbk.pdfPart": "PDF dieses Teils",
   "tbk.pdfUnit": "PDF dieses Kapitels",
   "tbk.pdfLesson": "PDF dieser Lektion",
+  "tbk.gradiva": "Materialien",
   "tbk.pdfPrep": "Lehrbuch wird vorbereitet …",
   "tbk.pdfProgress": "{done} von {total} Lektionen",
   "tbk.pdfNoPrint": "Dieser Browser kann kein PDF speichern. Öffne den Link in Chrome oder Safari.",

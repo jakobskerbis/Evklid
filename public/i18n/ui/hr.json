@@ -2145,6 +2145,7 @@
   "tbk.pdfPart": "PDF ovog dijela",
   "tbk.pdfUnit": "PDF ovog poglavlja",
   "tbk.pdfLesson": "PDF ove lekcije",
+  "tbk.gradiva": "Materijali",
   "tbk.pdfPrep": "Pripremam udžbenik …",
   "tbk.pdfProgress": "{done} od {total} lekcija",
   "tbk.pdfNoPrint": "Ovaj preglednik ne može spremiti PDF. Otvori poveznicu u Chromeu ili Safariju.",
