@@ -70,6 +70,7 @@ export function labOhm(el, { load = "R100" } = {}) {
     id: "tok-6V",
     vprasanje: `Kolikšen tok bo tekel skozi ${LOADS[L0].name} pri napetosti 6 V? Napovej, preden začneš meriti.`,
     enota: "mA",
+    primer: "npr. 25",
     odprto: () => table.rows.length === 0,
     izmerjeno: () => tokPri(series[L0], 6),
   });
@@ -159,7 +160,9 @@ export function labOhm(el, { load = "R100" } = {}) {
     last.I = B.readA();
     last.U = B.readV();
     const ar = AM_RANGES[B.amRange], vr = VM_RANGES[B.vmRange];
-    if (last.I) am.set(last.I.text, last.I.over ? "" : ar.unit, `območje ${ar.max * ar.k}\u00a0${ar.unit}`);
+    // do napovedi (ali prve zapisane meritve) ampermeter ne izda odgovora
+    if (last.I && N.caka) am.set("", "", "najprej napovej tok");
+    else if (last.I) am.set(last.I.text, last.I.over ? "" : ar.unit, `območje ${ar.max * ar.k}\u00a0${ar.unit}`);
     else am.set("", "", "ni priključen");
     if (last.U) vm.set(last.U.text, last.U.over ? "" : "V", `območje ${vr.max}\u00a0V`);
     else vm.set("", "", "ni priključen");

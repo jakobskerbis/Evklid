@@ -3,10 +3,10 @@
 import test, { before } from "node:test";
 import assert from "node:assert/strict";
 import { ENGINES } from "../public/sim/index.js";
-import { parseStevilo } from "../public/sim/lab.js";
+import { parseStevilo, faktorDeset } from "../public/sim/lab.js";
 import { tokPri } from "../public/sim/lab-fiz.js";
 import { indikatorIzMeritev } from "../public/sim/lab-titracija.js";
-import { najtoplejsi } from "../public/sim/lab-toplota.js";
+import { poPolUre } from "../public/sim/lab-toplota.js";
 import { playwright, serve, odpri, meriOhm } from "./laboratorij-pomoc.js";
 
 const POZNEJE = new Set(["lab-kem.js", "lab-indikatorji.js", "lab-reakcije.js", "lab-elektrika.js", "lab-elektrokemija.js"]);
@@ -24,12 +24,33 @@ test("every experiment that says »Napovej« (outside the #994 files) has a pred
   assert.deepEqual(z.sort(), ["lab-mesanje", "lab-ohlajanje", "lab-ohm", "lab-titracija"]);
 });
 
-test("number parsing accepts a decimal comma and rejects text", () => {
+test("number parsing accepts a decimal comma and the experiment's own unit, rejects text and other units", () => {
   assert.equal(parseStevilo("4,5"), 4.5);
   assert.equal(parseStevilo(" 1 000 "), 1000);
   assert.equal(parseStevilo("−0,25"), -0.25);
-  assert.equal(parseStevilo("60%"), 60);
-  for (const x of ["", "abc", "1,2,3", "5 mA", null]) assert.equal(parseStevilo(x), null, String(x));
+  for (const x of ["", "abc", "1,2,3", "5 mA", "60%", "60 %", null]) assert.equal(parseStevilo(x), null, String(x));
+  // enota poskusa za številom (pregled #1054, točka 16), tudi m/s2 za m/s² in »2-krat«
+  assert.equal(parseStevilo("97 Ω", "Ω"), 97);
+  assert.equal(parseStevilo("9,6 m/s²", "m/s²"), 9.6);
+  assert.equal(parseStevilo("9,6 m/s2", "m/s²"), 9.6);
+  assert.equal(parseStevilo("37 °C", "°C"), 37);
+  assert.equal(parseStevilo("2-krat", "-krat"), 2);
+  assert.equal(parseStevilo("60 %", "%"), 60);
+  assert.equal(parseStevilo("0,06 A", "mA"), null, "druga enota ni ista količina v mA");
+  // faktor ~10ⁿ: napaka pri pretvorbi enot
+  assert.equal(faktorDeset(0.06, 60), 3);
+  assert.equal(faktorDeset(600, 60), 1);
+  assert.equal(faktorDeset(70, 60), 0);
+});
+
+test("mesanje compares only a valid (stirred) mixture; titracija asks about the indicator only after both", async () => {
+  const top = (await import("../public/sim/lab-toplota.js")).labMesanje.toString();
+  assert.match(top, /if \(!prvi && trial\.done\.ok\) prvi = /);
+  assert.match(top, /Izračun \(samo voda\)/);
+  assert.doesNotMatch(top, /Napoved \(samo voda\)/);
+  const tit = (await import("../public/sim/lab-titracija.js")).labTitracija.toString();
+  assert.match(tit, /if \(!indikatorIzMeritev\(sibke\)\) \{/);
+  assert.match(tit, /Za primerjavo titriraj/);
 });
 
 test("measured values for the comparison come from the student's own measurements", () => {
@@ -39,16 +60,19 @@ test("measured values for the comparison come from the student's own measurement
   assert.ok(Math.abs(s.vrednost - 60) < 1e-9 && /premice/.test(s.besedilo));
   assert.equal(tokPri([[2, 20]], 6), null);
   // titracija ocetne kisline: bližje ekvivalentni točki
-  const r = (indId, V, over) => ({ indId, V, over });
+  const r = (indId, V, over, id = "ocetna") => ({ id, indId, V, over });
   assert.equal(indikatorIzMeritev([r("fenolftalein", 24.1, 0.05)]), null, "en indikator še ni dovolj");
   assert.equal(indikatorIzMeritev([r("metiloranz", 7.4, -16.6), r("fenolftalein", 24.1, 0.05), r("fenolftalein", 25.0, 0.95)]).vrednost, "fenolftalein");
   assert.equal(indikatorIzMeritev([r("metiloranz", 24.05, 0.0), r("fenolftalein", 24.1, 0.05)]).vrednost, "enako");
-  // ohlajanje: prva meritev po 30 min v vsaki posodi
-  const meas = [[[0, 80], [30, 51.2]], [[0, 80], [30, 72.4]], [[0, 80], [29, 60], [30.5, 55]]];
-  const n = najtoplejsi(meas, ["porcelanska skodelica", "termovka z zamaškom", "lonček iz stiropora s pokrovom"], 30);
-  assert.equal(n.vrednost, "1");
-  assert.match(n.besedilo, /^2: termovka z zamaškom \(72,4/);
-  assert.equal(najtoplejsi([[[0, 80], [20, 60]], [], []], ["porcelanska skodelica", null, null], 30), null, "pred 30 min ni primerjave");
+  // različna vzorca (ocetna kislina in kis) se ne primerjata (pregled #1053, točka 11)
+  assert.equal(indikatorIzMeritev([r("fenolftalein", 24.1, 0.05, "ocetna"), r("metiloranz", 6.0, -15, "kis")]), null);
+  assert.equal(indikatorIzMeritev([r("fenolftalein", 24.1, 0.05, "ocetna"), r("metiloranz", 6.0, -15, "kis"), r("fenolftalein", 21.0, 0.02, "kis")]).id, "kis");
+  // ohlajanje: temperatura v prvi napolnjeni posodi ob prvi meritvi po 30 min
+  const meas = [[], [[0, 80], [29, 60], [30.5, 55.2]], [[0, 80], [30, 72.4]]];
+  const n = poPolUre(meas, [null, "porcelanska skodelica", "termovka z zamaškom"], 30);
+  assert.equal(n.vrednost, 55.2);
+  assert.match(n.besedilo, /^55,2\s°C \(posoda 2: porcelanska skodelica, po 31\smin\)/);
+  assert.equal(poPolUre([[[0, 80], [20, 60]], [], []], ["porcelanska skodelica", null, null], 30), null, "pred 30 min ni primerjave");
 });
 
 let browser = null;
@@ -106,7 +130,7 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
       out.izbiraPrim = [M.primerjava.hidden, M.primerjava.querySelector(".lab-why").className, M.stanje()];
       return out;
     });
-    assert.deepEqual(r.napaka, [null, "Vpiši število (npr. 50 ali 4,5)."]);
+    assert.deepEqual(r.napaka, [null, "Vpiši število v mA (npr. 4,5)."]);
     assert.equal(r.zapisano[0], 55.5);
     assert.match(r.zapisano[1], /^Tvoja napoved: 55,5\s?mA\. Lahko jo še spremeniš/);
     assert.equal(r.zapisano[2], true, "primerjave še ni");
@@ -118,7 +142,55 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     assert.equal(r.ujema, "lab-why ok");
     assert.deepEqual(r.izbira, ["a", "true,false"]);
     assert.equal(r.ni, null);
-    assert.deepEqual(r.izbiraPrim, [false, "lab-why ok", { v: "b", t: "druga", zaprto: true }]);
+    assert.deepEqual(r.izbiraPrim, [false, "lab-why ok", { v: "b", t: "druga", zaprto: true, k: null }]);
+    assert.deepEqual(errs, []);
+    await ctx.close();
+  });
+
+  // Pregled #1053: fokus ostane na izbrani možnosti, odstopanje v enoti (°C), namig »preveri enote«, napoved za drugo posodo izgine.
+  await t.test("component: focus stays on the chosen option, absolute tolerance, unit hint, key change clears", async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const { p, errs } = await odpri(ctx, base);
+    await p.evaluate(() => {
+      const st = (window.st = { iz: null, k: "a" });
+      window.M = window.lab.napoved({ id: "m", vprasanje: "Katera?", moznosti: [["a", "prva"], ["b", "druga"]] });
+      window.T = window.lab.napoved({ id: "t", vprasanje: () => `Posoda ${st.k}?`, enota: "°C", abs: 2, primer: "npr. 37", kljuc: () => st.k, izmerjeno: () => st.iz });
+      document.getElementById("m").append(window.M.el, window.T.el, window.T.primerjava);
+    });
+    await p.locator(".lab-opt", { hasText: "druga" }).focus();
+    await p.keyboard.press("Enter");
+    const f = await p.evaluate(() => [document.activeElement?.textContent, document.activeElement?.getAttribute("aria-pressed"), window.M.vrednost]);
+    assert.deepEqual(f, ["druga", "true", "b"], "fokus ostane na izbranem gumbu");
+    assert.equal(await p.locator(".lab-napoved input").nth(0).getAttribute("placeholder"), "npr. 37");
+    const r = await p.evaluate(() => {
+      const T = window.T, st = window.st, inp = T.el.querySelector("input"), btn = T.el.querySelector("button");
+      const out = { caka: T.caka };
+      inp.value = "37 °C";
+      btn.click();
+      out.vnos = [T.vrednost, T.caka];
+      st.k = "b";
+      T.osvezi();
+      out.kljuc = [T.vrednost, T.el.querySelector(".lab-q-text").textContent];
+      inp.value = "52";
+      btn.click();
+      st.iz = { vrednost: 50.6, besedilo: "50,6 °C" };
+      T.osvezi();
+      out.ok = T.primerjava.querySelector(".lab-why").className;
+      st.iz = { vrednost: 36.3, besedilo: "36,3 °C" };
+      T.osvezi();
+      out.bad = [T.primerjava.querySelector(".lab-why").className, T.primerjava.querySelector(".lab-why").textContent];
+      st.iz = { vrednost: 5.2, besedilo: "5,2 °C" };
+      T.osvezi();
+      out.faktor = T.primerjava.querySelector(".lab-why").textContent;
+      return out;
+    });
+    assert.equal(r.caka, true);
+    assert.deepEqual(r.vnos, [37, false], "enota za številom je dovoljena");
+    assert.deepEqual(r.kljuc, [null, "Posoda b?"], "napoved za drugo postavitev se pobriše");
+    assert.equal(r.ok, "lab-why ok", "52 je v ±2 °C od 50,6");
+    assert.equal(r.bad[0], "lab-why bad");
+    assert.match(r.bad[1], /Razlika je 15,7\s°C\./);
+    assert.match(r.faktor, /faktor ~10: preveri enote/);
     assert.deepEqual(errs, []);
     await ctx.close();
   });
@@ -127,8 +199,14 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
     const { p, errs } = await odpri(ctx, base, "lab-ohm");
     assert.equal(await p.evaluate(() => document.querySelector(".demo-controls > .lab-napoved")?.dataset.napoved), "tok-6V");
+    // ampermeter do napovedi ne izda odgovora (pregled #1053, točka 7)
+    await p.waitForTimeout(500);
+    const am = () => p.evaluate(() => document.querySelector('[aria-label="ampermeter"]').textContent);
+    assert.match(await am(), /najprej napovej tok/);
     await p.locator(".lab-napoved input").fill("30");
     await p.locator(".lab-napoved").getByRole("button", { name: "Zapiši napoved" }).click();
+    await p.waitForTimeout(500);
+    assert.doesNotMatch(await am(), /najprej napovej/);
     await meriOhm(p, [2, 4]);
     const vmes = await p.evaluate(() => [document.querySelector(".lab-napoved .lab-tit-field").hidden, document.querySelector(".lab-primerjava").hidden]);
     assert.deepEqual(vmes, [true, true], "po prvi meritvi napoved zaprta, primerjave še ni (ni meritve pri 6 V ne premice)");
@@ -144,12 +222,18 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     await ctx.close();
   });
 
-  await t.test("titracija, mesanje, ohlajanje: prediction first in the controls, no page errors", async () => {
+  await t.test("titracija, mesanje, ohlajanje: prediction in the controls (mesanje: below the water sliders), no page errors", async () => {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
     for (const id of ["lab-titracija", "lab-mesanje", "lab-ohlajanje"]) {
       const { p, errs } = await odpri(ctx, base, id);
-      const r = await p.evaluate(() => ({ prvi: !!document.querySelector(".demo-controls > .lab-napoved"), opts: document.querySelectorAll(".lab-napoved .lab-opt").length, polje: !!document.querySelector(".lab-napoved input") }));
-      assert.ok(r.prvi, id);
+      const r = await p.evaluate(() => ({
+        prvi: !!document.querySelector(".demo-controls > .lab-napoved"),
+        podVodo: document.querySelector(".lab-napoved")?.previousElementSibling?.querySelector("legend")?.textContent,
+        opts: document.querySelectorAll(".lab-napoved .lab-opt").length,
+        polje: !!document.querySelector(".lab-napoved input"),
+      }));
+      if (id === "lab-mesanje") assert.equal(r.podVodo, "2. Voda", id);
+      else assert.ok(r.prvi, id);
       assert.ok(r.opts >= 2 || r.polje, id);
       assert.deepEqual(errs, [], id);
       await p.close();

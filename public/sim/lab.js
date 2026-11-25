@@ -272,46 +272,67 @@ export function shramba(el) {
 // Napoved pred meritvijo (profil A, 2026-11-25): učenec napove, preden meri, na koncu vidi »Tvoja napoved · Izmerjeno«.
 // Skupni gradnik vseh poskusov (tudi vodenega načina). napoved(o) vrne { el, primerjava, osvezi, stanje, obnovi, vrednost }:
 //   o.id          ime napovedi v poskusu (ključ v shranjenem stanju), npr. "tok-6V"
-//   o.vprasanje   besedilo vprašanja (HTML)
-//   o.enota       število: enota za vnos (npr. "mA"); o.dec decimalke pri izpisu (privzeto 1)
-//   o.moznosti    izbira namesto števila: [[vrednost, besedilo]] ali funkcija, ki jih vrne (npr. izbrane posode)
+//   o.vprasanje   besedilo vprašanja (HTML) ali funkcija, ki ga vrne (npr. z imenom izbrane posode)
+//   o.enota       število: enota za vnos (npr. "mA"; "-krat" se izpiše brez presledka); o.dec decimalke pri izpisu (privzeto 1);
+//                 o.primer besedilo v praznem polju (npr. "npr. 37"; ne pravi odgovor); o.abs: dovoljeno odstopanje v enoti
+//                 (npr. 2 za ±2 °C) namesto ±10 %
+//   o.moznosti    izbira namesto števila: [[vrednost, besedilo]] ali funkcija, ki jih vrne
+//   o.kljuc()     postavitev, za katero velja napoved (npr. vrsta prve posode); ko se spremeni, se napoved pobriše
 //   o.odprto()    ali učenec še lahko napove (privzeto vedno); ko vrne false, se okvir zapre: napoved ostane, vnos izgine
-//   o.izmerjeno() null ali { vrednost, besedilo (HTML), ujema? }; ujema privzeto: število ±10 %, izbira enaka vrednost
+//   o.izmerjeno() null ali { vrednost, besedilo (HTML), ujema? }; ujema privzeto: število ±10 % (ali ±o.abs), izbira enaka vrednost
+// N.caka: učenec še ni napovedal, a še lahko (poskus do napovedi skrije odčitek, ki bi napoved izdal).
 // el gre na vrh kontrol (pred prvo meritvijo), primerjava k rezultatom. Poskus po vsaki spremembi pokliče osvezi().
 // Stanje za shrambo: stanje() → { v, t, zaprto }, obnovi(s). Ni odvisen od nobenega poskusa.
-export const parseStevilo = (x) => {
-  const t = String(x ?? "").trim().replace(/\s| /g, "").replace("−", "-").replace(",", ".").replace(/%$/, "");
+// Število iz vnosa: decimalna vejica, presledki, minus (−). Za številom je lahko enota, a samo enota poskusa (»97 Ω«, »9,6 m/s²«,
+// »37 °C«, »2-krat«); druga enota ali odstotek (»50 %«) ni število v tej enoti, zato null.
+const normEnota = (u) => String(u ?? "").replace(/\s| /g, "").replace(/^-/, "").replace(/\^?2(?!\d)/g, "²").replace(/\^?3(?!\d)/g, "³").replace(/[·*]/g, "").replace(/^ohm(ov|a)?$/i, "Ω").toLowerCase();
+export const parseStevilo = (x, enota = "") => {
+  let t = String(x ?? "").trim().replace(/\s| /g, "").replace("−", "-").replace(",", ".");
+  const e = normEnota(enota), m = /^([-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)(\D.*)$/i.exec(t);
+  if (m && e && normEnota(m[2]) === e) t = m[1];
   if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(t)) return null;
   const v = Number(t);
   return Number.isFinite(v) ? v : null;
 };
+// Ali je razlika približno faktor 10ⁿ (n ≥ 1): napaka pri pretvorbi enot (mA ↔ A, mm ↔ m, kPa ↔ Pa).
+export const faktorDeset = (x, prava) => {
+  const r = Math.abs(Math.log10(Math.abs(x / prava)));
+  const n = Math.round(r);
+  return x && prava && n >= 1 && Math.abs(r - n) < 0.15 ? n : 0;
+};
 export function napoved(o) {
   const stevilo = !o.moznosti;
   const moznosti = () => (typeof o.moznosti === "function" ? o.moznosti() : o.moznosti) || [];
-  let v = null, txt = "", zaprto = false;
-  const tekst = h("p", { class: "lab-q-text", html: o.vprasanje });
+  const enota = (o.enota || "").replace(/^-/, ""); // »-krat«: brez presledka za številom (2-krat), v oznaki polja »krat«
+  const vprasanje = () => (typeof o.vprasanje === "function" ? o.vprasanje() : o.vprasanje);
+  let v = null, txt = "", zaprto = false, kljuc = null;
+  const tekst = h("p", { class: "lab-q-text", html: vprasanje() });
   const moja = h("p", { class: "lab-napoved-moja", "aria-live": "polite" });
-  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoja napoved${o.enota ? ` v ${o.enota}` : ""}`, placeholder: "npr. 50" });
+  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoja napoved${enota ? ` v ${enota}` : ""}`, placeholder: o.primer || "" });
   const zapisi = button("Zapiši napoved", () => zapisiStevilo(), "primary small");
   vnos.addEventListener("keydown", (e) => e.key === "Enter" && zapisiStevilo());
   const polje = stevilo
-    ? h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoja napoved${o.enota ? ` [${o.enota}]` : ""}`), vnos, zapisi)
+    ? h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoja napoved${enota ? ` [${enota}]` : ""}`), vnos, zapisi)
     : h("div", { class: "lab-opts", role: "group", "aria-label": "tvoja napoved" });
   const el = h("section", { class: "lab-q lab-napoved", "data-napoved": o.id || "" }, h("h4", {}, "Napoved"), tekst, polje, moja);
   const prim = h("dl", { class: "lab-primerjava-vrednosti" });
   const sodba = h("p", { class: "lab-why" });
   const primerjava = h("section", { class: "lab-q lab-primerjava", hidden: true }, h("h4", {}, "Tvoja napoved · Izmerjeno"), prim, sodba);
-  const izpis = (x) => (stevilo ? `${fmt(x, o.dec ?? 1)}${o.enota ? ` ${o.enota}` : ""}` : txt);
+  const zEnoto = (x) => `${fmt(x, o.dec ?? 1)}${!o.enota ? "" : o.enota.startsWith("-") ? o.enota : ` ${o.enota}`}`;
+  const izpis = (x) => (stevilo ? zEnoto(x) : txt);
+  const zdaj = () => (o.kljuc ? String(o.kljuc()) : null);
   function zapisiStevilo() {
-    const x = parseStevilo(vnos.value);
-    if (x == null) return (zadnje.moja = null), (moja.textContent = "Vpiši število (npr. 50 ali 4,5).");
+    const x = parseStevilo(vnos.value, o.enota);
+    if (x == null) return (zadnje.moja = null), (moja.textContent = `Vpiši število${enota ? ` v ${enota}` : ""} (npr. 4,5).`);
     v = x;
     txt = izpis(x);
+    kljuc = zdaj();
     osvezi();
   }
   function izberi(val, label) {
     v = val;
     txt = label;
+    kljuc = zdaj();
     osvezi();
   }
   let sigMoz = "";
@@ -320,15 +341,25 @@ export function napoved(o) {
     if (!zaprto && (o.odprto ? !o.odprto() : false)) zaprto = true;
     const m = zaprto ? null : o.izmerjeno?.();
     if (m) zaprto = true; // meritev je že tu: napovedovati ni več smiselno
+    // Napoved velja za postavitev, pri kateri je bila dana (o.kljuc, npr. katera posoda je prva): ko se ta spremeni, je ni več.
+    if (!zaprto && v != null && o.kljuc && zdaj() !== kljuc) (v = null), (txt = ""), (vnos.value = "");
+    const vp = vprasanje();
+    if (zadnje.vp !== vp) (zadnje.vp = vp), (tekst.innerHTML = vp);
     polje.hidden = zaprto;
     if (!stevilo && !zaprto) {
       const list = moznosti(), cur = v == null ? null : list.find(([val]) => val === v);
-      if (v != null) cur ? (txt = cur[1]) : (v = null); // izbrana posoda se je zamenjala ali je ni več
-      const sig = JSON.stringify([list, v]);
+      if (v != null) cur ? (txt = cur[1]) : (v = null); // izbrane možnosti ni več
+      // gumbe zgradimo znova le, ko se spremenijo možnosti; izbira spremeni samo aria-pressed (fokus ostane na gumbu)
+      const sig = JSON.stringify(list);
       if (sig !== sigMoz) {
         sigMoz = sig;
-        polje.replaceChildren(...list.map(([val, label]) => h("button", { type: "button", class: "lab-opt", "aria-pressed": String(val === v), onclick: () => izberi(val, label) }, label)));
+        polje.replaceChildren(...list.map(([val, label]) => {
+          const b = h("button", { type: "button", class: "lab-opt", onclick: () => izberi(val, label) }, label);
+          b._v = val;
+          return b;
+        }));
       }
+      for (const b of polje.children) if (b.getAttribute("aria-pressed") !== String(b._v === v)) b.setAttribute("aria-pressed", String(b._v === v));
     }
     const html = v != null ? `Tvoja napoved: <b>${txt}</b>${zaprto ? "" : ". Lahko jo še spremeniš, dokler ne začneš meriti."}` : zaprto ? "Napovedi nisi zapisal, preden si meril." : "";
     // aria-live: pišemo le spremembe (poskus lahko kliče osvezi vsakih 100 ms); primerjamo z zadnjim zapisom, ne z innerHTML (&nbsp;)
@@ -339,10 +370,12 @@ export function napoved(o) {
     if (primerjava.hidden) return;
     const vr = `<div><dt>Tvoja napoved</dt><dd>${txt}</dd></div><div><dt>Izmerjeno</dt><dd>${iz.besedilo}</dd></div>`;
     pisi(prim, "prim", vr);
-    const ok = iz.ujema ?? (stevilo ? Math.abs(v - iz.vrednost) <= 0.1 * Math.abs(iz.vrednost) + 1e-9 : v === iz.vrednost);
-    const cls = `lab-why ${ok ? "ok" : "bad"}`, sod = ok
-      ? "<b>Napoved se ujema z meritvijo.</b>"
-      : `<b>Napoved se ne ujema z meritvijo.</b> ${stevilo && Number.isFinite(iz.vrednost) && iz.vrednost ? `Razlika je ${fmt((100 * Math.abs(v - iz.vrednost)) / Math.abs(iz.vrednost), 0)} %. ` : ""}Razmisli, kaj si pri napovedi spregledal.`;
+    const d = stevilo ? Math.abs(v - iz.vrednost) : 0;
+    const ok = iz.ujema ?? (!stevilo ? v === iz.vrednost : o.abs != null ? d <= o.abs + 1e-9 : d <= 0.1 * Math.abs(iz.vrednost) + 1e-9);
+    // Razlika: pri temperaturi v kelvinih (»Razlika je 15,7 °C«), sicer v odstotkih; pri faktorju ~10ⁿ namig na enote.
+    const n = stevilo && Number.isFinite(iz.vrednost) ? faktorDeset(v, iz.vrednost) : 0;
+    const razlika = !stevilo || !Number.isFinite(iz.vrednost) ? "" : n ? `Napoved se razlikuje za faktor ~${10 ** n}: preveri enote. ` : o.abs != null ? `Razlika je ${zEnoto(d)}. ` : iz.vrednost ? `Razlika je ${fmt((100 * d) / Math.abs(iz.vrednost), 0)} %. ` : "";
+    const cls = `lab-why ${ok ? "ok" : "bad"}`, sod = ok ? "<b>Napoved se ujema z meritvijo.</b>" : `<b>Napoved se ne ujema z meritvijo.</b> ${razlika}Razmisli, kaj si pri napovedi spregledal.`;
     if (sodba.className !== cls) sodba.className = cls;
     pisi(sodba, "sod", sod);
   }
@@ -350,10 +383,12 @@ export function napoved(o) {
   return {
     el, primerjava, osvezi,
     get vrednost() { return v; },
-    stanje: () => ({ v, t: txt, zaprto }),
+    // učenec še ni napovedal, a lahko (poskus lahko do napovedi skrije odčitek, ki bi napoved izdal)
+    get caka() { return !zaprto && v == null; },
+    stanje: () => ({ v, t: txt, zaprto, k: kljuc }),
     obnovi(s) {
       if (!s || typeof s !== "object") return;
-      if ((stevilo && Number.isFinite(s.v)) || (!stevilo && typeof s.v === "string")) (v = s.v), (txt = typeof s.t === "string" ? s.t : izpis(s.v));
+      if ((stevilo && Number.isFinite(s.v)) || (!stevilo && typeof s.v === "string")) (v = s.v), (txt = typeof s.t === "string" ? s.t : izpis(s.v)), (kljuc = typeof s.k === "string" ? s.k : zdaj());
       zaprto = !!s.zaprto;
       osvezi();
     },
