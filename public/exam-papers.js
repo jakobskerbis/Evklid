@@ -71,7 +71,7 @@ export function paperLabel(e, subjectName = (s) => s) {
   return `${examName(e.exam)} – ${subjectName(e.subject)}${level}, ${e.year}, ${termText(e)}`;
 }
 
-function rowHtml(e, i, tutor, local, ours) {
+function rowHtml(e, i, tutor, local, ours, sim) {
   const files = e.files
     .map((f) => `<a class="btn-secondary small pp-file" href="${esc(f.url)}" target="_blank" rel="noopener noreferrer" title="${esc(t("pp.opens"))}">${icon("file-text")}<span>${esc(fileText(f, e))}</span>${icon("external-link")}</a>`)
     .join("");
@@ -80,16 +80,18 @@ function rowHtml(e, i, tutor, local, ours) {
   // Naša pola obstaja: gumb »Reši našo polo v tem slogu« pred povezavami na ric.si (public/our-paper.js).
   const expl = e.ours ? "" : `<span class="pp-expl">${icon("notebook-pen")}${esc(t("pp.oursSoon"))}</span>`;
   const oursBtn = e.ours && ours ? `<button type="button" class="secondary small pp-ours" data-pp-ours="${i}">${icon("notebook-pen")}<span>${esc(t("pp.oursOpen"))}</span></button>` : "";
+  // »Poskusni izpit«: ista naša pola s pravim časom, brez rešitev, nato ocena po točkovniku (public/our-paper.js openExamSim).
+  const simBtn = e.ours && sim ? `<button type="button" class="secondary small pp-sim" data-pp-sim="${i}">${icon("timer")}<span>${esc(t("pi.open"))}</span></button>` : "";
   // »Rešuj z inštruktorjem«: pogovor z inštruktorjem, ki ve, katero polo učenec rešuje (nalogo pošlje s fotografijo ali prepisom).
   const help = tutor ? `<button type="button" class="secondary small pp-tutor" data-pp-tutor="${i}">${icon("message-circle")}<span>${esc(t("pp.tutor"))}</span></button>` : "";
   // »Odpri preneseno polo«: PDF, ki ga je učenec prenesel z ric.si, ostane v napravi (public/paper-viewer.js).
   const open = local ? `<label class="btn-secondary small pp-file pp-local">${icon("folder-open")}<span>${esc(t("pp.openLocal"))}</span><input type="file" accept="application/pdf,.pdf" data-pp-local="${i}"></label>` : "";
-  return `<li class="pp-row"><div class="pp-when"><b>${e.year}</b><span>${esc(termText(e))}</span></div><div class="pp-files">${oursBtn}${files}${help}${open}</div>${expl}</li>`;
+  return `<li class="pp-row"><div class="pp-when"><b>${e.year}</b><span>${esc(termText(e))}</span></div><div class="pp-files">${oursBtn}${simBtn}${files}${help}${open}</div>${expl}</li>`;
 }
 
 // Namesti izbirnik v `box`. start: { track, exam, subject, level } (privzeto učenčeva raven).
 // onLevel(raven): učenec je izbral drugo raven (OR/VR) matematike na maturi.
-export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null, onLevel = null, follow = false } = {}) {
+export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null, onSim = null, onLevel = null, follow = false } = {}) {
   const v = { ...start };
   // Neveljavna začetna izbira (npr. predmet, ki ga izpit nima) se izbriše od tam naprej.
   let cleared = null;
@@ -132,7 +134,7 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
           .map(([val, label, sub]) => `<button type="button" class="choice lp-opt ${val === v[current[0]] ? "on" : ""}" data-pp-key="${current[0]}" data-pp-val="${esc(val)}"><span>${esc(label)}</span>${sub ? `<small>${esc(sub)}</small>` : ""}</button>`)
           .join("")}</div>`
           : entries.length
-            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint", { file: firstFile(shown[0]) }))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
+            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint", { file: firstFile(shown[0]) }))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs, !!onSim)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
             : `<p class="muted">${esc(t("pp.empty"))}</p>`
       }${other}`;
   };
@@ -149,6 +151,8 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
     if (local && onReopen?.(shown[Number(local.querySelector("[data-pp-local]").dataset.ppLocal)], subjectName)) return e.preventDefault();
     const ours = e.target.closest("[data-pp-ours]");
     if (ours && onOurs) return onOurs(shown[Number(ours.dataset.ppOurs)], subjectName);
+    const sim = e.target.closest("[data-pp-sim]");
+    if (sim && onSim) return onSim(shown[Number(sim.dataset.ppSim)], subjectName);
     const tutor = e.target.closest("[data-pp-tutor]");
     if (tutor && onTutor) return onTutor(shown[Number(tutor.dataset.ppTutor)], subjectName);
     if (e.target.closest("[data-pp-other]")) {

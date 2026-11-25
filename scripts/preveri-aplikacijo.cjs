@@ -1229,6 +1229,26 @@ async function examsView(p, label) {
   await expectVisible(p, "#exams-content .exam-ready", "NPZ in matura: pripravljenost");
   await expectVisible(p, '#exam-papers .pp-row a[href^="https://www.ric.si/mma/"]', "pretekle pole");
   await screen(p, `npz-matura-pole-${label}`);
+  // Poskusni izpit na naši poli (public/our-paper.js openExamSim): uvod → pisanje z uro → ocena po točkovniku →
+  // rezultat po temah; po zaprtju je rezultat na strani (Tvoje poskusne pole).
+  await click(p, "#exam-papers .pp-sim", { wait: 500 });
+  await expectVisible(p, ".pv.op-sim [data-sim-start]", "poskusni izpit: uvod", 8000);
+  await screen(p, `poskusni-izpit-uvod-${label}`);
+  await click(p, ".pv.op-sim [data-sim-start]", { wait: 300 });
+  await expectVisible(p, ".pv.op-sim .op-timer", "poskusni izpit: ura");
+  if (await p.locator(".pv.op-sim .op-sol, .pv.op-sim [data-op-show]").count()) throw new Error("poskusni izpit: rešitve so vidne med pisanjem");
+  await screen(p, `poskusni-izpit-pisanje-${label}`);
+  await click(p, ".pv.op-sim [data-sim-finish]", { wait: 300 });
+  await expectVisible(p, ".pv.op-sim .op-pick [data-sim-pt]", "poskusni izpit: ocena po točkovniku");
+  await click(p, ".pv.op-sim .op-pick [data-sim-pt]:last-child", { wait: 100 });
+  await screen(p, `poskusni-izpit-ocena-${label}`);
+  await click(p, ".pv.op-sim [data-sim-save]", { wait: 800 });
+  await expectVisible(p, ".pv.op-sim .op-sim-result", "poskusni izpit: rezultat", 8000);
+  await screen(p, `poskusni-izpit-rezultat-${label}`);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre poskusnega izpita");
+  await expectVisible(p, "#exams-content .exam-sims .sim-list li", "Tvoje poskusne pole", 8000);
   await click(p, "#exams-content [data-er-practice]", { wait: 500 });
   await expectVisible(p, "#view-topic #practice .task", "vaja šibke teme");
   await click(p, "#back-to-path", { wait: 300 });

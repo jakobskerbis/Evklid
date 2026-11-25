@@ -9,31 +9,37 @@
 // `poudari`: začetek besedila gumba, stikala ali oznake kontrole, ki jo korak obkroži. `zakaj` se pokaže, ko je korak
 // opravljen. Besedila so slovenska kot vse besedilo poskusov (lab-*.js).
 
-// Število iz celice ali nastavitve (decimalna vejica, enota za številom).
-export const stevilo = (s) => {
-  const m = String(s ?? "").replace(/−/g, "-").match(/-?\d+(?:[.,]\d+)?/);
-  return m ? Number(m[0].replace(",", ".")) : NaN;
+import { stevilo, celica, kjer, razlicne, ujemanje } from "./lab-vodeno-pomoc.js";
+// Vodeni poskusi faze 2 (docs/laboratorij.md »Vodeni poskus«): vsak v svoji datoteki public/sim/vodeno/<ključ>.js.
+import labCo2 from "./vodeno/lab-co2.js";
+import labElektroliza from "./vodeno/lab-elektroliza.js";
+import labGrelnik from "./vodeno/lab-grelnik.js";
+import labHitrost from "./vodeno/lab-hitrost.js";
+import labHooke from "./vodeno/lab-hooke.js";
+import labLom from "./vodeno/lab-lom.js";
+import labNewton2 from "./vodeno/lab-newton2.js";
+const FAZA2 = {
+  "lab-co2": labCo2,
+  "lab-elektroliza": labElektroliza,
+  "lab-grelnik": labGrelnik,
+  "lab-hitrost": labHitrost,
+  "lab-hooke": labHooke,
+  "lab-lom": labLom,
+  "lab-newton2": labNewton2,
 };
-// Vrednost stolpca, katerega glava se ujema z `re` (npr. /^h\b/ za »h [m]«).
-export const celica = (vrstica, re) => {
-  for (const [k, v] of Object.entries(vrstica || {})) if (re.test(k)) return v;
-  return "";
-};
-// Vrstice, pri katerih se stolpec `re` ujema z `vrednost` (regularni izraz).
-const kjer = (c, re, vrednost) => c.vrstice.filter((r) => vrednost.test(celica(r, re)));
-// Različne vrednosti (zaokrožene na `d` decimalk) v stolpcu.
-const razlicne = (vrstice, re, d = 2) => new Set(vrstice.map((r) => stevilo(celica(r, re))).filter(Number.isFinite).map((x) => x.toFixed(d)));
-// Najmanj dve titraciji istega vzorca se ujemata na 0,10 mL (kot »Ujemanje« v lab-titracija.js → concordant).
-export function ujemanje(vrstice) {
-  const po = new Map();
-  for (const r of vrstice) {
-    const V = stevilo(celica(r, /^V\b/));
-    if (!Number.isFinite(V)) continue;
-    const k = celica(r, /^vzorec/);
-    po.set(k, [...(po.get(k) || []), V]);
-  }
-  for (const V of po.values()) for (const a of V) if (V.filter((b) => b >= a - 1e-9 && b <= a + 0.1 + 1e-9).length >= 2) return true;
-  return false;
+
+export { stevilo, celica, ujemanje };
+
+// Zadnje pipetiranje (lab-titracija.js → pipette): vzorec HCl, pipeta sprana z vzorcem, erlenmajerica ne z vzorcem.
+// Opozorili o mokri pipeti in erlenmajerici, splaknjeni z vzorcem, sta v dnevniku tik pred vrstico »S propipeto si …«
+// (AUDIT-075: prej je korak štel katerokoli pipetiranje).
+const PIPETIRAL = /S propipeto si/, NAROBE = /Pipeta je bila še mokra|Erlenmajerico si splaknil z vzorcem/;
+function pravilnoPipetiral(dn) {
+  let k = dn.length - 1;
+  while (k >= 0 && !PIPETIRAL.test(dn[k])) k--;
+  if (k < 0 || !/klorovodikova/.test(dn[k])) return false;
+  for (let j = k - 1; j >= 0 && !PIPETIRAL.test(dn[j]); j--) if (NAROBE.test(dn[j])) return false;
+  return true;
 }
 
 // Dnevnik titracije: spiranje izprazni bireto (lab-model-titracija.js → rinse), zato šteje le polnjenje po njem.
@@ -82,7 +88,7 @@ export const KORAKI = {
         namig: "Voda v pipeti bi vzorec razredčila, zato pipeto spereš z vzorcem. Voda v erlenmajerici ne spremeni množine kisline, ostanek vzorca pa bi jo povečal.",
         zakaj: "Polnilna pipeta odmeri natanko 25,00\u00a0mL. To prostornino vzorca potrebuješ v računu.",
         poudari: ["pipeto prej speri", "erlenmajerico speri", "Odpipetiraj"],
-        done: (c) => c.bilo(/S propipeto si/),
+        done: (c) => pravilnoPipetiral(c.dnevnik),
       },
       {
         naslov: "Dodaj indikator",
@@ -90,7 +96,7 @@ export const KORAKI = {
         namig: "Fenolftalein je v kislini brezbarven, v bazi rožnat.",
         zakaj: "Indikator s spremembo barve pokaže končno točko: takrat si dodal ravno toliko NaOH, kolikor je bilo v vzorcu kisline.",
         poudari: ["indikator", "Dodaj 2 kapljici"],
-        done: (c) => c.bilo(/dodal 2 kapljici indikatorja/),
+        done: (c) => pravilnoPipetiral(c.dnevnik) && c.zadnji(/S propipeto si/, /dodal 2 kapljici indikatorja: fenolftalein/) === 1,
       },
       {
         naslov: "Zapiši začetni odčitek",
@@ -273,4 +279,5 @@ export const KORAKI = {
       },
     ],
   },
+  ...FAZA2,
 };
