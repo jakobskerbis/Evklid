@@ -70,6 +70,7 @@
 .lab-vod-cilj-poskusa { color: var(--muted); }
 .lab-vod-zakaj { font-size: 0.9rem; color: var(--muted); }
 .lab-vod-zakaj b { color: var(--ok); }
+.lab-vod-narobe { font-weight: 600; padding: 6px 10px; border-radius: 8px; background: var(--surface-2); border-inline-start: 4px solid var(--demo-a); }
 .lab-vod-namig summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 40px; display: flex; align-items: center; }
 .lab-vod-kje { margin: 4px 0 2px; }
 .lab-vod-kje[hidden] { display: none; }

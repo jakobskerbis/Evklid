@@ -37,6 +37,9 @@ export function ujemanje(vrstice) {
 }
 
 // Dnevnik titracije: spiranje izprazni bireto (lab-model-titracija.js → rinse), zato šteje le polnjenje po njem.
+// Vzorec in indikator (AUDIT-075): korak šteje le pravo izbiro, ne katere koli vrstice dnevnika.
+const PIP = /S propipeto si/, PIP_HCL = /S propipeto si.*Vzorec: klorovodikova kislina/, IND = /dodal 2 kapljici indikatorja/, IND_FEN = /dodal 2 kapljici indikatorja: fenolftalein/;
+const DRUG_VZOREC = "V erlenmajerici je drug vzorec. Pri »vzorec« izberi klorovodikovo kislino in pritisni »Odpipetiraj« znova.";
 const SPRAL = /Bireto si trikrat spral/, NAPOLNIL = /Bireto si (z lijakom )?napolnil|Bireto si dopolnil/, ZRAK = /zračni mehurček je odšel iz konice|zraka v konici ni bilo/;
 
 export const KORAKI = {
@@ -82,7 +85,8 @@ export const KORAKI = {
         namig: "Voda v pipeti bi vzorec razredčila, zato pipeto spereš z vzorcem. Voda v erlenmajerici ne spremeni množine kisline, ostanek vzorca pa bi jo povečal.",
         zakaj: "Polnilna pipeta odmeri natanko 25,00\u00a0mL. To prostornino vzorca potrebuješ v računu.",
         poudari: ["pipeto prej speri", "erlenmajerico speri", "Odpipetiraj"],
-        done: (c) => c.bilo(/S propipeto si/),
+        done: (c) => c.zadnji(PIP_HCL, PIP) === 0,
+        narobe: (c) => (c.zadnji(PIP_HCL, PIP) === 1 ? DRUG_VZOREC : null),
       },
       {
         naslov: "Dodaj indikator",
@@ -90,7 +94,12 @@ export const KORAKI = {
         namig: "Fenolftalein je v kislini brezbarven, v bazi rožnat.",
         zakaj: "Indikator s spremembo barve pokaže končno točko: takrat si dodal ravno toliko NaOH, kolikor je bilo v vzorcu kisline.",
         poudari: ["indikator", "Dodaj 2 kapljici"],
-        done: (c) => c.bilo(/dodal 2 kapljici indikatorja/),
+        // Fenolftalein po zadnjem pipetiranju, in to pipetiranje je bilo HCl.
+        done: (c) => c.zadnji(PIP, IND_FEN, IND) === 1 && c.zadnji(PIP_HCL, PIP) === 0,
+        narobe: (c) =>
+          c.zadnji(PIP_HCL, PIP) === 1 ? DRUG_VZOREC
+          : c.zadnji(PIP, IND_FEN, IND) === 2 ? "V erlenmajerici je drug indikator. Za ta korak izberi fenolftalein: pritisni »Odpipetiraj« (nova erlenmajerica) in dodaj fenolftalein."
+          : null,
       },
       {
         naslov: "Zapiši začetni odčitek",

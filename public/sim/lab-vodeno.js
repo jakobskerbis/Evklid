@@ -69,6 +69,7 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
   let dnevnik = []; // { t, k } vsa sporočila dnevnika od začetka vodenja
   let controls = null; // .demo-controls, v katerega je kartica vstavljena (nov element = poskus zgrajen znova)
   let shown = -1, shownMode = "", konecJavljen = false, timer = 0, sched = 0;
+  let opozorilo = null, shownOpozorilo = null; // k.narobe(c): napačna izbira pri tem koraku (AUDIT-075)
   const opazovani = new WeakSet();
   const cilji = new Set();
 
@@ -141,9 +142,17 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
     if (mode === "vodeno") {
       const c = kontekst(mount, dnevnik);
       while (i < def.koraki.length && safe(() => def.koraki[i].done(c))) i++;
+      opozorilo = def.koraki[i]?.narobe ? narobe(() => def.koraki[i].narobe(c)) : null;
     }
     render();
   }
+  const narobe = (f) => {
+    try {
+      return f() || null;
+    } catch {
+      return null;
+    }
+  };
   const safe = (f) => {
     try {
       return !!f();
@@ -166,9 +175,11 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
     if (bar.get() !== mode) bar.set(mode, true);
     oznaci();
     kje.hidden = !cilj();
-    if (!force && shown === i && shownMode === mode) return;
+    if (!force && shown === i && shownMode === mode && shownOpozorilo === opozorilo) return;
+    const samoOpozorilo = shown === i && shownMode === mode;
     shown = i;
     shownMode = mode;
+    shownOpozorilo = opozorilo;
     card.hidden = mode !== "vodeno";
     if (mode !== "vodeno") return card.replaceChildren(), (glas.textContent = "");
     const n = def.koraki.length;
@@ -191,7 +202,8 @@ export function vodi(mount, key, { nacin = "vodeno", onNacin, onKonec } = {}) {
       const k = def.koraki[i];
       kids.push(h("h3", {}, k.naslov), h("p", { class: "lab-vod-kaj" }, k.kaj));
       if (k.poudari || k.pokazi) kids.push(kje);
-      glas.textContent = `Korak ${i + 1} od ${n}: ${k.naslov}`;
+      glas.textContent = samoOpozorilo && opozorilo ? opozorilo : `Korak ${i + 1} od ${n}: ${k.naslov}`;
+      if (opozorilo) kids.push(h("p", { class: "lab-vod-narobe" }, opozorilo));
       if (k.namig) kids.push(h("details", { class: "lab-vod-namig" }, h("summary", {}, "Namig"), h("p", {}, k.namig)));
     }
     card.replaceChildren(...kids);

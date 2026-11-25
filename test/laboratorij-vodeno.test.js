@@ -65,6 +65,25 @@ test("step checks: a done() reads only what the student did", () => {
   assert.equal(tit[2].done(c({ zadnji: zadnji([POLN, SPRAL, POLN]) })), true);
   assert.equal(tit[3].done(c({ zadnji: zadnji([SPRAL, POLN, ZRAK]) })), true);
   assert.equal(tit[3].done(c({ zadnji: zadnji([SPRAL, ZRAK, POLN]) })), false, "zrak izpuščen pred polnjenjem");
+  // AUDIT-075: vzorec in indikator štejeta le, če sta prava (HCl, fenolftalein); napačna izbira dobi opozorilo.
+  const pip = (v) => `S propipeto si v polnilno pipeto posrkal vzorec do oznake in ga izpustil v erlenmajerico: 25,00 mL. Vzorec: ${v}.`;
+  const HCL = pip("klorovodikova kislina HCl"), OCET = pip("ocetna kislina CH₃COOH");
+  const ind = (x) => `V erlenmajerico si dodal 2 kapljici indikatorja: ${x} (prehod pri pH 8,2–10,0: brezbarvna → rožnata).`;
+  const FEN = ind("fenolftalein"), MO = ind("metiloranž");
+  const [vzorec, indikator] = [tit[4], tit[5]];
+  assert.equal(vzorec.done(c({ zadnji: zadnji([HCL]) })), true);
+  assert.equal(vzorec.done(c({ zadnji: zadnji([OCET]) })), false, "ocetna kislina namesto HCl");
+  assert.match(vzorec.narobe(c({ zadnji: zadnji([OCET]) })), /klorovodikovo kislino/);
+  assert.equal(vzorec.narobe(c({ zadnji: zadnji([HCL]) })), null);
+  assert.equal(vzorec.done(c({ zadnji: zadnji([OCET, HCL]) })), true, "znova odpipetiral pravi vzorec");
+  assert.equal(indikator.done(c({ zadnji: zadnji([HCL, FEN]) })), true);
+  assert.equal(indikator.done(c({ zadnji: zadnji([HCL, MO]) })), false, "metiloranž namesto fenolftaleina");
+  assert.match(indikator.narobe(c({ zadnji: zadnji([HCL, MO]) })), /fenolftalein/);
+  assert.equal(indikator.done(c({ zadnji: zadnji([HCL, MO, HCL]) })), false, "nova erlenmajerica še brez indikatorja");
+  assert.equal(indikator.narobe(c({ zadnji: zadnji([HCL, MO, HCL]) })), null);
+  assert.equal(indikator.done(c({ zadnji: zadnji([HCL, MO, HCL, FEN]) })), true);
+  assert.equal(indikator.done(c({ zadnji: zadnji([HCL, FEN, OCET]) })), false, "nov vzorec je ocetna kislina");
+  assert.equal(indikator.done(c({ zadnji: zadnji([OCET, FEN]) })), false);
   const ohm = KORAKI["lab-ohm"].koraki;
   const vr = (U, I, p = "100 Ω") => ({ porabnik: p, "U [V]": U, "I [mA]": I, "U/I [Ω]": "100" });
   const pet = ["2,0", "4,0", "6,0", "8,0", "10,0"].map((U) => vr(U, String(stevilo(U) * 10)));
@@ -332,6 +351,46 @@ test("guided experiments play through to the end in a real browser", { timeout: 
     assert.match(s.oznaka, /opravljeno/);
     assert.equal(s.cilji, 0);
   }
+  assert.deepEqual(errors, []);
+});
+
+test("titration: a wrong indicator does not finish the step and shows what to do (AUDIT-075)", { timeout: 120000 }, async (t) => {
+  if (!browser) return t.skip("Playwright/Chromium ni nameščen");
+  const server = await serve();
+  const base = `http://127.0.0.1:${server.address().port}`;
+  t.after(() => server.close());
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, reducedMotion: "reduce" });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(`${base}/t-vod.html`);
+  await page.waitForFunction(() => window.ready);
+  await page.evaluate(() => mount("lab-titracija"));
+  const narobe = () => page.evaluate(() => document.querySelector(".lab-vod-narobe")?.textContent || "");
+  await page.evaluate(async () => {
+    await stikalo("zaščitna očala");
+    await klik("Speri bireto");
+    await klik("Napolni bireto");
+    await klik("Izpusti zrak");
+    await stikalo("pipeto prej speri");
+    await klik("Odpipetiraj");
+    await dokler(() => /S propipeto si/.test(zadnjiDnevnik()));
+    await izbira("indikator", "metiloranž");
+    await klik("Dodaj 2 kapljici");
+  });
+  await page.waitForTimeout(400);
+  assert.equal((await page.evaluate(() => stanje())).korak, 5, "korak »Dodaj indikator« ostane odprt");
+  assert.match(await narobe(), /fenolftalein/);
+  assert.ok((await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)) <= 0, "opozorilo ne povzroči vodoravnega drsenja");
+  await page.evaluate(async () => {
+    await klik("Odpipetiraj");
+    await dokler(() => /S propipeto si/.test(zadnjiDnevnik()));
+    await izbira("indikator", "fenolftalein");
+    await klik("Dodaj 2 kapljici");
+  });
+  await page.waitForTimeout(400);
+  assert.equal((await page.evaluate(() => stanje())).korak, 6, "s fenolftaleinom korak opravljen");
+  assert.equal(await narobe(), "");
   assert.deepEqual(errors, []);
 });
 
