@@ -1469,3 +1469,17 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 /* Obnovljene meritve s prejšnjega obiska in gumb »Začni znova« nad tabelo. */
 .lab-obnova { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; font-size: 0.9rem; color: var(--muted); }
 .lab-obnova button { min-height: 44px !important; }
+/* Napoved pred meritvijo in primerjava »Tvoja napoved · Izmerjeno«. */
+.lab-napoved { margin: 0 0 10px; }
+.lab-napoved .lab-tit-field .lab-tit-in { width: 7em; }
+.lab-napoved-moja { margin: 6px 0 0; font-size: 0.92rem; }
+.lab-napoved-moja:empty { display: none; }
+.lab-primerjava-vrednosti { display: grid; grid-template-columns: repeat(auto-fit, minmax(9em, 1fr)); gap: 8px; margin: 6px 0 0; }
+.lab-primerjava-vrednosti > div { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); }
+.lab-primerjava-vrednosti dt { font-size: 0.85rem; color: var(--muted); }
+.lab-primerjava-vrednosti dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+/* Okvir napovedi, primerjave in računa: kot .lab-q (vprašanje »Sklep«), a ni sklep (vodeni način šteje sklepe po .lab-q). */
+.lab-okvir { margin-top: 14px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+.lab-okvir h4 { margin: 0 0 4px; }
+.demo.lab .lab-okvir { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
+.lab-okvir.lab-napoved { margin: 0 0 10px; }

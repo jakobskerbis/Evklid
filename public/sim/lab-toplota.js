@@ -2,7 +2,7 @@
 // taljenje ledu in vrenje vode (lab-faze), ohlajanje čaja v različnih posodah (lab-ohlajanje).
 // Modeli: lab-model-toplota.js (brez DOM). Čas teče v realnem času, učenec ga lahko pospeši.
 import { h, s, fmt, decZapis, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved } from "./lab.js";
 import { drawMeter } from "./lab-fiz.js";
 import { GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, izkoristek, geometrija, POSODE, VODA, GRELEC, NAPAJALNIK_T, KRAJI, SKODELICE, CAJ, T_IDEALNA, tlakNaVisini, vrelisce, POENOSTAVITVE_TOPLOTA } from "./lab-model-toplota.js";
 
@@ -342,15 +342,17 @@ export function labMesanje(el) {
   const qBox = h("div");
   const pts = [];
   const auto = { on: true, every: 2, next: 2 };
-  let speed = 1, trial = null, asked = false;
+  let speed = 1, trial = null, asked = false, prvi = null; // prvi: prvi zapisani poskus (za primerjavo z napovedjo)
   const st = { m1: 100, T1: 80, m2: 100, T2: 20, tehtaj: true };
 
   const posSeg = seg("posoda", [["stiropor", "lonček iz stiropora"], ["casa400", "steklena čaša"]], B.posoda, (v) => ((B.posoda = v), B.faza === "prazno" || log.push("Posodo zamenjaš pri novem poskusu.", "info"), draw()));
   const lidT = toggle("pokrov s luknjo za termometer", true, (v) => ((B.pokrov = v), draw()));
-  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), draw()) });
-  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), draw()) });
-  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), draw()) });
-  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), draw()) });
+  // nova mešanica (mase, temperature): napoved za prejšnjo ne velja več (napoved → kljuc)
+  const noviPodatki = () => (draw(), N.osvezi());
+  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), noviPodatki()) });
+  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), noviPodatki()) });
+  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), noviPodatki()) });
+  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), noviPodatki()) });
   const wT = toggle("vodo stehtam (sicer natočim do oznake)", true, (v) => (st.tehtaj = v));
   const coldBtn = button("Natoči hladno vodo", () => cold(), "primary small");
   const mixBtn = button("Zlij toplo vodo v posodo", () => mix(), "primary small");
@@ -373,15 +375,29 @@ export function labMesanje(el) {
     tryText: "Zmešaj 100 g vode z 80 °C in 100 g vode z 20 °C v lončku iz stiropora s pokrovom. Napovej končno temperaturo, nato poskus ponovi v stekleni čaši brez pokrova. Kaj se zgodi, če zapišeš temperaturo, preden premešaš?",
   });
   el.classList.add("lab");
+  // Napoved pred zlivanjem: po zlivanju izračun (samo voda) že pokaže rezultat.
+  const N = napoved({
+    id: "T-zmesi",
+    vprasanje: "Kolikšna bo temperatura zmesi, ko zliješ toplo vodo k hladni? Nastavi mase in temperature, nato napovej, preden zliješ.",
+    enota: "°C",
+    primer: "npr. 37",
+    abs: 2,
+    kljuc: () => `${st.m1}:${st.T1}:${trial?.k2 ?? `${st.m2}:${st.T2}`}`, // ko je hladna voda v posodi, štejeta njena drsnika ob nalivanju
+    odprto: () => !trial?.T1 && !prvi,
+    izmerjeno: () => prvi && { vrednost: prvi.T, besedilo: `${fixed(prvi.T, 1)}\u00a0°C (${fmt(prvi.m1, 0)}\u00a0g s ${fixed(prvi.T1, 1)}\u00a0°C in ${fmt(prvi.m2, 0)}\u00a0g s ${fixed(prvi.T2, 1)}\u00a0°C)` },
+  });
+  m2Sl.closest("fieldset").after(N.el); // pod drsniki za vodo: vprašanje pravi, naj jih najprej nastaviš
+  qBox.before(N.primerjava);
 
   function cold() {
     if (B.faza === "zmes") return log.push("V posodi je že zmes. Za nov poskus pritisni »Nov poskus«.", "warn");
     const m = B.nalijHladno(st.m2, st.T2);
-    trial = { pos: B.posoda, pokrov: B.pokrov, m2: st.tehtaj ? B.readM(m).value : st.m2, m2w: st.tehtaj };
+    trial = { pos: B.posoda, pokrov: B.pokrov, m2: st.tehtaj ? B.readM(m).value : st.m2, m2w: st.tehtaj, k2: `${st.m2}:${st.T2}` };
     if (st.tehtaj) balL.set(B.readM(m).text, "g", "hladna voda");
     else balL.set("", "", "ne tehtaš");
     pts.length = 0;
     log.push(`V posodi je hladna voda (${st.tehtaj ? `${fixed(trial.m2, 1)} g` : `do oznake ${st.m2} mL`}). Počakaj, da se termometer ustali.`, "info");
+    N.osvezi(); // ponovno nalivanje z drugimi drsniki: druga mešanica
     stanje(), redraw(), draw();
   }
   function mix() {
@@ -396,6 +412,7 @@ export function labMesanje(el) {
     zap.shrani();
     auto.next = auto.every;
     log.push(`Topla voda (${fixed(trial.T1, 1)} °C) je v posodi. Hladna je imela ${fixed(trial.T2, 1)} °C.`, "info");
+    N.osvezi();
     redraw(), draw(), sync();
   }
   function record() {
@@ -408,6 +425,8 @@ export function labMesanje(el) {
     else if (B.t > 240) log.push("Dolgo si čakal: zmes se je medtem že ohladila, zato je izmerjena temperatura nižja.", "warn");
     if (!trial.m2w) log.push("Vode nisi stehtal: maso si ocenil po oznaki, ki je natančna le na ~5 %.", "warn");
     trial.done = { T, Tc, ok: B.premesano >= 5 };
+    if (!prvi && trial.done.ok) prvi = { T, m1: trial.m1, T1: trial.T1, m2: trial.m2, T2: trial.T2 }; // za napoved le veljavna meritev (premešano)
+    N.osvezi();
     sync();
     if (trial.done.ok) vprasaj();
   }
@@ -437,7 +456,7 @@ export function labMesanje(el) {
     stanje();
     if (!trial?.T1) return (calc.innerHTML = "");
     const Tc = T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2);
-    calc.innerHTML = `<p>Napoved (samo voda):</p>${texBlock(String.raw`T = \dfrac{m_1T_1 + m_2T_2}{m_1 + m_2} = \dfrac{${fixed(trial.m1, 1)}${en("g")} \cdot ${fixed(trial.T1, 1)}${en("°C")} + ${fixed(trial.m2, 1)}${en("g")} \cdot ${fixed(trial.T2, 1)}${en("°C")}}{${fixed(trial.m1 + trial.m2, 1)}${en("g")}} = ${rez(fixed(Tc, 1), "°C")}`)}${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(Math.abs(trial.done.T - Tc), 1)} °C ${trial.done.T < Tc ? "manj" : "več"}, kot kaže izračun.</p>` : ""}`;
+    calc.innerHTML = `<p>Izračun (samo voda):</p>${texBlock(String.raw`T = \dfrac{m_1T_1 + m_2T_2}{m_1 + m_2} = \dfrac{${fixed(trial.m1, 1)}${en("g")} \cdot ${fixed(trial.T1, 1)}${en("°C")} + ${fixed(trial.m2, 1)}${en("g")} \cdot ${fixed(trial.T2, 1)}${en("°C")}}{${fixed(trial.m1 + trial.m2, 1)}${en("g")}} = ${rez(fixed(Tc, 1), "°C")}`)}${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(Math.abs(trial.done.T - Tc), 1)} °C ${trial.done.T < Tc ? "manj" : "več"}, kot kaže izračun.</p>` : ""}`;
   }
   function reset() {
     B.faza = "prazno";
@@ -508,10 +527,12 @@ export function labMesanje(el) {
   }
   // obnovljeno: zadnji poskus (krivulja in izračun) ostane, dokler ne natočiš nove vode
   zap.vezi(table, {
-    get: () => ({ trial, pts }),
+    get: () => ({ trial, pts, prvi, napoved: N.stanje() }),
     set: (d) => {
+      if (d?.prvi && ["T", "m1", "T1", "m2", "T2"].every((k) => Number.isFinite(d.prvi[k]))) prvi = d.prvi;
       if (d?.trial && Number.isFinite(d.trial.m1) && Number.isFinite(d.trial.T1) && Number.isFinite(d.trial.m2) && Number.isFinite(d.trial.T2)) trial = d.trial;
       if (Array.isArray(d?.pts)) pts.push(...d.pts.filter((p) => Array.isArray(p) && p.every(Number.isFinite)));
+      N.obnovi(d?.napoved); // zadnja, ko so poskus in meritve že obnovljeni
       if (trial?.done?.ok) vprasaj();
       sync();
     },
@@ -698,6 +719,12 @@ export function labFaze(el) {
 }
 
 // ================================================================ ohlajanje čaja v različnih posodah
+// Temperatura čaja v prvi napolnjeni posodi ob času tMin [min]: prva meritev ob tMin ali pozneje. Za napoved.
+export function poPolUre(meas, imena, tMin = 30) {
+  const i = imena.findIndex(Boolean), p = i < 0 ? null : meas[i]?.find((q) => q[0] >= tMin - 1e-6);
+  return p ? { vrednost: p[1], besedilo: `${fixed(p[1], 1)}\u00a0°C (posoda ${i + 1}: ${imena[i]}, po ${fmt(p[0], 0)}\u00a0min)` } : null;
+}
+
 export function labOhlajanje(el) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js); novo nalivanje jih zamenja z novimi
   const B = new OhlajanjeBench({ seed: zap.seed });
@@ -737,6 +764,24 @@ export function labOhlajanje(el) {
     tryText: "Nalij čaj v porcelansko skodelico s pokrovčkom in brez njega ter v termovko. Napovej, v kateri bo čez pol ure najtoplejši. Zakaj se čaj na začetku ohlaja hitreje kot pozneje? Kaj naredi pokrovček?",
   });
   el.classList.add("lab");
+  // Napoved pred nalivanjem: temperatura v prvi izbrani posodi po 30 minutah (število, ±3 °C). Velja za posodo, ki je bila
+  // izbrana ob napovedi: če jo zamenjaš, se napoved pobriše (o.kljuc).
+  const prva = () => B.vrste.findIndex(Boolean);
+  const N = napoved({
+    id: "T-po-30-min",
+    vprasanje: () => {
+      const i = prva();
+      return i < 0 ? "Izberi vsaj eno posodo, nato napovej temperaturo čaja v njej po 30 minutah." : `Kolikšna bo temperatura čaja v posodi ${i + 1} (${SKODELICE[B.vrste[i]].name}) 30 minut po nalivanju? Čaj ima ob nalivanju ${CAJ.T}\u00a0°C, soba 20\u00a0°C. Napovej, preden naliješ.`;
+    },
+    enota: "°C",
+    primer: "npr. 65",
+    abs: 3,
+    kljuc: () => `${prva()}:${B.vrste[prva()]}`,
+    odprto: () => !B.cups && !meas.some((m) => m.length),
+    izmerjeno: () => poPolUre(meas, imena, 30),
+  });
+  el.querySelector(".demo-controls")?.prepend(N.el);
+  qBox.before(N.primerjava);
 
   function pour() {
     if (!B.vrste.some(Boolean)) return log.push("Izberi vsaj eno posodo.", "warn");
@@ -781,6 +826,7 @@ export function labOhlajanje(el) {
   ura0(el, B, {
     speed: () => speed, auto, running: () => B.teče, record,
     tick: () => {
+      N.osvezi(); // izbira posod spremeni vprašanje (in pobriše napoved za drugo posodo), nalivanje jo zapre, meritev po 30 min jo primerja
       thL.forEach((L, i) => {
         const r = B.readT(i);
         L.set(r ? r.text : "", "°C", B.vrste[i] ? SKODELICE[B.vrste[i]].name : "brez posode");
@@ -824,15 +870,17 @@ export function labOhlajanje(el) {
     svg.setAttribute("aria-label", `Tri posode s čajem: ${B.vrste.map((k, i) => `${i + 1} ${k ? SKODELICE[k].name : "brez posode"}`).join(", ")}.`);
   }
   zap.vezi(table, {
-    get: () => ({ meas, imena, vrste: nalite }),
+    get: () => ({ meas, imena, vrste: nalite, napoved: N.stanje() }),
     set: (d) => {
-      if (!Array.isArray(d?.meas) || !Array.isArray(d.imena)) return;
+      // napoved obnovimo zadnjo: izbira posod spremeni ključ napovedi (kljuc) in bi jo sicer pobrisala
+      if (!Array.isArray(d?.meas) || !Array.isArray(d.imena)) return N.obnovi(d?.napoved);
       // posode, v katere je bil čaj nalit: izbira in risba se ujemata z obnovljenimi meritvami
       const vrste = Array.isArray(d.vrste) ? d.vrste : d.imena.map((n) => Object.keys(SKODELICE).find((k) => SKODELICE[k].name === n)); // starejši zapis: po imenu
       vrste.slice(0, 3).forEach((v, i) => sels[i].set(Object.hasOwn(SKODELICE, v ?? "") ? v : ""));
       nalite = [...B.vrste];
       d.meas.slice(0, 3).forEach((m, i) => Array.isArray(m) && meas[i].push(...m.filter((p) => Array.isArray(p) && p.every(Number.isFinite))));
       imena = [0, 1, 2].map((i) => (typeof d.imena[i] === "string" ? d.imena[i] : null));
+      N.obnovi(d?.napoved);
       if (zadnji(meas.flat(), (p) => p[0]) >= 20) vprasaj();
     },
   });
