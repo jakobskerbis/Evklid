@@ -856,6 +856,23 @@ function readinessHtml(c) {
   </section>`;
 }
 
+// Tvoje poskusne pole (server/poskusna-pola.js simHistory): zadnji rezultati s šibkimi temami in gumbom Vadi.
+// Brez rezultatov kartica pove, kje se poskusni izpit začne (gumb »Poskusni izpit« pri naši poli spodaj).
+function simsHtml(sims = []) {
+  const year = (id) => (String(id).match(/-(\d{4})-/) || [])[1] || "";
+  const raven = (id) => (/-VR-/.test(id) ? `${LOCILO}${t("lp.vr")}` : /-OR-/.test(id) ? `${LOCILO}${t("lp.or")}` : "");
+  const rows = sims
+    .map(
+      (r) => `<li><div class="sim-row"><span>${escapeHtml(new Date(r.date).toLocaleDateString(locale()))}</span><span class="sim-paper">${escapeHtml(`${year(r.paper)}${raven(r.paper)}${r.pola ? `${LOCILO}${t("pp.oursPola", { n: r.pola })}` : ""}`)}</span><b>${r.points} / ${r.maxPoints}</b><span class="bar"><i style="width:${Math.max(0, Math.min(100, r.percent))}%"></i></span></div>${
+        r.weak.length
+          ? `<div class="sim-weak">${r.weak.map((w) => `<button type="button" class="secondary small" data-er-practice="${escapeHtml(w.id)}">${icon("pencil")}<span>${escapeHtml(w.name)}${LOCILO}${w.got}/${w.max}</span></button>`).join("")}</div>`
+          : ""
+      }</li>`,
+    )
+    .join("");
+  return `<section class="card exam-sims"><h2>${icon("timer")}${t("pi.histTitle")}</h2>${rows ? `<ul class="sim-list">${rows}</ul>` : `<p class="muted small-note">${t("pi.histEmpty")}</p>`}</section>`;
+}
+
 // Raven mature iz matematike na strani »NPZ in matura« (j, 20. 11.): izbira pri Preteklih polah velja za celo stran
 // (Pripravljenost, Najprej vadi, Teme, Vadba, Poskusni izpit). Velja, dokler se raven v profilu ne spremeni;
 // brez izbire raven iz profila (strežnik, exams.js examRaven).
@@ -926,7 +943,7 @@ async function loadExams(key = state.examKey, exam = null) {
     </section>
     ${
       si
-        ? `<section class="card exam-official exam-papers"><h2>${icon("file-text")}${t("pp.title")}</h2><p class="muted">${t("pp.text")}</p><div id="exam-papers" class="pp-picker"><p class="muted">${t("common.loading")}</p></div></section>`
+        ? `${simsHtml(c.sims)}<section class="card exam-official exam-papers"><h2>${icon("file-text")}${t("pp.title")}</h2><p class="muted">${t("pp.text")}</p><div id="exam-papers" class="pp-picker"><p class="muted">${t("common.loading")}</p></div></section>`
         : c.official
           ? `<section class="card exam-official"><h2>${icon("file-text")}${t("gr.pastTitle")}</h2><p class="muted">${t("gr.pastText", { src: escapeHtml(c.official.source) })}</p><a class="btn-secondary" href="${escapeHtml(c.official.url)}" target="_blank" rel="noopener">${icon("external-link")}${t("gr.pastOpen")}</a></section>`
           : ""
@@ -974,6 +991,7 @@ async function showPapers(c) {
     },
     onTutor: paperTutor,
     onOurs: openOurs,
+    onSim: openSim,
     onLocal: (entry, file, subjectName) => openLocalPaper(entry, file, subjectName),
     onReopen: (entry, subjectName) => {
       const k = keptPaper;
@@ -1044,6 +1062,54 @@ async function openOurs(entry, subjectName, focus = null) {
   } finally {
     paperBusy = false;
   }
+}
+// »Poskusni izpit« na naši poli (public/our-paper.js openExamSim, server/poskusna-pola.js): ena izpitna pola s pravim
+// časom; začeta pola (čas, točke) ostane v tej napravi, dokler je učenec ne shrani. Po shranitvi se stran osveži
+// (Tvoje poskusne pole).
+async function openSim(entry, subjectName) {
+  if (!entry?.ours || paperZaseden()) return;
+  paperBusy = true;
+  try {
+    const [paper, op] = await Promise.all([api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`), ourMod.load(), pripraviIzris()]);
+    const key = `evklid.sim.${state.student.id}.${entry.id}`;
+    const sid = state.student.id;
+    op.openExamSim(paper, {
+      title: t("pi.paperTitle", { paper: paperLabel(entry, subjectName) }),
+      rich: (md) => withFormulaSubject(entry.subject, () => renderRich(String(md ?? "")), null, ""),
+      store: {
+        get: () => {
+          try {
+            return JSON.parse(localStorageGet(key) || "null");
+          } catch {
+            return null;
+          }
+        },
+        set: (v) => localStorageSet(key, JSON.stringify(v)),
+        clear: () => localStorageSet(key, ""),
+      },
+      onSave: async ({ pola, points, seconds }) => {
+        try {
+          const res = await api(`/api/students/${sid}/exam-sim`, { method: "POST", body: { paper: entry.id, pola, points, seconds } });
+          if (state.student?.id === sid && currentView === "exams") loadExams(state.examKey);
+          return res;
+        } catch (err) {
+          toast(err.message);
+          throw err;
+        }
+      },
+      onPractice: (topicId) => practiceTopic(topicId),
+    });
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    paperBusy = false;
+  }
+}
+// »Vadi« pri šibki temi (Pripravljenost, Poskusne pole): odpre temo in prvo nalogo; nazaj vodi na stran NPZ in matura.
+async function practiceTopic(id) {
+  setBack("exams");
+  const pretest = await openTopic(id);
+  if (!pretest && $("#t-practice")) nextPractice();
 }
 // Počaka, da se konča odpiranje pogovora (paperBusy, največ 5 s), nato fn: hiter ← med odpiranjem klepeta iz pole.
 async function poPaperBusy(fn) {
@@ -1166,9 +1232,7 @@ document.addEventListener("click", async (e) => {
   }
   const pr = e.target.closest("[data-er-practice]");
   if (pr) {
-    setBack("exams");
-    const pretest = await openTopic(pr.dataset.erPractice);
-    if (!pretest && $("#t-practice")) nextPractice();
+    await practiceTopic(pr.dataset.erPractice);
   }
 });
 
