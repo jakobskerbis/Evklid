@@ -6,8 +6,8 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { neprimernoIme, withName, createNameStream } from "../server/ime-oznaka.js";
 
-const SLABA = ["lulek", "Lulek123", "l u l e k", "f.u.c.k", "fuuuuck", "Kurac", "pička", "P1zda", "jebemti", "Jebote", "Arschloch", "Scheiße", "cazzo", "Kurva", "SEX", "asshole", "nigga", "ŠUPAK", "kurčevo", "Mali kurc", "bitch99"];
-const DOBRA = ["Ana-Maria", "Rita", "Mona", "Kurt", "Nigel", "Peter", "Jakob", "Assia", "As", "Sara", "Dickson", "Fuks", "Šimen", "Picasso", "Merdin", "Hans", "Bastian", "Pedro", "Kurtović", "Penelope", "Žiga", "Neža", "Ritter", "Kristjan", "Marko 2", "Pia-Lina", "Eva B.", "Ula", "Analisa", "Tit", "Scott", "Bob", "Bobby", "Ćazim"];
+const SLABA = ["lulek", "Lulek123", "l u l e k", "f.u.c.k", "fuuuuck", "Kurac", "pička", "P1zda", "jebemti", "Jebote", "Arschloch", "Scheiße", "cazzo", "Kurva", "SEX", "asshole", "nigga", "ŠUPAK", "kurčevo", "Mali kurc", "bitch99", "kurec", "Prdec", "kakec", "pimpek", "seksi", "pofukan", "zjeban", "govnar", "bazdmeg", "köcsög", "seggfej", "shit", "shithead", "Schwuchtel"];
+const DOBRA = ["Ana-Maria", "Rita", "Mona", "Kurt", "Nigel", "Peter", "Jakob", "Assia", "As", "Sara", "Dickson", "Fuks", "Šimen", "Picasso", "Merdin", "Hans", "Bastian", "Pedro", "Kurtović", "Penelope", "Žiga", "Neža", "Ritter", "Kristjan", "Marko 2", "Pia-Lina", "Eva B.", "Ula", "Analisa", "Tit", "Scott", "Bob", "Bobby", "Ćazim", "Shital", "Muca", "Kaka", "Fagot", "Kurbus", "Pickering", "Drkalić"];
 
 test("neprimernoIme: kletvice in zapisi s številkami, podvojenimi in razmaknjenimi črkami", () => {
   for (const n of SLABA) assert.equal(neprimernoIme(n), true, n);

@@ -25,24 +25,24 @@ const norma = (s) =>
 const BESEDE = new Set(
   [
     // sl, hr
-    "rit", "fuk", "fukat", "fukam", "fukas", "drek", "srat", "scat", "scanje", "joske", "peder", "pedri", "buzi", "debil", "kreten", "butec", "bedak", "cipa", "sisa", "sise", "cigan", "cefur", "govno", "supak", "glupan", "kurva", "seks",
+    "rit", "fuk", "fukat", "fukam", "fukas", "drek", "srat", "scat", "scanje", "joske", "peder", "pedri", "buzi", "debil", "kreten", "butec", "bedak", "cipa", "sisa", "sise", "cigan", "cefur", "govno", "supak", "glupan", "kurva", "seks", "seksi", "kurec", "prdec", "prdac", "kakec", "pimpek", "guzica",
     "kurba", "kurbe", "kurbi", "kurbo", "kurbin", "kurbica", "picka", "picke", "picki", "picko", "picku", "pickin", "drkat", "drkam", "drkas", "drkal", "drkanje",
     // en
-    "dick", "cock", "sex", "tits", "fag", "niga", "nigas", "slut", "whore", "twat", "nazi", "hitler", "bastard", "bollocks", "porn",
+    "dick", "cock", "sex", "tits", "fag", "fagit", "niga", "nigas", "slut", "whore", "twat", "nazi", "hitler", "bastard", "bollocks", "porn", "shit", "shits", "shity", "shiter", "sexy", "dildo",
     // de
-    "arsch", "fick", "ficken", "fotze", "hure", "titten", "schwanz",
+    "arsch", "fick", "ficken", "fotze", "hure", "titten", "schwanz", "kacke",
     // it
-    "merda", "culo", "figa", "troia", "cazzo", "cazzi",
+    "merda", "culo", "figa", "troia", "cazzo", "cazzi", "frocio", "bastardo",
     // hu
-    "fasz", "geci", "szar", "neger",
+    "fasz", "geci", "szar", "neger", "kocsog", "faszfej", "seggfej",
   ].map(norma),
 );
 const ZACETKI = [
-  "kurc", "kurac", "kurce", "pizd", "pickic", "jebem", "jebat", "jeban", "jebot", "jebac", "jebi", "jebo", "kurv", "sranj", "lulek", "lulc", "buzer", "pedof", "retard",
-  "fuck", "shit", "bitch", "cunt", "pussy", "asshole", "faggot", "wank", "niger", "penis", "vagin", "porno",
-  "arschl", "scheis", "ficke", "schlamp", "wichs", "hurens", "missgeb",
+  "kurc", "kurac", "kurce", "pizd", "pickic", "jebem", "jebat", "jeban", "jebot", "jebac", "jebi", "jebo", "kurv", "sranj", "lulek", "lulc", "buzer", "pedof", "retard", "govn", "pofuk", "zjeb",
+  "fuck", "shith", "bitch", "cunt", "pussy", "asshole", "wank", "niger", "penis", "vagin", "porno",
+  "arschl", "scheis", "ficke", "schlamp", "wichs", "hurens", "missgeb", "schwucht",
   "stronz", "puttan", "vaffan", "cogli", "minch",
-  "picsa", "bazm", "baszd",
+  "picsa", "bazm", "bazd", "baszd",
 ].map(norma);
 // Besede imena; zaporedje posameznih črk (»l u l e k«, »f.u.c.k«) postane ena beseda.
 function besedeImena(name) {
