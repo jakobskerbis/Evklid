@@ -64,6 +64,60 @@ Vsi ukazi SymPy, ki gredo skozi `is_zero` (`server/cas/worker.py`: `equal`, vsta
 
 PV-03 doda v odgovor workerja način preverjanja (`symbolic` ali `sampled`), dogovor s profilom B na #539.
 
+## Meritev (PV-02)
+
+Referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (384 trditev, 191 pravilnih) ustvari
+`node scripts/nabor-preverjanje.mjs` iz fiksnega semena (vedno enaka datoteka). Resnica je znana iz konstrukcije
+(enačbe iz izbranih ničel, korenske in logaritemske enačbe iz izbrane veljavne in tuje rešitve, neenačbe iz izbranih
+krajišč, znani odvodi, integrali in računi), ne iz preverjevalnikov Evklida; drugi pregledovalec je vse oznake
+neodvisno preveril s SymPy. Skupine: polinomske enačbe, iracionalne ničle, zaokroženi približki, luknje racionalnih
+enačb, korenske enačbe, neenačbe, identitete, odvodi, integrali, računi, limite, enote, periodične rešitve, velika
+števila, »skoraj« (napake tik ob meji tolerance: veliki koeficienti, znanstveni zapis, »≈«, napačno zaokroženo,
+odrezano namesto zaokroženo, bližnji ulomki, velika števila) in »druge« (logaritemske, eksponentne, z absolutno
+vrednostjo, racionalne neenačbe, »ni rešitve«, kompleksni rešitvi kot realni, napačna perioda). Pravilen zaokrožen
+odgovor ima mejo `najvec: "numericno"`.
+
+Dogovora: rešitve so realne (kompleksni rešitvi pri realni enačbi sta napaka); identiteta, kot je
+`(x^2-4)/(x-2) = x+2`, šteje kot pravilna poenostavitev (izključeno točko preverja skupina »luknja«).
+
+`node scripts/meri-preverjanje.mjs [--json pot]` izmeri tri motorje: `sympy` (surov izid workerja), `skener`
+(`verifyAiFull`, kot ga vidi učenec) in `skener-lokalno` (isto brez SymPy). Razredi: napačno potrjena, previsok
+status, lažni alarm, napačna s šibkim statusom (učenec vidi »delno« ali »numerično«), izjema, ujeta napaka, potrjena,
+šibkejši status, nepreverjena. `test/preverjanje-meritev.test.js` (CI ima SymPy prek `npm ci`, postinstall) pade ob
+vsaki novi napačni potrditvi, previsokem statusu, lažnem alarmu ali izjemi in kadar motor ujame ali potrdi manj kot
+ob izhodišču. Limite in enote (21 trditev) nimajo oblike rešitve skenerja, zato jih meri samo surov SymPy.
+
+Izhodišče 25. 11. 2026:
+
+| Motor | Trditev | Napačno potrjene | Ujete napake | Napačne s šibkim statusom | Lažni alarmi | Pravilne potrjene |
+| --- | --- | --- | --- | --- | --- | --- |
+| sympy (surovo) | 384 | 5 | 187/193 | 0 | 0 | 179/191 (+12 previsoko) |
+| skener | 363 | **4** | 178/182 | 0 | 5 | 153/181 (+1 previsoko) |
+| skener-lokalno | 363 | 0 | 172/182 | 5 | 8 | 101/181 |
+
+0 napačno potrjenih na tem naboru pomeni pri 95-odstotnem zaupanju delež pod približno 3/n (n = število napačnih
+trditev) in velja samo za vrste napak v naboru.
+
+Ugotovitve (popravki v ločenih PR-jih):
+
+- **Skener: 4 napačno potrjene trditve (»Preverjeno« pri napačnem odgovoru).** Identiteta in odvod z velikimi
+  koeficienti, napačnimi za 1 (`(x+1000000)^2` = `x^2+1999999*x+10^12`): `is_zero` v `server/cas/worker.py` šteje
+  točko za ničlo, ko je |razlika| ≤ 10⁻⁹ · največji člen (≈ 10¹²), in vrne `ok: true`. Ničla v znanstvenem zapisu
+  z napačno mantiso (`2*10^6` namesto 2,4·10⁶, `1e6` namesto 1,4·10⁶): `decimals_tol` da toleranco pol enote zadnjega
+  mesta mantise (5·10⁵). Pri treh od štirih je lokalna točna algebra pravilno rekla »napaka«, a `verifyAiFull` da
+  prednost SymPy; po pravilu »motorja se ne strinjata → nepreverjeno« (`statusTrditve`) bi bile ujete.
+- Skener: »≈1414« (zaokroženo na celo število) dobi »Preverjeno«: regex `rounded` v `verifyAiFull` prepozna le
+  decimalno piko, ne »≈« ali zapisa e/10^n.
+- Skener: pravilen določeni integral z mejo iz več znakov (`∫_0^pi sin(x) dx = 2`, `∫_1^10 1/x dx = ln(10)`) dobi
+  »Zaznana napaka«, ker `public/scan/verify.js` mejo prebere le do prvega znaka. Zaokrožen račun (`1/3+1/7 ≈ 0.476`,
+  `sqrt(2) ≈ 1.414`) dobi »Zaznana napaka«, ker skener račun pošlje v `equal` (točno), ne v `value`.
+- Skener brez SymPy: luknja brez rešitev (`(x^2-1)/(x-1)=2`) in `1.4e6` dobita »Zaznana napaka«; pet napačnih
+  odgovorov dobi šibek pozitiven status: trije periodični in napačna periodična rešitev s predolgo periodo
+  »Delno preverjeno«, napačen odvod z velikimi koeficienti »Numerično preverjeno«.
+- Surov SymPy: zaokrožene decimalke sprejme s toleranco (`decimals_tol`) in vrne `ok: true` (12 previsokih
+  statusov); zmnožek velikih števil v zapisu `1.2193263111263526*10^17` (napaka 9) sprejme, ker `value` računa s
+  plavajočo vejico. Kdor bi `ok: true` preslikal v `izracunano`, bi te precenil: PV-03 (worker vrne način preverjanja).
+
 ## Pravilo za nove dele aplikacije
 
 Vsak nov del aplikacije, ki prikaže matematično trditev, jo odda v zapisu trditve in prikaže status iz
