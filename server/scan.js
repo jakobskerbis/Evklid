@@ -3,30 +3,40 @@
 //   POST /api/students/:id/scan/solve  { text, goal?, given?, sought? } → { solution }       AI rešitev po korakih
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
-// (public/scan/verify.js); nepreverjena se pokaže z opozorilom, nikoli kot »preverjeno«.
+// (public/scan/verify.js); vsaka rešitev dobi enega od petih statusov (public/scan/status.js), »Preverjeno« samo z dokazom.
 import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { casCheck } from "./cas.js";
+import { STATUSES } from "../public/scan/status.js";
 
-// AI rešitev preverita dve neodvisni kodi: numerična (public/scan/verify.js) in SymPy (server/cas.js).
-// SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja numerično preverjanje.
+// AI rešitev preverita dve neodvisni kodi: public/scan/verify.js (točna algebra za polinome, sicer numerika) in
+// SymPy (server/cas.js). SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja verify.js.
 // Ujame tudi rešitve izven numeričnega iskanja (|x| > 10⁶) in točne vrednosti (√2 proti 1,414).
-// Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam SymPy ne odloča.
-// Kjer numerika popolnosti ne more preveriti (partial: sistem, periodične rešitve, »ni rešitve«), brez
-// odločitve SymPy rešitev ni »preverjena«, ampak nepreverjena (reason "unknown"; AUDIT-001).
+// Status (public/scan/status.js): »verified« samo, ko SymPy ali točna algebra dokaže celotno množico rešitev;
+// numerična potrditev je največ »numeric«, sistem in periodične rešitve brez dokaza popolnosti »partial« (AUDIT-001).
+// verified: true samo pri statusu »verified« (stari odjemalci prikažejo značko »preverjeno« le takrat).
+// Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam ne odloča nobena koda (status »unverified«).
+const periodicClaim = (sol) => (sol?.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(String(s)));
 export async function verifyAiFull(text, sol, { cas = true } = {}) {
   const num = verifyAi(text, sol);
   const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
-  if (c.ok === true) return { verified: true, reason: null };
+  if (c.ok === true) {
+    // SymPy pri periodičnih rešitvah preveri popolnost samo na [−20, 20] (worker.py solve_one): »delno«
+    const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : "verified";
+    return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
+  }
   if (c.ok === false) {
     const missing = num.reason === "missing" || /^manjka rešitev/.test(c.why || "");
-    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why, status: "wrong" };
   }
-  if (num.verified && num.partial) return { verified: false, reason: "unknown" };
-  return num;
+  const status = num.status || (num.verified ? "numeric" : "unverified");
+  if (status === "verified") return { verified: true, reason: null, status };
+  return { verified: false, reason: num.verified ? "unknown" : num.reason, ...(num.missing ? { missing: num.missing } : {}), status };
 }
+// boljši status prej (za izbiro med prvim in ponovljenim odgovorom)
+const statusRank = (s) => STATUSES.length - STATUSES.indexOf(s || "unverified");
 
 // Zapis za SymPy (server/cas/worker.py). Tam je log brez osnove ln, v šoli in v public/graph/math.js pa desetiški,
 // zato log(x) → lg(x); log_b(x), log_(b)(x), log_{b}(x) → log(x, b) (tako ga piše READ_PROMPT); √2 → sqrt(2).
@@ -103,6 +113,9 @@ async function casScan(text, sol) {
     return casCheck("solve", [eqs.join(", "), names.join(", "), claim]);
   }
   if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [casText(prep(text)), casText(prep(sol.value))]);
+  // Neenačba (P3-3): obstoječa operacija »ineq« primerja množico rešitev s SymPy solveset (worker.py op_ineq).
+  // Dvojne neenačbe (1 < x < 5) worker ne razčleni in vrne null (velja verify.js).
+  if (sol?.kind === "inequality" && sol.value) return casCheck("ineq", [casText(prep(text)), v, casText(String(sol.value))]);
   if (sol?.kind === "derivative" && sol.value) {
     const f = String(text).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
     return casCheck("diff", [casText(prep(f)), v, casText(prep(sol.value))]);
@@ -237,7 +250,7 @@ export function solvePrompt(text, lang, feedback = null, goal = null, given = []
     "Return only JSON:\n" +
     '{"kind":"equation|inequality|system|expression|arith|derivative|integral|limit|other","variable":"x","problem_tex":"LaTeX",' +
     '"answer_tex":"LaTeX of the final answer","solutions":["values in calculator syntax, one per solution (equations); for periodic solutions use k, e.g. pi/6+2*k*pi; for a system one string like x=2; y=-1"],' +
-    '"value":"final result in calculator syntax (expression, arith, derivative, integral without +C, limit)",' +
+    '"value":"final result in calculator syntax (expression, arith, derivative, integral without +C, limit; for an inequality its solution set as intervals joined by U, e.g. (-oo, -2) U [3, oo), {} if none, R if all)",' +
     '"methods":[{"name":"short method name","steps":[{"title":"what we do, one sentence","tex":"LaTeX of the line after this step","why":"why this step is allowed or how to do it, 1–3 sentences; inline maths in $...$"}]}]}' +
     (feedback ? `\nYour previous answer failed an automatic check (${feedback}). Find the mistake and answer again.` : "")
   );
@@ -278,9 +291,11 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [], 
     });
     return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model };
   };
+  // Naloga s podatki: besedilo je le predloga, preverjanje ne odloča (status »unverified«, ne »napačno«)
+  const verify = async (sol) => (given.length ? { verified: false, reason: "given", status: "unverified" } : await verifyAiFull(text, sol));
   let out = await ask(null);
   let usage = [out.usage];
-  let check = out.sol ? await verifyAiFull(text, out.sol, { cas: !given.length }) : { verified: false, reason: "parse" };
+  let check = out.sol ? await verify(out.sol) : { verified: false, reason: "parse", status: "unverified" };
   // Ena ponovitev, kadar preverjanje pokaže napačno ali manjkajočo rešitev. Pri nalogi s podatki (parametri)
   // preverjanje vidi le predlogo f(x) = …, zato ponovitve ne sproži (rešitev ostane označena kot nepreverjena).
   if (out.sol && !given.length && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
@@ -294,14 +309,14 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [], 
     }
     if (again) {
       usage.push(again.usage);
-      const c2 = again.sol ? await verifyAiFull(text, again.sol, { cas: !given.length }) : { verified: false };
-      if (again.sol && (c2.verified || !out.sol)) {
+      const c2 = again.sol ? await verify(again.sol) : { verified: false, status: "unverified" };
+      if (again.sol && (!out.sol || statusRank(c2.status) > statusRank(check.status))) {
         out = again;
         check = c2;
       }
     }
   }
-  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null } : null, usage, model: out.model };
+  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null, status: check.status || "unverified" } : null, usage, model: out.model };
 }
 
 // Branje naloge za Inštruktorja: vse predmete (matematika, fizika, kemija, biologija), besedilo kot na listu, formule

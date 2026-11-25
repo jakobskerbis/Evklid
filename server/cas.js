@@ -18,6 +18,7 @@ const TIMEOUT_MS = () => Number(process.env.EVKLID_CAS_TIMEOUT_MS) || 9000;
 
 let proc = null;
 let ready = null; // Promise<boolean>
+let lastStart = null; // izid zadnjega zagona (true/false), null = še ni bil zagnan (casStanje)
 let failedAt = 0; // po neuspelem zagonu nekaj časa ne poskušamo znova
 let seq = 0;
 const waiting = new Map(); // id → { resolve, timer }
@@ -33,6 +34,7 @@ function start() {
     const done = (v) => {
       if (settled) return;
       settled = true;
+      lastStart = v;
       if (!v) failedAt = Date.now();
       resolve(v);
     };
@@ -151,6 +153,14 @@ async function casCheckNow(op, args) {
 // Ali preverjevalnik dela (za /healthz in teste).
 export async function casAvailable() {
   return !!(await start());
+}
+
+// Stanje za /healthz/stanje in Stražo (skener P3-3): brez SymPy noben rezultat AI ne more biti »Preverjeno«.
+// Ne čaka: če preverjevalnik še ni bil zagnan, ga zažene v ozadju in vrne deluje: null (naslednji klic ve več).
+export function casStanje() {
+  if (!casOn()) return { vklopljen: false, deluje: null };
+  if (lastStart === null) start().catch(() => {});
+  return { vklopljen: true, deluje: lastStart };
 }
 
 export function casStop() {

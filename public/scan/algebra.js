@@ -442,3 +442,448 @@ export function constQ(node) {
   const p = tryPoly(node);
   return p && p.isConst() ? p.constValue() : null;
 }
+
+// ---------- točni dokazi (skener P3-2, AUDIT-001) ----------
+// Brez SymPy dokažemo s točno algebro: rešitve oblike u + w·√c vstavimo brez decimalk, število vseh realnih ničel
+// polinoma prešteje Sturmov izrek (na vsej realni osi, brez meje iskanja), manjkajoče ničle poišče bisekcija znotraj
+// Cauchyjeve meje. Neenačbo preverimo na vseh kritičnih točkah in med njimi. Kjer to ne gre, funkcije vrnejo null
+// (takrat ostane samo numerično preverjanje in status nikoli ni »Preverjeno«, public/scan/status.js).
+
+const PROOF_LIMIT = 10n ** 3000n; // vmesni ulomki Sturmovega zaporedja so lahko veliki
+const MAX_PROOF_DEG = 16;
+const proof = (fn) => {
+  try {
+    return withLimit(PROOF_LIMIT, fn);
+  } catch (err) {
+    if (err instanceof AlgebraError) return null;
+    throw err;
+  }
+};
+
+// n = k² · r (r brez kvadratov)
+export function squareFree(n) {
+  n = big(n);
+  let k = 1n;
+  let r = n;
+  for (let p = 2n; p * p <= r && p < 100000n; p++) {
+    while (r % (p * p) === 0n) {
+      r /= p * p;
+      k *= p;
+    }
+  }
+  return { k, r };
+}
+
+// Število u + w·√c (c celo, brez kvadratov; c = 1 pomeni racionalno število).
+export class Surd {
+  constructor(u, w = Q.ZERO, c = 1n) {
+    u = Q.of(u);
+    w = Q.of(w);
+    c = big(c);
+    if (c < 0n) throw new AlgebraError("complex");
+    if (c > 1n && !w.zero) {
+      const { k, r } = squareFree(c);
+      w = w.mul(new Q(k));
+      c = r;
+    }
+    if (c <= 1n || w.zero) {
+      if (c === 1n) u = u.add(w);
+      w = Q.ZERO;
+      c = 1n;
+    }
+    this.u = u;
+    this.w = w;
+    this.c = c;
+  }
+  static of(v) {
+    return v instanceof Surd ? v : new Surd(v);
+  }
+  get rational() {
+    return this.c === 1n;
+  }
+  pair(o) {
+    o = Surd.of(o);
+    if (!this.rational && !o.rational && this.c !== o.c) throw new AlgebraError("surd");
+    return [o, this.rational ? o.c : this.c];
+  }
+  add(o) {
+    const [b, c] = this.pair(o);
+    return new Surd(this.u.add(b.u), this.w.add(b.w), c);
+  }
+  sub(o) {
+    return this.add(Surd.of(o).neg());
+  }
+  neg() {
+    return new Surd(this.u.neg(), this.w.neg(), this.c);
+  }
+  mul(o) {
+    const [b, c] = this.pair(o);
+    const cq = new Q(c);
+    return new Surd(this.u.mul(b.u).add(this.w.mul(b.w).mul(cq)), this.u.mul(b.w).add(this.w.mul(b.u)), c);
+  }
+  div(o) {
+    const b = Surd.of(o);
+    // (u + w√c)⁻¹ = (u − w√c) / (u² − w²c)
+    const n = b.u.mul(b.u).sub(b.w.mul(b.w).mul(new Q(b.c)));
+    if (n.zero) throw new AlgebraError("div0");
+    return this.mul(new Surd(b.u.div(n), b.w.neg().div(n), b.c));
+  }
+  get sign() {
+    const su = this.u.sign;
+    const sw = this.w.sign;
+    if (!sw) return su;
+    if (!su || su === sw) return sw;
+    // različna predznaka: primerjamo u² in w²c
+    const d = this.u.mul(this.u).cmp(this.w.mul(this.w).mul(new Q(this.c)));
+    return d > 0 ? su : d < 0 ? sw : 0;
+  }
+  num() {
+    return this.u.num() + this.w.num() * Math.sqrt(Number(this.c));
+  }
+}
+
+// Točna vrednost konstantnega izraza (drevo iz public/graph/math.js) v obliki u + w·√c, sicer null.
+export function surdOf(node) {
+  try {
+    return proof(() => surdNode(node));
+  } catch {
+    return null;
+  }
+}
+function surdNode(node) {
+  const n = node;
+  switch (n?.k) {
+    case "num":
+      return new Surd(Q.of(n.v));
+    case "q":
+      return new Surd(n.q);
+    case "grp":
+      return surdNode(n.a);
+    case "neg":
+      return surdNode(n.a).neg();
+    case "+":
+      return surdNode(n.a).add(surdNode(n.b));
+    case "-":
+      return surdNode(n.a).sub(surdNode(n.b));
+    case "*":
+      return surdNode(n.a).mul(surdNode(n.b));
+    case "/":
+      return surdNode(n.a).div(surdNode(n.b));
+    case "^": {
+      const e = surdNode(n.b);
+      if (!e.rational) throw new AlgebraError("notsurd");
+      if (e.u.eq(new Q(1n, 2n))) return sqrtS(surdNode(n.a));
+      if (!e.u.int || e.u.n < 0n || e.u.n > 16n) throw new AlgebraError("notsurd");
+      let out = new Surd(Q.ONE);
+      const b = surdNode(n.a);
+      for (let i = 0n; i < e.u.n; i++) out = out.mul(b);
+      return out;
+    }
+    case "call":
+      if (n.f === "sqrt" && n.args?.length === 1) return sqrtS(surdNode(n.args[0]));
+      throw new AlgebraError("notsurd");
+    default:
+      throw new AlgebraError("notsurd");
+  }
+}
+function sqrtS(x) {
+  if (!x.rational || x.u.sign < 0) throw new AlgebraError("notsurd");
+  // √(n/d) = √(n·d) / d
+  const { k, r } = squareFree(x.u.n * x.u.d);
+  return new Surd(Q.ZERO, new Q(k, x.u.d), r);
+}
+
+// Točen ulomek iz števila s plavajočo vejico (vsako tako število je k / 2ᵉ).
+export function qFromFloat(x) {
+  if (!Number.isFinite(x)) throw new AlgebraError("nan");
+  let m = x;
+  let e = 0n;
+  while (!Number.isInteger(m) && e < 1100n) {
+    m *= 2;
+    e++;
+  }
+  return withLimit(PROOF_LIMIT, () => new Q(BigInt(m), 2n ** e));
+}
+
+// Primerjava točnih števil; pri različnih korenih (√2 proti √3) po približku, če sta dovolj narazen, sicer napaka.
+export function cmpS(a, b) {
+  a = Surd.of(a);
+  b = Surd.of(b);
+  if (a.rational || b.rational || a.c === b.c) return a.sub(b).sign;
+  const x = a.num();
+  const y = b.num();
+  if (Math.abs(x - y) > 1e-9 * Math.max(1, Math.abs(x), Math.abs(y))) return x < y ? -1 : 1;
+  throw new AlgebraError("surd");
+}
+
+// Polinom kot koeficienti [a0, a1, …, an] (Q).
+const trimCs = (cs) => {
+  const a = cs.map((c) => Q.of(c));
+  while (a.length > 1 && a[a.length - 1].zero) a.pop();
+  return a;
+};
+const zeroCs = (cs) => cs.every((c) => c.zero);
+export function evalCs(cs, x) {
+  x = Surd.of(x);
+  let acc = new Surd(Q.ZERO);
+  for (let i = cs.length - 1; i >= 0; i--) acc = acc.mul(x).add(cs[i]);
+  return acc;
+}
+const evalQcs = (cs, x) => {
+  let acc = Q.ZERO;
+  for (let i = cs.length - 1; i >= 0; i--) acc = acc.mul(x).add(cs[i]);
+  return acc;
+};
+const derivCs = (cs) => (cs.length < 2 ? [Q.ZERO] : cs.slice(1).map((c, i) => c.mul(new Q(i + 1))));
+function divmodCs(a, b) {
+  b = trimCs(b);
+  const r = trimCs(a);
+  const db = b.length - 1;
+  const lb = b[db];
+  const q = Array.from({ length: Math.max(1, r.length - db) }, () => Q.ZERO);
+  while (r.length - 1 >= db && !zeroCs(r)) {
+    const k = r.length - 1 - db;
+    const f = r[r.length - 1].div(lb);
+    q[k] = f;
+    for (let i = 0; i <= db; i++) r[i + k] = r[i + k].sub(f.mul(b[i]));
+    r.pop();
+    while (r.length > 1 && r[r.length - 1].zero) r.pop();
+    if (!r.length) r.push(Q.ZERO);
+  }
+  return { q, r };
+}
+// pozitiven faktor ne spremeni predznakov: vsak člen zaporedja delimo z |vodilnim koeficientom|
+const normCs = (cs) => {
+  const lc = cs[cs.length - 1].abs();
+  return cs.map((c) => c.div(lc));
+};
+function gcdCs(a, b) {
+  a = trimCs(a);
+  b = trimCs(b);
+  while (!zeroCs(b)) [a, b] = [b, divmodCs(a, b).r];
+  return normCs(a);
+}
+
+// Sturmovo zaporedje dela brez večkratnih ničel (p / gcd(p, p')); null, če ga ne znamo sestaviti.
+export function sturmChain(cs) {
+  return proof(() => {
+    let p = trimCs(cs);
+    if (p.length < 2 || p.length - 1 > MAX_PROOF_DEG) return null;
+    const g = gcdCs(p, derivCs(p));
+    if (g.length > 1) p = divmodCs(p, g).q;
+    const chain = [normCs(p)];
+    if (p.length > 1) chain.push(normCs(derivCs(p)));
+    while (chain.length < 2 * MAX_PROOF_DEG && chain[chain.length - 1].length > 1) {
+      const r = divmodCs(chain[chain.length - 2], chain[chain.length - 1]).r;
+      if (zeroCs(r)) break;
+      chain.push(normCs(r.map((c) => c.neg())));
+    }
+    return chain;
+  });
+}
+const variations = (signs) => {
+  let v = 0;
+  let prev = 0;
+  for (const s of signs) {
+    if (!s) continue;
+    if (prev && s !== prev) v++;
+    prev = s;
+  }
+  return v;
+};
+// predznaki zaporedja v x (Q) ali v ±∞ (x = -Infinity / Infinity)
+function chainSigns(chain, x) {
+  if (x === Infinity || x === -Infinity)
+    return chain.map((c) => {
+      const s = c[c.length - 1].sign;
+      return x > 0 || (c.length - 1) % 2 === 0 ? s : -s;
+    });
+  return chain.map((c) => evalQcs(c, x).sign);
+}
+// število različnih realnih ničel na (lo, hi]; lo/hi sta Q ali ±Infinity
+const countIn = (chain, lo = -Infinity, hi = Infinity) => variations(chainSigns(chain, lo)) - variations(chainSigns(chain, hi));
+export function sturmCount(chain, lo = -Infinity, hi = Infinity) {
+  return proof(() => countIn(chain, lo, hi));
+}
+// Cauchyjeva meja: vse realne ničle so v (−B, B)
+export function cauchyBound(cs) {
+  const p = trimCs(cs);
+  const n = p.length - 1;
+  let m = Q.ZERO;
+  for (let i = 0; i < n; i++) {
+    const r = p[i].div(p[n]).abs();
+    if (r.cmp(m) > 0) m = r;
+  }
+  return m.add(Q.ONE);
+}
+// Ločeni intervali (lo, hi], v vsakem natanko ena ničla, širine pod relativno 1e−10 (ali do 200 razpolovitev).
+export function isolateRoots(cs, maxSteps = 4000) {
+  return proof(() => {
+    const chain = sturmChain(cs);
+    if (!chain) return null;
+    const B = cauchyBound(chain[0]);
+    const todo = [[B.neg(), B]];
+    const out = [];
+    let steps = 0;
+    while (todo.length) {
+      if (++steps > maxSteps) return null;
+      const [lo, hi] = todo.pop();
+      const n = countIn(chain, lo, hi);
+      if (n === 0) continue;
+      if (n === 1) {
+        out.push(refine(chain, lo, hi));
+        continue;
+      }
+      const m = lo.add(hi).div(new Q(2n));
+      todo.push([lo, m], [m, hi]);
+    }
+    return out.sort((a, b) => a.lo.cmp(b.lo));
+  });
+}
+// Ena ničla brez večkratnosti na (lo, hi]: p(lo) ≠ 0, zato zadošča predznak p (cenejše od celega zaporedja).
+function refine(chain, lo, hi) {
+  const p = chain[0];
+  const sLo = evalQcs(p, lo).sign;
+  for (let i = 0; i < 200; i++) {
+    const w = hi.sub(lo).num();
+    const mag = Math.max(1e-300, Math.abs(lo.num()), Math.abs(hi.num()));
+    if (w <= 1e-10 * mag) break;
+    const m = lo.add(hi).div(new Q(2n));
+    const sm = evalQcs(p, m).sign;
+    if (sm === 0) return { lo: m, hi: m, x: m.num() };
+    if (sm !== sLo) hi = m;
+    else lo = m;
+  }
+  return { lo, hi, x: (lo.num() + hi.num()) / 2 };
+}
+
+/**
+ * Enačba p(x) = 0 (cs: koeficienti) in trditev rešitev sols: [{ s: Surd }] točno ali [{ num }] približno.
+ * Vrne { holds, exact, complete, missing } ali null (stopnja < 1 ali prevelika števila):
+ * holds: vsaka trditev je ničla (točna vrednost točno, približek: ničla na ±10⁻⁶·|x|), exact: vse trditve točne,
+ * complete: true = različnih trditev je toliko kot vseh realnih ničel (Sturm), false = katera manjka, null = ne vemo.
+ */
+export function polyEquationProof(cs, sols) {
+  return proof(() => {
+    const p = trimCs(cs);
+    if (p.length < 2 || p.length - 1 > MAX_PROOF_DEG) return null;
+    const chain = sturmChain(p);
+    if (!chain) return null;
+    const pts = [];
+    for (const sol of sols) {
+      if (sol.s) {
+        if (evalCs(p, sol.s).sign !== 0) return { holds: false, exact: true, complete: null, missing: [] };
+        pts.push({ s: sol.s, x: sol.s.num() });
+      } else {
+        const x = sol.num;
+        const eps = 1e-6 * Math.max(1, Math.abs(x));
+        if (countIn(chain, qFromFloat(x - eps), qFromFloat(x + eps)) < 1) return { holds: false, exact: false, complete: null, missing: [] };
+        pts.push({ x, eps });
+      }
+    }
+    // različne trditve (točne primerjamo točno, približke po oknu ±eps)
+    const distinct = [];
+    for (const a of pts) {
+      const same = distinct.some((b) => {
+        if (a.s && b.s) {
+          try {
+            return cmpS(a.s, b.s) === 0;
+          } catch {
+            return Math.abs(a.x - b.x) < 1e-12 * Math.max(1, Math.abs(a.x));
+          }
+        }
+        return Math.abs(a.x - b.x) <= (a.eps || 0) + (b.eps || 0) + 1e-12 * Math.max(1, Math.abs(a.x));
+      });
+      if (!same) distinct.push(a);
+    }
+    const exact = pts.every((a) => a.s);
+    const total = countIn(chain);
+    if (distinct.length === total) return { holds: true, exact, complete: true, missing: [] };
+    if (distinct.length > total) return { holds: true, exact, complete: null, missing: [] };
+    // manjka vsaj ena ničla: poiščemo jih za povratno informacijo (ponovni poskus AI). Najprej odstranimo
+    // točne racionalne trditve (deljenje z x − q), da iščemo samo v preostanku (hitro tudi pri ničlah do 10¹²).
+    let rest = chain[0];
+    for (const a of distinct) if (a.s?.rational && rest.length > 2) rest = divmodCs(rest, [a.s.u.neg(), Q.ONE]).q;
+    const ex = rest.length <= 3 ? exactRoots(rest) : null;
+    const roots = ex ? ex.map((r) => r.num()) : (isolateRoots(rest) || []).map((r) => r.x);
+    const missing = roots.filter((x) => !distinct.some((a) => Math.abs(a.x - x) <= (a.eps || 0) + 1e-9 * Math.max(1, Math.abs(x))));
+    return { holds: true, exact, complete: false, missing };
+  });
+}
+
+// Realne ničle polinoma stopnje ≤ 2 (po izpostavitvi xᵏ) točno, kot Surd; null, če jih tako ne znamo zapisati.
+export function exactRoots(cs) {
+  return proof(() => {
+    let p = trimCs(cs);
+    if (zeroCs(p)) return null;
+    const out = [];
+    if (p.length > 1 && p[0].zero) {
+      out.push(new Surd(Q.ZERO));
+      while (p.length > 1 && p[0].zero) p = p.slice(1);
+    }
+    const d = p.length - 1;
+    if (d === 1) out.push(new Surd(p[0].neg().div(p[1])));
+    else if (d === 2) {
+      const [c, b, a] = p;
+      const D = b.mul(b).sub(a.mul(c).mul(new Q(4n)));
+      if (D.sign === 0) out.push(new Surd(b.neg().div(a.mul(new Q(2n)))));
+      else if (D.sign > 0) {
+        const r = sqrtS(new Surd(D));
+        const two = new Surd(a.mul(new Q(2n)));
+        out.push(r.neg().sub(b).div(two), r.sub(b).div(two));
+      }
+    } else if (d > 2) return null;
+    const uniq = [];
+    for (const r of out) if (!uniq.some((u) => cmpS(u, r) === 0)) uniq.push(r);
+    return uniq.sort((x, y) => cmpS(x, y));
+  });
+}
+
+const relHoldsSign = (s, op) => (op === "<" ? s < 0 : op === ">" ? s > 0 : op === "<=" ? s <= 0 : op === ">=" ? s >= 0 : s === 0);
+// interval { lo, hi, loClosed, hiClosed } ali { point } s krajišči Surd (null = neskončno)
+function inSet(ivs, x) {
+  return ivs.some((iv) => {
+    if (iv.point) return cmpS(x, iv.point) === 0;
+    const a = iv.lo == null ? 1 : cmpS(x, iv.lo);
+    const b = iv.hi == null ? -1 : cmpS(x, iv.hi);
+    return (a > 0 || (a === 0 && iv.loClosed)) && (b < 0 || (b === 0 && iv.hiClosed));
+  });
+}
+
+/**
+ * Ali je množica ivs natanko množica rešitev sistema neenačb rels: [{ cs, op }] (pomeni p(x) op 0)?
+ * true / false (dokazano), null (kritičnih točk ne znamo zapisati točno, npr. stopnja > 2).
+ * Preveri vse kritične točke (ničle in krajišča) in po eno racionalno točko med vsakima sosednjima.
+ */
+export function inequalityProof(rels, ivs) {
+  return proof(() => {
+    const pts = [];
+    for (const r of rels) {
+      const roots = exactRoots(r.cs);
+      if (!roots) {
+        // konstanten izraz (0 < 5): brez kritičnih točk
+        if (trimCs(r.cs).length === 1 && !zeroCs(trimCs(r.cs))) continue;
+        return null;
+      }
+      pts.push(...roots);
+    }
+    for (const iv of ivs) for (const e of [iv.lo, iv.hi, iv.point]) if (e != null) pts.push(Surd.of(e));
+    const uniq = [];
+    for (const x of pts.sort((a, b) => cmpS(a, b))) if (!uniq.length || cmpS(uniq[uniq.length - 1], x) !== 0) uniq.push(x);
+    const truth = (x) => rels.every((r) => relHoldsSign(evalCs(trimCs(r.cs), x).sign, r.op));
+    const tests = [...uniq];
+    if (!uniq.length) tests.push(new Surd(Q.ZERO));
+    else {
+      tests.push(new Surd(new Q(BigInt(Math.floor(uniq[0].num())) - 1n)));
+      tests.push(new Surd(new Q(BigInt(Math.ceil(uniq[uniq.length - 1].num())) + 1n)));
+      for (let i = 1; i < uniq.length; i++) {
+        const [a, b] = [uniq[i - 1], uniq[i]];
+        const t = a.rational && b.rational ? new Surd(a.u.add(b.u).div(new Q(2n))) : new Surd(qFromFloat((a.num() + b.num()) / 2));
+        if (!(cmpS(a, t) < 0 && cmpS(t, b) < 0)) return null;
+        tests.push(t);
+      }
+    }
+    for (const x of tests) if (truth(x) !== inSet(ivs, x)) return false;
+    return true;
+  });
+}
