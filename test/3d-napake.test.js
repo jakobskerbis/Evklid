@@ -42,7 +42,7 @@ test("WebGL ostane svoje sporočilo, neznana napaka dobi splošno besedilo in im
 test("vsak ključ ima besedilo v slovenščini in v živih jezikih", async () => {
   const { default: SL } = await import("../public/i18n/sl.js");
   const { LIVE_UI_LANGUAGES } = await import("../public/i18n/languages.js");
-  const kljuci = ["a3.oldBrowser", "a3.lowMemory", "a3.lowQuality", "a3.otherError", "a3.errorTech", "a3.updated", "a3.retry", "a3.loadError", "a3.noWebgl"];
+  const kljuci = ["a3.oldBrowser", "a3.lowMemory", "a3.lowQuality", "a3.otherError", "a3.errorTech", "a3.updated", "a3.retry", "a3.loadError", "a3.noWebgl", "a3.noConnection"];
   for (const k of kljuci) assert.ok(SL[k], `sl: ${k}`);
   for (const jezik of LIVE_UI_LANGUAGES.filter((j) => j !== "sl")) {
     const ui = JSON.parse(fs.readFileSync(new URL(`../public/i18n/ui/${jezik}.json`, import.meta.url), "utf8"));
@@ -150,7 +150,8 @@ test("RangeError je pomnilnik samo s sporočilom o pomnilniku ali medpomnilniku"
 });
 
 test("napaka z povezava: true (naloziModel brez povezave) je napaka povezave", () => {
-  assert.equal(na(Object.assign(new Error("model ni na voljo"), { povezava: true })).vrsta, "povezava");
+  const r = na(Object.assign(new Error("povezava"), { povezava: true }));
+  assert.deepEqual([r.vrsta, r.key], ["povezava", "a3.noConnection"]);
 });
 
 test("tehnični razlog: naslov z oklepaji ne pušča poizvedbe, e-pošta je skrita", () => {

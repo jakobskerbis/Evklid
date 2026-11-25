@@ -50,14 +50,16 @@ export function tehnicno(err) {
 
 // Vrsta napake in ključ besedila: { vrsta, key, detail, modul }. detail: HTTP status ali ime napake. modul: napaka uvoza
 // modula, zato »Poskusi znova« osveži stran mimo starih kopij service workerja (osveziMimoStarih). Napaka s
-// `povezava: true` (npr. naloziModel brez povezave) je napaka povezave.
+// `povezava: true` (naloziModel, ko se seznam ali datoteka modela ne naloži) je napaka povezave z besedilom a3.noConnection
+// (kot »Ni povezave« na strani /3d, stran.js niPovezave).
 export function napakaBesedilo(err, { naVoljo = typeof navigator !== "undefined" ? navigator.onLine !== false : true } = {}) {
   if (err?.koda === "webgl") return { vrsta: "webgl", key: "a3.noWebgl", detail: null, modul: false };
   if (err?.koda === "brskalnik") return { vrsta: "brskalnik", key: "a3.oldBrowser", detail: null, modul: false };
   if (err?.koda === "pomnilnik") return { vrsta: "pomnilnik", key: "a3.lowMemory", detail: null, modul: false };
   const ime = String(err?.name || "");
   const sporocilo = String(err?.message ?? err ?? "");
-  if (!naVoljo || err?.povezava === true) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
+  if (err?.povezava === true) return { vrsta: "povezava", key: "a3.noConnection", detail: null, modul: false };
+  if (!naVoljo) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
   if (NESKLADJE.test(sporocilo)) return { vrsta: "posodobitev", key: "a3.updated", detail: null, modul: true };
   if (ime === "SyntaxError" && /JSON|Unrecognized token|token '<'|token </i.test(sporocilo)) return { vrsta: "povezava", key: "a3.loadError", detail: null, modul: false };
   if (ime === "SyntaxError" && !NI_BRSKALNIK.test(sporocilo)) return { vrsta: "brskalnik", key: "a3.oldBrowser", detail: null, modul: false };

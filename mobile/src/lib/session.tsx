@@ -18,6 +18,9 @@ export type Parent = {
   minor: boolean;
   verified: boolean;
   is_admin?: boolean;
+  guest?: boolean;
+  // false: račun s prijavo z Apple brez gesla (server/accounts/index.js publicParent); izvoz in izbris ga potrdita z Apple.
+  has_password?: boolean;
   trial_ends_at: string | null;
   subscription: { status: string; plan: string; seats: number; period_end: string | null; cancel_at_period_end: boolean } | null;
 };
@@ -53,8 +56,19 @@ const LEGACY_SLUGS = (brand.legacy || []).map((l: { slug?: string }) => l.slug |
 // gre vse, kar je od računa (src/lib/zasebnost.js): izbrani profil, račun in profili, paketi vaj in neposlani
 // odgovori vseh profilov, časi preverjanja, zavihek Uči, deljene slike in fotografije nalog v predpomnilniku; spletna stran
 // v aplikaciji pobriše svoje osebne podatke (web-state.ts requestWebClear). Nastavitve naprave ostanejo.
+// Kopija »Prenesi moje podatke« (src/app/export-data.tsx) z osebnimi podatki vseh profilov: zaslon jo pobriše ob odhodu,
+// tu še ob zagonu aplikacije in koncu seje, če je bila aplikacija med deljenjem ugasnjena (pregled #1037).
+export const EXPORT_FILE = `${brand.slug}-podatki.json`;
+export function removeExportCopy() {
+  try {
+    const f = new File(Paths.cache, EXPORT_FILE);
+    if (f.exists) f.delete();
+  } catch {}
+}
+
 function clearDevice() {
   forgetOffline();
+  removeExportCopy();
   pocistiShrambo(Storage, brand.slug, LEGACY_SLUGS);
   requestWebClear();
   try {
@@ -123,6 +137,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       await loadSession();
       // Brez seje (npr. odjava v starejši različici, ki podatkov ni brisala): ostanki prejšnjega računa gredo.
       if (!hasSession()) clearDevice();
+      else removeExportCopy();
       setSignedIn(hasSession());
       await refresh().catch(() => {});
       setReady(true);

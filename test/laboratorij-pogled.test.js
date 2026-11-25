@@ -3,6 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import SL from "../public/i18n/sl.js";
 import { SIM_TOPICS, simsForTopic, labExperiments, labKey, LAB_INFO } from "../public/sim/katalog.js";
 import { ENGINES } from "../public/sim/index.js";
 import { labList } from "../server/laboratorij.js";
@@ -70,4 +71,35 @@ test("lab view: tab in »Uči se«, i18n and the tutor's open-window command", (
   assert.match(html, /<section id="view-lab" class="uci-pane/);
   assert.ok(WINDOW_VIEWS.includes("lab"));
   assert.equal(openWindowIntent("odpri laboratorij").view, "lab");
+});
+
+test("»Preveri se« po poskusu (povezave C4): vaja iste teme, ← in Nazaj vrneta v poskus", () => {
+  const lab = fs.readFileSync(new URL("../public/laboratorij.js", import.meta.url), "utf8");
+  const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(lab, /x\.locked \|\| !D\.practice \|\| !vajaTeme\(x\)\.length \? ""/, "zaklenjen poskus gumba nima");
+  assert.match(lab, /data-lab-practice="\$\{esc\(tp\.id\)\}"/);
+  assert.match(lab, /teme\.some\(\(tp\) => tp\.path === data\.myPath\) \? data\.myPath/, "najprej učenčeva pot");
+  assert.match(app, /practice: async \(id\) => \{[\s\S]*?setBack\("uci"\);[\s\S]*?nextPractice\(\);/);
+  assert.match(app, /\["competition", "exams", "uci"\]\.includes\(state\.backTo\)/, "tipka Nazaj iz teme vrne v Uči se");
+  assert.match(app, /name === "uci" && state\.backTo === "uci"\) setBack\("path"\)/, "vrnitev v poskus porabi »← Laboratorij«");
+  for (const k of ["lab.check", "lab.checkText"]) assert.ok(SL[k], k);
+});
+
+test("povezave C3: graf meritev izpiše formulo iz lekcije (prvih 5 poskusov)", () => {
+  const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
+  assert.match(read("lab.js"), /if \(formula\) wrap\.append\(h\("p", \{ class: "lab-graph-formula", html: `Formula: \$\{formula\}` \}\)\)/);
+  assert.ok(read("lab-fiz.js").includes("formula: tex(String.raw`I = \\frac{U}{R}`)"));
+  assert.ok(read("lab-elektrika.js").includes("formula: tex(String.raw`R = \\frac{U}{I}`)"));
+  assert.match(read("lab-sile.js"), /formula: "<i>F<\/i> = <i>k<\/i> · <i>x<\/i>"/);
+  assert.match(read("lab-optika.js"), /formula: "<i>n<\/i>₁ sin α = <i>n<\/i>₂ sin β"/);
+  assert.ok(read("lab-optika.js").includes("formula: tex(String.raw`\\frac{1}{f} = \\frac{1}{a} + \\frac{1}{b}`)"));
+});
+
+test("povezave C3: druga skupina formul (gostota, vzgon, tlak, sila na vodnik), oznake kot v poskusu", () => {
+  const read = (p) => fs.readFileSync(new URL(`../public/sim/${p}`, import.meta.url), "utf8");
+  const sile = read("lab-sile.js");
+  assert.ok(sile.includes('formula: "<i>m</i> = ρ · <i>V</i>"'));
+  assert.ok(sile.includes('formula: "<i>F</i><sub>vzg</sub> = ρ<sub>tek</sub> · <i>g</i> · <i>V</i><sub>izp</sub>"'));
+  assert.ok(sile.includes('formula: "<i>p</i> = ρ · <i>g</i> · <i>h</i> = ρ<sub>v</sub> · <i>g</i> · Δ<i>h</i>"'));
+  assert.equal(read("lab-magnetizem.js").split('formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>"').length - 1, 2);
 });

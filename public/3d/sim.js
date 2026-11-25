@@ -51,6 +51,7 @@ export function sim3d(el, opts = {}) {
       // Napaka: sporočilo po vrsti napake (povezava, star brskalnik, pomnilnik …) namesto praznega okvirja; p je ob gradnji
       // že odstranjen. »Poskusi znova« naloži model še enkrat. i18n in napake.js uvozimo ločeno: brez povezave se
       // napake.js morda ne naloži, besedilo (i18n.js je navadno že naložen) in gumb pa morata ostati (kot uci-se.js show3d).
+      // Izpad povezave pri modelu (naloziModel vrže povezava: true) gre po isti poti: a3.noConnection in en »Poskusi znova«.
       const t = await import("/i18n.js").then((m) => m.t, () => () => "3D");
       const { napakaVsebina } = await import("./napake.js").catch(() => ({}));
       box?.remove();
@@ -65,7 +66,7 @@ export function sim3d(el, opts = {}) {
       if (napakaVsebina) p.replaceChildren(...napakaVsebina(err, { t, znova, razredGumba: "secondary" }));
       else {
         const s = document.createElement("p");
-        s.textContent = t("a3.loadError");
+        s.textContent = t(err?.povezava ? "a3.noConnection" : "a3.loadError");
         const b = document.createElement("button");
         b.type = "button";
         b.className = "secondary";
