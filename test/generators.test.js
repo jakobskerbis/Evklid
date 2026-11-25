@@ -52,7 +52,7 @@ test("vsi generatorji vrnejo veljavne naloge pri vseh težavnostih", () => {
           checkTask(t, `${g.id}${year ? ` ${year}. r.` : ""} L${level} seed ${seed}`);
           reached.add(t.generator);
           // Dvojezični generatorji (indijski izpiti): tudi hindijska naloga.
-          if (g.langs?.includes("hi")) checkTask(generateTask(g.topics[0], level, seed * 7919 + level, "hi", year), `${g.id} L${level} seed ${seed} hi`);
+          if (g.langs?.includes("hi")) checkTask(generateTask(g.topics[0], level, seed * 7919 + level, "hi", year), `${g.id}${year ? ` ${year}. r.` : ""} L${level} seed ${seed} hi`);
         }
       }
     }
