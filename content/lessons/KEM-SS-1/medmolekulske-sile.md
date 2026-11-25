@@ -226,6 +226,18 @@ Vrelišča od zgoraj navzdol: $-162\,°\mathrm{C}$, $-85\,°\mathrm{C}$, $100\,�
 ~ Nobeno topilo ne topi vsega. Nepolarni heksan topi nepolarne snovi, na primer maščobe.
 > Podobno se topi v podobnem: skupine $\mathrm{O{-}H}$ v sladkorju tvorijo vodikove vezi z vodo, zato se sladkor v vodi dobro raztaplja.
 
+? Za izparevanje $1\,\mathrm{mol}$ vode porabimo okoli $41\,\mathrm{kJ}$ (premagamo medmolekulske sile). Za razbitje vseh vezi $\mathrm{O{-}H}$ v $1\,\mathrm{mol}$ vode pa okoli $926\,\mathrm{kJ}$. Kolikokrat več energije potrebujemo za razbitje vezi? (Na celo število.)
+= 23 | 0,5
+~ 885 | To je razlika energij. Vprašanje sprašuje, kolikokrat več, torej po razmerju.
+~ 0,04 | Ulomek si obrnil: deli večjo energijo z manjšo.
+> $\dfrac{926\,\mathrm{kJ}}{41\,\mathrm{kJ}} \approx 23$. Kemijske vezi so več kot dvajsetkrat močnejše, zato pri vrenju molekule vode ostanejo cele.
+
+? Koliko vodikovih vezi lahko ena molekula vode največ tvori s sosednjimi molekulami (kot v ledu)?
+= 4
+~ 2 | To so le vezi prek njenih dveh vodikovih atomov. Kisik ima še dva prosta elektronska para, vsak lahko sprejme vodik sosednje molekule.
+~ 1 | Ena molekula vode ima dva vodika in dva prosta elektronska para na kisiku.
+> Molekula vode ima $2$ vodika na kisiku (vsak tvori vez s sosedom) in $2$ prosta elektronska para na kisiku (vsak privlači vodik soseda): skupaj $4$ vodikove vezi.
+
 :::simboli
 M_r | relativna molekulska masa | | – | vsota A_r vseh atomov v molekuli
 A_r | relativna atomska masa | | – | iz periodnega sistema

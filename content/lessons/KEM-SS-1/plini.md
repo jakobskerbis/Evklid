@@ -235,6 +235,17 @@ Pozor na dogovore. Starejši »normalni pogoji« so $0\,^\circ\mathrm{C}$ in $10
 + $0{,}125\,\mathrm{mol}$
 > $n = \dfrac{pV}{RT} = \dfrac{101{,}3 \cdot 3{,}0}{8{,}314 \cdot 293} \approx 0{,}125\,\mathrm{mol}$.
 
+? Kolikšna je masa $2{,}24\,\mathrm{L}$ ogljikovega dioksida pri normalnih pogojih? ($M(\mathrm{CO_2}) = 44\,\mathrm{g/mol}$)
+= 4,4 g | 0,05
+~ 98,6 | Prostornine ne množiš z molsko maso. Najprej izračunaj množino $n = \dfrac{V}{V_m}$.
+~ 0,1 | To je množina v molih. Pomnoži jo še z molsko maso.
+> $n = \dfrac{V}{V_m} = \dfrac{2{,}24\,\mathrm{L}}{22{,}4\,\mathrm{L/mol}} = 0{,}100\,\mathrm{mol}$, $m = n \cdot M = 0{,}100\,\mathrm{mol} \cdot 44\,\mathrm{g/mol} = 4{,}4\,\mathrm{g}$.
+
+? Jeklenka s prostornino $10\,\mathrm{L}$ vsebuje $2{,}0\,\mathrm{mol}$ dušika pri $27\,^\circ\mathrm{C}$. Kolikšen je tlak v jeklenki? Rezultat vpiši v kPa na cele kPa.
+= 499 kPa | 1
+~ 44,9 | Temperatura mora biti v kelvinih: $T = 27 + 273 = 300\,\mathrm{K}$.
+> $p = \dfrac{nRT}{V} = \dfrac{2{,}0\,\mathrm{mol} \cdot 8{,}314\,\mathrm{kPa \cdot L/(mol \cdot K)} \cdot 300\,\mathrm{K}}{10\,\mathrm{L}} \approx 499\,\mathrm{kPa}$, približno petkrat več od zračnega tlaka.
+
 :::simboli
 V_m | molska prostornina | V_m = \frac{V}{n} | L/mol | pri normalnih pogojih $22{,}4\,\mathrm{L/mol}$
 V | prostornina plina | V = \frac{nRT}{p} | L

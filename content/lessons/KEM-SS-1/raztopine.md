@@ -251,6 +251,18 @@ $$c_1 V_1 = c_2 V_2$$
 + $0{,}20\,\text{mol/L}$
 > Iz $c_1 V_1 = c_2 V_2$ sledi $c_2 = \dfrac{1{,}0 \cdot 100}{500} = 0{,}20\,\text{mol/L}$. Odgovor $0{,}17\,\text{mol/L}$ bi dobil, če bi $500\,\text{mL}$ vode *dodal* ($V_2 = 600\,\text{mL}$), naloga pa pravi, da je končna prostornina $500\,\text{mL}$.
 
+? Koliko gramov natrijevega hidroksida ($M = 40\,\text{g/mol}$) potrebuješ za $250\,\text{mL}$ raztopine s koncentracijo $0{,}20\,\text{mol/L}$?
+= 2,0 g | 0,02
+~ 2000 | Prostornino moraš pretvoriti v litre: $250\,\text{mL} = 0{,}250\,\text{L}$.
+~ 0,05 | To je množina v molih. Pomnoži jo še z molsko maso.
+> $n = c \cdot V = 0{,}20\,\text{mol/L} \cdot 0{,}250\,\text{L} = 0{,}050\,\text{mol}$, $m = n \cdot M = 0{,}050\,\text{mol} \cdot 40\,\text{g/mol} = 2{,}0\,\text{g}$.
+
+? Fiziološka raztopina ima masni delež natrijevega klorida $0{,}90\,\%$. Koliko gramov soli je v $250\,\text{g}$ te raztopine?
+= 2,25 g | 0,01
+~ 225 | $0{,}90\,\%$ je $0{,}0090$, ne $0{,}90$. Odstotek pred računanjem deli s $100$.
+~ 277,8 | Maso raztopine si delil z masnim deležem. Velja $m(\text{topljenec}) = w \cdot m(\text{raztopina})$.
+> $m(\mathrm{NaCl}) = w \cdot m(\text{raztopina}) = 0{,}0090 \cdot 250\,\text{g} = 2{,}25\,\text{g}$.
+
 :::simboli
 m | masa (topljenca, topila ali raztopine) | | g | m(raztopina) = m(topljenec) + m(topilo)
 w | masni delež topljenca | w = \frac{m(\text{topljenec})}{m(\text{raztopina})} | – | v odstotkih: pomnožimo s 100

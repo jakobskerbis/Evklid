@@ -250,6 +250,18 @@ Postopek za katerikoli par atomov, na primeru kalija ($\mathrm{EN} = 0{,}8$), br
 ~ V soli ni molekul $\mathrm{NaCl}$, ampak mreža ionov.
 > Kovinska vez ne veže kationov na točno določene sosede, zato je kovina kovna. V ionskem kristalu premik za eno mesto postavi $\mathrm{Na^+}$ ob $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ ob $\mathrm{Cl^-}$; odboj kristal razkolje.
 
+? Aluminij (3 valenčni elektroni) in kisik (6 valenčnih elektronov) tvorita ionsko spojino $\mathrm{Al_2O_3}$. Koliko elektronov skupaj preide z atomov aluminija na atome kisika v eni formulski enoti?
+= 6
+~ 3 | Toliko elektronov odda en atom aluminija. V formulski enoti sta dva.
+~ 2 | Toliko elektronov sprejme en atom kisika. Atomi kisika so trije.
+> Vsak $\mathrm{Al}$ odda $3$ elektrone ($\mathrm{Al^{3+}}$), vsak $\mathrm{O}$ jih sprejme $2$ ($\mathrm{O^{2-}}$). V $\mathrm{Al_2O_3}$: $2 \cdot 3 = 3 \cdot 2 = 6$ elektronov.
+
+? Koliko skupnih (veznih) elektronskih parov je v molekuli $\mathrm{CO_2}$ ($\mathrm{O{=}C{=}O}$)?
+= 4
+~ 2 | Vezi sta dve, a vsaka je dvojna: vsaka dvojna vez sta dva skupna para.
+~ 8 | To je število veznih elektronov, ne parov. En par sta dva elektrona.
+> Ogljik ima $4$ valenčne elektrone in mu do okteta manjkajo $4$, zato tvori $4$ vezi: dve dvojni vezi s kisikom, skupaj $4$ skupne pare ($8$ elektronov).
+
 :::simboli
 \Delta\mathrm{EN} | razlika elektronegativnosti | \Delta\mathrm{EN} = \lvert \mathrm{EN}_1 - \mathrm{EN}_2 \rvert | – | do 0,4 nepolarna, do 1,7 polarna kovalentna, nad tem ionska
 \mathrm{EN} | elektronegativnost | | – | po Paulingovi lestvici; največja pri fluoru (≈ 4,0)

@@ -229,6 +229,17 @@ Rezultat: $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$. Vrsta: spajanje.
 ~ Indeks $2$ v $\mathrm{H_2O}$ velja samo za vodik. V vsaki molekuli vode je en atom kisika.
 > Desno: $8 \cdot 2 + 10 = 26$ atomov kisika. Levo: $13 \cdot 2 = 26$. Enačba je urejena.
 
+? Uredi enačbo $\mathrm{Fe + O_2 \rightarrow Fe_2O_3}$ z najmanjšimi celimi koeficienti. Kolikšna je vsota vseh koeficientov?
+= 9
+~ 4,5 | Koeficienti morajo biti cela števila. Enačbo z $\tfrac32\,\mathrm{O_2}$ pomnoži z $2$.
+~ 3 | Enačba ni urejena: kisik je levo v parih, desno po trije atomi. Koeficienti so večji od $1$.
+> $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$: levo $4$ atomi Fe in $6$ atomov O, desno prav tako. Vsota $4 + 3 + 2 = 9$.
+
+? Uredi enačbo zgorevanja etanola $\mathrm{C_2H_5OH + O_2 \rightarrow CO_2 + H_2O}$. Kolikšen koeficient stoji pred $\mathrm{O_2}$, če je pred etanolom $1$?
+= 3 | 0,1
+~ 3,5 | Pozabil si na kisik v etanolu. Desno je $7$ atomov kisika, en je že v etanolu, zato iz $\mathrm{O_2}$ pride le $6$.
+> $\mathrm{C_2H_5OH + 3\,O_2 \rightarrow 2\,CO_2 + 3\,H_2O}$: desno $2 \cdot 2 + 3 = 7$ atomov kisika, levo $1 + 3 \cdot 2 = 7$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol
 m | masa snovi | | g

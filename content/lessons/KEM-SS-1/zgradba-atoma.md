@@ -254,6 +254,18 @@ $$A_r = \sum_i x_i\, m_i$$
 + $1$ nevtron in $0$ elektronov
 > $N = 3 - 2 = 1$. Nevtralni helij ima $2$ elektrona, naboj $2+$ pomeni dva manj, torej $0$.
 
+? Galij ima izotopa $^{69}\mathrm{Ga}$ (delež $60\,\%$) in $^{71}\mathrm{Ga}$ (delež $40\,\%$). Kolikšna je njegova relativna atomska masa? (Mase izotopov vzemi kar enake masnim številom.)
+= 69,8 | 0,05
+~ 70,0 | To je navadno povprečje. Izotopa nista enako pogosta: vsako maso pomnoži z njenim deležem.
+~ 70,2 | Deleža si zamenjal. Pogostejši je lažji izotop $^{69}\mathrm{Ga}$.
+> $A_r = 0{,}60 \cdot 69 + 0{,}40 \cdot 71 = 41{,}4 + 28{,}4 = 69{,}8$. Rezultat je bližje $69$, ker je tega izotopa več.
+
+? Koliko elektronov ima ion $^{56}_{26}\mathrm{Fe^{3+}}$?
+= 23
+~ 29 | Pozitiven naboj pomeni, da je atom elektrone oddal, zato jih ima manj kot protonov.
+~ 30 | To je število nevtronov, $56 - 26$.
+> Nevtralni atom železa ima $Z = 26$ elektronov. Naboj $3+$ pomeni tri elektrone manj: $26 - 3 = 23$.
+
 :::simboli
 s | podlupina s | | | ena orbitala, največ 2 elektrona
 p | podlupina p | | | tri orbitale, največ 6 elektronov; p⁺ je proton

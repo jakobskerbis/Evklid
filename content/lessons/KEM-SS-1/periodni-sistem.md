@@ -294,6 +294,17 @@ Paulingova lestvica je zasnovana tako, da elektronegativnost povezuje z energijo
 ~ Pozabil si absolutno vrednost. $\Delta\mathrm{EN} = |1{,}3 - 3{,}4| = 2{,}1$ je vedno pozitivna.
 > $\Delta\mathrm{EN} = |1{,}3 - 3{,}4| = 2{,}1 > 1{,}7$, zato je vez ionska: magnezij odda dva elektrona kisiku ($\mathrm{Mg^{2+}}$ in $\mathrm{O^{2-}}$).
 
+? Koliko valenčnih elektronov ima atom elementa, ki je v 3. periodi in 15. skupini?
+= 5
+~ 15 | Pri skupinah od 13. do 18. je število valenčnih elektronov enako številki skupine minus $10$.
+~ 3 | To je številka periode. Ta pove število lupin, ne valenčnih elektronov.
+> V 15. skupini imajo atomi $15 - 10 = 5$ valenčnih elektronov. Element je fosfor: $2,\ 8,\ 5$.
+
+? Element je v 4. periodi in 2. skupini. Kolikšno je njegovo vrstno število $Z$?
+= 20
+~ 12 | To je magnezij, ki je v 3. periodi. V 4. periodi so atomi z eno lupino več.
+> Prve tri periode imajo $2 + 8 + 8 = 18$ elementov. V 4. periodi sta kalij ($19$) in kalcij ($20$), zato je element kalcij, $Z = 20$.
+
 :::simboli
 F | privlačna sila jedra na valenčni elektron | F \propto \frac{Z_\text{ef}\cdot e^2}{r^2} | N | ∝ pomeni »je sorazmerna z« (Coulombov zakon)
 Z_{\text{ef}} | efektivni naboj jedra | | – | manjši od Z, ker notranji elektroni senčijo jedro
