@@ -51,18 +51,22 @@ blok RACUN), `vrsta` (`VRSTE`), `predpostavke`, `obmocje`, `enote`, `prejsnji` (
 sledi), `pravilo`, `dokazi` (`{ motor, holds, how, complete, ms, razlicica }`), `dokaz` (Lean izrek in sha256) in
 `izid` (status, izračunan iz dokazov; vir ga ne nastavi sam). `napakeZapisa(t)` preveri obliko, ne matematike.
 
-## Znana omejitev: SymPy še ne pove, kako je preveril
+## Način preverjanja SymPy (PV-03)
 
-Vsi ukazi SymPy, ki gredo skozi `is_zero` (`server/cas/worker.py`: `equal`, vstavljanje rešitev pri `solve`,
-`diff`, nedoločeni `int`, `value`), ob neuspehu simbolnega poenostavljanja preidejo na preizkus v naključnih točkah
-(ustavi se pri 8 ujemanjih, zadošča jih 5) in vrnejo isti `ok: true` kot simbolni dokaz; tudi konstanto sprejmejo kot
-0, ko je |N(z, 30)| < 10⁻¹². Zato:
+Worker (`server/cas/worker.py`) v vsakem odgovoru vrne `how`, najšibkejši način, ki ga je ukaz uporabil
+(dogovor s profilom B na #539):
 
-- izidov bloka RACUN (`server/racun.js`) še ne preslikamo v `izracunano`;
-- »Preverjeno« skenerja, ki temelji na SymPy `ok: true` (`server/scan.js` `verifyAiFull`: izrazi, odvodi), se
-  preslika v `izracunano`, čeprav je lahko le numerično. To je znana precenitev do PV-03.
+- `symbolic`: simbolni račun (poenostavitev na 0, `solveset`, točna števila, ki jih SymPy odloči sam);
+- `numeric`: števila na 30 mest (konstanta z decimalkami, |N| < 10⁻¹²), sprejem s toleranco zapisa (`decimals_tol`,
+  približki rešitev, zaokroženi vmesni rezultati, enote z razmerjem, ki ni točno 1), numeričen določeni integral,
+  realnost korenov in logaritmov, ki je SymPy ne dokaže, in popolnost periodičnih rešitev samo na [−20, 20];
+- `sampled`: `is_zero` je odločil s preizkusom v naključnih točkah.
 
-PV-03 doda v odgovor workerja način preverjanja (`symbolic` ali `sampled`), dogovor s profilom B na #539.
+`ok` in `why` sta nespremenjena; `server/cas.js` `casCheck` vrne `how`, kadar ga worker pošlje. Pravilo: SymPy »drži«
+je `izracunano` samo pri `how: "symbolic"`, sicer največ `numericno` (meja motorja `sympy` v `trditev.js` ostane
+`exact`, vir pa navede `how` po workerju). Skener (`verifyAiFull`) to že upošteva: SymPy, ki ni simbolno dokazal, da
+največ »Numerično preverjeno«, razen če je lokalna točna algebra odgovor dokazala. Bloka RACUN (`server/racun.js`,
+profil B) še ne preslikamo v statuse; ko ga, velja isto pravilo.
 
 ## Meritev (PV-02)
 
@@ -80,7 +84,7 @@ odgovor ima mejo `najvec: "numericno"`.
 Dogovora: rešitve so realne (kompleksni rešitvi pri realni enačbi sta napaka); identiteta, kot je
 `(x^2-4)/(x-2) = x+2`, šteje kot pravilna poenostavitev (izključeno točko preverja skupina »luknja«).
 
-`node scripts/meri-preverjanje.mjs [--json pot]` izmeri tri motorje: `sympy` (surov izid workerja), `skener`
+`node scripts/meri-preverjanje.mjs [--json pot]` izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
 (`verifyAiFull`, kot ga vidi učenec) in `skener-lokalno` (isto brez SymPy). Razredi: napačno potrjena, previsok
 status, lažni alarm, napačna s šibkim statusom (učenec vidi »delno« ali »numerično«), izjema, ujeta napaka, potrjena,
 šibkejši status, nepreverjena. `test/preverjanje-meritev.test.js` (CI ima SymPy prek `npm ci`, postinstall) pade ob
@@ -92,9 +96,11 @@ Izhodišče 25. 11. 2026:
 | Motor | Trditev | Napačno potrjene | Ujete napake | Napačne s šibkim statusom | Lažni alarmi | Pravilne potrjene |
 | --- | --- | --- | --- | --- | --- | --- |
 | sympy (surovo) | 384 | 5 | 187/193 | 0 | 0 | 179/191 (+12 previsoko) |
+| sympy z načinom (PV-03) | 384 | 0 | 187/193 | 5 | 0 | 171/191 |
 | skener | 363 | **4** | 178/182 | 0 | 5 | 153/181 (+1 previsoko) |
 | skener-lokalno | 363 | 0 | 172/182 | 5 | 8 | 101/181 |
 | skener po popravku | 363 | 0 | 178/182 | 0 | 5 | 154/181 |
+| skener s PV-03 | 363 | 0 | 178/182 | 0 | 5 | 153/181 |
 | skener-lokalno po popravku | 363 | 0 | 173/182 | 4 | 7 | 106/181 |
 
 0 napačno potrjenih na tem naboru pomeni pri 95-odstotnem zaupanju delež pod približno 3/n (n = število napačnih
@@ -111,8 +117,8 @@ Ugotovitve:
   skener pokaže »Nepreverjeno«; odvod polinoma `verify.js` preveri točno (ulomki); zapis `1.4e6` se lokalno prebere kot
   1,4·10⁶ (prej kot 1,4·e·6). **Ostane odprto:** popravek velja le za polinome. Napačen odgovor z velikimi koeficienti
   v nepolinomskem izrazu (npr. `(x+1000000)^2 + sin(x)` ali `e*(x+1000000)^3` za odvod) še dobi »Preverjeno«, ker
-  vzroka v `is_zero` (relativna toleranca glede na največji člen) ni popravil; to reši PV-03 (worker vrne način
-  preverjanja, vzorčeno → največ »Numerično«).
+  vzroka v `is_zero` (relativna toleranca glede na največji člen) ni popravil. **PV-03:** worker zdaj pove, da je
+  odločil v točkah (`how: "sampled"`), zato skener tam pokaže največ »Numerično preverjeno«.
 - Skener: »≈1414« (zaokroženo na celo število) je dobil »Preverjeno«, ker je regex `rounded` v `verifyAiFull`
   prepoznal le decimalno piko. **Popravljeno:** »≈«, »approx« in znanstveni zapis (2e6, 2*10^6) so približek.
 - Odprto, skener: pravilen določeni integral z mejo iz več znakov (`∫_0^pi sin(x) dx = 2`, `∫_1^10 1/x dx = ln(10)`) dobi
@@ -123,7 +129,8 @@ Ugotovitve:
   »Delno preverjeno«.
 - Surov SymPy: zaokrožene decimalke sprejme s toleranco (`decimals_tol`) in vrne `ok: true` (12 previsokih
   statusov); zmnožek velikih števil v zapisu `1.2193263111263526*10^17` (napaka 9) sprejme, ker `value` računa s
-  plavajočo vejico. Kdor bi `ok: true` preslikal v `izracunano`, bi te precenil: PV-03 (worker vrne način preverjanja).
+  plavajočo vejico. **PV-03:** vsi ti odgovori imajo `how` ≠ `symbolic`, zato so največ `numericno`; surov SymPy z
+  načinom nima nobene napačno potrjene trditve in nobenega previsokega statusa, pet napačnih pa dobi `numericno`.
 
 ## Pravilo za nove dele aplikacije
 

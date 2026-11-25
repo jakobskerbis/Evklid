@@ -99,7 +99,8 @@ function start() {
         if (w) {
           waiting.delete(msg.id);
           clearTimeout(w.timer);
-          w.resolve({ ok: msg.ok, why: msg.why || "" });
+          // how (PV-03): symbolic | numeric | sampled; samo, kadar ga worker pošlje
+          w.resolve({ ok: msg.ok, why: msg.why || "", ...(typeof msg.how === "string" ? { how: msg.how } : {}) });
         }
       }
     });

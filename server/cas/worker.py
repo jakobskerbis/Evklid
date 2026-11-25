@@ -3,6 +3,8 @@
 #   noter: {"id": 1, "op": "solve", "args": ["x^2-5*x+6=0", "x", "2, 3"]}
 #   ven:   {"id": 1, "ok": true}  |  {"id": 1, "ok": false, "why": "..."}  |  {"id": 1, "ok": null, "why": "..."}
 # ok = null pomeni »koda tega ne zna preveriti« (ni napaka odgovora).
+# how (PV-03, docs/preverjanje.md): najšibkejši način, ki ga je ukaz uporabil: »symbolic« (simbolni račun),
+# »numeric« (število na 30 mest, toleranca zapisa, popolnost samo na odseku) ali »sampled« (naključne točke).
 # Varnost: besedilo piše model, zato ga razčlenimo samo z belim seznamom imen (brez pik, podčrtajev, narekovajev),
 # vsak ukaz ima časovno omejitev (SIGALRM) in proces omejen pomnilnik.
 import json
@@ -28,6 +30,15 @@ from sympy.parsing.sympy_parser import (
 from sympy.physics import units as U
 
 TIME_LIMIT = 6  # sekund na ukaz
+
+# Način preverjanja trenutnega ukaza (handle ga ponastavi): velja najšibkejši uporabljeni.
+_NACINI = {"symbolic": 2, "numeric": 1, "sampled": 0}
+_nacin = ["symbolic"]
+
+
+def oslabi(nacin):
+    if _NACINI[nacin] < _NACINI[_nacin[0]]:
+        _nacin[0] = nacin
 TRANSFORMS = standard_transformations + (implicit_multiplication, convert_xor)
 
 
@@ -192,6 +203,9 @@ def is_zero(expr, syms=None):
         if z == 0:
             return True
         if z.is_number:
+            if not z.atoms(sp.Float) and z.is_zero is not None:
+                return bool(z.is_zero)  # točna števila: SymPy odloči simbolno (npr. 2 − 3 ≠ 0); decimalke ostanejo številske
+            oslabi("numeric")
             v = complex(sp.N(z, 30))
             return abs(v) < 1e-12
     except Timeout:
@@ -199,6 +213,7 @@ def is_zero(expr, syms=None):
     except Exception:
         pass
     free = sorted(expr.free_symbols, key=str)
+    oslabi("sampled" if free else "numeric")
     r = _sample_zero(expr, free, 0)
     if r is False and free:
         # pravilo, ki velja samo za pozitivne vrednosti (ln(a*b) = ln a + ln b, sqrt(a*b) …): ne vemo
@@ -265,6 +280,7 @@ def same_value(exact, claimed_text, variables=None):
         ev, cv = complex(sp.N(exact, 30)), complex(sp.N(claimed, 30))
     except Exception:
         return d
+    oslabi("numeric")  # od tu naprej primerjamo števila (toleranca zapisa)
     if tol is None:
         # celo število ali ulomek brez decimalk: zaokroženo na celo je dovoljeno samo, če je napisano »≈«;
         # brez »≈« in za manj kot pol enote ne vemo, ali je mišljeno zaokroženo (ni napaka, ni potrjeno)
@@ -329,6 +345,15 @@ def _real_ok(e, x, v):
         if isinstance(a, sp.Pow) and (not a.exp.is_number or a.exp.is_integer):
             continue
         try:
+            im = sp.simplify(sp.im(a.subs(x, v)))
+            if im == 0:
+                continue  # realnost dokazana simbolno
+        except Timeout:
+            raise
+        except Exception:
+            pass
+        oslabi("numeric")
+        try:
             val = complex(sp.N(a.subs(x, v), 20))
         except Exception:
             continue
@@ -382,6 +407,7 @@ def solve_one(e, x, claim_text, names):
             if r is True and real and not _real_ok(e, x, v):
                 r = False
             if r is False and tol is not None:
+                oslabi("numeric")  # zaokrožena rešitev: sprejeta le s toleranco
                 approx.append((c, ex, tol))
                 break
             if r is False:
@@ -440,6 +466,7 @@ def solve_one(e, x, claim_text, names):
         part = None
     if part is None or not part.is_FiniteSet:
         raise Unsure("neskončna množica rešitev")
+    oslabi("numeric")  # popolnost periodičnih rešitev samo na [−20, 20]
     found = [f for f in part if ok_found(f)]
     bad = approx_hit(found)
     if bad:
@@ -451,6 +478,7 @@ def solve_one(e, x, claim_text, names):
 
 
 def _in_family(f, ex, k):
+    oslabi("numeric")  # član družine iščemo s števili (k = −12 … 12)
     fv = complex(sp.N(f))
     for kv in range(-12, 13):
         try:
@@ -524,6 +552,8 @@ def solve_system(eqs, vs, claim_text, names):
         except Exception:
             return False
 
+    if approx:
+        oslabi("numeric")
     for pt, tol in approx:
         if not any(close(s, pt, tol) for s in sols):
             return False, "rešitev ne zadošča vsem enačbam"
@@ -565,6 +595,7 @@ def op_int(f, var, *rest):
         a, b = parse(rest[0]), parse(rest[1])
         val = sp.integrate(fe, (x, a, b))
         if val.has(sp.Integral):
+            oslabi("numeric")
             val = sp.Integral(fe, (x, a, b)).evalf(30)
         ok = same_value(val, rest[2])
         if ok is None:
@@ -659,6 +690,7 @@ def op_value(expr, claimed):
     ok = same_value(e, claimed)
     # Zaokroženi vmesni rezultati samo v mejah SLACK_MAX_REL in EXCESS_MAX_REL; zunaj njih ostane stroga sodba.
     if ok is not True and rounded_operands_ok(e, expr, claimed):
+        oslabi("numeric")
         ok = True
     if ok is None:
         raise Unsure("vrednosti ne znam primerjati")
@@ -720,6 +752,8 @@ def op_units(expr, claimed):
     if ratio.free_symbols or ratio.atoms(U.Quantity):
         return False, "enoti se ne ujemata"
     tol = decimals_tol(claimed)
+    if ratio != 1:
+        oslabi("numeric")  # razmerje vrednosti ni točno 1: primerjava števil
     rv = float(sp.N(ratio))
     cval = abs(lead_number(claimed) or 0)
     if tol is None:
@@ -739,9 +773,10 @@ def handle(req):
     if not op:
         return {"ok": None, "why": "neznan ukaz"}
     signal.alarm(TIME_LIMIT)
+    _nacin[0] = "symbolic"
     try:
         ok, why = op(*[str(a) for a in req.get("args", [])])
-        return {"ok": bool(ok), "why": why or ""}
+        return {"ok": bool(ok), "why": why or "", "how": _nacin[0]}
     except Unsure as e:
         return {"ok": None, "why": str(e)}
     except Timeout:

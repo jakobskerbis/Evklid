@@ -1,0 +1,43 @@
+// PV-03 (docs/preverjanje.md): worker v odgovoru pove, kako je preveril (how: symbolic | numeric | sampled).
+// »Računsko preverjeno« sme biti samo simbolni dokaz; vzorčenje v točkah in toleranca zapisa nista dokaz.
+import { test, after } from "node:test";
+import assert from "node:assert/strict";
+import { casCheck, casAvailable, casStop } from "../server/cas.js";
+
+const HAVE = await casAvailable();
+after(() => casStop());
+const nacin = async (op, args) => {
+  const r = await casCheck(op, args);
+  return `${r.ok}/${r.how}`;
+};
+
+test("worker: način preverjanja", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  // simbolno
+  assert.equal(await nacin("solve", ["x^2-5*x+6=0", "x", "2, 3"]), "true/symbolic");
+  assert.equal(await nacin("solve", ["sqrt(x+1)=x-1", "x", "3"]), "true/symbolic");
+  assert.equal(await nacin("equal", ["(x+3)^2", "x^2+6*x+9"]), "true/symbolic");
+  assert.equal(await nacin("diff", ["x^3", "x", "3*x^2"]), "true/symbolic");
+  assert.equal(await nacin("int", ["sin(x)", "x", "0", "pi", "2"]), "true/symbolic");
+  assert.equal(await nacin("value", ["3/4+1/2", "5/4"]), "true/symbolic");
+  assert.equal(await nacin("ineq", ["x^2-1<0", "x", "(-1, 1)"]), "true/symbolic");
+  assert.equal(await nacin("units", ["72*km/h", "20*m/s"]), "true/symbolic");
+  assert.equal(await nacin("solve", ["x+y=3, x-y=1", "x, y", "x=2, y=1"]), "true/symbolic");
+  // vzorčeno: velik koeficient, napačen za 1, sprejme le preizkus v točkah
+  assert.equal(await nacin("equal", ["(x+1000000)^2", "x^2+1999999*x+1000000000000"]), "true/sampled");
+  // številsko: toleranca zapisa, decimalke, popolnost periodičnih rešitev le na odseku
+  assert.equal(await nacin("solve", ["x^2-2*x-1=0", "x", "2.414, -0.414"]), "true/numeric");
+  assert.equal(await nacin("solve", ["(x-2)*(x-2400000)=0", "x", "2, 2*10^6"]), "true/numeric");
+  assert.equal(await nacin("value", ["sqrt(2)", "1.414"]), "true/numeric");
+  assert.equal(await nacin("units", ["3.2*kg*9.81*m/s^2", "31.4*N"]), "true/numeric");
+  assert.equal(await nacin("solve", ["sin(x)=0", "x", "k*pi"]), "true/numeric");
+  assert.equal(await nacin("equal", ["0.1+0.2", "0.3"]), "true/numeric");
+  // »ne drži« ostane, kot je bil
+  assert.equal((await casCheck("value", ["3/4+1/2", "4/6"])).ok, false);
+  assert.equal((await casCheck("solve", ["x^2-5*x+6=0", "x", "2"])).ok, false);
+});
+
+test("cas.js: odziv brez how (star worker) ostane brez polja", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  const r = await casCheck("neznan", ["x"]);
+  assert.equal(r.ok, null);
+  assert.equal("how" in r, false);
+});
