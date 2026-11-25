@@ -99,6 +99,14 @@ const T = (text, answer, hint, given, find, formula, steps) => ({ text: withCons
 const ime = (r) => r.pick(NAMES);
 const dw = (d) => (d === 0 ? "na celo število" : d === 1 ? "na eno decimalko" : d === 2 ? "na dve decimalki" : `na ${d} decimalke`);
 
+// Jedro v TeX: nuc(14, 7, "N") → {}^{14}_{7}\mathrm{N}; NEU je nevtron.
+const nuc = (A, Z, s) => `{}^{${A}}_{${Z}}\\mathrm{${s}}`;
+const NEU = nuc(1, 0, "n");
+const MEV_J = 1.602e-13; // 1 MeV v J (kot v lekciji o jedrskih reakcijah)
+// Hrbti stoječega valovanja: hrbti(3) → "hrbti" (3 hrbti), zHrbti(2) → "z 2 hrbtoma".
+const hrbti = (k) => (k === 1 ? "hrbet" : k === 2 ? "hrbta" : k <= 4 ? "hrbti" : "hrbtov");
+const zHrbti = (k) => (k === 1 ? "z 1 hrbtom" : k === 2 ? "z 2 hrbtoma" : `s ${k} hrbti`);
+
 export const DODATNE_FIZ_SS = [
   // ---------------- 1. letnik ----------------
   {
@@ -3889,6 +3897,1577 @@ export const DODATNE_FIZ_SS = [
         ["W_k = \\dfrac{m v^2}{2}", "W_k = m_d c \\Delta T"],
         [`$v = ${vk}\\ \\mathrm{km/h} ${eq(vk / 3.6, 2)} ${qty(tx(vk / 3.6, 2), "m/s")}$`, `$W_k = \\dfrac{${m} \\cdot (${tx(vk / 3.6, 2)})^2}{2}\\ \\mathrm{J} ${res(W, 0, "J")}$`, `$\\Delta T = \\dfrac{W_k}{4 m_d c} ${res(dT, 1, "K")}$`],
       );
+    },
+  },
+  // ---------------- 3. letnik: dušeno in vsiljeno nihanje ----------------
+  {
+    id: "dod-fiz-ss-duseno-amplituda",
+    topics: ["FIZ-SS-3/duseno-in-vsiljeno-nihanje"],
+    gen(level, r) {
+      const nm = ime(r);
+      const S = r.pick([
+        { what: "konec letve, vpete v primež,", u: "mm", x: [8, 30], xd: 0, th: [0.2, 0.8], thd: 2, t0: [0.02, 0.1], t0d: 3 },
+        { what: "utež na vzmeti", u: "cm", x: [3, 12], xd: 0, th: [2, 8], thd: 1, t0: [0.3, 1.2], t0d: 2 },
+        { what: "gugalnica, ki je nihče ne potiska,", u: "cm", x: [40, 120], xd: 0, th: [5, 15], thd: 1, t0: [2, 3.5], t0d: 1 },
+        { what: "struna kitare", u: "mm", x: [1, 4], xd: 1, th: [0.5, 2], thd: 1, t0: [0.003, 0.01], t0d: 4 },
+        { what: "nihalo stenske ure brez navijanja", u: "cm", x: [4, 10], xd: 0, th: [20, 90], thd: 0, t0: [1, 2], t0d: 1 },
+        { what: "karoserija avta z obrabljenimi blažilniki", u: "cm", x: [3, 8], xd: 0, th: [0.5, 1.5], thd: 2, t0: [0.6, 1], t0d: 2 },
+      ]);
+      const Cap = S.what[0].toUpperCase() + S.what.slice(1);
+      const x0 = r.dec(S.x[0], S.x[1], S.xd);
+      const th = r.dec(S.th[0], S.th[1], S.thd);
+      const ths = qty(tx(th), "s");
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const k = r.int(1, 4);
+          const t = roundHalfUp(k * th, 3);
+          const x = x0 / 2 ** k;
+          return T(
+            `${Cap} niha z začetno amplitudo $${qty(tx(x0), S.u)}$. Zaradi dušenja se amplituda razpolovi vsakih $${ths}$. Kolikšna je amplituda po $${qty(tx(t), "s")}$? Zaokroži na dve decimalki.`,
+            num(x, S.u, 2, [M(x0 / (2 * k), "Amplituda se v vsakem razpolovnem času razpolovi: deliš z $2^k$, ne z $2k$."), M(x0 - x, "To je, za koliko se je amplituda zmanjšala; vprašanje sprašuje, kolikšna je še."), M(x0 / 4 ** k, "Razpolavlja se amplituda, ne energija; amplitude ne kvadriraj.")]),
+            "Najprej izračunaj, koliko razpolovnih časov je minilo.",
+            [dat("x_0(0)", tx(x0), S.u), dat("t_{1/2}", tx(th), "s"), dat("t", tx(t), "s")],
+            ["x_0(t)"],
+            ["x_0(t) = x_0(0) \\cdot \\left(\\dfrac{1}{2}\\right)^{t/t_{1/2}}"],
+            [`$\\dfrac{t}{t_{1/2}} = \\dfrac{${tx(t)}}{${tx(th)}} = ${k}$`, `$x_0(t) = \\dfrac{${tx(x0)}}{2^{${k}}}\\ \\mathrm{${S.u}} = \\dfrac{${tx(x0)}}{${2 ** k}}\\ \\mathrm{${S.u}} ${res(x, 2, S.u)}$`],
+          );
+        }
+        const x1 = roundHalfUp(x0 * r.dec(0.25, 0.8, 2), S.xd + 1);
+        const p = (x1 / x0) ** 2 * 100;
+        return T(
+          `${Cap} niha z amplitudo $${qty(tx(x0), S.u)}$. Čez nekaj časa je zaradi dušenja amplituda le še $${qty(tx(x1), S.u)}$. Koliko odstotkov začetne energije ima nihanje še? Zaokroži na eno decimalko.`,
+          num(p, "%", 1, [M((x1 / x0) * 100, "Energija je sorazmerna s kvadratom amplitude, zato razmerje amplitud kvadriraj."), M(100 - p, "To je delež energije, ki se je spremenil v toploto; vprašanje sprašuje, koliko je ostane."), M((x1 / x0) ** 2, "Razmerje pretvori v odstotke (pomnoži s 100 %).")]),
+          "Koeficient vzmeti (ali nihala) se ne spremeni, zato energiji primerjaš kar prek amplitud.",
+          [dat("x_0", tx(x0), S.u), dat("x_0'", tx(x1), S.u)],
+          ["W'/W"],
+          ["W = \\dfrac{1}{2} k x_0^2", "\\dfrac{W'}{W} = \\left(\\dfrac{x_0'}{x_0}\\right)^2"],
+          [`$\\dfrac{x_0'}{x_0} = \\dfrac{${tx(x1)}}{${tx(x0)}} \\approx ${tx(x1 / x0, 4)}$`, `$\\dfrac{W'}{W} = \\left(\\dfrac{${tx(x1)}}{${tx(x0)}}\\right)^2 \\cdot 100\\ \\% ${res(p, 1, "\\%")}$`],
+        );
+      }
+      if (level === 2) {
+        const kind = r.pick(["neceli", "tau", "blazilnik"]);
+        if (kind === "neceli") {
+          let t;
+          do t = r.dec(th * 0.4, th * 3.5, S.thd);
+          while (Math.abs(t / th - Math.round(t / th)) < 0.05);
+          const e = t / th;
+          const p = 0.25 ** e * 100;
+          return T(
+            `${Cap} niha dušeno: amplituda se razpolovi vsakih $${ths}$. Koliko odstotkov začetne energije ima nihanje še po $${qty(tx(t), "s")}$? Zaokroži na eno decimalko.`,
+            num(p, "%", 1, [M(0.5 ** e * 100, "To je delež amplitude; energija je sorazmerna s kvadratom amplitude."), 100 - 50 * e > 1 ? M(100 - 50 * e, "Amplituda ne pojema linearno, ampak v enakih časih za enak faktor.") : null, M(100 - p, "To je delež energije, ki se je spremenil v toploto.")]),
+            "Najprej izračunaj, na kolikšen del začetne vrednosti pade amplituda (eksponent ni celo število), nato ta del kvadriraj.",
+            [dat("t_{1/2}", tx(th), "s"), dat("t", tx(t), "s")],
+            ["W'/W"],
+            ["\\dfrac{x_0(t)}{x_0(0)} = \\left(\\dfrac{1}{2}\\right)^{t/t_{1/2}}", "\\dfrac{W'}{W} = \\left(\\dfrac{x_0(t)}{x_0(0)}\\right)^2"],
+            [`$\\dfrac{t}{t_{1/2}} = \\dfrac{${tx(t)}}{${tx(th)}} \\approx ${tx(e, 4)}$`, `$\\dfrac{x_0(t)}{x_0(0)} = 0{,}5^{${tx(e, 4)}} \\approx ${tx(0.5 ** e, 4)}$`, `$\\dfrac{W'}{W} = (${tx(0.5 ** e, 4)})^2 \\cdot 100\\ \\% ${res(p, 1, "\\%")}$`],
+          );
+        }
+        if (kind === "tau") {
+          const x1 = roundHalfUp(x0 * r.dec(0.1, 0.7, 2), S.xd + 1);
+          const tau = th;
+          const t = tau * Math.log(x0 / x1);
+          return T(
+            `${Cap} niha z začetno amplitudo $${qty(tx(x0), S.u)}$. Amplituda pojema po zakonu $x_0(t) = x_0(0)\\, e^{-t/\\tau}$ s karakterističnim časom $\\tau = ${ths}$. Čez koliko časa je amplituda le še $${qty(tx(x1), S.u)}$? Zaokroži na dve decimalki.`,
+            num(t, "s", 2, [M(tau * Math.log10(x0 / x1), "Osnova je $e$, zato uporabi naravni logaritem $\\ln$."), M(tau * Math.log2(x0 / x1), "$\\tau$ ni razpolovni čas; v zakonu z osnovo $e$ uporabi $\\ln$."), M(tau * (x1 / x0), "Logaritmiraj obe strani enačbe in izrazi $t$.")]),
+            "Enačbo deli z $x_0(0)$ in logaritmiraj z naravnim logaritmom.",
+            [dat("x_0(0)", tx(x0), S.u), dat("x_0(t)", tx(x1), S.u), dat("\\tau", tx(tau), "s")],
+            ["t"],
+            ["x_0(t) = x_0(0)\\, e^{-t/\\tau}", "t = \\tau \\ln\\dfrac{x_0(0)}{x_0(t)}"],
+            [`$\\dfrac{x_0(0)}{x_0(t)} = \\dfrac{${tx(x0)}}{${tx(x1)}} \\approx ${tx(x0 / x1, 4)}$`, `$t = ${tx(tau)}\\ \\mathrm{s} \\cdot \\ln ${tx(x0 / x1, 4)} ${res(t, 2, "s")}$`],
+          );
+        }
+        const k = r.int(15, 40);
+        const a0 = r.dec(3, 6, 1);
+        const a1 = r.dec(0.5, a0 * 0.8, 1);
+        const W0 = 0.5 * k * 1000 * (a0 / 100) ** 2;
+        const W1 = 0.5 * k * 1000 * (a1 / 100) ** 2;
+        const Q = W0 - W1;
+        return T(
+          `${nm} zapelje čez grbino. Vzmet ob kolesu ima koeficient $${k}\\ \\mathrm{kN/m}$, karoserija ob njej zaniha z amplitudo $${qty(tx(a0), "cm")}$, po enem nihaju pa je amplituda zaradi blažilnika le še $${qty(tx(a1), "cm")}$. Koliko energije se je v tem nihaju spremenilo v toploto? Zaokroži na dve decimalki.`,
+          num(Q, "J", 2, [M(0.5 * k * 1000 * ((a0 - a1) / 100) ** 2, "Odšteti moraš energiji, ne amplitudi: $W = \\frac{1}{2} k x_0^2$ za vsako amplitudo posebej."), M(Q * 1e4, "Amplitudi pretvori v metre."), M(Q / 1000, "Koeficient pretvori v N/m ($1\\ \\mathrm{kN/m} = 1000\\ \\mathrm{N/m}$).")]),
+          "Izračunaj energijo nihanja pred nihajem in po njem; razlika se je spremenila v toploto.",
+          [dat("k", k, "kN/m"), dat("x_0", tx(a0), "cm"), dat("x_0'", tx(a1), "cm")],
+          ["Q"],
+          ["W = \\dfrac{1}{2} k x_0^2", "Q = W - W'"],
+          [`$k = ${k}\\,000\\ \\mathrm{N/m}$`, `$W = \\dfrac{1}{2} \\cdot ${k}\\,000 \\cdot (${tx(a0 / 100)})^2\\ \\mathrm{J} ${res(W0, 3, "J")}$`, `$W' = \\dfrac{1}{2} \\cdot ${k}\\,000 \\cdot (${tx(a1 / 100)})^2\\ \\mathrm{J} ${res(W1, 3, "J")}$`, `$Q = W - W' ${res(Q, 2, "J")}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const t = r.dec(th * 0.8, th * 3, S.thd);
+        const x1 = roundHalfUp(x0 * 0.5 ** (t / th), S.xd + 1);
+        if (x1 <= 0 || x1 >= x0) return null;
+        const thx = (t * Math.LN2) / Math.log(x0 / x1);
+        return T(
+          `${nm} s kamero posname dušeno nihanje: ${S.what} ima na začetku amplitudo $${qty(tx(x0), S.u)}$, po $${qty(tx(t), "s")}$ pa le še $${qty(tx(x1), S.u)}$. Kolikšen je razpolovni čas amplitude? Zaokroži na dve decimalki.`,
+          num(thx, "s", 2, [M((t * x0) / (2 * (x0 - x1)), "Amplituda ne pojema linearno; uporabi eksponentni zakon in logaritem."), M((t * Math.log(x0 / x1)) / Math.LN2, "Si obrnil ulomek? $t_{1/2} = t \\ln 2 / \\ln(x_0(0)/x_0(t))$."), M(t / Math.log(x0 / x1), "To je karakteristični čas $\\tau$; razpolovni čas je $\\tau \\ln 2$.")]),
+          "Zapiši $\\dfrac{x_0(t)}{x_0(0)} = \\left(\\dfrac{1}{2}\\right)^{t/t_{1/2}}$, logaritmiraj in izrazi $t_{1/2}$.",
+          [dat("x_0(0)", tx(x0), S.u), dat("x_0(t)", tx(x1), S.u), dat("t", tx(t), "s")],
+          ["t_{1/2}"],
+          ["\\dfrac{x_0(t)}{x_0(0)} = \\left(\\dfrac{1}{2}\\right)^{t/t_{1/2}}", "t_{1/2} = \\dfrac{t \\ln 2}{\\ln\\big(x_0(0)/x_0(t)\\big)}"],
+          [`$\\dfrac{x_0(0)}{x_0(t)} = \\dfrac{${tx(x0)}}{${tx(x1)}} \\approx ${tx(x0 / x1, 4)}$`, `$t_{1/2} = \\dfrac{${tx(t)} \\cdot \\ln 2}{\\ln ${tx(x0 / x1, 4)}}\\ \\mathrm{s} ${res(thx, 2, "s")}$`],
+        );
+      }
+      const t0 = r.dec(S.t0[0], S.t0[1], S.t0d);
+      const lost = (1 - 0.25 ** (t0 / th)) * 100;
+      return T(
+        `${Cap} niha z nihajnim časom $${qty(tx(t0), "s")}$, amplituda pa se zaradi dušenja razpolovi v $${ths}$. Koliko odstotkov energije, ki jo nihanje še ima, se v enem nihaju spremeni v toploto? Zaokroži na eno decimalko.`,
+        num(lost, "%", 1, [M((1 - 0.5 ** (t0 / th)) * 100, "To je, za koliko odstotkov pade amplituda; energija je sorazmerna s kvadratom amplitude."), M(0.25 ** (t0 / th) * 100, "To je delež energije, ki ostane; vprašanje sprašuje po izgubljenem delu."), M(Math.min(100, (100 * t0) / th), "Pojemanje ni linearno; amplituda se v vsakem nihaju zmanjša za enak faktor.")]),
+        "Izračunaj, koliko nihajev je v enem razpolovnem času, in iz tega faktor, s katerim se amplituda pomnoži v enem nihaju.",
+        [dat("t_0", tx(t0), "s"), dat("t_{1/2}", tx(th), "s")],
+        ["\\Delta W / W"],
+        ["\\dfrac{x_0'}{x_0} = \\left(\\dfrac{1}{2}\\right)^{t_0/t_{1/2}}", "\\dfrac{W'}{W} = \\left(\\dfrac{x_0'}{x_0}\\right)^2", "\\dfrac{\\Delta W}{W} = 1 - \\dfrac{W'}{W}"],
+        [
+          `$\\dfrac{t_0}{t_{1/2}} = \\dfrac{${tx(t0)}}{${tx(th)}} \\approx ${tx(t0 / th, 4)}$`,
+          `$\\dfrac{x_0'}{x_0} = 0{,}5^{${tx(t0 / th, 4)}} \\approx ${tx(0.5 ** (t0 / th), 4)}$`,
+          `$\\dfrac{W'}{W} = (${tx(0.5 ** (t0 / th), 4)})^2 \\approx ${tx(0.25 ** (t0 / th), 4)}$`,
+          `$\\dfrac{\\Delta W}{W} = (1 - ${tx(0.25 ** (t0 / th), 4)}) \\cdot 100\\ \\% ${res(lost, 1, "\\%")}$`,
+        ],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-lastna-frekvenca",
+    topics: ["FIZ-SS-3/duseno-in-vsiljeno-nihanje"],
+    gen(level, r) {
+      const nm = ime(r);
+      const w = Math.PI * 2;
+      if (level === 1) {
+        if (r.next() < 0.65) {
+          const S = r.pick([
+            { txt: (m, k) => `Utež z maso $${qty(tx(m), "kg")}$ visi na vzmeti s koeficientom $${k}\\ \\mathrm{N/m}$.`, m: () => r.dec(0.1, 2, 2), k: () => r.int(10, 400), ku: "N/m", kf: 1 },
+            { txt: (m, k) => `Na eno kolo avtomobila odpade masa $${m}\\ \\mathrm{kg}$, vzmet ob tem kolesu pa ima koeficient $${k}\\ \\mathrm{kN/m}$.`, m: () => r.int(25, 45) * 10, k: () => r.int(15, 40), ku: "kN/m", kf: 1000 },
+            { txt: (m, k) => `Pralni stroj z maso $${m}\\ \\mathrm{kg}$ stoji na gumijastih nogicah, ki skupaj delujejo kot vzmet s koeficientom $${k}\\ \\mathrm{kN/m}$.`, m: () => r.int(55, 90), k: () => r.int(20, 120), ku: "kN/m", kf: 1000 },
+          ]);
+          const m = S.m();
+          const k = S.k();
+          const nu = Math.sqrt((k * S.kf) / m) / w;
+          return T(
+            `${S.txt(m, k)} Kolikšna je lastna frekvenca tega nihala? Zaokroži na dve decimalki.`,
+            num(nu, "Hz", 2, [M(Math.sqrt((k * S.kf) / m), "To je kotna frekvenca $\\omega_0$; deli jo še z $2\\pi$."), M(w * Math.sqrt((k * S.kf) / m), "Lastna frekvenca je $\\frac{1}{2\\pi}\\sqrt{k/m}$, faktor $2\\pi$ je v imenovalcu."), S.kf > 1 ? M(Math.sqrt(k / m) / w, "Koeficient pretvori v N/m.") : M(Math.sqrt(m / k) / w, "Pod korenom je $k/m$, ne $m/k$.")]),
+            "Lastno frekvenco nihala na vzmeti določata le masa in koeficient vzmeti.",
+            [dat("m", tx(m), "kg"), dat("k", k, S.ku)],
+            ["\\nu_0"],
+            ["\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k}{m}}"],
+            [S.kf > 1 ? `$k = ${k}\\,000\\ \\mathrm{N/m}$` : `$\\dfrac{k}{m} = \\dfrac{${k}}{${tx(m)}}\\ \\mathrm{s^{-2}} \\approx ${qty(tx(k / m, 2), "s^{-2}")}$`, `$\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{${S.kf > 1 ? `${k}\\,000` : k}}{${tx(m)}}}\\ \\mathrm{Hz} ${res(nu, 2, "Hz")}$`],
+          );
+        }
+        const S = r.pick([
+          { obj: "gugalnico", N: [3, 8], t0: [2, 3.5] },
+          { obj: "leseno brv", N: [10, 30], t0: [0.3, 0.7] },
+          { obj: "konec ravnila, vpetega na rob mize,", N: [20, 50], t0: [0.04, 0.1] },
+          { obj: "utež na vzmeti", N: [10, 20], t0: [0.4, 1.2] },
+        ]);
+        const N = r.int(S.N[0], S.N[1]);
+        const t = roundHalfUp(N * r.dec(S.t0[0], S.t0[1], 3), 1);
+        const nu = N / t;
+        return T(
+          `${nm} sune ${S.obj} in jo pusti prosto nihati. S štoparico izmeri, da naredi $${N}$ nihajev v $${qty(tx(t), "s")}$. Kolikšna je lastna frekvenca? Zaokroži na dve decimalki.`,
+          num(nu, "Hz", 2, [M(t / N, "To je nihajni čas; frekvenca je njegova obratna vrednost."), M(N * t, "Frekvenca je število nihajev, deljeno s časom.")]),
+          "Prosto nihalo niha s svojo lastno frekvenco. Frekvenca pove, koliko nihajev naredi v eni sekundi.",
+          [`N = ${N}`, dat("t", tx(t), "s")],
+          ["\\nu_0"],
+          ["\\nu_0 = \\dfrac{N}{t}"],
+          [`Telo niha prosto, zato je izmerjena frekvenca lastna frekvenca.`, `$\\nu_0 = \\dfrac{${N}}{${qty(tx(t), "s")}} ${res(nu, 2, "Hz")}$`],
+        );
+      }
+      if (level === 2) {
+        const kind = r.pick(["brv", "obrati", "lc"]);
+        if (kind === "brv") {
+          const F = r.dec(0.5, 3, 1);
+          const x = r.dec(1, 6, 1);
+          const m = r.int(10, 60) * 100;
+          const k = (F * 1000) / (x / 1000);
+          const nu = Math.sqrt(k / m) / w;
+          return T(
+            `Ko na sredino brvi položijo breme s težo $${qty(tx(F), "kN")}$, se brv povesi za $${qty(tx(x), "mm")}$. Nihajoči del brvi ima maso $${m}\\ \\mathrm{kg}$. Kolikšna je lastna frekvenca brvi? Zaokroži na dve decimalki.`,
+            num(nu, "Hz", 2, [M(nu / Math.sqrt(1000), "Silo pretvori v N in poves v m, preden izračunaš koeficient."), M(Math.sqrt(k / m), "To je kotna frekvenca; deli jo še z $2\\pi$."), M(w * Math.sqrt(m / k), "To je nihajni čas $t_0$; frekvenca je njegova obratna vrednost.")]),
+            "Brv se upogiba kot vzmet: iz sile in povesa najprej izračunaj njen koeficient.",
+            [dat("F", tx(F), "kN"), dat("x", tx(x), "mm"), dat("m", m, "kg")],
+            ["\\nu_0"],
+            ["k = \\dfrac{F}{x}", "\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k}{m}}"],
+            [`$k = \\dfrac{${tx(F * 1000)}\\ \\mathrm{N}}{${tx(x / 1000)}\\ \\mathrm{m}} ${res(k, 0, "N/m")}$`, `$\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{${tx(k, 0)}}{${m}}}\\ \\mathrm{Hz} ${res(nu, 2, "Hz")}$`],
+          );
+        }
+        if (kind === "obrati") {
+          const m = r.int(55, 90);
+          const k = r.int(20, 120);
+          const nu = Math.sqrt((k * 1000) / m) / w;
+          const rpm = nu * 60;
+          return T(
+            `Pralni stroj z maso $${m}\\ \\mathrm{kg}$ stoji na nogicah, ki delujejo kot vzmet s koeficientom $${k}\\ \\mathrm{kN/m}$. Neenakomerno razporejeno perilo stroj trese s frekvenco vrtenja bobna. Pri koliko obratih na minuto se stroj najbolj strese? Zaokroži na celo število.`,
+            num(rpm, "min⁻¹", 0, [M(nu, "To je frekvenca v obratih na sekundo; pretvori v obrate na minuto."), M(Math.sqrt((k * 1000) / m) * 60, "To je kotna frekvenca; deli jo še z $2\\pi$."), M(Math.sqrt(k / m) / w * 60, "Koeficient pretvori v N/m.")], { unitAlternatives: ["/min", "obr/min", "obratov na minuto", "1/min", "min-1", "min^-1"] }),
+            "Stroj se najbolj strese v resonanci, ko je frekvenca vrtenja enaka lastni frekvenci stroja na nogicah.",
+            [dat("m", m, "kg"), dat("k", k, "kN/m")],
+            ["n"],
+            ["\\nu = \\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k}{m}}", "n = 60\\ \\mathrm{s/min} \\cdot \\nu"],
+            [`$\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{${k}\\,000}{${m}}}\\ \\mathrm{Hz} ${res(nu, 3, "Hz")}$`, `Resonanca: $\\nu = \\nu_0$.`, `$n = 60 \\cdot ${tx(nu, 3)}\\ \\mathrm{min^{-1}} ${res(rpm, 0, "min^{-1}")}$`],
+          );
+        }
+        const L = r.dec(0.5, 10, 1);
+        const Cn = r.int(2, 100);
+        const nu = 1 / (w * Math.sqrt(L * 1e-3 * Cn * 1e-9)) / 1000;
+        return T(
+          `Nihajni krog v ${r.pick(["starem radiu za dolge valove", "kovinskem detektorju", "induktivnem polnilniku", "šolskem poskusu"])} ima tuljavo z induktivnostjo $${qty(tx(L), "mH")}$ in kondenzator s kapaciteto $${Cn}\\ \\mathrm{nF}$. Pri kateri frekvenci vzbujanja zaniha v resonanci? Rezultat zapiši v kHz in zaokroži na eno decimalko.`,
+          num(nu, "kHz", 1, [M(1 / Math.sqrt(L * 1e-3 * Cn * 1e-9) / 1000, "To je kotna frekvenca; deli jo še z $2\\pi$."), M(nu * 1000, "Rezultat pretvori v kHz."), M(1 / (w * L * 1e-3 * Cn * 1e-9) / 1000, "Pod korenom je zmnožek $LC$.")]),
+          "Resonanca nastopi, ko je frekvenca vzbujanja enaka lastni frekvenci kroga. Enote pretvori v H in F.",
+          [dat("L", tx(L), "mH"), dat("C", Cn, "nF")],
+          ["\\nu_0"],
+          ["\\nu_0 = \\dfrac{1}{2\\pi\\sqrt{LC}}"],
+          [`$LC = ${sci(L * 1e-3, 2)}\\ \\mathrm{H} \\cdot ${sci(Cn * 1e-9, 2)}\\ \\mathrm{F} = ${qty(sci(L * 1e-3 * Cn * 1e-9, 3), "s^2")}$`, `$\\nu_0 = \\dfrac{1}{2\\pi\\sqrt{LC}} ${res(nu * 1000, 0, "Hz")} ${eq(nu, 1)} ${qty(tx(nu, 1), "kHz")}$`],
+        );
+      }
+      const kind = r.pick(["trsa", "potniki", "postaja"]);
+      if (kind === "trsa") {
+        const m = r.int(10, 50) * 100;
+        const nu0 = r.dec(1.6, 2.4, 2);
+        const k = roundHalfUp((m * (w * nu0) ** 2) / 1000, 0);
+        const nuR = Math.sqrt((k * 1000) / m) / w;
+        const nuT = r.pick([3, 3.5, 4]);
+        const f = (nuT / nuR) ** 2;
+        return T(
+          `Brv z maso $${m}\\ \\mathrm{kg}$ se upogiba kot vzmet s koeficientom $${k}\\ \\mathrm{kN/m}$. Da je pešci ne bi poganjali v resonanci, mora biti njena lastna frekvenca vsaj $${qty(tx(nuT), "Hz")}$. Kolikokrat večji mora postati koeficient brvi? Zaokroži na dve decimalki.`,
+          num(f, "", 2, [M(nuT / nuR, "Frekvenca je sorazmerna s $\\sqrt{k}$, zato razmerje frekvenc kvadriraj."), M(Math.sqrt(nuT / nuR), "Iz $\\nu_0 \\propto \\sqrt{k}$ sledi $k \\propto \\nu_0^2$, ne $\\sqrt{\\nu_0}$.")]),
+          "Najprej izračunaj sedanjo lastno frekvenco. Ker je $\\nu_0 \\propto \\sqrt{k}$, je $k \\propto \\nu_0^2$.",
+          [dat("m", m, "kg"), dat("k", k, "kN/m"), dat("\\nu_0'", tx(nuT), "Hz")],
+          ["k'/k"],
+          ["\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k}{m}}", "\\dfrac{k'}{k} = \\left(\\dfrac{\\nu_0'}{\\nu_0}\\right)^2"],
+          [`$\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{${k}\\,000}{${m}}}\\ \\mathrm{Hz} \\approx ${qty(tx(nuR, 3), "Hz")}$`, `$\\dfrac{k'}{k} = \\left(\\dfrac{${tx(nuT)}}{${tx(nuR, 3)}}\\right)^2 ${eq(f, 2)} ${tx(f, 2)}$`],
+        );
+      }
+      if (kind === "potniki") {
+        const m = r.int(25, 45) * 10;
+        const k = r.int(15, 40);
+        const dm = r.int(4, 16) * 10;
+        const nu1 = Math.sqrt((k * 1000) / (m + dm)) / w;
+        return T(
+          `Na eno kolo praznega avtomobila odpade masa $${m}\\ \\mathrm{kg}$, vzmet ob kolesu ima koeficient $${k}\\ \\mathrm{kN/m}$. ${nm} naloži v avto prtljago in potnike, tako da se masa na to kolo poveča za $${dm}\\ \\mathrm{kg}$. Kolikšna je zdaj lastna frekvenca nihanja ob tem kolesu? Zaokroži na dve decimalki.`,
+          num(nu1, "Hz", 2, [M(Math.sqrt((k * 1000) / m) / w, "Upoštevaj, da se je masa povečala."), M(Math.sqrt((k * 1000) / dm) / w, "Niha vsa masa: prazen avto skupaj s tovorom."), M(Math.sqrt((k * 1000) / (m + dm)), "To je kotna frekvenca; deli jo še z $2\\pi$.")]),
+          "Vzmet ostane ista, niha pa večja masa: sešteješ maso praznega avta in tovora.",
+          [dat("m", m, "kg"), dat("\\Delta m", dm, "kg"), dat("k", k, "kN/m")],
+          ["\\nu_0'"],
+          ["m' = m + \\Delta m", "\\nu_0' = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k}{m'}}"],
+          [`$m' = ${m} + ${dm}\\ \\mathrm{kg} = ${m + dm}\\ \\mathrm{kg}$`, `$\\nu_0' = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{${k}\\,000}{${m + dm}}}\\ \\mathrm{Hz} ${res(nu1, 2, "Hz")}$`],
+        );
+      }
+      const FM = r.next() < 0.5;
+      const f = FM ? r.dec(88, 108, 1) : r.int(55, 160) * 10;
+      const L = FM ? r.dec(0.1, 1, 2) : r.int(10, 50) * 10;
+      const fHz = FM ? f * 1e6 : f * 1e3;
+      const LH = L * 1e-6;
+      const Cp = 1 / (w * w * fHz * fHz * LH) * 1e12;
+      return T(
+        `${nm} nastavlja nihajni krog radijskega sprejemnika na postajo, ki oddaja s frekvenco $${qty(tx(f), FM ? "MHz" : "kHz")}$. Tuljava ima induktivnost $${qty(tx(L), "\\mathrm{\\mu H}")}$. Kolikšna mora biti kapaciteta kondenzatorja? Rezultat zapiši v pF in zaokroži na eno decimalko.`,
+        num(Cp, "pF", 1, [M(1 / (w * fHz * fHz * LH) * 1e12, "Ko kvadriraš $2\\pi$, dobiš $4\\pi^2$."), M(1 / (fHz * fHz * LH) * 1e12, "Pozabil si na faktor $4\\pi^2$."), M(1 / (w * w * fHz * LH) * 1e12, "Frekvenco je treba kvadrirati.")]),
+        "Krog sprejme postajo, ko je njegova lastna frekvenca enaka frekvenci postaje. Enačbo kvadriraj in izrazi $C$.",
+        [dat("\\nu", tx(f), FM ? "MHz" : "kHz"), dat("L", tx(L), "\\mathrm{\\mu H}")],
+        ["C"],
+        ["\\nu_0 = \\dfrac{1}{2\\pi\\sqrt{LC}}", "C = \\dfrac{1}{4\\pi^2 \\nu^2 L}"],
+        [`Resonanca: $\\nu_0 = \\nu = ${qty(sci(fHz, 3), "Hz")}$`, `$C = \\dfrac{1}{4\\pi^2 \\cdot (${sci(fHz, 3)})^2 \\cdot ${sci(LH, 2)}}\\ \\mathrm{F} \\approx ${qty(sci(Cp * 1e-12, 3), "F")}$`, `$C ${res(Cp, 1, "pF")}$`],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-resonanca-pojmi",
+    topics: ["FIZ-SS-3/duseno-in-vsiljeno-nihanje"],
+    gen(level, r) {
+      const nm = ime(r);
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const S = r.pick([
+            { a: "Brv ima lastno frekvenco", q: "Čez njo gre skupina pohodnikov v enakem ritmu. Pri kateri frekvenci korakov se brv najbolj zaziblje?", lo: 1.5, hi: 2.5, d: 1 },
+            { a: "Gugalnica ima lastno frekvenco", q: `${nm} jo potiska v enakomernem ritmu. Pri kateri frekvenci potiskanja bo amplituda največja?`, lo: 0.3, hi: 0.6, d: 2 },
+            { a: "Pralni stroj na nogicah ima lastno frekvenco", q: "Pri kateri frekvenci vrtenja bobna se stroj najbolj strese?", lo: 4, hi: 12, d: 1 },
+            { a: "Vzvratno ogledalo v avtu ima lastno frekvenco", q: "Pri kateri frekvenci tresljajev motorja se ogledalo najbolj trese?", lo: 15, hi: 40, d: 0 },
+            { a: "Utež na vzmeti ima lastno frekvenco", q: `${nm} vzmet zgoraj periodično vleče gor in dol. Pri kateri frekvenci bo amplituda uteži največja?`, lo: 0.8, hi: 3, d: 1 },
+          ]);
+          const nu0 = r.dec(S.lo, S.hi, S.d);
+          const o = (x) => `${plain(x, S.d)} Hz`;
+          return T(
+            `${S.a} $${qty(tx(nu0, S.d), "Hz")}$. ${S.q}`,
+            choice(r, o(nu0), [
+              [o(nu0 * 0.6), "Daleč pod lastno frekvenco nihalo sledi sili z majhno amplitudo."],
+              [o(nu0 * 1.5), "Višja frekvenca vzbujevalnika ne pomeni večje amplitude; nad lastno frekvenco nihalo ne dohaja sile."],
+              ["Pri vseh frekvencah enako", "Amplituda vsiljenega nihanja je odvisna od tega, kako blizu je frekvenca vzbujevalnika lastni frekvenci."],
+            ]),
+            "Pomisli, kdaj vzbujevalnik potiska vedno v smeri gibanja in nihalu v vsakem nihaju doda energijo.",
+            [dat("\\nu_0", tx(nu0, S.d), "Hz")],
+            ["\\nu"],
+            ["\\nu = \\nu_0 \\Rightarrow \\text{resonanca}"],
+            ["Amplituda vsiljenega nihanja je največja, ko je frekvenca vzbujevalnika enaka lastni frekvenci (resonanca).", `$\\nu = \\nu_0 = ${qty(tx(nu0, S.d), "Hz")}$`],
+          );
+        }
+        const nu0 = r.dec(0.5, 5, 1);
+        let nu;
+        do nu = r.dec(0.3, 8, 1);
+        while (Math.abs(nu - nu0) < 0.4);
+        const S = r.pick(["utež na vzmeti", "nitno nihalo", "kovinsko ploščico na vzmeti"]);
+        return T(
+          `${nm} pritrdi ${S} z lastno frekvenco $${qty(tx(nu0), "Hz")}$ na motorček, ki jo poganja s frekvenco $${qty(tx(nu), "Hz")}$. S kolikšno frekvenco niha nihalo, ko se nihanje ustali? Zaokroži na eno decimalko.`,
+          num(nu, "Hz", 1, [M(nu0, "Lastna frekvenca velja le za prosto nihalo; vsiljeno nihalo sledi vzbujevalniku."), M((nu + nu0) / 2, "Frekvenci se ne povprečita; ustaljeno nihanje ima frekvenco vzbujevalnika."), M(Math.abs(nu - nu0), "Razlika frekvenc vpliva le na amplitudo, ne na frekvenco nihanja.")]),
+          "Razlikuj prosto in vsiljeno nihanje: kaj določa frekvenco, ko motorček ves čas poganja nihalo?",
+          [dat("\\nu_0", tx(nu0), "Hz"), dat("\\nu_{vz}", tx(nu), "Hz")],
+          ["\\nu"],
+          ["\\text{vsiljeno nihanje: } \\nu = \\nu_{vz}"],
+          ["Po prehodnem času vsiljeno nihalo niha s frekvenco vzbujevalnika, ne s svojo lastno.", `$\\nu = \\nu_{vz} = ${qty(tx(nu), "Hz")}$`],
+        );
+      }
+      if (level === 2) {
+        const kind = r.pick(["gugalnica", "cas", "energija"]);
+        if (kind === "gugalnica") {
+          const l = r.dec(1.5, 3, 1);
+          const t0 = 2 * Math.PI * Math.sqrt(l / GZ);
+          return T(
+            `${nm} potiska prijatelja na gugalnici z vrvmi dolžine $${qty(tx(l), "m")}$. Na koliko sekund mora potiskati, da gugalnico poganja v resonanci z enim potiskom na nihaj? Gugalnico obravnavaj kot matematično nihalo. Zaokroži na dve decimalki.`,
+            num(t0, "s", 2, [M(t0 / 2, "En nihaj je gibanje tja in nazaj; potiskaš enkrat na cel nihaj."), M(1 / t0, "To je frekvenca; vprašanje sprašuje po času med potiski."), M(2 * Math.PI * Math.sqrt(GZ / l), "Pod korenom je $l/g$, ne $g/l$.")]),
+            "V resonanci je frekvenca potiskanja enaka lastni frekvenci gugalnice, torej je čas med potiski enak njenemu nihajnemu času.",
+            [dat("l", tx(l), "m"), K.g],
+            ["t_0"],
+            ["t_0 = 2\\pi\\sqrt{\\dfrac{l}{g}}", "\\nu = \\nu_0"],
+            ["Resonanca: čas med potiski je enak nihajnemu času gugalnice.", `$t_0 = 2\\pi\\sqrt{\\dfrac{${tx(l)}}{${G_TEX}}}\\ \\mathrm{s} ${res(t0, 2, "s")}$`],
+          );
+        }
+        if (kind === "cas") {
+          const t0 = r.dec(0.5, 3, 1);
+          const a0 = r.int(4, 12) * 2;
+          const o = (x) => `${plain(x, 2)} s`;
+          return T(
+            `${nm} meri nihajni čas dušenega nihala. Ko je amplituda $${a0}\\ \\mathrm{cm}$, je nihajni čas $${qty(tx(t0), "s")}$. Kolikšen je nihajni čas, ko amplituda zaradi dušenja pade na $${a0 / 2}\\ \\mathrm{cm}$?`,
+            choice(r, `Približno ${o(t0)}`, [
+              [`Približno ${o(t0 / 2)}`, "Nihajni čas harmoničnega nihala ni odvisen od amplitude; dušeno nihalo niha z manjšim odmikom, a skoraj v istem ritmu."],
+              [`Približno ${o(t0 * 2)}`, "Ko amplituda pada, se nihanje ne upočasni; nihajni čas ostane skoraj enak."],
+              [`Približno ${o(t0 / Math.SQRT2)}`, "Nihajni čas ni odvisen od amplitude, zato se ne spremeni s korenom amplitude."],
+            ]),
+            "Spomni se, od česa je odvisen nihajni čas nihala na vzmeti ali matematičnega nihala.",
+            [dat("x_0", a0, "cm"), dat("x_0'", a0 / 2, "cm"), dat("t_0", tx(t0), "s")],
+            ["t_0'"],
+            ["t_0 = 2\\pi\\sqrt{\\dfrac{m}{k}}"],
+            ["V formuli za nihajni čas ni amplitude.", `Pri šibkem dušenju ostane $t_0' \\approx t_0 = ${qty(tx(t0), "s")}$.`],
+          );
+        }
+        const W = r.dec(0.5, 20, 1);
+        const f = r.pick([2, 3, 4]);
+        const o = (x) => `${plain(x, 2)} J`;
+        return T(
+          `Dušeno nihalo ima energijo $${qty(tx(W), "J")}$. Čez nekaj časa amplituda pade na ${f === 2 ? "polovico" : f === 3 ? "tretjino" : "četrtino"} začetne. Koliko energije ima nihalo takrat?`,
+          choice(r, o(W / f ** 2), [
+            [o(W / f), "Energija je sorazmerna s kvadratom amplitude, ne z amplitudo."],
+            [o(W - W / f ** 2), "To je energija, ki se je spremenila v toploto; vprašanje sprašuje, koliko je ostane."],
+            [o(W / f ** 3), "Energija nihala je $\\frac{1}{2} k x_0^2$: amplituda je na kvadrat, ne na tretjo potenco."],
+          ]),
+          "Zapiši energijo nihala z amplitudo in pomisli, kaj se zgodi, ko amplitudo deliš s $" + f + "$.",
+          [dat("W", tx(W), "J"), `x_0' = x_0 / ${f}`],
+          ["W'"],
+          ["W = \\dfrac{1}{2} k x_0^2", "\\dfrac{W'}{W} = \\left(\\dfrac{x_0'}{x_0}\\right)^2"],
+          [`$\\dfrac{W'}{W} = \\left(\\dfrac{1}{${f}}\\right)^2 = \\dfrac{1}{${f * f}}$`, `$W' = \\dfrac{${tx(W)}\\ \\mathrm{J}}{${f * f}} ${res(W / f ** 2, 2, "J")}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const m = r.int(15, 60) * 100;
+        const nuT = r.dec(1.6, 2.4, 2);
+        const k = roundHalfUp((m * (2 * Math.PI * nuT) ** 2) / 1000, 0);
+        const nu0 = Math.sqrt((k * 1000) / m) / (2 * Math.PI);
+        const s = r.dec(0.6, 0.8, 2);
+        const v = nu0 * s;
+        return T(
+          `Brv z maso $${m}\\ \\mathrm{kg}$ se upogiba kot vzmet s koeficientom $${k}\\ \\mathrm{kN/m}$. ${nm} hodi čeznjo s koraki, dolgimi $${qty(tx(s), "m")}$, in vsak korak brv malo potisne. Pri kolikšni hitrosti hoje koraki poganjajo brv v resonanci? Zaokroži na dve decimalki.`,
+          num(v, "m/s", 2, [M(s / nu0, "Frekvenca korakov je število korakov na sekundo: $v = \\nu \\cdot s$."), M(s * Math.sqrt((k * 1000) / m), "Kotna frekvenca ni frekvenca; deli jo še z $2\\pi$."), M(nu0 * s * 3.6, "Rezultat zapiši v m/s.")]),
+          "Najprej izračunaj lastno frekvenco brvi. V resonanci je frekvenca korakov enaka lastni frekvenci.",
+          [dat("m", m, "kg"), dat("k", k, "kN/m"), dat("s", tx(s), "m")],
+          ["v"],
+          ["\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k}{m}}", "v = \\nu_0\\, s"],
+          [`$\\nu_0 = \\dfrac{1}{2\\pi}\\sqrt{\\dfrac{${k}\\,000}{${m}}}\\ \\mathrm{Hz} \\approx ${qty(tx(nu0, 3), "Hz")}$`, `Resonanca: ${nm} naredi $${tx(nu0, 3)}$ korakov na sekundo.`, `$v = ${tx(nu0, 3)}\\ \\mathrm{s^{-1}} \\cdot ${qty(tx(s), "m")} ${res(v, 2, "m/s")}$`],
+        );
+      }
+      const Q = r.pick([
+        {
+          q: `${nm} je pri avtu zamenjal${g(nm, "", "a")} obrabljene blažilnike z novimi, ki bolj dušijo. Kako se spremeni resonančni vrh nihanja karoserije na valoviti cesti?`,
+          ok: "Vrh je nižji in širši.",
+          wrong: [
+            ["Vrh je višji in ožji.", "Visok in ozek vrh ima šibko dušenje; novi blažilniki dušijo močneje."],
+            ["Vrh se premakne k dvakrat višji frekvenci.", "Dušenje lastno frekvenco le malo zniža, ne podvoji je."],
+            ["Vrh ostane enak, nihanje se le hitreje umiri.", "Dušenje določa tudi višino in širino resonančnega vrha."],
+          ],
+          d: "\\text{dušenje} = \\text{močnejše kot prej}",
+          f: "\\text{oblika resonančnega vrha}",
+          s: ["Močnejše dušenje v vsakem nihaju odvzame več energije.", "Zato je amplituda v resonanci manjša, vrh pa širši."],
+        },
+        {
+          q: `Pralni stroj pri pospeševanju centrifuge pri nekem številu obratov močno zaropota, pri največjih obratih pa teče mirno. Kako to razloži ${nm}?`,
+          ok: "Pri največjih obratih je frekvenca vrtenja daleč nad lastno frekvenco stroja, zato je amplituda majhna.",
+          wrong: [
+            ["Pri velikih obratih vzbujevalnik ne dovaja več energije.", "Neuravnoteženo perilo stroj trese ves čas; amplituda je majhna, ker stroj ne dohaja hitre sile."],
+            ["Z obrati se poveča lastna frekvenca stroja.", "Lastno frekvenco določata masa stroja in nogice, ne obrati bobna."],
+            ["Resonanca nastopi le pri nizkih frekvencah.", "Resonanca nastopi pri frekvenci, ki je enaka lastni, ne glede na to, ali je nizka ali visoka."],
+          ],
+          d: "\\text{frekvenca vrtenja} = \\text{narašča do največje}",
+          f: "\\text{razlaga}",
+          s: ["Med pospeševanjem gre frekvenca vrtenja skozi lastno frekvenco stroja: resonanca.", "Pri največjih obratih je $\\nu \\gg \\nu_0$, zato stroj komaj niha."],
+        },
+        {
+          q: `${nm} bere, da vojaki most prečkajo ne v koraku. Zakaj?`,
+          ok: "Da mosta ne bi poganjali z eno frekvenco, ki bi bila lahko enaka njegovi lastni.",
+          wrong: [
+            ["Ker je teža vojakov v koraku večja.", "Teža je enaka ne glede na korak; pomembno je, ali je sila periodična."],
+            ["Da bi most prečkali hitreje.", "Hitrost ni razlog; korak v ritmu bi most lahko poganjal v resonanci."],
+            ["Ker koraki v ritmu povečajo dušenje mostu.", "Dušenje je lastnost mostu; ritem korakov ga ne spremeni."],
+          ],
+          d: "\\text{sila korakov} = \\text{periodična}",
+          f: "\\text{razlog}",
+          s: ["Koraki v ritmu so periodična sila z eno frekvenco.", "Če je ta enaka lastni frekvenci mostu, nastopi resonanca."],
+        },
+        {
+          q: `${nm} vrti gumb za izbiro postaje na starem radiu. Kaj se pri tem dogaja v sprejemniku?`,
+          ok: "Spreminja lastno frekvenco nihajnega kroga; močno zaniha le pri postaji z enako frekvenco.",
+          wrong: [
+            ["Antena sprejme le eno frekvenco, druge odbije.", "Antena sprejme valove vseh postaj; izbira jih nihajni krog."],
+            ["Nihajni krog vedno zaniha s svojo lastno frekvenco, ne glede na postajo.", "Vsiljeno nihanje sledi vzbujevalniku; močno je le pri frekvenci blizu lastne."],
+            ["Sprejemnik izbere najmočnejšo postajo.", "Izbira je odvisna od nastavljene lastne frekvence, ne od moči oddajnika."],
+          ],
+          d: "\\nu_0 = \\dfrac{1}{2\\pi\\sqrt{LC}}",
+          f: "\\text{izbira postaje}",
+          s: ["Gumb spreminja kapaciteto $C$ in s tem lastno frekvenco kroga.", "Resonanca nastopi pri postaji, katere frekvenca je enaka lastni."],
+        },
+      ]);
+      return T(Q.q, choice(r, Q.ok, Q.wrong), "Primerjaj frekvenco vzbujevalnika z lastno frekvenco nihala in pomisli, kaj določa dušenje.", [Q.d], [Q.f], ["\\nu \\approx \\nu_0 \\Rightarrow \\text{resonanca}"], Q.s);
+    },
+  },
+  // ---------------- 3. letnik: stoječe valovanje ----------------
+  {
+    id: "dod-fiz-ss-stojece-struna",
+    topics: ["FIZ-SS-3/stojece-valovanje"],
+    gen(level, r) {
+      const nm = ime(r);
+      if (level === 1) {
+        if (r.next() < 0.6) {
+          const S = r.pick([
+            { what: "Struna kitare", L: [0.6, 0.66], Ld: 2, c: [120, 450] },
+            { what: "Struna violine", L: [0.31, 0.33], Ld: 2, c: [200, 900] },
+            { what: "Žica pašne ograje med drogovoma", L: [3, 8], Ld: 1, c: [40, 120] },
+            { what: "Napeta vrv v telovadnici", L: [4, 10], Ld: 1, c: [10, 40] },
+            { what: "Jeklenica vremenskega stolpa", L: [10, 30], Ld: 0, c: [60, 150] },
+          ]);
+          const L = r.dec(S.L[0], S.L[1], S.Ld);
+          const c = r.int(S.c[0], S.c[1]);
+          const k = r.int(1, 4);
+          const nu = (k * c) / (2 * L);
+          const which = k === 1 ? "osnovnega lastnega nihanja (en hrbet)" : `${k}. lastnega nihanja (${k} ${hrbti(k)})`;
+          return T(
+            `${S.what} je dolga $${qty(tx(L), "m")}$ in vpeta na obeh koncih. Hitrost valovanja na njej je $${c}\\ \\mathrm{m/s}$. Kolikšna je frekvenca ${which}? Zaokroži na eno decimalko.`,
+            num(nu, "Hz", 1, [M(c / (2 * L), "To je osnovna frekvenca; pomnoži jo še z $n$."), M((k * c) / L, "Na dolžino strune pride $n$ polovic valovne dolžine: $\\lambda = 2L/n$."), M((k * c) / (4 * L), "Med sosednjima vozloma je pol valovne dolžine, ne četrtina.")]),
+            "Na obeh vpetih koncih sta vozla, zato je na dolžino strune celo število polovic valovne dolžine.",
+            [dat("L", tx(L), "m"), dat("c", c, "m/s"), `n = ${k}`],
+            [`\\nu_{${k}}`],
+            ["L = n\\dfrac{\\lambda}{2}", "\\nu_n = \\dfrac{n\\,c}{2L}"],
+            [`$\\lambda_{${k}} = \\dfrac{2L}{n} = \\dfrac{2 \\cdot ${tx(L)}}{${k}}\\ \\mathrm{m} ${res((2 * L) / k, 4, "m")}$`, `$\\nu_{${k}} = \\dfrac{${k} \\cdot ${c}}{2 \\cdot ${tx(L)}}\\ \\mathrm{Hz} ${res(nu, 1, "Hz")}$`],
+          );
+        }
+        const c = r.int(10, 40);
+        const nu = r.dec(2, 12, 1);
+        const d = (c / (2 * nu)) * 100;
+        const what = r.pick(["napeti vrvi", "dolgi vzmeti na tleh", "gumijasti cevi", "vrvi za skakanje"]);
+        return T(
+          `${nm} na ${what} vzbudi stoječe valovanje s frekvenco $${qty(tx(nu), "Hz")}$. Hitrost valovanja je $${c}\\ \\mathrm{m/s}$. Kako daleč sta sosednja vozla? Rezultat zapiši v cm in zaokroži na eno decimalko.`,
+          num(d, "cm", 1, [M((c / nu) * 100, "To je valovna dolžina; sosednja vozla sta narazen pol valovne dolžine."), M((c / (4 * nu)) * 100, "To je razdalja med vozlom in sosednjim hrbtom."), M(c / (2 * nu), "Rezultat pretvori v centimetre.")]),
+          "Najprej izračunaj valovno dolžino.",
+          [dat("\\nu", tx(nu), "Hz"), dat("c", c, "m/s")],
+          ["d"],
+          ["\\lambda = \\dfrac{c}{\\nu}", "d = \\dfrac{\\lambda}{2}"],
+          [`$\\lambda = \\dfrac{${c}}{${tx(nu)}}\\ \\mathrm{m} ${res(c / nu, 4, "m")}$`, `$d = \\dfrac{\\lambda}{2} ${res(c / (2 * nu), 4, "m")} ${eq(d, 1)} ${qty(tx(d, 1), "cm")}$`],
+        );
+      }
+      if (level === 2) {
+        const F = r.int(40, 150);
+        const mg = r.dec(0.3, 6, 2);
+        const lcm = r.int(50, 200);
+        const L = r.dec(0.6, 0.66, 2);
+        const k = r.int(1, 3);
+        const c = Math.sqrt((F * (lcm / 100)) / (mg / 1000));
+        const nu = (k * c) / (2 * L);
+        const which = k === 1 ? "osnovnega lastnega nihanja" : `${k}. lastnega nihanja`;
+        return T(
+          `${nm} ima kos strune z dolžino $${lcm}\\ \\mathrm{cm}$ in maso $${qty(tx(mg), "g")}$. Enako struno napne s silo $${F}\\ \\mathrm{N}$ med pritrdiščema, ki sta $${qty(tx(L), "m")}$ narazen. Kolikšna je frekvenca ${which}? Zaokroži na eno decimalko.`,
+          num(nu, "Hz", 1, [M(nu * Math.sqrt(1000), "Maso pretvori v kilograme."), M(nu * 10, "Dolžino kosa strune pretvori v metre."), M((k * c) / L, "Pri $n$-tem lastnem nihanju je $L = n\\lambda/2$.")]),
+          "Najprej iz sile ter mase in dolžine kosa strune izračunaj hitrost valovanja.",
+          [dat("l", lcm, "cm"), dat("m", tx(mg), "g"), dat("F", F, "N"), dat("L", tx(L), "m"), `n = ${k}`],
+          [`\\nu_{${k}}`],
+          ["c = \\sqrt{\\dfrac{F\\,l}{m}}", "\\nu_n = \\dfrac{n\\,c}{2L}"],
+          [`$c = \\sqrt{\\dfrac{${F} \\cdot ${tx(lcm / 100)}}{${sci(mg / 1000, 2)}}}\\ \\mathrm{m/s} ${res(c, 1, "m/s")}$`, `$\\nu_{${k}} = \\dfrac{${k} \\cdot ${tx(c, 1)}}{2 \\cdot ${tx(L)}}\\ \\mathrm{Hz} ${res(nu, 1, "Hz")}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const L = r.int(10, 40);
+        const mu = r.dec(0.3, 2, 1);
+        const k = r.int(1, 4);
+        const c0 = r.int(20, 150);
+        const nu = roundHalfUp((k * c0) / (2 * L), 2);
+        const c = (2 * L * nu) / k;
+        const F = (mu * c * c) / 1000;
+        const what = r.pick(["Žica daljnovoda", "Jeklenica žičnice", "Žica med drogovoma", "Vrv mostu za pešce"]);
+        return T(
+          `${what} je dolga $${L}\\ \\mathrm{m}$ in ima maso $${qty(tx(mu), "kg")}$ na meter. V vetru na njej nastane stoječe valovanje ${zHrbti(k)}, ki niha s frekvenco $${qty(tx(nu), "Hz")}$. S kolikšno silo je napeta? Rezultat zapiši v kN in zaokroži na dve decimalki.`,
+          num(F, "kN", 2, [M((mu * c) / 1000, "Iz $c = \\sqrt{F/\\mu}$ sledi $F = \\mu c^2$: hitrost kvadriraj."), M(F / 4, "Med sosednjima vozloma je pol valovne dolžine: $\\lambda = 2L/n$."), M(F * 1000, "Rezultat pretvori v kN.")]),
+          "Iz števila hrbtov določi valovno dolžino, nato hitrost valovanja; silo izrazi iz enačbe za hitrost na struni.",
+          [dat("L", L, "m"), dat("\\mu", tx(mu), "kg/m"), `n = ${k}`, dat("\\nu", tx(nu), "Hz")],
+          ["F"],
+          ["L = n\\dfrac{\\lambda}{2}", "c = \\lambda\\nu", "c = \\sqrt{\\dfrac{F}{\\mu}}"],
+          [`$\\lambda = \\dfrac{2L}{n} = \\dfrac{2 \\cdot ${L}}{${k}}\\ \\mathrm{m} ${res((2 * L) / k, 3, "m")}$`, `$c = \\lambda\\nu ${res(c, 2, "m/s")}$`, `$F = \\mu c^2 = ${tx(mu)} \\cdot (${tx(c, 2)})^2\\ \\mathrm{N} ${res(F * 1000, 0, "N")} ${eq(F, 2)} ${qty(tx(F, 2), "kN")}$`],
+        );
+      }
+      const nu = r.int(100, 400);
+      const nu2 = roundHalfUp(nu * r.dec(1.02, 1.12, 3), 0);
+      const p = ((nu2 / nu) ** 2 - 1) * 100;
+      return T(
+        `${nm} uglašuje kitaro. Struna niha s frekvenco $${nu}\\ \\mathrm{Hz}$, pravi ton pa ima $${nu2}\\ \\mathrm{Hz}$. Za koliko odstotkov mora povečati silo, s katero je struna napeta? Dolžina in masa strune se ne spremenita. Zaokroži na eno decimalko.`,
+        num(p, "%", 1, [M((nu2 / nu - 1) * 100, "Frekvenca je sorazmerna s $\\sqrt{F}$, zato razmerje frekvenc kvadriraj."), M((Math.sqrt(nu2 / nu) - 1) * 100, "Iz $\\nu \\propto \\sqrt{F}$ sledi $F \\propto \\nu^2$, ne $\\sqrt{\\nu}$."), M((nu2 / nu) ** 2 * 100, "To je nova sila v odstotkih stare; vprašanje sprašuje po povečanju.")]),
+        "Pri isti dolžini je frekvenca sorazmerna s hitrostjo valovanja, ta pa s korenom sile.",
+        [dat("\\nu", nu, "Hz"), dat("\\nu'", nu2, "Hz")],
+        ["\\Delta F / F"],
+        ["\\nu_1 = \\dfrac{c}{2L}", "c = \\sqrt{\\dfrac{F}{\\mu}}", "\\dfrac{F'}{F} = \\left(\\dfrac{\\nu'}{\\nu}\\right)^2"],
+        [`$\\dfrac{F'}{F} = \\left(\\dfrac{${nu2}}{${nu}}\\right)^2 \\approx ${tx((nu2 / nu) ** 2, 4)}$`, `Sila se poveča za $(${tx((nu2 / nu) ** 2, 4)} - 1) \\cdot 100\\ \\% ${res(p, 1, "\\%")}$`],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-stojece-vozli",
+    topics: ["FIZ-SS-3/stojece-valovanje"],
+    gen(level, r) {
+      const nm = ime(r);
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const L = r.dec(2, 10, 1);
+          const N = r.int(3, 7);
+          const lam = (2 * L) / (N - 1);
+          const what = r.pick(["napeti vrvi", "dolgi vzmeti", "gumijasti vrvi", "žici ograje"]);
+          return T(
+            `${nm} na ${what} dolžine $${qty(tx(L), "m")}$, vpeti na obeh koncih, opazi stoječe valovanje s $${N}$ vozli (krajišči sta šteti zraven). Kolikšna je valovna dolžina? Zaokroži na dve decimalki.`,
+            num(lam, "m", 2, [M((2 * L) / N, "Krajišči sta tudi vozla; med $N$ vozli je $N - 1$ odsekov."), M(L / (N - 1), "Med sosednjima vozloma je pol valovne dolžine, ne cela."), M((4 * L) / (N - 1), "Odsek med vozloma je $\\lambda/2$, zato je $\\lambda$ dvakratnik odseka.")]),
+            "Preštej, koliko odsekov med sosednjimi vozli je na vrvi.",
+            [dat("L", tx(L), "m"), `N_{vozlov} = ${N}`],
+            ["\\lambda"],
+            ["n = N_{vozlov} - 1", "L = n\\dfrac{\\lambda}{2}"],
+            [`Odsekov (hrbtov) je $n = ${N} - 1 = ${N - 1}$.`, `$\\lambda = \\dfrac{2L}{n} = \\dfrac{2 \\cdot ${tx(L)}}{${N - 1}}\\ \\mathrm{m} ${res(lam, 2, "m")}$`],
+          );
+        }
+        const k = r.int(1, 6);
+        const d = r.dec(0.1, 1.5, 2);
+        const L = roundHalfUp(k * d, 2);
+        const lam = 2 * d;
+        return T(
+          `Napeta vrv dolžine $${qty(tx(L), "m")}$ je vpeta na obeh koncih. Na njej je stoječe valovanje z valovno dolžino $${qty(tx(lam), "m")}$. Koliko hrbtov ima?`,
+          num(k, "", null, [M(L / lam, "Na en hrbet pride pol valovne dolžine, ne cela."), M(k + 1, "To je število vozlov (s krajiščema); hrbtov je eden manj.")], { tolerance: 1e-9 }),
+          "Pomisli, kolikšen del valovne dolžine je med sosednjima vozloma.",
+          [dat("L", tx(L), "m"), dat("\\lambda", tx(lam), "m")],
+          ["n"],
+          ["L = n\\dfrac{\\lambda}{2}"],
+          [`$\\dfrac{\\lambda}{2} = ${qty(tx(d), "m")}$`, `$n = \\dfrac{L}{\\lambda/2} = \\dfrac{${tx(L)}}{${tx(d)}} = ${k}$`],
+        );
+      }
+      if (level === 2) {
+        if (r.next() < 0.5) {
+          const a = r.int(1, 5);
+          let b;
+          do b = r.int(1, 6);
+          while (b === a);
+          const nuA = r.dec(3, 40, 1);
+          const nuB = (nuA * b) / a;
+          return T(
+            `${nm} na napeti vrvi opazi stoječe valovanje ${zHrbti(a)} pri frekvenci $${qty(tx(nuA), "Hz")}$. Pri kateri frekvenci nastane stoječe valovanje ${zHrbti(b)}? Sila v vrvi se ne spremeni. Zaokroži na eno decimalko.`,
+            num(nuB, "Hz", 1, [M((nuA * a) / b, "Več hrbtov pomeni krajšo valovno dolžino in višjo frekvenco: $\\nu_n = n\\nu_1$."), M(nuA * b, "Dana frekvenca ni osnovna; najprej jo deli s številom hrbtov."), M(nuA + (b - a), "Frekvence niso razmaknjene za 1 Hz, ampak so večkratniki osnovne.")]),
+            "Lastne frekvence so večkratniki osnovne frekvence. Iz dane frekvence najprej izračunaj osnovno.",
+            [`n_1 = ${a}`, dat(`\\nu_{${a}}`, tx(nuA), "Hz"), `n_2 = ${b}`],
+            [`\\nu_{${b}}`],
+            ["\\nu_n = n\\,\\nu_1"],
+            [`$\\nu_1 = \\dfrac{${tx(nuA)}\\ \\mathrm{Hz}}{${a}} ${res(nuA / a, 3, "Hz")}$`, `$\\nu_{${b}} = ${b} \\cdot \\nu_1 ${res(nuB, 1, "Hz")}$`],
+          );
+        }
+        const L = r.dec(0.3, 1.2, 2);
+        const c = r.int(80, 400);
+        const k = r.int(1, 4);
+        const nu = (k * c) / (2 * L);
+        const t = 1000 / (4 * nu);
+        return T(
+          `Struna dolžine $${qty(tx(L), "m")}$, vpeta na obeh koncih, niha v ${k === 1 ? "osnovnem lastnem nihanju" : `${k}. lastnem nihanju`}. Hitrost valovanja na njej je $${c}\\ \\mathrm{m/s}$. V kolikšnem času gre struna iz največjega odklona v ravno lego? Rezultat zapiši v ms in zaokroži na tri decimalke.`,
+          num(t, "ms", 3, [M(1000 / nu, "To je cel nihajni čas; iz skrajne lege v ravno gre struna v četrtini."), M(1000 / (2 * nu), "V polovici nihajnega časa gre struna v obrnjeno obliko; ravna je že v četrtini."), M(1 / (4 * nu), "Rezultat pretvori v milisekunde.")]),
+          "Najprej izračunaj frekvenco nihanja, nato nihajni čas.",
+          [dat("L", tx(L), "m"), dat("c", c, "m/s"), `n = ${k}`],
+          ["t"],
+          ["\\nu_n = \\dfrac{n\\,c}{2L}", "t_0 = \\dfrac{1}{\\nu_n}", "t = \\dfrac{t_0}{4}"],
+          [`$\\nu_{${k}} = \\dfrac{${k} \\cdot ${c}}{2 \\cdot ${tx(L)}}\\ \\mathrm{Hz} ${res(nu, 2, "Hz")}$`, `$t_0 = \\dfrac{1}{\\nu_{${k}}} ${res(1000 / nu, 3, "ms")}$`, `$t = \\dfrac{t_0}{4} ${res(t, 3, "ms")}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const L = r.dec(2, 8, 1);
+        const c = r.int(5, 30);
+        const second = r.next() < 0.4;
+        const nu = ((second ? 3 : 1) * c) / (4 * L);
+        return T(
+          `${nm} priveže en konec vrvi na steno, drugega pa na lahek obroček, ki brez trenja drsi po navpični palici. Vrv je dolga $${qty(tx(L), "m")}$, hitrost valovanja na njej je $${c}\\ \\mathrm{m/s}$. Kolikšna je ${second ? "druga najnižja" : "najnižja"} frekvenca stoječega valovanja na tej vrvi? Zaokroži na dve decimalki.`,
+          num(nu, "Hz", 2, second ? [M(c / L, "Pri vrvi, vpeti na obeh koncih, bi bila to druga lastna frekvenca; ob obročku je hrbet."), M(c / (2 * L), "Ob prostem krajišču je hrbet, ne vozel."), M(c / (4 * L), "To je najnižja frekvenca; naslednja ima na vrvi tri četrtine valovne dolžine.")] : [M(c / (2 * L), "Ob prostem krajišču (obroček) je hrbet, ne vozel."), M(c / L, "Med vozlom in hrbtom je četrtina valovne dolžine.")]),
+          "Na vpetem krajišču je vozel, na prostem pa hrbet. Nariši najpreprostejše oblike, ki to izpolnijo.",
+          [dat("L", tx(L), "m"), dat("c", c, "m/s"), "\\text{krajišči} = \\text{vpeto (stena) in prosto (obroček)}"],
+          ["\\nu"],
+          ["L = (2n - 1)\\dfrac{\\lambda}{4}", "\\nu = \\dfrac{c}{\\lambda}"],
+          [
+            "Ob steni (vpeto krajišče) je vozel, ob obročku (prosto krajišče) hrbet.",
+            second ? `Druga oblika ima vozel, hrbet, vozel in hrbet: $L = \\dfrac{3\\lambda}{4}$, torej $\\lambda = \\dfrac{4L}{3} ${res((4 * L) / 3, 3, "m")}$` : `Najpreprostejša oblika je četrtina vala: $L = \\dfrac{\\lambda}{4}$, torej $\\lambda = 4L = ${qty(tx(4 * L), "m")}$`,
+            `$\\nu = \\dfrac{c}{\\lambda} ${res(nu, 2, "Hz")}$`,
+          ],
+        );
+      }
+      const L = r.dec(0.62, 0.66, 2);
+      const nu1 = r.int(80, 330);
+      const s = r.int(1, 7);
+      const nu2 = roundHalfUp(nu1 * 2 ** (s / 12), 1);
+      const L2 = ((L * nu1) / nu2) * 100;
+      return T(
+        `Prosta struna kitare z nihajočo dolžino $${qty(tx(L), "m")}$ zveni s frekvenco $${nu1}\\ \\mathrm{Hz}$. ${nm} jo pritisne ob prečko, tako da se nihajoči del skrajša in struna zazveni s frekvenco $${qty(tx(nu2), "Hz")}$. Kako dolg je zdaj nihajoči del strune? Sila v struni se ne spremeni. Rezultat zapiši v cm in zaokroži na eno decimalko.`,
+        num(L2, "cm", 1, [M(((L * nu2) / nu1) * 100, "Višji ton pomeni krajšo struno: frekvenca je obratno sorazmerna z dolžino."), M((L - (L * nu1) / nu2) * 100, "To je del strune med prečko in koncem, ki ne niha."), M((L * nu1) / nu2, "Rezultat pretvori v centimetre.")]),
+        "Hitrost valovanja se ne spremeni, zato je frekvenca obratno sorazmerna z dolžino nihajočega dela.",
+        [dat("L", tx(L), "m"), dat("\\nu_1", nu1, "Hz"), dat("\\nu_1'", tx(nu2), "Hz")],
+        ["L'"],
+        ["\\nu_1 = \\dfrac{c}{2L}", "\\dfrac{L'}{L} = \\dfrac{\\nu_1}{\\nu_1'}"],
+        [`$c = 2L\\nu_1 = 2 \\cdot ${tx(L)} \\cdot ${nu1}\\ \\mathrm{m/s} = ${qty(tx(2 * L * nu1), "m/s")}$`, `$L' = \\dfrac{c}{2\\nu_1'} = \\dfrac{${tx(2 * L * nu1)}}{2 \\cdot ${tx(nu2)}}\\ \\mathrm{m} ${res((L * nu1) / nu2, 4, "m")} ${eq(L2, 1)} ${qty(tx(L2, 1), "cm")}$`],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-stojece-pojmi",
+    topics: ["FIZ-SS-3/stojece-valovanje"],
+    gen(level, r) {
+      const nm = ime(r);
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const E = r.pick([
+            { ctx: "Vrv je na drugem koncu privezana na kljuko zaprtih vrat.", fixed: true },
+            { ctx: "Vrv se na drugem koncu konča z lahkim obročkom, ki brez trenja drsi po navpični palici.", fixed: false },
+            { ctx: "Drugi konec vrvi je privezan na kovinski obroč v steni.", fixed: true },
+            { ctx: "Drugi konec vrvi je privezan na lahko nit, ki visi s stropa, tako da se lahko prosto premika gor in dol.", fixed: false },
+            { ctx: "Drugi konec vrvi je trdno privezan na drevo.", fixed: true },
+          ]);
+          const inv = "Vrne se kot dolina (faza se obrne).";
+          const same = "Vrne se kot hrib (brez obrata faze).";
+          return T(
+            `${nm} pošlje po vodoravni vrvi en sam hrib. ${E.ctx} Kako se hrib odbije od tega konca?`,
+            choice(r, E.fixed ? inv : same, [
+              E.fixed ? [same, "Tako se odbije ob prostem krajišču; vpeto krajišče potegne vrv v nasprotno smer."] : [inv, "Tako se odbije ob vpetem krajišču; prosti konec se dvigne in hrib vrne brez obrata."],
+              ["Na koncu se ne odbije, ampak izgine.", "Valovanje se na koncu vrvi odbije; energija ne izgine."],
+              ["Vrne se kot hrib z dvakratno amplitudo.", "Odbiti sunek ima (brez izgub) enako amplitudo kot vpadni."],
+            ]),
+            "Ugotovi, ali se konec vrvi lahko premika ali ne.",
+            [E.fixed ? "\\text{krajišče} = \\text{vpeto}" : "\\text{krajišče} = \\text{prosto}"],
+            ["\\text{oblika odbitega sunka}"],
+            ["\\text{vpeto: obrat faze},\\ \\text{prosto: brez obrata}"],
+            [E.fixed ? "Konec se ne more premakniti: to je vpeto krajišče." : "Konec se lahko prosto premika gor in dol: to je prosto krajišče.", E.fixed ? "Vrv vleče konec navzgor, ta pa vrv navzdol (3. Newtonov zakon), zato se hrib vrne kot dolina." : "Prosti konec se dvigne še više in pošlje nazaj hrib, brez obrata faze."],
+          );
+        }
+        const S = r.pick([
+          { what: "valov na jezeru", obj: "račka na gladini", l: [1, 6], c: [1, 4] },
+          { what: "valov na napeti vrvi", obj: "pentlja, privezana na vrv", l: [0.5, 3], c: [2, 10] },
+          { what: "valov v valovni kadi", obj: "plovec na gladini", l: [0.02, 0.06], c: [0.2, 0.4], ld: 3 },
+        ]);
+        const lam = r.dec(S.l[0], S.l[1], S.ld || 1);
+        const c = r.dec(S.c[0], S.c[1], S.ld ? 2 : 1);
+        const t0 = lam / c;
+        return T(
+          `${nm} na posnetku ${S.what} odčita valovno dolžino $${qty(tx(lam), "m")}$. Valovi potujejo s hitrostjo $${qty(tx(c), "m/s")}$. S kolikšnim nihajnim časom niha ${S.obj}? Zaokroži na dve decimalki.`,
+          num(t0, "s", 2, [M(c / lam, "To je frekvenca; nihajni čas je njena obratna vrednost."), M(lam * c, "V enem nihajnem času val prepotuje eno valovno dolžino: $t_0 = \\lambda/c$.")]),
+          "V enem nihajnem času se oblika vala premakne za eno valovno dolžino.",
+          [dat("\\lambda", tx(lam), "m"), dat("c", tx(c), "m/s")],
+          ["t_0"],
+          ["t_0 = \\dfrac{\\lambda}{c}"],
+          [`V času $t_0$ se oblika premakne za $\\lambda$: $c = \\dfrac{\\lambda}{t_0}$.`, `$t_0 = \\dfrac{${tx(lam)}}{${tx(c)}}\\ \\mathrm{s} ${res(t0, 2, "s")}$`],
+        );
+      }
+      if (level === 2) {
+        if (r.next() < 0.55) {
+          const dir = r.pick(["desno", "levo"]);
+          const side = r.pick(["desno", "levo", "vrh"]);
+          const obj = r.pick(["Račka", "Boja", "Plovec", "Odpadli list"]);
+          const where = side === "vrh" ? "ravno na vrhu vala" : `malo ${side} od najbližjega vrha, na pobočju vala`;
+          const front = side === dir;
+          const up = "Dviga se.";
+          const down = "Spušča se.";
+          const rest = "Ta hip miruje.";
+          const ok = side === "vrh" ? rest : front ? up : down;
+          const why = {
+            [up]: "Dviga se delec pred vrhom, na strani, kamor val potuje; ta delec je za vrhom.",
+            [down]: side === "vrh" ? "Na vrhu je delec v skrajni legi in ta hip miruje." : "Spušča se delec za vrhom; ta delec je pred vrhom, ki se mu bliža.",
+            [rest]: "Miruje le delec na vrhu ali v dolini; ta je na pobočju.",
+          };
+          if (side === "vrh") why[up] = "Na vrhu je delec v skrajni legi in ta hip miruje.";
+          const wrong = [up, down, rest].filter((x) => x !== ok).map((x) => [x, why[x]]);
+          wrong.push([`Premika se v ${dir} skupaj z valom.`, "Pri prečnem valovanju delci nihajo gor in dol; v smeri širjenja se premika oblika vala, ne voda."]);
+          return T(
+            `Valovi na jezeru potujejo v ${dir}. ${obj} je ta trenutek ${where}. Kako se ${obj.toLowerCase()} ta trenutek giblje?`,
+            choice(r, ok, wrong),
+            "Premakni obliko vala za malo v smeri širjenja in poglej, ali je na istem mestu gladina zdaj višje ali nižje.",
+            [`\\text{smer širjenja} = \\text{v ${dir}}`, side === "vrh" ? "\\text{lega} = \\text{na vrhu}" : `\\text{lega} = \\text{${side} od vrha}`],
+            ["\\text{smer gibanja}"],
+            ["\\Delta x = c\\,\\Delta t"],
+            [
+              side === "vrh" ? "Delec na vrhu je v skrajni legi." : front ? "Delec je pred vrhom (na strani, kamor val potuje)." : "Delec je za vrhom (vrh je že šel mimo njega).",
+              side === "vrh" ? "Ta hip miruje, nato se začne spuščati." : front ? "Vrh se mu bliža, zato se dviga." : "Vrh se od njega oddaljuje, zato se spušča.",
+            ],
+          );
+        }
+        const lam = r.dec(1, 8, 1);
+        const c = r.dec(0.8, 4, 1);
+        const t = lam / (2 * c);
+        const obj = r.pick(["Boja", "Račka", "Plovec"]);
+        return T(
+          `Valovi na morju imajo valovno dolžino $${qty(tx(lam), "m")}$ in potujejo s hitrostjo $${qty(tx(c), "m/s")}$. ${obj} je ta trenutek na vrhu vala. Čez koliko časa bo prvič v dolini? Zaokroži na dve decimalki.`,
+          num(t, "s", 2, [M(lam / c, "V celem nihajnem času se boja vrne na vrh; v dolino pride v polovici."), M(lam / (4 * c), "V četrtini nihajnega časa je boja šele v ravnovesni legi."), M(c / (2 * lam), "Nihajni čas je $\\lambda/c$, ne $c/\\lambda$.")]),
+          "Izračunaj nihajni čas in pomisli, kolikšen del nihaja mine od vrha do doline.",
+          [dat("\\lambda", tx(lam), "m"), dat("c", tx(c), "m/s")],
+          ["t"],
+          ["t_0 = \\dfrac{\\lambda}{c}", "t = \\dfrac{t_0}{2}"],
+          [`$t_0 = \\dfrac{${tx(lam)}}{${tx(c)}}\\ \\mathrm{s} ${res(lam / c, 3, "s")}$`, `Od vrha do doline mine pol nihaja: $t = \\dfrac{t_0}{2} ${res(t, 2, "s")}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const c1 = r.dec(3, 6, 1);
+        const c2 = r.dec(1, c1 - 0.8, 1);
+        const a = r.int(20, 70);
+        const b = todeg(Math.asin((Math.sin(rad(a)) * c2) / c1));
+        return T(
+          `Morski valovi potujejo po globoki vodi s hitrostjo $${qty(tx(c1), "m/s")}$ in pod kotom $${a}^\\circ$ glede na vpadno pravokotnico zadenejo mejo s plitvino. V plitvini je njihova hitrost $${qty(tx(c2), "m/s")}$. Pod kolikšnim kotom glede na pravokotnico potujejo v plitvini? Zaokroži na eno decimalko.`,
+          num(b, "°", 1, [M(todeg(Math.asin((Math.sin(rad(a)) * c1) / c2)), "V počasnejši vodi se val zasuče proti pravokotnici: lomni kot je manjši od vpadnega."), M((a * c2) / c1, "Razmerje hitrosti je enako razmerju sinusov kotov, ne kotov samih."), M(a, "Ko se hitrost spremeni, se spremeni tudi smer valovanja.")]),
+          "Zapiši lomni zakon za valovanje in izrazi sinus lomnega kota.",
+          [dat("c_1", tx(c1), "m/s"), dat("c_2", tx(c2), "m/s"), `\\alpha = ${a}^\\circ`],
+          ["\\beta"],
+          ["\\dfrac{\\sin\\alpha}{\\sin\\beta} = \\dfrac{c_1}{c_2}"],
+          [`$\\sin\\beta = \\sin ${a}^\\circ \\cdot \\dfrac{${tx(c2)}}{${tx(c1)}} \\approx ${tx((Math.sin(rad(a)) * c2) / c1, 4)}$`, `$\\beta ${resd(b, 1)}$`],
+        );
+      }
+      const [f, sf] = r.pick([[1.21, 1.1], [1.44, 1.2], [2.25, 1.5], [4, 2], [9, 3], [0.81, 0.9], [0.64, 0.8], [0.25, 0.5]]);
+      const nu = r.int(80, 440);
+      const o = (x) => `${plain(x, 1)} Hz`;
+      const how = f > 1 ? `poveča za faktor $${tx(f)}$` : `zmanjša na $${tx(f * 100)}\\ \\%$ prejšnje vrednosti`;
+      return T(
+        `Struna ${r.pick(["kitare", "violine", "violončela", "harfe"])} niha v osnovnem lastnem nihanju s frekvenco $${nu}\\ \\mathrm{Hz}$. ${nm} silo, s katero je struna napeta, ${how}. S kolikšno frekvenco zdaj niha osnovno lastno nihanje?`,
+        choice(r, o(nu * sf), [
+          [o(nu * f), "Frekvenca je sorazmerna s hitrostjo valovanja, ta pa s korenom sile, ne s silo."],
+          [o(nu), "Sila spremeni hitrost valovanja na struni in s tem frekvenco."],
+          [o(nu * f * f), "Frekvenca narašča s korenom sile, ne s kvadratom."],
+        ]),
+        "Poveži frekvenco s hitrostjo valovanja in hitrost s silo v struni.",
+        [dat("\\nu_1", nu, "Hz"), `F' = ${tx(f)}\\,F`],
+        ["\\nu_1'"],
+        ["\\nu_1 = \\dfrac{c}{2L}", "c = \\sqrt{\\dfrac{F}{\\mu}}"],
+        [`$\\nu_1 \\propto c \\propto \\sqrt{F}$, zato $\\dfrac{\\nu_1'}{\\nu_1} = \\sqrt{${tx(f)}} = ${tx(sf)}$`, `$\\nu_1' = ${tx(sf)} \\cdot ${nu}\\ \\mathrm{Hz} = ${qty(tx(nu * sf, 1), "Hz")}$`],
+      );
+    },
+  },
+  // ---------------- 4. letnik: jedrske reakcije in reaktor ----------------
+  {
+    id: "dod-fiz-ss-jedrska-ohranitev",
+    topics: ["FIZ-SS-4/jedrske-reakcije-in-reaktor"],
+    gen(level, r) {
+      const nm = ime(r);
+      const P = (A, Z, s, k = 1) => ({ A, Z, s, k });
+      const tex = (p) => `${p.k > 1 ? `${p.k}\\,` : ""}${nuc(p.A, p.Z, p.s)}`;
+      const RX = [
+        { L: [P(14, 7, "N"), P(4, 2, "He")], R: [P(17, 8, "O"), P(1, 1, "H")], x: 1 },
+        { L: [P(9, 4, "Be"), P(4, 2, "He")], R: [P(12, 6, "C"), P(1, 0, "n")], x: 1 },
+        { L: [P(10, 5, "B"), P(1, 0, "n")], R: [P(7, 3, "Li"), P(4, 2, "He")], x: 1 },
+        { L: [P(6, 3, "Li"), P(1, 0, "n")], R: [P(3, 1, "H"), P(4, 2, "He")], x: 0 },
+        { L: [P(27, 13, "Al"), P(4, 2, "He")], R: [P(30, 15, "P"), P(1, 0, "n")], x: 1 },
+        { L: [P(2, 1, "H"), P(3, 1, "H")], R: [P(4, 2, "He"), P(1, 0, "n")], x: 1 },
+        { L: [P(14, 7, "N"), P(1, 0, "n")], R: [P(14, 6, "C"), P(1, 1, "H")], x: 1 },
+        { L: [P(7, 3, "Li"), P(1, 1, "H")], R: [P(4, 2, "He"), P(4, 2, "He")], x: 1 },
+        { L: [P(2, 1, "H"), P(2, 1, "H")], R: [P(3, 2, "He"), P(1, 0, "n")], x: 1 },
+        { L: [P(235, 92, "U"), P(1, 0, "n")], R: [P(141, 56, "Ba"), P(92, 36, "Kr"), P(1, 0, "n", 3)], x: 1 },
+        { L: [P(235, 92, "U"), P(1, 0, "n")], R: [P(140, 54, "Xe"), P(94, 38, "Sr"), P(1, 0, "n", 2)], x: 1 },
+        { L: [P(235, 92, "U"), P(1, 0, "n")], R: [P(137, 55, "Cs"), P(96, 37, "Rb"), P(1, 0, "n", 3)], x: 1 },
+      ];
+      const side = (arr, xi) => arr.map((p, i) => (i === xi ? "\\mathrm{X}" : tex(p))).join(" + ");
+      const eqX = (R) => `${side(R.L, -1)} \\rightarrow ${side(R.R, R.x)}`;
+      const terms = (arr, xi, key, sym) => arr.map((p, i) => (i === xi ? sym : p.k > 1 ? `${p.k} \\cdot ${p[key]}` : `${p[key]}`)).join(" + ");
+      const sum = (arr, key) => arr.reduce((s, p) => s + p[key] * p.k, 0);
+      if (level === 1) {
+        const R = r.pick(RX);
+        const X = R.R[R.x];
+        const askA = r.next() < 0.5;
+        const key = askA ? "A" : "Z";
+        const ans = X[key];
+        const proj = R.L[1];
+        const multi = R.R.find((p) => p.k > 1);
+        const mist = askA
+          ? [M(ans - proj.A, "Na levi strani upoštevaj tudi vpadni delec."), multi ? M(ans + multi.k - 1, `Nastane ${multi.k} nevtronov; vsak ima masno število 1.`) : null]
+          : [M(ans - proj.Z, "Na levi strani upoštevaj tudi naboj vpadnega delca."), M(X.A, "Vprašanje sprašuje po vrstnem (protonskem) številu, ne po masnem.")];
+        return T(
+          `${nm} v zapisu jedrske reakcije $${eqX(R)}$ ne prepozna delca $\\mathrm{X}$. Kolikšno je ${askA ? "masno število $A$" : "vrstno število $Z$"} delca $\\mathrm{X}$?`,
+          num(ans, "", null, mist, { tolerance: 1e-9 }),
+          askA ? "Število nukleonov se ohrani: vsota masnih števil levo je enaka vsoti desno." : "Naboj se ohrani: vsota vrstnih števil levo je enaka vsoti desno.",
+          [`\\text{levo} = ${side(R.L, -1)}`, `\\text{desno} = ${side(R.R, R.x)}`],
+          [askA ? "A_X" : "Z_X"],
+          [askA ? "\\sum A_{levo} = \\sum A_{desno}" : "\\sum Z_{levo} = \\sum Z_{desno}"],
+          [`$${terms(R.L, -1, key)} = ${terms(R.R, R.x, key, `${key}_X`)}$`, `$${key}_X = ${sum(R.L, key)} - ${sum(R.R, key) - ans} = ${ans}$`],
+        );
+      }
+      if (level === 2) {
+        if (r.next() < 0.55) {
+          const NAME = { "1,1": "proton", "1,0": "nevtron", "4,2": "delec alfa (jedro helija-4)", "3,1": "jedro tritija (vodika-3)", "2,1": "devteron (jedro vodika-2)", "3,2": "jedro helija-3", "0,-1": "elektron" };
+          const R = r.pick(RX.filter((x) => x.R[x.x].A <= 4));
+          const X = R.R[R.x];
+          const keyX = `${X.A},${X.Z}`;
+          const wrong = Object.entries(NAME)
+            .filter(([k2]) => k2 !== keyX)
+            .map(([k2, name]) => {
+              const [a, z] = k2.split(",");
+              return [name[0].toUpperCase() + name.slice(1), `Ta delec ima $A = ${a}$ in $Z = ${z}$; vsoti masnih ali vrstnih števil se potem ne ujemata.`];
+            });
+          return T(
+            `${nm} s table prepiše jedrsko reakcijo $${eqX(R)}$. Kateri delec je $\\mathrm{X}$?`,
+            choice(r, NAME[keyX][0].toUpperCase() + NAME[keyX].slice(1), wrong),
+            "Iz ohranitve števila nukleonov in naboja izračunaj $A$ in $Z$ delca X, nato ga poimenuj.",
+            [`\\text{levo} = ${side(R.L, -1)}`, `\\text{desno} = ${side(R.R, R.x)}`],
+            ["\\mathrm{X}"],
+            ["\\sum A_{levo} = \\sum A_{desno}", "\\sum Z_{levo} = \\sum Z_{desno}"],
+            [`Masna števila: $A_X = ${sum(R.L, "A")} - ${sum(R.R, "A") - X.A} = ${X.A}$`, `Vrstna števila: $Z_X = ${sum(R.L, "Z")} - ${sum(R.R, "Z") - X.Z} = ${X.Z}$`, `Delec z $A = ${X.A}$ in $Z = ${X.Z}$: ${NAME[keyX]}.`],
+          );
+        }
+        const F = r.pick([
+          [141, 56, "Ba", 92, 36, "Kr"],
+          [144, 56, "Ba", 89, 36, "Kr"],
+          [139, 56, "Ba", 94, 36, "Kr"],
+          [140, 54, "Xe", 94, 38, "Sr"],
+          [134, 52, "Te", 100, 40, "Zr"],
+          [131, 50, "Sn", 103, 42, "Mo"],
+          [137, 55, "Cs", 96, 37, "Rb"],
+          [137, 52, "Te", 97, 40, "Zr"],
+        ]);
+        const k = 236 - F[0] - F[3];
+        return T(
+          `Pri cepitvi urana-235 s počasnim nevtronom nastaneta jedri $${nuc(F[0], F[1], F[2])}$ in $${nuc(F[3], F[4], F[5])}$ ter nekaj prostih nevtronov: $${nuc(235, 92, "U")} + ${NEU} \\rightarrow ${nuc(F[0], F[1], F[2])} + ${nuc(F[3], F[4], F[5])} + k\\,${NEU}$. Koliko nevtronov nastane pri tej cepitvi?`,
+          num(k, "", null, [M(k - 1, "Na levi strani je poleg urana še vpadni nevtron.")], { tolerance: 1e-9 }),
+          "Vrstna števila se že ujemajo; preštej masna števila na obeh straneh.",
+          [`\\text{levo} = ${nuc(235, 92, "U")} + ${NEU}`, `\\text{desno} = ${nuc(F[0], F[1], F[2])} + ${nuc(F[3], F[4], F[5])} + k\\,${NEU}`],
+          ["k"],
+          ["\\sum A_{levo} = \\sum A_{desno}"],
+          [`Naboj: $92 + 0 = ${F[1]} + ${F[4]}$ ✓`, `Nukleoni: $235 + 1 = ${F[0]} + ${F[3]} + k$`, `$k = 236 - ${F[0] + F[3]} = ${k}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const k = r.pick([1.01, 1.02, 1.05, 1.1, 0.99, 0.98, 0.95, 0.9]);
+        const N1 = r.int(1, 9) * 1000;
+        const gn = r.int(5, 40);
+        const N = N1 * k ** gn;
+        return T(
+          `V reaktorju je faktor množenja $k = ${tx(k)}$. V neki generaciji se razcepi $${N1}$ jeder urana-235. Koliko cepitev je v generaciji, ki pride $${gn}$ generacij pozneje? Zaokroži na celo število.`,
+          num(N, "", 0, [M(N1 * (1 + gn * (k - 1)), "Število cepitev se v vsaki generaciji pomnoži s $k$, ne spremeni za enako število."), M(N1 * k * gn, "Faktor $k$ se množi $g$-krat: $k^g$, ne $k \\cdot g$."), M(N1 * k ** (gn - 1), "Po $g$ generacijah je $k$ uporabljen $g$-krat.")]),
+          "Faktor množenja pove, kolikokrat več cepitev je v naslednji generaciji kot v prejšnji.",
+          [`k = ${tx(k)}`, `N_1 = ${N1}`, `g = ${gn}`],
+          ["N"],
+          ["k = \\dfrac{N_2}{N_1}", "N = N_1 \\cdot k^g"],
+          [`V vsaki generaciji se število cepitev pomnoži s $k$.`, `$N = ${N1} \\cdot ${tx(k)}^{${gn}} ${eq(N, 0)} ${tx(N, 0)}$`],
+        );
+      }
+      const up = r.next() < 0.5;
+      const N1 = r.int(20, 90) * 100;
+      const k = up ? r.dec(1.01, 1.1, 2) : r.dec(0.9, 0.99, 2);
+      const N2 = Math.round(N1 * k);
+      const ks = tx(N2 / N1, 3);
+      const pushIn = "Potisniti kontrolne palice globlje v sredico.";
+      const pullOut = "Kontrolne palice delno izvleči iz sredice.";
+      return T(
+        `${nm} v simulaciji reaktorja prešteje: v eni generaciji je $${N1}$ cepitev, v naslednji pa $${N2}$. Kaj mora storiti operater, da bo moč reaktorja stalna?`,
+        choice(r, up ? pushIn : pullOut, [
+          up ? [pullOut, "Palice vpijajo nevtrone; če jih izvlečeš, $k$ še naraste in moč raste hitreje."] : [pushIn, "Palice vpijajo nevtrone; če jih potisneš globlje, $k$ še pade in reakcija ugaša."],
+          ["Nič, reaktor že deluje s stalno močjo.", `Faktor množenja je $k \\approx ${ks}$, ne 1; število cepitev se spreminja.`],
+          up ? ["Gorivu dodati več urana-235.", "Z več urana-235 bi bil $k$ še večji."] : ["Vodi dodati več borove kisline.", "Bor-10 vpija nevtrone, zato bi $k$ še padel."],
+        ]),
+        "Izračunaj faktor množenja in pomisli, ali je treba nevtrone dodatno vpijati ali jih manj vpijati.",
+        [`N_1 = ${N1}`, `N_2 = ${N2}`],
+        ["\\text{ukrep}"],
+        ["k = \\dfrac{N_2}{N_1}", "k = 1 \\Rightarrow \\text{stalna moč}"],
+        [`$k = \\dfrac{${N2}}{${N1}} \\approx ${ks}$`, up ? "$k > 1$: moč narašča. Palice je treba potisniti globlje, da vpijejo več nevtronov in je $k = 1$." : "$k < 1$: moč pada. Palice je treba delno izvleči, da vpijejo manj nevtronov in je $k = 1$."],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-reakcijska-energija",
+    topics: ["FIZ-SS-4/jedrske-reakcije-in-reaktor"],
+    gen(level, r) {
+      const nm = ime(r);
+      const U = 931.5;
+      const fm = (x) => tx(x, 6);
+      const UMEV = "1\\ \\mathrm{u} \\cdot c^2 = 931{,}5\\ \\mathrm{MeV}";
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const dm = r.dec(0.0005, 0.02, 6);
+          const W = dm * U;
+          const ctx = r.pick(["Pri neki jedrski reakciji z obstreljevanjem", "Pri zlitju dveh lahkih jeder", "Pri razpadu alfa", "Pri reakciji, ki jo sproži počasen nevtron"]);
+          return T(
+            `${ctx} je skupna masa produktov za $${qty(fm(dm), "u")}$ manjša od mase začetnih delcev. Koliko energije se sprosti? ($1\\ \\mathrm{u}$ ustreza $931{,}5\\ \\mathrm{MeV}$.) Zaokroži na dve decimalki.`,
+            num(W, "MeV", 2, [M(dm, "Masni primanjkljaj pretvori v energijo: pomnoži ga z $931{,}5\\ \\mathrm{MeV/u}$."), M(-W, "Produkti so lažji, zato se energija sprosti: rezultat je pozitiven.")]),
+            "Masni primanjkljaj v enotah u pretvoriš v energijo z enim množenjem.",
+            [dat("\\Delta m", fm(dm), "u"), UMEV],
+            ["W_r"],
+            ["W_r = \\Delta m \\cdot 931{,}5\\ \\mathrm{MeV/u}"],
+            [`$\\Delta m = m_{pred} - m_{po} = ${qty(fm(dm), "u")} > 0$, zato se energija sprosti.`, `$W_r = ${fm(dm)} \\cdot 931{,}5\\ \\mathrm{MeV} ${res(W, 2, "MeV")}$`],
+          );
+        }
+        const B = r.pick([
+          { p: [14, 6, "C"], d: [14, 7, "N"], mp: 14.003242, md: 14.003074, name: "ogljika-14" },
+          { p: [60, 27, "Co"], d: [60, 28, "Ni"], mp: 59.933817, md: 59.930786, name: "kobalta-60" },
+          { p: [3, 1, "H"], d: [3, 2, "He"], mp: 3.016049, md: 3.016029, name: "tritija" },
+          { p: [90, 38, "Sr"], d: [90, 39, "Y"], mp: 89.907738, md: 89.907152, name: "stroncija-90" },
+          { p: [137, 55, "Cs"], d: [137, 56, "Ba"], mp: 136.907089, md: 136.905827, name: "cezija-137" },
+        ]);
+        const dm = B.mp - B.md;
+        const W = dm * U;
+        const eqs = `${nuc(...B.p)} \\rightarrow ${nuc(...B.d)} + {}^{\\ 0}_{-1}\\mathrm{e} + \\bar{\\nu}`;
+        return T(
+          `Jedro ${B.name} razpade z razpadom $\\beta^-$: $${eqs}$. Atomski masi sta $M(\\mathrm{${B.p[2]}}) = ${qty(fm(B.mp), "u")}$ in $M(\\mathrm{${B.d[2]}}) = ${qty(fm(B.md), "u")}$; $1\\ \\mathrm{u}$ ustreza $931{,}5\\ \\mathrm{MeV}$. Koliko energije se sprosti pri enem razpadu? Zaokroži na tri decimalke.`,
+          num(W, "MeV", 3, [M((dm - 0.000549) * U, "Mase so atomske: elektron je v razliki že upoštevan, ne odštej ga še enkrat."), M(dm, "Razliko mas pretvori v energijo ($931{,}5\\ \\mathrm{MeV/u}$)."), M(-W, "Masa pred razpadom je večja, zato se energija sprosti: rezultat je pozitiven.")]),
+          "Novi atom ima en elektron več; izsevani elektron je ravno ta. Zato vzameš kar razliko atomskih mas.",
+          [`M(\\mathrm{${B.p[2]}}) = ${qty(fm(B.mp), "u")}`, `M(\\mathrm{${B.d[2]}}) = ${qty(fm(B.md), "u")}`, UMEV],
+          ["W_r"],
+          ["\\Delta m = M(\\mathrm{X}) - M(\\mathrm{Y})", "W_r = \\Delta m \\cdot 931{,}5\\ \\mathrm{MeV/u}"],
+          [`$\\Delta m = ${fm(B.mp)} - ${fm(B.md)}\\ \\mathrm{u} = ${qty(fm(dm), "u")}$`, `$W_r = ${fm(dm)} \\cdot 931{,}5\\ \\mathrm{MeV} ${res(W, 3, "MeV")}$`],
+        );
+      }
+      const NM = (A, s) => `M({}^{${A}}\\mathrm{${s}})`;
+      if (level === 2) {
+        const RX = [
+          { eq: `${nuc(10, 5, "B")} + ${NEU} \\rightarrow ${nuc(7, 3, "Li")} + ${nuc(4, 2, "He")}`, L: [[NM(10, "B"), 10.012937], ["m_n", 1.008665]], R: [[NM(7, "Li"), 7.016003], [NM(4, "He"), 4.002603]] },
+          { eq: `${nuc(14, 7, "N")} + ${nuc(4, 2, "He")} \\rightarrow ${nuc(17, 8, "O")} + ${nuc(1, 1, "H")}`, L: [[NM(14, "N"), 14.003074], [NM(4, "He"), 4.002603]], R: [[NM(17, "O"), 16.999132], [NM(1, "H"), 1.007825]] },
+          { eq: `${nuc(9, 4, "Be")} + ${nuc(4, 2, "He")} \\rightarrow ${nuc(12, 6, "C")} + ${NEU}`, L: [[NM(9, "Be"), 9.012182], [NM(4, "He"), 4.002603]], R: [[NM(12, "C"), 12.0], ["m_n", 1.008665]] },
+          { eq: `${nuc(7, 3, "Li")} + ${nuc(1, 1, "H")} \\rightarrow 2\\,${nuc(4, 2, "He")}`, L: [[NM(7, "Li"), 7.016003], [NM(1, "H"), 1.007825]], R: [[NM(4, "He"), 4.002603, 2]] },
+          { eq: `${nuc(6, 3, "Li")} + ${NEU} \\rightarrow ${nuc(4, 2, "He")} + ${nuc(3, 1, "H")}`, L: [[NM(6, "Li"), 6.015123], ["m_n", 1.008665]], R: [[NM(4, "He"), 4.002603], [NM(3, "H"), 3.016049]] },
+          { eq: `${nuc(14, 7, "N")} + ${NEU} \\rightarrow ${nuc(14, 6, "C")} + ${nuc(1, 1, "H")}`, L: [[NM(14, "N"), 14.003074], ["m_n", 1.008665]], R: [[NM(14, "C"), 14.003242], [NM(1, "H"), 1.007825]] },
+          { eq: `${nuc(27, 13, "Al")} + ${nuc(4, 2, "He")} \\rightarrow ${nuc(30, 15, "P")} + ${NEU}`, L: [[NM(27, "Al"), 26.981538], [NM(4, "He"), 4.002603]], R: [[NM(30, "P"), 29.978314], ["m_n", 1.008665]] },
+          { eq: `${nuc(235, 92, "U")} + ${NEU} \\rightarrow ${nuc(141, 56, "Ba")} + ${nuc(92, 36, "Kr")} + 3\\,${NEU}`, L: [[NM(235, "U"), 235.04393], ["m_n", 1.008665]], R: [[NM(141, "Ba"), 140.914403], [NM(92, "Kr"), 91.926173], ["m_n", 1.008665, 3]] },
+        ];
+        const R = r.pick(RX);
+        const ms = (arr) => arr.reduce((s, x) => s + x[1] * (x[2] || 1), 0);
+        const mL = ms(R.L);
+        const mR = ms(R.R);
+        const dm = mL - mR;
+        const W = dm * U;
+        const all = [...R.L, ...R.R].filter((x, i, a) => a.findIndex((y) => y[0] === x[0]) === i);
+        const list = all.map((x) => `$${x[0]} = ${qty(fm(x[1]), "u")}$`).join(", ");
+        const multi = R.R.find((x) => x[2] > 1);
+        const ex = (x) => (x[2] > 1 ? `${x[2]} \\cdot ${fm(x[1])}` : fm(x[1]));
+        return T(
+          `${nm} v tabeli poišče atomske mase za reakcijo $${R.eq}$: ${list}. Kolikšna je reakcijska energija? ($1\\ \\mathrm{u}$ ustreza $931{,}5\\ \\mathrm{MeV}$; če reakcija energijo porabi, je rezultat negativen.) Zaokroži na dve decimalki.`,
+          num(W, "MeV", 2, [M(-W, "Masni primanjkljaj je $m_{pred} - m_{po}$; pazi na vrstni red odštevanja."), M(dm, "Masni primanjkljaj pretvori v energijo ($931{,}5\\ \\mathrm{MeV/u}$)."), multi ? M((dm + (multi[2] - 1) * multi[1]) * U, `Na desni je ${multi[2]}-krat isti delec; vsakega upoštevaj.`) : null]),
+          "Seštej mase pred reakcijo in po njej ter ju odštej; razliko pretvori v energijo.",
+          all.map((x) => `${x[0]} = ${qty(fm(x[1]), "u")}`).concat(UMEV),
+          ["W_r"],
+          ["\\Delta m = m_{pred} - m_{po}", "W_r = \\Delta m \\cdot 931{,}5\\ \\mathrm{MeV/u}"],
+          [
+            `$m_{pred} = ${R.L.map(ex).join(" + ")}\\ \\mathrm{u} = ${qty(fm(mL), "u")}$`,
+            `$m_{po} = ${R.R.map(ex).join(" + ")}\\ \\mathrm{u} = ${qty(fm(mR), "u")}$`,
+            `$\\Delta m = ${qty(fm(dm), "u")}$${dm < 0 ? " (negativen: reakcija energijo porabi)" : ""}`,
+            `$W_r = ${fm(dm)} \\cdot 931{,}5\\ \\mathrm{MeV} ${res(W, 2, "MeV")}$`,
+          ],
+        );
+      }
+      if (r.next() < 0.55) {
+        const A = r.pick([
+          { p: [241, 95, "Am"], d: [237, 93, "Np"], mp: 241.056829, md: 237.048173, name: "americija-241" },
+          { p: [226, 88, "Ra"], d: [222, 86, "Rn"], mp: 226.02541, md: 222.017578, name: "radija-226" },
+          { p: [210, 84, "Po"], d: [206, 82, "Pb"], mp: 209.982874, md: 205.974465, name: "polonija-210" },
+          { p: [238, 92, "U"], d: [234, 90, "Th"], mp: 238.050788, md: 234.043601, name: "urana-238" },
+          { p: [222, 86, "Rn"], d: [218, 84, "Po"], mp: 222.017578, md: 218.008973, name: "radona-222" },
+        ]);
+        const dm = A.mp - A.md - 4.002603;
+        const W = dm * U;
+        const askA = r.next() < 0.6;
+        const Wa = (W * A.d[0]) / A.p[0];
+        const Wy = (W * 4) / A.p[0];
+        const ans = askA ? Wa : Wy;
+        const d = askA ? 2 : 3;
+        return T(
+          `Mirujoče jedro ${A.name} razpade z razpadom alfa: $${nuc(...A.p)} \\rightarrow ${nuc(...A.d)} + ${nuc(4, 2, "He")}$. Atomske mase: $M(\\mathrm{${A.p[2]}}) = ${qty(fm(A.mp), "u")}$, $M(\\mathrm{${A.d[2]}}) = ${qty(fm(A.md), "u")}$, $M(\\mathrm{He}) = ${qty("4{,}002603", "u")}$; $1\\ \\mathrm{u}$ ustreza $931{,}5\\ \\mathrm{MeV}$. Kolikšno kinetično energijo dobi ${askA ? "delec alfa" : "odrinjeno jedro"}? Zaokroži na ${askA ? "dve" : "tri"} decimalke.`,
+          num(ans, "MeV", d, askA ? [M(W, "Del sproščene energije dobi tudi odrinjeno jedro."), M(Wy, "To je energija jedra; lažji delec alfa dobi večji del.")] : [M(Wa, "To je energija delca alfa; težko jedro dobi le majhen del."), M(W, "Večino energije odnese lažji delec alfa."), M((W * 4) / A.d[0], "Deli z vsoto mas obeh produktov, ne le z maso jedra.")]),
+          "Najprej izračunaj reakcijsko energijo. Gibalni količini produktov sta enako veliki, zato lažji delec dobi več kinetične energije.",
+          [`M(\\mathrm{${A.p[2]}}) = ${qty(fm(A.mp), "u")}`, `M(\\mathrm{${A.d[2]}}) = ${qty(fm(A.md), "u")}`, "M(\\mathrm{He}) = 4{,}002603\\ \\mathrm{u}", UMEV],
+          [askA ? "W_\\alpha" : `W_{\\mathrm{${A.d[2]}}}`],
+          ["W_r = \\Delta m \\cdot 931{,}5\\ \\mathrm{MeV/u}", "p_\\alpha = p_{jedra},\\ W = \\dfrac{p^2}{2m}", askA ? `W_\\alpha = W_r \\cdot \\dfrac{m_{jedra}}{m_{jedra} + m_\\alpha}` : `W_{jedra} = W_r \\cdot \\dfrac{m_\\alpha}{m_{jedra} + m_\\alpha}`],
+          [
+            `$\\Delta m = ${fm(A.mp)} - ${fm(A.md)} - 4{,}002603\\ \\mathrm{u} = ${qty(fm(dm), "u")}$`,
+            `$W_r = ${fm(dm)} \\cdot 931{,}5\\ \\mathrm{MeV} \\approx ${qty(tx(W, 3), "MeV")}$`,
+            askA ? `$W_\\alpha = ${tx(W, 3)}\\ \\mathrm{MeV} \\cdot \\dfrac{${A.d[0]}}{${A.p[0]}} ${res(Wa, 2, "MeV")}$` : `$W_{jedra} = ${tx(W, 3)}\\ \\mathrm{MeV} \\cdot \\dfrac{4}{${A.p[0]}} ${res(Wy, 3, "MeV")}$`,
+          ],
+        );
+      }
+      const mv = r.dec(0.5, 5, 1);
+      const dT = r.int(20, 80);
+      const W1 = r.int(170, 200);
+      const Q = mv * 4200 * dT;
+      const N = Q / (W1 * MEV_J);
+      const mug = N * 3.9e-25 * 1e9;
+      return T(
+        `${nm} si zamisli, da bi $${qty(tx(mv), "kg")}$ vode segrel${g(nm, "", "a")} za $${dT}\\ \\mathrm{K}$ z energijo cepitve urana-235. Pri vsaki cepitvi se sprosti $${W1}\\ \\mathrm{MeV}$. Koliko urana-235 bi bilo treba razcepiti? ($c_v = 4200\\ \\mathrm{J/(kg\\,K)}$, $1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}$, masa jedra urana-235 je $3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg}$) Rezultat zapiši v µg in zaokroži na dve decimalki.`,
+        num(mug, "µg", 2, [M(mug * 1e6, "Energijo cepitve pretvori v J: $1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}$."), M(mug / 1000, "$1\\ \\mathrm{kg} = 10^9\\ \\mathrm{\\mu g}$.")]),
+        "Izračunaj toploto za vodo, nato število potrebnih cepitev in iz njega maso urana.",
+        [dat("m_v", tx(mv), "kg"), dat("\\Delta T", dT, "K"), dat("W_1", W1, "MeV"), "c_v = 4200\\ \\mathrm{J/(kg\\,K)}", "1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}", "m_1 = 3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg}"],
+        ["m_U"],
+        ["Q = m_v c_v \\Delta T", "N = \\dfrac{Q}{W_1}", "m_U = N\\, m_1"],
+        [
+          `$Q = ${tx(mv)} \\cdot 4200 \\cdot ${dT}\\ \\mathrm{J} = ${qty(tx(Q), "J")}$`,
+          `$W_1 = ${W1} \\cdot 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J} \\approx ${qty(sci(W1 * MEV_J, 3), "J")}$`,
+          `$N = \\dfrac{Q}{W_1} \\approx ${sci(N, 3)}$`,
+          `$m_U = N \\cdot 3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg} \\approx ${qty(sci(mug * 1e-9, 3), "kg")} ${eq(mug, 2)} ${qty(tx(mug, 2), "\\mathrm{\\mu g}")}$`,
+        ],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-reaktor",
+    topics: ["FIZ-SS-4/jedrske-reakcije-in-reaktor"],
+    gen(level, r) {
+      const nm = ime(r);
+      const MEVT = "1\\ \\mathrm{MeV} = 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}";
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const R = r.dec(1, 9, 2);
+          const P = (R * 1e19 * 200 * MEV_J) / 1e6;
+          return T(
+            `V sredici reaktorja se vsako sekundo razcepi $${tx(R)} \\cdot 10^{19}$ jeder urana-235. Pri vsaki cepitvi se sprosti približno $200\\ \\mathrm{MeV}$. Kolikšna je toplotna moč reaktorja? ($${MEVT}$) Rezultat zapiši v MW in zaokroži na celo število.`,
+            num(P, "MW", 0, [M(P * 1e6, "Rezultat pretvori v megavate ($1\\ \\mathrm{MW} = 10^6\\ \\mathrm{W}$)."), M(P / 200, "Število cepitev na sekundo pomnoži še z energijo ene cepitve."), M(P * 1e-6, "MeV pretvori v J z $1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}$, ne z $1{,}602 \\cdot 10^{-19}\\ \\mathrm{J}$.")]),
+            "Moč je energija na sekundo: pomnoži število cepitev v sekundi z energijo ene cepitve v joulih.",
+            [`\\dfrac{N}{t} = ${tx(R)} \\cdot 10^{19}\\ \\mathrm{s^{-1}}`, dat("W_1", 200, "MeV"), MEVT],
+            ["P"],
+            ["P = \\dfrac{N}{t} \\cdot W_1"],
+            [`$W_1 = 200 \\cdot 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J} = 3{,}204 \\cdot 10^{-11}\\ \\mathrm{J}$`, `$P = ${tx(R)} \\cdot 10^{19}\\ \\mathrm{s^{-1}} \\cdot 3{,}204 \\cdot 10^{-11}\\ \\mathrm{J} \\approx ${qty(sci(P * 1e6, 3), "W")} ${eq(P, 0)} ${qty(tx(P, 0), "MW")}$`],
+          );
+        }
+        const Q = r.pick([
+          {
+            q: "Kaj je naloga moderatorja (vode) v reaktorju v Krškem?",
+            ok: "Upočasni hitre nevtrone, da lažje razcepijo uran-235.",
+            wrong: [
+              ["Vpija nevtrone in tako uravnava verižno reakcijo.", "Nevtrone vpijajo kontrolne palice in bor; moderator jih upočasnjuje."],
+              ["Pospeši nevtrone, da imajo dovolj energije za cepitev.", "Uran-235 veliko lažje razcepijo počasni nevtroni."],
+              ["Razcepi jedra urana.", "Jedra razcepijo nevtroni; voda jih le upočasni."],
+            ],
+          },
+          {
+            q: "Kaj delajo kontrolne palice iz srebra, indija in kadmija?",
+            ok: "Vpijajo nevtrone.",
+            wrong: [
+              ["Upočasnjujejo nevtrone.", "To dela moderator (voda); palice nevtrone vpijajo."],
+              ["Oddajajo nevtrone, ki sprožijo verižno reakcijo.", "Palice nevtrone vpijajo, ne oddajajo."],
+              ["Hladijo sredico reaktorja.", "Sredico hladi voda v primarnem krogu."],
+            ],
+          },
+          {
+            q: "Reaktor deluje s stalno močjo. Kolikšen je faktor množenja $k$?",
+            ok: "k = 1",
+            wrong: [
+              ["k > 1", "Pri $k > 1$ število cepitev narašča in moč raste."],
+              ["k < 1", "Pri $k < 1$ verižna reakcija ugaša."],
+              ["k = 0", "Pri $k = 0$ se verižna reakcija takoj ustavi."],
+            ],
+          },
+          {
+            q: "Zakaj voda v primarnem krogu pri okoli 300 °C ne zavre?",
+            ok: "Ker je pod visokim tlakom, okoli 155 bar.",
+            wrong: [
+              ["Ker je v njej raztopljena borova kislina.", "Bor vpija nevtrone; vrelišča skoraj ne spremeni."],
+              ["Ker jo sproti hladi voda iz Save.", "Sava hladi kondenzator sekundarnega kroga; v primarnem krogu je voda vroča."],
+              ["Ker voda pri 300 °C nikoli ne zavre.", "Pri normalnem tlaku voda zavre pri 100 °C; vrelišče dvigne visok tlak."],
+            ],
+          },
+          {
+            q: "Zakaj gorivo za reaktor obogatijo?",
+            ok: "Da vsebuje več urana-235 (okoli 4 % namesto 0,7 %), ki ga počasni nevtroni cepijo.",
+            wrong: [
+              ["Da vsebuje več urana-238, ki se lažje cepi.", "Počasni nevtroni cepijo uran-235, ne uran-238."],
+              ["Da gorivo gori z višjo temperaturo.", "Uran ne gori; energija nastane pri cepitvi jeder."],
+              ["Da izseva manj sevanja.", "Obogatitev poveča delež cepljivega urana-235; s sevanjem ni povezana."],
+            ],
+          },
+        ]);
+        return T(`${nm} se pripravlja na maturo. ${Q.q}`, choice(r, Q.ok, Q.wrong), "Ločuj: moderator upočasnjuje, kontrolne palice in bor vpijajo, hladilo odnaša toploto.", ["\\text{reaktor} = \\text{tlačnovodni}"], ["\\text{vloga dela}"], ["k = \\dfrac{N_2}{N_1}"], [`Pravilno: ${Q.ok}`, "Moderator upočasnjuje nevtrone, kontrolne palice in bor jih vpijajo, pri $k = 1$ je moč stalna."]);
+      }
+      if (level === 2) {
+        if (r.next() < 0.5) {
+          const up = r.next() < 0.5;
+          const N1 = r.int(20, 90) * 100;
+          const k = up ? r.dec(1.01, 1.1, 2) : r.dec(0.9, 0.99, 2);
+          const N2 = Math.round(N1 * k);
+          const kk = N2 / N1;
+          const o = (x, t) => `k ≈ ${plain(x, 3)}; moč ${t}`;
+          return T(
+            `${nm} opazuje števec cepitev: v eni generaciji je $${N1}$ cepitev, v naslednji pa $${N2}$. Kolikšen je faktor množenja in kaj se dogaja z močjo reaktorja?`,
+            choice(r, o(kk, up ? "narašča" : "pada"), [
+              [o(kk, up ? "pada" : "narašča"), up ? "Pri $k > 1$ je v vsaki generaciji več cepitev, zato moč narašča." : "Pri $k < 1$ je v vsaki generaciji manj cepitev, zato moč pada."],
+              [o(N1 / N2, up ? "pada" : "narašča"), "Faktor množenja je $N_2/N_1$ (nova generacija deljena s prejšnjo), ne obratno."],
+              [o(kk, "je stalna"), "Stalna moč pomeni $k = 1$, torej enako število cepitev v vsaki generaciji."],
+            ]),
+            "Faktor množenja je število cepitev v novi generaciji, deljeno s številom v prejšnji.",
+            [`N_1 = ${N1}`, `N_2 = ${N2}`],
+            ["k"],
+            ["k = \\dfrac{N_2}{N_1}"],
+            [`$k = \\dfrac{${N2}}{${N1}} \\approx ${tx(kk, 3)}$`, up ? "$k > 1$: število cepitev in moč naraščata." : "$k < 1$: število cepitev in moč padata."],
+          );
+        }
+        const Pt = r.int(15, 35) * 100;
+        const eta = r.dec(0.3, 0.36, 2);
+        const Pel = eta * Pt;
+        const Po = Pt - Pel;
+        return T(
+          `Jedrska elektrarna ima toplotno moč $${Pt}\\ \\mathrm{MW}$ in izkoristek $${tx(eta * 100)}\\ \\%$. Kolikšen toplotni tok odnaša hladilna voda v reko? Zaokroži na celo število.`,
+          num(Po, "MW", 0, [M(Pel, "To je električna moč; v reko gre preostanek toplote."), M(Pt, "Del toplotne moči se spremeni v električno."), M(Pt * (1 + eta), "Električno moč odštej od toplotne, ne prištej.")]),
+          "Izkoristek pove, kolikšen del toplotne moči postane električna; preostanek odnese hladilna voda.",
+          [dat("P_t", Pt, "MW"), `\\eta = ${tx(eta * 100)}\\ \\%`],
+          ["P_{odv}"],
+          ["P_{el} = \\eta\\, P_t", "P_{odv} = P_t - P_{el}"],
+          [`$P_{el} = ${tx(eta)} \\cdot ${Pt}\\ \\mathrm{MW} = ${qty(tx(Pel), "MW")}$`, `$P_{odv} = ${Pt} - ${tx(Pel)}\\ \\mathrm{MW} ${res(Po, 0, "MW")}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const Pel = r.int(60, 110) * 10;
+        const eta = r.dec(0.31, 0.35, 2);
+        const Pt = Pel / eta;
+        const N = (Pt * 1e6 * 86400) / (200 * MEV_J);
+        const m = N * 3.9e-25;
+        return T(
+          `Elektrarna z električno močjo $${Pel}\\ \\mathrm{MW}$ in izkoristkom $${tx(eta * 100)}\\ \\%$ obratuje ves dan. Koliko urana-235 se v tem času razcepi, če se pri vsaki cepitvi sprosti $200\\ \\mathrm{MeV}$? ($${MEVT}$, masa jedra urana-235 je $3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg}$) Zaokroži na dve decimalki.`,
+          num(m, "kg", 2, [M(m * eta, "Uran sprošča toploto; električna moč je le njen del. Najprej izračunaj toplotno moč."), M(m / 24, "En dan ima $86\\,400\\ \\mathrm{s}$, ne $3600\\ \\mathrm{s}$."), M(m * eta * eta, "Toplotna moč je $P_{el}/\\eta$, ne $\\eta P_{el}$.")]),
+          "Iz električne moči in izkoristka najprej izračunaj toplotno moč, nato energijo v enem dnevu in število cepitev.",
+          [dat("P_{el}", Pel, "MW"), `\\eta = ${tx(eta * 100)}\\ \\%`, dat("t", "86\\,400", "s"), dat("W_1", 200, "MeV"), MEVT, "m_1 = 3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg}"],
+          ["m"],
+          ["P_t = \\dfrac{P_{el}}{\\eta}", "N = \\dfrac{P_t\\, t}{W_1}", "m = N\\, m_1"],
+          [
+            `$P_t = \\dfrac{${Pel}}{${tx(eta)}}\\ \\mathrm{MW} \\approx ${qty(tx(Pt, 1), "MW")}$`,
+            `$W = P_t t \\approx ${tx(Pt, 1)} \\cdot 10^6\\ \\mathrm{W} \\cdot 86\\,400\\ \\mathrm{s} \\approx ${qty(sci(Pt * 1e6 * 86400, 3), "J")}$`,
+            `$N = \\dfrac{W}{200 \\cdot 1{,}602 \\cdot 10^{-13}\\ \\mathrm{J}} \\approx ${sci(N, 3)}$`,
+            `$m = N \\cdot 3{,}90 \\cdot 10^{-25}\\ \\mathrm{kg} ${res(m, 2, "kg")}$`,
+          ],
+        );
+      }
+      const Pt = r.int(15, 35) * 100;
+      const eta = r.dec(0.3, 0.36, 2);
+      const dT = r.dec(1, 3, 1);
+      const Po = Pt * (1 - eta);
+      const q = (Po * 1e6) / (4200 * dT) / 1000;
+      return T(
+        `Elektrarna ima toplotno moč $${Pt}\\ \\mathrm{MW}$ in izkoristek $${tx(eta * 100)}\\ \\%$. Toploto, ki ne postane električna energija, odnaša rečna voda, ki se pri tem segreje za $${qty(tx(dT), "K")}$. Koliko kubičnih metrov vode mora vsako sekundo teči skozi kondenzator? ($c_v = 4200\\ \\mathrm{J/(kg\\,K)}$, $\\rho = 1000\\ \\mathrm{kg/m^3}$) Zaokroži na eno decimalko.`,
+        num(q, "m³/s", 1, [M((Pt * 1e6) / (4200 * dT) / 1000, "V vodo gre le toplota, ki ne postane električna energija."), M((Pt * eta * 1e6) / (4200 * dT) / 1000, "To je električna moč; reka odnaša preostanek toplote."), M((Po * 1e6) / (4200 * dT), "Masni tok v kg/s pretvori v prostorninski tok v m³/s.")], { unitAlternatives: ["m3/s", "m^3/s"] }),
+        "Izračunaj toplotni tok, ki gre v reko, nato z enačbo za toploto maso vode, ki jo vsako sekundo segreje.",
+        [dat("P_t", Pt, "MW"), `\\eta = ${tx(eta * 100)}\\ \\%`, dat("\\Delta T", tx(dT), "K"), "c_v = 4200\\ \\mathrm{J/(kg\\,K)}", "\\rho = 1000\\ \\mathrm{kg/m^3}"],
+        ["\\Phi_V"],
+        ["P_{odv} = (1 - \\eta) P_t", "P_{odv} = \\dfrac{m}{t} c_v \\Delta T", "\\Phi_V = \\dfrac{m/t}{\\rho}"],
+        [`$P_{odv} = (1 - ${tx(eta)}) \\cdot ${Pt}\\ \\mathrm{MW} = ${qty(tx(Po), "MW")}$`, `$\\dfrac{m}{t} = \\dfrac{${tx(Po)} \\cdot 10^6}{4200 \\cdot ${tx(dT)}}\\ \\mathrm{kg/s} \\approx ${qty(tx((Po * 1e6) / (4200 * dT), 0), "kg/s")}$`, `$\\Phi_V = \\dfrac{m/t}{\\rho} ${res(q, 1, "m^3/s")}$`],
+      );
+    },
+  },
+  // ---------------- 4. letnik: meritve, grafi in poročilo ----------------
+  {
+    id: "dod-fiz-ss-meritve-napake",
+    topics: ["FIZ-SS-4/meritve-grafi-in-porocilo"],
+    gen(level, r) {
+      const nm = ime(r);
+      const pm = (x, dx, u, d = 1) => `(${tx(x, d)} \\pm ${tx(dx)})\\ \\mathrm{${u}}`;
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const da = r.pick([0.1, 0.2, 0.5]);
+          const db = r.pick([0.1, 0.2, 0.5]);
+          const S = r.pick([
+            { a: [170, 200], b: [60, 140], u: "cm", t: (A, B) => `${nm} izmeri višino kavlja, na katerem visi nihalo, $h_1 = ${A}$, in višino središča kroglice $h_2 = ${B}$. Dolžina nihala je $l = h_1 - h_2$.`, s: ["h_1", "h_2", "l"], op: "-" },
+            { a: [145, 175], b: [2, 8], u: "cm", t: (A, B) => `Septembra je bil${g(nm, "", "a")} ${nm} visok${g(nm, "", "a")} $h_1 = ${A}$, junija pa $h_2 = ${B}$. Rast je $r = h_2 - h_1$.`, s: ["h_1", "h_2", "r"], op: "rast" },
+            { a: [80, 150], b: [100, 250], u: "g", t: (A, B) => `Prazna čaša ima maso $m_1 = ${A}$, čaša z vodo pa $m_2 = ${B}$. Masa vode je $m = m_2 - m_1$.`, s: ["m_1", "m_2", "m"], op: "voda" },
+            { a: [20, 60], b: [20, 60], u: "cm", t: (A, B) => `${nm} položi skupaj dve palici z dolžinama $a = ${A}$ in $b = ${B}$. Skupna dolžina je $l = a + b$.`, s: ["a", "b", "l"], op: "+" },
+          ]);
+          let A = r.dec(S.a[0], S.a[1], 1);
+          let B = r.dec(S.b[0], S.b[1], 1);
+          if (S.op === "rast") B = roundHalfUp(A + B, 1);
+          if (S.op === "voda") B = roundHalfUp(A + B, 1);
+          const D = da + db;
+          const val = S.op === "+" ? A + B : S.op === "-" ? A - B : B - A;
+          return T(
+            `${S.t(pm(A, da, S.u), pm(B, db, S.u))} Kolikšna je absolutna napaka $\\Delta ${S.s[2]}$? Zaokroži na eno decimalko.`,
+            num(D, S.u, 1, [M(Math.abs(da - db), "Tudi pri razliki se absolutni napaki seštejeta, ne odštejeta."), M(Math.max(da, db), "Upoštevati moraš napaki obeh meritev."), M(val, `To je vrednost $${S.s[2]}$, ne njena napaka.`)]),
+            "Pomisli na najslabši primer: kdaj je rezultat največji in kdaj najmanjši?",
+            [dat(`\\Delta ${S.s[0]}`, tx(da), S.u), dat(`\\Delta ${S.s[1]}`, tx(db), S.u)],
+            [`\\Delta ${S.s[2]}`],
+            ["\\Delta x = \\Delta a + \\Delta b \\quad (x = a \\pm b)"],
+            [`$${S.s[2]} = ${qty(tx(val, 1), S.u)}$`, `Pri vsoti in razliki se absolutni napaki seštejeta: $\\Delta ${S.s[2]} = ${tx(da)} + ${qty(tx(db), S.u)} = ${qty(tx(D, 1), S.u)}$`],
+          );
+        }
+        const S = r.pick([
+          { what: "Rob kovinske kocke", s: "a", q: "prostornine kocke", n: 3, lo: 2, hi: 6, xd: 2, dxs: [0.01, 0.02, 0.05], f: "V = a^3" },
+          { what: "Premer jeklene kroglice", s: "d", q: "prostornine kroglice", n: 3, lo: 0.5, hi: 2.5, xd: 2, dxs: [0.01, 0.02], f: "V = \\dfrac{\\pi d^3}{6}" },
+          { what: "Stranica kvadratne ploščice", s: "a", q: "ploščine ploščice", n: 2, lo: 5, hi: 30, xd: 1, dxs: [0.1, 0.2], f: "S = a^2" },
+          { what: "Polmer okrogle mize", s: "r", q: "ploščine mize", n: 2, lo: 40, hi: 80, xd: 1, dxs: [0.2, 0.5], f: "S = \\pi r^2" },
+        ]);
+        const x = r.dec(S.lo, S.hi, S.xd);
+        const dx = r.pick(S.dxs);
+        const rel = ((S.n * dx) / x) * 100;
+        const d = rel < 0.1 ? 3 : rel < 1 ? 2 : 1;
+        return T(
+          `${S.what} meri $${S.s} = ${pm(x, dx, "cm", S.xd)}$. Kolikšna je relativna napaka ${S.q}? Odgovor zapiši v odstotkih in zaokroži ${dw(d)}.`,
+          num(rel, "%", d, [M(rel / S.n, "Pri potenci se relativna napaka pomnoži z eksponentom."), M((S.n * dx) / x, "Količnik pretvori v odstotke (pomnoži s 100 %).")]),
+          `Količina je sorazmerna z $${S.s}^${S.n}$; ugotovi, kolikokrat se pri tem pomnoži relativna napaka.`,
+          [dat(S.s, tx(x, S.xd), "cm"), dat(`\\Delta ${S.s}`, tx(dx), "cm")],
+          [`\\delta_{${S.f[0]}}`],
+          [S.f, `\\delta_{x} = n\\,\\delta_{${S.s}} \\quad (x \\propto ${S.s}^n)`],
+          [`$\\delta_{${S.s}} = \\dfrac{${tx(dx)}}{${tx(x, S.xd)}} \\cdot 100\\ \\% \\approx ${tx((dx / x) * 100, 3)}\\ \\%$`, `$\\delta = ${S.n} \\cdot ${tx((dx / x) * 100, 3)}\\ \\% ${res(rel, d, "\\%")}$${S.f.includes("pi") ? " (število $\\pi$ je natančno)" : ""}`],
+        );
+      }
+      if (level === 2) {
+        if (r.next() < 0.5) {
+          const m = r.dec(45, 95, 1);
+          const dm = r.pick([0.1, 0.5]);
+          const h = r.dec(1.5, 1.95, 2);
+          const dh = 0.01;
+          const itm = m / (h * h);
+          const dl = dm / m + (2 * dh) / h;
+          const D = itm * dl;
+          return T(
+            `${nm} izmeri svojo maso $m = ${pm(m, dm, "kg")}$ in višino $h = ${pm(h, dh, "m", 2)}$. Indeks telesne mase je $\\mathrm{ITM} = m/h^2$. Kolikšna je absolutna napaka ITM? Zaokroži na eno decimalko.`,
+            num(D, "kg/m²", 1, [M(itm * (dm / m + dh / h), "Višina je v formuli na kvadrat, zato njeno relativno napako podvoji."), M(itm * Math.abs(dm / m - (2 * dh) / h), "Tudi pri deljenju se relativni napaki seštejeta."), M(dm + 2 * dh, "Seštej relativni napaki, ne absolutnih; nato pomnoži z ITM.")], { unitAlternatives: ["kg/m^2", "kg/m2"] }),
+            "Izračunaj ITM, nato relativni napaki mase in višine. Pri kvadratu se relativna napaka podvoji.",
+            [dat("m", tx(m), "kg"), dat("\\Delta m", tx(dm), "kg"), dat("h", tx(h, 2), "m"), dat("\\Delta h", tx(dh), "m")],
+            ["\\Delta\\mathrm{ITM}"],
+            ["\\mathrm{ITM} = \\dfrac{m}{h^2}", "\\delta_{\\mathrm{ITM}} = \\delta_m + 2\\,\\delta_h", "\\Delta\\mathrm{ITM} = \\delta_{\\mathrm{ITM}} \\cdot \\mathrm{ITM}"],
+            [
+              `$\\mathrm{ITM} = \\dfrac{${tx(m)}}{${tx(h, 2)}^2}\\ \\mathrm{kg/m^2} \\approx ${qty(tx(itm, 2), "kg/m^2")}$`,
+              `$\\delta_m = \\dfrac{${tx(dm)}}{${tx(m)}} \\approx ${tx(dm / m, 4)},\\quad \\delta_h = \\dfrac{${tx(dh)}}{${tx(h, 2)}} \\approx ${tx(dh / h, 4)}$`,
+              `$\\delta_{\\mathrm{ITM}} = ${tx(dm / m, 4)} + 2 \\cdot ${tx(dh / h, 4)} \\approx ${tx(dl, 4)}$`,
+              `$\\Delta\\mathrm{ITM} = ${tx(dl, 4)} \\cdot ${tx(itm, 2)}\\ \\mathrm{kg/m^2} ${res(D, 1, "kg/m^2")}$`,
+            ],
+          );
+        }
+        const m = r.dec(0.2, 1.5, 2);
+        const dm = 0.01;
+        const v = r.dec(0.4, 2.5, 2);
+        const dv = r.pick([0.02, 0.05]);
+        const W = (m * v * v) / 2;
+        const dl = dm / m + (2 * dv) / v;
+        const D = W * dl;
+        const what = r.pick(["Voziček na zračni progi", "Igrača na kolesih", "Voziček po klancu", "Drsnik na vodoravni progi"]);
+        return T(
+          `${what} ima maso $m = ${pm(m, dm, "kg", 2)}$, ${nm} pa s svetlobnimi vrati izmeri hitrost $v = ${pm(v, dv, "m/s", 2)}$. Kolikšna je absolutna napaka kinetične energije? Zaokroži na tri decimalke.`,
+          num(D, "J", 3, [M(W * (dm / m + dv / v), "Hitrost je v formuli na kvadrat, zato njeno relativno napako podvoji."), M(2 * D, "Kinetična energija je $\\frac{1}{2} m v^2$; ne pozabi na $\\frac{1}{2}$."), M(W * dl * 100, "Relativno napako uporabi kot decimalno število, ne v odstotkih.")]),
+          "Napaka $W_k$ sledi iz relativnih napak; $v$ nastopa na kvadrat.",
+          [dat("m", tx(m, 2), "kg"), dat("\\Delta m", tx(dm), "kg"), dat("v", tx(v, 2), "m/s"), dat("\\Delta v", tx(dv), "m/s")],
+          ["\\Delta W_k"],
+          ["W_k = \\dfrac{1}{2} m v^2", "\\delta_W = \\delta_m + 2\\,\\delta_v", "\\Delta W_k = \\delta_W \\cdot W_k"],
+          [
+            `$W_k = \\dfrac{1}{2} \\cdot ${tx(m, 2)} \\cdot ${tx(v, 2)}^2\\ \\mathrm{J} ${res(W, 4, "J")}$`,
+            `$\\delta_W = \\dfrac{${tx(dm)}}{${tx(m, 2)}} + 2 \\cdot \\dfrac{${tx(dv)}}{${tx(v, 2)}} \\approx ${tx(dl, 4)}$`,
+            `$\\Delta W_k = ${tx(dl, 4)} \\cdot ${tx(W, 4)}\\ \\mathrm{J} ${res(D, 3, "J")}$`,
+          ],
+        );
+      }
+      if (r.next() < 0.55) {
+        const l = r.dec(0.4, 1.2, 3);
+        const dl = r.pick([0.002, 0.003, 0.005]);
+        const N = r.pick([10, 20]);
+        const dt = r.pick([0.1, 0.2, 0.3]);
+        const gt = r.dec(9.75, 9.86, 3);
+        const t = roundHalfUp(N * 2 * Math.PI * Math.sqrt(l / gt), 1);
+        const Tp = t / N;
+        const dT = dt / N;
+        const gg = (4 * Math.PI * Math.PI * l) / (Tp * Tp);
+        const rel = dl / l + (2 * dT) / Tp;
+        const D = gg * rel;
+        return T(
+          `${nm} meri težni pospešek z nitnim nihalom dolžine $l = ${pm(l, dl, "m", 3)}$. Čas $${N}$ nihajev je $t = ${pm(t, dt, "s")}$. Kolikšna je absolutna napaka izmerjenega $g$? Zaokroži na dve decimalki.`,
+          num(D, "m/s²", 2, [M(gg * (dl / l + dT / Tp), "Nihajni čas je v formuli na kvadrat, zato njegovo relativno napako podvoji."), M(gg * (dl / l + (2 * dt) / Tp), `Napako časa deli s številom nihajev: $\\Delta T = \\Delta t / ${N}$.`), M(gg * (dl / l), "Upoštevaj tudi napako nihajnega časa.")], { unitAlternatives: ["m/s^2", "m/s2"] }),
+          "Najprej izračunaj nihajni čas in njegovo napako (obe deliš s številom nihajev), nato $g$ in njegovo relativno napako.",
+          [dat("l", tx(l, 3), "m"), dat("\\Delta l", tx(dl), "m"), `N = ${N}`, dat("t", tx(t, 1), "s"), dat("\\Delta t", tx(dt), "s")],
+          ["\\Delta g"],
+          ["T = \\dfrac{t}{N},\\ \\Delta T = \\dfrac{\\Delta t}{N}", "g = \\dfrac{4\\pi^2 l}{T^2}", "\\delta_g = \\delta_l + 2\\,\\delta_T"],
+          [
+            `$T = \\dfrac{${tx(t, 1)}}{${N}}\\ \\mathrm{s} = ${qty(tx(Tp), "s")},\\quad \\Delta T = \\dfrac{${tx(dt)}}{${N}}\\ \\mathrm{s} = ${qty(tx(dT), "s")}$`,
+            `$g = \\dfrac{4\\pi^2 \\cdot ${tx(l, 3)}}{${tx(Tp)}^2}\\ \\mathrm{m/s^2} \\approx ${qty(tx(gg, 3), "m/s^2")}$`,
+            `$\\delta_g = \\dfrac{${tx(dl)}}{${tx(l, 3)}} + 2 \\cdot \\dfrac{${tx(dT)}}{${tx(Tp)}} \\approx ${tx(rel, 4)}$`,
+            `$\\Delta g = ${tx(rel, 4)} \\cdot ${tx(gg, 3)}\\ \\mathrm{m/s^2} ${res(D, 2, "m/s^2")}$`,
+          ],
+        );
+      }
+      let dl, dT;
+      do {
+        dl = r.dec(0.2, 2, 1);
+        dT = r.dec(0.3, 1.5, 1);
+      } while (Math.abs(dT - dl / 2) < 0.15);
+      const meter = "Boljši meter, ki prepolovi napako dolžine.";
+      const time = "Merjenje 20 namesto 10 nihajev, ki prepolovi napako nihajnega časa.";
+      const tBetter = dT > dl / 2;
+      const gainL = dl / 2;
+      const gainT = dT;
+      const pc = (x) => `${tx(x)}\\ \\%`;
+      return T(
+        `${nm} meri $g$ z nihalom. Relativna napaka dolžine je $\\delta_l = ${pc(dl)}$, nihajnega časa pa $\\delta_T = ${pc(dT)}$. Kaj bolj zmanjša relativno napako $g$?`,
+        choice(r, tBetter ? time : meter, [
+          tBetter ? [meter, `Boljši meter zmanjša $\\delta_g$ le za $${pc(gainL)}$, daljše merjenje časa pa za $${pc(gainT)}$, ker je $T$ v formuli na kvadrat.`] : [time, `Daljše merjenje časa zmanjša $\\delta_g$ za $${pc(gainT)}$, boljši meter pa za $${pc(gainL)}$.`],
+          ["Oboje enako, saj se obe napaki prepolovita.", "Napaka $T$ šteje dvakrat ($\\delta_g = \\delta_l + 2\\delta_T$), zato prepolovitev ne prinese enakega zmanjšanja."],
+          ["Nobeno: napaka $g$ je odvisna le od tega, kako natančen je $\\pi$.", "Število $4\\pi^2$ je natančno; $\\delta_g$ je odvisna od napak $l$ in $T$."],
+        ]),
+        "Zapiši $\\delta_g$ z $\\delta_l$ in $\\delta_T$ ter izračunaj, za koliko se zmanjša v vsakem primeru.",
+        [`\\delta_l = ${pc(dl)}`, `\\delta_T = ${pc(dT)}`],
+        ["\\text{večje zmanjšanje } \\delta_g"],
+        ["g = \\dfrac{4\\pi^2 l}{T^2}", "\\delta_g = \\delta_l + 2\\,\\delta_T"],
+        [
+          `Zdaj: $\\delta_g = ${tx(dl)} + 2 \\cdot ${tx(dT)} = ${pc(dl + 2 * dT)}$`,
+          `Boljši meter: $\\delta_g = ${tx(dl / 2)} + 2 \\cdot ${tx(dT)} = ${pc(dl / 2 + 2 * dT)}$; več nihajev: $\\delta_g = ${tx(dl)} + 2 \\cdot ${tx(dT / 2)} = ${pc(dl + dT)}$`,
+          tBetter ? "Bolj pomaga merjenje več nihajev." : "Bolj pomaga boljši meter.",
+        ],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-meritve-graf",
+    topics: ["FIZ-SS-4/meritve-grafi-in-porocilo"],
+    gen(level, r) {
+      const nm = ime(r);
+      const pt = (name, x, xu, y, yu, dx = 2, dy = 2) => `${name}(${qty(tx(x, dx), xu)};\\ ${qty(tx(y, dy), yu)})`;
+      const nihalo = () => {
+        const kt = (4 * Math.PI * Math.PI) / r.dec(9.6, 10, 2);
+        const xA = r.dec(0.1, 0.3, 2);
+        const xB = r.dec(0.8, 1.2, 2);
+        const yA = roundHalfUp(kt * xA, 2);
+        const yB = roundHalfUp(kt * xB, 2);
+        return { xA, xB, yA, yB, k: (yB - yA) / (xB - xA) };
+      };
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const P = nihalo();
+          return T(
+            `${nm} nariše graf $T^2$ v odvisnosti od dolžine nihala $l$ in skozi merske točke potegne premico. Na premici izbere točki $${pt("A", P.xA, "m", P.yA, "s^2")}$ in $${pt("B", P.xB, "m", P.yB, "s^2")}$. Kolikšen je naklon premice? Zaokroži na dve decimalki.`,
+            num(P.k, "s²/m", 2, [M(1 / P.k, "Naklon je $\\Delta y / \\Delta x$: spremembo na navpični osi deli s spremembo na vodoravni."), M((4 * Math.PI * Math.PI) / P.k, "To je že težni pospešek; vprašanje sprašuje po naklonu.")], { unitAlternatives: ["s^2/m", "s2/m"] }),
+            "Naklon je sprememba količine na navpični osi, deljena s spremembo na vodoravni osi.",
+            [dat("l_A", tx(P.xA, 2), "m"), dat("T_A^2", tx(P.yA, 2), "s^2"), dat("l_B", tx(P.xB, 2), "m"), dat("T_B^2", tx(P.yB, 2), "s^2")],
+            ["k"],
+            ["k = \\dfrac{T_B^2 - T_A^2}{l_B - l_A}"],
+            [`$\\Delta(T^2) = ${tx(P.yB, 2)} - ${qty(tx(P.yA, 2), "s^2")} = ${qty(tx(P.yB - P.yA, 2), "s^2")},\\quad \\Delta l = ${tx(P.xB, 2)} - ${qty(tx(P.xA, 2), "m")} = ${qty(tx(P.xB - P.xA, 2), "m")}$`, `$k = \\dfrac{${tx(P.yB - P.yA, 2)}}{${tx(P.xB - P.xA, 2)}}\\ \\mathrm{s^2/m} ${res(P.k, 2, "s^2/m")}$`],
+          );
+        }
+        const k = r.dec(3.95, 4.15, 2);
+        const Tp = r.dec(0.8, 2.2, 2);
+        const l = (Tp * Tp) / k;
+        return T(
+          `Na ${r.pick(["Nikinem", "Lukovem", "Zalinem", "Timovem"])} grafu $T^2$ v odvisnosti od dolžine nihala $l$ gre premica skozi izhodišče in ima naklon $k = ${qty(tx(k), "s^2/m")}$. Pri kateri dolžini nihala je nihajni čas $T = ${qty(tx(Tp), "s")}$? Zaokroži na dve decimalki.`,
+          num(l, "m", 2, [M(Tp / k, "Na navpični osi je $T^2$, ne $T$: nihajni čas najprej kvadriraj."), M(Tp * Tp * k, "Iz $T^2 = k\\,l$ izrazi $l$: deliš s $k$.")]),
+          "Zapiši enačbo premice skozi izhodišče in vanjo vstavi kvadrat nihajnega časa.",
+          [dat("k", tx(k), "s^2/m"), dat("T", tx(Tp), "s")],
+          ["l"],
+          ["T^2 = k\\, l"],
+          [`$T^2 = ${tx(Tp)}^2\\ \\mathrm{s^2} = ${qty(tx(Tp * Tp, 4), "s^2")}$`, `$l = \\dfrac{T^2}{k} = \\dfrac{${tx(Tp * Tp, 4)}}{${tx(k)}}\\ \\mathrm{m} ${res(l, 2, "m")}$`],
+        );
+      }
+      if (level === 2) {
+        const kind = r.pick(["g", "vzmet", "pad"]);
+        if (kind === "g") {
+          const P = nihalo();
+          const gg = (4 * Math.PI * Math.PI) / P.k;
+          return T(
+            `Na grafu $T^2$ v odvisnosti od $l$ ${nm} na premici najboljšega prileganja izbere točki $${pt("A", P.xA, "m", P.yA, "s^2")}$ in $${pt("B", P.xB, "m", P.yB, "s^2")}$. Kolikšen težni pospešek dobi iz naklona? Zaokroži na dve decimalki.`,
+            num(gg, "m/s²", 2, [M(4 * Math.PI * Math.PI * P.k, "Iz $k = 4\\pi^2/g$ sledi $g = 4\\pi^2/k$: s $k$ deliš."), M((Math.PI * Math.PI) / P.k, "Kvadrat od $2\\pi$ je $4\\pi^2$."), M(1 / P.k, "Naklon ni neposredno $g$; uporabi $g = 4\\pi^2/k$.")], { unitAlternatives: ["m/s^2", "m/s2"] }),
+            "Iz enačbe nihala zapiši $T^2$ kot linearno funkcijo $l$ in poveži naklon z $g$.",
+            [dat("l_A", tx(P.xA, 2), "m"), dat("T_A^2", tx(P.yA, 2), "s^2"), dat("l_B", tx(P.xB, 2), "m"), dat("T_B^2", tx(P.yB, 2), "s^2")],
+            ["g"],
+            ["T^2 = \\dfrac{4\\pi^2}{g}\\, l", "k = \\dfrac{\\Delta(T^2)}{\\Delta l}", "g = \\dfrac{4\\pi^2}{k}"],
+            [`$k = \\dfrac{${tx(P.yB, 2)} - ${tx(P.yA, 2)}}{${tx(P.xB, 2)} - ${tx(P.xA, 2)}}\\ \\mathrm{s^2/m} \\approx ${qty(tx(P.k, 4), "s^2/m")}$`, `$g = \\dfrac{4\\pi^2}{${tx(P.k, 4)}}\\ \\mathrm{m/s^2} ${res(gg, 2, "m/s^2")}$`],
+          );
+        }
+        if (kind === "vzmet") {
+          const kv = r.int(10, 80);
+          const K = (4 * Math.PI * Math.PI) / kv;
+          const xA = r.dec(0.05, 0.2, 2);
+          const xB = r.dec(0.4, 0.8, 2);
+          const yA = roundHalfUp(K * xA, 3);
+          const yB = roundHalfUp(K * xB, 3);
+          const kk = (yB - yA) / (xB - xA);
+          const kx = (4 * Math.PI * Math.PI) / kk;
+          return T(
+            `${nm} na vzmet obeša različne uteži in meri nihajni čas. Na grafu $T^2$ v odvisnosti od mase $m$ izbere na premici točki $${pt("A", xA, "kg", yA, "s^2", 2, 3)}$ in $${pt("B", xB, "kg", yB, "s^2", 2, 3)}$. Kolikšen je koeficient vzmeti? Zaokroži na eno decimalko.`,
+            num(kx, "N/m", 1, [M(kk, "To je naklon grafa; koeficient vzmeti je $4\\pi^2$ deljeno z naklonom."), M(1 / kk, "Uporabi $k = 4\\pi^2/\\text{naklon}$; manjka faktor $4\\pi^2$."), M(4 * Math.PI * Math.PI * kk, "Iz naklona $4\\pi^2/k$ izrazi $k$: deli $4\\pi^2$ z naklonom.")]),
+            "Kvadriraj enačbo za nihajni čas nihala na vzmeti: kaj je naklon premice $T^2(m)$?",
+            [dat("m_A", tx(xA, 2), "kg"), dat("T_A^2", tx(yA, 3), "s^2"), dat("m_B", tx(xB, 2), "kg"), dat("T_B^2", tx(yB, 3), "s^2")],
+            ["k"],
+            ["T^2 = \\dfrac{4\\pi^2}{k}\\, m", "\\text{naklon} = \\dfrac{\\Delta(T^2)}{\\Delta m} = \\dfrac{4\\pi^2}{k}"],
+            [`$\\text{naklon} = \\dfrac{${tx(yB, 3)} - ${tx(yA, 3)}}{${tx(xB, 2)} - ${tx(xA, 2)}}\\ \\mathrm{s^2/kg} \\approx ${qty(tx(kk, 4), "s^2/kg")}$`, `$k = \\dfrac{4\\pi^2}{${tx(kk, 4)}}\\ \\mathrm{N/m} ${res(kx, 1, "N/m")}$`],
+          );
+        }
+        const gt = r.dec(9.6, 10, 2);
+        const xA = r.dec(0.03, 0.08, 3);
+        const xB = r.dec(0.2, 0.4, 3);
+        const yA = roundHalfUp((gt / 2) * xA, 3);
+        const yB = roundHalfUp((gt / 2) * xB, 3);
+        const kk = (yB - yA) / (xB - xA);
+        const gg = 2 * kk;
+        return T(
+          `${nm} spušča kroglico z različnih višin $s$ in meri čas padanja $t$. Na graf $s$ v odvisnosti od $t^2$ nariše premico in na njej izbere točki $${pt("A", xA, "s^2", yA, "m", 3, 3)}$ in $${pt("B", xB, "s^2", yB, "m", 3, 3)}$. Kolikšen je težni pospešek? Zaokroži na dve decimalki.`,
+          num(gg, "m/s²", 2, [M(kk, "Iz $s = \\frac{g}{2} t^2$ je naklon $g/2$; pomnoži ga z 2."), M(2 / kk, "Naklon je $\\Delta s / \\Delta(t^2)$, ne obratno."), M(kk / 2, "Naklon je $g/2$, zato je $g$ dvakratnik naklona.")], { unitAlternatives: ["m/s^2", "m/s2"] }),
+          "Zapiši pot prostega pada in ugotovi, kaj je naklon premice $s(t^2)$.",
+          [dat("t_A^2", tx(xA, 3), "s^2"), dat("s_A", tx(yA, 3), "m"), dat("t_B^2", tx(xB, 3), "s^2"), dat("s_B", tx(yB, 3), "m")],
+          ["g"],
+          ["s = \\dfrac{g}{2}\\, t^2", "\\text{naklon} = \\dfrac{\\Delta s}{\\Delta(t^2)} = \\dfrac{g}{2}"],
+          [`$\\text{naklon} = \\dfrac{${tx(yB, 3)} - ${tx(yA, 3)}}{${tx(xB, 3)} - ${tx(xA, 3)}}\\ \\mathrm{m/s^2} \\approx ${qty(tx(kk, 4), "m/s^2")}$`, `$g = 2 \\cdot ${tx(kk, 4)}\\ \\mathrm{m/s^2} ${res(gg, 2, "m/s^2")}$`],
+        );
+      }
+      if (r.next() < 0.5) {
+        const kt = (4 * Math.PI * Math.PI) / r.dec(9.7, 9.9, 2);
+        const rr = r.dec(1, 3, 1) / 100;
+        const xA = r.dec(0.2, 0.4, 2);
+        const xB = r.dec(0.9, 1.2, 2);
+        const yA = roundHalfUp(kt * (xA + rr), 3);
+        const yB = roundHalfUp(kt * (xB + rr), 3);
+        const kk = (yB - yA) / (xB - xA);
+        const b = yA - kk * xA;
+        const rc = (b / kk) * 100;
+        if (rc <= 0.2) return null;
+        return T(
+          `${nm} je dolžino nihala meril${g(nm, "", "a")} od kavlja do vrha kroglice, ne do njenega središča. Premica na grafu $T^2(l)$ zato ne gre skozi izhodišče; na njej ležita točki $${pt("A", xA, "m", yA, "s^2", 2, 3)}$ in $${pt("B", xB, "m", yB, "s^2", 2, 3)}$. Kolikšen je polmer kroglice? Rezultat zapiši v cm in zaokroži na eno decimalko.`,
+          num(rc, "cm", 1, [M(b * 100, "Presečišče z navpično osjo je $k\\,r$; deli ga še z naklonom."), M(b / kk, "Rezultat pretvori v centimetre."), M(2 * rc, "Premica je premaknjena za polmer kroglice, ne za premer.")]),
+          "Prava zveza je $T^2 = k(l + r)$. Iz točk izračunaj naklon in presečišče z navpično osjo.",
+          [dat("l_A", tx(xA, 2), "m"), dat("T_A^2", tx(yA, 3), "s^2"), dat("l_B", tx(xB, 2), "m"), dat("T_B^2", tx(yB, 3), "s^2")],
+          ["r"],
+          ["T^2 = k\\,(l + r) = k\\,l + k\\,r", "k = \\dfrac{\\Delta(T^2)}{\\Delta l}", "r = \\dfrac{n}{k}\\ (n:\\ \\text{presečišče})"],
+          [
+            `$k = \\dfrac{${tx(yB, 3)} - ${tx(yA, 3)}}{${tx(xB, 2)} - ${tx(xA, 2)}}\\ \\mathrm{s^2/m} \\approx ${qty(tx(kk, 4), "s^2/m")}$`,
+            `$n = T_A^2 - k\\,l_A = ${tx(yA, 3)} - ${tx(kk, 4)} \\cdot ${tx(xA, 2)}\\ \\mathrm{s^2} \\approx ${qty(tx(b, 4), "s^2")}$`,
+            `$r = \\dfrac{n}{k} = \\dfrac{${tx(b, 4)}}{${tx(kk, 4)}}\\ \\mathrm{m} ${res(b / kk, 4, "m")} ${eq(rc, 1)} ${qty(tx(rc, 1), "cm")}$`,
+          ],
+        );
+      }
+      const Q = r.pick([
+        { ctx: `${nm} pri brizgi z zaprto konico meri tlak $p$ pri različnih prostorninah $V$ (temperatura je stalna, $pV$ je stalen).`, ok: "p v odvisnosti od 1/V", wrong: [["p v odvisnosti od V", "Pri $p \\propto 1/V$ so točke na hiperboli, ne na premici."], ["p v odvisnosti od V²", "Tlak ni sorazmeren s kvadratom prostornine."], ["p² v odvisnosti od V", "Kvadriranje tlaka iz obratnega sorazmerja ne naredi premice."]], law: "p = \\dfrac{C}{V}" },
+        { ctx: `${nm} meri nihajni čas $T$ nitnega nihala pri različnih dolžinah $l$.`, ok: "T² v odvisnosti od l", wrong: [["T v odvisnosti od l", "Ker je $T \\propto \\sqrt{l}$, točke ležijo na krivulji."], ["T v odvisnosti od l²", "Nihajni čas ni sorazmeren s kvadratom dolžine."], ["1/T v odvisnosti od l", "$1/T$ pada s korenom dolžine; graf ni premica."]], law: "T^2 = \\dfrac{4\\pi^2}{g}\\, l" },
+        { ctx: `${nm} spušča voziček iz mirovanja po klancu in meri pot $s$ v odvisnosti od časa $t$.`, ok: "s v odvisnosti od t²", wrong: [["s v odvisnosti od t", "Pri enakomerno pospešenem gibanju je $s \\propto t^2$; graf $s(t)$ je parabola."], ["s v odvisnosti od √t", "Pot ni sorazmerna s korenom časa."], ["s v odvisnosti od 1/t", "Pot s časom narašča, ne pada."]], law: "s = \\dfrac{a}{2} t^2" },
+        { ctx: `${nm} meri silo $F$ med nabitima kroglicama pri različnih razdaljah $r$.`, ok: "F v odvisnosti od 1/r²", wrong: [["F v odvisnosti od 1/r", "Sila pada s kvadratom razdalje, ne z razdaljo."], ["F v odvisnosti od r²", "Sila z razdaljo pada, ne narašča."], ["F v odvisnosti od r", "Točke $F(r)$ ležijo na krivulji, ki pada."]], law: "F = \\dfrac{C}{r^2}" },
+        { ctx: `${nm} meri kinetično energijo $W_k$ vozička pri različnih hitrostih $v$.`, ok: "W_k v odvisnosti od v²", wrong: [["W_k v odvisnosti od v", "Ker je $W_k \\propto v^2$, je graf $W_k(v)$ parabola."], ["W_k v odvisnosti od √v", "Energija narašča s kvadratom hitrosti, ne s korenom."], ["W_k v odvisnosti od 1/v", "Energija s hitrostjo narašča."]], law: "W_k = \\dfrac{m}{2} v^2" },
+        { ctx: `${nm} meri nihajni čas $T$ uteži na vzmeti pri različnih masah $m$.`, ok: "T² v odvisnosti od m", wrong: [["T v odvisnosti od m", "Ker je $T \\propto \\sqrt{m}$, točke ležijo na krivulji."], ["T v odvisnosti od m²", "Nihajni čas ni sorazmeren s kvadratom mase."], ["T v odvisnosti od 1/m", "Nihajni čas z maso narašča."]], law: "T^2 = \\dfrac{4\\pi^2}{k}\\, m" },
+      ]);
+      return T(
+        `${Q.ctx} Kateri graf naj nariše, da bodo točke ležale na premici skozi izhodišče?`,
+        choice(r, Q.ok, Q.wrong),
+        "Zapiši zakon, ki povezuje obe količini, in ga preoblikuj v obliko $y = k\\,x$.",
+        [`\\text{merjeni količini} = ${Q.ctx.match(/\$[^$]+\$/g).slice(0, 2).map((x) => x.slice(1, -1)).join(",\\ ")}`],
+        ["\\text{osi grafa}"],
+        ["y = k\\, x \\Rightarrow \\text{premica skozi izhodišče}"],
+        [`Zakon: $${Q.law}$`, `Desna stran je premo sorazmerna s količino ${Q.ok.split(" od ")[1]}, zato je graf »${Q.ok}« premica skozi izhodišče.`],
+      );
+    },
+  },
+  {
+    id: "dod-fiz-ss-meritve-porocilo",
+    topics: ["FIZ-SS-4/meritve-grafi-in-porocilo"],
+    gen(level, r) {
+      const nm = ime(r);
+      if (level === 1) {
+        if (r.next() < 0.5) {
+          const N = r.pick([10, 20, 25, 50]);
+          const dt = r.pick([0.1, 0.2, 0.3]);
+          const t = r.dec(N * 0.8, N * 2.2, 1);
+          const dT = dt / N;
+          return T(
+            `${nm} z ročno štoparico izmeri čas $${N}$ nihajev nihala: $t = (${tx(t, 1)} \\pm ${tx(dt)})\\ \\mathrm{s}$. Kolikšna je absolutna napaka nihajnega časa $T = t/${N}$? Zaokroži na tri decimalke.`,
+            num(dT, "s", 3, [M(dt, `Napaka se razdeli na vse nihaje: deli jo s ${N}.`), M(dt * N, "Napako deliš s številom nihajev, ne množiš."), M(t / N, "To je nihajni čas, ne njegova napaka.")]),
+            "Število nihajev je natančno; z njim deliš čas in tudi njegovo napako.",
+            [dat("t", tx(t, 1), "s"), dat("\\Delta t", tx(dt), "s"), `N = ${N}`],
+            ["\\Delta T"],
+            ["T = \\dfrac{t}{N}", "\\Delta T = \\dfrac{\\Delta t}{N}"],
+            [`$T = \\dfrac{${tx(t, 1)}}{${N}}\\ \\mathrm{s} ${res(t / N, 3, "s")}$`, `$\\Delta T = \\dfrac{${tx(dt)}}{${N}}\\ \\mathrm{s} ${res(dT, 3, "s")}$`],
+          );
+        }
+        const base = roundHalfUp(10 * r.dec(0.9, 2.2, 2), 1);
+        const ts = [0, 1, 2, 3, 4].map(() => roundHalfUp(base + r.int(-3, 3) / 10, 1));
+        const sum = ts.reduce((a, b) => a + b, 0);
+        const mean = sum / 5;
+        const Tp = mean / 10;
+        return T(
+          `${nm} petkrat izmeri čas desetih nihajev nihala: ${ts.map((x) => `$${qty(tx(x, 1), "s")}$`).join(", ")}. Kolikšen je povprečni nihajni čas? Zaokroži na tri decimalke.`,
+          num(Tp, "s", 3, [M(mean, "To je povprečni čas desetih nihajev; deli ga še z 10."), M(sum / 10, "Najprej izračunaj povprečje petih meritev (deli s 5)."), M(ts[0] / 10, "Uporabi vseh pet meritev, ne le prve.")]),
+          "Najprej izračunaj povprečje petih meritev, nato ga deli s številom nihajev.",
+          [`t_{10} = ${ts.map((x) => tx(x, 1)).join(";\\ ")}\\ \\mathrm{s}`],
+          ["T"],
+          ["\\bar{t}_{10} = \\dfrac{t_1 + \\dots + t_5}{5}", "T = \\dfrac{\\bar{t}_{10}}{10}"],
+          [`$\\bar{t}_{10} = \\dfrac{${ts.map((x) => tx(x, 1)).join(" + ")}}{5}\\ \\mathrm{s} = ${qty(tx(mean, 2), "s")}$`, `$T = \\dfrac{${tx(mean, 2)}}{10}\\ \\mathrm{s} ${res(Tp, 3, "s")}$`],
+        );
+      }
+      if (level === 2) {
+        if (r.next() < 0.5) {
+          let gv, err;
+          do {
+            gv = r.dec(9.4, 10.2, 3);
+            err = r.dec(0.11, 0.84, 2);
+          } while (Math.round(err * 100) % 10 === 0 || roundHalfUp(gv, 1) === roundHalfUp(gv, 2));
+          const g1 = roundHalfUp(gv, 1);
+          const e1 = roundHalfUp(err, 1);
+          const f = (a, da, b, db) => `(${plain(a, da)} ± ${plain(b, db)}) m/s²`;
+          return T(
+            `${nm} v poročilu iz naklona grafa izračuna $g = ${qty(tx(gv, 3), "m/s^2")}$ in napako $\\Delta g = ${qty(tx(err, 2), "m/s^2")}$. Kako zapiše rezultat v poročilu?`,
+            choice(r, f(g1, 1, e1, 1), [
+              [f(gv, 3, err, 2), "Napako zaokrožimo na eno veljavno mesto, vrednost pa na isto decimalno mesto kot napako."],
+              [f(roundHalfUp(gv, 2), 2, e1, 1), "Vrednost ima več decimalk kot napaka; zadnja števka vrednosti mora biti na istem mestu kot napaka."],
+              [f(g1, 1, err, 2), "Absolutno napako zaokrožimo na eno veljavno mesto."],
+            ]),
+            "Najprej zaokroži napako na eno veljavno mesto, nato vrednost na isto decimalno mesto.",
+            [dat("g", tx(gv, 3), "m/s^2"), dat("\\Delta g", tx(err, 2), "m/s^2")],
+            ["\\text{zapis } (g \\pm \\Delta g)"],
+            ["x = (\\bar{x} \\pm \\Delta x)\\ \\text{enota}"],
+            [`Napaka na eno veljavno mesto: $\\Delta g \\approx ${qty(tx(e1, 1), "m/s^2")}$`, `Vrednost na desetinke: $g \\approx ${qty(tx(g1, 1), "m/s^2")}$`, `Zapis: $g = (${tx(g1, 1)} \\pm ${tx(e1, 1)})\\ \\mathrm{m/s^2}$`],
+          );
+        }
+        const N = r.pick([10, 20, 25]);
+        const dt = r.pick([0.1, 0.2, 0.3]);
+        const t = r.dec(N * 0.8, N * 2.2, 1);
+        const rel = (dt / t) * 100;
+        return T(
+          `${nm} izmeri čas $${N}$ nihajev $t = (${tx(t, 1)} \\pm ${tx(dt)})\\ \\mathrm{s}$ in iz njega izračuna nihajni čas $T = t/${N}$. Kolikšna je relativna napaka nihajnega časa v odstotkih? Zaokroži na dve decimalki.`,
+          num(rel, "%", 2, [M((dt / N / t) * 100, `Napako $\\Delta T = \\Delta t/${N}$ deli z nihajnim časom $T$, ne s celim časom $t$.`), M((dt / (t / N)) * 100, `Pri $\\Delta T$ deli tudi napako s ${N}.`), M(dt / t, "Količnik pretvori v odstotke.")]),
+          "Izračunaj $T$ in $\\Delta T$; obe deliš z istim natančnim številom nihajev.",
+          [dat("t", tx(t, 1), "s"), dat("\\Delta t", tx(dt), "s"), `N = ${N}`],
+          ["\\delta_T"],
+          ["T = \\dfrac{t}{N},\\ \\Delta T = \\dfrac{\\Delta t}{N}", "\\delta_T = \\dfrac{\\Delta T}{T}"],
+          [`$T = ${qty(tx(t / N, 3), "s")},\\ \\Delta T = ${qty(tx(dt / N, 3), "s")}$`, `$\\delta_T = \\dfrac{\\Delta T}{T} = \\dfrac{\\Delta t}{t} = \\dfrac{${tx(dt)}}{${tx(t, 1)}} \\cdot 100\\ \\% ${res(rel, 2, "\\%")}$`, "Deljenje z natančnim številom $N$ relativne napake ne spremeni."],
+        );
+      }
+      if (r.next() < 0.5) {
+        const Tp = r.dec(0.8, 2.5, 2);
+        const dt = r.pick([0.1, 0.2, 0.3]);
+        const p = r.pick([0.2, 0.25, 0.5, 1]);
+        const x = dt / ((p / 100) * Tp);
+        const N = Math.ceil(x - 1e-9);
+        if (N < 2) return null;
+        return T(
+          `${nm} meri nihajni čas nihala, ki je približno $${qty(tx(Tp), "s")}$. Štoparico sproži in ustavi z napako $${qty(tx(dt), "s")}$. Najmanj koliko zaporednih nihajev mora meriti skupaj, da bo relativna napaka nihajnega časa največ $${tx(p)}\\ \\%$?`,
+          num(N, "", null, [M(N - 1, "Pri tem številu nihajev je napaka še prevelika; zaokroži navzgor.")], { tolerance: 1e-9 }),
+          "Zapiši relativno napako nihajnega časa pri $N$ nihajih in postavi pogoj, da je največ dovoljena.",
+          [dat("T", tx(Tp), "s"), dat("\\Delta t", tx(dt), "s"), `\\delta_{max} = ${tx(p)}\\ \\%`],
+          ["N"],
+          ["\\delta_T = \\dfrac{\\Delta t / N}{T} = \\dfrac{\\Delta t}{N\\,T}", "N \\ge \\dfrac{\\Delta t}{\\delta_{max}\\, T}"],
+          [`$N \\ge \\dfrac{${tx(dt)}}{${tx(p / 100)} \\cdot ${tx(Tp)}} \\approx ${tx(x, 2)}$`, `Najmanjše celo število: $N = ${N}$`],
+        );
+      }
+      const Q = r.pick([
+        {
+          q: "V katerem delu poročila zapiše stavek »Dobljeni $g$ se v okviru napake ujema z $9{,}81\\ \\mathrm{m/s^2}$; največji vir napake je merjenje časa.«?",
+          ok: "Sklep",
+          wrong: [["Namen", "Namen pove le, kaj meriš, ne pa rezultata."], ["Potek dela", "Potek dela opisuje korake merjenja, ne primerjave rezultata."], ["Pripomočki", "Tu našteješ merilne naprave z natančnostjo."]],
+        },
+        {
+          q: "Zakaj meri čas desetih nihajev in ne enega?",
+          ok: "Napaka štoparice se razdeli na deset nihajev, zato je napaka nihajnega časa desetkrat manjša.",
+          wrong: [["Ker se nihalo po desetih nihajih ustavi.", "Število nihajev izbereš ti; nihalo niha še dolgo."], ["Ker je nihajni čas pri več nihajih daljši.", "Nihajni čas je za vsak nihaj enak."], ["Da je relativna napaka dolžine manjša.", "Število nihajev ne vpliva na meritev dolžine."]],
+        },
+        {
+          q: "Dolžino nihala je meril do vrha kroglice, ne do središča. Kako bo videti premica na grafu $T^2(l)$?",
+          ok: "Sekala bo navpično os nad izhodiščem; naklon in s tem $g$ ostaneta pravilna.",
+          wrong: [["Šla bo skozi izhodišče, a bo imela večji naklon.", "Vse dolžine so prekratke za isti polmer: premica se premakne, naklon se ne spremeni."], ["Točke ne bodo več ležale na premici.", "Zveza $T^2 = k(l + r)$ je še vedno linearna."], ["Izračunani $g$ bo dvakrat prevelik.", "Naklon ostane $4\\pi^2/g$; sistematična napaka premakne le presečišče."]],
+        },
+        {
+          q: "Kako izbere točki za izračun naklona premice?",
+          ok: "Dve točki na narisani premici, čim bolj narazen.",
+          wrong: [["Prvo in zadnjo mersko točko.", "Merske točke ne ležijo nujno na premici; vzameš točki s premice."], ["Dve sosednji merski točki.", "Bližnji točki dasta naklon z veliko napako; vzemi točki na premici, daleč narazen."], ["Točko na premici in izhodišče, tudi če premica ne gre skozenj.", "Če premica ne gre skozi izhodišče, ta točka ni na njej."]],
+        },
+        {
+          q: "Katero količino nariše na vodoravno os grafa $T^2(l)$?",
+          ok: "Dolžino nihala l, ki jo spreminja.",
+          wrong: [["Kvadrat nihajnega časa T², ki ga meri.", "Količina, ki jo meriš, gre na navpično os."], ["Čas desetih nihajev.", "Na osi so količine iz linearizirane zveze, $l$ in $T^2$."], ["Zaporedno številko meritve.", "Iz takega grafa ne dobiš naklona, povezanega z $g$."]],
+        },
+      ]);
+      return T(`${nm} piše poročilo o merjenju $g$ z nihalom. ${Q.q}`, choice(r, Q.ok, Q.wrong), "Spomni se pravil za graf in sedmih delov poročila: namen, pripomočki, potek, tabela, graf, izračun z napako, sklep.", ["\\text{meritev} = g \\text{ z nitnim nihalom}"], ["\\text{pravilen odgovor}"], ["T^2 = \\dfrac{4\\pi^2}{g}\\, l"], [`Pravilno: ${Q.ok}`, "Graf: spreminjana količina vodoravno, merjena navpično; naklon iz dveh točk na premici; sklep primerja rezultat s pričakovanim."]);
     },
   },
 ];
