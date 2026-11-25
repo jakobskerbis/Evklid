@@ -2,17 +2,9 @@
 // Vsaka demonstracija je funkcija (el) => void, ki nariše vse v el.
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
-import { tryIt } from "./sim/kit.js"; // tryIt: »Preizkusi: …« (sim/napis-poskusa.js)
-import { izrisi } from "./mat/izris.js";
+import { tryIt, fmt, tex } from "./sim/kit.js"; // tryIt: »Preizkusi: …« (sim/napis-poskusa.js); fmt, tex: ločilo jezika vmesnika
 
 const NS = "http://www.w3.org/2000/svg";
-
-// Število s slovensko decimalno vejico.
-export function fmt(x, d = 2) {
-  if (!Number.isFinite(x)) return "–";
-  const r = Number(x.toFixed(d));
-  return String(r).replace(".", ",").replace("-", "−");
-}
 
 function h(tag, attrs = {}, ...kids) {
   const el = document.createElement(tag);
@@ -81,7 +73,6 @@ function animate(el, step) {
   requestAnimationFrame(tick);
 }
 
-const tex = (t) => izrisi(t, { vejica: true });
 
 // ------------------------------------------------------------ y = kx + n
 function linearna(el) {

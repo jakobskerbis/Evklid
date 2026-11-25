@@ -94,8 +94,11 @@ test("/path for goal matura: Danes data = due reviews, then the path's next topi
     assert.ok(ex.readiness.weakest.length);
     // Nov maturant: nobena tema še ni vadena, zato tema Učne poti (kot Današnji trening in »Naslednja«), ne prva tema kataloga.
     assert.equal(ex.readiness.weakestTried, null);
-    assert.ok(p.next && p.next.id !== ex.readiness.weakest[0].id, "pot je drugje kot prva tema kataloga");
+    assert.ok(p.next && p.next.id !== "MAT-SS-1/osnove-logike", "pot je drugje kot prva tema kataloga");
     assert.deepEqual(p.danes.next, { id: p.next.id, name: p.next.name }, "ista tema kot Naslednja na Učni poti");
+    // En vir priporočila (audit #8): »Najprej vadi« se začne z isto temo kot kartica Danes.
+    assert.equal(ex.readiness.weakest[0].id, p.next.id.replace("MAT-SS-4/", "MAT-EX-MATURA/"), JSON.stringify(ex.readiness.weakest));
+    assert.equal(ex.readiness.weakest[0].name, p.danes.next.name);
     assert.equal(p.danes.due, 0);
     assert.equal(p.danes.minutes, 15);
     assert.equal(p.danes.odsoten, 0, "brez nalog ni vrnitve");
@@ -110,8 +113,8 @@ test("/path for goal matura: Danes data = due reviews, then the path's next topi
     assert.equal(p.danes.review, 2);
     assert.equal(p.danes.minutes, 5);
     assert.equal(p.danes.odsoten, 8);
-    // Napačen prvi odgovor v temi mature (prek API kot v aplikaciji): ta tema je najšibkejša vadena, kartica Danes jo ponudi,
-    // čeprav so v »Najprej vadi« pred njo še nevadene teme.
+    // Napačen prvi odgovor v temi mature (prek API kot v aplikaciji): ta tema je najšibkejša vadena, kartica Danes jo ponudi
+    // in »Najprej vadi« jo pokaže prvo.
     const post = (u, body) => fetch(base + u, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
     const sibka = ex.readiness.weakest[1].id;
     let task = null;
@@ -121,7 +124,7 @@ test("/path for goal matura: Danes data = due reviews, then the path's next topi
     p = await get(`/api/students/${s.id}/path`);
     const ex2 = await get(`/api/students/${s.id}/exams`);
     assert.equal(ex2.readiness.weakestTried?.id, sibka, JSON.stringify(ex2.readiness));
-    assert.notEqual(ex2.readiness.weakest[0].id, sibka, "nevadene teme ostanejo prve v Najprej vadi");
+    assert.equal(ex2.readiness.weakest[0].id, sibka, "ista tema kot kartica Danes");
     assert.deepEqual(p.danes.next, { id: sibka, name: ex2.readiness.weakestTried.name });
     // Drug cilj ali druga pot: brez kartice.
     assert.equal((await get(`/api/students/${s.id}/path?key=MAT-SS-1`)).danes, undefined);

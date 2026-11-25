@@ -5,17 +5,54 @@
 import { okrasi, vstavi } from "./materiali.js";
 import { napisPoskusa } from "./napis-poskusa.js";
 import { izrisi, decVejica } from "../mat/izris.js";
+import { uiChain } from "../i18n/languages.js";
 
 export const NS = "http://www.w3.org/2000/svg";
 
-// Število s slovensko decimalno vejico.
-export function fmt(x, d = 2) {
+// Decimalno ločilo jezika vmesnika (<html lang>, nastavi ga i18n), kot ga piše Intl (kot public/games/topics.js):
+// sl, de, hr, it, hu, fr, ru … vejica, en (tudi en-GB) pika. Če Intl jezika ne pozna (mali ICU, WebView), njegovi
+// nadomestni jeziki brez angleščine in slovenščine (bs → hr); sicer, ali ob napaki, vejica. Brez dokumenta (Node) sl.
+const jezikVmesnika = () => (typeof document !== "undefined" && document.documentElement?.lang) || "sl";
+const locila = new Map();
+export function decLocilo(lang = jezikVmesnika()) {
+  if (!locila.has(lang)) {
+    let sep = ",";
+    try {
+      const tag = [lang, ...uiChain(lang).filter((c) => c !== "en" && c !== "sl")].find((c) => Intl.NumberFormat.supportedLocalesOf(c).length);
+      if (tag) sep = (1.5).toLocaleString(tag).includes(",") ? "," : ".";
+    } catch {}
+    locila.set(lang, sep);
+  }
+  return locila.get(lang);
+}
+// Niz števila s piko (toFixed, odčitek merilnika) za prikaz: ločilo jezika, minus »−«.
+export const decZapis = (t, lang) => String(t).replace(".", decLocilo(lang)).replace(/-/g, "−");
+// Pri pikastem ločilu: decimalna vejica (»0,25«, v TeX tudi »9{,}81«) → pika. Ostanejo: naštevanja (»1,2,3«, »1, 2«),
+// tisočice (»1,000,000«), indeksi (»x_{1,2}«) in par v oklepaju (»(1,2)«, »A(1,2)«, »[1,5]«, »\{1,2\}«).
+// Pravilo pisanja: točke in pare pišemo z vejico in presledkom ali s podpičjem (»(4; 3,5)«, skica.js par).
+const OKLEPAJ = /(?:[([]|\\\{)[-−]?$/, ZAKLEPAJ = /^(?:[)\]]|\\\})/;
+const vPiko = (t, vejica) =>
+  String(t).replace(new RegExp(String.raw`(?<![\d.,]|\d\{,\}|_\{)(\d+)${vejica}(\d+)(?![\d,]|\{,\})`, "g"), (m, a, b, i, s) =>
+    OKLEPAJ.test(s.slice(Math.max(0, i - 3), i)) && ZAKLEPAJ.test(s.slice(i + m.length, i + m.length + 2)) ? m : `${a}.${b}`);
+// Besedilo s števili, zapisanimi s slovensko vejico (»0,25«, »1,70 m«): ločilo jezika. Ne za prozo in TeX.
+export const decBesedilo = (t, lang) => (decLocilo(lang) === "." ? vPiko(t, ",") : t);
+// Formula s stalnicami, zapisanimi z vejico (»9{,}81«, »0,1«): pri pikastem ločilu pika (tex to naredi sam).
+export const decTeX = (t, lang) => (decLocilo(lang) === "." ? vPiko(t, String.raw`(?:,|\{,\})`) : t);
+// Decimalni znak v TeX, ki ga sestavimo sami (npr. 0{,}\overline{3}): »{,}« ali ».«.
+export const decZnakTeX = (lang) => (decLocilo(lang) === "." ? "." : "{,}");
+// Število, ki ga vpiše učenec: sprejme vejico ali piko in minus »−«; prazno ali neveljavno → null.
+export function beriStevilo(t) {
+  const v = String(t ?? "").trim().replace(",", ".").replace("−", "-");
+  return v === "" || !Number.isFinite(Number(v)) ? null : Number(v);
+}
+// Število z decimalnim ločilom jezika vmesnika in znakom minus »−«.
+export function fmt(x, d = 2, lang) {
   if (!Number.isFinite(x)) return "–";
   const r = Number(x.toFixed(d));
-  return String(Object.is(r, -0) ? 0 : r).replace(".", ",").replace("-", "−");
+  return decZapis(Object.is(r, -0) ? 0 : r, lang);
 }
 // Število za KaTeX (decimalna vejica brez presledka).
-export const tfmt = (x, d = 2) => fmt(x, d).replace("−", "-").replace(",", "{,}");
+export const tfmt = (x, d = 2, lang) => fmt(x, d, lang).replace("−", "-").replace(",", "{,}");
 
 // Kombinirajoča črta (x̄ = x + U+0304) se v pisavi aplikacije izriše zamaknjeno kot »x‾« (j, 2. 11.
 // 2026), zato črko s črto izrišemo kot črko s črto nad njo (razred ovl, text-decoration: overline).
@@ -275,7 +312,7 @@ export function playButton(anim, { play = "Predvajaj", pause = "Ustavi" } = {}) 
 // Naštevanje (»1, 2«, »\{1, 2, 3\}«, »x_{1,2}«) ostane, kot je: le število z eno vejico med števkama.
 // Pravilo je v public/mat/izris.js (decVejica), skupno za vso aplikacijo.
 export { decVejica };
-export const tex = (t) => izrisi(t, { vejica: true });
+export const tex = (t) => izrisi(decTeX(t), { vejica: true });
 export const texBlock = (t) => `<div class="demo-eq">${tex(t)}</div>`;
 
 // Koordinatni sistem. Vrne { X, Y, inv(px,py), g } za risanje v enotah.

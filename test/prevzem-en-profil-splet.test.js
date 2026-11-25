@@ -19,7 +19,11 @@ test("en profil: prevzem ponudi Nadaljuj tukaj in Odjava, osnutek ostane", opts,
     const drugje = await prijava(srv.base, email);
     const r = await fetch(`${srv.base}/api/students/${racun.id}/claim`, { method: "POST", headers: { cookie: drugje } });
     assert.equal(r.status, 200);
-    await p.click("#send");
+    // Okno prevzema odpre katerikoli odgovor 409 (public/account.js), tudi zahteva, ki jo stran pošlje sama (po nalaganju
+    // in osvežitvi jih je več): okno je lahko že čez gumb, preden ga test pritisne, in klik miške bi 30 s čakal, ker okno
+    // prestreže kazalec. Zato pošiljanje prek DOM: ob odprtem oknu vrne strežnik spet 409 in okno ostane eno samo.
+    const poslji = () => p.evaluate(() => document.querySelector("#send").click());
+    await poslji();
     await p.waitForSelector("#taken-overlay", { timeout: 15000 });
     assert.equal(await p.locator("#taken-other").count(), 0, "brez »Izberi drug profil«");
     assert.equal(await p.locator("#taken-logout").innerText(), "Odjava");
@@ -48,7 +52,7 @@ test("en profil: prevzem ponudi Nadaljuj tukaj in Odjava, osnutek ostane", opts,
     assert.equal(await p.locator("#taken-overlay").count(), 0);
     // »Odjava« v oknu odjavi (druga naprava profil spet prevzame).
     await fetch(`${srv.base}/api/students/${racun.id}/claim`, { method: "POST", headers: { cookie: drugje } });
-    await p.click("#send");
+    await poslji();
     await p.waitForSelector("#taken-logout", { timeout: 15000 });
     await Promise.all([p.waitForURL(/odjava=1/, { timeout: 15000 }), p.click("#taken-logout")]);
     assert.deepEqual(p.napake, []);
