@@ -258,6 +258,28 @@ test("ležeč telefon 844 × 390: okno z dolgim vnosom ni pod tipkovnico", opts,
   });
 });
 
+// Najnižji ležeč telefon (640 × 360): plošča je višja od zaslona; s flex-end je bil zgornji del (čipi) odrezan in nedosegljiv.
+test("ležeč telefon 640 × 360: vse plasti tipkovnice so cele na zaslonu", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 640, height: 360 });
+    await p.locator("#input").tap();
+    await p.waitForSelector(".tk:not([hidden])");
+    const n = await p.locator(".tk:not([hidden]) .tk-tab").count();
+    for (let i = 0; i < n; i++) {
+      await p.locator(".tk:not([hidden]) .tk-tab").nth(i).click();
+      await p.waitForTimeout(200);
+      const m = await p.evaluate(() => {
+        const tk = document.querySelector(".tk:not([hidden])");
+        const tipke = [...tk.querySelectorAll(".tk-in > *, .tk-k, .tk-chip")].filter((e) => e.checkVisibility()).map((e) => e.getBoundingClientRect());
+        return { plast: tk.querySelector(".tk-tab.on")?.textContent, vrh: Math.round(Math.min(...tipke.map((r) => r.top))), dno: Math.round(Math.max(...tipke.map((r) => r.bottom))), h: innerHeight };
+      });
+      assert.ok(m.vrh >= 0 && m.dno <= m.h, `plast cela na zaslonu: ${JSON.stringify(m)}`);
+    }
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
 test("iPad 820 × 1180 pokončno: oznake klepeta so cele in izbira načina je tapljiva (UX-102)", opts, async () => {
   await withApp(async (base) => {
     const { ctx, p, errors } = await phone(base, { width: 820, height: 1180 });

@@ -136,7 +136,7 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
    style.css »Telefon ležeče«). --tk-h na <body> je 0: dialogi in prekrivna okna ne rezervirajo prostora spodaj. */
 @media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
   .tk { --tk-sirina: min(480px, 56vw); top: 0; left: auto; width: var(--tk-sirina); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
-    border-top: 0; border-left: 1px solid var(--border); display: flex; flex-direction: column; justify-content: flex-end;
+    border-top: 0; border-left: 1px solid var(--border); display: flex; flex-direction: column; justify-content: flex-end; justify-content: safe flex-end; /* safe: višja plošča (640 × 360) se ne odreže zgoraj, kamor se ne da drsnuti */
     padding-top: max(6px, var(--varno-zg, env(safe-area-inset-top, 0px))); }
   .tk::-webkit-scrollbar { display: none; }
   .tk-in { width: 100%; }
