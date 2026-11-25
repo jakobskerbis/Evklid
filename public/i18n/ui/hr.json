@@ -482,6 +482,8 @@
   "set.usage": "Potrošnja AI-ja ovaj mjesec",
   "set.help": "Pomoć",
   "set.helpText": "Kratki obilazak pokazuje gdje se što nalazi u aplikaciji.",
+  "set.safety": "Sigurnost",
+  "set.safetyText": "Kad Evklid u razgovoru primijeti da si u nevolji ili u opasnosti, odmah ti pokaže brojeve za pomoć. Kod učenika mlađih od 15 godina e-mail dobiva i roditelj koji je otvorio račun (bez sadržaja razgovora). Ako pišeš o nasilju, roditeljima ne pišemo.",
   "set.tourAgain": "Ponovi uvodni obilazak",
   "set.newStudent": "Dodaj profil",
   "set.newStudentText": "Novi profil za drugog učenika: svaki ima svoj put učenja, napredak i razgovore.",
