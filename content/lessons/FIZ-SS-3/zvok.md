@@ -257,6 +257,18 @@ Danes isto počnejo astronomi z ogromnimi teleskopi. Namesto trobentačev je zve
 + Zvezdo ziblje planet, ki jo obkroži v $4$ dneh.
 > Ko se zvezda giblje proti nam, je svetloba pomaknjena k modri, ko stran, k rdeči. Redno menjavanje pomeni kroženje zaradi nevidnega spremljevalca.
 
+? Jakost zvoka sesalnika je $1{,}0\cdot10^{-5}\,\mathrm{W/m^2}$. Kolikšna je raven jakosti v decibelih?
+= 70 dB | 0,5
+~ 7 | Pozabil si pomnožiti z $10\,\mathrm{dB}$: $L = 10\,\mathrm{dB} \cdot \log \dfrac{j}{j_0}$.
+~ -50 | Jakost moraš deliti z $j_0 = 10^{-12}\,\mathrm{W/m^2}$, preden logaritmiraš.
+> $L = 10\,\mathrm{dB} \cdot \log \dfrac{1{,}0\cdot10^{-5}}{10^{-12}} = 10\,\mathrm{dB} \cdot \log 10^{7} = 70\,\mathrm{dB}$.
+
+? Reševalno vozilo s sireno $800\,\mathrm{Hz}$ se od tebe oddaljuje s hitrostjo $20\,\mathrm{m/s}$. Hitrost zvoka je $340\,\mathrm{m/s}$. Kolikšno frekvenco slišiš? (Na cel herc.)
+= 756 Hz | 1
+~ 850 | To bi slišal, ko se vozilo približuje. Pri oddaljevanju je v imenovalcu $c + v$.
+~ 753 | To je enačba za gibajočega se opazovalca. Tu se giblje izvir: $\nu' = \nu\,\dfrac{c}{c + v}$.
+> $\nu' = \nu\,\dfrac{c}{c + v} = 800\,\mathrm{Hz} \cdot \dfrac{340}{360} \approx 756\,\mathrm{Hz}$. Ton je nižji, ker se izvir oddaljuje.
+
 :::simboli
 j | jakost zvoka | j = \dfrac{P}{S} | W/m^2 | moč na enoto površine
 P | zvočna moč izvira | | W

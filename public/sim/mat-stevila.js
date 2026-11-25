@@ -1,5 +1,5 @@
 // Simulacije: števila, deljivost, ulomki, decimalna števila, odstotki, potence.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
+import { h, s, decZapis, decBesedilo, decZnakTeX, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
 
 // Številska premica: vrne { X, g } in nariše oznake.
 function numberLine(svg, { x0, x1, from, to, step, major = step, y = 60, labels = true, fmtL }) {
@@ -418,23 +418,32 @@ export function decimalke(el) {
 }
 
 // ------------------------------------------------------------ periodična decimalna števila
+// Deljenje a : b do periode: cel del, števke pred periodo (pre), perioda (per), zadnji ostanek in vrstice deljenja.
+export function deljenje(a, b) {
+  const whole = Math.floor(a / b);
+  let r = a % b;
+  const seen = new Map(), digits = [], rows = [];
+  while (r && !seen.has(r) && digits.length < 40) {
+    seen.set(r, digits.length);
+    const q = Math.floor((r * 10) / b);
+    rows.push(`<tr><td>${r * 10} : ${b}</td><td>= ${q}</td><td>ostanek ${(r * 10) % b}</td></tr>`);
+    digits.push(q);
+    r = (r * 10) % b;
+  }
+  const start = r ? seen.get(r) : digits.length;
+  return { whole, pre: digits.slice(0, start).join(""), per: digits.slice(start).join(""), r, rows };
+}
+// a/b v TeX s periodo in ločilom jezika: 1/3 → »0{,}\overline{3}« (angleško »0.\overline{3}«), 1/6 → »0{,}1\overline{6}«.
+export function periodicniTeX(a, b, lang) {
+  const { whole, pre, per } = deljenje(a, b);
+  return `${whole}${pre || per ? decZnakTeX(lang) + pre + (per ? `\\overline{${per}}` : "") : ""}`;
+}
 export function periode(el) {
   const out = readout();
   let a = 5, b = 7;
   const draw = () => {
-    const whole = Math.floor(a / b);
-    let r = a % b;
-    const seen = new Map(), digits = [], rows = [];
-    while (r && !seen.has(r) && digits.length < 40) {
-      seen.set(r, digits.length);
-      const q = Math.floor((r * 10) / b);
-      rows.push(`<tr><td>${r * 10} : ${b}</td><td>= ${q}</td><td>ostanek ${(r * 10) % b}</td></tr>`);
-      digits.push(q);
-      r = (r * 10) % b;
-    }
-    const start = r ? seen.get(r) : digits.length;
-    const pre = digits.slice(0, start).join(""), per = digits.slice(start).join("");
-    const t = `\\frac{${a}}{${b}} = ${whole}${digits.length ? "{,}" + pre + (per ? `\\overline{${per}}` : "") : ""}`;
+    const { pre, per, r, rows } = deljenje(a, b);
+    const t = `\\frac{${a}}{${b}} = ${periodicniTeX(a, b)}`;
     const pf = primeFactors(b / gcd(a, b));
     out.innerHTML = texBlock(t) +
       `<p>${r ? `Ostanek ${r} se ponovi, zato se od tu naprej ponavljajo iste števke: perioda ima ${per.length} ${per.length === 1 ? "števko" : per.length === 2 ? "števki" : per.length < 5 ? "števke" : "števk"}.` : "Deljenje se konča (ostanek 0): decimalno število je končno."}</p>
@@ -871,7 +880,7 @@ export function znanstveni(el) {
     const value = m * 10 ** e;
     let long;
     if (e >= 0) long = Number(value.toPrecision(3)).toLocaleString("sl-SI", { maximumFractionDigits: 0 }).replace(/\./g, " ");
-    else long = value.toFixed(-e + 1).replace(".", ",");
+    else long = decZapis(value.toFixed(-e + 1));
     out.innerHTML = texBlock(`${tfmt(m, 1)}\\cdot 10^{${e}}\\ \\mathrm{m}`) +
       `<p>Daljši zapis: <b>${long} m</b>. Eksponent ${e} pove, za koliko mest premaknemo decimalno vejico ${e >= 0 ? "v desno" : "v levo"}.</p>
        <p>Podobna velikost: <b>${near[1]}</b>.</p>
@@ -954,16 +963,16 @@ export function realna(el) {
     s("text", { x: 240, y: 60, class: "tick" }, svg, "iracionalna");
     const spot = { N: [80, 120], Z: [150, 120], Q: [196, 100], R: [280, 100] }[set];
     s("circle", { cx: spot[0], cy: spot[1], r: 16, class: "pt fill-a" }, svg);
-    label(svg, spot[0], spot[1] + 1, name.length > 4 ? "•" : name, "node-lbl");
+    label(svg, spot[0], spot[1] + 1, name.length > 4 ? "•" : decBesedilo(name), "node-lbl");
     const X = (x) => 20 + ((x + 4) / 8) * 300;
     s("line", { x1: 20, y1: 210, x2: 320, y2: 210, class: "axis" }, svg);
     for (let i = -4; i <= 4; i++) { s("line", { x1: X(i), y1: 204, x2: X(i), y2: 216, class: "axis" }, svg); label(svg, X(i), 232, fmt(i), "tick"); }
     s("circle", { cx: X(v), cy: 210, r: 7, class: "pt fill-a" }, svg);
     const names = { N: "naravno", Z: "celo, ni pa naravno", Q: "racionalno, ni pa celo", R: "iracionalno (realno, ni pa racionalno)" };
-    out.innerHTML = `<p><b>${name}</b> je ${names[set]} število${note ? ` (${note})` : ""}.</p>
+    out.innerHTML = `<p><b>${decBesedilo(name)}</b> je ${names[set]} število${note ? ` (${decBesedilo(note)})` : ""}.</p>
       <p class="muted">Vsako naravno število je tudi celo, vsako celo je racionalno, vsako racionalno je realno. Racionalna števila lahko zapišemo kot ulomek; njihov decimalni zapis je končen ali periodičen. Iracionalnih ne moremo zapisati kot ulomek. Vsa realna števila skupaj zapolnijo številsko premico.</p>`;
   };
-  const chips = h("div", { class: "demo-chips" }, NUMS.map(([n], i) => button(n, () => ((pick = i), draw()), "chip-btn")));
+  const chips = h("div", { class: "demo-chips" }, NUMS.map(([n], i) => button(decBesedilo(n), () => ((pick = i), draw()), "chip-btn")));
   layout(el, { stage: [svg], extra: chips, out, tryText: "Kam spada √9? Kam √8? Ali je 0,333… racionalno število?" });
   draw();
 }
@@ -1070,7 +1079,7 @@ export function enote(el, { set = "dolzina", sets } = {}) {
     const lo = Math.min(from, to), hi = Math.max(from, to);
     for (let i = lo; i < hi; i++) mult *= factor(i);
     const res = to > from ? v * mult : v / mult;
-    const str = (x) => (Math.abs(x) >= 1e-4 && Math.abs(x) < 1e9 ? fmt(x, 6) : x.toExponential(2).replace(".", ","));
+    const str = (x) => (Math.abs(x) >= 1e-4 && Math.abs(x) < 1e9 ? fmt(x, 6) : decZapis(x.toExponential(2)));
     out.innerHTML = `<div class="demo-eq">${str(v)} ${S.units[from]} = <b>${str(res)} ${S.units[to]}</b></div>
       <p>${from === to ? "Enoti sta enaki." : to > from ? `Gremo po stopnicah navzdol (v manjšo enoto) za ${hi - lo} ${hi - lo === 1 ? "stopnico" : hi - lo === 2 ? "stopnici" : hi - lo < 5 ? "stopnice" : "stopnic"}: <b>množimo</b> z ${mult}. Manjših enot je več.` : `Gremo po stopnicah navzgor (v večjo enoto): <b>delimo</b> z ${mult}. Večjih enot je manj.`}</p>
       <p class="muted">${S.factors ? "Pri času faktorji niso 10: 1 dan = 24 h, 1 h = 60 min, 1 min = 60 s." : `Vsaka stopnica pomeni faktor ${S.f}${S.f === 100 ? " (ploščinske enote: 10 · 10)" : S.f === 1000 && S.name === "prostornina" ? " (prostorninske enote: 10 · 10 · 10)" : ""}.`} ${S.extra || ""}</p>`;

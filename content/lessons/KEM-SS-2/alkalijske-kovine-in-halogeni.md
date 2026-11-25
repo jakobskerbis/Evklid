@@ -243,6 +243,18 @@ Alkalijske kovine so ravno nasprotje: elektrona nočejo obdržati. Večji kot je
 ~ Tu ne gre za nevtralizacijo; natrij je fluoru elektron oddal in nastala je ionska sol.
 > Reaktiven je element $\mathrm{F_2}$, ki elektrone išče. Fluoridni ion ima polno zunanjo lupino in je v majhnih količinah koristen za sklenino.
 
+? Natrij reagira z vodo: $\mathrm{2\,Na + 2\,H_2O \rightarrow 2\,NaOH + H_2}$. Koliko litrov vodika nastane iz $0{,}46\,\text{g}$ natrija ($M = 23\,\text{g/mol}$) pri normalnih pogojih ($V_m = 22{,}4\,\text{L/mol}$)?
+= 0,224 L | 0,002
+~ 0,448 | Pozabil si na razmerje koeficientov: iz $2\,\text{mol}$ natrija nastane le $1\,\text{mol}$ vodika.
+~ 0,02 | To je množina natrija v molih. Prek razmerja koeficientov izračunaj množino vodika in nato prostornino.
+> $n(\mathrm{Na}) = \dfrac{0{,}46\,\text{g}}{23\,\text{g/mol}} = 0{,}020\,\text{mol}$, $n(\mathrm{H_2}) = \dfrac{0{,}020}{2}\,\text{mol} = 0{,}010\,\text{mol}$, $V = 0{,}010\,\text{mol} \cdot 22{,}4\,\text{L/mol} = 0{,}224\,\text{L}$.
+
+? Kolikšen je masni delež natrija v kuhinjski soli $\mathrm{NaCl}$? ($A_r(\mathrm{Na}) = 23$, $A_r(\mathrm{Cl}) = 35{,}5$) Rezultat vpiši v odstotkih na desetinko.
+= 39,3 % | 0,1
+~ 60,7 | To je masni delež klora. Natrij je lažji del soli.
+~ 64,8 | Maso natrija si delil z maso klora. Deliti moraš z molsko maso cele spojine.
+> $M(\mathrm{NaCl}) = 23 + 35{,}5 = 58{,}5\,\text{g/mol}$, $w(\mathrm{Na}) = \dfrac{23}{58{,}5} = 0{,}393 = 39{,}3\,\%$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol
 m | masa | m = n \cdot M | g

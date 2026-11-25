@@ -226,6 +226,18 @@ Vrelišča od zgoraj navzdol: $-162\,°\mathrm{C}$, $-85\,°\mathrm{C}$, $100\,�
 ~ Nobeno topilo ne topi vsega. Nepolarni heksan topi nepolarne snovi, na primer maščobe.
 > Podobno se topi v podobnem: skupine $\mathrm{O{-}H}$ v sladkorju tvorijo vodikove vezi z vodo, zato se sladkor v vodi dobro raztaplja.
 
+? Za izparevanje $1\,\mathrm{mol}$ vode porabimo okoli $41\,\mathrm{kJ}$ (premagamo medmolekulske sile). Za razbitje vseh vezi $\mathrm{O{-}H}$ v $1\,\mathrm{mol}$ vode pa okoli $926\,\mathrm{kJ}$. Kolikokrat več energije potrebujemo za razbitje vezi? (Na celo število.)
+= 23 | 0,5
+~ 885 | To je razlika energij. Vprašanje sprašuje, kolikokrat več, torej po razmerju.
+~ 0,04 | Ulomek si obrnil: deli večjo energijo z manjšo.
+> $\dfrac{926\,\mathrm{kJ}}{41\,\mathrm{kJ}} \approx 23$. Kemijske vezi so več kot dvajsetkrat močnejše, zato pri vrenju molekule vode ostanejo cele.
+
+? Za izparevanje $1\,\mathrm{mol}$ vode porabimo okoli $41\,\mathrm{kJ}$. Koliko energije porabimo, da izpari $9{,}0\,\mathrm{g}$ vode ($M = 18\,\mathrm{g/mol}$)? Rezultat vpiši v kJ.
+= 20,5 kJ | 0,1
+~ 369 | Energije ne množiš z maso. $41\,\mathrm{kJ}$ velja za $1\,\mathrm{mol}$, zato najprej izračunaj množino $n = \dfrac{m}{M}$.
+~ 82 | Množino si izračunal obratno: $n = \dfrac{m}{M} = \dfrac{9{,}0}{18}\,\mathrm{mol}$, ne $\dfrac{18}{9{,}0}$.
+> $n = \dfrac{9{,}0\,\mathrm{g}}{18\,\mathrm{g/mol}} = 0{,}50\,\mathrm{mol}$, $Q = 0{,}50\,\mathrm{mol} \cdot 41\,\mathrm{kJ/mol} = 20{,}5\,\mathrm{kJ}$. Toliko energije gre le za premagovanje medmolekulskih sil, molekule vode ostanejo cele.
+
 :::simboli
 M_r | relativna molekulska masa | | – | vsota A_r vseh atomov v molekuli
 A_r | relativna atomska masa | | – | iz periodnega sistema

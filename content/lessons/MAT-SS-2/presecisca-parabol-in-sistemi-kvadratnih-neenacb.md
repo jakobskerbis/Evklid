@@ -100,6 +100,8 @@ točka: -1 | −1 | prazna
 točka: 3 | 3
 :::
 
+V simulaciji spodaj (»Parabola in njena lega glede na os«) nastavi a = 1, b = −2, c = −3 in znak »≤ 0«: rešitev je $[-1, 3]$. Nato nastavi a = −1, b = 4, c = 5 in znak »> 0«: rešitev je $(-1, 5)$. Opazuj, da je presek obeh, $(-1, 3]$, rešitev sistema z zgornje slike.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): parabola in premica
