@@ -392,7 +392,7 @@ export function labMesanje(el) {
     enota: "°C",
     primer: "npr. 37",
     abs: 2,
-    kljuc: () => `${st.m1}:${st.T1}:${st.m2}:${st.T2}`,
+    kljuc: () => `${st.m1}:${st.T1}:${trial?.k2 ?? `${st.m2}:${st.T2}`}`, // ko je hladna voda v posodi, štejeta njena drsnika ob nalivanju
     odprto: () => !trial?.T1 && !prvi,
     izmerjeno: () => prvi && { vrednost: prvi.T, besedilo: `${fixed(prvi.T, 1)}\u00a0°C (${fmt(prvi.m1, 0)}\u00a0g s ${fixed(prvi.T1, 1)}\u00a0°C in ${fmt(prvi.m2, 0)}\u00a0g s ${fixed(prvi.T2, 1)}\u00a0°C)` },
   });
@@ -402,11 +402,12 @@ export function labMesanje(el) {
   function cold() {
     if (B.faza === "zmes") return log.push("V posodi je že zmes. Za nov poskus pritisni »Nov poskus«.", "warn");
     const m = B.nalijHladno(st.m2, st.T2);
-    trial = { pos: B.posoda, pokrov: B.pokrov, m2: st.tehtaj ? B.readM(m).value : st.m2, m2w: st.tehtaj };
+    trial = { pos: B.posoda, pokrov: B.pokrov, m2: st.tehtaj ? B.readM(m).value : st.m2, m2w: st.tehtaj, k2: `${st.m2}:${st.T2}` };
     if (st.tehtaj) balL.set(B.readM(m).text, "g", "hladna voda");
     else balL.set("", "", "ne tehtaš");
     pts.length = 0;
     log.push(`V posodi je hladna voda (${st.tehtaj ? `${fixed(trial.m2, 1)} g` : `do oznake ${st.m2} mL`}). Počakaj, da se termometer ustali.`, "info");
+    N.osvezi(); // ponovno nalivanje z drugimi drsniki: druga mešanica
     stanje(), redraw(), draw();
   }
   function mix() {
