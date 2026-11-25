@@ -295,7 +295,8 @@ export function cleanSolution(s) {
 export const SOLVE_ATTEMPTS = 3;
 
 // Kaj je bilo narobe s poskusom (za naslednji poziv AI): navedeni odgovor in izid preverjanja.
-export function retryFeedback(sol, check) {
+export function retryFeedback(sol, check, { cut = false } = {}) {
+  if (cut) return "your answer was cut off because it was too long: give fewer, shorter steps and only one method";
   if (!sol) return "the answer was not the requested JSON";
   const vals = (sol.solutions || []).map(String).filter(Boolean);
   const said = sol.kind === "inequality" && sol.value ? `your solution set was ${sol.value}` : vals.length ? `your solutions were ${vals.join("; ")}` : sol.value ? `your result was ${sol.value}` : "you gave no solution";
@@ -307,27 +308,29 @@ export function retryFeedback(sol, check) {
         ? `x ≈ ${miss.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation`
         : "a solution is missing"
       : "substituting your result back does not give the original";
-  return `${said}; ${why}`;
+  return `${said}; ${why}`.slice(0, 600); // dolžina omejena: rezerva poti računa z ~400 bajti na poskus
 }
 
 /**
- * Reševanje s samodejnimi ponovitvami. ask(feedback[]) → { sol, usage, model }, verify(sol) → izid preverjanja.
+ * Reševanje s samodejnimi ponovitvami. ask(feedback[], { cut }) → { sol, usage, model, cut }, verify(sol) → izid preverjanja.
+ * canAfford(): rezervira strošek naslednjega klica (meje porabe učenca); false → brez nadaljnjih ponovitev.
  * Ponovi, dokler je zadnji poskus napačen (wrong / missing) ali neberljiv, največ attempts klicev. Pri nalogi s podatki
  * (canRetry: false) preverjanje vidi le predlogo, zato napačnost ne sproži ponovitve (neberljiv odgovor jo).
  * Obdrži najboljši poskus po statusu (prvi pri enakem).
  */
-export async function solveWithRetries({ ask, verify, canRetry = true, attempts = SOLVE_ATTEMPTS }) {
+export async function solveWithRetries({ ask, verify, canRetry = true, attempts = SOLVE_ATTEMPTS, canAfford = () => true }) {
   const bad = (c) => c.reason === "wrong" || c.reason === "missing";
   let out = await ask([]);
   const usage = [out.usage];
   let check = out.sol ? await verify(out.sol) : { verified: false, reason: "parse", status: "unverified" };
-  let last = { sol: out.sol, check };
+  let last = { sol: out.sol, check, cut: !!out.cut };
   const notes = [];
   while (usage.length < attempts && (!last.sol || (canRetry && bad(last.check)))) {
-    notes.push(retryFeedback(last.sol, last.check));
+    if (!canAfford()) break; // za naslednji klic ni več prostora v mejah porabe: ostane najboljši poskus
+    notes.push(retryFeedback(last.sol, last.check, { cut: last.cut }));
     let again;
     try {
-      again = await ask([...notes]);
+      again = await ask([...notes], { cut: last.cut });
     } catch (err) {
       // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane najboljša rešitev.
       console.warn(`[evklid] reševanje: ponovitev ni uspela (${err?.message || err}), ostane najboljša rešitev`);
@@ -335,7 +338,7 @@ export async function solveWithRetries({ ask, verify, canRetry = true, attempts 
     }
     usage.push(again.usage);
     const c2 = again.sol ? await verify(again.sol) : { verified: false, reason: "parse", status: "unverified" };
-    last = { sol: again.sol, check: c2 };
+    last = { sol: again.sol, check: c2, cut: !!again.cut };
     if (again.sol && (!out.sol || statusRank(c2.status) > statusRank(check.status))) {
       out = again;
       check = c2;
@@ -344,24 +347,25 @@ export async function solveWithRetries({ ask, verify, canRetry = true, attempts 
   return { out, check, usage };
 }
 
-export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "" }) {
+export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "", canAfford }) {
   const model = SOLVE_MODEL();
   if (isMockMode()) return { mock: true, solution: null, usage: null, model };
-  const ask = async (feedback) => {
+  const ask = async (feedback, { cut = false } = {}) => {
     const final = await getClient().messages.create({
       model,
       max_tokens: 8000,
       thinking: { type: "adaptive" },
-      // ponovitev po napaki: več razmisleka (meja izhodnih žetonov ostane ista)
-      output_config: { effort: feedback.length ? "high" : "medium" },
+      // ponovitev po napaki: več razmisleka (meja izhodnih žetonov ostane ista); po odrezanem odgovoru ne,
+      // ker bi daljše razmišljanje odgovor spet odrezalo
+      output_config: { effort: feedback.length && !cut ? "high" : "medium" },
       messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given, sought) }],
     });
-    return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model };
+    return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model, cut: final.stop_reason === "max_tokens" };
   };
   // Naloga s podatki: besedilo je le predloga, preverjanje ne odloča (status »unverified«, ne »napačno«)
   const verify = async (sol) => (given.length ? { verified: false, reason: "given", status: "unverified" } : await verifyAiFull(text, sol));
-  const { out, check, usage } = await solveWithRetries({ ask, verify, canRetry: !given.length });
-  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null, status: check.status || "unverified" } : null, usage, model: out.model || model };
+  const { out, check, usage } = await solveWithRetries({ ask, verify, canRetry: !given.length, ...(canAfford ? { canAfford } : {}) });
+  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null, status: check.status || "unverified", attempts: usage.length } : null, usage, model: out.model || model };
 }
 
 // Branje naloge za Inštruktorja: vse predmete (matematika, fizika, kemija, biologija), besedilo kot na listu, formule
@@ -470,13 +474,15 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const sought = cleanSought(rawSought);
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
-    // Do SOLVE_ATTEMPTS klicev (samodejne ponovitve ob napačni rešitvi), vsak z navodili, nalogo, podatki in
-    // povratno informacijo prejšnjih poskusov ter do 8000 izhodnimi žetoni.
-    const input = 6000 + 400 * SOLVE_ATTEMPTS + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
-    const hold = usage?.guard ? usage.guard(s.id, SOLVE_ATTEMPTS * callMaxUsd(SOLVE_MODEL(), input, 8000)) : null;
+    // Do SOLVE_ATTEMPTS klicev (samodejne ponovitve ob napačni rešitvi), vsak z navodili, nalogo, podatki,
+    // povratno informacijo prejšnjih poskusov (do 600 znakov na poskus) ter do 8000 izhodnimi žetoni.
+    // Rezerviramo en klic; vsako ponovitev posebej, šele ko je potrebna (meja ni strožja kot pred ponovitvami).
+    const input = 6000 + 600 * SOLVE_ATTEMPTS + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
+    const perCall = callMaxUsd(SOLVE_MODEL(), input, 8000);
+    const hold = usage?.guard ? usage.guard(s.id, perCall) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
-      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl" });
+      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl", canAfford: () => !hold || hold.take(perCall) });
       if (out.mock) return res.json({ solution: null, mock: true });
       for (const u of [].concat(out.usage || [])) if (u) usage?.log(s.id, out.model, u, "skeniranje");
       if (!out.solution) return res.status(502).json({ error: "Rešitve ni bilo mogoče sestaviti. Poskusi znova ali vprašaj inštruktorja." });

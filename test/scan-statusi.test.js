@@ -315,4 +315,13 @@ test("samodejne ponovitve: strežnik sam poskusi znova (do SOLVE_ATTEMPTS), uče
   assert.equal(r.usage.length, 1);
   assert.deepEqual(r.out.sol.solutions, ["1", "6"]);
   assert.equal(retryFeedback(null, {}), "the answer was not the requested JSON");
+  // odrezan odgovor (max_tokens): prosimo za krajšega
+  assert.match(retryFeedback(null, {}, { cut: true }), /cut off/);
+  // povratna informacija je omejena (dolg izpis SymPy ali dolge rešitve ne napihnejo poziva)
+  assert.ok(retryFeedback({ solutions: ["1".repeat(900)] }, { reason: "wrong" }).length <= 600);
+  // brez prostora v mejah porabe za naslednji klic: ni ponovitve, ostane prvi odgovor
+  let afford = 0;
+  r = await run([["1"]], { canAfford: () => afford++ < 1 });
+  assert.equal(r.usage.length, 2);
+  assert.equal(afford, 2);
 });

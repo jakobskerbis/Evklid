@@ -922,6 +922,7 @@ function fromAi(sol) {
     verified: !!sol.verified,
     // status s strežnika (public/scan/status.js); starejši strežnik pošlje samo verified
     status: STATUSES.includes(sol.status) ? sol.status : sol.verified ? "verified" : "unverified",
+    attempts: Number.isInteger(sol.attempts) ? sol.attempts : 1, // klici AI (samodejne ponovitve na strežniku)
     graph: graphOfProblem(sol.problem_tex, S.text),
   };
 }
@@ -968,7 +969,8 @@ function renderSolution(box) {
   const status = STATUSES.includes(r.status) ? r.status : r.verified ? "verified" : "unverified";
   // Pri »napačno« brez oznake »Rešil Evklid AI« (bi se brala kot »AI je rešil: napačno«); razlaga pove, da gre za odgovor AI.
   const badge = `${r.ai && status !== "wrong" ? `<span class="scan-badge ai">${icon("sparkles")}${esc(t("scan.st.ai"))}</span>` : ""}<span class="scan-badge ${STATUS_CLASS[status]}" data-status="${status}">${icon(STATUS_ICON[status])}${esc(t(`scan.st.${status}`))}</span>`;
-  const note = `<p class="scan-status-note">${esc(t(`scan.st.${status}Tip`))}${r.ai && status !== "wrong" && status !== "unverified" ? ` ${esc(t("scan.st.aiSteps"))}` : ""}</p>`;
+  const tipKey = status === "wrong" && r.attempts > 1 ? "scan.st.wrongTipRetried" : `scan.st.${status}Tip`;
+  const note = `<p class="scan-status-note">${esc(t(tipKey))}${r.ai && status !== "wrong" && status !== "unverified" ? ` ${esc(t("scan.st.aiSteps"))}` : ""}</p>`;
   if (status === "wrong") {
     // Napačna rešitev se ne pokaže kot odgovor (ne rezultat ne koraki). Strežnik je že sam poskusil večkrat
     // (server/scan.js SOLVE_ATTEMPTS), zato učenca ne prosimo za nov poskus: ostane inštruktor.
@@ -976,7 +978,7 @@ function renderSolution(box) {
     <section class="card scan-answer" aria-label="${esc(t("scan.answer"))}" data-ai-generated="true">
       <div class="scan-answer-head"><span class="scan-label">${esc(t("scan.answer"))}</span><span class="scan-badges">${badge}</span></div>
       ${note}
-      <div class="scan-actions"><button type="button" class="primary" data-act="ask">${icon("message-circle")}${esc(t("scan.askAll"))}</button></div>
+      <div class="scan-actions"><button type="button" class="secondary" data-act="new">${icon("scan-line")}${esc(t("scan.new"))}</button><button type="button" class="primary" data-act="ask">${icon("message-circle")}${esc(t("scan.askAll"))}</button></div>
     </section>
     ${S.ai?.loading ? `<div class="card scan-ai-state"><span class="spinner"></span><p>${esc(t("scan.solvingAi"))}</p></div>` : S.ai?.error ? `<p class="scan-err">${esc(S.ai.error)}</p>` : ""}`;
     bindSolution(box);
