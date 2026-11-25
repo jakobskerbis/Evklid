@@ -412,8 +412,6 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
           return fs.readFileSync(file).indexOf(k) >= 0;
         };
         assert.equal(vDatoteki(kosB), true);
-        // test_plans ostane nedotaknjen (selitev pride pozneje).
-        db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (?, 'p', '[0]', '2026-12-15')").run(a.sid);
 
         // Varnostna kopija: brez izvirnikov, brez bajtov izvirnika, metapodatki ostanejo.
         assert.equal(makeBackup(db, file, { now: new Date() }).made, true);
@@ -422,7 +420,7 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
         try {
           assert.equal(c.prepare("SELECT COUNT(*) AS n FROM priprava_izvirniki").get().n, 0);
           assert.equal(c.prepare("SELECT COUNT(*) AS n FROM priprava_viri").get().n, 3);
-          assert.equal(c.prepare("SELECT COUNT(*) AS n FROM test_plans").get().n, 1);
+          assert.equal(c.prepare("SELECT COUNT(*) AS n FROM priprave").get().n, 2);
         } finally {
           c.close();
         }
@@ -465,21 +463,22 @@ test("varnostna kopija in izvoz ne vsebujeta izvirnikov; izbris profila in raču
   }
 });
 
-test("migracija na obstoječi bazi: tabele nastanejo, ponoven zagon ne spremeni ničesar, test_plans ostane", () => {
+test("migracija na obstoječi bazi: tabele nastanejo, ponoven zagon ne spremeni ničesar, test_plans se preseli", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "priprava-m-"));
   const file = path.join(dir, "evklid.db");
   try {
     let store = openDb(file);
     store.db.prepare("INSERT INTO students (id, name, settings) VALUES (1, 'A', '{}')").run();
-    store.db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (1, 'p', '[1]', '2026-12-01')").run();
-    // Starejša baza brez tabel priprave.
+    // Starejša baza brez tabel priprave, z načrtom testa v test_plans (pred PR 2b).
     store.db.exec("DROP TABLE priprava_izvirniki; DROP TABLE priprava_viri; DROP TABLE priprave;");
+    store.db.exec("CREATE TABLE test_plans (student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE, path_key TEXT NOT NULL, units TEXT NOT NULL, test_date TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')), event_id TEXT)");
+    store.db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (1, 'MAT-SS-4', '[1]', '2026-12-01')").run();
     store.db.close();
     store = openDb(file);
     const t = (n) => !!store.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(n);
     assert.ok(t("priprave") && t("priprava_viri") && t("priprava_izvirniki"));
-    assert.deepEqual({ ...store.db.prepare("SELECT student_id, path_key, units, test_date FROM test_plans").get() }, { student_id: 1, path_key: "p", units: "[1]", test_date: "2026-12-01" });
-    store.db.prepare("INSERT INTO priprave (student_id, naslov) VALUES (1, 'x')").run();
+    assert.equal(t("test_plans"), false);
+    assert.deepEqual({ ...store.db.prepare("SELECT student_id, pot, sklopi, datum_testa, aktivna FROM priprave").get() }, { student_id: 1, pot: "MAT-SS-4", sklopi: "[1]", datum_testa: "2026-12-01", aktivna: 1 });
     const fk = store.db.prepare("PRAGMA foreign_key_list(priprava_izvirniki)").all();
     assert.equal(fk[0].table, "priprava_viri");
     assert.equal(fk[0].on_delete, "CASCADE");

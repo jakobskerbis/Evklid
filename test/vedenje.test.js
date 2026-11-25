@@ -36,10 +36,10 @@ test("vedenje: dnevi z rešeno nalogo in aktivnost pred testom", () => {
     ana,
     seal(JSON.stringify({ lessons: [], events: [{ date: day(1), kind: "test", name: "Matematika" }, { date: day(5), kind: "dogodek", name: "izlet" }] })),
   );
-  // Bor: aktiven 1 dan (20 dni nazaj), test iz priprave na test pred 8 dnevi: pred njim ni bil aktiven.
+  // Bor: aktiven 1 dan (20 dni nazaj), test iz priprave na test (server/priprava/aktivna.js) pred 8 dnevi: pred njim ni bil aktiven.
   const bor = student("Bor");
   ask(bor, 20);
-  db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (?, 'MAT-SS-4', '[]', ?)").run(bor, day(8));
+  db.prepare("INSERT INTO priprave (student_id, naslov, pot, sklopi, datum_testa, aktivna) VALUES (?, 'Test', 'MAT-SS-4', '[]', ?, 1)").run(bor, day(8));
 
   const v = growthReport(db, { days: 30, now }).vedenje;
   assert.equal(PRED_TESTOM_DNI, 3);
@@ -57,7 +57,7 @@ test("vedenje: test na prvi dan obdobja šteje aktivnost pred obdobjem (7 dni: z
   const s = db.prepare("INSERT INTO students (name, settings, created_at) VALUES ('Cene', '{}', ?)").run(at(40)).lastInsertRowid;
   const c = db.prepare("INSERT INTO conversations (student_id, created_at, updated_at) VALUES (?, ?, ?)").run(s, at(8), at(8)).lastInsertRowid;
   db.prepare("INSERT INTO messages (conversation_id, role, api_content, display_text, created_at) VALUES (?, 'user', '\"x\"', 'x', ?)").run(c, at(8));
-  db.prepare("INSERT INTO test_plans (student_id, path_key, units, test_date) VALUES (?, 'MAT-SS-4', '[]', ?)").run(s, at(6).slice(0, 10));
+  db.prepare("INSERT INTO priprave (student_id, naslov, pot, sklopi, datum_testa, aktivna) VALUES (?, 'Test', 'MAT-SS-4', '[]', ?, 1)").run(s, at(6).slice(0, 10));
   const r = growthReport(db, { days: 7, now });
   assert.deepEqual([r.vedenje.tests, r.vedenje.beforeTest, r.vedenje.activeDays], [1, 1, 0], "aktivnost 8 dni nazaj je 2 dni pred testom 6 dni nazaj, a izven obdobja");
   assert.deepEqual([r.weeklyActive, r.activeProfiles ?? 0], [0, 0], "aktivnost pred obdobjem ne šteje med aktivne v tednu");
