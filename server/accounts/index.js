@@ -974,7 +974,8 @@ export function mountAccounts(app, store, opts = {}) {
       const o = offersFor(studentId);
       offerReason = o.reason || (schools.membership(studentId)?.inSchool ? "school" : null);
     }
-    return { error: hint ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}), ...(offerReason ? { offer_reason: offerReason } : {}) };
+    // block.trialOut že sam pozove k naročnini: namig gre samo v polje hint (kartica), ne še enkrat v besedilo (pregled #1042).
+    return { error: hint && code !== "block.trialOut" ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}), ...(offerReason ? { offer_reason: offerReason } : {}) };
   }
 
   // Poraba brezplačnega profila ta mesec (gost: vse omrežje) in poraba izbrisanih profilov istega računa.
