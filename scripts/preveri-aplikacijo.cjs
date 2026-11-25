@@ -1152,9 +1152,12 @@ async function okna(p, label) {
     const b = await p.locator("#chat-bubble .cb-main").boundingBox();
     const vw = p.viewportSize().width;
     const vh = p.viewportSize().height;
-    await p.mouse.move(b.x + 28, b.y + 28);
+    // Prime sredino: na nizkem zaslonu je mehurček jeziček, širok 24 px (UX PR 1).
+    const cx = b.x + b.width / 2;
+    const cy = b.y + b.height / 2;
+    await p.mouse.move(cx, cy);
     await p.mouse.down();
-    for (let i = 1; i <= 12; i++) await p.mouse.move(b.x + 28 + (vw / 2 - 40 - b.x - 28) * (i / 12), b.y + 28 + (vh - 100 - b.y - 28) * (i / 12));
+    for (let i = 1; i <= 12; i++) await p.mouse.move(cx + (vw / 2 - 40 - cx) * (i / 12), cy + (vh - 100 - cy) * (i / 12));
     await settle(p, 150);
     if (!(await p.locator("#chat-bubble.magnet").count())) throw new Error("X ne privlači mehurčka");
     await screen(p, `mehurcek-x-${label}`);
