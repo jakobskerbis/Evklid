@@ -915,7 +915,7 @@ function renderSolution(box) {
   const shown = Math.min(S.shown, steps.length);
   const izvori = izvorOznak(steps, r.problemTex);
   const badge = r.verified
-    ? `<span class="scan-badge ok" title="${esc(t("scan.verifiedTip"))}">${icon("badge-check")}${esc(r.ai ? t("scan.aiVerified") : t("scan.verified"))}</span>`
+    ? `<span class="scan-badge ok" title="${esc(t("scan.verifiedTip"))}">${icon("badge-check")}${esc(r.ai ? t("scan.aiVerified") : t("scan.resultVerified"))}</span>`
     : `<span class="scan-badge warn">${icon("info")}${esc(t("scan.aiUnverified"))}</span>`;
   box.innerHTML = `${head}
     <section class="card scan-answer" aria-label="${esc(t("scan.answer"))}"${r.ai ? ' data-ai-generated="true"' : ""}>

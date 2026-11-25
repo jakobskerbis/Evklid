@@ -1,5 +1,5 @@
 // »Moji zapiski« (korak 1): do 5 fotografij ali prilepljeno besedilo → učenec preveri prepis → snov z učne poti
-// (brez AI) → kviz iz naših nalog (»Preverjeno«) in kartice iz zapiskov (»Preverjeno« ali »Iz tvojih zapiskov –
+// (brez AI) → kviz iz naših nalog (»Preverjeno«) in kartice iz zapiskov (»Pregledal AI« ali »Iz tvojih zapiskov –
 // nepreverjeno«), ki gredo v Kartice. Modul, besedila in slog se naložijo šele ob odprtju (public/flashcards.js).
 // Fotografija gre na strežnik samo za branje (server/zapiski.js) in se nikjer ne shrani, tudi na napravi ne.
 import { t as tg, currentLang, srToLatin } from "../i18n.js";
@@ -54,9 +54,10 @@ const esc = (s) => D.escapeHtml(String(s ?? ""));
 const sid = () => D.getStudent()?.id;
 const base = () => `/api/students/${sid()}/zapiski`;
 const v = () => D.box();
-const tag = (ok) =>
+// »Preverjeno« samo za naloge, ki jih sestavi in izračuna koda; kartico iz zapiskov je pregledal AI (IN-10).
+const tag = (ok, label = "scan.verified") =>
   ok
-    ? `<span class="zap-tag zap-ok">${icon("badge-check")} ${esc(t("scan.verified"))}</span>`
+    ? `<span class="zap-tag zap-ok">${icon("badge-check")} ${esc(t(label))}</span>`
     : `<span class="zap-tag zap-unchecked">${icon("info")} ${esc(t("cards.notesUnchecked"))}</span>`;
 export const errText = (err) => {
   const c = err?.body?.code;
@@ -369,6 +370,6 @@ function cardsHtml(cards, note, aiOff) {
   if (!cards) return note.cards ? `<p class="muted">${esc(t("zap.cardsAdded", { title: note.set }))}</p>` : `<p class="muted">${esc(t("zap.noCards"))}</p>`;
   return `<p class="muted">${esc(t("zap.cardsAdded", { title: note.set }))}</p>
     <ul class="zap-card-list">${cards
-      .map((c) => `<li class="card"><div class="zap-q-top">${tag(c.checked)}</div><div class="zap-front" dir="auto">${D.renderRich(c.front)}</div><div class="muted" dir="auto">${D.renderRich(c.back)}</div></li>`)
+      .map((c) => `<li class="card"><div class="zap-q-top">${tag(c.checked, "cards.notesAiReviewed")}</div><div class="zap-front" dir="auto">${D.renderRich(c.front)}</div><div class="muted" dir="auto">${D.renderRich(c.back)}</div></li>`)
       .join("")}</ul>`;
 }

@@ -8,7 +8,7 @@
 //
 // Pravilnost: teme najde koda (iskanje po besedah kot server/lekcija-za-vprasanje.js, brez AI); kviz so naše naloge iz
 // Vadnice, ki jih sestavi in izračuna koda (»Preverjeno«). Kartice iz zapiskov napiše hitri model samo iz prepisa;
-// koda preračuna vsak račun (server/verify.js codeCheck), en pregled naredi Sonnet. Obe OK → »Preverjeno«, sicer
+// koda preračuna vsak račun (server/verify.js codeCheck), en pregled naredi Sonnet. Obe OK → »Pregledal AI«, sicer
 // »Iz tvojih zapiskov – nepreverjeno«; kartica, ki jo pregled označi za napačno, se ne shrani.
 //
 // Zasebnost: slike strežnik nikoli ne shrani; shrani prepis rokopisa (šifrirano kot pogovori), prilepljeno besedilo
