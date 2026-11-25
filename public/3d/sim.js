@@ -72,7 +72,10 @@ export function sim3d(el, opts = {}) {
         b.type = "button";
         b.className = "secondary";
         b.textContent = t("a3.retry");
-        b.addEventListener("click", znova, { once: true });
+        // Neuspel uvoz modula ostane v brskalnikovem seznamu modulov (po specifikaciji; Safari, Firefox, Chromium na CI): nov
+        // import() ga ne prenese znova, zato »Poskusi znova« tedaj osveži stran (kot napake.js pri modul: true).
+        const uvoz = /importing a module script failed|dynamically imported module|module script/i.test(String(err?.message ?? ""));
+        b.addEventListener("click", uvoz ? () => location.reload() : znova, { once: true });
         p.replaceChildren(s, b);
       }
       if (el.isConnected) el.append(p);

@@ -1,5 +1,8 @@
 // 3D simulacija v lekciji (public/3d/sim.js) brez povezave: tudi ko se napake.js ne naloži, okvir pokaže sporočilo
-// »Preveri povezavo« in gumb »Poskusi znova«, ki naloži znova (pregled z napravo: prej je ostal samo napis »3D«).
+// »Preveri povezavo« in gumb »Poskusi znova« (pregled z napravo: prej je ostal samo napis »3D«). Po neuspelem uvozu modula
+// gumb osveži stran: neuspel modul ostane v brskalnikovem seznamu modulov (Chromium na CI ga ob novem import() ne prenese
+// znova, zato je preverjanje »nova zahteva za modeli.js« tam padlo, lokalno pa ne). Ob izpadu seznama modelov (fetch)
+// gumb naloži znova brez osvežitve.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
@@ -47,12 +50,57 @@ test("sim3d: brez napake.js in modelov sporočilo o povezavi in »Poskusi znova�
     assert.equal(await p.textContent("#sim p"), besedili[0]);
     assert.equal(await p.textContent("#sim button"), besedili[1]);
     assert.notEqual(besedili[0], "3D");
-    const prej = modeli;
+    assert.ok(modeli >= 1);
+    const osvezena = p.waitForEvent("load", { timeout: 20000 });
     await p.click("#sim button");
-    for (let i = 0; i < 200 && modeli === prej; i++) await p.waitForTimeout(100);
-    assert.ok(modeli > prej, "»Poskusi znova« naloži znova");
+    await osvezena;
+    assert.equal(await p.locator("#sim").count(), 0, "»Poskusi znova« po neuspelem uvozu modula osveži stran");
+    assert.deepEqual(napake, []);
+  } finally {
+    await ctx.close();
+    await browser.close();
+    server.close();
+  }
+});
+
+test("sim3d: brez napake.js in seznama modelov »Ni povezave«, »Poskusi znova« naloži znova", { skip: playwright ? false : "Playwright ni nameščen", timeout: 120000 }, async (t) => {
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, info() {}, warn() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, locale: "sl-SI", serviceWorkers: "block" });
+  try {
+    const p = await ctx.newPage();
+    const napake = [];
+    p.on("pageerror", (e) => napake.push(String(e)));
+    let seznam = 0;
+    await p.route("**/3d/napake.js", (r) => r.abort("internetdisconnected"));
+    await p.route("**/3d/modeli/seznam.json", (r) => (seznam++, r.abort("internetdisconnected")));
+    await p.goto(`${base}/healthz`);
+    const besedilo = await p.evaluate(async () => {
+      const { t } = await import("/i18n.js");
+      const el = document.createElement("div");
+      el.id = "sim";
+      document.body.append(el);
+      const { sim3d } = await import("/3d/sim.js");
+      sim3d(el, { model: "celica-zivalska" });
+      return t("a3.noConnection");
+    });
     await p.waitForSelector("#sim button", { timeout: 20000 });
-    assert.equal(await p.textContent("#sim p"), besedili[0]);
+    assert.equal(await p.textContent("#sim p"), besedilo);
+    const gumb = await p.$("#sim button");
+    const prej = seznam;
+    assert.ok(prej >= 1);
+    await p.click("#sim button");
+    // fetch seznama ni v seznamu modulov: nova zahteva in nova kartica (stari gumb ni več v dokumentu)
+    await p.waitForFunction((g) => !g.isConnected && document.querySelector("#sim button"), gumb, { timeout: 20000 });
+    assert.ok(seznam > prej, "»Poskusi znova« naloži znova");
+    assert.equal(await p.textContent("#sim p"), besedilo);
     assert.deepEqual(napake, []);
   } finally {
     await ctx.close();
