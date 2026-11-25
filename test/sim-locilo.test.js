@@ -1,7 +1,7 @@
 // Decimalno ločilo v simulacijah sledi jeziku vmesnika (public/sim/kit.js: fmt, tfmt, decZapis, beriStevilo).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { fmt, tfmt, decLocilo, decZapis, beriStevilo } from "../public/sim/kit.js";
+import { fmt, tfmt, decLocilo, decZapis, decBesedilo, decTeX, beriStevilo } from "../public/sim/kit.js";
 
 test("fmt: vejica v sl, de, hr, it, hu; pika v en; minus »−«", () => {
   assert.equal(fmt(1.5, 2, "sl"), "1,5");
@@ -13,12 +13,21 @@ test("fmt: vejica v sl, de, hr, it, hu; pika v en; minus »−«", () => {
   assert.equal(fmt(NaN, 2, "en"), "–");
 });
 
-test("drugi jeziki po verigi uiChain; brez dokumenta slovensko", () => {
-  assert.equal(decLocilo("sr"), ","); // sr → hr
-  assert.equal(decLocilo("fr"), "."); // fr → en
-  assert.equal(decLocilo("bar"), ","); // bavarščina → de
+test("ločilo po Intl: fr, ru … vejica; en in en-GB pika; neznan jezik po uiChain", () => {
+  for (const l of ["sl", "fr", "ru", "sr"]) assert.equal(decLocilo(l), ",", l);
+  assert.equal(decLocilo("en"), ".");
+  assert.equal(decLocilo("en-GB"), ".");
+  assert.equal(fmt(1.5, 2, "fr"), "1,5");
   assert.equal(decLocilo("xx"), ","); // neznan → sl
-  assert.equal(fmt(3.14), "3,14");
+  assert.equal(fmt(3.14), "3,14"); // brez dokumenta slovensko
+});
+
+test("stalnice v formuli in besedilu ter eksponent", () => {
+  assert.equal(decTeX(String.raw`m \cdot 9{,}81 = 0,1\ x_{1,2}`, "en"), String.raw`m \cdot 9.81 = 0.1\ x_{1,2}`);
+  assert.equal(decTeX("9{,}81", "sl"), "9{,}81");
+  assert.equal(decBesedilo("0,25 in 1, 2", "en"), "0.25 in 1, 2");
+  assert.equal(decBesedilo("109,5°", "sl"), "109,5°");
+  assert.equal(decZapis("1.2e-5", "en"), "1.2e−5");
 });
 
 test("jezik vzame iz <html lang>", () => {

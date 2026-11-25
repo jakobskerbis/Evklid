@@ -9,13 +9,28 @@ import { uiChain } from "../i18n/languages.js";
 
 export const NS = "http://www.w3.org/2000/svg";
 
-// Decimalno ločilo jezika vmesnika (<html lang>, nastavi ga i18n): sl, de, hr, it, hu vejica, en pika;
-// drugi jeziki po verigi uiChain (npr. sr → hr → vejica, fr → en → pika). Brez dokumenta (Node) slovensko.
-const LOCILO = { sl: ",", de: ",", hr: ",", it: ",", hu: ",", en: "." };
+// Decimalno ločilo jezika vmesnika (<html lang>, nastavi ga i18n), kot ga piše Intl (kot public/games/topics.js):
+// sl, de, hr, it, hu, fr, ru … vejica, en (tudi en-GB) pika. Jezik, ki ga Intl ne pozna, po verigi uiChain.
+// Brez dokumenta (Node) slovensko; ob napaki vejica.
 const jezikVmesnika = () => (typeof document !== "undefined" && document.documentElement?.lang) || "sl";
-export const decLocilo = (lang = jezikVmesnika()) => LOCILO[uiChain(lang).find((c) => c in LOCILO)];
+const locila = new Map();
+export function decLocilo(lang = jezikVmesnika()) {
+  if (!locila.has(lang)) {
+    let sep = ",";
+    try {
+      const tag = [lang, ...uiChain(lang)].find((c) => Intl.NumberFormat.supportedLocalesOf(c).length);
+      if (tag) sep = (1.5).toLocaleString(tag).includes(",") ? "," : ".";
+    } catch {}
+    locila.set(lang, sep);
+  }
+  return locila.get(lang);
+}
 // Niz števila s piko (toFixed, odčitek merilnika) za prikaz: ločilo jezika, minus »−«.
-export const decZapis = (t, lang) => String(t).replace(".", decLocilo(lang)).replace("-", "−");
+export const decZapis = (t, lang) => String(t).replace(".", decLocilo(lang)).replace(/-/g, "−");
+// Besedilo s števili, zapisanimi s slovensko vejico (»0,25«, »1,70 m«): ločilo jezika. Ne za prozo.
+export const decBesedilo = (t, lang) => (decLocilo(lang) === "." ? String(t).replace(/(\d),(?=\d)/g, "$1.") : t);
+// Formula s stalnicami, zapisanimi z vejico (»9{,}81«, »0,1«): pri pikastem ločilu pika (tex to naredi sam).
+export const decTeX = (t, lang) => (decLocilo(lang) === "." ? decVejica(t).replace(/(\d)\{,\}(?=\d)/g, "$1.") : t);
 // Število, ki ga vpiše učenec: sprejme vejico ali piko in minus »−«; prazno ali neveljavno → null.
 export function beriStevilo(t) {
   const v = String(t ?? "").trim().replace(",", ".").replace("−", "-");
@@ -288,7 +303,7 @@ export function playButton(anim, { play = "Predvajaj", pause = "Ustavi" } = {}) 
 // Naštevanje (»1, 2«, »\{1, 2, 3\}«, »x_{1,2}«) ostane, kot je: le število z eno vejico med števkama.
 // Pravilo je v public/mat/izris.js (decVejica), skupno za vso aplikacijo.
 export { decVejica };
-export const tex = (t) => izrisi(t, { vejica: true });
+export const tex = (t) => izrisi(decTeX(t), { vejica: true });
 export const texBlock = (t) => `<div class="demo-eq">${tex(t)}</div>`;
 
 // Koordinatni sistem. Vrne { X, Y, inv(px,py), g } za risanje v enotah.

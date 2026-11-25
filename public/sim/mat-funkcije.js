@@ -1,6 +1,6 @@
 // Simulacije: grafi funkcij (s prednastavitvami), limita, odvod, integral, zaporedja, vrste, obresti,
 // kompleksna števila in gibanje (srečanje).
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, axes, fnPath, arrow, animate, playButton, draggable, handle, deg, axisMark, spanMark, axisSlider, snapTo } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, tfmt, decBesedilo, clamp, label, axes, fnPath, arrow, animate, playButton, draggable, handle, deg, axisMark, spanMark, axisSlider, snapTo } from "./kit.js";
 
 const PI = Math.PI;
 const T = (x, d = 2) => tfmt(x, d);
@@ -681,7 +681,7 @@ export function integral(el, { mode = "doloceni" } = {}) {
          <p class="muted">Konstanta C premakne graf F navzgor ali navzdol: vse te funkcije imajo isti odvod, zato je nedoločeni integral cela družina funkcij.</p>`;
     }
   };
-  const ctl = [select({ label: "funkcija", options: Object.entries(IFUN).map(([k, v]) => [k, v.name]), value: key, onChange: (v) => ((key = v), draw()) })];
+  const ctl = [select({ label: "funkcija", options: Object.entries(IFUN).map(([k, v]) => [k, decBesedilo(v.name)]), value: key, onChange: (v) => ((key = v), draw()) })];
   const sa = axisSlider(slider({ label: "a", min: -2, max: 6, step: 0.1, value: a, cls: "a", onInput: (v) => ((a = v), draw()) }), svg);
   const sb = axisSlider(slider({ label: "b", min: -2, max: 6, step: 0.1, value: b, cls: "c", onInput: (v) => ((b = v), draw()) }), svg);
   if (mode === "doloceni")

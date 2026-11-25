@@ -2,9 +2,8 @@
 // elektromagnetna indukcija (lab-indukcija). Modeli: lab-model-magnetizem.js (brez DOM). CSS: predpona lab-mag-.
 // Risbe so v stalnem merilu (merilna črta), oprema v pravih razmerjih; čas teče v realnem času (pospešek časa in posnetek ×0,1
 // sta označena v risbi). Risba se nariše znova ob vsakem koraku ure (10-krat na sekundo) ali sličici poskusa.
-import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox } from "./kit.js";
+import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox, decZapis } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
-import { decZapis } from "./kit.js";
 import { ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, HALL, TehtnicaBench, MAGNETI, VODNIKI, IndukcijaBench, MAGNET_IND, CEV, SENZOR, GALVANOMETER, G_SOLA, naklonSkoziIzhodisce, POENOSTAVITVE_MAGNETIZEM } from "./lab-model-magnetizem.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -320,7 +319,7 @@ export function labElektromagnet(el, opts = {}) {
 
   const tSel = select({ label: "tuljava", options: TUL_OPTS, value: B.tuljava, onChange: (v) => ((B.tuljava = v), (B.sponke = 0), log.push(`Na stojalo si vpel tuljavo s ${TULJAVE[v].N} ovoji.`, "info"), sync()) });
   const jSel = select({ label: "jedro", options: JED_OPTS, value: B.jedro, onChange: (v) => setJedro(v) });
-  const razSeg = row("ploščici pod jarmom", seg("plastični ploščici pod jarmom", [["0", "brez"], ["0.5", "0,5 mm"], ["1", "1 mm"], ["2", "2 mm"]], String(B.razmik), (v) => ((B.razmik = +v), log.push(+v ? `Med kraka in jarem si vložil plastični ploščici debeline ${num(+v, +v < 1 ? 1 : 0)}${nb}mm.` : "Jarem se krakov dotika neposredno (reža je le ~0,03 mm).", "info"), sync())));
+  const razSeg = row("ploščici pod jarmom", seg("plastični ploščici pod jarmom", [["0", "brez"], ["0.5", `${num(0.5, 1)} mm`], ["1", "1 mm"], ["2", "2 mm"]], String(B.razmik), (v) => ((B.razmik = +v), log.push(+v ? `Med kraka in jarem si vložil plastični ploščici debeline ${num(+v, +v < 1 ? 1 : 0)}${nb}mm.` : "Jarem se krakov dotika neposredno (reža je le ~0,03 mm).", "info"), sync())));
   const amPosSeg = row("ampermeter", seg("vezava ampermetra", [["zaporedno", "zaporedno"], ["vzporedno", "vzporedno s tuljavo"]], B.amPos, (v) => ((B.amPos = v), (said.kratek = false), log.push(v === "zaporedno" ? "Ampermeter je vezan zaporedno s tuljavo: skozi oba teče isti tok." : "Ampermeter si vezal vzporedno s tuljavo.", v === "zaporedno" ? "info" : "warn"))));
   const amSel = select({ label: "vtičnica in območje ampermetra", options: [["10", "10 A (vtičnica 10A)"], ["200m", "200 mA (vtičnica mA)"], ["20m", "20 mA (vtičnica mA)"]], value: B.amRange, onChange: (v) => (B.amRange = v) });
   const prT = toggle("vodnika priključena na tuljavo", false, (v) => ((B.prikljuceno = v), log.push(v ? "Krokodilčka sta na priključkih tuljave: krog je sklenjen." : "Snel si krokodilčka s tuljave: krog je odprt.", "info")));
@@ -1030,7 +1029,7 @@ export function labIndukcija(el) {
   function readouts() {
     const R = B.run;
     if (!R || R.galv) {
-      uL.set(R?.galv ? num(sample(R, R.t) * 100, 0) : num(0, 3), R?.galv ? "%" : "V", R?.galv ? "odklon galvanometra" : `±${B.range}${nb}V · ${B.fs >= 1000 ? `${B.fs / 1000}${nb}kHz` : `${B.fs}${nb}Hz`}`);
+      uL.set(R?.galv ? num(sample(R, R.t) * 100, 0) : fixed(0, 3), R?.galv ? "%" : "V", R?.galv ? "odklon galvanometra" : `±${B.range}${nb}V · ${B.fs >= 1000 ? `${B.fs / 1000}${nb}kHz` : `${B.fs}${nb}Hz`}`);
       p1L.set("–", "V");
       p2L.set("–", "V");
       return;

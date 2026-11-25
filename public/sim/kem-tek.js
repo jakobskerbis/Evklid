@@ -1,5 +1,5 @@
 // Simulacije za kemijska tekmovanja: Hessov zakon, pufri, oblike molekul (VSEPR).
-import { s, svgBox, slider, select, segmented, toggle, readout, layout, texBlock, fmt, clamp, label, arrow, axes, draggable } from "./kit.js";
+import { s, svgBox, slider, select, segmented, toggle, readout, layout, texBlock, fmt, decBesedilo, clamp, label, arrow, axes, draggable } from "./kit.js";
 import { solvePH } from "./kem-reakcije.js";
 import { atomBall } from "./kem-skupno.js";
 
@@ -188,7 +188,7 @@ export function vsepr(el) {
   const info = () => {
     const [f, c, , nb, nl, shape, ang] = VSEPR[k];
     out.innerHTML = `<p><b>${f}</b>: okoli osrednjega atoma ${c} so ${nb + nl} elektronske domene (${nb} vezne${nl ? `, ${nl} nevezn${nl === 1 ? "i par" : nl === 2 ? "a para" : "i pari"}` : ""}), oznaka AX<sub>${nb}</sub>${nl ? `E<sub>${nl}</sub>` : ""}.</p>
-      <p>Oblika molekule: <b>${shape}</b>, vezni kot ${ang}.</p>
+      <p>Oblika molekule: <b>${shape}</b>, vezni kot ${decBesedilo(ang)}.</p>
       <p class="muted">VSEPR: elektronski pari okoli osrednjega atoma se razporedijo čim dlje drug od drugega. Nevezni pari zavzamejo več prostora, zato zmanjšajo vezne kote (CH₄ 109,5°, NH₃ 107°, H₂O 104,5°). Obliko določajo le položaji atomov. Povleci molekulo, da jo zavrtiš.</p>`;
   };
   let last = null;

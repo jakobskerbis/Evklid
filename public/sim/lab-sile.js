@@ -1,8 +1,7 @@
 // Virtualni laboratorij, »Silomer in uteži«: Hookov zakon (lab-hooke), gostota (lab-gostota), vzgon (lab-vzgon),
 // hidrostatični tlak z manometrom (lab-tlak). Modeli: lab-model-sile.js (brez DOM). Odčitki analognih skal so v povečavi (lupa).
-import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, decZapis } from "./kit.js";
 import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
-import { decZapis } from "./kit.js";
 import { HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI, SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, POENOSTAVITVE_SILE } from "./lab-model-sile.js";
 
 const nb = " ";

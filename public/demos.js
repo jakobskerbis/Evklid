@@ -2,8 +2,7 @@
 // Vsaka demonstracija je funkcija (el) => void, ki nariše vse v el.
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
-import { tryIt, fmt } from "./sim/kit.js"; // tryIt: »Preizkusi: …« (sim/napis-poskusa.js); fmt: ločilo jezika vmesnika
-import { izrisi } from "./mat/izris.js";
+import { tryIt, fmt, tex } from "./sim/kit.js"; // tryIt: »Preizkusi: …« (sim/napis-poskusa.js); fmt, tex: ločilo jezika vmesnika
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -74,7 +73,6 @@ function animate(el, step) {
   requestAnimationFrame(tick);
 }
 
-const tex = (t) => izrisi(t, { vejica: true });
 
 // ------------------------------------------------------------ y = kx + n
 function linearna(el) {

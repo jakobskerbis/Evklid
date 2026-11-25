@@ -574,7 +574,7 @@ export function labProstiPad(el) {
     const xc = 150, hc = 1.7 * P, yc = yTla - hc;
     s("path", { d: `M${xc},${yc + 0.13 * hc} v${0.42 * hc} M${xc},${yc + 0.55 * hc} l-9,${0.45 * hc} M${xc},${yc + 0.55 * hc} l9,${0.45 * hc} M${xc},${yc + 0.2 * hc} l-12,${0.3 * hc} M${xc},${yc + 0.2 * hc} l12,${0.3 * hc}`, class: "lab-gib-clovek" }, svg);
     s("circle", { cx: xc, cy: yc + 0.065 * hc, r: 0.065 * hc, class: "lab-gib-clovek-g" }, svg);
-    label(svg, xc + 16, yc + 6, "1,70 m", "lab-gib-cm", "start");
+    label(svg, xc + 16, yc + 6, `${fixed(1.7, 2)} m`, "lab-gib-cm", "start");
     // stojalo: podnožje, drog, roka z elektromagnetom ali kleščami
     s("rect", { x: 30, y: yTla - 6, width: 70, height: 6, rx: 2, fill: u(svg, "crno") }, svg);
     s("rect", { x: 44, y: yTla - 2.38 * P, width: 5, height: 2.38 * P - 6, fill: u(svg, "jeklo"), class: "lab-gib-drog-st" }, svg);

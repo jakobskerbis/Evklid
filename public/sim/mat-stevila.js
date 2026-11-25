@@ -1,5 +1,5 @@
 // Simulacije: števila, deljivost, ulomki, decimalna števila, odstotki, potence.
-import { h, s, decZapis, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
+import { h, s, decZapis, decBesedilo, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
 
 // Številska premica: vrne { X, g } in nariše oznake.
 function numberLine(svg, { x0, x1, from, to, step, major = step, y = 60, labels = true, fmtL }) {
@@ -954,16 +954,16 @@ export function realna(el) {
     s("text", { x: 240, y: 60, class: "tick" }, svg, "iracionalna");
     const spot = { N: [80, 120], Z: [150, 120], Q: [196, 100], R: [280, 100] }[set];
     s("circle", { cx: spot[0], cy: spot[1], r: 16, class: "pt fill-a" }, svg);
-    label(svg, spot[0], spot[1] + 1, name.length > 4 ? "•" : name, "node-lbl");
+    label(svg, spot[0], spot[1] + 1, name.length > 4 ? "•" : decBesedilo(name), "node-lbl");
     const X = (x) => 20 + ((x + 4) / 8) * 300;
     s("line", { x1: 20, y1: 210, x2: 320, y2: 210, class: "axis" }, svg);
     for (let i = -4; i <= 4; i++) { s("line", { x1: X(i), y1: 204, x2: X(i), y2: 216, class: "axis" }, svg); label(svg, X(i), 232, fmt(i), "tick"); }
     s("circle", { cx: X(v), cy: 210, r: 7, class: "pt fill-a" }, svg);
     const names = { N: "naravno", Z: "celo, ni pa naravno", Q: "racionalno, ni pa celo", R: "iracionalno (realno, ni pa racionalno)" };
-    out.innerHTML = `<p><b>${name}</b> je ${names[set]} število${note ? ` (${note})` : ""}.</p>
+    out.innerHTML = `<p><b>${decBesedilo(name)}</b> je ${names[set]} število${note ? ` (${decBesedilo(note)})` : ""}.</p>
       <p class="muted">Vsako naravno število je tudi celo, vsako celo je racionalno, vsako racionalno je realno. Racionalna števila lahko zapišemo kot ulomek; njihov decimalni zapis je končen ali periodičen. Iracionalnih ne moremo zapisati kot ulomek. Vsa realna števila skupaj zapolnijo številsko premico.</p>`;
   };
-  const chips = h("div", { class: "demo-chips" }, NUMS.map(([n], i) => button(n, () => ((pick = i), draw()), "chip-btn")));
+  const chips = h("div", { class: "demo-chips" }, NUMS.map(([n], i) => button(decBesedilo(n), () => ((pick = i), draw()), "chip-btn")));
   layout(el, { stage: [svg], extra: chips, out, tryText: "Kam spada √9? Kam √8? Ali je 0,333… racionalno število?" });
   draw();
 }
