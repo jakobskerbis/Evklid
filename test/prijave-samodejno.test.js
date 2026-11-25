@@ -5,11 +5,11 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawn } from "node:child_process";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { scrubName, exportReports, ensureReportsTable } from "../server/reports.js";
 import { ownerOnly } from "../server/accounts/account-lock.js";
+import { zazeniStreznik } from "./zagon-streznika.js";
 
 const TOKEN = "t".repeat(40);
 const REPLY = 'Ana, 7 krat 8 je 54.\n<<META subject=MAT topic="poštevanka" error=0 mode=A flag=none done=0>>';
@@ -170,21 +170,9 @@ test("prikaz v Računu: povezava na PR in besedilo v vseh jezikih", () => {
 for (const extra of [{ EVKLID_ACCOUNTS: "1" }, { EVKLID_PASSWORD: "geslo-za-test" }]) {
   test(`izvoz in stanje prijav od zunaj: samo s ključem (${Object.keys(extra)[0]})`, async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-prijave-"));
-    const port = 39000 + Math.floor(Math.random() * 900);
-    const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], {
-      env: { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_EXPORT_TOKEN: TOKEN, ...extra },
-      stdio: "ignore",
-    });
+    const { srv, base, konec } = await zazeniStreznik({ ...process.env, EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_EXPORT_TOKEN: TOKEN, ...extra });
     try {
-      const base = `http://127.0.0.1:${port}`;
-      for (let i = 0; i < 150; i++) {
-        try {
-          await fetch(`${base}/healthz`);
-          break;
-        } catch {
-          await new Promise((r) => setTimeout(r, 100));
-        }
-      }
+      if (!base) assert.fail(`strežnik se je končal pred zagonom: ${(await konec).stderr}`);
       const req = (p, auth, method = "GET") =>
         fetch(base + p, {
           method,
@@ -202,6 +190,7 @@ for (const extra of [{ EVKLID_ACCOUNTS: "1" }, { EVKLID_PASSWORD: "geslo-za-test
       assert.notEqual((await req("/api/kozmetika/prijave/lesson/1", `Bearer ${TOKEN}`)).status, 200);
     } finally {
       srv.kill();
+      await konec;
       fs.rmSync(dir, { recursive: true, force: true });
     }
   });

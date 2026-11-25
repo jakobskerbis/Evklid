@@ -125,6 +125,8 @@ podnapis: Vsota dveh »V« (črtkano) je korito (polno)
 
 To je odgovor na drugo uganko. Pult je številska premica: kuhinjsko korito je pri $0$, hladilnik je pri $-2$, štedilnik pri $1$. Razdalji od deske pri $x$ sta $|x - 1|$ in $|x + 2|$. Vsota je najmanjša, $3\,\mathrm{m}$, kjerkoli med hladilnikom in štedilnikom: najboljših mest je neskončno mnogo.
 
+V simulaciji spodaj (»Premik in zrcaljenje grafa«) izberi osnovno funkcijo $f(x) = |x|$ in nastavi p = 2, q = −1 in a = −1. Opazuj, kako se teme »V« premakne v $(2, -1)$ in kako se graf obrne navzdol, kot napove zapis $y = -|x - 2| - 1$.
+
 **6. $|f(x)|$ ali $f(|x|)$ (višja raven).** Zapisa sta si podobna, pomenita pa nekaj povsem drugega.
 
 - $y = |f(x)|$: absolutno vrednost vzamemo na koncu, od **vrednosti**. Kar je nad osjo $x$, ostane. Kar je pod njo, prezrcalimo čez os $x$ navzgor.
