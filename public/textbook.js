@@ -958,7 +958,8 @@ document.addEventListener(
 // ---------- Lekcija po korakih ----------
 // Hitrost (#9): koraki, ki ob odprtju niso izrisani (data-lazy), se izrišejo po eden v ozadju: najprej tisti za
 // trenutnim, nato tisti pred njim. Med kosi brskalnik nariše zaslon in sprejme dotik (scheduler.yield, sicer
-// requestIdleCallback ali setTimeout). Začnemo po prvi sliki lekcije. Tisk izriše vse naenkrat.
+// requestIdleCallback ali setTimeout). Začnemo po prvi sliki lekcije. Pred tiskom
+// (beforeprint, npr. scripts/preveri-videz-lekcij.cjs) se izriše vse naenkrat; zaprta lekcija poslušalca odstrani.
 const naslednjiKos = () =>
   globalThis.scheduler?.yield ? globalThis.scheduler.yield() : new Promise((ok) => (window.requestIdleCallback ? requestIdleCallback(ok, { timeout: 300 }) : setTimeout(ok, 0)));
 function renderRest(box, ensure) {
@@ -970,7 +971,7 @@ function renderRest(box, ensure) {
   requestAnimationFrame(() =>
     setTimeout(async () => {
       for (;;) {
-        if (!live()) return;
+        if (!live()) return window.removeEventListener("beforeprint", all); // zaprta lekcija ne sme ostati v pomnilniku
         const rest = lazy();
         if (!rest.length) return window.removeEventListener("beforeprint", all);
         const shown = Number(steps.find((el) => !el.hidden)?.dataset.step || 0);
