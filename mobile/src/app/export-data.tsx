@@ -75,7 +75,9 @@ export default function ExportData() {
       // Kot izbris (delete-account.tsx): 401 z login: true je potekla seja (api.ts jo že počisti), sicer napačno geslo
       // ali neuspela ponovna prijava z Apple.
       const denied = err instanceof ApiError && err.status === 401 && !err.body?.login;
-      setError(denied ? t(body.apple_identity_token ? "mob.appleFailed" : "mob.wrongPassword") : (err as Error).message);
+      // Pred potrditvijo e-naslova strežnik izvoz zavrne (403 verify, #747).
+      const unverified = err instanceof ApiError && err.status === 403 && err.body?.verify;
+      setError(unverified ? t("mob.verifyEmail") : denied ? t(body.apple_identity_token ? "mob.appleFailed" : "mob.wrongPassword") : (err as Error).message);
     } finally {
       if (mounted.current) setBusy(false);
     }

@@ -1,11 +1,12 @@
 // Prenos podatkov v mobilni aplikaciji (GDPR čl. 15 in 20): zaslon mobile/src/app/export-data.tsx, vrstica v Jaz,
-// besedila mob.export* v vseh 33 jezikih, strežnik izvoz s sejo aplikacije (geslo; Apple: test/izvoz-apple.test.js).
+// besedila mob.export* v živih jezikih vmesnika (LIVE_UI_LANGUAGES; ostali so zamrznjeni in padejo nazaj prek uiChain), strežnik izvoz s sejo aplikacije (geslo; Apple: test/izvoz-apple.test.js).
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import SL from "../public/i18n/sl.js";
+import { LIVE_UI_LANGUAGES, FROZEN_UI_LANGUAGES } from "../public/i18n/languages.js";
 
 const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 const KEYS = ["exportData", "exportTitle", "exportText", "exportPrivate", "exportButton", "exportAppleHint", "exportNoPassword", "exportSetPassword", "exportLinkSent", "exportDone", "exportUnavailable"].map((k) => `mob.${k}`);
@@ -15,6 +16,7 @@ test("zaslon za prenos: geslo ali Apple, datoteka v predpomnilnik in meni za del
   assert.match(src, /api\("\/api\/account\/export", \{ method: "POST", body, signal: request\.current\.signal \}\)/);
   assert.match(src, /new File\(Paths\.cache, EXPORT_FILE\)/);
   assert.match(src, /Sharing\.shareAsync\(file\.uri, \{ mimeType: "application\/json"/);
+  assert.match(src, /err\.status === 403 && err\.body\?\.verify[\s\S]{0,80}mob\.verifyEmail/, "nepotrjen e-naslov: razumljivo sporočilo v jeziku vmesnika");
   assert.match(src, /const denied = err instanceof ApiError && err\.status === 401 && !err\.body\?\.login;/);
   assert.match(src, /body\.apple_identity_token \? "mob\.appleFailed" : "mob\.wrongPassword"/);
   assert.match(src, /apple_identity_token: cred\.identityToken, apple_nonce: nonce/);
@@ -35,10 +37,16 @@ test("zaslon za prenos: geslo ali Apple, datoteka v predpomnilnik in meni za del
   assert.match(read("mobile/src/lib/session.tsx"), /has_password\?: boolean;/);
 });
 
-test("besedila mob.export* v vseh jezikih, prevedena in z {email}", () => {
+test("besedila mob.export* v živih jezikih, prevedena in z {email}; zamrznjeni jeziki nespremenjeni", () => {
   const dir = new URL("../public/i18n/ui/", import.meta.url);
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
-  assert.equal(files.length, 32);
+  const files = LIVE_UI_LANGUAGES.filter((c) => c !== "sl").map((c) => `${c}.json`);
+  assert.equal(files.length, 5);
+  for (const c of FROZEN_UI_LANGUAGES) {
+    const f = new URL(`${c}.json`, dir);
+    if (!fs.existsSync(f)) continue;
+    const d = JSON.parse(fs.readFileSync(f, "utf8"));
+    for (const k of KEYS) assert.equal(d[k], undefined, `${c}.json je zamrznjen: ${k}`);
+  }
   for (const k of KEYS) assert.ok(SL[k], `sl: ${k}`);
   for (const f of files) {
     const d = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
@@ -72,8 +80,13 @@ test("strežnik: izvoz s sejo aplikacije z geslom; napačno geslo je 401 brez lo
     const st = await call("/api/account/status");
     assert.equal(st.body.parent.has_password, true, "zaslon pokaže polje za geslo");
     assert.equal(st.body.parent.guest, false);
+    // Pred potrditvijo e-naslova je izvoz zaklenjen (#747): 403 z verify, zaslon pokaže mob.verifyEmail.
+    const unverified = await call("/api/account/export", { password: "geslo12345" });
+    assert.equal(unverified.status, 403);
+    assert.equal(unverified.body.verify, true);
+    store.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE email = ?").run("izvoz@primer.si");
     const bad = await call("/api/account/export", { password: "napacno-geslo" });
-    assert.equal(bad.status, 401);
+    assert.equal(bad.status, 401, JSON.stringify(bad.body));
     assert.ok(!bad.body.login, "seja ostane, napačno geslo ni potekla prijava");
     const ok = await call("/api/account/export", { password: "geslo12345" });
     assert.equal(ok.status, 200, JSON.stringify(ok.body));
