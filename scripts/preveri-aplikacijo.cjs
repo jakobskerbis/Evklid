@@ -184,7 +184,7 @@ async function newPage(browser, phone, label, base) {
   });
   p.on("requestfailed", (r) => {
     const why = r.failure()?.errorText || "";
-    if (/ERR_ABORTED/.test(why)) return; // prekinjeno ob menjavi strani ali pretoku
+    if (/ERR_ABORTED|cancelled|NS_BINDING_ABORTED/i.test(why)) return; // prekinjeno ob menjavi strani ali pretoku (Chromium, WebKit »Load request cancelled«, Firefox)
     problem(`${label} ${p.where}`, `zahteva ni uspela: ${r.method()} ${r.url().replace(base, "")} (${why})`);
   });
   p.on("response", (r) => {
@@ -2185,7 +2185,8 @@ async function jezikZaslon(p, ime) {
   else opozorila.push({ where, what });
 }
 // Nov profil v tujem jeziku (država naprave določi šolski sistem), nato Učna pot, učbenik in lekcija.
-// Drugi zagon (telefon) najde obstoječi profil in se odpre na Učni poti.
+// Telefon dobi svoj, nov kontekst (brez shranjenega profila), zato gre znova skozi uvod; če bi se odprl obstoječi
+// profil, korak uvoda preskoči.
 async function tujJezik(browser, app, phone) {
   const p = await newPage(browser, phone, `${phone ? "tel" : "pc"}-${JEZIK}`, app.base);
   await p.goto(app.base + "/");

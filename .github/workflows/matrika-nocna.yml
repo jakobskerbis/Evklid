@@ -118,8 +118,8 @@ jobs:
   # slovenščina) ne seže (#11): telefon v WebKitu (Safarijev pogon, iPhone 13: lekcija, laboratorij, 3D, vaja) in
   # profil v angleščini iz Velike Britanije (pomešan jezik na Učni poti, v učbeniku in lekciji; zaenkrat opozorila,
   # ki so v povzetku zagona). WebKit ~6–8 min, angleščina ~2 min. Ob napaki: delovni tok je rdeč, posnetki v Artifacts.
-  preveri:
-    name: preveri (${{ matrix.ime }})
+  nocni-preveri:
+    name: nocni-preveri (${{ matrix.ime }})
     runs-on: ubuntu-24.04
     timeout-minutes: 75
     strategy:
@@ -184,7 +184,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         timeout-minutes: 5
         with:
-          name: preveri-posnetki-${{ matrix.ime }}
+          name: nocni-preveri-posnetki-${{ matrix.ime }}
           path: |
             preveri.log
             posnetki/
