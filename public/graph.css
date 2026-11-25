@@ -615,6 +615,9 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sc-act { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 12px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 .sc-act:hover, .sc-act:focus-visible { border-color: var(--accent); color: var(--accent); }
 .sc-act svg.i { width: 16px; height: 16px; flex-shrink: 0; }
+/* »Iz grafa: …« ob sporočilu o neznanem imenu (nad prozornim poljem vnosa) */
+.sc-err:has(.sc-from-graph) { flex-wrap: wrap; }
+.sc-err .sc-from-graph { position: relative; z-index: 1; flex-shrink: 0; }
 /* »Pokaži na grafu« v starejših vrsticah zgodovine in ob sporočilu napake: le ikona (v-graf.js) */
 .sc-h-row:has(> .sc-h-graf) { position: relative; padding-inline-start: 48px; }
 .sc-h-row > .sc-h-graf { position: absolute; inset-inline-start: 0; bottom: 6px; }
