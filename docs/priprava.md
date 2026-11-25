@@ -164,7 +164,7 @@ označena kot prebrana; ne šteje v pripravljenost).
 Razmiki veljajo med dnevi, ker se načrt vsak dan računa znova iz zgodovine: tema v učenju dobi naslednjo vajo 1–2 dni
 po zadnji vaji (ne vsak dan), ponovitev pride tretjino preostalega časa pozneje, največ 7 dni. Najšibkejše prve; najprej
 prve enote vseh tem, nato druge in tretje; samo en učni dan → najprej teme v učenju. Največ 3 enote na dan; kar ne gre,
-je v `nePrideNaVrsto` (`stisnjeno`). Zadnji dan pred testom poskusni test (obstoječi `/test-prep`: aktivna priprava,
+je v `nePrideNaVrsto` (`stisnjeno`). Zadnji dan pred testom (tudi, ko je to danes) poskusni test (obstoječi `/test-prep`: aktivna priprava,
 izbrani sklopi in vsaj ena tema z nalogami). Brez datuma en teden; test mimo → `mimo`; test danes → prazen načrt.
 Danes: šteje samo vaja, ponavljanje in vaja iz lista (ne test, uvrstitev ali tekmovanje); nova snov in vaja sta opravljeni
 po 3 rešenih nalogah teme ta dan (slovenski dan izdaje naloge), ponovitev po 2 (kot ponavljanje Evklida); `naslednja` je

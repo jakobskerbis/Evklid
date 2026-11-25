@@ -85,8 +85,12 @@ test("razmiki veljajo med dnevi: vaja po razmiku od zadnje vaje, ponovitev po Ev
   for (let i = 1; i < a1.length; i++) assert.ok((Date.parse(a1[i]) - Date.parse(a1[i - 1])) / 86400000 <= NAJVEC_RAZMIK, a1.join());
   assert.ok(vseNaloge(d).some((x) => x.tema?.id === "a2" && x.datum >= "2027-02-25"));
   // En sam učni dan (test jutri): najprej utrjevanje tem v učenju, nova snov za njimi.
-  const jutri = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-02", teme: [tema("n1", 0), tema("n2", 0), tema("n3", 0), tema("l1", 0.4)] });
+  const jutri = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-02", poskusniTest: false, teme: [tema("n1", 0), tema("n2", 0), tema("n3", 0), tema("l1", 0.4)] });
   assert.equal(jutri.dnevi[0].naloge[0].tema.id, "l1");
+  // Z načrtom testa je dan pred testom poskusni test, kot so ga kazali prejšnji dnevi.
+  const zadnji = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-02", teme: [tema("n1", 0), tema("m1", 1)] });
+  assert.deepEqual(zadnji.dnevi[0].naloge.map((x) => x.vrsta), ["poskusni_test"]);
+  assert.equal(zadnji.stisnjeno, false);
   // Test danes: nič ne »ne pride na vrsto«.
   const danes = sestaviNacrt({ danes: "2026-12-01", datum: "2026-12-01", teme: [tema("n1", 0)] });
   assert.equal(danes.stisnjeno, false);

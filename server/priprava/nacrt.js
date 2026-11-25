@@ -12,7 +12,7 @@
 //   prva enota teme, vadene pred kratkim, pride šele po razmiku od zadnje vaje;
 // - prednost: najnižja ocena, nato vrstni red učnega načrta; samo en učni dan pred testom: najprej teme v učenju
 //   (utrjevanje pred novo snovjo);
-// - zadnji dan pred testom: poskusni test (mešane naloge iz sklopov, obstoječi /test-prep), če sta vsaj dva dneva;
+// - zadnji dan pred testom: poskusni test (mešane naloge iz sklopov, obstoječi /test-prep), tudi ko je to danes;
 // - največ NA_DAN enot na dan; kar ne gre v načrt, je našteto v nePrideNaVrsto (najprej odpade ponovitev, nato vaja);
 // - tema brez nalog v Vadnici (ni preverljiva s kodo): enota »zapiski« (preberi izseke), največ ena na dan, za
 //   preverljivimi enotami; ko učenec označi zapiske kot prebrane, je opravljena; ne šteje v pripravljenost.
@@ -57,7 +57,8 @@ export function sestaviNacrt({ danes, datum = null, teme, naDan = NA_DAN, poskus
   const doTesta = datum ? razlika(danes, datum) : null;
   // Dnevi za učenje: od danes do dneva pred testom; brez datuma en teden.
   const dni = datum ? Math.max(0, doTesta) : BREZ_DATUMA_DNI;
-  const poskusni = poskusniTest && !!datum && dni >= 2;
+  // Poskusni test je vedno zadnji dan pred testom (tudi, ko je to danes), da se dan ne spremeni iz dneva v dan.
+  const poskusni = poskusniTest && !!datum && dni >= 1;
   const ucni = poskusni ? dni - 1 : dni;
   const dnevi = Array.from({ length: dni }, (_, i) => ({ datum: dodajDni(danes, i), naloge: [] }));
   const vec = (t) => ({ id: t.id, ime: t.ime, sklop: t.sklop, izsekov: t.izsekov, vaja: t.vaja });
