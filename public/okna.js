@@ -652,6 +652,7 @@ function placeBubble() {
 const OKNA_KONTROLE = ".okno:not([hidden]) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch], .composer-row, .answer-row)";
 const TOAST_OVIRE = `${CONTROLS}, ${OKNA_KONTROLE}, ${NE_PREKRIJ}, body > main.view:not([hidden]):not(.in-okno) :is(.composer-row, .answer-row), #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
 const GLAVE = "body > :is(.topbar, #mock-banner, #test-notice):not([hidden]), body > main.view:not([hidden]):not(.in-okno) :is(.chat-head, .topic-top)";
+let toastOd = 0; // kdaj se je obvestilo pokazalo ali dobilo novo besedilo (opazovalec v initOkna)
 export function placeToast() {
   const el = $("#toast");
   if (!el || el.hidden) return;
@@ -679,7 +680,7 @@ export function placeToast() {
   const pokrije = (y) => ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom + 4) - Math.max(y, o.top - 4) > 0).length;
   let best = { y: r.top, n: pokrije(r.top) };
   const mesta = [r.top];
-  for (let y = r.top - 8; best.n && y >= vrh + 8; y -= 8) {
+  for (let y = r.top - 4; best.n && y >= vrh + 8; y -= 4) {
     mesta.push(y);
     const n = pokrije(y);
     if (n < best.n) best = { y, n };
@@ -697,6 +698,12 @@ export function placeToast() {
     for (const y of mesta) {
       const n = prava(y);
       if (n < best.n) best = { y, n };
+    }
+    // Obvestilo, ki je bilo že vidno vsaj sekundo, nato pa mu je novo stanje vzelo vsak prost prostor (npr. list kalkulatorja
+    // čez ves zaslon), se skrije prej, namesto da bi prekrivalo gumbe novega stanja (dimni test 25. 11.: PSE v listu).
+    if (best.n && Date.now() - toastOd >= 1000) {
+      el.hidden = true;
+      return;
     }
   }
   if (best.y === r.top) return;
@@ -911,13 +918,15 @@ export function initOkna(opts) {
   );
   // Obvestilo (#toast, pišejo ga app.js, account.js, leagues.js, kalkulator.js): ob prikazu in novem besedilu na prosto mesto.
   const obvestilo = document.getElementById("toast");
-  // Isto dejanje pogosto še spremeni stran (zapre obrazec, izriše odgovor): mesto preverimo še po 250 in 800 ms.
-  let pozneje = [];
+  // Isto dejanje pogosto še spremeni stran (zapre obrazec, izriše odgovor, odpre list): dokler je obvestilo vidno (nekaj
+  // sekund), mesto preverimo vsakih 200 ms; spremembe velikosti in sloga ne sprožijo nobenega dogodka (dimni test 25. 11.).
+  let straza = 0;
   if (obvestilo)
     new MutationObserver(() => {
+      toastOd = Date.now();
       placeToast();
-      pozneje.forEach(clearTimeout);
-      pozneje = [250, 800].map((ms) => setTimeout(placeToast, ms));
+      clearInterval(straza);
+      straza = obvestilo.hidden ? 0 : setInterval(() => (obvestilo.hidden ? (clearInterval(straza), (straza = 0)) : placeToast()), 200);
     }).observe(obvestilo, { attributes: true, attributeFilter: ["hidden", "data-at"], childList: true });
   // Uvod, prijava in tekmovalna ura skrijejo mehurček (razredi na <body>).
   new MutationObserver(() => refreshBubble()).observe(document.body, { attributes: true, attributeFilter: ["class"] });

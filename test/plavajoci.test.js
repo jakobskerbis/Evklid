@@ -323,3 +323,41 @@ test("telefon 390 × 844: klepet v spodnjem listu (tap na mehurček) – obvesti
     await ctx.close();
   });
 });
+
+test("telefon 390 × 844: obvestilo brez prostega mesta – novo ostane vidno, staro se umakne, ne prekriva novega stanja (dimni test 25. 11.: PSE v listu)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 390, height: 844 });
+    await p.evaluate(() => window.evklid.showView("path"));
+    await p.waitForTimeout(300);
+    const mreza = () =>
+      p.evaluate(() => {
+        const box = document.createElement("div");
+        // Kot list kalkulatorja s tabelo PSE čez ves zaslon (okno je pod obvestilom).
+        box.id = "mreza";
+        box.className = "okno";
+        box.style.cssText = "position:fixed;inset:0;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;z-index:45;width:auto;height:auto";
+        for (let i = 0; i < 6 * 16; i++) box.append(Object.assign(document.createElement("button"), { textContent: String(i) }));
+        document.body.append(box);
+      });
+    const pokazi = (besedilo) =>
+      p.evaluate((b) => {
+        const t = document.querySelector("#toast");
+        t.textContent = b;
+        t.hidden = false;
+        t.dataset.at = Date.now();
+      }, besedilo);
+    const skrito = () => p.evaluate(() => document.querySelector("#toast").hidden);
+    // Staro obvestilo (vidno > 1 s), nato stanje brez prostega mesta: se skrije in ne prekriva gumbov.
+    await pokazi("Zahteva je zapisana");
+    await p.waitForTimeout(1100);
+    await mreza();
+    await p.waitForTimeout(400);
+    assert.equal(await skrito(), true, "staro obvestilo se umakne, ko mu novo stanje vzame ves prostor");
+    // Novo obvestilo v stanju brez prostega mesta: uporabnik ga vidi (ne izgine takoj).
+    await pokazi("Shranjeno");
+    await p.waitForTimeout(300);
+    assert.equal(await skrito(), false, "novo obvestilo ostane vidno");
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
