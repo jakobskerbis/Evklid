@@ -167,7 +167,7 @@ test("API: načrt iz obsega testa in rešenih nalog (vaja, ne test); označeno n
     vpis.run(s.id, "MAT-SS-4/doloceni-integral", "practice");
     vpis.run(s.id, "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij", "manual");
     // Naloge testa danes ne štejejo kot vaja teme.
-    const naloga = store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, mode) VALUES (?, 'MAT-SS-4/nedoloceni-integral', 1, '{}', 1, ?)");
+    const naloga = store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, mode, first_try_correct) VALUES (?, 'MAT-SS-4/nedoloceni-integral', 1, '{}', 1, ?, 1)");
     for (let i = 0; i < 3; i++) naloga.run(s.id, "test");
     const r = await req("GET", `/api/students/${s.id}/priprave/${p.id}/nacrt`);
     assert.equal(r.status, 200, JSON.stringify(r.body));
@@ -196,6 +196,7 @@ test("API: načrt iz obsega testa in rešenih nalog (vaja, ne test); označeno n
     assert.equal(r2.body.dnevi[0].naloge.find((x) => x.tema?.id === "MAT-SS-4/nedoloceni-integral").opravljeno, true);
     // Prebrano: samo tema iz načrta te priprave.
     assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: "MAT-OS-8/pitagorov-izrek" })).status, 400);
+    assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: { toString: 1 } })).status, 400);
     assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: "MAT-SS-4/doloceni-integral" })).status, 200);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM priprava_prebrano WHERE priprava_id = ?").get(p.id).n, 1);
     assert.equal((await req("POST", `/api/students/${s.id}/priprave/${p.id}/nacrt/prebrano`, { tema_id: "MAT-SS-4/doloceni-integral", prebrano: false })).status, 200);

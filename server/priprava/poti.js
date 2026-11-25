@@ -634,7 +634,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
 
   // Načrt priprave (PR 5, nacrt.js): teme obsega testa (brez načrta testa teme iz zapiskov), izkazano znanje iz
   // rešenih nalog (topicScore, osnovne teme kot pri pripravljenosti na izpit), zgodovina vaje in rešene naloge danes.
-  // Šteje samo vaja, ponavljanje in vaja iz lista (kot obvladanje, progress.js checkMastery), ne test ali uvrstitev.
+  // Šteje vsaka odgovorjena naloga (tudi napačna) vaje, ponavljanja in vaje iz lista (kot obvladanje, progress.js
+  // checkMastery), ne test ali uvrstitev.
   // Dan naloge je dan, ko je bila izdana (created_at, UTC → slovenski dan).
   const danLj = (sql) => (sql ? nowParts(new Date(`${String(sql).replace(" ", "T")}Z`)).date : null);
   async function temeNacrta(s, p) {
@@ -645,7 +646,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const zdaj = sqlCas(now());
     const stanje = db.prepare(STANJE_OCENE);
     const naloge = db.prepare(
-      "SELECT created_at FROM tasks WHERE student_id = ? AND topic_id = ? AND solved = 1 AND mode IN ('practice','review','list') ORDER BY id DESC LIMIT 20",
+      "SELECT created_at FROM tasks WHERE student_id = ? AND topic_id = ? AND first_try_correct IS NOT NULL AND mode IN ('practice','review','list') ORDER BY id DESC LIMIT 20",
     );
     const prebrano = new Map(db.prepare("SELECT tema_id, datum FROM priprava_prebrano WHERE priprava_id = ? AND student_id = ?").all(p.id, s.id).map((r) => [r.tema_id, r.datum]));
     const teme = ids.map((id, i) => {
@@ -752,7 +753,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!s) return;
     const p = ena(s, req);
     if (!p) return niPriprave(res);
-    const tema = String(req.body?.tema_id || "");
+    const tema = typeof req.body?.tema_id === "string" ? req.body.tema_id : "";
     const z = await zemljevidZa(s, p);
     const danes = nowParts(new Date(now())).date;
     if (!(z.obseg || z.teme).some((t) => t.id === tema)) return res.status(400).json({ error: "Tema ni v načrtu te priprave.", code: "tema_ni_v_nacrtu" });
