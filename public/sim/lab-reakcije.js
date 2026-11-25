@@ -353,6 +353,7 @@ export function labHitrost(el, opts = {}) {
     S_.ser.set(S_.run, []);
     S_.m0 = null;
     if (hkratiT.get()) startUra();
+    else log.push("Štoparica še ne teče! Zaženi jo čim prej, sicer bodo časi napačni.", "warn");
     if (mode === "marmor") {
       // začetna masa takoj po dodatku (t = 0)
       const o = b.beriMaso();
@@ -360,7 +361,6 @@ export function labHitrost(el, opts = {}) {
       tabs.marmor.add({ p: String(S_.n), t: "0", m: o.text.replace(".", ","), dm: "0,00" });
       S_.ser.get(S_.run).push([0, 0]);
     }
-    else log.push("Štoparica še ne teče! Zaženi jo čim prej, sicer bodo časi napačni.", "warn");
     if (mode === "marmor") {
       log.push(`Dodal si ${num(r.m, 2)}${nb}g marmorja${b.vata ? " in vrat zamašil z vato" : ""}.`, "ok");
       if (!b.vata) once("vata", "Brez vate bodo mehurčki CO₂ iz bučke razpršili tudi kapljice kisline: izguba mase bo prevelika.", "warn");
