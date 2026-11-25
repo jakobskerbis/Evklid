@@ -4,9 +4,10 @@
 // točke kot vsaka naloga iz Vadnice (P1-4).
 // Inštruktor gumb zahteva z blokom <<ODPRI vaja="tema">> (server/odpri.js). Pravilo v pozivu, kdaj ga napisati, doda
 // profil B (#539); do tedaj je stikalo EVKLID_VAJA_PO_RAZLAGI izklopljeno in gumba ni.
-// Tema se išče kot pri gumbu za lekcijo: najprej natančno ime teme učenčeve stopnje (topicForName), sicer ena izmed
-// prvih treh lekcij, ki ima v naslovu vsaj dve tretjini besed iz poizvedbe. Tema brez generatorja → nič (gumba ni);
-// nikoli napačna tema.
+// Tema se išče strožje kot pri gumbu za lekcijo (pregled #1088): najprej natančno ime teme učenčeve stopnje
+// (topicForName); sicer, le pri poizvedbi z vsaj dvema besedama, prva lekcija, ki ima v naslovu VSE besede poizvedbe in
+// nobena druga lekcija ne (ali jo prehiti za MIN_LEAD). Ena sama beseda (»enačba«, »kvadratna«, »ulomki«) brez
+// natančnega imena teme ne da gumba. Tema brez generatorja → nič. Nikoli napačna tema: raje brez gumba.
 // Nadomesti: nič. Podobne naloge si je do zdaj izmislil model v odgovoru; ta modul jih ne podvaja, ampak preusmeri v
 // obstoječo Vadnico (progress.nextPractice), ki ostane edino mesto za naloge.
 import { rankLessons, topicForName, terms } from "./lekcija-za-vprasanje.js";
@@ -15,16 +16,19 @@ import { getTopic } from "./curriculum.js";
 
 export const vajaVklopljena = () => process.env.EVKLID_VAJA_PO_RAZLAGI === "1";
 
+const MIN_LEAD = 1.2; // kot server/lekcija-za-vprasanje.js topicForName
+
 /** Tema učenčeve stopnje z generatorjem nalog za poizvedbo (ime teme ali snovi) ali null. */
 export function temaZVajo(q, settings) {
   const besede = new Set(terms(q));
   if (!besede.size) return null;
-  const natancna = topicForName(q, settings);
-  const kandidati = natancna ? [natancna] : rankLessons(q, settings).slice(0, 3).filter((r) => r.inTitle >= Math.ceil((besede.size * 2) / 3)).map((r) => r.d.id);
-  for (const id of kandidati) {
-    if (!hasGenerator(id)) continue;
-    const tema = getTopic(id);
-    if (tema) return { topicId: id, title: tema.name || tema.title || id };
+  let id = topicForName(q, settings);
+  if (!id && besede.size >= 2) {
+    const [prvi, drugi] = rankLessons(q, settings);
+    const vse = (r) => r && r.inTitle >= besede.size;
+    if (vse(prvi) && (!vse(drugi) || prvi.score >= drugi.score * MIN_LEAD)) id = prvi.d.id;
   }
-  return null;
+  if (!id || !hasGenerator(id)) return null;
+  const tema = getTopic(id);
+  return tema ? { topicId: id, title: tema.name || tema.title || id } : null;
 }

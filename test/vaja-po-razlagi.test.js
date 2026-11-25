@@ -16,9 +16,10 @@ const OS6 = st("OSNOVNA_SOLA", "6. razred", "MAT");
 const SS1K = st("SREDNJA_SOLA", "1. letnik", "KEM");
 const SS2B = st("SREDNJA_SOLA", "2. letnik", "BIO");
 
-const zStikalom = async (fn) => {
+const sStikalom = (vrednost) => async (fn) => {
   const prej = process.env.EVKLID_VAJA_PO_RAZLAGI;
-  process.env.EVKLID_VAJA_PO_RAZLAGI = "1";
+  if (vrednost == null) delete process.env.EVKLID_VAJA_PO_RAZLAGI;
+  else process.env.EVKLID_VAJA_PO_RAZLAGI = vrednost;
   try {
     return await fn();
   } finally {
@@ -26,6 +27,8 @@ const zStikalom = async (fn) => {
     else process.env.EVKLID_VAJA_PO_RAZLAGI = prej;
   }
 };
+const zStikalom = sStikalom("1");
+const brezStikala = sStikalom(null);
 
 test("tema z vajo: ime teme učenčeve stopnje najde temo z generatorjem", () => {
   assert.equal(temaZVajo("kvadratna enačba", SS2)?.topicId, "MAT-SS-2/kvadratna-enacba");
@@ -40,12 +43,15 @@ test("tema z vajo: dvoumna ali neznana poizvedba ne da gumba (nikoli napačna te
   assert.equal(temaZVajo("seštevanje ulomkov", OS6), null);
   assert.equal(temaZVajo("", SS2), null);
   assert.equal(temaZVajo("xyzzy blabla", SS2), null);
+  // Ena sama splošna beseda ni ime teme: brez gumba (prej bi našla naključno lekcijo s to besedo).
+  for (const [q, s] of [["enačba", SS2], ["kvadratna", SS2], ["kvadratna", OS6], ["ulomki", OS6], ["integral", SS2], ["celica", SS2B], ["mitoza", SS2B]])
+    assert.equal(temaZVajo(q, s), null, q);
   // Brez slovenske stopnje (tuji šolski sistem) ni iskanja po lekcijah.
   assert.equal(temaZVajo("kvadratna enačba", normalizeSettings({ ...SS2, school_system: "GB" })), null);
 });
 
 test("naloga za izbrano temo: generator jo ustvari na vseh treh ravneh (odgovore preverja test vseh generatorjev)", () => {
-  for (const [q, s] of [["kvadratna enačba", SS2], ["Ohmov zakon", OS9F], ["množina snovi", SS1K], ["mitoza", SS2B]]) {
+  for (const [q, s] of [["kvadratna enačba", SS2], ["Ohmov zakon", OS9F], ["množina snovi", SS1K], ["celični cikel in mitoza", SS2B]]) {
     const t = temaZVajo(q, s);
     assert.ok(t, q);
     for (const level of [1, 2, 3]) {
@@ -57,8 +63,8 @@ test("naloga za izbrano temo: generator jo ustvari na vseh treh ravneh (odgovore
 
 test("ODPRI vaja: brez stikala nič; s stikalom gumb z id teme; blok učenec ne vidi", async () => {
   const blok = 'Razložila sem. Poskusi še sam.\n<<ODPRI vaja="kvadratna enačba">>';
-  assert.equal(vajaVklopljena(), process.env.EVKLID_VAJA_PO_RAZLAGI === "1");
-  if (!vajaVklopljena()) assert.deepEqual(await resolveOpen(blok, SS2), []);
+  assert.equal(await brezStikala(() => vajaVklopljena()), false);
+  assert.deepEqual(await brezStikala(() => resolveOpen(blok, SS2)), []);
   assert.deepEqual(parseOpenBlocks(blok).map((b) => b.kind), ["practice"]);
   const r = await zStikalom(() => resolveOpen(blok, SS2));
   assert.equal(r.length, 1);
@@ -76,7 +82,8 @@ test("odjemalec: gumb »Podobna naloga« odpre temo v Vadnici in začne vajo; pr
   assert.match(odpri, /practice: \["pencil", "vr\.vaja"\]/);
   assert.match(odpri, /if \(x\.kind === "practice"\) return D\.openPractice\(x\.id\);/);
   const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /openPractice: async \(id\) => \(await openTopic\(id\)\) \|\| \(currentView === "topic" && state\.topic\?\.id === id && \$\("#t-practice"\) && nextPractice\(\)\)/);
+  const vrstica = app.split("\n").find((l) => /^\s*openPractice: \(id\) =>/.test(l)) || "";
+  for (const del of ['setBack("path")', "openTopic(id)", "nextPractice()"]) assert.ok(vrstica.includes(del), del);
   assert.match(fs.readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8"), /"vr\.vaja": "Podobna naloga"/);
   for (const l of ["en", "de", "hr", "it", "hu"]) assert.ok(JSON.parse(fs.readFileSync(new URL(`../public/i18n/ui/${l}.json`, import.meta.url), "utf8"))["vr.vaja"], l);
 });
