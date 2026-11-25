@@ -394,7 +394,7 @@ async function renderBody() {
             (h) => `<li><button type="button" class="tb-topic" data-lesson="${esc(h.id)}">
               <span class="tb-name">${esc(h.name)}</span>
               <span class="tb-sub">${esc(h.pathLabel)}${LOCILO}${esc(h.unit)}</span>
-              ${h.snippet ? `<span class="tb-snip">${snipHtml(h.snippet)}</span>` : ""}
+              ${h.snippet ? `<span class="tb-snip" dir="auto">${snipHtml(h.snippet)}</span>` : ""}
             </button></li>`,
           )
           .join("")}</ul>`

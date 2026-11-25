@@ -20,7 +20,8 @@
 //   slovar   public/formula-data.js SYMBOLS (kartica ob kliku na oznako v formuli)
 //   ui       public/i18n/sl.js (besedila vmesnika)
 // Namerni navadni zapis: namig za vnos (inputHint, ključi ui z »Hint« pri kalkulatorju) uči, kako se tipka, zato ga
-// ne štejemo (izpiše se posebej z --vnos). Izris v brskalniku (DOM) preverja scripts/preveri-katex.cjs.
+// ne štejemo (izpiše se posebej z --vnos). Izris v brskalniku (DOM) preverja neizrisanoVDom spodaj (na vsakem zaslonu
+// scripts/preveri-aplikacijo.cjs).
 //
 // Uporaba: node scripts/popis-formul.js [--json] [--vzorci N] [--vir lekcije,vaje,…] [--vnos] [--odstrani-popravljene] [poti lekcij …]
 //   (privzeto vsi viri; s potmi samo te lekcije). Test: test/mat-zapis.test.js (izhodišče test/fiksno/mat-zapis-izhodisce.json).
