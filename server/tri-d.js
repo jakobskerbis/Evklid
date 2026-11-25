@@ -8,7 +8,6 @@ import express from "express";
 import path from "node:path";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
-import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { pickEncoding } from "./compress.js";
 
@@ -129,7 +128,7 @@ function addonsHandler(root) {
 // dokler stisnjene ni, gre nestisnjena. X-File-Size: prava velikost za trak nalaganja (three FileLoader jo bere pred
 // Content-Length, ki je pri stisnjeni datoteki manjši).
 const brMapa = () =>
-  process.env.EVKLID_BR_DIR || (process.env.EVKLID_DB ? path.join(path.dirname(process.env.EVKLID_DB), "br-3d") : path.join(os.tmpdir(), "evklid-br-3d"));
+  process.env.EVKLID_BR_DIR || path.join(process.env.EVKLID_DB ? path.dirname(process.env.EVKLID_DB) : path.join(here, "..", "data"), "br-3d");
 
 export function brModeli({ root = modelsDir, mapa = brMapa(), seznam = () => listCache.body, osvezi = modelList, kakovost = 5 } = {}) {
   const nared = new Set(); // različice (v), ki imajo stisnjeno datoteko na disku
