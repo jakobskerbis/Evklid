@@ -4,7 +4,7 @@
 // zapiskih« (ne ugibamo). Obseg testa je iz načrta testa (pot in sklopi); brez načrta obsega ni, so samo teme zapiskov.
 // Predznanje: teme iste poti pred prvim sklopom testa (učni načrt gre od lažjega k težjemu); brez trditev o znanju.
 import { getPath, getTopic, listPaths } from "../curriculum.js";
-import { rankLessons, searchOn, levelOf } from "../lekcija-za-vprasanje.js";
+import { rankLessons, searchOn, levelOf, terms } from "../lekcija-za-vprasanje.js";
 
 const MIN_SCORE = 4.5; // kot lessonForQuestion / topicForName
 const MIN_LEAD = 1.2;
@@ -14,12 +14,17 @@ const IZSEK_ZNAKOV = 400;
 export const MAX_IZSEKOV = 5000; // več izsekov (zelo dolgi viri) zemljevid ne pregleda: delno
 
 // Formula v iskanju: ukazi LaTeX, ki povedo snov, postanejo besede (\\int → integral), ostalo odpade.
-const LATEX_BESEDE = { int: "integral", iint: "integral", oint: "integral", det: "determinanta", lim: "limita", sum: "vsota", sqrt: "koren", log: "logaritem", ln: "logaritem", sin: "kotne funkcije", cos: "kotne funkcije", tan: "kotne funkcije", vec: "vektor", binom: "binomski", prod: "produkt" };
+// Ena beseda na formulo, po prednosti (\\lim sin x / x je limita, ne kotne funkcije); \\sqrt ne pove snovi
+// (rešitev kvadratne enačbe, Pitagorov izrek).
+const LATEX_BESEDE = { int: "integral", iint: "integral", oint: "integral", lim: "limita", sum: "vsota", prod: "produkt", det: "determinanta", binom: "binomski", vec: "vektor", log: "logaritem", ln: "logaritem", sin: "kotne funkcije", cos: "kotne funkcije", tan: "kotne funkcije" };
+const LATEX_RED = Object.keys(LATEX_BESEDE);
 const brezFormul = (t) =>
   String(t || "").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g, (f) => {
     // Integral z mejama je določeni, brez mej nedoločeni.
     const int = /\\int\s*_/.test(f) ? "določeni integral" : /\\int\b/.test(f) ? "nedoločeni integral" : "";
-    return ` ${int} ${[...new Set([...f.matchAll(/\\([a-z]+)/g)].map((m) => LATEX_BESEDE[m[1]]).filter(Boolean))].join(" ")} `;
+    const ukazi = new Set([...f.matchAll(/\\([a-z]+)/g)].map((m) => m[1]));
+    const prvi = LATEX_RED.find((c) => ukazi.has(c));
+    return ` ${int || (prvi ? LATEX_BESEDE[prvi] : "")} `;
   });
 
 /**
@@ -32,16 +37,30 @@ export function temaIzseka(izsek, settings, obseg = null, predpomnilnik = new Ma
   if (iz) return iz;
   const naslov = brezFormul(izsek.naslov).trim();
   if (!naslov) return null;
-  if (!predpomnilnik.has(naslov)) predpomnilnik.set(naslov, temaBesedila(naslov, settings, obseg));
+  if (!predpomnilnik.has(naslov)) predpomnilnik.set(naslov, temaBesedila(naslov, settings, obseg, true));
   return predpomnilnik.get(naslov);
 }
 
-function temaBesedila(tekst, settings, obseg) {
+function temaBesedila(tekst, settings, obseg, naslov = false) {
   const hits = rankLessons(tekst, settings).slice(0, 8);
   const [best, second] = hits;
   if (!best || !best.inTitle || best.score < MIN_SCORE) return null;
+  const q = new Set(terms(tekst));
+  const ujema = (h) => [...h.d.title].filter((w) => q.has(w));
+  // Naslov, ki imenuje več tem (»Kemijske reakcije in množina snovi«, »Delo in energija«), ne da teme izsekom.
+  if (naslov) {
+    const b = new Set(ujema(best));
+    if (hits.some((h) => h !== best && h.inTitle === h.d.title.size && ujema(h).every((w) => !b.has(w)))) return null;
+  }
+  // Tema iz obsega testa ima prednost le, kadar ni dvoumna: cel naslov, vsaj dve besedi naslova ali besede, ki jih nima
+  // nobena druga tema zunaj obsega (sicer bi vse o »funkciji« pristalo pri »Kvadratni funkciji«).
   if (obseg) {
-    const v = hits.find((h) => obseg.has(h.d.id) && h.inTitle && h.score >= best.score * OBSEG_DELEZ);
+    const nedvoumna = (h) => {
+      if (h.inTitle === h.d.title.size || h.inTitle >= 2) return true;
+      const w = ujema(h);
+      return hits.every((o) => o === h || obseg.has(o.d.id) || w.every((x) => !o.d.title.has(x)));
+    };
+    const v = hits.find((h) => obseg.has(h.d.id) && h.inTitle && h.score >= best.score * OBSEG_DELEZ && nedvoumna(h));
     if (v) return v.d.id;
   }
   const whole = best.inTitle === best.d.title.size;

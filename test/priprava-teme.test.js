@@ -121,3 +121,22 @@ test("zelo veliko izsekov: zemljevid pregleda največ MAX_IZSEKOV in ne zadrži 
   assert.ok(tik > 0, "zanka dogodkov mora med računanjem teči");
   assert.ok(Date.now() - t0 < 15000);
 });
+
+test("brez napačnih tem: naslov z več temami ne da teme izsekom; obseg ne posrka splošnih izsekov", async () => {
+  // »Kemijske reakcije in množina snovi«: reakcije in ioni niso množina snovi.
+  const kem = await izsekiIz("kem-reakcije.md");
+  const z = await zemljevid({ predmet: "KEM" }, kem, { curriculum_level: "1. letnik", educational_track: "SREDNJA_SOLA" });
+  const reakcije = kem.filter((i) => /Gorenje|Razpad|Ioni/.test(i.besedilo)).map((i) => i.id);
+  assert.ok(reakcije.length === 3 && reakcije.every((id) => z.samoVZapiskih.includes(id)), JSON.stringify(z.teme));
+  assert.ok(z.teme.some((t) => t.ime === "Množina snovi"));
+  // Splošno o funkciji in enačbi, test iz sklopa »Kvadratna funkcija«: nič ne pristane v obsegu.
+  const iz = (await (async () => razrezi((await preberiVir("besedilo", Buffer.from(
+    "# Funkcija in enačba\n\nFunkcija je predpis, ki vsakemu elementu definicijskega območja priredi natanko en element zaloge vrednosti.\n\nEnačba je enakost z neznanko. Rešitev enačbe je število, ki enačbo spremeni v pravilno enakost.\n\nFunkcija je soda, če je f(-x) = f(x), in liha, če je f(-x) = -f(x).\n\nNeenačbo rešimo podobno kot enačbo, le da se pri množenju z negativnim številom znak obrne.",
+  ))).strani))()).map((x, i) => ({ ...x, id: i + 1 }));
+  const o = await zemljevid({ pot: "MAT-SS-2", sklopi: [3] }, iz, { curriculum_level: "2. letnik", educational_track: "SREDNJA_SOLA" });
+  assert.equal(o.pokritost.pokrite, 0, JSON.stringify(o.teme));
+  assert.ok(o.teme.every((t) => !t.vObsegu));
+  // Formula: limita s sinusom je limita, korenski izraz sam ne pove teme.
+  const f = await zemljevid({ predmet: "MAT" }, [{ id: 1, naslov: null, besedilo: "$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$" }], SS4);
+  assert.ok(!f.teme.some((t) => /Kotne/.test(t.ime)), JSON.stringify(f.teme));
+});
