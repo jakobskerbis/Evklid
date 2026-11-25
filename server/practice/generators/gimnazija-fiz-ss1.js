@@ -519,7 +519,7 @@ const GENS = [
           const v0 = (GZ * t) / 2;
           const h = (GZ * t * t) / 8;
           return T(
-            `${n} vrže žogo navpično navzgor in jo čez $${qty(tx(t), "s")}$ ujame na isti višini, kot jo je ${g(n, "vrgel", "vrgla")}. Kako visoko nad roko je letela žoga? ${noAir} Zaokroži na dve decimalki.`,
+            `${n} vrže žogo navpično navzgor in jo čez $${qty(tx(t), "s")}$ ujame na isti višini, kot jo je ${g(n, "vrgel", "vrgla")}. Kako visoko nad roko se je dvignila žoga? ${noAir} Zaokroži na dve decimalki.`,
             num(h, 2, [M((GZ * t * t) / 2, "Vzpon traja le polovico celotnega časa leta."), M((GZ * t * t) / 4, "Vzpon traja t/2, zato je h = g (t/2)²/2."), M(v0, "To je začetna hitrost (m/s), ne višina.")], "m"),
             "Let je simetričen: vzpon traja polovico celotnega časa. Iz tega dobiš $v_0$ ali neposredno višino.",
             [dat("t", tx(t), "s"), gD()],

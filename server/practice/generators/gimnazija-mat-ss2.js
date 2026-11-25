@@ -684,7 +684,7 @@ const KVFUN = {
     const C = r.pick([
       { s: "Lok mostu", w: "Ob tleh je širok", edge: "enega od vznožij loka" },
       { s: "Vhod v predor", w: "Ob tleh je širok", edge: "roba vhoda" },
-      { s: "Curek vodnjaka", w: "Pade na tla v razdalji", edge: "šobe" },
+      { s: "Curek vodnjaka", w: "Iz šobe v tleh pade na tla v razdalji", edge: "šobe" },
     ]);
     const w = r.pick([12, 16, 20, 24, 30, 40, 50, 60]);
     const h = r.pick([4, 5, 6, 8, 10, 12, 15]);
@@ -918,9 +918,9 @@ const KVENA = {
       return {
         text: C,
         answer: num(ans, null, [M(2 * Tv, "Če bi delala enako hitro, bi vsak potreboval dvakrat več časa – tu pa sta hitrosti različni."), M(askSlow ? x - h : x, `To je čas ${askSlow ? "hitrejšega" : "počasnejšega"}.`)], "h"),
-        hint: "V eni uri prvi opravi $\\dfrac{1}{x - h}$ dela, drugi $\\dfrac{1}{x}$ dela, skupaj $\\dfrac{1}{T}$ dela.",
-        data: { given: [`h = ${h}\\ \\mathrm{h}`, `T = ${Tt}`], find: ["x"] },
-        formula: "\\dfrac{1}{x} + \\dfrac{1}{x - h} = \\dfrac{1}{T}",
+        hint: "Naj bo $x$ čas počasnejšega. V eni uri hitrejši opravi $\\dfrac{1}{x - \\Delta t}$ dela, počasnejši $\\dfrac{1}{x}$ dela, skupaj $\\dfrac{1}{T}$ dela.",
+        data: { given: [`\\Delta t = ${h}\\ \\mathrm{h}`, `T = ${Tt}`], find: [askSlow ? "x" : "x - \\Delta t"] },
+        formula: "\\dfrac{1}{x} + \\dfrac{1}{x - \\Delta t} = \\dfrac{1}{T}",
         solution: L(Td > 1 ? `$T = ${Tt} = ${ft(Tn, Td)}\\ \\mathrm{h}$` : null,`$\\dfrac{1}{x} + \\dfrac{1}{x - ${h}} = ${ft(Td, Tn)}$`, `$${poly(cs.map((v) => v / cg))} = 0$`, `$x_1 = ${x}$, $x_2 = ${ft(h * Tn, Td * x)}$ (ne pride v poštev, ker mora biti $x > ${h}$)`, `Posamič: $x = ${x}\\ \\mathrm{h}$ in $x - ${h} = ${x - h}\\ \\mathrm{h}$; iskani čas je $${ans}\\ \\mathrm{h}$.`),
       };
     }
@@ -1406,7 +1406,7 @@ const LOGA = {
       const Lr = roundHalfUp(Ln, 1);
       const nn = 10 ** ((Lr - L1) / 10);
       return {
-        text: `Raven zvoka je ${DB}. En zvočnik ustvari raven $${L1}\\ \\mathrm{dB}$. Več enakih zvočnikov hkrati ustvari raven $${tx(Lr)}\\ \\mathrm{dB}$ (jakosti se seštejejo). Koliko zvočnikov igra?`,
+        text: `Raven zvoka je ${DB}. En zvočnik ustvari raven $${L1}\\ \\mathrm{dB}$. Več enakih zvočnikov hkrati ustvari raven $${tx(Lr)}\\ \\mathrm{dB}$ (jakosti se seštejejo). Koliko zvočnikov igra? Rezultat zaokroži na celo število.`,
         answer: num(nn, 0, [M(Lr - L1, "To je razlika ravni; razmerje jakosti je $10^{\\Delta L/10}$."), M(Lr / L1, "Ravni v decibelih se ne delijo – iz razlike ravni izračunaj razmerje jakosti.")]),
         hint: "Razlika ravni je $10 \\log n$, kjer je $n$ razmerje jakosti.",
         data: { given: [`L_1 = ${L1}\\ \\mathrm{dB}`, `L = ${tx(Lr)}\\ \\mathrm{dB}`], find: ["n"] },

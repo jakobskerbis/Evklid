@@ -233,7 +233,7 @@ const trig = {
           ]),
           hint: `Vstavi $h = ${tx(h0)}$ in izrazi $\\${fn}\\left(\\frac{\\pi t}{6}\\right)$. Za $0 \\le t < 12$ je argument med $0$ in $2\\pi$.`,
           data: { given: [model, `h = ${tx(h0)}\\ \\mathrm{m}`], find: ["t"] },
-          formula: [`\\${fn} y = ${vT}:\\ y = ${radTex(ts[0] * 30)}, ${radTex(ts[1] * 30)}`, "t = \\dfrac{6y}{\\pi}"],
+          formula: [fn === "sin" ? "\\sin y = c:\\ y_1 = \\arcsin c,\\ y_2 = \\pi - y_1" : "\\cos y = c:\\ y_1 = \\arccos c,\\ y_2 = 2\\pi - y_1", "t = \\dfrac{6y}{\\pi}"],
           solution: `$${tx(A)} + ${Bt}\\${fn}\\left(\\frac{\\pi t}{6}\\right) = ${tx(h0)}$ $\\Rightarrow$ $\\${fn}\\left(\\frac{\\pi t}{6}\\right) = ${vT}$\nNa $[0, 2\\pi)$: $\\frac{\\pi t}{6} = ${radTex(ts[0] * 30)}$ ali $${radTex(ts[1] * 30)}$\n$t = ${ts[0]}\\ \\mathrm{h}$ ali $t = ${ts[1]}\\ \\mathrm{h}$\n${second ? "Drugič" : "Prvič"}: $t = ${ans}\\ \\mathrm{h}$`,
         };
       }

@@ -39,6 +39,8 @@ const ap = (x, d) => (Math.abs(roundHalfUp(x, d) - x) < 1e-9 ? "=" : "\\approx")
 const txr = (x, d) => tx(roundHalfUp(x, d));
 // Koeficient pred izrazom: 1 → "", -1 → "-", sicer število.
 const cf = (c) => (c === 1 ? "" : c === -1 ? "-" : tx(c));
+// Faktor pred ulomkom: 1 → "", -1 → "-", sicer "3 \cdot ".
+const mc = (c) => (c === 1 ? "" : c === -1 ? "-" : `${tx(c)} \\cdot `);
 // Ulomek kot koeficient: cfr(2, 2) → "", cfr(3, 2) → "\frac{3}{2}".
 const cfr = (n, d) => {
   const [a, b] = fr(n, d);
@@ -140,7 +142,7 @@ const DER_ITEMS = [
   ["\\sqrt{x}", "\\dfrac{1}{2\\sqrt{x}}", [["\\dfrac{1}{\\sqrt{x}}", "Manjka faktor $\\frac{1}{2}$ iz eksponenta."], ["\\dfrac{2}{3}x\\sqrt{x}", "To je nedoločeni integral, ne odvod."], ["\\dfrac{\\sqrt{x}}{2}", "Eksponent $\\frac{1}{2}$ se zmanjša za 1."]], "(x^n)' = nx^{n-1}"],
   ["\\cos^2 x", "-2\\sin x\\cos x", [["2\\cos x", "Pomnoži še z odvodom notranje funkcije $\\cos x$."], ["-\\sin^2 x", "Najprej odvajaš kvadrat, nato pomnožiš z notranjim odvodom."], ["2\\sin x\\cos x", "Odvod kosinusa je $-\\sin x$."]], "(u^2)' = 2uu'"],
   ["\\dfrac{x}{x + 1}", "\\dfrac{1}{(x + 1)^2}", [["1", "Odvod količnika ni količnik odvodov."], ["-\\dfrac{1}{(x + 1)^2}", "V števcu je $u'v - uv'$: vrstni red je pomemben."], ["\\dfrac{2x + 1}{(x + 1)^2}", "V števcu je razlika $u'v - uv'$, ne vsota."]], "\\left(\\dfrac{u}{v}\\right)' = \\dfrac{u'v - uv'}{v^2}"],
-  ["\\tan x", "\\dfrac{1}{\\cos^2 x}", [["\\dfrac{1}{\\sin^2 x}", "Zamenjal si z odvodom kotangensa (ta ima še minus)."], ["-\\dfrac{1}{\\cos^2 x}", "Tangens je naraščajoča funkcija, zato je odvod pozitiven."], ["\\dfrac{1}{\\cos x}", "Po pravilu za količnik je v imenovalcu $\\cos^2 x$."]], "(\\tan x)' = \\dfrac{1}{\\cos^2 x}"],
+  ["\\tan x", "\\dfrac{1}{\\cos^2 x}", [["\\dfrac{1}{\\sin^2 x}", "Zamenjal si z odvodom kotangensa (ta ima še minus)."], ["-\\dfrac{1}{\\cos^2 x}", "Tangens je naraščajoča funkcija, zato je odvod pozitiven."], ["\\dfrac{1}{\\cos x}", "Po pravilu za količnik je v imenovalcu $\\cos^2 x$."]], "\\tan x = \\dfrac{\\sin x}{\\cos x},\\ \\left(\\dfrac{u}{v}\\right)' = \\dfrac{u'v - uv'}{v^2}"],
 ];
 
 // ---------- nedoločeni integral: kaj ni primitivna funkcija ----------
@@ -424,7 +426,7 @@ const GENS = [
         hint: "Plače pri A tvorijo aritmetično, pri B geometrijsko zaporedje. Izračunaj obe vsoti in ju odštej.",
         data: { given: [`a_1 = ${sA}\\ \\text{€}`, `d = ${kA}\\ \\text{€}`, `b_1 = ${sB}\\ \\text{€}`, `p = ${p}\\ \\%`, `n = ${n}`], find: ["|s_A - s_B|"] },
         formula: ["s_n = \\dfrac{n}{2}\\big(2a_1 + (n - 1)d\\big)", "s_n = b_1\\dfrac{q^n - 1}{q - 1}"],
-        solution: `A: $s_A = \\dfrac{${n}}{2}(2 \\cdot ${sA} + ${n - 1} \\cdot ${kA}) = ${SA}\\ \\text{€}$\nB: $q = ${tx(q)}$, $s_B = ${sB} \\cdot \\dfrac{${tx(q)}^{${n}} - 1}{${tx(q)} - 1} \\approx ${tx(SB, 2)}\\ \\text{€}$\nUgodnejša je ponudba ${SA > SB ? "A" : "B"}, razlika $${ap(diff, 0)} ${txr(diff, 0)}\\ \\text{€}$.`,
+        solution: `A: $s_A = \\dfrac{${n}}{2}(2 \\cdot ${sA} + ${n - 1} \\cdot ${kA}) = ${SA}\\ \\text{€}$\nB: $q = ${tx(q)}$, $s_B = ${sB} \\cdot \\dfrac{${tx(q)}^{${n}} - 1}{${tx(q)} - 1} ${ap(SB, 2)} ${txr(SB, 2)}\\ \\text{€}$\nUgodnejša je ponudba ${SA > SB ? "A" : "B"}, razlika $${ap(diff, 0)} ${txr(diff, 0)}\\ \\text{€}$.`,
       };
     },
   },
@@ -629,7 +631,7 @@ const GENS = [
       const ms = kind === "krogi"
         ? [{ value: (Math.PI * R * R) / (1 - S2), why: "Polmeri se zmanjšujejo s faktorjem $\\frac{\\sqrt{2}}{2}$, ploščine pa s kvadratom tega faktorja." }, { value: Math.PI * R * R, why: "Sešteti moraš ploščine vseh krogov, ne le prvega." }]
         : kind === "kvadrati"
-          ? [{ value: (2 * R * R) / (1 - S2), why: "Stranice se zmanjšujejo s faktorjem $\\frac{\\sqrt{2}}{2}$, ploščine pa s kvadratom tega faktorja." }, { value: 2 * R * R, why: "Diagonala prvega kvadrata je premer kroga $2R$, ne polmer." }]
+          ? [{ value: (2 * R * R) / (1 - S2), why: "Stranice se zmanjšujejo s faktorjem $\\frac{\\sqrt{2}}{2}$, ploščine pa s kvadratom tega faktorja." }, { value: 2 * R * R, why: "Sešteti moraš ploščine vseh kvadratov, ne le prvega." }]
           : [{ value: 4 * Math.PI * R, why: "Polmer se zmanjša s faktorjem $\\frac{\\sqrt{2}}{2}$, ne $\\frac{1}{2}$ (to velja za ploščine)." }, { value: 2 * Math.PI * R, why: "Sešteti moraš obsege vseh krogov." }];
       const last = kind === "krogi"
         ? `$S = \\dfrac{\\pi \\cdot ${R}^2}{1 - \\frac{1}{2}} = ${2 * R * R}\\pi ${ap(val, 2)} ${txr(val, 2)}\\ \\mathrm{cm^2}$`
@@ -680,7 +682,7 @@ const GENS = [
             hint: "Odvajaj člen za členom in vstavi točko.",
             data: { given: [`f(x) = ${f}`, `x_0 = ${x0}`], find: [`f'(${x0})`] },
             formula: ["(\\ln x)' = \\dfrac{1}{x}", "(x^n)' = nx^{n-1}"],
-            solution: `$f'(x) = \\dfrac{${a}}{x} ${tm(2 * b, "x")}$\n$f'(${x0}) = \\dfrac{${a}}{${x0}} ${sg(2 * b * x0)} = ${ft(a + 2 * b * x0 * x0, x0)}$`,
+            solution: `$f'(x) = ${a < 0 ? "-" : ""}\\dfrac{${Math.abs(a)}}{x} ${tm(2 * b, "x")}$\n$f'(${x0}) = ${a < 0 ? "-" : ""}\\dfrac{${Math.abs(a)}}{${x0}} ${sg(2 * b * x0)} = ${ft(a + 2 * b * x0 * x0, x0)}$`,
           };
         }
         if (t === 1) {
@@ -688,7 +690,7 @@ const GENS = [
           const b = r.int(0, 8);
           const c = r.int(0, 20);
           const t0 = r.int(2, 10);
-          const s = `${cf(a)}t^2${b ? ` + ${b}t` : ""}${c ? ` + ${c}` : ""}`;
+          const s = `${cf(a)}t^2${b ? ` + ${cf(b)}t` : ""}${c ? ` + ${c}` : ""}`;
           const v = 2 * a * t0 + b;
           return {
             text: `Telo se giblje premo, njegova lega je $s(t) = ${s}$ ($s$ v metrih, $t$ v sekundah). Kolikšna je hitrost telesa ob času $t = ${t0}\\ \\mathrm{s}$?`,
@@ -776,7 +778,7 @@ const GENS = [
           hint: "Odvajaj po pravilu za količnik, pri čemer je $a$ konstanta. Vstavi točko in reši linearno enačbo.",
           data: { given: [`f(x) = \\dfrac{x^2 + a}{x ${sg(c)}}`, `f'(${x0}) = ${ft(Kn, Kd)}`], find: ["a"] },
           formula: "\\left(\\dfrac{u}{v}\\right)' = \\dfrac{u'v - uv'}{v^2}",
-          solution: `$f'(x) = \\dfrac{2x(x ${sg(c)}) - (x^2 + a)}{(x ${sg(c)})^2} = \\dfrac{x^2 ${tm(2 * c, "x")} - a}{(x ${sg(c)})^2}$\n$f'(${x0}) = \\dfrac{${top} - a}{${Kd}} = ${ft(Kn, Kd)}$\n$${top} - a = ${Kn}$, $a = ${a}$`,
+          solution: `$f'(x) = \\dfrac{2x(x ${sg(c)}) - (x^2 + a)}{(x ${sg(c)})^2} = \\dfrac{x^2 ${tm(2 * c, "x")} - a}{(x ${sg(c)})^2}$\n$f'(${x0}) = ${Kd === 1 ? `${top} - a` : `\\dfrac{${top} - a}{${Kd}}`} =${ft(Kn, Kd)}$\n$${top} - a = ${Kn}$, $a = ${a}$`,
         };
       }
       if (t === 1) {
@@ -799,7 +801,7 @@ const GENS = [
             hint: "Uporabi pravilo za produkt; drugi faktor odvajaj kot posredno funkcijo.",
             data: { given: [`f(x) = ${uT}(${L})^${n}`, `x_0 = ${x0}`], find: [`f'(${x0})`] },
             formula: ["(uv)' = u'v + uv'", "\\big((ax + b)^n\\big)' = n(ax + b)^{n-1} \\cdot a"],
-            solution: `$f'(x) = ${duT} \\cdot (${L})^${n} + ${uT} \\cdot ${n}(${L})${n - 1 === 1 ? "" : `^{${n - 1}}`} \\cdot ${pt(a)}$\n$f'(${x0}) = ${A} ${sg(B)} = ${A + B}$`,
+            solution: `$f'(x) = ${m === 1 ? "" : `${duT} \\cdot `}(${L})^${n} + ${uT} \\cdot ${n}(${L})${n - 1 === 1 ? "" : `^{${n - 1}}`} \\cdot ${pt(a)}$\n$f'(${x0}) = ${A} ${sg(B)} = ${A + B}$`,
           };
         }
         if (kind === 1) {
@@ -825,7 +827,7 @@ const GENS = [
           hint: "Uporabi pravilo za količnik; števec odvajaj kot posredno funkcijo.",
           data: { given: [`f(x) = \\dfrac{${ek(k)}}{x ${sg(c)}}`], find: ["f'(0)"] },
           formula: ["\\left(\\dfrac{u}{v}\\right)' = \\dfrac{u'v - uv'}{v^2}", "(e^{kx})' = ke^{kx}"],
-          solution: `$f'(x) = \\dfrac{${k}${ek(k)}(x ${sg(c)}) - ${ek(k)}}{(x ${sg(c)})^2}$\n$f'(0) = \\dfrac{${k} \\cdot ${pt(c)} - 1}{${c * c}}$\n$f'(0) = ${ft(k * c - 1, c * c)}$`,
+          solution: `$f'(x) = \\dfrac{${cf(k)}${ek(k)}(x ${sg(c)}) - ${ek(k)}}{(x ${sg(c)})^2}$\n$f'(0) = \\dfrac{${k} \\cdot ${pt(c)} - 1}{${c * c}}$\n$f'(0) = ${ft(k * c - 1, c * c)}$`,
         };
       }
       if (r.next() < 0.5) {
@@ -899,25 +901,26 @@ const GENS = [
             rhs = n === 2 ? "\\dfrac{k}{x}" : `\\dfrac{k}{x^${n - 1}}`;
             k = [-a, n - 1];
             ms = [{ value: a / (n - 1), why: "Nov eksponent je negativen; deljenje z njim spremeni predznak." }, { value: -a / n, why: "Deli z novim eksponentom, ne s starim." }, { value: a * (1 - n), why: "Z novim eksponentom deliš, ne množiš." }];
-            sol = `$${integrand} = ${a}x^{-${n}}$\n$\\displaystyle\\int ${a}x^{-${n}}\\,dx = ${a} \\cdot \\dfrac{x^{${1 - n}}}{${1 - n}} + C = ${ft(-a, n - 1)} \\cdot \\dfrac{1}{x^{${n - 1}}} + C$`;
+            const kf = cfr(-a, n - 1);
+            sol = `$${integrand} = ${cf(a)}x^{-${n}}$\n$\\displaystyle\\int ${cf(a)}x^{-${n}}\\,dx = ${mc(a)}\\dfrac{x^{${1 - n}}}{${1 - n}} + C = ${kf === "" || kf === "-" ? kf : `${kf} \\cdot `}\\dfrac{1}{x${n === 2 ? "" : `^{${n - 1}}`}} + C$`;
           } else if (kind === 1) {
             integrand = `${sgn}\\dfrac{${A}}{\\sqrt{x}}`;
             rhs = "k\\sqrt{x}";
             k = [2 * a, 1];
             ms = [{ value: a / 2, why: "Deljenje z $\\frac{1}{2}$ je množenje z 2." }, { value: -2 * a, why: "Nov eksponent $-\\frac{1}{2} + 1$ je pozitiven." }];
-            sol = `$${integrand} = ${a}x^{-\\frac{1}{2}}$\n$\\displaystyle\\int ${a}x^{-\\frac{1}{2}}\\,dx = ${a} \\cdot \\dfrac{x^{\\frac{1}{2}}}{\\frac{1}{2}} + C = ${2 * a}\\sqrt{x} + C$`;
+            sol = `$${integrand} = ${cf(a)}x^{-\\frac{1}{2}}$\n$\\displaystyle\\int ${cf(a)}x^{-\\frac{1}{2}}\\,dx = ${mc(a)}\\dfrac{x^{\\frac{1}{2}}}{\\frac{1}{2}} + C = ${2 * a}\\sqrt{x} + C$`;
           } else if (kind === 2) {
             integrand = `${cf(a)}x\\sqrt{x}`;
             rhs = "kx^2\\sqrt{x}";
             k = [2 * a, 5];
             ms = [{ value: (5 * a) / 2, why: "Z novim eksponentom deliš, ne množiš." }, { value: (2 * a) / 3, why: "$x\\sqrt{x} = x^{3/2}$; eksponent povečaj za 1." }];
-            sol = `$x\\sqrt{x} = x^{\\frac{3}{2}}$\n$\\displaystyle\\int ${a}x^{\\frac{3}{2}}\\,dx = ${a} \\cdot \\dfrac{x^{\\frac{5}{2}}}{\\frac{5}{2}} + C = ${ft(2 * a, 5)}x^2\\sqrt{x} + C$`;
+            sol = `$x\\sqrt{x} = x^{\\frac{3}{2}}$\n$\\displaystyle\\int ${cf(a)}x^{\\frac{3}{2}}\\,dx = ${mc(a)}\\dfrac{x^{\\frac{5}{2}}}{\\frac{5}{2}} + C = ${ft(2 * a, 5)}x^2\\sqrt{x} + C$`;
           } else {
             integrand = `${cf(a)}\\sqrt[3]{x}`;
             rhs = "kx\\sqrt[3]{x}";
             k = [3 * a, 4];
             ms = [{ value: (4 * a) / 3, why: "Z novim eksponentom deliš, ne množiš." }, { value: 3 * a, why: "Deli z novim eksponentom, ne s starim." }];
-            sol = `$\\sqrt[3]{x} = x^{\\frac{1}{3}}$\n$\\displaystyle\\int ${a}x^{\\frac{1}{3}}\\,dx = ${a} \\cdot \\dfrac{x^{\\frac{4}{3}}}{\\frac{4}{3}} + C = ${ft(3 * a, 4)}x\\sqrt[3]{x} + C$`;
+            sol = `$\\sqrt[3]{x} = x^{\\frac{1}{3}}$\n$\\displaystyle\\int ${cf(a)}x^{\\frac{1}{3}}\\,dx = ${mc(a)}\\dfrac{x^{\\frac{4}{3}}}{\\frac{4}{3}} + C = ${ft(3 * a, 4)}x\\sqrt[3]{x} + C$`;
           }
           return {
             text: `Velja $\\displaystyle\\int ${integrand}\\,dx = ${rhs} + C$. Koliko je $k$? Vpiši ulomek ali celo število.`,
@@ -957,7 +960,7 @@ const GENS = [
             hint: "Integriraj člen za členom, iz pogoja $F(0)$ določi konstanto, nato vstavi drugo točko.",
             data: { given: [`f(x) = ${f}`, `F(0) = ${c}`], find: [`F(${xT})`] },
             formula: ["\\int \\cos x\\,dx = \\sin x + C", "\\int \\sin x\\,dx = -\\cos x + C"],
-            solution: `$F(x) = ${tm(a, "\\sin x", true)} ${tm(-b, "\\cos x")} + C$\n$F(0) = ${-b} + C = ${c}$ $\\Rightarrow$ $C = ${C0}$\n$F(${xT}) = ${a * sn - b * cs} ${sg(C0)} = ${v}$`,
+            solution: `$F(x) = ${tm(a, "\\sin x", true)} ${tm(-b, "\\cos x")} + C$\n$F(0) = ${-b} + C = ${c}$ $\\Rightarrow$ $C = ${C0}$\n$F(${xT}) = ${C0 ? `${a * sn - b * cs} ${sg(C0)} = ` : ""}${v}$`,
           };
         }
         if (t === 1) {
@@ -975,7 +978,7 @@ const GENS = [
             hint: "Lega je nedoločeni integral hitrosti; konstanto določi iz začetne lege.",
             data: { given: [`v(t) = ${vT}`, `s(0) = ${s0}\\ \\mathrm{m}`, `t = ${Tt}\\ \\mathrm{s}`], find: [`s(${Tt})`] },
             formula: ["s(t) = \\int v(t)\\,dt", "s(0) = s_0"],
-            solution: `$s(t) = ${poly([p / 3, q / 2, w, 0], "t")} + C$\n$s(0) = C = ${s0}$\n$s(${Tt}) = ${sNoC} + ${s0} = ${ans}\\ \\mathrm{m}$`,
+            solution: `$s(t) = ${poly([p / 3, q / 2, w, 0], "t")} + C$\n$s(0) = C = ${s0}$\n$s(${Tt}) = ${s0 ? `${sNoC} + ${s0} = ` : ""}${ans}\\ \\mathrm{m}$`,
           };
         }
         const a = r.nonZero(-5, 6);
@@ -989,7 +992,7 @@ const GENS = [
             hint: "Ulomek razbij na dva člena (deli vsak člen števca z $x^2$), nato integriraj kot potence.",
             data: { given: [`f(x) = ${f}`, `F(1) = ${c}`], find: ["F(2)"] },
             formula: ["\\int x^n\\,dx = \\dfrac{x^{n+1}}{n + 1} + C", "\\int x^{-2}\\,dx = -\\dfrac{1}{x} + C"],
-            solution: `$f(x) = ${a} ${b < 0 ? "-" : "+"} ${Math.abs(b) === 1 ? "" : Math.abs(b)}x^{-2}$\n$F(x) = ${tm(a, "x", true)} ${b < 0 ? "+" : "-"} \\dfrac{${Math.abs(b)}}{x} + C$\n$F(1) = ${a - b} + C = ${c}$ $\\Rightarrow$ $C = ${c - a + b}$\n$F(2) = ${ft(4 * a - b, 2)} ${sg(c - a + b)} = ${ft(2 * a + b + 2 * c, 2)}$`,
+            solution: `$f(x) = ${a} ${b < 0 ? "-" : "+"} ${Math.abs(b) === 1 ? "" : Math.abs(b)}x^{-2}$\n$F(x) = ${tm(a, "x", true)} ${b < 0 ? "+" : "-"} \\dfrac{${Math.abs(b)}}{x} + C$\n$F(1) = ${a - b} + C = ${c}$ $\\Rightarrow$ $C = ${c - a + b}$\n$F(2) = ${ft(4 * a - b, 2)}${c - a + b ? ` ${sg(c - a + b)}` : ""} =${ft(2 * a + b + 2 * c, 2)}$`,
           };
         }
         const v = a * Math.E + b + c - a;
@@ -1000,7 +1003,7 @@ const GENS = [
           hint: "Ulomek razbij na dva člena, nato integriraj: $\\int \\frac{1}{x}\\,dx = \\ln x$.",
           data: { given: [`f(x) = ${f}`, `F(1) = ${c}`], find: ["F(e)"] },
           formula: ["\\int \\dfrac{1}{x}\\,dx = \\ln|x| + C", "\\ln 1 = 0,\\ \\ln e = 1"],
-          solution: `$f(x) = ${a} + \\dfrac{${b}}{x}$\n$F(x) = ${tm(a, "x", true)} ${tm(b, "\\ln x")} + C$\n$F(1) = ${a} + C = ${c}$ $\\Rightarrow$ $C = ${c - a}$\n$F(e) = ${tm(a, "e", true)} ${sg(b)} ${sg(c - a)} ${ap(v, 2)} ${txr(v, 2)}$`,
+          solution: `$f(x) = ${a} ${b < 0 ? "-" : "+"} \\dfrac{${Math.abs(b)}}{x}$\n$F(x) = ${tm(a, "x", true)} ${tm(b, "\\ln x")} + C$\n$F(1) = ${a} + C = ${c}$ $\\Rightarrow$ $C = ${c - a}$\n$F(e) = ${tm(a, "e", true)} ${sg(b)}${c - a ? ` ${sg(c - a)}` : ""}${ap(v, 2)} ${txr(v, 2)}$`,
         };
       }
       const t = r.int(0, 2);
@@ -1063,7 +1066,7 @@ const GENS = [
           dsub = `${2 * c}x`;
           k = [m, 2 * c];
           ms = [{ value: m, why: "Ne pozabi deliti z odvodom notranje funkcije (brez $x$)." }, { value: 2 * c * m, why: "Z notranjim odvodom deliš, ne množiš." }, { value: m / c, why: "Odvod $x^2$ je $2x$: ne pozabi faktorja 2." }];
-          mid = `x\\,dx = \\dfrac{dt}{${2 * c}}$, $\\displaystyle\\int ${cf(m)}e^t\\dfrac{dt}{${2 * c}} = ${ft(m, 2 * c)}e^t + C`;
+          mid = `x\\,dx = \\dfrac{dt}{${2 * c}}$, $\\displaystyle\\int ${cf(m)}e^t\\dfrac{dt}{${2 * c}} = ${cfr(m, 2 * c)}e^t + C`;
         } else if (kind === 1) {
           const cc = r.int(1, 9);
           integrand = `\\dfrac{${cf(m)}x}{x^2 + ${cc}}`;
@@ -1072,7 +1075,7 @@ const GENS = [
           dsub = "2x";
           k = [m, 2];
           ms = [{ value: m, why: "Iz $dt = 2x\\,dx$ sledi $x\\,dx = \\frac{dt}{2}$." }, { value: 2 * m, why: "Z 2 deliš, ne množiš." }];
-          mid = `x\\,dx = \\dfrac{dt}{2}$, $\\displaystyle\\int \\dfrac{${m}}{t}\\cdot\\dfrac{dt}{2} = ${ft(m, 2)}\\ln t + C`;
+          mid = `x\\,dx = \\dfrac{dt}{2}$, $\\displaystyle\\int \\dfrac{${m}}{t}\\cdot\\dfrac{dt}{2} = ${cfr(m, 2)}\\ln t + C`;
         } else if (kind === 2) {
           const n = r.int(2, 4);
           integrand = `${cf(m)}\\sin^${n} x\\cos x`;
@@ -1081,7 +1084,7 @@ const GENS = [
           dsub = "\\cos x";
           k = [m, n + 1];
           ms = [{ value: m / n, why: "Deli z novim eksponentom, ne s starim." }, { value: -m / (n + 1), why: "Pri $t = \\sin x$ je $dt = \\cos x\\,dx$, brez minusa." }, { value: m * (n + 1), why: "Z novim eksponentom deliš, ne množiš." }];
-          mid = `\\displaystyle\\int ${cf(m)}t^${n}\\,dt = ${ft(m, n + 1)}t^{${n + 1}} + C`;
+          mid = `\\displaystyle\\int ${cf(m)}t^${n}\\,dt = ${cfr(m, n + 1)}t^{${n + 1}} + C`;
         } else {
           const n = r.int(1, 4);
           integrand = `\\dfrac{${cf(m)}\\ln${n === 1 ? "" : `^${n}`} x}{x}`;
@@ -1090,7 +1093,7 @@ const GENS = [
           dsub = "\\dfrac{1}{x}";
           k = [m, n + 1];
           ms = [...(n === 1 ? [] : [{ value: m / n, why: "Deli z novim eksponentom, ne s starim." }]), { value: m, why: "Pri integriranju potence $t^n$ deliš z novim eksponentom." }, { value: m * (n + 1), why: "Z novim eksponentom deliš, ne množiš." }];
-          mid = `\\displaystyle\\int ${cf(m)}t${n === 1 ? "" : `^${n}`}\\,dt = ${ft(m, n + 1)}t^{${n + 1}} + C`;
+          mid = `\\displaystyle\\int ${cf(m)}t${n === 1 ? "" : `^${n}`}\\,dt = ${cfr(m, n + 1)}t^{${n + 1}} + C`;
         }
         return {
           text: `Velja $\\displaystyle\\int ${integrand}\\,dx = ${rhs} + C$. Koliko je $k$? Vpiši ulomek ali celo število.`,
@@ -1112,7 +1115,7 @@ const GENS = [
           hint: "Integriraj ($a$ je konstanta), iz točke $A$ določi $C$, nato vstavi točko $B$.",
           data: { given: [`F(0) = ${c}`, `F(${x1}) = ${y1}`], find: ["a"] },
           formula: "\\int x^n\\,dx = \\dfrac{x^{n+1}}{n + 1} + C",
-          solution: `$F(x) = x^3 + \\dfrac{a}{2}x^2 + C$\n$F(0) = C = ${c}$\n$${x1 ** 3} + ${ft(x1 * x1, 2)}a ${sg(c)} = ${y1}$\n$a = ${a}$`,
+          solution: `$F(x) = x^3 + \\dfrac{a}{2}x^2 + C$\n$F(0) = C = ${c}$\n$${x1 ** 3} + ${ft(x1 * x1, 2)}a${c ? ` ${sg(c)}` : ""} = ${y1}$\n$a = ${a}$`,
         };
       }
       const k = r.nonZero(-3, 3);
@@ -1125,7 +1128,7 @@ const GENS = [
         hint: "Integriraj ($a$ je konstanta), iz točke $A$ določi $C$, nato vstavi točko $B$.",
         data: { given: [`F(0) = ${c}`, `F(${x1}) = ${y1}`], find: ["a"] },
         formula: "\\int x^n\\,dx = \\dfrac{x^{n+1}}{n + 1} + C",
-        solution: `$F(x) = \\dfrac{a}{3}x^3 ${tm(b, "x")} + C$\n$F(0) = C = ${c}$\n$\\dfrac{a}{3} \\cdot ${pt(x1)}^3 ${sg(b * x1)} ${sg(c)} = ${y1}$\n$${ft(x1 ** 3, 3)}a = ${y1 - b * x1 - c}$, $a = ${a}$`,
+        solution: `$F(x) = \\dfrac{a}{3}x^3 ${tm(b, "x")} + C$\n$F(0) = C = ${c}$\n$\\dfrac{a}{3} \\cdot ${pt(x1)}^3 ${sg(b * x1)}${c ? ` ${sg(c)}` : ""} = ${y1}$\n$${ft(x1 ** 3, 3)}a = ${y1 - b * x1 - c}$, $a = ${a}$`,
       };
     },
   },
@@ -1205,7 +1208,7 @@ const GENS = [
           calc = `${a} \\cdot \\left(\\sin \\frac{\\pi}{2} - \\sin\\left(-\\frac{\\pi}{2}\\right)\\right) = ${a} \\cdot (1 + 1)`;
         } else if (kind === 3) {
           const k = r.int(1, 3);
-          [fT, lo, hi, val] = [`\\dfrac{${a}}{x}`, "1", k === 1 ? "e" : `e^${k}`, a * k];
+          [fT, lo, hi, val] = [`${a < 0 ? "-" : ""}\\dfrac{${Math.abs(a)}}{x}`, "1", k === 1 ? "e" : `e^${k}`, a * k];
           Ft = `${tm(a, "\\ln x", true)}`;
           rule = "\\int \\dfrac{1}{x}\\,dx = \\ln|x| + C";
           ms = [{ value: -a * k, why: "Newton-Leibnizova formula: $F(b) - F(a)$, ne obratno." }, { value: a * (1 - Math.exp(-k)), why: "$\\int \\frac{1}{x}\\,dx = \\ln|x|$." }];
@@ -1313,7 +1316,7 @@ const GENS = [
           [fT, lo, hi, val] = [`${cf(a)}\\sin x`, "0", "\\pi", 2 * a];
           ms = [{ value: 0, why: "$\\cos \\pi = -1$." }];
           rule = "\\int \\sin x\\,dx = -\\cos x + C";
-          calc = `-${a}(\\cos \\pi - \\cos 0) = -${a}(-1 - 1) = ${2 * a}`;
+          calc = `-${cf(a)}(\\cos \\pi - \\cos 0) = -${cf(a)}(-1 - 1) = ${2 * a}`;
         }
         return {
           text: `Izračunaj ploščino lika, ki ga omejujejo graf funkcije $f(x) = ${fT}$, os $x$ ter premici $x = ${lo}$ in $x = ${hi}$. Zaokroži na dve decimalki.`,
@@ -1337,7 +1340,7 @@ const GENS = [
           hint: "Poišči presečišči grafov, nato integriraj razliko zgornje in spodnje funkcije.",
           data: { given: [`f(x) = ${fT}`, `y = ${gT}`], find: ["S"] },
           formula: ["S = \\int_{x_1}^{x_2} \\big(f(x) - g(x)\\big)\\,dx", "\\int \\sqrt{x}\\,dx = \\dfrac{2}{3}x\\sqrt{x} + C"],
-          solution: `Presečišči: $${fT} = ${gT}$ $\\Rightarrow$ $x = 0$ ali $\\sqrt{x} = ${ft(c, m)}$, $x = ${X}$\nNa vmesnem intervalu je koren nad premico.\n$S = \\displaystyle\\int_0^{${X}} (${fT} - ${gT})\\,dx = \\left(${ft(2 * c, 3)}x\\sqrt{x} - ${ft(m, 2)}x^2\\right)\\Big|_0^{${X}}$\n$S = ${ft(2 * c ** 4, 3 * m ** 3)} - ${ft(c ** 4, 2 * m ** 3)} = ${ft(c ** 4, 6 * m ** 3)}$`,
+          solution: `Presečišči: $${fT} = ${gT}$ $\\Rightarrow$ $x = 0$ ali $\\sqrt{x} = ${ft(c, m)}$, $x = ${X}$\nNa vmesnem intervalu je koren nad premico.\n$S = \\displaystyle\\int_0^{${X}} (${fT} - ${gT})\\,dx = \\left(${ft(2 * c, 3)}x\\sqrt{x} - ${cfr(m, 2)}x^2\\right)\\Big|_0^{${X}}$\n$S = ${ft(2 * c ** 4, 3 * m ** 3)} - ${ft(c ** 4, 2 * m ** 3)} = ${ft(c ** 4, 6 * m ** 3)}$`,
         };
       }
       if (t === 1) {
@@ -1426,7 +1429,7 @@ const GENS = [
         if (t === 1) {
           const [cls, sit, n] = kombSituation(r);
           return {
-            text: `${sit} Katero pravilo uporabimo?`,
+            text: `${sit} Ne računaj: s katerim pravilom bi to izračunali?`,
             answer: pickAns(r, KOMB_OPTS[cls], KOMB_OPTS.map((o, i) => [o, KOMB_WHY[cls][i]]).filter((_, i) => i !== cls)),
             hint: "Vprašaj se: ali izbiramo vse elemente ali le nekatere, ali je vrstni red pomemben in ali se elementi lahko ponavljajo?",
             data: { given: [`n = ${n}`], find: ["\\text{pravilo}"] },
@@ -1500,12 +1503,13 @@ const GENS = [
         if (t === 1) {
           const n = r.int(8, 20);
           const k = r.int(3, 5);
-          const text = r.next() < 0.5
+          const chair = r.next() < 0.5;
+          const text = chair
             ? `Društvo ima $${n}$ članov. Izberejo $${k}$-člansko komisijo, nato pa izmed članov komisije še njenega predsednika. Na koliko načinov lahko to storijo?`
             : `Trener izmed $${n}$ igralcev izbere $${k}$ za začetno postavo in med njimi še kapetana. Na koliko načinov lahko izbere?`;
           return {
             text,
-            answer: num(C(n, k) * k, null, [{ value: C(n, k), why: "Upoštevaj še izbiro predsednika (kapetana)." }, { value: V(n, k), why: "Vrstni red ostalih izbranih ni pomemben." }, { value: C(n, k) + k, why: "Izbiri sledita druga drugi: možnosti zmnožiš." }]),
+            answer: num(C(n, k) * k, null, [{ value: C(n, k), why: chair ? "Upoštevaj še izbiro predsednika." : "Upoštevaj še izbiro kapetana." }, { value: V(n, k), why: "Vrstni red ostalih izbranih ni pomemben." }, { value: C(n, k) + k, why: "Izbiri sledita druga drugi: možnosti zmnožiš." }]),
             hint: "Najprej izberi skupino (vrstni red ni pomemben), nato v njej eno osebo s posebno vlogo.",
             data: { given: [`n = ${n}`, `k = ${k}`], find: ["N"] },
             formula: "N = \\dbinom{n}{k} \\cdot k",
