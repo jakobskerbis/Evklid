@@ -1104,8 +1104,8 @@ export function labNihalo(el) {
     s("line", { x1: px, y1: py, x2: px, y2: py + L - rr, class: "lab-gib-nit" }, nit);
     s("circle", { cx: px, cy: py + L, r: rr, fill: u(svg, B.kroglica === "les" ? "les" : "krogla"), class: "lab-gib-krogla" }, nit);
     // štoparica in merilo desno zgoraj: zunaj loka kroglice (do 30° in 150 cm sega lok do y ≈ 260 na x 97–367, pregled #1075)
-    lcdTxt = casovnikNaprava(svg, svg, W - 106, 40, 100, 1, "ŠTOPARICA");
-    merilo(svg, W - 98, 96, 0.5 * P, "50 cm");
+    lcdTxt = casovnikNaprava(svg, svg, W - 106, 62, 100, 1, "ŠTOPARICA"); // pod gumboma za povečavo in pripetje
+    merilo(svg, W - 98, 118, 0.5 * P, "50 cm");
     upd();
     svg.setAttribute("aria-label", `Nihalo: ${K.name} na niti, dolžina ${Math.round(B.lNom * 100)} cm, odmik ${B.kotNom}°. ${B.tece ? "Niha." : "Miruje v odmaknjeni legi."}`);
   }
