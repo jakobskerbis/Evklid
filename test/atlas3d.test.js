@@ -210,6 +210,20 @@ test("meja točk platna: velik iPad ne dobi 5,6 M točk, računalnik ostane oste
   assert.equal(locljivostPlatna(1, 1280, 800, "visoka"), 1);
 });
 
+test("računalnik (brez dotika) ohrani videz: polna gostota in 4× MSAA tudi na velikem zaslonu", async () => {
+  const { locljivostPlatna, vzorciMSAA } = await import("../public/3d/modeli.js");
+  // MacBook Retina čez cel zaslon: 1440 × 900 CSS, gostota 2 → 5,2 M točk
+  assert.equal(locljivostPlatna(2, 1440, 900, "visoka", false), 2);
+  assert.equal(vzorciMSAA(1440 * 2 * 900 * 2, false), 4);
+  // zaslon 2560 × 1440 z gostoto 1
+  assert.equal(locljivostPlatna(1, 2560, 1440, "visoka", false), 1);
+  assert.equal(vzorciMSAA(2560 * 1440, false), 4);
+  // ista platna na tablici: meja in brez MSAA
+  assert.ok(locljivostPlatna(2, 1440, 900, "visoka", true) < 2);
+  assert.equal(vzorciMSAA(2560 * 1440, true), 0);
+  assert.equal(vzorciMSAA(1e6, true), 4);
+});
+
 // Pogodba za modele iz kode: info, zgradi(THREE, ctx) in kar vrne. Graditelji brez DOM (canvas za napise) se v Node
 // ne zgradijo do konca; zanje preverimo le info.
 async function preveriGraditelja(file) {
