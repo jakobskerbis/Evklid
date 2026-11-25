@@ -172,6 +172,23 @@ test("lab in a browser: locked conclusion, measurements survive reopening and re
     assert.deepEqual(k, ["evklid.lab.meritve.1.lab-ohm"]);
     const rows = await p.evaluate(() => JSON.parse(localStorage.getItem("evklid.lab.meritve.1.lab-ohm")).rows.length);
     assert.equal(rows, 1, "po menjavi profila se zapis profila 1 ne spremeni");
+    // »Ponastavi« po menjavi profila pobriše meritve profila, s katerim je bil poskus postavljen, ne meritev profila 2 (pregled #1052)
+    const ohm2 = JSON.stringify({ v: 1, seed: 5, rows: [{ p: "100 Ω", U: "2,00", I: "20,1", R: "–" }], series: { R100: [[2, 20.1]] } });
+    await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.2.lab-ohm", d), ohm2);
+    await p.locator(".demo-reset").click();
+    await p.waitForTimeout(300);
+    const po = await p.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("evklid.lab.meritve.")).sort());
+    assert.deepEqual(po, ["evklid.lab.meritve.2.lab-ohm"], "Ponastavi: pozabljen zapis profila 1, profil 2 ostane");
+    // pokvarjene točke grafa (Ohm): neveljavne izpustimo, poskus se naloži (prej »Simulacije ni bilo mogoče naložiti.« ob vsakem obisku)
+    const pokvarjeno = JSON.stringify({ v: 1, seed: 5, rows: [{ p: "100 Ω", U: "2,00", I: "20,1", R: "–" }], series: { R100: [[2, "x"], null, [4, 40.2], [1], "abc", [6, 60.3]], L6: "abc", R47: [[null, 1]] } });
+    await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.2.lab-ohm", d), pokvarjeno);
+    await p.evaluate(() => window.mount("lab-ohm"));
+    await p.waitForTimeout(300);
+    const st = await p.evaluate(() => ({ napaka: /ni bilo mogoče naložiti/.test(document.body.textContent), vrstice: document.querySelectorAll(".lab-table tbody tr").length, tocke: JSON.parse(localStorage.getItem("evklid.lab.meritve.2.lab-ohm"))?.series }));
+    assert.equal(st.napaka, false);
+    assert.equal(st.vrstice, 1);
+    await meriOhm(p, [8]);
+    assert.deepEqual(JSON.parse(await p.evaluate(() => localStorage.getItem("evklid.lab.meritve.2.lab-ohm"))).series.R100.slice(0, 2), [[4, 40.2], [6, 60.3]], "veljavne točke ostanejo");
     assert.deepEqual(errs, []);
     await ctx.close();
   });
