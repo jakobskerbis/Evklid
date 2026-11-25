@@ -7,7 +7,7 @@
 // Znani zadetki v vsebini so v test/fiksno/mat-zapis-izhodisce.json (popravke vsebine pregledajo ločeni pregledovalci).
 // Seznam se samo krči: nov zadetek podre test; popravljen zadetek odstrani z
 //   node scripts/popis-formul.js --odstrani-popravljene
-import { test } from "node:test";
+import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { popis, pregledaj, primerjaj, preberiIzhodisce, UI_VNOS } from "../scripts/popis-formul.js";
@@ -26,6 +26,16 @@ test("pregled: najde vsako vrsto neizrisane matematike", () => {
   assert.deepEqual(vrste("Koliko je sqrt(16)?"), ["koren"]);
   assert.deepEqual(vrste("Izračunaj 3*4 in 2 * x."), ["zvezdica", "zvezdica"]);
   assert.deepEqual(vrste("Velja x <= 3 in a != b."), ["primerjava", "primerjava"]);
+  // Pregled 2: vsak ukaz LaTeX, negativni eksponent, 2x*3 in x**2.
+  assert.deepEqual(vrste("Vektor \\mathbf{v}, kot \\angle ABC."), ["latex", "latex"]);
+  assert.deepEqual(vrste("Enota s^-1 in 10^−3."), ["potenca", "potenca"]);
+  assert.deepEqual(vrste("Vpiši 2x*3 ali x**2."), ["zvezdica", "zvezdica"]);
+  // V vsebini (renderRich) je vsak viden $ napaka, tudi ob števki (prej v test/mat-lekcije.test.js); izjema za
+  // zneske velja samo za besedila vmesnika.
+  for (const s of ["Rezultat je $3.", "Cena 5 $."]) {
+    assert.deepEqual(pregledaj(s, "md", { strogo: true }).map((z) => z.vrsta), ["dolar"], s);
+    assert.deepEqual(vrste(s), [], s);
+  }
 });
 
 test("pregled: pravilen zapis in namerno navadno besedilo nista zadetka", () => {
@@ -72,15 +82,14 @@ let chromium = null;
 try {
   chromium = await require("playwright").chromium.launch();
 } catch {}
+// Zapri tudi, ko test DOM ne teče (--test-name-pattern), sicer proces visi na odprtem brskalniku.
+after(() => chromium?.close());
 const brskalnik = { skip: chromium ? false : "Playwright Chromium ni nameščen", timeout: 120000 };
 
 test("izris (DOM): pot rich.js da čiste formule, surov zapis in napaka izrisa se najdeta", brskalnik, async (t) => {
   const app = createApp(openDb(":memory:"), { scheduler: false, log: { error() {}, warn() {}, info() {} } });
   const server = app.listen(0);
-  t.after(async () => {
-    await chromium.close();
-    server.close();
-  });
+  t.after(() => server.close());
   const p = await chromium.newPage({ viewport: { width: 390, height: 740 } });
   await p.goto(`http://127.0.0.1:${server.address().port}/zasebnost.html`);
   await p.evaluate(async () => {

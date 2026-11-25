@@ -69,24 +69,28 @@ export const vidno = (html) =>
     .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&");
 
 export const VZOREC = {
-  latex: /\\(?:frac|dfrac|sqrt|cdot|times|int|sum|lim|left|right|mathrm|text|alpha|beta|pi|Delta|vec|overline|le|ge|leq|geq|neq|approx|infty|circ)\b/g,
-  // Znak za dolar ob znesku ni formula: »{usd} $«, »($)«, »$5« (stroški AI v ameriških dolarjih).
+  // Vsak ukaz (\frac, \mathbf, \angle …): zunaj formule ga učenec ne bi smel videti nikoli.
+  latex: /\\[a-zA-Z]{2,}/g,
+  // Znak za dolar ob znesku ni formula: »{usd} $«, »($)«, »$5« (stroški AI v ameriških dolarjih). Velja samo za
+  // besedila vmesnika (t(), brez izrisa $…$); v vsebini, ki gre skozi renderRich, je vsak viden $ napaka (DOLAR_STROGO).
   dolar: /(?<![\d}][ \t]?|\()\$(?![ \t]?\d|\))/g,
-  // ^ brez pogleda nazaj (cm^2, 10^3); _ s pogledom nazaj (imena v SQL, npr. id_kluba), kemija posebej (CO_2).
-  potenca: /[A-Za-z0-9)\]]\^[\w({]|(?<![\w/:.])[A-Za-z]_[\w{(]|(?<![\w/:.])[A-Z][a-z]?[A-Z]?[a-z]?_\d/g,
+  // ^ brez pogleda nazaj (cm^2, 10^3, s^-1); _ s pogledom nazaj (imena v SQL, npr. id_kluba), kemija posebej (CO_2).
+  potenca: /[A-Za-z0-9)\]]\^[-−]?[\w({]|(?<![\w/:.])[A-Za-z]_[\w{(]|(?<![\w/:.])[A-Z][a-z]?[A-Z]?[a-z]?_\d/g,
   koren: /\bsqrt\s*\(/g,
   // * med števkami, posamičnimi črkami ali oklepaji (2*3, 2 * x, a*b, )*( ); Markdown poudarke (*beseda*) marked že
   // pretvori v <em>, zato ostane le dobesedna zvezdica. Zvezdica za opombo (»cena*«) nima števke ali črke za seboj.
-  zvezdica: /(?:\d|(?<![\p{L}\d])\p{L}|\))[ \t]?\*[ \t]?(?:\d|\p{L}(?![\p{L}\d])|\()/gu,
+  zvezdica: /(?:\d|(?<![\p{L}\d])\d?\p{L}|\))[ \t]?\*{1,2}[ \t]?(?:\d|\p{L}(?![\p{L}\d])|\()/gu,
   // ASCII primerjave med izrazoma (x <= 3, a != b); puščic (->, =>) ne štejemo: v besedilu so namerne.
   primerjava: /[\w)][ \t]?(?:<=|>=|!=)[ \t]?[\w(−-]/g,
 };
 export const VRSTE = ["napaka", ...Object.keys(VZOREC)];
+const DOLAR_STROGO = /\$/g;
 
 // Pregled enega besedila. nacin "md": Markdown s formulami $…$ (renderRich, kot naloga, lekcija, klepet);
 // "tex": čisti TeX brez ločil (formula naloge, podatki, možnosti z options_tex; renderMath).
+// strogo: vsak viden $ je zadetek (vsebina; brez izjeme za zneske, ki velja za besedila vmesnika).
 // Vrne [{ vrsta, ujemanje, odlomek, tex? }].
-export function pregledaj(besedilo, nacin = "md") {
+export function pregledaj(besedilo, nacin = "md", { strogo = false } = {}) {
   napakeTrenutne = [];
   const s = String(besedilo ?? "");
   if (!s.trim()) return [];
@@ -95,7 +99,7 @@ export function pregledaj(besedilo, nacin = "md") {
   if (nacin === "tex") return out;
   const t = vidno(html);
   for (const [vrsta, re] of Object.entries(VZOREC))
-    for (const m of t.matchAll(re))
+    for (const m of t.matchAll(strogo && vrsta === "dolar" ? DOLAR_STROGO : re))
       out.push({
         vrsta,
         ujemanje: m[0],
@@ -149,10 +153,11 @@ export function neizrisanoVDom() {
   for (let n = hodi.nextNode(); n; n = hodi.nextNode()) {
     const el = n.parentElement;
     const t = n.nodeValue;
-    if (!el || !t || t.length < 4 || el.closest(PRESKOCI) || !vis(el)) continue;
+    if (!el || !t || t.length < 4) continue;
+    // Najprej vzorci (poceni), šele ob zadetku vidnost (getComputedStyle na vsakem besedilu bi upočasnil vsak zaslon).
     for (const [vrsta, re] of Object.entries(VZ)) {
       const m = re.exec(t);
-      if (m) dodaj(vrsta, el, t.slice(Math.max(0, m.index - 30), m.index + 50));
+      if (m && !el.closest(PRESKOCI) && vis(el)) dodaj(vrsta, el, t.slice(Math.max(0, m.index - 30), m.index + 50));
     }
   }
   return out;
@@ -307,7 +312,7 @@ export async function popis({ viri = Object.keys(VIRI), lekcije = null, vnos = f
       const videni = new Set();
       for (const { besedilo, polje, nacin } of enota.besedila) {
         st.besedil++;
-        for (const z of pregledaj(besedilo, nacin)) {
+        for (const z of pregledaj(besedilo, nacin, { strogo: ime !== "ui" })) {
           const kljuc = kljucZadetka(ime, enota.mesto, enota.poKljucu || enota.json || enota.stevila || enota.slovar ? `${enota.slovar ? `${enota.slovar}.` : ""}${polje}` : null, z, enota.stevila);
           if (videni.has(kljuc)) continue; // isti zapis v več semenih ali dvakrat v istem besedilu
           videni.add(kljuc);
@@ -351,7 +356,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   const izid = await popis({ viri, lekcije: poti.length ? poti : null, vnos: args.includes("--vnos") });
   if (args.includes("--odstrani-popravljene")) {
     const izh = preberiIzhodisce();
-    const { popravljeni } = primerjaj(izid, izh.kljuci);
+    // Samo ključi virov (in lekcij), ki jih je ta zagon pregledal: »--vir lekcije --odstrani-popravljene« ne sme
+    // izbrisati ključev drugih virov.
+    const pregledan = (k) => {
+      const [vir, mesto] = k.split(" | ");
+      return viri.includes(vir) && (!poti.length || poti.some((p) => rel(p) === mesto));
+    };
+    const { popravljeni } = primerjaj(izid, izh.kljuci.filter(pregledan));
     izh.kljuci = izh.kljuci.filter((k) => !popravljeni.includes(k));
     fs.writeFileSync(IZHODISCE, `${JSON.stringify(izh, null, 1)}\n`);
     console.log(`Iz izhodišča odstranjenih ${popravljeni.length} popravljenih zadetkov, ostane ${izh.kljuci.length}.`);
