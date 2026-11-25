@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -39,19 +39,24 @@ Poveča se, a za malo (na približno $54\,\%$). Novi človek prinese $23$ novih 
 3. **Račun.** Produkt ulomkov je isti račun kot $\frac{V_{365}^{23}}{365^{23}}$, le po delih.
 4. **Smiselnost.** Rezultat je med $0$ in $1$. Ker je presenetljiv, smo ga podprli še s štetjem parov.
 
-Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz besed naloge prepoznati orodje. Pomaga ti ta preglednica.
+Isti štirje koraki delujejo pri vsaki mešani nalogi. Najtežji je drugi: iz besed naloge prepoznati orodje. Pomaga ti ta seznam: levo od puščice je, kar piše v besedilu, desno orodje in zapis.
 
-| v besedilu piše | orodje | zapis |
-|---|---|---|
-| največ, najmanj, najvišja točka | odvod $= 0$ | $f'(x) = 0$ |
-| naklon tangente, hitrost spreminjanja | odvod v točki | $k = f'(x_0)$ |
-| ploščina pod grafom, pot iz hitrosti | določeni integral | $\int_a^b f(x)\,dx$ |
-| na koliko načinov, koliko tekem | kombinatorika | $n!$, $V_n^k$, $\binom{n}{k}$ |
-| vsaj eden, vsaj dva | nasprotni dogodek | $1 - P(\overline{A})$ |
-| vsako leto za $p\,\%$ | geometrijsko zaporedje | $a_n = a_1 q^{n-1}$ |
-| tipična vrednost, razpršenost | statistika | $\bar x$, $\mathrm{Me}$, $\sigma$ |
+- »največ, najmanj, najvišja točka« → odvod, $f'(x) = 0$
+- »naklon tangente, hitrost spreminjanja« → odvod v točki, $k = f'(x_0)$
+- »ploščina pod grafom, pot iz hitrosti« → določeni integral $\int_a^b f(x)\,dx$
+- »na koliko načinov, koliko tekem« → kombinatorika: $n!$, $V_n^k$, $\binom{n}{k}$
+- »vsaj eden, vsaj dva« → nasprotni dogodek, $1 - P(\overline{A})$
+- »vsako leto za $p\,\%$« → geometrijsko zaporedje, $a_n = a_1 q^{n-1}$
+- »tipična vrednost, razpršenost« → statistika: $\bar x$, $\mathrm{Me}$, $\sigma$
+- »kje se grafa sekata« → sistem enačb, $f(x) = g(x)$
+- »podvoji se, razpolovi se« → eksponentna enačba in logaritem, $q^t = 2$ ali $q^t = \frac{1}{2}$
+- »kot med vektorjema« → skalarni produkt in dolžini vektorjev
+- »razdalja od premice« → pravokotnica skozi točko, razdalja do projekcije
+- »ničle polinoma« → razcep ali Hornerjev algoritem, $p(x) = 0$
+- »se dotika« → diskriminanta, pogoj $D = 0$
+- »stranica nasproti kota« → kosinusni izrek
 
-Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 1. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
+Večkoračna naloga je **veriga** takih orodij. Primer: »Žoga leti po tiru $h(t)$. Kdaj je najvišje in kdaj pade na tla?« Prvi del je odvod, drugi kvadratna enačba iz 2. letnika. Vsak člen verige reši posebej in rezultat prvega zapiši, preden začneš drugega.
 
 :::premisli
 Naloga sprašuje: »Kolikšna je največja hitrost kolesarja in kolikšno pot prevozi do ustavitve?« Dana je hitrost $v(t)$. Kateri dve orodji potrebuješ in zakaj ne istega dvakrat?
@@ -63,7 +68,7 @@ V simulaciji spodaj (Zbirka simulacij za maturo) odpri Odvod in poišči točko,
 
 ## Rešeni primeri
 
-### Primer 1 (lažji): trije prosti meti
+### Primer 1 (lažji, višja raven): trije prosti meti
 
 Košarkarica zadene prosti met z verjetnostjo $0{,}8$, meti so neodvisni. Izvede tri mete. Kolikšna je verjetnost, da vsaj enkrat zgreši?
 
@@ -143,7 +148,7 @@ $a_n = a_1 q^{n-1}$, $S_n = a_1 \dfrac{q^n - 1}{q - 1}$
 :::premisli
 Koliko je $S_6 = 2000 \cdot \dfrac{1{,}05^6 - 1}{0{,}05}$?
 ---
-$S_6 \approx 13\,604$ vstopnic v šestih sezonah.
+$S_6 \approx 13\,604$ vstopnice v šestih sezonah.
 :::
 
 ## Pogoste napake
@@ -156,20 +161,141 @@ $S_6 \approx 13\,604$ vstopnic v šestih sezonah.
 
 ## Povzetek
 
-- Mešana naloga je veriga orodij iz različnih letnikov; vsak člen reši in zapiši posebej.
-- Postopek: ključna beseda → orodje → račun → preverba smiselnosti.
+- **Mešana naloga** je veriga orodij iz različnih letnikov; vsak člen reši in zapiši posebej.
+- **Postopek:** ključna beseda → orodje → račun → preverba smiselnosti.
+
+**Ključna beseda → orodje:**
+
 - »Vsaj« → nasprotni dogodek $1 - P(\overline{A})$.
 - »Največ, najmanj« → $f'(x) = 0$, nato vrednost funkcije v tej točki.
 - »Pot iz hitrosti, ploščina« → določeni integral.
-- »Na koliko načinov« → osnovni izrek, $n!$, $V_n^k$, $\binom{n}{k}$; vprašaj, ali je vrstni red pomemben.
-- »Vsako leto za $p\,\%$« → $a_n = a_1 q^{n-1}$ in $S_n = a_1 \frac{q^n - 1}{q - 1}$.
-- Paradoks rojstnih dni: pri $23$ ljudeh je verjetnost skupnega rojstnega dne približno $0{,}507$.
+- »Na koliko načinov« → osnovni izrek, $n!$, $V_n^k$, $\binom{n}{k}$.
+- Pri štetju vprašaj, ali je vrstni red pomemben.
+
+**»Vsako leto za $p\,\%$«** → geometrijsko zaporedje:
+
+$$a_n = a_1 q^{n-1}$$
+
+$$S_n = a_1 \frac{q^n - 1}{q - 1}$$
+
+- **Paradoks rojstnih dni:** pri $23$ ljudeh je verjetnost skupnega rojstnega dne približno $0{,}507$.
+
+## Ponovitev
+
+**Formule**
+- $P(A) = 1 - P(\overline{A})$ (na pamet)
+- največ, najmanj: $f'(x) = 0$ (na pamet)
+- $V_n^k = \frac{n!}{(n-k)!}$ (na pamet)
+- $a_n = a_1 q^{n-1}$ (na pamet)
+- $S_n = a_1 \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- pot iz hitrosti: $\int_a^b v(t)\,dt$ (na pamet)
+
+**Postopek**
+1. Poišči ključno besedo (»vsaj«, »največ«, »na koliko načinov«).
+2. Izberi orodje, ki ji ustreza.
+3. Vsak člen verige reši posebej in zapiši rezultat.
+4. Preveri smiselnost (verjetnost je med $0$ in $1$).
+5. Še enkrat preberi vprašanje in odgovori prav nanj.
+
+**Pazi na**
+- Pri »vsaj eden« verjetnosti ne seštevaj; računaj z nasprotnim dogodkom.
+- Iz $h'(t) = 0$ dobiš čas vrha; za višino izračunaj še $h(t)$.
+- Je vrstni red pomemben (doma in v gosteh)? Potem $V_n^k$, ne $\binom{n}{k}$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V vrečki je $5$ rdečih in $3$ modre kroglice. Hkrati naključno izvlečemo dve kroglici. Izračunajte verjetnost, da sta kroglici različnih barv.
+
+**Rešitev:**
+
+1. Vseh izidov je toliko, kot je načinov za izbiro $2$ od $8$ kroglic; vrstni red ni pomemben: $\binom{8}{2} = \dfrac{8 \cdot 7}{2} = 28$.
+2. Ugodni izidi: rdečo kroglico izberemo na $5$ načinov, modro na $3$, po osnovnem izreku kombinatorike skupaj $5 \cdot 3 = 15$.
+3. $P = \dfrac{15}{28}$.
+4. Odgovor: verjetnost, da sta kroglici različnih barv, je $\dfrac{15}{28}$.
+
+**Točkovanje:** 1 točka za število vseh izidov $28$, 1 točka za število ugodnih izidov $15$, 1 točka za verjetnost $\frac{15}{28}$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dani sta funkcija $f(x) = -x^2 + 4x$ in premica $p$ z enačbo $y = x$.
+
+a) Izračunajte ničli funkcije $f$ in koordinate presečišč grafa funkcije $f$ s premico $p$. (2 točki)
+
+b) Zapišite enačbo tangente na graf funkcije $f$ v točki z absciso $x_0 = 1$. (2 točki)
+
+c) Izračunajte ploščino lika, ki ga omejujeta graf funkcije $f$ in premica $p$. (3 točke)
+
+**Rešitev:**
+
+1. a) $-x^2 + 4x = -x(x - 4) = 0$, zato sta ničli $x_1 = 0$ in $x_2 = 4$.
+2. a) Presečišča: $-x^2 + 4x = x$ da $x^2 - 3x = 0$ oziroma $x(x - 3) = 0$, torej $x = 0$ ali $x = 3$. Presečišči sta $A(0, 0)$ in $B(3, 3)$.
+3. b) $f(1) = -1 + 4 = 3$, $f'(x) = -2x + 4$, naklon tangente $k = f'(1) = 2$.
+4. b) Tangenta skozi $(1, 3)$: $y - 3 = 2(x - 1)$, torej $y = 2x + 1$.
+5. c) Med $x = 0$ in $x = 3$ je graf funkcije nad premico (na primer $f(1) = 3 > 1$), zato je $S = \int_0^3 \left(-x^2 + 4x - x\right) dx = \int_0^3 \left(-x^2 + 3x\right) dx$.
+6. c) $S = \left[-\dfrac{x^3}{3} + \dfrac{3x^2}{2}\right]_0^3 = -9 + \dfrac{27}{2} = \dfrac{9}{2}$.
+7. Odgovor: ničli sta $0$ in $4$, presečišči $A(0, 0)$ in $B(3, 3)$; tangenta ima enačbo $y = 2x + 1$; ploščina lika je $\dfrac{9}{2}$ kvadratne enote.
+
+**Točkovanje:** a) 1 točka za ničli $0$ in $4$, 1 točka za presečišči $(0, 0)$ in $(3, 3)$; b) 1 točka za $f(1) = 3$ in $f'(1) = 2$, 1 točka za enačbo $y = 2x + 1$; c) 1 točka za integral razlike $f(x) - x$ z mejama $0$ in $3$, 1 točka za primitivno funkcijo, 1 točka za ploščino $\frac{9}{2}$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Verjetnost, da je naključno izbrana žarnica iz neke tovarne pokvarjena, je $0{,}04$. Žarnice so pokvarjene neodvisno druga od druge.
+
+a) V škatli je $10$ žarnic. Izračunajte verjetnost, da je pokvarjena natanko ena. Rezultat zaokrožite na štiri decimalna mesta. (2 točki)
+
+b) Izračunajte verjetnost, da je med $10$ žarnicami v škatli vsaj ena pokvarjena. Rezultat zaokrožite na štiri decimalna mesta. (2 točki)
+
+c) Najmanj koliko žarnic mora biti v škatli, da je verjetnost, da je vsaj ena pokvarjena, večja od $0{,}5$? (3 točke)
+
+d) Kontrolor preizkuša žarnice eno za drugo. Verjetnost, da je prva pokvarjena žarnica šele $k$-ta preizkušena, je $p_k = 0{,}04 \cdot 0{,}96^{k-1}$. Utemeljite, da so $p_1, p_2, p_3, \ldots$ členi geometrijskega zaporedja, izračunajte vsoto $p_1 + p_2 + \dots + p_{10}$ in pojasnite, zakaj je enaka rezultatu iz b). (3 točke)
+
+**Rešitev:**
+
+1. a) Gre za zaporedje $10$ neodvisnih poskusov z verjetnostjo $0{,}04$ za pokvarjeno žarnico: $P = \binom{10}{1} \cdot 0{,}04 \cdot 0{,}96^9$.
+2. a) $P = 10 \cdot 0{,}04 \cdot 0{,}692534\ldots = 0{,}277013\ldots \approx 0{,}2770$.
+3. b) Nasprotni dogodek je »nobena žarnica ni pokvarjena«, njegova verjetnost je $0{,}96^{10} = 0{,}664832\ldots$.
+4. b) $P = 1 - 0{,}96^{10} = 0{,}335167\ldots \approx 0{,}3352$.
+5. c) Za $n$ žarnic zahtevamo $1 - 0{,}96^n > 0{,}5$, torej $0{,}96^n < 0{,}5$.
+6. c) Logaritmiramo: $n \ln 0{,}96 < \ln 0{,}5$. Ker je $\ln 0{,}96 < 0$, se pri deljenju znak neenakosti obrne: $n > \dfrac{\ln 0{,}5}{\ln 0{,}96} = 16{,}979\ldots$.
+7. c) Najmanjše naravno število je $n = 17$. Preverba: $0{,}96^{16} \approx 0{,}5204 > 0{,}5$ in $0{,}96^{17} \approx 0{,}4996 < 0{,}5$.
+8. d) $\dfrac{p_{k+1}}{p_k} = \dfrac{0{,}04 \cdot 0{,}96^{k}}{0{,}04 \cdot 0{,}96^{k-1}} = 0{,}96$ za vsak $k$, zato je zaporedje geometrijsko s prvim členom $p_1 = 0{,}04$ in količnikom $q = 0{,}96$.
+9. d) $S_{10} = 0{,}04 \cdot \dfrac{0{,}96^{10} - 1}{0{,}96 - 1} = 0{,}04 \cdot \dfrac{1 - 0{,}96^{10}}{0{,}04} = 1 - 0{,}96^{10} \approx 0{,}3352$.
+10. d) Dogodki »prva pokvarjena žarnica je $k$-ta« za $k = 1, 2, \ldots, 10$ so nezdružljivi, njihova vsota pa je dogodek »med prvimi $10$ žarnicami je vsaj ena pokvarjena«. Zato je vsota njihovih verjetnosti enaka verjetnosti iz b).
+11. Odgovor: a) $0{,}2770$; b) $0{,}3352$; c) najmanj $17$ žarnic; d) zaporedje je geometrijsko s $q = 0{,}96$, vsota prvih desetih členov je $1 - 0{,}96^{10} \approx 0{,}3352$, kar je verjetnost iz b).
+
+**Točkovanje:** a) 1 točka za nastavek $\binom{10}{1} \cdot 0{,}04 \cdot 0{,}96^9$ in 1 točka za rezultat $0{,}2770$; b) 1 točka za nasprotni dogodek z verjetnostjo $0{,}96^{10}$ in 1 točka za rezultat $0{,}3352$; c) 1 točka za neenačbo $0{,}96^n < 0{,}5$ in 1 točka za logaritmiranje z obratom neenačaja ter 1 točka za odgovor $17$ žarnic; d) 1 točka za utemeljitev s količnikom $q = 0{,}96$ in 1 točka za vsoto $S_{10} \approx 0{,}3352$ in 1 točka za pojasnilo, zakaj je enaka rezultatu iz b).
+
+### Ustno vprašanje 1
+
+:::premisli
+(višja raven) Kdaj sta dogodka $A$ in $B$ neodvisna in kako tedaj izračunamo verjetnost, da se zgodita oba?
+---
+Dogodka $A$ in $B$ sta neodvisna, če to, ali se zgodi eden, ne vpliva na verjetnost drugega. Za neodvisna dogodka je verjetnost produkta enaka produktu verjetnosti: $P(A \cdot B) = P(A) \cdot P(B)$. To enakost lahko vzamemo tudi za definicijo neodvisnosti. Primer sta dva meta kovanca: verjetnost, da obakrat pade grb, je $\frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši postopek, s katerim z odvodom poiščemo največjo vrednost zvezne funkcije na zaprtem intervalu.
+---
+Najprej izračunamo odvod $f'$ in poiščemo stacionarne točke v notranjosti intervala $[a, b]$, to je rešitve enačbe $f'(x) = 0$. Kandidati za največjo vrednost so te stacionarne točke, točke, kjer funkcija ni odvedljiva, in obe krajišči $a$ in $b$. V vseh kandidatih izračunamo vrednost funkcije in največja med njimi je iskana največja vrednost. Krajišč ne smemo izpustiti, ker je funkcija lahko največja prav na krajišču, čeprav odvod tam ni enak $0$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Izpelji formulo za vsoto prvih $n$ členov geometrijskega zaporedja s količnikom $q \neq 1$.
+---
+Vsoto zapišemo kot $S_n = a_1 + a_1 q + \dots + a_1 q^{n-1}$. Enakost pomnožimo s $q$ in dobimo $q S_n = a_1 q + a_1 q^2 + \dots + a_1 q^n$. Ko od druge enakosti odštejemo prvo, se vsi vmesni členi izničijo in ostane $q S_n - S_n = a_1 q^n - a_1$. Ker je $q \neq 1$, smemo deliti s $q - 1$ in dobimo $S_n = a_1 \frac{q^n - 1}{q - 1}$.
+:::
 
 ## Drugače: Z analogijo
 
 Trener ne izumi nove taktike za vsako akcijo nasprotnika. Pozna nekaj vzorcev (protinapad, prekršek pred kazenskim prostorom, kot) in za vsakega ima pripravljeno potezo. Ko prepozna vzorec, ve, kaj narediti.
 
-Maturitetna naloga je ista igra. »Najvišja točka« je protinapad: odgovor je vedno $f'(x) = 0$. »Vsaj en zadetek« je kot: odgovor je vedno nasprotni dogodek. Naloga se zdi nova, ker je oblečena v drugo zgodbo (žoga, kolesar, vstopnice), vzorec pod njo pa je star. Preglednica v razlagi je tvoja knjiga potez.
+Maturitetna naloga je ista igra. »Najvišja točka« je protinapad: odgovor je vedno $f'(x) = 0$. »Vsaj en zadetek« je kot: odgovor je vedno nasprotni dogodek. Naloga se zdi nova, ker je oblečena v drugo zgodbo (žoga, kolesar, vstopnice), vzorec pod njo pa je star. Seznam v razlagi je tvoja knjiga potez.
 
 ## Drugače: Bolj natančno
 
@@ -214,20 +340,16 @@ Razlog je število parov $\binom{n}{2} = \frac{n(n-1)}{2}$, ki raste s kvadratom
 ~ Vsaka od $10$ novih ekip odigra več kot eno tekmo, kar $2 \cdot 19 = 38$ tekem.
 > $V_{20}^2 = 20 \cdot 19 = 380$, $V_{10}^2 = 10 \cdot 9 = 90$. Število tekem raste približno s kvadratom števila ekip.
 
-? Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno?
-- $1{,}4$
-~ To je $0{,}7 + 0{,}7$. Verjetnost ne more biti večja od $1$; dogodka nista nezdružljiva.
-- $0{,}49$
-~ To je verjetnost, da zadene **obe**, ne vsaj eno.
-+ $0{,}91$
+? (višja raven) Napadalec zadene enajstmetrovko z verjetnostjo $0{,}7$. Izvede dve neodvisni. Kolikšna je verjetnost, da zadene vsaj eno? Vpiši kot decimalno število.
+= 0,91 | 0,001
+~ 1,4 | To je $0{,}7 + 0{,}7$. Verjetnost ne more biti večja od $1$; dogodka nista nezdružljiva.
+~ 0,49 | To je verjetnost, da zadene **obe**, ne vsaj eno.
 > Nasprotni dogodek: zgreši obe, $0{,}3 \cdot 0{,}3 = 0{,}09$. Torej $1 - 0{,}09 = 0{,}91$.
 
-? Višina žoge je $h(t) = -5t^2 + 15t$ ($h$ v m, $t$ v s). Kolikšna je največja višina?
-- $1{,}5\,\mathrm{m}$
-~ $1{,}5$ je čas vrha v sekundah iz $h'(t) = -10t + 15 = 0$. Vstavi ga še v $h(t)$.
-- $22{,}5\,\mathrm{m}$
-~ To je le $15 \cdot 1{,}5$; pozabil si člen $-5t^2$.
-+ $11{,}25\,\mathrm{m}$
+? (brez računala) Višina žoge je $h(t) = -5t^2 + 15t$ ($h$ v m, $t$ v s). Kolikšna je največja višina (v metrih)?
+= 11,25 m | 0,01
+~ 1,5 | $1{,}5$ je čas vrha v sekundah iz $h'(t) = -10t + 15 = 0$. Vstavi ga še v $h(t)$.
+~ 22,5 | To je le $15 \cdot 1{,}5$; pozabil si člen $-5t^2$.
 > $h'(t) = -10t + 15 = 0$ da $t = 1{,}5\,\mathrm{s}$; $h(1{,}5) = -11{,}25 + 22{,}5 = 11{,}25\,\mathrm{m}$.
 
 :::simboli
@@ -250,6 +372,23 @@ a_1 | prvi člen zaporedja | | | vstopnice v 1. sezoni
 a_n, a_6 | $n$-ti člen zaporedja | a_n = a_1 q^{n-1} | |
 q | količnik geometrijskega zaporedja | | – | $q = 1{,}05$ pri rasti $5\,\%$
 S_n, S_6 | vsota prvih $n$ členov | S_n = a_1 \frac{q^n - 1}{q - 1} | |
-p | odstotek rasti | | \% |
+p | odstotek rasti | | \% | v 2. nalogi za maturo je $p$ oznaka premice $y = x$
 D | diskriminanta | D = b^2 - 4ac | |
 :::
+
+<<RACUN
+vrednost: 8*7/2 | 28
+vrednost: 5*3/28 | 15/28
+resi: -x^2+4*x=0 | x | 0, 4
+resi: -x^2+4*x=x | x | 0, 3
+odvod: -x^2+4*x | x | -2*x+4
+vrednost: -1^2+4*1 | 3
+integral: -x^2+3*x | x | 0 | 3 | 9/2
+vrednost: 10*0.04*0.96^9 | 0.2770
+vrednost: 0.96^10 | 0.6648
+vrednost: 1-0.96^10 | 0.3352
+vrednost: log(0.5)/log(0.96) | 16.98
+vrednost: 0.96^16 | 0.5204
+vrednost: 0.96^17 | 0.4996
+vrednost: 0.04*(0.96^10-1)/(0.96-1) | 0.3352
+>>

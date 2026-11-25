@@ -3,6 +3,8 @@
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
 import { okrasi, vstavi } from "./materiali.js";
+import { napisPoskusa } from "./napis-poskusa.js";
+import { izrisi, decVejica } from "../mat/izris.js";
 
 export const NS = "http://www.w3.org/2000/svg";
 
@@ -219,7 +221,11 @@ export const values = (list) =>
   `<div class="demo-values">${list.map(([label, v]) => `<div class="demo-val"><span>${label}</span><b>${v}</b></div>`).join("")}</div>`;
 export const readout = () => h("div", { class: "demo-readout", "aria-live": "polite" });
 export const stage = (...kids) => h("div", { class: "demo-stage" }, ...kids);
-export const tryIt = (text) => (text ? h("p", { class: "demo-try" }, h("b", {}, "Poskusi: "), text) : null);
+// »Preizkusi: …« (niz) ali »Razmisli: …« ({ razmisli: "…" }); pravilo v napis-poskusa.js.
+export const tryIt = (x) => {
+  const n = napisPoskusa(x);
+  return n ? h("p", { class: "demo-try", "data-vrsta": n.vrsta }, h("b", {}, `${n.napis} `), n.besedilo) : null;
+};
 
 // Animacija, ki se ustavi, ko simulacija ni več na strani.
 // Vrne { play(), pause(), toggle(), running }.
@@ -267,9 +273,9 @@ export function playButton(anim, { play = "Predvajaj", pause = "Ustavi" } = {}) 
 
 // Decimalna vejica v formuli: »0,041« → »0{,}041« (KaTeX bi za vejico dodal presledek kot za ločilom: »0, 041«).
 // Naštevanje (»1, 2«, »\{1, 2, 3\}«, »x_{1,2}«) ostane, kot je: le število z eno vejico med števkama.
-export const decVejica = (t) =>
-  String(t).replace(/\d+(?:,\d+)+/g, (m, i, s) => (m.indexOf(",") === m.lastIndexOf(",") && !/(?:_\{|\\\{)\s*$/.test(s.slice(0, i)) ? m.replace(",", "{,}") : m));
-export const tex = (t) => (window.katex ? katex.renderToString(decVejica(t), { throwOnError: false }) : t);
+// Pravilo je v public/mat/izris.js (decVejica), skupno za vso aplikacijo.
+export { decVejica };
+export const tex = (t) => izrisi(t, { vejica: true });
 export const texBlock = (t) => `<div class="demo-eq">${tex(t)}</div>`;
 
 // Koordinatni sistem. Vrne { X, Y, inv(px,py), g } za risanje v enotah.
@@ -416,7 +422,7 @@ export function fnPath(f, A, { from = A.x0, to = A.x1, n = 240 } = {}) {
     const x = from + ((to - from) * i) / n;
     const y = f(x);
     const ok = Number.isFinite(y) && y > A.y0 - span * 2 && y < A.y1 + span * 2;
-    if (ok && pen && prevY != null && Math.abs(y - prevY) > span * 1.5) pen = false;
+    if (n >= 20 && ok && pen && prevY != null && Math.abs(y - prevY) > span * 1.5) pen = false; // pri redkem vzorčenju (premica, vrtenina, n = 2) preskok ni nezveznost
     if (ok) d += `${pen ? "L" : "M"}${A.X(x).toFixed(1)},${A.Y(y).toFixed(1)}`;
     pen = ok;
     prevY = ok ? y : null;
@@ -513,15 +519,6 @@ export function handle(parent, cls = "a", r = 7) {
   g.move = (x, y) => g.setAttribute("transform", `translate(${x},${y})`);
   g.dot = c;
   return g;
-}
-
-// Canvas, ki se prilagodi gostoti zaslona. Vrne { cv, ctx, W, H }.
-export function canvasBox(W, H) {
-  const cv = h("canvas", { class: "demo-canvas", width: W * 2, height: H * 2 });
-  cv.style.aspectRatio = `${W} / ${H}`;
-  const ctx = cv.getContext("2d");
-  ctx.scale(2, 2);
-  return { cv, ctx, W, H };
 }
 
 // Barva iz CSS spremenljivke (za canvas).

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -199,6 +199,61 @@ $R_m = \dfrac{10{,}05}{0{,}005} = 2010\,\Omega$, $R_x = 2010 - 5 = 2005\,\Omega$
 - Mejna upornost $R_g = \sqrt{R_A R_V}$ loči področji obeh vezav.
 - Wheatstonov most je ničelna metoda: v ravnovesju velja $R_x R_4 = R_2 R_3$, neodvisno od napetosti vira.
 - Impedanca $Z = U/I$ (efektivni vrednosti); za tuljavo $Z = \sqrt{R^2 + X_L^2}$, $X_L = 2\pi f L$.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- kaj je izmerjena upornost $R_m$ pri U-I metodi in zakaj se zaradi $R_A$ in $R_V$ razlikuje od prave upornosti $R_x$;
+- kaj kateri merilnik kaže točno pri vezavi A in pri vezavi B, popravek rezultata in relativno napako obeh vezav (točno in približno);
+- izpeljavo mejne upornosti $R_g = \sqrt{R_A R_V}$ in pogoj, pri katerem velja ($R_x \ll R_V$);
+- izpeljavo pogoja ravnovesja Wheatstonovega mostu $R_x R_4 = R_2 R_3$ in zakaj ni odvisen od napetosti vira;
+- kako iz enosmerne in izmenične U-I meritve dobiš $R$, $Z$, $X_L$ in $L$ tuljave ter zakaj U-I metoda ne da faznega kota;
+- pogoj ravnovesja izmeničnega mostu $Z_x Z_4 = Z_2 Z_3$, zakaj nastavljaš dva elementa, in enačbi Maxwellovega mostu.
+
+### Naloga 1
+
+Tuljavo meriš z Maxwellovim mostom. Upornika sta $R_2 = 1000\,\Omega$ in $R_3 = 250\,\Omega$, v veji 4 sta vzporedno vezana upor $R_4$ in kondenzator $C_4$. Indikator kaže nič pri $R_4 = 5000\,\Omega$ in $C_4 = 0{,}47\,\mu\mathrm{F}$. (a) Izračunaj upornost navitja $R_x$ in induktivnost $L_x$. (b) Kolikšen tok bi tekel skozi tuljavo, če bi jo priklopil na izmenično napetost $24{,}0\,\mathrm{V}$ s frekvenco $50\,\mathrm{Hz}$? (c) Uporniki imajo relativno standardno negotovost $0{,}1\,\%$, kondenzator $1\,\%$, viri niso korelirani. Kolikšni sta relativni negotovosti $R_x$ in $L_x$ in kaj iz tega sklepaš?
+
+**Rešitev:**
+
+1. (a) Iz realnega dela pogoja ravnovesja: $R_x = \dfrac{R_2 R_3}{R_4} = \dfrac{1000 \cdot 250}{5000} = 50$ ohmov.
+2. Iz imaginarnega dela: $L_x = R_2 R_3 C_4 = 1000 \cdot 250 \cdot 0{,}47 \cdot 10^{-6} = 0{,}1175$ henryja.
+3. (b) Reaktanca pri $50\,\mathrm{Hz}$: $X_L = 2\pi f L_x = 2\pi \cdot 50 \cdot 0{,}1175 \approx 36{,}91$ ohma.
+4. Impedanca: $Z = \sqrt{R_x^2 + X_L^2} = \sqrt{50^2 + 36{,}91^2} \approx 62{,}15$ ohma.
+5. Tok: $I = \dfrac{U}{Z} = \dfrac{24{,}0}{62{,}15} \approx 0{,}386$ ampera.
+6. (c) $R_x$ je produkt in količnik treh upornosti: $u_r(R_x) = \sqrt{0{,}1^2 + 0{,}1^2 + 0{,}1^2} \approx 0{,}17$ odstotka.
+7. $L_x$ je produkt dveh upornosti in kapacitivnosti: $u_r(L_x) = \sqrt{0{,}1^2 + 0{,}1^2 + 1^2} \approx 1{,}01$ odstotka.
+8. Odgovor: $R_x = 50\,\Omega$, $L_x \approx 0{,}118\,\mathrm{H}$, tok pri $24\,\mathrm{V}$ in $50\,\mathrm{Hz}$ je okoli $0{,}39\,\mathrm{A}$. Negotovost $R_x$ je $0{,}17\,\%$, negotovost $L_x$ pa $1{,}0\,\%$ in jo skoraj v celoti določa kondenzator: točnejša upornika je ne bi zmanjšala, točnejši kondenzator pa bi jo. Frekvenca vira v rezultatu ne nastopa, zato k negotovosti ne prispeva.
+
+### Naloga 2
+
+Upornik z upornostjo okoli $400\,\Omega$ meriš z U-I metodo. Ampermeter ima $R_A = 2\,\Omega$, voltmeter $R_V = 20\,\mathrm{k\Omega}$. (a) Za $R_x = 400\,\Omega$ izračunaj točno relativno napako pri vezavi A in pri vezavi B ter izberi vezavo. (b) Pri izbrani vezavi odčitaš $12{,}06\,\mathrm{V}$ in $30{,}0\,\mathrm{mA}$. Kolikšna je prava upornost? (c) Brez približka $R_x \ll R_V$ izračunaj upornost, pri kateri sta napaki obeh vezav po velikosti točno enaki, in jo primerjaj z $R_g = \sqrt{R_A R_V}$.
+
+**Rešitev:**
+
+1. (a) Vezava A meri vzporedno vezavo: $e_A = -\dfrac{R_x}{R_x + R_V} = -\dfrac{400}{20\,400} \approx -0{,}0196$, torej $-1{,}96\,\%$.
+2. Vezava B meri zaporedno vezavo: $e_B = \dfrac{R_A}{R_x} = \dfrac{2}{400} = 0{,}005$, torej $+0{,}5\,\%$.
+3. Vezava B ima skoraj štirikrat manjšo napako. Enako pove mejna upornost: $R_g = \sqrt{2 \cdot 20\,000} = 200$ ohmov, upornik pa ima več.
+4. (b) $R_m = \dfrac{12{,}06}{0{,}0300} = 402$ ohma.
+5. Popravek vezave B: $R_x = R_m - R_A = 402 - 2 = 400$ ohmov.
+6. (c) Pogoj $|e_A| = e_B$: $\dfrac{R_x}{R_x + R_V} = \dfrac{R_A}{R_x}$, torej $R_x^2 - R_A R_x - R_A R_V = 0$.
+7. Pozitivna rešitev: $R_x = \dfrac{R_A + \sqrt{R_A^2 + 4 R_A R_V}}{2} = \dfrac{2 + \sqrt{4 + 160\,000}}{2} \approx 201{,}0$ ohma.
+8. Odgovor: pri $400\,\Omega$ je boljša vezava B ($+0{,}5\,\%$ proti $-1{,}96\,\%$), prava upornost je $400\,\Omega$. Točna meja je $201{,}0\,\Omega$, približek $R_g = 200\,\Omega$ se od nje razlikuje za $0{,}5\,\%$ (za približno $R_A/2$), ker je $R_g \ll R_V$. Pri obeh vezavah je tam napaka okoli $1\,\%$.
+
+### Naloga 3
+
+Izpelji pogoj ravnovesja Wheatstonovega mostu, v katerem levo stranico tvorita $R_x$ (zgoraj) in $R_3$ (spodaj), desno pa $R_2$ (zgoraj) in $R_4$ (spodaj). Utemelji, zakaj pogoj ni odvisen od napetosti vira in zakaj notranja upornost ničelnega indikatorja ne vpliva na rezultat.
+
+**Rešitev:**
+
+1. Naj bo napetost vira $U_0$, spodnje oglišče pa na potencialu nič. V ravnovesju skozi indikator ne teče tok, zato sta stranici neobremenjena delilnika napetosti.
+2. Potencial leve srednje točke: $V_L = U_0 \dfrac{R_3}{R_x + R_3}$. Potencial desne: $V_D = U_0 \dfrac{R_4}{R_2 + R_4}$.
+3. Ravnovesje pomeni $V_L = V_D$: $\dfrac{R_3}{R_x + R_3} = \dfrac{R_4}{R_2 + R_4}$.
+4. Križno množenje: $R_3 R_2 + R_3 R_4 = R_4 R_x + R_4 R_3$. Člen $R_3 R_4$ se odšteje in ostane $R_x R_4 = R_2 R_3$, torej $R_x = \dfrac{R_2 R_3}{R_4}$.
+5. Napetost vira: $U_0$ nastopa na obeh straneh enačbe $V_L = V_D$ kot enak faktor in se pokrajša. Vpliva le na to, kako velika je razlika $V_L - V_D$ pri majhnem neravnovesju, torej na občutljivost.
+6. Indikator: v ravnovesju je napetost na njem nič in skozenj ne teče tok, zato mostu ne obremenjuje, ne glede na svojo notranjo upornost. Ta upornost vpliva samo na to, kako majhno neravnovesje še opaziš.
+7. Sklep: most primerja $R_x$ z znanimi upornostmi in ne meri pod obremenitvijo. Zato točnost določajo $R_2$, $R_3$, $R_4$ in občutljivost indikatorja, ne pa vir ali umerjenost indikatorja.
 
 ## Drugače: Na sliki
 

@@ -3,9 +3,9 @@
 // Izbira se zapiše v skrita polja obrazca (educational_track, study_program,
 // curriculum_level), zato jo obrazci berejo kot prej.
 
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { imaStopnjo, jeOs, jeSs, jeFaks } from "./stopnja.js";
-import { SCHOOL_SYSTEMS, isRegional, gradesOf, gradeInfo, trackForLevel } from "./regions.js";
+import { SCHOOL_SYSTEMS, isRegional, gradeInfo, trackForLevel } from "./regions.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -20,6 +20,10 @@ const SS_LEVELS = [
   ["OR", t("lp.or"), t("lp.orSub")],
   ["VR", t("lp.vr"), t("lp.vrSub")],
 ];
+// »Še ne vem« (ovire na telefonu 2026-11-18): letnik brez ravni (»3. letnik«), vsebina kot osnovna raven
+// (vse, kar loči ravni, preverja /VR/). Ravno je mogoče izbrati pozneje v glavi Inštruktorja ali v nastavitvah.
+const UNSURE = "?";
+const SS_LEVEL_STEPS = [...SS_LEVELS, [UNSURE, t("lp.unsure"), t("lp.unsureSub")]];
 const UNI_YEARS = ["1. letnik", "2. letnik", "3. letnik", "4. letnik"];
 
 // Regijski šolski sistem (public/regions.js): stopnja → razred z imeni tega sistema.
@@ -47,7 +51,7 @@ function fromSettings(s, programs) {
   if (v.track === "OSNOVNA_SOLA") v.grade = OS_GRADES.find((g) => level.startsWith(g.slice(0, 2))) || "";
   if (v.track === "SREDNJA_SOLA") {
     v.year = SS_YEARS.find((y) => level.startsWith(y[0])) || "";
-    v.ssLevel = /VR/.test(level) ? "VR" : /OR/.test(level) ? "OR" : "";
+    v.ssLevel = /VR/.test(level) ? "VR" : /OR/.test(level) ? "OR" : /^\d\. letnik$/.test(level) ? UNSURE : "";
   }
   if (v.track === "UNIVERZA") {
     const p = programs.find((x) => x.id === s.study_program);
@@ -61,7 +65,7 @@ function fromSettings(s, programs) {
 function toSettings(v) {
   if (v.sys) return regionToSettings(v);
   if (v.track === "OSNOVNA_SOLA" && v.grade) return { educational_track: v.track, study_program: "", curriculum_level: v.grade };
-  if (v.track === "SREDNJA_SOLA" && v.year && v.ssLevel) return { educational_track: v.track, study_program: "", curriculum_level: `${v.year} ${v.ssLevel}` };
+  if (v.track === "SREDNJA_SOLA" && v.year && v.ssLevel) return { educational_track: v.track, study_program: "", curriculum_level: v.ssLevel === UNSURE ? v.year : `${v.year} ${v.ssLevel}` };
   if (v.track === "UNIVERZA" && v.program && v.year) return { educational_track: v.track, study_program: v.program, curriculum_level: v.year };
   return null;
 }
@@ -73,7 +77,7 @@ function steps(v, programs) {
   if (v.track === "OSNOVNA_SOLA") out.push(["grade", t("lp.qGrade"), OS_GRADES.map((g) => [g, levelLabel(g)]), v.grade && levelLabel(v.grade)]);
   if (v.track === "SREDNJA_SOLA") {
     out.push(["year", t("lp.qYear"), SS_YEARS.map((y) => [y, levelLabel(y)]), v.year && levelLabel(v.year)]);
-    if (v.year) out.push(["ssLevel", t("lp.qLevel"), SS_LEVELS, SS_LEVELS.find((l) => l[0] === v.ssLevel)?.[1]]);
+    if (v.year) out.push(["ssLevel", t("lp.qLevel"), SS_LEVEL_STEPS, SS_LEVEL_STEPS.find((l) => l[0] === v.ssLevel)?.[1]]);
   }
   if (v.track === "UNIVERZA") {
     const unis = [...new Map(programs.map((p) => [p.university, p.universityName])).entries()];
@@ -197,6 +201,18 @@ export function levelLabel(level) {
 }
 
 /**
+ * Raven matematike v srednji šoli (osnovna / višja / še ne vem) za hitro menjavo v glavi Inštruktorja (j, 17. 11. 2026;
+ * od 18. 11. v istem seznamu kot letnik): [{ settings, label, current }]; prazno, če letnik ravni nima
+ * (npr. »2. letnik gimnazija«) ali ni srednja šola. »Še ne vem« = letnik brez ravni (»3. letnik«).
+ */
+export function ravenChoices(s = {}) {
+  const m = /^(\d\. letnik)(?: (OR|VR))?$/.exec(String(s.curriculum_level || ""));
+  if (!m || isRegional(s.school_system) || !jeSs(s)) return [];
+  const make = (level, label, current) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level: level }, label, current });
+  return [...SS_LEVELS.map(([r, label]) => make(`${m[1]} ${r}`, label, r === m[2])), make(m[1], t("lp.unsure"), !m[2])];
+}
+
+/**
  * Razredi ali letniki iste šole za hitro menjavo (glava Inštruktorja): [{ settings, label, current }].
  * Ostane ista vrsta šole, program in raven matematike (SŠ); regijski sistem: razredi iste stopnje.
  */
@@ -207,13 +223,14 @@ export function levelChoices(s = {}) {
     const stage = SCHOOL_SYSTEMS[s.school_system].stages.find(([name]) => name === g?.stage);
     return (stage?.[1] || []).map(([label]) => ({ settings: regionToSettings({ sys: s.school_system, grade: label }), label, current: label === g?.label })).filter((x) => x.settings);
   }
-  const make = (curriculum_level) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level }, label: levelLabel(curriculum_level), current: curriculum_level === level });
+  const make = (curriculum_level, label = levelLabel(curriculum_level)) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level }, label, current: curriculum_level === level });
   if (!imaStopnjo(s)) return [];
-  if (jeOs(s)) return OS_GRADES.map(make);
+  if (jeOs(s)) return OS_GRADES.map((y) => make(y));
   if (jeSs(s)) {
-    const rest = level.replace(/^\d+\. letnik/, ""); // » OR« / » VR«
+    const rest = level.replace(/^\d+\. letnik/, ""); // » OR« / » VR« / »« (raven še ne vem)
+    // Letnik z ravnijo v napisu (»3. letnik OR«): v glavi sta letnik in raven en izbirni seznam (ovire na telefonu 2026-11-18).
     return SS_YEARS.map((y) => make(y + rest));
   }
-  if (jeFaks(s)) return UNI_YEARS.map(make);
+  if (jeFaks(s)) return UNI_YEARS.map((y) => make(y));
   return [];
 }

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -73,7 +73,7 @@ $$p_i = \frac{n_iRT}{V}.$$
 
 $$p = p_1 + p_2 + \dots = \sum_i p_i.$$
 
-*Dokaz:* $\sum_i p_i = \sum_i n_iRT/V = (\sum_i n_i)RT/V = nRT/V$, kar je tlak celotne množine $n$. Iz tega sledi zveza z **množinskim deležem** $x_i = n_i/n_{\text{skupna}}$: deljenje $p_i = n_iRT/V$ z $p = nRT/V$ da
+*Dokaz:* $\sum_i p_i = \sum_i n_iRT/V = (\sum_i n_i)RT/V = nRT/V$, kar je tlak celotne množine $n$. Iz tega sledi zveza z **množinskim deležem** $x_i = n_i/n_{\text{skupna}}$: deljenje $p_i = n_iRT/V$ s $p = nRT/V$ da
 
 $$p_i = x_i\,p, \qquad \sum_i x_i = 1.$$
 
@@ -142,7 +142,7 @@ $n_i = m_i/M_i$, $x_i = n_i/n$, $p = \dfrac{nRT}{V}$, $p_i = x_i\,p = \dfrac{n_i
 **Rešitev:**
 
 1. Množini: $n(\mathrm{He}) = 4{,}00 / 4{,}003\,\mathrm{mol} \approx 0{,}999\,\mathrm{mol}$, $n(\mathrm{O_2}) = 16{,}0 / 32{,}00\,\mathrm{mol} = 0{,}500\,\mathrm{mol}$; skupaj $n \approx 1{,}499\,\mathrm{mol}$.
-2. Množinska deleža: $x(\mathrm{He}) = 0{,}999 / 1{,}499 \approx 0{,}667$, $x(\mathrm{O_2}) \approx 0{,}333$. Čeprav je kisika po masi štirikrat več, je helija po množini dvakrat več.
+2. Množinska deleža: $x(\mathrm{He}) = 0{,}9993 / 1{,}4993 \approx 0{,}667$, $x(\mathrm{O_2}) \approx 0{,}333$. Čeprav je kisika po masi štirikrat več, je helija po množini dvakrat več.
 3. Skupni tlak: $T = 300{,}15\,\mathrm{K}$, $V = 1{,}00 \cdot 10^{-2}\,\mathrm{m^3}$, $p = \dfrac{1{,}499 \cdot 8{,}314 \cdot 300{,}15}{1{,}00 \cdot 10^{-2}}\,\mathrm{Pa} \approx 3{,}74 \cdot 10^5\,\mathrm{Pa} = 374\,\mathrm{kPa}$.
 4. Parcialna tlaka (po Daltonu je vsak sorazmeren z množinskim deležem): $p(\mathrm{He}) = 0{,}667 \cdot 374\,\mathrm{kPa} \approx 249\,\mathrm{kPa}$, $p(\mathrm{O_2}) = 0{,}333 \cdot 374\,\mathrm{kPa} \approx 125\,\mathrm{kPa}$.
 5. Preizkus: $p(\mathrm{O_2}) = \dfrac{0{,}500 \cdot 8{,}314 \cdot 300{,}15}{1{,}00 \cdot 10^{-2}}\,\mathrm{Pa} \approx 125\,\mathrm{kPa}$ in $249 + 125 = 374\,\mathrm{kPa}$.
@@ -223,7 +223,7 @@ Navedi predpostavke kinetične teorije idealnega plina in iz njih izpelji $pV = 
 **Rešitev:**
 
 1. Predpostavke: $N$ enakih molekul z maso $m$ v kocki s stranico $L$ ($V = L^3$); molekule so točkaste, med seboj se ne privlačijo, trki s stenami so prožni, trki med molekulami ne spremenijo porazdelitve hitrosti, smeri gibanja so naključne.
-2. Molekula s komponento hitrosti $v_x$ se od stene odbije s $-v_x$, zato se ji gibalna količina spremeni za $2mv_x$.
+2. Molekula s komponento hitrosti $v_x$ se od stene odbije z $-v_x$, zato se ji gibalna količina spremeni za $2mv_x$.
 3. Do iste stene se vrne po času $2L/v_x$, zato je povprečna sila ene molekule na steno $\dfrac{2mv_x}{2L/v_x} = \dfrac{mv_x^2}{L}$.
 4. Za vse molekule je sila $Nm\langle v_x^2 \rangle/L$, tlak pa sila na ploščino $L^2$: $p = Nm\langle v_x^2 \rangle/V$.
 5. Nobena smer ni izbrana, zato $\langle v_x^2 \rangle = \langle v_y^2 \rangle = \langle v_z^2 \rangle = \tfrac13\langle v^2 \rangle$ in $pV = \tfrac13 Nm\langle v^2 \rangle$.
@@ -236,15 +236,35 @@ Navedi predpostavke kinetične teorije idealnega plina in iz njih izpelji $pV = 
 
 Predstavljaj si posodo iz Primera 3 kot škatlo z dvema vrstama kroglic:
 
-```
- +-----------------------------+
- |  o   o    .   o    o   .    |    o  helij  (0,999 mol, 2/3 molekul)
- |    o    .    o   o    o     |    .  kisik  (0,500 mol, 1/3 molekul)
- |  .   o    o     .   o    o  |
- |    o   .    o   o    .      |    p(He) = 249 kPa
- +-----------------------------+    p(O2) = 125 kPa
-                                     p     = 374 kPa
-```
+:::risba skica
+opis: Zaprta posoda iz Primera 3 z 18 kroglicami: 12 majhnih praznih krožcev je helij (0,999 mol, dve tretjini molekul), 6 večjih polnih krogov je kisik (0,500 mol, ena tretjina molekul). Pod posodo so tlaki: parcialni tlak helija 249 kPa, parcialni tlak kisika 125 kPa, skupni tlak 374 kPa.
+območje: 0; -16 .. 320; 154
+pravokotnik: 40; 58 .. 280; 150 | ozadje
+krog: 61,6; 108,6 | 3 | modra
+krog: 265; 101,1 | 3 | modra
+krog: 105,5; 70 | 5,5 | oranžna polno
+krog: 55,1; 126,6 | 3 | modra
+krog: 143,6; 110,3 | 3 | modra
+krog: 182,6; 130,2 | 5,5 | oranžna polno
+krog: 59,2; 71,1 | 3 | modra
+krog: 219,1; 125,9 | 3 | modra
+krog: 141,5; 74,1 | 5,5 | oranžna polno
+krog: 169,1; 76,1 | 3 | modra
+krog: 207,3; 75,1 | 3 | modra
+krog: 246,7; 70,3 | 5,5 | oranžna polno
+krog: 133,3; 133,1 | 3 | modra
+krog: 181,1; 102,6 | 3 | modra
+krog: 93,3; 100,1 | 5,5 | oranžna polno
+krog: 229; 97,7 | 3 | modra
+krog: 97,6; 136,4 | 3 | modra
+krog: 246,4; 127,9 | 5,5 | oranžna polno
+krog: 62; 42 | 3 | modra
+napis: 72; 42 | helij: 0,999 mol, 2/3 molekul | desno
+krog: 62; 26 | 5,5 | oranžna polno
+napis: 72; 26 | kisik: 0,500 mol, 1/3 molekul | desno
+napis: 160; 8 | p(He) = 249 kPa, p(O_2) = 125 kPa
+napis: 160; -8 | p = 374 kPa
+:::
 
 Tlak nastane zaradi trkov molekul s stenami. Ker se pri idealnem plinu molekule ne zmenijo druga za drugo, vsaka vrsta »tolče« po stenah, kot da bi bila sama. Helijevih molekul je dvakrat več, zato prispevajo dve tretjini tlaka, čeprav je vsaka osemkrat lažja od molekule kisika. Pri isti temperaturi imajo namreč vse molekule enako povprečno kinetično energijo: lažje so ustrezno hitrejše, zato vsaka v povprečju enako močno tolče po steni.
 
@@ -276,7 +296,7 @@ Pri reakciji cinka s klorovodikovo kislino zberemo vodik nad vodo. Pri $25\,^\ci
 
 $$pV = \tfrac{1}{3}Nm\langle v^2 \rangle,$$
 
-kjer je $N$ število molekul in $\langle v^2 \rangle$ povprečje kvadrata hitrosti. Primerjava s $pV = nRT = Nk_BT$ da povprečno kinetično energijo molekule $\frac{1}{2}m\langle v^2 \rangle = \frac{3}{2}k_BT$: temperatura je merilo za kinetično energijo molekul. Korenska srednja hitrost je $v_{\mathrm{rms}} = \sqrt{3RT/M}$; za dušik pri $25\,^\circ\mathrm{C}$ je $\sqrt{3 \cdot 8{,}314 \cdot 298{,}15 / 0{,}02801}\,\mathrm{m/s} \approx 515\,\mathrm{m/s}$. Daltonov zakon sledi neposredno: prispevki različnih vrst molekul k sili na steno se seštejejo.
+kjer je $N$ število molekul in $\langle v^2 \rangle$ povprečje kvadrata hitrosti. Primerjava s $pV = nRT = Nk_BT$ da povprečno kinetično energijo molekule $\frac{1}{2}m\langle v^2 \rangle = \frac{3}{2}k_BT$: temperatura je merilo za kinetično energijo molekul. Korenska srednja hitrost je $v_{\mathrm{rms}} = \sqrt{3RT/M}$; za dušik pri $25\,^\circ\mathrm{C}$ je $\sqrt{3 \cdot 8{,}314 \cdot 298{,}15 / 0{,}02802}\,\mathrm{m/s} \approx 515\,\mathrm{m/s}$. Daltonov zakon sledi neposredno: prispevki različnih vrst molekul k sili na steno se seštejejo.
 
 **Van der Waalsova enačba.** Za realne pline
 

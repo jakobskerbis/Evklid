@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -7,7 +7,7 @@ avtor: AI
 
 Zakaj baterije telefonov uporabljajo litij in ne natrija, ki ga je v morju na tone? Odgovor je v legi obeh kovin: litij je najlažja kovina, njegov ion je drobcen in zlahka potuje med plastmi grafita. Iz lege elementa brez merjenja napovemo velikost atoma, kako lahko odda elektron in kako močno v vezi vleče elektrone. Tako je Mendelejev napovedal lastnosti galija in germanija, še preden so ju odkrili.
 
-Periodične lastnosti boš rabil ves študij: pri polarnosti vezi, redoks reakcijah, spektroskopiji in kristalih.
+Periodične lastnosti boš potreboval ves študij: pri polarnosti vezi, redoks reakcijah, spektroskopiji in kristalih.
 
 Na koncu boš iz elektronske konfiguracije in **efektivnega naboja jedra** utemeljil trende **polmerov**, **ionizacijske energije** in **elektronegativnosti**.
 
@@ -51,7 +51,7 @@ približno $140$, $133$, $102$, $72$ in $54\,\mathrm{pm}$.
 
 $$\mathrm{X(g) \longrightarrow X^+(g) + e^-}, \qquad \Delta H \approx I_1 > 0.$$
 
-Navajamo jo v $\mathrm{kJ/mol}$ ali v $\mathrm{eV}$ na atom. Trend je obraten od polmera: vzdolž periode **narašča**, navzdol po skupini **pada**. Najmanjšo $I_1$ imajo alkalijske kovine ($\mathrm{K}$: $419\,\mathrm{kJ/mol}$), največjo žlahtni plini ($\mathrm{He}$: $2372\,\mathrm{kJ/mol}$).
+Navajamo jo v $\mathrm{kJ/mol}$ ali v $\mathrm{eV}$ na atom. Trend je obraten od polmera: vzdolž periode **narašča**, navzdol po skupini **pada**. Najmanjšo $I_1$ imajo alkalijske kovine ($\mathrm{Cs}$: $376\,\mathrm{kJ/mol}$), največjo žlahtni plini ($\mathrm{He}$: $2372\,\mathrm{kJ/mol}$).
 
 Prve ionizacijske energije elementov 2. periode ($\mathrm{kJ/mol}$):
 
@@ -73,7 +73,7 @@ Dve izjemi od naraščanja imata jasen vzrok:
 :::premisli
 Magnezij ima konfiguracijo $[\mathrm{Ne}]\,3s^2$. Med katerima zaporednima ionizacijskima energijama pričakuješ velik skok in zakaj?
 ---
-Med $I_2$ in $I_3$. Prva dva elektrona odvzamemo iz lupine $3s$, tretji pa mora priti iz notranje, močno vezane podlupine $2p^6$ (izmerjeno: $I_2 = 1451$, $I_3 = 7733\,\mathrm{kJ/mol}$).
+Med $I_2$ in $I_3$. Prva dva elektrona odvzamemo iz podlupine $3s$, tretji pa mora priti iz notranje, močno vezane podlupine $2p^6$ (izmerjeno: $I_2 = 1451$, $I_3 = 7733\,\mathrm{kJ/mol}$).
 :::
 
 **6. Elektronska afiniteta** $E_\mathrm{ea}$ je energija, ki se sprosti, ko izoliran atom v plinastem stanju sprejme elektron: $\mathrm{X(g) + e^- \to X^-(g)}$, $\Delta H \approx -E_\mathrm{ea}$. Pozitivna $E_\mathrm{ea}$ pomeni, da je anion stabilnejši od atoma; pri nekaterih atomih (Be, N, žlahtni plini) je negativna ali blizu nič, kar pomeni, da se energija porabi. Največjo afiniteto imajo halogeni (klor okoli $349\,\mathrm{kJ/mol}$ sproščene energije), saj z dodatnim elektronom dosežejo konfiguracijo žlahtnega plina. Trend je manj pravilen kot pri ionizacijski energiji.
@@ -222,7 +222,7 @@ Disociacijske energije vezi so $D(\mathrm{H{-}H}) = 436\,\mathrm{kJ/mol}$, $D(\m
 2. V eV na molekulo: $92{,}5 / 96{,}49 \approx 0{,}959$, zato $|\chi(\mathrm{Cl}) - \chi(\mathrm{H})| = \sqrt{0{,}959} \approx 0{,}98$.
 3. Klor je bolj elektronegativen od vodika (desno zgoraj v sistemu), zato $\chi(\mathrm{Cl}) = 2{,}20 + 0{,}98 = 3{,}18$, kar se dobro ujema s tabelirano $3{,}16$.
 4. Ionski značaj: $1 - \mathrm{e}^{-0{,}98^2/4} = 1 - \mathrm{e}^{-0{,}240} \approx 0{,}21$, torej okoli $21\,\%$. Ker je $0{,}4 \le 0{,}98 < 1{,}7$, je vez polarna kovalentna.
-5. (b) Razlika $\Delta\chi = 3{,}98 - 3{,}16 = 0{,}82$, zato je presežek $0{,}82^2 = 0{,}672\,\mathrm{eV}$ na molekulo, kar ustreza $0{,}672 \cdot 96{,}49\,\mathrm{kJ/mol} \approx 64{,}9\,\mathrm{kJ/mol}$.
+5. (b) Razlika $\Delta\chi = 3{,}98 - 3{,}16 = 0{,}82$, zato je presežek $0{,}82^2 = 0{,}6724\,\mathrm{eV}$ na molekulo, kar ustreza $0{,}6724 \cdot 96{,}49\,\mathrm{kJ/mol} \approx 64{,}9\,\mathrm{kJ/mol}$.
 6. Iz definicije: $D(\mathrm{Cl{-}F}) = \tfrac12(243 + 158) + 64{,}9 = 200{,}5 + 64{,}9 \approx 265\,\mathrm{kJ/mol}$.
 7. Ocena je za $265/251 \approx 1{,}06$, torej okoli $6\,\%$, previsoka: Paulingova zveza je empirična.
 8. Odgovor: $\chi(\mathrm{Cl}) \approx 3{,}18$, vez $\mathrm{H{-}Cl}$ je polarna kovalentna z okoli $21\,\%$ ionskega značaja; ocena $D(\mathrm{Cl{-}F}) \approx 265\,\mathrm{kJ/mol}$ je za okoli $6\,\%$ nad izmerjeno.
@@ -245,17 +245,52 @@ Natančno definiraj prvo in drugo ionizacijsko energijo. Utemelji, zakaj je za v
 
 Trendi na obrisu periodnega sistema ($r$ polmer, $I_1$ ionizacijska energija, $\chi$ elektronegativnost):
 
-```
-              I1 in χ rasteta  ---->
-          +-----------------------------------------------+
-   r      |  Li  Be                        B  C  N  O  F  |  ^
-   raste  |  Na  Mg                       Al Si  P  S Cl  |  |  I1 in χ
-     |    |  K   Ca   (prehodne kovine)   Ga Ge As Se Br  |  |  rasteta
-     v    |  Rb  Sr                       In Sn Sb Te  I  |  |
-          |  Cs  Ba                       Tl Pb Bi Po At  |  |
-          +-----------------------------------------------+
-              <----  r in kovinski značaj rasteta
-```
+:::risba skica
+opis: Obris periodnega sistema z elementi blokov s in p od 2. do 6. periode: levo Li, Na, K, Rb, Cs in Be, Mg, Ca, Sr, Ba, v sredini prehodne kovine, desno skupine od B do F zgoraj in od Tl do At spodaj. Puščici v desno in navzgor: prva ionizacijska energija I₁ in elektronegativnost χ rasteta vzdolž periode in navzgor po skupini. Puščici v levo in navzdol: polmer r in kovinski značaj rasteta proti levi in navzdol po skupini.
+območje: 0; -6 .. 320; 154
+pravokotnik: 30; 26 .. 270; 122 | ozadje
+napis: 42; 110 | Li
+napis: 71; 110 | Be
+napis: 167; 110 | B
+napis: 189; 110 | C
+napis: 211; 110 | N
+napis: 233; 110 | O
+napis: 255; 110 | F
+napis: 42; 92 | Na
+napis: 71; 92 | Mg
+napis: 167; 92 | Al
+napis: 189; 92 | Si
+napis: 211; 92 | P
+napis: 233; 92 | S
+napis: 255; 92 | Cl
+napis: 42; 74 | K
+napis: 71; 74 | Ca
+napis: 167; 74 | Ga
+napis: 189; 74 | Ge
+napis: 211; 74 | As
+napis: 233; 74 | Se
+napis: 255; 74 | Br
+napis: 42; 56 | Rb
+napis: 71; 56 | Sr
+napis: 167; 56 | In
+napis: 189; 56 | Sn
+napis: 211; 56 | Sb
+napis: 233; 56 | Te
+napis: 255; 56 | I
+napis: 42; 38 | Cs
+napis: 71; 38 | Ba
+napis: 167; 38 | Tl
+napis: 189; 38 | Pb
+napis: 211; 38 | Bi
+napis: 233; 38 | Po
+napis: 255; 38 | At
+napis: 119; 83 | prehodne | sredina | siva
+napis: 119; 65 | kovine | sredina | siva
+puščica: 60; 134 -> 240; 134 | I_1 in χ rasteta | nad | modra
+puščica: 280; 38 -> 280; 110 | I_1, χ | desno | modra
+puščica: 240; 14 -> 60; 14 | r in kovinski značaj rasteta | pod | oranžna
+puščica: 20; 110 -> 20; 38 | r | levo | oranžna
+:::
 
 Graf $I_1(Z)$ je »žaga« z vrhovi pri žlahtnih plinih.
 
@@ -339,7 +374,7 @@ N_{n-1} | število elektronov v lupini n − 1 | | –
 N_{\le n-2} | število elektronov v lupinah n − 2 in nižje | | –
 n | glavno kvantno število zunanje lupine | | – | enako številki periode
 r | polmer atoma ali iona | | pm
-\Delta H | entalpija ionizacije | \Delta H \approx I_1 | kJ/mol | pozitivna: ionizacija porabi energijo
+\Delta H | sprememba entalpije pri ionizaciji ali sprejemu elektrona | | kJ/mol | ionizacija: ΔH ≈ I₁ > 0 (energija se porabi); sprejem elektrona: ΔH ≈ −Eₑₐ
 I_1 | prva ionizacijska energija | | kJ/mol | najmanjša pri alkalijskih kovinah
 I_2 | druga ionizacijska energija | | kJ/mol
 I_3 | tretja ionizacijska energija | | kJ/mol
@@ -350,5 +385,5 @@ E | energija za odstranitev treh elektronov | E = I_1 + I_2 + I_3 | kJ/mol
 \chi | elektronegativnost | | –
 \Delta\chi | razlika elektronegativnosti vezanih atomov | \Delta\chi = \lvert\chi_\mathrm{A} - \chi_\mathrm{B}\rvert | – | večja Δχ pomeni bolj ionsko vez
 \chi_\mathrm{A}, \chi_\mathrm{B} | elektronegativnosti vezanih atomov A in B | | –
-D | disociacijska energija vezi | | eV | npr. D(A−B) za vez med A in B
+D | disociacijska energija vezi | | kJ/mol | npr. D(A−B) za vez med A in B
 :::

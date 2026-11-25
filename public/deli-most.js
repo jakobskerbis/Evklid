@@ -55,4 +55,4 @@ export function shareResultJs(r) {
 }
 
 // Zastavica zmožnosti, ki jo aplikacija vbrizga pred nalaganjem strani.
-export const NATIVE_FLAG_JS = "(function(){try{window.EvklidNative=Object.assign(window.EvklidNative||{},{shareImage:1});}catch(e){}})();true;";
+export const NATIVE_FLAG_JS = "(function(){try{window.EvklidNative=Object.assign(window.EvklidNative||{},{shareImage:1,tisk:1});}catch(e){}})();true;";

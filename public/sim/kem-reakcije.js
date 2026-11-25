@@ -1,5 +1,5 @@
 // Simulacije pri kemiji: energija pri reakcijah, reaktivnost kovin, redoks, titracija, hitrost reakcij, ravnotežje, disociacija, galvanski člen in elektroliza.
-import { s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, clamp, label, arrow, animate, playButton, axes, rnd } from "./kit.js";
+import { s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, clamp, label, arrow, animate, playButton, axes, rnd } from "./kit.js";
 import { sub, beaker } from "./kem-skupno.js";
 
 // ------------------------------------------------------------ pH iz nabojne bilance

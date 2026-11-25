@@ -12,6 +12,8 @@ async function call(url, { method = "GET", body, headers = {} } = {}) {
   let r;
   try {
     r = await fetch(url, { method, headers: { "Content-Type": "application/json", ...headers }, body: body && JSON.stringify(body) });
+    // Sprememba mimo app.js api(): vnaprej prenesene kopije (public/kliki.js topli) niso več sveže.
+    if (method !== "GET") dispatchEvent(new Event("evklid:sprememba"));
   } catch {
     throw Object.assign(new Error(t("off.noConnection")), { status: 0 });
   }
@@ -88,7 +90,16 @@ const head = (v) => (v.q >= 0 ? `<p class="kv-qn">${esc(t("kv.question", { n: v.
 
 // --- učitelj (projektor) ---
 
+// Projektor (ucitelj.html) nima app.js: dolge formule vprašanj, možnosti in rešitev (KaTeX s strežnika) se tu zložijo
+// pri enačajih, pomanjšajo ali drsijo enako kot v aplikaciji (public/sirina.js; za zlaganje potrebuje KaTeX). V Ligah
+// (app.js) teče že; initSirina je enkraten (enoten matematični zapis F2, 24. 11. 2026).
+const sirinaFormul = () =>
+  Promise.all([import("./rich.js").then((m) => m.naloziKnjiznice()), import("./sirina.js")])
+    .then(([, m]) => m.initSirina())
+    .catch(() => {}); // brez KaTeX ostanejo formule s strežnika izrisane, le nezložene
+
 export function hostQuiz({ code, key, game, onClose }) {
+  sirinaFormul();
   const headers = key ? { "X-Teacher-Key": key } : {};
   const base = `/api/teacher/classes/${encodeURIComponent(code)}/kviz`;
   const s = screen("kv-host", titleHtml(game.className, game.topic.name), () => {

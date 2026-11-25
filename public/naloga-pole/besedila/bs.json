@@ -1,0 +1,19 @@
+{
+  "np.ask.exam": "Koji NPZ misliš?",
+  "np.ask.subject": "Iz kojeg je predmeta zadatak?",
+  "np.ask.level": "Osnovni ili viši nivo?",
+  "np.ask.year": "Iz koje je godine ispit?",
+  "np.ask.pola": "Iz koje je ispitne knjižice {n}. zadatak?",
+  "np.ask.session": "Koji termin?",
+  "np.ask.section": "Iz kojeg je dijela ispita {n}. zadatak?",
+  "np.plain": "Pošalji kao obično pitanje",
+  "np.ours": "Ovo je Evklidov zadatak u stilu ispita »{paper}«, a ne originalni zadatak RIC-a. Original je slobodno dostupan na ric.si.",
+  "np.figure": "Slika uz zadatak nalazi se u Evklidovom ispitu.",
+  "np.openOurs": "Otvori u Evklidovom ispitu",
+  "np.noOurs": "Za »{paper}« još nemamo Evklidovu verziju. Preuzmi original sa ric.si, otvori ga ovdje i kod {n}. zadatka dodirni »{help}«.",
+  "np.missing": "Evklidova verzija ispita »{paper}« nema {n}. zadatak. Provjeri broj zadatka.",
+  "np.download": "Preuzmi original: {file}",
+  "np.openOriginal": "Otvori original",
+  "np.pickHint": "Prvo preuzmi original, a zatim pod »Otvori original« izaberi datoteku {name}.",
+  "np.wrongFile": "To je drugi ispit. Izaberi datoteku {name}."
+}

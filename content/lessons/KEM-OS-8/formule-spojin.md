@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -40,7 +40,7 @@ $$n_+ \cdot q_+ + n_- \cdot q_- = 0$$
 
 To je pogoj, ki ga mora izpolniti vsaka formula. Tu je $n_+$ število kationov, $q_+$ naboj kationa, $n_-$ število anionov in $q_-$ naboj aniona.
 
-Hitra pot je **križno pravilo**. Številko naboja kationa zapišeš kot **indeks** (malo številko spodaj desno) k anionu, številko naboja aniona pa kot indeks h kationu. Nato oba indeksa skrajšaš na najmanjše celo razmerje, če se da: $\mathrm{Mg^{2+}}$ + $\mathrm{O^{2-}}$ → $\mathrm{Mg_2O_2}$ → okrajšamo → $\mathrm{MgO}$. Indeksa $1$ ne pišemo. Kation (kovina) stoji v formuli prvi, naboji pa se v formulo spojine ne pišejo.
+Hitra pot je **križno pravilo**. Številko naboja kationa zapišeš kot **indeks** (malo številko spodaj desno) k anionu, številko naboja aniona pa kot indeks h kationu. Nato oba indeksa skrajšaš na najmanjše celo razmerje, če se da: $\mathrm{Mg^{2+}}$ + $\mathrm{O^{2-}}$ → $\mathrm{Mg_2O_2}$ (dva iona na dva iona) → okrajšamo → $\mathrm{MgO}$ (en $\mathrm{Mg^{2+}}$ na en $\mathrm{O^{2-}}$). Indeksa $1$ ne pišemo. Križno pravilo je le bližnjica, zato formulo vedno preveri s pogojem zgoraj: $1 \cdot 2 + 1 \cdot (-2) = 0$. Kation (kovina) stoji v formuli prvi, naboji pa se v formulo spojine ne pišejo.
 
 **3. Kaj pove indeks.** Indeks velja samo za element, ki stoji tik pred njim. V $\mathrm{CaCl_2}$ je en kalcijev ion in sta dva kloridna iona. Pri ionski spojini formula pove razmerje ionov v kristalu. Najmanjši skupek ionov s tem razmerjem imenujemo **formulska enota**. Pri molekulski spojini pa formula pove natančno sestavo ene molekule.
 
@@ -76,7 +76,7 @@ Ogljik in kisik tvorita dve različni spojini, $\mathrm{CO}$ in $\mathrm{CO_2}$.
 Kalcij in klor tvorita ione s stalnima nabojema ($\mathrm{Ca^{2+}}$, $\mathrm{Cl^-}$), zato je razmerje vedno $1 : 2$ in ime ga ne rabi povedati. Med nekovinama ionov ni, isti dve nekovini lahko tvorita več različnih molekul. Brez predpone ne bi vedeli, ali gre za $\mathrm{CO}$ ali $\mathrm{CO_2}$.
 :::
 
-**6. Preizkusi sam.** V simulaciji spodaj »Sestavljanje formul iz ionov« izberi $\mathrm{Al^{3+}}$ in $\mathrm{O^{2-}}$ ter dodajaj ione, dokler skupni naboj ni nič. Opazi, da se ničla prvič pojavi pri dveh aluminijevih in treh oksidnih ionih. Nato poskusi še $\mathrm{Mg^{2+}}$ in $\mathrm{Cl^-}$.
+**6. Preizkusi sam.** V simulaciji spodaj »Sestavljanje formul iz ionov« izberi $\mathrm{Al^{3+}}$ in $\mathrm{O^{2-}}$ ter preštej ione na sliki. Opazi, da se naboja izravnata pri dveh aluminijevih in treh oksidnih ionih. Nato poskusi še $\mathrm{Mg^{2+}}$ in $\mathrm{Cl^-}$.
 
 ## Rešeni primeri
 
@@ -94,14 +94,14 @@ Pogoj: $n_+ \cdot q_+ + n_- \cdot q_- = 0$; križno pravilo, nato indeksa skraj�
 **Rešitev:**
 
 1. Naboja: magnezij odda $2$ elektrona, $\mathrm{Mg^{2+}}$; kisik sprejme $2$, $\mathrm{O^{2-}}$.
-2. Po križnem pravilu dobimo $\mathrm{Mg_2O_2}$.
-3. Indeksa skrajšamo z $2$, ker formula pove najmanjše razmerje: $\mathrm{MgO}$.
-4. Preverimo naboje: $1 \cdot 2 + 1 \cdot (-2) = 0$.
+2. Po križnem pravilu je naboj kisika ($2$) indeks magnezija in naboj magnezija ($2$) indeks kisika: $\mathrm{Mg_2O_2}$, dva iona na dva iona.
+3. Indeksa skrajšamo z $2$, ker formula pove najmanjše razmerje: $\mathrm{MgO}$, en ion $\mathrm{Mg^{2+}}$ na en ion $\mathrm{O^{2-}}$.
+4. Preverimo naboje: $1 \cdot 2 + 1 \cdot (-2) = 0$. (Dva $\mathrm{Mg^{2+}}$ na en $\mathrm{O^{2-}}$ bi dala $2 \cdot 2 + 1 \cdot (-2) = 2$, ne $0$.)
 5. Odgovor: nastane magnezijev oksid, $\mathrm{MgO}$.
 
 ### Primer 2: od imena do formule
 
-Mnogi antiperspiranti vsebujejo aluminijev klorid. Zapiši formulo te spojine in povej, koliko ionov je v eni formulski enoti.
+Nekateri antiperspiranti vsebujejo aluminijev klorid. Zapiši formulo te spojine in povej, koliko ionov je v eni formulski enoti.
 
 **Podatki:** ime aluminijev klorid; aluminij je v 13. skupini (3 zunanji elektroni); klor je v 17. skupini (7 zunanjih elektronov)
 **Iščemo:** formulo in število ionov v formulski enoti
@@ -172,7 +172,7 @@ Trije ioni $\mathrm{Mg^{2+}}$ dajo $+6$, dva iona $\mathrm{N^{3-}}$ dasta $-6$. 
 ## Povzetek
 
 - Ionska spojina: kation prvi, anion drugi; vsota nabojev v formuli je $0$.
-- Križno pravilo: naboj kationa je indeks aniona in obratno; nato indeksa skrajšaj na najmanjše celo razmerje ($\mathrm{Mg^{2+}}$ + $\mathrm{O^{2-}}$ → $\mathrm{Mg_2O_2}$ → okrajšamo → $\mathrm{MgO}$); indeksa $1$ ne pišeš ($\mathrm{Al_2O_3}$, $\mathrm{AlCl_3}$, $\mathrm{Mg_3N_2}$).
+- Križno pravilo je bližnjica: indeks kationa je naboj aniona, indeks aniona naboj kationa; nato skrajšaj na najmanjše celo razmerje ($\mathrm{Mg_2O_2}$ → $\mathrm{MgO}$, en $\mathrm{Mg^{2+}}$ na en $\mathrm{O^{2-}}$) in preveri vsoto nabojev ($1 \cdot 2 + 1 \cdot (-2) = 0$); indeksa $1$ ne pišeš ($\mathrm{Al_2O_3}$, $\mathrm{AlCl_3}$, $\mathrm{Mg_3N_2}$).
 - Indeks velja za element tik pred njim.
 - Ime ionske spojine: kovina v pridevniški obliki + nekovina s končnico -id (klorid, oksid, sulfid, nitrid), brez števil.
 - Molekulska spojina (dve nekovini): formula iz števila vezi, v imenu predpone mono-, di-, tri-, tetra- ($\mathrm{CO_2}$ ogljikov dioksid, $\mathrm{CCl_4}$ ogljikov tetraklorid). Predpono mono- izpustimo le pred prvim elementom (»ogljikov«, ne »monoogljikov«), pri drugem jo zapišemo: $\mathrm{CO}$ je ogljikov monoksid.
@@ -187,7 +187,7 @@ Pri aluminijevem oksidu je enako. Vsak $\mathrm{Al^{3+}}$ je skupina treh »plus
 
 ## Drugače: Bolj natančno
 
-Ionska spojina ni iz molekul. Kristal safirja je neskončna mreža ionov, kjer je na vsaka dva aluminijeva iona trije oksidni. Zato $\mathrm{Al_2O_3}$ imenujemo **formulska enota**, ne molekula. Pri $\mathrm{CO_2}$ pa formula res opisuje eno samostojno molekulo.
+Ionska spojina ni iz molekul. Kristal safirja je neskončna mreža ionov, kjer so na vsaka dva aluminijeva iona trije oksidni. Zato $\mathrm{Al_2O_3}$ imenujemo **formulska enota**, ne molekula. Pri $\mathrm{CO_2}$ pa formula res opisuje eno samostojno molekulo.
 
 Nekatere kovine, predvsem prehodne, tvorijo ione z različnimi naboji. Železo je lahko $\mathrm{Fe^{2+}}$ ali $\mathrm{Fe^{3+}}$. Naboj tedaj povemo z rimsko številko: $\mathrm{FeO}$ je železov(II) oksid, $\mathrm{Fe_2O_3}$ železov(III) oksid. Prav slednji je bil v magnetni plasti starih avdiokaset, na katere so snemali glasbo.
 

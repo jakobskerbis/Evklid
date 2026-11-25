@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Moč naprave
+  - $P = U \cdot I$, enota $\mathrm{W}$
+  - doma $U = 230\,\mathrm{V}$
+- Energija
+  - $W = P \cdot t$
+  - kW krat h da kWh
+  - $1\,\mathrm{kWh} = 3{,}6\,\mathrm{MJ}$
+- Strošek
+  - $C = W \cdot c$
+  - napaka: vati namesto kilovatov
+- Moč in upor
+  - $P = \dfrac{U^2}{R} = I^2 R$
+  - pri isti napetosti: manjši upor, večja moč
+  - zaporedna grelca: moč pade
+- Hišna napeljava
+  - vtičnice vzporedno, tokovi se seštevajo
+  - varovalka $16\,\mathrm{A}$: največ $3680\,\mathrm{W}$
+- Čas delovanja
+  - majhna moč, dolg čas
+  - stanje pripravljenosti ni zanemarljivo

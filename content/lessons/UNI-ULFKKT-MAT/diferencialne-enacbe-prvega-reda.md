@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -138,7 +138,7 @@ Ločitev spremenljivk: $\int \frac{dc}{c} = -\int k\, dt$, rešitev $c(t) = c_0 
 3. Eksponent: $kt = 0{,}0250\,\mathrm{min^{-1}} \cdot 40\,\mathrm{min} = 1{,}00$ (brez enote, kot mora biti).
 4. $c(40\,\mathrm{min}) = 0{,}80\,\mathrm{mol/L} \cdot e^{-1} = 0{,}80 \cdot 0{,}3679\,\mathrm{mol/L} = 0{,}294\,\mathrm{mol/L}$.
 5. Razpolovni čas: $t_{1/2} = \frac{\ln 2}{0{,}0250\,\mathrm{min^{-1}}} = \frac{0{,}6931}{0{,}0250}\,\mathrm{min} = 27{,}7\,\mathrm{min}$.
-6. Preizkus: $40\,\mathrm{min}$ je malo več od enega razpolovnega časa, zato mora biti koncentracija malo manj od polovice $0{,}40\,\mathrm{mol/L}$; $0{,}294\,\mathrm{mol/L}$ se s tem ujema.
+6. Preizkus: $40\,\mathrm{min}$ je med enim in dvema razpolovnima časoma, zato mora biti koncentracija med $0{,}40\,\mathrm{mol/L}$ in $0{,}20\,\mathrm{mol/L}$; $0{,}294\,\mathrm{mol/L}$ se s tem ujema.
 7. Odgovor: po $40\,\mathrm{min}$ je koncentracija $0{,}294\,\mathrm{mol/L}$, razpolovni čas pa je $27{,}7\,\mathrm{min}$.
 
 ### Primer 2
@@ -284,7 +284,7 @@ Kjer velja Picardov izrek, se rešitvi ne moreta sekati (v presečišču bi imel
 
 ## Drugače: Korak za korakom s številkami
 
-Vzorec s $90\,^\circ\mathrm{C}$ postavimo v prostor s $20\,^\circ\mathrm{C}$; po $5\,\mathrm{min}$ ima $70\,^\circ\mathrm{C}$. Kdaj bo imel $40\,^\circ\mathrm{C}$?
+Vzorec z $90\,^\circ\mathrm{C}$ postavimo v prostor z $20\,^\circ\mathrm{C}$; po $5\,\mathrm{min}$ ima $70\,^\circ\mathrm{C}$. Kdaj bo imel $40\,^\circ\mathrm{C}$?
 
 1. **Model:** $\frac{dT}{dt} = -k(T - 20)$, torej $T(t) = 20 + 70\, e^{-kt}$.
 2. **Konstanta:** $70 = 20 + 70e^{-5k}$, $e^{-5k} = \frac{5}{7}$, $k = \frac{1}{5}\ln\frac{7}{5} = \frac{0{,}3365}{5} = 0{,}0673\,\mathrm{min^{-1}}$.
@@ -369,7 +369,8 @@ C | integracijska konstanta | | | določimo jo iz začetnega pogoja
 N | velikost populacije | | | eksponentna rast: $N(t) = N_0 e^{kt}$
 N_0 | začetna velikost populacije | |
 t | čas | |
-k | konstanta rasti oziroma hitrosti | | | k > 0 rast, k < 0 upadanje; v kinetiki s⁻¹
+k | konstanta rasti oziroma hitrosti | | | v N' = kN: k > 0 rast, k < 0 upadanje; v kinetiki (c' = −kc) je k > 0, enota s⁻¹
+\lambda | razpadna konstanta | \lambda = -k | | pri razpadu ($k < 0$); $t_{1/2} = \ln 2/\lambda$
 r | stopnja rasti v logističnem modelu | |
 K | nosilnost okolja | | | drugje tudi poljubna konstanta v rešitvi
 c | množinska koncentracija reaktanta | c(t) = c_0 e^{-kt} | mol/L | kinetika prvega reda

@@ -20,7 +20,7 @@ stanje: osnutek
   - mesta A, P, E
   - 4 energijsko bogate vezi na peptidno vez
 - Mutacije
-  - tiha, smiselna, nesmiselna
+  - tiha, drugačnosmiselna, nesmiselna
   - vstavitev premakne bralni okvir
 - Računi
   - aminokislin $=$ kodonov $- 1$

@@ -1,4 +1,4 @@
-// Pogled »Zbirke in učni pass« (public/zbirke.js): vitrina, učni pass s 30 stopnjami, tri zbirke
+// Pogled »Zbirke in nagradna pot« (public/zbirke.js): vitrina, nagradna pot (pass) s 30 stopnjami, tri zbirke
 // znanja z vnaprej vidnimi pogoji in pogled »preglej« (katera snov in kdaj je prinesla predmet).
 import { t } from "./i18n.js";
 import { icon } from "./icons.js";
@@ -52,10 +52,13 @@ export async function showZbirke(item = null, back = null) {
   const zbBack = view?.querySelector(".zb-back");
   if (zbBack) zbBack.hidden = from !== "games";
   if (item) tab = collectionOf(item);
+  const prej = data;
+  const prejJson = data && JSON.stringify(data);
   if (data) render();
   try {
     await loadZbirke();
-    render();
+    // Nespremenjeni podatki: zaslon je že izrisan, drugi izris bi bil le še ena dolga naloga po odprtju (kliki 20. 11. 2026).
+    if (!prej || izrisano !== prej || prejJson !== JSON.stringify(data)) render();
   } catch (e) {
     if (!data) root.innerHTML = `<p class="muted">${esc(e.message)}</p>`;
   }
@@ -200,8 +203,10 @@ function closeInspect() {
   render(opener);
 }
 
+let izrisano = null; // podatki zadnjega izrisa
 function render(focus = null) {
   if (!root || !data) return;
+  izrisano = data;
   const keep = focus || focusKey(document.activeElement);
   const own = ownedSet();
   const counts = Object.fromEntries(COLLECTIONS.map((c) => [c.id, KNOWLEDGE.filter((x) => x.collection === c.id && (!x.hidden || own.has(x.id)))]));

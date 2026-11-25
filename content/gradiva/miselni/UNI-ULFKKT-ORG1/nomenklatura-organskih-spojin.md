@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sestava imena
+  - predpone + osnova + končnica
+  - 4-hidroksi-4-metilpentan-2-on
+  - lokant: številka atoma glavne verige
+- Osnove imen
+  - met, et, prop, but, pent … dek
+  - *-an*, *-en*, *-in*; obroč *ciklo-*
+  - alkilne skupine *-il*: metil, izopropil
+- Pravila za alkane
+  - najdaljša veriga, več substituentov
+  - najnižji lokanti (prva razlika), abeceda brez *di-*, *tri-*
+  - pazi: 2-etilpropan je 2-metilbutan
+- Prednost skupin
+  - kislina, ester, amid, nitril
+  - aldehid, keton, alkohol, amin
+  - halogeni, nitro, alkoksi: le predpone
+- Splošni postopek
+  - glavna skupina, veriga, oštevilčenje, ime
+  - lokanti: skupina, večkratne vezi, predpone
+  - *pent-3-en-2-ol*, *butanal* brez lokanta
+- Stereodeskriptorji
+  - *(E)*, *(Z)* pri dvojni vezi
+  - *(R)*, *(S)* pri kiralnem središču
+- Stopnja nenasičenosti
+  - alkan $\mathrm{C}_n\mathrm{H}_{2n+2}$
+  - $U = \dfrac{2c + 2 + d - h - x}{2}$
+  - $\mathrm{C_6H_{10}O}$: $U = 2$

@@ -49,11 +49,32 @@ PDF razreda, poglavja in celega predmeta se ne izdela več na telefonu. Ob vsaki
 - `EVKLID_FREE_DAILY_QUESTIONS=10` – brezplačni paket: 10 vprašanj na dan.
 - `EVKLID_FREE_POOL_USD=10` – brezplačni paket: vsi brezplačni učenci skupaj porabijo največ 10 $ (≈ 8,7 €) na mesec, nato do 1. v mesecu samo Vadnica in lekcije.
 - `EVKLID_FREE_STUDENT_USD=0.2` – brezplačni paket: največ 0,2 $ na brezplačnega učenca na mesec.
+- `EVKLID_UNVERIFIED_DAY_USD=0.2` – vsi računi z nepotrjenim e-naslovom (in gostje) skupaj: največ 0,2 $ na dan (≈ 400 vprašanj s Haikujem), znotraj mesečne meje brezplačnih; nato do polnoči samo Vadnica in lekcije (»potrdi e-naslov«).
 - `EVKLID_MONTHLY_BUDGET_USD=50` – opozorilo v dnevniku pri 80 % porabe.
+- Ciljna meritev natančnosti po spremembi lekcij ali prompta **ne teče več na strežniku** (16. 11. 2026: strežnik in meritev
+  skupaj sta presegla 512 MB paketa Starter in Render je strežnik ponovno zagnal). Teče v GitHubu ob vsaki združitvi v main,
+  ki spremeni lekcije ali prompt: `.github/workflows/meritev-po-objavi.yml` (koda `scripts/meritev-po-objavi.mjs`,
+  `server/meritev-po-objavi.js`). Največ 1 $ na zagon, 15 $ na teden (ISO, UTC; šteje le samodejne meritve v GitHubu, ročne meritve na Renderju ali
+  računalniku ne), en zagon na commit; brez sprememb ni zagona. Enkrat na teden tek brez sprememb ohrani stanje
+  (0 $), da GitHub predpomnilnika ne izbriše.
+  Potrebuje skrivnost `ANTHROPIC_API_KEY` v GitHubu (Settings > Secrets and variables > Actions). Izid: Actions > Meritev po
+  objavi > zagon (povzetek in artefakt z dnevnikom). Spremenljivko `EVKLID_MERITEV_PO_OBJAVI` v Render → Environment lahko izbrišeš;
+  strežnik je ne bere več. `/api/admin/meritev-po-objavi` kaže le še staro zgodovino s strežnika.
 
 Vse lahko spremeniš v Render → Environment.
 
 **Šifriranje podatkov:** nastavi tudi `EVKLID_DATA_KEY` (navodila v [varnost-podatkov.md](varnost-podatkov.md)).
+
+## Glas za ustno spraševanje (storitev evklid-glas)
+
+Evklid bere vprašanja ustnega spraševanja na glas z odprtim slovenskim glasom Piper (glas »artur«, CC BY 4.0), ker
+glas naprave slovenščino pozna skoraj samo v Edgu. Glas ustvari ločena zasebna storitev `evklid-glas` iz
+`render.yaml` (Python, `glas/streznik.py`, Starter ≈ 7 $ na mesec; j 19. 11. 2026). Nastane ob sinhronizaciji
+Blueprinta (Render → Blueprints → evklid → **Manual Sync**, če se ne pojavi sama). Glavni strežnik jo najde prek
+`EVKLID_GLAS_URL` (`fromService`, ime:vrata). Brez nje Evklid uporabi glas naprave kot prej. Sinhronizacija
+Blueprinta, ki doda spremenljivko, lahko glavni strežnik takoj znova objavi, zato jo zaženi v nočnem oknu objav
+(03:00–05:00, scripts/render-objava.js). Preverjanje:
+v Render Shell glavnega strežnika `curl -s http://$EVKLID_GLAS_URL/healthz` vrne `ok`.
 
 ## Varnostna kopija
 
@@ -90,6 +111,8 @@ Nastavitev (enkrat):
 Obnova od zunaj (npr. na novem strežniku z istim `EVKLID_DATA_KEY`): `node scripts/obnovi-kopijo.js --oblak-prenesi 2026-11-04` prenese, odšifrira in preveri kopijo ter jo shrani kot lokalno `2026-11-04-0000`; naprej kot zgoraj (`--preveri 2026-11-04-0000`, nato `node scripts/obnovi-kopijo.js 2026-11-04-0000` in Restart service). Brez `EVKLID_DATA_KEY` (ali starega ključa v `EVKLID_DATA_KEYS_OLD`) se kopije od zunaj ne da odpreti, zato ključ hrani tudi v upravitelju gesel.
 
 ### Vaja obnove (enkrat pred pilotom, nato enkrat na mesec)
+
+Cel postopek obnove z izmerjenimi časi (tudi na novem strežniku): [obnova.md](obnova.md).
 
 1. `node scripts/obnovi-kopijo.js --zdaj`, nato `node scripts/obnovi-kopijo.js --preveri`: mora pisati »OBNOVA BI USPELA«.
 2. Prava vaja (ko nihče ne uporablja Evklida; kar se vpiše med vajo, se izgubi): `node scripts/obnovi-kopijo.js <datum ročne kopije iz 1. koraka>`, Restart service, preveri prijavo in profil, nato `--razveljavi` in še en Restart service.

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { verifyAnswer, parseVerdict, codeCheck } from "../server/verify.js";
+import { readFileSync } from "node:fs";
+import { verifyAnswer, parseVerdict, parseCardVerdicts, codeCheck, CARDS_SYSTEM } from "../server/verify.js";
 
 const fake = (replies) => {
   const calls = [];
@@ -20,6 +21,57 @@ test("verdict parsing", () => {
   assert.equal(parseVerdict("NAPAKA: 7 · 8 je 56").reason, "7 · 8 je 56");
   assert.equal(parseVerdict("OK, but 7·8 is 56").ok, false, "vse razen golega OK je dvom");
   assert.equal(parseVerdict("**OK**").ok, true);
+  // Utemeljitev pred sodbo (krog 8): sodba je zadnja vrstica; NAPAKA kjer koli ostane zavrnitev.
+  assert.equal(parseVerdict("The card states the rule correctly.\n\nOK").ok, true);
+  assert.equal(parseVerdict("NAPAKA: x\nOK").ok, false);
+  assert.match(parseVerdict("The flashcard states the criss-cross rule.").reason, /^brez sodbe: The flashcard/);
+});
+
+test("card verdicts: a wrong card rejects only itself", () => {
+  assert.deepEqual(parseCardVerdicts("OK", 3).cards, [true, true, true]);
+  assert.deepEqual(parseCardVerdicts("NAPAKA 2: x", 3).cards, [true, false, true]);
+  assert.equal(parseCardVerdicts("NAPAKA 2: x", 3).reason, "2: x");
+  assert.deepEqual(parseCardVerdicts("- NAPAKA card 1: x\n- NAPAKA #3 – y", 3).cards, [false, true, false]);
+  assert.deepEqual(parseCardVerdicts("NAPAKA: 2 je napačna", 3).cards, [false, false, false], "brez številke pred dvopičjem: vse");
+  assert.deepEqual(parseCardVerdicts("NAPAKA 4: x", 3).cards, [false, false, false], "številka zunaj obsega: vse");
+  assert.deepEqual(parseCardVerdicts("Card 2 has a NAPAKA in it", 3).cards, [false, false, false]);
+  assert.deepEqual(parseCardVerdicts("", 2).cards, [false, false]);
+  assert.match(CARDS_SYSTEM, /NAPAKA <number>/);
+  assert.doesNotMatch(CARDS_SYSTEM, /exactly one line/);
+});
+
+const FIX = JSON.parse(readFileSync(new URL("./fixtures/kartice-preverjanje.json", import.meta.url), "utf8"));
+for (const f of FIX.primeri) {
+  test(`cards fixture: ${f.ime}`, async () => {
+    const seen = [];
+    const fn = async (p) => {
+      seen.push(p);
+      const text = /opus/.test(p.model) ? f.odgovori.opus : f.odgovori.sonnet;
+      return { content: [{ type: "text", text }], usage: { input_tokens: 1000, output_tokens: 50 }, model: p.model, stop_reason: "end_turn" };
+    };
+    const r = await verifyAnswer({ question: "formule ionskih spojin", answer: f.kartice.join("\n"), kind: "cards", cards: f.kartice, createFn: fn });
+    assert.deepEqual(r.cards, f.pricakovano);
+    assert.equal(r.ok, f.pricakovano.every(Boolean));
+    assert.equal(seen.length, 2, "en klic na model, kot prej");
+    for (const p of seen) {
+      assert.equal(p.system, CARDS_SYSTEM);
+      f.kartice.forEach((c, i) => assert.ok(p.messages[0].content.includes(`${i + 1}. ${c}`), "kartice so oštevilčene"));
+    }
+  });
+}
+
+test("cards: a multi-line card stays one numbered item for the reviewer", async () => {
+  const seen = [];
+  const fn = async (p) => (seen.push(p), { content: [{ type: "text", text: "OK" }], usage: { input_tokens: 10, output_tokens: 1 }, model: p.model, stop_reason: "end_turn" });
+  const cards = ["Koraki? → 1. naboja\n2. križno pravilo", "B → b"];
+  await verifyAnswer({ question: "q", answer: cards.join("\n"), kind: "cards", cards, createFn: fn });
+  for (const p of seen) assert.match(p.messages[0].content, /1\. Koraki\? → 1\. naboja ; 2\. križno pravilo\n2\. B → b/);
+});
+
+test("cards: a cut-off reviewer rejects every card", async () => {
+  const cut = async (p) => ({ content: [{ type: "text", text: "OK" }], stop_reason: "max_tokens", usage: { output_tokens: 10 }, model: p.model });
+  const r = await verifyAnswer({ question: "q", answer: "A → a\nB → b", kind: "cards", cards: ["A → a", "B → b"], createFn: cut });
+  assert.deepEqual(r.cards, [false, false]);
 });
 
 test("a cut-off or refused reviewer, a failed call or a too long answer is never OK; costs are still logged", async () => {
@@ -169,6 +221,37 @@ test("chat: flashcards stay hidden until checked, rejected ones are deleted", as
     assert.equal(bad.store.db.prepare("SELECT COUNT(*) AS n FROM flashcards").get().n, 0);
   } finally {
     bad.close();
+  }
+});
+
+test("chat: in a mixed batch only the wrong flashcard is deleted", async () => {
+  const k = (v, o) => `<<KARTICA\nV: ${v}\nO: ${o}\n>>`;
+  const reply =
+    "Dobro.\n" +
+    k("Kako s križnim pravilom določiš indeksa?", "Indeks kationa je naboj aniona, indeks aniona naboj kationa; nato skrajšaj.") +
+    "\n" + k("Kaj je indeks kationa?", "Indeks kationa je naboj kationa.") +
+    "\n" + k("Formula aluminijevega oksida?", "$\\mathrm{Al_2O_3}$") + META;
+  // Preverjevalec zavrne kartico, ki trdi »naboj kationa« za indeks kationa (številko prebere iz oštevilčenega seznama).
+  const createFn = async (p) => {
+    const line = p.messages[0].content.split("\n").find((l) => /Indeks kationa je naboj kationa/.test(l));
+    const text = line ? `NAPAKA ${line.match(/^(\d+)\./)[1]}: the cation's subscript is the anion's charge` : "OK";
+    return { content: [{ type: "text", text }], usage: { input_tokens: 1000, output_tokens: 20 }, model: p.model, stop_reason: "end_turn" };
+  };
+  const app = await chatServer(reply, (a) => verifyAnswer({ ...a, createFn }));
+  const warn = console.warn;
+  const logs = [];
+  console.warn = (m) => logs.push(String(m));
+  try {
+    await app.ask("razloži formule ionskih spojin");
+    await tick();
+    const fronts = (await app.cards()).map((c) => c.front).sort();
+    assert.deepEqual(fronts, ["Formula aluminijevega oksida?", "Kako s križnim pravilom določiš indeksa?"]);
+    assert.equal(app.store.db.prepare("SELECT COUNT(*) AS n FROM flashcards").get().n, 2);
+    assert.ok(logs.some((l) => /kartice niso shranjene \(1 od 3; razlog ne gre v dnevnik/.test(l)), logs.join("\n"));
+    assert.ok(!logs.some((l) => /the cation/.test(l)), "besedilo kartice ne sme v dnevnik");
+  } finally {
+    console.warn = warn;
+    app.close();
   }
 });
 

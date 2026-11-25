@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -20,7 +20,7 @@ To deluje, dokler je programa malo. Ko imaš račune, stranke in kartice, se fun
 
 ## Razlaga
 
-**1. Razred in objekt.** **Razred** je načrt: opiše, katere podatke ima neka vrsta stvari in kaj zna. **Objekt** (tudi *primerek* ali *instanca*) je ena konkretna stvar, narejena po tem načrtu. Razred `Racun` je en, objektov `Racun` (Anin račun, Borov račun …) je lahko poljubno mnogo.
+**1. Razred in objekt.** **Razred** je načrt: opiše, katere podatke ima neka vrsta stvari in kaj zna. **Objekt** (tudi *primerek* ali *instanca*) je ena konkretna stvar, narejena po tem načrtu. Razred `Racun` je eden, objektov `Racun` (Anin račun, Borov račun …) je lahko poljubno mnogo.
 
 To že poznaš: `list` je razred, vsak seznam, ki ga ustvariš, pa je objekt tega razreda. Klic `[1, 2].append(3)` je klic **metode** `append` na tem objektu.
 
@@ -83,19 +83,30 @@ Metodo kličeš s piko in oklepaji: `a.polozi(50)`. Python sam vstavi `a` na mes
 Metoda `dvigni` pokaže, zakaj je razred koristen: pravilo »ne dvigni več, kot imaš« je zapisano na enem mestu, ob podatkih, ki jih varuje.
 
 :::premisli
-Imamo `a = Racun("Ana", 100)` in `b = Racun("Bor", 20)`. Pokličemo `a.polozi(30)`. Kolikšen je zdaj `b.stanje`? Zakaj?
+Imamo `a = Racun("Ana", 100)` in `b = Racun("Bor", 20)`. Pokličemo `a.polozi(30)`. Kolikšno je zdaj `b.stanje`? Zakaj?
 ---
 Še vedno `20`. Metoda je spremenila `self.stanje`, `self` pa je bil pri tem klicu objekt `a`. Objekt `b` ima svoj atribut `stanje`, ki ga nihče ni spremenil.
 :::
 
 **5. Ime in objekt.** Spremenljivka ne vsebuje objekta, ampak **kaže nanj**, tako kot pri seznamih. Prirejanje `c = a` ne naredi novega računa, ampak novo ime za isti račun:
 
-```
-a ──┐
-    ├──►  Racun: lastnik "Ana", stanje 130
-c ──┘
-b ─────►  Racun: lastnik "Bor", stanje 20
-```
+:::risba skica
+opis: Levo so imena a, c in b, desno dva pravokotnika, ki pomenita objekta. Od imen a in c vodita puščici v isti pravokotnik z napisom Racun: lastnik "Ana", stanje 130. Od imena b vodi puščica v drug pravokotnik z napisom Racun: lastnik "Bor", stanje 20.
+območje: 0; 0 .. 14; 8
+pravokotnik: 4,5; 4,4 .. 13,5; 7,6 | modra | ozadje
+napis: 9; 6,7 | Racun: | sredina
+napis: 9; 5,3 | lastnik "Ana", stanje 130 | sredina
+pravokotnik: 4,5; 0,4 .. 13,5; 3,6 | oranžna | ozadje
+napis: 9; 2,7 | Racun: | sredina
+napis: 9; 1,3 | lastnik "Bor", stanje 20 | sredina
+napis: 1; 7 | a | levo | debelo
+napis: 1; 5 | c | levo | debelo
+napis: 1; 2 | b | levo | debelo
+puščica: 1,3; 7 -> 4,5; 6,4
+puščica: 1,3; 5 -> 4,5; 5,6
+puščica: 1,3; 2 -> 4,5; 2
+podnapis: Imeni a in c kažeta na isti objekt, ime b na drugega.
+:::
 
 Nov objekt nastane samo s klicem razreda, na primer `Racun("Ana", 130)`.
 
@@ -132,7 +143,7 @@ Konstruktor shrani argumente v atribute; v metodi je `self` objekt pred piko. Ra
 
 **Rešitev:**
 
-1. Klic `Tocka(3, 4)` ustvari objekt in pokliče `__init__` z `self` = novi objekt, `x = 3`, `y = 4`.
+1. Klic `Tocka(3, 4)` ustvari objekt in pokliče `__init__` s `self` = novi objekt, `x = 3`, `y = 4`.
 2. Konstruktor nastavi `self.x = 3` in `self.y = 4`, zato `t.x` vrne `3`.
 3. Pri `t.razdalja()` je `self` objekt `t`, zato metoda računa s `self.x = 3` in `self.y = 4`.
 4. $3^2 + 4^2 = 25$, koren iz $25$ je $5$; ker je eksponent `0.5` tipa `float`, Python vrne `5.0`.
@@ -149,7 +160,7 @@ ok = a.dvigni(200)
 a.dvigni(30)
 ```
 
-Kolikšen je na koncu `a.stanje` in kaj je shranjeno v `ok`?
+Kolikšno je na koncu `a.stanje` in kaj je shranjeno v `ok`?
 
 **Podatki:** začetno stanje $100$, polog $50$, poskus dviga $200$, dvig $30$; metoda `dvigni` vrne `False` in ne spremeni stanja, če je znesek večji od stanja
 **Iščemo:** končno vrednost `a.stanje` in vrednost `ok`
@@ -251,7 +262,7 @@ Vrne `4.75`, ker je $2{,}5 + 1{,}5 + 0{,}75 = 4{,}75$. Brez `self.` metoda ne bi
 
 ## Pogoste napake
 
-- **Pozabljen `self` v definiciji.** Študent napiše `def obseg():`, ker pri klicu `p.obseg()` ne poda nobenega argumenta. Python pa objekt `p` poda sam, zato javi `TypeError: obseg() takes 0 positional arguments but 1 was given`. Prvi parameter vsake metode je `self`.
+- **Pozabljen `self` v definiciji.** Študent napiše `def obseg():`, ker pri klicu `p.obseg()` ne poda nobenega argumenta. Python pa objekt `p` poda sam, zato javi `TypeError: Pravokotnik.obseg() takes 0 positional arguments but 1 was given`. Prvi parameter vsake metode je `self`.
 - **Brez `self.` v metodi.** V metodi `polozi` študent napiše `stanje = stanje + znesek`. To je lokalna spremenljivka, ki ne obstaja, zato dobi napako; če pa je le priredi (`stanje = 0`), atribut ostane nespremenjen. Do atributov objekta vedno dostopaš s `self.ime`.
 - **Konstruktor naj vrne objekt.** Študent v `__init__` napiše `return self` ali kliče `a.__init__(...)` ročno. Objekt ustvari klic razreda `Racun(...)`; `__init__` ga le napolni z atributi in ne sme vrniti ničesar (Python javi `TypeError`).
 - **Klic metode brez oklepajev.** `p.ploscina` ni število, ampak metoda sama; izpis pokaže nekaj kot `<bound method ...>`. Za izračun potrebuješ `p.ploscina()`.
@@ -265,13 +276,141 @@ Vrne `4.75`, ker je $2{,}5 + 1{,}5 + 0{,}75 = 4{,}75$. Brez `self.` metoda ne bi
 - Metoda je funkcija v razredu s prvim parametrom `self`; klic `a.polozi(50)` pomeni `Racun.polozi(a, 50)`.
 - Spremenljivka kaže na objekt; `c = a` ne naredi kopije.
 
-## Drugače: Iz vsakdanjega življenja
+## Za izpit
 
-Pomisli na obrazec za vpis na fakulteto. Prazen obrazec je **razred**: določa, katera polja obstajajo (ime, priimek, datum rojstva). Vsak izpolnjen obrazec je **objekt**: ima ista polja, a svoje vrednosti. Ko Ana popravi svoj datum, se Borov obrazec ne spremeni.
+Znati moraš povedati:
+- definicijo razreda in objekta (primerka) ter kako objekt nastane: klic `Ime(...)` ustvari prazen objekt in nanj pokliče `__init__`;
+- kaj je `self` in zakaj je klic `a.polozi(50)` enak klicu `Racun.polozi(a, 50)`;
+- razliko med parametrom ali lokalno spremenljivko metode in atributom `self.ime`;
+- razliko med atributom objekta (nastavljen v `__init__`) in atributom razreda (zapisan v telesu razreda) ter zakaj spremenljivih podatkov ne hranimo v atributu razreda;
+- da spremenljivka kaže na objekt: `c = a` ne naredi kopije, enako velja za seznam, ki ga objekt shrani v atribut;
+- čemu služita posebni metodi `__str__` in `__eq__`.
 
-**Konstruktor** je trenutek, ko vzameš nov obrazec in vpišeš začetne podatke. **Atributi** so izpolnjena polja. **Metode** so dejanja, ki jih uradnik naredi z obrazcem, na primer »potrdi« ali »spremeni naslov«. Vsakič dela z enim, točno določenim obrazcem. To je `self`.
+### Naloga 1
 
-Če dva uradnika držita isti list papirja, je to `c = a`: dve roki, en obrazec.
+Razred `Polinom` hrani koeficiente polinoma v seznamu; `koef[i]` je koeficient pri $x^i$.
+
+```python
+class Polinom:
+    def __init__(self, koef):
+        self.koef = koef
+
+    def stopnja(self):
+        return len(self.koef) - 1
+
+    def vrednost(self, x):
+        v = 0
+        for k in reversed(self.koef):
+            v = v * x + k
+        return v
+
+    def odvod(self):
+        nov = []
+        for i in range(1, len(self.koef)):
+            nov.append(i * self.koef[i])
+        return Polinom(nov)
+
+    def pomnozi(self, c):
+        for i in range(len(self.koef)):
+            self.koef[i] = self.koef[i] * c
+
+t = [1, -3, 0, 2]
+p = Polinom(t)
+q = p.odvod()
+r = p
+r.pomnozi(2)
+t.append(1)
+print(p.vrednost(2), q.vrednost(2), p.stopnja(), q.stopnja())
+```
+
+(a) Kaj izpiše program? Pri vsakem koraku povej, na katere objekte kažejo imena `t`, `p`, `q` in `r`. (b) Spremeni eno vrstico razreda tako, da spreminjanje seznama `t` zunaj razreda ne vpliva več na polinom, in povej, kaj program izpiše po popravku.
+
+**Rešitev:**
+
+1. `p = Polinom(t)`: konstruktor izvede `self.koef = koef`, zato `p.koef` in `t` kažeta na isti seznam `[1, -3, 0, 2]`. Polinom je $1 - 3x + 2x^3$.
+2. `q = p.odvod()`: metoda sestavi nov seznam `[1 * (-3), 2 * 0, 3 * 2]`, torej `[-3, 0, 6]`, in vrne nov objekt. `q` je $-3 + 6x^2$ in s `p` ne deli ničesar.
+3. `r = p`: novo ime za isti objekt, novega polinoma ni.
+4. `r.pomnozi(2)`: `self` je objekt, na katerega kažeta `r` in `p`. Skupni seznam postane `[2, -6, 0, 4]`; to vidimo prek `p.koef` in prek `t`. Objekt `q` je nastal prej in ostane `[-3, 0, 6]`.
+5. `t.append(1)`: ker je `t` isti seznam kot `p.koef`, ima polinom `p` zdaj koeficiente `[2, -6, 0, 4, 1]`, torej $2 - 6x + 4x^3 + x^4$.
+6. `p.vrednost(2)`: $2 - 6 \cdot 2 + 4 \cdot 2^3 + 2^4 = 2 - 12 + 32 + 16 = 38$. `q.vrednost(2)`: $-3 + 6 \cdot 2^2 = 21$.
+7. `p.stopnja()` vrne $5 - 1 = 4$, `q.stopnja()` vrne $3 - 1 = 2$. Program izpiše `38 21 4 2`.
+8. (b) V konstruktorju napišemo `self.koef = list(koef)`. Objekt dobi svojo kopijo seznama, zato `t.append(1)` spremeni le `t`. Imeni `r` in `p` še vedno kažeta na isti objekt, zato množenje z $2$ ostane: `p.koef` je `[2, -6, 0, 4]`.
+9. Po popravku: `p.vrednost(2)` je $2 - 12 + 32 = 22$, `p.stopnja()` je $4 - 1 = 3$; `q` se ne spremeni.
+10. Odgovor: (a) `38 21 4 2`; (b) s `self.koef = list(koef)` program izpiše `22 21 3 2`.
+
+### Naloga 2
+
+Natančno navedi razliko med atributom razreda in atributom objekta. Nato utemelji, kaj izpiše spodnji program, in razred popravi tako, da ima vsaka skupina svoje člane.
+
+```python
+class Skupina:
+    clani = []
+
+    def __init__(self, ime):
+        self.ime = ime
+
+    def dodaj(self, oseba):
+        self.clani.append(oseba)
+
+a = Skupina("A")
+b = Skupina("B")
+a.dodaj("Ana")
+b.dodaj("Bor")
+b.ime = "C"
+print(len(a.clani), a.ime, a.clani is b.clani)
+```
+
+**Rešitev:**
+
+1. Atribut objekta nastane s prirejanjem `self.ime = vrednost` (navadno v `__init__`) in pripada enemu objektu; vsak objekt ima svojega.
+2. Atribut razreda je spremenljivka, zapisana v telesu razreda zunaj metod. Obstaja enkrat, v razredu, in ga delijo vsi objekti tega razreda.
+3. Ko Python bere `self.clani`, atribut najprej išče v objektu; ker ga tam ni, ga najde v razredu. Pri `a` in `b` je to isti seznam `Skupina.clani`.
+4. `a.dodaj("Ana")` in `b.dodaj("Bor")` zato dodajata v isti seznam, ki je na koncu `["Ana", "Bor"]`. Metoda `append` seznam spremeni, ničesar ne priredi, zato nov atribut objekta ne nastane.
+5. `b.ime = "C"` je prirejanje atributu objekta `b`; atribut `a.ime` je ločen in ostane `"A"`.
+6. Program izpiše `2 A True`: `len(a.clani)` je $2$, `a.ime` je `"A"`, izraz `a.clani is b.clani` pa je `True`, ker gre za en sam seznam.
+7. Popravek: vrstico `clani = []` izbrišemo in v konstruktor dodamo `self.clani = []`. Vsak klic `Skupina(...)` potem ustvari nov prazen seznam in program izpiše `1 A False`.
+
+### Naloga 3
+
+Napiši razred `Ulomek` za ulomke s pozitivnim števcem in imenovalcem. Konstruktor ulomek okrajša. Metoda `plus(drugi)` vrne nov ulomek, vsoto obeh, in ne spremeni nobenega od seštevancev. Dodaj `__eq__` in `__str__` (izpis oblike `7/15`). Kaj izpiše `print(Ulomek(1, 6).plus(Ulomek(3, 10)))`? Utemelji, zakaj brez metode `__eq__` izraz `Ulomek(1, 2) == Ulomek(1, 2)` vrne `False`.
+
+**Rešitev:**
+
+1. Atributa sta `self.st` in `self.im`. Za krajšanje v konstruktorju z Evklidovim algoritmom poiščemo največji skupni delitelj in oba dela z njim delimo.
+2. `plus` uporabi $\frac{a}{b} + \frac{c}{d} = \frac{ad + cb}{bd}$ in rezultat vrne s klicem `Ulomek(...)`; tako ga konstruktor sam okrajša, objekta `self` in `drugi` pa ostaneta nespremenjena.
+
+```python
+class Ulomek:
+    def __init__(self, st, im):
+        a, b = st, im
+        while b != 0:
+            a, b = b, a % b
+        self.st = st // a
+        self.im = im // a
+
+    def plus(self, drugi):
+        return Ulomek(self.st * drugi.im + drugi.st * self.im,
+                      self.im * drugi.im)
+
+    def __eq__(self, drugi):
+        return self.st == drugi.st and self.im == drugi.im
+
+    def __str__(self):
+        return str(self.st) + "/" + str(self.im)
+```
+
+3. `Ulomek(1, 6)` in `Ulomek(3, 10)` sta že okrajšana. V `plus` je števec $1 \cdot 10 + 3 \cdot 6 = 28$, imenovalec $6 \cdot 10 = 60$.
+4. Konstruktor novega ulomka: Evklidov algoritem na paru $(28, 60)$ da zaporedje $(60, 28)$, $(28, 4)$, $(4, 0)$, delitelj je $4$. Atributa sta $28 : 4 = 7$ in $60 : 4 = 15$.
+5. `print` pokliče `__str__`, zato se izpiše `7/15`.
+6. Brez `__eq__` operator `==` pri objektih lastnega razreda primerja, ali sta operanda isti objekt. Vsak klic `Ulomek(1, 2)` ustvari nov objekt, zato je rezultat `False`, čeprav sta atributa enaka. Z `__eq__` primerjamo atribute; ker konstruktor krajša, je tudi `Ulomek(2, 4) == Ulomek(1, 2)` enako `True`.
+
+## Drugače: Uporaba v stroki
+
+Matematik in fizik pri delu skoraj nikoli ne pišeta vsega sama, ampak uporabljata objekte iz knjižnic. V modulu `fractions` je `Fraction` **razred**: `Fraction(1, 3)` pokliče **konstruktor**, **atributa** `numerator` in `denominator` hranita števec in imenovalec. Vsota `Fraction(1, 3) + Fraction(1, 6)` je natanko `Fraction(1, 2)`, medtem ko `0.1 + 0.2` da `0.30000000000000004`.
+
+V numeričnih izračunih je matrika **objekt** razreda `ndarray` iz knjižnice NumPy. Atribut `A.shape` pove velikost, na primer `(1000, 1000)`, **metoda** `A.sum()` pa sešteje vseh milijon elementov. V simulaciji gibanja delcev je vsak delec objekt z atributi za lego in hitrost ter metodo, ki ga premakne za en časovni korak.
+
+Tudi `c = a` ima tu posledice. Matrika $1000 \times 1000$ realnih števil zasede $8$ MB. `B = A` ne porabi nič novega pomnilnika, a sprememba `B[0, 0] = 5` spremeni tudi `A`. Ločeno matriko naredi `A.copy()`, ki zasede novih $8$ MB.
 
 ## Drugače: Korak za korakom s številkami
 

@@ -3,6 +3,7 @@ import { icon } from "./icons.js";
 import { avatarSvg, itemOf, itemName, itemRarity, wear } from "./avatar.js";
 import { DRAW } from "./zbirke.js";
 import { t, currentLang, locale } from "./i18n.js";
+import { nameHasContact } from "./ime-skupine.js";
 import { zavrzi } from "./odgovor.js";
 import { quizCardHtml, playQuiz } from "./kviz.js";
 import { itemThumb, earnedWhere } from "./zbirke-view.js";
@@ -14,8 +15,11 @@ const api = async (url, opts = {}) => {
     headers: { "Content-Type": "application/json" },
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
+  // Sprememba mimo app.js api(): vnaprej prenesene kopije (public/kliki.js topli) niso več sveže.
+  if (opts.method && opts.method !== "GET") dispatchEvent(new Event("evklid:sprememba"));
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || t("lg.error", { status: res.status }));
+  // Napaka s ključem prevoda (npr. lg.nameContact): v jeziku učenca, ne v slovenščini strežnika.
+  if (!res.ok) throw new Error((data.code === "lg.nameContact" && t(data.code)) || data.error || t("lg.error", { status: res.status }));
   return data;
 };
 
@@ -133,22 +137,41 @@ function watchQuiz(studentId, inClass) {
   if (inClass) quizTimer = setInterval(() => refreshQuiz(studentId), 5000);
 }
 
-export async function loadLeague(studentId) {
+const leagueData = (studentId) =>
+  Promise.all([
+    api(`/api/students/${studentId}/league`),
+    api(`/api/students/${studentId}/assignments`).catch(() => null),
+    api(`/api/students/${studentId}/vitrina`).catch(() => null), // vitrine v razredu (server/vitrina.js)
+  ]);
+// Vnaprej (app.js, ko se odpre »Jaz« ali ob dotiku vrstice Lige): odprtje lige ne čaka strežnika. Velja za istega
+// učenca, 60 s in samo, če aplikacija vmes ni ničesar spremenila (gen: števec sprememb v app.js).
+let warm = null; // { id, gen, t, p }
+export function prefetchLeague(studentId, gen) {
+  if (warm && warm.id === studentId && warm.gen === gen && Date.now() - warm.t < 60_000) return;
+  warm = { id: studentId, gen, t: Date.now(), p: leagueData(studentId) };
+  warm.p.catch(() => {});
+}
+
+export async function loadLeague(studentId, gen) {
   current = studentId;
   const root = $("#league-content");
   let data;
   let tasks = null; // razredne naloge (server/schools.js); brez njih liga še vedno deluje
   let vit = null;
+  const w = warm;
+  warm = null;
+  const fresh = w && w.id === studentId && gen !== undefined && w.gen === gen && Date.now() - w.t < 60_000;
   try {
-    [data, tasks, vit] = await Promise.all([
-      api(`/api/students/${studentId}/league`),
-      api(`/api/students/${studentId}/assignments`).catch(() => null),
-      api(`/api/students/${studentId}/vitrina`).catch(() => null), // vitrine v razredu (server/vitrina.js)
-    ]);
+    [data, tasks, vit] = await (fresh ? w.p.catch(() => leagueData(studentId)) : leagueData(studentId));
   } catch (e) {
     root.innerHTML = `<p class="muted">${esc(e.message)}</p>`;
     return;
   }
+  // Pripravljeni podatki: najprej slika tapa, izris lige v naslednji nalogi (INP; kliki 20. 11. 2026).
+  if (fresh) await new Promise((ok) => {
+    const to = setTimeout(ok, 100);
+    requestAnimationFrame(() => setTimeout(() => (clearTimeout(to), ok()), 0));
+  });
   if (current !== studentId) return;
   vitrine = vit;
   const L = data.league;
@@ -206,7 +229,7 @@ export async function loadLeague(studentId) {
         <button class="primary" type="submit">${esc(t("lg.join"))}</button>
       </form>
       <form id="friends-form" class="row">
-        <input id="friends-name" placeholder="${esc(t("lg.groupPh"))}" aria-label="${esc(t("lg.groupPh"))}" maxlength="40">
+        <input id="friends-name" dir="auto" placeholder="${esc(t("lg.groupPh"))}" aria-label="${esc(t("lg.groupPh"))}" maxlength="40">
         <button type="submit" class="secondary">${icon("plus")}<span>${esc(t("lg.create"))}</span></button>
       </form>
       <p class="muted">${esc(t("lg.teacher"))} <a href="ucitelj.html" target="_blank">${esc(t("lg.teacherLink"))}</a></p>
@@ -237,6 +260,7 @@ export async function loadLeague(studentId) {
   });
   $("#friends-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (nameHasContact($("#friends-name").value)) return toast(t("lg.nameContact"));
     try {
       const r = await api(`/api/students/${studentId}/friend-groups`, { method: "POST", body: { name: $("#friends-name").value } });
       toast(t("lg.created", { code: r.code }));
@@ -384,6 +408,7 @@ function toast(msg) {
   if (!el) return alert(msg);
   el.textContent = msg;
   el.hidden = false;
+  el.dataset.at = Date.now(); // app.js hideOldToast
   clearTimeout(toast.timer);
   toast.timer = setTimeout(() => (el.hidden = true), 4000);
 }

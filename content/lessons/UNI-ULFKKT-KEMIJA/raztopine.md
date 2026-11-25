@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -33,7 +33,7 @@ Vsaka koncentracija je ulomek »koliko topljenca / na koliko česa«. Razlikujej
 
 Količini s prostornino v imenovalcu ($c$, $\gamma$) sta odvisni od temperature, ker se prostornina s temperaturo spreminja. Molalnost ni, zato jo uporabljamo pri koligativnih lastnostih.
 
-**3. Pretvarjanje.** Most med maso in prostornino raztopine je **gostota** $\rho = m(\text{raztopine})/V(\text{raztopine})$. Iz masnega deleža izračunamo množinsko koncentracijo z
+**3. Pretvarjanje.** Most med maso in prostornino raztopine je **gostota** $\rho = m(\text{raztopine})/V(\text{raztopine})$. Iz masnega deleža izračunamo množinsko koncentracijo s
 
 $$c = \frac{w\,\rho}{M}.$$
 
@@ -124,7 +124,7 @@ $c = \dfrac{w\,\rho}{M}$, $c_1V_1 = c_2V_2$
 **Rešitev:**
 
 1. Za osnovo vzamemo $1\,\mathrm{L}$ koncentrirane kisline, ker iščemo množino na liter: masa $1000\,\mathrm{mL} \cdot 1{,}18\,\mathrm{g/mL} = 1180\,\mathrm{g}$.
-2. Masa $\mathrm{HCl}$: $0{,}37 \cdot 1180\,\mathrm{g} \approx 437\,\mathrm{g}$; množina $437 / 36{,}46\,\mathrm{mol} \approx 11{,}97\,\mathrm{mol}$.
+2. Masa $\mathrm{HCl}$: $0{,}37 \cdot 1180\,\mathrm{g} = 436{,}6\,\mathrm{g}$; množina $436{,}6 / 36{,}46\,\mathrm{mol} \approx 11{,}97\,\mathrm{mol}$.
 3. Torej $c_1 \approx 12{,}0\,\mathrm{mol/L}$.
 4. Redčenje (množina $\mathrm{HCl}$ se ohrani, dodamo le vodo): $V_1 = \dfrac{c_2V_2}{c_1} = \dfrac{0{,}100\,\mathrm{mol/L} \cdot 500\,\mathrm{mL}}{11{,}97\,\mathrm{mol/L}} \approx 4{,}18\,\mathrm{mL}$.
 5. Postopek: v merilno bučko za $500\,\mathrm{mL}$ nalijemo nekaj vode, dodamo $4{,}18\,\mathrm{mL}$ koncentrirane kisline in dopolnimo z vodo do oznake.
@@ -235,15 +235,43 @@ Izpelji, da je za razredčeno raztopino nehlapnega topljenca relativno znižanje
 
 Redčenje si predstavljaj kot isto število »kroglic« topljenca v večji posodi:
 
-```
-   pred redčenjem          po redčenju
-   +--------+              +-------------------------+
-   | ****** |  + voda  ->  |  *    *     *    *   *  |
-   | ****** |              |    *    *     *     *   |
-   +--------+              |  *    *    *    *    *  |
-   V1 = 10 mL              +-------------------------+
-   c1 = 1,0 mol/L          V2 = 100 mL,  c2 = 0,10 mol/L
-```
+:::risba skica
+opis: Redčenje. Levo majhna posoda z 12 kroglicami topljenca, prostornina V₁ = 10 mL, koncentracija c₁ = 1,0 mol/L. Puščica z napisom »+ voda« kaže na desno, desetkrat večjo posodo z istimi 12 kroglicami, ki so razmaknjene: V₂ = 100 mL, c₂ = 0,10 mol/L.
+območje: 0; -16 .. 320; 116
+pravokotnik: 35; 20 .. 65; 65 | ozadje
+pravokotnik: 130; 20 .. 310; 95 | ozadje
+krog: 42; 26 | 2,5 | modra polno
+krog: 50; 26 | 2,5 | modra polno
+krog: 58; 26 | 2,5 | modra polno
+krog: 42; 37 | 2,5 | modra polno
+krog: 50; 37 | 2,5 | modra polno
+krog: 58; 37 | 2,5 | modra polno
+krog: 42; 48 | 2,5 | modra polno
+krog: 50; 48 | 2,5 | modra polno
+krog: 58; 48 | 2,5 | modra polno
+krog: 42; 59 | 2,5 | modra polno
+krog: 50; 59 | 2,5 | modra polno
+krog: 58; 59 | 2,5 | modra polno
+krog: 244,7; 30,3 | 2,5 | modra polno
+krog: 195,1; 36,3 | 2,5 | modra polno
+krog: 245,9; 75 | 2,5 | modra polno
+krog: 199,1; 82,5 | 2,5 | modra polno
+krog: 159; 83,9 | 2,5 | modra polno
+krog: 271,9; 38,9 | 2,5 | modra polno
+krog: 211,3; 57,2 | 2,5 | modra polno
+krog: 250,2; 57,2 | 2,5 | modra polno
+krog: 288,1; 53,6 | 2,5 | modra polno
+krog: 291,2; 80,9 | 2,5 | modra polno
+krog: 148,7; 35,7 | 2,5 | modra polno
+krog: 149,3; 54,5 | 2,5 | modra polno
+puščica: 72; 42 -> 122; 42 | + voda | nad
+napis: 50; 74 | pred redčenjem
+napis: 220; 106 | po redčenju
+napis: 50; 8 | V_1 = 10 mL
+napis: 50; -8 | c_1 = 1,0 mol/L
+napis: 220; 8 | V_2 = 100 mL
+napis: 220; -8 | c_2 = 0,10 mol/L
+:::
 
 Kroglic je enako ($n = c_1V_1 = c_2V_2$), prostornina je desetkrat večja, zato je koncentracija desetkrat manjša.
 
@@ -255,7 +283,7 @@ Osmozo si predstavljaj kot U-cev s polprepustno membrano na dnu. Na levi je čis
 
 **Klinični laboratorij: osmometer.** Osmolalnost plazme (okoli $0{,}290\,\mathrm{mol}$ delcev na kilogram vode) merijo s krioskopskim osmometrom: vzorec zmrzne pri okoli $-1{,}86 \cdot 0{,}290\,^\circ\mathrm{C} \approx -0{,}54\,^\circ\mathrm{C}$. Razlika med izmerjeno osmolalnostjo in osmolalnostjo, izračunano iz koncentracij natrija, glukoze in sečnine (osmolalna vrzel), razkrije npr. zastrupitev z etanolom ali metanolom.
 
-**Industrija: obratna osmoza in hladilne tekočine.** Pri razsoljevanju na morsko vodo pritisnemo z večjim tlakom od osmoznega (za morsko vodo okoli $2{,}5$ do $3\,\mathrm{MPa}$), da voda teče skozi membrano iz slane v sladko stran; tako pripravljajo tudi ultračisto vodo za farmacijo in elektroniko. Hladilne tekočine z etilenglikolom zmrzujejo globoko pod $0\,^\circ\mathrm{C}$; pri teh koncentracijah enačba $\Delta T_t = K_kb$ da le oceno.
+**Industrija: obratna osmoza in hladilne tekočine.** Pri razsoljevanju na morsko vodo pritisnemo z večjim tlakom od osmoznega (za morsko vodo okoli $2{,}5$ do $3\,\mathrm{MPa}$), da voda teče skozi membrano s slane na sladko stran; tako pripravljajo tudi ultračisto vodo za farmacijo in elektroniko. Hladilne tekočine z etilenglikolom zmrzujejo globoko pod $0\,^\circ\mathrm{C}$; pri teh koncentracijah enačba $\Delta T_t = K_kb$ da le oceno.
 
 **Raziskave: molske mase polimerov.** Z membransko osmometrijo določajo številsko povprečno molsko maso polimerov in beljakovin (Naloga 2).
 
@@ -284,7 +312,7 @@ Za vodo ($T_t^* = 273{,}15\,\mathrm{K}$, $M_1 = 0{,}018\,02\,\mathrm{kg/mol}$, $
 
 **Raoultov zakon s številkami.** Za raztopino $1{,}00\,\mathrm{mol}$ saharoze v $1000\,\mathrm{g}$ vode je $n(\mathrm{H_2O}) \approx 55{,}5\,\mathrm{mol}$, $x_1 \approx 55{,}5/56{,}5 \approx 0{,}982$. Pri $25\,^\circ\mathrm{C}$ ($p^* = 3{,}17\,\mathrm{kPa}$) je parni tlak $p \approx 3{,}11\,\mathrm{kPa}$; znižanje je le okoli $0{,}06\,\mathrm{kPa}$, zato je merjenje parnega tlaka manj občutljivo kot krioskopija ali osmometrija.
 
-**Realne raztopine elektrolitov.** Izmerjeni $i$ je manjši od idealnega, ker se ioni v raztopini delno združujejo v ionske pare in ker jih obdaja ionska atmosfera (Debye-Hücklova teorija). Za $0{,}1\,\mathrm{mol/kg}$ $\mathrm{NaCl}$ je $i \approx 1{,}9$. V natančnih računih nadomestimo koncentracijo z aktivnostjo, molalnost pa z **osmolalnostjo** (število mol delcev na kilogram topila), ki jo v medicinskih laboratorijih merijo neposredno.
+**Realne raztopine elektrolitov.** Izmerjeni $i$ je manjši od idealnega, ker se ioni v raztopini delno združujejo v ionske pare in ker jih obdaja ionska atmosfera (Debye-Hücklova teorija). Za $0{,}1\,\mathrm{mol/kg}$ $\mathrm{NaCl}$ je $i \approx 1{,}9$. V natančnih računih nadomestimo koncentracijo z aktivnostjo, molalnost pa z **osmolalnostjo** (število molov delcev na kilogram topila), ki jo v medicinskih laboratorijih merijo neposredno.
 
 **Osmometrija polimerov.** Ker je $\Pi$ že pri majhnih koncentracijah merljiv (milimol na liter da nekaj kilopaskalov), z osmoznim tlakom določamo molske mase beljakovin in polimerov, pri katerih bi bilo znižanje tališča premajhno za merjenje.
 
@@ -300,11 +328,11 @@ Za vodo ($T_t^* = 273{,}15\,\mathrm{K}$, $M_1 = 0{,}018\,02\,\mathrm{kg/mol}$, $
 
 ? $10\,\mathrm{mL}$ raztopine s koncentracijo $1{,}0\,\mathrm{mol/L}$ razredčimo z vodo na končno prostornino $100\,\mathrm{mL}$. Kolikšna je nova koncentracija?
 + $0{,}10\,\mathrm{mol/L}$
-- $0{,}090\,\mathrm{mol/L}$
+- $0{,}091\,\mathrm{mol/L}$
 ~ Tako računaš, če $100\,\mathrm{mL}$ vode dodaš; v nalogi je $100\,\mathrm{mL}$ že končna prostornina.
 - $10\,\mathrm{mol/L}$
 ~ Pri redčenju koncentracija ne more narasti; zamenjal si $V_1$ in $V_2$.
-> $c_2 = c_1V_1/V_2 = 1{,}0 \cdot 10 / 100\,\mathrm{mol/L} = 0{,}10\,\mathrm{mol/L}$. $0{,}090$ bi dobil, če bi dodal $100\,\mathrm{mL}$ vode (končna prostornina $110\,\mathrm{mL}$).
+> $c_2 = c_1V_1/V_2 = 1{,}0 \cdot 10 / 100\,\mathrm{mol/L} = 0{,}10\,\mathrm{mol/L}$. $0{,}091$ bi dobil, če bi dodal $100\,\mathrm{mL}$ vode (končna prostornina $110\,\mathrm{mL}$).
 
 ? Katera vodna raztopina z molalnostjo $0{,}10\,\mathrm{mol/kg}$ ima najnižje tališče?
 - glukoza

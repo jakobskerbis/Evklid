@@ -49,8 +49,6 @@ export function backupKey(id = null) {
 export const encryptionOn = () => !!keys();
 export const currentKeyId = () => keys()?.id ?? null;
 export const isEncrypted = (v) => typeof v === "string" && v.startsWith(PREFIX);
-// keyId šifriranega zapisa (ali null).
-export const keyIdOfValue = (v) => (isEncrypted(v) ? v.slice(PREFIX.length, PREFIX.length + 8) : null);
 
 // Zašifrira besedilo (null in undefined ostaneta). Brez ključa vrne besedilo nespremenjeno.
 export function seal(text) {
@@ -87,6 +85,37 @@ export function canOpen(value) {
   return unseal(value, null) !== null;
 }
 
+// Oznaka dogodka (events.flag, j 18. 11. 2026): »none« ostane berljiv (SQL loči opozorila od navadnih odgovorov),
+// vse ostale (distress, unsafe, injection, offtopic, photo) se zašifrirajo, da se iz baze ne vidi, katera je stiska.
+// Pred šifriranjem dopolnjena na FLAG_PAD znakov: vsi zapisi so enako dolgi, dolžina ne izda vrste oznake.
+export const FLAG_PAD = 12;
+// Brez ključa ostane nedopolnjena (kot vsa polja brez ključa: nešifrirano).
+export const sealFlag = (flag) => (flag === null || flag === undefined || flag === "none" || !keys() ? flag : seal(String(flag).padEnd(FLAG_PAD)));
+// Odšifrirana oznaka; neberljiva (manjka ključ) vrne `fallback` (privzeto null).
+export function openFlag(flag, fallback = null) {
+  if (!isEncrypted(flag)) return typeof flag === "string" ? flag.trim() : flag;
+  const v = unseal(flag, null);
+  return v === null ? fallback : v.trim();
+}
+
+// Pregled oznake (events.pregled, server/stiska-obvestilo.js): vrsta varnostnega okna ob stiski in čas, ko je skrbnik
+// oznako pregledal. Zapiše se ob vsaki oznaki razen »none« (ne samo ob stiski) in je dopolnjen na PREGLED_PAD znakov,
+// zato se iz baze po prisotnosti ali dolžini ne vidi, katera oznaka je stiska ali je bila pregledana.
+export const PREGLED_PAD = 96;
+export const sealPregled = (obj) => seal(JSON.stringify(obj || {}).padEnd(PREGLED_PAD));
+// Odšifriran pregled ({} ali { v, pregledano_ob, pregledal }); NULL ali neberljiv vrne `fallback` (privzeto null).
+export function openPregled(value, fallback = null) {
+  if (value === null || value === undefined) return fallback;
+  const s = unseal(value, null);
+  if (s === null) return fallback;
+  try {
+    const o = JSON.parse(s.trim());
+    return o && typeof o === "object" ? o : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 // JSON polje: zašifriran niz JSON; ob neberljivem zapisu vrne `fallback`.
 export const sealJson = (obj) => seal(JSON.stringify(obj));
 export function unsealJson(value, fallback) {
@@ -108,6 +137,14 @@ export function blindIndex(text) {
   return `h1:${k.id}:${crypto.createHmac("sha256", sub).update(String(text)).digest("base64url").slice(0, 32)}`;
 }
 
+// Zgoščena vrednost omrežja (naslova IP) za kvote gostov: HMAC s ključem, izpeljanim iz EVKLID_DATA_KEY, da je iz baze
+// ni mogoče obrniti s preizkušanjem vseh naslovov IPv4 (pregled DPIA, 21. 11. 2026). Brez ključa (razvoj, testi) sha256.
+export function netHash(text) {
+  const k = keys();
+  if (!k) return crypto.createHash("sha256").update(`evklid-guest-net|${text}`).digest("hex");
+  return crypto.createHmac("sha256", crypto.createHmac("sha256", k.key).update("evklid-gost-omrezje").digest()).update(String(text)).digest("hex");
+}
+
 // Skrivnost za HMAC naslovov IP v dnevniku dostopov: iz ključa podatkov ali naključna, shranjena v bazi.
 export function auditSecret(db) {
   const k = keys();
@@ -124,12 +161,29 @@ export function auditSecret(db) {
 
 export const newKey = () => crypto.randomBytes(32).toString("base64");
 
+// Produkcija: Render (sam nastavi RENDER=true), NODE_ENV=production ali javni naslov s https.
+export const jeProdukcija = (env = process.env) => env.NODE_ENV === "production" || (!!env.RENDER && env.RENDER !== "false" && env.RENDER !== "0") || /^https:/i.test(env.EVKLID_BASE_URL || "");
+
+/**
+ * Ob zagonu (server/index.js): v produkciji brez EVKLID_DATA_KEY se strežnik ne zažene, ker bi pogovori in druga
+ * osebna polja šli v bazo nešifrirani. Izjema samo izrecno z EVKLID_ALLOW_PLAINTEXT=1. Vrne besedilo napake ali null.
+ * Razvoj, testi in preizkusni način (brez produkcijskih znakov) delajo brez ključa kot prej.
+ */
+export function zagonBrezKljuca(env = process.env) {
+  if (!jeProdukcija(env) || env.EVKLID_ALLOW_PLAINTEXT === "1") return null;
+  if (String(env.EVKLID_DATA_KEY || "").trim()) return null; // napačno obliko ključa javi keys() ob prvi uporabi
+  return (
+    "[evklid] Strežnik se ne zažene: v produkciji ni nastavljen EVKLID_DATA_KEY, zato bi se pogovori in drugi osebni " +
+    "podatki v bazi shranjevali nešifrirani. Nastavi EVKLID_DATA_KEY (isti ključ kot doslej, iz upravitelja gesel; nov ključ: " +
+    "node scripts/kljuc-podatkov.js). Samo če nešifrirano shranjevanje res želiš: EVKLID_ALLOW_PLAINTEXT=1. Več: docs/varnost-podatkov.md."
+  );
+}
+
 // Opozorilo ob zagonu v produkciji brez ključa (enkrat).
 let warned = false;
 export function warnIfNoKey(log = console) {
   if (warned || keys()) return;
-  const prod = process.env.NODE_ENV === "production" || /^https:/i.test(process.env.EVKLID_BASE_URL || "");
-  if (!prod) return;
+  if (!jeProdukcija()) return;
   warned = true;
   log.warn?.("[evklid] OPOZORILO: EVKLID_DATA_KEY ni nastavljen, pogovori se v bazi shranjujejo nešifrirani (docs/varnost-podatkov.md).");
 }
@@ -154,6 +208,12 @@ export const SEALED = [
   { table: "pilot_mnenja", cols: ["liked", "bothers"] },
   // Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa.
   { table: "zapiski", cols: ["naslov", "prepis"] },
+  // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
+  // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
+  // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
+  { table: "events", cols: ["flag"], where: "flag <> 'none'", pad: FLAG_PAD, clearIf: { value: "distress", cols: ["topic", "topic_id"] } },
+  // Pregled oznake (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js), dopolnjen kot oznaka.
+  { table: "events", cols: ["pregled"], where: "pregled IS NOT NULL", pad: PREGLED_PAD, label: "events.pregled" },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
@@ -167,7 +227,7 @@ export function encryptionStats(db) {
     for (const c of t.cols.filter((x) => hasCol(db, t.table, x))) {
       const s = { table: t.table, col: c, encrypted: 0, plain: 0, unreadable: 0, oldKey: 0 };
       const cur = currentKeyId();
-      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL`).iterate()) {
+      for (const r of db.prepare(`SELECT ${c} AS v FROM ${t.table} WHERE ${c} IS NOT NULL${t.where ? ` AND (${t.where})` : ""}`).iterate()) {
         if (!isEncrypted(r.v)) s.plain++;
         else if (!canOpen(r.v)) s.unreadable++;
         else {

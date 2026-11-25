@@ -10,7 +10,7 @@ import { createApp } from "../server/app.js";
 import { verifyAppleJws, AppleSignatureError, APPLE_ROOT_G3 } from "../server/mobile/apple-crypto.js";
 import { BUNDLE_ID, STORE_PRODUCTS, appleState } from "../server/mobile/store-billing.js";
 import { googleSubscriptionState } from "../server/mobile/google-play.js";
-import { goalPushText } from "../server/mobile/push.js";
+import { dropExpiredPushTokens, goalPushText } from "../server/mobile/push.js";
 import { fetchApk } from "../server/mobile/download.js";
 import { apkVersion, manifestVersion } from "../server/mobile/apk-info.js";
 import os from "node:os";
@@ -221,6 +221,82 @@ test("App Store purchase gives the plan, other account is refused, refund notifi
   });
 });
 
+// Točka 1.2: po vračilu star podpisan nakup (isti JWS) naročnine ne oživi; nov nakup, obnova in nadgradnja jo.
+// Transakcija, kupljena pred najnovejšo znano (iOS jih ob zagonu dostavi po vrsti; star letni paket po nadgradnji),
+// stanja ne spremeni. REFUND_REVERSED nakup spet vklopi.
+test("Apple: refunded purchase stays refunded; renewals, upgrades and new purchases go through; older ones are no-ops", async () => {
+  await withServer(async ({ appClient, adult, store, base }) => {
+    const c = appClient();
+    const p = await adult(c);
+    const token = (await c("/api/billing/store")).body.account_token;
+    const post = (t) => c("/api/billing/apple", { body: { signed_transaction: appleJws(t) } });
+    const parent = () => store.db.prepare("SELECT sub_status, sub_plan FROM parents WHERE id = ?").get(p.id);
+    const status = () => parent().sub_status;
+    const notify = (type, t) =>
+      fetch(`${base}/webhooks/app-store`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ signedPayload: appleJws({ notificationType: type, data: { bundleId: BUNDLE_ID, signedTransactionInfo: appleJws(t) } }) }) });
+    const DAY = 86400000;
+    const now = Date.now();
+    const product = (interval, family) => STORE_PRODUCTS.find((x) => !x.legacy && x.interval === interval && !!x.family === family);
+    const t = (id, o) => tx({ appAccountToken: token, transactionId: id, signedDate: now, ...o });
+    const oct = t("2000000010", { purchaseDate: now - 32 * DAY, expiresDate: now - 2 * DAY });
+    const nov = t("2000000011", { purchaseDate: now - 2 * DAY, expiresDate: now + 28 * DAY });
+
+    // 1. Novejše obdobje, nato iOS znova dostavi starejšo transakcijo: brez učinka, ostane dejavno.
+    assert.equal((await post(nov)).status, 200);
+    const older = await post(oct);
+    assert.equal(older.status, 200);
+    assert.equal(older.body.older, true);
+    assert.equal(status(), "active");
+    assert.equal((await post(nov)).status, 200, "isti nakup znova (»Obnovi nakupe«)");
+
+    // 2. Vračilo starejšega obdobja: obvestilo naročnino konča, trenutni (plačani) nakup jo znova vklopi.
+    assert.equal((await notify("REFUND", { ...oct, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    assert.equal((await post(nov)).status, 200);
+    assert.equal(status(), "active");
+
+    // 3. Vračilo trenutnega obdobja: isti nakup ostane zavrnjen (tudi brez datuma podpisa), zakasnelo obvestilo ga ne vklopi.
+    assert.equal((await notify("REFUND", { ...nov, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    const again = await post(nov);
+    assert.equal(again.status, 409);
+    assert.equal(again.body.revoked, true);
+    assert.equal((await post({ ...nov, signedDate: undefined })).status, 409);
+    assert.equal((await notify("DID_RENEW", nov)).status, 200);
+    assert.equal(status(), "canceled");
+
+    // 4. Vračilo preklicano (spor končan): nakup spet velja.
+    assert.equal((await notify("REFUND_REVERSED", nov)).status, 200);
+    assert.equal(status(), "active");
+    assert.equal((await post(nov)).status, 200);
+
+    // 5. Nadgradnja iz letnega v družinski mesečni paket v aplikaciji: novi paket velja.
+    const y1 = t("2000000020", { productId: product("year", false).id, purchaseDate: now - DAY, expiresDate: now + 364 * DAY });
+    const m1 = t("2000000021", { productId: product("month", true).id, purchaseDate: now, expiresDate: now + 30 * DAY });
+    assert.equal((await post(y1)).status, 200);
+    assert.equal(parent().sub_plan, product("year", false).plan);
+    const up = await post(m1);
+    assert.equal(up.status, 200, JSON.stringify(up.body));
+    assert.equal(up.body.older, undefined);
+    assert.deepEqual({ ...parent() }, { sub_status: "active", sub_plan: product("month", true).plan });
+
+    // 6. Vračilo nadgradnje: star letni nakup iz predpomnilnika naročnine ne vklopi.
+    assert.equal((await notify("REFUND", { ...m1, revocationDate: now })).status, 200);
+    assert.equal(status(), "canceled");
+    const stale = await post(y1);
+    assert.equal(stale.status, 200);
+    assert.equal(stale.body.older, true);
+    assert.equal(status(), "canceled");
+
+    // 7. Nov nakup po vračilu (krajše obdobje od vrnjenega letnega): velja.
+    const m2 = t("2000000022", { productId: product("month", false).id, purchaseDate: now + 1000, expiresDate: now + 30 * DAY });
+    const fresh = await post(m2);
+    assert.equal(fresh.status, 200, JSON.stringify(fresh.body));
+    assert.equal(fresh.body.older, undefined);
+    assert.equal(status(), "active");
+  });
+});
+
 // Testni nakupi so brezplačni (TestFlight, peskovnik): veljajo samo za testne račune.
 test("test purchases count only for store testers and admins", async () => {
   await withServer(
@@ -384,17 +460,112 @@ test("push tokens: only Expo tokens, tied to the account", async () => {
   });
 });
 
+// Pregled #897: žeton obvestil ne sme ostati vezan na račun, ko prijava na telefonu poteče ali je odjavljena.
+test("push tokens follow the login session: expired or logged-out session stops reminders", async () => {
+  await withServer(async ({ appClient, adult, store }) => {
+    const db = store.db;
+    const tokens = () => db.prepare("SELECT token FROM push_tokens ORDER BY token").all().map((r) => r.token);
+    const c = appClient();
+    const p = await adult(c);
+    const T1 = "ExponentPushToken[telefon1aaaaaaaaaaa]";
+    assert.equal((await c("/api/push/register", { body: { token: T1, platform: "android" } })).status, 200);
+    const row = db.prepare("SELECT session_hash FROM push_tokens WHERE token = ?").get(T1);
+    assert.equal(row.session_hash, crypto.createHash("sha256").update(c.session()).digest("hex"), "žeton je vezan na to prijavo");
+
+    // Druga prijava istega računa (npr. brskalnik) žetona prve ne ohranja pri življenju.
+    const web = appClient();
+    assert.equal((await web("/api/auth/login", { body: { email: "starsh@primer.si", password: "geslo12345" } })).status, 200);
+    assert.equal(dropExpiredPushTokens(db), 0);
+    assert.deepEqual(tokens(), [T1]);
+    db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE token_hash = ?").run("2000-01-01T00:00:00.000Z", row.session_hash);
+    assert.equal(dropExpiredPushTokens(db, new Date(), p.id + 1), 0, "samo za podani račun");
+    assert.equal(dropExpiredPushTokens(db, new Date(), p.id), 1, "potekla seja telefona: žeton gre");
+    assert.deepEqual(tokens(), []);
+
+    // Odjava, ki ne odjavi žetona (npr. telefon brez povezave ob odjavi), ga ne pusti vezanega.
+    const c2 = appClient();
+    assert.equal((await c2("/api/auth/login", { body: { email: "starsh@primer.si", password: "geslo12345" } })).status, 200);
+    const T2 = "ExponentPushToken[telefon2bbbbbbbbbbb]";
+    assert.equal((await c2("/api/push/register", { body: { token: T2 } })).status, 200);
+    assert.equal((await c2("/api/auth/logout", { body: {} })).status, 200);
+    dropExpiredPushTokens(db);
+    assert.deepEqual(tokens(), []);
+
+    // Stari zapis brez seje velja, dokler ima račun živo prijavo.
+    const T3 = "ExponentPushToken[starizapiscccccccccc]";
+    db.prepare("INSERT INTO push_tokens (token, parent_id) VALUES (?, ?)").run(T3, p.id);
+    assert.equal(dropExpiredPushTokens(db), 0);
+    db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE parent_id = ?").run("2000-01-01T00:00:00.000Z", p.id);
+    assert.equal(dropExpiredPushTokens(db), 1);
+    // … a največ 30 dni od zadnje prijave žetona, tudi ob živi prijavi v brskalniku (aplikacija brez opomnika ga ne prijavi znova).
+    db.prepare("UPDATE parent_sessions SET expires_at = ? WHERE parent_id = ?").run("2999-01-01T00:00:00.000Z", p.id);
+    db.prepare("INSERT INTO push_tokens (token, parent_id, updated_at) VALUES (?, ?, datetime('now', '-29 days'))").run(T3, p.id);
+    assert.equal(dropExpiredPushTokens(db), 0, "29 dni: še velja");
+    assert.equal(dropExpiredPushTokens(db, new Date(Date.now() + 2 * 86400000)), 1, "čez 30 dni: gre");
+  });
+});
+
+test("download page: promises only apps that exist, in every language (dl.intro, dl.introWeb)", async () => {
+  // Brez APK in Google Play: ne obljublja nobene aplikacije (dl.introWeb).
+  await withServer(async ({ base }) => {
+    const en = await (await fetch(`${base}/prenesi?lang=en`)).text();
+    assert.doesNotMatch(en, /available as an app for Android/);
+    assert.match(en, /The phone app is coming soon\./);
+    const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+    assert.match(sl, /Aplikacija za telefon bo kmalu na voljo\./);
+  });
+  // APK za Android, za iPhone ni aplikacije: Android + »Dodaj na začetni zaslon« (dl.intro).
+  await withServer(
+    async ({ base }) => {
+      const en = await (await fetch(`${base}/prenesi?lang=en`)).text();
+      assert.doesNotMatch(en, /Android and iPhone/);
+      assert.match(en, /app for Android\. On iPhone and iPad, add it to your Home Screen/);
+      const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+      assert.match(sl, /aplikacija za Android\. Na iPhonu in iPadu ga v Safariju dodaš na začetni zaslon/);
+    },
+    { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)) },
+  );
+  // Vsi jeziki: uvoda brez aplikacije za iPhone omenita Safari, ime ostane Evklid.
+  const dir = new URL("../public/i18n/ui/", import.meta.url);
+  for (const f of fs.readdirSync(dir)) {
+    const d = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
+    for (const k of ["dl.intro", "dl.introWeb"]) {
+      assert.match(d[k], /Safari/, `${f} ${k}`);
+      assert.match(d[k], /Evklid/, `${f} ${k}`);
+    }
+    assert.notEqual(d["dl.intro"], d["dl.introApps"], f);
+  }
+});
+
 test("download page offers the APK when it exists and works without login", async () => {
   await withServer(
     async ({ base }) => {
       const page = await (await fetch(`${base}/prenesi?lang=en`)).text();
       assert.match(page, /\/prenesi\/evklid\.apk/);
       assert.match(page, /TestFlight/);
+      // Z aplikacijo za iPhone (TestFlight) uvod omeni obe napravi; APK brez Google Play pove, zakaj je datoteka.
+      assert.match(page, /available as an app for Android and iPhone/);
+      assert.match(page, /not in Google Play yet/);
+      // Noga z javnimi stranmi (ne v aplikaciji, ?app=1).
+      assert.match(page, /<footer><a href="\/">Evklid<\/a><a href="\/o-evklidu">/);
+      assert.ok(!(await (await fetch(`${base}/prenesi?lang=sl&app=1`)).text()).includes("<footer>"));
       const apk = await fetch(`${base}/prenesi/evklid.apk`);
       assert.equal(apk.status, 200);
       assert.equal(apk.headers.get("content-type"), "application/vnd.android.package-archive");
     },
     { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)), env: { EVKLID_TESTFLIGHT_URL: "https://testflight.apple.com/join/TEST" } },
+  );
+});
+
+// APK brez Google Play pove, zakaj je datoteka; noga z javnimi stranmi (uvod preveri test »promises only apps that exist«).
+test("download page: APK without Google Play explains why, footer links public pages", async () => {
+  await withServer(
+    async ({ base }) => {
+      const sl = await (await fetch(`${base}/prenesi?lang=sl`)).text();
+      assert.match(sl, /Aplikacije še ni v trgovini Google Play, zato jo preneseš kar s te strani\./);
+      assert.ok(sl.includes('<a href="/starsi.html">Za starše</a>'));
+    },
+    { apkFile: fileURLToPath(new URL("./fixtures/apple-chain.json", import.meta.url)) },
   );
 });
 

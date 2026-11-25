@@ -23,6 +23,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     let spremenjeno = 0;
     for (const node of doc.getRoot().listNodes()) {
       if (!node.getMesh() || node.getExtras()?.tkivo !== tkivo || node.getExtras().napihnjeno === odmik) continue;
+      const korak = odmik - (node.getExtras().napihnjeno || 0);
       for (const prim of node.getMesh().listPrimitives()) {
         const m = G.preberi(node, prim);
         // normala oglišča: povprečje normal vseh oglišč na istem mestu (šivi UV), da se mreža ob šivu ne razpre
@@ -40,12 +41,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         for (let i = 0; i < n; i++) {
           const v = vsota.get(kl[i]);
           const l = Math.hypot(...v) || 1;
-          for (let c = 0; c < 3; c++) m.P[i * 3 + c] += (v[c] / l) * odmik;
+          for (let c = 0; c < 3; c++) m.P[i * 3 + c] += (v[c] / l) * korak;
         }
         if (!suho) G.zapisi(doc, node, prim, m);
       }
       node.setExtras({ ...node.getExtras(), napihnjeno: odmik });
-      console.log(`${rel}: ${node.getName()}: +${(odmik * 1000).toFixed(1)} mm`);
+      console.log(`${rel}: ${node.getName()}: +${(korak * 1000).toFixed(1)} mm (skupaj ${(odmik * 1000).toFixed(1)} mm)`);
       spremenjeno++;
     }
     // stari dostopniki zamenjanih mrež ne smejo ostati v datoteki

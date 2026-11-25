@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,18 +15,34 @@ Nekaj let kasneje je skupina pri IBM pod vodstvom Johna Backusa razvila jezik FO
 
 Temperature v Ljubljani en teden ob 14. uri (levo indeks, desno vrednost v predalu):
 
-```
- i    t[i]
-    +------+
- 0  | 18,4 |
- 1  | 21,0 |
- 2  | 24,6 |
- 3  | 23,2 |
- 4  | 19,8 |
- 5  | 17,5 |
- 6  | 20,3 |
-    +------+
-```
+:::risba skica
+opis: Sedem predalov, zloženih drug pod drugim. Levo ob vsakem je indeks i, v predalu vrednost t[i]: indeks 0 vrednost 18,4; indeks 1 vrednost 21,0; indeks 2 vrednost 24,6; indeks 3 vrednost 23,2; indeks 4 vrednost 19,8; indeks 5 vrednost 17,5; indeks 6 vrednost 20,3.
+območje: 0; 0 .. 140; 198
+enota: 1
+napis: 20; 186 | i | sredina | debelo
+napis: 85; 186 | t[i] | sredina | debelo
+pravokotnik: 40; 148 .. 130; 172 | modra
+napis: 20; 160 | 0 | sredina
+napis: 85; 160 | 18,4 | sredina
+pravokotnik: 40; 124 .. 130; 148 | modra
+napis: 20; 136 | 1 | sredina
+napis: 85; 136 | 21,0 | sredina
+pravokotnik: 40; 100 .. 130; 124 | modra
+napis: 20; 112 | 2 | sredina
+napis: 85; 112 | 24,6 | sredina
+pravokotnik: 40; 76 .. 130; 100 | modra
+napis: 20; 88 | 3 | sredina
+napis: 85; 88 | 23,2 | sredina
+pravokotnik: 40; 52 .. 130; 76 | modra
+napis: 20; 64 | 4 | sredina
+napis: 85; 64 | 19,8 | sredina
+pravokotnik: 40; 28 .. 130; 52 | modra
+napis: 20; 40 | 5 | sredina
+napis: 85; 40 | 17,5 | sredina
+pravokotnik: 40; 4 .. 130; 28 | modra
+napis: 20; 16 | 6 | sredina
+napis: 85; 16 | 20,3 | sredina
+:::
 
 Vse vrednosti so istega tipa, vsaka ima svoj **indeks**, štetje se začne pri $0$. Zadnji indeks je za ena manjši od dolžine. Do vrednosti prideš neposredno po indeksu, ne da bi šel čez prejšnje: `t[2]` je $24{,}6$.
 
@@ -98,12 +114,42 @@ for (int i = 0; i < n / 2; i++) {
 
 Mesečne povprečne temperature treh postaj (p 0, p 1, p 2) za štiri mesece (januar–april) so **dvodimenzionalna tabela** s $3$ vrsticami in $4$ stolpci:
 
-```
-      jan  feb  mar  apr
-p 0: [ 2,1  4,5  9,8 14,2]
-p 1: [-1,3  1,2  6,4 11,0]
-p 2: [ 0,4  3,0  8,1 12,6]
-```
+:::risba skica
+opis: Tabela s 3 vrsticami in 4 stolpci. Stolpci so meseci jan, feb, mar, apr, vrstice so postaje p 0, p 1, p 2. Vrstica p 0: 2,1; 4,5; 9,8; 14,2. Vrstica p 1: −1,3; 1,2; 6,4; 11,0. Vrstica p 2: 0,4; 3,0; 8,1; 12,6.
+območje: 0; 0 .. 274; 118
+enota: 1
+napis: 72; 104 | jan | sredina
+napis: 128; 104 | feb | sredina
+napis: 184; 104 | mar | sredina
+napis: 240; 104 | apr | sredina
+napis: 20; 76 | p 0 | sredina
+pravokotnik: 44; 62 .. 100; 90 | modra
+napis: 72; 76 | 2,1 | sredina
+pravokotnik: 100; 62 .. 156; 90 | modra
+napis: 128; 76 | 4,5 | sredina
+pravokotnik: 156; 62 .. 212; 90 | modra
+napis: 184; 76 | 9,8 | sredina
+pravokotnik: 212; 62 .. 268; 90 | modra
+napis: 240; 76 | 14,2 | sredina
+napis: 20; 48 | p 1 | sredina
+pravokotnik: 44; 34 .. 100; 62 | modra
+napis: 72; 48 | −1,3 | sredina
+pravokotnik: 100; 34 .. 156; 62 | modra
+napis: 128; 48 | 1,2 | sredina
+pravokotnik: 156; 34 .. 212; 62 | modra
+napis: 184; 48 | 6,4 | sredina
+pravokotnik: 212; 34 .. 268; 62 | modra
+napis: 240; 48 | 11,0 | sredina
+napis: 20; 20 | p 2 | sredina
+pravokotnik: 44; 6 .. 100; 34 | modra
+napis: 72; 20 | 0,4 | sredina
+pravokotnik: 100; 6 .. 156; 34 | modra
+napis: 128; 20 | 3,0 | sredina
+pravokotnik: 156; 6 .. 212; 34 | modra
+napis: 184; 20 | 8,1 | sredina
+pravokotnik: 212; 6 .. 268; 34 | modra
+napis: 240; 20 | 12,6 | sredina
+:::
 
 ```java
 double[][] m = new double[3][4];
@@ -147,7 +193,7 @@ Osnovne metode na primeru `v = "LJ;31.4;0.0"`:
 
 `substring(a, b)` vrne znake od indeksa $a$ do indeksa $b$, brez $b$.
 
-**Primerjava nizov.** `a == b` primerja sklica (ali je to isti objekt), `a.equals(b)` pa vsebino. Dva niza z enakimi znaki sta lahko različna objekta, zato vsebino **vedno** primerjaj z `equals`; vrstni red po kodah znakov da `compareTo` (zato `"ž"` pride za `"z"`, ne pred njim; to ni slovenska abeceda).
+**Primerjava nizov.** `a == b` primerja sklica (ali je to isti objekt), `a.equals(b)` pa vsebino. Dva niza z enakimi znaki sta lahko različna objekta, zato vsebino **vedno** primerjaj z `equals`; vrstni red po kodah znakov da `compareTo` (zato `"č"` pride za `"z"`, ne takoj za `"c"`; to ni slovenska abeceda).
 
 **Znaki so števila.** `char` je v Javi celoštevilski tip, zato `'7' - '0'` da $7$, `(char)('a' + 1)` pa `'b'`. Pretvorbo celega niza v število opravita `Integer.parseInt` in `Double.parseDouble`.
 
@@ -298,7 +344,7 @@ Koliko je deževnih dni, kolikšen je delež in kako ga izračunaš v Javi?
 - **`b = a` kot kopija.** Kopira se sklic; spremembe prek `b` vidiš v `a`. Za kopijo uporabi `clone()` ali `Arrays.copyOf`.
 - **Primerjava nizov z `==`.** Lahko vrne `false` za enaka besedila. Uporabi `equals`.
 - **`length` pri nizih in tabelah.** Tabela ima atribut `a.length`, niz metodo `s.length()`.
-- **Celoštevilsko deljenje pri povprečju ali deležu.** `vsota / n` z dvema `int` zaokroži navzdol; vsaj eno število pretvori v `double`.
+- **Celoštevilsko deljenje pri povprečju ali deležu.** `vsota / n` z dvema `int` odreže decimalni del; vsaj eno število pretvori v `double`.
 
 ## Povzetek
 
@@ -351,7 +397,7 @@ static double[][] zgladi(double[][] g) {
 }
 ```
 
-3. Pogoj `a >= 0 && a < v && b >= 0 && b < s` izloči sosede zunaj mreže; ker `&&` računa skrajšano, do `g[a][b]` pride le, ko sta indeksa veljavna.
+3. Pogoj `a >= 0 && a < v && b >= 0 && b < s` izloči sosede zunaj mreže; ker je dostop `g[a][b]` znotraj `if`, do njega pride le, ko sta indeksa veljavna.
 4. Celica $(0, 0)$: soseda sta $(1, 0) = 5$ in $(0, 1) = 3$; $(1 + 5 + 3)/3 = 3{,}0$.
 5. Celica $(1, 1)$: vse štiri sosede obstajajo, $(7 + 0 + 3 + 6 + 5)/5 = 21/5 = 4{,}2$.
 6. Celica $(2, 3)$: soseda sta $(1, 3) = 8$ in $(2, 2) = 4$; $(1 + 8 + 4)/3 \approx 4{,}33$.
@@ -456,7 +502,7 @@ Obrni tabelo `a = {3, 8, 1, 6, 4}` na mestu z zanko iz razlage.
 ~ Več sklicev na isto tabelo je dovoljeno in pogosto; to je ravno pomen sklica.
 > `b = a` kopira naslov; obe spremenljivki kažeta na isti objekt, zato je sprememba prek `b` vidna prek `a`.
 
-? Kateri korak rešitve je napačen? Naloga: povprečje tabele `t` z $7$ elementi. (1) `double s = 0;` (2) `for (int i = 0; i <= t.length; i++) s += t[i];` (3) `double p = s / t.length;`
+? Kateri korak rešitve je napačen? Naloga: povprečje tabele `t` s $7$ elementi. (1) `double s = 0;` (2) `for (int i = 0; i <= t.length; i++) s += t[i];` (3) `double p = s / t.length;`
 - korak 1
 ~ Seštevalnik se pravilno začne pri nič pred zanko.
 + korak 2

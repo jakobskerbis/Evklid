@@ -3,7 +3,7 @@
 import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import { casCheck, casAvailable, casStop } from "../server/cas.js";
-import { parseClaims, checkAnswerClaims, chemBalanced, molarOk, STATS_KV } from "../server/racun.js";
+import { MAX_CLAIMS, parseClaims, checkAnswerClaims, chemBalanced, molarOk, STATS_KV } from "../server/racun.js";
 import { stripMeta, createStreamFilter } from "../server/meta.js";
 import { stripRacunBlocks } from "../server/textbook.js";
 import { verifyAiFull } from "../server/scan.js";
@@ -98,6 +98,23 @@ cas("SymPy: zaokroženi rezultati in enote", async () => {
   assert.equal((await casCheck("value", ["sqrt(2)", "1.42"])).ok, false);
   assert.equal((await casCheck("value", ["3/4+2/5", "23/20"])).ok, true);
   assert.equal((await casCheck("value", ["sin(30*pi/180)", "1/2"])).ok, true);
+  // Meritev SŠ 18. 11. (KEM-SS-3): 17,46 mol je izpisan zaokrožen vmesni rezultat (17,4626), 1048,6 g je pravilno.
+  assert.equal((await casCheck("value", ["17.46*60.05", "1048.6"])).ok, true, "zaokrožen vmesni rezultat s 4 mesti");
+  assert.equal((await casCheck("value", ["17.46*60.05", "1049.5"])).ok, false, "prava napaka ostane napaka");
+  assert.equal((await casCheck("value", ["1.0487*4.80", "5.05"])).ok, false);
+  assert.equal((await casCheck("value", ["17.46*60.05", "1049"])).ok, true, "celo število: zaokrožitev 0,5");
+  assert.equal((await casCheck("value", ["12.34*5.6", "69"])).ok, true);
+  // FIZ-SS-2/notranja-energija-in-toplota (vrstici 404–405): zaokrožena temperatura zmesi 74,19 °C
+  assert.equal((await casCheck("value", ["4200*(80-74.19)", "24402"])).ok, true);
+  assert.equal((await casCheck("value", ["450*(74.19-20)", "24386"])).ok, true);
+  // Ponovni pregled #835: celo število pri |vrednost| < 10 ni zaokrožitev (kot same_value)
+  for (const [expr, claim] of [["2*3.1416", "6"], ["1.2345*0.3", "0"], ["1.2345*0.5", "1"], ["1.2345/4", "0"]]) {
+    assert.equal((await casCheck("value", [expr, claim])).ok, false, `${expr} | ${claim}`);
+  }
+  // Pregled #835: odstopanje zaradi zaokroženih vmesnih rezultatov je omejeno (≤ 0,1 % vrednosti, presežek ≤ 0,05 %).
+  for (const [expr, claim] of [["1234.5-1234.4", "0.2"], ["1234.5-1234.4", "0.15"], ["17.46*60.05", "1048.9"], ["1.0001^10000", "2.0"], ["1/(1.2345-1.2344)", "5000.0"], ["1/(1.2345-1.2344)", "12000.0"]]) {
+    assert.equal((await casCheck("value", [expr, claim])).ok, false, `${expr} | ${claim}`);
+  }
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*N"])).ok, true);
   assert.equal((await casCheck("units", ["3.2*kg*9.81*m/s^2", "31.4*J"])).ok, false, "napačna enota");
   assert.equal((await casCheck("units", ["72*km/h", "20*m/s"])).ok, true);
@@ -134,6 +151,65 @@ cas("skeniranje: AI rešitev preverita numerika in SymPy", async () => {
   assert.equal((await verifyAiFull("2x+y=5; x-y=1", { kind: "system", solutions: ["x=2; y=1"] })).verified, true);
   assert.equal((await verifyAiFull("f(x) = x^2 sin(x)", { kind: "derivative", variable: "x", value: "2x sin(x) + x^2 cos(x)" })).verified, true);
   assert.equal((await verifyAiFull("\\frac{1}{2}+\\frac{1}{3}", { kind: "arith", value: "5/6" })).verified, true);
+});
+
+// AUDIT-001: SymPy preveri popolnost tudi pri sistemih z več rešitvami (prej jih je preskočil) in pri
+// primerih, kjer numerika popolnosti ne preveri.
+cas("AUDIT-001: SymPy rejects incomplete solution sets, accepts complete ones", async () => {
+  const wrong = [
+    ["x=10000000", { kind: "equation", variable: "x", solutions: [] }],
+    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2+0*k"] }],
+    ["x^2=1; y=0", { kind: "system", solutions: ["x=1; y=0"] }],
+    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi"] }],
+    ["x^2+y^2=25; x+y=7", { kind: "system", solutions: ["x=3; y=4"] }],
+    ["x^2=1; y^2=1", { kind: "system", solutions: ["x=1; y=1", "x=-1; y=-1"] }],
+  ];
+  for (const [t, sol] of wrong) {
+    const r = await verifyAiFull(t, sol);
+    assert.equal(r.verified, false, t);
+    assert.equal(r.reason, "missing", `${t}: ${r.cas}`);
+  }
+  const right = [
+    ["x^2+y^2=25; x+y=7", { kind: "system", solutions: ["x=3; y=4", "x=4; y=3"] }],
+    ["x^2=1; y^2=1", { kind: "system", solutions: ["x=1; y=1", "x=1; y=-1", "x=-1; y=1", "x=-1; y=-1"] }],
+    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi", "x=5*pi/6+2*k*pi"] }],
+    ["x^2+1=0", { kind: "equation", variable: "x", solutions: [] }],
+  ];
+  for (const [t, sol] of right) assert.equal((await verifyAiFull(t, sol)).verified, true, t);
+});
+
+// Pregled #935 (oba pregledovalca): pravilni odgovori, ki jih je SymPy po spremembi zavrnil ali ni odločil.
+cas("AUDIT-001 pregled: log, implicitno množenje, √, »2x«, več rešitev v enem nizu, sistem brez rešitve", async () => {
+  const ok = [
+    ["2x^2+y=3; 3x+y=1", { kind: "system", solutions: ["x=2; y=-5", "x=-1/2; y=5/2"] }],
+    ["2x+3y=7; 4x-y=0", { kind: "system", solutions: ["x=1/2; y=2"] }],
+    ["log_10(x)+log_10(y)=1; x+y=11", { kind: "system", solutions: ["x=1; y=10", "x=10; y=1"] }],
+    ["log(x)+log(y)=1; x+y=7", { kind: "system", solutions: ["x=2; y=5", "x=5; y=2"] }],
+    ["x^2+y^2=13; xy=6", { kind: "system", solutions: ["x=2; y=3", "x=3; y=2", "x=-2; y=-3", "x=-3; y=-2"] }],
+    ["x^2+y^2=4; y=x", { kind: "system", solutions: ["x=√2; y=√2", "x=-√2; y=-√2"] }],
+    ["x+y=7; x*y=12", { kind: "system", solutions: ["x=3, y=4; x=4, y=3"] }],
+    ["x+y=2; 2*x+2*y=5", { kind: "system", solutions: [] }],
+    ["x-y=1; 2x-2y=3", { kind: "system", solutions: ["ni rešitve"] }],
+    ["x-y=1; 2x-2y=3", { kind: "system", solutions: ["Sistem nima rešitve."] }],
+    ["x+y=2; 2x+2y=4", { kind: "system", solutions: ["x=k; y=2-k"] }],
+    ["log_10(x)=1", { kind: "equation", variable: "x", solutions: ["10"] }],
+    ["log_2(x)+log_2(x-2)=3", { kind: "equation", variable: "x", solutions: ["4"] }],
+    ["log(x)+log(x-3)=1", { kind: "equation", variable: "x", solutions: ["5"] }],
+    ["log(x^2)=2", { kind: "equation", variable: "x", solutions: ["10", "-10"] }],
+  ];
+  for (const [t, sol] of ok) {
+    const r = await verifyAiFull(t, sol);
+    assert.equal(r.verified, true, `${t}: ${JSON.stringify(r)}`);
+  }
+  // Premica v ravnini rešitev ni cela množica rešitev.
+  const plane = await verifyAiFull("x+y+z=1; 2*x+2*y+2*z=2; 3*x+3*y+3*z=3", { kind: "system", solutions: ["x=t; y=1-t; z=0"] });
+  assert.equal(plane.verified, false);
+  assert.equal(plane.reason, "missing");
+  // Periodične rešitve v sistemu: SymPy ne odloča, numerika jih ne potrdi (nepreverjeno, ne »napačno«).
+  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2*k*pi; y=1/2", "x=5*pi/6+2*k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
+  assert.deepEqual(await verifyAiFull("sin(x)=y; y=1/2", { kind: "system", solutions: ["x=pi/6+2k*pi; y=1/2", "x=5pi/6+2k*pi; y=1/2"] }), { verified: false, reason: "unknown" });
+  // Nepopolno ostane nepopolno tudi z log in implicitnim množenjem.
+  assert.equal((await verifyAiFull("x^2+y^2=13; xy=6", { kind: "system", solutions: ["x=2; y=3", "x=3; y=2"] })).reason, "missing");
 });
 
 // Pregled #581 (funkcija): pravilni šolski odgovori ne smejo sprožiti lažnega alarma.
@@ -198,7 +274,7 @@ cas("klepet: napačna trditev v bloku RACUN sproži en popravek; blok ni viden",
   const calls = [];
   const answer = "Enačbo razstaviva: $(x-2)(x-3)=0$, zato je $x = 2$." + "\n<<RACUN\nresi: x^2-5*x+6=0 | x | 2\n>>" + META;
   const streamFn = async ({ system, mode, onText, messages }) => {
-    const isFix = typeof system === "string" && system.startsWith("You fix one mistake");
+    const isFix = typeof system === "string" && system.startsWith("You fix the mistakes");
     calls.push({ isFix, messages });
     const text = isFix ? "Popravek: rešitvi sta $x = 2$ in $x = 3$." : answer;
     if (!isFix) onText(text);
@@ -224,4 +300,11 @@ cas("klepet: napačna trditev v bloku RACUN sproži en popravek; blok ni viden",
   } finally {
     server.close();
   }
+});
+
+test("parseClaims: odgovor inštruktorja do MAX_CLAIMS, lekcija (max = Infinity) vse trditve", () => {
+  const lines = Array.from({ length: MAX_CLAIMS + 5 }, () => `kemija: H2 + Cl2 -> 2 HCl`).join("\n");
+  const text = `<<RACUN\n${lines}\n>>`;
+  assert.equal(parseClaims(text).length, MAX_CLAIMS);
+  assert.equal(parseClaims(text, Infinity).length, MAX_CLAIMS + 5);
 });

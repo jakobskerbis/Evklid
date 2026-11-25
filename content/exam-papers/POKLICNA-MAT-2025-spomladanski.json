@@ -31,15 +31,15 @@
             0,
             3
           ],
-          "answer": "DA: 1. in 4. trditev. NE: 2. in 3. trditev.",
+          "answer": "DA: A in D. NE: B in C.",
           "ways": [
             {
               "title": "Po pravilih za potence, ulomke in korene",
-              "text": "**1. trditev – DA.** Potenca z negativnim eksponentom je obratna vrednost potence s pozitivnim eksponentom: $x^{-n} = \\frac{1}{x^n}$. Za $x = a + b$ in $n = 2$ dobiš $(a + b)^{-2} = \\frac{1}{(a + b)^2}$. Ker je $a + b > 0$, je imenovalec različen od nič.\n\n**2. trditev – NE.** Ulomke seštevaš tako, da jih razširiš na skupni imenovalec, ne tako, da sešteješ števce in imenovalce posebej:\n$\\frac{2}{a} + \\frac{3}{b} = \\frac{2b}{ab} + \\frac{3a}{ab} = \\frac{2b + 3a}{ab}$.\nZapis $\\frac{5}{a + b}$ nastane z napačnim seštevanjem »števec + števec, imenovalec + imenovalec«.\n\n**3. trditev – NE.** Koren se ne »razdeli« čez vsoto. Po kvadriranju desne strani dobiš $(a + b)^2 = a^2 + 2ab + b^2$, kar je za pozitivna $a$ in $b$ vedno **večje** od $a^2 + b^2$ (za člen $2ab > 0$). Zato je $\\sqrt{a^2 + b^2} < a + b$.\n\n**4. trditev – DA.** Korene zapišeš kot potence z ulomljenimi eksponenti in eksponente sešteješ:\n$\\sqrt{a} \\cdot \\sqrt[3]{a} = a^{\\frac{1}{2}} \\cdot a^{\\frac{1}{3}} = a^{\\frac{1}{2} + \\frac{1}{3}} = a^{\\frac{5}{6}} = \\sqrt[6]{a^5}$."
+              "text": "**Trditev A – DA.** Potenca z negativnim eksponentom je obratna vrednost potence s pozitivnim eksponentom: $x^{-n} = \\frac{1}{x^n}$. Za $x = a + b$ in $n = 2$ dobiš $(a + b)^{-2} = \\frac{1}{(a + b)^2}$. Ker je $a + b > 0$, je imenovalec različen od nič.\n\n**Trditev B – NE.** Ulomke seštevaš tako, da jih razširiš na skupni imenovalec, ne tako, da sešteješ števce in imenovalce posebej:\n$\\frac{2}{a} + \\frac{3}{b} = \\frac{2b}{ab} + \\frac{3a}{ab} = \\frac{2b + 3a}{ab}$.\nZapis $\\frac{5}{a + b}$ nastane z napačnim seštevanjem »števec + števec, imenovalec + imenovalec«.\n\n**Trditev C – NE.** Koren se ne »razdeli« čez vsoto. Po kvadriranju desne strani dobiš $(a + b)^2 = a^2 + 2ab + b^2$, kar je za pozitivna $a$ in $b$ vedno **večje** od $a^2 + b^2$ (za člen $2ab > 0$). Zato je $\\sqrt{a^2 + b^2} < a + b$.\n\n**Trditev D – DA.** Korene zapišeš kot potence z ulomljenimi eksponenti in eksponente sešteješ:\n$\\sqrt{a} \\cdot \\sqrt[3]{a} = a^{\\frac{1}{2}} \\cdot a^{\\frac{1}{3}} = a^{\\frac{1}{2} + \\frac{1}{3}} = a^{\\frac{5}{6}} = \\sqrt[6]{a^5}$."
             },
             {
               "title": "Drugače: preizkus s števili",
-              "text": "Trditev, ki ne velja, ovržeš z enim protiprimerom. Pri pravilnih trditvah števila le potrdijo, da je račun smiseln, dokaz pa je pravilo iz prvega načina.\n\n- **1. trditev** pri $a = 1$, $b = 1$: levo $2^{-2} = \\frac{1}{4}$, desno $\\frac{1}{2^2} = \\frac{1}{4}$. Enako, kot pričakuješ (DA).\n- **2. trditev** pri $a = 1$, $b = 1$: levo $\\frac{2}{1} + \\frac{3}{1} = 5$, desno $\\frac{5}{2}$. Različno, torej NE.\n- **3. trditev** pri $a = 3$, $b = 4$: levo $\\sqrt{9 + 16} = \\sqrt{25} = 5$, desno $3 + 4 = 7$. Različno, torej NE.\n- **4. trditev** pri $a = 64$: levo $\\sqrt{64} \\cdot \\sqrt[3]{64} = 8 \\cdot 4 = 32$, desno $\\sqrt[6]{64^5} = \\left(\\sqrt[6]{64}\\right)^5 = 2^5 = 32$. Enako (DA)."
+              "text": "Trditev, ki ne velja, ovržeš z enim protiprimerom. Pri pravilnih trditvah števila le potrdijo, da je račun smiseln, dokaz pa je pravilo iz prvega načina.\n\n- **Trditev A** pri $a = 1$, $b = 1$: levo $2^{-2} = \\frac{1}{4}$, desno $\\frac{1}{2^2} = \\frac{1}{4}$. Enako, kot pričakuješ (DA).\n- **Trditev B** pri $a = 1$, $b = 1$: levo $\\frac{2}{1} + \\frac{3}{1} = 5$, desno $\\frac{5}{2}$. Različno, torej NE.\n- **Trditev C** pri $a = 3$, $b = 4$: levo $\\sqrt{9 + 16} = \\sqrt{25} = 5$, desno $3 + 4 = 7$. Različno, torej NE.\n- **Trditev D** pri $a = 64$: levo $\\sqrt{64} \\cdot \\sqrt[3]{64} = 8 \\cdot 4 = 32$, desno $\\sqrt[6]{64^5} = \\left(\\sqrt[6]{64}\\right)^5 = 2^5 = 32$. Enako (DA)."
             }
           ],
           "scoring": "Po 1 točka za vsako pravilno presojeno trditev (4 trditve, skupaj 4 točke).",
@@ -85,11 +85,11 @@
           "ways": [
             {
               "title": "Po korakih",
-              "text": "**Podatki:** masa raztopine $m_r = 2{,}5\\,\\mathrm{kg} = 2500\\,\\mathrm{g}$, delež gnojila $6\\,\\%$, masa raztopine se poveča za $20\\,\\%$.\n\n**Iščemo:** maso gnojila $m_g$ in nov odstotek gnojila.\n\n**Masa gnojila:** $m_g = 0{,}06 \\cdot 2500\\,\\mathrm{g} = 150\\,\\mathrm{g}$.\n\n**Nova masa raztopine:** povečanje za $20\\,\\%$ pomeni množenje s $1{,}2$:\n$m_r' = 1{,}2 \\cdot 2500\\,\\mathrm{g} = 3000\\,\\mathrm{g}$ (dolil je $500\\,\\mathrm{g}$ vode).\n\n**Nov delež:** voda ne prinese gnojila, zato ga je še vedno $150\\,\\mathrm{g}$:\n$\\frac{150\\,\\mathrm{g}}{3000\\,\\mathrm{g}} = 0{,}05$, kar je $5\\,\\%$."
+              "text": "**Podatki:** masa raztopine $m_r = 2{,}5\\,\\mathrm{kg} = 2500\\,\\mathrm{g}$, delež gnojila $6\\,\\%$, masa raztopine se poveča za $20\\,\\%$.\n\n**Iščemo:** maso gnojila $m_g$ in nov odstotek gnojila.\n\n**Masa gnojila:** $m_g = 0{,}06 \\cdot 2500\\,\\mathrm{g} = 150\\,\\mathrm{g}$.\n\n**Nova masa raztopine:** povečanje za $20\\,\\%$ pomeni množenje z $1{,}2$:\n$m_r' = 1{,}2 \\cdot 2500\\,\\mathrm{g} = 3000\\,\\mathrm{g}$ (dolil je $500\\,\\mathrm{g}$ vode).\n\n**Nov delež:** voda ne prinese gnojila, zato ga je še vedno $150\\,\\mathrm{g}$:\n$\\frac{150\\,\\mathrm{g}}{3000\\,\\mathrm{g}} = 0{,}05$, kar je $5\\,\\%$."
             },
             {
               "title": "Drugače: z razmerjem",
-              "text": "Masa gnojila se ne spremeni, masa raztopine pa se pomnoži s $1{,}2$. Delež je količnik »gnojilo : raztopina«: ko imenovalec pomnožiš z $1{,}2$, se ves količnik deli z $1{,}2$:\n$\\frac{6\\,\\%}{1{,}2} = 5\\,\\%$.\n\nMaso gnojila preveriš s sklepanjem: $1\\,\\%$ od $2500\\,\\mathrm{g}$ je $25\\,\\mathrm{g}$, $6\\,\\%$ pa $6 \\cdot 25\\,\\mathrm{g} = 150\\,\\mathrm{g}$.\n\n**Preizkus:** $5\\,\\%$ od $3000\\,\\mathrm{g}$ je $0{,}05 \\cdot 3000\\,\\mathrm{g} = 150\\,\\mathrm{g}$, kar je ravno masa gnojila. ✓"
+              "text": "Masa gnojila se ne spremeni, masa raztopine pa se pomnoži z $1{,}2$. Delež je količnik »gnojilo : raztopina«: ko imenovalec pomnožiš z $1{,}2$, se ves količnik deli z $1{,}2$:\n$\\frac{6\\,\\%}{1{,}2} = 5\\,\\%$.\n\nMaso gnojila preveriš s sklepanjem: $1\\,\\%$ od $2500\\,\\mathrm{g}$ je $25\\,\\mathrm{g}$, $6\\,\\%$ pa $6 \\cdot 25\\,\\mathrm{g} = 150\\,\\mathrm{g}$.\n\n**Preizkus:** $5\\,\\%$ od $3000\\,\\mathrm{g}$ je $0{,}05 \\cdot 3000\\,\\mathrm{g} = 150\\,\\mathrm{g}$, kar je ravno masa gnojila. ✓"
             }
           ],
           "scoring": "- 1 točka: masa gnojila $150\\,\\mathrm{g}$\n- 1 točka: nova masa raztopine $3000\\,\\mathrm{g}$ (oz. $3\\,\\mathrm{kg}$)\n- 1 točka: nastavek za nov delež (masa gnojila se ne spremeni, npr. $\\frac{150}{3000}$)\n- 1 točka: odgovor $5\\,\\%$",
@@ -390,7 +390,7 @@
             }
           ],
           "scoring": "- 1 točka: prepoznava kombinacij (vrstni red ni pomemben)\n- 1 točka: število ekip $\\binom{10}{7} = 120$\n- 1 točka: vseh izidov žreba $\\binom{10}{3} = 120$\n- 1 točka: nastavek za ugodne izide $4 \\cdot 3 \\cdot 3$\n- 1 točka: ugodnih izidov $36$\n- 1 točka: verjetnost $P = \\frac{3}{10} = 0{,}3$",
-          "mistake": "Napačno je šteti variacije ($10 \\cdot 9 \\cdot 8 = 720$) kot število ekip: ekipa je ista, ne glede na vrstni red izbiranja. Če pri verjetnosti urejeno šteješ vse izide, moraš urejeno šteti tudi ugodne (z $3! = 6$), sicer dobiš napačno $\\frac{36}{720} = 0{,}05$."
+          "mistake": "Napačno je šteti variacije ($10 \\cdot 9 \\cdot 8 = 720$) kot število ekip: ekipa je ista, ne glede na vrstni red izbiranja. Če pri verjetnosti urejeno šteješ vse izide, moraš urejeno šteti tudi ugodne (s $3! = 6$), sicer dobiš napačno $\\frac{36}{720} = 0{,}05$."
         }
       ]
     },

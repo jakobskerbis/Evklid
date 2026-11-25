@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -155,6 +155,60 @@ Ramenoglavično deblo → desna skupna karotidna arterija → desna notranja kar
 - Aortni lok: ramenoglavično deblo, leva skupna karotidna, leva podključnična arterija. Trebušna aorta se razcepi v skupni iliakalni arteriji; na udih nadlahtna, koželjnična in podlahtnična ter stegenska in podkolenska arterija.
 - Vene: zgornja in spodnja votla vena, portalna vena v jetra; površinski velika safena in srednja komolčna vena.
 - Minutni volumen je utripni volumen krat frekvenca, v mirovanju okoli $5\,\text{L/min}$.
+
+## Za izpit
+
+Znati moraš povedati:
+- lego srca, štiri votline in pretin ter za vsako votlino, od kod kri pride in kam odteče;
+- štiri zaklopke z lego in vlogo ter nalogo tetivnih nitk in papilarnih mišic;
+- plasti srčne stene in prehrano srčne mišice (venčni arteriji, venčni sinus);
+- definicijo arterije in vene ter potek malega in velikega obtoka po vrsti;
+- odcepe aortnega loka in glavne arterije do glave, roke, trebušnih organov in noge;
+- glavne vene (votli veni, portalna vena, površinske vene) in zvezo $V_m = V_u \cdot f$.
+
+### Naloga 1
+
+Kolesarka ima v mirovanju utripni volumen $70\,\text{mL}$ in frekvenco $70\,/\text{min}$, med treningom pa $110\,\text{mL}$ in $150\,/\text{min}$. V telesu ima $5{,}0\,\text{L}$ krvi. V dnevu trenira $1$ uro, preostalih $23$ ur vzemi kot mirovanje. (a) Izračunaj minutni volumen v mirovanju in med treningom ter povej, kaj k povečanju prispeva več: utripni volumen ali frekvenca. (b) Koliko časa v povprečju traja en krog vse krvi skozi levi prekat v enem in drugem stanju? (c) Koliko litrov krvi prečrpa levi prekat v vsem dnevu, kolikokrat se kri v povprečju obrne in kolikšen delež dnevne prostornine odpade na uro treninga?
+
+**Rešitev:**
+
+1. Mirovanje: $V_m = 70\,\text{mL} \cdot 70\,/\text{min} = 4900\,\text{mL/min} = 4{,}9\,\text{L/min}$.
+2. Trening: $V_m = 110\,\text{mL} \cdot 150\,/\text{min} = 16500\,\text{mL/min} = 16{,}5\,\text{L/min}$. Minutni volumen se poveča za faktor $\dfrac{16{,}5}{4{,}9} \approx 3{,}37$.
+3. Prispevka: frekvenca se poveča za faktor $\dfrac{150}{70} \approx 2{,}14$, utripni volumen za faktor $\dfrac{110}{70} \approx 1{,}57$. Več prispeva frekvenca; produkt obeh faktorjev da spet $3{,}37$.
+4. Čas enega kroga je prostornina krvi, deljena z minutnim volumnom. Mirovanje: $\dfrac{5{,}0\,\text{L}}{4{,}9\,\text{L/min}} \approx 1{,}02\,\text{min}$, to je okoli $61\,\text{s}$. Trening: $\dfrac{5{,}0\,\text{L}}{16{,}5\,\text{L/min}} \approx 0{,}303\,\text{min}$, to je okoli $18\,\text{s}$.
+5. Dan ima $24 \cdot 60 = 1440\,\text{min}$: trening $60\,\text{min}$, mirovanje $1440 - 60 = 1380\,\text{min}$.
+6. Prečrpana prostornina: mirovanje $4{,}9 \cdot 1380 = 6762\,\text{L}$, trening $16{,}5 \cdot 60 = 990\,\text{L}$, skupaj $6762 + 990 = 7752\,\text{L}$.
+7. Število krogov: $n = \dfrac{7752\,\text{L}}{5{,}0\,\text{L}} \approx 1550$.
+8. Delež treninga: $\dfrac{990}{7752} \approx 0{,}128$, čeprav traja le $\dfrac{60}{1440} \approx 0{,}042$ dneva.
+9. Odgovor: minutni volumen je $4{,}9\,\text{L/min}$ v mirovanju in $16{,}5\,\text{L/min}$ med treningom, več prispeva frekvenca. En krog traja okoli $61\,\text{s}$ oziroma $18\,\text{s}$. V dnevu levi prekat prečrpa $7752\,\text{L}$, kri se obrne okoli $1550$-krat, na uro treninga odpade okoli $13\,\%$ prostornine. Desni prekat prečrpa v istem času enako prostornino, sicer bi se kri kopičila v enem obtoku.
+
+### Naloga 2
+
+Natančno navedi definiciji arterije in vene. Nato utemelji, ali je pravilna trditev: »V arterijah teče kri, bogata s kisikom, v venah kri, revna s kisikom.« Pri tem po vrsti opiši oba obtoka z vsemi srčnimi votlinami in zaklopkami.
+
+**Rešitev:**
+
+1. Definiciji: arterija je žila, ki vodi kri od srca; vena je žila, ki vodi kri k srcu. Merilo je smer toka, ne vsebnost kisika.
+2. Mali obtok: desni prekat → pulmonalna zaklopka → pljučno deblo → leva in desna pljučna arterija → pljučne kapilare → štiri pljučne vene → levi preddvor.
+3. Veliki obtok: levi preddvor → mitralna zaklopka → levi prekat → aortna zaklopka → aorta → arterije → arteriole → kapilare v tkivih → venule → vene → zgornja in spodnja votla vena → desni preddvor → trikuspidalna zaklopka → desni prekat.
+4. Kri sprejme kisik v pljučnih kapilarah in ga odda v kapilarah tkiv. Med tkivi in pljuči je zato revna s kisikom, med pljuči in tkivi bogata.
+5. V velikem obtoku trditev drži: aorta in njene veje vodijo kri s kisikom, votli veni kri brez njega.
+6. V malem obtoku je obratno: pljučno deblo in pljučni arteriji vodijo od srca kri, revno s kisikom, pljučne vene pa k srcu kri, najbogatejšo s kisikom.
+7. Sklep: trditev ni pravilna, ker velja samo za veliki obtok. Pravilno je: arterija vodi od srca, vena k srcu; koliko kisika je v žili, določa obtok, ki mu pripada.
+
+### Naloga 3
+
+Bolniku se na steni levega prekata naredi krvni strdek in del se odtrga. (a) Utemelji, ali lahko ta strdek povzroči pljučno embolijo. (b) Navedi pot, po kateri pride do desne polovice možganov, in pot, po kateri pride do prstov leve noge. (c) Primerjaj s strdkom iz podkolenske vene.
+
+**Rešitev:**
+
+1. Strdek nosi tok krvi, zaklopke pa dovolijo le eno smer. Iz levega prekata gre lahko samo skozi aortno zaklopko v aorto; mitralna zaklopka mu zapre pot nazaj v levi preddvor.
+2. Pretin med levo in desno polovico srca je neprepusten. V desno srce in pljučne arterije bi strdek prišel le skozi kapilare velikega obtoka, te pa so zanj preozke. Pljučne embolije zato ne more povzročiti.
+3. Obtiči v prvi arteriji velikega obtoka, ki je ožja od njega, in zapre dotok krvi tkivu za tem mestom.
+4. Do desne polovice možganov: levi prekat → ascendentna aorta → aortni lok → ramenoglavično deblo → desna skupna karotidna arterija → desna notranja karotidna arterija.
+5. Do prstov leve noge: aortni lok → descendentna aorta skozi prepono → razcep v višini četrtega ledvenega vretenca → leva skupna iliakalna → leva zunanja iliakalna → stegenska → podkolenska arterija in njene veje.
+6. Strdek iz podkolenske vene potuje k srcu: spodnja votla vena → desni preddvor → desni prekat → pljučno deblo. Prvo kapilarno omrežje na njegovi poti je v pljučih.
+7. Sklep: strdek iz ven velikega obtoka ali desnega srca ogroža pljuča, strdek iz levega srca pa organe velikega obtoka, na primer možgane, ledvice ali nogo. O cilju odloča stran srca, s katere strdek izhaja.
 
 ## Drugače: Kot zgodba
 

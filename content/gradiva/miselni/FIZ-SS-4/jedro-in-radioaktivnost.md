@@ -11,7 +11,7 @@ stanje: osnutek
   - ustavi ga list papirja
 - Razpad beta
   - nevtron v proton in elektron, $Z + 1$
-  - napaka: elektron ni iz ovojnice
+  - pazi: elektron ni iz ovojnice
 - Sevanje gama
   - foton z energijo okoli MeV
   - element ostane isti

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -35,7 +35,7 @@ Telo je kot gradbišče, ki nikoli ne miruje. Stroji potrebujejo gorivo, zidovi 
 | maščobe | gorivo, zaloga, membrane | $37\,\mathrm{kJ}$ |
 | vitamini, minerali, voda | orodje in sestavine | $0$ |
 
-Maščobe dajo na gram več kot dvakrat toliko energije kot sladkor. Vlaknine (celuloza iz zelenjave in polnozrnatih žit) ne prebavimo, hranijo pa bakterije v debelem črevesu in pospešujejo prebavo.
+Maščobe dajo na gram več kot dvakrat toliko energije kot sladkor. Vlaknin (celuloze iz zelenjave in polnozrnatih žit) ne prebavimo, hranijo pa bakterije v debelem črevesu in pospešujejo prebavo.
 
 **Uravnotežena prehrana** pokrije potrebe po energiji in vseh esencialnih snoveh. Več kot polovica energije naj pride iz ogljikovih hidratov (predvsem škroba, ne sladkorja), največ okoli $30\,\%$ iz maščob (nasičene, ki jih spoznaš v točki 4, največ $10\,\%$ vse energije) in $10$ do $15\,\%$ iz beljakovin. Na krožniku je to: polovica zelenjave in sadja, četrtina polnozrnatih žit ali krompirja, četrtina rib, stročnic, jajc ali mesa.
 
@@ -236,7 +236,7 @@ Napis »light« pomeni le manj nečesa, ne pa malo energije. Jogurt brez maščo
 - okoli $60\,\mathrm{kJ}$
 ~ To je desetkrat premalo. Že $16\,\mathrm{g}$ maščob pomnoži s $37\,\mathrm{kJ/g}$.
 - okoli $270\,\mathrm{kJ}$
-~ Tako dobiš z $17\,\mathrm{kJ/g}$, kot da bi bila maščoba sladkor. Maščobe dajo $37\,\mathrm{kJ/g}$.
+~ Tako dobiš s $17\,\mathrm{kJ/g}$, kot da bi bila maščoba sladkor. Maščobe dajo $37\,\mathrm{kJ/g}$.
 + okoli $600\,\mathrm{kJ}$
 - okoli $6000\,\mathrm{kJ}$
 ~ To je desetkrat preveč, skoraj polovica dnevne potrebe.

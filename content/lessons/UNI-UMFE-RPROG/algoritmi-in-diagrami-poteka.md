@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -20,20 +20,31 @@ Beseda **algoritem** je še veliko starejša. Izhaja iz imena perzijskega učenj
 
 Kot diagram poteka:
 
-```
-     ( začetek )
-          |
-      / beri U /
-          |
-  < |U-230| <= 23 ? >
-    da |       | ne
-       v       v
- /"v redu"/ /"zunaj"/
-       |       |
-       +---+---+
-           |
-       ( konec )
-```
+:::risba skica
+opis: Diagram poteka merilnika. Od zgoraj navzdol: oval »začetek«, paralelogram »beri U«, romb s pogojem »absolutna vrednost U − 230 je največ 23?«. Iz romba vodi veja »da« levo navzdol v paralelogram z izpisom »v redu«, veja »ne« desno navzdol v paralelogram z izpisom »zunaj tolerance«. Veji se spodaj združita in vodita v oval »konec«.
+območje: 0; 0 .. 308; 268
+enota: 1
+lik: 187; 267 -> 193; 265,4 -> 197,4; 261 -> 199; 255 -> 197,4; 249 -> 193; 244,6 -> 187; 243 -> 121; 243 -> 115; 244,6 -> 110,6; 249 -> 109; 255 -> 110,6; 261 -> 115; 265,4 -> 121; 267
+napis: 154; 255 | začetek | sredina
+črta: 154; 243 -> 154; 225 | puščica
+lik: 114; 225 -> 202; 225 -> 194; 199 -> 106; 199
+napis: 154; 212 | beri U | sredina
+črta: 154; 199 -> 154; 181 | puščica
+lik: 154; 181 -> 254; 153 -> 154; 125 -> 54; 153
+napis: 154; 153 | ∣U − 230∣ ≤ 23? | sredina
+črta: 54; 153 -> 54; 98 | puščica
+črta: 254; 153 -> 254; 98 | puščica
+napis: 54; 118 | da | levo
+napis: 254; 118 | ne | desno
+lik: 14; 98 -> 102; 98 -> 94; 72 -> 6; 72
+napis: 54; 85 | »v redu« | sredina
+lik: 174; 98 -> 306; 98 -> 298; 72 -> 166; 72
+napis: 236; 85 | »zunaj tolerance« | sredina
+črta: 54; 72 -> 54; 50 -> 254; 50 -> 254; 72
+črta: 154; 50 -> 154; 30 | puščica
+lik: 182; 30 -> 188; 28,4 -> 192,4; 24 -> 194; 18 -> 192,4; 12 -> 188; 7,6 -> 182; 6 -> 126; 6 -> 120; 7,6 -> 115,6; 12 -> 114; 18 -> 115,6; 24 -> 120; 28,4 -> 126; 30
+napis: 154; 18 | konec | sredina
+:::
 
 Že iz tega primera vidiš vse dele, ki jih bomo zdaj natančno poimenovali.
 
@@ -46,7 +57,7 @@ Kot diagram poteka:
 Algoritem lahko zapišemo z naravnim jezikom, s **psevdokodo** (strukturiran zapis, podoben programu, a brez pravil določenega jezika), z **diagramom poteka** ali v programskem jeziku.
 
 **Simboli diagrama poteka** (po standardu ISO 5807):
-- zaobljen pravokotnik (ovalno): začetek in konec;
+- zaobljen pravokotnik (oval): začetek in konec;
 - pravokotnik: obdelava, na primer račun ali prireditev;
 - paralelogram: vhod ali izhod podatkov;
 - romb: odločitev, iz njega gresta dve puščici, »da« in »ne«;
@@ -151,26 +162,49 @@ Pred zanko: $\text{vsota} = 0$, $n = 0$, beri $x$. Zanka, dokler $x \ge 0$: pri�
 
 1. Diagram:
 
-```
-      ( začetek )
-           |
-   [ vsota=0, n=0 ]
-           |
-       / beri x /
-           |
-    +-> < x >= 0 ? > -ne-+
-    |      | da          |
-    | [vsota=vsota+x]    |
-    | [n = n + 1    ]    |
-    | [max posodobi ]    |
-    |  / beri x /        |
-    +------+             |
-                         v
-       < n = 0 ? > <-----+
-      da |     | ne
-         v     v
- /ni meritev/ /vsota/n, max/
-```
+:::risba skica
+opis: Diagram poteka zanke z mejnikom. Od zgoraj navzdol: oval »začetek«, pravokotnik »vsota = 0, n = 0«, paralelogram »beri x«, romb »x ≥ 0?«. Veja »da« vodi navzdol v pravokotnik s tremi koraki (vsota = vsota + x, n = n + 1, posodobi največjo), nato v paralelogram »beri x«, od tam pa puščica po levi strani nazaj nad romb »x ≥ 0?«. Veja »ne« vodi po desni strani navzdol v romb »n = 0?«. Njegova veja »da« vodi levo v izpis »ni meritev«, veja »ne« desno v izpis »vsota / n, največja«. Izpisa se združita v oval »konec«.
+območje: 0; 0 .. 308; 448
+enota: 1
+lik: 173; 448 -> 179; 446,4 -> 183,4; 442 -> 185; 436 -> 183,4; 430 -> 179; 425,6 -> 173; 424 -> 107; 424 -> 101; 425,6 -> 96,6; 430 -> 95; 436 -> 96,6; 442 -> 101; 446,4 -> 107; 448
+napis: 140; 436 | začetek | sredina
+črta: 140; 424 -> 140; 409 | puščica
+pravokotnik: 74; 385 .. 206; 409
+napis: 140; 397 | vsota = 0, n = 0 | sredina
+črta: 140; 385 -> 140; 370 | puščica
+lik: 103; 370 -> 185; 370 -> 177; 346 -> 95; 346
+napis: 140; 358 | beri x | sredina
+črta: 140; 346 -> 140; 324 | puščica
+lik: 140; 324 -> 192; 302 -> 140; 280 -> 88; 302
+napis: 140; 302 | x ≥ 0? | sredina
+črta: 140; 280 -> 140; 263 | puščica
+napis: 140; 274 | da | desno
+pravokotnik: 68; 209 .. 212; 263
+napis: 140; 251 | vsota = vsota + x | sredina
+napis: 140; 236 | n = n + 1 | sredina
+napis: 140; 221 | posodobi največjo | sredina
+črta: 140; 209 -> 140; 194 | puščica
+lik: 103; 194 -> 185; 194 -> 177; 170 -> 95; 170
+napis: 140; 182 | beri x | sredina
+črta: 140; 170 -> 140; 159 -> 16; 159 -> 16; 335 -> 140; 335 | puščica
+črta: 192; 302 -> 292; 302 -> 292; 145 -> 140; 145
+črta: 140; 145 -> 140; 130 | puščica
+napis: 210; 302 | ne | nad
+lik: 140; 130 -> 192; 108 -> 140; 86 -> 88; 108
+napis: 140; 108 | n = 0? | sredina
+črta: 88; 108 -> 62; 108 -> 62; 72 | puščica
+črta: 192; 108 -> 224; 108 -> 224; 72 | puščica
+napis: 62; 92 | da | levo
+napis: 224; 92 | ne | desno
+lik: 14; 72 -> 118; 72 -> 110; 48 -> 6; 48
+napis: 62; 60 | »ni meritev« | sredina
+lik: 152; 72 -> 304; 72 -> 296; 48 -> 144; 48
+napis: 224; 60 | vsota / n, največja | sredina
+črta: 62; 48 -> 62; 38 -> 224; 38 -> 224; 48
+črta: 140; 38 -> 140; 24 | puščica
+lik: 168; 24 -> 174; 22,4 -> 178,4; 18 -> 180; 12 -> 178,4; 6 -> 174; 1,6 -> 168; 0 -> 112; 0 -> 106; 1,6 -> 101,6; 6 -> 100; 12 -> 101,6; 18 -> 106; 22,4 -> 112; 24
+napis: 140; 12 | konec | sredina
+:::
 
 2. Prvo meritev beremo pred zanko, ker je pogoj zanke odvisen od nje. Na koncu telesa beremo naslednjo.
 3. Sledilna tabela (vrednosti po vsakem prehodu zanke):
@@ -182,7 +216,7 @@ Pred zanko: $\text{vsota} = 0$, $n = 0$, beri $x$. Zanka, dokler $x \ge 0$: pri�
 - $x = -1$: pogoj ne velja, izhod iz zanke.
 
 4. $n = 4 \neq 0$, zato izpiše povprečje $\frac{43}{4} = 10{,}75$ in največjo vrednost $15$.
-5. Posebni primer: če je že prvi vhod $-1$, zanka se ne izvede, $n = 0$. Brez odločitve po zanki bi algoritem delil z nič.
+5. Posebni primer: če je že prvi vhod $-1$, se zanka ne izvede, $n = 0$. Brez odločitve po zanki bi algoritem delil z nič.
 6. Program, ki smo ga zagnali:
 
 ```python
@@ -256,7 +290,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Enačba $x^3 - x - 2 = 0$ ima ničlo na intervalu $[1, 2]$, ker je $f(1) = -2 < 0$ in $f(2) = 4 > 0$. **Bisekcija**: dokler je dolžina intervala vsaj $0{,}1$, izračunaj sredino $s$; če imata $f(a)$ in $f(s)$ različna predznaka (ali je $f(s) = 0$), postavi $b \leftarrow s$, sicer $a \leftarrow s$. Na koncu izpiši sredino intervala. (a) Opiši diagram poteka. (b) Sestavi sledilno tabelo za $a = 1$, $b = 2$. (c) Za koliko se lahko približek najbolj razlikuje od prave ničle?
+Zvezna funkcija $f(x) = x^3 - x - 2$ ima ničlo na intervalu $[1, 2]$, ker je $f(1) = -2 < 0$ in $f(2) = 4 > 0$. **Bisekcija**: dokler je dolžina intervala vsaj $0{,}1$, izračunaj sredino $s$; če imata $f(a)$ in $f(s)$ različna predznaka (ali je $f(s) = 0$), postavi $b \leftarrow s$, sicer $a \leftarrow s$. Na koncu izpiši sredino intervala. (a) Opiši diagram poteka. (b) Sestavi sledilno tabelo za $a = 1$, $b = 2$. (c) Za koliko se lahko približek najbolj razlikuje od prave ničle?
 
 **Rešitev:**
 
@@ -316,7 +350,7 @@ Navigacija v avtu dela enako. Na vsakem križišču preveri pogoj (»sem že na 
 ~ Zaobljen pravokotnik označi začetek ali konec, zato je pravilen.
 > Odločitev ima vedno dva izhoda. Z enim samim diagram za del vhodov ne pove, kaj storiti, kar krši določenost.
 
-? Algoritem: $s = 0$; za $k$ od $1$ do $4$: $s \leftarrow s + k^2$; izpiši $s$. Kaj izpiše?
+? Algoritem: $\text{vsota} = 0$; za $k$ od $1$ do $4$: $\text{vsota} \leftarrow \text{vsota} + k^2$; izpiši vsoto. Kaj izpiše?
 - $10$
 ~ To je vsota $1 + 2 + 3 + 4$, brez kvadriranja.
 - $16$
@@ -342,7 +376,7 @@ Navigacija v avtu dela enako. Na vsakem križišču preveri pogoj (»sem že na 
 + korak 3, ker je rezultat $a = 12$, ne $b$
 > Ko je $b = 0$, je največji skupni delitelj v $a$: $D = 12$.
 
-? Termostat v rastlinjaku vsako minuto izmeri temperaturo. Če je pod $18\,°\mathrm{C}$, vklopi grelec, sicer ga izklopi. Katera struktura opisuje to delovanje?
+? Termostat v rastlinjaku vsako minuto izmeri temperaturo. Če je pod $18\,^\circ\mathrm{C}$, vklopi grelec, sicer ga izklopi. Katera struktura opisuje to delovanje?
 - samo zaporedje
 ~ Zaporedje ne izbira med dvema možnostma in se ne ponavlja.
 - samo odločitev
@@ -359,9 +393,9 @@ E | porabljena energija | E = \frac{P \cdot t}{1000} | kWh
 U | izmerjena napetost | | V
 n | število meritev | | –
 r | ostanek pri deljenju | r = a \bmod b | –
-a, b | števili v Evklidovem algoritmu
+a, b | števili v Evklidovem algoritmu; pri bisekciji krajišči intervala
 D | največji skupni delitelj
 s | sredina intervala | s = \frac{a + b}{2}
-x | meritev (vhodni podatek) | | | negativna vrednost je mejnik
+x | vhodni podatek (v Primeru 3 meritev); pri $f(x)$ spremenljivka funkcije | | | v Primeru 3 je negativna vrednost mejnik
 k | števec zanke | | –
 :::

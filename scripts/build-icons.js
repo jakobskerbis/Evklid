@@ -9,7 +9,7 @@ const NAMES = [
   "camera", "send", "arrow-left", "arrow-right", "lightbulb", "trophy", "target", "puzzle", "book-open",
   "sparkles", "circle-help", "menu", "chevron-right", "graduation-cap", "play", "rotate-ccw", "gift", "award",
   "calendar", "info", "search", "users", "circle-check", "circle-x", "bot", "trending-up", "download", "flask-conical", "monitor-play", "refresh-cw", "medal", "timer", "skip-forward", "flag",
-  "sigma", "sun", "moon", "sun-moon", "palette", "dices", "paintbrush", "mic", "square", "circle-arrow-up", "party-popper", "globe", "wifi-off", "cloud-upload", "feather", "message-square-heart",
+  "sigma", "speech", "sun", "moon", "sun-moon", "palette", "dices", "paintbrush", "mic", "square", "circle-arrow-up", "party-popper", "globe", "wifi-off", "cloud-upload", "feather", "message-square-heart",
   "library", "file-text", "list-checks", "external-link", "notebook-pen", "bell",
   // znanstveni kalkulator in enote
   "calculator", "atom", "ruler", "arrow-left-right",
@@ -101,7 +101,11 @@ async function useEra(id) {
   tutorMark();
 }
 if (typeof document !== "undefined" && typeof window !== "undefined") {
-  useEra(document.documentElement.dataset.era || "");
+  // Ikone, ki jih je strežnik poslal že izrisane (data-zg, server/vstopna-stran.js), ob zgodovinskem slogu ostanejo
+  // skrite, dokler ni znan nabor ikon obdobja (style.css), da privzeta ikona ne utripne pred ikono obdobja.
+  const ikone = () => document.documentElement.setAttribute("data-ikone", "");
+  useEra(document.documentElement.dataset.era || "").finally(ikone);
+  setTimeout(ikone, 1500); // počasno omrežje: ikone obdobja zamenjajo privzete, ko pridejo
   window.addEventListener("evklid:era", (e) => useEra(e.detail || ""));
 }
 `;

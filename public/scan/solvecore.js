@@ -50,7 +50,8 @@ export function prep(text) {
     .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factor)\s*[:.]?\s*/i, "")
     .trim();
   // a/b z dvema celima številoma je ulomek: 3/4·2/5 = (3/4)·(2/5), ne ((3/4)·2)/5.
-  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!])/g, "($1/$2)");
+  // Ne pri znanstvenem zapisu v imenovalcu (»2/1e8« = 2/10⁸, ne (2/1)·10⁸; AUDIT-042).
+  s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!]|[\d.,]*[eE][+\-−]?\d)/g, "($1/$2)");
   return s;
 }
 
@@ -67,7 +68,6 @@ export function splitSystem(text) {
 // Zapis drevesa v TeX (lepši od splošnega: ulomki Q, oklepaji pri vstavljanju, decimalna vejica)
 
 const unwrap = (n) => (n && n.k === "grp" ? unwrap(n.a) : n);
-const isLeafNum = (n) => n && (n.k === "num" || n.k === "q");
 const negLike = (n) => (n.k === "num" && n.v < 0) || (n.k === "q" && n.q.sign < 0) || n.k === "neg";
 
 export function tex(node, opt = {}) {
@@ -205,8 +205,6 @@ function decompose(node) {
 
 const grp = (a) => ({ k: "grp", a });
 const lines = (rows) => (rows.length > 1 ? `\\begin{gathered} ${rows.join(" \\\\ ")} \\end{gathered}` : rows[0]);
-const qn = (q, dec = false) => ({ k: "q", q: Q.of(q), dec });
-const mulN = (a, b) => ({ k: "*", a, b });
 
 // izpis člena {sign, c, f}
 function termNodeTex({ c, f }, first) {
@@ -597,13 +595,25 @@ function quadraticMethods(a, b, c, v, opt = {}) {
       const f2 = `\\left(${termsTex([{ m: { [v]: 1 }, c: Q.ONE }, { m: {}, c: new Q(q) }].filter((x) => !x.c.zero))}\\right)`;
       st.push(step(T("scan.s.factored"), p === q ? `${f1}^{2} = 0` : `${f1}${f2} = 0`, { why: T("scan.w.factored") }));
     } else {
-      // a(x − r1)(x − r2) → (d1 x − n1)(d2 x − n2)
+      // Metoda ac: srednji člen razdelimo (m · n = a · c, m + n = b), v parih izpostavimo, šele nato rešitve.
+      // a x² + bx + c = L(d1 x − n1)(d2 x − n2) z L = a / (d1 d2) (celo, ker sta faktorja primitivna);
+      // m = −L d1 n2, n = −L d2 n1; a x² + mx = L d1 x (d2 x − n2), nx + c = −L n1 (d2 x − n2).
       const fs = sols.length > 1 ? sols : [sols[0], sols[0]];
+      const [n1, d1, n2, d2] = [fs[0].q.n, fs[0].q.d, fs[1].q.n, fs[1].q.d];
       const lin = fs.map((s) => new P([{ m: { [v]: 1 }, c: new Q(s.q.d) }, { m: {}, c: new Q(-s.q.n) }]));
-      const lead = a.div(new Q(fs[0].q.d * fs[1].q.d));
+      const lead = a.div(new Q(d1 * d2));
       const pre = lead.one ? "" : lead.tex();
-      st.push(step(T("scan.s.acMethod", { ac: String(A * C), b: String(B) }), lines([`${v}_{1} + ${v}_{2} = -\\frac{b}{a} = ${b.neg().div(a).tex()},\\quad ${v}_{1} \\cdot ${v}_{2} = \\frac{c}{a} = ${c.div(a).tex()}`, `\\Rightarrow\\; ${solsTex}`]), { why: T("scan.w.vietaA") }));
-      st.push(step(T("scan.s.factored"), sols.length > 1 ? `${pre}\\left(${lin[0].tex()}\\right)\\left(${lin[1].tex()}\\right) = 0` : `${pre}\\left(${lin[0].tex()}\\right)^{2} = 0`, { why: T("scan.w.factored") }));
+      const L = lead.n;
+      const m = -L * d1 * n2;
+      const n = -L * d2 * n1;
+      const w = (x) => (x < 0n ? `(${x})` : `${x}`);
+      st.push(step(T("scan.s.vieta", { p: String(A * C), s: String(B), m: String(m), n: String(n) }), `${m} \\cdot ${w(n)} = ${A * C},\\quad ${m} + ${w(n)} = ${B}`, { why: T("scan.w.acSplit") }));
+      const split = `${termsTex([{ m: { [v]: 2 }, c: a }, { m: { [v]: 1 }, c: new Q(m) }, { m: { [v]: 1 }, c: new Q(n) }, { m: {}, c }])} = 0`;
+      const g2 = -L * n1;
+      const abs2 = g2 < 0n ? -g2 : g2;
+      const group = `${termsTex([{ m: { [v]: 1 }, c: new Q(L * d1) }])}\\left(${lin[1].tex()}\\right) ${g2 < 0n ? "-" : "+"} ${abs2 === 1n ? "" : abs2}\\left(${lin[1].tex()}\\right) = 0`;
+      const fact = sols.length > 1 ? `${pre}\\left(${lin[0].tex()}\\right)\\left(${lin[1].tex()}\\right) = 0` : `${pre}\\left(${lin[0].tex()}\\right)^{2} = 0`;
+      st.push(step(T("scan.s.factored"), lines([split, group, fact]), { why: T("scan.w.factored") }));
     }
     st.push(step(T("scan.s.zeroProduct"), solsTex, { why: T("scan.w.zeroProduct") }));
     methods.push({ id: "factor", steps: st });
@@ -2224,6 +2234,54 @@ export function solve(text, { goal = null, complex = false } = {}) {
   } catch (err) {
     return { ok: false, reason: err instanceof AlgebraError ? "unsupported" : "error", detail: String(err?.message || err), ...base, type: info.type };
   }
+}
+
+// Korak z oznako operacije (»/ −4«, »/ : 2«): oznaka v zvezku stoji ob vrstici, NA katero jo uporabimo, rezultat pa
+// pod njo (j 14. 11. 2026). Za vsak tak korak vrne to vrstico: zadnjo prejšnjo enačbo ali neenačbo (ne pogoja x ≠ 0,
+// ne seznama »a = 1, b = 0«), sicer nalogo. Velja tudi za korake AI.
+const VRSTICA = /(?:^|[^\\a-zA-Z])(?:=|<|>)|\\(?:le|ge|leq|geq)(?![a-zA-Z])/;
+const NI_VRSTICA = /\\(?:ne|neq|quad|qquad|text|in|notin|Rightarrow|implies)(?![a-zA-Z])|,\\[;:,]|\\begin\{(?:cases|array|aligned)/;
+export function izvorOznak(steps, start) {
+  let prej = start || null;
+  return (steps || []).map((s) => {
+    const from = s?.note ? prej : null;
+    const t = typeof s?.tex === "string" ? s.tex : "";
+    if (VRSTICA.test(t) && !NI_VRSTICA.test(t)) prej = t;
+    return from;
+  });
+}
+
+// Kaj na grafu označimo kot rešitev naloge (j 14. 11. 2026: »povsod, kjer rešitev zahteva interval oz. točko«):
+// neenačba → intervali s številske premice, enačba → ničle ali presečišča (x-koordinate). null: ničesar.
+export function oznakaGrafa(r) {
+  // sistem: rešitev je točka v ravnini (graf jo že kaže), ne vrednosti na osi x (y = 1 ni x = 1)
+  if (!r?.graph || r.kind === "system" || r.graph.vars) return null;
+  const num = (e) => (e == null ? null : typeof e.num === "function" ? e.num() : Number(e.num));
+  if (r.numberLine) {
+    const intervals = (r.numberLine.intervals || [])
+      .map((iv) => (iv.point ? { point: num(iv.point) } : { lo: num(iv.lo), hi: num(iv.hi), loClosed: !!iv.loClosed, hiClosed: !!iv.hiClosed }))
+      .filter((iv) => [iv.point, iv.lo, iv.hi].every((x) => x == null || Number.isFinite(x)));
+    return intervals.length ? { intervals } : null;
+  }
+  let xs = (r.graph.xs || []).filter(Number.isFinite);
+  if (!xs.length && typeof r.answer?.tex === "string" && !r.answer.key) xs = resitveIzTex(r.answer.tex);
+  return xs.length ? { points: xs, curves: (r.graph.exprs || []).length > 1 } : null;
+}
+// »x = 2«, »x_{1} = -3,\quad x_{2} = \frac{1}{2}«, »x = 2{,}5« → števila (drugo, npr. koreni, vrne prazno).
+function resitveIzTex(t) {
+  const out = [];
+  let ime = null;
+  for (const del of t.split(/,\s*\\quad|\\quad|;/)) {
+    const m = /^\s*([a-zA-Z])(?:_\{?\d+\}?)?\s*=\s*(.+?)\s*$/.exec(del);
+    if (!m || (ime && m[1] !== ime)) return [];
+    ime = m[1];
+    const d = m[2].replace(/\{,\}/g, ".").replace(/\s+/g, "");
+    const f = /^(-?)\\[dt]?frac\{(\d+(?:\.\d+)?)\}\{(\d+(?:\.\d+)?)\}$/.exec(d);
+    const v = f ? (f[1] ? -1 : 1) * (Number(f[2]) / Number(f[3])) : /^-?\d+(?:\.\d+)?$/.test(d) ? Number(d) : NaN;
+    if (!Number.isFinite(v)) return [];
+    out.push(v);
+  }
+  return out;
 }
 
 // Za preverjanje AI rešitev (server in vmesnik): ali vrednost reši enačbo?

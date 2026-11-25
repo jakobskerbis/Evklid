@@ -1,5 +1,5 @@
 // Univerzitetni študijski programi (1. stopnja in enoviti magistrski): seznam s strežnika in izbirnik.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 let cache = null;
 
 export async function loadPrograms(api) {
@@ -9,22 +9,6 @@ export async function loadPrograms(api) {
 
 // Že naloženi programi (prazen seznam, dokler jih ne naložimo).
 export const programsCache = () => cache || [];
-
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-
-// <optgroup> po fakultetah, <option> po programih.
-export function programOptions(programs, selected) {
-  const byFac = new Map();
-  for (const p of programs) {
-    if (!byFac.has(p.facultyName)) byFac.set(p.facultyName, []);
-    byFac.get(p.facultyName).push(p);
-  }
-  return [...byFac]
-    .map(([fac, list]) => `<optgroup label="${esc(fac)}">${list
-      .map((p) => `<option value="${esc(p.id)}" ${p.id === selected ? "selected" : ""}>${esc(p.name)}</option>`)
-      .join("")}</optgroup>`)
-    .join("");
-}
 
 export const UNI_YEARS = ["1. letnik", "2. letnik", "3. letnik", "4. letnik"];
 

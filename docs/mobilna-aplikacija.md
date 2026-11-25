@@ -8,9 +8,10 @@ zaslon (`mobile/src/app/web.tsx`), zato sta videz in delovanje vedno enaka splet
 Evklidova tipkovnica, laboratorij, NPZ, vse nove stvari s spleta. Seja je ena: WebView najprej odpre
 `/api/mobile/web` z glavami aplikacije, strežnik isto sejo zapiše v piškotek WebView-a
 (`server/mobile/web-session.js`). Odjava na spletu odjavi tudi aplikacijo. Splet aplikacijo prepozna po
-`EvklidApp/<različica>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
+`EvklidApp/<različica> <kanal>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
 Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu gre nazaj po strani, povezave na
-druge strani odpre brskalnik.
+druge strani odpre brskalnik. Povezava iz e-pošte `https://evklid.app/vabilo?koda=…` (vabilo v pilot, `server/vabila.js`) se vedno odpre v
+brskalniku (aplikacija nima univerzalnih povezav); registracija tam je ista kot v aplikaciji, zato posebnega zaslona v aplikaciji ni.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
 brez povezave. Med objavo nove različice (gostitelj vrne 502/503/504) aplikacija ob vrtavki pokaže »Evklid se posodablja …« in poskuša znova do ~70 s (`BUSY_WAIT`, kot splet), ob prekinjeni povezavi dvakrat tiho poskusi znova. Ko strežnik še vedno ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
@@ -23,7 +24,13 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   gumbom »Vprašaj inštruktorja«. Vibracija ob pravilnem in napačnem odgovoru.
 - **Vaje brez povezave**: naloge učne poti se shranijo na telefon, odgovor preveri telefon (isto
   preverjanje kot strežnik, `server/practice/check.js`), ob povezavi strežnik odgovore preveri še
-  enkrat in podeli XP.
+  enkrat in podeli XP. Paket in vrsta odgovorov sta vezana na račun in profil (id profila se po izbrisu lahko ponovi).
+- **Odjava, izbris računa, potekla seja**: ob odjavi gredo neposlani odgovori najprej na strežnik (največ 6 s), nato
+  s telefona izgine vse od računa (izbrani profil, račun in profili, paketi vaj in odgovori, časi preverjanja, zavihek Uči, deljene slike in fotografije nalog),
+  spletna stran v aplikaciji pa pobriše svoje osebne podatke kot ob odjavi na spletu. Ostanejo nastavitve naprave
+  (tresljaji, ura opomnika, id naprave) — `mobile/src/lib/zasebnost.js`, `test/mobile-odjava-brisanje.test.js`.
+  Žeton potisnih obvestil se na strežniku odjavi samo ob odjavi (ob izbrisu računa ga pobriše strežnik); po potekli
+  seji ostane vezan na račun do naslednje prijave na tem telefonu.
 - **Lekcije** po korakih (kratke kartice z vprašanji »Preveri se« vmes, `public/lesson-steps.js`) ali vse
   naenkrat, »Razloži drugače«, formule in tabele kot na spletu.
   Vprašanja z vpisom števila in razvrščanjem (`public/preveri-se.js`) aplikacija dobi, ker pošlje glavo
@@ -54,7 +61,21 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   `evklid://prijava?t=…`, 15 minut, `server/mobile/app-link.js`). Zaslon za prijavo v aplikaciji ima gumb,
   ki to stran odpre.
 - **Naročnina**: v trgovinah nakup v aplikaciji (Apple In-App Purchase, Google Play Billing), v APK za
-  neposredni prenos plačilo na spletu (Stripe).
+  neposredni prenos plačilo na spletu (Stripe): naravni zaslon Naročnina odpre spletni zavihek Račun v aplikaciji
+  (`/api/mobile/web?to=/?pogled=racun`), kjer so potrditve pred plačilom; aplikacija sama nakupa ne pošilja.
+  Kanal na koncu User-Agent (`store` ali `direct`) in glava `X-App-Channel`. V različici iz trgovine
+  (`public/pay-ui.js` isStoreApp) splet ne pokaže: naročnine, nadgradnje, gumba »Upravljaj naročnino« (portal),
+  darila, vpisa aktivacijske ali darilne kode, kartice Podari, dokupa (le preostali pogovori), paketa pred testom,
+  povezave za plačilo staršu, obrazca na `placaj.html` (besedilo `payp.inApp`), ponudbe naročnine ob novi stopnji
+  (`public/level-up.js`), gumba za dokup ob obvestilu o porabi (`server/app.js` `allowance.buy`) ter povezav na cene
+  in `/prenesi` na javnih straneh (`theme.js`, `v-aplikaciji.js`); povezave `target=_blank` na strani Evklida ostanejo
+  v aplikaciji (`web.tsx` onOpenWindow). Strežnik nakup zavrne s 403 (`server/mobile/trgovina.js`: `/api/billing/`
+  checkout, upgrade, gift, credit, pass, podari, pay-link, portal in `/api/pay/<žeton>/checkout`).
+  Plačilo v APK se odpre v zavihku brskalnika; stran za uspeh ima `&app=1` (nakup iz aplikacije) in brez prijave
+  pove »Vrni se v aplikacijo Evklid«. Ob vrnitvi v aplikacijo (`evklid:spet` iz `web.tsx`) splet pokliče
+  `/api/billing/sync` (strežnik največ en klic Stripa na 5 s na starša) in zavihek Račun izriše znova, ko se je
+  kupljeno spremenilo (zapis nakupa v sessionStorage: naročnina do plačila ali 2 uri, drugo ena osvežitev), da
+  starš ne plača dvakrat.
 - Svetla in temna tema, 33 jezikov vmesnika (isti prevodi kot splet), iPad, dostopnost (VoiceOver,
   TalkBack).
 
@@ -72,6 +93,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
 | 3D atlas in modeli | telo v 3D, kviz, modeli iz kode (`public/3d/`) | L | WebView `/3d` (`Web3D.tsx`), vstop v Uči se → 3D svet in v zavihku Jaz | ✓ narejeno; vstop iz lekcije (»Poglej v 3D«, simulacija `3d-<id>` v katalogu) je na spletu, v naravni lekciji še ne |
+| Potrditev e-naslova | »Sem potrdil(a)« pove »Še ni potrjeno …«, »Pošlji znova« pove, da velja samo nova povezava (`public/account.js` renderVerify) | S | naravno (`profiles.tsx` VerifyEmail) | ✓ narejeno (15. 11. 2026); zaslon za povezavo v drugem brskalniku (»Težave?«) je samo na spletu, ker se povezava iz e-pošte vedno odpre v brskalniku; mladoletni/polnoletni stavek o staršu aplikacija ne kaže |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
 | Klikljive črke v formulah | kartica s pomenom črke iz predmeta, razdelka in lekcije (`public/formula-info.js`; lekcije, razlaga teme z »Bistvom«, naloge, odgovori inštruktorja, list s formulami z oznakami razdelkov) | M | naravno: `RichText` označi črke (`annotateTex`), dotik pošlje kodo iz WebView, kartica (`public/formula-card.js`) se odpre kot spodnji list; predmet in oznake iz `FormulaCtx` (`useTopicFx`, `/api/topic`) | ✓ narejeno v lekciji, nalogah in klepetu; list s formulami čaka na način Formule (vrstica »Formule«) |
 | Moji grafi | shranjeni grafi na strežniku | S | `/kalkulator` s sejo aplikacije (žeton v glavi ali enkratna povezava kot `app-link.js`) | ✗ |
@@ -93,11 +115,14 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Okna | več oken hkrati (`okna.js`) | L | samo iPad (Split View); na telefonu ne | ✗ (namerno na telefonu) |
 | Nastavitve | slogi (Igriv, Temen, zgodovinski), lastne barve, jezik, tempo, tipkovnica, glas; aplikacija ima raven, opomnike, vibracijo | M | naravno; slogi kot dodatne palete v `theme.ts` | delno |
 | Račun staršev | otroci, plačila, darila, šole (`account.js`) | M | odpri spletno stran prijavljeno (`app-link.js` v obratni smeri) | delno (naročnina, izbris) |
-| Nadgradnja stopnje, dokup razlag, darilo po stopnji | gumb »Odpri: …« (doplačilo razlike), gumb »Dokupi razlage« ob obvestilu o porabi, izbira stopnje darilne kode (`account.js`, `app.js` addAllowanceNote) | S | splet; aplikacija iz trgovine teh nakupov ne sme ponuditi mimo trgovine | delno (cena stopnje, Družina, obvestilo o porabi brez gumba) |
+| Nadgradnja stopnje, dokup razlag, darilo po stopnji | gumb »Odpri: …« (doplačilo razlike), gumb »Dokupi razlage« ob obvestilu o porabi, izbira stopnje darilne kode (`account.js`, `app.js` addAllowanceNote) | S | splet; aplikacija iz trgovine teh nakupov ne sme ponuditi mimo trgovine | delno (cena stopnje, Družina, obvestilo o porabi brez gumba; mobilna aplikacija nima zaslona za dokup pogovorov, zato videza izbire dokupa iz `credit-card.js` — ploščice in gumb »Nadaljuj za skupaj …«, j 2026-11-15 — ni treba usklajevati) |
+| Kartica ob porabljenih brezplačnih vprašanjih | razlog, »Z naročnino dobiš« (cena stopnje, več vprašanj, podrobnejše razlage, interaktivni deli lekcij), »Pošlji povezavo staršu« (mladoletni) ali »Izberi naročnino« (polnoleten), »Vadi naprej v Vadnici« (`public/meja-placilo.js`, j 2026-11-15) | S | aplikacija iz trgovine ponudbe in povezave za plačilo mimo trgovine ne sme pokazati: tudi splet v aplikaciji (`EvklidApp/` v User-Agent) kaže samo razlog in Vadnico; naravni klepet (`mobile/src/app/chat/[id].tsx` blockText) ostaja vrstica z razlogom in namigom | ✗ (namerno, do nakupa v trgovini) |
 | Skrbnik | upravljanje (APK, uporabniki) | S | samo splet | ✗ (namerno) |
+| Povabi prijatelja po uspehu | kartica »Pokaži Evklida prijatelju« pod osvojeno temo in opravljenim preizkusom znanja (`public/povabi.js`, 15+, enkrat na 7 dni, nagrada samo z delujočimi plačili) | S | ne: nagrada za povabilo je vezana na plačilo na spletu (pravila trgovin); tudi WebView z `EvklidApp/` je ne pokaže | ✗ (namerno) |
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
+| Pristajalna stran pred prijavo | eno sporočilo za gimnazijce, en gumb »Začni brezplačno«, prijava kot povezava, zgled pogovora in trije dokazi (`public/pristajalna.js`, j 15. 11. 2026) | S | naravno: naslov in en gumb nad prijavo v `sign-in.tsx` | ✗ aplikacija se odpre na naravni prijavi (`sign-in.tsx`: logotip, `mob.tagline`, »Prijava« in »Ustvari račun« kot dva gumba); pristajalne strani nima, ker jo namesti nekdo, ki je Evklid že izbral |
 
 - **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js): WebView ne podpira Web Share z datotekami
   ne prenosa slike, zato aplikacija deli prek mostu (`public/deli-most.js`, `mobile/src/app/web.tsx`):
@@ -128,7 +153,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 |---|---|---|
 | Kje | Android: APK na evklid.app/prenesi | App Store, Google Play |
 | Gradnja | `eas build --profile direct --platform android` | `eas build --profile production` |
-| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 99 €, SŠ 13,99 / 139 €, faks 19,99 / 199 €, Družina 18,99 / 189 €, Družina s študentom 27,99 / 269 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 101, 15,99 / 141, 21,99 / 201, 20,99 / 191, 29,99 / 271 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
+| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 99 €, SŠ 13,99 / 99 €, faks 19,99 / 199 €, Družina 18,99 / 189 €, Družina s študentom 27,99 / 269 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 101, 15,99 / 101, 21,99 / 201, 20,99 / 191, 29,99 / 271 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
 | Provizija | Stripe ~1,5 % + 0,25 € | 15 % (Apple Small Business Program, Google Play) |
 
 Cene v trgovinah so višje zaradi provizije. Aplikacija iz trgovine ne sme omenjati cenejših cen na
@@ -193,9 +218,10 @@ Vsakič:
    gradnje prilepi v **Račun → Aplikacija za Android (APK)** in tapni »Naloži APK«.
 
 **Posodobitve nameščene aplikacije** (`mobile/src/lib/updates.ts`):
-- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ob vsaki združitvi v `main`, ki spremeni
-  `mobile/` ali skupne datoteke s spletom, Expo (EAS Workflows, `mobile/.eas/workflows/posodobitev.yml`)
-  objavi posodobitev na kanal `direct`. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
+- **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ko so testi za združitev v `main` zeleni
+  (vsi štirje posli v `testi.yml`, tudi `tipi`), GitHub (`.github/workflows/ota.yml`, skrivnost `EXPO_TOKEN`)
+  objavi posodobitev na kanal `direct`, če je kateri commit od zadnje objave spremenil `mobile/` ali skupne
+  datoteke s spletom (seznam `POTI` v `ota.yml`). Padli testi: nič ne gre na telefone. Telefon jo prenese ob zagonu in jo uporabi ob naslednjem zagonu;
   ko je prenesena, aplikacija ponudi »Posodobi« (takojšen ponovni zagon). Dobijo jo samo gradnje z enako
   domorodno kodo (`runtimeVersion: fingerprint`). Brezplačni načrt Expo pokrije do 1.000 uporabnikov na mesec.
 - **Nova domorodna koda** (nov paket Expo, nova različica SDK, sprememba `app.config.ts`) potrebuje nov APK:

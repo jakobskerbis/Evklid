@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -49,21 +49,33 @@ Predpostavka o enakomernosti po širini je dobra za ozke prereze in tankostenske
 
 $$\tau(z) = \frac{3T}{2bh}\left(1 - \frac{4z^2}{h^2}\right), \qquad \tau_{max} = \frac{3}{2}\,\frac{T}{A}.$$
 
-```
- prerez     τ(z)
- +----+   |
- |    |   |--
- |    |   |----
- |----|   |-----  τ_max (os)
- |    |   |----
- |    |   |--
- +----+   |
-```
+:::risba skica
+opis: Levo pravokotni prerez širine b in višine h z nevtralno osjo na sredini višine. Desno potek strižne napetosti τ po višini z: parabola, ki je na zgornjem in spodnjem robu enaka nič, največja pa na nevtralni osi, kjer je τ max = 1,5 T/A.
+območje: 0; -3 .. 12; 3
+pravokotnik: 1; -2 .. 3; 2 | siva ozadje
+pravokotnik: 1; -2 .. 3; 2 | debelo
+črta: 1; 0 -> 8; 0 | črtkano siva
+črta: 5; -2 -> 5; 2
+črta: 5; -2 -> 5,7; -1,75 -> 6,31; -1,5 -> 6,83; -1,25 -> 7,25; -1 -> 7,58; -0,75 -> 7,81; -0,5 -> 7,95; -0,25 -> 8; 0 -> 7,95; 0,25 -> 7,81; 0,5 -> 7,58; 0,75 -> 7,25; 1 -> 6,83; 1,25 -> 6,31; 1,5 -> 5,7; 1,75 -> 5; 2 | oranžna debelo
+puščica: 5; -1,5 -> 6,31; -1,5 | | | oranžna
+puščica: 5; -1 -> 7,25; -1 | | | oranžna
+puščica: 5; -0,5 -> 7,81; -0,5 | | | oranžna
+puščica: 5; 0 -> 8; 0 | | | oranžna
+puščica: 5; 0,5 -> 7,81; 0,5 | | | oranžna
+puščica: 5; 1 -> 7,25; 1 | | | oranžna
+puščica: 5; 1,5 -> 6,31; 1,5 | | | oranžna
+napis: 2; 2,5 | prerez | sredina
+napis: 7,3; 1,6 | τ(z) | desno
+napis: 5; 2,5 | τ = 0 | sredina
+napis: 5; -2,5 | τ = 0 | sredina
+napis: 8,2; 0 | τ_{max} = 1,5 T/A | desno
+napis: 0,9; 0 | os | levo
+:::
 
 Za poln krog je največja napetost (na nevtralni osi) $\tau_{max} = \frac{4}{3}\,\frac{T}{A}$, za tanko okroglo cev $\tau_{max} = 2\,\frac{T}{A}$.
 
 :::premisli
-Pravokotni leseni nosilec obrnemo s pokončne lege ($b = 10\,\mathrm{cm}$, $h = 20\,\mathrm{cm}$) v ležečo ($b = 20\,\mathrm{cm}$, $h = 10\,\mathrm{cm}$). Kako se spremenita največja normalna in največja strižna napetost pri istem $M$ in $T$?
+Pravokotni leseni nosilec obrnemo iz pokončne lege ($b = 10\,\mathrm{cm}$, $h = 20\,\mathrm{cm}$) v ležečo ($b = 20\,\mathrm{cm}$, $h = 10\,\mathrm{cm}$). Kako se spremenita največja normalna in največja strižna napetost pri istem $M$ in $T$?
 ---
 Strižna ostane enaka: $\tau_{max} = 1{,}5\,T/A$ je odvisna le od ploščine. Normalna se podvoji, ker se odpornostni moment $bh^2/6$ razpolovi. Strig in upogib se na obliko prereza odzivata različno.
 :::
@@ -78,7 +90,7 @@ $$q = \tau\,b = \frac{T\,S_y}{I_y}.$$
 
 Enota je $\mathrm{N/m}$ (ali $\mathrm{N/mm}$). Če spoj tvorijo vijaki ali žeblji z nosilnostjo $F_1$ na kos, mora biti razmik med njimi največ $s = F_1/q$.
 
-**Tankostenski prerezi.** V steni debeline $t$ si strižni tok $q = \tau t$ predstavljamo kot tok vode po cevi, ki teče vzdolž srednjice stene. V I-profilu teče v pasovih vodoravno, od prostih robov proti stojini, v stojini pa navpično; v stičišču se tokova seštejeta. Stojina prenese skoraj vso prečno silo, zato je dober približek $\tau \approx T/(h_s t_s)$.
+**Tankostenski prerezi.** V steni debeline $t$ si strižni tok $q = \tau t$ predstavljamo kot tok vode po cevi, ki teče vzdolž srednjice stene. V I-profilu teče v pasovih vodoravno in narašča od nič na prostih robovih proti stojini, v stojini pa navpično; v stičišču se tokova obeh polovic pasu seštejeta. Stojina prenese skoraj vso prečno silo, zato je dober približek $\tau \approx T/(h_s t_s)$.
 
 :::premisli
 Zakaj je pri I-profilu strižna napetost v pasu tik ob stojini mnogo manjša kot v stojini tik pod pasom, čeprav je statični moment na obeh mestih skoraj enak?
@@ -237,14 +249,22 @@ Vzemi kup listov papirja in ga upogni. Listi zdrsnejo drug po drugem, konci se z
 
 I-profil si predstavljaj kot cevovod:
 
-```
- ==========   pas: tok teče
-      ||      vodoravno k stojini
-      ||
-      ||      stojina: skoraj
-      ||      ves tok navzdol
- ==========
-```
+:::risba skica
+opis: Prerez I-profila s puščicami strižnega toka. V zgornjem pasu tok teče z obeh koncev vodoravno proti stojini, v stojini teče skoraj ves tok navzdol, v spodnjem pasu se od stojine razdeli na obe strani.
+območje: 0; -1,2 .. 9,5; 7
+pravokotnik: 1; 5 .. 8; 5,6
+pravokotnik: 1; 0 .. 8; 0,6
+pravokotnik: 4,2; 0,6 .. 4,8; 5
+puščica: 1,2; 5,3 -> 4; 5,3 | | | oranžna
+puščica: 7,8; 5,3 -> 5; 5,3 | | | oranžna
+puščica: 4,5; 4,7 -> 4,5; 0,9 | | | oranžna debelo
+puščica: 4; 0,3 -> 1,2; 0,3 | | | oranžna
+puščica: 5; 0,3 -> 7,8; 0,3 | | | oranžna
+napis: 4,5; 6,3 | pas: tok teče vodoravno k stojini | sredina
+napis: 5; 3,2 | stojina: skoraj | desno
+napis: 5; 2,5 | ves tok navzdol | desno
+napis: 4,5; -0,7 | spodnji pas: tok se razdeli | sredina
+:::
 
 Tok iz obeh polovic pasu se v stičišču zlije v stojino, kot dva pritoka v reko; v spodnjem pasu se spet razdeli.
 
@@ -271,7 +291,7 @@ Tok iz obeh polovic pasu se v stičišču zlije v stojino, kot dva pritoka v rek
 - Strižna napetost je največja na zgornjem in spodnjem robu.
 ~ Na robu je strig nič, ker na prosti ploskvi ni strižne obtežbe; največje so tam normalne napetosti.
 + Strižna napetost je največja na nevtralni osi in znaša $1{,}5\,T/A$.
-> Iz $\tau = TS_y/(I_y b)$: $S_y$ je največji na nevtralni osi, kjer je odrezani del največji.
+> Iz $\tau = TS_y/(I_y b)$: $S_y$ je največji pri rezu na nevtralni osi (deli onkraj nje bi ga že zmanjševali), širina $b$ pa je povsod enaka.
 
 ? Pravokotni nosilec $8\,\mathrm{cm} \times 25\,\mathrm{cm}$ ima prečno silo $20\,\mathrm{kN}$. Kolikšna je največja strižna napetost?
 - $1{,}0\,\mathrm{MPa}$

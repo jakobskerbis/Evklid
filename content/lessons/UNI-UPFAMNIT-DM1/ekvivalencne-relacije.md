@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -49,11 +49,19 @@ Za vsebovanost $[b] \subseteq [a]$: iz $x \sim b$ in $a \sim b$ potrebujemo $b \
 
 Primer za $A = \{1, \dots, 6\}$ in razbitje $\{\{1, 2, 3\}, \{4\}, \{5, 6\}\}$:
 
-```
-+-------+-----+-----+
-| 1 2 3 |  4  | 5 6 |
-+-------+-----+-----+
-```
+:::risba skica
+opis: Pravokotnik, ki predstavlja množico A, je z dvema navpičnima črtama razdeljen na tri kose: v prvem so 1, 2 in 3, v drugem je 4, v tretjem sta 5 in 6.
+območje: 0; 0 .. 12; 3
+pravokotnik: 0,5; 0,5 .. 11,5; 2,5
+črta: 5,5; 0,5 -> 5,5; 2,5
+črta: 8; 0,5 -> 8; 2,5
+napis: 1,5; 1,5 | 1
+napis: 3; 1,5 | 2
+napis: 4,5; 1,5 | 3
+napis: 6,75; 1,5 | 4
+napis: 9; 1,5 | 5
+napis: 10,5; 1,5 | 6
+:::
 
 **Izrek 2 (ekvivalence in razbitja).** Za vsako ekvivalenco $\sim$ na $A$ je $A/{\sim}$ razbitje $A$. Obratno: za vsako razbitje $\mathcal R$ je relacija $a \sim_{\mathcal R} b \iff$ »$a$ in $b$ ležita v istem kosu« ekvivalenca, in njeni razredi so ravno kosi $\mathcal R$. Prireditvi sta druga drugi inverzni, zato je med ekvivalencami na $A$ in razbitji $A$ bijekcija.
 
@@ -117,7 +125,7 @@ ekvivalenca: refleksivna, simetrična, tranzitivna; delna urejenost: refleksivna
 2. Skupin je $4 \cdot 2 = 8$, zato ima $\approx$ največ $8$ razredov (manj, če kakšne skupine med bolniki ni).
 3. $\to$ je refleksivna ($S \subseteq S$) in tranzitivna (vsebovanost je tranzitivna).
 4. Ni simetrična: darovalec $0$ Rh$-$ nima antigenov, zato lahko daruje bolniku $\mathrm A$ Rh$+$, obratno pa ne.
-5. Ni tudi antisimetrična: dva *različna* bolnika z isto skupino sta drug z drugim v relaciji v obe smeri. Refleksivni in tranzitivni relaciji rečemo **predurejenost** (kvaziurejenost).
+5. Tudi antisimetrična ni: dva *različna* bolnika z isto skupino sta drug z drugim v relaciji v obe smeri. Refleksivni in tranzitivni relaciji rečemo **predurejenost** (kvaziurejenost).
 6. Povezava: $x \to y$ in $y \to x$ hkrati velja natanko tedaj, ko $x \approx y$. Ko bolnike »združimo« po $\approx$, postane $\to$ na $8$ skupinah prava delna urejenost, vsebovanost množic antigenov.
 7. Odgovor: $\approx$ je ekvivalenca z največ $8$ razredi; $\to$ je predurejenost, ki na faktorski množici postane delna urejenost.
 
@@ -138,7 +146,7 @@ dobra definiranost: iz $(a, b) \sim (a', b')$ sledi $(ad + bc, bd) \sim (a'd + b
 2. Tranzitivnost: naj bo $ad = bc$ in $cf = de$. Prvo enačbo pomnožimo s $f$, drugo z $b$: $adf = bcf = bde$. Torej $d(af - be) = 0$.
 3. Ker je $d \neq 0$ in $\mathbb Z$ nima deliteljev niča, je $af = be$, torej $(a, b) \sim (e, f)$. Tu potrebujemo, da imenovalci niso nič.
 4. Razred: $(x, y) \sim (1, 2) \iff 2x = y$, torej $[(1, 2)] = \{(k, 2k) ;\ k \in \mathbb Z \setminus \{0\}\}$: vsi zapisi ulomka $\frac{1}{2}$.
-5. Dobra definiranost: naj bo $ab' = a'b$. Primerjamo $(ad + bc)\,b'd$ in $(a'd + b'c)\,bd$.
+5. Dobra definiranost: ker je $b \neq 0$ in $d \neq 0$, je $bd \neq 0$, zato par $(ad + bc, bd)$ leži v $A$. Naj bo $ab' = a'b$. Primerjamo $(ad + bc)\,b'd$ in $(a'd + b'c)\,bd$.
 6. Levo: $ab'd^2 + bb'cd$. Desno: $a'bd^2 + bb'cd$. Ker je $ab' = a'b$, sta enaka. Spremembo predstavnika drugega argumenta obravnavamo simetrično.
 7. Odgovor: $\sim$ je ekvivalenca, razredi so racionalna števila, $[(1, 2)]$ so vsi pari $(k, 2k)$, seštevanje je dobro definirano. Tako $\mathbb Q$ zgradimo iz $\mathbb Z$.
 
@@ -270,7 +278,7 @@ print(list(razredi.values()))
 
 **Ekvivalenčna ovojnica.** Presek poljubne družine ekvivalenc na $A$ je ekvivalenca. Zato za vsako relacijo $R \subseteq A \times A$ obstaja najmanjša ekvivalenca, ki jo vsebuje: presek vseh ekvivalenc, ki vsebujejo $R$. Konstruktivno: vzamemo $R$, dodamo diagonalo in obrnjene pare, nato tranzitivno ovojnico. Velja $a \sim b$ natanko tedaj, ko $a = b$ ali obstaja zaporedje $a = x_0, x_1, \dots, x_k = b$, v katerem je vsak sosednji par v $R$ ali v $R^{-1}$. To je točno to, kar izračuna union–find.
 
-**Mreža ekvivalenc.** Ekvivalence na $A$, urejene z vsebovanostjo (pravimo, da je finejša ekvivalenca manjša), tvorijo mrežo. Spodnja meja dveh ekvivalenc je njun presek, zgornja meja pa ekvivalenčna ovojnica unije, ne unija sama. Najmanjši element je enakost (vsak element sam v razredu), največji je $A \times A$ (en sam razred).
+**Mreža ekvivalenc.** Ekvivalence na $A$, urejene z vsebovanostjo (pravimo, da je finejša ekvivalenca manjša), tvorijo mrežo. Največja spodnja meja (infimum) dveh ekvivalenc je njun presek, najmanjša zgornja meja (supremum) pa ekvivalenčna ovojnica unije, ne unija sama. Najmanjši element je enakost (vsak element sam v razredu), največji je $A \times A$ (en sam razred).
 
 ## Preveri se
 
@@ -326,11 +334,11 @@ print(list(razredi.values()))
 
 :::simboli
 A | osnovna množica | | |
-a, b, c, x, y | elementi množice $A$ | | |
+a, b, c, x, y | elementi množice $A$ | | | v Primeru 3 cela števila (komponente parov)
 \pi | kanonična projekcija | \pi(a) = [a] | | surjektivna
 f | preslikava | | | jedro: $f(a) = f(b)$
 \bar f | inducirana preslikava | | | bijekcija na $f(A)$
 n, k | naravni števili | | |
 R | relacija ali kos razbitja | | |
-d | število pozitivnih deliteljev | | | $d(12) = 6$
+d | število pozitivnih deliteljev | | | $d(12) = 6$; v Primeru 3 je $d$ celo število
 :::

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -11,7 +11,7 @@ Isti model opiše strune glasbil, membrano zvočnika, atome, ki nihajo vzdolž v
 
 ## Razlaga
 
-Začni pri enem samem nihalu: utež na vzmeti potegneš navzdol in spustiš. Vzmet jo vleče nazaj, utež prešine ravnovesno lego, se ustavi na drugi strani in se vrne. Ta primer najprej razstavimo na pojme, enačbo in rešitev, potem pa ga posplošimo na nihalo na vrvici, energijo in dušenje.
+Začni pri enem samem nihalu: utež na vzmeti potegneš navzdol in spustiš. Vzmet jo vleče nazaj, utež gre skozi ravnovesno lego, se ustavi na drugi strani in se vrne. Ta primer najprej razstavimo na pojme, enačbo in rešitev, potem pa ga posplošimo na nihalo na vrvici, energijo in dušenje.
 
 ### Utež na vzmeti, korak za korakom
 
@@ -233,7 +233,7 @@ Dve vzmeti s koeficientoma $k_1 = 60\,\mathrm{N/m}$ in $k_2 = 30\,\mathrm{N/m}$ 
 5. Fazni zamik: $\cos\delta = x(0)/x_0 = 0{,}030/0{,}04637 \approx 0{,}647$, $\sin\delta = -v(0)/(\omega_0x_0) = 0{,}25/(7{,}071 \cdot 0{,}04637) \approx 0{,}762$, torej $\delta \approx 0{,}867\,\mathrm{rad}$.
 6. Najvišja lega je $x = -x_0$, kar zahteva $\omega_0t + \delta = \pi$: $t = (\pi - 0{,}867)/7{,}071\,\mathrm{s} \approx 0{,}322\,\mathrm{s}$.
 7. Sila v vzmeteh je $F = k(mg/k + x) = mg + kx$: največja v spodnji legi, $F_{\max} = 3{,}924 + 20 \cdot 0{,}04637 \approx 4{,}85\,\mathrm{N}$, najmanjša v zgornji, $F_{\min} = 3{,}924 - 0{,}927 \approx 3{,}00\,\mathrm{N}$.
-8. Odgovor: vzmeti sta v mirovanju raztegnjeni za $6{,}5\,\mathrm{cm}$ in $13{,}1\,\mathrm{cm}$; utež niha z $t_0 \approx 0{,}89\,\mathrm{s}$ in amplitudo $4{,}6\,\mathrm{cm}$ ter je prvič v najvišji legi ob $t \approx 0{,}32\,\mathrm{s}$. Sila v vzmeteh se giblje med $3{,}0\,\mathrm{N}$ in $4{,}9\,\mathrm{N}$; ker je ves čas pozitivna, sta vzmeti ves čas napeti in model velja.
+8. Odgovor: vzmeti sta v mirovanju raztegnjeni za $6{,}5\,\mathrm{cm}$ in $13{,}1\,\mathrm{cm}$; utež niha s $t_0 \approx 0{,}89\,\mathrm{s}$ in amplitudo $4{,}6\,\mathrm{cm}$ ter je prvič v najvišji legi ob $t \approx 0{,}32\,\mathrm{s}$. Sila v vzmeteh se giblje med $3{,}0\,\mathrm{N}$ in $4{,}9\,\mathrm{N}$; ker je ves čas pozitivna, sta vzmeti ves čas napeti in model velja.
 
 ### Naloga 2
 
@@ -252,18 +252,34 @@ Natančno navedi, kdaj je nihanje harmonično, in za nedušeno nihalo na vzmeti 
 
 Harmonično nihanje je **senca enakomernega kroženja**. Predstavljaj si kroglico, ki enakomerno kroži s kotno hitrostjo $\omega_0$ po krožnici s polmerom $x_0$, in njeno senco na steni:
 
-```
-     krog                 senca na osi x
-      .--.
-    /  o   \    ---->   |-----o----|----------|
-   |   +    |           -x0        0         x0
-    \      /
-      '--'
-```
+:::risba skica
+opis: Krožnica s polmerom x₀ in kroglica na njej pri kotu ω₀t = 60°. Navpična črtkana črta spusti kroglico na os x pod krožnico, kjer je njena senca pri x = x₀ cos ω₀t. Na osi so označene točke −x₀, 0 in x₀; senca niha med −x₀ in x₀.
+območje: -3; -3,6 .. 3,6; 2,8
+krog: 0; 0 | 2
+črta: 0; 0 -> 1; 1,73 | siva
+napis: 0,35; 1,05 | x_0 | levo
+napis: 0,62; 0,27 | ω_0t
+črta: 0; 0 -> 2; 0 | siva črtkano
+črta: 1; 1,73 -> 1; -2,6 | črtkano
+puščica: 1,6; 2,2 -> 0,4; 2,5
+napis: 1,75; 2,2 | kroženje | desno
+črta: -2,6; -2,6 -> 2,8; -2,6 | puščica
+napis: 3,1; -2,6 | x | desno
+črta: -2; -2,5 -> -2; -2,7
+črta: 0; -2,5 -> 0; -2,7
+črta: 2; -2,5 -> 2; -2,7
+napis: -2; -3,1 | −x_0
+napis: 0; -3,1 | 0
+napis: 2; -3,1 | x_0
+točka: 1; 1,73 | kroglica | desno | modra
+točka: 0; 0 | | |
+točka: 1; -2,6 | senca | nad desno | oranžna
+podnapis: Senca kroglice na osi x je pri x = x₀ cos ω₀t
+:::
 
 Ko kroglica obkroži krožnico enkrat, senca naredi en cel nihaj. Projekcija lege je $x_0\cos\omega_0 t$, projekcija hitrosti $-\omega_0x_0\sin\omega_0 t$, projekcija radialnega pospeška $-\omega_0^2x$. Iz te slike je jasno, zakaj je senca najhitrejša na sredini in se v skrajnih legah ustavi.
 
-Graf dušenega nihanja je kosinusna krivulja, ki jo od zgoraj in spodaj omejujeta eksponentni ovojnici $\pm x_0e^{-\beta t}$. Pri kritičnem dušenju krivulja le enkrat pade proti ničli, ne da bi jo prečkala.
+Graf dušenega nihanja je kosinusna krivulja, ki jo od zgoraj in spodaj omejujeta eksponentni ovojnici $\pm x_0e^{-\beta t}$. Pri kritičnem dušenju krivulja (če telo spustimo iz mirovanja) le enkrat pade proti ničli, ne da bi jo prečkala.
 
 ## Drugače: Uporaba v stroki
 

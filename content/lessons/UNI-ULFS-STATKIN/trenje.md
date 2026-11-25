@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -36,7 +36,7 @@ Potiskaš s $P = 90\,\mathrm{N}$. Kolikšna je sila trenja in ali kovček miruje
 $60\,\mathrm{N}$. Potisk presega mejo $80\,\mathrm{N}$, zato kovček drsi in velja $\mu_\mathrm{t} N = 0{,}3 \cdot 200\,\mathrm{N}$. Preostalih $30\,\mathrm{N}$ ni uravnoteženih, zato kovček pospešuje.
 :::
 
-**Posplošitev 1: lepenje.** Dokler ploskvi ne drsita drug ob drugi, govorimo o **lepenju** (statičnem trenju). Sila lepenja ni podana vnaprej. Je neznanka, ki jo dobiš iz ravnotežnih enačb. Navzgor je omejena:
+**Posplošitev 1: lepenje.** Dokler ploskvi ne drsita druga ob drugi, govorimo o **lepenju** (statičnem trenju). Sila lepenja ni podana vnaprej. Je neznanka, ki jo dobiš iz ravnotežnih enačb. Navzgor je omejena:
 
 $$|F| \le \mu_\mathrm{l} N$$
 
@@ -182,6 +182,61 @@ $\alpha_\mathrm{max} \approx 19{,}3^\circ$. Naklon $35\,\%$ pomeni ravno $\tan\a
 - V Coulombovem modelu velikost stične ploskve ne vpliva na trenje.
 - Postopek: predpostavi mirovanje, izračunaj potrebno $F$, preveri mejo.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo lepenja in Coulombov pogoj $|F| \le \mu_\mathrm{l} N$ ter zakaj je sila lepenja neznanka iz ravnotežnih enačb, ne $\mu_\mathrm{l} N$;
+- zakon drsnega trenja $F = \mu_\mathrm{t} N$, smer sile (nasproti relativni hitrosti oziroma težnji drsenja) in razmerje $\mu_\mathrm{t} < \mu_\mathrm{l}$;
+- izpeljavo pogoja $\tan\alpha \le \mu_\mathrm{l}$ za mirovanje na klancu, definicijo mejnega kota lepenja $\varphi_\mathrm{l} = \arctan\mu_\mathrm{l}$ in zakaj se teža pokrajša;
+- postopek: predpostavi mirovanje, izračunaj potrebna $F$ in $N$, preveri mejo; na meji zdrsa dodaj $F = \mu_\mathrm{l} N$;
+- stožec trenja, zakaj je naloga z več stiki določena šele v mejnem stanju in kdaj se telo prej prevrne, kot zdrsne.
+
+### Naloga 1
+
+Zaboj s težo $600\,\mathrm{N}$ leži na klancu z naklonom $25^\circ$; koeficient lepenja je $0{,}3$. Ob klanec ga pritiskaš z vodoravno silo $P$, ki kaže proti klancu. (a) Pokaži, da zaboj brez sile $P$ zdrsne. (b) Določi najmanjšo in največjo silo $P$, pri kateri zaboj še miruje. (c) Kolikšna je sila lepenja in kam kaže pri $P = 400\,\mathrm{N}$? (d) Pri kateri sili $P$ lepenje sploh ni potrebno?
+
+**Rešitev:**
+
+1. Brez $P$ velja pogoj $\tan\alpha \le \mu_\mathrm{l}$. Ker je $\tan 25^\circ \approx 0{,}466 > 0{,}3$, zaboj zdrsne navzdol.
+2. Prosto telo s silo $P$; silo lepenja $F$ štejemo pozitivno navzgor po klancu. Vzdolž klanca: $F + P\cos\alpha - G\sin\alpha = 0$. Pravokotno na klanec: $N = G\cos\alpha + P\sin\alpha$. Vodoravna sila poveča normalno silo.
+3. Najmanjša sila: zaboj teži navzdol, lepenje kaže navzgor in je na meji, $F = \mu_\mathrm{l} N$. Iz $G\sin\alpha - P\cos\alpha = \mu_\mathrm{l}(G\cos\alpha + P\sin\alpha)$ sledi $P_\mathrm{min} = G\,\dfrac{\sin\alpha - \mu_\mathrm{l}\cos\alpha}{\cos\alpha + \mu_\mathrm{l}\sin\alpha}$.
+4. Vstavimo $\sin 25^\circ \approx 0{,}4226$ in $\cos 25^\circ \approx 0{,}9063$: $P_\mathrm{min} = 600\,\mathrm{N} \cdot \dfrac{0{,}1507}{1{,}0331} \approx 87{,}5\,\mathrm{N}$.
+5. Največja sila: zaboj teži navzgor, lepenje kaže navzdol, $F = -\mu_\mathrm{l} N$. Dobimo $P_\mathrm{max} = G\,\dfrac{\sin\alpha + \mu_\mathrm{l}\cos\alpha}{\cos\alpha - \mu_\mathrm{l}\sin\alpha} = 600\,\mathrm{N} \cdot \dfrac{0{,}6945}{0{,}7795} \approx 534{,}6\,\mathrm{N}$.
+6. Kontrola z mejnim kotom lepenja $\varphi_\mathrm{l} = \arctan 0{,}3 \approx 16{,}7^\circ$: izraza sta enaka $G\tan(\alpha - \varphi_\mathrm{l}) = 600\,\mathrm{N} \cdot \tan 8{,}3^\circ \approx 87{,}5\,\mathrm{N}$ in $G\tan(\alpha + \varphi_\mathrm{l}) = 600\,\mathrm{N} \cdot \tan 41{,}7^\circ \approx 534{,}6\,\mathrm{N}$. Ujema se.
+7. Pri $P = 400\,\mathrm{N}$: $F = G\sin\alpha - P\cos\alpha \approx 253{,}6\,\mathrm{N} - 362{,}5\,\mathrm{N} = -108{,}9\,\mathrm{N}$. Negativni predznak pomeni, da lepenje kaže navzdol po klancu. $N \approx 543{,}8\,\mathrm{N} + 169{,}0\,\mathrm{N} = 712{,}8\,\mathrm{N}$, meja $\mu_\mathrm{l} N \approx 213{,}8\,\mathrm{N}$. Ker je $108{,}9\,\mathrm{N} < 213{,}8\,\mathrm{N}$, zaboj miruje.
+8. Lepenje ni potrebno, ko je $F = 0$: $P = G\tan\alpha = 600\,\mathrm{N} \cdot 0{,}4663 \approx 279{,}8\,\mathrm{N}$.
+9. Odgovor: zaboj miruje za $87{,}5\,\mathrm{N} \le P \le 534{,}6\,\mathrm{N}$. Pri $400\,\mathrm{N}$ je sila lepenja približno $109\,\mathrm{N}$ navzdol po klancu, pri $279{,}8\,\mathrm{N}$ je nič. Smer lepenja se torej znotraj območja mirovanja obrne.
+
+### Naloga 2
+
+Lestev z dolžino $4{,}0\,\mathrm{m}$ in težo $120\,\mathrm{N}$ (težišče na sredini) je prislonjena ob gladko navpično steno in s tlemi oklepa kot $60^\circ$. Koeficient lepenja med lestvijo in tlemi je $0{,}4$. Po lestvi se vzpenja človek s težo $700\,\mathrm{N}$. (a) Kako daleč vzdolž lestve lahko pride, preden lestev zdrsne? (b) Kolikšen mora biti koeficient lepenja, da varno pride do vrha?
+
+**Rešitev:**
+
+1. Prosto telo lestve: v spodnjem koncu $A$ normalna sila tal $N_A$ navzgor in sila lepenja $F$ proti steni; v zgornjem koncu $B$ le normalna sila stene $N_B$ (stena je gladka); teža lestve $G_\mathrm{l}$ na sredini in teža človeka $G_\mathrm{č}$ na razdalji $s$ od $A$, merjeno vzdolž lestve.
+2. Navpično: $N_A = G_\mathrm{l} + G_\mathrm{č} = 120\,\mathrm{N} + 700\,\mathrm{N} = 820\,\mathrm{N}$. Vodoravno: $F = N_B$.
+3. Momenti glede na $A$ ($\theta = 60^\circ$): $N_B L\sin\theta = G_\mathrm{l}\,\dfrac{L}{2}\cos\theta + G_\mathrm{č}\,s\cos\theta$. Čim više je človek, tem večja sta $N_B$ in potrebno lepenje.
+4. Meja zdrsa: $F = \mu_\mathrm{l} N_A = 0{,}4 \cdot 820\,\mathrm{N} = 328\,\mathrm{N}$, torej $N_B = 328\,\mathrm{N}$.
+5. Ročice: $L\sin\theta = 4{,}0\,\mathrm{m} \cdot 0{,}866 \approx 3{,}464\,\mathrm{m}$, $\dfrac{L}{2}\cos\theta = 2{,}0\,\mathrm{m} \cdot 0{,}5 = 1{,}0\,\mathrm{m}$. Momentna enačba: $328\,\mathrm{N} \cdot 3{,}464\,\mathrm{m} = 120\,\mathrm{N\,m} + 350\,\mathrm{N} \cdot s$.
+6. $s = \dfrac{1136{,}2\,\mathrm{N\,m} - 120\,\mathrm{N\,m}}{350\,\mathrm{N}} \approx 2{,}90\,\mathrm{m}$.
+7. Človek na vrhu ($s = L$): $N_B = \dfrac{120\,\mathrm{N\,m} + 700\,\mathrm{N} \cdot 2{,}0\,\mathrm{m}}{3{,}464\,\mathrm{m}} \approx 438{,}8\,\mathrm{N}$. Potrebni koeficient: $\mu_\mathrm{l} \ge \dfrac{438{,}8\,\mathrm{N}}{820\,\mathrm{N}} \approx 0{,}535$.
+8. Odgovor: lestev zdrsne, ko je človek približno $2{,}90\,\mathrm{m}$ od spodnjega konca (na slabih treh četrtinah lestve). Za vzpon do vrha bi moral biti koeficient lepenja vsaj $0{,}54$. Prazna lestev potrebuje le $F \approx 34{,}6\,\mathrm{N}$, zato miruje; nevarnost naraste šele z višino človeka.
+
+### Naloga 3
+
+Natančno navedi Coulombov zakon za lepenje in za drsno trenje. Izpelji pogoj, pri katerem telo miruje na klancu z naklonom $\alpha$, in utemelji, zakaj ni odvisen od teže telesa. Utemelji, ali se telo, ki po klancu že drsi, samo ustavi, če velja $\mu_\mathrm{t} < \tan\alpha < \mu_\mathrm{l}$.
+
+**Rešitev:**
+
+1. Lepenje: dokler stični ploskvi ne drsita druga ob drugi, je sila lepenja tolikšna, kot zahteva ravnotežje, in omejena z $|F| \le \mu_\mathrm{l} N$. Kaže nasproti težnji drsenja. $N$ je normalna sila v stiku, $\mu_\mathrm{l}$ koeficient lepenja (brez enote, odvisen od para snovi in stanja površin).
+2. Drsno trenje: ko ploskvi drsita, je $F = \mu_\mathrm{t} N$ in kaže nasproti relativni hitrosti; običajno je $\mu_\mathrm{t} < \mu_\mathrm{l}$.
+3. Klanec, prosto telo: teža $G$, normalna sila $N$ pravokotno na klanec, lepenje $F$ navzgor po klancu. Ravnotežje vzdolž klanca da $F = G\sin\alpha$, pravokotno nanj $N = G\cos\alpha$.
+4. Pogoj $F \le \mu_\mathrm{l} N$ postane $G\sin\alpha \le \mu_\mathrm{l} G\cos\alpha$. Delimo z $G\cos\alpha > 0$: $\tan\alpha \le \mu_\mathrm{l}$ oziroma $\alpha \le \varphi_\mathrm{l} = \arctan\mu_\mathrm{l}$.
+5. Neodvisnost od teže: potrebna sila $G\sin\alpha$ in meja $\mu_\mathrm{l} G\cos\alpha$ sta obe sorazmerni z $G$, zato se $G$ pokrajša. Težje telo potrebuje večje lepenje, a ima v enakem razmerju večjo mejo.
+6. Drseče telo: zdaj velja $F = \mu_\mathrm{t} N = \mu_\mathrm{t} G\cos\alpha$. Rezultanta vzdolž klanca navzdol je $G\sin\alpha - \mu_\mathrm{t} G\cos\alpha = G\cos\alpha\,(\tan\alpha - \mu_\mathrm{t}) > 0$, ker je $\tan\alpha > \mu_\mathrm{t}$.
+7. Odgovor: telo miruje, če je $\tan\alpha \le \mu_\mathrm{l}$, ne glede na težo. Telo, ki že drsi, se pri $\mu_\mathrm{t} < \tan\alpha < \mu_\mathrm{l}$ ne ustavi, ampak pospešuje navzdol, čeprav bi isto telo na istem klancu mirovalo, če bi ga tja položili brez hitrosti.
+
 ## Drugače: Z analogijo
 
 Lepenje si predstavljaj kot plačilno kartico z limitom na potovanju.
@@ -266,6 +321,7 @@ G | teža telesa | | N
 P | potisna (vlečna) sila | | N
 \alpha | naklonski kot klanca | \tan\alpha = \frac{\Delta h}{d} | °
 \alpha_\mathrm{max} | mejni kot klanca | \tan\alpha_\mathrm{max} = \mu_\mathrm{l} | ° | pri večjem naklonu telo zdrsne
+\varphi_\mathrm{l} | mejni kot lepenja (torni kot) | \varphi_\mathrm{l} = \arctan\mu_\mathrm{l} | °
 \beta | kot vlečne sile (pasu) glede na vodoravnico | | °
 h | nadmorska višina | | m | Δh višinska razlika med plastnicama
 d | vodoravna razdalja (projekcija na karti) | | m

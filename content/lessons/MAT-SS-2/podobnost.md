@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -27,7 +27,7 @@ Podobnost najlažje razumeš ob **skladnosti**, ki jo poznaš iz osnovne šole. 
 |---|---|---|
 | koti | enaki | enaki |
 | stranice | enake | $k$-krat daljše |
-| ploščina | enaka | $k^2$-krat večja |
+| ploščina | enaka | $k^2$-kratna |
 | zapis | $\cong$ | $\sim$ |
 
 **2. Ustrezne stranice.** Ustrezni stranici ležita nasproti enakih kotov. Najkrajša stranica prvega trikotnika ustreza najkrajši stranici drugega.
@@ -87,6 +87,44 @@ Na risbi zgoraj: $15^2 = 25 \cdot 9$, $20^2 = 25 \cdot 16$ in $12^2 = 9 \cdot 16
 Kaj se zgodi, če višina razdeli hipotenuzo na dva enaka odseka, $c_a = c_b$? Kolikšna je tedaj višina v primerjavi z odsekom in kakšen je trikotnik?
 ---
 Iz $v_c^2 = c_a \cdot c_a = c_a^2$ sledi $v_c = c_a$: višina je enako dolga kot vsak odsek. Kateti sta enaki ($a^2 = c \cdot c_a = b^2$), zato je trikotnik enakokrak pravokotni, kota ob hipotenuzi sta $45^\circ$.
+:::
+
+**8. Središčni razteg.** Podobne like dobimo s preslikavo. Izberemo točko $S$, **središče raztega**, in število $k \ne 0$, **koeficient raztega**. **Središčni razteg** vsaki točki $T$ priredi točko $T'$ na premici $ST$, za katero je
+
+$$|ST'| = |k| \cdot |ST|$$
+
+Pri $k > 0$ leži $T'$ na isti strani središča kot $T$ (na poltraku $ST$), pri $k < 0$ na nasprotni strani. Središče $S$ se preslika samo vase. Tako deluje projektor: središče je v objektivu, slika na platnu je povečana. Tudi kovanec in Luna iz primera 2 sta povezana s središčnim raztegom s središčem v očesu.
+
+- Daljica se preslika v vzporedno daljico, ki je $|k|$-krat daljša: $|A'B'| = |k| \cdot |AB|$.
+- Koti se ohranijo.
+- Zato je slika lika podobna liku s koeficientom podobnosti $|k|$, ploščina pa se pomnoži s $k^2$.
+
+Pri $|k| > 1$ se lik poveča, pri $|k| < 1$ se pomanjša. Pri $k = 1$ ostane vse na mestu, pri $k = -1$ je razteg zrcaljenje čez točko $S$.
+
+V koordinatnem sistemu merimo odmik točke od središča in ga pomnožimo s $k$. Točka $T(x, y)$ se pri središču $S(x_S, y_S)$ preslika v $T'(x', y')$:
+
+$$x' = x_S + k\,(x - x_S), \qquad y' = y_S + k\,(y - y_S)$$
+
+Pri središču v izhodišču je preprosto $T'(kx, ky)$. Na risbi je središče v izhodišču: večji trikotnik je slika trikotnika $ABC$ pri $k = 2$, manjši na drugi strani središča pri $k = -\frac{1}{2}$.
+
+:::risba graf
+opis: Središčni razteg s središčem v izhodišču S. Modri trikotnik ABC ima oglišča A(2, 1), B(4, 1), C(3, 3). Pri k = 2 se preslika v oranžni trikotnik A'B'C' z oglišči (4, 2), (8, 2), (6, 6), ki ima dvakrat daljše stranice. Pri k = −1/2 se preslika v zeleni trikotnik z oglišči (−1; −0,5), (−2; −0,5), (−1,5; −1,5) na drugi strani središča. Črtkane premice skozi S povezujejo ustrezna oglišča.
+x: -3 .. 9 | 1 | x
+y: -2 .. 7 | 1 | y
+enako: da
+črta: -1; -0,5 -> 4; 2 | siva črtkano
+črta: -2; -0,5 -> 8; 2 | siva črtkano
+črta: -1,5; -1,5 -> 6; 6 | siva črtkano
+lik: 2; 1 -> 4; 1 -> 3; 3 | modra
+lik: 4; 2 -> 8; 2 -> 6; 6 | oranžna
+lik: -1; -0,5 -> -2; -0,5 -> -1,5; -1,5 | zelena
+točka: 0; 0 | S | nad levo
+točka: 2; 1 | A | pod
+točka: 4; 1 | B | pod
+točka: 3; 3 | C | levo
+točka: 4; 2 | A' | nad levo
+točka: 8; 2 | B' | pod
+točka: 6; 6 | C' | levo
 :::
 
 ## Rešeni primeri
@@ -171,23 +209,139 @@ Koliko merita $c_b$ in $v_c$?
 $c_b = 50 - 18 = 32\,\text{cm}$ in $v_c^2 = 18 \cdot 32 = 576$, zato $v_c = 24\,\text{cm}$. Preizkus: $b^2 = 50 \cdot 32 = 1600$, $b = 40\,\text{cm}$, in $30 \cdot 40 = 50 \cdot 24$, ker sta to dvakratni ploščini.
 :::
 
+### Primer 5: središčni razteg v koordinatah
+
+Trikotnik $ABC$ ima oglišča $A(2, 2)$, $B(4, 2)$ in $C(2, 3)$. Preslikaj ga s središčnim raztegom s središčem $S(1, 1)$ in koeficientom a) $k = 2$, b) $k = -1$. Primerjaj ploščine slik s ploščino trikotnika $ABC$.
+
+**Podatki:** $A(2, 2)$, $B(4, 2)$, $C(2, 3)$, središče $S(1, 1)$, koeficienta $k = 2$ in $k = -1$
+**Iščemo:** oglišča slik in njihove ploščine
+
+:::formula
+$x' = x_S + k\,(x - x_S)$, $\;y' = y_S + k\,(y - y_S)$; ploščina slike je $k^2$-krat ploščina lika
+:::
+
+**Rešitev:**
+
+1. Odmiki od središča: $A$ je $1$ desno in $1$ gor od $S$, $B$ je $3$ desno in $1$ gor, $C$ je $1$ desno in $2$ gor.
+2. a) Pri $k = 2$ odmike podvojimo: $A'(1 + 2, 1 + 2) = A'(3, 3)$, $B'(1 + 6, 1 + 2) = B'(7, 3)$, $C'(1 + 2, 1 + 4) = C'(3, 5)$.
+3. b) Pri $k = -1$ odmike obrnemo: $A''(1 - 1, 1 - 1) = A''(0, 0)$, $B''(1 - 3, 1 - 1) = B''(-2, 0)$, $C''(1 - 1, 1 - 2) = C''(0, -1)$.
+4. Trikotnik $ABC$ ima pravi kot pri $A$, kateti merita $|AB| = 2$ in $|AC| = 1$, zato je $P = \dfrac{2 \cdot 1}{2} = 1$.
+5. Slika pri $k = 2$ ima kateti $4$ in $2$: $P' = \dfrac{4 \cdot 2}{2} = 4 = 2^2 \cdot 1$. Slika pri $k = -1$ ima kateti $2$ in $1$: $P'' = 1 = (-1)^2 \cdot 1$.
+6. Odgovor: a) $A'(3, 3)$, $B'(7, 3)$, $C'(3, 5)$, ploščina je $4$-krat večja; b) $A''(0, 0)$, $B''(-2, 0)$, $C''(0, -1)$, trikotnik je skladen z $ABC$ (zrcaljen čez $S$), ploščina je enaka.
+
 ## Pogoste napake
 
 - **Napačno povezane stranice.** Razmerje mora povezovati *ustrezni* stranici, torej tisti, ki ležita nasproti enakih kotov. Preden zapišeš sorazmerje, označi enake kote.
 - **Obrnjeno razmerje na eni strani.** Kar na levi deliš v nekem vrstnem redu (na primer premer z razdaljo), moraš v istem vrstnem redu deliti tudi na desni. Pri Luni je zapis $\dfrac{x}{384\,000} = \dfrac{275}{2{,}5}$ napačen: na levi je premer deljen z razdaljo, na desni razdalja s premerom.
 - **Ploščina raste s $k$ namesto s $k^2$.** Kdor misli »dvakrat daljše, dvakrat večje«, pozabi, da se lik raztegne v dveh smereh. Če so dolžine dvakrat večje, je ploščina štirikrat večja. Iz razmerja ploščin dobiš $k$ s korenjenjem.
-- **Zamenjana odseka pri Evklidovem izreku.** Kvadrat katete $a$ je enak $c \cdot c_a$, kjer je $c_a$ odsek *ob* kateti $a$ (med $B$ in vznožjem višine). Ne uporabi odseka ob drugi kateti.
+- **Zamenjana odseka pri Evklidovem izreku.** Kvadrat katete $a$ je enak $c \cdot c_a$, kjer je $c_a$ odsek *ob* kateti $a$ (med $B$ in nožiščem višine). Ne uporabi odseka ob drugi kateti.
 - **Pozabljen koren.** Velja $v_c^2 = c_a \cdot c_b$ in $a^2 = c \cdot c_a$. Kdor zapiše zmnožek kot končni rezultat, dobi pri odsekih $4$ in $25$ višino $100$, kar je daljše od hipotenuze. Na koncu še koreni.
 
 ## Povzetek
 
-- Trikotnika sta podobna, če imata enake ustrezne kote in enaka razmerja ustreznih stranic. Razmerje je koeficient podobnosti $k$.
+- Trikotnika sta **podobna**, če imata enake ustrezne kote in enaka razmerja ustreznih stranic.
+- To razmerje je **koeficient podobnosti** $k$.
 - Dovolj je ujemanje v dveh kotih (KK) ali eden od izrekov SSS, SKS, SSK.
 - Razmerje dolžin je $k$, razmerje ploščin je $k^2$.
-- V pravokotnem trikotniku višina na hipotenuzo razdeli hipotenuzo na odseka $c_a$ in $c_b$ ter trikotnik na dva podobna trikotnika.
-- Evklidov izrek: $a^2 = c \cdot c_a$, $b^2 = c \cdot c_b$.
-- Višinski izrek: $v_c^2 = c_a \cdot c_b$.
+- V pravokotnem trikotniku višina na hipotenuzo razdeli hipotenuzo na odseka $c_a$ in $c_b$, trikotnik pa na dva podobna trikotnika.
+
+**Evklidov izrek:**
+
+$$a^2 = c \cdot c_a, \quad b^2 = c \cdot c_b$$
+
+**Višinski izrek:**
+
+$$v_c^2 = c_a \cdot c_b$$
+
+**Središčni razteg** s središčem $S$ in koeficientom $k \ne 0$:
+
+$$|ST'| = |k| \cdot |ST|$$
+
+- Pri $k < 0$ je $T'$ na drugi strani $S$.
+- Slika je podobna liku s koeficientom $|k|$; ploščina se pomnoži s $k^2$.
 - Pri nalogah najprej nariši skico, označi enake kote in šele nato zapiši sorazmerje.
+
+## Ponovitev
+
+**Formule**
+- $\dfrac{a'}{a} = \dfrac{b'}{b} = \dfrac{c'}{c} = k$ (na pamet)
+- razmerje ploščin je $k^2$ (na pamet)
+- $a^2 = c \cdot c_a$, $\;b^2 = c \cdot c_b$ (priloga)
+- $v_c^2 = c_a \cdot c_b$ (priloga)
+- središčni razteg: $|ST'| = |k| \cdot |ST|$ (na pamet)
+
+**Postopek**
+1. Nariši skico in označi enake kote.
+2. Podobnost utemelji s KK, SSS, SKS ali SSK.
+3. Poveži ustrezni stranici in izračunaj $k$.
+4. Zapiši sorazmerje v istem vrstnem redu na obeh straneh.
+5. Izračunaj neznano dolžino; pri ploščinah uporabi $k^2$.
+
+**Pazi na**
+- Povezuj stranici nasproti enakih kotov.
+- Ploščina se pomnoži s $k^2$, ne s $k$.
+- Pri Evklidovem in višinskem izreku na koncu še koreni.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+V trikotniku $ABC$ vzporednica s stranico $AB$ seka stranico $AC$ v točki $M$ in stranico $BC$ v točki $N$. Velja $|CM| = 4\,\text{cm}$ in $|MA| = 2\,\text{cm}$, ploščina trikotnika $MNC$ pa je $12\,\text{cm}^2$. Izračunajte ploščino trapeza $ABNM$.
+
+**Rešitev:**
+
+1. Ker je $MN \parallel AB$, sta kota pri $M$ in $A$ istoležna kota ob vzporednicah, zato enaka; kot pri $C$ je skupen. Po izreku KK sta trikotnika $ABC$ in $MNC$ podobna.
+2. Ustrezni stranici sta $|CA| = 4\,\text{cm} + 2\,\text{cm} = 6\,\text{cm}$ in $|CM| = 4\,\text{cm}$, zato je koeficient podobnosti $k = \dfrac{|CA|}{|CM|} = \dfrac{6}{4} = \dfrac{3}{2}$.
+3. Razmerje ploščin je $k^2 = \dfrac{9}{4}$, zato je ploščina trikotnika $ABC$ enaka $\dfrac{9}{4} \cdot 12\,\text{cm}^2 = 27\,\text{cm}^2$.
+4. Trapez $ABNM$ je trikotnik $ABC$ brez trikotnika $MNC$: $27\,\text{cm}^2 - 12\,\text{cm}^2 = 15\,\text{cm}^2$.
+5. Odgovor: ploščina trapeza $ABNM$ je $15\,\text{cm}^2$.
+
+**Točkovanje:** 1 točka za podobnost trikotnikov in $k = \dfrac{3}{2}$, 1 točka za ploščino trikotnika $ABC$ ($27\,\text{cm}^2$), 1 točka za ploščino trapeza ($15\,\text{cm}^2$).
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+V pravokotnem trikotniku $ABC$ s pravim kotom pri $C$ je $D$ nožišče višine iz oglišča $C$ na hipotenuzo. Višina meri $|CD| = 6\,\text{cm}$, odsek hipotenuze pa $|DB| = 3\,\text{cm}$.
+
+a) Izračunajte dolžino odseka $|AD|$ in dolžino hipotenuze $|AB|$. (2 točki)
+b) Izračunajte dolžini katet $a = |BC|$ in $b = |AC|$. Rezultata zapišite s poenostavljenima korenoma. (2 točki)
+c) Utemeljite, da sta trikotnika $ACD$ in $CBD$ podobna. Izračunajte koeficient podobnosti $k = \dfrac{|AC|}{|CB|}$ in razmerje ploščin trikotnikov $ACD$ in $CBD$. (3 točke)
+
+**Rešitev:**
+
+1. a) Odsek $|DB|$ leži ob kateti $a$, zato je $c_a = 3\,\text{cm}$, iskani odsek je $c_b = |AD|$. Po višinskem izreku je $v_c^2 = c_a \cdot c_b$, torej $c_b = \dfrac{v_c^2}{c_a} = \dfrac{36}{3} = 12\,\text{cm}$.
+2. a) Hipotenuza: $c = c_a + c_b = 3 + 12 = 15\,\text{cm}$.
+3. b) Po Evklidovem izreku je $a^2 = c \cdot c_a = 15 \cdot 3 = 45$, zato $a = \sqrt{45} = 3\sqrt{5}\,\text{cm}$.
+4. b) Prav tako $b^2 = c \cdot c_b = 15 \cdot 12 = 180$, zato $b = \sqrt{180} = 6\sqrt{5}\,\text{cm}$. Preverimo: $45 + 180 = 225 = 15^2$. ✓
+5. c) Oba trikotnika imata pravi kot pri $D$. Kot trikotnika $ACD$ pri $A$ je kot $\alpha$ trikotnika $ABC$. V trikotniku $CBD$ je kot pri $C$ enak $90^\circ - \beta = \alpha$. Trikotnika se ujemata v dveh kotih, zato sta po izreku KK podobna.
+6. c) Ustrezni stranici sta hipotenuzi obeh trikotnikov, $|AC|$ in $|CB|$: $k = \dfrac{6\sqrt{5}}{3\sqrt{5}} = 2$. Preverimo še z drugim parom ustreznih stranic: $\dfrac{|AD|}{|CD|} = \dfrac{12}{6} = 2$. ✓
+7. c) Razmerje ploščin je $k^2 = 4$. Preverimo: ploščina trikotnika $ACD$ je $\dfrac{12 \cdot 6}{2} = 36\,\text{cm}^2$, ploščina trikotnika $CBD$ je $\dfrac{3 \cdot 6}{2} = 9\,\text{cm}^2$, in $36 : 9 = 4$. ✓
+8. Odgovor: a) $|AD| = 12\,\text{cm}$, $|AB| = 15\,\text{cm}$; b) $a = 3\sqrt{5}\,\text{cm}$, $b = 6\sqrt{5}\,\text{cm}$; c) trikotnika sta podobna po izreku KK, $k = 2$, razmerje ploščin je $4 : 1$.
+
+**Točkovanje:** a) 1 točka za višinski izrek z vstavljenimi podatki in $|AD| = 12\,\text{cm}$, 1 točka za $|AB| = 15\,\text{cm}$; b) 1 točka za $a = 3\sqrt{5}\,\text{cm}$, 1 točka za $b = 6\sqrt{5}\,\text{cm}$ (pravilna odseka v Evklidovem izreku); c) 1 točka za utemeljitev podobnosti z dvema enakima kotoma, 1 točka za $k = 2$, 1 točka za razmerje ploščin $4$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Naštej izreke o podobnosti trikotnikov in pojasni, zakaj pri izreku KK zadoščata dva para enakih kotov.
+---
+Po izreku KK sta trikotnika podobna, če se ujemata v dveh kotih. Dva kota zadoščata, ker je vsota notranjih kotov trikotnika $180^\circ$, zato sta enaka tudi tretja kota. Po izreku SSS sta trikotnika podobna, če so razmerja vseh treh parov ustreznih stranic enaka. Po izreku SKS sta podobna, če sta razmerji dveh parov ustreznih stranic enaki in sta enaka kota med tema stranicama. Po izreku SSK sta podobna, če sta razmerji dveh parov ustreznih stranic enaki in sta enaka kota, ki ležita nasproti daljše od teh dveh stranic.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži Evklidov izrek v pravokotnem trikotniku in iz njega izpelji Pitagorov izrek.
+---
+V pravokotnem trikotniku $ABC$ s pravim kotom pri $C$ višina iz $C$ seka hipotenuzo v točki $D$ in jo razdeli na odseka $c_a = |DB|$ in $c_b = |AD|$. Trikotnika $ABC$ in $CBD$ imata pravi kot in skupni kot pri $B$, zato sta po izreku KK podobna. Iz razmerja ustreznih stranic $\dfrac{c}{a} = \dfrac{a}{c_a}$ sledi $a^2 = c \cdot c_a$, enako iz podobnosti trikotnikov $ABC$ in $ACD$ sledi $b^2 = c \cdot c_b$. Ko obe enakosti seštejemo, dobimo $a^2 + b^2 = c\,(c_a + c_b) = c^2$, kar je Pitagorov izrek.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+V kakšnem razmerju sta ploščini dveh podobnih trikotnikov? Odgovor utemelji.
+---
+Če sta trikotnika podobna s koeficientom podobnosti $k$, je razmerje njunih ploščin $k^2$. Vse dolžine drugega trikotnika so $k$-krat daljše, torej tudi izbrana stranica in višina nanjo. Ploščina je polovica zmnožka stranice in višine, zato se pomnoži s $k \cdot k = k^2$. Na primer pri dvakrat daljših stranicah je ploščina štirikrat večja.
+:::
 
 ## Drugače: Na sliki
 
@@ -224,7 +378,7 @@ Preverimo višino še s ploščino. Ploščina je $\dfrac{a \cdot b}{2} = \dfrac
 
 ## Drugače: Bolj natančno (dokaz)
 
-**Podobnost trikotnikov.** V pravokotnem trikotniku $ABC$ (pravi kot pri $C$) naj bo $D$ vznožje višine iz $C$. Označimo kota $\alpha$ pri $A$ in $\beta$ pri $B$, pri čemer $\alpha + \beta = 90^\circ$.
+**Podobnost trikotnikov.** V pravokotnem trikotniku $ABC$ (pravi kot pri $C$) naj bo $D$ nožišče višine iz $C$. Označimo kota $\alpha$ pri $A$ in $\beta$ pri $B$, pri čemer $\alpha + \beta = 90^\circ$.
 
 - $\triangle ABC$ in $\triangle CBD$: oba imata pravi kot (pri $C$ oziroma pri $D$) in skupni kot $\beta$ pri $B$. Po izreku KK sta podobna.
 - $\triangle ABC$ in $\triangle ACD$: oba imata pravi kot in skupni kot $\alpha$ pri $A$. Po izreku KK sta podobna.
@@ -286,17 +440,60 @@ $$a^2 + b^2 = c \cdot c_a + c \cdot c_b = c\,(c_a + c_b) = c \cdot c = c^2.$$
 ~ $25 \cdot 21$ uporabi odsek ob drugi kateti. Kateta ob odseku $4\,\text{cm}$ potrebuje prav ta odsek.
 > Najprej hipotenuza $c = 4 + 21 = 25\,\text{cm}$, nato Evklidov izrek $a^2 = 25 \cdot 4 = 100$, torej $a = 10\,\text{cm}$.
 
+? (brez računala) Središčni razteg s središčem $S(1, 2)$ in koeficientom $k = -2$ preslika točko $T(3, 5)$ v točko $T'$. Koliko je prva koordinata (abscisa) točke $T'$?
+= -3 | 0
+~ 5 | Vzel si $k = 2$. Pri negativnem $k$ leži $T'$ na drugi strani središča.
+~ -6 | Raztegnil si iz izhodišča, $-2 \cdot 3$. Odmik meriš od središča $S$.
+~ -4 | Če si izračunal $-2 \cdot (3 - 1)$, je to le pomnoženi odmik, prišteti mu moraš še $x_S = 1$. Če si izračunal drugo koordinato $y' = -4$: sprašujemo po prvi, $x'$.
+> $x' = 1 + (-2) \cdot (3 - 1) = 1 - 4 = -3$. (Druga koordinata: $y' = 2 + (-2) \cdot (5 - 2) = -4$, torej $T'(-3, -4)$.)
+
+? Lik s ploščino $5\,\text{cm}^2$ preslikamo s središčnim raztegom s koeficientom $k = -3$. Kolikšna je ploščina slike?
+= 45 cm² | 0
+~ -45 | Ploščina ni negativna. Razmerje ploščin je $k^2 = (-3)^2 = 9$.
+~ 15 | Dolžine se pomnožijo s $|k| = 3$, ploščina pa s $k^2 = 9$.
+> Slika je podobna liku s koeficientom $|k| = 3$, zato je njena ploščina $9 \cdot 5\,\text{cm}^2 = 45\,\text{cm}^2$.
+
 :::simboli
 a, b, c | stranice trikotnika | | | pri višini na hipotenuzo: a, b kateti, c hipotenuza
-a', b', c' | istoležne stranice podobnega trikotnika | | |
-k | koeficient podobnosti | k = \frac{a'}{a} | | k > 1: večji trikotnik, k < 1: manjši
+a', b', c' | ustrezne (istoležne) stranice podobnega trikotnika | | |
+k | koeficient podobnosti; pri središčnem raztegu koeficient raztega | k = \frac{a'}{a} | | k > 1: večji trikotnik, k < 1: manjši; koeficient raztega je lahko tudi negativen
+S | središče središčnega raztega | | |
+T, T' | točka in njena slika pri središčnem raztegu | | |
+y | druga koordinata točke $T$ (pri središčnem raztegu) | | |
+x_S, y_S | koordinati središča raztega | | |
+x', y' | koordinati slike $T'$ | x' = x_S + k\,(x - x_S) | |
+P, P', P'' | ploščina trikotnika in njegovih slik | | |
 c_a | odsek hipotenuze ob kateti a | | | a² = c · c_a
 c_b | odsek hipotenuze ob kateti b | | | b² = c · c_b
 v_c | višina na hipotenuzo | v_c^2 = c_a \cdot c_b | |
-x | premer Lune | x = \frac{p \cdot R}{r} | km
+x | premer Lune | x = \frac{p \cdot R}{r} | km | pri središčnem raztegu prva koordinata točke $T$
 p | premer kovanca | | cm
 r | razdalja kovanca od očesa | | cm
 R | razdalja od Zemlje do Lune | | km
-A, B, C | oglišča trikotnika | | | pravi kot je pri C
+A, B, C | oglišča trikotnika | | | pravi kot je pri C; pri središčnem raztegu poljubni trikotnik, v primeru 5 je pravi kot pri A
 D | nožišče višine na hipotenuzo | | |
+M, N | presečišči vzporednice z AB s stranicama AC in BC (naloga 1 za maturo) | | |
 :::
+
+<<RACUN
+vrednost: (4+2)/4 | 3/2
+vrednost: (3/2)^2*12 | 27
+vrednost: 27-12 | 15
+vrednost: 6^2/3 | 12
+vrednost: 3+12 | 15
+vrednost: sqrt(15*3) | 3*sqrt(5)
+vrednost: sqrt(15*12) | 6*sqrt(5)
+vrednost: (6*sqrt(5))/(3*sqrt(5)) | 2
+vrednost: (12*6/2)/(3*6/2) | 4
+vrednost: 12*6/2 | 36
+vrednost: 3*6/2 | 9
+vrednost: 1+2*(2-1) | 3
+vrednost: 1+2*(4-1) | 7
+vrednost: 1+2*(3-1) | 5
+vrednost: 1-1*(4-1) | -2
+vrednost: 1-1*(3-1) | -1
+vrednost: 4*2/2 | 4
+vrednost: 1+(-2)*(3-1) | -3
+vrednost: 2+(-2)*(5-2) | -4
+vrednost: (-3)^2*5 | 45
+>>

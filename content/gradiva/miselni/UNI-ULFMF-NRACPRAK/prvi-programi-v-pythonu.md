@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Spremenljivka in prireditev
+  - `x = izraz`: najprej desna stran, nato shrani
+  - `b = a` shrani trenutno vrednost, ne povezave
+  - `a = a + 1` ni enačba
+- Tipi vrednosti
+  - `int` $80$, `float` `3.5` s piko, `str` v narekovajih
+  - `"5" + "3"` je `"53"`, ne $8$
+  - `input()` vrne besedilo; pretvori z `int(...)`
+- Zanka for in range
+  - `range(a, b)`: od $a$ do $b - 1$
+  - število ponovitev $b - a$; `range(n)` začne z $0$
+  - pazi: `range(5)` ne vsebuje $5$
+- Akumulator
+  - `skupaj = 0` pred zanko
+  - v telesu `skupaj = skupaj + mb`
+  - primer: tedenski prenos $1480\,\mathrm{MB}$
+- Zamik
+  - telo: $4$ presledki pod dvopičjem
+  - zamaknjen `print` izpiše vsak korak
+- Zanka while
+  - ponavlja, dokler pogoj velja
+  - `==` primerja, `=` priredi
+  - `ure(100, 15)` vrne $6$
+- Funkcija
+  - `def ime(parametri):` in `return`
+  - `print` pokaže, `return` vrne
+  - brez `return` klic vrne `None`

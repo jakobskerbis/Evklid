@@ -4,6 +4,7 @@
 "u.snov": "Materi",
 "u.iskanje": "Materi apa yang ingin kutanyakan?",
 "u.isciPh": "mis. hukum Ohm",
+"u.isciPhTema": "mis. {tema}",
 "u.isci": "Cari",
 "u.koliko": "Berapa pertanyaan",
 "u.kako": "Cara kamu menjawab",
@@ -73,6 +74,7 @@
 "u.nalagam": "Memuat …",
 "u.starsNaslov": "Menjawab dengan suara",
 "u.starsOpis": "Dalam kuis lisan dan dengan mikrofon di obrolan dengan tutor, anak Anda dapat menjawab dengan suara. Penyedia browser (mis. Google, Apple, atau Microsoft) mengubah ucapan menjadi teks; Evklid hanya menerima teks dan tidak menyimpan audio. Untuk anak di bawah 15 tahun fitur ini mati sampai Anda menyalakannya. Mengetik selalu bisa.",
+"u.starsOpisZame": "Dalam kuis lisan dan dengan mikrofon di obrolan dengan tutor, kamu dapat menjawab dengan suara. Penyedia browser (mis. Google, Apple, atau Microsoft) mengubah ucapan menjadi teks; Evklid hanya menerima teks dan tidak menyimpan audio. Mengetik selalu bisa.",
 "u.dovoli": "Izinkan menjawab dengan suara",
 "u.nad15": "15 tahun ke atas: tidak perlu izin.",
 "u.shranjeno": "Tersimpan."

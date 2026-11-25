@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -48,7 +48,7 @@ kjer oglati oklepaji pomenijo **ravnotežne** množinske koncentracije. Produkti
 
 $$\Delta_\mathrm{r}G^\circ = -RT\ln K.$$
 
-Ker je $\Delta_\mathrm{r}G^\circ$ odvisna le od temperature, je od nje odvisna le tudi $K$.
+Ker je $\Delta_\mathrm{r}G^\circ$ odvisna le od temperature, je le od nje odvisna tudi $K$.
 
 ### Heterogena ravnotežja
 
@@ -248,10 +248,10 @@ Za reakcijo $\mathrm{N_2O_4(g) \rightleftharpoons 2\,NO_2(g)}$ je pri $298\,\mat
 2. Pretvorba v $K_c$ ($\Delta n = 1$): $RT = 0{,}083\,14 \cdot 350 = 29{,}10$, $K_c = \dfrac{4{,}57}{29{,}10} = 0{,}157$.
 3. Preglednica: $c_0(\mathrm{N_2O_4}) = 0{,}0200\,\mathrm{mol/L}$; v ravnotežju $[\mathrm{N_2O_4}] = 0{,}0200 - x$, $[\mathrm{NO_2}] = 2x$.
 4. Enačba: $\dfrac{4x^2}{0{,}0200 - x} = 0{,}157$, urejeno $4x^2 + 0{,}157\,x - 0{,}003\,14 = 0$.
-5. $x = \dfrac{-0{,}157 + \sqrt{0{,}157^2 + 16 \cdot 0{,}003\,14}}{8} = \dfrac{-0{,}157 + 0{,}2737}{8} = 0{,}01458\,\mathrm{mol/L}$; negativna rešitev nima pomena.
-6. Stopnja disociacije: $\alpha = \dfrac{0{,}01458}{0{,}0200} = 0{,}729$.
+5. $x = \dfrac{-0{,}157 + \sqrt{0{,}157^2 + 16 \cdot 0{,}003\,14}}{8} = \dfrac{-0{,}157 + 0{,}273\,66}{8} = 0{,}014\,58\,\mathrm{mol/L}$; negativna rešitev nima pomena.
+6. Stopnja disociacije: $\alpha = \dfrac{0{,}014\,58}{0{,}0200} = 0{,}729$.
 7. Skupna koncentracija plina: $0{,}0200 - x + 2x = 0{,}0346\,\mathrm{mol/L}$, skupni tlak $p = cRT = 0{,}0346 \cdot 29{,}10 = 1{,}01\,\mathrm{bar}$.
-8. Preizkus s parcialnimi tlaki: $p(\mathrm{NO_2}) = 0{,}0292 \cdot 29{,}10 = 0{,}849\,\mathrm{bar}$; $p(\mathrm{N_2O_4}) = 0{,}005\,42 \cdot 29{,}10 = 0{,}158\,\mathrm{bar}$; $0{,}849^2/0{,}158 \approx 4{,}56 \approx K_p$.
+8. Preizkus s parcialnimi tlaki: $p(\mathrm{NO_2}) = 0{,}029\,16 \cdot 29{,}10 = 0{,}849\,\mathrm{bar}$; $p(\mathrm{N_2O_4}) = 0{,}005\,42 \cdot 29{,}10 = 0{,}158\,\mathrm{bar}$; $0{,}849^2/0{,}158 \approx 4{,}56 \approx K_p$.
 9. Odgovor: pri $350\,\mathrm{K}$ razpade $72{,}9\,\%$ $\mathrm{N_2O_4}$, skupni tlak v ravnotežju je približno $1{,}01\,\mathrm{bar}$.
 
 ### Naloga 2
@@ -271,18 +271,19 @@ Iz zveze $\Delta_\mathrm{r}G = \Delta_\mathrm{r}G^\circ + RT\ln Q$ izpelji povez
 
 Predstavljaj si graf koncentracij v odvisnosti od časa za Primer 2:
 
-```
- c [mol/L]
- 0,8 |               .................  HI (0,778)
-     |          ..''
- 0,5 |*      .''
-     |  *  .'
-     |   .*
-     |  .   *
- 0,1 | .       **********************  H2 = I2 (0,111)
-   0 |'_______________________________ čas
-      ^ začetek      ^ ravnotežje (vodoravne črte)
-```
+:::risba graf
+opis: Shematični graf koncentracij v odvisnosti od časa za Primer 2. Koncentracija H₂ in I₂ (ista krivulja) pada od 0,500 mol/L in se zravna pri 0,111 mol/L. Koncentracija HI raste od 0 in se zravna pri 0,778 mol/L. Od navpične črtkane črte naprej sta krivulji vodoravni: ravnotežje.
+x: 0 .. 6 | 1 | čas
+y: 0 .. 0,9 | 0,1 | c [mol/L]
+f: 0.1111 + 0.3889*exp(-1*x) | modra
+f: 0.7778*(1 - exp(-1*x)) | oranžna debelo
+črta: 4; 0 -> 4; 0,9 | črtkano siva
+točka: 0; 0,5 | 0,500 | nad desno
+napis: 5; 0,82 | HI (0,778) | sredina
+napis: 3,9; 0,24 | H_2 = I_2 (0,111) | levo
+napis: 4; 0,45 | ravnotežje | desno
+podnapis: Koncentracije se po določenem času ne spreminjajo več (časovni potek je shematičen)
+:::
 
 Krivulje se po določenem času zravnajo. To ne pomeni, da se reakcija ustavi, ampak da sta hitrosti v obe smeri enaki.
 
@@ -294,7 +295,7 @@ Le Chatelierovo načelo si predstavljaj kot tehtnico z vzmetjo: če na eno stran
 
 **Kontaktni postopek za žveplovo kislino.** Oksidacija $\mathrm{2\,SO_2 + O_2 \rightleftharpoons 2\,SO_3}$ ($\Delta_\mathrm{r}H^\circ \approx -198\,\mathrm{kJ/mol}$) teče na katalizatorju $\mathrm{V_2O_5}$ v več zaporednih plasteh. Plin med plastmi hladijo, ker pri nižji temperaturi $K$ naraste, uporabljajo presežek zraka (več $\mathrm{O_2}$), vmesna absorpcija $\mathrm{SO_3}$ pa odstrani produkt; tako presežejo $99\,\%$ pretvorbe.
 
-**Gravimetrija.** Oborino kalcijevega oksalata $\mathrm{CaC_2O_4}$ spiramo z razredčeno raztopino amonijevega oksalata, ne s čisto vodo: oksalatni ion $\mathrm{C_2O_4^{2-}}$ je skupen oborini in raztopini, zato poveča $Q$ za raztapljanje $\mathrm{CaC_2O_4(s) \rightleftharpoons Ca^{2+} + C_2O_4^{2-}}$ in premakne ravnotežje v levo in zmanjša izgube, amonijev oksalat pa pri žarjenju razpade.
+**Gravimetrija.** Oborino kalcijevega oksalata $\mathrm{CaC_2O_4}$ spiramo z razredčeno raztopino amonijevega oksalata, ne s čisto vodo: oksalatni ion $\mathrm{C_2O_4^{2-}}$ je skupen oborini in raztopini, zato poveča $Q$ za raztapljanje $\mathrm{CaC_2O_4(s) \rightleftharpoons Ca^{2+} + C_2O_4^{2-}}$ in premakne ravnotežje v levo, kar zmanjša izgube, amonijev oksalat pa pri žarjenju razpade.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -359,7 +360,7 @@ Ravnotežno zmes iz Primera 1 ($[\mathrm{N_2O_4}] = 0{,}0400\,\mathrm{mol/L}$, $
 > Pravilno je $K_c = 0{,}0120^2/0{,}0400 = 3{,}6 \cdot 10^{-3}$ (Primer 1). Brez kvadrata dobi vrednost, ki je več kot osemdesetkrat prevelika.
 
 :::simboli
-a, b | stehiometrična koeficienta reaktantov A in B | | –
+a, b | stehiometrična koeficienta reaktantov A in B | | – | a z indeksom (aᵢ) je drugje aktivnost snovi
 c, d | stehiometrična koeficienta produktov C in D | | – | c je drugje tudi množinska koncentracija
 K_c | konstanta ravnotežja s koncentracijami | K_c = \frac{[\mathrm{C}]^c\,[\mathrm{D}]^d}{[\mathrm{A}]^a\,[\mathrm{B}]^b} | | odvisna le od temperature
 K_p | konstanta ravnotežja s parcialnimi tlaki | K_p = K_c\,(RT)^{\Delta n} | | tlaki v barih
@@ -370,7 +371,7 @@ Q | kvocient reakcije | | – | enaka oblika kot K, a s trenutnimi koncentracija
 R | splošna plinska konstanta | | J/(mol K) | s tlaki v barih 0,083 14 L bar/(mol K)
 T | absolutna temperatura | | K
 T_1, T_2 | temperaturi, pri katerih primerjamo konstanti | | K
-\Delta n | razlika množin plinastih produktov in reaktantov | \Delta n = (c + d) - (a + b) | – | šteje le plinaste snovi
+\Delta n | razlika vsot koeficientov plinastih produktov in reaktantov | \Delta n = (c + d) - (a + b) | – | šteje le plinaste snovi
 \Delta_\mathrm{r} | sprememba pri reakciji (reakcijska količina) | | | ΔᵣG: reakcijska Gibbsova energija, ΔᵣH°: reakcijska entalpija
 G | Gibbsova energija | | kJ/mol | ΔᵣG: reakcijska Gibbsova energija; spontano, ko je negativna
 H | entalpija | | kJ/mol | ΔᵣH°: standardna reakcijska entalpija

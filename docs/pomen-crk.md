@@ -33,6 +33,8 @@ Koda: `public/formula-data.js` (slovar, `validIn`, `definitionsIn`), `public/ric
      so lahko sredi druge besede, imajo `\b` (»leč« ni v »vleče«/»daleč«, »krog« ni v »okrog«, »sfer« ni v »atmosfera«);
    - `ne`: v tej temi, povedi ali kjerkoli v besedilu bloka ima črka drug pomen, zato `teme` ne velja (formula `ctx` še vedno);
    - `brez`: formula, kjer črka nima tega pomena (`dx` v integralu ni premer, `e^{…}` ni naboj);
+   - `kljub`/`kljubF`: privzeti pomen velja kljub `ne`, če poved (tema) ali formula vsebuje ta vzorec;
+   - `povNe`: `pov` ne velja, če je v isti povedi tudi ta vzorec;
    - `oba`: potrebna sta formula in tema (ploščina S, površina P, prostornina V, višina v, imaginarna enota i).
    - `zan`: formula sama zanesljivo pove pomen, tudi brez teme in pri `oba` (številka z enoto: S = 1,5 m², V = 2,00 L);
    - `samo`: po temi (brez `ctx`) velja le, če se formula ujema z vzorcem (a, b, c so koeficienti v »a = 1«, »a ≠ 0«,
@@ -65,24 +67,38 @@ klikljivih črk manj (varna smer).
 | Črka | Pomen v slovarju | Velja, ko | Ni ta pomen (primeri) |
 |---|---|---|---|
 | x₁, x₂, x₁,₂ (MAT) | rešitev (ničla) kvadratne enačbe | formula rešitev / Vieta, tema kvadratna enačba/funkcija/neenačba, diskriminanta, Vieta | točke na intervalu (Lagrange, Rolle, Cauchy), člena zaporedja, povprečje, integral, odvod |
-| a, b, c (MAT) | koeficienti kvadratne enačbe | a x², b² − 4ac, formula rešitev; tema kvadratna | stranice trikotnika, poljubna števila, polosi elipse/hiperbole, y = c/x, zaporedje; b v a x² + b (prosti člen) |
+| a, b, c (MAT) | koeficienti kvadratne enačbe | a x² (ne a x³, ne log_a), b² − 4ac, −b ± √, Vieta ob x₁/x₂; tema kvadratna | stranice trikotnika, poljubna števila, polosi elipse/hiperbole, y = c/x, zaporedje; b v a x² + b (prosti člen) |
 | D (MAT) | diskriminanta | b² − 4ac, √D; tema kvadratna | oglišče D, definicijsko območje |
 | k (MAT) | smerni koeficient | y = k x + n; tema premica, linearna funkcija | indeks, celo število (kπ), binomski simbol, zaporedje, lekcija o linearnih enačbah ali sistemih (množitelj ±k) |
 | n (MAT) | začetna vrednost | y = k x + n v isti formuli ali povedi (j, pregled 463: ne vsak n v temi) | naravno število, n-ti koren, mnogokotnik, razmerje m : n |
-| p, q (MAT) | koordinati temena | y = a(x − p)² + q; tema teme/temenska oblika | verjetnost, praštevilo |
+| p, q (MAT) | koordinati temena / središča / premika grafa | (x − p)² + (y − q)² → središče S(p, q); (x − p)² (temenska oblika y = a(x − p)² + q), tema teme/temenska oblika → teme; (x − p) v log, ln, √, sin/cos, eksponentu, ulomku, \|x − p\|, f(x − p) → vodoravni premik (asimptota x = p pri log in ulomku); (x − p)ⁿ z n ≠ 2 (potenčna) → vodoravni premik; »= [koeficient] člen + q« (+ q edini člen za funkcijo, števec ulomka brez x) → navpični premik (j, 16. 11. 2026: v log_a(x − p) + q je bil q »ordinata temena«; pregled PR 785: − q, (2x + 1)/(x − p) + q, 2^x + 3 + q, diferenčni kvocient, P(x)/(x − p), f(x − p) = f(x), x = √p + q → ni okna; asimptota le iz iste formule) | verjetnost (p + q = 1), praštevilo, količnik q zaporedja, stožnice (y² = 2px), 1/(x − p)² ni teme; teme po temi ne velja v temah o logaritmih, eksponentni, korenski, racionalni, kotnih funkcijah, premikih |
 | r, d (MAT) | polmer, premer | π v formuli ali tema krog/valj/stožec/krogla | `dx`, integral, vsota, limita, kotne funkcije, »okrog«; d kot razdalja (sekanta, tangenta) |
-| o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, verjetnost P (met kocke), hitrost v |
-| e (MAT) | Eulerjevo število | e^…, ln, exp, lim | – |
+| o, S, P, V, v (MAT) | obseg, ploščina, površina, prostornina, višina | `X =` in geometrijska tema | vsota S, S v stopinjah (vsota kotov), verjetnost P (met kocke), hitrost v |
+| e (MAT) | Eulerjevo število | e^…, ln, exp, lim | linearna ekscentričnost (e² = a² − b², ε = e/a) |
 | i (MAT) | imaginarna enota | Eulerjeva oblika (e^{iφ}, cos φ ± i sin φ, i² = −1) sama; i², 3 + 4i in tema kompleksna/kvadratna | indeks i, enotski vektor \vec i |
 | a_n, a_1, s_n (MAT) | zaporedje | tema zaporedje/vrsta | koeficienti polinoma |
-| α, β, γ (MAT) | kot | sin/cos/tan, °, ∠ ali geometrijska tema | »ravnina α«, stopnja tveganja α, parameter, skalar (α f + β g) |
+| α, β, γ (MAT) | kot | sin/cos/tan, °, ∠ ali geometrijska tema | »ravnina α«, stopnja tveganja α, parameter, skalar (α f + β g, α, β ∈ ℝ, vektorski prostor), e^{αt}, cos βt, λ = α ± iβ |
 | M (FIZ) | navor | M = r F (tudi r · F), tema navor/vzvod/ravnovesje | masa Zemlje ali Sonca (gravitacija), molska masa (KEM ima svoj M) |
 | k, x (FIZ) | konstanta vzmeti, raztezek | F = k x (tudi k · x, k × x, k Δx), tema vzmet/prožnost/nihanje | Boltzmannova konstanta, valovno število, lega x |
 | n (FIZ) | lomni količnik | n = c₀/c, sin, tema lom/leča/optika | množina snovi (p V = n R T), število nihajev ali meritev, red uklona |
 | e (FIZ) | naboj | privzeto | e^{−t/τ} (Eulerjevo število) |
-| A (FIZ) | delo | privzeto | amplituda pri nihanju in valovanju |
+| A (FIZ) | delo | privzeto | amplituda pri nihanju in valovanju; ploščina preseka (torzija, nosilci, $FL/(EA)$) |
+| F (FIZ) | sila | privzeto | gorišče pri lečah in zrcalih |
+| a (FIZ) | pospešek | F = m a, v = v₀ + a t, a = v²/r, F/m, enota m/s²; tema gibanje, sile, kroženje | razdalja predmeta (leče), rob kvadra, mrežni parameter, ročica (torzija), stranica preseka |
+| c (FIZ) | hitrost svetlobe (valovanja) | c = λν, mc², hc; tema svetloba, valovanje, zvok, optika | rob kvadra; c_p ne podeduje; specifična toplota ima svojo različico (Q =, ΔT) |
+| t (FIZ, KEM, BIO) | čas / temperatura v °C | °C: T = t + 273, število s °C za = ali ≈; sicer čas (BIO le z enoto časa) | Δt = 300 °C / hitrost je čas |
+| E, T (FIZ) | energija, temperatura | privzeto | modul elastičnosti in navor v mehaniki trdnin (torzija, upogib, nosilci); E pri električnem polju (E = F/e, E = U/d, F = eE, tema električno polje, kondenzator) |
+| U, R, I, C, Q, λ (FIZ) | napetost, upor, tok, kapaciteta, toplota, valovna dolžina | privzeto | ΔU, notranja energija, termodinamika; R v p V = n R T, plin, polmer Zemlje/planeta; I jakost zvoka/svetlobe, vztrajnost; C toplotna kapaciteta (ΔT); Q = C U, Q = I t, kondenzator, elektrostatika; λ razpadna konstanta (e^{−λt}, razpad, radioaktivnost) — tam črka ni klikljiva (16. 11. 2026); U in R ostaneta napetost in upor, ko poved omenja napetost (ne površinsko ali mehansko), upor kot samostalnik (ne »uporabi«, »upor zraka«, toplotni upor), volt, ohm, Ω ali električni tok/krog/delo, ali ima formula enoto V, A ali Ω (`kljub`, `kljubF`; pregled 785-2); R ni upor tudi pri polmeru in toplotnem prevodu |
+| h (FIZ) | Planckova konstanta / višina | h ν, h f, h c, h/… → Planck; sicer višina | višina ne velja v temah foton, fotoefekt, kvant, sevanje, spekter |
+| B, G (FIZ) | gostota magnetnega polja, gibalna količina | formula (Φ = B S, G = m v), enota T, tema magnetizem / trki | podpora nosilca, teža G, gravitacijska konstanta, Gibbsova energija ΔG |
+| S (FIZ) | ploščina | privzeto | ΔS (entropija) |
+| p, n (KEM) | tlak, množina snovi | p privzeto; n z enoto mol, n = m/M, m = n M ali privzeto | proton p⁺, nevtron n⁰, orbitala np², lupina n = 4, n = 10 meritev, n = 0, 1, 2, kromosomi |
+| Q (KEM) | reakcijski kvocient / toplota | Q < K, Q = K, Q = [ … ] → kvocient; sicer toplota | – |
+| c (KEM) | množinska koncentracija | privzeto | Q = m c ΔT, specifična toplota, kalorimetrija (16. 11. 2026) |
+| R, S, w (KEM) | plinska konstanta, entropija, masni delež | R T, −ΔH/R; ΔS, T ΔS; w = m/…; ustrezna tema | R_f, R_s, natezna trdnost R_m; substrat [S]; širina vrha w |
+| črke iz kemije (BIO) | m, n, c, V, T, t, ΔG | le z enoto ali formulo; oznake z indeksom (K_a, N_A …) ostanejo | p = 0,05 (p-vrednost), Vv (alel), 4n (garnitura), w = W/W_max (fitnes), R = p/q |
 | H, F, G, ξ (MAT) | – (ni v slovarju) | samo definicija v besedilu ali oznake lekcije | primitivni funkciji F, G, vmesna točka ξ |
-| t, m, v, a, F, s … (FIZ) | čas, masa, hitrost … | privzeto v fiziki | – |
+| m, v, s … (FIZ) | masa, hitrost, pot … | privzeto v fiziki | – |
 
 Nov vnos v slovar: če ima črka v predmetu več kot en pogost pomen, mora imeti `ctx` ali `teme` (in po
 potrebi `ne`/`brez`); sicer bi bila klikljiva povsod. Pomene piše in pregleduje Opus (CLAUDE.md).

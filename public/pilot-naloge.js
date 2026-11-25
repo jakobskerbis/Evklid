@@ -3,7 +3,8 @@
 // 1. skeniraj 10 nalog pod različnimi pogoji (ocena »Prebrano prav / narobe« na zaslonu Skeniraj),
 // 2. preizkusi 5 delov aplikacije, 3. kje je zastavica za prijavo napake, 4. kratka anketa, 5. preizkus znanja na začetku
 // in čez 14 dni (server/pilot-ucinek.js). Vse je prostovoljno. V Računu: vprašanje o plačilu za polnoletnega imetnika.
-import { t, locale, currentLang } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n-zasloni.js";
+import { SL_MONTH } from "./datum.js";
 import { icon, hydrateIcons } from "./icons.js";
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -223,7 +224,6 @@ function render() {
 
 // Datum odprtja: v slovenščini »v petek, 13. novembra« (tožilnik dneva, rodilnik meseca; B4 P2-7), drugod Intl.
 const SL_DAY = ["nedeljo", "ponedeljek", "torek", "sredo", "četrtek", "petek", "soboto"];
-const SL_MONTH = ["januarja", "februarja", "marca", "aprila", "maja", "junija", "julija", "avgusta", "septembra", "oktobra", "novembra", "decembra"];
 export function whenText(iso, lang = currentLang()) {
   const d = new Date(iso);
   if (lang === "sl") return `v ${SL_DAY[d.getDay()]}, ${d.getDate()}. ${SL_MONTH[d.getMonth()]}`;
@@ -307,11 +307,12 @@ function quizCard(s) {
   let body;
   if (quiz?.data?.task) {
     const tk = quiz.data.task;
-    const ph = tk.inputHint || (tk.unit ? t("task.phUnit", { unit: tk.unit }) : t("task.phResult"));
+    // Pri pilotnih nalogah enota ni obvezna (strežnik jo doda, server/pilot-ucinek.js): namig je samo rezultat.
+    const ph = tk.inputHint || t("task.phResult");
     const input =
       tk.answerType === "choice"
         ? `<div class="choices${tk.options.some((o) => String(o).length > 20) ? " one-col" : ""}">${tk.options.map((o, i) => `<button type="button" class="choice" data-pn="quiz-choice" data-i="${i}">${D.choiceHtml?.(tk, o) ?? esc(o)}</button>`).join("")}</div>`
-        : `<form class="answer-row pn-quiz-form"><label class="sr-only" for="pn-quiz-in">${esc(ph)}</label><input id="pn-quiz-in" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${tk.answerType === "number" && !tk.unit ? "decimal" : "text"}" placeholder="${esc(ph)}"><button type="button" class="primary" data-pn="quiz-send">${esc(t("pn.quizSend"))}</button></form>`;
+        : `<form class="answer-row pn-quiz-form"><label class="sr-only" for="pn-quiz-in">${esc(ph)}</label><input id="pn-quiz-in" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${tk.answerType === "number" && !tk.hasUnit ? "decimal" : "text"}" placeholder="${esc(ph)}"><button type="button" class="primary" data-pn="quiz-send">${esc(t("pn.quizSend"))}</button></form>`;
     // Prvič vse pravilno: strežnik doda tri težje naloge (brez tega bi bil drugi preizkus na stropu).
     const harder = quiz.phase === "pre" && quiz.data.harder ? `<p class="pn-status ok" role="status">${icon("sparkles")}${esc(t("pn.quizHarder"))}</p>` : "";
     body = `${harder}<p class="muted small" aria-live="polite">${esc(t("pn.quizCount", { i: quiz.data.index + 1, n: quiz.data.total }))}</p>

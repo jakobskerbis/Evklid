@@ -8,6 +8,7 @@
 .me-back { display: none !important; }
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
   .me-back { display: inline-flex !important; }
+  #me-exams.v-vrstici { display: none !important; } /* NPZ/matura je na četrtem mestu spodnje vrstice (app.js) */
 }
 
 /* ---------- tablica na dotik: spodnja vrstica z napisi namesto samih ikon zgoraj ---------- */
@@ -81,10 +82,11 @@
   .chat-head > .chat-calc { margin-inline-end: -8px; }
   .chat-head h1 { white-space: nowrap; text-overflow: ellipsis; }
   /* Oznake pogovora v svoji vrstici pod naslovom, cele in berljive (j 2026-11-04: prej »Mat…«, »…lekci«); če jih je
-     več, kot gre v vrstico, se vrstica pomika vstran. Odprt seznam pogovorov jih skrije (glava spet ena vrstica). */
+     več, kot gre v vrstico, se prelomijo v drugo vrstico (brez pomikanja vstran, ovire na telefonu 2026-11-18). Odprt
+     seznam pogovorov jih skrije (glava spet ena vrstica). */
   .chat-head { flex-wrap: wrap; row-gap: 2px; }
   .chat-head #chat-state {
-    order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow-x: auto; scrollbar-width: none;
+    order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow: visible; flex-wrap: wrap;
     margin-inline: -16px; padding: 0 16px 4px;
   }
   .chat-head #chat-state::-webkit-scrollbar { display: none; }
@@ -133,6 +135,15 @@
     margin-top: auto; padding-bottom: var(--tb-step-pb); transition: transform 0.22s ease;
   }
   body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { transform: translateY(calc(var(--tb-step-pb) - 12px - var(--tabbar-h, 0px))); }
+}
+/* ---------- Spodnja vrstica se po 3 s neuporabe skrije (j, 2026-11-14; public/noga.js) ----------
+   Na zaslonih, kjer je vrstica v postavitvi (Učna pot, Uči se, Tekmovanja, Jaz …): body.tb-mir jo pritrdi pod spodnji
+   rob (vsebina dobi njen prostor), body.tb-vraca jo ob uporabi pripelje nazaj (0,22 s), nato je spet v postavitvi.
+   Zasloni za branje zgoraj imajo močnejše pravilo (--tb-y) in ostanejo po starem. Med vodičem (kaže na zavihke) je
+   vrstica vedno na mestu. */
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  body:is(.tb-mir, .tb-vraca):not(:has(> #tour:not([hidden]))) > .tabbar { position: fixed; inset-inline: 0; bottom: 0; z-index: 30; transition: transform 0.22s ease; }
+  body.tb-mir:not(:has(> #tour:not([hidden]))) > .tabbar { transform: translateY(100%); visibility: hidden; transition: transform 0.22s ease, visibility 0s linear 0.22s; }
 }
 @media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
 

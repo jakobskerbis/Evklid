@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -136,7 +136,7 @@ $p_v = \varphi_1 \, p_s(t_1)$, $\quad x = 0{,}622\,\dfrac{p_v}{p - p_v}$, $\quad
 
 ### Primer 3: vlažilnik in grelnik za kabino
 
-Ana želi v kabini $22\,^\circ\mathrm{C}$ in $\varphi = 40\,\%$. Ventilator dovaja $300\,\mathrm{m^3/h}$ zunanjega zraka iz primera 2 ($0\,^\circ\mathrm{C}$, $80\,\%$; gostota suhega zraka približno $1{,}2\,\mathrm{kg/m^3}$). Grelnik zrak najprej segreje na $22\,^\circ\mathrm{C}$, nato parni vlažilnik doda vodo; temperatura se pri vlaženju praktično ne spremeni. Koliko vode na uro mora dodati vlažilnik in kolikšna mora biti moč grelnika?
+Ana želi v kabini $22\,^\circ\mathrm{C}$ in $\varphi = 40\,\%$. Ventilator dovaja v kabino $300\,\mathrm{m^3/h}$ zunanjega zraka iz primera 2 ($0\,^\circ\mathrm{C}$, $80\,\%$); pretok je merjen za grelnikom pri $22\,^\circ\mathrm{C}$, kjer je gostota suhega zraka približno $1{,}2\,\mathrm{kg/m^3}$. Grelnik zrak najprej segreje na $22\,^\circ\mathrm{C}$, nato parni vlažilnik doda vodo; temperatura se pri vlaženju praktično ne spremeni. Koliko vode na uro mora dodati vlažilnik in kolikšna mora biti moč grelnika?
 
 **Podatki:** $t_1 = 0\,^\circ\mathrm{C}$, $t_2 = 22\,^\circ\mathrm{C}$, $\varphi_3 = 0{,}40$, $p_s(22\,^\circ\mathrm{C}) = 2645\,\mathrm{Pa}$, $x_1 = 3{,}02\,\mathrm{g/kg}$, $V = 300\,\mathrm{m^3/h}$, $\rho = 1{,}2\,\mathrm{kg/m^3}$, $p = 101\,325\,\mathrm{Pa}$
 **Iščemo:** masni tok vode $m_w$ v $\mathrm{kg/h}$ in moč grelnika $\dot Q$ v $\mathrm{kW}$
@@ -269,7 +269,7 @@ Analogija ima mejo: v zraku »sedeži« niso prava mesta. Para in zrak sta meša
 - rosišče $8\,^\circ\mathrm{C}$
 ~ Rosišče je določeno samo s količino pare: več pare pomeni višje rosišče.
 + relativna vlažnost $40\,\%$
-> Relativna vlažnost pove le, kako blizu nasičenja je zrak. Isti $40\,\%$ pri $0\,^\circ\mathrm{C}$ in pri $30\,^\circ\mathrm{C}$ pomeni zelo različno količino vode.
+> Relativna vlažnost pove le, kako blizu nasičenja je zrak. Istih $40\,\%$ pri $0\,^\circ\mathrm{C}$ in pri $30\,^\circ\mathrm{C}$ pomeni zelo različno količino vode.
 
 ? Zrak ima $25\,^\circ\mathrm{C}$ in absolutno vlažnost $6{,}9\,\mathrm{g/m^3}$. Kolikšna je relativna vlažnost? Uporabi tabelo iz razlage.
 - $6{,}9\,\%$

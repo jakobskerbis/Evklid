@@ -30,7 +30,7 @@ test("kartice strani se razvrstijo v stolpce, ki se računajo iz širine vsebnik
   const ui = css("ui.css");
   assert.match(ui, /\.set-cols[^{]*\{[^}]*column-width:\s*400px/);
   assert.match(read("index.html"), /<div class="set-cols">/, "Nastavitve imajo ovoj za stolpce");
-  assert.match(read("account.js"), /<div class="kolone">/, "Račun ima ovoj za stolpce");
+  assert.match(read("racun.js"), /<div class="kolone">/, "Račun ima ovoj za stolpce");
 });
 
 test("aplikacija na telefonu: odmik za uro in gumbe ni podvojen", () => {

@@ -23,6 +23,13 @@ function token(s) {
     .replace(/^[^\d+\-.,=]{0,12}=\s*/, "")
     // »10^-4« (brez množitelja) je 1·10^-4.
     .replace(/^([+-]?)\s*10\s*\^/, "$11·10^");
+  // Tisočice s piko (»10.000«, »1.250.000«, »10.000,5«): pike so ločila tisočic, ne decimalna vejica.
+  // Z eno samo piko in brez vejice (»10.000«) je zapis dvoumen (lahko je tudi 10,000), zato token vrne
+  // obe branji (value in alt); checkNumber sprejme odgovor, če se katero od njiju ujema.
+  const th = /^([+-]?)\s*([1-9]\d{0,2}(?:\.\d{3})+)(,\d*)?(?![\d.])/.exec(t);
+  if (th && (th[3] != null || (th[2].match(/\./g) || []).length > 1)) {
+    return token(t.replace(th[2], th[2].replace(/\./g, "")));
+  }
   const m = NUM.exec(t);
   if (!m) return null;
   const digits = m[2].replace(/ /g, "").replace(",", ".");
@@ -34,7 +41,10 @@ function token(s) {
   const rest = t.slice(m[0].length).trim();
   // Za številom še števka, ulomek, potenca ali množenje (»2 5«, »1/2«, »10^-3«, »2·10³«): to ni eno število.
   if (/^[\d.,/^:·⋅*×⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/.test(rest)) return null;
-  return { value, decimals, exp, rest, text: m[0].trim(), mant: `${m[1]}${m[2]}`, hasExp: m[3] != null };
+  let alt = th && !m[3] ? Number(`${m[1]}${m[2].replace(".", "")}`) : null;
+  // »2.000«, »1.000«: decimalke 000 nihče ne piše za 2 ali 1, zato je to skoraj gotovo dva tisoč (branje zamenjamo).
+  if (alt != null && /\.000$/.test(m[2])) return { value: alt, decimals: 0, exp: 0, rest, text: m[0].trim().replace(".", ""), mant: `${m[1]}${m[2].replace(".", "")}`, hasExp: false, alt: null };
+  return { value, decimals, exp, rest, text: m[0].trim(), mant: `${m[1]}${m[2]}`, hasExp: m[3] != null, alt };
 }
 
 /** Število iz vnosa učenca (vejica ali pika, različni minusi, enota za številom se ne upošteva); sicer null. */
@@ -71,11 +81,32 @@ const near = (x, v, tol) => Math.abs(x - v) <= tol * (1 + 1e-9) + 1e-12 * Math.m
  * { ok: false, wrong } (wrong = indeks tipične napačne vrednosti »~« ali -1).
  */
 export function checkNumber(c, input) {
-  const x = parseNum(input);
-  if (x === null) return { empty: true, ok: false, wrong: -1 };
+  const tk = token(input);
+  if (!tk) return { empty: true, ok: false, wrong: -1 };
+  const wrong = c.wrong || [];
+  const x = tk.value;
   if (near(x, c.value, c.tol)) return { ok: true, wrong: -1 };
   // Tipična napačna vrednost »~« ima svojo natančnost (izpisane decimalke), ne tolerance pravilnega odgovora.
-  return { ok: false, wrong: (c.wrong || []).findIndex((w) => near(x, w.value, w.tol ?? c.tol)) };
+  const exact = wrong.findIndex((w) => near(x, w.value, w.tol ?? c.tol));
+  if (exact >= 0) return { ok: false, wrong: exact };
+  // »12.345« je lahko 12,345 ali dvanajst tisoč: branje s tisočicami velja le, če prvo branje ni tipična napaka
+  // (»2.345« pri pretvorbi kg v g je napaka »~ 2,345«, ne pravilni odgovor 2345).
+  if (tk.alt != null) {
+    if (near(tk.alt, c.value, c.tol)) return { ok: true, wrong: -1 };
+    const i = wrong.findIndex((w) => near(tk.alt, w.value, w.tol ?? c.tol));
+    if (i >= 0) return { ok: false, wrong: i };
+  }
+  // Učenec napačno vrednost pogosto vpiše zaokroženo (1/64 kot 0,016 ali 0,0156): če ima vnos vsaj eno decimalko in
+  // je napačna vrednost na toliko decimalk enaka vnosu, se pokaže razlaga najbližje. Ne, če je vnos le zaokrožen ali
+  // odrezan pravilni odgovor (2,5 ali 2,6 pri 2,54; 0,6 pri 0,67) ali 0.
+  const d = tk.decimals > 0 && !tk.hasExp ? tk.decimals : 0;
+  const half = 0.5 * 10 ** -d;
+  if (!d || x === 0 || Math.abs(x - c.value) < 10 ** -d * (1 + 1e-9)) return { ok: false, wrong: -1 };
+  let best = -1;
+  wrong.forEach((w, i) => {
+    if (near(x, w.value, half) && (best < 0 || Math.abs(x - w.value) < Math.abs(x - wrong[best].value))) best = i;
+  });
+  return { ok: false, wrong: best };
 }
 
 /** Vrstni red učenca (indeksi elementov v pravilnem vrstnem redu) je pravilen. */

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -94,7 +94,7 @@ $$\ln\frac{k_2}{k_1} = \frac{E_a}{R}\left(\frac{1}{T_1} - \frac{1}{T_2}\right).$
 
 **Izrek.** Katalizator ne spremeni ne $\Delta H$ ne $\Delta G$ reakcije in zato ne ravnotežne konstante $K$; enako pospeši reakcijo v obe smeri, zato se ravnotežje le hitreje vzpostavi.
 
-**Utemeljitev.** $\Delta G^\circ = -RT\ln K$ je razlika med stanji izhodnih snovi in produktov, ki ju katalizator ne spremeni. Ker je za elementarni korak $K = k_{\to}/k_{\leftarrow}$ in se obe poti spustita skozi isto nižje prehodno stanje, se obe konstanti povečata za enak faktor.
+**Utemeljitev.** $\Delta G^\circ = -RT\ln K$ je razlika med stanji izhodnih snovi in produktov, ki ju katalizator ne spremeni. Ker je za elementarni korak $K = k_{\to}/k_{\leftarrow}$ in obe smeri potekata skozi isto nižje prehodno stanje, se obe konstanti povečata za enak faktor.
 
 **Homogena kataliza:** katalizator je v isti fazi kot reaktanti. Primer: jodidni ioni pri razpadu vodikovega peroksida v vodi, kisline pri estrenju.
 
@@ -125,7 +125,7 @@ $v = -\dfrac{1}{2}\dfrac{\Delta[\mathrm{N_2O_5}]}{\Delta t} = \dfrac{1}{4}\dfrac
 2. Hitrost reakcije delimo s koeficientom $2$, da je neodvisna od izbrane snovi: $v = 0{,}0031/(2 \cdot 100)\,\mathrm{mol\,L^{-1}\,s^{-1}} = 1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$.
 3. $\mathrm{NO_2}$ ima koeficient $4$: nastaja s $4v = 6{,}2 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$.
 4. $\mathrm{O_2}$ ima koeficient $1$: nastaja z $v = 1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$.
-5. Odgovor: povprečna hitrost reakcije je $1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$; $\mathrm{NO_2}$ nastaja štirikrat, $\mathrm{O_2}$ enako hitro.
+5. Odgovor: povprečna hitrost reakcije je $1{,}55 \cdot 10^{-5}\,\mathrm{mol\,L^{-1}\,s^{-1}}$; $\mathrm{NO_2}$ nastaja štirikrat hitreje, $\mathrm{O_2}$ pa enako hitro.
 
 ### Primer 2
 
@@ -205,7 +205,7 @@ $[\mathrm{A}] = 0{,}050 \cdot e^{-0{,}90}\,\mathrm{mol/L} \approx 0{,}050 \cdot 
 - **Razpolovni čas je pri vseh reakcijah stalen.** Stalen je le pri 1. redu. Pri 2. redu se z vsakim razpolovom podaljša, pri 0. redu skrajša.
 - **Temperatura v °C v Arrheniusovi enačbi.** Vstavi absolutno temperaturo v kelvinih; z °C dobiš napačen in pri $0\,^\circ\mathrm{C}$ celo nesmiseln rezultat.
 - **Katalizator premakne ravnotežje.** Katalizator ne spremeni $K$; ravnotežje se le hitreje vzpostavi. Ravnotežni izkoristek pri sintezi amoniaka poveča visok tlak; višja temperatura ga celo zmanjša (reakcija je eksotermna) in je potrebna le zaradi hitrosti. Katalizator samo skrajša čas do ravnotežja.
-- **Večja $\Delta H$ pomeni počasnejšo reakcijo.** Hitrost določa višina hriba $E_a$, ne razlika med dolinama. Zelo eksotermna reakcija je lahko zelo počasna (gorenje lesa pri sobni temperaturi).
+- **Bolj eksotermna reakcija je hitrejša.** Hitrost določa višina hriba $E_a$, ne razlika med dolinama. Zelo eksotermna reakcija je lahko zelo počasna (gorenje lesa pri sobni temperaturi).
 
 ## Povzetek
 
@@ -259,7 +259,7 @@ Predlagani mehanizem razpada $\mathrm{H_2O_2}$ z jodidom je: (1) $\mathrm{H_2O_2
 
 1. (a) Seštevek: $2\,\mathrm{H_2O_2} \to 2\,\mathrm{H_2O} + \mathrm{O_2}$. $\mathrm{I^-}$ se v koraku 1 porabi in v koraku 2 vrne: katalizator (homogen). $\mathrm{IO^-}$ nastane in se porabi: vmesni produkt. Oba koraka sta dvomolekulska.
 2. (b) Počasni korak določa hitrost, za elementarni korak je red enak molekularnosti: $v = k_1[\mathrm{H_2O_2}][\mathrm{I^-}]$, 1. red glede na vsako snov, skupno 2. red.
-3. (c) Vsakemu počasnemu koraku takoj sledi hitri, ki porabi še eno molekulo $\mathrm{H_2O_2}$, zato je poraba $-\mathrm{d}[\mathrm{H_2O_2}]/\mathrm{d}t = 2v = 2k_1[\mathrm{I^-}][\mathrm{H_2O_2}]$. Ker je $[\mathrm{I^-}]$ stalna, je to $k'[\mathrm{H_2O_2}]$ z $k' = 2k_1[\mathrm{I^-}] = 2 \cdot 0{,}0115 \cdot 0{,}10\,\mathrm{s^{-1}} = 2{,}30 \cdot 10^{-3}\,\mathrm{s^{-1}}$: navidezno 1. red.
+3. (c) Vsakemu počasnemu koraku takoj sledi hitri, ki porabi še eno molekulo $\mathrm{H_2O_2}$, zato je poraba $-\mathrm{d}[\mathrm{H_2O_2}]/\mathrm{d}t = 2v = 2k_1[\mathrm{I^-}][\mathrm{H_2O_2}]$. Ker je $[\mathrm{I^-}]$ stalna, je to $k'[\mathrm{H_2O_2}]$ s $k' = 2k_1[\mathrm{I^-}] = 2 \cdot 0{,}0115 \cdot 0{,}10\,\mathrm{s^{-1}} = 2{,}30 \cdot 10^{-3}\,\mathrm{s^{-1}}$: navidezno 1. red.
 4. $t_{1/2} = \ln 2/k' = 0{,}6931/(2{,}30 \cdot 10^{-3})\,\mathrm{s} \approx 301\,\mathrm{s} \approx 5{,}0\,\mathrm{min}$.
 5. Odgovor: jodid je katalizator, $\mathrm{IO^-}$ vmesni produkt; $v = k_1[\mathrm{H_2O_2}][\mathrm{I^-}]$; pri stalnem jodidu $\mathrm{H_2O_2}$ razpada navidezno po 1. redu z razpolovnim časom okoli $5\,\mathrm{min}$. Podvojitev jodida bi ga razpolovila.
 
@@ -267,18 +267,29 @@ Predlagani mehanizem razpada $\mathrm{H_2O_2}$ z jodidom je: (1) $\mathrm{H_2O_2
 
 Energijski diagram iste reakcije brez katalizatorja in z njim:
 
-```
- E
- |       ___        brez kat.
- |      /   \
- |     / ___ \      s kat.
- |    / /   \ \
- |___/_/     \_\
- |  izh.       \
- |  snovi       \____
- |             produkti
- +-------------------> potek
-```
+:::risba skica
+opis: Energijski diagram: navpična os je energija E, vodoravna potek reakcije. Obe krivulji se začneta na ravni izhodnih snovi in končata na nižji ravni produktov. Polna krivulja brez katalizatorja ima visok vrh, črtkana krivulja s katalizatorjem ima nižji vrh. Navpični puščici kažeta aktivacijsko energijo od ravni izhodnih snovi do vrha: daljša (E z indeksom a) brez katalizatorja, krajša s katalizatorjem. Razlika med ravnema izhodnih snovi in produktov, ΔH, je za obe poti enaka.
+območje: -0,5; -0,8 .. 15,6; 8,5
+črta: 0; 0 -> 0; 8 | puščica
+črta: 0; 0 -> 13,5; 0 | puščica
+napis: 0,3; 8 | E | desno
+napis: 12,5; -0,45 | potek reakcije | levo
+črta: 2; 3 -> 12,6; 3 | siva črtkano
+črta: 1; 3 -> 2; 3 -> 2,25; 3,04 -> 2,5; 3,15 -> 2,75; 3,34 -> 3; 3,59 -> 3,25; 3,89 -> 3,5; 4,23 -> 3,75; 4,61 -> 4; 5 -> 4,25; 5,39 -> 4,5; 5,77 -> 4,75; 6,11 -> 5; 6,41 -> 5,25; 6,66 -> 5,5; 6,85 -> 5,75; 6,96 -> 6; 7 -> 6,25; 6,95 -> 6,5; 6,79 -> 6,75; 6,54 -> 7; 6,19 -> 7,25; 5,78 -> 7,5; 5,3 -> 7,75; 4,79 -> 8; 4,25 -> 8,25; 3,71 -> 8,5; 3,2 -> 8,75; 2,72 -> 9; 2,31 -> 9,25; 1,96 -> 9,5; 1,71 -> 9,75; 1,55 -> 10; 1,5 -> 11; 1,5 | modra debelo
+črta: 1; 3 -> 2; 3 -> 2,25; 3,02 -> 2,5; 3,08 -> 2,75; 3,17 -> 3; 3,29 -> 3,25; 3,44 -> 3,5; 3,62 -> 3,75; 3,8 -> 4; 4 -> 4,25; 4,2 -> 4,5; 4,38 -> 4,75; 4,56 -> 5; 4,71 -> 5,25; 4,83 -> 5,5; 4,92 -> 5,75; 4,98 -> 6; 5 -> 6,25; 4,97 -> 6,5; 4,87 -> 6,75; 4,71 -> 7; 4,49 -> 7,25; 4,22 -> 7,5; 3,92 -> 7,75; 3,59 -> 8; 3,25 -> 8,25; 2,91 -> 8,5; 2,58 -> 8,75; 2,28 -> 9; 2,01 -> 9,25; 1,79 -> 9,5; 1,63 -> 9,75; 1,53 -> 10; 1,5 -> 11; 1,5 | oranžna črtkano debelo
+napis: 0,2; 2,4 | izhodne snovi | desno
+napis: 10,6; 0,9 | produkti
+črta: 8,3; 7,7 -> 9,2; 7,7 | modra debelo
+napis: 9,4; 7,7 | brez katalizatorja | desno | modra
+črta: 8,3; 6,8 -> 9,2; 6,8 | oranžna črtkano debelo
+napis: 9,4; 6,8 | s katalizatorjem | desno | oranžna
+puščica: 5,85; 3 -> 5,85; 7 | | | modra
+napis: 6; 7,95 | E_a | sredina | modra
+puščica: 6,15; 3 -> 6,15; 5 | | | oranžna
+napis: 6,3; 1,6 | E_a s kat. | sredina | oranžna
+puščica: 12,2; 3 -> 12,2; 1,5 | ΔH | desno | siva
+podnapis: Katalizator zniža vrh (aktivacijsko energijo), ravni izhodnih snovi in produktov pa ostaneta enaki.
+:::
 
 Višji hrib je pot brez katalizatorja, nižji pot s katalizatorjem. Obe poti se začneta in končata v istih dolinah: $\Delta H$ je enaka, razlika je le v višini hriba $E_a$.
 

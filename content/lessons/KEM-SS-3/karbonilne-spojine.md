@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Prezrela jabolka na vročem avgustovskem soncu dišijo ostro, skoraj kot kis. Del tega vonja je etanal, $\mathrm{CH_3CHO}$, ki v sadju nastaja iz etanola. Vonj pokošene trave je heks-3-enal. Nad gozdovi pa poleti na soncu nastaja metanal, ki ga sateliti merijo iz vesolja.
+Prezrela jabolka na vročem avgustovskem soncu dišijo ostro, skoraj kot kis. Del tega vonja je etanal, $\mathrm{CH_3CHO}$, ki v sadju nastaja pri vrenju sladkorjev skupaj z etanolom. Vonj pokošene trave je heks-3-enal. Nad gozdovi pa poleti na soncu nastaja metanal, ki ga sateliti merijo iz vesolja.
 
 Etanal je skoraj enak etanolu, le da ima namesto enojne vezi C–O dvojno vez C=O. Dvojna vez je močnejša. Ali torej etanal vre še višje kot etanol, ki vre pri $78\,^\circ\mathrm{C}$? Napovej, preden bereš naprej.
 

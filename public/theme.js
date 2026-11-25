@@ -38,6 +38,30 @@
     r.classList.add("v-aplikaciji");
     r.style.setProperty("--varno-zg", "0px");
     r.style.setProperty("--varno-sp", "0px");
+    // Aplikacija iz trgovine (»EvklidApp/<različica> store«, public/pay-ui.js isStoreApp): brez povezav na cene in
+    // na prenos APK mimo trgovine (pravila trgovin).
+    if (/ EvklidApp\/\S+ store\b/.test(navigator.userAgent)) {
+      r.classList.add("v-trgovini");
+      const st = document.createElement("style");
+      st.textContent = '.v-trgovini a[href*="#cene"],.v-trgovini a[href^="/prenesi"]{display:none!important}';
+      document.head.appendChild(st);
+    }
+  } catch {}
+})();
+
+// Aplikacija (WebView) in nameščena spletna aplikacija nimata gumba za povečavo: nehoten poteg z dvema prstoma je
+// zaslon za nekaj odstotkov povečal in ostal tak. Glava je nato ob drsenju napol zdrsnila z zaslona, spodnji vrstici
+// so se odrezali napisi, ob desnem in spodnjem robu pa sta bila vidna drsnika (j 2026-11-15). Tam strani ne
+// povečujemo (sprememba ob zagonu povečavo tudi ponastavi); velikost pisave ostane po nastavitvi telefona.
+// V brskalniku povečava ostane (dostopnost).
+(function () {
+  try {
+    const app = / EvklidApp\//.test(navigator.userAgent) || (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+    const vp = document.querySelector('meta[name="viewport"]');
+    if (!app || !vp || /maximum-scale/.test(vp.content)) return;
+    // Izvirnik za pregledovalnik izpitnih pol (paper-viewer.js): tam drobni tisk A4 berejo s povečavo s prsti.
+    vp.setAttribute("data-izvirno", vp.content);
+    vp.setAttribute("content", vp.content + ", minimum-scale=1, maximum-scale=1, user-scalable=no");
   } catch {}
 })();
 

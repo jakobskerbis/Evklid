@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -101,7 +101,7 @@ $P = 4\pi r^2$ in $V = \dfrac{4}{3}\pi r^3$
 3. Zaokrožimo: $P \approx 452{,}39\,\text{cm}^2$.
 4. **Prostornina:** $V = \frac{4}{3}\pi r^3 = \frac{4}{3}\pi \cdot 6^3$.
 5. $6^3 = 6 \cdot 6 \cdot 6 = 216$. Velja $\frac{4}{3} \cdot 216 = 4 \cdot 72 = 288$. Torej $V = 288\pi\,\text{cm}^3 \approx 904{,}78\,\text{cm}^3$.
-6. Preverimo smiselnost: kocka s stranico $12\,\text{cm}$ ($= 2r$), v katero se krogla ravno prilega, ima prostornino $12^3 = 1728\,\text{cm}^3$. Krogla ima manj, $904{,}78\,\text{cm}^3$, kar je nekaj več kot polovica kocke (približno $52\,\%$). Rezultat je smiseln.
+6. Preverimo smiselnost: kocka z robom $12\,\text{cm}$ ($= 2r$), v katero se krogla ravno prilega, ima prostornino $12^3 = 1728\,\text{cm}^3$. Krogla ima manj, $904{,}78\,\text{cm}^3$, kar je nekaj več kot polovica kocke (približno $52\,\%$). Rezultat je smiseln.
 7. Odgovor: površina krogle je $144\pi\,\text{cm}^2 \approx 452{,}39\,\text{cm}^2$, prostornina $288\pi\,\text{cm}^3 \approx 904{,}78\,\text{cm}^3$.
 
 ### Primer 2: podan je premer
@@ -170,7 +170,7 @@ $V = \frac{32}{3}\pi\,\text{cm}^3 \approx 33{,}51\,\text{cm}^3$. Število zrn: $
 
 ## Pogoste napake
 
-- **Premer namesto polmera.** »V nalogi piše $22\,\text{cm}$, to vstavim za $r$.« Toda $22\,\text{cm}$ je premer, polmer je pol manjši. Ker je v prostornini $r^3$, dobiš $2^3 = 8$-krat preveliko prostornino. Popravek: pred računanjem vedno preveri, ali je dan $r$ ali $d$, in izračunaj $r = d : 2$.
+- **Premer namesto polmera.** »V nalogi piše $22\,\text{cm}$, to vstavim za $r$.« Toda $22\,\text{cm}$ je premer, polmer je za polovico manjši. Ker je v prostornini $r^3$, dobiš $2^3 = 8$-krat preveliko prostornino. Popravek: pred računanjem vedno preveri, ali je dan $r$ ali $d$, in izračunaj $r = d : 2$.
 - **Zamenjava formul ali enot.** »Površina je $\frac{4}{3}\pi r^3$, saj je to formula za kroglo.« Toda površina je ploskev, zato ima $r^2$ in enoto $\text{cm}^2$; $r^3$ in $\text{cm}^3$ spadata k prostornini. Popravek: enota ti pove, katera formula je prava: $\text{cm}^2$ gre z $r^2$, $\text{cm}^3$ z $r^3$.
 - **Pozabljeno deljenje s $3$.** »$V = 4\pi r^3$.« Ulomek $\frac{4}{3}$ je del formule; brez deljenja s $3$ je prostornina $3$-krat prevelika (večja celo od valja okoli krogle, ki ima $2\pi r^3$). Popravek: preveri, ali je krogla manjša od valja okoli sebe.
 - **»Dvakrat večji polmer, dvakrat več.«** Učenec misli, da se prostornina poveča toliko kot polmer. Toda $r$ je v prostornini na tretjo potenco: dvakrat večji polmer da $8$-krat večjo prostornino in $4$-krat večjo površino. Popravek: faktor povečave polmera kubiraj za prostornino in kvadriraj za površino.

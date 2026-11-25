@@ -1,7 +1,7 @@
 // Simulacije za matematična tekmovanja: logika, Dirichletovo načelo, invariante, igre, ostanki, poti,
 // diofantske enačbe, ura, sredine, urejanje, Vietove formule, funkcijske enačbe, Hanojski stolpi, grafi,
 // potenca točke, Cevov izrek, najkrajša pot, Legendrova formula.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, clamp, label, animate, playButton, axes, fnPath, handle, draggable, gcd, rint } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, clamp, label, animate, playButton, axes, fnPath, handle, draggable, gcd, rint } from "./kit.js";
 
 const binom = (n, k) => {
   if (k < 0 || k > n) return 0;
@@ -117,7 +117,7 @@ export function predalcki(el) {
       buttons(button("Razporedi naključno", () => upd(true), "primary small"), button("Čim bolj enakomerno", () => upd(false))),
     ],
     out,
-    tryText: "Koliko ljudi mora biti v sobi, da imata gotovo dva rojstni dan v istem mesecu? Nastavi 12 predalov.",
+    tryText: "Koliko ljudi mora biti v sobi, da sta gotovo dva rojena na isti dan v tednu? Nastavi 7 predalov.",
   });
 }
 
@@ -666,21 +666,26 @@ export function hanoi(el) {
     s("rect", { x: 10, y: 180, width: 320, height: 8, rx: 3, class: "fill-muted" }, svg);
     pegs.forEach((p, i) => {
       const x = 60 + i * 110;
-      const g = s("g", { class: "drag" }, svg);
+      const g = s("g", { class: "drag", "data-palica": i }, svg);
       s("rect", { x: x - 50, y: 40, width: 100, height: 140, class: "hit-area" }, g);
       s("rect", { x: x - 3, y: 50, width: 6, height: 130, rx: 3, class: sel === i ? "fill-accent" : "fill-muted" }, g);
       p.forEach((d, j) => s("rect", { x: x - 8 - d * 6, y: 166 - j * 16, width: 16 + d * 12, height: 14, rx: 5, class: `fill-${["a", "b", "c", "accent", "danger", "ok", "a"][d % 7]}` }, g));
-      g.addEventListener("click", () => {
-        if (sel === null) sel = pegs[i].length ? i : null;
-        else {
-          move(sel, i);
-          sel = null;
-        }
-        draw();
-        info();
-      });
     });
   };
+  // Klik posluša slika (ne vsaka palica, ki se med »Reši sam« nariše znova): Safari na iPadu in iPhonu sicer ob dotiku
+  // med animacijo ne pošlje klika (nov klikljiv element = meni ob lebdenju; scripts/gumbi-na-dotik.cjs).
+  svg.addEventListener("click", (ev) => {
+    const p = ev.target.closest?.("[data-palica]")?.dataset.palica;
+    if (p == null) return;
+    const i = Number(p);
+    if (sel === null) sel = pegs[i].length ? i : null;
+    else {
+      move(sel, i);
+      sel = null;
+    }
+    draw();
+    info();
+  });
   const info = () => {
     const done = pegs[2].length === n;
     out.innerHTML = `<p>Potez: <b>${moves}</b>. Najmanjše število potez za ${n} ploščic je 2<sup>${n}</sup> − 1 = <b>${2 ** n - 1}</b>. ${done ? '<b class="ok-text">Stolp je prestavljen!</b>' : ""}</p>

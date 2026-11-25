@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -47,7 +47,7 @@ pH se je zniževal, ker je vsaka kapljica kisline odvzela nekaj ionov $\mathrm{O
 | žveplova $\mathrm{H_2SO_4}$ | sulfat $\mathrm{SO_4^{2-}}$ | kalijev sulfat $\mathrm{K_2SO_4}$ |
 | dušikova $\mathrm{HNO_3}$ | nitrat $\mathrm{NO_3^-}$ | kalijev nitrat $\mathrm{KNO_3}$ |
 
-Formulo soli zapišeš s križnim pravilom: naboj enega iona postane indeks drugega, nato indeksa skrajšaš na najmanjše celo razmerje ($\mathrm{Ca^{2+}}$ + $\mathrm{SO_4^{2-}}$ → $\mathrm{Ca_2(SO_4)_2}$ → okrajšamo → $\mathrm{CaSO_4}$). Skupina $\mathrm{SO_4}$ ostane cela, njenih indeksov ne spreminjaš.
+Formulo soli zapišeš s križnim pravilom: naboj enega iona postane indeks drugega, nato indeksa skrajšaš na najmanjše celo razmerje ($\mathrm{Ca^{2+}}$ + $\mathrm{SO_4^{2-}}$ → $\mathrm{Ca_2(SO_4)_2}$ → okrajšamo → $\mathrm{CaSO_4}$, en ion na en ion). Na koncu preveri vsoto nabojev: $1 \cdot 2 + 1 \cdot (-2) = 0$. Skupina $\mathrm{SO_4}$ ostane cela, njenih indeksov ne spreminjaš.
 
 **6. Cela enačba.** Splošna shema je:
 
@@ -99,7 +99,7 @@ kislina + baza $\longrightarrow$ sol + voda; en $\mathrm{H^+}$ potrebuje en $\ma
 
 **Rešitev:**
 
-1. Kation baze je $\mathrm{K^+}$, anion kisline $\mathrm{SO_4^{2-}}$. Po križnem pravilu: $\mathrm{K_2SO_4}$, kalijev sulfat.
+1. Kation baze je $\mathrm{K^+}$, anion kisline $\mathrm{SO_4^{2-}}$. Po križnem pravilu: $\mathrm{K_2SO_4}$, kalijev sulfat. Preverba: $2 \cdot 1 + 1 \cdot (-2) = 0$.
 2. Kislina ima dva vodika, torej odda dva iona $\mathrm{H^+}$. Za vsakega potrebujemo en $\mathrm{OH^-}$, zato pišemo $2\,\mathrm{KOH}$. Nastaneta dve molekuli vode.
 3. Enačba: $\mathrm{H_2SO_4 + 2\,KOH \longrightarrow K_2SO_4 + 2\,H_2O}$.
 4. Štejemo kisik: levo $4 + 2 \cdot 1 = 6$, desno $4 + 2 \cdot 1 = 6$. Vodik: levo $2 + 2 = 4$, desno $2 \cdot 2 = 4$. Kalij $2$ in žveplo $1$ se tudi ujemata.
@@ -153,7 +153,7 @@ $\mathrm{HNO_3 + KOH \longrightarrow KNO_3 + H_2O}$. Kislina ima en vodik, baza 
 - **Sol je samo kuhinjska sol.** Beseda sol pomeni celo skupino ionskih spojin. Kalijev nitrat, kalcijev klorid in kalijev sulfat so prav tako soli.
 - **Nevtralizacija vedno da pH 7.** Le, če se količini kisline in baze točno ujemata. Če baze dodaš preveč, je raztopina bazična, kot v simulaciji pri več kot $20\,\mathrm{mL}$.
 - **Razbita skupina v formuli soli.** Zapis $\mathrm{KSO_4}$ ali $\mathrm{K(SO_4)_2}$ je napačen. Sulfat ima naboj $2-$, zato potrebuješ dva iona $\mathrm{K^+}$: $\mathrm{K_2SO_4}$.
-- **Indeks namesto koeficienta.** Kdor uredi enačbo z $\mathrm{H_4O_2}$ namesto $2\,\mathrm{H_2O}$, je spremenil snov. Število molekul vode spreminjaš samo s koeficientom.
+- **Indeks namesto koeficienta.** Kdor uredi enačbo s $\mathrm{H_4O_2}$ namesto $2\,\mathrm{H_2O}$, je spremenil snov. Število molekul vode spreminjaš samo s koeficientom.
 
 ## Povzetek
 

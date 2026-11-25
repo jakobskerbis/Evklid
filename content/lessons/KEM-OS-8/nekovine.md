@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -47,7 +47,7 @@ Kot elementi halogeni tvorijo **dvoatomne molekule**: dva atoma si delita en par
 Navzdol po skupini se barva temni, snov pa prehaja od plina prek tekočine do trdne snovi. Vsi so strupeni ali dražilni.
 
 :::premisli
-Pri alkalijskih kovinah reaktivnost navzdol po skupini narašča. Halogen elektron sprejme, večji atom pa tuj elektron privlači šibkeje kot manjši. Kdo je reaktivnejši, fluor ali jod?
+Pri alkalijskih kovinah reaktivnost navzdol po skupini narašča. Halogen elektron sprejme, večji atom pa tuj elektron privlači šibkeje kot manjši. Kateri je reaktivnejši, fluor ali jod?
 ---
 Fluor. Pri halogenih reaktivnost navzdol pada, ravno obratno kot pri alkalijskih kovinah. Najmanjši atom, fluor, najmočneje pritegne dodatni elektron.
 :::
@@ -152,7 +152,7 @@ Helij, ker je žlahtni plin in ne gori. Vodik gori, zato za otroke ni varen. $n 
 
 ## Pogoste napake
 
-- **Halogen kot en atom.** Kdo zapiše plin klor kot $\mathrm{Cl}$, ker tako piše v periodnem sistemu. Kot element je klor iz dvoatomnih molekul, zato $\mathrm{Cl_2}$. Pri žlahtnih plinih je obratno: $\mathrm{He}$, ne $\mathrm{He_2}$.
+- **Halogen kot en atom.** Marsikdo zapiše plin klor kot $\mathrm{Cl}$, ker tako piše v periodnem sistemu. Kot element je klor iz dvoatomnih molekul, zato $\mathrm{Cl_2}$. Pri žlahtnih plinih je obratno: $\mathrm{He}$, ne $\mathrm{He_2}$.
 - **»Vsi halogeni so plini.«** Fluor in klor sta res plina, a brom je tekočina, jod trdna snov. Stanje se navzdol po skupini spreminja.
 - **»Reaktivnost navzdol narašča, kot pri alkalijskih kovinah.«** Kovina elektron odda, halogen ga sprejme. Velik atom elektron lažje odda, a ga teže pritegne. Pri halogenih reaktivnost navzdol pada: fluor je najreaktivnejši.
 - **»Vsi žlahtni plini so lažji od zraka.«** Ker helij dvigne balon, se zdi, da to velja za vse. Liter argona ima maso $1{,}66\,\mathrm{g}$, liter zraka $1{,}20\,\mathrm{g}$. Lažja od zraka sta le helij in neon.

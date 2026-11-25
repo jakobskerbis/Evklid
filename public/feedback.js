@@ -1,9 +1,9 @@
 // Povratne informacije testerjev: vprašalnik (ocene po področjih + pripombe) ali kratek pogovor
 // z inštruktorjem. Na računalniku, kjer teče strežnik, še zbrana mnenja in povzetek.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { createRenderer } from "./rich.js";
-import { renderAdminReports } from "./prijave.js";
+import { feedbackCardHtml } from "./zacetna.js";
 
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -42,19 +42,24 @@ export function initFeedback(opts, config = {}) {
   renderFeedbackCard();
 }
 
-// Kartica na Učni poti: dokler tester ne pošlje mnenja ali je ne skrije.
+// Profil je star vsaj en koledarski dan (lokalni datum): nov učenec na prvi dan vidi najprej trening (j, 15. 11. 2026).
+const localDay = (d) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+function secondDay(s) {
+  if (!s) return false;
+  if (!s.created_at) return true; // brez datuma nastanka (npr. profil samo na napravi) kartica ostane kot prej
+  const born = new Date(`${String(s.created_at).replace(" ", "T")}Z`); // created_at je UTC (SQLite datetime)
+  return !Number.isNaN(born.getTime()) && born < new Date() && localDay(born) !== localDay(new Date());
+}
+
+// Kartica na Učni poti: od drugega dne profila, dokler tester ne pošlje mnenja ali je ne skrije.
 export function renderFeedbackCard() {
   const box = $("#feedback-card");
-  if (!box) return;
+  if (!box || !ctx) return;
   const state = store();
-  box.hidden = !cfg.prompt || state === "hidden" || state === "sent";
+  box.hidden = !cfg.prompt || state === "hidden" || state === "sent" || !secondDay(ctx.getStudent());
   if (box.hidden) return;
   box.className = "card fb-card";
-  box.innerHTML = `
-    <span class="fb-card-ic">${icon("message-square-heart")}</span>
-    <div class="fb-card-text"><b>${esc(t("fb.cardTitle"))}</b><p class="muted">${esc(t("fb.cardText"))}</p></div>
-    <button type="button" class="ghost icon-only fb-card-x" aria-label="${esc(t("fb.dismiss"))}" title="${esc(t("fb.dismiss"))}">${icon("x")}</button>
-    <button type="button" class="primary fb-card-go">${esc(t("fb.cardBtn"))}</button>`;
+  box.innerHTML = feedbackCardHtml(t); // izris skupen s strežnikom (public/zacetna.js)
   box.querySelector(".fb-card-go").onclick = () => ctx.showView("feedback");
   box.querySelector(".fb-card-x").onclick = () => {
     store("hidden");
@@ -295,5 +300,6 @@ async function renderAdmin(box) {
     <div class="card"><h2>${icon("flag")} ${esc(t("adm.rep.title"))}</h2><div class="fb-reports"></div></div>`;
   hydrateIcons(box);
   // Prijave napak (lekcije, odgovori inštruktorja, skrbnik) tudi na računalniku s strežnikom brez računov.
-  renderAdminReports(box.querySelector(".fb-reports"), { api: ctx.api, toast: ctx.toast });
+  // Modul prijav se naloži šele tu (ni del prvega odprtja aplikacije).
+  import("./prijave.js").then((m) => m.renderAdminReports(box.querySelector(".fb-reports"), { api: ctx.api, toast: ctx.toast }), () => ctx.toast(t("off.noConnection")));
 }

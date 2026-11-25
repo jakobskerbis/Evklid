@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Hidrostatični tlak
+  - $p = \rho g h$, enota $\mathrm{Pa}$
+  - oblika posode ne šteje
+  - bazen $4\,\mathrm{m}$: $40\,\mathrm{kPa}$
+- Vzgon
+  - razlika sil na spodnjo in zgornjo ploskev
+  - $F_\mathrm{vz} = \rho_\mathrm{t} g V_\mathrm{p}$
+  - napaka: globlje pomeni večji vzgon
+- Plavanje
+  - vzgon enak teži
+  - delež pod gladino $\dfrac{\rho}{\rho_\mathrm{t}}$
+  - napaka: celo $V$ namesto $V_\mathrm{p}$
+- Potapljanje s silo
+  - sila roke je vzgon minus teža
+  - deska: $30\,\mathrm{N} - 3\,\mathrm{N} = 27\,\mathrm{N}$
+- Vezne posode
+  - ena tekočina: enake gladine
+  - dve tekočini: $\rho_1 h_1 = \rho_2 h_2$
+  - redkejša tekočina stoji višje
+- Tekmovalna strategija
+  - ravnina meje, pod njo ista tekočina
+  - enak presek: meja dol, gladina gor

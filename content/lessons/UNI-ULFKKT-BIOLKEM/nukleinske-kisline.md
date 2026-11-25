@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-V vrečki zmečkaj nekaj jagod z žličko detergenta za posodo in ščepcem soli, precedi in po robu kozarca nalij mrzel alkohol. Na meji tekočin se v nekaj minutah pokažejo bele, sluzaste niti: DNA, vidna s prostim očesom. Bakterija *E. coli* ima v svoji DNA približno $4{,}6$ milijona baznih parov. Prepisati jih mora pred vsako delitvijo, vsakih $20$ do $40$ minut, in to skoraj brez napake.
+V vrečki zmečkaj nekaj jagod z žličko detergenta za posodo in ščepcem soli, precedi in po robu kozarca nalij mrzel alkohol. Na meji tekočin se v nekaj minutah pokažejo bele, sluzaste niti: DNA, vidna s prostim očesom. Bakterija *E. coli* ima v svoji DNA približno $4{,}6$ milijona baznih parov. Podvojiti jih mora pred vsako delitvijo, vsakih $20$ do $40$ minut, in to skoraj brez napake.
 
 Natančno kopijo omogoča zgradba: verigi se ujemata kot ključ in ključavnica, zato vsaka nosi navodilo za drugo.
 
@@ -35,7 +35,7 @@ Veriga ima dva različna konca: na enem je prost 5'-fosfat, na drugem prosta 3'-
 
 ### Blok 3: dvojna vijačnica DNA
 
-V celici DNA tvori dve verigi, ovite druga okoli druge v desnosučno vijačnico (oblika B). Pomembna so tri pravila:
+V celici DNA tvori dve verigi, oviti druga okoli druge v desnosučno vijačnico (oblika B). Pomembna so tri pravila:
 
 - Verigi sta **antiparalelni**: ena teče $5' \to 3'$, druga ob njej $3' \to 5'$.
 - Baze se parijo **komplementarno**: A s T z dvema vodikovima vezema, G s C s tremi.
@@ -82,11 +82,11 @@ Dodatna skupina 2'-OH naredi RNA kemijsko manj stabilno. V bazični raztopini na
 
 ### Blok 5: podvajanje je semikonzervativno
 
-Pri podvajanju (replikaciji) se verigi ločita in vsaka služi kot **matrica** za novo verigo. Vsaka hčerinska molekula ima eno staro in eno novo verigo. To je leta 1958 pokazal poskus Meselsona in Stahla s težkim dušikom $^{15}\mathrm{N}$ in centrifugiranjem v gradientu CsCl.
+Pri podvajanju (replikaciji) se verigi ločita in vsaka služi kot **matrica** za novo verigo. Vsaka hčerinska molekula ima eno staro in eno novo verigo. To je leta 1958 pokazal poskus Meselsona in Stahla s težkim dušikom $\mathrm{^{15}N}$ in centrifugiranjem v gradientu CsCl.
 
-**Napoved poskusa.** Naj se molekula z dvema težkima verigama ($^{15}\mathrm{N}$) podvaja semikonzervativno v gojišču s $^{14}\mathrm{N}$. Potem je po $n \ge 1$ generacijah med $2^n$ molekulami natanko $2$ hibridnih (težka + lahka), vse druge so lahke; delež hibridnih je $2/2^n = 2^{1-n}$.
+**Napoved poskusa.** Naj se molekula z dvema težkima verigama ($\mathrm{^{15}N}$) podvaja semikonzervativno v gojišču s $\mathrm{^{14}N}$. Potem je po $n \ge 1$ generacijah med $2^n$ molekulami natanko $2$ hibridnih (težka + lahka), vse druge so lahke; delež hibridnih je $2/2^n = 2^{1-n}$.
 
-*Izpeljava.* Stari verigi se nikoli ne razgradita in pri vsakem podvajanju vsaka dobi novo, lahko partnerico. Ker sta ločeni že po prvi generaciji, sta vedno v dveh različnih molekulah. Vse druge verige so nastale v $^{14}\mathrm{N}$, zato so molekule brez stare verige lahke. Pri konzervativnem modelu pa bi ostala ena težka molekula in $2^n - 1$ lahkih, hibridne nikoli.
+*Izpeljava.* Stari verigi se nikoli ne razgradita in pri vsakem podvajanju vsaka dobi novo, lahko partnerico. Ker sta ločeni že po prvi generaciji, sta vedno v dveh različnih molekulah. Vse druge verige so nastale v $\mathrm{^{14}N}$, zato so molekule brez stare verige lahke. Pri konzervativnem modelu pa bi ostala ena težka molekula in $2^n - 1$ lahkih, hibridne nikoli.
 
 ### Blok 6: replikacijske vilice
 
@@ -110,14 +110,29 @@ Gradniki so deoksinukleozid-trifosfati (dATP, dGTP, dCTP, dTTP). Sproščeni pir
 
 Ker sta matrici antiparalelni, se ena nova veriga lahko podaljšuje ves čas v smeri gibanja vilice. To je **vodilna veriga**. Druga mora rasti stran od vilice, zato nastaja v koščkih, **Okazakijevih fragmentih** (pri bakterijah $1000$ do $2000$ nukleotidov). To je **zaostajajoča veriga**.
 
-Na sliki v besedah:
+Na sliki:
 
-```
-          5' ──────────────────── 3'   stara veriga
-vilica →     ═══► vodilna (neprekinjena)
-             ◄══ ◄══ ◄══ zaostajajoča (koščki)
-          3' ──────────────────── 5'   stara veriga
-```
+:::risba skica
+opis: Replikacijske vilice v obliki ležeče črke Y. Desno je še nerazpleteni del dvojne vijačnice, vilica se premika v desno. Zgornja stara veriga ima levo konec 3' in desno konec 5'; ob njej raste vodilna veriga kot ena neprekinjena puščica v desno, proti vilici. Spodnja stara veriga ima levo konec 5' in desno konec 3'; ob njej nastaja zaostajajoča veriga iz treh kratkih puščic v levo, stran od vilice. Vse nove verige rastejo v smeri od 5' proti 3'.
+območje: 0; 0 .. 14; 8
+črta: 1; 7 -> 8; 4,3 -> 12,5; 4,3 | siva debelo
+črta: 1; 1 -> 8; 3,7 -> 12,5; 3,7 | siva debelo
+napis: 0,5; 7 | 3'
+napis: 13; 4,3 | 5' | nad
+napis: 0,5; 1 | 5'
+napis: 13; 3,7 | 3' | pod
+napis: 8; 7,2 | stara veriga
+napis: 8; 0,7 | stara veriga
+puščica: 1; 6,4 -> 6,5; 4,28 | | | modra debelo
+puščica: 2,6; 2,22 -> 1; 1,6 | | | oranžna
+puščica: 4,6; 2,99 -> 3; 2,37 | | | oranžna
+puščica: 6,5; 3,72 -> 5; 3,14 | | | oranžna
+napis: 2,2; 4,5 | vodilna
+napis: 2,2; 3,5 | zaostajajoča
+puščica: 9; 5,6 -> 11,5; 5,6 | vilica | nad
+napis: 10; 2,6 | nerazpleteni del
+podnapis: Vodilna veriga raste neprekinjeno proti vilici, zaostajajoča v koščkih stran od nje
+:::
 
 :::premisli
 Kaj bi se zgodilo z zaostajajočo verigo, če bi DNA-polimeraza znala graditi tudi v smeri $3' \to 5'$?
@@ -179,12 +194,12 @@ Kromosom *E. coli* je krožen in ima $4{,}6 \cdot 10^6$ baznih parov. Podvajanje
 **Iščemo:** čas podvajanja $t$, število fragmentov $n_\mathrm{F}$ in primerjev, potrebno hitrost $v'$
 
 :::formula
-Vsaka vilica prepiše polovico kromosoma: $t = \dfrac{N/2}{v}$, $\quad n_\mathrm{F} = \dfrac{2 \cdot N/2}{l}$, $\quad v' = \dfrac{N/2}{t'}$
+Vsaka vilica podvoji polovico kromosoma: $t = \dfrac{N/2}{v}$, $\quad n_\mathrm{F} = \dfrac{2 \cdot N/2}{l}$, $\quad v' = \dfrac{N/2}{t'}$
 :::
 
 **Rešitev:**
 
-1. Vilici se odpravita v nasprotnih smereh in se srečata na drugi strani kroga, zato vsaka prepiše polovico: $\dfrac{4{,}6 \cdot 10^6\,\text{bp}}{2} = 2{,}3 \cdot 10^6\,\text{bp}$.
+1. Vilici se odpravita v nasprotnih smereh in se srečata na drugi strani kroga, zato vsaka podvoji polovico: $\dfrac{4{,}6 \cdot 10^6\,\text{bp}}{2} = 2{,}3 \cdot 10^6\,\text{bp}$.
 2. Čas: $t = \dfrac{2{,}3 \cdot 10^6\,\text{bp}}{1000\,\text{bp/s}} = 2300\,\text{s}$.
 3. V minutah: $2300 / 60 \approx 38{,}3$, torej približno $38\,\text{min}$.
 4. V vsaki vilici je ena nova veriga zaostajajoča, ker sta matrici antiparalelni; dolga je toliko kot pot vilice, $2{,}3 \cdot 10^6\,\text{nt}$.
@@ -201,13 +216,13 @@ Kromosom 1 človeka ima približno $2{,}5 \cdot 10^8$ baznih parov. Vilica pri e
 **Iščemo:** najmanjše število izvorov $n$
 
 :::formula
-Vsak izvor v času $t$ prepiše $2 \cdot v \cdot t$ baznih parov: $n = \dfrac{N}{2 \cdot v \cdot t}$
+Vsak izvor v času $t$ podvoji $2 \cdot v \cdot t$ baznih parov: $n = \dfrac{N}{2 \cdot v \cdot t}$
 :::
 
 **Rešitev:**
 
 1. Čas v sekundah: $8 \cdot 3600 = 28800$, torej $t = 28\,800\,\text{s}$.
-2. En izvor z dvema vilicama prepiše $2 \cdot 50 \cdot 28800 = 2880000$, torej $2{,}88 \cdot 10^6\,\text{bp}$.
+2. En izvor z dvema vilicama podvoji $2 \cdot 50 \cdot 28800 = 2880000$, torej $2{,}88 \cdot 10^6\,\text{bp}$.
 3. Izračunaj $n$ sam in razmisli, kako zaokrožiti.
 
 :::premisli
@@ -221,7 +236,7 @@ $n \approx 86{,}8$, zaokrožimo **navzgor** na $87$ izvorov: s $86$ izvori podva
 - **Chargaff za vsako verigo.** »RNA ima $20\,\%$ A, torej ima $20\,\%$ U.« To velja le za dvoverižno molekulo, kjer je vsak A sparjen. Enoverižna RNA in posamezna veriga DNA tega ne izpolnjujeta.
 - **Komplementarna veriga brez obrata.** Pod 5'-ATGC-3' napišeš TACG in ga bereš kot 5'-TACG-3'. Verigi sta antiparalelni, zato je to v resnici 3'-TACG-5'. Pravilno: 5'-GCAT-3'. Vedno označi oba konca.
 - **Polimeraza gradi v obe smeri.** »Na drugi matrici polimeraza pač gradi $3' \to 5'$.« Ne zna: nukleotid veže le na 3'-OH. Zato ena veriga nastaja v Okazakijevih fragmentih.
-- **Konzervativno podvajanje.** »Stara vijačnica ostane cela.« Po enem krogu v $^{14}\mathrm{N}$ so imele vse molekule vmesno gostoto, torej po eno staro in eno novo verigo.
+- **Konzervativno podvajanje.** »Stara vijačnica ostane cela.« Po enem krogu v $\mathrm{^{14}N}$ so imele vse molekule vmesno gostoto, torej po eno staro in eno novo verigo.
 - **»DNA drže skupaj samo vodikove vezi.«** Vodikove vezi določajo pravilno parjenje, k stabilnosti pa največ prispeva zlaganje baz.
 
 ## Povzetek
@@ -262,7 +277,7 @@ Linearni dvoverižni fragment DNA ima $1200$ baznih parov. Ena njegova veriga vs
 
 ### Naloga 2
 
-Natančno navedi Chargaffova pravila in jih dokaži iz komplementarnega parjenja. Utemelji, ali veljajo za enoverižno RNA. Nato izpelji, kakšne lise po $1$, $2$ in $3$ generacijah v gojišču s $^{14}\mathrm{N}$ da ultracentrifugiranje DNA, ki je bila na začetku v celoti označena s $^{15}\mathrm{N}$, pri semikonzervativnem in pri konzervativnem modelu.
+Natančno navedi Chargaffova pravila in jih dokaži iz komplementarnega parjenja. Utemelji, ali veljajo za enoverižno RNA. Nato izpelji, kakšne lise po $1$, $2$ in $3$ generacijah v gojišču s $\mathrm{^{14}N}$ da ultracentrifugiranje DNA, ki je bila na začetku v celoti označena s $\mathrm{^{15}N}$, pri semikonzervativnem in pri konzervativnem modelu.
 
 **Rešitev:**
 
@@ -306,7 +321,7 @@ Natančno navedi Chargaffova pravila in jih dokaži iz komplementarnega parjenja
 ~ Polimeraza nikoli ne gradi $3' \to 5'$; nukleotid veže le na prosto 3'-OH skupino.
 > Na eni matrici smer $5' \to 3'$ sovpada s smerjo vilice, na drugi je nasprotna, zato mora polimeraza vedno znova začeti na novem primerju.
 
-? Bakterije z DNA iz $^{15}\mathrm{N}$ se enkrat podvojijo v gojišču s $^{14}\mathrm{N}$. Kakšno DNA dobimo?
+? Bakterije z DNA iz $\mathrm{^{15}N}$ se enkrat podvojijo v gojišču s $\mathrm{^{14}N}$. Kakšno DNA dobimo?
 - Pol težke in pol lahke DNA.
 ~ Tako bi bilo pri konzervativnem podvajanju, kjer stara vijačnica ostane cela.
 + Samo DNA vmesne gostote.
@@ -335,6 +350,7 @@ G | gvanin | | | %G: delež gvanina med bazami
 C | citozin | | | %C: delež citozina; %C = %G
 A | adenin | | | %A: delež adenina; %A = %T
 T | timin | | | %T: delež timina
+A_{260}, A_{280} | absorbanca pri 260 nm oziroma 280 nm | | –
 n_{AT} | število baznih parov A–T | | – | vsak par ima 2 vodikovi vezi
 n_{GC} | število baznih parov G–C | | – | vsak par ima 3 vodikove vezi
 t | čas podvajanja DNA | t = \dfrac{N/2}{v} | s
@@ -342,5 +358,5 @@ n_\mathrm{F} | število Okazakijevih fragmentov v enem krogu | n_\mathrm{F} = \d
 l | povprečna dolžina Okazakijevega fragmenta | | nt
 N | dolžina genoma | | bp | v baznih parih
 v | hitrost ene replikacijske vilice | | bp/s
-n | najmanjše število izvorov podvajanja | n = \dfrac{N}{2 \cdot v \cdot t} | – | vsak izvor ima dve vilici
+n | najmanjše število izvorov podvajanja | n = \dfrac{N}{2 \cdot v \cdot t} | – | vsak izvor ima dve vilici; pri poskusu Meselsona in Stahla je $n$ število generacij
 :::

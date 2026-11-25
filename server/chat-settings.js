@@ -410,7 +410,8 @@ const PROFILE_KEYS = Object.keys(PROFILE_SETTINGS).filter((k) => k !== "weak_poi
 // send(event, data): dogodki za odjemalca. Vrne { onToolUse, state }.
 
 export function createSettingsTools({ store, studentId, conversationId, device = {}, pending, send = () => {}, schedules = null, onSchedule = () => {} }) {
-  const state = { used: false, proposal: null, language: null, student: null };
+  // done: kaj je orodje v tem odgovoru res spremenilo (gre kot skrita opomba v zgodovino, actionNote).
+  const state = { used: false, proposal: null, language: null, student: null, done: [] };
   const dev = { ...device };
   const avatars = new Avatars(store.db);
 
@@ -529,6 +530,7 @@ export function createSettingsTools({ store, studentId, conversationId, device =
       send("device_settings", { changes: deviceChanges });
     }
     if (result.status !== "needs_confirmation" && !result.applied.length && !result.device.length) result.note = result.note || "nothing changed (already set)";
+    for (const a of [...result.applied, ...result.device]) state.done.push(`${a.setting} = ${typeof a.to === "string" ? a.to : JSON.stringify(a.to)}`);
     return { content: JSON.stringify(result) };
   }
 
@@ -719,4 +721,12 @@ export function mockToolText(resultContent) {
   if (r.status === "needs_confirmation") parts.push(`Res želiš spremembo (${fmt(r.needs_confirmation)})? Potrdi z gumbom spodaj ali napiši »da«.`);
   if (!parts.length) parts.push("To je že nastavljeno.");
   return parts.join(" ");
+}
+
+// Skrita opomba v zgodovini pogovora (j, 17. 11. 2026): odgovor s klicem orodja se shrani brez klica, zato je
+// inštruktor v naslednjem odgovoru mislil, da spremembe ni naredil, in to napačno priznal. Učenec opombe ne vidi
+// (prikazano besedilo je ločeno); inštruktor iz nje ve, kaj je bilo res spremenjeno.
+export function actionNote(done = []) {
+  if (!done.length) return null;
+  return `<orodje>App record, not shown to the student: during this reply the settings tool really applied: ${done.join("; ")}. Never mention or repeat this record.</orodje>`;
 }

@@ -5,12 +5,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, digitFor,
-  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS, KEM_CHARGE,
+  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, digitFor,
+  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
-import { GROUPS, symGroups } from "../public/symbols.js";
+import { GROUPS, symGroups, ELEMENT_SYMBOLS } from "../public/symbols.js";
 import { DEVICE_SETTINGS, deviceValue } from "../public/settings-registry.js";
 import { BUILTINS } from "../public/graph/math.js";
 import { evaluate } from "../public/graph/scicore.js";
@@ -95,6 +95,18 @@ test("templates: @ marks the caret and takes the selected text", () => {
   for (const [label, ins] of all) assert.ok((ins.match(/@/g) || []).length <= 1, label);
 });
 
+test("tipka = je pri roki (j, 18. 11.): druga predloga v Inštruktorju, v 123 pri matematiki zgoraj; ≠ in x ostaneta", () => {
+  assert.deepEqual(TUTOR_CHIPS[0], ["a/b", "(@)/()"]);
+  assert.deepEqual(TUTOR_CHIPS[1], ["=", "="]);
+  assert.ok(TUTOR_CHIPS.some(([l]) => l === "≠"), "≠ ostane");
+  assert.deepEqual(NUM_TOP_MATH[1], ["=", "="]);
+  assert.deepEqual(NUM_TOP_MATH.map(([l]) => l), ["x²", "=", "√", "xⁿ", "π", "( )", "a/b"]);
+  const js = read("public/tipkovnica.js");
+  assert.match(js, /math \? "x" : "="/, "v mreži 123 pri matematiki ostane x");
+  assert.match(js, /--cols:\$\{topKeys\.length\}/, "zgornja vrsta je ena vrstica ne glede na število tipk");
+  assert.match(js, /l === "=" && enterMode\(\) === "calc"/, "v načinu calc je = samo izračunaj");
+});
+
 test("letter layouts per app language", () => {
   const sl = layoutFor("sl");
   assert.equal(sl.id, "sl");
@@ -175,26 +187,29 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
 test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer je zavihek (j, 5. 11.)", () => {
   const kem = KEM_ROWS.flat().map((k) => k.trim());
   assert.equal(new Set(kem).size, kem.length, "tipka v Kem je dvakrat");
-  for (const k of GROUPS.kemija.keys) assert.ok(kem.includes(k.ins), `»${k.label}« je bila samo v čipu Σ, v Kem je ni`);
+  for (const k of GROUPS.kemija.keys) assert.ok(kem.includes(k.ins.trim()), `»${k.label}« je bila samo v čipu Σ, v Kem je ni`);
   for (const [lvl, subj] of [["OS", "MAT"], ["SS", "KEM"], ["FAKS", "KEM"], ["FAKS", "MAT"], ["OS", "FIZ"]]) {
     assert.ok(!symGroups(lvl, subj, true).includes("kemija"), `${lvl} ${subj}: čip Kemija ob zavihku Kem`);
     assert.ok(symGroups(lvl, subj, false).includes("kemija"), `${lvl} ${subj}: brez zavihka Kem čip ostane`);
   }
-  // pregled #460: pravi » + « med snovmi v Reakcijah, naboji (tudi ³⁻) posebej in nadpisani
+  // pregled #460: pravi » + « med snovmi v Reakcijah, naboji (tudi ³⁻) posebej (od 13. 11. na strani Ioni) in nadpisani
   const re = KEM_GROUPS.find(([id]) => id === "re")[2].flat();
+  const ion = KEM_GROUPS.find(([id]) => id === "ion")[2].flat();
   assert.ok(re.includes(" + "), "» + « med snovmi");
-  for (const c of ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻"]) assert.ok(re.includes(c) && KEM_CHARGE.test(c), c);
+  for (const c of ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻"]) assert.ok(ion.includes(c) && KEM_CHARGE.test(c), c);
   assert.ok(!KEM_CHARGE.test(" + ") && !KEM_CHARGE.test("e⁻") && !KEM_CHARGE.test("₂"));
   const tk = read("public/tipkovnica.js");
   assert.match(tk, /tk-chg-b[^`]*◌<\/span><sup>/, "naboj je nadpisan ob ◌");
   // podzavihka imata svoja napisa (i18n), ne enakih kot tipki; tipka »H₂O« ostane oblikovanje formule
-  assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.re"]);
+  assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.ion", "tk.kem.re", "tk.kem.pse"]);
   assert.match(tk, /subtabs\(KEM_GROUPS\.map\(\(\[id, label\]\) => \[id, t\(label\)\]\)/);
   assert.match(tk, /key\("H₂O", \{ a: "chem" \}/);
   assert.match(tk, /role="tab"[^`]*aria-label="\$\{esc\(label\)\}"/, "podzavihki imajo aria-label");
   for (const f of fs.readdirSync(path.join(ROOT, "public/i18n/ui"))) {
     const j = JSON.parse(read(`public/i18n/ui/${f}`));
     assert.ok(j["tk.kem.el"] && j["tk.kem.re"] && j["tk.kem.el"] !== j["tk.kem.re"], `${f}: podzavihka Kem`);
+    for (const k of ["tk.kem.ion", "tk.kem.pse", "tk.kem.cat", "tk.kem.sub", "tk.kem.sup"]) assert.ok(j[k], `${f}: ${k}`);
+    assert.ok(j["tk.kem.sub"].includes("{n}") && j["tk.kem.sup"].includes("{n}"), `${f}: {n} v opisu indeksa`);
   }
   // opisi kemijskih tipk iz GROUPS.kemija (oborina, plin, kristalna voda)
   const opis = Object.fromEntries(GROUPS.kemija.keys.map((k) => [k.ins, k.title]));
@@ -202,8 +217,36 @@ test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer 
   assert.equal(opis["↑"], "plin");
   assert.equal(opis["·"], "kristalna voda");
   assert.match(tk, /GROUPS\.kemija\.keys\.filter\(\(k\) => k\.title\)/);
-  // dva podzavihka po največ dve vrstici po 10 tipk: zavihek je enako visok kot drugi
-  for (const [, , rows] of KEM_GROUPS) assert.ok(rows.length <= 2 && rows.every((r) => r.length <= 10));
+  // strani po največ tri vrste po 10 tipk: zavihek je enako visok kot drugi (tipkovnica.css data-kem)
+  for (const [, , rows] of KEM_GROUPS) assert.ok(rows.length <= 3 && rows.every((r) => r.length <= 10));
+});
+
+test("kemijska tipkovnica (j, 13. 11.): Σ → Kemija = zavihek Kem, indeksi in naboji ločeni, vsak element dosegljiv", () => {
+  const page = (id) => KEM_GROUPS.find(([g]) => g === id)[2];
+  // Snovi: pogosti elementi in vsi indeksi; Ioni: naboji, skupine in vse nadpisane števke
+  assert.deepEqual([...page("el")[2]].sort(), [..."₀₁₂₃₄₅₆₇₈₉"].sort());
+  assert.deepEqual([...page("ion")[2]].sort(), [..."⁰¹²³⁴⁵⁶⁷⁸⁹"].sort());
+  for (const x of page("el").slice(0, 2).flat()) assert.ok(ELEMENT_SYMBOLS.includes(x), x);
+  for (const c of ["(s)", "(l)", "(g)", "(aq)", "Δ", "hν", "KAT", "e⁻", " ← ", "°", "ΔH"]) assert.ok(page("re").flat().includes(c), c);
+  assert.ok(page("ion").flat().includes("[@]") && page("ion").flat().includes("·"));
+  // Vsi elementi: vseh 118 simbolov, vsaka začetnica ima tipko, v vrsti elementov jih je največ 12
+  assert.equal(ELEMENT_SYMBOLS.length, 118);
+  assert.equal(new Set(ELEMENT_SYMBOLS).size, 118);
+  const letters = KEM_LETTERS.flat();
+  for (const s of ELEMENT_SYMBOLS) assert.ok(letters.includes(s[0]), `${s}: ni začetnice`);
+  for (const l of letters) {
+    const n = ELEMENT_SYMBOLS.filter((s) => s[0] === l).length;
+    assert.ok(n >= 1 && n <= 12, `${l}: ${n} elementov`);
+  }
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /if \(S\.symg === "kemija"\) return tabs \+ kemBody\(true\)/, "Σ → Kemija riše isto kot zavihek Kem");
+  assert.match(tk, /const kemHtml = \(\) => kemBody\(false\)/);
+  // indeks spodaj, naboj zgoraj, oba ob okvirčku
+  assert.match(tk, /cls: "chg dn"[^\n]*<sub>/);
+  assert.match(tk, /cls: `chg up[^\n]*<sup>/);
+  const css = read("public/tipkovnica.css");
+  assert.match(css, /\.tk-k\.chg sub \{ top: /);
+  assert.match(css, /data-kem="sym"\] \.tk-k \{ height: 42px/);
 });
 
 test("settings: registry keys for the tutor, defaults, stored per device", () => {
@@ -245,7 +288,7 @@ test("i18n: every keyboard string is in Slovenian and all 32 UI languages, trans
     const d = JSON.parse(read(`public/i18n/ui/${code}.json`));
     for (const k of [...used, ...tk]) assert.ok(d[k], `${code}: ${k}`);
     // prevedeno, ne slovenska kopija (razen kratic in imen, ki so v več jezikih enaka)
-    const same = tk.filter((k) => d[k] === SL[k] && !["tk.l.kem", "tk.g.osnovno", "tk.g.funkcije", "tk.g.kemija", "tk.set.title"].includes(k));
+    const same = tk.filter((k) => d[k] === SL[k] && !["tk.l.kem", "tk.g.osnovno", "tk.g.funkcije", "tk.g.kemija", "tk.set.title", "tk.kem.cat"].includes(k));
     assert.ok(same.length <= 3, `${code}: neprevedeno ${same.join(", ")}`);
   }
 });
@@ -406,18 +449,19 @@ test("glide: slovar je veljaven, WORDS.sl na začetku, brez dvojnikov, pod 150 K
   assert.ok(GLIDE_SL.includes("enačba") && GLIDE_SL.includes("kemija"));
 });
 
-test("sentenceBack: troklik na ⌫ izbriše poved do konca prejšnje (presledek za piko ostane)", () => {
-  const v = "Prva poved. Druga po";
-  assert.equal(v.slice(0, sentenceBack(v, v.length)), "Prva poved. ");
-  assert.equal(sentenceBack("Prva poved.", 11), 0);
-  assert.equal(sentenceBack("Ali je? Da!  ", 13), 8);
-  assert.equal(sentenceBack("vrstica\nnova vrst", 17), 8);
-  assert.equal(sentenceBack("x = 3.5 cm", 10), 0, "decimalna pika brez presledka ni konec povedi");
-  assert.equal(sentenceBack("", 0), 0);
-  const w = "Prva poved. Druga ";
-  assert.equal(w.slice(0, sentenceBack(w, w.length)), "Prva poved. ");
+test("⌫ kot Gboard (j, 18. 11.): brez dvoklika/troklika; držanje po 1,5 s po besedah, v polju s formulo po znakih; ⌫ po drsenju zbriše besedo", () => {
+  const js = read("public/tipkovnica.js");
+  assert.doesNotMatch(js, /BS_MULTI_MS|deleteChunk|sentenceBack|bsAt/, "ni več dvoklika in troklika na ⌫");
+  assert.match(js, /const BS_WORD_MS = 1500;/);
+  assert.match(js, /if \(a\.word\) deleteWord\(f\);\s*else if \(!undoCorrection\(f, corr\)\) backspace\(f\);/, "dotik = en znak, prvi ⌫ po samopopravku ga razveljavi");
+  assert.match(js, /return !!r && r\[0\] === r\[1\] && !f\.classList\.contains\("vnos-izrisan"\)/, "po besedah samo navadno besedilo s kazalcem");
+  assert.match(js, /if \(!wordWise\(f\)\) return backspace\(f\)/, "v polju s formulo po znakih");
+  assert.match(js, /down !== d \|\| !wordWise\(target\(\)\)\) return;/, "kjer ni po besedah, ostane 75 ms po znakih");
+  assert.match(js, /nl === r\[0\] - 1 \? nl : Math\.max\(wordsBack\(f\.value, r\[0\], 1\), nl \+ 1\)/, "nova vrstica je svoj korak");
+  assert.match(js, /if \(S\.field !== field\) clearTimers\(\);[^\n]*\n\s*S\.field = field;/, "držan ⌫ ne briše v novem polju");
+  assert.match(js, /a\.a === "bs" && lg\)/, "⌫ takoj po drsenju zbriše drsano besedo");
+  assert.equal(wordsBack("Prva poved. Druga beseda", 24), 18);
 });
-
 test("pregled #460: puščici in » + « se vstavita s presledkoma, brez dvojnega presledka; ↑ ↓ brez; indeksi z ◌", async () => {
   const rows = KEM_ROWS.flat();
   for (const k of [" + ", " → ", " ⇌ "]) assert.ok(rows.includes(k), JSON.stringify(k));

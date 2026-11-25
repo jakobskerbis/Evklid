@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -42,7 +42,7 @@ Pogoj je **potreben, ne pa zadosten**: v stacionarni točki je lahko minimum, ma
 :::premisli
 Ima funkcija $f(x, y) = xy$ v izhodišču ekstrem?
 ---
-Nima, izhodišče je sedlo. Gradient $(y, x)$ je tam res nič, a na premici $y = x$ je $f = x^2 \ge 0$, na premici $y = -x$ pa $f = -x^2 \le 0$, zato $f$ blizu izhodišča zavzame obe predznaki.
+Nima, izhodišče je sedlo. Gradient $(y, x)$ je tam res nič, a na premici $y = x$ je $f = x^2 \ge 0$, na premici $y = -x$ pa $f = -x^2 \le 0$, zato $f$ blizu izhodišča zavzame oba predznaka.
 :::
 
 **3. Hessejeva matrika.** Drugi parcialni odvodi tvorijo **Hessejevo matriko**
@@ -64,9 +64,9 @@ Pri $D > 0$ sta $A$ in $C$ istega predznaka, zato lahko namesto $A$ pogledamo tu
 
 Ideja testa: blizu stacionarne točke je funkcija po Taylorjevi formuli približno kvadratna,
 $$f(x_0 + h, y_0 + k) \approx f(x_0, y_0) + \tfrac{1}{2}\left(Ah^2 + 2Bhk + Ck^2\right).$$
-Če je kvadratna forma za vse $(h, k) \neq (0, 0)$ pozitivna, je v točki minimum; če je negativna, maksimum; če zavzame obe predznaki, sedlo. Pri $A \neq 0$ jo dopolnimo do kvadrata:
+Če je kvadratna forma za vse $(h, k) \neq (0, 0)$ pozitivna, je v točki minimum; če je negativna, maksimum; če zavzame oba predznaka, sedlo. Pri $A \neq 0$ jo dopolnimo do kvadrata:
 $$Ah^2 + 2Bhk + Ck^2 = A\left(h + \tfrac{B}{A}k\right)^2 + \tfrac{AC - B^2}{A}\,k^2.$$
-Pri $D > 0$ imata oba člena predznak števila $A$ in nista hkrati nič, zato je forma pri $A > 0$ pozitivna, pri $A < 0$ negativna. Pri $D < 0$ da $k = 0$, $h \neq 0$ predznak $A$, izbira $h = -\frac{B}{A}k$, $k \neq 0$ pa nasprotni predznak, zato je točka sedlo. (Pri $A = 0$ in $D < 0$ je $B \neq 0$ in forma $2Bhk + Ck^2$ prav tako zavzame obe predznaki.)
+Pri $D > 0$ imata oba člena predznak števila $A$ in nista hkrati nič, zato je forma pri $A > 0$ pozitivna, pri $A < 0$ negativna. Pri $D < 0$ da $k = 0$, $h \neq 0$ predznak $A$, izbira $h = -\frac{B}{A}k$, $k \neq 0$ pa nasprotni predznak, zato je točka sedlo. (Pri $A = 0$ in $D < 0$ je $B \neq 0$ in forma $2Bhk + Ck^2$ prav tako zavzame oba predznaka.)
 
 **5. Več spremenljivk.** Za $f(x_1, \dots, x_n)$ je stacionarna točka rešitev sistema $\frac{\partial f}{\partial x_i} = 0$, $i = 1, \dots, n$, Hessejeva matrika pa je $n \times n$ z elementi $\frac{\partial^2 f}{\partial x_i \partial x_j}$. Če je $H$ v stacionarni točki **pozitivno definitna** (vse lastne vrednosti pozitivne), je tam lokalni minimum; če je **negativno definitna**, maksimum; če ima lastne vrednosti obeh predznakov, sedlo. Pozitivno definitnost preverimo s **Sylvestrovim kriterijem**: vse vodilne glavne poddeterminante $\Delta_1 = f_{x_1x_1}$, $\Delta_2$, …, $\Delta_n = \det H$ so pozitivne. Za negativno definitnost morajo predznaki alternirati: $\Delta_1 < 0$, $\Delta_2 > 0$, $\Delta_3 < 0$, …
 
@@ -160,10 +160,10 @@ $S = xy + 2xz + 2yz$, pogoj $g = xyz - V = 0$. Lagrange: $\nabla S = \lambda \na
 5. Drugo enačbo pomnožimo z $y$, tretjo z $z$: $xy + 2yz = \lambda xyz = 2xz + 2yz$, zato $xy = 2xz$ in $y = 2z$. Torej $x = y = 2z$.
 6. Vstavimo v pogoj: $2z \cdot 2z \cdot z = 4z^3 = 32$, $z^3 = 8$, $z = 2\,\mathrm{dm}$, $x = y = 4\,\mathrm{dm}$.
 7. Površina: $S = 4 \cdot 4 + 2 \cdot 4 \cdot 2 + 2 \cdot 4 \cdot 2 = 16 + 16 + 16 = 48\,\mathrm{dm^2}$.
-8. To je res minimum: ko gre katerakoli mera proti $0$ ali $\infty$, gre $S$ proti $\infty$, zato zvezna funkcija na tej ploskvi zavzame najmanjšo vrednost, edina kandidatka pa je najdena točka. Za primerjavo: kocka z robom $\sqrt[3]{32} \approx 3{,}17\,\mathrm{dm}$ bi porabila $5 \cdot 3{,}17^2 \approx 50{,}4\,\mathrm{dm^2}$.
+8. To je res minimum: ko gre katerakoli mera proti $0$ ali $\infty$, gre $S$ proti $\infty$, zato zvezna funkcija na tej ploskvi zavzame najmanjšo vrednost, edina kandidatka pa je najdena točka. Za primerjavo: kocka z robom $\sqrt[3]{32} \approx 3{,}175\,\mathrm{dm}$ bi porabila $5 \cdot 3{,}175^2 \approx 50{,}4\,\mathrm{dm^2}$.
 9. Multiplikator iz prve enačbe: $4 + 2 \cdot 2 = \lambda \cdot 4 \cdot 2$, torej $\lambda = 1\,\mathrm{dm^{-1}}$.
 10. Preverimo pomen: za poljuben $V$ je $x = y = 2z$ in $4z^3 = V$, torej $S_{\min} = 12z^2 = 12\left(\frac{V}{4}\right)^{2/3}$ in $\frac{dS_{\min}}{dV} = \frac{2}{z}$, kar je pri $z = 2\,\mathrm{dm}$ ravno $1\,\mathrm{dm^{-1}} = \lambda$.
-11. Ocena: $\Delta S \approx \lambda\, \Delta V = 1\,\mathrm{dm^{-1}} \cdot 1\,\mathrm{dm^3} = 1\,\mathrm{dm^2}$. Natančno: $12 \cdot 8{,}25^{2/3} = 49{,}0\,\mathrm{dm^2}$, torej $\Delta S = 0{,}995\,\mathrm{dm^2}$.
+11. Ocena: $\Delta S \approx \lambda\, \Delta V = 1\,\mathrm{dm^{-1}} \cdot 1\,\mathrm{dm^3} = 1\,\mathrm{dm^2}$. Natančno: $12 \cdot 8{,}25^{2/3} \approx 48{,}995\,\mathrm{dm^2}$, torej $\Delta S = 0{,}995\,\mathrm{dm^2}$.
 12. Odgovor: škatla naj ima dno $4\,\mathrm{dm} \times 4\,\mathrm{dm}$ in višino $2\,\mathrm{dm}$; porabimo $48\,\mathrm{dm^2}$ materiala. Multiplikator je $\lambda = 1\,\mathrm{dm^{-1}}$, zato dodatni $\mathrm{dm^3}$ prostornine zahteva približno $1\,\mathrm{dm^2}$ materiala več.
 
 ### Primer 4 – zdaj ti
@@ -355,7 +355,7 @@ h, k | prirastka spremenljivk x in y | | | v f(a + h) je h vektor prirastkov
 A | vrednost f_xx v stacionarni točki | A = f_{xx}(T_0) |
 B | vrednost f_xy v stacionarni točki | B = f_{xy}(T_0) |
 C | vrednost f_yy v stacionarni točki | C = f_{yy}(T_0) |
-D | determinanta Hessejeve matrike | D = f_{xx} f_{yy} - f_{xy}^2 | | D > 0 in A > 0: minimum; D < 0: sedlo
+D | determinanta Hessejeve matrike | D = f_{xx} f_{yy} - f_{xy}^2 | | D > 0 in A > 0: minimum; D < 0: sedlo; D je tudi množica, na kateri iščemo ekstreme
 L | Lagrangeova funkcija | L(x, y, \lambda) = f(x, y) - \lambda\, g(x, y) |
 \lambda | Lagrangeov multiplikator | |
 g | funkcija vezi | | | pogoj g(x, y) = 0

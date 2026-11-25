@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Leta 1897 je Ferdinand Braun v stekleno cev usmeril curek elektronov in ga odklonil z merjeno napetostjo. Svetla pika na zaslonu je prvič pokazala, kako se napetost spreminja s časom. Prvi osciloskopi s prostotekočim časovnim odklonom pa niso dali mirne slike: pri vsakem preletu zaslona je krivulja začela na drugem mestu in slika je drsela. Pravi preboj so prinesli šele osciloskopi s **proženjem**, ki prelet začnejo vedno v isti točki signala. Od takrat se na zaslonu ponavljajoč signal ustavi, kot bi ga fotografirali.
+Leta 1897 je Ferdinand Braun v stekleno cev usmeril curek elektronov in ga odklonil z merjenim električnim signalom. Svetla pika na zaslonu je prvič pokazala, kako se tak signal spreminja s časom. Prvi osciloskopi s prostotekočim časovnim odklonom pa niso dali mirne slike: pri vsakem preletu zaslona je krivulja začela na drugem mestu in slika je drsela. Pravi preboj so prinesli šele osciloskopi s **proženjem**, ki prelet začnejo vedno v isti točki signala. Od takrat se na zaslonu ponavljajoč signal ustavi, kot bi ga fotografirali.
 
 V kemijskem laboratoriju osciloskop odgovori na vprašanja, ki jih voltmeter ne more: ali ultrazvočna kopel res niha s $40\,\mathrm{kHz}$, zakaj pH-meter kaže nemirno vrednost, kako hitro naraste svetlobni impulz pri meritvi fluorescence. Voltmeter da eno število, osciloskop pa celo obliko signala in, če ga preklopimo v **frekvenčni prikaz**, tudi iz katerih frekvenc je signal sestavljen.
 
@@ -30,15 +30,26 @@ kjer sta $y$ in $x$ odčitka v razdelkih. Iz periode dobimo frekvenco $f = 1/T$.
 
 Iz napetosti od temena do temena $U_{pp}$ dobimo temensko vrednost $U_p = U_{pp}/2$. Za sinusni signal je efektivna vrednost $U_p/\sqrt{2}$, za druge oblike pa ne: zato sodobni osciloskopi efektivno vrednost računajo iz vzorcev.
 
-```
- |<---- 10 razdelkov ---->|
- +------------------------+
- |  .-.     .-.     .-.   |
- |-*---\---/---\---/---\--|
- |      '-'     '-'     '-|
- +------------------------+
- * prožitev: nivo in naklon
-```
+:::risba graf
+opis: Zaslon osciloskopa z mrežo 10 razdelkov vodoravno in 8 navpično. Na njem sta dve periodi sinusnega signala: ena perioda traja 5 razdelkov, od dna do vrha pa signal sega čez 4,6 razdelka (2,3 razdelka nad in pod sredino zaslona). Vodoravna črtkana črta na sredini je nivo proženja. Točka proženja je na levem robu zaslona, kjer signal prečka nivo navzgor (naraščajoči naklon).
+x: 0 .. 10 | 1 | x (razdelki)
+y: 0 .. 8 | 1 | y (razdelki)
+višina: 260
+f: 4 + 2,3*sin(2*pi*x/5) | modra
+črta: 0; 4 -> 10; 4 | črtkano oranžna
+puščica: 8,1; 6,7 -> 8,1; 4,1 | | | oranžna
+napis: 8,1; 6,8 | nivo proženja | nad | oranžna
+puščica: 1,1; 7,6 -> 0,4; 5,2 | | | oranžna
+napis: 1,15; 7,6 | naraščajoči naklon | desno | oranžna
+točka: 0; 4 | prožitev | pod desno | oranžna
+puščica: 0; 0,8 -> 5; 0,8
+črta: 5; 0,5 -> 5; 1,1
+napis: 2,8; 0,8 | perioda: 5 razdelkov | nad
+črta: 1,25; 6,3 -> 3,75; 6,3 | črtkano siva
+puščica: 3,75; 1,7 -> 3,75; 6,3
+napis: 3,75; 6,4 | 4,6 razdelka | nad
+podnapis: Zaslon z 10 × 8 razdelki; prožitev določata nivo in naklon
+:::
 
 ### Proženje: zakaj slika stoji
 
@@ -99,7 +110,7 @@ Daljše okno da finejšo ločljivost. Če v okno ne pade celo število period, s
 Pravokotni signal z amplitudo $A$ ima v spektru le lihe harmonske komponente z amplitudami $4A/(n\pi)$: $1{,}27\,A$; $0{,}42\,A$; $0{,}25\,A$ … V časovnem prikazu vidimo obliko, v frekvenčnem sestavo.
 
 :::premisli
-Zapis s $10\,000$ vzorci in $f_s = 100\,\mathrm{kS/s}$ ima ločljivost $10\,\mathrm{Hz}$. Ali bi z $10$-krat večjo vzorčevalno frekvenco (pri enakem $N$) bolje ločili brnenje pri $50\,\mathrm{Hz}$ od $60\,\mathrm{Hz}$?
+Zapis z $10\,000$ vzorci in $f_s = 100\,\mathrm{kS/s}$ ima ločljivost $10\,\mathrm{Hz}$. Ali bi z $10$-krat večjo vzorčevalno frekvenco (pri enakem $N$) bolje ločili brnenje pri $50\,\mathrm{Hz}$ od $60\,\mathrm{Hz}$?
 ---
 Ne, slabše. $\Delta f = f_s/N$ bi narasla na $100\,\mathrm{Hz}$, ker bi okno trajalo le $10\,\mathrm{ms}$. Višja $f_s$ razširi prikaz navzgor, ločljivost pa določa le dolžina okna.
 :::
@@ -220,7 +231,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Sonda 10:1 ima v konici upor $R_1 = 9\,\mathrm{M\Omega}$ z nastavljivim kondenzatorjem $C_1$. Vhod osciloskopa ima $R_2 = 1\,\mathrm{M\Omega}$ in $C_2 = 20\,\mathrm{pF}$ (kabel vštet). a) Kolikšen mora biti $C_1$? b) Kolikšna je impedanca, ki jo kompenzirana sonda pokaže merjencu pri $10\,\mathrm{MHz}$ (upornost zanemari, ker je mnogo večja)? c) Kondenzator je pomotoma nastavljen na $3\,\mathrm{pF}$. Na sondo pripeljemo pravokotni signal od $0$ do $5\,\mathrm{V}$. Kakšna je napetost na vhodu tik po robu in v ustaljenem stanju, za koliko odstotkov rob prenihi in s katero časovno konstanto se prenihaj umiri?
+Sonda 10:1 ima v konici upor $R_1 = 9\,\mathrm{M\Omega}$ z nastavljivim kondenzatorjem $C_1$. Vhod osciloskopa ima $R_2 = 1\,\mathrm{M\Omega}$ in $C_2 = 20\,\mathrm{pF}$ (kabel vštet). a) Kolikšen mora biti $C_1$? b) Kolikšna je impedanca, ki jo kompenzirana sonda pokaže merjencu pri $10\,\mathrm{MHz}$ (upornost zanemari, ker je mnogo večja)? c) Kondenzator je pomotoma nastavljen na $3\,\mathrm{pF}$. Na sondo pripeljemo pravokotni signal od $0$ do $5\,\mathrm{V}$. Kakšna je napetost na vhodu tik po robu in v ustaljenem stanju, za koliko odstotkov rob preniha in s katero časovno konstanto se prenihaj umiri?
 
 **Rešitev:**
 
@@ -243,9 +254,9 @@ Izpelji čas vzpona sistema prvega reda in pokaži, da je $t_r \approx 0{,}35/B$
 2. Odziv na enotsko stopnico je $1 - \mathrm{e}^{-t/\tau}$. Vrednost $0{,}1$ doseže pri $t_1 = \tau\ln(10/9)$, vrednost $0{,}9$ pri $t_2 = \tau\ln 10$.
 3. $t_r = t_2 - t_1 = \tau\ln 9 \approx 2{,}197\,\tau$.
 4. Vstavimo $\tau = 1/(2\pi B)$: $t_r = \ln 9/(2\pi B) \approx 0{,}350/B$.
-5. Naj bo $t_s = k\,t_o$. Relativna napaka je $t_m/t_s - 1 = \sqrt{1 + 1/k^2} - 1$.
-6. Pogoj $\sqrt{1 + 1/k^2} \le 1{,}05$ da $1/k^2 \le 1{,}1025 - 1 = 0{,}1025$, torej $k \ge 3{,}12$.
-7. Preverba: pri $k = 3$ je napaka $5{,}4\,\%$, pri $k = 5$ pa $2{,}0\,\%$.
+5. Naj bo $t_s = q\,t_o$. Relativna napaka je $t_m/t_s - 1 = \sqrt{1 + 1/q^2} - 1$.
+6. Pogoj $\sqrt{1 + 1/q^2} \le 1{,}05$ da $1/q^2 \le 1{,}1025 - 1 = 0{,}1025$, torej $q \ge 3{,}12$.
+7. Preverba: pri $q = 3$ je napaka $5{,}4\,\%$, pri $q = 5$ pa $2{,}0\,\%$.
 8. Odgovor: $t_r = \ln 9/(2\pi B) \approx 0{,}35/B$; osciloskop mora biti vsaj okoli $3$-krat hitrejši od signala za napako do $5\,\%$, za napako okoli $2\,\%$ pa $5$-krat.
 
 ## Drugače: Z analogijo
@@ -258,7 +269,7 @@ Pasovna širina je kot vztrajnost kazalca: težak kazalec ne sledi hitrim sunkom
 
 ## Drugače: Bolj natančno
 
-**Lissajousove krivulje.** V načinu XY en kanal odklanja vodoravno, drugi navpično. Za dva sinusa iste frekvence z amplitudama $A$ in $B$ ter faznim zamikom $\varphi$ nastane elipsa. Kjer seka navpično os, je $y_0 = B\sin\varphi$, zato $\sin\varphi = y_0/B$. Pri razmerju frekvenc $2:1$ nastane osmica; število dotikov z vodoravnim in navpičnim robom da razmerje frekvenc.
+**Lissajousove krivulje.** V načinu XY en kanal odklanja vodoravno, drugi navpično. Za dva sinusa iste frekvence z amplitudama $A_x$ in $A_y$ ter faznim zamikom $\varphi$ nastane elipsa. Kjer seka navpično os, je $y_0 = A_y\sin\varphi$, zato $\sin\varphi = y_0/A_y$. Pri razmerju frekvenc $2:1$ nastane osmica; število dotikov z vodoravnim in navpičnim robom da razmerje frekvenc.
 
 **Efektivna vrednost iz vzorcev.** Digitalni osciloskop računa $U_{ef} = \sqrt{\frac{1}{N}\sum u_i^2}$ prek celega števila period. Če okno ne zajame celih period, je rezultat malo napačen; zato osciloskop ponudi izračun »po ciklih«.
 
@@ -299,7 +310,7 @@ Pasovna širina je kot vztrajnost kazalca: težak kazalec ne sledi hitrim sunkom
 ~ Previsok nivo prepreči proženje in slika drsi ali zamrzne, oblike vrhov pa ne spremeni.
 - Vhod je v sklopitvi AC.
 ~ AC sklopitev povzroči počasno povešanje ravnih vrhov, ne kratkih konic na robovih.
-> Pri $C_1 > R_2C_2/R_1$ visoke frekvence (robovi) pridejo skozi z večjim razmerjem kot enosmerna komponenta; rob prenihi in se nato umiri (Naloga 1).
+> Pri $C_1 > R_2C_2/R_1$ visoke frekvence (robovi) pridejo skozi z večjim razmerjem kot enosmerna komponenta; rob preniha in se nato umiri (Naloga 1).
 
 ? Študent izračuna pravi čas vzpona: »$t_o = 0{,}35/200\,\mathrm{MHz} = 1{,}75\,\mathrm{ns}$; izmerjeno $t_m = 2{,}5\,\mathrm{ns}$; torej $t_s = t_m - t_o = 0{,}75\,\mathrm{ns}$.« Kateri korak je napačen?
 - izračun $t_o$
@@ -309,7 +320,7 @@ Pasovna širina je kot vztrajnost kazalca: težak kazalec ne sledi hitrim sunkom
 + odštevanje $t_m - t_o$
 > Časa vzpona se seštevata kvadratno: $t_s = \sqrt{2{,}5^2 - 1{,}75^2}\,\mathrm{ns} \approx 1{,}79\,\mathrm{ns}$, ne $0{,}75\,\mathrm{ns}$.
 
-? Tehnik v laboratoriju posname valovitost napajalnika s $f_s = 50\,\mathrm{kS/s}$. V spektru vidi močno črto pri $10\,\mathrm{kHz}$, proizvajalec pa pravi, da stikalni napajalnik dela pri $60\,\mathrm{kHz}$. Kaj je najverjetnejša razlaga?
+? Tehnik v laboratoriju posname valovitost napajalnika z $f_s = 50\,\mathrm{kS/s}$. V spektru vidi močno črto pri $10\,\mathrm{kHz}$, proizvajalec pa pravi, da stikalni napajalnik dela pri $60\,\mathrm{kHz}$. Kaj je najverjetnejša razlaga?
 - Napajalnik je pokvarjen in dela s šestkrat nižjo frekvenco.
 ~ Zrcaljenje razloži črto brez okvare; preden sklepamo na okvaro, preverimo pogoj vzorčenja.
 + Komponenta pri $60\,\mathrm{kHz}$ je nad $f_s/2$ in se zrcali na $|60 - 50|\,\mathrm{kHz} = 10\,\mathrm{kHz}$.

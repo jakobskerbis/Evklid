@@ -11,11 +11,11 @@ stanje: osnutek
 - Ottov proces
   - dve adiabati, dve izohori
   - $\eta = 1 - \varepsilon^{1-\kappa}$, brez $T_3$
-  - napaka: več toplote ne da večjega $\eta$
+  - napaka: »več toplote da večji $\eta$«
 - Dieslov proces
   - izobarno dovajanje, $\varphi = \dfrac{V_3}{V_2}$
   - pri enakem $\varepsilon$ slabši od Otta
-- Jouleov proces
+- Joulov proces
   - dve adiabati, dve izobari
   - $\eta = 1 - r_p^{(1-\kappa)/\kappa}$
   - največje delo pri $T_2 = \sqrt{T_1T_3}$

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -261,7 +261,7 @@ Rešitve enačbe $z^6 = 1$ so oglišča pravilnega šestkotnika na enotski krož
 
 **Spektroskopija in Fourierova analiza.** Signal pri NMR in FTIR je vsota nihanj $A\cos(\omega t + \delta)$, ki jih zapišemo kot realne dele $Ae^{i(\omega t + \delta)}$. Fourierova transformacija, ki iz signala izračuna spekter, deluje s kompleksnimi eksponenti; absolutna vrednost da jakost, argument pa fazo, ki jo pri obdelavi spektra popravljamo.
 
-**Dinamika procesov.** Pri dušenem nihanju ali pri regulaciji reaktorja dobimo karakteristično enačbo, na primer $\lambda^2 + 2\lambda + 5 = 0$ z rešitvama $\lambda = -1 \pm 2i$. Realni del $-1$ pove, kako hitro nihanje zamira (negativen realni del pomeni stabilen sistem), imaginarni del $2$ pa kotno frekvenco nihanja.
+**Dinamika procesov.** Pri dušenem nihanju ali pri regulaciji reaktorja dobimo karakteristično enačbo, na primer $\lambda^2 + 2\lambda + 5 = 0$ z rešitvama $\lambda = -1 \pm 2i$. Realni del $-1$ pove, kako hitro nihanje zamira (negativen realni del pomeni stabilen sistem), imaginarni del $2$ pa krožno frekvenco nihanja.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -325,8 +325,8 @@ kjer smo prepoznali Taylorjevi vrsti kosinusa in sinusa. Iz $e^{z + w} = e^z e^w
 
 :::simboli
 z | kompleksno število | z = a + bi | |
-a | realni del števila z | a = \operatorname{Re} z | |
-b | imaginarni del števila z | b = \operatorname{Im} z | | realno število, brez i
+a | realni del števila z | a = \operatorname{Re} z | | v formuli za kvadratno enačbo koeficient pri z²
+b | imaginarni del števila z | b = \operatorname{Im} z | | realno število, brez i; v formuli za kvadratno enačbo koeficient pri z
 i | imaginarna enota | i^2 = -1 | |
 c | realni del drugega števila c + di | | |
 d | imaginarni del drugega števila c + di | | | pri deljenju c + di ≠ 0

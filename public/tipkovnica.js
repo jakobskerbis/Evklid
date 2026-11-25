@@ -11,12 +11,13 @@
 //   math    polje za matematiko (velja tudi pri nastavitvi »Samo za matematiko«); own: polje ima svoje tipke
 import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
-import { GROUPS, symGroups, chemFormat } from "./symbols.js";
+import { GROUPS, symGroups, chemFormat, ELEMENT_SYMBOLS } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
+import { brisiNazaj } from "./vnos-formul.js";
 import {
-  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
-  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
+  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
+  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
 const touch = () => typeof matchMedia !== "undefined" && matchMedia("(pointer: coarse)").matches;
@@ -44,7 +45,7 @@ let lastProfile; // f(x) odpre skupino poglavja samo ob novem poglavju; učenče
 let words = null; // seznam za predloge (naloži se, ko so predlogi vklopljeni)
 let starts = null; // predlogi, ko se beseda še ne piše
 
-const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, kemg: "el", sys: null, explicit: false };
+const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, kemg: "el", kemL: "C", sys: null, explicit: false };
 let board = null;
 let keys = []; // data-k → dejanje
 
@@ -67,7 +68,8 @@ function configFor(field) {
 }
 const val = (v, field) => (typeof v === "function" ? v(field) : v);
 const orig = (f) => (origMode.has(f) ? origMode.get(f) : f.getAttribute("inputmode"));
-const textField = (el) => el?.closest?.("input, textarea, [contenteditable='true'], [contenteditable='']") || null;
+// Izris formule čez polje (public/predogled-vnosa.js) šteje kot polje samo.
+const textField = (el) => el?.closest?.(".vnos-izris")?.vnosPolje || el?.closest?.("input, textarea, [contenteditable='true'], [contenteditable='']") || null;
 const visible = (el) => !!el && el.isConnected && el.getClientRects().length > 0;
 
 // Polje dobi našo tipkovnico samo od sebe (dotik, nastavitev, ni »svoje« tipkovnice, ni telefonove za to polje).
@@ -117,6 +119,7 @@ export function openKeyboard(field, { layer } = {}) {
   if (S.field && S.field !== field && !autoEligible(S.field)) release(S.field);
   if (S.sys === field) S.sys = null;
   S.explicit = !autoEligible(field);
+  if (S.field !== field) clearTimers(); // držan ⌫/←/→ ne briše naprej v novem polju
   S.field = field;
   S.cfg = cfg;
   S.kind = kind;
@@ -139,6 +142,15 @@ export function openKeyboard(field, { layer } = {}) {
   if (document.activeElement !== field) field.focus({ preventScroll: true });
   const was = S.open;
   S.open = true;
+  // Polje v modalnem oknu (<dialog>, npr. ustno spraševanje): tipkovnica gre v okno, sicer je pod njim in nedosegljiva.
+  // Tudi če je bila tipkovnica odstranjena z vsebino okna (!board.isConnected), jo spet vstavimo.
+  const host = field.closest("dialog[open]") || document.body;
+  if (board.parentElement !== host || !board.isConnected) host.appendChild(board);
+  // Okno se zapre (npr. kviz, ustno): tipkovnica gre z njim, zato jo zapremo (sicer ostaneta tk-open in odmik).
+  if (host !== document.body && !host.tkZapri) {
+    host.tkZapri = true;
+    host.addEventListener("close", () => S.open && board.parentElement === host && hideKeyboard());
+  }
   board.hidden = false;
   document.body.classList.add("tk-open");
   render();
@@ -364,13 +376,15 @@ function numHtml() {
       .join("")}</div>`;
   }
   const math = S.cfg.math || S.layers.some((l) => layerId(l) === "fx");
-  const top = (math ? NUM_TOP_MATH : NUM_TOP_TEXT).map(([l, ins]) => key(l, { a: "ins", v: ins }, { cls: "fn sm" })).join("");
+  // način »calc«: tipka = je izračunaj (GO), zato je zgoraj ni še enkrat kot znak
+  const topKeys = (math ? NUM_TOP_MATH : NUM_TOP_TEXT).filter(([l]) => !(l === "=" && enterMode() === "calc"));
+  const top = topKeys.map(([l, ins]) => key(l, { a: "ins", v: ins }, { cls: "fn sm" })).join("");
   const cells = ["7", "8", "9", "÷", "BS", "4", "5", "6", "×", "L", "1", "2", "3", "−", "R", "0", "D", math ? "x" : "=", "+", "GO"];
   const ins = { "÷": ":", "×": "·", "−": "-" };
   const grid = cells
     .map((c) => (c === "BS" ? bsKey("fn") : c === "L" ? leftKey() : c === "R" ? rightKey() : c === "GO" ? goKey("") : c === "D" ? key(d, { a: "ins", v: d }) : key(c, { a: "ins", v: ins[c] || c }, { cls: /\d/.test(c) ? "dig" : "" })))
     .join("");
-  return `<div class="tk-grid" style="--cols:6">${top}</div><div class="tk-grid" style="--cols:5">${grid}</div>`;
+  return `<div class="tk-grid" style="--cols:${topKeys.length}">${top}</div><div class="tk-grid" style="--cols:5">${grid}</div>`;
 }
 
 function subtabs(list, cur, act) {
@@ -407,39 +421,101 @@ function symHtml() {
   const s = studentSettings() || {};
   const all = symGroups(stopnja(s), s.subject, S.layers.some((l) => layerId(l) === "kem"));
   if (!all.includes(S.symg)) S.symg = all[0];
+  const tabs = subtabs(all.map((g) => [g, symName(g)]), S.symg, "symg");
+  // Σ → Kemija: iste strani kot zavihek »Kem« (j, 13. 11.), strani v drugi, nižji vrsti čipov
+  if (S.symg === "kemija") return tabs + kemBody(true);
   const sl = currentLang() === "sl";
-  return `${subtabs(all.map((g) => [g, symName(g)]), S.symg, "symg")}
+  return `${tabs}
     <div class="tk-grid tk-scroll" style="--cols:6">${GROUPS[S.symg].keys.map((k) => key(k.label, { a: "ins", v: k.ins }, { cls: "sym", aria: sl && k.title ? k.title : "" })).join("")}</div>
     <div class="tk-row">${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
 }
 
-function kemHtml() {
+// ---------- kemija ----------
+
+const SUB_D = "₀₁₂₃₄₅₆₇₈₉";
+const SUP_D = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "−" };
+/** Napis s pravimi (večjimi) indeksi in nadpisi: »NO₃« → NO<sub>3</sub>, »e⁻« → e<sup>−</sup>; drobni ₃ v pisavi se ne bere. */
+function chemLabel(s) {
+  // ovito v <span>: tipka je mreža (place-items), sicer bi bil indeks pod besedilom
+  return "<span>" + esc(s)
+    .replace(/[₀-₉]+/g, (m) => `<sub>${[...m].map((c) => SUB_D.indexOf(c)).join("")}</sub>`)
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+/g, (m) => `<sup>${[...m].map((c) => SUP_D[c]).join("")}</sup>`) + "</span>";
+}
+// imena elementov za aria-label in namig na strani »Vsi elementi« (naložijo se ob prvem odprtju strani)
+let elNames = null;
+function loadElNames() {
+  if (elNames) return;
+  elNames = {};
+  import("./graph/pse-data.js")
+    .then((m) => {
+      elNames = Object.fromEntries(m.ELEMENTS.map((e) => [e.sym, e]));
+      // med pritiskom ne rišemo znova (tipka bi izginila izpod prsta): počakamo, da se prst dvigne
+      const again = () => S.open && S.kemg === "pse" && (down ? setTimeout(again, 250) : render());
+      again();
+    })
+    .catch(() => (elNames = null)); // brez povezave: ob naslednjem odprtju strani poskusimo znova
+}
+const elName = (sym) => {
+  const e = elNames?.[sym];
+  return e ? (currentLang() === "sl" ? e.sl : e.en) : "";
+};
+
+/**
+ * Kemijska tipkovnica: strani (Snovi, Ioni, Reakcije, Vsi elementi), tri vrste tipk in spodnja vrsta.
+ * inSym: v Σ (pod čipi skupin), sicer zavihek »Kem«. Oboje je enako (j, 13. 11.).
+ */
+function kemBody(inSym = false) {
   if (!KEM_GROUPS.some(([id]) => id === S.kemg)) S.kemg = KEM_GROUPS[0][0];
   const g = KEM_GROUPS.find(([id]) => id === S.kemg);
+  S.kemView = inSym ? "sym" : "kem";
   // opisi tipk (oborina, plin, kristalna voda …) iz GROUPS.kemija; v slovenščini, kot v Σ
   const sl = currentLang() === "sl";
   const opis = new Map(GROUPS.kemija.keys.filter((k) => k.title).map((k) => [k.ins, k.title]));
-  const PLAIN = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "−" };
   const one = (c) => {
-    const d = sl ? opis.get(c.trim()) || "" : "";
-    if (KEM_CHARGE.test(c)) {
-      // naboj: nadpisan ob ◌, da ni videti kot » + « med snovmi
-      const n = [...c].map((x) => PLAIN[x]).join("");
-      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup></span>` });
+    const d = sl ? opis.get(c) || opis.get(c.trim()) || "" : "";
+    if (KEM_CHARGE.test(c) || /^[⁰¹²³⁴⁵⁶⁷⁸⁹]$/.test(c)) {
+      // naboj ali nadpisana števka: ◌ z nadpisom, da ni videti kot » + « med snovmi ali navadna števka
+      const n = [...c].map((x) => SUP_D[x]).join("");
+      const aria = KEM_CHARGE.test(c) ? (d ? `${d} ${n}` : n) : t("tk.kem.sup", { n });
+      return key(c, { a: "ins", v: c }, { cls: `chg up${n.length > 1 ? " two" : ""}`, aria, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup></span>` });
     }
     if (/^[₀-₉]$/.test(c)) {
-      // indeks: ◌ z indeksom (kot naboj), da se vidi, da je indeks in ne številka
-      const n = String("₀₁₂₃₄₅₆₇₈₉".indexOf(c));
-      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sub>${n}</sub></span>` });
+      // indeks: ◌ z indeksom spodaj (kot naboj), da se vidi, da je indeks in ne številka
+      const n = String(SUB_D.indexOf(c));
+      return key(c, { a: "ins", v: c }, { cls: "chg dn", aria: t("tk.kem.sub", { n }), tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sub>${n}</sub></span>` });
     }
-    const label = c.trim();
-    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${c === " + " ? "sym" : ""}`, aria: d && `${label} ${d}`, tip: d });
+    if (c === "KAT") {
+      const v = t("tk.kem.cat");
+      return key(v, { a: "lit", v }, { cls: v.length > 4 || (v.length > 2 && /[\u3040-\u9fff]/.test(v)) ? `word kem ${v.length > 7 ? "w2 xs" : "w15"}` : "sm", aria: sl ? `${v} ${d}` : v, tip: d });
+    }
+    const label = c === "[@]" ? "[ ]" : c.trim();
+    // ena velikost v vrsti: skupine (NO₃ … MnO₄) vse »sm«, enote z ulomkom (g/mol …) »word kem« (dolge širše)
+    const n = label.replace(/[₀-₉⁰-⁹⁺⁻]/g, "").length;
+    const group = /[₀-₉]/.test(label) || label === "OH";
+    const cls = c === "·" ? "dot" : `${label.includes("/") ? "word kem" + (n > 5 ? " w15" : "") : group || n > 2 ? "sm" : ""}${/^ [+→⇌←] $/.test(c) ? "sym" : ""}`;
+    const aria = d && d !== label ? `${label} ${d}` : "";
+    return key(label, { a: "ins", v: c }, { cls, aria, tip: d !== label ? d : "", html: chemLabel(label) });
   };
   const row = (r) => `<div class="tk-row">${r.map(one).join("")}</div>`;
-  return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg")}
-    ${g[2].map(row).join("")}
-    <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
+  let rows;
+  if (S.kemg === "pse") {
+    // vsi elementi: začetnica, nato vsi elementi s to začetnico (po vrstnem številu)
+    loadElNames();
+    const letter = (c) => {
+      const on = c === S.kemL;
+      const i = keys.push({ a: "kemL", v: c }) - 1;
+      return `<button type="button" class="tk-k fn letter${on ? " on" : ""}" data-k="${i}" aria-pressed="${on}">${c}</button>`;
+    };
+    const syms = ELEMENT_SYMBOLS.filter((x) => x[0] === S.kemL);
+    const el = (x) => key(x, { a: "ins", v: x }, { cls: "el", aria: [x, elName(x)].filter(Boolean).join(" "), tip: elName(x) });
+    rows = KEM_LETTERS.map((r) => `<div class="tk-row">${r.map(letter).join("")}</div>`).join("") + `<div class="tk-row tk-els">${syms.map(el).join("")}</div>`;
+  } else rows = g[2].map(row).join("");
+  const page = subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg").replace('class="tk-sub"', `class="tk-sub${inSym ? " tk-sub2" : ""}"`);
+  return `${page}
+    ${rows}
+    <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat"), html: chemLabel("H₂O") })}${bsKey("fn")}${goKey()}</div>`;
 }
+const kemHtml = () => kemBody(false);
 
 function customHtml(L) {
   const cells = L.keys.map((k) => key(k[0], { a: "ins", v: k[1] ?? k[0] }, { cls: /^[0-9.,]$/.test(k[0]) ? "dig" : "sm", aria: k[2] || "" })).join("");
@@ -450,12 +526,13 @@ function customHtml(L) {
 function render() {
   if (!board || !S.open) return;
   keys = [];
+  S.kemView = null;
   const L = layerObj(S.layer);
   S.layer = layerId(L);
   const body = typeof L === "object" ? customHtml(L) : { abc: abcHtml, num: numHtml, fx: fxHtml, sym: symHtml, kem: kemHtml }[S.layer]?.() || abcHtml();
   const c = ctxChips();
   const ctx = c.html || (prefs.words && S.layer === "abc" && words) || reserveCtx() ? `<div class="tk-ctx${c.words ? " words" : ""}"${c.glide ? ' data-g="1"' : ""}>${c.html}</div>` : "";
-  board.innerHTML = `<div class="tk-in${S.layers.length > 1 ? " tk-multi" : ""}">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}">${body}</div></div>`;
+  board.innerHTML = `<div class="tk-in${S.layers.length > 1 ? " tk-multi" : ""}">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}"${S.kemView ? ` data-kem="${S.kemView}"` : ""}>${body}</div></div>`;
   // razred namesto ».tk:has(…)«: :has na plošči je ob vsakem pritisku na novo preračunal slog vseh tipk
   board.classList.toggle("tk-abc", S.layer === "abc");
   for (const cv of [trail?.cv, fading]) {
@@ -467,6 +544,23 @@ function render() {
     if (cv === fading) cv.classList.add("out");
   }
   if (S.layer === "abc" && prefs.glide) loadGlide();
+  markMore();
+}
+// Vrstica nad tipkami, ki drsi vstran (šest enot): zbledel rob na strani, kjer je še kaj (pregled PR 786, G).
+function markMore() {
+  const box = board?.querySelector(".tk-ctx");
+  if (!box) return;
+  const upd = () => {
+    const max = box.scrollWidth - box.clientWidth;
+    const x = Math.abs(box.scrollLeft);
+    box.classList.toggle("more-end", max > 1 && x < max - 1);
+    box.classList.toggle("more-start", max > 1 && x > 1);
+  };
+  if (!box.dataset.more) {
+    box.dataset.more = "1";
+    box.addEventListener("scroll", upd, { passive: true });
+  }
+  requestAnimationFrame(upd);
 }
 // Na dotik je pri vklopljenih predlogih besed vrstica nad zavihki vedno na mestu (tudi prazna, kot pas
 // predlogov pri Gboard), da tipkovnica med pisanjem ne raste. Izklopljeni predlogi: brez praznega pasu (j, 4. 11.).
@@ -491,6 +585,7 @@ function renderCtx() {
   }
   if (!box || !(prefs.words && S.layer === "abc")) return;
   box.innerHTML = c.html;
+  markMore();
 }
 
 /** Sprememba ⇧ na črkah: napise zamenjamo na mestu (kot Gboard brez utripa), ne rišemo vse plošče znova. */
@@ -572,6 +667,14 @@ function backspace(f) {
     return fire(f, "deleteContentBackward");
   }
   const [s, e] = r;
+  // Polje, ki zapis pokaže kot formulo: ⌫ na »)/(« ne razbije ulomka (prazen ulomek izgine cel, sicer skok v števec).
+  const z = s === e && f.classList.contains("vnos-izrisan") ? brisiNazaj(f.value, s) : null;
+  if (z) {
+    if (z.value === f.value) return f.setSelectionRange(z.caret, z.caret);
+    f.setRangeText("", z.caret, z.caret + f.value.length - z.value.length, "end");
+    f.setSelectionRange(z.caret, z.caret);
+    return fire(f, "deleteContentBackward");
+  }
   const out = deleteBack(f.value, s, e);
   if (out.value === f.value) return;
   f.setRangeText("", out.caret, e > s ? e : s, "end");
@@ -579,18 +682,27 @@ function backspace(f) {
   fire(f, "deleteContentBackward");
 }
 
-// Najdaljši razmik med dotiki ⌫, ki še šteje kot dvoklik ali troklik.
-const BS_MULTI_MS = 350;
-/** Dvoklik/troklik na ⌫: zbriše besedo ali poved pred kazalcem (izbrano besedilo kot en ⌫). */
-function deleteChunk(f, kind) {
+// ⌫ kot Gboard (j, 18. 11.): vsak dotik zbriše en znak; držanje ponavlja po en znak, po BS_WORD_MS držanja po besedah.
+const BS_WORD_MS = 1500;
+/** Ali bi deleteWord res zbrisal celo besedo (navadno besedilo s kazalcem brez izbire; ne polje s formulo, število, e-pošta). */
+function wordWise(f) {
+  if (!f) return false;
+  if (f.isContentEditable) return !!getSelection()?.isCollapsed;
+  const r = sel(f);
+  return !!r && r[0] === r[1] && !f.classList.contains("vnos-izrisan");
+}
+/** Držanje ⌫ dlje od BS_WORD_MS: zbriše besedo pred kazalcem (izbrano besedilo kot en ⌫); nova vrstica je svoj korak. */
+function deleteWord(f) {
   if (f.isContentEditable) {
     const s = getSelection();
-    if (s?.isCollapsed) s.modify?.("extend", "backward", kind);
+    if (s?.isCollapsed) s.modify?.("extend", "backward", "word");
     return document.execCommand("delete");
   }
   const r = sel(f);
-  if (!r || r[0] !== r[1]) return backspace(f);
-  const from = kind === "word" ? wordsBack(f.value, r[0], 1) : sentenceBack(f.value, r[0]);
+  // Polje s formulo (public/predogled-vnosa.js): »beseda« je ves zapis »(1)/(2« in bi pustila »)«; tam po en ⌫.
+  if (!wordWise(f)) return backspace(f);
+  const nl = f.value.lastIndexOf("\n", r[0] - 1);
+  const from = nl === r[0] - 1 ? nl : Math.max(wordsBack(f.value, r[0], 1), nl + 1);
   if (from === r[0]) return;
   f.setRangeText("", from, r[0], "end");
   f.setSelectionRange(from, from);
@@ -683,7 +795,6 @@ function finishGlide(pts, centers) {
     if (f.maxLength >= 0 && f.value.length - (r[1] - r[0]) + sp.length + w.length > f.maxLength) return;
     S.corr = null;
     S.lastSpace = 0;
-    S.bsAt = 0;
     insertText(f, sp + w, true);
     const e = sel(f);
     if (!e) return;
@@ -759,7 +870,6 @@ async function paste(f) {
 
 function act(a) {
   if (!a) return;
-  if (a.a !== "bs") S.bsAt = 0; // dvoklik na ⌫ šteje le, če vmes ni bilo druge tipke
   if (a.a === "layer") {
     S.layer = a.v;
     S.shift = 0;
@@ -769,6 +879,7 @@ function act(a) {
   if (a.a === "fxg") return (S.fxg = a.v), render();
   if (a.a === "symg") return (S.symg = a.v), render();
   if (a.a === "kemg") return (S.kemg = a.v), render();
+  if (a.a === "kemL") return (S.kemL = a.v), render();
   if (a.a === "hide") return hideKeyboard({ blur: true });
   if (a.a === "globe") return toSystem();
   if (a.a === "sh") {
@@ -805,11 +916,8 @@ function act(a) {
     if (S.shift === 1) S.shift = 0;
   } else if (a.a === "sp") space(f, !!lg);
   else if (a.a === "bs") {
-    // dvoklik na ⌫ izbriše besedo, troklik poved (j, 4. 11.); držanje (rep) ponavlja po en znak
-    const now = Date.now();
-    const n = !a.rep && now - (S.bsAt || 0) < BS_MULTI_MS ? (S.bsN || 1) + 1 : 1;
-    if (!a.rep) Object.assign(S, { bsN: n, bsAt: now });
-    if (n >= 2) deleteChunk(f, n === 2 ? "word" : "sentence");
+    // kot Gboard (j, 18. 11.): en dotik = en znak (prvi ⌫ po samopopravku ga razveljavi); dolgo držanje (word) po besedah
+    if (a.word) deleteWord(f);
     else if (!undoCorrection(f, corr)) backspace(f);
   }
   else if (a.a === "l") moveCaret(f, -1);
@@ -823,8 +931,13 @@ function act(a) {
       fire(f, "insertReplacementText");
     }
   } else if (a.a === "unit") {
-    f.value = withUnit(f.value, a.v);
-    f.setSelectionRange?.(f.value.length, f.value.length);
+    // Vse ponujene enote (vrstica nad tipkami): nova zamenja prejšnjo, tudi »N s« (public/enote-izbira.js).
+    const units = (val(S.cfg.ctx, S.field) || []).filter((c) => !Array.isArray(c) && c.unit).map((c) => c.ins ?? c.label);
+    const empty = !withUnit(f.value, "", units);
+    f.value = withUnit(f.value, a.v, units);
+    // Brez števila kazalka pred enoto, da se število vpiše pred njo.
+    const at = empty ? 0 : f.value.length;
+    f.setSelectionRange?.(at, at);
     fire(f, "insertReplacementText");
   } else if (a.a === "word") {
     const w = currentWord();
@@ -935,7 +1048,6 @@ function showPop(btn, base, shift = S.shift) {
   return true;
 }
 function popInsert(v) {
-  S.bsAt = 0;
   const f = target();
   S.lastGlide = null;
   if (f) insertText(f, v);
@@ -975,6 +1087,7 @@ function clearTimers() {
   clearTimeout(down.lp);
   clearTimeout(down.rep);
   clearInterval(down.iv);
+  clearTimeout(down.wd);
 }
 
 // Sled prsta med drsenjem (kot Gboard: barvna črta, ki bledi); platno znotraj plošče, brez dogodkov dotika.
@@ -1112,9 +1225,21 @@ function wireBoard() {
       }
       down.rep = setTimeout(() => {
         down.moved = true;
-        const rep = { ...a, rep: true }; // ponavljanje ni dvoklik
+        const rep = { ...a, rep: true };
         act(rep);
         down.iv = setInterval(() => act(rep), 75);
+        // ⌫ držan BS_WORD_MS (od pritiska): naprej po besedah, počasneje (kot Gboard)
+        if (a.a === "bs") {
+          const d = down;
+          d.wd = setTimeout(() => {
+            // samo kjer se res briše po besedah; drugje (polje s formulo v Inštruktorju, število, izbira) ostane po znakih na 75 ms
+            if (down !== d || !wordWise(target())) return;
+            clearInterval(d.iv);
+            const word = { ...rep, word: true };
+            act(word);
+            d.iv = setInterval(() => act(word), 200);
+          }, BS_WORD_MS - 450);
+        }
       }, 450);
     }
   });
@@ -1460,3 +1585,8 @@ export function mountKeyboardSettings(box) {
     savePrefs();
   });
 }
+
+// Lena različica (tipkovnica-lena.js, za prvi izris aplikacije) izve, da je tipkovnica naložena, kdorkoli jo je uvozil.
+import * as jaz from "./tipkovnica.js";
+import { prijaviTipkovnico } from "./tipkovnica-lena.js";
+prijaviTipkovnico(jaz);

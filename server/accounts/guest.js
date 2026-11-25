@@ -3,10 +3,11 @@ import "../env.js";
 //
 // Gost je račun brez e-naslova, vezan na piškotek naprave. Ima brezplačni paket; da brisanje piškotkov
 // ali profila ne da nove kvote, se vprašanja na dan in mesečna poraba AI štejejo za vse goste
-// z istega omrežja (zgoščen IP, pri IPv6 omrežje /64) skupaj, tudi za že izbrisane goste.
+// z istega omrežja (zgoščen IP, pri IPv6 omrežje /56) skupaj, tudi za že izbrisane goste.
 import { randomBytes } from "node:crypto";
 import { sha256 } from "./auth.js";
 import { detachAudit } from "../dnevnik-dostopov.js";
+import { netHash } from "../crypto-polje.js";
 
 export const GUEST_SESSION_DAYS = 365;
 
@@ -72,21 +73,27 @@ export const guestPerDay = (env = process.env) => {
   return env.EVKLID_GUEST_PER_DAY && Number.isFinite(v) ? v : 5;
 };
 
+// IPv6: omrežje je /56 (#747, pregled 2): ponudniki domačim priključkom pogosto dodelijo /56, zato bi en priključek
+// z menjavo /64 v svojem /56 dobil 256 novih kvot za nepotrjene račune in registracije.
 function v6prefix(ip) {
   const [head, tail = ""] = ip.split("::");
   const h = head ? head.split(":") : [];
   const t = tail ? tail.split(":") : [];
-  const full = [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill("0"), ...t];
-  return full.slice(0, 4).map((x) => x.toLowerCase().padStart(4, "0")).join(":");
+  const full = [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill("0"), ...t].map((x) => x.toLowerCase().padStart(4, "0"));
+  return [...full.slice(0, 3), `${full[3].slice(0, 2)}00`].join(":");
 }
 
 export function netKey(ip = "") {
   let s = String(ip).trim();
   if (s.startsWith("::ffff:") && s.includes(".")) s = s.slice(7);
-  return s.includes(":") ? `${v6prefix(s)}::/64` : s;
+  return s.includes(":") ? `${v6prefix(s)}::/56` : s;
 }
 
-export const guestNet = (req) => sha256(`evklid-guest-net|${netKey(req.ip || req.socket?.remoteAddress)}`);
+// Ob uvedbi ključa (21. 11. 2026) in ob vsaki menjavi EVKLID_DATA_KEY se nove vrednosti ne ujemajo s starimi: do konca
+// meseca ima omrežje dve ločeni skupini (stari in novi računi), skupne meje (nepotrjeni računi na dan, brezplačni sklad)
+// pa veljajo naprej, zato je največ okoli 0,20 $ na dan več. Stari zapisi parents.guest_net ostanejo nezaščiten sha256,
+// dokler račun ni potrjen (takrat se pobriše) ali izbrisan; v novo obliko jih ni mogoče pretvoriti, ker naslova IP ne hranimo.
+export const guestNet = (req) => netHash(netKey(req.ip || req.socket?.remoteAddress));
 
 // Gost ali nekdanji gost, ki še ni potrdil e-naslova: šteje se v kvoto omrežja.
 const ON_NET = "(p.is_guest = 1 OR (p.guest_net IS NOT NULL AND p.email_verified_at IS NULL))";

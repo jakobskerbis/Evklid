@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -101,7 +101,7 @@ Razmerje $\kappa = C_p/C_V$ (adiabatni eksponent) je $5/3 \approx 1{,}67$ za eno
 
 ### Primer 1 (lažji)
 
-Za alpinistično odpravo na osemtisočak napolnijo jeklenko s prostornino $20\,\mathrm{L}$; vsebuje kisik pod tlakom $150\,\mathrm{bar}$ pri temperaturi $20\,^\circ\mathrm{C}$. Kolikšna sta množina in masa kisika? Kolikšno prostornino bi ta kisik zavzel pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$? Kisik obravnavaj kot idealni plin.
+Za bazni tabor alpinistične odprave na osemtisočak napolnijo jeklenko s prostornino $20\,\mathrm{L}$; vsebuje kisik pod tlakom $150\,\mathrm{bar}$ pri temperaturi $20\,^\circ\mathrm{C}$. Kolikšna sta množina in masa kisika? Kolikšno prostornino bi ta kisik zavzel pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$? Kisik obravnavaj kot idealni plin.
 
 **Podatki:** $V = 20\,\mathrm{L} = 0{,}020\,\mathrm{m^3}$, $p = 150\,\mathrm{bar} = 1{,}50 \cdot 10^7\,\mathrm{Pa}$, $T = 293{,}15\,\mathrm{K}$, $M(\mathrm{O_2}) = 32\,\mathrm{g/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$; normalni pogoji $T_0 = 273{,}15\,\mathrm{K}$, $p_0 = 101\,325\,\mathrm{Pa}$
 **Iščemo:** množino $n$, maso $m$, prostornino $V_0$ pri normalnih pogojih
@@ -156,7 +156,7 @@ $C_V = \tfrac{5}{2}R$, $C_p = C_V + R = \tfrac{7}{2}R$; $Q_V = nC_V\Delta T$, $Q
 5. Delo plina pri stalnem tlaku: $A' = nR\Delta T = 2{,}0 \cdot 8{,}314 \cdot 100\,\mathrm{J} \approx 1{,}66\,\mathrm{kJ}$. Preizkus: $Q_p - \Delta W_n = 5{,}82 - 4{,}16 = 1{,}66\,\mathrm{kJ}$. ✓
 6. Obratno vprašanje: pri stalnem tlaku dovedemo $Q_V$, zato $\Delta T' = \dfrac{Q_V}{nC_p} = \dfrac{nC_V\Delta T}{nC_p} = \dfrac{\Delta T}{\kappa} = \dfrac{100\,\mathrm{K}}{1{,}40} \approx 71{,}4\,\mathrm{K}$ in $T' \approx 371{,}4\,\mathrm{K}$. Segretje je manjše, ker gre del toplote v delo.
 7. Začetna prostornina iz plinske enačbe: $V_1 = \dfrac{2{,}0 \cdot 8{,}314 \cdot 300}{1{,}00 \cdot 10^5}\,\mathrm{m^3} \approx 0{,}0499\,\mathrm{m^3} = 49{,}9\,\mathrm{L}$. Pri stalnem tlaku je $V \propto T$: $V' = V_1T'/T_1 = 49{,}9\,\mathrm{L} \cdot 371{,}4/300 \approx 61{,}8\,\mathrm{L}$.
-8. Odgovor: pri stalni prostornini potrebujemo približno $4{,}16\,\mathrm{kJ}$, pri stalnem tlaku približno $5{,}82\,\mathrm{kJ}$ toplote. Notranja energija se v obeh primerih poveča za $4{,}16\,\mathrm{kJ}$; pri stalnem tlaku gre razlika, $1{,}66\,\mathrm{kJ}$, v delo, ki ga plin opravi pri razširjanju. Če pri stalnem tlaku dovedemo le $4{,}16\,\mathrm{kJ}$, se plin segreje za okoli $71\,\mathrm{K}$ (na $371\,\mathrm{K}$), njegova prostornina pa naraste s $49{,}9\,\mathrm{L}$ na okoli $61{,}8\,\mathrm{L}$.
+8. Odgovor: pri stalni prostornini potrebujemo približno $4{,}16\,\mathrm{kJ}$, pri stalnem tlaku približno $5{,}82\,\mathrm{kJ}$ toplote. Notranja energija se v obeh primerih poveča za $4{,}16\,\mathrm{kJ}$; pri stalnem tlaku gre razlika, $1{,}66\,\mathrm{kJ}$, v delo, ki ga plin opravi pri razširjanju. Če pri stalnem tlaku dovedemo le $4{,}16\,\mathrm{kJ}$, se plin segreje za okoli $71\,\mathrm{K}$ (na $371\,\mathrm{K}$), njegova prostornina pa naraste z $49{,}9\,\mathrm{L}$ na okoli $61{,}8\,\mathrm{L}$.
 
 ### Primer 4 – zdaj ti
 
@@ -238,14 +238,30 @@ Natančno navedi ekviparticijski izrek s pogoji. Izpelji molski toplotni kapacit
 
 Kroglice v škatli letijo v vse smeri; milijarde drobnih sunkov ob stene na sekundo se zlijejo v enakomeren tlak.
 
-```
- +---------------------------+
- |  o->      <-o     o       |
- |      o          ^         |  <- vsak odboj od stene
- |   v    o->      o     <-o |     prenese 2 m0 v_x
- |         o          o      |
- +---------------------------+
-```
+:::risba skica
+opis: Pravokotna škatla z osmimi molekulami, narisanimi kot krogci. Puščice ob njih kažejo v različne smeri: gibanje je naključno. Ena molekula leti proti desni steni; ob vsakem odboju od stene ji preda gibalno količino 2 m₀ vₓ.
+območje: 0; -1,2 .. 16; 6,5
+pravokotnik: 1; 1 .. 11; 5,5 | debelo
+krog: 2; 4,6 | 0,15 | polno modra
+puščica: 2,15; 4,6 -> 3,15; 4,6
+krog: 6; 4,6 | 0,15 | polno modra
+puščica: 5,85; 4,6 -> 4,85; 4,6
+krog: 8; 4,4 | 0,15 | polno modra
+puščica: 8; 4,25 -> 8; 3,25
+krog: 3; 3,6 | 0,15 | polno modra
+puščica: 3,11; 3,71 -> 3,81; 4,41
+krog: 2,2; 2 | 0,15 | polno modra
+puščica: 2,2; 1,85 -> 2,2; 1,25
+krog: 4,5; 2,6 | 0,15 | polno modra
+puščica: 4,65; 2,6 -> 5,65; 2,6
+krog: 7; 1,8 | 0,15 | polno modra
+puščica: 6,89; 1,91 -> 6,19; 2,61
+krog: 9,4; 3 | 0,15 | polno oranžna
+puščica: 9,55; 3 -> 10,85; 3 | v_x | nad | oranžna
+puščica: 12,8; 0,8 -> 11,15; 2,8
+napis: 12,4; 0,2 | odboj od stene | sredina
+napis: 12,4; -0,7 | preda 2 m_0 v_x | sredina
+:::
 
 - Pol manjša škatla (enaka $T$): dvakrat pogostejši udarci, dvakratni tlak.
 - Toplejši plin: udarci so močnejši **in** pogostejši, zato $p \propto \langle v^2\rangle \propto T$.
@@ -260,7 +276,7 @@ V diagramu $p(V)$ so izoterme hiperbole $p = nRT/V$; izoterma pri višji tempera
 
 **Osmozni tlak.** Za razredčene raztopine velja van 't Hoffova enačba $\Pi = cRT$ (oblika plinske enačbe $p = \frac{n}{V}RT$); z osmometrijo določajo molske mase polimerov in beljakovin.
 
-**Ločevanje izotopov in difuzija.** Hitrost izlivanja plina skozi drobne pore je sorazmerna z $v_{\text{ef}} \propto 1/\sqrt{M}$. Pri plinastem $\mathrm{UF_6}$ se izotopa urana razlikujeta le za faktor $\sqrt{352/349} \approx 1{,}004$, zato so difuzijske obogatitvene naprave potrebovale več sto zaporednih stopenj.
+**Ločevanje izotopov in difuzija.** Hitrost izlivanja plina skozi drobne pore je sorazmerna z $v_{\text{ef}} \propto 1/\sqrt{M}$. Pri plinastem $\mathrm{UF_6}$ se hitrosti molekul z izotopoma urana razlikujeta le za faktor $\sqrt{352/349} \approx 1{,}004$, zato so difuzijske obogatitvene naprave potrebovale več kot tisoč zaporednih stopenj.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -295,7 +311,7 @@ Iz nje sledijo najverjetnejša hitrost $\sqrt{2k_BT/m_0}$, povprečna $\sqrt{8k_
 ~ Zamenjano sorazmerje: pri stalni temperaturi sta $p$ in $V$ obratno sorazmerna, ker molekule v manjši posodi pogosteje zadevajo stene.
 + Podvoji se.
 - Ostane enak.
-~ Hitrost molekul se res ne spremeni, a v polovični prostornini zadene vsako steno dvakrat več molekul na sekundo.
+~ Hitrost molekul se res ne spremeni, a v polovični prostornini zadene vsak del stene dvakrat več molekul na sekundo.
 > Pri izotermni spremembi je $pV = \text{konst.}$, zato pri polovični prostornini tlak naraste na dvakratno vrednost.
 
 ? Absolutno temperaturo plina podvojimo. Kako se spremeni efektivna hitrost molekul?
@@ -363,6 +379,6 @@ A' | delo plina pri stalnem tlaku | A' = p\Delta V = nR\Delta T | J
 F | sila molekul na steno | | N
 \Delta t | čas, v katerem štejemo trke s steno | | s
 S | ploščina stene | | m^2
-f | Maxwellova porazdelitev hitrosti | | s/m | tudi število prostostnih stopenj v C_V = (f/2)R
+f | število prostostnih stopenj | | – | f(v) je Maxwellova porazdelitev hitrosti (enota s/m)
 e | osnova naravnega logaritma | | – | e ≈ 2,718
 :::

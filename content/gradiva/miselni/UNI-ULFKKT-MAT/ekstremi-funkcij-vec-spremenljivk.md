@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lokalni in globalni ekstremi
+  - lokalni: primerjava v okolici točke
+  - globalni: primerjava na vsem območju
+- Stacionarne točke
+  - $\nabla f = 0$, torej $f_x = 0$ in $f_y = 0$
+  - pogoj je potreben, ne zadosten
+  - sedlo: $f = x^2 - y^2$ v $(0, 0)$
+- Hessejev test
+  - $D = f_{xx}f_{yy} - f_{xy}^2$
+  - $D > 0$: $f_{xx} > 0$ minimum, $f_{xx} < 0$ maksimum
+  - $D < 0$ sedlo, $D = 0$ ne odloči
+- Več spremenljivk
+  - pozitivno definitna $H$: minimum
+  - negativno definitna $H$: maksimum
+  - definitnost preverimo s Sylvestrovim kriterijem
+- Vezani ekstremi
+  - $L = f - \lambda g$
+  - $\nabla f = \lambda \nabla g$ in $g = 0$
+  - napaka: »Hessejev test na vezi«
+- Globalni ekstremi
+  - Weierstrass: zvezna $f$ na zaprti omejeni množici zavzame oba ekstrema
+  - notranje stacionarne točke, rob, oglišča
+  - primerjaj vrednosti $f$ v kandidatih

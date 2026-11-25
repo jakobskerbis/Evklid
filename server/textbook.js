@@ -26,9 +26,11 @@ export const LESSONS_DIR = process.env.EVKLID_LESSONS || path.join(here, "..", "
 // je zapisano v public/sim/katalog.js; prikažemo samo že narejene.
 export function simsFor(topicId, lesson = loadLesson(topicId)) {
   const usable = (d) => hasEngine(d.id) && (d.id !== "zbirka" || (d.opts?.items || []).some((it) => hasEngine(it[0])));
-  // Regijska tema vzame simulacije svojih osnovnih tem (brez ponovitev).
+  // Regijska tema vzame simulacije svojih osnovnih tem, fakultetna še simulacije enake teme drugih programov (sameTopics),
+  // ki ima isto lekcijo (brez ponovitev).
   const seen = new Set();
   const list = baseTopicIds(topicId)
+    .flatMap((id) => [id, ...sameTopics(id).filter((x) => x !== id)]) // lastna tema prva (prva simulacija je za tisk)
     .flatMap((id) => simsForTopic(id))
     .filter((d) => usable(d) && !seen.has(d.id + JSON.stringify(d.opts)) && seen.add(d.id + JSON.stringify(d.opts)));
   const extra = lesson?.meta.demo;
@@ -54,7 +56,10 @@ export function lessonLinks(demos) {
     const m3 = /^3d-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(d.id);
     if (m3 && !seen.has(d.id)) {
       seen.add(d.id);
-      out.push({ kind: "3d", id: m3[1], title: bare(d.title) });
+      // Začetne vrednosti iz kataloga (npr. faks lekcije: `zacetek: { faks: true }`) gredo z gumbom »Poglej v 3D«
+      // v naslov /3d#<id>?faks=1, da se model odpre enako kot v lekciji.
+      const z = Object.entries(d.opts?.zacetek || {}).filter(([k, v]) => /^[a-z][a-z0-9-]*$/i.test(k) && v != null && v !== false);
+      out.push({ kind: "3d", id: m3[1], title: bare(d.title), ...(z.length ? { zacetek: Object.fromEntries(z.map(([k, v]) => [k, v === true ? "1" : String(v)])) } : {}) });
     }
   }
   return out;
@@ -242,9 +247,15 @@ export function expandFormulaBlocks(md, mode = "html") {
 // aplikaciji skrita za gumbom »Pokaži rešitev«, da učenec najprej poskusi sam (j, 1. 11. 2026). Samo v
 // načinu html; tudi enovrstična rešitev na koncu razdelka (»Za izpit«). »Premisli« na koncu razdelka (v 270 lekcijah) ostane viden pod gumbom, ne v rešitvi.
 const SOLUTION_RE = /^\*\*Rešitev:\*\*[ \t]*([^\n]*)\n?([\s\S]*?)(?=^#{2,3}[ \t]|^[ \t]*<div class="tb-think">|(?![\s\S]))/gm;
+// Primer »… zadnji korak je tvoj« (v naslovu primera ali v zadnjem koraku rešitve): postopek je odprt, skrit ostane le zadnji korak v »Premisli« pod njim (sicer
+// sta drug pod drugim dva podobna gumba za razkritje; Geminijev pregled 17. 11. 2026).
+const OPEN_SOLUTION_RE = /zadnji korak je tvoj/i;
 export function hideSolutions(md) {
-  return String(md ?? "").replace(SOLUTION_RE, (_, first, body) => {
+  const src = String(md ?? "");
+  return src.replace(SOLUTION_RE, (_, first, body, offset) => {
     const inner = `${first.trim()}\n\n${body.trim()}`.trim();
+    const heading = src.slice(0, offset).match(/^#{2,3}[ \t]+(.*)$/gm)?.pop() || "";
+    if (OPEN_SOLUTION_RE.test(heading) || OPEN_SOLUTION_RE.test(body)) return `<details class="tb-solution" open><summary>Skrij rešitev</summary>\n\n${inner}\n\n</details>\n\n`;
     return `<details class="tb-solution"><summary>Pokaži rešitev</summary>\n\n${inner}\n\n</details>\n\n`;
   });
 }

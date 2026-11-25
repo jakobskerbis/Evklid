@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,9 +13,9 @@ Kje je ta cena in kako jo najdemo brez ugibanja? Odgovor da odvod. Iz njega razb
 
 ## Razlaga
 
-**Tabela namesto formule.** Naj bo $x$ cena rogljička v evrih. Vsak evro podražitve odžene $200$ kupcev ($20$ na vsakih $10$ centov), zato je prodanih $300 - 200(x - 1) = 500 - 200x$ kosov. Prihodek je cena krat število kosov:
+**Tabela namesto formule.** Naj bo $x$ cena rogljička v evrih. Vsak evro podražitve odžene $200$ kupcev ($20$ na vsakih $10$ centov), zato je prodanih $300 - 200(x - 1) = 500 - 200x$ kosov. Prihodek je cena krat število kosov (cena in prihodek v evrih):
 
-| cena $x$ [€] | prodanih kosov | prihodek [€] |
+| cena $x$ | kosov | prihodek |
 |---|---|---|
 | $1{,}00$ | $300$ | $300{,}00$ |
 | $1{,}10$ | $280$ | $308{,}00$ |
@@ -40,6 +40,18 @@ Enak je $0$. Levo od vrha so smerni koeficienti pozitivni, desno negativni. Ko s
 $$y = f(a) + f'(a)\,(x - a)$$
 
 Za rogljičke je prihodek $R(x) = 500x - 200x^2$ in $R'(x) = 500 - 400x$. Pri ceni $1\,€$ je $R'(1) = 100$. Tangenta tam je $y = 300 + 100(x - 1)$ oziroma $y = 100x + 200$. Število $100$ pove: pri majhni podražitvi prihodek raste približno za $100\,€$ na vsak evro podražitve, torej približno $1\,€$ na vsak cent.
+
+**Normala.** Normala je premica skozi dotikališče, pravokotna na tangento. Produkt smernih koeficientov pravokotnih premic je $-1$, zato ima normala pri $k_t = f'(a) \ne 0$ smerni koeficient $k_n = -\frac{1}{k_t}$ in enačbo
+
+$$y = f(a) - \frac{1}{f'(a)}\,(x - a)$$
+
+Pri $f'(a) = 0$ je normala navpična premica $x = a$.
+
+**Presečni kot krivulj.** Kot med grafoma $f$ in $g$ v presečišču z absciso $x_0$ je kot med tangentama v tej točki. S $k_1 = f'(x_0)$ in $k_2 = g'(x_0)$ je
+
+$$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
+
+in $0^\circ \le \varphi \le 90^\circ$. Pri $k_1 k_2 = -1$ se krivulji sekata **pravokotno**, pri $k_1 = k_2$ se dotikata ($\varphi = 0^\circ$).
 
 **Naraščanje in padanje.** Predznak odvoda pove smer grafa:
 
@@ -110,13 +122,13 @@ $f'(x) > 0$: narašča, $f'(x) < 0$: pada; ekstrem, kjer $f'$ zamenja predznak
 
 1. Odvod: $f'(x) = 3x^2 - 6x - 9 = 3(x + 1)(x - 3)$.
 2. Stacionarni točki sta $x_1 = -1$ in $x_2 = 3$, ker je tam eden od faktorjev enak $0$.
-3. Predznak preverimo s po eno testno točko na vsakem intervalu:
+3. Predznak preverimo s po eno testno točko na vsakem intervalu, po vrsti $-2$, $0$ in $4$:
 
-| interval | testna točka | $f'$ | $f$ |
-|---|---|---|---|
-| $(-\infty, -1)$ | $-2$ | $15 > 0$ | narašča |
-| $(-1, 3)$ | $0$ | $-9 < 0$ | pada |
-| $(3, \infty)$ | $4$ | $15 > 0$ | narašča |
+| interval | $f'$ | $f$ |
+|---|---|---|
+| $(-\infty, -1)$ | $15 > 0$ | narašča |
+| $(-1, 3)$ | $-9 < 0$ | pada |
+| $(3, \infty)$ | $15 > 0$ | narašča |
 
 4. Pri $-1$ se predznak zamenja iz $+$ v $-$: lokalni maksimum $f(-1) = -1 - 3 + 9 + 2 = 7$.
 5. Pri $3$ se zamenja iz $-$ v $+$: lokalni minimum $f(3) = 27 - 27 - 27 + 2 = -25$.
@@ -168,6 +180,24 @@ Ali je pri $x = 5$ res maksimum in kolikšna je prostornina?
 Za $x = 4$ sta oba faktorja pozitivna, $V' > 0$; za $x = 6$ je $30 - 6x < 0$, $V' < 0$. Predznak gre iz $+$ v $-$, torej maksimum. $V(5) = 5 \cdot 20^2 = 2000\,\mathrm{cm^3}$, to sta $2$ litra.
 :::
 
+### Primer 5: normala in presečni kot
+
+Paraboli $f(x) = x^2$ in $g(x) = 2 - x^2$ se sekata v $T(1, 1)$. (a) Zapiši enačbo normale na graf $f$ v $T$. (b) Izračunaj presečni kot parabol v $T$.
+
+**Podatki:** $f(x) = x^2$, $g(x) = 2 - x^2$, $T(1, 1)$
+**Iščemo:** (a) normalo $y = kx + n$, (b) kot $\varphi$
+
+:::formula
+$k_n = -\frac{1}{f'(a)}$; $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$
+:::
+
+**Rešitev:**
+
+1. $f'(x) = 2x$ in $g'(x) = -2x$, zato $k_1 = f'(1) = 2$ in $k_2 = g'(1) = -2$.
+2. (a) $k_n = -\frac{1}{2}$, $y = 1 - \frac{1}{2}(x - 1) = -\frac{1}{2}x + \frac{3}{2}$.
+3. (b) $\tan\varphi = \left|\frac{-2 - 2}{1 + 2 \cdot (-2)}\right| = \frac{4}{3}$, $\varphi \approx 53{,}13^\circ$.
+4. Odgovor: normala je $y = -\frac{1}{2}x + \frac{3}{2}$, paraboli se sekata pod kotom $\varphi \approx 53{,}13^\circ$ ($53^\circ 8'$).
+
 ## Pogoste napake
 
 - **»Odvod je nič, torej je ekstrem.«** Pri $f(x) = x^3$ je $f'(0) = 0$, ekstrema pa ni, ker odvod ne zamenja predznaka. Vedno preveri predznak levo in desno od stacionarne točke.
@@ -178,11 +208,133 @@ Za $x = 4$ sta oba faktorja pozitivna, $V' > 0$; za $x = 6$ je $30 - 6x < 0$, $V
 
 ## Povzetek
 
-- Tangenta v $\bigl(a, f(a)\bigr)$: $y = f(a) + f'(a)(x - a)$; smerni koeficient je $f'(a)$.
+**Tangenta** v $\bigl(a, f(a)\bigr)$ ima smerni koeficient $f'(a)$:
+
+$$y = f(a) + f'(a)(x - a)$$
+
+**Normala** je pravokotna na tangento:
+
+$$k_n = -\frac{1}{f'(a)}$$
+
+- Pri $f'(a) = 0$ je normala $x = a$.
+
+**Presečni kot** med tangentama:
+
+$$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$
+
+- Pri $k_1 k_2 = -1$ sta pravokotni.
+
+**Naraščanje in ekstremi:**
+
 - $f' > 0$ na intervalu: $f$ narašča; $f' < 0$: $f$ pada.
-- Stacionarna točka: $f'(a) = 0$. Ekstrem je tam le, če $f'$ zamenja predznak ($+ \to -$ maksimum, $- \to +$ minimum).
+- **Stacionarna točka:** $f'(a) = 0$.
+- Ekstrem je tam le, če $f'$ zamenja predznak: $+ \to -$ maksimum, $- \to +$ minimum.
 - Vrednost ekstrema dobiš z vstavljanjem v $f$.
-- Ekstremalni problem: sestavi funkcijo ene spremenljivke, določi smiselni interval, reši $f' = 0$, preveri predznak in robove, odgovori v stavku z enotami.
+- **Ekstremalni problem:** sestavi funkcijo ene spremenljivke, določi smiselni interval, reši $f' = 0$, preveri predznak in robove, odgovori v stavku z enotami.
+
+## Ponovitev
+
+**Formule**
+- tangenta: $y = f(a) + f'(a)(x - a)$ (na pamet)
+- normala: $k_n = -\frac{1}{f'(a)}$, $f'(a) \ne 0$ (na pamet)
+- $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$ (na pamet)
+- $f' > 0$: narašča, $f' < 0$: pada (na pamet)
+- ekstrem: $f'(a) = 0$ in $f'$ zamenja predznak (na pamet)
+
+**Postopek**
+1. Sestavi funkcijo ene spremenljivke.
+2. Določi smiselni interval.
+3. Reši $f'(x) = 0$.
+4. Preveri predznak $f'$ levo in desno ter vrednosti na robovih.
+5. Najdeno točko vstavi v $f$ in odgovori v stavku z enotami.
+
+**Pazi na**
+- $f'(a) = 0$ še ni ekstrem ($x^3$ pri $0$); preveri menjavo predznaka.
+- V tangenti je smerni koeficient število $f'(a)$, ne $f'(x)$.
+- Absciso vstavi v $f$, ne v $f'$; vrednost primerjaj še z vrednostma na robovih.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Na grafu funkcije $f(x) = x^2 - 4x + 5$ poiščite točko, v kateri je tangenta vzporedna s premico $y = 2x - 1$, in zapišite enačbo te tangente.
+
+**Rešitev:**
+
+1. Vzporedni premici imata enaka smerna koeficienta, zato mora veljati $f'(x) = 2$.
+2. $f'(x) = 2x - 4$, iz $2x - 4 = 2$ sledi $x = 3$. Ordinata: $f(3) = 9 - 12 + 5 = 2$, dotikališče je $T(3, 2)$.
+3. Tangenta: $y = 2 + 2(x - 3) = 2x - 4$.
+4. Odgovor: tangenta v točki $T(3, 2)$ je vzporedna z dano premico, njena enačba je $y = 2x - 4$.
+
+**Točkovanje:** 1 točka za pogoj $f'(x) = 2$ z odvodom $2x - 4$, 1 točka za točko $T(3, 2)$, 1 točka za enačbo tangente.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x^3 - 6x^2 + 9x$.
+
+a) Izračunajte ničle funkcije $f$. (2 točki)
+b) Določite intervale naraščanja in padanja ter lokalne ekstreme funkcije $f$. (3 točke)
+c) Narišite graf funkcije $f$. (2 točki)
+
+**Rešitev:**
+
+1. a) $f(x) = x(x^2 - 6x + 9) = x(x - 3)^2$.
+2. a) Ničli sta $x_1 = 0$ (enostavna) in $x_2 = 3$ (dvojna, graf se tam osi $x$ le dotakne).
+3. b) $f'(x) = 3x^2 - 12x + 9 = 3(x - 1)(x - 3)$, stacionarni točki sta $x = 1$ in $x = 3$.
+4. b) Predznak odvoda: $f'(0) = 9 > 0$, $f'(2) = -3 < 0$, $f'(4) = 9 > 0$. Funkcija narašča na $(-\infty, 1)$ in na $(3, \infty)$, pada na $(1, 3)$.
+5. b) V $x = 1$ se predznak $f'$ zamenja iz $+$ v $-$: lokalni maksimum $f(1) = 1 - 6 + 9 = 4$. V $x = 3$ se zamenja iz $-$ v $+$: lokalni minimum $f(3) = 0$.
+6. c) Graf pride od spodaj, seka os $x$ v izhodišču, se dvigne do $T_1(1, 4)$, spusti do $T_2(3, 0)$, kjer se osi $x$ dotakne, nato narašča čez vse meje. Za oporo: $f(-1) = -16$ in $f(4) = 4$.
+7. Odgovor: ničli sta $0$ in $3$ (dvojna); $f$ narašča na $(-\infty, 1)$ in $(3, \infty)$, pada na $(1, 3)$; lokalni maksimum je $T_1(1, 4)$, lokalni minimum $T_2(3, 0)$.
+
+**Točkovanje:** a) 1 točka za razcep $x(x - 3)^2$, 1 točka za obe ničli; b) 1 točka za odvod in stacionarni točki, 1 točka za intervale naraščanja in padanja, 1 točka za oba ekstrema z vrsto in ordinato; c) 1 točka za ničle in ekstreme na pravih mestih, 1 točka za pravilno obliko grafa (dotik osi $x$ v $x = 3$, obnašanje za velike $\lvert x \rvert$).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Iz pločevine izdelujejo valjaste posode brez pokrova s prostornino $2$ litra. Dno je iz debelejše pločevine: kvadratni decimeter pločevine za dno stane $0{,}60\,€$, za plašč pa $0{,}30\,€$. Polmer dna označimo z $r$ (v decimetrih).
+
+a) Pokažite, da stroški pločevine za eno posodo v evrih znašajo $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$, $r > 0$. (3 točke)
+b) Izračunajte polmer dna, pri katerem so stroški najmanjši, in utemeljite, da so pri tem polmeru res najmanjši. Polmer zaokrožite na milimeter. (4 točke)
+c) Izračunajte višino te posode (na milimeter) in najmanjše stroške (na cent). Kaj ugotovite, ko višino primerjate s premerom dna? (3 točke)
+
+**Rešitev:**
+
+1. a) $2\,\mathrm{L} = 2\,\mathrm{dm^3}$, zato $\pi r^2 h = 2$ in $h = \dfrac{2}{\pi r^2}$.
+2. a) Ploščina dna je $\pi r^2$, ploščina plašča $2\pi r h$. Stroški so $C = 0{,}6 \cdot \pi r^2 + 0{,}3 \cdot 2\pi r h$.
+3. a) Vstavimo $h$: $0{,}3 \cdot 2\pi r \cdot \dfrac{2}{\pi r^2} = \dfrac{1{,}2}{r}$, torej $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$.
+4. b) $C'(r) = 1{,}2\pi r - \dfrac{1{,}2}{r^2}$.
+5. b) $C'(r) = 0$ da $1{,}2\pi r^3 = 1{,}2$, torej $r^3 = \dfrac{1}{\pi}$ in $r = \sqrt[3]{\dfrac{1}{\pi}} \doteq 0{,}68278\,\mathrm{dm}$.
+6. b) Za manjši $r$ je $\pi r^3 < 1$ in $C'(r) < 0$, za večji $r$ je $C'(r) > 0$: stroški najprej padajo, nato naraščajo, zato je to minimum. Ker gredo stroški pri $r \to 0$ in pri $r \to \infty$ čez vse meje, je to tudi najmanjša vrednost na $(0, \infty)$.
+7. b) $r \doteq 0{,}683\,\mathrm{dm} \doteq 6{,}8\,\mathrm{cm}$.
+8. c) $h = \dfrac{2}{\pi r^2} \doteq \dfrac{2}{\pi \cdot 0{,}68278^2} \doteq 1{,}3656\,\mathrm{dm} \doteq 13{,}7\,\mathrm{cm}$.
+9. c) $C(0{,}68278) \doteq 0{,}8788 + 1{,}7575 = 2{,}6363$, torej približno $2{,}64\,€$.
+10. c) Če je $\pi r^3 = 1$, je $h = \dfrac{2}{\pi r^2} = \dfrac{2r^3}{r^2} = 2r$: višina je enaka premeru dna.
+11. Odgovor: stroški so najmanjši pri polmeru dna $6{,}8\,\mathrm{cm}$ in višini $13{,}7\,\mathrm{cm}$ in znašajo približno $2{,}64\,€$ na posodo; najcenejša posoda je visoka toliko, kolikor meri premer dna.
+
+**Točkovanje:** a) 1 točka za $h = \frac{2}{\pi r^2}$, 1 točka za zapis stroškov dna in plašča, 1 točka za vstavljanje in poenostavitev; b) 1 točka za odvod, 1 točka za enačbo $r^3 = \frac{1}{\pi}$, 1 točka za utemeljitev minimuma, 1 točka za $r \doteq 6{,}8\,\mathrm{cm}$; c) 1 točka za višino, 1 točka za stroške z enoto, 1 točka za ugotovitev $h = 2r$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Izpelji enačbo tangente na graf funkcije $f$ v točki $(a, f(a))$ in iz nje enačbo normale.
+---
+Tangenta gre skozi točko $(a, f(a))$, njen smerni koeficient pa je odvod $f'(a)$. Premica s smernim koeficientom $k$ skozi točko $(a, f(a))$ ima enačbo $y - f(a) = k(x - a)$, zato je tangenta $y = f(a) + f'(a)(x - a)$. Normala gre skozi isto točko in je pravokotna na tangento, zato je pri $f'(a) \ne 0$ produkt njunih smernih koeficientov $-1$ in normala je $y = f(a) - \frac{1}{f'(a)}(x - a)$. Pri $f'(a) = 0$ je tangenta vodoravna, normala pa navpična premica $x = a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kaj je stacionarna točka funkcije in kdaj ima funkcija v njej lokalni ekstrem? Navedi primer stacionarne točke, ki ni ekstrem.
+---
+Stacionarna točka je točka $a$, v kateri je $f'(a) = 0$; tangenta je tam vodoravna. Funkcija ima v njej lokalni maksimum, če odvod v njej zamenja predznak iz $+$ v $-$, in lokalni minimum, če ga zamenja iz $-$ v $+$. Če odvod predznaka ne zamenja, ekstrema ni. Primer je $f(x) = x^3$ v točki $0$: $f'(0) = 0$, a $f'(x) = 3x^2$ je na obeh straneh pozitiven, zato funkcija ves čas narašča.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kako izračunaš kot, pod katerim se sekata grafa dveh funkcij, in kdaj se grafa sekata pravokotno?
+---
+Najprej poiščeš presečišče grafov, recimo z absciso $x_0$. Kot med grafoma je kot med njunima tangentama v presečišču, ki imata smerna koeficienta $k_1 = f'(x_0)$ in $k_2 = g'(x_0)$. Če je $1 + k_1 k_2 \ne 0$, zanj velja $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, kjer je $0^\circ \le \varphi < 90^\circ$. Grafa se sekata pravokotno, ko je $k_1 k_2 = -1$, saj sta tedaj tangenti pravokotni.
+:::
 
 ## Drugače: Z analogijo
 
@@ -230,20 +382,16 @@ Enako je pri ceni rogljičkov: prihodek je največji tam, kjer podražitev neha 
 + Pade, s $312{,}50\,€$ na $308\,€$.
 > Desno od maksimuma je $R' < 0$, prihodek pada: $R(1{,}40) = 1{,}40 \cdot 220 = 308\,€$.
 
-? Katera je enačba tangente na graf $f(x) = x^2 - 2x$ v točki z absciso $3$?
-- $y = 3x - 6$
-~ Za smerni koeficient je vzeta vrednost $f(3) = 3$ namesto $f'(3)$.
-+ $y = 4x - 9$
-- $y = 4x + 3$
-~ Za začetno vrednost $n$ je vzet $f(3)$, premik $(x - 3)$ pa izpuščen.
+? Tangenta na graf $f(x) = x^2 - 2x$ v točki z absciso $3$ ima enačbo $y = kx + n$. Koliko je $n$?
+= -9 | 0
+~ -6 | Za smerni koeficient je vzeta vrednost $f(3) = 3$ namesto $f'(3) = 4$, tako dobiš $y = 3x - 6$.
+~ 3 | Za začetno vrednost $n$ je vzet $f(3)$, premik $(x - 3)$ pa izpuščen.
 > $f(3) = 3$, $f'(x) = 2x - 2$, $f'(3) = 4$; $y = 3 + 4(x - 3) = 4x - 9$.
 
-? Dnevni dobiček delavnice je $D(x) = -2x^2 + 120x - 1000$ evrov, kjer je $x$ število izdelkov. Kolikšen je največji dobiček?
-- $30\,€$
-~ $30$ je število izdelkov, pri katerem je dobiček največji, ne dobiček.
-- $0\,€$
-~ To je $D'(30)$. Vrednost dobička dobiš, ko $30$ vstaviš v $D$, ne v $D'$.
-+ $800\,€$
+? (brez računala) Dnevni dobiček delavnice je $D(x) = -2x^2 + 120x - 1000$ evrov, kjer je $x$ število izdelkov. Kolikšen je največji dobiček?
+= 800 € | 0
+~ 30 | $30$ je število izdelkov, pri katerem je dobiček največji, ne dobiček.
+~ 0 | To je $D'(30)$. Vrednost dobička dobiš, ko $30$ vstaviš v $D$, ne v $D'$.
 > $D'(x) = -4x + 120 = 0$ da $x = 30$; $D(30) = -1800 + 3600 - 1000 = 800$, predznak $D'$ gre iz $+$ v $-$.
 
 :::simboli
@@ -257,4 +405,34 @@ c | prodajna cena slušalk | | €
 D | dobiček (v primeru 3 tedenski) | D(c) = (c - 20)(600 - 10c) | €
 D' | odvod dobička | D'(c) = -20c + 800 |
 V | prostornina škatle | V(x) = x\,(30 - 2x)^2 | cm^3
+k_t | smerni koeficient tangente | k_t = f'(a) |
+k_n | smerni koeficient normale | k_n = -\frac{1}{k_t} |
+g | druga funkcija | |
+x_0 | abscisa presečišča | |
+k_1, k_2 | smerna koeficienta tangent | |
+\varphi | presečni kot krivulj | | °
 :::
+
+<<RACUN
+odvod: 2-x^2 | x | -2*x
+enako: 1-(1/2)*(x-1) | -x/2+3/2
+vrednost: abs((-2-2)/(1+2*(-2))) | 4/3
+vrednost: atan(4/3)*180/pi | 53.13
+odvod: x^2-4*x+5 | x | 2*x-4
+resi: 2*x-4=2 | x | 3
+vrednost: 3^2-4*3+5 | 2
+enako: 2+2*(x-3) | 2*x-4
+enako: x^3-6*x^2+9*x | x*(x-3)^2
+odvod: x^3-6*x^2+9*x | x | 3*(x-1)*(x-3)
+resi: 3*x^2-12*x+9=0 | x | 1, 3
+neenacba: 3*x^2-12*x+9<0 | x | (1, 3)
+vrednost: 1^3-6*1^2+9*1 | 4
+vrednost: (-1)^3-6*(-1)^2+9*(-1) | -16
+vrednost: 4^3-6*4^2+9*4 | 4
+enako: 0.6*pi*r^2+0.3*2*pi*r*2/(pi*r^2) | 0.6*pi*r^2+1.2/r
+odvod: 0.6*pi*r^2+1.2/r | r | 1.2*pi*r-1.2/r^2
+vrednost: (1/pi)^(1/3) | 0.68278
+vrednost: 2/(pi*0.68278^2) | 1.3656
+vrednost: 0.6*pi*0.68278^2+1.2/0.68278 | 2.6363
+enako: 2/(pi*r^2)*pi*r^3 | 2*r
+>>

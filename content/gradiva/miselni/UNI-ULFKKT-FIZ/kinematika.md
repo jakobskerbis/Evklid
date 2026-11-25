@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lega, premik, pot
+  - $\vec{r}(t)$, premik $\Delta\vec{r}$ je vektor
+  - pot $s \ge |\Delta\vec{r}|$
+- Hitrost in pospešek
+  - $\vec{v} = \mathrm{d}\vec{r}/\mathrm{d}t$, tangentna na tir
+  - $\vec{a} = \mathrm{d}\vec{v}/\mathrm{d}t$, tudi pri spremembi smeri
+  - nazaj z integriranjem, konstanti $\vec{r}_0$, $\vec{v}_0$
+- Enakomerno pospešeno gibanje
+  - $v = v_0 + at$, $x = x_0 + v_0t + \tfrac{1}{2}at^2$
+  - $v^2 = v_0^2 + 2a(x - x_0)$
+  - zavorna pot raste s kvadratom hitrosti
+- Krivo gibanje
+  - $a_t = \mathrm{d}v/\mathrm{d}t$, $a_r = v^2/R$
+  - $a = \sqrt{a_t^2 + a_r^2}$
+- Poševni met
+  - vodoravno enakomerno, navpično pospešeno z $g$
+  - $D = v_0^2\sin 2\alpha/g$, največ pri $45^\circ$
+  - $h_{\max} = v_0^2\sin^2\alpha/(2g)$
+- Kroženje
+  - $v = \omega r$, $a_r = \omega^2 r$, $a_t = \alpha r$
+  - kot v radianih, $t_0 = 2\pi/\omega$
+- Relativno gibanje
+  - $\vec{v} = \vec{v}\,' + \vec{u}$, vektorska vsota
+  - $\vec{a} = \vec{a}\,'$ pri stalnem $\vec{u}$

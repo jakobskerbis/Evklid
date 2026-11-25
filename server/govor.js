@@ -1,6 +1,7 @@
 // Besedilo lekcije (Markdown + LaTeX) → slovensko besedilo za branje na glas (zvočni povzetek).
 // Brskalnik ga prebere s slovenskim glasom (speechSynthesis), strežnik nič ne stane.
 // Formule beremo, kot jih prebere učitelj: »I je enako U deljeno z R«, »v nič«, »deset na minus tri«.
+import "./env.js";
 import { DRAW_RE, drawingText } from "./risbe.js";
 
 // Enote: [ednina, dvojina, 3–4, 5 in več, rodilnik ednine (decimalno število), tožilnik ednine (»na sekundo«)].
@@ -186,7 +187,27 @@ function expr(s) {
       i = j;
       continue;
     }
-    if ((m = /^\\(?:mathrm|text|textrm|mathit|operatorname|mathbf|boldsymbol|vec|overline|bar)/.exec(rest))) {
+    if ((m = /^\\(?:overline|bar)(?![a-zA-Z])/.exec(rest))) {
+      // \bar z je konjugirano kompleksno število; drugače (povprečje x, daljica AB) preberemo črto nad znakom.
+      const [a, j] = group(s, i + m[0].length);
+      const complex = /[zw]/.test(a) && /^[zw\d\s_{}+\-]*(?:\\cdot[zw\d\s_{}+\-]*)*$/.test(a);
+      push(/^\s*[zw](?:_\{?\w+\}?)?\s*$/.test(a) ? `konjugirano ${expr(a)}` : complex ? `konjugirana vrednost ${expr(a)}` : `${expr(a)} s črto`);
+      i = j;
+      lastNumber = null;
+      continue;
+    }
+    // Re z, Im z: realni in imaginarni del. \mathrm{Re} brez spremenljivke za njim (Re = …) je v fiziki Reynoldsovo število.
+    if (
+      (m = /^\\operatorname\s*\{?\s*(Re|Im)\s*\}?(?![a-zA-Z])(?:\s*\\[,;:!])?/.exec(rest)) ||
+      (m = /^\\mathrm\s*\{\s*(Im)\s*\}(?:\s*\\[,;:!])?/.exec(rest)) ||
+      (m = /^\\mathrm\s*\{\s*(Re)\s*\}(?:\s*\\[,;:!])?(?=\s*(?:[a-zA-Z(]|\\(?!(?:approx|le|ge|leq|geq|ne|neq|lt|gt|sim)(?![a-zA-Z]))[a-zA-Z]))/.exec(rest))
+    ) {
+      push(m[1] === "Re" ? "realni del" : "imaginarni del");
+      i += m[0].length;
+      lastNumber = null;
+      continue;
+    }
+    if ((m = /^\\(?:mathrm|text|textrm|mathit|operatorname|mathbf|boldsymbol|vec)/.exec(rest))) {
       const [a, j] = group(s, i + m[0].length);
       const sym = a.replace(/\\Omega/g, "Ω").replace(/\\%/g, "%").replace(/\^\{?(\d)\}?/, "^$1");
       // Brez števila pred njim je en sam velik znak simbol (kemijski element C, O, H), ne enota.
@@ -218,6 +239,7 @@ function expr(s) {
     if ((m = /^\\(ge|geq)(?![a-zA-Z])/.exec(rest))) { push("je večje ali enako"); i += m[0].length; continue; }
     if ((m = /^\\(Rightarrow|implies|to|rightarrow|longrightarrow)(?![a-zA-Z])/.exec(rest))) { push(m[1] === "to" || m[1] === "rightarrow" || m[1] === "longrightarrow" ? "v" : "torej"); i += m[0].length; continue; }
     if ((m = /^\\(pm)(?![a-zA-Z])/.exec(rest))) { push("plus minus"); i += m[0].length; continue; }
+    if ((m = /^\\(subset|subseteq|in)(?![a-zA-Z])/.exec(rest))) { push(m[1] === "in" ? "je element" : "je podmnožica"); i += m[0].length; lastNumber = null; continue; }
     if ((m = /^\\(sin|cos|tan|log|ln)(?![a-zA-Z])/.exec(rest))) { push({ sin: "sinus", cos: "kosinus", tan: "tangens", log: "logaritem", ln: "naravni logaritem" }[m[1]]); i += m[0].length; continue; }
     if ((m = /^\\(Omega)(?![a-zA-Z])/.exec(rest))) { push(lastNumber != null ? unitWord("Ω", lastNumber) : "ohm"); i += m[0].length; lastNumber = null; continue; }
     if ((m = /^\\%/.exec(rest))) { push(unitWord("%", lastNumber) || "odstotkov"); i += 2; lastNumber = null; continue; }
@@ -272,4 +294,43 @@ export function speakMarkdown(md) {
     .filter(Boolean)
     .map((l) => (/[.!?:]$/.test(l) ? l : `${l}.`))
     .join("\n");
+}
+
+// --- Slovenski glas strežnika (MP3) ---
+// Ustno spraševanje: besedilo vprašanja gre k zasebnemu glasovnemu strežniku (glas/streznik.py, Render pserv
+// »evklid-glas«, odprt glas Piper), nazaj pride MP3. Glas naprave slovenščino pozna skoraj samo v Edgu, zato je to edina
+// pot, da Evklid bere na glas v Chromu, v aplikaciji za Android in na iPhonu (j, 19. 11. 2026).
+// Brez EVKLID_GLAS_URL (lokalno, testi) strežnika ni: odjemalec uporabi glas naprave kot prej.
+export const MAX_GLAS = 600; // znakov besedila na branje (vprašanje + dodatno vprašanje sta krajša)
+const TIMEOUT_MS = 11_000; // odjemalec po 12 s uporabi glas naprave
+
+// Render da pri fromService (property: hostport) »ime:vrata« brez sheme.
+export function glasUrl(raw = process.env.EVKLID_GLAS_URL) {
+  const v = String(raw || "").trim();
+  if (!v) return null;
+  return (/^https?:\/\//i.test(v) ? v : `http://${v}`).replace(/\/+$/, "");
+}
+
+/**
+ * Besedilo → MP3 (Buffer) ali null, ko strežnika ni ali ne odgovori.
+ * @param {string} text
+ * shrani: false – glasovni strežnik posnetka ne shrani na disk (dodatno vprašanje izhaja iz učenčevega odgovora).
+ * @param {{ url?: string|null, fetchFn?: typeof fetch, shrani?: boolean }} [o]
+ */
+export async function govorMp3(text, { url = glasUrl(), fetchFn = fetch, shrani = true } = {}) {
+  const besedilo = String(text || "").replace(/\s+/g, " ").trim().slice(0, MAX_GLAS);
+  if (!url || !besedilo) return null;
+  try {
+    const r = await fetchFn(`${url}/govor`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(shrani ? { besedilo } : { besedilo, shrani: false }),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!r.ok || !/audio\/mpeg/.test(r.headers.get("content-type") || "")) return null;
+    const buf = Buffer.from(await r.arrayBuffer());
+    return buf.length ? buf : null;
+  } catch {
+    return null;
+  }
 }

@@ -5,12 +5,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import katex from "katex";
+import { napakaIzraza } from "../public/mat/izris.js";
 import { getTopic, getPath } from "./curriculum.js";
 import { parseLesson } from "./textbook.js";
 import { renderMd, shell } from "./textbook-print.js";
 import { speakMarkdown } from "./govor.js";
 import { checkIdentities } from "./lesson-identity.js";
 import { ENGINES } from "../public/sim/index.js";
+import { dateText } from "../public/datum.js";
 
 export const GRADIVA_DIR = process.env.EVKLID_GRADIVA || path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "content", "gradiva");
 
@@ -142,11 +144,8 @@ export function checkGradivo(vrsta, src, topicId = null) {
   }
   // Formule morajo izrisati brez napake.
   for (const m of src.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
-    try {
-      katex.renderToString(m[1] || m[2], { throwOnError: true, strict: "ignore" });
-    } catch (e) {
-      errs.push(`formula se ne izriše: ${(m[1] || m[2]).slice(0, 40)} (${String(e.message).slice(0, 60)})`);
-    }
+    const napaka = napakaIzraza(m[1] || m[2], { katex });
+    if (napaka) errs.push(`formula se ne izriše: ${(m[1] || m[2]).slice(0, 40)} (${napaka.slice(0, 60)})`);
   }
   if (/PhET/i.test(src)) errs.push("brez omembe PhET");
   // Formule, ki si jih učenec zapomni: enakost mora veljati za vse vrednosti (lesson-identity.js).
@@ -156,7 +155,7 @@ export function checkGradivo(vrsta, src, topicId = null) {
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const today = () => new Date().toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" });
+const today = () => dateText(new Date(), "sl-SI"); // »17. novembra 2026« (public/datum.js)
 
 const PAGE_CSS = `
   .gr { font: 10.5pt/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -203,7 +202,7 @@ export function gradivoPage(vrsta, topicId) {
     ${body}
     ${g.meta.stanje !== "pregledano" ? `<p class="muted small">Osnutek: gradivo še pregleduje učitelj.</p>` : ""}
   </section>`;
-  return shell(`${g.meta.naslov || t.name} · ${kind.toLowerCase()}`, content, PAGE_CSS);
+  return shell(`${g.meta.naslov || t.name} · ${kind.toLowerCase()}`, content, PAGE_CSS, 0, { ai: true });
 }
 
 // Kratek video: scenarij za predvajalnik v aplikaciji (public/gradiva.js), ki upravlja simulacijo.

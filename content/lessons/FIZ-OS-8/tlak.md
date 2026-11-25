@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -46,7 +46,7 @@ V simulaciji spodaj (»Tlak na ploskev in tlak v tekočini«) izberi opeko in jo
 :::premisli
 Stena hiše je debela $30\,\mathrm{cm}$, betonski pas pod njo (temelj) pa je širok $60\,\mathrm{cm}$. Napovej: kolikokrat manjši je tlak na zemljo, kot bi bil, če bi stena stala kar na zemlji? Zakaj je to gradbenikom pomembno?
 ---
-Teža stene in strehe se na temelju porazdeli po dvakrat večji ploskvi, zato je tlak na zemljo približno pol manjši. Zemlja manj popusti in hiša se manj poseda.
+Teža stene in strehe se na temelju porazdeli po dvakrat večji ploskvi, zato je tlak na zemljo približno dvakrat manjši. Zemlja manj popusti in hiša se manj poseda.
 :::
 
 **4. Tekočine pritiskajo v vse smeri.** Voda v rezervoarju zaradi svoje teže pritiska na dno, pa tudi na stene in na vsak predmet v njej. Ta tlak deluje **v vseh smereh** in vedno pravokotno na ploskev, ki se je tekočina dotika. Na isti globini je tlak povsod enak, z globino pa narašča.
@@ -180,7 +180,7 @@ $h = 15\,\mathrm{m}$. Smiselno: vsakih $10\,\mathrm{m}$ vode da približno $100\
 - Tekočina pritiska v vse smeri, pravokotno na ploskve; na isti globini je tlak enak.
 - Hidrostatični tlak: $p = \rho g h$, $h$ je globina pod gladino. Ni odvisen od oblike posode ali količine tekočine.
 - V vodi tlak naraste za približno $100\,000\,\mathrm{Pa}$ na vsakih $10\,\mathrm{m}$.
-- Silo na ploskev dobimo s $F = p \cdot S$.
+- Silo na ploskev dobimo z $F = p \cdot S$.
 
 ## Drugače: Na sliki
 

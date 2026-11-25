@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -29,7 +29,7 @@ Kompleks v oglatem oklepaju je **notranja sfera**; ioni zunaj nje (**zunanja sfe
 
 1. V soli najprej imenujemo kation, nato anion (kot pri $\mathrm{NaCl}$: natrijev klorid).
 2. V kompleksu najprej ligande **po abecedi**, nato kovino. Množilne predpone (di-, tri-, tetra-, penta-, heksa-; pri zapletenih ligandih bis-, tris-) pri abecedi ne štejejo.
-3. Anionski ligandi dobijo končnico -o: klorido ($\mathrm{Cl^-}$), cianido ($\mathrm{CN^-}$), hidroksido, okso, oksalato; v starejših knjigah kloro, ciano. Nevtralni: akva ($\mathrm{H_2O}$), amin ($\mathrm{NH_3}$), karbonil ($\mathrm{CO}$), etilendiamin.
+3. Anionski ligandi dobijo končnico -o: klorido ($\mathrm{Cl^-}$), cianido ($\mathrm{CN^-}$), hidroksido, oksido, oksalato; v starejših knjigah kloro, ciano, okso. Nevtralni: akva ($\mathrm{H_2O}$), amin ($\mathrm{NH_3}$), karbonil ($\mathrm{CO}$), etilendiamin.
 4. Oksidacijsko število kovine z rimsko številko v oklepaju. V kationu je kovina pridevnik (kobaltov, bakrov), v nevtralnem kompleksu samostalnik (platina), v anionu dobi končnico -at: ferat (Fe), kuprat (Cu), kobaltat, platinat, kromat, nikljat.
 
 Zgledi: $[\mathrm{Cu(NH_3)_4}]\mathrm{SO_4}$ je tetraaminbakrov(II) sulfat; $\mathrm{K_4[Fe(CN)_6]}$ je kalijev heksacianidoferat(II); $[\mathrm{PtCl_2(NH_3)_2}]$ je diamindikloridoplatina(II).
@@ -49,14 +49,17 @@ Zgledi: $[\mathrm{Cu(NH_3)_4}]\mathrm{SO_4}$ je tetraaminbakrov(II) sulfat; $\ma
 - **geometrijski**: *cis* (enaka liganda sosednja, pod $90^\circ$) in *trans* (nasprotna, $180^\circ$); pri $\mathrm{MA_3B_3}$ *fac* (trije enaki na eni ploskvi oktaedra) in *mer* (na »poldnevniku«);
 - **optični**: zrcalni sliki, ki se ne prekrivata (enantiomera). Kompleks je kiralen, če nima zrcalne ravnine in nima središča simetrije (strogo: nobene zrcalne rotacijske osi); tipična primera sta $[\mathrm{M(AA)_3}]$ in *cis*-$[\mathrm{M(AA)_2B_2}]$.
 
-```
-  cis               trans
- Cl   NH3         Cl   NH3
-   \ /              \ /
-   Pt               Pt
-   / \              / \
- Cl   NH3      H3N     Cl
-```
+:::risba molekula
+opis: Dve kvadratno planarni strukturi z atomom platine Pt v sredini in štirimi ligandi v ogliščih. Levo cis: klorova liganda Cl sta sosednja (levo zgoraj in levo spodaj), amoniaka NH₃ sta desno zgoraj in desno spodaj. Desno trans: klorova liganda sta nasprotna (levo zgoraj in desno spodaj), amoniaka pa desno zgoraj in levo spodaj.
+---
+   cis            trans
+
+Cl    NH3      Cl    NH3
+  \  /           \  /
+   Pt             Pt
+  /  \           /  \
+Cl    NH3     H3N    Cl
+:::
 
 V tetraedru so vsi štirje položaji med seboj sosednji (vsi koti $109{,}5^\circ$), zato $\mathrm{MA_2B_2}$ nima *cis* in *trans*.
 
@@ -70,11 +73,30 @@ Tri. *Trans* izomer ima zrcalno ravnino (vsebuje oba obroča en), zato je akiral
 $$\Delta_\mathrm{t} \approx \frac{4}{9}\Delta_\mathrm{o}.$$
 Razlogi: le štirje ligandi namesto šestih in nobena orbitala ne kaže naravnost proti njim. Ker je $\Delta_\mathrm{t}$ skoraj vedno manjši od energije parjenja, so tetraedrski kompleksi **visokospinski**. Težišče se spet ohrani: $e$ je pri $-0{,}6\,\Delta_\mathrm{t}$, $t_2$ pri $+0{,}4\,\Delta_\mathrm{t}$.
 
-```
- oktaeder        tetraeder
- -- --   e_g     -- -- --  t2
- -- -- -- t2g    -- --     e
-```
+:::risba skica
+opis: Energijski diagram razcepa orbital d. Levo oktaeder: spodaj tri orbitale t₂g pri −0,4 Δo, zgoraj dve orbitali eg pri +0,6 Δo, med njima razcep Δo. Desno tetraeder, obrnjeno in z manjšim razcepom Δt, ki je 4/9 Δo: spodaj dve orbitali e pri −0,6 Δt, zgoraj tri orbitale t₂ pri +0,4 Δt.
+območje: 0; 0 .. 34; 16
+napis: 5,2; 15 | oktaeder
+napis: 22,7; 15 | tetraeder
+črta: 2,5; 12,4 -> 4,9; 12,4 | debelo
+črta: 5,5; 12,4 -> 7,9; 12,4 | debelo
+črta: 1; 3,4 -> 3,4; 3,4 | debelo
+črta: 4; 3,4 -> 6,4; 3,4 | debelo
+črta: 7; 3,4 -> 9,4; 3,4 | debelo
+napis: 10; 12,4 | e_g | desno
+napis: 10; 3,4 | t_{2g} | desno
+puščica: 14,2; 12,4 -> 14,2; 3,4 | | | siva
+puščica: 14,2; 3,4 -> 14,2; 12,4 | Δ_o | desno | siva
+črta: 18,5; 8,6 -> 20,9; 8,6 | debelo
+črta: 21,5; 8,6 -> 23,9; 8,6 | debelo
+črta: 24,5; 8,6 -> 26,9; 8,6 | debelo
+črta: 20; 4,6 -> 22,4; 4,6 | debelo
+črta: 23; 4,6 -> 25,4; 4,6 | debelo
+napis: 27,5; 8,6 | t_2 | desno
+napis: 27,5; 4,6 | e | desno
+puščica: 30,5; 8,6 -> 30,5; 4,6 | | | siva
+puščica: 30,5; 4,6 -> 30,5; 8,6 | Δ_t | desno | siva
+:::
 
 **Kvadratno planarno** polje si predstavljamo kot oktaeder, iz katerega odmaknemo liganda na osi $z$. Orbitale z delom $z$ se znižajo, $d_{x^2-y^2}$ (kaže proti štirim ligandom v ravnini) pa ostane daleč najvišje. Pri $d^8$ in močnem polju je ta orbitala prazna, vseh osem elektronov je sparjenih in kompleks je **diamagneten**. To so kompleksi $\mathrm{Pt^{2+}}$, $\mathrm{Pd^{2+}}$, $\mathrm{Au^{3+}}$ in $\mathrm{Ni^{2+}}$ z močnimi ligandi.
 
@@ -122,9 +144,9 @@ naboj kompleksa = oksidacijsko število + vsota nabojev ligandov; z $\mathrm{Ag^
 
 ### Primer 2: izomeri kobaltovega kompleksa
 
-Za oktaedrski kompleks $[\mathrm{Co(NH_3)_3Cl_3}]$ določi število in vrsto stereoizomerov. Kaj se spremeni, če tri $\mathrm{NH_3}$ zamenjamo z enim tridonornim ligandom, ki lahko zasede le tri sosednja mesta na eni ploskvi?
+Za oktaedrski kompleks $[\mathrm{Co(NH_3)_3Cl_3}]$ določi število in vrsto stereoizomerov. Kaj se spremeni, če tri $\mathrm{NH_3}$ zamenjamo z enim troveznim ligandom, ki lahko zasede le tri sosednja mesta na eni ploskvi?
 
-**Podatki:** oktaeder, $\mathrm{MA_3B_3}$ ($\mathrm{A} = \mathrm{NH_3}$, $\mathrm{B} = \mathrm{Cl^-}$); v drugem delu tridonorni ligand le na eni ploskvi
+**Podatki:** oktaeder, $\mathrm{MA_3B_3}$ ($\mathrm{A} = \mathrm{NH_3}$, $\mathrm{B} = \mathrm{Cl^-}$); v drugem delu trovezni ligand le na eni ploskvi
 **Iščemo:** število stereoizomerov v obeh primerih
 
 :::formula
@@ -137,7 +159,7 @@ $\mathrm{MA_3B_3}$: *fac* (trije A na eni ploskvi) in *mer* (trije A na poldnevn
 2. Pri *fac* so koti A–Co–A vsi $90^\circ$; pri *mer* je en kot $180^\circ$.
 3. Oba izomera imata zrcalno ravnino, zato nista kiralna.
 4. Ligand, ki lahko zasede le tri sosednja mesta na eni ploskvi, dovoli le *fac*.
-5. Odgovor: $[\mathrm{Co(NH_3)_3Cl_3}]$ ima dva stereoizomera, *fac* in *mer*; s takim tridonornim ligandom ostane en sam (*fac*).
+5. Odgovor: $[\mathrm{Co(NH_3)_3Cl_3}]$ ima dva stereoizomera, *fac* in *mer*; s takim troveznim ligandom ostane en sam (*fac*).
 
 ### Primer 3: oblika iz magnetnega momenta
 
@@ -154,7 +176,7 @@ $\mu = \sqrt{n(n+2)}\,\mu_\mathrm{B}$; tetraeder: $\mathrm{LFSE} = (-0{,}6\,n_e 
 
 1. Oksidacijsko število: $-2 - 4 \cdot (-1) = +2$ v obeh; Ni je v 10. skupini, zato $10 - 2 = 8$ elektronov $d$.
 2. Imeni (anion, končnica -at): tetrakloridonikljat(II) in tetracianidonikljat(II).
-3. Iz $\mu$: $\sqrt{n(n+2)} = 2{,}8$ da $n = 2$, saj je $\sqrt{8} \approx 2{,}83$. (Izmerjeni moment tetraedrskih kompleksov Ni(II) je zaradi orbitalnega prispevka višji, okoli $3{,}5$ do $4\,\mu_\mathrm{B}$; tudi to vrednost razložita le dva neparna elektrona, saj bi trije dali vsaj $3{,}87\,\mu_\mathrm{B}$ brez orbitalnega dela.)
+3. Iz $\mu$: $\sqrt{n(n+2)} = 2{,}8$ da $n = 2$, saj je $\sqrt{8} \approx 2{,}83$. (Izmerjeni moment tetraedrskih kompleksov Ni(II) je zaradi orbitalnega prispevka višji, okoli $3{,}5$ do $4\,\mu_\mathrm{B}$; tudi to vrednost razložita le dva neparna elektrona, saj ima ion $d^8$ lahko le nič ali dva neparna elektrona.)
 4. Tetraeder pri $d^8$: $e^4\,t_2^4$, v $t_2$ sta dva neparna elektrona. Kvadrat pri $d^8$: prazna $d_{x^2-y^2}$, nič neparnih. Torej je $[\mathrm{NiCl_4}]^{2-}$ tetraedrski, $[\mathrm{Ni(CN)_4}]^{2-}$ kvadratno planaren.
 5. To se ujema s spektrokemijsko vrsto: šibki in veliki ligandi $\mathrm{Cl^-}$ dajo tetraeder z majhnim razcepom, močni $\mathrm{CN^-}$ velik razcep, pri katerem se prazna $d_{x^2-y^2}$ izplača.
 6. LFSE: $(-0{,}6 \cdot 4 + 0{,}4 \cdot 4)\,\Delta_\mathrm{t} = -0{,}8\,\Delta_\mathrm{t} \approx -0{,}8 \cdot \frac{4}{9}\Delta_\mathrm{o} \approx -0{,}36\,\Delta_\mathrm{o}$.
@@ -188,7 +210,7 @@ $\ln K = 9{,}67 \cdot \ln 10 \approx 22{,}27$, zato $\Delta G^\circ = -8{,}314 \
 
 - **KŠ = število ligandov.** $[\mathrm{Co(en)_3}]^{3+}$ ima tri ligande, a KŠ $6$. Štej donorske atome.
 - **Vsi kloridi se oborijo.** Klorid, vezan v notranji sferi, z $\mathrm{Ag^+}$ ne reagira hitro. Iz mase oborine sklepamo, koliko kloridov je zunaj, kar je bil Wernerjev dokaz zgradbe.
-- **Cis in trans pri tetraedru.** V tetraedru so vsi položaji sosednji, zato $\mathrm{MA_2B_2}$ ni geometrijskih izomerov. Dva izomera kažeta na kvadratno planarno obliko.
+- **Cis in trans pri tetraedru.** V tetraedru so vsi položaji sosednji, zato $\mathrm{MA_2B_2}$ nima geometrijskih izomerov. Dva izomera kažeta na kvadratno planarno obliko.
 - **Tetraedrski razcep kot oktaedrski.** V tetraedru sta spodaj *dve* orbitali ($e$), razcep je le okoli $\frac{4}{9}\Delta_\mathrm{o}$ in nizkospinskih tetraedrskih kompleksov skoraj ni.
 - **Abeceda s predponami.** Pri $[\mathrm{CoCl_2(NH_3)_4}]^+$ odloča prva črka imena liganda, ne predpona: amin je pred klorido, zato tetraamindikloridokobaltov(III) ion, ne »dikloridotetraaminkobaltov(III)«.
 
@@ -258,15 +280,22 @@ Vijolična spojina A in rdeča spojina B imata isto sestavo $\mathrm{CoBr(NH_3)_
 
 Oktaeder s šestimi mesti, oštevilčenimi tako, da sta $1$ in $6$ nasprotna:
 
-```
-        1
-        |
-   5 -- M -- 3
-       /|
-      4 2
-        |
-        6
-```
+:::risba skica
+opis: Oktaeder: kovina M v sredini in šest mest na treh med seboj pravokotnih oseh. Mesto 1 je zgoraj, mesto 6 spodaj; mesto 5 levo, mesto 3 desno; mesto 2 zadaj desno zgoraj, mesto 4 spredaj levo spodaj. Nasprotni pari so 1 in 6, 2 in 4, 3 in 5.
+območje: -4; -4 .. 4; 4
+enota: 30
+črta: 0; -3 -> 0; 3
+črta: -3; 0 -> 3; 0
+črta: -1,6; -1,2 -> 1,6; 1,2
+krog: 0; 0 | 0,45 | ozadje
+napis: 0; 0 | M
+napis: 0; 3 | 1 | nad
+napis: 0; -3 | 6 | pod
+napis: -3; 0 | 5 | levo
+napis: 3; 0 | 3 | desno
+napis: 1,6; 1,2 | 2 | nad desno
+napis: -1,6; -1,2 | 4 | pod levo
+:::
 
 Nasprotni pari so $1$–$6$, $2$–$4$, $3$–$5$; vsi drugi pari so *cis*. Pri $\mathrm{MA_4B_2}$ dasta B na $1, 6$ *trans*, na $1, 2$ *cis*. Pri $\mathrm{MA_3B_3}$ dajo A na $1, 2, 3$ *fac* (ploskev), na $1, 3, 6$ *mer*. Vsako drugo razporeditev z rotacijo prevedeš na eno od teh.
 
@@ -281,7 +310,7 @@ Barvni krog pomaga pri barvi: kompleks z vrhom absorpcije v rumenem delu je vijo
 
 ## Drugače: Bolj natančno
 
-**Teorija ligandnega polja.** Kristalno polje ligande obravnava kot točkaste naboje in ne pojasni, zakaj je nevtralni $\mathrm{CO}$ močnejši ligand od $\mathrm{F^-}$. Teorija molekulskih orbital to pojasni z vezmi π: ligandi π-akceptorji ($\mathrm{CO}$, $\mathrm{CN^-}$) imajo prazne orbitale π*, ki znižajo $t_{2g}$ in povečajo $\Delta_\mathrm{o}$; ligandi π-donorji ($\mathrm{Cl^-}$, $\mathrm{OH^-}$) zapolnjene orbitale p dvignejo $t_{2g}$ in zmanjšajo $\Delta_\mathrm{o}$. Od tod vrstni red spektrokemijske vrste: π-donorji < čisti σ-donorji < π-akceptorji.
+**Teorija ligandnega polja.** Kristalno polje ligande obravnava kot točkaste naboje in ne pojasni, zakaj je nevtralni $\mathrm{CO}$ močnejši ligand od $\mathrm{F^-}$. Teorija molekulskih orbital to pojasni z vezmi π: ligandi π-akceptorji ($\mathrm{CO}$, $\mathrm{CN^-}$) imajo prazne orbitale π*, ki znižajo $t_{2g}$ in povečajo $\Delta_\mathrm{o}$; ligandi π-donorji ($\mathrm{Cl^-}$, $\mathrm{OH^-}$) z zapolnjenimi orbitalami p dvignejo $t_{2g}$ in zmanjšajo $\Delta_\mathrm{o}$. Od tod vrstni red spektrokemijske vrste: π-donorji < čisti σ-donorji < π-akceptorji.
 
 **Pravilo 18 elektronov.** Karbonilni kompleksi nizkovalentnih kovin so obstojni, kadar je vsota elektronov $d$ kovine in elektronov, ki jih podarijo ligandi, enaka $18$: $[\mathrm{Ni(CO)_4}]$ ima $10 + 4 \cdot 2 = 18$, $[\mathrm{Cr(CO)_6}]$ $6 + 6 \cdot 2 = 18$.
 
@@ -336,7 +365,7 @@ Barvni krog pomaga pri barvi: kompleks z vrhom absorpcije v rumenem delu je vijo
 :::simboli
 \Delta_\mathrm{o} | oktaedrski razcep kristalnega polja | | kJ/mol
 \Delta_\mathrm{t} | tetraedrski razcep kristalnega polja | \Delta_\mathrm{t} \approx \frac{4}{9}\Delta_\mathrm{o} | kJ/mol
-\mu | magnetni moment (samo spin) | \mu = \sqrt{n(n+2)}\,\mu_\mathrm{B} | –
+\mu | magnetni moment (samo spin) | \mu = \sqrt{n(n+2)}\,\mu_\mathrm{B} | \mu_\mathrm{B}
 n | število neparnih elektronov | | –
 n_e, n_t | število elektronov v $e$ oz. $t_2$ | | –
 \beta_3, \beta_6, \beta_3' | celokupne konstante tvorbe | | – | z ustreznimi enotami koncentracije

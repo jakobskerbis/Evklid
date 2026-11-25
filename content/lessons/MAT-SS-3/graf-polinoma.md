@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -37,10 +37,8 @@ Tu je $x_1$ ničla stopnje $k_1$, $x_2$ ničla stopnje $k_2$ in tako naprej.
 
 Stopnja ničle odloči, kaj graf naredi ob njej. Faktor $(x - 1)^2$ je kvadrat, zato je levo in desno od $1$ pozitiven. Ob ničli stopnje $2$ se predznak polinoma torej ne spremeni: graf se osi $x$ le dotakne in se obrne nazaj. Faktor $(x - 1)$ ali $(x - 1)^3$ pa je levo od $1$ negativen, desno pozitiven. Predznak se zamenja in graf os seka.
 
-| stopnja ničle | graf ob ničli | predznak |
-|---|---|---|
-| liha ($1, 3, \dots$) | seka os $x$ | se zamenja |
-| soda ($2, 4, \dots$) | se dotakne osi $x$ | ostane enak |
+- Ničla lihe stopnje ($1, 3, \dots$): graf seka os $x$, predznak se zamenja.
+- Ničla sode stopnje ($2, 4, \dots$): graf se osi $x$ dotakne, predznak ostane enak.
 
 Pri stopnji $3$ ali več se graf ob ničli še splošči: dlje časa se drži tik ob osi.
 
@@ -58,9 +56,9 @@ Pod osjo. Med $-1$ in $1$ leži le ničla $0$, ta pa je stopnje $2$, zato se pre
 
 | $x$ | $p(x)$ | $x^3$ |
 |---|---|---|
-| $10$ | $5$ | $1000$ |
-| $100$ | $900\,005$ | $1\,000\,000$ |
-| $1000$ | $990\,000\,005$ | $1\,000\,000\,000$ |
+| $10$ | $5$ | $10^3$ |
+| $100$ | $900\,005$ | $10^6$ |
+| $1000$ | $990\,000\,005$ | $10^9$ |
 
 Pri $x = 10$ sta vrednosti še zelo različni, pri $x = 1000$ se razlikujeta le še za odstotek. Vodilni člen raste hitreje od vseh drugih in jih prevlada. Za polinom stopnje $n$ z vodilnim koeficientom $a_n$ zato velja
 
@@ -68,10 +66,12 @@ $$p(x) \approx a_n x^n \quad \text{za zelo velike } |x|.$$
 
 Kam gresta kraka grafa, določata le parnost stopnje $n$ in predznak $a_n$:
 
-| | $a_n > 0$ | $a_n < 0$ |
+| | levo | desno |
 |---|---|---|
-| $n$ sod | levo $+\infty$, desno $+\infty$ | levo $-\infty$, desno $-\infty$ |
-| $n$ lih | levo $-\infty$, desno $+\infty$ | levo $+\infty$, desno $-\infty$ |
+| $n$ sod, $a_n > 0$ | $+\infty$ | $+\infty$ |
+| $n$ sod, $a_n < 0$ | $-\infty$ | $-\infty$ |
+| $n$ lih, $a_n > 0$ | $-\infty$ | $+\infty$ |
+| $n$ lih, $a_n < 0$ | $+\infty$ | $-\infty$ |
 
 »Desno $+\infty$« pomeni: ko gre $x \to +\infty$, gre $p(x) \to +\infty$, graf se dviga čez vse meje. Pri sodi stopnji sta kraka na isti strani osi $x$, pri lihi na nasprotnih. Predznak $a_n$ vedno pove, kam gre desni krak.
 
@@ -94,6 +94,15 @@ Oba navzdol, levo in desno $-\infty$. Vodilni člen je $-x^4$: stopnja $4$ je so
 V simulaciji spodaj, »Graf polinoma: ničle in njihova stopnja«, nastavi stopnjo ničle $x_2$ najprej na $2$, nato na $1$ in na $3$. Opazuj, kdaj graf os $x$ ob $x_2$ seka in kdaj se je le dotakne. Bodi pozoren še na levi krak: kaj se zgodi z njim, ko se skupna stopnja spremeni iz sode v liho?
 
 **Rešitev uganke.** V modelu $T(t) = -0{,}04\,(t - 2)(t - 7)^2$ je $t = 7$ ničla stopnje $2$. Graf se osi le dotakne, predznak se ne zamenja. Med $t = 2$ in $t = 7$ je temperatura negativna, npr. $T(5) = -0{,}04 \cdot 3 \cdot 4 = -0{,}48$. Zato je negativna tudi po $t = 7$. Ob 1.00 se je zrak le ogrel do ledišča in se spet ohladil, nad ledišče se do 4.00 ni dvignil.
+
+**8. Sestavljanje modela (višja raven).** Model iz uganke je bil podan. Kako ga sestavimo sami?
+
+1. Izberemo spremenljivki z enotama in območje, na katerem model velja.
+2. Izberemo obliko. Če poznamo ničle in vemo, ali graf ob njih os seka ali se je dotakne, vzamemo razcepljeno obliko $a\,(x - x_1)^{k_1}\cdots$, neznan je le $a$. Če imamo le meritve, vzamemo razvito obliko z neznanimi koeficienti. Polinom stopnje $n$ ima $n + 1$ koeficientov, zato ga določa $n + 1$ točk z različnimi $x$.
+3. Koeficiente izračunamo: $a$ iz ene točke, v razviti obliki pa iz sistema linearnih enačb (vsaka točka da eno enačbo).
+4. Model preverimo z meritvijo, ki je nismo uporabili, in povemo, kje ni več smiseln.
+
+Izberemo najmanjšo stopnjo, ki ustreza podatkom. Kraki grafa gredo v $\pm\infty$, zato polinomski model velja le na omejenem območju.
 
 ## Rešeni primeri
 
@@ -161,6 +170,33 @@ Koliko je $a$ in kam gresta kraka?
 Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$. Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.
 :::
 
+### Primer 4 (višja raven): model iz meritev
+
+Po zaužitju tablete merijo koncentracijo zdravila v krvi $C$ (v $\mathrm{mg/l}$) ob času $t$ (v urah):
+
+| $t$ | $0$ | $1$ | $2$ | $3$ | $4$ |
+|---|---|---|---|---|---|
+| $C$ | $0$ | $25$ | $32$ | $27$ | $16$ |
+
+Iz prvih štirih meritev sestavi model s polinomom tretje stopnje, ga preveri s peto in ugotovi, kdaj po modelu zdravila v krvi ni več.
+
+**Podatki:** meritve $(0, 0)$, $(1, 25)$, $(2, 32)$, $(3, 27)$, kontrolna $(4, 16)$; polinom tretje stopnje
+**Iščemo:** model $C(t)$, njegovo ničlo po zaužitju in območje veljavnosti
+
+:::formula
+$C(t) = a_3 t^3 + a_2 t^2 + a_1 t + a_0$; vsaka meritev $(t_i, C_i)$ da enačbo $C(t_i) = C_i$.
+:::
+
+**Rešitev:**
+
+1. Iz $C(0) = 0$ sledi $a_0 = 0$.
+2. Ostale tri meritve dajo sistem (drugo in tretjo enačbo smo delili z $2$ in $3$): $a_3 + a_2 + a_1 = 25$, $4a_3 + 2a_2 + a_1 = 16$, $9a_3 + 3a_2 + a_1 = 9$.
+3. Odštejemo zaporedni enačbi: $3a_3 + a_2 = -9$ in $5a_3 + a_2 = -7$. Od tod $2a_3 = 2$, torej $a_3 = 1$, $a_2 = -12$, $a_1 = 36$.
+4. Model: $C(t) = t^3 - 12t^2 + 36t = t\,(t - 6)^2$.
+5. Preizkus s peto meritvijo: $C(4) = 4 \cdot 4 = 16$. Ujema se.
+6. Ničla $6$ je stopnje $2$: graf se osi dotakne in se obrne navzgor. Za $t > 6$ bi koncentracija spet rasla, česar brez nove tablete ni.
+7. Odgovor: $C(t) = t\,(t - 6)^2$; po modelu zdravila v krvi ni več po $6$ urah, model velja za $0 \le t \le 6$.
+
 ## Pogoste napake
 
 - **»Vsaka ničla je presečišče.«** Kdor tako misli, nariše pri $(x - 1)^2$ graf, ki gre čez os. Toda kvadrat je na obeh straneh pozitiven, zato se graf osi le dotakne. Popravek: pri vsaki ničli najprej poglej eksponent njenega faktorja.
@@ -171,11 +207,124 @@ Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}
 
 ## Povzetek
 
-- V razcepu $p(x) = a\,(x - x_1)^{k_1}(x - x_2)^{k_2}\cdots$ je $k_1$ stopnja ničle $x_1$.
-- Ničla lihe stopnje: graf seka os $x$, predznak se zamenja. Ničla sode stopnje: graf se osi dotakne, predznak ostane.
+**Stopnja ničle:** v razcepu
+
+$$p(x) = a\,(x - x_1)^{k_1}(x - x_2)^{k_2}\cdots$$
+
+je $k_1$ stopnja ničle $x_1$.
+
+- Ničla **lihe stopnje**: graf seka os $x$, predznak se zamenja.
+- Ničla **sode stopnje**: graf se osi dotakne, predznak ostane.
+
 - Med sosednjima ničlama je predznak stalen; določiš ga z eno testno točko.
-- Za velike $|x|$ je $p(x) \approx a_n x^n$. Sod $n$: kraka na isti strani; lih $n$: na nasprotnih. Predznak $a_n$ pove smer desnega kraka.
-- Presečišče z osjo $y$ je $(0, p(0))$.
+- Za velike $|x|$ je $p(x) \approx a_n x^n$.
+- Sod $n$: kraka na isti strani; lih $n$: na nasprotnih.
+- Predznak $a_n$ pove smer desnega kraka.
+- **Presečišče z osjo $y$** je $(0, p(0))$.
+
+## Ponovitev
+
+**Formule**
+- $p(x) = a\,(x - x_1)^{k_1}(x - x_2)^{k_2}\cdots$ (na pamet)
+- $k$ lih: graf seka os $x$; $k$ sod: se je dotakne (na pamet)
+- Za velike $|x|$: $p(x) \approx a_n x^n$ (na pamet)
+- Presečišče z osjo $y$: $(0, p(0))$ (na pamet)
+
+**Postopek**
+1. Polinom razcepi in odčitaj ničle z njihovimi stopnjami.
+2. Izračunaj $p(0)$.
+3. Iz $a_n x^n$ določi smer obeh krakov.
+4. Pri vsaki ničli odloči, ali graf seka os ali se je dotakne.
+5. Nariši graf od leve proti desni; dvom razreši s testno točko.
+
+**Pazi na**
+- Pri ničli sode stopnje se graf osi le dotakne, predznak ostane.
+- Predznaki se izmenjujejo le, če so vse ničle lihe stopnje.
+- Kraka določa člen z najvišjo potenco, ne prosti člen.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Rešite neenačbo $x^3 - 4x^2 + 4x \le 0$.
+
+**Rešitev:**
+
+1. Razcep: $x^3 - 4x^2 + 4x = x(x^2 - 4x + 4) = x(x - 2)^2$. Ničli sta $0$ (stopnje $1$) in $2$ (stopnje $2$).
+2. Vodilni koeficient je pozitiven, zato je za $x > 2$ polinom pozitiven. Pri $2$ (soda stopnja) se predznak ne zamenja: na $(0, 2)$ je pozitiven. Pri $0$ (liha stopnja) se zamenja: za $x < 0$ je negativen.
+3. Polinom je negativen za $x < 0$, enak $0$ pa pri $x = 0$ in $x = 2$.
+4. Odgovor: $x \in (-\infty, 0] \cup \{2\}$.
+
+**Točkovanje:** 1 točka za razcep $x(x - 2)^2$, 1 točka za pravilne predznake (brez menjave pri $2$), 1 točka za rešitev $(-\infty, 0] \cup \{2\}$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dan je polinom $p(x) = -x^3 + 3x + 2$.
+
+a) Pokažite, da je število $2$ ničla polinoma $p$, in razcepite $p$ na linearne faktorje. (2 točki)
+b) Zapišite ničle polinoma $p$ z njihovimi stopnjami, presečišče grafa z osjo $y$ in obnašanje obeh krakov. Nato skicirajte graf polinoma $p$. (3 točke)
+c) Rešite neenačbo $p(x) > 0$. (2 točki)
+
+**Rešitev:**
+
+1. a) Hornerjev algoritem z $2$ na koeficientih $-1, 0, 3, 2$: $-1$; $-2$; $-1$; $0$. Ostanek $0$ pomeni $p(2) = 0$, količnik je $-x^2 - 2x - 1 = -(x + 1)^2$.
+2. a) $p(x) = -(x - 2)(x + 1)^2$.
+3. b) Ničli: $-1$ stopnje $2$ (graf se osi dotakne) in $2$ stopnje $1$ (graf os seka). $p(0) = 2$, presečišče z osjo $y$ je $(0, 2)$.
+4. b) Vodilni člen je $-x^3$: stopnja je liha, koeficient negativen, zato gre levi krak v $+\infty$, desni v $-\infty$.
+5. b) Predznaki od desne: za $x > 2$ negativen; pri $2$ se zamenja, na $(-1, 2)$ pozitiven; pri $-1$ (soda) ostane, za $x < -1$ pozitiven. Skica: graf pride z leve od zgoraj, se pri $-1$ osi dotakne in se vrne navzgor, gre skozi $(0, 2)$, pri $2$ preseka os in pada proti $-\infty$.
+6. c) $p(x) > 0$ velja povsod levo od $2$, razen v ničli $-1$.
+7. Odgovor: $p(x) = -(x - 2)(x + 1)^2$; neenačba velja za $x \in (-\infty, -1) \cup (-1, 2)$.
+
+**Točkovanje:** a) 1 točka za $p(2) = 0$ in količnik, 1 točka za razcep $-(x - 2)(x + 1)^2$; b) 1 točka za ničli s stopnjama in točko $(0, 2)$, 1 točka za kraka, 1 točka za skico (dotik pri $-1$, sekanje pri $2$); c) 1 točka za $x < 2$, 1 točka za izločitev $x = -1$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 2 (z računalom)
+
+Po močnem deževju se gladina zadrževalnika dvigne nad običajno višino. Odmik gladine od običajne višine $v$ (v centimetrih) $d$ dni po začetku dežja opišemo s polinomom tretje stopnje. Pri $d = 0$ je gladina na običajni višini. Pri $d = 8$ se vrne na običajno višino in graf se tam osi $d$ le dotakne. Pri $d = 2$ je bila gladina $36\,\mathrm{cm}$ nad običajno.
+
+a) Sestavite polinom $v(d)$, ki ustreza opisu. (3 točke)
+b) Za koliko centimetrov je bila gladina nad običajno višino pri $d = 5$? (1 točka)
+c) Zapornica je odprta, kadar je gladina vsaj $32\,\mathrm{cm}$ nad običajno. Pokažite, da je $d = 4$ rešitev enačbe $v(d) = 32$, in poiščite še njeni drugi rešitvi. (3 točke)
+d) Koliko časa je zapornica odprta? Rezultat zaokrožite na celo uro. (2 točki)
+e) Pojasnite, zakaj model ne velja za $d > 8$. (1 točka)
+
+**Rešitev:**
+
+1. a) Ničli sta $0$ in $8$. Dotik pri $8$ pomeni sodo stopnjo ničle, torej faktor $(d - 8)^2$. Polinom je tretje stopnje, zato ostane za ničlo $0$ faktor $d$: $v(d) = a\,d\,(d - 8)^2$.
+2. a) Iz $v(2) = a \cdot 2 \cdot 36 = 72a = 36$ sledi $a = \frac{1}{2}$, torej $v(d) = \frac{1}{2}\,d\,(d - 8)^2$.
+3. b) $v(5) = \frac{1}{2} \cdot 5 \cdot 9 = 22{,}5\,\mathrm{cm}$.
+4. c) $v(4) = \frac{1}{2} \cdot 4 \cdot 16 = 32$, zato je $d = 4$ rešitev. Enačba $\frac{1}{2}\,d\,(d - 8)^2 = 32$ je enakovredna $d^3 - 16d^2 + 64d - 64 = 0$.
+5. c) Horner s $4$ na $1, -16, 64, -64$: $1$; $-12$; $16$; $0$. Količnik je $d^2 - 12d + 16$.
+6. c) $d^2 - 12d + 16 = 0$ da $d = 6 \pm 2\sqrt{5}$, torej $d \approx 1{,}5279$ ali $d \approx 10{,}4721$. Druga rešitev je zunaj območja modela $0 \le d \le 8$.
+7. d) Pri $d = 2$ je $v = 36 > 32$, zato je gladina vsaj $32\,\mathrm{cm}$ nad običajno med $d = 6 - 2\sqrt{5}$ in $d = 4$. Med $4$ in $8$ ni več nobene rešitve, zato tam ostane pod $32\,\mathrm{cm}$.
+8. d) Trajanje: $4 - (6 - 2\sqrt{5}) = 2\sqrt{5} - 2 \approx 2{,}4721$ dneva $\approx 59{,}33\,\mathrm{h}$.
+9. e) Za $d > 8$ sta $d$ in $(d - 8)^2$ pozitivna in desni krak gre v $+\infty$. Gladina bi se brez dežja dvigovala v nedogled, kar ni smiselno; model opisuje le $0 \le d \le 8$.
+10. Odgovor: $v(d) = \frac{1}{2}\,d\,(d - 8)^2$; $v(5) = 22{,}5\,\mathrm{cm}$; druga rešitev v območju modela je $d = 6 - 2\sqrt{5} \approx 1{,}53$; zapornica je odprta približno $59$ ur.
+
+**Točkovanje:** a) 1 točka za ničli $0$ in $8$ s pravima stopnjama, 1 točka za obliko $a\,d\,(d - 8)^2$, 1 točka za $a = \frac{1}{2}$; b) 1 točka za $22{,}5\,\mathrm{cm}$; c) 1 točka za $v(4) = 32$; 1 točka za količnik $d^2 - 12d + 16$; 1 točka za $d = 6 \pm 2\sqrt{5}$; d) 1 točka za interval $[6 - 2\sqrt{5}, 4]$; 1 točka za približno $59$ ur; e) 1 točka za utemeljitev.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kako stopnja ničle vpliva na obliko grafa polinoma ob tej ničli in zakaj?
+---
+Če je $c$ ničla stopnje $k$, lahko polinom zapišemo kot $p(x) = (x - c)^k s(x)$, kjer je $s(c) \ne 0$. Blizu $c$ ima $s$ stalen predznak, zato se predznak $p$ zamenja natanko takrat, ko se zamenja predznak $(x - c)^k$. Pri lihi stopnji $k$ se predznak zamenja in graf seka os $x$. Pri sodi stopnji $k$ predznak ostane in se graf osi $x$ le dotakne. Pri stopnji $3$ ali več se graf ob ničli še splošči.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Kako iz stopnje in vodilnega koeficienta polinoma ugotovimo, kam gresta kraka njegovega grafa?
+---
+Za zelo velike $|x|$ vodilni člen prevlada nad drugimi, zato je $p(x) \approx a_n x^n$. Predznak vodilnega koeficienta $a_n$ pove, kam gre desni krak: pri $a_n > 0$ v $+\infty$, pri $a_n < 0$ v $-\infty$. Pri sodi stopnji $n$ gre levi krak v isto smer kot desni. Pri lihi stopnji $n$ gre levi krak v nasprotno smer.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Pojasni postopek reševanja polinomske neenačbe na primeru $(x - 1)^2(x + 2) > 0$.
+---
+Najprej določimo ničle in njihove stopnje: $1$ je ničla stopnje $2$, $-2$ pa ničla stopnje $1$. Vodilni koeficient je pozitiven, zato je polinom za $x > 1$ pozitiven. Pri ničli $1$ sode stopnje se predznak ne zamenja, zato je polinom pozitiven tudi na $(-2, 1)$; pri ničli $-2$ lihe stopnje se zamenja, zato je za $x < -2$ negativen. Ker je neenačba stroga, ničel ne vključimo, in rešitev je $(-2, 1) \cup (1, \infty)$.
+:::
 
 ## Drugače: Na sliki
 
@@ -231,14 +380,11 @@ Vsak ulomek v oklepaju ima v imenovalcu potenco $x$, zato gre proti $0$, ko $|x|
 ~ Ničla je ena sama; stopnja $2$ pove, da se faktor $(x - c)$ v razcepu ponovi dvakrat.
 > Pri ničli sode stopnje se graf osi dotakne in obrne nazaj, predznak se ne zamenja.
 
-? Koliko je $p(0)$ za $p(x) = -2(x - 1)^3(x + 4)^2$?
-- $-32$
-~ $(0 - 1)^3 = -1$, ne $1$: liha potenca negativnega števila je negativna.
-+ $32$
-- $8$
-~ Izpustil si kvadrat: $(0 + 4)^2 = 16$, ne $4$.
-- $-8$
-~ Tu sta dve napaki hkrati: $(-1)^3$ si vzel kot $1$, $4^2$ pa kot $4$.
+? (brez računala) Koliko je $p(0)$ za $p(x) = -2(x - 1)^3(x + 4)^2$?
+= 32 | 0
+~ -32 | $(0 - 1)^3 = -1$, ne $1$: liha potenca negativnega števila je negativna.
+~ 8 | Izpustil si kvadrat: $(0 + 4)^2 = 16$, ne $4$.
+~ -8 | Tu sta dve napaki hkrati: $(-1)^3$ si vzel kot $1$, $4^2$ pa kot $4$.
 > $p(0) = -2 \cdot (-1)^3 \cdot 4^2 = -2 \cdot (-1) \cdot 16 = 32$.
 
 ? Jana je določila predznake polinoma $p(x) = (x + 1)(x - 2)^2$: za $x < -1$ negativen, med $-1$ in $2$ pozitiven, za $x > 2$ negativen. Kje se je zmotila?
@@ -269,9 +415,34 @@ Vsak ulomek v oklepaju ima v imenovalcu potenco $x$, zato gre proti $0$, ko $|x|
 + Le po $t = 6$, torej po polnoči.
 > Za $t > 6$ je $(t - 6) > 0$ in $(t - 1)^2 > 0$, pred njima pa $-0{,}1$, zato $T < 0$; npr. $T(7) = -3{,}6\,^\circ\mathrm{C}$. Pri sodi ničli $1$ se predznak ne zamenja, zato je pred $t = 6$ temperatura nad lediščem.
 
+? (višja raven) O ničlah ne vemo ničesar, imamo le meritve z različnimi časi. Najmanj koliko meritev potrebujemo, da enolično določimo model s polinomom četrte stopnje?
+= 5 | 0
+~ 4 | Polinom četrte stopnje ima pet koeficientov, od $a_4$ do $a_0$; vsaka meritev da le eno enačbo.
+> Neznanih koeficientov je $4 + 1 = 5$, zato potrebujemo pet enačb, torej pet meritev.
+
+<<RACUN
+enako: x^3-4*x^2+4*x | x*(x-2)^2
+neenacba: x^3-4*x^2+4*x<=0 | x | (-oo, 0] U {2}
+vrednost: -(2^3)+3*2+2 | 0
+enako: -x^3+3*x+2 | -(x-2)*(x+1)^2
+vrednost: -(0^3)+3*0+2 | 2
+neenacba: -x^3+3*x+2>0 | x | (-oo, -1) U (-1, 2)
+resi: a*2*(2-8)^2=36 | a | 1/2
+vrednost: 1/2*5*(5-8)^2 | 22.5
+vrednost: 1/2*4*(4-8)^2 | 32
+enako: d*(d-8)^2-64 | (d-4)*(d^2-12*d+16)
+resi: d^2-12*d+16=0 | d | 6-2*sqrt(5), 6+2*sqrt(5)
+vrednost: 6-2*sqrt(5) | 1.5279
+vrednost: 2*sqrt(5)-2 | 2.4721
+vrednost: (2*sqrt(5)-2)*24 | 59.33
+resi: a+b+c=25, 8*a+4*b+2*c=32, 27*a+9*b+3*c=27 | a, b, c | a=1, b=-12, c=36
+enako: t^3-12*t^2+36*t | t*(t-6)^2
+vrednost: 4*(4-6)^2 | 16
+>>
+
 :::simboli
 T | temperatura zraka | | ^\circ C | model iz uganke
-t | čas po 18.00 | | h
+t | čas (v uganki po 18.00, v primeru 4 po zaužitju tablete) | | h
 p | polinom | |
 x | neodvisna spremenljivka | |
 a | koeficient pred oklepaji (vodilni koeficient) | |
@@ -283,4 +454,7 @@ c | ničla polinoma | p(c) = 0 |
 k | stopnja ničle $c$ | | | eksponent faktorja $(x - c)^k$
 v | odmik gladine od običajne višine | | cm
 d | čas od začetka merjenja | | dan
+C | koncentracija zdravila v krvi | C(t) = t\,(t - 6)^2 | mg/l | model iz primera 4, $0 \le t \le 6$
+a_3, a_2, a_1, a_0 | koeficienti modela | | | določimo jih iz meritev
+t_i, C_i | čas in koncentracija pri $i$-ti meritvi | | |
 :::

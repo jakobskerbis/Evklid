@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Polje smeri
+  - $y' = f(x, y)$: naklon v vsaki točki
+  - rešitev je krivulja, ki sledi smerokazom
+- Začetni problem
+  - splošna rešitev vsebuje eno konstanto
+  - $y(x_0) = y_0$ izbere partikularno rešitev
+- Ločljive enačbe
+  - $y' = f(x)g(y)$, $\int \frac{dy}{g(y)} = \int f(x)\, dx + C$
+  - konstantne rešitve iz $g(y) = 0$
+  - napaka: ločevanje neločljive enačbe
+- Linearne enačbe
+  - $y' + py = q$, $\mu = e^{\int p\, dx}$
+  - $(\mu y)' = \mu q$, zgradba $y = y_h + y_p$
+  - pazi: predznak $p$ v množitelju
+- Rast in razpad
+  - $N' = kN$, $N = N_0 e^{kt}$
+  - $t_{1/2} = \frac{\ln 2}{\lambda}$, $t_2 = \frac{\ln 2}{k}$
+  - enota $k$ je $\mathrm{s^{-1}}$ ali $\mathrm{min^{-1}}$
+- Logistični model in ohlajanje
+  - $N' = rN\left(1 - \frac{N}{K}\right)$, nosilnost $K$
+  - $T = T_\mathrm{o} + (T_0 - T_\mathrm{o})e^{-kt}$
+- Picardov izrek
+  - $f$ in $\partial f/\partial y$ zvezni: lokalno ena rešitev
+  - rešitvi se ne sekata

@@ -1,6 +1,12 @@
-node_modules/
+node_modules
 data/
 .env
 sim-results/
 .pylib/
 __pycache__/
+.ikone-drevo/
+.meritev/
+
+# Preizkus 3: naloge v čistem besedilu nikoli v repozitorij (šifrirane so v scripts/preizkus3-naloge.enc)
+preizkus3-naloge*.json
+glas/model/

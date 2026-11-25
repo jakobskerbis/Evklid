@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Značilne števke
+  - vse zanesljive števke in ena ocenjena
+  - $0{,}0450\,\text{g}$: tri; ničle spredaj ne štejejo
+  - v dvomu znanstveni zapis: $1{,}20 \cdot 10^3\,\text{mL}$
+- Negotovost
+  - zapis $x \pm \Delta x$, relativna $\Delta x/|x|$
+  - negotovost zaokroži na eno značilno števko
+- Seštevanje in odštevanje
+  - $\Delta(x \pm y) = \Delta x + \Delta y$
+  - odloča najmanj decimalnih mest
+- Množenje in deljenje
+  - seštejejo se relativne negotovosti
+  - odloča najmanj značilnih števk
+  - zaokroži šele na koncu
+- Tabela in graf
+  - naslov tabele nad njo, naslov slike pod njo
+  - glava stolpca: količina / enota
+  - točke in gladka krivulja, ne lomljena črta
+- Poročilo
+  - namen, teorija, pribor, postopek, rezultati, razprava
+  - postopek v pretekliku
+  - napaka: »razlaga vzrokov med rezultati«

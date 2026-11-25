@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -107,7 +107,7 @@ $\mathrm{C/N_{mešanice}} = \dfrac{m_\mathrm{C,1} + m_\mathrm{C,2}}{m_\mathrm{N,
 3. Razmerje: $\dfrac{13{,}8}{0{,}45} \approx 30{,}7$. Seštevamo mase, ker mikroorganizmi »vidijo« ves ogljik in ves dušik v kupu.
 4. Odgovor: C/N mešanice je približno $31$, kar je malo nad pragom. Kup se bo razkrajal, a sprva počasi.
 
-### Primer 3 (težji): koliko dušika vzame zastirka
+### Primer 3 (težji): koliko dušika vzame žagovina
 
 Po gradnji hiše lastnik na gredo s $50\,\mathrm{m^2}$ vdela $100\,\mathrm{kg}$ suhe žagovine ($50\,\%$ C, $0{,}1\,\%$ N). V prvi sezoni se razgradi $30\,\%$ njenega ogljika in sprosti $30\,\%$ njenega dušika. Mikroorganizmi vgradijo tretjino razgrajenega ogljika v biomaso s C/N $= 8$. Koliko dušika vzamejo iz tal na kvadratni meter?
 
@@ -156,7 +156,7 @@ $5 - 0{,}25 = 0{,}55\,x - 0{,}44\,x$, torej $4{,}75 = 0{,}11\,x$ in $x \approx 4
 - **»Več organske snovi, več dušika za rastline.«** Snov z visokim C/N (žagovina, slama, sekanci) dušik najprej veže. Gnoji šele kompost ali snov s C/N pod okrog $25$; svež les najprej kompostiraj ali dodaj dušik.
 - **Humus je vsa organska snov.** Sveži opad, listje in žagovina niso humus. Humus je predelana, temna, obstojna snov s C/N okrog $10$. Tudi »humus« na vreči iz trgovine je navadno mešanica zemlje in komposta.
 - **Mineralizacija in humifikacija sta isto.** Mineralizacija razgradi snov do $\mathrm{CO_2}$ in ionov ter sprosti hranila. Humifikacija gradi obstojne snovi in hranila zadrži. Prva hrani rastline danes, druga gradi zalogo.
-- **Organski ogljik je organska snov.** $2{,}3\,\%$ $C_\mathrm{org}$ ni $2{,}3\,\%$ OST. Pomnoži s $1{,}72$.
+- **Organski ogljik je organska snov.** $2{,}3\,\%$ $C_\mathrm{org}$ ni $2{,}3\,\%$ OST. Pomnoži z $1{,}72$.
 
 ## Povzetek
 
@@ -167,34 +167,105 @@ $5 - 0{,}25 = 0{,}55\,x - 0{,}44\,x$, torej $4{,}75 = 0{,}11\,x$ in $x \approx 4
 - C/N je razmerje mas C in N. Pod okrog $25$ neto mineralizacija dušika, nad okrog $25$ (izrazito nad $30$) imobilizacija. C/N mešanice izračunaš iz vsot mas, ne iz povprečja razmerij.
 - Mikrobna biomasa ima C/N okrog $8$; vgradi okrog tretjino porabljenega ogljika.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo organske snovi tal in humusa ter preračun $\mathrm{OST} \approx 1{,}72 \cdot C_\mathrm{org}$ z razlago, od kod faktor;
+- razlike med humusom in glinastimi minerali (gradniki, izvor naboja, KIK, obstojnost) in zakaj KIK humusa narašča s pH;
+- delitev humusnih snovi po topnosti: fulvokisline, huminske kisline, humin;
+- definicije mineralizacije (z amonifikacijo in nitrifikacijo), humifikacije in imobilizacije;
+- izpeljavo praga C/N okrog $25$ iz C/N mikrobne biomase ($8$) in izkoristka ogljika (tretjina);
+- zakaj razkroj v razmočenih tleh zastane in zakaj se izsušena šotna tla posedajo.
+
+### Naloga 1
+
+Po žetvi pšenice zaorjejo na njivi $6\,\mathrm{t/ha}$ suhe slame s $45\,\%$ ogljika in z $0{,}5\,\%$ dušika. V prvi sezoni se razgradi $60\,\%$ njenega ogljika in sprosti $60\,\%$ njenega dušika. Mikroorganizmi vgradijo tretjino razgrajenega ogljika v biomaso s C/N $= 8$. (a) Kolikšna je neto imobilizacija dušika na hektar? (b) Koliko gnojila KAN ($27\,\%$ N) na hektar jo izravna? (c) Kolikšen je ob koncu sezone C/N tega, kar je od slame ostalo v tleh (nerazgrajeni ostanek in mikrobna biomasa skupaj), če ves vgrajeni dušik ostane v biomasi?
+
+**Rešitev:**
+
+1. C/N slame: $\dfrac{45}{0{,}5} = 90$. To je nad pragom $25$, zato pričakujemo imobilizacijo.
+2. Ogljik v slami: $6000 \cdot 0{,}45 = 2700$ kg/ha; razgradi se $2700 \cdot 0{,}6 = 1620$ kg.
+3. V biomaso gre tretjina: $1620 / 3 = 540$ kg C. Zanjo je potrebnih $540 / 8 = 67{,}5$ kg N.
+4. Dušik v slami: $6000 \cdot 0{,}005 = 30$ kg/ha; sprosti se $30 \cdot 0{,}6 = 18$ kg.
+5. (a) Neto imobilizacija: $67{,}5 - 18 = 49{,}5$ kg N/ha.
+6. (b) KAN: $\dfrac{49{,}5}{0{,}27} \approx 183$ kg/ha.
+7. (c) Ogljik ob koncu sezone: nerazgrajenega je $2700 - 1620 = 1080$ kg, v biomasi $540$ kg; skupaj $1080 + 540 = 1620$ kg.
+8. Dušik ob koncu sezone: v ostanku $30 - 18 = 12$ kg, v biomasi $67{,}5$ kg; skupaj $12 + 67{,}5 = 79{,}5$ kg.
+9. Razmerje: $\dfrac{1620}{79{,}5} \approx 20{,}4$.
+10. Odgovor: mikroorganizmi vzamejo tlom $49{,}5\,\mathrm{kg}$ N/ha, kar izravna okrog $183\,\mathrm{kg}$ KAN na hektar. C/N pade z $90$ na okrog $20$, torej pod prag: ogljik je odšel kot $\mathrm{CO_2}$, dušik je ostal. Zato je imobilizacija začasna.
+
+### Naloga 2
+
+Ornica je globoka $25\,\mathrm{cm}$, gostota tal je $1{,}4\,\mathrm{t/m^3}$, laboratorij je izmeril $1{,}8\,\%$ $C_\mathrm{org}$. Humus ima C/N $= 10$ in KIK $200\,\mathrm{cmol(+)/kg}$; vzemi, da je vsa organska snov humus. Na leto se mineralizira $2\,\%$ organskega dušika. (a) Kolikšen je delež organske snovi? (b) Kolikšni sta zalogi organskega ogljika in dušika na hektar? (c) Koliko dušika se na leto sprosti rastlinam? (d) Koliko prispeva humus h KIK tal?
+
+**Rešitev:**
+
+1. (a) $\mathrm{OST} \approx 1{,}72 \cdot 1{,}8 = 3{,}096\,\%$, torej okrog $3{,}1\,\%$.
+2. Masa ornice na hektar: $10\,000 \cdot 0{,}25 \cdot 1{,}4 = 3500$ t.
+3. (b) Organski ogljik: $3500 \cdot 0{,}018 = 63$ t/ha.
+4. Organski dušik: $63 / 10 = 6{,}3$ t/ha, ker ima humus C/N $10$.
+5. (c) Mineralizacija: $6300 \cdot 0{,}02 = 126$ kg N/ha na leto.
+6. (d) V kilogramu tal je $0{,}031\,\mathrm{kg}$ humusa, zato prispeva $0{,}031 \cdot 200 = 6{,}2\,\mathrm{cmol(+)}$ na kilogram tal.
+7. Odgovor: tla imajo okrog $3{,}1\,\%$ organske snovi, v ornici je $63\,\mathrm{t}$ organskega ogljika in $6{,}3\,\mathrm{t}$ dušika na hektar. Na leto se sprosti $126\,\mathrm{kg}$ N/ha; preostalih $98\,\%$ dušika ostane vezanih v humusu, rastlinam nedostopnih. Humus prispeva h KIK okrog $6{,}2\,\mathrm{cmol(+)/kg}$ tal, čeprav ga je le $3\,\%$ mase.
+
+### Naloga 3
+
+Natančno opredeli mineralizacijo, humifikacijo in imobilizacijo dušika. Nato izpelji prag C/N, nad katerim pride do neto imobilizacije, in utemelji, zakaj je imobilizacija začasna.
+
+**Rešitev:**
+
+1. Mineralizacija je razgradnja organske snovi do anorganskih spojin: $\mathrm{CO_2}$, vode in ionov. Organski dušik se sprosti kot $\mathrm{NH_4^+}$ (amonifikacija), ta se oksidira v $\mathrm{NO_3^-}$ (nitrifikacija).
+2. Humifikacija je pretvorba ostankov in mikrobnih produktov v obstojne humusne snovi; ogljik in dušik zadrži v tleh.
+3. Imobilizacija je vgradnja $\mathrm{NH_4^+}$ in $\mathrm{NO_3^-}$ iz talne raztopine v mikrobno biomaso, ker ostanek sam nima dovolj dušika.
+4. Izpeljava: mikroorganizmi razgradijo maso ogljika $m_\mathrm{C}$. V biomaso vgradijo tretjino, $\dfrac{m_\mathrm{C}}{3}$, biomasa pa ima C/N $= 8$. Potrebujejo torej $\dfrac{m_\mathrm{C}}{3 \cdot 8} = \dfrac{m_\mathrm{C}}{24}$ dušika.
+5. Ostanek s tem ogljikom prinese $\dfrac{m_\mathrm{C}}{\mathrm{C/N}}$ dušika. Bilanca je izravnana, ko je $\dfrac{m_\mathrm{C}}{\mathrm{C/N}} = \dfrac{m_\mathrm{C}}{24}$, torej pri $\mathrm{C/N} = 24$.
+6. Pri C/N nad $24$ ostanek prinese manj dušika, kot ga biomasa potrebuje: neto imobilizacija. Pri C/N pod $24$ dušik ostaja: neto mineralizacija. Ker izkoristek ogljika in C/N biomase nista povsem stalna, v praksi navajamo prag okrog $25$ (med $20$ in $30$).
+7. Začasnost: dve tretjini razgrajenega ogljika odideta kot $\mathrm{CO_2}$, dušik pa ostane v biomasi in razkrojnih produktih. C/N preostanka zato pada. Ko pade pod prag in ko odmrli mikroorganizmi sami postanejo hrana, se dušik spet sprošča.
+
 ## Drugače: Na sliki
 
-Sledi poti enega kilograma ogljika iz žagovine (puščice berejo od zgoraj navzdol):
+Sledi poti enega kilograma ogljika iz žagovine (puščice beri od zgoraj navzdol):
 
-```
-        svež ostanek (1 kg C)
-                |
-      razkroj (mikroorganizmi)
-       /          |           \
-  CO2 v zrak   biomasa     humusne snovi
-  (večina)    mikrobov      (desetina do
-     ↑         (C/N 8)       tretjina C)
-     |            |              |
-     +-- umrejo, razgradnja -----+-- počasna
-                                     mineralizacija
-```
+:::risba skica
+opis: Shema poti ogljika. Zgoraj svež ostanek z 1 kg ogljika, pod njim razkroj z mikroorganizmi. Od razkroja vodijo tri puščice navzdol: levo v CO₂ v zrak (večina), v sredino v biomaso mikrobov z razmerjem C/N 8 in desno v humusne snovi (desetina do tretjina ogljika). Od biomase (mikrobi umrejo, razgradnja) in od humusnih snovi (počasna mineralizacija) vodi spodaj črta nazaj v CO₂ v zrak.
+območje: 0; 0 .. 16; 11
+pravokotnik: 3,5; 9,6 .. 12,5; 10,8 | ozadje
+napis: 8; 10,2 | svež ostanek (1 kg C) | sredina
+puščica: 8; 9,6 -> 8; 8,6
+pravokotnik: 3,5; 7,4 .. 12,5; 8,6 | ozadje
+napis: 8; 8 | razkroj (mikroorganizmi) | sredina
+puščica: 5; 7,4 -> 2,6; 5,6
+puščica: 8; 7,4 -> 8; 5,6
+puščica: 11; 7,4 -> 13,2; 5,6
+pravokotnik: 0; 2,8 .. 5,2; 5,6 | siva
+napis: 2,6; 4,6 | CO_2 v zrak | sredina
+napis: 2,6; 3,8 | (večina) | sredina
+pravokotnik: 5,8; 2,8 .. 10; 5,6 | oranžna
+napis: 7,9; 5 | biomasa | sredina
+napis: 7,9; 4,2 | mikrobov | sredina
+napis: 7,9; 3,4 | (C/N 8) | sredina
+pravokotnik: 10,4; 2,8 .. 16; 5,6 | zelena
+napis: 13,2; 5 | humusne snovi | sredina
+napis: 13,2; 4,2 | (desetina do | sredina
+napis: 13,2; 3,4 | tretjina C) | sredina
+črta: 13,2; 2,8 -> 13,2; 1,6 -> 2,6; 1,6
+črta: 8; 2,8 -> 8; 1,6
+puščica: 2,6; 1,6 -> 2,6; 2,8
+napis: 4; 1 | umrejo, razgradnja | sredina
+napis: 12; 1 | počasna mineralizacija | sredina
+:::
 
 Leva veja je mineralizacija, desna humifikacija. Srednja veja je ozko grlo za dušik: vsak kilogram ogljika v biomasi potrebuje $125\,\mathrm{g}$ dušika. Če ga ostanek nima, ga mikrobi poiščejo v talni raztopini.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Zamisli si delavnico, ki dela lesene stole. Les (ogljik) je poceni in ga je veliko, vijakov (dušika) pa malo. Za vsak stol potrebuje mizar določeno število vijakov.
+**Pedološki laboratorij.** Vzorec ornice posušijo na zraku in presejejo skozi sito z odprtinami $2\,\mathrm{mm}$. S suhim sežigom v elementnem analizatorju določijo ogljik in dušik; v karbonatnih tleh odštejejo ogljik iz karbonatov. Iz $1{,}5\,\%$ $C_\mathrm{org}$ dobijo $1{,}72 \cdot 1{,}5 \approx 2{,}6\,\%$ organske snovi, iz obeh meritev pa še C/N tal.
 
-- Če dobi pošiljko z veliko lesa in skoraj brez vijakov (žagovina), mora vijake pokupiti v sosednji trgovini. Trgovina so tla, sosed brez vijakov pa rastlina.
-- Če dobi pošiljko z malo lesa in veliko vijakov (kompost, detelja), mu vijaki ostanejo in jih proda naprej rastlinam.
-- Stoli, ki dolgo zdržijo in se le počasi razstavljajo, so humus. Stoli, ki jih takoj razstavi na dele, so mineralizacija.
+**Gnojilni načrt.** Agronom po C/N presodi, kaj bo zaorani ostanek naredil z dušikom. Ob zaoravanju žitne slame (C/N $60$–$100$) predvidi dodatek okrog $7$ do $10\,\mathrm{kg}$ dušika na tono slame, da ozimina jeseni ne strada. Pri podoru detelje (C/N pod $25$) dušik, ki se bo sprostil, odšteje od gnojilnega obroka.
 
-Primerjava ima mejo: mikroorganizmi lesa ne kopičijo, ampak ga večino »pokurijo« za energijo. Zato je njihova potreba po dušiku odvisna od tega, koliko ogljika vgradijo, ne od tega, koliko ga porabijo.
+**Kompostarna.** Tehnolog zmeša z dušikom bogate odpadke (pokošena trava, kuhinjski odpadki) in lesne sekance tako, da je C/N mešanice blizu praga. Računa kot v primeru 2: iz vsot mas ogljika in dušika.
+
+**Raba šotnih tal.** Na izsušenem barju se organska snov mineralizira in površje se poseda, tudi za centimeter ali več na leto. Zato pri kmetovanju na takih tleh vzdržujejo visoko gladino podtalnice.
 
 ## Preveri se
 
@@ -210,7 +281,7 @@ Primerjava ima mejo: mikroorganizmi lesa ne kopičijo, ampak ga večino »pokuri
 
 ? Ornica je globoka $0{,}3\,\mathrm{m}$, gostota tal je $1{,}3\,\mathrm{t/m^3}$, organske snovi je $3\,\%$. Koliko organske snovi je približno na hektarju?
 - okrog $1{,}2\,\mathrm{t}$
-~ Verjetno si pozabil, da ima hektar $10\,000\,\mathrm{m^2}$, ali si dvakrat delil s $100$.
+~ Verjetno si za hektar vzel $100\,\mathrm{m^2}$ namesto $10\,000\,\mathrm{m^2}$ ali si dvakrat delil s $100$.
 - okrog $12\,\mathrm{t}$
 ~ Za faktor $10$ premalo; preveri globino ($0{,}3\,\mathrm{m}$, ne $0{,}03\,\mathrm{m}$).
 + okrog $120\,\mathrm{t}$

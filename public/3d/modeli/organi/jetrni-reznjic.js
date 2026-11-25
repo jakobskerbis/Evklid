@@ -228,7 +228,9 @@ export function zgradi(THREE, ctx = {}) {
   const meja = new THREE.Mesh(zdruzi(mejG), M.hepSt);
   const dnoG = new THREE.CircleGeometry(RH, 6, Math.PI / 6).rotateX(-Math.PI / 2).translate(0, Y0 + 2, 0);
   const sin = new THREE.Mesh(dnoG, M.sin);
-  svet.add(meja, sin);
+  // spodnja ploskev rezine (od spodaj je bila odprta: nazobčane ploščice, ocena 18. 11.)
+  const dnoS = new THREE.Mesh(new THREE.CircleGeometry(RH, 6, Math.PI / 6).rotateX(Math.PI / 2).translate(0, Y0, 0), M.hepSt);
+  svet.add(meja, sin, dnoS);
 
   // ---------- centralna vena ----------
   const cvZ = new THREE.CylinderGeometry(RCV, RCV, H + 6, hi ? 40 : 24, 1, true);
@@ -305,7 +307,7 @@ export function zgradi(THREE, ctx = {}) {
   const del = (id, ime, la, opis, barva, meshes, p, x = {}) => deli.push({ id, ime, la, opis, barva, meshes, tocka: U(p), ...x });
   const c0 = VOG[5], c1 = VOG[0];
   const pl = ploscePoti[3], plT = pl[Math.floor(pl.length * 0.6)];
-  del("hepatociti", "Jetrne celice (hepatociti)", "Hepatocyti", "Celice v ploščicah, debelih eno celico; predelujejo hranila, shranjujejo glikogen, razgrajujejo strupe in izdelujejo žolč.", "#e2a07a", [vrh, stena, meja, jedM], V(plT[0], Y1, plT[1]));
+  del("hepatociti", "Jetrne celice (hepatociti)", "Hepatocyti", "Celice v ploščicah, debelih eno celico; predelujejo hranila, shranjujejo glikogen, razgrajujejo strupe in izdelujejo žolč.", "#e2a07a", [vrh, stena, meja, jedM, dnoS], V(plT[0], Y1, plT[1]));
   del("sinusoidi", "Sinusoidi", "Vasa sinusoidea", "Široke kapilare med ploščicami; po njih teče mešana kri iz portalne vene in arterije proti centralni veni.", "#8e2f3a", [sin, kri], V(Math.cos(vmes[7]) * 200, Y1 - 30, Math.sin(vmes[7]) * 200));
   del("centralna-vena", "Centralna vena", "Vena centralis", "Zbira kri iz sinusoidov in jo odvaja v jetrne vene in naprej v spodnjo votlo veno.", "#6a62bc", [cv, cvL], V(0, Y1 + 3, RCV));
   del("portalna-vena", "Vejica portalne vene", "Ramus venae portae", "Prinaša kri iz črevesja, bogato s hranili; je največja cev v portalnem prostoru.", "#7b72cc", [pv], c0.pv.clone().setY(Y1 + 5));
@@ -320,7 +322,7 @@ export function zgradi(THREE, ctx = {}) {
     deli,
     korak(t) { if (gib) tok(t); },
     pogled: [0.3, 1.0, 1],
-    okvir: { sredisce: [0, 0, 0.03], polmer: 0.92 },
+    okvir: { sredisce: [0, 0, 0.03], polmer: 1 }, // odzgoraj ne pod orodno vrstico (ocena 18. 11.)
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       for (const x of odpad) x.dispose();

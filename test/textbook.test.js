@@ -5,7 +5,7 @@ import path from "node:path";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { getTopic, listPaths, topicOrder, sameTopics } from "../server/curriculum.js";
-import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions } from "../server/textbook.js";
+import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions, formulaSheetSections } from "../server/textbook.js";
 import { checkLessonSource } from "../server/lesson-check.js";
 import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
 import { hasEngine } from "../public/sim/index.js";
@@ -34,6 +34,23 @@ Slika.
   assert.deepEqual(l.alternatives, [{ title: "Na sliki", md: "Slika." }]);
   assert.equal(l.checks.length, 1, "vprašanje brez pravilnega odgovora se izpusti");
   assert.deepEqual(l.checks[0], { q: "Koliko je $2 + 2$?", options: ["3", "4"], correct: 1, why: "Ker je tako.", optionWhy: ["", ""] });
+});
+
+test("checkLessonSource: stanja osnutek / preverjeno / pregledano in polje pregledal", () => {
+  const src = (head) => `---\n${head}\n---\n## Razlaga\nBesedilo.\n`;
+  const st = (head) => {
+    const r = checkLessonSource(src(head));
+    return { errors: r.errors.filter((e) => /stanje|pregled/.test(e)), warnings: r.warnings.filter((w) => /stanje|pregled/.test(w)) };
+  };
+  for (const s of ["osnutek", "preverjeno"]) assert.deepEqual(st(`stanje: ${s}`), { errors: [], warnings: [] }, s);
+  assert.deepEqual(st("stanje: pregledano\npregledal: Ana Novak"), { errors: [], warnings: [] });
+  assert.equal(st("stanje: preverjen").errors.length, 1, "neznano stanje je napaka");
+  assert.equal(st("").errors.length, 1, "brez stanja je napaka");
+  assert.equal(st("stanje: pregledano").warnings.length, 1, "pregledano brez imena učitelja je opozorilo");
+  assert.equal(st("stanje: preverjeno\npregledal: Ana Novak").warnings.length, 1, "ime učitelja brez stanja pregledano");
+  for (const ai of ["AI", "Claude Opus", "program"]) assert.equal(st(`stanje: pregledano\npregledal: ${ai}`).errors.length, 1, `AI ni pregledovalec: ${ai}`);
+  for (const ime of ["Kaia Kos", "Mihael Zupan", "Ana Čaić"]) assert.deepEqual(st(`stanje: pregledano\npregledal: ${ime}`).errors, [], `človek: ${ime}`);
+  assert.equal(parseLesson(src("stanje: pregledano\npregledal: Ana Novak")).meta.pregledal, "Ana Novak");
 });
 
 test("lesson files load for competition paths too", () => {
@@ -133,7 +150,7 @@ test("every lesson file belongs to a topic and is complete", () => {
       for (const need of ["razlaga", "rešeni primeri", "povzetek"]) assert.ok(titles.includes(need), `${id}: manjka »${need}«`);
       assert.ok(v.lesson.alternatives.length >= 2, `${id}: premalo drugačnih razlag`);
       assert.ok(v.lesson.checks.length >= 2, `${id}: premalo vprašanj`);
-      if (v.lesson.status) assert.match(v.lesson.status, /^(osnutek|pregledano)$/);
+      if (v.lesson.status) assert.match(v.lesson.status, /^(osnutek|preverjeno|pregledano)$/);
       assert.ok(lessonSummaryForPrompt(id).length > 50);
       // Vsako vprašanje: natanko en pravilen odgovor, vsi odgovori različni.
       const raw = fs.readFileSync(path.join(LESSONS_DIR, dir.name, f), "utf8");
@@ -230,7 +247,19 @@ test("textbook API and PDF page", async () => {
     assert.match(sheetHtml, /class="katex"/);
     assert.doesNotMatch(sheetHtml, /katex-error/);
     assert.match(await (await fetch(`${base}/ucbenik/MAT-OS-8/formule`)).text(), /Matematika: formule in konstante/);
-    assert.equal((await fetch(`${base}/ucbenik/MAT-TEK/formule`)).status, 404);
+    // Tekmovalni učbeniki imajo list kot šolski: gumb v kazalu, stran in tisk.
+    for (const k of ["MAT-TEK", "FIZ-TEK", "KEM-TEK"]) {
+      assert.equal(books.find((b) => b.key === k).formulas, true, k);
+      assert.ok(formulaSheetSections(k)?.sections.length, k);
+    }
+    const tekSheet = await fetch(`${base}/ucbenik/MAT-TEK/formule`);
+    assert.equal(tekSheet.status, 200);
+    const tekHtml = await tekSheet.text();
+    assert.match(tekHtml, /Matematika: formule in konstante/);
+    assert.match(tekHtml, /Tekmovanja in olimpijade/);
+    assert.doesNotMatch(tekHtml, /katex-error/);
+    assert.match(await (await fetch(`${base}/ucbenik/FIZ-TEK-SS/formule`)).text(), /Fizika: formule in konstante/);
+    assert.equal((await fetch(`${base}/ucbenik/BIO-SS/formule`)).status, 404);
     const hits = await (await fetch(`${base}/api/textbook/search?q=ohm`)).json();
     assert.equal(hits[0].id, "FIZ-OS-9/upor-in-ohmov-zakon");
 
@@ -276,4 +305,16 @@ test("university lessons: check-lesson asks for the exam-oriented structure", ()
   assert.match(w, /1 nalog nima celotne rešitve/);
   // Enovrstična rešitev zadnje naloge na koncu razdelka je tudi skrita za gumbom.
   assert.match(hideSolutions("### Naloga 2\nUtemelji.\n\n**Rešitev:** Ker velja $2+2=4$."), /<details class="tb-solution">[\s\S]*Ker velja/);
+});
+
+test("worked example »zadnji korak je tvoj«: steps stay open, only the last step waits in Premisli (Gemini review 2026-11-17)", () => {
+  const md = "### Primer 4: produkt\nOdvajaj.\n\n**Rešitev:**\n1. Korak.\n\n### Primer 5: zadnji korak je tvoj\nIzračunaj.\n\n**Rešitev:**\n1. Prvi.\n2. Napovej:\n\n<div class=\"tb-think\">x</div>\n";
+  const html = hideSolutions(md);
+  const [p4, p5] = html.split("### Primer 5");
+  assert.match(p4, /<details class="tb-solution"><summary>Pokaži rešitev<\/summary>/);
+  assert.match(p5, /<details class="tb-solution" open><summary>Skrij rešitev<\/summary>[\s\S]*Prvi/);
+  assert.match(p5, /<\/details>\n\n<div class="tb-think">/, "Premisli ostane pod postopkom");
+  // fraza v zadnjem koraku (KEM-TEK-SS, kemijska vez, Primer 3)
+  const kem = hideSolutions("### Primer 3: voda\nIzračunaj.\n\n**Rešitev:**\n\n1. Prvi.\n2. Zadnji korak je tvoj: vstavi.\n\n<div class=\"tb-think\">x</div>\n");
+  assert.match(kem, /<details class="tb-solution" open><summary>Skrij rešitev<\/summary>/);
 });

@@ -6,8 +6,7 @@
 // Urnik je zaseben: vidi ga samo učenec (in starš na njegovi napravi), nikoli lige ali učitelj.
 import "./env.js";
 import crypto from "node:crypto";
-import dns from "node:dns/promises";
-import net from "node:net";
+import { prenesiJavno, privateIp, readLimited } from "./prenos-uporabnik.js";
 import { cleanText, normalizeSettings } from "./settings.js";
 import { PROGRAMS, UNI_PATHS } from "./university-data.js";
 import { ALL_SUBJECTS } from "./subjects.js";
@@ -304,14 +303,9 @@ export function parseIcs(text, settings) {
 }
 
 // Naslov koledarja je od učenca: samo https (webcal → https), javni naslovi, največ 3 MB in 15 s.
-function privateIp(ip) {
-  if (net.isIPv4(ip)) {
-    const [a, b] = ip.split(".").map(Number);
-    return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224;
-  }
-  const v = ip.toLowerCase();
-  return v === "::1" || v === "::" || v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe80") || v.startsWith("::ffff:") && privateIp(v.slice(7));
-}
+// Preverjanje naslova in prenos sta v server/prenos-uporabnik.js (točka A4); privateIp in readLimited ostaneta izvožena tu.
+export const ICS_MAX_BYTES = 3 * 1024 * 1024;
+export { privateIp, readLimited };
 
 export function cleanIcsUrl(url) {
   let s = String(url || "").trim().replace(/^webcals?:\/\//i, "https://");
@@ -331,18 +325,23 @@ export function cleanIcsUrl(url) {
   return u.toString();
 }
 
-export async function fetchIcs(url, { fetchFn = fetch, lookup = dns.lookup } = {}) {
+// fetchFn samo za teste; brez njega gre prenos prek prenesiJavno s preverjanjem naslova ob povezovanju (točka A4).
+const ICS_NAPAKE = {
+  NASLOV: "Povezava mora biti javni naslov https (ali webcal) do koledarja.",
+  NI_NASLOVA: "Koledarja na tej povezavi ni mogoče najti.",
+  ZASEBNI: "Ta naslov ni javen.",
+  PREVELIK: "Koledar je prevelik.",
+};
+export async function fetchIcs(url, { fetchFn = null, lookup } = {}) {
   const clean = cleanIcsUrl(url);
-  if (!clean) throw new Error("Povezava mora biti javni naslov https (ali webcal) do koledarja.");
-  const host = new URL(clean).hostname.replace(/^\[|\]$/g, "");
-  const addrs = net.isIP(host) ? [{ address: host }] : await lookup(host, { all: true }).catch(() => []);
-  if (!addrs.length) throw new Error("Koledarja na tej povezavi ni mogoče najti.");
-  if (addrs.some((a) => privateIp(a.address))) throw new Error("Ta naslov ni javen.");
-  const res = await fetchFn(clean, { redirect: "error", signal: AbortSignal.timeout(15000), headers: { Accept: "text/calendar, text/plain;q=0.5" } });
-  if (!res.ok) throw new Error(`Koledarja ni bilo mogoče prenesti (${res.status}).`);
-  const text = await res.text();
-  if (text.length > 3 * 1024 * 1024) throw new Error("Koledar je prevelik.");
-  return { url: clean, text };
+  if (!clean) throw new Error(ICS_NAPAKE.NASLOV);
+  try {
+    const text = await prenesiJavno(clean, { max: ICS_MAX_BYTES, timeoutMs: 15000, headers: { Accept: "text/calendar, text/plain;q=0.5" }, ...(lookup ? { lookup } : {}), fetchFn });
+    return { url: clean, text };
+  } catch (err) {
+    if (err?.code === "STATUS" && err.status) throw new Error(`Koledarja ni bilo mogoče prenesti (${err.status}).`);
+    throw new Error(ICS_NAPAKE[err?.code] || "Koledarja ni bilo mogoče prenesti.");
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -473,7 +472,6 @@ export function nowParts(now = new Date()) {
   const date = `${p.year}-${p.month}-${p.day}`;
   return { date, time: `${p.hour}:${p.minute}`, day: weekdayOf(date) };
 }
-const addDays = (date, n) => new Date(Date.parse(`${date}T12:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
 const daysBetween = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86400000);
 
 export function scheduleView(data, settings, now = new Date()) {

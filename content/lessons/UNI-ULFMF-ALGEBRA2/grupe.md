@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -31,7 +31,7 @@ Primeri: $(\mathbb Z, +)$ z enoto $0$; $(\mathbb R \setminus \{0\}, \cdot)$ z en
 
 Vrstni red pri $(ab)^{-1}$ je obrnjen kot pri slačenju: najprej sezuješ čevelj, nato nogavico. Odslej operacijo pišemo kot množenje, $ab$.
 
-**3. Red elementa.** Za $a \in G$ pišemo $a^k = a \cdots a$ ($k$-krat). **Red elementa** $a$ je najmanjši $k \ge 1$ z $a^k = e$ (če obstaja). Grupa je **ciklična**, če obstaja $g$, da je vsak element potenca $g$; tedaj $G = \langle g \rangle$. $\mathbb Z_n$ je ciklična z generatorjem $1$.
+**3. Red elementa.** Za $a \in G$ pišemo $a^k = a \cdots a$ ($k$-krat). **Red elementa** $a$ je najmanjši $k \ge 1$ z $a^k = e$ (če obstaja). Grupa je **ciklična**, če obstaja $g$, da je vsak element cela potenca $g$ (tudi $g^0 = e$ in $g^{-k} = (g^{-1})^k$); tedaj $G = \langle g \rangle$. $\mathbb Z_n$ je ciklična z generatorjem $1$.
 
 *Preveri v eni vrstici:* kakšen red ima $4$ v $\mathbb Z_6$? ($4, 8 \equiv 2, 12 \equiv 0$, torej red $3$.)
 
@@ -63,7 +63,7 @@ Ne in ne. Po Lagrangeu red elementa in red podgrupe delita $15$. Delitelji štev
 
 **Cikel** $(a_1\;a_2\;\dots\;a_k)$ pošlje $a_1 \mapsto a_2 \mapsto \dots \mapsto a_k \mapsto a_1$, ostale točke pusti. Cikel dolžine $2$ je **transpozicija**.
 
-**Izrek.** (a) Vsaka permutacija je produkt disjunktnih ciklov, enolično do vrstnega reda. (b) Red permutacije je najmanjši skupni večkratnik dolžin njenih ciklov. (c) Vsaka permutacija je produkt transpozicij; parnost njihovega števila je za dano permutacijo vedno enaka.
+**Izrek.** (a) Vsaka permutacija je produkt disjunktnih ciklov, enolično do vrstnega reda. (b) Red permutacije je najmanjši skupni večkratnik ($\operatorname{lcm}$) dolžin njenih ciklov. (c) Vsaka permutacija je produkt transpozicij; parnost njihovega števila je za dano permutacijo vedno enaka.
 
 Razcep v (a) dobiš tako, da slediš točki $1$, dokler se ne vrne, nato vzameš najmanjšo neuporabljeno točko. Za (b): disjunktni cikli komutirajo, cikel dolžine $k$ ima red $k$. Za (c): $(a_1\;a_2\;\dots\;a_k) = (a_1\;a_k)\cdots(a_1\;a_3)(a_1\;a_2)$, torej je cikel dolžine $k$ produkt $k - 1$ transpozicij.
 
@@ -77,7 +77,7 @@ Razcep v (a) dobiš tako, da slediš točki $1$, dokler se ne vrne, nato vzameš
 
 **Trditev.** Za homomorfizem velja $f(e_G) = e_K$ in $f(a^{-1}) = f(a)^{-1}$; $\ker f$ je podgrupa v $G$, $\operatorname{im} f$ je podgrupa v $K$; $f$ je injektiven natanko tedaj, ko je $\ker f = \{e_G\}$.
 
-**Dokaz.** Iz $f(e) = f(ee) = f(e)f(e)$ s krajšanjem $f(e) = e_K$. Iz $f(a)f(a^{-1}) = f(e) = e_K$ sledi $f(a^{-1}) = f(a)^{-1}$. Za $a, b \in \ker f$ je $f(ab^{-1}) = e_K e_K^{-1} = e_K$, zato je $\ker f$ po kriteriju podgrupa; za sliko podobno. Če je $f$ injektiven, v jedru je le $e_G$. Obratno: iz $f(a) = f(b)$ sledi $f(ab^{-1}) = e_K$, torej $ab^{-1} \in \ker f = \{e\}$ in $a = b$. $\square$
+**Dokaz.** Iz $f(e) = f(ee) = f(e)f(e)$ s krajšanjem $f(e) = e_K$. Iz $f(a)f(a^{-1}) = f(e) = e_K$ sledi $f(a^{-1}) = f(a)^{-1}$. Za $a, b \in \ker f$ je $f(ab^{-1}) = e_K e_K^{-1} = e_K$, zato je $\ker f$ po kriteriju podgrupa; za sliko podobno. Če je $f$ injektiven, je v jedru le $e_G$. Obratno: iz $f(a) = f(b)$ sledi $f(ab^{-1}) = e_K$, torej $ab^{-1} \in \ker f = \{e\}$ in $a = b$. $\square$
 
 Primeri: $\det\colon \mathrm{GL}_n(\mathbb R) \to \mathbb R \setminus \{0\}$ z jedrom $\mathrm{SL}_n(\mathbb R)$; $\operatorname{sgn}\colon S_n \to \{1, -1\}$ z jedrom $A_n$; $\exp\colon (\mathbb R, +) \to (\mathbb R_{>0}, \cdot)$ je izomorfizem, saj $e^{x+y} = e^xe^y$.
 
@@ -97,7 +97,7 @@ V $S_5$ sta $\sigma = (1\;3\;5)(2\;4)$ in $\tau = (1\;2)(3\;4\;5)$. Izračunaj $
 **Iščemo:** $\sigma\tau$, $\tau\sigma$, red in $\operatorname{sgn}\sigma$, $\sigma^{-1}$
 
 :::formula
-Red je $\operatorname{nzv}$ dolžin disjunktnih ciklov; cikel dolžine $k$ je produkt $k - 1$ transpozicij; inverz cikla je isti cikel v obratnem vrstnem redu.
+Red je $\operatorname{lcm}$ dolžin disjunktnih ciklov; cikel dolžine $k$ je produkt $k - 1$ transpozicij; inverz cikla je isti cikel v obratnem vrstnem redu.
 :::
 
 **Rešitev:**
@@ -105,7 +105,7 @@ Red je $\operatorname{nzv}$ dolžin disjunktnih ciklov; cikel dolžine $k$ je pr
 1. $\sigma\tau$, točka $1$: $\tau$ jo pošlje v $2$, $\sigma$ dvojko v $4$; torej $1 \mapsto 4$. Točka $4$: $\tau$ v $5$, $\sigma$ v $1$; torej $4 \mapsto 1$.
 2. Točka $2$: $\tau$ v $1$, $\sigma$ v $3$; točka $3$: $\tau$ v $4$, $\sigma$ v $2$. Točka $5$: $\tau$ v $3$, $\sigma$ v $5$, torej negibna. Sledi $\sigma\tau = (1\;4)(2\;3)$.
 3. Na enak način $\tau\sigma = (1\;4)(2\;5)$. Ker $\sigma\tau \ne \tau\sigma$, $S_5$ ni komutativna.
-4. Red: cikla dolžin $3$ in $2$ dasta $\operatorname{nzv}(3, 2) = 6$.
+4. Red: cikla dolžin $3$ in $2$ dasta $\operatorname{lcm}(3, 2) = 6$.
 5. Predznak: $2 + 1 = 3$ transpozicije, liha permutacija, $\operatorname{sgn}\sigma = -1$.
 6. Inverz: $\sigma^{-1} = (1\;5\;3)(2\;4)$.
 7. Odgovor: $\sigma\tau = (1\;4)(2\;3)$, $\tau\sigma = (1\;4)(2\;5)$; $\sigma$ ima red $6$, je liha, $\sigma^{-1} = (1\;5\;3)(2\;4)$.
@@ -160,7 +160,7 @@ Permutacija $\rho \in S_7$ pošlje $1 \mapsto 3$, $2 \mapsto 5$, $3 \mapsto 1$, 
 **Iščemo:** razcep na cikle, red, $\operatorname{sgn}\rho$
 
 :::formula
-Sledi točki do vrnitve; red je $\operatorname{nzv}$ dolžin; cikel dolžine $k$ prispeva $k - 1$ transpozicij.
+Sledi točki do vrnitve; red je $\operatorname{lcm}$ dolžin; cikel dolžine $k$ prispeva $k - 1$ transpozicij.
 :::
 
 **Rešitev:**
@@ -171,13 +171,13 @@ Sledi točki do vrnitve; red je $\operatorname{nzv}$ dolžin; cikel dolžine $k$
 :::premisli
 Kolikšna sta red in predznak?
 ---
-$\rho = (1\;3)(2\;5)(4\;6\;7)$. Red je $\operatorname{nzv}(2, 2, 3) = 6$. Transpozicij je $1 + 1 + 2 = 4$, zato je $\rho$ soda, $\operatorname{sgn}\rho = 1$.
+$\rho = (1\;3)(2\;5)(4\;6\;7)$. Red je $\operatorname{lcm}(2, 2, 3) = 6$. Transpozicij je $1 + 1 + 2 = 4$, zato je $\rho$ soda, $\operatorname{sgn}\rho = 1$.
 :::
 
 ## Pogoste napake
 
 - **Napačen vrstni red kompozituma.** $\sigma\tau$ pomeni najprej $\tau$. Kdor začne s $\sigma$, dobi $\tau\sigma$, kar je v $S_n$ navadno druga permutacija. Pred računom si zapiši dogovor.
-- **Red kot vsota dolžin.** Permutacija $(1\;2\;3)(4\;5)$ nima reda $5$, ampak $\operatorname{nzv}(3, 2) = 6$. Vsota dolžin je le število premaknjenih točk.
+- **Red kot vsota dolžin.** Permutacija $(1\;2\;3)(4\;5)$ nima reda $5$, ampak $\operatorname{lcm}(3, 2) = 6$. Vsota dolžin je le število premaknjenih točk.
 - **Parnost po dolžini cikla.** Cikel dolžine $3$ je **soda** permutacija (dve transpoziciji). Parnost cikla je nasprotna parnosti njegove dolžine.
 - **Obrat Lagrangeovega izreka.** Lagrange ne pravi, da za vsak delitelj obstaja podgrupa. $A_4$ ima $12$ elementov, a nobene podgrupe reda $6$.
 - **Pozabljena zaprtost ali enota pri podgrupi.** Množica lihih celih števil ni podgrupa $(\mathbb Z, +)$: $1 + 1 = 2$ ni liho, $0$ ni v množici. Kriterij zahteva neprazno množico in $ab^{-1} \in H$.
@@ -188,7 +188,7 @@ $\rho = (1\;3)(2\;5)(4\;6\;7)$. Red je $\operatorname{nzv}(2, 2, 3) = 6$. Transp
 - Grupa: zaprtost, asociativnost, enota, inverzi; enota in inverzi so enolični, $(ab)^{-1} = b^{-1}a^{-1}$.
 - Podgrupa: neprazna $H$ z $ab^{-1} \in H$. Lagrange: $\lvert H \rvert$ deli $\lvert G \rvert$, prek razdelitve na odseke $aH$.
 - Red elementa deli red grupe; grupa praštevilskega reda je ciklična.
-- $S_n$ ima $n!$ elementov; razcep na disjunktne cikle, red je $\operatorname{nzv}$ dolžin, cikel dolžine $k$ je $k - 1$ transpozicij; $A_n$ ima $\frac{n!}{2}$ elementov.
+- $S_n$ ima $n!$ elementov; razcep na disjunktne cikle, red je $\operatorname{lcm}$ dolžin, cikel dolžine $k$ je $k - 1$ transpozicij; $A_n$ ima $\frac{n!}{2}$ elementov.
 - Homomorfizem $f(ab) = f(a)f(b)$; $f(e) = e$; jedro in slika sta podgrupi; injektiven natanko pri trivialnem jedru. Primera: $\det$ z jedrom $\mathrm{SL}_n$, $\operatorname{sgn}$ z jedrom $A_n$.
 
 ## Za izpit
@@ -211,13 +211,13 @@ Znati moraš povedati:
 2. Transpozicije $(a\;b)$: $\binom52 = 10$, red $2$.
 3. Dve disjunktni transpoziciji: $\frac{\binom52\binom32}{2} = \frac{10 \cdot 3}{2} = 15$, red $2$ (deljenje z $2$, ker vrstni red transpozicij ni pomemben).
 4. Trojni cikli: $\binom53 \cdot 2 = 20$ (tri točke, dva cikla na njih), red $3$.
-5. Trojni cikel in transpozicija: $20 \cdot 1 = 20$, red $\operatorname{nzv}(3, 2) = 6$.
+5. Trojni cikel in transpozicija: $20 \cdot 1 = 20$, red $\operatorname{lcm}(3, 2) = 6$.
 6. Četverni cikli: $\binom54 \cdot 3! = 30$, red $4$.
 7. Petkratni cikli: $4! = 24$, red $5$.
 8. Vsota: $1 + 10 + 15 + 20 + 20 + 30 + 24 = 120$.
 9. (b) Število transpozicij po tipih: $0, 1, 2, 2, 3, 3, 4$. Sode so identiteta, dvojne transpozicije, trojni in petkratni cikli: $1 + 15 + 20 + 24 = 60 = \frac{5!}{2}$.
 10. (c) Red $10$ bi zahteval cikla dolžin $5$ in $2$, torej $7$ točk. V $S_5$ jih je le $5$, zato elementa reda $10$ ni (čeprav $10$ deli $120$).
-11. Odgovor: redi $1, 2, 3, 4, 5, 6$ s $1, 25, 20, 30, 24, 20$ elementi; $A_5$ ima $60$ elementov; elementa reda $10$ ni. (Grupa vrtenj ikozaedra iz Primera 2 je izomorfna $A_5$: ima prav tako $15$ elementov reda $2$, $20$ reda $3$ in $24$ reda $5$.)
+11. Odgovor: redi $1, 2, 3, 4, 5, 6$ z $1, 25, 20, 30, 24, 20$ elementi; $A_5$ ima $60$ elementov; elementa reda $10$ ni. (Grupa vrtenj ikozaedra iz Primera 2 je izomorfna $A_5$: ima prav tako $15$ elementov reda $2$, $20$ reda $3$ in $24$ reda $5$.)
 
 ### Naloga 2
 
@@ -238,19 +238,22 @@ Natančno navedi in dokaži Lagrangeov izrek. Nato dokaži: (a) grupa praštevil
 
 Simetrije enakostraničnega trikotnika z oglišči $1$, $2$, $3$:
 
-```
-       1
-      / \
-     /   \
-    /  .  \
-   2-------3
-```
+:::risba skica
+opis: Enakostranični trikotnik z oglišči 1 zgoraj, 2 levo spodaj in 3 desno spodaj. V sredini je označeno središče trikotnika, okoli katerega trikotnik vrtimo.
+območje: -1; -0,8 .. 5; 4,3
+enota: 40
+lik: 0; 0 -> 4; 0 -> 2; 3,464
+točka: 2; 1,155
+točka: 2; 3,464 | 1 | nad
+točka: 0; 0 | 2 | levo
+točka: 4; 0 | 3 | desno
+:::
 
 - Vrtenje za $120°$ pošlje $1 \to 2 \to 3 \to 1$: permutacija $(1\;2\;3)$; za $240°$: $(1\;3\;2)$.
 - Zrcaljenje čez os skozi $1$ zamenja $2$ in $3$: $(2\;3)$; podobno $(1\;3)$ in $(1\;2)$.
 - Z identiteto je to $6$ simetrij, natanko vseh $3! = 6$ permutacij oglišč. Grupa simetrij trikotnika je torej $S_3$.
 
-Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je $A_3$), zrcaljenja so liha. Dve zrcaljenji zaporedoma data vrtenje: $(1\;2)(2\;3) = (1\;2\;3)$. Predznak tu pove, ali simetrija ohranja smer obhoda oglišč.
+Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je $A_3$), zrcaljenja so liha. Dve zrcaljenji zaporedoma dasta vrtenje: $(1\;2)(2\;3) = (1\;2\;3)$. Predznak tu pove, ali simetrija ohranja smer obhoda oglišč.
 
 ## Drugače: Uporaba v stroki
 
@@ -284,7 +287,7 @@ Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je
 ~ Faktoriela raste veliko hitreje.
 + približno $3{,}6$ milijona
 - približno $10^{10}$
-~ $10^{10}$ bi bilo število vseh preslikav $\{1..10\} \to \{1..10\}$, ne bijekcij.
+~ $10^{10}$ bi bilo število vseh preslikav $\{1, \dots, 10\} \to \{1, \dots, 10\}$, ne bijekcij.
 > $10! = 3\,628\,800$.
 
 ? Zakaj grupa s $15$ elementi ne more imeti elementa reda $4$?
@@ -302,10 +305,10 @@ Vrtenja $\{\mathrm{id}, (1\;2\;3), (1\;3\;2)\}$ tvorijo podgrupo reda $3$ (to je
 ~ V $S_5$ je le $5$ točk; cikla dolžine $6$ ni.
 + trojni cikel in disjunktna transpozicija
 - dve disjunktni transpoziciji
-~ Red je $\operatorname{nzv}(2, 2) = 2$, in je soda.
+~ Red je $\operatorname{lcm}(2, 2) = 2$, in je soda.
 - trojni cikel
 ~ Red je $3$ in cikel je sod.
-> $\operatorname{nzv}(3, 2) = 6$, transpozicij je $2 + 1 = 3$, torej liha. To je edini tip z redom $6$ v $S_5$.
+> $\operatorname{lcm}(3, 2) = 6$, transpozicij je $2 + 1 = 3$, torej liha. To je edini tip z redom $6$ v $S_5$.
 
 ? Beljakovinska kletka (plašč) ima simetrijo kocke oziroma oktaedra; grupa vrtenj ima $24$ elementov. Plašč je iz enakih podenot, vsaka na mestu brez simetrije. Koliko podenot je v najmanjšem takem plašču?
 - $8$
@@ -328,7 +331,7 @@ h, h_1, h_2 | elementi podgrupe $H$ | |
 g | generator ali poljuben element | |
 k | število odsekov, eksponent ali dolžina cikla | |
 p | praštevilo | |
-n | stopnja simetrične grupe | |
+n | naravno število: stopnja $S_n$, modul v $\mathbb Z_n$ ali velikost matrike | |
 S_n | simetrična grupa | | | $n!$ elementov
 A_n | alternirajoča grupa | | | sode permutacije
 \sigma, \tau, \rho | permutacije | |

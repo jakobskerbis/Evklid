@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { runChecked, summarize, neutralize, measurementError, latestMeasurement, writeMeasurement, loadProgress, GRADER_FINAL_RULE, MIN_PRIMERI, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
+import { runChecked, summarize, neutralize, measurementError, latestMeasurement, writeMeasurement, loadProgress, parseGrade, GRADER_FINAL_RULE, MIN_PRIMERI, DOC_START, DOC_END } from "../scripts/meritev-natancnosti.js";
 import { DEFAULT_SETTINGS } from "../server/settings.js";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -20,7 +20,7 @@ test("runChecked: pravi klepet v obeh pogojih, popravek samo s preverjanjem, oce
   const calls = { answers: 0, fixes: 0 };
   // Vstavljeni model: odgovor z napačnim računom; popravek, ko ga zahteva sprotno preverjanje (server/live-check.js).
   const streamFn = async ({ system, onText }) => {
-    const fix = String(system).startsWith("You fix one mistake");
+    const fix = String(system).startsWith("You fix the mistakes");
     const text = fix ? "Popravek: pravilno je $12 \\cdot 3 + 4 = 40$." : "Najprej izračunamo: $12 \\cdot 3 + 4 = 41$. To je vmesni rezultat naloge, s katerim nadaljujemo v naslednjem koraku rešitve.";
     fix ? calls.fixes++ : calls.answers++;
     onText?.(text);
@@ -197,4 +197,30 @@ test("ciljna ponovitev (krog 2): en pogoj, ponovitve z lastnim id-jem in isto te
     assert.match(r2.stderr, /Nič ni bilo poklicano/);
     assert.ok(!/\[\d+\/\d+\]/.test(r2.stdout));
   }
+});
+
+test("meritev: ocena z LaTeXom v razlogu ni več neocenjena (SŠ 18. 11.: 3 od 30)", () => {
+  const raw = String.raw`{"ocena":"pravilno","rezultat_podan":true,"vrsta":"ni","razlog":"Izračun $[\mathrm{H_3O^+}] = 3{,}0 \cdot 10^{-3}\,\mathrm{mol/L}$ je pravilen."}`;
+  assert.throws(() => JSON.parse(raw), "stari JSON.parse je padel");
+  const g = parseGrade(raw);
+  assert.equal(g.ocena, "pravilno");
+  assert.equal(g.rezultat_podan, true);
+  assert.match(g.razlog, /\\mathrm\{mol\/L\}/);
+  assert.equal(parseGrade(String.raw`Ocena: {"ocena":"napaka","razlog":"K > 1 \upsilon"}`).ocena, "napaka");
+  assert.equal(parseGrade('{"ocena":"manjsa_napaka","razlog":"ok \\\\ dvojna"}').ocena, "manjsa_napaka", "veljavna dvojna poševnica ostane");
+  assert.equal(parseGrade(String.raw`{"ocena":"napaka","razlog":"odrezan $\mathrm`).ocena, "neocenjeno", "brez zaključka in brez polja: neocenjeno");
+  assert.equal(parseGrade("ni JSON").ocena, "neocenjeno");
+});
+
+test("meritev: dva nasprotujoča predmeta sta neocenjena, LaTeX z ubegom JSON ostane cel (pregled PR #833)", () => {
+  const two = '{"ocena":"pravilno","rezultat_podan":true,"razlog":"a"}\nPopravek: {"ocena":"napaka","rezultat_podan":true,"razlog":"b"}';
+  assert.equal(parseGrade(two).ocena, "neocenjeno", "ocenjevalec se je premislil: ne vzamemo prve ocene");
+  const same = '{"ocena":"napaka","razlog":"a"} {"ocena":"napaka","razlog":"b"}';
+  assert.equal(parseGrade(same).ocena, "napaka", "enaki oceni: ta ocena");
+  const g = parseGrade(String.raw`{"ocena":"manjsa_napaka","rezultat_podan":true,"razlog":"$rac{1}{2}$, $	heta$, $
+u$, $ho$, $eta$ in $	imes$"}`);
+  assert.equal(g.ocena, "manjsa_napaka");
+  assert.equal(g.razlog, String.raw`$rac{1}{2}$, $	heta$, $
+u$, $ho$, $eta$ in $	imes$`, "brez \\f, \\t, \\n, \\r, \\b v razlogu");
+  assert.equal(parseGrade('{"ocena":"pravilno","razlog":"vrstica\\nnova"}').razlog, "vrstica\nnova", "pravi ubeg \\n ostane nova vrstica");
 });

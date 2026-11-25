@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Točke in povezave
+  - povezava nima smeri, brez zank
+  - $K_n$ ima $\binom{n}{2}$ povezav
+- Stopnja točke
+  - $d(v)$ šteje povezave iz $v$
+  - v $K_n$ je stopnja $n - 1$
+- Lema o rokovanju
+  - $d(v_1) + \dots + d(v_n) = 2m$
+  - napaka: vsoto stopenj vzeti za $m$
+- Lihe stopnje
+  - točk z liho stopnjo je sodo mnogo
+  - $7$ telefonov s stopnjo $3$: nemogoče
+- Barvanje povezav
+  - dve barvi: polna in črtkana
+  - iščemo enobarvni trikotnik
+- Šest točk
+  - Dirichlet: $\lceil 5/2 \rceil = 3$ povezave iste barve
+  - nato povezave med tremi sosedi
+- Pet ne zadošča
+  - petkotnik polno, zvezda črtkano
+  - zato $R(3, 3) = 6$
+- Tri barve
+  - $17$ točk: $\lceil 16/3 \rceil = 6$ sosedov
+  - med njimi uporabi $R(3, 3) = 6$

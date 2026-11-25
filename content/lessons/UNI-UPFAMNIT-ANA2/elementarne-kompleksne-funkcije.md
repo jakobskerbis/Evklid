@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -85,7 +85,7 @@ Neskončno. Iz $e^{x}(\cos y + i\sin y) = 1$ sledi $e^{x} = 1$ in kot $y$ je ve�
 
 $$\cos z = \frac{e^{iz} + e^{-iz}}{2}, \qquad \sin z = \frac{e^{iz} - e^{-iz}}{2i}.$$
 
-Ti formuli vzamemo za definicijo pri kompleksnem $z$. Ujemata se s Taylorjevima vrstama. Pozor: kompleksni kosinus ni omejen, saj je $\cos i = \dfrac{e^{-1} + e}{2} \approx 1{,}543$.
+Ti formuli vzamemo za definicijo pri kompleksnem $z$. Ujemata se s Taylorjevima vrstama. Pozor: kompleksni kosinus ni omejen: že $\cos i = \dfrac{e^{-1} + e}{2} \approx 1{,}543$ je večji od $1$, $\cos(iy) = \dfrac{e^{-y} + e^{y}}{2}$ pa z $y$ raste čez vse meje.
 
 **Logaritem.** Ker $\exp$ ni injektiven, ima enačba $e^{w} = z$ za $z \neq 0$ neskončno rešitev: $w = \ln|z| + i(\varphi + 2k\pi)$, kjer je $\varphi$ kot števila $z$. Kompleksni logaritem je zato večličen: vsako $z \neq 0$ ima neskončno logaritmov. Za računanje izberemo eno vejo (en izbor $k$), običajno tisto s $\varphi \in (-\pi, \pi]$.
 
@@ -177,7 +177,7 @@ Kot je določen do večkratnika $2\pi$: $y = \pi + 2k\pi$. Rešitve so $z = \ln 
 - **Seštevanje namesto množenja.** Kdor piše $e^{x+iy} = e^{x} + e^{iy}$, zamenja pravilo za potence s pravilom za vsote. Pravilno je $e^{x+iy} = e^{x}e^{iy}$.
 - **Koti v stopinjah.** Eulerjeva formula izhaja iz Taylorjevih vrst, te pa veljajo le za radiane. $e^{i\cdot 90}$ ni $i$; pravilno je $e^{i\pi/2} = i$.
 - **»$|e^{z}| = e^{|z|}$.«** Velikost določa le realni del. Na primer $|e^{3i}| = 1$, ne $e^{3}$.
-- **Ena rešitev enačbe $e^{z} = w$.** Ker je $\exp$ periodičen s periodo $2\pi i$, je rešitev neskončno, vse se razlikujejo za $2k\pi i$.
+- **Ena rešitev enačbe $e^{z} = w$ ($w \neq 0$).** Ker je $\exp$ periodičen s periodo $2\pi i$, je rešitev neskončno, vse se razlikujejo za $2k\pi i$.
 
 ## Povzetek
 
@@ -186,6 +186,58 @@ Kot je določen do večkratnika $2\pi$: $y = \pi + 2k\pi$. Rešitve so $z = \ln 
 - $e^{x+iy} = e^{x}(\cos y + i\sin y)$, $|e^{z}| = e^{\operatorname{Re} z}$, $e^{z+w} = e^{z}e^{w}$.
 - $e^{z} \neq 0$, funkcija je periodična s periodo $2\pi i$; logaritem je zato večličen.
 - $\cos z = \frac{e^{iz}+e^{-iz}}{2}$, $\sin z = \frac{e^{iz}-e^{-iz}}{2i}$; za kompleksne $z$ nista omejena.
+
+## Za izpit
+
+Znati moraš povedati:
+- definicijo $e^{z} = \sum_{n=0}^{\infty} \frac{z^{n}}{n!}$ za $z \in \mathbb{C}$ in zakaj vrsta konvergira absolutno za vsak $z$;
+- Eulerjevo formulo $e^{ix} = \cos x + i\sin x$ z izpeljavo iz vrste (potence števila $i$, ločitev sodih in lihih členov, zakaj je preureditev dovoljena);
+- adicijski izrek $e^{z+w} = e^{z}e^{w}$ in posledice: $e^{x+iy} = e^{x}(\cos y + i\sin y)$, $|e^{z}| = e^{\operatorname{Re} z}$, $e^{z} \neq 0$, perioda $2\pi i$;
+- definiciji $\cos z = \frac{e^{iz}+e^{-iz}}{2}$ in $\sin z = \frac{e^{iz}-e^{-iz}}{2i}$ ter zakaj za kompleksne $z$ nista omejena;
+- vse rešitve enačbe $e^{w} = z$ za $z \neq 0$: $w = \ln|z| + i(\varphi + 2k\pi)$, in kaj pomeni, da je logaritem večličen.
+
+### Naloga 1
+
+Poišči vse rešitve enačbe $\cos z = 2$ v $\mathbb{C}$. Rešitve zapiši v obliki $x + iy$ in eno od njih preveri z neposrednim računom.
+
+**Rešitev:**
+
+1. Po definiciji je $\cos z = \dfrac{e^{iz} + e^{-iz}}{2}$. Označimo $w = e^{iz}$; ker je $e^{iz} \neq 0$, je $e^{-iz} = \dfrac{1}{w}$. Enačba postane $w + \dfrac{1}{w} = 4$.
+2. Pomnožimo z $w$: $w^{2} - 4w + 1 = 0$, torej $w = \dfrac{4 \pm \sqrt{12}}{2} = 2 \pm \sqrt3$. Obe vrednosti sta pozitivni realni števili: $2 + \sqrt3 \approx 3{,}732$ in $2 - \sqrt3 \approx 0{,}268$.
+3. Ker je $(2+\sqrt3)(2-\sqrt3) = 4 - 3 = 1$, je $2 - \sqrt3 = \dfrac{1}{2+\sqrt3}$ in $\ln(2-\sqrt3) = -\ln(2+\sqrt3)$.
+4. Rešimo $e^{iz} = w$. Število $w$ je pozitivno, njegov kot je $0$, zato je $iz = \ln w + 2k\pi i$, $k \in \mathbb{Z}$. Delimo z $i$ (upoštevamo $\frac{1}{i} = -i$): $z = 2k\pi - i\ln w$.
+5. Za $w = 2 + \sqrt3$ dobimo $z = 2k\pi - i\ln(2+\sqrt3)$, za $w = 2 - \sqrt3$ pa $z = 2k\pi + i\ln(2+\sqrt3)$.
+6. Preizkus za $z = i\ln(2+\sqrt3)$: $e^{iz} = e^{-\ln(2+\sqrt3)} = 2 - \sqrt3$ in $e^{-iz} = 2 + \sqrt3$, zato je $\cos z = \dfrac{(2-\sqrt3) + (2+\sqrt3)}{2} = 2$.
+7. Odgovor: $z = 2k\pi \pm i\ln(2+\sqrt3)$, $k \in \mathbb{Z}$, kjer je $\ln(2+\sqrt3) \approx 1{,}317$. Nobena rešitev ni realna, kar se ujema z $|\cos x| \le 1$ za realne $x$.
+
+### Naloga 2
+
+Z Eulerjevo formulo izrazi $\cos^{4}x$ ($x \in \mathbb{R}$) kot vsoto kosinusov večkratnikov kota $x$ in nato izračunaj $\displaystyle\int_{0}^{\pi/2} \cos^{4}x\,dx$.
+
+**Rešitev:**
+
+1. Za realni $x$ je $\cos x = \dfrac{e^{ix} + e^{-ix}}{2}$, zato je $\cos^{4}x = \dfrac{(e^{ix} + e^{-ix})^{4}}{16}$.
+2. Binomska formula s koeficienti $1, 4, 6, 4, 1$ in pravilo $e^{z}e^{w} = e^{z+w}$ dasta
+   $(e^{ix} + e^{-ix})^{4} = e^{4ix} + 4e^{2ix} + 6 + 4e^{-2ix} + e^{-4ix}$.
+3. Združimo simetrične člene: $e^{4ix} + e^{-4ix} = 2\cos 4x$ in $4(e^{2ix} + e^{-2ix}) = 8\cos 2x$.
+4. Torej $\cos^{4}x = \dfrac{2\cos 4x + 8\cos 2x + 6}{16} = \dfrac{3}{8} + \dfrac{1}{2}\cos 2x + \dfrac{1}{8}\cos 4x$.
+5. Preizkus pri $x = 0$: $\frac38 + \frac12 + \frac18 = 1 = \cos^{4}0$.
+6. Integriramo po členih: $\displaystyle\int_{0}^{\pi/2}\cos^{4}x\,dx = \Big[\frac{3x}{8} + \frac{\sin 2x}{4} + \frac{\sin 4x}{32}\Big]_{0}^{\pi/2}$. Ker je $\sin\pi = \sin 2\pi = 0$, ostane le prvi člen.
+7. Odgovor: $\cos^{4}x = \frac38 + \frac12\cos 2x + \frac18\cos 4x$ in $\displaystyle\int_{0}^{\pi/2}\cos^{4}x\,dx = \frac{3\pi}{16} \approx 0{,}589$.
+
+### Naloga 3
+
+Natančno navedi definicijo kompleksne eksponentne funkcije in adicijski izrek. Nato utemelji: (a) $|e^{z}| = e^{\operatorname{Re} z}$ in $e^{z} \neq 0$ za vsak $z \in \mathbb{C}$; (b) $e^{z} = e^{w}$ velja natanko tedaj, ko je $z - w = 2k\pi i$ za neki $k \in \mathbb{Z}$. Kaj iz (b) sledi za logaritem?
+
+**Rešitev:**
+
+1. Definicija: $e^{z} = \sum_{n=0}^{\infty} \dfrac{z^{n}}{n!}$ za $z \in \mathbb{C}$. Vrsta konvergira absolutno, ker vrsta absolutnih vrednosti $\sum \dfrac{|z|^{n}}{n!}$ konvergira (njena vsota je $e^{|z|}$).
+2. Adicijski izrek: $e^{z+w} = e^{z}e^{w}$ za vse $z, w \in \mathbb{C}$. Iz njega in iz Eulerjeve formule sledi za $z = x + iy$ ($x, y \in \mathbb{R}$): $e^{z} = e^{x}e^{iy} = e^{x}(\cos y + i\sin y)$.
+3. (a) Absolutna vrednost produkta je produkt absolutnih vrednosti: $|e^{z}| = e^{x}\,|\cos y + i\sin y| = e^{x}\sqrt{\cos^{2}y + \sin^{2}y} = e^{x} = e^{\operatorname{Re} z}$.
+4. Realna eksponentna funkcija je pozitivna, zato je $|e^{z}| = e^{x} > 0$ in $e^{z} \neq 0$. Drugi dokaz: $e^{z}e^{-z} = e^{0} = 1$, torej noben faktor ni enak $0$.
+5. (b) Smer »$\Leftarrow$«: $e^{2k\pi i} = \cos 2k\pi + i\sin 2k\pi = 1$, zato je $e^{w + 2k\pi i} = e^{w}e^{2k\pi i} = e^{w}$.
+6. Smer »$\Rightarrow$«: iz $e^{z} = e^{w}$ sledi $e^{z-w} = e^{z}e^{-w} = e^{w}e^{-w} = 1$. Pišimo $z - w = u + iv$ z realnima $u$ in $v$. Iz $|e^{u+iv}| = e^{u} = 1$ sledi $u = 0$. Ostane $\cos v + i\sin v = 1$, torej $\cos v = 1$ in $\sin v = 0$, kar velja natanko za $v = 2k\pi$. Zato je $z - w = 2k\pi i$.
+7. Sklep: $\exp$ ni injektivna funkcija; vsako vrednost $z \neq 0$ zavzame v neskončno mnogo točkah, ki se razlikujejo za večkratnike $2\pi i$. Enačba $e^{w} = z$ ima zato rešitve $w = \ln|z| + i(\varphi + 2k\pi)$, logaritem je večličen in za računanje moramo izbrati eno vejo, običajno $\varphi \in (-\pi, \pi]$.
 
 ## Drugače: Kot zgodba
 

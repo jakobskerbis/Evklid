@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -19,7 +19,7 @@ Vsak zakon postavimo ob nekaj, kar že poznaš, in pogledamo, v čem se razlikuj
 
 Novo je to, da enako velja za telo, ki se že giblje. **Prvi Newtonov zakon (zakon o ravnovesju ali vztrajnostni zakon):** če je rezultanta sil na telo nič, telo miruje ali se giblje enakomerno po premici.
 
-Za sile sta torej mirovanje in enakomerno premo gibanje *enaka* stanja. Za gibanje s stalno hitrostjo rezultanta ni potrebna. Potrebna je šele za **spremembo** velikosti ali smeri hitrosti.
+Za sile sta torej mirovanje in enakomerno premo gibanje *enaki* stanji. Za gibanje s stalno hitrostjo rezultanta ni potrebna. Potrebna je šele za **spremembo** velikosti ali smeri hitrosti.
 
 Lastnost telesa, da ohranja svoje gibanje, imenujemo **vztrajnost**. Večja ko je masa, večja je vztrajnost.
 
@@ -118,7 +118,7 @@ $F_g = m \cdot g$, rezultanta $F = F_p - F_g$, nato $a = \dfrac{F}{m}$
 
 ### Primer 3: kaj pokaže telefon v avtu
 
-Telefon, pritrjen v nosilcu, z aplikacijo za pospeškomer izmeri, da avto pospešuje s $2\,\mathrm{m/s^2}$. Avto ima maso $1200\,\mathrm{kg}$, upor zraka in kotalno trenje ga skupaj zavirata s $400\,\mathrm{N}$. S kolikšno silo ga poganja motor?
+Telefon, pritrjen v nosilcu, z aplikacijo za pospeškomer izmeri, da avto pospešuje z $2\,\mathrm{m/s^2}$. Avto ima maso $1200\,\mathrm{kg}$, upor zraka in kotalno trenje ga skupaj zavirata s $400\,\mathrm{N}$. S kolikšno silo ga poganja motor?
 
 **Podatki:** $a = 2\,\mathrm{m/s^2}$, $m = 1200\,\mathrm{kg}$, zaviralna sila $F_u = 400\,\mathrm{N}$
 **Iščemo:** silo motorja $F_m$

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,9 +15,9 @@ Prizora sta si na videz tuja: enkrat glasnost, drugič udarci. Skrivata pa isto 
 
 ## Razlaga
 
-**Nazaj od odvoda.** Pri vsaki vrstici spodaj je znan odvod, iščemo funkcijo, ki ima ta odvod. Ugibamo, nato preverimo z odvajanjem:
+**Nazaj od odvoda.** Pri vsaki vrstici spodaj je znan odvod $f(x)$, iščemo funkcijo $F(x)$, ki ima ta odvod. Ugibamo, nato preverimo z odvajanjem ($F'(x)$):
 
-| znan odvod $f(x)$ | funkcija $F(x)$ | preverba $F'(x)$ |
+| $f(x)$ | $F(x)$ | $F'(x)$ |
 |---|---|---|
 | $8$ | $8x$ | $8$ ✓ |
 | $2x$ | $x^2$ | $2x$ ✓ |
@@ -52,9 +52,9 @@ Bobnar iz uvoda: število udarcev $N(t)$ ima odvod $60 + 12t$, zato je $N(t) = 6
 | $\dfrac{1}{x}$ | $\ln\lvert x\rvert + C$ | $x \ne 0$ |
 | $e^x$ | $e^x + C$ | |
 | $\cos x$ | $\sin x + C$ | |
-| $\sin x$ | $-\cos x + C$ | pazi na minus |
+| $\sin x$ | $-\cos x + C$ | |
 
-Za potence lahko zapišemo tudi formulo:
+Pri $\sin x$ pazi na minus. Za potence lahko zapišemo tudi formulo:
 
 $$\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$$
 
@@ -70,7 +70,7 @@ Zakaj pravilo za potence ne velja za $n = -1$?
 Ker bi v imenovalcu dobili $n + 1 = 0$. Funkcija $x^{-1} = \frac{1}{x}$ ima zato svoje pravilo: integral je $\ln\lvert x\rvert + C$.
 :::
 
-**Uvedba nove spremenljivke.** Odvajaj $(x^2 + 1)^4$ po verižnem pravilu: dobiš $4(x^2 + 1)^3 \cdot 2x$. Odvod notranje funkcije, $2x$, je »padel ven« kot faktor. Ko v integrandu vidiš notranjo funkcijo in zraven njen odvod, je to sled verižnega pravila. Postopek:
+**Uvedba nove spremenljivke (višja raven).** Odvajaj $(x^2 + 1)^4$ po verižnem pravilu: dobiš $4(x^2 + 1)^3 \cdot 2x$. Odvod notranje funkcije, $2x$, je »padel ven« kot faktor. Ko v integrandu vidiš notranjo funkcijo in zraven njen odvod, je to sled verižnega pravila. Postopek:
 
 1. Notranjo funkcijo poimenuješ z novo spremenljivko: $u = g(x)$.
 2. Odvajaš: $du = g'(x)\,dx$, in v integralu zamenjaš ves $x$ in $dx$.
@@ -123,7 +123,7 @@ $\int x^n\,dx = \dfrac{x^{n+1}}{n+1} + C$, $\int \sin x\,dx = -\cos x + C$, $\in
 5. Preverba: $\left(\dfrac{8}{3}x^{3/2}\right)' = \dfrac{8}{3} \cdot \dfrac{3}{2}\,x^{1/2} = 4\sqrt{x}$ ✓, $(3\cos x)' = -3\sin x$ ✓.
 6. Odgovor: integral je $\dfrac{8}{3}\,x\sqrt{x} + 3\cos x + 2e^x + C$.
 
-### Primer 3 (težji): nihanje kitarske strune
+### Primer 3 (težji, višja raven): nihanje kitarske strune
 
 Na počasnem posnetku se sredina kitarske strune giblje s hitrostjo $v(t) = 6\cos(3t)$, kjer je $v$ v $\mathrm{mm/s}$ in $t$ v sekundah. Ob $t = 0$ je struna v ravnovesni legi, odmik je $y(0) = 0$. Zapiši odmik $y(t)$ in izračunaj odmik ob $t = \dfrac{\pi}{6}\,\mathrm{s}$.
 
@@ -144,7 +144,7 @@ $y(t) = \int v(t)\,dt$, z novo spremenljivko $u = 3t$, $du = 3\,dt$
 6. Ob $t_1$: $y\!\left(\dfrac{\pi}{6}\right) = 2\sin\dfrac{\pi}{2} = 2$.
 7. Odgovor: odmik je $y(t) = 2\sin(3t)\,\mathrm{mm}$; ob $t = \dfrac{\pi}{6}\,\mathrm{s}$ je struna $2\,\mathrm{mm}$ od ravnovesne lege, kar je njen največji odmik.
 
-### Primer 4: zdaj ti
+### Primer 4 (višja raven): zdaj ti
 
 Izračunaj $\int 3x^2\,(x^3 - 2)^4\,dx$.
 
@@ -172,17 +172,140 @@ $\int u^4\,du = \dfrac{u^5}{5} + C$, torej $\dfrac{(x^3 - 2)^5}{5} + C$. Preverb
 - **Pozabljeni $C$.** Zapis $\int 2x\,dx = x^2$ izpusti vse premaknjene parabole. Nedoločeni integral je družina, zato vedno dodaj $+ C$. Konkretno vrednost $C$ določi šele dodaten podatek, kot je $y(0) = 0$.
 - **Odvajanje namesto integriranja.** Kdor pri $\int x^3\,dx$ napiše $3x^2$, je eksponent zmanjšal. Pri integriranju se eksponent *poveča* za $1$, nato deliš z novim eksponentom: $\dfrac{x^4}{4}$.
 - **Minus pri sinusu.** $\int \sin x\,dx = \cos x$ je narobe, ker je $(\cos x)' = -\sin x$. Pravilno: $-\cos x + C$. Preverba z odvajanjem to napako takoj ujame.
-- **Pozabljeni faktor pri notranji funkciji.** $\int \cos(3x)\,dx = \sin(3x) + C$ ne drži: odvod desne strani je $3\cos(3x)$. Ker je $dx = \dfrac{du}{3}$, je pravilno $\dfrac{\sin(3x)}{3} + C$.
-- **Integral produkta po faktorjih.** $\int 2x\,(x^2 + 1)^3\,dx$ ni $x^2 \cdot \dfrac{(x^2 + 1)^4}{4}$. Za produkt ni pravila »integriraj vsak faktor posebej«; tu pomaga nova spremenljivka $u = x^2 + 1$, rezultat je $\dfrac{(x^2 + 1)^4}{4} + C$.
+- **Pozabljeni faktor pri notranji funkciji (višja raven).** $\int \cos(3x)\,dx = \sin(3x) + C$ ne drži: odvod desne strani je $3\cos(3x)$. Ker je $dx = \dfrac{du}{3}$, je pravilno $\dfrac{\sin(3x)}{3} + C$.
+- **Integral produkta po faktorjih (višja raven).** $\int 2x\,(x^2 + 1)^3\,dx$ ni $x^2 \cdot \dfrac{(x^2 + 1)^4}{4}$. Za produkt ni pravila »integriraj vsak faktor posebej«; tu pomaga nova spremenljivka $u = x^2 + 1$, rezultat je $\dfrac{(x^2 + 1)^4}{4} + C$.
 
 ## Povzetek
 
-- $\int f(x)\,dx = F(x) + C$ pomeni $F'(x) = f(x)$; integriranje je odvajanje v obratni smeri.
-- Rezultat je družina funkcij, ki se razlikujejo za konstanto $C$; grafi so navpično premaknjeni, nakloni pri isti abscisi enaki.
-- Osnovni integrali: $\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$ ($n \ne -1$), $\int \frac{1}{x}\,dx = \ln\lvert x\rvert + C$, $\int e^x\,dx = e^x + C$, $\int \cos x\,dx = \sin x + C$, $\int \sin x\,dx = -\cos x + C$.
-- Konstanto nesemo pred integral, vsoto integriramo po členih; za produkt takega pravila ni.
-- Nova spremenljivka: $u = g(x)$, $du = g'(x)\,dx$, integriraj po $u$, vrni se k $x$. Pri $u = kx$ deliš s $k$.
+**Nedoločeni integral:**
+
+$$\int f(x)\,dx = F(x) + C$$
+
+- To pomeni $F'(x) = f(x)$: integriranje je odvajanje v obratni smeri.
+- Rezultat je **družina funkcij**, ki se razlikujejo za konstanto $C$.
+- Grafi so navpično premaknjeni, nakloni pri isti abscisi so enaki.
+
+| $f(x)$ | $\int f(x)\,dx$ |
+|:-:|:-:|
+| $x^n$, $n \ne -1$ | $\frac{x^{n+1}}{n+1} + C$ |
+| $\frac{1}{x}$ | $\ln\lvert x\rvert + C$ |
+| $e^x$ | $e^x + C$ |
+| $\cos x$ | $\sin x + C$ |
+| $\sin x$ | $-\cos x + C$ |
+
+- **Konstanto** nesemo pred integral, **vsoto** integriramo po členih.
+- Za **produkt** takega pravila ni.
+- **Nova spremenljivka** (višja raven): $u = g(x)$, $du = g'(x)\,dx$; integriraj po $u$, vrni se k $x$.
+- (višja raven) Pri $u = kx$ deliš s $k$.
 - Vedno preveri z odvajanjem.
+
+## Ponovitev
+
+**Formule**
+- $\int f(x)\,dx = F(x) + C$, kjer $F'(x) = f(x)$ (na pamet)
+- $\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$, $n \ne -1$ (na pamet)
+- $\int \frac{1}{x}\,dx = \ln\lvert x\rvert + C$ (na pamet)
+- $\int e^x\,dx = e^x + C$ (na pamet)
+- $\int \sin x\,dx = -\cos x + C$, $\int \cos x\,dx = \sin x + C$ (na pamet)
+- (višja raven) nova spremenljivka: $u = g(x)$, $du = g'(x)\,dx$ (na pamet)
+
+**Postopek**
+1. Vsoto integriraj po členih, konstanto postavi pred integral.
+2. Vsak člen integriraj po osnovnih integralih.
+3. Dodaj $+ C$.
+4. Če je dan podatek, npr. $y(0) = 0$, iz njega izračunaj $C$.
+5. Rezultat preveri z odvajanjem.
+
+**Pazi na**
+- Vedno dodaj $+ C$: rezultat je družina funkcij.
+- Eksponent povečaj za $1$ in deli z novim: $\int x^3\,dx = \frac{x^4}{4} + C$.
+- $\int \sin x\,dx = -\cos x + C$, ne $\cos x$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Izračunajte $\int \left(\dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x\right) dx$ za $x \ne 0$.
+
+**Rešitev:**
+
+1. Prvi člen zapišemo kot potenco, $\dfrac{3}{x^2} = 3x^{-2}$, zato je $\int 3x^{-2}\,dx = 3 \cdot \dfrac{x^{-1}}{-1} = -\dfrac{3}{x}$.
+2. Drugi člen: $\int \dfrac{2}{x}\,dx = 2\ln\lvert x\rvert$; tretji člen: $\int 4\cos x\,dx = 4\sin x$.
+3. Preverba: $\left(-\dfrac{3}{x} - 2\ln\lvert x\rvert + 4\sin x\right)' = \dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x$.
+4. Odgovor: $\int \left(\dfrac{3}{x^2} - \dfrac{2}{x} + 4\cos x\right) dx = -\dfrac{3}{x} - 2\ln\lvert x\rvert + 4\sin x + C$.
+
+**Točkovanje:** 1 točka za $-\dfrac{3}{x}$ (zapis s potenco $x^{-2}$ in pravilo za potence), 1 točka za $-2\ln\lvert x\rvert$, 1 točka za $4\sin x$ in integracijsko konstanto $C$.
+
+### Naloga 2: krajša strukturirana naloga, 6 točk, pola 1 (brez računala)
+
+Za funkcijo $f$ velja $f'(x) = 3x^2 - 6x$, njen graf pa poteka skozi točko $T(1, 2)$.
+
+a) Zapišite predpis funkcije $f$. (2 točki)
+
+b) Izračunajte ničle funkcije $f$. (2 točki)
+
+c) Izračunajte koordinate lokalnih ekstremov funkcije $f$ in za vsakega utemeljite, ali je lokalni maksimum ali lokalni minimum. (2 točki)
+
+**Rešitev:**
+
+1. a) Funkcija $f$ je primitivna funkcija za $f'$: $f(x) = \int (3x^2 - 6x)\,dx = x^3 - 3x^2 + C$.
+2. a) Iz $f(1) = 2$ sledi $1 - 3 + C = 2$, torej $C = 4$ in $f(x) = x^3 - 3x^2 + 4$.
+3. b) Ena ničla je $x = -1$, ker je $f(-1) = -1 - 3 + 4 = 0$. Z deljenjem z $(x + 1)$ dobimo $f(x) = (x + 1)(x^2 - 4x + 4) = (x + 1)(x - 2)^2$.
+4. b) Ničli sta $x_1 = -1$ (enostavna) in $x_2 = 2$ (dvojna).
+5. c) Stacionarni točki: $f'(x) = 3x^2 - 6x = 3x(x - 2) = 0$, torej $x = 0$ in $x = 2$; $f(0) = 4$ in $f(2) = 8 - 12 + 4 = 0$.
+6. c) Odvod $f'$ pri $x = 0$ spremeni predznak s $+$ na $-$, pri $x = 2$ pa z $-$ na $+$. Zato ima $f$ v točki $(0, 4)$ lokalni maksimum, v točki $(2, 0)$ pa lokalni minimum; tam se graf dotakne osi $x$, kar se ujema z dvojno ničlo.
+7. Odgovor: a) $f(x) = x^3 - 3x^2 + 4$; b) $x_1 = -1$, $x_2 = 2$ (dvojna ničla); c) lokalni maksimum v točki $(0, 4)$, lokalni minimum v točki $(2, 0)$.
+
+**Točkovanje:** a) 1 točka za $x^3 - 3x^2 + C$, 1 točka za $C = 4$ iz pogoja $f(1) = 2$; b) 1 točka za razcep (ali uganjeno ničlo in deljenje polinoma), 1 točka za obe ničli; c) 1 točka za stacionarni točki $x = 0$ in $x = 2$ z vrednostma $f(0) = 4$ in $f(2) = 0$, 1 točka za utemeljeno vrsto ekstremov (maksimum v $(0, 4)$, minimum v $(2, 0)$).
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = x\sqrt{x^2 + 9}$.
+
+a) Z uvedbo nove spremenljivke izračunajte $\int f(x)\,dx$. (3 točke)
+
+b) Poiščite tisto primitivno funkcijo $F$ funkcije $f$, za katero je $F(0) = 0$, in izračunajte $F(4)$. (3 točke)
+
+c) Izračunajte $\int \sin^2 x\,\cos x\,dx$. (2 točki)
+
+d) Izračunajte $\int \dfrac{2x + 3}{x^2 + 3x + 5}\,dx$ in utemeljite, zakaj v rezultatu absolutna vrednost ni potrebna. (2 točki)
+
+**Rešitev:**
+
+1. a) Notranja funkcija je $x^2 + 9$, njen odvod $2x$ je do faktorja $2$ že v integrandu. Uvedemo $u = x^2 + 9$, $du = 2x\,dx$, torej $x\,dx = \dfrac{du}{2}$.
+2. a) $\int \sqrt{u} \cdot \dfrac{du}{2} = \dfrac{1}{2} \cdot \dfrac{u^{3/2}}{3/2} = \dfrac{1}{3}\,u^{3/2}$, zato je $\int f(x)\,dx = \dfrac{1}{3}\,(x^2 + 9)\sqrt{x^2 + 9} + C$.
+3. b) $F(0) = \dfrac{1}{3} \cdot 9 \cdot 3 + C = 9 + C$; iz $F(0) = 0$ sledi $C = -9$.
+4. b) $F(4) = \dfrac{1}{3} \cdot 25 \cdot 5 - 9 = \dfrac{125}{3} - \dfrac{27}{3} = \dfrac{98}{3}$.
+5. c) Uvedemo $u = \sin x$, $du = \cos x\,dx$: $\int u^2\,du = \dfrac{u^3}{3} + C = \dfrac{\sin^3 x}{3} + C$.
+6. d) Števec je odvod imenovalca: $u = x^2 + 3x + 5$, $du = (2x + 3)\,dx$, zato je integral enak $\int \dfrac{du}{u} = \ln\lvert u\rvert + C$.
+7. d) Diskriminanta imenovalca je $D = 9 - 20 = -11 < 0$, vodilni koeficient pa je pozitiven, zato je $x^2 + 3x + 5 > 0$ za vsak $x$ in absolutna vrednost ne spremeni ničesar.
+8. Odgovor: a) $\dfrac{1}{3}\,(x^2 + 9)\sqrt{x^2 + 9} + C$; b) $F(x) = \dfrac{1}{3}\,(x^2 + 9)\sqrt{x^2 + 9} - 9$ in $F(4) = \dfrac{98}{3}$; c) $\dfrac{\sin^3 x}{3} + C$; d) $\ln(x^2 + 3x + 5) + C$.
+
+**Točkovanje:** a) 1 točka za $u = x^2 + 9$ in $x\,dx = \dfrac{du}{2}$, 1 točka za $\dfrac{1}{3}\,u^{3/2}$, 1 točka za rezultat, izražen z $x$, s konstanto $C$; b) 1 točka za $F(0) = 9 + C$, 1 točka za $C = -9$, 1 točka za $F(4) = \dfrac{98}{3}$; c) 1 točka za $u = \sin x$ in $du = \cos x\,dx$, 1 točka za rezultat; d) 1 točka za $\ln(x^2 + 3x + 5) + C$ (prizna se tudi zapis z absolutno vrednostjo), 1 točka za utemeljitev, da je imenovalec povsod pozitiven (negativna diskriminanta in pozitivni vodilni koeficient).
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj je primitivna funkcija dane funkcije $f$ in kaj je nedoločeni integral funkcije $f$?
+---
+Funkcija $F$ je primitivna funkcija funkcije $f$ na intervalu, če za vsak $x$ s tega intervala velja $F'(x) = f(x)$. Če je $F$ primitivna funkcija za $f$, je primitivna funkcija tudi $F + C$ za vsako realno število $C$, ker je odvod konstante enak $0$. Dve primitivni funkciji iste funkcije se na intervalu razlikujeta le za konstanto. Množico vseh primitivnih funkcij imenujemo nedoločeni integral in pišemo $\int f(x)\,dx = F(x) + C$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Utemelji, zakaj smemo pri nedoločenem integralu konstantni faktor nesti pred integral in vsoto integrirati člen za členom.
+---
+Obe lastnosti utemeljimo z odvajanjem, ker je primitivna funkcija določena s svojim odvodom. Če je $F' = f$ in $H' = h$, je po pravilih za odvajanje $(aF + bH)' = af + bh$. Zato je $aF + bH$ primitivna funkcija funkcije $af + bh$, torej velja $\int (af + bh)\,dx = a\int f\,dx + b\int h\,dx$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+(višja raven) Pojasni, kako integriramo z uvedbo nove spremenljivke, in postopek pokaži na integralu $\int 2x\cos(x^2)\,dx$.
+---
+Metoda je obrat verižnega pravila in je uporabna, kadar je v integrandu sestavljena funkcija $f\bigl(g(x)\bigr)$ in zraven odvod notranje funkcije $g'(x)$. Notranjo funkcijo označimo z $u = g(x)$, izrazimo $du = g'(x)\,dx$ in integral zapišemo samo s spremenljivko $u$. Integriramo po $u$ in nato namesto $u$ vstavimo $g(x)$. Pri $\int 2x\cos(x^2)\,dx$ vzamemo $u = x^2$, $du = 2x\,dx$ in dobimo $\int \cos u\,du = \sin(x^2) + C$.
+:::
 
 ## Drugače: Z analogijo
 
@@ -215,7 +338,7 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 ~ $C$ ni napaka: brez nje manjkajo vse možne začetne glasnosti. Brez začetnega podatka je ne smemo izpustiti.
 > Hitrost pove le, kako se glasnost spreminja; od kod začne, določi konstanta $C$ (pri fade-inu iz uvoda $-40\,\mathrm{dB}$).
 
-? V katerem vrstnem redu izvedeš uvedbo nove spremenljivke? (A: izbereš $u = g(x)$; B: $dx$ izraziš z $du$; C: integriraš po $u$; D: namesto $u$ vstaviš $g(x)$.)
+? (višja raven) V katerem vrstnem redu izvedeš uvedbo nove spremenljivke? (A: izbereš $u = g(x)$; B: $dx$ izraziš z $du$; C: integriraš po $u$; D: namesto $u$ vstaviš $g(x)$.)
 - A, C, B, D
 ~ Integrirati po $u$ še ne moreš, dokler v integralu stoji $dx$. Najprej zamenjaj $x$ in $dx$.
 + A, B, C, D
@@ -223,13 +346,12 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 ~ Če se vrneš k $x$ pred integriranjem, imaš spet prvotni integral in nisi nič pridobil.
 > Najprej novo spremenljivko in $du = g'(x)\,dx$, nato integral po $u$, na koncu nazaj k $x$.
 
-? Kaj se zgodi z rezultatom $\int \cos(kx)\,dx$, če $k$ podvojiš, z $2$ na $4$?
-- Faktor pred sinusom se podvoji, z $2$ na $4$.
-~ Tako bi bilo pri odvajanju: $\bigl(\sin(kx)\bigr)' = k\cos(kx)$. Pri integriranju s $k$ deliš.
-- Rezultat ostane $\sin(kx) + C$, spremeni se le $k$ v sinusu.
-~ Tu je pozabljen $du = k\,dx$. Odvod $\sin(4x)$ je $4\cos(4x)$, ne $\cos(4x)$.
-+ Faktor pred sinusom se razpolovi, z $\frac{1}{2}$ na $\frac{1}{4}$.
-> $\int \cos(kx)\,dx = \dfrac{\sin(kx)}{k} + C$: večji $k$ pomeni manjši faktor $\dfrac{1}{k}$.
+? (višja raven) (brez računala) Pri $k = 2$ je $\int \cos(2x)\,dx = \frac{1}{2}\sin(2x) + C$. Če $k$ podvojiš na $4$, dobiš $\int \cos(4x)\,dx = a\sin(4x) + C$. Koliko je faktor $a$? Vpiši kot decimalno število.
+= 0,25 | 0,01
+~ 4 | Tako bi bilo pri odvajanju: $\bigl(\sin(kx)\bigr)' = k\cos(kx)$. Pri integriranju s $k$ deliš.
+~ 0,5 | To je faktor pri $k = 2$, ki je ostal enak. Pri $k = 4$ deliš s $4$, ne z $2$.
+~ 1 | Faktor $\frac{1}{2}$ se ne podvoji skupaj s $k$. Tudi $\int \cos(4x)\,dx = \sin(4x) + C$ ne velja (pozabljen $du = 4\,dx$): odvod $\sin(4x)$ je $4\cos(4x)$, ne $\cos(4x)$.
+> $\int \cos(kx)\,dx = \dfrac{\sin(kx)}{k} + C$: večji $k$ pomeni manjši faktor $\dfrac{1}{k}$. Faktor se razpolovi, z $\frac{1}{2}$ na $a = \frac{1}{4} = 0{,}25$.
 
 ? Koliko je $\int \left(x^2 + \dfrac{1}{x}\right) dx$ za $x \ne 0$?
 - $2x - \dfrac{1}{x^2} + C$
@@ -239,13 +361,30 @@ Enako pri kilometrskem števcu: hitrost avtomobila pove, koliko kilometrov doda�
 + $\dfrac{x^3}{3} + \ln\lvert x\rvert + C$
 > $\int x^2\,dx = \dfrac{x^3}{3}$ in $\int \dfrac{1}{x}\,dx = \ln\lvert x\rvert$; konstanto dodamo enkrat.
 
-? Bobnar začne s tempom $80$ udarcev na minuto in pospešuje, tempo je $80 + 20t$ ($t$ v minutah). Koliko udarcev odigra v prvih $3$ minutah?
-- $140$
-~ To je tempo ob $t = 3$, torej hitrost, ne število udarcev.
-- $420$
-~ To dobiš, če ves čas računaš s končnim tempom ($140 \cdot 3$) ali pri $20t$ pozabiš deliti z $2$. Tempo je na začetku manjši.
-+ $330$
+? (brez računala) Bobnar začne s tempom $80$ udarcev na minuto in pospešuje, tempo je $80 + 20t$ ($t$ v minutah). Koliko udarcev odigra v prvih $3$ minutah?
+= 330 | 0
+~ 140 | To je tempo ob $t = 3$, torej hitrost, ne število udarcev.
+~ 420 | To dobiš, če ves čas računaš s končnim tempom ($140 \cdot 3$) ali pri $20t$ pozabiš deliti z $2$. Tempo je na začetku manjši.
 > $N(t) = 80t + 10t^2 + C$, $N(0) = 0$ da $C = 0$; $N(3) = 240 + 90 = 330$.
+
+<<RACUN
+integral: 3/x^2-2/x+4*cos(x) | x | -3/x-2*ln(x)+4*sin(x)
+odvod: -3/x-2*ln(x)+4*sin(x) | x | 3/x^2-2/x+4*cos(x)
+integral: 3*x^2-6*x | x | x^3-3*x^2
+resi: 1-3+C=2 | C | 4
+enako: x^3-3*x^2+4 | (x+1)*(x-2)^2
+resi: x^3-3*x^2+4=0 | x | -1, 2
+resi: 3*x^2-6*x=0 | x | 0, 2
+vrednost: 0^3-3*0^2+4 | 4
+vrednost: 2^3-3*2^2+4 | 0
+integral: x*sqrt(x^2+9) | x | (x^2+9)*sqrt(x^2+9)/3
+vrednost: (0^2+9)*sqrt(0^2+9)/3 | 9
+vrednost: (4^2+9)*sqrt(4^2+9)/3-9 | 98/3
+integral: sin(x)^2*cos(x) | x | sin(x)^3/3
+integral: (2*x+3)/(x^2+3*x+5) | x | ln(x^2+3*x+5)
+vrednost: 3^2-4*5 | -11
+integral: 2*x*cos(x^2) | x | sin(x^2)
+>>
 
 :::simboli
 f | integrand (znan odvod) | f(x) = F'(x) |
@@ -253,7 +392,7 @@ F | primitivna funkcija; nedoločeni integral je družina F + C | F'(x) = f(x) |
 C | integracijska konstanta | | | poljubno realno število
 x | spremenljivka, po kateri integriramo | |
 n | eksponent potence | | | $n \ne -1$
-g | notranja funkcija | |
+g | notranja funkcija | | | v pravilu za vsoto druga funkcija pod integralom
 u | nova spremenljivka | u = g(x) |
 k | koeficient notranje funkcije $kx$ | |
 a | konstantni faktor pred prvim členom | |
@@ -261,6 +400,7 @@ b | konstantni faktor pred drugim členom | |
 v | hitrost sredine strune | v(t) = 6\cos(3t) | mm/s
 y | odmik strune od ravnovesne lege | y(t) = \int v(t)\,dt | mm
 t | čas | | s | pri bobnarju v minutah
+N | število odigranih udarcev | | | odvod $N'(t)$ je tempo
 d | oznaka diferenciala v $dx$, $du$, $dt$ | | | pove, po kateri spremenljivki integriramo
 e | Eulerjevo število | e \approx 2{,}718 | | osnova naravnega logaritma
 :::

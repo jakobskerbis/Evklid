@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -107,7 +107,7 @@ Tip I: $\iint_D f\, dA = \int_a^b \int_{\varphi_1(x)}^{\varphi_2(x)} f\, dy\, dx
 3. Zunanji integral: $\int_0^1 \frac{x^3 - x^5}{2}\, dx = \frac{1}{2}\left(\frac{1}{4} - \frac{1}{6}\right) = \frac{1}{2} \cdot \frac{1}{12} = \frac{1}{24}$.
 4. Obrnjen vrstni red: za $0 \le y \le 1$ sega $x$ od premice $x = y$ do parabole $x = \sqrt{y}$, torej $D = \{0 \le y \le 1,\ y \le x \le \sqrt y\}$.
 5. $\int_y^{\sqrt y} xy\, dx = y\left[\frac{x^2}{2}\right]_y^{\sqrt y} = \frac{y}{2}(y - y^2)$ in $\int_0^1 \frac{y^2 - y^3}{2}\, dy = \frac{1}{2}\left(\frac{1}{3} - \frac{1}{4}\right) = \frac{1}{24}$.
-6. Odgovor: $\iint_D xy\, dA = \frac{1}{24} \approx 0{,}0417$; oba vrstna reda data isti rezultat.
+6. Odgovor: $\iint_D xy\, dA = \frac{1}{24} \approx 0{,}0417$; oba vrstna reda dasta isti rezultat.
 
 ### Primer 3 (težji)
 
@@ -142,7 +142,7 @@ $m = \iiint_T \rho\, dV$, sferne koordinate $dV = r^2\sin\vartheta\, dr\, d\vart
 - **Spremenljivke v mejah zunanjega integrala.** Meje zunanjega integrala morajo biti konstante. Če je rezultat dvojnega integrala po celem računu še odvisen od $x$ ali $y$, je meja napačno postavljena.
 - **Napačne meje pri zamenjavi vrstnega reda.** Študent le zamenja $dx$ in $dy$, meje pa pusti. Območje je treba vedno narisati in meje odčitati na novo.
 - **Napačna lega krivulj.** V Primeru 2 je na $(0, 1)$ parabola pod premico; z obrnjenima mejama dobimo $-\frac{1}{24}$. Pri ploščini ali masi negativen rezultat pomeni napako.
-- **Mešanje dogovorov za sferne koordinate.** Če je $\vartheta$ kot od osi $z$, je element $r^2\sin\vartheta$ in $\vartheta \in [0, \pi]$. Meja $\vartheta \in [0, 2\pi]$ šteje vsako točko dvakrat.
+- **Mešanje dogovorov za sferne koordinate.** Če je $\vartheta$ kot od osi $z$, je element $r^2\sin\vartheta$ in $\vartheta \in [0, \pi]$. Z mejo $\vartheta \in [0, 2\pi]$ bi vsako točko zajeli dvakrat, a ker je $\sin\vartheta$ na $[\pi, 2\pi]$ negativen, se prispevka odštejeta: prostornina krogle bi prišla $0$.
 - **Jacobijeva determinanta brez absolutne vrednosti.** Pri preslikavah, ki obrnejo orientacijo, je $J < 0$; v integral vstavimo $|J|$.
 
 ## Povzetek
@@ -207,7 +207,7 @@ Natančno navedi izrek o zamenjavi spremenljivk v dvojnem integralu in izpelji p
 
 **Pretok v cevi.** Pri laminarnem toku je hitrost v cevi parabolična, $v(r) = v_{\max}\left(1 - \frac{r^2}{R^2}\right)$. Prostorninski pretok je $\Phi_V = \int_0^{2\pi}\int_0^R v(r)\, r\, dr\, d\varphi = \frac{\pi R^2 v_{\max}}{2}$: povprečna hitrost je polovica največje. Iz izmerjenega pretoka v cevovodu tako izračunamo največjo hitrost in strižno obremenitev ob steni.
 
-**Katalizatorska zrna.** V poroznem kroglastem zrnu katalizatorja reaktant difundira od površja navznoter in se sproti porablja, zato je koncentracija v notranjosti manjša. Povprečno hitrost reakcije v zrnu dobimo kot trojni integral v sfernih koordinatah, $\frac{1}{V}\int_0^R r_A(c(r))\, 4\pi r^2\, dr$, kjer je $r_A$ hitrost reakcije na enoto prostornine (ne polmer); njeno razmerje s hitrostjo pri površinski koncentraciji je faktor izkoristka zrna, s katerim inženir izbere velikost zrn.
+**Katalizatorska zrna.** V poroznem kroglastem zrnu katalizatorja reaktant difundira od površja navznoter in se sproti porablja, zato je koncentracija v notranjosti manjša. Povprečno hitrost reakcije v zrnu dobimo kot trojni integral v sfernih koordinatah, $\frac{1}{V}\int_0^R r_A(c(r))\, 4\pi r^2\, dr$, kjer je $r_A$ hitrost reakcije na enoto prostornine (ne polmer); njeno razmerje s hitrostjo pri površinski koncentraciji je faktor učinkovitosti zrna, s katerim inženir izbere velikost zrn.
 
 **Mešala in vrtenje.** Vztrajnostni moment mešala okoli osi $z$ je $\iiint_T (x^2 + y^2)\rho\, dV$; od njega je odvisen zagonski navor motorja.
 
@@ -227,7 +227,7 @@ V kartezičnih koordinatah tega integrala ne bi znali izračunati, saj $\int e^{
 
 ## Drugače: Bolj natančno
 
-**Definicija in obstoj.** Naj bo $f$ omejena na pravokotniku $P$. Za delitev $\mathcal D$ na pravokotnike $P_{ij}$ definiramo spodnjo in zgornjo Darbouxjevo vsoto $s(\mathcal D) = \sum m_{ij}\, |P_{ij}|$ in $S(\mathcal D) = \sum M_{ij}\, |P_{ij}|$, kjer sta $m_{ij}$ in $M_{ij}$ infimum in supremum $f$ na $P_{ij}$. Funkcija je integrabilna, če je $\sup_{\mathcal D} s = \inf_{\mathcal D} S$. Vsaka zvezna funkcija na $P$ je integrabilna, saj je na kompaktni množici enakomerno zvezna: za vsak $\varepsilon > 0$ obstaja $\delta > 0$, da je pri delitvi s premeri pod $\delta$ razlika $M_{ij} - m_{ij} < \varepsilon$ in zato $S - s < \varepsilon\, |P|$. Na splošnem omejenem območju $D$ integral definiramo tako, da $f$ izven $D$ nadaljujemo z $0$; to je dobro definirano, če ima rob $D$ ploščino $0$ (na primer, če je sestavljen iz grafov zveznih funkcij).
+**Definicija in obstoj.** Naj bo $f$ omejena na pravokotniku $P$. Za delitev $\mathcal D$ na pravokotnike $P_{ij}$ definiramo spodnjo in zgornjo Darbouxovo vsoto $s(\mathcal D) = \sum m_{ij}\, |P_{ij}|$ in $S(\mathcal D) = \sum M_{ij}\, |P_{ij}|$, kjer sta $m_{ij}$ in $M_{ij}$ infimum in supremum $f$ na $P_{ij}$. Funkcija je integrabilna, če je $\sup_{\mathcal D} s = \inf_{\mathcal D} S$. Vsaka zvezna funkcija na $P$ je integrabilna, saj je na kompaktni množici enakomerno zvezna: za vsak $\varepsilon > 0$ obstaja $\delta > 0$, da je pri delitvi s premeri pod $\delta$ razlika $M_{ij} - m_{ij} < \varepsilon$ in zato $S - s < \varepsilon\, |P|$. Na splošnem omejenem območju $D$ integral definiramo tako, da $f$ izven $D$ nadaljujemo z $0$; to je dobro definirano, če ima rob $D$ ploščino $0$ (na primer, če je sestavljen iz grafov zveznih funkcij).
 
 **Fubinijev izrek.** Če je $f$ zvezna na $P = [a, b] \times [c, d]$, je funkcija $F(x) = \int_c^d f(x, y)\, dy$ zvezna in $\iint_P f\, dA = \int_a^b F(x)\, dx$. Za nezvezne funkcije zahtevamo absolutno integrabilnost; brez nje sta lahko dvakratna integrala v različnih vrstnih redih različna.
 

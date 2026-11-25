@@ -82,7 +82,7 @@ export function createPacer(pace, paint, { setTimer = setTimeout, clearTimer = c
 
   const finishIfDone = () => {
     if (final && shown >= raw.length) {
-      paint(raw);
+      paint(raw, true); // končni izris (izpis-toka.js: takoj, ne ob naslednji sličici)
       resolveDone();
       return true;
     }
@@ -126,6 +126,13 @@ export function createPacer(pace, paint, { setTimer = setTimeout, clearTimer = c
       }
       final = true;
       kick();
+    },
+    // Pretočeno besedilo ni več veljavno (besedilo pred klicem orodja, server/claude.js onRetract): začni znova.
+    reset() {
+      if (final) return;
+      raw = "";
+      shown = 0;
+      paint("");
     },
     skip() {
       instant = true;

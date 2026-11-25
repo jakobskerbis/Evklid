@@ -236,7 +236,7 @@
       },
       {
        "title": "Drugače: z enačbami",
-       "text": "Označimo Anin delež z $3k$ in Borov s $5k$. Iz vsote: $3k + 5k = 720$, $8k = 720$, $k = 90$.\n\nCenetov delež $c$ dobimo iz razlike: $c - 3k = 360$, torej $c = 360 + 270 = 630$.\n\nCelotno plačilo: $3k + 5k + c = 720 + 630 = 1350$ (€). Razmerje $270 : 450 : 630$ okrajšamo z $90$ in dobimo $3 : 5 : 7$."
+       "text": "Označimo Anin delež s $3k$ in Borov s $5k$. Iz vsote: $3k + 5k = 720$, $8k = 720$, $k = 90$.\n\nCenetov delež $c$ dobimo iz razlike: $c - 3k = 360$, torej $c = 360 + 270 = 630$.\n\nCelotno plačilo: $3k + 5k + c = 720 + 630 = 1350$ (€). Razmerje $270 : 450 : 630$ okrajšamo z $90$ in dobimo $3 : 5 : 7$."
       },
       {
        "title": "Preizkus",

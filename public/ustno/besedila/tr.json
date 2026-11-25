@@ -4,6 +4,7 @@
 "u.snov": "Konu",
 "u.iskanje": "Seni hangi konudan sorayım?",
 "u.isciPh": "ör. Ohm yasası",
+"u.isciPhTema": "ör. {tema}",
 "u.isci": "Ara",
 "u.koliko": "Kaç soru",
 "u.kako": "Nasıl cevap veriyorsun",
@@ -73,6 +74,7 @@
 "u.nalagam": "Yükleniyor …",
 "u.starsNaslov": "Sesle cevap verme",
 "u.starsOpis": "Sözlü sınavda ve öğretmenle sohbetteki mikrofonla çocuğunuz sesli yanıt verebilir. Konuşmayı metne tarayıcının sağlayıcısı (ör. Google, Apple veya Microsoft) çevirir; Evklid yalnızca metni alır ve ses kaydetmez. 15 yaşından küçükler için siz açana kadar kapalıdır. Yazarak yanıt her zaman çalışır.",
+"u.starsOpisZame": "Sözlü sınavda ve öğretmenle sohbetteki mikrofonla sesli yanıt verebilirsin. Konuşmayı metne tarayıcının sağlayıcısı (ör. Google, Apple veya Microsoft) çevirir; Evklid yalnızca metni alır ve ses kaydetmez. Yazarak yanıt her zaman çalışır.",
 "u.dovoli": "Sesle cevap vermeye izin ver",
 "u.nad15": "15 yaş veya üstü: izin gerekmez.",
 "u.shranjeno": "Kaydedildi."

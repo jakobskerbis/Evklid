@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Linearna enačba
+  - $y'' + p(x)y' + q(x)y = f(x)$
+  - dva začetna pogoja: $y(x_0)$ in $y'(x_0)$
+- Homogena enačba
+  - superpozicija: $y_h = C_1y_1 + C_2y_2$
+  - neodvisnost: $W = y_1y_2' - y_1'y_2 \neq 0$
+- Karakteristična enačba
+  - $\lambda^2 + a\lambda + b = 0$, $D = a^2 - 4b$
+  - $D > 0$: $C_1e^{\lambda_1x} + C_2e^{\lambda_2x}$
+  - $D = 0$: $(C_1 + C_2x)e^{\lambda x}$
+- Kompleksni ničli
+  - $\alpha \pm i\beta$: $e^{\alpha x}(C_1\cos\beta x + C_2\sin\beta x)$
+  - $y'' + \omega^2y = 0$: harmonično nihanje
+- Nehomogena enačba
+  - $y = y_h + y_p$
+  - nastavek ima obliko desne strani
+  - konstanti določi šele iz celotne rešitve
+- Resonanca nastavka
+  - nastavek pomnoži z $x^k$
+  - $k$ je večkratnost ustrezne ničle
+- Nihanje
+  - $m\ddot x + b\dot x + kx = F$
+  - dušenje: podkritično, kritično, nadkritično
+  - resonanca pri $\Omega \approx \omega_0$

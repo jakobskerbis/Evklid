@@ -23,7 +23,7 @@ stanje: osnutek
   - nasproti A pride U
 - Prevod: mRNA → beljakovina
   - ribosom v citoplazmi bere kodone
-  - antikodon tRNA prinese aminokislino
+  - tRNA z antikodonom prinese aminokislino
 - Uravnavanje izražanja
   - ista DNA, različni geni vklopljeni
   - primer: laktoza pri *E. coli*

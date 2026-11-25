@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -43,7 +43,7 @@ Na $\mathbb{Q}$ je neresnična, ker $\sqrt2$ ni racionalno število. Na $\mathbb
 $$\forall x \in A\colon P(x) \ \sim\ \forall x\,\big(x \in A \Rightarrow P(x)\big)$$
 $$\exists x \in A\colon P(x) \ \sim\ \exists x\,\big(x \in A \wedge P(x)\big)$$
 
-Pri $\forall$ je veznik implikacija, pri $\exists$ konjunkcija. Stavek »vsa praštevila, večja od $2$, so lihi« je torej $\forall x\,\big((x \text{ praštevilo} \wedge x > 2) \Rightarrow x \text{ liho}\big)$.
+Pri $\forall$ je veznik implikacija, pri $\exists$ konjunkcija. Stavek »vsa praštevila, večja od $2$, so liha« je torej $\forall x\,\big((x \text{ praštevilo} \wedge x > 2) \Rightarrow x \text{ liho}\big)$.
 
 **5. Negacija.** Izjava $\forall x\, P(x)$ je neresnična natanko tedaj, ko je v stolpcu $P$ kakšna ničla, torej ko obstaja $x$, za katerega $P(x)$ ne velja:
 
@@ -152,7 +152,7 @@ Negacija: $\forall M \in \mathbb{R}\ \exists n \in \mathbb{N}\colon n > M$. Ta j
 - **Zanikanje domene.** Napačno: negacija od $\forall x \in \mathbb{R}\colon x^2 \geq 0$ je $\exists x \notin \mathbb{R}\colon x^2 < 0$. Domena pove, o čem govorimo, in ni del trditve. Pravilno: $\exists x \in \mathbb{R}\colon x^2 < 0$.
 - **Napačna negacija implikacije pod kvantifikatorjem.** Napačno: $\neg\, \forall x\,(P \Rightarrow Q) \sim \exists x\,(P \Rightarrow \neg Q)$. Implikacija je neresnična le pri $P = 1$, $Q = 0$. Pravilno: $\exists x\,(P(x) \wedge \neg Q(x))$.
 - **Zamenjava vrstnega reda $\forall$ in $\exists$.** Kdor zamenja $\forall x\, \exists y$ z $\exists y\, \forall x$, iz »vsak ima svojega« naredi »eden velja za vse«. Prva izjava sledi iz druge, obratno pa ne. Pravilno: vrstni red ohrani tudi pri negaciji.
-- **Implikacija pri $\exists$.** Napačno: »neko praštevilo je sodo« zapišemo $\exists x\,(x \text{ praštevilo} \Rightarrow x \text{ sodo})$. To je resnično že pri $x = 4$, ker je premisa neresnična. Pravilno: $\exists x\,(x \text{ praštevilo} \wedge x \text{ sodo})$.
+- **Implikacija pri $\exists$.** Napačno: »neko praštevilo je sodo« zapišemo $\exists x\,(x \text{ praštevilo} \Rightarrow x \text{ sodo})$. To je resnično že pri $x = 4$, ker je premisa neresnična; veljalo bi tudi, če sodega praštevila sploh ne bi bilo. Pravilno: $\exists x\,(x \text{ praštevilo} \wedge x \text{ sodo})$.
 
 ## Povzetek
 
@@ -163,17 +163,71 @@ Negacija: $\forall M \in \mathbb{R}\ \exists n \in \mathbb{N}\colon n > M$. Ta j
 - Pri več kvantifikatorjih se ob negaciji vsak obrne, vrstni red ostane. Vrstni red $\forall$ in $\exists$ je pomemben, enaka kvantifikatorja smemo zamenjati.
 - Za ovržbo $\forall$ zadošča protiprimer, za dokaz $\exists$ zadošča priča.
 
-## Drugače: Iz vsakdanjega življenja (igra dveh igralcev)
+## Za izpit
 
-Izjavo s kvantifikatorji si predstavljaj kot igro med **branilcem**, ki trdi, da izjava drži, in **izzivalcem**, ki trdi nasprotno.
+Znati moraš povedati:
+- definicije: predikat (izjavna forma), področje pogovora, prosta in vezana spremenljivka, univerzalni in eksistenčni kvantifikator;
+- pomen omejenih kvantifikatorjev: pri $\forall x \in A$ implikacija, pri $\exists x \in A$ konjunkcija, in kaj velja pri $A = \emptyset$;
+- pravili za negacijo, $\neg\, \forall x\, P \sim \exists x\, \neg P$ in $\neg\, \exists x\, P \sim \forall x\, \neg P$, z utemeljitvijo na končni domeni (De Morgan), ter negacijo $\forall x\,(P \Rightarrow Q)$;
+- negacijo izjave z več kvantifikatorji (vsak se obrne, vrstni red in domene ostanejo, na koncu zanikaš predikat);
+- zakaj je vrstni red $\forall$ in $\exists$ pomemben: $\exists y\, \forall x\, P \models \forall x\, \exists y\, P$, obrat ne velja (protiprimer $y > x$ na $\mathbb{N}$);
+- katere enakovrednosti in posledice veljajo med kvantifikatorji in vezniki $\wedge$, $\vee$, s protiprimeri za obrate.
 
-- Pri $\forall x$ izbere $x$ izzivalec. Izbral bo najbolj neugodnega.
-- Pri $\exists y$ izbere $y$ branilec. Izbral bo najugodnejšega in pozna vse, kar je bilo izbrano pred njim.
-- Na koncu preverimo predikat. Izjava je resnična, če ima branilec zmagovalno strategijo.
+### Naloga 1
 
-Pri $\forall x\, \exists y\colon y > x$ na $\mathbb{N}$ izzivalec reče $x = 100$, branilec odgovori $y = 101$ in zmaga. Pri $\exists y\, \forall x\colon y > x$ mora branilec prvi izbrati $y$, izzivalec pa odgovori z $x = y$ in zmaga.
+Funkcija $f\colon \mathbb{R} \to \mathbb{R}$ je **enakomerno zvezna**, če velja
+$$\forall \varepsilon > 0\ \exists \delta > 0\ \forall x\, \forall y\colon \big(|x - y| < \delta \Rightarrow |f(x) - f(y)| < \varepsilon\big).$$
+(a) Zapiši negacijo te izjave. (b) Z njo dokaži, da $f(x) = x^2$ ni enakomerno zvezna. (c) Izbiro preveri s številkami pri $\delta = 0{,}1$.
 
-Negacija zamenja vlogi igralcev. Kar je bila izbira izzivalca ($\forall$), postane izbira novega branilca ($\exists$), in obratno.
+**Rešitev:**
+
+1. Kvantifikatorje obrnemo v istem vrstnem redu, domeni $\varepsilon > 0$ in $\delta > 0$ ostaneta: $\exists \varepsilon > 0\ \forall \delta > 0\ \exists x\, \exists y\colon \neg(\dots)$.
+2. Zanikamo implikacijo, $\neg(p \Rightarrow q) \sim p \wedge \neg q$: $\exists \varepsilon > 0\ \forall \delta > 0\ \exists x\, \exists y\colon \big(|x - y| < \delta \wedge |f(x) - f(y)| \geq \varepsilon\big)$.
+3. Kdo izbira: $\varepsilon$ izberemo mi, enkrat za vselej. Nato je $\delta > 0$ poljuben, $x$ in $y$ pa smeta biti odvisna od $\delta$, ker $\exists x\, \exists y$ stojita za $\forall \delta$.
+4. Izberemo $\varepsilon = 1$. Za dani $\delta > 0$ vzamemo $x = \frac{1}{\delta}$ in $y = \frac{1}{\delta} + \frac{\delta}{2}$.
+5. Prvi pogoj: $|x - y| = \frac{\delta}{2} < \delta$.
+6. Drugi pogoj: $|f(x) - f(y)| = y^2 - x^2 = (y - x)(y + x) = \frac{\delta}{2}\left(\frac{2}{\delta} + \frac{\delta}{2}\right) = 1 + \frac{\delta^2}{4} \geq 1 = \varepsilon$.
+7. Številke pri $\delta = 0{,}1$: $x = 10$, $y = 10{,}05$, $|x - y| = 0{,}05 < 0{,}1$ in $y^2 - x^2 = 101{,}0025 - 100 = 1{,}0025 \geq 1$.
+8. Odgovor: negacija je $\exists \varepsilon > 0\ \forall \delta > 0\ \exists x\, \exists y\colon (|x - y| < \delta \wedge |f(x) - f(y)| \geq \varepsilon)$. Resnična je z $\varepsilon = 1$, $x = \frac{1}{\delta}$, $y = \frac{1}{\delta} + \frac{\delta}{2}$, zato $x^2$ ni enakomerno zvezna na $\mathbb{R}$.
+
+### Naloga 2
+
+Domena je $D = \{1, 2, 3, 4, 6, 12\}$ (delitelji števila $12$), $x \mid y$ pomeni »$x$ deli $y$«. Ugotovi resničnost izjav. Resnično utemelji, neresnični zapiši negacijo brez znaka $\neg$ pred kvantifikatorjem in navedi pričo zanjo.
+a) $\exists x\, \forall y\colon x \mid y$
+b) $\forall x\, \forall y\colon (x \mid y \vee y \mid x)$
+c) $\forall x\, \exists y\colon x \cdot y = 12$
+d) $\forall x\, \exists y\colon (y \neq x \wedge x \mid y)$
+
+**Rešitev:**
+
+1. a) Resnična. Priča je $x = 1$, ki deli vsako število iz $D$. Tu mora en sam $x$ ustrezati vsem $y$.
+2. b) Neresnična. Negacija: $\exists x\, \exists y\colon (x \nmid y \wedge y \nmid x)$; disjunkcija je po De Morganu postala konjunkcija. Priča: $x = 4$, $y = 6$, ker $4 \nmid 6$ in $6 \nmid 4$ (ustrezata tudi para $2, 3$ in $3, 4$).
+3. c) Resnična. Za vsak $x$ vzamemo $y = \frac{12}{x}$: pari $(1, 12)$, $(2, 6)$, $(3, 4)$, $(4, 3)$, $(6, 2)$, $(12, 1)$. Vsak $y$ je v $D$; odvisen je od $x$, kar je pri $\forall x\, \exists y$ dovoljeno.
+4. d) Neresnična. Negacija: $\exists x\, \forall y\colon (y = x \vee x \nmid y)$. Priča je $x = 12$: edini večkratnik števila $12$ v $D$ je $12$ sam, zato za vsak $y \in D$ velja $y = 12$ ali $12 \nmid y$.
+5. Odgovor: a) resnična, b) neresnična (protiprimer $4$ in $6$), c) resnična, d) neresnična (protiprimer $x = 12$).
+
+### Naloga 3
+
+Utemelji, ali velja: (a) iz $\exists y\, \forall x\, P(x, y)$ sledi $\forall x\, \exists y\, P(x, y)$; (b) iz $\forall x\, \exists y\, P(x, y)$ sledi $\exists y\, \forall x\, P(x, y)$; (c) $\forall x\,(P(x) \vee Q(x)) \sim \forall x\, P(x) \vee \forall x\, Q(x)$. Kjer trditev ne velja, navedi strukturo (domeno in pomen predikatov), v kateri odpove.
+
+**Rešitev:**
+
+1. (a) Velja. Naj bo v neki strukturi $\exists y\, \forall x\, P(x, y)$ resnična. Potem obstaja element $b$ domene, da je $P(a, b)$ resnična za vsak $a$.
+2. Vzemimo poljuben $a$. Zanj je priča za $\exists y\, P(a, y)$ kar ta isti $b$. Torej je $\forall x\, \exists y\, P(x, y)$ resnična. Ker je bila struktura poljubna, velja $\exists y\, \forall x\, P \models \forall x\, \exists y\, P$.
+3. (b) Ne velja. Struktura: domena $\mathbb{N}$, $P(x, y)$: »$y > x$«. Izjava $\forall x\, \exists y\colon y > x$ je resnična ($y = x + 1$). Izjava $\exists y\, \forall x\colon y > x$ je neresnična, ker bi pri $x = y$ veljalo $y > y$.
+4. (c) Ne velja. Smer $\forall x\, P \vee \forall x\, Q \models \forall x\,(P \vee Q)$ drži: če $P$ velja za vse $x$ (ali $Q$ za vse $x$), velja za vsak $x$ tudi $P(x) \vee Q(x)$.
+5. Obratna smer odpove v strukturi: domena $\mathbb{N}$, $P(x)$: »$x$ je sod«, $Q(x)$: »$x$ je lih«. Leva stran je resnična, ker je vsako naravno število sodo ali liho. Desna je neresnična: ni vsako število sodo (protiprimer $1$) in ni vsako liho (protiprimer $2$).
+6. Odgovor: (a) velja, (b) ne velja (protiprimer $y > x$ na $\mathbb{N}$), (c) ne velja, drži le posledica z desne na levo. Z $\wedge$ namesto $\vee$ bi enakovrednost v (c) veljala.
+
+## Drugače: Uporaba v stroki
+
+**Definicije v analizi.** Vsaka definicija z $\varepsilon$ je izjava s tremi ali štirimi kvantifikatorji. Zveznost v točki $a$ je $\forall \varepsilon > 0\ \exists \delta > 0\ \forall x\colon (|x - a| < \delta \Rightarrow |f(x) - f(a)| < \varepsilon)$. Ko dokazuješ, da funkcija ni zvezna ali da zaporedje ne konvergira, najprej mehansko zapišeš negacijo, šele nato iščeš pričo.
+
+**Specifikacije programov.** Trditev »tabela $a$ dolžine $n$ je urejena« je $\forall i\, \forall j\colon (0 \le i < j < n \Rightarrow a[i] \le a[j])$. Tabela $[2, 5, 5, 9]$ ji ustreza. Za $[2, 7, 5]$ orodje za preverjanje vrne protiprimer $i = 1$, $j = 2$ (ker $7 > 5$), torej pričo za negacijo $\exists i\, \exists j\colon (0 \le i < j < n \wedge a[i] > a[j])$.
+
+**Podatkovne baze.** Jezik SQL ima eksistenčni kvantifikator (`EXISTS`), splošnega univerzalnega pa ne. Poizvedbo »študenti, ki so opravili vse izpite« zato zapišeš z dvojno negacijo, $\forall i\, O(s, i) \sim \neg\, \exists i\, \neg O(s, i)$: študenti, za katere ne obstaja izpit, ki ga niso opravili.
+
+**Dokazovalni pomočniki.** V programih, kot sta Lean in Rocq (prej Coq), izrek zapišeš kot formulo s kvantifikatorji, program pa preveri vsak korak dokaza. Cilj $\forall x$ dokažeš za poljuben $x$, pri cilju $\exists y$ moraš podati pričo. Vrstni red kvantifikatorjev določa, od česa je priča lahko odvisna.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -241,7 +295,7 @@ Recept za negacijo izjave s kvantifikatorji, na primeru $\forall \varepsilon > 0
 
 ? Zaporedje $(a_n)$ je omejeno, če velja $\exists M > 0\ \forall n \in \mathbb{N}\colon |a_n| \leq M$. Kaj pomeni, da zaporedje *ni* omejeno?
 - $\exists M > 0\ \forall n \in \mathbb{N}\colon |a_n| > M$
-~ Zanikal si le predikat, kvantifikatorja pa nisi obrnil. Ob negaciji se obrne vsak.
+~ Zanikal si le predikat, kvantifikatorjev pa nisi obrnil. Ob negaciji se obrne vsak.
 - $\forall M > 0\ \forall n \in \mathbb{N}\colon |a_n| > M$
 ~ Obrnil si le prvi kvantifikator. Tudi $\forall n$ mora postati $\exists n$.
 + $\forall M > 0\ \exists n \in \mathbb{N}\colon |a_n| > M$
@@ -257,4 +311,7 @@ D | področje pogovora (domena)
 p, q | izjavi
 n | naravno število
 M | realno število (zgornja meja)
+f | realna funkcija
+\varepsilon | poljubno majhno pozitivno število (dovoljeno odstopanje)
+\delta | pozitivno število, ki ga izberemo glede na ε
 :::

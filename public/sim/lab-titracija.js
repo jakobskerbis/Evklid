@@ -2,8 +2,9 @@
 // Učenec spere in napolni bireto, izpusti zrak iz konice, odpipetira vzorec, izbere indikator, titrira po kapljicah,
 // sam odčita bireto, ponavlja do ujemanja in izračuna koncentracijo. Napake imajo posledice kot v pravem laboratoriju.
 import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en } from "./lab.js";
 import { flaskLevel } from "./lab-kem.js";
+import { fotoPoskus, risiTitracijo, OKNA_TITRACIJA } from "./foto.js";
 import { TitrBench, VZORCI, INDIKATORJI, BIRETA, PIPETA, colourName, indicatorColor, POENOSTAVITVE_TITRACIJA } from "./lab-model-titracija.js";
 
 // ---------------------------------------------------------------- mere pripomočkov (mm), risba v pravem razmerju
@@ -69,7 +70,7 @@ export function labTitracija(el) {
   cIn.addEventListener("keydown", (e) => e.key === "Enter" && checkC());
   const cBtn = button("Preveri koncentracijo", () => checkC(), "primary small");
   const calc = h("div", { class: "lab-tit-calc", hidden: true },
-    h("p", { class: "muted", html: "<i>c</i>(kisline) = <i>c</i>(NaOH) · <i>V</i>(NaOH) / <i>V</i>(vzorca); <i>c</i>(NaOH) = 0,1000 mol/L, <i>V</i>(vzorca) = 25,00 mL. Vzemi povprečje titracij, ki se ujemajo." }),
+    h("p", { class: "muted", html: `${tex(String.raw`c(\text{kisline}) = \frac{c(\mathrm{NaOH}) \cdot V(\mathrm{NaOH})}{V(\text{vzorca})}`)}; ${tex(String.raw`c(\mathrm{NaOH}) = 0{,}1000${en("mol/L")}`)}, ${tex(String.raw`V(\text{vzorca}) = 25{,}00${en("mL")}`)}. Vzemi povprečje titracij, ki se ujemajo.` }),
     h("label", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, "c(kisline) [mol/L]"), cIn), h("div", { class: "demo-buttons" }, cBtn));
   const grp = (title, ...kids) => h("fieldset", { class: "lab-tit-grp" }, h("legend", {}, title), ...kids);
   const buttons = (...k) => h("div", { class: "demo-buttons" }, ...k);
@@ -90,6 +91,7 @@ export function labTitracija(el) {
     tryText: "Določi neznano koncentracijo klorovodikove kisline: titriraj, dokler se dve titraciji ne ujemata na 0,10 mL, in izračunaj c. Nato titriraj ocetno kislino enkrat z metiloranžem in enkrat s fenolftaleinom. Napovej, kateri da pravi rezultat, in razloži zakaj. Kaj se zgodi, če bireto napolniš, ne da bi jo prej spral s titrantom?",
   });
   el.classList.add("lab");
+  const foto = fotoPoskus("titracija", svg, el, () => draw(), OKNA_TITRACIJA);
 
   // ---------------------------------------------------------------- stanje poskusa
   let cur = null; // tekoča titracija: { R1, R1t, ind, id, trial, mehur, wrongRead }
@@ -422,6 +424,13 @@ export function labTitracija(el) {
     const sampleV = f ? (pip ? f.Vs * Math.min(1, pip.t / pip.dur) : f.V) : 0;
     const col = f && !pip ? rgb(B.colour()) : "rgb(247,250,252)";
     const R = B.reading();
+    // Fotografski prikaz (foto.js, privzeto vklopljen): iste količine iz modela, položene na izrisane sloje.
+    const fotoOk = foto.risi((o, meta) => risiTitracijo(o, meta, { polna: B.filled, R, pipa: B.tap, mehur: b.mehur, V: sampleV, barva: f ? (pip ? [247, 250, 252] : B.colour()) : null, ph: phT.get(),
+      blisk: f && !pip ? B.flash : 0, bliskBarva: f && f.ind !== "brez" ? indicatorColor(INDIKATORJI[f.ind], 13) : null, kapljice: drops, curek: B.tap === "curek" && sampleV > 0, miruje: reduced }));
+    if (!fotoOk) risba(f, b, sampleV, col, R);
+    stanjeGumbov(f, col, R);
+  }
+  function risba(f, b, sampleV, col, R) {
     // ---- levo: stojalo, bireta, erlenmajerica, pipeta
     s("line", { x1: 4, y1: BENCH, x2: 198, y2: BENCH, class: "lab-tit-bench" }, svg);
     s("rect", { x: 14, y: BENCH - 6 * K - 0.5, width: 150, height: 6 * K + 0.5, rx: 1.5, class: "lab-box" }, svg);
@@ -466,6 +475,8 @@ export function labTitracija(el) {
 
     drawZoom(R);
     drawClose(sampleV, col);
+  }
+  function stanjeGumbov(f, col, R) {
     svg.setAttribute("aria-label", `Bireta na stojalu nad erlenmajerico na beli ploščici; povečava meniska in pogled od blizu. ${B.filled ? `Spodnji rob meniska je med oznakama ${fixed(Math.floor(R * 10 + 1e-9) / 10, 1)} in ${fixed(Math.floor(R * 10 + 1e-9) / 10 + 0.1, 1)} mL.` : "Bireta je prazna."}`);
     // gumbi, ki trenutno nimajo smisla
     purgeBtn.disabled = !B.filled;

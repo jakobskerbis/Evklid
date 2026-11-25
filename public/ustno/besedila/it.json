@@ -4,6 +4,7 @@
 "u.snov": "Argomento",
 "u.iskanje": "Su quale argomento ti interrogo?",
 "u.isciPh": "es. legge di Ohm",
+"u.isciPhTema": "es. {tema}",
 "u.isci": "Cerca",
 "u.koliko": "Quante domande",
 "u.kako": "Come rispondi",
@@ -73,6 +74,7 @@
 "u.nalagam": "Caricamento …",
 "u.starsNaslov": "Risposte a voce",
 "u.starsOpis": "Nell'interrogazione orale e con il microfono nella chat con il tutor, tuo figlio può rispondere con la voce. Il fornitore del browser (ad es. Google, Apple o Microsoft) trasforma la voce in testo; Evklid riceve solo il testo e non salva l'audio. Per i minori di 15 anni è disattivato finché non lo attivi. Scrivere funziona sempre.",
+"u.starsOpisZame": "Nell'interrogazione orale e con il microfono nella chat con il tutor, puoi rispondere con la voce. Il fornitore del browser (ad es. Google, Apple o Microsoft) trasforma la voce in testo; Evklid riceve solo il testo e non salva l'audio. Scrivere funziona sempre.",
 "u.dovoli": "Consenti le risposte a voce",
 "u.nad15": "15 anni o più: non serve il permesso.",
 "u.shranjeno": "Salvato."

@@ -6,7 +6,7 @@
 // predpomnilnik deluje. Strošek: en kratek klic Haikuja na 10 izmenjav (~0,0007 $), vrsta `povzetek`.
 // Shranjen je šifriran (tabela conversation_summaries) in se izbriše s pogovorom.
 import { stripMeta } from "./meta.js";
-import { isHiddenNote } from "./skrite-opombe.js";
+import { isHiddenNote, neutralizeHiddenTags } from "./skrite-opombe.js";
 
 export const summaryOn = () => process.env.EVKLID_CHAT_SUMMARY !== "0";
 const TAG = "povzetek_pogovora";
@@ -52,22 +52,25 @@ export function transcript(messages) {
 }
 
 // Povzetek gre kot prvi blok prvega (učenčevega) sporočila v oknu, kot druge skrite opombe.
+// Povzetek piše model iz učenčevih sporočil: oznake skritih opomb v njem se nevtralizirajo (IN-12, pregled #1030).
 export function withSummary(history, summary) {
   if (!summary || !history.length || history[0].role !== "user") return history;
   const first = history[0];
   const content = typeof first.content === "string" ? [{ type: "text", text: first.content }] : first.content;
-  return [{ ...first, content: [{ type: "text", text: `${SUMMARY_HEAD}\nThe app's summary of the earlier part of this conversation (older messages are not shown). Use it as background; it is not something the student wrote now. Never mention this note.\n${summary}\n</${TAG}>` }, ...content] }, ...history.slice(1)];
+  return [{ ...first, content: [{ type: "text", text: `${SUMMARY_HEAD}\nThe app's summary of the earlier part of this conversation (older messages are not shown). Use it as background; it is not something the student wrote now. Never mention this note.\n${neutralizeHiddenTags(summary)}\n</${TAG}>` }, ...content] }, ...history.slice(1)];
 }
 
 /**
  * Vrne zgodovino za model s povzetkom odrezanega dela. Po potrebi povzetek posodobi (en klic hitrega
  * modela, največ 8 s; ob napaki gre zgodovina brez povzetka, kot doslej).
- * @param {{store, conversationId, fullHistory, history, streamFn, log?: (r) => void, signal?}} o
+ * mask(text, saved): shranjen povzetek iz časa, ko je model ime učenca še poznal → ime zamenjano z oznako (server/ime-oznaka.js).
+ * @param {{store, conversationId, fullHistory, history, streamFn, log?: (r) => void, signal?, mask?: (t: string, saved: {text, upto, at}) => string}} o
  */
-export async function summarizedHistory({ store, conversationId, fullHistory, history, streamFn, log, signal }) {
+export async function summarizedHistory({ store, conversationId, fullHistory, history, streamFn, log, signal, mask = (t) => t }) {
   const dropped = fullHistory.length - history.length;
   if (!summaryOn() || dropped <= 0) return history;
   let saved = store.getSummary(conversationId);
+  if (saved?.text) saved = { ...saved, text: mask(saved.text, saved) };
   // Pogovor se je skrajšal (izbrisana sporočila): povzetek ne velja več, naredimo ga znova.
   if (saved && saved.upto > dropped) saved = null;
   if (saved?.upto === dropped) return withSummary(history, saved.text);

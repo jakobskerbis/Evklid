@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -25,7 +25,7 @@ Za vsakim koščkom je kratko vprašanje; odgovor je v oklepaju.
 
 *Preveri:* ali `Integer.parseInt("dvajset")` vrne $0$? (Ne, vrže `NumberFormatException`.)
 
-**2. Ujemanje s `try`–`catch`.** Kodo, ki lahko vrže izjemo, damo v blok `try`. Za njim v blok `catch` napišemo, kaj naredimo ob napaki.
+**2. Lovljenje s `try`–`catch`.** Kodo, ki lahko vrže izjemo, damo v blok `try`. Za njim v blok `catch` napišemo, kaj naredimo ob napaki.
 
 ```java
 try {
@@ -54,7 +54,7 @@ if (odstotek < 0 || odstotek > 100) {
 }
 ```
 
-Nekatere izjeme so **preverjene** (npr. `IOException`): metoda jih mora ujeti ali v glavi napovedati s `throws IOException`. Izjeme iz `RuntimeException` so **nepreverjene**, te prevajalnik ne zahteva.
+Nekatere izjeme so **preverjene** (npr. `IOException`): metoda jih mora ujeti ali v glavi napovedati s `throws IOException`. Izjeme iz `RuntimeException` so **nepreverjene**, zanje prevajalnik tega ne zahteva.
 
 *Preveri:* ali se vrstica takoj za `throw` v istem bloku še izvede? (Ne, metoda se tam prekine.)
 
@@ -251,38 +251,141 @@ Kolikšna sta `imenik.size()` in `imenik.get("Ana")`?
 
 - Izjema je objekt, ki ga Java vrže ob napaki med izvajanjem; potuje navzgor po klicih, dokler je kdo ne ujame.
 - `try { … } catch (Tip e) { … } finally { … }`: `catch` ujame tip in njegove podrazrede; specifični tipi pred splošnimi; `finally` se izvede vedno.
-- `throw new …` vrže izjemo sami; preverjene izjeme je treba ujeti ali napovedati s `throws`.
-- `ArrayList`: urejen seznam spremenljive dolžine; `add`, `add(i, x)`, `get(i)`, `set(i, x)`, `remove(i)`, `size()`.
+- S `throw new …` izjemo vržemo sami; preverjene izjeme je treba ujeti ali napovedati s `throws`.
+- `ArrayList`: urejen seznam spremenljive dolžine; `add`, `add(i, x)`, `get(i)`, `remove(i)`, `size()`.
 - `HashMap`: pari ključ → vrednost, ključi enolični; `put` prepiše, `get` vrne `null`, če ključa ni.
 - Generiki (`List<String>`, `Par<A, B>`) dajo preverjanje tipov ob prevajanju; parametri so razredi (`Integer`, ne `int`).
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo izjeme in pot vržene izjeme po skladu klicev do prvega ujemajočega `catch` ali do konca programa,
+- pravila bloka `try`–`catch`–`finally`: kaj se ob izjemi preskoči, kateri `catch` se izbere (tip in podrazredi, specifični pred splošnimi), kdaj se izvede `finally`,
+- razliko med preverjenimi in nepreverjenimi izjemami ter kaj prevajalnik zahteva (`catch` ali `throws`),
+- delovanje metod `add`, `add(i, x)`, `get`, `remove(i)`, `size` pri `ArrayList` ter `put`, `get`, `getOrDefault`, `containsKey` pri `HashMap`,
+- zakaj je tipski parameter razred (`Integer`, ne `int`) in kaj generiki preverijo ob prevajanju,
+- časovno zahtevnost osnovnih operacij seznama in slovarja z utemeljitvijo.
+
+### Naloga 1
+
+Kaj izpiše spodnji program? Za vsak obhod zanke zapiši vsebino seznama `s`, vrednost `vsota` in vsebino slovarja `m`.
+
+```java
+static int f(List<Integer> s, int i) {
+    try {
+        return 100 / s.get(2 * i);
+    } catch (ArithmeticException e) {
+        return -1;
+    } finally {
+        s.add(i);
+    }
+}
+
+public static void main(String[] args) {
+    List<Integer> s = new ArrayList<>(List.of(4, 0, 0));
+    Map<String, Integer> m = new HashMap<>();
+    int vsota = 0;
+    for (int i = 0; i < 5; i++) {
+        try {
+            vsota += f(s, i);
+            m.put("ok", m.getOrDefault("ok", 0) + 1);
+        } catch (IndexOutOfBoundsException e) {
+            m.put("izven", m.getOrDefault("izven", 0) + 1);
+        }
+    }
+    System.out.println(vsota + " " + s + " " + m.get("ok")
+        + " " + m.get("izven") + " " + m.get("deljenje"));
+}
+```
+
+**Rešitev:**
+
+1. Pravila: celoštevilsko deljenje z $0$ vrže `ArithmeticException`, `get` z indeksom izven seznama vrže `IndexOutOfBoundsException`. Blok `finally` v `f` se izvede vedno, torej se `i` doda na konec seznama pri vsakem klicu, tudi ko `f` vrne vrednost ali ko izjema potuje naprej v `main`.
+2. $i = 0$: `s.get(0)` je $4$, `f` vrne $\frac{100}{4} = 25$; `finally` doda $0$: `[4, 0, 0, 0]`. `vsota` je $25$, `m` je `{ok=1}`.
+3. $i = 1$: `s.get(2)` je $0$, deljenje vrže `ArithmeticException`, ki jo ujame `catch` v `f`; `f` vrne $-1$. `finally` doda $1$: `[4, 0, 0, 0, 1]`. `vsota` je $25 - 1 = 24$, `m` je `{ok=2}`.
+4. $i = 2$: `s.get(4)` je $1$, `f` vrne $\frac{100}{1} = 100$; `finally` doda $2$: `[4, 0, 0, 0, 1, 2]`. `vsota` je $24 + 100 = 124$, `m` je `{ok=3}`.
+5. $i = 3$: seznam ima $6$ elementov (indeksi od $0$ do $5$), `s.get(6)` vrže `IndexOutOfBoundsException`. Ta ni podrazred `ArithmeticException`, zato je `catch` v `f` ne ujame; `finally` kljub temu doda $3$: `[4, 0, 0, 0, 1, 2, 3]`. Izjema pride v `main`, preostanek bloka `try` se preskoči (`vsota` in ključ `ok` se ne spremenita), `catch` nastavi `izven` na $1$.
+6. $i = 4$: seznam ima $7$ elementov, `s.get(8)` spet vrže `IndexOutOfBoundsException`; `finally` doda $4$: `[4, 0, 0, 0, 1, 2, 3, 4]`. `izven` je $2$.
+7. Ključa `deljenje` ni v slovarju, zato `get` vrne `null`; pri lepljenju nizov se izpiše kot `null` in izjeme ni.
+8. Odgovor: program izpiše `124 [4, 0, 0, 0, 1, 2, 3, 4] 3 2 null`.
+
+### Naloga 2
+
+Natančno navedi razliko med preverjenimi in nepreverjenimi izjemami ter pravilo o vrstnem redu blokov `catch`. Nato za vsak odlomek utemelji, ali se prevede; če se prevede, povej, kaj se zgodi ob izvajanju.
+
+(a) `static void shrani() { throw new IOException("disk"); }`
+(b) `static void nastavi(int p) { if (p < 0) throw new IllegalArgumentException("p"); }`
+(c) `try { Integer.parseInt(s); } catch (IllegalArgumentException e) { } catch (NumberFormatException e) { }`
+(d) `Map<String, int> m = new HashMap<>();`
+(e) `Map<String, Integer> m = new HashMap<>(); int n = m.get("x");`
+
+**Rešitev:**
+
+1. Preverjene izjeme so podrazredi `Exception`, ki niso podrazredi `RuntimeException` (npr. `IOException`). Metoda, v kateri lahko nastanejo, jih mora ujeti s `catch` ali napovedati v glavi s `throws`; to preveri prevajalnik. Nepreverjene so podrazredi `RuntimeException` (in `Error`); zanje prevajalnik ne zahteva ničesar.
+2. Vrstni red: ob izjemi se izvede prvi `catch`, katerega tip je tip izjeme ali njegov nadrazred. Blok za podrazred mora zato stati pred blokom za nadrazred, sicer je nedosegljiv in prevajalnik javi napako.
+3. (a) Ne: `IOException` je preverjena, metoda je ne ujame in nima `throws IOException`.
+4. (b) Da: `IllegalArgumentException` je podrazred `RuntimeException`, torej nepreverjena. Klic `nastavi(-1)` vrže izjemo, ki potuje h klicoči metodi; klic `nastavi(5)` se konča brez izjeme.
+5. (c) Ne: `NumberFormatException` je podrazred `IllegalArgumentException`, zato bi jo ujel že prvi blok; drugi je nedosegljiv.
+6. (d) Ne: tipski parameter mora biti razred; pravilno je `Map<String, Integer>`.
+7. (e) Da, prevede se, ker Java vrednost tipa `Integer` sama pretvori v `int`. Ob izvajanju `get` vrne `null`, saj ključa ni, pretvorba `null` v `int` pa vrže `NullPointerException`.
+8. Odgovor: prevedeta se (b) in (e); (e) se ob izvajanju konča z `NullPointerException`.
+
+### Naloga 3
+
+Seznam z $n$ elementi zgradimo iz praznega `ArrayList` na dva načina: (A) $n$-krat pokličemo `add(0, x)`, (B) $n$-krat pokličemo `add(x)`. Izpelji, koliko premikov obstoječih elementov povzroči vsak način, in rezultat izračunaj za $n = 2000$. Povečevanje notranje tabele zanemari. Utemelji, zakaj pri slovarju `HashMap` takega pojava ni.
+
+**Rešitev:**
+
+1. `add(0, x)` vstavi na indeks $0$, zato se vsi obstoječi elementi zamaknejo za eno mesto desno. Če je v seznamu $m$ elementov, je premikov $m$.
+2. Način A: pri zaporednih klicih je v seznamu $0, 1, 2, \dots, n - 1$ elementov, skupaj $0 + 1 + \dots + (n - 1) = \dfrac{n(n - 1)}{2}$ premikov. To je $O(n^2)$.
+3. Način B: `add(x)` doda na konec in ne premakne nobenega elementa, skupaj $0$ premikov; vseh $n$ klicev je $O(n)$.
+4. Za $n = 2000$: način A povzroči $\dfrac{2000 \cdot 1999}{2} = 1\,999\,000$ premikov, to je povprečno $\dfrac{1\,999\,000}{2000} = 999{,}5$ premika na klic; način B nobenega.
+5. Slovar elementov ne hrani po zaporednih indeksih. `put` s `hashCode()` izračuna predal ključa in par shrani vanj, drugi pari ostanejo na mestu. Zato je `put` povprečno $O(1)$ ne glede na število parov.
+6. Odgovor: način A povzroči $\dfrac{n(n - 1)}{2}$ premikov (pri $n = 2000$ je to $1\,999\,000$), način B nobenega; v slovarju se ob vstavljanju nič ne premika.
 
 ## Drugače: Na sliki
 
 Pot izjeme si predstavljaj kot sklad klicev, narisan od spodaj navzgor:
 
-```
-  preberi("40%")    ← tu parseInt vrže izjemo, preberi se prekine
-        ↓ izjema pade dol
-  zanka v main      ← tu je try-catch: izjema se ujame, zanka teče naprej
-        ↓ (če ne bi bilo catch)
-  JVM               ← program se konča in izpiše sled klicev
-```
+:::risba skica
+opis: Sklad klicev kot trije pravokotniki drug pod drugim. Zgoraj je klic preberi("40%"), kjer parseInt vrže izjemo in se preberi prekine. Puščica navzdol kaže, da izjema pade v zanko v main; tam jo ujame try-catch in zanka teče naprej. Črtkana puščica navzdol do JVM kaže pot, če catch ne bi obstajal: program se konča in izpiše sled klicev.
+območje: 0; 0 .. 22; 9
+pravokotnik: 0,5; 6,5 .. 9; 8,5 | rdeča
+pravokotnik: 0,5; 3,5 .. 9; 5,5 | zelena
+pravokotnik: 0,5; 0,5 .. 9; 2,5 | siva
+napis: 4,75; 7,5 | preberi("40%") | sredina
+napis: 4,75; 4,5 | zanka v main | sredina
+napis: 4,75; 1,5 | JVM | sredina
+puščica: 4,75; 6,5 -> 4,75; 5,5
+puščica: 4,75; 3,5 -> 4,75; 2,5 | | | črtkano
+napis: 9,5; 7,5 | parseInt vrže izjemo | desno
+napis: 9,5; 6 | izjema pade dol | desno
+napis: 9,5; 4,5 | try-catch ujame izjemo | desno
+napis: 9,5; 3 | če ne bi bilo catch | desno
+napis: 9,5; 1,5 | konec in sled klicev | desno
+:::
 
-Zbirke pa kot predale:
+Zbirke pa kot predale. `ArrayList` ima oštevilčene predale brez lukenj:
 
-```
-ArrayList:   [0] Kamera  [1] Sporočila  [2] Glasba     ← oštevilčeni, brez lukenj
-HashMap:     "Ana" → 070 555 666                       ← nalepke namesto številk
-             "Bor" → 031 333 444
-```
+| indeks | `[0]` | `[1]` | `[2]` |
+|---|---|---|---|
+| element | Kamera | Sporočila | Glasba |
 
-Pri seznamu iščeš po številki predala, pri slovarju po nalepki. Vstavljanje v seznam premakne vse predale desno; v slovarju se nič ne premika.
+`HashMap` ima nalepke namesto številk:
+
+| ključ (nalepka) | vrednost |
+|---|---|
+| `"Ana"` | 070 555 666 |
+| `"Bor"` | 031 333 444 |
+
+Pri seznamu iščeš po številki predala, pri slovarju po nalepki. Vstavljanje v seznam premakne vse predale od tistega mesta naprej za eno v desno; v slovarju se nič ne premika.
 
 ## Drugače: Bolj natančno
 
 **Hierarhija.** Vse, kar lahko vržemo, deduje od `Throwable`. Ta ima dva podrazreda: `Error` (resne težave okolja, npr. `StackOverflowError` pri neskončni rekurziji; teh običajno ne lovimo) in `Exception`. Podrazredi `RuntimeException` so nepreverjeni, ostali `Exception` so preverjeni: prevajalnik zahteva `catch` ali `throws`. Lastno izjemo naredimo z dedovanjem, npr. `class PraznaBaterija extends Exception`.
 
-**Časovna zahtevnost.** `ArrayList.get(i)` je $O(1)$, `add(x)` na konec povprečno $O(1)$ (notranja tabela se ob polnosti poveča za konstanten faktor), `add(0, x)` in `remove(0)` pa $O(n)$, ker se zamaknejo vsi elementi. `HashMap.get` in `put` sta povprečno $O(1)$: ključ se z `hashCode()` preslika v predal, enakost se preveri z `equals()`. Zato mora razred, ki ga uporabljaš kot ključ, imeti usklajena `equals` in `hashCode`.
+**Časovna zahtevnost.** `ArrayList.get(i)` je $O(1)$, `add(x)` na konec povprečno $O(1)$ (notranja tabela se ob polnosti poveča za konstanten faktor), `add(0, x)` in `remove(0)` pa $O(n)$, ker se zamaknejo vsi elementi. `HashMap.get` in `put` sta povprečno $O(1)$: ključ se s `hashCode()` preslika v predal, enakost se preveri z `equals()`. Zato mora razred, ki ga uporabljaš kot ključ, imeti usklajena `equals` in `hashCode`.
 
 **Brisanje tipov.** Generiki obstajajo le ob prevajanju; v izvedljivi kodi je `List<String>` samo `List` (*type erasure*). Zato ne moreš napisati `new T()` ali `new T[10]`, in zato `List<int>` ni mogoč: notranje so elementi tipa `Object`.
 
@@ -337,7 +440,7 @@ Pri seznamu iščeš po številki predala, pri slovarju po nalepki. Vstavljanje 
 > Slovar najde vrednost po ključu v povprečju v konstantnem času, ne glede na število prijateljev.
 
 :::simboli
-i | indeks elementa v seznamu | | | šteje od 0
+i | indeks elementa v seznamu ali števec zanke | | | šteje od 0
 k | ključ v slovarju (mapi)
 T | tip (razred) izjeme | | | catch ujame tudi podrazrede
 :::

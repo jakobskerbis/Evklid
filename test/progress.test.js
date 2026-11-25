@@ -50,7 +50,7 @@ test("difficulty adapts and topic is mastered after 8/10 with 2 hard", () => {
   assert.ok(st.review_due);
 });
 
-test("a mistake lowers difficulty and returns a hint, not the solution", () => {
+test("a mistake returns a hint, not the solution; one mistake keeps the level", () => {
   const { p, s } = setup();
   p.nextPractice(s.id, TOPIC);
   const st = p.state(s.id, TOPIC);
@@ -62,11 +62,80 @@ test("a mistake lowers difficulty and returns a hint, not the solution", () => {
   assert.equal(res.correct, false);
   assert.ok(res.hint);
   assert.equal(res.solution, undefined);
-  assert.equal(res.levelDown, 1);
-  // Še dva napačna poskusa: nato rešen zgled
+  assert.equal(res.levelDown, undefined);
+  assert.equal(p.state(s.id, TOPIC).level, 2);
+  // Še dva napačna poskusa iste naloge: nato rešen zgled (dodatni poskusi ne štejejo kot nove napake)
   p.answer(s.id, task.id, wrong);
   const last = p.answer(s.id, task.id, wrong);
   assert.ok(last.solution);
+  assert.equal(p.state(s.id, TOPIC).level, 2);
+});
+
+// Raven vaje: gor po 3 pravilnih zapored, dol šele po 2 napačnih zapored (prvi poskus vsake naloge).
+function levelAt(level) {
+  const ctx = setup();
+  ctx.p.nextPractice(ctx.s.id, TOPIC); // rešen zgled
+  const st = ctx.p.state(ctx.s.id, TOPIC);
+  st.level = level;
+  ctx.p.saveState(st);
+  return ctx;
+}
+function solve({ p, s }, ok) {
+  const { task } = p.nextPractice(s.id, TOPIC);
+  const a = p.getTask(task.id).payload.answer;
+  if (ok) return p.answer(s.id, task.id, correctInput(a));
+  // Napačna naloga do konca (vsi poskusi), da naslednja ni ista nedokončana naloga; šteje le prvi poskus.
+  const first = p.answer(s.id, task.id, `99999 ${a.unit || ""}`);
+  for (let i = 1; i < RULES.maxAttempts; i++) p.answer(s.id, task.id, `99999 ${a.unit || ""}`);
+  return first;
+}
+
+test("level: two consecutive wrong answers drop it by one", () => {
+  const ctx = levelAt(3);
+  assert.equal(solve(ctx, false).levelDown, undefined);
+  assert.equal(solve(ctx, false).levelDown, 2);
+  const st = ctx.p.state(ctx.s.id, TOPIC);
+  assert.equal(st.level, 2);
+  assert.equal(st.wrong_streak, 0);
+  // Na novi ravni spet šteje od začetka: ena napaka ne zniža
+  assert.equal(solve(ctx, false).levelDown, undefined);
+  assert.equal(ctx.p.state(ctx.s.id, TOPIC).level, 2);
+});
+
+test("level: wrong, correct, wrong does not drop it", () => {
+  const ctx = levelAt(2);
+  solve(ctx, false);
+  assert.equal(solve(ctx, true).correct, true);
+  assert.equal(ctx.p.state(ctx.s.id, TOPIC).wrong_streak, 0);
+  assert.equal(solve(ctx, false).levelDown, undefined);
+  assert.equal(ctx.p.state(ctx.s.id, TOPIC).level, 2);
+});
+
+test("level: still goes up after 3 correct in a row, also after a single mistake", () => {
+  const ctx = levelAt(1);
+  solve(ctx, true);
+  solve(ctx, true);
+  assert.equal(solve(ctx, true).levelUp, 2);
+  solve(ctx, false);
+  assert.equal(ctx.p.state(ctx.s.id, TOPIC).level, 2);
+  solve(ctx, true);
+  solve(ctx, true);
+  assert.equal(solve(ctx, true).levelUp, 3);
+});
+
+test("level: never below the minimum", () => {
+  const ctx = levelAt(1);
+  for (let i = 0; i < 5; i++) assert.equal(solve(ctx, false).levelDown, undefined);
+  assert.equal(ctx.p.state(ctx.s.id, TOPIC).level, 1);
+  assert.equal(RULES.levelDownStreak, 2);
+});
+
+test("level: the wrong-answer count survives a restart (stored with the topic state)", () => {
+  const ctx = levelAt(2);
+  solve(ctx, false);
+  const fresh = new Progress(ctx.store); // nov primerek, ista baza
+  assert.equal(fresh.state(ctx.s.id, TOPIC).wrong_streak, 1);
+  assert.equal(solve({ ...ctx, p: fresh }, false).levelDown, 1);
 });
 
 test("all units open; later units only get a recommendation; placement test skips a unit", () => {
@@ -386,4 +455,42 @@ test("XP summary: level progress, today's XP and the daily goal from the profile
   assert.equal(p.xpSummary(s.id).goal, 100);
   store.updateStudent(s.id, { settings: { xp_goal: 77 } });
   assert.equal(p.xpSummary(s.id).goal, 50, "neznan cilj → privzeti");
+});
+
+test("XP summary: ownTotal ne šteje XP nalog pilota; first_task se shrani samo kot 1", () => {
+  const { store, p, s } = setup();
+  p.award(s.id, [[20, "pilot: feature"]]);
+  let x = p.xpSummary(s.id);
+  assert.deepEqual([x.total, x.ownTotal], [20, 0]);
+  p.award(s.id, [[10, "pravilno"]]);
+  x = p.xpSummary(s.id);
+  assert.deepEqual([x.total, x.ownTotal], [30, 10]);
+  assert.equal(store.updateStudent(s.id, { settings: { first_task: 1 } }).settings.first_task, 1);
+  assert.equal(store.updateStudent(s.id, { settings: { subject: "MAT" } }).settings.first_task, 1, "ostane ob drugih spremembah");
+  assert.equal(store.updateStudent(s.id, { settings: { first_task: "da" } }).settings.first_task, undefined, "neveljavna vrednost se zavrže");
+});
+
+test("level: an older database gets the wrong_streak column on open", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const { DatabaseSync } = await import("node:sqlite");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "raven-"));
+  const file = path.join(dir, "stara.db");
+  const old = new DatabaseSync(file);
+  old.exec(`CREATE TABLE topic_state (student_id INTEGER NOT NULL, topic_id TEXT NOT NULL, level INTEGER NOT NULL DEFAULT 1,
+    streak INTEGER NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'new', source TEXT, mastered_at TEXT,
+    review_stage INTEGER NOT NULL DEFAULT 0, review_due TEXT, seen_example INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (student_id, topic_id));
+    INSERT INTO topic_state (student_id, topic_id, level) VALUES (1, 'T', 3);`);
+  old.close();
+  const store = openDb(file);
+  try {
+    const cols = store.db.prepare("PRAGMA table_info(topic_state)").all().map((c) => c.name);
+    assert.ok(cols.includes("wrong_streak"));
+    assert.equal(store.db.prepare("SELECT wrong_streak FROM topic_state WHERE topic_id = 'T'").get().wrong_streak, 0);
+  } finally {
+    store.db.close();
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });

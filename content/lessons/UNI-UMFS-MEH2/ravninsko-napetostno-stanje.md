@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -9,7 +9,7 @@ Vzemi kos krede in ga zvij med prsti. Ne poči naravnost prečno. Poči po poše
 
 Druga slika je z urgence. Smučar pade, vez se ne sprosti in smučka mu zasuka nogo. Na rentgenski sliki se lom golenice vije okrog kosti kot navoj vijaka. Ortopedi mu rečejo **spiralni zlom**.
 
-Kreda in kost sta povsem različni snovi. Obremenitev pa je v obeh primerih ista: torzija. Iz torzije znaš izračunati strižno napetost na prečnem prerezu. Normalne napetosti, ki bi material trgala, tam ni. Zakaj se potem oba lomita, kot bi ju nekdo vlekel narazen, in to poševno?
+Kreda in kost sta povsem različni snovi. Obremenitev pa je v obeh primerih ista: torzija. Iz torzije znaš izračunati strižno napetost na prečnem prerezu. Normalne napetosti, ki bi material trgala, tam ni. Zakaj se potem obe lomita, kot bi ju nekdo vlekel narazen, in to poševno?
 
 Odgovor skriva ista ideja: napetost v točki je odvisna od tega, **kako obrnemo ploskev**, na kateri jo opazujemo. Ko to obvladaš, poiščeš smer, v kateri je material obremenjen najbolj. Tam napoveš lom kosti, vsadka ali strojnega dela.
 
@@ -59,7 +59,7 @@ $$R = \sqrt{\left(\frac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2}$$
 
 $$\tan 2\varphi_0 = \frac{2\tau_{xy}}{\sigma_x - \sigma_y}$$
 
-Kot $\varphi_0$ pove, za koliko je glavna smer zavrtena od osi $x$. Kadar je $\sigma_x > \sigma_y$, ta kot kaže na $\sigma_1$. Največja strižna napetost je $\tau_{\max} = R$. Deluje na ploskvah, ki so za $45^\circ$ zavrtene od glavnih smeri.
+Kot $\varphi_0$ pove, za koliko je glavna smer zavrtena od osi $x$. Kadar je $\sigma_x > \sigma_y$, ta kot kaže na $\sigma_1$. Največja strižna napetost v ravnini $xy$ je $\tau_{\max} = R$. Deluje na ploskvah, ki so za $45^\circ$ zavrtene od glavnih smeri.
 
 **6. Mohrov krog.** Obe formuli iz točke 4 skupaj opisujeta krog v ravnini $(\sigma, \tau)$. Nariši ga takole:
 
@@ -169,6 +169,63 @@ $\sigma_2 = \sigma_s - R = -10 - 60 = -70\,\mathrm{MPa}$ in $\tau_{\max} = R = 6
 - Mohrov krog: središče $\sigma_s$, polmer $R$, točki $X(\sigma_x, \tau_{xy})$ in $Y(\sigma_y, -\tau_{xy})$; zasuk $\varphi$ na elementu je $2\varphi$ na krogu.
 - Čisti strig ima $\sigma_1 = \tau$ pod $45^\circ$: zato spiralni zlom kosti.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo ravninskega napetostnega stanja ($\sigma_x$, $\sigma_y$, $\tau_{xy}$, v smeri $z$ ni napetosti) in dogovor o predznakih;
+- transformacijski enačbi za $\sigma_\varphi$ in $\tau_\varphi$ ter zakaj je vsota normalnih napetosti na pravokotnih ploskvah stalna;
+- definicijo glavnih napetosti in glavnih smeri, formule $\sigma_{1,2} = \sigma_s \pm R$ in $\tan 2\varphi_0$ ter dokaz, da na glavnih ploskvah ni striga;
+- kje deluje največja strižna napetost v ravnini $\tau_{\max} = R$ in kolikšna je tam normalna napetost;
+- konstrukcijo Mohrovega kroga (os $\tau$ navzdol, točki $X$ in $Y$, središče, polmer, pravilo $2\varphi$) in izpeljavo njegove enačbe;
+- napetostno stanje pri čistem nategu in pri čistem strigu ter razlago spiralnega zloma krhkega materiala.
+
+### Naloga 1
+
+V točki na površini gredi je $\sigma_x = 80\,\mathrm{MPa}$, $\sigma_y = -40\,\mathrm{MPa}$ in $\tau_{xy} = -45\,\mathrm{MPa}$. (a) Določi glavni napetosti in kot glavne smeri ter povej, kateri glavni napetosti ta smer pripada. (b) Določi največjo strižno napetost v ravnini, lego ploskev, na katerih deluje, in normalno napetost na njih. (c) Izračunaj $\sigma_\varphi$ in $\tau_\varphi$ na ploskvi z normalo pod $\varphi = 60^\circ$ in rezultat preveri. (d) Normalni napetosti ostaneta enaki, strig pa se spreminja. Kolikšen sme biti največ $\lvert\tau_{xy}\rvert$, da velja $\sigma_1 \le 100\,\mathrm{MPa}$ in $\tau_{\max} \le 90\,\mathrm{MPa}$?
+
+**Rešitev:**
+
+1. Srednja napetost: $\sigma_s = \dfrac{80 - 40}{2} = 20\,\mathrm{MPa}$. Polovična razlika: $\dfrac{80 + 40}{2} = 60\,\mathrm{MPa}$.
+2. Polmer: $R = \sqrt{60^2 + 45^2} = 75\,\mathrm{MPa}$.
+3. Glavni napetosti: $\sigma_1 = 20 + 75 = 95\,\mathrm{MPa}$, $\sigma_2 = 20 - 75 = -55\,\mathrm{MPa}$.
+4. Glavna smer: $\tan 2\varphi_0 = \dfrac{2 \cdot (-45)}{80 + 40} = -0{,}75$, torej $2\varphi_0 \approx -36{,}9^\circ$ in $\varphi_0 \approx -18{,}4^\circ$ (v smeri urnega kazalca). Ker je $\sigma_x > \sigma_y$, ta smer pripada $\sigma_1$; $\sigma_2$ deluje pravokotno nanjo, pod $71{,}6^\circ$.
+5. Največji strig: $\tau_{\max} = R = 75\,\mathrm{MPa}$, na ploskvah z normalama pod $-18{,}4^\circ \pm 45^\circ$, torej pod $26{,}6^\circ$ in $-63{,}4^\circ$. Tem ploskvam na krogu pripadata najnižja in najvišja točka, zato je normalna napetost na obeh $\sigma_s = 20\,\mathrm{MPa}$.
+6. Ploskev pod $60^\circ$: $2\varphi = 120^\circ$, $\cos 120^\circ = -0{,}5$, $\sin 120^\circ \approx 0{,}866$.
+7. $\sigma_\varphi = 20 + 60 \cdot (-0{,}5) - 45 \cdot 0{,}866 \approx -49{,}0\,\mathrm{MPa}$.
+8. $\tau_\varphi = -60 \cdot 0{,}866 - 45 \cdot (-0{,}5) \approx -29{,}5\,\mathrm{MPa}$.
+9. Preverba: točka mora ležati na krogu, $\sqrt{(-49{,}0 - 20)^2 + 29{,}5^2} \approx 75\,\mathrm{MPa} = R$.
+10. Pogoj za $\sigma_1$: $20 + R \le 100$, torej $R \le 80\,\mathrm{MPa}$. Pogoj za strig: $R \le 90\,\mathrm{MPa}$. Merodajen je strožji, $R \le 80\,\mathrm{MPa}$.
+11. $\lvert\tau_{xy}\rvert \le \sqrt{80^2 - 60^2} = \sqrt{2800} \approx 52{,}9\,\mathrm{MPa}$.
+12. Odgovor: (a) $\sigma_1 = 95\,\mathrm{MPa}$ v smeri, zavrteni za $18{,}4^\circ$ v smeri urnega kazalca od osi $x$, $\sigma_2 = -55\,\mathrm{MPa}$; (b) $\tau_{\max} = 75\,\mathrm{MPa}$ pod $45^\circ$ od glavnih smeri, tam je $\sigma = 20\,\mathrm{MPa}$; (c) $\sigma_\varphi \approx -49{,}0\,\mathrm{MPa}$, $\tau_\varphi \approx -29{,}5\,\mathrm{MPa}$; (d) $\lvert\tau_{xy}\rvert \le 52{,}9\,\mathrm{MPa}$, omejuje ga pogoj za $\sigma_1$.
+
+### Naloga 2
+
+Iz transformacijskih enačb izpelji enačbo Mohrovega kroga. Nato utemelji, (a) da je normalna napetost ekstremna natanko na ploskvah brez striga, in (b) da je na ploskvah največjega striga normalna napetost enaka $\sigma_s$.
+
+**Rešitev:**
+
+1. Označimo $a = \dfrac{\sigma_x - \sigma_y}{2}$. Transformacijski enačbi sta $\sigma_\varphi - \sigma_s = a\cos 2\varphi + \tau_{xy}\sin 2\varphi$ in $\tau_\varphi = -a\sin 2\varphi + \tau_{xy}\cos 2\varphi$.
+2. Obe kvadriramo in seštejemo. Mešana člena $\pm 2 a\,\tau_{xy}\sin 2\varphi\cos 2\varphi$ se odštejeta, pri $a^2$ in $\tau_{xy}^2$ pa ostane $\cos^2 2\varphi + \sin^2 2\varphi = 1$.
+3. Dobimo $\left(\sigma_\varphi - \sigma_s\right)^2 + \tau_\varphi^2 = a^2 + \tau_{xy}^2 = R^2$. Kot je izpadel: vse ploskve skozi točko ležijo na krogu s središčem $(\sigma_s, 0)$ in polmerom $R$.
+4. (a) Odvajamo: $\dfrac{\mathrm{d}\sigma_\varphi}{\mathrm{d}\varphi} = -2a\sin 2\varphi + 2\tau_{xy}\cos 2\varphi = 2\tau_\varphi$. Odvod je nič natanko tam, kjer je $\tau_\varphi = 0$.
+5. Iz $\tau_\varphi = 0$ sledi $\tan 2\varphi_0 = \dfrac{\tau_{xy}}{a} = \dfrac{2\tau_{xy}}{\sigma_x - \sigma_y}$. Enačba kroga da tam $\sigma_\varphi - \sigma_s = \pm R$, torej $\sigma_{1,2} = \sigma_s \pm R$. Rešitvi za $2\varphi_0$ se razlikujeta za $180^\circ$, glavni smeri sta zato pravokotni.
+6. (b) Iz enačbe kroga je $\tau_\varphi^2 = R^2 - \left(\sigma_\varphi - \sigma_s\right)^2 \le R^2$. Enakost velja le pri $\sigma_\varphi = \sigma_s$, torej je $\tau_{\max} = R$ in normalna napetost tam $\sigma_s$.
+7. Ti točki sta na krogu za $90^\circ$ oddaljeni od $\sigma_1$ in $\sigma_2$, na elementu torej za $45^\circ$ od glavnih smeri.
+
+### Naloga 3
+
+Iz meritve poznamo glavni napetosti $\sigma_1 = 120\,\mathrm{MPa}$ in $\sigma_2 = -40\,\mathrm{MPa}$. Smer $\sigma_1$ je od osi $x$ zavrtena za $30^\circ$ v nasprotni smeri urnega kazalca. Določi $\sigma_x$, $\sigma_y$ in $\tau_{xy}$. Utemelji, ali je to stanje lahko nastalo v palici, ki je obremenjena samo z osno silo in torzijo.
+
+**Rešitev:**
+
+1. Središče in polmer kroga: $\sigma_s = \dfrac{120 - 40}{2} = 40\,\mathrm{MPa}$, $R = \dfrac{120 + 40}{2} = 80\,\mathrm{MPa}$.
+2. Na krogu je točka $X$ od točke $\sigma_1$ oddaljena za $2\varphi_0 = 60^\circ$. Njeni koordinati glede na središče sta $R\cos 2\varphi_0$ in $R\sin 2\varphi_0$.
+3. $\sigma_x = 40 + 80 \cdot 0{,}5 = 80\,\mathrm{MPa}$.
+4. $\sigma_y = 40 - 80 \cdot 0{,}5 = 0\,\mathrm{MPa}$.
+5. $\tau_{xy} = 80 \cdot 0{,}866 \approx 69{,}3\,\mathrm{MPa}$. Predznak je pozitiven, ker je $\varphi_0 > 0$ in $\sigma_x > \sigma_y$.
+6. Preverba: $\tan 2\varphi_0 = \dfrac{2 \cdot 69{,}3}{80 - 0} \approx 1{,}73$, kar je $\tan 60^\circ$; vsota $80 + 0 = 80\,\mathrm{MPa} = \sigma_1 + \sigma_2$.
+7. Odgovor: $\sigma_x = 80\,\mathrm{MPa}$, $\sigma_y = 0$, $\tau_{xy} \approx 69{,}3\,\mathrm{MPa}$. Stanje je lahko nastalo v taki palici: osna sila da samo $\sigma_x$, torzija samo $\tau_{xy}$, napetosti $\sigma_y$ pa ni, če os $x$ kaže vzdolž palice.
+
 ## Drugače: Kot zgodba
 
 V steni golenice živi drobcen kvadratek kosti. Ves dan ga stiska teža telesa, malo ga upogiba hoja. Svoje počutje opiše s tremi številkami: koliko ga vlečejo ali tiščijo levo in desno, koliko gor in dol in koliko ga strižejo.
@@ -196,7 +253,7 @@ Iz elementa izrežemo klin. Poševna ploskev ima površino $A$ in normalo pod ko
 
 $$\sigma_\varphi A = \sigma_x A\cos^2\varphi + \sigma_y A\sin^2\varphi + 2\tau_{xy} A\sin\varphi\cos\varphi$$
 
-Z $\cos^2\varphi = \tfrac{1}{2}(1 + \cos 2\varphi)$, $\sin^2\varphi = \tfrac{1}{2}(1 - \cos 2\varphi)$ in $2\sin\varphi\cos\varphi = \sin 2\varphi$ dobimo formulo za $\sigma_\varphi$ iz točke 4. Ravnovesje v smeri poševne ploskve na enak način da $\tau_\varphi$.
+S $\cos^2\varphi = \tfrac{1}{2}(1 + \cos 2\varphi)$, $\sin^2\varphi = \tfrac{1}{2}(1 - \cos 2\varphi)$ in $2\sin\varphi\cos\varphi = \sin 2\varphi$ dobimo formulo za $\sigma_\varphi$ iz točke 4. Ravnovesje v smeri poševne ploskve na enak način da $\tau_\varphi$.
 
 Obe formuli kvadriramo in seštejemo, pa se kot izloči:
 
@@ -228,7 +285,7 @@ pokaže, da ima $\sigma_\varphi$ ekstrem natanko tam, kjer je $\tau_\varphi = 0$
 + $\sigma_1 > \sigma_x > \tau_{\max}$
 > $\sigma_s = 10\,\mathrm{MPa}$, $R = \sqrt{20^2 + 15^2} = 25\,\mathrm{MPa}$, torej $\sigma_1 = 35\,\mathrm{MPa} > \sigma_x = 30\,\mathrm{MPa} > \tau_{\max} = 25\,\mathrm{MPa}$.
 
-? Kaj se zgodi z Mohrovim krogom, če $\tau_{xy}$ povečamo, $\sigma_x$ in $\sigma_y$ pa ostaneta enaki?
+? Kaj se zgodi z Mohrovim krogom, če $\tau_{xy}$ povečamo, $\sigma_x$ in $\sigma_y$ pa ostaneta nespremenjeni (in različni med seboj)?
 - Središče se premakne v desno.
 ~ Središče je $\sigma_s = (\sigma_x + \sigma_y)/2$ in od striga ni odvisno.
 - Polmer se poveča natanko za toliko, kot se je povečal $\tau_{xy}$.

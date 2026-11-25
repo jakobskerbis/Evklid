@@ -6,8 +6,10 @@ import { withFormulaSubject, plainTex } from "./formula-data.js";
 import { lessonSteps, demoSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
-import { jeFaks } from "./stopnja.js";
+import { jeFaks, jeSs } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
+import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
+import { isStoreApp } from "./pay-ui.js"; // aplikacija iz trgovine: brez ponudbe paketov mimo trgovine
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -249,23 +251,28 @@ async function renderHome() {
   // Študent fakultete: najprej učbenik njegovega študijskega programa, nato OŠ/SŠ.
   const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
-  if (!tb.books.length || tb.program !== program || tb.system !== system) {
-    const books = await ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`);
-    // Stanje šele po preverjanju: zavržen odgovor ne sme pustiti novih knjig brez ponastavitve predmeta in poti.
-    if (my !== navSeq) return;
+  // Ob prvem odprtju že zdaj kazalo učbenika, ki ga bo učenec najverjetneje videl (predmet in raven iz nastavitev),
+  // hkrati s seznamom učbenikov in potjo: namesto treh čakanj na strežnik eno. Napačna ugibanja ostanejo v pomnilniku.
+  // Samo slovenski učbeniki, ki zagotovo obstajajo (napačen ključ bi dal 404 v dnevniku).
+  const guess = `${student?.settings?.subject}-${jeSs(student?.settings) ? "SS" : "OS"}`;
+  if (!tb.book && !program && system === "SI" && /^(MAT|FIZ|KEM|BIO)-(OS|SS)$|^NAR-OS$/.test(guess)) loadToc(guess, system).catch(() => null);
+  // Seznam učbenikov in učenčeva pot hkrati (prej drug za drugim: dva čakanja na omrežje pred prvim izrisom).
+  const needBooks = !tb.books.length || tb.program !== program || tb.system !== system;
+  const [fetchedBooks, myPath] = await Promise.all([
+    needBooks ? ctx.api(`/api/textbook/books?system=${encodeURIComponent(system)}${program ? `&program=${encodeURIComponent(program)}` : ""}`) : null,
+    needBooks || tb.myPath === null ? ctx.api(`/api/students/${student.id}/path`).then((r) => r?.key || "", () => "") : tb.myPath,
+  ]);
+  // Stanje šele po preverjanju: zavržen odgovor ne sme pustiti novih knjig brez ponastavitve predmeta in poti.
+  if (my !== navSeq) return;
+  if (needBooks) {
     tb.program = program;
     tb.system = system;
-    tb.books = books;
+    tb.books = fetchedBooks;
     tb.subject = null;
     tb.book = null;
     tb.group = null;
-    tb.myPath = null;
   }
-  if (tb.myPath === null) {
-    const key = (await ctx.api(`/api/students/${student.id}/path`).catch(() => null))?.key || "";
-    if (my !== navSeq) return;
-    tb.myPath = key;
-  }
+  tb.myPath = myPath;
   // Privzeto: učbenik predmeta in ravni, ki ju učenec ima v učni poti.
   if (!tb.subject) tb.subject = program ? "PROG" : (tb.myPath || student?.settings?.subject || "MAT").split("-")[0];
   const subjects = [...new Map(tb.books.map((b) => [b.subject, b.subject === "PROG" ? t("tbk.myStudy") : b.subjectName])).entries()];
@@ -287,7 +294,7 @@ async function renderHome() {
       </div>
       ${tb.browse ? "" : `<button type="button" class="text-btn tb-browse" id="tb-browse">${ic("library")}${esc(t("tbk.browse"))}</button>`}
       <div class="tb-filters"${tb.browse ? "" : " hidden"}>
-        <div class="seg" role="tablist" aria-label="${esc(t("set.subject"))}">${subjects
+        <div class="seg" role="tablist" aria-label="${esc(t("set.subject"))}">${predmetiNaRavni(subjects, tb.books, book)
           .map(([k, v]) => `<button type="button" role="tab" data-subj="${esc(k)}" class="${k === tb.subject ? "active" : ""}" aria-selected="${k === tb.subject}">${esc(v)}</button>`)
           .join("")}</div>
         ${books.length > 1 ? `<div class="seg" role="tablist" aria-label="${esc(t("tbk.level"))}">${books
@@ -298,7 +305,7 @@ async function renderHome() {
         <div><p class="eyebrow">${esc(t("nav.textbook"))}</p><h2>${esc(book.subjectName)} · ${esc(book.schoolName)}</h2>
         <p class="muted">${esc(t(book.lessons < book.topics ? "tbk.countMore" : "tbk.count", { done: book.lessons, total: book.topics }))}</p></div>
         <div class="tb-book-actions">
-          <a class="btn-primary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
+          <a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfAll"))}</a>
           ${book.formulas ? `<a class="btn-secondary tb-book-pdf" href="${esc(pdfHref(book.key, { topic: "formule" }))}" target="_blank" rel="noopener">${ic("sigma")}${esc(t("tbk.pdfFormulas"))}</a>` : ""}
         </div>
         ${book.subject === "PROG" ? `<div class="seg tb-mode" role="tablist" aria-label="${esc(t("refs.title"))}">
@@ -324,8 +331,9 @@ async function renderHome() {
   });
   box.querySelectorAll("[data-subj]").forEach((b) =>
     b.addEventListener("click", () => {
+      const raven = tb.books.find((x) => x.key === tb.book)?.school;
       tb.subject = b.dataset.subj;
-      tb.book = null;
+      tb.book = knjigaNaRavni(tb.books, tb.subject, raven);
       tb.group = null;
       renderHome();
     }),
@@ -387,13 +395,18 @@ async function renderBody() {
     body.innerHTML = `<div class="card"><p>${esc(t("tbk.noBook"))}</p></div>`;
     return;
   }
-  let book;
-  try {
-    book = await ctx.api(`/api/textbook/toc?book=${encodeURIComponent(tb.book)}&system=${encodeURIComponent(tb.system || "SI")}`);
-  } catch (err) {
-    return failed(err);
+  // Kazalo iz pomnilnika (učbenik, ki je bil v tej seji že odprt ali vnaprej naložen): takoj, brez omrežja.
+  // Sicer »Nalagam …« namesto prazne strani, dokler kazalo ne pride (j, 15. 11. 2026: prazno, dolgo nalaganje).
+  let book = tocCache.get(tocKey(tb.book));
+  if (!book) {
+    body.innerHTML = `<p class="muted tb-loading" role="status">${esc(t("common.loading"))}</p>`;
+    try {
+      book = await loadToc(tb.book);
+    } catch (err) {
+      return failed(err);
+    }
+    if (stale()) return;
   }
-  if (stale()) return;
   if (book.subject === "PROG" && tb.mode === "refs") return renderRefs(body, book, stale);
   const unitHtml = (u, i, pathKey) => `<section class="card tb-unit">
         <h2><span class="tb-num">${i + 1}</span>${esc(u.title)}</h2>
@@ -436,16 +449,101 @@ async function renderBody() {
       renderBody();
     }),
   );
+  // Med brskanjem po vseh učbenikih naložimo kazala drugih učbenikov v ozadju, da se predmet in raven zamenjata takoj.
+  if (tb.browse) prefetchTocs();
 }
 
-// Klik na temo v kazalu ali iskanju.
+// Kazala učbenikov v tej seji (ključ: učbenik in šolski sistem). Vsebina se spremeni le z novo različico strežnika,
+// ob kateri se stran osveži sama (app.js), zato jih ne osvežujemo. Zahteva, ki še teče, se deli (vnaprej in klik).
+const tocCache = new Map();
+const tocPending = new Map();
+const tocKey = (bookKey, system = tb.system || "SI") => `${system}|${bookKey}`;
+function loadToc(bookKey, system = tb.system || "SI") {
+  const key = tocKey(bookKey, system);
+  if (tocCache.has(key)) return Promise.resolve(tocCache.get(key));
+  let p = tocPending.get(key);
+  if (!p) {
+    p = ctx
+      .api(`/api/textbook/toc?book=${encodeURIComponent(bookKey)}&system=${encodeURIComponent(system)}`)
+      .then((book) => {
+        // Kopija brez povezave (service worker, 503 z X-Offline) ali napaka ne pride sem; v pomnilnik samo pravo kazalo.
+        if (book && Array.isArray(book.parts)) tocCache.set(key, book);
+        return book;
+      })
+      .finally(() => tocPending.delete(key));
+    tocPending.set(key, p);
+  }
+  return p;
+}
+let prefetching = false;
+async function prefetchTocs() {
+  if (prefetching) return;
+  prefetching = true;
+  try {
+    // Ena za drugo, v mirnem trenutku: brez gneče zahtev ob odprtju (12 učbenikov, skupaj ~70 kB).
+    await new Promise((ok) => setTimeout(ok, 300));
+    for (const b of tb.books) {
+      if (b.subject === "PROG" || tocCache.has(tocKey(b.key))) continue;
+      // Brez povezave ali ob napaki strežnika nehamo (sicer do 12 × 7 s čakanja service workerja); klik naloži sam.
+      if (!(await loadToc(b.key).then(() => true, () => false))) break;
+    }
+  } finally {
+    prefetching = false;
+  }
+}
+
+// Klik na temo v kazalu ali iskanju (in Prejšnja/Naslednja lekcija). Ime teme gre takoj na zaslon (renderLesson).
+const lessonName = (b) => (b.querySelector(".tb-name")?.textContent || b.textContent || "").replace(/^\s*←\s*|\s*→\s*$/g, "").trim();
 document.addEventListener("click", (e) => {
   const b = e.target.closest("#view-textbook [data-lesson]");
   if (b) {
     tb.topicId = b.dataset.lesson;
-    renderLesson(tb.topicId);
+    renderLesson(tb.topicId, lessonName(b));
   }
 });
+// Lekcija vnaprej (j, 15. 11. 2026: »vse se ob kliku odpre takoj«): ob dotiku (pointerdown je ~0,1–0,3 s pred klikom)
+// ali ko miška pride nad temo, zahtevo za lekcijo že pošljemo; po odprtju lekcije v ozadju še naslednjo lekcijo.
+// Kopija velja minuto (osebna polja: test predznanja, paket) in se porabi enkrat.
+const lessonAhead = new Map(); // id -> { at, p }
+const LESSON_AHEAD_MS = 60_000;
+function prefetchLesson(id) {
+  if (!id || !ctx?.getStudent?.()) return;
+  for (const [k, v] of lessonAhead) if (Date.now() - v.at >= LESSON_AHEAD_MS) lessonAhead.delete(k); // stare kopije iz pomnilnika
+  const hit = lessonAhead.get(id);
+  if (hit && Date.now() - hit.at < LESSON_AHEAD_MS) return;
+  const p = ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(id)}`);
+  const hit2 = { at: Date.now(), p, sid: ctx.getStudent().id, done: false };
+  p.then(
+    () => (hit2.done = true),
+    () => lessonAhead.get(id) === hit2 && lessonAhead.delete(id),
+  );
+  lessonAhead.set(id, hit2);
+}
+function takeLesson(id) {
+  const hit = lessonAhead.get(id);
+  lessonAhead.delete(id);
+  return hit && Date.now() - hit.at < LESSON_AHEAD_MS && hit.sid === ctx.getStudent()?.id ? hit : null;
+}
+// Miška: šele ko ostane nad temo 0,1 s (premik čez kazalo ne naloži vseh lekcij, ki jih prečka).
+let hoverTimer = null;
+document.addEventListener(
+  "pointerover",
+  (e) => {
+    if (e.pointerType !== "mouse") return;
+    const b = e.target.closest?.("#view-textbook [data-lesson]");
+    clearTimeout(hoverTimer);
+    if (b) hoverTimer = setTimeout(() => b.isConnected && b.matches(":hover") && prefetchLesson(b.dataset.lesson), 100);
+  },
+  { passive: true },
+);
+document.addEventListener(
+  "pointerdown",
+  (e) => {
+    const b = e.target.closest?.("#view-textbook [data-lesson]");
+    if (b) prefetchLesson(b.dataset.lesson);
+  },
+  { passive: true },
+);
 
 // Formula in rešitev v rešenem primeru sta skriti za gumbom, da učenec najprej poskusi sam.
 // Kadar je vsaka črka formule klikljiva s pomenom iz lekcije (:::simboli), okna »Pokaži formulo«
@@ -475,13 +573,30 @@ function wireFormulas(root) {
   );
 }
 
-async function renderLesson(topicId) {
+async function renderLesson(topicId, name = "") {
   const my = ++navSeq;
   stopReading();
   const box = $("#view-textbook");
+  // Takoj po kliku: Nazaj, ime teme in »Nalagam …« (prej je kazalo ostalo na zaslonu, dokler lekcija ni prišla,
+  // kot da klik ni uspel). Kopija, ki je že prispela (vnaprej), se izriše v istem trenutku in tega vmesnega zaslona ni;
+  // zahteva, ki ob dotiku še teče (pointerdown tik pred klikom), vmesni zaslon pokaže.
+  const ahead = takeLesson(topicId);
+  // Ista lekcija znova (vrnitev na zavihek, menjava jezika): ostane na zaslonu, dokler nova kopija ne pride.
+  if (!ahead?.done && box && current?.id !== topicId) {
+    box.innerHTML = `<div class="tb-lesson-grid"><div class="tb-main">
+      <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
+      <p class="muted tb-crumb">&nbsp;</p>
+      ${name ? `<h1 class="tb-title">${esc(name)}</h1>` : ""}
+      <p class="muted tb-loading" role="status">${esc(t("common.loading"))}</p></div></div>`;
+    $("#tb-back")?.addEventListener("click", () => {
+      tb.topicId = null;
+      renderHome();
+    });
+    window.scrollTo(0, 0);
+  }
   let L;
   try {
-    L = await ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`);
+    L = await (ahead?.p || ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`));
   } catch (err) {
     // Brez povezave: javna kopija že obiskane lekcije iz predpomnilnika (public/sw.js, samo besedilo).
     L = err?.status ? null : await ctx.api(`/api/lesson?id=${encodeURIComponent(topicId)}`).catch(() => null);
@@ -515,7 +630,7 @@ async function renderLesson(topicId) {
     : locked
       ? `<section class="card tb-locked"><h2>${ic("lock")}Poskus: ${esc(L.locked.demo)}</h2>
           <p>Interaktivni poskusi, simulacije in sprotno preverjanje so na voljo v plačljivem paketu in med 7-dnevnim preizkusom. Besedilo lekcije in PDF sta brezplačna.</p>
-          ${!L.offers || (L.offers.show && L.offers.prices) ? `<button type="button" class="primary" id="tb-upgrade">${ic("sparkles")}Poglej pakete</button>` : ""}</section>`
+          ${!isStoreApp() && (!L.offers || (L.offers.show && L.offers.prices)) ? `<button type="button" class="primary" id="tb-upgrade">${ic("sparkles")}Poglej pakete</button>` : ""}</section>`
       : "";
   const altHtml = lesson?.alternatives?.length
     ? `<div class="tb-alt">
@@ -572,8 +687,8 @@ async function renderLesson(topicId) {
   const nChecks = lesson?.checks?.length || 0;
   const checksHtml = nChecks ? checksCard(lesson.checks.map((_, i) => i)) : "";
 
-  // Po korakih (privzeto): kratke kartice, vmes vprašanje, spodaj Nazaj / Naprej.
-  const stepMode = !!lesson && sections.length > 0 && stepPref();
+  // Vedno po korakih (j, 15. 11. 2026; prej izbira »Vse naenkrat«): kratke kartice, vmes vprašanje, spodaj Nazaj / Naprej.
+  const stepMode = !!lesson && sections.length > 0;
   const steps = stepMode ? lessonSteps(sections, nChecks) : [];
   // Simulacija je na istem koraku kot besedilo, ki jo omenja (j, 2. 11. 2026).
   const onStep = steps.map(() => []);
@@ -597,9 +712,6 @@ async function renderLesson(topicId) {
         <button type="button" class="tb-step-btn next" id="tb-step-next" aria-label="${esc(t("tb.steps.next"))}" title="${esc(t("tb.steps.next"))}">${ic("arrow-right")}</button>
       </div>`
     : "";
-  const modeBtn = lesson
-    ? `<button type="button" class="ghost tb-mode-btn" id="tb-mode">${ic(stepMode ? "file-text" : "layers")}${esc(t(stepMode ? "tb.steps.all" : "tb.steps.byStep"))}</button>`
-    : "";
 
   // Ista tema v Laboratoriju ali 3D svetu (public/sim/katalog.js, strežnik: lessonView → links): en dotik odpre poskus
   // v zavihku Laboratorij ali atlas oziroma model čez cel zaslon.
@@ -608,7 +720,7 @@ async function renderLesson(topicId) {
         .map((k) =>
           k.kind === "lab"
             ? `<button type="button" class="tb-link" data-tb-lab="${esc(k.key)}" aria-label="${esc(t("tb.openLab", { title: k.title }))}">${ic("flask-conical")}<span><small>${esc(t("tb.inLab"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`
-            : `<button type="button" class="tb-link" data-tb-3d="${esc(k.id)}" data-title="${esc(k.title)}" aria-label="${esc(t("tb.open3d", { title: k.title }))}">${ic("box")}<span><small>${esc(t("tb.in3d"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`,
+            : `<button type="button" class="tb-link" data-tb-3d="${esc(k.id)}" data-title="${esc(k.title)}"${k.zacetek ? ` data-zacetek="${esc(new URLSearchParams(k.zacetek).toString())}"` : ""} aria-label="${esc(t("tb.open3d", { title: k.title }))}">${ic("box")}<span><small>${esc(t("tb.in3d"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`,
         )
         .join("")}</div>`
     : "";
@@ -621,7 +733,7 @@ async function renderLesson(topicId) {
     <h2>Kaj zdaj?</h2>
     ${L.practice || !pending ? `<div class="actions">
       ${L.practice ? `<button type="button" class="primary" id="tb-practice">${ic("pencil")}Vadi naloge</button>` : ""}
-      ${lesson ? `<button type="button" class="secondary" data-ustno="${esc(L.id)}">${ic("mic")}${esc(t("ustno.vprasajMe"))}</button>` : ""}
+      ${lesson ? `<button type="button" class="secondary" data-ustno="${esc(L.id)}">${ic("speech")}${esc(t("ustno.vprasajMe"))}</button>` : ""}
       ${pending ? "" : `<button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>`}
     </div>` : ""}
     <div class="tb-nav">
@@ -633,12 +745,12 @@ async function renderLesson(topicId) {
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
     <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
-    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
+    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="${esc(pdfHref(L.path, { topic: L.id.split("/")[1] }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfLesson"))}</a>${L.unit ? `<a class="tb-pdf" href="${esc(pdfHref(L.path, { unit: L.unit }))}" target="_blank" rel="noopener">${ic("download")}${esc(t("tbk.pdfUnit"))}</a>` : ""}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
     ${linkHtml}
     ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
-    ${lesson && lesson.status !== "pregledano" ? `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, pritisni »Prijavi napako«.</p>` : ""}
+    ${!lesson || lesson.status === "pregledano" ? "" : lesson.status === "preverjeno" ? `<p class="tb-draft tb-checked">Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. Če opaziš napako, pritisni »Prijavi napako«.</p>` : `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, pritisni »Prijavi napako«.</p>`}
     ${stepMode ? `<div class="tb-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${steps.length}"><span></span></div>${stepsHtml}${nextHtml}` : `${sectionHtml}${fallback}${checksHtml}${nextHtml}`}
     </div><aside class="tb-side">${demoHtml}</aside></div>${stepper}`;
   placeDemos(box);
@@ -654,6 +766,8 @@ async function renderLesson(topicId) {
     });
   }
   box.scrollTop = 0;
+  // Naslednja lekcija v ozadju: »Naslednja lekcija →« na koncu se odpre takoj.
+  if (L.next?.id) setTimeout(() => current?.id === L.id && prefetchLesson(L.next.id), 1500);
 
   $("#tb-back").addEventListener("click", () => {
     tb.topicId = null;
@@ -675,7 +789,10 @@ async function renderLesson(topicId) {
   });
   box.querySelectorAll("[data-tb-lab]").forEach((b) => b.addEventListener("click", () => ctx.openLab?.(b.dataset.tbLab)));
   // getAttribute: »data-tb-3d« v dataset ni »tb3d« (vezaj pred števko ostane, ključ je »tb-3d«).
-  box.querySelectorAll("[data-tb-3d]").forEach((b) => b.addEventListener("click", () => ctx.open3d?.(b.getAttribute("data-tb-3d"), b.dataset.title)));
+  // data-zacetek: začetne vrednosti modela iz kataloga (faks lekcije: faks=1), open3d jih doda v naslov /3d#<id>?…
+  box.querySelectorAll("[data-tb-3d]").forEach((b) =>
+    b.addEventListener("click", () => ctx.open3d?.(b.getAttribute("data-tb-3d"), b.dataset.title, b.dataset.zacetek ? Object.fromEntries(new URLSearchParams(b.dataset.zacetek)) : null)),
+  );
   box.querySelectorAll(".tb-demo-mount").forEach((m) => {
     const d = demos[Number(m.dataset.sim)];
     mountSim(d.id, m, d.opts);
@@ -733,13 +850,13 @@ async function renderLesson(topicId) {
           ? `Ni čisto tako. ${R(wrongWhy)} Poskusi še enkrat.`
           : "Ni čisto tako. Premisli še enkrat ali preberi razlago zgoraj."}</div>`;
         prilagodiSirino(why);
-        if (ok) el.querySelectorAll(".tb-opt").forEach((x) => (x.disabled = true));
+        if (ok) {
+          el.querySelectorAll(".tb-opt").forEach((x) => (x.disabled = true));
+          why.tabIndex = -1; // onemogočen gumb ne obdrži fokusa: fokus (in bralnik zaslona) gre na razlago
+          why.focus({ preventScroll: true });
+        }
       }),
     );
-  });
-  $("#tb-mode")?.addEventListener("click", () => {
-    setStepPref(!stepMode);
-    renderLesson(topicId);
   });
   if (stepMode) wireSteps(box, L.id, steps.length);
   $("#tb-practice")?.addEventListener("click", async () => {
@@ -754,19 +871,6 @@ async function renderLesson(topicId) {
 }
 
 // ---------- Lekcija po korakih ----------
-const STEP_PREF = "tb-steps";
-function stepPref() {
-  try {
-    return localStorage.getItem(STEP_PREF) !== "0";
-  } catch {
-    return true;
-  }
-}
-function setStepPref(on) {
-  try {
-    localStorage.setItem(STEP_PREF, on ? "1" : "0");
-  } catch {}
-}
 function wireSteps(box, lessonId, n) {
   const key = `tb-step:${lessonId}`;
   const all = [...box.querySelectorAll(".tb-step")];
@@ -784,13 +888,27 @@ function wireSteps(box, lessonId, n) {
     count.setAttribute("aria-label", t("tb.steps.count", { n: cur + 1, m: n }));
     bar.setAttribute("aria-valuenow", String(cur + 1));
     bar.firstElementChild.style.width = `${((cur + 1) / n) * 100}%`;
+    // Gumb, ki postane onemogočen, ne sme vzeti fokusa s seboj (tipkovnica bi skočila na začetek strani).
+    const lost = (document.activeElement === prev && cur === 0) || (document.activeElement === next && cur === n - 1);
     prev.disabled = cur === 0;
     next.disabled = cur === n - 1;
     end.hidden = cur !== n - 1;
+    // Zadnji korak: »Kaj zdaj?« (vaje, inštruktor) je v DOM pred gumbi, zato tja; prvi korak: »Naprej«.
+    const kajZdaj = cur === n - 1 && end.querySelector("button:not(:disabled), a[href]");
+    if (lost) (cur === 0 ? next : kajZdaj || prev).focus({ preventScroll: cur === 0 || !kajZdaj });
     try {
       sessionStorage.setItem(key, String(cur));
     } catch {}
-    if (scroll && bar.getBoundingClientRect().top < 0) bar.scrollIntoView({ block: "start" });
+    // Nov korak se začne pri razlagi (Geminijev pregled 17. 11.): če korak ne bi bil ves viden pod glavo lekcije ali
+    // na telefonu glava zavzame več kot tretjino zaslona, skočimo na trak napredka nad korakom; na velikem zaslonu,
+    // kjer je korak že ves viden, stran ostane.
+    if (scroll) {
+      const top = bar.getBoundingClientRect().top;
+      const stepper = box.querySelector(".tb-stepper");
+      const visibleBottom = stepper ? stepper.getBoundingClientRect().top : innerHeight;
+      const narrow = innerWidth < 760 && top > innerHeight * 0.3;
+      if (top < 0 || narrow || all[cur].getBoundingClientRect().bottom > visibleBottom) bar.scrollIntoView({ block: "start" });
+    }
   };
   prev.addEventListener("click", () => go(cur - 1, true));
   next.addEventListener("click", () => go(cur + 1, true));

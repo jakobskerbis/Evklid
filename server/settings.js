@@ -21,13 +21,16 @@ export const ENUMS = {
   school_system: SYSTEM_IDS,
   // Lahki način (varčevanje s podatki): auto = po povezavi naprave, lite = vedno, normal = nikoli.
   data_mode: ["auto", "lite", "normal"],
-  // Cilj učenca (public/goal-data.js); datum je neobvezen, opomnik ob 12.00 velja le z datumom.
+  // Cilj učenca (public/goal-data.js); datum je neobvezen, dnevni opomnik velja le z datumom.
   goal: GOALS,
   // Kotiček zanimanj: kako zahtevne novice (auto = po šoli) in ali tudi v angleščini.
   news_level: NEWS_LEVELS,
   news_lang: NEWS_LANGS,
   // Stikalo »Skrij igre« (j, 2. 11. 2026): off skrije razdelek Igre na vseh napravah profila.
   games: ["on", "off"],
+  // Slovnični spol, v katerem inštruktor piše učencu (j, 18. 11. 2026; »« = po imenu, server/ime-oznaka.js).
+  // Namesto imena gre k ponudniku AI samo spol.
+  gender: ["", "m", "z"],
 };
 
 export const DEFAULT_SETTINGS = {
@@ -47,7 +50,7 @@ export const DEFAULT_SETTINGS = {
   data_mode: "auto",
   goal: DEFAULT_GOAL,
   goal_date: "", // YYYY-MM-DD ali prazno
-  goal_reminder: true, // dnevni opomnik ob 12.00 do datuma cilja
+  goal_reminder: true, // dnevni opomnik (OPOMNIK_URA, 16.00) do datuma cilja
   xp_goal: DEFAULT_XP_GOAL, // dnevni cilj XP (public/xp-levels.js XP_GOALS)
   // Kotiček zanimanj (public/interests.js): null = vprašalnik še ni bil izpolnjen, [] = preskočen.
   interests: null,
@@ -58,7 +61,32 @@ export const DEFAULT_SETTINGS = {
   game_childhood: null,
   games: "on", // razdelek Igre: on = viden, off = skrit (»Skrij igre«)
   game_titles: [], // lastni naslovi iger iz vprašalnika (childhood.js matchTitle)
+  gender: "", // »m«, »z« ali »« (po imenu)
 };
+
+// Naslov pogovora iz prvega sporočila (j 17. 11., pregled: naslov skeniranega pogovora je bil surov zapis): formule v
+// $…$ in zapis kalkulatorja (2*(x-3), sqrt(x), x^2) kot berljivo besedilo, brez klica AI.
+const SUP = { 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹", "-": "⁻", n: "ⁿ", x: "ˣ" };
+const TEX = { cdot: "·", times: "×", div: ":", le: "≤", leq: "≤", ge: "≥", geq: "≥", ne: "≠", neq: "≠", pi: "π", alpha: "α", beta: "β", gamma: "γ", Delta: "Δ", delta: "δ", lambda: "λ", mu: "μ", omega: "ω", varphi: "φ", phi: "φ", theta: "θ", rho: "ρ", sigma: "σ", infty: "∞", to: "→", rightarrow: "→", approx: "≈", pm: "±", circ: "°", degree: "°", int: "∫", sum: "Σ", sqrt: "√" };
+const par = (x) => (/^[\w.,]+$/.test(x.trim()) ? x.trim() : `(${x.trim()})`);
+export function plainTitle(value) {
+  if (typeof value !== "string") return "";
+  let s = value
+    .replace(/\*\*([^*]+)\*\*/g, "$1") // krepko (**Naloga**) brez zvezdic
+    .replace(/\\(?:d|t)?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, (m, a, b) => `${par(a)}/${par(b)}`)
+    .replace(/\\sqrt\s*\{([^{}]*)\}/g, "√$1")
+    .replace(/\\(?:text|mathrm|mathbf|operatorname)\s*\{([^{}]*)\}/g, "$1")
+    .replace(/\\(left|right)\b/g, "")
+    .replace(/\\([a-zA-Z]+)/g, (m, c) => TEX[c] ?? c) // neznan ukaz ostane z imenom: sin, cos, log, ln, lim
+    .replace(/\\[,;:! ]/g, " ")
+    .replace(/\^\{([0-9n\-x]+)\}|\^([0-9nx])/g, (m, a, b) => [...(a || b)].map((c) => SUP[c] ?? c).join(""))
+    .replace(/_\{?([0-9]+)\}?/g, (m, d) => [...d].map((c) => "₀₁₂₃₄₅₆₇₈₉"[c]).join("")) // log_2 → log₂
+    .replace(/_\{([^{}]*)\}/g, "$1")
+    .replace(/[{}$]/g, "")
+    .replace(/\bsqrt\(/g, "√(")
+    .replace(/(?<=\S)\s*\*\s*(?=\S)/g, "·"); // 2*3*4 → 2·3·4
+  return s;
+}
 
 // Proste besedilne nastavitve gredo v sistemski prompt, zato jih skrajšamo
 // in odstranimo prelome vrstic, da ne morejo posnemati novih razdelkov.
@@ -133,6 +161,10 @@ export function normalizeSettings(input = {}) {
   // Različica vodiča ob prvi uporabi, ki jo je profil že videl (public/app.js TOUR_VERSION); ni nastavitev za inštruktorja.
   const tv = Number(input.tour_version);
   if (Number.isInteger(tv) && tv >= 0 && tv <= 99) out.tour_version = tv;
+  // Profil je rešil prvo nalogo (public/app.js): šele potem vprašalnik zanimanj in vodič; ni nastavitev za inštruktorja.
+  if (input.first_task === true || input.first_task === 1) out.first_task = 1;
+  // Maturant je ponudbo »cilj matura« na Učni poti sprejel ali zavrnil (public/goal-data.js ponudiMaturo); ni za inštruktorja.
+  if (input.matura_offer === true || input.matura_offer === 1) out.matura_offer = 1;
   return out;
 }
 

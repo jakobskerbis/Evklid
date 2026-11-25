@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -141,7 +141,7 @@ $m g h = \dfrac{m v^2}{2}$, torej $v = \sqrt{2 g h}$
 
 1. Na vrhu: $W_k = 0$, $W_p = 30 \cdot 10 \cdot 2 = 600\,\text{J}$.
 2. Na dnu je $W_p = 0$, zato je vsa energija kinetična: $W_k = 600\,\text{J}$.
-3. Iz $W_k = \dfrac{m v^2}{2}$ izračunaj $v^2$, nato $v$. Preveri še s $v = \sqrt{2 g h}$.
+3. Iz $W_k = \dfrac{m v^2}{2}$ izračunaj $v^2$, nato $v$. Preveri še z $v = \sqrt{2 g h}$.
 
 :::premisli
 Kolikšna je hitrost otroka na dnu?
@@ -202,7 +202,7 @@ Vsa izgubljena potencialna energija se je torej pojavila kot $\frac{m v^2}{2}$. 
 ~ Obe sta odvisni tudi od mase: težje kladivo pri isti hitrosti ali višini opravi več dela.
 > $W_k = \dfrac{m v^2}{2}$ vsebuje maso in hitrost, $W_p = m g h$ pa maso, $g$ in višino.
 
-? Žebelj se zabije globlje, če kladivo zamahneš dvakrat hitreje. Zakaj se kinetična energija kladiva pri tem početveri?
+? Žebelj se zabije globlje, če s kladivom zamahneš dvakrat hitreje. Zakaj se kinetična energija kladiva pri tem početveri?
 - Se ne početveri, ampak le podvoji.
 ~ To bi veljalo, če hitrost v formuli ne bi bila kvadrirana.
 + Ker je hitrost v formuli kvadrirana: $2^2 = 4$.

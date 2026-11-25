@@ -4,7 +4,26 @@
 // in jih preverja v brskalniku (isti check.js kot strežnik). Odgovori čakajo v vrsti in
 // se ob ponovni povezavi pošljejo strežniku, ki vsako nalogo iz semena ustvari znova,
 // odgovor preveri še enkrat in podeli XP.
-import { checkAnswer } from "/practice/check.js";
+
+// Preverjanje (check.js) in razčlenjevalnik izrazov za cel zapis (»5√7« pri iskanem b) nista del prvega izrisa Učne poti
+// (~30 KB stisnjeno): app.js ju naloži po njem (zasloniPozneje), da ju service worker shrani za delo brez povezave.
+// Klic iz paketa pred tem ju počaka (offlineApi vrne obljubo). Brez razčlenjevalnika preverjanje dela kot prej.
+let checkAnswer = null;
+let offlineTask = null; // enote pri nalogi iz paketa (public/enote-izbira.js), skupaj s check.js
+let MATH = null;
+let preverjanje = null;
+export const pripraviPreverjanje = () =>
+  (preverjanje ||= Promise.all([import("/practice/check.js"), import("./graph/math.js").catch(() => null), import("./enote-izbira.js")]).then(
+    ([c, m, e]) => {
+      checkAnswer = c.checkAnswer;
+      MATH = m;
+      offlineTask = e.offlineTask;
+    },
+    (err) => {
+      preverjanje = null; // brez povezave in brez kopije: naslednji klic poskusi znova
+      throw err;
+    },
+  ));
 
 // Enako kot hintSteps v server/practice/index.js: podatki → formula → namig.
 function hintSteps(t) {
@@ -19,7 +38,14 @@ function hintSteps(t) {
 
 const PACK = (sid) => `evklid.offline.pack.${sid}`;
 const QUEUE = (sid) => `evklid.offline.queue.${sid}`;
+// Strežnik je v zadnjih 24 urah že izdal največ paketov (429, drseče okno): 6 ur ne sprašujemo znova.
+const LIMIT = (sid) => `evklid.offline.limit.${sid}`;
+const LIMIT_MS = 6 * 3600e3;
 const DAY = 86400000;
+// Paket iz različice pred PR 786 ima pri nalogi z enoto le »unit« (brez hasUnit in units): naloga bi skrila
+// enote, preverjanje pa bi enoto zahtevalo. Tak paket je zastarel (osveži ga, ko je povezava).
+export const isStalePack = (pack) =>
+  Object.values(pack?.tasks || {}).some((list) => Array.isArray(list) && list.some((x) => x?.task && x.task.hasUnit === undefined && !!(x.task.unit || x.answer?.unit)));
 
 const read = (key, fallback) => {
   try {
@@ -64,13 +90,17 @@ export class OfflineError extends Error {
 export async function refreshPack(api, sid, pathKey, { force = false } = {}) {
   if (!navigator.onLine) return getPack(sid);
   const old = getPack(sid);
-  if (!force && old && old.path === pathKey && Date.now() - Date.parse(old.created) < DAY) return old;
+  // Paket iz različice pred PR 786 (enota brez hasUnit) je zastarel tudi, če je mlajši od dneva.
+  if (!force && old && old.path === pathKey && Date.now() - Date.parse(old.created) < DAY && !isStalePack(old)) return old;
+  const limitAt = Number(read(LIMIT(sid), 0)) || 0;
+  if (limitAt && Date.now() - limitAt < LIMIT_MS && Date.now() >= limitAt) return old;
   try {
     const pack = await api(`/api/students/${sid}/offline-pack?path=${encodeURIComponent(pathKey)}`);
     // Če ni prostora (zasebno okno, poln pomnilnik), paket preprosto ni na voljo.
     if (!write(PACK(sid), pack)) return old;
     return pack;
-  } catch {
+  } catch (err) {
+    if (err?.status === 429) write(LIMIT(sid), Date.now());
     return old;
   }
 }
@@ -93,6 +123,11 @@ export function offlineApi(sid, url, opts = {}) {
   if (!pack) return undefined;
   const u = new URL(url, location.origin);
   const p = u.pathname;
+  // Naloga ali odgovor iz paketa potrebuje check.js: če še ni naložen, počakamo nanj (app.js fromPack počaka obljubo;
+  // undefined ali neuspel uvoz tam postane prevedeno sporočilo brez povezave).
+  if (!checkAnswer && (p === `/api/students/${sid}/practice/next` || /^\/api\/students\/\d+\/tasks\/off-[^/]+\/answer$/.test(p))) {
+    return pripraviPreverjanje().then(() => offlineApi(sid, url, opts));
+  }
   const body = typeof opts.body === "string" ? JSON.parse(opts.body || "{}") : opts.body || {};
 
   if (p === "/api/topic") {
@@ -110,7 +145,7 @@ export function offlineApi(sid, url, opts = {}) {
     const done = new Set(read(QUEUE(sid), []).map((r) => `${r.topic_id}:${r.seed}`));
     const item = list.find((x) => !done.has(`${body.topic_id}:${x.seed}`)) || list[Math.floor(Math.random() * list.length)];
     lastTask = { ...item, topic_id: body.topic_id, attempts: 0, id: `off-${item.seed}` };
-    return { task: { id: lastTask.id, mode: "practice", ...item.task }, state: { level: item.level, streak: 0 }, offline: true };
+    return { task: { id: lastTask.id, mode: "practice", ...offlineTask(item.task, item.answer, checkAnswer) }, state: { level: item.level, streak: 0 }, offline: true };
   }
   const m = /^\/api\/students\/\d+\/tasks\/(off-[^/]+)\/(answer|help|skip|read|hint)$/.exec(p);
   if (m && lastTask?.id === decodeURIComponent(m[1])) {
@@ -119,7 +154,7 @@ export function offlineApi(sid, url, opts = {}) {
       return { steps: steps.slice(0, Math.max(1, Number(body.step) || 1)), total: steps.length, offline: true };
     }
     if (m[2] !== "answer") throw new OfflineError();
-    const res = checkAnswer(lastTask.answer, body.answer);
+    const res = checkAnswer(lastTask.answer, body.answer, { convert: true, text: lastTask.task?.text, find: lastTask.task?.data?.find, math: MATH });
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}), offline: true };
     if (["format", "unit", "simplify"].includes(res.kind)) return { ...out, retry: true };
     lastTask.attempts += 1;
@@ -149,8 +184,8 @@ const CONFIG = "evklid.config";
 // zadnji zaslon s temo ali lekcijo profila (zadnji-zaslon) in njegov posnetek (zadnji-posnetek, public/zacetek.js).
 const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.|work\.|graph\.|sci\.|goalSeen\.|schedule|ours\.|levelup\.|zadnji-zaslon$|zadnji-posnetek$)/;
 // Posamezni ključi: učiteljev ključ razreda (dostop do razreda!), ime otroka iz povabila, darilna in
-// priporočilna koda iz povezave, izbrani profil.
-const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref"]);
+// priporočilna koda iz povezave, koda vabila v pilot (public/vabilo.js), izbrani profil.
+const LINK_KEYS = new Set(["evklid_invite_name", "evklid_koda", "evklid_ref", "evklid.vabilo"]);
 const PRIVATE_EXACT = new Set(["teacherClasses", "studentId", ...LINK_KEYS]);
 export const isPrivateKey = (k) => typeof k === "string" && (PRIVATE_KEYS.test(k) || PRIVATE_EXACT.has(k));
 
@@ -211,6 +246,7 @@ export async function clearPrivate() {
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
     for (const k of keys) if (isPrivateKey(k)) localStorage.removeItem(k);
   } catch {}
+  dropDrafts(/^evklid\.(osnutek|odgovor)\./); // osnutki vprašanj in odgovorov v tem zavihku (app.js, vadnica.js)
   try {
     navigator.serviceWorker?.controller?.postMessage({ type: "clear-private" });
   } catch {}
@@ -222,10 +258,20 @@ export async function clearPrivate() {
   } catch {}
 }
 
+// Osnutki (vprašanje inštruktorju po pogovoru, odgovor naloge po nalogi) so v sessionStorage zavihka:
+// »evklid.osnutek.<profil>.<pogovor>«, »evklid.odgovor.<profil>.<naloga>«. Odjava in izbris profila ju pobrišeta.
+function dropDrafts(re) {
+  try {
+    const keys = [];
+    for (let i = 0; i < sessionStorage.length; i++) keys.push(sessionStorage.key(i));
+    for (const k of keys) if (re.test(k)) sessionStorage.removeItem(k);
+  } catch {}
+}
+
 // Izbris enega profila: pobrišejo se njegovi podatki na napravi (paket, vrsta, skener, kalkulator, cilji …).
 export function clearProfile(sid) {
   const id = String(sid);
-  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup)\\.${id}\\.`);
+  const own = new RegExp(`^evklid\\.(offline\\.pack|offline\\.queue|offline\\.limit|scan|graph|sci|goalSeen)\\.${id}$|^evklid\\.(ours|levelup)\\.${id}\\.`);
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
@@ -235,6 +281,7 @@ export function clearProfile(sid) {
     // Zadnji zaslon in njegov posnetek (public/zacetek.js), če sta od tega profila.
     for (const k of ["evklid.zadnji-zaslon", "evklid.zadnji-posnetek"]) if (String(read(k, null)?.s) === id) localStorage.removeItem(k);
   } catch {}
+  dropDrafts(new RegExp(`^evklid\\.(osnutek|odgovor)\\.${id}\\.`));
 }
 
 // Ali so na napravi osebni podatki (brez zapisa o lastniku).

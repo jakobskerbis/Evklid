@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -42,7 +42,7 @@ $$\mathrm{NaH + H_2O \longrightarrow NaOH + H_2}$$
 | Rb | $[\mathrm{Kr}]\,5\mathrm{s}^1$ | 403 | 39 |
 | Cs | $[\mathrm{Xe}]\,6\mathrm{s}^1$ | 376 | 29 |
 
-Navzdol po skupini atomski polmer raste, zunanji elektron je dlje od jedra in bolj zasenčen. Ionizacijska energija zato pada, reaktivnost raste. Kovinska vez je šibka (en elektron na atom), zato so kovine mehke (režemo jih z nožem) in imajo nizka tališča. Li, Na in K so lažji od vode.
+Navzdol po skupini atomski polmer raste, zunanji elektron je dlje od jedra in bolj zasenčen. Ionizacijska energija zato pada, reaktivnost raste. Kovinska vez je šibka (en elektron na atom), zato so kovine mehke (režemo jih z nožem) in imajo nizka tališča. Li, Na in K imajo manjšo gostoto kot voda.
 
 :::premisli
 Zakaj natrij v spojinah nikoli nima oksidacijskega števila $+2$? Druga ionizacijska energija natrija je $4562\,\mathrm{kJ/mol}$.
@@ -103,7 +103,7 @@ $\mathrm{MgCO_3}$ da, razpade že pri nekaj sto stopinjah; $\mathrm{BaCO_3}$ ne,
 
 **8. Diagonalna podobnost.** Litij je po lastnostih bližje magneziju kot natriju: oba tvorita nitrid, njuna karbonata pri segrevanju razpadeta ($\mathrm{Na_2CO_3}$ ne), $\mathrm{LiOH}$ je slabše topen od $\mathrm{NaOH}$. Razlog je podobna gostota naboja ionov $\mathrm{Li^+}$ in $\mathrm{Mg^{2+}}$.
 
-**9. Pomembne spojine.** Elektroliza raztopine $\mathrm{NaCl}$ da $\mathrm{NaOH}$, $\mathrm{Cl_2}$ in $\mathrm{H_2}$. Iz apnenca dobimo žgano apno ($\mathrm{CaCO_3 \to CaO + CO_2}$), iz njega z vodo gašeno apno $\mathrm{Ca(OH)_2}$, ki na zraku s $\mathrm{CO_2}$ spet otrdi v $\mathrm{CaCO_3}$. Ioni $\mathrm{Ca^{2+}}$ in $\mathrm{Mg^{2+}}$ povzročajo trdoto vode; v vodi so raztopljeni kot hidrogenkarbonata, npr. $\mathrm{Ca(HCO_3)_2}$. Pri segrevanju se hidrogenkarbonat razgradi ($\mathrm{Ca(HCO_3)_2 \to CaCO_3 + H_2O + CO_2}$) in izloči se kotlovec $\mathrm{CaCO_3}$.
+**9. Pomembne spojine.** Elektroliza raztopine $\mathrm{NaCl}$ da $\mathrm{NaOH}$, $\mathrm{Cl_2}$ in $\mathrm{H_2}$. Iz apnenca dobimo žgano apno ($\mathrm{CaCO_3 \to CaO + CO_2}$), iz njega z vodo gašeno apno $\mathrm{Ca(OH)_2}$, ki na zraku s $\mathrm{CO_2}$ spet otrdi v $\mathrm{CaCO_3}$. Ioni $\mathrm{Ca^{2+}}$ in $\mathrm{Mg^{2+}}$ povzročajo trdoto vode; v vodi so raztopljeni večinoma kot hidrogenkarbonata, npr. $\mathrm{Ca(HCO_3)_2}$. Pri segrevanju se hidrogenkarbonat razgradi ($\mathrm{Ca(HCO_3)_2 \to CaCO_3 + H_2O + CO_2}$) in izloči se kotlovec $\mathrm{CaCO_3}$.
 
 ## Rešeni primeri
 
@@ -142,7 +142,7 @@ $\mathrm{2\,Na + 2\,H_2O \to 2\,NaOH + H_2}$, $n = \dfrac{m}{M}$, $V = \dfrac{nR
 1. Množina natrija: $n(\mathrm{Na}) = \dfrac{2{,}30\,\mathrm{g}}{22{,}99\,\mathrm{g/mol}} \approx 0{,}100\,\mathrm{mol}$.
 2. Iz enačbe: 2 mol Na dasta 1 mol $\mathrm{H_2}$, zato $n(\mathrm{H_2}) \approx 0{,}0500\,\mathrm{mol}$.
 3. Prostornina po splošni plinski enačbi: $V = \dfrac{0{,}0500 \cdot 8{,}314 \cdot 298{,}15}{100\,000}\,\mathrm{m^3} \approx 1{,}24 \cdot 10^{-3}\,\mathrm{m^3}$.
-4. NaOH nastane toliko molov kot je bilo natrija: $m(\mathrm{NaOH}) \approx 0{,}100\,\mathrm{mol} \cdot 40{,}00\,\mathrm{g/mol} \approx 4{,}00\,\mathrm{g}$.
+4. NaOH nastane toliko molov, kot je bilo natrija: $m(\mathrm{NaOH}) \approx 0{,}100\,\mathrm{mol} \cdot 40{,}00\,\mathrm{g/mol} \approx 4{,}00\,\mathrm{g}$.
 5. Odgovor: nastane $1{,}24\,\mathrm{L}$ vodika, v raztopini je $4{,}00\,\mathrm{g}$ NaOH.
 
 ### Primer 3 (težji): kateri hidrid je boljši vir vodika
@@ -249,12 +249,34 @@ Natančno definiraj mrežno entalpijo in izpelji Born-Haberjev izraz za $\mathrm
 
 Predstavljaj si atom kot jedro z »lupinami« čebule.
 
-```
-Li:  (jedro) )  •            zunanji e⁻ blizu, močno vezan
-Na:  (jedro) ) )   •
-K:   (jedro) ) ) )    •
-Cs:  (jedro) ) ) ) ) )      •    zunanji e⁻ daleč, šibko vezan
-```
+:::risba skica
+opis: Štirje atomi drug pod drugim: Li, Na, K in Cs. Levo je jedro, desno od njega notranje lupine kot navpične črtice: Li ima 1, Na 2, K 3, Cs 5. Zunanji elektron je točka za zadnjo lupino: pri Li na razdalji 2 enot od jedra (blizu, močno vezan), pri Na 3, pri K 4, pri Cs 6 enot (daleč, šibko vezan).
+območje: -2; -0,8 .. 16; 3,8
+napis: -1,3; 3 | Li | sredina
+krog: 0; 3 | 0,3 | siva polno
+črta: 1; 2,65 -> 1; 3,35 | siva
+točka: 2; 3 | e⁻ blizu, močno vezan | desno | modra
+napis: -1,3; 2 | Na | sredina
+krog: 0; 2 | 0,3 | siva polno
+črta: 1; 1,65 -> 1; 2,35 | siva
+črta: 2; 1,65 -> 2; 2,35 | siva
+točka: 3; 2 | e⁻ | desno | modra
+napis: -1,3; 1 | K | sredina
+krog: 0; 1 | 0,3 | siva polno
+črta: 1; 0,65 -> 1; 1,35 | siva
+črta: 2; 0,65 -> 2; 1,35 | siva
+črta: 3; 0,65 -> 3; 1,35 | siva
+točka: 4; 1 | e⁻ | desno | modra
+napis: -1,3; 0 | Cs | sredina
+krog: 0; 0 | 0,3 | siva polno
+črta: 1; -0,35 -> 1; 0,35 | siva
+črta: 2; -0,35 -> 2; 0,35 | siva
+črta: 3; -0,35 -> 3; 0,35 | siva
+črta: 4; -0,35 -> 4; 0,35 | siva
+črta: 5; -0,35 -> 5; 0,35 | siva
+točka: 6; 0 | e⁻ daleč, šibko vezan | desno | modra
+podnapis: Več notranjih lupin: zunanji elektron je dlje od jedra in šibkeje vezan.
+:::
 
 Vsaka nova lupina potisne zunanji elektron dlje in ga zakrije pred jedrom, zato ga cezij odda najlaže. Pri 2. skupini ima jedro en proton več in oba zunanja elektrona drži močneje, zato je magnezij manj reaktiven od natrija.
 
@@ -320,7 +342,7 @@ Pri karbonatih si predstavljaj kation kot magnet: majhen $\mathrm{Mg^{2+}}$ od b
 + raztopina $\mathrm{BaCl_2}$
 - raztopina $\mathrm{Ba(OH)_2}$ v presežku, ker je hidroksid netopen
 ~ $\mathrm{Ba(OH)_2}$ je dobro topen; obori se $\mathrm{BaSO_4}$, presežek pa naredi vodo močno bazično.
-> Topnost sulfatov v 2. skupini navzdol pada. $\mathrm{Ba^{2+} + SO_4^{2-} \to BaSO_4}$ je praktično netopen in se obori.
+> Topnost sulfatov v 2. skupini navzdol pada. $\mathrm{BaSO_4}$, ki nastane po $\mathrm{Ba^{2+} + SO_4^{2-} \to BaSO_4}$, je praktično netopen in se obori.
 
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol | v ns: glavno kvantno število

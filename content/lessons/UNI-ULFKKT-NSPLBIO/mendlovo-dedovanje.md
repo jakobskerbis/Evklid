@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -32,7 +32,7 @@ Danes vemo, zakaj: alela ležita na homolognih kromosomih, ki se pri mejozi razp
 
 Vsaka celica ima verjetnost $\tfrac{1}{4}$. Genotipi so v razmerju $RR : Rr : rr = 1 : 2 : 1$, fenotipi pa okroglo : nagubano $= 3 : 1$, ker sta $RR$ in $Rr$ oba okrogla.
 
-**Poimenovanje generacij.** Starša sta generacija P, njuni potomci F1, potomci F1 med seboj F2. Križanje dveh čistih linij ($RR \times rr$) da enotno F1 ($Rr$), F2 pa razcepi $3 : 1$.
+**Poimenovanje generacij.** Starša sta generacija P, njuni potomci F1, potomci F1 med seboj F2. Križanje dveh čistih linij ($RR \times rr$) da enotno F1 ($Rr$), F2 pa se razcepi $3 : 1$.
 
 :::premisli
 Zakaj se je v F2 nagubano seme pojavilo nespremenjeno, čeprav ga v F1 ni bilo? Kaj bi napovedalo »mešanje« lastnosti?
@@ -75,13 +75,26 @@ Mendlova zakona veljata tudi tu; drugačen je le odnos med aleli.
 
 Pri človeku križanj ne izbiramo, zato dedovanje beremo iz **rodovnika**: kvadrat je moški, krog ženska, polno znamenje oseba z lastnostjo, vodoravna črta zakon, navpična potomce.
 
-```
- I    □───○        zdrava starša
-        │
- II   ┌─┼───┐
-      ■ ○   □      bolan sin,
-                   zdrava otroka
-```
+:::risba skica
+opis: Rodovnik z dvema generacijama. V generaciji I sta zdrava starša: oče (prazen kvadrat) in mati (prazen krog), povezana z vodoravno črto. Od nje gre navpična črta do treh otrok v generaciji II: bolan sin (poln kvadrat), zdrava hči (prazen krog) in zdrav sin (prazen kvadrat).
+območje: 0; 0,8 .. 8; 5,2
+napis: 0,6; 4 | I | sredina | debelo
+napis: 0,6; 2 | II | sredina | debelo
+pravokotnik: 2,6; 3,6 .. 3,4; 4,4
+krog: 5; 4 | 0,4
+črta: 3,4; 4 -> 4,6; 4
+napis: 4; 4,6 | zdrava starša | nad
+črta: 4; 4 -> 4; 2,4
+črta: 2; 3 -> 6; 3
+črta: 2; 3 -> 2; 2,4
+črta: 6; 3 -> 6; 2,4
+pravokotnik: 1,6; 1,6 .. 2,4; 2,4 | polno
+krog: 4; 2 | 0,4
+pravokotnik: 5,6; 1,6 .. 6,4; 2,4
+napis: 2; 1,5 | bolan sin | pod
+napis: 4; 1,5 | zdrava hči | pod
+napis: 6; 1,5 | zdrav sin | pod
+:::
 
 Tipični vzorci:
 
@@ -148,9 +161,9 @@ rožnata × rožnata (heterozigota): $1 : 2 : 1$; vsak genotip ima svoj fenotip
 
 ### Primer 3 (težji)
 
-Mendel je križal čisti liniji z okroglimi rumenimi ($RRYY$) in nagubanimi zelenimi semeni ($rryy$). Rastline F1 je samooplodil in v F2 dobil $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubanega rumenega in $32$ nagubanih zelenih semen. a) Ali se podatki ujemajo z razmerjem $9 : 3 : 3 : 1$ (stopnja značilnosti $0{,}05$)? b) S kolikšno verjetnostjo je naključno izbrana okrogla rumena rastlina F2 dvojni heterozigot? c) Kaj bi dalo testno križanje take rastline?
+Mendel je križal čisti liniji z okroglimi rumenimi ($RRYY$) in nagubanimi zelenimi semeni ($rryy$). Rastline F1 je samooplodil in v F2 dobil $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubano rumeno in $32$ nagubanih zelenih semen. a) Ali se podatki ujemajo z razmerjem $9 : 3 : 3 : 1$ (stopnja značilnosti $0{,}05$)? b) S kolikšno verjetnostjo je naključno izbrana okrogla rumena rastlina F2 dvojni heterozigot? c) Kaj bi dalo testno križanje take rastline?
 
-**Podatki:** F2: $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubanih rumenih, $32$ nagubanih zelenih; $R$ okroglo, $Y$ rumeno, oba dominantna; meja $\chi^2$ pri $3$ prostostnih stopnjah $7{,}81$
+**Podatki:** F2: $315$ okroglih rumenih, $108$ okroglih zelenih, $101$ nagubano rumeno, $32$ nagubanih zelenih; $R$ okroglo, $Y$ rumeno, oba dominantna; meja $\chi^2$ pri $3$ prostostnih stopnjah $7{,}81$
 **Iščemo:** $\chi^2$ in sklep, $P(RrYy \mid$ okrogla rumena$)$, izid testnega križanja
 
 :::formula
@@ -221,7 +234,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Ženska z normalnim barvnim vidom ima barvno slepega očeta; njen brat je albino, njena starša pa sta pigmentirana. Poroči se z moškim z normalnim vidom, ki je prenašalec albinizma. Barvna slepota je X-vezana recesivna ($X^b$), albinizem avtosomno recesiven ($a$); gena se dedujeta neodvisno. a) Kolikšna je verjetnost, da bo prvi otrok barvno slep sin z normalno pigmentacijo? b) Kolikšna je verjetnost, da bo prvi otrok brez obeh lastnosti? c) Ali je lahko hči barvno slepa?
+Ženska z normalnim barvnim vidom in normalno pigmentacijo ima barvno slepega očeta; njen brat je albino, njena starša pa sta pigmentirana. Poroči se z moškim z normalnim vidom, ki je prenašalec albinizma. Barvna slepota je X-vezana recesivna ($X^b$), albinizem avtosomno recesiven ($a$); gena se dedujeta neodvisno. a) Kolikšna je verjetnost, da bo prvi otrok barvno slep sin z normalno pigmentacijo? b) Kolikšna je verjetnost, da bo prvi otrok brez obeh lastnosti? c) Ali je lahko hči barvno slepa?
 
 **Rešitev:**
 
@@ -250,13 +263,32 @@ Natančno navedi Mendlov drugi zakon s pogoji. Izpelji razmerje fenotipov pri kr
 
 Dihibridno križanje si lahko narišeš kot **drevo** namesto tabele $4 \times 4$:
 
-```
- oblika        barva     delež
- okroglo 3/4 ┬ rumeno 3/4  9/16
-             └ zeleno 1/4  3/16
- nagub.  1/4 ┬ rumeno 3/4  3/16
-             └ zeleno 1/4  1/16
-```
+:::risba skica
+opis: Drevo verjetnosti za dihibridno križanje. Prva razvejitev je oblika: okroglo s 3/4 in nagubano z 1/4. Vsaka veja se razcepi po barvi: rumeno s 3/4 in zeleno z 1/4. Deleži na koncih vej: okroglo rumeno 9/16, okroglo zeleno 3/16, nagubano rumeno 3/16, nagubano zeleno 1/16.
+območje: 0; 0 .. 13; 6,6
+napis: 2,5; 6,1 | oblika | sredina | debelo
+napis: 6,2; 6,1 | barva | sredina | debelo
+napis: 12,9; 6,1 | delež | levo | debelo
+črta: 0,5; 3 -> 4,5; 4,6
+črta: 0,5; 3 -> 4,5; 1,4
+napis: 0,3; 4,6 | okroglo 3/4 | nad desno
+napis: 0,3; 1,4 | nagubano 1/4 | pod desno
+črta: 4,5; 4,6 -> 7,3; 5,25
+črta: 4,5; 4,6 -> 7,3; 3,75
+črta: 4,5; 1,4 -> 7,3; 2,25
+črta: 4,5; 1,4 -> 7,3; 0,75
+točka: 0,5; 3
+točka: 4,5; 4,6
+točka: 4,5; 1,4
+napis: 7,5; 5,25 | rumeno 3/4 | desno
+napis: 7,5; 3,75 | zeleno 1/4 | desno
+napis: 7,5; 2,25 | rumeno 3/4 | desno
+napis: 7,5; 0,75 | zeleno 1/4 | desno
+napis: 12,9; 5,25 | 9/16 | levo
+napis: 12,9; 3,75 | 3/16 | levo
+napis: 12,9; 2,25 | 3/16 | levo
+napis: 12,9; 0,75 | 1/16 | levo
+:::
 
 Vsaka pot skozi drevo je en razred; delež je produkt verjetnosti na veji. Drevo hitro raste: za tri gene ima $8$ končnih vej, tabela pa bi imela $64$ celic.
 
@@ -325,6 +357,6 @@ E | pričakovano število potomcev v razredu | | – | skupno število krat dele
 P | verjetnost | | – | število med 0 in 1
 n | število potomcev | | –
 R, r | alela za obliko semena (okroglo, nagubano) oz. barvo ploda | | | velika črka: dominanten alel
-Y, y | alela za barvo semena (rumeno, zeleno) | | | $Y$ dominanten
+Y, y | alela za barvo semena (rumeno, zeleno) oz. dlake pri miših | | | $Y$ dominanten
 A, a | dominantni in recesivni alel | | | pri albinizmu $a$ recesiven
 :::

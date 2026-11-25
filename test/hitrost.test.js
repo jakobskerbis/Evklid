@@ -27,7 +27,12 @@ const get = async (mw, p, headers = {}) => {
 
 test("startupFiles: index.html, its styles and the static module graph, games only when asked", () => {
   const list = startupFiles(PUBLIC);
-  for (const u of ["/", "/app.js", "/style.css", "/theme.js", "/i18n/sl.js", "/vendor/katex/katex.min.js"]) assert.ok(list.includes(u), u);
+  for (const u of ["/", "/app.js", "/style.css", "/theme.js", "/i18n-osnova.js"]) assert.ok(list.includes(u), u);
+  // Cel slovar ni v statičnem grafu prvega odprtja (public/i18n-osnova.js; jedro besedil vstavi strežnik, server/i18n-jedro.js).
+  for (const u of ["/i18n.js", "/i18n/sl.js"]) assert.ok(!list.includes(u), u);
+  // KaTeX, marked in DOMPurify niso del prvega odprtja (public/rich.js naloziKnjiznice); strežnik jih stisne kot »later«.
+  assert.ok(!list.some((u) => /^\/vendor\/(katex|marked|dompurify)\/.*\.js$/.test(u)), "knjižnice za izris ob prvem odprtju");
+  assert.ok(startupFiles(PUBLIC, "index.html", ["vendor/katex/katex.min.js"]).includes("/vendor/katex/katex.min.js"));
   assert.ok(!list.some((u) => u.startsWith("/games/subjects/")), "games subjects must not be in the first load");
   const later = startupFiles(PUBLIC, "index.html", ["games/index.js"]);
   assert.ok(later.includes("/games/index.js") && later.some((u) => u.startsWith("/games/subjects/")));

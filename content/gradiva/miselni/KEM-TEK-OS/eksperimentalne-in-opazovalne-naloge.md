@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Opažanje in sklep
+  - opažanje: mehurčki, barva, oborina
+  - sklep: »nastaja $\mathrm{CO_2}$«
+  - napaka: sklep zapišeš kot opažanje
+- Metoda izločanja
+  - tabela snovi in poskusov
+  - zadnji dve loči nov poskus
+- Pošten poskus
+  - spreminjaj eno stvar
+  - kontrolni poskus s čisto vodo
+- Dokazne reakcije
+  - $\mathrm{CO_2}$ pooblači apnico
+  - $\mathrm{H_2}$ poči, $\mathrm{O_2}$ razplamti trsko
+  - škrob z jodovico modro-črno
+- Masa in plin
+  - izguba mase je masa plina
+  - $n = \dfrac{\Delta m}{M}$
+- Varnostni znaki
+  - bel romb z rdečim robom, črna slika
+  - plamen, jedko, lobanja, klicaj
+- Varno delo
+  - kislino vlivaj v vodo
+  - vonj s pahljanjem, očala

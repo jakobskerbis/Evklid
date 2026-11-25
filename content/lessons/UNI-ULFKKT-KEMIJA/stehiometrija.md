@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -144,7 +144,7 @@ $n(\mathrm{C}) = n(\mathrm{CO_2})$, $\quad n(\mathrm{H}) = 2\,n(\mathrm{H_2O})$,
 
 ### Primer 4 – zdaj ti
 
-Na taborjenju kuhaš na gorilniku, ki porabi celo kartušo s $220\,\mathrm{g}$ propana $\mathrm{C_3H_8}$. Koliko gramov ogljikovega dioksida pri tem nastane? Reakcija: $\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}$; $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$.
+Na taborjenju kuhaš na gorilniku, ki porabi celo kartušo z $220\,\mathrm{g}$ propana $\mathrm{C_3H_8}$. Koliko gramov ogljikovega dioksida pri tem nastane? Reakcija: $\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}$; $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$.
 
 **Podatki:** $m(\mathrm{C_3H_8}) = 220\,\mathrm{g}$, $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$, enačba $\mathrm{C_3H_8 + 5\,O_2 \to 3\,CO_2 + 4\,H_2O}$
 **Iščemo:** maso $m(\mathrm{CO_2})$
@@ -206,7 +206,7 @@ Acetilsalicilno kislino ($\mathrm{C_9H_8O_4}$, $M = 180{,}16\,\mathrm{g/mol}$) p
 3. Presežek: $0{,}074\,05 - 0{,}036\,20 = 0{,}037\,85\,\mathrm{mol}$ acetanhidrida, kar je $0{,}037\,85 \cdot 102{,}09\,\mathrm{g} \approx 3{,}86\,\mathrm{g}$.
 4. Teoretična masa: $m_\text{teor} = 0{,}036\,20 \cdot 180{,}16\,\mathrm{g} = 6{,}522\,\mathrm{g}$.
 5. Dejanska masa čistega produkta (nečistoče ne štejemo): $5{,}20 \cdot 0{,}950\,\mathrm{g} = 4{,}94\,\mathrm{g}$; $\eta = 4{,}94/6{,}522 \cdot 100\,\% \approx 75{,}7\,\%$.
-6. c) Za $100\,\mathrm{g}$ produkta potrebujemo teoretično $100/180{,}16\,\mathrm{mol} = 0{,}5551\,\mathrm{mol}$; pri izkoristku $\eta = 0{,}7575$ moramo vzeti $0{,}5551/0{,}7575\,\mathrm{mol} = 0{,}7328\,\mathrm{mol}$ salicilne kisline, kar je $0{,}7328 \cdot 138{,}12\,\mathrm{g} \approx 101\,\mathrm{g}$.
+6. c) Za $100\,\mathrm{g}$ produkta potrebujemo teoretično $100/180{,}16\,\mathrm{mol} = 0{,}5551\,\mathrm{mol}$; pri izkoristku $\eta = 0{,}7574$ moramo vzeti $0{,}5551/0{,}7574\,\mathrm{mol} = 0{,}7329\,\mathrm{mol}$ salicilne kisline, kar je $0{,}7329 \cdot 138{,}12\,\mathrm{g} \approx 101\,\mathrm{g}$.
 7. Odgovor: omejujoča je salicilna kislina, ostane okoli $3{,}86\,\mathrm{g}$ acetanhidrida, izkoristek je okoli $75{,}7\,\%$, za $100\,\mathrm{g}$ produkta potrebujemo okoli $101\,\mathrm{g}$ salicilne kisline.
 
 ### Naloga 2
@@ -218,7 +218,7 @@ Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$. a) Natančno defin
 1. a) Reakcijski obseg $\xi$ je količina z enoto mol, za katero velja $n_i = n_{i,0} + \nu_i\xi$ za vse snovi; pri $\xi = 1\,\mathrm{mol}$ reakcija poteče enkrat v molskem merilu, kot je zapisana.
 2. Masa sistema: $m = \sum_i n_i M_i = \sum_i n_{i,0}M_i + \xi\sum_i \nu_i M_i$.
 3. Urejena enačba ima na obeh straneh enako število atomov vsakega elementa; ker je $M_i$ vsota molskih mas atomov, je $\sum_i \nu_i M_i = 0$. Torej $m = \sum_i n_{i,0}M_i$ za vsak $\xi$: masa se ohranja.
-4. b) Omejujoči reaktant je reaktant, ki se ob popolnem poteku reakcije porabi prvi in zato določa največji obseg. Za reaktant je $\nu_i < 0$ in pogoj $n_i \ge 0$ da $\xi \le n_{i,0}/|\nu_i|$. Vsi pogoji hkrati dajo $\xi_\text{max} = \min_i n_{i,0}/|\nu_i|$; pri tem $\xi$ je množina reaktanta, kjer je dosežen minimum, enaka $0$, drugih pa še pozitivna.
+4. b) Omejujoči reaktant je reaktant, ki se ob popolnem poteku reakcije porabi prvi in zato določa največji obseg. Za reaktant je $\nu_i < 0$ in pogoj $n_i \ge 0$ da $\xi \le n_{i,0}/|\nu_i|$. Vsi pogoji hkrati dajo $\xi_\text{max} = \min_i n_{i,0}/|\nu_i|$; pri tem $\xi$ je množina reaktanta, kjer je dosežen minimum, enaka $0$, drugih pa še nenegativna.
 5. c) Ne. Pri $\mathrm{2\,H_2 + O_2 \to 2\,H_2O}$ z $1{,}0\,\mathrm{mol}$ $\mathrm{H_2}$ in $0{,}60\,\mathrm{mol}$ $\mathrm{O_2}$ je kisika manj, a $n/|\nu|$ je za vodik $0{,}50\,\mathrm{mol}$, za kisik $0{,}60\,\mathrm{mol}$: omejujoči je vodik, ostane $0{,}10\,\mathrm{mol}$ kisika.
 6. Odgovor: masa se ohranja, ker je $\sum_i \nu_i M_i = 0$; omejujoči reaktant je določen z najmanjšim $n_{i,0}/|\nu_i|$, ne z najmanjšo množino ali maso.
 
@@ -226,13 +226,27 @@ Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$. a) Natančno defin
 
 Vsak stehiometrijski račun je pot po tem zemljevidu:
 
-```
-  masa A          množina A          množina B          masa B
-  [ g ]  --:M-->  [ mol ]  --·νB/νA-->  [ mol ]  --·M-->  [ g ]
-                     ^                     |
-   V(plin), p, T ----+                     +----> V(plin) = nRT/p
-   c, V(raztopina) --+                     +----> c = n/V
-```
+:::risba skica
+opis: Zemljevid stehiometrijskega računa. Levo zgoraj je masa snovi A v gramih; puščica navzdol z napisom »deli z M(A)« vodi do množine A v molih. Od množine A vodi vodoravna puščica z napisom »krat razmerje koeficientov ν(B)/ν(A)« do množine B v molih. Od množine B vodi puščica navzgor z napisom »krat M(B)« do mase B v gramih. Pod množino A sta druga vhoda: plin, n = pV/(RT), in raztopina, n = cV. Pod množino B sta druga izhoda: plin, V = nRT/p, in raztopina, c = n/V. Mas A in B ne povezuje nobena neposredna puščica.
+območje: 0; 0 .. 12; 8
+napis: 2,5; 7,4 | masa A (g) | sredina | debelo
+puščica: 2,5; 6,9 -> 2,5; 5,6 | : M(A) | desno
+pravokotnik: 0,8; 3,5 .. 4,2; 5,5 | modra
+napis: 2,5; 4,9 | množina A | sredina | debelo
+napis: 2,5; 4,1 | (mol) | sredina
+puščica: 4,3; 4,5 -> 7,7; 4,5 | · ν_B/ν_A | nad
+pravokotnik: 7,8; 3,5 .. 11,2; 5,5 | modra
+napis: 9,5; 4,9 | množina B | sredina | debelo
+napis: 9,5; 4,1 | (mol) | sredina
+puščica: 9,5; 5,6 -> 9,5; 6,9 | · M(B) | desno
+napis: 9,5; 7,4 | masa B (g) | sredina | debelo
+puščica: 2,5; 2,2 -> 2,5; 3,4 | | | siva
+napis: 2,5; 1,6 | plin: n = pV/(RT) | sredina
+napis: 2,5; 0,6 | raztopina: n = cV | sredina
+puščica: 9,5; 3,4 -> 9,5; 2,2 | | | siva
+napis: 9,5; 1,6 | plin: V = nRT/p | sredina
+napis: 9,5; 0,6 | raztopina: c = n/V | sredina
+:::
 
 Vodoravna pot vedno teče skozi **množino**. Mase dveh različnih snovi nikoli ne povezujemo neposredno.
 
@@ -246,7 +260,7 @@ Omejujoči reaktant si predstavljaj kot sestavljanje koles: vsako kolo potrebuje
 
 **Inženirstvo: zračna blazina.** Ob trku razpade natrijev azid: $\mathrm{2\,NaN_3 \to 2\,Na + 3\,N_2}$. Iz $65{,}0\,\mathrm{g}$ $\mathrm{NaN_3}$ ($M = 65{,}02\,\mathrm{g/mol}$, torej $1{,}000\,\mathrm{mol}$) nastane $1{,}500\,\mathrm{mol}$ dušika, pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$ okoli $37{,}2\,\mathrm{L}$. Premalo azida pomeni mehko blazino, preveč nevarno trdo.
 
-**Fiziologija in klinična prehrana.** Pri popolni oksidaciji glukoze (Primer 1) se za vsak mol porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski koeficient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$; z merjenjem v izdihanem zraku (posredna kalorimetrija) ocenijo, kaj telo porablja.
+**Fiziologija in klinična prehrana.** Pri popolni oksidaciji glukoze (Primer 1) se za vsak mol porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski kvocient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$; z merjenjem v izdihanem zraku (posredna kalorimetrija) ocenijo, kaj telo porablja.
 
 **Agronomija.** Za $120\,\mathrm{kg}$ dušika na hektar je pri masnem deležu dušika v $\mathrm{NH_4NO_3}$ $2 \cdot 14{,}01 / 80{,}05 \approx 0{,}35$ treba posuti približno $343\,\mathrm{kg}$ gnojila.
 
@@ -272,7 +286,7 @@ Koliko gramov vode nastane, če zmešamo $3{,}00\,\mathrm{g}$ vodika in $16{,}0\
 
 ## Preveri se
 
-? Koliko mol je $4{,}0\,\mathrm{g}$ natrijevega hidroksida ($M = 40{,}0\,\mathrm{g/mol}$)?
+? Koliko molov je $4{,}0\,\mathrm{g}$ natrijevega hidroksida ($M = 40{,}0\,\mathrm{g/mol}$)?
 - $10\,\mathrm{mol}$
 ~ Delil si obratno, $M/m = 40{,}0/4{,}0$. Enote izdajo napako: $\mathrm{g/mol}$ deljeno z $\mathrm{g}$ da $\mathrm{mol^{-1}}$, ne mol.
 + $0{,}10\,\mathrm{mol}$

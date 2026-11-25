@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -7,7 +7,7 @@ avtor: AI
 
 Uganka za začetek. V kavnem aparatu vodo spusti elektromagnetni ventil: tuljava je navita na železno jedro, v katerem je majhna zračna reža. Ko steče tok, polje v reži pritegne železno kotvico in ventil se odpre. Silnice tečejo $100\,\mathrm{mm}$ po železu in le $1\,\mathrm{mm}$ po zraku. Relativna permeabilnost železa je $2000$.
 
-Ugani, preden bereš naprej: kateri del poti "porabi" večino amperskih ovojev tuljave? Sto milimetrov železa ali en milimeter zraka? Oceni tudi delež.
+Ugani, preden bereš naprej: kateri del poti »porabi« večino amperskih ovojev tuljave? Sto milimetrov železa ali en milimeter zraka? Oceni tudi delež.
 
 Podobna uganka visi na kuhinjski steni. Magnetni nosilec trdno drži nož, ki se ga dotika. Če vmes zatakneš zloženo kuhinjsko krpo, nož zdrsne.
 
@@ -21,9 +21,9 @@ Model sestavimo iz majhnih kosov. Za vsakim je kratko vprašanje. Odgovori nanj,
 
 $$\Theta = N I$$
 
-Enota je amper; v praksi rečemo "amperski ovoji". Tuljava ima v magnetnem krogu vlogo vira napetosti.
+Enota je amper; v praksi rečemo »amperski ovoji«. Tuljava ima v magnetnem krogu vlogo vira napetosti.
 
-*Preveri:* tuljava s $400$ ovoji, po kateri teče $0{,}5\,\mathrm A$, ima $\Theta = {?}$ *(Odgovor: $200\,\mathrm A$.)*
+*Preveri:* tuljava s $400$ ovoji, po kateri teče $0{,}5\,\mathrm{A}$, ima $\Theta = {?}$ *(Odgovor: $200\,\mathrm{A}$.)*
 
 **2. Pretok.** Gostota magnetnega pretoka $B$ se meri v teslah. Kadar je $B$ po preseku $A$ enakomerna, je **magnetni pretok** $\Phi = B A$. Enota je weber, $1\,\mathrm{Wb} = 1\,\mathrm{T\,m^2}$.
 
@@ -35,7 +35,7 @@ Silnice polja $B$ so sklenjene. Zato je pretok vzdolž nerazvejanega jedra povso
 
 $$R_{\mathrm{m}} = \frac{l}{\mu_0 \mu_{\mathrm{r}} A}$$
 
-Enota je $\mathrm{A/Wb}$, kar je isto kot $\mathrm H^{-1}$. Primerjaj z uporom žice $R = \dfrac{l}{\gamma A}$: dolžina je v števcu, presek in snovna lastnost v imenovalcu. Vlogo specifične prevodnosti $\gamma$ ima permeabilnost $\mu$.
+Enota je $\mathrm{A/Wb}$, kar je isto kot $\mathrm{H}^{-1}$. Primerjaj z uporom žice $R = \dfrac{l}{\gamma A}$: dolžina je v števcu, presek in snovna lastnost v imenovalcu. Vlogo specifične prevodnosti $\gamma$ ima permeabilnost $\mu$.
 
 *Preveri:* presek jedra prepoloviš. Kaj se zgodi z $R_{\mathrm{m}}$? *(Odgovor: podvoji se.)*
 
@@ -52,7 +52,7 @@ Na odseku jedra je **magnetni padec napetosti** $V_{\mathrm{m}} = R_{\mathrm{m}}
 | upor $R$ | magnetni upor $R_{\mathrm{m}}$ | A/Wb |
 | padec $R I$ | $V_{\mathrm{m}} = H l$ | A |
 
-*Preveri:* $\Theta = 300\,\mathrm A$, $R_{\mathrm{m}} = 10^6\,\mathrm{A/Wb}$. Kolikšen je $\Phi$? *(Odgovor: $0{,}3\,\mathrm{mWb}$.)*
+*Preveri:* $\Theta = 300\,\mathrm{A}$, $R_{\mathrm{m}} = 10^6\,\mathrm{A/Wb}$. Kolikšen je $\Phi$? *(Odgovor: $0{,}3\,\mathrm{mWb}$.)*
 
 **5. Zaporedni odseki.** Jedro z režo je zaporedna vezava dveh magnetnih uporov, železa in zraka. Skozi oba teče isti pretok, upora se seštejeta:
 
@@ -60,7 +60,7 @@ $$\Theta = (R_{\mathrm{Fe}} + R_\delta)\,\Phi$$
 
 To je drugi Kirchhoffov zakon v magnetni obliki: vsota magnetnih padcev po zanki je enaka vzbujanju.
 
-Zdaj nazaj k uganki. Pri enakem preseku sta upora v razmerju dolžin, deljenih z $\mu_{\mathrm{r}}$. Železo z dolžino $100\,\mathrm{mm}$ in $\mu_{\mathrm{r}} = 2000$ ima enak magnetni upor kot $0{,}05\,\mathrm{mm}$ zraka. Reža $1\,\mathrm{mm}$ je torej "dvajsetkrat daljša" od vsega železa.
+Zdaj nazaj k uganki. Pri enakem preseku sta upora v razmerju dolžin, deljenih z $\mu_{\mathrm{r}}$. Železo z dolžino $100\,\mathrm{mm}$ in $\mu_{\mathrm{r}} = 2000$ ima enak magnetni upor kot $0{,}05\,\mathrm{mm}$ zraka. Reža $1\,\mathrm{mm}$ je torej »dvajsetkrat daljša« od vsega železa.
 
 :::premisli
 Kolikšen delež amperskih ovojev porabi reža iz uganke? Napovej, nato preveri z razmerjem uporov.
@@ -84,15 +84,15 @@ Pretok se razdeli obratno sorazmerno z magnetnima uporoma, kot tok med vzporedni
 
 *Preveri:* $R_1 = R_2$. Kolikšen je $R_{\mathrm{p}}$? *(Odgovor: $R_1/2$.)*
 
-**7. Meja modela.** Relativna permeabilnost železa ni stalna. Ko $B$ preseže približno $1{,}5\,\mathrm T$, se železo nasiči in $\mu_{\mathrm{r}}$ močno pade. Linearni zakon zato velja, dokler je železo daleč od nasičenja. Vedno preveri $B$ v vsakem odseku.
+**7. Meja modela.** Relativna permeabilnost železa ni stalna. Ko $B$ preseže približno $1{,}5\,\mathrm{T}$, se železo nasiči in $\mu_{\mathrm{r}}$ močno pade. Linearni zakon zato velja, dokler je železo daleč od nasičenja. Vedno preveri $B$ v vsakem odseku.
 
 ## Rešeni primeri
 
 ### Primer 1: obročasto jedro
 
-Kuhinjski robot ima v napajalniku dušilko, navito na železni obroč. Srednja dolžina silnice je $30\,\mathrm{cm}$, presek $4\,\mathrm{cm^2}$, $\mu_{\mathrm{r}} = 1500$. Tuljava ima $200$ ovojev, teče enosmerni tok $0{,}5\,\mathrm A$. Kolikšna sta magnetni upor jedra in pretok?
+Kuhinjski robot ima v napajalniku dušilko, navito na železni obroč. Srednja dolžina silnice je $30\,\mathrm{cm}$, presek $4\,\mathrm{cm^2}$, $\mu_{\mathrm{r}} = 1500$. Tuljava ima $200$ ovojev, teče enosmerni tok $0{,}5\,\mathrm{A}$. Kolikšna sta magnetni upor jedra in pretok?
 
-**Podatki:** $l = 0{,}30\,\mathrm m$, $A = 4\,\mathrm{cm^2}$, $\mu_{\mathrm{r}} = 1500$, $N = 200$, $I = 0{,}5\,\mathrm A$, $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{Vs/(Am)}$
+**Podatki:** $l = 0{,}30\,\mathrm{m}$, $A = 4\,\mathrm{cm^2}$, $\mu_{\mathrm{r}} = 1500$, $N = 200$, $I = 0{,}5\,\mathrm{A}$, $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{Vs/(Am)}$
 **Iščemo:** magnetni upor $R_{\mathrm{m}}$ in pretok $\Phi$
 
 :::formula
@@ -103,16 +103,16 @@ $R_{\mathrm{m}} = \dfrac{l}{\mu_0 \mu_{\mathrm{r}} A}$, $\Phi = \dfrac{N I}{R_{\
 
 1. Presek pretvorimo v osnovno enoto, ker je $1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$: $A = 4 \cdot 10^{-4}\,\mathrm{m^2}$.
 2. Magnetni upor: $R_{\mathrm{m}} = \dfrac{0{,}30}{4\pi \cdot 10^{-7} \cdot 1500 \cdot 4 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 3{,}98 \cdot 10^{5}\,\mathrm{A/Wb}$.
-3. Vzbujanje: $\Theta = 200 \cdot 0{,}5\,\mathrm A = 100\,\mathrm A$.
-4. Ohmov zakon: $\Phi = \dfrac{100\,\mathrm A}{3{,}98 \cdot 10^{5}\,\mathrm{A/Wb}} \approx 2{,}51 \cdot 10^{-4}\,\mathrm{Wb}$.
-5. Kontrola: $B = \dfrac{2{,}51 \cdot 10^{-4}\,\mathrm{Wb}}{4 \cdot 10^{-4}\,\mathrm{m^2}} \approx 0{,}63\,\mathrm T$. To je daleč pod nasičenjem, zato je stalni $\mu_{\mathrm{r}}$ upravičen.
+3. Vzbujanje: $\Theta = 200 \cdot 0{,}5\,\mathrm{A} = 100\,\mathrm{A}$.
+4. Ohmov zakon: $\Phi = \dfrac{100\,\mathrm{A}}{3{,}98 \cdot 10^{5}\,\mathrm{A/Wb}} \approx 2{,}51 \cdot 10^{-4}\,\mathrm{Wb}$.
+5. Kontrola: $B = \dfrac{2{,}51 \cdot 10^{-4}\,\mathrm{Wb}}{4 \cdot 10^{-4}\,\mathrm{m^2}} \approx 0{,}63\,\mathrm{T}$. To je daleč pod nasičenjem, zato je stalni $\mu_{\mathrm{r}}$ upravičen.
 6. Odgovor: magnetni upor jedra je približno $3{,}98 \cdot 10^{5}\,\mathrm{A/Wb}$, pretok pa približno $0{,}25\,\mathrm{mWb}$.
 
 ### Primer 2: ventil kavnega aparata
 
-Uganko zdaj rešimo s številkami. Jedro ventila ima $l_{\mathrm{Fe}} = 100\,\mathrm{mm}$, $\mu_{\mathrm{r}} = 2000$ in režo $\delta = 1\,\mathrm{mm}$. Presek je povsod $1\,\mathrm{cm^2}$. Da kotvica zanesljivo pritegne, potrebujemo v reži $B = 0{,}5\,\mathrm T$. Koliko amperskih ovojev je potrebnih? Koliko ovojev mora imeti tuljava, če sme voditi največ $0{,}25\,\mathrm A$? Raztros silnic ob reži zanemari.
+Uganko zdaj rešimo s številkami. Jedro ventila ima $l_{\mathrm{Fe}} = 100\,\mathrm{mm}$, $\mu_{\mathrm{r}} = 2000$ in režo $\delta = 1\,\mathrm{mm}$. Presek je povsod $1\,\mathrm{cm^2}$. Da kotvica zanesljivo pritegne, potrebujemo v reži $B = 0{,}5\,\mathrm{T}$. Koliko amperskih ovojev je potrebnih? Koliko ovojev mora imeti tuljava, če sme voditi največ $0{,}25\,\mathrm{A}$? Raztros silnic ob reži zanemari.
 
-**Podatki:** $l_{\mathrm{Fe}} = 0{,}1\,\mathrm m$, $\mu_{\mathrm{r}} = 2000$, $\delta = 10^{-3}\,\mathrm m$, $A = 10^{-4}\,\mathrm{m^2}$, $B = 0{,}5\,\mathrm T$, $I = 0{,}25\,\mathrm A$
+**Podatki:** $l_{\mathrm{Fe}} = 0{,}1\,\mathrm{m}$, $\mu_{\mathrm{r}} = 2000$, $\delta = 10^{-3}\,\mathrm{m}$, $A = 10^{-4}\,\mathrm{m^2}$, $B = 0{,}5\,\mathrm{T}$, $I = 0{,}25\,\mathrm{A}$
 **Iščemo:** magnetno napetost $\Theta$ in število ovojev $N$
 
 :::formula
@@ -121,18 +121,18 @@ $\Phi = B A$, $R_{\mathrm{Fe}} = \dfrac{l_{\mathrm{Fe}}}{\mu_0 \mu_{\mathrm{r}} 
 
 **Rešitev:**
 
-1. Pretok: $\Phi = 0{,}5\,\mathrm T \cdot 10^{-4}\,\mathrm{m^2} = 5 \cdot 10^{-5}\,\mathrm{Wb}$. Odseka sta zaporedna, zato je pretok v železu enak.
+1. Pretok: $\Phi = 0{,}5\,\mathrm{T} \cdot 10^{-4}\,\mathrm{m^2} = 5 \cdot 10^{-5}\,\mathrm{Wb}$. Odseka sta zaporedna, zato je pretok v železu enak.
 2. Upor reže ($\mu_{\mathrm{r}} = 1$): $R_\delta = \dfrac{10^{-3}}{4\pi \cdot 10^{-7} \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 7{,}958 \cdot 10^{6}\,\mathrm{A/Wb}$.
 3. Upor železa: $R_{\mathrm{Fe}} = \dfrac{0{,}1}{4\pi \cdot 10^{-7} \cdot 2000 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 3{,}979 \cdot 10^{5}\,\mathrm{A/Wb}$, kar je dvajsetina upora reže.
-4. Vzbujanje: $\Theta = (3{,}979 \cdot 10^{5} + 7{,}958 \cdot 10^{6}) \cdot 5 \cdot 10^{-5}\,\mathrm A \approx 417{,}8\,\mathrm A$. Od tega reža porabi $397{,}9\,\mathrm A$, železo le $19{,}9\,\mathrm A$.
-5. Ovoji: $N = \dfrac{417{,}8\,\mathrm A}{0{,}25\,\mathrm A} \approx 1671{,}1$. Navzgor zaokrožimo, da gostota v reži ne pade pod zahtevano.
-6. Odgovor: potrebujemo približno $418\,\mathrm A$ amperskih ovojev, torej tuljavo z vsaj $1672$ ovoji. Skoraj vse ovoje "porabi" milimetrska reža.
+4. Vzbujanje: $\Theta = (3{,}979 \cdot 10^{5} + 7{,}958 \cdot 10^{6}) \cdot 5 \cdot 10^{-5}\,\mathrm{A} \approx 417{,}8\,\mathrm{A}$. Od tega reža porabi $397{,}9\,\mathrm{A}$, železo le $19{,}9\,\mathrm{A}$.
+5. Ovoji: $N = \dfrac{417{,}8\,\mathrm{A}}{0{,}25\,\mathrm{A}} \approx 1671{,}1$. Navzgor zaokrožimo, da gostota v reži ne pade pod zahtevano.
+6. Odgovor: potrebujemo približno $418\,\mathrm{A}$ amperskih ovojev, torej tuljavo z vsaj $1672$ ovoji. Skoraj vse ovoje »porabi« milimetrska reža.
 
 ### Primer 3: jedro oblike E (razvejani krog)
 
-Dušilka v indukcijski kuhalni plošči ima jedro oblike E. Za preizkus skozi tuljavo na srednjem stebru spustimo enosmerni tok. Magnetni upori stebrov (z ustreznimi deli jarma) so: srednji $2 \cdot 10^{5}\,\mathrm{A/Wb}$, levi $4 \cdot 10^{5}\,\mathrm{A/Wb}$, desni z režo $1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}$. Tuljava ima $300$ ovojev, tok je $2\,\mathrm A$. Kolikšni so pretoki v vseh treh stebrih?
+Dušilka v indukcijski kuhalni plošči ima jedro oblike E. Za preizkus skozi tuljavo na srednjem stebru spustimo enosmerni tok. Magnetni upori stebrov (z ustreznimi deli jarma) so: srednji $2 \cdot 10^{5}\,\mathrm{A/Wb}$, levi $4 \cdot 10^{5}\,\mathrm{A/Wb}$, desni z režo $1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}$. Tuljava ima $300$ ovojev, tok je $2\,\mathrm{A}$. Kolikšni so pretoki v vseh treh stebrih?
 
-**Podatki:** $N = 300$, $I = 2\,\mathrm A$, $R_{\mathrm{s}} = 2 \cdot 10^{5}\,\mathrm{A/Wb}$, $R_1 = 4 \cdot 10^{5}\,\mathrm{A/Wb}$, $R_2 = 1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}$
+**Podatki:** $N = 300$, $I = 2\,\mathrm{A}$, $R_{\mathrm{s}} = 2 \cdot 10^{5}\,\mathrm{A/Wb}$, $R_1 = 4 \cdot 10^{5}\,\mathrm{A/Wb}$, $R_2 = 1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}$
 **Iščemo:** pretoke $\Phi_{\mathrm{s}}$, $\Phi_1$ in $\Phi_2$
 
 :::formula
@@ -141,12 +141,12 @@ $R_{\mathrm{p}} = \dfrac{R_1 R_2}{R_1 + R_2}$, $\Phi_{\mathrm{s}} = \dfrac{N I}{
 
 **Rešitev:**
 
-1. Vzbujanje: $\Theta = 300 \cdot 2\,\mathrm A = 600\,\mathrm A$.
+1. Vzbujanje: $\Theta = 300 \cdot 2\,\mathrm{A} = 600\,\mathrm{A}$.
 2. Stranska stebra vežeta isti razcepišči, zato sta vzporedna: $R_{\mathrm{p}} = \dfrac{4 \cdot 10^{5} \cdot 1{,}2 \cdot 10^{6}}{4 \cdot 10^{5} + 1{,}2 \cdot 10^{6}}\,\mathrm{A/Wb} = 3 \cdot 10^{5}\,\mathrm{A/Wb}$.
 3. Srednji steber je z njima v zaporedju: skupni upor je $2 \cdot 10^{5} + 3 \cdot 10^{5} = 5 \cdot 10^{5}\,\mathrm{A/Wb}$.
-4. Pretok v srednjem stebru: $\Phi_{\mathrm{s}} = \dfrac{600\,\mathrm A}{5 \cdot 10^{5}\,\mathrm{A/Wb}} = 1{,}2 \cdot 10^{-3}\,\mathrm{Wb}$.
-5. Magnetni padec na stranskih stebrih: $V_{\mathrm{p}} = 3 \cdot 10^{5} \cdot 1{,}2 \cdot 10^{-3}\,\mathrm A = 360\,\mathrm A$. Preostalih $240\,\mathrm A$ porabi srednji steber.
-6. Pretoka v stranskih stebrih: $\Phi_1 = \dfrac{360\,\mathrm A}{4 \cdot 10^{5}\,\mathrm{A/Wb}} = 9 \cdot 10^{-4}\,\mathrm{Wb}$ in $\Phi_2 = \dfrac{360\,\mathrm A}{1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}} = 3 \cdot 10^{-4}\,\mathrm{Wb}$.
+4. Pretok v srednjem stebru: $\Phi_{\mathrm{s}} = \dfrac{600\,\mathrm{A}}{5 \cdot 10^{5}\,\mathrm{A/Wb}} = 1{,}2 \cdot 10^{-3}\,\mathrm{Wb}$.
+5. Magnetni padec na stranskih stebrih: $V_{\mathrm{p}} = 3 \cdot 10^{5} \cdot 1{,}2 \cdot 10^{-3}\,\mathrm{A} = 360\,\mathrm{A}$. Preostalih $240\,\mathrm{A}$ porabi srednji steber.
+6. Pretoka v stranskih stebrih: $\Phi_1 = \dfrac{360\,\mathrm{A}}{4 \cdot 10^{5}\,\mathrm{A/Wb}} = 9 \cdot 10^{-4}\,\mathrm{Wb}$ in $\Phi_2 = \dfrac{360\,\mathrm{A}}{1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}} = 3 \cdot 10^{-4}\,\mathrm{Wb}$.
 7. Kontrola s prvim Kirchhoffovim zakonom: $0{,}9 + 0{,}3 = 1{,}2\,\mathrm{mWb}$, kar se ujema s $\Phi_{\mathrm{s}}$.
 8. Odgovor: v srednjem stebru je $1{,}2\,\mathrm{mWb}$, v levem $0{,}9\,\mathrm{mWb}$, v desnem z režo le $0{,}3\,\mathrm{mWb}$.
 
@@ -163,24 +163,24 @@ $V_{\mathrm{p}} = R_2 \Phi_2$, $\Phi_1 = \dfrac{V_{\mathrm{p}}}{R_1}$, $\Phi_{\m
 
 **Rešitev:**
 
-1. Padec na desnem stebru: $V_{\mathrm{p}} = 1{,}2 \cdot 10^{6} \cdot 5 \cdot 10^{-4}\,\mathrm A = 600\,\mathrm A$. Enak padec je na levem stebru, ker sta vzporedna.
-2. Levi steber: $\Phi_1 = \dfrac{600\,\mathrm A}{4 \cdot 10^{5}\,\mathrm{A/Wb}} = 1{,}5 \cdot 10^{-3}\,\mathrm{Wb}$.
+1. Padec na desnem stebru: $V_{\mathrm{p}} = 1{,}2 \cdot 10^{6} \cdot 5 \cdot 10^{-4}\,\mathrm{A} = 600\,\mathrm{A}$. Enak padec je na levem stebru, ker sta vzporedna.
+2. Levi steber: $\Phi_1 = \dfrac{600\,\mathrm{A}}{4 \cdot 10^{5}\,\mathrm{A/Wb}} = 1{,}5 \cdot 10^{-3}\,\mathrm{Wb}$.
 3. Srednji steber: $\Phi_{\mathrm{s}} = 1{,}5 \cdot 10^{-3} + 5 \cdot 10^{-4} = 2 \cdot 10^{-3}\,\mathrm{Wb}$.
 4. Izračunaj sam še $\Theta$ in $I$, nato preveri:
 
 :::premisli
 Kolikšna sta $\Theta$ in tok $I$?
 ---
-Na srednjem stebru je padec $2 \cdot 10^{5} \cdot 2 \cdot 10^{-3}\,\mathrm A = 400\,\mathrm A$, zato je $\Theta = 400\,\mathrm A + 600\,\mathrm A = 1000\,\mathrm A$. Tok je $I = \dfrac{1000\,\mathrm A}{300} \approx 3{,}33\,\mathrm A$.
+Na srednjem stebru je padec $2 \cdot 10^{5} \cdot 2 \cdot 10^{-3}\,\mathrm{A} = 400\,\mathrm{A}$, zato je $\Theta = 400\,\mathrm{A} + 600\,\mathrm{A} = 1000\,\mathrm{A}$. Tok je $I = \dfrac{1000\,\mathrm{A}}{300} \approx 3{,}33\,\mathrm{A}$.
 :::
 
 ## Pogoste napake
 
-- **»Železa je največ, torej prevlada.«** Učenec primerja geometrijski dolžini $100\,\mathrm{mm}$ in $1\,\mathrm{mm}$. Ker je $\mu_{\mathrm{r}}$ železa nekaj tisoč, je magnetni upor železa velikokrat manjši. Popravek: železo pretvori v enakovredno dolžino zraka $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ in šele nato primerjaj.
+- **»Železa je največ, torej prevlada.«** Študent primerja geometrijski dolžini $100\,\mathrm{mm}$ in $1\,\mathrm{mm}$. Ker je $\mu_{\mathrm{r}}$ železa nekaj tisoč, je magnetni upor železa velikokrat manjši. Popravek: železo pretvori v enakovredno dolžino zraka $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ in šele nato primerjaj.
 - **V razcepišču sešteva gostote $B$.** Če imajo stebri različne preseke, so tudi gostote različne. Ohranja se pretok, ne gostota. Popravek: Kirchhoffov zakon zapiši za $\Phi$, gostoto v vsakem stebru izračunaj posebej z $B = \Phi/A$.
-- **Celo vzbujanje na stranski steber.** Učenec deli $\Theta$ kar z $R_1$ in pozabi, da del magnetne napetosti porabi srednji steber. Tako dobi v veji več pretoka, kot ga je v celem krogu. Popravek: najprej skupni upor in skupni pretok, nato padec $V_{\mathrm{p}}$ na vzporedni veji.
-- **Brez ovojev ali brez pretvorbe enot.** Kdor vzame $\Theta = I$, dobi $N$-krat premajhen pretok. Kdor vstavi presek v $\mathrm{cm^2}$, se zmoti za faktor $10^{4}$. Popravek: $\Theta = N I$ ter $1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$, $1\,\mathrm{mm} = 10^{-3}\,\mathrm m$.
-- **Stalni $\mu_{\mathrm{r}}$ pri vsaki gostoti.** Rezultat $B = 2{,}5\,\mathrm T$ v železu ni mogoč, ker je železo že nasičeno. Popravek: preveri $B$; nad približno $1{,}5\,\mathrm T$ vzemi krivuljo magnetenja.
+- **Celo vzbujanje na stranski steber.** Študent deli $\Theta$ kar z $R_1$ in pozabi, da del magnetne napetosti porabi srednji steber. Tako dobi v veji več pretoka, kot ga je v celem krogu. Popravek: najprej skupni upor in skupni pretok, nato padec $V_{\mathrm{p}}$ na vzporedni veji.
+- **Brez ovojev ali brez pretvorbe enot.** Kdor vzame $\Theta = I$, dobi $N$-krat premajhen pretok. Kdor vstavi presek v $\mathrm{cm^2}$, se zmoti za faktor $10^{4}$. Popravek: $\Theta = N I$ ter $1\,\mathrm{cm^2} = 10^{-4}\,\mathrm{m^2}$, $1\,\mathrm{mm} = 10^{-3}\,\mathrm{m}$.
+- **Stalni $\mu_{\mathrm{r}}$ pri vsaki gostoti.** Rezultat $B = 2{,}5\,\mathrm{T}$ v železu ni mogoč, ker je železo že nasičeno. Popravek: preveri $B$; nad približno $1{,}5\,\mathrm{T}$ vzemi krivuljo magnetenja.
 
 ## Povzetek
 
@@ -191,18 +191,99 @@ Na srednjem stebru je padec $2 \cdot 10^{5} \cdot 2 \cdot 10^{-3}\,\mathrm A = 4
 - Razvejani krog: v razcepišču velja $\sum \Phi = 0$, vzporedne veje računaš kot vzporedne upore.
 - Model je linearen le, dokler železo ni nasičeno.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije magnetne napetosti $\Theta = N I$, pretoka $\Phi$ in magnetnega upora $R_{\mathrm{m}}$ z enotami ter analogijo z električnim krogom;
+- izpeljavo $R_{\mathrm{m}} = \dfrac{l}{\mu_0 \mu_{\mathrm{r}} A}$ in Ohmovega zakona $\Theta = R_{\mathrm{m}} \Phi$ iz Amperovega zakona za obroč;
+- oba Kirchhoffova zakona magnetnega kroga in njun izvor (Amperov zakon, brezizvornost polja $B$);
+- račun jedra z režo: zaporedna vezava, enakovredna dolžina zraka $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$, delitev magnetne napetosti;
+- postopek za razvejani krog (nadomestni upor, skupni pretok, padec na vzporedni veji, pretoki vej);
+- predpostavke modela (enakomerna gostota, brez raztrosa, stalni $\mu_{\mathrm{r}}$) in račun s krivuljo magnetenja, ko železo ni več linearno.
+
+### Naloga 1
+
+Jedro oblike E ima $\mu_{\mathrm{r}} = 2000$. Srednji steber je dolg $8\,\mathrm{cm}$, ima presek $6\,\mathrm{cm^2}$ in nima reže. Vsak stranski steber z delom jarma ima dolžino poti v železu $24\,\mathrm{cm}$ in presek $3\,\mathrm{cm^2}$. V levem stebru je reža $\delta_1 = 0{,}5\,\mathrm{mm}$, v desnem reža $\delta_2 = 1{,}5\,\mathrm{mm}$. Tuljava s $600$ ovoji je na srednjem stebru. Raztros zanemari. (a) Izračunaj magnetne upore srednjega, levega in desnega stebra. (b) Kolikšen tok potrebuješ, da bo gostota v desni reži $0{,}4\,\mathrm{T}$? (c) Kolikšni sta takrat gostoti v levem in srednjem stebru in ali je linearni model upravičen? (d) Kolikšen delež magnetnega padca na desnem stebru porabi reža?
+
+**Rešitev:**
+
+1. Srednji steber: $R_{\mathrm{s}} = \dfrac{0{,}08}{4\pi \cdot 10^{-7} \cdot 2000 \cdot 6 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 5{,}31 \cdot 10^{4}\,\mathrm{A/Wb}$.
+2. Železo enega stranskega stebra: $R_{\mathrm{Fe}} = \dfrac{0{,}24}{4\pi \cdot 10^{-7} \cdot 2000 \cdot 3 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 3{,}18 \cdot 10^{5}\,\mathrm{A/Wb}$.
+3. Reži: $R_{\delta 1} = \dfrac{0{,}5 \cdot 10^{-3}}{4\pi \cdot 10^{-7} \cdot 3 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 1{,}326 \cdot 10^{6}\,\mathrm{A/Wb}$ in $R_{\delta 2} = \dfrac{1{,}5 \cdot 10^{-3}}{4\pi \cdot 10^{-7} \cdot 3 \cdot 10^{-4}}\,\mathrm{A/Wb} \approx 3{,}979 \cdot 10^{6}\,\mathrm{A/Wb}$.
+4. Železo in reža sta v stebru zaporedna: $R_1 = R_{\mathrm{Fe}} + R_{\delta 1} \approx 1{,}645 \cdot 10^{6}\,\mathrm{A/Wb}$, $R_2 = R_{\mathrm{Fe}} + R_{\delta 2} \approx 4{,}297 \cdot 10^{6}\,\mathrm{A/Wb}$.
+5. Pretok v desnem stebru: $\Phi_2 = 0{,}4\,\mathrm{T} \cdot 3 \cdot 10^{-4}\,\mathrm{m^2} = 1{,}2 \cdot 10^{-4}\,\mathrm{Wb}$.
+6. Padec na desnem (in zato tudi na levem) stebru: $V_{\mathrm{p}} = R_2 \Phi_2 \approx 4{,}297 \cdot 10^{6} \cdot 1{,}2 \cdot 10^{-4}\,\mathrm{A} \approx 515{,}7\,\mathrm{A}$.
+7. Levi steber: $\Phi_1 = \dfrac{V_{\mathrm{p}}}{R_1} \approx \dfrac{515{,}7\,\mathrm{A}}{1{,}645 \cdot 10^{6}\,\mathrm{A/Wb}} \approx 3{,}135 \cdot 10^{-4}\,\mathrm{Wb}$.
+8. Srednji steber: $\Phi_{\mathrm{s}} = \Phi_1 + \Phi_2 \approx 4{,}335 \cdot 10^{-4}\,\mathrm{Wb}$; padec na njem je $R_{\mathrm{s}} \Phi_{\mathrm{s}} \approx 23{,}0\,\mathrm{A}$.
+9. Vzbujanje in tok: $\Theta = R_{\mathrm{s}} \Phi_{\mathrm{s}} + V_{\mathrm{p}} \approx 23{,}0\,\mathrm{A} + 515{,}7\,\mathrm{A} = 538{,}7\,\mathrm{A}$, $I = \dfrac{\Theta}{N} = \dfrac{538{,}7\,\mathrm{A}}{600} \approx 0{,}90\,\mathrm{A}$.
+10. Gostoti: levi steber $B_1 = \dfrac{3{,}135 \cdot 10^{-4}\,\mathrm{Wb}}{3 \cdot 10^{-4}\,\mathrm{m^2}} \approx 1{,}05\,\mathrm{T}$, srednji steber $B_{\mathrm{s}} = \dfrac{4{,}335 \cdot 10^{-4}\,\mathrm{Wb}}{6 \cdot 10^{-4}\,\mathrm{m^2}} \approx 0{,}72\,\mathrm{T}$. Vse gostote so pod približno $1{,}5\,\mathrm{T}$, zato je stalni $\mu_{\mathrm{r}}$ upravičen.
+11. Delež reže v desnem stebru: $\dfrac{R_{\delta 2}}{R_2} \approx \dfrac{3{,}979}{4{,}297} \approx 0{,}93$.
+12. Odgovor: $R_{\mathrm{s}} \approx 5{,}3 \cdot 10^{4}$, $R_1 \approx 1{,}64 \cdot 10^{6}$, $R_2 \approx 4{,}30 \cdot 10^{6}\,\mathrm{A/Wb}$; potreben tok je približno $0{,}90\,\mathrm{A}$; v levem stebru je $1{,}05\,\mathrm{T}$, v srednjem $0{,}72\,\mathrm{T}$, model je upravičen; reža porabi okoli $93\,\%$ padca na desnem stebru. Levi steber z ožjo režo vodi $2{,}6$-krat več pretoka kot desni.
+
+### Naloga 2
+
+Izpelji gostoto $B$ v reži nerazvejanega jedra s stalnim presekom, dolžino poti v železu $l_{\mathrm{Fe}}$, relativno permeabilnostjo $\mu_{\mathrm{r}}$ in režo $\delta$, ki ga vzbuja tuljava z $N$ ovoji in tokom $I$. Navedi predpostavke. Utemelji, kdaj smeš železo zanemariti in zakaj je tedaj zveza med $B$ in $I$ linearna, čeprav železo ni linearna snov.
+
+**Rešitev:**
+
+1. Predpostavke: gostota je po preseku enakomerna, ves pretok ostane v jedru, ob reži ni raztrosa (presek reže je enak preseku železa).
+2. Polje $B$ nima izvorov, zato je pretok $\Phi$ skozi železo in režo isti. Ker je presek enak, je enaka tudi gostota: $B_{\mathrm{Fe}} = B_\delta = B$.
+3. Poljski jakosti sta različni: $H_{\mathrm{Fe}} = \dfrac{B}{\mu_0 \mu_{\mathrm{r}}}$ in $H_\delta = \dfrac{B}{\mu_0}$. V reži je $H$ torej $\mu_{\mathrm{r}}$-krat večja.
+4. Amperov zakon po srednji silnici: $H_{\mathrm{Fe}} l_{\mathrm{Fe}} + H_\delta \delta = N I$.
+5. Vstavimo: $\dfrac{B}{\mu_0}\left(\dfrac{l_{\mathrm{Fe}}}{\mu_{\mathrm{r}}} + \delta\right) = N I$, torej $B = \dfrac{\mu_0 N I}{\dfrac{l_{\mathrm{Fe}}}{\mu_{\mathrm{r}}} + \delta}$.
+6. To je Ohmov zakon $\Theta = (R_{\mathrm{Fe}} + R_\delta)\,\Phi$, deljen s presekom; $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ je enakovredna dolžina zraka.
+7. Železo smeš zanemariti, ko je $\dfrac{l_{\mathrm{Fe}}}{\mu_{\mathrm{r}}} \ll \delta$. Tedaj je $B \approx \dfrac{\mu_0 N I}{\delta}$.
+8. V tem izrazu $\mu_{\mathrm{r}}$ ne nastopa več. Dokler železo ni nasičeno (in je $\mu_{\mathrm{r}}$ velik), sprememba $\mu_{\mathrm{r}}$ s tokom skoraj ne vpliva na $B$: krog določa zrak, ki je linearen. Ko se železo nasiči, $l_{\mathrm{Fe}}/\mu_{\mathrm{r}}$ zraste, pogoj ne velja več in zveza se ukrivi.
+
+### Naloga 3
+
+Jedro iz elektropločevine ima dolžino poti v železu $40\,\mathrm{cm}$, stalen presek in režo $0{,}8\,\mathrm{mm}$. Tuljava ima $400$ ovojev. Krivulja magnetenja pločevine je dana s točkami:
+
+| $B$ (T) | $1{,}0$ | $1{,}2$ | $1{,}4$ | $1{,}6$ |
+|---|---|---|---|---|
+| $H$ (A/m) | $250$ | $400$ | $1000$ | $4000$ |
+
+(a) Kolikšen tok potrebuješ za $B = 1{,}2\,\mathrm{T}$ v reži? (b) Kolikšen za $B = 1{,}6\,\mathrm{T}$? (c) Kolikšen tok za $1{,}6\,\mathrm{T}$ bi napovedal linearni model s stalnim $\mu_{\mathrm{r}}$, določenim pri $1{,}2\,\mathrm{T}$? Utemelji razliko. Raztros zanemari.
+
+**Rešitev:**
+
+1. Pretok je dan, zato je račun premočrten: $\Theta = H_{\mathrm{Fe}} l_{\mathrm{Fe}} + \dfrac{B}{\mu_0}\,\delta$, pri čemer $H_{\mathrm{Fe}}$ odčitamo iz tabele.
+2. (a) Železo: $400\,\mathrm{A/m} \cdot 0{,}4\,\mathrm{m} = 160\,\mathrm{A}$. Reža: $\dfrac{1{,}2}{4\pi \cdot 10^{-7}} \cdot 0{,}8 \cdot 10^{-3}\,\mathrm{A} \approx 763{,}9\,\mathrm{A}$.
+3. $\Theta \approx 160\,\mathrm{A} + 763{,}9\,\mathrm{A} = 923{,}9\,\mathrm{A}$, $I = \dfrac{923{,}9\,\mathrm{A}}{400} \approx 2{,}31\,\mathrm{A}$.
+4. (b) Železo: $4000\,\mathrm{A/m} \cdot 0{,}4\,\mathrm{m} = 1600\,\mathrm{A}$. Reža: $\dfrac{1{,}6}{4\pi \cdot 10^{-7}} \cdot 0{,}8 \cdot 10^{-3}\,\mathrm{A} \approx 1018{,}6\,\mathrm{A}$.
+5. $\Theta \approx 1600\,\mathrm{A} + 1018{,}6\,\mathrm{A} = 2618{,}6\,\mathrm{A}$, $I = \dfrac{2618{,}6\,\mathrm{A}}{400} \approx 6{,}55\,\mathrm{A}$.
+6. (c) V linearnem modelu je $\Theta$ sorazmeren z $B$: $\Theta \approx 923{,}9\,\mathrm{A} \cdot \dfrac{1{,}6}{1{,}2} \approx 1231{,}9\,\mathrm{A}$, $I \approx \dfrac{1231{,}9\,\mathrm{A}}{400} \approx 3{,}08\,\mathrm{A}$.
+7. Razlika: pri $1{,}2\,\mathrm{T}$ železo porabi le $160\,\mathrm{A}$ od $924\,\mathrm{A}$ (okoli $17\,\%$), pri $1{,}6\,\mathrm{T}$ pa $1600\,\mathrm{A}$ od $2619\,\mathrm{A}$ (okoli $61\,\%$). Železo je nasičeno, njegov $\mu_{\mathrm{r}}$ je padel z okoli $2390$ na okoli $320$, zato magnetni upor železa ni več majhen proti reži.
+8. Odgovor: za $1{,}2\,\mathrm{T}$ potrebuješ približno $2{,}31\,\mathrm{A}$, za $1{,}6\,\mathrm{T}$ približno $6{,}55\,\mathrm{A}$. Linearni model bi napovedal le $3{,}08\,\mathrm{A}$, več kot dvakrat premalo: gostota zraste za tretjino, tok pa na $2{,}8$-kratnik.
+
 ## Drugače: Na sliki
 
 Jedro oblike E prerišemo v nadomestno vezje. Vsak odsek iz iste snovi in z istim presekom je en upor. Vsaka reža je svoj upor. Tuljava je vir.
 
-```
-        Rs
-  +---[====]---+--------+
-  |            |        |
- (Θ)         [R1]     [R2]
-  |            |      (reža)
-  +------------+--------+
-```
+:::risba skica
+opis: Nadomestno vezje jedra oblike E. Levo je vir magnetne napetosti theta, enake N krat I. Iz njega vodi zgoraj upor srednjega stebra R s do zgornjega razcepišča. Med zgornjim in spodnjim razcepiščem sta vzporedno vezana upor levega stebra R 1 in upor desnega stebra z režo R 2. Pretok fi s teče iz vira skozi R s in se v zgornjem razcepišču razdeli na fi 1 in fi 2.
+območje: 0; 0 .. 11; 6
+črta: 1; 3,6 -> 1; 5 -> 2,5; 5
+črta: 4,5; 5 -> 9; 5 -> 9; 3,8
+črta: 9; 2,2 -> 9; 1 -> 1; 1 -> 1; 2,4
+črta: 6; 5 -> 6; 3,8
+črta: 6; 2,2 -> 6; 1
+krog: 1; 3 | 0,6 | modra
+pravokotnik: 2,5; 4,7 .. 4,5; 5,3 | oranžna
+pravokotnik: 5,7; 2,2 .. 6,3; 3,8 | oranžna
+pravokotnik: 8,7; 2,2 .. 9,3; 3,8 | oranžna
+napis: 1; 3 | Θ | sredina | modra
+napis: 3,5; 5,4 | R_s | nad
+napis: 5,6; 3 | R_1 | levo
+napis: 9,4; 3 | R_2 | desno
+napis: 9,4; 2,4 | (reža) | desno
+točka: 6; 5 | razcepišče | nad
+točka: 6; 1 | razcepišče | pod
+puščica: 4,7; 4,6 -> 5,7; 4,6 | Φ_s | pod | zelena
+puščica: 6,6; 4,6 -> 6,6; 3,9 | Φ_1 | desno | zelena
+puščica: 9,6; 4,8 -> 9,6; 4,1 | Φ_2 | desno | zelena
+podnapis: Nadomestno vezje jedra oblike E: vir, zaporedni upor srednjega stebra in vzporedna upora stranskih stebrov.
+:::
 
 - Levo je vir $\Theta = N I$ z uporom srednjega stebra $R_{\mathrm{s}}$.
 - Desno sta vzporedno vezana upora stranskih stebrov $R_1$ in $R_2$.
@@ -212,7 +293,7 @@ Jedro oblike E prerišemo v nadomestno vezje. Vsak odsek iz iste snovi in z isti
 
 ## Drugače: Bolj natančno
 
-**Izvor obeh Kirchhoffovih zakonov.** Amperov zakon po sklenjeni zanki skozi odseke da $\sum_k H_k l_k = N I$. Ker je $H_k l_k = V_{\mathrm m,k}$, je to drugi Kirchhoffov zakon. Polje $B$ nima izvorov: $\oint \vec B \cdot \mathrm d\vec A = 0$. Za ploskev okrog razcepišča zato velja $\sum \Phi = 0$, kar je prvi Kirchhoffov zakon.
+**Izvor obeh Kirchhoffovih zakonov.** Amperov zakon po sklenjeni zanki skozi odseke da $\sum_k H_k l_k = N I$. Ker je $H_k l_k = V_{\mathrm{m},k}$, je to drugi Kirchhoffov zakon. Polje $B$ nima izvorov: $\oint \vec B \cdot \mathrm d\vec A = 0$. Za ploskev okrog razcepišča zato velja $\sum \Phi = 0$, kar je prvi Kirchhoffov zakon.
 
 **Predpostavke.** Gostota je po preseku enakomerna, ves pretok ostane v jedru in ob reži ni raztrosa. Prvo velja za tanka jedra. Drugo velja približno, ker je $\mu_{\mathrm{Fe}} \gg \mu_0$, a nikoli povsem: del pretoka se sklene skozi zrak (stresani pretok). Raztros ob reži približno upoštevaš s povečanim presekom reže: pri pravokotnem preseku $a \times b$ vzameš $(a + \delta)(b + \delta)$.
 
@@ -232,7 +313,7 @@ Jedro oblike E prerišemo v nadomestno vezje. Vsak odsek iz iste snovi in z isti
 ~ Weber je enota pretoka. Magnetni upor je količnik $\Theta/\Phi$, zato ima enoto $\mathrm{A/Wb}$.
 > $R_{\mathrm{m}} = \dfrac{l}{\mu_0 \mu_{\mathrm{r}} A}$: daljša pot ga poveča, večji presek in večja permeabilnost ga zmanjšata.
 
-? Jedri A in B sta enaki: $l_{\mathrm{Fe}} = 0{,}2\,\mathrm m$, $\mu_{\mathrm{r}} = 1000$, enak presek in enaka tuljava z enakim tokom. Jedro B ima še režo $0{,}8\,\mathrm{mm}$. Kolikokrat manjši je pretok v jedru B?
+? Jedri A in B sta enaki: $l_{\mathrm{Fe}} = 0{,}2\,\mathrm{m}$, $\mu_{\mathrm{r}} = 1000$, enak presek in enaka tuljava z enakim tokom. Jedro B ima še režo $0{,}8\,\mathrm{mm}$. Kolikokrat manjši je pretok v jedru B?
 - Skoraj enak, saj je reža le $0{,}4\,\%$ dolžine.
 ~ Tako bi bilo, če bi imel zrak enako permeabilnost kot železo. Zrak ima $\mu_{\mathrm{r}} \approx 1$, zato kratka reža pomeni velik upor.
 - Približno $4$-krat.
@@ -240,25 +321,25 @@ Jedro oblike E prerišemo v nadomestno vezje. Vsak odsek iz iste snovi in z isti
 + Približno $5$-krat.
 - Približno $1000$-krat.
 ~ Faktor $\mu_{\mathrm{r}}$ velja za primerjavo enako dolgih odsekov, tu pa sta dolžini različni.
-> Železo ustreza $0{,}2\,\mathrm m / 1000 = 0{,}2\,\mathrm{mm}$ zraka. Jedro B ima enakovredno $0{,}2 + 0{,}8 = 1{,}0\,\mathrm{mm}$ zraka, torej $5$-krat večji upor in $5$-krat manjši pretok.
+> Železo ustreza $0{,}2\,\mathrm{m} / 1000 = 0{,}2\,\mathrm{mm}$ zraka. Jedro B ima enakovredno $0{,}2 + 0{,}8 = 1{,}0\,\mathrm{mm}$ zraka, torej $5$-krat večji upor in $5$-krat manjši pretok.
 
-? Jedro iz primera 3 ($\Theta = 600\,\mathrm A$, $R_{\mathrm{s}} = 2 \cdot 10^{5}$, $R_1 = 4 \cdot 10^{5}$, $R_2 = 1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}$). Sošolka je zapisala: »$\Phi_1 = \dfrac{\Theta}{R_1} = \dfrac{600}{4 \cdot 10^{5}} = 1{,}5\,\mathrm{mWb}$.« Kje je napaka?
+? Jedro iz primera 3 ($\Theta = 600\,\mathrm{A}$, $R_{\mathrm{s}} = 2 \cdot 10^{5}$, $R_1 = 4 \cdot 10^{5}$, $R_2 = 1{,}2 \cdot 10^{6}\,\mathrm{A/Wb}$). Sošolka je zapisala: »$\Phi_1 = \dfrac{\Theta}{R_1} = \dfrac{600}{4 \cdot 10^{5}} = 1{,}5\,\mathrm{mWb}$.« Kje je napaka?
 - Ulomek je obrnjen, pravilno je $\Phi_1 = R_1 \Theta$.
 ~ Ohmov zakon je $\Phi = \Theta/R_{\mathrm{m}}$; deljenje je pravilno. Napaka je v tem, katero napetost je vstavila.
 - Levi in desni steber bi morala sešteti zaporedno.
 ~ Stranska stebra vežeta isti razcepišči, zato sta vzporedna, ne zaporedna.
-+ Na levi steber ne deluje cela $\Theta$: del je porabi srednji steber, na levem je le $360\,\mathrm A$.
++ Na levi steber ne deluje cela $\Theta$: del je porabi srednji steber, na levem je le $360\,\mathrm{A}$.
 - Napake ni, račun je pravilen.
 ~ Pretok $1{,}5\,\mathrm{mWb}$ v eni veji bi bil večji od vsega pretoka $1{,}2\,\mathrm{mWb}$, kar krši prvi Kirchhoffov zakon.
-> Pravilno: $\Phi_{\mathrm{s}} = 1{,}2\,\mathrm{mWb}$, $V_{\mathrm{p}} = 360\,\mathrm A$, $\Phi_1 = 360/(4 \cdot 10^{5}) = 0{,}9\,\mathrm{mWb}$.
+> Pravilno: $\Phi_{\mathrm{s}} = 1{,}2\,\mathrm{mWb}$, $V_{\mathrm{p}} = 360\,\mathrm{A}$, $\Phi_1 = 360/(4 \cdot 10^{5}) = 0{,}9\,\mathrm{mWb}$.
 
-? Tuljava z $250$ ovoji in tokom $2\,\mathrm A$ je na jedru z magnetnim uporom $2{,}5 \cdot 10^{6}\,\mathrm{A/Wb}$. Kolikšen je pretok?
+? Tuljava z $250$ ovoji in tokom $2\,\mathrm{A}$ je na jedru z magnetnim uporom $2{,}5 \cdot 10^{6}\,\mathrm{A/Wb}$. Kolikšen je pretok?
 - $0{,}8\,\mu\mathrm{Wb}$
 ~ To je $I/R_{\mathrm{m}}$: manjka število ovojev. Vzbujanje je $\Theta = N I$.
 + $0{,}2\,\mathrm{mWb}$
 - $1{,}25 \cdot 10^{9}\,\mathrm{Wb}$
 ~ To je produkt $\Theta \cdot R_{\mathrm{m}}$. Pretok dobiš z deljenjem, kot tok pri Ohmovem zakonu.
-> $\Theta = 250 \cdot 2\,\mathrm A = 500\,\mathrm A$, $\Phi = \dfrac{500\,\mathrm A}{2{,}5 \cdot 10^{6}\,\mathrm{A/Wb}} = 2 \cdot 10^{-4}\,\mathrm{Wb}$.
+> $\Theta = 250 \cdot 2\,\mathrm{A} = 500\,\mathrm{A}$, $\Phi = \dfrac{500\,\mathrm{A}}{2{,}5 \cdot 10^{6}\,\mathrm{A/Wb}} = 2 \cdot 10^{-4}\,\mathrm{Wb}$.
 
 ? Nož na magnetnem nosilcu drži trdno. Ko med nož in nosilec vstaviš zloženo kuhinjsko krpo, nož zdrsne. Kaj je glavni razlog?
 - Krpa je električni izolator, zato zaustavi magnetno polje.

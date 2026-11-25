@@ -4,7 +4,7 @@
 // - besedilo naloge ne gre nad odprto ploščo za vnos (telefon);
 // - odgovor inštruktorja ne gre v vidni del klepeta, ko je odprta tipkovnica.
 // Okno se odpre enkrat na dogodek: ko ga učenec zapre, ostane zaprto, dokler se besedilo bistveno ne spremeni.
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
 import { icon } from "./icons.js";
 
 const dismissed = new Map(); // vrsta → { sig, len }

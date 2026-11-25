@@ -80,12 +80,6 @@ function factorTex(n) {
     .map(([p, e]) => (e === 1 ? p : `${p}^${e}`))
     .join(" \\cdot ");
 }
-const name2 = (r) => {
-  const a = r.pick(NAMES);
-  let b = r.pick(NAMES);
-  while (b === a) b = r.pick(NAMES);
-  return [a, b];
-};
 
 // Številski odgovor s tipičnimi napakami [[vrednost, zakaj], …]; napaka, ki je enaka pravilnemu rezultatu, odpade.
 function num(value, unit = null, decimals = null, mistakes = [], extra = {}) {
@@ -106,10 +100,18 @@ function num(value, unit = null, decimals = null, mistakes = [], extra = {}) {
   return { ...a, ...extra };
 }
 // Racionalni odgovor: celo število kot število (z napakami), sicer okrajšan ulomek a/b.
-function rat(x, mistakes = []) {
+// frac: napake veljajo tudi za ulomek (preverjanje jih primerja natančno); pri celem odgovoru ostanejo
+// le cele napake, ker bi se necela ujemala s sosednjim celim vnosom. Če dve različni napaki dasta isto
+// vrednost, ne vemo, katera razlaga velja: odpadeta obe.
+function rat(x, mistakes = [], frac = false) {
   const [n, d] = red(x[0], x[1]);
-  if (d === 1) return num(n, null, null, mistakes);
-  return { type: "fraction", num: n, den: d };
+  if (!frac) return d === 1 ? num(n, null, null, mistakes) : { type: "fraction", num: n, den: d };
+  const same = (u, v) => Math.abs(u - v) < 1e-9;
+  let ok = mistakes.filter(([v]) => Number.isFinite(v) && !same(v, n / d) && (d !== 1 || same(v, Math.round(v))));
+  ok = ok.filter(([v]) => ok.filter(([w]) => same(v, w)).length === 1);
+  if (d === 1) return num(n, null, null, ok.map(([v, why]) => [Math.round(v), why]));
+  const ms = ok.slice(0, 3).map(([value, why]) => ({ value, why }));
+  return { type: "fraction", num: n, den: d, ...(ms.length ? { mistakes: ms } : {}) };
 }
 // Izbirni odgovor: pravilni + napačni [[možnost, zakaj], …]; why je urejen po premešanem vrstnem redu.
 function choice(r, correct, wrong) {
@@ -126,7 +128,7 @@ export const DODATNE_MAT_SS12 = [
   // ---------- 1. letnik ----------
   {
     id: "dod-mat-ss12-mnozice",
-    topics: ["MAT-SS-1/mnozice"],
+    topics: ["MAT-SS-1/mnozice", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const setTex = (s) => (s.length ? `\\{${s.join(", ")}\\}` : "\\emptyset");
       const ops = (A, B) => {
@@ -248,7 +250,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-deljivost",
-    topics: ["MAT-SS-1/naravna-in-cela-stevila"],
+    topics: ["MAT-SS-1/naravna-in-cela-stevila", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const DV = ["D(a, b) = \\text{zmnožek skupnih prafaktorjev z najmanjšimi eksponenti}", "v(a, b) = \\text{zmnožek vseh prafaktorjev z največjimi eksponenti}"];
       const pair = (lo, hi) => {
@@ -406,7 +408,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-racionalna",
-    topics: ["MAT-SS-1/racionalna-stevila"],
+    topics: ["MAT-SS-1/racionalna-stevila", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const fracR = (lo = 2, hi = 9, neg = true) => {
         let n;
@@ -566,7 +568,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-intervali",
-    topics: ["MAT-SS-1/realna-stevila-in-intervali"],
+    topics: ["MAT-SS-1/realna-stevila-in-intervali", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const ivTex = (l, lc, h, hc) => `${lc ? "[" : "("}${l}, ${h}${hc ? "]" : ")"}`;
       const intsIn = (l, lc, h, hc) => range(Math.ceil(l) - 1, Math.floor(h) + 1).filter((x) => (lc ? x >= l : x > l) && (hc ? x <= h : x < h));
@@ -712,7 +714,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-potence",
-    topics: ["MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti"],
+    topics: ["MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const RULES = ["a^m \\cdot a^n = a^{m + n}", "a^m : a^n = a^{m - n}", "(a^m)^n = a^{m \\cdot n}", "a^{-n} = \\dfrac{1}{a^n}"];
       if (level === 1) {
@@ -803,7 +805,7 @@ export const DODATNE_MAT_SS12 = [
         const val = askX ? m : n;
         return T({
           text: `Izraz $${expr}$ ($x, y \\ne 0$) zapiši v obliki $x^{m} y^{n}$. Koliko je $${askX ? "m" : "n"}$?`,
-          answer: num(val, null, null, askX ? [[a + c + d - e, "Pri potenciranju potence eksponente zmnožimo: (x^a)^c = x^(a·c)."], [a * c + d + e, "Pri deljenju eksponent imenovalca odštejemo."]] : [[b + c - f, "Pri potenciranju potence eksponente zmnožimo: (y^b)^c = y^(b·c)."], [b * c + f, "Pri deljenju eksponent imenovalca odštejemo."]]),
+          answer: { ...num(val, null, null, askX ? [[a + c + d - e, "Pri potenciranju potence eksponente zmnožimo: (x^a)^c = x^(a·c)."], [a * c + d + e, "Pri deljenju eksponent imenovalca odštejemo."]] : [[b + c - f, "Pri potenciranju potence eksponente zmnožimo: (y^b)^c = y^(b·c)."], [b * c + f, "Pri deljenju eksponent imenovalca odštejemo."]]), form: { expr: "x^m*y^n", vals: { m, n }, ask: askX ? "m" : "n" } },
           hint: "Najprej potenciraj oklepaj (eksponente pomnoži), nato pri isti osnovi eksponente seštej oziroma odštej.",
           data: { given: [`x^{m} y^{n} = ${expr}`], find: [askX ? "m" : "n"] },
           formula: RULES.slice(0, 3),
@@ -831,7 +833,7 @@ export const DODATNE_MAT_SS12 = [
       const B = `${bm} \\cdot 10^{${qq}}`;
       return T({
         text: `${C.s(A, B)} Rezultat zapiši v obliki $c \\cdot 10^{n}$, kjer je $1 \\le c < 10$. Koliko je $n$?`,
-        answer: num(e, null, null, [[p + qq, "Če je zmnožek mantis 10 ali več, ga zapiši kot c · 10 in povečaj eksponent za 1."], [p * qq, "Pri množenju potenc z osnovo 10 eksponente seštejemo."], [p - qq, "Pri množenju eksponente seštejemo, ne odštejemo."]]),
+        answer: { ...num(e, null, null, [[p + qq, "Če je zmnožek mantis 10 ali več, ga zapiši kot c · 10 in povečaj eksponent za 1."], [p * qq, "Pri množenju potenc z osnovo 10 eksponente seštejemo."], [p - qq, "Pri množenju eksponente seštejemo, ne odštejemo."]]), form: { expr: "c*10^n", vals: { c: prod, n: e }, ask: "n" } },
         hint: "Posebej zmnoži števili pred potencama in posebej potenci števila 10. Na koncu preveri, ali je $1 \\le c < 10$.",
         data: { given: [`${C.sym} = ${qty(A, C.u)}`, `N = ${B}`], find: ["n"] },
         formula: ["(a \\cdot 10^{p}) \\cdot (b \\cdot 10^{q}) = (a \\cdot b) \\cdot 10^{p + q}"],
@@ -841,7 +843,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-algebrski",
-    topics: ["MAT-SS-1/algebrski-izrazi"],
+    topics: ["MAT-SS-1/algebrski-izrazi", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const SQ = ["(a + b)^2 = a^2 + 2ab + b^2", "(a - b)^2 = a^2 - 2ab + b^2"];
       const xT = (a) => (a === 1 ? "x" : `(${a}x)`);
@@ -945,7 +947,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-razstavljanje",
-    topics: ["MAT-SS-1/razstavljanje-izrazov"],
+    topics: ["MAT-SS-1/razstavljanje-izrazov", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const fac = (r1) => `(x ${sg(-r1)})`;
       if (level === 1) {
@@ -1110,7 +1112,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-ulomljeni",
-    topics: ["MAT-SS-1/ulomljeni-izrazi"],
+    topics: ["MAT-SS-1/ulomljeni-izrazi", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -1210,23 +1212,37 @@ export const DODATNE_MAT_SS12 = [
       let bad;
       let lines;
       let f;
+      // Tipične napake kot funkcije x: [[vrednost(x), zakaj], …].
+      let errs;
       if (t === 0) {
         E = `${dfr(`x^2 - ${a * a}`, `x^2 + ${mono(b, "x")}`)} \\cdot ${dfr(`x + ${b}`, `x + ${a}`)}`;
         simp = dfr(`x - ${a}`, "x");
         bad = [0, -b, -a, a];
         f = (x) => q(x - a, x);
+        errs = [
+          [(x) => ((-a * a) / (b * x)) * ((x + b) / (x + a)), "Krajšaš lahko le faktorje, ne posameznih členov: x² v števcu in imenovalcu se ne pokrajša. Najprej razstavi."],
+          [(x) => x - a, "Po krajšanju v imenovalcu ostane še faktor x."],
+        ];
         lines = [`$E = ${dfr(`(x - ${a})(x + ${a})`, `x(x + ${b})`)} \\cdot ${dfr(`x + ${b}`, `x + ${a}`)}$`, `Okrajšamo $(x + ${a})$ in $(x + ${b})$: $E = ${simp}$`];
       } else if (t === 1) {
         E = `${dfr(poly([1, 2 * a, a * a]), `x^2 - ${b * b}`)} : ${dfr(`x + ${a}`, `x - ${b}`)}`;
         simp = dfr(`x + ${a}`, `x + ${b}`);
         bad = [b, -b, -a];
         f = (x) => q(x + a, x + b);
+        errs = [
+          [(x) => (x + a) ** 3 / ((x - b) ** 2 * (x + b)), "Pri deljenju z ulomkom pomnožiš z obratno vrednostjo drugega ulomka."],
+          [(x) => (x + a) / (x - b), `x² − ${b * b} je razlika kvadratov (x − ${b})(x + ${b}), ne (x − ${b})².`],
+        ];
         lines = [`$E = ${dfr(`(x + ${a})^2`, `(x - ${b})(x + ${b})`)} \\cdot ${dfr(`x - ${b}`, `x + ${a}`)}$`, `Okrajšamo $(x + ${a})$ in $(x - ${b})$: $E = ${simp}$`];
       } else {
         E = `${dfr(b, `x - ${a}`)} - ${dfr(b, `x + ${a}`)}`;
         simp = dfr(2 * a * b, `x^2 - ${a * a}`);
         bad = [a, -a];
         f = (x) => q(2 * a * b, x * x - a * a);
+        errs = [
+          [() => 0, "Najprej razširi na skupni imenovalec; minus velja za ves števec."],
+          [(x) => (2 * a * b) / (x * x + a * a), `(x − ${a})(x + ${a}) = x² − ${a * a}, ne x² + ${a * a}.`],
+        ];
         lines = [`$E = ${dfr(`${b}(x + ${a}) - ${b}(x - ${a})`, `(x - ${a})(x + ${a})`)}$`, `$E = ${simp}$`];
       }
       let x0;
@@ -1235,7 +1251,11 @@ export const DODATNE_MAT_SS12 = [
       const v = f(x0);
       return T({
         text: r.pick([`Poenostavi izraz $E = ${E}$ in izračunaj njegovo vrednost za $x = ${x0}$.`, `Izraz $E = ${E}$ najprej poenostavi, nato izračunaj $E$ pri $x = ${x0}$ (rezultat kot okrajšan ulomek).`]),
-        answer: rat(v),
+        answer: rat(
+          v,
+          errs.map(([e, why]) => [e(x0), why]),
+          true,
+        ),
         hint: "Števce in imenovalce razstavi, pri deljenju pomnoži z obratno vrednostjo, okrajšaj in šele nato vstavi $x$.",
         data: { given: [`E = ${E}`, `x = ${x0}`], find: ["E"] },
         formula: ["a^2 - b^2 = (a - b)(a + b)", "\\dfrac{a}{b} \\cdot \\dfrac{c}{d} = \\dfrac{ac}{bd}", "\\dfrac{a}{b} : \\dfrac{c}{d} = \\dfrac{a}{b} \\cdot \\dfrac{d}{c}"],
@@ -1245,7 +1265,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-sistemi",
-    topics: ["MAT-SS-1/sistemi-linearnih-enacb"],
+    topics: ["MAT-SS-1/sistemi-linearnih-enacb", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const cf = (b) => (Math.abs(b) === 1 ? "" : Math.abs(b));
       if (level === 1) {
@@ -1393,7 +1413,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-koti",
-    topics: ["MAT-SS-1/osnovni-geometrijski-pojmi"],
+    topics: ["MAT-SS-1/osnovni-geometrijski-pojmi", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.pick(["komp", "supl", "sokot", "sovrsni"]);
@@ -1488,7 +1508,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-trikotnik",
-    topics: ["MAT-SS-1/trikotnik"],
+    topics: ["MAT-SS-1/trikotnik", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         const t = r.int(0, 2);
@@ -1672,7 +1692,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-stirikotniki",
-    topics: ["MAT-SS-1/stirikotniki-in-krog"],
+    topics: ["MAT-SS-1/stirikotniki-in-krog", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const U = "cm^2";
       const area = (v, d, ms) => num(v, "cm²", d, ms, { unitAlternatives: ["cm2"] });
@@ -1834,7 +1854,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-podatki",
-    topics: ["MAT-SS-1/obdelava-podatkov"],
+    topics: ["MAT-SS-1/obdelava-podatkov", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const list = (v) => v.map((x) => `$${x}$`).join(", ");
       const dl = (v) => `x = ${v.join(";\\ ")}`;
@@ -1992,7 +2012,7 @@ export const DODATNE_MAT_SS12 = [
   // ---------- 2. letnik ----------
   {
     id: "dod-mat-ss12-koreni",
-    topics: ["MAT-SS-2/koreni"],
+    topics: ["MAT-SS-2/koreni", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const SF = [2, 3, 5, 6, 7, 10, 11];
       if (level === 1) {
@@ -2010,7 +2030,7 @@ export const DODATNE_MAT_SS12 = [
           const ms = askA ? [[s * s, "Iz kvadrata moraš še koreniti: √(a²) = a."], [part, "Razcep ni dokončan – izpostavi največji kvadrat, ki deli število."]] : [[n / s, "Pod korenom ostane število, deljeno s kvadratom a², ne z a."], [s * k, "Pod korenom ostane le faktor, ki ni popoln kvadrat."]];
           return T({
             text: `Delno koreni $\\sqrt{${n}}$, tako da dobiš obliko $a\\sqrt{b}$, kjer je $b$ čim manjše naravno število. Koliko je $${askA ? "a" : "b"}$?`,
-            answer: num(askA ? s : k, null, null, ms),
+            answer: { ...num(askA ? s : k, null, null, ms), form: { expr: "a√(b)", vals: { a: s, b: k }, ask: askA ? "a" : "b" } },
             hint: `Poišči največji popolni kvadrat, ki deli $${n}$.`,
             data: { given: [`\\sqrt{${n}} = a\\sqrt{b}`], find: [askA ? "a" : "b"] },
             formula: "\\sqrt{a^2 b} = a\\sqrt{b}",
@@ -2048,7 +2068,7 @@ export const DODATNE_MAT_SS12 = [
         const E = ms.map((m, i) => term(cs[i], m, i === 0)).join("");
         return T({
           text: r.pick([`Izraz $${E}$ zapiši v obliki $K\\sqrt{${k}}$. Koliko je $K$?`, `Poenostavi $${E}$. Rezultat ima obliko $K\\sqrt{${k}}$ – koliko je $K$?`]),
-          answer: num(K, null, null, [[sum(cs), "Vsak koren najprej delno koreni – pred koren pride tudi faktor."], [sum(ms.map((m, i) => m * m * cs[i])), "Iz kvadrata pod korenom pride pred koren njegov koren, ne kvadrat."]]),
+          answer: { ...num(K, null, null, [[sum(cs), "Vsak koren najprej delno koreni – pred koren pride tudi faktor."], [sum(ms.map((m, i) => m * m * cs[i])), "Iz kvadrata pod korenom pride pred koren njegov koren, ne kvadrat."]]), form: { expr: `K√(${k})`, vals: { K }, ask: "K" } },
           hint: `Vsak koren delno koreni, da dobiš $\\sqrt{${k}}$, nato seštej podobne člene.`,
           data: { given: [`${E} = K\\sqrt{${k}}`], find: ["K"] },
           formula: ["\\sqrt{a^2 b} = a\\sqrt{b}", "m\\sqrt{b} + n\\sqrt{b} = (m + n)\\sqrt{b}"],
@@ -2109,7 +2129,7 @@ export const DODATNE_MAT_SS12 = [
       const den = `${p === 1 ? "" : p}\\sqrt{${b}}`;
       return T({
         text: `Racionaliziraj imenovalec ulomka $${dfr(k, den)}$ in ga zapiši v obliki $m\\sqrt{${b}}$. Koliko je $m$? (Ulomek okrajšaj.)`,
-        answer: rat(m, [[k / p, `Pri množenju s √${b} dobiš v imenovalcu še ${b}.`], [k * b, "√b · √b = b pride v imenovalec, ne v števec."]]),
+        answer: { ...rat(m, [[k / p, `Pri množenju s √${b} dobiš v imenovalcu še ${b}.`], [k * b, "√b · √b = b pride v imenovalec, ne v števec."]]), form: { expr: `m√(${b})`, vals: { m: m[0] / m[1] }, ask: "m" } },
         hint: `Števec in imenovalec pomnoži s $\\sqrt{${b}}$.`,
         data: { given: [`${dfr(k, den)} = m\\sqrt{${b}}`], find: ["m"] },
         formula: "\\dfrac{a}{\\sqrt{b}} = \\dfrac{a\\sqrt{b}}{b}",
@@ -2119,7 +2139,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-racionalni-eksponenti",
-    topics: ["MAT-SS-2/potence-z-racionalnimi-eksponenti"],
+    topics: ["MAT-SS-2/potence-z-racionalnimi-eksponenti", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const ex = (p, qq) => `\\frac{${Math.abs(p)}}{${qq}}`;
       const root = (p, qq) => (qq === 2 ? `\\sqrt{x${p === 1 ? "" : `^{${p}}`}}` : `\\sqrt[${qq}]{x${p === 1 ? "" : `^{${p}}`}}`);
@@ -2221,7 +2241,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kompleksna",
-    topics: ["MAT-SS-2/kompleksna-stevila"],
+    topics: ["MAT-SS-2/kompleksna-stevila", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const zt = (a, b) => (a === 0 ? (b === 0 ? "0" : mono(b, "i")) : `${a}${b === 0 ? "" : b < 0 ? ` - ${mono(-b, "i")}` : ` + ${mono(b, "i")}`}`);
       const MUL = "(a + bi)(c + di) = (ac - bd) + (ad + bc)i";
@@ -2338,7 +2358,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kvadratna-funkcija",
-    topics: ["MAT-SS-2/kvadratna-funkcija"],
+    topics: ["MAT-SS-2/kvadratna-funkcija", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const TEME = ["p = -\\dfrac{b}{2a}", "q = f(p) = -\\dfrac{D}{4a}"];
       if (level === 1) {
@@ -2458,7 +2478,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kvadratna-enacba",
-    topics: ["MAT-SS-2/kvadratna-enacba"],
+    topics: ["MAT-SS-2/kvadratna-enacba", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const QF = "x_{1,2} = \\dfrac{-b \\pm \\sqrt{D}}{2a}, \\quad D = b^2 - 4ac";
       if (level === 1) {
@@ -2601,7 +2621,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kvadratna-neenacba",
-    topics: ["MAT-SS-2/kvadratna-neenacba"],
+    topics: ["MAT-SS-2/kvadratna-neenacba", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       if (level === 1) {
         let p;
@@ -2707,7 +2727,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-eksponentna-funkcija",
-    topics: ["MAT-SS-2/eksponentna-funkcija"],
+    topics: ["MAT-SS-2/eksponentna-funkcija", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const BS = [[2, 1], [3, 1], [4, 1], [5, 1], [1, 2], [1, 3]];
       const bT = ([n, d]) => (d === 1 ? `${n}` : `\\left(${dfr(n, d)}\\right)`);
@@ -2819,7 +2839,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-eksponentne-enacbe",
-    topics: ["MAT-SS-2/eksponentne-enacbe"],
+    topics: ["MAT-SS-2/eksponentne-enacbe", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const RULE = "a^{m} = a^{n} \\iff m = n";
       const ef = (k, e) => (k === 1 ? e : k === -1 ? `-(${e})` : `${k}(${e})`);
@@ -2920,7 +2940,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-logaritem",
-    topics: ["MAT-SS-2/logaritem"],
+    topics: ["MAT-SS-2/logaritem", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const DEF = "\\log_a b = x \\iff a^x = b";
       const isPow = (n, b) => {
@@ -3077,7 +3097,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-logaritemska-enacba",
-    topics: ["MAT-SS-2/logaritemska-funkcija-in-enacbe"],
+    topics: ["MAT-SS-2/logaritemska-funkcija-in-enacbe", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const DEF = "\\log_a u = k \\iff u = a^k";
       const arg = (s) => (s === 0 ? "x" : `(x ${sg(s)})`);
@@ -3228,7 +3248,7 @@ export const DODATNE_MAT_SS12 = [
   },
   {
     id: "dod-mat-ss12-kotne-funkcije",
-    topics: ["MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku"],
+    topics: ["MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku", "MAT-SS-2/mesane-naloge-1-in-2-letnika", "MAT-SS-4/vadbena-maturitetna-pola"],
     gen(level, r) {
       const TRIG = ["\\sin \\alpha = \\dfrac{a}{c}", "\\cos \\alpha = \\dfrac{b}{c}", "\\tan \\alpha = \\dfrac{a}{b}"];
       const sin = (x) => Math.sin(rad(x));

@@ -1,13 +1,13 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Vzemi suho špageto, primi jo za oba konca in jo zvijaj, dokler ne poči. Poglej lom: ni raven prečni prerez, ampak poševna vijačnica, približno pod $45^\circ$ na os. Nato drugo špageto samo upogni. Ta poči skoraj naravnost.
+Vzemi suh špaget, primi ga za oba konca in ga zvijaj, dokler ne poči. Poglej lom: ni raven prečni prerez, ampak poševna vijačnica, približno pod $45^\circ$ na os. Nato drug špaget samo upogni. Ta poči skoraj naravnost.
 
-Pri zvijanju v prerezu deluje le strižna napetost $\tau$, špageta pa je počila po ploskvi, kjer strižna napetost ni največja. Gred kuhinjskega robota hkrati upogibamo in zvijamo, stena sifona za smetano je napeta v dveh smereh. Iz nateznega preizkusa pa poznamo le eno število, mejo tečenja. Kako primerjati tako zapleteno stanje z enim številom? Odgovor dajo **hipoteze o porušitvi** in **primerjalne napetosti**.
+Pri zvijanju v prerezu deluje le strižna napetost $\tau$, špaget pa je počil po ploskvi, kjer strižna napetost ni največja. Gred kuhinjskega robota hkrati upogibamo in zvijamo, stena sifona za smetano je napeta v dveh smereh. Iz nateznega preizkusa pa poznamo le eno število, mejo tečenja. Kako primerjati tako zapleteno stanje z enim številom? Odgovor dajo **hipoteze o porušitvi** in **primerjalne napetosti**.
 
 ## Razlaga
 
@@ -21,9 +21,9 @@ $$\sigma_{\mathrm{pr}} \le \sigma_{\mathrm{dop}}$$
 
 Kako iz stanja izračunati $\sigma_{\mathrm{pr}}$, pove hipoteza o porušitvi. Vsaka hipoteza izbere eno količino, ki naj bi odločala o porušitvi.
 
-*Preveri:* kolikšna je $\sigma_{\mathrm{pr}}$ pri čistem nategu z $\sigma = 90\,\mathrm{MPa}$? (Odgovor: $90\,\mathrm{MPa}$, saj je to že enoosno stanje.)
+*Preveri:* kolikšna je $\sigma_{\mathrm{pr}}$ pri čistem nategu s $\sigma = 90\,\mathrm{MPa}$? (Odgovor: $90\,\mathrm{MPa}$, saj je to že enoosno stanje.)
 
-**Korak 3 – glavne napetosti po vrsti.** Iz lekcije o ravninskem napetostnem stanju znaš izračunati glavni napetosti v ravnini, $\sigma'$ in $\sigma''$. Tretja glavna napetost, pravokotno na ravnino, je $0$. Vse tri razvrstimo po velikosti: $\sigma_1 \ge \sigma_2 \ge \sigma_3$. Ničla dobi svoje mesto v vrsti kot vsaka druga vrednost.
+**Korak 3 – glavne napetosti po vrsti.** Iz lekcije o ravninskem napetostnem stanju znaš izračunati glavni napetosti v ravnini (tam $\sigma_1$ in $\sigma_2$); tu ju označimo $\sigma'$ in $\sigma''$, ker indekse potrebujemo za razvrstitev vseh treh. Tretja glavna napetost, pravokotno na ravnino, je $0$. Vse tri razvrstimo po velikosti: $\sigma_1 \ge \sigma_2 \ge \sigma_3$. Ničla dobi svoje mesto v vrsti kot vsaka druga vrednost.
 
 *Preveri:* $\sigma' = 80\,\mathrm{MPa}$, $\sigma'' = -20\,\mathrm{MPa}$. Kaj so $\sigma_1$, $\sigma_2$, $\sigma_3$? (Odgovor: $80$, $0$ in $-20\,\mathrm{MPa}$.)
 
@@ -34,9 +34,9 @@ $$\sigma_{\mathrm{pr}} = \sigma_1$$
 Pri čistem zvijanju sta glavni napetosti $\sigma_1 = \tau$ in $\sigma_3 = -\tau$.
 
 :::premisli
-Na kateri ploskvi deluje $\sigma_1 = \tau$ pri čistem zvijanju (spomni se Mohrovega kroga)? Zakaj je zato špageta počila po vijačnici pod $45^\circ$ in ne po prečnem prerezu, kjer je strižna napetost največja?
+Na kateri ploskvi deluje $\sigma_1 = \tau$ pri čistem zvijanju (spomni se Mohrovega kroga)? Zakaj je zato špaget počil po vijačnici pod $45^\circ$ in ne po prečnem prerezu, kjer je strižna napetost največja?
 ---
-Ker je krhka. Ne zanima jo strig, ampak natezna napetost. Največja natezna napetost $\sigma_1 = \tau$ pri čistem zvijanju deluje pravokotno na ploskve pod $45^\circ$, zato razpoka sledi njim in se ovije v vijačnico.
+Ker je krhek. Ne zanima ga strig, ampak natezna napetost. Največja natezna napetost $\sigma_1 = \tau$ pri čistem zvijanju deluje pravokotno na ploskve pod $45^\circ$, zato razpoka sledi njim in se ovije v vijačnico.
 :::
 
 **Korak 5 – duktilne snovi: Tresca.** Jeklo teče, ker kristalne ravnine zdrsnejo druga po drugi. Zdrs povzroča strig. Tresca zato trdi: tečenje se začne, ko največja strižna napetost doseže vrednost iz nateznega preizkusa. V vsakem stanju je $\tau_{\max} = \dfrac{\sigma_1 - \sigma_3}{2}$, pri preizkusu pa $\tau_{\max} = \dfrac{R_e}{2}$. Ko polovici izenačimo:
@@ -147,8 +147,8 @@ $\tau_{\max} = \sqrt{\dfrac{150^2 - 50{,}93^2}{4}} \approx 70{,}5\,\mathrm{MPa}$
 - **Pozabljena ničla pri Tresci.** Ko sta obe glavni napetosti v ravnini pozitivni, je najmanjša $\sigma_3 = 0$. Kdor vzame $\sigma' - \sigma''$, upošteva le strig v ravnini, ne največjega, ki deluje na ploskvah zunaj nje. Pri sifonu bi to dalo $22{,}5$ namesto $45\,\mathrm{MPa}$.
 - **$\sqrt{\sigma^2 + 3\tau^2}$ za vsako stanje.** Ta oblika velja le, ko je ena normalna napetost $0$ (upogib s torzijo). Za stanje $\sigma_x$, $\sigma_y$, $\tau_{xy}$ najprej izračunaj glavne napetosti in uporabi splošno formulo.
 - **»Von Mises je bolj varen, ker je novejši.«** Ravno obratno: von Mises da manjšo ali enako $\sigma_{\mathrm{pr}}$. Tresca je konservativnejša, von Mises natančnejši za duktilne kovine.
-- **Duktilna hipoteza za krhko snov.** Za steklen pokrov ali keramično posodo von Mises precenjuje nosilnost. Krhke snovi popustijo zaradi natega, zato uporabi $\sigma_{\mathrm{pr}} = \sigma_1$ in primerjaj z $R_m$.
-- **Primerjava s $\tau_{\mathrm{dop}}$.** $\sigma_{\mathrm{pr}}$ je normalna napetost in jo primerjaš z $\sigma_{\mathrm{dop}}$ iz nateznega preizkusa, ne s strižno dopustno napetostjo.
+- **Duktilna hipoteza za krhko snov.** Za steklen pokrov ali keramično posodo von Mises lahko preceni nosilnost. Krhke snovi popustijo zaradi natega, zato uporabi $\sigma_{\mathrm{pr}} = \sigma_1$ in primerjaj z $R_m$.
+- **Primerjava s $\tau_{\mathrm{dop}}$.** $\sigma_{\mathrm{pr}}$ je normalna napetost in jo primerjaš s $\sigma_{\mathrm{dop}}$ iz nateznega preizkusa, ne s strižno dopustno napetostjo.
 
 ## Povzetek
 
@@ -158,6 +158,65 @@ $\tau_{\max} = \sqrt{\dfrac{150^2 - 50{,}93^2}{4}} \approx 70{,}5\,\mathrm{MPa}$
 - Tresca: $\sigma_{\mathrm{pr}} = \sigma_1 - \sigma_3$; von Mises: koren iz polovice vsote kvadratov razlik.
 - Upogib s torzijo: $\sqrt{\sigma^2 + 4\tau^2}$ (Tresca), $\sqrt{\sigma^2 + 3\tau^2}$ (von Mises).
 - Tresca $\ge$ von Mises, največ za $15{,}5\,\%$ (čisti strig).
+
+## Za izpit
+
+Znati moraš povedati:
+- definicijo primerjalne napetosti in pogoj trdnosti $\sigma_{\mathrm{pr}} \le \sigma_{\mathrm{dop}} = \dfrac{R_e}{\nu}$;
+- kako razvrstiš glavne napetosti $\sigma_1 \ge \sigma_2 \ge \sigma_3$ pri ravninskem stanju (z ničlo iz tretje smeri);
+- hipotezo največje normalne napetosti (Rankine), za katere snovi velja in s katero trdnostjo primerjaš;
+- Trescovo hipotezo z utemeljitvijo prek $\tau_{\max} = \dfrac{\sigma_1 - \sigma_3}{2}$ in von Misesovo hipotezo s splošno formulo ter fizikalnim pomenom (energija spremembe oblike, hidrostatično stanje da $0$);
+- izpeljavo oblik $\sqrt{\sigma^2 + 4\tau^2}$ in $\sqrt{\sigma^2 + 3\tau^2}$ za upogib s torzijo in pogoj, kdaj veljata;
+- primerjavo hipotez: Tresca $\ge$ von Mises, največja razlika $15{,}5\,\%$ pri čistem strigu.
+
+### Naloga 1
+
+Jeklena gred s polnim krožnim prerezom je v nevarnem prerezu obremenjena z upogibnim momentom $M = 120\,\mathrm{N\,m}$ in torzijskim momentom $T = 200\,\mathrm{N\,m}$. Meja tečenja je $R_e = 360\,\mathrm{MPa}$, zahtevani varnostni faktor $\nu = 2{,}4$. (a) Določi najmanjši premer gredi po von Misesu in po Tresci. (b) Na voljo so premeri $24$, $25$, $26$ in $28\,\mathrm{mm}$. Katerega izbereš po vsaki hipotezi? (c) Za $d = 25\,\mathrm{mm}$ izračunaj dejanski varnostni faktor po obeh hipotezah.
+
+**Rešitev:**
+
+1. Dopustna napetost: $\sigma_{\mathrm{dop}} = \dfrac{360}{2{,}4} = 150\,\mathrm{MPa}$. Momenta: $M = 120000\,\mathrm{N\,mm}$, $T = 200000\,\mathrm{N\,mm}$.
+2. Za krožni prerez je $W_p = 2W$, zato $\sigma = \dfrac{M}{W}$ in $\tau = \dfrac{T}{2W}$. Von Mises: $\sigma_{\mathrm{pr,M}} = \sqrt{\dfrac{M^2}{W^2} + 3\,\dfrac{T^2}{4W^2}} = \dfrac{\sqrt{M^2 + 0{,}75\,T^2}}{W}$. Tresca: $\sigma_{\mathrm{pr,T}} = \dfrac{\sqrt{M^2 + T^2}}{W}$.
+3. Števec po von Misesu: $\sqrt{120000^2 + 0{,}75 \cdot 200000^2} = 210713\,\mathrm{N\,mm}$.
+4. Števec po Tresci: $\sqrt{120000^2 + 200000^2} = 233238\,\mathrm{N\,mm}$.
+5. Potrebni odpornostni moment po von Misesu: $W \ge \dfrac{210713}{150} = 1404{,}8\,\mathrm{mm^3}$. Iz $W = \dfrac{\pi d^3}{32}$ sledi $d \ge \sqrt[3]{\dfrac{32 \cdot 1404{,}8}{\pi}} = 24{,}28\,\mathrm{mm}$.
+6. Po Tresci: $W \ge \dfrac{233238}{150} = 1554{,}9\,\mathrm{mm^3}$ in $d \ge \sqrt[3]{\dfrac{32 \cdot 1554{,}9}{\pi}} = 25{,}11\,\mathrm{mm}$.
+7. Izbira: po von Misesu $d = 25\,\mathrm{mm}$ (premer $24\,\mathrm{mm}$ je premajhen), po Tresci $d = 26\,\mathrm{mm}$ (premer $25\,\mathrm{mm}$ je za malenkost premajhen).
+8. Za $d = 25\,\mathrm{mm}$: $W = \dfrac{\pi \cdot 25^3}{32} = 1534{,}0\,\mathrm{mm^3}$ in $W_p = 3068{,}0\,\mathrm{mm^3}$.
+9. Napetosti: $\sigma = \dfrac{120000}{1534{,}0} = 78{,}23\,\mathrm{MPa}$, $\tau = \dfrac{200000}{3068{,}0} = 65{,}19\,\mathrm{MPa}$.
+10. $\sigma_{\mathrm{pr,M}} = \sqrt{78{,}23^2 + 3 \cdot 65{,}19^2} = 137{,}36\,\mathrm{MPa}$, $\sigma_{\mathrm{pr,T}} = \sqrt{78{,}23^2 + 4 \cdot 65{,}19^2} = 152{,}05\,\mathrm{MPa}$.
+11. Varnostna faktorja: $\nu_{\mathrm{M}} = \dfrac{360}{137{,}36} = 2{,}62$, $\nu_{\mathrm{T}} = \dfrac{360}{152{,}05} = 2{,}37$.
+12. Odgovor: najmanjši premer je $24{,}28\,\mathrm{mm}$ po von Misesu in $25{,}11\,\mathrm{mm}$ po Tresci; izbereš $25\,\mathrm{mm}$ oziroma $26\,\mathrm{mm}$. Gred s premerom $25\,\mathrm{mm}$ ima $\nu_{\mathrm{M}} \approx 2{,}62$ (ustreza) in $\nu_{\mathrm{T}} \approx 2{,}37$ (tik pod zahtevanim $2{,}4$).
+
+### Naloga 2
+
+V točki na površini strojnega dela je ravninsko napetostno stanje $\sigma_x = 120\,\mathrm{MPa}$, $\sigma_y = 60\,\mathrm{MPa}$, $\tau_{xy} = 40\,\mathrm{MPa}$. (a) Izračunaj glavne napetosti in jih razvrsti. (b) Del je iz jekla z $R_e = 280\,\mathrm{MPa}$. Izračunaj varnostni faktor po Tresci in po von Misesu. (c) Enak del je iz sive litine z natezno trdnostjo $R_m = 250\,\mathrm{MPa}$. Katero hipotezo uporabiš in kolikšna je varnost proti lomu?
+
+**Rešitev:**
+
+1. Glavni napetosti v ravnini (iz lekcije o ravninskem napetostnem stanju): središče $\dfrac{120 + 60}{2} = 90\,\mathrm{MPa}$, polmer $\sqrt{\left(\dfrac{120 - 60}{2}\right)^2 + 40^2} = 50\,\mathrm{MPa}$.
+2. $\sigma' = 90 + 50 = 140\,\mathrm{MPa}$, $\sigma'' = 90 - 50 = 40\,\mathrm{MPa}$.
+3. Tretja glavna napetost je $0$. Razvrstitev: $\sigma_1 = 140$, $\sigma_2 = 40$, $\sigma_3 = 0\,\mathrm{MPa}$.
+4. Tresca: $\sigma_{\mathrm{pr,T}} = 140 - 0 = 140\,\mathrm{MPa}$. Razlika $140 - 40$ bi bila napačna, ker je najmanjša napetost ničla.
+5. Von Mises: $\sigma_{\mathrm{pr,M}} = \sqrt{\tfrac{1}{2}\left[100^2 + 40^2 + 140^2\right]} = 124{,}90\,\mathrm{MPa}$.
+6. Jeklo: $\nu_{\mathrm{T}} = \dfrac{280}{140} = 2$ in $\nu_{\mathrm{M}} = \dfrac{280}{124{,}90} = 2{,}24$.
+7. Siva litina je krhka, zato velja hipoteza največje normalne napetosti: $\sigma_{\mathrm{pr}} = \sigma_1 = 140\,\mathrm{MPa}$. Varnost proti lomu: $\dfrac{250}{140} = 1{,}79$.
+8. Odgovor: $\sigma_1 = 140$, $\sigma_2 = 40$, $\sigma_3 = 0\,\mathrm{MPa}$; za jeklo $\nu_{\mathrm{T}} = 2$ in $\nu_{\mathrm{M}} \approx 2{,}24$; za sivo litino uporabiš $\sigma_{\mathrm{pr}} = \sigma_1$ in dobiš varnost $\approx 1{,}79$ glede na $R_m$.
+
+### Naloga 3
+
+Izpelji primerjalno napetost po Tresci in po von Misesu za vlakno, v katerem delujeta upogibna napetost $\sigma$ in torzijska napetost $\tau$. Nato utemelji, pri katerem razmerju $\dfrac{\tau}{\sigma}$ se hipotezi najbolj razlikujeta in za koliko.
+
+**Rešitev:**
+
+1. Stanje je $\sigma_x = \sigma$, $\sigma_y = 0$, $\tau_{xy} = \tau$. Glavni napetosti v ravnini sta $\dfrac{\sigma}{2} \pm \sqrt{\dfrac{\sigma^2}{4} + \tau^2}$.
+2. Koren je večji od $\dfrac{|\sigma|}{2}$ (če je $\tau \ne 0$), zato je ena glavna napetost pozitivna, druga negativna. Ničla iz tretje smeri je vmes: $\sigma_2 = 0$.
+3. Tresca: $\sigma_{\mathrm{pr,T}} = \sigma_1 - \sigma_3 = 2\sqrt{\dfrac{\sigma^2}{4} + \tau^2} = \sqrt{\sigma^2 + 4\tau^2}$.
+4. Von Mises s $\sigma_2 = 0$: $\sigma_{\mathrm{pr}}^2 = \tfrac{1}{2}\left[\sigma_1^2 + \sigma_3^2 + (\sigma_3 - \sigma_1)^2\right] = \sigma_1^2 - \sigma_1\sigma_3 + \sigma_3^2 = (\sigma_1 + \sigma_3)^2 - 3\sigma_1\sigma_3$.
+5. Vsota je $\sigma_1 + \sigma_3 = \sigma$, produkt $\sigma_1\sigma_3 = \dfrac{\sigma^2}{4} - \left(\dfrac{\sigma^2}{4} + \tau^2\right) = -\tau^2$. Sledi $\sigma_{\mathrm{pr,M}} = \sqrt{\sigma^2 + 3\tau^2}$.
+6. Razmerje hipotez: $\dfrac{\sigma_{\mathrm{pr,T}}}{\sigma_{\mathrm{pr,M}}} = \sqrt{\dfrac{\sigma^2 + 4\tau^2}{\sigma^2 + 3\tau^2}} = \sqrt{1 + \dfrac{\tau^2}{\sigma^2 + 3\tau^2}}$. Pri $\tau = 0$ je $1$ (čisti upogib, hipotezi se ujemata).
+7. Ulomek $\dfrac{\tau^2}{\sigma^2 + 3\tau^2}$ raste, ko raste $\dfrac{\tau}{\sigma}$, in je največ $\dfrac{1}{3}$ pri $\sigma = 0$. Največje razmerje je zato $\sqrt{\dfrac{4}{3}} = \dfrac{2}{\sqrt{3}} \approx 1{,}155$.
+8. Odgovor: $\sigma_{\mathrm{pr,T}} = \sqrt{\sigma^2 + 4\tau^2}$, $\sigma_{\mathrm{pr,M}} = \sqrt{\sigma^2 + 3\tau^2}$. Obliki veljata le, ko je druga normalna napetost v ravnini $0$. Hipotezi se najbolj razlikujeta pri čistem strigu ($\sigma = 0$, torej samo torzija): Tresca da za $15{,}5\,\%$ večjo primerjalno napetost.
 
 ## Drugače: Na sliki
 
@@ -178,7 +237,7 @@ Nariši ravnino z osema $\sigma'$ (vodoravno) in $\sigma''$ (navpično), tretja 
 
 ## Drugače: Bolj natančno
 
-**Od kod $\sqrt{\sigma^2 + 4\tau^2}$ in $\sqrt{\sigma^2 + 3\tau^2}$.** Pri $\sigma_x = \sigma$, $\sigma_y = 0$, $\tau_{xy} = \tau$ sta glavni napetosti v ravnini $\dfrac{\sigma}{2} \pm \sqrt{\dfrac{\sigma^2}{4} + \tau^2}$. Prva je pozitivna, druga negativna, zato je $\sigma_2 = 0$. Tresca: $\sigma_1 - \sigma_3 = 2\sqrt{\dfrac{\sigma^2}{4} + \tau^2} = \sqrt{\sigma^2 + 4\tau^2}$. Pri von Misesu z $\sigma_2 = 0$ dobimo $\sigma_{\mathrm{pr}}^2 = \sigma_1^2 - \sigma_1\sigma_3 + \sigma_3^2$. Ker je $\sigma_1 + \sigma_3 = \sigma$ in $\sigma_1\sigma_3 = -\tau^2$, sledi $\sigma_{\mathrm{pr}}^2 = \sigma^2 - 3\sigma_1\sigma_3 = \sigma^2 + 3\tau^2$.
+**Od kod $\sqrt{\sigma^2 + 4\tau^2}$ in $\sqrt{\sigma^2 + 3\tau^2}$.** Pri $\sigma_x = \sigma$, $\sigma_y = 0$, $\tau_{xy} = \tau$ sta glavni napetosti v ravnini $\dfrac{\sigma}{2} \pm \sqrt{\dfrac{\sigma^2}{4} + \tau^2}$. Prva je pozitivna, druga negativna, zato je $\sigma_2 = 0$. Tresca: $\sigma_1 - \sigma_3 = 2\sqrt{\dfrac{\sigma^2}{4} + \tau^2} = \sqrt{\sigma^2 + 4\tau^2}$. Pri von Misesu s $\sigma_2 = 0$ dobimo $\sigma_{\mathrm{pr}}^2 = \sigma_1^2 - \sigma_1\sigma_3 + \sigma_3^2$. Ker je $\sigma_1 + \sigma_3 = \sigma$ in $\sigma_1\sigma_3 = -\tau^2$, sledi $\sigma_{\mathrm{pr}}^2 = \sigma^2 - 3\sigma_1\sigma_3 = \sigma^2 + 3\tau^2$.
 
 **Energija spremembe oblike.** Specifično deformacijsko energijo lahko razdelimo na del, ki spremeni prostornino, in del, ki spremeni obliko. Za linearno elastično izotropno snov je drugi del
 
@@ -186,7 +245,7 @@ $$u_d = \frac{(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \s
 
 kjer je $G$ strižni modul. Pri enoosnem nategu je $u_d = \dfrac{\sigma^2}{6G}$. Von Mises trdi, da tečenje nastopi, ko $u_d$ doseže vrednost iz preizkusa. Izenačitev da natanko formulo za $\sigma_{\mathrm{pr,M}}$. Enak rezultat dobiš iz strižne napetosti na oktaedrski ploskvi, ki je enako nagnjena na vse tri glavne smeri.
 
-**Meje hipotez.** Obe duktilni hipotezi predpostavljata, da hidrostatični del ($\sigma_1 = \sigma_2 = \sigma_3$) ne povzroči tečenja, in da je material enak v nategu in tlaku. Za krhke snovi, ki so v tlaku mnogo močnejše, se uporabljajo še Mohrova in Coulomb-Mohrova hipoteza.
+**Meje hipotez.** Obe duktilni hipotezi predpostavljata, da hidrostatični del ($\sigma_1 = \sigma_2 = \sigma_3$) ne povzroči tečenja in da je material enak v nategu in tlaku. Za krhke snovi, ki so v tlaku mnogo močnejše, se uporabljajo še Mohrova in Coulomb-Mohrova hipoteza.
 
 ## Preveri se
 
@@ -208,12 +267,12 @@ kjer je $G$ strižni modul. Pri enoosnem nategu je $u_d = \dfrac{\sigma^2}{6G}$.
 ~ To je rezultat po Tresci, $2\tau$. Von Mises da manj.
 > $\sigma_{\mathrm{pr,M}} = \sqrt{3}\,\tau \approx 1{,}73 \cdot 50 \approx 87\,\mathrm{MPa}$.
 
-? Zakaj se suha špageta pri zvijanju zlomi po vijačnici pod $45^\circ$?
+? Zakaj se suh špaget pri zvijanju zlomi po vijačnici pod $45^\circ$?
 - Ker je strižna napetost pri torziji največja na ploskvah pod $45^\circ$.
 ~ Pri čisti torziji je strig največji v prečnem in vzdolžnem prerezu. Pod $45^\circ$ je največja normalna napetost.
-+ Ker je krhka in poči po ploskvi, na katero deluje največja natezna napetost $\sigma_1 = \tau$.
++ Ker je krhek in poči po ploskvi, na katero deluje največja natezna napetost $\sigma_1 = \tau$.
 - Ker po Tresci duktilne snovi tečejo pod $45^\circ$.
-~ Špageta ni duktilna: ne teče, ampak takoj poči. Tresca opisuje tečenje duktilnih kovin.
+~ Špaget ni duktilen: ne teče, ampak takoj poči. Tresca opisuje tečenje duktilnih kovin.
 > Pri čisti torziji je $\sigma_1 = \tau$ na ploskvi pod $45^\circ$. Krhka snov sledi največjemu nategu, zato razpoka zavije v vijačnico.
 
 ? V gredi je upogibna napetost $\sigma = 120\,\mathrm{MPa}$, dopustna napetost je $150\,\mathrm{MPa}$. Kolikšna je največja dopustna strižna napetost $\tau$ po Tresci?

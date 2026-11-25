@@ -64,7 +64,9 @@ export function renderWelcome(box, o) {
   const w = WELCOME[o.stage];
   if (!w) return;
   // Pravila ponudb (server/placila/ponudbe.js): ne med poukom, ne pod 15 let, ne, če jih je učitelj izklopil.
-  const upsell = !o.premium && o.accounts && (!o.offers || (o.offers.show && o.offers.prices));
+  // Aplikacija iz trgovine: brez ponudbe naročnine mimo trgovine (isti preizkus kot public/pay-ui.js isStoreApp;
+  // brez uvoza, ker pay-ui.js naloži i18n.js, ta modul pa se uvaža tudi v preizkusih brez brskalnika).
+  const upsell = !/ EvklidApp\/\S+ store\b/.test(globalThis.navigator?.userAgent || "") && !o.premium && o.accounts && (!o.offers || (o.offers.show && o.offers.prices));
   box.innerHTML = `
     <div class="card level-card welcome">
       <div class="lc-head"><span class="lc-ic">${icon("party-popper")}</span><h2>${w.title}</h2>

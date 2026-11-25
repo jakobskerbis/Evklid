@@ -19,6 +19,16 @@ test("si exams: NPZ and matura for Slovenian students only, default by school an
   assert.equal(key("SREDNJA_SOLA", "3. letnik VR", "MAT"), "MAT-EX-MATURA", "SŠ: privzeto splošna matura");
 });
 
+test("si exams: path labels and subject names are Slovenian (no »Mathematics« in the matura header)", () => {
+  assert.equal(getPath("MAT-EX-MATURA").label, "Splošna matura – Matematika");
+  assert.doesNotMatch(getPath("MAT-EX-MATURA").label, /Mathematics/);
+  assert.equal(getPath("FIZ-EX-NPZ9").label, "NPZ 9. razred – Fizika");
+  const info = examInfo("MAT-EX-MATURA", "SI");
+  assert.equal(info.subjectName, "Matematika");
+  assert.deepEqual(info.subjects.map((s) => s.name), ["Matematika", "Fizika", "Kemija", "Biologija"]);
+  assert.equal(getPath("MAT-EX-SAT").label, "SAT – Mathematics"); // tuji izpiti ostanejo angleški
+});
+
 test("si exams: topics come from the Slovenian learning paths, tasks are in Slovenian", () => {
   const info = examInfo("MAT-EX-MATURA", "SI");
   assert.equal(info.tasksLang, "sl");
@@ -137,4 +147,82 @@ test("API: NPZ and matura view has readiness, the date comes from the goal, pape
   } finally {
     server.close();
   }
+});
+
+test("si exams: NPZ in matura page shows one maths level and Shrani without a date opens the calendar", async () => {
+  // i18n.js ob nalaganju prevede statične napise v strani: v Node je stran prazna.
+  globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+  const { matLevel } = await import("../public/exam-papers.js");
+  assert.equal(matLevel({ curriculum_level: "4. letnik VR" }), "VR");
+  assert.equal(matLevel({ curriculum_level: "3. letnik OR" }), "OR");
+  assert.equal(matLevel({ curriculum_level: "4. letnik VR " }), "VR");
+  assert.equal(matLevel({ curriculum_level: "4. letnik" }), null, "»še ne vem«");
+  assert.equal(matLevel({}), null);
+  const { readFileSync } = await import("node:fs");
+  const app = ["app.js", "vadnica.js"].map((f) => readFileSync(new URL(`../public/${f}`, import.meta.url), "utf8")).join("\n"); // NPZ in matura: public/vadnica.js
+  // Pripravljenost (»Splošna matura · Višja raven«) in Pretekle pole vzameta raven, ki jo vrne strežnik (exams.js examRaven).
+  assert.match(app, /const raven = c\.exam === "MATURA" && c\.subject === "MAT" \? c\.raven \|\| null : null;/);
+  assert.match(app, /const level = c\.raven \|\| matLevel\(s\) \|\| "OR";/);
+  // »Shrani« s praznim datumom odpre koledar (na telefonu sam fokus ne naredi nič).
+  assert.match(app, /if \(!validDate\(date\)\) return openDatePicker\(\$\("#er-date"\)\);/);
+  assert.match(app, /input\.showPicker\?\.\(\)/);
+  // Druga raven pri Preteklih polah izriše celo stran znova za to raven; Vadba in Poskusni izpit jo pošljeta strežniku.
+  assert.match(app, /onLevel: \(raven\) =>/);
+  assert.match(app, /startSession\("contest", \{ path: key, \.\.\.\(raven \? \{ raven \} : \{\}\) \}\)/);
+  assert.match(readFileSync(new URL("../public/exam-papers.js", import.meta.url), "utf8"), /if \(key === "level"\) onLevel\?\.\(val\);/);
+});
+
+test("si exams: maths matura level chosen on the page applies to readiness, topics, training and mock (OR drops VR-only topics)", async () => {
+  const { examRaven, mockPlan } = await import("../server/exams.js");
+  const vrOnly = new Set(getPath("MAT-EX-MATURA").units.flatMap((u) => u.topics).filter((t) => /\(višja raven\)\s*$/.test(t.goals || "")).map((t) => t.id));
+  assert.ok(vrOnly.size >= 10, "teme samo za višjo raven so označene v ciljih");
+  assert.equal(examRaven("MAT-EX-MATURA", { curriculum_level: "4. letnik VR" }), "VR");
+  assert.equal(examRaven("MAT-EX-MATURA", { curriculum_level: "4. letnik VR" }, "OR"), "OR", "izbira na strani ima prednost");
+  assert.equal(examRaven("MAT-EX-MATURA", { curriculum_level: "4. letnik" }), null, "»še ne vem«: vse teme");
+  assert.equal(examRaven("MAT-EX-MATURA", { curriculum_level: "4. letnik OR" }, "XX"), "OR");
+  assert.equal(examRaven("FIZ-EX-MATURA", { curriculum_level: "4. letnik VR" }, "OR"), null, "samo matematika");
+  for (let i = 0; i < 5; i++) for (const p of mockPlan("MAT-EX-MATURA", "OR").plan) assert.ok(!vrOnly.has(p.topic), p.topic);
+
+  const store = openDb(":memory:");
+  const app = createApp(store, { streamFn: async () => ({ content: [], text: "", stopReason: "end_turn" }) });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const call = async (path, opts = {}) => {
+    const res = await fetch(base + path, { method: opts.method || "GET", headers: { "Content-Type": "application/json" }, body: opts.body ? JSON.stringify(opts.body) : undefined });
+    return { status: res.status, body: await res.json() };
+  };
+  try {
+    const s = (await call("/api/students", { method: "POST", body: { name: "Jan", settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "4. letnik VR", subject: "MAT" } } })).body;
+    const ids = (v) => v.units.flatMap((u) => u.topics.map((t) => t.id));
+    const vr = (await call(`/api/students/${s.id}/exams`)).body;
+    assert.equal(vr.raven, "VR");
+    assert.ok(ids(vr).some((id) => vrOnly.has(id)), "višja raven: vse teme");
+    const or = (await call(`/api/students/${s.id}/exams?key=MAT-EX-MATURA&raven=OR`)).body;
+    assert.equal(or.raven, "OR");
+    assert.ok(!ids(or).some((id) => vrOnly.has(id)), "osnovna raven: brez tem višje ravni");
+    assert.equal(ids(or).length, ids(vr).length - ids(vr).filter((id) => vrOnly.has(id)).length);
+    assert.ok(!or.readiness.weakest.some((w) => vrOnly.has(w.id)));
+    // Vadba za izpit in poskusni izpit na osnovni ravni: samo teme osnovne ravni.
+    for (const kind of ["competition-training", "contest"]) {
+      const r = await call(`/api/students/${s.id}/${kind}`, { method: "POST", body: { path: "MAT-EX-MATURA", raven: "OR" } });
+      assert.equal(r.status, 200, kind);
+      const row = store.db.prepare("SELECT plan FROM sessions WHERE student_id = ? AND kind = ? ORDER BY rowid DESC").get(s.id, kind === "contest" ? "contest" : "tek");
+      const plan = JSON.parse(row.plan);
+      assert.ok(plan.length > 0);
+      for (const p of plan) assert.ok(!vrOnly.has(p.topic), `${kind}: ${p.topic}`);
+    }
+  } finally {
+    server.close();
+  }
+});
+
+test("past papers hint names the row's first download button (NPZ, poklicna, splošna matura)", async () => {
+  globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+  const { firstFile } = await import("../public/exam-papers.js");
+  const { t } = await import("../public/i18n-osnova.js");
+  const prvi = (exam) => firstFile(PAPERS_SI.find((p) => p.exam === exam));
+  assert.equal(prvi("NPZ9"), "Preizkus znanja");
+  assert.equal(prvi("POKLICNA"), "Izpitna pola");
+  assert.equal(prvi("MATURA"), "Izpitna pola 1");
+  assert.match(t("pp.openLocalHint", { file: prvi("NPZ6") }), /\(gumb »Preizkus znanja«\)/);
 });

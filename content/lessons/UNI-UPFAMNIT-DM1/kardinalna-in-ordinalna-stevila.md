@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Ekonomisti in teoretiki iger poznajo postopek **iterativnega izločanja strogo dominiranih strategij**: v vsakem krogu iz igre odstranimo strategije, ki so slabše od neke druge ne glede na to, kaj igrajo nasprotniki, in ponavljamo. V končni igri se postopek ustavi po končno mnogo krogih. Pri igrah z neskončno mnogo strategijami (na primer ponudbe cen v neskončno majhnih korakih) pa so našli primere, kjer se po krogih $0, 1, 2, \dots$ postopek še ne ustavi: ko »opravimo vse kroge z naravnimi števili«, se v novem stanju pokažejo nove dominirane strategije. Potreben je krog *po vseh naravnih številih*, nato še eden in tako naprej.
+Ekonomisti in teoretiki iger poznajo postopek **iterativnega izločanja strogo dominiranih strategij**: v vsakem krogu iz igre odstranimo strategije, ki so slabše od neke druge ne glede na to, kaj igrajo nasprotniki, in ponavljamo. V končni igri se postopek ustavi po končno mnogo krogih. Pri igrah z neskončno mnogo strategijami (na primer ponudbe cen v poljubno majhnih korakih) pa so našli primere, kjer se po krogih $0, 1, 2, \dots$ postopek še ne ustavi: ko »opravimo vse kroge z naravnimi števili«, se v novem stanju pokažejo nove dominirane strategije. Potreben je krog *po vseh naravnih številih*, nato še eden in tako naprej.
 
 Naravna števila tu odpovejo kot števec: ne poznajo »koraka po vseh korakih«. Za takšne postopke potrebujemo **ordinalna števila**, ki štejejo *mesto* v vrsti, tudi onkraj neskončnosti, in **transfinitno indukcijo**, s katero o njih dokazujemo. Ob tem natančno ločimo dve vprašanji, ki ju pri končnih množicah ne ločimo: *koliko* je elementov (kardinalno število) in *v kakšnem vrstnem redu* so (ordinalno število).
 
@@ -32,7 +32,7 @@ Velja tudi obrat (za dokaz potrebujemo šibko obliko aksioma izbire), zato si do
 
 ### Blok 2: izomorfizem in ključna lema
 
-Urejenosti $(A, <)$ in $(B, \prec)$ sta **izomorfni**, če obstaja bijekcija $f\colon A \to B$, da iz $x < y$ sledi $f(x) \prec f(y)$. Izomorfne urejenosti imajo isti **tip urejenosti**.
+Linearni urejenosti $(A, <)$ in $(B, \prec)$ sta **izomorfni**, če obstaja bijekcija $f\colon A \to B$, da iz $x < y$ sledi $f(x) \prec f(y)$. Izomorfne urejenosti imajo isti **tip urejenosti**.
 
 **Lema.** Če je $(W, <)$ dobro urejena in $f\colon W \to W$ strogo naraščajoča, je $f(x) \ge x$ za vsak $x \in W$.
 
@@ -265,12 +265,61 @@ Natančno navedi in dokaži lemo o strogo naraščajoči preslikavi dobro urejen
 
 Ordinal nariši kot vrsto črtic od leve proti desni. Črtice se proti »koncu« zgoščujejo, ker jih je neskončno mnogo.
 
-```
-w     | | | ||||…
-w+1   | | | ||||…  |
-1+w   | | | | ||||…
-w*2   | | |||…  | | |||…
-```
+:::risba skica
+opis: Štiri vrste navpičnih črtic, ki se proti desni zgoščujejo in končajo s tremi pikami. Vrsta ω: ena zgostitev. Vrsta ω + 1: ena zgostitev in desno za njo ena sama črtica. Vrsta 1 + ω: ena črtica dodana spredaj, slika je enaka kot pri ω. Vrsta ω · 2: dve zgostitvi zapored.
+območje: 0; 0 .. 17; 8
+napis: 0; 7 | ω | desno
+napis: 0; 5 | ω + 1 | desno
+napis: 0; 3 | 1 + ω | desno
+napis: 0; 1 | ω · 2 | desno
+črta: 4; 6,4 -> 4; 7,6
+črta: 6,5; 6,4 -> 6,5; 7,6
+črta: 8,38; 6,4 -> 8,38; 7,6
+črta: 9,78; 6,4 -> 9,78; 7,6
+črta: 10,84; 6,4 -> 10,84; 7,6
+črta: 11,63; 6,4 -> 11,63; 7,6
+črta: 12,22; 6,4 -> 12,22; 7,6
+črta: 12,67; 6,4 -> 12,67; 7,6
+napis: 13,5; 7 | …
+črta: 4; 4,4 -> 4; 5,6
+črta: 6,5; 4,4 -> 6,5; 5,6
+črta: 8,38; 4,4 -> 8,38; 5,6
+črta: 9,78; 4,4 -> 9,78; 5,6
+črta: 10,84; 4,4 -> 10,84; 5,6
+črta: 11,63; 4,4 -> 11,63; 5,6
+črta: 12,22; 4,4 -> 12,22; 5,6
+črta: 12,67; 4,4 -> 12,67; 5,6
+napis: 13,5; 5 | …
+črta: 15,5; 4,4 -> 15,5; 5,6 | oranžna debelo
+črta: 4; 2,4 -> 4; 3,6 | oranžna debelo
+črta: 4,8; 2,4 -> 4,8; 3,6
+črta: 7,1; 2,4 -> 7,1; 3,6
+črta: 8,82; 2,4 -> 8,82; 3,6
+črta: 10,12; 2,4 -> 10,12; 3,6
+črta: 11,09; 2,4 -> 11,09; 3,6
+črta: 11,82; 2,4 -> 11,82; 3,6
+črta: 12,36; 2,4 -> 12,36; 3,6
+črta: 12,77; 2,4 -> 12,77; 3,6
+napis: 13,5; 3 | …
+črta: 4; 0,4 -> 4; 1,6
+črta: 5,38; 0,4 -> 5,38; 1,6
+črta: 6,41; 0,4 -> 6,41; 1,6
+črta: 7,18; 0,4 -> 7,18; 1,6
+črta: 7,76; 0,4 -> 7,76; 1,6
+črta: 8,19; 0,4 -> 8,19; 1,6
+črta: 8,52; 0,4 -> 8,52; 1,6
+črta: 8,77; 0,4 -> 8,77; 1,6
+napis: 9,5; 1 | …
+črta: 10,5; 0,4 -> 10,5; 1,6
+črta: 11,88; 0,4 -> 11,88; 1,6
+črta: 12,91; 0,4 -> 12,91; 1,6
+črta: 13,68; 0,4 -> 13,68; 1,6
+črta: 14,26; 0,4 -> 14,26; 1,6
+črta: 14,69; 0,4 -> 14,69; 1,6
+črta: 15,02; 0,4 -> 15,02; 1,6
+črta: 15,27; 0,4 -> 15,27; 1,6
+napis: 16; 1 | …
+:::
 
 - $1 + \omega$: dodana črtica na začetku se izgubi v vrsti, slika je enaka $\omega$.
 - $\omega + 1$: črtica *za* zgostitvijo stoji sama; ima pred sabo neskončno elementov, a ni naslednik nobenega naravnega števila.
@@ -283,13 +332,13 @@ Kardinalno števec vidi le, koliko je črtic; vse štiri slike imajo $\aleph_0$ 
 - **Teorija iger in ekonomija.** Iterativno izločanje dominiranih strategij v neskončnih igrah lahko potrebuje transfinitno mnogo krogov; dokaz, da se postopek ustavi pri nekem ordinalu, je transfinitna indukcija.
 - **Računalništvo.** Dokaz, da se program ustavi, pogosto priredi stanju ordinal, ki se z vsakim korakom zmanjša. Ker padajoče zaporedje ordinalov ni neskončno, se program ustavi. Za izraze, ki se pri poenostavljanju razširijo, je potrebna mera v ordinalih do $\omega^\omega$ ali višje.
 - **Matematična logika.** Gentzen je s transfinitno indukcijo do ordinala $\varepsilon_0$ dokazal neprotislovnost Peanove aritmetike; »moč« teorij se meri z ordinali.
-- **Optimizacija in analiza.** Cantor-Bendixsonov postopek odstranjevanja izoliranih točk zaprte množice teče po ordinalih; podobni postopki se pojavijo v teoriji mere in pri iteracijah, ki jih ne moremo ustaviti v končno korakih.
+- **Optimizacija in analiza.** Cantor-Bendixsonov postopek odstranjevanja izoliranih točk zaprte množice teče po ordinalih; podobni postopki se pojavijo v teoriji mere in pri iteracijah, ki jih ne moremo ustaviti v končno mnogo korakih.
 
 ## Drugače: Bolj natančno
 
 **Dokaz Hessenbergovega izreka (skica).** Na $\kappa \times \kappa$ definiramo urejenost: $(\alpha, \beta) \prec (\gamma, \delta)$, če je $\max(\alpha, \beta) < \max(\gamma, \delta)$, ali je maksimum enak in je $(\alpha, \beta)$ leksikografsko manjši. To je dobra urejenost. Indukcija po neskončnih kardinalih: če $\kappa \cdot \kappa > \kappa$, ima njen tip začetni odsek dolžine $\kappa$, ki je vsebovan v nekem kvadratu $\gamma \times \gamma$ z $\lvert \gamma \rvert < \kappa$. Če je $\gamma$ končen, je $\gamma \times \gamma$ končna; sicer je po indukcijski predpostavki $\lvert \gamma \times \gamma \rvert = \lvert \gamma \rvert < \kappa$. Oboje je protislovje.
 
-**Kardinalna potenca brez aksioma izbire.** Brez aksioma izbire nekatere množice niso ekvipotentne nobenemu ordinalu; tedaj $\lvert A \rvert$ ni nujno kardinal v smislu te lekcije in moči niso vse primerljive. Aksiom izbire je enakovreden trditvi, da je vsaka množica dobro uredljiva (Zermelov izrek); to obravnava naslednja lekcija.
+**Kardinalna števila brez aksioma izbire.** Brez aksioma izbire nekatere množice niso ekvipotentne nobenemu ordinalu; tedaj $\lvert A \rvert$ ni nujno kardinal v smislu te lekcije in moči niso vse primerljive. Aksiom izbire je enakovreden trditvi, da je vsaka množica dobro uredljiva (Zermelov izrek); to obravnava naslednja lekcija.
 
 ## Preveri se
 

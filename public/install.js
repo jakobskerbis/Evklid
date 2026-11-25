@@ -7,8 +7,9 @@
 // - Odprto v Instagramu, Messengerju …: najprej odpri v brskalniku.
 // Kartica je na Učni poti (dokler je ne skriješ), vrstica v »Jaz« in kartica v Nastavitvah ostaneta.
 import { icon } from "./icons.js";
-import { t, currentLang } from "./i18n.js";
+import { t, currentLang } from "./i18n-osnova.js";
 import { jsonAliNic } from "./odgovor.js";
+import { installMiniHtml } from "./zacetna.js";
 
 const KEY = "evklid.install"; // čas, ko je bila kartica na Učni poti skrita
 const HIDE_DAYS = 21;
@@ -197,8 +198,7 @@ export function refresh() {
     if (!card.hidden) {
       // Na Učni poti majhna vrstica (ne odrine vaj navzdol); dotik kjer koli odpre namestitev.
       card.className = "card list-card install-mini";
-      card.innerHTML = `<button type="button" class="list-row inst-go"><span class="ic">${icon(p.mobile ? "smartphone" : "download")}</span><span class="lr-text"><b>${esc(t("inst.title"))}</b><small>${esc(p.mobile ? t("inst.meSub") : t("inst.textDesk"))}</small></span>${icon("chevron-right")}</button>
-        <button type="button" class="ghost icon-only fb-card-x" aria-label="${esc(t("inst.dismiss"))}" title="${esc(t("inst.dismiss"))}">${icon("x")}</button>`;
+      card.innerHTML = installMiniHtml(t, p.mobile); // izris skupen s strežnikom (public/zacetna.js)
       card.querySelector(".inst-go").onclick = install;
       card.querySelector(".fb-card-x").onclick = () => {
         set(String(Date.now()));

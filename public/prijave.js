@@ -2,9 +2,8 @@
 // prijav za skrbnika (Račun → Prijave napak). Okvir prijave ima isti videz kot prijava pod odgovorom
 // inštruktorja (style.css .report-box).
 import { icon, hydrateIcons } from "./icons.js";
-import { t } from "./i18n.js";
-import { createRenderer } from "./rich.js";
-import { annotateTex } from "./formula-info.js";
+import { t } from "./i18n-osnova.js";
+import { createRenderer, naloziKnjiznice } from "./rich.js";
 
 // Naprava ob prijavi (kot pri mnenjih, feedback.js): telefon / tablica / računalnik in velikost zaslona.
 export function deviceInfo() {
@@ -39,7 +38,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
  * Okvir s prijavo: vprašanje, razlogi (neobvezno), opomba, Pošlji / Prekliči.
  * onSend({ reason, note }) vrne obljubo; ob napaki ostane okvir odprt s sporočilom.
  */
-export function reportBox({ ask, reasons = [], notePh, needNote = false, sendLabel = t("rep.send"), onSend, onClose }) {
+export function reportBox({ ask, reasons = [], notePh, needNote = false, needNoteMsg = null, sendLabel = t("rep.send"), onSend, onClose }) {
   const box = document.createElement("div");
   box.className = "report-box";
   box.setAttribute("role", "group");
@@ -89,7 +88,7 @@ export function reportBox({ ask, reasons = [], notePh, needNote = false, sendLab
       return;
     }
     if (needNote && !note) {
-      err.textContent = t("bug.needNote");
+      err.textContent = needNoteMsg || t("bug.needNote");
       err.hidden = false;
       area.focus();
       return;
@@ -141,20 +140,27 @@ export function wireLessonReport(btn, { api, studentId, topic, step, toast }) {
   });
 }
 
-/** Skrbnik v klepetu: opis napake, zraven gredo zadnja sporočila pogovora. */
-export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose, thanks = null, ask = null }) {
+/**
+ * Skrbnik v klepetu: opis napake, zraven gredo zadnja sporočila pogovora. feature: zahteva za novo funkcijo
+ * (žarnica v glavi klepeta, samo skrbnik; server/reports.js kind = feature).
+ */
+export function openAdminBug(anchor, { api, studentId, conversationId, view, toast, onClose, thanks = null, ask = null, feature = false }) {
+  const k = feature ? "idea" : "bug";
   const box = reportBox({
-    ask: ask || t("bug.ask"),
-    notePh: t("bug.notePh"),
+    ask: ask || t(`${k}.ask`),
+    notePh: t(`${k}.notePh`),
     needNote: true,
+    needNoteMsg: t(`${k}.needNote`),
+    ...(feature ? { sendLabel: t("chat.send") } : {}),
     onSend: async ({ note }) => {
-      await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: (typeof conversationId === "function" ? conversationId() : conversationId) || undefined, view, ...deviceInfo() } });
-      toast(thanks || t("bug.thanks"), "check");
+      await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: (typeof conversationId === "function" ? conversationId() : conversationId) || undefined, view, ...(feature ? { kind: "feature" } : {}), ...deviceInfo() } });
+      toast(thanks || t(`${k}.thanks`), "check");
       onClose?.();
     },
     onClose,
   });
   box.classList.add("bug-box");
+  box.dataset.kind = k;
   anchor.after(box);
   box.focusFirst();
   return box;
@@ -162,21 +168,22 @@ export function openAdminBug(anchor, { api, studentId, conversationId, view, toa
 
 // ---------- seznam prijav za skrbnika ----------
 
-const KIND_ICON = { message: "message-circle", lesson: "book-open", app: "flag" };
+const KIND_ICON = { message: "message-circle", lesson: "book-open", app: "flag", feature: "lightbulb" };
 
 function reportTitle(r) {
   if (r.kind === "message") return `${t("adm.rep.message")} ${r.code}`;
   if (r.kind === "lesson") return `${t("adm.rep.lesson")}: ${r.topic_name || r.topic_id}${r.step ? ` · ${t("adm.rep.step", { n: r.step })}` : ""}`;
-  return t("adm.rep.app");
+  return t(r.kind === "feature" ? "adm.rep.feature" : "adm.rep.app");
 }
 function reasonText(r) {
-  if (r.kind === "app") return "";
+  if (r.kind === "app" || r.kind === "feature") return "";
   return r.kind === "lesson" ? lessonReason(r.reason) : t(`rep.${r.reason}`);
 }
 
 // Odgovor, kot ga je videl učenec: izrisan HTML s spleta (očiščen) ali, pri prijavah iz aplikacije in starejših
 // prijavah, besedilo znova izrisano z istim izrisovalnikom kot v klepetu.
 let rich = null;
+let annotateTex = null; // formula-info.js: naloži renderAdminReports (ni del prvega izrisa)
 function shownBlock(r) {
   if (r.kind !== "message" || !(r.shown || r.answer)) return "";
   let html = "";
@@ -184,7 +191,7 @@ function shownBlock(r) {
   try {
     if (r.shown) html = safeShown(r.shown);
     else {
-      rich ||= createRenderer({ annotate: (tex, o) => annotateTex(tex, undefined, o) });
+      rich ||= createRenderer({ annotate: (tex, o) => (annotateTex ? annotateTex(tex, undefined, o) : tex) });
       html = rich.renderRich(r.answer);
       label = t("adm.rep.rerendered");
     }
@@ -201,6 +208,9 @@ function shownBlock(r) {
 export async function renderAdminReports(box, { api, toast, showAll = false }) {
   let data;
   try {
+    // Knjižnice in oznake formul (rich.js, formula-info.js) za izris odgovorov niso del prvega izrisa aplikacije.
+    const [fx] = await Promise.all([import("./formula-info.js"), naloziKnjiznice()]);
+    annotateTex = fx.annotateTex;
     data = await api(`/api/admin/reports${showAll ? "?status=all" : ""}`);
   } catch (e) {
     box.innerHTML = `<p class="muted">${esc(e.message)}</p>`;
@@ -240,4 +250,81 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
       }
     }),
   );
+}
+
+// Obrazec »Prijavi napako« pod odgovorom inštruktorja (iz public/app.js addMsgFoot; server/reports.js).
+export function openMsgReport(el, foot, btn, id, done, { convId, api, toast }) {
+  if (el.querySelector(".report-box")) return;
+  btn.setAttribute("aria-expanded", "true");
+  const box = document.createElement("div");
+  box.className = "report-box";
+  box.setAttribute("role", "group");
+  box.innerHTML = `<p></p><div class="rep-reasons"></div><textarea maxlength="500" rows="2"></textarea>
+    <p class="rep-err" role="alert" hidden></p>
+    <div class="rep-actions"><button type="button" class="primary small rep-send"></button><button type="button" class="ghost rep-cancel"></button></div>
+    <p class="rep-code muted" hidden><span></span> <span class="msg-code"></span></p>`;
+  box.querySelector("p").textContent = t("rep.ask");
+  if (foot.dataset.code) {
+    const c = box.querySelector(".rep-code");
+    c.hidden = false;
+    c.firstElementChild.textContent = `${t("rep.code")}:`;
+    // Črka O z malo (j, 17. 11. 2026): v pisavi telefona sta »O« in »0« enaka (#000O je bil videti kot #0000).
+    // Iskanje kode (server/reports.js parseMessageCode) ne loči velikih in malih črk.
+    c.lastElementChild.textContent = foot.dataset.code.replace(/O/g, "o");
+  }
+  box.setAttribute("aria-label", t("rep.ask"));
+  const area = box.querySelector("textarea");
+  area.placeholder = t("rep.notePh");
+  area.setAttribute("aria-label", t("rep.notePh"));
+  let reason = null;
+  for (const r of ["wrong", "unsafe", "other"]) {
+    const rb = document.createElement("button");
+    rb.type = "button";
+    rb.className = "secondary small";
+    rb.setAttribute("aria-pressed", "false");
+    rb.textContent = t(`rep.${r}`);
+    rb.addEventListener("click", () => {
+      reason = r;
+      box.querySelectorAll(".rep-reasons button").forEach((x) => x.setAttribute("aria-pressed", String(x === rb)));
+      err.hidden = true;
+    });
+    box.querySelector(".rep-reasons").append(rb);
+  }
+  const err = box.querySelector(".rep-err");
+  const sendBtn = box.querySelector(".rep-send");
+  const close = () => {
+    box.remove();
+    btn.setAttribute("aria-expanded", "false");
+    btn.focus();
+  };
+  sendBtn.textContent = t("rep.send");
+  box.querySelector(".rep-cancel").textContent = t("rep.cancel");
+  box.querySelector(".rep-cancel").addEventListener("click", close);
+  box.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      e.stopPropagation();
+      close();
+    }
+  });
+  sendBtn.addEventListener("click", async () => {
+    if (!reason) {
+      err.textContent = t("rep.pick");
+      err.hidden = false;
+      return;
+    }
+    sendBtn.disabled = true;
+    try {
+      // Zraven gre, kar je učenec videl: izrisan HTML sporočila in naprava (napaka v izpisu formule).
+      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value, shown: shownHtml(el), ...deviceInfo() } });
+      box.remove();
+      done();
+      toast(t("rep.thanks"), "check");
+    } catch (e) {
+      err.textContent = e.message;
+      err.hidden = false;
+      sendBtn.disabled = false;
+    }
+  });
+  foot.after(box);
+  box.querySelector(".rep-reasons button").focus();
 }

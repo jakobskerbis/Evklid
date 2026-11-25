@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -24,9 +24,9 @@ Snov gradimo po kosih. Za vsakim kosom je kratko vprašanje za preverjanje.
 *Preveri:* kateri del uganke ustreza receptorju? *(Natakarjeva naučenost, da se odzove na zvonec.)*
 
 :::premisli
-Adrenalin v stresu pride s krvjo do srca in do celic očesne leče. Srce začne biti hitreje, leča pa se ne spremeni. Kaj lahko sklepaš o celicah teh dveh tkiv?
+Hormon glukagon pride s krvjo do jeter in do skeletnih mišic. Jetra začnejo v kri sproščati glukozo, mišice pa se nanj ne odzovejo. Kaj lahko sklepaš o celicah teh dveh tkiv?
 ---
-Srčne mišične celice imajo receptorje za adrenalin, celice leče pa ne. Odziv ni odvisen od tega, kam hormon pride, ampak od tega, ali ga celica lahko »prebere«.
+Jetrne celice imajo receptorje za glukagon, mišične celice pa ne. Odziv ni odvisen od tega, kam hormon pride, ampak od tega, ali ga celica lahko »prebere«.
 :::
 
 **3. Nadzornik: hipotalamus in hipofiza.** **Hipofiza** je žleza velikosti graha pod možgani. Povezana je s **hipotalamusom**, delom možganov, ki ji s svojimi hormoni ukazuje. Hipofiza izloča hormone, ki ukazujejo drugim žlezam. Primer: **TSH** (ščitnico spodbujajoči hormon) spodbudi ščitnico.
@@ -35,7 +35,7 @@ Količino hormona telo drži v mejah z **negativno povratno zanko**. Pomisli na 
 
 *Preveri:* kaj naredi termostat, ko je pečica prehladna? *(Vklopi grelec, temperatura naraste.)*
 
-**4. Ščitnica in jod.** **Ščitnica** leži na vratu pred grlom. Izloča **tiroksin**, ki pospeši presnovo: celice porabijo več kisika in hranil, telo proizvede več toplote. Za tiroksin ščitnica potrebuje **jod**. Ker ga je v hrani v Sloveniji malo, ga dodajajo kuhinjski soli (jodirana sol).
+**4. Ščitnica in jod.** **Ščitnica** leži na vratu pod grlom, pred sapnikom. Izloča **tiroksin**, ki pospeši presnovo: celice porabijo več kisika in hranil, telo proizvede več toplote. Za tiroksin ščitnica potrebuje **jod**. Ker ga je v hrani v Sloveniji malo, ga dodajajo kuhinjski soli (jodirana sol).
 
 *Preveri:* zakaj je na embalaži soli napis »jodirana«? *(Da dobimo dovolj joda za tiroksin.)*
 
@@ -53,7 +53,7 @@ Hormona delujeta **antagonistično** (nasprotno). Tako je glukoza v krvi na teš
 | Žleza | Hormon | Učinek | Motnja |
 |---|---|---|---|
 | hipofiza | rastni hormon | rast kosti in mišic | premalo: pritlikavost; preveč: velikanska rast |
-| ščitnica | tiroksin | pospeši presnovo | premalo joda: golša; preveč: hipertiroza |
+| ščitnica | tiroksin | pospeši presnovo | premalo joda: golša; preveč tiroksina: hipertiroza |
 | trebušna slinavka | inzulin | zniža glukozo v krvi | sladkorna bolezen |
 | nadledvična žleza | adrenalin, kortizol | odziv na stres | preveč kortizola: Cushingov sindrom |
 

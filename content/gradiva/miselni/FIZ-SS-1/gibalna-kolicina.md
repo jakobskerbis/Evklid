@@ -22,8 +22,9 @@ stanje: osnutek
   - $p_1 + p_2 = p_1' + p_2'$
   - velja, ko je vsota zunanjih sil nič
   - sunka teles sta nasprotno enaka
-- Neprožni trk
+- Popolnoma neprožni trk
   - telesi se sprimeta
   - $m_1 v_1 + m_2 v_2 = (m_1 + m_2)\,v'$
 - Prožni trk
   - telesi se odbijeta
+  - razmikata se enako hitro, kot sta se približevala

@@ -7,8 +7,8 @@ export const info = {
   naslov: "Nefron",
   podrocje: "organi",
   predmet: "BIO",
-  opis: "Nefron je osnovna enota ledvice; vsaka ledvica jih ima okoli milijon. V glomerulu se iz krvi precedi primarni seč, v cevkah se večina vode in snovi vrne v kri, ostanek odteče po zbiralci. Glomerul je narisan povečan, Henlejeva zanka pa močno skrajšana: v resnici je nefron dolg nekaj centimetrov.",
-  poskusi: "Sledi rumenim kapljicam od glomerula do zbiralce: skozi katere dele gredo?",
+  opis: "Nefron je osnovna enota ledvice; vsaka ledvica jih ima okoli milijon. V glomerulu se iz krvi precedi primarni seč, v cevkah se večina vode in snovi vrne v kri, ostanek odteče po zbiralcu. Glomerul je narisan povečan, Henlejeva zanka pa močno skrajšana: v resnici je nefron dolg nekaj centimetrov.",
+  poskusi: "Sledi rumenim kapljicam od glomerula do zbiralca: skozi katere dele gredo?",
   merilo: { m: 1.4e-3, oznaka: "1,4 mm" },
 };
 
@@ -315,6 +315,11 @@ export function zgradi(THREE, ctx = {}) {
       sp.scale.set(0.72, 0.18, 1); // berljivo tudi na telefonu
       sp.position.set(-600 * S, (y - YC) * S, 0);
       sp.raycast = () => {};
+      // od zgoraj ali spodaj bi se napisa prekrila (ocena 18. 11.): pri strmem pogledu zbledita
+      sp.onBeforeRender = (r, sc, cam) => {
+        const v = cam.getWorldDirection(new THREE.Vector3());
+        sm.opacity = 1 - THREE.MathUtils.smoothstep(Math.abs(v.y), 0.6, 0.8);
+      };
       group.add(sp);
     }
   }
@@ -367,7 +372,7 @@ export function zgradi(THREE, ctx = {}) {
   del("tanki", "Henlejeva zanka (tanki del)", "Pars tenuis ansae nephroni", "Tanka zanka, ki se spusti globoko v sredico; v padajočem kraku voda izhaja iz cevke.", "#f3dcb4", [mreze.tanki], tk(15));
   del("debeli", "Debeli del Henlejeve zanke", "Pars recta tubuli distalis", "Naraščajoči krak, ki črpa sol iz seča, vode pa ne prepušča; tako je sredica slana in lahko izsrka vodo iz zbiralc.", "#e6b44c", [mreze.debeli], tk(20.5));
   del("dct", "Distalni zviti tubul", "Tubulus contortus distalis", "Cevka se vrne k svojemu glomerulu (macula densa) in natančno uravna sol in kislost seča.", "#d9c060", [mreze.dct, mreze.veznik], tk(25.5));
-  del("zbiralca", "Zbiralca", "Tubulus colligens", "Vanjo se izliva več nefronov; s hormonom ADH telo določi, koliko vode se še vrne v kri. Ostane seč.", "#6fbfb8", [zbir, zbirL], CD.getPointAt(0.55));
+  del("zbiralca", "Zbiralce", "Tubulus colligens", "Vanj se izliva več nefronov; s hormonom ADH telo določi, koliko vode se še vrne v kri. Ostane seč.", "#6fbfb8", [zbir, zbirL], CD.getPointAt(0.55));
   del("kapilare", "Peritubularne kapilare in vasa recta", "Vasa peritubularia et vasa recta", "Kapilare okoli cevk sprejmejo vodo in snovi, ki se vrnejo iz seča v kri.", "#d94a58", [kap], tk(5.5).add(V(0, 0, 40)));
   del("zile", "Interlobularna arterija in vena", "Arteria et vena interlobularis", "Žili med ledvičnimi režnjiči: arterija prinaša kri k nefronom, vena jo odvaja.", "#5f73c6", [art, ven], AI.getPointAt(0.55), { skrijTocko: true });
   del("tok", "Primarni seč in seč", "Urina primaria et urina", "Rumene kapljice kažejo pot tekočine; vse manjše so, ker se večina vode vrne v kri.", "#ffe27a", [kaplje, krvnicke], POT[Math.floor(POT.length * 0.04)], { skrijTocko: true });
@@ -383,6 +388,7 @@ export function zgradi(THREE, ctx = {}) {
     nadzor,
     korak(t) { if (gib) tok(t); },
     pogled: [0.18, 0.12, 1],
+    okvir: { sredisce: [0, 0.03, 0], polmer: 1.08 }, // z rezervo pod orodno vrstico (ocena 18. 11.)
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       for (const x of odpad) x.dispose();

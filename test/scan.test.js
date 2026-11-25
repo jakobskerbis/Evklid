@@ -5,8 +5,9 @@ import path from "node:path";
 import SL from "../public/i18n/sl.js";
 import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
-import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, READ_PROMPT } from "../server/scan.js";
-import { answerParts } from "../public/scan/odgovor.js";
+import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, solveWithAi, READ_PROMPT, readLangLine, verifyAiFull, casText } from "../server/scan.js";
+import { setClient } from "../server/claude.js";
+import { answerParts, soughtParts, soughtNeedsAi } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
@@ -54,6 +55,18 @@ test("rational equations: domain, common denominator, rejected roots; x collecte
   assert.equal(r.methods[0].steps[2].title.k, "scan.s.standardRight");
   assert.equal(flat(r.methods[0].steps[2].tex), "4x^{2}-1=0");
   assert.match(ans("-3/x = 6").methods[0].steps.at(-1).tex, /: \\left\(-\\frac/);
+});
+
+test("quadratic razcep with a ≠ 1: ac split and grouping come before the roots", () => {
+  const f = ans("6x^2-x-2=0").methods.find((m) => m.id === "factor");
+  assert.deepEqual(f.steps.slice(0, 3).map((s) => s.title.k), ["scan.s.vieta", "scan.s.factored", "scan.s.zeroProduct"]);
+  assert.equal(flat(f.steps[0].tex), "-4\\cdot3=-12,\\quad-4+3=-1");
+  const t = flat(f.steps[1].tex);
+  assert.ok(t.includes("6x^{2}-4x+3x-2=0") && t.includes("2x\\left(3x-2\\right)+\\left(3x-2\\right)=0") && t.includes("\\left(2x+1\\right)\\left(3x-2\\right)=0"), t);
+  assert.ok(!f.steps[0].tex.includes("x_{1}"), "roots are not given before the factorisation");
+  assert.equal(f.steps[0].why.k, "scan.w.acSplit");
+  const d = ans("4x^2-4x+1=0").methods.find((m) => m.id === "factor");
+  assert.match(flat(d.steps[1].tex), /2x\\left\(2x-1\\right\)-\\left\(2x-1\\right\)=0.*\\left\(2x-1\\right\)\^\{2\}=0/);
 });
 
 test("quadratic equations: every method gives the same verified roots", () => {
@@ -243,6 +256,11 @@ test("AI solutions are verified: substitution, missing roots, derivatives, integ
   assert.equal(verifyAi("∫_0^1 x^2 dx", { kind: "integral", value: "1/2" }).verified, false);
   assert.equal(verifyAi("x+y=3; x-y=1", { kind: "system", solutions: ["x=2; y=1"] }).verified, true);
   assert.equal(verifyAi("x+y=3; x-y=1", { kind: "system", solutions: ["x=1; y=2"] }).verified, false);
+  // sovražni ključi v rešitvi sistema ne postanejo spremenljivke in ne onesnažijo prototipa (CodeQL js/remote-property-injection)
+  assert.equal(verifyAi("x+y=5; x-y=1", { kind: "system", solutions: ["__proto__=1, x=3, y=2"] }).verified, true);
+  assert.equal(verifyAi("x+y=5; x-y=1", { kind: "system", solutions: ["constructor=3, y=2"] }).verified, false);
+  assert.equal(({}).x, undefined);
+  assert.equal(Object.prototype.hasOwnProperty.call(Object.prototype, "x"), false);
   assert.equal(verifyAi("(x^2-1)/(x-1)", { kind: "expression", value: "x+1" }).verified, true);
   // »ni rešitve« ni preverjeno, kadar ničla obstaja zunaj [−50, 50], na robu območja ali kot dotikalna ničla
   for (const t of ["x/200 = 1", "e^x = 100000", "log(x) = 3", "sqrt(x-60) = 0", "abs(x-1.1) = 0"]) assert.equal(verifyAi(t, { kind: "equation", solutions: [] }).verified, false, t);
@@ -250,6 +268,53 @@ test("AI solutions are verified: substitution, missing roots, derivatives, integ
   // neenačba ni enačba; »x = 2« je dovoljen zapis rešitve
   assert.equal(verifyAi("x > 0", { kind: "equation", solutions: ["1"] }).verified, false);
   assert.equal(verifyAi("x^2 = 4", { kind: "equation", solutions: ["x = 2", "x = -2"] }).verified, true);
+});
+
+// AUDIT-001 (neodvisni pregled, PR #934): numerika ne sme trditi, da je množica rešitev popolna, kadar tega ne
+// preveri (sistem, periodične rešitve, »ni rešitve«). Brez SymPy (cas: false, npr. naloga s podatki ali izpad)
+// taka rešitev ni »preverjena«; ko jo SymPy potrdi, je (test/racun.test.js).
+test("casText: zapis za SymPy (log desetiški, log_b, √, implicitno množenje imen)", () => {
+  assert.equal(casText("log_10(x)+log_10(y)=1"), "log(x, 10)+log(y, 10)=1");
+  assert.equal(casText("log_(2)(x-1)=3"), "log(x-1, 2)=3");
+  assert.equal(casText("log(x)+log(x-3)=1"), "lg(x)+lg(x-3)=1");
+  assert.equal(casText("log(x, 2)=3"), "log(x, 2)=3");
+  assert.equal(casText("log(log(x))=0"), "lg(lg(x))=0");
+  assert.equal(casText("ln(x)=2"), "ln(x)=2");
+  assert.equal(casText("x=√2"), "x=sqrt(2)");
+  assert.equal(casText("√(x+2)=x"), "sqrt(x+2)=x");
+  assert.equal(casText("xy=6", ["x", "y"]), "x*y=6");
+  assert.equal(casText("xy=6"), "xy=6", "brez imen ne ugibamo");
+  assert.equal(casText("sin(x)+xy", ["x", "y"]), "sin(x)+x*y");
+});
+
+test("AUDIT-001: without SymPy an unproven complete solution set is not »verified«", async () => {
+  const partial = [
+    ["x=10000000", { kind: "equation", variable: "x", solutions: [] }],
+    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2+0*k"] }],
+    ["x^2=1; y=0", { kind: "system", solutions: ["x=1; y=0"] }],
+    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi"] }],
+    ["x^2+y^2=25; x+y=7", { kind: "system", solutions: ["x=3; y=4"] }],
+    ["x^2=1; y^2=1", { kind: "system", solutions: ["x=1; y=1", "x=-1; y=-1"] }],
+  ];
+  for (const [t, sol] of partial) {
+    const n = verifyAi(t, sol);
+    assert.equal(n.verified, true, `${t}: dane rešitve držijo`);
+    assert.equal(n.partial, true, `${t}: popolnost ni preverjena`);
+    assert.deepEqual(await verifyAiFull(t, sol, { cas: false }), { verified: false, reason: "unknown" }, t);
+  }
+  // Napačna ali manjkajoča rešitev ostane »wrong« / »missing« (inštruktor jo popravi), ne »unknown«.
+  assert.equal((await verifyAiFull("x^2=1; y=0", { kind: "system", solutions: ["x=2; y=0"] }, { cas: false })).reason, "wrong");
+  assert.equal((await verifyAiFull("x^2-1=0", { kind: "equation", variable: "x", solutions: [] }, { cas: false })).reason, "missing");
+  // Kjer numerika popolnost preveri (navadna enačba, vse ničle v iskanem območju), ostane preverjeno.
+  for (const [t, sol] of [
+    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2", "x=-2"] }],
+    ["x^2-5x+6=0", { kind: "equation", variable: "x", solutions: ["2", "3"] }],
+    ["x=3", { kind: "equation", variable: "x", solutions: ["3"] }],
+    ["x*e^x", { kind: "derivative", value: "e^x + x*e^x" }],
+  ]) {
+    assert.equal(verifyAi(t, sol).partial, undefined, t);
+    assert.equal((await verifyAiFull(t, sol, { cas: false })).verified, true, t);
+  }
 });
 
 test("server cleans AI output (limits, types)", () => {
@@ -362,4 +427,108 @@ test("AI answer as a list of facts is shown one fact per line (j's screenshot 4.
   assert.deepEqual(answerParts("D_f=(0,\\infty), Z_f=\\mathbb{R}, \\text{ničla } x=1, \\text{naraščajoča}"), ["D_f=(0,\\infty)", "Z_f=\\mathbb{R}", "\\text{ničla } x=1", "\\text{naraščajoča}"]);
   assert.deepEqual(answerParts("x\\in\\{2,3,4\\}, y\\in\\{1,2,3\\}"), ["x\\in\\{2,3,4\\}", "y\\in\\{1,2,3\\}"]);
   for (const one of ["x\\in[-5,\\infty)", "T(7,2)", "x=2{,}5", "f(x)=\\frac{1}{x}, x\\neq 0", "x_1=2,5, x_2=3", "x=1, 2, 3, y=0"]) assert.equal(answerParts(one).length, 1, one);
+});
+
+// j 14. 11. 2026: besede v »Podatki« so bile v angleščini, iskana količina pa med podatki.
+test("photo reading writes the words of the data in the app language and keeps what is asked apart", () => {
+  assert.match(readLangLine("sl"), /slovenščina/);
+  assert.match(readLangLine("de"), /German/);
+  assert.match(readLangLine("sl"), /"given" and "sought"/);
+  assert.match(READ_PROMPT, /"sought": what the task asks you to find is never data/);
+  assert.match(READ_PROMPT, /leave "sought" out/);
+  assert.match(READ_PROMPT, /the vertex of the parabola\)/);
+  assert.doesNotMatch(READ_PROMPT, /a perimeter\)/);
+  assert.match(READ_PROMPT, /with the meaning of the page/);
+  assert.doesNotMatch(READ_PROMPT, /in the words of the page|Iskano:|last item of "given"/);
+  assert.match(READ_PROMPT, /"given":\["\.\.\."\],"sought":"\.\.\."/);
+});
+
+// j 16. 11. 2026: »to ni podatek« – iskano je svoje polje, ne element given.
+test("cleanProblems keeps sought apart from given and limits it like a given item", () => {
+  const [p] = cleanProblems([{ text: "f(x)=x^2-4", tex: "f", sought: "  \\text{kot, pod katerim\n graf seka os x} " }]);
+  assert.equal(p.sought, "\\text{kot, pod katerim graf seka os x}");
+  assert.equal(p.given, undefined); // brez pravih podatkov ostane given prazen → lastni reševalnik in SymPy
+  assert.equal(cleanProblems([{ text: "x=1", sought: "x".repeat(300) }])[0].sought.length, 160);
+  for (const bad of [undefined, "", "   ", 7, ["a"]]) assert.equal("sought" in cleanProblems([{ text: "x=1", sought: bad }])[0], false);
+  // starejši odgovor brez sought deluje kot prej
+  assert.deepEqual(cleanProblems([{ text: "P=?", tex: "P", given: ["a = 3"] }])[0], { text: "P=?", tex: "P", goal: null, given: ["a = 3"] });
+  assert.match(solvePrompt("f(x)=x^2-4", "slovenščina", null, null, [], "\\text{kot}"), /asks to find.*\\text\{kot\}/);
+  assert.doesNotMatch(solvePrompt("x=1", "slovenščina"), /asks to find/);
+});
+
+test("AI solve: sought alone keeps the check and retry on (given switches them off) and reaches the prompt", async () => {
+  const prevKey = process.env.ANTHROPIC_API_KEY;
+  const prevMock = process.env.EVKLID_MOCK;
+  process.env.ANTHROPIC_API_KEY = "test-ni-pravi";
+  delete process.env.EVKLID_MOCK;
+  const prompts = [];
+  // napačna rešitev x=5 za x+1=3: s preverjanjem (given prazen) sledi ponovitev, brez njega ne
+  setClient({
+    messages: {
+      create: async (req) => (prompts.push(req.messages[0].content), {
+        content: [{ type: "text", text: JSON.stringify({ kind: "equation", variable: "x", problem_tex: "x+1=3", answer_tex: "x=5", solutions: ["5"], methods: [{ name: "a", steps: [{ title: "t", tex: "x=5", why: "w" }] }] }) }],
+        usage: { input_tokens: 10, output_tokens: 10 },
+        model: "m",
+      }),
+    },
+  });
+  try {
+    const a = await solveWithAi({ text: "x+1=3", sought: "\\text{rešitev}" });
+    assert.equal(prompts.length, 2, "sought ne sme izklopiti preverjanja");
+    assert.equal(a.solution.verified, false);
+    assert.match(prompts[0], /asks to find.*\\text\{rešitev\}/);
+    prompts.length = 0;
+    await solveWithAi({ text: "x+1=3", given: ["a = 3"] });
+    assert.equal(prompts.length, 1, "pri podatkih preverjanje ne odloča (kot pred #700)");
+  } finally {
+    setClient(null);
+    if (prevKey === undefined) delete process.env.ANTHROPIC_API_KEY;
+    else process.env.ANTHROPIC_API_KEY = prevKey;
+    if (prevMock !== undefined) process.env.EVKLID_MOCK = prevMock;
+  }
+});
+
+test("API: scan read passes the app language to readFn and sought to solveFn", async () => {
+  const img = "data:image/jpeg;base64," + Buffer.from("x").toString("base64");
+  const langs = [];
+  const scanReadFn = async ({ lang }) => (langs.push(lang), { problems: [{ text: "x^2-4=0", tex: "x", goal: null, sought: "\\text{Ničle}" }], usage: null, model: "m" });
+  const seen = [];
+  const scanSolveFn = async (args) => (seen.push(args), { solution: { kind: "equation", methods: [{ name: "a", steps: [{ title: "t", tex: "x", why: "" }] }] }, usage: [], model: "m" });
+  await withApp({ scanReadFn, scanSolveFn }, async ({ req }) => {
+    const s = (await req("POST", "/api/students", { name: "Ana", settings: { curriculum_level: "1. letnik", language: "hr" } })).body;
+    const read = await req("POST", `/api/students/${s.id}/scan/read`, { image: img });
+    assert.deepEqual(langs, ["hr"]);
+    assert.equal(read.body.problems[0].sought, "\\text{Ničle}");
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x^2-4=0", sought: " \\text{Ničle} " })).status, 200);
+    assert.equal(seen[0].sought, "\\text{Ničle}");
+    assert.deepEqual(seen[0].given, []);
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1" })).status, 200);
+    assert.equal(seen[1].sought, "");
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", sought: 5 })).status, 400);
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", sought: "x".repeat(200) })).status, 400);
+  });
+});
+
+test("sought is shown as plain text (breaks between words) and a plain expression with a sought goes to AI", () => {
+  assert.deepEqual(soughtParts("\\text{ploščina lika med grafom in koordinatnima osema}"), { text: "ploščina lika med grafom in koordinatnima osema", math: "" });
+  assert.deepEqual(soughtParts("\\text{teme parabole } T(p,q)"), { text: "teme parabole", math: "T(p,q)" });
+  assert.deepEqual(soughtParts("kot, pod katerim graf seka os x"), { text: "kot, pod katerim graf seka os x", math: "" });
+  assert.deepEqual(soughtParts("x_0"), { text: "", math: "x_0" });
+  const simp = solve("x^2-4", {});
+  assert.equal(soughtNeedsAi(simp, { sought: "\\text{teme}" }), true);
+  assert.equal(soughtNeedsAi(simp, { sought: "" }), false);
+  assert.equal(soughtNeedsAi(solve("x^2-4", { goal: "factor" }), { sought: "\\text{teme}", goal: "factor" }), false);
+  assert.equal(soughtNeedsAi(solve("x^2-4=0", {}), { sought: "\\text{kot}" }), false);
+});
+
+test("konstantna naloga brez d/dx kot »derivative« z 0 ni preverjena (meritev skenerja s11), drugo ostane", () => {
+  const t = "∫_0^2 (3*x^2-2*x+1) dx";
+  assert.deepEqual(verifyAi(t, { kind: "derivative", value: "0" }), { verified: false, reason: "kind" });
+  assert.equal(verifyAi(t, { kind: "expression", value: "0" }).verified, false);
+  assert.equal(verifyAi(t, { kind: "integral", value: "0" }).verified, false);
+  assert.equal(verifyAi(t, { kind: "integral", value: "6" }).verified, true);
+  assert.equal(verifyAi("\\int_0^2 (3*x^2-2*x+1) dx", { kind: "integral", value: "6" }).verified, true);
+  assert.equal(verifyAi("∫_0^2 x dx", { kind: "expression", value: "2" }).verified, true);
+  assert.equal(verifyAi("d/dx 5", { kind: "derivative", value: "0" }).verified, true);
+  assert.equal(verifyAi("x^2*e^x", { kind: "derivative", value: "2*x*e^x+x^2*e^x" }).verified, true);
 });

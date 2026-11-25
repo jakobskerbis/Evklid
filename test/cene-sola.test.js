@@ -19,7 +19,7 @@ const SECRET = "whsec_test";
 test("cene: Osebno ob šolski licenci 5,99 €/49 €, redne cene po stopnjah, darilo po letni ceni stopnje", () => {
   assert.deepEqual(
     PLANS.map((p) => p.amount),
-    [999, 9900, 1399, 13900, 1999, 19900, 1899, 18900, 2799, 26900],
+    [999, 9900, 1399, 9900, 1999, 19900, 1899, 18900, 2799, 26900],
   );
   assert.deepEqual(
     SCHOOL_PLANS.map((p) => [p.interval, p.amount, p.seats]),
@@ -163,7 +163,7 @@ async function withServer(fn) {
   }
 }
 
-const OK = { adult: true, withdrawal: true };
+const OK = { adult: true, withdrawal: true, terms: true };
 
 test("Osebno ob šolski licenci: le z otrokom s šolsko licenco, cena ni v portalu, mesto dobi šolski otrok", async () => {
   await withServer(async ({ store, stripe, licensed, register }) => {

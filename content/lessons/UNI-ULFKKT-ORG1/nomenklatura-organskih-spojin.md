@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -56,7 +56,7 @@ Z drugega konca dobimo $\{2, 2, 4\}$, ki je na drugem mestu nižje od $\{2, 4, 4
 | karboksilna kislina | -ojska kislina | karboksi- | etanojska kislina |
 | ester | -oat (alkil …oat) | alkoksikarbonil- | etil etanoat |
 | amid | -amid | karbamoil- | etanamid |
-| nitril | -nitril | ciano- | etanonitril |
+| nitril | -nitril | ciano- | etannitril |
 | aldehid | -al | okso- (formil-) | propanal |
 | keton | -on | okso- | propanon |
 | alkohol | -ol | hidroksi- | propan-2-ol |
@@ -76,7 +76,7 @@ Pri spojinah z dvojnimi vezmi pride v poštev še **stereodeskriptor** *(E)* ali
 :::premisli
 Spojino $\mathrm{CH_3{-}CH{=}CH{-}CH(OH){-}CH_3}$ lahko oštevilčiš z leve ali z desne: enkrat dobi nižji lokant dvojna vez, drugič skupina OH. Je pravilno *pent-2-en-4-ol* ali *pent-3-en-2-ol*?
 ---
-Najnižji lokant dobi najprej glavna skupina ($\mathrm{{-}OH}$), šele nato dvojna vez.
+Pravilno je *pent-3-en-2-ol*. Najnižji lokant dobi najprej glavna skupina ($\mathrm{{-}OH}$), šele nato dvojna vez.
 :::
 
 **7. Splošna formula in stopnja nenasičenosti.** Iz imena izračunamo formulo, iz formule pa preverimo ime.
@@ -155,7 +155,7 @@ Prednost: karboksilna kislina $>$ alkohol. Glavna veriga: glavna skupina, nato d
 
 ## Pogoste napake
 
-- **Veriga ni najdaljša.** Ime *2-etilpropan* je napačno: etilna skupina na C2 podaljša verigo na $4$ atome, pravilno ime je *2-metilbutan*. Etilna skupina na C2 ali metilna na C1 sta vedno znak, da veriga ni najdaljša.
+- **Veriga ni najdaljša.** Ime *2-etilpropan* je napačno: etilna skupina na C2 podaljša verigo na $4$ atome, pravilno ime je *2-metilbutan*. Etilna skupina na C2 ali metilna na C1 sta v alkanu vedno znak, da veriga ni najdaljša.
 - **Oštevilčenje z napačnega konca.** *3-metilbutan* ni pravilno; z drugega konca dobimo nižji lokant: *2-metilbutan*. Pri alkoholih: *butan-3-ol* je v resnici *butan-2-ol*.
 - **Množilne predpone pri abecednem vrstnem redu.** *2,2-dimetil-3-etilpentan* je napačno, ker *di-* ne šteje: *e* (etil) je pred *m* (metil), pravilno je *3-etil-2,2-dimetilpentan*.
 - **Napačna glavna skupina.** Pri $\mathrm{HO{-}CH_2{-}CH_2{-}CO{-}CH_3}$ ima keton prednost pred alkoholom: *4-hidroksibutan-2-on*, ne *3-oksobutan-1-ol*.
@@ -218,11 +218,13 @@ V organski kemiji pogosto rišemo **skeletne** (črtne) formule: vsak vrh in kon
 
 Pri iskanju najdaljše verige si pomagaj tako, da s prstom potuješ od enega konca molekule do drugega in šteješ atome. Pri vsakem razvejišču preizkusi vse poti, kot tukaj:
 
-```
-        CH3
-        |
-CH3-CH2-CH-CH3        zapisano kot "veriga s 4 C in metilom"
-```
+:::risba molekula
+opis: Strukturna formula 2-metilbutana. Vodoravna veriga CH₃ – CH₂ – CH – CH₃ s štirimi ogljikovimi atomi; na tretji atom z leve, CH, je navzgor vezana skupina CH₃ (metil).
+---
+            CH3
+            |
+CH3 – CH2 – CH – CH3
+:::
 
 Z leve proti desni preko razvejišča je veriga $\mathrm{CH_3{-}CH_2{-}CH{-}CH_3}$ s štirimi atomi, enako dolga pa je tudi pot, ki pri razvejišču zavije navzgor v skupino $\mathrm{CH_3}$. Ime je *2-metilbutan*, ne glede na to, katero pot izberemo.
 

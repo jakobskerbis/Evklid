@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -45,7 +45,7 @@ Enako velja za tok, $I_{\mathrm{ef}} = \dfrac{I_0}{\sqrt{2}}$, povprečna moč p
 
 V simulaciji spodaj, »Izmenična napetost in efektivna vrednost«, nastavi temensko napetost na $325\,\mathrm{V}$. Opazuj, kje leži črtkana črta $U_{\mathrm{ef}}$ in da je povprečna moč na spodnjem grafu točno na polovici višine grb. Preden spremeniš frekvenco, napovej, kaj se zgodi s povprečno močjo. Nato preveri: grbe se zgostijo, povprečna moč pa ostane enaka.
 
-**5. Nihajni krog.** Doslej je naboje poganjal generator. Ali lahko tok niha tudi sam od sebe? Lahko. Kondenzator s **kapaciteto** $C$ (enota farad, $\mathrm{F}$) nabijemo in ga vežemo na tuljavo z **induktivnostjo** $L$ (enota henri, $\mathrm{H}$). Induktivnost pove, kako močno se tuljava upira spremembi toka. Takemu krogu pravimo **električni nihajni krog**.
+**5. Nihajni krog.** Doslej je naboje poganjal generator. Ali lahko tok niha tudi sam od sebe? Lahko. Kondenzator s **kapaciteto** $C$ (enota farad, $\mathrm{F}$) nabijemo in ga vežemo na tuljavo z **induktivnostjo** $L$ (enota henry, $\mathrm{H}$). Induktivnost pove, kako močno se tuljava upira spremembi toka. Takemu krogu pravimo **električni nihajni krog**.
 
 Kaj se zgodi? Kondenzator se začne prazniti skozi tuljavo. Tok ne more skočiti takoj na največjo vrednost, ker ga inducirana napetost v tuljavi zavira. Ko je kondenzator prazen, tok ne more takoj pasti na nič, ker ga inducirana napetost zdaj poganja naprej. Tok zato kondenzator nabije v nasprotno smer. Nato vse poteka nazaj.
 
@@ -159,7 +159,7 @@ $t_0 = 2\pi \cdot 1{,}58\cdot10^{-7}\,\mathrm{s} \approx 9{,}9\cdot10^{-7}\,\mat
 
 ## Pogoste napake
 
-- **»V vtičnici je največ $230\,\mathrm{V}$.«** Številka na nalepki je efektivna vrednost. Napetost v vrhu doseže $325\,\mathrm{V}$. To je pomembno pri izbiri kondenzatorjev in izolacije, ki morata zdržati vrh, ne povprečja.
+- **»V vtičnici je največ $230\,\mathrm{V}$.«** Številka na nalepki je efektivna vrednost. Napetost v vrhu doseže $325\,\mathrm{V}$. To je pomembno pri izbiri kondenzatorjev in izolacije, ki morajo zdržati vrh, ne efektivne vrednosti.
 - **Efektivna vrednost je polovica temenske.** Učenec si zapomni, da je povprečna moč polovica največje, in razpolovi kar napetost. Ker je moč sorazmerna s kvadratom napetosti, se napetost deli s $\sqrt{2}$, ne z $2$: $U_{\mathrm{ef}} \approx 0{,}71\,U_0$.
 - **Efektivna napetost je povprečna napetost.** Povprečje sinusne napetosti v celem nihaju je nič. Efektivna vrednost ni povprečje napetosti, ampak tista enosmerna napetost, ki da enako povprečno moč.
 - **Štirikrat večji $C$, štirikrat manjša frekvenca.** Pozabljen koren. Lastna frekvenca je obratno sorazmerna s $\sqrt{LC}$, zato štirikrat večji $C$ frekvenco le razpolovi.
@@ -227,7 +227,7 @@ in od tod $\omega^2 = \dfrac{1}{LC}$ ter $t_0 = \dfrac{2\pi}{\omega} = 2\pi\sqrt
 ? Zakaj se v nihajnem krogu kondenzator po izpraznitvi nabije v nasprotno smer, namesto da bi tok kar prenehal?
 - Ker kondenzator naboj odbije nazaj.
 ~ Prazen kondenzator nima naboja, ki bi karkoli odbijal. Tok poganja nekaj drugega.
-+ Ker tuljava zavira vsako spremembo toka: ko tok začne padati, inducirana napetost ga poganja naprej.
++ Ker tuljava zavira vsako spremembo toka: ko tok začne padati, ga inducirana napetost poganja naprej.
 - Ker v krogu teče tok iz vtičnice.
 ~ Nihajni krog ni priključen na omrežje. Niha sam od sebe, z energijo, ki je bila na začetku v kondenzatorju.
 - Ker se energija ob izpraznitvi izgubi in jo mora krog nadomestiti.

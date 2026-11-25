@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -81,7 +81,7 @@ $(\vec{b}, \vec{a}, \vec{c}) = (\vec{b} \times \vec{a}) \cdot \vec{c} = -(\vec{a
 
 $$\vec{r} = \vec{r}_0 + t\,\vec{s}, \quad t \in \mathbb{R}, \qquad \text{oziroma} \qquad \frac{x - x_0}{s_1} = \frac{y - y_0}{s_2} = \frac{z - z_0}{s_3}.$$
 
-Prvi zapis je **parametrični** (vektorski), drugi **kanonični**. Premica skozi točki $A$ in $B$ ima smerni vektor $\overrightarrow{AB}$.
+Prvi zapis je **parametrični** (vektorski), drugi **kanonični** (če je kateri $s_i = 0$, mora biti ustrezni števec enak $0$). Premica skozi točki $A$ in $B$ ima smerni vektor $\overrightarrow{AB}$.
 
 **6. Ravnina.** Ravnino določata točka $T_0$ in **normala** $\vec{n} = (a, b, c)$, pravokotna na ravnino. Za vsako točko $T$ ravnine je $\vec{n} \cdot (\vec{r} - \vec{r}_0) = 0$, kar da
 
@@ -93,7 +93,7 @@ $$d(T_1, \Sigma) = \frac{|ax_1 + by_1 + cz_1 - d|}{\sqrt{a^2 + b^2 + c^2}}.$$
 
 *Izpeljava:* naj bo $T_0$ poljubna točka ravnine. Razdalja je dolžina projekcije vektorja $\overrightarrow{T_0T_1}$ na normalo, torej $\frac{|\vec{n} \cdot (\vec{r}_1 - \vec{r}_0)|}{|\vec{n}|}$; ker je $\vec{n} \cdot \vec{r}_0 = d$, je števec enak $|ax_1 + by_1 + cz_1 - d|$.
 
-Kot med dvema ravninama je kot med normalama; kot $\alpha$ med premico in ravnino izračunamo iz $\sin\alpha = \dfrac{|\vec{s} \cdot \vec{n}|}{|\vec{s}|\,|\vec{n}|}$.
+Kot med dvema ravninama je kot med normalama (če je ta top, vzamemo njegov suplement); kot $\alpha$ med premico in ravnino izračunamo iz $\sin\alpha = \dfrac{|\vec{s} \cdot \vec{n}|}{|\vec{s}|\,|\vec{n}|}$.
 
 **7. Medsebojna lega premic in razdalja točke do premice.** Premici s smernima vektorjema $\vec{s}_1$ in $\vec{s}_2$ skozi točki $T_1$ in $T_2$ sta lahko:
 
@@ -125,7 +125,7 @@ $|\vec{a}| = \sqrt{a_1^2 + a_2^2 + a_3^2}$, $\vec{a} \cdot \vec{b} = a_1b_1 + a_
 1. $|\vec{a}| = \sqrt{1 + 4 + 4} = \sqrt{9} = 3$, $|\vec{b}| = \sqrt{9 + 0 + 16} = 5$.
 2. $\vec{a} \cdot \vec{b} = 1 \cdot 3 + 2 \cdot 0 + 2 \cdot 4 = 11$.
 3. $\cos\varphi = \dfrac{11}{3 \cdot 5} = \dfrac{11}{15} \approx 0{,}733$.
-4. $\varphi = \arccos 0{,}733 \approx 42{,}8^\circ$ (v radianih $\approx 0{,}748$).
+4. $\varphi = \arccos\frac{11}{15} \approx 42{,}8^\circ$ (v radianih $\approx 0{,}748$).
 5. Odgovor: $|\vec{a}| = 3$, $|\vec{b}| = 5$, $\vec{a} \cdot \vec{b} = 11$, vektorja oklepata kot približno $42{,}8^\circ$.
 
 ### Primer 2
@@ -247,18 +247,19 @@ Utemelji, ali velja: če je $\vec{a} \neq \vec{0}$ in $\vec{a} \times \vec{b} = 
 
 Predstavljaj si dva vektorja, ki izhajata iz iste točke:
 
-```
-            a x b  (kaže iz ravnine, pravilo desne roke)
-              ^
-              |
-              |      b
-              |     /
-              |    /  ploščina = |a x b|
-              |   /___________
-              |  /           /
-              | /  phi      /
-              O-----------> a
-```
+:::risba skica
+opis: Iz točke O izhajata vektorja a in b, ki oklepata kot φ in napenjata paralelogram, katerega ploščina je enaka dolžini vektorja a × b. Vektor a × b izhaja iz O in je pravokoten na ravnino paralelograma; smer določa pravilo desne roke.
+območje: -1,5; -0,8 .. 7,2; 3,6
+lik: 0; 0 -> 4; 0 -> 6; 1,2 -> 2; 1,2 | modra ozadje
+črta: 4; 0 -> 6; 1,2 -> 2; 1,2 | črtkano
+puščica: 0; 0 -> 4; 0 | a | pod | modra debelo
+puščica: 0; 0 -> 2; 1,2 | b | nad levo | zelena debelo
+puščica: 0; 0 -> 0; 3 | a × b | desno | oranžna debelo
+točka: 0; 0 | O | levo
+napis: 1,05; 0,28 | φ
+napis: 4,4; 1,65 | ploščina = dolžina a × b
+podnapis: Vektor a × b je pravokoten na paralelogram, napet na a in b (pravilo desne roke).
+:::
 
 - **Skalarni produkt** je dolžina sence vektorja $\vec{a}$ na smeri $\vec{b}$, pomnožena z $|\vec{b}|$. Če svetimo pravokotno na $\vec{b}$ in sence ni, sta vektorja pravokotna.
 - **Vektorski produkt** je puščica, pravokotna na »list«, na katerem ležita $\vec{a}$ in $\vec{b}$; njena dolžina je ploščina paralelograma. Prste desne roke ukrivi od $\vec{a}$ proti $\vec{b}$, palec kaže smer $\vec{a} \times \vec{b}$.
@@ -290,7 +291,7 @@ Premica torej prebode ravnino v točki $(-2, 4, -5)$ pod kotom približno $9{,}6
 
 ## Drugače: Bolj natančno
 
-**Cauchy-Schwarzeva neenakost.** $|\vec{a} \cdot \vec{b}| \le |\vec{a}|\,|\vec{b}|$, z enakostjo natanko za vzporedna vektorja. Za neničelna vektorja je zato kvocient $\frac{\vec{a} \cdot \vec{b}}{|\vec{a}||\vec{b}|}$ vedno v $[-1, 1]$ in kot je dobro definiran tudi v $\mathbb{R}^n$, kjer si ga ne moremo predstavljati.
+**Cauchy-Schwarzeva neenakost.** $|\vec{a} \cdot \vec{b}| \le |\vec{a}|\,|\vec{b}|$, z enakostjo natanko za vzporedna vektorja (ali ko je kateri ničeln). Za neničelna vektorja je zato kvocient $\frac{\vec{a} \cdot \vec{b}}{|\vec{a}||\vec{b}|}$ vedno v $[-1, 1]$ in kot je dobro definiran tudi v $\mathbb{R}^n$, kjer si ga ne moremo predstavljati.
 
 **Lagrangeova identiteta.** $|\vec{a} \times \vec{b}|^2 = |\vec{a}|^2|\vec{b}|^2 - (\vec{a} \cdot \vec{b})^2$. Ker je desna stran enaka $|\vec{a}|^2|\vec{b}|^2(1 - \cos^2\varphi)$, sledi $|\vec{a} \times \vec{b}| = |\vec{a}||\vec{b}|\sin\varphi$. Identiteto preveriš z razpisom komponent.
 

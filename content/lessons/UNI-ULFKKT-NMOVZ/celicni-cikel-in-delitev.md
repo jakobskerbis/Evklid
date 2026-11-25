@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -33,7 +33,7 @@ Po S fazi je vsak kromosom iz dveh enakih molekul DNA, **sestrskih kromatid**. S
 | po mejozi I (npr. metafaza II) | $n = 23$ | $46$ | $2c$ |
 | po mejozi II | $23$ | $23$ | $c$ |
 
-Za interfazo sledi **faza M**: jedrska delitev (mitoza ali mejoza) in delitev citoplazme (**citokineza**).
+Za interfazo sledi **faza M**: delitev jedra (mitoza ali mejoza) in delitev citoplazme (**citokineza**).
 
 **Mitoza: kopija enaka izvirniku.** Mitoza iz ene diploidne celice naredi dve enaki diploidni celici.
 
@@ -76,7 +76,7 @@ Trditev iz uvoda torej ne drži: dve mitozi bi zahtevali dve S fazi in dali šti
 :::premisli
 Sošolec trdi: »Vsaka delitev razpolovi število kromosomov, saj iz ene celice nastaneta dve.« Za DNA to drži ($4c \to 2c \to c$). Zakaj pa število kromosomov razpolovi le mejoza I, mejoza II pa ne?
 ---
-Ker v anafazi I gresta homologna kromosoma vsak na svoj pol: vsaka celica dobi le enega iz para. V mejozi II se ločita sestrski kromatidi, kar število kromosomov ohrani (kot v mitozi), razpolovi pa količino DNA s $2c$ na $c$.
+Ker v anafazi I gresta homologna kromosoma vsak na svoj pol: vsaka celica dobi le enega iz para. V mejozi II se ločita sestrski kromatidi, kar število kromosomov ohrani (kot v mitozi), razpolovi pa količino DNA z $2c$ na $c$.
 :::
 
 **Kontrolne točke: gradbeni nadzor celice.** Prehode med fazami poganjajo **od ciklinov odvisne kinaze** (CDK). To so encimi, ki fosforilirajo tarčne proteine, aktivni pa so le, kadar je nanje vezan ustrezen ciklin. Koncentracija ciklinov v ciklu narašča in pada, ker jih celica sintetizira in nato razgradi. Kontrolna točka je mehanizem, ki zadrži aktivacijo naslednjega koraka, dokler pogoj ni izpolnjen.
@@ -184,7 +184,7 @@ Anafaza mitoze: $48$ kromosomov z eno kromatido, skupaj $48$ kromatid (vsaka kro
 
 ## Povzetek
 
-- Celični cikel: G1 → S (podvojevanje DNA) → G2 → M (jedrska delitev in citokineza).
+- Celični cikel: G1 → S (podvojevanje DNA) → G2 → M (delitev jedra in citokineza).
 - Po S fazi ima kromosom dve sestrski kromatidi, ki ju drži kohezin; število kromosomov ostane, DNA se podvoji ($2c \to 4c$).
 - Mitoza: separaza razreže kohezin, sestrske kromatide se ločijo; nastaneta dve enaki diploidni celici.
 - Mejoza: ena S faza, dve delitvi. Mejoza I (parjenje, prekrižanje, ločitev homologov) razpolovi število kromosomov; mejoza II loči sestrske kromatide. Nastanejo štiri različne haploidne celice; neodvisno razporejanje da $2^n$ kombinacij.
@@ -219,7 +219,7 @@ Rž ima $2n = 14$, celica v G1 vsebuje približno $16\,\mathrm{pg}$ DNA. (a) Kol
 
 ### Naloga 2
 
-Utemelji, zakaj se v anafazi I ločita homologna kromosoma, sestrski kromatidi pa ostaneta skupaj, in zakaj zato mejoza I razpolovi število kromosomov, mejoza II pa ne. Nato opiši, kako kontrolna točka delitvenega vretena prepreči anafazo, dokler en sam kinetohor ni pripet.
+Utemelji, zakaj se v anafazi I ločita homologna kromosoma, sestrski kromatidi pa ostaneta skupaj, in zakaj zato mejoza I razpolovi število kromosomov, mejoza II pa ne. Nato opiši, kako kontrolna točka delitvenega vretena prepreči anafazo, dokler je vsaj en kinetohor še nepripet.
 
 **Rešitev:**
 
@@ -238,19 +238,43 @@ Materin kromosom nariši z debelo, očetovega s tanko črto; po S fazi je vsak �
 
 Mitoza, v metafazi:
 
-```
-   pol  ←   X (debel)   →  pol
-   pol  ←   X (tanek)   →  pol
-```
+:::risba skica
+opis: Metafaza mitoze. Levo in desno sta pola vretena, na sredini je navpična črtkana ekvatorialna ravnina. Na njej sta eden nad drugim dva kromosoma v obliki črke X: zgornji, materin, je narisan debelo, spodnji, očetov, tanko. Od vsakega kromosoma kažeta puščici na oba pola: sestrski kromatidi gresta vsaka na svoj pol.
+območje: 0; 0 .. 12; 6
+črta: 6; 0,95 -> 6; 5,05 | siva črtkano
+točka: 1; 3 | pol | levo
+točka: 11; 3 | pol | desno
+črta: 5,6; 3,7 -> 6,4; 4,9 | modra debelo
+črta: 5,6; 4,9 -> 6,4; 3,7 | modra debelo
+črta: 5,6; 1,1 -> 6,4; 2,3 | oranžna
+črta: 5,6; 2,3 -> 6,4; 1,1 | oranžna
+puščica: 5,3; 4,2 -> 1,4; 3,2
+puščica: 6,7; 4,2 -> 10,6; 3,2
+puščica: 5,3; 1,8 -> 1,4; 2,8
+puščica: 6,7; 1,8 -> 10,6; 2,8
+napis: 6; 5,1 | materin (debel) | nad | modra
+napis: 6; 0,9 | očetov (tanek) | pod | oranžna
+:::
 
 Vsak pol dobi eno debelo in eno tanko črto.
 
 Mejoza I, v metafazi I:
 
-```
-   pol  ←   X (debel)
-            X (tanek)   →  pol
-```
+:::risba skica
+opis: Metafaza I mejoze. Levo in desno sta pola vretena, na sredini je navpična črtkana ekvatorialna ravnina. Homologna kromosoma v obliki črke X ležita drug ob drugem, vsak na svoji strani ravnine: debeli materin levo, tanki očetov desno. Od materinega kaže ena puščica na levi pol, od očetovega ena puščica na desni pol: vsak kromosom gre cel na svoj pol.
+območje: 0; 0 .. 12; 6
+črta: 6; 0,4 -> 6; 5,6 | siva črtkano
+točka: 1; 3 | pol | levo
+točka: 11; 3 | pol | desno
+črta: 4,8; 2,4 -> 5,6; 3,6 | modra debelo
+črta: 4,8; 3,6 -> 5,6; 2,4 | modra debelo
+črta: 6,4; 2,4 -> 7,2; 3,6 | oranžna
+črta: 6,4; 3,6 -> 7,2; 2,4 | oranžna
+puščica: 4,5; 3 -> 1,4; 3
+puščica: 7,5; 3 -> 10,6; 3
+napis: 5,2; 3,8 | materin (debel) | nad levo | modra
+napis: 6,8; 2,2 | očetov (tanek) | pod desno | oranžna
+:::
 
 Na en pol gre cel debel »X«, na drugega cel tanek; v mejozi II se »X« razpre kot v mitozi.
 
@@ -268,7 +292,7 @@ Na en pol gre cel debel »X«, na drugega cel tanek; v mejozi II se »X« razpre
 ~ Kromosomi so v profazi že podvojeni, vidni postanejo, ker se zgostijo. DNA se podvoji v S fazi.
 + V G2 ima vsak kromosom dve sestrski kromatidi, število kromosomov pa je enako kot v G1.
 - Kontrolna točka G1/S sama popravi poškodovano DNA.
-~ Kontrolna točka cikel le ustavi (npr. p53 → p21 zavre CDK); popravijo ga popravljalni encimi.
+~ Kontrolna točka cikel le ustavi (npr. p53 → p21 zavre CDK); DNA popravijo popravljalni encimi.
 - Mejoza I loči sestrski kromatidi, mejoza II pa homologna kromosoma.
 ~ Vrstni red je obraten: v mejozi I se ločita homologa, v mejozi II sestrski kromatidi.
 > S faza podvoji DNA, ne kromosomov: v G2 je $46$ kromosomov s po dvema kromatidama.

@@ -4,7 +4,7 @@ import { cardFor, configureCard, claimMarks, createMarkPage, pruneTones } from "
 
 configureCard({ t, lang: currentLang, katex: () => window.katex });
 
-export { annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-data.js";
+export { annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary, plainTex } from "./formula-data.js";
 
 // Kartice ne pokažemo pri testih (Preizkus znanja, tekmovanje), ker bi zveza izdala rešitev.
 const blocked = (el) => !!el.closest(".no-fx, button, .choice, label, input, textarea, .sym-key, [contenteditable]");
@@ -27,6 +27,7 @@ function rememberPos(el) {
 function close(fromBack = false) {
   if (!pop || pop.hidden) return false;
   pop.hidden = true;
+  pop.style.transform = pop.style.transition = "";
   openEl?.setAttribute("aria-expanded", "false");
   openEl?.removeAttribute("aria-controls");
   openEl?.classList.remove("fx-open");
@@ -49,11 +50,13 @@ function open(el, { again = false, focus = false } = {}) {
     pop.setAttribute("role", "dialog");
     pop.hidden = true;
     document.body.appendChild(pop);
+    swipe(pop);
   }
   pop.setAttribute("aria-label", card.label);
   if (el.dataset.fxTone) pop.dataset.tone = el.dataset.fxTone;
   else delete pop.dataset.tone;
   pop.innerHTML = `${card.html}<button type="button" class="fx-close" aria-label="${t("fx.close")}">×</button>`;
+  pop.style.transform = pop.style.transition = ""; // ostanek potega, če se je okno med njim zaprlo drugače
   pop.hidden = false;
   openEl = el;
   el.setAttribute("aria-expanded", "true");
@@ -64,6 +67,42 @@ function open(el, { again = false, focus = false } = {}) {
   rememberPos(el);
   if (focus) pop.focus({ preventScroll: true });
   if (!again) hooks.opened?.();
+}
+
+// Telefon: kartico povlečeš navzdol in jo s tem zapreš, kot nakazuje ročaj (j 2026-11-25). Poteg navzgor ali
+// poteg, ko je vsebina kartice odpeljana navzdol, ostane drsenje vsebine. Dovolj je 60 px ali hiter poteg.
+function swipe(p) {
+  let y0 = NaN, t0 = 0, dy = 0, drag = false;
+  p.addEventListener("touchstart", (e) => {
+    drag = false;
+    dy = 0;
+    y0 = p.classList.contains("fx-sheet") && e.touches.length === 1 && p.scrollTop <= 0 ? e.touches[0].clientY : NaN;
+    t0 = performance.now();
+  }, { passive: true });
+  p.addEventListener("touchmove", (e) => {
+    if (Number.isNaN(y0)) return;
+    dy = e.touches[0].clientY - y0;
+    if (!drag && dy < -6) { y0 = NaN; return; }
+    if (!drag && dy > 6) drag = true;
+    if (!drag) return;
+    e.preventDefault();
+    p.style.transition = "none";
+    p.style.transform = `translateY(${Math.max(0, dy)}px)`;
+  }, { passive: false });
+  const end = () => {
+    y0 = NaN;
+    if (!drag || p.hidden) return void (drag = false);
+    drag = false;
+    const fast = dy > 20 && dy / Math.max(1, performance.now() - t0) > 0.5;
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    p.style.transition = calm ? "none" : "transform 0.18s ease-out";
+    if (dy < 60 && !fast) { p.style.transform = ""; return; }
+    p.style.transform = `translateY(${p.offsetHeight + 16}px)`;
+    const was = openEl;
+    setTimeout(() => { if (openEl === was) close(); }, calm ? 0 : 180);
+  };
+  p.addEventListener("touchend", end);
+  p.addEventListener("touchcancel", () => { y0 = NaN; drag = false; p.style.transform = ""; });
 }
 
 // Okno nikoli ne prekrije formule, na katero se nanaša (j, 6. 11.). Računalnik: ob simbolu, pod ali nad celo
@@ -82,12 +121,14 @@ function place(el) {
   const sheet = window.innerWidth <= SHEET_MAX;
   pop.classList.toggle("fx-sheet", sheet);
   if (sheet) {
+    // Plavajoča kartica z odmikom od robov (j 2026-11-25: list, prilepljen na dno, je bil videti kot noga strani).
+    // Nad spodnjim menijem 8 px nad njim; brez menija odmik in varni rob da CSS (.fx-sheet bottom).
     pop.style.width = "";
-    pop.style.left = "0px";
+    pop.style.left = "";
     pop.style.top = "";
-    pop.style.bottom = `${Math.max(0, window.innerHeight - barTop)}px`;
-    pop.style.paddingBottom = barTop < window.innerHeight ? "14px" : ""; // nad menijem varni rob ni potreben
-    const sheetTop = barTop - pop.offsetHeight;
+    pop.style.bottom = barTop < window.innerHeight ? `${window.innerHeight - barTop + 8}px` : "";
+    pop.style.paddingBottom = "";
+    const sheetTop = pop.getBoundingClientRect().top;
     const r = line();
     if (r.bottom + 8 > sheetTop) {
       // Formula pod listom: zdrsni jo nad list (drsni ovoj pogleda ali cela stran).

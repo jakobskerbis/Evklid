@@ -5,7 +5,8 @@
 // tekmovalni trening, nastavitve, meni profila, urnik in izpite; z računi še registracijo,
 // prijavo, Račun in stran za starše. Beleži napake strani in konzole, neuspele zahteve in odgovore
 // ≥ 400, vodoravno drsenje in vidne neprevedene ključe (npr. »nav.path«).
-// Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon]
+// Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon|racuni]
+// (--samo: en del, CI jih zažene tri hkrati; računi tečejo samo brez --samo ali z --samo racuni).
 // Izhod 1, če je kaj narobe. Potrebuje Playwright s Chromiumom (require("playwright")).
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
@@ -95,6 +96,18 @@ function taskAnswer(dbPath, taskId) {
   } finally {
     db.close();
   }
+}
+// Id naloge, ki je zdaj prikazana (app.js renderTask: data-task-id na kartici naloge). Iz zaslona in ne iz odgovorov
+// strežnika: zahteva v ozadju ali odgovor, prebran za izrisom, bi sicer dal id druge naloge. Z »prev« počaka na novo
+// nalogo; vrne null, če je namesto nje prikazan konec (#practice .result).
+async function shownTaskId(p, prev = null) {
+  const h = await p.waitForFunction((old) => {
+    if (old && document.querySelector("#practice .result")) return { id: null };
+    const id = document.querySelector("#practice .card.task[data-task-id]")?.dataset.taskId;
+    return id && id !== old ? { id } : null;
+  }, prev, { timeout: 5000 }).catch(() => null);
+  if (!h) throw new Error(prev ? "nova naloga se ni prikazala" : "ne najdem id prikazane naloge");
+  return (await h.jsonValue()).id;
 }
 function answersFor(a) {
   const round = (v, d) => (d == null ? String(v) : (Math.round(v * 10 ** d + 1e-9) / 10 ** d).toFixed(d));
@@ -209,19 +222,6 @@ function PAGE_HOOKS() {
   requestAnimationFrame(zagonTick);
   // Neobravnavane zavrnitve aplikacija pokaže le kot obvestilo; tukaj jih zabeležimo kot napako.
   addEventListener("unhandledrejection", (e) => console.error(`neobravnavana zavrnitev: ${e.reason?.message || e.reason}`));
-  const f = window.fetch;
-  window.fetch = async (...a) => {
-    const r = await f(...a);
-    try {
-      if (/\/(practice\/next|pretest|competition-training|contest|daily|review|unit-practice|placement|test-prep|answer|skip)$/.test(String(a[0])) && r.ok) {
-        r.clone().json().then((j) => {
-          const t = j.task || j.next?.task;
-          if (t?.id) window.__stmTask = t.id;
-        }).catch(() => {});
-      }
-    } catch {}
-    return r;
-  };
   const raf = window.requestAnimationFrame.bind(window);
   const caf = window.cancelAnimationFrame.bind(window);
   const pending = new Map();
@@ -280,10 +280,44 @@ async function screen(p, name) {
   if (r.down > 1) problem(`${p.label} ${name}`, `cela stran je za ${r.down} px višja od zaslona (drsi stran namesto pogleda)`);
   if (r.raw.length) problem(`${p.label} ${name}`, `neprevedeni ključi: ${r.raw.join(", ")}`);
   if (r.mini?.length) problem(`${p.label} ${name}`, `mali navpični drsnik (▲▼) v: ${r.mini.slice(0, 5).join(", ")} (docs/oblikovanje.md)`);
+  const pokrito = await bubbleCovers(p);
+  if (pokrito.length) problem(`${p.label} ${name}`, `mehurček inštruktorja prekriva: ${pokrito.join(", ")}`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
   }
+}
+// Mehurček inštruktorja (public/okna.js) ne sme prekriti gumba, povezave ali polja (primerjava z Astro 24. 11. 2026:
+// prekrit X na pasu, gumb za pripenjanje v poskusu). Mesto popravi v 400 ms po menjavi pogleda, zato počakamo.
+async function bubbleCovers(p) {
+  // Najprej počakamo (mesto in »umaknjen« se popravita v 400 ms), šele nato preverimo vidnost.
+  if (!(await p.locator("#chat-bubble:not([hidden])").count().catch(() => 0))) return [];
+  await p.waitForTimeout(500);
+  return p
+    .evaluate(() => {
+      const b = document.querySelector("#chat-bubble");
+      // Med vlečenjem (tudi magnet na X) je mehurček pod prstom namenoma kjerkoli.
+      if (!b || b.hidden || ["umaknjen", "scrolling", "dragging", "magnet", "show-x"].some((c) => b.classList.contains(c))) return [];
+      const r = b.querySelector(".cb-main").getBoundingClientRect();
+      const sel = "button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch], .sc-empty p";
+      const out = [];
+      for (const el of document.querySelectorAll(sel)) {
+        if (b.contains(el) || el.closest(".cb-drop, [hidden], [inert]")) continue;
+        const s = el.getBoundingClientRect();
+        if (!s.width || !s.height || getComputedStyle(el).visibility === "hidden") continue;
+        // Prekrivanje vsaj 6 × 6 px, mehurček je tam na vrhu (meni z višjim z-index ga prekrije, to je v redu),
+        // element pa je takoj pod njim (ne pod drugim oknom).
+        const x0 = Math.max(r.left, s.left), x1 = Math.min(r.right, s.right), y0 = Math.max(r.top, s.top), y1 = Math.min(r.bottom, s.bottom);
+        if (x1 - x0 < 6 || y1 - y0 < 6) continue;
+        const sloji = document.elementsFromPoint((x0 + x1) / 2, (y0 + y1) / 2);
+        if (!sloji.length || !b.contains(sloji[0])) continue;
+        const pod = sloji.find((e) => !b.contains(e));
+        if (pod && !el.contains(pod) && !pod.contains(el)) continue;
+        out.push(`${el.nodeName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : ""}${el.getAttribute("aria-label") ? ` »${el.getAttribute("aria-label").slice(0, 30)}«` : ""}`);
+      }
+      return [...new Set(out)].slice(0, 4);
+    })
+    .catch(() => []);
 }
 // Počaka, da se zahteve umirijo (brez fiksnih dolgih čakanj).
 async function settle(p, ms = 150) {
@@ -359,6 +393,11 @@ async function tab(p, view) {
   // Računalnik: zgornja vrstica; telefon: spodnja vrstica ali »Jaz« → seznam.
   const top = p.locator(`.topbar .tab[data-view="${view}"]`);
   if (await top.isVisible()) return click(p, `.topbar .tab[data-view="${view}"]`);
+  // Računalnik: pogledi pod »Jaz« (data-pod-jaz) so na seznamu v »Jaz«.
+  if (view !== "me" && (await p.locator('.topbar .tab[data-view="me"]').isVisible())) {
+    await click(p, '.topbar .tab[data-view="me"]');
+    return click(p, `#view-me [data-go="${view}"]`);
+  }
   await revealBar(p);
   const bottom = p.locator(`#tabbar .tab[data-view="${view}"]`);
   if (await bottom.isVisible()) return click(p, `#tabbar .tab[data-view="${view}"]`);
@@ -422,16 +461,30 @@ async function closeTour(p, how, timeout = 5000) {
   if (!(tv >= 1)) throw new Error(`vodič ni shranjen v profilu (tour_version ${tv})`);
 }
 
-// tour: kako zapreti vodič; stran: »drug pogled« = takoj po vprašalniku odpre Učbenik, vodič pa
-// mora počakati na vrnitev na Učno pot (ne sme se odpreti čez drug pogled).
-async function onboard(p, name, levelSteps, { interests = false, tour = "preskoci", away = false } = {}) {
+// Nov profil (j, 15. 11. 2026): po uvodu takoj Učna pot z »Začni trening«, brez vprašalnika zanimanj,
+// vodiča in kartice mnenja (ta pride od drugega dne). Vprašalnik in vodič pridejo po prvi rešeni nalogi (intro).
+async function onboard(p, name, levelSteps) {
   await expectVisible(p, "#onboard-form", "obrazec za nov profil", 10000);
   await p.fill('#onboard-form input[name="name"]', name);
   for (const val of levelSteps) await click(p, `#onboard-form .lp-opt[data-val="${val}"]`);
   await screen(p, `uvod-${name}`);
   await click(p, '#onboard-form button[type="submit"]', { wait: 300 });
-  // Vprašalnik kotička zanimanj (ob prvem zagonu profila).
-  await expectVisible(p, ".iq-wrap .iq", "vprašalnik zanimanj", 8000);
+  await expectVisible(p, "#view-path #xp-card .hero", "učna pot", 8000);
+  await settle(p, 1200);
+  if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj pred prvo nalogo");
+  if (await p.locator("#tour").isVisible()) throw new Error("vodič pred prvo nalogo");
+  if (await p.locator("#feedback-card").isVisible()) throw new Error("kartica mnenja že prvi dan");
+  await screen(p, `pot-${name}`);
+}
+
+// Po prvi rešeni nalogi, ob prihodu na Učno pot: vprašalnik zanimanj, nato kratek vodič.
+// tour: kako zapreti vodič; away: takoj po vprašalniku odpre Učbenik, vodič pa mora počakati na
+// vrnitev na Učno pot (ne sme se odpreti čez drug pogled).
+async function intro(p, name, { interests = false, tour = "preskoci", away = false } = {}) {
+  await expectVisible(p, ".iq-wrap .iq", "vprašalnik zanimanj po prvi nalogi", 8000);
+  // Gumba vprašalnika sta vidna brez drsenja (noga prilepljena na dno okna).
+  const off = await p.evaluate(() => [...document.querySelectorAll(".iq-wrap .iq-actions button")].some((b) => { const r = b.getBoundingClientRect(); return r.bottom > innerHeight + 1 || r.top < 0; }));
+  if (off) throw new Error("gumba vprašalnika zanimanj nista vidna v oknu");
   await screen(p, `zanimanja-${name}`);
   if (interests) {
     await click(p, '.iq-wrap [data-int="space"]');
@@ -440,14 +493,15 @@ async function onboard(p, name, levelSteps, { interests = false, tour = "preskoc
     await click(p, ".iq-wrap [data-level]");
     await click(p, ".iq-wrap [data-iq=next]");
     await p.fill(".iq-wrap .iq-custom input", "šah");
-    await click(p, ".iq-wrap [data-iq=save]", { wait: 300 });
-  } else if (away)
-    await p.evaluate(() => {
-      document.querySelector(".iq-wrap [data-iq=skip]").click();
+  }
+  const zapri = interests ? ".iq-wrap [data-iq=save]" : ".iq-wrap [data-iq=skip]";
+  if (away)
+    await p.evaluate((sel) => {
+      document.querySelector(sel).click();
       document.querySelector('.topbar .tab[data-view="uci"]').click();
       document.querySelector('#view-uci [data-uci-tab="textbook"]').click();
-    });
-  else await click(p, ".iq-wrap [data-iq=skip]", { wait: 300 });
+    }, zapri);
+  else await click(p, zapri, { wait: 300 });
   await p.locator(".iq-wrap").waitFor({ state: "detached", timeout: 5000 }).catch(() => {
     throw new Error("vprašalnik zanimanj se ni zaprl");
   });
@@ -457,9 +511,11 @@ async function onboard(p, name, levelSteps, { interests = false, tour = "preskoc
     if (await p.locator("#tour").isVisible()) throw new Error("vodič se je odprl čez drug pogled");
     await tab(p, "path");
   }
+  await expectVisible(p, "#tour", "vodič po prvi nalogi", 5000);
+  const steps = (await p.locator("#tour .tour-step").innerText()).trim();
+  if (!/^1 \/ 3$/.test(steps)) throw new Error(`prvi vodič nima 3 korakov (${steps})`);
   await closeTour(p, tour);
   await expectVisible(p, "#view-path #xp-card .hero", "učna pot");
-  await screen(p, `pot-${name}`);
 }
 
 // Odgovor na nalogo prek vmesnika: izbira ali vpis.
@@ -497,8 +553,7 @@ async function practiceTopic(p, db) {
     await click(p, "#ex-next", { wait: 300 });
   }
   await expectVisible(p, "#practice .task .task-text", "naloga");
-  const taskId = await p.evaluate(() => window.__stmTask);
-  if (!taskId) throw new Error("ne najdem id naloge");
+  const taskId = await shownTaskId(p);
   // Lestev namigov do konca.
   let hints = 0;
   for (; hints < 5 && (await p.locator("#hint-btn").isVisible()); hints++) {
@@ -628,14 +683,15 @@ async function chat(p, label) {
   await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
   await settle(p, 300);
   await screen(p, `klepet-${label}`);
-  // Ulomki, vsote in integrali s tipk (j, 4. 11.): predogled nad poljem jih izriše kot formulo.
+  // Ulomki, vsote in integrali s tipk (j, 4. 11.; 14. 11.: izris kar v polju, brez surovega zapisa).
   await p.fill("#input", "Koliko je (3)/(4) + ∑_(n=1)^(5) n in ∫_(0)^(1) (x^(2)) dx?");
-  await expectVisible(p, "#formula-preview .katex .mfrac", "predogled ulomka nad poljem");
-  if (!(await p.locator("#formula-preview .katex .mop").count())) throw new Error("vsota ali integral nista izrisana v predogledu");
+  await expectVisible(p, "#composer .vnos-izris .katex .mfrac", "ulomek izrisan v polju");
+  if (!(await p.locator("#composer .vnos-izris .katex .mop").count())) throw new Error("vsota ali integral nista izrisana v polju");
+  if (!(await p.evaluate(() => document.querySelector("#input").classList.contains("vnos-izrisan")))) throw new Error("surov zapis je viden v polju");
   await screen(p, `klepet-formule-${label}`);
   await p.fill("#input", "");
-  await p.waitForFunction(() => document.querySelector("#formula-preview")?.hidden, null, { timeout: 3000 }).catch(() => {
-    throw new Error("predogled ostane po praznjenju polja");
+  await p.waitForFunction(() => document.querySelector("#composer .vnos-izris")?.hidden, null, { timeout: 3000 }).catch(() => {
+    throw new Error("izris ostane po praznjenju polja");
   });
   // Način v glavi se zamenja kar tam (j, 4. 11.): »Celotna rešitev«, nato nazaj na »Vodenje«.
   for (const want of ["Celotna rešitev", "Vodenje"]) {
@@ -705,6 +761,17 @@ async function chat(p, label) {
   }
 }
 
+// Mehurček inštruktorja: imena delov kalkulatorja, ki jih prekrije (prazno, če je skrit ali nič ne prekrije).
+const covers = () => {
+  const b = document.getElementById("chat-bubble");
+  if (!b || b.hidden) return "";
+  const r = b.getBoundingClientRect();
+  return [...document.querySelectorAll("#view-graph :is(.calc-modes, .sc-keys, .sc-entry, .gc-panel, .gc-zoom)")]
+    .filter((el) => el.offsetParent)
+    .filter((el) => { const q = el.getBoundingClientRect(); return r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top; })
+    .map((el) => el.className.split(" ")[0])
+    .join(", ");
+};
 async function calculator(p, label) {
   await tab(p, "graph");
   await expectVisible(p, "#view-graph #graph-slot > *", "kalkulator");
@@ -712,10 +779,54 @@ async function calculator(p, label) {
     await click(p, `#view-graph [data-calc-mode="${mode}"]`, { wait: 400 });
     const empty = await p.locator("#graph-slot").evaluate((s) => !s.innerText.trim() && !s.querySelector("canvas,svg"));
     if (empty) throw new Error(`kalkulator »${mode}« je prazen`);
+    // Mehurček inštruktorja (po pogovoru) ne prekrije tipk, vnosa ali seznama grafa (okna.js KEEP_CLEAR, pilot 14. 11. 2026).
+    const covered = await p.evaluate(covers);
+    if (covered) throw new Error(`mehurček inštruktorja prekrije ${covered} v kalkulatorju »${mode}«`);
     await screen(p, `kalkulator-${mode}-${label}`);
+    // Telefon ležeče: tipke so čez ves zaslon, zato se mehurček skrije namesto da bi pokril tipko (j 14. 11. 2026).
+    if (mode === "sci" && p.viewportSize().width < 760) {
+      const size = p.viewportSize();
+      await p.setViewportSize({ width: size.height, height: size.width });
+      let lez;
+      try {
+        await settle(p, 300);
+        lez = await p.evaluate(covers);
+      } finally {
+        await p.setViewportSize(size);
+        await settle(p, 300);
+      }
+      if (lez) throw new Error(`mehurček inštruktorja ležeče prekrije ${lez} v kalkulatorju`);
+    }
   }
   // Znanstveni: izračun.
   await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
+  // Tipka Nazaj ob odprti plošči funkcij (⋯) in ob povečanem grafu (telefon) zapre samo to plast, kalkulator ostane
+  // (j, 14. 11. 2026). Klik prek DOM, kot drugje v tem pregledu.
+  const layers = [
+    ["sci", '#view-graph .sc-key[data-ins="#more"]', "#view-graph .sc.sc-panel-open", "plošča funkcij"],
+    ["graph", '#view-graph [data-act="expand"]', "#view-graph .gc.gc-full", "povečan graf"],
+  ];
+  for (const [mode, btn, open, what] of layers) {
+    await click(p, `#view-graph [data-calc-mode="${mode}"]`, { wait: 400 });
+    if (!(await p.locator(btn).isVisible())) continue; // gumb za povečan graf je samo na ozkem zaslonu
+    await p.locator(btn).evaluate((b) => b.click());
+    await settle(p, 200);
+    if (!(await p.locator(open).count())) throw new Error(`ni se odprla plast »${what}«`);
+    await p.goBack();
+    await settle(p, 300);
+    if ((await currentView(p)) !== "view-graph") throw new Error(`tipka Nazaj ob odprti plasti »${what}« zapre kalkulator (${await currentView(p)})`);
+    if (await p.locator(open).count()) throw new Error(`tipka Nazaj ne zapre plasti »${what}«`);
+  }
+  // Nazaj se vrne na prejšnji zavihek kalkulatorja z nedotaknjenim stanjem (j, 24. 11. 2026: povezani zavihki)
+  await click(p, '#view-graph [data-calc-mode="sci"]', { wait: 300 });
+  await p.locator("#view-graph .sc-input").fill("12 + 30");
+  await click(p, '#view-graph [data-calc-mode="tools"]', { wait: 400 });
+  await p.goBack();
+  await settle(p, 400);
+  const active = await p.locator("#view-graph .calc-modes [data-calc-mode].active").getAttribute("data-calc-mode");
+  if ((await currentView(p)) !== "view-graph" || active !== "sci") throw new Error(`Nazaj iz Orodij ni vrnil na Znanstveni (${await currentView(p)}, ${active})`);
+  if ((await p.locator("#view-graph .sc-input").inputValue()) !== "12 + 30") throw new Error("Nazaj na Znanstveni: vnos se je izgubil");
+  await p.locator("#view-graph .sc-input").fill("");
 }
 
 // Premična okna (public/okna.js): ukaz inštruktorju odpre kalkulator v oknu (telefon: spodnji list),
@@ -728,7 +839,10 @@ async function oknaVsi(p) {
   // Okna iz prejšnjih korakov zapremo in jih na koncu vrnemo (sicer bi zavihek odprl okno namesto glavnega pogleda).
   const before = await p.$$eval(".okno[data-view]", (ws) => ws.map((w) => w.dataset.view));
   for (const v of before) await p.evaluate((v) => window.evklid.closeWindow(v), v);
-  const views = await p.$$eval(".topbar .tabs .tab[data-view]", (ts) => ts.filter((t) => !t.hidden).map((t) => t.dataset.view));
+  // Vidni zavihki brez »Jaz« (seznam, ne okno) in brez tistih pod »Jaz« (data-pod-jaz, odprejo se s seznama).
+  const views = await p.$$eval(".topbar .tabs .tab[data-view]", (ts) =>
+    ts.filter((t) => !t.hidden && t.getClientRects().length && t.dataset.view !== "me").map((t) => t.dataset.view),
+  );
   for (const v of views) {
     if (v === "path") continue; // Učna pot je glavni pogled tega koraka
     const ok = await p.evaluate((v) => window.evklid.openWindow(v), v);
@@ -792,6 +906,16 @@ async function okna(p, label) {
   await screen(p, `klepet-prijava-${label}`);
   await click(p, "#view-chat .bug-box .rep-send", { wait: 400 });
   if (await p.locator("#view-chat .bug-box").count()) throw new Error("skrbnikova prijava napake se ni poslala");
+  // Skrbnik: »Predlagaj novo funkcijo« (žarnica) zamenja odprt obrazec za napako in pošlje zahtevo (kind = feature).
+  await click(p, "#chat-bug", { wait: 150 });
+  await click(p, "#chat-idea", { wait: 150 });
+  if ((await p.locator("#view-chat .bug-box").count()) !== 1 || !(await p.locator('#view-chat .bug-box[data-kind="idea"]').count())) throw new Error("žarnica ni zamenjala obrazca za napako z obrazcem za novo funkcijo");
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 100 });
+  await expectVisible(p, "#view-chat .bug-box .rep-err", "opozorilo, da je treba opisati novo funkcijo");
+  await p.fill("#view-chat .bug-box textarea", "Preizkus: zahteva za novo funkcijo");
+  await screen(p, `klepet-funkcija-${label}`);
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 400 });
+  if (await p.locator("#view-chat .bug-box").count()) throw new Error("skrbnikova zahteva za novo funkcijo se ni poslala");
   await p.fill("#input", "Pokaži periodni sistem");
   await click(p, "#send", { wait: 300 });
   await expectVisible(p, '.okno[data-view="graph"] #graph-slot .pse, .okno[data-view="graph"] #graph-slot > *', "kalkulator v oknu po ukazu inštruktorju", 8000);
@@ -922,9 +1046,11 @@ async function competition(p, label, view = "competition") {
   await click(p, `#${view}-content [data-comp-train]`, { wait: 400 });
   await expectVisible(p, "#practice .task", "naloga tekmovalnega treninga");
   // Trening do konca: »Ne vem« ni, zato odgovorimo pravilno ali narobe, dokler ni konec.
+  let id = null;
   for (let i = 0; i < 12; i++) {
     if (await p.locator("#practice .result").isVisible()) break;
-    const id = await p.evaluate(() => window.__stmTask);
+    id = await shownTaskId(p, id);
+    if (!id) break;
     const { right, wrong } = answersFor(taskAnswer(p.db, id));
     await answerTask(p, p.db, i % 2 ? wrong || right : right || wrong);
     if (await p.locator("#fb-retry").isVisible()) {
@@ -1011,6 +1137,32 @@ async function examsView(p, label) {
   await p.waitForTimeout(200);
   if (await p.locator(".pv").count()) throw new Error("Esc ne zapre prenesene pole");
   await p.setViewportSize(size);
+  // Naloga pole, omenjena v klepetu (public/naloga-pole.js): manjkajoča pola → gumbi; nato naša naloga z opombo,
+  // »Odpri v Evklidovi poli« in izvirnik (napačna pola RIC se ne odpre, prava se odpre).
+  await tab(p, "chat");
+  await p.fill("#input", "matura mat OR 2024 naloga B4");
+  await click(p, "#send", { wait: 500 });
+  await expectVisible(p, ".paper-note [data-np-add]", "vprašanje po izpitni poli v klepetu");
+  await screen(p, `naloga-pole-vprasanje-${label}`);
+  await click(p, ".paper-note [data-np-add]:nth-child(2)", { wait: 800 }); // 2. izpitna pola
+  await expectVisible(p, ".paper-note [data-np-ours]", "Evklidova naloga v klepetu", 8000);
+  const asked = await p.locator("#messages .msg.user").last().innerText();
+  if (!/B4\. naloga/.test(asked) || /pola 2/.test(asked)) throw new Error(`naloga pole v klepetu: nepričakovano sporočilo »${asked.slice(0, 120)}«`);
+  await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
+  await screen(p, `naloga-pole-klepet-${label}`);
+  await p.locator(".paper-note [data-np-file]").last().setInputFiles({ ...pdf, name: "M241-401-1-1.pdf" });
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("izvirnik: odprla se je napačna pola (1 namesto 2)");
+  await p.locator(".paper-note [data-np-file]").last().setInputFiles({ ...pdf, name: "M241-401-1-2.pdf" });
+  await expectVisible(p, ".pv .pv-page", "izvirnik iz klepeta", 15000);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(200);
+  await click(p, ".paper-note [data-np-ours]", { wait: 800 });
+  await expectVisible(p, ".pv.op .op-task", "Evklidova pola iz klepeta", 8000);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(200);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre Evklidove pole, odprte iz klepeta");
+  await tab(p, "exams");
   // Pole sledijo čipom na vrhu; »Druge pretekle pole« odpre izbiro po korakih (drobtine vrnejo korak, izbira ga zapre).
   if (await p.locator("#exam-papers .lp-opt").count()) throw new Error("pri polah je še drug izbirnik šole/izpita");
   await click(p, "#exam-papers [data-pp-other]", { wait: 200 });
@@ -1059,6 +1211,42 @@ async function lab(p, label) {
   await click(p, "#view-lab .lab-card [data-lab-open]", { wait: 300 });
   await expectVisible(p, opened, "odprt poskus");
   await screen(p, `poskus-${label}`);
+  // »Vprašaj inštruktorja« v poskusu (odklenjenem): klepet z vpisanim vprašanjem, gumb »Nazaj na: …« vrne v isti poskus.
+  const ask = p.locator("#view-lab [data-lab-ask]");
+  if (await ask.count()) {
+    const naslov = ((await p.locator("#view-lab .lab-title span").textContent()) || "").trim();
+    await ask.click();
+    await settle(p, 300);
+    if ((await currentView(p)) !== "view-chat") throw new Error("»Vprašaj inštruktorja« v poskusu ne odpre klepeta");
+    if (!(await p.locator("#input").inputValue()).includes(naslov)) throw new Error("v klepetu ni vpisano ime poskusa");
+    await expectVisible(p, "#chat-return", "gumb »Nazaj na: …« v klepetu");
+    if (!((await p.locator("#chat-return").textContent()) || "").includes(naslov)) throw new Error("gumb »Nazaj na: …« nima imena poskusa");
+    // Faza B: vrstica »Inštruktor bo videl …« in posnetek stanja (server/ucni-kontekst.js) z naslednjim sporočilom.
+    await expectVisible(p, "#chat-kontekst", "vrstica »Inštruktor bo videl …«");
+    await screen(p, `poskus-vprasaj-${label}`);
+    await p.locator("#input").fill(`${await p.locator("#input").inputValue()}zakaj?`);
+    const [req] = await Promise.all([
+      p.waitForRequest((r) => r.method() === "POST" && /\/api\/conversations\/\d+\/messages$/.test(r.url()), { timeout: 10000 }),
+      p.locator("#send").click(),
+    ]);
+    const k = JSON.parse(req.postData() || "{}").kontekst;
+    if (k?.sourceType !== "lab" || !k.sourceId) throw new Error(`sporočilo iz poskusa nima posnetka stanja (${JSON.stringify(k)})`);
+    if (!k.parameters?.length) throw new Error("posnetek poskusa nima nobene nastavitve");
+    await (await req.response())?.finished(); // odgovor (SSE) do konca, preden zapustimo klepet
+    await settle(p, 500);
+    if (await p.locator("#chat-kontekst").isVisible()) throw new Error("vrstica »Inštruktor bo videl …« ostane po poslanem sporočilu");
+    await click(p, "#chat-return", { wait: 300 });
+    if ((await currentView(p)) !== "view-lab") throw new Error("»Nazaj na: …« ne vrne v laboratorij");
+    await expectVisible(p, "#view-lab .lab-mount .demo-reset", "isti poskus po vrnitvi iz klepeta");
+    if (((await p.locator("#view-lab .lab-title span").textContent()) || "").trim() !== naslov) throw new Error("po vrnitvi iz klepeta je odprt drug poskus");
+    // Tipka Nazaj v klepetu vodi prav tako nazaj v poskus.
+    await ask.click();
+    await settle(p, 300);
+    await p.locator("#input").fill("");
+    await p.goBack();
+    await settle(p, 300);
+    if ((await currentView(p)) !== "view-lab" || !(await p.locator("#view-lab .lab-mount .demo-reset").count())) throw new Error("tipka Nazaj iz klepeta ne vrne v poskus");
+  }
   // »Povečaj risbo« (ozek zaslon): tipka Nazaj zapre le povečavo, poskus ostane odprt; ozadje ni več neodzivno (inert).
   const zoom = p.locator("#view-lab .lab-mount .lab-zoom");
   if ((await zoom.count()) && (await zoom.isVisible())) {
@@ -1088,6 +1276,12 @@ async function lab(p, label) {
   await expectVisible(p, opened, "odprt poskus");
   await p.keyboard.press("Escape");
   await expectVisible(p, "#view-lab .lab-card", "seznam po Esc");
+  await click(p, "#view-lab .lab-card [data-lab-topic]", { wait: 300 });
+  await expectVisible(p, "#view-textbook .tb-title", "tema učbenika iz laboratorija");
+  // Tipka Nazaj iz te lekcije vrne v Laboratorij (ne na kazalo učbenika); nato znova v isto temo.
+  await p.goBack();
+  await settle(p, 300);
+  if ((await currentView(p)) !== "view-lab") throw new Error("Nazaj iz lekcije, odprte v laboratoriju, ne vrne v laboratorij");
   await click(p, "#view-lab .lab-card [data-lab-topic]", { wait: 300 });
   await expectVisible(p, "#view-textbook .tb-title", "tema učbenika iz laboratorija");
   // Iz lekcije en dotik nazaj v isti poskus (»Uči se«: povezava iz kataloga, textbook.js .tb-links).
@@ -1273,8 +1467,10 @@ async function flashcards(p) {
 }
 
 async function feedback(p, label) {
-  const t = p.locator('.topbar .tab[data-view="feedback"]');
-  if (!(await t.isVisible()) && !(await p.locator("#tabbar").evaluate((b) => getComputedStyle(b).display !== "none"))) return;
+  // Zavihek je na računalniku pod »Jaz«: šteje atribut hidden, ne vidnost.
+  const on = await p.locator("#feedback-tab").evaluate((t) => !t.hidden);
+  const meTop = await p.locator('.topbar .tab[data-view="me"]').isVisible();
+  if (!(on && meTop) && !(await p.locator("#tabbar").evaluate((b) => getComputedStyle(b).display !== "none"))) return;
   await tab(p, "feedback");
   await settle(p, 300);
   if ((await currentView(p)) !== "view-feedback") throw new Error("Mnenje se ni odprlo");
@@ -1287,8 +1483,10 @@ async function desktop(browser, app) {
   const p = await newPage(browser, false, "pc", app.base);
   p.db = app.db;
   await p.goto(app.base + "/");
-  await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"], { interests: true, tour: "vse" }));
+  await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"]));
   await step(p, "naloga", () => practiceTopic(p, app.db));
+  // away: vodič počaka na vrnitev na Učno pot (SŠ uvoda nima več, zato to preveri osnovnošolka).
+  await step(p, "zanimanja-vodic", () => intro(p, "Ana", { interests: true, tour: "vse", away: true }));
   await step(p, "dnevni-trening", async () => {
     await click(p, "#xp-card [data-daily]", { wait: 400 });
     await expectVisible(p, "#practice .task, #practice .result, #practice p", "dnevni trening");
@@ -1345,15 +1543,32 @@ async function desktop(browser, app) {
   });
   // Drugi in tretji profil: »Dodaj profil« iz menija profila.
   for (const [name, levels, lbl, opts] of [
-    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { tour: "esc", away: true }],
-    ["Cene", ["UNIVERZA", "UL", "UL-FMF", "UL-FMF-MAT", "1. letnik"], "UNI", { tour: "preskoci" }],
+    // SŠ (j, 20. 11. 2026): brez vprašalnika zanimanj in vodiča tudi po prvi nalogi; vodič iz Nastavitev se zapre z Esc.
+    ["Bor", ["SREDNJA_SOLA", "2. letnik", "VR"], "SS", { intro: true, noIntro: true }],
+    ["Cene", ["UNIVERZA", "UL", "UL-FMF", "UL-FMF-MAT", "1. letnik"], "UNI", {}],
   ]) {
     await step(p, `nov-profil-${lbl}`, async () => {
       await click(p, "#profile-btn");
       await click(p, '#profile-pop [data-act="add"]', { wait: 300 });
       await p.fill('#new-student-form input[name="name"]', name);
       await click(p, '#new-student-form button[type="submit"]', { wait: 400 });
-      await onboard(p, name, levels, opts);
+      await onboard(p, name, levels);
+      // Prva rešena naloga brez klikanja skozi temo: oznaka v profilu (kot jo shrani odgovor), nato osvežitev.
+      if (opts.intro) {
+        await p.evaluate(async () => {
+          await fetch(`/api/students/${localStorage.getItem("studentId")}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: { first_task: 1 } }) });
+        });
+        await p.reload();
+        if (opts.noIntro) {
+          await expectVisible(p, "#view-path #xp-card .hero", "učna pot", 8000);
+          await settle(p, 2500);
+          if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj v srednji šoli");
+          if (await p.locator("#tour").isVisible()) throw new Error("vodič v srednji šoli");
+          await tab(p, "settings");
+          await click(p, "#tour-again", { wait: 200 });
+          await closeTour(p, "esc");
+        } else await intro(p, name, opts);
+      }
     });
     await step(p, `pot-${lbl}`, async () => {
       await click(p, "#xp-card .next-row[data-open]", { wait: 300 });
@@ -1368,11 +1583,11 @@ async function desktop(browser, app) {
     if (lbl === "SS") await step(p, `npz-matura-${lbl}`, () => examsView(p, lbl));
     if (lbl === "UNI")
       await step(p, "faks-brez-npz", async () => {
-        if (await p.locator("#exams-tab").isVisible()) throw new Error("fakulteta ima zavihek NPZ in matura");
+        if (await p.locator("#exams-tab").evaluate((t) => !t.hidden)) throw new Error("fakulteta ima zavihek NPZ in matura");
       });
     if (lbl === "UNI")
       await step(p, "faks-brez-tekmovanj", async () => {
-        if (await p.locator("#competition-tab").isVisible()) throw new Error("fakulteta ima zavihek Tekmovanja");
+        if (await p.locator("#competition-tab").evaluate((t) => !t.hidden)) throw new Error("fakulteta ima zavihek Tekmovanja");
       });
     await views(p, lbl);
   }
@@ -1390,7 +1605,7 @@ async function desktop(browser, app) {
     await expectVisible(p, "#view-path #xp-card .hero", `učna pot po osvežitvi (${p.url()})`, 8000);
     await tab(p, "competition");
     await expectVisible(p, "#competition-content [data-comp-train]", "izpiti");
-    if (await p.locator("#exams-tab").isVisible()) throw new Error("regijski sistem ima zavihek NPZ in matura");
+    if (await p.locator("#exams-tab").evaluate((t) => !t.hidden)) throw new Error("regijski sistem ima zavihek NPZ in matura");
     await screen(p, "izpiti");
     await click(p, "#competition-content [data-comp-train]", { wait: 400 });
     await expectVisible(p, "#practice .task", "naloga izpitnega treninga");
@@ -1414,8 +1629,10 @@ async function uciPhone(p) {
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (over > 1) throw new Error(`Uči se → ${v}: vodoravno drsenje (${over} px)`);
   }
-  await expectVisible(p, "#view-3d .uci-3d-card", "kartice 3D sveta", 8000);
+  await expectVisible(p, "#view-3d .uci-3d-veja", "veje drevesa 3D sveta", 8000);
   await screen(p, "uci-3d");
+  await click(p, '#view-3d .uci-3d-veja[data-pot="matematika"]', { wait: 300 });
+  await expectVisible(p, "#view-3d .uci-3d-card", "modeli v veji Matematika", 8000);
   await click(p, "#view-3d .uci-3d-card", { wait: 300 });
   // Okvir je istega izvora in si deli glavno nit: gradnja prizora (swiftshader) lahko za nekaj sekund ustavi strani.
   await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(async () => {
@@ -1427,6 +1644,29 @@ async function uciPhone(p) {
   await frame.locator("#k3-glavni > *").first().waitFor({ state: "attached", timeout: 20000 }).catch(() => {
     throw new Error("stran /3d se v okvirju ni naložila");
   });
+  // »Vprašaj inštruktorja« v oknu izbranega dela: klepet z vpisanim vprašanjem, »Nazaj na: …« odpre isti model z istim delom.
+  const delGumb = frame.locator(".k3-deli [data-del]").first();
+  await delGumb.waitFor({ state: "attached", timeout: 30000 }).catch(() => {
+    throw new Error("model v okvirju nima seznama delov");
+  });
+  const delId = await delGumb.getAttribute("data-del");
+  await delGumb.evaluate((b) => b.click());
+  await frame.locator(".k3-info .k3-vprasaj").waitFor({ state: "attached", timeout: 15000 }).catch(() => {
+    throw new Error("okno dela nima gumba »Vprašaj inštruktorja«");
+  });
+  await screen(p, "uci-3d-del");
+  await frame.locator(".k3-info .k3-vprasaj").evaluate((b) => b.click());
+  await settle(p, 400);
+  if (await p.locator(".uci-3d-full").count()) throw new Error("»Vprašaj inštruktorja« v 3D ne zapre okvirja");
+  if ((await currentView(p)) !== "view-chat") throw new Error("»Vprašaj inštruktorja« v 3D ne odpre klepeta");
+  if (!(await p.locator("#input").inputValue()).trim()) throw new Error("v klepetu ni vpisanega vprašanja iz 3D");
+  await expectVisible(p, "#chat-return", "gumb »Nazaj na: …« po vprašanju iz 3D");
+  await screen(p, "uci-3d-vprasaj");
+  await p.locator("#input").fill("");
+  await click(p, "#chat-return", { wait: 400 });
+  const nazaj3d = (await p.locator(".uci-3d-full iframe").getAttribute("src").catch(() => "")) || "";
+  if (!nazaj3d.includes(`del=${encodeURIComponent(delId)}`)) throw new Error(`»Nazaj na: …« ne odpre istega modela in dela (${nazaj3d || "brez okvirja"})`);
+  if ((await currentView(p)) !== "view-3d") throw new Error(`pod 3D po vrnitvi iz klepeta je ${await currentView(p)}`);
   await p.goBack();
   await settle(p, 300);
   if (await p.locator(".uci-3d-full").count()) throw new Error("tipka Nazaj ne zapre 3D čez cel zaslon");
@@ -1457,7 +1697,7 @@ async function uciPhone(p) {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
     return f;
   });
-  if (!/^\/3d\?vgrajeno=1(&raven=[123])?#[a-z0-9]+(-[a-z0-9]+)*$/.test(src)) throw new Error(`»Poglej v 3D« v lekciji ne odpre modela (${src || "brez okvirja"})`);
+  if (!/^\/3d\?vgrajeno=1(&raven=[123])?#[a-z0-9]+(-[a-z0-9]+)*(\?[\w%.-]+=[\w%.-]+(&[\w%.-]+=[\w%.-]+)*)?$/.test(src)) throw new Error(`»Poglej v 3D« v lekciji ne odpre modela (${src || "brez okvirja"})`);
   if (await p.locator(".uci-3d-full").count()) throw new Error("Esc ne zapre 3D modela iz lekcije");
   await closeLesson();
   await uciTb("FIZ-OS-8/gostota");
@@ -1480,6 +1720,17 @@ async function phone(browser, app) {
     await expectVisible(p, "#view-path #xp-card .hero", "učna pot na telefonu", 8000);
     if (!(await p.locator("#tabbar").isVisible())) throw new Error("spodnja vrstica ni vidna");
     await screen(p, "pot");
+  });
+  // Prvi zaslon: vrstica »Skeniraj nalogo« pod današnjim treningom odpre skener (j, 18. 11. 2026).
+  await step(p, "tel-pot-skeniraj", async () => {
+    await click(p, "#xp-card [data-scan-home]", { wait: 300 });
+    if ((await currentView(p)) !== "view-scan") throw new Error("»Skeniraj nalogo« na Učni poti ne odpre skenerja");
+    // »←« v skenerju vodi nazaj, od koder je učenec prišel (Učna pot), ne na Jaz.
+    await click(p, "#view-scan .me-back", { wait: 300 });
+    if ((await currentView(p)) !== "view-path") throw new Error(`»←« iz skenerja, odprtega z Učne poti, odpre ${await currentView(p)}`);
+    if (await p.locator('#goal-modes [data-gm="scan"]').count()) throw new Error("»Skeniraj nalogo« je na Učni poti dvakrat (tudi med bližnjicami cilja)");
+    await barTab(p, "path", { wait: 300 });
+    await expectVisible(p, "#view-path #xp-card .hero", "učna pot po vrnitvi iz skenerja", 8000);
   });
   // Vodič na telefonu: »Ponovi uvodni ogled« v Nastavitvah, vsi koraki (zavihki pod »Jaz« se preskočijo).
   await step(p, "tel-vodic", async () => {
@@ -1531,7 +1782,7 @@ async function phone(browser, app) {
       await p.goBack();
       await settle(p, 300);
       const now = await currentView(p);
-      if (now !== "view-me" && v !== "graph") throw new Error(`tipka Nazaj z »${v}« vodi na ${now} namesto na »Jaz«`);
+      if (now !== "view-me") throw new Error(`tipka Nazaj z »${v}« vodi na ${now} namesto na »Jaz«`);
     });
   }
   await step(p, "tel-naloga", async () => {
@@ -1753,9 +2004,21 @@ async function accounts(browser, app) {
     await p.fill('#auth-form input[name="password"]', "geslo1234");
     await p.fill('#auth-form input[name="birth_date"]', "1985-04-02");
     await p.check('#auth-form input[name="accept_privacy"]');
+    await p.check('#auth-form input[name="accept_terms"]');
     await screen(p, "registracija");
     await click(p, '#auth-form button[type="submit"]', { wait: 400 });
+    // Potrditev e-naslova ni zid pred profilom (#747): najprej obrazec za profil; profil za otroka (soglasje starša)
+    // pa šele po potrditvi, zato odda obrazec za otroka zaslon »Potrdi e-naslov«.
+    await expectVisible(p, "#child-form", "obrazec za profil pred potrditvijo", 8000);
+    await p.check('#child-form input[name="whose"][value="child"]');
+    await p.fill('#child-form input[name="name"]', "Miha");
+    for (const val of ["OSNOVNA_SOLA", "7. razred"]) await click(p, `#child-form .lp-opt[data-val="${val}"]`);
+    await p.selectOption('#child-form select[name="birth_year"]', String(new Date().getFullYear() - 12));
+    await p.check('#child-form input[name="consent"]');
+    p.allow = [/^403 \/api\/students$/];
+    await click(p, '#child-form button[type="submit"]', { wait: 600 });
     await expectVisible(p, "#verify-done", "potrditev e-naslova");
+    p.allow = [];
     await screen(p, "potrditev");
     const href = await p.locator('#view-auth a[href*="/api/auth/verify"]').getAttribute("href");
     await p.goto(href);
@@ -1772,14 +2035,16 @@ async function accounts(browser, app) {
     await p.check('#child-form input[name="consent"]');
     await screen(p, "otrok");
     await click(p, '#child-form button[type="submit"]', { wait: 600 });
-    await expectVisible(p, ".iq-wrap .iq", "vprašalnik zanimanj otroka", 8000);
-    await click(p, ".iq-wrap [data-iq=skip]", { wait: 300 });
-    await closeTour(p, "preskoci");
-    await expectVisible(p, "#view-path #xp-card .hero", "učna pot otroka");
+    // Pred prvo nalogo ni vprašalnika zanimanj in vodiča (j, 15. 11. 2026).
+    await expectVisible(p, "#view-path #xp-card .hero", "učna pot otroka", 8000);
+    await settle(p, 1200);
+    if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj otroka pred prvo nalogo");
+    if (await p.locator("#tour").isVisible()) throw new Error("vodič otroka pred prvo nalogo");
     await screen(p, "pot-otroka");
   });
   await step(p, "racun", async () => {
-    await click(p, "#account-tab", { wait: 500 });
+    await tab(p, "account");
+    await settle(p, 500);
     await expectVisible(p, "#view-account #logout-btn", "Račun");
     await screen(p, "racun");
   });
@@ -1790,7 +2055,8 @@ async function accounts(browser, app) {
   });
   await step(p, "klepet-racun", () => chat(p, "racun"));
   await step(p, "odjava-prijava", async () => {
-    await click(p, "#account-tab", { wait: 400 });
+    await tab(p, "account");
+    await settle(p, 400);
     await click(p, "#logout-btn", { wait: 500 });
     await expectVisible(p, "#auth-form", "prijava po odjavi", 8000);
     await p.fill('#auth-form input[name="email"]', email);
@@ -1858,16 +2124,25 @@ async function accounts(browser, app) {
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
   const browser = await chromium.launch();
   try {
-    const app = await startServer();
-    if (ONLY !== "telefon") await desktop(browser, app);
-    if (ONLY !== "racunalnik") await phone(browser, app);
-    if (ACCOUNTS && !ONLY) {
+    if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
+    const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik
+    if (!ONLY || ONLY === "racunalnik") await desktop(browser, app);
+    if (ONLY === "telefon") {
+      // Samo telefon (CI ga zažene hkrati z računalnikom): prvi profil, ki ga sicer ustvari del »računalnik«.
+      const p = await newPage(browser, false, "pc", app.base);
+      p.db = app.db;
+      await p.goto(app.base + "/");
+      await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"]));
+      await p.context().close();
+    }
+    if (!ONLY || ONLY === "telefon") await phone(browser, app);
+    if (ACCOUNTS && (!ONLY || ONLY === "racuni")) {
       const acc = await startServer({ EVKLID_ACCOUNTS: "1" });
       await accounts(browser, acc);
       const bad = acc.log.join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
       bad.forEach((l) => problem("strežnik (računi)", l.slice(0, 200)));
     }
-    const bad = app.log.join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
+    const bad = (app?.log || []).join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
     bad.forEach((l) => problem("strežnik", l.slice(0, 200)));
   } finally {
     await browser.close();

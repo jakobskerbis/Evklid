@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -35,7 +35,7 @@ Pri zapisu s števkami gremo v obratni smeri. Vsak razred, razen skrajno levega,
 
 **Mestna vrednost.** Ista števka ima različno vrednost glede na mesto, kjer stoji. V številu $6\,080\,250$ pomeni osmica $80\,000$, petica pa le $50$. Vsako mesto je **desetkrat** vredno toliko kot mesto desno od njega. Imena mest od desne: enice, desetice, stotice, tisočice, desettisočice, stotisočice, milijoni.
 
-Ničla na nekem mestu pove, da tam ni ničesar. Kljub temu je pomembna, saj drži ostale števke na pravih mestih. $6\,080\,250$ in $680\,250$ se razlikujeta samo za eno ničlo, prvo število pa je skoraj desetkrat večje.
+Ničla na nekem mestu pove, da tam ni ničesar. Kljub temu je pomembna, saj drži ostale števke na pravih mestih. $6\,080\,250$ in $680\,250$ se razlikujeta samo za eno ničlo, prvo število pa je skoraj devetkrat večje.
 
 **Milijon in milijarda.** Tisoč tisočev je milijon: $1\,000 \cdot 1\,000 = 1\,000\,000$. Tisoč milijonov je milijarda, zapišemo jo z enico in devetimi ničlami.
 
@@ -45,7 +45,7 @@ Ničla na nekem mestu pove, da tam ni ničesar. Kljub temu je pomembna, saj drž
 Večji je milijon, in sicer za $1$. Ko devetici na mestu enic prišteješ ena, nastane prenos skozi vsa mesta in dobiš sedemmestno število. Odloča število mest, ne velikost števk.
 :::
 
-**Urejanje.** Stanovanje A stane $285\,400$ €, stanovanje B $258\,900$ €. Obe števili imata šest mest. Zato primerjamo števke od leve: stotisočice sta pri obeh $2$, desettisočice pa $8$ in $5$. Ker je $8 > 5$, je A dražje: $285\,400 > 258\,900$.
+**Urejanje.** Stanovanje A stane $285\,400$ €, stanovanje B $258\,900$ €. Obe števili imata šest mest. Zato primerjamo števke od leve: stotisočici sta pri obeh $2$, desettisočici pa $8$ in $5$. Ker je $8 > 5$, je A dražje: $285\,400 > 258\,900$.
 
 Splošno pravilo za naravni števili:
 

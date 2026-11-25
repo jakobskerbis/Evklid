@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -143,7 +143,7 @@ Iz $\rho = \dfrac{n\,M}{a^3 N_\mathrm{A}}$ izrazimo $n = \dfrac{\rho\, a^3 N_\ma
 
 ### Primer 4: zdaj ti – vrzeli v vročem aluminiju
 
-Aluminij pri vlivanju posod segrejemo na $600\,^\circ\mathrm{C}$. Energija za nastanek vrzeli je $0{,}68\,\mathrm{eV}$. Kolikšen delež mest v mreži je prazen?
+Kos čistega aluminija segrejemo na $600\,^\circ\mathrm{C}$, tik pod tališče ($660\,^\circ\mathrm{C}$). Energija za nastanek vrzeli je $0{,}68\,\mathrm{eV}$. Kolikšen delež mest v mreži je prazen?
 
 **Podatki:** $T = 600\,^\circ\mathrm{C}$, $Q_\mathrm{v} = 0{,}68\,\mathrm{eV}$, $k = 8{,}617\cdot10^{-5}\,\mathrm{eV/K}$
 **Iščemo:** delež vrzeli $N_\mathrm{v}/N$
@@ -195,18 +195,18 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Železo se pri $912\,^\circ\mathrm{C}$ preobrazi iz BCC v FCC. Pri tej temperaturi je polmer atoma v mreži BCC $0{,}1258\,\mathrm{nm}$, v mreži FCC pa $0{,}1292\,\mathrm{nm}$; $M = 55{,}85\,\mathrm{g/mol}$. (a) Izračunaj mrežna parametra obeh mrež. (b) Za koliko odstotkov se ob preobrazbi spremeni prostornina kosa železa? (c) Izračunaj gostoti obeh faz pri $912\,^\circ\mathrm{C}$.
+Železo se pri $912\,^\circ\mathrm{C}$ preobrazi iz BCC v FCC. Pri tej temperaturi je polmer atoma v mreži BCC $0{,}1258\,\mathrm{nm}$, v mreži FCC pa $0{,}1289\,\mathrm{nm}$; $M = 55{,}85\,\mathrm{g/mol}$. (a) Izračunaj mrežna parametra obeh mrež. (b) Za koliko odstotkov se ob preobrazbi spremeni prostornina kosa železa? (c) Izračunaj gostoti obeh faz pri $912\,^\circ\mathrm{C}$.
 
 **Rešitev:**
 
 1. BCC: $a_\mathrm{B} = \dfrac{4R}{\sqrt3} = \dfrac{4 \cdot 0{,}1258}{\sqrt3}\,\mathrm{nm} \approx 0{,}2905\,\mathrm{nm}$.
-2. FCC: $a_\mathrm{F} = 2\sqrt2\,R = 2\sqrt2 \cdot 0{,}1292\,\mathrm{nm} \approx 0{,}3654\,\mathrm{nm}$.
-3. Število atomov se ne spremeni, zato primerjamo prostornino na atom. BCC: $\dfrac{a_\mathrm{B}^3}{2} = \dfrac{0{,}024521}{2}\,\mathrm{nm^3} \approx 0{,}012261\,\mathrm{nm^3}$.
-4. FCC: $\dfrac{a_\mathrm{F}^3}{4} = \dfrac{0{,}048800}{4}\,\mathrm{nm^3} \approx 0{,}012200\,\mathrm{nm^3}$.
-5. Relativna sprememba: $\dfrac{0{,}012200 - 0{,}012261}{0{,}012261} \approx -0{,}0049 = -0{,}49\,\%$.
+2. FCC: $a_\mathrm{F} = 2\sqrt2\,R = 2\sqrt2 \cdot 0{,}1289\,\mathrm{nm} \approx 0{,}3646\,\mathrm{nm}$.
+3. Število atomov se ne spremeni, zato primerjamo prostornino na atom. BCC: $\dfrac{a_\mathrm{B}^3}{2} = \dfrac{0{,}024521}{2}\,\mathrm{nm^3} \approx 0{,}0122605\,\mathrm{nm^3}$.
+4. FCC: $\dfrac{a_\mathrm{F}^3}{4} = \dfrac{0{,}048461}{4}\,\mathrm{nm^3} \approx 0{,}0121153\,\mathrm{nm^3}$.
+5. Relativna sprememba: $\dfrac{0{,}0121153 - 0{,}0122605}{0{,}0122605} \approx -0{,}0118 = -1{,}18\,\%$.
 6. Gostota je masa atoma, deljena s prostornino na atom: $\rho_\mathrm{B} = \dfrac{55{,}85}{6{,}022\cdot10^{23} \cdot 1{,}2261\cdot10^{-23}}\,\mathrm{g/cm^3} \approx 7{,}56\,\mathrm{g/cm^3}$ ($1\,\mathrm{nm^3} = 10^{-21}\,\mathrm{cm^3}$).
-7. $\rho_\mathrm{F} = \dfrac{55{,}85}{6{,}022\cdot10^{23} \cdot 1{,}2200\cdot10^{-23}}\,\mathrm{g/cm^3} \approx 7{,}60\,\mathrm{g/cm^3}$.
-8. Odgovor: $a_\mathrm{BCC} \approx 0{,}2905\,\mathrm{nm}$, $a_\mathrm{FCC} \approx 0{,}3654\,\mathrm{nm}$; železo se ob segrevanju čez $912\,^\circ\mathrm{C}$ skrči za okoli $0{,}5\,\%$ prostornine, gostota naraste s $7{,}56$ na $7{,}60\,\mathrm{g/cm^3}$. Skrček je manjši, kot bi ga dalo samo razmerje $0{,}74/0{,}68$, ker je polmer atoma v FCC večji.
+7. $\rho_\mathrm{F} = \dfrac{55{,}85}{6{,}022\cdot10^{23} \cdot 1{,}2115\cdot10^{-23}}\,\mathrm{g/cm^3} \approx 7{,}66\,\mathrm{g/cm^3}$.
+8. Odgovor: $a_\mathrm{BCC} \approx 0{,}2905\,\mathrm{nm}$, $a_\mathrm{FCC} \approx 0{,}3646\,\mathrm{nm}$; železo se ob segrevanju čez $912\,^\circ\mathrm{C}$ skrči za okoli $1{,}2\,\%$ prostornine, gostota naraste s $7{,}56$ na $7{,}66\,\mathrm{g/cm^3}$. Skrček je manjši, kot bi ga dalo samo razmerje $0{,}74/0{,}68$, ker je polmer atoma v FCC večji.
 
 ### Naloga 2
 
@@ -225,15 +225,30 @@ Natančno definiraj delež zapolnjenosti in dokaži, da je za preprosto kubično
 
 ## Drugače: Na sliki
 
-Prerez skozi ploskev celice FCC (● je središče atoma):
+Prerez skozi ploskev celice FCC (kvadrat s stranico $a$, krogi so atomi s polmerom $R$):
 
-```
-●───────●
-│ ╲     │
-│   ●   │
-│     ╲ │
-●───────●
-```
+:::risba skica
+opis: Kvadratna ploskev celice FCC s stranico a. V vsakem oglišču in v središču ploskve je središče atoma; atomi so krogi s polmerom R. Po diagonali se krogi dotikajo: od oglišča do roba prvega kroga je R, čez srednji krog 2R, do nasprotnega oglišča še R, skupaj 4R = a√2. Po robu kvadrata se ogliščna kroga ne dotikata, med njima je reža.
+območje: -2; -2 .. 6; 6
+krog: 0; 0 | 1,41 | siva
+krog: 4; 0 | 1,41 | siva
+krog: 0; 4 | 1,41 | siva
+krog: 4; 4 | 1,41 | siva
+krog: 2; 2 | 1,41 | siva
+pravokotnik: 0; 0 .. 4; 4 | debelo
+črta: 0; 4 -> 4; 0 | modra debelo
+točka: 0; 0
+točka: 4; 0
+točka: 0; 4
+točka: 4; 4
+točka: 2; 2
+napis: 0,7; 3,65 | R | desno | modra
+napis: 2; 2 | 2R | desno | modra
+napis: 3,4; 0,95 | R | desno | modra
+napis: 2; 0 | a | pod
+napis: 2; 4 | reža | nad
+podnapis: Po diagonali ploskve: R + 2R + R = 4R = a√2
+:::
 
 Po diagonali se vrstijo: polovica ogliščnega atoma ($R$), cel atom na ploskvi ($2R$) in polovica drugega ogliščnega atoma ($R$). Skupaj $4R = a\sqrt2$. Po robu kocke se atoma ne dotikata, med njima je reža.
 

@@ -59,7 +59,7 @@ jobs:
           code=$(( (${last:-0} > now ? ${last:-0} : now) + 1 ))
           echo "code=$code" >> "$GITHUB_OUTPUT"
           echo "Nova različica: $code (evklid.app $now, zadnja izdaja ${last:-ni})"
-      # Prstni odtis pred prebuild (kot EAS): enak kot pri objavi posodobitev (.eas/workflows/posodobitev.yml),
+      # Prstni odtis pred prebuild (kot EAS): enak kot pri objavi posodobitev (ota.yml),
       # sicer APK ne dobi posodobitev JavaScripta.
       - name: Prstni odtis
         if: env.HAS_EXPO != 'true'

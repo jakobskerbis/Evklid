@@ -1,6 +1,6 @@
 // Generatorji nalog za matematiko v OŠ (6.–9. razred).
 // Vsak generator izračuna števila in pravilen odgovor v kodi.
-import { NAMES, choices, g, nOf, verbOf } from "../rng.js";
+import { NAMES, g, nOf, verbOf } from "../rng.js";
 import { fmt, gcd, roundHalfUp } from "../check.js";
 
 // Število za LaTeX z decimalno vejico.
@@ -1026,7 +1026,7 @@ export const MAT_GENERATORS = [
       const shown = neg ? val.toFixed(e + 1).replace(".", ",") : String(Math.round(val));
       return {
         text: `Število $${shown.replace(",", "{,}")}$ zapiši v obliki $a \\cdot 10^n$, kjer je $1 \\le a < 10$. Koliko je $n$?`,
-        answer: withMistakes({ type: "number", value: neg ? -e : e }, [
+        answer: withMistakes({ type: "number", value: neg ? -e : e, form: { expr: "a*10^n", vals: { a: mant, n: neg ? -e : e }, ask: "n" } }, [
           [neg ? e : -e, neg ? "Število je manjše od 1, zato je eksponent negativen." : "Število je večje od 10, zato je eksponent pozitiven."],
           [neg ? -(e - 1) : e + 1, neg ? "Ne štej le ničel za vejico: štej, za koliko mest premakneš vejico do prve neničelne števke." : "Ne štej vseh števk: štej, za koliko mest premakneš vejico, da ostane ena števka pred njo."],
         ]),
@@ -1074,7 +1074,7 @@ export const MAT_GENERATORS = [
       const s = r.int(2, 6);
       return {
         text: `Delno koreni: $\\sqrt{${s * s * k}} = a\\sqrt{${k}}$. Koliko je $a$?`,
-        answer: withMistakes({ type: "number", value: s }, [
+        answer: withMistakes({ type: "number", value: s, form: { expr: `a√(${k})`, vals: { a: s }, ask: "a" } }, [
           [s * s, "To je popolni kvadrat pod korenom; pred koren pride njegov koren."],
           [(s * s * k) / k / 2, "Koren ni polovica: iz popolnega kvadrata izračunaj koren."],
         ]),
@@ -1162,7 +1162,6 @@ export const MAT_GENERATORS = [
       "MAT-OS-8/linearne-enacbe",
       "MAT-OS-9/linearne-enacbe-z-ulomki",
       "MAT-OS-6/preproste-enacbe",
-      "MAT-SS-1/linearne-enacbe",
     ],
     gen(level, r) {
       const x = r.int(-9, 12);
@@ -1382,7 +1381,6 @@ export const MAT_GENERATORS = [
       "MAT-OS-9/linearna-funkcija",
       "MAT-OS-9/graf-linearne-funkcije",
       "MAT-OS-9/premica-v-ravnini",
-      "MAT-SS-1/linearna-funkcija",
     ],
     gen(level, r) {
       const k = r.nonZero(-4, 4);
@@ -1534,7 +1532,7 @@ export const MAT_GENERATORS = [
   },
   {
     id: "neenacbe",
-    topics: ["MAT-OS-9/linearne-neenacbe", "MAT-SS-1/linearne-neenacbe", "MAT-OS-6/preproste-neenacbe"],
+    topics: ["MAT-OS-9/linearne-neenacbe", "MAT-OS-6/preproste-neenacbe"],
     gen(level, r) {
       if (level === 2 && r.int(0, 1) === 1) {
         // Branje rešitve s številske premice
@@ -1623,7 +1621,7 @@ export const MAT_GENERATORS = [
   },
   {
     id: "telesa",
-    topics: ["MAT-OS-9/prizma", "MAT-OS-9/valj", "MAT-OS-9/piramida", "MAT-OS-9/stozec", "MAT-OS-9/krogla", "MAT-SS-3/povrsina-in-prostornina-teles"],
+    topics: ["MAT-OS-9/prizma", "MAT-OS-9/valj", "MAT-OS-9/piramida", "MAT-OS-9/stozec", "MAT-OS-9/krogla"],
     gen(level, r, topicId = "") {
       const u = r.pick(["cm", "dm", "m"]);
       const u3 = `${u}³`;
@@ -1866,7 +1864,7 @@ export const MAT_GENERATORS = [
   },
   {
     id: "podobnost",
-    topics: ["MAT-OS-9/podobni-trikotniki", "MAT-OS-9/talesov-izrek", "MAT-SS-2/podobnost"],
+    topics: ["MAT-OS-9/podobni-trikotniki", "MAT-OS-9/talesov-izrek"],
     gen(level, r) {
       const k = level === 1 ? r.int(2, 4) : r.pick([1.5, 2.5, 3, 1.2]);
       const a = r.int(2, 12);
@@ -1906,10 +1904,15 @@ export const MAT_GENERATORS = [
   },
   {
     id: "verjetnost",
-    topics: ["MAT-OS-9/verjetnost", "MAT-SS-4/verjetnost"],
+    topics: ["MAT-OS-9/verjetnost"],
     gen(level, r) {
       // Okrajšan ulomek za neokrajšanim, če se razlikujeta.
       const reduced = (rn, rd, n, d) => (rn === n && rd === d ? "" : ` = ${fracTex(n, d)}`);
+      // Odgovor kot ulomek s tipičnimi napakami (napake po vrednosti; rng se ne porabi).
+      const frM = (n, d, list) => {
+        const { mistakes } = withMistakes({ type: "number", value: n / d }, list);
+        return mistakes ? { type: "fraction", num: n, den: d, mistakes } : { type: "fraction", num: n, den: d };
+      };
       if (level === 1) {
         // En korak: preštejemo ugodne izide na kocki ali na kolesu sreče z N enakimi polji.
         const N = r.pick([6, 6, 8, 10, 12]);
@@ -1920,7 +1923,7 @@ export const MAT_GENERATORS = [
           ["število, manjše od 3", (x) => x < 3],
           ["praštevilo", (x) => [2, 3, 5, 7, 11].includes(x)],
           ["število, deljivo s 3", (x) => x % 3 === 0],
-          [N === 6 ? "šestico" : `število ${N}`, (x) => x === N],
+          [N === 6 ? "šestica" : `število ${N}`, (x) => x === N],
         ];
         const [what, ok] = r.pick(conds);
         const all = Array.from({ length: N }, (_, i) => i + 1);
@@ -1932,7 +1935,10 @@ export const MAT_GENERATORS = [
             : `Kolo sreče ima ${N} enakih polj, oštevilčenih od 1 do ${N}. Kolikšna je verjetnost, da se ustavi na polju, kjer je ${what}? Zapiši kot okrajšan ulomek.`;
         return {
           text,
-          answer: { type: "fraction", num: n, den: d },
+          answer: frM(n, d, [
+            [(N - good.length) / N, "To je verjetnost nasprotnega dogodka: šteti moraš ugodne izide."],
+            [good.length / (N - good.length), "Deli s številom vseh izidov, ne s številom neugodnih."],
+          ]),
           hint: "Verjetnost = število ugodnih izidov : število vseh izidov.",
           data: { given: [`n_{\\text{vsi}} = ${N}`], find: ["P"] },
           formula: P_FORMULA,
@@ -1954,7 +1960,11 @@ export const MAT_GENERATORS = [
         const favLabel = ask === "rdeča" ? "rdeče" : ask === "modra" ? "modre" : "ne zelene";
         return {
           text: `V vrečki ${kroglice(total)}: ${nOf(red, "rdeča", "rdeči", "rdeče", "rdečih")}, ${nOf(blue, "modra", "modri", "modre", "modrih")} in ${nOf(green, "zelena", "zeleni", "zelene", "zelenih")}. Na slepo izvlečemo eno. Kolikšna je verjetnost, da ${ask === "ni zelena" ? "ni zelena" : `je ${ask}`}? Zapiši kot okrajšan ulomek.`,
-          answer: { type: "fraction", num: n, den: d },
+          answer: frM(n, d, [
+            [(total - fav) / total, "To je verjetnost nasprotnega dogodka."],
+            [fav / (total - fav), "Deli s številom vseh kroglic, ne s številom neugodnih."],
+            [ask === "ni zelena" ? green / total : fav / (red + blue + green - 1), ask === "ni zelena" ? "To je verjetnost, da je zelena; iščemo, da ni zelena." : "Vlečemo eno kroglico: imenovalec je število vseh kroglic."],
+          ]),
           hint: ask === "ni zelena" ? "Ugodne so vse kroglice, ki niso zelene. Koliko jih je?" : "Koliko je vseh kroglic? Koliko je ugodnih?",
           data: { given: [nDat("rdeče", red), nDat("modre", blue), nDat("zelene", green)], find: ["P"] },
           formula: P_FORMULA,
@@ -1967,7 +1977,11 @@ export const MAT_GENERATORS = [
       const [n, d] = reduce(R * (R - 1), T * (T - 1));
       return {
         text: `V vrečki ${kroglice(T)}: ${nOf(R, "rdeča", "rdeči", "rdeče", "rdečih")} in ${nOf(blue + green, "druge barve", "drugih barv", "drugih barv", "drugih barv")}. Zaporedoma izvlečemo dve kroglici, prve ne vrnemo. Kolikšna je verjetnost, da sta obe rdeči? Zapiši kot okrajšan ulomek.`,
-        answer: { type: "fraction", num: n, den: d },
+        answer: frM(n, d, [
+          [(R / T) ** 2, "Prve kroglice ne vrnemo: pri drugem vlečenju je ena kroglica (in ena rdeča) manj."],
+          [R / T, "To je verjetnost le za prvo kroglico; pomnoži še z verjetnostjo za drugo."],
+          [R / T + (R - 1) / (T - 1), "Verjetnosti zaporednih korakov zmnožimo, ne seštejemo."],
+        ]),
         hint: "Verjetnost za prvo rdečo pomnoži z verjetnostjo za drugo rdečo, ko je ena že izvlečena.",
         data: { given: [nDat("vse", T), nDat("rdeče", R), nDat("druge", blue + green)], find: ["P"] },
         formula: ["P = P_1 \\cdot P_2", "P = \\dfrac{n_{\\text{rdeče}}}{n_{\\text{vse}}} \\cdot \\dfrac{n_{\\text{rdeče}} - 1}{n_{\\text{vse}} - 1}"],

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -11,9 +11,9 @@ Vse, kar dela, je ponavljanje istih korakov z drugimi številkami. Kratek progra
 
 ## Razlaga
 
-**1. Mamljiva napaka: »enačaj pomeni enako«.** Iz matematike znaš, da $x = x + 3$ nima rešitve. V programu pa je vrstica
+**1. Mamljiva napaka: »enačaj pomeni enako«.** Iz matematike veš, da $x = x + 3$ nima rešitve. V programu pa je vrstica
 
-```
+```vb
 tocke = tocke + 3
 ```
 
@@ -37,7 +37,7 @@ Program izvede `a = 5`, nato `b = a`, nato `a = 7`. Kolikšen je zdaj `b`? Napov
 
 **2. Mamljiva napaka: »program preveri vse pogoje in naredi vse, kar drži«.** Pogojni stavek izbere *eno* pot:
 
-```
+```vb
 If razlika > 0 Then
     izid = "zmaga"
 ElseIf razlika = 0 Then
@@ -57,7 +57,7 @@ Dobi »bron«. Pogoj `t >= 10` drži že prvi, zato veja z zlatom nikoli ne prid
 
 **3. Mamljiva napaka: »za sto vrstic napišem sto ukazov«.** **Zanka** ponavlja isti blok. Ko število ponovitev poznaš vnaprej, uporabiš `For`:
 
-```
+```vb
 For i = 2 To 7
     ' telo zanke
 Next i
@@ -78,7 +78,7 @@ Makre urejaš v urejevalniku VBA (Alt + F11), zaženeš jih z Alt + F8. Datoteko
 
 Igralka je zadela $7$ metov za dve točki, $4$ mete za tri točke in $5$ prostih metov po eno točko. Kolikšna je vrednost `tocke` po spodnjih ukazih?
 
-```
+```vb
 Dim tocke As Integer
 tocke = 0
 tocke = tocke + 2 * 7
@@ -105,7 +105,7 @@ Prireditev: nova vrednost = izračun desne strani s staro vrednostjo
 
 Luka pomaga še prijatelju v nogometni ligi. Ekipa ima pred tekmo $17$ točk na lestvici. Tekma se konča $2 : 2$. Za zmago dobi $3$ točke, za neodločen izid $1$, za poraz $0$. Kakšna sta `izid` in `lestvica` po izvedbi?
 
-```
+```vb
 razlika = goliDoma - goliGost
 If razlika > 0 Then
     izid = "zmaga"
@@ -148,7 +148,7 @@ Zanka `For i = 2 To 7` čez vrstice; v telesu prištevanje in pogojno štetje; p
 
 1. Zanka začne pri $2$, ker je v vrstici $1$ naslov, in konča pri $7$: to je $7 - 2 + 1 = 6$ tekem. Spremenljivka `vsota` hrani seštevek točk, `st` pa šteje tekme z vsaj $10$ točkami.
 
-```
+```vb
 Sub Krog()
     Dim i As Integer, st As Integer
     Dim vsota As Integer
@@ -174,7 +174,7 @@ End Sub
 
 Kolesarka trenira štiri dni. Prvi dan prevozi $20\,\text{km}$, vsak naslednji dan $5\,\text{km}$ več. Kolikšni sta `skupaj` in `km` po zanki?
 
-```
+```vb
 km = 20
 skupaj = 0
 For dan = 1 To 4
@@ -217,6 +217,120 @@ Dan 3: `skupaj` $= 45 + 30 = 75$, `km` $= 35$. Dan 4: `skupaj` $= 75 + 35 = 110$
 - `If … ElseIf … Else … End If` izvede natanko eno vejo, prvo, katere pogoj drži.
 - `For i = a To b` ponovi blok $b - a + 1$-krat; `Do While … Loop` ponavlja, dokler pogoj drži, in potrebuje spremembo v telesu.
 - Makro (`Sub … End Sub`) bere in piše celice z `Cells(vrstica, stolpec).Value` in `Range("D1").Value`; datoteka `.xlsm`; Ctrl + Z ga ne razveljavi.
+
+## Za izpit
+
+Znati moraš povedati:
+- kaj je spremenljivka, kaj pove njen tip in kako jo v VBA najaviš (`Dim ime As Tip`);
+- kaj naredi prireditev `x = x + 3` in zakaj to ni enačba; razliko med `=` kot prireditvijo in `=` kot primerjavo v `If`;
+- kako se izvede `If … ElseIf … Else … End If`: natanko ena veja, prva, katere pogoj drži, zato je vrstni red pogojev pomemben;
+- koliko ponovitev izvede `For i = a To b` in kolikšen je števec po zanki; kdaj namesto nje uporabiš `Do While … Loop` in kaj mora biti v njenem telesu, da se ustavi;
+- kaj je makro, kako z `Cells(vrstica, stolpec).Value` in `Range("D1").Value` bere in piše celice ter zakaj je napisan makro z zanko boljši od posnetega;
+- kako s tabelo sledenja poiščeš napako v programu.
+
+### Naloga 1
+
+V laboratoriju štejejo kolonije na ploščah. V stolpcu B so števila kolonij (B1 je naslov): v B2 do B8 so $34$, $120$, $12$, $87$, $310$, $45$ in $150$, celica B9 je prazna. Plošča je števna, če ima od $30$ do $300$ kolonij.
+
+```vb
+Sub Plosce()
+    Dim i As Integer, st As Integer
+    Dim x As Long, vsota As Long, maks As Long
+    i = 2
+    vsota = 0
+    st = 0
+    maks = 0
+    Do While Cells(i, 2).Value <> ""
+        x = Cells(i, 2).Value
+        If x > 300 Then
+            Cells(i, 3).Value = "prevec"
+        ElseIf x >= 30 Then
+            Cells(i, 3).Value = "stevna"
+            vsota = vsota + x
+            st = st + 1
+            If x > maks Then
+                maks = x
+            End If
+        Else
+            Cells(i, 3).Value = "premalo"
+        End If
+        i = i + 1
+    Loop
+    Range("E1").Value = vsota / st
+    Range("E2").Value = maks
+    Range("E3").Value = i
+End Sub
+```
+
+(a) Kaj makro zapiše v celice C2 do C8 ter v E1, E2 in E3? (b) Študentka zamenja pogoja: najprej `If x >= 30 Then` (z vejo »stevna«), nato `ElseIf x > 300 Then` (z vejo »prevec«). Kaj je zdaj v C6 in E1? (c) V prvotnem makru nekdo pobriše celico B5. Kaj je po zagonu v E1, E2 in E3?
+
+**Rešitev:**
+
+1. Zanka začne pri `i = 2` in teče, dokler celica v stolpcu B ni prazna, torej za $i = 2, 3, \ldots, 8$. To je $8 - 2 + 1 = 7$ ponovitev.
+2. Tabela sledenja:
+
+| `i` | `x` | veja | `vsota` | `st` | `maks` |
+|---|---|---|---|---|---|
+| 2 | 34 | stevna | 34 | 1 | 34 |
+| 3 | 120 | stevna | 154 | 2 | 120 |
+| 4 | 12 | premalo | 154 | 2 | 120 |
+| 5 | 87 | stevna | 241 | 3 | 120 |
+| 6 | 310 | prevec | 241 | 3 | 120 |
+| 7 | 45 | stevna | 286 | 4 | 120 |
+| 8 | 150 | stevna | 436 | 5 | 150 |
+
+3. V C2 do C8 so po vrsti »stevna«, »stevna«, »premalo«, »stevna«, »prevec«, »stevna«, »stevna«.
+4. Po ponovitvi z `i = 8` števec postane $9$; B9 je prazna, zato se zanka konča. V E3 je $9$.
+5. V E1 je povprečje števnih plošč $\dfrac{436}{5} = 87{,}2$, v E2 največje število kolonij na števni plošči, $150$.
+6. (b) Pri $x = 310$ pogoj `x >= 30` drži že prvi, zato veja »prevec« nikoli ne pride na vrsto. V C6 je »stevna«, vsota je $436 + 310 = 746$, `st` je $6$, v E1 je $\dfrac{746}{6} \approx 124{,}33$.
+7. (c) Zanka se konča pri prvi prazni celici, to je zdaj B5. Obdela le $34$, $120$ in $12$: vsota je $34 + 120 = 154$, `st` je $2$, `maks` je $120$.
+8. Odgovor: (a) v E1 je $87{,}2$, v E2 $150$, v E3 $9$; (b) v C6 je »stevna«, v E1 približno $124{,}33$; (c) v E1 je $\dfrac{154}{2} = 77$, v E2 $120$, v E3 $5$. Makro pri tem ne javi napake, čeprav je tri plošče (B6 do B8) spregledal.
+
+### Naloga 2
+
+Natančno navedi, koliko ponovitev izvede zanka `For i = a To b` pri $a \le b$ in kolikšen je `i` po njej. Zanko `For i = 3 To 11` s telesom `s = s + i` nato zapiši z `Do While` in utemelji, kaj se zgodi, če eno vrstico telesa izpustiš.
+
+**Rešitev:**
+
+1. Števec dobi zaporedoma vrednosti $a, a + 1, \ldots, b$, obe meji sta vključeni. Ponovitev je zato $b - a + 1$.
+2. Po zadnji ponovitvi se števec poveča še enkrat. Ker je $b + 1$ čez mejo, se zanka konča in `i` je enak $b + 1$.
+3. Za `For i = 3 To 11` je ponovitev $11 - 3 + 1 = 9$, po zanki je `i` enak $12$.
+4. Enakovredna zanka s pogojem:
+
+```vb
+i = 3
+Do While i <= 11
+    s = s + i
+    i = i + 1
+Loop
+```
+
+5. Začetno vrednost in povečanje števca, ki ju `For` opravi sam, moraš pri `Do While` napisati sam. Pogoj je `<=`, ker je meja $11$ vključena; z `<` bi bilo ponovitev le $8$.
+6. Brez vrstice `i = i + 1` ostane `i` ves čas $3$. Pogoj `i <= 11` zato vedno drži in zanka se nikoli ne konča.
+7. Odgovor: $b - a + 1$ ponovitev, po zanki je `i` enak $b + 1$; zanka `Do While` potrebuje v telesu spremembo, ki pogoj nekoč ovrže.
+
+### Naloga 3
+
+Kultura bakterij ima na začetku $500$ celic in se podvoji vsakih $20$ minut. (a) Kolikšna sta `n` in `t` po spodnji zanki? (b) Utemelji, zakaj tu ni primerna zanka `For`. (c) Utemelji, ali ukaza `a = b` in `b = a` zamenjata vrednosti spremenljivk `a = 4` in `b = 9`, in zapiši pravilno zamenjavo.
+
+```vb
+n = 500
+t = 0
+Do While n < 100000
+    n = n * 2
+    t = t + 20
+Loop
+```
+
+**Rešitev:**
+
+1. Vsaka ponovitev `n` podvoji in `t` poveča za $20$. Zaporedne vrednosti `n` so $1000$, $2000$, $4000$, $8000$, $16\,000$, $32\,000$, $64\,000$ in $128\,000$.
+2. Po sedmi ponovitvi je `n` enak $64\,000$, kar je manj od $100\,000$, zato zanka teče še enkrat. Po osmi je `n` enak $128\,000$ in pogoj ne drži več.
+3. Ponovitev je $8$, zato je `t` enak $8 \cdot 20 = 160$ minut.
+4. (b) Število ponovitev ni znano vnaprej, saj je odvisno od začetnega števila celic in meje. `For` zahteva znano končno vrednost števca, `Do While` pa se ustavi, ko pogoj neha držati.
+5. (c) Ukaz `a = b` v `a` shrani $9$; stara vrednost $4$ se izgubi. Ukaz `b = a` nato v `b` prepiše $9$. Obe spremenljivki sta $9$, zamenjave ni.
+6. Pravilno je s tretjo spremenljivko: `c = a`, `a = b`, `b = c`. Po teh ukazih je `c` enak $4$, `a` enak $9$ in `b` enak $4$.
+7. Odgovor: (a) `n` je $128\,000$, `t` je $160$ minut; (b) ker število ponovitev ni znano vnaprej; (c) ne, obe sta $9$, za zamenjavo potrebuješ pomožno spremenljivko.
 
 ## Drugače: Kot zgodba
 

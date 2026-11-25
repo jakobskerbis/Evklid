@@ -1,0 +1,32 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dvojni integral
+  - limita Riemannovih vsot $\sum f(x_i^*, y_j^*)\, \Delta A_{ij}$
+  - $f \ge 0$: prostornina pod grafom
+  - gostota v $\mathrm{kg/m^2}$ da maso
+- Fubinijev izrek
+  - $\iint_P f\, dA = \int_a^b \int_c^d f\, dy\, dx$
+  - pri notranjem integralu je druga spremenljivka konstanta
+- Splošna območja
+  - tip I: $\varphi_1(x) \le y \le \varphi_2(x)$
+  - meje zunanjega integrala so konstante
+  - zamenjava vrstnega reda: najprej nariši območje
+- Uporabe
+  - ploščina $S(D) = \iint_D 1\, dA$
+  - masa $m = \iint_D \sigma\, dA$, težišče $x_T = \frac{1}{m}\iint_D x\,\sigma\, dA$
+- Trojni integral
+  - $V = \iiint_T 1\, dV$, $m = \iiint_T \rho\, dV$
+  - množina $n = \iiint_T c\, dV$
+- Jacobijeva determinanta
+  - $dx\, dy = |J|\, du\, dv$
+  - napaka: pozabljen faktor $|J|$
+- Polarne in cilindrične koordinate
+  - $dA = r\, dr\, d\varphi$
+  - $dV = r\, dr\, d\varphi\, dz$
+  - paraboloid $z = 4 - r^2$: $V = 8\pi$
+- Sferne koordinate
+  - $dV = r^2 \sin\vartheta\, dr\, d\vartheta\, d\varphi$
+  - krogla: $V = \frac{4}{3}\pi R^3$
+  - samo $r$: $dV = 4\pi r^2\, dr$

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,11 +13,41 @@ Prvi del lekcije pojasni, zakaj je keramika taka: kakšna je njena zgradba in za
 
 **1. Slika najprej: kristal keramike.** Zamisli si ravnino kristala magnezijevega oksida MgO:
 
-```
- O Mg  O Mg  O
-Mg  O Mg  O Mg
- O Mg  O Mg  O
-```
+:::risba skica
+opis: Ravnina kristala MgO: tri vrste po pet ionov. V vsaki vrsti in vsakem stolpcu se izmenjujeta veliki ion O²⁻ in mali ion Mg²⁺ (prva vrsta O, Mg, O, Mg, O; druga Mg, O, Mg, O, Mg; tretja kot prva). Vsak ion ima v ravnini za najbližje sosede štiri ione z nasprotnim nabojem; ioni z enakim nabojem se ne dotikajo.
+območje: -0,9; -0,9 .. 4,9; 2,9
+krog: 0; 2 | 0,66 | modra ozadje
+krog: 2; 2 | 0,66 | modra ozadje
+krog: 4; 2 | 0,66 | modra ozadje
+krog: 1; 1 | 0,66 | modra ozadje
+krog: 3; 1 | 0,66 | modra ozadje
+krog: 0; 0 | 0,66 | modra ozadje
+krog: 2; 0 | 0,66 | modra ozadje
+krog: 4; 0 | 0,66 | modra ozadje
+krog: 1; 2 | 0,34 | oranžna polno
+krog: 3; 2 | 0,34 | oranžna polno
+krog: 0; 1 | 0,34 | oranžna polno
+krog: 2; 1 | 0,34 | oranžna polno
+krog: 4; 1 | 0,34 | oranžna polno
+krog: 1; 0 | 0,34 | oranžna polno
+krog: 3; 0 | 0,34 | oranžna polno
+napis: 0; 2 | O | sredina
+napis: 2; 2 | O | sredina
+napis: 4; 2 | O | sredina
+napis: 1; 1 | O | sredina
+napis: 3; 1 | O | sredina
+napis: 0; 0 | O | sredina
+napis: 2; 0 | O | sredina
+napis: 4; 0 | O | sredina
+napis: 1; 2 | Mg | sredina
+napis: 3; 2 | Mg | sredina
+napis: 0; 1 | Mg | sredina
+napis: 2; 1 | Mg | sredina
+napis: 4; 1 | Mg | sredina
+napis: 1; 0 | Mg | sredina
+napis: 3; 0 | Mg | sredina
+podnapis: Ravnina kristala MgO: veliki krogi so ioni O²⁻, mali ioni Mg²⁺
+:::
 
 Vsak ion Mg²⁺ ima za sosede štiri ione O²⁻ v ravnini ter še enega nad in enega pod njo, skupaj šest. Ioni z enakim nabojem se nikoli ne dotikajo. Če bi hoteli eno vrstico premakniti za en ion v desno, bi za trenutek prišli $\mathrm{Mg^{2+}}$ ob $\mathrm{Mg^{2+}}$ in $\mathrm{O^{2-}}$ ob $\mathrm{O^{2-}}$; odboj je ogromen. To je bistvo krhkosti.
 
@@ -42,15 +72,20 @@ Pri **silikatih** je osnovna enota tetraeder $\mathrm{SiO_4^{4-}}$: ion silicija
 
 Posledica: keramika se do loma deformira le elastično. Vsaka razpoka, pora ali zrno nečistoče je mesto, kjer se napetost zbere, ne pa »razmaže« s plastično deformacijo.
 
-```
-   sigma
-    |
- ---|---
-  > |<  razpoka
- ---|---  dolžina a
-    |
-   sigma
-```
+:::risba skica
+opis: Keramična plošča v nategu. Napetost sigma jo vleče navzgor in navzdol (puščici). Z levega roba sega vodoravno v ploščo ostra razpoka dolžine a; ob njeni konici se napetost zbere.
+območje: -1,6; -1,3 .. 6; 5,3
+pravokotnik: 0; 0 .. 4; 4 | siva ozadje
+lik: 0; 2,12 -> 1,5; 2 -> 0; 1,88 | rdeča polno
+puščica: 2; 4 -> 2; 5 | σ | desno
+puščica: 2; 0 -> 2; -1 | σ | desno
+črta: 0; 1,4 -> 1,5; 1,4 | siva
+črta: 0; 1,3 -> 0; 1,5 | siva
+črta: 1,5; 1,3 -> 1,5; 1,5 | siva
+napis: 0,75; 1,4 | a | pod
+točka: 1,5; 2 | konica razpoke | nad | rdeča
+podnapis: Razpoka dolžine a v plošči, obremenjeni z natezno napetostjo σ
+:::
 
 Na konici razpoke z dolžino $a$ in polmerom konice $\rho$ je napetost približno $\sigma_\mathrm{max} = 2\sigma\sqrt{a/\rho}$, pri ostri razpoki večkrat večja od povprečne. Inženirska mera odpornosti je **lomna žilavost** $K_\mathrm{Ic}$:
 
@@ -91,7 +126,7 @@ Tu sta $V_\mathrm{v}$ in $V_\mathrm{m} = 1 - V_\mathrm{v}$ prostorninska deleža
 Kratka vlakna prevzamejo silo prek strižne napetosti na meji z matrico. Da se vlakno obremeni do svoje trdnosti $\sigma_\mathrm{v}$, mora biti dolgo vsaj **kritično dolžino** $l_\mathrm{c} = \frac{\sigma_\mathrm{v}d}{2\tau_\mathrm{c}}$, kjer je $d$ premer vlakna in $\tau_\mathrm{c}$ strižna trdnost meje.
 
 :::premisli
-Kompozit z $60\,\%$ ogljikovih vlaken je vzdolž vlaken okoli $16$-krat bolj tog kot prečno. Kaj to pomeni za konstruktorja okvirja kolesa in kako to rešijo?
+Kompozit s $60\,\%$ ogljikovih vlaken je vzdolž vlaken okoli $16$-krat bolj tog kot prečno. Kaj to pomeni za konstruktorja okvirja kolesa in kako to rešijo?
 ---
 Enosmerni kompozit je močno anizotropen: prečno je skoraj tako mehak kot matrica. Okvir obremenijo sile v več smereh, zato zložijo **laminat** iz plasti z različno usmeritvijo vlaken (npr. $0°$, $\pm 45°$, $90°$), tako da je tog v vseh potrebnih smereh.
 :::
@@ -114,11 +149,11 @@ Razmerje $\frac{r_\mathrm{K}}{r_\mathrm{A}}$: $0{,}225$–$0{,}414$ da $4$; $0{,
 1. MgO: $\frac{0{,}072}{0{,}140} = 0{,}514$, v območju za $6$; vsak Mg je v oktaedru šestih kisikov (struktura NaCl).
 2. $\mathrm{SiO_2}$: $\frac{0{,}040}{0{,}140} = 0{,}286$, v območju za $4$; to je tetraeder $\mathrm{SiO_4}$.
 3. CsCl: $\frac{0{,}170}{0{,}181} = 0{,}939$, v območju za $8$; Cs je v središču kocke osmih Cl.
-4. Odgovor: koordinacijska števila so $6$, $4$ in $8$. Napovedi se ujemajo z izmerjenimi strukturami; pri razmerjih blizu meje (npr. $\mathrm{Al_2O_3}$) je pravilo le okvirno.
+4. Odgovor: koordinacijska števila so $6$, $4$ in $8$. Napovedi se ujemajo z izmerjenimi strukturami; pravilo pa je le okvirno in včasih odpove (npr. $\mathrm{Al_2O_3}$: razmerje okoli $0{,}38$ napove $4$, dejansko število je $6$).
 
 ### Primer 2
 
-Ploščica iz $\mathrm{Al_2O_3}$ ima lomno žilavost $4\,\mathrm{MPa\,\sqrt{m}}$. Pri pregledu je največja najdena razpoka dolga $50\,\mu\mathrm{m}$ ($Y = 1$). Pri kolikšni natezni napetosti se ploščica zlomi? Kako dolga sme biti razpoka, da ploščica zdrži $500\,\mathrm{MPa}$? Za primerjavo izračunaj kritično napetost za jeklo z $K_\mathrm{Ic} = 50\,\mathrm{MPa\,\sqrt{m}}$ in enako razpoko.
+Ploščica iz $\mathrm{Al_2O_3}$ ima lomno žilavost $4\,\mathrm{MPa\,\sqrt{m}}$. Pri pregledu je največja najdena razpoka dolga $50\,\mu\mathrm{m}$ ($Y = 1$). Pri kolikšni natezni napetosti se ploščica zlomi? Kako dolga sme biti razpoka, da ploščica zdrži $500\,\mathrm{MPa}$? Za primerjavo izračunaj kritično napetost za jeklo s $K_\mathrm{Ic} = 50\,\mathrm{MPa\,\sqrt{m}}$ in enako razpoko.
 
 **Podatki:** $K_\mathrm{Ic} = 4\,\mathrm{MPa\,\sqrt{m}}$, $a = 50\,\mu\mathrm{m}$, $Y = 1$, zahtevana napetost $500\,\mathrm{MPa}$; jeklo $K_\mathrm{Ic} = 50\,\mathrm{MPa\,\sqrt{m}}$
 **Iščemo:** $\sigma_\mathrm{c}$ za keramiko in jeklo, največjo dopustno dolžino razpoke
@@ -206,7 +241,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Za ojačitev nosilca potrebujemo enosmerni ogljik–epoksidni kompozit ($E_\mathrm{v} = 230\,\mathrm{GPa}$, $E_\mathrm{m} = 3{,}5\,\mathrm{GPa}$, $\rho_\mathrm{v} = 1{,}8\,\mathrm{g/cm^3}$, $\rho_\mathrm{m} = 1{,}2\,\mathrm{g/cm^3}$) z modulom vzdolž vlaken $100\,\mathrm{GPa}$. (a) Kolikšen mora biti prostorninski delež vlaken in kolikšna je gostota? (b) Kompozit vzdolž obremenimo z $500\,\mathrm{MPa}$. Kolikšne so deformacija ter napetosti v vlaknih in matrici? (c) Cenejša različica bi imela kratka vlakna dolžine $0{,}2\,\mathrm{mm}$ s premerom $7\,\mu\mathrm{m}$ in trdnostjo $3500\,\mathrm{MPa}$; strižna trdnost meje je $40\,\mathrm{MPa}$. Ali so vlakna dovolj dolga?
+Za ojačitev nosilca potrebujemo enosmerni ogljik–epoksidni kompozit ($E_\mathrm{v} = 230\,\mathrm{GPa}$, $E_\mathrm{m} = 3{,}5\,\mathrm{GPa}$, $\rho_\mathrm{v} = 1{,}8\,\mathrm{g/cm^3}$, $\rho_\mathrm{m} = 1{,}2\,\mathrm{g/cm^3}$) z modulom vzdolž vlaken $100\,\mathrm{GPa}$. (a) Kolikšen mora biti prostorninski delež vlaken in kolikšna je gostota? (b) Kompozit vzdolž obremenimo s $500\,\mathrm{MPa}$. Kolikšne so deformacija ter napetosti v vlaknih in matrici? (c) Cenejša različica bi imela kratka vlakna dolžine $0{,}2\,\mathrm{mm}$ s premerom $7\,\mu\mathrm{m}$ in trdnostjo $3500\,\mathrm{MPa}$; strižna trdnost meje je $40\,\mathrm{MPa}$. Ali so vlakna dovolj dolga?
 
 **Rešitev:**
 
@@ -242,7 +277,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 - **Elektronika.** Podlage tiskanih vezij za močnostno elektroniko so iz $\mathrm{Al_2O_3}$ ali AlN (izolator, dobro prevaja toploto). Piezoelektrična keramika PZT je v ultrazvočnih senzorjih, merilnikih tlaka in vbrizgalnih šobah.
 - **Merilna tehnika.** Senzor kisika v izpušnem sistemu avtomobila (lambda sonda) je iz $\mathrm{ZrO_2}$, ki pri visoki temperaturi prevaja kisikove ione.
 - **Medicina.** Zobne krone in glave umetnih kolkov so iz $\mathrm{ZrO_2}$ in $\mathrm{Al_2O_3}$: obstojni, biokompatibilni in trdi.
-- **Letalstvo in promet.** Najnovejša potniška letala imajo okoli polovico strukturne mase iz ogljikovih kompozitov. Zavorni koluti športnih avtomobilov so iz ogljika, ojačenega s SiC (CMC). Lopatice vetrnih elektrarn so iz steklenih vlaken v smoli.
+- **Letalstvo in promet.** Najnovejša potniška letala imajo okoli polovico strukturne mase iz ogljikovih kompozitov. Zavorni koluti športnih avtomobilov so iz SiC, ojačenega z ogljikovimi vlakni (CMC). Lopatice vetrnih elektrarn so iz steklenih vlaken v smoli.
 - **Kontrola kakovosti.** Ker lom določa najdaljša razpoka, keramične in kompozitne dele pregledujejo z ultrazvokom in rentgensko tomografijo; razslojitev laminata je glavna napaka, ki jo iščejo.
 
 ## Drugače: Bolj natančno
@@ -275,7 +310,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 ~ Kompozit vzdolž vlaken ima več kot trikrat večje razmerje od aluminija.
 > $\frac{E}{\rho}$: kompozit $89$, jeklo $26{,}8$, aluminij $25{,}9$ (v $\mathrm{GPa\,cm^3/g}$).
 
-? Kaj se zgodi z natezno trdnostjo keramičnega dela, če največja površinska razpoka zraste za štirikrat?
+? Kaj se zgodi z natezno trdnostjo keramičnega dela, če se največja površinska razpoka podaljša na štirikratno dolžino?
 - Trdnost se zmanjša na četrtino.
 ~ Trdnost je obratno sorazmerna s korenom dolžine razpoke, ne z dolžino.
 + Trdnost se zmanjša na polovico.
@@ -295,7 +330,7 @@ Armirani beton je najstarejši vsakdanji kompozit. Beton je kot keramika: v tlak
 ~ Koordinacijsko število $12$ se pojavi pri kovinah z gostim zlogom, ne v ionski keramiki s tem razmerjem.
 > $\frac{0{,}100}{0{,}180} = 0{,}556$, kar je med $0{,}414$ in $0{,}732$: oktaedrska koordinacija.
 
-? Aluminij ($E_\mathrm{m} = 70\,\mathrm{GPa}$) ojačimo z $30\,\%$ enosmernih SiC vlaken ($E_\mathrm{v} = 400\,\mathrm{GPa}$). Kolikšen je modul vzdolž vlaken?
+? Aluminij ($E_\mathrm{m} = 70\,\mathrm{GPa}$) ojačimo s $30\,\%$ enosmernih SiC vlaken ($E_\mathrm{v} = 400\,\mathrm{GPa}$). Kolikšen je modul vzdolž vlaken?
 - $93\,\mathrm{GPa}$
 ~ To je modul prečno na vlakna (harmonično pravilo).
 + $169\,\mathrm{GPa}$

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Matrika
+  - velikost $m \times n$: vrstice, nato stolpci
+  - $(A^T)_{ij} = a_{ji}$
+- Seštevanje in množenje
+  - vsota po elementih, enaki velikosti
+  - $(AB)_{ij} = \sum_k a_{ik}b_{kj}$, velikost $(m \times n)(n \times p)$
+  - pazi: $AB \neq BA$, $(AB)^T = B^TA^T$
+- Determinanta
+  - red $2$: $ad - bc$
+  - razvoj po vrstici: $\det A = \sum_j a_{ij}C_{ij}$
+  - $C_{ij} = (-1)^{i+j}M_{ij}$
+- Lastnosti determinante
+  - zamenjava vrstic spremeni predznak
+  - $\det(AB) = \det A \det B$, $\det(\lambda A) = \lambda^n\det A$
+  - trikotna matrika: produkt diagonale
+- Inverzna matrika
+  - obstaja natanko tedaj, ko $\det A \neq 0$
+  - $A^{-1} = \frac{1}{\det A}\operatorname{adj} A$
+  - Gauss-Jordan: $[A \mid I] \to [I \mid A^{-1}]$
+- Sistem enačb
+  - $A\vec{x} = \vec{b}$ ima rešitev $\vec{x} = A^{-1}\vec{b}$
+  - $(AB)^{-1} = B^{-1}A^{-1}$
+- Geometrijski pomen
+  - $|\det A|$ je faktor ploščine
+  - primer: stolpca $(3, 0)$, $(1, 2)$, ploščina $6$

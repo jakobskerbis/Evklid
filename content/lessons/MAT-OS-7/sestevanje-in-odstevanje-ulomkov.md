@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -251,10 +251,10 @@ V splošnem: $\frac{a}{b} + \frac{c}{d} = \frac{a \cdot d + c \cdot b}{b \cdot d
 > $4\frac{1}{3} - 2\frac{1}{2} = 4\frac{2}{6} - 2\frac{3}{6} = 3\frac{8}{6} - 2\frac{3}{6} = 1\frac{5}{6}$ km. Preizkus: $2\frac{3}{6} + 1\frac{5}{6} = 3\frac{8}{6} = 4\frac{2}{6}$.
 
 :::simboli
-a, b | števca ulomkov | | | v a/b = a · k / (b · k) je b imenovalec
-c | skupni imenovalec | | | c ≠ 0
+a, b | števca ulomkov | | | v a/b = a · k / (b · k) je b imenovalec; v mešanem številu je a celi del
+c | skupni imenovalec | | | c ≠ 0; v a/b + c/d je c števec
 k | število, s katerim razširimo ulomek | | | k ≠ 0
 x | iskani del proge | | | v primeru 2 Timova razdalja
-t | čas, ki ostane za tretjo etapo | | h
+t | čas, ki ostane za tretjo etapo | | h | v primeru 4 skupni čas kolesarjenja
 v | najmanjši skupni večkratnik imenovalcev | | | najmanjši skupni imenovalec
 :::

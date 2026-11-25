@@ -16,6 +16,7 @@
 // Odločitev j (9. 11. 2026): visoka formula (ulomek …) sredi besedila gre povsod v svojo vrstico kot v učbeniku
 // (prilagodiFormulo; izjema ostaneta .tb-opt in .tb-q); ui.css za vsak tak blok enako velja (.tb-zlozena je blok),
 // v gumbu odgovora (.choice) ostane znotraj gumba.
+import { izrisi as izrisiTex } from "./mat/izris.js";
 
 export const MIN = 0.8;
 const BOX = ".katex-display, .md-table-wrap";
@@ -31,7 +32,13 @@ let ro = null;
 
 // Relacije, pri katerih zložimo predolgo formulo (le na vrhnji ravni, ne v ulomku ali oklepaju {…}).
 const REL = new Set(["\\approx", "\\le", "\\leq", "\\ge", "\\geq", "\\neq", "\\ne", "\\equiv", "\\doteq", "\\sim", "\\simeq", "\\to", "\\rightarrow", "\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies", "\\longrightarrow", "\\leftrightarrow", "\\rightleftharpoons", "\\propto", "\\lt", "\\gt"]);
+// Puščica z napisom (»V \xrightarrow{pV=nRT} n«, kartica »Zapomni si«): relacija skupaj s svojim napisom [..]{..}.
+const XREL = /^\\x(?:rightarrow|leftarrow|Rightarrow|Leftarrow|leftrightarrow|Leftrightarrow|rightleftharpoons|longrightarrow|mapsto|hookrightarrow)$/;
 const LOCI = new Set(["\\quad", "\\qquad"]);
+// Klepet (j 17. 11. 2026, telefon): zložena enačba ostane strnjena. Leva stran ostane v prvi vrstici s prvim
+// »= …«, naslednji koraki gredo v isto vrstico, dokler gredo vanjo, enačaji drug pod drugim. Učbenik in drugo
+// ohranijo levo stran v svoji vrstici (j 2026-11-01).
+export const STRNJENO = ".msg";
 // Sklep (⇒, ⇔) začne novo izjavo, ki se v novi vrstici začne s puščico: »2h = 15« / »⇒ h = 7,5«.
 const SKLEP = new Set(["\\Rightarrow", "\\implies", "\\iff", "\\Leftrightarrow", "\\Longrightarrow", "\\Longleftrightarrow"]);
 // Člen vsote, pri katerem lahko predolg del enačbe nadaljujemo v novi vrstici (pred znakom, kot v zvezku).
@@ -87,7 +94,8 @@ function razrezi(t, dolg, znaki = PLUS) {
         if (m && i + 1 + m[0].length < t.length) vrh.push(i + 1 + m[0].length);
       }
     }
-    if (g > 0) odprti.push(tok);
+    // Indeks korena (\sqrt[n+1]{…}) ni oklepaj, v katerem bi lomili (kot {…}).
+    if (g > 0) odprti.push(tok === "[" && /\\sqrt\s*$/.test(t.slice(0, i)) ? "{" : tok);
     else if (g < 0) odprti.pop();
     const pred = () => !PRED.test(t.slice(0, i).trimEnd()) && !/^\s*10\s*\^/.test(t.slice(i + tok.length));
     if (g) depth = Math.max(0, depth + g);
@@ -145,6 +153,20 @@ function imaVrstice(t) {
   return false;
 }
 
+// Dolžina skupine [..] ali {..} (s presledki pred njo) na mestu i v t, ali 0.
+function skupina(t, i) {
+  const m = /^\s*([[{])/.exec(t.slice(i));
+  if (!m) return 0;
+  const [o, z] = m[1] === "[" ? ["[", "]"] : ["{", "}"];
+  let d = 0;
+  for (let j = i + m[0].length - 1; j < t.length; j++) {
+    if (t[j] === "\\") { j++; continue; }
+    if (t[j] === o) d++;
+    else if (t[j] === z && --d === 0) return j + 1 - i;
+  }
+  return 0;
+}
+
 // TeX formule → TeX z vrsticami v »aligned«, ali null, če formule ni kje zložiti.
 // stopnja 1: le izjave, ločene s \quad, gredo vsaka v svojo vrstico.
 // stopnja 2: še leva stran v svoji vrstici in pod njo vsak »= …« (zamaknjen, enačaji drug pod drugim).
@@ -152,7 +174,8 @@ function imaVrstice(t) {
 // približno 1/2, 1/3 … najdaljšega dela.
 // meja (neobvezno): koliko znakov (dolzina) približno gre v vrstico. Z njo stopnja 2 zloži le izjave, ki so
 // daljše od meje (krajše ostanejo v eni vrstici), od stopnje 3 pa so kosi dolgi do meje (3), 3/4 (4), 1/2 (5).
-export function zlozTex(tex, stopnja = 2, meja = 0) {
+// strnjeno (klepet, STRNJENO): leva stran ostane v prvi vrstici s prvim »= …«; koraki se nizajo v vrstico do meje.
+export function zlozTex(tex, stopnja = 2, meja = 0, strnjeno = false) {
   if (imaVrstice(tex) || /^\s*\\begin\{[a-z]*(?:aligned|align|gather|cases|split|array)\*?\}/.test(tex)) return null; // že ima vrstice ali poravnavo
   // Kemijska enačba v enem \mathrm{…}: zložimo vsebino, vsak del spet v \mathrm.
   let ovoj = (x) => x;
@@ -186,6 +209,15 @@ export function zlozTex(tex, stopnja = 2, meja = 0) {
       i += tok.length;
       continue;
     }
+    if (lahko && XREL.test(tok)) {
+      // Napis puščice ([spodaj]{zgoraj}) ostane z njo.
+      let n = tok.length;
+      if (/^\s*\[/.test(tex.slice(i + n))) n += skupina(tex, i + n);
+      if (/^\s*\{/.test(tex.slice(i + n))) n += skupina(tex, i + n);
+      iz.push({ rel: tex.slice(i, i + n).trim(), t: "" });
+      i += n;
+      continue;
+    }
     if (lahko && (tok === "=" || tok === "<" || tok === ">" || REL.has(tok))) iz.push({ rel: tok, t: "" });
     else if (depth === 0 && LOCI.has(tok) && iz.some((d) => d.t.trim())) {
       izjave.push([{ rel: "", t: "" }]);
@@ -196,22 +228,56 @@ export function zlozTex(tex, stopnja = 2, meja = 0) {
   }
   // Razmik na koncu vrstice (»2k\\pi \\ « pred »ali«) ni več potreben.
   for (const d of izjave.flat()) d.t = d.t.replace(/(?:\s|\\[ ,;:!]|\\q?quad(?![a-zA-Z]))+$/, "");
+  // Relacija na koncu (»… = « brez desne strani) ostane na koncu prejšnjega dela, ne odpade.
+  for (const iz of izjave)
+    for (let j = iz.length - 1; j > 0; j--)
+      if (iz[j].rel && !iz[j].t.trim()) {
+        iz[j - 1].t = `${iz[j - 1].t.trimEnd()} ${iz[j].rel}`;
+        iz.splice(j, 1);
+      }
   const del = (d) => `${d.rel ? `${d.rel} ` : ""}${ovoj(d.t.trim())}`;
   // Od stopnje 3 naprej: kosi, dolgi največ 1/(stopnja − 1) najdaljšega dela (ali do meje, zamik odštet).
   const najdaljsi = Math.max(...izjave.flat().map((d) => dolzina(d.t)));
   const dolg = stopnja < 3 ? Infinity : Math.max(6, meja > 0 ? Math.floor(meja * [1, 0.75, 0.5][Math.min(stopnja, 5) - 3]) - 2 : Math.ceil(najdaljsi / (stopnja - 1)));
   // Izjava, ki gre po meji v vrstico, ostane cela.
-  const kratka = (iz) => meja > 0 && iz.reduce((n, d) => n + dolzina(d.t) + (d.rel ? 1 : 0), 0) <= meja;
+  const kratka = (iz) => meja > 0 && iz.reduce((n, d) => n + dolzina(d.t) + dolzina(d.rel), 0) <= meja;
   // Del v eno ali več vrstic: prva z relacijo (zamik `zamik`), nadaljevanja pred + ali − še malo bolj zamaknjena.
   const vrsticeDela = (d, zamik) => {
     const kosi = dolg < Infinity ? razrezi(d.t.trim(), dolg) : [d.t.trim()];
-    // V kemijski enačbi (\\mathrm) ostane znak na začetku nadaljevanja zunaj ovoja, sicer bi bil predznak (»+NaCl«).
-    const nad = (t) => {
-      const z = mr && /^(?:[-+]|\\(?:pm|mp|cdot|times)(?![a-zA-Z]))\s*/.exec(t);
-      return z ? `${z[0].trim()} ${ovoj(t.slice(z[0].length))}` : ovoj(t);
-    };
     return kosi.map((t, j) => (j ? `&${zamik}\\quad {}${nad(t)}` : `&${zamik}${d.rel ? "{}" : ""}${del({ rel: d.rel, t })}`));
   };
+  // Strnjeno: prva vrstica »leva stran = prvi korak«, nato koraki, dokler gredo v vrstico (meja, od stopnje 4 ožja).
+  // Ena sama izjava s kratko levo stranjo ima enačaje poravnane pod prvim (»F &= … \\ &≈ …«), sicer so nadaljnje
+  // vrstice zamaknjene za \quad. Nadaljevanje predolgega dela (pred + ali ·) je vedno v novi vrstici.
+  const strnjene = (deli, sama) => {
+    const L = dolzina(deli[0].t);
+    const lim = meja > 0 ? meja * [1, 1, 1, 1, 0.85, 0.7][Math.min(stopnja, 5)] : 0;
+    const poravnaj = sama && L <= Math.max(6, lim * 0.4);
+    const zamik = poravnaj ? L : 2;
+    const vrste = [{ rel: true, s: [] }];
+    let n = L;
+    deli.slice(1).forEach((d, i) => {
+      const kosi = dolg < Infinity ? razrezi(d.t.trim(), dolg) : [d.t.trim()];
+      kosi.forEach((t, j) => {
+        const m = dolzina(t) + (j ? 0 : dolzina(d.rel));
+        if (j) vrste.push({ rel: false, s: [`\\quad {}${nad(t)}`] }), (n = zamik + 2 + m);
+        else if (!i || n + m <= lim) vrste[vrste.length - 1].s.push(del({ rel: d.rel, t })), (n += m);
+        else vrste.push({ rel: true, s: [del({ rel: d.rel, t })] }), (n = zamik + m);
+      });
+    });
+    const lev = ovoj(deli[0].t.trim());
+    return vrste.map((v, j) => {
+      const s = `${v.rel ? "{}" : ""}${v.s.join(" ")}`;
+      if (poravnaj) return j ? `&${s}` : `${lev} &${s}`;
+      return j ? `&\\quad ${s}` : `&${lev} ${v.s.join(" ")}`;
+    });
+  };
+  // V kemijski enačbi (\\mathrm) ostane znak na začetku nadaljevanja zunaj ovoja, sicer bi bil predznak (»+NaCl«).
+  const nad = (t) => {
+    const z = mr && /^(?:[-+]|\\(?:pm|mp|cdot|times)(?![a-zA-Z]))\s*/.exec(t);
+    return z ? `${z[0].trim()} ${ovoj(t.slice(z[0].length))}` : ovoj(t);
+  };
+  const vec = izjave.filter((iz) => iz.some((d) => d.t.trim())).length > 1;
   const vrstice = [];
   for (const iz of izjave) {
     const deli = iz.filter((d) => d.t.trim());
@@ -221,6 +287,7 @@ export function zlozTex(tex, stopnja = 2, meja = 0) {
     }
     // Leva stran v svoji vrstici, nato vsak »= …« v svoji (j 2026-11-01), enačaji drug pod drugim.
     if (stopnja < 2 || kratka(deli)) vrstice.push(`&${deli.map(del).join(" ")}`);
+    else if (strnjeno) vrstice.push(...strnjene(deli, !vec));
     else vrstice.push(...vrsticeDela(deli[0], ""), ...deli.slice(1).flatMap((d) => vrsticeDela(d, "\\quad ")));
   }
   if (vrstice.length < 2) return null;
@@ -271,7 +338,7 @@ function izrisi(al) {
   let html = izrisi_.get(al);
   if (html) return html;
   try {
-    html = globalThis.katex.renderToString(al, { throwOnError: true, strict: "ignore", trust: (c) => c.command === "\\htmlData" });
+    html = izrisiTex(al, { zaupaj: "oznake", napaka: "vrzi" });
   } catch {
     return null;
   }
@@ -282,14 +349,14 @@ function izrisi(al) {
 
 // stopnja "t": ista formula v velikosti besedila (ostane v vrstici); 0: cela formula v svoji vrstici;
 // 1 in 2: zložena (zlozTex).
-function zlozi(k, stopnja, meja = 0) {
+function zlozi(k, stopnja, meja = 0, strnjeno = !!k.closest(STRNJENO)) {
   const tex = (izvirnik.has(k) ? izvirniTex.get(k) : null) ?? k.querySelector("annotation")?.textContent;
-  let al = tex && globalThis.katex && (stopnja === "t" ? besedilniTex(tex) : stopnja === 0 ? tex : zlozTex(tex, stopnja, meja));
+  let al = tex && globalThis.katex && (stopnja === "t" ? besedilniTex(tex) : stopnja === 0 ? tex : zlozTex(tex, stopnja, meja, strnjeno));
   if (!al) return null;
   if (stopnja === "t") {
     let html;
     try {
-      html = globalThis.katex.renderToString(al, { throwOnError: true, strict: "ignore", trust: (c) => c.command === "\\htmlData" });
+      html = izrisiTex(al, { zaupaj: "oznake", napaka: "vrzi" });
     } catch {
       return null;
     }
@@ -327,6 +394,8 @@ function zlozi(k, stopnja, meja = 0) {
 // pomanjšaj do MIN. Vrne (morda novo) formulo.
 // Formula sredi besedila, višja od `visoka` (ulomek, pisan z \dfrac), bi razmaknila vrstico besedila: najprej
 // jo izrišemo v velikosti besedila (\frac), le če je še vedno previsoka, dobi svojo vrstico (j 2026-11-01).
+// Ali je prva vrstica zložene formule (al) po dolzina daljša od meje.
+const sirokaPrva = (al, meja) => dolzina(al.replace(/^\\begin\{aligned\}/, "").split(" \\\\ ")[0].replace(/&/g, "")) > meja;
 function prilagodiFormulo(k, w, meri, visoka = Infinity) {
   k = obnovi(k);
   k.style.fontSize = "";
@@ -346,17 +415,45 @@ function prilagodiFormulo(k, w, meri, visoka = Infinity) {
   const meja = tex ? Math.floor((w * dolzina(tex)) / need) : 0;
   let prej = null;
   let st0 = 0;
-  for (const st of [1, 2, 3, 4, 5]) {
-    if (meri(k) <= w + 1 || w / meri(k) >= 0.9) break;
-    const al = tex && zlozTex(tex, st, meja);
+  // Klepet: če strnjena oblika še vedno ne gre v vrstico (dolga leva stran), še oblika iz učbenika.
+  const s0 = !!k.closest(STRNJENO);
+  let sn0 = s0;
+  // Najožja poskušena oblika (pri enaki širini prejšnja): če nobena ne gre v vrstico, ostane ta, ne zadnja poskušena
+  // (pri 320 px je bila oblika iz učbenika z »v« samim v prvi vrstici enako široka kot strnjena).
+  let naj = null;
+  const oceni = () => {
+    const m = meri(k);
+    if (!naj || m < naj.m - 1) naj = { st: st0, sn: sn0, m };
+    return m;
+  };
+  for (const [st, sn] of [[1, s0], [2, s0], [3, s0], [4, s0], [5, s0], ...(s0 ? [[2, false], [3, false], [4, false], [5, false]] : [])]) {
+    const m = oceni();
+    if (m <= w + 1 || w / m >= 0.9) break;
+    const al = tex && zlozTex(tex, st, meja, sn);
     if (!al || al === prej) continue; // ta stopnja ne spremeni ničesar
+    // Strnjena oblika, katere prva vrstica (leva stran s prvim korakom) po oceni ne gre v vrstico: brez izrisa in
+    // merjenja naprej (vsako merjenje postavi stran znova; 50 takih formul pri 320 px je bilo dvakrat počasnejših).
+    if (sn && st >= 2 && meja > 0 && sirokaPrva(al, meja)) continue;
     prej = al;
-    const z = zlozi(k, st, meja);
-    if (z) (k = z), (st0 = st);
+    const z = zlozi(k, st, meja, sn);
+    if (z) (k = z), (st0 = st), (sn0 = sn);
+  }
+  const m = oceni();
+  if (m > w + 1 && w / m < 0.9 && naj && (naj.st !== st0 || naj.sn !== sn0)) {
+    const z = naj.st ? zlozi(k, naj.st, meja, naj.sn) : obnovi(k);
+    if (z) (k = z), (st0 = naj.st), (sn0 = naj.sn);
   }
   pomanjsaj(k, w, () => meri(k));
-  if (kljuc) zapomni(kljuc, { st: st0, meja, fs: k.style.fontSize });
+  if (kljuc) zapomni(kljuc, { st: st0, sn: sn0, meja, fs: k.style.fontSize });
   return k;
+}
+
+// Formula v delu strani, ki svojo postavitev ureja sam (znanstveni kalkulator, j 14. 11. 2026: »naj se čim bolje
+// razporedijo po vidnem zaslonu«): enkratna prilagoditev širini w brez opazovalca strani. Kar gre v vrstico, ostane
+// nespremenjeno; predolgo se zloži pri enačajih (in pred + in −), nato pomanjša do MIN. Vrne (morda novo) formulo.
+export function prilagodiSirini(k, w) {
+  if (!k?.isConnected || !(w > 0)) return k;
+  return prilagodiFormulo(k, w, (x) => Math.max(x.getBoundingClientRect().width, x.scrollWidth));
 }
 
 // Zadnja rešitev za formulo: ob premiku drsnika simulacija izriše isto formulo z drugimi števkami. Ključ je širina
@@ -404,8 +501,12 @@ function formuleOkvira(el, w, rob) {
   return ks.length ? { w: sir, rob, ks, meri } : null;
 }
 
+const MEHURCEK = ".msg, .bubble, .fx-pop";
+const vMehurcku = (el) => el.matches(".katex-display, .md-table-wrap") && !!el.parentElement?.closest(MEHURCEK);
 function okvir(el) {
-  const w = el.clientWidth;
+  // Formula v svoji vrstici ali tabela v mehurčku, ki se skrči na vsebino (klepet): šteje prostor mehurčka, ne trenutna
+  // širina. Sicer zložena formula zoži mehurček, ta formulo, ta jo zloži še ožje … (ResizeObserver v krogu, 320 px).
+  const w = vMehurcku(el) ? Math.floor(prostor(el)) : el.clientWidth;
   if (!w || sirine.get(el) === w) return;
   sirine.set(el, w);
   if (el.matches(".md-table-wrap")) {
@@ -434,7 +535,7 @@ function hitro(mesta) {
       continue;
     }
     f.ks.forEach((k, i) => {
-      const z = (r[i].st && zlozi(k, r[i].st, r[i].meja)) || k;
+      const z = (r[i].st && zlozi(k, r[i].st, r[i].meja, r[i].sn)) || k;
       z.style.fontSize = r[i].fs;
     });
     sirine.set(el, w);
@@ -451,13 +552,21 @@ function hitro(mesta) {
 // sosedov, v vrstici, ki se prelomi, pa vsa vrstica (sosed gre v naslednjo vrstico).
 function prostor(el) {
   const cs = getComputedStyle(el);
+  // Vrstični element (odstavek v odzivu »Pravilno! …« ima display: inline) nima svoje širine: clientWidth je 0,
+  // offsetWidth pa dolžina besedila, zato bi spodnji račun od prostora odštel kar ves odstavek in vsako formulo
+  // v njem naredil drsno (j 14. 11. 2026). Njegov prostor je prostor bloka, v katerem stoji.
+  if (cs.display === "inline" && el.parentElement && el.parentElement !== document.body) return prostor(el.parentElement);
   const px = (v) => parseFloat(v) || 0;
   const rob = px(cs.paddingLeft) + px(cs.paddingRight);
   const cw = el.clientWidth - rob;
   const p = el.parentElement;
   const ps = p && getComputedStyle(p);
   const vFlex = !!ps && /flex$/.test(ps.display) && !ps.flexDirection.startsWith("column");
-  if (!vFlex && !el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
+  // Odstavek v mehurčku, ki se skrči na vsebino (klepet), je širok le toliko kot njegova najširša vrstica: formula, ki je
+  // v odstavku sama, bi bila zato vedno »preširoka« za ločilo in zložena v stolpec (j 15. 11. 2026: »x²« zgoraj, »− 5x + 6«
+  // in »= 0« pod njim). Njegov prostor je prostor mehurčka.
+  const vMehurcku = !!p?.closest(".msg, .bubble, .fx-pop");
+  if (!vFlex && !vMehurcku && !el.matches(".msg, .bubble, .fx-pop") && !/^inline/.test(cs.display) && !/^(?:fixed|absolute)$/.test(cs.position)) return cw;
   let pw = p && p !== document.body ? prostor(p) : innerWidth;
   if (vFlex && ps.flexWrap === "nowrap") {
     const gap = px(ps.columnGap);
@@ -485,7 +594,7 @@ function vrstica(el) {
   const vis = visina(el);
   const pisava = getComputedStyle(el).fontSize;
   for (let k of el.querySelectorAll(":scope .katex")) {
-    if (k.parentElement?.closest(".katex-display, table, .katex")) continue;
+    if (k.parentElement?.closest(".katex-display, table, .md-vod, .katex")) continue;
     if (prilagojene.get(k) === w && k.isConnected) continue;
     if (!el.closest(".textbook") && blok(k) !== el) continue; // formula v gnezdenem odstavku ima svoje mesto
     const tex = !izvirnik.has(k) && k.querySelector("annotation")?.textContent;
@@ -556,14 +665,19 @@ function blok(k) {
 
 // Kje se prilagodi formula k: njena prikazana formula, okvir s formulo ali vrstica z besedilom (v učbeniku
 // odstavek, drugje najbližji blokovni starš; ne v poljih za vnos, SVG in tabelah).
-function mestoFormule(k) {
+export function mestoFormule(k) {
   if (k.parentElement?.closest(".katex")) return null;
   const d = k.closest(".katex-display");
-  if (d) return d.parentElement?.closest(".katex-display, table") ? null : d;
+  if (d) return d.parentElement?.closest(".katex-display, table, .md-vod") ? null : d;
   const o = k.closest(OKVIRI);
   if (o) return o.parentElement?.closest(".katex-display") ? null : o;
   // .sk-chip: oznaka okna s podatki pod skico ima stalno postavitev (graph.css), ne zlagamo je in ne pomikamo.
-  if (k.closest("table, svg, math-field, textarea, input, [contenteditable], .sk-chip")) return null;
+  // .md-vod: vodoravna tabela (public/vodoravna-tabela.js) je tabela v stolpcih; formule v njej ostanejo v polni velikosti.
+  // .k3-izpis: izpis 3D modela prelomi KaTeX sam (vsaka formula v svoji vrstici), enako v aplikaciji in na strani /3d.
+  // .sc: znanstveni kalkulator ima svojo postavitev (vrstica zgodovine in vnos se pomikata vstran, matriko pomanjša
+  // sam). Zlaganje je tam formulo v zgodovini ob vsaki spremembi velikosti zložilo in razložilo (utripanje), vnos pa
+  // znova izrisalo brez oznake kazalca (rdeč »\htmlClass«; j 14. 11. 2026).
+  if (k.closest("table, .md-vod, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis, .sc")) return null;
   if (k.closest(".textbook")) return k.parentElement?.closest(VRSTE) || null;
   return blok(k);
 }
@@ -611,6 +725,13 @@ function zazeni() {
   if (ro) return;
   // V naslednji sliki, da sprememba pisave ne sproži opozorila »ResizeObserver loop«.
   ro = new ResizeObserver((vnosi) => requestAnimationFrame(() => vnosi.forEach((v) => prilagodi(v.target))));
+  // Obrat telefona: mehurček, ki se skrči na vsebino, z enako zloženo formulo ostane enako širok, zato ResizeObserver
+  // ne sporoči ničesar, čeprav je prostora zdaj več (ali manj). Ob spremembi okna (z zamikom) jih prilagodi znova.
+  let cakaj = 0;
+  globalThis.addEventListener?.("resize", () => {
+    clearTimeout(cakaj);
+    cakaj = setTimeout(() => opazovani.forEach((el) => el.isConnected && vMehurcku(el) && prilagodi(el)), 150);
+  });
   // Ko se naložijo pisave KaTeX, so formule drugače široke: prilagodi znova.
   const znova = () => {
     sirine = new WeakMap();
@@ -638,7 +759,7 @@ export function prilagodiSirino(root, { vrstice = true } = {}) {
   if (!vrstice) return;
   const vrste = new Set();
   root.querySelectorAll(".katex").forEach((k) => {
-    if (k.closest(".katex-display, table")) return;
+    if (k.closest(".katex-display, table, .md-vod")) return;
     const o = k.closest(OKVIRI);
     if (o) return vrste.add(o);
     const p = k.parentElement?.closest(VRSTE);

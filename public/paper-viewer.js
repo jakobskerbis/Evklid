@@ -3,6 +3,7 @@
 // Naloge najde besedilna plast (public/paper-tasks.js); »Pomoč pri tej nalogi« izreže le to nalogo (JPEG, največ
 // 1600 px) in jo z besedilom pošlje inštruktorju. Strani brez zaznanih nalog: učenec povleče okvir (prst ali miška).
 import { t } from "./i18n.js";
+import { zadrziFokus, escZaOkno } from "./fokus-okna.js";
 import { icon } from "./icons.js";
 import { splitTasks, textInBox } from "./paper-tasks.js";
 
@@ -29,7 +30,6 @@ const withTimeout = (promise, ms) =>
   Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { fallback: true })), ms))]);
 
 let current = null;
-export const paperViewerOpen = () => !!current;
 // Zapre pregledovalnik (gumb, Esc, tipka Nazaj v app.js). Vrne true, če je bil odprt.
 export function closePaperViewer() {
   if (!current) return false;
@@ -38,8 +38,9 @@ export function closePaperViewer() {
 }
 
 // file: izbrani PDF; title: oznaka pole; onHelp({ label, page, text, image }) odpre inštruktorja; onClose: zaprl jo je
-// učenec (gumb, Esc, Nazaj), ne »Pomoč pri tej nalogi«; page: stran (od 1), ki se pokaže ob odprtju.
-export async function openPaperViewer(file, { title, onHelp, onClose, page: startPage = 0 }) {
+// učenec (gumb, Esc, Nazaj), ne »Pomoč pri tej nalogi«; page: stran (od 1), ki se pokaže ob odprtju; task: oznaka
+// naloge (»5«, »A5«), pri kateri se pola odpre, če jo besedilna plast najde (klepet, public/naloga-pole.js).
+export async function openPaperViewer(file, { title, onHelp, onClose, page: startPage = 0, task: startTask = "" }) {
   closePaperViewer();
   const back = document.activeElement;
   const el = document.createElement("div");
@@ -62,6 +63,11 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     <div class="pv-scroll"><div class="pv-pages"></div></div>`;
   document.body.append(el);
   document.documentElement.classList.add("pv-open");
+  // Pola nima svoje povečave: v aplikaciji, kjer je povečava strani sicer izklopljena (theme.js), jo za čas branja
+  // vrnemo; ob zaprtju se spet izklopi in zaslon se vrne na običajno velikost (glava in spodnja vrstica cela).
+  const vpMeta = document.querySelector('meta[name="viewport"][data-izvirno]');
+  const vpBrez = vpMeta?.getAttribute("content");
+  if (vpMeta) vpMeta.setAttribute("content", vpMeta.getAttribute("data-izvirno"));
   const $ = (s) => el.querySelector(s);
   const status = (msg) => ($(".pv-status").textContent = msg);
   const scroller = $(".pv-scroll");
@@ -93,27 +99,36 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   const close = (forHelp) => {
     if (state.closed) return;
     state.closed = true;
+    document.removeEventListener("keydown", naEscDok, true);
     if (!forHelp) onClose?.();
     current = null;
     observer?.disconnect();
     for (const p of pages) p.task?.cancel?.();
     loading?.destroy();
     if (blobUrl) URL.revokeObjectURL(blobUrl);
+    sprosti({ vrni: false });
     el.remove();
     document.documentElement.classList.remove("pv-open");
+    if (vpMeta) vpMeta.setAttribute("content", vpBrez);
     back?.focus?.();
   };
   current = { close };
-  $("[data-pv-close]").focus();
+  const sprosti = zadrziFokus(el, { zacetni: $("[data-pv-close]"), prej: back });
   $("[data-pv-close]").onclick = () => close(); // že med nalaganjem in ob napaki
 
-  el.addEventListener("keydown", (e) => {
+  const naEsc = (e) => {
     if (e.key !== "Escape") return;
     e.preventDefault();
     e.stopPropagation();
     if (sel || el.classList.contains("pv-boxing")) return setMarking(false);
     close();
-  });
+  };
+  el.addEventListener("keydown", naEsc);
+  // Esc tudi, ko fokus ni v oknu (npr. na body): enako kot v oknu.
+  function naEscDok(e) {
+    if (escZaOkno(e, el)) naEsc(e);
+  }
+  document.addEventListener("keydown", naEscDok, true);
 
   try {
     const data = new Uint8Array(await file.arrayBuffer());
@@ -203,7 +218,8 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   pages.forEach((p) => observer.observe(p.el));
   // Naslovnica in navodila nimajo nalog: začnemo pri prvi najdeni nalogi.
   // Ponovno odprta pola (po pomoči pri nalogi) se odpre pri zadnji nalogi.
-  const start = startPage ? startPage - 1 : tasks.length ? tasks[0].regions[0].page : -1;
+  const want = startTask ? tasks.find((x) => x.label === startTask) : null;
+  const start = want ? want.regions[0].page : startPage ? startPage - 1 : tasks.length ? tasks[0].regions[0].page : -1;
   if (pages[start]) scroller.scrollTop = pages[start].el.offsetTop - 8;
 
   // Številka strani in premik na prejšnjo/naslednjo.

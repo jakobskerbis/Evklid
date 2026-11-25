@@ -244,7 +244,6 @@ const NONMET = ["O", "N", "S", "Cl", "C", "P", "F", "H", "Br", "I"];
 const NOBLE = ["He", "Ne", "Ar", "Kr"];
 const HALO = ["F", "Cl", "Br", "I"];
 const ALK = ["Li", "Na", "K"];
-const EARTH = ["Be", "Mg", "Ca", "Ba"];
 // [simbol, perioda, skupina 1–18]
 const PG = [["H", 1, 1], ["He", 1, 18], ["Li", 2, 1], ["Be", 2, 2], ["B", 2, 13], ["C", 2, 14], ["N", 2, 15], ["O", 2, 16], ["F", 2, 17], ["Ne", 2, 18], ["Na", 3, 1], ["Mg", 3, 2], ["Al", 3, 13], ["Si", 3, 14], ["P", 3, 15], ["S", 3, 16], ["Cl", 3, 17], ["Ar", 3, 18], ["K", 4, 1], ["Ca", 4, 2], ["Fe", 4, 8], ["Cu", 4, 11], ["Zn", 4, 12], ["Br", 4, 17]];
 const TRENDS = [

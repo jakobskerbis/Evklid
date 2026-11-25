@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -51,7 +51,7 @@ Kam se odbije žarek, ki pade na zrcalo pravokotno, torej z vpadnim kotom $0^\ci
 Nazaj vase, po isti poti. Ker je $\alpha = 0^\circ$, je tudi $\beta = 0^\circ$: odbiti žarek leži kar na vpadni pravokotnici.
 :::
 
-**Kje je slika v resnici.** Zdaj lahko popravimo napačno slutnjo. Iz konice Majinega nosu gre svetloba na vse strani. Nekaj žarkov zadene zrcalo, se odbije po odbojnem zakonu in pride v Majino oko. Oko ne ve, da je svetloba zavila. Odbite žarke podaljša naravnost nazaj, za zrcalo. Vsi podaljški se sekajo v eni točki, ki je **za zrcalom, enako daleč kot je nos pred njim**. Tam Maja vidi sliko nosu.
+**Kje je slika v resnici.** Zdaj lahko popravimo napačno slutnjo. Iz konice Majinega nosu gre svetloba na vse strani. Nekaj žarkov zadene zrcalo, se odbije po odbojnem zakonu in pride v Majino oko. Oko ne ve, da je svetloba zavila. Odbite žarke podaljša naravnost nazaj, za zrcalo. Vsi podaljški se sekajo v eni točki, ki je **za zrcalom, enako daleč, kot je nos pred njim**. Tam Maja vidi sliko nosu.
 
 Slika v ravnem zrcalu je zato:
 
@@ -153,7 +153,7 @@ $\alpha = \dfrac{110^\circ}{2} = 55^\circ$ in $\gamma = 90^\circ - 55^\circ = 35
 
 - **Kot merijo od zrcala.** »Žarek oklepa z zrcalom $25^\circ$, torej je odbojni kot $25^\circ$.« Kota merimo od vpadne pravokotnice. Če je dan kot z zrcalom, ga odštej od $90^\circ$: vpadni in odbojni kot sta $65^\circ$.
 - **Slika je na površini zrcala.** Potem bi bila razdalja do slike enaka razdalji do zrcala. Slika je enako daleč *za* zrcalom, zato je od tebe dvakrat dlje kot zrcalo.
-- **Za vso postavo potrebuješ zrcalo tvoje višine.** Žarek od stopal se odbije na polovici višine oči, žarek od temena na polovici med očmi in temenom. Dovolj je zrcalo s polovico tvoje višine, če je pravilno obešeno.
+- **Za vso postavo potrebuješ zrcalo svoje višine.** Žarek od stopal se odbije na polovici višine oči, žarek od temena na polovici med očmi in temenom. Dovolj je zrcalo s polovico tvoje višine, če je pravilno obešeno.
 - **Če stopim nazaj, se vidim več.** Točki odboja za stopala in teme ostaneta na istih višinah. Na vsaki razdalji vidiš enak del sebe.
 - **Hrapave ploskve svetlobe ne odbijajo.** Odbijajo jo, a na vse strani. Prav zato jih sploh vidimo; slike v njih ni, ker odbiti žarki niso urejeni.
 

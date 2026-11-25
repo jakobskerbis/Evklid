@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -17,7 +17,7 @@ Vsak razdelek spodaj se začne s predstavo, ki se zdi naravna, a vodi v napako. 
 
 ### »Vektor je puščica«
 
-Puščica je le en primer. Pomembno ni, kako je vektor videti, ampak kaj z vektorji znamo početi. Vektorski prostor nad $\mathbb{R}$ je množica $V$, v kateri znamo vektorje seštevati ($u + v \in V$) in množiti s skalarjem ($\lambda u \in V$ za $\lambda \in \mathbb{R}$). Operaciji morata ustrezati običajnim pravilom: seštevanje je asociativno in komutativno, obstaja ničelni vektor $\mathbf{0}$, vsak $u$ ima nasprotni vektor $-u$, veljata distributivnosti in $1 \cdot u = u$.
+Puščica je le en primer. Pomembno ni, kako je vektor videti, ampak kaj z vektorji znamo početi. Vektorski prostor nad $\mathbb{R}$ je množica $V$, v kateri znamo vektorje seštevati ($u + v \in V$) in množiti s skalarjem ($\lambda u \in V$ za $\lambda \in \mathbb{R}$). Operaciji morata ustrezati običajnim pravilom: seštevanje je asociativno in komutativno, obstaja ničelni vektor $\mathbf{0}$, vsak $u$ ima nasprotni vektor $-u$, veljata distributivnosti, $\lambda(\mu u) = (\lambda\mu) u$ in $1 \cdot u = u$.
 
 Primeri, ki jih boš srečeval ves čas:
 
@@ -190,6 +190,61 @@ Seštejemo vse tri enačbe: $2(a + b + c) = 6$, torej $a + b + c = 3$. Od tega o
 - Vektorji so linearno neodvisni, če le trivialna kombinacija da $\mathbf{0}$; preverimo s homogenim sistemom ali determinanto.
 - Baza je neodvisna množica, ki napenja prostor; koordinate glede na bazo so enolične.
 - Dimenzija je število vektorjev v bazi: $\dim \mathbb{R}^n = n$, $\dim \mathbb{R}_n[x] = n + 1$. Pri množici rešitev je enaka številu prostih spremenljivk.
+
+## Za izpit
+
+Znati moraš povedati:
+- definicijo vektorskega podprostora in ekvivalentni test ($\mathbf{0} \in U$ in $\alpha u + \beta v \in U$);
+- definiciji linearne ogrinjače in linearne neodvisnosti ter kako neodvisnost preveriš s homogenim sistemom, rangom ali determinanto;
+- definicijo baze in dokaz, da so koordinate glede na bazo enolične;
+- definicijo dimenzije, lemo o zamenjavi in zakaj iz nje sledi, da imajo vse baze enako število elementov;
+- da je v prostoru dimenzije $n$ več kot $n$ vektorjev vedno odvisnih, $n$ neodvisnih pa je že baza;
+- zakaj je množica rešitev $A\mathbf{x} = \mathbf{0}$ podprostor in da je njena dimenzija število prostih spremenljivk.
+
+### Naloga 1
+
+V $\mathbb{R}^4$ so dani vektorji $v_1 = (1, 1, 0, 2)$, $v_2 = (2, 1, 1, 3)$, $v_3 = (1, -1, 2, 0)$ in $v_4 = (1, 2, -1, a)$, kjer je $a \in \mathbb{R}$. Naj bo $U = \mathcal{L}\{v_1, v_2, v_3, v_4\}$ in $W = \{(x, y, z, w) \in \mathbb{R}^4 : x + z - w = 0\}$. (a) Določi $\dim U$ v odvisnosti od $a$ in zapiši bazo $U$. (b) Za $a = 3$ izrazi $v_3$ in $v_4$ z $v_1$ in $v_2$. (c) Za $a = 3$ poišči bazo in dimenzijo preseka $U \cap W$.
+
+**Rešitev:**
+
+1. Vektorje zapišemo kot vrstice in eliminiramo. $V_2 - 2V_1 = (0, -1, 1, -1)$, $V_3 - V_1 = (0, -2, 2, -2)$, $V_4 - V_1 = (0, 1, -1, a - 2)$.
+2. Tretja vrstica je dvakratnik druge, zato po $V_3 - 2V_2$ postane ničelna. Četrti prištejemo drugo: $(0, 0, 0, a - 3)$.
+3. Če je $a \neq 3$, ostanejo tri neničelne vrstice: $\dim U = 3$, baza je npr. $(1, 1, 0, 2)$, $(0, -1, 1, -1)$, $(0, 0, 0, 1)$. Če je $a = 3$, ostaneta dve: $\dim U = 2$, baza je $b_1 = (1, 1, 0, 2)$, $b_2 = (0, -1, 1, -1)$. V nobenem primeru ni $U = \mathbb{R}^4$ in štirje vektorji so odvisni za vsak $a$.
+4. Za (b) beremo iz eliminacije. Velja $b_1 = v_1$ in $b_2 = v_2 - 2v_1$. Iz $v_3 - v_1 = 2b_2$ sledi $v_3 = v_1 + 2(v_2 - 2v_1) = -3v_1 + 2v_2$. Pri $a = 3$ je $v_4 - v_1 = -b_2$, torej $v_4 = v_1 - (v_2 - 2v_1) = 3v_1 - v_2$.
+5. Preizkus: $-3v_1 + 2v_2 = (-3 + 4,\ -3 + 2,\ 0 + 2,\ -6 + 6) = (1, -1, 2, 0)$ in $3v_1 - v_2 = (3 - 2,\ 3 - 1,\ 0 - 1,\ 6 - 3) = (1, 2, -1, 3)$.
+6. Za (c) je splošni vektor iz $U$ enak $s\,b_1 + t\,b_2 = (s,\ s - t,\ t,\ 2s - t)$. V $W$ leži natanko takrat, ko je $x + z - w = s + t - (2s - t) = -s + 2t = 0$, torej $s = 2t$.
+7. Vstavimo $s = 2t$: $(2t,\ t,\ t,\ 3t) = t\,(2, 1, 1, 3)$. Preizkus v enačbi za $W$: $2 + 1 - 3 = 0$.
+8. Odgovor: $\dim U = 2$ za $a = 3$ in $\dim U = 3$ sicer. Pri $a = 3$ je $v_3 = -3v_1 + 2v_2$, $v_4 = 3v_1 - v_2$, presek $U \cap W$ pa je premica z bazo $\{(2, 1, 1, 3)\} = \{v_2\}$ in dimenzijo $1$.
+
+### Naloga 2
+
+Natančno navedi definiciji linearne neodvisnosti in baze. Nato dokaži: (a) če so $v_1, \ldots, v_k$ linearno neodvisni in $w \notin \mathcal{L}\{v_1, \ldots, v_k\}$, so tudi $v_1, \ldots, v_k, w$ linearno neodvisni; (b) če je $b_1, \ldots, b_n$ baza prostora $V$, ima vsak $v \in V$ natanko en zapis $v = \alpha_1 b_1 + \ldots + \alpha_n b_n$.
+
+**Rešitev:**
+
+1. Definiciji. Vektorji $v_1, \ldots, v_k$ so linearno neodvisni, če iz $\alpha_1 v_1 + \ldots + \alpha_k v_k = \mathbf{0}$ sledi $\alpha_1 = \ldots = \alpha_k = 0$. Baza prostora $V$ je zaporedje vektorjev, ki je linearno neodvisno in napenja $V$.
+2. Dokaz (a). Naj bo $\alpha_1 v_1 + \ldots + \alpha_k v_k + \beta w = \mathbf{0}$. Pokazati moramo, da so vsi koeficienti enaki $0$.
+3. Če bi bil $\beta \neq 0$, bi lahko delili: $w = -\frac{\alpha_1}{\beta} v_1 - \ldots - \frac{\alpha_k}{\beta} v_k$. Potem bi bil $w \in \mathcal{L}\{v_1, \ldots, v_k\}$, kar nasprotuje predpostavki. Torej je $\beta = 0$.
+4. Ostane $\alpha_1 v_1 + \ldots + \alpha_k v_k = \mathbf{0}$. Ker so $v_1, \ldots, v_k$ neodvisni, je $\alpha_1 = \ldots = \alpha_k = 0$. Vsi koeficienti so torej $0$ in vektorji $v_1, \ldots, v_k, w$ so neodvisni.
+5. Dokaz (b), obstoj: baza napenja $V$, zato je vsak $v \in V$ linearna kombinacija vektorjev $b_1, \ldots, b_n$.
+6. Dokaz (b), enoličnost: naj bo $v = \sum \alpha_i b_i = \sum \beta_i b_i$. Odštejemo: $\sum (\alpha_i - \beta_i) b_i = \mathbf{0}$. Zaradi neodvisnosti je $\alpha_i - \beta_i = 0$, torej $\alpha_i = \beta_i$ za vse $i$.
+7. Sklep: trditev (a) je korak, s katerim neodvisno množico dopolnjujemo do baze; v (b) napenjanje da obstoj zapisa, neodvisnost pa enoličnost.
+
+### Naloga 3
+
+Naj bo $U = \{p \in \mathbb{R}_3[x] : p(1) = 0 \text{ in } p(-1) = 0\}$ in $M = \{p \in \mathbb{R}_3[x] : p(1) = 1\}$. (a) Utemelji, ali sta $U$ in $M$ podprostora v $\mathbb{R}_3[x]$. (b) Poišči bazo in dimenzijo $U$. (c) Pokaži, da polinom $q = 2x^3 + 3x^2 - 2x - 3$ leži v $U$, in določi njegove koordinate v najdeni bazi.
+
+**Rešitev:**
+
+1. $M$ ni podprostor: ničelni polinom ima v točki $1$ vrednost $0 \neq 1$, zato $\mathbf{0} \notin M$.
+2. $U$ je podprostor. Ničelni polinom je v $U$. Za $p, r \in U$ in $\alpha, \beta \in \mathbb{R}$ velja $(\alpha p + \beta r)(1) = \alpha p(1) + \beta r(1) = 0$ in enako v točki $-1$, torej $\alpha p + \beta r \in U$.
+3. Naj bo $p = c_0 + c_1 x + c_2 x^2 + c_3 x^3$. Pogoja sta $c_0 + c_1 + c_2 + c_3 = 0$ in $c_0 - c_1 + c_2 - c_3 = 0$.
+4. Vsota enačb da $2(c_0 + c_2) = 0$, razlika $2(c_1 + c_3) = 0$. Torej $c_0 = -c_2$ in $c_1 = -c_3$; prosti sta $c_2$ in $c_3$.
+5. Splošni element: $p = c_2 (x^2 - 1) + c_3 (x^3 - x)$. Polinoma $p_1 = x^2 - 1$ in $p_2 = x^3 - x$ napenjata $U$. Neodvisna sta, ker imata različni stopnji: v $\alpha p_1 + \beta p_2 = 0$ koeficient pri $x^3$ da $\beta = 0$, pri $x^2$ pa $\alpha = 0$.
+6. Torej je $\{x^2 - 1,\ x^3 - x\}$ baza in $\dim U = 2$, kar je število prostih spremenljivk: $4 - 2 = 2$.
+7. Za (c): $q(1) = 2 + 3 - 2 - 3 = 0$ in $q(-1) = -2 + 3 + 2 - 3 = 0$, torej $q \in U$.
+8. Iz $q = \alpha (x^2 - 1) + \beta (x^3 - x)$ primerjamo koeficienta pri $x^2$ in $x^3$: $\alpha = 3$, $\beta = 2$. Preizkus pri $x$ in $1$: $-\beta = -2$ in $-\alpha = -3$, kar se ujema.
+9. Odgovor: $M$ ni podprostor, $U$ je podprostor z bazo $\{x^2 - 1,\ x^3 - x\}$ in $\dim U = 2$; koordinate polinoma $q$ so $(3, 2)$, saj je $q = 3(x^2 - 1) + 2(x^3 - x)$.
 
 ## Drugače: Na sliki
 

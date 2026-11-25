@@ -4,6 +4,7 @@
 import { GENERATORS, generateTask } from "../server/practice/index.js";
 import { checkAnswer, roundHalfUp, fmt } from "../server/practice/check.js";
 import { getTopic } from "../server/curriculum.js";
+import * as MATH from "../public/graph/math.js";
 
 const prefix = process.argv[2] || "";
 const SEEDS = Number(process.env.SEEDS || 40);
@@ -38,10 +39,13 @@ for (const g of GENERATORS) {
       bad++;
       continue;
     }
-    for (let level = 1; level <= 3; level++) {
+    // Generatorji z maxYear (npr. tek-mladi-* do 4. razreda) se brez razreda ne izberejo: preverimo jih
+    // za vsak razred od 1 (oz. minYear) do maxYear.
+    const years = g.maxYear != null ? Array.from({ length: g.maxYear - (g.minYear ?? 1) + 1 }, (_, i) => (g.minYear ?? 1) + i) : [null];
+    for (const [year, level] of years.flatMap((y) => [1, 2, 3].map((l) => [y, l]))) {
       for (let seed = 1; seed <= SEEDS; seed++) {
         try {
-          const t = generateTask(topicId, level, seed);
+          const t = generateTask(topicId, level, seed, undefined, year);
           if (t.generator !== g.id) continue;
           n++;
           const a = t.answer;
@@ -49,11 +53,19 @@ for (const g of GENERATORS) {
           if (a.type === "number" && a.decimals != null && Math.abs(a.value) < 0.5 * 10 ** -a.decimals && a.value !== 0) {
             throw new Error(`odgovor ${a.value} se zaokroži na 0 pri ${a.decimals} decimalkah`);
           }
-          const res = checkAnswer(a, correctInput(a));
+          // Iste možnosti kot pri vaji (server/progress.js): cel zapis, »b = 7«, izraz namesto števila.
+          const opts = { convert: true, text: t.text, find: t.data?.find, math: MATH };
+          const res = checkAnswer(a, correctInput(a), opts);
           if (res.kind !== "correct") throw new Error(`lastni odgovor ${correctInput(a)} ni sprejet: ${JSON.stringify(res)}`);
           for (const m of a.mistakes || []) {
             if (!Number.isFinite(m.value) || !m.why) throw new Error(`napaka brez vrednosti ali razlage: ${JSON.stringify(m)}`);
-            if (checkAnswer(a, fmt(m.value) + (a.unit ? " " + a.unit : "")).kind === "correct") throw new Error(`tipična napaka ${m.value} je sprejeta kot pravilna`);
+            if (checkAnswer(a, fmt(m.value) + (a.unit ? " " + a.unit : ""), opts).kind === "correct") throw new Error(`tipična napaka ${m.value} je sprejeta kot pravilna`);
+          }
+          // Cel zapis s pravimi vrednostmi (»5√7« pri iskanem b) ni napačen poskus.
+          if (a.form) {
+            const whole = a.form.expr.replace(/\b[a-zA-Z]\b/g, (c) => (c in a.form.vals ? `(${a.form.vals[c]})` : c));
+            const w = checkAnswer(a, whole, opts);
+            if (w.code !== "chk.partOnly") throw new Error(`cel zapis ${whole} ni prepoznan: ${JSON.stringify(w)}`);
           }
           if (a.type === "choice" && a.why && a.why.length !== a.options.length) throw new Error("answer.why mora imeti razlago za vsako možnost (pri pravilni null)");
           const text = [t.text, t.hint, t.solution].join(" ");
@@ -62,7 +74,7 @@ for (const g of GENERATORS) {
           // Dvojezični generatorji (indijski izpiti): hindijska naloga z istim semenom mora imeti
           // enak odgovor, besedilo v devanagariju in prav toliko $ kot angleška.
           if (g.langs?.includes("hi")) {
-            const h = generateTask(topicId, level, seed, "hi");
+            const h = generateTask(topicId, level, seed, "hi", year);
             if (h.generator !== g.id || JSON.stringify(stripWhy(h.answer)) !== JSON.stringify(stripWhy(a))) throw new Error("hindijska naloga ima drug odgovor kot angleška (isto seme)");
             for (const f of ["text", "hint", "solution"]) {
               if (!h[f]) throw new Error(`hindijska naloga nima polja ${f}`);
@@ -75,7 +87,7 @@ for (const g of GENERATORS) {
           }
         } catch (e) {
           bad++;
-          if (bad <= 40) console.log(`${g.id} | ${topicId} | raven ${level} | seme ${seed}: ${e.message}`);
+          if (bad <= 40) console.log(`${g.id} | ${topicId} | raven ${level}${year ? ` | ${year}. razred` : ""} | seme ${seed}: ${e.message}`);
         }
       }
     }

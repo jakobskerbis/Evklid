@@ -1,6 +1,8 @@
 // Register generatorjev in ustvarjanje nalog.
 import crypto from "node:crypto";
 import { makeRng } from "./rng.js";
+import { checkAnswer, fmt } from "./check.js";
+import { unitChoices } from "../../public/enote-izbira.js";
 import { popraviNastevanja } from "../nastevanje.js";
 import { MAT_GENERATORS } from "./generators/mat.js";
 import { FIZ_GENERATORS } from "./generators/fiz.js";
@@ -9,6 +11,11 @@ import { UNI_GENERATORS } from "./generators/uni.js";
 import { DODATNE_MAT_OS } from "./generators/dodatne-mat-os.js";
 import { DODATNE_MAT_SS12 } from "./generators/dodatne-mat-ss12.js";
 import { DODATNE_MAT_SS34 } from "./generators/dodatne-mat-ss34.js";
+import { MATURA_MAT_SS4 } from "./generators/matura-mat-ss4.js";
+import { MATURA_MAT_SS3 } from "./generators/matura-mat-ss3.js";
+import { MATURA_MAT_SS2 } from "./generators/matura-mat-ss2.js";
+import { MATURA_MAT_SS1_GEO } from "./generators/matura-mat-ss1-geo.js";
+import { MATURA_MAT_SS1 } from "./generators/matura-mat-ss1.js";
 import { DODATNE_OS_FIZ_KEM } from "./generators/dodatne-os-fiz-kem.js";
 import { DODATNE_FIZ_SS } from "./generators/dodatne-fiz-ss.js";
 import { DODATNE_KEM_SS } from "./generators/dodatne-kem-ss.js";
@@ -42,6 +49,11 @@ export const GENERATORS = [
   ...DODATNE_MAT_OS,
   ...DODATNE_MAT_SS12,
   ...DODATNE_MAT_SS34,
+  ...MATURA_MAT_SS1,
+  ...MATURA_MAT_SS1_GEO,
+  ...MATURA_MAT_SS2,
+  ...MATURA_MAT_SS3,
+  ...MATURA_MAT_SS4,
   ...DODATNE_OS_FIZ_KEM,
   ...DODATNE_FIZ_SS,
   ...DODATNE_KEM_SS,
@@ -83,6 +95,19 @@ function gensFor(topicId) {
   return baseTopicIds(topicId).flatMap((b) => (b === topicId ? [] : (BY_TOPIC[b] || []).map((g) => [g, b])));
 }
 
+// Generatorji za učenčev razred (games.js schoolYear: OŠ 1–9, SŠ 10–13): minYear/maxYear pri generatorju
+// (npr. tekmovalne naloge za 1.–4. razred v tek-mat-os-mladi.js). Brez razreda: generatorji brez maxYear.
+// Če za razred ni nobenega, ostanejo vsi (tema brez naloge bi bila slabša od pretežke naloge).
+export function fitsYear(g, year) {
+  if (!Number.isInteger(year)) return g.maxYear == null;
+  return (g.minYear == null || year >= g.minYear) && (g.maxYear == null || year <= g.maxYear);
+}
+function gensForYear(topicId, year) {
+  const all = gensFor(topicId);
+  const fit = all.filter(([g]) => fitsYear(g, year));
+  return fit.length ? fit : all;
+}
+
 export function hasGenerator(topicId) {
   return gensFor(topicId).length > 0;
 }
@@ -116,14 +141,15 @@ export function plainCommas(t, slovensko = true) {
 // Ustvari nalogo za temo. level: 1 (lažje) – 3 (težje).
 // lang: jezik besedila pri dvojezičnih generatorjih ("hi" = hindijsko, sicer angleško
 // ali slovensko); drugi generatorji ga prezrejo. Isto seme da v vseh jezikih isto nalogo.
-export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31), lang = "en") {
-  const gens = gensFor(topicId);
+// year: leto šolanja učenca (izbira generatorjev s minYear/maxYear); drugi generatorji ga prezrejo.
+export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31), lang = "en", year = null) {
+  const gens = gensForYear(topicId, year);
   if (!gens.length) return null;
   const r = makeRng(seed);
   const [g, genTopic] = r.pick(gens);
   // Nekaj poskusov, če bi generator vrnil neveljavno nalogo.
   for (let i = 0; i < 5; i++) {
-    const t = g.gen(level, r, genTopic, lang);
+    const t = g.gen(level, r, genTopic, lang, year);
     if (t && t.text && t.answer) return plainCommas({ ...t, generator: g.id, topicId, level, seed, ...(lang === "hi" && g.langs?.includes("hi") ? { textLang: "hi" } : {}) }, !g.langs);
   }
   throw new Error(`Generator ${g.id} ni ustvaril naloge.`);
@@ -149,6 +175,18 @@ export function optionsAreTex(task) {
   return opts.length > 0 && !opts.some((o) => o.includes("$")) && opts.some((o) => /\\[a-zA-Z]+/.test(o));
 }
 
+// Ali preverjanje sprejme enoto u kot pravo (ne vrne napake enote) pri pravi številski vrednosti.
+function unitAccepts(answer) {
+  const value = Number.isFinite(answer.value) ? fmt(answer.value, answer.decimals ?? null) : "1";
+  return (u) => {
+    try {
+      return checkAnswer(answer, `${value} ${u}`).kind !== "unit";
+    } catch {
+      return true; // v dvomu enote ne ponudimo
+    }
+  };
+}
+
 // Kar gre k odjemalcu: brez pravilnega odgovora in rešitve.
 export function publicTask(task) {
   const { answer } = task;
@@ -158,7 +196,11 @@ export function publicTask(task) {
     inputHint: task.inputHint || null,
     level: task.level,
     answerType: answer.type,
-    unit: answer.unit || null,
+    // Prave enote odjemalec pred odgovorom ne dobi (pregled PR 786, C): le, ali jo naloga ima, in enote za izbiro.
+    hasUnit: !!answer.unit,
+    // Enote za izbiro (prava in pet drugih po abecedi, public/enote-izbira.js): brez enot, ki jih preverjanje
+    // sprejme kot pravo (velikost črke, unitAlternatives), da izbira ne ponudi »napačne«, ki je v resnici prava.
+    units: answer.unit ? unitChoices(answer.unit, { subject: task.topicId || task.subject || "", seed: task.text, accepts: unitAccepts(answer) }) : null,
     options: answer.type === "choice" ? answer.options : null,
     optionsTex: optionsAreTex(task),
     coefficientCount: answer.type === "coefficients" ? answer.values.length : null,

@@ -6,6 +6,7 @@ import { isHiddenNote } from "./skrite-opombe.js";
 import { mockToolCall, mockToolText } from "./chat-settings.js";
 // Zgornja meja vhoda ob prekinitvi pred message_start (krožni uvoz: meje-ai.js uporablja claude.js le v funkcijah).
 import { systemTokens, messageTokens } from "./meje-ai.js";
+import { jeProdukcija } from "./crypto-polje.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 
@@ -107,6 +108,8 @@ export function apiErrorCode(err) {
   const is = (C, name) => (typeof C === "function" && err instanceof C) || err?.name === name;
   const status = Number(err?.status) || ERROR_TYPE_STATUS[err?.error?.error?.type] || 0;
   const msg = String(err?.error?.error?.message || err?.message || "");
+  // Tok je obmolknil (nadzornik mirovanja v streamReply): ni odgovora od Anthropic, učenec lahko poskusi znova.
+  if (err?.zastoj) return "zastoj odgovora";
   if (!status) {
     if (is(Anthropic.APIUserAbortError, "APIUserAbortError") || err?.name === "AbortError") return null;
     // Druge napake brez statusa so napake v naši kodi: vzrok je v konzoli strežnika, ne pri povezavi.
@@ -119,6 +122,8 @@ export function apiErrorCode(err) {
   if (status === 404) return "404 model ne obstaja";
   if (status === 413) return "413 sporočilo je predolgo";
   if (status === 429) return "429 omejitev porabe";
+  // Predolgo čakanje v vrsti za AI (server/vrsta-ai.js): ista napaka za učenca, koda pove skrbniku, da je vzrok naval.
+  if (status === 529 && err?.vrsta) return "529 preveč hkratnih vprašanj";
   if (status === 529 || /overloaded/i.test(msg)) return "529 Anthropic je preobremenjen";
   return `${status} napaka pri Anthropic`;
 }
@@ -131,6 +136,63 @@ export function isMockMode() {
   if (process.env.EVKLID_MOCK === "1") return true;
   return !process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN;
 }
+
+// Ob zagonu (server/index.js): v produkciji (isti znaki kot crypto-polje.js jeProdukcija) brez ključa API bi strežnik
+// tiho tekel v preizkusnem načinu (vnaprej pripravljeni odgovori za vse učence), zato se ne zažene. Preizkusni način v
+// produkciji samo izrecno z EVKLID_MOCK=1. Vrne besedilo napake ali null.
+export function zagonBrezAiKljuca(env = process.env) {
+  if (!jeProdukcija(env) || env.EVKLID_MOCK === "1") return null;
+  if (String(env.ANTHROPIC_API_KEY || "").trim() || String(env.ANTHROPIC_AUTH_TOKEN || "").trim()) return null;
+  return (
+    "[evklid] Strežnik se ne zažene: v produkciji ni nastavljen ANTHROPIC_API_KEY, zato bi inštruktor tekel v preizkusnem " +
+    "načinu (vnaprej pripravljeni odgovori). Nastavi ANTHROPIC_API_KEY v Render → Environment. Samo če preizkusni način " +
+    "res želiš: EVKLID_MOCK=1."
+  );
+}
+
+// Izid klicev modela za zdravje strežnika (server/zdravje.js, /healthz/stanje → ai): fn({ ok: true }) ali
+// fn({ ok: false, koda }) s kodo iz apiErrorCode (brez vsebine in brez ključa). Prekinitev učenca ni izid.
+let opazovalecAi = null;
+export function nastaviOpazovalcaAi(fn) {
+  opazovalecAi = typeof fn === "function" ? fn : null;
+}
+const javiIzid = (izid) => {
+  try {
+    opazovalecAi?.(izid);
+  } catch (e) {
+    console.warn(`[evklid] zdravje AI: ${e?.message || e}`);
+  }
+};
+
+// Nadzornik mirovanja toka (zastoj): SDK meri rok samo do glav odgovora; če tok nato obmolkne, bi odgovor visel v
+// nedogled (pogovor zaklenjen, mesto v vrsti za AI zasedeno). Šteje vsak kos iz omrežja, tudi »ping« Anthropica, ki ga
+// SDK ne pokaže (razmišljanje modela je v toku privzeto skrito). EVKLID_AI_MIROVANJE_S (privzeto 60, 0 = izklop);
+// za Opus in Sonnet (deep, mid: dolgo skrito razmišljanje, presledki med »ping« še niso izmerjeni)
+// EVKLID_AI_MIROVANJE_DEEP_S (privzeto 180).
+export function mirovanjeMs(env = process.env, mode = "chat") {
+  const dolgo = mode === "deep" || mode === "mid";
+  const raw = dolgo ? env.EVKLID_AI_MIROVANJE_DEEP_S : env.EVKLID_AI_MIROVANJE_S;
+  const v = raw == null || String(raw).trim() === "" ? (dolgo ? 180 : 60) : Number(raw);
+  return Number.isFinite(v) && v > 0 ? Math.round(v * 1000) : 0;
+}
+// Vmesnik SDK za en klic: glave odgovora in vsak prebrani kos telesa pokličejo tik(); samo uspešen odgovor (2xx) pomeni,
+// da je klic morda plačan (429/529, ki ju SDK ponovi, ne). Ob prekinitvi (signal) se telo takoj zapre z napako, tudi
+// če povezava sama ne odgovori več.
+const vmesnikZivosti = (tik, signal) => async (request, next) => {
+  const res = await next(request);
+  tik(res.ok);
+  if (!res.body || typeof res.body.pipeThrough !== "function") return res;
+  const body = res.body.pipeThrough(
+    new TransformStream({
+      transform(chunk, ctrl) {
+        tik(res.ok);
+        ctrl.enqueue(chunk);
+      },
+    }),
+    { signal },
+  );
+  return new Response(body, { status: res.status, statusText: res.statusText, headers: res.headers });
+};
 
 let client = null;
 // Samo za teste: lažen odjemalec API (null vrne pravega).
@@ -156,9 +218,19 @@ export const supportsFallback = (model) => !/haiku/.test(model);
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
 // canRound(round): pred vsakim dodatnim krogom orodij; false = brez novega klica (trda meja AI, server/meje-ai.js).
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true }) {
+// Besedilo pred klicem orodja (j, 17. 11. 2026: »Želi zeleno barvo. Najbolj smiselno je …« v odgovoru): kratek uvod
+// oziroma razmislek se ne prikaže. Daljše besedilo (razlaga z odstavki, formulami ali bloki) ostane, ker je del odgovora.
+export const isPreamble = (s) => {
+  const t = String(s || "").trim();
+  return t.length <= 300 && !/\n\s*\n|\$|<</.test(t);
+};
+
+// onPhase("think"): model je začel razmišljati (prvi blok razmišljanja, preden je kaj besedila); odjemalec pokaže
+// »Razmišljam …«. noThinking: klic brez razmišljanja (samo Haiku, poskus EVKLID_HITRI_KORAK, server/hitri-korak.js).
+// Rezultat ima timing: { thinking, firstThinkMs, firstTextMs, totalMs } od začetka klica (server/casi-odgovora.js).
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, onRetract = null, onPhase = null, noThinking = false, signal, tools = null, onToolUse = null, quick = null, canRound = null, fallback = true, idleMs = mirovanjeMs(process.env, mode) }) {
   const { model, effort, max_tokens } = modeParams(mode);
-  if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
+  if (isMockMode()) return mockReply({ messages, onText, onPhase, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
   const params = {
     model,
@@ -183,6 +255,12 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
+  // Brez razmišljanja dovoli samo Haiku (Opus 5.5 ga ne dovoli izklopiti, glej quickParams).
+  const thinkingOff = (!!noThinking && /haiku/.test(model)) || params.thinking?.type === "disabled";
+  // quickParams: thinking disabled in effort low (brez razmišljanja višji effort vrne 400, npr. EVKLID_EFFORT=medium).
+  if (noThinking && /haiku/.test(model)) Object.assign(params, quickParams(model));
+  const t0 = Date.now();
+  const timing = { thinking: !thinkingOff, firstThinkMs: null, firstTextMs: null, totalMs: null };
   if (supportsFallback(model) && fallback !== false) {
     params.betas = ["server-side-fallback-2026-07-01"];
     params.fallbacks = "default";
@@ -196,7 +274,12 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   let finalModel = model;
   let toolCalls = 0;
   let msgs = messages;
+  // Besedilo kroga, ki se konča s klicem orodja (»Želi zeleno barvo. Najbolj smiselno je …«), je razmislek pred
+  // dejanjem, ne odgovor (j, 17. 11. 2026): ne gre v odgovor; odjemalec ga ob onRetract pobriše. Če po orodju
+  // modela ne napiše ničesar več, ostane zadnje tako besedilo (da odgovor ni prazen).
+  let dropped = "";
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    const roundStart = text.length;
     if (round > 0 && canRound && !canRound(round)) break;
     // Prekinjeno pred zahtevo (učenec je zaprl aplikacijo med pripravo, npr. povzetkom): klic ne odide in se ne
     // šteje (pregled #462 S2: prej fantomski strošek vhoda in odgovor Opusa v dnevni meji).
@@ -209,7 +292,25 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     const p = { ...params, messages: msgs };
     if (tools?.length && round === MAX_TOOL_ROUNDS) p.tool_choice = { type: "none" };
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
-    const stream = getClient().beta.messages.stream(p, { signal });
+    // Nadzornik mirovanja (zastoj): lasten signal klica, ki ga prekine učenec (signal) ali obmolkel tok (budilka).
+    let zastoj = false;
+    let glave = false; // API je odgovoril (glave): klic je morda plačan
+    let budilka = null;
+    const klic = new AbortController();
+    const odvezi = () => klic.abort();
+    if (signal?.aborted) klic.abort();
+    else signal?.addEventListener?.("abort", odvezi, { once: true });
+    const tik = (odgovor = false) => {
+      glave ||= odgovor;
+      if (!idleMs) return;
+      clearTimeout(budilka);
+      budilka = setTimeout(() => {
+        zastoj = true;
+        klic.abort();
+      }, idleMs); // brez unref: budilka se vedno počisti v finally spodaj
+    };
+    tik();
+    const stream = getClient().beta.messages.stream(p, { signal: klic.signal, middleware: [vmesnikZivosti(tik, klic.signal)] });
     // Poraba sproti: ob prekinitvi (učenec zapre aplikacijo) ali napaki sredi toka je klic že plačan, zato napaka nese
     // porabo in strežnik jo zapiše (server/app.js). message_start nosi vhod in output_tokens ≈ 1; message_delta s
     // pravim izhodom pride šele tik pred koncem (pregled #462, KRITIČNO). Brez message_delta zato zapišemo izhod
@@ -226,6 +327,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     let final;
     try {
       for await (const event of stream) {
+        tik(true);
         if (event.type === "message_start") {
           live = { ...(event.message?.usage || {}) };
           liveModel = event.message?.model || model;
@@ -236,6 +338,10 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         } else if (event.type === "content_block_start" && /thinking/.test(event.content_block?.type || "")) {
           thinkAt = Date.now();
           firstBlockAt ||= thinkAt;
+          if (timing.firstThinkMs === null) {
+            timing.firstThinkMs = thinkAt - t0;
+            if (!text) onPhase?.("think");
+          }
         } else if (event.type === "content_block_stop" && thinkAt) {
           thinkMs += Date.now() - thinkAt;
           thinkAt = 0;
@@ -245,6 +351,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
           const d = event.delta || {};
           deltaBytes += Buffer.byteLength(String(d.text ?? d.thinking ?? d.partial_json ?? d.signature ?? ""), "utf8");
           if (d.type === "text_delta") {
+            if (timing.firstTextMs === null) timing.firstTextMs = Date.now() - t0;
             const chunk = gap + d.text;
             gap = "";
             text += chunk;
@@ -253,7 +360,14 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         }
       }
       final = await stream.finalMessage();
-    } catch (err) {
+    } catch (napaka) {
+      let err = napaka;
+      // Prekinil je nadzornik mirovanja, ne učenec: napaka s kodo »zastoj odgovora« gre učencu kot običajna napaka.
+      if (zastoj && !signal?.aborted) {
+        err = new Error(`Tok odgovora AI je obmolknil za ${Math.round(idleMs / 1000)} s.`);
+        err.name = "ZastojAI";
+        err.zastoj = true;
+      }
       const roundMax = p.max_tokens || max_tokens;
       let partial = null;
       if (thinkAt) thinkMs += Date.now() - thinkAt;
@@ -264,12 +378,13 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
       // bajti vseh delt (žeton ≤ bajt) + 10 %; razmišljanje, ki ga tok ne pokaže v celoti (povzetek ali skrito), po
       // času bloka razmišljanja × največja hitrost modela. Pri drugi napaki sredi toka (API, omrežje) ne vemo,
       // koliko je API napisal: previdno ves max_tokens kroga. Pol sekunde pisanja po zaprtju povezave je rezerva.
-      const ours = !!signal?.aborted;
+      // Zastoj (nadzornik mirovanja) je prav tako naša prekinitev ob znanem času: šteje dejansko napisano.
+      const ours = !!signal?.aborted || zastoj;
       const outBound = ours
         ? Math.min(roundMax, Math.ceil(1.1 * deltaBytes + (thinkMs / 1000 + ABORT_LAG_S) * maxTokensPerSec(liveModel)))
         : roundMax;
       if (live) partial = lastDelta ? live : { ...live, output_tokens: Math.max(outBound, live.output_tokens || 0) };
-      else if (signal?.aborted) {
+      else if (signal?.aborted || (zastoj && glave)) {
         const inBound = systemTokens(p.system) + messageTokens(p.messages) + (p.tools?.length ? Math.ceil(Buffer.byteLength(JSON.stringify(p.tools), "utf8") / 2) : 0);
         partial = { input_tokens: 0, cache_creation_input_tokens: inBound, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: inBound }, output_tokens: 0 };
       }
@@ -278,7 +393,11 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
         err.usage = spent;
         err.model = liveModel;
       }
+      if (!signal?.aborted) javiIzid({ ok: false, koda: apiErrorCode(err) });
       throw err;
+    } finally {
+      clearTimeout(budilka);
+      signal?.removeEventListener?.("abort", odvezi);
     }
     const extra = fallbackExtraUsd(final.usage);
     const roundUsage = extra ? { ...final.usage, extra_cost_usd: extra } : { ...final.usage };
@@ -290,6 +409,11 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     content.push(...final.content);
     const calls = final.content.filter((b) => b.type === "tool_use");
     if (stopReason !== "tool_use" || !calls.length || !onToolUse) break;
+    if (text.length > roundStart && isPreamble(text.slice(roundStart))) {
+      dropped = text.slice(roundStart).trim();
+      text = text.slice(0, roundStart);
+      onRetract?.(text);
+    }
     const results = [];
     for (const c of calls) {
       toolCalls++;
@@ -298,10 +422,13 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     }
     msgs = [...msgs, { role: "assistant", content: final.content }, { role: "user", content: results }];
   }
-  return { content, text, stopReason, usage, model: finalModel, toolCalls };
+  if (!text.trim() && dropped) text = dropped;
+  timing.totalMs = Date.now() - t0;
+  javiIzid({ ok: true });
+  return { content, text, stopReason, usage, model: finalModel, toolCalls, timing };
 }
 
-const MAX_TOOL_ROUNDS = 3;
+export const MAX_TOOL_ROUNDS = 3;
 
 // Največja hitrost pisanja (žetonov na sekundo, zgornja meja z rezervo; pregled #462 S3): za razmišljanje, ki ga
 // prekinjen tok ne pokaže v celoti. Neznan model: najhitrejši.
@@ -386,7 +513,9 @@ function mockAnswer(userText) {
   );
 }
 
-async function mockReply({ messages, onText, signal, model, onToolUse = null }) {
+async function mockReply({ messages, onText, onPhase = null, signal, model, onToolUse = null }) {
+  const t0 = Date.now();
+  onPhase?.("think"); // kot pravi model: najprej razmišlja (odjemalec pokaže »Razmišljam …«)
   let text = null;
   let toolCalls = 0;
   // Nastavitve iz klepeta tudi brez ključa (najpogostejše prošnje, glej server/chat-settings.js).
@@ -398,12 +527,13 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
   }
   if (text === null) text = mockAnswer(lastUserText(messages));
   const delay = Number(process.env.EVKLID_MOCK_DELAY_MS ?? 15);
+  const firstTextMs = Date.now() - t0;
   for (let i = 0; i < text.length; i += 6) {
     if (signal?.aborted) break;
     onText(text.slice(i, i + 6));
     if (delay) await new Promise((r) => setTimeout(r, delay));
   }
-  return { content: [{ type: "text", text }], text, stopReason: "end_turn", usage: { input_tokens: 0, output_tokens: 0 }, model, toolCalls };
+  return { content: [{ type: "text", text }], text, stopReason: "end_turn", usage: { input_tokens: 0, output_tokens: 0 }, model, toolCalls, timing: { thinking: true, firstThinkMs: 0, firstTextMs, totalMs: Date.now() - t0 } };
 }
 
 // ---------------------------------------------------------------------------
@@ -412,15 +542,16 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
 
 export const OCR_MODEL = env("EVKLID_OCR_MODEL", MODEL);
 
-export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", unit = null }) {
+// Prave enote modelu ne pošljemo (j, 17. 11. 2026): bralec bi jo lahko dopisal in izdal odgovor; enota je neobvezna.
+export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", withUnit = false }) {
   if (isMockMode()) return { text: null, mock: true, usage: null, model: OCR_MODEL };
   const kind =
     answerType === "fraction"
       ? "ulomek (zapiši kot a/b)"
       : answerType === "coefficients"
         ? "zaporedje koeficientov, ločenih z vejico (npr. 2, 1, 2)"
-        : unit
-          ? `število z enoto (npr. 12,5 ${unit})`
+        : withUnit
+          ? "število, morda z enoto (enoto prepiši le, če je napisana; ne dodajaj je)"
           : "število ali kratek izraz";
   const final = await getClient().messages.create({
     model: OCR_MODEL,

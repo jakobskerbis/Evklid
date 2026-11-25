@@ -5,8 +5,8 @@
 // Dolg seznam (z iskalnikom) se odpre čez gumb: izbrana možnost je v iskalnem okencu na vrhu,
 // seznam pod njim pa se začne za njo (j, 31. 10.).
 // Iskalnik piše z Evklidovo tipkovnico (j, 1. 11.: telefonova le za prijavne podatke).
-import { t } from "./i18n.js";
-import { hideKeyboard, keyboardOpenFor } from "./tipkovnica.js";
+import { t } from "./i18n-osnova.js";
+import { hideKeyboard, keyboardOpenFor } from "./tipkovnica-lena.js";
 
 const CHEVRON = '<svg class="dd-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 const CHECK = '<svg class="dd-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -41,8 +41,18 @@ export function enhanceSelect(sel) {
   btn.setAttribute("aria-haspopup", "listbox");
   btn.setAttribute("aria-expanded", "false");
   btn.innerHTML = `<span class="dd-label" dir="auto"></span>${CHEVRON}`;
+  // Ime gumba: oznaka in izbrana vrednost (aria-labelledby), da bralnik zaslona prebere tudi izbiro
+  // (pregled PR 786: aria-label je skril izbrano enoto). Pri prazni izbiri (»Enota«) samo oznaka.
   const label = sel.getAttribute("aria-label") || labelText(sel.labels?.[0]);
-  if (label) btn.setAttribute("aria-label", label);
+  const ids = `dd-${++uid}`;
+  if (label) {
+    const name = document.createElement("span");
+    name.id = `${ids}-n`;
+    name.className = "sr-only";
+    name.textContent = label;
+    btn.prepend(name);
+    btn.querySelector(".dd-label").id = `${ids}-v`;
+  }
   sel.before(wrap);
   wrap.append(btn, sel); // gumb pred menijem: klik na <label> odpre gumb
   sel.tabIndex = -1;
@@ -56,6 +66,7 @@ export function enhanceSelect(sel) {
     const opt = sel.options[indexProp.get.call(sel)];
     btn.querySelector(".dd-label").textContent = opt ? opt.textContent : "";
     btn.classList.toggle("placeholder", !opt || opt.value === "");
+    if (label) btn.setAttribute("aria-labelledby", !opt || opt.value === "" ? `${ids}-n` : `${ids}-n ${ids}-v`);
     btn.disabled = sel.disabled;
     wrap.hidden = sel.hidden;
   };
@@ -77,26 +88,36 @@ export function enhanceSelect(sel) {
   });
 }
 
+let gseq = 0;
 function open(sel, btn) {
   closeMenu();
   const list = document.createElement("div");
   list.className = "dd-list";
   list.id = `dd-list-${++uid}`;
   list.setAttribute("role", "listbox");
+  // Ime seznama za bralnik zaslona (#792): isto kot gumb (aria-label izbirnega seznama ali njegova oznaka).
+  const name = sel.getAttribute("aria-label") || labelText(sel.labels?.[0]);
+  if (name) list.setAttribute("aria-label", name);
   list.tabIndex = -1;
   const items = [];
   const current = indexProp.get.call(sel);
   let html = "";
   for (const child of sel.children) {
     if (child.tagName === "OPTGROUP") {
-      html += `<div class="dd-group" role="presentation">${esc(child.label)}</div>`;
+      // Skupina (npr. raven) z imenom za bralnik zaslona; ovoj ima display: contents (ui.css), videz ostane.
+      const gid = `dd-g-${uid}-${++gseq}`;
+      html += `<div class="dd-grp" role="group" aria-labelledby="${gid}"><div class="dd-group" id="${gid}" role="presentation">${esc(child.label)}</div>`;
       for (const o of child.children) html += optHtml(o);
+      html += "</div>";
     } else if (child.tagName === "OPTION") html += optHtml(child);
   }
   function optHtml(o) {
     if (o.hidden) return "";
     const i = o.index;
-    return `<div class="dd-opt" role="option" data-i="${i}" aria-selected="${i === current}"${o.disabled ? ' aria-disabled="true"' : ""}><span dir="auto">${esc(o.textContent)}</span>${CHECK}</div>`;
+    // data-sep: črta pred možnostjo; data-checked: kljukica pri drugi trenutni izbiri istega seznama (raven mature v glavi, #834).
+    const sep = o.hasAttribute("data-sep") ? '<div class="dd-sep" role="separator"></div>' : "";
+    const checked = o.hasAttribute("data-checked") ? ' aria-checked="true"' : "";
+    return `${sep}<div class="dd-opt" role="option" data-i="${i}" aria-selected="${i === current}"${checked}${o.disabled ? ' aria-disabled="true"' : ""}><span dir="auto">${esc(o.textContent)}</span>${CHECK}</div>`;
   }
   // Dolg seznam (npr. jeziki ali vsak z vsaj SEARCH_FROM možnostmi) ima na vrhu iskalnik,
   // v katerem piše izbrana možnost: <select data-search data-search-ph="Išči …">.
@@ -134,14 +155,14 @@ function open(sel, btn) {
       const el = items[at];
       const grp = el.previousElementSibling?.classList.contains("dd-group") && !el.previousElementSibling.hidden ? el.previousElementSibling : el;
       const want = Math.max(0, grp.offsetTop - head.offsetHeight);
-      // Blizu konca seznama se ne da pomakniti dovolj: seznam raje skrajšamo, da ni odrezane vrstice.
-      const short = want - (list.scrollHeight - list.clientHeight);
-      if (short > 0) list.style.maxHeight = `${list.offsetHeight - short}px`;
-      list.scrollTop = want;
+      // Blizu konca seznama (npr. 8. razred od 9) se ne da pomakniti dovolj: seznam ostane cel in se pomakne do dna,
+      // da so vidni tudi razredi pred izbranim (prej se je skrajšal na eno ali dve vrstici, #792).
+      list.scrollTop = Math.min(want, list.scrollHeight - list.clientHeight);
     }
   } else setActive(state, Math.max(0, items.findIndex((el) => Number(el.dataset.i) === current)), true);
   if (state.search) {
-    const fold = (x) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    // Brez naglasov in presledkov: »4.letni« najde »4. letnik VR« (j 16. 11., pregled posnetkov).
+    const fold = (x) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").toLowerCase();
     state.search.addEventListener("input", () => {
       const q = fold(state.search.value.trim());
       let first = -1;

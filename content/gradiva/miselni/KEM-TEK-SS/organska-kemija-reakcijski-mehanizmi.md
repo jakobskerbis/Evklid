@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nukleofil ali baza
+  - nukleofil napade ogljik: substitucija
+  - baza vzame $\beta$-H: eliminacija
+  - toplota in velika baza dajeta eliminacijo
+- Adicija
+  - obratna eliminaciji
+  - Markovnikovo pravilo: $\mathrm{H^+}$ na ogljik z več H
+  - stabilnost karbokationa: terciarni > sekundarni > primarni
+- Mehanizem SN2
+  - en korak, napad od zadaj
+  - $v = k[\mathrm{RX}][\mathrm{Nu}]$
+  - najlažje metilni in primarni substrati
+- Mehanizem SN1
+  - dva koraka prek karbokationa
+  - $v = k[\mathrm{RX}]$, nukleofil ne vpliva
+  - napaka: več nukleofila pospeši SN1
+- Eliminacija E1 E2
+  - Zajcevo pravilo: bolj substituirani alken
+  - pri E2 sta H in X anti
+- Stereokemija
+  - stereocenter: štirje različni substituenti
+  - SN2 inverzija, SN1 racemizacija
+  - črka R/S po prioritetah CIP

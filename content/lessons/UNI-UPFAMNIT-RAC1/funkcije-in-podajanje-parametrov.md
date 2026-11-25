@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -116,7 +116,7 @@ Metoda kliče samo sebe. Temu rečemo **rekurzija**. Ima dva dela:
 
 Klic `kofein(3)` poteka kot stopnice dol in nazaj gor:
 
-```
+```text
 kofein(3) čaka na kofein(2)
   kofein(2) čaka na kofein(1)
     kofein(1) čaka na kofein(0)
@@ -274,6 +274,105 @@ Koliko vrne `vrstniRedi(4)`?
 - Doseg: lokalna spremenljivka je vidna od deklaracije do konca svojega bloka; enaka imena v različnih metodah so različne spremenljivke.
 - Rekurzija: metoda kliče sebe na manjšem problemu; potrebuje osnovni primer in korak, ki se mu približa. Vsak klic ima svoje parametre.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- sestavne dele metode (glava s tipom vrnjene vrednosti, parametri, telo, `return`, `void`) in razliko med parametrom in argumentom;
+- štiri korake, ki se zgodijo ob klicu metode, in kaj pomeni podajanje po vrednosti;
+- kaj je doseg in kje sta vidna lokalna spremenljivka in parameter;
+- kaj je rekurzija, kaj sta osnovni primer in rekurzivni korak ter kdaj se rekurzija ustavi;
+- kaj je na klicnem skladu med rekurzivnimi klici in zakaj nastane `StackOverflowError`;
+- dokaz pravilnosti rekurzivne metode z indukcijo (osnovni primer, indukcijski korak, ustavitev).
+
+### Naloga 1
+
+Dana je metoda:
+
+```java
+static int f(int n) {
+    if (n <= 1) {
+        return 1;
+    }
+    return f(n - 1) + 2 * f(n - 2);
+}
+```
+
+(a) Koliko vrne klic `f(6)`? (b) Kolikokrat se pri tem metoda `f` skupaj pokliče? (c) Največ koliko okvirjev metode `f` je hkrati na klicnem skladu?
+
+**Rešitev:**
+
+1. Osnovna primera: $f(0) = 1$ in $f(1) = 1$.
+2. Vrednosti računamo od spodaj navzgor: $f(2) = 1 + 2 \cdot 1 = 3$, $f(3) = 3 + 2 \cdot 1 = 5$, $f(4) = 5 + 2 \cdot 3 = 11$, $f(5) = 11 + 2 \cdot 5 = 21$, $f(6) = 21 + 2 \cdot 11 = 43$.
+3. Število klicev označimo s $K(n)$. Klic z $n \le 1$ ne kliče naprej: $K(0) = K(1) = 1$. Za $n \ge 2$ štejemo klic sam in vse klice obeh manjših problemov: $K(n) = 1 + K(n - 1) + K(n - 2)$.
+4. Dobimo $K(2) = 1 + 1 + 1 = 3$, $K(3) = 1 + 3 + 1 = 5$, $K(4) = 1 + 5 + 3 = 9$, $K(5) = 1 + 9 + 5 = 15$, $K(6) = 1 + 15 + 9 = 25$.
+5. Sklad: klic `f(n - 2)` se začne šele, ko se `f(n - 1)` že vrne in je njegov okvir odstranjen. Najdaljša veriga odprtih klicev je `f(6)`, `f(5)`, `f(4)`, `f(3)`, `f(2)`, `f(1)`, torej $6$ okvirjev.
+6. Odgovor: (a) `f(6)` vrne $43$; (b) metoda se pokliče $25$-krat; (c) hkrati je odprtih največ $6$ okvirjev metode `f`. Klicev je veliko več kot različnih vrednosti $n$ ($7$), ker se isti manjši problemi računajo večkrat.
+
+### Naloga 2
+
+Kaj izpiše program? Za vsako spremenljivko v izpisu utemelji vrednost s pravili o podajanju po vrednosti in dosegu.
+
+```java
+static int a(int x, int y) {
+    x = x + y;
+    y = b(x) + y;
+    return x * y;
+}
+
+static int b(int x) {
+    x = x - 3;
+    return 2 * x;
+}
+
+public static void main(String[] args) {
+    int x = 4, y = 7;
+    int z = a(y, x);
+    b(z);
+    System.out.println(x + " " + y + " " + z);
+}
+```
+
+**Rešitev:**
+
+1. Klic `a(y, x)`: argumenta sta $7$ in $4$. Odloča položaj, ne ime, zato parameter `x` metode `a` dobi $7$, parameter `y` pa $4$.
+2. V metodi `a`: `x` postane $7 + 4 = 11$.
+3. Klic `b(x)`: parameter `x` metode `b` dobi kopijo $11$, postane $11 - 3 = 8$, metoda vrne $2 \cdot 8 = 16$. Spremenljivka `x` v metodi `a` ostane $11$.
+4. V metodi `a`: `y` postane $16 + 4 = 20$, metoda vrne $11 \cdot 20 = 220$. Ta vrednost se shrani v `z`.
+5. Klic `b(z)` vrne $2 \cdot (220 - 3) = 434$, a klicatelj vrednosti ne shrani, zato se izgubi. `z` ostane $220$, ker je metoda spreminjala le svojo kopijo.
+6. Spremenljivki `x` in `y` v `main` sta drugi spremenljivki kot parametri z istim imenom v metodah `a` in `b`; nobena metoda ju ni mogla spremeniti.
+7. Odgovor: program izpiše `4 7 220`.
+
+### Naloga 3
+
+Metoda računa potenco $a^n$ za celo število $n \ge 0$ (`n / 2` je celoštevilsko deljenje):
+
+```java
+static long potenca(long a, int n) {
+    if (n == 0) {
+        return 1;
+    }
+    long h = potenca(a, n / 2);
+    if (n % 2 == 0) {
+        return h * h;
+    }
+    return h * h * a;
+}
+```
+
+(a) Dokaži z indukcijo, da metoda za vsak $n \ge 0$ vrne $a^n$, in utemelji, da se ustavi. (b) Kolikokrat se metoda pokliče pri `potenca(3, 13)` in koliko vrne? (c) Primerjaj s številom klicev metode, ki uporablja korak $a^n = a \cdot a^{n-1}$.
+
+**Rešitev:**
+
+1. Osnovni primer: za $n = 0$ metoda vrne $1 = a^0$.
+2. Indukcijska predpostavka: metoda vrne pravilno vrednost za vse eksponente, manjše od $n$ (potrebujemo vse manjše, ne le $n - 1$, ker klic skoči na $\lfloor n/2 \rfloor$). Za $n \ge 1$ je $\lfloor n/2 \rfloor < n$, zato je $h = a^{\lfloor n/2 \rfloor}$.
+3. Če je $n$ sod, je $n = 2 \lfloor n/2 \rfloor$ in metoda vrne $h \cdot h = a^{2 \lfloor n/2 \rfloor} = a^n$. Če je $n$ lih, je $n = 2 \lfloor n/2 \rfloor + 1$ in metoda vrne $h \cdot h \cdot a = a^n$. Trditev torej velja za vsak $n \ge 0$.
+4. Ustavitev: za $n \ge 1$ je $0 \le \lfloor n/2 \rfloor < n$, zato se argument strogo zmanjšuje in ostane nenegativen; po končno mnogo klicih doseže osnovni primer $n = 0$.
+5. Klici pri $n = 13$: eksponenti so $13 \to 6 \to 3 \to 1 \to 0$, torej $5$ klicev.
+6. Vrednosti se vračajo navzgor: $1$; nato $1 \cdot 1 \cdot 3 = 3$ (za $n = 1$); $3 \cdot 3 \cdot 3 = 27$ (za $n = 3$); $27 \cdot 27 = 729$ (za $n = 6$); $729 \cdot 729 \cdot 3 = 1\,594\,323$ (za $n = 13$).
+7. Metoda s korakom $a \cdot a^{n-1}$ se pokliče za $n = 13, 12, \ldots, 0$, torej $13 + 1 = 14$-krat. Na splošno potrebuje $n + 1$ klicev, metoda z razpolavljanjem pa za $n \ge 1$ le $\lfloor \log_2 n \rfloor + 2$ klicev: pri $n = 1000$ je to $11$ namesto $1001$.
+8. Odgovor: metoda je pravilna in se ustavi za vsak $n \ge 0$; `potenca(3, 13)` vrne $1\,594\,323$ po $5$ klicih, preprosta rekurzija bi jih potrebovala $14$.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si, da družinska zdravnica pošlje pacienta k specialistu. Specialistu ne da originalne kartoteke, ampak **fotokopijo** izvidov. Specialist lahko po kopiji piše, original ostane nedotaknjen. To je podajanje po vrednosti. Ko specialist konča, pošlje nazaj **svoj izvid**: to je `return`. Zdravnica ga sama vloži v kartoteko, kot klicatelj z `utrip = povecaj(utrip);`.
@@ -319,7 +418,7 @@ Rekurzija je kot veriga posvetov: vsak zdravnik vpraša kolega o nekoliko lažje
 - Java po imenih parametrov ugotovi pravi vrstni red in vrne $22{,}04$.
 ~ Argumenti nimajo imen; v parametre gredo po položaju.
 - Prevajalnik javi napako, ker se argumenta ne ujemata.
-~ Oba argumenta sta števili tipa, ki ga glava pričakuje, zato prevajalnik nima česa javiti.
+~ Oba argumenta sta števili, ki ju Java sprejme kot `double` (celo število $60$ samodejno pretvori), zato prevajalnik nima česa javiti.
 + Program teče brez napake, a vrne nesmiselno majhno število.
 > `masa` dobi $1{,}65$, `visina` pa $60$, zato je rezultat $\frac{1{,}65}{3600} \approx 0{,}00046$. Vrstni red argumentov je pomemben, napake pa računalnik ne opazi.
 
@@ -344,5 +443,5 @@ Rekurzija je kot veriga posvetov: vsak zdravnik vpraša kolega o nekoliko lažje
 > $400 \to 200 \to 100 \to 50 \to 25$: $\frac{400}{2^4} = 25\,\text{mg}$.
 
 :::simboli
-n | število razpolovnih časov (delitev) | n = \frac{\text{čas}}{\text{čas ene delitve}} | – | celice(n) = 2 · celice(n − 1)
+n | argument rekurzivne metode: število razpolovnih časov ali delitev, v primeru 4 število pacientov | n = \frac{\text{čas}}{\text{čas ene delitve}} | – | celice(n) = 2 · celice(n − 1)
 :::

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -49,7 +49,7 @@ $$B = \frac{\mu_0NI}{l}.$$
 
 Polje v središču krožne zanke s polmerom $R$ je $B = \mu_0I/(2R)$; to izračunamo z Biot-Savartovim zakonom, ker Amperov tu ni dovolj.
 
-**6. Sila med vzporednima vodnikoma.** Vodnik 1 ustvari na mestu vodnika 2 polje $\mu_0I_1/(2\pi r)$, ki deluje na vodnik 2 s silo $F/l = \mu_0I_1I_2/(2\pi r)$. Vodnika z istosmernima tokovoma se privlačita, z nasprotnima se odbijata.
+**6. Sila med vzporednima vodnikoma.** Vodnik 1 ustvari na mestu vodnika 2 polje $\mu_0I_1/(2\pi r)$, ki deluje na vodnik 2 s silo $F/l = \mu_0I_1I_2/(2\pi r)$. Vodnika z enako usmerjenima tokovoma se privlačita, z nasprotno usmerjenima se odbijata.
 
 **7. Magnetni pretok.** Skozi ploskev s površino $S$ v homogenem polju je **magnetni pretok**
 
@@ -110,7 +110,7 @@ $B = \dfrac{\mu_0I_1}{2\pi r}$, $F = I_2lB$
 1. Vodnik je dolg in raven, zato velja $B = \mu_0I_1/(2\pi r)$ iz Amperovega zakona: $B = 4\pi \cdot 10^{-7} \cdot 10/(2\pi \cdot 0{,}020)\,\mathrm{T} = 2 \cdot 10^{-7} \cdot 10/0{,}020\,\mathrm{T} = 1{,}0 \cdot 10^{-4}\,\mathrm{T}$.
 2. To je $100\,\mu\mathrm{T}$, dvakrat več od zemeljskega polja; zato vodniki s tokom motijo kompas.
 3. Polje je pravokotno na drugi vodnik, zato $F = I_2lB = 5{,}0 \cdot 1{,}0 \cdot 1{,}0 \cdot 10^{-4}\,\mathrm{N} = 5{,}0 \cdot 10^{-4}\,\mathrm{N}$.
-4. Odgovor: polje na razdalji $2{,}0\,\mathrm{cm}$ je $1{,}0 \cdot 10^{-4}\,\mathrm{T}$; vodnika se privlačita, ker sta tokova istosmerna, sila na meter drugega vodnika je $0{,}50\,\mathrm{mN}$.
+4. Odgovor: polje na razdalji $2{,}0\,\mathrm{cm}$ je $1{,}0 \cdot 10^{-4}\,\mathrm{T}$; vodnika se privlačita, ker tokova tečeta v isto smer, sila na meter drugega vodnika je $0{,}50\,\mathrm{mN}$.
 
 ### Primer 2
 
@@ -125,11 +125,11 @@ $e_0U = \tfrac{1}{2}mv^2$, $r = \dfrac{mv}{e_0B} = \dfrac{1}{B}\sqrt{\dfrac{2mU}
 
 **Rešitev:**
 
-1. $m_{12} = 12 \cdot 1{,}66 \cdot 10^{-27}\,\mathrm{kg} \approx 1{,}99 \cdot 10^{-26}\,\mathrm{kg}$.
-2. Delo električnega polja $e_0U$ se pretvori v kinetično energijo, zato $v_{12} = \sqrt{2e_0U/m_{12}} = \sqrt{2 \cdot 1{,}602 \cdot 10^{-19} \cdot 2000/1{,}99 \cdot 10^{-26}}\,\mathrm{m/s} \approx 1{,}79 \cdot 10^5\,\mathrm{m/s}$.
-3. Lorentzova sila opravlja vlogo centripetalne sile: $r_{12} = m_{12}v_{12}/(e_0B) = 1{,}99 \cdot 10^{-26} \cdot 1{,}79 \cdot 10^5/(1{,}602 \cdot 10^{-19} \cdot 0{,}20)\,\mathrm{m} \approx 0{,}1115\,\mathrm{m}$ (natančneje $0{,}11152\,\mathrm{m}$).
-4. Ker je $r \propto \sqrt{m}$: $r_{13} = r_{12}\sqrt{13/12} \approx 0{,}11608\,\mathrm{m}$.
-5. Ioni zadenejo detektor po polovici kroga, torej na razdalji premera od vstopa: $\Delta x = 2(0{,}11608 - 0{,}11152)\,\mathrm{m} \approx 9{,}1\,\mathrm{mm}$.
+1. $m_{12} = 12 \cdot 1{,}66 \cdot 10^{-27}\,\mathrm{kg} = 1{,}992 \cdot 10^{-26}\,\mathrm{kg}$.
+2. Delo električnega polja $e_0U$ se pretvori v kinetično energijo, zato $v_{12} = \sqrt{2e_0U/m_{12}} = \sqrt{2 \cdot 1{,}602 \cdot 10^{-19} \cdot 2000/1{,}992 \cdot 10^{-26}}\,\mathrm{m/s} \approx 1{,}794 \cdot 10^5\,\mathrm{m/s}$.
+3. Lorentzova sila opravlja vlogo centripetalne sile: $r_{12} = m_{12}v_{12}/(e_0B) = 1{,}992 \cdot 10^{-26} \cdot 1{,}794 \cdot 10^5/(1{,}602 \cdot 10^{-19} \cdot 0{,}20)\,\mathrm{m} \approx 0{,}1115\,\mathrm{m}$ (natančneje $0{,}11151\,\mathrm{m}$).
+4. Ker je $r \propto \sqrt{m}$: $r_{13} = r_{12}\sqrt{13/12} \approx 0{,}11606\,\mathrm{m}$.
+5. Ioni zadenejo detektor po polovici kroga, torej na razdalji premera od vstopa: $\Delta x = 2(0{,}11606 - 0{,}11151)\,\mathrm{m} \approx 9{,}1\,\mathrm{mm}$.
 6. Odgovor: ion $\mathrm{^{12}C^+}$ ima hitrost okoli $1{,}8 \cdot 10^5\,\mathrm{m/s}$ in kroži s polmerom $11{,}2\,\mathrm{cm}$, ion $\mathrm{^{13}C^+}$ s polmerom $11{,}6\,\mathrm{cm}$; izotopa zadeneta detektor približno $9\,\mathrm{mm}$ narazen.
 
 ### Primer 3 (težji)
@@ -236,13 +236,33 @@ Natančno navedi Amperov zakon z vsemi pogoji in z njim izpelji gostoto polja do
 
 Palica na tirnicah iz Primera 3 (polje kaže iz lista, $\odot$):
 
-```
-   o------------------------o
-   |     ⊙   ⊙   ⊙   |          palica →  v
-  [R]    ⊙   ⊙   ⊙   |  l
-   |     ⊙   ⊙   ⊙   |
-   o------------------------o
-```
+:::risba skica
+opis: Pogled od zgoraj na dve vzporedni vodoravni tirnici, ki sta na levem koncu povezani z uporom R. Čeznju leži navpično narisana palica dolžine l = 0,50 m, ki se giblje v desno s hitrostjo v = 2,0 m/s. Magnetno polje B = 0,40 T kaže iz lista (znaki ⊙). Inducirani tok I teče po palici navzdol, po spodnji tirnici v levo in skozi upor navzgor, torej v smeri urinega kazalca. Magnetna sila na palico kaže v levo, proti gibanju.
+območje: 0; -0,8 .. 12,5; 6,4
+črta: 1; 1 -> 11; 1
+črta: 1; 5 -> 11; 5
+črta: 1; 1 -> 1; 2,4
+črta: 1; 3,6 -> 1; 5
+pravokotnik: 0,7; 2,4 .. 1,3; 3,6
+napis: 1,5; 3 | R = 0,80 Ω | desno
+napis: 3,8; 4,2 | ⊙ | sredina | siva
+napis: 5; 4,2 | ⊙ | sredina | siva
+napis: 3,8; 1,8 | ⊙ | sredina | siva
+napis: 5; 1,8 | ⊙ | sredina | siva
+napis: 8,6; 4,2 | ⊙ | sredina | siva
+napis: 10; 4,2 | ⊙ | sredina | siva
+napis: 8,6; 1,8 | ⊙ | sredina | siva
+napis: 10; 1,8 | ⊙ | sredina | siva
+napis: 9,6; 0,4 | B = 0,40 T (iz lista) | pod | siva
+črta: 7; 0,7 -> 7; 5,3 | debelo
+napis: 7; 5,4 | palica, l = 0,50 m | nad
+puščica: 7; 3 -> 8,5; 3 | | | zelena
+napis: 8,7; 3 | v = 2,0 m/s | desno | zelena
+puščica: 7; 3 -> 5,6; 3 | | | rdeča
+napis: 6,3; 2,8 | F_m | pod | rdeča
+puščica: 5; 1 -> 3; 1 | I | pod | oranžna
+puščica: 3; 5 -> 5; 5 | I | nad | oranžna
+:::
 
 Palica drsi v desno, pretok narašča; inducirani tok ustvari polje v list, magnetna sila na palico pa kaže v levo, proti gibanju.
 
@@ -281,7 +301,7 @@ Za središče krožne zanke so vsi prispevki vzporedni in $r = R$, zato je $B = 
 ~ Uporabil si padanje z $1/r^2$, ki velja za točkast naboj; polje dolgega ravnega vodnika pada z $1/r$.
 + $B/2$
 - $2B$
-~ Polje z razdaljo ne narašča: dlje od vodnika so silnice redkejše, ker se isti »tok« silnic razporedi po daljši krožnici.
+~ Polje z razdaljo ne narašča: dlje od vodnika so silnice redkejše, ker se isti $\mu_0I$ iz Amperovega zakona razporedi po daljši krožnici.
 > $B = \mu_0I/(2\pi r)$ pada z $1/r$.
 
 ? Dolga tuljava ima $500$ ovojev na dolžini $25\,\mathrm{cm}$, po njej teče tok $2{,}0\,\mathrm{A}$. Kolikšna je gostota polja v notranjosti?

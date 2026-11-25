@@ -1,13 +1,13 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Potapljač se na vdih spusti na dno $5\,\mathrm{m}$ globokega skakalnega bazena in začne ga boleti v ušesih. Na isti globini v jezeru čuti skoraj natanko enako bolečino, čeprav je jezero tisočkrat večje.
+Potapljač se na vdih spusti na dno $5\,\mathrm{m}$ globokega skakalnega bazena in v ušesih ga začne boleti. Na isti globini v jezeru čuti skoraj natanko enako bolečino, čeprav je jezero tisočkrat večje.
 
-Vaterpolist potisne žogo pod vodo in jo spusti. Žoga izstreli iz vode, kot bi jo nekdo brcnil od spodaj.
+Vaterpolist potisne žogo pod vodo in jo spusti. Žoga šine iz vode, kot bi jo nekdo brcnil od spodaj.
 
 Obe situaciji skrivata isto idejo: **tlak v mirujoči tekočini raste z globino in je odvisen samo od globine**. Bolečina v ušesu je razlika tlakov na bobniču. Žogo pa potiska navzgor razlika tlakov med njenim spodnjim in zgornjim delom. V procesnem inženirstvu ista ideja določa debelino sten rezervoarjev, silo na lopute in okna, odčitke manometrov in plavanje merilnih plovcev.
 
@@ -49,7 +49,7 @@ Sprememba tlaka na gladini se prenese v vse točke tekočine (**Pascalov zakon**
 
 **4. Absolutni tlak in nadtlak.** Večina merilnikov meri razliko do okoliškega zraka: to je **nadtlak** $p_\mathrm{n} = p - p_0 = \rho g h$. **Absolutni tlak** $p$ šteje od vakuuma. Merilnik v pnevmatiki kolesa, ki kaže $4\,\mathrm{bar}$, pomeni okoli $5\,\mathrm{bar}$ absolutno. Enote: $1\,\mathrm{bar} = 10^5\,\mathrm{Pa}$. Pri vodi vsakih $10\,\mathrm{m}$ globine doda približno $1\,\mathrm{bar}$.
 
-Kako to izgleda v vodi:
+Kako je to videti v vodi:
 
 | Globina $h$ | Nadtlak $\rho g h$ | Absolutni tlak |
 |---|---|---|
@@ -207,7 +207,7 @@ Pravokotna loputa v navpični steni rezervoarja z vodo je široka $1{,}5\,\mathr
 5. Ročica sile glede na tečaj: $2{,}1667 - 1{,}0 = 1{,}1667\,\mathrm{m}$; moment $M = 58\,860 \cdot 1{,}1667\,\mathrm{N\,m} \approx 68\,670\,\mathrm{N\,m}$.
 6. Zapah je $2{,}0\,\mathrm{m}$ od tečaja; ravnovesje momentov: $F_\mathrm{z} = \dfrac{68\,670}{2{,}0}\,\mathrm{N} \approx 34\,335\,\mathrm{N}$.
 7. Ravnovesje sil: $F_\mathrm{t} = 58\,860 - 34\,335 = 24\,525\,\mathrm{N}$.
-8. Odgovor: voda pritiska na loputo s $58{,}9\,\mathrm{kN}$, središče tlaka je na globini $2{,}17\,\mathrm{m}$, zapah nosi $34{,}3\,\mathrm{kN}$, tečaj $24{,}5\,\mathrm{kN}$. Če bi silo napačno postavili v težišče, bi zapahu pripisali le polovico, $29{,}4\,\mathrm{kN}$.
+8. Odgovor: voda pritiska na loputo z $58{,}9\,\mathrm{kN}$, središče tlaka je na globini $2{,}17\,\mathrm{m}$, zapah nosi $34{,}3\,\mathrm{kN}$, tečaj $24{,}5\,\mathrm{kN}$. Če bi silo napačno postavili v težišče, bi zapahu pripisali le polovico, $29{,}4\,\mathrm{kN}$.
 
 ### Naloga 2
 
@@ -314,6 +314,6 @@ m_\mathrm{Pb} | masa svinčene uteži | | kg
 y | razdalja vzdolž ploskve od presečišča z gladino | | m
 \theta | naklonski kot ploskve proti gladini | | °
 y_\mathrm{T} | lega težišča ploskve, merjena vzdolž ploskve | | m
-y_\mathrm{P} | lega središča tlaka, merjena vzdolž ploskve | y_\mathrm{P} = y_\mathrm{T} + \frac{I_\mathrm{T}}{y_\mathrm{T} A} | m | središče tlaka je vedno pod težiščem
+y_\mathrm{P} | lega središča tlaka, merjena vzdolž ploskve | y_\mathrm{P} = y_\mathrm{T} + \frac{I_\mathrm{T}}{y_\mathrm{T} A} | m | pod težiščem, razen pri vodoravni ploskvi
 I_\mathrm{T} | ploskovni vztrajnostni moment okoli osi skozi težišče | | m^4 | za pravokotnik b a³/12
 :::

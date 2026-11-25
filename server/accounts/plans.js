@@ -11,21 +11,30 @@ export const MAX_CHILDREN = 4;
 // 2026-11-10 (potrdil j 10. 11.): #511: neujemajoče plačilo 1 leto; #477: odstavek o pilotu.
 // 2026-11-11 (j 10. 11., združeno 11. 11.): eno obvestilo za Moje zapiske #563 (odstavek »Moji zapiski«: prepis rokopisa,
 // fotografija se ne shrani) in ustno spraševanje #564 (stikalo starša za glas, tudi mikrofon v Inštruktorju).
-export const PRIVACY_VERSION = "2026-11-11";
+// 2026-11-14 (j 14. 11., »Vse ja«): alineja »Kratka anketa po 7 dneh« (B3, #674).
+// 2026-11-18 (j 17. 11.): strani usklajene s kodo (#817): fotografije 7 dni, kdo vidi podatke, šola upravljavec
+// podatkov razreda, šifrirana kopija v EU (R2), študenti.
+// 2026-11-21 (j 21. 11., kartica »Da, v aplikaciji«, brez e-pošte): urnik in zgoščeni IP (#908), tabela piškotkov (#916),
+// ogledi pogovora v dnevniku dostopov (#924).
+// 2026-11-25 (j 25. 11., obvestilo v aplikaciji kot 21. 11.): alineja »Varnost ob stiski« (e-mail skrbniku ob vsakem
+// varnostnem oknu, staršu otroka pod 15 let brez nasilja in blažjega okna; IN-14).
+export const PRIVACY_VERSION = "2026-11-25";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
-// stopnji profila (public/stopnja.js): OŠ 9,99 € na mesec ali 99 € na leto, SŠ 13,99 / 139 €, faks 19,99 / 199 €.
+// stopnji profila (public/stopnja.js): OŠ 9,99 € na mesec ali 99 € na leto, SŠ 13,99 / 99 €, faks 19,99 / 199 €.
 // Družina (2–4 profili OŠ ali SŠ) 18,99 / 189 €, Družina s študentom (2–4 profili, tudi faks) 27,99 / 269 €.
-// Letna cena ≈ 10 mesečnih plačil. Pravilo j: vsak paket ima v najslabšem primeru (učenec porabi ves zajamčeni
+// Letna cena ≈ 10 mesečnih plačil (SŠ ≈ 7, glej spodaj). Pravilo j: vsak paket ima v najslabšem primeru (učenec porabi ves zajamčeni
 // AI) vsaj 75 % dobička (worstProfit spodaj). Prejšnje cene (1. 11.): OŠ 9,99 / 89, SŠ 12,99 / 119, faks
 // 16,99 / 149, Družina 17,99 / 159, s študentom 24,99 / 219 €.
+// Letna SŠ 99 € (j 2026-11-19, kartica »99 € na leto«; prej 139 €): pod 119,99 €, ≈ 7 mesečnih plačil do mature.
+// OŠ in SŠ letno sta zato enako dragi (prehod med njima: ista cena, server/accounts/email.js planChangeEmail).
 // Paket OŠ obdrži stari lookup_key (<slug>_1_month), da obstoječe naročnine ostanejo pri isti ceni v Stripu.
 // Ob spremembi zneska Stripe sam ustvari novo ceno in staro arhivira (glej ensurePrices); obstoječe
 // naročnine ostanejo pri stari ceni. Naročnina odpre svojo stopnjo in vse nižje (server/placila/pravice.js).
 export const LEVEL_PRICES = {
   OS: { month: 999, year: 9900 },
-  SS: { month: 1399, year: 13900 },
+  SS: { month: 1399, year: 9900 },
   FAKS: { month: 1999, year: 19900 },
 };
 export const FAMILY_PRICES = {
@@ -180,7 +189,6 @@ let fx = { rates: {}, at: 0 };
 export function setFxRates(rates, at = Date.now()) {
   fx = { rates: { ...(rates || {}) }, at: Number(at) || 0 };
 }
-export const fxState = () => ({ ...fx, fresh: Date.now() - fx.at <= FX_MAX_AGE_MS });
 // € za eno enoto valute za izračun meje (z rezervo); 0 za neznano valuto.
 export function eurPerUnitNow(cur, now = Date.now()) {
   if (cur === "EUR") return 1;
@@ -248,7 +256,7 @@ export const SCHOOL_PLANS = [
 export const schoolPlanFor = (interval) => SCHOOL_PLANS.find((p) => p.interval === interval) || null;
 
 // Darilna koda: eno leto za en profil izbrane stopnje, enkratno plačilo po letni ceni stopnje
-// (j 2026-11-04: 99 / 139 / 199 €; server/placila/darila.js). Zajamčeni AI kot pri letni naročnini stopnje.
+// (j 2026-11-04, SŠ 2026-11-19: 99 / 99 / 199 €; server/placila/darila.js). Zajamčeni AI kot pri letni naročnini stopnje.
 export const giftFor = (level = "OS") => {
   const l = LEVEL_PRICES[level] ? level : "OS";
   return { amount: LEVEL_PRICES[l].year, days: 365, currency: "EUR", level: l, label: `Darilna koda: 1 leto ${LEVEL_LABEL[l]}` };
@@ -261,6 +269,19 @@ export const ALL_PLANS = [...PLANS.map((p) => ({ ...p, currency: "EUR" })), ...L
 // Cene, ustvarjene pod prejšnjim imenom aplikacije (brand.json → legacy), imajo v Stripu lookup_key »<staro>_…«.
 const currentKey = (key) => LEGACY.reduce((k, l) => (k.startsWith(`${l.slug}_`) ? `${BRAND.slug}_${k.slice(l.slug.length + 1)}` : k), String(key ?? ""));
 export const planByKey = (key) => ALL_PLANS.find((p) => p.key === currentKey(key)) || null;
+// Paket cene v Stripu. Ob spremembi zneska (npr. SŠ letno 139 → 99 €, j 2026-11-19) ensurePrices prenese lookup_key na
+// novo ceno in staro arhivira; obstoječe naročnine ostanejo na stari ceni brez lookup_key. Takrat paket po
+// metadata.plan_key (cene od 2026-11-19) ali po nazivu (nickname = label, v drugih valutah »label (VALUTA)«),
+// valuti in obdobju, ki so med paketi enolični.
+export const planOfPrice = (price) => {
+  if (!price) return null;
+  const byKey = planByKey(price.lookup_key) || planByKey(price.metadata?.plan_key);
+  if (byKey) return byKey;
+  const cur = String(price.currency || "").toUpperCase();
+  const interval = price.recurring?.interval;
+  if (!price.nickname || !cur || !interval) return null;
+  return ALL_PLANS.find((p) => p.currency === cur && p.interval === interval && (cur === "EUR" ? p.label : `${p.label} (${cur})`) === price.nickname) || null;
+};
 export const isSchoolPlan = (key) => !!planByKey(key)?.school;
 // Paket za nakup: v evrih 1 profil po stopnji profila, 2 ali več profilov Družina (s študentom, če je stopnja
 // faks); v regijskih valutah kot doslej po številu otrok (1 ali 2).
@@ -295,6 +316,9 @@ const envUsd = (k, d) => {
 };
 export const freeMonthlyPoolUsd = () => envUsd("EVKLID_FREE_POOL_USD", 10);
 export const freeStudentMonthlyUsd = () => envUsd("EVKLID_FREE_STUDENT_USD", 0.2);
+// Vsi nepotrjeni računi in gostje skupaj na dan (#747 pregled 2), znotraj skupne meje brezplačnih: 0,2 $ ≈ 400 vprašanj
+// s Haikujem (≈ 40 novincev po 10 vprašanj), da množica izmišljenih naslovov ne porabi mesečnega bazena v enem dnevu.
+export const unverifiedDayUsd = () => envUsd("EVKLID_UNVERIFIED_DAY_USD", 0.2);
 
 // ---------- paketi pred testom (enkratno plačilo, j 2026-10-30, cene j 2026-11-04) ----------
 // Poln dostop za en profil za 7 ali 14 dni, brez naročnine. aiUsd = največja poraba AI v času paketa; ko je
@@ -324,7 +348,7 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 
 // ---------- poraba AI v naročnini (j 2026-11-01, deleži j 2026-11-04 »Predlog A«) ----------
 // Zajamčeno na profil na mesec (v $, kot zaračunava Claude API): mesečna naročnina OŠ 1,9 $, SŠ 2,9 $, faks 4,5 $;
-// letna OŠ 1,7 $, SŠ 2,6 $, faks 3,8 $. Družina ima en skupen delež za ves račun (vsi profili skupaj): Družina 3,2 $
+// letna OŠ 1,7 $, SŠ 1,7 $ (j 2026-11-19, letna cena 99 €; prej 2,6 $), faks 3,8 $. Družina ima en skupen delež za ves račun (vsi profili skupaj): Družina 3,2 $
 // (letno 2,6 $), Družina s študentom 5,5 $ (letno 4,3 $); obvestila 80 % / 100 % in »še N razlag« veljajo za skupni
 // delež. Osebno ob šolski licenci 0,9 $ (letno 0,6 $). Regijski paketi po pravilu 75 % (regionalGuaranteeUsd).
 // Deleži naročnikov imajo prednost pred brezplačnimi v skupnem mesečnem proračunu (server/usage.js).
@@ -333,10 +357,11 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 // paketa (najslabši primer, worstProfit), skupaj z brezplačnim repom 0,2 $ na profil nad mejo (subscriptionCeiling
 // spodaj; meja paketa = vrednost − rep). Hitri način je vštet v mejo: podrobne razlage do meje / 1,15
 // (to se pokaže učencu kot »še N razlag«), nato hitri model (Haiku) še FAST_TAIL (15 % podrobnega dela) do meje. Nad
-// mejo velja dnevna meja brezplačnega paketa (freeDailyQuestions, 10 vprašanj na dan, hitri model) do 1. v mesecu
-// ali do dokupa (server/usage.js studentBudget/overCeiling, server/accounts/index.js dailyLimitFor).
+// mejo profil vsak dan do konca obdobja paketa (ali do dokupa) dela kot brezplačni paket: dnevna meja vprašanj
+// (freeDailyQuestions, 10 na dan, hitri model) in brezplačni rep, razporejen po dnevih (j 2026-11-17; server/usage.js
+// overCeiling/tailToday, server/accounts/index.js dailyLimitFor).
 export const AI_GUARANTEE_USD = { OS: 1.9, SS: 2.9, FAKS: 4.5 };
-export const AI_GUARANTEE_YEAR_USD = { OS: 1.7, SS: 2.6, FAKS: 3.8 };
+export const AI_GUARANTEE_YEAR_USD = { OS: 1.7, SS: 1.7, FAKS: 3.8 };
 export const FAMILY_POOL_USD = { druzina: { month: 3.2, year: 2.6 }, druzina_student: { month: 5.5, year: 4.3 } };
 export const SCHOOL_PLAN_AI_USD = { month: 0.9, year: 0.6 };
 export const FAST_TAIL = 0.15;
@@ -353,7 +378,7 @@ export const guaranteeUsd = (level, interval = "month") => {
   return capTo(table[level] ?? table.OS, eurMonth);
 };
 // Brezplačni rep (j 2026-11-04): nad mejo paketa naročnik dela kot brezplačni profil, z enako mesečno mejo
-// (freeStudentMonthlyUsd, 0,2 $ na profil; server/usage.js overFreeTail). Ta rep je vštet v vrednosti iz tabele:
+// (freeStudentMonthlyUsd, 0,2 $ na profil; po dnevih server/usage.js tailToday, ves rep overFreeTail). Ta rep je vštet v vrednosti iz tabele:
 // meja paketa = vrednost − 0,2 $ × profili paketa (Družina 4), nikoli pod 0. Najslabši primer je tako
 // meja + rep = vrednost iz tabele (ali manj).
 export const subscriptionCeiling = (totalUsd, profiles = 1) => Math.max(0, Math.round(((totalUsd || 0) - freeStudentMonthlyUsd() * profiles) * 1000) / 1000);

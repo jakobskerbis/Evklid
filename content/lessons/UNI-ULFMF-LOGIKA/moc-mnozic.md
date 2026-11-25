@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -65,7 +65,7 @@ Recimo, da so vsa števila iz $(0, 1)$ v zaporedju $a_1, a_2, a_3, \dots$, zapis
 | $3$ | $0{,}71\mathbf{4}2\ldots$ | $4$ | $5$ |
 | $4$ | $0{,}123\mathbf{4}\ldots$ | $4$ | $5$ |
 
-Dobimo $x = 0{,}5455\ldots$. Število $x$ se od $a_k$ razlikuje v $k$-ti decimalki, torej $x \neq a_k$ za vsak $k$. A $x \in (0, 1)$, zato ga seznam ne vsebuje. Protislovje: nobeno zaporedje ne zajame vseh števil iz $(0, 1)$. Števki $4$ in $5$ izberemo zato, da se izognemo dvojnim zapisom, kot je $0{,}0999\ldots = 0{,}1$.
+Dobimo $x = 0{,}5455\ldots$. Število $x$ se od $a_k$ razlikuje v $k$-ti decimalki, torej $x \neq a_k$ za vsak $k$. A $x \in (0, 1)$, zato bi moral biti na seznamu. Protislovje: nobeno zaporedje ne zajame vseh števil iz $(0, 1)$. Števki $4$ in $5$ izberemo zato, da se izognemo dvojnim zapisom, kot je $0{,}0999\ldots = 0{,}1$.
 
 Ker je $(0, 1) \subseteq \mathbb{R}$, je neštevna tudi $\mathbb{R}$. Moč $\mathbb{R}$ imenujemo **kontinuum** in jo označimo s $\mathfrak{c}$.
 
@@ -116,7 +116,7 @@ Linearna funkcija, ki krajišče $0$ pošlje v $2$ in $1$ v $5$: $f(x) = 3x + 2$
 3. Surjektivnost: za $y \in (2, 5)$ je $x = \frac{y - 2}{3} \in (0, 1)$ in $f(x) = y$.
 4. $f(0{,}2) = 3 \cdot 0{,}2 + 2 = 2{,}6$.
 5. $f^{-1}(4{,}1) = \dfrac{4{,}1 - 2}{3} = 0{,}7$.
-6. Ker je $(2, 5) \sim (0, 1)$ in je $(0, 1)$ neštevna, je neštevna tudi $(2, 5)$. Če bi bila $(2, 5)$ števna, bi kompozitum z $f$ naštel tudi $(0, 1)$.
+6. Ker je $(2, 5) \sim (0, 1)$ in je $(0, 1)$ neštevna, je neštevna tudi $(2, 5)$. Če bi bila $(2, 5)$ števna, bi kompozitum njenega naštetja z $f^{-1}$ naštel tudi $(0, 1)$.
 7. Odgovor: intervala sta enako močna z bijekcijo $f(x) = 3x + 2$; $f(0{,}2) = 2{,}6$, v $4{,}1$ se preslika $0{,}7$; $(2, 5)$ je neštevna.
 
 ### Primer 3 (težji): diagonalno štetje parov
@@ -176,18 +176,72 @@ Kot unija dveh števnih množic bi bila $\mathbb{R}$ števna. To nasprotuje Cant
 
 - $A \sim B$ (enako močni), če obstaja bijekcija $A \to B$. Za $A \not\sim B$ moraš izključiti vse funkcije.
 - Števno neskončna: $A \sim \mathbb{N}$, moč $\aleph_0$; števna = končna ali števno neskončna = elemente lahko naštejemo v zaporedje.
-- Števne so: sodih števil, $\mathbb{Z}$ ($0, 1, -1, 2, -2, \dots$), $\mathbb{N} \times \mathbb{N}$ (diagonale), $\mathbb{Q}$. Podmnožica, končna unija in produkt števnih množic so števni.
+- Števne so: množica sodih števil, $\mathbb{Z}$ ($0, 1, -1, 2, -2, \dots$), $\mathbb{N} \times \mathbb{N}$ (diagonale), $\mathbb{Q}$. Podmnožica, končna unija in produkt števnih množic so števni.
 - Neštevne so: $(0, 1)$ (Cantorjev diagonalni argument), $\mathbb{R}$, vsak interval $(a, b)$, iracionalna števila; moč $\mathbb{R}$ je kontinuum $\mathfrak{c}$.
 - Neskončna množica je lahko enako močna s svojo pravo podmnožico.
 - $|A| \le |B|$ pomeni injekcijo $A \to B$; iz $|A| \le |B|$ in $|B| \le |A|$ sledi $|A| = |B|$.
 
-## Drugače: Iz vsakdanjega življenja (Hilbertov hotel)
+## Za izpit
 
-Hotel ima sobe $1, 2, 3, \dots$ in vse so zasedene. Pride nov gost. Receptor vsakega gosta preseli iz sobe $n$ v sobo $n + 1$. Soba $1$ je prosta, nihče ni ostal brez sobe. Torej $\mathbb{N} \sim \mathbb{N} \cup \{0\}$.
+Znati moraš povedati:
+- definicije: enako močni množici, končna, števno neskončna, števna in neštevna množica, moči $\aleph_0$ in $\mathfrak{c}$;
+- dokaze, da so $\mathbb{Z}$, $\mathbb{N} \times \mathbb{N}$ in $\mathbb{Q}$ števne (naštetje v zaporedje, diagonalno štetje s formulo za $\pi$);
+- Cantorjev diagonalni argument za neštevnost $(0, 1)$, tudi zakaj izberemo števki $4$ in $5$ in zakaj argument ne deluje za $\mathbb{Q}$;
+- pravila za števnost: podmnožica, unija (tudi števno mnogo množic), produkt; nadmnožica neštevne množice je neštevna;
+- definicijo $|A| \le |B|$ in izrek Cantor–Schröder–Bernstein;
+- Cantorjev izrek $|A| < |\mathcal{P}(A)|$ z dokazom (množica $D = \{a \in A ;\ a \notin f(a)\}$).
 
-Pride avtobus z neskončno gosti $b_1, b_2, \dots$. Gost iz sobe $n$ se preseli v sobo $2n$, gost $b_k$ dobi sobo $2k - 1$. Spet so vsi nastanjeni. To je unija dveh števnih množic.
+### Naloga 1
 
-Pride pa avtobus, v katerem ima vsak potnik za ime neskončno zaporedje ničel in enic. Takih potnikov ne moreš nastaniti, tudi v prazen hotel ne. Če bi jih razporedil po sobah, bi diagonalni potnik (v $k$-tem mestu ravno obratno od gosta v sobi $k$) ostal na cesti. To je neštevna množica.
+Naj bo $f\colon \mathbb{N} \to \mathbb{Z}$ bijekcija iz razlage ($f(n) = \frac{n}{2}$ za sod $n$, $f(n) = -\frac{n-1}{2}$ za lih $n$) in $\pi$ diagonalno štetje parov, $\pi(m, n) = \frac{(m+n-2)(m+n-1)}{2} + m$. (a) Zapiši inverz $g = f^{-1}\colon \mathbb{Z} \to \mathbb{N}$ s formulo. (b) Utemelji, da je $F(a, b) = \pi(g(a), g(b))$ bijekcija $\mathbb{Z} \times \mathbb{Z} \to \mathbb{N}$. (c) Izračunaj $F(-3, 2)$. (d) Kateri par $(a, b) \in \mathbb{Z} \times \mathbb{Z}$ je na mestu $100$?
+
+**Rešitev:**
+
+1. Inverz: pozitivna števila so slike sodih $n$, iz $z = \frac{n}{2}$ dobimo $n = 2z$. Število $0$ in negativna števila so slike lihih $n$, iz $z = -\frac{n-1}{2}$ dobimo $n = 1 - 2z$. Torej $g(z) = 2z$ za $z > 0$ in $g(z) = 1 - 2z$ za $z \le 0$. Preverimo: $g(0) = 1$, $g(1) = 2$, $g(-1) = 3$.
+2. Ker je $g$ bijekcija, je tudi $(a, b) \mapsto (g(a), g(b))$ bijekcija $\mathbb{Z} \times \mathbb{Z} \to \mathbb{N} \times \mathbb{N}$; njen inverz je $(m, n) \mapsto (f(m), f(n))$. Funkcija $\pi$ je bijekcija $\mathbb{N} \times \mathbb{N} \to \mathbb{N}$ (Primer 3). Kompozitum dveh bijekcij je bijekcija, zato je $F$ bijekcija in $\mathbb{Z} \times \mathbb{Z} \sim \mathbb{N}$.
+3. $g(-3) = 1 - 2 \cdot (-3) = 7$ in $g(2) = 2 \cdot 2 = 4$.
+4. Par $(7, 4)$ leži na diagonali $s = 11$. Pred njo je $\frac{9 \cdot 10}{2} = 45$ parov, zato je $F(-3, 2) = 45 + 7 = 52$.
+5. Mesto $100$: pred diagonalo $s = 15$ je $\frac{13 \cdot 14}{2} = 91$ parov, pred diagonalo $s = 16$ pa $\frac{14 \cdot 15}{2} = 105$. Ker je $91 < 100 \le 105$, je mesto $100$ na diagonali $s = 15$.
+6. Na njej je to par na mestu $100 - 91 = 9$, torej $m = 9$ in $n = 15 - 9 = 6$.
+7. Nazaj v $\mathbb{Z}$: $a = f(9) = -\frac{9 - 1}{2} = -4$ in $b = f(6) = \frac{6}{2} = 3$.
+8. Preverimo: $g(-4) = 1 + 8 = 9$, $g(3) = 6$ in $\pi(9, 6) = 91 + 9 = 100$.
+9. Odgovor: $g(z) = 2z$ za $z > 0$, $g(z) = 1 - 2z$ za $z \le 0$; $F(-3, 2) = 52$; na mestu $100$ je par $(-4, 3)$.
+
+### Naloga 2
+
+Sestavi bijekcijo $h\colon [0, 1] \to (0, 1)$, zapisano s predpisom, in dokaži, da je bijekcija. Kam se preslikajo $0$, $1$, $\frac{1}{5}$ in $0{,}3$? Katero število se preslika v $\frac{1}{4}$?
+
+**Rešitev:**
+
+1. Težava sta krajišči $0$ in $1$, ki ju v $(0, 1)$ ni. Uporabimo zamik kot pri bijekciji $n \mapsto n + 1$: izberemo zaporedje različnih točk $c_1 = 0$, $c_2 = 1$, $c_3 = \frac{1}{2}$, $c_4 = \frac{1}{3}$, …, torej $c_k = \frac{1}{k-1}$ za $k \ge 2$, in ga zamaknemo za dve mesti.
+2. Predpis: $h(c_k) = c_{k+2}$, to je $h(0) = \frac{1}{2}$ in $h\!\left(\frac{1}{n}\right) = \frac{1}{n+2}$ za $n \in \mathbb{N}$; za vse druge $x$ je $h(x) = x$.
+3. Slika v $(0, 1)$: točke $c_k$ gredo v $c_3, c_4, \dots$, ki so v $(0, 1)$; druge točke iz $[0, 1]$ niso krajišči in ostanejo na mestu.
+4. Injektivnost: na zaporedju je $k \mapsto k + 2$ injektivna in členi so različni; zunaj zaporedja je $h$ identiteta; točka zaporedja se slika v zaporedje, točka zunaj njega pa ostane zunaj, zato se sliki ne moreta ujemati.
+5. Surjektivnost: naj bo $y \in (0, 1)$. Če je $y = c_k$, je $k \ge 3$ in $y = h(c_{k-2})$. Sicer je $y = h(y)$.
+6. Vrednosti: $h(0) = \frac{1}{2}$, $h(1) = \frac{1}{3}$, $h\!\left(\frac{1}{5}\right) = \frac{1}{7}$. Število $0{,}3 = \frac{3}{10}$ ni oblike $\frac{1}{n}$, zato $h(0{,}3) = 0{,}3$.
+7. Iz $\frac{1}{n+2} = \frac{1}{4}$ sledi $n = 2$: v $\frac{1}{4}$ se preslika $\frac{1}{2}$.
+8. Odgovor: $h$ je bijekcija, zato $[0, 1] \sim (0, 1)$; $h(0) = \frac{1}{2}$, $h(1) = \frac{1}{3}$, $h\!\left(\frac{1}{5}\right) = \frac{1}{7}$, $h(0{,}3) = 0{,}3$, v $\frac{1}{4}$ se preslika $\frac{1}{2}$. Izrek Cantor–Schröder–Bernstein bi dal le obstoj bijekcije, ne predpisa.
+
+### Naloga 3
+
+Naj bo $\mathcal{F}$ množica vseh končnih podmnožic $\mathbb{N}$ in $\mathcal{N}$ množica vseh neskončnih podmnožic $\mathbb{N}$. Utemelji, ali sta $\mathcal{F}$ in $\mathcal{N}$ števni. Neštevnosti $\mathcal{P}(\mathbb{N})$ ne privzemi, ampak jo dokaži.
+
+**Rešitev:**
+
+1. $\mathcal{F}$ je števna. Za $n \in \mathbb{N}$ naj bo $\mathcal{F}_n$ množica vseh podmnožic množice $\{1, 2, \dots, n\}$. Ta je končna, ima $2^n$ elementov.
+2. Vsaka končna $B \subseteq \mathbb{N}$ je prazna ali ima največji element $n$, zato je $B \in \mathcal{F}_n$ za neki $n$. Torej je $\mathcal{F} = \mathcal{F}_1 \cup \mathcal{F}_2 \cup \dots$ unija števno mnogo končnih (torej števnih) množic in je števna. Ker vsebuje vse enojce $\{n\}$, je neskončna, torej števno neskončna.
+3. $\mathcal{P}(\mathbb{N})$ je neštevna. Recimo, da je $B_1, B_2, B_3, \dots$ zaporedje, v katerem nastopi vsaka podmnožica $\mathbb{N}$. Naj bo $D = \{n \in \mathbb{N} ;\ n \notin B_n\}$.
+4. Za vsak $k$ velja: $k \in D$ natanko tedaj, ko $k \notin B_k$. Množici $D$ in $B_k$ se torej razlikujeta v elementu $k$, zato $D \ne B_k$ za vsak $k$. A $D \subseteq \mathbb{N}$, protislovje. Takega zaporedja ni.
+5. $\mathcal{N}$ je neštevna. Velja $\mathcal{P}(\mathbb{N}) = \mathcal{F} \cup \mathcal{N}$. Če bi bila $\mathcal{N}$ števna, bi bila $\mathcal{P}(\mathbb{N})$ unija dveh števnih množic, torej števna, kar nasprotuje koraku 4.
+6. Odgovor: $\mathcal{F}$ je števno neskončna, $\mathcal{N}$ je neštevna. Sklep je enak kot pri $\mathbb{R} = \mathbb{Q} \cup \mathbb{I}$: če neštevni množici odvzamemo števno, ostane neštevna.
+
+## Drugače: Uporaba v stroki
+
+**Teorija mere in verjetnost.** Števna množica ima dolžino (Lebesguovo mero) $0$. Racionalna števila iz $[0, 1]$ naštej kot $q_1, q_2, \dots$ in $q_k$ pokrij z intervalom dolžine $\frac{\varepsilon}{2^k}$. Skupna dolžina je največ $\frac{\varepsilon}{2} + \frac{\varepsilon}{4} + \dots = \varepsilon$; pri $\varepsilon = 0{,}01$ vse ulomke pokriješ z intervali skupne dolžine največ $0{,}01$. Zato je naključno izbrano število iz $[0, 1]$ z verjetnostjo $1$ iracionalno. Verjetnost je aditivna le za števno mnogo dogodkov: diskretno porazdelitev podaš z verjetnostmi posameznih točk, pri zvezni ima vsaka točka verjetnost $0$ in potrebuješ gostoto.
+
+**Računalništvo.** Program je končen niz znakov iz končne abecede. Nizov dolžine $n$ iz dveh znakov je $2^n$, vseh nizov je zato števno mnogo. Funkcij $\mathbb{N} \to \{0, 1\}$ pa je neštevno mnogo (diagonalni argument), zato večine sploh ne izračuna noben program. Z diagonalnim argumentom Turing dokaže tudi, da problem ustavitve ni odločljiv.
+
+**Teorija števil.** Polinomov s celimi koeficienti je števno mnogo in vsak neničelni ima končno mnogo ničel, zato je algebraičnih števil števno mnogo. Ker je $\mathbb{R}$ neštevna, transcendentna števila obstajajo in jih je neštevno mnogo; tako je Cantor leta 1874 dokazal njihov obstoj, ne da bi zapisal eno samo.
 
 ## Drugače: Korak za korakom s številkami
 

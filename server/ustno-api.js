@@ -2,7 +2,8 @@
 // vidi in lahko popravi. Strošek gre skozi iste meje AI kot inštruktor (server/usage.js hold, server/meje-ai.js),
 // spraševanje šteje kot USTNO_QUESTIONS vprašanj na dan (accounts: brezplačni paket 3 od 10). Ne gre v lige, učitelj
 // ga ne vidi; prepis se hrani kot pogovor (šifrirano, kot drugi pogovori). Ugovor »Ne strinjam se« gre v prijave napak.
-import { getTopic } from "./curriculum.js";
+import { AI_JSON } from "./ai-oznaka.js";
+import { getTopic, pathKeyFor } from "./curriculum.js";
 import { loadLesson } from "./textbook.js";
 import { hasGenerator } from "./practice/index.js";
 import { lessonForQuestion } from "./lekcija-za-vprasanje.js";
@@ -11,8 +12,9 @@ import { seal, sealJson, unsealJson } from "./crypto-polje.js";
 import { callMaxUsd } from "./meje-ai.js";
 import { lokalnaVrsta, nujnoZa } from "./nujno.js";
 import { audit } from "./dnevnik-dostopov.js";
+import { speakMarkdown, govorMp3, glasUrl } from "./govor.js";
 import {
-  pickQuestions, publicQuestion, gradeUser, reviewUser, callModel, pointsFrom, resultStatus, score, better, cleanFollowup, cleanFeedback,
+  pickQuestions, publicQuestion, forSpeech, gradeUser, reviewUser, callModel, pointsFrom, resultStatus, score, better, cleanFollowup, cleanFeedback,
   GRADE_SYSTEM, REVIEW_SYSTEM, USTNO_MODEL, USTNO_REVIEW_MODEL, GRADE_MAX_TOKENS, REVIEW_MAX_TOKENS, USTNO_QUESTIONS, COUNTS, MAX_ANSWER, MAX_APPEALS, POINTS,
 } from "./ustno.js";
 
@@ -45,7 +47,7 @@ export function ustnoTables(db) {
     );`);
 }
 
-export function mountUstno(app, store, { loadStudent, usage, progress = null, accounts = null, createFn = null } = {}) {
+export function mountUstno(app, store, { loadStudent, usage, progress = null, accounts = null, createFn = null, glasFn = govorMp3 } = {}) {
   const db = store.db;
   ustnoTables(db);
   const intParam = (v) => (/^\d+$/.test(String(v)) ? Number(v) : NaN);
@@ -88,6 +90,23 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     return null;
   }
 
+  // Primer v polju za iskanje (»npr. …«): tema z učenčeve učne poti (njegov predmet in raven), za katero so vprašanja;
+  // najprej zadnja začeta (po vrsti na poti), nato tista, ki je na vrsti, nato prva na poti. Ime je v jeziku poti
+  // (za ne-slovenske učence lahko slovensko, kot vsebina poti). Ob napaki brez primera.
+  function exampleTopic(student) {
+    try {
+      return exampleTopicOf(student);
+    } catch {
+      return null;
+    }
+  }
+  function exampleTopicOf(student) {
+    const view = progress?.pathView?.(student.id, pathKeyFor(student.settings));
+    const all = (view?.units || []).filter((u) => !u.ahead).flatMap((u) => u.topics);
+    const order = [...all.filter((t) => t.status !== "new").reverse(), ...(view?.next ? [view.next] : []), ...all];
+    return order.find((t) => topicOf(t.id))?.name || null;
+  }
+
   const loadSession = (req, res, s) => {
     const row = db.prepare("SELECT * FROM ustno_seje WHERE id = ? AND student_id = ?").get(intParam(req.params.sid), s.id);
     if (!row) {
@@ -125,7 +144,7 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const s = loadStudent(req, res);
     if (!s) return;
     const snov = topicsFor(s, { tema: req.query.tema, test: req.query.test === "1", besedilo: req.query.besedilo });
-    res.json({ snov: snov ? { naslov: snov.naslov, teme: snov.teme.map((t) => ({ id: t.id, name: t.name })) } : null, glas: voice(s.id), stevila: COUNTS });
+    res.json({ snov: snov ? { naslov: snov.naslov, teme: snov.teme.map((t) => ({ id: t.id, name: t.name })) } : null, ...(snov ? {} : { primer: exampleTopic(s) }), glas: voice(s.id), stevila: COUNTS });
   });
 
   // Začetek: izbor vprašanj, pogovor; spraševanje šteje kot USTNO_QUESTIONS vprašanj (ne pri samooceni).
@@ -153,6 +172,10 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     if (!qs.length) return res.status(404).json({ error: "Za to snov še ni vprašanj za ustno.", code: "u.niVprasanj" });
     let convId = null;
     if (!samoocena) {
+      // Dnevna meja (točka A1, pregled 3): tudi tu, sinhrono s štetjem spodaj. Preverjanje v vmesniku računov teče pred
+      // branjem telesa, zato bi ga sočasne zahteve obšle (vse bi videle isto število vprašanj).
+      const dnevna = accounts?.dailyBlock?.(s.id, USTNO_QUESTIONS);
+      if (dnevna) return res.status(429).json(dnevna);
       const conv = store.createConversation(s.id, { pathTopic: snov.teme.length === 1 ? snov.teme[0].id : qs.length && qs.every((q) => q.topicId === qs[0].topicId) ? qs[0].topicId : null, title: `Ustno spraševanje: ${snov.naslov}`.slice(0, 80) });
       convId = conv.id;
       addMsg(convId, "user", `Vprašaj me (${qs.length} vprašanj): ${snov.naslov}`);
@@ -289,6 +312,8 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     const next = !dodatno && rec.dodatno ? `Dodatno vprašanje: ${rec.dodatno}` : qs[i + 1] ? `Vprašanje ${i + 2} od ${qs.length}: ${qs[i + 1].besedilo}` : "";
     addMsg(row.conversation_id, "assistant", [feedbackText(q, { ...out, points: rec.points }), next].filter(Boolean).join("\n\n"));
     res.json({
+      // podporni metapodatki: oceno ali razlago je napisala AI (model ali pregled »napačno«; server/ai-oznaka.js)
+      ...((!skip && answer && modelKps.length) || rec.points.some((p) => p.reviewed) ? AI_JSON : {}),
       tocke: out.tocke,
       max: out.max,
       dobro: out.dobro,
@@ -390,7 +415,7 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
     addMsg(row.conversation_id, "user", `Ne strinjam se z oceno.${comment ? ` ${comment}` : ""}`);
     addMsg(row.conversation_id, "assistant", `Ponovni pregled: ${out.tocke} od ${out.max} točk.`);
     const used = db.prepare("SELECT ugovori FROM ustno_seje WHERE id = ?").get(row.id)?.ugovori ?? MAX_APPEALS;
-    res.json({ tocke: out.tocke, max: out.max, dobro: out.dobro, pojmi: publicPoints(q, points), ugovori: Math.max(0, MAX_APPEALS - used) });
+    res.json({ ...AI_JSON, tocke: out.tocke, max: out.max, dobro: out.dobro, pojmi: publicPoints(q, points), ugovori: Math.max(0, MAX_APPEALS - used) });
   }
 
   // Konec: povzetek (»4 od 5«, kaj znaš, kaj ponovi). Samoocena pošlje svoje ocene (brez AI).
@@ -426,6 +451,37 @@ export function mountUstno(app, store, { loadStudent, usage, progress = null, ac
       tocke: per.reduce((t, x) => t + (x.r?.tocke || 0), 0),
       max: qs.reduce((t, q) => t + q.pojmi.length, 0),
     });
+  });
+
+  // Branje na glas s slovenskim glasom strežnika (server/govor.js govorMp3): samo besedilo vprašanja te seje ali
+  // dodatnega vprašanja, ki ga je seja že dobila (nikoli poljubnega besedila iz zahteve). Brez glasovnega strežnika
+  // 503: odjemalec uporabi glas naprave. Ne gre v meje AI (ni klica modela); meja branj na uro varuje strežnik.
+  const reads = new Map(); // student → [časi branj v zadnji uri]
+  const READS_PER_HOUR = 240;
+  app.post("/api/students/:id/ustno/:sid/govor", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const ses = loadSession(req, res, s);
+    if (!ses) return;
+    const { qs, st } = ses;
+    const i = Number(req.body?.i);
+    const q = Number.isInteger(i) ? qs[i] : null;
+    if (!q) return res.status(400).json({ error: "Ni takega vprašanja." });
+    const follow = req.body?.dodatno === true ? st.odgovori[i]?.dodatno : null;
+    if (req.body?.dodatno === true && !follow) return res.status(400).json({ error: "Dodatnega vprašanja ni." });
+    const text = follow ? forSpeech(speakMarkdown(follow)) : publicQuestion(q, i).govor;
+    const now = Date.now();
+    const recent = (reads.get(s.id) || []).filter((t) => now - t < 3_600_000);
+    if (recent.length >= READS_PER_HOUR) return res.status(429).json({ error: "Preveč branj. Poskusi čez nekaj minut." });
+    recent.push(now);
+    if (reads.size > 2000) for (const [k, v] of reads) if (!v.some((t) => now - t < 3_600_000)) reads.delete(k);
+    reads.set(s.id, recent);
+    // Brez glasovnega strežnika (code »ni«) odjemalec v tem odprtju ne poskuša več; ob napaki ali gneči ob naslednjem branju.
+    if (!glasUrl() && glasFn === govorMp3) return res.status(503).json({ error: "Glas strežnika ni nastavljen.", code: "ni" });
+    const mp3 = await glasFn(text, { shrani: !follow });
+    if (!mp3) return res.status(503).json({ error: "Glas strežnika ni na voljo." });
+    res.set({ "Content-Type": "audio/mpeg", "Content-Length": String(mp3.length), "Cache-Control": "private, max-age=86400" });
+    res.end(mp3);
   });
 
   // Stikalo starša (odločitev 3; j 10. 11.: velja povsod, tudi za mikrofon v klepetu z inštruktorjem, server/app.js):

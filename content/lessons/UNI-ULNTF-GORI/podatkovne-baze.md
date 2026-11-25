@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -42,7 +42,7 @@ Mesto bi bilo zapisano pri vsakem igralcu kluba posebej. Ob selitvi bi ga morali
 
 **Imena delov.** Tabeli v relacijskem modelu rečemo **relacija**. Vrstica je **zapis** (ena stvar iz sveta, npr. en igralec). Stolpec je **atribut** (ena lastnost, npr. goli). Vsak atribut ima **domeno**, to je nabor dovoljenih vrednosti: goli so cela števila od $0$ naprej, ime je besedilo.
 
-**Ključi.** **Primarni ključ** je atribut, ki vsak zapis enolično določi. V tabeli igralcev je to `id_igralca`: dva igralca se lahko imenujeta Ana, številke $101$ pa ima le eden. **Tuji ključ** je atribut, ki kaže na primarni ključ druge tabele. `id_kluba` v tabeli igralcev je tuji ključ. Baza ne dovoli vpisati igralca s številko kluba, ki je ni v tabeli klubov.
+**Ključi.** **Primarni ključ** je atribut (ali skupina atributov), ki vsak zapis enolično določi. V tabeli igralcev je to `id_igralca`: dva igralca se lahko imenujeta Ana, številko $101$ pa ima le eden. **Tuji ključ** je atribut, ki kaže na primarni ključ druge tabele. `id_kluba` v tabeli igralcev je tuji ključ. Baza ne dovoli vpisati igralca s številko kluba, ki je ni v tabeli klubov.
 
 En klub ima več igralcev, vsak igralec pa en klub. Taki povezavi rečemo **ena proti mnogo** ($1 : N$). Tuji ključ je vedno na strani »mnogo«.
 
@@ -104,7 +104,7 @@ Trener želi seznam igralcev z vsaj $9$ goli, od najboljšega navzdol. Kaj vrne 
 
 Vodstvo lige želi za vsak klub vedeti, koliko igralcev ima in koliko golov so skupaj dali.
 
-**Podatki:** tabela `Igralci`; klub $1$: goli $7$, $3$, $10$; klub $2$: goli $12$, $5$; klub $3$: gol $9$
+**Podatki:** tabela `Igralci`; klub $1$: goli $7$, $3$, $10$; klub $2$: goli $12$, $5$; klub $3$: goli $9$
 **Iščemo:** število igralcev in vsoto golov za vsak klub
 
 :::formula
@@ -184,6 +184,101 @@ Vsota je $20$, igralci so trije, povprečje je $\dfrac{20}{3} \approx 6{,}67$ go
 - `JOIN … ON` poveže tabeli po ključu; brez pogoja za povezavo dobimo vse pare vrstic.
 - `COUNT` šteje vrstice, `SUM` sešteva vrednosti.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicije pojmov relacija, zapis, atribut in domena;
+- definiciji primarnega in tujega ključa, kaj baza pri tujem ključu zavrne in zakaj je pri povezavi $1 : N$ tuji ključ na strani »mnogo«;
+- obliko poizvedbe `SELECT` in logični vrstni red izvajanja `FROM` → `WHERE` → `GROUP BY` → `HAVING` → `SELECT` → `ORDER BY`;
+- razliko med `WHERE` in `HAVING` ter med `COUNT` in `SUM`;
+- kaj naredi `JOIN … ON` in koliko vrstic dobimo brez pogoja za povezavo;
+- zapis preproste poizvedbe s simboli $\sigma$, $\pi$ in $\bowtie$.
+
+### Naloga 1
+
+Baza geotehničnih raziskav ima tabelo `Vrtine` (primarni ključ `id_vrtine`) in tabelo `Vzorci` (primarni ključ `id_vzorca`, tuji ključ `id_vrtine`). Pri vsakem vzorcu jedra sta zapisani globina odvzema v metrih in enoosna tlačna trdnost v $\mathrm{MPa}$.
+
+| id_vrtine | oznaka | kraj |
+|---|---|---|
+| 1 | V-1 | Velenje |
+| 2 | V-2 | Trbovlje |
+| 3 | V-3 | Velenje |
+| 4 | V-4 | Hrastnik |
+
+| id_vzorca | id_vrtine | globina | trdnost |
+|---|---|---|---|
+| 301 | 1 | 4 | 18 |
+| 302 | 1 | 12 | 42 |
+| 303 | 2 | 15 | 65 |
+| 304 | 1 | 20 | 54 |
+| 305 | 3 | 6 | 9 |
+| 306 | 2 | 25 | 85 |
+| 307 | 3 | 8 | 15 |
+| 308 | 1 | 30 | 60 |
+| 309 | 2 | 8 | 30 |
+| 310 | 4 | 14 | 35 |
+| 311 | 4 | 22 | 45 |
+
+```sql
+SELECT v.oznaka, COUNT(*) AS st, AVG(z.trdnost) AS povp
+FROM Vzorci z JOIN Vrtine v ON z.id_vrtine = v.id_vrtine
+WHERE z.globina >= 10
+GROUP BY v.id_vrtine, v.oznaka
+HAVING AVG(z.trdnost) < 60
+ORDER BY povp DESC;
+```
+
+(a) Kaj vrne poizvedba? Pokaži vmesni rezultat po vsakem delu. (b) Kaj vrne, če vrstico `WHERE` izbrišemo? (c) Koliko vrstic vrne `SELECT * FROM Vzorci, Vrtine;`?
+
+**Rešitev:**
+
+1. `FROM … JOIN`: vsak od $11$ vzorcev dobi oznako svoje vrtine; vrstic je še vedno $11$, ker ima vsak vzorec natanko eno vrtino.
+2. `WHERE z.globina >= 10` obdrži vzorce $302$, $303$, $304$, $306$, $308$, $310$ in $311$, torej $7$ vrstic. Oba vzorca vrtine V-3 (globini $6$ in $8$) izpadeta.
+3. `GROUP BY` naredi tri skupine. V-3 skupine nima, ker zanjo ni ostala nobena vrstica.
+4. V-1: `COUNT(*)` je $3$, povprečje $\dfrac{42 + 54 + 60}{3} = 52$.
+5. V-2: `COUNT(*)` je $2$, povprečje $\dfrac{65 + 85}{2} = 75$.
+6. V-4: `COUNT(*)` je $2$, povprečje $\dfrac{35 + 45}{2} = 40$.
+7. `HAVING AVG(z.trdnost) < 60` izloči V-2 ($75$); ostaneta V-1 in V-4.
+8. `ORDER BY povp DESC`: najprej $52$, nato $40$. Ime `povp` tu smemo uporabiti, ker se `ORDER BY` izvede za `SELECT`.
+9. Odgovor (a): dve vrstici, $(\text{V-1}, 3, 52)$ in $(\text{V-4}, 2, 40)$.
+10. Brez `WHERE` so v skupinah vsi vzorci. V-1: $\dfrac{18 + 42 + 54 + 60}{4} = 43{,}5$. V-2: $\dfrac{65 + 85 + 30}{3} = 60$. V-3: $\dfrac{9 + 15}{2} = 12$. V-4 ostane pri $40$.
+11. V-2 spet izpade, ker $60 < 60$ ne velja. Odgovor (b): tri vrstice: $(\text{V-1}; 4; 43{,}5)$, $(\text{V-4}; 2; 40)$ in $(\text{V-3}; 2; 12)$.
+12. Odgovor (c): brez pogoja za povezavo dobimo vse pare, $11 \cdot 4 = 44$ vrstic.
+
+### Naloga 2
+
+Za tabeli `Vrtine` in `Vzorci` iz naloge 1: (a) Natančno navedi definiciji primarnega in tujega ključa. (b) Utemelji, zakaj `id_vrtine` ne more biti primarni ključ tabele `Vzorci`. (c) Utemelji, katere zapise izmed $(312, 7, 5, 20)$, $(301, 2, 10, 50)$ in $(312, 2, 15, 65)$ baza pri vnosu v tabelo `Vzorci` zavrne. (d) Utemelji, zakaj kraj ni zapisan v tabeli `Vzorci`.
+
+**Rešitev:**
+
+1. Primarni ključ je atribut ali skupina atributov, ki vsak zapis tabele enolično določi: dva zapisa nimata iste vrednosti.
+2. Tuji ključ je atribut, ki kaže na primarni ključ druge tabele; njegova vrednost mora obstajati kot primarni ključ v tisti tabeli.
+3. (b) V tabeli `Vzorci` se `id_vrtine` ponavlja: vrednost $1$ imajo štirje vzorci, vrednost $2$ trije. Atribut, ki se ponavlja, zapisa ne določi enolično. Povezava je $1 : N$ (ena vrtina, več vzorcev), tuji ključ pa je na strani »mnogo«.
+4. (c) Zapis $(312, 7, 5, 20)$ baza zavrne: vrtine s številko $7$ v tabeli `Vrtine` ni, tuji ključ ne bi kazal na obstoječ zapis.
+5. Zapis $(301, 2, 10, 50)$ baza zavrne: primarni ključ $301$ že obstaja.
+6. Zapis $(312, 2, 15, 65)$ baza sprejme. Vrtina $2$ obstaja, ključ $312$ je nov; to, da se globina in trdnost ujemata z vzorcem $303$, ni ovira, ker enoličnost velja le za ključ.
+7. (d) Kraj je lastnost vrtine, ne vzorca. Če bi bil zapisan pri vzorcih, bi bil pri V-1 zapisan štirikrat; ob popravku bi morali spremeniti štiri vrstice, in če bi eno spregledali, bi baza za isto vrtino trdila dva različna kraja. Tako je zapisan enkrat, v tabeli `Vrtine`.
+
+### Naloga 3
+
+Za tabeli iz naloge 1 utemelji, ali je poizvedba veljavna. Neveljavno popravi in povej rezultat.
+
+(a) `SELECT id_vrtine, AVG(trdnost) FROM Vzorci WHERE AVG(trdnost) > 50 GROUP BY id_vrtine;`
+
+(b) `SELECT id_vrtine, MAX(globina) AS najgloblje FROM Vzorci WHERE najgloblje > 20 GROUP BY id_vrtine;`
+
+(c) Poizvedbo `SELECT v.oznaka FROM Vzorci z JOIN Vrtine v ON z.id_vrtine = v.id_vrtine WHERE z.trdnost > 60;` zapiši s simboli $\sigma$, $\pi$ in $\bowtie$ ter povej rezultat.
+
+**Rešitev:**
+
+1. Logični vrstni red je `FROM` → `WHERE` → `GROUP BY` → `HAVING` → `SELECT` → `ORDER BY`.
+2. (a) Ni veljavna. `WHERE` se izvede pred `GROUP BY` in vidi posamezne vrstice, povprečja skupine takrat še ni. Pogoj spada v `HAVING`: `SELECT id_vrtine, AVG(trdnost) FROM Vzorci GROUP BY id_vrtine HAVING AVG(trdnost) > 50;`
+3. Povprečja po vrtinah so $43{,}5$; $60$; $12$ in $40$ (naloga 1). Pogoj izpolni le vrtina $2$; rezultat je ena vrstica, $(2, 60)$.
+4. (b) Ni veljavna iz dveh razlogov. Ime `najgloblje` nastane šele v `SELECT`, ki se izvede za `WHERE`; poleg tega je pogoj postavljen za `MAX`, torej za skupino. Popravek: `SELECT id_vrtine, MAX(globina) AS najgloblje FROM Vzorci GROUP BY id_vrtine HAVING MAX(globina) > 20;`
+5. Največje globine so $30$ (vrtina $1$), $25$ (vrtina $2$), $8$ (vrtina $3$) in $22$ (vrtina $4$). Rezultat so tri vrstice: $(1, 30)$, $(2, 25)$ in $(4, 22)$.
+6. (c) Poizvedba je veljavna: pogoj velja za posamezno vrstico, zato spada v `WHERE`. Zapis: $\pi_{\text{oznaka}}\big(\sigma_{\text{trdnost} > 60}(\text{Vzorci} \bowtie \text{Vrtine})\big)$.
+7. Pogoj $\text{trdnost} > 60$ izpolnita vzorca $303$ ($65$) in $306$ ($85$); vzorec $308$ ima natanko $60$ in izpade. Oba sta iz vrtine $2$, zato SQL vrne dve vrstici z oznako V-2 (projekcija $\pi$ v relacijski algebri da množico, torej eno vrstico; SQL podvojitev odstrani šele z `DISTINCT`).
+
 ## Drugače: Z analogijo
 
 Pomisli na garderobo pred tekmo. Jakno oddaš, dobiš listek s številko $57$. Listek jakne ne vsebuje, le kaže nanjo. Garderoberka po številki najde pravi obešalnik.
@@ -195,19 +290,19 @@ Pomisli na garderobo pred tekmo. Jakno oddaš, dobiš listek s številko $57$. L
 
 `JOIN` je garderoberka, ki za vsak listek prinese pravo jakno. Brez navodila »po številki« bi ti pokazala vse jakne.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-V aplikaciji fantazijske lige izbiraš igralce. Vsak tvoj klik je del poizvedbe:
+Geotehnično podjetje hrani podatke o vrtinah, vzorcih in meritvah v relacijski bazi. Vsako vprašanje inženirja je del poizvedbe:
 
-| tvoj klik | del poizvedbe |
+| vprašanje inženirja | del poizvedbe |
 |---|---|
-| odpreš seznam igralcev | `FROM Igralci` |
-| »samo branilci« | `WHERE pozicija = 'branilec'` |
-| »pokaži ime in točke« | `SELECT ime, tocke` |
-| »razvrsti po točkah« | `ORDER BY tocke DESC` |
-| »povprečje po klubih« | `GROUP BY klub` z `AVG(tocke)` |
+| odpre seznam vzorcev jedra | `FROM Vzorci` |
+| »samo globlje od $10\,\mathrm{m}$« | `WHERE globina > 10` |
+| »pokaži globino in trdnost« | `SELECT globina, trdnost` |
+| »najprej najšibkejši« | `ORDER BY trdnost ASC` |
+| »povprečna trdnost po vrtinah« | `GROUP BY id_vrtine` z `AVG(trdnost)` |
 
-Aplikacija za vsak tvoj klik sestavi tak ukaz, ga pošlje bazi na strežniku in ti pokaže vrnjeno tabelo. Ko izbereš igralca v svojo ekipo, aplikacija izvede `INSERT` v tabelo, ki povezuje tvojo ekipo z igralci prek dveh tujih ključev.
+Program za geotehnično poročilo ali GIS za vsako tako vprašanje sestavi ukaz, ga pošlje bazi in vrnjeno tabelo nariše kot profil vrtine ali točke na karti. Pri monitoringu plazu ali odlagališča merilniki sami vpisujejo podatke: $40$ piezometrov, ki gladino podzemne vode zapišejo vsako uro, v enem letu doda $40 \cdot 24 \cdot 365 = 350\,400$ vrstic. Vsaka meritev je `INSERT` v tabelo, ki ima tuji ključ na tabelo merilnih mest; koordinate merilnega mesta so zato zapisane le enkrat. Preglednica pri toliko vrsticah in več hkratnih uporabnikih postane počasna in nepregledna, baza pa na vprašanje »katera merilna mesta so ta teden presegla opozorilno gladino« odgovori z eno poizvedbo z `WHERE`, `GROUP BY` in `HAVING`.
 
 ## Preveri se
 
@@ -254,7 +349,7 @@ Aplikacija za vsak tvoj klik sestavi tak ukaz, ga pošlje bazi na strežniku in 
 ~ Vrstice se ne seštejejo, ampak vsaka vrstica ene tabele dobi par z vsako vrstico druge.
 + $18$
 - $3$
-~ Rezultat ni manjši od nobene od tabel; vsak igralec se pojavi s vsakim klubom.
+~ Rezultat ni manjši od nobene od tabel; vsak igralec se pojavi z vsakim klubom.
 > Brez pogoja dobimo vse pare: $6 \cdot 3 = 18$ vrstic. Šele `ON i.id_kluba = k.id_kluba` jih zmanjša na $6$ pravih.
 
 :::simboli

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -25,6 +25,13 @@ $$p(x) = a_n x^n + a_{n-1}x^{n-1} + \dots + a_1 x + a_0, \quad a_n \ne 0.$$
 
 **Hitri test:** kakšne so stopnja, vodilni koeficient in prosti člen polinoma $p(x) = 4 - 2x^3 + x$? *Odgovor: stopnja $3$, vodilni koeficient $-2$, prosti člen $4$; vrstni red zapisa ne šteje.*
 
+**Polinomska funkcija.** Funkcija, ki vsakemu realnemu številu $x$ priredi vrednost polinoma $p(x)$, je **polinomska funkcija**. Dve že dobro poznaš:
+
+- **Linearna** $kx + n$ ($k \ne 0$): stopnja $1$, vodilni koeficient je smerni koeficient $k$, prosti člen je začetna vrednost $n$.
+- **Kvadratna** $ax^2 + bx + c$ ($a \ne 0$): stopnja $2$, vodilni koeficient $a$, prosti člen $c$.
+
+Konstantna funkcija $p(x) = a_0$ z $a_0 \ne 0$ je polinom stopnje $0$. Linearna in kvadratna funkcija sta torej posebna primera polinomske funkcije. Vse, kar velja za polinome, velja tudi zanju: polinom stopnje $1$ ima eno ničlo, polinom stopnje $2$ največ dve.
+
 **Blok 2: vrednost in ničla.** Vrednost $p(a)$ dobiš, ko namesto $x$ vstaviš število $a$. Če je $p(a) = 0$, je $a$ **ničla** polinoma. Rešitve uganke so torej ničle polinoma $f$.
 
 **Hitri test:** ali je $t = 4$ ničla $f$? *Odgovor: ne, $f(4) = 64 - 96 + 44 - 6 = 6$.*
@@ -37,11 +44,9 @@ Tu je $p$ deljenec, $q$ delitelj, $k$ količnik in $r$ ostanek, ki ima nižjo st
 
 Razdelimo $(2x^3 - 3x^2 + 4x - 5) : (x - 2)$. V vsakem koraku delimo le vodilna člena, pomnožimo nazaj in odštejemo:
 
-| korak | vodilna člena | pomnožimo z $x - 2$ | ostane |
-|---|---|---|---|
-| 1 | $2x^3 : x = 2x^2$ | $2x^3 - 4x^2$ | $x^2 + 4x - 5$ |
-| 2 | $x^2 : x = x$ | $x^2 - 2x$ | $6x - 5$ |
-| 3 | $6x : x = 6$ | $6x - 12$ | $7$ |
+1. $2x^3 : x = 2x^2$. Pomnožimo z $x - 2$: $2x^3 - 4x^2$. Ostane $x^2 + 4x - 5$.
+2. $x^2 : x = x$. Pomnožimo z $x - 2$: $x^2 - 2x$. Ostane $6x - 5$.
+3. $6x : x = 6$. Pomnožimo z $x - 2$: $6x - 12$. Ostane $7$.
 
 Količnik je $k(x) = 2x^2 + x + 6$, ostanek $r = 7$. Ustavimo se, ko ima to, kar ostane, nižjo stopnjo od delitelja.
 
@@ -82,6 +87,22 @@ $$f(t) = (t - 1)(t - 2)(t - 3).$$
 Polinom stopnje $n$ ima največ $n$ ničel, zato četrtega trenutka ni. V simulaciji spodaj (»Polinom in njegove ničle«) postavi vodilni koeficient (drsnik a) na $1$ in ničle na $1$, $2$ in $3$, vse s stopnjo $1$ (stopnja ničle pove, kolikokrat se faktor $x - a$ ponovi). Opazi, da graf os $x$ seka natanko v teh točkah. Nato eni ničli nastavi stopnjo $0$: polinom izgubi faktor in eno presečišče.
 
 **Hitri test:** kateri kandidati za cele ničle pridejo v poštev pri $x^3 + 2x - 5$? *Odgovor: $\pm 1$ in $\pm 5$.*
+
+**Blok 7: osnovni izrek algebre.** Polinom $x^2 + 1$ nima nobene realne ničle. Med kompleksnimi števili pa ima dve: $i$ in $-i$, saj je $x^2 + 1 = (x - i)(x + i)$. To ni naključje.
+
+**Osnovni izrek algebre:** vsak polinom stopnje $n \ge 1$ ima vsaj eno kompleksno ničlo. (Realna števila so tudi kompleksna.)
+
+Izrek zagotovi le eno ničlo, a iz njega sledi veliko več:
+
+1. **Razcep na linearne faktorje.** Ničla $z_1$ odcepi faktor $x - z_1$. Količnik ima stopnjo $n - 1$ in po izreku spet ničlo. Ko to ponovimo $n$-krat, dobimo $p(x) = a_n (x - z_1)(x - z_2)\cdots(x - z_n)$.
+2. **Natanko $n$ ničel.** Polinom stopnje $n$ ima natanko $n$ kompleksnih ničel, če vsako štejemo tolikokrat, kolikor je njena stopnja. Polinom $(x - 2)^2(x + 1)$ ima ničle $2$, $2$ in $-1$.
+3. **Konjugirani pari.** Če ima polinom realne koeficiente in je $z$ njegova ničla, je ničla tudi $\bar{z}$, in to z enako stopnjo. Konjugiranje namreč ohrani vsote in produkte, realnih koeficientov pa ne spremeni, zato je $p(\bar{z}) = \overline{p(z)} = \bar{0} = 0$.
+4. **Realni razcep.** Za nerealno ničlo $z = u + wi$ ($w \ne 0$) je $(x - z)(x - \bar{z}) = x^2 - 2ux + u^2 + w^2$ kvadratni polinom z realnimi koeficienti in negativno diskriminanto. Zato vsak polinom z realnimi koeficienti razcepimo na faktorje z realnimi koeficienti: linearne in kvadratne brez realnih ničel.
+5. **Liha stopnja.** Nerealne ničle pridejo v parih, zato jih je sodo mnogo. Polinom lihe stopnje z realnimi koeficienti ima torej vsaj eno realno ničlo.
+
+Primer: $x^3 - 1 = (x - 1)(x^2 + x + 1)$. Kvadratni faktor ima diskriminanto $1 - 4 = -3$ in konjugirani ničli $-\frac{1}{2} \pm \frac{\sqrt{3}}{2}\,i$. Polinom ima tri kompleksne ničle, od tega eno realno.
+
+**Hitri test:** polinom z realnimi koeficienti ima ničlo $3 - 2i$. Katera je zagotovo še njegova ničla? *Odgovor: $3 + 2i$.*
 
 ## Rešeni primeri
 
@@ -167,6 +188,25 @@ Kakšna sta količnik in ostanek?
 $-3 \cdot (-2) - 8 = -2$ in $-2 \cdot (-2) + 1 = 5$. Količnik je $2x^2 - 3x - 2$, ostanek $5$. Preizkus: $p(-2) = -16 + 4 + 16 + 1 = 5$.
 :::
 
+### Primer 5: polinom iz kompleksne ničle
+
+Sestavi polinom tretje stopnje z realnimi koeficienti in vodilnim koeficientom $1$, ki ima ničli $2$ in $1 + i$.
+
+**Podatki:** stopnja $3$, realni koeficienti, $a_3 = 1$, ničli $2$ in $1 + i$
+**Iščemo:** polinom $p(x)$ v razviti obliki
+
+:::formula
+$p(x) = (x - z_1)(x - z_2)(x - z_3)$; pri realnih koeficientih je z $z$ ničla tudi $\bar{z}$.
+:::
+
+**Rešitev:**
+
+1. Koeficienti so realni, zato je ničla tudi $\overline{1 + i} = 1 - i$. Ničle so $2$, $1 + i$ in $1 - i$. Več jih ni, ker ima polinom stopnje $3$ natanko tri.
+2. Konjugirana faktorja zmnožimo najprej, da $i$ izgine: $(x - 1 - i)(x - 1 + i) = (x - 1)^2 - i^2 = x^2 - 2x + 2$.
+3. $p(x) = (x - 2)(x^2 - 2x + 2) = x^3 - 4x^2 + 6x - 4$.
+4. Preizkus: $p(2) = 8 - 16 + 12 - 4 = 0$.
+5. Odgovor: $p(x) = x^3 - 4x^2 + 6x - 4$.
+
 ## Pogoste napake
 
 - **Manjkajoča potenca brez ničle.** Pri $2x^3 - 5x + 3$ nekdo v Hornerjevo shemo napiše le $2, -5, 3$ in računa, kot da gre za polinom druge stopnje. Vsaka potenca od najvišje do $x^0$ mora imeti svoje mesto, zato $2, 0, -5, 3$.
@@ -177,22 +217,140 @@ $-3 \cdot (-2) - 8 = -2$ in $-2 \cdot (-2) + 1 = 5$. Količnik je $2x^2 - 3x - 2
 
 ## Povzetek
 
-- Polinom: $p(x) = a_n x^n + \dots + a_1 x + a_0$, $a_n \ne 0$; $n$ je stopnja, $a_n$ vodilni koeficient, $a_0$ prosti člen.
-- Deljenje: $p(x) = q(x)\,k(x) + r(x)$, stopnja ostanka je manjša od stopnje delitelja. Delimo vodilna člena, pomnožimo nazaj, odštejemo cel izraz.
-- Izrek o ostanku: ostanek pri deljenju z $x - a$ je $p(a)$. Število $a$ je ničla natanko tedaj, ko $x - a$ deli $p$.
-- Hornerjev algoritem da hkrati $p(a)$ in količnik; manjkajoče potence nadomesti $0$, pri $x + c$ vzemi $a = -c$.
-- Cele ničle polinoma s celimi koeficienti so med delitelji prostega člena (oba predznaka). Polinom stopnje $n$ ima največ $n$ ničel.
+**Polinom** stopnje $n$ ($a_n \ne 0$):
+
+$$p(x) = a_n x^n + \dots + a_1 x + a_0$$
+
+- $a_n$ je **vodilni koeficient**, $a_0$ **prosti člen**.
+- Linearna funkcija je polinomska funkcija stopnje $1$, kvadratna stopnje $2$.
+
+**Deljenje:**
+
+$$p(x) = q(x)\,k(x) + r(x)$$
+
+- Stopnja ostanka je manjša od stopnje delitelja.
+- Delimo vodilna člena, pomnožimo nazaj, odštejemo cel izraz.
+- **Izrek o ostanku:** ostanek pri deljenju z $x - a$ je $p(a)$.
+- Število $a$ je ničla natanko tedaj, ko $x - a$ deli $p$.
+- **Hornerjev algoritem** da hkrati $p(a)$ in količnik; manjkajoče potence nadomesti $0$, pri $x + c$ vzemi $a = -c$.
+- **Cele ničle** polinoma s celimi koeficienti so med delitelji prostega člena (oba predznaka).
+- Polinom stopnje $n$ ima največ $n$ ničel.
+- **Osnovni izrek algebre:** polinom stopnje $n \ge 1$ ima kompleksno ničlo, zato natanko $n$ kompleksnih ničel (štetih s stopnjo).
+- Pri realnih koeficientih so nerealne ničle v konjugiranih parih, zato ima polinom lihe stopnje vsaj eno realno ničlo.
+
+## Ponovitev
+
+**Formule**
+- $p(x) = q(x)\,k(x) + r(x)$, ostanek nižje stopnje (na pamet)
+- ostanek pri deljenju z $x - a$ je $p(a)$ (na pamet)
+- $p(a) = 0 \iff (x - a)$ deli $p(x)$ (na pamet)
+- pri celih koeficientih so cele ničle delitelji prostega člena $a_0$, z obema predznakoma (na pamet)
+
+**Postopek**
+1. Zapiši koeficiente vseh potenc, manjkajoče z $0$.
+2. Delitelje prostega člena preizkušaj s Hornerjem, dokler ne dobiš $p(a) = 0$.
+3. Iz zadnje vrstice sheme preberi količnik $k(x)$.
+4. Količnik razstavi naprej (pri stopnji $2$ s kvadratno enačbo).
+5. Zapiši $p(x)$ kot produkt in naštej vse ničle.
+
+**Pazi na**
+- Manjkajoča potenca: v shemo napiši $0$ (pri $2x^3 - 5x + 3$ so to $2, 0, -5, 3$).
+- Pri deljenju z $x + 2$ vzemi $a = -2$, ne $2$.
+- Kandidati za ničle so delitelji z obema predznakoma, ne le pozitivni.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Določite realno število $m$ tako, da bo polinom $p(x) = x^3 + mx^2 - 4x + 12$ deljiv z $x - 2$. Nato zapišite količnik pri tem deljenju.
+
+**Rešitev:**
+
+1. Po izreku o ostanku je $p$ deljiv z $x - 2$ natanko tedaj, ko je $p(2) = 0$.
+2. $p(2) = 8 + 4m - 8 + 12 = 4m + 12$. Iz $4m + 12 = 0$ sledi $m = -3$.
+3. Hornerjev algoritem z $a = 2$ na koeficientih $1, -3, -4, 12$: $1$; $1 \cdot 2 - 3 = -1$; $-1 \cdot 2 - 4 = -6$; $-6 \cdot 2 + 12 = 0$.
+4. Odgovor: $m = -3$, količnik je $k(x) = x^2 - x - 6$.
+
+**Točkovanje:** 1 točka za pogoj $p(2) = 0$, 1 točka za $m = -3$, 1 točka za količnik $x^2 - x - 6$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dan je polinom $p(x) = 2x^3 - 3x^2 - 11x + 6$.
+
+a) Pokažite, da je število $3$ ničla polinoma $p$. (1 točka)
+b) Razcepite $p$ na linearne faktorje in zapišite vse njegove ničle. (3 točke)
+c) Določite količnik in ostanek pri deljenju polinoma $p$ s polinomom $x^2 - 1$. (3 točke)
+
+**Rešitev:**
+
+1. a) $p(3) = 54 - 27 - 33 + 6 = 0$, zato je $3$ ničla.
+2. b) Hornerjev algoritem z $a = 3$ na koeficientih $2, -3, -11, 6$: $2$; $2 \cdot 3 - 3 = 3$; $3 \cdot 3 - 11 = -2$; $-2 \cdot 3 + 6 = 0$. Količnik je $2x^2 + 3x - 2$.
+3. b) Ničle količnika: $x = \dfrac{-3 \pm \sqrt{9 + 16}}{4} = \dfrac{-3 \pm 5}{4}$, torej $x = \dfrac{1}{2}$ ali $x = -2$. Zato je $2x^2 + 3x - 2 = (2x - 1)(x + 2)$.
+4. b) $p(x) = (x - 3)(2x - 1)(x + 2)$; ničle so $3$, $\dfrac{1}{2}$ in $-2$.
+5. c) $2x^3 : x^2 = 2x$; $2x(x^2 - 1) = 2x^3 - 2x$; ostane $-3x^2 - 9x + 6$.
+6. c) $-3x^2 : x^2 = -3$; $-3(x^2 - 1) = -3x^2 + 3$; ostane $-9x + 3$, ki je prve stopnje, zato končamo.
+7. c) Preizkus pri $x = 1$, kjer je $x^2 - 1 = 0$: $p(1) = 2 - 3 - 11 + 6 = -6$ in ostanek $-9 + 3 = -6$. Ujema se.
+8. Odgovor: $p(x) = (x - 3)(2x - 1)(x + 2)$ z ničlami $3$, $\frac{1}{2}$ in $-2$; pri deljenju z $x^2 - 1$ je količnik $2x - 3$, ostanek $-9x + 3$.
+
+**Točkovanje:** a) 1 točka za $p(3) = 0$; b) 1 točka za količnik $2x^2 + 3x - 2$, 1 točka za ničli $\frac{1}{2}$ in $-2$, 1 točka za razcep na linearne faktorje; c) 1 točka za pravilen prvi korak deljenja, 1 točka za količnik $2x - 3$, 1 točka za ostanek $-9x + 3$.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Iz pravokotnega kosa kartona z merama $16\,\mathrm{cm}$ in $10\,\mathrm{cm}$ v vseh štirih vogalih izrežemo enake kvadrate s stranico $x$ (v centimetrih) in robove zapognemo navzgor. Nastane odprta škatla.
+
+a) Zapišite prostornino škatle $V(x)$ kot polinom v razviti obliki in določite, za katere $x$ ima naloga smisel. (3 točke)
+b) Določite vse $x$, pri katerih ima škatla prostornino $144\,\mathrm{cm^3}$. (5 točk)
+c) Z razcepom iz b) zapišite $V(x) - 144$ kot produkt linearnih faktorjev in utemeljite, da nobena takšna škatla nima prostornine, večje od $144\,\mathrm{cm^3}$. (2 točki)
+
+**Rešitev:**
+
+1. a) Dno škatle meri $(16 - 2x)$ krat $(10 - 2x)$, višina je $x$. Zato $V(x) = x(16 - 2x)(10 - 2x)$.
+2. a) $(16 - 2x)(10 - 2x) = 160 - 52x + 4x^2$, torej $V(x) = 4x^3 - 52x^2 + 160x$.
+3. a) Vse tri mere morajo biti pozitivne: $x > 0$ in $10 - 2x > 0$ (takrat je tudi $16 - 2x > 0$). Naloga ima smisel za $0 < x < 5$.
+4. b) $4x^3 - 52x^2 + 160x = 144$; delimo s $4$ in prenesemo: $x^3 - 13x^2 + 40x - 36 = 0$.
+5. b) Cele ničle iščemo med delitelji $36$. $x = 1$: $1 - 13 + 40 - 36 = -8$; $x = 2$: $8 - 52 + 80 - 36 = 0$. Ničla je $2$.
+6. b) Horner z $a = 2$ na $1, -13, 40, -36$: $1$; $-11$; $18$; $0$. Količnik $x^2 - 11x + 18 = (x - 2)(x - 9)$.
+7. b) $x^3 - 13x^2 + 40x - 36 = (x - 2)^2(x - 9)$, ničli sta $2$ (dvojna) in $9$. Ker $9$ ni med $0$ in $5$, ostane $x = 2$.
+8. c) Iz korakov 4–7: $V(x) - 144 = 4(x^3 - 13x^2 + 40x - 36) = 4(x - 2)^2(x - 9)$.
+9. c) Za $0 < x < 5$ je $(x - 2)^2 \ge 0$ in $x - 9 < 0$, zato je $V(x) - 144 \le 0$, enakost pa velja le pri $x = 2$. Torej je $V(x) \le 144$.
+10. Odgovor: $V(x) = 4x^3 - 52x^2 + 160x$ za $0 < x < 5$; prostornina je $144\,\mathrm{cm^3}$ le pri $x = 2\,\mathrm{cm}$, in to je največja možna prostornina.
+
+**Točkovanje:** a) 1 točka za $V(x) = x(16 - 2x)(10 - 2x)$, 1 točka za razvito obliko, 1 točka za $0 < x < 5$; b) 1 točka za enačbo $x^3 - 13x^2 + 40x - 36 = 0$, 1 točka za najdeno ničlo $2$, 1 točka za količnik $x^2 - 11x + 18$, 1 točka za ničli $2$ in $9$, 1 točka za izločitev $x = 9$ in odgovor $x = 2$; c) 1 točka za razcep $V(x) - 144 = 4(x - 2)^2(x - 9)$, 1 točka za utemeljitev s predznakoma faktorjev.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kaj pove izrek o deljenju polinomov in kaj iz njega sledi pri deljenju polinoma z linearnim polinomom $x - a$?
+---
+Za polinoma $p$ in $q \ne 0$ obstajata natanko en količnik $k$ in natanko en ostanek $r$, da velja $p = q k + r$, pri čemer je $r = 0$ ali pa ima $r$ nižjo stopnjo kot $q$. Pri deljenju z $x - a$ je ostanek zato konstanta. Ko v $p(x) = (x - a)\,k(x) + r$ vstavimo $x = a$, dobimo $r = p(a)$. Od tod sledi, da je $a$ ničla polinoma $p$ natanko tedaj, ko je $p$ deljiv z $x - a$.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Dokaži, da je vsaka cela ničla polinoma s celimi koeficienti delitelj njegovega prostega člena.
+---
+Naj bo celo število $a$ ničla polinoma $p(x) = a_n x^n + \dots + a_1 x + a_0$ s celimi koeficienti, torej $a_n a^n + \dots + a_1 a + a_0 = 0$. Od tod je $a_0 = -a\,(a_n a^{n-1} + \dots + a_1)$. Izraz v oklepaju je celo število, ker so koeficienti in $a$ cela števila. Zato je $a_0$ večkratnik števila $a$, torej je $a$ delitelj prostega člena.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer polinoma tretje stopnje z eno samo realno ničlo in pojasni, zakaj ima polinom stopnje $n$ največ $n$ ničel.
+---
+Primer je $p(x) = x^3 + x = x(x^2 + 1)$: faktor $x^2 + 1$ je vedno pozitiven, zato je edina realna ničla $0$. Vsaka ničla $a$ odcepi linearni faktor $x - a$, saj je polinom po izreku o ostanku deljiv z $x - a$, količnik $k$ pa ima stopnjo za $1$ nižjo. Vsaka druga ničla $b \ne a$ je ničla količnika, saj iz $(b - a)\,k(b) = 0$ in $b - a \ne 0$ sledi $k(b) = 0$. Ker stopnja pri vsakem odcepu pade za $1$ in polinom stopnje $0$ nima ničel, ima polinom stopnje $n$ največ $n$ različnih ničel.
+:::
 
 ## Drugače: Na sliki
 
-Nariši graf $f(t) = (t - 1)(t - 2)(t - 3)$ in zraven tabelo predznakov:
+Nariši graf $f(t) = (t - 1)(t - 2)(t - 3)$ in zraven tabelo predznakov (v srednjem stolpcu so po vrsti predznaki faktorjev $t - 1$, $t - 2$ in $t - 3$):
 
-| interval | $t - 1$ | $t - 2$ | $t - 3$ |
-|---|---|---|---|
-| $t < 1$ | $-$ | $-$ | $-$ |
-| $1 < t < 2$ | $+$ | $-$ | $-$ |
-| $2 < t < 3$ | $+$ | $+$ | $-$ |
-| $t > 3$ | $+$ | $+$ | $+$ |
+| interval | predznaki | $f(t)$ |
+|---|---|---|
+| $t < 1$ | $-\ -\ -$ | $-$ |
+| $1 < t < 2$ | $+\ -\ -$ | $+$ |
+| $2 < t < 3$ | $+\ +\ -$ | $-$ |
+| $t > 3$ | $+\ +\ +$ | $+$ |
 
 Produkt je zaporedoma negativen, pozitiven, negativen in pozitiven. Graf torej prihaja od spodaj, pri $1$ preseka os $t$ navzgor, pri $2$ navzdol in pri $3$ spet navzgor. Vsak faktor $t - a$ je na sliki eno presečišče z osjo pri $t = a$. Ko s Hornerjem odcepiš faktor, z grafa »odstraniš« eno presečišče, preostale ničle pa ostanejo na istih mestih.
 
@@ -252,17 +410,55 @@ Produkt je zaporedoma negativen, pozitiven, negativen in pozitiven. Graf torej p
 + Pri $t = 2$ in $t = 3$ minutah.
 > Ničle so $2$, $3$ in $-3$; v poštev prideta le nenegativni.
 
+? (brez računala) Kolikšna je stopnja polinomske funkcije $p(x) = (2x - 1)^2 - 4x^2$?
+= 1 | 0
+~ 2 | Kvadrat binoma da $4x^2 - 4x + 1$, člen $4x^2$ pa se odšteje. Ostane $-4x + 1$.
+~ 4 | Stopnje se pri kvadriranju ne seštevajo tako: $(2x - 1)^2$ je stopnje $2$, ne $4$.
+> $p(x) = 4x^2 - 4x + 1 - 4x^2 = -4x + 1$. To je linearna funkcija, torej polinomska funkcija stopnje $1$.
+
+? Polinom četrte stopnje z realnimi koeficienti ima ničli $1 + 2i$ in $-3i$. Koliko realnih ničel ima?
+= 0 | 0
+~ 2 | Pozabil si na konjugirani števili: ničli sta tudi $1 - 2i$ in $3i$. To so že štiri ničle.
+~ 1 | Polinom četrte stopnje ima natanko štiri kompleksne ničle, štete s stopnjo; vse štiri so že znane.
+> Pri realnih koeficientih sta ničli tudi $1 - 2i$ in $3i$. Polinom stopnje $4$ ima natanko štiri ničle, zato realnih ni.
+
+<<RACUN
+resi: 4*m+12=0 | m | -3
+vrednost: 2^3-3*2^2-4*2+12 | 0
+enako: (x^3-3*x^2-4*x+12)/(x-2) | x^2-x-6
+vrednost: 2*3^3-3*3^2-11*3+6 | 0
+enako: (2*x^3-3*x^2-11*x+6)/(x-3) | 2*x^2+3*x-2
+enako: 2*x^3-3*x^2-11*x+6 | (x-3)*(2*x-1)*(x+2)
+resi: 2*x^3-3*x^2-11*x+6=0 | x | -2, 1/2, 3
+enako: 2*x^3-3*x^2-11*x+6 | (x^2-1)*(2*x-3)-9*x+3
+enako: x*(16-2*x)*(10-2*x) | 4*x^3-52*x^2+160*x
+enako: (x^3-13*x^2+40*x-36)/(x-2) | x^2-11*x+18
+enako: x^3-13*x^2+40*x-36 | (x-2)^2*(x-9)
+resi: 4*x^3-52*x^2+160*x=144 | x | 2, 9
+enako: 4*x^3-52*x^2+160*x-144 | 4*(x-2)^2*(x-9)
+enako: (x-1-I)*(x-1+I) | x^2-2*x+2
+enako: (x-2)*(x^2-2*x+2) | x^3-4*x^2+6*x-4
+vrednost: 2^3-4*2^2+6*2-4 | 0
+enako: x^3-1 | (x-1)*(x^2+x+1)
+enako: (2*x-1)^2-4*x^2 | -4*x+1
+>>
+
 :::simboli
 p | polinom (deljenec) | p(x) = a_n x^n + \dots + a_0 |
 x | spremenljivka | |
 a_n | vodilni koeficient | | | ni enak $0$
 a_{n-1}, a_1 | koeficienti | |
 a_0 | prosti člen | |
-n | stopnja polinoma | | | največji eksponent
+n | stopnja polinoma | | | največji eksponent; pri linearni funkciji $kx + n$ začetna vrednost
 q | delitelj | |
-k | količnik | |
+k | količnik | | | pri linearni funkciji $kx + n$ smerni koeficient
 r | ostanek | r = p(a) | | pri deljenju z $x - a$
-a | število, v katerem računamo vrednost | | | iz delitelja $x - a$
+a | število, v katerem računamo vrednost | | | iz delitelja $x - a$; pri kvadratni funkciji $ax^2 + bx + c$ vodilni koeficient
+b | linearni koeficient kvadratne funkcije $ax^2 + bx + c$ | |
+c | prosti člen kvadratne funkcije $ax^2 + bx + c$ | | | v delitelju $x + c$ je $a = -c$
+z | kompleksna ničla polinoma | | | $z = u + wi$
+\bar{z} | konjugirano število ničle $z$ | | | $u - wi$
+z_1, z_2, z_3 | ničle polinoma | | | štete s stopnjo
 f | odmik teleskopa od tarče | | ^\circ
 t | čas | | min
 h | odmik sonde od tirnice | | m

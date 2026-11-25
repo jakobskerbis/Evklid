@@ -12,7 +12,7 @@ stanje: osnutek
 - Seštevanje in odštevanje
   - predznaki kot pri celih številih
   - skupni imenovalec: $\frac{a}{c} + \frac{b}{c} = \frac{a + b}{c}$
-  - napaka: $\frac{1}{2}$ in $\frac{1}{3}$ ne dasta $\frac{2}{5}$
+  - napaka: $\frac{1}{2} + \frac{1}{3} = \frac{2}{5}$
 - Množenje in deljenje
   - enaka predznaka $+$, različna $-$
   - delimo z množenjem z obratno vrednostjo

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -16,12 +16,12 @@ Začnimo z molekulo, ki jo že poznaš: **etan**, $\mathrm{CH_3{-}CH_3}$. Iz nje
 **Korak 1: zamenjamo en atom H.** Na desnem ogljiku en atom H nadomestimo s skupino atomov $\mathrm{{-}OH}$: atom kisika, vezan na ogljik, in nanj atom vodika.
 
 ```
-     H   H                H   H
-     |   |                |   |
+    H H                H H
+    | |                | |
   H—C—C—H     →      H—C—C—O—H
-     |   |                |   |
-     H   H                H   H
-    etan                 etanol
+    | |                | |
+    H H                H H
+   etan              etanol
 ```
 
 Kisik tvori $2$ vezi (eno s C, eno s H), ogljik še vedno $4$. Racionalna formula je $\mathrm{CH_3{-}CH_2{-}OH}$, pogosto pišemo $\mathrm{C_2H_5OH}$.
@@ -192,7 +192,7 @@ Analogija ima meje: molekule ne »izbirajo«, med njimi delujejo privlačne sile
 
 **Pot etanola v jetrih.** Jetra etanol najprej pretvorijo v etanal (acetaldehid). Ta je strupen in povzroča glavobol in slabost po pitju. Nato ga pretvorijo v ocetno kislino, iz nje pa nastaneta $\mathrm{CO_2}$ in voda.
 
-**Zakaj je metanol tako nevaren.** Jetra metanol na enak način pretvorijo v metanal (formaldehid) in mravljično kislino. Ti snovi poškodujeta vidni živec in druge organe. Zato zastrupitev z metanolom povzroči slepoto.
+**Zakaj je metanol tako nevaren.** Jetra metanol na enak način pretvorijo v metanal (formaldehid) in mravljinčno kislino. Ti snovi poškodujeta vidni živec in druge organe. Zato zastrupitev z metanolom povzroči slepoto.
 
 **Promili.** Vsebnost alkohola v krvi merimo v promilih: $1$ promil pomeni $1\,\text{g}$ etanola na kilogram krvi. Vozniki začetniki ne smejo imeti v krvi nič alkohola.
 

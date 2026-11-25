@@ -4,6 +4,7 @@
 "u.snov": "Chủ đề",
 "u.iskanje": "Mình hỏi em chủ đề nào?",
 "u.isciPh": "vd. định luật Ôm",
+"u.isciPhTema": "vd. {tema}",
 "u.isci": "Tìm",
 "u.koliko": "Bao nhiêu câu hỏi",
 "u.kako": "Em trả lời thế nào",
@@ -73,6 +74,7 @@
 "u.nalagam": "Đang tải …",
 "u.starsNaslov": "Trả lời bằng giọng nói",
 "u.starsOpis": "Trong phần hỏi miệng và khi dùng micrô trong trò chuyện với gia sư, con bạn có thể trả lời bằng giọng nói. Nhà cung cấp trình duyệt (ví dụ Google, Apple hoặc Microsoft) chuyển lời nói thành văn bản; Evklid chỉ nhận văn bản và không lưu âm thanh. Với trẻ dưới 15 tuổi, tính năng này tắt cho đến khi bạn bật. Gõ phím luôn hoạt động.",
+"u.starsOpisZame": "Trong phần hỏi miệng và khi dùng micrô trong trò chuyện với gia sư, bạn có thể trả lời bằng giọng nói. Nhà cung cấp trình duyệt (ví dụ Google, Apple hoặc Microsoft) chuyển lời nói thành văn bản; Evklid chỉ nhận văn bản và không lưu âm thanh. Gõ phím luôn hoạt động.",
 "u.dovoli": "Cho phép trả lời bằng giọng nói",
 "u.nad15": "Từ 15 tuổi trở lên: không cần cho phép.",
 "u.shranjeno": "Đã lưu."

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -11,7 +11,7 @@ Ugibati ni treba. Odgovor dobiš z enim računom, ko spoznaš dve vrsti zaporedi
 
 ## Razlaga
 
-**1. Dve zaporedji v tabeli.** Obe zaporedji se začneta z $2$. Prvo vsakič poveča za $3$, drugo vsakič pomnoži s $3$:
+**1. Dve zaporedji v tabeli.** Obe zaporedji se začneta z $2$. Prvo se vsakič poveča za $3$, drugo se vsakič pomnoži s $3$:
 
 | $n$ | prištevamo $3$ | množimo s $3$ |
 |---|---|---|
@@ -77,7 +77,18 @@ Pri $q = 1$ so vsi členi enaki $a_1$, zato je $S_n = n \cdot a_1$.
 
 *Preveri:* koliko je $1 + 2 + 4 + 8 + 16$ po formuli? *(Odgovor: $\frac{2^5 - 1}{2 - 1} = 31$.)*
 
-V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom večjim od $1$ opazi, da so razmiki med sosednjimi točkami vedno večji.
+V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom, večjim od $1$, opazi, da so razmiki med sosednjimi točkami vedno večji.
+
+**7. Zaporedje po vzorcu.** Pri nalogi »nadaljuj zaporedje« iščemo pravilo, ki ga izpolnjujejo vsi dani členi. Iz nekaj primerov sklepamo na splošno pravilo: temu rečemo **induktivno sklepanje**. Pomagajo vprašanja po vrsti:
+
+1. Ali so razlike sosednjih členov enake (aritmetično zaporedje)? Ali so količniki enaki (geometrijsko)?
+2. Če ne, ali razlike same tvorijo preprosto zaporedje? Pri $1, 4, 9, 16, \ldots$ so razlike $3, 5, 7$: vsaka je za $2$ večja, zato je naslednja razlika $9$ in naslednji člen $25$.
+3. Ali je člen povezan s svojim indeksom $n$ ali z znanim zaporedjem (kvadrati, potence)? Členi $1, 4, 9, 16$ so kvadrati: $a_n = n^2$. Členi $4, 10, 28, 82$ so za $1$ večji od potenc števila $3$: $a_n = 3^n + 1$, naslednji člen je $244$.
+4. Domnevo za splošni člen **preveri pri vseh danih členih**. Šele nato je posplošitev smiselna.
+
+Nekaj danih členov zaporedja ne določa enolično. Zaporedje $1, 2, 4, \ldots$ lahko nadaljuješ z $8$ (podvajanje) ali s $7$ (razlike $1, 2, 3$). Zato zapiši pravilo, ki si ga uporabil. Formula, dobljena z induktivnim sklepanjem, je le domneva. Da velja za vsak $n$, moramo šele dokazati, na primer z matematično indukcijo.
+
+*Preveri:* nadaljuj zaporedje $1, 3, 7, 15, 31, \ldots$ in zapiši splošni člen. *(Odgovor: $63$; vsak člen je za $1$ manjši od potence števila $2$, $a_n = 2^n - 1$.)*
 
 ## Rešeni primeri
 
@@ -137,7 +148,27 @@ $S_n = \dfrac{n}{2}\,\bigl(2a_1 + (n-1)\,d\bigr)$, $\quad a_n = a_1 + (n-1)\,d$
 6. Najnižja vrsta: $a_{20} = 18 + 19 \cdot 2 = 56$. Preizkus: $\dfrac{20}{2} \cdot (18 + 56) = 740$.
 7. Odgovor: streha ima $20$ vrst, v najnižji vrsti je $56$ strešnikov.
 
-### Primer 4: zdaj ti
+### Primer 4: nadaljuj in posploši
+
+Zaporedje se začne s členi $2, 6, 12, 20, 30, \ldots$ Nadaljuj ga z dvema členoma, ugani splošni člen in ugotovi, kateri člen zaporedja je enak $420$.
+
+**Podatki:** $a_1 = 2$, $a_2 = 6$, $a_3 = 12$, $a_4 = 20$, $a_5 = 30$, $a_n = 420$
+**Iščemo:** $a_6$, $a_7$, splošni člen $a_n$ in indeks $n$ člena $420$
+
+:::formula
+Razlike sosednjih členov $a_{n+1} - a_n$; domnevo za $a_n$ preveri pri vseh danih členih.
+:::
+
+**Rešitev:**
+
+1. Razlike so $4, 6, 8, 10$, zato zaporedje ni aritmetično. Količniki $3$; $2$; $1{,}67$ … niso enaki, zato tudi ni geometrijsko.
+2. Razlike se vsakič povečajo za $2$. Naslednji razliki sta $12$ in $14$, zato je $a_6 = 30 + 12 = 42$ in $a_7 = 42 + 14 = 56$.
+3. Posplošimo: $2 = 1 \cdot 2$, $6 = 2 \cdot 3$, $12 = 3 \cdot 4$, $20 = 4 \cdot 5$, $30 = 5 \cdot 6$. Vsak člen je produkt indeksa in naslednjega števila, domneva je $a_n = n(n + 1)$.
+4. Preizkus na novih členih: $a_6 = 6 \cdot 7 = 42$ in $a_7 = 7 \cdot 8 = 56$, kar se ujema s korakom 2.
+5. Člen $420$: enačba $n(n + 1) = 420$ oziroma $n^2 + n - 420 = 0$ ima rešitvi $n = 20$ in $n = -21$. Indeks je naravno število, zato $n = 20$.
+6. Odgovor: naslednja člena sta $42$ in $56$, splošni člen je $a_n = n(n + 1)$, število $420$ je dvajseti člen.
+
+### Primer 5: zdaj ti
 
 V geometrijskem zaporedju je $a_2 = 6$ in $a_5 = 48$. Izračunaj vsoto prvih šestih členov.
 
@@ -170,12 +201,111 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 
 ## Povzetek
 
-- Aritmetično zaporedje: $a_{n+1} - a_n = d$ (diferenca).
-- $a_n = a_1 + (n-1)\,d$ in $S_n = \dfrac{n}{2}(a_1 + a_n) = \dfrac{n}{2}\bigl(2a_1 + (n-1)d\bigr)$.
-- Geometrijsko zaporedje: $\dfrac{a_{n+1}}{a_n} = q$ (količnik).
-- $a_n = a_1 \cdot q^{\,n-1}$ in za $q \ne 1$: $S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$; za $q = 1$: $S_n = n\,a_1$.
-- Od $a_1$ do $a_n$ je $n - 1$ korakov; formulo vedno preveri pri $n = 1$.
+**Aritmetično zaporedje** ($d$ je diferenca):
+
+$$a_{n+1} - a_n = d$$
+
+$$a_n = a_1 + (n-1)\,d$$
+
+$$S_n = \frac{n}{2}(a_1 + a_n)$$
+
+$$S_n = \frac{n}{2}\bigl(2a_1 + (n-1)d\bigr)$$
+
+**Geometrijsko zaporedje** ($q$ je količnik):
+
+$$\frac{a_{n+1}}{a_n} = q$$
+
+$$a_n = a_1 \cdot q^{\,n-1}$$
+
+$$S_n = a_1 \cdot \frac{q^n - 1}{q - 1} \quad (q \ne 1)$$
+
+- Za $q = 1$ je $S_n = n\,a_1$.
+- Od $a_1$ do $a_n$ je $n - 1$ korakov.
+- Formulo vedno preveri pri $n = 1$.
 - Vrsto zaporedja določi šele, ko preveriš razliko oziroma količnik pri vseh danih parih.
+- **Zaporedje po vzorcu**: išči enake razlike, količnike, vzorec v razlikah ali zvezo z indeksom $n$.
+- Domnevo za $a_n$ preveri pri vseh danih členih.
+
+## Ponovitev
+
+**Formule**
+- $a_n = a_1 + (n - 1)d$ (na pamet)
+- $S_n = \frac{n}{2}(a_1 + a_n)$ (priloga)
+- $a_n = a_1 \cdot q^{n-1}$ (na pamet)
+- $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$, $q \ne 1$ (priloga)
+- $S_n = n\,a_1$ pri $q = 1$ (priloga)
+
+**Postopek**
+1. Preveri razliko oziroma količnik pri vseh danih parih in določi vrsto zaporedja.
+2. Znane podatke ($a_1$, $d$ ali $q$, $n$) vstavi v formulo za $a_n$ ali $S_n$.
+3. Iz enačbe ali sistema izračunaj neznanko.
+4. Rezultat preveri pri $n = 1$ in pri danih členih.
+
+**Pazi na**
+- Do $a_n$ je $n - 1$ korakov: $a_1 + (n - 1)d$ in $a_1 \cdot q^{n-1}$.
+- Padec za $20\,\%$ pomeni $q = 0{,}8$, rast za $5\,\%$ pa $q = 1{,}05$.
+- Gaussova formula $S_n = \frac{n}{2}(a_1 + a_n)$ velja le za aritmetično zaporedje.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Med števili $7$ in $43$ vstavite osem števil tako, da vseh deset števil v tem vrstnem redu tvori aritmetično zaporedje. Zapišite vstavljena števila in izračunajte vsoto vseh desetih števil.
+
+**Rešitev:**
+
+1. Prvi člen je $a_1 = 7$, deseti $a_{10} = 43$. Iz $a_{10} = a_1 + 9d$ sledi $9d = 36$ in $d = 4$.
+2. Vstavljena števila so $11, 15, 19, 23, 27, 31, 35, 39$.
+3. Vsota: $S_{10} = \dfrac{10}{2}\,(7 + 43) = 5 \cdot 50 = 250$.
+4. Odgovor: vstavimo števila $11, 15, 19, 23, 27, 31, 35, 39$; vsota vseh desetih števil je $250$.
+
+**Točkovanje:** 1 točka za diferenco $d = 4$, 1 točka za vstavljena števila, 1 točka za vsoto $250$.
+
+### Naloga 2: krajša strukturirana naloga, 8 točk, pola 2 (z računalom)
+
+Kolesarka se pripravlja na dirko. V prvem tednu priprav prevozi $120\,\text{km}$, nato vsak teden prevozi $8\,\%$ več kot v prejšnjem tednu.
+
+a) Koliko kilometrov prevozi v šestem tednu? Rezultat zaokrožite na desetinko kilometra. (2 točki)
+b) Koliko kilometrov skupaj prevozi v prvih desetih tednih? Rezultat zaokrožite na desetinko kilometra. (2 točki)
+c) V katerem tednu prvič prevozi več kot $250\,\text{km}$? (2 točki)
+d) Njen sotekmovalec v prvem tednu prav tako prevozi $120\,\text{km}$, nato pa vsak teden $12\,\text{km}$ več kot v prejšnjem tednu. Kdo v prvih desetih tednih skupaj prevozi več in za koliko? Razliko zaokrožite na desetinko kilometra. (2 točki)
+
+**Rešitev:**
+
+1. a) Tedenske razdalje tvorijo geometrijsko zaporedje z $a_1 = 120$ in količnikom $q = 1{,}08$, ker je razdalja vsak teden za $8\,\%$ večja kot prejšnji teden.
+2. a) $a_6 = 120 \cdot 1{,}08^5 = 176{,}319\ldots \approx 176{,}3$ (km).
+3. b) $S_{10} = 120 \cdot \dfrac{1{,}08^{10} - 1}{1{,}08 - 1} = 1738{,}387\ldots \approx 1738{,}4$ (km).
+4. c) Pogoj $120 \cdot 1{,}08^{\,n-1} > 250$ preoblikujemo v $1{,}08^{\,n-1} > \dfrac{25}{12}$ in logaritmiramo: $n - 1 > \dfrac{\log \frac{25}{12}}{\log 1{,}08} \approx 9{,}54$.
+5. c) Najmanjše celo število, ki to izpolni, je $n - 1 = 10$, torej $n = 11$. Preizkus: $a_{10} = 120 \cdot 1{,}08^9 \approx 239{,}9$ in $a_{11} = 120 \cdot 1{,}08^{10} \approx 259{,}1$.
+6. d) Sotekmovalčeve razdalje tvorijo aritmetično zaporedje s prvim členom $120$ in diferenco $d = 12$. V desetih tednih prevozi $\dfrac{10}{2}\,(2 \cdot 120 + 9 \cdot 12) = 5 \cdot 348 = 1740$ (km).
+7. d) Razlika: $1740 - 1738{,}387\ldots \approx 1{,}6$ (km).
+8. Odgovor: a) približno $176{,}3\,\text{km}$; b) približno $1738{,}4\,\text{km}$; c) v $11.$ tednu; d) več prevozi sotekmovalec, približno za $1{,}6\,\text{km}$.
+
+**Točkovanje:** a) 1 točka za količnik $q = 1{,}08$ in zapis člena $a_6$, 1 točka za rezultat $176{,}3\,\text{km}$; b) 1 točka za pravilno vstavljeno formulo za vsoto geometrijskega zaporedja, 1 točka za rezultat $1738{,}4\,\text{km}$; c) 1 točka za neenačbo (ali za preizkus členov $a_{10}$ in $a_{11}$), 1 točka za odgovor $11.$ teden; d) 1 točka za vsoto $1740\,\text{km}$, 1 točka za sklep, da sotekmovalec prevozi približno $1{,}6\,\text{km}$ več.
+
+### Ustno vprašanje 1
+
+:::premisli
+Kdaj je zaporedje aritmetično in kdaj geometrijsko? Zapiši splošni člen vsakega od njiju.
+---
+Zaporedje je aritmetično, če je razlika zaporednih členov stalna: $a_{n+1} - a_n = d$, kjer je $d$ diferenca. Njegov splošni člen je $a_n = a_1 + (n-1)\,d$. Zaporedje z neničelnimi členi je geometrijsko, če je količnik zaporednih členov stalen: $\dfrac{a_{n+1}}{a_n} = q$. Njegov splošni člen je $a_n = a_1 \cdot q^{\,n-1}$, ker od prvega do $n$-tega člena naredimo $n - 1$ korakov.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji formulo za vsoto prvih $n$ členov geometrijskega zaporedja s količnikom $q \ne 1$.
+---
+Vsoto zapišemo kot $S_n = a_1 + a_1 q + \ldots + a_1 q^{n-1}$ in jo pomnožimo s $q$, da dobimo $q S_n = a_1 q + a_1 q^2 + \ldots + a_1 q^n$. Obe vsoti imata skupne vse člene razen $a_1$ in $a_1 q^n$, zato pri odštevanju ostane $S_n - q S_n = a_1 - a_1 q^n$. Ker je $q \ne 1$, izpostavimo $S_n$ in delimo z $1 - q$. Dobimo $S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Navedi primer zaporedja, ki je hkrati aritmetično in geometrijsko, in pojasni, zakaj so taka le konstantna zaporedja.
+---
+Primer je konstantno zaporedje $5, 5, 5, \ldots$ z diferenco $d = 0$ in količnikom $q = 1$. Če so $a$, $a + d$ in $a + 2d$ zaporedni členi geometrijskega zaporedja, mora veljati pogoj $\dfrac{a + d}{a} = \dfrac{a + 2d}{a + d}$, torej enačba $(a + d)^2 = a(a + 2d)$. Po poenostavitvi ostane $d^2 = 0$, zato je $d = 0$. Vsako zaporedje, ki je hkrati aritmetično in geometrijsko, je torej konstantno z neničelnimi členi.
+:::
 
 ## Drugače: Na sliki
 
@@ -203,12 +333,10 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 ~ Absolutne vrednosti res rastejo, sami členi pa ne: $5, -10, 20, -40$. Zaporedje je alternirajoče.
 > Od $a_1$ do $a_n$ je $n - 1$ množenj s $q$; pri $n = 1$ formula da $a_1 \cdot q^0 = a_1$.
 
-? Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
-- $49$
-~ To je $4 + 15 \cdot 3$. Korakov je le $14$, ker prvi člen že imaš.
-+ $46$
-- $4 \cdot 3^{14}$
-~ Tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
+? (brez računala) Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
+= 46 | 0
+~ 49 | To je $4 + 15 \cdot 3$. Korakov je le $14$, ker prvi člen že imaš.
+~ 19131876 | To je $4 \cdot 3^{14}$: tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
 > $a_{15} = 4 + 14 \cdot 3 = 46$.
 
 ? Maja je vsoto $1 + 3 + 9 + 27 + 81$ izračunala takole: $\dfrac{5}{2} \cdot (1 + 81) = 205$. Kje je napaka?
@@ -237,8 +365,45 @@ Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri
 ~ To je $500 \cdot 0{,}2^3$. Ostane $80\,\%$ vrednosti, zato je $q = 0{,}8$, ne $0{,}2$.
 > Vrednosti tvorijo geometrijsko zaporedje s $q = 0{,}8$: po $3$ letih je vrtalnik vreden $500 \cdot 0{,}8^3 = 256\,\text{€}$.
 
+? (brez računala) Nadaljuj zaporedje $1, 5, 11, 19, 29, \ldots$ po vzorcu. Koliko je šesti člen?
+= 41 | 0
+~ 39 | Razlike niso enake: $4, 6, 8, 10$. Vsaka je za $2$ večja od prejšnje, zato je naslednja $12$, ne $10$.
+~ 58 | Zaporedje ni geometrijsko: $\frac{5}{1} \ne \frac{11}{5}$. Poglej razlike sosednjih členov.
+> Razlike so $4, 6, 8, 10$, naslednja je $12$: $a_6 = 29 + 12 = 41$. Splošni člen je $a_n = n^2 + n - 1$.
+
+? Kateri splošni člen ustreza zaporedju $3, 8, 15, 24, \ldots$?
+- $a_n = 5n - 2$
+~ Ta formula da $3$ in $8$, tretji člen pa bi bil $13$, ne $15$. Domnevo preveri pri vseh danih členih.
+- $a_n = n^2 + 2$
+~ Ta da $3, 6, 11, \ldots$: ujema se le prvi člen.
++ $a_n = n(n + 2)$
+- $a_n = 3n$
+~ Ta da $3, 6, 9, \ldots$: drugi člen ni $8$.
+> $1 \cdot 3 = 3$, $2 \cdot 4 = 8$, $3 \cdot 5 = 15$, $4 \cdot 6 = 24$. Vsak člen je za $1$ manjši od kvadrata: $a_n = (n + 1)^2 - 1 = n(n + 2)$.
+
+<<RACUN
+vrednost: (43-7)/9 | 4
+vrednost: 10/2*(7+43) | 250
+vrednost: 7+8*4 | 39
+vrednost: 120*1.08^5 | 176.3
+vrednost: 120*(1.08^10-1)/(1.08-1) | 1738.4
+vrednost: log(25/12)/log(1.08) | 9.54
+vrednost: 120*1.08^9 | 239.9
+vrednost: 120*1.08^10 | 259.1
+vrednost: 10/2*(2*120+9*12) | 1740
+vrednost: 1740-120*(1.08^10-1)/(1.08-1) | 1.6
+enako: (a+d)^2-a*(a+2*d) | d^2
+vrednost: 3^5+1 | 244
+vrednost: 2^6-1 | 63
+vrednost: 6*7 | 42
+vrednost: 7*8 | 56
+resi: n^2+n-420=0 | n | -21, 20
+vrednost: 6^2+6-1 | 41
+enako: (n+1)^2-1 | n*(n+2)
+>>
+
 :::simboli
-a_n | splošni ($n$-ti) člen zaporedja | a_n = a_1 + (n-1)\,d | | geometrijsko: $a_n = a_1 q^{n-1}$
+a_n | splošni ($n$-ti) člen zaporedja | a_n = a_1 + (n-1)\,d | | geometrijsko: $a_n = a_1 q^{n-1}$; pri zaporedju po vzorcu ga uganemo iz danih členov
 a_{n+1} | člen, ki sledi členu $a_n$ | | |
 a_1 | prvi člen zaporedja | | |
 d | diferenca aritmetičnega zaporedja | d = a_{n+1} - a_n | |

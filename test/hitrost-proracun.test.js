@@ -27,7 +27,11 @@ const br = (u) => zlib.brotliCompressSync(fs.readFileSync(path.join(pub, u)), { 
 // 12. 11. 2026 (#602): namigi za razmerje a : b in količnik (5 novih ključev chk.* v
 // public/i18n/sl.js, +0,12 KB stisnjeno; prvo odprtje 820,98 → 821,10 KB, main po #605). Kviz in pilot pokažeta namig po kodi
 // iz sl.js, zato besedila ne moreta biti naložena pozneje.
-const BUDGET = { files: 140, totalKB: 2048, fileKB: 75 };
+// j 14. 11. 2026 (B3, #674, »Ok« na kartico): meja na datoteko 75 → 80 KB, ker je public/i18n/sl.js dosegel 74,96 KB in
+// anketa po 7 dneh (13 ključev, +0,2 KB stisnjeno) ne gre več noter.
+// j 19. 11. 2026 (#868, kartica »Da, 85 KB«): meja na datoteko 80 → 85 KB; public/i18n/sl.js je bil na 79,87 KB, sporočila
+// za cel zapis v vajah (6 ključev chk.*, kviz in pilot jih pokažeta po kodi) ga dvignejo na 80,07 KB.
+const BUDGET = { files: 140, totalKB: 2048, fileKB: 85 };
 
 test("prvo odprtje: velikost stisnjenih datotek v proračunu", () => {
   assert.ok(own.length <= BUDGET.files, `${own.length} datotek ob prvem odprtju (proračun ${BUDGET.files}); novo veliko kodo naloži z import() ob uporabi`);
@@ -38,7 +42,7 @@ test("prvo odprtje: velikost stisnjenih datotek v proračunu", () => {
 });
 
 test("težka orodja niso del prvega odprtja (naložijo se ob uporabi ali ob nedejavnosti)", () => {
-  for (const u of ["/graph/calc.js", "/graph/sci.js", "/graph/tools.js", "/3d/modeli.js", "/games/index.js"]) {
+  for (const u of ["/graph/calc.js", "/graph/sci.js", "/graph/tools.js", "/3d/modeli.js", "/games/index.js", "/icons/deljenje.jpg"]) {
     assert.ok(!own.includes(u), `${u} se naloži ob prvem odprtju`);
   }
   assert.ok(!startupFiles(pub, "index.html").some((u) => u.startsWith("/vendor/three")), "three.js ob prvem odprtju");
@@ -49,7 +53,7 @@ test("vstopna stran vnaprej naloži vse module prvega odprtja (brez slapa uvozov
   assert.ok(modules.includes("/app.js") && modules.length > 20);
   for (const u of modules) {
     assert.ok(fs.existsSync(path.join(pub, u)), `${u} ne obstaja`);
-    assert.ok(html.includes(`<link rel="modulepreload" href="${u}">`), u);
+    assert.ok(html.includes(`<link rel="modulepreload" href="${u}" fetchpriority="low">`), u);
   }
   // navadne skripte (theme.js, knjižnice) niso moduli
   assert.ok(!html.includes('modulepreload" href="/theme.js"'));
@@ -66,7 +70,7 @@ test("strežnik pošlje vstopno stran z modulepreload, stisnjeno in s 304", asyn
     assert.equal(res.status, 200);
     assert.match(res.headers.get("content-type"), /text\/html/);
     const text = await res.text();
-    assert.match(text, /<link rel="modulepreload" href="\/app\.js">/);
+    assert.match(text, /<link rel="modulepreload" href="\/app\.js" fetchpriority="low">/);
     const again = await fetch(`${base}/index.html`, { headers: { "accept-encoding": "br", "if-none-match": res.headers.get("etag") } });
     assert.equal(again.status, 304);
   } finally {

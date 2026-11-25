@@ -2,7 +2,7 @@
 // igra se odpre v istem pogledu. Igra = vrsta igre (engines.js) × matematični pojem (topics.js).
 import { t, locale } from "../i18n.js";
 import { icon } from "../icons.js";
-import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, loadConceptNames, makeQuestion, shuffle } from "./topics.js";
+import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, loadConceptNames, makeQuestion, shuffle, loadSubjects, subjectsReady, conceptReady } from "./topics.js";
 import { gameLock as ruleLock, clearedPace, lessonsOf, PACE, CLEAR_CORRECT, CHECK_TASKS, CHECK_PASS, LOCKS_ON } from "./unlock.js";
 // Zapora iger je izklopljena (LOCKS_ON v unlock.js): vse igre so odprte.
 const gameLock = (...a) => (LOCKS_ON ? ruleLock(...a) : null);
@@ -102,11 +102,22 @@ export function initGames(c) {
     if (!SUBJECTS.includes(filter.subject)) filter.subject = "MAT";
   } catch {}
 }
+// Lahek zagon (j 17. 11. 2026): generatorji nalog se naložijo le za učenčev predmet in predmet, ki ga portal
+// pokaže (shranjena izbira, sicer matematika); ob nalaganju iger v ozadju (public/app.js) in ob menjavi predmeta
+// v profilu. Tako so igre tega predmeta v predpomnilniku service workerja in delujejo tudi brez povezave. Na mobilnih
+// podatkih ali počasni povezavi se igre v ozadju ne prenesejo (games/stage.js backgroundLoadOk): tam delujejo brez
+// povezave šele, ko je učenec po zadnji objavi vsaj enkrat odprl Igre s povezavo.
+// Igra drugega predmeta naloži svoj paket šele ob izbiri predmeta ali odprtju igre (openGame).
+export const currentSubjects = () => [ctx?.getStudent()?.settings?.subject, filter.subject].filter((x) => SUBJECTS.includes(x));
+export const prepareSubjects = () => loadSubjects(currentSubjects()).catch(() => {});
 export const allGamesCount = () => ENGINES.reduce((n, e) => n + (e.fits ? CONCEPTS.filter((c) => e.fits(c)).length : CONCEPTS.length), 0);
 
+// Predmeti, za katere je portal v tem odprtju Iger že začel prenos paketov (največ enkrat na predmet).
+const portalTried = new Set();
 export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
+  portalTried.clear();
   setNumberStyle(ctx.currentLang());
   await loadConceptNames(ctx.currentLang());
   applyStageLook();
@@ -269,15 +280,28 @@ function renderPortal() {
   if (filter.kind === "kid" && !kidEngines.length) filter.kind = "all";
   const kinds = ENGINES.filter((e) => filter.kind === "all" || e.id === filter.kind || (filter.kind === "kid" && kidEngines.includes(e.id)));
   const match = (c, e) => !q || `${conceptName(c)} ${areaName(c.area)} ${kindName(e)}`.toLowerCase().includes(q);
+  // Predmeti glede na stopnjo (j 2026-11-14): le predmeti z igrami za učenčevo stopnjo (pravilo »Zate«),
+  // gimnazijec npr. ne vidi Spoznavanja okolja. Brez profila vsi; iskanje še vedno najde vse igre.
+  const subjects = ctx.getStudent() ? SUBJECTS.filter((x) => CONCEPTS.some((c) => c.subject === x && forYou(c))) : SUBJECTS;
+  if (!subjects.length) subjects.push(...SUBJECTS);
+  // Skrit shranjen predmet se le prikaže kot drug (filtra ne spreminjamo: prvi prikaz teče še s privzetim letnikom).
+  const hidden = !subjects.includes(filter.subject);
+  const subj = hidden ? (subjects.includes("MAT") ? "MAT" : subjects[0]) : filter.subject;
+  const fArea = hidden && !["you", "all"].includes(filter.area) ? "you" : filter.area;
+  // Igre prikazanega predmeta pripravimo že zdaj; brez povezave ne (in največ enkrat na predmet v tem odprtju Iger).
+  if (!subjectsReady([subj]) && navigator.onLine !== false && !portalTried.has(subj)) {
+    portalTried.add(subj);
+    loadSubjects([subj]).catch(() => {});
+  }
   // Iskanje gre čez vse predmete, sicer le izbrani predmet.
   // »Zate« brez iger za ta predmet (npr. fakultetni predmet v OŠ) → vsa področja predmeta.
-  const anyForYou = CONCEPTS.some((c) => c.subject === filter.subject && forYou(c));
-  const area = filter.area === "you" && !anyForYou ? "all" : filter.area;
-  const pick = (c) => (q || c.subject === filter.subject) && (area === "you" ? forYou(c) : area === "all" || c.area === area);
+  const anyForYou = CONCEPTS.some((c) => c.subject === subj && forYou(c));
+  const area = fArea === "you" && !anyForYou ? "all" : fArea;
+  const pick = (c) => (q || c.subject === subj) && (area === "you" ? forYou(c) : area === "all" || c.area === area);
   let total = 0;
   let paths = 0;
   // Najprej le seznam iger (brez HTML), nato HTML samo za igre na trenutni strani.
-  const groups = AREAS.filter((a) => q || a[3] === filter.subject).map(([id]) => {
+  const groups = AREAS.filter((a) => q || a[3] === subj).map(([id]) => {
     // Sosednji ploščici se razlikujeta po snovi in po vrsti igre (pisana mreža).
     const cs = CONCEPTS.filter((c) => c.area === id && pick(c));
     const path = [];
@@ -323,10 +347,10 @@ function renderPortal() {
         <label class="gm-search">${icon("search")}<input type="search" value="${esc(filter.q)}" placeholder="${esc(t("games.search"))}" aria-label="${esc(t("games.search"))}"></label>
       </div>
       ${ctx.getStudent() && !q ? dailyCard(daily, { t, lang: ctx.currentLang(), level: curDailyLevel(), suggested: suggestedDaily() }) : ""}
-      ${SUBJECTS.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${SUBJECTS.map((x) => chip(x, t(`subj.${x}`), filter.subject === x)).join("")}</div>` : ""}
+      ${subjects.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${subjects.map((x) => chip(x, t(`subj.${x}`), subj === x)).join("")}</div>` : ""}
       <div class="chip-row gm-areas" role="group" aria-label="${esc(t("games.areas"))}">
-        ${chip("you", t("games.forYou"), filter.area === "you")}${chip("all", t("games.all"), filter.area === "all")}
-        ${AREAS.filter((a) => a[3] === filter.subject).map(([id]) => chip(id, areaName(id), filter.area === id)).join("")}
+        ${chip("you", t("games.forYou"), fArea === "you")}${chip("all", t("games.all"), fArea === "all")}
+        ${AREAS.filter((a) => a[3] === subj).map(([id]) => chip(id, areaName(id), fArea === id)).join("")}
       </div>
       <div class="chip-row gm-kinds" role="group" aria-label="${esc(t("games.kinds"))}">
         ${chip("all", t("games.allKinds"), filter.kind === "all")}${kidEngines.length ? chip("kid", `🕹️ ${t("games.kidChip")}`, filter.kind === "kid") : ""}${ENGINES.map((e) => chip(e.id, kindName(e), filter.kind === e.id, isNewDate(e.added))).join("")}
@@ -348,6 +372,7 @@ function renderPortal() {
   root.querySelector(".gm-areas").addEventListener("click", (ev) => {
     const b = ev.target.closest("button[data-val]");
     if (!b) return;
+    filter.subject = subj; // prikazani predmet (skrit shranjeni se ob izbiri področja zamenja s prikazanim)
     filter.area = b.dataset.val;
     page = 0;
     saveFilter();
@@ -626,6 +651,7 @@ function openGame(id) {
   const engine = ENGINES.find((e) => e.id === eid);
   const concept = CONCEPTS.find((c) => c.id === cid);
   if (!engine || !concept || !fits(engine, concept)) return;
+  if (!conceptReady(cid)) return waitForPack(id, concept);
   const lock = gameLock(eid, concept, LS);
   if (lock) return showLock(engine, concept, lock);
   root.innerHTML = `<div class="gm-host"></div>`;
@@ -670,6 +696,21 @@ function openGame(id) {
     },
   });
   window.scrollTo(0, 0);
+}
+
+// Igra predmeta, katerega paket še ni naložen (npr. iz iskanja čez vse predmete): kratko čakanje, nato igra.
+// Brez povezave ostane portal z obvestilom (paketi učenčevega predmeta so že v predpomnilniku).
+function waitForPack(id, concept) {
+  root.innerHTML = `<div class="gm-portal"><p class="muted gm-wait">${esc(t("common.loading"))}</p></div>`;
+  const wait = root.querySelector(".gm-wait");
+  loadSubjects([concept.subject]).then(
+    () => wait.isConnected && !game && conceptReady(concept.id) && openGame(id),
+    () => {
+      if (!wait.isConnected || game) return;
+      renderPortal();
+      ctx.toast?.(t("off.noConnection"));
+    },
+  );
 }
 
 // Zaklenjena igra: kaj manjka in pot do odklepa (snov na učni poti, preizkus ali najprej mirnejša igra).
@@ -855,7 +896,7 @@ function renderShop(msg = "", top = false) {
     f.querySelector("button").disabled = true;
     try {
       await ctx.api(`/api/students/${s.id}/feedback`, { method: "POST", body: JSON.stringify({ kind: "cosmetics", ideas: wish, lang }) });
-      f.outerHTML = `<p class="gm-shop-msg gm-wish-done" role="status" tabindex="-1">${esc(t("games.wishThanks"))}</p>`;
+      f.outerHTML = `<p class="gm-shop-msg gm-wish-done" role="status" tabindex="-1">${esc(t("games.shopWishThanks"))}</p>`;
       root.querySelector(".gm-wish-done")?.focus();
     } catch (err) {
       f.querySelector("button").disabled = false;
@@ -928,6 +969,7 @@ function closeGame() {
 
 // Ob odhodu iz pogleda igro ustavimo.
 export function leaveGames() {
+  root?.querySelector(".gm-wait")?.remove(); // čakanje na paket ne odpre igre v skritem pogledu (waitForPack)
   if (game) {
     game.destroy();
     game = null;

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -48,7 +48,7 @@ $100$-krat. Ležeče: $b = 30$, $h = 3$, pokonci: $b = 3$, $h = 30$. Razmerje je
 
 $$I_y = I_{y_T} + a^2 A$$
 
-Tu je $I_{y_T}$ vztrajnostni moment glede na vzporedno os skozi težišče ploskve, $a$ razdalja med osema in $A$ ploščina. Člen $a^2 A$ je vedno pozitiven, zato je težiščna os tista, glede na katero je $I$ najmanjši.
+Tu je $I_{y_T}$ vztrajnostni moment glede na vzporedno os skozi težišče ploskve, $a$ razdalja med osema in $A$ ploščina. Člen $a^2 A$ je vedno pozitiven, zato je med vsemi vzporednimi osmi težiščna os tista, glede na katero je $I$ najmanjši.
 
 Pri sestavljenem prerezu (T, I, L, U) izrek uporabimo za vsak del posebej. Najprej določimo skupno težišče, nato vsak del prenesemo nanj in seštejemo.
 
@@ -153,7 +153,7 @@ Steiner za $I_y$, $I_z$, $I_{yz}$, nato $I_{1,2} = I_s \pm R$ in $\tan 2\varphi_
 2. Odmiki težišč krakov od skupnega težišča: krak 1 $(-1;\ 1)\,\mathrm{cm}$, krak 2 $(1{,}5;\ -1{,}5)\,\mathrm{cm}$. Lastni momenti krakov po $\dfrac{b h^3}{12}$: za $I_y$ sta $18$ in $0{,}33\,\mathrm{cm^4}$, za $I_z$ pa $0{,}5$ in $5{,}33\,\mathrm{cm^4}$.
 3. $I_y = 18 + 1^2 \cdot 6 + 0{,}33 + 1{,}5^2 \cdot 4 = 33{,}33\,\mathrm{cm^4}$.
 4. $I_z = 0{,}5 + 1^2 \cdot 6 + 5{,}33 + 1{,}5^2 \cdot 4 = 20{,}83\,\mathrm{cm^4}$.
-5. $I_{yz} = (-1) \cdot 1 \cdot 6 + 1{,}5 \cdot (-1{,}5) \cdot 4 = -15\,\mathrm{cm^4}$. Krakova ležita v »drugem« in »četrtem« kvadrantu okrog težišča, zato je predznak negativen.
+5. $I_{yz} = (-1) \cdot 1 \cdot 6 + 1{,}5 \cdot (-1{,}5) \cdot 4 = -15\,\mathrm{cm^4}$. Kraka ležita v »drugem« in »četrtem« kvadrantu okrog težišča, zato je predznak negativen.
 6. $I_s = \dfrac{33{,}33 + 20{,}83}{2} = 27{,}08\,\mathrm{cm^4}$ in $R = \sqrt{6{,}25^2 + 15^2} = 16{,}25\,\mathrm{cm^4}$.
 7. $I_1 = 27{,}08 + 16{,}25 = 43{,}33\,\mathrm{cm^4}$, $I_2 = 27{,}08 - 16{,}25 = 10{,}83\,\mathrm{cm^4}$.
 8. $\tan 2\varphi_0 = \dfrac{2 \cdot (-15)}{20{,}83 - 33{,}33} = 2{,}4$, torej $2\varphi_0 = 67{,}4^\circ$ in $\varphi_0 = 33{,}7^\circ$.
@@ -195,29 +195,117 @@ $h^2 = \dfrac{6 \cdot 20}{20} = 6\,\mathrm{mm^2}$, $h \approx 2{,}45\,\mathrm{mm
 - $I_y = \int_A z^2\,\mathrm{d}A$: razdalja na kvadrat, vedno pozitiven, enota $\mathrm{mm^4}$. Pravokotnik: $\dfrac{b h^3}{12}$.
 - Steinerjev izrek: $I_y = I_{y_T} + a^2 A$. Težiščna os da najmanjši $I$. Pri sestavljenih prerezih najprej skupno težišče, nato vsak del s svojim $a^2 A$.
 - Deviacijski moment $I_{yz} = \int_A y z\,\mathrm{d}A$ je lahko negativen; pri simetrijski osi je $0$.
-- Glavni osi: $I_{yz} = 0$; $I_{1,2} = I_s \pm R$, kot iz $\tan 2\varphi_0 = \dfrac{2 I_{yz}}{I_z - I_y}$, z preizkusom, katera os nosi $I_1$.
+- Glavni osi: $I_{yz} = 0$; $I_{1,2} = I_s \pm R$, kot iz $\tan 2\varphi_0 = \dfrac{2 I_{yz}}{I_z - I_y}$, s preizkusom, katera os nosi $I_1$.
 - Odpornostni moment $W = \dfrac{I}{e_{\max}}$, $\sigma_{\max} = \dfrac{M}{W}$. Pravokotnik: $\dfrac{b h^2}{6}$; če prerez ni simetričen glede na nevtralno os, je merodajen manjši $W$.
+
+## Za izpit
+
+Znati moraš povedati:
+- definicije $I_y = \int_A z^2\,\mathrm{d}A$, $I_z = \int_A y^2\,\mathrm{d}A$ in $I_{yz} = \int_A y z\,\mathrm{d}A$, njihove enote in predznake ter razliko do statičnega momenta;
+- Steinerjev izrek $I_y = I_{y_T} + a^2 A$ z dokazom in s pogojem, da je ena od vzporednih osi težiščna; obliko izreka za $I_{yz}$;
+- postopek za sestavljen prerez: skupno težišče, lastni momenti delov, Steinerjevi členi, vsota;
+- kaj sta glavni težiščni osi ($I_{yz} = 0$), formuli $I_{1,2} = I_s \pm R$ in $\tan 2\varphi_0 = \dfrac{2 I_{yz}}{I_z - I_y}$ ter preizkus, katera os nosi $I_1$;
+- zakaj je $I_y + I_z$ pri zasuku osi stalna in zakaj je simetrijska os vedno glavna os;
+- definicijo odpornostnega momenta $W = \dfrac{I}{e_{\max}}$, zvezo $\sigma_{\max} = \dfrac{M}{W}$ in kateri $W$ je merodajen pri nesimetričnem prerezu.
+
+### Naloga 1
+
+Z-profil je sestavljen iz treh pravokotnikov. Koordinatno izhodišče je v sredini stojine. Stojina: $-0{,}5 \le y \le 0{,}5$; $-5 \le z \le 5$ (v cm). Zgornja pasnica je na levi: $-4{,}5 \le y \le -0{,}5$; $4 \le z \le 5$. Spodnja pasnica je na desni: $0{,}5 \le y \le 4{,}5$; $-5 \le z \le -4$. (a) Izračunaj $I_y$, $I_z$ in $I_{yz}$ glede na težiščni osi. (b) Določi glavna vztrajnostna momenta in kot glavne osi, ki nosi $I_1$. (c) Nosilec upogibamo okrog te glavne osi. Izračunaj odpornostni moment $W_1$ in največji dopustni upogibni moment pri $\sigma_{\mathrm{dop}} = 120\,\mathrm{MPa}$.
+
+**Rešitev:**
+
+1. Težišče: prerez je točkovno simetričen glede na izhodišče (vsaki točki $(y;\ z)$ pripada točka $(-y;\ -z)$), zato je težišče v izhodišču. Ploščine: stojina $10\,\mathrm{cm^2}$, vsaka pasnica $4\,\mathrm{cm^2}$, skupaj $18\,\mathrm{cm^2}$.
+2. Težišči pasnic: zgornja $(-2{,}5;\ 4{,}5)\,\mathrm{cm}$, spodnja $(2{,}5;\ -4{,}5)\,\mathrm{cm}$. Težišče stojine je v izhodišču, zato stojina nima Steinerjevih členov.
+3. $I_y = \dfrac{1 \cdot 10^3}{12} + 2 \cdot \left(\dfrac{4 \cdot 1^3}{12} + 4{,}5^2 \cdot 4\right) = 246\,\mathrm{cm^4}$.
+4. $I_z = \dfrac{10 \cdot 1^3}{12} + 2 \cdot \left(\dfrac{1 \cdot 4^3}{12} + 2{,}5^2 \cdot 4\right) = 61{,}5\,\mathrm{cm^4}$.
+5. Lastni deviacijski momenti pravokotnikov so $0$, ostaneta Steinerjeva člena pasnic: $I_{yz} = (-2{,}5) \cdot 4{,}5 \cdot 4 + 2{,}5 \cdot (-4{,}5) \cdot 4 = -90\,\mathrm{cm^4}$.
+6. $I_s = \dfrac{246 + 61{,}5}{2} = 153{,}75\,\mathrm{cm^4}$, polovična razlika $\dfrac{246 - 61{,}5}{2} = 92{,}25\,\mathrm{cm^4}$.
+7. $R = \sqrt{92{,}25^2 + 90^2} = 128{,}88\,\mathrm{cm^4}$.
+8. $I_1 = 153{,}75 + 128{,}88 = 282{,}63\,\mathrm{cm^4}$, $I_2 = 153{,}75 - 128{,}88 = 24{,}87\,\mathrm{cm^4}$.
+9. $\tan 2\varphi_0 = \dfrac{2 \cdot (-90)}{61{,}5 - 246} = 0{,}9756$, torej $2\varphi_0 = 44{,}29^\circ$ in $\varphi_0 = 22{,}15^\circ$.
+10. Preizkus: $\cos 44{,}29^\circ = 0{,}7158$, $\sin 44{,}29^\circ = 0{,}6983$, zato $I_{y'} = 153{,}75 + 92{,}25 \cdot 0{,}7158 + 90 \cdot 0{,}6983 = 282{,}63\,\mathrm{cm^4}$. Os, zavrtena za $22{,}15^\circ$ od $y$ proti $z$, nosi $I_1$.
+11. Najbolj oddaljeno vlakno: razdalja točke od osi $y'$ je $z' = -y\sin\varphi_0 + z\cos\varphi_0$, s $\sin 22{,}15^\circ = 0{,}3770$ in $\cos 22{,}15^\circ = 0{,}9262$. Največja je v zunanjem oglišču zgornje pasnice $(-4{,}5;\ 5)$: $e_{\max} = 4{,}5 \cdot 0{,}3770 + 5 \cdot 0{,}9262 = 6{,}328\,\mathrm{cm}$. Zaradi točkovne simetrije je enako oddaljeno oglišče $(4{,}5;\ -5)$.
+12. $W_1 = \dfrac{282{,}63}{6{,}328} = 44{,}66\,\mathrm{cm^3} = 44660\,\mathrm{mm^3}$.
+13. $M_{\mathrm{dop}} = \sigma_{\mathrm{dop}} W_1 = 120 \cdot 44660 = 5{,}36 \cdot 10^6\,\mathrm{N\,mm}$.
+14. Odgovor: $I_y = 246\,\mathrm{cm^4}$, $I_z = 61{,}5\,\mathrm{cm^4}$, $I_{yz} = -90\,\mathrm{cm^4}$; $I_1 \approx 282{,}6\,\mathrm{cm^4}$ okrog osi pod $22{,}15^\circ$, $I_2 \approx 24{,}9\,\mathrm{cm^4}$; $W_1 \approx 44{,}7\,\mathrm{cm^3}$ in $M_{\mathrm{dop}} \approx 5{,}36\,\mathrm{kN\,m}$. Kontrola: $I_1 + I_2 = I_y + I_z = 307{,}5\,\mathrm{cm^4}$.
+
+### Naloga 2
+
+Izpelji Steinerjev izrek za osni vztrajnostni moment in natančno navedi pogoj, pod katerim velja. Nato na pravokotniku $b = 6\,\mathrm{cm}$, $h = 12\,\mathrm{cm}$ pokaži, da izrek med dvema netežiščnima osema ne velja: izračunaj $I$ glede na spodnji rob in glede na vzporedno os, ki je $2\,\mathrm{cm}$ nad spodnjim robom.
+
+**Rešitev:**
+
+1. Naj bo $\zeta$ oddaljenost delčka $\mathrm{d}A$ od težiščne osi $y_T$, os $y$ pa vzporedna in odmaknjena za $a$. Potem je $z = \zeta + a$.
+2. $I_y = \int_A (\zeta + a)^2\,\mathrm{d}A = \int_A \zeta^2\,\mathrm{d}A + 2a\int_A \zeta\,\mathrm{d}A + a^2\int_A \mathrm{d}A$.
+3. Prvi integral je $I_{y_T}$, tretji je ploščina $A$. Srednji je statični moment glede na težiščno os, ki je $0$. Sledi $I_y = I_{y_T} + a^2 A$.
+4. Pogoj: osi sta vzporedni in ena od njiju gre skozi težišče ploskve. Samo tedaj srednji člen izgine. Posledica: med vsemi vzporednimi osmi je $I$ najmanjši glede na težiščno.
+5. Pravokotnik, težiščna os: $I_T = \dfrac{6 \cdot 12^3}{12} = 864\,\mathrm{cm^4}$, ploščina $A = 6 \cdot 12 = 72\,\mathrm{cm^2}$.
+6. Spodnji rob je od težišča oddaljen $6\,\mathrm{cm}$: $I_{\mathrm{rob}} = 864 + 6^2 \cdot 72 = 3456\,\mathrm{cm^4}$ (to je $\dfrac{b h^3}{3}$).
+7. Os $2\,\mathrm{cm}$ nad robom je od težišča oddaljena $4\,\mathrm{cm}$: $I = 864 + 4^2 \cdot 72 = 2016\,\mathrm{cm^4}$.
+8. Napačna pot, neposredno z roba na to os z odmikom $2\,\mathrm{cm}$: $3456 + 2^2 \cdot 72 = 3744\,\mathrm{cm^4}$ ali $3456 - 2^2 \cdot 72 = 3168\,\mathrm{cm^4}$. Nobena vrednost ni $2016\,\mathrm{cm^4}$.
+9. Odgovor: izrek velja le med težiščno osjo in njej vzporedno osjo. Med dvema netežiščnima osema greš vedno prek težišča: najprej odšteješ $6^2 \cdot 72$, nato prišteješ $4^2 \cdot 72$.
+
+### Naloga 3
+
+Kvadratni prerez s stranico $a = 6\,\mathrm{cm}$ enkrat upogibamo okrog težiščne osi, vzporedne stranici, drugič okrog diagonale. Utemelji, ali sta vztrajnostna momenta v obeh legah enaka, in ugotovi, v kateri legi nosilec pri enaki dopustni napetosti prenese večji upogibni moment.
+
+**Rešitev:**
+
+1. Glede na osi, vzporedni stranicama: $I_y = I_z = \dfrac{6 \cdot 6^3}{12} = 108\,\mathrm{cm^4}$. Obe osi sta simetrijski, zato je $I_{yz} = 0$.
+2. Potem je $I_s = 108\,\mathrm{cm^4}$ in $R = \sqrt{0^2 + 0^2} = 0$. Sledi $I_1 = I_2 = 108\,\mathrm{cm^4}$.
+3. Formula za zasuk da $I_{y'} = I_s + 0 \cdot \cos 2\varphi - 0 \cdot \sin 2\varphi = 108\,\mathrm{cm^4}$ pri vsakem kotu $\varphi$. Vsaka težiščna os kvadrata je torej glavna os in vztrajnostni moment okrog diagonale je enak kot okrog osi, vzporedne stranici.
+4. Odpornostni moment je odvisen še od $e_{\max}$. Os vzporedno stranici: $e_{\max} = 3\,\mathrm{cm}$, $W = \dfrac{108}{3} = 36\,\mathrm{cm^3}$.
+5. Diagonala: najbolj oddaljeno je oglišče, $e_{\max} = \dfrac{6}{\sqrt{2}} = 4{,}243\,\mathrm{cm}$, $W = \dfrac{108}{4{,}243} = 25{,}45\,\mathrm{cm^3}$.
+6. Razmerje: $\dfrac{36}{25{,}45} = 1{,}41$, to je $\sqrt{2}$.
+7. Odgovor: vztrajnostna momenta sta enaka ($108\,\mathrm{cm^4}$), ker ima kvadrat $I_y = I_z$ in $I_{yz} = 0$. Nosilnost pa ni enaka: v legi s stranico vzporedno osi je $W = 36\,\mathrm{cm^3}$, na oglu le $25{,}5\,\mathrm{cm^3}$, zato kvadrat na oglu prenese $\sqrt{2}$-krat manjši moment.
 
 ## Drugače: Na sliki
 
 Prerez si predstavljaj kot kup vodoravnih trakov. Vsak trak dobi »glas« sorazmeren s ploščino, pomnoženo s kvadratom oddaljenosti od osi:
 
-```
- razdalja z    trak     prispevek z²·dA
-   +3 ──────  █████   █████████
-   +2 ──────  █████   ████
-   +1 ──────  █████   █
-    0 ══════  █████   (nič)
-   −1 ──────  █████   █
-   −2 ──────  █████   ████
-   −3 ──────  █████   █████████
-```
+:::risba skica
+opis: Sedem enako širokih vodoravnih trakov prereza na razdaljah z = +3, +2, +1, 0, −1, −2, −3 od osi. Ob vsakem je vodoravni stolpec, dolg z² enot: 9, 4, 1, 0, 1, 4, 9. Trak na osi ne prispeva nič, zunanja trakova največ.
+območje: 0; -4 .. 19; 5
+črta: 3; 0 -> 8,2; 0 | črtkano
+črta: 11,6; 0 -> 18,7; 0 | črtkano
+pravokotnik: 3; 2,6 .. 6; 3,4 | siva
+pravokotnik: 8; 2,7 .. 17; 3,3 | modra
+napis: 1,5; 3 | +3
+napis: 17,3; 3 | 9 | desno
+pravokotnik: 3; 1,6 .. 6; 2,4 | siva
+pravokotnik: 8; 1,7 .. 12; 2,3 | modra
+napis: 1,5; 2 | +2
+napis: 12,3; 2 | 4 | desno
+pravokotnik: 3; 0,6 .. 6; 1,4 | siva
+pravokotnik: 8; 0,7 .. 9; 1,3 | modra
+napis: 1,5; 1 | +1
+napis: 9,3; 1 | 1 | desno
+pravokotnik: 3; -0,4 .. 6; 0,4 | siva
+napis: 1,5; 0 | 0 (os)
+napis: 8,3; 0 | 0 (nič) | desno
+pravokotnik: 3; -1,4 .. 6; -0,6 | siva
+pravokotnik: 8; -1,3 .. 9; -0,7 | modra
+napis: 1,5; -1 | −1
+napis: 9,3; -1 | 1 | desno
+pravokotnik: 3; -2,4 .. 6; -1,6 | siva
+pravokotnik: 8; -2,3 .. 12; -1,7 | modra
+napis: 1,5; -2 | −2
+napis: 12,3; -2 | 4 | desno
+pravokotnik: 3; -3,4 .. 6; -2,6 | siva
+pravokotnik: 8; -3,3 .. 17; -2,7 | modra
+napis: 1,5; -3 | −3
+napis: 17,3; -3 | 9 | desno
+napis: 1,5; 4,3 | z
+napis: 4,5; 4,3 | trak dA
+napis: 11; 4,3 | prispevek z^2·dA
+podnapis: Prispevek traku raste s kvadratom razdalje od osi.
+:::
 
 Zunanja trakova prispevata devetkrat toliko kot trakova ob osi, čeprav so vsi enako široki. Zato I-profil »odreže« sredino in jo prestavi na rob.
 
-Glavne osi si predstavljaj kot kazalec, ki ga vrtiš okrog težišča. Ko ga obrneš za $\varphi$, se $I_{y'}$ spreminja kot točka na krogu s središčem $I_s$ in polmerom $R$. Najvišja točka kroga je $I_1$, najnižja $I_2$. Enak krog boš srečal pri napetostih (Mohrov krog).
+Glavne osi si predstavljaj kot kazalec, ki ga vrtiš okrog težišča. Ko ga obrneš za $\varphi$, se $I_{y'}$ spreminja kot točka na krogu s središčem $I_s$ in polmerom $R$. Skrajna desna točka kroga je $I_1$, skrajna leva $I_2$. Enak krog boš srečal pri napetostih (Mohrov krog).
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 - **Ravnilo in telefon.** Telefon s prerezom $75\,\mathrm{mm} \times 8\,\mathrm{mm}$ ima pri upogibu čez ploščato stran $I = 3200\,\mathrm{mm^4}$, čez rob pa $2{,}81 \cdot 10^5\,\mathrm{mm^4}$, skoraj $88$-krat več. Zato se telefoni v zadnjem žepu upognejo »ploščato«, nikoli čez rob.
 - **Rebra na ohišju.** Plastično ohišje polnilnika ali usmerjevalnika ima na notranji strani tanka rebra. Odmaknejo material od osi in povečajo $I$ z malo dodane mase.

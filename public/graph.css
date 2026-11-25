@@ -51,7 +51,7 @@
 .gc .gc-playall:hover:not(:disabled) { background: var(--accent-soft); filter: brightness(0.97); }
 .gc .gc-playall[hidden] { display: none; }
 /* ob gumbu »Predvajaj vse« je vrstica polna: »Moji grafi« ostane samo ikona */
-.gc-bar:has(.gc-playall:not([hidden])) [data-act="graphs"] span { display: none; }
+.gc-bar:has(.gc-playall:not([hidden])) [data-act="graphs"] .gc-lbl { display: none; }
 .gc-text-btn svg.i { color: var(--accent); }
 /* Ozek seznam izrazov (ločnica, razdelilnik.js, do 280 px): napis se raje skrajša s tropičjem, kot da bi segel
    čez sosednji gumb; pod 370 px ostaneta samo ikoni (napis ostane za bralnike zaslona, title za miško). */
@@ -122,6 +122,8 @@
 .gc-deriv { color: var(--muted); font-weight: 700; }
 .gc-err { display: flex; gap: 6px; align-items: flex-start; color: var(--danger); font-weight: 700; font-size: 0.88rem; line-height: 1.35; }
 .gc-err svg.i { margin-top: 2px; }
+.gc-hint { display: flex; gap: 6px; align-items: flex-start; color: var(--muted); font-size: 0.85rem; line-height: 1.35; margin-top: 2px; }
+.gc-hint svg.i { margin-top: 2px; flex: none; }
 .gc .gc-chip {
   justify-self: start; min-height: 36px; padding: 4px 12px; border-radius: 999px; font-size: 0.85rem;
   border: 1.5px solid var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 800;
@@ -168,6 +170,13 @@
 .gc .gc-fab:hover { border-color: var(--accent); color: var(--accent); }
 .gc .gc-fab svg.i { width: 19px; height: 19px; }
 .gc .gc-expand { position: absolute; left: 10px; top: 10px; z-index: 2; display: none; }
+/* »Uporabi v računu« za označeno točko (graf → znanstveni kalkulator) */
+.gc-use { position: absolute; inset-inline: 10px; bottom: 10px; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; padding: 6px 8px; border-radius: 14px; background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--border); box-shadow: 0 2px 10px rgb(0 0 0 / 0.12); }
+.gc-use[hidden] { display: none; }
+.gc-use-h { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.gc-use-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.gc-use-btn .katex { font-size: 1em; }
+.gc-use-area { flex-wrap: wrap; }
 
 /* pojavni meni */
 .gc-pop {
@@ -279,8 +288,13 @@ body.graph-open { overflow: hidden; }
 .sc-preview { min-height: 1.7em; text-align: right; overflow-x: auto; color: var(--text); font-size: 1.5rem; }
 /* Vnos je viden samo kot lep zapis s kazalcem (j, 5. 11.: »nikjer naj ni viden surov vnos«): surovo polje je prosojno čez vso vnosno vrstico (tipkovnica, dotik in kazalec delujejo kot prej), prazno pa kaže namig. */
 .sc-entry { position: relative; }
-.sc-entry:has(.sc-preview:not(:empty)) .sc-input { position: absolute; inset: 0 12px; width: auto; height: 100%; opacity: 0; }
-.sc-entry:has(.sc-preview:not(:empty)) .sc-preview { min-height: 2.2em; display: flex; align-items: center; justify-content: flex-end; cursor: text; }
+/* čez vso vrstico, tudi čez 12 px robova: dotik desno od zadnjega znaka postavi kazalec na konec (AUDIT-038) */
+.sc-entry:has(.sc-preview:not(:empty)) .sc-input { position: absolute; inset: 0; width: auto; height: 100%; opacity: 0; }
+.sc-entry:has(.sc-preview:not(:empty)) .sc-preview { min-height: 2.2em; display: flex; align-items: center; cursor: text; }
+/* desno poravnano z margin-left: auto (ne justify-content: flex-end), da se dolg vnos lahko pomakne tudi do začetka */
+.sc-preview > .katex { margin-left: auto; }
+/* zložena formula v zgodovini (sirina.js) ostane ob desnem robu kot ostale */
+.sc .katex.tb-zlozena { margin-left: auto; margin-right: 0; }
 /* kazalec in prazen okvirček (sci-vnos.js): barvi iz spremenljivk teme, tudi v temni temi */
 .sc-preview .sc-caret { color: var(--accent); animation: sc-blink 1.1s steps(1) infinite; }
 .sc-preview .sc-caret .rule { border-color: currentColor; }
@@ -442,7 +456,7 @@ body.graph-open { overflow: hidden; }
 .pse-lg i { background: color-mix(in srgb, var(--c) 45%, var(--surface)); }
 
 /* formule */
-.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
+.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 88px; display: flex; flex-direction: column; gap: 12px; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
@@ -467,8 +481,16 @@ body.graph-open { overflow: hidden; }
 .fm-f { min-width: 0; overflow-x: auto; overflow-y: hidden; line-height: 1.55; padding: 2px 0; }
 .fm-f .katex { white-space: nowrap; }
 .fm-f p { margin: 0; }
+/* Štiri stopnje (OŠ, SŠ, Tekmovanja, Fakulteta) v vrstici ne gredo na telefon: dve po dve, brez pomikanja vstran;
+   dolg napis (npr. v španščini) se prelomi v dve vrstici. */
+@media (max-width: 720px) {
+  .fm-sel .fm-lvl { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; border-radius: 22px; }
+  .fm-sel .fm-lvl > button { min-width: 0; white-space: normal; }
+}
+/* zelo ozek telefon: »Mathématiques« in »Mathematics« sta preširoka za tri predmete v vrstici */
+@media (max-width: 360px) { .fm-sel .seg > button { padding: 6px 6px !important; } }
 @media (max-width: 600px) {
-  .fm-wrap { padding: 0 12px 20px; }
+  .fm-wrap { padding: 0 12px 88px; } /* prostor za gumb ob zadnji formuli */
   .fm-sel .seg { width: 100%; }
   .fm-sel .seg > button { min-height: 36px; padding: 6px 10px !important; }
   .fm-body .fm-sec { padding: 14px 16px; }
@@ -583,6 +605,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sc-vars[hidden] { display: none; }
 .sc-vars-l { font-size: 0.75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
 .sc-var { flex-shrink: 0; min-height: 34px; white-space: nowrap; font-weight: 700; }
+.sc-recent-src { font-weight: 600; color: var(--muted); font-size: 0.8em; } /* izvor izida (Orodja, PSE …) */
 .sc-h-note { font-size: 0.85rem; text-align: right; padding: 0 6px 2px; max-width: 100%; overflow-x: auto; }
 .sc-bool { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
 .sc-bool.ok { color: var(--ok); }
@@ -592,6 +615,14 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sc-act { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 12px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 .sc-act:hover, .sc-act:focus-visible { border-color: var(--accent); color: var(--accent); }
 .sc-act svg.i { width: 16px; height: 16px; flex-shrink: 0; }
+/* »Iz grafa: …« ob sporočilu o neznanem imenu (nad prozornim poljem vnosa) */
+.sc-err:has(.sc-from-graph) { flex-wrap: wrap; }
+.sc-err .sc-from-graph { position: relative; z-index: 1; flex-shrink: 0; }
+/* »Pokaži na grafu« v starejših vrsticah zgodovine in ob sporočilu napake: le ikona (v-graf.js) */
+.sc-h-row:has(> .sc-h-graf) { position: relative; padding-inline-start: 48px; }
+.sc-h-row > .sc-h-graf { position: absolute; inset-inline-start: 0; bottom: 6px; }
+.sc-h-graf { width: 40px; min-width: 40px; height: 40px; padding: 0; justify-content: center; }
+.sc-err .sc-h-graf { flex-shrink: 0; margin-inline-start: 4px; position: relative; z-index: 1; } /* nad prozornim poljem vnosa */
 .sc-empty p { margin: 0 0 6px; }
 .sc-try { font-weight: 800; color: var(--text); margin-top: 10px !important; }
 .sc-examples { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
@@ -654,6 +685,23 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 [dir="rtl"] .sc-acts, [dir="rtl"] .sc-err { justify-content: flex-start; }
 [dir="rtl"] .sc-const { text-align: right; }
 
+/* ---------- tabele s tremi ali več stolpci v listu formul (Telo | Površina | Prostornina) ----------
+   Na telefonu se vrstica zloži v kartico: prvi stolpec je naslov, pod njim vsaka vrednost z imenom svojega stolpca
+   (data-label, public/vodoravna-tabela.js), da se tabela nikoli ne pomika vstran. */
+.fm-sec .md-table-wrap:has(> .md-stolpci) { container-type: inline-size; }
+@container (max-width: 560px) {
+  .fm-sec table.md-stolpci, .fm-sec .md-stolpci > tbody, .fm-sec .md-stolpci > tbody > tr, .fm-sec .md-stolpci > tbody > tr > td { display: block; }
+  .fm-sec table.md-stolpci { width: 100%; }
+  .fm-sec .md-stolpci > thead { display: none; }
+  .fm-sec .md-stolpci > tbody > tr + tr { border-top: 1px solid var(--border); }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row { border-top: 0; }
+  .fm-sec .md-stolpci > tbody > tr > td { border: 0; padding: 6px 12px; background: none; text-align: start; }
+  .fm-sec .md-stolpci > tbody > tr > td:first-child { background: var(--surface-2); font-weight: 800; }
+  .fm-sec .md-stolpci > tbody > tr.fm-skica-row > td { background: none; padding: 4px 0 12px; }
+  .fm-sec .md-stolpci > tbody > tr > td:empty:not(:first-child) { display: none; }
+  .fm-sec .md-stolpci td[data-label]:not(:first-child, :empty)::before { content: attr(data-label); display: block; font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+}
+
 /* ---------- interaktivne skice v karticah formul (public/skice/) ---------- */
 /* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */
 .fm-item.has-skica { grid-template-columns: minmax(0, 1fr); }
@@ -661,8 +709,19 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .md-table .fm-skica-row > td { padding: 4px 0 12px; white-space: normal; background: none; }
 /* Široka tabela se na telefonu pomika vstran: skica je široka kot vidni del tabele in ostane na mestu. */
 .md-table-wrap:has(.fm-skica-row) { container-type: inline-size; }
-/* Rob tabele (2 × 1 px) ne sme povzročiti pomika; na računalniku skica tabele ne razširi. */
-.fm-skica-row .fm-skica { width: min(calc(100cqw - 2px), 460px); position: sticky; left: 0; }
+/* Rob tabele (2 × 1 px) ne sme povzročiti pomika. */
+.fm-skica-row .fm-skica { width: calc(100cqw - 2px); position: sticky; left: 0; }
+/* Prostor na tablici in računalniku (j, 15. 11. 2026, iPad: tabela likov je ostala ozka, desno prazno): tabela s skico
+   zasede vso širino razdelka, ob dovolj prostora je skica levo, čipi, drsniki in navodilo pa desno ob njej. */
+.fm-sec .md-table-wrap > table:has(.fm-skica-row) { width: 100%; }
+.fm-skica { container-type: inline-size; }
+/* Na široki skici (nad telefonom) vrednost drsnika ne sme sloneti ob rob kartice. */
+@container (min-width: 480px) { .fm-skica > .sk { padding-inline-end: 12px; } }
+@container (min-width: 720px) {
+  .fm-skica > .sk { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; column-gap: 20px; align-items: start; padding-inline-end: 12px; }
+  .fm-skica > .sk > .sk-frame { grid-column: 1; grid-row: 1 / -1; }
+  .fm-skica > .sk > :not(.sk-frame) { grid-column: 2; }
+}
 .sk { --sk-bg: #10131f; --sk-line: rgb(255 255 255 / 0.16); --sk-glavna: #f4f5fb; --sk-ploskev: #8f8cff; --sk-izbor: #f5c542; --sk-druga: #4fd18b; --sk-napaka: #ff6b6b; --sk-pt: #4f8cff;
   display: grid; gap: 10px; margin: 6px 0 4px; }
 .sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }
@@ -847,7 +906,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .fm-fx > .fm-f { flex: 0 1 auto; padding-inline-end: 6px; } /* prostor za nagnjene črke KaTeX, sicer bi drsniki.js videl pomik */
 /* na telefonu so gumbi v stolpcu ob desnem robu, na širšem zaslonu tik za formulo */
 @media (max-width: 640px) { .fm-fx > .fm-f { flex: 1 1 auto; } }
-.fm-calc { flex: none; width: 36px; height: 36px; color: var(--muted); }
-.fm-calc:hover, .fm-calc:focus-visible { color: var(--accent); }
-@media (pointer: coarse) { .fm-calc { width: 44px; height: 44px; } .pse-act button { min-height: 44px; } }
+.fm-calc, .fm-graph { flex: none; width: 36px; height: 36px; color: var(--muted); }
+.fm-calc:hover, .fm-calc:focus-visible, .fm-graph:hover, .fm-graph:focus-visible { color: var(--accent); }
+@media (pointer: coarse) { .fm-calc, .fm-graph { width: 44px; height: 44px; } .pse-act button { min-height: 44px; } }
 .pse-mm-res { margin: 8px 0 4px; }

@@ -4,6 +4,7 @@
 "u.snov": "Stoff",
 "u.iskanje": "Zu welchem Stoff soll ich dich abfragen?",
 "u.isciPh": "z. B. Ohmsches Gesetz",
+"u.isciPhTema": "z. B. {tema}",
 "u.isci": "Suchen",
 "u.koliko": "Wie viele Fragen",
 "u.kako": "Wie du antwortest",
@@ -73,6 +74,7 @@
 "u.nalagam": "Wird geladen …",
 "u.starsNaslov": "Antworten mit der Stimme",
 "u.starsOpis": "Beim mündlichen Abfragen und mit dem Mikrofon im Chat mit dem Tutor kann Ihr Kind mit der Stimme antworten. Der Anbieter des Browsers (z. B. Google, Apple oder Microsoft) wandelt Sprache in Text um; Evklid bekommt nur den Text und speichert keinen Ton. Für Kinder unter 15 Jahren ist es ausgeschaltet, bis Sie es einschalten. Tippen funktioniert immer.",
+"u.starsOpisZame": "Beim mündlichen Abfragen und mit dem Mikrofon im Chat mit dem Tutor kannst du mit der Stimme antworten. Der Anbieter des Browsers (z. B. Google, Apple oder Microsoft) wandelt Sprache in Text um; Evklid bekommt nur den Text und speichert keinen Ton. Tippen funktioniert immer.",
 "u.dovoli": "Antworten mit der Stimme erlauben",
 "u.nad15": "15 oder älter: keine Erlaubnis nötig.",
 "u.shranjeno": "Gespeichert."

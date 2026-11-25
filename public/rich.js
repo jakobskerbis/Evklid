@@ -1,40 +1,268 @@
 // Izris besedila z Markdownom in formulami (inštruktor, razlage, naloge, lekcije, kartice).
 // Knjižnice (marked, KaTeX, DOMPurify) so v brskalniku globalne; testi jih podajo sami.
 
+import { obrnjenaTabela, oznaciStolpce, vodoravnaTabela } from "./vodoravna-tabela.js";
+import { izrisi as izrisiTex, NAPAKA_HTML } from "./mat/izris.js";
+
 const lib = (name) => globalThis[name];
+
+// Knjižnice niso več del prvega izrisa (~95 KB stisnjeno; docs/meritve/prijavljen-mobilno-2026-11-19.md točka 2):
+// app.js jih naloži po prvem izrisu Učne poti (naloziKnjiznice), ali prej ob prvi potrebi. Stran, ki jih ima v <script>
+// (kalkulator, učitelj, 3D), jih ima že, zato je naloziKnjiznice tam takoj izpolnjena.
+const KNJIZNICE = [
+  ["katex", "vendor/katex/katex.min.js"],
+  ["marked", "vendor/marked/lib/marked.umd.js"],
+  ["DOMPurify", "vendor/dompurify/purify.min.js"],
+];
+export const knjizniceNalozene = () => KNJIZNICE.every(([ime]) => lib(ime));
+let nalaganje = null;
+let poskusov = 0;
+const skripta = (src) =>
+  new Promise((ok, ne) => {
+    const el = document.createElement("script");
+    el.src = src;
+    el.onload = ok;
+    el.onerror = () => (el.remove(), ne(new Error(`ni naloženo: ${src}`)));
+    document.head.append(el);
+  });
+export function naloziKnjiznice() {
+  if (knjizniceNalozene()) return Promise.resolve();
+  if (typeof document === "undefined") return Promise.reject(new Error("brez knjižnic"));
+  if (nalaganje) return nalaganje;
+  // Ob neuspehu (brez povezave, nova različica) nov poskus z drugim naslovom, kot app.js lenModul.
+  const r = poskusov++ ? `?r=${poskusov}` : "";
+  return (nalaganje = Promise.all(KNJIZNICE.map(([ime, pot]) => lib(ime) || skripta(new URL(pot, import.meta.url).href + r)))
+    .then(() => {
+      if (!knjizniceNalozene()) throw new Error("knjižnice niso naložene");
+    })
+    .catch((err) => {
+      nalaganje = null;
+      throw err;
+    }));
+}
+
+// Izris pred prihodom knjižnic (dotik takoj po prvem izrisu): namesto izrisa kratek nadomestek z besedilom, ki ga
+// renderer zamenja s pravim izrisom, ko so knjižnice (in kar zahteva pripravi) naložene. Številka je enolična v strani.
+let nadomestkov = 0;
+
+// Točka A3: besedilo od modela in učencev (in vse drugo, kar gre skozi renderRich) ne sme nalagati ničesar z drugih
+// strani in ne sme vsebovati obrazcev ali vrinjenih slogov (style z url() bi naložil zunanjo sliko, gumb ali obrazec
+// bi se pretvarjal, da je del aplikacije). Povezave ostanejo. KaTeX se vstavi šele po čiščenju (style v formulah ostane).
+const PREPOVEDANE_OZNAKE = ["form", "input", "button", "textarea", "select", "option", "style", "link", "meta", "base"];
+const PREPOVEDANI_ATRIBUTI = ["style", "srcset", "poster", "background", "formaction", "action"];
+const NASLOVI_SLIK = ["src", "href", "xlink:href"];
+// Slika ali vir je dovoljen samo z iste strani, kot data:image/… ali blob: (fotografija s kamere).
+function lokalno(v) {
+  const s = String(v || "").trim();
+  if (/^data:image\//i.test(s)) return true;
+  try {
+    const u = new URL(s, globalThis.location?.href);
+    return (u.protocol === "blob:" || u.protocol === location.protocol) && u.origin === location.origin;
+  } catch {
+    return false;
+  }
+}
+const escHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const XHTML = "http://www.w3.org/1999/xhtml";
+const MEDIJI = new Set(["img", "source", "video", "audio", "track", "image", "use", "feimage", "iframe", "embed", "object", "mglyph"]);
+// url(…) v atributu (fill, stroke, mask, filter, clip-path, marker-*, cursor …) naloži tuj dokument SVG; dovoljen je le
+// sklic znotraj strani url(#…). Enako image-set(…), image(…), src(…), cross-fade(…), element(…). Ubežne znake CSS
+// (u\rl, u\72 l) najprej razrešimo.
+const odCss = (v) =>
+  String(v)
+    .replace(/\\([0-9a-f]{1,6})[ \t\r\n\f]?/gi, (_, h) => String.fromCodePoint(Math.min(parseInt(h, 16), 0x10ffff) || 0xfffd))
+    .replace(/\\([\s\S])/g, "$1");
+const tujUrl = (v) => {
+  const s = odCss(v);
+  return /url\s*\(\s*['"]?\s*(?!#)/i.test(s) || /(?:image-set|image|src|cross-fade|element)\s*\(/i.test(s);
+};
+export function ocistiStrogo(html, purify = lib("DOMPurify")) {
+  const frag = purify.sanitize(html, { FORBID_TAGS: PREPOVEDANE_OZNAKE, FORBID_ATTR: PREPOVEDANI_ATRIBUTI, RETURN_DOM_FRAGMENT: true });
+  for (const el of frag.querySelectorAll("*")) {
+    const ime = el.localName.toLowerCase();
+    const medij = MEDIJI.has(ime);
+    // SVG in MathML (razen povezave <a>): naslov samo #… ali, pri slikah in virih, z iste strani.
+    const tuji = el.namespaceURI !== XHTML && ime !== "a";
+    for (const { name, value } of [...el.attributes]) {
+      const naslov = NASLOVI_SLIK.includes(name.toLowerCase());
+      if (naslov && medij && !lokalno(value)) el.removeAttribute(name);
+      else if (naslov && tuji && !medij && !String(value).trim().startsWith("#")) el.removeAttribute(name);
+      else if (tujUrl(value)) el.removeAttribute(name);
+    }
+  }
+  const ovoj = frag.ownerDocument.createElement("div");
+  ovoj.append(frag);
+  return ovoj.innerHTML;
+}
+
+// Prazna vrstica v poravnanih enačbah (»… \\ \\ …« v aligned, gathered …) bi bila prazen pas sredi računa
+// (j 17. 11. 2026, telefon): dvojni prelom postane enojni, prelom tik pred \end odpade.
+const VRSTICE_ENV = /\\begin\{(aligned|alignedat|gathered|align\*?|gather\*?|split)\}([\s\S]*?)\\end\{\1\}/g;
+export function brezPraznihVrstic(tex) {
+  if (!tex.includes("\\begin")) return tex;
+  return tex.replace(VRSTICE_ENV, (_, env, body) => {
+    // Le vrstice tega okolja: v vgnezdenem okolju (pmatrix, cases …) ostane vse, kot je.
+    let d = 0;
+    const kosi = body.split(/(\\(?:begin|end)\{[a-zA-Z*]*\})/).map((t, i) => {
+      if (i % 2) return (d += t.startsWith("\\begin") ? 1 : -1), t;
+      return d ? t : t.replace(/\\\\(?:\s*\\\\(?!\s*\[))+/g, "\\\\");
+    });
+    if (!d) {
+      // brez \s* pred \\ (sicer kvadratno na dolgem nizu presledkov)
+      const v = kosi[kosi.length - 1];
+      const k = v.replace(/\\\\\s*$/, "");
+      if (k !== v) kosi[kosi.length - 1] = k.trimEnd();
+    }
+    return `\\begin{${env}}${kosi.join("")}\\end{${env}}`;
+  });
+}
+
+// Potenca z okroglimi oklepaji (»e^(-x^2)«, j 17. 11. 2026): KaTeX bi nadpisal le »(«, ostalo bi bilo v vrstici.
+// »^(X)« postane »^{X}«, ko je oklepaj ves eksponent: uravnotežen, brez vrhnje relacije ali vejice, ne predolg.
+// Ne v \text{…} in ne za \^ (naglas); »^{…}«, »^2«, »^\frac…« ostanejo. Red odvoda (»f^(n)(x)«, »y^(4)«: ena črka ali
+// števka pri f, g ali y) ostane v oklepaju: »f^{(n)}«.
+const BESEDILO = /^\\(?:text|textrm|textbf|textit|textsf|texttt|textnormal|textup|emph|mbox|hbox)\s*\{/;
+const REL_V_POTENCI = /^(?:=|<|>|,|;|\\(?:le|leq|ge|geq|neq|ne|approx|equiv|to|rightarrow|Rightarrow|iff|quad|qquad)(?![a-zA-Z]))/;
+export function potencaZOklepaji(tex) {
+  if (!tex.includes("^(") && !/\^\s+\(/.test(tex)) return tex;
+  let out = "";
+  for (let i = 0; i < tex.length; ) {
+    const c = tex[i];
+    if (c === "\\") {
+      const b = BESEDILO.exec(tex.slice(i, i + 16));
+      if (b) {
+        // preskoči vso skupino {…}
+        let d = 0, j = i + b[0].length - 1;
+        for (; j < tex.length; j++) {
+          if (tex[j] === "\\") { j++; continue; }
+          if (tex[j] === "{") d++;
+          else if (tex[j] === "}" && --d === 0) break;
+        }
+        out += tex.slice(i, j + 1);
+        i = j + 1;
+        continue;
+      }
+      out += tex.slice(i, i + 2);
+      i += 2;
+      continue;
+    }
+    if (c === "^") {
+      const m = /^\^\s*\(/.exec(tex.slice(i));
+      if (m) {
+        const z = i + m[0].length; // za »(«
+        let p = 1, br = 0, j = z, ok = true;
+        for (; j < tex.length && j - z <= 80; j++) {
+          const t = tex[j];
+          if (t === "\\") {
+            if (p === 1 && br === 0 && REL_V_POTENCI.test(tex.slice(j))) ok = false;
+            j++;
+            continue;
+          }
+          if (t === "{") br++;
+          else if (t === "}") { if (--br < 0) break; }
+          else if (br === 0 && t === "(") p++;
+          else if (br === 0 && t === ")" && --p === 0) break;
+          else if (p === 1 && br === 0 && REL_V_POTENCI.test(tex.slice(j))) ok = false;
+        }
+        const notri = tex.slice(z, j);
+        // »x^(a)^(b)«, »y^(n)'«: prvi ostane (dvojni eksponent bi bil napaka KaTeX), drugi se popravi.
+        if (ok && p === 0 && br === 0 && notri.trim() && !/^\s*['^]/.test(tex.slice(j + 1))) {
+          const odvod = /^[fgy]$/.test(tex[i - 1] || "") && !/[a-zA-Z\\]/.test(tex[i - 2] || "") && /^\s*[a-zA-Z0-9]\s*$/.test(notri);
+          out += odvod ? `^{(${notri.trim()})}` : `^{${potencaZOklepaji(notri)}}`;
+          i = j + 1;
+          continue;
+        }
+      }
+    }
+    out += c;
+    i++;
+  }
+  return out;
+}
 
 // annotate(tex): klikljive formule (formula-info.js) ovijejo znane simbole in enote v \htmlData{fx=…};
 // renderMath(tex, display, false) jih izpusti (npr. v gumbih z možnostmi odgovora).
-export function createRenderer({ marked = lib("marked"), katex = lib("katex"), sanitize, annotate = null } = {}) {
-  const clean = sanitize || ((html) => lib("DOMPurify").sanitize(html));
+// marked, katex: knjižnici (privzeto globalni, prebrani ob izrisu, ne ob nastanku); pripravljen(): dodatni pogoj za izris
+// (npr. modul oznak formul); pripravi(): obljuba, ki naloži vse za izris (privzeto naloziKnjiznice); kontekst() in
+// vKontekstu(ctx, fn): ob nadomestku shrani okoliščine izrisa (predmet formul) in jih ob pravem izrisu obnovi.
+export function createRenderer({ marked: markedLib, katex: katexLib, sanitize, annotate = null, pripravljen = null, pripravi = null, kontekst = null, vKontekstu = null } = {}) {
+  const clean = sanitize || ((html) => ocistiStrogo(html));
+  let marked = markedLib;
+  let katex = katexLib;
+  const nared = () => {
+    marked = markedLib || lib("marked");
+    katex = katexLib || lib("katex");
+    return !!(marked && katex && (sanitize || lib("DOMPurify")) && (!pripravljen || pripravljen()));
+  };
+  const cakajo = new Map(); // številka nadomestka → { fn, ctx }
+  let cakanje = null;
+  const obnovi = () => {
+    cakanje = null;
+    if (!nared()) return;
+    for (const [n, { fn, ctx }] of [...cakajo]) {
+      cakajo.delete(n);
+      const el = typeof document !== "undefined" && document.querySelector(`[data-rich-caka="${n}"]`);
+      if (!el) continue;
+      try {
+        el.outerHTML = vKontekstu && ctx !== undefined ? vKontekstu(ctx, fn) : fn();
+      } catch (err) {
+        console.error("rich:", err);
+      }
+    }
+  };
+  const nadomestek = (fn, besedilo) => {
+    const n = ++nadomestkov;
+    cakajo.set(n, { fn, ctx: kontekst ? kontekst() : undefined });
+    cakanje ||= Promise.resolve()
+      .then(() => (pripravi ? pripravi() : naloziKnjiznice()))
+      .then(obnovi, () => {
+        cakanje = null; // brez povezave: nadomestek ostane, naslednji izris poskusi znova
+      });
+    return `<span class="rich-caka" data-rich-caka="${n}">${escHtml(besedilo)}</span>`;
+  };
   const plain = { throwOnError: false, strict: "ignore" };
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
+  // D5: predpomnilnik izrisov KaTeX (isti TeX in iste možnosti → isti HTML). Med pretakanjem odgovora se iste formule
+  // izrišejo znova ob vsakem koraku; tako samo prvič. Neuspešen izris (throwOnError) se ne shrani.
+  const izrisi = new Map();
+  const NAJVEC_IZRISOV = 500;
+  const izris = (tex, opts, display) => {
+    const kljuc = `${opts === trusted ? "t" : "p"}${display ? "D" : "i"}${tex}`;
+    let h = izrisi.get(kljuc);
+    if (h !== undefined) return h;
+    // Skupni izris (public/mat/izris.js); napaka se vrže, renderMath spodaj poskusi brez oznak in nazadnje okvirček.
+    h = izrisiTex(tex, { blok: display, katex, zaupaj: opts === trusted ? "oznake" : undefined, napaka: "vrzi" });
+    if (izrisi.size >= NAJVEC_IZRISOV) izrisi.delete(izrisi.keys().next().value);
+    izrisi.set(kljuc, h);
+    return h;
+  };
 
   // Označena formula, ki je KaTeX ne zna izrisati, se izriše neoznačena (nikoli rdeč surov LaTeX).
   // ctx: poved okoli formule (niz) ali { sentence, block }, da dvoumna črka dobi pomen iz besedila
   // (formula-data.js annotateTex): block je celo besedilo (kartica, naloga, razdelek) z definicijami oznak.
   function renderMath(tex, display, fx = true, ctx = "") {
+    if (!nared()) return nadomestek(() => renderMath(tex, display, fx, ctx), tex);
+    tex = brezPraznihVrstic(potencaZOklepaji(tex));
     try {
       if (annotate && fx) {
         const o = typeof ctx === "string" ? (ctx ? { sentence: ctx } : null) : ctx;
         const annotated = annotate(tex, o);
         if (annotated !== tex) {
           try {
-            return katex.renderToString(annotated, { ...trusted, throwOnError: true, displayMode: display });
+            return izris(annotated, trusted, display);
           } catch { /* spodaj brez oznak */ }
         }
       }
-      return katex.renderToString(tex, { ...plain, displayMode: display });
+      return izris(tex, plain, display);
     } catch {
-      try {
-        return katex.renderToString(tex, { ...plain, displayMode: display });
-      } catch {
-        return tex;
-      }
+      // Neveljaven ali nepopoln izraz (ali RangeError ob zelo globokem gnezdenju): nikoli rdeč surov LaTeX, ampak
+      // okvirček (public/mat/izris.js NAPAKA_HTML; j, 24. 11. 2026).
+      return NAPAKA_HTML;
     }
   }
 
   function renderRich(text) {
+    if (!nared()) return nadomestek(() => renderRich(text), String(text ?? ""));
     const math = [];
     const stash = (tex, display) => `@@MATH${math.push({ tex, display }) - 1}@@`;
     // Formule najprej skrijemo, da Markdown ne pokvari \frac, _ ali | v njih (| bi razdelil celico tabele).
@@ -61,7 +289,12 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       const inner = centerNumberColumns(body).replace(/@@MATH(\d+)@@/g, (m, i) =>
         math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].ctx) : m,
       );
-      return `<div class="md-table-wrap"><table class="md-table">${inner}</table></div>`;
+      const vod = vodoravnaTabela(inner);
+      if (vod) return vod;
+      const obrnjena = obrnjenaTabela(inner);
+      if (obrnjena) return `<div class="md-obrni"><div class="md-obrni-siroka"><div class="md-table-wrap"><table class="md-table">${inner}</table></div></div><div class="md-obrni-ozka"><div class="md-table-wrap"><table class="md-table">${obrnjena}</table></div></div></div>`;
+      const oznacena = oznaciStolpce(inner);
+      return `<div class="md-table-wrap"><table class="md-table${oznacena ? " md-stolpci" : ""}">${oznacena || inner}</table></div>`;
     });
     html = subHeadings(html);
     // Ločilo takoj za vrstično formulo (». , ; : ! ?«) ostane z njo v isti vrstici: pika se ne prelomi sama v novo vrstico
@@ -73,7 +306,9 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
     });
   }
 
-  return { renderMath, renderRich };
+  // odlozi(fn, besedilo): fn() z izrisom formul, pred prihodom knjižnic nadomestek, ki ga fn() pozneje zamenja.
+  const odlozi = (fn, besedilo) => (nared() ? fn() : nadomestek(fn, besedilo));
+  return { renderMath, renderRich, nared, odlozi };
 }
 
 // Poved, v kateri stoji formula (do pike, klicaja, vprašaja ali nove vrstice), brez drugih formul in Markdowna.

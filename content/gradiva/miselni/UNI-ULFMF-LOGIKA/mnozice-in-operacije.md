@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množica in element
+  - $x \in A$, $x \notin A$, moč $|A|$
+  - vrstni red in ponavljanje nista pomembna
+  - $\emptyset \neq \{\emptyset\}$
+- Podmnožica
+  - $A \subseteq B \iff \forall x\,(x \in A \Rightarrow x \in B)$
+  - $\emptyset \subseteq A$ za vsako $A$
+  - napaka: zamenjava $\in$ in $\subseteq$
+- Enakost množic
+  - $A = B \iff A \subseteq B \wedge B \subseteq A$
+  - dokaz za poljuben $x$
+- Operacije
+  - $\cup$ ali, $\cap$ in, $A^c$ ne
+  - $A \setminus B$: v $A$ in ne v $B$
+  - $|A \cup B| = |A| + |B| - |A \cap B|$
+- Zakoni
+  - $(A \cup B)^c = A^c \cap B^c$
+  - $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$
+- Potenčna množica
+  - $\mathcal{P}(A)$: vse podmnožice, tudi $\emptyset$ in $A$
+  - $|\mathcal{P}(A)| = 2^{|A|}$, ne $2n$
+- Kartezični produkt
+  - urejeni par: $(1, 2) \neq (2, 1)$
+  - $|A \times B| = |A| \cdot |B|$
+  - v splošnem $A \times B \neq B \times A$

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Samo cele rešitve
+  - vozovnice, kovanci, kvadratki na zemljevidu
+  - poskušanje ni dokaz
+- Pogoj rešljivosti
+  - $ax + by = c$ rešljiva, ko $D(a, b) \mid c$
+  - $6x + 9y = 20$ nima rešitve
+- Vse rešitve
+  - eno da Evklidov algoritem nazaj
+  - $x = x_0 + \frac{b}{d}t$, $y = y_0 - \frac{a}{d}t$
+  - napaka: korak $b$ namesto $\frac{b}{d}$
+- Razcep
+  - produkt enak znanemu številu
+  - $(x - y)(x + y) = 45$
+  - preglej vse pare deliteljev
+- Omejevanje
+  - uredi neznanke: $x \leq y \leq z$
+  - ostanki: kvadrat po modulu $4$ je $0$ ali $1$
+- Neskončni spust
+  - iz rešitve strogo manjša rešitev
+  - $x^2 = 2y^2$ nima naravnih rešitev

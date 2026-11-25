@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { filesFromTarball, planChanges, applyChanges, rollback, readState, needsRestart, supervisorChanged, MARKER } from "../scripts/posodobitev.js";
+import { filesFromTarball, planChanges, applyChanges, rollback, readState, needsRestart, supervisorChanged, MARKER, githubHeaders, gitAuthEnv, gitEnv, accessMessage, tarballUrl, update } from "../scripts/posodobitev.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
@@ -138,31 +138,144 @@ test("stara povezava (ngrok) preusmeri na lastno domeno, ko ta kaže na ta stre�
   }
 });
 
-test("Render: objava, ko je strežnik miren, med uporabo največ 3 ure čakanja, neuspele ne ponavlja", async () => {
-  const { decide, pendingSince } = await import("../scripts/render-objava.js");
+test("Render: v nočnem oknu objava, ko je strežnik miren, ob koncu okna v vsakem primeru, neuspele ne ponavlja", async () => {
+  const { decide: decideOb, pendingSince } = await import("../scripts/render-objava.js");
   const sha = "abcdef1234567890";
   const ura = 3600000;
+  const noc = Date.parse("2026-11-20T03:30:00+01:00");
+  const decide = (o) => decideOb({ now: noc, testi: { stanje: "uspeh" }, ...o }); // testi zeleni (objava-po-testih.test.js)
   const miren = { razlicica: "111111111111", aktivni: 0, mirujeMs: null, gorMs: 2 * ura };
   assert.equal(decide({ stanje: { ...miren, razlicica: sha.slice(0, 12) }, mainSha: sha, cakaMin: 500 }).objavi, false);
   assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 5 }).objavi, true);
   const zaseden = { ...miren, mirujeMs: 60000 };
   assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 60 }).objavi, false);
   assert.equal(decide({ stanje: { ...miren, aktivni: 1 }, mainSha: sha, cakaMin: 60 }).objavi, false);
-  assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 181 }).objavi, true);
+  assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 181, now: Date.parse("2026-11-20T04:40:00+01:00") }).objavi, true);
   assert.equal(decide({ stanje: { ...miren, gorMs: 20 * 60000 }, mainSha: sha, cakaMin: 30 }).objavi, false);
   assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 1, rocno: true }).objavi, true);
   assert.equal(decide({ stanje: null, mainSha: sha, cakaMin: 10 }).objavi, false);
   assert.equal(decide({ stanje: null, mainSha: sha, cakaMin: 61 }).objavi, true);
-  const now = Date.now();
+  const now = noc;
   assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 200, zadnja: { sha, at: now - ura }, now }).objavi, false);
   assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 200, zadnja: { sha, at: now - 4 * ura }, now }).objavi, true);
   assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 5, zadnja: { sha: "drugi", at: now - 2 * ura }, now }).objavi, true);
   assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 5, zadnja: { sha: "drugi", at: now - 20 * 60000 }, now }).objavi, false);
   assert.equal(decide({ stanje: null, mainSha: sha, cakaMin: 61, zadnja: { sha: "drugi", at: now - 20 * 60000 }, now }).objavi, false);
+  // Začasno »takoj« (TAKOJ_DO): objavi tudi med uporabo in kmalu po prejšnji objavi, a iste različice ne sproži dvakrat.
+  assert.equal(decide({ stanje: { ...zaseden, gorMs: 5 * 60000 }, mainSha: sha, cakaMin: 1, takoj: true }).objavi, true);
+  assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 1, takoj: true, zadnja: { sha, at: now - 60000 }, now }).objavi, false);
+  assert.equal(decide({ stanje: { ...miren, razlicica: sha.slice(0, 12) }, mainSha: sha, cakaMin: 1, takoj: true }).objavi, false);
+  // Do nadaljnjega takoj (j, 24. 11. 2026): glavni tek odloča s takoj = Date.now() < TAKOJ_DO.
+  const { TAKOJ_DO } = await import("../scripts/render-objava.js");
+  assert.ok(Date.now() < TAKOJ_DO, "objave takoj do nadaljnjega");
   const c = (sha, date, ...parents) => ({ sha, commit: { committer: { date } }, parents: parents.map((p) => ({ sha: p })) });
   // m1, m2: združitvi v main; b1 (star commit v veji), bm (»Merge main« v veji, star datum) se ne štejeta.
   const vrsta = [c("b1", "2026-10-30T01:00:00Z", "x"), c("bm", "2026-10-30T02:00:00Z", "b1", "x"), c("m1", "2026-10-30T08:00:00Z", "x", "bm"), c("s1", "2026-10-30T08:30:00Z", "m1"), c("m2", "2026-10-30T09:00:00Z", "s1", "y")];
   assert.equal(pendingSince(vrsta, "m2"), Date.parse("2026-10-30T08:00:00Z"));
   assert.equal(pendingSince([c("a", "2026-10-30T07:00:00Z", "x")], "a"), Date.parse("2026-10-30T07:00:00Z"));
   assert.equal(pendingSince([]), null);
+});
+
+test("Render: objave samo ponoči (3.–5. ura po ljubljanskem času), nujne in ročne takoj", async () => {
+  const { decide: decideOb, ljubljanaMin, doNoci, NUJNO, nujnaSprememba } = await import("../scripts/render-objava.js");
+  const decide = (o) => decideOb({ testi: { stanje: "uspeh" }, ...o });
+  const sha = "abcdef1234567890";
+  const miren = { razlicica: "111111111111", aktivni: 0, mirujeMs: null, gorMs: 5 * 3600000 };
+  const zaseden = { ...miren, mirujeMs: 60000 };
+  const ob = (s) => Date.parse(s);
+  // Zimski (UTC+1) in poletni čas (UTC+2).
+  assert.equal(ljubljanaMin(ob("2026-11-20T02:15:00Z")), 3 * 60 + 15);
+  assert.equal(ljubljanaMin(ob("2026-07-20T01:15:00Z")), 3 * 60 + 15);
+  assert.equal(doNoci(ob("2026-11-20T03:30:00+01:00")), 0);
+  assert.equal(doNoci(ob("2026-11-20T02:00:00+01:00")), 60);
+  assert.equal(doNoci(ob("2026-11-20T10:00:00+01:00")), 17 * 60);
+  // Podnevi miren strežnik in sprememba, stara 10 ur: ne objavi.
+  const dan = decide({ stanje: miren, mainSha: sha, cakaMin: 600, now: ob("2026-11-20T10:00:00+01:00") });
+  assert.equal(dan.objavi, false);
+  assert.equal(dan.doOkna, 17 * 60);
+  assert.equal(decide({ stanje: null, mainSha: sha, cakaMin: 600, now: ob("2026-11-20T23:00:00+01:00") }).objavi, false);
+  assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 5, now: ob("2026-11-20T05:00:00+01:00") }).objavi, false);
+  // Ponoči: miren → takoj; zaseden → počaka do zadnjih 30 minut okna.
+  assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 5, now: ob("2026-11-20T03:00:00+01:00") }).objavi, true);
+  assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 600, now: ob("2026-11-20T04:15:00+01:00") }).objavi, false);
+  assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 600, now: ob("2026-11-20T04:31:00+01:00") }).objavi, true);
+  // Tudi ob koncu okna ne objavi manj kot uro po prejšnji objavi.
+  assert.equal(decide({ stanje: { ...zaseden, gorMs: 20 * 60000 }, mainSha: sha, cakaMin: 600, now: ob("2026-11-20T04:40:00+01:00") }).objavi, false);
+  // Nujno ([nujno] v sporočilu) in ročni zagon: takoj, tudi podnevi med uporabo; iste različice ne sproži dvakrat.
+  const opoldne = ob("2026-11-20T12:00:00+01:00");
+  assert.equal(decide({ stanje: { ...zaseden, gorMs: 5 * 60000 }, mainSha: sha, cakaMin: 1, nujno: true, now: opoldne }).objavi, true);
+  assert.equal(decide({ stanje: zaseden, mainSha: sha, cakaMin: 1, rocno: true, now: opoldne }).objavi, true);
+  assert.equal(decide({ stanje: miren, mainSha: sha, cakaMin: 1, nujno: true, zadnja: { sha, at: opoldne - 60000 }, now: opoldne }).objavi, false);
+  assert.equal(decide({ stanje: { ...miren, razlicica: sha.slice(0, 12) }, mainSha: sha, cakaMin: 1, nujno: true, now: opoldne }).objavi, false);
+  assert.ok(NUJNO.test("[nujno] Popravek prijave (#900)"));
+  assert.ok(!NUJNO.test("Nujno-ponovitev: test (#901)"));
+  // Šteje le naslov združitve v main po zadnji sproženi objavi; ne commiti iz veje in ne telo sporočila.
+  const c = (sha, date, message, ...parents) => ({ sha, commit: { message, committer: { date } }, parents: parents.map((p) => ({ sha: p })) });
+  const vrsta = [
+    c("b1", "2026-11-20T09:00:00Z", "[nujno] commit v veji", "x"),
+    c("m1", "2026-11-20T10:00:00Z", "[nujno] Popravek prijave (#900)", "x", "b1"),
+    c("m2", "2026-11-20T11:00:00Z", "Opis pravila (#901)\n\n[nujno] na začetku naslova objavi takoj", "m1"),
+    c("m3", "2026-11-20T12:00:00Z", "Lekcija (#902)", "m2", "b1"),
+  ];
+  assert.equal(nujnaSprememba(vrsta, "m3"), true);
+  assert.equal(nujnaSprememba(vrsta, "m3", Date.parse("2026-11-20T10:30:00Z")), false); // nujna je že sprožena
+  assert.equal(nujnaSprememba(vrsta.slice(2), "m3"), false); // telo sporočila se ne šteje
+  assert.equal(nujnaSprememba([c("m4", "2026-11-20T12:00:00Z", "Lekcija (#903)", "x", "b1"), vrsta[0]], "m4"), false); // veja se ne šteje
+});
+
+test("zaseben repozitorij: ključ samo v glavi, brez ključa vse kot prej", () => {
+  const KEY = "github_pat_SKRIVNO123";
+  assert.equal(githubHeaders("").Authorization, undefined);
+  assert.equal(githubHeaders(KEY).Authorization, `Bearer ${KEY}`);
+  assert.equal(githubHeaders(KEY, { Accept: "x" }).Accept, "x");
+  assert.equal(tarballUrl("a/b", "s", ""), "https://codeload.github.com/a/b/tar.gz/s");
+  assert.equal(tarballUrl("a/b", "s", KEY), "https://api.github.com/repos/a/b/tarball/s");
+  assert.ok(!tarballUrl("a/b", "s", KEY).includes(KEY));
+  const env = { PATH: process.env.PATH, HOME: os.tmpdir() };
+  assert.equal(gitAuthEnv("", env), env);
+  const e = gitAuthEnv(KEY, { ...env, GIT_CONFIG_COUNT: "1", GIT_CONFIG_KEY_0: "a.b", GIT_CONFIG_VALUE_0: "c" });
+  assert.equal(e.GIT_CONFIG_COUNT, "2");
+  assert.equal(e.GIT_CONFIG_KEY_0, "a.b");
+  // git ključ res uporabi za github.com (samo tam), v argumentih ga ni in napaka ga ne izpiše
+  const header = execFileSync("git", ["config", "--get-urlmatch", "http.extraheader", "https://github.com/x/y"],
+    { env: gitAuthEnv(KEY, env), encoding: "utf8" }).trim();
+  assert.equal(header, `Authorization: Basic ${Buffer.from(`x-access-token:${KEY}`).toString("base64")}`);
+  let err = "";
+  try {
+    execFileSync("git", ["ls-remote", "https://127.0.0.1:1/x.git"], { env: gitAuthEnv(KEY, env), stdio: ["ignore", "pipe", "pipe"] });
+  } catch (x) { err = `${x.message}\n${x.stderr}`; }
+  assert.ok(err && !err.includes(KEY) && !err.includes(Buffer.from(`x-access-token:${KEY}`).toString("base64")));
+  // git nikoli ne sprašuje za prijavo (z ključem ali brez), ključ pa doda samo, če je nastavljen
+  for (const key of ["", KEY]) {
+    const g = gitEnv(key, env);
+    assert.equal(g.GIT_TERMINAL_PROMPT, "0");
+    assert.equal(g.GCM_INTERACTIVE, "never");
+    assert.equal(!!g.GIT_CONFIG_COUNT, !!key);
+  }
+  assert.match(accessMessage(404, false), /EVKLID_GITHUB_TOKEN/);
+  assert.match(accessMessage(401, true), /zavrnil ključ/);
+  assert.equal(accessMessage(500, false), "GitHub ni odgovoril (500)");
+});
+
+test("zaseben repozitorij: posodobitev pošlje ključ in ob 404 pove, kaj vpisati", async () => {
+  const KEY = "github_pat_SKRIVNO456";
+  const old = { fetch: globalThis.fetch, key: process.env.EVKLID_GITHUB_TOKEN };
+  const seen = [];
+  globalThis.fetch = async (url, opts = {}) => { seen.push({ url: String(url), auth: opts.headers?.Authorization }); return new Response("", { status: 404 }); };
+  try {
+    for (const key of ["", KEY]) {
+      seen.length = 0;
+      if (key) process.env.EVKLID_GITHUB_TOKEN = key; else delete process.env.EVKLID_GITHUB_TOKEN;
+      const log = [];
+      const r = await update({ root: tmp(), say: (m) => log.push(m), install: false });
+      assert.ok(r.error);
+      assert.match(r.error, key ? /zavrnil ključ/ : /EVKLID_GITHUB_TOKEN/);
+      assert.ok(seen.length > 0 && seen.every((s) => s.url.startsWith("https://api.github.com/")));
+      assert.ok(seen.every((s) => s.auth === (key ? `Bearer ${KEY}` : undefined)));
+      assert.ok(!log.join("\n").includes(KEY) && !r.error.includes(KEY));
+    }
+  } finally {
+    globalThis.fetch = old.fetch;
+    if (old.key === undefined) delete process.env.EVKLID_GITHUB_TOKEN; else process.env.EVKLID_GITHUB_TOKEN = old.key;
+  }
 });

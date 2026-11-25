@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -44,9 +44,9 @@ Zakaj se reža na suši zapre tudi sredi sončnega dne, ko bi rastlina CO₂ nuj
 Skozi odprto režo izhlapeva voda. Če je korenine ne morejo nadomestiti, bi celice izgubile turgor in list bi ovenel. Korenine in list pri pomanjkanju vode tvorijo hormon abscizinsko kislino, ki sproži izstop K⁺ iz zapiralk. Rastlina za ceno manj fotosinteze ohrani vodo.
 :::
 
-**Blok 5: kompromis CO₂ proti vodi.** Izhlapevanju vode skozi reže pravimo **transpiracija**. Vleče vodo po ksilemu od korenin do lista in list hladi. Kutikula ne prepušča ne vode ne CO₂, zato izmenjava plinov teče skozi reže. Spodaj so reže v senci, zato izhlapi manj vode. List z režami le spodaj je **hipostomatičen**, z režami na obeh straneh **amfistomatičen**.
+**Blok 5: kompromis CO₂ proti vodi.** Izhlapevanju vode skozi reže pravimo **transpiracija**. Vleče vodo po ksilemu od korenin do lista in list hladi. Kutikula skoraj ne prepušča vode in CO₂, zato izmenjava plinov teče skozi reže. Spodaj so reže v senci, zato izhlapi manj vode. List z režami le spodaj je **hipostomatičen**, z režami na obeh straneh **amfistomatičen**.
 
-*Preveri:* Kaj bi se zgodilo z izmenjavo plinov, če bi bil list povsod prekrit z debelo kutikulo brez rež? (Ustavila bi se: kutikula ne prepušča niti CO₂.)
+*Preveri:* Kaj bi se zgodilo z izmenjavo plinov, če bi bil list povsod prekrit z debelo kutikulo brez rež? (Skoraj povsem bi se ustavila: kutikula tudi CO₂ skoraj ne prepušča.)
 
 **Blok 6: prilagoditve na okolje.** Ista zgradba se v različnih okoljih spremeni:
 
@@ -69,13 +69,13 @@ Izhlapevanje se zmanjša. Laski in jamica zadržijo plast mirnega, vlažnega zra
 
 **Blok 7: metamorfoze listov.** Ko list prevzame drugo nalogo, se spremeni tudi oblika: **vitice** graha za oprijemanje, **trni** kaktusa in češmina za obrambo in manj izhlapevanja, mesnate **luske** čebulice za shranjevanje, lovilni listi **rosike** za lov žuželk.
 
-*Preveri:* So bodice kaktusa listi ali stebla? (Listi; zeleno, mesnato telo kaktusa je steblo.)
+*Preveri:* So trni kaktusa listi ali stebla? (Listi; zeleno, mesnato telo kaktusa je steblo.)
 
 ## Rešeni primeri
 
 ### Primer 1: odtis z lakom za nohte
 
-Na spodnjo stran lista bršljana namažeš tanko plast prozornega laka, ga posušiš in odlepiš z lepilnim trakom. Pod mikroskopom omejiš kvadratno polje s stranico $0{,}5\,\mathrm{mm}$ in v njem presteješ $45$ rež. Kolikšna je gostota rež?
+Na spodnjo stran lista fižola namažeš tanko plast prozornega laka, ga posušiš in odlepiš z lepilnim trakom. Pod mikroskopom omejiš kvadratno polje s stranico $0{,}5\,\mathrm{mm}$ in v njem presteješ $45$ rež. Kolikšna je gostota rež?
 
 **Podatki:** stranica polja $a = 0{,}5\,\mathrm{mm}$, število rež $N = 45$
 **Iščemo:** gostoto rež $g$ (rež na $\mathrm{mm^2}$)
@@ -125,13 +125,13 @@ Kserofitni znaki: manj izhlapevanja (kutikula, ugreznjene reže, laski) in odpor
 
 1. Debela kutikula in večplastna povrhnjica zmanjšata izhlapevanje skozi površino, ko so reže zaprte.
 2. Reže v jamicah z laski imajo nad seboj miren vlažen zrak, zato izhlapi manj vode tudi, ko so odprte.
-3. Sklerenhim drži list v obliki, ko turgor pade, zato list na suši ne ovene in se ne zmečka.
+3. Sklerenhim drži list v obliki, ko turgor pade, zato list na suši ne oveni in se ne zmečka.
 4. Palisade na obeh straneh kažejo na močno svetlobo z obeh smeri, kar je značilno za sončna, odprta rastišča.
 5. Odgovor: rastlina je kserofit sončnih, suhih rastišč (tak list ima npr. oleander); vse lastnosti varčujejo z vodo, palisade pa izkoristijo obilico svetlobe.
 
 ### Primer 4: zdaj ti
 
-Na odtisu z lista lipe vidiš krožno vidno polje s premerom $0{,}4\,\mathrm{mm}$. V njem presteješ $30$ rež. Kolikšna je gostota rež? Zaokroži na cele.
+Na odtisu s spodnje strani lista lipe vidiš krožno vidno polje s premerom $0{,}4\,\mathrm{mm}$. V njem presteješ $30$ rež. Kolikšna je gostota rež? Zaokroži na cele.
 
 **Podatki:** premer polja $d = 0{,}4\,\mathrm{mm}$, $N = 30$
 **Iščemo:** gostoto $g$
@@ -168,6 +168,62 @@ $g = \dfrac{30}{0{,}1257\,\mathrm{mm^2}} \approx 239\,\mathrm{mm^{-2}}$. Če bi 
 - Transpiracija vleče vodo iz korenin, a je izguba; reže so pri kopenskih dvokaličnicah večinoma spodaj.
 - Prilagoditve: sončni in senčni listi, kserofiti (kutikula, ugreznjene reže, laski, iglice), hidrofiti (aerenhim, reže zgoraj ali jih ni); metamorfoze: vitice, trni, luske, lovilni listi.
 
+## Za izpit
+
+Znati moraš povedati:
+- dele lista in razliko med mrežastim in vzporednim ožiljem ter med enostavnim in sestavljenim listom;
+- plasti dorziventralnega lista od zgornje do spodnje povrhnjice z nalogo vsake plasti ter lego ksilema in floema v žili;
+- zgradbo listne reže in mehanizem odpiranja in zapiranja (K⁺, voda, turgor, zgradba stene zapiralk, abscizinska kislina);
+- kaj je transpiracija in zakaj je lega rež kompromis med sprejemom CO₂ in izgubo vode (hipostomatičen, amfistomatičen list);
+- znake sončnih in senčnih listov, kserofitov in hidrofitov ter metamorfoze listov s primeri.
+
+### Naloga 1
+
+Na odtisu spodnje strani lista v krožnem vidnem polju s premerom $0{,}5\,\mathrm{mm}$ presteješ $55$ rež, na odtisu zgornje strani v enakem polju $5$ rež. Ploskev lista ima $60\,\mathrm{cm^2}$. Pora odprte reže ima ploščino $80\,\mathrm{\mu m^2}$. (a) Izračunaj gostoto rež na obeh straneh, zaokroženo na cele. (b) Koliko rež ima list in kolikšen delež jih je spodaj? (c) Kolikšen delež spodnje površine lista zavzemajo odprte pore?
+
+**Rešitev:**
+
+1. Polmer polja: $r = \dfrac{0{,}5\,\mathrm{mm}}{2} = 0{,}25\,\mathrm{mm}$. Ploščina: $A = \pi \cdot (0{,}25\,\mathrm{mm})^2 \approx 0{,}1963\,\mathrm{mm^2}$.
+2. Gostota spodaj: $g_\mathrm{s} = \dfrac{55}{0{,}1963\,\mathrm{mm^2}} \approx 280\,\mathrm{mm^{-2}}$.
+3. Gostota zgoraj: $g_\mathrm{z} = \dfrac{5}{0{,}1963\,\mathrm{mm^2}} \approx 25\,\mathrm{mm^{-2}}$.
+4. Ploščina lista: $60 \cdot 100\,\mathrm{mm^2} = 6000\,\mathrm{mm^2}$.
+5. Rež spodaj: $6000 \cdot 280 = 1680000$. Rež zgoraj: $6000 \cdot 25 = 150000$.
+6. Skupaj: $1680000 + 150000 = 1830000$ rež.
+7. Delež spodaj: polji sta enaki, zato se ploščina pokrajša in zadošča štetje: $\delta = \dfrac{55}{55 + 5} \approx 0{,}917$, torej okoli $92\,\%$.
+8. Ploščina ene pore v $\mathrm{mm^2}$: $1\,\mathrm{mm^2} = 10^6\,\mathrm{\mu m^2}$, zato $80\,\mathrm{\mu m^2} = 0{,}00008\,\mathrm{mm^2}$.
+9. Pore na $1\,\mathrm{mm^2}$ spodnje strani: $280 \cdot 0{,}00008 = 0{,}0224$, torej $0{,}0224\,\mathrm{mm^2}$ por na $1\,\mathrm{mm^2}$ lista. To je $2{,}24\,\%$.
+10. Odgovor: (a) spodaj $280$, zgoraj $25$ rež na $\mathrm{mm^2}$; (b) list ima okoli $1{,}8$ milijona rež, okoli $92\,\%$ jih je spodaj, list je skoraj hipostomatičen; (c) odprte pore zavzemajo le okoli $2\,\%$ spodnje površine, a skoznje teče skoraj vsa izmenjava plinov, ker kutikula skoraj ne prepušča vode in CO₂.
+
+### Naloga 2
+
+Natančno opiši, kako se listna reža odpre in zapre, in utemelji, zakaj se pora odpre prav takrat, ko turgor zapiralk naraste.
+
+**Rešitev:**
+
+1. Režo sestavljata dve celici zapiralki s poro med njima. Pod njo je podrežna votlinica. Zapiralki sta edini celici povrhnjice s kloroplasti.
+2. Na svetlobi zapiralki aktivno sprejmeta K⁺. Modra svetloba aktivira protonsko črpalko, ki izčrpa H⁺; notranjost postane bolj negativna in kanali za K⁺ se odprejo.
+3. Zaradi ionov vodni potencial zapiralk pade. Voda vstopi z osmozo in turgor naraste.
+4. Stena zapiralke ni povsod enaka. Notranja stena ob pori je debelejša, celulozne mikrofibrile pa potekajo prečno, kot obroči na cevi.
+5. Celica se zato ne more razširiti v obseg, lahko se le podaljša. Ker sta zapiralki na koncih zrasli in je notranja stena manj raztegljiva, se ukrivita navzven in pora se odpre.
+6. Zapiranje: K⁺ izstopi, voda odteče, turgor pade in zapiralki se zravnata. To se zgodi v temi.
+7. Na suši zapiranje sproži abscizinska kislina, tudi sredi dneva. Reže zapira tudi visoka koncentracija CO₂ v listu.
+8. Sklep: reža je odprta pri napetih in zaprta pri ohlapnih zapiralkah. List, ki izgublja vodo, zato reže zapre in izgubo zmanjša.
+
+### Naloga 3
+
+Prerez lista pokaže: reže so le v zgornji povrhnjici, spodnja povrhnjica je brez rež in s tanko kutikulo, večino mezofila zavzemajo veliki zračni prostori, sklerenhima je malo. Utemelji, v katerem okolju list raste. Nato napovej tri razlike, ki jih pričakuješ pri listu kserofita.
+
+**Rešitev:**
+
+1. Reže le zgoraj pomenijo, da spodnja stran ne pride v stik z zrakom. List plava na vodi, kot pri lokvanju.
+2. Veliki zračni prostori so aerenhim. List drži na gladini in vodi zrak do potopljenih delov.
+3. Spodnja stran leži na vodi, zato tam ni izhlapevanja in debela kutikula ni potrebna.
+4. List nosi voda, zato potrebuje malo mehanskega tkiva.
+5. Sklep: list pripada hidrofitu s plavajočimi listi.
+6. Kserofit, prva razlika: debela kutikula, pogosto večplastna povrhnjica. Izhlapevanje skozi površino je majhno tudi, ko so reže zaprte.
+7. Druga razlika: reže so spodaj, ugreznjene v jamice in pokrite z laski. Nad njimi ostane miren, vlažen zrak, zato vodna para difundira počasneje.
+8. Tretja razlika: veliko sklerenhima, ki drži list v obliki, ko turgor pade; namesto aerenhima je mezofil gost ali ima vodni parenhim.
+
 ## Drugače: Na sliki
 
 Nariši vodoraven pravokotnik in ga razdeli na pet vodoravnih pasov.
@@ -188,7 +244,7 @@ Puščice: CO₂ vstopa spodaj skozi režo in se po praznih prostorih razširi d
 
 **Difuzija.** Pretok vodne pare je sorazmeren z razliko koncentracij med skoraj nasičeno podrežno votlinico in okolico ter obratno sorazmeren z uporom poti. Mejna plast mirnega zraka, jamice in laski povečajo upor.
 
-**Drugi tipi listov.** Listi trav so pogosto izobilateralni, z enakim mezofilom in režami na obeh straneh. Pri C₄ rastlinah (koruza) žile obdaja venec celic žilnega ovoja s kloroplasti (**Kranzova anatomija**). Peščene trave imajo reže v žlebovih, ki jih ob suši zaprejo **sklepne celice**, ko se list zvije.
+**Drugi tipi listov.** Listi trav so pogosto izobilateralni, z enakim mezofilom in režami na obeh straneh. Pri C₄ rastlinah (koruza) žile obdaja venec celic žilnega ovoja s kloroplasti (**anatomija tipa Kranz**, iz nem. *Kranz* »venec«). Peščene trave imajo reže v žlebovih, ki jih ob suši zaprejo **sklepne celice**, ko se list zvije.
 
 ## Preveri se
 

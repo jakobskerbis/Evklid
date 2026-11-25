@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -46,7 +46,7 @@ Tretja krožnica je skoraj prazna: na njej je en sam elektron.
 
 **Zunanji elektroni.** Elektronom v zadnji zasedeni lupini rečemo **zunanji** ali **valenčni elektroni**. So najdlje od jedra, zato jih jedro drži najšibkeje. Ko se atom sreča z drugim atomom, se srečajo prav zunanji elektroni. Zato odločajo o kemijskih lastnostih elementa. Notranji elektroni pri reakcijah ne sodelujejo.
 
-V simulaciji spodaj »Razporeditev elektronov po lupinah« dodajaj elektrone enega za drugim. Opazuj, pri katerem elektronu se odpre nova lupina in koliko elektronov je takrat v zunanji lupini.
+V simulaciji spodaj »Razporeditev elektronov po lupinah« z drsnikom povečuj vrstno število: tako dodajaš elektrone enega za drugim. Opazuj, pri katerem elektronu se odpre nova lupina in koliko elektronov je takrat v zunanji lupini.
 
 :::premisli
 Kalij ima $Z = 19$. Napovej razporeditev: v katero lupino gre njegov 19. elektron in zakaj?
@@ -74,7 +74,7 @@ Takšna je 3. perioda:
 
 Notranji del $2, 8$ je v vsej periodi enak. Spreminja se samo zunanja lupina.
 
-**Polna zunanja lupina.** Žlahtni plini imajo polno zunanjo lupino: helij $2$, neon $2, 8$, argon $2, 8, 8$. Helij je izjema, saj ima le $2$ elektrona, a je njegova edina lupina polna. Atom s polno zunanjo lupino ne potrebuje ne sprejeti ne oddati elektronov, zato skoraj ne reagira. To je razlog, ki ga je periodni sistem skrival.
+**Polna zunanja lupina.** Žlahtni plini imajo polno zunanjo lupino: helij $2$, neon $2, 8$, argon $2, 8, 8$. Helij je izjema, saj ima le $2$ elektrona, a je njegova edina lupina polna. Atomu s polno zunanjo lupino ni treba ne sprejeti ne oddati elektronov, zato skoraj ne reagira. To je razlog, ki ga je periodni sistem skrival.
 
 :::premisli
 Litij ima 2 lupini, natrij 3, kalij 4. Zakaj se kljub temu v reakcijah vedejo zelo podobno?
@@ -210,7 +210,7 @@ Postopek za vsak element do $Z = 20$, prikazan na aluminiju ($Z = 13$):
 - Kalij
 ~ Kalij ima res 4 lupine, a o skupini odločajo zunanji elektroni, in kalij ima enega, kot litij in natrij.
 - Litij
-~ Litij ima le 2 lupini, vendar je število lupin perioda. Zunanji elektron ima enega, kot natrij in kalij.
+~ Litij ima le 2 lupini, vendar je število lupin perioda. Zunanji elektron ima en sam, kot natrij in kalij.
 + Magnezij
 > Litij, natrij in kalij imajo po en zunanji elektron (1. skupina). Magnezij ima dva, zato je v 2. skupini.
 

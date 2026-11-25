@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -155,7 +155,7 @@ $33 / 40 = 0{,}825$, oblikovano kot odstotek $82{,}5\,\%$.
 ## Pogoste napake
 
 - **Številke namesto sklicev.** `=18+22+15+25` da pravi rezultat le, dokler se podatki ne spremenijo. Napačna misel je »rezultat je isti, torej je vseeno«. Formula naj vedno bere celice (`=SUM(B2:B5)`), da se ob popravku preračuna.
-- **Kopiranje brez <code>&#36;</code>.** Kdor vrednost zmage da v `F1` in piše `=F1*B2+C2`, pričakuje, da se `F1` ne bo premikal. Pri kopiranju se premakne v `F2`, `F3` … , ki so prazni, zato ekipe ostanejo le pri remijih. Celico, ki je skupna vsem vrsticam, zakleni: <code>&#36;F&#36;1</code>.
+- **Kopiranje brez <code>&#36;</code>.** Kdor vrednost zmage da v `F1` in piše `=F1*B2+C2`, pričakuje, da se `F1` ne bo premikal. Pri kopiranju se premakne v `F2`, `F3` …, ki so prazni, zato ekipe ostanejo le pri remijih. Celico, ki je skupna vsem vrsticam, zakleni: <code>&#36;F&#36;1</code>.
 - **Ničla namesto prazne celice.** Videti je, da sta »nič« in »prazno« isto. Za `AVERAGE` nista: ničla se šteje kot podatek in zniža povprečje, prazna celica se izpusti. Tekme, ki je ni bilo, ne vpiši kot $0$.
 - **Pozabljen enačaj.** Brez `=` na začetku program vsebino shrani kot besedilo in nič ne izračuna. Formula se vedno začne z `=`.
 - **Graf po videzu.** Črtni graf za točke ekip na lestvici je napačen, ker črta med ekipama nakazuje razvoj, ki ga ni. Za primerjavo kategorij izberi stolpčni graf, za spremembo v času črtnega.
@@ -169,6 +169,62 @@ $33 / 40 = 0{,}825$, oblikovano kot odstotek $82{,}5\,\%$.
 - Relativni sklic (`B2`) se pri kopiranju premakne, absolutni (<code>&#36;F&#36;1</code>) ostane; mešana sta <code>&#36;F1</code> in <code>F&#36;1</code>.
 - Konstanto, skupno vsem vrsticam, zapiši v svojo celico in nanjo pokaži z absolutnim sklicem.
 - Vrsta grafa sledi vprašanju: stolpčni za primerjavo, črtni za čas, tortni za dele celote, raztreseni za povezavo dveh količin.
+
+## Za izpit
+
+Znati moraš povedati:
+- kaj je celica, naslov celice, sklic, obseg in formula ter zakaj se formula s sklici ob spremembi podatkov sama preračuna;
+- razliko med relativnim, absolutnim in obema mešanima sklicema ter kaj se z vsakim zgodi pri kopiranju v drugo vrstico in drug stolpec;
+- kaj izračunajo `SUM`, `AVERAGE`, `MIN`, `MAX`, `COUNT` in `IF` ter kako `AVERAGE` in `COUNT` obravnavata prazno celico in ničlo;
+- zakaj konstanto, skupno vsem vrsticam, zapišemo v svojo celico in nanjo pokažemo z absolutnim sklicem;
+- katero vrsto grafa izbereš za primerjavo kategorij, spremembo v času, dele celote in povezavo dveh količin, z utemeljitvijo.
+
+### Naloga 1
+
+V gnojilnem poskusu so v `A2:A4` površine treh parcel: $20$, $35$ in $50\,\mathrm{m^2}$. V `B1:D1` so odmerki dušika: $4$, $8$ in $12\,\mathrm{g/m^2}$. V `F1` je delež dušika v gnojilu, $0{,}27$. V obsegu `B2:D4` želimo maso gnojila v kilogramih za vsako parcelo pri vsakem odmerku. (a) Zapiši formulo za `B2`, ki jo lahko brez popravkov skopiraš v ves obseg `B2:D4`, in utemelji vsak znak <code>&#36;</code>. (b) Kaj piše v `D4` po kopiranju in kaj celica pokaže? (c) Kaj bi pisalo v `D4` in kaj bi celica pokazala, če bi v `B2` vpisal `=A2*B1/F1/1000`? (d) Kaj pokaže `=SUM(B2:D4)`?
+
+**Rešitev:**
+
+1. Masa dušika v gramih je površina krat odmerek. Masa gnojila je masa dušika, deljena z deležem dušika; za kilograme delimo še s $1000$.
+2. Površina je vedno v stolpcu $A$, vrstica pa se spreminja, zato zaklenemo le stolpec: <code>&#36;A2</code>. Odmerek je vedno v vrstici $1$, stolpec pa se spreminja, zato zaklenemo le vrstico: <code>B&#36;1</code>. Delež je ena sama celica za vse, zato zaklenemo oboje: <code>&#36;F&#36;1</code>.
+3. Formula v `B2`: <code>=&#36;A2&#42;B&#36;1/&#36;F&#36;1/1000</code>. Pokaže $\frac{20 \cdot 4}{0{,}27 \cdot 1000} \approx 0{,}296$ kilograma.
+4. `D4` je dva stolpca desno in dve vrstici niže. Premaknejo se samo nezaklenjeni deli: <code>=&#36;A4&#42;D&#36;1/&#36;F&#36;1/1000</code>.
+5. Vrednost v `D4`: $\frac{50 \cdot 12}{0{,}27 \cdot 1000} \approx 2{,}222$ kilograma.
+6. Brez znakov <code>&#36;</code> se premaknejo vsi sklici: iz `=A2*B1/F1/1000` nastane v `D4` formula `=C4*D3/H3/1000`. Celica `H3` je prazna in v računu šteje kot $0$, zato program javi napako deljenja z ničlo (`#DIV/0!`). Tudi `C4` in `D3` nista več površina in odmerek, ampak sosednja rezultata.
+7. Vsota vseh devetih celic: površine dajo $20 + 35 + 50 = 105$, odmerki $4 + 8 + 12 = 24$, zato je vsota $\frac{105 \cdot 24}{0{,}27 \cdot 1000} \approx 9{,}33$ kilograma.
+8. Odgovor: (a) <code>=&#36;A2&#42;B&#36;1/&#36;F&#36;1/1000</code>; (b) <code>=&#36;A4&#42;D&#36;1/&#36;F&#36;1/1000</code>, pokaže približno $2{,}22\,\mathrm{kg}$; (c) `=C4*D3/H3/1000`, pokaže napako `#DIV/0!`; (d) približno $9{,}33\,\mathrm{kg}$ gnojila.
+
+### Naloga 2
+
+Natančno navedi, kaj so relativni, absolutni in oba mešana sklica. Za vsakega od sklicev `B2`, <code>&#36;B&#36;2</code>, <code>&#36;B2</code> in <code>B&#36;2</code> utemelji, kaj nastane, ko formulo iz celice `D2` skopiraš v celico `F5`.
+
+**Rešitev:**
+
+1. Relativni sklic (`B2`) pomeni lego glede na celico s formulo: »dva stolpca levo, ista vrstica«. Pri kopiranju se premakne za toliko stolpcev in vrstic kot formula.
+2. Absolutni sklic (<code>&#36;B&#36;2</code>) pomeni vedno isto celico; znak <code>&#36;</code> pred črko zaklene stolpec, pred številko vrstico.
+3. Mešani sklic zaklene samo eno: <code>&#36;B2</code> stolpec, <code>B&#36;2</code> vrstico. Nezaklenjeni del se premika kot pri relativnem sklicu.
+4. Od `D2` do `F5` je premik za $2$ stolpca desno ($D \to F$) in za $5 - 2 = 3$ vrstice navzdol.
+5. `B2` postane `D5`: stolpec $B$ se premakne za dva v $D$, vrstica $2$ za tri v $5$.
+6. <code>&#36;B&#36;2</code> ostane <code>&#36;B&#36;2</code>, ker sta zaklenjena stolpec in vrstica.
+7. <code>&#36;B2</code> postane <code>&#36;B5</code>: stolpec ostane, vrstica se premakne.
+8. <code>B&#36;2</code> postane <code>D&#36;2</code>: stolpec se premakne, vrstica ostane.
+9. Sklep: znak <code>&#36;</code> ne spremeni vrednosti, ki jo formula izračuna v prvotni celici; določa le, kaj se zgodi pri kopiranju.
+
+### Naloga 3
+
+V `B2:B7` je kalivost šestih vzorcev semena v odstotkih: $92$, $88$, prazna celica (vzorec je bil uničen), $0$ (nobeno seme ni vzkalilo), $95$ in $85$. (a) Kaj pokažeta `=COUNT(B2:B7)` in `=AVERAGE(B2:B7)`? (b) Kolikšno bi bilo povprečje, če bi v prazno celico vpisal $0$, in kolikšno, če bi ničlo v `B5` izbrisal? Utemelji, kateri zapis je pravilen. (c) V `C2` je `=IF(B2>=80;"ustreza";"ne ustreza")`, skopirano do `C7`. Kaj pokaže `C4` in zakaj je to zavajajoče?
+
+**Rešitev:**
+
+1. `COUNT` šteje celice s števili: ničla je število, prazna celica ni. Števil je $5$.
+2. Vsota: $92 + 88 + 0 + 95 + 85 = 360$.
+3. `AVERAGE` deli s številom podatkov, ne s številom celic: $360 / 5 = 72$.
+4. Z ničlo v prazni celici bi bilo podatkov $6$: $360 / 6 = 60$.
+5. Brez ničle v `B5` bi ostali $4$ podatki: $360 / 4 = 90$.
+6. Pravilen je prvotni zapis. Uničen vzorec ni meritev, zato ostane prazen. Vzorec, v katerem ni nič vzkalilo, je meritev z vrednostjo $0$ in mora ostati v povprečju.
+7. V `C4` je formula `=IF(B4>=80;"ustreza";"ne ustreza")`. Prazna celica `B4` v primerjavi šteje kot $0$, pogoj ni izpolnjen, zato `C4` pokaže »ne ustreza«.
+8. To je zavajajoče, ker vzorec sploh ni bil izmerjen; v stolpcu $C$ pa je videti enako kot vzorec s kalivostjo $0\,\%$.
+9. Odgovor: (a) `COUNT` pokaže $5$, `AVERAGE` $72$; (b) $60$ oziroma $90$, pravilno je $72$; (c) »ne ustreza«, čeprav meritve ni.
 
 ## Drugače: Kot zgodba
 
@@ -228,7 +284,7 @@ Postopek za ligaško lestvico, ki jo boš lahko spreminjal:
 
 ? V `F1` je $3$, v `D2` je <code>=&#36;F&#36;1&#42;B2+C2</code>. Ekipa ima v `B2` $9$ zmag in v `C2` $4$ neodločene izide. Koliko točk pokaže `D2`?
 - $16$
-~ To je $3 + 9 + 4$: točke za zmago so prišteta, ne pomnožena z zmagami.
+~ To je $3 + 9 + 4$: točke za zmago so prištete, ne pomnožene z zmagami.
 - $39$
 ~ To je $3 \cdot (9 + 4)$: tudi neodločeni so pomnoženi s $3$. Remi prinese le $1$ točko.
 + $31$

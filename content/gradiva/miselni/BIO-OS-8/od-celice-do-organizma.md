@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Specializacija celic
+  - oblika ustreza nalogi
+  - enaka DNA, uporabljen različen del
+- Primeri celic
+  - rdeča krvnička brez jedra nosi kisik
+  - živčna celica z izrastki do $1\,\mathrm{m}$
+  - črevesna celica z mikrovili
+- Tkivo
+  - podobne celice, ista naloga
+  - krovno, vezivno, mišično, živčno
+  - kri je tekoče vezivno tkivo
+- Organ
+  - več različnih tkiv skupaj
+  - srce, želodec, ledvica, list
+- Organski sistem
+  - več organov za eno nalogo
+  - obtočila: srce, žile, kri
+  - napaka: srce ni organski sistem
+- Ravni organizacije
+  - celica → tkivo → organ → organski sistem → organizem
+- Življenjske funkcije
+  - prehranjevanje, dihanje, izločanje, gibanje
+  - odzivanje, razmnoževanje
+  - pri vsaki sodeluje več sistemov

@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Dietetičarka sestavlja bolniku jedilnik: vsaka porcija živila prinese določeno količino beljakovin, maščob in ogljikovih hidratov. Dvojna porcija prinese dvakrat toliko, dve živili skupaj pa vsoto svojih prispevkov. Radiolog na zaslonu zavrti rentgensko sliko okoli središča za $90^\circ$: dve puščici, narisani na sliko, lahko sešteje pred vrtenjem ali po njem in dobi isto, enako velja za raztegnitev puščice za faktor $2$. Krožnik in rentgenska slika nimata nič skupnega, obe preslikavi pa ohranjata seštevanje in množenje s skalarjem; takim pravimo **linearne**. Enako se obnašata odvajanje polinomov, $(p + q)' = p' + q'$ in $(\lambda p)' = \lambda p'$, ter množenje z matriko, $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}$. Vsako linearno preslikavo zapišemo z **matriko preslikave**, zato se računanje z njimi prevede na računanje z matrikami. Spoznaš še **jedro** in **sliko** preslikave ter kako se matrika spremeni, ko **zamenjamo bazo**.
+Dietetičarka sestavlja bolniku jedilnik: vsaka porcija živila prinese določeno količino beljakovin, maščob in ogljikovih hidratov. Dvojna porcija prinese dvakrat toliko, dve živili skupaj pa vsoto svojih prispevkov. Radiolog na zaslonu zavrti rentgensko sliko okoli središča za $90^\circ$: dve puščici, narisani na sliko, lahko sešteje pred vrtenjem ali po njem in dobi isto, enako velja za raztegnitev puščice za faktor $2$. Krožnik in rentgenska slika nimata nič skupnega, obe preslikavi pa ohranjata seštevanje in množenje s skalarjem; takim pravimo **linearne**. Enako se obnašata odvajanje polinomov, $(p + q)' = p' + q'$ in $(\lambda p)' = \lambda p'$, ter množenje z matriko, $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}$. Vsako linearno preslikavo med končnorazsežnima prostoroma zapišemo z **matriko preslikave**, zato se računanje z njimi prevede na računanje z matrikami. Spoznaš še **jedro** in **sliko** preslikave ter kako se matrika spremeni, ko **zamenjamo bazo**.
 
 ## Razlaga
 
@@ -57,7 +57,7 @@ $$[L(u)]_C = A\,[u]_B.$$
 
 ### Jedro in slika
 
-Na mreži: če se paralelogram sploči, se vsaj ena cela premica vektorjev zlije v izhodišče. **Jedro** preslikave je $\ker L = \{u \in U : L(u) = \mathbf{0}\}$, vse kar se »zbriše«. **Slika** je $\operatorname{im} L = \{L(u) : u \in U\}$, vse kar preslikava doseže. Jedro je podprostor v $U$, slika pa podprostor v $V$.
+Na mreži: če se paralelogram sploči, se vsaj ena cela premica vektorjev zlije v izhodišče. **Jedro** preslikave je $\ker L = \{u \in U : L(u) = \mathbf{0}\}$, vse, kar se »zbriše«. **Slika** je $\operatorname{im} L = \{L(u) : u \in U\}$, vse, kar preslikava doseže. Jedro je podprostor v $U$, slika pa podprostor v $V$.
 
 Za $L(\mathbf{x}) = A\mathbf{x}$ je jedro množica rešitev homogenega sistema $A\mathbf{x} = \mathbf{0}$. Slika je ogrinjača stolpcev matrike $A$, ker je $A\mathbf{x} = x_1 \mathbf{a}_1 + \ldots + x_n \mathbf{a}_n$.
 
@@ -78,7 +78,7 @@ Kar jedro »vzame«, slika »izgubi«. Vsota je vedno $3$. S simboli: za $L\colo
 
 $$\dim \ker L + \dim \operatorname{im} L = \dim U.$$
 
-Število $\dim \operatorname{im} L$ je **rang** preslikave in je enak rangu njene matrike.
+Število $\dim \operatorname{im} L$ je **rang** preslikave in je enako rangu njene matrike.
 
 :::premisli
 Ali obstaja injektivna linearna preslikava $\mathbb{R}^3 \to \mathbb{R}^2$? Zakaj?
@@ -116,7 +116,7 @@ $j$-ti stolpec matrike $= L(e_j)$; $\;L(\mathbf{x}) = A\mathbf{x}$
 **Rešitev:**
 
 1. $L(e_1) = L(1, 0, 0) = (1, 0)$, $L(e_2) = L(0, 1, 0) = (-1, 1)$, $L(e_3) = L(0, 0, 1) = (0, -1)$.
-2. Sliki zložimo v stolpce: $A = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$, velikost $2 \times 3$, ker gre $\mathbb{R}^3 \to \mathbb{R}^2$.
+2. Slike zložimo v stolpce: $A = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$, velikost $2 \times 3$, ker gre $\mathbb{R}^3 \to \mathbb{R}^2$.
 3. $A \cdot (2, 5, 1) = (1 \cdot 2 - 1 \cdot 5 + 0 \cdot 1,\ 0 \cdot 2 + 1 \cdot 5 - 1 \cdot 1) = (-3, 4)$.
 4. Preizkus neposredno po predpisu: $L(2, 5, 1) = (2 - 5,\ 5 - 1) = (-3, 4)$, se ujema.
 5. Odgovor: $A = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$ in $L(2, 5, 1) = (-3, 4)$.
@@ -202,6 +202,62 @@ $A' = \begin{bmatrix} 1 & 1 \\ 0 & -1 \end{bmatrix}\begin{bmatrix} 3 & 2 \\ 0 & 
 - Dimenzijska formula: $\dim \ker L + \dim \operatorname{im} L = \dim U$.
 - Prehodna matrika $P$ ima v stolpcih novo bazo v starih koordinatah: $[u]_B = P[u]_{B'}$, nova matrika preslikave je $A' = P^{-1}AP$.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo linearne preslikave (oba pogoja) in posledico $L(\mathbf{0}) = \mathbf{0}$;
+- kako nastane matrika preslikave glede na bazi $B$ in $C$ (v $j$-tem stolpcu koordinate $L(u_j)$ v bazi $C$) in zvezo $[L(u)]_C = A\,[u]_B$;
+- definiciji jedra in slike, v katerem prostoru ležita, ter dokaz, da je $L$ injektivna natanko tedaj, ko je $\ker L = \{\mathbf{0}\}$;
+- dimenzijsko formulo $\dim \ker L + \dim \operatorname{im} L = \dim U$ s pogojem (končnorazsežen $U$) in dokazom z dopolnitvijo baze jedra;
+- kaj je prehodna matrika $P$, v katero smer pretvarja koordinate, in izpeljavo $A' = P^{-1}AP$.
+
+### Naloga 1
+
+Preslikava $L\colon \mathbb{R}_2[x] \to \mathbb{R}_2[x]$ je dana s predpisom $L(p)(x) = (x + 1)\,p'(x) - 2p(x)$. (a) Utemelji, da je $L$ linearna. (b) Zapiši njeno matriko $A$ v bazi $B = \{1, x, x^2\}$ in z njo izračunaj $L(3 - x + 4x^2)$. (c) Poišči bazi jedra in slike ter povej, ali je $L$ injektivna oziroma surjektivna. (d) Zapiši matriko $A'$ preslikave $L$ v bazi $B' = \{1,\ x + 1,\ (x + 1)^2\}$ in jo razloži.
+
+**Rešitev:**
+
+1. Linearnost: odvajanje je linearno, zato je $L(p + q) = (x + 1)(p' + q') - 2(p + q) = L(p) + L(q)$ in $L(\lambda p) = (x + 1)\lambda p' - 2\lambda p = \lambda L(p)$.
+2. Slike baznih vektorjev: $L(1) = -2$, $L(x) = (x + 1) - 2x = 1 - x$, $L(x^2) = 2x(x + 1) - 2x^2 = 2x$.
+3. Njihove koordinate v $B$ so $(-2, 0, 0)$, $(1, -1, 0)$, $(0, 2, 0)$. To so stolpci: $A = \begin{bmatrix} -2 & 1 & 0 \\ 0 & -1 & 2 \\ 0 & 0 & 0 \end{bmatrix}$.
+4. $[p]_B = (3, -1, 4)$, zato $A[p]_B = (-6 - 1,\ 1 + 8,\ 0) = (-7, 9, 0)$, torej $L(p) = -7 + 9x$. Preizkus po predpisu: $(x + 1)(8x - 1) - 2(3 - x + 4x^2) = 8x^2 + 7x - 1 - 6 + 2x - 8x^2 = 9x - 7$.
+5. Jedro: matrika je že stopničasta, vodilna elementa sta v 1. in 2. stolpcu, prosta spremenljivka je $x_3$. Iz druge vrstice $x_2 = 2x_3$, iz prve $x_1 = \tfrac12 x_2 = x_3$. Torej $\ker L = \mathcal{L}\{(1, 2, 1)\}$, to je polinom $1 + 2x + x^2 = (x + 1)^2$. Preizkus: $(x + 1) \cdot 2(x + 1) - 2(x + 1)^2 = 0$.
+6. Slika: prvotna stolpca na mestih vodilnih elementov, $(-2, 0, 0)$ in $(1, -1, 0)$, sta polinoma $-2$ in $1 - x$. Torej $\operatorname{im} L = \mathcal{L}\{-2,\ 1 - x\} = \mathbb{R}_1[x]$.
+7. $\dim \ker L = 1$ in $\dim \operatorname{im} L = 2$, vsota je $3 = \dim \mathbb{R}_2[x]$. Ker jedro ni $\{\mathbf{0}\}$, $L$ ni injektivna; ker $x^2$ ni v sliki, ni surjektivna.
+8. Prehodna matrika ima v stolpcih koordinate polinomov $1$, $x + 1$, $(x + 1)^2 = 1 + 2x + x^2$ v bazi $B$: $P = \begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & 2 \\ 0 & 0 & 1 \end{bmatrix}$, njen obrat je $P^{-1} = \begin{bmatrix} 1 & -1 & 1 \\ 0 & 1 & -2 \\ 0 & 0 & 1 \end{bmatrix}$.
+9. $AP = \begin{bmatrix} -2 & -1 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 0 \end{bmatrix}$ in $A' = P^{-1}(AP) = \begin{bmatrix} -2 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 0 \end{bmatrix}$.
+10. Preizkus brez matrik: $L(1) = -2 \cdot 1$, $L(x + 1) = (x + 1) - 2(x + 1) = -(x + 1)$, $L\big((x + 1)^2\big) = 0$. Stolpci $A'$ so res koordinate teh slik v bazi $B'$.
+11. Odgovor: $L(3 - x + 4x^2) = -7 + 9x$; $\ker L = \mathcal{L}\{(x + 1)^2\}$, $\operatorname{im} L = \mathbb{R}_1[x]$, $L$ ni ne injektivna ne surjektivna; v bazi $B'$ je matrika diagonalna z $-2$, $-1$, $0$ na diagonali, torej $L$ vsak vektor baze $B'$ le pomnoži s številom, tretjega z $0$ (ta razpenja jedro).
+
+### Naloga 2
+
+Natančno navedi dimenzijsko formulo z vsemi predpostavkami. Nato utemelji: (a) katere vrednosti lahko zavzame $\dim \ker L$ za linearno preslikavo $L\colon \mathbb{R}^5 \to \mathbb{R}^3$; (b) ali obstaja linearna preslikava $L\colon \mathbb{R}^4 \to \mathbb{R}^4$ z $\ker L = \operatorname{im} L$ in ali obstaja taka preslikava $\mathbb{R}^3 \to \mathbb{R}^3$; (c) da je linearna preslikava injektivna natanko tedaj, ko je $\ker L = \{\mathbf{0}\}$.
+
+**Rešitev:**
+
+1. Formula: naj bosta $U$ in $V$ vektorska prostora, $U$ končnorazsežen, in $L\colon U \to V$ linearna. Potem je $\dim \ker L + \dim \operatorname{im} L = \dim U$. Na desni je dimenzija **domene**; o dimenziji $V$ formula ne pove nič.
+2. (a) Slika je podprostor v $\mathbb{R}^3$, zato je $\dim \operatorname{im} L \in \{0, 1, 2, 3\}$. Iz formule je $\dim \ker L = 5 - \dim \operatorname{im} L \in \{2, 3, 4, 5\}$. Jedro ima vedno dimenzijo vsaj $2$, zato $L$ ni nikoli injektivna; vrednost $2$ doseže natanko surjektivna $L$, vrednost $5$ ničelna preslikava.
+3. (b) Če je $\ker L = \operatorname{im} L$, imata enako dimenzijo $k$ in formula da $2k = \dim U$. Za $U = \mathbb{R}^3$ bi moralo biti $2k = 3$, kar za celo število $k$ ni mogoče: take preslikave ni.
+4. Za $U = \mathbb{R}^4$ je $k = 2$ in preslikava obstaja, na primer $L(x_1, x_2, x_3, x_4) = (x_3, x_4, 0, 0)$. Njeno jedro so vektorji z $x_3 = x_4 = 0$, torej $\mathcal{L}\{e_1, e_2\}$; njena slika so vektorji oblike $(a, b, 0, 0)$, torej prav tako $\mathcal{L}\{e_1, e_2\}$.
+5. (c) Smer $\Rightarrow$: naj bo $L$ injektivna in $u \in \ker L$. Potem je $L(u) = \mathbf{0} = L(\mathbf{0})$ in zaradi injektivnosti $u = \mathbf{0}$.
+6. Smer $\Leftarrow$: naj bo $\ker L = \{\mathbf{0}\}$ in $L(u) = L(v)$. Zaradi linearnosti je $L(u - v) = L(u) - L(v) = \mathbf{0}$, torej $u - v \in \ker L$, zato $u - v = \mathbf{0}$ in $u = v$.
+7. Sklep: dimenzija jedra je določena z dimenzijo domene in rangom; enakost $\ker L = \operatorname{im} L$ je mogoča le v prostoru sode dimenzije; injektivnost preverimo samo na ničelnem vektorju.
+
+### Naloga 3
+
+Za realno število $t$ naj bo $L_t\colon \mathbb{R}^3 \to \mathbb{R}^3$, $L_t(\mathbf{x}) = A_t\mathbf{x}$, z matriko $A_t = \begin{bmatrix} 1 & 1 & t \\ 1 & t & 1 \\ t & 1 & 1 \end{bmatrix}$. (a) Za katere $t$ je $L_t$ obrnljiva? (b) Za vse ostale $t$ poišči bazi jedra in slike.
+
+**Rešitev:**
+
+1. Razvoj determinante po prvi vrstici: $\det A_t = 1 \cdot (t - 1) - 1 \cdot (1 - t) + t \cdot (1 - t^2) = -t^3 + 3t - 2$.
+2. Ničla $t = 1$: $-1 + 3 - 2 = 0$. Po deljenju s $(t - 1)$ dobimo $-t^3 + 3t - 2 = -(t - 1)(t^2 + t - 2) = -(t - 1)^2(t + 2)$.
+3. (a) $L_t$ je obrnljiva natanko tedaj, ko je $\det A_t \neq 0$, torej za vse $t$ razen $t = 1$ in $t = -2$. Takrat je $\ker L_t = \{\mathbf{0}\}$ in $\operatorname{im} L_t = \mathbb{R}^3$.
+4. (b) $t = 1$: vse tri vrstice so $(1, 1, 1)$, rang je $1$. Jedro je ravnina $x_1 + x_2 + x_3 = 0$ s prostima $x_2, x_3$: baza $(-1, 1, 0)$, $(-1, 0, 1)$. Slika je ogrinjača edinega neodvisnega stolpca: $\operatorname{im} L_1 = \mathcal{L}\{(1, 1, 1)\}$. Dimenziji: $2 + 1 = 3$.
+5. $t = -2$: $A_{-2} = \begin{bmatrix} 1 & 1 & -2 \\ 1 & -2 & 1 \\ -2 & 1 & 1 \end{bmatrix}$. Eliminacija: $V_2 - V_1 = (0, -3, 3)$, $V_3 + 2V_1 = (0, 3, -3)$, nato $V_3 + V_2 = (0, 0, 0)$. Rang je $2$, vodilna elementa sta v 1. in 2. stolpcu.
+6. Jedro: iz druge vrstice $x_2 = x_3$, iz prve $x_1 = -x_2 + 2x_3 = x_3$. Torej $\ker L_{-2} = \mathcal{L}\{(1, 1, 1)\}$. Preizkus: vsota vsake vrstice matrike $A_{-2}$ je $1 + 1 - 2 = 0$.
+7. Slika: prvotna stolpca $(1, 1, -2)$ in $(1, -2, 1)$. Vsota komponent vsakega stolpca je $0$, zato je $\operatorname{im} L_{-2}$ ravnina $y_1 + y_2 + y_3 = 0$. Dimenziji: $1 + 2 = 3$.
+8. Odgovor: $L_t$ je obrnljiva za $t \notin \{1, -2\}$. Pri $t = 1$ je jedro ravnina $x_1 + x_2 + x_3 = 0$ in slika premica $\mathcal{L}\{(1, 1, 1)\}$; pri $t = -2$ je obratno, jedro je premica $\mathcal{L}\{(1, 1, 1)\}$ in slika ravnina $y_1 + y_2 + y_3 = 0$.
+
 ## Drugače: Na sliki
 
 Nariši na papir kvadratno mrežo in v izhodišču puščici $e_1$ (desno) in $e_2$ (gor).
@@ -239,9 +295,9 @@ Recept za zamenjavo baze:
 
 Torej $\dim \operatorname{im} L = n - k$. Posledica za $L\colon U \to U$: $L$ je injektivna $\iff$ surjektivna $\iff$ obrnljiva. Pri kvadratni matriki je to isto kot $\det A \neq 0$.
 
-**Kompozitum.** Če imata $L$ in $K$ matriki $A$ in $B$ v ustreznih bazah, ima $K \circ L$ matriko $BA$. Zato je množenje matrik definirano tako, kot je.
+**Kompozitum.** Če imata $L$ in $K$ matriki $A$ in $M$ v ustreznih bazah, ima $K \circ L$ matriko $MA$. Zato je množenje matrik definirano tako, kot je.
 
-**Izpeljava $A' = P^{-1}AP$.** Iz $[u]_B = P[u]_{B'}$ in $[L(u)]_B = A[u]_B$ dobimo $[L(u)]_{B'} = P^{-1}[L(u)]_B = P^{-1}AP\,[u]_{B'}$. Matriki $A$ in $A'$ sta **podobni**. Podobne matrike imajo enako determinanto in rang, saj opisujeta isto preslikavo.
+**Izpeljava $A' = P^{-1}AP$.** Iz $[u]_B = P[u]_{B'}$ in $[L(u)]_B = A[u]_B$ dobimo $[L(u)]_{B'} = P^{-1}[L(u)]_B = P^{-1}AP\,[u]_{B'}$. Matriki $A$ in $A'$ sta **podobni**. Podobne matrike imajo enako determinanto in rang, saj opisujejo isto preslikavo.
 
 ## Preveri se
 

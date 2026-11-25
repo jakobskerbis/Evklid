@@ -10,6 +10,7 @@
 // Opisi (desc) so v angleščini, ker jih bere model (manj žetonov); učencu jih ne kažemo.
 
 import { INTEREST_IDS, NEWS_LEVELS, NEWS_LANGS } from "./interests.js";
+import { OPOMNIK_URA } from "./goal-data.js";
 import { DIALECTS } from "./dialects.js";
 import { GENRE_IDS } from "./games/childhood.js";
 
@@ -31,8 +32,8 @@ export const PROFILE_SETTINGS = {
   dialect: { desc: `tutor's dialect or language variant, only for the chat tone (terms, formulas, boxes and tasks stay standard); '' = standard language; must belong to the conversation language: ${DIALECT_LIST}` },
   data_mode: { values: ["auto", "lite", "normal"], desc: "light mode (less data, shorter replies): auto = on slow connection, lite = always, normal = never" },
   goal: { values: ["sprotno", "test", "npz", "matura", "tekmovanje", "izpit"], desc: "student's goal: sprotno = everyday learning, test = school test, npz (OŠ), matura (SŠ), tekmovanje (competition), izpit (faculty / regional exam)" },
-  goal_date: { desc: "date of the goal 'YYYY-MM-DD', or '' to delete it (daily reminder at 12:00 until then)" },
-  goal_reminder: { values: ["on", "off"], desc: "daily reminder at 12:00 until goal_date" },
+  goal_date: { desc: `date of the goal 'YYYY-MM-DD', or '' to delete it (daily reminder at ${OPOMNIK_URA}:00 until then)` },
+  goal_reminder: { values: ["on", "off"], desc: `daily reminder at ${OPOMNIK_URA}:00 until goal_date` },
   xp_goal: { values: ["30", "50", "100", "200"], desc: "daily XP goal (≈ 15 XP per solved task): 30 relaxed, 50 normal (default), 100 serious, 200 intense" },
   avatar: { object: true, desc: "avatar look (the only thing other students see): object {slot: value}; kind (character: cat, fox, dragon …), body (colour), eyes, mouth, bg take one item id; hat, outfit, acc, badge, fx take a list of up to 6 item ids worn together (a single id is added to what the drawer already holds, a list replaces the whole drawer, [] empties it; two items on the same spot, e.g. two pairs of glasses, keep only the last); only free items or items the student owns (get_settings lists both); buying with game coins happens only in the games shop" },
   interests: { list: true, values: INTEREST_IDS, desc: `news corner (Kotiček) interests, whole new list (replaces the old one), max 8, ids: ${INTEREST_IDS.join(", ")}` },
@@ -80,7 +81,6 @@ export const SCHEDULE_SETTINGS = {
   events: { desc: "tests and deadlines: date 'YYYY-MM-DD', optional time 'HH:MM', kind test|kolokvij|izpit|ustno|naloga|drugo, name e.g. 'Kontrolna naloga iz matematike', optional note (material)" },
 };
 
-export const ALL_SETTING_KEYS = [...Object.keys(PROFILE_SETTINGS), ...Object.keys(DEVICE_SETTINGS), ...Object.keys(SCHEDULE_SETTINGS).map((k) => `schedule_${k}`)];
 export const HEX = /^#[0-9a-f]{6}$/i;
 
 // Preveri vrednost nastavitve naprave; vrne normalizirano vrednost ali null.

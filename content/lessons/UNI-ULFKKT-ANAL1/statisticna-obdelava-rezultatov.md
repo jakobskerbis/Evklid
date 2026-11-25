@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -29,7 +29,7 @@ Poglej stolpec z odmiki. Odmiki so pozitivni in negativni, njihova vsota je toč
 
 **Trditev.** Povprečje je najboljša ocena prave vrednosti v tem smislu, da je vsota kvadratov odmikov $\sum (x_i - a)^2$ najmanjša natanko pri $a = \bar x$. *Dokaz:* $\sum (x_i - a)^2 = \sum \big((x_i - \bar x) + (\bar x - a)\big)^2 = \sum (x_i - \bar x)^2 + 2(\bar x - a)\sum (x_i - \bar x) + n(\bar x - a)^2$. Srednji člen je $0$, zadnji je $\ge 0$ in enak $0$ le pri $a = \bar x$.
 
-Za raztros odmike kvadriramo. Kvadrat odmika je vedno pozitiven, zato se ne izniči. **Definicija:** za $n \ge 2$ meritev je **standardni odklon** vzorca $s$, merilo za raztros posameznih meritev okoli povprečja,
+Za raztros odmike kvadriramo. Kvadrat odmika ni nikoli negativen, zato se ne izniči. **Definicija:** za $n \ge 2$ meritev je **standardni odklon** vzorca $s$, merilo za raztros posameznih meritev okoli povprečja,
 
 $$s = \sqrt{\frac{\sum (x_i - \bar x)^2}{n-1}}$$
 
@@ -307,13 +307,13 @@ x | izmerjena vrednost | | mm
 \bar{x} | povprečje meritev (aritmetična sredina) | \bar x = \dfrac{\sum x_i}{n} | mm
 x_i | i-ta meritev | | mm
 i | zaporedna številka meritve | | – | od 1 do n
-n | število meritev | | –
+n | število meritev | | – | v Nalogi 1 tudi množina kisline (mol)
 s | standardni odklon vzorca | s = \sqrt{\dfrac{\sum (x_i - \bar x)^2}{n-1}} | mm | raztros meritev okoli povprečja
 \mu | prava vrednost | \mu = \bar x \pm \dfrac{t \cdot s}{\sqrt{n}} | mm | interval zaupanja, navadno 95 %
 t | Studentov faktor | | – | odvisen od n in izbrane verjetnosti
 \rho | gostota opeke | \rho = \dfrac{m}{a \cdot b \cdot c} | kg/m^3
 m | masa opeke | | kg
-a | dolžina opeke | | m
+a | dolžina opeke | | m | v trditvi o povprečju poljubno število
 b | širina opeke | | m
-c | višina opeke | | m
+c | višina opeke | | m | v Nalogi 1 koncentracija NaOH (mol/L)
 :::

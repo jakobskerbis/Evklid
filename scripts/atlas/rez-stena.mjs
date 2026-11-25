@@ -1,6 +1,7 @@
 // Delež stene za pokrov reza (docs/3d.md »Cut surface in any plane«): iz KONČNE mreže organa izračuna, kolikšen del
 // vsakega voksla leži v polnem tkivu, in ga zapiše kot sliko rezin ob GLB (R = stena: tkiva z `rezVolumen`, G = druga
-// polna telesa s pokrovom reza, npr. venčne žile v maščobi žleba, B prazen; <organ>-stena.png, telefon
+// polna telesa s pokrovom reza, npr. venčne žile v maščobi žleba (delež); R je predznačena razdalja do ploskve, glej
+// razdaljaStene; B = delež notranjih delov stene v votlinah; <organ>-stena.png, telefon
 // <organ>-stena-telefon.png, ker ima telefon svojo mrežo). organ.js (materialPokrova, vol.stena) z njo odloči, kje je
 // pokrov reza na globini ravnine. Prej je to odločala prostorska tekstura CT (dolžina vektorja vlaken), ki se z mrežo
 // ne ujema povsod (endokard, premaknjen v votlino, relief maščobe in trabekul): rob reza je bil stopničast, ob njem

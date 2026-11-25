@@ -1,7 +1,7 @@
 // Dotik skozi kožo (public/3d/izbira.js, docs/3d.md »Picking«): v atlasu koža ne prestreže dotika, če je pod njo del;
 // drugi tap na isto mesto izbere kožo. Pregledovalnik modelov ostane pri najbližjem zadetku (prosojni deli celic,
 // organov in fizike ostanejo izbirljivi); preskoči le material z userData.skozi.
-// 1) brez brskalnika: pomožna funkcija in citoskelet živalske celice;
+// 1) brez brskalnika: pomožna funkcija in steklena membrana živalske celice (tap gre skozi);
 // 2) v pravem brskalniku (Playwright, če je nameščen): atlas s kožo in prosojnim učnim ciljem (veliki pečni).
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -30,28 +30,31 @@ test("izbira: lupina se preskoči, če je za njo del; prosojno brez skozi ostane
   assert.deepEqual(imena(skoziLupino([zad("koza", trdno, 1), zad("prsnica", trdno, 2)], (h) => h.ime === "koza")), ["prsnica", ["koza"]]);
 });
 
-test("pregledovalnik: citoskelet živalske celice (prosojen) ostane izbirljiv kot najbližji zadetek", { skip: !THREE && "three ni nameščen" }, async () => {
+test("pregledovalnik: steklena membrana živalske celice prepusti dotik do dela za njo", { skip: !THREE && "three ni nameščen" }, async () => {
   const { zgradi } = await import("../public/3d/modeli/celice/zivalska.js");
   const m = zgradi(THREE, { kakovost: "nizka", gibanje: false });
   m.group.updateMatrixWorld(true);
-  const cito = m.deli.find((d) => d.id === "citoskelet");
-  const mreza = cito.meshes[0];
-  assert.ok(mreza.material.transparent && mreza.material.opacity < 0.5, "citoskelet ni več prosojen: preizkus ne preverja ničesar");
+  const mem = m.deli.find((d) => d.id === "membrana");
+  const steklo = mem.meshes[0].material;
+  assert.ok(steklo.transparent && steklo.userData.skozi === true, "membrana ni več steklena lupina: preizkus ne preverja ničesar");
   const vidna = (o) => { for (let x = o; x; x = x.parent) if (!x.visible) return false; return true; };
+  const delOd = (o) => m.deli.find((d) => d.meshes.some((x) => x === o || x === o.parent))?.id ?? null;
   const rc = new THREE.Raycaster();
-  const pos = mreza.geometry.attributes.position;
-  const v = new THREE.Vector3();
-  const kam = new THREE.Vector3(0.4, 0.6, 3);
-  let zadetki = 0;
-  for (let i = 0; i < pos.count; i += Math.max(1, Math.floor(pos.count / 200))) {
-    v.fromBufferAttribute(pos, i).applyMatrix4(mreza.matrixWorld);
-    rc.set(kam, v.clone().sub(kam).normalize());
+  // od spodaj spredaj (zunaj izreza): žarek najprej zadene membrano, za njo so organeli
+  const kam = new THREE.Vector3(0.3, -0.9, 3);
+  let skozi = 0;
+  for (let i = 0; i < 60; i++) {
+    const cilj = new THREE.Vector3(Math.sin(i * 1.7) * 0.4, -0.2 + Math.cos(i * 2.3) * 0.3, Math.sin(i * 0.9) * 0.3);
+    rc.set(kam, cilj.sub(kam).normalize());
     const hits = rc.intersectObject(m.group, true).filter((h) => vidna(h.object)).sort((a, b) => a.distance - b.distance);
-    if (!hits.length) continue;
-    assert.equal(skoziLupino(hits).zadetek, hits[0]);
-    if (hits[0].object === mreza) zadetki++;
+    if (!hits.length || delOd(hits[0].object) !== "membrana") continue;
+    const z = skoziLupino(hits).zadetek;
+    if (hits.some((h) => !h.object.material?.userData?.skozi)) {
+      assert.notEqual(z.object.material?.userData?.skozi, true, "dotik se ustavi na steklu, čeprav je za njim del");
+      if (delOd(z.object) !== "membrana") skozi++;
+    }
   }
-  assert.ok(zadetki > 0, "citoskelet ni zadet niti enkrat");
+  assert.ok(skozi > 10, "premalo žarkov skozi membrano: " + skozi);
   m.dispose?.();
 });
 

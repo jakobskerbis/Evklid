@@ -1,5 +1,5 @@
 // Simulacije pri kemiji: organske spojine in poimenovanje, izomerija, destilacija nafte, polimeri, organske reakcije.
-import { s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, clamp, label, animate, playButton, rnd } from "./kit.js";
+import { s, svgBox, slider, select, segmented, button, buttons, readout, layout, texBlock, clamp, label, animate, playButton, rnd } from "./kit.js";
 import { sub, drawMolecule } from "./kem-skupno.js";
 
 const ROOT = ["met", "et", "prop", "but", "pent", "heks", "hept", "okt", "non", "dek"];
@@ -273,16 +273,14 @@ export function destilacija(el) {
     trayY.forEach((y, i) => {
       s("line", { x1: colX, y1: y + 12, x2: colX + colW, y2: y + 12, class: "thin-line" }, svg);
       s("path", { d: `M${colX + colW} ${y + 6} H${colX + colW + 22}`, class: "wire" }, svg);
-      const g = s("g", { class: "pt-cell" + (sel === i ? " sel" : ""), role: "button" }, svg);
+      const g = s("g", { class: "pt-cell" + (sel === i ? " sel" : ""), role: "button", "data-frakcija": i }, svg);
       s("rect", { x: colX + colW + 24, y: y - 4, width: 128, height: 20, rx: 5, class: sel === i ? "pt-bg k-sel" : "pt-bg" }, g);
       s("text", { x: colX + colW + 30, y: y + 10, class: "pt-legend" }, g, `${FRAKCIJE[i][0]} (${got[i]})`);
-      g.addEventListener("click", () => ((sel = i), draw(), info()));
       label(svg, colX - 6, y + 12, `${Math.round(tAt(y + 12))} °C`, "tick small", "end");
     });
-    const g = s("g", { class: "pt-cell" + (sel === 5 ? " sel" : ""), role: "button" }, svg);
+    const g = s("g", { class: "pt-cell" + (sel === 5 ? " sel" : ""), role: "button", "data-frakcija": 5 }, svg);
     s("rect", { x: colX + colW + 24, y: bottom - 14, width: 128, height: 20, rx: 5, class: sel === 5 ? "pt-bg k-sel" : "pt-bg" }, g);
     s("text", { x: colX + colW + 30, y: bottom, class: "pt-legend" }, g, `${FRAKCIJE[5][0]} (${got[5]})`);
-    g.addEventListener("click", () => ((sel = 5), draw(), info()));
     // peč
     s("rect", { x: colX - 10, y: bottom + 6, width: colW + 20, height: 26, rx: 6, class: "fill-danger", opacity: 0.25 + 0.5 * clamp((Tf - 300) / 150, 0, 1) }, svg);
     label(svg, colX + colW / 2, bottom + 19, `peč ${Tf} °C`, "tick small b");
@@ -326,6 +324,15 @@ export function destilacija(el) {
       <p>Nafta je zmes ogljikovodikov z različno dolgimi verigami. V koloni je spodaj vroče, zgoraj hladneje. Pare se dvigajo in vsaka snov <b>kondenzira</b> na višini, kjer je temperatura nižja od njenega vrelišča. Daljše molekule imajo višje vrelišče.</p>
       <p class="muted">V oklepaju je število ujetih molekul posamezne frakcije. Klikni frakcijo za opis.</p>`;
   };
+  // Klik posluša slika, ne vsaka frakcija: slika se riše vsako sličico, nov element s poslušalcem klika pa Safari na
+  // iPadu in iPhonu ob dotiku vzame kot meni ob lebdenju in ne pošlje klika nobenemu gumbu na strani (j 2026-11-15).
+  svg.addEventListener("click", (ev) => {
+    const i = ev.target.closest?.("[data-frakcija]")?.dataset.frakcija;
+    if (i == null) return;
+    sel = Number(i);
+    draw();
+    info();
+  });
   const anim = animate(el, (dt) => {
     step(dt);
     draw();
@@ -532,6 +539,6 @@ export function organskeReakcije(el) {
       buttons(button("Izvedi reakcijo", () => ((t = 0.12), anim.play()), "primary small"), button("Znova", reset)),
     ],
     out,
-    tryText: "V čem se razlikujeta adicija in substitucija? Katera reakcija je obratna adiciji vode?",
+    tryText: { razmisli: "V čem se razlikujeta adicija in substitucija? Katera reakcija je obratna adiciji vode?" },
   });
 }

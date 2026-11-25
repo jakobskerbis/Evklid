@@ -1,11 +1,13 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAULT_DOMAIN, toNum } from "./model.js";
-import { niceNumber, parse, compile } from "./math.js";
+import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
+import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
+import { fitModelView } from "./okno.js";
 import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
+import { izrisi } from "../mat/izris.js";
 
 const MAX_HISTORY = 80;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -14,7 +16,10 @@ const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: n
 
 /**
  * Ustvari kalkulator v elementu root.
- * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field) }
+ * opts: { t(key, vars), icon(name), locale(), storageKey(), api?, studentId(), toast(msg), askTutor?(text), canExport?, symbols?(panel, field),
+ *   useInCalc?(text) (»Uporabi v računu«: vrednost ali ∫(f; a; b) v znanstveni kalkulator),
+ *   recent?() (skupna zgodovina zavihkov: [{ text, src }]),
+ *   shared?() ({ vars, funcs } znanstvenega kalkulatorja: »Iz kalkulatorja: a = 5«) }
  * Brez api ni »Moji grafi« (stran /kalkulator brez prijave), brez askTutor ni »Vprašaj inštruktorja«.
  */
 export function createCalculator(root, opts) {
@@ -32,15 +37,11 @@ export function createCalculator(root, opts) {
     if (comma()) s = s.replace(".", ",");
     return s.replace(/^-/, "−");
   };
-  const tex = (s, display = false) => {
-    try {
-      return window.katex.renderToString(s, { throwOnError: false, displayMode: display, strict: "ignore" });
-    } catch {
-      return esc(s);
-    }
-  };
+  const stepText = sliderText; // model.js (AUDIT-014)
+  const tex = (s, display = false) => izrisi(s, { blok: display });
 
-  let state = load() || emptyState();
+  let state = load() || upgrade(emptyState());
+  let kbComma = null; // zapis (vejica/pika), s katerim je zgrajena tipkovnica
   let model = null;
   let focusId = null;
   const undo = [];
@@ -59,7 +60,7 @@ export function createCalculator(root, opts) {
         <button type="button" class="gc-btn gc-playall" data-act="playall" data-on="false" hidden></button>
         <span class="gc-bar-sp"></span>
         <button type="button" class="gc-btn gc-text-btn" data-act="examples" title="${esc(t("gc.examples"))}">${icon("sparkles")}<span>${esc(t("gc.examples"))}</span></button>
-        ${opts.api ? `<button type="button" class="gc-btn gc-text-btn" data-act="graphs" title="${esc(t("gc.myGraphs"))}">${icon("folder-open")}<span>${esc(t("gc.myGraphs"))}</span></button>` : ""}
+        ${opts.api ? `<button type="button" class="gc-btn gc-text-btn" data-act="graphs" title="${esc(t("gc.myGraphs"))}">${icon("folder-open")}<span class="gc-lbl">${esc(t("gc.myGraphs"))}</span></button>` : ""}
         <button type="button" class="gc-btn" data-act="more" title="${esc(t("gc.more"))}" aria-label="${esc(t("gc.more"))}">${icon("ellipsis-vertical")}</button>
       </div>
       <div class="gc-list" role="list"></div>
@@ -74,6 +75,7 @@ export function createCalculator(root, opts) {
         <button type="button" class="gc-fab" data-act="home" title="${esc(t("gc.home"))}" aria-label="${esc(t("gc.home"))}">${icon("house")}</button>
         <button type="button" class="gc-fab" data-act="fit" title="${esc(t("gc.fit"))}" aria-label="${esc(t("gc.fit"))}">${icon("maximize")}</button>
       </div>
+      <div class="gc-use" hidden></div>
       <button type="button" class="gc-fab gc-expand" data-act="expand" title="${esc(t("gc.fullGraph"))}" aria-label="${esc(t("gc.fullGraph"))}" aria-pressed="false">${icon("maximize-2")}</button>
     </section>
     <div class="gc-pop" hidden role="dialog"></div>`;
@@ -90,6 +92,7 @@ export function createCalculator(root, opts) {
       if (id) list.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: "nearest" });
     },
     onDrag: drag,
+    onMark: (p) => showUse(p),
     onDragEnd: () => commit(),
     label: (k) => t(`gc.poi.${k}`),
     fmt: (v, digits) => fmt(v, digits), // oznake točk: značilna mesta
@@ -110,6 +113,9 @@ export function createCalculator(root, opts) {
     return null;
   }
   function upgrade(s) {
+    // star zapis (max(1,2), tudi bloki GRAF in shranjeni grafi) ali graf iz drugega zapisa (pika/vejica) → zapis 2
+    // v trenutnem zapisu, z enakim pomenom
+    s = upgradeZapis(s, comma());
     const base = emptyState();
     // prazen graf vedno začne v običajnem oknu (prej se je lahko shranilo oddaljeno −150 … 150)
     const blank = !s.items.some((it) => it.type !== "expr" || String(it.text || "").trim());
@@ -162,6 +168,14 @@ export function createCalculator(root, opts) {
   // ---------- model in osveževanje ----------
 
   function rebuild() {
+    // zapis se je med sejo spremenil (jezik s piko ↔ z vejico): besedila v novem zapisu z enakim pomenom, nove tipke
+    if (state.vejica !== comma()) {
+      const next = upgradeZapis(state, comma());
+      state.items = next.items;
+      state.vejica = next.vejica;
+      state.zapis = next.zapis;
+    }
+    if (kbComma !== null && kbComma !== comma()) configureKeys();
     model = buildModel(state, { comma: comma() });
     for (const o of model.items) {
       const tools = o.src?.tools;
@@ -264,6 +278,8 @@ export function createCalculator(root, opts) {
         return t("gc.errChar", { ch: e.info.f });
       case "polInside":
         return t("sc.errPolInside");
+      case "arity":
+        return t("gc.errArity", { ex: arityExample(e.info, comma() ? ";" : ",") });
       case "seqStart":
         return t("gc.errSeqStart", { name: e.info.name });
       case "vecMix":
@@ -309,21 +325,54 @@ export function createCalculator(root, opts) {
     const extra = row.querySelector(".gc-extra");
     // drsnik med animacijo posodobimo na mestu: če bi ga vsako sličico zgradili znova,
     // gumb za ustavitev in drsnik ne bi nikoli dobila klika
-    if (o.kind === "slider" && updateSliderInPlace(o, extra)) return;
-    extra.innerHTML = extraHtml(o);
+    if (o.kind === "slider" && updateSliderInPlace(o, extra)) return void (extra._html = null);
+    // Ostale vrstice med predvajanjem drsnika zgradimo znova le, ko se spremenijo: nova polja in gumbi (meji t, θ,
+    // »Dodaj drsnike«) v vsaki sličici bi na iPadu in iPhonu pokvarili vse dotike (Safari klik pošlje le, če se ob
+    // dotiku ne pojavi nov klikljiv element; docs/oblikovanje.md, scripts/gumbi-na-dotik.cjs).
+    const html = extraHtml(o);
+    if (extra._html === html) return;
+    extra._html = html;
+    extra.innerHTML = html;
     if (o.kind === "slider") bindSlider(o, extra);
     if (o.kind === "param" || o.kind === "polar") bindDomain(o, extra);
+  }
+
+  // Skupne vrednosti z znanstvenim kalkulatorjem (opts.shared: { vars, funcs } istega učenca). Graf jih ne bere
+  // tiho: vrstica z neznanim imenom ponudi »Iz kalkulatorja: a = 5«, ki doda vrstico z enakim pomenom.
+  const sciNum = (v) => {
+    let s = String(Number(v.toPrecision(15)));
+    if (/e/.test(s)) s = s.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+    return comma() ? s.replace(".", ",") : s;
+  };
+  const TRIG_FN = /(?<![A-Za-z])(?:sin|cos|tan|cot|sec|csc|tg|ctg|arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg)(?![a-z])/;
+  function fromSci(names) {
+    const sh = (names?.length && opts.shared?.()) || null;
+    if (!sh || state.zapis !== 3) return [];
+    const out = [];
+    for (const n of names) {
+      const v = sh.vars?.[n];
+      const f = sh.funcs?.[n];
+      if (typeof v === "number" && Number.isFinite(v)) out.push({ name: n, label: `${n} = ${fmt(v, 8)}`, text: `${n} = ${sciNum(v)}` });
+      // funkcija iz kalkulatorja (zapis je isti); Ans in ° pomenita v grafu drugo, zato teh ne prenesemo
+      // kotne funkcije pri različni enoti kota (kalkulator DEG, graf RAD) bi pomenile drugo: take funkcije ne ponudimo
+      else if (f && typeof f.body === "string" && /^[A-Za-z]$/.test(f.param || "") && !/Ans|°|′|″/.test(f.body) && !(TRIG_FN.test(f.body) && (sh.angle || "deg") !== (state.settings.deg ? "deg" : "rad"))) out.push({ name: n, label: `${n}(${f.param})`, text: `${n}(${f.param}) = ${f.body}` });
+    }
+    return out;
   }
 
   function extraHtml(o) {
     const it = o.src;
     if (o.kind === "error") {
-      const add = o.missing?.length ? `<button type="button" class="gc-chip" data-act="sliders">${icon("sliders-horizontal")}${esc(t("gc.addSliders", { names: o.missing.join(", ") }))}</button>` : "";
-      return `<div class="gc-err">${icon("info")}<span>${esc(errorText(o.error))}</span></div>${add}`;
+      // imena, ki jih pozna znanstveni kalkulator (a = 5, f(x) = …): ponudimo njihove vrednosti (skupne vrednosti)
+      const known = fromSci(o.missing);
+      const rest = (o.missing || []).filter((n) => !known.some((k) => k.name === n));
+      const sci = known.length ? `<button type="button" class="gc-chip" data-act="fromsci">${icon("calculator")}${esc(t("gc.fromCalc", { names: known.map((k) => k.label).join(", ") }))}</button>` : "";
+      const add = rest.length ? `<button type="button" class="gc-chip" data-act="sliders">${icon("sliders-horizontal")}${esc(t("gc.addSliders", { names: rest.join(", ") }))}</button>` : "";
+      return `<div class="gc-err">${icon("info")}<span>${esc(errorText(o.error))}</span></div>${sci}${add}`;
     }
     if (o.kind === "value" || o.kind === "define" || o.kind === "list") {
       if (o.kind === "list" && Array.isArray(o.value) && o.value.length > 30) return `<div class="gc-val">= ${esc(fmt(o.value))}</div>`;
-      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>`;
+      return `<div class="gc-val">= ${esc(fmt(o.value, 10))}</div>${hintHtml(o)}`;
     }
     if (o.kind === "slider") {
       const sl = { ...sliderRange(o.value), ...(it.slider || {}) };
@@ -361,7 +410,22 @@ export function createCalculator(root, opts) {
         parts.push(`<div class="gc-val">${icon("trending-up")}<span>${t("gc.tangent")}: ${tex(`y = ${num(k)}x${nTxt}`)}</span></div>`);
       }
     }
+    // ploščina: »Uporabi v računu« vpiše ∫(f; a; b) v znanstveni kalkulator (le funkcija samo od x, brez drsnikov)
+    if (opts.useInCalc && (o.kind === "y" || o.plot === "y") && Array.isArray(it.tools?.area) && areaText(o, it)) {
+      parts.push(`<div class="gc-val gc-use-area"><span>${tex(`\\int_{${fmt(it.tools.area[0], 4).replace(",", "{,}")}}^{${fmt(it.tools.area[1], 4).replace(",", "{,}")}}`)}</span><button type="button" class="sc-act gc-use-btn" data-act="use-area">${icon("calculator")}<span>${esc(t("gc.useInCalc"))}</span></button></div>`);
+    }
+    parts.push(hintHtml(o));
     return parts.join("");
+  }
+
+  // Namig pod vrstico (pomen ostane): »(2,3)« je morda točka, »2e3x« je 2·e·3·x
+  function hintHtml(o) {
+    const h = o.hint;
+    const nb = (x) => String(x).replace(/ /g, "\u00a0");
+    let msg = "";
+    if (h?.code === "pointSep") msg = t("gc.hintPoint", { ex: nb(h.ex) });
+    else if (h?.code === "eulerE") msg = t("gc.hintEuler", { src: nb(h.src), euler: nb(h.euler), fix: nb(h.fix) });
+    return msg ? `<div class="gc-hint">${icon("info")}<span>${esc(msg)}</span></div>` : "";
   }
 
   // 6,283 → 2π (meje parametrov so pogosto večkratniki π)
@@ -440,6 +504,8 @@ export function createCalculator(root, opts) {
         } catch {
           v = NaN;
         }
+        // vrstica se zgradi znova (napačen vnos izgine, 2*pi se izpiše kot 2π), čeprav se njen HTML ni spremenil
+        extra._html = null;
         if (!Number.isFinite(v)) return refresh();
         const d = [...(it.domain || DEFAULT_DOMAIN[o.kind])];
         d[Number(inp.dataset.dom)] = v;
@@ -459,9 +525,7 @@ export function createCalculator(root, opts) {
     if (!it) return;
     const name = /^\s*([^=]+?)\s*=/.exec(it.text)?.[1] || "a";
     const step = it.slider?.step || sliderRange(value).step;
-    const digits = Math.max(0, Math.min(6, -Math.floor(Math.log10(step) + 1e-9)));
-    const v = Number(value.toFixed(digits));
-    it.text = `${name} = ${v}`;
+    it.text = `${name} = ${stepText(value, step)}`;
     if (record) commit(false);
     refresh();
   }
@@ -502,13 +566,18 @@ export function createCalculator(root, opts) {
         inp.value = Number.isFinite(v) ? fmt(v, 6) : "";
       });
       extra.innerHTML = "";
+      extra._html = null;
       return;
     }
     const opts2 = [["", t("gc.regNone")], ...MODELS.map((m) => [m, t(`gc.reg.${m}`)])];
-    extra.innerHTML = `<div class="gc-reg">
+    // Izbira regresije in kljukica se zgradita znova le, ko se spremenita (glej updateRow: dotik na iPadu med drsnikom).
+    const html = `<div class="gc-reg">
       <label class="gc-reg-pick"><span>${esc(t("gc.reg"))}</span><select data-act="reg">${opts2.map(([v, l]) => `<option value="${v}" ${(it.reg || "") === v ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></label>
       <label class="gc-check"><input type="checkbox" data-act="lines" ${it.lines ? "checked" : ""}> ${esc(t("gc.lines"))}</label>
     </div>${o.fit ? `<div class="gc-val gc-fit">${tex(o.fit.tex)}<span class="gc-r2">${tex(`R^2 = ${fmt(o.fit.r2, 4).replace(",", "{,}")}`)}</span></div>` : ""}`;
+    if (extra._html === html) return;
+    extra._html = html;
+    extra.innerHTML = html;
   }
 
   // ---------- dogodki seznama ----------
@@ -601,11 +670,20 @@ export function createCalculator(root, opts) {
       return;
     }
     if (act === "del") return removeItem(id);
+    if (act === "use-area") {
+      const txt = areaText(modelItem(id), it);
+      if (txt) opts.useInCalc?.(txt);
+      return;
+    }
     if (act === "menu") return openRowMenu(id, e.target.closest("[data-act]"));
-    if (act === "sliders") {
+    if (act === "sliders" || act === "fromsci") {
       const o = modelItem(id);
       const at = state.items.indexOf(it);
-      const add = (o.missing || []).map((n) => ({ id: newId(), type: "expr", text: `${n} = 1`, color: 0 }));
+      const known = fromSci(o.missing);
+      const add =
+        act === "fromsci"
+          ? known.map((k) => ({ id: newId(), type: "expr", text: k.text, color: nextColor() }))
+          : (o.missing || []).filter((n) => !known.some((k) => k.name === n)).map((n) => ({ id: newId(), type: "expr", text: `${n} = 1`, color: 0 }));
       state.items.splice(at, 0, ...add);
       commit();
       renderList();
@@ -709,12 +787,13 @@ export function createCalculator(root, opts) {
         const sl = { ...sliderRange(v), ...(s.slider || {}) };
         const step = sl.step || 0.1;
         const val = Math.min(sl.max, Math.max(sl.min, Math.round(v / step) * step));
-        s.text = `${name} = ${Number(val.toFixed(6))}`;
+        s.text = `${name} = ${stepText(val, step)}`;
       };
       if (x?.slider) setS(x.slider, gx);
       if (y?.slider) setS(y.slider, gy);
       if (x?.lit || y?.lit) {
-        const m = /^\s*\((.*),(.*)\)\s*$/.exec(it.text);
+        // o.text: besedilo za parse() (decimalna pika, ločilo »,«), zato točka (1,5; 2) ostane ena točka
+        const m = /^\s*\((.*),(.*)\)\s*$/.exec(o.text || "");
         if (m) {
           const xs = x?.lit ? String(r(gx)) : m[1].trim();
           const ys = y?.lit ? String(r(gy)) : m[2].trim();
@@ -758,7 +837,8 @@ export function createCalculator(root, opts) {
           it.slider.dir = 1;
         }
         const name = /^\s*([^=]+?)\s*=/.exec(it.text)?.[1] || "a";
-        it.text = `${name} = ${Number(v.toFixed(4))}`;
+        // predvajanje: 100-krat drobneje od koraka (gladko tudi pri razponu ±10⁻⁷), nikoli zaokroženo na 0 (AUDIT-014)
+        it.text = `${name} = ${stepText(v, (sl.step || span / 100) / 100)}`;
       }
       refresh();
       scheduleSave();
@@ -875,12 +955,23 @@ export function createCalculator(root, opts) {
     });
   }
 
+  // 6,02214076E23 → 6,02214076 · 10²³ (napis; vrednost vrstice ostane v zapisu kalkulatorja)
+  const SUPD = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
+  const recentLabel = (x) => String(x).replace(/E(-?\d+)$/, (m, e) => ` · 10${[...e].map((c) => SUPD[c]).join("")}`).replace(/^-/, "−");
+  // skupna zgodovina zavihkov (opts.recent): zadnji številski izidi kot vrstice menija »Dodaj«
+  function recentRows() {
+    const src = { sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" };
+    const rec = (opts.recent?.() || []).filter((r) => /^-?[\d.,]+(?:E-?\d+)?$/.test(r.text)).slice(0, 4);
+    if (!rec.length || state.zapis !== 3) return "";
+    return `<div class="gc-pop-h">${esc(t("gc.addRecent"))}</div>` + rec.map((r) => `<button type="button" class="gc-menu-row" data-add="recent" data-v="${esc(r.text)}">${icon("calculator")}<span>${esc(recentLabel(r.text))} <span class="muted">· ${esc(t(src[r.src] || "sc.modeSci"))}</span></span></button>`).join("");
+  }
+
   function openAddMenu(anchor) {
     const html = `
       <button type="button" class="gc-menu-row" data-add="expr">${icon("square-function")}<span>${esc(t("gc.addExpr"))}</span></button>
       <button type="button" class="gc-menu-row" data-add="slider">${icon("sliders-horizontal")}<span>${esc(t("gc.addSlider"))}</span></button>
       <button type="button" class="gc-menu-row" data-add="table">${icon("table")}<span>${esc(t("gc.addTable"))}</span></button>
-      <button type="button" class="gc-menu-row" data-add="note">${icon("text")}<span>${esc(t("gc.addNote"))}</span></button>`;
+      <button type="button" class="gc-menu-row" data-add="note">${icon("text")}<span>${esc(t("gc.addNote"))}</span></button>${recentRows()}`;
     openPop(html, anchor, (e) => {
       const b = e.target.closest("[data-add]");
       if (!b) return;
@@ -888,10 +979,11 @@ export function createCalculator(root, opts) {
       const idx = state.items.length - 1;
       const kind = b.dataset.add;
       if (kind === "expr") insertAfter(idx);
-      if (kind === "slider") {
+      if (kind === "slider" || kind === "recent") {
         const used = new Set(state.items.map((x) => /^\s*([a-wz])\s*=/.exec(x.text || "")?.[1]));
         const name = "abcdkmnpqsuvw".split("").find((c) => !used.has(c)) || "a";
-        insertAfter(idx, { text: `${name} = 1` });
+        // izid iz drugega zavihka (skupna zgodovina): drsnik z vrednostjo izida
+        insertAfter(idx, { text: `${name} = ${kind === "recent" ? b.dataset.v : 1}` });
       }
       if (kind === "table") {
         const n = state.items.filter((x) => x.type === "table").length + 1;
@@ -939,6 +1031,7 @@ export function createCalculator(root, opts) {
     view.selected = null;
     view.shown = [];
     view.trace = null;
+    $(".gc-use").hidden = true;
     renderList();
     refresh();
     view.view = view.squared(state.view);
@@ -946,6 +1039,70 @@ export function createCalculator(root, opts) {
     updateBar();
     scheduleSave();
     if (state.items.some((x) => x.slider?.play)) animate();
+  }
+
+  // ---------- »Uporabi v računu« (graf → znanstveni kalkulator) ----------
+  // Število za vnos v kalkulator: 12 mest, zapis kalkulatorja (vejica ali pika), brez »e« in brez šuma 0,30000000004.
+  const numIn = (v) => {
+    let s = String(Number(v.toPrecision(12)));
+    if (/e/.test(s)) s = s.replace(/e([+-]?)(\d+)/, (m, sg, d) => `·10^(${sg === "-" ? "-" : ""}${d})`);
+    return comma() ? s.replace(".", ",") : s;
+  };
+  // ∫(f; a; b) s telesom vrstice (zapis 3 je isti kot v znanstvenem kalkulatorju); null, če f uporablja drsnike
+  function areaText(o, it) {
+    if (!o || state.zapis !== 3) return null;
+    const body = o.ast2 || o.body;
+    const v = o.varName || "x";
+    if (!body || [...freeVars(body)].some((w) => w !== v)) return null;
+    const m = /=(?!=)\s*(.*)$/s.exec(String(it.text || ""));
+    const f = m ? m[1].trim() : String(it.text || "").trim();
+    let ufn = false;
+    walk(body, (n) => n.k === "ufn" && (ufn = true)); // klic funkcije grafa (f(x) + 1): kalkulator je ne pozna
+    if (!f || ufn) return null;
+    // graf v stopinjah: v kalkulatorju so integrali v radianih, zato sin(x) → sin((x)°) (isti pomen)
+    const sub = v !== "x" ? null : state.settings.deg ? degreesToCalc(f) : f;
+    if (!sub) return null;
+    const [a, b] = it.tools.area;
+    return `∫(${sub}; ${numIn(Math.min(a, b))}; ${numIn(Math.max(a, b))})${a > b ? "·(-1)" : ""}`;
+  }
+  // označena točka na grafu: gumba x = … in y = …
+  const useBox = $(".gc-use");
+  function showUse(p) {
+    if (!opts.useInCalc || !p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) {
+      useBox.hidden = true;
+      return;
+    }
+    const kind = p.types?.length ? `${p.types.map((k) => t(`gc.poi.${k}`)).join(", ")}: ` : "";
+    const b = (n, v) => `<button type="button" class="sc-act gc-use-btn" data-use="${esc(numIn(v))}" aria-label="${esc(t("gc.useValue", { v: `${n} = ${fmt(v, 8)}` }))}">${icon("calculator")}<span>${tex(`${n} = ${fmt(v, 8).replace("−", "-").replace(",", "{,}")}`)}</span></button>`;
+    useBox.innerHTML = `<span class="gc-use-h">${esc(kind)}${esc(t("gc.useInCalc"))}</span><span class="gc-use-row">${b("x", p.x)}${b("y", p.y)}</span>`;
+    useBox.hidden = false;
+  }
+  useBox.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-use]");
+    if (b) opts.useInCalc?.(b.dataset.use);
+  });
+  // opomba k grafu iz znanstvenega kalkulatorja: sporočilo kalkulatorja (divergenten integral) ali razlaga okna
+  function noteText(p, message) {
+    if (p.message && message) return message;
+    if (p.message && !p.note) return ""; // sporočilo napake brez besedila (npr. iz starejše vrstice): le graf
+    if (!p.note) return "";
+    const v = {};
+    for (const [k, x] of Object.entries(p.note.vars || {})) v[k] = typeof x === "number" ? (x === Infinity ? "∞" : x === -Infinity ? "−∞" : fmt(x)) : x;
+    return t(p.note.key, v);
+  }
+
+  // Znana konstanta formule (g, c, G, N_A …; formula-calc.js formulaConstant): drsnik s pravo vrednostjo na sredini
+  // (od 0 do dvakratne vrednosti). Zelo majhne (h = 6,6·10⁻³⁴) ne gredo v drsnik brez zapisa z »e«: stalna vrednost.
+  function constRow(n, v) {
+    if (typeof v !== "number" || !Number.isFinite(v) || v === 0) return null;
+    const dec = (x) => (comma() ? x.replace(".", ",") : x);
+    const e = Math.floor(Math.log10(Math.abs(v)));
+    if (e < -11) {
+      const m = Number((v / 10 ** e).toPrecision(12));
+      return { id: newId(), type: "expr", text: `${n} = ${dec(String(m))}·10^(${e})` };
+    }
+    const step = 10 ** (e - 3);
+    return { id: newId(), type: "expr", text: `${n} = ${dec(sliderText(v, 10 ** Math.max(e - 9, -20)))}`, slider: { min: Number(sliderText(v - Math.abs(v), step)), max: Number(sliderText(v + Math.abs(v), step)), step } };
   }
 
   // shranjeni grafi na strežniku (po učencu)
@@ -1186,29 +1343,36 @@ export function createCalculator(root, opts) {
   // Plasti 123 in f(x) sta mreži kalkulatorja; Σ in ABC sta skupni. Enter v vrstici doda novo vrstico.
 
   let lastField = null;
-  const KEYS = {
-    "123": [
-      ["x", "x"], ["y", "y"], ["a²", "^2", "x²"], ["aᵇ", "^"], ["7"], ["8"], ["9"], ["÷", "/"],
-      ["(", "("], [")", ")"], ["<", "<"], [">", ">"], ["4"], ["5"], ["6"], ["×", "*"],
-      ["|a|", "|@|"], [",", ","], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
-      ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], [".", "."], ["=", "="], ["+", "+"],
-    ],
-    fx: [
-      ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", "root(@, )"],
-      ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["∛", "∛(@)"], ["n!", "!"], ["°", "°"], ["{ : }", "{@ : }"], ["[ ]", "[@]"],
-      ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", "mod(@, )"], ["min", "min(@)"], ["max", "max(@)"],
-      ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", "nCr(@, )"], ["%", "%"],
-    ],
-  };
+  // V slovenskem zapisu je vejica decimalna, argumente in koordinate loči »;« (kot v znanstvenem kalkulatorju).
+  // Tipke se zgradijo znova, če se zapis med sejo spremeni (configureKeys iz rebuild).
+  function configureKeys() {
+    kbComma = comma();
+    const SEP = kbComma ? ";" : ",";
+    const KEYS = {
+      "123": [
+        ["x", "x"], ["y", "y"], ["a²", "^2", "x²"], ["aᵇ", "^"], ["7"], ["8"], ["9"], ["÷", "/"],
+        ["(", "("], [")", ")"], ["<", "<"], [">", ">"], ["4"], ["5"], ["6"], ["×", "*"],
+        ["|a|", "|@|"], [SEP, SEP], ["≤", "<="], ["≥", ">="], ["1"], ["2"], ["3"], ["−", "-"],
+        ["√", "√(@)"], ["π", "π"], ["θ", "θ"], ["t", "t"], ["0"], kbComma ? [",", ","] : [".", "."], ["=", "="], ["+", "+"],
+      ],
+      fx: [
+        ["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["ln", "ln(@)"], ["log", "log(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"], ["ⁿ√", `root(@${SEP} )`],
+        ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["∛", "∛(@)"], ["n!", "!"], ["°", "°"], ["{ : }", "{@ : }"], ["[ ]", "[@]"],
+        ["f(x)", "f(x) = @"], ["f′(x)", "f'(x)"], ["d/dx", "d/dx(@)"], ["∫", "∫_(@)^() () dx"], ["Σ", "∑_(n=1)^(@) "], ["mod", `mod(@${SEP} )`], ["min", "min(@)"], ["max", "max(@)"],
+        ["r", "r"], ["a", "a"], ["b", "b"], ["k", "k"], ["n", "n"], ["mean", "mean(@)"], ["nCr", `nCr(@${SEP} )`], ["%", "%"],
+      ],
+    };
+    configureKeyboard(list, {
+      math: true,
+      layers: [{ id: "num", label: "123", cols: 8, keys: KEYS["123"] }, { id: "fx", label: "f(x)", cols: 8, keys: KEYS.fx }, "sym", "abc"],
+      start: "num",
+      enter: "go",
+      parsed: true, // math.js: abs, floor … ostanejo imena funkcij
+    });
+  }
   root.dataset.kbScope = "";
   initKeyboard();
-  configureKeyboard(list, {
-    math: true,
-    layers: [{ id: "num", label: "123", cols: 8, keys: KEYS["123"] }, { id: "fx", label: "f(x)", cols: 8, keys: KEYS.fx }, "sym", "abc"],
-    start: "num",
-    enter: "go",
-    parsed: true, // math.js: abs, floor … ostanejo imena funkcij
-  });
+  configureKeys();
   // Odprta tipkovnica: graf in seznam se stisneta, pomoč pod seznamom se skrije.
   const onKeyboard = (e) => {
     const on = !!e.detail?.open && root.contains(e.detail.field);
@@ -1247,10 +1411,123 @@ export function createCalculator(root, opts) {
         view.draw();
       }
     },
+    /** Definicije grafa za znanstveni kalkulator (»Iz grafa: a = 2, f(x)«): drsniki in vrednosti, funkcije ene črke. */
+    shared() {
+      const vars = {};
+      const funcs = {};
+      if (state.zapis !== 3) return { vars, funcs }; // drug zapis bi v kalkulatorju pomenil drugo
+      for (const o of model?.items || []) {
+        if ((o.kind === "slider" || o.kind === "define") && typeof o.value === "number" && Number.isFinite(o.value)) vars[o.name] = o.value;
+        if (o.kind === "func" && o.params?.length === 1 && /^[A-Za-z]$/.test(o.fname) && /^[A-Za-z]$/.test(o.params[0])) {
+          const m = /=(?!=)\s*(.*)$/s.exec(String(o.src.text || ""));
+          if (m && m[1].trim()) funcs[o.fname] = { param: o.params[0], body: m[1].trim() };
+        }
+      }
+      return { vars, funcs, angle: state.settings.deg ? "deg" : "rad" };
+    },
+    /**
+     * Formula iz zbirke na grafu ({ lhs, rhs, v } iz formula-calc.js formulaPlot): vrstica »s(t) = v₀ t + …«
+     * (ime je leva stran, če je prosta črka) in drsniki za ostale količine (vrednost 1). Doda k trenutnemu grafu.
+     */
+    addFormula({ lhs, rhs, v, consts = {} }) {
+      const used = new Set(state.items.map((x) => /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*[(=]/.exec(String(x.text || ""))?.[1]).filter(Boolean));
+      const ok = (n) => /^[A-Za-zα-ωΑ-Ω]$/.test(n) && !["x", "y", "r", "θ", "e", v].includes(n) && !used.has(n) && !new RegExp(`(^|[^\\p{L}_])${n}(?![\\p{L}_₀-₉])`, "u").test(rhs);
+      const name = [lhs, "f", "g", "h", "p", "q", "u", "w", "F", "G", "H"].find(ok);
+      if (!name) return false;
+      const next = clone(state);
+      next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
+      const fid = newId();
+      next.items.push({ id: fid, type: "expr", text: `${name}(${v}) = ${rhs}`, color: 0 });
+      loadState(next);
+      // ostale količine formule: drsniki (kot gumb »Dodaj drsnik«)
+      const o = modelItem(fid);
+      if (o?.missing?.length) {
+        const at = state.items.findIndex((x) => x.id === fid);
+        state.items.splice(at, 0, ...o.missing.map((n) => constRow(n, consts[n]) || { id: newId(), type: "expr", text: `${n} = 1` }));
+        renderList();
+        refresh();
+      }
+      const it = item(fid);
+      it.color = nextColor();
+      commit();
+      refresh();
+      // okno kot pri grafih v odgovorih (okno.js): ničle, ekstremi, asimptote; premica skozi izhodišče ni 1 enota velika
+      const fit = fitModelView(model, { W: view.W, H: view.H }) || view.fitBounds();
+      if (fit) {
+        state.view = fit;
+        state.settings = { ...state.settings, square: false };
+        view.view = fit;
+        commit();
+        view.draw();
+      }
+      return true;
+    },
+    /**
+     * »Pokaži na grafu« iz znanstvenega kalkulatorja (public/graph/v-graf.js): doda vrstice k trenutnemu grafu
+     * (ne pobriše ga; v razveljavi), vključi orodja in okno pokaže zanimiv del. req: { text, env, message?, simple? }.
+     * Vrne true, če je graf narisan.
+     */
+    async showPlan(req) {
+      const { graphPlan } = await import("./v-graf.js");
+      view.resize();
+      const texts = state.items.filter((x) => x.type === "expr").map((x) => String(x.text || ""));
+      const p = graphPlan(req.text, req.env, { texts, deg: !!state.settings.deg, W: view.W, H: view.H, simple: !!req.simple });
+      if (!p) {
+        opts.toast?.(t("gc.fromSci.none"));
+        return false;
+      }
+      const next = clone(state);
+      next.items = next.items.filter((x) => x.type !== "expr" || String(x.text || "").trim() || x.slider);
+      const used = next.items.map((x) => x.color);
+      let c = 0;
+      const color = () => {
+        while (used.includes(c % PALETTE.length) && c < PALETTE.length) c++;
+        used.push(c % PALETTE.length);
+        return c++ % PALETTE.length;
+      };
+      for (const it of p.items) {
+        const row = { id: newId(), color: color(), ...it };
+        if (row.label === undefined) delete row.label;
+        next.items.push(row);
+      }
+      // spremenjena nastavitev grafa: kratka opomba (učenec ve, zakaj se je graf spremenil; j, 24. 11. 2026)
+      const changed = [];
+      if (p.deg !== undefined && p.deg !== !!state.settings.deg) {
+        next.settings = { ...next.settings, deg: p.deg };
+        changed.push(t(p.deg ? "gc.fromSci.setDeg" : "gc.fromSci.setRad"));
+      }
+      if (p.view) {
+        next.view = p.view;
+        const wide = Math.abs(Math.log(((p.view.ymax - p.view.ymin) / view.H) / ((p.view.xmax - p.view.xmin) / view.W))) > Math.log(1.6);
+        if ((!p.square || wide) && state.settings.square !== false) {
+          next.settings = { ...next.settings, square: false };
+          changed.push(t("gc.fromSci.noSquare"));
+        }
+      }
+      const note = [noteText(p, req.message), ...changed].filter(Boolean).join(" ");
+      if (note) next.items.splice(next.items.length - p.items.length, 0, { id: newId(), type: "note", text: note });
+      loadState(next);
+      if (p.view) {
+        state.view = view.squared(p.view);
+        view.view = state.view;
+        view.draw();
+      }
+      list.querySelectorAll(".gc-note-in").forEach(autoGrow); // opomba v celoti (sicer ena vrstica)
+      const last = state.items[state.items.length - 1];
+      if (last) list.querySelector(`[data-id="${last.id}"]`)?.scrollIntoView({ block: "nearest" });
+      return true;
+    },
     resize() {
       view.resize();
       view.draw();
       if (state.items.some((x) => x.slider?.play)) animate(); // drsnik, ki je tekel pred preklopom, teče naprej
+    },
+    /** Tipka Nazaj (app.js calcBack): zapre meni vrstice ali povečan graf. Vrne true, če je kaj zaprla. */
+    back() {
+      if (!pop.hidden) closePop();
+      else if (root.classList.contains("gc-full")) root.querySelector('[data-act="expand"]')?.click();
+      else return false;
+      return true;
     },
     /** Ob menjavi učenca: njegov zadnji graf (shranjen na napravi). */
     reload() {

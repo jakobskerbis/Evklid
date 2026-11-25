@@ -1,5 +1,5 @@
 // Simulacije: prikazi podatkov, srednje vrednosti, statistika, verjetnost, kombinatorika.
-import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, arrow, draggable, svgPoint, rint, rad } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, draggable, rint, rad } from "./kit.js";
 
 const COLORS = ["a", "b", "c", "accent", "muted"];
 
@@ -67,7 +67,7 @@ export function diagram(el, { type = "stolpcni" } = {}) {
     stage: [h("div", { class: "demo-seg-wrap" }, segmented({ options: [["stolpcni", "Stolpčni"], ["figurni", "Figurni"], ["crtni", "Črtni"], ["tortni", "Tortni"]], value: type, onChange: (v) => ((type = v), draw()) })), svg],
     extra: editor,
     out,
-    tryText: "Isti podatki v štirih prikazih. Iz katerega najhitreje vidiš, kaj je najbolj priljubljeno? Iz katerega delež celote?",
+    tryText: { razmisli: "Isti podatki v štirih prikazih. Iz katerega najhitreje vidiš, kaj je najbolj priljubljeno? Iz katerega delež celote?" },
   });
   draw();
 }

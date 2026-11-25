@@ -7,12 +7,14 @@ import { sameSubject } from "./subjects.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
-import { CONTEST, TRAINING_TASKS, isCompetitionPath } from "./competition.js";
-import { isExamPath, mockPlan, scaledScore, examGrade } from "./exams.js";
+import * as MATH from "../public/graph/math.js";
+import { CONTEST, TRAINING_TASKS, isCompetitionPath, topicsForYear } from "./competition.js";
+import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps } from "./exams.js";
 import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
 import { nowParts } from "./schedule.js";
+import { schoolYear } from "./games.js";
 
 // Tekmovalni trening in poskusno tekmovanje veljata tudi za priprave na izpite.
 const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
@@ -24,6 +26,7 @@ const ONE_SHOT = ["placement", "contest", "pretest"];
 
 export const RULES = {
   levelUpStreak: 3, // 3 pravilni zapored -> težje
+  levelDownStreak: 2, // 2 napačna zapored na isti ravni -> lažje (ena napaka ravni ne zniža, da učenec ne niha)
   masteryWindow: 10, // zadnjih 10 nalog
   masteryCorrect: 8, // vsaj 8 pravilnih v prvem poskusu
   masteryHard: 2, // od tega vsaj 2 na najvišji težavnosti
@@ -45,6 +48,9 @@ export const RULES = {
   offlinePacksPerDay: 8, // paketov brez povezave na dan na profil (menjava poti, več naprav)
 };
 
+// Vaja iz testa ali domače naloge (server/vaja-iz-lista.js): dolžine, ki jih učenec izbere, in meja »obvladaš«.
+export const LIST = { lengths: [6, 12, 20], maxSkills: 20, okShare: 0.75 };
+
 const XP = {
   base: (level) => 5 + 5 * level, // 10 / 15 / 20
   minWithHelp: 2,
@@ -54,6 +60,9 @@ const XP = {
   daily: 15,
   dailyStreak: (days) => 5 * Math.min(days, 7),
 };
+
+// XP za rešeno nalogo (brez bonusa za obvladanje in niz dni); attempts > 1 doda bonus za popravljeno napako.
+const taskXp = (level, helped, attempts) => (helped ? Math.max(XP.minWithHelp, Math.floor(XP.base(level) / 2)) : XP.base(level)) + (attempts > 1 ? XP.fixBonus : 0);
 
 const nowSql = () => new Date().toISOString().replace("T", " ").slice(0, 19);
 const addDays = (d) => new Date(Date.now() + d * 86400000).toISOString().replace("T", " ").slice(0, 19);
@@ -78,9 +87,21 @@ export class Progress {
   taskLang(studentId) {
     return taskLanguage(this.store.getStudent?.(studentId)?.settings?.language);
   }
+  // Leto šolanja (OŠ 1–9, SŠ 10–13, faks 14) za izbiro nalog po razredu (practice/index.js fitsYear).
+  taskYear(studentId) {
+    const st = this.store.getStudent?.(studentId);
+    return st ? schoolYear(st.settings || {}) : null;
+  }
   // Jezik vmesnika (za imena tem mednarodne poti v slovenskem vmesniku).
   uiLang(studentId) {
     return uiLanguage(this.store.getStudent?.(studentId)?.settings?.language);
+  }
+  // Raven mature iz profila (»4. letnik OR«) za šolske poti matematike v gimnaziji: na osnovni ravni učna pot,
+  // nova snov in priprava na test izpustijo teme samo za višjo raven (exams.js ravenKeeps), kot jih že stran
+  // »NPZ in matura« (#891). Druge poti in »še ne vem«: null (vse teme).
+  profileRaven(studentId, pathKey) {
+    if (!/^MAT-SS-\d$/.test(String(pathKey || ""))) return null;
+    return / (VR|OR)$/.exec(String(this.store.getStudent?.(studentId)?.settings?.curriculum_level || "").trim())?.[1] || null;
   }
 
   // ---------- stanje teme ----------
@@ -91,6 +112,7 @@ export class Progress {
         topic_id: topicId,
         level: 1,
         streak: 0,
+        wrong_streak: 0,
         status: "new",
         source: null,
         mastered_at: null,
@@ -103,13 +125,13 @@ export class Progress {
   saveState(s) {
     this.db
       .prepare(
-        `INSERT INTO topic_state (student_id, topic_id, level, streak, status, source, mastered_at, review_stage, review_due, seen_example, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-         ON CONFLICT(student_id, topic_id) DO UPDATE SET level = excluded.level, streak = excluded.streak, status = excluded.status,
+        `INSERT INTO topic_state (student_id, topic_id, level, streak, wrong_streak, status, source, mastered_at, review_stage, review_due, seen_example, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+         ON CONFLICT(student_id, topic_id) DO UPDATE SET level = excluded.level, streak = excluded.streak, wrong_streak = excluded.wrong_streak, status = excluded.status,
            source = excluded.source, mastered_at = excluded.mastered_at, review_stage = excluded.review_stage,
            review_due = excluded.review_due, seen_example = excluded.seen_example, updated_at = datetime('now')`,
       )
-      .run(s.student_id, s.topic_id, s.level, s.streak, s.status, s.source, s.mastered_at, s.review_stage, s.review_due, s.seen_example);
+      .run(s.student_id, s.topic_id, s.level, s.streak, s.wrong_streak || 0, s.status, s.source, s.mastered_at, s.review_stage, s.review_due, s.seen_example);
   }
   markMastered(studentId, topicId, source) {
     const s = this.state(studentId, topicId);
@@ -127,9 +149,14 @@ export class Progress {
   }
 
   // ---------- pregled učne poti ----------
-  pathView(studentId, pathKey) {
+  // year (leto šolanja, games.js schoolYear): pri tekmovalni poti samo teme za učenčev razred (competition.js MIN_YEAR).
+  // raven: matura iz matematike na osnovni ravni (»OR«) brez tem samo za višjo raven (exams.js examRaven).
+  pathView(studentId, pathKey, year = null, raven = null) {
     const path = getPath(pathKey);
     if (!path) return null;
+    const keep =
+      year && isCompetitionPath(pathKey) ? new Set(topicsForYear(path.units.flatMap((u) => u.topics.map((t) => t.id)), year)) : null;
+    const forRaven = ravenKeeps(raven ?? this.profileRaven(studentId, pathKey));
     const states = Object.fromEntries(
       this.db
         .prepare("SELECT * FROM topic_state WHERE student_id = ? AND topic_id LIKE ?")
@@ -138,8 +165,10 @@ export class Progress {
     );
     const now = nowSql();
     const ui = this.uiLang(studentId);
-    const units = path.units.map((u) => {
-      const topics = u.topics.map((t0) => {
+    const units = path.units.flatMap((u) => {
+      const own = (keep ? u.topics.filter((t) => keep.has(t.id)) : u.topics).filter(forRaven);
+      if (!own.length) return [];
+      const topics = own.map((t0) => {
         const t = localTopic(t0, ui);
         const s = states[t.id] || {};
         return {
@@ -155,14 +184,14 @@ export class Progress {
       });
       const gated = topics.filter((t) => t.practice);
       const relevant = gated.length ? gated : topics;
-      return {
+      return [{
         title: localUnitTitle(u, ui),
         topics,
         hasPractice: gated.length > 0,
         started: topics.some((t) => t.status !== "new"),
         mastered: relevant.every((t) => t.status === "mastered"),
         progress: relevant.filter((t) => t.status === "mastered").length / relevant.length,
-      };
+      }];
     });
     // Brez ključavnic (j, 31. 10. 2026): vsak sklop je vedno odprt. Sklop, pred katerim prejšnji sklop z vajami
     // še ni osvojen in ga učenec še ni začel, je »naprej« (ahead): pot zanj priporoči najprej temo iz prejšnjega
@@ -211,11 +240,14 @@ export class Progress {
   }
 
   // Naslednja vaja pri temi. Prvič pri temi najprej pokažemo rešen zgled.
-  nextPractice(studentId, topicId) {
+  // vnaprej: odjemalec naslednjo nalogo pripravi pred klikom (public/kliki.js vadnica). Takrat brez zgleda in brez
+  // spremembe stanja teme: tema, ki bi pokazala zgled ali je še nova, vrne { vnaprej: false } (klik pozneje kot prej).
+  nextPractice(studentId, topicId, { vnaprej = false } = {}) {
     if (!hasGenerator(topicId)) return null;
     const s = this.state(studentId, topicId);
+    if (vnaprej && (!s.seen_example || s.status === "new")) return { vnaprej: false };
     if (!s.seen_example) {
-      const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId));
+      const ex = generateTask(topicId, 1, undefined, this.taskLang(studentId), this.taskYear(studentId));
       s.seen_example = 1;
       if (s.status === "new") s.status = "learning";
       this.saveState(s);
@@ -229,11 +261,23 @@ export class Progress {
     const pending = this.db
       .prepare("SELECT * FROM tasks WHERE student_id = ? AND topic_id = ? AND mode = 'practice' AND session_id IS NULL AND solved = 0 AND attempts < ? ORDER BY id DESC LIMIT 1")
       .get(studentId, topicId, RULES.maxAttempts);
+    const lang = this.taskLang(studentId);
+    const year = this.taskYear(studentId);
     if (pending) {
-      return { task: { id: pending.id, mode: "practice", ...publicTask(JSON.parse(pending.payload)) }, state: { level: s.level, streak: s.streak }, resumed: true };
+      const payload = JSON.parse(pending.payload);
+      // Nedotaknjena naloga (lahko pripravljena vnaprej, { vnaprej: true }): velja od zdaj, ko jo učenec dobi (tedensko
+      // poročilo staršem, server/rast.js štejeta po created_at), in samo, če stopnja, jezik in razred še veljajo.
+      // Starejše vrstice brez gen (pred to spremembo) štejejo kot veljavne.
+      const fresh = !pending.attempts && !pending.hint_used;
+      const stale = fresh && (pending.level !== s.level || (payload.gen && (payload.gen.lang !== lang || payload.gen.year !== year)));
+      if (!vnaprej && fresh && !stale) this.db.prepare("UPDATE tasks SET created_at = datetime('now') WHERE id = ?").run(pending.id);
+      if (!stale) return { task: { id: pending.id, mode: "practice", ...publicTask(payload) }, state: { level: s.level, streak: s.streak }, resumed: true };
+      if (vnaprej) return { vnaprej: false }; // nova naloga nastane šele ob kliku
     }
-    const task = generateTask(topicId, s.level, undefined, this.taskLang(studentId));
+    const task = { ...generateTask(topicId, s.level, undefined, lang, year), gen: { lang, year } };
     const id = this.saveTask(studentId, task, "practice");
+    // Zastarela nedotaknjena naloga odide šele za novo: nova dobi drugo številko (odjemalec ima morda staro).
+    if (pending) this.db.prepare("DELETE FROM tasks WHERE id = ?").run(pending.id);
     return { task: { id, mode: "practice", ...publicTask(task) }, state: { level: s.level, streak: s.streak } };
   }
 
@@ -277,7 +321,7 @@ export class Progress {
         this.saveState(st);
       }
       const level = item.level ?? st.level;
-      let task = generateTask(item.topic, level, undefined, this.taskLang(sess.student_id));
+      let task = generateTask(item.topic, level, undefined, this.taskLang(sess.student_id), this.taskYear(sess.student_id));
       // Izpitni format: izbirna vprašanja (A–D) namesto vpisa števila.
       if (item.format === "choice") task = toChoice(task, task.seed, item.options || 4);
       const id = this.saveTask(sess.student_id, task, item.mode, sessionId);
@@ -295,7 +339,10 @@ export class Progress {
       if (sess && !sess.finished) {
         this.db.prepare("UPDATE sessions SET finished = 1 WHERE id = ?").run(sessionId);
         if (sess.kind === "daily") out.xp = this.award(sess.student_id, [[XP.daily, "dnevni trening"]]);
+        if (sess.kind === "list") out.list = this.listSummary(sess, all, true);
       }
+      if (sess?.kind === "list" && !out.list) out.list = this.listSummary(sess, all, false);
+      if (sess?.kind === "list") out.listXp = all.reduce((n, t) => n + (t.solved ? taskXp(t.level, t.hint_used || t.attempts > 1, t.attempts) : 0), 0);
       return out;
     }
     const payload = JSON.parse(open.payload);
@@ -336,7 +383,10 @@ export class Progress {
   startPlacement(studentId, pathKey, unitIndex) {
     const unit = getPath(pathKey)?.units[unitIndex];
     if (!unit) return null;
-    const topics = unit.topics.filter((t) => hasGenerator(t.id));
+    // Kot sklop na poti (pathView): osnovna raven brez tem samo za višjo raven, sicer bi OR pri Odvodu dobil 3 od 6 nalog iz VR.
+    const all = unit.topics.filter((t) => hasGenerator(t.id));
+    const own = all.filter(ravenKeeps(this.profileRaven(studentId, pathKey)));
+    const topics = own.length ? own : all;
     if (!topics.length) return null;
     const open = this.openSession(studentId, "placement", (x) => x.params.path === pathKey && x.params.unit === unitIndex);
     if (open) return this.sessionNext(open.id);
@@ -379,6 +429,7 @@ export class Progress {
       s.status = "learning";
       s.level = Math.max(1, Math.min(3, known));
       s.streak = 0;
+      s.wrong_streak = 0;
       this.saveState(s);
     }
     this.db.prepare("UPDATE topic_state SET pretest = ? WHERE student_id = ? AND topic_id = ?").run(known, studentId, topicId);
@@ -487,12 +538,14 @@ export class Progress {
   // ---------- tekmovanja ----------
   // Tekmovalni trening: prepletene naloge iz vseh tem tekmovalne poti. Teme, ki se
   // jih učenec že uči, pridejo večkrat; težavnost se prilagaja kot pri vadnici.
-  startCompetition(studentId, pathKey) {
+  // year: leto šolanja učenca; teme samo do njegovega razreda (competition.js topicsForYear).
+  startCompetition(studentId, pathKey, year = null, raven = null) {
     if (!isPrepPath(pathKey)) return null;
-    const view = this.pathView(studentId, pathKey);
+    const view = this.pathView(studentId, pathKey, year, raven);
     const topics = view?.units.flatMap((u) => u.topics).filter((t) => t.practice) || [];
     if (!topics.length) return null;
-    const open = this.openSession(studentId, "tek", (x) => x.params.path === pathKey);
+    // Odprt trening iste poti nadaljujemo, če je za isto raven mature (starejši brez ravni veljajo za vse).
+    const open = this.openSession(studentId, "tek", (x) => x.params.path === pathKey && (x.params.raven === undefined || x.params.raven === raven));
     if (open) return this.sessionNext(open.id);
     const learning = shuffle(topics.filter((t) => t.status === "learning"));
     const rest = shuffle(topics.filter((t) => t.status !== "learning"));
@@ -513,15 +566,17 @@ export class Progress {
       if (j > 0) [order[i], order[j]] = [order[j], order[i]];
     }
     const plan = order.map((topic) => ({ topic, mode: "practice" }));
-    return this.sessionNext(this.createSession(studentId, "tek", plan, { path: pathKey }));
+    return this.sessionNext(this.createSession(studentId, "tek", plan, { path: pathKey, raven }));
   }
 
   // Poskusno tekmovanje: 10 nalog iz različnih tem, od lažjih k težjim, na čas,
   // en poskus, brez namigov. Rezultat (točke) je viden šele na koncu.
-  startContest(studentId, pathKey) {
+  startContest(studentId, pathKey, year = null, raven = null) {
     if (!isPrepPath(pathKey)) return null;
     const path = getPath(pathKey);
-    const topics = path.units.flatMap((u) => u.topics).filter((t) => hasGenerator(t.id)).map((t) => t.id);
+    const all = path.units.flatMap((u) => u.topics).filter((t) => ravenKeeps(raven)(t) && hasGenerator(t.id)).map((t) => t.id);
+    // Tekmovanje: samo teme do učenčevega razreda (kot kategorije po razredih pri Kenguruju in Vegovem).
+    const topics = isCompetitionPath(pathKey) ? topicsForYear(all, year) : all;
     if (!topics.length) return null;
     const open = this.openSession(studentId, "contest", (x) => x.params.path === pathKey);
     if (open) {
@@ -529,7 +584,7 @@ export class Progress {
       this.finishContest(open);
     }
     // Izpit: vprašanja in čas po formatu izpita; tekmovanje: 10 nalog od lažjih k težjim.
-    const exam = isExamPath(pathKey) ? mockPlan(pathKey) : null;
+    const exam = isExamPath(pathKey) ? mockPlan(pathKey, raven) : null;
     const order = shuffle(topics);
     const plan = exam ? exam.plan : CONTEST.levels.map((level, i) => ({ topic: order[i % order.length], mode: "contest", level }));
     const minutes = exam ? exam.minutes : CONTEST.minutes;
@@ -606,9 +661,10 @@ export class Progress {
   // Tema izpita šteje kot njena osnovna tema na Učni poti (MAT-EX-NPZ9/… ↔ MAT-OS-8/…): velja boljše stanje.
   // Ocena teme: obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0.
   // Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
-  examReadiness(studentId, pathKey) {
+  examReadiness(studentId, pathKey, raven = null) {
     if (!isExamPath(pathKey)) return null;
     const path = getPath(pathKey);
+    const forRaven = ravenKeeps(raven);
     const now = nowSql();
     const stateOf = this.db.prepare("SELECT status, level, review_due FROM topic_state WHERE student_id = ? AND topic_id = ?");
     const tries = this.db.prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN first_try_correct = 0 THEN 1 ELSE 0 END) AS wrong FROM tasks WHERE student_id = ? AND topic_id = ? AND first_try_correct IS NOT NULL");
@@ -617,7 +673,7 @@ export class Progress {
     const topics = [];
     path.units.forEach((u, ui0) =>
       u.topics.forEach((t0, ti) => {
-        if (!hasGenerator(t0.id)) return;
+        if (!forRaven(t0) || !hasGenerator(t0.id)) return;
         const ids = [t0.id, ...(t0.base || [])];
         let score = 0;
         let n = 0;
@@ -634,12 +690,14 @@ export class Progress {
     );
     if (!topics.length) return { percent: 0, weakest: [] };
     const percent = Math.round((100 * topics.reduce((s, t) => s + t.score, 0)) / topics.length);
-    const weakest = topics
+    const out = ({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" });
+    const sorted = topics
       .filter((t) => t.score < 1)
-      .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order)
-      .slice(0, 3)
-      .map(({ id, name, unit, score }) => ({ id, name, unit, status: score === 0 ? "new" : score < 0.8 ? "learning" : "due" }));
-    return { percent, weakest };
+      .sort((a, b) => a.score - b.score || b.wrongRate - a.wrongRate || b.tried - a.tried || a.order - b.order);
+    const weakest = sorted.slice(0, 3).map(out);
+    // Najšibkejša med temami, ki jih je učenec že vadil (kartica Danes): neizvadena tema o šibkosti ne pove nič.
+    const vadena = sorted.find((t) => t.tried > 0 || t.score > 0);
+    return { percent, weakest, weakestTried: vadena ? out(vadena) : null };
   }
 
   // Zadnji rezultati poskusnih tekmovanj na tej poti.
@@ -701,13 +759,52 @@ export class Progress {
     const open = this.openSession(studentId, "test", (x) => x.created_at.slice(0, 10) === today());
     if (open) return this.sessionNext(open.id);
     const path = getPath(plan.path);
-    const topics = plan.units.flatMap((i) => path.units[i].topics).filter((t) => hasGenerator(t.id)).map((t) => t.id);
+    const all = plan.units.flatMap((i) => path.units[i].topics).filter((t) => hasGenerator(t.id));
+    // Osnovna raven brez tem samo za višjo raven; če izbrani sklopi nimajo drugih tem, ostanejo vse.
+    const own = all.filter(ravenKeeps(this.profileRaven(studentId, plan.path)));
+    const topics = (own.length ? own : all).map((t) => t.id);
     if (!topics.length) return null;
     const d = plan.daysLeft;
     const levels = d >= 7 ? [1, 1, 2, 2, 2, 2, 2, 2, 3, 3] : d >= 3 ? [1, 2, 2, 2, 2, 3, 3, 3, 3, 3] : [2, 2, 3, 3, 3, 3, 3, 3, 3, 3];
     const order = shuffle(topics);
     const items = Array.from({ length: RULES.testTasks }, (_, i) => ({ topic: order[i % order.length], mode: "test", level: levels[i] }));
     return this.sessionNext(this.createSession(studentId, "test", items, { date: plan.date }));
+  }
+
+  // ---------- vaja iz testa ali domače naloge (server/vaja-iz-lista.js) ----------
+  // skills: id-ji tem z generatorji (veščine, ki jih je učenec potrdil na seznamu). Naloge so samo naše (Vadnica),
+  // od lažjih k težjim: prva tretjina stopnja 1, druga 2, zadnja 3; veščine se izmenjujejo. V seji so shranjeni samo
+  // id-ji tem (nikoli besedilo izvirnih nalog).
+  startList(studentId, skills, length) {
+    const ids = [...new Set(skills)].filter((id) => getTopic(id) && hasGenerator(id)).slice(0, LIST.maxSkills);
+    if (!ids.length || !LIST.lengths.includes(length)) return null;
+    // Več veščin kot nalog: v vajo pride toliko (naključnih) veščin, kolikor je nalog; povzetek pozna samo te.
+    const order = shuffle(ids).slice(0, length);
+    const plan = Array.from({ length }, (_, i) => ({ topic: order[i % order.length], mode: "list", level: 1 + Math.min(2, Math.floor((3 * i) / length)) }));
+    return this.sessionNext(this.createSession(studentId, "list", plan, { skills: order }));
+  }
+  // Povzetek po veščinah: »ok« (vsaj 2 nalogi in vsaj 3/4 v prvem poskusu), »more« (pod tem) ali »few« (ena sama
+  // pravilna naloga: premalo za oceno). apply (enkrat, ob koncu seje): šibka tema, ki je bila obvladana že pred to
+  // sejo, gre jutri v ponavljanje (review: true); šibka nova tema dobi stanje »učim se« (vidna na poti).
+  listSummary(sess, all, apply) {
+    const lang = this.uiLang(sess.student_id);
+    return (sess.params.skills || []).map((id) => {
+      const rows = all.filter((t) => t.topic_id === id && t.first_try_correct !== null);
+      const correct = rows.filter((t) => t.first_try_correct).length;
+      const share = rows.length ? correct / rows.length : 0;
+      // »none«: veščina brez odgovorjene naloge (odjemalec je ne pokaže).
+      const status = !rows.length ? "none" : rows.length >= 2 && share >= LIST.okShare ? "ok" : rows.length === 1 && correct === 1 ? "few" : "more";
+      const st = this.state(sess.student_id, id);
+      const before = st.status === "mastered" && st.mastered_at && st.mastered_at < sess.created_at;
+      if (apply && rows.length && status === "more") {
+        if (before) this.advanceReview(sess.student_id, id, false);
+        else if (st.status === "new") {
+          st.status = "learning";
+          this.saveState(st);
+        }
+      }
+      return { id, name: localTopic(getTopic(id), lang)?.name || getTopic(id)?.name || id, correct, total: rows.length, status, ok: status === "ok", review: status === "more" && !!before };
+    });
   }
 
   // Pregled za spodnjo vrstico.
@@ -748,15 +845,15 @@ export class Progress {
     if (packsToday >= RULES.offlinePacksPerDay) return { limited: true };
     this.db.prepare("INSERT INTO offline_packs (student_id) VALUES (?)").run(studentId);
     // Izdane naloge (seme, raven): sinhronizacija sprejme samo te, ne poljubnih semen (P2: neomejen XP).
-    const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level) VALUES (?, ?, ?, ?)");
+    const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level, year) VALUES (?, ?, ?, ?, ?)");
     this.db.prepare(`DELETE FROM offline_issued WHERE created_at < datetime('now','-${RULES.offlineIssuedDays} days')`).run();
     for (const t of topics) {
       const topic = getTopic(t.id);
       info[t.id] = { id: t.id, name: topic.name, goals: topic.goals, unit: topic.unit, path: pathKey, subject: topic.subject, pathLabel: path.label };
       tasks[t.id] = Array.from({ length: perTopic }, (_, i) => {
         const level = Math.max(1, Math.min(3, t.level + (i % 3 === 2 ? 1 : 0)));
-        const task = generateTask(t.id, level, undefined, this.taskLang(studentId));
-        issue.run(studentId, t.id, task.seed, level);
+        const task = generateTask(t.id, level, undefined, this.taskLang(studentId), this.taskYear(studentId));
+        issue.run(studentId, t.id, task.seed, level, this.taskYear(studentId));
         return { level, seed: task.seed, task: publicTask(task), answer: task.answer, solution: task.solution, hint: task.hint };
       });
     }
@@ -774,14 +871,15 @@ export class Progress {
     let noXp = 0;
     const seen = this.db.prepare("INSERT OR IGNORE INTO offline_results (student_id, topic_id, seed) VALUES (?, ?, ?)");
     const issued = this.db.prepare(
-      `SELECT 1 FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
+      `SELECT year FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
     );
     let left = RULES.offlineXpPerDay - this.db.prepare("SELECT COUNT(*) AS n FROM offline_results WHERE student_id = ? AND date(created_at) = date('now')").get(studentId).n;
     for (const r of results.slice(0, 300)) {
       const level = Number(r?.level);
       const seed = Number(r?.seed);
       if (!getTopic(r?.topic_id) || !hasGenerator(r.topic_id) || ![1, 2, 3].includes(level) || !Number.isInteger(seed) || seed < 0 || seed >= 2 ** 31) continue;
-      if (!issued.get(studentId, r.topic_id, seed, level)) {
+      const iss = issued.get(studentId, r.topic_id, seed, level);
+      if (!iss) {
         skipped += 1;
         continue;
       }
@@ -789,7 +887,9 @@ export class Progress {
       const xp = left > 0;
       left -= 1;
       if (!xp) noXp += 1;
-      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId));
+      // Razred ob izdaji (učenec ga je vmes lahko spremenil): ista naloga kot v paketu. NULL (paket izdan pred
+      // shranjevanjem razreda, ali učenec brez razreda) = naloga brez razreda, kot ob izdaji teh paketov.
+      const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId), iss.year);
       const id = this.saveTask(studentId, task, "practice");
       const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200), { xp });
       synced += 1;
@@ -815,12 +915,17 @@ export class Progress {
     }
 
     const task = row.payload;
-    const res = checkAnswer(task.answer, input);
+    // Pravilno pretvorjen rezultat (druga predpona) velja povsod, kjer besedilo ne zahteva enote (j, 17. 11. 2026).
+    // math: cel zapis (»5√7«, »y = −9x + 6«) in izraz namesto števila; find: »b = 7« pri iskani količini b.
+    const res = checkAnswer(task.answer, input, { convert: true, text: task.text, find: task.data?.find, math: MATH });
     // code/params: prevod sporočila v jeziku vmesnika (message ostane slovenski).
     const out = { kind: res.kind, message: res.message || null, ...(res.code ? { code: res.code, params: res.params || {} } : {}) };
 
-    // Napake v zapisu (manjka enota, neokrajšan ulomek ...) ne štejemo kot poskus.
-    if (["format", "unit", "simplify"].includes(res.kind)) {
+    // Napake v zapisu (manjka enota, neokrajšan ulomek ...) ne štejemo kot poskus. Napačna enota (chk.unit) na
+    // tekmovanju in poskusnem izpitu (mode »contest«) šteje kot napačen odgovor (j, 17. 11. 2026: »Nevtralno + šteje
+    // na tekmovanjih«); manjkajoča enota (chk.addUnit) je povsod nov poskus.
+    const wrongUnitCounts = res.kind === "unit" && res.code === "chk.unit" && row.mode === "contest";
+    if (["format", "unit", "simplify"].includes(res.kind) && !wrongUnitCounts) {
       return { ...out, retry: true };
     }
 
@@ -873,13 +978,14 @@ export class Progress {
       out.correct = true;
       out.solution = task.solution;
       const helped = row.hint_used || attempts > 1;
-      let xp = helped ? Math.max(XP.minWithHelp, Math.floor(XP.base(row.level) / 2)) : XP.base(row.level);
+      const xp = taskXp(row.level, helped, 1);
       const reasons = [[xp, helped ? "pravilno (s pomočjo)" : "pravilno"]];
       if (attempts > 1) reasons.push([XP.fixBonus, "popravljena napaka"]);
       out.xp = giveXp ? this.award(studentId, reasons) : null;
 
       if (row.mode === "practice") {
         if (firstTry) {
+          s.wrong_streak = 0;
           s.streak += 1;
           if (s.streak >= RULES.levelUpStreak && s.level < 3) {
             s.level += 1;
@@ -895,6 +1001,12 @@ export class Progress {
         }
       }
       if (row.mode === "review" && firstTry) this.advanceReview(studentId, row.topic_id, true);
+      // Vaja iz testa: naloge štejejo v obvladanje teme (kot vaja), stopnje teme ne spreminjajo (načrt je od lažjih k težjim).
+      if (row.mode === "list" && s.status !== "mastered" && this.checkMastery(studentId, row.topic_id)) {
+        this.markMastered(studentId, row.topic_id, "practice");
+        out.mastered = true;
+        if (giveXp) out.xp = this.award(studentId, [[XP.mastery, "obvladana tema"]], out.xp);
+      }
       if (row.session_id) out.next = this.sessionNext(row.session_id);
       // Samorazlaga: občasno vprašanje »zakaj?«
       if (Math.random() < 0.3) out.selfExplain = "Razloži sam sebi v enem stavku: zakaj je bil ključni korak pravilen?";
@@ -903,11 +1015,17 @@ export class Progress {
 
     // Napačno
     out.correct = false;
+    // Šteje prvi poskus vsake naloge (kot pri streak): raven se zniža šele po RULES.levelDownStreak napačnih
+    // zapored na isti ravni; pravilen odgovor ali sprememba ravni števec ponastavi.
     if (row.mode === "practice" && firstTry) {
       s.streak = 0;
-      if (s.level > 1) {
-        s.level -= 1;
-        out.levelDown = s.level;
+      s.wrong_streak = (s.wrong_streak || 0) + 1;
+      if (s.wrong_streak >= RULES.levelDownStreak) {
+        s.wrong_streak = 0;
+        if (s.level > 1) {
+          s.level -= 1;
+          out.levelDown = s.level;
+        }
       }
       this.saveState(s);
     }
@@ -957,7 +1075,7 @@ export class Progress {
     const last = this.db
       .prepare(
         `SELECT first_try_correct, level FROM tasks
-         WHERE student_id = ? AND topic_id = ? AND mode IN ('practice','review') AND first_try_correct IS NOT NULL
+         WHERE student_id = ? AND topic_id = ? AND mode IN ('practice','review','list') AND first_try_correct IS NOT NULL
          ORDER BY id DESC LIMIT ?`,
       )
       .all(studentId, topicId, RULES.masteryWindow);
@@ -994,7 +1112,10 @@ export class Progress {
       // Vse teme sklopa (tudi brez vaj) štejemo kot obvladane.
       const t0 = getTopic(topics[0]);
       const unit = getPath(t0.path).units[t0.unitIndex];
-      for (const t of unit.topics) this.markMastered(studentId, t.id, "placement");
+      // Teme samo za višjo raven, ki jih preizkus osnovne ravni ni zajel, ostanejo neosvojene (sicer bi prišle v ponavljanje).
+      const keep = ravenKeeps(this.profileRaven(studentId, t0.path));
+      const own = unit.topics.filter(keep);
+      for (const t of own.length ? own : unit.topics) this.markMastered(studentId, t.id, "placement");
       xp = this.award(studentId, [[XP.placement, "preizkus znanja"]]);
     } else {
       for (const id of topics) {
@@ -1056,6 +1177,8 @@ export class Progress {
 
   xpSummary(studentId) {
     const total = this.db.prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ?").get(studentId).s;
+    // ownTotal: XP brez nalog pilota (razlog »pilot: …«); po njem klient ve, ali je učenec sam kaj rešil (uvod po prvi nalogi).
+    const ownTotal = this.db.prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ? AND COALESCE(reason, '') NOT LIKE 'pilot:%'").get(studentId).s;
     const week = this.db
       .prepare("SELECT COALESCE(SUM(amount),0) AS s FROM xp_events WHERE student_id = ? AND created_at >= ?")
       .get(studentId, weekStart()).s;
@@ -1066,7 +1189,7 @@ export class Progress {
     // Raven in napredek do naslednje (levelFrom/levelTo = skupni XP na začetku te in naslednje ravni),
     // današnji XP in dnevni cilj iz nastavitve profila xp_goal.
     const goal = cleanXpGoal(this.store.getStudent?.(studentId)?.settings?.xp_goal);
-    return { total, week, today, goal, streak: this.dayStreak(studentId), level: lp.level, levelFrom: lp.from, levelTo: lp.to };
+    return { total, ownTotal, week, today, goal, streak: this.dayStreak(studentId), level: lp.level, levelFrom: lp.from, levelTo: lp.to };
   }
 
 }

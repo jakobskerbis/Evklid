@@ -291,3 +291,39 @@ test("vpiši število: tipična napačna vrednost »~« ima svojo natančnost, n
   // Brez lastne natančnosti (stari podatki) velja kot prej toleranca pravilnega odgovora.
   assert.equal(checkNumber({ value: 2.3, tol: 0.005, wrong: [{ value: 5.3 }] }, "5,301").wrong, 0);
 });
+
+test("tisočice s piko: 10.000 je deset tisoč, dvoumno 12.345 velja na oba načina", () => {
+  assert.equal(parseNum("1.250.000"), 1250000);
+  assert.equal(parseNum("10.000,5"), 10000.5);
+  assert.deepEqual(checkNumber({ value: 10000, tol: 0, wrong: [] }, "10.000"), { ok: true, wrong: -1 });
+  // Dvoumno »12.345«: velja 12,345 ali dvanajst tisoč; »10.000« (decimalke 000) je samo deset tisoč.
+  assert.deepEqual(checkNumber({ value: 12.345, tol: 0.0005, wrong: [] }, "12.345"), { ok: true, wrong: -1 });
+  assert.deepEqual(checkNumber({ value: 12345, tol: 0, wrong: [] }, "12.345"), { ok: true, wrong: -1 });
+  assert.equal(checkNumber({ value: 10, tol: 0, wrong: [] }, "10.000").ok, false);
+  assert.deepEqual(checkNumber({ value: 1250000, tol: 0, wrong: [] }, "1.250.000 €"), { ok: true, wrong: -1 });
+  assert.equal(checkNumber({ value: 10000, tol: 0, wrong: [] }, "10.001").ok, false);
+  assert.equal(parseNum("2.5"), 2.5);
+  // Pretvorba enot: »2.345« ob tipični napaki »~ 2,345« (kg namesto g) ni pravilen odgovor 2345.
+  assert.deepEqual(checkNumber({ value: 2345, tol: 0, wrong: [{ value: 2.345, tol: 0.0005 }] }, "2.345"), { ok: false, wrong: 0 });
+  assert.equal(checkNumber({ value: 125, tol: 0, wrong: [] }, "0.125").ok, false);
+  // »2.000« je dva tisoč, tudi če je med napakami »~ 2« (kW namesto W).
+  assert.deepEqual(checkNumber({ value: 2000, tol: 0, wrong: [{ value: 2, tol: 0.5 }] }, "2.000"), { ok: true, wrong: -1 });
+  // Branje s tisočicami najde tudi tipično napako.
+  assert.equal(checkNumber({ value: 5, tol: 0, wrong: [{ value: 2345, tol: 0.5 }] }, "2.345").wrong, 0);
+});
+
+test("tipična napačna vrednost se prepozna tudi zaokrožena na decimalke vnosa", () => {
+  const q = { value: 2.5, tol: 0.01, wrong: [{ value: 0.015625, tol: 5e-7 }, { value: 42.67, tol: 0.005 }, { value: 2.45, tol: 0.005 }] };
+  assert.equal(checkNumber(q, "0,016").wrong, 0);
+  assert.equal(checkNumber(q, "0,0156").wrong, 0);
+  assert.equal(checkNumber(q, "42,7").wrong, 1);
+  assert.equal(checkNumber(q, "42,6").wrong, -1);
+  // Grobo zaokrožen pravilni odgovor ni tipična napaka (2,54 in »~ 2,46«: vnos 2,5).
+  assert.equal(checkNumber({ value: 2.54, tol: 0.005, wrong: [{ value: 2.46, tol: 0.005 }] }, "2,5").wrong, -1);
+  assert.equal(checkNumber(q, "0,0").wrong, -1);
+  // Odrezan pravilni odgovor (0,6 pri 0,67) ne dobi razlage tuje napake 0,58; izmed več ujemanj velja najbližja.
+  assert.equal(checkNumber({ value: 0.67, tol: 0.005, wrong: [{ value: 0.58, tol: 0.005 }] }, "0,6").wrong, -1);
+  assert.equal(checkNumber({ value: 5, tol: 0, wrong: [{ value: 0.24, tol: 0.005 }, { value: 0.17, tol: 0.005 }] }, "0,2").wrong, 1);
+  assert.equal(checkNumber(q, "0").wrong, -1); // celo število brez decimalk ne zaokroža napačnih vrednosti
+  assert.equal(checkNumber(q, "2,5").ok, true);
+});

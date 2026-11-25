@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -34,16 +34,24 @@ Glasilna špranja je najožje mesto poti pri odraslem. Tujek, ki gre skozi njo, 
 
 **Glavna bronha** se razlikujeta. Skica razcepa:
 
-```
-         sapnik
-           |
-    +------+------+
-  desni         levi
-  kratek        daljši
-  širok         ožji
-  strm          položen
-  3 režnji      2 režnja
-```
+:::risba skica
+opis: Razcep sapnika na glavna bronha. Sapnik teče navpično navzdol in se razcepi. Desni glavni bronh (na sliki levo) je kratek, širok in strm ter vodi v pljučno krilo s 3 režnji. Levi glavni bronh (na sliki desno) je daljši, ožji in položen ter vodi v pljučno krilo z 2 režnjema.
+območje: 0; 25 .. 300; 205
+črta: 150; 198 -> 150; 130 | debelo
+črta: 150; 130 -> 133,1; 93,7 | debelo
+črta: 150; 130 -> 206,6; 73,4
+napis: 158; 170 | sapnik | desno
+napis: 70; 112 | desni | sredina | debelo
+napis: 70; 94 | kratek
+napis: 70; 76 | širok
+napis: 70; 58 | strm
+napis: 70; 40 | 3 režnji
+napis: 255; 112 | levi | sredina | debelo
+napis: 255; 94 | daljši
+napis: 255; 76 | ožji
+napis: 255; 58 | položen
+napis: 255; 40 | 2 režnja
+:::
 
 Desni glavni bronh je dolg okoli $2{,}5\,\mathrm{cm}$, širši in od navpičnice odklonjen le okoli $25°$. Levi je dolg okoli $5\,\mathrm{cm}$, ožji in odklonjen okoli $45°$, ker mora pod aortnim lokom mimo srca.
 
@@ -58,7 +66,7 @@ Pljuča hranita dva obtoka. Pljučne arterije prinesejo vso kri za izmenjavo pli
 
 **Alveole.** Pljuča imajo okoli $300$–$500$ milijonov alveol s skupno površino okoli $70\,\mathrm{m^2}$. Steno alveole gradijo ploščati **pnevmociti tipa I** (izmenjava plinov) in kockasti **pnevmociti tipa II**, ki izločajo **surfaktant**. Ta zmanjša površinsko napetost, da se alveole ob izdihu ne sesedejo. **Krvno-zračna pregrada** (pnevmocit I, zlita bazalna membrana, endotelij kapilare) je debela le okoli $0{,}5\,\mathrm{\mu m}$. V alveolah so še makrofagi, ki požirajo prah.
 
-**Popljučnica (plevra).** Kot pri vseh seroznih mrenah ima dva lista. **Visceralni** list prekriva pljuča in sega v fisure. **Parietalni** prekriva notranjo stran prsne stene, prepono, sredoprsje in nad vrhom pljuč tvori **plevralno kupolo**. Med listoma je reža z nekaj mililitri tekočine. Tam, kjer se parietalni list z ene stene obrne na drugo, nastanejo **recesusi**, žepi, v katere pljuča sežejo le ob globokem vdihu. Največji je **rebrno-prepončni recesus**.
+**Plevra (poprsnica).** Kot pri vseh seroznih mrenah ima dva lista. **Visceralni** list (popljučnica) prekriva pljuča in sega v fisure. **Parietalni** (porebrnica) prekriva notranjo stran prsne stene, prepono, sredoprsje in nad vrhom pljuč tvori **plevralno kupolo**. Med listoma je reža z nekaj mililitri tekočine. Tam, kjer se parietalni list z ene stene obrne na drugo, nastanejo **recesusi**, žepi, v katere pljuča sežejo le ob globokem vdihu. Največji je **rebrno-prepončni recesus**.
 
 **Meje.** Pri mirnem dihanju je spodnji rob pljuč in plevre takšen (pravilo »6–8–10« in »8–10–12«):
 
@@ -66,7 +74,7 @@ Pljuča hranita dva obtoka. Pljučne arterije prinesejo vso kri za izmenjavo pli
 - **plevra:** $8.$, $10.$ in $12.$ rebro v istih črtah;
 - razlika dveh reber je rebrno-prepončni recesus.
 
-**Dihalne mišice.** Glavna je **prepona**; živec preponec izhaja iz vratnih segmentov $\mathrm{C3}$–$\mathrm{C5}$. Ko se skrči, se kupola spusti in prsna votlina se poveča. Zunanje medrebrne mišice dvigajo rebra pri vdihu, notranje jih spuščajo pri aktivnem izdihu. Ob vsakem rebru, v žlebu na njegovem **spodnjem** robu, teče medrebrni snop: vena, arterija in živec, od zgoraj navzdol.
+**Dihalne mišice.** Glavna je **prepona**; prepončni živec izhaja iz vratnih segmentov $\mathrm{C3}$–$\mathrm{C5}$. Ko se skrči, se kupola spusti in prsna votlina se poveča. Zunanje medrebrne mišice dvigajo rebra pri vdihu, notranje jih spuščajo pri aktivnem izdihu. Ob vsakem rebru, v žlebu na njegovem **spodnjem** robu, teče medrebrni snop: vena, arterija in živec, od zgoraj navzdol.
 
 :::premisli
 Rana z nožem v spodnjem delu vratu, tik nad ključnico, lahko povzroči pnevmotoraks (zrak v plevralni votlini). Zakaj, če so pljuča vendar v prsnem košu?
@@ -153,14 +161,14 @@ $V_\mathrm{cev} = \pi \left(\frac{d}{2}\right)^2 l$, $V_\mathrm{A} = (V_\mathrm{
 :::premisli
 Kolikšna je alveolarna ventilacija in za koliko odstotkov se zmanjša?
 ---
-$(500 - 150 - 94) \cdot 12 = 3072\,\mathrm{mL/min}$, okoli $3{,}1\,\mathrm{L/min}$ namesto $4{,}2\,\mathrm{L/min}$, kar je okoli četrtino manj. Zato so dihalke kratke in potapljač z njo diha globlje.
+$(500 - 150 - 94) \cdot 12 = 3072\,\mathrm{mL/min}$, okoli $3{,}1\,\mathrm{L/min}$ namesto $4{,}2\,\mathrm{L/min}$, kar je okoli četrtino manj. Zato so dihalke kratke in potapljač z dihalko diha globlje.
 :::
 
 ## Pogoste napake
 
 - **»Sapnik je ves iz hrustančnih obročev.«** Hrustanci so v obliki črke C; zadnja stena je mišična in se dotika požiralnika. Zato grižljaj v požiralniku lahko pritisne na sapnik.
 - **»Levo pljučno krilo ima tri režnje, ker sta krili simetrični.«** Levo ima dva režnja in le poševno fisuro; prostor tretjega zavzame srce (srčna zareza, lingula).
-- **»Pljuča in plevra se končata na isti višini.«** Plevra sega dve rebri niže. Ta razlika je recesus, ki je ključen za torakocentezo in za razumevanje, kam steče tekočina.
+- **»Pljuča in plevra se končajo na isti višini.«** Plevra sega dve rebri niže. Ta razlika je recesus, ki je ključen za torakocentezo in za razumevanje, kam steče tekočina.
 - **Vbod ob spodnjem robu rebra.** Medrebrni snop teče na spodnjem robu zgornjega rebra; igla gre nad zgornjim robom spodnjega.
 - **»Ves vdihnjeni zrak pride do alveol.«** Okoli $150\,\mathrm{mL}$ vsakega vdiha ostane v prevodnem delu. Plitvo dihanje zato zelo zmanjša alveolarno ventilacijo (Naloga 1).
 
@@ -245,7 +253,7 @@ Drevo je posajeno v dve vreči z mokro notranjostjo: to sta plevralni votlini. V
 > Razlika med mejo plevre in pljuč je rebrno-prepončni recesus.
 
 ? Pljuča imajo okoli $70\,\mathrm{m^2}$ površine alveol. Približno kolikšen del te površine ostane, če emfizem uniči polovico alveolarnih sten in je pregrada nespremenjena?
-- skoraj vsa, ker alveol je več sto milijonov
+- skoraj vsa, ker je alveol več sto milijonov
 ~ Število ne pomaga, če je uničena polovica sten; površina se zmanjša sorazmerno.
 + okoli polovica, torej okoli $35\,\mathrm{m^2}$
 - okoli četrtina

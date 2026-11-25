@@ -1,0 +1,19 @@
+{
+  "np.ask.exam": "Cilin NPZ ke parasysh?",
+  "np.ask.subject": "Nga cila lëndë është detyra?",
+  "np.ask.level": "Nivel bazë apo i lartë?",
+  "np.ask.year": "Nga cili vit është provimi?",
+  "np.ask.pola": "Nga cila fletë provimi është detyra {n}?",
+  "np.ask.session": "Cili afat?",
+  "np.ask.section": "Nga cila pjesë e provimit është detyra {n}?",
+  "np.plain": "Dërgoje si pyetje të zakonshme",
+  "np.ours": "Kjo është një detyrë e Evklidit në stilin e provimit «{paper}», jo detyra origjinale e RIC. Origjinali është falas në ric.si.",
+  "np.figure": "Figura e detyrës është në provimin e Evklidit.",
+  "np.openOurs": "Hap në provimin e Evklidit",
+  "np.noOurs": "Për «{paper}» ende nuk kemi version të Evklidit. Shkarko origjinalin nga ric.si, hape këtu dhe te detyra {n} prek «{help}».",
+  "np.missing": "Versioni i Evklidit për «{paper}» nuk ka detyrën {n}. Kontrollo numrin e detyrës.",
+  "np.download": "Shkarko origjinalin: {file}",
+  "np.openOriginal": "Hap origjinalin",
+  "np.pickHint": "Fillimisht shkarko origjinalin, pastaj te «Hap origjinalin» zgjidh skedarin {name}.",
+  "np.wrongFile": "Ky është provim tjetër. Zgjidh skedarin {name}."
+}

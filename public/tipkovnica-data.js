@@ -99,32 +99,47 @@ export const FX_GROUPS = [
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
 export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" };
 
-// Kemija: dva podzavihka (kot Σ), da zavihek ostane enako visok kot drugi: »Snovi« (elementi in indeksi) in »Reakcije«
-// (» + « med snovmi, puščice (» → «, » ⇌ « s presledkoma, napis tipke brez; ↑ ↓ brez), naboji, agregatna stanja). Tu je vse, kar je imel prej tudi čip »Kemija« v Σ (j, 5. 11.:
-// kemija je bila dvakrat); čip se v Σ ne pokaže več, kjer je zavihek »Kem« (symbols.js symGroups). Napisa podzavihkov
-// sta ključa i18n (tk.kem.el, tk.kem.re); tipka »H₂O« v spodnji vrstici je oblikovanje formule v polju (tk.chemFormat).
-// Naboji so na tipkah izrisani nadpisano ob ◌ (tipkovnica.js), da se ločijo od » + « med snovmi.
+// Kemija (j, 13. 11.: »Izboljšaj tipkovnico za kemijo«): štiri strani, vsaka tri vrste, enake v zavihku »Kem« in v Σ → Kemija
+// (tipkovnica.js kemBody). »Snovi«: pogosti elementi in indeksi (₂, spodaj); »Ioni«: naboji (²⁺, zgoraj), skupine (SO₄),
+// nadpisane števke (¹⁴C, 1s²); »Reakcije«: » + « in puščice s presledkoma, ↑ ↓, pogoji (Δ, hν, kat.), agregatna stanja,
+// termodinamika in enote; »Vsi elementi«: začetnica, nato vsi elementi s to začetnico (KEM_LETTERS, symbols.js ELEMENT_SYMBOLS).
+// Napisi strani so ključi i18n (tk.kem.*); »KAT« je katalizator v jeziku učenca (tk.kem.cat). Indeksi in naboji so na tipkah
+// izrisani ob ◌ (spodaj ali zgoraj), da se ločijo od navadnih števk in od » + « med snovmi. Tipka »H₂O« v spodnji vrstici
+// je oblikovanje formule v polju (tk.chemFormat).
 export const KEM_GROUPS = [
   ["el", "tk.kem.el", [
-    ["H", "C", "N", "O", "S", "Cl", "Na", "K", "Ca", "Fe"],
-    ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"],
+    ["H", "C", "N", "O", "S", "P", "Cl", "Na", "K", "Ca"],
+    ["Mg", "Al", "Fe", "Cu", "Zn", "Ag", "F", "Br", "I", "Si"],
+    ["₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "₀"],
+  ]],
+  ["ion", "tk.kem.ion", [
+    ["⁺", "⁻", "²⁺", "²⁻", "³⁺", "³⁻", "⁴⁺", "⁴⁻", "·", "[@]"],
+    ["OH", "NO₃", "SO₄", "CO₃", "PO₄", "NH₄", "HCO₃", "MnO₄"],
+    ["¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "⁰"],
   ]],
   ["re", "tk.kem.re", [
-    [" + ", " → ", " ⇌ ", "↑", "↓", "Δ", "ΔH", "·", "°C", "e⁻"],
-    ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻", "(aq)", "(s)", "(l)", "(g)"],
+    [" + ", " → ", " ⇌ ", " ← ", "↑", "↓", "Δ", "hν", "KAT", "e⁻"],
+    ["(s)", "(l)", "(g)", "(aq)", "ΔH", "ΔS", "ΔG", "°", "%"],
+    ["°C", "kPa", "mol", "g/mol", "mol/L", "kJ/mol", "pH"],
   ]],
+  ["pse", "tk.kem.pse", []],
+];
+/** Strani »Vsi elementi«: začetnice simbolov (brez J in Q, s katerima se ne začne noben element), dve vrsti. */
+export const KEM_LETTERS = [
+  ["A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M"],
+  ["N", "O", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
 ];
 /** Naboj (⁺, ²⁻, …): na tipki nadpisan ob ◌, da ni videti kot » + « ali »−«. */
 export const KEM_CHARGE = /^[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/;
 export const KEM_ROWS = KEM_GROUPS.flatMap(([, , rows]) => rows);
 
-// Vrstica 123 nad številkami: v matematiki zapisi, drugje pogosti znaki.
-export const NUM_TOP_MATH = [["x²", "²"], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
+// Vrstica 123 nad številkami: v matematiki zapisi (z »=«, ker je v mreži namesto njega x), drugje pogosti znaki.
+export const NUM_TOP_MATH = [["x²", "²"], ["=", "="], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
 export const NUM_TOP_TEXT = [["( )", "(@)"], ["%", "%"], ["€", "€"], ["/", "/"], ["#", "#"], ["&", "&"]];
-// Pogosti znaki v klepetu z inštruktorjem (vrstica nad tipkami).
+// Pogosti znaki v klepetu z inštruktorjem (vrstica nad tipkami); »=« takoj za ulomkom, da je pri roki (j, 18. 11.).
 // Ulomek, potenca, indeks (zaporedja), integral in vsota se v poslanem sporočilu izrišejo kot formula (public/vnos-formul.js).
 export const TUTOR_CHIPS = [
-  ["a/b", "(@)/()"], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"], ["aₙ", "_(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["∑", "∑_(n=1)^(@) "],
+  ["a/b", "(@)/()"], ["=", "="], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"], ["aₙ", "_(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["∑", "∑_(n=1)^(@) "],
   ["π", "π"], ["∞", "∞"], ["→", "→"], ["≤", "≤"], ["≠", "≠"], ["·", "·"], ["°", "°"],
 ];
 export const URL_CHIPS = [["https://", "https://"], [".com", ".com"], [".si", ".si"], ["/", "/"]];
@@ -233,26 +248,12 @@ export function stepCaret(value, pos, dir) {
 }
 
 /** Enota pri nalogi: zamenja prejšnjo enoto na koncu odgovora (»12 m« + km/h → »12 km/h«). */
-export function withUnit(value, unit) {
-  return String(value ?? "").replace(/\s+[^\d\s,./−-][^\s]*$/, "").trimEnd() + " " + unit;
-}
+// Vpis enote (skupaj s ploščo Piši in aplikacijo): public/enote-izbira.js.
+export { withUnit } from "./enote-izbira.js";
 
 // ---------- nastavitve naprave ----------
-export const PREF_KEY = "evklid.tipkovnica";
-export const MODES = ["always", "math", "never"];
-export const DEFAULT_PREFS = { mode: "always", words: false, buzz: true, glide: true };
-export function parsePrefs(raw) {
-  let p = {};
-  try {
-    p = JSON.parse(raw || "{}") || {};
-  } catch {}
-  return {
-    mode: MODES.includes(p.mode) ? p.mode : DEFAULT_PREFS.mode,
-    words: typeof p.words === "boolean" ? p.words : DEFAULT_PREFS.words,
-    buzz: typeof p.buzz === "boolean" ? p.buzz : DEFAULT_PREFS.buzz,
-    glide: typeof p.glide === "boolean" ? p.glide : DEFAULT_PREFS.glide,
-  };
-}
+// Nastavitve tipkovnice so v svojem majhnem modulu: chat-settings.js jih rabi ob zagonu, ta datoteka pa ne.
+export { PREF_KEY, MODES, DEFAULT_PREFS, parsePrefs } from "./tipkovnica-nastavitve.js";
 
 /** Predlogi besed: do n besed iz seznama, ki se začnejo z začetkom besede (velika začetnica ostane). */
 export function suggest(words, prefix, n = 3) {
@@ -293,20 +294,6 @@ export function wordsBack(value, pos, n = 1) {
   for (let k = 0; k < n && p > 0; k++) {
     while (p > 0 && /\s/u.test(v[p - 1])) p--;
     while (p > 0 && !/\s/u.test(v[p - 1])) p--;
-  }
-  return p;
-}
-
-/** Začetek povedi pred kazalcem (troklik na ⌫): za zadnjim ».«, »!«, »?« ali »…« s presledkom ali za novo vrstico. */
-export function sentenceBack(value, pos) {
-  const v = String(value ?? "");
-  let p = Math.max(0, Math.min(pos, v.length));
-  while (p > 0 && /[ \t]/u.test(v[p - 1])) p--; // presledki tik pred kazalcem gredo s povedjo
-  while (p > 0 && /[.!?…]/u.test(v[p - 1])) p--; // ločilo konca te povedi
-  while (p > 0) {
-    const c = v[p - 1];
-    if (c === "\n" || (/\s/u.test(c) && p > 1 && /[.!?…]/u.test(v[p - 2]))) break;
-    p--;
   }
   return p;
 }

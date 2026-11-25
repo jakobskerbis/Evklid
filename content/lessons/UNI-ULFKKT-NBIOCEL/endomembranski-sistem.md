@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -47,7 +47,7 @@ Ne. SRP signal prepozna, ko izstopi iz ribosoma; C-konec izstopi šele ob koncu 
 
 **Zrnati ER** (z ribosomi) je mesto, kjer proteini nastanejo in se zvijejo:
 
-- **Zvijanje** pomagajo šaperoni (BiP), **protein disulfid-izomeraza** tvori disulfidne vezi, ki jih v citosolu ni (tam je redukcijsko okolje).
+- **Zvijanje:** pomagajo šaperoni (BiP), **protein disulfid-izomeraza** tvori disulfidne vezi, ki jih v citosolu ni (tam je redukcijsko okolje).
 - **N-glikozilacija:** encim oligosahariltransferaza prenese vnaprej sestavljen oligosaharid (iz $14$ sladkornih enot, pripet na lipid dolihol) na asparagin v zaporedju **Asn–X–Ser/Thr**, kjer X ni prolin. Prenos poteka med vnosom.
 - **Nadzor kakovosti:** kalneksin in kalretikulin zadržita napol zvite glikoproteine. Trajno napačno zviti proteini se vrnejo v citosol in razgradijo v proteasomu (z ER povezana razgradnja, ERAD). Če se nezviti proteini kopičijo, celica sproži **odziv na nezvite proteine**: manj prevajanja, več šaperonov.
 
@@ -73,19 +73,32 @@ Mešiček nastane, se odcepi, potuje in se zlije s pravo tarčo. Tri vrste **pla
 - **COPI:** iz Golgija nazaj v ER in med cisternami (nazaj);
 - **klatrin** (z adaptorji): iz TGN v endosome in iz plazmaleme pri endocitozi; odcep zadrgne GTPaza **dinamin**.
 
-Plašč na membrano pripeljejo majhne GTPaze (Sar1 za COPII, ARF za COPI). Pravo tarčo izbere par **Rab** proteinov in povezovalnih proteinov, zlitje pa izvedejo **SNARE**: v-SNARE na mešičku in t-SNARE na tarči se zvijeta v snop in membrani potegneta skupaj. Po zlitju snop razdre ATPaza NSF.
+Plašč na membrano pripeljejo majhne GTPaze (Sar1 za COPII, ARF za COPI). Pravo tarčo izbere par proteinov **Rab** in povezovalnih proteinov, zlitje pa izvedejo **SNARE**: v-SNARE na mešičku in t-SNARE na tarči se zvijeta v snop in membrani potegneta skupaj. Po zlitju snop razdre ATPaza NSF.
 
 **Vračanje.** Proteini ER, ki jih tok odnese naprej, imajo na C-koncu signal **KDEL** (Lys–Asp–Glu–Leu). Receptor KDEL v cis Golgiju jih ujame in s COPI mešički vrne v ER.
 
-```
-ER --COPII--> cis-Golgi
- ^              |
- +----COPI------+
-                v
-            trans (TGN)
-           /    |    \
-     endosom  mešiček  plazmalema
-```
+:::risba skica
+opis: Shema poti mešičkov z okvirji od zgoraj navzdol. Zgoraj je ER, pod njim cis-Golgi. Puščica navzdol iz ER v cis-Golgi ima oznako COPII (naprej), puščica navzgor iz cis-Golgija nazaj v ER oznako COPI (nazaj). Iz cis-Golgija vodi puščica navzdol v trans Golgi (TGN). Iz TGN vodijo tri puščice: v endosom, v mešiček in v plazmalemo.
+območje: 0; 0 .. 14; 10,4
+pravokotnik: 4,5; 8,6 .. 9,5; 9,8 | oranžna | ozadje
+napis: 7; 9,2 | ER | sredina
+puščica: 6; 8,6 -> 6; 7 | COPII (naprej) | levo
+puščica: 8; 7 -> 8; 8,6 | COPI (nazaj) | desno
+pravokotnik: 4,5; 5,8 .. 9,5; 7 | zelena | ozadje
+napis: 7; 6,4 | cis-Golgi | sredina
+puščica: 7; 5,8 -> 7; 4,6
+pravokotnik: 4,5; 3,4 .. 9,5; 4,6 | modra | ozadje
+napis: 7; 4 | trans (TGN) | sredina
+puščica: 5,5; 3,4 -> 2,5; 1,8
+puščica: 7; 3,4 -> 7; 1,8
+puščica: 8,5; 3,4 -> 11,5; 1,8
+pravokotnik: 0,5; 0,6 .. 4,5; 1,8 | siva | ozadje
+napis: 2,5; 1,2 | endosom | sredina
+pravokotnik: 5; 0,6 .. 9; 1,8 | siva | ozadje
+napis: 7; 1,2 | mešiček | sredina
+pravokotnik: 9,5; 0,6 .. 13,5; 1,8 | siva | ozadje
+napis: 11,5; 1,2 | plazmalema | sredina
+:::
 
 :::premisli
 Pri bolezni I-celic (mukolipidoza II) celicam manjka encim, ki lizosomskim encimom doda M6P. Kje bomo te encime našli in kakšni bodo lizosomi?
@@ -95,7 +108,7 @@ Brez M6P jih receptorji v TGN ne prepoznajo, zato gredo po privzeti poti, s kons
 
 ### Odgovor na uvodno vprašanje
 
-Bakterija nima ER ne Golgija: protein ne vstopi v oksidacijsko okolje za disulfidne vezi in ne dobi sladkorjev. Kvasovke ga glikozilirajo, a v Golgiju dodajo večinoma manozo (oligosaharidi z veliko manoze), ki jih človeški imunski sistem in jetra prepoznajo kot tuje. Celice CHO so sesalske: imajo podobne encime Golgija kot človek in naredijo kompleksne oligosaharide s galaktozo in sialno kislino.
+Bakterija nima ER ne Golgija: protein ne vstopi v oksidacijsko okolje za disulfidne vezi in ne dobi sladkorjev. Kvasovke ga glikozilirajo, a v Golgiju dodajo večinoma manozo (oligosaharidi z veliko manoze), ki jih človeški imunski sistem in jetra prepoznajo kot tuje. Celice CHO so sesalske: imajo podobne encime Golgija kot človek in naredijo kompleksne oligosaharide z galaktozo in sialno kislino.
 
 ## Rešeni primeri
 
@@ -224,7 +237,7 @@ Pri poskusu z označevanjem in sledenjem izmerimo delež označenega glikoprotei
 1. a) Pri kinetiki prvega reda je razmerje zaporednih vrednosti v enakih presledkih stalno. Razmerja so $0{,}71$; $0{,}70$; $0{,}72$; $0{,}69$: skoraj stalna.
 2. Konstanta iz prve in zadnje točke: $k = \ln(100/25)/40\,\mathrm{min} \approx 0{,}0347\,\mathrm{min^{-1}}$.
 3. Razpolovni čas: $t_{1/2} = \ln 2/k \approx 20\,\mathrm{min}$, kar se ujema s $50\,\%$ po $20\,\mathrm{min}$.
-4. b) Po $60\,\mathrm{min}$: $100\,\% \cdot \mathrm{e}^{-0{,}0347 \cdot 60} \approx 12{,}5\,\%$ (tri razpolovne dobe).
+4. b) Po $60\,\mathrm{min}$: $100\,\% \cdot \mathrm{e}^{-0{,}0347 \cdot 60} \approx 12{,}5\,\%$ (trije razpolovni časi).
 5. Do $5\,\%$: $t = \ln 20/k \approx 86\,\mathrm{min}$.
 6. c) Po $30\,\mathrm{min}$ je ER zapustilo $100 - 36 = 64\,\%$, odpornih pa je le $55\,\%$.
 7. Razlika $9\,\%$ je protein, ki je zapustil ER, a še ni prišel do srednjih cistern Golgija: je v mešičkih, vmesnem predelku med ER in Golgijem ali v cis cisterni. Odpornost na Endo H nastopi šele z encimom manozidazo II v srednjih cisternah.
@@ -326,7 +339,7 @@ r | polmer | | µm
 d_c | premer celice | | µm
 d_v | premer mešička | | nm
 n | število mešičkov | n = \frac{A_c}{A_v} | –
-t | čas | | s
+t | čas | | s | v nalogi o kinetiki v min
 k | konstanta izhoda iz ER | | 1/min | kinetika prvega reda
 t_{1/2} | razpolovni čas | t_{1/2} = \frac{\ln 2}{k} | min
 :::

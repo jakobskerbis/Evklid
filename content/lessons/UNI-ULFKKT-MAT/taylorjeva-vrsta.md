@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -37,7 +37,7 @@ $$T(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x - a)^n.$$
 
 Pri $a = 0$ ji pravimo **Maclaurinova vrsta**. Delne vsote Taylorjeve vrste so ravno Taylorjevi polinomi $T_n$.
 
-*Preizkus:* kateri so prvi trije členi Taylorjeve vrste funkcije $f(x) = x^3$ okoli $a = 1$? (Ker je $f(1) = 1$, $f'(1) = 3$, $f''(1) = 6$, $f'''(1) = 6$ in višji odvodi nič, je vrsta končna: $1 + 3(x - 1) + 3(x - 1)^2 + (x - 1)^3$.)
+*Preizkus:* kakšna je Taylorjeva vrsta funkcije $f(x) = x^3$ okoli $a = 1$? (Ker je $f(1) = 1$, $f'(1) = 3$, $f''(1) = 6$, $f'''(1) = 6$ in višji odvodi nič, je vrsta končna: $1 + 3(x - 1) + 3(x - 1)^2 + (x - 1)^3$.)
 
 **2. Kdaj je vrsta enaka funkciji.** Taylorjeva vrsta je potenčna vrsta, zato ima konvergenčni polmer. A tudi tam, kjer konvergira, še ni nujno enaka $f$. To odloči ostanek.
 
@@ -51,7 +51,7 @@ Za uporabo potrebujemo zadostni pogoj, ki ga preverimo brez $\xi$.
 
 **Dokaz.** Iz Lagrangeove oblike je $|R_n(x)| \le \frac{M\,|x - a|^{n+1}}{(n+1)!}$. Pokažimo, da za vsak $r \ge 0$ velja $\frac{r^n}{n!} \to 0$. Za $n \ge N > 2r$ je $\frac{r^{n+1}}{(n+1)!} = \frac{r^n}{n!} \cdot \frac{r}{n+1} \le \frac12 \cdot \frac{r^n}{n!}$, zato se člen od $N$ naprej pri vsakem koraku vsaj razpolovi in gre proti $0$. Z $r = |x - a|$ dobimo $R_n(x) \to 0$. $\square$
 
-Pogoj o vseh odvodih ni odveč. Funkcija $f(x) = \mathrm{e}^{-1/x^2}$ (in $f(0) = 0$) ima v $0$ vse odvode enake $0$, zato je njena Maclaurinova vrsta enaka $0$ za vsak $x$, funkcija pa je za $x \ne 0$ pozitivna. Vrsta konvergira povsod, a k napačni funkciji. Dokaz je v Nalogi 3 razdelka Za izpit.
+Pogoj o omejenosti odvodov ni odveč. Funkcija $f(x) = \mathrm{e}^{-1/x^2}$ (in $f(0) = 0$) ima v $0$ vse odvode enake $0$, zato je njena Maclaurinova vrsta enaka $0$ za vsak $x$, funkcija pa je za $x \ne 0$ pozitivna. Vrsta konvergira povsod, a k napačni funkciji. Dokaz je v Nalogi 3 razdelka Za izpit.
 
 :::premisli
 Odvodi funkcije $\sin x$ so $\pm\sin x$ in $\pm\cos x$. Zakaj iz tega takoj sledi, da je $\sin x$ enak svoji Maclaurinovi vrsti za **vsak** realni $x$, ne le za majhne?
@@ -307,20 +307,32 @@ Nariši graf $y = \sin x$ in ob njem Taylorjeve polinome $T_1 = x$, $T_3 = x - \
 
 Pri $\ln(1 + x)$ je slika drugačna: polinomi se funkcije oprijemajo le na $(-1, 1]$. Zunaj tega intervala se z vsakim novim členom oddaljujejo vse bolj in bolj divje nihajo.
 
-Konvergenčna območja na številski osi (`=` konvergira, `-` divergira):
+Konvergenčna območja na številski osi (debela črta konvergira, črtkana divergira; poln krožec je vključen rob, prazen izključen):
 
-```
-e^x, sin x, cos x:
-====================  vsi x
-
-ln(1+x):
--------(====]-------
-      -1    1
-
-(1+x)^a, a ni naravno:
--------(====)-------
-      -1    1
-```
+:::risba skica
+opis: Tri številske osi z označenima točkama −1 in 1. Prva, za eˣ, sin x in cos x: debela črta po vsej osi, vrsta konvergira za vse x. Druga, za ln(1 + x): debela črta samo med −1 in 1, pri −1 prazen krožec (rob ni vključen), pri 1 poln krožec (rob je vključen); zunaj tega vrsta divergira. Tretja, za (1 + x) na α, kjer α ni naravno število: debela črta med −1 in 1, na obeh robovih prazen krožec.
+območje: 0; 0 .. 320; 200
+napis: 10; 184 | e^x, sin x, cos x: vsi x | desno
+črta: 20; 160 -> 300; 160 | debelo modra
+črta: 120; 155 -> 120; 165
+črta: 200; 155 -> 200; 165
+napis: 120; 160 | −1 | pod
+napis: 200; 160 | 1 | pod
+napis: 10; 118 | ln(1 + x) | desno
+črta: 20; 94 -> 300; 94 | črtkano siva
+črta: 120; 94 -> 200; 94 | debelo modra
+krog: 120; 94 | 4,5 | ozadje
+točka: 200; 94 | | | modra
+napis: 120; 94 | −1 | pod
+napis: 200; 94 | 1 | pod
+napis: 10; 52 | (1 + x)^α, α ni naravno | desno
+črta: 20; 28 -> 300; 28 | črtkano siva
+črta: 120; 28 -> 200; 28 | debelo modra
+krog: 120; 28 | 4,5 | ozadje
+krog: 200; 28 | 4,5 | ozadje
+napis: 120; 28 | −1 | pod
+napis: 200; 28 | 1 | pod
+:::
 
 Na robu binomske vrste je odvisno od $\alpha$: pri $\alpha > 0$ konvergira v obeh robnih točkah.
 
@@ -366,7 +378,7 @@ Ta oblika ne potrebuje neznane točke $\xi$ in iz nje po izreku o povprečni vre
 
 ? Zakaj vrsta $2 - \frac{2^2}{2} + \frac{2^3}{3} - \dots$ ne da $\ln 3$, čeprav je to vrsta za $\ln(1 + x)$ pri $x = 2$?
 - Ker je vrsta alternirajoča in zato konvergira k drugi vrednosti.
-~ Alternirajoča vrsta konvergira le, če členi padajo proti $0$; tu členi $\frac{2^n}{n}$ rastejo.
+~ Alternirajoča vrsta konvergira le, če gredo členi proti $0$; tu členi $\frac{2^n}{n}$ rastejo.
 + Ker je $x = 2$ zunaj konvergenčnega intervala $(-1, 1]$ in vrsta divergira.
 - Ker $\ln 3$ ni mogoče zapisati z nobeno vrsto.
 ~ Lahko: $\ln 3 = \ln\frac{1 + 1/2}{1 - 1/2} = 2\left(\frac12 + \frac{1}{24} + \dots\right)$, kot v Primeru 3.
@@ -398,7 +410,7 @@ x | spremenljivka | | |
 n, k, j | indeksi seštevanja | | |
 N | indeks, od katerega se členi razpolavljajo | | |
 \xi | vmesna točka med $a$ in $x$ | | |
-t | integracijska spremenljivka | | |
+t | integracijska spremenljivka (v Primeru 1 čas) | | |
 M | meja za absolutne vrednosti odvodov | | |
 r | razdalja $|x - a|$ | | |
 c_n | koeficient potenčne vrste | c_n = \frac{f^{(n)}(a)}{n!} | |

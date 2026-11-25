@@ -1,12 +1,15 @@
 // Stran za šole /sole, naročila šolske licence in predračun (server/sole.js).
+// Naročila šol so privzeto zaprta (točka 37, server/sole.js soleNarocilaOdprta); ta test preverja odprta.
+process.env.EVKLID_SOLE_NAROCILA = "1";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { pilotReport } from "../server/pilot.js";
 import { SCHOOL_LICENCE_PRICES } from "../server/schools.js";
-import { validateOrder, predracunHtml, CONSENT_TEXT } from "../server/sole.js";
+import { validateOrder, predracunHtml, CONSENT_TEXT, questionsWord, firstDays } from "../server/sole.js";
 import { BRAND } from "../server/brand.js";
+import { createRequire } from "node:module";
 
 const NOW = new Date("2026-10-30T10:00:00Z");
 const good = (over = {}) => ({
@@ -80,7 +83,10 @@ test("/sole page, orders without accounts (local admin), status, predračun", as
     for (const p of Object.values(SCHOOL_LICENCE_PRICES)) assert.ok(new RegExp(`>${p.eur}\\s€<`).test(html), `cena ${p.eur}`);
     assert.ok(html.includes("na učenca na leto"));
     assert.ok(html.includes("UJP") && html.includes('id="order-form"') && html.includes('name="website"'));
-    assert.ok(!/DDV/.test(html), "na strani ni trditev o DDV");
+    // Status DDV: j 16. 11. 2026 potrdil, da ni zavezanec. Na strani sta samo ti dve potrjeni trditvi o DDV, nič drugega.
+    const vat = "Izvajalec ni zavezanec za DDV, zato DDV ni obračunan.";
+    assert.ok(html.includes(vat), "potrjena trditev o DDV");
+    assert.ok(!/DDV/.test(html.replace(vat, "").replace("Izvajalec ni zavezanec za DDV.", "")), "na strani ni drugih trditev o DDV");
     assert.equal((await fetch(`${base}/sole.html`, { headers: ua })).status, 200);
     await new Promise((r) => setTimeout(r, 20));
     assert.equal(pilotReport(store.db, { days: 1 }).totals.visits.sole, 2);
@@ -171,6 +177,8 @@ test("predračun: totals per plan and escaping of every buyer field", () => {
   assert.ok(html.includes(`data-total="${3 * SCHOOL_LICENCE_PRICES.pilot.eur}"`));
   assert.ok(html.includes("Predračun št. 2026-0007") && html.includes("SI00 2026-0007"));
   assert.ok(html.includes("Šifra PU"));
+  // Status DDV (j 16. 11. 2026): ni zavezanec; vrstice »DDV [izpolni]« ni več.
+  assert.ok(html.includes("<td colspan=\"4\">Izvajalec ni zavezanec za DDV.</td>") && !/<td colspan="3">DDV<\/td>/.test(html));
   assert.ok(!predracunHtml({ ...o, budget_user: 0, budget_code: null }, NOW).includes("Šifra PU"));
 });
 
@@ -211,4 +219,54 @@ test("school orders with accounts: public form, admin only for an admin parent",
   } finally {
     server.close();
   }
+});
+
+// Točka 1.5: CSP (script-src 'self') blokira vrinjene skripte in onclick; gumb »Natisni« mora delati prek datoteke.
+const require = createRequire(import.meta.url);
+let playwright = null;
+for (const p of ["playwright", process.env.PLAYWRIGHT, "/opt/npm-tools/node_modules/playwright"].filter(Boolean)) {
+  try {
+    playwright = require(p);
+    break;
+  } catch {}
+}
+test("predračun: brez vrinjenih skript, gumb Natisni pod CSP odpre tiskanje", { skip: playwright ? false : "Playwright ni nameščen", timeout: 60000 }, async (t) => {
+  const html = predracunHtml({ id: 7, school: "OŠ", address: "", registration_no: "", tax_id: "", budget_user: 0, budget_code: null, contact: "", email: "a@b.si", phone: "", plan: "pilot", students: 3, price_eur: 1, start_date: "2027-09-01", note: "" }, NOW);
+  assert.doesNotMatch(html, /\son[a-z]+\s*=/i, "brez atributov on…=");
+  assert.doesNotMatch(html, /<script(?![^>]*\ssrc=)[^>]*>/i, "brez vrinjenih skript");
+  let browser;
+  try {
+    browser = await playwright.chromium.launch();
+  } catch {
+    return t.skip("Chromium ni nameščen");
+  }
+  const store = openDb(":memory:");
+  const app = createApp(store, { scheduler: false, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    assert.equal((await post(base, good({ startDate: nextYear }))).status, 201);
+    const id = store.db.prepare("SELECT id FROM school_orders").get().id;
+    const page = await browser.newPage();
+    const blocked = [];
+    page.on("console", (m) => /Content Security Policy/i.test(m.text()) && blocked.push(m.text()));
+    await page.addInitScript(() => {
+      window.__natisnjeno = 0;
+      window.print = () => window.__natisnjeno++;
+    });
+    const res = await page.goto(`${base}/api/admin/school-orders/${id}/predracun`);
+    assert.equal(res.status(), 200);
+    assert.match(res.headers()["content-security-policy"] || "", /script-src 'self'/);
+    await page.click("#natisni");
+    await page.waitForFunction(() => window.__natisnjeno === 1, null, { timeout: 5000 });
+    assert.deepEqual(blocked, []);
+  } finally {
+    await browser.close();
+    server.close();
+  }
+});
+
+test("stran /sole: slovenske množinske oblike za ustno spraševanje in dneve preizkusa", () => {
+  assert.deepEqual([1, 2, 3, 5].map(questionsWord), ["1 vprašanje", "2 vprašanji", "3 vprašanja", "5 vprašanj"]);
+  assert.deepEqual([1, 2, 3, 5, 7].map(firstDays), ["prvi dan", "prva 2 dneva", "prvi 3 dnevi", "prvih 5 dni", "prvih 7 dni"]);
 });

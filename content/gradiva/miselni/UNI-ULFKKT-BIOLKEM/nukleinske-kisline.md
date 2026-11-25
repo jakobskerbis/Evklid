@@ -1,0 +1,34 @@
+---
+avtor: AI
+stanje: osnutek
+---
+
+- Nukleotid
+  - pentoza, baza na C1', fosfat na C5'
+  - nukleozid: brez fosfata
+  - purina A, G; pirimidini C, T, U
+- Veriga in smer
+  - fosfodiestrska vez 3'–5', ogrodje polianion
+  - zaporedje pišemo $5' \to 3'$
+- Dvojna vijačnica
+  - antiparalelni verigi, A–T $2$, G–C $3$ vodikove vezi
+  - $0{,}34\,\text{nm}$ na par, $10{,}5$ para na zavoj
+  - stabilnost: predvsem zlaganje baz
+- Chargaffova pravila
+  - $\%A = \%T$, $\%G = \%C$
+  - samo dvoverižna, popolnoma sparjena DNA
+  - napaka: uporaba za RNA
+- RNA
+  - riboza, uracil, ena zvita veriga
+  - mRNA, tRNA, rRNA
+  - 2'-OH: hidroliza v bazičnem
+- Semikonzervativno podvajanje
+  - Meselson in Stahl, $\mathrm{^{15}N}$
+  - hibridnih molekul $2$ od $2^n$
+- Replikacijske vilice
+  - helikaza, SSB, topoizomeraza, primaza, ligaza
+  - polimeraza: primer s 3'-OH, rast $5' \to 3'$
+  - *E. coli*: $2300\,\text{s}$ pri $1000\,\text{bp/s}$
+- Vodilna in zaostajajoča
+  - Okazakijevi fragmenti, $1000$ do $2000$ nukleotidov
+  - eksonukleaza $3' \to 5'$ in popravila: manj kot ena napaka na $10^9$

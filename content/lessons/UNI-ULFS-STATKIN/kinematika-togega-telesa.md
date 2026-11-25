@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Ko so konec 18. stoletja gradili parne stroje, so morali inženirji, med njimi James Watt, z ročicami in drogovi pretvarjati nihanje vzvoda v premo gibanje bata. Za vsak del mehanizma so potrebovali hitrost v vsaki legi, računati pa so znali le gibanje točk. Pomagala je ideja, ki jo je že Johann Bernoulli uporabil za kotaljenje, splošno pa jo je v 19. stoletju dokazal Michel Chasles: vsako ravninsko gibanje togega telesa je v danem trenutku **vrtenje okoli ene same točke**. Tej točki pravimo **trenutni pol hitrosti**.
+Ko so konec 18. stoletja gradili parne stroje, so morali inženirji, med njimi James Watt, z ročicami in drogovi pretvarjati nihanje vzvoda v premo gibanje bata. Za vsak del mehanizma so potrebovali hitrost v vsaki legi, računati pa so znali le gibanje točk. Pomagala je ideja, ki jo je že Johann Bernoulli uporabil za kotaljenje, splošno pa jo je v 19. stoletju dokazal Michel Chasles: vsako ravninsko gibanje togega telesa je v danem trenutku translacija ali **vrtenje okoli ene same točke**. Tej točki pravimo **trenutni pol hitrosti**.
 
 Preizkusi jo s poskusom, ki ga lahko narediš doma. Na obod kolesa pritrdi lučko, v temi kolo enakomerno zakotali in ga posnemi z dolgo osvetlitvijo. Lučka nariše loke (cikloido), ki se pri tleh za hip ustavijo in na vrhu raztegnejo. Katera točka kolesa je najhitrejša in katera miruje? Odgovor, ki ga da pol, je natančen in hiter, in ravno to izpit od tebe pričakuje: hitrosti in pospeške točk mehanizma v dani legi.
 
@@ -126,7 +126,7 @@ $P$ = presečišče navpičnice skozi $A$ in vodoravnice skozi $B$; $\omega = \d
 4. $v_B = \omega\,r_{PB} = 0{,}373 \cdot 3{,}83\,\mathrm{m/s} \approx 1{,}43\,\mathrm{m/s}$, navzdol. Isto da $v_A\cot\varphi = 1{,}2 \cdot 1{,}192\,\mathrm{m/s}$.
 5. Sredina $M$ je od pola oddaljena za polovico diagonale pravokotnika, torej $L/2$: $v_M = 0{,}373 \cdot 2{,}5\,\mathrm{m/s} \approx 0{,}93\,\mathrm{m/s}$.
 6. Preizkus s projekcijami na $AB$: $v_A\cos\varphi = 1{,}2 \cdot 0{,}766 \approx 0{,}919\,\mathrm{m/s}$ in $v_B\sin\varphi = 1{,}43 \cdot 0{,}643 \approx 0{,}919\,\mathrm{m/s}$. ✓
-7. Odgovor: lestev se vrti s $0{,}373\,\mathrm{s^{-1}}$, zgornji konec pada s $1{,}43\,\mathrm{m/s}$, sredina se giblje s $0{,}93\,\mathrm{m/s}$.
+7. Odgovor: lestev se vrti z $0{,}373\,\mathrm{s^{-1}}$, zgornji konec pada z $1{,}43\,\mathrm{m/s}$, sredina se giblje z $0{,}93\,\mathrm{m/s}$.
 
 ### Primer 3 (težji)
 
@@ -149,7 +149,7 @@ $v_A = \omega_1 r$, $\omega_2 = \dfrac{v_A}{r_{PA}}$, $v_B = \omega_2 r_{PB}$; $
 6. **Enačba pospeškov.** Z $\vec{\alpha}_2 = \alpha_2\vec{k}$ je $\vec{\alpha}_2 \times \vec{r}_{AB} = (0{,}0866\,\alpha_2;\ 0{,}3905\,\alpha_2)$, $\omega_2^2 \approx 6{,}557\,\mathrm{s^{-2}}$ in $\omega_2^2\vec{r}_{AB} \approx (2{,}561;\ -0{,}568)\,\mathrm{m/s^2}$. Pospešek bata je vodoraven, $\vec{a}_B = (a_B;\ 0)$.
 7. Komponenta $y$: $0 = -34{,}64 + 0{,}3905\,\alpha_2 + 0{,}568$, zato $\alpha_2 = 34{,}07/0{,}3905\,\mathrm{s^{-2}} \approx 87{,}3\,\mathrm{s^{-2}}$ (pozitivna smer).
 8. Komponenta $x$: $a_B = -20 + 0{,}0866 \cdot 87{,}25 - 2{,}561\,\mathrm{m/s^2} \approx -20 + 7{,}56 - 2{,}56 = -15{,}0\,\mathrm{m/s^2}$.
-9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje s $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v pozitivni smeri (nasprotno od urinega kazalca, torej ojnica se vrti vse počasneje), pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, bat ne giblje enakomerno.
+9. Odgovor: ojnica se vrti z $2{,}56\,\mathrm{s^{-1}}$ v smeri urinega kazalca, bat se giblje z $1{,}95\,\mathrm{m/s}$ proti $O$; kotni pospešek ojnice je $87{,}3\,\mathrm{s^{-2}}$ v pozitivni smeri (nasprotno od urinega kazalca, ojnica se torej vrti vse počasneje), pospešek bata $15{,}0\,\mathrm{m/s^2}$ proti $O$. Čeprav se ročica vrti enakomerno, se bat ne giblje enakomerno.
 
 ### Primer 4 – zdaj ti
 
@@ -187,7 +187,7 @@ Pol je na razdalji $v_{sp}/\omega = 3{,}0/10\,\mathrm{m} = 0{,}30\,\mathrm{m}$ n
 - Ravninsko gibanje togega telesa = translacija + vrtenje; $\omega$ in $\alpha$ sta skupna vsemu telesu.
 - Hitrosti: $\vec{v}_B = \vec{v}_A + \vec{\omega} \times \vec{r}_{AB}$; projekciji hitrosti na $AB$ sta enaki.
 - Trenutni pol $P$: $\vec{v}_P = 0$, $r_{AP} = v_A/\omega$; leži na presečišču pravokotnic na hitrosti; $v_B = \omega\,r_{PB}$, pravokotno na $PB$.
-- Vzporedne hitrosti in $\omega = 0$: trenutna translacija. Kotaljenje: pol v stični točki, $v_S = \omega R$.
+- Vzporedni hitrosti, ki nista pravokotni na $AB$: trenutna translacija, $\omega = 0$. Kotaljenje: pol v stični točki, $v_S = \omega R$.
 - Pospeški: $\vec{a}_B = \vec{a}_A + \vec{\alpha} \times \vec{r}_{AB} - \omega^2\vec{r}_{AB}$; pol ima v splošnem pospešek, ki ni nič.
 - Mehanizem: lega → kotne hitrosti (pol) → enačbe pospeškov po komponentah → preizkus.
 
@@ -227,7 +227,7 @@ Natančno navedi in dokaži izrek o hitrostih dveh točk togega telesa pri ravni
 2. Projekcije: pomnožimo izrek skalarno z $\vec{e}_{AB}$; ker je $\vec{\omega} \times \vec{r}_{AB} \perp \vec{e}_{AB}$, dobimo $\vec{v}_B \cdot \vec{e}_{AB} = \vec{v}_A \cdot \vec{e}_{AB}$.
 3. Pol: iz $\vec{v}_A + \vec{\omega} \times \vec{r}_{AP} = 0$ z vektorskim množenjem z $\vec{\omega}$ sledi edina rešitev $\vec{r}_{AP} = \vec{\omega} \times \vec{v}_A/\omega^2$.
 4. Primer pravokotne zveznice: $\vec{v}_B - \vec{v}_A = \vec{\omega} \times \vec{r}_{AB}$ je vzporedna s hitrostma, zato sta lahko različno veliki; $\omega = |v_B - v_A|/|AB|$, pol leži na premici $AB$ (kot pri valju med deskama).
-5. Če zveznica ni pravokotna na vzporedni hitrosti, izrek o projekcijah zahteva $v_A\cos\beta = v_B\cos\beta$ z $\cos\beta \ne 0$, torej $v_A = v_B$. Hitrosti morata biti enaki: to je trenutna translacija, $\omega = 0$.
+5. Če zveznica ni pravokotna na vzporedni hitrosti, izrek o projekcijah zahteva $v_A\cos\beta = v_B\cos\beta$ s $\cos\beta \ne 0$, torej $v_A = v_B$. Hitrosti morata biti enaki: to je trenutna translacija, $\omega = 0$.
 6. Odgovor: različno veliki vzporedni hitrosti sta mogoči le, če je zveznica točk pravokotna nanju.
 
 ### Naloga 3
@@ -246,28 +246,42 @@ Kolo s polmerom $0{,}50\,\mathrm{m}$ se brez spodrsavanja kotali v desno; v opaz
 
 Lestev ob steni; $P$ je trenutni pol, pravokotnici na hitrosti se sekata v njem:
 
-```
- stena
-  |B . . . . . P
-  | \          .
-  |  \         .
-  |   \ lestev .
-  |    \       .
-  |     \      .
-  |      \     .
-  +-------A------- tla
-          -> vA
-```
+:::risba skica
+opis: Lestev AB, prislonjena ob navpično steno. Spodnji konec A je na tleh 3,83 m od stene, zgornji konec B na steni 3,21 m nad tlemi. Hitrost A kaže vodoravno stran od stene, hitrost B navpično navzdol. Črtkana vodoravnica skozi B in črtkana navpičnica skozi A se sekata v trenutnem polu P, ki je nasprotno oglišče pravokotnika nad vogalom.
+območje: -1,2; -0,9 .. 6; 4,4
+črta: 0; 0 -> 0; 4,2 | debelo
+črta: 0; 0 -> 5,8; 0 | debelo
+napis: 0; 4,2 | stena | levo
+napis: 5,5; 0 | tla | nad
+črta: 3,83; 0 -> 0; 3,21 | modra debelo
+napis: 1,915; 1,605 | lestev | levo | modra
+črta: 0; 3,21 -> 3,83; 3,21 | črtkano
+črta: 3,83; 0 -> 3,83; 3,21 | črtkano
+puščica: 3,83; 0 -> 5,03; 0 | v_A | pod | oranžna
+puščica: 0; 3,21 -> 0; 1,78 | v_B | levo | oranžna
+točka: 3,83; 0 | A | pod
+točka: 0; 3,21 | B | levo
+točka: 3,83; 3,21 | P | desno | rdeča
+:::
 
-Hitrost $B$ je navpična, zato je pravokotnica nanjo vodoravna (pikčasta črta skozi $B$). Hitrost $A$ je vodoravna, pravokotnica navpična (skozi $A$). Hitrost vsake točke lestve je pravokotna na zveznico s $P$ in sorazmerna z razdaljo do $P$. Sredina je presečišče diagonal pravokotnika, zato je od $P$ in od vogala oddaljena $L/2$. Ker je njena razdalja do vogala ves čas $L/2$, sredina lestve opiše četrtinko kroga okoli vogala; njena hitrost je pravokotna na zveznico s $P$.
+Hitrost $B$ je navpična, zato je pravokotnica nanjo vodoravna (črtkana črta skozi $B$). Hitrost $A$ je vodoravna, pravokotnica navpična (skozi $A$). Hitrost vsake točke lestve je pravokotna na zveznico s $P$ in sorazmerna z razdaljo do $P$. Sredina je presečišče diagonal pravokotnika, zato je od $P$ in od vogala oddaljena $L/2$. Ker je njena razdalja do vogala ves čas $L/2$, sredina lestve opiše četrtinko kroga okoli vogala; njena hitrost je pravokotna na zveznico s $P$.
 
 Kolo: hitrosti točk navpičnega premera rastejo linearno od pola navzgor:
 
-```
- vrh   ------->  2v
- os    --->       v
- tla   .          0  (pol)
-```
+:::risba skica
+opis: Kolo s polmerom R na vodoravnih tleh. Na navpičnem premeru so narisane vodoravne hitrosti: v stični točki s tlemi (pol) je hitrost 0, v osi v, na vrhu 2v. Črtkana premica od pola skozi konici obeh puščic kaže, da hitrost raste linearno z višino nad polom.
+območje: -1,8; -0,6 .. 3,2; 2,5
+črta: -1,6; 0 -> 3; 0 | debelo
+krog: 0; 1 | 1
+črta: 0; 0 -> 0; 2 | siva
+puščica: 0; 2 -> 2; 2 | 2v | nad | oranžna
+puščica: 0; 1 -> 1; 1 | v | nad | oranžna
+črta: 0; 0 -> 2; 2 | črtkano
+točka: 0; 2 | vrh | nad levo
+točka: 0; 1 | os | levo
+točka: 0; 0 | pol, 0 | pod | rdeča
+napis: 2,6; 0 | tla | nad
+:::
 
 ## Drugače: Uporaba v stroki
 

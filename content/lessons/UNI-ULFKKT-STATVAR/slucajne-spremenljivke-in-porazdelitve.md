@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -226,16 +226,28 @@ Natančno definiraj zvezno slučajno spremenljivko in eksponentno porazdelitev s
 
 Nariši stolpčni diagram za $\mathrm{Bin}(7; 0{,}3)$:
 
-| $k$ | $P(X = k)$ | stolpec |
-|---|---|---|
-| 0 | 0,082 | ▇▇ |
-| 1 | 0,247 | ▇▇▇▇▇▇ |
-| 2 | 0,318 | ▇▇▇▇▇▇▇▇ |
-| 3 | 0,227 | ▇▇▇▇▇▇ |
-| 4 | 0,097 | ▇▇ |
-| 5–7 | 0,029 | ▇ |
+| $k$ | $P(X = k)$ |
+|---|---|
+| 0 | 0,082 |
+| 1 | 0,247 |
+| 2 | 0,318 |
+| 3 | 0,227 |
+| 4 | 0,097 |
+| 5–7 | 0,029 |
 
-Višine stolpcev se seštejejo v $1$. Pri zvezni porazdelitvi si predstavljaj, da stolpce zožiš in jih je neskončno: dobiš gladko krivuljo, gostoto. Eksponentna gostota pada od največje vrednosti pri $t = 0$ kot smučarska skakalnica; normalna je zvon s vrhom pri $\mu$; enakomerna je vodoraven pravokotnik nad $[a, b]$ z višino $\frac{1}{b-a}$, da je njegova ploščina $1$.
+:::risba stolpci
+opis: Stolpčni diagram verjetnosti P(X = k) za Bin(7; 0,3). Navpična os od 0 do 0,4 po 0,1. Stolpci: k = 0 ima 0,082, k = 1 ima 0,247, k = 2 ima 0,318 (najvišji), k = 3 ima 0,227, k = 4 ima 0,097, k od 5 do 7 skupaj 0,029.
+os: P(X = k)
+korak: 0,1
+stolpec: 0 | 0,082
+stolpec: 1 | 0,247
+stolpec: 2 | 0,318
+stolpec: 3 | 0,227
+stolpec: 4 | 0,097
+stolpec: 5–7 | 0,029
+:::
+
+Višine stolpcev se seštejejo v $1$. Pri zvezni porazdelitvi si predstavljaj, da stolpce zožiš in jih je neskončno: dobiš gladko krivuljo, gostoto. Eksponentna gostota pada od največje vrednosti pri $t = 0$ kot smučarska skakalnica; normalna je zvon z vrhom pri $\mu$; enakomerna je vodoraven pravokotnik nad $[a, b]$ z višino $\frac{1}{b-a}$, da je njegova ploščina $1$.
 
 ## Drugače: Uporaba v stroki
 

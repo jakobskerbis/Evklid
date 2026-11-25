@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -17,13 +17,28 @@ Paradoks razreši zgradba vezi. Dvojna vez je ena vez $\sigma$ in ena vez $\pi$,
 
 **Definicije.** Pri **homolitski** cepitvi vezi obdrži vsak atom po en elektron vezi in nastaneta radikala; pri **heterolitski** oba elektrona ostaneta pri enem atomu in nastaneta iona. **Elektrofil** je delec, ki v reakciji sprejme elektronski par in z njim tvori novo kovalentno vez (Lewisova kislina); **nukleofil** je delec, ki ta par odda (Lewisova baza). Reakcija je **regioselektivna**, če od več možnih konstitucijskih izomerov nastane pretežno eden, in **stereospecifična**, če stereoizomerni reaktanti dajo različne stereoizomerne produkte.
 
-```
-  alkan (le σ)                 alken (σ + π)
-                                 ░░░ oblak π ░░░
-  H3C ── CH3                   H2C ═══════ CH2
-  elektroni tesno med jedroma    ░░░ oblak π ░░░
-  → dosežejo jih le radikali    → dosegljiv elektrofilom
-```
+:::risba skica
+opis: Dve molekuli, ena pod drugo. Zgoraj alkan etan, H₃C – CH₃, ki ima le vez σ: elektroni so tesno med jedroma, dosežejo jih le radikali. Spodaj alken eten, H₂C = CH₂, z vezjo σ in vezjo π: oblak elektronov π leži nad ravnino molekule in pod njo, zato je dosegljiv elektrofilom.
+območje: 0; 0 .. 16; 8
+napis: 3,5; 7,3 | alkan (le σ) | sredina
+napis: 2; 6 | H_3C | sredina
+črta: 2,8; 6 -> 4,2; 6 | debelo
+napis: 5; 6 | CH_3 | sredina
+napis: 11; 6,4 | elektroni tesno med jedroma | sredina
+napis: 11; 5,6 | dosežejo jih le radikali | sredina
+črta: 0,5; 4,6 -> 15,5; 4,6 | siva | črtkano
+napis: 3,5; 3,9 | alken (σ + π) | sredina
+pravokotnik: 1,8; 2,35 .. 5,2; 3,35 | modra | ozadje
+napis: 3,5; 2,85 | oblak π | sredina
+napis: 2; 1,8 | H_2C | sredina
+črta: 2,8; 1,9 -> 4,2; 1,9 | debelo
+črta: 2,8; 1,7 -> 4,2; 1,7 | debelo
+napis: 5; 1,8 | CH_2 | sredina
+pravokotnik: 1,8; 0,25 .. 5,2; 1,25 | modra | ozadje
+napis: 3,5; 0,75 | oblak π | sredina
+napis: 11; 2,2 | oblak π nad in pod ravnino | sredina
+napis: 11; 1,4 | dosegljiv elektrofilom | sredina
+:::
 
 ### Adicije na alkene
 
@@ -91,11 +106,20 @@ Hidratacija alkina (z $\mathrm{H_2SO_4}$ in $\mathrm{Hg^{2+}}$) najprej da **eno
 
 **Radikalsko halogeniranje alkanov.** Metan in klor v temi ne reagirata. Na svetlobi nastane klorometan in $\mathrm{HCl}$. Veriga se vrti v krogu:
 
-```
-        Cl·  ── + CH4 ──►  HCl + CH3·
-         ▲                      │
-         └── CH3Cl ◄── + Cl2 ───┘
-```
+:::risba skica
+opis: Krog propagacije pri kloriranju metana. Zgoraj levo je radikal Cl·. Puščica v desno: Cl· reagira s CH₄, nastaneta HCl in metilni radikal CH₃·. Puščica navzdol in nato v levo: CH₃· reagira s Cl₂, nastane CH₃Cl. Puščica navzgor nazaj k Cl·: drugi korak vrne radikal Cl·, ki začne nov krog.
+območje: 0; 0 .. 14; 6
+pravokotnik: 1; 4 .. 3; 5 | oranžna | ozadje
+napis: 2; 4,5 | Cl· | sredina
+puščica: 3; 4,5 -> 9; 4,5 | + CH_4 | nad
+pravokotnik: 9; 4 .. 13; 5 | oranžna | ozadje
+napis: 11; 4,5 | HCl + CH_3· | sredina
+črta: 11; 4 -> 11; 1,5 -> 5; 1,5 | puščica
+napis: 11,2; 2,9 | + Cl_2 | desno
+pravokotnik: 1; 1 .. 5; 2 | zelena | ozadje
+napis: 3; 1,5 | CH_3Cl + Cl· | sredina
+puščica: 2; 2 -> 2; 4 | Cl· se vrne | desno
+:::
 
 Gre za **verižno reakcijo** v treh fazah:
 
@@ -274,14 +298,19 @@ Natančno navedi Markovnikovo pravilo s pogoji in ga utemelji z mehanizmom adici
 
 ## Drugače: Na sliki
 
-```
-A: H+ na C1
-   CH3–CH=CH2 → CH3–CH(+)–CH3
-   2°, stabilnejši
-B: H+ na C2
-   CH3–CH=CH2 → CH3–CH2–CH2(+)
-   1°, manj stabilen
-```
+:::risba skica
+opis: Dve možni protonaciji propena CH₃–CH=CH₂. Pot A: H⁺ se veže na C1, nastane sekundarni kation CH₃–CH⁺–CH₃, ki je stabilnejši. Pot B: H⁺ se veže na C2, nastane primarni kation CH₃–CH₂–CH₂⁺, ki je manj stabilen.
+območje: 0; 0 .. 16; 6
+napis: 2,5; 3 | CH_3–CH=CH_2 | sredina
+puščica: 5,1; 3,4 -> 8; 4,6 | A: H⁺ na C1 | nad levo
+puščica: 5,1; 2,6 -> 8; 1,4 | B: H⁺ na C2 | pod levo
+pravokotnik: 8; 4 .. 15; 5,2 | zelena | ozadje
+napis: 11,5; 4,6 | CH_3–CH⁺–CH_3 | sredina
+napis: 11,5; 3,6 | 2°, stabilnejši | sredina
+pravokotnik: 8; 0,8 .. 15; 2 | rdeča | ozadje
+napis: 11,5; 1,4 | CH_3–CH_2–CH_2⁺ | sredina
+napis: 11,5; 0,4 | 1°, manj stabilen | sredina
+:::
 
 Hitreje nastane kation A, $\mathrm{Br^-}$ pa pride tja, kjer je naboj.
 

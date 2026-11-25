@@ -48,21 +48,33 @@ export function terms(text) {
 }
 
 const SCHOOL_RANK = { OS: 0, SS: 1 };
-function levelOf(settings) {
+export function levelOf(settings) {
   const st = stopnja(settings || {});
   const school = st === "FAKS" ? null : st;
   const grade = Number((String(settings?.curriculum_level || "").match(/([1-9])/) || [])[1]) || (school === "SS" ? 4 : 9);
   return school ? { school, grade } : null;
 }
 
+// Iskanje po učbeniku (in vaja iz testa) deluje za slovensko OŠ in SŠ: stopnja in šolski sistem SI.
+export const searchOn = (settings) => !!levelOf(settings) && (!settings?.school_system || settings.school_system === "SI");
+
 const summaryOf = (lesson) => lesson?.sections?.find((s) => /^povzetek/i.test(s.title))?.md || "";
 
 // Kazalo tem za predmet in raven: krni naslova, ciljev in (kjer je lekcija s »Povzetkom«) besedila.
 // Teme brez lekcije so v kazalu tudi, da vprašanje o njih ne dobi sosednje lekcije z eno skupno besedo.
+// Kazalo ima ~1 MB kopice (množice besed vseh lekcij do ravni); hranimo največ INDEX_MAX nazadnje uporabljenih
+// (prej meja 200, v praksi do ~65 MB: 5 predmetov × 13 ravni, ob 512 MB na Renderju). Izpuščeno se ob naslednjem vprašanju zgradi znova (~10–50 ms).
+export const INDEX_MAX = 16;
 const indexes = new Map();
+export const indexCount = () => indexes.size; // testi
 function indexFor(subject, school, grade) {
   const key = `${subject}|${school}|${grade}`;
-  if (indexes.has(key)) return indexes.get(key);
+  const hit = indexes.get(key);
+  if (hit) {
+    indexes.delete(key); // LRU: na konec
+    indexes.set(key, hit);
+    return hit;
+  }
   const docs = [];
   for (const p of listPaths(subject)) {
     if (!(p.school in SCHOOL_RANK)) continue; // brez tekmovalnih poti
@@ -87,8 +99,8 @@ function indexFor(subject, school, grade) {
   for (const d of docs) for (const w of new Set([...d.title, ...d.meta, ...d.body])) df.set(w, (df.get(w) || 0) + 1);
   const idf = (w) => Math.log(1 + docs.length / (df.get(w) || 0.5));
   const idx = { docs, idf };
-  if (indexes.size > 200) indexes.clear();
   indexes.set(key, idx);
+  while (indexes.size > INDEX_MAX) indexes.delete(indexes.keys().next().value);
   return idx;
 }
 
@@ -155,18 +167,30 @@ export function rankLessons(text, settings) {
     const key = fold(d.name);
     if (!byName.has(key) || byName.get(key).score < score) byName.set(key, { d, score, inTitle });
   }
-  return [...byName.values()].sort((a, b) => b.score - a.score);
+  // Enaka ocena (naslova z enakimi koreni, »Celični organeli« in »Od celice do organizma«): prednost ima tema,
+  // katere celo ime je v vprašanju.
+  const fq = fold(text);
+  const named = (x) => (fq.includes(fold(x.d.name)) ? 1 : 0);
+  return [...byName.values()].sort((a, b) => b.score - a.score || named(b) - named(a));
 }
 
 // Skrita opomba za inštruktorja (kot opomba pole): povzetek lekcije in kje jo učenec najde.
-export function lessonNote(hit) {
+// mode: način učenca (A/B); pri B (celotna rešitev) opomba ne zadrži rešitve (j 14. 11.); B1 = način A, a učenec v tem
+// sporočilu izrecno prosi za rešitev (server/nacin.js asksForSolution).
+export function lessonNote(hit, mode = "A") {
   if (!hit) return "";
+  const pace =
+    mode === "B"
+      ? "The student has chosen način B (celotna rešitev): follow the rules of način B."
+      : mode === "B1"
+        ? "The student explicitly asks for the full solution of this task: follow the rules of način B for it."
+        : "Keep your usual step-by-step pace and do not give formulas or the answer before the student tries.";
   const summary = expandFormulaBlocks(hit.summary, "plain").replace(/\n{3,}/g, "\n\n").trim().slice(0, 1200);
   return [
     LESSON_NOTE_HEAD,
     `The app's textbook (Učbenik) has a lesson that probably matches this question: »${hit.name}« (${hit.pathLabel}). Its summary:`,
     summary,
-    "Background only: if it matches the question, use the same notation and terms as the lesson. If the student or their task uses another method, follow the student. Keep your usual step-by-step pace and do not give formulas or the answer before the student tries. If the question is about something else, ignore this note. You may suggest that the student opens this lesson in Učbenik; never mention this note itself.",
+    `Background only: if it matches the question, use the same notation and terms as the lesson. If the student or their task uses another method, follow the student. ${pace} If the question is about something else, ignore this note. You may suggest that the student opens this lesson in Učbenik; never mention this note itself.`,
     `</${LESSON_TAG}>`,
   ].join("\n");
 }

@@ -14,3 +14,10 @@ test("straža: preizkusi so samo javni GET-i brez prijave in brez AI", () => {
     assert.equal(typeof p.preveri, "function");
   }
 });
+
+test("straža: inštruktor v preizkusnem načinu (mock) podre Stražo", async () => {
+  const { presojaStanja } = await import("../scripts/straza.mjs");
+  const osnova = { id: "x", razlicica: "1" };
+  assert.deepEqual(presojaStanja({ ...osnova, mock: false }).napake, []);
+  assert.match(presojaStanja({ ...osnova, mock: true }).napake.join(), /preizkusnem načinu/);
+});

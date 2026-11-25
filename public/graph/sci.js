@@ -1,13 +1,16 @@
 // Znanstveni kalkulator in pretvornik enot (vmesnik). Računa scicore.js (+ scisolve.js za enačbe,
 // neenačbe, sisteme, funkcije, odvode in kompleksna števila), brez API in brez knjižnic.
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
-import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
-import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
-import { commandName, parseCommand } from "./cas.js";
+import { arityExample } from "./math.js";
+import { evaluate, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
+import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralErrorKey, calculusEnv } from "./scisolve.js";
+import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
+import { graphable } from "./v-graf.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
-import { pomanjsaj } from "../sirina.js";
+import { pomanjsaj, prilagodiSirini } from "../sirina.js";
+import { izrisi } from "../mat/izris.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -15,13 +18,7 @@ const MAX_HISTORY = 60;
 const FORMATS = ["auto", "sci", "eng", "fix2", "fix3", "fix4", "sig2", "sig3", "sig4"];
 const ANGLES = ["deg", "rad", "grad"]; // stopinje, radiani, gradi (400 v polnem krogu)
 
-const texHtml = (s, display = false) => {
-  try {
-    return window.katex.renderToString(s, { throwOnError: false, displayMode: display, strict: "ignore" });
-  } catch {
-    return esc(s);
-  }
-};
+const texHtml = (s, display = false) => izrisi(s, { blok: display });
 // 1/det A pred matriko: na ozkem zaslonu se matrika prelomi v svojo vrstico, ne pomika vstran
 const matBreak = (tex) => String(tex ?? "").replace(/\}\\begin\{pmatrix\}/g, "}\\allowbreak\\begin{pmatrix}");
 const usesComma = (locale) => {
@@ -132,9 +129,15 @@ export function texPlain(tex) {
 
 /**
  * Znanstveni kalkulator v elementu root.
- * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
+ * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), showOnGraph?({ text, env, message, simple }),
+ *   stage?() (»OS«, »SS«, »FAKS«), steps?(text, goal), canSteps?(),
+ *   recent?() / addRecent?({ text, src }) (skupna zgodovina zavihkov),
+ *   convert?(value) (»Pretvori enote«: Orodja → pretvornik z vrednostjo; v fiziki in kemiji),
+ *   sharedGraph?() ({ vars, funcs } grafičnega kalkulatorja: »Iz grafa: a = 2«) }
  */
+let sayCount = 0; // več kalkulatorjev na strani: vsak ima svoj opis za bralnik zaslona
 export function createScientific(root, opts) {
+  const sayId = `sc-say-${++sayCount}`;
   const { t, icon } = opts;
   const comma = () => usesComma(opts.locale?.());
   const key = () => opts.storageKey?.() || "evklid.sci.0";
@@ -173,7 +176,8 @@ export function createScientific(root, opts) {
         <div class="sc-line">
           <div class="sc-preview" aria-hidden="true"></div>
         </div>
-        <input class="sc-input" data-kb-own autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("sc.title"))}" placeholder="${esc(t("sc.placeholder"))}">
+        <input class="sc-input" data-kb-own autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("sc.title"))}" aria-describedby="${sayId}" placeholder="${esc(t("sc.placeholder"))}">
+        <div class="sc-say sr-only" id="${sayId}"></div>
         <div class="sc-live" aria-live="polite"></div>
       </div>
     </div>
@@ -218,7 +222,35 @@ export function createScientific(root, opts) {
   const OPS = /^[+×÷^²³⁻!%−]/;
   // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
   // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
+  // Lastna razveljavitev (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y, »razveljavi« na telefonu): vnos se spreminja tudi s kodo
+  // (⌫, tipke na zaslonu), kar sistemsko razveljavitev pokvari ali izbriše (pregled #945: prazno polje v Firefoxu,
+  // kazalec na napačnem mestu). Stanje je besedilo in kazalec PRED spremembo; zapiše ga update() ob vsaki spremembi.
+  const undo = { back: [], fwd: [], cur: { v: "", p: 0 } };
+  function record() {
+    const v = input.value;
+    const p = input.selectionStart ?? v.length;
+    if (v === undo.cur.v) {
+      undo.cur.p = p;
+      return;
+    }
+    undo.back.push(undo.cur);
+    if (undo.back.length > 200) undo.back.shift();
+    undo.fwd = [];
+    undo.cur = { v, p };
+  }
+  function history(dir) {
+    const from = dir < 0 ? undo.back : undo.fwd;
+    const to = dir < 0 ? undo.fwd : undo.back;
+    if (!from.length) return;
+    to.push({ v: input.value, p: input.selectionStart ?? input.value.length });
+    undo.cur = from.pop();
+    input.value = undo.cur.v;
+    input.setSelectionRange(undo.cur.p, undo.cur.p);
+    recall = -1;
+    update();
+  }
   function insert(text, o = {}) {
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? input.value.length;
     if (o.replace) input.value = "";
     if (o.angle && ANGLES.includes(o.angle) && st.angle !== o.angle) {
       st.angle = o.angle;
@@ -228,8 +260,19 @@ export function createScientific(root, opts) {
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
+    // izbira, ki zajame le del imenovane predloge, se razširi na celo predlogo (ne ostane »;0;1)«); oklepaj, ki bi
+    // ostal brez para, ostane (AUDIT-039)
+    {
+      const a = input.selectionStart ?? input.value.length;
+      const b = input.selectionEnd ?? a;
+      if (a !== b) {
+        const d = deleteSpan(input.value, a, b);
+        input.value = d.text;
+        input.setSelectionRange(d.pos, d.pos);
+      }
+    }
     const s = input.selectionStart ?? input.value.length;
-    const e = input.selectionEnd ?? s;
+    const e = s;
     const at = ins.indexOf("@");
     const clean = ins.replace("@", "");
     input.value = input.value.slice(0, s) + clean + input.value.slice(e);
@@ -244,21 +287,37 @@ export function createScientific(root, opts) {
       live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
     }
   }
-  function del() {
+  // ⌫ (zaslonska in strojna tipka) in Delete: ime funkcije, ukaz in predloga gredo kot celota (sci-vnos.js, AUDIT-004)
+  function edit(fn) {
     const s = input.selectionStart ?? input.value.length;
     const e = input.selectionEnd ?? s;
-    if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
-    else if (s > 0) {
-      // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
-      const n = m ? m[0].length : 1;
-      input.value = input.value.slice(0, s - n) + input.value.slice(s);
-      input.setSelectionRange(s - n, s - n);
-    }
-    update();
+    if (input.value === undo.cur.v) undo.cur.p = s; // razveljavitev vrne kazalec sem (selectionchange je lahko še na poti)
+    // varovalo: brisanje, po katerem se zapis ne bi izrisal, se ne zgodi (AUDIT-034)
+    const ok = (x) => {
+      try {
+        return !!entryBase(x, env())?.ok;
+      } catch {
+        return false;
+      }
+    };
+    const r = fn(input.value, s, e, { ok });
+    if (!r.text.trim()) r.text = r.pos = ""; // ostali presledki (»∑_(n=1)^(5) « brez predloge) niso vnos
+    r.pos = Math.min(Number(r.pos) || 0, r.text.length);
+    const changed = r.text !== input.value;
+    if (changed) replaceText(r.text);
+    input.setSelectionRange(r.pos, r.pos);
+    if (changed) {
+      recall = -1;
+      update();
+    } else showEntry();
   }
+  const replaceText = (next) => (input.value = next);
+  const del = () => edit(backspace);
+  const delForward = () => edit(deleteForward);
+  // ◀ ▶: na naslednje mesto kazalca v zapisu (iz integranda v mejo, čez ime funkcije), ne za en znak
   function move(d) {
-    const p = Math.max(0, Math.min(input.value.length, (input.selectionStart ?? input.value.length) + d));
+    if (entry.text !== input.value) showEntry();
+    const p = stepCaret(entry.base, input.value, input.selectionStart ?? input.value.length, d);
     input.setSelectionRange(p, p);
     showEntry();
   }
@@ -278,9 +337,15 @@ export function createScientific(root, opts) {
   };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
+  // »dvojna rešitev«, »trojna rešitev«, »4-kratna rešitev« v jeziku vmesnika
+  const multText = (m) => (m === 2 ? t("sc.mult.2") : m === 3 ? t("sc.mult.3") : t("sc.mult.n", { n: m }));
+  // število v navadnem besedilu (sporočilo, ne TeX): 8 mest, decimalna vejica, pravi minus
+  const plainNum = (v) => String(Number(v.toPrecision(8))).replace(".", comma() ? "," : ".").replace("-", "−");
   function errorText(e) {
     const names = (e.info?.names || []).join(", ");
     switch (e.code) {
+      case "notReal": // √(−1), ln(−1): kompleksna vrednost namesto »npr. deljenje z 0« (AUDIT-051)
+        return t("sc.notReal", { z: complexText(e.info) });
       case "missing":
         return t("gc.errMissing", { names });
       case "char":
@@ -291,13 +356,36 @@ export function createScientific(root, opts) {
         return t("sc.errEquation");
       case "sumLimit":
         return t("sc.errSumLimit");
+      case "sumDiverge":
+        return t(e.info?.prod ? "sc.errProdDiverge" : "sc.errSumDiverge");
+      case "sumUnknown":
+        return t("sc.errSumUnknown");
+      case "ncrK":
+        return t("sc.errNcrK", { f: e.info.f || "nCr" });
+      case "intDiverge":
+      case "intUndefined":
+      case "intUnknown":
+      case "intTimeout": {
+        const [key, p] = integralErrorKey(e);
+        return t(key, p.pv !== undefined ? { pv: plainNum(p.pv) } : p);
+      }
       case "polInside":
         return t("sc.errPolInside");
+      case "arity":
+        return t("gc.errArity", { ex: arityExample(e.info, ";") });
       case "vecMix":
       case "vecOp":
         return t("sc.errVec");
       case "undef":
         return t("sc.errUndefined");
+      case "noDeriv": {
+        // levi in desni odvod se ne ujemata (|x| pri 0) ali funkcija tu ni zvezna (AUDIT-018)
+        const { left, right } = e.info || {};
+        if (Number.isFinite(left) && Number.isFinite(right)) return t("sc.errNoDerivLR", { left: fmt(left).text, right: fmt(right).text });
+        return t("sc.errNoDeriv");
+      }
+      case "noDerivDomain":
+        return t("sc.errNoDerivDomain");
       case "casUnsupported":
       case "casEquation":
       case "casNeedEq":
@@ -337,6 +425,17 @@ export function createScientific(root, opts) {
     }
   }
 
+  // Celo število nad 2⁵³ (AUDIT-050): do 40 mest vse števke s presledki po tri (»=«), daljše ali brez točnih števk
+  // »≈« in zaokroženo. 10²⁰ ostane 1·10²⁰ (zaokroženi zapis je že točen).
+  const BIG_DIGITS = 40;
+  const bigShown = (e) => {
+    if (!e.big && !e.bigApprox) return null;
+    const digits = e.big?.replace("-", "");
+    if (digits && digits.replace(/0+$/, "").length <= 10) return null;
+    if (digits && digits.length <= BIG_DIGITS && st.format === "auto") return { rel: "=", tex: groupTex(e.big) };
+    return { rel: "\\approx", tex: fmt(e.value).tex };
+  };
+  const groupTex = (s) => `${s.startsWith("-") ? "-" : ""}${s.replace("-", "").replace(/\B(?=(\d{3})+(?!\d))/g, "\\,")}`;
   // rezultat (TeX za vrednost) po trenutni obliki zapisa
   function valueTex(v, approx) {
     const f = fmt(v);
@@ -361,16 +460,22 @@ export function createScientific(root, opts) {
         e.value = r.value;
         if (r.assign) e.assign = r.assign;
         if (r.approx) e.approx = true;
+        if (r.est) e.est = true;
+        if (r.precision) e.note = { key: "sc.precision" }; // AUDIT-049: navadnih 16 mest ni bilo dovolj
+        if (r.big) e.big = r.big; // AUDIT-050: točne števke celega števila nad 2⁵³
+        if (r.bigApprox) e.bigApprox = true;
         break;
       case "complex":
         e.re = r.re;
         e.im = r.im;
         break;
       case "solve":
-        e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx"]);
+        e.res = solutionTex(r, c, st.format, multText);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx", "searched", "rex", "forms", "noPi", "mult", "cmult", "runc", "cerr", "cex", "vx", "gx"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
+        if (r.searched) e.note = { key: "sc.searchedNone", tex: r.searched };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
+        if (r.all && r.cond) e.note = { key: "sc.cas.cond", tex: r.cond }; // x ∈ ℝ, velja za x ≠ 2 (AUDIT-048)
         e.steps = true;
         if (r.roots.length) e.first = r.roots[0];
         break;
@@ -378,6 +483,7 @@ export function createScientific(root, opts) {
         e.res = intervalsTex(r, c, st.format);
         e.r = pick(r, ["v", "intervals"]); // ±∞ se v JSON shrani kot null
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
+        if (r.cond) e.note = { key: "sc.cas.cond", tex: r.cond };
         e.steps = true;
         break;
       case "system":
@@ -444,7 +550,7 @@ export function createScientific(root, opts) {
     if (!r) return e.res || "";
     try {
       const c = comma();
-      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format);
+      if (e.kind === "solve") return solutionTex({ complex: [], ...r }, c, st.format, multText);
       if (e.kind === "ineq") return intervalsTex({ ...r, intervals: r.intervals.map((i) => ({ ...i, lo: i.lo ?? -Infinity, hi: i.hi ?? Infinity })) }, c, st.format);
       if (e.kind === "system") return systemTex(r, c, st.format);
     } catch {}
@@ -456,7 +562,9 @@ export function createScientific(root, opts) {
     switch (e.kind || "value") {
       case "value": {
         const d = e.dms ? dmsOf(e.value, { comma: comma() }) : null;
-        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
+        const big = bigShown(e);
+        if (big) return texHtml(`${e.assign ? `${e.assign} ` : ""}${big.rel} ${big.tex}`);
+        return texHtml(`${e.assign ? `${e.assign} ` : ""}${e.est ? "\\approx" : "="} ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
       }
       case "complex":
         return texHtml(`= ${complexTex(e.re, e.im)}`);
@@ -495,7 +603,7 @@ export function createScientific(root, opts) {
   // Vnos je viden samo kot lep zapis s kazalcem (sci-vnos.js); surovo polje je neviden (graph.css).
   // Zapis brez kazalca se izračuna enkrat na besedilo (update); premik kazalca le vstavi kazalec v isti TeX.
   let entry = { text: null, base: null };
-  const entryHtml = (tex) => window.katex.renderToString(tex, { throwOnError: false, strict: "ignore", trust: TRUST });
+  const entryHtml = (tex) => izrisi(tex, { zaupaj: TRUST });
   function showEntry(r) {
     const prev = $(".sc-preview");
     const text = input.value;
@@ -512,6 +620,61 @@ export function createScientific(root, opts) {
       tex = caretTex(entry.base, input.selectionStart ?? text.length);
     } catch {}
     prev.innerHTML = tex ? entryHtml(tex) : "";
+    speak(tex);
+    // dolg vnos se najprej malo pomanjša (do 80 %); šele nato se pomika, kazalec pa ostane viden
+    const k = prev.querySelector(".katex");
+    if (!k) return;
+    pomanjsaj(k, prev.clientWidth, () => prev.scrollWidth);
+    const c = prev.querySelector(".sc-caret");
+    if (c && prev.scrollWidth > prev.clientWidth + 1) {
+      const pr = prev.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      if (cr.left < pr.left + 8) prev.scrollLeft -= pr.left + 8 - cr.left;
+      else if (cr.right > pr.right - 8) prev.scrollLeft += cr.right - pr.right + 8;
+    }
+  }
+  // bralnik zaslona: opis matematike namesto surovega vnosa (AUDIT-040), z besedami v jeziku vmesnika
+  const sayWords = () => Object.fromEntries(t("sc.say.words").split("|").map((w, i) => [SAY_WORDS[i], w.trim()]));
+  const sayGreek = () => Object.fromEntries(t("sc.say.greek").split("|").map((w, i) => [SAY_GREEK[i], w.trim()]));
+  function speak(tex) {
+    const el = $(".sc-say");
+    if (!el) return;
+    let txt = "";
+    try {
+      txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), greek: sayGreek(), parse: window.katex.__parse }) : "";
+    } catch {}
+    if (el.textContent !== txt) el.textContent = txt;
+  }
+  // vodoravni okvirji vidnih znakov zapisa (brez kazalca) po vrsti
+  function glyphBoxes(root) {
+    const out = [];
+    const w = document.createTreeWalker(root.querySelector(".katex-html") || root, NodeFilter.SHOW_TEXT);
+    for (let n; (n = w.nextNode()); ) {
+      if (n.parentElement.closest(".sc-caret")) continue;
+      for (let k = 0; k < n.data.length; k++) {
+        if (!n.data[k].trim()) continue;
+        const r = document.createRange();
+        r.setStart(n, k);
+        r.setEnd(n, k + 1);
+        const b = r.getBoundingClientRect();
+        if (b.width > 0) out.push([b.left, b.right]);
+      }
+    }
+    return out;
+  }
+  // x v prvem izrisu → x v drugem: znotraj znaka sorazmerno, med znakoma sorazmerno, zunaj premik najbližjega
+  function mapX(x, A, B) {
+    if (!A.length || A.length !== B.length) return x;
+    const lin = (x, a0, a1, b0, b1) => (a1 - a0 > 0.5 ? b0 + ((x - a0) * (b1 - b0)) / (a1 - a0) : b0 + (x - a0));
+    const idx = A.map((_, i) => i).sort((i, j) => A[i][0] - A[j][0]);
+    const first = idx[0], last = idx.at(-1);
+    if (x <= A[first][0]) return B[first][0] + (x - A[first][0]);
+    if (x >= A[last][1]) return B[last][1] + (x - A[last][1]);
+    for (const i of idx) if (A[i][0] <= x && x <= A[i][1]) return lin(x, A[i][0], A[i][1], B[i][0], B[i][1]);
+    for (let k = 0; k + 1 < idx.length; k++) {
+      const i = idx[k], j = idx[k + 1];
+      if (A[i][1] <= x && x <= A[j][0]) return lin(x, A[i][1], A[j][0], B[i][1], B[j][0]);
+    }
+    return x;
   }
   // Dotik na lep zapis: položaj v besedilu iz izrisa (merilne točke na vseh mestih kazalca), ne iz prosojnega polja.
   function caretFromPoint(x, y) {
@@ -520,27 +683,48 @@ export function createScientific(root, opts) {
     const shown = prev.innerHTML;
     let best = null;
     try {
+      // izris z merilnimi točkami je lahko nekoliko širši (točka ob \left| doda tanek presledek, ||x|−1| ~13 px):
+      // dotik prevedemo z znakov prikazanega izrisa na iste znake v izrisu s točkami (AUDIT-048)
+      const from = glyphBoxes(prev);
       prev.innerHTML = entryHtml(stopsTex(entry.base));
+      x = mapX(x, from, glyphBoxes(prev));
       for (const el of prev.querySelectorAll("[data-evk-p]")) {
-        const b = el.getBoundingClientRect();
+        // okvir same merilne črte (0,4 em nad osnovnico), ne vrstice okoli nje: vrstici števca in imenovalca se prekrivata
+        const b = (el.querySelector(".katex-rule, .rule") || el).getBoundingClientRect();
         const dy = y < b.top ? b.top - y : y > b.bottom ? y - b.bottom : 0;
-        const d = Math.abs(x - b.left) + 2 * dy;
+        // tudi oddaljenost od navpične sredine točke: pred ∫ in na začetku spodnje meje sta skoraj na istem x,
+        // dotik v višini vrstice je pred ∫, dotik nižje je v meji (AUDIT-003)
+        const d = Math.abs(x - b.left) + 2 * dy + 0.25 * Math.abs(y - (b.top + b.bottom) / 2);
         if (!best || d < best.d) best = { d, p: Number(el.dataset.evkP) };
       }
     } catch {}
     prev.innerHTML = shown;
     return best && Number.isFinite(best.p) ? best.p : input.value.length;
   }
+  // Dotik: Chromium (Android) klik premakne proti sredini polja (prilagoditev dotika, ~8 px); kazalec postavimo po
+  // točki, kjer se je prst res dotaknil (pointerdown), ne po kliku (AUDIT-003: dotik na števec ni v imenovalcu).
+  let down = null;
+  input.addEventListener("pointerdown", (ev) => (down = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp }));
   input.addEventListener("click", (ev) => {
-    const p = ev.detail > 0 && input.value ? caretFromPoint(ev.clientX, ev.clientY) : null;
+    const near = down && ev.timeStamp - down.t < 1500 && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) < 48;
+    const [x, y] = near ? [down.x, down.y] : [ev.clientX, ev.clientY];
+    down = null;
+    const p = ev.detail > 0 && input.value ? caretFromPoint(x, y) : null;
     setTimeout(() => {
-      if (p != null && input.selectionStart === input.selectionEnd) input.setSelectionRange(p, p);
+      // dvojni ali trojni klik/dotik ne izbere skrite »besede« surovega vnosa (»∫«, »sin«), ki bi jo naslednja tipka
+      // nadomestila: kazalec gre na mesto dotika (AUDIT-003); vlečenje z miško (detail 1) izbiro ohrani
+      if (p != null && (input.selectionStart === input.selectionEnd || ev.detail > 1)) input.setSelectionRange(p, p);
       showEntry();
     });
   });
   input.addEventListener("keyup", () => showEntry());
-  document.addEventListener("selectionchange", () => document.activeElement === input && showEntry());
+  document.addEventListener("selectionchange", () => {
+    if (document.activeElement !== input) return;
+    if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? undo.cur.p; // kazalec pred naslednjo spremembo
+    showEntry();
+  });
   function update() {
+    record();
     const text = input.value;
     const prev = $(".sc-preview");
     const live = $(".sc-live");
@@ -548,6 +732,7 @@ export function createScientific(root, opts) {
     if (!text.trim()) {
       fromFormula = null;
       prev.innerHTML = "";
+      speak(null);
       live.textContent = "";
       live.className = "sc-live";
       return;
@@ -566,12 +751,23 @@ export function createScientific(root, opts) {
     }
     showEntry(r);
     live.className = "sc-live muted";
-    if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
+    const big = r.kind === "value" ? bigShown(r) : null;
+    if (big) live.innerHTML = texHtml(`${big.rel} ${big.tex}`);
+    else if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`${r.est ? "\\approx" : "="} ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
+    else if (r.kind === "cas" && !r.resTex && !r.none) live.innerHTML = ""; // samo zapis (predogled matrike z okvirčki)
     else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${matBreak(r.resTex)}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
+    // DEG/GRA: ∫ in d/dx sta v radianih (AUDIT-055) – opomba tudi v predogledu, kot pod rezultatom
+    if (radNote(text, r) && live.innerHTML) live.insertAdjacentHTML("beforeend", ` <span class="sc-live-hint">${esc(t(radKey(text)))}</span>`);
   }
+  const radNote = (text, r) => st.angle !== "rad" && ["value", "deriv"].includes(r?.kind) && /∫|d\/d|'/.test(text);
+  // cela vrstica je ∫ ali d/dx: »Računano v radianih«; sicer le ∫ in d/dx, ostanek v stopinjah ali gradih
+  const radKey = (text) => {
+    const e = env();
+    return calculusEnv(text, e) !== e ? "sc.cas.radians" : st.angle === "grad" ? "sc.radiansPartGrad" : "sc.radiansPart";
+  };
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
   const analyzeLive = (text) => analyzeLiveEnv(text, env());
 
@@ -583,16 +779,27 @@ export function createScientific(root, opts) {
     if (!r) return;
     const bad = r.error || (r.kind === "value" && !Number.isFinite(r.value));
     if (bad) {
+      const msg = r.error ? errorText(r.error) : t("sc.errUndefined");
       live.className = "sc-live sc-err";
-      live.innerHTML = `${icon("info")}<span>${esc(r.error ? errorText(r.error) : t("sc.errUndefined"))}</span>`;
+      live.innerHTML = `${icon("info")}<span>${esc(msg)}</span>`;
+      // divergenten integral, limita brez vrednosti: graf vseeno pokaže f in to sporočilo (brez osenčene vrednosti)
+      if (opts.showOnGraph && /∫|lim/.test(text) && !simple()) {
+        const ans = st.ans;
+        live.insertAdjacentHTML("beforeend", grafBtn(-1));
+        live.querySelector(".sc-h-graf").addEventListener("click", () => showOnGraph(text, ans, msg));
+      }
+      if (r.error?.code === "missing") fromGraph(live, text);
       return;
     }
+    const ansBefore = st.ans;
     if (r.kind === "value") {
       if (r.assign && !fromFormula?.has(r.assign)) st.vars[r.assign] = r.value;
       st.ans = r.value;
     } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
     else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
     const e = entryOf(text, r);
+    if (radNote(text, r) && !e.note) e.note = { key: radKey(text) }; // ∫, d/dx v DEG/GRA (AUDIT-055)
+    if (/Ans/.test(text)) e.ga = ansBefore; // graf iz te vrstice z Ans, kot je bil ob računu
     // vnos v minutah in sekundah (v DEG): tudi rezultat v °′″; f′(2) je odvod, ne minuta
     if (e.kind === "value" && st.angle === "deg" && /\d\s*[′″]/.test(text) && dmsOf(e.value)) e.dms = true;
     if (e.first !== undefined) {
@@ -600,6 +807,13 @@ export function createScientific(root, opts) {
       delete e.first;
     }
     fromFormula = null;
+    // skupna zgodovina zavihkov: številski izid (Grafični ga ponudi kot vrednost)
+    if (e.kind === "value" && Number.isFinite(e.value)) {
+      // 10 mest; zelo velika in majhna števila z ×10ˣ (»E« kot tipka ×10ˣ: v vnosu se izriše kot 6,022 · 10²³)
+      const a = Math.abs(e.value);
+      const txt = a && (a >= 1e10 || a < 1e-4) ? e.value.toExponential(9).replace(/\.?0+e/, "e").replace(/e\+?/, "E") : String(Number(e.value.toPrecision(10)));
+      opts.addRecent?.({ text: comma() ? txt.replace(".", ",") : txt, src: "sci" });
+    }
     st.history.push(e);
     if (st.history.length > MAX_HISTORY) st.history.splice(0, st.history.length - MAX_HISTORY);
     save();
@@ -648,10 +862,20 @@ export function createScientific(root, opts) {
     insert(m ? (m[1] === "°" ? "′" : "″") : "°");
   }
 
+  // ---------- »Pokaži na grafu« (public/graph/v-graf.js) ----------
+  const simple = () => opts.stage?.() === "OS"; // osnovna šola: brez analize (integral, odvod, limita, vsota)
+  const canGraph = (e) => !!opts.showOnGraph && graphable(e, { simple: simple() });
+  const grafBtn = (i) => `<button type="button" class="sc-act sc-h-graf" data-act="graf" data-i="${i}" title="${esc(t("sc.showOnGraph"))}" aria-label="${esc(t("sc.showOnGraph"))}">${icon("chart-spline")}</button>`;
+  function showOnGraph(text, ans, message) {
+    opts.showOnGraph?.({ text, message, simple: simple(), env: { vars: vars(), funcs: st.funcs, ans: Number.isFinite(ans) ? ans : st.ans, angle: st.angle, comma: comma() } });
+  }
+
   function actionsHtml(e, i) {
     const acts = [];
     const btn = (act, ic, label) => `<button type="button" class="sc-act" data-act="${act}" data-i="${i}">${icon(ic)}<span>${esc(t(label))}</span></button>`;
-    if (e.plot?.length && opts.openGraph) acts.push(btn("plot", "chart-spline", "sc.plot"));
+    // »Pokaži na grafu« (v-graf.js): graf z orodji grafičnega kalkulatorja; sicer star »Nariši graf« (le izrazi)
+    if (canGraph(e)) acts.push(btn("graf", "chart-spline", "sc.showOnGraph"));
+    else if (e.plot?.length && opts.openGraph) acts.push(btn("plot", "chart-spline", "sc.plot"));
     if (e.cas) for (const [op, ic] of [["simplify", "sparkles"], ["expand", "maximize-2"], ["factor", "blocks"]]) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="${op}" data-i="${i}">${icon(ic)}<span>${esc(t(`sc.cas.${op}`))}</span></button>`);
     if (e.ana) {
       // ∫ dx in Taylor: spremenljivko dopišemo le, če ni x
@@ -660,11 +884,18 @@ export function createScientific(root, opts) {
       acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="taylor"${v} data-i="${i}" title="${esc(t("sc.cas.taylorPoly"))}">${icon("sigma")}<span>${esc(t("sc.cas.taylor"))}</span></button>`);
     }
     if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
+    // črke, ki jih definira graf (k = 3, g(x)): »Iz grafa: …« (skupne vrednosti)
+    if (["sym", "expr", "symeq", "plot", "solve", "ineq"].includes(e.kind)) {
+      const fg = fromGraphOf(namesIn(e.text));
+      if (fg) acts.push(fromGraphBtn(fg, i));
+    }
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
     if ((e.kind || "value") === "value" && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
       acts.push(`<button type="button" class="sc-act" data-act="dms" data-i="${i}" aria-pressed="${!!e.dms}" title="${esc(t("sc.toDms"))}"><span aria-hidden="true">°′″</span><span class="sr-only">${esc(t("sc.toDms"))}</span></button>`);
+    // fizika in kemija: izid v pretvornik enot (Orodja), vrednost se vpiše tam (povezani zavihki)
+    if ((e.kind || "value") === "value" && opts.convert && Number.isFinite(e.value) && (profile === "fiz" || profile === "kem")) acts.push(btn("convert", "ruler", "sc.toUnits"));
     if (["value", "solve", "ineq", "system", "deriv", "complex", "pair", "cas"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
   }
@@ -685,14 +916,32 @@ export function createScientific(root, opts) {
           ${resultHtml(e) ? `<button type="button" class="sc-h-res" data-i="${i}" title="${esc(t("sc.useResult"))}">${resultHtml(e)}</button>` : ""}
           ${fact ? `<div class="sc-h-note muted">${texHtml(`${fmt(e.value).tex} = ${factorsTex(e.value, fact)}`)}</div>` : ""}
           ${last || !/^sc\.cas\.(symHint|eqHint)$/.test(e.note?.key || "") ? noteHtml(e) : ""}
-          ${last ? actionsHtml(e, i) : ""}
+          ${last ? actionsHtml(e, i) : canGraph(e) ? grafBtn(i) : ""}
         </div>`;
       })
       .join("");
-    // matrika se ne prelomi: preširok rezultat najprej malo pomanjšamo (do 80 %, sirina.js), šele nato se pomika
-    hist.querySelectorAll(".sc-h-res").forEach((b) => b.querySelector(".mtable") && pomanjsaj(b, b.clientWidth, () => b.scrollWidth));
+    razporedi();
     if (scroll) hist.scrollTop = hist.scrollHeight;
   }
+
+  // Formule v zgodovini se razporedijo po vidni širini (j 14. 11. 2026): kar gre v vrstico, ostane v eni vrstici,
+  // predolgo se zloži pri = (in pred + in −), nato malo pomanjša (do 80 %, sirina.js); pomika se le še ogromen izraz.
+  // Kalkulator to naredi sam enkrat ob izrisu in ob spremembi širine (splošni opazovalec iz sirina.js ga izpusti:
+  // vrstica zgodovine je široka toliko kot formula, zato je zlaganje utripalo).
+  let sirinaZgodovine = 0;
+  function razporedi() {
+    const vrsta = hist.querySelector(".sc-h-row");
+    if (!vrsta) return;
+    sirinaZgodovine = Math.round(hist.getBoundingClientRect().width);
+    const w = vrsta.clientWidth - 12; // notranji rob gumba (graph.css: padding 2px 6px)
+    hist.querySelectorAll(".sc-h-expr, .sc-h-res, .sc-h-note").forEach((b) => {
+      for (const k of b.querySelectorAll(".katex")) if (!k.parentElement.closest(".katex")) prilagodiSirini(k, w);
+    });
+  }
+  if (typeof ResizeObserver !== "undefined")
+    new ResizeObserver(() => {
+      if (Math.round(hist.getBoundingClientRect().width) !== sirinaZgodovine) requestAnimationFrame(() => renderHistory(false));
+    }).observe(hist);
 
   // Zgodovina ostane pri dnu, ko se prostor spremeni (tipkovnica, vnosna vrstica): sicer plošča prekrije zadnji gumb (Kopiraj).
   let priDnu = true;
@@ -702,17 +951,56 @@ export function createScientific(root, opts) {
       if (priDnu) hist.scrollTop = hist.scrollHeight;
     }).observe(hist);
 
+  // Skupne vrednosti z grafičnim kalkulatorjem (opts.sharedGraph: { vars, funcs }): črka, ki je kalkulator ne
+  // pozna, graf pa jo definira (drsnik k = 3, g(x) = …), ponudi gumb »Iz grafa: …«; ob dotiku se shrani in vrstica
+  // izračuna znova. Nič se ne prenese tiho.
+  function fromGraphOf(names) {
+    names = [...names];
+    const sh = names.length && opts.sharedGraph ? opts.sharedGraph() : null;
+    if (!sh) return null;
+    // funkcija grafa s kotnimi funkcijami pri drugi enoti kota (graf RAD, kalkulator DEG) bi pomenila drugo: ne ponudimo
+    const trigOk = (f) => !/(?<![A-Za-z])(?:sin|cos|tan|cot|sec|csc|tg|ctg|arcsin|arccos|arctan|arccot|asin|acos|atan|acot|arctg)(?![a-z])/.test(f.body) || (sh.angle || "rad") === st.angle;
+    const known = names.filter((n) => !(n in st.vars) && !st.funcs[n] && (Number.isFinite(sh.vars?.[n]) || (sh.funcs?.[n] && trigOk(sh.funcs[n]))));
+    if (!known.length) return null;
+    return {
+      label: known.map((n) => (sh.funcs?.[n] ? `${n}(${sh.funcs[n].param})` : `${n} = ${fmt(sh.vars[n]).text}`)).join(", "),
+      apply() {
+        for (const n of known) {
+          if (sh.funcs?.[n]) st.funcs[n] = { param: sh.funcs[n].param, body: sh.funcs[n].body };
+          else st.vars[n] = sh.vars[n];
+        }
+        save();
+        renderVars();
+      },
+    };
+  }
+  const fromGraphBtn = (fg, i) => `<button type="button" class="sc-act sc-from-graph" data-act="fromgraph" data-i="${i}">${icon("chart-spline")}<span>${esc(t("sc.fromGraph", { names: fg.label }))}</span></button>`;
+  function fromGraph(live, text) {
+    const fg = fromGraphOf(namesIn(text));
+    if (!fg) return;
+    live.insertAdjacentHTML("beforeend", fromGraphBtn(fg, -1));
+    live.querySelector(".sc-from-graph").addEventListener("click", () => {
+      fg.apply();
+      input.value = text;
+      compute();
+    });
+  }
+
   function renderVars() {
     const vs = Object.entries(st.vars);
     const fs = Object.entries(st.funcs);
-    varsBar.hidden = !vs.length && !fs.length;
+    const rec = (opts.recent?.() || []).filter((r) => r.src !== "sci").slice(0, 4);
+    varsBar.hidden = !vs.length && !fs.length && !rec.length;
     if (varsBar.hidden) return (varsBar.innerHTML = "");
     const c = comma();
     varsBar.innerHTML =
-      `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` +
+      (vs.length || fs.length ? `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` : "") +
       vs.map(([n, v]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}" title="${esc(t("sc.insert"))}">${texHtml(`${n} = ${formatNumber(v, { mode: "auto", comma: c }).tex}`)}</button>`).join("") +
-      fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("");
+      fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("") +
+      (rec.length ? `<span class="sc-vars-l">${esc(t("sc.recent"))}</span>` + rec.map((r) => `<button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${texHtml(r.text.replace(/E(-?\d+)$/, "\\cdot 10^{$1}").replace(/(\d),(\d)/, "$1{,}$2"))}</button>`).join("") : "");
   }
+  // skupna zgodovina zavihkov (opts.recent): izidi iz Orodij, PSE, grafa … kot čipi »Nedavno«
+  const srcName = (src) => t({ sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" }[src] || "sc.modeSci");
 
   function syncBar() {
     root.querySelectorAll(".sc-angle button").forEach((b) => {
@@ -840,7 +1128,40 @@ export function createScientific(root, opts) {
     recall = -1;
     update();
   });
+  // strojni Backspace/Delete (tudi telefonova tipkovnica 🌐) gre po isti poti kot zaslonska ⌫
+  input.addEventListener("beforeinput", (e) => {
+    if (e.isComposing) return;
+    if (e.inputType === "historyUndo" || e.inputType === "historyRedo") {
+      e.preventDefault();
+      history(e.inputType === "historyUndo" ? -1 : 1);
+      return;
+    }
+    // tipkanje čez izbiro: izbira dela imenovane predloge se razširi na celo predlogo, oklepaj, ki bi ostal brez para,
+    // ostane (AUDIT-039); vstavi insert(), ker WebKit spremenjene izbire v beforeinput ne upošteva
+    if (e.inputType === "insertText" && e.data && input.selectionStart !== input.selectionEnd) {
+      e.preventDefault();
+      insert(e.data);
+      return;
+    }
+    if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
+      e.preventDefault();
+      del();
+    } else if (e.inputType === "deleteContentForward" || e.inputType === "deleteWordForward") {
+      e.preventDefault();
+      delForward();
+    }
+  });
   input.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && /^[zy]$/i.test(e.key)) {
+      e.preventDefault();
+      history(e.key.toLowerCase() === "y" || e.shiftKey ? 1 : -1);
+      return;
+    }
+    if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && input.value) {
+      e.preventDefault();
+      move(e.key === "ArrowLeft" ? -1 : 1);
+      return;
+    }
     if (e.key === "Enter") {
       e.preventDefault();
       compute();
@@ -883,6 +1204,17 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
+      else if (act === "fromgraph") {
+        fromGraphOf(namesIn(it.text))?.apply();
+        input.value = it.text;
+        compute();
+      }
+      else if (act === "convert") {
+        let txt = String(Number(it.value.toPrecision(12)));
+        if (/e/.test(txt)) txt = it.value.toExponential(11).replace(/\.?0+e/, "e");
+        opts.convert?.(comma() ? txt.replace(".", ",") : txt);
+      }
+      else if (act === "graf") showOnGraph(it.text, it.ga);
       else if (act === "steps") opts.steps?.(chemNumbers(it.stepsText || it.text), it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
       else if (act === "cas") {
         // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)
@@ -913,7 +1245,8 @@ export function createScientific(root, opts) {
       input.value = it.text;
       input.setSelectionRange(it.text.length, it.text.length);
       update();
-    } else if ((it.kind || "value") === "value") insert(it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: comma() }).text.replace("−", "-") : formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-"));
+    } else if ((it.kind || "value") === "value" && it.big && bigShown(it)?.rel === "=") insert(it.big);
+    else if ((it.kind || "value") === "value") insert(it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: comma() }).text.replace("−", "-") : formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-"));
     else if (it.kind === "complex") insert(`(${complexText(it)})`);
     if (!touch) input.focus({ preventScroll: true });
   });
@@ -927,6 +1260,7 @@ export function createScientific(root, opts) {
   function copyText(it) {
     const c = comma();
     if (it.none) return t("sc.cas.limitNone");
+    if ((it.kind || "value") === "value" && it.big && bigShown(it)?.rel === "=") return it.big.replace("-", "−");
     if ((it.kind || "value") === "value") return it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: c }).text : formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
     return texPlain(String(resTex(it)));
@@ -991,7 +1325,14 @@ export function createScientific(root, opts) {
       showPanel(null);
       refresh();
     },
+    /** Tipka Nazaj (app.js calcBack): odprta plošča funkcij ali konstant se zapre, kalkulator ostane. */
+    back() {
+      if (!root.classList.contains("sc-panel-open")) return false;
+      showPanel(null);
+      return true;
+    },
     insert,
+    renderVars, // skupna zgodovina zavihkov: čipi »Nedavno« ob preklopu na Znanstveni
     get state() {
       return st;
     },
@@ -1094,5 +1435,15 @@ export function createUnits(root, opts) {
     const r = calc();
     if (Number.isFinite(r)) opts.onInsert(show(r).text.replace(" · 10^", "E").replace("−", "-"));
   });
-  return { root, resize() {}, reload() {} };
+  return {
+    root,
+    resize() {},
+    reload() {},
+    /** Vrednost iz znanstvenega kalkulatorja (»Pretvori enote«): vpiše jo in preračuna, količina ostane izbrana. */
+    setValue(v) {
+      $(".un-val").value = String(v);
+      calc();
+      $(".un-val").focus({ preventScroll: true });
+    },
+  };
 }

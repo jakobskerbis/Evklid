@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -29,7 +29,7 @@ Tako je $\frac{2}{3}\cdot\frac{4}{5}=\frac{8}{15}$.
 :::premisli
 Ali bo $\frac{3}{4}\cdot\frac{1}{2}$ večje ali manjše od $\frac{3}{4}$? Napovej, preden računaš.
 ---
-Manjše. Množiti s $\frac{1}{2}$ pomeni vzeti polovico, rezultat je $\frac{3}{8}$. Pri množenju z ulomkom, manjšim od $1$, dobiš manj, kot si imel.
+Manjše. Množiti z $\frac{1}{2}$ pomeni vzeti polovico, rezultat je $\frac{3}{8}$. Pri množenju z ulomkom, manjšim od $1$, dobiš manj, kot si imel.
 :::
 
 **3. Krajšanje pred množenjem.** Produkt je en sam ulomek $\frac{a\cdot c}{b\cdot d}$. Zato smemo pred množenjem krajšati **katerikoli** števec s **katerimkoli** imenovalcem, če ju deli isto število. Pri seštevanju tega ne smemo: v $\frac{1}{2}+\frac{2}{3}$ dvojk ne smeš »pokrajšati navzkriž«.
@@ -175,7 +175,7 @@ $$\frac{1}{2}\cdot\frac{1}{3}=\frac{1}{6}$$
 
 Množiti z $\frac{1}{2}$ pomeni vzeti polovico. Zato je rezultat manjši.
 
-**Deljenje.** Številsko premico od $0$ do $1$ razdeli na osmine. Do $\frac{3}{4}=\frac{6}{8}$ lahko po vrsti narišeš korake dolžine $\frac{1}{8}$. Koraki so natanko $6$, zato $\frac{3}{4}:\frac{1}{8}=6$. Deljenje sprašuje, **kolikokrat** se krajši korak prilega v daljšo dolžino.
+**Deljenje.** Številsko premico od $0$ do $1$ razdeli na osmine. Do $\frac{3}{4}=\frac{6}{8}$ lahko po vrsti narišeš korake dolžine $\frac{1}{8}$. Korakov je natanko $6$, zato $\frac{3}{4}:\frac{1}{8}=6$. Deljenje sprašuje, **kolikokrat** se krajši korak prilega v daljšo dolžino.
 
 ## Drugače: Iz vsakdanjega življenja
 
@@ -189,7 +189,7 @@ Beseda »od« pri ulomkih pogosto pomeni množenje: polovica od $\frac{3}{4}$ je
 
 $$\frac{2}{3}:\frac{1}{6}=\frac{2}{3}\cdot\frac{6}{1}=\frac{12}{3}=4$$
 
-Dobiš $4$ kose. Preveri po pamet: $\frac{2}{3}=\frac{4}{6}$, torej štiri šestine.
+Dobiš $4$ kose. Preveri na pamet: $\frac{2}{3}=\frac{4}{6}$, torej štiri šestine.
 
 ## Drugače: Bolj natančno
 

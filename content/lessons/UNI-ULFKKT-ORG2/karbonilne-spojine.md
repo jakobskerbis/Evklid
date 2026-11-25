@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -30,13 +30,45 @@ Ne. Planarno skupino nukleofil napade z obeh strani enako pogosto, zato nastane 
 
 **Posplošitev: nukleofilna adicija.** Isti koraki veljajo za vse aldehide in ketone:
 
-```
- Nu⁻     R           R                R
-   ↘     \           \               \
-     C=O   →   Nu–C–O⁻   →(H⁺)→  Nu–C–OH
-     /           /               /
-    R'          R'              R'
-```
+:::risba skica
+opis: Shema nukleofilne adicije v treh strukturah. Levo: karbonilna spojina, ogljik C z delnim pozitivnim nabojem je z dvojno vezjo vezan na kisik O in z enojnima vezema na skupini R in R′; nukleofil Nu z negativnim nabojem s puščico napada ogljik. Sredina: alkoksid, na ogljik so z enojnimi vezmi vezani Nu, R, R′ in kisik z negativnim nabojem. Desno, po protonaciji s H plus: produkt, v katerem so na ogljik vezani Nu, R, R′ in skupina OH.
+območje: 0; 0,2 .. 18,5; 6
+napis: 2; 3 | C
+črta: 1,65; 3,3 -> 0,95; 3,9
+napis: 0,65; 4,15 | R
+črta: 1,65; 2,7 -> 0,95; 2,1
+napis: 0,65; 1,85 | R'
+črta: 2,4; 3,1 -> 3,5; 3,1
+črta: 2,4; 2,9 -> 3,5; 2,9
+napis: 3,8; 3 | O
+napis: 2,75; 3,7 | δ+ | sredina | siva
+napis: 1,2; 5,4 | Nu⁻ | sredina | modra
+puščica: 1,4; 5 -> 2,05; 3,5 | | | modra
+puščica: 5; 3 -> 6,2; 3
+puščica: 11,8; 3 -> 13; 3 | H⁺ | nad
+napis: 8,5; 3 | C
+črta: 8,15; 3,3 -> 7,45; 3,9
+napis: 7,15; 4,15 | R
+črta: 8,15; 2,7 -> 7,45; 2,1
+napis: 7,15; 1,85 | R'
+črta: 8,9; 3 -> 10,0; 3
+napis: 10,35; 3 | O⁻
+črta: 8,5; 3,4 -> 8,5; 4,5
+napis: 8,5; 4,9 | Nu
+napis: 15; 3 | C
+črta: 14,65; 3,3 -> 13,95; 3,9
+napis: 13,65; 4,15 | R
+črta: 14,65; 2,7 -> 13,95; 2,1
+napis: 13,65; 1,85 | R'
+črta: 15,4; 3 -> 16,5; 3
+napis: 17; 3 | OH
+črta: 15; 3,4 -> 15; 4,5
+napis: 15; 4,9 | Nu
+napis: 2,3; 0,8 | karbonil | sredina | siva
+napis: 8,8; 0,8 | alkoksid | sredina | siva
+napis: 15,3; 0,8 | produkt | sredina | siva
+podnapis: Nukleofil se veže na karbonilni ogljik, vez π se razcepi, kisik po protonaciji postane OH.
+:::
 
 Nukleofil se veže na ogljik, kisik postane OH. Spreminja se samo nukleofil:
 

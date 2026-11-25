@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -144,7 +144,7 @@ Utež: $mg - F_v = ma$. Kolut: $F_vR = J\alpha$. Vez: $a = \alpha R$. Sledi $a =
 
 ### Primer 3 (težji)
 
-Študent sedi na vrtljivem stolu z utežema v iztegnjenih rokah. Skupni vztrajnostni moment je $6{,}0\,\mathrm{kg\,m^2}$, stol se vrti s $0{,}50$ obrata na sekundo. Študent pritegne roke k telesu, s čimer se vztrajnostni moment zmanjša na $2{,}0\,\mathrm{kg\,m^2}$. Kolikšna je nova frekvenca vrtenja? Kako se spremeni kinetična energija in od kod razlika? Na kolikšno vrednost bi moral študent zmanjšati vztrajnostni moment, da bi se vrtel z $2{,}0$ obrata na sekundo, in koliko dela bi pri tem opravil? Trenje v ležaju zanemari.
+Študent sedi na vrtljivem stolu z utežema v iztegnjenih rokah. Skupni vztrajnostni moment je $6{,}0\,\mathrm{kg\,m^2}$, stol se vrti z $0{,}50$ obrata na sekundo. Študent pritegne roke k telesu, s čimer se vztrajnostni moment zmanjša na $2{,}0\,\mathrm{kg\,m^2}$. Kolikšna je nova frekvenca vrtenja? Kako se spremeni kinetična energija in od kod razlika? Na kolikšno vrednost bi moral študent zmanjšati vztrajnostni moment, da bi se vrtel z $2{,}0$ obrata na sekundo, in koliko dela bi pri tem opravil? Trenje v ležaju zanemari.
 
 **Podatki:** $J_1 = 6{,}0\,\mathrm{kg\,m^2}$, $\nu_1 = 0{,}50\,\mathrm{s^{-1}}$, $J_2 = 2{,}0\,\mathrm{kg\,m^2}$, $\nu_3 = 2{,}0\,\mathrm{s^{-1}}$, zunanjih navorov ni
 **Iščemo:** $\nu_2$, $W_{k1}$, $W_{k2}$ in delo študenta; $J_3$ za $\nu_3$ in delo za to spremembo
@@ -155,14 +155,14 @@ $J_1\omega_1 = J_2\omega_2$, $\omega = 2\pi\nu$, $W_k = \tfrac{1}{2}J\omega^2 = 
 
 **Rešitev:**
 
-1. Teža in sila ležaja imata nosilke vzdolž osi ali skozi njo, zato nimata navora okoli navpične osi. Vrtilna količina se ohranja.
+1. Teža in sila ležaja sta vzporedni z osjo ali imata nosilko skozi njo, zato nimata navora okoli navpične osi. Vrtilna količina se ohranja.
 2. $\nu_2 = \nu_1 J_1/J_2 = 0{,}50\,\mathrm{s^{-1}} \cdot 6{,}0/2{,}0 = 1{,}5\,\mathrm{s^{-1}}$.
 3. Za energijo potrebujemo kotni hitrosti v $\mathrm{s^{-1}}$, ne obratov na sekundo: $\omega_1 = 2\pi \cdot 0{,}50\,\mathrm{s^{-1}} = \pi\,\mathrm{s^{-1}} \approx 3{,}14\,\mathrm{s^{-1}}$, $\omega_2 = 3\pi\,\mathrm{s^{-1}} \approx 9{,}42\,\mathrm{s^{-1}}$.
 4. $W_{k1} = \tfrac{1}{2} \cdot 6{,}0 \cdot 3{,}14^2\,\mathrm{J} \approx 29{,}6\,\mathrm{J}$, $W_{k2} = \tfrac{1}{2} \cdot 2{,}0 \cdot 9{,}42^2\,\mathrm{J} \approx 88{,}8\,\mathrm{J}$.
 5. Kinetična energija se je povečala za približno $59{,}2\,\mathrm{J}$. Ker je $W_k = \Gamma^2/(2J)$ in se $\Gamma$ ohranja, se energija poveča za faktor $J_1/J_2 = 3$.
 6. Obratno vprašanje: iz $J_1\nu_1 = J_3\nu_3$ je $J_3 = 6{,}0 \cdot 0{,}50/2{,}0\,\mathrm{kg\,m^2} = 1{,}5\,\mathrm{kg\,m^2}$.
 7. Delo mišic je sprememba kinetične energije: $\Gamma = J_1\omega_1 = 6{,}0 \cdot \pi\,\mathrm{kg\,m^2/s} \approx 18{,}85\,\mathrm{kg\,m^2/s}$, $W_{k3} = \Gamma^2/(2J_3) = 18{,}85^2/3{,}0\,\mathrm{J} \approx 118{,}4\,\mathrm{J}$, zato $A = 118{,}4\,\mathrm{J} - 29{,}6\,\mathrm{J} \approx 88{,}8\,\mathrm{J}$. Delo raste kot $1/J_3$, zato vsako nadaljnje zmanjšanje $J$ stane več.
-8. Odgovor: stol se vrti s $1{,}5$ obrata na sekundo, kinetična energija naraste s $29{,}6\,\mathrm{J}$ na $88{,}8\,\mathrm{J}$; razliko, približno $59\,\mathrm{J}$, opravijo študentove mišice, ko vlečejo uteži proti osi. Za $2{,}0$ obrata na sekundo bi moral $J$ zmanjšati na $1{,}5\,\mathrm{kg\,m^2}$ in opraviti približno $88{,}8\,\mathrm{J}$ dela.
+8. Odgovor: stol se vrti z $1{,}5$ obrata na sekundo, kinetična energija naraste z $29{,}6\,\mathrm{J}$ na $88{,}8\,\mathrm{J}$; razliko, približno $59\,\mathrm{J}$, opravijo študentove mišice, ko vlečejo uteži proti osi. Za $2{,}0$ obrata na sekundo bi moral $J$ zmanjšati na $1{,}5\,\mathrm{kg\,m^2}$ in opraviti približno $88{,}8\,\mathrm{J}$ dela.
 
 ### Primer 4 – zdaj ti
 
@@ -192,7 +192,7 @@ $\alpha = \omega/t = 1{,}57\,\mathrm{s^{-1}}/2{,}0\,\mathrm{s} \approx 0{,}785\,
 
 - **Navor kot $rF$ brez kota.** Pomembna je pravokotna razdalja do nosilke sile. Sila vzdolž ročaja ključa nima navora.
 - **Vztrajnostni moment kot lastnost telesa.** $J$ je odvisen od izbire osi. Palica ima okoli krajišča štirikrat večji $J$ kot okoli središča.
-- **Pozabljen vztrajnostni moment koluta.** Pri uteži na vrvici, navito na kolut, pospešek ni $g$ in sila vrvice ni $mg$; del energije gre v vrtenje koluta.
+- **Pozabljen vztrajnostni moment koluta.** Pri uteži na vrvici, naviti na kolut, pospešek ni $g$ in sila vrvice ni $mg$; del energije gre v vrtenje koluta.
 - **Kotaljenje brez energije vrtenja.** Pri kotaljenju je $W_k = \tfrac{1}{2}mv^2 + \tfrac{1}{2}J\omega^2$, zato se valj po klancu spusti počasneje kot klada, ki drsi brez trenja.
 - **Ohranitev kinetične energije namesto vrtilne količine.** Ko se $J$ spremeni zaradi notranjih sil, se ohranja $\Gamma = J\omega$, kinetična energija pa se spremeni.
 - **Obrati in radiani.** V $W_k = \tfrac{1}{2}J\omega^2$ in $v = \omega R$ vstavi $\omega$ v $\mathrm{s^{-1}}$ (rad/s), ne frekvence v obratih na sekundo.
@@ -260,17 +260,23 @@ Izpelji hitrost, ki jo ima telo z maso $m$, polmerom $R$ in vztrajnostnim moment
 
 Vrata gledamo od zgoraj. Tečaji so os, sila deluje na kljuko:
 
-```
-  os (tečaji)
-   O=========================[kljuka]
-   |<------------- r -------------->|
-                                    ^
-                                    | F (pravokotno: največji navor)
-```
+:::risba skica
+opis: Vrata od zgoraj kot vodoravna debela črta. Na levem koncu je os (tečaji), na desnem kljuka. Razdalja od osi do kljuke je označena z r. Na kljuko deluje sila F pravokotno na vrata; med vrati in silo je označen pravi kot. Pri pravokotni sili je navor največji.
+območje: -1,5; -3,6 .. 11; 2
+črta: 0; 0 -> 8; 0 | debelo
+točka: 0; 0 | os (tečaji) | pod
+točka: 8; 0 | kljuka | desno
+puščica: 4; 1 -> 8; 1
+puščica: 4; 1 -> 0; 1
+napis: 4; 1,5 | r | sredina
+puščica: 8; -2,8 -> 8; -0,15 | F | desno | oranžna
+pravikot: 8; 0 | 0; 0 | 8; -2,8
+napis: 7; -3,2 | pravokotno: največji navor | sredina
+:::
 
 Če silo nagnemo proti tečajem, se ročica (pravokotna razdalja od osi do nosilke sile) skrajša in vrata se odpirajo težje. Če pritisnemo ob tečajih, je ročica skoraj nič in vrata se ne premaknejo.
 
-Vztrajnostni moment si predstavljaj z dvema enako težkima kolesoma: pri prvem je masa v obroču daleč od osi, pri drugem zbrana v pestu. Prvo je težje zavrteti in težje ustaviti, ker vsak del mase prispeva sorazmerno s $r^2$.
+Vztrajnostni moment si predstavljaj z dvema enako težkima kolesoma: pri prvem je masa v obroču daleč od osi, pri drugem zbrana v pestu. Prvo je težje zavrteti in težje ustaviti, ker vsak del mase prispeva sorazmerno z $r^2$.
 
 Tabela analogij: $x \leftrightarrow \varphi$, $v \leftrightarrow \omega$, $a \leftrightarrow \alpha$, $m \leftrightarrow J$, $F \leftrightarrow M$, $G = mv \leftrightarrow \Gamma = J\omega$, $\tfrac{1}{2}mv^2 \leftrightarrow \tfrac{1}{2}J\omega^2$.
 

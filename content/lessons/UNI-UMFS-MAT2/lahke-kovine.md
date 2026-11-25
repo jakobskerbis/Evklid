@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,10 +15,10 @@ Z znanjem o jeklih tega ni mogoče razložiti: jeklo je najtrše takoj po kaljen
 
 Lahke kovine imajo gostoto pod okoli $5\,\mathrm{g/cm^3}$. Primerjava z železom:
 
-- železo: $\rho = 7{,}87\,\mathrm{g/cm^3}$, $E = 210\,\mathrm{GPa}$, kubična telesno centrirana (pod $912\,^\circ\mathrm C$);
-- aluminij: $\rho = 2{,}70\,\mathrm{g/cm^3}$, $E = 70\,\mathrm{GPa}$, ploskovno centrirana kubična, tali se pri $660\,^\circ\mathrm C$;
-- magnezij: $\rho = 1{,}74\,\mathrm{g/cm^3}$, $E = 45\,\mathrm{GPa}$, heksagonalna gosto zložena, tali se pri $650\,^\circ\mathrm C$;
-- titan: $\rho = 4{,}51\,\mathrm{g/cm^3}$, $E \approx 110\,\mathrm{GPa}$, heksagonalna $\alpha$ pod $882\,^\circ\mathrm C$, nad njo kubična telesno centrirana $\beta$, tali se pri $1668\,^\circ\mathrm C$.
+- železo: $\rho = 7{,}87\,\mathrm{g/cm^3}$, $E = 210\,\mathrm{GPa}$, kubična telesno centrirana (pod $912\,^\circ\mathrm{C}$);
+- aluminij: $\rho = 2{,}70\,\mathrm{g/cm^3}$, $E = 70\,\mathrm{GPa}$, ploskovno centrirana kubična, tali se pri $660\,^\circ\mathrm{C}$;
+- magnezij: $\rho = 1{,}74\,\mathrm{g/cm^3}$, $E = 45\,\mathrm{GPa}$, heksagonalna gosto zložena, tali se pri $650\,^\circ\mathrm{C}$;
+- titan: $\rho = 4{,}51\,\mathrm{g/cm^3}$, $E \approx 110\,\mathrm{GPa}$, heksagonalna $\alpha$ pod $882\,^\circ\mathrm{C}$, nad njo kubična telesno centrirana $\beta$, tali se pri $1668\,^\circ\mathrm{C}$.
 
 Opazi: modul elastičnosti pade skoraj v istem razmerju kot gostota. **Specifična togost** $E/\rho$ je pri vseh štirih okoli $25\,\mathrm{GPa\,cm^3/g}$. Lahka kovina v nategu ni »bolj toga za isto maso«. Prednost se pokaže pri upogibu tankih sten in pri **specifični trdnosti** $R_\mathrm{p0,2}/\rho$, kjer so dobre lahke zlitine večkrat boljše od konstrukcijskega jekla.
 
@@ -33,7 +33,7 @@ Gnetne zlitine označujemo s štirimi števkami (EN AW-xxxx). Prva pove glavni l
 - 6xxx: magnezij in silicij, profili in okvirji (6061, 6082);
 - 7xxx: cink z magnezijem in bakrom, najtrdnejše zlitine (7075).
 
-Zlitine 1xxx, 3xxx in 5xxx utrjujemo le s hladnim preoblikovanjem (stanje H). Zlitine 2xxx, 6xxx in 7xxx so **toplotno utrjevalne**. Livne zlitine (EN AC) so večinoma zlitine Al-Si (silumini), ki se dobro livajo. Stanje zapišemo za pomišljajem: O žarjeno, T4 raztopno žarjeno in naravno starano, T6 raztopno žarjeno in umetno starano do največje trdnosti.
+Zlitine 1xxx, 3xxx in 5xxx utrjujemo le s hladnim preoblikovanjem (stanje H). Zlitine 2xxx, 6xxx in 7xxx so **toplotno utrjevalne**. Livne zlitine (EN AC) so večinoma zlitine Al-Si (silumini), ki se dobro livajo. Stanje zapišemo za vezajem: O žarjeno, T4 raztopno žarjeno in naravno starano, T6 raztopno žarjeno in umetno starano do največje trdnosti.
 
 ### Izločevalno utrjevanje: primerjava s kaljenjem jekla
 
@@ -45,18 +45,20 @@ Pri jeklu kaljenje ujame ogljik v prenasičeni martenzit. Ta nastane brez difuzi
 
 **Postopek (zlitina Al-$4\,\%$ Cu):**
 
-1. **Raztopno žarjenje** nad solvusom (okoli $500\,^\circ\mathrm C$), a pod evtektično temperaturo $548\,^\circ\mathrm C$, v praksi pri $510$ do $520\,^\circ\mathrm C$: ves baker se raztopi v $\alpha$.
+1. **Raztopno žarjenje** nad solvusom (okoli $500\,^\circ\mathrm{C}$), a pod evtektično temperaturo $548\,^\circ\mathrm{C}$, v praksi pri $510$ do $520\,^\circ\mathrm{C}$: ves baker se raztopi v $\alpha$.
 2. **Gašenje** v vodi: difuzija nima časa, nastane **prenasičena trdna raztopina**. Ob tem ostane v mreži veliko praznih mest, ki kasneje pospešijo difuzijo.
-3. **Staranje**: pri sobni temperaturi (naravno) ali pri $120$ do $200\,^\circ\mathrm C$ (umetno). Baker se zbira v izločke v zaporedju: Guinier-Prestonove cone (ploščice debeline nekaj atomov) $\to$ $\theta''$ $\to$ $\theta'$ $\to$ ravnotežna faza $\theta$ ($\mathrm{Al_2Cu}$).
+3. **Staranje**: pri sobni temperaturi (naravno) ali pri $120$ do $200\,^\circ\mathrm{C}$ (umetno). Baker se zbira v izločke v zaporedju: Guinier-Prestonove cone (ploščice debeline nekaj atomov) $\to$ $\theta''$ $\to$ $\theta'$ $\to$ ravnotežna faza $\theta$ ($\mathrm{Al_2Cu}$).
 
-```
-Rp ^      vrh (T6)
-   |     _--_
-   |   /      \__  prestaranje
-   |  /          ---
-   | /
-   +------------------> t
-```
+:::risba graf
+opis: Kvalitativen graf trdnosti Rp v odvisnosti od časa staranja t. Trdnost od začetne vrednosti po gašenju najprej strmo raste, doseže vrh (stanje T6) in nato počasi pada (prestaranje). Osi sta brez številk.
+x: 0 .. 6 | 1 | t
+y: 0 .. 6 | 1 | R_p
+oznake: ne
+f: 2 + 3*x*exp(1 - x) | debelo modra
+točka: 1; 5 | vrh (T6) | nad
+napis: 4; 3,2 | prestaranje | nad
+podnapis: Trdnost med staranjem: rast do vrha (T6), nato prestaranje
+:::
 
 Trdnost med staranjem najprej raste, doseže vrh in nato pada. Pri prestaranju izločki zrastejo, razdalje med njimi se povečajo in izgubijo koherenco z mrežo. Dislokacije jih tedaj obidejo.
 
@@ -74,11 +76,11 @@ kjer je $Q$ aktivacijska energija difuzije (za baker v aluminiju okoli $130\,\ma
 
 ### Magnezijeve zlitine
 
-Magnezij je najlažja konstrukcijska kovina. Ima heksagonalno mrežo z malo drsnimi sistemi pri sobni temperaturi, zato se slabo hladno preoblikuje; pločevine oblikujemo pri $200$ do $300\,^\circ\mathrm C$. Največ ga ulivamo pod tlakom. Najbolj razširjena je **AZ91** (okoli $9\,\%$ Al, $1\,\%$ Zn): ohišja menjalnikov, nosilci volanov, ohišja prenosnikov. Slabosti: slaba odpornost proti koroziji, posebej v stiku z jeklom (galvanski člen), in vnetljivi ostružki pri obdelavi.
+Magnezij je najlažja konstrukcijska kovina. Ima heksagonalno mrežo z malo drsnimi sistemi pri sobni temperaturi, zato se slabo hladno preoblikuje; pločevine oblikujemo pri $200$ do $300\,^\circ\mathrm{C}$. Največ ga ulivamo pod tlakom. Najbolj razširjena je **AZ91** (okoli $9\,\%$ Al, $1\,\%$ Zn): ohišja menjalnikov, nosilci volanov, ohišja prenosnikov. Slabosti: slaba odpornost proti koroziji, posebej v stiku z jeklom (galvanski člen), in vnetljivi ostružki pri obdelavi.
 
 ### Titanove zlitine
 
-Titan je skoraj dvakrat lažji od jekla, ima zelo veliko specifično trdnost, ohrani jo do okoli $500\,^\circ\mathrm C$ in je izredno odporen proti koroziji zaradi goste plasti $\mathrm{TiO_2}$. Je drag, ker ga pridobivamo v zapletenem postopku prek $\mathrm{TiCl_4}$. Legirni elementi stabilizirajo eno od obeh modifikacij:
+Titan je za dobrih $40\,\%$ lažji od jekla, ima zelo veliko specifično trdnost, ohrani jo do okoli $500\,^\circ\mathrm{C}$ in je izredno odporen proti koroziji zaradi goste plasti $\mathrm{TiO_2}$. Je drag, ker ga pridobivamo v zapletenem postopku prek $\mathrm{TiCl_4}$. Legirni elementi stabilizirajo eno od obeh modifikacij:
 
 - **stabilizatorji $\alpha$** (Al, O, N) dvignejo temperaturo prehoda;
 - **stabilizatorji $\beta$** (V, Mo, Nb, Fe) jo znižajo.
@@ -86,9 +88,9 @@ Titan je skoraj dvakrat lažji od jekla, ima zelo veliko specifično trdnost, oh
 Ločimo zlitine $\alpha$, $\alpha + \beta$ in $\beta$. Najpogostejša je $\alpha + \beta$ zlitina **Ti-6Al-4V**: letalski deli, lopatice kompresorjev, vsadki. Zlitine $\alpha + \beta$ in $\beta$ lahko tudi toplotno utrdimo z raztopnim žarjenjem in staranjem.
 
 :::premisli
-Zakaj je titanova zlitina boljša izbira za del, ki je vroč $400\,^\circ\mathrm C$, kot aluminijeva zlitina T6, čeprav ima ta podobno specifično trdnost pri sobni temperaturi?
+Zakaj je titanova zlitina boljša izbira za del, ki dela pri $400\,^\circ\mathrm{C}$, kot aluminijeva zlitina T6, čeprav ima ta podobno specifično trdnost pri sobni temperaturi?
 ---
-Pri $400\,^\circ\mathrm C$ je aluminijeva zlitina daleč nad temperaturo staranja: izločki hitro zrastejo, zlitina se prestara in izgubi trdnost. Aluminij se tali že pri $660\,^\circ\mathrm C$, titan pri $1668\,^\circ\mathrm C$, zato je $400\,^\circ\mathrm C$ zanj sorazmerno »hladno«.
+Pri $400\,^\circ\mathrm{C}$ je aluminijeva zlitina daleč nad temperaturo staranja: izločki hitro zrastejo, zlitina se prestara in izgubi trdnost. Aluminij se tali že pri $660\,^\circ\mathrm{C}$, titan pri $1668\,^\circ\mathrm{C}$, zato je $400\,^\circ\mathrm{C}$ zanj sorazmerno »hladno«.
 :::
 
 ## Rešeni primeri
@@ -134,9 +136,9 @@ upogibna togost plošče $\propto E t^3$; enaka togost: $t = t_\mathrm{j}\sqrt[3
 
 ### Primer 3 (težji): načrt toplotne obdelave
 
-Zlitino Al-$4\,\%$ Cu (masni deleži) toplotno utrjujemo. Iz faznega diagrama: solvus pri $4\,\%$ Cu je pri okoli $500\,^\circ\mathrm C$, evtektična temperatura $548\,^\circ\mathrm C$, topnost bakra v $\alpha$ pri sobni temperaturi okoli $0{,}1\,\%$, faza $\theta$ vsebuje okoli $53\,\%$ Cu. (a) V katerem območju naj bo temperatura raztopnega žarjenja? (b) Kolikšen masni delež faze $\theta$ bi bil v ravnotežju pri sobni temperaturi? (c) Pri $190\,^\circ\mathrm C$ zlitina doseže vrh trdnosti v $10\,\mathrm h$. Koliko časa potrebuje pri $170\,^\circ\mathrm C$, če je $Q = 130\,\mathrm{kJ/mol}$?
+Zlitino Al-$4\,\%$ Cu (masni deleži) toplotno utrjujemo. Iz faznega diagrama: solvus pri $4\,\%$ Cu je pri okoli $500\,^\circ\mathrm{C}$, evtektična temperatura $548\,^\circ\mathrm{C}$, topnost bakra v $\alpha$ pri sobni temperaturi okoli $0{,}1\,\%$, faza $\theta$ vsebuje okoli $53\,\%$ Cu. (a) V katerem območju naj bo temperatura raztopnega žarjenja? (b) Kolikšen masni delež faze $\theta$ bi bil v ravnotežju pri sobni temperaturi? (c) Pri $190\,^\circ\mathrm{C}$ zlitina doseže vrh trdnosti v $10\,\mathrm{h}$. Koliko časa potrebuje pri $170\,^\circ\mathrm{C}$, če je $Q = 130\,\mathrm{kJ/mol}$?
 
-**Podatki:** $w_0 = 4\,\%$, $T_\mathrm{solvus} \approx 500\,^\circ\mathrm C$, $T_\mathrm{e} = 548\,^\circ\mathrm C$, $w_\alpha = 0{,}1\,\%$, $w_\theta = 53\,\%$, $t_1 = 10\,\mathrm h$ pri $T_1 = 463{,}15\,\mathrm K$, $T_2 = 443{,}15\,\mathrm K$, $Q = 130\,\mathrm{kJ/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
+**Podatki:** $w_0 = 4\,\%$, $T_\mathrm{solvus} \approx 500\,^\circ\mathrm{C}$, $T_\mathrm{e} = 548\,^\circ\mathrm{C}$, $w_\alpha = 0{,}1\,\%$, $w_\theta = 53\,\%$, $t_1 = 10\,\mathrm{h}$ pri $T_1 = 463{,}15\,\mathrm{K}$, $T_2 = 443{,}15\,\mathrm{K}$, $Q = 130\,\mathrm{kJ/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
 **Iščemo:** temperaturno območje, delež $\theta$, čas $t_2$
 
 :::formula
@@ -145,13 +147,13 @@ vzvodno pravilo: $W_\theta = \dfrac{w_0 - w_\alpha}{w_\theta - w_\alpha}$; $t_2 
 
 **Rešitev:**
 
-1. (a) Temperatura mora biti nad solvusom, da se ves baker raztopi, in pod evtektično, sicer se ob mejah zrn začne taliti evtektik (»sežig«). Okno je torej od okoli $500$ do $548\,^\circ\mathrm C$; v praksi blizu $510$ do $520\,^\circ\mathrm C$ z varnostjo na obeh straneh.
+1. (a) Temperatura mora biti nad solvusom, da se ves baker raztopi, in pod evtektično, sicer se ob mejah zrn začne taliti evtektik (»sežig«). Okno je torej od okoli $500$ do $548\,^\circ\mathrm{C}$; v praksi blizu $510$ do $520\,^\circ\mathrm{C}$ z varnostjo na obeh straneh.
 2. (b) Vzvodno pravilo: $W_\theta = \dfrac{4 - 0{,}1}{53 - 0{,}1} \approx 0{,}074$, torej okoli $7{,}4\,\%$ faze $\theta$. Prav ta baker lahko pri staranju tvori izločke.
-3. (c) Razmerje $Q/R = 130\,000 / 8{,}314 \approx 15\,636\,\mathrm K$.
-4. Razlika recipročnih temperatur: $\dfrac{1}{443{,}15} - \dfrac{1}{463{,}15} \approx 9{,}745 \cdot 10^{-5}\,\mathrm{K^{-1}}$.
-5. Eksponent: $15\,636 \cdot 9{,}745 \cdot 10^{-5} \approx 1{,}524$; $\mathrm e^{1{,}524} \approx 4{,}59$.
-6. Čas: $t_2 \approx 10 \cdot 4{,}59 \approx 45{,}9\,\mathrm h$.
-7. Odgovor: (a) med okoli $500$ in $548\,^\circ\mathrm C$; (b) okoli $7{,}4\,\%$ faze $\theta$; (c) okoli $46\,\mathrm h$. Nižja temperatura pomeni daljši čas, a navadno nekoliko višji vrh, ker so izločki drobnejši.
+3. (c) Razmerje $Q/R = 130\,000 / 8{,}314 \approx 15\,636\,\mathrm{K}$.
+4. Razlika recipročnih temperatur: $\dfrac{1}{443{,}15} - \dfrac{1}{463{,}15} \approx 9{,}744 \cdot 10^{-5}\,\mathrm{K^{-1}}$.
+5. Eksponent: $15\,636 \cdot 9{,}744 \cdot 10^{-5} \approx 1{,}524$; $\mathrm e^{1{,}524} \approx 4{,}59$.
+6. Čas: $t_2 \approx 10 \cdot 4{,}59 \approx 45{,}9\,\mathrm{h}$.
+7. Odgovor: (a) med okoli $500$ in $548\,^\circ\mathrm{C}$; (b) okoli $7{,}4\,\%$ faze $\theta$; (c) okoli $46\,\mathrm{h}$. Nižja temperatura pomeni daljši čas, a navadno nekoliko višji vrh, ker so izločki drobnejši.
 
 ### Primer 4 – zdaj ti: vsadek, ki izgine
 
@@ -181,7 +183,7 @@ Po $3$ mesecih $(1{,}4/1{,}5)^3 \approx 0{,}81$, po letu $(1{,}1/1{,}5)^3 \appro
 
 - **»Aluminij je bolj tog za isto maso kot jeklo.«** V nategu ni: $E/\rho$ je skoraj enak. Prednost je pri upogibu tankih sten in pri trdnosti.
 - **Gašenje aluminija kot kaljenje jekla.** Po gašenju je zlitina mehka; trdnost da šele staranje. Pri jeklu je trdnost največja takoj po kaljenju.
-- **Daljše ali bolj vroče staranje je vedno boljše.** Po vrhu trdnost pada (prestaranje); zlitine 2xxx in 7xxx zato ne smejo dolgo delovati nad okoli $150\,^\circ\mathrm C$.
+- **Daljše ali bolj vroče staranje je vedno boljše.** Po vrhu trdnost pada (prestaranje); zlitine 2xxx in 7xxx zato ne smejo dolgo delovati nad okoli $150\,^\circ\mathrm{C}$.
 - **Raztopno žarjenje »čim višje«.** Nad evtektično temperaturo se meje zrn delno talijo in zlitina je neuporabna.
 - **Vsaka aluminijeva zlitina se utrdi s staranjem.** Zlitine 1xxx, 3xxx in 5xxx niso toplotno utrjevalne; utrjujemo jih s hladnim preoblikovanjem.
 
@@ -192,7 +194,7 @@ Po $3$ mesecih $(1{,}4/1{,}5)^3 \approx 0{,}81$, po letu $(1{,}1/1{,}5)^3 \appro
 - Izločevalno utrjevanje: raztopno žarjenje nad solvusom in pod evtektikom, gašenje v prenasičeno raztopino, staranje (GP cone, $\theta''$, $\theta'$, $\theta$); po vrhu prestaranje.
 - Pogoja: topnost pada s temperaturo in nastanejo drobni (koherentni) izločki.
 - Mg: heksagonalna mreža, slabo hladno preoblikovanje, tlačno litje (AZ91), korozija.
-- Ti: $\alpha$ (hcp) pod $882\,^\circ\mathrm C$, $\beta$ (bcc) nad; stabilizatorji $\alpha$ Al, O, N, stabilizatorji $\beta$ V, Mo; Ti-6Al-4V; odličen proti koroziji in biokompatibilen.
+- Ti: $\alpha$ (hcp) pod $882\,^\circ\mathrm{C}$, $\beta$ (bcc) nad; stabilizatorji $\alpha$ Al, O, N, stabilizatorji $\beta$ V, Mo; Ti-6Al-4V; odličen proti koroziji in biokompatibilen.
 
 ## Za izpit
 
@@ -207,7 +209,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-Natezna vez dolžine $0{,}8\,\mathrm m$ prenaša silo $50\,\mathrm{kN}$ z varnostjo $1{,}5$ proti meji plastičnosti. Izbiramo med S355 ($E = 210\,\mathrm{GPa}$, $\rho = 7{,}85\,\mathrm{g/cm^3}$, $R_\mathrm{p0,2} = 355\,\mathrm{MPa}$), 7075-T6 ($71{,}7\,\mathrm{GPa}$; $2{,}81\,\mathrm{g/cm^3}$; $505\,\mathrm{MPa}$), AZ91 ($45\,\mathrm{GPa}$; $1{,}81\,\mathrm{g/cm^3}$; $150\,\mathrm{MPa}$) in Ti-6Al-4V ($114\,\mathrm{GPa}$; $4{,}43\,\mathrm{g/cm^3}$; $880\,\mathrm{MPa}$). (a) Vez se sme podaljšati največ za $0{,}4\,\mathrm{mm}$. Kateri material da najlažjo vez? (b) Kaj pa, če je dovoljeni raztezek $2\,\mathrm{mm}$?
+Natezna vez dolžine $0{,}8\,\mathrm{m}$ prenaša silo $50\,\mathrm{kN}$ z varnostjo $1{,}5$ proti meji plastičnosti. Izbiramo med S355 ($E = 210\,\mathrm{GPa}$, $\rho = 7{,}85\,\mathrm{g/cm^3}$, $R_\mathrm{p0,2} = 355\,\mathrm{MPa}$), 7075-T6 ($71{,}7\,\mathrm{GPa}$; $2{,}81\,\mathrm{g/cm^3}$; $505\,\mathrm{MPa}$), AZ91 ($45\,\mathrm{GPa}$; $1{,}81\,\mathrm{g/cm^3}$; $150\,\mathrm{MPa}$) in Ti-6Al-4V ($114\,\mathrm{GPa}$; $4{,}43\,\mathrm{g/cm^3}$; $880\,\mathrm{MPa}$). (a) Vez se sme podaljšati največ za $0{,}4\,\mathrm{mm}$. Kateri material da najlažjo vez? (b) Kaj pa, če je dovoljeni raztezek $2\,\mathrm{mm}$?
 
 **Rešitev:**
 
@@ -242,13 +244,13 @@ Predstavljaj si dislokacijo kot vrv, ki jo vlečeš po polju s količki.
 - Pri vrhu so količki ravno tako veliki, da jih vrv komaj še prereže, in še vedno gosti.
 - Pri prestaranju se drobni količki zlijejo v redke debele stebre. Vrv jih ne more prerezati, a se med njimi lahko upogne in jih obide. Razmiki so veliki, zato gre spet lažje.
 
-Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje, na desni obidenje.
+Krivulja trdnosti v času iz razlage je zato hrib: na levi je odločilno rezanje, na desni obhod.
 
 ## Drugače: Uporaba v stroki
 
 - **Letalstvo.** Spodnja stran kril je pogosto iz 2024-T3 (odpornost proti utrujanju), zgornja iz 7075-T6 ali novejših zlitin 7xxx (tlačna trdnost).
-- **Varjenje toplotno utrjevalnih zlitin.** V toplotno vplivnem področju zvara pri 6061-T6 se izločki delno raztopijo, malo dlje od zvara pa prestarajo; trdnost ob zvaru pade za tretjino ali več, kar mora konstrukter upoštevati ali zvar ponovno toplotno obdelati.
-- **Avtomobilska industrija.** Aluminijeve pločevine 6xxx dobavijo v stanju T4. Med sušenjem laka (okoli $180\,^\circ\mathrm C$, $20$ do $30\,\mathrm{min}$) se karoserija delno umetno postara, kar je izkoristek ene toplotne obdelave za dve nalogi.
+- **Varjenje toplotno utrjevalnih zlitin.** V toplotno vplivanem področju zvara pri 6061-T6 se izločki delno raztopijo, malo dlje od zvara pa prestarajo; trdnost ob zvaru pade za tretjino ali več, kar mora konstrukter upoštevati ali zvar ponovno toplotno obdelati.
+- **Avtomobilska industrija.** Aluminijeve pločevine 6xxx dobavijo v stanju T4. Med sušenjem laka (okoli $180\,^\circ\mathrm{C}$, $20$ do $30\,\mathrm{min}$) se karoserija delno umetno postara, kar je izkoristek ene toplotne obdelave za dve nalogi.
 - **Medicina.** Ti-6Al-4V in čisti titan sta standard za kolčne endoproteze, zobne vsadke in plošče za kosti. Kost se na titanov oksid neposredno veže (oseointegracija). Modul titana ($110\,\mathrm{GPa}$) je še vedno večkrat večji od modula kortikalne kosti (okoli $10$ do $30\,\mathrm{GPa}$), zato vsadek prevzame del obremenitve in kost okoli njega se lahko tanjša. Razgradljivi magnezijevi vijaki se uporabljajo pri manjših zlomih.
 
 ## Preveri se

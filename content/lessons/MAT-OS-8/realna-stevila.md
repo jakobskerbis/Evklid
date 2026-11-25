@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,7 +13,7 @@ Taka števila srečuješ pogosto. Kvadratna nalepka za telefon s ploščino $2\,
 
 ## Razlaga
 
-**1. Racionalna števila.** Število je **racionalno**, če ga lahko zapišemo kot ulomek $\dfrac{m}{n}$, kjer je $m$ celo število, $n$ pa naravno število. Množico racionalnih števil označimo z $\mathbb{Q}$. Sem sodijo naravna števila ($5 = \dfrac{5}{1}$), cela števila ($-3 = \dfrac{-3}{1}$), ulomki, končna decimalna števila ($0{,}75 = \dfrac{3}{4}$) in neskončna **periodična** decimalna števila ($0{,}333\ldots = \dfrac{1}{3}$).
+**1. Racionalna števila.** Število je **racionalno**, če ga lahko zapišemo kot ulomek $\dfrac{m}{n}$, kjer je $m$ celo število, $n$ pa naravno število. Množico racionalnih števil označimo s $\mathbb{Q}$. Sem sodijo naravna števila ($5 = \dfrac{5}{1}$), cela števila ($-3 = \dfrac{-3}{1}$), ulomki, končna decimalna števila ($0{,}75 = \dfrac{3}{4}$) in neskončna **periodična** decimalna števila ($0{,}333\ldots = \dfrac{1}{3}$).
 
 *Hitra preizkušnja:* je $-1{,}5$ racionalno? (Da, $-1{,}5 = \dfrac{-3}{2}$.)
 
@@ -167,7 +167,7 @@ $1414^2 = 1\,999\,396$ in $1415^2 = 2\,002\,225$, zato $1414 < \sqrt{2\,000\,000
 ## Pogoste napake
 
 - **»Vsak koren je iracionalen.«** Učenec vidi znak za koren in sklepa na iracionalnost. Toda $\sqrt{16} = 4$ in $\sqrt{0{,}49} = 0{,}7$ sta racionalni. Najprej preveri, ali je pod korenom popolni kvadrat.
-- **»Dolg ali neskončen zapis pomeni iracionalno.«** Število $0{,}333\ldots$ je neskončno, a periodično, zato je $\dfrac{1}{3}$. Iracionalno je le število, ki je neskončno **in** neperiodično.
+- **»Dolg ali neskončen zapis pomeni iracionalno.«** Zapis $0{,}333\ldots$ je neskončen, a periodičen, zato je to $\dfrac{1}{3}$. Iracionalno je le število, katerega zapis je neskončen **in** neperiodičen.
 - **Približek namesto vrednosti.** Zapisa $\pi = 3{,}14$ in $\sqrt{2} = 1{,}41$ sta napačna, ker sta to zaokrožena približka. Tudi $\dfrac{22}{7}$ ni $\pi$. Piši $\pi \approx 3{,}14$.
 - **Napačna lega negativnih korenov.** $-\sqrt{5}$ ni med $2$ in $3$, ampak zrcalno čez $0$: med $-3$ in $-2$, približno pri $-2{,}24$.
 - **Koren zamenjan s polovico.** »$\sqrt{70}$ je okrog $35$«, ker je učenec delil z $2$. Koren je število, ki krat samo sebe da $70$: $8^2 = 64$ in $9^2 = 81$, torej je $\sqrt{70}$ med $8$ in $9$.
@@ -212,7 +212,7 @@ Predpostavka je bila napačna, zato $\sqrt{2}$ ni racionalno število. Podoben r
 ~ $\sqrt{16} = 4$ je naravno število. Koren ni vedno iracionalen.
 + racionalna: $\sqrt{16}$, $0{,}333\ldots$ | iracionalna: $\sqrt{15}$, $\pi$
 - racionalna: $\sqrt{16}$ | iracionalna: $0{,}333\ldots$, $\pi$
-~ $0{,}333\ldots$ je neskončno, a periodično, zato je enako $\dfrac{1}{3}$.
+~ $0{,}333\ldots$ ima neskončen, a periodičen zapis, zato je enako $\dfrac{1}{3}$.
 > $\sqrt{16} = 4$ in $0{,}333\ldots = \dfrac{1}{3}$ sta racionalni. $15$ ni popolni kvadrat, zato je $\sqrt{15}$ iracionalno, enako kot $\pi$.
 
 ? Oceni: med katerima zaporednima celima številoma leži $\sqrt{70}$?
@@ -251,8 +251,8 @@ Predpostavka je bila napačna, zato $\sqrt{2}$ ni racionalno število. Podoben r
 
 :::simboli
 m | števec ulomka | | | celo število
-n | imenovalec ulomka | | | naravno število
-k | največje celo število, manjše od korena | | | $k < \sqrt{x} < k + 1$
+n | imenovalec ulomka; v točki 3 naravno število pod korenom | | | naravno število
+k | največje celo število, manjše od korena | | | $k < \sqrt{x} < k + 1$; v dokazu $m = 2k$
 x | število pod korenom (korenjenec) | |
 S | ploščina kvadrata | S = a^2 | cm^2 | v Primeru 4 v pikslih
 a | stranica kvadrata | a = \sqrt{S} | cm | v Primeru 4 v pikslih

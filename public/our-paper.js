@@ -6,6 +6,7 @@
 import { t, locale } from "./i18n.js";
 import { prilagodiSirino } from "./sirina.js";
 import { icon } from "./icons.js";
+import { zadrziFokus, escZaOkno } from "./fokus-okna.js";
 import { partKey } from "./our-paper-key.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -22,8 +23,8 @@ export function closeOurPaper() {
 // paper: JSON pole; title: oznaka (»Naša pola v slogu NPZ 9 – Matematika, 2026«); rich(md) → HTML;
 // onTutor(task, part): vprašaj inštruktorja; score: { get() → { "1a": true }, set(obj) } (shrani napravo);
 // onChecked([{ key, ok }]): ob zaprtju deli, pri katerih je učenec odprl rešitev ali (od)označil »Imam prav«
-// (za šibke točke; ok = označeno).
-export function openOurPaper(paper, { title, rich, onTutor, score = null, onChecked = null }) {
+// (za šibke točke; ok = označeno). focus: indeks naloge v paper.tasks, pri kateri se pola odpre (klepet, naloga-pole.js).
+export function openOurPaper(paper, { title, rich, onTutor, score = null, onChecked = null, focus = null }) {
   closeOurPaper();
   const back = document.activeElement;
   const got = { ...(score?.get?.() || {}) };
@@ -106,7 +107,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
       <p class="op-about">${icon("info")}<span>${esc(t("pp.oursAbout"))}</span></p>
       ${paper.tools && !(paper.polas?.length && paper.polas.every((x) => x.tools)) ? `<p class="op-tools">${esc(paper.tools)}</p>` : ""}
       ${paper.tasks
-        .map((tk, i) => `${headings(tk, paper.tasks[i - 1])}<article class="op-task"><h3>${esc(t("pp.oursTask", { n: `${tk.section || ""}${tk.n}` }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${tk.parts.map((p) => partHtml(tk, p)).join("")}</ol></article>`)
+        .map((tk, i) => `${headings(tk, paper.tasks[i - 1])}<article class="op-task" data-op-i="${i}"><h3>${esc(t("pp.oursTask", { n: `${tk.section || ""}${tk.n}` }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${tk.parts.map((p) => partHtml(tk, p)).join("")}</ol></article>`)
         .join("")}
     </div></div>`;
   const showScore = () => (el.querySelector(".op-score").textContent = t("pp.oursScore", { got: sum(), max }));
@@ -153,10 +154,17 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
       close();
     }
   });
+  // Esc zapre polo tudi, ko fokus ni v njej (npr. na body, ko izgine element s fokusom). Kot gumb ×: označene
+  // točke ostanejo (score.set ob vsaki spremembi), šibke točke gredo na strežnik (onChecked).
+  const naEsc = (e) => escZaOkno(e, el) && close();
+  document.addEventListener("keydown", naEsc, true);
+  let sprosti = () => {}; // zadrziFokus spodaj; close() je varen tudi, če izris prej vrže napako
   const close = () => {
     if (!current) return;
     current = null;
+    document.removeEventListener("keydown", naEsc, true);
     if (touched.size && onChecked) onChecked([...touched].map((key) => ({ key, ok: !!got[key] })));
+    sprosti({ vrni: false });
     el.remove();
     document.documentElement.classList.remove("pv-open");
     back?.focus?.();
@@ -167,6 +175,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
   // Predolga formula se zloži pri enačajih, preširoka formula ali tabela se najprej pomanjša (public/sirina.js);
   // skrite rešitve se prilagodijo, ko se pokažejo.
   prilagodiSirino(el, { vrstice: false });
-  el.querySelector("[data-op-close]").focus();
+  sprosti = zadrziFokus(el, { zacetni: el.querySelector("[data-op-close]"), prej: back });
+  if (Number.isInteger(focus)) el.querySelector(`[data-op-i="${focus}"]`)?.scrollIntoView({ block: "start" });
   return el;
 }

@@ -1,6 +1,7 @@
 import test from "node:test";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
+import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 import assert from "node:assert/strict";
@@ -105,27 +106,44 @@ for (const extra of [{ EVKLID_ACCOUNTS: "1" }, { EVKLID_PASSWORD: "geslo-za-test
   test(`izvoz od zunaj: samo s ključem (${Object.keys(extra)[0]})`, async () => {
     const token = "k".repeat(40);
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-izvoz-"));
-    const port = 39000 + Math.floor(Math.random() * 900);
+    // Prosta vrata od sistema (naključna so se lahko pokrila z drugim testom).
+    const port = await new Promise((resolve, reject) => {
+      const s = net.createServer().once("error", reject);
+      s.listen(0, "127.0.0.1", () => {
+        const { port } = s.address();
+        s.close(() => resolve(port));
+      });
+    });
     const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], {
       env: { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_EXPORT_TOKEN: token, ...extra },
-      stdio: "ignore",
+      stdio: ["ignore", "pipe", "pipe"],
     });
+    let stderr = "";
+    srv.stderr.on("data", (d) => (stderr += d));
+    // Strežnik je pripravljen, ko izpiše »Evklid teče na«; če se prej konča, test takoj pade (z njegovim stderr).
+    const ready = new Promise((resolve, reject) => {
+      let out = "";
+      srv.stdout.on("data", (d) => {
+        out += d;
+        if (out.includes("Evklid teče na")) resolve();
+      });
+      srv.once("exit", (code, sig) => reject(new Error(`strežnik se je končal (${code ?? sig}):\n${stderr}`)));
+    });
+    ready.catch(() => {}); // po koncu testa (srv.kill) zavrnitev ni napaka
+    let timer;
     try {
       const url = `http://127.0.0.1:${port}/api/kozmetika/export`;
       const get = (auth) => fetch(url, { headers: { "X-Forwarded-For": "1.2.3.4", ...(auth ? { Authorization: auth } : {}) } }).then((r) => r.status);
-      for (let i = 0; i < 150; i++) {
-        try {
-          await fetch(`http://127.0.0.1:${port}/healthz`);
-          break;
-        } catch {
-          await new Promise((r) => setTimeout(r, 100));
-        }
-      }
+      await Promise.race([
+        ready,
+        new Promise((_, reject) => (timer = setTimeout(() => reject(new Error("rok 60 s")), 60_000))),
+      ]).catch((e) => assert.fail(`strežnik se ni zagnal: ${e.message}\n${stderr}`));
       assert.equal(await get(), 404);
       assert.equal(await get(`Bearer ${"x".repeat(40)}`), 404);
       assert.equal(await fetch(`${url}?token=${token}`, { headers: { "X-Forwarded-For": "1.2.3.4" } }).then((r) => r.status), 404);
       assert.equal(await get(`Bearer ${token}`), 200);
     } finally {
+      clearTimeout(timer);
       srv.kill();
       fs.rmSync(dir, { recursive: true, force: true });
     }

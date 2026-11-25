@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -162,7 +162,7 @@ $\det A = \sum_j a_{1j} C_{1j}$, $C_{ij} = (-1)^{i+j} M_{ij}$, $A^{-1} = \dfrac{
 
 - **Množenje po elementih.** Študent zmnoži istoležne elemente, kot pri seštevanju. Pravilno: element produkta je vsota produktov vrstice prve in stolpca druge matrike.
 - **Zamenjan vrstni red.** Iz $AX = B$ sklepa $X = BA^{-1}$. Ker množenje ni komutativno, je pravilno $X = A^{-1}B$ (z leve pomnožimo z $A^{-1}$).
-- **Neobstoječ produkt.** Matriki $2 \times 3$ in $2 \times 3$ ne moremo zmnožiti; notranji dimenziji se morata ujemati.
+- **Neobstoječ produkt.** Matrik $2 \times 3$ in $2 \times 3$ ne moremo zmnožiti; notranji dimenziji se morata ujemati.
 - **$\det(\lambda A) = \lambda \det A$.** Pravilno je $\lambda^n \det A$, ker se z $\lambda$ pomnoži vsaka od $n$ vrstic.
 - **Pozabljen predznak kofaktorja** ali pozabljeno transponiranje pri prirejenki. Preveri: $AA^{-1}$ mora dati $I$.
 - **Sarrusovo pravilo za $4 \times 4$.** Velja samo za $3 \times 3$; za večje matrike razvijaj ali prevedi na trikotno obliko.
@@ -232,15 +232,20 @@ Naj bo $A$ kvadratna matrika reda $n$. Natančno navedi in dokaži izrek o obrnl
 
 Stolpca matrike $A = \begin{bmatrix} 3 & 1 \\ 0 & 2 \end{bmatrix}$ sta vektorja $(3, 0)$ in $(1, 2)$. Preslikava $\vec{x} \mapsto A\vec{x}$ pošlje enotski kvadrat (oglišča $(0,0)$, $(1,0)$, $(1,1)$, $(0,1)$) v paralelogram, ki ga razpenjata stolpca:
 
-```
-  y
-  2 |    *-----------*         (1,2)       (4,2)
-    |   /           /
-  1 |  /           /
-    | /           /
-  0 *-----------*----- x       (0,0)       (3,0)
-    0   1   2   3   4
-```
+:::risba graf
+opis: Enotski kvadrat z oglišči (0, 0), (1, 0), (1, 1), (0, 1) in njegova slika, paralelogram z oglišči (0, 0), (3, 0), (4, 2), (1, 2). Paralelogram razpenjata stolpca matrike, vektorja (3, 0) in (1, 2); osnovnica meri 3, višina 2, ploščina 6.
+x: -1 .. 5 | 1 | x
+y: -1 .. 3 | 1 | y
+enako: da
+lik: 0; 0 -> 3; 0 -> 4; 2 -> 1; 2 | oranžna
+lik: 0; 0 -> 1; 0 -> 1; 1 -> 0; 1 | modra
+puščica: 0; 0 -> 3; 0 | (3, 0) | pod | debelo
+puščica: 0; 0 -> 1; 2 |  |  | debelo
+napis: 1; 2 | (1, 2) | nad
+točka: 4; 2 | (4, 2) | desno
+napis: 2,5; 1,4 | ploščina 6 | sredina
+podnapis: Enotski kvadrat (modro) se preslika v paralelogram (oranžno) s ploščino 6
+:::
 
 Ploščina paralelograma je osnovnica krat višina $= 3 \cdot 2 = 6$, kar je ravno $\det A = 3 \cdot 2 - 1 \cdot 0 = 6$. Absolutna vrednost determinante torej pove, **kolikokrat preslikava poveča ploščino** (v prostoru prostornino). Negativen predznak pomeni, da preslikava obrne orientacijo (kot zrcaljenje). Če je $\det A = 0$, se kvadrat sesede v daljico ali točko: preslikava izgubi dimenzijo in je ni mogoče obrniti, zato $A^{-1}$ ne obstaja.
 
@@ -300,7 +305,7 @@ kjer vsota teče po vseh $n!$ permutacijah $\sigma$ množice $\{1, \dots, n\}$, 
 - $10$
 ~ Tako bi bilo, če bi z $2$ pomnožili le eno vrstico.
 - $30$
-~ Faktor $2$ ne množimo s številom vrstic, ampak ga potenciramo: $2^3$.
+~ Faktorja $2$ ne množimo s številom vrstic, ampak ga potenciramo: $2^3$.
 + $40$
 > Vsako od treh vrstic pomnožimo z $2$, zato $\det(2A) = 2^3 \cdot 5 = 40$.
 
@@ -318,8 +323,8 @@ i | indeks vrstice | |
 j | indeks stolpca | |
 k | indeks seštevanja pri množenju matrik | | | teče od 1 do n
 n | število stolpcev (red kvadratne matrike) | |
-a | element matrike A | | | brez indeksov: element matrike reda 2
-b | element matrike B | | | brez indeksov: element matrike reda 2
+a | element matrike reda 2 | | | v Primeru 3 in Nalogi 2 realni parameter v matriki
+b | element matrike reda 2 | | | z indeksoma b_ij: element matrike B
 c, d | elementa matrike reda 2 | |
 \lambda | število, s katerim množimo matriko | |
 \vec{x} | vektor neznank sistema | \vec{x} = A^{-1}\vec{b} |

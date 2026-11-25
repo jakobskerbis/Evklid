@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: graf
 avtor: AI
 ---
@@ -183,6 +183,8 @@ Obe imata teme $T(1, 8)$ nad osjo $x$. Parabola $f$ je odprta navzdol, njena kra
 
 *Preveri:* kakšna je zaloga vrednosti $f(x) = -(x - 2)^2 + 9$? ($(-\infty, 9]$, ker je $a < 0$.)
 
+**8. Predpis iz podatkov.** Obliko izberi po podatkih: teme in točka → temenska (Primer 4), ničli in točka → ničelna, tri točke → splošna. Vsaka točka da enačbo za $a$, $b$ in $c$. Pri $(0, 3)$, $(1, 2)$ in $(2, 5)$ je $c = f(0) = 3$. Iz $f(1) = a + b + 3 = 2$ sledi $a + b = -1$, iz $f(2) = 4a + 2b + 3 = 5$ pa $2a + b = 1$. Odštejemo: $a = 2$, torej $b = -3$ in $f(x) = 2x^2 - 3x + 3$.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
@@ -327,14 +329,142 @@ Iz $2(x - 3)^2 = 2$ sledi $(x - 3)^2 = 1$ in $x - 3 = \pm 1$, torej $x_1 = 2$ in
 
 ## Povzetek
 
-- Kvadratna funkcija: $f(x) = ax^2 + bx + c$, $a \ne 0$; graf je parabola.
-- $a > 0$: odprta navzgor (minimum v temenu); $a < 0$: odprta navzdol (maksimum v temenu).
-- Temenska oblika $f(x) = a(x - p)^2 + q$, teme $T(p, q)$, simetrijska os $x = p$.
-- Iz splošne oblike: $p = -\dfrac{b}{2a}$, $q = f(p)$; presečišče z osjo $y$ je $(0, c)$.
-- Ničelna oblika $f(x) = a(x - x_1)(x - x_2)$; ničle so rešitve enačbe $f(x) = 0$.
-- Dve realni ničli, če sta $a$ in $q$ različnih predznakov; ena pri $q = 0$; nobene, če sta enakih predznakov.
-- Zaloga vrednosti: $[q, \infty)$ za $a > 0$, $(-\infty, q]$ za $a < 0$.
-- Ničli (in vsak par enako visokih točk) ležita simetrično glede na os: $p = \dfrac{x_1 + x_2}{2}$. Za $a > 0$ funkcija pada do $p$, nato narašča; za $a < 0$ obratno.
+- **Kvadratna funkcija**: $f(x) = ax^2 + bx + c$, $a \ne 0$; graf je **parabola**.
+
+**Temenska oblika** (teme $T(p, q)$, simetrijska os $x = p$):
+
+$$f(x) = a(x - p)^2 + q$$
+
+| | $a > 0$ | $a < 0$ |
+|:-:|:-:|:-:|
+| odprta | navzgor | navzdol |
+| teme | minimum | maksimum |
+| $Z_f$ | $[q, \infty)$ | $(-\infty, q]$ |
+| $x < p$ | pada | narašča |
+| $x > p$ | narašča | pada |
+
+**Iz splošne oblike:**
+
+$$p = -\frac{b}{2a}, \quad q = f(p)$$
+
+- Presečišče z osjo $y$ je $(0, c)$.
+
+**Ničelna oblika** (ničle so rešitve enačbe $f(x) = 0$):
+
+$$f(x) = a(x - x_1)(x - x_2)$$
+
+- $a$ in $q$ različnih predznakov: **dve** realni ničli.
+- $q = 0$: **ena** ničla.
+- $a$ in $q$ enakih predznakov: **nobene** realne ničle.
+
+Ničli (in vsak par enako visokih točk) ležita simetrično glede na os:
+
+$$p = \frac{x_1 + x_2}{2}$$
+
+## Ponovitev
+
+**Formule**
+- $f(x) = a(x - p)^2 + q$, teme $T(p, q)$ (na pamet)
+- $p = -\dfrac{b}{2a}$, $\;q = f(p)$ (na pamet)
+- $f(x) = a(x - x_1)(x - x_2)$ (na pamet)
+- $p = \dfrac{x_1 + x_2}{2}$ (na pamet)
+- $a > 0$: $Z_f = [q, \infty)$; $a < 0$: $Z_f = (-\infty, q]$ (na pamet)
+
+**Postopek**
+1. Iz predznaka $a$ ugotovi, ali je parabola odprta navzgor ali navzdol.
+2. Izračunaj teme: $p$ in $q = f(p)$.
+3. Ničle dobiš iz enačbe $f(x) = 0$.
+4. Presečišče z osjo $y$ je $(0, c)$.
+5. Nariši parabolo in zapiši zalogo vrednosti.
+
+**Pazi na**
+- V $(x + 3)^2$ je $p = -3$: v temenski obliki stoji $x - p$.
+- $c$ je vrednost pri $x = 0$, ne v temenu: $q = f(p)$.
+- V $p = -\dfrac{b}{2a}$ vstavi $b$ s predznakom v oklepaju.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Graf kvadratne funkcije $f$ seka os $x$ v točkah $(-1, 0)$ in $(5, 0)$, os $y$ pa v točki $(0, 10)$. Zapišite predpis funkcije $f$ v splošni obliki.
+
+**Rešitev:**
+
+1. Ničli sta $-1$ in $5$, zato je ničelna oblika $f(x) = a(x + 1)(x - 5)$.
+2. Iz $f(0) = 10$ sledi $a \cdot 1 \cdot (-5) = 10$, torej $-5a = 10$ in $a = -2$.
+3. $f(x) = -2(x + 1)(x - 5) = -2(x^2 - 4x - 5) = -2x^2 + 8x + 10$.
+4. Odgovor: $f(x) = -2x^2 + 8x + 10$.
+
+**Točkovanje:** 1 točka za ničelno obliko $a(x + 1)(x - 5)$, 1 točka za $a = -2$, 1 točka za splošno obliko $-2x^2 + 8x + 10$.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 1 (brez računala)
+
+Dana je funkcija $f(x) = -x^2 - 2x + 3$.
+
+a) Izračunajte koordinati temena in zapišite predpis funkcije v temenski obliki. (2 točki)
+b) Izračunajte ničli in presečišče grafa z osjo $y$. Nato narišite graf funkcije $f$. (3 točke)
+c) Zapišite zalogo vrednosti funkcije $f$ in interval, na katerem funkcija narašča. (2 točki)
+
+**Rešitev:**
+
+1. a) $a = -1$, $b = -2$, zato $p = -\dfrac{-2}{2 \cdot (-1)} = -1$ in $q = f(-1) = -1 + 2 + 3 = 4$. Teme je $T(-1, 4)$.
+2. a) Temenska oblika: $f(x) = -(x + 1)^2 + 4$.
+3. b) Iz $-(x + 1)^2 + 4 = 0$ sledi $(x + 1)^2 = 4$ in $x + 1 = \pm 2$, torej $x_1 = -3$ in $x_2 = 1$.
+4. b) $f(0) = 3$, presečišče z osjo $y$ je $(0, 3)$; zrcalna točka glede na os $x = -1$ je $(-2, 3)$.
+5. b) Graf: parabola, odprta navzdol ($a < 0$), skozi točke $(-3, 0)$, $(-2, 3)$, $T(-1, 4)$, $(0, 3)$ in $(1, 0)$, simetrična glede na premico $x = -1$.
+6. c) Ker je $a < 0$, je $q = 4$ največja vrednost: $Z_f = (-\infty, 4]$.
+7. c) Funkcija narašča levo od temena, na intervalu $(-\infty, -1]$.
+8. Odgovor: $T(-1, 4)$, $f(x) = -(x + 1)^2 + 4$; ničli $-3$ in $1$, presečišče $(0, 3)$; $Z_f = (-\infty, 4]$, narašča na $(-\infty, -1]$.
+
+**Točkovanje:** a) 1 točka za teme $T(-1, 4)$, 1 točka za temensko obliko; b) 1 točka za ničli, 1 točka za presečišče $(0, 3)$, 1 točka za graf (smer odprtosti, teme, ničli); c) 1 točka za zalogo vrednosti, 1 točka za interval naraščanja.
+
+### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
+
+Kmet želi ob ravnem zidu hleva s $120\,\text{m}$ ograje ograditi pravokoten pašnik. Ob zidu ograje ne postavi. Pašnik s pregrado, ki je pravokotna na zid, razdeli na dva dela; tudi pregrada je iz iste ograje. Z $x$ označimo dolžino stranice pašnika, ki je pravokotna na zid, v metrih.
+
+a) Pokažite, da je ploščina pašnika $P(x) = -3x^2 + 120x$ (v $\text{m}^2$), in zapišite, za katere $x$ je model smiseln. (3 točke)
+b) Določite mere pašnika z največjo ploščino in to ploščino. (3 točke)
+c) Pri katerih $x$ je ploščina pašnika $900\,\text{m}^2$? Zapišite mere obeh takih pašnikov. (2 točki)
+d) Narišite graf funkcije $P$ na intervalu, kjer je model smiseln, in z grafa preberite, za katere $x$ je ploščina vsaj $900\,\text{m}^2$. (2 točki)
+
+**Rešitev:**
+
+1. a) Ograja tvori dve stranici, pravokotni na zid, in pregrado, skupaj $3x$. Za stranico ob zidu ostane $120 - 3x$ metrov.
+2. a) Ploščina: $P(x) = x(120 - 3x) = -3x^2 + 120x$.
+3. a) Dolžini morata biti pozitivni: $x > 0$ in $120 - 3x > 0$, torej $0 < x < 40$.
+4. b) Ničelna oblika $P(x) = -3x(x - 40)$ ima ničli $0$ in $40$, zato je teme pri $p = \dfrac{0 + 40}{2} = 20$. Ker je $a = -3 < 0$, je tam največja vrednost.
+5. b) Mere: $x = 20\,\text{m}$ in $120 - 60 = 60\,\text{m}$; ploščina $P(20) = 20 \cdot 60 = 1200\,\text{m}^2$.
+6. c) Iz $-3x^2 + 120x = 900$ sledi $x^2 - 40x + 300 = 0$, torej $(x - 10)(x - 30) = 0$ in $x = 10$ ali $x = 30$.
+7. c) Pri $x = 10$ je pašnik $10\,\text{m} \times 90\,\text{m}$, pri $x = 30$ pa $30\,\text{m} \times 30\,\text{m}$.
+8. d) Graf je lok parabole, odprte navzdol, od $(0, 0)$ do $(40, 0)$ (krajišči nista vključeni) s temenom $(20, 1200)$. Vodoravna premica $P = 900$ ga seka pri $x = 10$ in $x = 30$.
+9. d) Med presečiščema je graf nad premico, zato je ploščina vsaj $900\,\text{m}^2$ za $x \in [10, 30]$.
+10. Odgovor: največja ploščina je $1200\,\text{m}^2$ pri merah $20\,\text{m} \times 60\,\text{m}$ (stranica ob zidu je $60\,\text{m}$); ploščina $900\,\text{m}^2$ pri $x = 10$ ali $x = 30$; vsaj $900\,\text{m}^2$ za $10 \le x \le 30$.
+
+**Točkovanje:** a) 1 točka za stranico $120 - 3x$, 1 točka za $P(x) = -3x^2 + 120x$, 1 točka za $0 < x < 40$; b) 1 točka za $x = 20$ z utemeljitvijo maksimuma, 1 točka za mere $20\,\text{m}$ in $60\,\text{m}$, 1 točka za $1200\,\text{m}^2$; c) 1 točka za $x = 10$ in $x = 30$, 1 točka za mere obeh pašnikov; d) 1 točka za graf s temenom in ničlama, 1 točka za interval $[10, 30]$.
+
+### Ustno vprašanje 1
+
+:::premisli
+Definiraj kvadratno funkcijo in pojasni, kako vodilni koeficient vpliva na obliko njenega grafa.
+---
+Kvadratna funkcija je funkcija s predpisom $f(x) = ax^2 + bx + c$, kjer so $a$, $b$ in $c$ realna števila in $a \ne 0$. Njen graf je parabola. Pri $a > 0$ je parabola odprta navzgor in ima v temenu najmanjšo vrednost. Pri $a < 0$ je odprta navzdol in ima v temenu največjo vrednost. Pri $|a| > 1$ je parabola ožja od $y = x^2$, pri $|a| < 1$ pa širša.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Izpelji koordinati temena parabole $y = ax^2 + bx + c$ z dopolnjevanjem do popolnega kvadrata.
+---
+Izpostavimo $a$ in zapišemo $ax^2 + bx + c = a\left(x^2 + \frac{b}{a}x\right) + c$. V oklepaju prištejemo in odštejemo kvadrat polovice koeficienta pri $x$, torej $\frac{b^2}{4a^2}$. Tako dobimo temensko obliko $a\left(x + \frac{b}{2a}\right)^2 + c - \frac{b^2}{4a}$. Od tod preberemo teme $T(p, q)$ s $p = -\frac{b}{2a}$ in $q = c - \frac{b^2}{4a}$, kar je enako $f(p)$.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kako iz temenske oblike kvadratne funkcije ugotovimo, koliko realnih ničel ima? Navedi primer.
+---
+Ničle so rešitve enačbe $a(x - p)^2 + q = 0$, torej $(x - p)^2 = -\frac{q}{a}$. Če sta $a$ in $q$ različno predznačena, je desna stran pozitivna in funkcija ima dve realni ničli $p \pm \sqrt{-\frac{q}{a}}$. Pri $q = 0$ ima eno dvojno ničlo $p$, saj teme leži na osi $x$. Če sta $a$ in $q$ enako predznačena, realnih ničel ni. Funkcija $f(x) = (x - 2)^2 - 9$ ima na primer ničli $-1$ in $5$, ker je $a > 0$ in $q < 0$.
+:::
 
 ## Drugače: Z analogijo
 
@@ -403,14 +533,14 @@ točka: 0; 1
 ~ -1 | Predznak je napačen: sredina med $-2$ in $4$ je desno od $0$.
 > Ničli ležita simetrično glede na os, zato je $p = \dfrac{x_1 + x_2}{2} = \dfrac{-2 + 4}{2} = 1$.
 
-? Kolikšna je druga koordinata $q$ temena parabole $f(x) = -x^2 - 6x + 7$?
+? (brez računala) Kolikšna je druga koordinata $q$ temena parabole $f(x) = -x^2 - 6x + 7$?
 = 16 | 0
 ~ -20 | V obrazec si vstavil $b = 6$ namesto $b = -6$ in dobil $p = 3$. Pravilno je $p = -\dfrac{-6}{2 \cdot (-1)} = -3$.
 ~ 34 | Računal si $(-3)^2 = 9$ in pozabil minus pred členom: $-x^2$ je pri $x = -3$ enako $-9$.
 ~ 7 | $7$ je prosti člen $c$, vrednost pri $x = 0$, ne v temenu.
 > $p = -\dfrac{-6}{2 \cdot (-1)} = -3$ in $q = f(-3) = -9 + 18 + 7 = 16$.
 
-? Kolikšna je najmanjša vrednost funkcije $f(x) = 2(x + 1)(x - 5)$?
+? (brez računala) Kolikšna je najmanjša vrednost funkcije $f(x) = 2(x + 1)(x - 5)$?
 = -18 | 0
 ~ -10 | To je $f(0)$, prosti člen $c$. Najmanjša vrednost je v temenu, ne pri $x = 0$.
 ~ -9 | Pozabil si vodilni koeficient $a = 2$ pred oklepajema.
@@ -425,6 +555,12 @@ točka: 0; 1
 - Parabola se obrne navzdol, ničli ostaneta $-1$ in $3$.
 ~ Parabola se obrne okoli temena, ki ostane pod osjo $x$. Kraka gresta navzdol in osi ne dosežeta več.
 > $p$ in $q$ se ne spremenita, zato teme ostane. Zdaj sta $a$ in $q$ oba negativna: teme je najvišja točka in leži pod osjo $x$, zato realnih ničel ni.
+
+? Parabola gre skozi $(0, 1)$, $(1, 2)$ in $(-1, 6)$. Koliko je $a$?
+= 3 | 0
+~ -2 | To je $b$. Ko enačbi seštevaš, se $b$ izniči.
+~ 1 | To je prosti člen $c = f(0)$.
+> $c = 1$, $a + b = 1$ in $a - b = 5$; seštejemo: $2a = 6$, $a = 3$, $b = -2$.
 
 :::simboli
 f | kvadratna funkcija | f(x) = ax^2 + bx + c | | v Primeru 3 temperatura v $^\circ\text{C}$
@@ -443,4 +579,26 @@ g, k | drugi kvadratni funkciji | | | v »premisli« in kvizu
 d | odmik od simetrijske osi | | |
 A | točka na grafu | | | v Primeru 4
 t_1, t_2 | uri z enako temperaturo | | h | $p = \frac{t_1 + t_2}{2}$
+P | ploščina pašnika | P(x) = -3x^2 + 120x | m^2 | v nalogi za maturo; $x$ je stranica, pravokotna na zid, v m
 :::
+
+<<RACUN
+resi: a*(0+1)*(0-5)=10 | a | -2
+enako: -2*(x+1)*(x-5) | -2*x^2+8*x+10
+vrednost: -(-2)/(2*(-1)) | -1
+vrednost: -(-1)^2-2*(-1)+3 | 4
+enako: -x^2-2*x+3 | -(x+1)^2+4
+resi: -x^2-2*x+3=0 | x | -3, 1
+vrednost: -(-2)^2-2*(-2)+3 | 3
+enako: x*(120-3*x) | -3*x^2+120*x
+vrednost: -120/(2*(-3)) | 20
+vrednost: 120-3*20 | 60
+vrednost: -3*20^2+120*20 | 1200
+resi: -3*x^2+120*x=900 | x | 10, 30
+vrednost: 120-3*10 | 90
+neenacba: -3*x^2+120*x>=900 | x | [10, 30]
+resi: (x-2)^2-9=0 | x | -1, 5
+resi: a+b+3=2, 4*a+2*b+3=5 | a, b | a=2, b=-3
+resi: a+b=-1, 2*a+b=1 | a, b | a=2, b=-3
+resi: a+b+1=2, a-b+1=6 | a, b | a=3, b=-2
+>>

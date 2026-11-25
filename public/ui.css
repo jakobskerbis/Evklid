@@ -37,16 +37,18 @@
 .dd-opt[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
 .dd-opt[aria-disabled="true"] { color: var(--muted); opacity: 0.6; cursor: default; }
 .dd-check { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; visibility: hidden; }
-.dd-opt[aria-selected="true"] .dd-check { visibility: visible; }
+.dd-opt[aria-selected="true"] .dd-check, .dd-opt[aria-checked="true"] .dd-check { visibility: visible; }
+.dd-sep { border-top: 1px solid var(--border); margin: 4px 0; }
 .dd-group {
   padding: 10px 12px 4px; font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
 }
-.dd-group:not(:first-child) { margin-top: 4px; border-top: 1px solid var(--border); padding-top: 12px; }
+.dd-group:not(:first-child), .dd-grp:not(:first-child) > .dd-group { margin-top: 4px; border-top: 1px solid var(--border); padding-top: 12px; }
+.dd-grp { display: contents; } /* skupina z imenom za bralnik zaslona (dropdown.js), brez lastnega videza */
 .dd-opt[hidden], .dd-group[hidden] { display: none; }
 /* Iskalnik v dolgem seznamu (npr. jeziki) ostane na vrhu med pomikanjem. */
 .dd-search { position: sticky; top: -6px; z-index: 1; margin: -6px -6px 4px; padding: 8px; background: var(--surface); border-bottom: 1px solid var(--border); }
 .dd-search input { width: 100%; min-height: 40px; }
-.dd-search + .dd-group { border-top: 0; margin-top: 0; }
+.dd-search + .dd-group, .dd-search + .dd-grp > .dd-group { border-top: 0; margin-top: 0; }
 /* Seznam z iskalnikom leži čez gumb: okence je na mestu gumba in pokaže izbrano možnost,
    seznam se pomika pod njim (dropdown.js, place(…, true)). */
 .dd-list.over { transform-origin: top center; }
@@ -172,7 +174,7 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
 /* Kartica s profilom je gumb: odpre Nastavitve (šola in letnik, račun). */
 .me-head { display: flex; align-items: center; gap: 16px; width: 100%; text-align: start; color: var(--text); font: inherit; cursor: pointer; }
 .me-head:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
-.me-head:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+.me-head:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .me-head > svg.i { flex: none; color: var(--muted); }
 .me-who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .me-name { font-size: 1.55rem; line-height: 1.25; font-weight: 800; letter-spacing: -0.01em; overflow-wrap: anywhere; }
@@ -229,6 +231,25 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   .tb-lesson-grid.has-side:has(+ .tb-stepper) .tb-side { max-height: calc(100dvh - 206px); }
   .tb-side .demo-values { grid-template-columns: 1fr 1fr; }
   .tb-lesson-grid.has-side .tb-side .demo-svg { max-width: 100%; max-height: 46dvh; width: auto; display: block; margin: 0 auto; }
+  /* Tablica na dotik (iPad): poskus v lekciji pod besedilom koraka, ne ob strani (j 2026-11-14: »zdaj zakrijejo pol
+     ekrana na iPadu«). Računalnik z miško ostane v dveh stolpcih. !important: pravila zgoraj in v uci.css so močnejša. */
+  @media (hover: none) and (pointer: coarse) {
+    .tb-lesson-grid.has-side { display: block; }
+    .tb-lesson-grid.has-side .tb-side { position: static !important; max-height: none !important; overflow: visible !important; margin-top: 16px; }
+    /* Čim bolje zapolni zaslon (j 2026-11-14): slika čez vso širino in višje. */
+    .tb-lesson-grid.has-side .tb-side .demo-svg { max-height: 75dvh; width: 100%; }
+  }
+  /* Ležeča tablica: slika levo čim večja, gumbi, izbire in izračun desno ob njej (brez drsenja ob vsaki spremembi). */
+  @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+    /* Le z natanko eno sliko neposredno v preizkusu (več slik, npr. platno s prekrivnim platnom, ostane kot prej)
+       in ne v premičnem oknu (ozko). Brez razmika med vrsticami: slika sega čez vse vrstice desnega stolpca. */
+    .tb-lesson-grid.has-side:not(.okno-body *) .tb-demo-mount:has(> :is(.demo-stage, .demo-svg, canvas)):not(:has(> :is(.demo-stage, .demo-svg, canvas) ~ :is(.demo-stage, .demo-svg, canvas))) {
+      display: grid; grid-template-columns: minmax(0, 3fr) minmax(300px, 2fr); grid-auto-flow: row dense; gap: 0 28px; align-items: start;
+    }
+    .tb-lesson-grid.has-side:not(.okno-body *) .tb-demo-mount:has(> :is(.demo-stage, .demo-svg, canvas)):not(:has(> :is(.demo-stage, .demo-svg, canvas) ~ :is(.demo-stage, .demo-svg, canvas))) > :is(.demo-stage, .demo-svg, canvas) { grid-column: 1; grid-row: 1 / span 40; align-self: start; }
+    .tb-lesson-grid.has-side:not(.okno-body *) .tb-demo-mount:has(> :is(.demo-stage, .demo-svg, canvas)):not(:has(> :is(.demo-stage, .demo-svg, canvas) ~ :is(.demo-stage, .demo-svg, canvas))) > :not(.demo-stage, .demo-svg, canvas) { grid-column: 2; min-width: 0; margin-block: 0 12px; }
+    .tb-lesson-grid.has-side .tb-demo-mount > .demo-stage .demo-svg { max-height: 75dvh; }
+  }
 
   /* Kazalo učbenika: sklopi v stolpcih, kolikor jih gre v širino. */
   .tb-part { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0 16px; align-items: start; }
@@ -602,8 +623,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
     grid-area: 1 / 1; justify-self: center; align-self: end; position: relative;
     width: var(--p-a); height: var(--p-a); border-radius: 22%; margin-bottom: calc(var(--p-h) * 0.229 - var(--p-a) / 2);
     box-shadow: 0 0 0 2px var(--t-door), 0 0 0 3.5px var(--t-line);
+    --ta-ic: 58%;
   }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big svg.i { width: 58%; height: 58%; }
   :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p.big { margin: 14px 0 4px; line-height: 1.25; }
   :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p:not(.big) { margin: 0; }
   :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .ideas { margin-top: 14px; gap: 8px; }
@@ -731,8 +752,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .empty .gr-chat .gr-text { font-size: 0.88rem; line-height: 1.4; }
 /* Nizek zaslon: prazen klepet brez drsnika (manjši pozdrav in razmiki, kartica ostane). */
 @media (max-height: 860px) {
-  .empty:has(.gr-chat) .tutor-avatar.big { width: 44px; height: 44px; border-radius: 14px; }
-  .empty:has(.gr-chat) .tutor-avatar.big svg.i { width: 22px; height: 22px; }
+  .empty:has(.gr-chat) .tutor-avatar.big { width: 44px; height: 44px; border-radius: 14px; --ta-ic: 22px; }
   .empty:has(.gr-chat) p.big { margin-top: 6px; font-size: 1.35rem; }
   .empty:has(.gr-chat) .ideas { margin-top: 8px; gap: 6px; }
   .empty .gr-chat { margin-top: 10px; padding-bottom: 10px; }
@@ -764,6 +784,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 /* ---------- Klikljive formule (public/formula-info.js) ---------- */
 /* Formule so vedno od leve proti desni, tudi v arabščini (sicer m/V = ρ postane obrnjeno). */
 .katex { direction: ltr; unicode-bidi: isolate; }
+/* Formula, ki je ni mogoče izrisati (public/mat/izris.js NAPAKA_HTML): okvirček namesto rdečega surovega LaTeX-a. */
+.mat-napaka { display: inline-block; color: var(--muted, #888); font-family: KaTeX_Main, serif; }
 /* Formula v svojem okviru (simulacija, namig, zbirka) se ne prelomi sama sredi izraza: preširoko zloži
    sirina.js pri enačajih (j 2026-11-04: »To naj velja za vse enačbe«). */
 /* Formula sredi besedila se nikjer ne prelomi sredi izraza (j 2026-11-08): ne za minusom, plusom, oklepajem. Cela
@@ -819,11 +841,16 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .fx-pop .fx-close { position: absolute; top: 4px; inset-inline-end: 4px; width: 40px; height: 40px; min-height: 40px !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--muted); font-size: 1.3rem; line-height: 1; }
 .fx-pop .fx-close:hover { color: var(--text); background: var(--surface-2) !important; }
 @media (max-width: 760px) { .fx-pop .fx-sub { padding-inline-start: 0; } .fx-pop .fx-parts { flex-direction: column; gap: 3px; } }
-/* Telefon: okno pomena je spodnji list nad spodnjim menijem (formula-info.js place), nikoli čez formulo. */
+/* Telefon: okno pomena je plavajoča kartica ob dnu, z odmikom od robov in ročajem, da ni videti kot noga strani
+   (j 2026-11-25); nad spodnjim menijem jo postavi formula-info.js place, nikoli čez formulo. */
 .fx-pop.fx-sheet {
-  position: fixed; left: 0; right: 0; width: auto; top: auto; max-height: min(55vh, 420px); overflow-y: auto;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0; border-bottom: 0; padding: 16px 18px; padding-inline-end: 52px;
-  padding-bottom: calc(14px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+  position: fixed; left: 8px; right: 8px; width: auto; top: auto; max-height: min(55vh, 420px); overflow-y: auto;
+  bottom: calc(8px + var(--varno-sp, env(safe-area-inset-bottom, 0px)));
+  border-radius: 16px; padding: 22px 18px 14px; padding-inline-end: 52px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+.fx-pop.fx-sheet::before {
+  content: ""; position: absolute; top: 7px; left: 50%; width: 36px; height: 4px; margin-left: -18px;
+  border-radius: 2px; background: var(--border); pointer-events: none;
 }
 
 /* ---------- Cilj in opomnik (public/goal.js) ---------- */
@@ -849,6 +876,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .goal-reminder .gr-body { flex: 1; display: grid; gap: 4px; min-width: 0; }
 .goal-reminder .gr-head { display: flex; justify-content: space-between; gap: 8px; font-size: 0.82rem; color: var(--muted); font-weight: 700; }
 .goal-reminder .actions { margin-top: 6px; }
+.goal-reminder .actions button.small { min-height: 40px !important; } /* dotik ≥ 40 px (button.small ima 38 px) */
 .goal-card { display: grid; gap: 12px; }
 .goal-card .goal-line { margin: 0; }
 .goal-card .goal-reminder { margin: 0; padding: 12px; border-radius: var(--radius-sm); }
@@ -922,6 +950,10 @@ body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 #view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
+/* Učna pot: sklopi po vrsticah (1, 2, 3 v prvi vrsti, nato 4, 5, 6), ne po stolpcih (j, 17. 11. 2026); stolpci kot zgoraj
+   (vsaj 400 px, kolikor jih gre), višina vrstice po najvišjem sklopu v njej. */
+#path-content { columns: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr)); gap: 0 20px; align-items: start; }
+#path-content > :is(.legend, h1, h2, h3, p) { grid-column: 1 / -1; }
 /* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */
 /* Vrstice vedno po vsebini: pogled ima stalno višino (drsi), zato bi jih mreža sicer stisnila do min-height
    (gumb s profilom na 44 px, velika ikona J bi segla čez kartico Raven; telefon, j 4. 11. 2026). */

@@ -2,8 +2,9 @@
 // plošča »Piši« je risalna površina. Na telefonu se plošča odpre spodaj (besedilo naloge ostane pripeto zgoraj),
 // na širšem zaslonu ob strani, tako da je naloga ves čas vidna.
 import { icon } from "./icons.js";
-import { t as tr, currentLang } from "./i18n.js";
-import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, keyboardPrefs, initKeyboard } from "./tipkovnica.js";
+import { t as tr, currentLang } from "./i18n-osnova.js";
+import { configureKeyboard, openKeyboard, hideKeyboard, keyboardOpenFor, initKeyboard, naloziTipkovnico } from "./tipkovnica-lena.js";
+import { unitAtEnd, withUnit } from "./enote-izbira.js";
 
 const LS_KEY = "evklid.pad";
 const prefs = (() => {
@@ -70,9 +71,8 @@ function build() {
     closePad();
   });
   pad.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => setTab(b.dataset.tab)));
-  pad.querySelector(".pad-units").addEventListener("click", (e) => {
-    const b = e.target.closest("button");
-    if (b) press(" " + b.dataset.u);
+  pad.querySelector(".pad-units").addEventListener("change", (e) => {
+    if (e.target.matches("select")) setUnit(e.target.value);
   });
   pad.querySelector(".pad-check").addEventListener("click", submit);
   ink = createInk(pad.querySelector("canvas.ink"));
@@ -114,18 +114,27 @@ function showTask() {
   requestAnimationFrame(() => card?.scrollIntoView({ block: "start" }));
 }
 
+// Enota na koncu odgovora, če je ena od ponujenih (»1,25 V«, »12V«, sama »V« → »V«), sicer "".
+const chosenUnit = (v) => unitAtEnd(v, cur?.units || []);
+
 function syncValue() {
   if (!cur) return;
   const v = cur.input.value;
   const span = pad.querySelector(".pad-value");
   span.textContent = v || cur.input.placeholder || "";
   span.classList.toggle("ph", !v);
+  const sel = pad.querySelector(".pad-unit");
+  if (sel) sel.value = chosenUnit(v);
 }
 
-function press(unit) {
+// Izbira enote: zamenja prejšnjo enoto (tudi »N s«, »kg m/s«); prazna izbira jo odstrani.
+function setUnit(unit) {
   if (!cur) return;
-  // Zamenjaj morebitno prejšnjo enoto.
-  cur.input.value = cur.input.value.replace(/\s+[^\d\s,./−-][^\s]*$/, "").trimEnd() + unit;
+  const empty = !withUnit(cur.input.value, "", cur.units);
+  cur.input.value = withUnit(cur.input.value, unit, cur.units);
+  // Brez števila: kazalka pred enoto, da se število vpiše pred njo (»12V« preverjanje sprejme).
+  if (empty) cur.input.setSelectionRange?.(0, 0);
+  cur.input.dispatchEvent(new Event("input", { bubbles: true }));
   syncValue();
 }
 
@@ -167,15 +176,18 @@ async function readInk() {
     ink.changed = ink.version !== version;
     box.innerHTML = `<div class="fb info"><span>${tr("pad.readAs", { text: '<b class="read-text"></b>' })}</span></div>
       <div class="actions"><button type="button" class="primary" data-ok>${tr("pad.okCheck")}</button><button type="button" data-fix>${tr("pad.fix")}</button></div>`;
-    box.querySelector(".read-text").textContent = r.text;
+    // Izbrana enota ostane, če je v prebranem zapisu ni (»22« + izbrana »V« → »22 V«).
+    const unit = chosenUnit(cur.input.value);
+    const read = unit && !/[^\d\s,.\-−+/·^{}()]/.test(r.text) ? `${r.text.trim()} ${unit}` : r.text;
+    box.querySelector(".read-text").textContent = read;
     box.querySelector("[data-ok]").addEventListener("click", () => {
-      cur.input.value = r.text;
+      cur.input.value = read;
       syncValue();
       box.innerHTML = "";
       submit();
     });
     box.querySelector("[data-fix]").addEventListener("click", () => {
-      cur.input.value = r.text;
+      cur.input.value = read;
       syncValue();
       box.innerHTML = "";
       setTab("keys");
@@ -195,7 +207,7 @@ function escapeHtml(s) {
 function startLayer(task, subject) {
   const numeric = ["number", "fraction", "coefficients"].includes(task.answerType);
   if (subject === "KEM" && !numeric) return "kem";
-  return numeric || task.unit ? "num" : "abc";
+  return numeric || task.hasUnit ? "num" : "abc";
 }
 
 /**
@@ -209,8 +221,14 @@ export function attachPad(opts) {
   cur = opts;
   ink.clear(true);
   pad.querySelector(".read-result").innerHTML = "";
-  const units = opts.task.unit ? [opts.task.unit] : [];
-  pad.querySelector(".pad-units").innerHTML = units.map((u) => `<button type="button" data-u="${escapeHtml(u)}">${escapeHtml(u)}</button>`).join("");
+  // Enota je del odgovora: privzeto ni izbrana, ponudba je več enot predmeta po abecedi (enote-izbira.js).
+  // Ponudbo sestavi strežnik (task.units, s pravim preverjanjem); prave enote odjemalec ne dobi.
+  const units = opts.task.units || [];
+  cur.units = units;
+  // Ime iz <label> (ne aria-label), da bralnik zaslona prebere tudi izbrano enoto.
+  pad.querySelector(".pad-units").innerHTML = units.length
+    ? `<label class="sr-only" for="pad-unit">${escapeHtml(tr("fx.unit"))}</label><select id="pad-unit" class="pad-unit"><option value="">${escapeHtml(tr("fx.unit"))}</option>${units.map((u) => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join("")}</select>`
+    : "";
   const kem = opts.subject === "KEM";
   configureKeyboard(opts.input, {
     math: true,
@@ -232,7 +250,8 @@ export function attachPad(opts) {
   if (auto && prefs.tab === "draw") openPad("draw");
   else {
     hideDraw();
-    if (auto && isTouch() && keyboardPrefs().mode !== "never") openKeyboard(opts.input);
+    // Tipkovnica (tipkovnica-lena.js) je navadno že naložena; sicer se odpre, ko pride, če je naloga še ista.
+    if (auto && isTouch()) naloziTipkovnico().then((k) => cur === opts && k.keyboardPrefs().mode !== "never" && openKeyboard(opts.input), () => {});
   }
 }
 
@@ -268,11 +287,6 @@ function hideDraw() {
 export function closePad() {
   hideDraw();
   if (cur && keyboardOpenFor(cur.input)) hideKeyboard();
-}
-
-// Po oddanem odgovoru: pri pravilnem odgovoru plošča izgine, da je vidna razlaga.
-export function padAfterAnswer(correctOrDone) {
-  if (correctOrDone) closePad();
 }
 
 // ---------------------------------------------------------------------------

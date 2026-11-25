@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -96,7 +96,7 @@ $S(n) = n \cup \{n\}$
 2. $2 = S(1) = \{\emptyset\} \cup \{\{\emptyset\}\} = \{\emptyset, \{\emptyset\}\}$.
 3. $3 = S(2) = \{\emptyset, \{\emptyset\}, \{\emptyset, \{\emptyset\}\}\}$, torej $3 = \{0, 1, 2\}$.
 4. $4 = 3 \cup \{3\} = \{0, 1, 2, 3\}$, ker naslednik doda prav prejšnje število.
-5. Odgovor: $4$ ima $4$ elemente, kot vsako von Neumannovo število $n$ jih ima $n$.
+5. Odgovor: $4$ ima $4$ elemente, tako kot ima vsako von Neumannovo število $n$ natanko $n$ elementov.
 
 ### Primer 2: vozovnice na progi
 
@@ -137,7 +137,7 @@ Zornova lema: neprazna $(P, \subseteq)$, v kateri ima vsaka veriga zgornjo mejo 
 3. $U$ nima kroga: krog ima končno mnogo cest, vsaka leži v nekem členu verige, členi so primerljivi, zato vse ležijo v največjem od njih. Ta pa je brez krogov. Torej je $U \in P$ zgornja meja.
 4. Po Zornovi lemi obstaja maksimalni gozd $T$.
 5. Recimo, da $T$ ne poveže krajev $a$ in $b$. Na poti od $a$ do $b$ v $G$ je cesta $e$, ki povezuje dve različni komponenti $T$ (dela omrežja, ki ju ceste iz $T$ med sabo ne povežejo). Ker $e$ združi dve ločeni komponenti, gozd $T \cup \{e\}$ ostane brez kroga in je večji od $T$, kar je protislovje.
-6. Odgovor: maksimalni gozd $T$ poveže vse kraje in nima krogov, torej je vpeto drevo. Za končne grafe zadošča indukcija, za neskončne potrebujemo Zorna.
+6. Odgovor: maksimalni gozd $T$ poveže vse kraje in nima krogov, torej je vpeto drevo. Za končne grafe zadošča indukcija, za poljubne neskončne potrebujemo Zorna.
 
 ### Primer 4: zdaj ti
 
@@ -179,23 +179,79 @@ $2 + 0 = 2$, torej $2 + 1 = S(2) = 3$ in $2 + 2 = S(3) = 4$.
 - Aksiom izbire: vsaka družina nepraznih množic ima izbirno funkcijo. Za končne družine ga ne potrebujemo.
 - Zornova lema: neprazna delno urejena množica, v kateri ima vsaka veriga zgornjo mejo v $P$, ima maksimalni element. V ZF je enakovredna AC in Zermelovemu izreku.
 
+## Za izpit
+
+Znati moraš povedati:
+- definicijo naslednika $S(n) = n \cup \{n\}$, induktivne množice in množice $\omega$ kot najmanjše induktivne množice;
+- vseh deset aksiomov ZFC, pri vsakem, kaj zagotavlja, in zakaj separacija ne dovoli »množice vseh množic« (Russellov paradoks);
+- Peanove aksiome, dokaz principa indukcije iz minimalnosti $\omega$ ter rekurzivni definiciji seštevanja in množenja;
+- princip matematične indukcije z bazo in korakom ter enakovredni obliki: krepko indukcijo in dobro urejenost $\omega$;
+- aksiom izbire z definicijo izbirne funkcije in utemeljitev, zakaj ga za končne družine ne potrebujemo;
+- Zornovo lemo z vsemi predpostavkami (neprazna $P$, zgornja meja vsake verige v $P$), razliko med maksimalnim in največjim elementom ter enakovrednost z AC in Zermelovim izrekom v ZF.
+
+### Naloga 1
+
+Seštevanje in množenje na $\omega$ sta definirana rekurzivno: $a + 0 = a$, $a + S(b) = S(a + b)$ ter $a \cdot 0 = 0$, $a \cdot S(b) = a \cdot b + a$. Označimo $1 = S(0)$, $2 = S(1)$, $3 = S(2)$, $4 = S(3)$, $5 = S(4)$, $6 = S(5)$. (a) Samo po teh pravilih izračunaj $2 \cdot 3$. (b) Z indukcijo dokaži, da za vse $a, b \in \omega$ velja $0 + a = a$ in $S(a) + b = S(a + b)$. (c) Iz (b) izpelji, da je seštevanje komutativno: $a + b = b + a$.
+
+**Rešitev:**
+
+1. (a) Množenje razvijemo do baze: $2 \cdot 3 = 2 \cdot 2 + 2$, $2 \cdot 2 = 2 \cdot 1 + 2$, $2 \cdot 1 = 2 \cdot 0 + 2 = 0 + 2$.
+2. $0 + 2 = S(0 + 1) = S(S(0 + 0)) = S(S(0)) = 2$, torej $2 \cdot 1 = 2$.
+3. $2 \cdot 2 = 2 + 2 = S(2 + 1) = S(S(2 + 0)) = S(S(2)) = 4$.
+4. $2 \cdot 3 = 4 + 2 = S(4 + 1) = S(S(4 + 0)) = S(S(4)) = 6$.
+5. (b) Trditev $0 + a = a$ dokažemo z indukcijo po $a$. Baza: $0 + 0 = 0$ po pravilu $a + 0 = a$. Korak: če je $0 + a = a$, je $0 + S(a) = S(0 + a) = S(a)$.
+6. Trditev $S(a) + b = S(a + b)$ dokažemo pri poljubnem, a izbranem $a$ z indukcijo po $b$. Baza: $S(a) + 0 = S(a) = S(a + 0)$.
+7. Korak: če je $S(a) + b = S(a + b)$, je $S(a) + S(b) = S(S(a) + b) = S(S(a + b)) = S(a + S(b))$. Prvi in zadnji enačaj sta definicija seštevanja, srednji je indukcijska predpostavka.
+8. (c) Pri izbranem $a$ naredimo indukcijo po $b$. Baza: $a + 0 = a = 0 + a$ po točki 5.
+9. Korak: če je $a + b = b + a$, je $a + S(b) = S(a + b) = S(b + a) = S(b) + a$; zadnji enačaj je točka 7 z zamenjanima vlogama črk.
+10. Odgovor: $2 \cdot 3 = 6$; po principu indukcije veljata obe pomožni trditvi in iz njiju $a + b = b + a$ za vse $a, b \in \omega$. Tri indukcije so potrebne, ker definicija seštevanja razvija le desni sumand.
+
+### Naloga 2
+
+Naj bosta $A$ in $B$ poljubni množici. Z Zornovo lemo dokaži, da obstaja injektivna preslikava $A \to B$ ali injektivna preslikava $B \to A$ (moči množic sta vedno primerljivi). Natančno povej, kje uporabiš vsako predpostavko leme.
+
+**Rešitev:**
+
+1. Naj bo $P$ množica vseh injektivnih preslikav $f\colon D_f \to B$, kjer je $D_f \subseteq A$. Vsaka taka $f$ je množica urejenih parov, $f \subseteq A \times B$, zato je $P$ množica po separaciji iz $\mathcal{P}(A \times B)$. Uredimo jo z $\subseteq$: $f \subseteq g$ pomeni, da $g$ razširja $f$.
+2. $P$ ni prazna: prazna preslikava $\emptyset$ (z $D_\emptyset = \emptyset$) je injektivna, torej $\emptyset \in P$.
+3. Naj bo $\mathcal{C} \subseteq P$ veriga in $U = \bigcup \mathcal{C}$. Pokažimo, da je $U$ preslikava: če sta $(x, y), (x, y') \in U$, ležita para v členih $f, g \in \mathcal{C}$. Ker sta primerljiva, sta oba para v večjem od njiju, ta pa je preslikava, zato $y = y'$.
+4. $U$ je injektivna z enakim sklepom: para $(x, y), (x', y) \in U$ ležita v istem členu verige, ki je injektiven, zato $x = x'$. Torej je $U \in P$ in je zgornja meja verige $\mathcal{C}$.
+5. Predpostavki Zornove leme sta izpolnjeni, zato ima $P$ maksimalni element $f$ z definicijskim območjem $D_f$ in zalogo vrednosti $Z_f = f(D_f)$.
+6. Recimo, da je $D_f \neq A$ in $Z_f \neq B$. Izberemo $a \in A \setminus D_f$ in $b \in B \setminus Z_f$ (ena sama izbira, zanjo AC ni potreben). Tedaj je $f \cup \{(a, b)\}$ injektivna preslikava, ki je strogo večja od $f$. To je v protislovju z maksimalnostjo.
+7. Torej je $D_f = A$ ali $Z_f = B$. V prvem primeru je $f\colon A \to B$ injektivna. V drugem je $f\colon D_f \to B$ bijekcija, zato je $f^{-1}\colon B \to D_f \subseteq A$ injektivna preslikava $B \to A$.
+8. Odgovor: vedno obstaja injekcija $A \to B$ ali injekcija $B \to A$. Nepraznost $P$ smo uporabili v točki 2, zgornjo mejo verige v $P$ v točkah 3 in 4, maksimalnost pa v točki 6.
+
+### Naloga 3
+
+Natančno navedi aksiom regularnosti in z njim utemelji: (a) nobena množica ni element same sebe; (b) ne obstajata množici $x$ in $y$ z $x \in y$ in $y \in x$; (c) za vsako množico $n$ je $S(n) \neq n$. (d) Utemelji na dva načina, da »množica vseh množic« ne obstaja: z regularnostjo in s separacijo.
+
+**Rešitev:**
+
+1. Aksiom regularnosti: vsaka neprazna množica $A$ ima element $x \in A$, za katerega je $x \cap A = \emptyset$.
+2. (a) Recimo, da je $x \in x$. Po aksiomu para obstaja $A = \{x\}$. Njen edini element je $x$, zanj pa je $x \in x \cap A$, torej $x \cap A \neq \emptyset$. To nasprotuje regularnosti, zato $x \notin x$.
+3. (b) Recimo, da je $x \in y$ in $y \in x$. Vzemimo $A = \{x, y\}$. Tedaj je $y \in x \cap A$ in $x \in y \cap A$, zato noben element $A$ nima praznega preseka z $A$. Protislovje.
+4. (c) Po definiciji je $n \in n \cup \{n\} = S(n)$. Če bi bilo $S(n) = n$, bi veljalo $n \in n$, kar nasprotuje točki (a).
+5. (d) Z regularnostjo: če bi množica vseh množic $V$ obstajala, bi bila tudi sama množica, torej $V \in V$, kar nasprotuje točki (a).
+6. S separacijo: iz $V$ bi dobili množico $R = \{x \in V : x \notin x\}$. Ker je $R \in V$, velja $R \in R$ natanko tedaj, ko $R \notin R$. To je protislovje (Russellov paradoks), zato $V$ ne obstaja.
+7. Sklep: regularnost prepove krožne verige pripadnosti, zato nobena množica ni element same sebe in naslednik je vedno nova množica. Drugi dokaz v (d) regularnosti ne potrebuje; množice vseh množic ni že v sistemu brez nje.
+
 ## Drugače: Z analogijo
 
 Indukcija je kot planinska koča s pravilom: »Kdor pride v kočo $n$, zna priti do koče $n + 1$.« Če znaš priti do prve koče, prideš do katere koli. Sama pot do koče $1000$ je končna, zato zadošča indukcija.
 
 Zornova lema je kot vzpon po grebenu, ki se cepi. Vsaka veriga je ena smer vzpona. Pogoj leme pravi: na vsaki smeri, ki jo hodiš v nedogled, obstaja točka nad vsem, kar si prehodil. Lema iz tega sklepa, da obstaja vrh, nad katerim ni ničesar več. Ne pove, kje je, in ne trdi, da je en sam.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Popotnik ima neskončno mnogo parov čevljev. Iz vsakega para lahko izbere enega brez aksioma izbire: pravilo »vedno levi« določi izbirno funkcijo. Pri neskončno mnogo parih nogavic pa sta nogavici v paru enaki in pravila ni. Da izbor po ena iz vsakega para obstaja, zagotovi šele AC. Primer je Russellov.
+**Raziskovalna matematika.** Zornova lema je standardno orodje za obstojne izreke v algebri in analizi. Z enakim vzorcem kot v Primeru 3 (delni objekti, unija verige, maksimalni element) dokažemo, da ima vsak vektorski prostor bazo, da ima vsak netrivialen kolobar z enico maksimalni ideal, in Hahn-Banachov izrek o razširitvi funkcionala. Baza prostora $\mathbb{R}$ nad $\mathbb{Q}$ (Hamelova baza) obstaja, zapisati pa je ne zna nihče. Zato matematiki v člankih pogosto označijo, kateri izreki so odvisni od AC: brez njega obstajajo modeli ZF, v katerih kak vektorski prostor nima baze.
 
-Podobno pri potovanju: iz vsake države vzameš glavno mesto, pravilo je jasno. Iz vsake neprazne podmnožice realne osi »ena točka« pa nima znanega predpisa, in tam AC opravi delo.
+**Računalniško preverjanje dokazov in programov.** Dokazovalniki, kot so Lean, Rocq (prej Coq) in Isabelle, dokaz sprejmejo le, če vsak korak sledi iz izbranih aksiomov, in izpišejo, katere aksiome dokaz uporablja. V Leanu je aksiom izbire (`Classical.choice`) eden od treh osnovnih aksiomov, Zornova lema pa je v knjižnici Mathlib iz njega dokazan izrek. Indukcija je vsakdanje orodje pri preverjanju programske opreme: pravilnost zanke dokažemo z zančno invarianto (baza pred prvim obhodom, korak za en obhod), pravilnost rekurzivne funkcije pa s krepko indukcijo po velikosti vhoda.
 
 ## Drugače: Bolj natančno
 
 **Indukcija v $\omega$.** Naj bo $A \subseteq \omega$ induktivna. Ker je $\omega$ presek vseh induktivnih podmnožic izbrane induktivne množice $I$ in je $A \subseteq I$ ena izmed njih, je $\omega \subseteq A$, torej $A = \omega$.
 
-**Zorn $\Rightarrow$ AC.** Naj bo $\{A_i\}_{i \in J}$ družina nepraznih množic. $P$ naj bodo delne izbirne funkcije $f$ (definirane na delu $J$, $f(i) \in A_i$), urejene z razširitvijo ($f \subseteq g$). $\emptyset \in P$; unija verige je spet delna izbirna funkcija, zato zgornja meja. Maksimalna $f$ je definirana na vsem $J$: sicer bi pri manjkajočem $i$ dodali kak $a \in A_i$ in $f$ razširili. Obratna smer (AC $\Rightarrow$ Zorn) zahteva transfinitno rekurzijo po ordinalih.
+**Zorn $\Rightarrow$ AC.** Naj bo $\{A_i\}_{i \in J}$ družina nepraznih množic. $P$ naj bodo delne izbirne funkcije $f$ (definirane na delu $J$, $f(i) \in A_i$), urejene z razširitvijo ($f \subseteq g$). $\emptyset \in P$; unija verige je spet delna izbirna funkcija, zato zgornja meja. Maksimalna $f$ je definirana na vsem $J$: sicer bi pri manjkajočem $i$ dodali kak $a \in A_i$ in $f$ razširili. Obratno smer (AC $\Rightarrow$ Zorn) običajno dokažemo s transfinitno rekurzijo po ordinalih.
 
 ## Preveri se
 
@@ -248,7 +304,7 @@ Podobno pri potovanju: iz vsake države vzameš glavno mesto, pravilo je jasno. 
 :::simboli
 S | naslednik | S(n) = n \cup \{n\}
 n | naravno število (kot množica)
-V | število vozovnic na progi z n postajami | V(n) = \frac{n(n-1)}{2} | | »množica vseh množic« V ne obstaja
+V | število vozovnic na progi z n postajami | V(n) = \frac{n(n-1)}{2} | | »množica vseh množic« V ne obstaja; v Primeru 3 je V množica krajev grafa
 P | delno urejena množica v Zornovi lemi | | | P(n) je tudi trditev pri indukciji
-a, b | naravni števili | | | pri aksiomu para poljubni množici
+a, b | naravni števili | | | pri aksiomu para poljubni množici, v Primeru 3 kraja
 :::

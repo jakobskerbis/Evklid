@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,7 +13,7 @@ Aplikacija izpiše povprečje $80$ minut. Sošolec Miha takoj sklene: »Torej po
 
 Preštej sam: več kot $80$ minut igrata le **dva** od desetih. Miha je zamenjal dve različni »sredini« podatkov. Ena sama vrednost ($400$ minut, nekdo je pozabil izklopiti igro) je povprečje potegnila navzgor, večine pa ni premaknila.
 
-Statistika ti pove, katero število opiše podatke pošteno, kako so podatki razpršeni in kdaj lahko iz povprečja in razpršenosti napoveš delež, ne da bi preštel vse. Proizvajalci telefonov tako napovejo, koliko baterij bo zdržalo manj kot obljubljajo, in temu prilagodijo garancijo.
+Statistika ti pove, katero število opiše podatke pošteno, kako so podatki razpršeni in kdaj lahko iz povprečja in razpršenosti napoveš delež, ne da bi preštel vse. Proizvajalci telefonov tako napovejo, koliko baterij bo zdržalo manj, kot obljubljajo, in temu prilagodijo garancijo.
 
 ## Razlaga
 
@@ -45,7 +45,9 @@ $$\sigma = \sqrt{\sigma^2}$$
 
 Količini $\sigma^2$ rečemo **varianca**. Večji $\sigma$ pomeni bolj razpršene podatke.
 
-**3. Kvartili in škatla z brki.** Mediana deli urejene podatke na dve polovici. Mediana spodnje polovice je **prvi kvartil** $Q_1$, mediana zgornje polovice **tretji kvartil** $Q_3$. Pri igricah je spodnja polovica $20, 30, 30, 40, 40$, torej $Q_1 = 30$; zgornja je $40, 50, 60, 90, 400$, torej $Q_3 = 60$.
+Na maturi (formula na prilogi) in v tej lekciji deliš z $N$: na računalu izberi tipko $\sigma_n$ ali $\sigma_x$, ne $s_x$ ali $\sigma_{n-1}$. Vzorčni odklon $s$, pri katerem deliš z $N - 1$, statistika uporablja, ko iz vzorca ocenjuje populacijo, matura pa ga ne zahteva.
+
+**3. Kvartili in škatla z brki.** Mediana deli urejene podatke na dve polovici. Mediana spodnje polovice je **prvi kvartil** $Q_1$, mediana zgornje polovice **tretji kvartil** $Q_3$. Pri igricah je spodnja polovica $20, 30, 30, 40, 40$, torej $Q_1 = 30$; zgornja je $40, 50, 60, 90, 400$, torej $Q_3 = 60$. Metod za kvartile je več (učbeniki, računala, preglednice) in pri majhnem številu podatkov se rezultati lahko nekoliko razlikujejo. Na maturi zato zapiši, kako si kvartila določil, saj se točkuje postopek.
 
 **Škatla z brki** te podatke nariše na številsko premico:
 
@@ -91,20 +93,18 @@ napis: 8,3; 1,35 | max | nad
 podnapis: Premica je med 70 in 400 prekinjena.
 :::
 
-V škatli je srednja polovica podatkov. Njena širina $Q_3 - Q_1 = 30$ je **medkvartilni razmik**. Podatek, ki je od škatle oddaljen več kot $1{,}5$ te širine (tu nad $60 + 45 = 105$), označimo kot **osamelec**. Igralec s $400$ minutami je osamelec.
+V škatli je srednja polovica podatkov. Njena širina $Q_3 - Q_1 = 30$ je **medkvartilni** (tudi medčetrtinski) **razmik**. Podatek, ki je od škatle oddaljen več kot $1{,}5$-kratnik te širine (tu nad $60 + 45 = 105$), označimo kot **osamelec**. Igralec s $400$ minutami je osamelec.
 
 **4. Od histograma h krivulji.** Pri veliko podatkih jih združimo v razrede in narišemo **histogram**. Če višino stolpca izberemo tako, da je **ploščina** stolpca enaka deležu podatkov v razredu, je skupna ploščina vseh stolpcev $1$.
 
 V simulaciji spodaj (Statistika: histogram in škatla z brki) postavi število podatkov na $300$ in razrede najprej na $5$, nato na $20$. Opazi, da se pri več podatkih in ožjih razredih vrhovi stolpcev poravnajo v gladko zvonasto obliko, škatla z brki pod njim pa je simetrična okoli mediane.
 
-**5. Normalna porazdelitev (višja raven).** Zvonasta krivulja, ki jo vidiš, je graf **gostote normalne porazdelitve**. Primerjaj ju točko za točko:
+**5. Normalna porazdelitev.** Zvonasta krivulja, ki jo vidiš, je graf **gostote normalne porazdelitve**. Primerjaj ju točko za točko:
 
-| | histogram | normalna krivulja |
-|---|---|---|
-| podatki | končno mnogo | slučajna spremenljivka $X$ |
-| delež | ploščina stolpcev | ploščina pod krivuljo |
-| sredina | $\bar x$ | pričakovana vrednost $\mu$ |
-| razpršenost | $\sigma$ podatkov | parameter $\sigma$ |
+- **Podatki:** histogram jih ima končno mnogo, normalna krivulja opisuje slučajno spremenljivko $X$.
+- **Delež:** pri histogramu je ploščina stolpcev, pri krivulji ploščina pod krivuljo.
+- **Sredina:** pri histogramu $\bar x$, pri krivulji pričakovana vrednost $\mu$.
+- **Razpršenost:** pri histogramu $\sigma$ podatkov, pri krivulji parameter $\sigma$.
 
 **Slučajna spremenljivka** $X$ je količina, katere vrednost je odvisna od naključja, npr. trajanje baterije naključno izbranega telefona. Njena **pričakovana vrednost** $\mu$ je povprečje, okoli katerega se vrednosti $X$ zbirajo na dolgi rok.
 
@@ -228,13 +228,131 @@ $\Phi(2) - \Phi(-1) = 0{,}4772 + 0{,}3413 = 0{,}8185$, torej približno $82\,\%$
 
 ## Povzetek
 
-- Aritmetična sredina $\bar x$ je vsota podatkov, deljena z $N$; mediana $\mathrm{Me}$ je srednji podatek urejenega niza; modus $\mathrm{Mo}$ je najpogostejši podatek.
+- **Aritmetična sredina** $\bar x$ je vsota podatkov, deljena z $N$.
+- **Mediana** $\mathrm{Me}$ je srednji podatek urejenega niza.
+- **Modus** $\mathrm{Mo}$ je najpogostejši podatek.
 - Osamelec močno premakne sredino, mediane skoraj ne.
-- Standardni odklon: $\sigma^2 = \frac{1}{N}\sum (x_i - \bar x)^2$, $\sigma = \sqrt{\sigma^2}$; $\sigma^2$ je varianca.
-- Škatla z brki: min, $Q_1$, $\mathrm{Me}$, $Q_3$, max; medkvartilni razmik $Q_3 - Q_1$.
-- Normalna porazdelitev: zvonasta, simetrična okoli $\mu$, ploščina pod krivuljo je verjetnost, cela ploščina je $1$.
-- Pravilo $68$–$95$–$99{,}7\,\%$ za $\mu \pm \sigma$, $\mu \pm 2\sigma$, $\mu \pm 3\sigma$.
-- $z = \frac{x - \mu}{\sigma}$; $P(X < x) = 0{,}5 + \Phi(z)$, $P(X > x) = 0{,}5 - \Phi(z)$.
+
+**Varianca** $\sigma^2$ in **standardni odklon** $\sigma$:
+
+$$\sigma^2 = \frac{1}{N}\sum (x_i - \bar x)^2$$
+
+$$\sigma = \sqrt{\sigma^2}$$
+
+- **Škatla z brki:** min, $Q_1$, $\mathrm{Me}$, $Q_3$, max.
+- **Medkvartilni razmik** je $Q_3 - Q_1$.
+- **Normalna porazdelitev** je zvonasta, simetrična okoli $\mu$.
+- Ploščina pod krivuljo je verjetnost; cela ploščina je $1$.
+
+**Pravilo $68$–$95$–$99{,}7\,\%$:**
+
+| Interval | Delež |
+|:-:|:-:|
+| $\mu \pm \sigma$ | $68\,\%$ |
+| $\mu \pm 2\sigma$ | $95\,\%$ |
+| $\mu \pm 3\sigma$ | $99{,}7\,\%$ |
+
+**Standardizacija:**
+
+$$z = \frac{x - \mu}{\sigma}$$
+
+$$P(X < x) = 0{,}5 + \Phi(z)$$
+
+$$P(X > x) = 0{,}5 - \Phi(z)$$
+
+## Ponovitev
+
+**Formule**
+- $\bar x = \frac{x_1 + x_2 + \dots + x_N}{N}$ (na pamet)
+- $\sigma = \sqrt{\frac{1}{N}\sum (x_i - \bar x)^2}$ (priloga)
+- medkvartilni razmik $Q_3 - Q_1$ (na pamet)
+- $z = \frac{x - \mu}{\sigma}$ (na pamet)
+- $P(X < x) = 0{,}5 + \Phi(z)$, $P(X > x) = 0{,}5 - \Phi(z)$ (na pamet)
+- $68$–$95$–$99{,}7\,\%$ za $\mu \pm \sigma$, $\mu \pm 2\sigma$, $\mu \pm 3\sigma$ (na pamet)
+
+**Postopek**
+1. Podatke uredi po velikosti.
+2. Izračunaj $\bar x$, $\mathrm{Me}$ in $\sigma$; pri osamelcih navedi mediano.
+3. Pri normalni porazdelitvi nariši krivuljo in pobarvaj iskano ploščino.
+4. Izračunaj $z$ in v tabeli odčitaj $\Phi(z)$.
+5. Glede na sliko $\Phi(z)$ prištej k $0{,}5$ ali ga odštej od $0{,}5$.
+
+**Pazi na**
+- Mediano išči šele v urejenem nizu.
+- $\Phi(z)$ je ploščina od sredine do $z$, ne od roba.
+- V $z$ deli s $\sigma$, ne z varianco: iz $\sigma^2 = 4$ je $\sigma = 2$.
+
+## Za maturo
+
+### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
+
+Deset dijakov je zapisalo, koliko minut traja njihova pot v šolo:
+
+$$15,\ 30,\ 8,\ 20,\ 12,\ 50,\ 16,\ 25,\ 10,\ 18$$
+
+Izračunajte medkvartilni razmik in z računom utemeljite, ali je podatek $50$ osamelec.
+
+**Rešitev:**
+
+1. Podatke uredimo po velikosti: $8, 10, 12, 15, 16, 18, 20, 25, 30, 50$. Spodnja polovica je $8, 10, 12, 15, 16$, zgornja $18, 20, 25, 30, 50$.
+2. Prvi kvartil je mediana spodnje polovice, $Q_1 = 12$; tretji kvartil je mediana zgornje polovice, $Q_3 = 25$.
+3. Medkvartilni razmik: $Q_3 - Q_1 = 25 - 12 = 13$ minut.
+4. Osamelci zgoraj so podatki nad $Q_3 + 1{,}5 \cdot 13 = 25 + 19{,}5 = 44{,}5$.
+5. Odgovor: medkvartilni razmik je $13$ minut. Ker je $50 > 44{,}5$, je podatek $50$ osamelec.
+
+**Točkovanje:** 1 točka za urejene podatke in kvartila $Q_1 = 12$, $Q_3 = 25$; 1 točka za medkvartilni razmik $13$ in mejo $44{,}5$; 1 točka za utemeljen sklep, da je $50$ osamelec.
+
+### Naloga 2: krajša strukturirana naloga, 7 točk, pola 2 (z računalom)
+
+Sadjar je stehtal šest jabolk in dobil mase v gramih:
+
+$$174,\ 186,\ 171,\ 189,\ 183,\ 177$$
+
+a) Izračunajte aritmetično sredino in standardni odklon mas teh šestih jabolk. Standardni odklon zaokrožite na dve decimalni mesti. (3 točke)
+
+Na podlagi velikega vzorca sadjar privzame, da je masa jabolka normalno porazdeljena s pričakovano vrednostjo $\mu = 180\,\mathrm{g}$ in standardnim odklonom $\sigma = 8\,\mathrm{g}$. Iz tabele: $\Phi(0{,}5) = 0{,}1915$, $\Phi(1{,}25) = 0{,}3944$, $\Phi(1{,}75) = 0{,}4599$. V delih b) in c) računajte s tem modelom.
+
+b) Kolikšen delež jabolk tehta manj kot $170\,\mathrm{g}$? Rezultat zapišite v odstotkih na dve decimalni mesti. (2 točki)
+
+c) Jabolka z maso med $176\,\mathrm{g}$ in $194\,\mathrm{g}$ gredo v prvi razred. Približno koliko od $2000$ jabolk gre v prvi razred? Zaokrožite na celo število. (2 točki)
+
+**Rešitev:**
+
+1. a) $\bar x = \dfrac{174 + 186 + 171 + 189 + 183 + 177}{6} = \dfrac{1080}{6} = 180\,\mathrm{g}$.
+2. a) Odkloni od sredine so $-6, 6, -9, 9, 3, -3$, njihovi kvadrati $36, 36, 81, 81, 9, 9$, vsota kvadratov je $252$.
+3. a) Varianca šestih mas je $252 : 6 = 42$, njihov standardni odklon pa $\sqrt{42} = 6{,}4807\ldots \approx 6{,}48\,\mathrm{g}$.
+4. b) Standardiziramo: $z = \dfrac{170 - 180}{8} = -1{,}25$.
+5. b) $P(X < 170) = 0{,}5 + \Phi(-1{,}25) = 0{,}5 - 0{,}3944 = 0{,}1056$, torej $10{,}56\,\%$.
+6. c) Standardizirani meji: $z_1 = \dfrac{176 - 180}{8} = -0{,}5$ in $z_2 = \dfrac{194 - 180}{8} = 1{,}75$.
+7. c) Meji sta na različnih straneh sredine: $P(176 < X < 194) = \Phi(1{,}75) - \Phi(-0{,}5) = 0{,}4599 + 0{,}1915 = 0{,}6514$.
+8. c) Pričakovano število: $0{,}6514 \cdot 2000 = 1302{,}8 \approx 1303$.
+9. Odgovor: mase šestih jabolk imajo aritmetično sredino $180\,\mathrm{g}$ in standardni odklon približno $6{,}48\,\mathrm{g}$; manj kot $170\,\mathrm{g}$ tehta $10{,}56\,\%$ jabolk; v prvi razred gre približno $1303$ jabolk.
+
+**Točkovanje:** a) 1 točka za $\bar x = 180\,\mathrm{g}$, 1 točka za vsoto kvadratov odklonov $252$ oziroma varianco $42$, 1 točka za standardni odklon $6{,}48\,\mathrm{g}$ (odklon $7{,}10\,\mathrm{g}$, deljen z $N - 1$, ne dobi točke za rezultat, točka za vsoto kvadratov oziroma varianco ostane); b) 1 točka za $z = -1{,}25$ in 1 točka za $10{,}56\,\%$; c) 1 točka za standardizirani meji in verjetnost $0{,}6514$ ter 1 točka za približno $1303$ jabolk.
+
+### Ustno vprašanje 1
+
+:::premisli
+Navedi primer podatkov, pri katerih se aritmetična sredina in mediana močno razlikujeta, in pojasni, katera bolje opiše tipično vrednost.
+---
+Primer so mesečne plače v podjetju, kjer večina zaposlenih zasluži podobno, direktor pa veliko več. Aritmetična sredina upošteva velikost vsakega podatka, zato jo en sam zelo velik podatek potegne navzgor. Mediana je srednji podatek urejenega niza, zato je velikost skrajnega podatka ne spremeni, dokler ta ostane na robu niza. Pri takih podatkih tipično vrednost bolje opiše mediana.
+:::
+
+### Ustno vprašanje 2
+
+:::premisli
+Opiši lastnosti grafa gostote normalne porazdelitve s parametroma $\mu$ in $\sigma$.
+---
+Graf je zvonasta krivulja, ki je simetrična glede na premico $x = \mu$ in tam doseže maksimum. Prevoja ima pri $x = \mu - \sigma$ in $x = \mu + \sigma$. Krivulja leži povsod nad osjo $x$ in se ji na obeh straneh približuje, a je nikoli ne doseže. Ploščina pod celotno krivuljo je $1$, ploščina med $a$ in $b$ pa je verjetnost, da slučajna spremenljivka zavzame vrednost med $a$ in $b$. Večji $\sigma$ da širšo in nižjo krivuljo.
+:::
+
+### Ustno vprašanje 3
+
+:::premisli
+Kaj meri standardni odklon, kako ga izračunamo in zakaj odklone od sredine pred povprečenjem kvadriramo?
+---
+Standardni odklon meri, kako so podatki razpršeni okoli aritmetične sredine. Najprej izračunamo varianco $\sigma^2 = \frac{(x_1 - \bar x)^2 + \dots + (x_N - \bar x)^2}{N}$, nato je $\sigma = \sqrt{\sigma^2}$. Odklonov ne smemo kar sešteti, ker je njihova vsota vedno $0$: $(x_1 - \bar x) + \dots + (x_N - \bar x) = N\bar x - N\bar x = 0$. Kvadrati so vsi nenegativni, zato se ne izničijo, koren na koncu pa vrne enoto podatkov.
+:::
 
 ## Drugače: Na sliki
 
@@ -271,21 +389,18 @@ Pri izdelkih, ki jih tovarna dela v velikih količinah (trajanje baterije, masa 
 ~ Zunaj $\mu \pm 3\sigma$ je le še $0{,}3\,\%$ ploščine, a krivulja osi $x$ nikoli ne doseže, saj je $e^{\ldots} > 0$.
 > Ploščina pod gostoto je verjetnost, vse vrednosti skupaj imajo verjetnost $1$.
 
-? Število aplikacij na telefonih petih dijakov: $9, 4, 13, 7, 7$. Kolikšna je mediana?
-- $13$
-~ To je srednji podatek neurejenega niza. Najprej uredi: $4, 7, 7, 9, 13$.
-- $8$
-~ To je aritmetična sredina ($40 : 5$), ne mediana.
-+ $7$
+? (brez računala) Število aplikacij na telefonih petih dijakov: $9, 4, 13, 7, 7$. Kolikšna je mediana?
+= 7 | 0
+~ 13 | To je srednji podatek neurejenega niza. Najprej uredi: $4, 7, 7, 9, 13$.
+~ 8 | To je aritmetična sredina ($40 : 5$), ne mediana.
 > Urejeno: $4, 7, 7, 9, 13$; na srednjem, 3. mestu je $7$.
 
-? Maja je izračunala delež baterij, ki zdržijo **manj** kot $23\,\mathrm{h}$ ($\mu = 20\,\mathrm{h}$, $\sigma = 2\,\mathrm{h}$): »$z = 1{,}5$, $\Phi(1{,}5) = 0{,}4332$, torej $43{,}32\,\%$.« Kje je napaka?
-- $z$ bi moral biti $\dfrac{23 - 20}{4} = 0{,}75$.
-~ V imenovalcu je standardni odklon $\sigma = 2$, ne varianca $\sigma^2 = 4$.
-- Odgovor bi moral biti $0{,}5 - 0{,}4332 = 6{,}68\,\%$.
-~ To je delež baterij, ki zdržijo **več** kot $23\,\mathrm{h}$. Maja išče manj.
-+ Pozabila je prišteti levo polovico: pravilno je $0{,}5 + 0{,}4332 = 93{,}32\,\%$.
-> $\Phi(z)$ šteje le od sredine do $z$. Vse baterije pod sredino ($50\,\%$) tudi zdržijo manj kot $23\,\mathrm{h}$.
+? Maja je izračunala delež baterij, ki zdržijo **manj** kot $23\,\mathrm{h}$ ($\mu = 20\,\mathrm{h}$, $\sigma = 2\,\mathrm{h}$): »$z = 1{,}5$, $\Phi(1{,}5) = 0{,}4332$, torej $43{,}32\,\%$.« Maja se je zmotila. Kolikšen je pravilni delež? Vpiši ga v odstotkih na dve decimalki.
+= 93,32 % | 0,01
+~ 0,93 | To je delež kot decimalno število ($0{,}9332$). Vpiši ga v odstotkih: $93{,}32\,\%$.
+~ 43,32 | To je Majin odgovor. $\Phi(1{,}5)$ šteje le baterije med $20$ in $23\,\mathrm{h}$; pozabila je prišteti levo polovico.
+~ 6,68 | To je $0{,}5 - 0{,}4332$, delež baterij, ki zdržijo **več** kot $23\,\mathrm{h}$. Maja išče manj.
+> Majin $z = \dfrac{23 - 20}{2} = 1{,}5$ je pravilen (v imenovalcu je standardni odklon $\sigma = 2$, ne varianca $\sigma^2 = 4$). $\Phi(z)$ pa šteje le od sredine do $z$. Vse baterije pod sredino ($50\,\%$) tudi zdržijo manj kot $23\,\mathrm{h}$: $0{,}5 + 0{,}4332 = 0{,}9332 = 93{,}32\,\%$.
 
 ? Oba modela imata $\mu = 20\,\mathrm{h}$, model A ima $\sigma = 1\,\mathrm{h}$, model B $\sigma = 3\,\mathrm{h}$. Pri katerem je verjetnost, da baterija zdrži več kot $23\,\mathrm{h}$, večja?
 - Pri A, ker je bolj zanesljiv.
@@ -325,3 +440,18 @@ z_a, z_b | standardizirani meji | | – |
 \sigma_A, \sigma_B | standardna odklona modelov A in B | | h |
 \bar x_A, \bar x_B | povprečni trajanji baterij | | h |
 :::
+
+<<RACUN
+vrednost: 25-12 | 13
+vrednost: 25+1.5*13 | 44.5
+vrednost: (174+186+171+189+183+177)/6 | 180
+vrednost: ((174-180)^2+(186-180)^2+(171-180)^2+(189-180)^2+(183-180)^2+(177-180)^2)/6 | 42
+vrednost: sqrt(42) | 6.48
+vrednost: sqrt(252/5) | 7.10
+vrednost: (170-180)/8 | -1.25
+vrednost: 0.5-0.3944 | 0.1056
+vrednost: (176-180)/8 | -0.5
+vrednost: (194-180)/8 | 1.75
+vrednost: 0.4599+0.1915 | 0.6514
+vrednost: 0.6514*2000 | 1302.8
+>>

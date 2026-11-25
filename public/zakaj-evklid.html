@@ -6,25 +6,33 @@
   <!-- Stran brez JavaScripta za obiskovalce, iskalnike in pomočnike AI. Sestavi jo server/vidnost.js:
        spremenljivke v dvojnih zavitih oklepajih so dejstva iz kode (cene, dnevi preizkusa, število jezikov), z »i:« ikone iz public/icons.js.
        Besedila: docs/besedila.md (vikanje, ker stran berejo starši in obiskovalci). -->
-  <title>Zakaj Evklid – preverjeni računi in izmerjena natančnost | evklid.app</title>
-  <meta name="description" content="Zakaj Evklid (evklid.app): račune v enačbah, odvodih in daljših izračunih preveri program. Izmerjena natančnost, razlike do splošnih klepetalnikov, kaj dobite in česa Evklid še ne zna.">
+  <title>Zakaj Evklid – preverjeni računi in kaj Evklid zna | evklid.app</title>
+  <meta name="description" content="Zakaj Evklid (evklid.app): račune v enačbah, odvodih in daljših izračunih preveri program. Kako preverjamo natančnost, razlike do splošnih klepetalnikov, kaj dobite in česa Evklid še ne zna.">
   <link rel="canonical" href="https://evklid.app/zakaj-evklid">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Evklid">
   <meta property="og:locale" content="sl_SI">
   <meta property="og:url" content="https://evklid.app/zakaj-evklid">
-  <meta property="og:title" content="Zakaj Evklid – preverjeni računi in izmerjena natančnost | evklid.app">
-  <meta property="og:description" content="Kako Evklid skrbi za pravilne rezultate, kaj smo izmerili, kaj dobite in česa še ne zna.">
-  <meta property="og:image" content="https://evklid.app/icons/icon-512.png">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:title" content="Zakaj Evklid – preverjeni računi in kaj Evklid zna | evklid.app">
+  <meta property="og:description" content="Kako Evklid skrbi za pravilne rezultate, kako preverjamo natančnost, kaj dobite in česa še ne zna.">
+  <meta property="og:image" content="https://evklid.app/icons/deljenje.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Evklid · evklid.app · slovenski AI inštruktor">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg?v=kristal">
   <link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
+  <!-- Pisavi takoj s slogi (kot pristajalna stran, server/vstopna-stran.js PISAVE): sicer prideta po prvem izrisu in
+       zamenjava pisave premakne vsebino ob sidrih cen in mature (CLS 0,20 na telefonu, meritev 21. 11. 2026). -->
+  <link rel="preload" href="/vendor/instrument-sans/files/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/vendor/instrument-sans/files/instrument-sans-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/vendor/instrument-sans/index.css">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/predstavitev.css">
   <link rel="stylesheet" href="/ui.css">
   <link rel="stylesheet" href="/account.css">
   <style>
@@ -67,8 +75,13 @@
     /* Stran »Zakaj Evklid«: tabele z daljšim besedilom (celice se lomijo) in podnaslovi. */
     .why-table td { white-space: normal; font-weight: 600; }
     .why-table td small { display: inline; white-space: nowrap; margin-inline-start: 6px; }
+    .why-table td small.why-ci { display: block; white-space: normal; margin-inline-start: 0; }
     .why-sub { margin: 20px 0 8px; font-size: 1.05rem; }
     .why-steps { margin-bottom: 4px; }
+    /* Primer 3x + 5 = 20 kot pogovor (oblački iz pristajalne strani, account.css .land-msg); statično, brez animacije. */
+    .why-chat { max-width: 560px; margin: 0 0 12px; box-shadow: none; border: 1px solid var(--border); }
+    .why-chat .land-msg { animation: none; }
+    .why-chat-note { margin-top: 0; }
     /* Videz samodejno po napravi (j 2026-11-10), brez JavaScripta: privzeto svetel, v temnem načinu naprave temna
        tema Evklida. Barve so prepis :root.dark iz public/style.css (test/vidnost.test.js preveri, da se ujemajo);
        uvodna kartica je v temnem načinu brez modre podlage. */
@@ -111,20 +124,29 @@
 </head>
 <body>
 <div class="about">
-  <header class="about-top">
-    <a class="brand" href="/" aria-label="Evklid – na začetno stran">
-      <span class="logo" aria-hidden="true">{{i:kristal}}</span>
-      <span class="brand-name">Evkli<span>d</span></span>
-    </a>
-    <a class="btn-primary" href="/">Odpri Evklid</a>
+  <header class="mkt-top">
+    <a class="mkt-brand" href="/" aria-label="Evklid – na začetno stran"><img src="/icons/favicon.svg?v=kristal" alt="" width="28" height="28"><span class="mkt-name">Evkli<span>d</span></span></a>
+    <nav class="mkt-nav" aria-label="Glavni meni">
+      <a href="/zakaj-evklid" aria-current="page">Zakaj Evklid</a>
+      <!--ce:!trgovina--><a href="/o-evklidu#cene">Cene</a><!--/ce:!trgovina-->
+      <a href="/starsi.html">Za starše</a>
+      <a href="/sole">Za šole</a>
+    </nav>
+    <a class="mkt-cta" href="/">Preizkusite brezplačno</a>
   </header>
+  <ul class="mkt-trust" aria-label="Zasebnost na kratko">
+    <li>Strežnik in baza v EU (Frankfurt)</li>
+    <li>Brez oglasov in sledilnikov</li>
+    <li>Anthropic podatkov ne uporablja za učenje modelov</li>
+    <li><a href="/zasebnost.html">Več o zasebnosti</a></li>
+  </ul>
 
   <main class="land">
     <section class="land-hero">
       <div class="land-hero-text">
         <p class="land-eyebrow">Matematika · Fizika · Kemija · Biologija</p>
         <h1>Zakaj Evklid</h1>
-        <p class="land-lead">Evklid (evklid.app) je slovenski AI inštruktor za šolo. Račune v enačbah, odvodih in daljših izračunih preveri program. Na tej strani preberete, kako to deluje, kaj smo o natančnosti izmerili, kaj dobite in česa Evklid še ne zna.</p>
+        <p class="land-lead">Evklid (evklid.app) je slovenski AI inštruktor za šolo. Račune v enačbah, odvodih in daljših izračunih preveri program. Na tej strani preberete, kako to deluje, kako preverjamo natančnost, kaj dobite in česa Evklid še ne zna.</p>
         <div class="land-actions">
           <a class="btn-primary" href="/">Začnite brezplačno</a>
           <a class="btn-secondary" href="#h-pravilnost">Kako to deluje</a>
@@ -144,14 +166,19 @@
       <ul class="land-grid land-feats why-steps">
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:badge-check}}</span><h3>Pred odgovorom</h3><p>Ko učenec napiše enačbo, sistem enačb, odvod ali daljši račun, ga Evklidov reševalnik najprej reši sam. Inštruktor dobi preverjen rezultat, še preden začne razlagati.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:message-circle}}</span><h3>Po odgovoru</h3><p>Program preračuna račune v odgovoru inštruktorja. Če najde napako, inštruktor odgovor popravi.</p></li>
-        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:clipboard-check}}</span><h3>Ko učenec pove rezultat</h3><p>Če je program nalogo rešil, učenčev rezultat primerja s svojo rešitvijo, še preden inštruktor odgovori. Pri nekaterih nalogah (na primer tekmovanja, fakulteta) odgovor v plačljivih paketih, do dnevne meje, pregleda še zmogljivejši model.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:clipboard-check}}</span><h3>Ko učenec pove rezultat</h3><p>Če je program nalogo rešil, učenčev rezultat primerja s svojo rešitvijo, še preden inštruktor odgovori. Pri nekaterih nalogah (na primer tekmovanja, fakulteta) v plačljivih paketih odgovor pregleda še zmogljivejši model. Teh pregledov je na dan omejeno število.</p></li>
       </ul>
       <h3 class="why-sub">Primer</h3>
-      <ol class="about-list">
-        <li>Učenec napiše: »Reši enačbo 3x + 5 = 20.«</li>
-        <li>Program enačbo reši sam: x = 5. Inštruktor rezultata učencu ne izda, ampak ga vodi z vprašanji.</li>
-        <li>Učenec odgovori: »x = 6.« Program to primerja s 5, zato inštruktor odgovora ne potrdi in pomaga poiskati napako.</li>
-      </ol>
+      <figure class="land-demo why-chat" aria-labelledby="why-chat-cap">
+        <figcaption id="why-chat-cap"><b>Primer pogovora z inštruktorjem</b></figcaption>
+        <ol>
+          <li class="land-msg me"><span class="sr-only">Učenec: </span>Reši enačbo 3x + 5 = 20. Mislim, da je x = 6.</li>
+          <li class="land-msg tutor"><span class="sr-only">Inštruktor: </span>Preveriva. Vstavi 6 namesto x: koliko je 3 · 6 + 5? Ali dobiš 20?</li>
+          <li class="land-msg me"><span class="sr-only">Učenec: </span>3 · 6 + 5 = 23, torej ne. Najprej odštejem 5: 3x = 15, zato x = 5.</li>
+          <li class="land-msg tutor"><span class="sr-only">Inštruktor: </span>Pravilno, x = 5. Preizkus: 3 · 5 + 5 = 20.</li>
+        </ol>
+      </figure>
+      <p class="about-text why-chat-note">V ozadju teče program. Program enačbo reši sam: x = 5. Zato inštruktor učenčevega rezultata x = 6 ne potrdi, rešitve pa tudi ne izda: z vprašanjem ga vodi, da napako najde sam.</p>
       <p class="land-note">Program preveri tisto, kar se da izračunati: račune, enačbe in rezultate. Besedne razlage ne more preveriti v celoti.</p>
     </section>
 
@@ -159,10 +186,10 @@
     <section class="land-sec" aria-labelledby="meritev">
       <h2 id="meritev">Kaj smo izmerili</h2>
 <!--ce:accModel-->
-      <p class="about-text">{{accDate}} smo modelu naročili, naj reši {{accTasks}} rešenih primerov iz Evklidovih lekcij, od osnovne šole do fakultete. Šteli smo odgovore, v katerih je bila strokovna napaka: napačen rezultat, napačna formula ali napačna trditev.</p>
+      <p class="about-text">{{accDate}} smo modelu naročili, naj reši {{accTasks}} rešenih primerov iz Evklidovih lekcij. Šteli smo odgovore, v katerih je bila strokovna napaka: napačen rezultat, napačna formula ali napačna trditev.</p>
 <!--/ce:accModel-->
 <!--ce:accApp-->
-      <p class="about-text">{{accDate}} smo skozi Evklidov klepet poslali {{accTasks}} rešenih primerov iz Evklidovih lekcij, od osnovne šole do fakultete. Vsakega smo poslali dvakrat: enkrat brez preverjanja in enkrat s preverjanjem (program preveri račune, pri delu nalog odgovor pregleda še zmogljivejši model), z nastavitvami plačljivega paketa. Šteli smo odgovore, v katerih je bila strokovna napaka: napačen rezultat, napačna formula, napačna trditev v razlagi ali napačna dodatna vaja.</p>
+      <p class="about-text">{{accDate}} smo skozi Evklidov klepet poslali {{accTasks}} rešenih primerov iz Evklidovih lekcij. Vsakega smo poslali dvakrat: enkrat brez preverjanja in enkrat s preverjanjem (program preveri račune, pri delu nalog odgovor pregleda še zmogljivejši model), z nastavitvami plačljivega paketa. Šteli smo odgovore, v katerih je bila strokovna napaka: napačen rezultat, napačna formula, napačna trditev v razlagi ali napačna dodatna vaja.</p>
 <!--/ce:accApp-->
       <table class="about-prices why-table">
         <thead><tr><th scope="col">Kaj smo merili</th><th scope="col">Odgovori z napako</th><th scope="col">Število nalog</th></tr></thead>
@@ -172,7 +199,7 @@
       </table>
       <h3 class="why-sub">Kako brati te številke</h3>
       <ul class="about-list">
-        <li>Vzorec je majhen. Že nekaj nalog več ali manj številke opazno spremeni, zato so okvirne.</li>
+        <li>Vzorec je majhen. Že nekaj nalog več ali manj številke opazno spremeni, zato so okvirne.<!--ce:accCi--> Ob številu napak je zapisan še 95-odstotni interval zaupanja: pove, kako negotov je odstotek pri tako majhnem vzorcu. Če bi meritev z enako velikim vzorcem ponavljali, bi tako izračunani intervali v 95 odstotkih primerov zajeli pravi delež odgovorov z napako.<!--/ce:accCi--></li>
         <li>Manjših nenatančnosti, ki učenca ne zavedejo (na primer zaokroževanje ali nenatančen zapis), nismo šteli kot napako<!--ce:accMinor--> (takih odgovorov: brez preverjanja {{accMinorBrez}}, s preverjanjem {{accMinorS}})<!--/ce:accMinor-->. Odgovor, ki učenca samo vodi z vprašanji in rezultata ne pove, šteje kot odgovor brez napake.</li>
 <!--ce:accModel-->
         <li>Merili smo sam model, brez sprotnega preverjanja s programom. Meritev celega odgovora s preverjanjem še pripravljamo in jo bomo objavili tukaj.</li>
@@ -193,12 +220,25 @@
       </ul>
     </section>
 <!--/ce:accAny-->
+<!--ce:!accAny-->
+    <section class="land-sec" aria-labelledby="h-natancnost">
+      <h2 id="h-natancnost">Kako natančen je Evklid</h2>
+      <p class="about-text">Natančnosti Evklida še nismo neodvisno izmerili, zato o njej ne objavljamo številk. Doslej smo jo preverjali sami: na manjšem številu rešenih primerov iz Evklidovih lekcij, odgovore pa je ocenil drug model umetne inteligence, ne človek. Iz tega ni mogoče zanesljivo sklepati, kako pogosto se Evklid zmoti pri pravih vprašanjih učencev.</p>
+      <p class="about-text">Številke bomo objavili šele, ko bodo odgovore na prava vprašanja učencev ocenili ljudje. Račune v enačbah, odvodih in daljših izračunih že zdaj preveri program, pri besedni razlagi pa se umetna inteligenca lahko zmoti.</p>
+    </section>
+<!--/ce:!accAny-->
+
+    <section class="land-sec" aria-labelledby="h-prijave">
+      <h2 id="h-prijave">Prijavljene napake</h2>
+      <p class="about-text">Pod vsakim odgovorom inštruktorja in v vsaki lekciji je gumb »Prijavi napako«, s katerim učenec sporoči, kaj je narobe. Prijave pregledamo in napake, ki jih najdemo, popravimo.</p>
+      <!--prijave-->
+    </section>
 
     <section class="land-sec" aria-labelledby="h-klepetalniki">
       <h2 id="h-klepetalniki">Evklid in splošni klepetalniki</h2>
       <p class="about-text">Splošni klepetalniki so narejeni za vsa področja. Evklid je narejen samo za učenje matematike in naravoslovja v slovenski šoli. Spodaj je opisano, kako dela Evklid. Drugih orodij ne ocenjujemo.</p>
       <ul class="land-grid land-feats">
-        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:book-open}}</span><h3>Slovenski učni načrt</h3><p>Snov je razvrščena po razredih in sklopih slovenskega učnega načrta, od 1. razreda osnovne šole do fakultete.</p></li>
+        <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:book-open}}</span><h3>Slovenski učni načrt</h3><p>Snov je razvrščena po razredih in sklopih slovenskega učnega načrta za 6.–9. razred osnovne šole in gimnazijo.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:message-circle}}</span><h3>Vodenje namesto rešitve</h3><p>Inštruktor rešitve ne izda. Z namigi in vprašanji učenca vodi do nje.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:badge-check}}</span><h3>Preverjanje s programom</h3><p>Račune v enačbah, odvodih in daljših izračunih preveri program.</p></li>
         <li class="card land-feat"><span class="land-ic" aria-hidden="true">{{i:infinity}}</span><h3>Učna pot in vaje</h3><p>Učenec ve, kaj je na vrsti. Vaje imajo vsakič nove številke.</p></li>
@@ -213,32 +253,40 @@
         <thead><tr><th scope="col">Področje</th><th scope="col">V Evklidu</th></tr></thead>
         <tbody>
           <tr><th scope="row">Predmeti</th><td>Matematika, fizika, kemija, biologija in naravoslovje</td></tr>
-          <tr><th scope="row">Stopnje</th><td>Osnovna šola, srednja šola in fakulteta</td></tr>
+          <tr><th scope="row">Stopnje</th><td>6.–9. razred osnovne šole in gimnazija; začetni izbor za nekatere fakultetne predmete (v razvoju)</td></tr>
           <tr><th scope="row">Jeziki</th><td>Napisan v slovenščini; vmesnik v {{languages}} jezikih</td></tr>
           <tr><th scope="row">Brezplačni preizkus</th><td>{{trialDays}} dni, brez kartice</td></tr>
           <tr><th scope="row">Brezplačni paket</th><td>{{freeDaily}} vprašanj inštruktorju na dan</td></tr>
+<!--ce:!trgovina-->
           <tr><th scope="row">Osnovna šola</th><td>{{osM}} na mesec ali {{osY}} na leto</td></tr>
           <tr><th scope="row">Srednja šola</th><td>{{ssM}} na mesec ali {{ssY}} na leto</td></tr>
           <tr><th scope="row">Fakulteta</th><td>{{faksM}} na mesec ali {{faksY}} na leto</td></tr>
-          <tr><th scope="row">Družina<small>2–4 profili</small></th><td>{{famM}} na mesec ali {{famY}} na leto</td></tr>
+          <tr><th scope="row">Družina<small>2–4 profili, osnovna in srednja šola</small></th><td>{{famM}} na mesec ali {{famY}} na leto</td></tr>
+          <tr><th scope="row">Družina s študentom<small>2–4 profili, tudi fakulteta</small></th><td>{{famsM}} na mesec ali {{famsY}} na leto</td></tr>
+<!--/ce:!trgovina-->
           <tr><th scope="row">Učiteljski račun</th><td>Brezplačen</td></tr>
           <tr><th scope="row">Naprave</th><td>Spletni brskalnik in aplikacija za Android</td></tr>
           <tr><th scope="row">Oglasi</th><td>Ni oglasov</td></tr>
         </tbody>
       </table>
-      <p class="land-note">Vse funkcije, cene in pogosta vprašanja so na strani <a href="/o-evklidu">O Evklidu</a>.</p>
+      <p class="land-note">Vse funkcije<!--ce:!trgovina-->, cene<!--/ce:!trgovina--> in pogosta vprašanja so na strani <a href="/o-evklidu">O Evklidu</a>.</p>
     </section>
 
     <section class="land-sec" aria-labelledby="h-nezna">
       <h2 id="h-nezna">Česa Evklid (še) ne zna</h2>
       <ul class="about-list">
         <li>Evklid je samo za matematiko, fiziko, kemijo, biologijo in naravoslovje. Slovenščine, tujih jezikov, zgodovine in drugih predmetov ne pokriva.</li>
-        <li>Aplikacije še ni v trgovinah Google Play in App Store. Evklid deluje v brskalniku, aplikacijo za Android pa prenesete s strani <a href="/prenesi">Prenesi aplikacijo</a>.</li>
-        <li>Umetna inteligenca se lahko zmoti pri razlagi. Program preveri račune v enačbah, odvodih in daljših izračunih, vsakega stavka razlage pa ne more.</li>
+<!--ce:!trgovina-->
+        <li>Aplikacije še ni v trgovinah Google Play in App Store; različici zanju sta v pripravi. Evklid deluje v brskalniku, aplikacijo za Android pa prenesete s strani <a href="/prenesi?lang=sl">Prenesi aplikacijo</a>. Brez prenosa lahko Evklid dodate na začetni zaslon telefona: na iPhonu v Safariju tapnite Deli → Dodaj na začetni zaslon, na Androidu v Chromu tapnite ⋮ → Dodaj na začetni zaslon ali Namesti aplikacijo.</li>
+<!--/ce:!trgovina-->
+        <li>Račune v enačbah, odvodih in daljših izračunih preveri program. Pri besedni razlagi se umetna inteligenca lahko zmoti; če se razlaga zdi nenavadna, lahko učenec prosi za drugačno razlago ali napako prijavi z gumbom »Prijavi napako« pod odgovorom.</li>
         <li>Brezplačni paket ima {{freeDaily}} vprašanj inštruktorju na dan in uporablja hitri model.</li>
 <!--ce:accAny-->
         <li>Meritev natančnosti je majhna ({{accTasks}} nalog), zato so številke okvirne.</li>
 <!--/ce:accAny-->
+<!--ce:!accAny-->
+        <li>Natančnosti še nismo neodvisno izmerili, zato številk o napakah ne objavljamo.</li>
+<!--/ce:!accAny-->
       </ul>
     </section>
 
@@ -247,7 +295,7 @@
       <div class="about-faq">
         <details>
           <summary>Ali se Evklid lahko zmoti?</summary>
-          <p>Da. Umetna inteligenca se lahko zmoti pri razlagi. Zato račune v enačbah, odvodih in daljših izračunih preveri Evklidov program. Vsakega stavka razlage program ne more preveriti.</p>
+          <p>Da. Račune v enačbah, odvodih in daljših izračunih preveri Evklidov program. Pri besedni razlagi se umetna inteligenca lahko zmoti; če se razlaga zdi nenavadna, lahko učenec prosi za drugačno razlago ali napako prijavi z gumbom »Prijavi napako« pod odgovorom.</p>
         </details>
 <!--ce:accAny-->
         <details>
@@ -255,6 +303,12 @@
           <p>{{accSentence}}</p>
         </details>
 <!--/ce:accAny-->
+<!--ce:!accAny-->
+        <details>
+          <summary>Kako natančen je Evklid?</summary>
+          <p>Natančnosti še nismo neodvisno izmerili, zato številk ne navajamo. Račune v enačbah, odvodih in daljših izračunih preveri program. Pri besedni razlagi se umetna inteligenca lahko zmoti; napako lahko učenec prijavi z gumbom »Prijavi napako« pod odgovorom.</p>
+        </details>
+<!--/ce:!accAny-->
         <details>
           <summary>V čem se Evklid razlikuje od splošnih klepetalnikov?</summary>
           <p>Evklid je narejen samo za učenje: sledi slovenskemu učnemu načrtu, učenca vodi do rešitve, namesto da bi jo izdal, račune v enačbah, odvodih in daljših izračunih pa preveri program. Natančnosti drugih orodij nismo merili, zato je ne primerjamo.</p>
@@ -279,8 +333,10 @@
       <a href="/o-evklidu">O Evklidu</a>
       <a href="/starsi.html">Za starše</a>
       <a href="/sole">Za učitelje in šole</a>
-      <a href="/prenesi">Prenesi aplikacijo</a>
+      <!--ce:!trgovina--><a href="/prenesi?lang=sl">Prenesi aplikacijo</a><!--/ce:!trgovina-->
       <a href="/zasebnost.html">Zasebnost</a>
+      <a href="/pogoji.html">Pogoji uporabe</a>
+      <a href="/odstop.html" data-i18n="land.withdraw">Odstop od pogodbe</a>
     </footer>
   </main>
 </div>

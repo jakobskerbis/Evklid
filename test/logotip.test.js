@@ -53,3 +53,25 @@ test("logo: every HTML page links the icon with a cache-busting ?v=", () => {
   const gate = read("server/gate.js").toString();
   assert.ok(gate.includes('rel="icon"') && gate.includes("apple-touch-icon.png?v="), "prijavna stran ima ikono z ?v=");
 });
+
+// Strani, ki jih izdela strežnik (tisk učbenika, gradiva, /gradiva/tisk/<žeton>, predračun ...), imajo enake ikone
+// kot index.html; brez njih Chrome na Androidu pokaže star /favicon.ico iz predpomnilnika (j 2026-11-18).
+test("logo: server-rendered HTML pages link the versioned icons (server/ikone.js)", async () => {
+  const { IKONE_HEAD, IKONE_VERZIJA } = await import("../server/ikone.js");
+  const index = read("public/index.html").toString();
+  for (const l of IKONE_HEAD.match(/<link [^>]+>/g)) assert.ok(index.includes(l), `index.html ima enako povezavo: ${l}`);
+  assert.equal(IKONE_HEAD.match(/<link /g).length, 3);
+  assert.ok(IKONE_HEAD.includes(`?v=${IKONE_VERZIJA}`));
+  const { shell } = await import("../server/textbook-print.js");
+  const page = shell("Naslov", "<p>x</p>");
+  assert.ok(page.includes(IKONE_HEAD) && page.indexOf(IKONE_HEAD) < page.indexOf("</head>"), "lupina tiska (učbenik, gradiva) ima ikone v <head>");
+  // Vsaka datoteka v server/, ki pošlje celo HTML stran, uporabi IKONE_HEAD ali ima ikono z ?v= (e-pošta nima zavihka).
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith(".js") ? [path.join(d, e.name)] : []));
+  for (const f of walk(path.join(ROOT, "server"))) {
+    const rel = path.relative(ROOT, f);
+    if (rel === path.join("server", "accounts", "email.js") || rel === path.join("server", "ikone.js")) continue;
+    const src = fs.readFileSync(f, "utf8");
+    if (!/<!doctype html/i.test(src)) continue;
+    assert.ok(src.includes("IKONE_HEAD") || /rel="icon"[^>]+href="\/icons\/[\w.-]+\?v=/.test(src), `${rel}: HTML stran brez ikon (uporabi IKONE_HEAD iz server/ikone.js)`);
+  }
+});

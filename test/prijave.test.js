@@ -99,6 +99,36 @@ test("admin bug report from the chat: admin only, keeps the last messages; repor
   });
 });
 
+test("admin feature request from the chat (j, 20 Nov 2026): admin only, kind feature, listed, exported, status works", async () => {
+  await withServer(async ({ call, store }) => {
+    const s = (await call("/api/students", { method: "POST", body: { name: "Jure" } })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, { method: "POST" })).body;
+    await call(`/api/conversations/${c.id}/messages`, { method: "POST", body: { text: "kaj je pitagorov izrek" } });
+    const url = `/api/students/${s.id}/bug`;
+    assert.equal((await call(url, { method: "POST", remote: true, body: { kind: "feature", note: "x" } })).status, 403, "ni skrbnik");
+    const empty = await call(url, { method: "POST", body: { kind: "feature", note: " " } });
+    assert.equal(empty.status, 400);
+    assert.match(empty.body.error, /želiš/);
+    const r = await call(url, { method: "POST", body: { kind: "feature", note: "Gumb za izvoz zapiskov v PDF", conversation_id: c.id, view: "chat" } });
+    assert.equal(r.status, 201);
+    const row = store.db.prepare("SELECT kind, note FROM bug_reports WHERE id = ?").get(r.body.id);
+    assert.equal(row.kind, "feature");
+    const it = (await call("/api/admin/reports")).body.reports.find((x) => x.kind === "feature");
+    assert.equal(it.note, "Gumb za izvoz zapiskov v PDF");
+    assert.match(it.context, /Učenec:\*\* kaj je pitagorov izrek/);
+    // Brez »kind« ostane navadna prijava napake.
+    const bug = await call(url, { method: "POST", body: { note: "Formula se ne izriše" } });
+    assert.equal(store.db.prepare("SELECT kind FROM bug_reports WHERE id = ?").get(bug.body.id).kind, "app");
+    assert.match((await call("/api/admin/reports/export")).body, /## Zahteva za novo funkcijo · skrbnik/);
+    const exp = (await call("/api/kozmetika/prijave/izvoz")).body.reports.find((x) => x.kind === "feature");
+    assert.equal(exp.note, "Gumb za izvoz zapiskov v PDF");
+    assert.equal((await call(`/api/admin/reports/feature/${r.body.id}`, { method: "POST", body: { status: "fixed" } })).status, 200);
+    assert.equal((await call(`/api/admin/reports/app/${r.body.id}`, { method: "POST", body: { status: "open" } })).status, 404, "vrsta se mora ujemati");
+    assert.equal((await call(`/api/kozmetika/prijave/feature/${r.body.id}/stanje`, { method: "POST", body: { status: "in_review", pr: 901 } })).status, 200);
+    assert.equal(store.db.prepare("SELECT status, pr FROM bug_reports WHERE id = ?").get(r.body.id).pr, 901);
+  });
+});
+
 test("message report keeps what the student saw: raw model text, rendered HTML and device", async () => {
   await withServer(async ({ call }) => {
     const s = (await call("/api/students", { method: "POST", body: { name: "Ana" } })).body;

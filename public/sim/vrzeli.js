@@ -516,7 +516,7 @@ export function emSpekter(el) {
 }
 
 // ------------------------------------------------------------ zvezde (HR-diagram)
-const SIGMA = 5.67e-8, T_SONCE = 5800, L_SONCE = 3.8e26, R_SONCE = 6.96e8;
+const SIGMA = 5.67e-8, T_SONCE = 5800, L_SONCE = 3.8e26;
 const ZVEZDE = [["Sonce", 5800, 1], ["Sirij A", 9900, 25], ["Betelgeza", 3600, 1.1e5], ["Proksima Kentavra", 3000, 0.0017], ["Rigel", 12000, 1.2e5], ["Sirij B", 25000, 0.056]];
 // približna barva telesa pri temperaturi T (črno telo)
 function barvaT(T0) {

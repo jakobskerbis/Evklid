@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -127,7 +127,7 @@ $N = \dfrac{L_v}{L_0}$; I-pas $= L - l_d$; H-cona $= L - 2l_t$
 
 ### Primer 2
 
-Ekotoksikologinja pregleduje histološke preparate tkiv rib iz onesnažene reke. Na enem preparatu vidi progaste celice, ki se razvejujejo, imajo eno jedro v sredini in jih na več mestih prečno sekajo temne stopničaste črte. Na drugem so vretenaste celice brez prog z enim jedrom v sredini, zložene v plasti. Za katero tkivo gre v vsakem primeru in iz katerega organa bi bil lahko preparat?
+Ekotoksikologinja pregleduje histološke preparate tkiv malih sesalcev z brega onesnažene reke. Na enem preparatu vidi progaste celice, ki se razvejujejo, imajo eno jedro v sredini in jih na več mestih prečno sekajo temne stopničaste črte. Na drugem so vretenaste celice brez prog z enim jedrom v sredini, zložene v plasti. Za katero tkivo gre v vsakem primeru in iz katerega organa bi bil lahko preparat?
 
 **Podatki:** preparat 1: progaste, razvejane celice, jedro v sredini, temne prečne stopničaste črte; preparat 2: vretenaste celice, brez prog, eno osrednje jedro, v plasteh
 **Iščemo:** vrsto mišičnine in verjeten organ
@@ -255,34 +255,64 @@ Organofosfatni pesticidi zavrejo acetilholinesterazo, kurare (rastlinski strup) 
 
 ## Drugače: Na sliki
 
-Sarkomera pri mirovanju (zgoraj) in skrčena (spodaj), en znak je $0{,}1\,\mathrm{\mu m}$. `-` so tanki filamenti, pripeti na Z-ploščo `|`, `=` debeli filamenti v sredini:
+Sarkomera pri mirovanju (zgoraj) in skrčena (spodaj) v istem merilu. Tanki filamenti so pripeti na Z-plošči, debeli filamenti so v sredini:
 
-```
-mirovanje, 2,5 µm
-|----------     ----------|
-     ================
-     |<-- A 1,6 --->|
-
-skrčena, 2,0 µm
-|--------------------|
-   ================
-```
+:::risba skica
+opis: Dve sarkomeri v istem merilu, zgoraj pri mirovanju, spodaj skrčena. Zgoraj sta Z-plošči 2,5 µm narazen, tanki filamenti segajo od vsake Z-plošče 1,0 µm proti sredini, med njunima koncema je 0,5 µm široka H-cona. Spodaj sta Z-plošči 2,0 µm narazen in tanki filamenti se na sredini stikajo. Debeli filamenti v sredini so na obeh slikah dolgi 1,6 µm (A-pas), kar kažeta navpični črtkani črti.
+območje: -0,3; 0 .. 2,8; 3
+črta: 0; 1,8 -> 0; 2,4 | debelo
+črta: 2,5; 1,8 -> 2,5; 2,4 | debelo
+črta: 0; 2,23 -> 1; 2,23 | modra
+črta: 0; 1,97 -> 1; 1,97 | modra
+črta: 1,5; 2,23 -> 2,5; 2,23 | modra
+črta: 1,5; 1,97 -> 2,5; 1,97 | modra
+pravokotnik: 0,45; 2,04 .. 2,05; 2,16 | oranžna polno
+napis: 1,25; 2,62 | mirovanje: 2,5 µm | nad | debelo
+napis: 0; 2,4 | Z | nad
+napis: 2,5; 2,4 | Z | nad
+napis: 0,55; 2,25 | tanki | nad | modra
+napis: 1,25; 2,18 | debeli | nad | oranžna
+napis: 1,25; 1,97 | H 0,5 | pod
+črta: 0,45; 1,72 -> 2,05; 1,72
+napis: 1,25; 1,7 | A-pas 1,6 µm | pod
+črta: 0,25; 0,45 -> 0,25; 1,05 | debelo
+črta: 2,25; 0,45 -> 2,25; 1,05 | debelo
+črta: 0,25; 0,88 -> 1,25; 0,88 | modra
+črta: 0,25; 0,62 -> 1,25; 0,62 | modra
+črta: 1,25; 0,88 -> 2,25; 0,88 | modra
+črta: 1,25; 0,62 -> 2,25; 0,62 | modra
+pravokotnik: 0,45; 0,69 .. 2,05; 0,81 | oranžna polno
+napis: 1,25; 1,12 | skrčena: 2,0 µm | nad | debelo
+črta: 0,45; 0,37 -> 2,05; 0,37
+napis: 1,25; 0,35 | A-pas 1,6 µm | pod
+črta: 0,45; 0,37 -> 0,45; 2,04 | črtkano siva
+črta: 2,05; 0,37 -> 2,05; 2,04 | črtkano siva
+:::
 
 Debeli filamenti (A-pas) ostanejo enako dolgi, tanki zdrsijo proti sredini; svetla I-pasova ob Z-ploščah se zožita. Če bi se skrajšali filamenti, bi se moral skrajšati A-pas, česar pod mikroskopom ni.
 
 Akson z mielinom, signal skače med zažemki:
 
-```
- --[####]-[####]-[####]-->
-     ^   ^
-  mielin Ranvierjev zažemek
-```
+:::risba skica
+opis: Akson kot vodoravna črta s puščico v smeri prevajanja, na njem trije mielinski ovoji (internodiji) kot pravokotniki. Med ovoji so kratki goli deli aksona, Ranvierjevi zažemki. Puščice nad aksonom kažejo, da akcijski potencial skače od zažemka do zažemka. Zažemki so narisani širši, kot so v resnici.
+območje: 0; 0 .. 10; 2,6
+črta: 0,3; 1 -> 9,8; 1 | puščica
+pravokotnik: 1; 0,7 .. 3,4; 1,3 | oranžna polno
+pravokotnik: 3,8; 0,7 .. 6,2; 1,3 | oranžna polno
+pravokotnik: 6,6; 0,7 .. 9; 1,3 | oranžna polno
+puščica: 0,9; 1,7 -> 3,5; 1,7
+puščica: 3,7; 1,7 -> 6,3; 1,7 | signal skoči | nad
+puščica: 6,5; 1,7 -> 9,1; 1,7
+napis: 2,2; 0,65 | mielinski ovoj | pod
+črta: 6,4; 0,95 -> 6,4; 0,45 | siva
+napis: 6,4; 0,45 | Ranvierjev zažemek | pod
+:::
 
-`[####]` je mielinski ovoj (internodij), `-` med ovoji je goli akson v Ranvierjevem zažemku.
+Pravokotniki so mielinski ovoji (internodiji), med njimi je goli akson v Ranvierjevem zažemku.
 
 ## Drugače: Uporaba v stroki
 
-**Diagnostika infarkta.** Srčni troponin I in T sta oblike troponina, ki jih ima le srčna mišičnina. Ko kardiomiociti odmrejo, ju je v krvi več, zato je meritev troponina glavni laboratorijski test za infarkt.
+**Diagnostika infarkta.** Srčni troponin I in T sta obliki troponina, ki ju ima le srčna mišičnina. Ko kardiomiociti odmrejo, ju je v krvi več, zato je meritev troponina glavni laboratorijski test za infarkt.
 
 **Ekotoksikologija.** Zaviranje acetilholinesteraze pri ribah in školjkah je standardni biomarker pesticidov v vodah. Pri čebelah se raziskuje, kako subletalni odmerki neonikotinoidov motijo orientacijo; zato je EU uporabo nekaterih neonikotinoidov na prostem prepovedala.
 
@@ -298,7 +328,7 @@ Koliko se skrajša mišica dolžine $30\,\mathrm{cm}$, če se sarkomere skrajša
 2. **Vse sarkomere so zaporedne,** zato se miofibrila (in mišica, če so vlakna vzporedna z mišico) skrajša za enak delež.
 3. **Skrajšanje:** $30\,\mathrm{cm} \cdot 0{,}192 \approx 5{,}8\,\mathrm{cm}$.
 4. **I-pas** se v vsaki sarkomeri skrajša za $0{,}5\,\mathrm{\mu m}$ (z $1{,}0$ na $0{,}5\,\mathrm{\mu m}$), A-pas ostane $1{,}6\,\mathrm{\mu m}$.
-5. **Pomen:** skrajšanje mišice za nekaj centimetrov je vsota premikov po pol mikrometra v več deset tisoč zaporednih sarkomerah.
+5. **Pomen:** skrajšanje mišice za nekaj centimetrov je vsota premikov po pol mikrometra v več kot sto tisoč zaporednih sarkomerah.
 
 ## Preveri se
 
@@ -334,7 +364,7 @@ Koliko se skrajša mišica dolžine $30\,\mathrm{cm}$, če se sarkomere skrajša
 ~ Pretvoril si centimetre v mikrometre z $10^5$ namesto $10^4$.
 > $3{,}0\,\mathrm{cm} = 3{,}0 \cdot 10^4\,\mathrm{\mu m}$, deljeno z $2{,}5\,\mathrm{\mu m}$ je $12\,000$.
 
-? Hitrost prevajanja v motoričnem aksonu je $50\,\mathrm{m/s}$, akson je dolg $1{,}0\,\mathrm{m}$. Koliko časa potrebuje signal, in koliko bi ga potreboval nemieliniziran akson s hitrostjo $1{,}0\,\mathrm{m/s}$?
+? Hitrost prevajanja v motoričnem aksonu je $50\,\mathrm{m/s}$, akson je dolg $1{,}0\,\mathrm{m}$. Koliko časa potrebuje signal in koliko bi ga potreboval nemieliniziran akson s hitrostjo $1{,}0\,\mathrm{m/s}$?
 - $50\,\mathrm{ms}$ in $1{,}0\,\mathrm{ms}$
 ~ Čas je pot deljena s hitrostjo, ne hitrost deljena s potjo; večja hitrost da krajši čas.
 + $20\,\mathrm{ms}$ in $1{,}0\,\mathrm{s}$

@@ -4,6 +4,7 @@
 "u.snov": "Lënda",
 "u.iskanje": "Nga cila lëndë të të pyes?",
 "u.isciPh": "p.sh. ligji i Ohmit",
+"u.isciPhTema": "p.sh. {tema}",
 "u.isci": "Kërko",
 "u.koliko": "Sa pyetje",
 "u.kako": "Si përgjigjesh",
@@ -73,6 +74,7 @@
 "u.nalagam": "Po ngarkohet …",
 "u.starsNaslov": "Përgjigje me zë",
 "u.starsOpis": "Në pyetjen me gojë dhe me mikrofonin në bisedë me tutorin, fëmija mund të përgjigjet me zë. Të folurën në tekst e kthen ofruesi i shfletuesit (p.sh. Google, Apple ose Microsoft); Evklid merr vetëm tekstin dhe nuk ruan zë. Për fëmijët nën 15 vjeç është i fikur derisa ta ndizni. Shkrimi funksionon gjithmonë.",
+"u.starsOpisZame": "Në pyetjen me gojë dhe me mikrofonin në bisedë me tutorin, mund të përgjigjesh me zë. Të folurën në tekst e kthen ofruesi i shfletuesit (p.sh. Google, Apple ose Microsoft); Evklid merr vetëm tekstin dhe nuk ruan zë. Shkrimi funksionon gjithmonë.",
 "u.dovoli": "Lejo përgjigjen me zë",
 "u.nad15": "15 vjeç ose më shumë: nuk nevojitet leje.",
 "u.shranjeno": "U ruajt."

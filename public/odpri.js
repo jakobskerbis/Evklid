@@ -1,7 +1,9 @@
 // Gumbi pod odgovorom inštruktorja za orodja aplikacije (server/odpri.js, docs/odpri.md): poskus z nastavljenimi
 // vrednostmi (okno nad pogovorom), 3D model ali del telesa, lekcija v učbeniku, igra za snov, formula iz zbirke,
 // premičen graf in preprosta skica kar v sporočilu. Pogovor ostane odprt: okno poskusa se zapre z ×, Esc ali Nazaj.
+// Besedila gumbov (t iz app.js) so v jedru slovarja (server/i18n-jedro.js ZASLONI_V_JEDRU).
 import { mountSim } from "./sim/index.js";
+import { zadrziFokus } from "./fokus-okna.js";
 
 let D = null; // { t, icon, escapeHtml, renderMath, openLesson, open3d, openGames, openLab, openFormulas, openGraph }
 export function initOpen(deps) {
@@ -34,8 +36,10 @@ export function addOpen(bubble, list) {
   }
   if (row.children.length) box.prepend(row);
   if (!box.children.length) return;
-  const foot = bubble.querySelector(".msg-foot");
-  if (foot) foot.before(box);
+  // Takoj za besedilom odgovora, pred gumbi z izbirami, »Razloži podrobneje«, »Nariši graf« in nogo sporočila
+  // (ti so lahko dodani prej ali pozneje; app.js addChoices jih postavi za ta okvir).
+  const before = bubble.querySelector(":scope > .choice-row, :scope > .deep-btn, :scope > .graph-btn, :scope > .msg-foot");
+  if (before) before.before(box);
   else bubble.append(box);
 }
 
@@ -68,8 +72,9 @@ let simOpen = null;
 export const simOverlayOpen = () => !!simOpen;
 export function closeSimOverlay() {
   if (!simOpen) return false;
-  const { box, from, onKey } = simOpen;
+  const { box, from, onKey, sprosti } = simOpen;
   simOpen = null;
+  sprosti({ vrni: false });
   document.removeEventListener("keydown", onKey, true);
   box.remove();
   document.body.classList.remove("open-sim-on");
@@ -105,10 +110,9 @@ async function openSim(x, from) {
     closeSimOverlay();
   };
   document.addEventListener("keydown", onKey, true);
-  simOpen = { box, from, onKey };
   document.body.append(box);
+  simOpen = { box, from, onKey, sprosti: zadrziFokus(box, { zacetni: close, prej: from }) };
   document.body.classList.add("open-sim-on");
-  close.focus();
   const ok = await mountSim(x.id, body, x.opts || {});
   if (!ok) body.replaceChildren(el("p", "muted", D.t("open.failed")));
   else if (x.set) applySet(body, x.set);
@@ -170,24 +174,43 @@ function graphCard(x) {
     D.openGraph(current);
   });
   // Graf se nariše, ko je sporočilo vidno (modul kalkulatorja se naloži šele takrat).
-  requestAnimationFrame(() => drawGraph(host, sliders, x.exprs, (list) => (current = list)).catch(() => host.replaceChildren(el("p", "muted", D.t("open.failed")))));
+  requestAnimationFrame(() => drawGraph(host, sliders, x.exprs, (list) => (current = list), x.view).catch(() => host.replaceChildren(el("p", "muted", D.t("open.failed")))));
   return c;
 }
 
-async function drawGraph(host, slidersEl, exprs, onChange) {
-  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange }] = await Promise.all([import("./graph/plot.js"), import("./graph/model.js")]);
+async function drawGraph(host, slidersEl, exprs, onChange, fixed) {
+  const [{ GraphView }, { buildModel, emptyState, newId, sliderRange, sliderText }, { fitModelView, modelAsymptoteLabels }] = await Promise.all([
+    import("./graph/plot.js"),
+    import("./graph/model.js"),
+    import("./graph/okno.js"),
+  ]);
   const state = emptyState();
   state.items = exprs.map((text, i) => ({ id: newId(), type: "expr", text, color: i % 8 }));
   let model = buildModel(state);
+  // Okno pokaže ničle, pole, ekstreme in prevoje (graph/okno.js), ne stalnega −10 … 10; okno iz bloka GRAF
+  // (inštruktor ga je določil sam) ostane, kot je. Drsniki okna ne spreminjajo.
+  // Iskanje okna traja na telefonu nekaj deset ms: najprej naj se izriše besedilo odgovora.
+  await (globalThis.scheduler?.yield ? globalThis.scheduler.yield() : new Promise((r) => setTimeout(r, 0)));
+  if (!host.isConnected) return;
+  const box = host.getBoundingClientRect();
+  const fit = fitModelView(model, { W: box.width || 320, H: box.height || 220, fixed: fixed || {} });
+  if (fit) {
+    state.view = fit;
+    state.settings.square = false;
+  }
   const fmt = (v, d = 4) => String(Math.round(v * 10 ** d) / 10 ** d).replace(".", ",").replace("-", "−");
   const view = new GraphView(host, {
     getState: () => state,
     getModel: () => model,
     label: (k) => D.t(`gc.poi.${k}`),
+    asimptote: true,
     fmt,
     axisFmt: (v, dec) => v.toFixed(dec).replace(".", ",").replace("-", "−"),
   });
-  view.canvas.setAttribute("aria-label", exprs.filter((e) => !/^\s*[a-zA-Z]\w*\s*=\s*-?[\d.,]+\s*$/.test(e)).join("; "));
+  // Opis za bralnike zaslona: izrazi in asimptote (»y = (x^2 - 4)/(x - 1); asimptote: x = 1, y = x + 1«).
+  const asym = modelAsymptoteLabels(model, state.view);
+  const desc = exprs.filter((e) => !/^\s*[a-zA-Z]\w*\s*=\s*-?[\d.,]+\s*$/.test(e)).join("; ");
+  view.canvas.setAttribute("aria-label", asym.length ? `${desc}; ${D.t("open.asymptotes")}: ${asym.join(", ")}` : desc);
   const redraw = () => {
     model = buildModel(state);
     view.draw();
@@ -201,11 +224,19 @@ async function drawGraph(host, slidersEl, exprs, onChange) {
     const inp = document.createElement("input");
     Object.assign(inp, { type: "range", min: r.min, max: r.max, step: r.step, value: o.value });
     inp.setAttribute("aria-label", o.name);
-    const out = el("output", "", fmt(o.value, 2));
+    // zapis z decimalkami koraka (10⁻⁸ ni 0, ne »3e-8«, ki bi bil 3·e − 8; AUDIT-014); prikaz kot prej z vsaj 2 decimalkama
+    // (3,14), majhne vrednosti s 3 veljavnimi mesti (0,0000000123)
+    const stepDec = Math.max(0, -Math.floor(Math.log10(r.step) + 1e-9));
+    const show = (v) => {
+      const a = Math.abs(v);
+      const d = !a || a >= 0.01 ? Math.max(2, stepDec) : -Math.floor(Math.log10(a)) + 2;
+      return sliderText(v, 10 ** -d).replace(".", ",").replace("-", "−");
+    };
+    const out = el("output", "", show(o.value));
     inp.addEventListener("input", () => {
       const v = Number(inp.value);
-      it.text = `${o.name} = ${v}`;
-      out.textContent = fmt(v, 2);
+      it.text = `${o.name} = ${sliderText(v, r.step)}`;
+      out.textContent = show(v);
       redraw();
     });
     row.append(name, inp, out);

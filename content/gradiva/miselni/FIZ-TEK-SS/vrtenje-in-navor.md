@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Navor
+  - $M = d \cdot F$, enota $\mathrm{N\,m}$
+  - napaka: šteje le sila
+- Ročica
+  - pravokotna razdalja od osi do nosilke
+  - $M = r F \sin\varphi$
+  - sila proti osi: navor nič
+- Pogoja ravnovesja
+  - vsota sil je nič
+  - vsota navorov je nič
+  - par sil: vsota nič, a vrti
+- Izbira osi
+  - os skozi neznano silo
+  - teža deluje v težišču
+- Vztrajnostni moment
+  - $J = \sum m_i r_i^2$, enota $\mathrm{kg\,m^2}$
+  - obroč $m r^2$, valj $\frac{1}{2} m r^2$
+  - napaka: dolžina namesto razdalje od osi
+- Zakon vrtenja
+  - $M = J \alpha$, kot $F = m a$
+  - $W_{vrt} = \frac{1}{2} J \omega^2$
+- Kotaljenje
+  - krogla pred valjem pred obročem
+  - masa in polmer ne vplivata

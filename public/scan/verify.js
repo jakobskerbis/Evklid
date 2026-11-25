@@ -105,7 +105,8 @@ function isEquation(text) {
 
 /**
  * ai: { kind, variable, problem, solutions: [..], value, steps … }
- * Vrne { verified: bool, reason, missing: [x …] }
+ * Vrne { verified: bool, reason, missing: [x …], partial? }. partial: true = dane rešitve držijo, popolnosti
+ * (ni drugih rešitev) pa numerika ni mogla preveriti (sistem, periodične rešitve, »ni rešitve«).
  */
 export function verifyAi(problemText, ai) {
   const r = check(problemText, ai);
@@ -119,24 +120,28 @@ function check(problemText, ai) {
     if (kind === "system") {
       const parts = splitSystem(problemText) || String(problemText).split(/;|\n/).filter((s) => s.includes("="));
       for (const sol of ai.solutions || []) {
-        const env = {};
+        const vals = new Map(); // ključ je ena črka; Map namesto pisanja v objekt (CodeQL js/remote-property-injection)
         for (const m of String(sol).matchAll(/([a-zA-Z])\s*=\s*([^;,]+(?:,\d+)?)/g)) {
           const val = values(m[2])[0];
           if (val === undefined) return { verified: false, reason: "parse" };
-          env[m[1]] = val;
+          vals.set(m[1], val);
         }
+        const env = Object.fromEntries(vals);
         if (!parts.length || parts.some((p) => satisfies(p, env) !== true)) return { verified: false, reason: "wrong" };
       }
-      return { verified: (ai.solutions || []).length > 0, reason: (ai.solutions || []).length ? null : "empty" };
+      // Numerika preveri le, da vsaka dana rešitev zadošča sistemu, ne pa, da ni še drugih (AUDIT-001):
+      // »partial« pove strežniku, da »preverjeno« sme reči le SymPy (server/scan.js verifyAiFull).
+      return { verified: (ai.solutions || []).length > 0, reason: (ai.solutions || []).length ? null : "empty", partial: true };
     }
     if (kind === "equation") {
       if (!isEquation(problemText)) return { verified: false, reason: "kind" };
       // »x = 2« ali »x_1 = 2« → »2«
       const sols = (ai.solutions || []).flatMap((s) => values(String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "")));
       if (!(ai.solutions || []).length) {
-        // »ni rešitve«: preverimo, da numerično res ni ničle
+        // »ni rešitve«: preverimo, da numerično res ni ničle. Iskanje seže le do ±10⁶, zato prazen izid
+        // ni dokaz, da rešitve ni (partial, AUDIT-001).
         const r = scanRoots(problemText, v);
-        return { verified: r.length === 0, reason: r.length ? "missing" : null, missing: r };
+        return r.length ? { verified: false, reason: "missing", missing: r } : { verified: true, reason: null, missing: r, partial: true };
       }
       if (!sols.length) return { verified: false, reason: "parse" };
       for (const s of sols) if (satisfies(problemText, { [v]: s }) !== true) return { verified: false, reason: "wrong" };
@@ -145,7 +150,9 @@ function check(problemText, ai) {
         const missing = scanRoots(problemText, v).filter((r) => !sols.some((s) => Math.abs(s - r) < 1e-5 * Math.max(1, Math.abs(r))));
         if (missing.length) return { verified: false, reason: "missing", missing };
       }
-      return { verified: true };
+      // Pri periodičnih rešitvah (k) popolnosti numerično ne preverimo: manjkajoča družina ali »2+0·k«
+      // namesto dveh rešitev bi sicer veljala za preverjeno (AUDIT-001).
+      return periodic ? { verified: true, partial: true } : { verified: true };
     }
     if (kind === "expression" || kind === "arith") {
       const a = parse(prep(problemText));
@@ -153,9 +160,16 @@ function check(problemText, ai) {
       return { verified: equalNumerically(a, b), reason: "wrong" };
     }
     if (kind === "derivative") {
-      const f = fnOf(String(problemText).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, ""));
+      const izraz = String(problemText).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
+      const f = fnOf(izraz);
       const g = fnOf(ai.value);
       if (!f || !g) return { verified: false, reason: "parse" };
+      // Naloga brez »d/dx« ali »f(x) =«, ki je konstanta (npr. določeni integral): odvod bi bil 0 in bi potrdil napačno
+      // rešitev »0«, ki jo AI označi kot odvod (meritev skenerja 19. 11., naloga s11).
+      if (izraz === String(problemText)) {
+        const y = [0.3, 1.7, -2.1].map((t) => f({ [v]: t }));
+        if (y.every((w) => fin(w) && Math.abs(w - y[0]) < 1e-9)) return { verified: false, reason: "kind" };
+      }
       return { verified: compareFns((x) => (f({ [v]: x + 1e-5 }) - f({ [v]: x - 1e-5 })) / 2e-5, (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {

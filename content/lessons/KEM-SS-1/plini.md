@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -59,7 +59,7 @@ Enačba vsebuje tudi oba pojava iz uvoda. Če se $T$ zniža in $V$ ostane enaka 
 V simulaciji spodaj, »Plin v posodi: tlak, prostornina, temperatura«, pusti množino pri miru in temperaturo podvoji, na primer s $300\,\mathrm{K}$ na $600\,\mathrm{K}$. Opazuj, kako se spremeni tlak in kako hitro se gibljejo delci.
 
 :::premisli
-Žogo s tlakom $180\,\mathrm{kPa}$ napolniš pri $22\,^\circ\mathrm{C}$ in jo neseš na igrišče s $2\,^\circ\mathrm{C}$. Ali tlak pade na desetino ($2$ namesto $22$)? Napovej in utemelji.
+Žogo s tlakom $180\,\mathrm{kPa}$ napolniš pri $22\,^\circ\mathrm{C}$ in jo neseš na igrišče z $2\,^\circ\mathrm{C}$. Ali tlak pade na desetino ($2$ namesto $22$)? Napovej in utemelji.
 ---
 Ne. Računati moraš s kelvini: $T$ pade z $295\,\mathrm{K}$ na $275\,\mathrm{K}$, to je na približno $93\,\%$. Tlak pade le na okoli $168\,\mathrm{kPa}$. Žoga je mehkejša, a še zdaleč ni prazna.
 :::

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ohranitev atomov
+  - Lavoisier: masa pred reakcijo = masa po njej
+  - vsak element levo in desno enako
+- Koeficienti, ne indeksi
+  - $\mathrm{2\,H_2O}$: 4 atomi H, 2 atoma O
+  - napaka: $\mathrm{H_2O}$ v $\mathrm{H_2O_2}$
+- Postopek urejanja
+  - zapletena formula najprej, $\mathrm{O_2}$ zadnji
+  - večatomni ion kot celota
+  - polovico odpravi: pomnoži z 2
+- Mol
+  - $N_A = 6{,}02 \cdot 10^{23}$ delcev
+  - $N = n \cdot N_A$
+- Molska masa
+  - vsota $A_r$ v formuli, enota g/mol
+  - $M(\mathrm{Ca(OH)_2}) = 74\,\mathrm{g/mol}$, oklepaj!
+  - $n = \frac{m}{M}$
+- Razmerje molov
+  - koeficienti štejejo mole, ne grame
+  - $\mathrm{2\,C_4H_{10} + 13\,O_2 \rightarrow 8\,CO_2 + 10\,H_2O}$

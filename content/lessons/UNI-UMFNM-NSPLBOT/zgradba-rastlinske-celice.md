@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -156,6 +156,60 @@ Rastlinsko celico ločijo od živalske tri zgradbe.
 - **Celična stena** (zunaj membrane): srednja lamela (pektini), primarna stena (celuloza, raztegljiva), sekundarna stena (znotraj primarne, pogosto z ligninom). Piknje in plazmodezme povezujejo celice. Daje obliko, oporo, zdrži turgor.
 - **Plastidi**: dvojna membrana, lastna DNA, nastanejo z delitvijo iz proplastidov. Kloroplasti (fotosinteza), kromoplasti (karotenoidi), levkoplasti oz. amiloplasti (škrob), etioplasti (tema). Med seboj se lahko pretvarjajo.
 - **Vakuola**: tonoplast in celični sok; v zreli celici do okoli $90\,\%$ prostornine. Turgor, skladišče, razgradnja, poceni rast. Izguba vode v hipertonični raztopini povzroči plazmolizo.
+
+## Za izpit
+
+Znati moraš povedati:
+- plasti celične stene od zunaj navznoter (srednja lamela, primarna stena, sekundarna stena), njihovo sestavo in čas nastanka;
+- razliko med celično steno in plazmalemo ter vlogo pikenj in plazmodezem;
+- skupne lastnosti plastidov (dvojna membrana, lastna krožna DNA, ribosomi, nastanek z delitvijo) in vrste plastidov z vsebino, mestom in nalogo;
+- primere pretvorb plastidov (zorenje paradižnika, zelenenje krompirja) in dokaze za endosimbiontski izvor;
+- zgradbo vakuole (tonoplast, celični sok) in njene štiri naloge;
+- nastanek turgorja in potek plazmolize ter zvezo $\Psi = \Psi_s + \Psi_p$.
+
+### Naloga 1
+
+Na mikrografiji lista je merilce, ki je na sliki dolgo $24\,\text{mm}$ in označeno z $20\,\mu\text{m}$. Celica stebričastega tkiva je na sliki dolga $96\,\text{mm}$ in široka $30\,\text{mm}$; obravnavaj jo kot kvader s kvadratnim prerezom. Citoplazma z organeli tvori ob vseh ploskvah sloj debeline $1\,\mu\text{m}$, vse ostalo je osrednja vakuola. (a) Izračunaj pravi meri celice in njeno prostornino. (b) Kolikšen delež prostornine zavzema vakuola? (c) Celico položimo v koncentrirano raztopino soli in vakuola izgubi $40\,\%$ svoje prostornine, prostornina citoplazme pa se ne spremeni. Kolikšen delež prostora znotraj stene še zapolnjuje protoplast? (d) Pred poskusom je imela celica $\Psi_s = -0{,}9\,\text{MPa}$ in $\Psi_p = 0{,}5\,\text{MPa}$, raztopina soli pa ima $\Psi = -2{,}0\,\text{MPa}$. Utemelji smer toka vode.
+
+**Rešitev:**
+
+1. Dolžina: $\dfrac{96}{24} \cdot 20\,\mu\text{m} = 80\,\mu\text{m}$. Širina: $\dfrac{30}{24} \cdot 20\,\mu\text{m} = 25\,\mu\text{m}$.
+2. Prostornina celice: $V = 80 \cdot 25 \cdot 25 = 50\,000\,\mu\text{m}^3$.
+3. Sloj citoplazme je na obeh straneh, zato je vakuola v vsaki smeri krajša za $2\,\mu\text{m}$: $78\,\mu\text{m} \times 23\,\mu\text{m} \times 23\,\mu\text{m}$.
+4. Prostornina vakuole: $78 \cdot 23 \cdot 23 = 41\,262\,\mu\text{m}^3$. Delež: $\dfrac{41\,262}{50\,000} \approx 0{,}825$, torej okoli $82{,}5\,\%$.
+5. Citoplazma: $50\,000 - 41\,262 = 8738\,\mu\text{m}^3$. Čeprav je sloj debel le $1\,\mu\text{m}$, zavzema okoli $17{,}5\,\%$ celice.
+6. Vakuola izgubi $0{,}4 \cdot 41\,262 = 16\,504{,}8\,\mu\text{m}^3$. Protoplast po plazmolizi: $50\,000 - 16\,504{,}8 = 33\,495{,}2\,\mu\text{m}^3$.
+7. Delež: $\dfrac{33\,495{,}2}{50\,000} \approx 0{,}67$. Protoplast zapolnjuje še okoli $67\,\%$ prostora znotraj stene; tretjino zavzema raztopina soli, ki je prešla skozi prepustno steno.
+8. Vodni potencial celice: $\Psi = -0{,}9 + 0{,}5 = -0{,}4\,\text{MPa}$. Ker je $-0{,}4\,\text{MPa} > -2{,}0\,\text{MPa}$, voda teče iz celice (višji $\Psi$) v raztopino (nižji $\Psi$).
+9. Odgovor: celica meri $80\,\mu\text{m} \times 25\,\mu\text{m} \times 25\,\mu\text{m}$ in ima $50\,000\,\mu\text{m}^3$; vakuola zavzema okoli $82{,}5\,\%$; po plazmolizi protoplast zapolnjuje okoli $67\,\%$ prostora znotraj stene; voda izstopa, ker ima celica višji vodni potencial od raztopine.
+
+### Naloga 2
+
+Natančno navedi plasti, ki jih od srednje lamele do protoplasta prečkamo pri lesni celici. Za vsako plast povej sestavo in čas nastanka ter utemelji, zakaj sekundarna stena leži pod primarno in zakaj celica s sekundarno steno ne raste več.
+
+**Rešitev:**
+
+1. Srednja lamela: tanek sloj pektinov, skupen dvema sosednjima celicama. Nastane prva in celici zlepi.
+2. Primarna stena: mreža celuloznih mikrofibril v matriksu hemiceluloz in pektinov. Nastaja med rastjo celice; je tanka in raztegljiva.
+3. Sekundarna stena: več celuloze, pogosto olesenela z ligninom. Nastane šele po koncu rasti.
+4. Plazmalema: selektivno prepustna membrana, ki obdaja protoplast. Ni del stene; stena je vedno zunaj nje.
+5. Lega sekundarne stene: steno gradi protoplast od znotraj. Celuloza nastaja na plazmalemi in se odlaga na njeno zunanjo stran, torej na notranjo stran že obstoječe stene. Vsaka mlajša plast zato leži bliže membrani.
+6. Konec rasti: celica raste tako, da turgor raztegne tanko primarno steno. Debela, olesenela sekundarna stena ni raztegljiva, zato se celica po njenem nastanku ne more več povečati.
+7. Sklep: vrstni red od zunaj navznoter je vrstni red nastanka; sekundarna stena da trdnost (les), a je cena zanjo konec rasti. Povezavo med protoplasti kljub debeli steni ohranjajo piknje s plazmodezmami.
+
+### Naloga 3
+
+Utemelji, ali drži trditev: »Plastide imajo samo zelene celice, v drugih celicah pa po potrebi nastanejo na novo iz citoplazme.« Odgovor podpri z dvema primeroma pretvorbe plastidov in z zgradbo plastida.
+
+**Rešitev:**
+
+1. Trditev ne drži v nobenem delu.
+2. Plastide imajo vse žive rastlinske celice. V nezelenih delih niso kloroplasti: v gomoljih, semenih in koreninski čepici so amiloplasti s škrobom, v plodovih in cvetovih kromoplasti s karotenoidi, v kalicah v temi etioplasti.
+3. Plastidi ne nastanejo na novo. Nastanejo le z delitvijo obstoječih plastidov; v tvornih celicah so to nediferencirani proplastidi, ki jih celica ob delitvi preda hčerinskima celicama.
+4. Prvi primer pretvorbe: pri zorenju paradižnika se kloroplasti pretvorijo v kromoplaste; klorofil razpade, kopiči se likopen.
+5. Drugi primer: gomolj krompirja na svetlobi ozeleni, ker se amiloplasti pretvorijo v kloroplaste. Vrsta plastida je torej odvisna od razmer, ne od tega, ali je celica »zelena«.
+6. Zgradba razloži, zakaj jih celica ne more izdelati na novo: plastid ima dvojno membrano, lastno krožno DNA in ribosome bakterijskega tipa (70S) ter se deli s cepitvijo. To so sledi endosimbioze s cianobakterijo; brez obstoječega plastida ni njegove DNA, čeprav večino njegovih beljakovin kodira jedro.
+7. Sklep: pravilna trditev je, da imajo plastide vse žive rastlinske celice, da se vrste plastidov pretvarjajo druga v drugo in da vsak plastid izvira iz plastida.
 
 ## Drugače: Z analogijo
 

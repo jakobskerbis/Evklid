@@ -47,8 +47,11 @@ test("every page starts its modules through zagon.js, and the listed modules exi
     assert.ok(m, `${page}: ${mods[0]}`);
     for (const ref of m[1].split(/\s+/)) assert.ok(fs.existsSync(path.join(PUB, ref.replace(/^\.?\//, ""))), `${page}: ${ref}`);
   }
-  const i18n = fs.readFileSync(path.join(PUB, "i18n.js"), "utf8");
+  // ready je v public/i18n-osnova.js (i18n.js ga izvozi naprej z izvirnimi besedili); nobeden nima top-level await.
+  const i18n = fs.readFileSync(path.join(PUB, "i18n-osnova.js"), "utf8");
   assert.match(i18n, /export const ready = /);
+  assert.match(fs.readFileSync(path.join(PUB, "i18n.js"), "utf8"), /export \* from "\.\/i18n-osnova\.js";/);
+  for (const f of ["i18n.js", "i18n-osnova.js"]) assert.doesNotMatch(fs.readFileSync(path.join(PUB, f), "utf8"), /^await /m, f);
 });
 
 // En sam način vnaprejšnjega nalaganja: <link rel="modulepreload"> v vstopni strani (server/vstopna-stran.js),
@@ -59,7 +62,7 @@ test("main page asks the browser to fetch all first-load modules at once (module
   try {
     const res = await fetch(`http://127.0.0.1:${server.address().port}/`);
     const html = await res.text();
-    for (const u of ["/zagon.js", "/app.js", "/i18n.js", "/i18n/sl.js", "/dropdown.js", "/appearance.js"]) assert.ok(html.includes(`<link rel="modulepreload" href="${u}">`), u);
+    for (const u of ["/zagon.js", "/app.js", "/i18n.js", "/i18n/sl.js", "/dropdown.js", "/appearance.js"]) assert.ok(html.includes(`<link rel="modulepreload" href="${u}" fetchpriority="low">`), u);
     assert.ok(!/modulepreload" href="[^"]*(\/vendor\/|\/theme\.js)/.test(html), "klasične skripte niso moduli");
     assert.ok(!/modulepreload/.test(res.headers.get("link") || ""), "samo en način (HTML), ne še glava Link");
   } finally {

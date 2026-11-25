@@ -458,7 +458,7 @@ export function zgradi(THREE, ctx = {}) {
       const sm = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
       odpad.push(sm, tex);
       napis = new THREE.Sprite(sm);
-      napis.scale.set(0.5, 0.1, 1);
+      napis.scale.set(0.7, 0.14, 1); // na 360 px je bil 0,5 × 0,1 neberljiv (ocena 18. 11.)
       napis.center.set(0, 0.5);
       napis.raycast = () => {};
       group.add(napis);
@@ -506,7 +506,8 @@ export function zgradi(THREE, ctx = {}) {
     nadzor,
     korak,
     pogled: [0.62, 0.16, 1],
-    okvir: { sredisce: [0, -0.05, 0], polmer: 1 },
+    // orodno vrstico nad odrom upošteva pregledovalnik (zamikZgoraj); kader z rezervo, da vogal žilnice ni pod gumbi (18. 11.)
+    okvir: { sredisce: [0, -0.05, 0], polmer: 1.08 },
     dispose() {
       for (const m of mreze) { m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); }
       for (const x of odpad) x.dispose();

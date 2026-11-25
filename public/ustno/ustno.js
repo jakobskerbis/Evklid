@@ -9,7 +9,9 @@ import { icon, hydrateIcons } from "../icons.js";
 import { spokenMath } from "../speech.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba } from "../nujno.js";
 import { zavrzi } from "../odgovor.js";
+import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer, hideKeyboard } from "../tipkovnica.js";
 import SL from "./besedila/sl.js";
+import { nalozi as aioNalozi, opombaHtml } from "../ai-oznaka/ai-oznaka.js";
 
 const KEY_NOTICE = "evklid.ustno.obvestilo"; // + ».<id profila>«: obvestilo vidi vsak profil na napravi (pregled B7)
 const KEY_PREFS = "evklid.ustno.nastavitve";
@@ -69,13 +71,82 @@ export function tt(key, vars = {}) {
 export const speechOk = () => typeof window !== "undefined" && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 const recLang = () => (currentLang() === "sl" ? "sl-SI" : locale());
 
-// --- branje na glas (glas naprave) ---
+// --- branje na glas ---
+// 1. Slovenski glas strežnika (server/govor.js govorMp3, odprt glas Piper): MP3 vprašanja te seje, na vseh napravah enak.
+//    Glas naprave slovenščino pozna skoraj samo v Edgu; Chrome, aplikacija za Android in iPhone ga nimajo (j, 19. 11.).
+// 2. Glas naprave (speechSynthesis), ko strežnik glasu nima (lokalno) ali ni povezave. 3. Obvestilo »ni glasu«.
+// En sam <audio> za vse branje: dotik v oknu ga odklene (iPhone in WebView v aplikaciji dovolita predvajanje brez
+// dotika le elementu, ki je že igral ob dotiku), zato vprašanje po »Začni« prebere sam.
+const SILENT = "/ustno/tiho.mp3"; // 0,25 s tišine (CSP media-src ne dovoli data:)
+let player = null;
+let unlocked = false;
+let serverVoice = true; // strežnik glasu nima (503, code »ni«): v tem odprtju ne poskušamo več
+let speakSeq = 0;
+const clips = new Map(); // »seja:i:dodatno« → Promise<objectURL | null>
+function audio() {
+  if (!player) {
+    player = new Audio();
+    player.preload = "auto";
+  }
+  return player;
+}
+function unlock() {
+  if (unlocked) return;
+  const a = audio();
+  if (!a.paused) return;
+  a.src = SILENT;
+  a.play()?.then(() => (unlocked = true), () => {});
+}
+function clip(i, dodatno) {
+  const key = `${run.id}:${i}:${dodatno ? 1 : 0}`;
+  if (!clips.has(key)) {
+    const p = fetch(`/api/students/${ctx.student.id}/ustno/${run.id}/govor`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ i, dodatno: !!dodatno }), signal: AbortSignal.timeout?.(12_000) })
+      .then(async (r) => {
+        if (r.status === 503 && (await r.clone().json().catch(() => ({}))).code === "ni") serverVoice = false;
+        if (!r.ok || !/audio\//.test(r.headers.get("content-type") || "")) return null;
+        return URL.createObjectURL(await r.blob());
+      })
+      .catch(() => null);
+    clips.set(key, p);
+    p.then((u) => u || clips.get(key) !== p || clips.delete(key)); // neuspelo branje se ob naslednjem dotiku poskusi znova
+  }
+  return clips.get(key);
+}
+function dropClips() {
+  for (const p of clips.values()) p.then((u) => u && URL.revokeObjectURL(u));
+  clips.clear();
+}
 function voiceFor(lang) {
   const vs = window.speechSynthesis?.getVoices() || [];
   const base = String(lang).split("-")[0].toLowerCase();
   return vs.find((v) => v.lang?.toLowerCase().replace("_", "-").startsWith(base)) || null;
 }
-function speak(text, onNoVoice) {
+// src: { i, dodatno } – vprašanje te seje, ki ga strežnik prebere s slovenskim glasom. Glavno vprašanje je iz slovenske
+// lekcije (vedno slovensko), dodatno vprašanje je v jeziku učenca: glas strežnika samo v slovenščini.
+async function speak(text, onNoVoice, src = null) {
+  stopSpeak();
+  const seq = ++speakSeq;
+  if (src && serverVoice && run?.id && (!src.dodatno || currentLang() === "sl")) {
+    const url = await clip(src.i, src.dodatno);
+    if (seq !== speakSeq) return; // medtem novo vprašanje ali konec
+    if (url) {
+      const a = audio();
+      a.src = url;
+      try {
+        await a.play();
+        unlocked = true;
+        return;
+      } catch (e) {
+        // AbortError: medtem ustavljeno (naslednje vprašanje, zaprto okno). NotAllowedError: brez dotika predvajanje ni
+        // dovoljeno, »Preberi vprašanje« ga prebere (dotik). Ne beremo z glasom naprave.
+        if (seq !== speakSeq || e?.name === "AbortError" || e?.name === "NotAllowedError") return;
+      }
+    }
+  }
+  if (seq !== speakSeq) return;
+  deviceSpeak(text, onNoVoice);
+}
+function deviceSpeak(text, onNoVoice) {
   const synth = window.speechSynthesis;
   if (!synth) return onNoVoice?.();
   synth.cancel();
@@ -94,7 +165,11 @@ function speak(text, onNoVoice) {
     setTimeout(() => synth.getVoices().length || onNoVoice?.(), 1500);
   }
 }
-const stopSpeak = () => window.speechSynthesis?.cancel();
+function stopSpeak() {
+  speakSeq++;
+  window.speechSynthesis?.cancel();
+  if (player && !player.paused) player.pause();
+}
 
 // --- »Si rekel …?«: strokovna beseda, ki je v prepisu skoraj (ne pa točno) zapisana ---
 const fold = (s) => String(s).toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
@@ -148,15 +223,20 @@ function sheet() {
   dlg = document.createElement("dialog");
   dlg.className = "us-okno";
   dlg.setAttribute("aria-labelledby", "us-title");
+  dlg.addEventListener("click", unlock, true);
   dlg.addEventListener("close", () => {
     stopRec();
     stopSpeak();
+    dropClips();
+    serverVoice = true; // ob naslednjem odprtju glas strežnika znova (morda je medtem nastavljen)
+    hideKeyboard(); // tipkovnica je v oknu (tipkovnica.js): ob zaprtju se zapre, sicer ostane spodnji odmik
   });
   document.body.append(dlg);
   return dlg;
 }
 function paint(body, { title = tt("u.naslov"), focus = null } = {}) {
   const d = sheet();
+  hideKeyboard(); // nov zaslon zamenja vsebino okna, tudi tipkovnico v njem
   d.innerHTML = `<div class="us-box" role="document">
     <div class="us-head"><span class="us-ic">${icon("mic")}</span><h2 id="us-title">${esc(title)}</h2>
       <button type="button" class="ghost icon-only" data-us="x" aria-label="${esc(tt("u.zapri"))}" title="${esc(tt("u.zapri"))}">${icon("x")}</button></div>
@@ -189,14 +269,14 @@ function prefs() {
  * Odpre spraševanje. src: { tema } (lekcija), { test: true } (urnik), { besedilo } (klepet: »Vprašaj me … iz …«).
  * c: { api, student, renderRich, openLesson }.
  */
-export async function odpri(src = {}, c = {}) {
+export async function odpri(src = {}, c = {}, typed = false) {
   ctx = c;
   // Gumb data-ustno: "test" (urnik), "pogovor" (klepet: tema pogovora ali zadnje vprašanje), sicer id lekcije.
   if (typeof src === "string") {
     const last = [...document.querySelectorAll("#messages .msg.user")].pop()?.textContent?.trim();
     src = src === "test" ? { test: true } : src === "pogovor" ? (c.topic ? { tema: c.topic } : last ? { besedilo: last.slice(0, 300) } : {}) : { tema: src };
   }
-  await loadDicts();
+  await Promise.all([loadDicts(), aioNalozi()]);
   paint(`<p class="muted">${esc(tt("u.nalagam"))}</p>`);
   const sid = c.student?.id;
   const q = new URLSearchParams();
@@ -211,10 +291,11 @@ export async function odpri(src = {}, c = {}) {
   }
   // število iz klepeta (»Vprašaj me 3 vprašanja …«)
   const asked = Number(/\b([358])\b/.exec(src.besedilo || "")?.[1]);
-  setup(src, pre, asked);
+  setup(src, pre, asked, typed);
 }
 
-function setup(src, pre, asked) {
+// typed: učenec je snov sam vpisal v iskanje (»Za to snov še ni vprašanj« samo takrat, ne ob besedilu iz klepeta).
+function setup(src, pre, asked, typed = false) {
   const p = prefs();
   if (asked) p.n = asked;
   const canVoice = speechOk() && pre.glas?.dovoljen;
@@ -222,13 +303,13 @@ function setup(src, pre, asked) {
   const nacin = canVoice ? p.nacin : "tipkanje";
   if (!pre.snov) {
     const d = paint(`<form class="us-form" data-us="isci">
-        <p>${esc(src.besedilo ? tt("u.niVprasanj") : "")}</p>
-        <label class="us-field"><span>${esc(tt("u.iskanje"))}</span><input name="q" maxlength="120" placeholder="${esc(tt("u.isciPh"))}" autocomplete="off" required></label>
+        ${typed ? `<p>${esc(tt("u.niVprasanj"))}</p>` : ""}
+        <label class="us-field"><span>${esc(tt("u.iskanje"))}</span><input name="q" maxlength="120" placeholder="${esc(pre.primer ? tt("u.isciPhTema", { tema: pre.primer }) : tt("u.isciPh"))}" value="${esc(typed ? src.besedilo : "")}" autocomplete="off" required></label>
         <button type="submit" class="primary">${esc(tt("u.isci"))}</button></form>`);
     d.querySelector("form").addEventListener("submit", (e) => {
       e.preventDefault();
       const v = e.target.q.value.trim();
-      if (v) odpri({ besedilo: v }, ctx);
+      if (v) odpri({ besedilo: v }, ctx, true);
     });
     return;
   }
@@ -297,7 +378,7 @@ function question(follow = null) {
     ${voice ? `<div class="us-mic-row"><button type="button" class="us-mic" data-us="mic" aria-pressed="false" aria-label="${esc(tt("u.mikrofon"))}">${icon("mic")}</button><p class="us-mic-hint muted">${esc(tt("u.dotakni"))}</p></div>` : ""}
     ${q.vrsta === "izracunaj" && !follow ? `<p class="muted small">${esc(tt("u.racun"))}</p>` : ""}
     <label class="us-field"><span>${esc(tt("u.prepis"))}</span><textarea name="odgovor" rows="4" maxlength="3000" dir="auto"></textarea></label>
-    ${q.vrsta === "izracunaj" && !follow ? `<label class="us-field"><span>${esc(tt("u.rezultat"))}</span><input name="rezultat" inputmode="decimal" maxlength="60" autocomplete="off" placeholder="${esc(q.enota ? `… ${q.enota}` : "")}"></label>` : ""}
+    ${q.vrsta === "izracunaj" && !follow ? `<label class="us-field"><span>${esc(tt("u.rezultat"))}</span><span class="us-in-row"><input name="rezultat" inputmode="decimal" maxlength="60" autocomplete="off" placeholder="${esc(q.enota ? `… ${q.enota}` : "")}"><button type="button" class="ghost icon-only" data-us="sym" aria-label="${esc(tGlobal("scan.symbols"))}" title="${esc(tGlobal("scan.symbols"))}" aria-expanded="false">${icon("sigma")}</button></span></label>` : ""}
     <div class="us-actions">
       ${voice ? `<button type="button" class="secondary" data-us="fix">${icon("pencil")} ${esc(tt("u.popravi"))}</button><button type="button" class="secondary" data-us="again">${icon("rotate-ccw")} ${esc(tt("u.povejZnova"))}</button>` : ""}
       <button type="button" class="primary" data-us="send">${icon("send")} ${esc(tt("u.oddaj"))}</button>
@@ -309,7 +390,7 @@ function question(follow = null) {
   const area = d.querySelector("textarea");
   const result = d.querySelector('input[name="rezultat"]');
   const qEl = d.querySelector(".us-q");
-  const sayIt = () => speak(q.govor && !follow ? q.govor : String(text).replace(/\$/g, ""), () => qEl.isConnected && live(tt("u.niGlasu")));
+  const sayIt = () => speak(q.govor && !follow ? q.govor : String(text).replace(/\$/g, ""), () => qEl.isConnected && live(tt("u.niGlasu")), { i: run.i, dodatno: !!follow });
   if (run.beri) sayIt();
   d.querySelector('[data-us="read"]').addEventListener("click", sayIt);
   const mic = d.querySelector('[data-us="mic"]');
@@ -372,6 +453,14 @@ function question(follow = null) {
     await grade({ answer, res, skip, follow: !!follow });
   };
   d.querySelector('[data-us="send"]').addEventListener("click", () => submit(false));
+  // Σ: Evklidova tipkovnica za rezultat (številke, ulomki, potence, enote), kot pri skeniranju (public/scan/scan.js).
+  if (result) {
+    configureKeyboard(result, { math: true, layers: ["num", "fx", "sym", "abc"], start: "num", enter: "go", enterText: tt("u.oddaj"), onEnter: () => submit(false) });
+    const sym = d.querySelector('[data-us="sym"]');
+    sym.addEventListener("click", () => toggleKeyboard(result, { layer: "sym" }));
+    const sync = () => (sym.isConnected ? sym.setAttribute("aria-expanded", String(keyboardOpenFor(result) && keyboardLayer() === "sym")) : window.removeEventListener("evklid:tipkovnica", sync));
+    window.addEventListener("evklid:tipkovnica", sync);
+  }
   d.querySelector('[data-us="dunno"]').addEventListener("click", () => submit(true));
   d.querySelector('[data-us="skip"]')?.addEventListener("click", () => submit(true));
 }
@@ -471,8 +560,8 @@ function feedback(q, r, wasFollow) {
   const appeal = r.ugovori > 0 && r.pojmi.some((p) => p.stanje !== "povedal");
   const d = paint(
     `<p class="us-count">${esc(tt("u.vprasanje", { i: run.i + 1, n: run.qs.length }))} · <b>${esc(tt("u.tocke", { t: fmt(r.tocke), m: r.max }))}</b></p>
-    ${groups}
-    ${r.razlaga ? `<div class="us-expl" dir="auto">${rich(r.razlaga)}</div>` : ""}
+    <div${r.ai_generated ? ' data-ai-generated="true"' : ""}>${groups}
+    ${r.razlaga ? `<div class="us-expl" dir="auto">${rich(r.razlaga)}</div>` : ""}${r.ai_generated ? opombaHtml(ctx.student?.settings, "ocena") : ""}</div>
     <details class="us-sample"><summary>${esc(tt("u.vzorec"))}</summary><div dir="auto">${rich(r.vzorec)}</div></details>
     ${canFollow ? `<div class="us-follow"><h4>${esc(tt("u.dodatno"))}</h4><p dir="auto">${esc(r.dodatno)}</p></div>` : ""}
     <div class="us-appeal" hidden><label class="us-field"><span>${esc(tt("u.razlogPh"))}</span><input name="razlog" maxlength="500"></label><button type="button" class="secondary" data-us="appealSend">${esc(tt("u.poslji"))}</button></div>
@@ -524,7 +613,7 @@ function selfQuestion(q, note = "") {
     { focus: ".us-q" },
   );
   const qEl = d.querySelector(".us-q");
-  const say = () => speak(q.govor, () => qEl.isConnected && live(tt("u.niGlasu")));
+  const say = () => speak(q.govor, () => qEl.isConnected && live(tt("u.niGlasu")), { i: run.i });
   if (run.beri) say();
   d.querySelector('[data-us="read"]').addEventListener("click", say);
   d.querySelector('[data-us="show"]').addEventListener("click", (e) => {

@@ -1,10 +1,11 @@
 // Skeniranje nalog (zaslon »Skeniraj«, public/scan/):
-//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex }] }  prepis s fotografije
-//   POST /api/students/:id/scan/solve  { text, goal? }     → { solution }                   AI rešitev po korakih
+//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought? }] }  prepis s fotografije
+//   POST /api/students/:id/scan/solve  { text, goal?, given?, sought? } → { solution }       AI rešitev po korakih
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
 // (public/scan/verify.js); nepreverjena se pokaže z opozorilom, nikoli kot »preverjeno«.
-import { getClient, isMockMode, quickParams, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
+import { AI_JSON } from "./ai-oznaka.js";
+import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { casCheck } from "./cas.js";
@@ -13,28 +14,98 @@ import { casCheck } from "./cas.js";
 // SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja numerično preverjanje.
 // Ujame tudi rešitve izven numeričnega iskanja (|x| > 10⁶) in točne vrednosti (√2 proti 1,414).
 // Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam SymPy ne odloča.
+// Kjer numerika popolnosti ne more preveriti (partial: sistem, periodične rešitve, »ni rešitve«), brez
+// odločitve SymPy rešitev ni »preverjena«, ampak nepreverjena (reason "unknown"; AUDIT-001).
 export async function verifyAiFull(text, sol, { cas = true } = {}) {
   const num = verifyAi(text, sol);
   const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
   if (c.ok === true) return { verified: true, reason: null };
-  if (c.ok === false) return { verified: false, reason: num.reason === "missing" ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+  if (c.ok === false) {
+    const missing = num.reason === "missing" || /^manjka rešitev/.test(c.why || "");
+    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+  }
+  if (num.verified && num.partial) return { verified: false, reason: "unknown" };
   return num;
+}
+
+// Zapis za SymPy (server/cas/worker.py). Tam je log brez osnove ln, v šoli in v public/graph/math.js pa desetiški,
+// zato log(x) → lg(x); log_b(x), log_(b)(x), log_{b}(x) → log(x, b) (tako ga piše READ_PROMPT); √2 → sqrt(2).
+// Z imeni spremenljivk sistema še implicitno množenje (xy → x*y; worker bi »xy« prebral kot eno ime). Pregled #935.
+export function casText(text, names = []) {
+  let t = String(text).replace(/√\s*\(/g, "sqrt(").replace(/√\s*([0-9]+(?:[.,][0-9]+)?|[a-zA-Z])/g, "sqrt($1)");
+  const head = /(?<![A-Za-z_])log(?:_(?:\{([^{}]+)\}|\(([^()]+)\)|([0-9]+|[a-zA-Z])))?\s*\(/y;
+  let out = "";
+  for (let i = 0; i < t.length; ) {
+    head.lastIndex = i;
+    const m = head.exec(t);
+    if (!m) {
+      out += t[i++];
+      continue;
+    }
+    let depth = 1;
+    let j = head.lastIndex;
+    for (; j < t.length && depth; j++) depth += t[j] === "(" ? 1 : t[j] === ")" ? -1 : 0;
+    if (depth) return t; // brez zaklepaja: pustimo, SymPy javi napako (ok: null)
+    const inner = casText(t.slice(head.lastIndex, j - 1), names);
+    const base = m[1] ?? m[2] ?? m[3];
+    let d = 0;
+    const comma = [...inner].some((c) => ((d += c === "(" ? 1 : c === ")" ? -1 : 0), c === "," && d === 0));
+    out += base ? `log(${inner}, ${base})` : comma ? `log(${inner})` : `lg(${inner})`;
+    i = j;
+  }
+  if (names.length) out = out.replace(/(?<![A-Za-z_])[a-z]{2,3}(?![A-Za-z_(])/g, (w) => ([...w].every((c) => names.includes(c)) ? [...w].join("*") : w));
+  return out;
+}
+
+// Rešitve sistema kot skupine »x=3, y=4«: ena rešitev na niz ali več v enem nizu (»x=3, y=4; x=4, y=3«);
+// nova skupina se začne, ko se ime ponovi. null = zapisa ne razumemo.
+function systemGroups(solutions) {
+  const groups = [];
+  for (const s of solutions) {
+    let cur = null;
+    let d = 0;
+    let part = "";
+    const parts = [];
+    for (const c of String(s)) {
+      d += c === "(" || c === "[" || c === "{" ? 1 : c === ")" || c === "]" || c === "}" ? -1 : 0;
+      if (d === 0 && (c === ";" || c === ",")) (parts.push(part), (part = ""));
+      else part += c;
+    }
+    parts.push(part);
+    for (const p of parts.map((x) => x.trim()).filter(Boolean)) {
+      const m = /^([a-zA-Z])\s*=(?!=)\s*(.+)$/.exec(p);
+      if (!m) return null;
+      if (!cur || cur.has(m[1])) groups.push((cur = new Map()));
+      cur.set(m[1], m[2].trim());
+    }
+  }
+  return groups;
 }
 
 async function casScan(text, sol) {
   const v = /^[a-zA-Z]$/.test(sol?.variable || "") ? sol.variable : "x";
   const sols = (sol?.solutions || []).map((x) => String(x).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "").trim()).filter(Boolean);
-  if (sol?.kind === "equation") return casCheck("solve", [prep(text), v, sols.length ? sols.join(", ") : "none"]);
+  if (sol?.kind === "equation") return casCheck("solve", [casText(prep(text)), v, sols.length ? sols.map((x) => casText(x)).join(", ") : "none"]);
   if (sol?.kind === "system") {
-    const eqs = (splitSystem(text) || String(text).split(/;|\n/).filter((x) => x.includes("="))).map((e) => prep(e));
-    const names = [...new Set(eqs.join(" ").match(/\b[a-z]\b/g) || [])].filter((n) => n !== "e");
-    if (!eqs.length || (sol.solutions || []).length !== 1) return { ok: null };
-    return casCheck("solve", [eqs.join(", "), names.join(", "), String(sol.solutions[0]).replace(/;/g, ",")]);
+    const raw = (splitSystem(text) || String(text).split(/;|\n/).filter((x) => x.includes("="))).map((e) => prep(e));
+    // Vse rešitve naenkrat (»x=3, y=4; x=4, y=3«), da SymPy preveri tudi popolnost; prej je sistem z več
+    // rešitvami SymPy preskočil in odločila je numerika, ki popolnosti ne preveri (AUDIT-001).
+    // »ni rešitve« / »no solution« kot besedilo je isto kot prazen seznam (worker: »none«).
+    const given = (sol.solutions || []).filter((x) => !/^\s*((sistem\s+)?(ni|nima)\s+rešit(ev|ve)|(the\s+system\s+has\s+)?no\s+solutions?|none|∅|\{\s*\})\s*\.?\s*$/i.test(String(x)));
+    const groups = systemGroups(given);
+    // Periodične rešitve v sistemu (k ob π ali °, tudi »2k«) worker vstavi s prostim k in jih zavrne: tu ne odloča
+    // (numerika: partial). Prost parameter k brez π ostane workerju.
+    if (!raw.length || !groups || given.some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(s) && /pi|π|°/.test(s))) return { ok: null };
+    // Imena: iz rešitev in iz enačb (tudi »2x«, »4y«; ne »e«).
+    const names = [...new Set([...groups.flatMap((g) => [...g.keys()]), ...(raw.join(" ").match(/(?<![A-Za-z_])[a-z](?![A-Za-z_(])/g) || [])])].filter((n) => n !== "e");
+    const eqs = raw.map((e) => casText(e, names));
+    const claim = groups.length ? groups.map((g) => [...g].map(([n, x]) => `${n}=${casText(x)}`).join(", ")).join("; ") : "none";
+    return casCheck("solve", [eqs.join(", "), names.join(", "), claim]);
   }
-  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [prep(text), prep(sol.value)]);
+  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [casText(prep(text)), casText(prep(sol.value))]);
   if (sol?.kind === "derivative" && sol.value) {
     const f = String(text).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
-    return casCheck("diff", [prep(f), v, prep(sol.value)]);
+    return casCheck("diff", [casText(prep(f)), v, casText(prep(sol.value))]);
   }
   return { ok: null };
 }
@@ -45,6 +116,9 @@ const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d
 // Branje matematike z rokopisa zahteva natančen model; ena fotografija je ~1500 žetonov.
 const READ_MODEL = () => env("EVKLID_SCAN_MODEL", MODEL_MID);
 const SOLVE_MODEL = () => env("EVKLID_SCAN_SOLVE_MODEL", MODEL_MID);
+// Branje naloge za Inštruktorja (kamera v klepetu, j 17. 11.): privzeto hitri model inštruktorja (Haiku), ker učenec
+// prepis pregleda in popravi, preden gre inštruktorju; strošek in izbira modela: docs/stroski-ai.md »Skener v Inštruktorju«.
+const TASK_READ_MODEL = () => env("EVKLID_SCAN_TUTOR_MODEL", MODEL);
 const MAX_IMAGE = 6 * 1024 * 1024;
 const MAX_TEXT = 600;
 
@@ -77,15 +151,20 @@ export const READ_PROMPT =
   'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
   "a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5 or k=0, a set of allowed digits or elements such as {1,2,4,8}, also when written in a »dano:« / »podatki:« line, in a box or short notes beside the task that belong to it (not a theory, hint or example box), or only in the sentence): " +
-  'a list of them in LaTeX, one each, in the words of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
+  'a list of them in LaTeX, one each, with the meaning of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
+  '- "sought": what the task asks you to find is never data. If it is already "text" as <letter>=?, or it is what "goal" does to "text" (solve it, its zeros, simplify, factor, evaluate, differentiate), leave "sought" out. ' +
+  'Otherwise (e.g. the angle at which the graph cuts the x-axis, the vertex of the parabola) write it in "sought" as one short phrase (LaTeX for maths), in the language of the language line below, e.g. in Slovene "\\\\text{kot, pod katerim graf seka os x}".\n' +
   "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve; if there is neither such an instruction nor an equation or inequality to solve, leave \"goal\" out.\n" +
-  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
+  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."],"sought":"..."}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
   // Fotografije, ki niso učno gradivo, zavrnemo (j, 2026-10-30); slike strežnik nikoli ne shrani.
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
 
-export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg" }) {
+// lang: jezik aplikacije (j 14. 11. 2026: besede v »Podatki« so bile v angleščini). V svojem bloku za READ_PROMPT,
+// da READ_PROMPT ostane enak za vse jezike (klic nima cache_control; slika je pred navodili).
+export const readLangLine = (lang) => `Language line: write every word in "given" and "sought" (inside \\text{}) in ${languagePrompt(lang || "sl")}, never in English unless that is the language; keep maths, units and symbols as written.`;
+export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg", lang = "sl" }) {
   const model = READ_MODEL();
   if (isMockMode()) return { mock: true, problems: [], usage: null, model };
   const final = await getClient().messages.create({
@@ -98,6 +177,7 @@ export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg" }) {
         content: [
           { type: "image", source: { type: "base64", media_type: mediaType, data: imageBase64 } },
           { type: "text", text: READ_PROMPT },
+          { type: "text", text: readLangLine(lang) },
         ],
       },
     ],
@@ -113,11 +193,13 @@ export function cleanProblems(list) {
     .slice(0, 6)
     .map((p) => {
       const given = cleanGiven(p.given);
+      const sought = cleanSought(p.sought);
       return {
         text: p.text.trim().slice(0, MAX_TEXT),
         tex: typeof p.tex === "string" ? p.tex.trim().slice(0, MAX_TEXT * 2) : "",
         goal: GOALS.includes(p.goal) ? p.goal : null,
         ...(given.length ? { given } : {}),
+        ...(sought ? { sought } : {}),
       };
     });
 }
@@ -131,6 +213,9 @@ export function cleanGiven(list) {
     .slice(0, MAX_GIVEN)
     .map((g) => g.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
 }
+// Iskana količina (»kot, pod katerim graf seka os x«): ni podatek, zato ne v given (j 16. 11. 2026: »to ni podatek«).
+// Ne izklopi lastnega reševalnika ne SymPy (ti gledata le given); AI jo dobi, da ve, kaj iskati.
+export const cleanSought = (v) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
 
 // Cilj, ki ga je učenec izbral na zaslonu (npr. »Razstavi«): brez njega bi AI izraz morda le poenostavil.
 const GOAL_TEXT = {
@@ -141,10 +226,11 @@ const GOAL_TEXT = {
   solve: "Task: solve it.",
 };
 
-export function solvePrompt(text, lang, feedback = null, goal = null, given = []) {
+export function solvePrompt(text, lang, feedback = null, goal = null, given = [], sought = "") {
   return (
     `A student wants a step-by-step solution of this maths problem (calculator syntax): ${text}\n` +
     (given.length ? `Data and conditions stated in the task (LaTeX; use them with their units, e.g. to find the parameters or the asked quantity, and give the answer with its unit): ${given.join("; ")}\n` : "") +
+    (sought ? `What the task asks to find (LaTeX/text): ${sought}\n` : "") +
     (GOAL_TEXT[goal] ? `${GOAL_TEXT[goal]}\n` : "") +
     `Write every title and explanation in ${lang}, simply, for a student at school level; use the notation of Slovenian schools (decimal comma in LaTeX as {,}, intervals with ( ) and [ ], »D« for the discriminant).\n` +
     "Solve it correctly; check your result yourself before answering. Steps must be small (one idea each), as a good teacher writes them on the board. Give a second method only if it is commonly taught.\n" +
@@ -179,7 +265,7 @@ export function cleanSolution(s) {
   };
 }
 
-export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }) {
+export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "" }) {
   const model = SOLVE_MODEL();
   if (isMockMode()) return { mock: true, solution: null, usage: null, model };
   const ask = async (feedback) => {
@@ -188,7 +274,7 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
       max_tokens: 8000,
       thinking: { type: "adaptive" },
       output_config: { effort: "medium" },
-      messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given) }],
+      messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given, sought) }],
     });
     return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model };
   };
@@ -218,9 +304,73 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
   return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null } : null, usage, model: out.model };
 }
 
+// Branje naloge za Inštruktorja: vse predmete (matematika, fizika, kemija, biologija), besedilo kot na listu, formule
+// v $…$, brez reševanja. figure: naloga ima skico, graf ali sliko, ki je besedilo ne nadomesti (inštruktor dobi še sliko).
+export const TASK_READ_PROMPT =
+  "The image shows a school task (maths, physics, chemistry or biology; printed or handwritten) that a student photographed to ask a tutor for help. " +
+  "Transcribe the task exactly as written, in its own language: the full wording with all numbers, units and sub-tasks a), b) …; maths and formulas in LaTeX between $ … $ (chemical formulas such as H₂O may stay plain). " +
+  "Do not solve, do not fix mistakes, do not add anything. If several separate tasks are visible, transcribe the most prominent one (the one in the middle or marked), set \"more\": true and \"tasks\" to how many separate tasks you see. Leave out the student's own working and crossed-out parts.\n" +
+  "Set \"figure\": true if the task depends on a drawing, graph, diagram, table image, circuit, geometric figure or structure formula that the text cannot fully replace; otherwise false.\n" +
+  'Return only JSON: {"text":"...","figure":false,"more":false,"tasks":1}. If no task is readable: {"text":""}.\n' +
+  'Accept schoolwork even if people appear in the frame. Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, return only {"text":"","unrelated":true}.';
+const TASK_READ_PROMPT_TOKENS = Buffer.byteLength(TASK_READ_PROMPT, "utf8") + 300;
+const TASK_READ_MAX = 1200; // izhodni žetoni: dolga besedilna naloga s podnalogami
+const MAX_TASK_TEXT = 3000;
+export async function readTaskPhoto({ imageBase64, mediaType = "image/jpeg" }) {
+  const model = TASK_READ_MODEL();
+  if (isMockMode()) return { mock: true, text: "", usage: null, model };
+  const final = await getClient().messages.create({
+    model,
+    max_tokens: TASK_READ_MAX,
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "image", source: { type: "base64", media_type: mediaType, data: imageBase64 } },
+          { type: "text", text: TASK_READ_PROMPT },
+        ],
+      },
+    ],
+  });
+  const data = jsonFrom(textOf(final)) || {};
+  const unrelated = data.unrelated === true;
+  const text = unrelated || typeof data.text !== "string" ? "" : data.text.trim().slice(0, MAX_TASK_TEXT);
+  const tasks = Number.isInteger(data.tasks) && data.tasks > 0 ? Math.min(data.tasks, 20) : data.more === true ? 2 : 1;
+  return { text, figure: data.figure === true, more: data.more === true || tasks > 1, tasks, unrelated, usage: final.usage, model: final.model || model };
+}
+
 // Navodila branja v žetonih za rezervo (žeton ≤ bajt, pregled #462 S7) + sporočilo in ovoj.
 const READ_PROMPT_TOKENS = Buffer.byteLength(READ_PROMPT, "utf8") + 500;
-export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi }) {
+export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi, readTaskFn = readTaskPhoto, dailyBlock = () => null, chatOff = () => false }) {
+  // Kamera v Inštruktorju: prepis naloge, ki ga učenec pregleda in pošlje inštruktorju (public/scan/scan.js, način tutor).
+  // Slike strežnik ne shrani; ob napaki učenec pošlje fotografijo ali nalogo vpiše (nikoli slepa ulica).
+  app.post("/api/students/:id/scan/read-task", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
+    if (!m || m[2].length > MAX_IMAGE) return res.status(400).json({ error: "Slika manjka ali je prevelika." });
+    // Branje plačamo le, če bo naloga lahko šla k inštruktorju: klepet vklopljen in dnevna meja vprašanj ni dosežena.
+    if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
+    const dnevna = dailyBlock(s.id);
+    if (dnevna) return res.status(429).json(dnevna);
+    const blocked = usage?.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
+    const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(TASK_READ_MODEL(), TASK_READ_MAX, 1, TASK_READ_PROMPT_TOKENS)) : null;
+    if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
+    try {
+      const out = await readTaskFn({ imageBase64: m[2], mediaType: m[1] });
+      if (out.mock) return res.json({ text: "", mock: true });
+      if (out.usage) usage?.log(s.id, out.model, out.usage, "skeniranje");
+      const more = !!out.more || out.tasks > 1;
+      res.json({ text: out.text || "", figure: !!out.figure, more, ...(more ? { tasks: Math.max(2, Number(out.tasks) || 2) } : {}), ...(out.unrelated ? { unrelated: true } : {}) });
+    } catch (err) {
+      console.error("[evklid] branje naloge:", err?.message || err);
+      res.status(502).json({ error: errorText(err, "Branje fotografije trenutno ne deluje. Nalogo vpiši s tipkami.") });
+    } finally {
+      hold?.release();
+    }
+  });
+
   app.post("/api/students/:id/scan/read", async (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -232,7 +382,7 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(READ_MODEL(), 2000, 1, READ_PROMPT_TOKENS)) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
-      const out = await readFn({ imageBase64: m[2], mediaType: m[1] });
+      const out = await readFn({ imageBase64: m[2], mediaType: m[1], lang: s.settings?.language || "sl" });
       if (out.mock) return res.json({ problems: [], mock: true });
       if (out.usage) usage?.log(s.id, out.model, out.usage, "skeniranje");
       res.json({ problems: out.problems, ...(out.unrelated ? { unrelated: true } : {}) });
@@ -255,18 +405,21 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     if (!Array.isArray(rawGiven) || rawGiven.length > MAX_GIVEN || rawGiven.some((g) => typeof g !== "string" || g.length > MAX_GIVEN_LEN))
       return res.status(400).json({ error: "Podatki naloge niso veljavni." });
     const given = cleanGiven(rawGiven);
+    const rawSought = req.body?.sought ?? "";
+    if (typeof rawSought !== "string" || rawSought.length > MAX_GIVEN_LEN) return res.status(400).json({ error: "Podatki naloge niso veljavni." });
+    const sought = cleanSought(rawSought);
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
     // Do dva klica (ponovitev ob napačni rešitvi), vsak z navodili, nalogo in podatki ter do 8000 izhodnimi žetoni.
-    const input = 6000 + Buffer.byteLength(text + rawGiven.join(""), "utf8");
+    const input = 6000 + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
     const hold = usage?.guard ? usage.guard(s.id, 2 * callMaxUsd(SOLVE_MODEL(), input, 8000)) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
-      const out = await solveFn({ text, goal, given, lang: s.settings?.language || "sl" });
+      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl" });
       if (out.mock) return res.json({ solution: null, mock: true });
       for (const u of [].concat(out.usage || [])) if (u) usage?.log(s.id, out.model, u, "skeniranje");
       if (!out.solution) return res.status(502).json({ error: "Rešitve ni bilo mogoče sestaviti. Poskusi znova ali vprašaj inštruktorja." });
-      res.json({ solution: out.solution });
+      res.json({ solution: out.solution, ...AI_JSON });
     } catch (err) {
       console.error("[evklid] reševanje:", err?.message || err);
       // Inštruktor (AI) ni na voljo (ni dobroimetja, ključ, preobremenjenost): vmesnik pokaže prijazno

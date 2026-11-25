@@ -1,0 +1,115 @@
+# Nočna regresijska matrika urejevalnika kalkulatorja (j, 24. 11. 2026): brskalniški del test/urejevalnik-matrika.test.js
+# ni več v CI ob vsakem PR (~76 s v delih »testi«); tu teče vsako noč POLN (MATRIKA_VSE=1, vse predloge na vseh mestih,
+# 1280 px z miško in 360 px z dotikom), vsak brskalnik v svojem poslu: Chromium ~7, WebKit ~10, Firefox ~11 min.
+# Čiste funkcije matrike in mala brskalniška testa (dotik na znake, brisanje) ostanejo v testi.yml ob vsakem PR.
+# Ob napaki: delovni tok je rdeč (GitHub pošlje e-pošto lastniku) in odpre ali dopolni zadevo »Nočna matrika
+# urejevalnika ne gre skozi«; ko je spet zelen, jo zapre. Ročni zagon: Actions > Nočna matrika > Run workflow.
+# Repozitorij je javen: teče samo na main (urnik ali ročno), brez skrivnosti, akcije pripete na SHA.
+name: Nočna matrika
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: matrika-nocna
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+env:
+  EVKLID_MOCK: "1"
+  PLAYWRIGHT_VERSION: "1.63.0"
+jobs:
+  matrika:
+    name: matrika (${{ matrix.brskalnik }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        brskalnik: [chromium, webkit, firefox]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+        timeout-minutes: 10
+      - name: Playwright
+        timeout-minutes: 5
+        run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-${{ matrix.brskalnik }}
+      # Namestitev z omejitvijo časa in 3 poskusi (kot v testi.yml: ogledalo Ubuntuja se občasno zatakne).
+      - name: Namestitev brskalnika (omejitev časa + ponovitev)
+        timeout-minutes: 42
+        env:
+          BRSKALNIK: ${{ matrix.brskalnik }}
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "30";
+          Acquire::https::Timeout "30";
+          APT
+          for poskus in 1 2 3; do
+            if timeout -k 10 13m npx playwright install --with-deps "$BRSKALNIK"; then exit 0; fi
+            echo "::warning::Namestitev brskalnika: poskus $poskus ni uspel ali je potekel (13 min)"
+            sudo pkill -9 -f '[a]pt-get|[a]pt |[d]pkg' || true
+            sleep 2
+            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m dpkg --configure -a --force-confdef --force-confold || true
+            sudo DEBIAN_FRONTEND=noninteractive timeout 3m apt-get -f install -y || true
+            sleep 5
+          done
+          echo "::error::Namestitev brskalnika ni uspela v 3 poskusih"
+          exit 1
+      # MATRIKA_BRSKALNIK: samo ta brskalnik; če ga ni, test pade (ne preskoči). Meja 60 min na datoteko.
+      - name: Poln zagon matrike
+        timeout-minutes: 65
+        env:
+          MATRIKA_VSE: "1"
+          MATRIKA_BRSKALNIK: ${{ matrix.brskalnik }}
+        run: node --disable-warning=ExperimentalWarning --test --test-timeout=3600000 --test-force-exit test/urejevalnik-matrika.test.js 2>&1 | tee matrika.log
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        timeout-minutes: 5
+        with:
+          name: matrika-dnevnik-${{ matrix.brskalnik }}
+          path: matrika.log
+          retention-days: 14
+
+  # Zadeva v GitHubu: ob napaki odpre novo ali doda komentar v odprto; ob uspehu odprto zapre. Samo ta posel sme pisati zadeve.
+  zadeva:
+    needs: matrika
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      IZID: ${{ needs.matrika.result }}
+      ZAGON: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      NASLOV: "Nočna matrika urejevalnika ne gre skozi"
+    steps:
+      - name: Odpri, dopolni ali zapri zadevo
+        run: |
+          st=$(gh issue list --state open --search "\"$NASLOV\" in:title" --json number,title --jq "map(select(.title == env.NASLOV))[0].number // empty")
+          if [ "$IZID" = "success" ]; then
+            [ -n "$st" ] && gh issue close "$st" --comment "Nočna matrika je spet zelena: $ZAGON"
+            exit 0
+          fi
+          besedilo="Nočna matrika urejevalnika (test/urejevalnik-matrika.test.js, MATRIKA_VSE=1) ni uspela: $IZID. Zagon in dnevniki (Artifacts): $ZAGON"
+          if [ -n "$st" ]; then gh issue comment "$st" --body "$besedilo"; else gh issue create --title "$NASLOV" --body "$besedilo"; fi
+          exit 1

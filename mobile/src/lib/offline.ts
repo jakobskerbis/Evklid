@@ -4,18 +4,45 @@
 // Enako kot public/offline.js v spletni aplikaciji, le da je shramba SQLite namesto localStorage.
 import Storage from "expo-sqlite/kv-store";
 import { checkAnswer } from "../../../server/practice/check.js";
+import { isStalePack, offlineTask } from "../../../public/enote-izbira.js";
+import brand from "../../../brand.json";
 import { api } from "./api";
-import { key } from "./keys";
+import { offlineKljuc, preseliStare } from "./zasebnost.js";
 
-const PACK = (sid: number) => key(`offline.pack.${sid}`);
-const QUEUE = (sid: number) => key(`offline.queue.${sid}`);
 const DAY = 86400000;
+
+// Ključa paketa in vrste sta vezana na račun in profil (src/lib/zasebnost.js offlineKljuc): nastavi ju
+// src/lib/session.tsx ob vsakem seznamu profilov, ob koncu seje se pozabita (in shramba pobriše).
+// Profil, ki ga ni na seznamu računa, nima paketa ne vrste (branje vrne nič, zapis se ne zgodi).
+type Owner = { parentId: number; students: { id: number; created_at?: string }[] };
+let owner: Owner | null = null;
+let gen = 0; // poveča se ob menjavi lastnika: odgovor strežnika, ki pride po odjavi, se ne zapiše
+const keyFor = (vrsta: "pack" | "queue", sid: number) => {
+  const s = owner?.students.find((x) => x.id === sid);
+  return owner && s ? offlineKljuc(brand.slug, vrsta, owner.parentId, s) : null;
+};
+const PACK = (sid: number) => keyFor("pack", sid);
+const QUEUE = (sid: number) => keyFor("queue", sid);
+
+export function setOfflineOwner(parentId: number | null | undefined, students: { id: number; created_at?: string }[]) {
+  if (parentId == null) return forgetOffline();
+  if (owner?.parentId !== parentId) gen++;
+  owner = { parentId, students: students.map((s) => ({ id: s.id, created_at: s.created_at })) };
+  // Ključi iz različice pred tem popravkom (samo id profila): neposlani odgovori tega računa se prenesejo.
+  preseliStare(Storage, brand.slug, parentId, owner.students);
+}
+export function forgetOffline() {
+  owner = null;
+  current = null;
+  gen++;
+}
 
 type PackTask = { level: number; seed: number; task: any; answer: any; solution: string; hint: string };
 export type Pack = { path: string; created: string; view: any; topics: Record<string, any>; tasks: Record<string, PackTask[]> };
 type Queued = { topic_id: string; level: number; seed: number; answer: string; at: string };
 
-const read = <T,>(key: string, fallback: T): T => {
+const read = <T,>(key: string | null, fallback: T): T => {
+  if (!key) return fallback;
   try {
     const v = Storage.getItemSync(key);
     return v ? (JSON.parse(v) as T) : fallback;
@@ -23,7 +50,7 @@ const read = <T,>(key: string, fallback: T): T => {
     return fallback;
   }
 };
-const write = (key: string, v: unknown) => Storage.setItemSync(key, JSON.stringify(v));
+const write = (key: string | null, v: unknown) => void (key && Storage.setItemSync(key, JSON.stringify(v)));
 
 export const getPack = (sid: number) => read<Pack | null>(PACK(sid), null);
 export const pendingCount = (sid: number) => read<Queued[]>(QUEUE(sid), []).length;
@@ -32,18 +59,32 @@ export const packTaskCount = (sid: number) => Object.values(getPack(sid)?.tasks 
 // Prenese nov paket, če je stari starejši od dneva ali za drugo pot.
 export async function refreshPack(sid: number, pathKey?: string | null, force = false) {
   const old = getPack(sid);
-  if (!force && old && (!pathKey || old.path === pathKey) && Date.now() - Date.parse(old.created) < DAY) return old;
+  // Paket iz različice pred PR 786 (enota brez hasUnit) je zastarel tudi, če je mlajši od dneva.
+  if (!force && old && (!pathKey || old.path === pathKey) && Date.now() - Date.parse(old.created) < DAY && !isStalePack(old)) return old;
+  const g = gen;
   const pack = await api<Pack>(`/api/students/${sid}/offline-pack${pathKey ? `?path=${encodeURIComponent(pathKey)}` : ""}`);
-  write(PACK(sid), pack);
+  if (g === gen) write(PACK(sid), pack);
   return pack;
 }
 
 export async function syncOffline(sid: number) {
   const queue = read<Queued[]>(QUEUE(sid), []);
   if (!queue.length) return null;
+  const g = gen;
   const out = await api<{ synced: number; correct: number; xp: any }>(`/api/students/${sid}/offline-sync`, { body: { results: queue } });
-  write(QUEUE(sid), read<Queued[]>(QUEUE(sid), []).slice(queue.length));
+  if (g === gen) write(QUEUE(sid), read<Queued[]>(QUEUE(sid), []).slice(queue.length));
   return out;
+}
+
+// Pred odjavo: neposlani odgovori vseh profilov računa gredo na strežnik (kot public/account.js sendQueued),
+// največ 6 s, napaka odjave ne ustavi (nato se pobrišejo s telefona).
+export async function sendAllQueued() {
+  const ids = (owner?.students || []).map((s) => s.id).filter((id) => pendingCount(id) > 0);
+  if (!ids.length) return;
+  const send = (async () => {
+    for (const id of ids) await syncOffline(id).catch(() => null);
+  })();
+  await Promise.race([send, new Promise((r) => setTimeout(r, 6000))]);
 }
 
 // Naloga iz paketa (po vrsti, da se ne ponavljajo; ko zmanjka, naključna).
@@ -56,7 +97,7 @@ export function offlineNext(sid: number, topicId: string) {
   const done = new Set(read<Queued[]>(QUEUE(sid), []).map((r) => `${r.topic_id}:${r.seed}`));
   const item = list.find((x) => !done.has(`${topicId}:${x.seed}`)) || list[Math.floor(Math.random() * list.length)];
   current = { ...item, topic_id: topicId, attempts: 0, id: `off-${item.seed}` };
-  return { task: { id: current.id, mode: "practice", ...item.task }, state: { level: item.level, streak: 0 }, offline: true };
+  return { task: { id: current.id, mode: "practice", ...offlineTask(item.task, item.answer, checkAnswer) }, state: { level: item.level, streak: 0 }, offline: true };
 }
 
 export function offlineHint(step: number) {
@@ -73,7 +114,7 @@ export function offlineHint(step: number) {
 
 export function offlineAnswer(sid: number, taskId: string, answer: string) {
   if (!current || current.id !== taskId) return null;
-  const res: any = checkAnswer(current.answer, answer);
+  const res: any = checkAnswer(current.answer, answer, { convert: true, text: current.task?.text });
   const out = { kind: res.kind, message: res.message || null, code: res.code, params: res.params || {}, offline: true };
   if (["format", "unit", "simplify"].includes(res.kind)) return { ...out, retry: true };
   current.attempts += 1;

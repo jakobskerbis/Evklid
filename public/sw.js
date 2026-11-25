@@ -106,7 +106,7 @@ self.addEventListener("message", (e) => {
   e.waitUntil(done);
 });
 
-// Stran ob prvem obisku pošlje seznam že naloženih datotek, da jih shranimo za brez povezave.
+// Stran ob prvem obisku pošlje seznam že naloženih datotek (po kosih), da jih shranimo za brez povezave; »ok« ob koncu kosa.
 self.addEventListener("message", (e) => {
   if (e.data?.type !== "precache" || !Array.isArray(e.data.urls)) return;
   const same = e.data.urls.filter((u) => {
@@ -124,10 +124,15 @@ self.addEventListener("message", (e) => {
         const cache = new URL(u, self.location.origin).pathname.startsWith("/vendor/") ? await caches.open(VENDOR) : statics;
         const hit = await cache.match(u);
         if (hit && (cache !== statics || fresh(hit))) return;
-        const res = await fetch(u).catch(() => null);
+        // Stran je datoteko pravkar prenesla: kopija iz predpomnilnika brskalnika (force-cache) brez ponovnega klica
+        // strežnika. Prej je šel vsak naslov še enkrat na strežnik (ob prvem obisku ~190 zahtev; meritev 21. 11. 2026).
+        // Različico pove shranjena glava X-Evklid-App (put, fresh); česar brskalnik nima, pride z omrežja kot prej.
+        // Samo datoteke aplikacije: vstopno stran in drug HTML vedno preveri strežnik (stara kopija iz predpomnilnika
+        // brskalnika bi lahko prepisala kopijo vstopne strani; pregled PR #919).
+        const res = await fetch(u, APP_FILE.test(new URL(u, self.location.origin).pathname) ? { cache: "force-cache" } : undefined).catch(() => null);
         if (res?.ok) await put(cache, u, res);
       }),
-    ),
+    ).finally(() => e.ports?.[0]?.postMessage("ok")), // stran pošilja seznam po kosih (public/app.js predpomni)
   );
 });
 
@@ -243,9 +248,9 @@ function usable(hit, entry, page, cacheName, nav = false) {
 }
 // entry: vstopna stran (shranjena pod ENTRY, ne glede na poizvedbo); clientId: stran, ki je zahtevala datoteko;
 // onPage(v): različica vstopne strani, ki je bila postrežena (z omrežja ali shranjena kopija).
-async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPage = null } = {}) {
+async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPage = null, key: fileKey = null } = {}) {
   const cache = await caches.open(cacheName);
-  const key = entry ? ENTRY : req;
+  const key = entry ? ENTRY : fileKey || req;
   const net = fetch(req).then((res) => {
     if (tunnelDown(res)) throw new Error("tunnel down");
     const v = cacheName === STATIC ? noteVersion(res) : null;
@@ -278,13 +283,22 @@ async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPa
   }
 }
 
+// Nov poskus uvoza po napaki (?r=, public/app.js, games/subjects/index.js) je ista datoteka: shranimo in iščemo jo
+// brez r, da jo naslednji zagon brez povezave (uvoz brez ?r=) najde v predpomnilniku.
+function appFileKey(req) {
+  const u = new URL(req.url);
+  if (!u.searchParams.has("r")) return req;
+  u.searchParams.delete("r");
+  return u.href;
+}
 // Datoteka aplikacije: kopija iste različice takoj (brez omrežja), sicer najprej omrežje.
 async function appFile(req, clientId) {
   const cache = await caches.open(STATIC);
-  const hit = await cache.match(req);
+  const key = appFileKey(req);
+  const hit = await cache.match(key);
   const page = hit ? await pageApp(clientId) : "";
   if (fresh(hit, page)) return hit;
-  return networkFirst(req, STATIC, TIMEOUT.static, { page });
+  return networkFirst(req, STATIC, TIMEOUT.static, { page, key });
 }
 
 async function cacheFirst(req) {

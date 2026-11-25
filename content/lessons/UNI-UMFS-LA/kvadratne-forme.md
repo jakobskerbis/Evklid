@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -217,7 +217,7 @@ Natančno navedi spektralni izrek za realne simetrične matrike. Dokaži, da so 
 2. Realnost: za $Av = \lambda v$, $v \ne 0$, je $\bar v^T A v$ realno, ker je $\overline{\bar v^T A v} = v^T A \bar v = (v^T A \bar v)^T = \bar v^T A^T v = \bar v^T A v$. Iz $\bar v^T A v = \lambda\, \bar v^T v$ in $\bar v^T v > 0$ sledi $\lambda \in \mathbb{R}$.
 3. Pravokotnost: $\lambda\, v^T w = (Av)^T w = v^T A w = \mu\, v^T w$, zato $(\lambda - \mu) v^T w = 0$; pri $\lambda \ne \mu$ je $v^T w = 0$.
 4. Definitnost (⇒): če je $A$ pozitivno definitna in $Av = \lambda v$, $v \ne 0$, je $0 < v^T A v = \lambda\, v^T v$, zato $\lambda > 0$.
-5. Definitnost (⇐): z $x = Qu$ je $q = \sum \lambda_i u_i^2$. Za $x \ne 0$ je tudi $u = Q^T x \ne 0$, zato je vsaj en $u_i \ne 0$ in vsota pozitivnih členov je pozitivna.
+5. Definitnost (⇐): z $x = Qu$ je $q = \sum \lambda_i u_i^2$. Za $x \ne 0$ je tudi $u = Q^T x \ne 0$, zato je vsaj en $u_i \ne 0$; vsota nenegativnih členov, od katerih je vsaj eden pozitiven, je pozitivna.
 6. Odgovor: dokazano; ključna sta simetričnost ($A^T = A$ v obeh dokazih) in ortogonalnost $Q$, ki ohrani neničelnost vektorja.
 
 ## Drugače: Z analogijo
@@ -302,7 +302,7 @@ C | kovariančna matrika vetra | | m^2/s^2
 \sigma | standardna deviacija | \sigma = \sqrt{\lambda} | m/s
 c | vrednost nivojnice ali ploskve | |
 J | matrika samih enic | |
-v, w | lastna vektorja | |
+v, w | lastna vektorja | | | v Primeru 2 sta $u$ in $v$ komponenti vetra
 \mu | druga lastna vrednost | |
 a | parameter forme | |
 :::

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -31,21 +31,66 @@ Glavna razlika do kovalentne: ionska vez **ni usmerjena**. Ion privlači vse nas
 
 **4. Druga razlika: elektronov je malo, atomov veliko → kovinska vez.** V bakru so vsi atomi enaki in imajo malo valenčnih elektronov. Elektronov je premalo, da bi atom z vsakim sosedom sestavil svoj par, zato atomi valenčne elektrone oddajo *vsem skupaj*. Ostanejo pozitivna jedra z notranjimi elektroni (**ionski ostanki**), med njimi pa se prosto giblje **elektronski oblak** (»elektronsko morje«). Oblak drži ostanke skupaj. To je **kovinska vez**; tudi ta ni usmerjena.
 
-Slika v besedah, tri vrste vezi drugo ob drugi:
+Na sliki so tri vrste vezi druga ob drugi:
 
-```
-kovalentna     ionska          kovinska
- A:A:A        + - + -         + + + +
- : : :        - + - +          ~~~~~~~   (oblak e⁻)
- A:A:A        + - + -         + + + +
-(par med       (sosedi so      (elektroni
- dvema)         nasprotni)      so skupni)
-```
+:::risba skica
+opis: Tri vrste vezi druga ob drugi, vsaka z dvema vrstama po tri delce. Levo kovalentna vez: atomi A so s sosedi povezani s črtami, vsaka črta je skupni elektronski par med dvema atomoma. V sredini ionska vez: ioni plus in minus se izmenjujejo kot polja na šahovnici, vsak ion ima za sosede nasprotno nabite ione. Desno kovinska vez: sami pozitivni ionski ostanki v okvirju, ki predstavlja skupni oblak prostih elektronov.
+območje: 0; 0 .. 15; 5,6
+pravokotnik: 10,3; 1,5 .. 14,7; 5,3 | siva ozadje
+črta: 1,5; 4,5 -> 2; 4,5
+črta: 3; 4,5 -> 3,5; 4,5
+črta: 1,5; 2,3 -> 2; 2,3
+črta: 3; 2,3 -> 3,5; 2,3
+črta: 1; 4 -> 1; 2,8
+črta: 2,5; 4 -> 2,5; 2,8
+črta: 4; 4 -> 4; 2,8
+krog: 1; 4,5 | 0,5
+napis: 1; 4,5 | A | sredina
+krog: 2,5; 4,5 | 0,5
+napis: 2,5; 4,5 | A | sredina
+krog: 4; 4,5 | 0,5
+napis: 4; 4,5 | A | sredina
+krog: 1; 2,3 | 0,5
+napis: 1; 2,3 | A | sredina
+krog: 2,5; 2,3 | 0,5
+napis: 2,5; 2,3 | A | sredina
+krog: 4; 2,3 | 0,5
+napis: 4; 2,3 | A | sredina
+krog: 6; 4,5 | 0,5 | modra
+napis: 6; 4,5 | + | sredina | modra
+krog: 7,5; 4,5 | 0,5 | oranžna
+napis: 7,5; 4,5 | − | sredina | oranžna
+krog: 9; 4,5 | 0,5 | modra
+napis: 9; 4,5 | + | sredina | modra
+krog: 6; 2,3 | 0,5 | oranžna
+napis: 6; 2,3 | − | sredina | oranžna
+krog: 7,5; 2,3 | 0,5 | modra
+napis: 7,5; 2,3 | + | sredina | modra
+krog: 9; 2,3 | 0,5 | oranžna
+napis: 9; 2,3 | − | sredina | oranžna
+krog: 11; 4,5 | 0,5 | modra
+napis: 11; 4,5 | + | sredina | modra
+krog: 12,5; 4,5 | 0,5 | modra
+napis: 12,5; 4,5 | + | sredina | modra
+krog: 14; 4,5 | 0,5 | modra
+napis: 14; 4,5 | + | sredina | modra
+krog: 11; 2,3 | 0,5 | modra
+napis: 11; 2,3 | + | sredina | modra
+krog: 12,5; 2,3 | 0,5 | modra
+napis: 12,5; 2,3 | + | sredina | modra
+krog: 14; 2,3 | 0,5 | modra
+napis: 14; 2,3 | + | sredina | modra
+napis: 12,5; 3,4 | oblak e⁻ | sredina
+napis: 2,5; 0,6 | kovalentna | sredina
+napis: 7,5; 0,6 | ionska | sredina
+napis: 12,5; 0,6 | kovinska | sredina
+podnapis: Kovalentna: par med dvema atomoma. Ionska: sosedi so nasprotni. Kovinska: elektroni so skupni.
+:::
 
 :::premisli
 Kovalentna vez je pri diamantu zelo močna. Napovej: ali je diamant zaradi tega tudi težko zlomiti z udarcem kladiva?
 ---
-Ne. Diamant je zelo trd (težko ga razi), a krhek. Usmerjene vezi ne dovolijo, da bi plast atomov zdrsnila na novo mesto. Ob prevelikem udarcu se vezi pretrgajo naenkrat in kristal poči. Trdota in žilavost nista isto.
+Ne. Diamant je zelo trd (težko ga je raziti), a krhek. Usmerjene vezi ne dovolijo, da bi plast atomov zdrsnila na novo mesto. Ob prevelikem udarcu se vezi pretrgajo naenkrat in kristal poči. Trdota in žilavost nista isto.
 :::
 
 **5. Iz vezi do lastnosti.** Lastnosti sledijo iz dveh vprašanj: *ali so elektroni prosti* in *ali je vez usmerjena*.
@@ -54,9 +99,9 @@ Ne. Diamant je zelo trd (težko ga razi), a krhek. Usmerjene vezi ne dovolijo, d
 |---|---|---|---|
 | kovinska | skupni, prosti | Cu, Al, Fe | prevodna, kovna, sijajna |
 | ionska | preneseni, vezani na ione | NaCl, MgO | izolator, trda, krhka |
-| kovalentna | v parih med sosedoma | diamant, Si, $\mathrm{SiO_2}$ | izolator, trda, krhka |
+| kovalentna | v parih med sosedoma | diamant, Si, $\mathrm{SiO_2}$ | izolator (Si polprevodnik), trda, krhka |
 
-Zakaj je kovina kovna? Ko plast ionskih ostankov zdrsne za en atom, je okolica enaka kot prej: oblak se preprosto prerazporedi, vez ostane. Pri ionskem kristalu pa po zdrsu za pol razdalje pridejo $\mathrm{Na^+}$ nad $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ nad $\mathrm{Cl^-}$. Enaki naboji se odbijejo, kristal se razkolje po ravni ploskvi.
+Zakaj je kovina kovna? Ko plast ionskih ostankov zdrsne za en atom, je okolica enaka kot prej: oblak se preprosto prerazporedi, vez ostane. Pri ionskem kristalu pa po zdrsu za eno razdaljo med sosednjima ionoma pridejo $\mathrm{Na^+}$ nad $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ nad $\mathrm{Cl^-}$. Enaki naboji se odbijejo, kristal se razkolje po ravni ploskvi.
 
 :::premisli
 Zakaj trden NaCl ne prevaja toka, čeprav je sestavljen iz nabitih ionov? Kdaj ga začne prevajati?
@@ -157,7 +202,7 @@ $p_\mathrm{i} = 1 - e^{-0{,}25\,(\Delta\chi)^2}$
 :::premisli
 Koliko je $p_\mathrm{i}$ in kaj to pomeni za brusni kamen?
 ---
-$e^{-0{,}1056} \approx 0{,}900$, zato $p_\mathrm{i} \approx 0{,}10$, torej okoli $10\,\%$. Vez je pretežno kovalentna in usmerjena: SiC je zelo trd (zato brusi jeklo), a krhek, zato plošča ob udarcu poči in jo moramo uporabljati z zaščitnim pokrovom.
+$e^{-0{,}1056} \approx 0{,}900$, zato $p_\mathrm{i} \approx 0{,}10$, torej okoli $10\,\%$. Vez je pretežno kovalentna in usmerjena: SiC je zelo trd (zato brusi kamen in barvne kovine), a krhek, zato plošča ob udarcu poči in jo moramo uporabljati z zaščitnim pokrovom.
 :::
 
 ## Pogoste napake
@@ -178,6 +223,58 @@ $e^{-0{,}1056} \approx 0{,}900$, zato $p_\mathrm{i} \approx 0{,}10$, torej okoli
 - Močnejša vez → višje tališče: $F = \dfrac{k z_1 z_2 e^2}{r^2}$. Delež ionskega značaja: $p_\mathrm{i} = 1 - e^{-0{,}25(\Delta\chi)^2}$.
 - Polimeri: kovalentno v verigi, šibke sekundarne vezi med verigami → nizko mehčališče.
 
+## Za izpit
+
+Znati moraš povedati:
+- definiciji valenčnih elektronov in elektronegativnosti $\chi$;
+- kako nastanejo kovalentna, ionska in kovinska vez, katera je usmerjena in kje so pri vsaki elektroni;
+- zakaj je kovina kovna in prevodna, ionski in kovalentni kristal pa krhek izolator (razlaga z zdrsom plasti in s prostimi elektroni);
+- Coulombov zakon $F = \dfrac{k z_1 z_2 e^2}{r^2}$ in kako naboj ter razdalja ionov vplivata na tališče;
+- oceno deleža ionskega značaja $p_\mathrm{i} = 1 - e^{-0{,}25(\Delta\chi)^2}$ in njen pomen pri keramikah;
+- zakaj se polimer zmehča pri nizki temperaturi, čeprav so v verigi kovalentne vezi.
+
+### Naloga 1
+
+Žgano apno CaO ima enako kristalno zgradbo kot NaCl in MgO. Razdalja med središčema sosednjih ionov $\mathrm{Ca^{2+}}$ in $\mathrm{O^{2-}}$ je $0{,}240\,\mathrm{nm}$, elektronegativnost kalcija je $1{,}00$, kisika $3{,}44$. Podatki za primerjavo: $r_\mathrm{NaCl} = 0{,}282\,\mathrm{nm}$, $r_\mathrm{MgO} = 0{,}211\,\mathrm{nm}$, $e = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$, $k = 8{,}99 \cdot 10^9\,\mathrm{N\,m^2/C^2}$. (a) Izračunaj privlačno silo med sosednjima ionoma v CaO. (b) Kolikokrat je ta sila večja kot v NaCl in kolikokrat manjša kot v MgO? Razvrsti snovi po pričakovanem tališču. (c) Izračunaj delež ionskega značaja vezi Ca–O in ga primerjaj z MgO ($68\,\%$). Ali bolj ionska vez pomeni višje tališče? (d) Pri kateri razliki elektronegativnosti je vez natanko pol ionska?
+
+**Rešitev:**
+
+1. Razdalja v metrih: $r = 2{,}40 \cdot 10^{-10}\,\mathrm{m}$, $r^2 = 5{,}76 \cdot 10^{-20}\,\mathrm{m^2}$.
+2. Števec z nabojema $z_1 = z_2 = 2$: $k \cdot 2 \cdot 2 \cdot e^2 = 8{,}99 \cdot 10^9 \cdot 4 \cdot (1{,}602 \cdot 10^{-19})^2 = 9{,}229 \cdot 10^{-28}\,\mathrm{N\,m^2}$.
+3. Sila: $F_\mathrm{CaO} = 9{,}229 \cdot 10^{-28} / 5{,}76 \cdot 10^{-20} \approx 1{,}60 \cdot 10^{-8}\,\mathrm{N}$.
+4. Primerjava z NaCl ($k$ in $e$ se okrajšata): $\dfrac{F_\mathrm{CaO}}{F_\mathrm{NaCl}} = 4 \cdot \left(\dfrac{0{,}282}{0{,}240}\right)^2 = 4 \cdot 1{,}381 \approx 5{,}52$.
+5. Primerjava z MgO (naboji so enaki, ostane razmerje razdalj): $\dfrac{F_\mathrm{MgO}}{F_\mathrm{CaO}} = \left(\dfrac{0{,}240}{0{,}211}\right)^2 \approx 1{,}29$.
+6. Tališča si sledijo kot sile: NaCl ($801\,^\circ\mathrm{C}$), nato CaO (okoli $2600\,^\circ\mathrm{C}$), nato MgO (okoli $2800\,^\circ\mathrm{C}$).
+7. Ionski značaj: $\Delta\chi = 3{,}44 - 1{,}00 = 2{,}44$; $2{,}44^2 = 5{,}954$; $0{,}25 \cdot 5{,}954 = 1{,}488$; $e^{-1{,}488} = 0{,}226$; zato $p_\mathrm{i} = 1 - 0{,}226 = 0{,}774$.
+8. Vez Ca–O je $77\,\%$ ionska, bolj kot Mg–O ($68\,\%$), tališče CaO pa je nižje. Delež ionskega značaja pove, kako so elektroni razdeljeni, ne kako močna je vez; moč določata naboj in razdalja ionov.
+9. Pol ionska vez: $e^{-0{,}25(\Delta\chi)^2} = 0{,}5$, torej $(\Delta\chi)^2 = 4 \ln 2 = 2{,}773$ in $\Delta\chi \approx 1{,}67$.
+10. Odgovor: $F_\mathrm{CaO} \approx 1{,}6 \cdot 10^{-8}\,\mathrm{N}$, to je $5{,}5$-krat več kot v NaCl in $1{,}3$-krat manj kot v MgO; $p_\mathrm{i} \approx 77\,\%$; vez je pol ionska pri $\Delta\chi \approx 1{,}67$.
+
+### Naloga 2
+
+Natančno navedi, kaj se zgodi z vezmi, ko v kristalu ena plast atomov zdrsne ob drugi za eno razdaljo med sosedoma, in sicer v bakru, v NaCl in v diamantu. Utemelji, zakaj je baker koven, druga dva pa krhka, in zakaj iz moči vezi ne moreš sklepati na kovnost.
+
+**Rešitev:**
+
+1. Baker (kovinska vez): ionski ostanki so vsi enaki, drži jih skupni elektronski oblak, vez ni usmerjena. Po zdrsu ima vsak ostanek enake sosede kot prej, oblak se prerazporedi in vez ostane. Kristal spremeni obliko, ne da bi počil: kovnost.
+2. NaCl (ionska vez): vez ni usmerjena, a soseda morata biti nasprotno nabita. Po zdrsu za eno razdaljo med ionoma pride $\mathrm{Na^+}$ nad $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ nad $\mathrm{Cl^-}$. Privlak se spremeni v odboj, kristal se razkolje po ravni ploskvi.
+3. Diamant (kovalentna vez): vsak elektronski par veže točno določena atoma v točno določeni smeri. Zdrs zahteva, da se vse vezi med plastema pretrgajo hkrati; prostih elektronov, ki bi atome medtem držali, ni. Kristal poči.
+4. Moč vezi določa tališče in togost. Diamant ima močnejše vezi kot baker, a je krhek; baker ima šibkejše vezi, a je koven.
+5. Sklep: za kovnost je odločilno, ali je vez neusmerjena in ali je okolica atoma po zdrsu enaka kot prej. Oba pogoja izpolni samo kovinska vez.
+
+### Naloga 3
+
+Polietilen in diamant imata med ogljikovimi atomi kovalentne vezi. Utemelji, zakaj se polietilenska cev zmehča že malo nad $100\,^\circ\mathrm{C}$, diamant pa brez dostopa zraka ostane trden še pri $1000\,^\circ\mathrm{C}$, in zakaj sta oba električna izolatorja.
+
+**Rešitev:**
+
+1. V diamantu je vsak ogljikov atom s štirimi kovalentnimi vezmi povezan s štirimi sosedi; mreža sega v vse tri smeri, ves kristal je ena sama velikanska molekula.
+2. V polietilenu kovalentne vezi povezujejo atome samo vzdolž verige. Sosednje verige držijo skupaj šibke sekundarne (van der Waalsove) vezi.
+3. Pri segrevanju najprej popustijo najšibkejše vezi. V polietilenu so to vezi med verigami: verige začnejo drseti druga ob drugi in snov se zmehča, kovalentne vezi v verigah pa ostanejo cele.
+4. V diamantu šibkih vezi ni. Da se atomi razmaknejo, se morajo pretrgati kovalentne vezi, za kar je potrebna zelo visoka temperatura.
+5. V obeh snoveh so valenčni elektroni vezani v pare med sosednjima atomoma, prostih elektronov ni, zato nobena ne prevaja toka.
+6. Sklep: lastnosti določa najšibkejša vez, ki se mora pretrgati (mehčanje), in gibljivost elektronov (prevodnost), ne najmočnejša vez v snovi.
+
 ## Drugače: Na sliki
 
 Nariši tri kvadratne mreže s po devetimi krožci.
@@ -188,15 +285,16 @@ Nariši tri kvadratne mreže s po devetimi krožci.
 
 Iz treh slik prebereš skoraj vse: kje so prosti elektroni (prevodnost) in kaj se zgodi ob zdrsu (kovnost ali krhkost).
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Pomisli na tri načine, kako se ljudje držijo skupaj na gradbišču.
+V strojništvu vrsta vezi odloča, iz česa bo kateri del.
 
-- **Kovalentna vez** je kot dva delavca, ki skupaj neseta eno bruno: drži ju skupni predmet, in to samo njiju, v točno določeni smeri. Če eden stopi vstran, bruno pade.
-- **Ionska vez** je kot magnetki na hladilniku: nasprotna pola se privlačita z vseh strani. Če pa zamakneš vrsto, se srečata enaka pola in odskočita.
-- **Kovinska vez** je kot ekipa, ki si podaja orodje iz skupnega zaboja: vsak lahko seže po kateremkoli orodju. Če se delavec premakne na drugo mesto, je zaboj še vedno v dosegu, ekipa drži skupaj.
+- **Rezalno orodje.** Stružna ploščica iz karbidne trdine ima trda, krhka zrna volframovega karbida, zlepljena s $6$ do $12\,\%$ kobalta. Kovinska vez v kobaltu dopušča zdrs in ustavi razpoke, zato ploščica prenese udarce pri prekinjenem rezu. Ploščica iz keramike $\mathrm{Al_2O_3}$ zdrži višjo temperaturo rezanja, a ob udarcu poči.
+- **Ležaj vretena.** Kroglice iz silicijevega nitrida $\mathrm{Si_3N_4}$ (pretežno kovalentna vez) so trde, imajo gostoto $3{,}2\,\mathrm{g/cm^3}$ namesto $7{,}8\,\mathrm{g/cm^3}$ pri jeklu in ne prevajajo toka, zato skozi ležaj elektromotorja ne tečejo ležajni tokovi.
+- **Cevni grelec.** Uporovna žica je zasuta s prahom MgO. Ionska vez nima prostih elektronov, zato prah izolira žico od plašča; tališče okoli $2800\,^\circ\mathrm{C}$ zdrži razžarjeno žico.
+- **Drsni ležaj in tesnilo.** Poliamid je trajno uporaben le do okoli $100\,^\circ\mathrm{C}$, PTFE do $260\,^\circ\mathrm{C}$: popustijo sekundarne vezi med verigami.
 
-Zato kovač kuje železo, keramičar pa ploščico raje reže z diamantnim kolescem, kot da bi jo upogibal.
+Konstruktor zato pri izbiri najprej vpraša, ali del potrebuje proste elektrone, zdrs ali trdoto, in šele nato išče material.
 
 ## Preveri se
 

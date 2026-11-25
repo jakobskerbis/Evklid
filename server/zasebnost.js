@@ -1,9 +1,11 @@
 // Varstvo podatkov učencev (docs/varnost-podatkov.md): šifriranje obstoječih vrstic ob zagonu,
 // roki hrambe in dnevno čiščenje. Šifriranje polj: server/crypto-polje.js.
-import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warnIfNoKey, SEALED, encryptionStats } from "./crypto-polje.js";
+import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, blindIndex, warnIfNoKey, SEALED, encryptionStats, openFlag } from "./crypto-polje.js";
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
+import { pocistiStare } from "./kopije.js";
+import { eraseAccount } from "./accounts/izbris.js";
 
 // Šifrirani stolpci (SEALED) in štetje neberljivih (encryptionStats) sta v crypto-polje.js: rabi ju tudi lahka nit
 // za nočni preizkus kopij (server/kopije-preizkus.js), ki ne sme naložiti tega modula in vsega, kar ta uvaža.
@@ -18,10 +20,26 @@ export const RETENTION = {
   auditDays: 365,
   // Dnevnik poslanih e-poštnih sporočil (samo za preprečevanje dvojnega pošiljanja): eno leto.
   emailLogDays: 365,
+  // Zapis obvestila o neaktivnem računu (kind »neaktivni«): izbris je 12 mesecev po obvestilu, zato dlje kot ostali.
+  inactiveLogDays: 760,
   // Dnevnik obvestil na telefon (enako): 90 dni.
   pushLogDays: 90,
-  // Račun, ki e-naslova ni potrdil v toliko dneh in nima profilov, plačil ali seje, se izbriše.
+  // Nepotrjen račun brez plačil: brez profilov in seje toliko dni po registraciji, s profili toliko dni brez dejavnosti.
   unverifiedDays: 30,
+  // Odpiranje delov aplikacije (točka B2, server/odpiranje-delov.js MAX_DNI): po toliko dneh brez odprtja.
+  odpiranjeDni: 120,
+  // Predpomnjeni odgovori inštruktorja se uporabijo 30 dni (app.js), nato izbrišejo (docs/izbris-izvoz.md, najdba 4).
+  answerCacheDays: 30,
+  // Naročila šol (school_orders: ime, e-naslov in telefon kontaktne osebe) od zadnje spremembe (updated_at).
+  // j 2026-11-16: brez pogodbe 2 leti po zadnjem stiku, sklenjeno 10 let (računovodska listina).
+  schoolOrderOpenDays: 730,
+  schoolOrderWonDays: 3653,
+  // Soglasje plačnika ob nakupu (billing_consents, z e-naslovom plačnika) po izbrisu računa: dokaz soglasja.
+  // j 2026-11-16: 5 let po nakupu (splošni zastaralni rok, OZ 346).
+  billingConsentDays: 1826,
+  // Oznake dogodkov (events.flag razen »none«; stiska, nevarna vsebina, vrivanje, tema zunaj predmetov, fotografija;
+  // j 18. 11. 2026, pregled #846): 90 dni od dogodka. Dogodek učenja ostane, oznaka postane »none« (clearOldFlags).
+  flagDays: 90,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -41,18 +59,41 @@ export function withoutImages(content, text) {
 // Zašifrira nešifrirane vrstice in znova zašifrira tiste s starim ključem. Idempotentno, ena transakcija na paket.
 // Neberljive vrstice (neznan ključ) pusti pri miru. Vrne { [tabela]: število spremenjenih }.
 const BATCH_BYTES = 8 * 1024 * 1024;
+// Med selitvijo secure_delete (SQLite): staro nešifrirano besedilo (tudi oznaka »distress«) ne ostane v prostem
+// prostoru strani baze. Po koncu nazaj na prejšnjo nastavitev.
 export function* encryptionSteps(db, batch = 200) {
+  if (!currentKeyId()) return;
+  const restore = secureDelete(db);
+  try {
+    yield* sealSteps(db, batch);
+  } finally {
+    restore();
+  }
+}
+function secureDelete(db) {
+  let prev = null;
+  try {
+    prev = db.prepare("PRAGMA secure_delete").get()?.secure_delete ?? null;
+    db.exec("PRAGMA secure_delete = ON");
+  } catch {}
+  return () => {
+    try {
+      if (prev !== null && db.isOpen !== false) db.exec(`PRAGMA secure_delete = ${Number(prev) ? "ON" : "OFF"}`);
+    } catch {}
+  };
+}
+function* sealSteps(db, batch) {
   const cur = currentKeyId();
-  if (!cur) return;
   const fresh = `enc1:${cur}:%`;
   for (const t of SEALED) {
     if (!hasTable(db, t.table)) continue;
     const cols = t.cols.filter((c) => hasCol(db, t.table, c));
     const need = cols.map((c) => `(${c} IS NOT NULL AND ${c} NOT LIKE '${fresh}')`);
     if (t.norm) need.push(`norm NOT LIKE 'h1:${cur}:%'`);
+    const only = t.where ? ` AND (${t.where})` : "";
     // Najprej samo rowid, vrstice nato ena po ena: sporočila s fotografijo imajo do 7 MB, 200 naenkrat bi na
     // strežniku s 512 MB pomnilnika lahko sprožilo OOM. Paket se konča tudi po ~8 MB besedila (zanka dogodkov).
-    const pick = db.prepare(`SELECT rowid AS rid FROM ${t.table} WHERE rowid > ? AND (${need.join(" OR ")}) ORDER BY rowid LIMIT ?`);
+    const pick = db.prepare(`SELECT rowid AS rid FROM ${t.table} WHERE rowid > ? AND (${need.join(" OR ")})${only} ORDER BY rowid LIMIT ?`);
     const one = db.prepare(`SELECT ${cols.join(", ")}${t.norm ? ", norm" : ""} FROM ${t.table} WHERE rowid = ?`);
     const upd = db.prepare(`UPDATE ${t.table} SET ${cols.map((c) => `${c} = ?`).join(", ")}${t.norm ? ", norm = ?" : ""} WHERE rowid = ?`);
     let last = 0;
@@ -70,7 +111,11 @@ export function* encryptionSteps(db, batch = 200) {
           for (const c of cols) bytes += r[c]?.length || 0;
           const plain = cols.map((c) => (r[c] === null ? null : unseal(r[c], null)));
           if (plain.some((v, i) => v === null && r[cols[i]] !== null)) continue; // neberljivo: pusti
-          const vals = plain.map((v) => (v === null ? null : seal(v)));
+          const vals = plain.map((v) => (v === null ? null : seal(t.pad ? String(v).padEnd(t.pad) : v)));
+          if (t.clearIf && plain.some((v) => typeof v === "string" && v.trim() === t.clearIf.value)) {
+            const have = t.clearIf.cols.filter((c) => hasCol(db, t.table, c));
+            if (have.length) db.prepare(`UPDATE ${t.table} SET ${have.map((c) => `${c} = NULL`).join(", ")} WHERE rowid = ?`).run(r.rid);
+          }
           if (!t.norm) {
             upd.run(...vals, r.rid);
           } else {
@@ -88,7 +133,8 @@ export function* encryptionSteps(db, batch = 200) {
         db.exec("ROLLBACK");
         throw e;
       }
-      yield { table: t.table, changed };
+      // label: drugi vnos za isto tabelo (events.pregled) se šteje posebej, ne prepiše števila prvega.
+      yield { table: t.label || t.table, changed };
     }
   }
 }
@@ -99,6 +145,51 @@ export function migrateEncryption(db, batch = 200) {
   return out;
 }
 
+
+// Oznake dogodkov (events.flag razen »none«: stiska, nevarna vsebina, vrivanje, tema zunaj predmetov, fotografija),
+// starejše od RETENTION.flagDays → »none«; dogodek učenja ostane. Brez ključa nič (napačna nastavitev ne sme brisati na
+// slepo). Neberljive oznake (manjka stari ključ) ostanejo: niso nikoli obravnavane kot stiska, le preštete v dnevniku.
+// Idempotentno; secure_delete, da staro besedilo ne ostane v prostih straneh.
+export function clearOldFlags(db, before, { log = console } = {}) {
+  if (!hasTable(db, "events") || !currentKeyId()) return 0;
+  const ids = [];
+  let unreadable = 0;
+  for (const r of db.prepare("SELECT id, flag FROM events WHERE flag <> 'none' AND created_at < ?").iterate(before)) {
+    if (openFlag(r.flag) === null) unreadable++;
+    else ids.push(r.id);
+  }
+  if (unreadable) log.warn?.(`[evklid] neberljive oznake dogodkov, starejše od roka: ${unreadable} (manjka ključ v EVKLID_DATA_KEYS_OLD)`);
+  if (!ids.length) return 0;
+  // Z oznako gre tudi njen pregled (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js).
+  const upd = db.prepare(`UPDATE events SET flag = 'none'${hasCol(db, "events", "pregled") ? ", pregled = NULL" : ""} WHERE id = ?`);
+  const restore = secureDelete(db);
+  try {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      for (const id of ids) upd.run(id);
+      db.exec("COMMIT");
+    } catch (e) {
+      db.exec("ROLLBACK");
+      throw e;
+    }
+  } finally {
+    restore();
+  }
+  return ids.length;
+}
+
+// Predpomnjeni odgovori z oznako stiske v vrstici META (<<META … flag=distress …>>). secure_delete: besedilo ne ostane
+// v prostih straneh. Odgovorov z flag=none, ob katerih je stisko našel le lokalni zaznavalnik ali pregled B, iz
+// besedila ni mogoče prepoznati; ti se izbrišejo z rokom predpomnilnika (30 dni).
+export function purgeCachedDistress(db) {
+  if (!hasTable(db, "answer_cache")) return 0;
+  const restore = secureDelete(db);
+  try {
+    return Number(db.prepare("DELETE FROM answer_cache WHERE text LIKE '%<<META%flag=distress%'").run().changes);
+  } finally {
+    restore();
+  }
+}
 
 // --- dnevno čiščenje ---
 // Hramba zapisa neujemajočega se plačila Stripa (dni).
@@ -161,10 +252,42 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   if (hasTable(db, "parent_sessions")) out.sessions = Number(db.prepare("DELETE FROM parent_sessions WHERE expires_at < ?").run(nowIso).changes);
   if (hasTable(db, "profile_unlocks")) out.unlocks = Number(db.prepare("DELETE FROM profile_unlocks WHERE expires_at < ?").run(now).changes);
   const ago = (d) => new Date(now - d * 86400000).toISOString().replace("T", " ").slice(0, 19);
-  if (hasTable(db, "email_log")) out.emailLog = Number(db.prepare("DELETE FROM email_log WHERE created_at < ?").run(ago(RETENTION.emailLogDays)).changes);
+  if (hasTable(db, "email_log")) {
+    // Obvestilo o neaktivnem računu (server/accounts/neaktivni.js) mora ostati do izbrisa (12 mesecev po obvestilu) in še malo.
+    out.emailLog = Number(db.prepare("DELETE FROM email_log WHERE kind <> 'neaktivni' AND created_at < ?").run(ago(RETENTION.emailLogDays)).changes);
+    out.emailLog += Number(db.prepare("DELETE FROM email_log WHERE kind = 'neaktivni' AND created_at < ?").run(ago(RETENTION.inactiveLogDays)).changes);
+  }
   if (hasTable(db, "push_log")) {
     // period se začne z datumom (YYYY-MM-DD:učenec).
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
+  }
+  if (hasTable(db, "odpiranje_delov")) out.odpiranje = Number(db.prepare("DELETE FROM odpiranje_delov WHERE zadnji < ?").run(ago(RETENTION.odpiranjeDni).slice(0, 10)).changes);
+  out.oznake = clearOldFlags(db, ago(RETENTION.flagDays), { log });
+  // Varnostni odgovori ob stiski, shranjeni v predpomnilnik pred popravkom #846 (genericAnswer shrani celo besedilo z
+  // vrstico META): izbris takoj, ne šele po 30 dneh. Idempotentno; šteje v answerCache (brez posebnega števila stisk).
+  const cachedSafety = hasTable(db, "answer_cache") ? purgeCachedDistress(db) : 0;
+  if (hasTable(db, "answer_cache")) out.answerCache = cachedSafety + Number(db.prepare("DELETE FROM answer_cache WHERE created_at < ?").run(ago(RETENTION.answerCacheDays)).changes);
+  // Rok hrambe varnostnih kopij na disku tudi z EVKLID_BACKUPS=0 (ko ne teče dnevna kopija): docs/izbris-izvoz.md.
+  try {
+    const file = db.prepare("PRAGMA database_list").all().find((r) => r.name === "main")?.file;
+    if (file) out.backups = pocistiStare(file, new Date(now));
+  } catch (e) {
+    log.error?.(`[evklid] čiščenje starih varnostnih kopij: ${e.message}`);
+  }
+  if (hasTable(db, "school_orders")) {
+    // Sklenjeno: status »won« ali šola z licenco iz naročila (school_id); ostalo je povpraševanje brez pogodbe.
+    const won = "(status = 'won' OR school_id IS NOT NULL)";
+    const del = (cond, d) => (d ? Number(db.prepare(`DELETE FROM school_orders WHERE ${cond} AND updated_at < ?`).run(ago(d)).changes) : 0);
+    out.schoolOrders = del(`NOT ${won}`, RETENTION.schoolOrderOpenDays) + del(won, RETENTION.schoolOrderWonDays);
+  }
+  if (RETENTION.billingConsentDays && hasTable(db, "billing_consents")) {
+    // Samo soglasja izbrisanih računov (parent_id NULL); pri obstoječem računu ostanejo, dokler je račun.
+    out.billingConsents = Number(db.prepare("DELETE FROM billing_consents WHERE parent_id IS NULL AND created_at < ?").run(ago(RETENTION.billingConsentDays)).changes);
+  }
+  if (RETENTION.billingConsentDays && hasTable(db, "withdrawals")) {
+    // Obvestila o odstopu (ime, e-naslov, pogodba; server/placila/odstop.js): dokaz o pravočasnem odstopu, enako dolgo kot
+    // soglasje ob nakupu. Pri obstoječem računu ostanejo, dokler je račun; po izbrisu računa 5 let od oddaje (preveri pravnik).
+    out.withdrawals = Number(db.prepare("DELETE FROM withdrawals WHERE parent_id IS NULL AND submitted_at < ?").run(new Date(now - RETENTION.billingConsentDays * 86400000).toISOString()).changes);
   }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
@@ -174,36 +297,46 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   return out;
 }
 
-// Nepotrjeni računi: samo brez profilov (profil brez potrditve ustvari le gost, ki je kasneje dobil račun;
-// njegovi podatki so lahko v katerikoli tabeli: grafi, igre, urnik …), brez plačil ali kode, brez veljavne seje
-// in ne gostje (goste čisti server/accounts/guest.js). Previdno: ob dvomu račun ostane.
+// Nepotrjeni računi (ne gostje; goste čisti server/accounts/guest.js), brez plačil ali kode:
+// - brez profilov: po RETENTION.unverifiedDays od registracije, če nimajo veljavne seje;
+// - s profili (#747: profil in učenje že pred potrditvijo, pregled 2): po RETENTION.unverifiedDays brez dejavnosti
+//   (vprašanja, dogodki učenja, točke, odprtje profila na napravi). Seja tu ne šteje, ker velja dolgo.
+// Izbris kot DELETE /api/account (server/accounts/izbris.js): poraba ostane šteta za omrežje. Ob dvomu račun ostane.
 function deleteStaleUnverified(db, { nowIso, before }) {
   if (!hasTable(db, "parents") || !hasCol(db, "students", "parent_id")) return 0;
   const cols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   const paid = ["stripe_customer_id", "sub_id", "sub_status", "promo_until", "bonus_until"].filter((c) => cols.includes(c)).map((c) => `p.${c} IS NULL`);
+  const none = (table, sql) => (hasTable(db, table) ? `AND NOT EXISTS (${sql})` : "");
+  const active = [
+    none("question_log", "SELECT 1 FROM question_log q JOIN students s ON s.id = q.student_id WHERE s.parent_id = p.id AND q.day >= @day"),
+    none("events", "SELECT 1 FROM events e JOIN students s ON s.id = e.student_id WHERE s.parent_id = p.id AND e.created_at >= @before"),
+    none("xp_events", "SELECT 1 FROM xp_events x JOIN students s ON s.id = x.student_id WHERE s.parent_id = p.id AND x.created_at >= @before"),
+    none("profile_devices", "SELECT 1 FROM profile_devices d JOIN students s ON s.id = d.student_id WHERE s.parent_id = p.id AND d.last_seen >= @before"),
+  ].join(" ");
   const ids = db
     .prepare(
       `SELECT p.id FROM parents p
-       WHERE p.is_guest = 0 AND p.email_verified_at IS NULL AND p.created_at < ?
+       WHERE p.is_guest = 0 AND p.email_verified_at IS NULL AND p.created_at < @before
          ${paid.map((c) => `AND ${c}`).join(" ")}
-         AND NOT EXISTS (SELECT 1 FROM parent_sessions ps WHERE ps.parent_id = p.id AND ps.expires_at > ?)
-         AND NOT EXISTS (SELECT 1 FROM students s WHERE s.parent_id = p.id)`,
+         AND (
+           (NOT EXISTS (SELECT 1 FROM students s WHERE s.parent_id = p.id)
+             AND NOT EXISTS (SELECT 1 FROM parent_sessions ps WHERE ps.parent_id = p.id AND ps.expires_at > @now))
+           OR (EXISTS (SELECT 1 FROM students s WHERE s.parent_id = p.id) ${active})
+         )`,
     )
-    .all(before, nowIso)
+    .all({ before, now: nowIso, ...(hasTable(db, "question_log") ? { day: before.slice(0, 10) } : {}) })
     .map((r) => r.id);
+  let n = 0;
   for (const id of ids) {
-    db.exec("BEGIN IMMEDIATE");
     try {
-      db.prepare("DELETE FROM students WHERE parent_id = ?").run(id);
-      db.prepare("DELETE FROM parents WHERE id = ?").run(id);
-      db.prepare("UPDATE audit_log SET parent_id = NULL WHERE parent_id = ?").run(id);
-      db.exec("COMMIT");
+      eraseAccount(db, id, { transaction: true });
+      n++;
     } catch {
-      db.exec("ROLLBACK");
+      // račun ostane (naslednji dan znova)
     }
   }
-  if (ids.length) audit(db, { actor: "system", action: "unverified_deleted", target: `n:${ids.length}` });
-  return ids.length;
+  if (n) audit(db, { actor: "system", action: "unverified_deleted", target: `n:${n}` });
+  return n;
 }
 
 // Ob zagonu: opozorilo brez ključa, šifriranje v ozadju (paket za paketom, strežnik med tem odgovarja),

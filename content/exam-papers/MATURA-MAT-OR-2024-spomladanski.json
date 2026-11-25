@@ -37,7 +37,7 @@
      "ways": [
       {
        "title": "Po korakih: odpravimo ulomke",
-       "text": "Neenačbo pomnožimo s skupnim imenovalcem $6$. Ker je $6 > 0$, se znak neenakosti ne spremeni. Pozor: z $6$ pomnožimo **vsak** člen, tudi $1$:\n$$2(x - 2) + 6 \\ge 3(3x + 1).$$\nOdpravimo oklepaje in uredimo:\n$$2x - 4 + 6 \\ge 9x + 3 \\quad\\Rightarrow\\quad 2x + 2 \\ge 9x + 3.$$\nČlene z $x$ prenesemo na levo, števila na desno:\n$$2x - 9x \\ge 3 - 2 \\quad\\Rightarrow\\quad -7x \\ge 1.$$\nDelimo z $-7$. Ker delimo z **negativnim** številom, se neenačaj obrne:\n$$x \\le -\\frac{1}{7}.$$\nRešitev: $x \\in \\left(-\\infty, -\\frac{1}{7}\\right]$. Krajišče $-\\frac{1}{7}$ spada zraven, ker neenačba dopušča enakost ($\\ge$)."
+       "text": "Neenačbo pomnožimo s skupnim imenovalcem $6$. Ker je $6 > 0$, se znak neenakosti ne spremeni. Pozor: s $6$ pomnožimo **vsak** člen, tudi $1$:\n$$2(x - 2) + 6 \\ge 3(3x + 1).$$\nOdpravimo oklepaje in uredimo:\n$$2x - 4 + 6 \\ge 9x + 3 \\quad\\Rightarrow\\quad 2x + 2 \\ge 9x + 3.$$\nČlene z $x$ prenesemo na levo, števila na desno:\n$$2x - 9x \\ge 3 - 2 \\quad\\Rightarrow\\quad -7x \\ge 1.$$\nDelimo z $-7$. Ker delimo z **negativnim** številom, se neenačaj obrne:\n$$x \\le -\\frac{1}{7}.$$\nRešitev: $x \\in \\left(-\\infty, -\\frac{1}{7}\\right]$. Krajišče $-\\frac{1}{7}$ spada zraven, ker neenačba dopušča enakost ($\\ge$)."
       },
       {
        "title": "Drugače: brez deljenja z negativnim številom in preizkus",
@@ -45,7 +45,7 @@
       }
      ],
      "scoring": "- 1 t.: pravilno odpravljeni ulomki in urejena neenačba, npr. $-7x \\ge 1$ ali $-1 \\ge 7x$,\n- 1 t.: rešitev $x \\in \\left(-\\infty, -\\frac{1}{7}\\right]$ (ali $x \\le -\\frac{1}{7}$).",
-     "mistake": "Pri deljenju z $-7$ pozabiš obrniti neenačaj in dobiš $x \\ge -\\frac{1}{7}$. Pogosta je tudi napaka, da z $6$ pomnožiš le ulomka, člena $1$ pa ne (dobiš $2x - 4 + 1$ namesto $2x - 4 + 6$)."
+     "mistake": "Pri deljenju z $-7$ pozabiš obrniti neenačaj in dobiš $x \\ge -\\frac{1}{7}$. Pogosta je tudi napaka, da s $6$ pomnožiš le ulomka, člena $1$ pa ne (dobiš $2x - 4 + 1$ namesto $2x - 4 + 6$)."
     }
    ]
   },
@@ -63,7 +63,7 @@
      "ways": [
       {
        "title": "Po korakih: odštejemo zamaknjeni števili",
-       "text": "Označimo $x = 0{,}3181818\\ldots$ Perioda $18$ ima dve števki, pred njo je ena neperiodična števka.\n\nŠtevilo pomnožimo tako, da je decimalna vejica tik pred periodo in tik za prvo periodo:\n$$10x = 3{,}181818\\ldots; \\qquad 1000x = 318{,}181818\\ldots$$\nRepa za vejico sta enaka, zato se pri odštevanju odštejeta:\n$$1000x - 10x = 318 - 3 \\quad\\Rightarrow\\quad 990x = 315 \\quad\\Rightarrow\\quad x = \\frac{315}{990}.$$\nKrajšamo z $45$ (ker je $315 = 45\\cdot 7$ in $990 = 45\\cdot 22$):\n$$x = \\frac{7}{22}.$$"
+       "text": "Označimo $x = 0{,}3181818\\ldots$ Perioda $18$ ima dve števki, pred njo je ena neperiodična števka.\n\nŠtevilo pomnožimo tako, da je decimalna vejica tik pred periodo in tik za prvo periodo:\n$$10x = 3{,}181818\\ldots; \\qquad 1000x = 318{,}181818\\ldots$$\nRepa za vejico sta enaka, zato se pri odštevanju odštejeta:\n$$1000x - 10x = 318 - 3 \\quad\\Rightarrow\\quad 990x = 315 \\quad\\Rightarrow\\quad x = \\frac{315}{990}.$$\nKrajšamo s $45$ (ker je $315 = 45\\cdot 7$ in $990 = 45\\cdot 22$):\n$$x = \\frac{7}{22}.$$"
       },
       {
        "title": "Drugače: razstavimo na neperiodični in periodični del",
@@ -639,7 +639,7 @@
       },
       {
        "title": "Drugače: s celimi koeficienti in razcepom",
-       "text": "Enačbo $0{,}4x^{2} - 1{,}8x - 3{,}6 = 0$ pomnožimo z $5$, da se znebimo decimalk:\n\n$$2x^{2} - 9x - 18 = 0$$\n\nIščemo razcep $(2x + m)(x + n)$ z $mn = -18$ in $2n + m = -9$. Ustrezata $m = 3$, $n = -6$:\n\n$$(2x + 3)(x - 6) = 0$$\n\nPreverimo: $2x^{2} - 12x + 3x - 18 = 2x^{2} - 9x - 18$ ✓. Zato je $x = -\\frac{3}{2}$ ali $x = 6$.\n\nOrdinati: $g\\left(-\\frac{3}{2}\\right) = -0{,}9 + 1{,}6 = 0{,}7$ in $g(6) = 3{,}6 + 1{,}6 = 5{,}2$.\n\nNa skici (v rešitvi) premica seka parabolo levo od temena in desno od njega, kar se ujema z $x_1 < 1{,}5 < x_2$ (teme parabole je pri $x = \\frac{1{,}2}{2 \\cdot 0{,}4} = 1{,}5$)."
+       "text": "Enačbo $0{,}4x^{2} - 1{,}8x - 3{,}6 = 0$ pomnožimo s $5$, da se znebimo decimalk:\n\n$$2x^{2} - 9x - 18 = 0$$\n\nIščemo razcep $(2x + m)(x + n)$ z $mn = -18$ in $2n + m = -9$. Ustrezata $m = 3$, $n = -6$:\n\n$$(2x + 3)(x - 6) = 0$$\n\nPreverimo: $2x^{2} - 12x + 3x - 18 = 2x^{2} - 9x - 18$ ✓. Zato je $x = -\\frac{3}{2}$ ali $x = 6$.\n\nOrdinati: $g\\left(-\\frac{3}{2}\\right) = -0{,}9 + 1{,}6 = 0{,}7$ in $g(6) = 3{,}6 + 1{,}6 = 5{,}2$.\n\nNa skici (v rešitvi) premica seka parabolo levo od temena in desno od njega, kar se ujema z $x_1 < 1{,}5 < x_2$ (teme parabole je pri $x = \\frac{1{,}2}{2 \\cdot 0{,}4} = 1{,}5$)."
       }
      ],
      "scoring": "1 točka: enačba $f(x) = g(x)$. 1 točka: urejena kvadratna enačba (npr. $0{,}4x^{2} - 1{,}8x - 3{,}6 = 0$). 2 točki: rešitvi $x_1 = -1{,}5$ in $x_2 = 6$ (po 1 točka). 2 točki: pripadajoči ordinati $0{,}7$ in $5{,}2$ (po 1 točka).",

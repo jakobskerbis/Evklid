@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -28,7 +28,7 @@ Zanikanje izjave »Oba sva oprodi« **ni** »Oba sva viteza«. Med njima je še 
 :::premisli
 Ali lahko kdo na otoku reče »Jaz sem oproda«? Zakaj?
 ---
-Ne more. Vitez bi s tem lagal, kar vitez ne počne. Oproda bi s tem povedal resnico. Kdor to reče, ni z otoka.
+Ne more. Vitez bi s tem lagal, česar vitez ne počne. Oproda bi s tem povedal resnico. Kdor to reče, ni z otoka.
 :::
 
 Obratno pa izjavo »Jaz sem vitez« lahko reče vsak: vitez po resnici, oproda z lažjo. Taka izjava sama zase ne pove ničesar.
@@ -52,7 +52,7 @@ Koliko vrstic ima tabela za $3$ osebe in koliko za $4$? Kdaj se ti tabela še sp
 Vsaka nova oseba vsako vrstico razcepi na dve (V ali O), zato se število vrstic podvoji: $3$ osebe dajo $8$ vrstic, $4$ osebe $16$. Pri treh osebah je tabela še obvladljiva. Pri več osebah najprej sklepaj in tabelo uporabi le za možnosti, ki ostanejo.
 :::
 
-**6. Orodje 3: mreža in izključevanje.** Pri nalogah »kdo ima kaj« nariši mrežo: v vrstice osebe, v stolpce predmete. Vsak podatek prepiši v znak: ✗ pomeni »ne«, ✓ pomeni »da«. Ko v polje vpišeš ✓, v isti vrstici in istem stolpcu povsod vpiši ✗, ker ima vsak natanko en predmet in vsak predmet natanko enega lastnika. Če v vrstici ostane eno prazno polje, vanj sodi ✓.
+**6. Orodje 3: mreža in izključevanje.** Pri nalogah »kdo ima kaj« nariši mrežo: v vrstice osebe, v stolpce predmete. Vsak podatek prepiši v znak: ✗ pomeni »ne«, ✓ pomeni »da«. Ko v polje vpišeš ✓, v isti vrstici in istem stolpcu povsod vpiši ✗, ker ima vsak natanko en predmet in vsak predmet natanko enega lastnika. Če v vrstici ali stolpcu ostane eno samo prazno polje, vanj sodi ✓.
 
 Pazi na **skrite podatke**: »Cene in lastnik psa hodita skupaj v šolo« pove, da Cene nima psa, saj ne hodi sam s sabo.
 
@@ -159,7 +159,7 @@ Pri izjavi »X in jaz sva iste vrste« preveri obe možnosti za govorca.
 :::premisli
 Kakšen je C in kakšen je končni odgovor?
 ---
-B je že gotovo vitez. Če bi bil C oproda, bi bil vitez natanko eden in A bi govoril resnico, kar ni mogoče. Torej je C vitez. Odgovor: A je oproda, B in C sta viteza. Preverba: vitezov sta $2$, zato A res laže; B pove resnico o A; C pove resnico, ker sta B in C oba viteza.
+B je že gotovo vitez. Če bi bil C oproda, bi bil vitez natanko eden in A bi govoril resnico, kar ni mogoče. Torej je C vitez. Odgovor: A je oproda, B in C sta viteza. Preverba: viteza sta $2$, zato A res laže; B pove resnico o A; C pove resnico, ker sta B in C oba viteza.
 :::
 
 ## Pogoste napake
@@ -254,5 +254,5 @@ Uporaben trik: če kdo reče »X in jaz sva iste vrste«, je X gotovo vitez, ne 
 
 :::simboli
 n | število oseb v nalogi | | | tabela vseh možnosti ima $2^n$ vrstic
-p, q | izjavi | | | vsaka je resnična ali neresnična
+p, q | izjavi | | | vsaka je resnična ali lažna
 :::

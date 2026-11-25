@@ -72,7 +72,7 @@ test("pilot: brez povezave za plačilo staršev (nova in že izdana povezava)", 
       process.env.EVKLID_PILOT_EMAILS = "meja@x.si";
       process.env.EVKLID_PILOT_DO = dayIso(10);
       try {
-        const c = await call(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "stars@x.si", adult: true, withdrawal: true } });
+        const c = await call(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "stars@x.si", adult: true, withdrawal: true, terms: true } });
         assert.equal(c.status, 409, JSON.stringify(c.body));
         assert.equal(c.body.pilot, true);
         assert.equal(c.body.error, "Med pilotom nakup ni mogoč. Po koncu pilota bo spet na voljo.");
@@ -93,9 +93,9 @@ test("pilot: brez nakupa darilne kode in »Podari Evklid« (prikaz in strežnik)
     const acc = (await call("/api/account")).body;
     assert.equal(acc.gift_buy, false);
     assert.equal(acc.podari, null);
-    const g = await call("/api/billing/gift", { method: "POST", body: { adult: true, withdrawal: true, level: "OS" } });
+    const g = await call("/api/billing/gift", { method: "POST", body: { adult: true, withdrawal: true, terms: true, level: "OS" } });
     assert.equal(g.status, 409, JSON.stringify(g.body));
-    const p = await call("/api/billing/podari", { method: "POST", body: { adult: true, understand: true } });
+    const p = await call("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, terms: true } });
     assert.equal(p.status, 409, JSON.stringify(p.body));
   });
 });
@@ -105,8 +105,8 @@ test("ne-pilot: darilna koda in »Podari Evklid« ostaneta", async () => {
     const acc = (await call("/api/account")).body;
     assert.equal(acc.gift_buy, true);
     assert.notEqual(acc.podari, null);
-    assert.notEqual((await call("/api/billing/gift", { method: "POST", body: { adult: true, withdrawal: true, level: "OS" } })).status, 409);
-    assert.notEqual((await call("/api/billing/podari", { method: "POST", body: { adult: true, understand: true } })).status, 409);
+    assert.notEqual((await call("/api/billing/gift", { method: "POST", body: { adult: true, withdrawal: true, terms: true, level: "OS" } })).status, 409);
+    assert.notEqual((await call("/api/billing/podari", { method: "POST", body: { adult: true, understand: true, terms: true } })).status, 409);
   });
 });
 

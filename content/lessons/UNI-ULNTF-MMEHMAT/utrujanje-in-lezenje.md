@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -26,16 +26,20 @@ Odgovor je torej odvisen od tega, **kolikokrat** in **kako dolgo pri kateri temp
 
 Preizkušance obremenjujemo z različnimi amplitudami in štejemo cikle do loma $N$. Narišemo $\sigma_a$ proti $\log N$:
 
-```
- σa
- |\
- | \
- |  \___
- |      \____
- |           \_______ σD
- |_________________________
- 10^3  10^5  10^7     log N
-```
+:::risba graf
+opis: Wöhlerjeva krivulja. Na navpični osi je amplituda napetosti σa, na vodoravni log N z oznakami 10³, 10⁵ in 10⁷. Krivulja od 10³ ciklov pada in se med 10⁶ in 10⁷ cikli izravna v vodoravno črto na višini trajne dinamične trdnosti σD.
+x: 3 .. 8 | 1 | log N
+y: 0 .. 10 | 2 | σ_a
+oznake: ne
+mreža: ne
+oznakax: 3 | 10^3
+oznakax: 5 | 10^5
+oznakax: 7 | 10^7
+oznakay: 4 | σ_D
+črta: 3; 4 -> 6,5; 4 | črtkano siva
+f: 4*(9/4)^((13/2 - x)*2/7) | modra | 3 .. 6,5
+črta: 6,5; 4 -> 8; 4 | modra debelo
+:::
 
 Krivulja pada in pri jeklih okoli $N_D \approx 10^6$ do $10^7$ ciklov preide v vodoravno črto. Napetost $\sigma_D$ je **trajna dinamična trdnost**: pod njo jeklo v preizkusu ne poči niti po $10^7$ ali več ciklih. Za konstrukcijska jekla je približno $\sigma_D \approx 0{,}5\,R_m$ ($R_m$ natezna trdnost). Aluminijeve zlitine izrazite meje nimajo: krivulja pada naprej, zato zanje navedemo trdnost pri izbranem številu ciklov (npr. $5 \cdot 10^8$).
 
@@ -57,7 +61,7 @@ $$\frac{\sigma_a}{\sigma_N} + \frac{\sigma_m}{R_m} = \frac{1}{n},$$
 
 kjer je $n$ varnostni faktor. Pri $n = 1$ ležijo na premici mejna stanja. Tlačna srednja napetost razpoke zapira; ugodnega vpliva v računu običajno ne upoštevamo.
 
-**Kumulativna poškodba.** Resnična obremenitev ima različne amplitude. **Palmgren-Minerovo pravilo** predpostavi, da $n_i$ ciklov z amplitudo, pri kateri je do loma $N_i$ ciklov, porabi delež $n_i/N_i$ življenjske dobe. Poškodba je
+**Kumulativna poškodba.** Resnična obremenitev ima različne amplitude. **Palmgren-Minerjevo pravilo** predpostavi, da $n_i$ ciklov z amplitudo, pri kateri je do loma $N_i$ ciklov, porabi delež $n_i/N_i$ življenjske dobe. Poškodba je
 
 $$D = \sum_i \frac{n_i}{N_i},$$
 
@@ -125,12 +129,12 @@ $\sigma_m = \dfrac{\sigma_{max} + \sigma_{min}}{2}$, $\sigma_a = \dfrac{\sigma_{
 1. $\sigma_m = (250 + 50)/2\,\mathrm{MPa} = 150\,\mathrm{MPa}$; $\sigma_a = (250 - 50)/2\,\mathrm{MPa} = 100\,\mathrm{MPa}$.
 2. $\frac{1}{n} = 100/270 + 150/600 \approx 0{,}370 + 0{,}250 = 0{,}620$.
 3. $n = 1/0{,}620 \approx 1{,}61$.
-4. Drug zorni kot: če bi $\sigma_m = 150\,\mathrm{MPa}$ ostala stalna (kot jo določa prednapetost), bi bila mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske. Faktor $1{,}61$ je manjši, ker Goodmanova enačba z $1/n$ predpostavi, da z istim faktorom narasteta $\sigma_a$ in $\sigma_m$. Kateri preizkus je pravi, je odvisno od tega, kako se obremenitev v resnici poveča.
+4. Drug zorni kot: če bi $\sigma_m = 150\,\mathrm{MPa}$ ostala stalna (kot jo določa prednapetost), bi bila mejna amplituda $270 \cdot (1 - 150/600)\,\mathrm{MPa} = 202{,}5\,\mathrm{MPa}$, dvakrat več od dejanske. Faktor $1{,}61$ je manjši, ker Goodmanova enačba z $1/n$ predpostavi, da z istim faktorjem narasteta $\sigma_a$ in $\sigma_m$. Kateri preizkus je pravi, je odvisno od tega, kako se obremenitev v resnici poveča.
 5. Odgovor: varnostni faktor je okoli $1{,}6$. Brez upoštevanja srednje napetosti bi dobili napačno $270/100 = 2{,}7$.
 
 ### Primer 3 (težji)
 
-Zvarni spoj v stolpu vetrne elektrarne ima Wöhlerjevo premico iz Primera 1. Iz meritev v enem letu so obremenitev razvrstili v bloke: $1000$ ciklov z amplitudo $350\,\mathrm{MPa}$, $10\,000$ ciklov s $300\,\mathrm{MPa}$, $50\,000$ ciklov s $260\,\mathrm{MPa}$ in $10^6$ ciklov z $200\,\mathrm{MPa}$. Kolikšna je letna poškodba po Minerjevem pravilu in kolikšna je pričakovana življenjska doba? Ali bi bila ocena varna, če bi stolp moral zdržati $20$ let in bi se zahtevala poškodba največ $D = 0{,}5$?
+Zvarni spoj v stolpu vetrne elektrarne ima Wöhlerjevo premico iz Primera 1. Iz meritev v enem letu so obremenitev razvrstili v bloke: $1000$ ciklov z amplitudo $350\,\mathrm{MPa}$, $10\,000$ ciklov s $300\,\mathrm{MPa}$, $50\,000$ ciklov z $260\,\mathrm{MPa}$ in $10^6$ ciklov z $200\,\mathrm{MPa}$. Kolikšna je letna poškodba po Minerjevem pravilu in kolikšna je pričakovana življenjska doba? Ali bi bila ocena varna, če bi stolp moral zdržati $20$ let in bi se zahtevala poškodba največ $D = 0{,}5$?
 
 **Podatki:** $\sigma_D = 240\,\mathrm{MPa}$, $N_D = 2 \cdot 10^6$, $k = 8$; letno $n_1 = 1000$ pri $350\,\mathrm{MPa}$, $n_2 = 10\,000$ pri $300\,\mathrm{MPa}$, $n_3 = 50\,000$ pri $260\,\mathrm{MPa}$, $n_4 = 10^6$ pri $200\,\mathrm{MPa}$; zahteva $20$ let pri $D \le 0{,}5$
 **Iščemo:** letno poškodbo $D_l$, življenjsko dobo $t$, ali zahteva velja
@@ -152,7 +156,7 @@ $N_i = N_D\left(\dfrac{\sigma_D}{\sigma_{ai}}\right)^k$, $D = \sum \dfrac{n_i}{N
 
 ### Primer 4 – zdaj ti
 
-Za jeklo parovoda pri obratovalni napetosti velja $P_{LM} = 2{,}1 \cdot 10^4$ (z $T$ v kelvinih, $t_r$ v urah, $C = 20$). Kolikšen je čas do loma pri $823\,\mathrm{K}$ ($550\,^\circ\mathrm{C}$) in kolikšen pri $873\,\mathrm{K}$ ($600\,^\circ\mathrm{C}$)?
+Za jeklo parovoda pri obratovalni napetosti velja $P_{LM} = 2{,}1 \cdot 10^4$ (s $T$ v kelvinih, $t_r$ v urah, $C = 20$). Kolikšen je čas do loma pri $823\,\mathrm{K}$ ($550\,^\circ\mathrm{C}$) in kolikšen pri $873\,\mathrm{K}$ ($600\,^\circ\mathrm{C}$)?
 
 **Podatki:** $P_{LM} = 2{,}1 \cdot 10^4$, $C = 20$, $T_1 = 823\,\mathrm{K}$, $T_2 = 873\,\mathrm{K}$
 **Iščemo:** $t_{r1}$ in $t_{r2}$
@@ -177,7 +181,7 @@ $\log t_{r2} = 21\,000/873 - 20 \approx 4{,}055$, torej $t_{r2} \approx 1{,}1 \c
 
 - **Pod mejo tečenja je varno.** Velja le za mirujočo obremenitev pri nizki temperaturi. Pri ponavljanju odloča amplituda glede na $\sigma_D$, pri visoki temperaturi pa čas.
 - **Amplituda je razlika napetosti.** Amplituda je **polovica** razlike $\sigma_{max} - \sigma_{min}$; razliki rečemo razpon napetosti.
-- **Pozabljena srednja napetost.** Natezna $\sigma_m$ zmanjša dopustno amplitudo (Primer 2); račun samo z $\sigma_a/\sigma_N$ je preoptimističen.
+- **Pozabljena srednja napetost.** Natezna $\sigma_m$ zmanjša dopustno amplitudo (Primer 2); račun samo s $\sigma_a/\sigma_N$ je preoptimističen.
 - **Linearna odvisnost $N$ od napetosti.** Pri $k = 8$ podvojitev amplitude ne razpolovi, ampak zmanjša število ciklov za faktor $2^8 = 256$.
 - **Temperatura v °C v Arrheniusovem členu in Larson-Millerjevem parametru.** Obe zvezi zahtevata absolutno temperaturo v kelvinih.
 
@@ -197,7 +201,7 @@ Znati moraš povedati:
 - definicije $\sigma_m$, $\sigma_a$, $R$ in trajne dinamične trdnosti;
 - obliko in razlago Wöhlerjeve krivulje ter razliko med jeklom in aluminijem;
 - mehanizem utrujenostnega loma (nastanek razpoke, rast, končni lom) in vpliv zarez ter površine;
-- Goodmanovo premico in Palmgren-Minerovo pravilo z omejitvami;
+- Goodmanovo premico in Palmgren-Minerjevo pravilo z omejitvami;
 - tri stopnje lezenja, Nortonov zakon z Arrheniusovim členom, napetostno relaksacijo in Larson-Millerjev parameter.
 
 ### Naloga 1
@@ -213,11 +217,11 @@ Pri $823\,\mathrm{K}$ in $100\,\mathrm{MPa}$ je izmerjena hitrost stacionarnega 
 5. Raztezek: $2{,}6 \cdot 10^{-10} \cdot 3{,}6 \cdot 10^8 \approx 0{,}093$, okoli $9\,\%$: cev bi se nedopustno raztegnila, verjetno bi prešla v terciarno lezenje.
 6. c) Dopustna hitrost: $0{,}01/(3{,}6 \cdot 10^8\,\mathrm{s}) \approx 2{,}78 \cdot 10^{-11}\,\mathrm{s^{-1}}$.
 7. Pri isti temperaturi je $\dot\varepsilon_s \propto \sigma^5$: $\sigma = 100\,\mathrm{MPa} \cdot (2{,}78)^{1/5} \approx 123\,\mathrm{MPa}$.
-8. Odgovor: a) $0{,}36\,\%$; b) okoli $2{,}6 \cdot 10^{-10}\,\mathrm{s^{-1}}$ in $9\,\%$; c) največ okoli $120\,\mathrm{MPa}$. Za $20\,\%$ večja napetost in $50\,\mathrm{K}$ višja temperatura povečata hitrost lezenja za faktor okoli $26$.
+8. Odgovor: a) $0{,}36\,\%$; b) okoli $2{,}6 \cdot 10^{-10}\,\mathrm{s^{-1}}$ in $9\,\%$; c) največ okoli $123\,\mathrm{MPa}$. Za $20\,\%$ večja napetost in $50\,\mathrm{K}$ višja temperatura povečata hitrost lezenja za faktor okoli $26$.
 
 ### Naloga 2
 
-Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga prepoznaš na prelomni ploskvi. Utemelji, zakaj zareze, hrapava površina in korozija zmanjšajo trajno dinamično trdnost. Navedi predpostavke Palmgren-Minerovega pravila in utemelji, zakaj je vrstni red obremenitev pomemben.
+Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga prepoznaš na prelomni ploskvi. Utemelji, zakaj zareze, hrapava površina in korozija zmanjšajo trajno dinamično trdnost. Navedi predpostavke Palmgren-Minerjevega pravila in utemelji, zakaj je vrstni red obremenitev pomemben.
 
 **Rešitev:**
 
@@ -226,7 +230,7 @@ Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga
 3. Končni lom: ko preostali presek ne zdrži več največje sile, se zlomi naenkrat; to območje je grobo, zrnato ali žilavo potrgano.
 4. Zareze: koncentracija napetosti poveča lokalno amplitudo nad nazivno. Hrapava površina ima veliko mikrozarez; korozija ustvarja jamice in razpoka nastane prej. Zato $\sigma_D$ dela vedno zmanjšamo s faktorji površine, velikosti in oblike.
 5. Minerjeve predpostavke: poškodba se sešteva linearno, neodvisno od amplitude in vrstnega reda, cikli pod $\sigma_D$ ne škodijo.
-6. Vrstni red: velika amplituda na začetku ustvari razpoko, ki jo nato rastejo tudi manjše amplitude, celo pod $\sigma_D$; obratni vrstni red je manj škodljiv. Zato je dejanska $D$ ob lomu lahko precej različna od $1$.
+6. Vrstni red: velika amplituda na začetku ustvari razpoko, ki jo nato večajo tudi manjše amplitude, celo pod $\sigma_D$; obratni vrstni red je manj škodljiv. Zato je dejanska $D$ ob lomu lahko precej različna od $1$.
 7. Odgovor: utrujenostni lom ima tri faze in značilno prelomno ploskev s progami; zareze, površina in korozija pospešijo nastanek razpoke; Minerjevo pravilo je linearen približek, ki vrstnega reda ne upošteva.
 
 ## Drugače: Uporaba v stroki
@@ -235,13 +239,13 @@ Opiši potek utrujenostnega loma od nastanka razpoke do loma in pojasni, kako ga
 
 **Termoelektrarne.** Cevi pregrevalnikov in parovodi so dimenzionirani na lezenje za $10^5$ do $2 \cdot 10^5$ ur. Ob pregledih merijo premer cevi in s posnetki mikrostrukture iščejo pore lezenja.
 
-**Letalstvo.** Po nesrečah letal Comet v petdesetih letih 20. stoletja (razpoke ob vogalih oken) so uvedli oblikovanje z dopustnimi poškodbami: razpoke se smejo pojaviti, a jih je treba z rednimi pregledi najti, preden postanejo kritične.
+**Letalstvo.** Po nesrečah letal Comet v petdesetih letih 20. stoletja (razpoke ob vogalih oken) so uvedli oblikovanje, varno ob odpovedi (*fail-safe*), iz katerega se je v sedemdesetih letih razvilo oblikovanje z dopustnimi poškodbami: razpoke se smejo pojaviti, a jih je treba z rednimi pregledi najti, preden postanejo kritične.
 
 **Postopki za večjo trdnost.** Peskanje s kroglicami in valjanje površine ustvarita tlačne zaostale napetosti, ki razpoke zapirajo in povečajo $\sigma_D$.
 
 ## Drugače: Korak za korakom s številkami
 
-Gred z $\sigma_D = 240\,\mathrm{MPa}$, $N_D = 2 \cdot 10^6$ in $k = 8$. Kaj se zgodi z življenjsko dobo, ko amplitudo večamo?
+Gred s $\sigma_D = 240\,\mathrm{MPa}$, $N_D = 2 \cdot 10^6$ in $k = 8$. Kaj se zgodi z življenjsko dobo, ko amplitudo večamo?
 
 1. $\sigma_a = 250\,\mathrm{MPa}$: $N = 2 \cdot 10^6 \cdot 0{,}96^8 \approx 1{,}44 \cdot 10^6$.
 2. $\sigma_a = 300\,\mathrm{MPa}$: $N \approx 3{,}4 \cdot 10^5$ (Primer 1).

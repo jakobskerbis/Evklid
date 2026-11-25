@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -36,7 +36,7 @@ Prostornina je pri vseh enaka, masa pa zelo različna. Masa enega kubičnega cen
 Večji kos je težji, a v zadnjem stolpcu je vedno isto število. Gostota je **lastnost snovi**, ne velikosti telesa. Zato lahko po gostoti ugotovimo, iz katere snovi je telo.
 
 :::premisli
-Koliko je masa železnega kosa s prostornino $4\,\text{cm}^3$? Napovej s pomočjo prve tabele.
+Kolikšna je masa železnega kosa s prostornino $4\,\text{cm}^3$? Napovej s pomočjo prve tabele.
 ---
 $31{,}6\,\text{g}$. En kubični centimeter železa ima $7{,}9\,\text{g}$, štirje imajo štirikrat toliko: $4 \cdot 7{,}9\,\text{g} = 31{,}6\,\text{g}$.
 :::
@@ -49,7 +49,7 @@ Iz te enačbe dobimo še dve obliki, kadar iščemo maso ali prostornino:
 
 $$m = \rho \cdot V \qquad V = \frac{m}{\rho}$$
 
-**4. Enote.** Kadar je masa v gramih in prostornina v $\text{cm}^3$, je gostota v $\mathrm{g/cm^3}$. Osnovna enota je $\mathrm{kg/m^3}$ (masa v kilogramih, prostornina v kubičnih metrih). Zveza:
+**4. Enote.** Kadar je masa v gramih in prostornina v $\text{cm}^3$, je gostota v $\mathrm{g/cm^3}$. Enota SI je $\mathrm{kg/m^3}$ (masa v kilogramih, prostornina v kubičnih metrih). Zveza:
 
 $$1\,\frac{\text{g}}{\text{cm}^3} = 1000\,\frac{\text{kg}}{\text{m}^3}$$
 
@@ -109,7 +109,7 @@ $\rho = \dfrac{m}{V}$, nato primerjava s tabelo gostot
 1. Iščemo gostoto, zato vzamemo $\rho = \dfrac{m}{V}$.
 2. Vstavimo: $\rho = \dfrac{54\,\text{g}}{20\,\text{cm}^3} = 2{,}7\,\dfrac{\text{g}}{\text{cm}^3}$.
 3. Primerjamo s tabelo: $2{,}7\,\text{g/cm}^3$ ima aluminij, zlato pa $19{,}3\,\text{g/cm}^3$.
-4. V osnovni enoti: $2{,}7 \cdot 1000 = 2700\,\text{kg/m}^3$.
+4. V enoti SI: $2{,}7 \cdot 1000 = 2700\,\text{kg/m}^3$.
 5. Odgovor: medalja ni iz zlata, ampak najverjetneje iz aluminija z zlato barvo na površini.
 
 ### Primer 2: masa iz gostote
@@ -233,7 +233,7 @@ Opomba: gostota je odvisna od temperature in pri plinih tudi od tlaka, saj se pr
 - $\mathrm{g/cm^3}$
 ~ To je enota gostote: grami (masa), deljeni s kubičnimi centimetri (prostornina).
 - $\mathrm{kg/m^3}$
-~ To je osnovna enota gostote: kilogrami, deljeni s kubičnimi metri.
+~ To je enota SI za gostoto: kilogrami, deljeni s kubičnimi metri.
 - $\mathrm{kg/l}$
 ~ Tudi to je enota gostote, masa na liter; voda ima $1\,\mathrm{kg/l}$.
 + $\mathrm{g \cdot cm^3}$

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -10,7 +10,7 @@ Večina količin v naravi je odvisna od več spremenljivk hkrati. Tlak idealnega
 Pri funkciji ene spremenljivke odvod pove, kako hitro se funkcija spreminja. Pri funkciji več spremenljivk pa se lahko vprašamo: kako hitro se spreminja, če spremenimo **samo eno** spremenljivko, druge pa držimo pri miru? Odgovor je **parcialni odvod**. Iz parcialnih odvodov sestavimo še:
 
 - **totalni diferencial**, s katerim ocenimo spremembo funkcije, ko se spremenijo vse spremenljivke hkrati, in izračunamo, kako se napake meritev prenesejo v rezultat,
-- **gradient**, vektor, ki kaže smer najhitrejšega naraščanja (npr. smer, v kateri se snov najhitreje segreva ali v katero difundira),
+- **gradient**, vektor, ki kaže smer najhitrejšega naraščanja (npr. smer, v kateri temperatura najhitreje narašča; toplota in snov pri difuziji tečeta v nasprotni smeri gradienta),
 - **verižno pravilo**, ko so spremenljivke same odvisne od drugih spremenljivk, na primer od časa.
 
 Parcialni odvodi so jezik termodinamike, fizikalne kemije, transportnih pojavov in optimizacije.
@@ -145,7 +145,7 @@ $\nabla T = (T_x, T_y)$, $\dfrac{\partial T}{\partial\vec{u}} = \nabla T \cdot \
 **Rešitev:**
 
 1. $T_x = -2x$, $T_y = -4y$, zato $\nabla T(1, 2) = (-2, -8)$, v $^\circ\mathrm{C/cm}$.
-2. Smer najhitrejšega segrevanja je $\nabla T$, enotski vektor $(-2, -8)/\sqrt{68} \approx (-0{,}24;\,-0{,}97)$: mravlja naj gre proti izhodišču, predvsem v smeri $-y$.
+2. Smer najhitrejšega segrevanja je $\nabla T$, enotski vektor $(-2, -8)/\sqrt{68} \approx (-0{,}24;\,-0{,}97)$: mravlja naj gre približno proti izhodišču, predvsem v smeri $-y$.
 3. Hitrost spreminjanja v tej smeri: $|\nabla T| = \sqrt{4 + 64} = \sqrt{68} \approx 8{,}25\,^\circ\mathrm{C/cm}$.
 4. Smer $(3, 4)$ ima dolžino $5$, enotski vektor $\vec{u} = (0{,}6;\,0{,}8)$. Smerni odvod: $\nabla T \cdot \vec{u} = -2 \cdot 0{,}6 - 8 \cdot 0{,}8 = -7{,}6\,^\circ\mathrm{C/cm}$.
 5. Temperatura se ne spreminja v smeri, pravokotni na gradient, na primer $(8, -2)$ oziroma $(4, -1)$: $(-2) \cdot 4 + (-8) \cdot (-1) = 0$ ✓.
@@ -234,18 +234,24 @@ Natančno definiraj diferenciabilnost funkcije dveh spremenljivk v točki in dok
 
 Nivojnice funkcije $T(x, y) = 100 - x^2 - 2y^2$ iz Primera 2 so elipse okoli izhodišča (vrh »hriba« je v $(0, 0)$, kjer je $T = 100$):
 
-```
-                y
-                |
-         .-----------.        T = 91 (skozi točko (1, 2))
-       /    .-----.    \
-      |    (  100  )    |  --- x
-       \    '-----'    /
-         '-----------'
-                |
-```
+:::risba graf
+opis: Koordinatni sistem z dvema elipsama s središčem v izhodišču. Zunanja elipsa je nivojnica T = 91 skozi točko (1, 2); os x seka pri −3 in 3, os y pri približno −2,12 in 2,12. Notranja elipsa je nivojnica T = 96; os x seka pri −2 in 2, os y pri približno −1,41 in 1,41. V izhodišču je vrh, T = 100. Iz točke (1, 2) kaže puščica v smeri gradienta (−2, −8) pravokotno na zunanjo elipso navznoter, navkreber.
+x: -4 .. 4 | 1 | x
+y: -3 .. 3 | 1 | y
+enako: da
+f: sqrt((9 - x^2)/2) | modra | -3 .. 3
+f: -sqrt((9 - x^2)/2) | modra | -3 .. 3
+f: sqrt((4 - x^2)/2) | siva | -2 .. 2
+f: -sqrt((4 - x^2)/2) | siva | -2 .. 2
+napis: 2,2; 2,7 | T = 91 | desno | modra
+napis: -0,9; -0,7 | T = 96 | sredina | siva
+točka: 0; 0 | T = 100 | nad levo
+puščica: 1; 2 -> 0,75; 1 | ∇T | desno | oranžna debelo
+točka: 1; 2 | (1, 2) | nad desno
+podnapis: Nivojnici T = 91 in T = 96 funkcije T(x, y) = 100 − x² − 2y²; gradient v točki (1, 2) kaže navkreber, pravokotno na nivojnico
+:::
 
-V točki $(1, 2)$ gradient $(-2, -8)$ kaže pravokotno na elipso navznoter, proti vrhu. Dolžina gradienta je velika tam, kjer so nivojnice gosto skupaj (strm breg), in majhna, kjer so redke (položen teren).
+V točki $(1, 2)$ gradient $(-2, -8)$ kaže pravokotno na elipso navznoter, torej navkreber (ne nujno naravnost v vrh). Dolžina gradienta je velika tam, kjer so nivojnice gosto skupaj (strm breg), in majhna, kjer so redke (položen teren).
 
 Parcialni odvod $f_x(a, b)$ si predstavljaj tako: graf prerežeš z navpično ravnino $y = b$, dobiš krivuljo in odčitaš njen naklon. Za $f_y$ prerežeš z ravnino $x = a$. Tangentna ravnina vsebuje obe tangenti teh dveh krivulj.
 
@@ -326,7 +332,7 @@ x, y | neodvisni spremenljivki (koordinati točke) | | | pri implicitnem odvajan
 a, b | koordinati točke (a, b), v kateri odvajamo | | |
 f_x | parcialni odvod funkcije f po x | f_x = \frac{\partial f}{\partial x} | | y držimo konstanten
 f_y | parcialni odvod funkcije f po y | f_y = \frac{\partial f}{\partial y} | | x držimo konstanten
-h, k | prirastka spremenljivk x in y | | |
+h, k | prirastka spremenljivk x in y | | | pri valju je h višina
 o | ostanek, ki gre proti 0 hitreje od argumenta (mali o) | | |
 A, B | koeficienta linearnega dela v definiciji diferenciabilnosti | A = f_x(a, b),\ B = f_y(a, b) | |
 E | ostanek linearnega približka | | | E/√(h² + k²) → 0
@@ -347,7 +353,7 @@ T | temperatura na plošči | | °C | v zgledu T(x, y) = 100 − x² − 2y²; p
 T_x | parcialni odvod temperature po x | T_x = \frac{\partial T}{\partial x} | °C/cm
 T_y | parcialni odvod temperature po y | T_y = \frac{\partial T}{\partial y} | °C/cm
 p | tlak idealnega plina | p = \frac{nRT}{V} | Pa
-V | prostornina plina | | m^3
+V | prostornina plina | | m^3 | pri valju prostornina valja v cm³
 n | množina plina | | mol | tudi število spremenljivk funkcije
 R | splošna plinska konstanta | | J/(mol K) | 8,314 J/(mol K)
 :::

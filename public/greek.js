@@ -2,10 +2,9 @@
 // Kartica .gr-fact v praznem klepetu z inštruktorjem in na dnu Učne poti; dejstvo je naključno, gumb pokaže drugo.
 // Nabor dejstev: v zgodovinskem slogu njegov (theme.js → ERAS[slog].facts, npr. era.renesansa.f1 …), sicer
 // Grški matematiki (greek.f1 … greek.f11). »Evklid« je tu matematik, ne ime aplikacije.
-import { icon } from "./icons.js";
-import { t } from "./i18n.js";
+import { t } from "./i18n-osnova.js";
+import { factHtml, GREEK } from "./zacetna.js";
 
-const GREEK = ["greek", 11];
 // [predpona, število] za trenutni slog.
 function factSet() {
   const T = window.STEMTheme;
@@ -28,14 +27,11 @@ function pick(set, not) {
   return i;
 }
 
-export function greekFactHtml(cls = "") {
+// prvo: dejstvo, ki ga je že pokazala Učna pot s strežnika (public/zacetek.js), da se ob prevzemu ne zamenja.
+export function greekFactHtml(cls = "", prvo = null) {
   const set = factSet();
-  const i = pick(set);
-  const title = t(`${set[0]}.title`);
-  return `<aside class="gr-fact ${cls}" aria-label="${title}" data-set="${set[0]}">
-    <div class="gr-body"><span class="eyebrow">${title}</span><p class="gr-text" aria-live="polite" data-fact="${i}">${t(keyOf(set, i))}</p></div>
-    <button type="button" class="ghost icon-only gr-next" title="${t("greek.next")}" aria-label="${t("greek.next")}">${icon("refresh-cw")}</button>
-  </aside>`;
+  const i = Number.isInteger(prvo) && prvo >= 0 && prvo < set[1] ? ((last = prvo), (lastSet = set[0]), prvo) : pick(set);
+  return factHtml(t, set, i, cls);
 }
 
 // Pokaže dejstvo iz trenutnega nabora; ob menjavi sloga zamenja tudi naslov.

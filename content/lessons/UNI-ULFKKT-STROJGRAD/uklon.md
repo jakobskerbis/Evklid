@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -57,7 +57,7 @@ $$F_{kr} = \frac{\pi^2 E I}{L_u^2}, \qquad L_u = \beta L.$$
 
 *Izpeljava za konzolo.* Os $x$ naj gre od vpetja navzgor, vrh se odmakne za $\delta$. V prerezu $x$ ima sila ročico $\delta - w$, zato $EI\,w'' = F(\delta - w)$ oziroma $w'' + k^2 w = k^2 \delta$. Rešitev, ki izpolni pogoja vpetja $w(0) = 0$ in $w'(0) = 0$, je $w = \delta(1 - \cos kx)$. Pogoj $w(L) = \delta$ da $\cos kL = 0$, najmanjša rešitev je $kL = \pi/2$. Zato $F_{kr} = \pi^2 EI/(4L^2) = \pi^2 EI/(2L)^2$ in $\beta = 2$.
 
-**Katera os.** Palica se vedno izboči tja, kjer je najšibkejša. Pri pravokotnem preseku $b \times h$ z $h < b$ je odločilen $I = b h^3/12$, z manjšo stranico na tretjo potenco. Če so podpore v obeh ravninah različne (npr. prečka prepreči izbočenje le v eni smeri), izračunamo $F_{kr}$ za vsako smer posebej, s pripadajočima $I$ in $L_u$; odloča manjša.
+**Katera os.** Palica se vedno izboči tja, kjer je najšibkejša. Pri pravokotnem preseku $b \times h$ s $h < b$ je odločilen $I = b h^3/12$, z manjšo stranico na tretjo potenco. Če so podpore v obeh ravninah različne (npr. prečka prepreči izbočenje le v eni smeri), izračunamo $F_{kr}$ za vsako smer posebej, s pripadajočima $I$ in $L_u$; odloča manjša.
 
 :::premisli
 Ravnilo iz pleksi stekla, $30 \times 3\,\mathrm{mm}$, stisneš med dlanema. Zakaj se vedno izboči čez ploščato stran in kolikokrat manjša je kritična sila v tej smeri kot čez rob? Oceni, preden bereš naprej.
@@ -231,7 +231,7 @@ Bobnar paličico prime še na sredini z drugo roko, da se ne more odmakniti. Zda
 
 Postopek pri vsaki stisnjeni palici:
 
-1. **Podpore → $\beta$.** Vpeto spodaj in prosto zgoraj: $2$. Oba členka: $1$. Vpeto in členek: $0{,}7$. Obe vpeti: $0{,}5$.
+1. **Podpore → $\beta$.** Vpeto spodaj in prosto zgoraj: $2$. Oba členka: $1$. Vpeto in členek: $0{,}7$. Oba konca vpeta: $0{,}5$.
 2. **$L_u = \beta L$** v milimetrih.
 3. **$I$ za šibkejšo os** v $\mathrm{mm^4}$: krog $\pi d^4/64$, cev $\pi(D^4-d^4)/64$, pravokotnik $b h^3/12$ z manjšo stranico $h$.
 4. **$F_{kr} = \pi^2 E I/L_u^2$**: z $E$ v MPa dobiš njutone.
@@ -297,7 +297,7 @@ Povezava z zvokom: za členkasto palico pod tlačno silo $F$ velja za osnovno la
 
 ? Visok odrski stolp za luči ima tanke navpične cevi. Inženir doda vodoravne prečke na polovici višine. Zakaj?
 - Da cevi prenesejo večjo natezno silo.
-~ Navpične cevi so pri teži luči stisnjene, ne natezne. Prečke nateznosti ne spremenijo.
+~ Navpične cevi so pri teži luči stisnjene, ne nategnjene. Prečke tega ne spremenijo.
 - Da se zmanjša napetost $F/A$ v ceveh.
 ~ Prečke ne spremenijo preseka cevi niti sile v njej, zato $F/A$ ostane enak.
 + Da se uklonska dolžina cevi razpolovi in kritična sila poveča približno štirikrat.
@@ -314,12 +314,12 @@ w | bočni odmik (izbočenje) palice | | m |
 k | parameter enačbe izbočenja | k^2 = \frac{F}{EI} | 1/m |
 F | osna tlačna sila | | N |
 d | premer palice (pri cevi notranji premer) | | m |
-n | varnost proti uklonu | n = \dfrac{F_{kr}}{F} | – |
+n | varnost proti uklonu | n = \dfrac{F_{kr}}{F} | – | v Eulerjevem izreku tudi število lokov izbočene oblike (n = 1, 2, …)
 D | zunanji premer cevi | | m |
 I_{\text{potr}} | potrebni vztrajnostni moment | I_{\text{potr}} = \dfrac{F_{kr} L^2}{\pi^2 E} | m^4 |
 \lambda | vitkost palice | \lambda = \dfrac{L_u}{i} | – | Euler velja pri jeklu za λ ≳ 100
 i | vztrajnostni polmer preseka | i = \sqrt{\frac{I}{A}} | m | za poln krog i = d/4
-A | ploščina prečnega prereza | | m^2 |
+A | ploščina prečnega prereza | | m^2 | v izpeljavi tudi konstanta rešitve w = A sin kx + B cos kx
 \sigma_{kr} | kritična napetost | \sigma_{kr} = \frac{\pi^2 E}{\lambda^2} | Pa |
 \sigma_P | meja proporcionalnosti | | Pa | jeklo ≈ 200 MPa
 \lambda_P | mejna vitkost | \lambda_P = \pi\sqrt{\frac{E}{\sigma_P}} | – | jeklo ≈ 99

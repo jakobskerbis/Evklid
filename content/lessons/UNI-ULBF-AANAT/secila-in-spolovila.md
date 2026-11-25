@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Odrasel človek ima okoli $3\,\mathrm L$ krvne plazme. Ledvici v enem dnevu precedita okoli $180\,\mathrm L$ tekočine iz krvi, z urinom pa izločimo le okoli $1{,}5\,\mathrm L$. Poskusi, preden bereš naprej: kolikokrat na dan gre vsa plazma skozi ledvični filter? In zakaj bi organ najprej izločil skoraj vse, nato pa več kot $99\,\%$ vrnil nazaj?
+Odrasel človek ima okoli $3\,\mathrm{L}$ krvne plazme. Ledvici v enem dnevu precedita okoli $180\,\mathrm{L}$ tekočine iz krvi, z urinom pa izločimo le okoli $1{,}5\,\mathrm{L}$. Poskusi, preden bereš naprej: kolikokrat na dan gre vsa plazma skozi ledvični filter? In zakaj bi organ najprej izločil skoraj vse, nato pa več kot $99\,\%$ vrnil nazaj?
 
 Odgovor je v zgradbi. Ledvica ni sito, ki pobere le odpadke, temveč filter z veliko pretočnostjo, za katerim sledi dolga cev za vračanje. Enak načrt poznajo čistilne naprave in obrati za predelavo vode: najprej vse odstrani, nato vrni, kar je dragoceno. Za biologa je to temelj fiziologije izločanja in osnova za razumevanje dialize, sečnih kamnov in okužb. Spolovila obravnavamo v isti lekciji, ker se razvijejo iz istega zasnovka in si pri moškem delijo pot navzven.
 
@@ -13,7 +13,7 @@ Odgovor je v zgradbi. Ledvica ni sito, ki pobere le odpadke, temveč filter z ve
 
 ### Blok 1: lega in zunanja zgradba ledvic
 
-Ledvici ležita **retroperitonealno**: za potrebušnico, ob hrbtenici, približno od 12. prsnega do 3. ledvenega vretenca. Desna je nekoliko nižje, ker so nad njo jetra. Vsaka je velika okoli $11 \times 6 \times 3\,\mathrm{cm}$ in tehta okoli $150\,\mathrm g$. Obdaja jo vezivna ovojnica, zunaj nje maščobna blazina in ledvična fascija.
+Ledvici ležita **retroperitonealno**: za potrebušnico, ob hrbtenici, približno od 12. prsnega do 3. ledvenega vretenca. Desna je nekoliko nižje, ker so nad njo jetra. Vsaka je velika okoli $11 \times 6 \times 3\,\mathrm{cm}$ in tehta okoli $150\,\mathrm{g}$. Obdaja jo vezivna ovojnica, zunaj nje maščobna blazina in ledvična fascija.
 
 Na medialnem robu je **hilus**: vanj vstopa ledvična arterija, izstopata ledvična vena in **ledvični meh** (pelvis), ki se nadaljuje v sečevod. Na čelnem prerezu vidimo:
 
@@ -29,30 +29,40 @@ Na medialnem robu je **hilus**: vanj vstopa ledvična arterija, izstopata ledvi�
 
 Nefron sestavljata **ledvično telesce** in **cevka (tubul)**:
 
-```
-aferentna   eferentna
-arteriola   arteriola
-     \  ___  /
-      (glom.)    skorja
-     [Bowman]
-        |
-  proksimalni tubul
-        |
-   +----+----+   sredica
-   | Henleje-|
-   | va zanka|
-   +----+----+
-        |
-   distalni tubul
-        |
-  zbiralca -> papila
-```
+:::risba skica
+opis: Shema nefrona. Zgoraj v skorji aferentna arteriola vstopa v glomerul, eferentna arteriola iz njega izstopa. Glomerul obdaja Bowmanova kapsula. Iz nje vodi proksimalni tubul, ta se nadaljuje v Henlejevo zanko, ki se spusti v sredico in se vrne v skorjo. Sledi distalni tubul, ki se izliva v zbiralce. Zbiralce teče skozi sredico navzdol do papile.
+območje: 0; 40 .. 320; 412
+črta: 0; 180 -> 320; 180 | črtkano siva
+napis: 6; 194 | skorja | desno | siva
+napis: 6; 166 | sredica | desno | siva
+krog: 90; 310 | 44
+krog: 90; 310 | 34 | oranžna
+napis: 90; 310 | glomerul
+napis: 142; 310 | Bowmanova kapsula | desno
+puščica: 52; 378 -> 74; 336
+puščica: 106; 336 -> 128; 378
+napis: 46; 404 | aferentna
+napis: 46; 390 | arteriola
+napis: 134; 404 | eferentna
+napis: 134; 390 | arteriola
+črta: 90; 266 -> 90; 256
+pravokotnik: 24; 232 .. 156; 256
+napis: 90; 244 | proksimalni tubul
+črta: 90; 232 -> 90; 90 -> 130; 90 -> 130; 205 -> 170; 205
+napis: 138; 150 | Henlejeva zanka | desno
+pravokotnik: 170; 193 .. 278; 217
+napis: 224; 205 | distalni tubul
+črta: 278; 205 -> 292; 205
+puščica: 292; 205 -> 292; 64
+napis: 286; 110 | zbiralce | levo
+napis: 292; 52 | papila
+:::
 
 1. **Glomerul**, klobčič kapilar, obdaja **Bowmanova kapsula**. Skupaj tvorita ledvično telesce, ki leži v skorji.
 2. **Proksimalni zviti tubul** vrne večino vode, natrija, vso glukozo in aminokisline. Celice imajo krtačast obrobek (mikrovile) in veliko mitohondrijev.
 3. **Henlejeva zanka** se spusti v sredico in se vrne proti skorji. Ustvari visoko koncentracijo soli v sredici.
 4. **Distalni zviti tubul** se vrne k lastnemu glomerulu. Tam, kjer se dotika aferentne arteriole, je **jukstaglomerularni aparat**, ki izloča renin in uravnava krvni tlak.
-5. Več nefronov se izliva v **zbiralco**, ta pa na papili v malo čašo.
+5. Več nefronov se izliva v **zbiralce**, to pa na papili v malo čašo.
 
 *Preveri:* Zakaj leži ledvično telesce v skorji, piramide pa v sredici? (Piramide so zgrajene iz zank in zbiralc, ki tečejo radialno proti papili; telesca so na začetku nefrona, zunaj.)
 
@@ -100,11 +110,11 @@ Pretok plazme $Q_\mathrm{p}$ dobimo iz pretoka krvi in hematokrita: $Q_\mathrm{p
 
 ### Blok 6: moška spolovila
 
-- **Modi** (testes) v **mošnji**: temperatura je okoli $2$ do $3\,\mathrm K$ nižja od telesne, kar potrebuje nastajanje semenčic. V **semenskih kanalčkih** nastajajo semenčice ob **Sertolijevih celicah**; med kanalčki **Leydigove celice** tvorijo testosteron.
+- **Modi** (testes) v **mošnji**: temperatura je okoli $2$ do $3\,\mathrm{K}$ nižja od telesne, kar potrebuje nastajanje semenčic. V **semenskih kanalčkih** nastajajo semenčice ob **Sertolijevih celicah**; med kanalčki **Leydigove celice** tvorijo testosteron.
 - **Nadmodek** (epididymis): zelo zvita cev, kjer semenčice dozorevajo.
 - **Semenovod** (ductus deferens): skozi dimeljski kanal v trebušno votlino, za mehurjem se združi z izvodilom **semenskega mešička** v **izbrizgalni vod**, ki se odpre v sečnico v prostati.
 - Žleze: semenska mešička (večina prostornine semena, fruktoza), **prostata** (obdaja začetek sečnice) in bulbouretralni žlezi.
-- **Penis**: dve brečasti telesi in gobasto telo okoli sečnice.
+- **Penis**: dve brecilni telesi in gobasto telo okoli sečnice.
 
 *Preveri:* Zakaj povečana prostata pri starejših moških otežuje uriniranje? (Obdaja sečnico tik pod mehurjem in jo pri rasti stisne.)
 
@@ -127,9 +137,9 @@ Jajcevod se z lijakom odpira v trebušno votlino, zato je pri ženski pot od no�
 
 ### Primer 1 (lažji): uganka iz uvoda
 
-Hitrost glomerulne filtracije je $125\,\mathrm{mL/min}$, dnevna količina urina $1{,}5\,\mathrm L$, prostornina plazme $3\,\mathrm L$. Koliko filtrata nastane na dan, kolikšen delež se vrne in kolikokrat na dan se prefiltrira vsa plazma?
+Hitrost glomerulne filtracije je $125\,\mathrm{mL/min}$, dnevna količina urina $1{,}5\,\mathrm{L}$, prostornina plazme $3\,\mathrm{L}$. Koliko filtrata nastane na dan, kolikšen delež se vrne in kolikokrat na dan se prefiltrira vsa plazma?
 
-**Podatki:** $G = 125\,\mathrm{mL/min}$, $V_\mathrm{u} = 1{,}5\,\mathrm L$ na dan, $V_\mathrm{p} = 3\,\mathrm L$, $1$ dan $= 1440\,\mathrm{min}$
+**Podatki:** $G = 125\,\mathrm{mL/min}$, $V_\mathrm{u} = 1{,}5\,\mathrm{L}$ na dan, $V_\mathrm{p} = 3\,\mathrm{L}$, $1$ dan $= 1440\,\mathrm{min}$
 **Iščemo:** dnevni filtrat $V_\mathrm{f}$, delež vrnjenega, število prehodov
 
 :::formula
@@ -138,10 +148,10 @@ $V_\mathrm{f} = G \cdot t$, delež vrnjenega $= \dfrac{V_\mathrm{f} - V_\mathrm{
 
 **Rešitev:**
 
-1. Filtrat: $V_\mathrm{f} = 125 \cdot 1440 = 180\,000\,\mathrm{mL} = 180\,\mathrm L$.
+1. Filtrat: $V_\mathrm{f} = 125 \cdot 1440 = 180\,000\,\mathrm{mL} = 180\,\mathrm{L}$.
 2. Vrnjeno: $\dfrac{180 - 1{,}5}{180} \approx 0{,}992$, torej okoli $99{,}2\,\%$.
 3. Prehodi: $\dfrac{180}{3} = 60$.
-4. Odgovor: na dan nastane $180\,\mathrm L$ filtrata, vrne se več kot $99\,\%$, vsa plazma pa gre skozi filter $60$-krat. Velik pretok pomeni, da se tudi snov z majhno koncentracijo hitro odstrani.
+4. Odgovor: na dan nastane $180\,\mathrm{L}$ filtrata, vrne se več kot $99\,\%$, vsa plazma pa gre skozi filter $60$-krat. Velik pretok pomeni, da se tudi snov z majhno koncentracijo hitro odstrani.
 
 ### Primer 2: očistek inulina in glukoze
 
@@ -163,9 +173,9 @@ $G = C_\mathrm{in} = \dfrac{U_\mathrm{in} Q_\mathrm{u}}{P_\mathrm{in}}$, $F = G 
 
 ### Primer 3 (težji): bolnik s sladkorno boleznijo
 
-Pri bolniku izmerijo: pretok krvi skozi ledvici $1{,}1\,\mathrm{L/min}$, hematokrit $0{,}45$, kreatinin v plazmi $0{,}010\,\mathrm{mg/mL}$ in v urinu $1{,}25\,\mathrm{mg/mL}$, dnevni urin $1{,}44\,\mathrm L$, glukozo v plazmi $4{,}0\,\mathrm{mg/mL}$. Največja hitrost vračanja glukoze je $375\,\mathrm{mg/min}$. Predpostavi, da je očistek kreatinina enak $G$. Izračunaj (a) $G$, (b) filtracijsko frakcijo, (c) koliko glukoze se izloči na minuto in kolikšna je njena koncentracija v urinu, (d) prag plazemske glukoze, nad katerim se glukoza pojavi v urinu.
+Pri bolniku izmerijo: pretok krvi skozi ledvici $1{,}1\,\mathrm{L/min}$, hematokrit $0{,}45$, kreatinin v plazmi $0{,}010\,\mathrm{mg/mL}$ in v urinu $1{,}25\,\mathrm{mg/mL}$, dnevni urin $1{,}44\,\mathrm{L}$, glukozo v plazmi $4{,}0\,\mathrm{mg/mL}$. Največja hitrost vračanja glukoze je $375\,\mathrm{mg/min}$. Predpostavi, da je očistek kreatinina enak $G$. Izračunaj (a) $G$, (b) filtracijsko frakcijo, (c) koliko glukoze se izloči na minuto in kolikšna je njena koncentracija v urinu, (d) prag plazemske glukoze, nad katerim se glukoza pojavi v urinu.
 
-**Podatki:** $Q_\mathrm{k} = 1100\,\mathrm{mL/min}$, $H = 0{,}45$, $P_\mathrm{kr} = 0{,}010\,\mathrm{mg/mL}$, $U_\mathrm{kr} = 1{,}25\,\mathrm{mg/mL}$, $V_\mathrm{u} = 1{,}44\,\mathrm L$ na dan, $P_\mathrm{g} = 4{,}0\,\mathrm{mg/mL}$, $T_\mathrm{m} = 375\,\mathrm{mg/min}$
+**Podatki:** $Q_\mathrm{k} = 1100\,\mathrm{mL/min}$, $H = 0{,}45$, $P_\mathrm{kr} = 0{,}010\,\mathrm{mg/mL}$, $U_\mathrm{kr} = 1{,}25\,\mathrm{mg/mL}$, $V_\mathrm{u} = 1{,}44\,\mathrm{L}$ na dan, $P_\mathrm{g} = 4{,}0\,\mathrm{mg/mL}$, $T_\mathrm{m} = 375\,\mathrm{mg/min}$
 **Iščemo:** $G$, $f$, izločeno glukozo, $U_\mathrm{g}$, prag
 
 :::formula
@@ -191,7 +201,7 @@ Pacientka ima vnetje sečnice. Ženska sečnica je dolga okoli $4\,\mathrm{cm}$,
 **Iščemo:** zaporedje struktur in razlago
 
 :::formula
-pot urina v obratni smeri: sečnica → mehur → sečevod → ledvični meh → čaše → papila → zbiralca
+pot urina v obratni smeri: sečnica → mehur → sečevod → ledvični meh → čaše → papila → zbiralce
 :::
 
 **Rešitev:**
@@ -208,7 +218,7 @@ Sečevod → ledvični meh → velika in mala čaša → papila → zbiralca (vn
 
 ## Pogoste napake
 
-- **»Ledvica izloči le odpadke.«** Glomerul filtrira vse majhne molekule, tudi glukozo in soli; tubuli jih nato vrnejo. Zato je filtrata $180\,\mathrm L$, urina $1{,}5\,\mathrm L$.
+- **»Ledvica izloči le odpadke.«** Glomerul filtrira vse majhne molekule, tudi glukozo in soli; tubuli jih nato vrnejo. Zato je filtrata $180\,\mathrm{L}$, urina $1{,}5\,\mathrm{L}$.
 - **»Za glomerulom je vena.«** Za glomerulom je eferentna *arteriola*; šele za peritubularnimi kapilarami so vene. To ohranja visok tlak v glomerulu.
 - **Zamenjava sečevoda in sečnice.** Sečevod (ureter) vodi iz ledvice v mehur, sečnica (urethra) iz mehurja navzven.
 - **»Oploditev poteka v maternici.«** Navadno poteka v ampuli jajcevoda; v maternico pride že zarodek.
@@ -217,7 +227,7 @@ Sečevod → ledvični meh → velika in mala čaša → papila → zbiralca (vn
 ## Povzetek
 
 - Ledvici sta retroperitonealni, od 12. prsnega do 3. ledvenega vretenca; skorja, sredica s piramidami, papile, čaše, ledvični meh, hilus.
-- Nefron: glomerul z Bowmanovo kapsulo, proksimalni tubul, Henlejeva zanka, distalni tubul, zbiralca; jukstaglomerularni aparat.
+- Nefron: glomerul z Bowmanovo kapsulo, proksimalni tubul, Henlejeva zanka, distalni tubul, zbiralce; jukstaglomerularni aparat.
 - Kri: aferentna arteriola → glomerul → eferentna arteriola → peritubularne kapilare in vasa recta.
 - Očistek $C = U Q_\mathrm{u} / P$; $G$ okoli $125\,\mathrm{mL/min}$ (inulin, kreatinin); $f = G / Q_\mathrm{p}$ okoli $0{,}2$; glukoza se izloči, ko $G P_\mathrm{g}$ preseže $T_\mathrm{m}$.
 - Sečevod s tremi zožitvami, mehur z detruzorjem in trikotnikom, sečnica ženske $4\,\mathrm{cm}$, moškega $20\,\mathrm{cm}$.
@@ -246,8 +256,8 @@ Pri preiskavi ledvic izmerijo: paraaminohipurna kislina (PAH) v plazmi $0{,}010\
 4. $G$ iz inulina: $\dfrac{30 \cdot 1{,}0}{0{,}25} = 120\,\mathrm{mL/min}$.
 5. Filtracijska frakcija: $f = \dfrac{120}{650} \approx 0{,}185$.
 6. Filtrirana glukoza: $120 \cdot 3{,}5 = 420\,\mathrm{mg/min}$; izloči se $420 - 375 = 45\,\mathrm{mg/min}$.
-7. Na dan: $45 \cdot 1440 = 64\,800\,\mathrm{mg} \approx 64{,}8\,\mathrm g$.
-8. Odgovor: pretok plazme $650\,\mathrm{mL/min}$, krvi okoli $1{,}18\,\mathrm{L/min}$, $f \approx 0{,}18$; izloči se okoli $65\,\mathrm g$ glukoze na dan, kar s seboj potegne tudi vodo (žeja in pogosto uriniranje pri sladkorni bolezni).
+7. Na dan: $45 \cdot 1440 = 64\,800\,\mathrm{mg} \approx 64{,}8\,\mathrm{g}$.
+8. Odgovor: pretok plazme $650\,\mathrm{mL/min}$, krvi okoli $1{,}18\,\mathrm{L/min}$, $f \approx 0{,}18$; izloči se okoli $65\,\mathrm{g}$ glukoze na dan, kar s seboj potegne tudi vodo (žeja in pogosto uriniranje pri sladkorni bolezni).
 
 ### Naloga 2
 
@@ -256,14 +266,14 @@ Natančno opiši pot krvi od ledvične arterije do ledvične vene in pot tekoči
 **Rešitev:**
 
 1. Kri: ledvična arterija → segmentne → interlobarne (med piramidami) → arkuatne (meja skorje in sredice) → interlobularne → aferentna arteriola → glomerul → eferentna arteriola → peritubularne kapilare v skorji in vasa recta v sredici → interlobularne, arkuatne, interlobarne vene → ledvična vena.
-2. Tekočina: kapilare glomerula → Bowmanova kapsula → proksimalni zviti tubul → Henlejeva zanka (spust, vzpon) → distalni zviti tubul → zbiralca → papila → mala čaša → velika čaša → ledvični meh.
-3. Lega: ledvično telesce, proksimalni in distalni tubul v skorji; Henlejeva zanka (pri nefronih ob sredici dolga) in zbiralce v sredici, v piramidah.
+2. Tekočina: kapilare glomerula → Bowmanova kapsula → proksimalni zviti tubul → Henlejeva zanka (spust, vzpon) → distalni zviti tubul → zbiralce → papila → mala čaša → velika čaša → ledvični meh.
+3. Lega: ledvično telesce, proksimalni in distalni tubul v skorji; Henlejeva zanka (pri nefronih ob sredici dolga) in zbiralca v sredici, v piramidah.
 4. Filtracija: tlak v kapilarah glomerula je visok, ker upor eferentne arteriole zadrži kri. Ožanje eferentne arteriole poveča filtracijo, ožanje aferentne jo zmanjša. Navadne kapilare na venski strani tega upora nimajo, zato bi tlak hitro padel.
 5. Za glomerulom je kri izgubila okoli petino plazemske vode (filtracijska frakcija okoli $0{,}2$), beljakovine pa so ostale v njej, zato je onkotski tlak v peritubularnih kapilarah visok in pospeši vračanje vode iz tubulov.
 
 ## Drugače: Na sliki
 
-Predstavljaj si čelni prerez ledvice kot pahljačo. Ročaj pahljače je hilus z ledvičnim mehom. Iz njega se razprejo čaše kot prsti, vsak prst objema vrh ene piramide. Piramide so trikotniki z bazo navzven in vrhom (papilo) proti hilusu, v njih so vzporedne črtice: Henlejeve zanke in zbiralce. Zunanji pas pahljače, skorja, je posut s pikami: to so ledvična telesca. Med piramidami se skorja spusti navznoter kot stebrički; po njih tečejo interlobarne žile. Arkuatne žile tečejo kot loki ob bazah piramid.
+Predstavljaj si čelni prerez ledvice kot pahljačo. Ročaj pahljače je hilus z ledvičnim mehom. Iz njega se razprejo čaše kot prsti, vsak prst objema vrh ene piramide. Piramide so trikotniki z bazo navzven in vrhom (papilo) proti hilusu, v njih so vzporedne črtice: Henlejeve zanke in zbiralca. Zunanji pas pahljače, skorja, je posut s pikami: to so ledvična telesca. Med piramidami se skorja spusti navznoter kot stebrički; po njih tečejo interlobarne žile. Arkuatne žile tečejo kot loki ob bazah piramid.
 
 Spolovila v mediani ravnini: pri ženski od spredaj nazaj mehur, maternica, danka; med maternico in danko globok žep potrebušnice. Pri moškem od spredaj nazaj mehur s prostato pod njim, za mehurjem semenska mešička, nato danka. Zato zdravnik prostato otipa skozi danko.
 
@@ -275,20 +285,20 @@ Spolovila v mediani ravnini: pri ženski od spredaj nazaj mehur, maternica, dank
 
 ## Drugače: Bolj natančno
 
-**Protitočni mehanizem.** Henlejeva zanka ima dva kraka z različno prepustnostjo. Spust je prepusten za vodo, vzpon ni, a aktivno črpa $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ v intersticij. Ker tekočina v krakih teče v nasprotnih smereh, se majhna razlika na vsaki višini sešteje v velik gradient: od okoli $300\,\mathrm{mOsm/L}$ v skorji do okoli $1200\,\mathrm{mOsm/L}$ na vrhu papile. Zbiralca prehaja ta gradient; ob antidiuretičnem hormonu so v njeni steni vodne pore (akvaporini) in urin se koncentrira.
+**Protitočni mehanizem.** Henlejeva zanka ima dva kraka z različno prepustnostjo. Spust je prepusten za vodo, vzpon ni, a aktivno črpa $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ v intersticij. Ker tekočina v krakih teče v nasprotnih smereh, se majhna razlika na vsaki višini sešteje v velik gradient: od okoli $300\,\mathrm{mOsm/L}$ v skorji do okoli $1200\,\mathrm{mOsm/L}$ na vrhu papile. Zbiralce prehaja ta gradient; ob antidiuretičnem hormonu so v njegovi steni vodne pore (akvaporini) in urin se koncentrira.
 
-**Skupni izvor.** Sečila in spolovila se razvijejo iz vmesnega mezoderma. Mezonefrični vod pri moškem postane nadmodek, semenovod in semenski mešiček, pri ženski skoraj izgine. Paramezonefrični vod pri ženski postane jajcevoda, maternica in zgornji del nožnice. Zato so organi homologni: moda in jajčnika, mošnja in velike sramne ustne.
+**Skupni izvor.** Sečila in spolovila se razvijejo iz vmesnega mezoderma. Mezonefrični vod pri moškem postane nadmodek, semenovod in semenski mešiček, pri ženski skoraj izgine. Paramezonefrični vod pri ženski postane jajcevoda, maternica in zgornji del nožnice. Zato so organi homologni: modi in jajčnika, mošnja in velike sramne ustne.
 
 ## Preveri se
 
 ? Katera trditev o nefronu je pravilna?
 - Ledvično telesce leži v sredici, v piramidah.
-~ Telesca so v skorji; v piramidah so zanke in zbiralce.
+~ Telesca so v skorji; v piramidah so zanke in zbiralca.
 + Za glomerulom kri teče v eferentno arteriolo.
 - Henlejeva zanka vrne vso glukozo.
 ~ Glukozo vrne proksimalni tubul; zanka ustvarja gradient soli.
-- Zbiralca se izliva neposredno v sečevod.
-~ Zbiralca se odpre na papili v malo čašo; šele ledvični meh preide v sečevod.
+- Zbiralce se izliva neposredno v sečevod.
+~ Zbiralce se odpre na papili v malo čašo; šele ledvični meh preide v sečevod.
 > Zaporedje arteriola, kapilare, arteriola ohranja visok tlak v glomerulu.
 
 ? Koncentracija inulina v plazmi je $0{,}20\,\mathrm{mg/mL}$, v urinu $25\,\mathrm{mg/mL}$, pretok urina $1{,}2\,\mathrm{mL/min}$. Kolikšna je hitrost glomerulne filtracije?

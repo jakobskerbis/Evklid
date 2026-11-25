@@ -6,6 +6,9 @@
 // Datoteka je v public/, ker isto kodo (brez DOM in brez knjižnic) uporabljata strežnik (server/risbe.js) in
 // brskalnik: graf z drsniki (»drsnik:«, j, 11. 11. 2026) public/risbe-zive.js ob premiku drsnika izriše znova.
 import { parse, compile, freeVars } from "./graph/math.js";
+// Izraz v risbi je v slovenskem zapisu: vejica med števkami je decimalna tudi v oklepaju (sin(0,63*x)), »;« loči vrednosti.
+// Prej je math.js vejico v oklepaju bral kot ločilo in sin(0,63*x) narisal kot sin 0 (ravna črta).
+const izraz = (src) => parse(String(src).replace(/(\d),(?=\d)/g, "$1.").replace(/;/g, ","));
 
 export const DRAW_RE = /^[ \t]*:::[ \t]*risba(?:[ \t]+([^\n]*?))?[ \t]*\n([\s\S]*?)\n[ \t]*:::[ \t]*$/gm;
 
@@ -174,7 +177,7 @@ function okolje(list, given, lenient) {
     let ast;
     let fn;
     try {
-      ast = parse(src);
+      ast = izraz(src);
       fn = compile(ast);
     } catch (e) {
       fail(`izraza »${src}« ne znam izračunati (${e.message})`);
@@ -412,7 +415,9 @@ function stolpci(b) {
   if (!(step > 0) || max / step > 20) fail("stolpci: korak mora biti pozitiven in dati največ 20 črt na osi");
   const top = Math.ceil(max / step - 1e-9) * step || step;
   const axis = b.one("os");
-  const [L, T, H] = [34, axis ? 30 : 14, 150];
+  const H = 150;
+  // Napis vrednosti nad stolpcem, ki seže (skoraj) do vrha osi, ne sme prekriti imena osi: tedaj dodatna vrstica prostora.
+  const [L, T] = [34, axis ? ((1 - max / top) * H < FS ? 30 + FS : 30) : 14];
   const Y = (v) => T + H - (v / top) * H;
   const slot = (W - L - 6) / bars.length;
   const st = style(b.one("barva", "modra"));
@@ -474,7 +479,7 @@ function graf(b, P = BREZ) {
     if (P.vals) fn = P.expr(f[0], ["x"]);
     else
       try {
-        fn = compile(parse(f[0]));
+        fn = compile(izraz(f[0]));
       } catch (e) {
         fail(`graf: izraza »${f[0]}« ne znam izračunati (${e.message})`);
       }

@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -15,7 +15,7 @@ V obeh primerih ne poznamo neposredne formule, poznamo pa **pravilo, kako iz pre
 
 Pri tlakovanju naj bo $t_n$ število načinov za pot dolžine $n$. Zadnja plošča je dolžine $1$ (pred njo je pot dolžine $n - 1$) ali dolžine $2$ (pred njo pot dolžine $n - 2$), zato je $t_n = t_{n-1} + t_{n-2}$, $t_1 = 1$, $t_2 = 2$. Zaporedje je $1, 2, 3, 5, 8, 13, \ldots$
 
-Ker zaporedje raste približno geometrijsko, je mamljivo poskusiti z $t_n = r^n$ in poiskati »pravi« $r$. Vstavimo: $r^n = r^{n-1} + r^{n-2}$, po deljenju z $r^{n-2}$ dobimo $r^2 = r + 1$ in $r = \frac{1 \pm \sqrt5}{2}$. Toda nobeno od zaporedij $r^n$ ne da $t_1 = 1$ in $t_2 = 2$ hkrati, z dodatnim faktorjem $c\,r^n$ pa lahko izpolnimo le en začetni pogoj.
+Ker zaporedje raste približno geometrijsko, je mamljivo poskusiti s $t_n = r^n$ in poiskati »pravi« $r$. Vstavimo: $r^n = r^{n-1} + r^{n-2}$, po deljenju z $r^{n-2}$ dobimo $r^2 = r + 1$ in $r = \frac{1 \pm \sqrt5}{2}$. Toda nobeno od zaporedij $r^n$ ne da $t_1 = 1$ in $t_2 = 2$ hkrati, z dodatnim faktorjem $c\,r^n$ pa lahko izpolnimo le en začetni pogoj.
 
 Napaka je v predpostavki, da je rešitev **eno samo** geometrijsko zaporedje. Rešitve linearne rekurzije se dajo **seštevati**: vsota rešitev je spet rešitev. Pravilna rešitev je kombinacija obeh, $t_n = C_1 r_1^n + C_2 r_2^n$, in dve konstanti ravno zadoščata za dva začetna pogoja. To zdaj natančno utemeljimo.
 
@@ -232,7 +232,7 @@ Natančno navedi izrek o splošni rešitvi homogene linearne rekurzije reda $k$,
 1. Izrek: če ima $p(r) = r^k - c_1r^{k-1} - \cdots - c_k$ različne korene $r_1, \ldots, r_k$, je vsaka rešitev $a_n = c_1a_{n-1} + \cdots + c_ka_{n-k}$ oblike $\sum C_ir_i^n$ z enolično določenimi konstantami.
 2. Vsak $r_i^n$ je rešitev (vstavimo, delimo z $r_i^{n-k}$, dobimo $p(r_i) = 0$); po linearnosti je rešitev tudi vsaka kombinacija.
 3. Za dane $a_0, \ldots, a_{k-1}$ rešimo sistem $\sum_i C_ir_i^j = a_j$, $j = 0, \ldots, k-1$. Njegova matrika je Vandermondova z determinanto $\prod_{i<l}(r_l - r_i) \ne 0$, zato ima natanko eno rešitev. Po izreku o enoličnosti je dobljena kombinacija prav iskano zaporedje; drugih rešitev ni.
-4. Dvojni koren: z $q(x) = x^{n-k}p(x)$ velja $q(r) = q'(r) = 0$. Iz $rq'(r) = 0$ sledi $nr^n = \sum_{j=1}^{k} c_j(n - j)r^{n-j}$, kar je rekurzija za $a_n = nr^n$.
+4. Dvojni koren: s $q(x) = x^{n-k}p(x)$ velja $q(r) = q'(r) = 0$. Iz $rq'(r) = 0$ sledi $nr^n = \sum_{j=1}^{k} c_j(n - j)r^{n-j}$, kar je rekurzija za $a_n = nr^n$.
 5. Neodvisnost: iz $\lambda r^n + \mu nr^n = 0$ za vse $n$ sledi pri $n = 0$ $\lambda = 0$ in pri $n = 1$ $\mu r = 0$; ker je $r \ne 0$ ($c_k \ne 0$), je $\mu = 0$. Rešitvi sta neodvisni.
 
 ### Naloga 3
@@ -242,8 +242,8 @@ Naj bo $b_n$ število načinov, kako plačaš $n$ evrov s kovanci za $1$ in $2$ 
 **Rešitev:**
 
 1. Število dvojk $j$ in enic $n - 2j$ natanko določa plačilo. Rodovna funkcija: $B(x) = (1 + x + x^2 + \cdots)(1 + x^2 + x^4 + \cdots) = \dfrac{1}{(1 - x)(1 - x^2)} = \dfrac{1}{(1 - x)^2(1 + x)}$.
-2. Nastavek: $\dfrac{1}{(1-x)^2(1+x)} = \dfrac{A}{1 - x} + \dfrac{B}{(1 - x)^2} + \dfrac{C}{1 + x}$, torej $1 = A(1 - x)(1 + x) + B(1 + x) + C(1 - x)^2$.
-3. Pri $x = 1$: $1 = 2B$, $B = \tfrac12$. Pri $x = -1$: $1 = 4C$, $C = \tfrac14$. Pri $x = 0$: $1 = A + \tfrac12 + \tfrac14$, $A = \tfrac14$.
+2. Nastavek: $\dfrac{1}{(1-x)^2(1+x)} = \dfrac{K}{1 - x} + \dfrac{L}{(1 - x)^2} + \dfrac{M}{1 + x}$, torej $1 = K(1 - x)(1 + x) + L(1 + x) + M(1 - x)^2$.
+3. Pri $x = 1$: $1 = 2L$, $L = \tfrac12$. Pri $x = -1$: $1 = 4M$, $M = \tfrac14$. Pri $x = 0$: $1 = K + \tfrac12 + \tfrac14$, $K = \tfrac14$.
 4. Koeficient pri $x^n$: $b_n = \tfrac14 + \tfrac12(n + 1) + \tfrac14(-1)^n = \dfrac{2n + 3 + (-1)^n}{4}$.
 5. Za sod $n$: $b_n = \dfrac{2n + 4}{4} = \dfrac{n}{2} + 1$. Za lih $n$: $b_n = \dfrac{2n + 2}{4} = \dfrac{n + 1}{2} = \left\lfloor \dfrac n2 \right\rfloor + 1$. ✓
 6. Odgovor: $B(x) = \frac{1}{(1-x)^2(1+x)}$ in $b_n = \lfloor n/2 \rfloor + 1$; na primer $5$ evrov plačaš na $3$ načine ($5 \times 1$, $2 + 3 \times 1$, $2 \cdot 2 + 1$).
@@ -252,26 +252,60 @@ Naj bo $b_n$ število načinov, kako plačaš $n$ evrov s kovanci za $1$ in $2$ 
 
 Tlakovanje poti dolžine $4$; vsako tlakovanje se konča s ploščo $1$ ali $2$:
 
-```
- konec z [1]:      konec z [2]:
- [1][1][1] [1]     [1][1] [ 2 ]
- [ 2 ][1]  [1]     [ 2 ]  [ 2 ]
- [1][ 2 ]  [1]
- 3 = t_3           2 = t_2
-```
+:::risba skica
+opis: Pet tlakovanj poti dolžine 4 v dveh skupinah. Levo so tri tlakovanja, ki se končajo s ploščo 1: 1, 1, 1 in 1; 2, 1 in 1; 1, 2 in 1. Pod njimi piše 3 = t₃. Desno sta dve tlakovanji, ki se končata s ploščo 2: 1, 1 in 2; 2 in 2. Pod njima piše 2 = t₂. Zadnja plošča je v vsakem tlakovanju poudarjena.
+območje: -0,5; 0,4 .. 10,5; 6,4
+napis: 2; 5,8 | konec s ploščo 1 | sredina
+pravokotnik: 0; 4,4 .. 1; 5,2
+pravokotnik: 1; 4,4 .. 2; 5,2
+pravokotnik: 2; 4,4 .. 3; 5,2
+pravokotnik: 3; 4,4 .. 4; 5,2 | oranžna debelo
+napis: 0,5; 4,8 | 1 | sredina
+napis: 1,5; 4,8 | 1 | sredina
+napis: 2,5; 4,8 | 1 | sredina
+napis: 3,5; 4,8 | 1 | sredina
+pravokotnik: 0; 3,2 .. 2; 4
+pravokotnik: 2; 3,2 .. 3; 4
+pravokotnik: 3; 3,2 .. 4; 4 | oranžna debelo
+napis: 1; 3,6 | 2 | sredina
+napis: 2,5; 3,6 | 1 | sredina
+napis: 3,5; 3,6 | 1 | sredina
+pravokotnik: 0; 2 .. 1; 2,8
+pravokotnik: 1; 2 .. 3; 2,8
+pravokotnik: 3; 2 .. 4; 2,8 | oranžna debelo
+napis: 0,5; 2,4 | 1 | sredina
+napis: 2; 2,4 | 2 | sredina
+napis: 3,5; 2,4 | 1 | sredina
+napis: 2; 1 | 3 = t_3 | sredina
+napis: 8; 5,8 | konec s ploščo 2 | sredina
+pravokotnik: 6; 4,4 .. 7; 5,2
+pravokotnik: 7; 4,4 .. 8; 5,2
+pravokotnik: 8; 4,4 .. 10; 5,2 | oranžna debelo
+napis: 6,5; 4,8 | 1 | sredina
+napis: 7,5; 4,8 | 1 | sredina
+napis: 9; 4,8 | 2 | sredina
+pravokotnik: 6; 3,2 .. 8; 4
+pravokotnik: 8; 3,2 .. 10; 4 | oranžna debelo
+napis: 7; 3,6 | 2 | sredina
+napis: 9; 3,6 | 2 | sredina
+napis: 8; 1 | 2 = t_2 | sredina
+:::
 
 Skupaj $t_4 = 3 + 2 = 5$. Leva skupina so vsa tlakovanja dolžine $3$ z dodano ploščo $1$, desna vsa tlakovanja dolžine $2$ z dodano ploščo $2$; nobeno tlakovanje ni šteto dvakrat.
 
 Model ogljika iz Primera 1 kot pot proti negibni točki:
 
-```
- a_n
- 500 - - - - - - - - - - - -
- 400            ___...--
- 333      __..--
- 250 __.--
-     0     20    46     n
-```
+:::risba graf
+opis: Graf presežka aₙ = 500 − 250 · 0,98ⁿ za n od 0 do 60. Krivulja se začne pri 250 (n = 0), gre skozi približno 333 pri n = 20 in približno 401 pri n = 46 ter se vse počasneje približuje črtkani vodoravni črti pri 500, ki je negibna točka.
+x: 0 .. 60 | 10 | n
+y: 200 .. 550 | 50 | a_n
+f: 500 - 250*0,98^x
+črta: 0; 500 -> 60; 500 | črtkano siva
+napis: 30; 500 | negibna točka 500 | nad
+točka: 0; 250 | 250 | pod desno
+točka: 20; 333,1 | 333 | pod desno
+točka: 46; 401,3 | 401 | pod desno
+:::
 
 Razlika do $500$ se vsako leto pomnoži z $0{,}98$, zato se presežek negibni točki približuje vse počasneje.
 
@@ -279,7 +313,7 @@ Razlika do $500$ se vsako leto pomnoži z $0{,}98$, zato se presežek negibni to
 
 **Analiza algoritmov.** Čas rekurzivnih programov opišejo rekurzije: naiven izračun Fibonaccijevih števil potrebuje $T(n) = T(n-1) + T(n-2) + 1$ korakov, kar raste kot $\varphi^n$; zato programerji uporabijo zanko ali pomnjenje. Hanojski stolp potrebuje $2^n - 1$ premikov.
 
-**Digitalni filtri.** Filter z enačbo $y_n = 0{,}9\,y_{n-1} + 0{,}1\,x_n$ gladi meritve (na primer temperature s postaje): izhod je rekurzija prvega reda. Stabilnost filtra je pogoj, da so vsi koreni karakterističnega polinoma po absolutni vrednosti manjši od $1$.
+**Digitalni filtri.** Filter z enačbo $y_n = 0{,}9\,y_{n-1} + 0{,}1\,x_n$ gladi meritve (na primer temperature s postaje): izhod je rekurzija prvega reda. Pogoj za stabilnost filtra je, da so vsi koreni karakterističnega polinoma po absolutni vrednosti manjši od $1$.
 
 **Populacijski in podnebni modeli.** Modeli populacij po starostnih razredih (Lesliejeve matrike) za ribe ali gozdove so sistemi linearnih rekurzij; prevladujoči koren pove dolgoročno rast ali upad populacije. Preprosti modeli ogljičnega kroga z več zalogovniki (ozračje, površinski in globoki ocean) so prav tako linearne rekurzije z več časovnimi konstantami.
 
@@ -314,7 +348,7 @@ Reši $a_n = 4a_{n-1} - 4a_{n-2}$, $a_0 = 1$, $a_1 = 6$.
 ~ Prost člen linearnosti ne pokvari; nelinearna bi bila, če bi nastopal na primer $k_{n-1}^2$ ali $k_{n-1}k_{n-2}$.
 > Koeficienta pri $k_{n-1}$ in $k_{n-2}$ sta stalna, člen $f(n) = 1$ pa je od nič različen: nehomogena linearna rekurzija reda $2$.
 
-? Razvrsti rešitve od najpočasneje do najhitreje rastoče za velike $n$: (A) $2^n$; (B) $n2^n$; (C) $\varphi^n$ z $\varphi \approx 1{,}618$; (D) $3^n$.
+? Razvrsti rešitve od najpočasneje do najhitreje rastoče za velike $n$: (A) $2^n$; (B) $n2^n$; (C) $\varphi^n$ s $\varphi \approx 1{,}618$; (D) $3^n$.
 - A, C, B, D
 ~ $\varphi^n$ raste počasneje od $2^n$, ker je $\varphi < 2$.
 + C, A, B, D
@@ -360,11 +394,11 @@ f | nehomogeni del (desna stran) $f(n)$ | | | $a_n^{(h)}$ homogeni, $a_n^{(p)}$ 
 p | karakteristični polinom $p(r)$ | | | $p(r) = r^k - c_1r^{k-1} - \cdots - c_k$
 r, r_1, r_2 | koreni karakterističnega polinoma | | |
 C, C_1, C_2 | konstante splošne rešitve | | |
-\alpha, \beta | konstante pri $2^n$ in $3^n$ | | |
+\alpha, \beta | konstanti splošne rešitve | | | v Primeru 3 pri $2^n$ in $3^n$
 t_n | število tlakovanj poti dolžine $n$ | t_n = t_{n-1} + t_{n-2} | |
 \varphi | zlato razmerje | \varphi = \frac{1 + \sqrt5}{2} | | približno 1,618
 \psi | drugi koren | \psi = \frac{1 - \sqrt5}{2} | | približno −0,618
-h_n | najmanjše število premikov Hanojskega stolpa | h_n = 2h_{n-1} + 1 | |
+h_n | najmanjše število premikov hanojskega stolpa | h_n = 2h_{n-1} + 1 | |
 A | rodovna funkcija $A(x)$ zaporedja $(a_n)$ | | | $A(x) = \sum a_nx^n$
 H | rodovna funkcija $H(x)$ zaporedja $(h_n)$ | | |
 x | formalna spremenljivka | | |

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tri poti toplote
+  - vedno s toplejšega na hladnejše
+  - prevajanje, konvekcija, sevanje
+- Prevajanje
+  - delci ostanejo, podajajo si gibanje
+  - predvsem v trdnih snoveh: žlica v vroči vodi
+- Konvekcija
+  - topla voda ali zrak se dvigne
+  - premika se snov sama
+  - radiator, ventilator v prenosniku
+- Sevanje
+  - ne potrebuje snovi: Sonce skozi vesolje
+  - seva vsako telo, termokamera
+  - temne površine bolje vpijejo
+- Prevodniki
+  - kovine: baker, aluminij, železo
+  - led se na aluminiju hitro tali
+- Izolatorji
+  - les, plastika, steklo, volna, stiropor
+  - ujet zrak: brez konvekcije
+  - termovka: prazen prostor, srebrna stena
+- Pogoste zmote
+  - kovina ni hladnejša, hitreje odvaja toploto
+  - izolator ne greje, le upočasni

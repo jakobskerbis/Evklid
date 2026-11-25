@@ -2,8 +2,9 @@
 // Kode živijo v tabeli promo_codes; skrbnik jih ustvari in izklopi v zavihku Račun.
 // Koda iz .env se ob zagonu vpiše oziroma posodobi (dnevi, število uporab, profili, model),
 // izklop iz zavihka Račun pa ostane tudi po ponovnem zagonu.
-// Nastavitve v .env: EVKLID_PROMO_CODE (privzeto EVKLID3X), EVKLID_PROMO_LIMIT (100),
-// EVKLID_PROMO_DAYS (90 = 3 meseci), EVKLID_PROMO_SEATS (1 otrok). EVKLID_PROMO_CODE=off kode iz .env ne doda.
+// Nastavitve v .env: EVKLID_PROMO_CODE (privzeto brez kode, točka A2: koda v javnem repozitoriju ne sme biti
+// aktivna sama od sebe), EVKLID_PROMO_LIMIT (100), EVKLID_PROMO_DAYS (90 = 3 meseci), EVKLID_PROMO_SEATS (1 otrok).
+// EVKLID_PROMO_CODE=off ali prazno: kode iz .env ni, prej vpisana koda iz .env se ob zagonu izklopi (unovčenja ostanejo).
 // EVKLID_PROMO_MODEL: zmogljivejši model za imetnike kode, privzeto »sonnet« (j 2026-10-30): Sonnet
 // ob 2. zaporedni »Razloži podrobneje«, Opus šele ob 3.; »opus« omejitev izklopi.
 // Vsak račun porabi največ eno aktivacijsko kodo (dve kodi se ne seštevata).
@@ -14,7 +15,7 @@ export const CODE_RE = /^[A-Z0-9-]{4,30}$/;
 export const MODEL_CAPS = ["sonnet"]; // null = brez omejitve (Opus)
 
 export function promoConfig(env = process.env) {
-  const code = String(env.EVKLID_PROMO_CODE ?? "EVKLID3X").trim().toUpperCase();
+  const code = String(env.EVKLID_PROMO_CODE ?? "").trim().toUpperCase();
   const num = (v, def) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Math.floor(Number(v)) : def);
   return {
     code: code === "OFF" || code === "" ? null : code,
@@ -78,6 +79,17 @@ export function createPromo(db, cfg) {
   const anyActive = () => !!db.prepare("SELECT 1 FROM promo_codes WHERE active = 1 AND (valid_until IS NULL OR valid_until >= ?)").get(today());
 
   // node:sqlite je sinhron, zato sta štetje in vpis skupaj atomarna (ni tekme za zadnje mesto).
+  // Preverjanje brez porabe (registracija: koda se porabi šele ob potrditvi e-naslova, #747 pregled 2): { ok, code } ali { error }.
+  function check(parent, raw) {
+    const code = String(raw || "").trim().toUpperCase();
+    if (!code) return { error: "Vpiši aktivacijsko kodo." };
+    const row = CODE_RE.test(code) ? get(code) : null;
+    if (!row || !row.active || (row.valid_until && row.valid_until < today())) return { error: "Ta aktivacijska koda ni veljavna." };
+    if (db.prepare("SELECT 1 FROM promo_redemptions WHERE parent_id = ?").get(parent.id)) return { error: "Na tem računu je bila aktivacijska koda že uporabljena." };
+    if (usedOf(code) >= row.max_uses) return { error: `Vseh ${row.max_uses} aktivacij te kode je že porabljenih.`, exhausted: true };
+    return { ok: true, code };
+  }
+
   function redeem(parent, raw) {
     const code = String(raw || "").trim().toUpperCase();
     if (!code) return { error: "Vpiši aktivacijsko kodo." };
@@ -134,5 +146,14 @@ export function createPromo(db, cfg) {
     return r.changes ? { ok: true } : { error: "Koda ne obstaja." };
   }
 
-  return { redeem, stats, used, codeOf, termsOf, list, create, setActive, anyActive };
+  // Ali je koda veljavna aktivacijska koda (vklopljena, ne pretečena): registracija z eno kodo (»Imam kodo«) tako ve,
+  // da je aktivacijska. Izklopljena ali pretečena koda ne zasenči vabila ali priporočila z istim zapisom (pregled #834).
+  const exists = (raw) => {
+    const code = String(raw || "").trim().toUpperCase();
+    if (!CODE_RE.test(code)) return false;
+    const row = get(code);
+    return !!row && !!row.active && !(row.valid_until && row.valid_until < today());
+  };
+
+  return { redeem, check, stats, used, codeOf, termsOf, list, create, setActive, anyActive, exists };
 }

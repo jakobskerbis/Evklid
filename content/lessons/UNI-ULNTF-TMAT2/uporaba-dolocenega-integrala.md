@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -23,7 +23,7 @@ ploščina lika med grafom, osjo $x$ in navpičnicama $x = a$, $x = b$. Lik razr
 
 Ploščina je vedno pozitivna, zato vzamemo absolutno vrednost:
 $$A = \int_a^b |f(x)|\,dx.$$
-V praksi poiščemo ničle $f$, interval razdelimo nanje in seštejemo absolutne vrednosti posameznih integralov. Za sinus: $A = 2 + |-2| = 4$. Prva misel iz uvoda je s tem ovržena.
+V praksi poiščemo ničle $f$, interval pri njih razdelimo in seštejemo absolutne vrednosti posameznih integralov. Za sinus: $A = 2 + |-2| = 4$. Prva misel iz uvoda je s tem ovržena.
 
 :::premisli
 Napovej, koliko vrne $\int_{-1}^{1} x^3\,dx$ in kolikšna je ploščina lika med $y = x^3$ in osjo $x$ na $[-1, 1]$.
@@ -82,7 +82,7 @@ $A = \displaystyle\int_a^b \big(f(x) - g(x)\big)\,dx$, kjer je $f$ zgoraj
 **Rešitev:**
 
 1. Presečišči: $x^2 = 2x \Rightarrow x(x - 2) = 0$, torej $a = 0$, $b = 2$.
-2. Kdo je zgoraj: pri $x = 1$ je $2x = 2$ in $x^2 = 1$, zato je premica nad parabolo.
+2. Katera je zgoraj: pri $x = 1$ je $2x = 2$ in $x^2 = 1$, zato je premica nad parabolo.
 3. $A = \int_0^2 (2x - x^2)\,dx = \left[x^2 - \frac{x^3}{3}\right]_0^2 = 4 - \frac{8}{3} = \frac{4}{3}$.
 4. Odgovor: ikona ima ploščino $\frac{4}{3}\,\mathrm{cm^2} \approx 1{,}33\,\mathrm{cm^2}$.
 
@@ -150,7 +150,7 @@ $\int_0^2 (x^3 - 4x)\,dx = (4 - 8) - 0 = -4$, graf je tam pod osjo. Ploščina j
 ## Pogoste napake
 
 - **Integral enačimo s ploščino.** »$\int_{-2}^{2} (x^3 - 4x)\,dx = 0$, torej je ploščina $0$.« Kosi pod osjo se štejejo negativno in odštejejo od kosov nad osjo. Popravek: poišči ničle, integriraj po delih in seštej absolutne vrednosti.
-- **Spodnja minus zgornja.** Kdor računa $\int (g - f)\,dx$, dobi negativno »ploščino« ali pa zamenja meje, da znak popravi na slepo. Popravek: s točko med presečiščema preveri, kdo je zgoraj, in odštevaj zgornja minus spodnja.
+- **Spodnja minus zgornja.** Kdor računa $\int (g - f)\,dx$, dobi negativno »ploščino« ali pa zamenja meje, da znak popravi na slepo. Popravek: s točko med presečiščema preveri, katera je zgoraj, in odštevaj zgornja minus spodnja.
 - **Pozabljen kvadrat pri vrtenini.** $V = \pi \int f\,dx$ je napačno, ker je presek krog s ploščino $\pi f^2$. Prav tako je narobe $\pi \left(\int f\,dx\right)^2$: kvadriramo funkcijo, ne integrala.
 - **Obroč kot kvadrat razlike.** Pri votlem telesu ni $\pi \int (f - g)^2\,dx$, ker ploščina obroča ni $\pi(f - g)^2$. Prav je $\pi(f^2 - g^2)$: velik krog minus luknja.
 - **$f$ namesto $f'$ v dolžini loka.** $\int \sqrt{1 + f^2}\,dx$ meša višino z naklonom. Vodoravna premica $y = 5$ ima na $[0, 1]$ dolžino $1$, ne $\sqrt{26}$. Popravek: pod korenom je vedno odvod.
@@ -163,6 +163,57 @@ $\int_0^2 (x^3 - 4x)\,dx = (4 - 8) - 0 = -4$, graf je tam pod osjo. Ploščina j
 - Dolžina loka: $L = \int_a^b \sqrt{1 + f'^2}\,dx$; lok je vedno vsaj tako dolg kot tetiva.
 - Skupna ideja: razreži na tanke rezine, zapiši prispevek ene rezine, integriraj.
 
+## Za izpit
+
+Znati moraš povedati:
+- formulo za ploščino med grafoma zveznih funkcij $f \ge g$ na $[a, b]$ in razlago z navpičnimi trakovi višine $f - g$;
+- zakaj $\int_a^b f(x)\,dx$ ni ploščina, kadar $f$ menja predznak, in kako izračunaš $\int_a^b |f(x)|\,dx$ po delih med ničlami;
+- izpeljavo formule $V = \pi \int_a^b f(x)^2\,dx$ z rezinami in formulo za votlo telo s pogojem $0 \le g \le f$;
+- izpeljavo formule $L = \int_a^b \sqrt{1 + f'(x)^2}\,dx$ s Pitagorovim izrekom in pogoj, da je $f$ zvezno odvedljiva;
+- utemeljitev, da je lok vsaj tako dolg kot tetiva in da je $L \ge b - a$.
+
+### Naloga 1
+
+Lik omejujeta parabola $y = x^2 + 1$ in premica $y = x + 3$. (a) Izračunaj ploščino lika. (b) Lik zavrtimo okoli osi $x$. Izračunaj prostornino nastalega votlega telesa.
+
+**Rešitev:**
+
+1. Presečišči: $x^2 + 1 = x + 3 \Rightarrow x^2 - x - 2 = (x - 2)(x + 1) = 0$, torej $a = -1$, $b = 2$.
+2. Katera je zgoraj: pri $x = 0$ je $x + 3 = 3$ in $x^2 + 1 = 1$, zato je premica nad parabolo. Na $[-1, 2]$ sta obe funkciji pozitivni, torej velja $0 \le g \le f$ za $f(x) = x + 3$, $g(x) = x^2 + 1$.
+3. Ploščina: $A = \int_{-1}^{2} (x + 2 - x^2)\,dx = \left[\frac{x^2}{2} + 2x - \frac{x^3}{3}\right]_{-1}^{2} = \frac{10}{3} - \left(-\frac{7}{6}\right) = \frac{9}{2}$.
+4. Razlika kvadratov: $f^2 - g^2 = (x^2 + 6x + 9) - (x^4 + 2x^2 + 1) = -x^4 - x^2 + 6x + 8$.
+5. Integral: $\int_{-1}^{2} (-x^4 - x^2 + 6x + 8)\,dx = \left[-\frac{x^5}{5} - \frac{x^3}{3} + 3x^2 + 8x\right]_{-1}^{2} = \frac{284}{15} - \left(-\frac{67}{15}\right) = \frac{117}{5}$.
+6. Prostornina: $V = \pi \cdot \frac{117}{5} = \frac{117\pi}{5} \approx 73{,}51$.
+7. Odgovor: $A = \frac{9}{2}$, $V = \frac{117\pi}{5} \approx 73{,}5$. Račun $\pi \int (f - g)^2\,dx$ bi bil napačen, ker presek ni krog, temveč obroč.
+
+### Naloga 2
+
+Izračunaj dolžino loka krivulje $y = \frac{x^2}{4} - \frac{\ln x}{2}$ na intervalu $[1, e]$. Rezultat preveri z dolžino tetive.
+
+**Rešitev:**
+
+1. Odvod: $f'(x) = \frac{x}{2} - \frac{1}{2x}$.
+2. Izraz pod korenom: $1 + f'(x)^2 = 1 + \frac{x^2}{4} - \frac{1}{2} + \frac{1}{4x^2} = \frac{x^2}{4} + \frac{1}{2} + \frac{1}{4x^2} = \left(\frac{x}{2} + \frac{1}{2x}\right)^2$.
+3. Na $[1, e]$ je $\frac{x}{2} + \frac{1}{2x} > 0$, zato je $\sqrt{1 + f'(x)^2} = \frac{x}{2} + \frac{1}{2x}$.
+4. Dolžina: $L = \int_1^e \left(\frac{x}{2} + \frac{1}{2x}\right)dx = \left[\frac{x^2}{4} + \frac{\ln x}{2}\right]_1^e = \frac{e^2}{4} + \frac{1}{2} - \frac{1}{4} = \frac{e^2 + 1}{4}$.
+5. Številsko: $L \approx 2{,}097$.
+6. Tetiva: krajišči sta $\left(1, \frac{1}{4}\right)$ in $\left(e, \frac{e^2}{4} - \frac{1}{2}\right)$, razliki koordinat sta $e - 1 \approx 1{,}718$ in $\frac{e^2}{4} - \frac{3}{4} \approx 1{,}097$. Tetiva meri $\sqrt{(e - 1)^2 + \left(\frac{e^2}{4} - \frac{3}{4}\right)^2} \approx 2{,}039$.
+7. Odgovor: $L = \frac{e^2 + 1}{4} \approx 2{,}10$, kar je malo več od tetive $2{,}04$, kot mora biti.
+
+### Naloga 3
+
+Izpelji formulo za prostornino telesa, ki nastane z vrtenjem grafa funkcije $f$ okoli osi $x$ na $[a, b]$. Natančno navedi pogoje za $f$. S formulo nato izpelji prostornino krogle s polmerom $r$ in utemelji, zakaj račun $\pi \left(\int_a^b f(x)\,dx\right)^2$ ne da prostornine.
+
+**Rešitev:**
+
+1. Pogoji: $f$ je zvezna na $[a, b]$ in $f \ge 0$.
+2. Rezina: telo razrežemo z ravninami, pravokotnimi na os $x$. Presek pri $x$ je krog s polmerom $f(x)$ in ploščino $\pi f(x)^2$, rezina debeline $dx$ je skoraj valj s prostornino $\pi f(x)^2\,dx$.
+3. Seštevek: vsota prostornin rezin je Riemannova vsota za funkcijo $\pi f^2$. Ker je $f$ zvezna, je zvezna tudi $\pi f^2$, zato vsote konvergirajo k $V = \pi \int_a^b f(x)^2\,dx$, ko gre debelina rezin proti $0$.
+4. Krogla: nastane z vrtenjem polkrožnice $f(x) = \sqrt{r^2 - x^2}$ na $[-r, r]$; tam je $f$ zvezna in $f \ge 0$.
+5. $V = \pi \int_{-r}^{r} (r^2 - x^2)\,dx = \pi \left[r^2 x - \frac{x^3}{3}\right]_{-r}^{r} = \pi \left(\frac{2r^3}{3} + \frac{2r^3}{3}\right) = \frac{4\pi r^3}{3}$.
+6. Napačni račun: $\pi \left(\int_a^b f\,dx\right)^2$ kvadrira ploščino pod grafom, ne polmera posamezne rezine. Protiprimer je valj $f(x) = r$ na $[0, h]$: pravilno je $V = \pi r^2 h$, napačni račun pa da $\pi (rh)^2 = \pi r^2 h^2$, kar se ujema le pri $h = 1$ in ima tudi napačno enoto.
+7. Sklep: kvadriramo funkcijo pod integralom, ker je prispevek vsake rezine sorazmeren s kvadratom njenega polmera.
+
 ## Drugače: Na sliki
 
 Predstavljaj si tri slike, narisane ena pod drugo.
@@ -171,7 +222,7 @@ Predstavljaj si tri slike, narisane ena pod drugo.
 - **Vrtenina.** Isti pravokotnik se zavrti okoli osi $x$ in postane tanek kovanec s polmerom $f(x)$. Če je spodaj še $g$, ima kovanec luknjo s polmerom $g(x)$, kot podložka. Kup kovancev od $a$ do $b$ je telo.
 - **Lok.** Na krivulji je kratek poševen odsek. Pod njim je pravokoten trikotnik: vodoravna kateta $dx$, navpična $f'(x)\,dx$, hipotenuza je odsek. Nanizane hipotenuze dajo krivuljo.
 
-Pri vseh treh je integral le stroj, ki sešteje neskončno tankih kosov. Razlikuje se samo to, kaj je en kos.
+Pri vseh treh je integral le stroj, ki sešteje neskončno mnogo tankih kosov. Razlikuje se samo to, kaj je en kos.
 
 ## Drugače: Bolj natančno
 

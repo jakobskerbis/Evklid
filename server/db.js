@@ -5,8 +5,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessList } from "./settings.js";
+import { privzetiCilj } from "../public/goal-data.js";
 import { Flashcards } from "./flashcards.js";
-import { seal, unseal, sealJson, unsealJson, UNREADABLE } from "./crypto-polje.js";
+import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
 
 // Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
 export const SKILL_KEEP_DAYS = 365;
@@ -32,6 +33,11 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   migrateLegacyDb(file);
   const db = new DatabaseSync(file);
   db.exec(`
+    -- D6: pisanje drugega procesa (npr. skripta v lupini Renderja) zaklene bazo za kratek čas. Brez čakanja (privzeto 0)
+    -- strežnik takoj vrže »database is locked« (500, izgubljen odgovor); tako počaka največ 2 s (ves strežnik, ker je
+    -- DatabaseSync sinhron).
+    -- Prvo, da velja tudi za WAL in migracije ob zagonu.
+    PRAGMA busy_timeout = 2000;
     PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS students (
@@ -76,6 +82,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       topic_id TEXT NOT NULL,
       level INTEGER NOT NULL DEFAULT 1,          -- težavnost 1–3
       streak INTEGER NOT NULL DEFAULT 0,         -- zaporedni pravilni odgovori
+      wrong_streak INTEGER NOT NULL DEFAULT 0,   -- zaporedni napačni odgovori na trenutni ravni
       status TEXT NOT NULL DEFAULT 'new',        -- new | learning | mastered
       source TEXT,                               -- practice | chat | placement
       mastered_at TEXT,
@@ -165,6 +172,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       topic_id TEXT NOT NULL,
       seed INTEGER NOT NULL,
       level INTEGER NOT NULL,
+      year INTEGER,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (student_id, topic_id, seed)
     );
@@ -279,6 +287,17 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     CREATE INDEX IF NOT EXISTS idx_school_use ON ai_school_use(school_id, created_at);
     CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
   if (!hadSchoolUse) db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('ai_school_ledger_start', datetime('now'))").run();
+  // Izbrisan profil (docs/izbris-izvoz.md, najdba 2): poraba ostane šoli, brez id profila (id dobi lahko nov profil).
+  // Ob zagonu še za profile, izbrisane pred sprožilcem (brez takih vrstic ne zapiše nič).
+  db.exec(`CREATE TRIGGER IF NOT EXISTS ai_school_use_student_delete AFTER DELETE ON students BEGIN
+      UPDATE ai_school_use SET student_id = NULL WHERE student_id = OLD.id;
+    END;
+    UPDATE ai_school_use SET student_id = NULL WHERE student_id IS NOT NULL AND student_id NOT IN (SELECT id FROM students);
+    -- Dnevni števec varnostnih pregledov profila (server/nujno.js, varnost_<dan>_<id>; najdba 5): nov profil z istim id
+    -- ga ne podeduje.
+    CREATE TRIGGER IF NOT EXISTS kv_student_delete AFTER DELETE ON students BEGIN
+      DELETE FROM kv WHERE key GLOB 'varnost_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_' || OLD.id;
+    END;`);
   // Migracija: nova tabela dobi današnja vprašanja iz obstoječih pogovorov, da se števec ob posodobitvi ne ponastavi.
   const hadQuestionLog = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'question_log'").get();
   db.exec(`CREATE TABLE IF NOT EXISTS question_log (
@@ -309,9 +328,16 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Začetni test predznanja teme: koliko stopenj (0–3) je učenec rešil zapored od lažje proti težji.
   const stateCols = db.prepare("PRAGMA table_info(topic_state)").all().map((c) => c.name);
   if (!stateCols.includes("pretest")) db.exec("ALTER TABLE topic_state ADD COLUMN pretest INTEGER");
+  // Zaporedni napačni odgovori na trenutni ravni teme (raven se zniža šele po dveh, RULES.levelDownStreak).
+  if (!stateCols.includes("wrong_streak")) db.exec("ALTER TABLE topic_state ADD COLUMN wrong_streak INTEGER NOT NULL DEFAULT 0");
   const convCols = db.prepare("PRAGMA table_info(conversations)").all().map((c) => c.name);
+  // Razred ob izdaji paketa brez povezave: sinhronizacija nalogo iz semena ustvari z istim razredom (tek-mladi-*).
+  const issuedCols = db.prepare("PRAGMA table_info(offline_issued)").all().map((c) => c.name);
+  if (!issuedCols.includes("year")) db.exec("ALTER TABLE offline_issued ADD COLUMN year INTEGER");
   if (!convCols.includes("path_topic")) db.exec("ALTER TABLE conversations ADD COLUMN path_topic TEXT");
   if (!convCols.includes("deep")) db.exec("ALTER TABLE conversations ADD COLUMN deep INTEGER NOT NULL DEFAULT 0");
+  // Način (A/B), s katerim je inštruktor nazadnje odgovoril v tem pogovoru: ob zamenjavi v glavi dobi opombo (server/nacin.js).
+  if (!convCols.includes("solving_mode")) db.exec("ALTER TABLE conversations ADD COLUMN solving_mode TEXT");
   // Trojno preverjanje (server/verify.js): shranjen odgovor in kartica sta vidna šele, ko sta preverjena.
   // Stari shranjeni odgovori niso bili preverjeni, zato ostanejo skriti (privzeto 0); stare kartice ostanejo.
   const cacheCols = db.prepare("PRAGMA table_info(answer_cache)").all().map((c) => c.name);
@@ -357,9 +383,65 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Tema učne poti pri dogodku (šibke točke iz vseh virov pod istim ključem, server/weaknesses.js).
   const eventCols = db.prepare("PRAGMA table_info(events)").all().map((c) => c.name);
   if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
+  // Pregled oznake (server/stiska-obvestilo.js): šifriran JSON ob vsaki oznaki razen »none« (vrsta okna ob stiski, pregledano_ob).
+  if (!eventCols.includes("pregled")) db.exec("ALTER TABLE events ADD COLUMN pregled TEXT");
+  // Starejše oznake (pred stolpcem pregled) dobijo prazen pregled, kot ga dobi vsaka nova oznaka razen »none«, da se iz
+  // baze po prisotnosti pregleda ne vidi, katera stara oznaka je stiska (pregled #856).
+  {
+    const brez = db.prepare("SELECT id FROM events WHERE pregled IS NULL AND flag IS NOT NULL AND flag <> 'none'").all();
+    if (brez.length) {
+      const upd = db.prepare("UPDATE events SET pregled = ? WHERE id = ?");
+      db.exec("BEGIN");
+      try { for (const r of brez) upd.run(sealPregled({}), r.id); db.exec("COMMIT"); } catch (e) { db.exec("ROLLBACK"); throw e; }
+    }
+  }
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
+  // D1 (hitrost, j 13. 11.): indeksi za poizvedbe po profilu, ki so brez njih brale celo tabelo ali ves mesec porabe
+  // (meritev 13. 11.: docs/meritve). Po vseh migracijah, ker obnova tabele events zgoraj ohrani samo idx_events_student.
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_conv_student ON conversations(student_id, updated_at);
+    CREATE INDEX IF NOT EXISTS idx_usage_student ON usage(student_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_tasks_session ON tasks(session_id);
+    CREATE INDEX IF NOT EXISTS idx_events_conv ON events(conversation_id, id);
+  `);
+  // D7 (hitrost, j 14. 11.): poraba AI vseh učencev po dnevih (UTC), da skupna vsota za danes in za ta mesec ni
+  // seštevanje celega meseca vrstic usage ob vsakem sporočilu (pri 1 M vrsticah ~0,3 s na vsoto, ~11 vsot na
+  // sporočilo). Vsoto vzdržujejo sprožilci ob vsakem vpisu, spremembi in brisanju iz usage (tudi iz drugega procesa),
+  // zato je enaka SUM(cost_usd) nad istimi vrsticami. Pozor: INSERT OR REPLACE / REPLACE INTO v usage bi vsoto
+  // podvojil (zamenjana vrstica ne sproži brisanja); tega v kodi ni. Če tabela ali kateri od sprožilcev manjka (prvi
+  // zagon, ročni poseg), se vse ustvari znova in napolni iz obstoječe porabe, v eni transakciji.
+  const dnevnoCelo = () =>
+    db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name IN ('usage_dnevno', 'usage_dnevno_ins', 'usage_dnevno_del', 'usage_dnevno_upd')").get().n === 4;
+  if (!dnevnoCelo()) {
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      if (!dnevnoCelo()) {
+        db.exec(`
+          CREATE TABLE IF NOT EXISTS usage_dnevno (dan TEXT PRIMARY KEY, usd REAL NOT NULL DEFAULT 0);
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_ins AFTER INSERT ON usage BEGIN
+            INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+              ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+          END;
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_del AFTER DELETE ON usage BEGIN
+            UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+          END;
+          CREATE TRIGGER IF NOT EXISTS usage_dnevno_upd AFTER UPDATE OF cost_usd, created_at ON usage BEGIN
+            UPDATE usage_dnevno SET usd = usd - OLD.cost_usd WHERE dan = substr(OLD.created_at, 1, 10);
+            INSERT INTO usage_dnevno (dan, usd) VALUES (substr(NEW.created_at, 1, 10), NEW.cost_usd)
+              ON CONFLICT(dan) DO UPDATE SET usd = usd + excluded.usd;
+          END;
+          DELETE FROM usage_dnevno;
+          INSERT INTO usage_dnevno (dan, usd) SELECT substr(created_at, 1, 10), SUM(cost_usd) FROM usage GROUP BY 1;
+        `);
+      }
+      db.exec("COMMIT");
+    } catch (err) {
+      db.exec("ROLLBACK");
+      throw err;
+    }
+  }
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
@@ -404,9 +486,15 @@ export class Store {
     return row ? parseStudent(row) : null;
   }
   createStudent(name, settings = DEFAULT_SETTINGS) {
+    // Maturant (4. letnik SŠ, matematika): brez izbranega cilja dobi cilj matura z datumom roka (public/goal-data.js);
+    // z izbranim ciljem je odločitev že sprejeta, zato mu Učna pot ponudbe ne pokaže.
+    const izbran = settings?.goal !== undefined;
+    let s = normalizeSettings(settings || {});
+    const matura = privzetiCilj(s);
+    if (matura.goal) s = izbran ? { ...s, matura_offer: 1 } : normalizeSettings({ ...s, ...matura });
     const r = this.db
       .prepare("INSERT INTO students (name, settings) VALUES (?, ?)")
-      .run(name, JSON.stringify(normalizeSettings(settings)));
+      .run(name, JSON.stringify(s));
     return this.getStudent(Number(r.lastInsertRowid));
   }
   updateStudent(id, { name, settings, manual_weaknesses }) {
@@ -472,6 +560,10 @@ export class Store {
     this.touchConversation(conversationId);
     return Number(r.lastInsertRowid);
   }
+  // Ali ima pogovor kakšno sporočilo (D3: brez nalaganja in odšifriranja vseh sporočil, tudi fotografij).
+  hasMessages(conversationId) {
+    return !!this.db.prepare("SELECT EXISTS(SELECT 1 FROM messages WHERE conversation_id = ?) AS e").get(conversationId).e;
+  }
   listMessages(conversationId) {
     return this.db
       .prepare("SELECT * FROM messages WHERE conversation_id = ? ORDER BY id")
@@ -484,9 +576,9 @@ export class Store {
   }
   // Sprotni povzetek pogovora (server/povzetek.js): { text, upto } ali null (tudi neberljiv po menjavi ključa).
   getSummary(conversationId) {
-    const r = this.db.prepare("SELECT text, upto FROM conversation_summaries WHERE conversation_id = ?").get(conversationId);
+    const r = this.db.prepare("SELECT text, upto, updated_at FROM conversation_summaries WHERE conversation_id = ?").get(conversationId);
     const text = r ? unseal(r.text, null) : null;
-    return text ? { text, upto: r.upto } : null;
+    return text ? { text, upto: r.upto, at: r.updated_at } : null;
   }
   setSummary(conversationId, text, upto) {
     this.db
@@ -502,18 +594,27 @@ export class Store {
   }
 
   // --- analitika ---
+  // Vrne id dogodka (oznaka stiske → server/stiska-obvestilo.js).
   addEvent(e) {
-    this.db
+    const flag = e.flag ?? "none";
+    const info = this.db
       .prepare(
-        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id, pregled)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.topic, e.error, e.mode, e.flag, e.topic_id ?? null);
+      // Ob stiski brez teme (j 18. 11. 2026): tema bi v nešifriranem stolpcu ostala tudi po roku hrambe oznake.
+      // Pregled ob vsaki oznaki razen »none« (enako dolg), da iz baze ni vidno, katera je stiska.
+      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, flag === "distress" ? null : e.topic, e.error, e.mode, sealFlag(flag), flag === "distress" ? null : (e.topic_id ?? null), flag === "none" ? null : sealPregled({}));
+    return Number(info.lastInsertRowid);
   }
+  // Varnostno okno brez oznake inštruktorja (IN-14): dogodek odgovora postane oznaka stiske, brez teme (kot addEvent).
+  markDistress(eventId) {
+    this.db.prepare("UPDATE events SET flag = ?, topic = NULL, topic_id = NULL, pregled = COALESCE(pregled, ?) WHERE id = ?").run(sealFlag("distress"), sealPregled({}), eventId);
+  }
+  // Oznaka je šifrirana (razen »none«); neberljiva šteje kot opozorilo (»unknown«), ne kot navaden odgovor.
   lastEvent(conversationId) {
-    return this.db
-      .prepare("SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1")
-      .get(conversationId);
+    const r = this.db.prepare("SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1").get(conversationId);
+    return r && { ...r, flag: openFlag(r.flag, "unknown") };
   }
   topicStats(studentId, days = 60) {
     return this.db
@@ -526,16 +627,24 @@ export class Store {
       )
       .all(studentId, `-${days} days`);
   }
+  // Oznake so šifrirane (crypto-polje.js sealFlag), zato se »photo« in neberljive izločijo po odšifriranju.
   flagEvents(studentId, limit = 50) {
-    return this.db
+    const out = [];
+    const rows = this.db
       .prepare(
         `SELECT e.flag, e.created_at, e.conversation_id, c.title
          FROM events e JOIN conversations c ON c.id = e.conversation_id
-         WHERE e.student_id = ? AND e.flag NOT IN ('none', 'photo') -- zavrnjena fotografija ni opozorilo za starše
-         ORDER BY e.id DESC LIMIT ?`,
+         WHERE e.student_id = ? AND e.flag <> 'none'
+         ORDER BY e.id DESC`,
       )
-      .all(studentId, limit)
-      .map(openConv);
+      .iterate(studentId);
+    for (const r of rows) {
+      const flag = openFlag(r.flag);
+      if (!flag || flag === "photo") continue; // zavrnjena fotografija ni opozorilo za starše
+      out.push(openConv({ ...r, flag }));
+      if (out.length >= limit) break;
+    }
+    return out;
   }
   // XP po dnevih (vse dejavnosti: lekcije, vaje, igre, inštruktor) za koledar aktivnosti na Napredku in strani Jaz.
   xpByDay(studentId, days = 371) {

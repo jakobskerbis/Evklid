@@ -23,6 +23,9 @@
 .us-field span { font-weight: 600; font-size: 0.95rem; }
 .us-field textarea, .us-field input { width: 100%; box-sizing: border-box; font: inherit; color: var(--text); background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; min-height: 44px; }
 .us-field textarea { resize: vertical; }
+.us-field span.us-in-row { display: flex; gap: 8px; align-items: center; font-weight: 400; font-size: 1rem; }
+.us-in-row input { flex: 1; min-width: 0; }
+.us-in-row button { flex: none; width: 44px; height: 44px; }
 .us-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .us-actions button { min-height: 44px; }
 .us-minor { margin-top: 4px; }

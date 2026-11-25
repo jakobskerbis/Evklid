@@ -1,8 +1,10 @@
 // Kotiček zanimanj: novice iz znanosti o temah, ki jih je učenec izbral, pripete novice,
 // celozaslonski pogled (časopis ali oglasna deska) in kratek vprašalnik ob prvem zagonu.
 // Novice da strežnik (server/corner.js), seznam področij je v public/interests.js.
-import { t, locale, currentLang } from "./i18n.js";
+import { t, locale, currentLang } from "./i18n-osnova.js";
+import { dateText } from "./datum.js";
 import { icon } from "./icons.js";
+import { zadrziFokus } from "./fokus-okna.js";
 import { jeOs } from "./stopnja.js";
 import { INTERESTS, MAX_INTERESTS } from "./interests.js";
 
@@ -252,20 +254,20 @@ export function openBoard() {
     root.requestFullscreen({ navigationUI: "hide" }).then(() => board && (board.ownFullscreen = true)).catch(() => {});
   }
   renderBoard();
-  $("[data-board-close]", el)?.focus();
+  board.sprosti = zadrziFokus(el, { zacetni: $("[data-board-close]", el), prej: board.prevFocus });
 }
 
 export function closeBoard({ keepFullscreen = false } = {}) {
   if (!board) return;
-  const { el, ownFullscreen, prevFocus } = board;
+  const { el, ownFullscreen, prevFocus, sprosti } = board;
   board = null;
+  sprosti?.({ vrni: false });
   el.remove();
   document.body.classList.remove("corner-board-open");
   if (ownFullscreen && !keepFullscreen && document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
   prevFocus?.focus?.();
 }
 
-export const boardOpen = () => !!board;
 // Tipka Nazaj: najprej zapre oglasno desko.
 export function cornerBack() {
   if (!board) return false;
@@ -280,7 +282,7 @@ function renderBoard() {
   const pins = pinnedIds();
   // Na oglasni deski so pripete novice na vrhu.
   const list = mode === "board" && filter !== "pinned" ? [...items.filter((i) => pins.has(i.id)), ...items.filter((i) => !pins.has(i.id))] : items;
-  const d = new Date().toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const d = dateText(new Date(), locale(), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   const today = d.charAt(0).toLocaleUpperCase(locale()) + d.slice(1);
   board.el.className = `corner-board mode-${mode}`;
   board.el.innerHTML = `
@@ -331,7 +333,7 @@ export function askInterests({ first = false } = {}) {
       try {
         const updated = await ctx.api(`/api/students/${student().id}`, { method: "PUT", body: { settings } });
         ctx.setStudent(updated);
-        if (save) ctx.toast?.(t("iq.saved"));
+        if (save && !first) ctx.toast?.(t("iq.saved")); // ob prvem zagonu bi ga skrila kartica uvodnega ogleda
       } catch (err) {
         if (save) {
           ctx.toast?.(err.message);
@@ -364,7 +366,9 @@ export function askInterests({ first = false } = {}) {
           <p class="muted small">${esc(t("iq.customHint"))}</p>
           ${askEnglish ? `<label class="check"><input type="checkbox" class="iq-en" ${english ? "checked" : ""}> <span>${esc(t("iq.english"))}</span></label>` : ""}`;
       }
-      const left = step === 0 ? (first ? `<button type="button" class="ghost" data-iq="skip">${esc(t("iq.skip"))}</button>` : `<button type="button" class="ghost" data-iq="cancel">${esc(t("corner.close"))}</button>`) : `<button type="button" class="ghost" data-iq="back">${icon("arrow-left")}${esc(t("iq.back"))}</button>`;
+      // Ob prvem zagonu je »Pozneje« na vsakem koraku (ne samo na prvem), drugače le Zapri oziroma Nazaj.
+      const skip = first ? `<button type="button" class="ghost" data-iq="skip">${esc(t("iq.skip"))}</button>` : "";
+      const left = step === 0 ? skip || `<button type="button" class="ghost" data-iq="cancel">${esc(t("corner.close"))}</button>` : `<button type="button" class="ghost" data-iq="back">${icon("arrow-left")}${esc(t("iq.back"))}</button>${skip}`;
       const right = step < total - 1 ? `<button type="button" class="primary" data-iq="next">${esc(t("iq.next"))}${icon("arrow-right")}</button>` : `<button type="button" class="primary" data-iq="save">${icon("check")}${esc(t("common.save"))}</button>`;
       box.innerHTML = `${dots}${body}<div class="iq-actions">${left}${right}</div>`;
       $(".iq-custom input", box)?.addEventListener("input", (e) => (custom = e.target.value));

@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { MIN, pomanjsaj } from "../public/sirina.js";
+import { MIN, pomanjsaj, mestoFormule } from "../public/sirina.js";
 
 const pub = (f) => fs.readFileSync(path.join(import.meta.dirname, "..", "public", f), "utf8");
 
@@ -62,6 +62,73 @@ test("a setting with only a few values is buttons, not a slider (axis sliders st
   assert.match(pub("textbook.css"), /\.demo-slider\.as-choice \.demo-choice/);
 });
 
+// Klepet na telefonu (j 17. 11. 2026): leva stran ni več sama v vrstici, koraki gredo v isto vrstico, dokler gredo vanjo.
+test("in the tutor chat a folded equation keeps its left side on the first line and packs steps up to the line length", async () => {
+  const { zlozTex, STRNJENO } = await import("../public/sirina.js");
+  assert.equal(STRNJENO, ".msg");
+  const f = "F = k m g = 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\approx 9418";
+  // dovolj prostora za dva koraka: »F = k m g = 0,80 · …« in pod enačajem »≈ 9418«
+  assert.equal(zlozTex(f, 2, 22, true), "\\begin{aligned}F &{}= k m g = 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\\\ &{}\\approx 9418\\end{aligned}");
+  // brez ocene dolžine vrstice: vsak naslednji korak v svoji vrstici, leva stran še vedno s prvim
+  assert.equal(zlozTex(f, 2, 0, true), "\\begin{aligned}F &{}= k m g \\\\ &{}= 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\\\ &{}\\approx 9418\\end{aligned}");
+  assert.equal(zlozTex("n(\\mathrm{O_2}) = \\frac{pV}{RT} = 0{,}204\\ \\text{mol}", 2, 10, true), "\\begin{aligned}n(\\mathrm{O_2}) &{}= \\frac{pV}{RT} \\\\ &{}= 0{,}204\\ \\text{mol}\\end{aligned}");
+  // nobene prazne vrstice in nobene vrstice s samo levo stranjo
+  for (const m of [0, 6, 10, 22]) for (const vr of (zlozTex(f, 2, m, true) || "").split(" \\\\ ")) assert.doesNotMatch(vr.replace(/\\\\(?:begin|end)\{aligned\}/g, ""), /^&?\s*(?:F\s*)?$/);
+  // kar gre v vrstico, ostane cela; enačba z enim samim enačajem se pri enačaju ne lomi (leva stran ne ostane sama)
+  assert.equal(zlozTex("Q = a - b = 1050", 2, 30, true), null);
+  assert.equal(zlozTex("s = v t", 2, 2, true), null);
+  // več izjav: brez poravnave pod prvim enačajem (stolpec leve strani bi zamaknil drugo izjavo), nadaljevanje za \\quad
+  assert.equal(zlozTex("x = 1 + 2 = 3 \\quad y = 4 + 5 = 9", 2, 4, true), "\\begin{aligned}&x = 1 + 2 \\\\ &\\quad {}= 3 \\\\ &y = 4 + 5 \\\\ &\\quad {}= 9\\end{aligned}");
+  // predolg del se nadaljuje pred + v novi vrstici
+  assert.equal(zlozTex("S = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 = 36", 3, 14, true), "\\begin{aligned}S &{}= 1 + 2 + 3 + 4 \\\\ &\\quad {}+ 5 + 6 + 7 + 8 = 36\\end{aligned}");
+  // učbenik (brez strnjeno) ostane, kot je bil
+  assert.equal(zlozTex(f, 2, 0), "\\begin{aligned}&F \\\\ &\\quad {}= k m g \\\\ &\\quad {}= 0{,}80 \\cdot 1200 \\cdot 9{,}81 \\\\ &\\quad {}\\approx 9418\\end{aligned}");
+});
+
+// Klepet, 3. pregled PR #798: predolga leva stran (»E_{k,1}+E_{p,1}+W_{zun}+Q_{dovedena} = …«) v strnjeni obliki ostane
+// v prvi vrstici, ki se pomika; prilagodiFormulo zato za strnjeno obliko poskusi še obliko iz učbenika, ki levo stran razreže.
+test("in the chat a long left side that does not fit in the packed layout falls back to the textbook fold", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  const e = "E_{k,1}+E_{p,1}+W_{zun}+Q_{dovedena} = E_{k,2}+E_{p,2} = 1250\\ \\text{J}";
+  // strnjeno: leva stran in prvi korak ostaneta skupaj v prvi vrstici na vseh stopnjah (predolga za mejo 12)
+  for (const st of [2, 3, 4, 5]) assert.match(zlozTex(e, st, 12, true).split(" \\\\ ")[0], /Q_\{dovedena\} = E_\{k,2\}/);
+  // učbenik: od stopnje 3 se leva stran nadaljuje pred + v novi vrstici
+  const u = zlozTex(e, 3, 12).split(" \\\\ ");
+  assert.equal(u[0], "\\begin{aligned}&E_{k,1}+E_{p,1}");
+  assert.ok(u.every((v) => !v.includes("Q_{dovedena} =")), u.join(" | "));
+  // prilagodiFormulo: po strnjenih stopnjah 1–5 še stopnje 2–5 iz učbenika; oblika (sn) gre v zlozi in v predpomnilnik
+  const js = pub("sirina.js");
+  assert.match(js, /\[\[1, s0\], \[2, s0\], \[3, s0\], \[4, s0\], \[5, s0\], \.\.\.\(s0 \? \[\[2, false\], \[3, false\], \[4, false\], \[5, false\]\] : \[\]\)\]/);
+  assert.match(js, /const z = zlozi\(k, st, meja, sn\);/);
+  assert.match(js, /zapomni\(kljuc, \{ st: st0, sn: sn0, meja,/);
+  assert.match(js, /zlozi\(k, r\[i\]\.st, r\[i\]\.meja, r\[i\]\.sn\)/);
+  // strnjena oblika s predolgo prvo vrstico se ne izriše in ne meri (hitrost pri 320 px)
+  assert.match(js, /if \(sn && st >= 2 && meja > 0 && sirokaPrva\(al, meja\)\) continue;/);
+  // tabela v mehurčku tudi; ob spremembi okna (obrat) se mehurčki prilagodijo znova; ostane najožja poskušena oblika
+  assert.match(js, /const vMehurcku = \(el\) => el\.matches\("\.katex-display, \.md-table-wrap"\)/);
+  assert.match(js, /addEventListener\?\.\("resize", [\s\S]{0,200}vMehurcku\(el\) && prilagodi\(el\)/);
+  assert.match(js, /naj\.st \? zlozi\(k, naj\.st, meja, naj\.sn\) : obnovi\(k\)/);
+  // formula v svoji vrstici v mehurčku meri proti prostoru mehurčka (ne trenutni širini), sicer bi se zlaganje vrtelo v krogu
+  assert.match(js, /const w = vMehurcku\(el\) \? Math\.floor\(prostor\(el\)\) : el\.clientWidth;/);
+});
+
+test("folding never splits inside a root index and keeps a relation that ends the formula", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  for (const sn of [true, false]) for (const st of [3, 4, 5]) assert.match(zlozTex("a = \\sqrt[n+1]{x_1 + x_2 + x_3 + x_4 + x_5 + x_6} = 5", st, 10, sn), /\\sqrt\[n\+1\]\{x_1/);
+  assert.equal(zlozTex("F = m a + b c + d e =", 2, 6), "\\begin{aligned}&F \\\\ &\\quad {}= m a + b c + d e =\\end{aligned}");
+  assert.match(zlozTex("F = m a + b c = 5 \\quad G = 4 \\approx", 2, 4, true), /G = 4 \\approx\\end\{aligned\}$/);
+});
+
+test("an arrow with a label (»Zapomni si« chain) folds before the arrow and keeps its label", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  const v = "V \\xrightarrow{pV=nRT} n(\\text{plin}) \\xrightarrow{\\text{koeficienta}} n(\\text{snov}) \\xrightarrow{m=nM} m";
+  assert.equal(zlozTex(v, 2, 25, true), "\\begin{aligned}V &{}\\xrightarrow{pV=nRT} n(\\text{plin}) \\\\ &{}\\xrightarrow{\\text{koeficienta}} n(\\text{snov}) \\\\ &{}\\xrightarrow{m=nM} m\\end{aligned}");
+  assert.equal(zlozTex(v, 2, 60, true), null); // napis šteje v dolžino: gre v vrstico
+  assert.equal(zlozTex("V \\xrightarrow[a]{pV=nRT} n \\xrightarrow{m=nM} m", 2, 8, true), "\\begin{aligned}V &{}\\xrightarrow[a]{pV=nRT} n \\\\ &{}\\xrightarrow{m=nM} m\\end{aligned}");
+  // v kemijski enačbi ostane napis pri puščici, zunaj \\mathrm
+  assert.equal(zlozTex("\\mathrm{CaCO_3 \\xrightarrow{T} CaO + CO_2}", 2, 0), "\\begin{aligned}&\\mathrm{CaCO_3} \\\\ &\\quad {}\\xrightarrow{T} \\mathrm{CaO + CO_2}\\end{aligned}");
+});
+
 test("a formula that does not fit is folded at its equals signs: left side on top, each »= …« below", async () => {
   const { zlozTex } = await import("../public/sirina.js");
   assert.equal(zlozTex("a = b + c = d"), "\\begin{aligned}&a \\\\ &\\quad {}= b + c \\\\ &\\quad {}= d\\end{aligned}");
@@ -94,7 +161,11 @@ test("an inline formula never overlaps the lines around it and keeps line spacin
 // j 2026-11-04: »Predolge zapise ustrezno prelomi v drugo vrstico. Če je mogoče, ne uporabljaj scrollanja. To naj velja
 // za vse enačbe.« Celoten videz v simulacijah, klepetu in nalogah preverja scripts/preveri-formule.cjs.
 test("every equation in the app is fitted: sims, chat, exercises, formula cards (not only lessons)", async () => {
-  for (const f of ["app.js", "kalkulator.js"]) assert.match(pub(f), /import \{ initSirina(?:, prilagodiZdaj)? \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/, f);
+  assert.match(pub("kalkulator.js"), /import \{ initSirina(?:, prilagodiZdaj)? \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/);
+  // app.js: sirina.js se naloži z izrisom formul (pripraviIzris, rich.js), ne pred Učno potjo (test/zacetek-leno.test.js).
+  assert.match(pub("app.js"), /const sirinaMod = lenModul\("\.\/sirina\.js", \(m\) => m\.initSirina\(\)\);/);
+  assert.match(pub("app.js"), /const pripraviIzris = \(\) => Promise\.all\(\[naloziKnjiznice\(\), fxMod\.load\(\), sirinaMod\.load\(\)\]\);/);
+  assert.match(pub("app.js"), /\ninitDrsniki\(\);/);
   const js = pub("sirina.js");
   assert.match(js, /mo\.observe\(document\.body, \{ childList: true, subtree: true \}\)/);
   // simulacija ob vsakem premiku drsnika: rešitev za isto obliko formule brez merjenja (drsnik ostane gladek)
@@ -150,8 +221,9 @@ test("decimal comma in sim formulas has no gap (»0,041«, not »0, 041«); list
   assert.equal(decVejica("2,5 + 3,75 = 6,25"), "2{,}5 + 3{,}75 = 6{,}25");
   assert.equal(decVejica("10^{2,5}"), "10^{2{,}5}");
   for (const t of ["1{,}5", "x_{1,2} = 3", "\\{1,2,3\\}", "\\{1,5\\}", "(1,2,3)", "T(1, 2)", "5\\,000"]) assert.equal(decVejica(t), t);
-  assert.match(pub("sim/kit.js"), /katex\.renderToString\(decVejica\(t\)/);
-  assert.match(pub("demos.js"), /katex\.renderToString\(decVejica\(t\)/);
+  // Izris s skupnim pravilom za vejico (public/mat/izris.js, vejica: true; enoten matematični zapis F1).
+  assert.match(pub("sim/kit.js"), /izrisi\(t, \{ vejica: true \}\)/);
+  assert.match(pub("demos.js"), /izrisi\(t, \{ vejica: true \}\)/);
 });
 
 // Pregled 4. 11.: zložena formula ostane za bralnik zaslona in kopiranje izvirna (MathML in njegov TeX); klepet
@@ -161,8 +233,13 @@ test("a folded formula keeps the original MathML; the chat scrolls to the bottom
   assert.equal((js.match(/const n = zamenjaj\(k, html\);\n\s*ohraniMathml\(k, n\);/g) || []).length, 2);
   assert.match(js, /export function prilagodiZdaj\(\) \{\n\s*if \(mo\) noveFormule\(mo\.takeRecords\(\)\);/);
   const app = pub("app.js");
-  assert.match(app, /bubble\.innerHTML = chatRich\(streamSafe\(shown\)\)[^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
-  assert.match(app, /box\.appendChild\(el\);\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
+  // D5 (#684): izris med tokom gre prek predpomnilnika blokov (izrisBlokov), končni prek chatRich; vrstni red ostane.
+  // Napis med čakanjem (#790): HTML odgovora najprej v html, nato v mehurček (z napisom ali brez); vrstni red ostane.
+  assert.match(app, /const html = koncno \? chatRich\(shown\) : izrisBlokov\(streamSafe\(shown\)\);/);
+  assert.match(app, /bubble\.innerHTML = \(html \? [^\n]*\n\s*\};/);
+  assert.match(app, /narisi\(shown, koncno\);\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
+  // Sporočilo z meritvami (meri: false = klicatelj prilagodi in pomakne enkrat za vsa, test/klepet-zgodovina.test.js).
+  assert.match(app, /else box\.appendChild\(el\);\n\s*if \(!meri\) return el;\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
   // kemijska enačba: znak na začetku nadaljevanja ostane zunaj \mathrm (sicer predznak brez razmika)
   const { zlozTex } = await import("../public/sirina.js");
   const z = zlozTex("\\mathrm{2Mg + O_2 \\rightarrow 2MgO + 2H_2O + CO_2 + NaCl + KCl + HCl}", 3, 20);
@@ -193,4 +270,19 @@ test("a list without brackets folds after top-level commas, a chemical chain bef
   assert.equal(zlozTex("\\mathrm{CH(CH_2{-}CH_2{-}CH_2{-}CH_3)}", 3, 6), null);
   // Naboj iona (^{-}) ni vez: »\mathrm{OH^}« bi se ne izrisal.
   assert.doesNotMatch(zlozTex("\\mathrm{C_6H_{11}Br + OH^{-} \\xrightarrow{H_2O} C_6H_{11}OH + Br^{-}}", 3, 8), /\^\}/);
+});
+
+// Znanstveni kalkulator ima svojo postavitev: zlaganje je formule v zgodovini zlagalo in razlagalo (utripanje),
+// vnos pa izrisalo brez oznake kazalca (rdeč »\\htmlClass«; j 14. 11. 2026).
+test("formulas in the scientific calculator are left to the calculator", () => {
+  const sc = { classes: ["sc"] };
+  const k = { parentElement: { closest: () => null }, closest: (sel) => (sel.split(",").some((s) => s.trim() === ".sc") ? sc : null) };
+  assert.equal(mestoFormule(k), null);
+});
+
+// j 2026-11-14: v odzivu »Pravilno! …« (odstavek z display: inline) je bila vsaka formula drsna in pomanjšana, čeprav je
+// bilo prostora dovolj: vrstični element nima clientWidth, zato je račun od prostora odštel ves odstavek.
+test("an inline paragraph (quiz feedback) measures the space of its block, not its own text", () => {
+  assert.match(pub("sirina.js"), /if \(cs\.display === "inline" && el\.parentElement && el\.parentElement !== document\.body\) return prostor\(el\.parentElement\);/);
+  assert.match(pub("textbook.css"), /\.tb-checks \.tb-why p \{ display: inline; \}/);
 });

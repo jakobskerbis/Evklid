@@ -11,7 +11,8 @@ import fs from "node:fs";
 import { BRAND } from "../server/brand.js";
 import { messageCode, parseMessageCode, purgeCachedAnswer, openReport } from "../server/reports.js";
 import { openMessage } from "../server/db.js";
-import { unseal } from "../server/crypto-polje.js";
+import { unseal, openFlag } from "../server/crypto-polje.js";
+import { audit } from "../server/dnevnik-dostopov.js";
 
 const file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`;
 if (!fs.existsSync(file)) {
@@ -22,18 +23,35 @@ const args = process.argv.slice(2);
 const db = new DatabaseSync(file, { readOnly: args[0] !== "--odstrani" });
 const hasTable = (t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
 const cut = (s, n = 600) => (s.length > n ? `${s.slice(0, n)} …` : s);
+// Vsak ogled pogovora ali prijav se zapiše v dnevnik dostopov (skrbnik, brez besedila in iskalnega niza);
+// branje: node scripts/dnevnik-dostopov.js; parent_id je tu račun, čigar sporočilo je bilo ogledano (ne račun skrbnika).
+// Ločena povezava za pisanje, ker je glavna samo za branje.
+let auditDb = null;
+function logView(target, parentId = null, action = "message_lookup") {
+  try {
+    auditDb ??= new DatabaseSync(file, { timeout: 5000 }); // strežnik lahko ravno piše (WAL)
+    audit(auditDb, { actor: "admin", action, target, parentId });
+  } catch (e) {
+    console.warn(`Dnevnik dostopov: ${e.message}`);
+  }
+}
 
 function show(id) {
   const row = db.prepare("SELECT * FROM messages WHERE id = ?").get(id);
   const m = row && openMessage(row);
   if (!m) return console.log(`Sporočilo ${messageCode(id)} (id ${id}) ne obstaja. Posnetek je morda ponarejen ali iz druge baze.`);
   const conv = db.prepare("SELECT * FROM conversations WHERE id = ?").get(m.conversation_id);
+  let parentId = null; // lokalno brez računov tabela students nima parent_id
+  try {
+    parentId = conv ? (db.prepare("SELECT parent_id FROM students WHERE id = ?").get(conv.student_id)?.parent_id ?? null) : null;
+  } catch {}
+  logView(`student:${conv?.student_id ?? "?"} msg:${id}`, parentId);
   if (conv) conv.title = unseal(conv.title);
   console.log(`\n=== ${messageCode(id)} · sporočilo ${id} · pogovor ${m.conversation_id} »${conv?.title ?? ""}« · učenec ${conv?.student_id ?? "?"} · ${m.created_at} UTC ===`);
   const around = db.prepare("SELECT * FROM messages WHERE conversation_id = ? AND id BETWEEN ? AND ? ORDER BY id").all(m.conversation_id, id - 6, id + 1).map(openMessage);
   for (const x of around) console.log(`\n${x.id === id ? ">>" : "  "} [${x.role === "user" ? "učenec" : "inštruktor"} ${messageCode(x.id)}] ${cut(x.display_text, x.id === id ? 4000 : 600)}`);
   const ev = db.prepare("SELECT subject, topic, error, mode, flag FROM events WHERE message_id = ?").get(id);
-  if (ev) console.log(`\nMETA: predmet ${ev.subject}, tema ${ev.topic}, napaka ${ev.error}, način ${ev.mode}, oznaka ${ev.flag}`);
+  if (ev) console.log(`\nMETA: predmet ${ev.subject}, tema ${ev.topic}, napaka ${ev.error}, način ${ev.mode}, oznaka ${openFlag(ev.flag, "neberljiva")}`);
   const raw = m.api_content.find?.((b) => b.type === "text")?.text || "";
   if (hasTable("answer_cache")) {
     const name = db.prepare("SELECT name FROM students WHERE id = ?").get(conv?.student_id ?? -1)?.name || "";
@@ -48,6 +66,7 @@ function show(id) {
 }
 
 if (args[0] === "--prijave") {
+  logView("reports");
   const rows = hasTable("message_reports") ? db.prepare("SELECT * FROM message_reports ORDER BY id DESC LIMIT 50").all().map(openReport) : [];
   if (!rows.length) console.log("Ni prijav napak.");
   for (const r of rows) console.log(`${r.created_at}  ${messageCode(r.message_id)}  ${r.reason.padEnd(6)}  ${cut((r.note ? `${r.note} | ` : "") + r.answer.replace(/\s+/g, " "), 140)}`);
@@ -57,6 +76,7 @@ if (args[0] === "--prijave") {
   else {
     const raw = openMessage(m).api_content.find?.((b) => b.type === "text")?.text || "";
     const n = hasTable("answer_cache") ? purgeCachedAnswer(db, raw, m.name || "") : 0;
+    logView(`msg:${parseMessageCode(args[1])}`, null, "answer_purge");
     console.log(n ? `Odstranjeno iz predpomnilnika (${n}). Tega odgovora ne dobi nihče več.` : "Odgovora ni v predpomnilniku.");
   }
 } else if (args[0] === "--besedilo" && args[1]) {

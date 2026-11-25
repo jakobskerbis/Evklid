@@ -1,19 +1,23 @@
-// Ovoji in stene okoli izbranega dela 3D modela (j, 4. 11. in 6. 11.): kaj pregledovalnik skrije, da se izbrani del ali
-// skupina vidi. Brez uvozov (THREE poda klicatelj), zato teče tudi v Node (test/3d-ovoji.test.js).
-//  1. Ovoj: večji del, ki ga zadene vseh šest žarkov od zunaj (±x, ±y, ±z) proti središču izbranega (celična stena,
-//     membrana, ovojnica …; tudi skrit »pokrov« izreza sklene lupino). Razpršeni deli (ribosomi) tega ne izpolnijo.
-//  2. Skupina (»skupina-<id>«, npr. Zaklopke, Organeli): vidni so samo člani (pregled #461 B2-N3: v skupinskem pogledu
-//     naj ne ostanejo trabekule, vene ali vez okoli zaklopk). Vse druge mreže skrijemo; brez žarkov, zato je tap poceni
-//     tudi na šibkem telefonu (prej žarki proti vsakemu članu 8–46 ms pri CPU ×4).
-const SMER = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+// Ovoji izbranega dela (docs/3d.md »Part window and framing«): deli, ki izbrani del res obdajajo (celična stena,
+// membrana, ovojnica ...), pregledovalnik skrije, da se izbrani vidi (j, 4. 11.). Brez uvozov (THREE pride kot
+// argument), da ga preizkus naloži v Node.
+//
+// »Obdaja« = (1) vseh šest žarkov od zunaj (±x, ±y, ±z) proti središču izbranega zadene ploskev tega dela (tudi skrit
+// pokrov izreza), preden pride do središča; (2) ovoj je večji od izbranega; (3) žarek ovoj doseže pred izbranim
+// delom v večini smeri; (4) del nima `ovoj: false`. Brez (3) je vsebina, ki leži znotraj izbranega in obkroža njegovo središče, veljala za ovoj: pri
+// bakteriofagu T4 z izbrano glavo je DNK v glavi (z delom DNK, ki je že v bakteriji, ima večji okvir) izginila med
+// vbrizgavanjem (j, 13. 11.). Razpršeni deli (ribosomi, silnice, pasovi, vijačnica DNK) ne izpolnijo (1).
 
-export function okvir(d, box) {
+export const SMERI = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+
+// Okvir vidnih mrež dela v svetovnih koordinatah.
+export function okvirDela(THREE, d, box = new THREE.Box3()) {
   box.makeEmpty();
   for (const m of d?.meshes || []) {
     if (!m) continue;
     m.updateWorldMatrix(true, true);
     m.traverseVisible((o) => {
-      if (!o.isMesh || (o.isInstancedMesh && o.count === 0)) return;
+      if (!(o.isMesh || o.isPoints) || (o.isInstancedMesh && o.count === 0)) return; // tudi točke (glikokaliks, ribosomi)
       const g = o.isInstancedMesh ? (o.boundingBox || (o.computeBoundingBox(), o.boundingBox)) : (o.geometry.boundingBox || (o.geometry.computeBoundingBox(), o.geometry.boundingBox));
       if (g) box.union(g.clone().applyMatrix4(o.matrixWorld));
     });
@@ -21,49 +25,81 @@ export function okvir(d, box) {
   return box;
 }
 
-const prostornina = (THREE, b) => {
+export function prostornina(THREE, b) {
   const v = b.getSize(new THREE.Vector3());
   return Math.max(v.x, 1e-6) * Math.max(v.y, 1e-6) * Math.max(v.z, 1e-6);
-};
+}
 
-/** Mreže, ki jih je treba skriti za izbrani del ali skupino d (d.skupinaDelov, d.clani). Vrne Set mrež. */
-export function najdiOvoje(THREE, d, deli, group) {
-  const out = new Set();
-  if (!d || !deli?.length || !group) return out;
-  const smeri = SMER.map((v) => new THREE.Vector3(...v));
-  const rc = new THREE.Raycaster();
+// Geometrijska razdalja do najbližjega zadetka. Nekateri modeli (mitoza, mejoza) zadetkom ovojnic za izbiro
+// prištejejo zamik, zato `distance` ni nujno prava razdalja; točka zadetka je.
+function prva(zadetki, izvor) {
+  let m = Infinity;
+  for (const h of zadetki) m = Math.min(m, h.point ? h.point.distanceTo(izvor) : h.distance);
+  return m;
+}
+
+// Ali je mreža vidna (sama in vsi predniki do korena).
+function vidna(o) {
+  for (let x = o; x; x = x.parent) if (!x.visible) return false;
+  return true;
+}
+
+// Vrne mreže delov, ki obdajajo del d (med deli `deli`), v vrstnem redu delov. `raycaster` je lahko skupen; uporabi
+// se s privzetimi plastmi, zato morajo biti prej skrite mreže že vrnjene na svoje plasti.
+export function mrezeOvojev(THREE, deli, d, { group = null, raycaster = new THREE.Raycaster() } = {}) {
+  const out = [];
+  if (!d || !Array.isArray(deli)) return out;
   const izbrane = new Set();
   for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
-  const bS = okvir(d, new THREE.Box3());
+  // Skupina delov (»skupina-<id>«, npr. Zaklopke): vidni so samo člani, vse druge mreže se skrijejo. Brez žarkov,
+  // zato je tap poceni tudi na šibkem telefonu (pregled #461 B2-N3: ob zaklopkah naj ne ostanejo trabekule ali vene).
+  if (d.skupinaDelov && d.clani?.length) {
+    for (const p of deli) {
+      if (p === d || d.clani.includes(p)) continue;
+      for (const m of p.meshes || []) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) out.push(o); });
+    }
+    return out;
+  }
+  const bS = okvirDela(THREE, d);
   if (bS.isEmpty()) return out;
   const c = bS.getCenter(new THREE.Vector3());
   const vS = prostornina(THREE, bS);
-  const bP = new THREE.Box3();
-  const R = new THREE.Box3().setFromObject(group).getBoundingSphere(new THREE.Sphere()).radius * 2 + 1;
-  const izvor = new THREE.Vector3();
-  const mrezeDela = (p) => {
-    const r = [];
-    for (const m of p.meshes || []) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) r.push(o); });
-    return r;
-  };
-  if (d.skupinaDelov && d.clani?.length) {
-    for (const p of deli) if (!d.clani.includes(p)) for (const o of mrezeDela(p)) out.add(o);
-    return out;
-  }
-  const vel = new Map(); // del → prostornina okvirja (enkrat)
-  const velikost = (p) => (vel.has(p) ? vel.get(p) : (vel.set(p, prostornina(THREE, okvir(p, bP))), vel.get(p)));
+  const koren = group || d.meshes?.find(Boolean)?.parent;
+  if (!koren) return out;
+  const R = new THREE.Box3().setFromObject(koren).getBoundingSphere(new THREE.Sphere()).radius * 2 + 1;
+  const smeri = SMERI.map((v) => new THREE.Vector3(...v));
+  const izvor = new THREE.Vector3(), bP = new THREE.Box3();
+  // razdalja do prvega zadetka vidnih mrež izbranega dela v vsaki smeri (R, če ga žarek do središča ne zadene)
+  const svoje = [];
+  for (const m of d.meshes || []) m?.traverse((o) => { if (o.isMesh && vidna(o)) svoje.push(o); });
+  const doIzbranega = smeri.map((s) => {
+    raycaster.set(izvor.copy(c).addScaledVector(s, R), s.clone().negate());
+    raycaster.near = 0;
+    raycaster.far = R;
+    return Math.min(R, prva(raycaster.intersectObjects(svoje, false), izvor));
+  });
   for (const p of deli) {
-    if (p === d || d.clani?.includes(p) || !p.meshes?.length) continue;
-    if (velikost(p) < vS * 1.25) continue;
-    if (!okvir(p, bP).containsPoint(c)) continue; // ovoj mora vsebovati središče izbranega (brez žarkov)
-    const mreze = mrezeDela(p);
+    // ovoj: false = del nikoli ni ovoj (vsebina, ki teče skozi model, npr. DNK bakteriofaga: tanek izbrani del, ki ga
+    // osni žarki ne zadenejo, bi jo sicer lahko imel za ovoj)
+    if (p === d || p.ovoj === false || !p.meshes?.length) continue;
+    if (prostornina(THREE, okvirDela(THREE, p, bP)) < vS * 1.25) continue; // ovoj je večji od izbranega
+    const mreze = [];
+    // tudi skrite mreže dela: skrit »pokrov« izreza sklene lupino (celica, HIV), da jo žarek iz izreza zadene
+    for (const m of p.meshes) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) mreze.push(o); });
     if (!mreze.length) continue;
-    const obdaja = smeri.every((s) => {
-      rc.set(izvor.copy(c).addScaledVector(s, R), s.clone().negate());
-      rc.far = R;
-      return rc.intersectObjects(mreze, false).length > 0;
-    });
-    if (obdaja) for (const o of mreze) out.add(o);
+    let pred = 0, obdaja = true;
+    for (let i = 0; i < smeri.length && obdaja; i++) {
+      const s = smeri[i];
+      raycaster.set(izvor.copy(c).addScaledVector(s, R), s.clone().negate());
+      raycaster.near = 0;
+      raycaster.far = R;
+      const zad = raycaster.intersectObjects(mreze, false);
+      if (!zad.length) obdaja = false;
+      else if (prva(zad, izvor) < doIzbranega[i] - 1e-6) pred++;
+    }
+    // ovoj je zunaj izbranega: žarek ga doseže prej v večini smeri (pri izrezu ali delu, ki gleda ven, ne v vseh)
+    if (!obdaja || pred * 2 <= smeri.length) continue;
+    out.push(...mreze);
   }
   return out;
 }

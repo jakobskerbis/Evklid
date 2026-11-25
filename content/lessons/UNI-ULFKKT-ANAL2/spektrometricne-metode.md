@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -62,7 +62,7 @@ Ostane enaka. Produkt $b \cdot c$ se ne spremeni: svetloba na poti sreča enako 
 
 **5. Umeritvena premica.** V praksi $\varepsilon$ redko vzamemo iz tabel. Izmerimo nekaj **standardov** z znano koncentracijo, narišemo $A$ proti $c$ in dobimo premico skozi izhodišče. Koncentracijo vzorca odčitamo s premice. Linearnost velja približno do $A \approx 1$; pri večjih absorbancah pride do detektorja premalo svetlobe in premica se ukrivi, zato vzorec razredčimo.
 
-*Hiter preizkus:* standard z $c = 2{,}0\,\mathrm{mg/L}$ ima $A = 0{,}10$. Kolikšna je $c$ vzorca z $A = 0{,}30$? (Odgovor: $6{,}0\,\mathrm{mg/L}$.)
+*Hiter preizkus:* standard s $c = 2{,}0\,\mathrm{mg/L}$ ima $A = 0{,}10$. Kolikšna je $c$ vzorca z $A = 0{,}30$? (Odgovor: $6{,}0\,\mathrm{mg/L}$.)
 
 **6. UV-VIS spektrometrija.** Molekule vpijajo ultravijolično ($200$–$400\,\mathrm{nm}$) in vidno svetlobo ($400$–$800\,\mathrm{nm}$), ko elektroni preskočijo v višje energijsko stanje. Spektrometer ima vir (devterijeva žarnica za UV, volframova za VIS), **monokromator**, ki izbere eno valovno dolžino, kiveto in detektor.
 
@@ -220,14 +220,40 @@ Natančno navedi Beer-Lambertov zakon z vsemi pogoji in ga izpelji. Nato utemelj
 
 Pot svetlobe v obeh napravah si nariši kot verigo:
 
-```
-UV-VIS:  žarnica (zvezni spekter) → monokromator → kiveta z raztopino → detektor
-AAS:     votla katodna žarnica (črte) → plamen z atomi → monokromator → detektor
-```
+:::risba skica
+opis: Dve navpični verigi s po štirimi okvirji, povezanimi s puščicami navzdol. UV-VIS: žarnica z zveznim spektrom, nato monokromator, nato kiveta z raztopino, nato detektor. AAS: votla katodna žarnica s črtami, nato plamen z atomi, nato monokromator, nato detektor.
+območje: 0; 0 .. 14; 10,4
+napis: 3,5; 9,7 | UV-VIS | sredina | debelo
+napis: 10,5; 9,7 | AAS | sredina | debelo
+pravokotnik: 0,5; 7,6 .. 6,5; 9 | oranžna | ozadje
+napis: 3,5; 8,6 | žarnica | sredina
+napis: 3,5; 8 | (zvezni spekter) | sredina
+puščica: 3,5; 7,6 -> 3,5; 6,8
+pravokotnik: 0,5; 5,4 .. 6,5; 6,8 | zelena | ozadje
+napis: 3,5; 6,1 | monokromator | sredina
+puščica: 3,5; 5,4 -> 3,5; 4,6
+pravokotnik: 0,5; 3,2 .. 6,5; 4,6 | modra | ozadje
+napis: 3,5; 3,9 | kiveta z raztopino | sredina
+puščica: 3,5; 3,2 -> 3,5; 2,4
+pravokotnik: 0,5; 1 .. 6,5; 2,4 | siva | ozadje
+napis: 3,5; 1,7 | detektor | sredina
+pravokotnik: 7,5; 7,6 .. 13,5; 9 | oranžna | ozadje
+napis: 10,5; 8,6 | votla katodna | sredina
+napis: 10,5; 8 | žarnica (črte) | sredina
+puščica: 10,5; 7,6 -> 10,5; 6,8
+pravokotnik: 7,5; 5,4 .. 13,5; 6,8 | modra | ozadje
+napis: 10,5; 6,1 | plamen z atomi | sredina
+puščica: 10,5; 5,4 -> 10,5; 4,6
+pravokotnik: 7,5; 3,2 .. 13,5; 4,6 | zelena | ozadje
+napis: 10,5; 3,9 | monokromator | sredina
+puščica: 10,5; 3,2 -> 10,5; 2,4
+pravokotnik: 7,5; 1 .. 13,5; 2,4 | siva | ozadje
+napis: 10,5; 1,7 | detektor | sredina
+:::
 
 Pri UV-VIS monokromator stoji *pred* vzorcem in izbere eno barvo iz mavrice. Pri AAS stoji *za* plamenom: plamen sam sveti, monokromator pa izloči vse razen črte elementa.
 
-Graf $A$ proti $c$ je premica skozi izhodišče, ki se pri velikih $A$ ukrivi navzdol. Graf $T$ proti $c$ je krivulja, ki se kot senca v vse globljem jezeru bliža nič, a je nikoli ne doseže.
+Graf $A$ proti $c$ je premica skozi izhodišče, ki se pri velikih $A$ ukrivi navzdol. Graf $T$ proti $c$ je krivulja, ki se kot senca v vse globljem jezeru bliža ničli, a je nikoli ne doseže.
 
 ## Drugače: Bolj natančno
 
@@ -252,7 +278,7 @@ Pri AAS je absorpcijska črta široka le okoli $0{,}005\,\mathrm{nm}$, pas monok
 - $0{,}32$
 ~ $0{,}32$ je prepustnost $T = 10^{-0{,}50}$, ne absorbanca.
 - $8{,}0 \cdot 10^{8}$
-~ Koncentracijo si delil namesto množil. Velja $A = \varepsilon\, b\, c$.
+~ S koncentracijo si delil namesto množil. Velja $A = \varepsilon\, b\, c$.
 > $A = 2{,}0 \cdot 10^4 \cdot 1{,}00 \cdot 2{,}5 \cdot 10^{-5} = 0{,}50$.
 
 ? Sošolec piše: »Vzorec ima v kiveti $1\,\mathrm{cm}$ prepustnost $0{,}60$. V kiveti $2\,\mathrm{cm}$ bo prepustnost $0{,}60/2 = 0{,}30$.« Kje je napaka?

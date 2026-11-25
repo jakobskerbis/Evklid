@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -65,7 +65,7 @@ Odpri simulacijo »Gibanje: srečanje in dohitevanje« spodaj in izberi vožnjo 
 :::premisli
 Zakaj pri dohitevanju z enakima hitrostma ni rešitve? Kaj se zgodi z enačbo $v t = d + v t$?
 ---
-Razdalja med vozili se ne manjša, ker obe vozita enako hitro. V enačbi odštejemo $v t$ na obeh straneh in ostane $0 = d$. To ne drži, ker je $d > 0$, zato enačba nima rešitve. Na grafu imata premici enak smerni koeficient, sta vzporedni in se nikoli ne sekata.
+Razdalja med voziloma se ne manjša, ker obe vozita enako hitro. V enačbi odštejemo $v t$ na obeh straneh in ostane $0 = d$. To ne drži, ker je $d > 0$, zato enačba nima rešitve. Na grafu imata premici enak smerni koeficient, sta vzporedni in se nikoli ne sekata.
 :::
 
 ## Rešeni primeri
@@ -165,7 +165,7 @@ Prištejemo $3x$ in odštejemo $24$: $14 = 2x$, torej $x = 7$. Preizkus: Ana ima
 ## Pogoste napake
 
 - **Neznanka brez pomena in mešane enote.** Učenec napiše »$x$ = čas« in v Primeru 3 zapiše $90(t - 10)$, ker je zamik »$10$«. Hitrost je v km/h, zamik pa v minutah, zato rezultat nima smisla. Popravek: neznanko opiši z enoto ($t$ v urah) in vse podatke pretvori v iste enote: $10\,\mathrm{min} = \dfrac{1}{6}\,\mathrm{h}$.
-- **Prevajanje besedo za besedo.** »Vsako uro izteče $40\,\mathrm{ml}$, ostane $180\,\mathrm{ml}$, začetno je $500\,\mathrm{ml}$« učenec prepiše kot $40x - 500 = 180$, ker si sledijo v tem vrstnem redu. Odštevanje pa ni zamenljivo. Popravek: vprašaj se, kaj od česa odvzameš. Od začetne količine odvzameš iztečeno: $500 - 40x$.
+- **Prevajanje besedo za besedo.** »Vsako uro izteče $40\,\mathrm{ml}$, začetno je $500\,\mathrm{ml}$, ostane $180\,\mathrm{ml}$« učenec prepiše kot $40x - 500 = 180$, ker si sledijo v tem vrstnem redu. Odštevanje pa ni zamenljivo. Popravek: vprašaj se, kaj od česa odvzameš. Od začetne količine odvzameš iztečeno: $500 - 40x$.
 - **Pri dohitevanju seštete hitrosti.** Učenec misli: »Oba vozita, torej $v_1 + v_2$.« Pri dohitevanju pa vozita v isto smer in se razdalja manjša le za razliko hitrosti. Popravek: nariši skico in zapiši pot vsakega posebej; enačba $v_1 t = d + v_2 t$ sama da razliko.
 - **Preizkus le v enačbi.** Če je enačba napačno zapisana, rešitev zanjo vseeno »drži«. Popravek: preizkus delaj v besedilu, z dejanskimi količinami.
 - **Odgovor je samo število.** V Primeru 3 je rešitev enačbe $t = 0{,}5$, vprašanje pa je »ob kateri uri«. Popravek: preberi vprašanje še enkrat in odgovori nanj, $14.30$.
@@ -192,13 +192,13 @@ Kot zdravnik ne pozabi kontrolnega pregleda, tudi ti ne izpusti preizkusa. Šele
 
 ## Drugače: Bolj natančno
 
-Vsaka stran enačbe je opis iste količine. Če vsako stran enačbe zapišemo kot linearno funkcijo, dobimo dve premici. Pri Ani in Boru (Primer 4) sta to $y = -3x + 38$ in $y = -x + 24$. Rešitev enačbe je abscisa presečišča premic: $(7, 17)$.
+Vsaka stran enačbe je opis iste količine. Če vsako stran enačbe zapišemo kot linearno funkcijo, dobimo dve premici. Pri Ani in Boru (Primer 4) sta to $y = -3x + 38$ in $y = -x + 24$. Rešitev enačbe $x = 7$ je abscisa presečišča premic $(7, 17)$.
 
 Zato ima linearna enačba v besedilni nalogi lahko:
 
 - **eno rešitev**, ko imata premici različna smerna koeficienta in se sekata;
 - **nobene rešitve**, ko sta premici vzporedni ($k_1 = k_2$, $n_1 \ne n_2$), na primer pri dohitevanju z enakima hitrostma;
-- **neskončno rešitev**, ko premici sovpadata. Tedaj sta obe strani le dva zapisa iste stvari.
+- **neskončno mnogo rešitev**, ko premici sovpadata. Tedaj sta obe strani le dva zapisa iste stvari.
 
 Iz enačb za gibanje lahko izrazimo čas splošno. Pri srečanju iz $v_1 t + v_2 t = d$ izpostavimo $t$: $t = \dfrac{d}{v_1 + v_2}$. Pri dohitevanju iz $v_1 t = d + v_2 t$ dobimo $t = \dfrac{d}{v_1 - v_2}$. Formula pokaže, da je za dohitevanje potrebno $v_1 > v_2$. Pri $v_1 = v_2$ bi delili z nič.
 

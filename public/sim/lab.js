@@ -57,6 +57,8 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
   // quiet: samodejni zapis (vsakih 30 s) premakne le okvir tabele, ne cele strani, da stran ne skače med delom.
   el.add = (r, { quiet = false } = {}) => (rows.push(r), draw(), quiet ? (el.scrollTop = el.scrollHeight) : el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
   el.clear = () => ((rows.length = 0), draw());
+  // Besedilo prazne tabele po korakih poskusa: »Še ni meritev. Natoči …« ne sme ostati, ko je voda že v posodi.
+  el.setEmpty = (text) => { if (none.textContent !== text) none.textContent = text; };
   el.rows = rows;
   draw();
   return el;
@@ -71,24 +73,37 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
   // Legenda je hkrati vklop in izklop: vsaka vrsta meritev, njena premica in mreža (public/sim/prikaz.js za ostale grafe).
   const legend = h("figcaption", { class: "lab-legend", role: "group" });
   wrap.append(legend);
-  let A = null, last = [];
+  let A = null, last = [], legSig = "";
   const off = new Set();
   wrap.setAxes = (ax) => Object.assign(opts, ax);
   const opts = { x, y };
-  const chip = (key, sym, text) =>
-    h("button", { type: "button", class: "lab-leg layer-chip", "data-layer": key, "aria-pressed": String(!off.has(key)), onclick: () => {
-      off.has(key) ? off.delete(key) : off.add(key);
-      wrap.draw(last);
-      // draw legendo nariše znova: fokus ostane na istem gumbu (tipkovnica)
-      [...legend.children].find((c) => c.dataset.layer === key)?.focus();
-    } }, sym, text);
+  // Gumbi legende nimajo svojih poslušalcev (klik posluša stalna legenda) in se narišejo znova le, ko se spremenijo:
+  // graf se med poskusom riše vsako sličico, nov gumb na zaslonu ob dotiku pa Safari na iPadu in iPhonu vzame kot
+  // meni ob lebdenju in klika ne pošlje, tudi ne drugim gumbom na strani (scripts/gumbi-na-dotik.cjs).
+  legend.addEventListener("click", (ev) => {
+    const key = ev.target.closest?.("button[data-layer]")?.dataset.layer;
+    if (key == null) return;
+    off.has(key) ? off.delete(key) : off.add(key);
+    wrap.draw(last);
+    // draw legendo nariše znova: fokus ostane na istem gumbu (tipkovnica)
+    [...legend.children].find((c) => c.dataset.layer === key)?.focus();
+  });
+  const chip = (key, sym, text) => ({ key, sym, text });
+  const chipEl = ({ key, sym, text }) =>
+    h("button", { type: "button", class: "lab-leg layer-chip", "data-layer": key, "aria-pressed": String(!off.has(key)) }, h("i", { class: sym, "aria-hidden": "true" }), text);
   wrap.draw = (series = []) => {
     last = series;
     svg.replaceChildren();
-    A = axes(svg, { W, H, x: opts.x, y: opts.y, pad: 38, padT: 14, padR: 14, origin, xLabel, yLabel, xStep: opts.xStep ?? xStep, yStep: opts.yStep ?? yStep, grid: !off.has("grid") });
+    A = axes(svg, { W, H, x: opts.x, y: opts.y, pad: 38, padT: 26, padR: 26, origin, xLabel, yLabel: opts.yLabel ?? yLabel, xStep: opts.xStep ?? xStep, yStep: opts.yStep ?? yStep, grid: !off.has("grid") });
+    // Puščici osi segata čez zadnjo oznako (sicer se »60« dotika puščice in napisa T [°C]); napisa osi sta ob konici.
+    const [axX, axY] = A.g.querySelectorAll(".axis"), [lbX, lbY] = A.g.querySelectorAll(".axis-label");
+    axX?.setAttribute("x2", A.R + 18);
+    axY?.setAttribute("y2", A.T - 18);
+    lbX?.setAttribute("x", A.R + 18);
+    lbY?.setAttribute("y", A.T - 6);
     const inside = ([px, py]) => px >= A.x0 && px <= A.x1 && py >= A.y0 && py <= A.y1;
-    legend.replaceChildren();
     legend.setAttribute("aria-label", t("sim.layers"));
+    const chips = [];
     series.forEach((S, i) => {
       const id = S.id ?? S.label ?? i;
       if (S.line && !off.has(`fit:${id}`)) {
@@ -99,21 +114,40 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
         }
         if (pts.length > 1) s("polyline", { points: pts.join(" "), class: `lab-fit stroke-${S.cls}` }, svg);
       }
-      if (!off.has(`pt:${id}`))
-        for (const p of S.pts) {
-          if (!inside(p)) continue;
-          const cx = A.X(p[0]), cy = A.Y(p[1]);
+      if (!off.has(`pt:${id}`)) {
+        // Gosto zapisane meritve (samodejni zapis vsaki 2 s): vsaka točka ima obrobo v barvi podlage, zato bi se
+        // prekrivajoče točke zlile v temno packo. Tedaj nariše črto skozi vse meritve in točko le na ~14 px.
+        // Le časovni niz (x ne pada, brez lastne premice): ročne meritve v poljubnem vrstnem redu (I(U), Hooke) ostanejo vse
+        // vidne, brez cikcak črte po vrstnem redu zapisa in brez črte čez črtkano premico.
+        const vis = S.pts.filter(inside), drawn = [];
+        const niz = !S.line && vis.every((p, i) => !i || p[0] >= vis[i - 1][0]);
+        for (const p of vis) {
+          const cx = A.X(p[0]), cy = A.Y(p[1]), q = drawn[drawn.length - 1];
+          if (!niz || !q || Math.hypot(cx - q[0], cy - q[1]) >= 14) drawn.push([cx, cy]);
+        }
+        if (vis.length) {
+          const z = [A.X(vis[vis.length - 1][0]), A.Y(vis[vis.length - 1][1])], q = drawn[drawn.length - 1];
+          if (q[0] !== z[0] || q[1] !== z[1]) Math.hypot(z[0] - q[0], z[1] - q[1]) < 9 ? (drawn[drawn.length - 1] = z) : drawn.push(z); // zadnja meritev je vedno vidna
+        }
+        if (drawn.length < vis.length && vis.length > 1) s("polyline", { points: vis.map((p) => `${A.X(p[0]).toFixed(1)},${A.Y(p[1]).toFixed(1)}`).join(" "), class: `lab-trace stroke-${S.cls}` }, svg);
+        for (const [cx, cy] of drawn) {
           if (S.shape === "^") s("path", { d: `M${cx},${cy - 6} L${cx + 5.5},${cy + 4} L${cx - 5.5},${cy + 4} Z`, class: `lab-pt fill-${S.cls}` }, svg);
           else s("circle", { cx, cy, r: 4.5, class: `lab-pt fill-${S.cls}` }, svg);
         }
+      }
       const clipped = S.pts.filter((p) => !inside(p)).length;
       if (!S.label) return;
       // Samo premica brez točk (npr. izračunana vrednost): en gumb z imenom, brez praznega gumba za točke.
-      if (S.line && !S.pts.length) return legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), S.label));
-      legend.append(chip(`pt:${id}`, h("i", { class: `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, "aria-hidden": "true" }), S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
-      if (S.line) legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), t("sim.layer.fit", { name: S.label })));
+      if (S.line && !S.pts.length) return chips.push(chip(`fit:${id}`, `lab-sym line bg-${S.cls}`, S.label));
+      chips.push(chip(`pt:${id}`, `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
+      if (S.line) chips.push(chip(`fit:${id}`, `lab-sym line bg-${S.cls}`, t("sim.layer.fit", { name: S.label })));
     });
-    if (legend.children.length) legend.append(chip("grid", h("i", { class: "layer-sw sw-grid", "aria-hidden": "true" }), t("sim.layer.grid")));
+    if (chips.length) chips.push(chip("grid", "layer-sw sw-grid", t("sim.layer.grid")));
+    const sig = JSON.stringify([chips, [...off]]);
+    if (sig !== legSig) {
+      legSig = sig;
+      legend.replaceChildren(...chips.map(chipEl));
+    }
   };
   wrap.draw();
   return wrap;
@@ -225,7 +259,7 @@ export function pripni(el) {
       stage.classList.toggle("lab-povecano", on);
       // Obrne se le električna shema (napisi se zavrtijo nazaj pokonci); prizor na mizi (steklovina, tekočine) ostane
       // pokonci in cel na zaslonu, ker bi bil na boku fizikalno napačen. Večji je, ko učenec telefon obrne ležeče.
-      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
+      stage.classList.toggle("lab-lezi", on && !!stage.querySelector("svg.lab-circuit:not(.lab-foto-on)") && (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1) >= 1.25);
       for (const [k, v] of [["role", "dialog"], ["aria-modal", "true"], ["aria-label", t("sim.lab.zoom")]]) on ? stage.setAttribute(k, v) : stage.removeAttribute(k);
       ozadje(on);
       // Poskus lahko izgine med odprto povečavo (drug pogled, »Ponastavi«, ukaz inštruktorja): ozadje ne sme ostati neodzivno.
@@ -346,3 +380,93 @@ export const fixed = (x, d) => {
   return t.replace(".", ",").replace("-", "−");
 };
 export { tex };
+// Formule v besedilu poskusov so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«), ne
+// <i>T</i> = (…)/(…) v besedilu, ki se lomi sredi izraza. Formula ostane v eni vrstici, ko gre; sicer jo sirina.js
+// prelomi pri =; nikoli ne drsi. Enota za številom: en("°C"), en("J/(kg·K)"); krepki rezultat: rez(fixed(x, 1), "°C").
+// Enote so stalni zapisi iz kode (ne vnos): vsak znak, ki v LaTeX ni sam zase (tudi \ { } $ _ ^ ~ # &), dobi svoj zapis.
+const ENOTA = { " ": "\\,", "%": "\\%", "°": "{}^\\circ ", "·": "\\cdot ", "²": "^2", "³": "^3", "⁻¹": "^{-1}", "Ω": "\\Omega ", "\\": "\\backslash ", "{": "\\{", "}": "\\}", "$": "\\$", _: "\\_", "^": "\\hat{}", "~": "\\sim ", "#": "\\#", "&": "\\&" };
+const enTex = (u) => String(u).replace(/⁻¹|[ %°·²³Ω\\{}$_^~#&]/g, (c) => ENOTA[c]);
+export const en = (u) => `\\,\\mathrm{${enTex(u)}}`;
+// Število, ki ga ni (fmt da »–«), je v formuli \text{–}; µ v enoti ne gre (KaTeX ga piše ležeče): enoto z µ napiši za formulo.
+export const rez = (x, u) => `\\mathbf{${String(x).replace("–", "\\text{–}")}${u ? `\\,${enTex(u)}` : ""}}`;
+
+// Posnetek stanja odprtega poskusa za »Vprašaj inštruktorja« (server/ucni-kontekst.js, j 24. 11. 2026): iz DOM, zato
+// velja za vse poskuse brez kode v vsakem posebej. Kontrole: oznaka `.demo-slider-label` (kit.js slider, select, vrstice
+// `row` v lab-*.js) in vrednost v drsniku (izpis), izbranem gumbu, seznamu ali polju; skupine gumbov in polja z lastnim
+// `aria-label`; stikala `.demo-check`. Seznam, ki še kaže »izberi …«, ni nastavitev. Isto ime dvakrat (levi in desni
+// polčlen) dobi naslov svojega okvirja (`legend`). Odčitki: zasloni merilnikov (lcd). Meritve: samo vidna tabela meritev,
+// zadnjih 20 vrstic, celica »·« je prazna. Nič ne izračuna in nič ne ugiba: česar ni na zaslonu, v posnetku ni.
+const besedilo = (el) => (el?.textContent || "").replace(/\s+/g, " ").trim();
+const PRAZNO = /^(|·|–|-|—|izberi\b.*|– ?izberi.*|\.\.\.|…)$/i;
+const izbrano = (sel) => {
+  const o = sel.selectedOptions?.[0];
+  const v = besedilo(o) || sel.value;
+  return !sel.value || PRAZNO.test(v) ? "" : v;
+};
+export function stanjePoskusa(root, { parametri = 16, odcitki = 8, vrstice = 20 } = {}) {
+  const vidno = (el) => !el.closest("[hidden]");
+  const okvir = (el) => besedilo(el.closest("fieldset")?.querySelector("legend"));
+  const nabor = []; // { ime, vrednost, okvir }
+  const prebrano = new Set();
+  for (const lab of root?.querySelectorAll?.(".demo-slider-label") || []) {
+    const box = lab.parentElement;
+    // Vrstica (`row`) okoli drsnika ali seznama z lastno oznako: vrednost prebere notranja oznaka, ne obe.
+    if (!box || !vidno(box) || box.querySelectorAll(".demo-slider-label").length > 1) continue;
+    const ime = besedilo(lab);
+    const range = box.querySelector('input[type="range"]');
+    const on = box.querySelector('.seg-btn.on, .seg-btn[aria-checked="true"]');
+    const sel = box.querySelector("select");
+    const vnos = box.querySelector('input[type="text"], input[type="number"]');
+    let vrednost = "";
+    if (range && !range.hidden) vrednost = besedilo(box.querySelector("output")) || String(range.value);
+    else if (on) vrednost = besedilo(on);
+    else if (sel) vrednost = izbrano(sel);
+    else if (vnos) vrednost = vnos.value.trim();
+    box.querySelectorAll('[role="radiogroup"], select, input').forEach((x) => prebrano.add(x));
+    if (ime && vrednost) nabor.push({ ime, vrednost, okvir: okvir(box) });
+  }
+  // Skupine gumbov in polja brez vrstice z oznako (npr. pipa birete, odčitek birete, vrsta škroba).
+  for (const g of root?.querySelectorAll?.('[role="radiogroup"][aria-label], input[type="text"][aria-label], input[type="number"][aria-label]') || []) {
+    if (prebrano.has(g) || !vidno(g) || g.closest(".demo-slider, .lab-row")) continue;
+    const vrednost = g.matches("input") ? g.value.trim() : besedilo(g.querySelector('.seg-btn.on, [aria-checked="true"]'));
+    if (vrednost) nabor.push({ ime: g.getAttribute("aria-label").trim(), vrednost, okvir: okvir(g) });
+  }
+  for (const chk of root?.querySelectorAll?.(".demo-check") || []) {
+    const input = chk.querySelector('input[type="checkbox"]');
+    const ime = besedilo(chk);
+    if (input && ime && vidno(chk)) nabor.push({ ime, vrednost: input.checked ? "da" : "ne", okvir: okvir(chk) });
+  }
+  const stej = new Map();
+  for (const x of nabor) stej.set(x.ime, (stej.get(x.ime) || 0) + 1);
+  const parameters = nabor
+    .map((x) => ({ ime: stej.get(x.ime) > 1 && x.okvir ? `${x.okvir}: ${x.ime}` : x.ime, vrednost: x.vrednost }))
+    .slice(0, parametri);
+  const readings = [];
+  for (const el of root?.querySelectorAll?.(".lab-lcd") || []) {
+    if (readings.length >= odcitki) break;
+    if (!vidno(el) || el.classList.contains("off")) continue;
+    const v = besedilo(el.querySelector(".lab-lcd-val"));
+    if (!v || v === "–") continue;
+    readings.push({ ime: besedilo(el.querySelector(".lab-lcd-name")), vrednost: `${v} ${besedilo(el.querySelector(".lab-lcd-unit"))}`.trim() });
+  }
+  // Celica: izbira v celici (npr. skupina snovi) je izbrana možnost, sicer besedilo; »·« in »izberi …« sta prazna.
+  const celica = (td) => {
+    const sel = td.querySelector("select");
+    // Barvni vzorec brez besedila (npr. jodovica pri amilazi) ima ime v aria-label.
+    const v = sel ? izbrano(sel) : besedilo(td) || [...td.querySelectorAll("[aria-label]")].map((x) => x.getAttribute("aria-label").trim()).join(", ");
+    return PRAZNO.test(v) ? "" : v;
+  };
+  let measurements = null;
+  for (const table of root?.querySelectorAll?.("table.lab-table") || []) {
+    if (!vidno(table) || !table.getClientRects?.().length) continue; // skrita tabela drugega dela poskusa
+    const glava = [...table.querySelectorAll("thead th")].map(besedilo);
+    const od = glava[0] === "#" ? 1 : 0; // zaporedna številka, ki jo doda dataTable
+    const rows = [...table.querySelectorAll("tbody tr")]
+      .map((tr) => [...tr.children].slice(od).map(celica))
+      .filter((r) => r.slice(od ? 0 : 1).some(Boolean)); // vrstica s samo imenom (npr. »kovina« brez meritve) ni meritev
+    if (!rows.length) continue;
+    measurements = { stolpci: glava.slice(od), vrstice: rows.slice(-vrstice) };
+    break;
+  }
+  return { parameters, readings, ...(measurements ? { measurements } : {}) };
+}

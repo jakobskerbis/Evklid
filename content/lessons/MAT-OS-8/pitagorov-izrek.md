@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 demo: pitagora
 avtor: AI
 ---
@@ -124,7 +124,7 @@ Iščemo kateto: $b = \sqrt{c^2 - a^2}$
 
 Hiša je široka $9{,}6\,\text{m}$. Streha ima dve enaki strmini, ki se stikata v slemenu. Sleme je na sredini, $1{,}4\,\text{m}$ nad vrhom zidov. Tesar potrebuje tram od slemena do roba zida in še $0{,}6\,\text{m}$ čez rob, da streha moli čez zid. Kako dolg mora biti tram?
 
-**Podatki:** širina hiše $9{,}6\,\text{m}$, višina slemena $b = 1{,}4\,\text{m}$, previs čez zid $0{,}6\,\text{m}$
+**Podatki:** širina hiše $9{,}6\,\text{m}$, sleme na sredini, višina slemena $b = 1{,}4\,\text{m}$, previs čez zid $0{,}6\,\text{m}$
 **Iščemo:** dolžino trama
 
 :::formula
@@ -176,7 +176,7 @@ $c \approx 5{,}83\,\text{m}$. Ker je $25 < 34 < 36$, leži koren med $5$ in $6$,
 - Pravokotni trikotnik: kateti $a$ in $b$ oklepata pravi kot, hipotenuza $c$ leži nasproti njega in je najdaljša.
 - Pitagorov izrek: $a^2 + b^2 = c^2$. Govori o ploščinah kvadratov nad stranicami.
 - Hipotenuza: $c = \sqrt{a^2 + b^2}$. Kateta: $a = \sqrt{c^2 - b^2}$. Na koncu vedno korenimo.
-- Rezultat je lahko iracionalen ($\sqrt{2} \approx 1{,}41$); zapišemo ga z $\approx$ in zaokrožimo.
+- Rezultat je lahko iracionalen ($\sqrt{2} \approx 1{,}41$); zapišemo ga s $\approx$ in zaokrožimo.
 - Obrat: če za tri dolžine velja $a^2 + b^2 = c^2$, je trikotnik pravokoten (zidarsko pravilo $3$, $4$, $5$).
 - Pri besedilnih nalogah najprej nariši skico in označi pravi kot.
 

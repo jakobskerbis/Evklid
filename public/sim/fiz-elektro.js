@@ -1,7 +1,6 @@
 // Simulacije pri fiziki: naboji in električno polje, električni krog, poraba energije, magnetno polje,
 // magnetna sila na naboj, elektromagnetna indukcija.
 import { h, s, svgBox, slider, select, segmented, toggle, button, buttons, readout, layout, texBlock, fmt, tfmt, clamp, label, arrow, animate, playButton, draggable, handle } from "./kit.js";
-import { timeGraph } from "./fiz-skupno.js";
 
 const T = (x, d = 2) => tfmt(x, d);
 
@@ -151,7 +150,7 @@ function drgnjenje(el) {
     stage: [svg],
     controls: [buttons(button("Podrgni balon ob pulover", () => ((moved = Math.min(24, moved + 4)), draw()), "primary small"), button("Razelektri", () => ((moved = 0), draw())))],
     out,
-    tryText: "Zakaj se nabit balon prime stene, čeprav stena ni nabita?",
+    tryText: { razmisli: "Zakaj se nabit balon prime stene, čeprav stena ni nabita?" },
   });
   draw();
 }

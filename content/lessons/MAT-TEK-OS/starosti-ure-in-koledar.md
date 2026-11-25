@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -228,7 +228,7 @@ Na steni visi koledar s sedmimi stolpci. Po sedmih korakih v desno si spet v ist
 - 12.30 → $180^\circ$
 ~ Ob 12.30 urni kazalec ni več na dvanajstici, ampak $15^\circ$ naprej. Kot je $165^\circ$.
 - 3.15 → $0^\circ$
-~ Oba kazalca kažeta na trojko le na prvi pogled. Urni je $7{,}5^\circ$ za trojko, zato je kot $7{,}5^\circ$.
+~ Oba kazalca kažeta na trojko le na prvi pogled. Urni je $7{,}5^\circ$ naprej od trojke, zato je kot $7{,}5^\circ$.
 > Ob 9.00 je urni kazalec pri $270^\circ$, minutni pri $0^\circ$. Razlika $270^\circ$ je več kot $180^\circ$, zato je manjši kot $360^\circ - 270^\circ = 90^\circ$.
 
 ? Kuhinjska ura kaže 1.05. Približno kolikšen je manjši kot med kazalcema?
@@ -255,13 +255,13 @@ Na steni visi koledar s sedmimi stolpci. Po sedmih korakih v desno si spet v ist
 ~ Pomik za 2 dni velja le, če vmes leži 29. februar. Leto 2026 ni prestopno, ker 2026 ni deljivo s 4.
 > Leto 2026 ima $365 = 52 \cdot 7 + 1$ dni, zato je pomik le 1 dan. Za nazaj: dan pred petkom je četrtek.
 
-? Danes je vsota starosti mame, očeta in njunih dveh otrok 80 let. Pred 5 leti je bila vsota starosti vseh, ki so takrat že živeli, 63 let. Koliko je star mlajši otrok?
+? Danes je vsota starosti mame, očeta in njunih dveh otrok 80 let, starejši otrok ima več kot 5 let. Pred 5 leti je bila vsota starosti vseh, ki so takrat že živeli, 63 let. Koliko je star mlajši otrok?
 - 3 leta
 ~ Vzel si, da so pred 5 leti živeli vsi štirje: $80 - 20 = 60$, in razliko $63 - 60$ prebral kot starost. Pred 5 leti pa so živeli le trije.
 + 2 leti
 - Podatki so protislovni, ker bi morala biti vsota pred 5 leti 60.
 ~ $60$ bi veljalo, če bi bili pred 5 leti rojeni vsi štirje. Mlajši otrok takrat še ni bil rojen.
-> Če bi pred 5 leti živeli vsi štirje, bi bila vsota $80 - 20 = 60$, ne $63$. Torej so takrat živeli le trije; danes so skupaj stari $63 + 15 = 78$ let. Mlajši otrok je star $80 - 78 = 2$ leti, kar je manj kot 5 in se ujema.
+> Če bi pred 5 leti živeli vsi štirje, bi bila vsota $80 - 20 = 60$, ne $63$. Torej so takrat živeli le trije (starejši otrok je bil že rojen); danes so skupaj stari $63 + 15 = 78$ let. Mlajši otrok je star $80 - 78 = 2$ leti, kar je manj kot 5 in se ujema.
 
 :::simboli
 k | kolikokrat je starejša oseba starejša | | | razlika starosti je k − 1 delov

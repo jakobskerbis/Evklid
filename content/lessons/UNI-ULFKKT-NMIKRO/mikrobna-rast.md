@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -51,15 +51,22 @@ Generacijski čas je lastnost vrste in razmer, ne velikosti populacije. *E. coli
 
 **Druga napačna ideja: rast brez konca.** Prav to je bila napaka v računu z maso Zemlje. V **zaprti kulturi** (bučka ali epruveta z gojiščem, ki mu ničesar ne dodajamo in ničesar ne odvajamo) rast poteka v štirih fazah. Če narišemo $\log N$ v odvisnosti od časa, dobimo **rastno krivuljo**. Spominja na višinski profil kolesarske etape: ravnica, strm vzpon, planota in spust.
 
-```
-log N
- │         ______
- │        /      \
- │       /        \
- │______/          \
- └────────────────────► t
-  lag  eksp. stac. odm.
-```
+:::risba skica
+opis: Rastna krivulja v zaprti kulturi. Navpična os je log N, vodoravna čas t. Krivulja ima štiri odseke: v lag fazi je vodoravna, v eksponentni fazi je ravna črta, ki strmo narašča, v stacionarni fazi je spet vodoravna, a višje, v fazi odmiranja pada. Črtkane navpične črte ločijo faze.
+območje: 0; -0,6 .. 14; 8
+puščica: 1; 1 -> 1; 7,5
+napis: 1,2; 7,5 | log N | desno
+puščica: 1; 1 -> 13,5; 1
+napis: 13,5; 1,1 | t | nad
+črta: 4; 1 -> 4; 7 | siva črtkano
+črta: 7; 1 -> 7; 7 | siva črtkano
+črta: 10; 1 -> 10; 7 | siva črtkano
+črta: 1; 2,5 -> 4; 2,5 -> 7; 6 -> 10; 6 -> 13; 3 | modra debelo
+napis: 2,5; 0,5 | lag | sredina
+napis: 5,5; -0,2 | eksponentna | sredina
+napis: 8,5; 0,5 | stacionarna | sredina
+napis: 11,5; -0,2 | odmiranje | sredina
+:::
 
 Na logaritemski osi pomeni enak korak navzgor enak faktor, na primer desetkratno povečanje. Eksponentna rast v enakih časih pomnoži število z enakim faktorjem, zato je tam ravna črta.
 
@@ -78,7 +85,7 @@ Naklon ostane enak, ker je generacijski čas odvisen od vrste in razmer, ne od z
 
 | Merilo | Vrste | Primer |
 |---|---|---|
-| Konsistenca | tekoče, poltrdno, trdno | hranilni bujon; gojišče s $1{,}5\,\%$ agarja |
+| Konsistenca | tekoče, poltrdno, trdno | hranilni bujon; gojišče z $1{,}5\,\%$ agarja |
 | Sestava | kompleksno (nedefinirano), sintetično (definirano) | pepton in kvasni ekstrakt; glukoza in znane soli |
 | Namen | selektivno, diferencialno, obogatitveno | MacConkeyjev agar; krvni agar |
 
@@ -231,7 +238,7 @@ Natančno navedi, pod katerimi pogoji velja $N = N_0 \cdot 2^{t/g}$, in enačbo 
 3. Logaritmiraš: $\log N = \log N_0 + \dfrac{\log 2}{g}\,t$. To je linearna funkcija $t$, torej premica z naklonom $\log 2/g$ in začetno vrednostjo $\log N_0$.
 4. Zapis $N = N_0\,e^{\mu t}$ mora ob $t = g$ dati $2N_0$: $e^{\mu g} = 2$, zato $\mu g = \ln 2$ in $\mu = \ln 2/g$.
 5. Naklon: po Monodovi enačbi je specifična hitrost rasti odvisna od koncentracije omejujočega hranila $S$ kot $\mu = \mu_\mathrm{max}\,S/(K_S + S)$, kjer je $\mu_\mathrm{max}$ največja specifična hitrost rasti, $K_S$ pa koncentracija, pri kateri je $\mu = \mu_\mathrm{max}/2$. V eksponentni fazi je $S \gg K_S$ že pri prvotni količini, zato je $\mu \approx \mu_\mathrm{max}$ in podvojitev $S$ naklona ne spremeni.
-6. Planota: končna gostota je sorazmerna s porabljenim omejujočim hranilom (stalen izkoristek biomase na enoto hranila), zato je pri dvakratni količini približno dvakrat višja, če hranilo ostane omejujoče (ne pošle prej kaj drugega); na logaritemski osi se dvigne za $\log 2 \approx 0{,}3$.
+6. Planota: končna gostota je sorazmerna s porabljenim omejujočim hranilom (stalen izkoristek biomase na enoto hranila), zato je pri dvakratni količini približno dvakrat višja, če hranilo ostane omejujoče (ne poide prej kaj drugega); na logaritemski osi se dvigne za $\log 2 \approx 0{,}3$.
 7. Odgovor: naklon ostane enak, stacionarna faza pa je približno pri dvakratni gostoti celic.
 
 ## Drugače: Kot zgodba
@@ -275,7 +282,7 @@ Eksponentno rast pogosto zapišemo z naravnim logaritmom: $N = N_0 \, e^{\mu t}$
 
 Hitrost rasti je odvisna od koncentracije omejujočega hranila $S$ (Monodova enačba): $\mu = \mu_\mathrm{max} \dfrac{S}{K_S + S}$. Pri veliki $S$ je $\mu \approx \mu_\mathrm{max}$, zato v eksponentni fazi zaloga hrane ne vpliva na naklon.
 
-V **odprti kulturi** (kemostatu) sveže gojišče stalno dotekamo in enako prostornino odvajamo. Tako kulturo dolgo držimo v eksponentni fazi s hitrostjo rasti, ki jo določa hitrost dotoka.
+V **odprti kulturi** (kemostatu) sveže gojišče stalno dovajamo in enako prostornino odvajamo. Tako kulturo dolgo držimo v eksponentni fazi s hitrostjo rasti, ki jo določa hitrost dotoka.
 
 ## Preveri se
 
@@ -294,15 +301,15 @@ V **odprti kulturi** (kemostatu) sveže gojišče stalno dotekamo in enako prost
 ~ Celice v novem gojišču se najprej prilagajajo. Eksponentna rast pride šele po lag fazi.
 + lag, eksponentna, stacionarna, odmiranje
 - lag, eksponentna, odmiranje, stacionarna
-~ Ko hranila pošle, se število najprej ustali. Upadati začne šele pozneje.
-> Najprej prilagajanje, nato podvajanje s stalnim $g$, nato planota, ko hranila pošle, in na koncu upad živih celic.
+~ Ko hranila poidejo, se število najprej ustali. Upadati začne šele pozneje.
+> Najprej prilagajanje, nato podvajanje s stalnim $g$, nato planota, ko hranila poidejo, in na koncu upad živih celic.
 
 ? Kaj se zgodi, če celice sredi eksponentne faze prenesemo v sveže, enako gojišče pri isti temperaturi?
 - Znova nastopi dolga lag faza, enako kot ob prvi nacepitvi.
 ~ Lag faza je dolga, ko se morajo celice prilagoditi. Tu so encimi za to gojišče že izdelani.
 + Celice rastejo eksponentno naprej, skoraj brez lag faze.
 - Kultura takoj preide v stacionarno fazo.
-~ Stacionarna faza nastopi, ko hranila pošle. V svežem gojišču jih je dovolj.
+~ Stacionarna faza nastopi, ko hranila poidejo. V svežem gojišču jih je dovolj.
 > Celice so že prilagojene na to gojišče, zato se lag faza skoraj ne pojavi in rast se nadaljuje z istim $g$.
 
 ? Kultura s $100$ celicami raste eksponentno z $g = 15\,\mathrm{min}$. Koliko celic je po $1$ uri?

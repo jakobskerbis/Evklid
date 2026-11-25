@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Postavi se v kot učilnice. Tla so ravnina, stene sta ravnini, rob med stenama je premica. Laserski žarek iz kazalnika je premica, ki zadene steno v eni točki. Vprašanja so konkretna: kje žarek zadene steno, pod kolikšnim kotom, kako daleč je luč na stropu od tal, ali se dva ravna kabla pod stropom dotikata?
+Postavi se v kot učilnice. Tla so ravnina, steni sta ravnini, rob med stenama je premica. Laserski žarek iz kazalnika je premica, ki zadene steno v eni točki. Vprašanja so konkretna: kje žarek zadene steno, pod kolikšnim kotom, kako daleč je luč na stropu od tal, ali se dva ravna kabla pod stropom dotikata?
 
 V ravnini že poznaš premico $ax + by = c$. V prostoru pa ista oblika z eno spremenljivko več, $ax + by + cz = d$, ne opisuje premice, ampak **ravnino**. Za premico potrebujemo drug zapis. Z vektorji, skalarnim in vektorskim produktom bomo vse te naloge rešili po enotnem receptu. Enako geometrijo kasneje srečaš pri sistemih linearnih enačb: vsaka enačba s tremi neznankami je ena ravnina.
 
@@ -60,7 +60,7 @@ Ne. Če imata skupno točko $T$ in nista vzporedni, je vektor $\vec n_1 \times \
 
 - *Točka $T(x_1, y_1, z_1)$ od ravnine:* vstavi $T$ v levo stran in deli z dolžino normale:
 $$\delta = \frac{|a x_1 + b y_1 + c z_1 - d|}{\sqrt{a^2 + b^2 + c^2}}.$$
-- *Točka $T$ od premice:* paralelogram z robovoma $\overrightarrow{AT}$ in $\vec e$ ima ploščino $|\overrightarrow{AT} \times \vec e|$; višina na osnovnico $|\vec e|$ je
+- *Točka $T$ od premice:* paralelogram s stranicama $\overrightarrow{AT}$ in $\vec e$ ima ploščino $|\overrightarrow{AT} \times \vec e|$; višina na osnovnico $|\vec e|$ je
 $$\delta = \frac{|\overrightarrow{AT} \times \vec e|}{|\vec e|}.$$
 - *Mimobežni premici:* paralelepiped z robovi $\overrightarrow{AB}$, $\vec e_1$, $\vec e_2$ ima prostornino $|\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2)|$; višina je
 $$\delta = \frac{|\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2)|}{|\vec e_1 \times \vec e_2|}.$$
@@ -174,6 +174,65 @@ $\delta = \dfrac{|0 + 3 + 0 - 12|}{3} = \dfrac{9}{3} = 3$. Plošča je debela $3
 - Razdalje: točka–ravnina $\frac{|ax_1 + by_1 + cz_1 - d|}{|\vec n|}$, točka–premica $\frac{|\overrightarrow{AT} \times \vec e|}{|\vec e|}$, mimobežnici $\frac{|\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2)|}{|\vec e_1 \times \vec e_2|}$.
 - Koti v $[0^\circ, 90^\circ]$: med premicama in med ravninama $\cos$, med premico in ravnino $\sin$.
 
+## Za izpit
+
+Znati moraš povedati:
+- parametrično in kanonično enačbo premice ter splošno enačbo ravnine $ax + by + cz = d$ s pomenom normale $\vec n = (a, b, c)$;
+- vse medsebojne lege dveh premic, premice in ravnine ter dveh ravnin, s pogoji na smerne vektorje, normale in skupne točke;
+- kriterij: nevzporedni premici se sekata natanko tedaj, ko je $\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2) = 0$, z utemeljitvijo;
+- formule za razdaljo točke od ravnine, točke od premice in med mimobežnicama, z izpeljavo prek projekcije, ploščine paralelograma in prostornine paralelepipeda;
+- formule za kote in zakaj pri kotu med premico in ravnino nastopa sinus.
+
+### Naloga 1
+
+Premica $p$ gre skozi $A(1, 1, 0)$ v smeri $\vec e_1 = (1, 2, 3)$, premica $q$ skozi $B(6, 3, -2)$ v smeri $\vec e_2 = (-1, 3, 2)$. (a) Določi medsebojno lego premic. (b) Izračunaj razdaljo med njima. (c) Poišči točki $P \in p$ in $Q \in q$, v katerih je ta razdalja dosežena. (d) Zapiši enačbo ravnine, ki vsebuje $p$ in je vzporedna s $q$.
+
+**Rešitev:**
+
+1. Smerna vektorja nista vzporedna: iz prve komponente bi moral biti $\vec e_2 = -\vec e_1 = (-1, -2, -3)$, kar ne drži.
+2. Vektorski produkt: $\vec e_1 \times \vec e_2 = (2 \cdot 2 - 3 \cdot 3,\ 3 \cdot (-1) - 1 \cdot 2,\ 1 \cdot 3 - 2 \cdot (-1)) = (-5, -5, 5)$.
+3. $\overrightarrow{AB} = (5, 2, -2)$ in $\overrightarrow{AB} \cdot (-5, -5, 5) = -25 - 10 - 10 = -45 \ne 0$. Premici sta mimobežni.
+4. $|\vec e_1 \times \vec e_2| = \sqrt{25 + 25 + 25} = 5\sqrt{3}$, zato $\delta = \dfrac{45}{5\sqrt{3}} = 3\sqrt{3} \approx 5{,}20$.
+5. Točki: $P = (1 + t,\ 1 + 2t,\ 3t)$, $Q = (6 - s,\ 3 + 3s,\ -2 + 2s)$. Vektor $\overrightarrow{PQ} = (5 - s - t,\ 2 + 3s - 2t,\ -2 + 2s - 3t)$ mora biti pravokoten na $\vec e_1$ in na $\vec e_2$.
+6. $\overrightarrow{PQ} \cdot \vec e_1 = 0$ da $3 + 11s - 14t = 0$, $\overrightarrow{PQ} \cdot \vec e_2 = 0$ da $-3 + 14s - 11t = 0$.
+7. Vsota enačb je $25s - 25t = 0$, torej $s = t$. Iz prve enačbe $3 - 3t = 0$, zato $t = 1$ in $s = 1$.
+8. $P = (2, 3, 3)$, $Q = (5, 6, 0)$. Preverimo: $\overrightarrow{PQ} = (3, 3, -3)$ in $|\overrightarrow{PQ}| = \sqrt{9 + 9 + 9} = 3\sqrt{3}$, enako kot v koraku 4.
+9. Iskana ravnina vsebuje smeri $\vec e_1$ in $\vec e_2$, zato je njena normala $\vec e_1 \times \vec e_2 = (-5, -5, 5)$ ali krajše $\vec n = (1, 1, -1)$. Skozi $A$: $d = 1 + 1 - 0 = 2$.
+10. Odgovor: premici sta mimobežni, $\delta = 3\sqrt{3}$, doseže se med $P(2, 3, 3)$ in $Q(5, 6, 0)$; ravnina je $x + y - z = 2$. Kontrola: razdalja točke $B$ od te ravnine je $\dfrac{|6 + 3 + 2 - 2|}{\sqrt{3}} = \dfrac{9}{\sqrt{3}} = 3\sqrt{3}$.
+
+### Naloga 2
+
+Dani sta ravnini $\Sigma_1\colon x + y + z = 6$ in $\Sigma_2\colon x - y + 2z = 4$ ter točka $T(1, 1, 1)$. (a) Zapiši parametrično enačbo presečnice ravnin. (b) Izračunaj kot med ravninama. (c) Izračunaj razdaljo točke $T$ od presečnice. (d) Zapiši enačbo ravnine, ki vsebuje presečnico in točko $T$.
+
+**Rešitev:**
+
+1. Normali $\vec n_1 = (1, 1, 1)$ in $\vec n_2 = (1, -1, 2)$ nista vzporedni, zato se ravnini sekata v premici.
+2. Smer presečnice: $\vec e = \vec n_1 \times \vec n_2 = (1 \cdot 2 - 1 \cdot (-1),\ 1 \cdot 1 - 1 \cdot 2,\ 1 \cdot (-1) - 1 \cdot 1) = (3, -1, -2)$.
+3. Točka na presečnici: pri $z = 0$ je $x + y = 6$ in $x - y = 4$, torej $x = 5$, $y = 1$. Točka $A(5, 1, 0)$.
+4. Presečnica: $x = 5 + 3t$, $y = 1 - t$, $z = -2t$.
+5. Kot: $\vec n_1 \cdot \vec n_2 = 1 - 1 + 2 = 2$, $|\vec n_1| = \sqrt{3}$, $|\vec n_2| = \sqrt{6}$. $\cos\varphi = \dfrac{2}{\sqrt{3}\,\sqrt{6}} = \dfrac{\sqrt{2}}{3}$, zato $\varphi \approx 61{,}9^\circ$.
+6. $\overrightarrow{AT} = (-4, 0, 1)$ in $\overrightarrow{AT} \times \vec e = (0 \cdot (-2) - 1 \cdot (-1),\ 1 \cdot 3 - (-4) \cdot (-2),\ (-4) \cdot (-1) - 0 \cdot 3) = (1, -5, 4)$.
+7. $|\overrightarrow{AT} \times \vec e| = \sqrt{1 + 25 + 16} = \sqrt{42}$, $|\vec e| = \sqrt{9 + 1 + 4} = \sqrt{14}$, zato $\delta = \dfrac{\sqrt{42}}{\sqrt{14}} = \sqrt{3} \approx 1{,}73$.
+8. Ravnina skozi presečnico in $T$ vsebuje vektorja $\overrightarrow{AT}$ in $\vec e$, zato je njena normala $(1, -5, 4)$. Skozi $A$: $d = 5 - 5 + 0 = 0$.
+9. Preverimo s $T$: $1 - 5 + 4 = 0$. Točka ustreza.
+10. Odgovor: presečnica je $\vec r = (5, 1, 0) + t\,(3, -1, -2)$, kot med ravninama približno $61{,}9^\circ$, razdalja $T$ od presečnice $\sqrt{3}$, iskana ravnina $x - 5y + 4z = 0$.
+
+### Naloga 3
+
+Premici $\vec r = \vec r_A + t\,\vec e_1$ in $\vec r = \vec r_B + s\,\vec e_2$ nista vzporedni. (a) Natančno navedi pogoj, pri katerem se sekata, in ga utemelji v obe smeri. (b) Izpelji formulo za razdaljo med premicama, kadar sta mimobežni.
+
+**Rešitev:**
+
+1. Trditev: premici se sekata natanko tedaj, ko je $\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2) = 0$. Označimo $\vec m = \vec e_1 \times \vec e_2$. Ker $\vec e_1$ in $\vec e_2$ nista vzporedna, je $\vec m \ne \vec 0$.
+2. Smer ($\Rightarrow$): če imata premici skupno točko, je $\vec r_A + t\,\vec e_1 = \vec r_B + s\,\vec e_2$ za neka $t$, $s$. Potem je $\overrightarrow{AB} = \vec r_B - \vec r_A = t\,\vec e_1 - s\,\vec e_2$.
+3. Vektor $\vec m$ je pravokoten na $\vec e_1$ in na $\vec e_2$, zato je $\overrightarrow{AB} \cdot \vec m = t\,(\vec e_1 \cdot \vec m) - s\,(\vec e_2 \cdot \vec m) = 0$.
+4. Smer ($\Leftarrow$): naj bo $\overrightarrow{AB} \cdot \vec m = 0$. Vektorji, pravokotni na $\vec m$, tvorijo dvodimenzionalni podprostor. Vektorja $\vec e_1$, $\vec e_2$ ležita v njem in sta linearno neodvisna, torej sta njegova baza.
+5. Zato obstajata $t$, $s$ z $\overrightarrow{AB} = t\,\vec e_1 - s\,\vec e_2$, kar pomeni $\vec r_A + t\,\vec e_1 = \vec r_B + s\,\vec e_2$. To je skupna točka premic.
+6. Razdalja: ravnina skozi $A$ z normalo $\vec m$ vsebuje prvo premico, ravnina skozi $B$ z isto normalo vsebuje drugo. Ravnini sta vzporedni.
+7. Za poljubni točki $P$ na prvi in $Q$ na drugi premici je $\overrightarrow{PQ} = \overrightarrow{AB} + s\,\vec e_2 - t\,\vec e_1$, zato $\overrightarrow{PQ} \cdot \vec m = \overrightarrow{AB} \cdot \vec m$. Projekcija $\overrightarrow{PQ}$ na $\vec m$ ima torej vedno dolžino $\dfrac{|\overrightarrow{AB} \cdot \vec m|}{|\vec m|}$ in $|\overrightarrow{PQ}|$ ni nikoli manjša od nje.
+8. Enakost velja, ko je $\overrightarrow{PQ}$ vzporeden z $\vec m$. Taka $P$, $Q$ obstajata: $\vec e_1$, $\vec e_2$, $\vec m$ so baza prostora, zato lahko zapišemo $\overrightarrow{AB} = t\,\vec e_1 - s\,\vec e_2 + \lambda\,\vec m$ in pri teh $t$, $s$ je $\overrightarrow{PQ} = \lambda\,\vec m$.
+9. Odgovor: $\delta = \dfrac{|\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2)|}{|\vec e_1 \times \vec e_2|}$. Geometrijsko je to višina paralelepipeda z robovi $\overrightarrow{AB}$, $\vec e_1$, $\vec e_2$ nad osnovno ploskvijo s ploščino $|\vec e_1 \times \vec e_2|$.
+
 ## Drugače: Na sliki (kot učilnice)
 
 Postavi izhodišče v kot sobe: os $x$ gre vzdolž ene stene, os $y$ vzdolž druge, os $z$ navpično.
@@ -206,7 +265,7 @@ Premica je množica $\{\vec r_A + t\,\vec e ;\ t \in \mathbb{R}\}$, torej premak
 
 **Hessova normalna oblika.** Če enačbo delimo z $|\vec n|$, dobimo $\vec n_0 \cdot \vec r = p$ z enotsko normalo $\vec n_0$. Pri $p \ge 0$ je $p$ razdalja ravnine od izhodišča, vrednost $\vec n_0 \cdot \vec r_T - p$ pa predznačena razdalja: predznak pove, na kateri strani ravnine leži $T$.
 
-**Povezava s sistemi.** Lega treh ravnin je rešljivost sistema treh linearnih enačb s tremi neznankami. Ena rešitev pomeni eno skupno točko, premica rešitev pomeni pramen ravnin skozi premico, brez rešitve pa vsaj dve vzporedni ravnini ali »prizmo«. Pogoj $\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2) = 0$ je mešani produkt, ki je enak determinanti matrike iz treh vektorjev. To bo pojasnila tema o determinantah.
+**Povezava s sistemi.** Lega treh ravnin je rešljivost sistema treh linearnih enačb s tremi neznankami. Ena rešitev pomeni eno skupno točko, premica rešitev pomeni šop ravnin skozi premico, brez rešitve pa vsaj dve vzporedni ravnini ali »prizmo«. Pogoj $\overrightarrow{AB} \cdot (\vec e_1 \times \vec e_2) = 0$ je mešani produkt, ki je enak determinanti matrike iz treh vektorjev. To bo pojasnila tema o determinantah.
 
 ## Preveri se
 
@@ -266,8 +325,8 @@ a, b, c | komponente normale (koeficienti enačbe ravnine)
 d | prosti člen enačbe ravnine | d = \vec n \cdot \vec r_A
 \vec n | normala ravnine | \vec n = (a, b, c) | | pravokotna na ravnino
 \delta | razdalja (točke od ravnine, premice; med premicama) | \delta = \frac{\lvert a x_1 + b y_1 + c z_1 - d \rvert}{\sqrt{a^2 + b^2 + c^2}} | | zveza velja za razdaljo točke T od ravnine
-\varphi | kot med premicama ali premico in ravnino | \cos\varphi = \frac{\lvert \vec e_1 \cdot \vec e_2 \rvert}{\lvert \vec e_1 \rvert\,\lvert \vec e_2 \rvert} | | 0° ≤ φ ≤ 90°; pri premici in ravnini sin φ
-\Sigma, \Sigma_1, \Sigma_2 | ravnina (ime ravnine) | | | Σ₁, Σ₂ vzporedni ravnini
+\varphi | kot med premicama, med ravninama ali med premico in ravnino | \cos\varphi = \frac{\lvert \vec e_1 \cdot \vec e_2 \rvert}{\lvert \vec e_1 \rvert\,\lvert \vec e_2 \rvert} | | 0° ≤ φ ≤ 90°; pri premici in ravnini sin φ
+\Sigma, \Sigma_1, \Sigma_2 | ravnina (ime ravnine) | | | Σ₁, Σ₂ dve različni ravnini
 A | dana točka premice (ravnine)
 B | točka druge premice | | | pri ravnini skozi tri točke druga točka
 C | tretja točka ravnine

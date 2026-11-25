@@ -2,7 +2,7 @@
 // (XP dobiš za lekcije, vaje, igre in pogovor z inštruktorjem). Podatki: /api/students/:id/progress → xpDays.
 // Teden se začne s ponedeljkom. Vsak stolpec ima 8 celic: oznaka meseca in 7 dni, zato ozek vsebnik (CSS) skrije
 // prve tedne kar po vrstnem redu celic in pokaže zadnje pol leta.
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
 
 const WEEKS = 53;
 const DAY = 86400000;

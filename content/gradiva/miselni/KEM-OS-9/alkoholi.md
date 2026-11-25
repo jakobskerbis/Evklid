@@ -11,7 +11,7 @@ stanje: osnutek
 - Skupina OH
   - vrelišče etanola $78\,^\circ\text{C}$, etana $-89\,^\circ\text{C}$
   - kratki alkoholi se mešajo z vodo
-  - napaka: alkohol ni baza
+  - pazi: alkohol ni baza
 - Etanol
   - $M = 46\,\text{g/mol}$, šest atomov H
   - topilo, gori v $\mathrm{CO_2}$ in vodo
@@ -19,7 +19,7 @@ stanje: osnutek
   - kvasovke pretvorijo glukozo brez zraka
   - $\mathrm{C_6H_{12}O_6 \rightarrow 2\,C_2H_5OH + 2\,CO_2}$
 - Medicina
-  - razkužilo z $60$ do $80\,\%$ alkohola
+  - razkužilo s $60$ do $80\,\%$ alkohola
   - uniči ovojnico bakterij
 - Vpliv na zdravje
   - jetra razgradijo okoli $7\,\text{g/h}$

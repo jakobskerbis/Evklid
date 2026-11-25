@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -64,7 +64,7 @@ $$\int_a^b f(x)\, dx = f(\xi)(b - a).$$
 
 Število $\bar f = \dfrac{1}{b - a} \displaystyle\int_a^b f(x)\, dx$ je **povprečna vrednost** funkcije na $[a, b]$. Pravokotnik z višino $\bar f$ ima enako ploščino kot lik pod grafom.
 
-*Dokaz.* Zvezna funkcija na $[a, b]$ zavzame najmanjšo vrednost $m$ in največjo $M$. Po oceni je $m \le \bar f \le M$, po izreku o vmesnih vrednostih pa obstaja $\xi \in [a, b]$ s $f(\xi) = \bar f$. Brez zveznosti izrek ne velja: za $f = 0$ na $[0, 1)$ in $f = 1$ na $[1, 2]$ je $\bar f = \frac{1}{2}$, vrednosti $\frac12$ pa $f$ ne zavzame.
+*Dokaz.* Zvezna funkcija na $[a, b]$ zavzame najmanjšo vrednost $m$ in največjo $M$. Po oceni je $m \le \bar f \le M$, po izreku o vmesnih vrednostih pa obstaja $\xi \in [a, b]$ z $f(\xi) = \bar f$. Brez zveznosti izrek ne velja: za $f = 0$ na $[0, 1)$ in $f = 1$ na $[1, 2]$ je $\bar f = \frac{1}{2}$, vrednosti $\frac12$ pa $f$ ne zavzame.
 
 **5. Osnovni izrek analize.** Naj bo $f$ zvezna na $[a, b]$. Funkcija
 
@@ -152,7 +152,7 @@ $S = \int_a^b \big(f(x) - g(x)\big)\, dx$, kjer je $f \ge g$ na $[a, b]$, meji $
 
 ### Primer 3 (težji)
 
-Lik med grafom $f(x) = \sqrt{x}$, osjo $x$ in premico $x = 4$ zavrtimo okoli osi $x$. Dolžine so v decimetrih. Nastalo posodo postavimo pokonci, s temenom navzdol, tako da je $x$ višina nad dnom. Izračunaj prostornino posode v litrih in povprečno ploščino prečnega prereza. Do katere višine sega voda, ko je posoda polna do polovice prostornine? Kako hitro se dviga gladina pri višini $2\,\mathrm{dm}$, če dotekata $0{,}5\,\mathrm{L/s}$?
+Lik med grafom $f(x) = \sqrt{x}$, osjo $x$ in premico $x = 4$ zavrtimo okoli osi $x$. Dolžine so v decimetrih. Nastalo posodo postavimo pokonci, s temenom navzdol, tako da je $x$ višina nad dnom. Izračunaj prostornino posode v litrih in povprečno ploščino prečnega prereza. Do katere višine sega voda, ko je posoda polna do polovice prostornine? Kako hitro se dviga gladina pri višini $2\,\mathrm{dm}$, če doteka $0{,}5\,\mathrm{L/s}$?
 
 **Podatki:** $f(x) = \sqrt{x}$, interval $[0, 4]$, enota dolžine $1\,\mathrm{dm}$, $1\,\mathrm{dm^3} = 1\,\mathrm{L}$, dotok $\frac{dV}{dt} = 0{,}5\,\mathrm{L/s}$
 **Iščemo:** prostornino $V$, povprečno ploščino prereza $\bar A$, višino $h_{1/2}$ pri polovični prostornini in hitrost dviganja gladine $\frac{dh}{dt}$ pri $h = 2\,\mathrm{dm}$
@@ -193,7 +193,7 @@ $h = \int_0^2 i(t)\, dt$ (Newton-Leibniz: $F(b) - F(a)$); $\bar i = \dfrac{1}{b 
 :::premisli
 Koliko dežja pade in kolikšna je povprečna jakost?
 ---
-$h = F(2) - F(0) = 12 - 8 - 0 = 4\,\mathrm{mm}$, kar je $4$ litre vode na kvadratni meter. Povprečna jakost je $\bar i = \frac{4\,\mathrm{mm}}{2\,\mathrm{h}} = 2\,\mathrm{mm/h}$, manj od največje $i(1) = 3\,\mathrm{mm/h}$.
+$h = F(2) - F(0) = 12 - 8 - 0 = 4\,\mathrm{mm}$, kar so $4$ litri vode na kvadratni meter. Povprečna jakost je $\bar i = \frac{4\,\mathrm{mm}}{2\,\mathrm{h}} = 2\,\mathrm{mm/h}$, manj od največje $i(1) = 3\,\mathrm{mm/h}$.
 :::
 
 ## Pogoste napake
@@ -270,7 +270,7 @@ Utemelji, ali velja: če je $f$ zvezna in nenegativna na $[a, b]$ in je $\int_a^
 
 Nariši graf $y = x^2$ na $[0, 1]$ in pod njim štiri enako široke pravokotnike s širino $0{,}25$. Če višino vzameš v **desnem** krajišču vsakega podintervala, pravokotniki segajo čez graf; njihova vsota je **zgornja ocena**. Če višino vzameš v **levem** krajišču, so pravokotniki pod grafom; dobiš **spodnjo oceno**. Prava ploščina je vmes.
 
-Ko podintervale ožamo, se »stopnice« vse bolj prilegajo krivulji in razlika med zgornjo in spodnjo oceno izgine. Ta skupna limita je integral.
+Ko podintervale ožimo, se »stopnice« vse bolj prilegajo krivulji in razlika med zgornjo in spodnjo oceno izgine. Ta skupna limita je integral.
 
 Pri ploščini med grafoma si predstavljaj tanke navpične trakove: vsak ima višino $f(x) - g(x)$ (od spodnje do zgornje krivulje) in širino $dx$. Pri vrtenini pa je vsak trak zavrten v tanek kovanec s polmerom $f(x)$ in debelino $dx$; njegova prostornina je $\pi f(x)^2\, dx$.
 
@@ -301,7 +301,7 @@ Približno izračunajmo $\int_0^1 x^2\, dx$ z Riemannovimi vsotami za $n = 4$ in
 
 ## Drugače: Bolj natančno
 
-**Darbouxove vsote.** Za delitev $P$ naj bo $m_i = \inf_{[x_{i-1}, x_i]} f$ in $M_i = \sup_{[x_{i-1}, x_i]} f$. **Spodnja** in **zgornja** vsota sta $s(P) = \sum m_i \Delta x_i$ in $S(P) = \sum M_i \Delta x_i$. Funkcija je integrabilna natanko tedaj, ko za vsak $\varepsilon > 0$ obstaja delitev $P$ s $S(P) - s(P) < \varepsilon$. Tedaj je integral skupna vrednost $\sup_P s(P) = \inf_P S(P)$.
+**Darbouxove vsote.** Za delitev $P$ naj bo $m_i = \inf_{[x_{i-1}, x_i]} f$ in $M_i = \sup_{[x_{i-1}, x_i]} f$. **Spodnja** in **zgornja** vsota sta $s(P) = \sum m_i \Delta x_i$ in $S(P) = \sum M_i \Delta x_i$. Funkcija je integrabilna natanko tedaj, ko za vsak $\varepsilon > 0$ obstaja delitev $P$ z $S(P) - s(P) < \varepsilon$. Tedaj je integral skupna vrednost $\sup_P s(P) = \inf_P S(P)$.
 
 Za zvezno funkcijo na $[a, b]$ to sledi iz **enakomerne zveznosti**: za $\varepsilon > 0$ obstaja $\delta$, da je $|f(x) - f(y)| < \frac{\varepsilon}{b - a}$, kadar je $|x - y| < \delta$. Za delitev s podintervali, krajšimi od $\delta$, je $M_i - m_i < \frac{\varepsilon}{b - a}$ in zato $S(P) - s(P) < \varepsilon$.
 
@@ -357,28 +357,27 @@ x | spremenljivka integracije | |
 a | spodnja meja integracije | |
 b | zgornja meja integracije | |
 d | oznaka diferenciala | | | dx pove, po kateri spremenljivki integriramo
-R | Riemannova vsota | R = \sum_{i=1}^{n} f(\xi_i)\, \Delta x_i |
-n | število podintervalov | | | v ∫xⁿ dx eksponent potence, n ≠ −1
-i | zaporedna številka podintervala | | | i = 1, …, n
+R | Riemannova vsota | R = \sum_{i=1}^{n} f(\xi_i)\, \Delta x_i | | pri delu plina splošna plinska konstanta
+n | število podintervalov | | | v ∫xⁿ dx eksponent potence, n ≠ −1; pri delu plina množina
+i | zaporedna številka podintervala; v primeru 4 jakost padavin (v mm/h) | | | i = 1, …, n
 \xi_i | izbrana točka v i-tem podintervalu | |
 \Delta x_i | dolžina i-tega podintervala | \Delta x_i = x_i - x_{i-1} |
 \Delta x | dolžina podintervala pri enakomerni delitvi | \Delta x = \frac{b - a}{n} |
 \xi | točka iz izreka o povprečni vrednosti | | | ξ leži na [a, b]
-F | primitivna funkcija funkcije f | F' = f |
+F | primitivna funkcija funkcije f | F' = f | | v točki 9 je $F(x)$ sila
 F' | odvod primitivne funkcije | F' = f |
 t | spremenljivka pod integralom | | | v primeru z zdravilom čas v urah
-h | prirastek spremenljivke x; v primeru 4 višina padavin | | | h ≠ 0, nato h → 0
-i | jakost padavin | | mm/h | v primeru 4
+h | prirastek spremenljivke x; v primeru 3 višina gladine, v primeru 4 višina padavin | | | h ≠ 0, nato h → 0
 \bar i | povprečna jakost padavin | \bar i = \frac{1}{b - a} \int_a^b i(t)\, dt | mm/h |
 \xi_h | točka med x in x + h | |
-S | ploščina lika med grafoma | S = \int_a^b \big(f(x) - g(x)\big)\, dx | | velja, če je f ≥ g na [a, b]
-g | spodnja funkcija (spodnji graf) | |
-V | prostornina vrtenine | V = \pi \int_a^b f(x)^2\, dx |
+S | ploščina lika med grafoma | S = \int_a^b \big(f(x) - g(x)\big)\, dx | | velja, če je f ≥ g na [a, b]; $S(P)$ je zgornja vsota
+g | spodnja funkcija (spodnji graf) | | | pri substituciji notranja funkcija $t = g(x)$
+V | prostornina vrtenine | V = \pi \int_a^b f(x)^2\, dx | | pri delu plina prostornina plina
 A | ploščina prereza vrtenine | A(x) = \pi f(x)^2 |
 \bar A | povprečna ploščina prereza | \bar A = \frac{1}{b - a} \int_a^b A(x)\, dx |
 k | smerni koeficient premice y = kx | | | Naloga 1
 G | integral z zgornjo mejo x² | G(x) = \int_0^{x^2} e^{-t^2}\, dt | | Naloga 2
 \Phi | integral s spremenljivo zgornjo mejo | \Phi(x) = \int_a^x f(t)\, dt | | primitivna funkcija f
-Q | prostorninski pretok | | m³/s
-\bar c | povprečna koncentracija zdravila v krvi | \bar c = \frac{1}{b - a} \int_a^b c(t)\, dt | mg/L | v zgledu na intervalu od 0 do 6 h
+Q | prostorninski pretok | | m³/s | v točki 9 poljubna količina
+\bar c | povprečna koncentracija zdravila v plazmi | \bar c = \frac{1}{b - a} \int_a^b c(t)\, dt | mg/L | v zgledu na intervalu od 0 do 6 h
 :::

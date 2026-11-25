@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,17 +13,28 @@ Bernoullijeva enačba trenja ne pozna. V ceveh, črpalkah, reaktorjih in žilah 
 
 ### Slika 1: plasti med ploščama
 
-**Viskoznost kot notranje trenje.** Vzemi tanko plast tekočine med dvema vzporednima ploščama. Spodnja plošča miruje, zgornjo vlečemo s stalno hitrostjo. Tekočina se drži obeh plošč: ob spodnji miruje, ob zgornji se giblje z njo. Vmes se plasti tekočine drsajo druga ob drugi, vsaka nekoliko hitreje od tiste pod njo.
+**Viskoznost kot notranje trenje.** Vzemi tanko plast tekočine med dvema vzporednima ploščama. Spodnja plošča miruje, zgornjo vlečemo s stalno hitrostjo. Tekočina se drži obeh plošč: ob spodnji miruje, ob zgornji se giblje z njo. Vmes plasti tekočine drsijo druga ob drugi, vsaka nekoliko hitreje od tiste pod njo.
 
-Diagram v besedah (prerez, hitrost plasti je dolžina puščice):
+Prerez (hitrost plasti je dolžina puščice):
 
-```
-zgornja plošča  ==========>  v
-                --------->
-                ------>
-                --->
-spodnja plošča  ==========   0
-```
+:::risba skica
+opis: Prerez plasti tekočine med dvema vzporednima ploščama. Spodnja plošča miruje, zgornja se giblje v desno s hitrostjo v₀. Puščice kažejo hitrost plasti: ob spodnji plošči je nič, nato enakomerno narašča z višino do v₀ ob zgornji plošči. Razdalja med ploščama je δ.
+območje: 0; -1,6 .. 13; 6,4
+pravokotnik: 2; -0,3 .. 10; 0 | siva polno
+pravokotnik: 2; 4 .. 10; 4,3 | siva polno
+črta: 3; 0 -> 3; 4 | siva
+puščica: 3; 1 -> 4,5; 1 | | | modra
+puščica: 3; 2 -> 6; 2 | | | modra
+puščica: 3; 3 -> 7,5; 3 | | | modra
+puščica: 3; 4,8 -> 9; 4,8 | | | modra debelo
+napis: 9,2; 4,8 | v_0 | desno | modra
+črta: 3; 0 -> 9; 4 | črtkano
+napis: 6; 5,3 | zgornja plošča se giblje | nad
+napis: 6; -0,8 | spodnja plošča miruje, v = 0 | pod
+črta: 11; 0 -> 11; 4 | siva
+napis: 11,2; 2 | δ | desno
+podnapis: Hitrost plasti (dolžina puščice) narašča linearno od 0 ob spodnji plošči do v₀ ob zgornji.
+:::
 
 Za vlečenje potrebujemo silo. Sila na enoto ploskve je **strižna napetost** $\tau$ (v Pa). Spremembi hitrosti s prečno razdaljo $\dfrac{\mathrm{d}v}{\mathrm{d}y}$ rečemo **strižna hitrost** (v $\mathrm{s^{-1}}$).
 
@@ -62,10 +73,20 @@ Olju viskoznost močno pade (večkrat), ker se molekule kapljevine lažje premik
 
 ### Slika 2: nit barvila v cevi
 
-```
-majhna hitrost:  ═══════════════════════   nit ostane ravna
-velika hitrost:  ═════~~≈≈≋≋▒▒▒▒▒▒▒▒▒▒▒▒   nit se raztrga, barvilo zapolni presek
-```
+:::risba skica
+opis: Dve vodoravni cevi z nitjo barvila, tok teče v desno. V zgornji cevi (majhna hitrost) nit ostane ravna do konca cevi. V spodnji cevi (velika hitrost) nit po kratki ravni poti zaniha, se raztrga in barvilo zapolni ves presek cevi.
+območje: 0; 0 .. 14; 7
+pravokotnik: 1; 4,5 .. 13; 5,5
+črta: 1; 5 -> 13; 5 | modra debelo
+napis: 7; 5,7 | majhna hitrost: nit ostane ravna | nad
+pravokotnik: 7; 1 .. 13; 2 | modra polno
+pravokotnik: 1; 1 .. 13; 2
+črta: 1; 1,5 -> 4; 1,5 -> 4,25; 1,54 -> 4,5; 1,43 -> 4,75; 1,61 -> 5; 1,35 -> 5,25; 1,69 -> 5,5; 1,27 -> 5,75; 1,76 -> 6; 1,2 -> 6,25; 1,84 -> 6,5; 1,12 -> 6,75; 1,91 -> 7; 1,05 | modra debelo
+napis: 7; 2,2 | velika hitrost: nit se raztrga | nad
+puščica: 1; 0,4 -> 3; 0,4 | | | siva
+napis: 3,2; 0,4 | smer toka | desno | siva
+podnapis: Pri veliki hitrosti barvilo po kratki poti zapolni ves presek cevi.
+:::
 
 **Reynoldsov poskus.** Osborne Reynolds je v stekleno cev z vodo vbrizgal tanko nit barvila. Pri majhni hitrosti je nit ostala ravna in ostra do konca cevi. Tak tok je **laminaren**: plasti tečejo vzporedno, brez mešanja. Pri veliki hitrosti se je nit po kratki razdalji raztrgala in barvilo je obarvalo ves presek. Tak tok je **turbulenten**: hitrost se na vsakem mestu nenehno spreminja po smeri in velikosti, nastajajo vrtinci.
 
@@ -77,10 +98,20 @@ Tu je $v$ povprečna hitrost (prostorninski pretok, deljen s presekom), $D$ notr
 
 Za tok v ravni okrogli cevi Re razdeli številsko premico na tri območja:
 
-```
-   laminarno       prehodno (nestabilno)      turbulentno
-0 ─────────────── 2100 ─────────────── 4000 ──────────────► Re
-```
+:::risba premica
+opis: Številska premica Reynoldsovega števila od 0 do 6000 za tok v ravni okrogli cevi. Od 0 do 2100 je tok laminaren, od 2100 do 4000 prehoden (nestabilen), nad 4000 turbulenten.
+od: 0
+do: 6000
+korak: 6000
+oznake: ne
+oznaka: 0 | 0
+oznaka: 2100 | 2100
+oznaka: 4000 | 4000
+oznaka: 6000 | Re
+interval: 0 .. 2100 | laminarno
+interval: 2100 .. 4000 | prehodno
+interval: 4000 .. 6000 | turbulentno
+:::
 
 - $\mathrm{Re} < 2100$: laminarni tok,
 - $2100 < \mathrm{Re} < 4000$: prehodno območje (tok je nestabilen),
@@ -90,21 +121,44 @@ Meja $2100$ je dogovorna; nekateri viri navajajo $2300$. V zelo gladkih cevih br
 
 ### Slika 3: profil hitrosti v preseku
 
-```
-  laminarno         turbulentno
- |->               |------>
- |------>          |-------->
- |---------->      |-------->
- |------>          |-------->
- |->               |------>
-```
+:::risba skica
+opis: Profila hitrosti v vzdolžnem prerezu cevi pri enaki povprečni hitrosti, tok teče v desno, ob obeh stenah je hitrost nič. Levo laminarni tok: profil je parabola, hitrost na osi je dvakrat večja od povprečne. Desno turbulentni tok: profil je sredi cevi skoraj raven in ob stenah strmo pade, hitrost na osi je približno 1,25-kratnik povprečne (povprečna je približno 0,8 največje). Črtkana črta v obeh ceveh kaže povprečno hitrost.
+območje: 0; -3,8 .. 14,5; 3,8
+črta: 1; -2 -> 6; -2 | debelo
+črta: 1; 2 -> 6; 2 | debelo
+črta: 1; -2 -> 1; 2 | siva
+puščica: 1; -1,6 -> 2,44; -1,6 | | | modra
+puščica: 1; -0,8 -> 4,36; -0,8 | | | modra
+puščica: 1; 0 -> 5; 0 | | | modra
+puščica: 1; 0,8 -> 4,36; 0,8 | | | modra
+puščica: 1; 1,6 -> 2,44; 1,6 | | | modra
+črta: 1; -2 -> 1,04; -1,99 -> 1,2; -1,95 -> 1,39; -1,9 -> 1,76; -1,8 -> 2,44; -1,6 -> 3,56; -1,2 -> 4,36; -0,8 -> 4,84; -0,4 -> 5; 0 -> 4,84; 0,4 -> 4,36; 0,8 -> 3,56; 1,2 -> 2,44; 1,6 -> 1,76; 1,8 -> 1,39; 1,9 -> 1,2; 1,95 -> 1,04; 1,99 -> 1; 2 | modra
+črta: 3; -2 -> 3; 2 | črtkano
+napis: 3,5; 3 | laminarno | nad
+napis: 3; 2,1 | v̄ | nad
+napis: 3,5; -2,3 | v_{max} = 2 v̄ | pod
+črta: 8,5; -2 -> 13,5; -2 | debelo
+črta: 8,5; 2 -> 13,5; 2 | debelo
+črta: 8,5; -2 -> 8,5; 2 | siva
+puščica: 8,5; -1,6 -> 10,49; -1,6 | | | oranžna
+puščica: 8,5; -0,8 -> 10,82; -0,8 | | | oranžna
+puščica: 8,5; 0 -> 11; 0 | | | oranžna
+puščica: 8,5; 0,8 -> 10,82; 0,8 | | | oranžna
+puščica: 8,5; 1,6 -> 10,49; 1,6 | | | oranžna
+črta: 8,5; -2 -> 9,67; -1,99 -> 9,98; -1,95 -> 10,13; -1,9 -> 10,3; -1,8 -> 10,49; -1,6 -> 10,69; -1,2 -> 10,82; -0,8 -> 10,92; -0,4 -> 11; 0 -> 10,92; 0,4 -> 10,82; 0,8 -> 10,69; 1,2 -> 10,49; 1,6 -> 10,3; 1,8 -> 10,13; 1,9 -> 9,98; 1,95 -> 9,67; 1,99 -> 8,5; 2 | oranžna
+črta: 10,5; -2 -> 10,5; 2 | črtkano
+napis: 11; 3 | turbulentno | nad
+napis: 10,5; 2,1 | v̄ | nad
+napis: 11; -2,3 | v_{max} ≈ 1,25 v̄ | pod
+podnapis: Dolžina puščice je hitrost na tisti oddaljenosti od osi; črtkano je povprečna hitrost.
+:::
 
 **Profil hitrosti.** Ob steni je hitrost vedno nič. V laminarnem toku je profil parabola, največja hitrost na osi je dvakrat večja od povprečne. V turbulentnem toku vrtinci premešajo tekočino, zato je profil sredi cevi skoraj raven, povprečna hitrost je približno $0{,}8$ največje.
 
 **Hagen-Poiseuillov zakon.** Naj nestisljiva newtonska tekočina teče stacionarno, laminarno in polno razvito po ravni okrogli cevi s polmerom $R$, ob steni naj ne drsi. Potem za profil hitrosti, povprečno hitrost $\bar v$ in tlačni padec $\Delta p$ na dolžini $L$ (premer $D = 2R$) velja
 $$v(r) = v_\mathrm{max}\left(1 - \frac{r^2}{R^2}\right),\quad \bar v = \frac{v_\mathrm{max}}{2},$$
 $$\Delta p = \frac{32\, \mu\, L\, \bar v}{D^2}.$$
-*Izpeljava:* na koaksialni valj tekočine s polmerom $r$ in dolžino $L$ deluje tlačna sila $\Delta p\, \pi r^2$, po plašču pa zavira strižna sila $\tau\, 2\pi r L$. Valj se ne pospešuje, zato sta enaki: $\tau = \dfrac{\Delta p\, r}{2L}$. Z $\tau = -\mu \dfrac{\mathrm{d}v}{\mathrm{d}r}$ (hitrost proti steni pada) dobimo $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$, z integracijo in pogojem $v(R) = 0$ pa $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, torej $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$. Pretok je $Q = \int_0^R v\, 2\pi r\, \mathrm{d}r = \dfrac{\pi \Delta p R^4}{8 \mu L}$, zato $\bar v = \dfrac{Q}{\pi R^2} = \dfrac{\Delta p R^2}{8\mu L} = \dfrac{v_\mathrm{max}}{2}$. Z $R = D/2$ izrazimo $\Delta p = \dfrac{8\mu L \bar v}{R^2} = \dfrac{32\mu L \bar v}{D^2}$. Pri turbulentnem toku zakon ne velja.
+*Izpeljava:* na koaksialni valj tekočine s polmerom $r$ in dolžino $L$ deluje tlačna sila $\Delta p\, \pi r^2$, po plašču pa zavira strižna sila $\tau\, 2\pi r L$. Valj se ne pospešuje, zato sta enaki: $\tau = \dfrac{\Delta p\, r}{2L}$. S $\tau = -\mu \dfrac{\mathrm{d}v}{\mathrm{d}r}$ (hitrost proti steni pada) dobimo $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$, z integracijo in pogojem $v(R) = 0$ pa $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, torej $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$. Pretok je $Q = \int_0^R v\, 2\pi r\, \mathrm{d}r = \dfrac{\pi \Delta p R^4}{8 \mu L}$, zato $\bar v = \dfrac{Q}{\pi R^2} = \dfrac{\Delta p R^2}{8\mu L} = \dfrac{v_\mathrm{max}}{2}$. Z $R = D/2$ izrazimo $\Delta p = \dfrac{8\mu L \bar v}{R^2} = \dfrac{32\mu L \bar v}{D^2}$. Pri turbulentnem toku zakon ne velja.
 
 :::premisli
 Skozi cev teče stalen prostorninski pretok. Cev zamenjamo s cevjo z dvakrat večjim premerom. Ali se Re poveča, zmanjša ali ostane enak?
@@ -173,7 +227,7 @@ $v = \dfrac{\mathrm{Re}\, \mu}{\rho\, D}$, $Q = v \cdot \dfrac{\pi D^2}{4}$, $\D
 6. Tok je laminaren, zato smemo uporabiti Hagen-Poiseuillov zakon: $\Delta p = \dfrac{32 \cdot 0{,}001 \cdot 2{,}0 \cdot 0{,}2104}{0{,}010^2}\,\mathrm{Pa} \approx 135\,\mathrm{Pa}$.
 7. Ta padec mora dati hidrostatični tlak stolpca vode: $h = \dfrac{\Delta p}{\rho g} = \dfrac{134{,}7}{998 \cdot 9{,}81}\,\mathrm{m} \approx 0{,}0138\,\mathrm{m}$.
 8. Hitrost v osi je pri laminarnem toku dvakratnik povprečne: $v_\mathrm{max} = 2 \cdot 0{,}2104\,\mathrm{m/s} \approx 0{,}421\,\mathrm{m/s}$.
-9. Odgovor: laminarni tok dobimo le pri pretoku pod približno $1\,\mathrm{L/min}$; tlačni padec je tedaj okoli $135\,\mathrm{Pa}$, za kar zadošča gladina le $1{,}4\,\mathrm{cm}$ nad iztokom, voda v osi pa teče z $0{,}42\,\mathrm{m/s}$. Zato voda v ceveh skoraj vedno teče turbulentno.
+9. Odgovor: laminarni tok dobimo le pri pretoku pod približno $1\,\mathrm{L/min}$; tlačni padec je tedaj okoli $135\,\mathrm{Pa}$, za kar zadošča gladina le $1{,}4\,\mathrm{cm}$ nad iztokom, voda v osi pa teče z $0{,}42\,\mathrm{m/s}$. (Zanemarjena kinetična energija curka, pri paraboličnem profilu $\rho \bar v^2$, bi dodala še okoli $44\,\mathrm{Pa}$ oziroma dobre $4\,\mathrm{mm}$ višine.) Zato voda v ceveh skoraj vedno teče turbulentno.
 
 ### Primer 4: zdaj ti
 
@@ -250,7 +304,7 @@ Natančno navedi pogoje in izpelji profil hitrosti laminarnega toka v ravni okro
 
 1. Pogoji: nestisljiva newtonska tekočina, stacionaren, laminaren, polno razvit tok, ravna okrogla cev s polmerom $R$, na steni $v = 0$.
 2. Ravnovesje sil na valj s polmerom $r$ in dolžino $L$: $\Delta p\,\pi r^2 = \tau\, 2\pi r L$, torej $\tau = \dfrac{\Delta p\, r}{2L}$.
-3. Z $\tau = -\mu\dfrac{\mathrm{d}v}{\mathrm{d}r}$: $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$; integracija s $v(R) = 0$ da $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, parabolo z $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$ v osi.
+3. S $\tau = -\mu\dfrac{\mathrm{d}v}{\mathrm{d}r}$: $\dfrac{\mathrm{d}v}{\mathrm{d}r} = -\dfrac{\Delta p\, r}{2\mu L}$; integracija z $v(R) = 0$ da $v(r) = \dfrac{\Delta p}{4\mu L}(R^2 - r^2)$, parabolo z $v_\mathrm{max} = \dfrac{\Delta p R^2}{4\mu L}$ v osi.
 4. $Q = \int_0^R v(r)\,2\pi r\,\mathrm{d}r = \dfrac{2\pi \Delta p}{4\mu L}\left(\dfrac{R^4}{2} - \dfrac{R^4}{4}\right) = \dfrac{\pi\Delta p R^4}{8\mu L}$.
 5. $\bar v = \dfrac{Q}{\pi R^2} = \dfrac{\Delta p R^2}{8\mu L} = \dfrac{v_\mathrm{max}}{2}$.
 6. Iz koraka 5: $\Delta p = \dfrac{8\mu L\bar v}{R^2}$, z $R = D/2$ pa $\Delta p = \dfrac{32\mu L\bar v}{D^2}$.
@@ -261,7 +315,7 @@ Natančno navedi pogoje in izpelji profil hitrosti laminarnega toka v ravni okro
 
 - **Kapilarni viskozimeter.** V Ubbelohdejevem ali Ostwaldovem viskozimetru odmerjena prostornina kapljevine laminarno izteče skozi kapilaro pod lastno težo. Po Hagen-Poiseuillu je čas iztekanja sorazmeren s kinematično viskoznostjo, $\nu = K t$, konstanto $K$ pa umerimo s standardom znane viskoznosti. Tako merijo viskoznost olj in raztopin polimerov.
 - **Rotacijski viskozimeter in reometer.** Merita navor pri znani strižni hitrosti (valja ali stožec in plošča, Couettov tok). Iz krivulje $\tau$ v odvisnosti od $\mathrm{d}v/\mathrm{d}y$ ugotovimo, ali je vzorec newtonski; tako preverjajo barve, kreme in taline polimerov.
-- **Cevovodi in črpalke.** Inženir najprej izračuna Re, saj od njega zavisi koeficient trenja in s tem tlačni padec ter moč črpalke. Viskozna olja črpajo ogreta, da se $\mu$ zmanjša.
+- **Cevovodi in črpalke.** Inženir najprej izračuna Re, saj je od njega odvisen koeficient trenja in s tem tlačni padec ter moč črpalke. Viskozna olja črpajo ogreta, da se $\mu$ zmanjša.
 - **Toplotni prenosniki.** Načrtujemo jih za turbulentni tok (običajno $\mathrm{Re} > 10^4$), ker vrtinci prenašajo toploto do stene veliko bolje kot laminarne plasti.
 - **Mikrofluidika in kromatografija.** V kanalih širine okoli $100\,\mu\mathrm{m}$ je Re običajno pod $1$, zato se dva vzporedna tokova mešata le z difuzijo, kar izkoriščajo laboratoriji na čipu. Tudi skozi polnilo kromatografske kolone teče mobilna faza laminarno, zato tlačni padec raste sorazmerno s pretokom.
 
@@ -299,7 +353,7 @@ Primer za občutek pri vodi ($\nu \approx 10^{-6}\,\mathrm{m^2/s}$): $\mathrm{Re
 - Hitrost tekočine, preračunano v brezdimenzijsko obliko.
 ~ Hitrost je le en del Re. Ista hitrost da pri medu in vodi povsem različna Re.
 - Koliko energije se izgubi zaradi trenja na enoto dolžine cevi.
-~ To so tlačne izgube, ki so od Re odvisne, a niso Re sam.
+~ To so tlačne izgube, ki so od Re odvisne, a niso Re samo.
 > $\mathrm{Re} = \dfrac{\rho v D}{\mu}$ primerja vztrajnost ($\rho v^2$) z viskoznim trenjem ($\mu v/D$). Pri velikem Re trenje ne uspe zadušiti motenj in tok postane turbulenten.
 
 ? Olje laminarno teče po cevi pri $\mathrm{Re} = 1800$. Olje segrejemo, pretok ostane enak. Kaj se zgodi?

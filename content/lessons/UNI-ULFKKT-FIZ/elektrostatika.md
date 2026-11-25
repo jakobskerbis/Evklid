@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Podrgni napihnjen balon ob suhe lase in ga približaj koščkom papirja: poskočijo k njemu, še preden se jih dotakne. To je elektrostatika, sila med mirujočimi naboji. Ista sila drži skupaj atome, molekule in kristale; ionska vez, vodikova vez in vezava zdravila na receptor so v jedru električne interakcije. V laboratoriju z njo elektroforeza ločuje DNK po naboju, v masnem spektrometru in elektronskem mikroskopu pa polje pospeši nabite delce.
+Podrgni napihnjen balon ob suhe lase in ga približaj koščkom papirja: poskočijo k njemu, še preden se jih dotakne. To je elektrostatika, sila med mirujočimi naboji. Ista sila drži skupaj atome, molekule in kristale; ionska vez, vodikova vez in vezava zdravila na receptor so v jedru električne interakcije. V laboratoriju z njo elektroforeza ločuje nabite molekule, kot so DNK in beljakovine, v masnem spektrometru in elektronskem mikroskopu pa polje pospeši nabite delce.
 
 Vse to stoji na štirih pojmih, ki se gradijo drug na drugem: **Coulombov zakon**, **električno polje**, **električni potencial** in **kondenzator**.
 
@@ -64,7 +64,7 @@ $$A = qU_{AB}.$$
 
 *Dokaz:* delo konservativne sile je enako zmanjšanju potencialne energije, $A = q\varphi_A - q\varphi_B = qU_{AB}$.
 
-Primerjava s težo: potencial ima vlogo produkta $gh$, napetost vlogo višinske razlike. Razlika je v predznaku: kamen vedno pade navzdol, naboj pa »pade« proti nižjemu ali višjemu potencialu, odvisno od svojega predznaka.
+Primerjava s težo: potencial ima vlogo produkta $gh$, napetost vlogo razlike $g\,\Delta h$ med dvema višinama. Razlika je v predznaku: kamen vedno pade navzdol, naboj pa »pade« proti nižjemu ali višjemu potencialu, odvisno od svojega predznaka.
 
 Potencial točkastega naboja $Q$ (z ničlo v neskončnosti) je
 
@@ -212,7 +212,7 @@ $Q = \sigma S = 7{,}0 \cdot 10^{-4} \cdot 1{,}0 \cdot 10^{-12}\,\mathrm{C} = 7{,
 ## Povzetek
 
 - Coulombov zakon: $F = \dfrac{|q_1q_2|}{4\pi\varepsilon\varepsilon_0r^2}$; v snovi z dielektričnostjo $\varepsilon$ je sila $\varepsilon$-krat manjša.
-- Poljska jakost $\vec{E} = \vec{F}/q$; točkasti naboj $E = Q/(4\pi\varepsilon_0r^2)$; polja seštevamo vektorsko.
+- Poljska jakost $\vec{E} = \vec{F}/q$; točkasti naboj $E = |Q|/(4\pi\varepsilon_0r^2)$; polja seštevamo vektorsko.
 - Potencial $\varphi = Q/(4\pi\varepsilon_0r)$ je skalar; napetost $U = \varphi_A - \varphi_B$, delo $A = qU$; $E_x = -\mathrm{d}\varphi/\mathrm{d}x$, homogeno polje $E = U/d$.
 - Kondenzator: $C = Q/U$, ploščati $C = \varepsilon\varepsilon_0S/d$; vzporedno $C = \sum C_k$, zaporedno $1/C = \sum 1/C_k$.
 - Energija $W = \tfrac{1}{2}CU^2 = Q^2/(2C)$, gostota energije $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$.
@@ -261,14 +261,28 @@ Natančno navedi Gaussov zakon. Z njim izpelji poljsko jakost in kapaciteto plo�
 
 Polje dipola iz Primera 2 ($+$ levo, $-$ desno, točka $P$ zgoraj na simetrali):
 
-```
-                 P
-              ↗  →  ↘
-            /    |    \
-          /      |      \
-     (+)--------+--------(-)
-   -3 cm         0        3 cm
-```
+:::risba skica
+opis: Dipol iz Primera 2 v koordinatah v centimetrih. Naboj +4,0 nC je v točki (−3; 0), naboj −4,0 nC v točki (3; 0), točka P je na simetrali v (0; 4), od vsakega naboja oddaljena 5 cm. Polje E₁ pozitivnega naboja kaže v P poševno navzgor v desno, stran od naboja; polje E₂ negativnega naboja kaže poševno navzdol v desno, proti naboju. Puščici sta enako dolgi. Njuna vsota E kaže vodoravno v desno in je 1,2-krat daljša od vsake od njiju.
+območje: -5,5; -1,6 .. 5,5; 6
+enota: 28
+črta: -4,5; 0 -> 4,5; 0 | siva
+črta: 0; -0,6 -> 0; 5,6 | siva črtkano
+črta: -3; 0 -> 0; 4 | črtkano
+črta: 3; 0 -> 0; 4 | črtkano
+točka: -3; 0 | +4,0 nC | pod | rdeča
+točka: 3; 0 | −4,0 nC | pod | modra
+napis: -3; -1,2 | −3 cm
+napis: 3; -1,2 | 3 cm
+napis: 0; -1,2 | 0
+napis: -1,7; 2,2 | 5 cm | levo
+puščica: 0; 4 -> 0,9; 5,2 | | | rdeča
+puščica: 0; 4 -> 0,9; 2,8 | | | modra
+puščica: 0; 4 -> 1,8; 4 | | | debelo
+napis: 1; 5,2 | E_1 | desno | rdeča
+napis: 1; 2,8 | E_2 | desno | modra
+napis: 1,9; 4 | E | desno
+točka: 0; 4 | P | levo
+:::
 
 Polje $+$ kaže od njega, polje $-$ k njemu; navpični komponenti se izničita, zato v $P$ polje kaže vodoravno v desno. Simetrala dipola je ekvipotencialna ploskev s potencialom nič. Pri ploščatem kondenzatorju so silnice vzporedne in enakomerno razmaknjene, ekvipotencialne ploskve pa ravnine, vzporedne s ploščama.
 

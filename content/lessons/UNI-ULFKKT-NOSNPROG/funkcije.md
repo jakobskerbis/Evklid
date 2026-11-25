@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -36,7 +36,7 @@ Klic `zmaga(olimpija)` iz uvoda korak za korakom:
 | `tocke = tocke + 3` | `olimpija` → 10 | `tocke` → 13 |
 | po klicu | `olimpija` → 10 | (pospravljen) |
 
-V levem stolpcu se vrednost niti enkrat ne spremeni. Vse dogajanje je potekalo na desnem pladnju, ta pa je na koncu izginil skupaj s številom $13$.
+V srednjem stolpcu se vrednost niti enkrat ne spremeni. Vse dogajanje je potekalo na desnem pladnju, ta pa je na koncu izginil skupaj s številom $13$.
 
 **3. Parameter in argument.** Ime `tocke` v vrstici `def zmaga(tocke):` je **parameter**: ime, ki ga funkcija pričakuje in ki dobi vrednost šele ob klicu. Vrednost, ki jo ob klicu podamo v oklepaju (tu vrednost spremenljivke `olimpija`, torej $10$), je **argument**. Ob klicu Python argument priredi parametru: na novem pladnju naredi `tocke = 10`. Funkcija ima lahko več parametrov, ločenih z vejicami; argumenti se jim priredijo po vrsti, prvi prvemu, drugi drugemu.
 
@@ -224,9 +224,9 @@ Koliko je `skupaj` in kaj izpiše zadnja vrstica?
 - `def ime(parametri):` shrani funkcijo; telo se izvede šele ob klicu `ime(argumenti)`.
 - Parametri so lokalna imena, ki ob klicu dobijo vrednosti argumentov, po vrsti.
 - Vsak klic ima svoj okvir: spremenljivke, nastale v funkciji, so lokalne, zunaj jih ni, ob naslednjem klicu začnejo znova.
-- Prirejanje parametru ne spremeni zunanje spremenljivke, tudi če ima isto ime. Rezultat spraviš ven z `return` in ga priredi: `x = f(x)`.
+- Prirejanje parametru ne spremeni zunanje spremenljivke, tudi če ima isto ime. Rezultat spraviš ven z `return` in ga prirediš: `x = f(x)`.
 - `return` vrne vrednost na mesto klica in funkcijo takoj konča; brez njega funkcija vrne `None`.
-- Seznam, spremenjen z metodo (npr. `append`), se spremeni tudi zunaj, ker oba imena kažeta nanj.
+- Seznam, spremenjen z metodo (npr. `append`), se spremeni tudi zunaj, ker obe imeni kažeta nanj.
 
 ## Za izpit
 

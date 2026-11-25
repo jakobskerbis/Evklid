@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -61,20 +61,35 @@ Kit in človek. Oba imata dlako (kit vsaj v zarodku), mlečne žleze in pljuča;
 
 **Drevo.** Če te znake uredimo po vrstnem redu, kako so nastajali, dobimo poenostavljeno drevo živali:
 
-```
-živali
-├─ spužve (brez pravih tkiv)
-└─ prava tkiva
-   ├─ ožigalkarji (radialni)
-   └─ bilateralci
-      ├─ prvousti
-      │  ├─ spiralci: ploski črvi,
-      │  │  mehkužci, kolobarniki
-      │  └─ levilci: gliste,
-      │     členonožci
-      └─ drugousti: iglokožci,
-         strunarji
-```
+:::risba skica
+opis: Poenostavljeno drevo živali, koren je levo, skupine so desno. Od korena »živali« se najprej odcepijo spužve (brez pravih tkiv). Veja »prava tkiva« se razcepi na ožigalkarje (radialni) in bilateralce. Bilateralci se razcepijo na prvouste in drugouste (iglokožci, strunarji). Prvousti se razcepijo na spiralce (ploski črvi, mehkužci, kolobarniki) in levilce (gliste, členonožci).
+območje: 0; -0,8 .. 16,5; 11
+črta: 0; 7,4375 -> 2,2; 7,4375 | debelo
+črta: 2,2; 9,5 -> 2,2; 5,375 | debelo
+črta: 2,2; 9,5 -> 16; 9,5 | debelo
+črta: 2,2; 5,375 -> 6,2; 5,375 | debelo
+črta: 6,2; 8 -> 6,2; 2,75 | debelo
+črta: 6,2; 8 -> 16; 8 | debelo
+črta: 6,2; 2,75 -> 10; 2,75 | debelo
+črta: 10; 4,5 -> 10; 1 | debelo
+črta: 10; 4,5 -> 13; 4,5 | debelo
+črta: 10; 1 -> 16; 1 | debelo
+črta: 13; 5,5 -> 13; 3,5 | debelo
+črta: 13; 5,5 -> 16; 5,5 | debelo
+črta: 13; 3,5 -> 16; 3,5 | debelo
+napis: 2,2; 7,4375 | živali | nad levo
+napis: 6,2; 5,375 | prava tkiva | pod levo
+napis: 10; 2,75 | bilateralci | pod levo
+napis: 13; 4,5 | prvousti | nad levo
+napis: 16; 9,5 | spužve (brez pravih tkiv) | nad levo
+napis: 16; 8 | ožigalkarji (radialni) | nad levo
+napis: 16; 6,4 | spiralci: ploski črvi, | nad levo
+napis: 16; 5,5 | mehkužci, kolobarniki | nad levo
+napis: 16; 3,5 | levilci: gliste, | pod levo
+napis: 16; 2,6 | členonožci | pod levo
+napis: 16; 1 | drugousti: iglokožci, strunarji | pod levo
+podnapis: Poenostavljeno drevo živali; vsako razcepišče je skupni prednik skupin desno od njega.
+:::
 
 Pri **prvoustih** iz blastopore nastanejo usta. **Levilci** se levijo.
 
@@ -126,12 +141,12 @@ Sploščen, brez telesne votline → ploski črvi; valjast, nečlenjen, s kutiku
 
 ### Primer 3: kdo je komu bližji
 
-Študent dobi tabelo znakov za štiri organizme. Ali je klop bolj soroden trakulji ali človeku?
+Študent dobi tabelo znakov za štiri organizme. Ali je klop bolj soroden metljaju ali človeku?
 
 | Organizem | prava tkiva | usta iz blastopore | levitev |
 |---|---|---|---|
 | spužva | ne | ne velja | ne |
-| trakulja | da | da | ne |
+| metljaj | da | da | ne |
 | klop | da | da | da |
 | človek | da | ne | ne |
 
@@ -144,11 +159,11 @@ Skupaj združi le skupine s skupnim **izpeljanim** znakom; znak ene same skupine
 
 **Rešitev:**
 
-1. Prava tkiva imajo trakulja, klop in človek, spužva ne. Spužva se odcepi prva.
-2. Usta iz blastopore imata trakulja in klop. To je skupen izpeljan znak, zato ju združimo v prvouste.
+1. Prava tkiva imajo metljaj, klop in človek, spužva ne. Spužva se odcepi prva.
+2. Usta iz blastopore imata metljaj in klop. To je skupen izpeljan znak, zato ju združimo v prvouste.
 3. Levitev ima samo klop, zato pri združevanju ne pomaga.
-4. Drevo: (spužva, (človek, (trakulja, klop))); v najbolj notranjem oklepaju sta najbližja sorodnika.
-5. Odgovor: klop je bližji trakulji, čeprav sta si na videz zelo različna.
+4. Drevo: (spužva, (človek, (metljaj, klop))); v najbolj notranjem oklepaju sta najbližja sorodnika.
+5. Odgovor: klop je bližji metljaju, čeprav sta si na videz zelo različna.
 
 ### Primer 4: zdaj ti
 
@@ -188,6 +203,72 @@ Med **pajkovce**: $8$ nog in brez tipalk. Gre za klopa. Klopi prenašajo lymsko 
 - Ključni znaki zunanje zgradbe: somernost, število zarodnih listov, telesna votlina (acelomati, psevdocelom, celom), členjenost, kutikula z levitvijo, prvousti ali drugousti.
 - Glavne veje: spužve; ožigalkarji; bilateralci, ti se delijo na prvouste (spiralci: ploski črvi, mehkužci, kolobarniki; levilci: gliste, členonožci) in drugouste (iglokožci, strunarji).
 - Medicinsko pomembni: trakulje in metljaji (ploski črvi), gliste, klopi in žuželke (členonožci), pijavke (kolobarniki).
+
+## Za izpit
+
+Znati moraš povedati:
+- definiciji taksonomije in filogenije, pojem taksona, glavne range po vrsti in pravila dvobesednega imena vrste;
+- razliko med homologijo in analogijo ter zakaj sorodnost dokazuje samo skupen izpeljan znak (sinapomorfija);
+- znake zunanje zgradbe za uvrstitev v deblo: somernost, zarodni listi, telesna votlina, členjenost, kutikula z levitvijo, usoda blastopore;
+- poenostavljeno drevo živali z vsemi razcepišči in po en medicinsko pomemben primer za vsako deblo;
+- definicije monofiletske, parafiletske in polifiletske skupine s primeri;
+- izpeljavo števila ukoreninjenih dreves $(2n-3)!!$ iz rekurzije $T(n+1) = (2n-1)\,T(n)$.
+
+### Naloga 1
+
+Za šest organizmov so znani znaki v tabeli. Glista ima psevdocelom, zato je pri celomu vpisano »ne«.
+
+| Organizem | prava tkiva | dvostranska somernost | usta iz blastopore | levitev | členjenost | celom |
+|---|---|---|---|---|---|---|
+| spužva | ne | ne | ne velja | ne | ne | ne |
+| meduza | da | ne | ne velja | ne | ne | ne |
+| deževnik | da | da | da | ne | da | da |
+| človeška glista | da | da | da | da | ne | ne |
+| klop | da | da | da | da | da | da |
+| človek | da | da | ne | ne | da | da |
+
+(a) Iz prvih štirih znakov sestavi drevo in ga zapiši z oklepaji. (b) Sošolec po členjenosti in celomu združi deževnika, klopa in človeka. Pokaži, s katerima znakoma je ta skupina v nasprotju, in povej, kaj iz tega sledi za členjenost. (c) Koliko ukoreninjenih dreves obstaja za šest skupin? Kolikšen delež vseh je drevo iz (a) in kolikšen delež dreves ima spužvo kot prvo odcepljeno vejo?
+
+**Rešitev:**
+
+1. Prava tkiva imajo vsi organizmi razen spužve, zato se spužva odcepi prva.
+2. Dvostransko somernost imajo deževnik, glista, klop in človek. Meduza se odcepi druga, ti štirje so bilateralci.
+3. Usta iz blastopore imajo deževnik, glista in klop: to so prvousti. Človek je drugoust in je njihova sestrska skupina.
+4. Levitev imata glista in klop: skupaj sta levilca, deževnik je njuna sestrska skupina.
+5. Drevo: (spužva, (meduza, (človek, (deževnik, (glista, klop))))).
+6. Skupina deževnik + klop + človek izpusti glisto. Znak »usta iz blastopore« zahteva skupino deževnik + glista + klop brez človeka, znak »levitev« pa skupino glista + klop brez deževnika. Obe skupini se s sošolčevo sekata, a nobena ni v njej ali ona v njiju, zato na istem drevesu ne morejo biti vse tri.
+7. Proti sošolčevi skupini govorita dva neodvisna znaka, potrjujejo pa ju tudi zaporedja DNA. Členjenost in celom zato nista skupna izpeljana znaka teh treh skupin: členjenost je pri kolobarnikih, členonožcih in strunarjih nastala neodvisno (analogija), celom pa je bil pri glistah verjetno izgubljen ali preoblikovan v psevdocelom. Sošolčeva skupina ni monofiletska.
+8. Število dreves: $T(6) = 1 \cdot 3 \cdot 5 \cdot 7 \cdot 9 = 945$.
+9. Drevo iz (a) je eno samo: $\frac{1}{945} \approx 0{,}0011$, torej okoli $0{,}11\,\%$.
+10. Če je spužva prva odcepljena veja, ostalih pet skupin sestavi poljubno drevo: $T(5) = 105$ dreves. Delež je $\frac{105}{945} = \frac{1}{9} \approx 11{,}1\,\%$.
+11. Odgovor: drevo je (spužva, (meduza, (človek, (deževnik, (glista, klop))))); členjenost je nastala večkrat; dreves je $945$, pravo je eno ($0{,}11\,\%$), spužvo na dnu ima $105$ dreves ($11{,}1\,\%$).
+
+### Naloga 2
+
+Natančno navedi definicije monofiletske, parafiletske in polifiletske skupine. Nato utemelji, v katero od teh vrst spadajo: (a) »črvi«, ki združujejo ploske črve, gliste in kolobarnike; (b) prvousti; (c) »nevretenčarji«, tj. vse živali brez vretenčarjev.
+
+**Rešitev:**
+
+1. Monofiletska skupina (klad) vsebuje skupnega prednika in vse njegove potomce. Parafiletska vsebuje skupnega prednika in le del njegovih potomcev. Polifiletska združuje organizme, katerih skupni prednik ni v skupini; združuje jih znak, ki je nastal večkrat.
+2. (a) Ploski črvi in kolobarniki so spiralci, gliste so levilci. Njihov zadnji skupni prednik je prednik vseh prvoustov, torej tudi mehkužcev in členonožcev, ki jih med »črvi« ni. Združuje jih le podolgovato telo brez nog, ki je nastalo večkrat neodvisno (analogija). Skupina je polifiletska.
+3. (b) Prvousti so spiralci in levilci skupaj: skupni prednik in vsi njegovi potomci. Skupni izpeljani znak je, da iz blastopore nastanejo usta. Skupina je monofiletska.
+4. (c) Skupni prednik vseh nevretenčarjev je prednik vseh živali. Skupina vsebuje tega prednika, izpušča pa del potomcev, vretenčarje, ki so veja znotraj strunarjev. Določa jo odsotnost znaka (hrbtenice), ne skupen izpeljan znak. Skupina je parafiletska.
+5. Sklep: sodobna sistematika prizna samo skupino (b). »Črvi« in »nevretenčarji« sta uporabni vsakdanji imeni, nista pa taksona.
+
+### Naloga 3
+
+(a) Izpelji, koliko ukoreninjenih dvojiško razvejanih dreves $T(n)$ obstaja za $n$ skupin. (b) Najmanj koliko skupin mora biti, da je dreves več kot milijon? (c) Program pregleda $1000$ dreves na sekundo. Koliko časa potrebuje za vsa drevesa pri $n = 9$ in pri $n = 10$?
+
+**Rešitev:**
+
+1. Za $n = 2$ je drevo eno samo: $T(2) = 1$.
+2. Drevo z $n$ skupinami ima $n$ vej do listov. Notranjih razcepišč je $n - 1$; vsako razen korena ima vejo do svojega prednika, to je $n - 2$ notranjih vej. Dodamo vejo nad korenom: skupaj $n + (n - 2) + 1 = 2n - 1$ vej.
+3. Novo skupino lahko pripnemo na katerokoli od teh vej in vsakič dobimo drugo drevo. Obratno iz vsakega drevesa z $n + 1$ skupinami z odstranitvijo zadnje skupine dobimo natanko eno drevo z $n$ skupinami in eno mesto pripetja. Vsako drevo zato nastane natanko enkrat: $T(n+1) = (2n-1)\,T(n)$.
+4. Iz rekurzije sledi $T(n) = 1 \cdot 3 \cdot 5 \cdots (2n-3) = (2n-3)!!$.
+5. Vrednosti: $T(7) = 945 \cdot 11 = 10\,395$, $T(8) = 10\,395 \cdot 13 = 135\,135$, $T(9) = 135\,135 \cdot 15 = 2\,027\,025$. Milijon prvič presežemo pri $n = 9$.
+6. Čas pri $n = 9$: $\frac{2\,027\,025}{1000} \approx 2027\,\mathrm{s} \approx 33{,}8\,\mathrm{min}$.
+7. Pri $n = 10$: $T(10) = 2\,027\,025 \cdot 17 = 34\,459\,425$, čas $\frac{34\,459\,425}{1000} \approx 34\,459\,\mathrm{s} \approx 9{,}6\,\mathrm{h}$.
+8. Odgovor: $T(n) = (2n-3)!!$; več kot milijon dreves je od $n = 9$ naprej; program potrebuje okoli $34$ minut za $9$ skupin in okoli $9{,}6$ ure za $10$ skupin. Ena dodatna skupina čas podaljša $17$-krat, zato vseh dreves pri več skupinah ne moremo pregledati.
 
 ## Drugače: Z analogijo
 
@@ -250,12 +331,12 @@ Za $n = 5$ je to $105$, za $n = 10$ že $34\,459\,425$. Zato drevesa iščemo z 
 ? Kateri znak kita kaže, da je bližje soroden človeku kot morskemu psu?
 - hidrodinamično telo
 ~ Tako telo ima tudi morski pes; nastalo je zaradi plavanja, torej je analogija.
-- plavuti
-~ Plavuti kot take so nastale neodvisno; kit jih je razvil iz okončin kopenskih prednikov.
+- plavutasta oblika okončin
+~ Plavutasta oblika je nastala neodvisno zaradi plavanja; kit jo je razvil iz okončin kopenskih prednikov.
 + mlečne žleze
 - življenje v morju
 ~ Okolje ni znak sorodnosti; v morju živi tudi morski pes.
-> Mlečne žleze so skupen izpeljan znak kita in človeka. Oblika telesa in plavuti so analogije zaradi plavanja.
+> Mlečne žleze so skupen izpeljan znak kita in človeka. Oblika telesa in plavutasta oblika okončin sta analogiji zaradi plavanja.
 
 ? Otroka srbi zadnjik, ponoči mama na koži opazi drobne bele, nečlenjene, valjaste črvičke. Kam spada zajedavec?
 - Med ploske črve, ker je majhen in bel.

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: preverjeno
+---
+- Ekstremalni problem
+  - iščemo največjo ali najmanjšo vrednost količine
+  - ploščina, prihodek, zmnožek, razdalja
+- Zveza iz besedila
+  - z njo izraziš drugo količino z $x$
+  - vsota $20$: števili $x$ in $20 - x$
+  - napaka: pri obsegu $40$ stranici $x$ in $40 - x$
+- Kvadratna funkcija
+  - $P(x) = x(20 - x) = -x^2 + 20x$
+  - prihodek $R(x) = x \cdot N(x)$
+- Definicijsko območje
+  - dolžine pozitivne, število ljudi nenegativno
+  - ograja $40\,\text{m}$ ob steni: $0 < x < 20$
+- Ekstrem v temenu
+  - $p = -\dfrac{b}{2a}$ ali dopolnjevanje do kvadrata
+  - $a < 0$: maksimum, $a > 0$: minimum
+- Teme zunaj območja
+  - ekstrem je v krajišču intervala
+  - na $[m, n]$ primerjaj teme in krajišči
+- Tipični rezultati
+  - pri danem obsegu je največji kvadrat
+  - ob steni: stranica ob steni dvakrat daljša
+- Odgovor z enoto
+  - mere, cena ali čas, ne le $q$
+  - preveri smiselnost v besedilu

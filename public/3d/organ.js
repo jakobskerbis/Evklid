@@ -249,7 +249,7 @@ function ohraniSencilnik(m) {
 }
 
 // t = nastavitve tkiva iz JSON: barva, hrap (hrapavost), lak, lakHrap, sijaj (sheen), sijajBarva, rob (presevnost ob
-// robu), robBarva, ao (moč zapečene sence 0–1), aoExp (kontrast sence, privzeto 1,6), zrno (barvna zrnatost), relief, f (frekvenca šuma v enotah organa),
+// robu), robBarva, ao (moč zapečene sence 0–1), aoExp (kontrast sence, privzeto 1,6), lakSenca (lak oslabi v zasenčenih kotanjah, 0–1), zrno (barvna zrnatost), relief, f (frekvenca šuma v enotah organa),
 // lise (velike tople lise), prosojnost (1 = neprozorno), fresnel (prozorno spredaj, mlečno ob robu), dvostransko,
 // znotraj (iz dela v »deli«, ne iz tkiva: cev z enojno steno, npr. aorta; vidna z obeh strani, notranjost pomnožena s tem faktorjem, brez pokrova reza in presevnosti),
 // prepustnost (transmission, samo visoka), masca/mascaBarva (rumena maščoba v brazdah, kjer je zapečena senca globoka), senca/sencaBarva (topel temnejši
@@ -322,7 +322,9 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
     const osnova = brezMape ? t.barva || "#cccccc" : t.odtenek || "#ffffff";
     m.color.set(osnova);
     m.userData.pbrBarva = osnova; // pogledi (uporabi) ohranijo odtenek namesto barve tkiva
-    if (tex.orm) {
+    // orm: false: tkivo ne bere pečene mape sence in hrapavosti (hrapavost in lak iz JSON). Za tkiva, kjer ima mapa
+    // nepečene (črne) lise: hrapavost 0 je tam zrcalila okolje kot sivo steklo (spodnja režnja pljuč, j 16. 11.).
+    if (tex.orm && t.orm !== false) {
       m.aoMap = tex.orm; // R: senca okolice (Cycles, z žarki po vsem organu)
       m.aoMapIntensity = t.aoTekstura ?? 1;
       m.roughnessMap = tex.orm; // G: hrapavost (maščoba bolj mat, endokard in zaklopke bolj sijoči)
@@ -333,7 +335,9 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       m.clearcoatRoughness = t.lakHrap ?? 0.6;
     }
   }
-  if (tex?.normalMap && t.tekstura !== false) {
+  // normala: 0 = brez normalne mape. normalScale 0 ne zadošča: three skalira le x in y, pokvarjena pika (z < 0, pljuča
+  // pod prekrižanimi robovi režnjev) obrne normalo navznoter, ploskev je siva z ostrim robom (sonda 18. 11.).
+  if (tex?.normalMap && t.tekstura !== false && (t.normala ?? 1) > 0) {
     m.normalMap = tex.normalMap;
     m.normalScale.copy(tex.normalScale).multiplyScalar(t.normala ?? 1);
     // Lak z normalno mapo samo na računalniku: telefon prihrani vzorčenje in izračun druge normale (lak je tam gladek).
@@ -373,6 +377,12 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
       .replace("#include <begin_vertex>", "#include <begin_vertex>\nvOrgPos = position;");
     sh.fragmentShader = sh.fragmentShader
       .replace("#include <common>", `#include <common>\nvarying vec3 vOrgPos;\nvarying float vOrgAO;\nvarying vec2 vOrgD;\n${t.foto ? "uniform sampler2D orgFoto;\n" : ""}${GLSL_SUM}${celice || t.konec ? GLSL_CEL : ""}`)
+      // lakSenca (0–1): v zasenčenih kotanjah (pečena senca okolice) vlažni lak oslabi. Navzdol obrnjene kotanje (spodnja
+      // ploskev pljuč, mediastinalna stran brez srca) so sicer zrcalile temno dno okolja: sive »steklene« lise (j 16. 11.).
+      .replace(
+        "#include <lights_physical_fragment>",
+        `#include <lights_physical_fragment>${t.lakSenca ? `\n#ifdef USE_CLEARCOAT\nmaterial.clearcoat *= mix( 1.0, smoothstep( 0.35, 0.9, vOrgAO ), ${fl(t.lakSenca)} );\n#endif` : ""}`,
+      )
       .replace(
         "#include <color_fragment>",
         `${t.kita ? kitaGLSL(t.kita) : "float orgKita = 0.0;"}
@@ -460,7 +470,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1, studio = fals
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}${t.listiKot ? `k${t.listiKot}` : ""}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.kita ? `-ki${JSON.stringify(t.kita)}` : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.foto ? `-fo${JSON.stringify(t.foto)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
+  m.customProgramCacheKey = () => `org-${t.lakSenca || 0}${t.orm === false ? "brezOrm" : ""}-${presevnoList}-${presevnoMasca}-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}${t.zile ? `/${t.zileMaska ?? ""}/${t.zileF ?? ""}/${t.zileSirina ?? ""}/${t.zileBarva || ""}` : ""}-${t.listi || 0}${t.listiKot ? `k${t.listiKot}` : ""}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}-${t.znotraj || 0}${t.zrcalo ? "-zr" : ""}${t.kita ? `-ki${JSON.stringify(t.kita)}` : ""}${t.limbus ? `-l${JSON.stringify(t.limbus)}` : ""}${t.foto ? `-fo${JSON.stringify(t.foto)}` : ""}${t.konec ? `-k${JSON.stringify(t.konec)}` : ""}${celice ? `-c${JSON.stringify(t.celice)}/${merilo}/${izh.join(",")}` : ""}${ravnine?.temnenje && !t.brezReza ? `-t${JSON.stringify(ravnine.temnenje)}/${t.kljuc || ""}` : ""}`;
   return ohraniSencilnik(m);
 }
 
@@ -1619,10 +1629,10 @@ export async function zgradiOrgan(ime, ctx = {}) {
     }
     // naslikane rezne ploskve: prenos šele ob prvem prerezu (celota jih ne potrebuje)
     if (rezi) {
-      for (const c of volCaka.splice(0)) new THREE.ImageLoader().load(`${BAZA}${c.pot}`, (img) => { c.tx.image = img; c.tx.needsUpdate = true; }, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
+      for (const c of volCaka.splice(0)) new THREE.ImageLoader().load(`${BAZA}${c.pot}`, (img) => { c.tx.image = img; c.tx.needsUpdate = true; ctx.narisi?.(); }, undefined, (e) => console.warn("organ: prostorska tekstura reza ni naložena", e));
       for (const sl of slike) {
         if (sl.tex) continue;
-        sl.tex = new THREE.TextureLoader().load(`${BAZA}${sl.pot}`, (tx) => (sl.uniform.value = tx), undefined, (e) => console.warn("organ: slika reza ni naložena", e));
+        sl.tex = new THREE.TextureLoader().load(`${BAZA}${sl.pot}`, (tx) => { sl.uniform.value = tx; ctx.narisi?.(); }, undefined, (e) => console.warn("organ: slika reza ni naložena", e));
         sl.tex.colorSpace = THREE.SRGBColorSpace;
         sl.tex.flipY = false; // vrstica 0 slike = največji y ravnine (senčilnik bere 1 − y)
       }
@@ -1675,9 +1685,9 @@ export async function zgradiOrgan(ime, ctx = {}) {
       const reze = !!ravnine && !tk.brezReza;
       // ucnaGladko (tkivo): brez normalne teksture (šarenica ne »plastelin«); ucnaRob [a0, a1]: prosojnost po Fresnelu
       // (roženica: obarvan rob kupole, sredina skoraj prozorna, zenica ostane črna; krog 11)
-      const umat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: tk.ucnaGladko ? null : teksture?.normalMap || null, clippingPlanes: rezi && reze ? ravZa(tk).seznam : [], depthWrite: narava.depthWrite });
+      const umat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0, normalMap: tk.ucnaGladko || (tk.normala ?? 1) <= 0 ? null : teksture?.normalMap || null, clippingPlanes: rezi && reze ? ravZa(tk).seznam : [], depthWrite: narava.depthWrite });
       if (tk.rezOdmik && reze) umat.userData.ravnineRez = ravZa(tk).seznam;
-      if (teksture?.normalScale && !tk.ucnaGladko) umat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6);
+      if (teksture?.normalScale && !tk.ucnaGladko) umat.normalScale.copy(teksture.normalScale).multiplyScalar(0.6 * (tk.normala ?? 1)); // normala 0: brez mape (glej mat)
       if (tk.ucnaRob) {
         const [a0, a1] = tk.ucnaRob;
         umat.transparent = true;

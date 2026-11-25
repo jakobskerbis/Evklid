@@ -21,6 +21,7 @@ const MARKERS = ["<<RACUN", "<< RACUN", "<<RAČUN", "<< RAČUN", "<<ODPRI", "<<G
 const MARKER_MAX = Math.max(...MARKERS.map((m) => m.length));
 
 import { ALL_SUBJECTS } from "./subjects.js";
+import { polishHold, polishReply } from "./instruktor-kandidat.js";
 
 const VALID = {
   subject: ALL_SUBJECTS,
@@ -109,19 +110,40 @@ export function parseChoices(text) {
   return out.length >= 2 ? out.slice(0, CHOICES_MAX) : [];
 }
 
-export function stripMeta(text) {
+// Mesto odstranjenega strojnega bloka (znak, ki ga v besedilu modela ni): oznake kode, ki obdajajo samo taka mesta, gredo
+// z njimi (meritev 21. 11. 2026: odgovor se je končal z »``«). Pravi bloki kode z vsebino ostanejo nedotaknjeni.
+const S = "\u0000";
+const FENCE_AROUND_RE = /^[ \t]*`+[\w-]*[ \t]*\n(?:[ \t\u0000]*\n)*[ \t]*\u0000[ \t\u0000]*(?:\n[ \t\u0000]*)*\n[ \t]*`+[ \t]*$/gm;
+const FENCE_OPEN_END_RE = /(^|\n)[ \t]*`+[\w-]*[ \t]*\n[\s\u0000]*\u0000[\s\u0000]*$/;
+const FENCE_AFTER_END_RE = /(\u0000[ \t\u0000]*\n(?:[ \t\u0000]*\n)*)([ \t]*`+[\w-]*[ \t]*)\s*$/; // prazen nezaprt blok za mestom na koncu
+
+// Je oznaka na mestu `at` zaključek pravega bloka kode (pred njo je liho število oznak s tremi ali več »`«)?
+// before: besedilo pred `all` (konec toka: že pretočeni del), da se oznake štejejo od začetka odgovora.
+function closesBlock(all, at, m, before = "") {
+  if (!/^[ \t]*`{3,}/.test(m)) return false;
+  return ((before + all.slice(0, at)).match(/^[ \t]*`{3,}/gm) || []).length % 2 === 1;
+}
+
+export function stripMeta(text, before = "") {
   return String(text)
+    .replace(/\u0000/g, "")
     // META v bloku kode: cel blok z oznakami (zaključne oznake pravih blokov kode ostanejo).
-    .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, "")
-    .replace(META_LOOSE_RE, "") // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
-    .replace(META_RE, "")
-    .replace(CARD_RE, "")
-    .replace(RACUN_RE, "")
-    .replace(CHOICES_JSON_RE, "")
-    .replace(CHOICES_RE, "")
-    .replace(CHOICES_LOOSE_RE, "")
-    .replace(OPEN_RE, "")
-    .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
+    .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, (m, off, all) => (closesBlock(all, off, m, before) ? m : ""))
+    .replace(META_LOOSE_RE, S) // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
+    .replace(META_RE, S)
+    .replace(CARD_RE, S)
+    .replace(RACUN_RE, S)
+    .replace(CHOICES_JSON_RE, S)
+    .replace(CHOICES_RE, S)
+    .replace(CHOICES_LOOSE_RE, S)
+    .replace(OPEN_RE, S)
+    .replace(/<orodje>[\s\S]*?(?:<\/orodje>|$)/g, S) // skrit zapis orodja (chat-settings.js actionNote), če ga model ponovi
+    .replace(/(?:<<\s*(?:META|KARTICA|RA[CČ]UN|ODPRI|GRAF|SKICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, S) // nedokončan blok (npr. odrezan odgovor)
+    .replace(/`+[ \t]*\u0000[ \t]*`+/g, S) // »``<<META …>>``« v vrstici
+    .replace(FENCE_AROUND_RE, (m, off, all) => (closesBlock(all, off, m, before) ? m : S))
+    .replace(FENCE_OPEN_END_RE, (m, pre, off, all) => (closesBlock(all, off + pre.length, m.slice(pre.length), before) ? m : pre))
+    .replace(FENCE_AFTER_END_RE, (m, pre, f, off, all) => (closesBlock(all, off + pre.length, f, before) ? m : pre))
+    .replace(/\u0000/g, "")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
 }
@@ -132,13 +154,32 @@ const LEAD_RE = /^[ \t]*(?:(?:odlično|dobro|super|zanimivo|izvrstno|krasno|lepo
 export const LEAD_MAX = 40; // toliko znakov zadrži pretakanje, dokler ni jasno, ali se odgovor začne z uvodno frazo
 export const stripLeadPhrase = (text) => String(text).replace(LEAD_RE, (m) => (m.trim().length === String(text).trim().length ? m : "")).replace(/^[ \t]*\n/, "");
 
+// Besedilo odgovora, kot ga vidi učenec (prikaz in shranjeno sporočilo): brez strojnih blokov in uvodne fraze, s
+// popravkoma predlogov in oznak (server/instruktor-kandidat.js; j 21. 11. 2026), enako kot pri pretakanju spodaj.
+export function replyText(text, { polish = true, language = "sl" } = {}) {
+  const t = stripLeadPhrase(stripMeta(text));
+  return polish ? polishReply(t, { language }) : t;
+}
+
 // Filter za pretakanje: sproti spušča besedilo naprej, a zadrži vse od
 // začetka prvega strojnega bloka ("<<META" ali "<<KARTICA") naprej (in morebitno
 // nedokončano predpono na koncu), da učenec strojnih blokov nikoli ne vidi.
-export function createStreamFilter() {
+// polish (privzeto vklopljeno, server/instruktor-kandidat.js): pretočeno besedilo dobi enaka popravka kot
+// končni prikaz (replyText zgoraj, server/app.js), da se izpis ob koncu ne začne znova; language: jezik pogovora.
+export function createStreamFilter({ polish = true, language = "sl" } = {}) {
   let buffer = "";
   let emitted = 0; // koliko znakov iz buffer je že šlo naprej
   let metaStarted = false;
+  let shown = ""; // polish: popravljeno besedilo, ki je že šlo naprej
+  const view = (raw) => polishReply(stripLeadPhrase(raw), { language });
+  // Popravljen nadaljnji del: popravek je odvisen le od besedila pred mestom (zadržan konec je pri tem upoštevan).
+  const next = (raw) => {
+    const all = view(raw);
+    // Če se že prikazan začetek po popravku ne ujema več, ne pošlji nič: končni done.text ga popravi.
+    const out = all.startsWith(shown) ? all.slice(shown.length) : "";
+    shown = all;
+    return out;
+  };
 
   let leadDone = false; // začetek odgovora je pregledan za uvodno frazo
   const lead = (out) => {
@@ -173,14 +214,45 @@ export function createStreamFilter() {
       }
       // Presledke, prelome in oznake kode na koncu zadrži, dokler ne vemo, ali jim sledi META.
       while (safeEnd > emitted && /[\s`]/.test(buffer[safeEnd - 1])) safeEnd--;
+      // Tudi začetek bloka kode z jezikom (»```json«) na koncu: lahko obdaja strojni blok (stripMeta ga odstrani).
+      const vrstica = buffer.lastIndexOf("\n", safeEnd - 1) + 1;
+      if (vrstica >= emitted && /^[ \t]*`{3,}[\w-]+[ \t]*$/.test(buffer.slice(vrstica, safeEnd))) safeEnd = vrstica;
+      while (safeEnd > emitted && /\s/.test(buffer[safeEnd - 1])) safeEnd--;
+      // Popravki: zadrži še predlog brez naslednje besede in začetek morebitne oznake (»Najprej pri…«).
+      for (let i = 0; polish && i < 4 && safeEnd > emitted; i++) {
+        let end = Math.max(emitted, safeEnd - polishHold(buffer.slice(0, safeEnd)));
+        while (end > emitted && /[\s`]/.test(buffer[end - 1])) end--;
+        if (end === safeEnd) break;
+        safeEnd = end;
+      }
       if (safeEnd <= emitted) return "";
+      // Popravek gre vsakič čez celotno besedilo: pri dolgih odgovorih ga ne ponavljaj za vsak droben kos (pregled #915),
+      // počakaj na vsaj 48 znakov (pri dolgem besedilu do 300) ali na prelom vrstice. Konec gre vedno naprej v end().
+      if (polish && leadDone && safeEnd - emitted < Math.min(300, Math.max(48, buffer.length / 60)) && !buffer.slice(emitted, safeEnd).includes("\n")) return "";
+      if (polish) {
+        // Uvodna fraza se odloči šele na dovolj dolgem začetku (tudi ko je konec zadržan zaradi oznake ali predloga).
+        if (!leadDone && safeEnd < LEAD_MAX && !buffer.slice(0, safeEnd).includes("\n")) return "";
+        emitted = safeEnd;
+        leadDone = true;
+        return next(buffer.slice(0, safeEnd));
+      }
       const out = buffer.slice(emitted, safeEnd);
       emitted = safeEnd;
       return lead(out);
     },
+    // Začne znova (besedilo pred klicem orodja ni odgovor, server/claude.js onRetract).
+    reset() {
+      buffer = "";
+      emitted = 0;
+      metaStarted = false;
+      leadDone = false;
+      shown = "";
+    },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
-      const rest = lead(stripMeta(buffer.slice(emitted)));
+      const tail = stripMeta(buffer.slice(emitted), buffer.slice(0, emitted));
+      if (polish) return { rest: next(buffer.slice(0, emitted) + tail), raw: buffer };
+      const rest = lead(tail);
       return { rest, raw: buffer };
     },
   };

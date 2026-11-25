@@ -4,6 +4,7 @@
 "u.snov": "Matière",
 "u.iskanje": "Sur quel sujet dois-je t’interroger ?",
 "u.isciPh": "p. ex. loi d’Ohm",
+"u.isciPhTema": "p. ex. {tema}",
 "u.isci": "Chercher",
 "u.koliko": "Combien de questions",
 "u.kako": "Comment tu réponds",
@@ -73,6 +74,7 @@
 "u.nalagam": "Chargement …",
 "u.starsNaslov": "Réponses à la voix",
 "u.starsOpis": "Lors de l'interrogation orale et avec le micro dans le chat avec le tuteur, votre enfant peut répondre à voix haute. Le fournisseur du navigateur (p. ex. Google, Apple ou Microsoft) transforme la parole en texte ; Evklid ne reçoit que le texte et n'enregistre aucun son. Pour les moins de 15 ans, c'est désactivé jusqu'à ce que vous l'activiez. La saisie au clavier fonctionne toujours.",
+"u.starsOpisZame": "Lors de l'interrogation orale et avec le micro dans le chat avec le tuteur, tu peux répondre à voix haute. Le fournisseur du navigateur (p. ex. Google, Apple ou Microsoft) transforme la parole en texte ; Evklid ne reçoit que le texte et n'enregistre aucun son. La saisie au clavier fonctionne toujours.",
 "u.dovoli": "Autoriser les réponses à la voix",
 "u.nad15": "15 ans ou plus : aucune autorisation nécessaire.",
 "u.shranjeno": "Enregistré."

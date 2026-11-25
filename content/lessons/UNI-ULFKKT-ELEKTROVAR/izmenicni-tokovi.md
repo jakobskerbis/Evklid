@@ -1,11 +1,11 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
 ## Zakaj se tega učimo
 
-Na gradbišču je betonski mešalnik priključen na vtičnico $230\,\mathrm{V}$. Tokovne klešče na dovodnem kablu kažejo $3{,}83\,\mathrm{A}$. Sošolec hitro izračuna: »Moč je $U I$, torej $230\,\mathrm{V} \cdot 3{,}83\,\mathrm{A} \approx 881\,\mathrm{W}$. Toliko energije v sekundi gre v boben.«
+Na gradbišču je betonski mešalnik priključen na vtičnico $230\,\mathrm{V}$. Tokovne klešče na eni žili dovodnega kabla kažejo $3{,}83\,\mathrm{A}$. Sošolec hitro izračuna: »Moč je $U I$, torej $230\,\mathrm{V} \cdot 3{,}83\,\mathrm{A} \approx 881\,\mathrm{W}$. Toliko energije v sekundi gre v boben.«
 
 Števec električne energije na gradbiščni omarici se s tem ne strinja. V eni uri našteje le okoli $0{,}53\,\mathrm{kWh}$, ne $0{,}88\,\mathrm{kWh}$. Kdo ima prav in kam gre razlika? Odgovor skriva izmenični tok: napetost in tok v motorju nista »v koraku«. Do konca lekcije boš sošolčevo trditev popravil s tremi orodji: s kazalci, z impedanco ter z delovno in jalovo močjo. Ista orodja rabi električar, ko izbira presek kabla za delavnico ali kondenzatorje za kompenzacijo.
 
@@ -164,7 +164,7 @@ $C = \dfrac{Q_C}{2\pi f U^2} = \dfrac{1312}{2\pi \cdot 50 \cdot 230^2}\,\mathrm{
 - Reaktanci: $X_L = \omega L$ (tok zaostaja $90^\circ$), $X_C = 1/(\omega C)$ (tok prehiteva $90^\circ$).
 - Impedanca: $Z = \sqrt{R^2 + (X_L - X_C)^2}$, $I = U/Z$, $\cos\varphi = R/Z$.
 - Moči: $P = UI\cos\varphi$ (W), $Q = UI\sin\varphi$ (var), $S = UI$ (VA), $S^2 = P^2 + Q^2$.
-- Kompenzacija: vzporedni kondenzator zmanjša $Q$ in tok, $P$ ostane enak.
+- Kompenzacija: vzporedni kondenzator zmanjša $Q$ in tok, $P$ ostane enaka.
 
 ## Za izpit
 

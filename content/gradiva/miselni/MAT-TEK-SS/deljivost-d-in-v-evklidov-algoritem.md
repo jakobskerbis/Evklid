@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Deljivost
+  - $a \mid b$ pomeni $b = ka$
+  - $d \mid a$ in $d \mid b$ da $d \mid ax + by$
+- D in v
+  - $D(18, 24) = 6$, $v(18, 24) = 72$
+  - tuji števili: $D(a, b) = 1$
+- Evklidov algoritem
+  - $a = qb + r$, $D(a, b) = D(b, r)$
+  - zadnji neničelni ostanek je $D$
+  - napaka: za $D$ vzeti ostanek $0$
+- Bézoutova enakost
+  - $ax + by = D(a, b)$
+  - ostanke vstavljamo od spodaj navzgor
+  - $7 \cdot 462 - 3 \cdot 1071 = 21$
+- Enačba $ax + by = c$
+  - cele rešitve natanko, ko $D(a, b) \mid c$
+  - vse rešitve: $x_0 + \frac{b}{d}t$, $y_0 - \frac{a}{d}t$
+- Uporabne lastnosti
+  - $D(ka, kb) = k \cdot D(a, b)$
+  - Evklidova lema: $a \mid bc$, $D(a, b) = 1$ da $a \mid c$
+  - $D \cdot v = ab$ le za dve števili

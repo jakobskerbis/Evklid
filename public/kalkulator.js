@@ -23,17 +23,18 @@ function toast(msg) {
   toast.timer = setTimeout(() => (el.hidden = true), 3500);
 }
 
+let graphNow = null; // grafični kalkulator, ko je ustvarjen (skupne vrednosti)
 function tool(m) {
   const base = { t, icon, locale, onInsert: (text) => setMode("sci").then((s) => s.insert(text)) };
   const host = document.createElement("div");
   if (m === "graph") {
     host.id = "graph-host";
     tools.graph ||= import("./graph/calc.js").then(({ createCalculator }) =>
-      createCalculator(host, { ...base, toast, storageKey: () => "evklid.graph.0", studentId: () => null, canExport: false }),
+      (graphNow = createCalculator(host, { ...base, toast, storageKey: () => "evklid.graph.0", studentId: () => null, canExport: false, useInCalc: base.onInsert, shared: () => { try { return JSON.parse(localStorage.getItem("evklid.sci.0") || "null"); } catch { return null; } } })),
     );
   } else if (m === "sci") {
     tools.sci ||= import("./graph/sci.js").then((mod) =>
-      mod.createScientific(host, { ...base, toast, storageKey: () => "evklid.sci.0", openGraph: async (exprs) => (await setMode("graph"))?.show(exprs), canSteps: () => false }),
+      mod.createScientific(host, { ...base, toast, storageKey: () => "evklid.sci.0", openGraph: async (exprs) => (await setMode("graph"))?.show(exprs), showOnGraph: async (req) => (await setMode("graph"))?.showPlan(req), sharedGraph: () => graphNow?.shared() || null, canSteps: () => false }),
     );
   } else {
     tools[m] ||= import("./graph/tools.js").then((mod) => (m === "pse" ? mod.createPse(host, { ...base, lang: currentLang }) : mod.createTools(host, { ...base, subject: () => subject })));

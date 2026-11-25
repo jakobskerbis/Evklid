@@ -3,7 +3,8 @@
 // hrbtu; tap (ali preslednica) kartico obrne, šele nato se oceni (»Še ne znam« / »Znam«). Strežnik določi, kdaj pride
 // kartica znova na vrsto (1, 3, 7, 16, 35, 90 dni). Napačna kartica se v isti vaji vrne še enkrat.
 import { icon } from "./icons.js";
-import { t, locale } from "./i18n.js";
+import { t, locale } from "./i18n-osnova.js";
+import { dateText } from "./datum.js";
 import { cardSets, sessionCards, OWN, OTHER } from "./kartice-sklopi.js";
 
 let D = null; // { api, renderRich, cardRich, escapeHtml, toast, showView, getStudent, getPath, subjectName, onDue }
@@ -31,6 +32,11 @@ const setName = (s) => (s.kind === "own" ? t("cards.setOwn") : s.kind === "other
 const keyName = (key) => (key === null ? t("cards.allSets") : key === OWN ? t("cards.setOwn") : key === OTHER ? t("cards.setOther") : key);
 const icons = (el) => el.querySelectorAll("i[data-icon]").forEach((i) => (i.outerHTML = icon(i.dataset.icon)));
 
+// Moji zapiski (public/zapiski/): modul, besedila in slog se naložijo šele zdaj.
+export async function showNotes() {
+  if (sid()) (await import("./zapiski/zapiski.js")).showZapiski({ ...D, box, back: showFlashcards });
+}
+
 export async function showFlashcards() {
   if (!sid()) return;
   const v = box();
@@ -53,7 +59,7 @@ function renderOverview() {
   const list = [...cards.values()];
   const sets = cardSets(list, new Intl.Collator(locale()));
   const due = list.filter((c) => c.is_due).length;
-  const next = data?.next_due ? sqlDate(data.next_due).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long" }) : null;
+  const next = data?.next_due ? dateText(sqlDate(data.next_due), locale(), { weekday: "long", day: "numeric", month: "long" }) : null;
   const start = due
     ? `<p class="fc-start-n"><b>${t("cards.dueN", { n: due })}</b></p>
        <div class="actions"><button type="button" class="primary" data-start>${icon("play")} ${t("cards.start")}</button></div>`
@@ -87,7 +93,7 @@ function renderOverview() {
   v.querySelectorAll(".fc-set").forEach((b) => b.addEventListener("click", () => startSession(sets[Number(b.dataset.i)].key)));
   v.querySelector("#fc-add").addEventListener("submit", addOwn);
   // Moji zapiski (public/zapiski/): modul, besedila in slog se naložijo šele zdaj.
-  v.querySelector("[data-notes]").addEventListener("click", async () => (await import("./zapiski/zapiski.js")).showZapiski({ ...D, box, back: showFlashcards }));
+  v.querySelector("[data-notes]").addEventListener("click", showNotes);
   v.querySelector(".fc-list").addEventListener("click", onListClick);
 }
 

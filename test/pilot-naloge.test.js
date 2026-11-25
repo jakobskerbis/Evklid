@@ -204,6 +204,12 @@ test("pilot: fotografija samo ob soglasju, samo od 15 let, izbris in rok hrambe"
     assert.ok(kid && kid.pilot.scans.length >= 1);
     // Ocene niso izvožene dvakrat (enkrat v children[].pilot, ne še v other).
     assert.ok(!JSON.stringify(ex.body.other || {}).includes("pilot_scans"));
+    // Ena pokvarjena vrstica (seznam težav ni JSON) ne skrije ostalih podatkov pilota (docs/izbris-izvoz.md, najdba 3).
+    store.db.prepare("UPDATE pilot_scans SET problems = 'ni json' WHERE student_id = ?").run(adult.sid);
+    const ex2 = await adult.call("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
+    const kid2 = ex2.body.children.find((c) => c.id === adult.sid || c.pilot?.scans?.length);
+    assert.ok(kid2.pilot.scans.length >= 1);
+    assert.ok(kid2.pilot.scans.some((sc) => sc.problems === "ni json"));
   });
 });
 
@@ -247,12 +253,15 @@ test("pilot: prijava napake v aplikaciji (zastavica v klepetu) samo za skrbnika 
   const loadStudent = (req, res) => store.getStudent(Number(req.params.id)) || (res.status(404).json({}), null);
   mountReports(app, store, { loadStudent, loadConversation: () => null, localOnly: (q, r, n) => n(), isAdmin: () => false, isPilot: (id) => id === a });
   const server = app.listen(0);
-  const post = (id) => fetch(`http://127.0.0.1:${server.address().port}/api/students/${id}/bug`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ note: "Ne dela" }) });
+  const post = (id, extra = {}) => fetch(`http://127.0.0.1:${server.address().port}/api/students/${id}/bug`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ note: "Ne dela", ...extra }) });
   const warn = console.warn;
   console.warn = () => {};
   try {
     assert.equal((await post(a)).status, 201);
     assert.equal((await post(b)).status, 403);
+    // Zahteva za novo funkcijo (žarnica) samo skrbnik, član pilota ne.
+    assert.equal((await post(a, { kind: "feature" })).status, 403);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM bug_reports WHERE kind = 'feature'").get().n, 0);
   } finally {
     console.warn = warn;
     server.close();

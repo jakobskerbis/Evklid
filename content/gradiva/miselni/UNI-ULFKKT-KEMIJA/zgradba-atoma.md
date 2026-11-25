@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delci v atomu
+  - $Z$ protoni, $A$ nukleoni, izotopi
+  - jedro $10^{-15}\,\mathrm{m}$, atom $10^{-10}\,\mathrm{m}$
+- Kvantizirana energija
+  - vodik: $E_n = -2{,}179 \cdot 10^{-18}\,\mathrm{J}/n^2$
+  - foton: $\Delta E = h\nu = hc/\lambda$
+  - $1/\lambda = R_\mathrm{H}(1/n_1^2 - 1/n_2^2)$
+- Valovna narava
+  - $\lambda = h/(mv)$, $\Delta x\,\Delta p_x \ge \hbar/2$
+  - $|\psi|^2$ je gostota verjetnosti
+  - orbitala ni tirnica
+- Kvantna števila
+  - $n \ge 1$, $l = 0, \dots, n-1$
+  - $m_l = -l, \dots, +l$, $m_s = \pm\tfrac12$
+  - lupina: $n^2$ orbital, $2n^2$ elektronov
+- Oblike orbital
+  - $s$ krogla, $p$ dvojni balon, $d$ štirje listi
+  - vozlov $n - 1$: $l$ kotnih
+- Pravila zasedanja
+  - Pauli: v orbitali največ $2$ elektrona
+  - izgradno načelo: nižji $n + l$ prej
+  - Hund: najprej posamezno, vzporedni spini
+- Konfiguracija
+  - kisik: $1s^2\,2s^2\,2p^4$, dva nesparjena
+  - nesparjeni elektroni: atom je paramagneten
+- Izjeme in ioni
+  - Cr $3d^5\,4s^1$, Cu $3d^{10}\,4s^1$
+  - kationi najprej oddajo $4s$
+  - napaka: »$\mathrm{Fe^{2+}}$ kot $3d^4\,4s^2$«

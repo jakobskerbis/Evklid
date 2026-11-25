@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -38,18 +38,30 @@ Pri $680\,\mathrm{nm}$ je to okoli $176\,\mathrm{kJ}$ na mol fotonov. Modri foto
 
 Prenos elektronov narišemo kot črko Z, postavljeno na bok. Navpično je energija elektrona (bolj zgoraj je močnejši reducent), vodoravno zaporedje prenašalcev:
 
-```
- P680*            P700*
-  ^  \             ^  \
-  |   PQ           |   Fd
-  |    \           |    \
-  |    b6f         |   NADPH
-  |      \         |
-  |       PC ----> P700
- P680
-  ^
- H2O
-```
+:::risba skica
+opis: Shema Z. Navpično je energija elektrona, vodoravno zaporedje prenašalcev. Elektron gre iz vode (H₂O, levo, malo nad P680) navzdol na P680. Foton ga dvigne navpično na vzbujeni P680*. Od tam se spušča prek PQ in citokroma b₆f do PC in naprej na P700. Drugi foton ga dvigne navpično na vzbujeni P700*, ki leži najvišje. Od tam se spusti prek Fd do NADPH.
+območje: -1; 1 .. 18; 12,5
+puščica: 1; 3 -> 3; 2
+puščica: 3; 2 -> 3; 9 | foton | levo | oranžna debelo
+puščica: 3; 9 -> 5; 7,5
+puščica: 5; 7,5 -> 7; 6
+puščica: 7; 6 -> 9; 4,5
+puščica: 9; 4,5 -> 11; 4
+puščica: 11; 4 -> 11; 11 | foton | levo | oranžna debelo
+puščica: 11; 11 -> 13; 8,7
+puščica: 13; 8,7 -> 15; 8
+točka: 1; 3 | H_2O | levo
+točka: 3; 2 | P680 | desno
+točka: 3; 9 | P680* | nad
+točka: 5; 7,5 | PQ | nad desno
+točka: 7; 6 | b_6f | nad desno
+točka: 9; 4,5 | PC | pod
+točka: 11; 4 | P700 | desno
+točka: 11; 11 | P700* | nad
+točka: 13; 8,7 | Fd | nad desno
+točka: 15; 8 | NADPH | desno
+podnapis: Shema Z: oranžni navpični puščici sta vzbujanji s fotonom, druge puščice so prenos elektrona.
+:::
 
 Navpični puščici sta vzbujanji s svetlobo.
 
@@ -84,7 +96,7 @@ Bilanca: $3$ ATP in $2$ NADPH na vezan $\mathrm{CO_2}$. Iz treh obratov ostane e
 
 RuBisCO je počasen (nekaj reakcij na sekundo) in ne loči dobro $\mathrm{CO_2}$ od $\mathrm{O_2}$. Ob **oksigenaciji** veže kisik: nastane en 3-fosfoglicerat in en **2-fosfoglikolat**, ki ga mora celica predelati v kloroplastu, peroksisomu in mitohondriju. Pri tem se sprosti pol molekule $\mathrm{CO_2}$ na oksigenacijo in porabita se ATP in redukcijski ekvivalenti. To je **fotorespiracija**. Razmerje oksigenacij proti karboksilacijam $\varphi$ raste s temperaturo (topnost $\mathrm{CO_2}$ pada hitreje od topnosti $\mathrm{O_2}$) in ko so listne reže zaprte.
 
-**Rastline C4** (koruza, sladkorni trs, proso) prostorsko ločita vezavo:
+**Rastline C4** (koruza, sladkorni trs, proso) prostorsko ločijo vezavo:
 
 - v **mezofilnih celicah** encim **PEP-karboksilaza**, ki nima afinitete do kisika, veže $\mathrm{HCO_3^-}$ na fosfoenolpiruvat; nastane oksaloacetat ($4$ C), nato malat;
 - malat potuje v **celice žilnega ovoja** (venčasta ali Kranzova zgradba lista), kjer se dekarboksilira; tam je $\mathrm{CO_2}$ okoli desetkrat bolj zgoščen in RuBisCO skoraj ne oksigenira;
@@ -113,10 +125,10 @@ $E = \dfrac{h c}{\lambda}$, $E_\mathrm{m} = N_\mathrm{A} E$
 
 **Rešitev:**
 
-1. Pri $680\,\mathrm{nm}$: $E = \dfrac{6{,}626 \cdot 10^{-34} \cdot 2{,}998 \cdot 10^{8}}{680 \cdot 10^{-9}} \approx 2{,}92 \cdot 10^{-19}\,\mathrm J$.
+1. Pri $680\,\mathrm{nm}$: $E = \dfrac{6{,}626 \cdot 10^{-34} \cdot 2{,}998 \cdot 10^{8}}{680 \cdot 10^{-9}} \approx 2{,}92 \cdot 10^{-19}\,\mathrm{J}$.
 2. Na mol: $E_\mathrm{m} \approx 2{,}921 \cdot 10^{-19} \cdot 6{,}022 \cdot 10^{23} \approx 1{,}76 \cdot 10^{5}\,\mathrm{J/mol} = 176\,\mathrm{kJ/mol}$.
-3. Pri $700\,\mathrm{nm}$: $E \approx 2{,}84 \cdot 10^{-19}\,\mathrm J$, $E_\mathrm{m} \approx 171\,\mathrm{kJ/mol}$.
-4. Odgovor: foton pri $680\,\mathrm{nm}$ nosi $2{,}92 \cdot 10^{-19}\,\mathrm J$ ($176\,\mathrm{kJ/mol}$), pri $700\,\mathrm{nm}$ $2{,}84 \cdot 10^{-19}\,\mathrm J$ ($171\,\mathrm{kJ/mol}$). Daljša valovna dolžina pomeni manj energije, zato je P700 vzbujen z nekoliko šibkejšimi fotoni.
+3. Pri $700\,\mathrm{nm}$: $E \approx 2{,}84 \cdot 10^{-19}\,\mathrm{J}$, $E_\mathrm{m} \approx 171\,\mathrm{kJ/mol}$.
+4. Odgovor: foton pri $680\,\mathrm{nm}$ nosi $2{,}92 \cdot 10^{-19}\,\mathrm{J}$ ($176\,\mathrm{kJ/mol}$), pri $700\,\mathrm{nm}$ $2{,}84 \cdot 10^{-19}\,\mathrm{J}$ ($171\,\mathrm{kJ/mol}$). Daljša valovna dolžina pomeni manj energije, zato je P700 vzbujen z nekoliko šibkejšimi fotoni.
 
 ### Primer 2: bilanca za eno molekulo glukoze
 
@@ -221,7 +233,7 @@ Za rastlino C3 vzemi, da na vsako karboksilacijo pride $\varphi$ oksigenacij, da
 5. Pri $\varphi = 0{,}15$: $n = \dfrac{9 \cdot 1{,}15}{0{,}925} \approx 11{,}19$, manj kot C4.
 6. Pri $\varphi = 0{,}4$: $n = \dfrac{9 \cdot 1{,}4}{0{,}8} = 15{,}75$, več kot C4.
 7. (c) Enačba $\dfrac{9\,(1 + \varphi)}{1 - \varphi/2} = \dfrac{41}{3}$ da $9 + 9\varphi = \dfrac{41}{3} - \dfrac{41}{6}\varphi$, torej $\varphi \left(9 + \dfrac{41}{6}\right) = \dfrac{14}{3}$ in $\varphi = \dfrac{28}{95} \approx 0{,}295$.
-8. Odgovor: rastlina C4 potrebuje okoli $13{,}7$ fotona na $\mathrm{CO_2}$; rastlina C3 okoli $11{,}2$ v hladnem in $15{,}75$ v vročem; meja je pri $\varphi \approx 0{,}29$, kar okvirno ustreza temperaturam lista okoli $25$ do $30\,^\circ\mathrm C$. Zato je pšenica uspešnejša v hladni pomladi, koruza v vročem poletju.
+8. Odgovor: rastlina C4 potrebuje okoli $13{,}7$ fotona na $\mathrm{CO_2}$; rastlina C3 okoli $11{,}2$ v hladnem in $15{,}75$ v vročem; meja je pri $\varphi \approx 0{,}29$, kar okvirno ustreza temperaturam lista okoli $25$ do $30\,^\circ\mathrm{C}$. Zato je pšenica uspešnejša v hladni pomladi, koruza v vročem poletju.
 
 ### Naloga 2
 
@@ -251,7 +263,7 @@ Calvinov cikel je tekoči trak v tovarni, ki vsakič naloži en ogljikov atom. T
 
 ## Drugače: Bolj natančno
 
-**Redoks potenciali.** Z-shema je narisana v merilu redoks potencialov: par $\mathrm{O_2/H_2O}$ ima okoli $+0{,}82\,\mathrm V$, $\mathrm{NADP^+/NADPH}$ okoli $-0{,}32\,\mathrm V$. Razlika $1{,}14\,\mathrm V$ za dva elektrona pomeni $\Delta G = -n F \Delta E$, okoli $220\,\mathrm{kJ}$ na mol NADPH. Na mol elektronov je to okoli $110\,\mathrm{kJ}$, foton pri $680\,\mathrm{nm}$ pa prinese $176\,\mathrm{kJ/mol}$. Termodinamično bi en foton zadoščal, a ločitev nabojev mora biti hitra in nepovratna, kar porabi velik del energije. En reakcijski center ne more ustvariti hkrati tako močnega oksidanta, kot je $\mathrm{P680^+}$, in tako močnega reducenta, kot je vzbujeni P700. Zato sta dva.
+**Redoks potenciali.** Z-shema je narisana v merilu redoks potencialov: par $\mathrm{O_2/H_2O}$ ima okoli $+0{,}82\,\mathrm{V}$, $\mathrm{NADP^+/NADPH}$ okoli $-0{,}32\,\mathrm{V}$. Razlika $1{,}14\,\mathrm{V}$ za dva elektrona pomeni $\Delta G = -n F \Delta E$, okoli $220\,\mathrm{kJ}$ na mol NADPH. Na mol elektronov je to okoli $110\,\mathrm{kJ}$, foton pri $680\,\mathrm{nm}$ pa prinese $176\,\mathrm{kJ/mol}$. Termodinamično bi en foton zadoščal, a ločitev nabojev mora biti hitra in nepovratna, kar porabi velik del energije. En reakcijski center ne more ustvariti hkrati tako močnega oksidanta, kot je $\mathrm{P680^+}$, in tako močnega reducenta, kot je vzbujeni P700. Zato sta dva.
 
 **Uravnavanje Calvinovega cikla.** Na svetlobi se poveča pH strome (okoli $8$) in koncentracija $\mathrm{Mg^{2+}}$, kar aktivira RuBisCO. Tioredoksin, ki ga reducira feredoksin, aktivira več encimov cikla (npr. fosforibulokinazo). Cikel zato teče le, ko svetlobne reakcije dovajajo ATP in NADPH.
 
@@ -321,7 +333,7 @@ n_\mathrm{f} | število fotonov na $\mathrm{CO_2}$ | | –
 \eta | izkoristek pretvorbe energije | \eta = \frac{\Delta G}{n_\mathrm{f} E_\mathrm{m}} | –
 \Delta G | sprememba Gibbsove energije na mol $\mathrm{CO_2}$ | | kJ/mol | okoli 478
 \varphi | razmerje oksigenacij proti karboksilacijam | | –
-n | število molekul ali fotonov | | mol
+n | množina molekul ali fotonov | | mol | v Nalogi 1 število fotonov na neto $\mathrm{CO_2}$
 m | masa | m = n M | g
 M | molska masa | | g/mol
 e | elektron | | | v zapisu $e^-$

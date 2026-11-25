@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -13,15 +13,24 @@ Vetrne elektrarne na odprtem morju pošiljajo energijo na kopno po podmorskih en
 
 Postavimo nekaj kompasov na karton, skozi katerega navpično teče tok. Igle se ne obrnejo k vodniku, ampak se postavijo **tangentno** na krožnice okoli njega. Bližje vodniku se igle ob vklopu toka odklonijo močneje; daleč stran jih polje toka komaj premakne in kažejo skoraj po zemeljskem polju.
 
-```
-       .---------.
-     /   .-----.   \
-    |   |   ⊙   |   |
-     \   '-----'   /
-       '---------'
-  ⊙ tok teče iz lista;
-  silnice so krožnice
-```
+:::risba skica
+opis: Prerez pravokotno na vodnik. V sredini je vodnik, označen s krožcem in piko: tok teče iz lista proti nam. Okoli njega sta dve soosni krožni silnici magnetnega polja. Puščice na silnicah kažejo smer polja B: v nasprotni smeri urinega kazalca.
+območje: -5; -4,8 .. 5; 3,8
+krog: 0; 0 | 1,5 | modra
+krog: 0; 0 | 3 | modra
+krog: 0; 0 | 0,35 | debelo
+točka: 0; 0
+puščica: 1,5; -0,35 -> 1,5; 0,35 | | | modra
+puščica: 0,35; 1,5 -> -0,35; 1,5 | | | modra
+puščica: -1,5; 0,35 -> -1,5; -0,35 | | | modra
+puščica: -0,35; -1,5 -> 0,35; -1,5 | | | modra
+puščica: 3; -0,35 -> 3; 0,35 | B | desno | modra
+puščica: 0,35; 3 -> -0,35; 3 | | | modra
+puščica: -3; 0,35 -> -3; -0,35 | | | modra
+puščica: -0,35; -3 -> 0,35; -3 | | | modra
+napis: 0,5; 0,55 | I | desno
+napis: 0; -4,2 | tok I teče iz lista; silnice so krožnice | sredina
+:::
 
 Smer silnic da **pravilo desne roke**: palec v smeri toka, upognjeni prsti kažejo smer polja. Na sliki zgoraj (tok iz lista) silnice tečejo v nasprotni smeri urinega kazalca.
 
@@ -141,20 +150,33 @@ $B(z) = \dfrac{\mu_0 N I R^2}{2\left(R^2 + z^2\right)^{3/2}}$, v središču $B_0
 3. Na osi delimo $B(z)$ z $B_0$; tok in število ovojev se krajšata: $B(z)/B_0 = \left(R^2/(R^2 + z^2)\right)^{3/2}$.
 4. $R^2/(R^2 + z^2) = 0{,}04/0{,}05 = 0{,}8$, in $0{,}8^{3/2} \approx 0{,}716$.
 5. $B(z) \approx 0{,}716 \cdot 50\,\mu\mathrm{T} \approx 35{,}8\,\mu\mathrm{T}$.
-6. Odgovor: potrebujemo tok okoli $0{,}40\,\mathrm{A}$. Že $10\,\mathrm{cm}$ od središča pa je polje za skoraj tretjino manjše, zato ena tuljava polja ne izniči v večjem prostoru.
+6. Odgovor: potrebujemo tok okoli $0{,}40\,\mathrm{A}$. Že $10\,\mathrm{cm}$ od središča pa je polje za dobro četrtino manjše, zato ena tuljava polja ne izniči v večjem prostoru.
 
 ### Primer 3 (težji)
 
 Dva podmorska kabla ležita vodoravno drug ob drugem, osi sta $10\,\mathrm{cm}$ narazen, $1{,}0\,\mathrm{m}$ pod morskim dnom. Po vsakem teče $1200\,\mathrm{A}$, v nasprotnih smereh. a) Kolikšna je gostota polja na dnu neposredno nad sredino med kabloma in kam kaže? b) Kolikšno je to polje v primerjavi s poljem enega kabla na isti razdalji? c) Kolikšno je polje $5{,}0\,\mathrm{m}$ nad dnom (nad sredino) in kolikšno razmerje s poljem enega kabla?
 
-```
-          P  (dno)
-          |
-          | h = 1,0 m
-          |
-      ⊙---+---⊗
-        d = 10 cm
-```
+:::risba skica
+opis: Prerez pravokotno na kabla (ni v merilu). Spodaj ležita kabla drug ob drugem, razdalja med osema je d = 10 cm. V levem teče tok iz lista (krožec s piko), v desnem v list (krožec s križcem). Točka P leži na morskem dnu, h = 1,0 m navpično nad sredino med kabloma.
+območje: -6,5; -2 .. 6,5; 6,4
+črta: -5; 5 -> 5; 5 | siva debelo
+črta: -1,6; 0 -> 1,6; 0
+črta: 0; 0 -> 0; 5 | črtkano
+krog: -2; 0 | 0,4 | debelo
+točka: -2; 0
+krog: 2; 0 | 0,4 | debelo
+črta: 1,72; -0,28 -> 2,28; 0,28
+črta: 1,72; 0,28 -> 2,28; -0,28
+točka: 0; 5 | P | nad
+napis: 5; 5,5 | dno | levo | siva
+napis: 0,3; 2,5 | h = 1,0 m | desno
+črta: -2; -1,2 -> 2; -1,2 | siva
+črta: -2; -0,9 -> -2; -1,5 | siva
+črta: 2; -0,9 -> 2; -1,5 | siva
+napis: 0; -1,3 | d = 10 cm | pod
+napis: -2,6; 0 | I iz lista | levo
+napis: 2,6; 0 | I v list | desno
+:::
 
 **Podatki:** $d = 0{,}10\,\mathrm{m}$, $h = 1{,}0\,\mathrm{m}$, $I = 1200\,\mathrm{A}$ (nasprotni smeri), višina $5{,}0\,\mathrm{m}$ nad dnom, torej $h_2 = 6{,}0\,\mathrm{m}$ nad kabloma, $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{V\,s/(A\,m)}$
 **Iščemo:** $B_P$ in smer, razmerje z enim kablom, $B$ pri $h_2$
@@ -169,7 +191,7 @@ $B_1 = \dfrac{\mu_0 I}{2\pi r}$ za vsak kabel; vektorska vsota; od daleč $B \ap
 2. Velikost polja vsakega kabla v $P$: $B_1 = \mu_0 I/(2\pi r) \approx 2{,}397 \cdot 10^{-4}\,\mathrm{T}$. Velikosti sta enaki, smeri pa ne.
 3. Vsak vektor je pravokoten na zveznico kabel–$P$. Ker sta tokova nasprotna, se **vodoravni** komponenti odštejeta, **navpični** pa seštejeta. Navpična komponenta posameznega polja je $B_1 \cdot (d/2)/r$.
 4. Skupaj: $B_P = 2B_1 \cdot \dfrac{d/2}{r} = \dfrac{\mu_0 I d}{2\pi r^2}$.
-5. $B_P = 2 \cdot 10^{-7} \cdot 1200 \cdot 0{,}10/1{,}0025\,\mathrm{T} \approx 2{,}39 \cdot 10^{-5}\,\mathrm{T} = 23{,}9\,\mu\mathrm{T}$, navpično.
+5. $B_P = 2 \cdot 10^{-7} \cdot 1200 \cdot 0{,}10/1{,}0025\,\mathrm{T} \approx 2{,}39 \cdot 10^{-5}\,\mathrm{T} = 23{,}9\,\mu\mathrm{T}$, navpično navzgor (pri smereh tokov na sliki).
 6. b) En kabel na razdalji $1{,}0\,\mathrm{m}$ (Primer 1) da $240\,\mu\mathrm{T}$; razmerje je $240/23{,}9 \approx 10$.
 7. c) Pri $h_2 = 6{,}0\,\mathrm{m}$ je $d/2$ zanemarljiv: $B \approx 2 \cdot 10^{-7} \cdot 1200 \cdot 0{,}10/36\,\mathrm{T} \approx 6{,}7 \cdot 10^{-7}\,\mathrm{T} = 0{,}67\,\mu\mathrm{T}$.
 8. En kabel: $2 \cdot 10^{-7} \cdot 1200/6{,}0\,\mathrm{T} = 4{,}0 \cdot 10^{-5}\,\mathrm{T} = 40\,\mu\mathrm{T}$; razmerje $40/0{,}67 \approx 60$.
@@ -258,7 +280,7 @@ Iz Biot-Savartovega zakona izpelji gostoto polja na osi krožne zanke s polmerom
 
 Iz elektrostatike že poznaš par zakonov, ki se obnaša enako:
 
-- **Coulombov zakon ↔ Biot-Savartov zakon.** Oba dasta polje majhnega izvora, ki pada s $1/r^2$; skupno polje dobimo s seštevanjem (integralom) prispevkov.
+- **Coulombov zakon ↔ Biot-Savartov zakon.** Oba dasta polje majhnega izvora, ki pada z $1/r^2$; skupno polje dobimo s seštevanjem (integralom) prispevkov.
 - **Gaussov zakon ↔ Amperov zakon.** Gauss šteje naboj **znotraj sklenjene ploskve**, Amper tok **skozi sklenjeno pot**. Oba sta vedno pravilna, a uporabna le ob simetriji: Gauss za kroglo, valj in ravnino, Amper za vodnik, toroid in tuljavo.
 - **Razlika.** Silnice električnega polja se začnejo in končajo na nabojih; magnetne silnice so sklenjene okoli tokov. Zato Gauss »objema« izvor s ploskvijo, Amper pa ga »obide« s potjo.
 

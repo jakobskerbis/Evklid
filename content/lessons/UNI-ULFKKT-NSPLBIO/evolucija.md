@@ -1,5 +1,5 @@
 ---
-stanje: osnutek
+stanje: preverjeno
 avtor: AI
 ---
 
@@ -62,16 +62,30 @@ Zakaj so triploidni potomci skoraj vedno neplodni? Pomagaj si z mejozo.
 V mejozi I se homologni kromosomi združijo v pare. Pri treh kopijah vsakega kromosoma ostane eden brez para in naključno odide na eno stran. Gamete dobijo neuravnoteženo število kromosomov in večinoma niso sposobne za oploditev. Tetraploid in diploid sta zato v eni generaciji ločeni vrsti.
 :::
 
-**Filogenija.** Ker vse vrste izvirajo iz skupnih prednikov, njihovo sorodnost narišemo kot **filogenetsko drevo**. Vrhovi vej so današnje vrste. Vsako **vozlišče** je skupni prednik vrst nad njim. Koren je najstarejši skupni prednik vseh vrst na drevesu.
+**Filogenija.** Ker vse vrste izvirajo iz skupnih prednikov, njihovo sorodnost narišemo kot **filogenetsko drevo**. Vrhovi vej so današnje vrste. Vsako **vozlišče** je skupni prednik vrst, ki izhajajo iz njega. Koren je zadnji skupni prednik vseh vrst na drevesu (najstarejše vozlišče).
 
-```
-        ┌──── zebra
-     ┌──┤
-  ┌──┤  └──── osel
-  │  └─────── konj
-──┤
-  └────────── nosorog
-```
+:::risba skica
+opis: Filogenetsko drevo štirih vrst, koren je levo, vrhovi vej desno. Iz korena gre ena veja naravnost do nosoroga, druga do vozlišča, iz katerega izhajata konj in še eno vozlišče. Iz tega najmlajšega vozlišča izhajata zebra in osel. Dolžine vej niso v merilu.
+območje: 0; 0 .. 10; 5
+črta: 1; 1,875 -> 2; 1,875
+črta: 2; 1 -> 2; 2,75
+črta: 2; 1 -> 7; 1
+črta: 2; 2,75 -> 3,5; 2,75
+črta: 3,5; 2 -> 3,5; 3,5
+črta: 3,5; 2 -> 7; 2
+črta: 3,5; 3,5 -> 5; 3,5
+črta: 5; 3 -> 5; 4
+črta: 5; 3 -> 7; 3
+črta: 5; 4 -> 7; 4
+točka: 2; 1,875 | koren | nad levo
+točka: 3,5; 2,75 | | nad levo
+točka: 5; 3,5 | | nad levo
+napis: 7,2; 4 | zebra | desno
+napis: 7,2; 3 | osel | desno
+napis: 7,2; 2 | konj | desno
+napis: 7,2; 1 | nosorog | desno
+podnapis: Vozlišča (pike) so skupni predniki; zebra in osel imata najmlajšega.
+:::
 
 Sorodnost bereš po vozliščih, ne po vrstnem redu vrhov. Zebra in osel imata najmlajšega skupnega prednika, zato sta si najbližja. Vejo pri vozlišču lahko zasukaš (osla narišeš nad zebro) in drevo ostane isto. Skupina, ki obsega prednika in *vse* njegove potomce, je **klad** (monofiletska skupina). Skupina s prednikom in le delom potomcev je **parafiletska** (plazilci brez ptic).
 
@@ -278,7 +292,7 @@ Zakon $\dfrac{p_t}{q_t} = \dfrac{p_0}{q_0}\left(\dfrac{w_R}{w_S}\right)^t$ iz ra
 ~ To je le opis slike in je točen.
 + Korak (2)
 - Korak (3)
-~ A je pod X, D pod Y, zato je njun najmlajši skupni prednik res koren.
+~ A izhaja iz X, D iz Y, zato je njun najmlajši skupni prednik res koren.
 > Sorodnost beremo po najmlajšem skupnem vozlišču. B in C se srečata šele v korenu, B in A pa že v X.
 
 ? Na golf igrišču so deset let škropili travo z istim herbicidom proti plevelu. Zdaj se enoletna latovka po škropljenju ne posuši več. Katera razlaga je najboljša?
@@ -303,7 +317,7 @@ w_S | relativni fitnes občutljivih | | – |
 t | število generacij | | – | pri molekulski uri čas razcepa v milijonih let
 N_\text{odp} | število preživelih odpornih celic | | – |
 N_\text{obč} | število preživelih občutljivih celic | | – |
-p | delež odpornih v tej generaciji | | – |
+p | delež odpornih v tej generaciji ali frekvenca alela A | | – |
 p' | delež odpornih v naslednji generaciji | p' = \dfrac{p \cdot w_R}{p \cdot w_R + (1 - p) \cdot w_S} | – |
 t_\text{ref} | znani čas razcepa za referenčni par | | milijon let |
 d | genetska razdalja med vrstama | | – | število razlik v zaporedju

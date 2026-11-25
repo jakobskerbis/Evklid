@@ -1,0 +1,135 @@
+# Obnova baze iz varnostne kopije (preizkušeno 15. 11. 2026)
+
+Postopek, kako Evklid vrnemo na delujoče stanje, ko se pokvari baza ali izgubimo cel strežnik. Vsi koraki so
+preizkušeni na sveži namestitvi z vajo `scripts/vaja-obnove.mjs` (teče tudi v CI kot `test/vaja-obnove.test.js`).
+Splošno o kopijah: [objava.md → Varnostna kopija](objava.md#varnostna-kopija).
+
+## Kaj imamo (stanje 15. 11. 2026, `https://evklid.app/healthz/stanje`)
+
+| Kopija | Kje | Stanje |
+|---|---|---|
+| Dnevna kopija baze (7 dni) + ročne (zadnje 3, največ 22 dni) | Render disk, `/var/data/kopije` | deluje (`kopije.kopij` 7, nočni preizkus `preverjanjeKopij.ok` true) |
+| Posnetek celega diska (7 dni) | Render → Disks | samodejno, Render |
+| Šifrirana kopija zunaj Renderja (1 na dan, 30 dni) | Cloudflare R2, vedro v EU s pravilom »izbriši po 30 dneh« (j potrdil 17. 11. 2026) | deluje od 17. 11. 2026 (`kopijeZunaj.zadnja` 2026-11-17, `napaka: false`) |
+
+Ob izgubi storitve ali celega Render računa ostane šifrirana kopija v R2 (obnova spodaj). Če `kopijeZunaj.napaka` v
+`/healthz/stanje` postane `true` ali `zadnja` ni včerajšnja ali današnja, nalaganje ne teče: preveri ključe v Render →
+Environment. Nastavitev R2: objava.md → »Kopija zunaj Renderja (Cloudflare R2)«.
+
+## Izmerjeni časi
+
+Vaja na sveži namestitvi (2-jedrni strežnik v oblaku, Node 22, preizkusni način brez pravih ključev). »Pilot« je
+20 učencev × 30 dni (≈ 1 pogovor na dan s 6 sporočili) + 3 pravi računi; »velika« je 1000 učencev × 30 dni.
+
+| Korak | Pilot (3,7 MB) | Velika (140 MB) |
+|---|---|---|
+| Kopija med delovanjem (`--zdaj`) | 0,1 s | 0,8 s |
+| Preizkus kopije (`--preveri`) | 0,2 s | 4,0 s |
+| Nalaganje šifrirane kopije v R2 (`--oblak-zdaj`) | 0,1 s | 1,2 s |
+| Prvi zagon sveže namestitve (prazna baza) | 1,9 s | 1,9 s |
+| Prenos kopije iz R2 + odšifriranje (`--oblak-prenesi`) | 0,2 s | 1,3 s |
+| Priprava obnove (`obnovi-kopijo.js <datum>`) | 0,1 s | 0,8 s |
+| Ponovni zagon z obnovo | 1,9 s | 2,1 s |
+| Preverjanje: prijava z geslom, profil, šifrirani pogovor | 2,9 s | 2,9 s |
+| **Vse skupaj (vaja, brez namestitve)** | **21 s** | **47 s** |
+
+Nova namestitev kode (enkrat, pred obnovo na novem strežniku): `git clone` 20 s, `npm ci` 16 s. Na Renderju
+gradnjo in objavo naredi Render sam (Render → Events pokaže dejanski čas; običajno nekaj minut).
+
+Po obnovi so se ujemala števila vrstic (starši, profili, pogovori, sporočila, poraba) z izvirno bazo, pogovori so
+bili berljivi, kopija v R2 pa ni vsebovala berljivega besedila.
+
+**Pričakovan čas do delovanja na Renderju:** pokvarjena baza, kopija na disku: **~5 min** (večino časa vzame
+Restart service). Izgubljen strežnik, kopija v R2: nov Render strežnik z istimi nastavitvami + obnova **~20–30 min**.
+
+## Postopek A: pokvarjena baza, strežnik deluje (najpogostejše)
+
+V Render → evklid → **Shell**:
+
+1. `node scripts/obnovi-kopijo.js` – seznam kopij (časi so UTC). Izberi zadnjo pred napako. `<datum>` spodaj
+   prepiši natanko, kot je v seznamu (npr. `2026-11-14` ali ročna `2026-11-14-0930`).
+2. `node scripts/obnovi-kopijo.js --preveri <datum>` – mora pisati »OBNOVA BI USPELA«.
+3. `node scripts/obnovi-kopijo.js <datum>` – pripravi obnovo.
+4. **V naslednji uri:** Render → Manual Deploy → **Restart service**. Pozneje obnova ne velja več (varovalka).
+5. Preveri: Render → Logs mora pisati »baza obnovljena iz kopije« (`kopije.obnovaCaka` je `false` tudi, ko je
+   obnova potekla in se ni zgodila); prijavi se in odpri profil.
+6. Če je obnova slabša od prej: `node scripts/obnovi-kopijo.js --razveljavi` in še en Restart service (mogoče
+   14 dni po obnovi).
+
+Izgubi se vse, kar se je zgodilo po izbrani kopiji. Računi in profili, izbrisani po kopiji, se ob zagonu izbrišejo
+znova (seznam izbrisov, `docs/izbris-izvoz.md`; Logs: »po obnovi znova izbrisano«); nič ni treba narediti ročno.
+
+### Namerna obnova pomotoma izbrisanih računov
+
+Če so bili računi izbrisani pomotoma (napaka v kodi ali skrbnika) in jih želiš vrniti iz kopije, jih seznam izbrisov
+po obnovi sicer izbriše znova. Za te račune ga izklopiš z nastavitvijo `EVKLID_IZBRISI_PREZRI`:
+
+1. Številke računov poišči v kopiji izpred izbrisa (Shell; pot kopije izpiše `node scripts/obnovi-kopijo.js`):
+   `node -e "const {DatabaseSync}=require('node:sqlite');console.log(new DatabaseSync(process.argv[1],{readOnly:true}).prepare('SELECT id, email FROM parents WHERE email = ?').all(process.argv[2]))" /var/data/kopije/<kopija>.db <e-naslov>`
+2. Render → evklid → Environment: `EVKLID_IZBRISI_PREZRI` = številke z vejicami (npr. `12,34`), Save (strežnik se
+   ponovno zažene).
+3. Obnova po postopku A (koraki 1–5). V Logs je za vsak račun vrstica »izbris računa 12 se ne ponovi in se odstrani
+   s seznama izbrisov«.
+4. Če je nastavljena kopija zunaj strežnika (R2): počakaj na vrstico »seznam izbrisov naložen v shrambo zunaj
+   strežnika« (najkasneje ~70 min po zagonu), sicer bi se zapisi od tam vrnili.
+5. Odstrani `EVKLID_IZBRISI_PREZRI` (Save). Zapisi teh računov so s seznama odstranjeni in se ne vrnejo; poznejši
+   izbris istega računa se zapiše kot običajno.
+
+Velja za račune skupaj s profili, ki so jih imeli ob izbrisu (profil, izbrisan posamič, se po obnovi izbriše znova).
+Stranka v Stripu in preklicana naročnina se z obnovo ne vrneta.
+
+## Postopek B: izgubljen cel strežnik ali disk (nova namestitev)
+
+1. Render → New → Blueprint iz repozitorija (objava.md → Koraki) z **istimi** nastavitvami okolja, predvsem
+   **isti `EVKLID_DATA_KEY`** iz upravitelja gesel. Z drugim ključem pogovorov ni mogoče prebrati (vaja to preveri:
+   `--preveri` z napačnim ključem javi napako). **Dodaj še `EVKLID_BACKUPS=0`:** sicer nova namestitev 2 minuti
+   po zagonu naredi kopijo svoje prazne baze in jo po 10 minutah naloži v R2 pod današnjim datumom, s tem pa
+   prepiše današnjo pravo kopijo. Ukazi `--oblak…` delujejo tudi z `EVKLID_BACKUPS=0`.
+2. Počakaj na prvi zagon. **Ta korak je obvezen:** `obnovi-kopijo.js` brez obstoječe baze napiše »Baze … ni« in
+   ne naredi ničesar; prvi zagon ustvari prazno bazo.
+3. Kopija:
+   - iz R2: `node scripts/obnovi-kopijo.js --oblak` (seznam), nato `node scripts/obnovi-kopijo.js --oblak-prenesi <LLLL-MM-DD>`
+     (prenesena kopija, starejša od 22 dni, se ob naslednjem dnevnem čiščenju pobriše: obnovi takoj ali jo prenesi znova);
+     kopija dobi ime `<datum>-0000`;
+   - ali, če stara storitev še obstaja in je odpovedal samo disk: v stari storitvi Render → Disks → Restore
+     snapshot (cel disk, nato samo Restart; koraki 1, 2 in 4 odpadejo).
+4. `node scripts/obnovi-kopijo.js --preveri <datum>-0000`, nato `node scripts/obnovi-kopijo.js <datum>-0000`.
+5. V naslednji uri Restart service, nato preveri kot v postopku A (5.), na naslovu nove storitve
+   (`https://<ime>.onrender.com`), ker `evklid.app` še kaže na stari strežnik.
+6. Domena: v novi storitvi Render → Settings → Custom Domains dodaj `evklid.app` in v Cloudflare popravi CNAME
+   (objava.md → Lastna domena). Če se je spremenil javni naslov: še `EVKLID_BASE_URL` in Stripe webhook (nov
+   `STRIPE_WEBHOOK_SECRET`).
+7. Šele ko prijava in pogovori delujejo: odstrani `EVKLID_BACKUPS=0` (Save → Render znova zažene strežnik in kopije
+   spet tečejo vsak dan).
+
+## Kaj vidijo učenci po obnovi
+
+- Naprava, ki je bila prijavljena pred kopijo, ostane prijavljena (seja je v kopiji); ponovna prijava ni potrebna.
+- Na novi napravi se prijavijo z geslom. Profil, ki je bil v kopiji »odprt« na drugi napravi, aplikacija ponudi
+  prevzeti (isto kot sicer, ko je profil odprt drugje).
+- Kar so napisali po kopiji (novi pogovori, XP, nakupi), v bazi manjka. Dogodkov Stripe, ki jih je stari strežnik
+  že prejel, Stripe sam ne pošlje znova: po obnovi v Stripe → Developers → Events poišči dogodke po času kopije in
+  jih pošlji znova (Resend); dvojnih ne obdela dvakrat (tabela `billing_events`).
+
+## Izpad med maturo
+
+Pisni deli spomladanskega roka mature so maja in junija. Takrat izpad najbolj škodi, zato (točka 40 načrta izboljšav, 19. 11. 2026):
+
+1. **Dva tedna pred prvim pisnim delom:** v `main` gredo samo popravki napak (vsaka združitev objavi novo različico in
+   ponovno zažene strežnik). Na Renderju naredi vajo obnove (spodaj, »Vaja«) in preveri, da UptimeRobot in Straža
+   pošiljata e-pošto (`docs/spremljanje.md`).
+2. **Strežnik ne odgovarja:** Render → Events in Logs. Pokvarjena baza: postopek A (~5 min). Izgubljen strežnik:
+   postopek B (~20–30 min).
+3. **Ne dela samo AI** (status.anthropic.com, napake v dnevniku pri klicih inštruktorja): lekcije, vaje, pole mature
+   in učbenik PDF delajo brez AI. Če inštruktor daje napačne odgovore, ga izklopi z `EVKLID_CHAT_OFF=1`
+   (`docs/krizni-nacrt.md`).
+4. **Obvestilo učencem:** j pošlje kratko sporočilo uporabnikom pilota (kaj ne dela, kaj dela, kdaj bo spet delovalo).
+   Pred maturo jim priporoči, naj si učbenik PDF prenesejo vnaprej.
+
+## Vaja
+
+- Samodejno: `node scripts/vaja-obnove.mjs` (privzeto 20 učencev; `--ucencev 1000` za veliko bazo, `--json`).
+  Vse teče v začasni mapi, brez pravih ključev, R2 nadomesti lokalni strežnik.
+- Na Renderju enkrat pred pilotom in nato enkrat na mesec (objava.md → Vaja obnove): `--zdaj`, `--preveri`, prava
+  obnova iz ročne kopije, Restart, preveri prijavo, `--razveljavi`, Restart. Med vajo ne sme nihče uporabljati
+  Evklida (kar se vpiše med vajo, se izgubi).

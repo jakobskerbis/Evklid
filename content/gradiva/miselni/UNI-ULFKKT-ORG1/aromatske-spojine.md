@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Stabilnost benzena
+  - hidrogenacija $208$ namesto $360\,\text{kJ/mol}$
+  - resonančna stabilizacija $152\,\text{kJ/mol}$
+  - vse vezi C–C $139\,\text{pm}$
+- Hücklovo pravilo
+  - ciklična, ravna, sklenjen sistem $p$
+  - $4n + 2$ elektronov $\pi$: aromatska
+  - $4n$ elektronov: antiaromatska
+- Utemeljitev z MO
+  - $E_k = \alpha + 2\beta\cos\dfrac{2\pi k}{N}$
+  - benzen: delokalizacijska energija $2\beta$
+- Štetje elektronov π
+  - pirol: par N šteje, $4 + 2$
+  - piridin: par N ne šteje
+  - $\text{C}^+$ prispeva $0$, $\text{C}^-$ $2$
+- Elektrofilna aromatska substitucija
+  - počasi arenijev ion, nato $-\text{H}^+$
+  - substitucija obnovi aromatičnost
+  - napaka: »benzen adira kot alken«
+- Pet reakcij
+  - $\text{Br}_2/\text{FeBr}_3$, $\text{HNO}_3/\text{H}_2\text{SO}_4$, $\text{SO}_3$
+  - alkiliranje F.–C.: premestitve, polialkiliranje
+  - aciliranje, nato redukcija: ravna veriga
+- Usmerjanje
+  - $-\text{OH}$, $-\text{NH}_2$, alkil: orto/para, hitreje
+  - $-\text{NO}_2$, $-\text{COR}$: meta, počasneje
+  - halogeni: orto/para, a počasneje

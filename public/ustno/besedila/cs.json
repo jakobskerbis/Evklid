@@ -4,6 +4,7 @@
 "u.snov": "Učivo",
 "u.iskanje": "Z jakého učiva tě mám vyzkoušet?",
 "u.isciPh": "např. Ohmův zákon",
+"u.isciPhTema": "např. {tema}",
 "u.isci": "Hledat",
 "u.koliko": "Kolik otázek",
 "u.kako": "Jak odpovídáš",
@@ -73,6 +74,7 @@
 "u.nalagam": "Načítám …",
 "u.starsNaslov": "Odpovídání hlasem",
 "u.starsOpis": "Při ústním zkoušení a s mikrofonem v chatu s lektorem může dítě odpovídat hlasem. Řeč na text převádí poskytovatel prohlížeče (např. Google, Apple nebo Microsoft); Evklid dostane jen text a zvuk neukládá. Pro děti mladší 15 let je to vypnuté, dokud to nezapnete. Psaní funguje vždy.",
+"u.starsOpisZame": "Při ústním zkoušení a s mikrofonem v chatu s lektorem můžeš odpovídat hlasem. Řeč na text převádí poskytovatel prohlížeče (např. Google, Apple nebo Microsoft); Evklid dostane jen text a zvuk neukládá. Psaní funguje vždy.",
 "u.dovoli": "Povolit odpovídání hlasem",
 "u.nad15": "15 let a více: povolení není potřeba.",
 "u.shranjeno": "Uloženo."

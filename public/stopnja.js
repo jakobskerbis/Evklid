@@ -34,6 +34,15 @@ export const jeOs = (p) => stopnja(p) === "OS";
 // Ali je v profilu (ali popravku) stopnja sploh zapisana.
 export const imaStopnjo = (p) => !!BY_TRACK[settingsOf(p).educational_track];
 
+// Uvod ob prvi uporabi (vprašalnik »Kaj te zanima?« in vodič po aplikaciji) je za osnovnošolce (j, 20. 11. 2026):
+// srednja šola, fakulteta in profil, star vsaj 15 let (letnica rojstva pri računih), ga preskočijo. Oba ostaneta
+// dosegljiva: kotiček zanimanj in Nastavitve → »Ponovi uvodni ogled«.
+export function brezUvoda(profile, leto = new Date().getFullYear()) {
+  if (!jeOs(profile)) return true;
+  const y = Number(profile?.birth_year);
+  return Number.isInteger(y) && y > 1900 && leto - y >= 15;
+}
+
 // Položaj stopnje (0 OŠ, 1 SŠ, 2 faks); neznana stopnja je OŠ.
 export const rang = (level) => Math.max(0, STOPNJE.indexOf(level));
 // Višja od dveh stopenj.

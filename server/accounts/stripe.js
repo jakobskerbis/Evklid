@@ -32,16 +32,19 @@ export class Stripe {
   get testMode() {
     return /^(sk|rk)_test_/.test(String(this.key || ""));
   }
-  async request(method, path, params) {
+  // opts.idempotencyKey: Stripe isti ključ v 24 urah izvede enkrat (npr. vračilo ob odstopu po prekinjenem klicu).
+  async request(method, path, params, opts = {}) {
     if (!this.key) throw new Error("STRIPE_SECRET_KEY ni nastavljen.");
     let url = API + path;
-    const init = { method, headers: { Authorization: `Bearer ${this.key}`, "Stripe-Version": "2024-06-20" } };
+    const init = { method, headers: { Authorization: `Bearer ${this.key}`, "Stripe-Version": "2024-06-20", ...(opts.idempotencyKey ? { "Idempotency-Key": String(opts.idempotencyKey) } : {}) } };
     if (params && method === "GET") url += "?" + formEncode(params).toString();
     else if (params) {
       init.headers["Content-Type"] = "application/x-www-form-urlencoded";
       init.body = formEncode(params).toString();
     }
-    const res = await this.fetch(url, init);
+    // Največ 60 s na klic (točka A7): obdelava dogodka Stripe mora končati precej pred PREVZEM_MS (5 min), sicer bi
+    // jo ponovna dostava prevzela in izvedla še enkrat (privzeta meja fetch je 300 s za glave in 300 s za telo).
+    const res = await this.fetch(url, { ...init, signal: AbortSignal.timeout(60_000) });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
       const err = new Error(body?.error?.message || `Stripe ${res.status}`);
@@ -94,7 +97,7 @@ export class Stripe {
         transfer_lookup_key: old ? true : undefined,
         nickname: currency === "EUR" ? plan.label : `${plan.label} (${currency})`,
         recurring: { interval: plan.interval },
-        metadata: { seats: plan.seats },
+        metadata: { seats: plan.seats, plan_key: plan.key },
       });
       byKey[plan.key] = price.id;
       if (old) {

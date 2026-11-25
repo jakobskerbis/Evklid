@@ -46,8 +46,9 @@ export function nextLevel(settings) {
     };
   }
   if (stage === "SS") {
-    const lvl = /VR/.test(s.curriculum_level) ? "VR" : "OR";
-    if (n && n < 4) return { label: `${n + 1}. letnik`, settings: { educational_track: "SREDNJA_SOLA", curriculum_level: `${n + 1}. letnik ${lvl}` } };
+    // Letnik brez ravni (»Še ne vem«, ovire na telefonu 2026-11-18) ostane brez ravni, ne postane OR (pregled #834).
+    const lvl = /VR/.test(s.curriculum_level) ? " VR" : /^\d\. letnik$/.test(String(s.curriculum_level || "").trim()) ? "" : " OR";
+    if (n && n < 4) return { label: `${n + 1}. letnik`, settings: { educational_track: "SREDNJA_SOLA", curriculum_level: `${n + 1}. letnik${lvl}` } };
     return { label: "fakulteta", stageUp: "UNI", choose: true, settings: { educational_track: "UNIVERZA" } };
   }
   if (n && n < programYears(s.study_program)) {
