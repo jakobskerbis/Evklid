@@ -4707,5 +4707,7 @@
   "set.grpProfiles": "Račun i profili",
   "set.grpProfilesSub": "Račun i profili učenika",
   "set.grpHelp": "Pomoć",
-  "set.grpHelpSub": "Uvodni obilazak i vodič kroz aplikaciju"
+  "set.grpHelpSub": "Uvodni obilazak i vodič kroz aplikaciju",
+  "path.noCurriculum": "Kurikul tvoje zemlje{country} još nije dostupan, zato koristiš slovenski kurikul, raspoređen po godinama školovanja. Razredi su iz tvog školskog sustava; instruktor ti sve objašnjava na tvom jeziku.",
+  "path.noExam": "Priprema za završni ispit ({exam}) još nije dostupna."
 }
