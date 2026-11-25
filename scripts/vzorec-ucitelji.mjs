@@ -99,7 +99,7 @@ export function odg(a) {
   if (a.value != null) return `${[].concat(a.value).map((v) => stevilo(v, a.decimals)).join("; ")}${a.unit ? ` ${a.unit}` : ""}${Number.isInteger(a.decimals) ? ` (zaokroženo na ${a.decimals} dec.)` : ""}`;
   return JSON.stringify(a);
 }
-const ena = (s) => String(s || "").replace(/\s*\n\s*/g, " ").replace(/\|/g, "\\|");
+const ena = (s) => String(s || "").replace(/\s*\n\s*/g, " ").replace(/\|/g, "&#124;");
 
 export function vzorecMd(v) {
   const L = [];

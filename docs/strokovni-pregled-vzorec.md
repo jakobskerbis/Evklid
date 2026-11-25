@@ -1,4 +1,4 @@
-<!-- Izdelano z `node scripts/vzorec-ucitelji.mjs --md` 26. 11. 2026; ne urejaj na roko. -->
+<!-- Izdelano z `node scripts/vzorec-ucitelji.mjs --md` 25. 11. 2026; ne urejaj na roko. -->
 
 # Vzorec za strokovni pregled (N-06)
 
