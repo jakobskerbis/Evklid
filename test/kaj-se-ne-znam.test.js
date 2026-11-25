@@ -42,7 +42,8 @@ test("vrzeli: Napredek začne s karto »Kaj še ne znam«, app.js samo kliče mo
   const prog = html.slice(html.indexOf('id="view-progress"'));
   assert.ok(prog.indexOf('class="card vrzeli-card"') < prog.indexOf('id="prog-goal"'), "karta je na vrhu Napredka");
   const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /import\("\.\/vrzeli\.js"\)\.then\(\(m\) => m\.narisiVrzeli\(state\.student\.id\)\)/);
+  const vrstica = app.split("\n").find((l) => l.includes('import("./vrzeli.js")')) || "";
+  for (const del of ["m.narisiVrzeli(state.student.id", 'setBack("path")', "openTopic(id)", "nextPractice()"]) assert.ok(vrstica.includes(del), del);
   assert.doesNotMatch(app, /p\.weak\.map/);
   const keys = ["vr.napake", "vr.kje", "vr.in", "vr.vadi", "vr.lekcija", "vr.prazno", ...["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"].map((v) => `vr.vir.${v}`)];
   const sl = fs.readFileSync(new URL("../public/i18n/sl.js", import.meta.url), "utf8");

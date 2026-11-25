@@ -3514,7 +3514,7 @@ async function loadProgress() {
       st.settings.goal_reminder && st.settings.goal_date ? `<div class="goal-reminder preview">${reminderCardHtml(st, { preview: true })}</div>` : ""
     }`;
   const p = await api(`/api/students/${state.student.id}/progress`);
-  import("./vrzeli.js").then((m) => m.narisiVrzeli(state.student.id)).catch(() => {}); // »Kaj še ne znam« (P1-8): šibke teme z dokazom, Vadi, Ponovi lekcijo
+  import("./vrzeli.js").then((m) => m.narisiVrzeli(state.student.id, { vadi: (id) => (setBack("path"), openTopic(id).then((x) => !x && $("#t-practice") && nextPractice())) })).catch(() => {}); // »Kaj še ne znam« (P1-8)
   // Delovni list za doma iz šibkih tem (iz nalog v Vadnici; strežnik pove, če je zaklenjen).
   const sheetBtn = $("#weak-sheet");
   $("#weak-sheet-msg").hidden = true;
