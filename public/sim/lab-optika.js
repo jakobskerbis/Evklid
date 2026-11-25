@@ -2,7 +2,7 @@
 // Modeli: lab-model-optika.js (brez DOM). Optika ne potrebuje ure: risba se nariše ob vsaki spremembi.
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
 import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
-import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, mejniKot, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
+import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
 // lomni količniki iz učbenika: če učenec vpiše tega, ne pa izmerjenega, ga račun zavrne (lab.js → preveriRacun, nazivno)
 const UCBENIK_N = { pmma: [1.49, 1.5], bk7: [1.5, 1.52], voda: [1.33] };
 
@@ -82,7 +82,7 @@ export function labLom(el) {
     cur = B.laser ? B.odcitaj({ odPloskve }) : null;
     if (cur?.popolni && B.smer === "snov" && !rekliTIR) {
       rekliTIR = true;
-      log.push(`<b>Popolni odboj:</b> lomljenega žarka ni več, vsa svetloba se odbije nazaj v snov. Mejni kot za ${SNOVI[B.snov].kratko} je okoli ${fixed(mejniKot(SNOVI[B.snov].n), 1)}${NB}°.`, "info");
+      log.push(`<b>Popolni odboj:</b> lomljenega žarka ni več, vsa svetloba se odbije nazaj v snov. Mejni kot je med zadnjim vpadnim kotom, pri katerem je bil lomljeni žarek še viden, in tem kotom.`, "info");
     }
     meters();
     draw();

@@ -358,10 +358,12 @@ export function labMesanje(el) {
 
   const posSeg = seg("posoda", [["stiropor", "lonček iz stiropora"], ["casa400", "steklena čaša"]], B.posoda, (v) => ((B.posoda = v), B.faza === "prazno" || log.push("Posodo zamenjaš pri novem poskusu.", "info"), draw()));
   const lidT = toggle("pokrov s luknjo za termometer", true, (v) => ((B.pokrov = v), draw()));
-  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), draw()) });
-  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), draw()) });
-  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), draw()) });
-  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), draw()) });
+  // nova mešanica (mase, temperature): napoved za prejšnjo ne velja več (napoved → kljuc)
+  const voda = () => (draw(), N.osvezi());
+  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), voda()) });
+  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), voda()) });
+  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), voda()) });
+  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), voda()) });
   const wT = toggle("vodo stehtam (sicer natočim do oznake)", true, (v) => (st.tehtaj = v));
   const coldBtn = button("Natoči hladno vodo", () => cold(), "primary small");
   const mixBtn = button("Zlij toplo vodo v posodo", () => mix(), "primary small");
@@ -391,6 +393,7 @@ export function labMesanje(el) {
     enota: "°C",
     primer: "npr. 37",
     abs: 2,
+    kljuc: () => `${st.m1}:${st.T1}:${st.m2}:${st.T2}`,
     odprto: () => !trial?.T1 && !prvi,
     izmerjeno: () => prvi && { vrednost: prvi.T, besedilo: `${fixed(prvi.T, 1)}\u00a0°C (${fmt(prvi.m1, 0)}\u00a0g s ${fixed(prvi.T1, 1)}\u00a0°C in ${fmt(prvi.m2, 0)}\u00a0g s ${fixed(prvi.T2, 1)}\u00a0°C)` },
   });
@@ -537,9 +540,9 @@ export function labMesanje(el) {
     get: () => ({ trial, pts, prvi, napoved: N.stanje() }),
     set: (d) => {
       if (d?.prvi && ["T", "m1", "T1", "m2", "T2"].every((k) => Number.isFinite(d.prvi[k]))) prvi = d.prvi;
-      N.obnovi(d?.napoved);
       if (d?.trial && Number.isFinite(d.trial.m1) && Number.isFinite(d.trial.T1) && Number.isFinite(d.trial.m2) && Number.isFinite(d.trial.T2)) trial = d.trial;
       if (Array.isArray(d?.pts)) pts.push(...d.pts.filter((p) => Array.isArray(p) && p.every(Number.isFinite)));
+      N.obnovi(d?.napoved); // zadnja, ko so poskus in meritve že obnovljeni
       if (trial?.done?.ok) vprasaj();
       sync();
     },
@@ -879,14 +882,15 @@ export function labOhlajanje(el) {
   zap.vezi(table, {
     get: () => ({ meas, imena, vrste: nalite, napoved: N.stanje() }),
     set: (d) => {
-      N.obnovi(d?.napoved);
-      if (!Array.isArray(d?.meas) || !Array.isArray(d.imena)) return;
+      // napoved obnovimo zadnjo: izbira posod spremeni ključ napovedi (kljuc) in bi jo sicer pobrisala
+      if (!Array.isArray(d?.meas) || !Array.isArray(d.imena)) return N.obnovi(d?.napoved);
       // posode, v katere je bil čaj nalit: izbira in risba se ujemata z obnovljenimi meritvami
       const vrste = Array.isArray(d.vrste) ? d.vrste : d.imena.map((n) => Object.keys(SKODELICE).find((k) => SKODELICE[k].name === n)); // starejši zapis: po imenu
       vrste.slice(0, 3).forEach((v, i) => sels[i].set(Object.hasOwn(SKODELICE, v ?? "") ? v : ""));
       nalite = [...B.vrste];
       d.meas.slice(0, 3).forEach((m, i) => Array.isArray(m) && meas[i].push(...m.filter((p) => Array.isArray(p) && p.every(Number.isFinite))));
       imena = [0, 1, 2].map((i) => (typeof d.imena[i] === "string" ? d.imena[i] : null));
+      N.obnovi(d?.napoved);
       if (zadnji(meas.flat(), (p) => p[0]) >= 20) vprasaj();
     },
   });

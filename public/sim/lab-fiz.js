@@ -10,12 +10,11 @@ export const BANDS = { R47: ["#f2c500", "#8e44ad", "#000", "#c9a227"], R100: ["#
 const YMAX = { R47: 300, R100: 150, R220: 75, R470: 30, L6: 150 };
 const POS = [["zaporedno", "zaporedno"], ["vzporedno", "vzporedno"], ["brez", "odklopljen"]];
 
-// Tok pri napetosti U iz meritev [[U, I_mA]]: meritev v ±0,3 V od U, sicer s premice skozi izhodišče (vsaj 3 meritve). Za napoved.
+// Tok pri napetosti U iz meritev [[U, I_mA]]: samo meritev v ±0,3 V od U. Za napoved. Tok s premice (k · 6 V) bi izdal upor,
+// ki ga učenec izračuna sam (lab.js → racun), zato brez meritve pri 6 V primerjave ni (redrawGraph prosi zanjo).
 export function tokPri(pts = [], U = 6) {
   const blizu = pts.filter((p) => Math.abs(p[0] - U) <= 0.3).sort((a, b) => Math.abs(a[0] - U) - Math.abs(b[0] - U))[0];
-  if (blizu) return { vrednost: blizu[1], besedilo: `${fmt(blizu[1], 1)}\u00a0mA pri ${fixed(blizu[0], 2)}\u00a0V` };
-  const k = pts.length >= 3 ? fitOrigin(pts) : NaN;
-  return Number.isFinite(k) ? { vrednost: k * U, besedilo: `${fmt(k * U, 1)}\u00a0mA (s premice skozi tvoje meritve)` } : null;
+  return blizu ? { vrednost: blizu[1], besedilo: `${fmt(blizu[1], 1)}\u00a0mA pri ${fixed(blizu[0], 2)}\u00a0V` } : null;
 }
 
 // Ohmov zakon: napajalnik, upornik ali žarnica, ampermeter in voltmeter.
@@ -32,7 +31,8 @@ export function labOhm(el, { load = "R100" } = {}) {
     { key: "p", label: "porabnik" },
     { key: "U", label: "<i>U</i> [V]" },
     { key: "I", label: "<i>I</i> [mA]" },
-    { key: "R", label: "<i>U</i>/<i>I</i> žarnice [Ω]" }, // pri uporniku bi stolpec izdal upor, ki ga učenec izračuna iz naklona
+    // pri uporniku bi stolpec izdal upor, ki ga učenec izračuna iz naklona; »žarnica« v drugi vrstici, da gre tabela na telefonu v okvir
+    { key: "R", label: "<i>U</i>/<i>I</i> [Ω]<br>žarnica" },
   ]);
   const graph = dataGraph({ x: [0, 12], y: [0, YMAX[B.load]], xStep: 2, xLabel: "U [V]", yLabel: "I [mA]", title: "Graf toka v odvisnosti od napetosti", formula: tex(String.raw`I = \frac{U}{R}`) });
   const fitOut = h("p", { class: "lab-fitout", "aria-live": "polite" });
@@ -110,8 +110,9 @@ export function labOhm(el, { load = "R100" } = {}) {
     fitOut.innerHTML = fit && !Rr.odkrito(fit.id)
       ? "Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Iz njenega naklona izračunaj upor in ga preveri spodaj."
       : fit
-      ? `Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Naklon: ${fmt(fit.k, 2)} mA/V = ${fmt(fit.k / 1000, 5)} A/V, zato ${tex(String.raw`R = \frac{1}{\text{naklon}} = ${rez(fmt(1000 / fit.k, 1), "Ω")}`)}. Na uporniku piše ${LOADS[cur].nom} Ω ± 5 %.`
+      ? `Črtkana premica skozi izhodišče se tvojim točkam najbolje prilega. Naklon: ${fmt(fit.k, 2)} mA/V = ${fmt(fit.k / 1000, 5)} A/V, zato ${tex(String.raw`R = \frac{1}{\text{naklon}} = ${rez(fixed(1000 / fit.k, 1), "Ω")}`)}. Na uporniku piše ${LOADS[cur].nom} Ω ± 5 %.`
       : LOADS[cur].type === "R" ? "Za premico in upor iz naklona potrebuješ vsaj 3 meritve." : `Žarnica: primerjaj ${tex(String.raw`\frac{U}{I}`)} pri različnih napetostih.`;
+    if (N.stanje().v != null && cur === L0 && (series[L0] || []).length >= 3 && !tokPri(series[L0], 6)) fitOut.innerHTML += " Za primerjavo z napovedjo izmeri tok še pri 6\u00a0V.";
     N.osvezi();
   }
   function maybeAsk(p) {
@@ -229,8 +230,10 @@ export function labOhm(el, { load = "R100" } = {}) {
     get: () => ({ racun: Rr.stanje(), series, napoved: N.stanje() }),
     set: (d) => {
       Rr.obnovi(d?.racun);
-      N.obnovi(d?.napoved);
-      for (const [id, pts] of Object.entries(d?.series || {})) if (id in LOADS && Array.isArray(pts)) series[id] = pts;
+      // pokvarjena točka (ni para končnih števil) bi ustavila redrawGraph zunaj obnove: izpustimo jo
+      const tocka = (q) => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]);
+      for (const [id, pts] of Object.entries(d?.series || {})) if (id in LOADS && Array.isArray(pts) && pts.some(tocka)) series[id] = pts.filter(tocka).map((q) => [q[0], q[1]]);
+      N.obnovi(d?.napoved); // zadnja: napoved se primerja z obnovljenimi meritvami
       Object.keys(series).forEach(maybeAsk);
     },
   });

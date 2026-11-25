@@ -54,10 +54,9 @@ test("mesanje compares only a valid (stirred) mixture; titracija asks about the 
 });
 
 test("measured values for the comparison come from the student's own measurements", () => {
-  // Ohm: meritev v ±0,3 V od 6 V, sicer s premice skozi izhodišče
+  // Ohm: samo meritev v ±0,3 V od 6 V; tok s premice (k · 6 V) bi izdal upor, ki ga učenec računa sam (pregled #1054)
   assert.equal(tokPri([[2, 20], [5.9, 59.1], [8, 80.5]], 6).vrednost, 59.1);
-  const s = tokPri([[2, 20], [4, 40], [8, 80]], 6);
-  assert.ok(Math.abs(s.vrednost - 60) < 1e-9 && /premice/.test(s.besedilo));
+  assert.equal(tokPri([[2, 20], [4, 40], [8, 80]], 6), null);
   assert.equal(tokPri([[2, 20]], 6), null);
   // titracija ocetne kisline: bližje ekvivalentni točki
   const r = (indId, V, over, id = "ocetna") => ({ id, indId, V, over });
@@ -217,7 +216,12 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     await nastavi(p, "napetost napajalnika", 0);
     await meriOhm(p, [2, 4]);
     const vmes = await p.evaluate(() => [document.querySelector(".lab-napoved .lab-tit-field").hidden, document.querySelector(".lab-primerjava").hidden]);
-    assert.deepEqual(vmes, [true, true], "po prvi meritvi napoved zaprta, primerjave še ni (ni meritve pri 6 V ne premice)");
+    assert.deepEqual(vmes, [true, true], "po prvi meritvi napoved zaprta, primerjave še ni (ni meritve pri 6 V)");
+    // tri meritve brez 6 V: tok s premice bi izdal upor, zato aplikacija prosi za meritev pri 6 V (pregled #1054)
+    await meriOhm(p, [8]);
+    const brez6 = await p.evaluate(() => [document.querySelector(".lab-fitout").textContent, document.querySelector(".lab-primerjava").hidden]);
+    assert.match(brez6[0], /izmeri tok še pri 6\s?V/);
+    assert.equal(brez6[1], true);
     await meriOhm(p, [6]);
     const r = await p.evaluate(() => ({ t: document.querySelector(".lab-primerjava .lab-primerjava-vrednosti").textContent, c: document.querySelector(".lab-primerjava .lab-why").className }));
     assert.match(r.t, /Tvoja napoved30\s?mAIzmerjeno\d+(,\d)?\s?mA pri \d,\d\d\s?V/);
@@ -246,6 +250,27 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
       assert.deepEqual(errs, [], id);
       await p.close();
     }
+    await ctx.close();
+  });
+
+  // Pregled #1053 (3. krog): napoved pri mešanju velja za nastavljeno mešanico; pri ohlajanju jo obnova ne pobriše.
+  await t.test("mesanje: moving a water slider clears the prediction; ohlajanje: a restore keeps the prediction for the restored cups", async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const { p, errs } = await odpri(ctx, base, "lab-mesanje");
+    await p.locator(".lab-napoved input").fill("45");
+    await p.locator(".lab-napoved").getByRole("button", { name: "Zapiši napoved" }).click();
+    assert.match(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), /45/);
+    await nastavi(p, "topla voda m₁", 120);
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), "", "druga mešanica: napoved pobrisana");
+    const shranjeno = { v: 1, seed: 3, rows: [], meas: [[], [], []], imena: [null, null, null], vrste: ["kovina", "porcelanP", "termovka"], napoved: { v: 60, t: "60 °C", zaprto: false, k: "0:kovina" } };
+    await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.0.lab-ohlajanje", JSON.stringify(d)), shranjeno);
+    await p.evaluate(() => window.mount("lab-ohlajanje"));
+    await p.waitForTimeout(200);
+    const o = await p.evaluate(() => ({ moja: document.querySelector(".lab-napoved-moja").textContent, posoda: document.querySelector('select[aria-label="posoda 1"]')?.value }));
+    assert.equal(o.posoda, "kovina");
+    assert.match(o.moja, /60/, "obnova posod ne pobriše napovedi");
+    await p.evaluate(() => localStorage.removeItem("evklid.lab.meritve.0.lab-ohlajanje"));
+    assert.deepEqual(errs, []);
     await ctx.close();
   });
 });
