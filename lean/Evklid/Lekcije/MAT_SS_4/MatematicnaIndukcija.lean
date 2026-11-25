@@ -152,11 +152,12 @@ theorem primer3 : ∀ n : ℕ, 5 ≤ n → n ^ 2 < 2 ^ n := by
       _ = 2 ^ (n + 1) := by ring
 
 /-- Primer 3, odgovor: najmanjši n₀, od katerega naprej je vedno 2ⁿ > n², je 5: pri n = 4 trditev ne
-velja (16 = 16), pri n = 3 tudi ne (8 < 9), pri 2 sta enaka. -/
+velja (16 = 16), pri n = 3 tudi ne (8 < 9), pri 2 sta enaka (2² = 4 = 2²). -/
 theorem primer3_n0 :
-    (∀ n : ℕ, 5 ≤ n → n ^ 2 < 2 ^ n) ∧ ¬ (4 ^ 2 < 2 ^ 4) ∧ 2 ^ 3 < 3 ^ 2 ∧ 2 ^ 2 = 2 ^ 2 ∧
+    (∀ n : ℕ, 5 ≤ n → n ^ 2 < 2 ^ n) ∧ ¬ (4 ^ 2 < 2 ^ 4) ∧ 2 ^ 3 < 3 ^ 2 ∧
+    ((fun n : ℕ => 2 ^ n) 2 = 4 ∧ (fun n : ℕ => n ^ 2) 2 = 4) ∧
     ∀ n₀ : ℕ, (∀ n, n₀ ≤ n → n ^ 2 < 2 ^ n) → 5 ≤ n₀ := by
-  refine ⟨primer3, by norm_num, by norm_num, rfl, fun n₀ h => ?_⟩
+  refine ⟨primer3, by norm_num, by norm_num, ⟨rfl, rfl⟩, fun n₀ h => ?_⟩
   by_contra hc
   have := h 4 (by omega)
   norm_num at this

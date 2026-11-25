@@ -4,9 +4,8 @@ sha256: 841c5450604e429da2262d68a720d48dbe163bcdef214e772bc1484f49c4a7e2
 Ni v Leanu: stolpčni risbi (dokazane so prikazane vrednosti), simulacija »Ponavljanje neodvisnih poskusov«
 (dokazano je le 16·3/8 = 6), pogoji za zaporedje neodvisnih poskusov in primeri, ki to niso (vlečenje brez
 vračanja, »Preveri se 1«; opis modela, ne trditev), analogija z mešalno mizo (dokazano je C(5,4) = 5), vrstni red
-korakov v »Razvrsti korake« (postopek), numerična vrednost ln 0,05 / ln 0,7 ≈ 8,40 (Mathlib nima dovolj ostrih
-mej za ln 0,7 in ln 0,05; dokazana sta pretvorba neenačbe z logaritmom in najmanjši n = 9), stavek »več o tem pri
-študiju statistike«. Neodvisnost je modelirana z verjetnostjo poteka p^k·q^(n−k) (produkt po poskusih); dokazano
+korakov v »Razvrsti korake« (postopek), stavek »več o tem pri študiju statistike«. Približek
+ln 0,05 / ln 0,7 ≈ 8,40 je dokazan kot meja 8,395 < … < 8,405. Neodvisnost je modelirana z verjetnostjo poteka p^k·q^(n−k) (produkt po poskusih); dokazano
 je, da vsota po vseh potekih s k uspehi da Bernoullijevo formulo.
 -/
 module
@@ -151,6 +150,30 @@ theorem primer3_logaritem (x : ℝ) :
   refine ⟨hl, ?_⟩
   rw [← Real.log_le_log_iff (Real.rpow_pos_of_pos (by norm_num) x) (by norm_num), Real.log_rpow (by norm_num),
     div_le_iff_of_neg hl]
+
+set_option exponentiation.threshold 2000 in
+/-- Primer 3, korak 3: ln 0,05 / ln 0,7 ≈ 8,40, dokazano kot 8,395 < ln 0,05 / ln 0,7 < 8,405
+(primerjava potenc 0,05²⁰⁰ s 0,7¹⁶⁷⁹ in 0,7¹⁶⁸¹). -/
+theorem primer3_priblizek :
+    8.395 < Real.log 0.05 / Real.log 0.7 ∧ Real.log 0.05 / Real.log 0.7 < 8.405 := by
+  have hl : Real.log 0.7 < 0 := Real.log_neg (by norm_num) (by norm_num)
+  refine ⟨?_, ?_⟩
+  · rw [lt_div_iff_of_neg hl]
+    have : (200 : ℝ) * Real.log 0.05 < 1679 * Real.log 0.7 := by
+      have e1 := Real.log_pow (0.05 : ℝ) 200
+      have e2 := Real.log_pow (0.7 : ℝ) 1679
+      push_cast at e1 e2
+      rw [← e1, ← e2]
+      exact Real.log_lt_log (by positivity) (by norm_num)
+    linarith
+  · rw [div_lt_iff_of_neg hl]
+    have : (1681 : ℝ) * Real.log 0.7 < 200 * Real.log 0.05 := by
+      have e1 := Real.log_pow (0.7 : ℝ) 1681
+      have e2 := Real.log_pow (0.05 : ℝ) 200
+      push_cast at e1 e2
+      rw [← e1, ← e2]
+      exact Real.log_lt_log (by positivity) (by norm_num)
+    linarith
 
 /-- Primer 3, korak 4: 1 − 0,7⁸ ≈ 0,942 < 0,95 in 1 − 0,7⁹ ≈ 0,960 ≥ 0,95. -/
 theorem primer3_preizkus :

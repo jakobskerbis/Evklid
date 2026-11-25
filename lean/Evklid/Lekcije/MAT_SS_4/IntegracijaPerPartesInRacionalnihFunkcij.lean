@@ -4,8 +4,9 @@ sha256: a5b24a7401d1c4d8f1ac15a0a86d7d842497b40ecdd41aab3b41250da6c20d72
 Ni v Leanu: zgodovina v uvodu (Mercator, Wright, Barrow) in »Drugače: Kot zgodba« (menjalnica);
 simulacija »Družina primitivnih funkcij«; nasveti, kako izbrati u (»novi integral je lažji/težji«
 ni matematična trditev; dokazana je le enakost pri obeh izbirah); Primer 3, koraki 5–6 in vrstica
-`vrednost: 10*(1/2)*ln(...)` (sin 46° ≈ 0,7193, ulomek ≈ 6,126, y ≈ 9,06 cm): Mathlib nima dovolj
-natančnih mej za sin 46° in ln 6,126 (preverjeno le numerično zunaj Leana: 0,71934; 6,12605; 9,0628);
+`vrednost: 10*(1/2)*ln(...)` (sin 46° ≈ 0,7193, ulomek ≈ 6,126, y ≈ 9,06 cm): natančne meje za
+sin 46° in ln 6,126 so zahtevne, še ni dokazano (preverjeno le numerično zunaj Leana: 0,71934; 6,12605;
+9,0628);
 zemljevid in »Grenlandija je videti večja«; Preveri se, vprašanje 1 (vrstni red korakov) in vprašanje 4
 (katera izbira u je smiselna) ter pri vprašanju 2 trditev, da se ostali trije rešijo s per partes
 (ni računska trditev; dokazani so vsi štirje rezultati razen ∫ x² cos x, ki ga lekcija ne izračuna);
@@ -329,6 +330,41 @@ example : (1 : ℝ) - 0 ≠ 0 ∧ (1 : ℝ) + 0 ≠ 0 := by norm_num
 theorem primer3_C (C : ℝ) : 1 / 2 * log |(1 + 0) / (1 - 0)| + C = 0 ↔ C = 0 := by
   simp
 
+/-- Enoličnost (uporabljeno pri primeru 3 in maturi 2 d)): če imata f in F na odprtem intervalu U isti
+odvod in se ujemata v točki a ∈ U, sta na U enaki. -/
+theorem enolicnost_na {U : Set ℝ} (hU : IsOpen U) (hpc : IsPreconnected U) (f F g : ℝ → ℝ) (a : ℝ)
+    (ha : a ∈ U) (hf : ∀ x ∈ U, HasDerivAt f (g x) x) (hF : ∀ x ∈ U, HasDerivAt F (g x) x)
+    (h : f a = F a) : ∀ x ∈ U, f x = F x := by
+  have hd : ∀ x ∈ U, HasDerivAt (fun x => f x - F x) 0 x := fun x hx => by
+    have := (hf x hx).sub (hF x hx); rwa [sub_self] at this
+  obtain ⟨C, hC⟩ := hU.exists_is_const_of_deriv_eq_zero (f := fun x => f x - F x) hpc
+    (fun x hx => (hd x hx).differentiableAt.differentiableWithinAt) (fun x hx => (hd x hx).deriv)
+  intro x hx
+  have h1 : f x - F x = C := hC x hx
+  have h2 : f a - F a = C := hC a ha
+  linarith
+
+/-- Predpostavke trditve `enolicnost_na` se dajo izpolniti (U = (0, 1), f = F = x, a = 1/2). -/
+example : IsOpen (Set.Ioo (0:ℝ) 1) ∧ IsPreconnected (Set.Ioo (0:ℝ) 1) ∧ (1 / 2 : ℝ) ∈ Set.Ioo 0 1 ∧
+    ∀ x ∈ Set.Ioo (0:ℝ) 1, HasDerivAt (fun x : ℝ => x) 1 x :=
+  ⟨isOpen_Ioo, isPreconnected_Ioo, by norm_num, fun x _ => hasDerivAt_id' x⟩
+
+/-- Primer 3, korak 4: vsaka funkcija F z F'(s) = 1/(1 − s²) na (−1, 1) in F(0) = 0 je tam
+F(s) = ½ ln|(1 + s)/(1 − s)|. -/
+theorem primer3_enolicno (F : ℝ → ℝ) (hF : ∀ s ∈ Set.Ioo (-1:ℝ) 1, HasDerivAt F (1 / (1 - s ^ 2)) s)
+    (h0 : F 0 = 0) : ∀ s ∈ Set.Ioo (-1:ℝ) 1, F s = 1 / 2 * log |(1 + s) / (1 - s)| := by
+  have h := enolicnost_na isOpen_Ioo isPreconnected_Ioo F
+    (fun s => 1 / 2 * log |(1 + s) / (1 - s)| + 0) _ 0 (by norm_num) hF
+    (fun s hs => primer3_F 0 s (by linarith [hs.2]) (by linarith [hs.1]))
+    (by rw [h0]; simp)
+  intro s hs; rw [h s hs, add_zero]
+
+/-- Predpostavke trditve `primer3_enolicno` se dajo izpolniti (F iz rešitve). -/
+example : (∀ s ∈ Set.Ioo (-1:ℝ) 1,
+      HasDerivAt (fun s => 1 / 2 * log |(1 + s) / (1 - s)| + 0) (1 / (1 - s ^ 2)) s) ∧
+    (1 / 2 * log |(1 + 0) / (1 - 0)| + 0 : ℝ) = 0 :=
+  ⟨fun s hs => primer3_F 0 s (by linarith [hs.2]) (by linarith [hs.1]), by simp⟩
+
 /-- Primer 3, korak 7 (in vrstica `vrednost: 10*46*pi/180`): 46° = 46π/180 ≈ 0,8029 rad, lok
 10 · 46π/180 ≈ 8,03 cm. -/
 theorem primer3_lok : |46 * π / 180 - 0.8029| < 0.00005 ∧ |10 * (46 * π / 180) - 8.03| < 0.005 := by
@@ -461,6 +497,20 @@ theorem matura2d :
   have t1 : 0 < t - 3 := by simp at ht; linarith
   have t2 : 0 < t + 1 := by simp at ht; linarith
   rw [abs_of_pos t1, abs_of_pos t2]; ring
+
+/-- Matura, naloga 2 d): vsaka funkcija G z G' = f na (3, ∞) in G(4) = 4 je tam
+G(x) = x + 2 ln(x − 3) + ln(x + 1) − ln 5. -/
+theorem matura2d_enolicno (G : ℝ → ℝ)
+    (hG : ∀ x ∈ Set.Ioi (3:ℝ), HasDerivAt G ((x ^ 2 + x - 4) / (x ^ 2 - 2 * x - 3)) x) (h4 : G 4 = 4) :
+    ∀ x ∈ Set.Ioi (3:ℝ), G x = x + 2 * log (x - 3) + log (x + 1) - log 5 :=
+  enolicnost_na isOpen_Ioi isPreconnected_Ioi G _ _ 4 (by norm_num) hG
+    (fun x hx => matura2d.1 x hx) (by rw [h4, matura2d.2.2.2])
+
+/-- Predpostavke trditve `matura2d_enolicno` se dajo izpolniti (G iz rešitve). -/
+example : (∀ x ∈ Set.Ioi (3:ℝ), HasDerivAt (fun x => x + 2 * log (x - 3) + log (x + 1) - log 5)
+      ((x ^ 2 + x - 4) / (x ^ 2 - 2 * x - 3)) x) ∧
+    (4:ℝ) + 2 * log (4 - 3) + log (4 + 1) - log 5 = 4 :=
+  ⟨fun x hx => matura2d.1 x hx, matura2d.2.2.2⟩
 
 /-- Ustno vprašanje 2 (in vrstici `enako`/`integral`): 1 = A(x + 1) + Bx za vsak x natanko pri A = 1,
 B = −1; 1/(x(x + 1)) = 1/x − 1/(x + 1) in ∫ dx/(x(x + 1)) = ln|x| − ln|x + 1| + C. -/

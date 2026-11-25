@@ -2,8 +2,9 @@
 vir: content/lessons/MAT-SS-4/uporaba-odvoda.md
 sha256: d5438bc87780029fa224101a9619c7995a5bb8016abfbe68b944b7074dd0b5ab
 Ni v Leanu: zgodba o peku in slika grafa (risba, številska premica); simulacija; formula za presečni kot
-tan φ = |(k₂ − k₁)/(1 + k₁k₂)| (definicija, ne trditev) in približek φ ≈ 53,13° (53° 8′) v Primeru 5 (Mathlib
-nima dovolj natančnih mej za arctan; dokazano je tan φ = 4/3); Preveri se 1 (R'(3) = −40 brez dane funkcije,
+tan φ = |(k₂ − k₁)/(1 + k₁k₂)| je dokazana kot tan(α₂ − α₁) = (k₂ − k₁)/(1 + k₁k₂) za smerna kota (`presecni_kot`),
+absolutna vrednost (izbira ostrega kota) pa je dogovor; približek φ ≈ 53,13° (53° 8′) v Primeru 5 (zahtevno,
+še ni dokazano; dokazano je tan φ = 4/3); Preveri se 1 (R'(3) = −40 brez dane funkcije,
 pomen besedila); analogije (pohodnik, temperatura); risanje grafa v Nalogi 2 c); odgovori »v stavku z
 enotami« in točkovanje. Naloga 3: številke so dokazane za natančni r = ∛(1/π) (lekcija vstavlja zaokroženi
 0,68278).
@@ -37,6 +38,10 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) 
     (∀ x ∈ interior (univ : Set ℝ), (0:ℝ) < (fun _ => (1:ℝ)) x) :=
   ⟨fun x => hasDerivAt_id' x, convex_univ, fun _ _ => one_pos⟩
 
+example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x) ((fun _ => (-1:ℝ)) x) x) ∧ Convex ℝ (univ : Set ℝ) ∧
+    (∀ x ∈ interior (univ : Set ℝ), (fun _ => (-1:ℝ)) x < 0) :=
+  ⟨fun x => (hasDerivAt_id' x).neg, convex_univ, fun _ _ => by norm_num⟩
+
 /-- Razlaga »Ekstremi«: če odvod v b zamenja predznak iz + v −, ima f v b lokalni maksimum. -/
 theorem lokalni_maksimum {f f' : ℝ → ℝ} {a b c : ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hab : a < b)
     (hbc : b < c) (h₀ : ∀ x ∈ Ioo a b, 0 ≤ f' x) (h₁ : ∀ x ∈ Ioo b c, f' x ≤ 0) : IsLocalMax f b :=
@@ -57,6 +62,11 @@ theorem lokalni_minimum {f f' : ℝ → ℝ} {a b c : ℝ} (hd : ∀ x, HasDeriv
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧
     (∀ x ∈ Ioo (-1:ℝ) 0, (fun x => 2 * x) x ≤ 0) ∧ (∀ x ∈ Ioo (0:ℝ) 1, 0 ≤ (fun x => 2 * x) x) :=
   ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num), by norm_num, by norm_num,
+    fun x hx => by simp only; linarith [hx.2], fun x hx => by simp only; linarith [hx.1]⟩
+
+example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -(2 * x)) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧
+    (∀ x ∈ Ioo (-1:ℝ) 0, 0 ≤ (fun x => -(2 * x)) x) ∧ (∀ x ∈ Ioo (0:ℝ) 1, (fun x => -(2 * x)) x ≤ 0) :=
+  ⟨fun x => ((hasDerivAt_pow 2 x).neg).congr_deriv (by norm_num), by norm_num, by norm_num,
     fun x hx => by simp only; linarith [hx.2], fun x hx => by simp only; linarith [hx.1]⟩
 
 /-! ## Uvod in razlaga: rogljički -/
@@ -104,6 +114,39 @@ theorem rogljicki_monotonost :
 theorem normala (k : ℝ) (hk : k ≠ 0) : k * (-1 / k) = -1 := by field_simp
 
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Normala (Razlaga, Ponovitev): pri k = f'(a) ≠ 0 premica y = f(a) − (x − a)/f'(a) gre skozi (a, f(a)),
+ima smerni koeficient −1/k in je pravokotna na tangento y = f(a) + k(x − a) (skalarni produkt
+smernih vektorjev (1, k) in (1, −1/k) je 0). -/
+theorem normala_enacba (fa k a : ℝ) (hk : k ≠ 0) :
+    fa - (a - a) / k = fa ∧ (∀ x, fa - (x - a) / k = fa + (-1 / k) * (x - a)) ∧
+    (1:ℝ) * 1 + k * (-1 / k) = 0 := by
+  refine ⟨by simp, fun x => by ring, by field_simp; ring⟩
+
+example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Normala pri f'(a) = 0: tangenta y = f(a) je vodoravna (smer (1, 0)), navpična premica x = a skozi
+(a, f(a)) (smer (0, 1)) je nanjo pravokotna. -/
+theorem normala_navpicna (fa a x : ℝ) :
+    fa + 0 * (x - a) = fa ∧ (1:ℝ) * 0 + 0 * 1 = 0 := by constructor <;> ring
+
+/-- Presečni kot: če sta α₁, α₂ smerna kota tangent (tan αᵢ = kᵢ, cos αᵢ ≠ 0), je
+tan(α₂ − α₁) = (k₂ − k₁)/(1 + k₁k₂); pri k₁k₂ = −1 je cos(α₂ − α₁) = 0 (pravi kot). -/
+theorem presecni_kot (α₁ α₂ k₁ k₂ : ℝ) (h₁ : cos α₁ ≠ 0) (h₂ : cos α₂ ≠ 0) (t₁ : tan α₁ = k₁)
+    (t₂ : tan α₂ = k₂) :
+    tan (α₂ - α₁) = (k₂ - k₁) / (1 + k₁ * k₂) ∧ (k₁ * k₂ = -1 → cos (α₂ - α₁) = 0) := by
+  rw [Real.tan_eq_sin_div_cos] at t₁ t₂
+  have s₁ : sin α₁ = k₁ * cos α₁ := by rw [← t₁]; field_simp
+  have s₂ : sin α₂ = k₂ * cos α₂ := by rw [← t₂]; field_simp
+  have hs : sin (α₂ - α₁) = cos α₁ * cos α₂ * (k₂ - k₁) := by rw [sin_sub, s₁, s₂]; ring
+  have hc : cos (α₂ - α₁) = cos α₁ * cos α₂ * (1 + k₁ * k₂) := by rw [cos_sub, s₁, s₂]; ring
+  refine ⟨?_, fun h => by rw [hc, h]; ring⟩
+  rw [Real.tan_eq_sin_div_cos, hs, hc]
+  have : cos α₁ * cos α₂ ≠ 0 := mul_ne_zero h₁ h₂
+  rw [mul_div_mul_left _ _ this]
+
+/-- Predpostavke trditve `presecni_kot` se dajo izpolniti (α₁ = α₂ = 0, k₁ = k₂ = 0). -/
+example : cos (0:ℝ) ≠ 0 ∧ tan (0:ℝ) = 0 := by simp
 
 /-- Premisli (x³): f'(0) = 0, a f'(x) = 3x² ≥ 0, f ves čas narašča in v 0 nima ekstrema. -/
 theorem kub_terasa :

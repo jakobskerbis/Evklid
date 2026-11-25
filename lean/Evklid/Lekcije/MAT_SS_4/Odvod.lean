@@ -376,6 +376,30 @@ theorem primer2_pada :
       (fun x hx => (hc x (ne_of_gt hx)).continuousWithinAt) ?_
     intro x hx; rw [interior_Ioi] at hx; exact hd x (ne_of_gt hx)
 
+/-- Povzetek in Postopek, korak 5: f' > 0 na (notranjosti) intervala ⇒ f tam strogo narašča. -/
+theorem narasca {f f' : ℝ → ℝ} {D : Set ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hD : Convex ℝ D)
+    (hp : ∀ x ∈ interior D, 0 < f' x) : StrictMonoOn f D :=
+  strictMonoOn_of_deriv_pos hD (fun x _ => (hd x).continuousAt.continuousWithinAt)
+    fun x hx => by rw [(hd x).deriv]; exact hp x hx
+
+/-- Povzetek in Postopek, korak 5: f' < 0 na (notranjosti) intervala ⇒ f tam strogo pada. -/
+theorem pada {f f' : ℝ → ℝ} {D : Set ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hD : Convex ℝ D)
+    (hn : ∀ x ∈ interior D, f' x < 0) : StrictAntiOn f D :=
+  strictAntiOn_of_deriv_neg hD (fun x _ => (hd x).continuousAt.continuousWithinAt)
+    fun x hx => by rw [(hd x).deriv]; exact hn x hx
+
+/-- Primer za `narasca` (predpostavke so izpolnljive): f(x) = x² ima f'(x) = 2x > 0 na (0, ∞), zato tam
+strogo narašča. -/
+example : StrictMonoOn (fun x : ℝ => x ^ 2) (Ioi 0) :=
+  narasca (f' := fun x => 2 * x) (fun x => by simpa using hasDerivAt_pow 2 x) (convex_Ioi 0)
+    fun x hx => by rw [interior_Ioi] at hx; simp only [mem_Ioi] at hx; linarith
+
+/-- Primer za `pada` (predpostavke so izpolnljive): f(x) = x² ima f'(x) = 2x < 0 na (−∞, 0), zato tam
+strogo pada. -/
+example : StrictAntiOn (fun x : ℝ => x ^ 2) (Iio 0) :=
+  pada (f' := fun x => 2 * x) (fun x => by simpa using hasDerivAt_pow 2 x) (convex_Iio 0)
+    fun x hx => by rw [interior_Iio] at hx; simp only [mem_Iio] at hx; linarith
+
 /-- Primer 3, koraka 1–2: T(t) = 180 − 30t + 1,5t², T'(t) = −30 + 3t, T'(0) = −30. -/
 theorem primer3_odvod (t : ℝ) :
     HasDerivAt (fun t : ℝ => 180 - 30 * t + 1.5 * t ^ 2) (-30 + 3 * t) t ∧ (-30:ℝ) + 3 * 0 = -30 := by

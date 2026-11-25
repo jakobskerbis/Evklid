@@ -101,6 +101,11 @@ theorem vsota_nezdruzljivih {α : Type*} [DecidableEq α] (Ω A B : Finset α) (
 /-- Predpostavka trditve `vsota_nezdruzljivih` se da izpolniti (»padla je 1« in »padla je 2«). -/
 example : Disjoint ({1} : Finset ℕ) {2} := by decide
 
+/-- Razlaga 3, »Preveri«: »padlo je sodo« {2, 4, 6} in »padla je 6« {6} nista nezdružljiva, saj je
+{2, 4, 6} · {6} = {6} neprazen (šestica je soda). -/
+theorem sodo_sest_zdruzljiva :
+    ({2, 4, 6} : Finset ℕ) ∩ {6} = {6} ∧ ¬ Disjoint ({2, 4, 6} : Finset ℕ) {6} := by decide
+
 /-- Razlaga 4 (splošna verjetnostna mera): μ(A ∪ B) + μ(A ∩ B) = μ(A) + μ(B). -/
 theorem vsota_mera {Ω : Type*} [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω) (A B : Set Ω)
     (hB : MeasurableSet B) : μ (A ∪ B) + μ (A ∩ B) = μ A + μ B :=
@@ -159,6 +164,29 @@ theorem neodvisnost {α : Type*} [DecidableEq α] (Ω A B : Finset α) (hB : 0 <
 /-- Predpostavka trditve `neodvisnost` se da izpolniti. -/
 example : 0 < P (Icc 1 6) {4, 5, 6} := by
   unfold P; rw [show #({4, 5, 6} : Finset ℕ) = 3 by decide, show #(Icc 1 6 : Finset ℕ) = 6 by decide]; norm_num
+
+/-- Razlaga 7 in Ustno vprašanje 3: pri dveh metih kovanca (izidi Fin 2 × Fin 2, 0 = grb) sta »v prvem metu
+pade grb« in »v drugem metu pade grb« neodvisna: P(A·B) = 1/4 = 1/2 · 1/2 = P(A)·P(B), torej P(A/B) = P(A). -/
+theorem kovanca_neodvisna :
+    P univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0) ∩ univ.filter (fun p => p.2 = 0)) =
+      P univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0)) *
+        P univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.2 = 0)) ∧
+    Pp univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0)) (univ.filter (fun p => p.2 = 0)) =
+      P univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0)) := by
+  have h : P univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0) ∩ univ.filter (fun p => p.2 = 0)) =
+      P univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0)) *
+        P univ ((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.2 = 0)) := by
+    unfold P
+    rw [show #((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0) ∩ univ.filter (fun p => p.2 = 0)) = 1
+        by decide, show #((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.1 = 0)) = 2 by decide,
+      show #((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.2 = 0)) = 2 by decide,
+      show #(univ : Finset (Fin 2 × Fin 2)) = 4 by decide]
+    norm_num
+  refine ⟨h, (neodvisnost _ _ _ ?_).mpr h⟩
+  unfold P
+  rw [show #((univ : Finset (Fin 2 × Fin 2)).filter (fun p => p.2 = 0)) = 2 by decide,
+    show #(univ : Finset (Fin 2 × Fin 2)) = 4 by decide]
+  norm_num
 
 /-- Pogoste napake in Ustno vprašanje 3: nezdružljiva dogodka s pozitivnima verjetnostma nista neodvisna. -/
 theorem nezdruzljiva_nista_neodvisna {α : Type*} [DecidableEq α] (Ω A B : Finset α) (h : Disjoint A B)
@@ -223,6 +251,12 @@ theorem jajca_pogojna :
         unfold jajca; decide +kernel, h3]
     norm_num
   · unfold P; rw [h4, h1]; norm_num
+
+/-- Razlaga 1, »Preveri«: nasprotni dogodek dogodka »vsaj eno od dveh jajc je počeno« je »obe jajci sta celi«. -/
+theorem jajca_nasprotni :
+    jajca \ jajca.filter (fun p => p.1.val < 2 ∨ p.2.val < 2) =
+      jajca.filter (fun p => 2 ≤ p.1.val ∧ 2 ≤ p.2.val) := by
+  unfold jajca; decide +kernel
 
 /-! ## Rešeni primeri -/
 

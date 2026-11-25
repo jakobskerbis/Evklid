@@ -350,9 +350,18 @@ theorem napaka_dosezena : (∀ n : ℕ, 1 ≤ n → 1 / (n : ℝ) ≠ 0) ∧
   ⟨fun n hn => by have : (0 : ℝ) < n := by exact_mod_cast hn
                   positivity, tendsto_const_nhds⟩
 
-/-- Pogoste napake 4: (n − 3)² da 4, 1, 0, 1, 4, 9 (n = 1, …, 6), zato ni monotono. -/
+/-- Pogoste napake 4: (n − 3)² da 4, 1, 0, 1, 4, 9 (n = 1, …, 6), zato ni monotono: a₂ < a₁ (ni naraščajoče)
+in a₃ < a₄ (ni padajoče). -/
 theorem napaka_n3 :
-    (List.range 6).map (fun k : ℕ => ((k : ℤ) + 1 - 3) ^ 2) = [4, 1, 0, 1, 4, 9] := by decide
+    (List.range 6).map (fun k : ℕ => ((k : ℤ) + 1 - 3) ^ 2) = [4, 1, 0, 1, 4, 9] ∧
+    ¬ Monotone (fun n : ℕ => ((n : ℤ) - 3) ^ 2) ∧ ¬ Antitone (fun n : ℕ => ((n : ℤ) - 3) ^ 2) := by
+  refine ⟨by decide, fun h => ?_, fun h => ?_⟩
+  · have := h (show (1 : ℕ) ≤ 2 by norm_num)
+    simp only at this
+    norm_num at this
+  · have := h (show (3 : ℕ) ≤ 4 by norm_num)
+    simp only at this
+    norm_num at this
 
 /-- Pogoste napake 5: lim (2n + 1)/(n + 3) = 2, ne 1. -/
 theorem napaka_2 : Tendsto (fun n : ℕ => (2 * (n : ℝ) + 1) / (n + 3)) atTop (𝓝 2) := by
@@ -525,9 +534,35 @@ theorem koren2_zaporedje :
 
 /-! ## Preveri se -/
 
-/-- Preveri se 2: če prvih 1000 členov 1/n zamenjamo s 7, ostane limita 0. -/
-theorem kviz2 : Tendsto (fun n : ℕ => if n ≤ 1000 then (7 : ℝ) else 1 / (n : ℝ)) atTop (𝓝 0) :=
-  lim_1_n.congr' (eventually_atTop.2 ⟨1001, fun n hn => by simp [show ¬ n ≤ 1000 by omega]⟩)
+/-- Preveri se 1: navzgor omejeno s 50 ne pomeni, da je 50 dosežen: aₙ = 50 − 1/n (n ≥ 1) ima vse člene ≤ 50,
+noben pa ni enak 50. -/
+theorem kviz1 : (∀ n : ℕ, 1 ≤ n → 50 - 1 / (n : ℝ) ≤ 50) ∧ (∀ n : ℕ, 1 ≤ n → 50 - 1 / (n : ℝ) ≠ 50) := by
+  refine ⟨fun n hn => ?_, fun n hn => ?_⟩ <;> have : (0 : ℝ) < n := by exact_mod_cast hn
+  · have : 0 < 1 / (n : ℝ) := by positivity
+    linarith
+  · have : 0 < 1 / (n : ℝ) := by positivity
+    intro h; linarith
+
+/-- Preveri se 2: če prvih 1000 členov 1/n zamenjamo s 7, ostane limita 0; zaporedje je (za n ≥ 1) še vedno
+padajoče, le ne strogo (a₁ = a₂ = 7). -/
+theorem kviz2 : Tendsto (fun n : ℕ => if n ≤ 1000 then (7 : ℝ) else 1 / (n : ℝ)) atTop (𝓝 0) ∧
+    (∀ m n : ℕ, 1 ≤ m → m ≤ n →
+      (if n ≤ 1000 then (7 : ℝ) else 1 / (n : ℝ)) ≤ (if m ≤ 1000 then (7 : ℝ) else 1 / (m : ℝ))) ∧
+    (if 1 ≤ 1000 then (7 : ℝ) else 1 / ((1 : ℕ) : ℝ)) = (if 2 ≤ 1000 then (7 : ℝ) else 1 / ((2 : ℕ) : ℝ)) := by
+  refine ⟨lim_1_n.congr' (eventually_atTop.2 ⟨1001, fun n hn => by simp [show ¬ n ≤ 1000 by omega]⟩),
+    fun m n hm hmn => ?_, ?_⟩
+  · have hm2 : (1 : ℝ) ≤ m := by exact_mod_cast hm
+    have hn2 : (1 : ℝ) ≤ n := by exact_mod_cast hm.trans hmn
+    by_cases h1 : m ≤ 1000
+    · by_cases h2 : n ≤ 1000
+      · simp only [h1, h2, ↓reduceIte, le_refl]
+      · simp only [h1, h2, ↓reduceIte]
+        have : 1 / (n : ℝ) ≤ 1 := by rw [div_le_one (by linarith)]; exact hn2
+        linarith
+    · have h2 : ¬ n ≤ 1000 := fun h => h1 (hmn.trans h)
+      simp only [h1, h2, ↓reduceIte]
+      exact one_div_le_one_div_of_le (by linarith) (by exact_mod_cast hmn)
+  · simp only [show 1 ≤ 1000 by norm_num, show 2 ≤ 1000 by norm_num, ↓reduceIte]
 
 /-- Preveri se 3: aₙ = (3n − 1)/(n + 4) → 3, bₙ = (n + 1)/(2n) → 1/2, cₙ = (2n² + 6)/(n² + 1) → 2;
 prvi členi a₁ = 0,4, b₁ = 1, c₁ = 4; vrstni red limit b, c, a. -/

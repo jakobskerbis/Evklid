@@ -86,6 +86,33 @@ theorem bobnar_N2 : (60 : ℝ) * 2 + 6 * 2 ^ 2 + 0 = 144 := by
   calc (60 : ℝ) * 2 + 6 * 2 ^ 2 + 0 = 120 + 24 := by norm_num
     _ = 144 := by norm_num
 
+/-- Enoličnost (uporabljeno pri bobnarju, primeru 3, maturi 3 b) in kvizu 5): če imata f in F na ℝ isti
+odvod in se ujemata v eni točki a, sta enaki povsod. -/
+theorem enolicnost (f F g : ℝ → ℝ) (a : ℝ) (hf : ∀ x, HasDerivAt f (g x) x)
+    (hF : ∀ x, HasDerivAt F (g x) x) (ha : f a = F a) : ∀ x, f x = F x := by
+  have hd : ∀ x, HasDerivAt (fun x => f x - F x) 0 x := fun x => by
+    have := (hf x).sub (hF x); rwa [sub_self] at this
+  have hc := is_const_of_deriv_eq_zero (f := fun x => f x - F x)
+    (fun x => (hd x).differentiableAt) (fun x => (hd x).deriv)
+  intro x
+  have : f x - F x = f a - F a := hc x a
+  linarith
+
+/-- Predpostavke trditve `enolicnost` se dajo izpolniti (f = F = x², a = 0). -/
+example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x) ∧ ((0:ℝ) ^ 2 = 0 ^ 2) :=
+  ⟨tabela_x2, rfl⟩
+
+/-- Razlaga, bobnar: vsaka funkcija N z N'(t) = 60 + 12t in N(0) = 0 je N(t) = 60t + 6t², zato
+N(2) = 144. -/
+theorem bobnar_enolicno (N : ℝ → ℝ) (hN : ∀ t, HasDerivAt N (60 + 12 * t) t) (h0 : N 0 = 0) :
+    (∀ t, N t = 60 * t + 6 * t ^ 2 + 0) ∧ N 2 = 144 := by
+  have h := enolicnost N _ _ 0 hN (bobnar_odvod 0) (by rw [h0]; norm_num)
+  exact ⟨h, by rw [h 2, bobnar_N2]⟩
+
+/-- Predpostavke trditve `bobnar_enolicno` se dajo izpolniti (N(t) = 60t + 6t²). -/
+example : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 60 * t + 6 * t ^ 2 + 0) (60 + 12 * t) t) ∧
+    ((60:ℝ) * 0 + 6 * 0 ^ 2 + 0 = 0) := ⟨bobnar_odvod 0, by norm_num⟩
+
 /-- Osnovni integrali, potenca: za naravni n je odvod x^(n+1)/(n+1) enak xⁿ. -/
 theorem potenca_nat (n : ℕ) (x : ℝ) :
     HasDerivAt (fun x : ℝ => x ^ (n + 1) / (n + 1)) (x ^ n) x := by
@@ -238,6 +265,16 @@ theorem primer3_korak3 (u : ℝ) : 6 * cos u * (1 / 3) = 2 * cos u := by ring
 /-- Primer 3, korak 5: y(0) = 2 sin 0 + C = C, zato iz y(0) = 0 sledi C = 0. -/
 theorem primer3_C (C : ℝ) : 2 * sin (3 * 0) + C = 0 ↔ C = 0 := by
   constructor <;> intro h <;> simp_all
+
+/-- Primer 3, korak 5: vsaka funkcija y z y'(t) = 6 cos(3t) in y(0) = 0 je y(t) = 2 sin(3t). -/
+theorem primer3_enolicno (y : ℝ → ℝ) (hy : ∀ t, HasDerivAt y (6 * cos (3 * t)) t) (h0 : y 0 = 0) :
+    ∀ t, y t = 2 * sin (3 * t) := by
+  have h := enolicnost y _ _ 0 hy (primer3_odvod 0) (by rw [h0]; simp)
+  intro t; rw [h t, add_zero]
+
+/-- Predpostavke trditve `primer3_enolicno` se dajo izpolniti (y(t) = 2 sin(3t)). -/
+example : (∀ t : ℝ, HasDerivAt (fun t => 2 * sin (3 * t) + 0) (6 * cos (3 * t)) t) ∧
+    (2 * sin (3 * 0) + 0 : ℝ) = 0 := ⟨primer3_odvod 0, by simp⟩
 
 /-- Primer 3, korak 6: y(π/6) = 2 sin(π/2) = 2. -/
 theorem primer3_vrednost : 2 * sin (3 * (π / 6)) = 2 := by
@@ -430,6 +467,18 @@ theorem matura3b_F4 : 1 / 3 * ((4:ℝ) ^ 2 + 9) * √((4:ℝ) ^ 2 + 9) - 9 = 98 
     _ = 125 / 3 - 27 / 3 := by norm_num
     _ = 98 / 3 := by norm_num
 
+/-- Matura, naloga 3 b): vsaka funkcija F z F'(x) = x√(x² + 9) in F(0) = 0 je
+F(x) = (1/3)(x² + 9)√(x² + 9) − 9, zato F(4) = 98/3. -/
+theorem matura3b_enolicno (F : ℝ → ℝ) (hF : ∀ x, HasDerivAt F (x * √(x ^ 2 + 9)) x) (h0 : F 0 = 0) :
+    (∀ x, F x = 1 / 3 * (x ^ 2 + 9) * √(x ^ 2 + 9) + -9) ∧ F 4 = 98 / 3 := by
+  have h := enolicnost F _ _ 0 hF (matura3a (-9)) (by rw [h0, matura3b_F0]; norm_num)
+  exact ⟨h, by rw [h 4, ← sub_eq_add_neg, matura3b_F4]⟩
+
+/-- Predpostavke trditve `matura3b_enolicno` se dajo izpolniti (F iz rešitve). -/
+example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => 1 / 3 * (x ^ 2 + 9) * √(x ^ 2 + 9) + -9)
+    (x * √(x ^ 2 + 9)) x) ∧ (1 / 3 * ((0:ℝ) ^ 2 + 9) * √((0:ℝ) ^ 2 + 9) + -9 = 0) :=
+  ⟨matura3a (-9), by rw [matura3b_F0]; norm_num⟩
+
 /-- Matura, naloga 3 c) (in vrstica `integral: sin(x)^2*cos(x)`): ∫ sin²x cos x dx = sin³x/3 + C. -/
 theorem matura3c (C x : ℝ) : HasDerivAt (fun x => sin x ^ 3 / 3 + C) (sin x ^ 2 * cos x) x := by
   have := (((hasDerivAt_sin x).pow 3).div_const 3).add_const C
@@ -493,5 +542,16 @@ theorem kviz5 : (∀ C t : ℝ, HasDerivAt (fun t : ℝ => 80 * t + 10 * t ^ 2 +
     convert this using 1; simp; ring
   · calc (80 : ℝ) * 3 + 10 * 3 ^ 2 + 0 = 240 + 90 := by norm_num
       _ = 330 := by norm_num
+
+/-- Preveri se, vprašanje 5: vsaka funkcija N z N'(t) = 80 + 20t in N(0) = 0 je N(t) = 80t + 10t²,
+zato N(3) = 330. -/
+theorem kviz5_enolicno (N : ℝ → ℝ) (hN : ∀ t, HasDerivAt N (80 + 20 * t) t) (h0 : N 0 = 0) :
+    (∀ t, N t = 80 * t + 10 * t ^ 2 + 0) ∧ N 3 = 330 := by
+  have h := enolicnost N _ _ 0 hN (kviz5.1 0) (by rw [h0]; norm_num)
+  exact ⟨h, by rw [h 3, kviz5.2.2]⟩
+
+/-- Predpostavke trditve `kviz5_enolicno` se dajo izpolniti (N(t) = 80t + 10t²). -/
+example : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 80 * t + 10 * t ^ 2 + 0) (80 + 20 * t) t) ∧
+    ((80:ℝ) * 0 + 10 * 0 ^ 2 + 0 = 0) := ⟨kviz5.1 0, by norm_num⟩
 
 end Evklid.Lekcije.MAT_SS_4.NedoloceniIntegral

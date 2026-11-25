@@ -5,7 +5,9 @@ Ni v Leanu: pojmi in postopki brez računa (populacija, vzorec, reprezentativnos
 koraki statistične naloge, »povezanost ni vzrok«, tretja spremenljivka, omejitve; premisli, ustna vprašanja,
 matura 1 in 2 c, kviza 1, 3 in 5 – besedni odgovori); ocene moči povezanosti z besedami (»močna«,
 »skoraj na premici«) in odčitavanje z risb (dokazane so le monotonost podatkov in sredine sosednjih točk);
-simulacija »Obdelava zbranih podatkov«. Korelacijski koeficient: dokazano le, da leži med −1 in 1.
+simulacija »Obdelava zbranih podatkov«. Korelacijski koeficient: dokazano le, da leži med −1 in 1;
+`korelacija_med` velja tudi, ko je kakšna vsota kvadratov odklonov 0 (vsi x ali vsi y enaki), a le zaradi
+Leanovega dogovora x/0 = 0 (r = 0); v lekciji r tam ni definiran.
 Pari s decimalnimi vrednostmi so pri urejanju (permutacija) zapisani v desetinkah kot naravna števila.
 -/
 module
@@ -64,6 +66,15 @@ theorem primer2_skupini : List.Perm [27, 29, 25, 30, 28, 26] [25, 26, 27, 28, 29
     List.Perm [21, 23, 19, 22] [19, 21, 22, 23] ∧
     [25, 26, 27, 28, 29, 30].Pairwise (· ≤ ·) ∧ [19, 21, 22, 23].Pairwise (· ≤ ·) := by decide
 
+/-- Primer 2: zapis dijaka kot pari (temperatura, dež?); suhi (filter »ne dež«) so 27, 29, 25, 30, 28, 26,
+deževni (filter »dež«) 21, 23, 19, 22; skupini skupaj štejeta vseh 10 dni (razdelitev podatkov). -/
+theorem primer2_razdelitev :
+    let d : List (ℕ × Bool) := [(27, false), (21, true), (29, false), (23, true), (25, false), (30, false),
+      (19, true), (28, false), (22, true), (26, false)]
+    d.length = 10 ∧ (d.filter (fun p => !p.2)).map Prod.fst = [27, 29, 25, 30, 28, 26] ∧
+    (d.filter (fun p => p.2)).map Prod.fst = [21, 23, 19, 22] ∧
+    (d.filter (fun p => !p.2)).length + (d.filter (fun p => p.2)).length = d.length := by decide
+
 /-- Primer 2, koraki 2–4: x̄_suho = 165/6 = 27,5, Me = (27 + 28)/2 = 27,5; x̄_dež = 85/4 = 21,25,
 Me = (21 + 22)/2 = 21,5; razlika 27,5 − 21,25 = 6,25 ≈ 6; najtoplejši deževni (23) < najhladnejši suhi (25). -/
 theorem primer2 : ((27 : ℝ) + 29 + 25 + 30 + 28 + 26) / 6 = 27.5 ∧ ((27 : ℝ) + 28) / 2 = 27.5 ∧
@@ -96,6 +107,15 @@ theorem matura2_urejeno :
     List.Perm [(2, 70), (0, 65), (5, 75), (8, 80), (3, 68), (10, 79), (1, 72), (6, 74), (4, 71), (12, 83)]
       [(0, 65), (1, 72), (2, 70), (3, 68), (4, 71), (5, 75), (6, 74), (8, 80), (10, 79), (12, 83)] ∧
     [0, 1, 2, 3, 4, 5, 6, 8, 10, 12].Pairwise (· < ·) := by decide
+
+/-- Matura 2 b): skupini sta pravilna razdelitev tabele: x ≤ 4 da 10y = 70, 65, 68, 72, 71 (to so
+6,5; 7,2; 7,0; 6,8; 7,1), x > 4 pa 75, 80, 79, 74, 83 (to so 7,5; 7,4; 8,0; 7,9; 8,3); skupaj 10 dijakov. -/
+theorem matura2b_skupini :
+    let d : List (ℕ × ℕ) :=
+      [(2, 70), (0, 65), (5, 75), (8, 80), (3, 68), (10, 79), (1, 72), (6, 74), (4, 71), (12, 83)]
+    List.Perm ((d.filter (fun p => p.1 ≤ 4)).map Prod.snd) [65, 72, 70, 68, 71] ∧
+    List.Perm ((d.filter (fun p => 4 < p.1)).map Prod.snd) [75, 74, 80, 79, 83] ∧
+    (d.filter (fun p => p.1 ≤ 4)).length + (d.filter (fun p => 4 < p.1)).length = d.length := by decide
 
 /-- Matura 2 b): ȳ₁ = (6,5 + 7,2 + 7,0 + 6,8 + 7,1)/5 = 34,6/5 = 6,92; ȳ₂ = (7,5 + 7,4 + 8,0 + 7,9 + 8,3)/5 =
 39,1/5 = 7,82; razlika 7,82 − 6,92 = 0,9 ure = 0,9·60 = 54 minut. -/

@@ -4,12 +4,14 @@ sha256: a0cc688c0a4dac39b3beebd923ea6f692b7b9e03135ceb3985d47db8055ff183
 Ni v Leanu: tabelne vrednosti Φ (Φ(1) = 0,3413, Φ(1,5) = 0,4332, Φ(2) = 0,4772, Φ(0,5), Φ(1,25), Φ(1,75))
 in pravilo 68–95–99,7 % (numerični integrali gostote; Mathlib nima numeričnih mej zanje) – zato so primeri
 z normalno porazdelitvijo dokazani kot račun s podanimi tabelnimi vrednostmi, P(X > 23) ≈ 0,13 % pri z = 3
-pa sploh ne (Φ(3) v lekciji ni podan); prevoja pri μ ± σ (drugi odvod gostote, ni dokazano); standardizacija
-kot zamenjava spremenljivke v integralu za splošna μ, σ (dokazano le P(Z < z) = 0,5 + Φ(z),
-P(Z > z) = 0,5 − Φ(z), Φ(−z) = −Φ(z) za standardno Z); histogram, simulacija, škatla z brki (risba),
+pa sploh ne (Φ(3) v lekciji ni podan); prevoja pri μ ± σ (zahtevno, še ni dokazano); standardizacija
+kot zamenjava spremenljivke v integralu za splošna μ, σ (zahtevno, še ni dokazano; dokazano le
+P(Z < z) = 0,5 + Φ(z), P(Z > z) = 0,5 − Φ(z), Φ(−z) = −Φ(z) za standardno Z); histogram, simulacija, škatla z brki (risba),
 pravilo za osamelce kot dogovor (dokazane so le meje in primerjave); vzorčni odklon in navodila za
 računalo; besedne razlage (premisli, ustna vprašanja, »Iz vsakdanjega življenja«, kviza 4 in 5 brez računa
 razen z-vrednosti in 0,5 − 0,3413).
+Opomba: `varianca_nenegativna` velja tudi pri N = 0, a le zaradi Leanovega dogovora x/0 = 0 (varianca 0);
+v lekciji je N ≥ 1.
 -/
 module
 
@@ -145,6 +147,39 @@ theorem f_nizja (μ σ₁ σ₂ : ℝ) (h1 : 0 < σ₁) (h12 : σ₁ < σ₂) : 
   exact mul_lt_mul_of_pos_right h12 hs
 
 /-- Predpostavke trditve `f_nizja` se dajo izpolniti (σ₁ = 1, σ₂ = 3). -/
+example : (0 : ℝ) < 1 ∧ (1 : ℝ) < 3 := by norm_num
+
+/-- Razlaga 5: večji σ da širšo krivuljo: za 0 < σ₁ < σ₂ je dovolj daleč od μ (|x − μ| > R)
+f_σ₂(x) > f_σ₁(x), repa krivulje s σ₂ sta višja. -/
+theorem f_sirsa (μ σ₁ σ₂ : ℝ) (h1 : 0 < σ₁) (h12 : σ₁ < σ₂) :
+    ∃ R : ℝ, ∀ x, R < |x - μ| → f μ σ₁ x < f μ σ₂ x := by
+  have h2 : 0 < σ₂ := by linarith
+  set c := 1 / (2 * σ₁ ^ 2) - 1 / (2 * σ₂ ^ 2) with hc
+  have hc0 : 0 < c := by
+    have : 1 / (2 * σ₂ ^ 2) < 1 / (2 * σ₁ ^ 2) :=
+      one_div_lt_one_div_of_lt (by positivity) (by nlinarith)
+    linarith
+  refine ⟨√(σ₂ / σ₁ / c), fun x hx => ?_⟩
+  have hpos : 0 < |x - μ| := lt_of_le_of_lt (Real.sqrt_nonneg _) hx
+  have ht : σ₂ / σ₁ / c < (x - μ) ^ 2 := by
+    have := (Real.sqrt_lt' hpos).mp hx
+    rwa [sq_abs] at this
+  set t := (x - μ) ^ 2 with htdef
+  have htc : σ₂ / σ₁ < t * c := by rwa [div_lt_iff₀ hc0] at ht
+  have hexp : σ₂ / σ₁ < exp (t * c) := by linarith [Real.add_one_le_exp (t * c)]
+  rw [div_lt_iff₀ h1] at hexp
+  have key : exp (-t / (2 * σ₂ ^ 2)) = exp (-t / (2 * σ₁ ^ 2)) * exp (t * c) := by
+    rw [← Real.exp_add]; congr 1; rw [hc]; field_simp; ring
+  unfold f
+  rw [← htdef, key]
+  have hs : 0 < √(2 * π) := Real.sqrt_pos.mpr (by positivity)
+  have hE : 0 < exp (-t / (2 * σ₁ ^ 2)) := Real.exp_pos _
+  rw [div_mul_eq_mul_div, div_mul_eq_mul_div, one_mul, one_mul,
+    div_lt_div_iff₀ (by positivity) (by positivity)]
+  have := mul_lt_mul_of_pos_left hexp (mul_pos hE hs)
+  nlinarith
+
+/-- Predpostavke trditve `f_sirsa` se dajo izpolniti (σ₁ = 1, σ₂ = 3). -/
 example : (0 : ℝ) < 1 ∧ (1 : ℝ) < 3 := by norm_num
 
 /-! ## Razlaga 6: standardizacija in Φ -/

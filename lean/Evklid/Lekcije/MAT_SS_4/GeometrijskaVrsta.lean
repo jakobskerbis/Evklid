@@ -116,12 +116,13 @@ example : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, 
 /-- Kdaj vrsta divergira: q = 1: 5 + 5 + … ima Sₙ = 5n; q > 1: 1 + 2 + 4 + … ima Sₙ = 2ⁿ − 1 ≥ n;
 q = −1: 1 − 1 + 1 − … ima delne vsote 1, 0, 1, 0. -/
 theorem divergenca_primeri (n : ℕ) :
-    S 5 1 n = 5 * n ∧ S 1 2 n = 2 ^ n - 1 ∧ (n : ℝ) ≤ 2 ^ n - 1 + 1 ∧
+    S 5 1 n = 5 * n ∧ S 1 2 n = 2 ^ n - 1 ∧ (n : ℝ) ≤ S 1 2 n ∧
     (S 1 (-1) 1 = 1 ∧ S 1 (-1) 2 = 0 ∧ S 1 (-1) 3 = 1 ∧ S 1 (-1) 4 = 0) := by
-  refine ⟨by simp [S]; ring, ?_, ?_, ?_⟩
-  · rw [(S_formula 1 2 (by norm_num) n).1]; norm_num
-  · have : (n : ℝ) < 2 ^ n := by exact_mod_cast Nat.lt_two_pow_self
-    linarith
+  have h2 : S 1 2 n = 2 ^ n - 1 := by rw [(S_formula 1 2 (by norm_num) n).1]; norm_num
+  refine ⟨by simp [S]; ring, h2, ?_, ?_⟩
+  · have : n + 1 ≤ 2 ^ n := Nat.lt_two_pow_self
+    have : (n : ℝ) + 1 ≤ 2 ^ n := by exact_mod_cast this
+    rw [h2]; linarith
   · refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num [S, sum_range_succ]
 
 /-- Simulacija: a₁ = 1, q = 0,5 ⇒ vsota 2; q = −0,5 ⇒ vsota 2/3; q = 1,1 ⇒ ne konvergira. -/
@@ -245,6 +246,22 @@ theorem napaka_delne (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
   rw [(S_formula a₁ q hq n).1, (S_formula a₁ q hq n).2]
   have : 1 - q ≠ 0 := sub_ne_zero.mpr (Ne.symm hq)
   field_simp; ring
+
+/-- Bolj natančno (iz `napaka_delne`): pri −1 < q < 0 in a₁ ≠ 0 delne vsote skačejo okoli vsote: napaki
+S − Sₙ = a₁qⁿ/(1 − q) in S − Sₙ₊₁ imata vedno nasprotna predznaka. -/
+theorem skace_okoli (a₁ q : ℝ) (ha : a₁ ≠ 0) (hq1 : -1 < q) (hq : q < 0) (n : ℕ) :
+    (a₁ / (1 - q) - S a₁ q n) * (a₁ / (1 - q) - S a₁ q (n + 1)) < 0 := by
+  have h1 : q ≠ 1 := by intro h; linarith
+  rw [(napaka_delne a₁ q h1 n).1, (napaka_delne a₁ q h1 (n + 1)).1]
+  have hx : a₁ * q ^ n / (1 - q) ≠ 0 :=
+    div_ne_zero (mul_ne_zero ha (pow_ne_zero _ hq.ne)) (by intro h; linarith)
+  have e : a₁ * q ^ n / (1 - q) * (a₁ * q ^ (n + 1) / (1 - q)) = q * (a₁ * q ^ n / (1 - q)) ^ 2 := by
+    rw [pow_succ]; ring
+  rw [e]
+  exact mul_neg_of_neg_of_pos hq (by positivity)
+
+/-- Predpostavke trditve `skace_okoli` se dajo izpolniti (a₁ = 12, q = −1/2 kot v Primeru 2). -/
+example : (12 : ℝ) ≠ 0 ∧ (-1 : ℝ) < -1 / 2 ∧ (-1 / 2 : ℝ) < 0 := by norm_num
 
 /-- Bolj natančno, trivialni primer: pri a₁ = 0 je vsota 0 za vsak q. -/
 theorem trivialni (q : ℝ) : Tendsto (S 0 q) atTop (𝓝 0) := by

@@ -9,6 +9,8 @@ integrala); izpeljava formule za prostornino vrtenine z rezinami (ustno vprašan
 V = π ∫ f² je v Leanu le zapis, preverjen na stožcu); »ploščina« kot geometrijski pojem (ploščina je
 zapisana kot ∫ |f| oziroma ∫ (g − f)); Preveri se, vprašanje 1 (pomen integrala hitrosti, ni računska
 trditev); razlaga »Arhimed«; točkovanje maturitetnih nalog.
+Opomba: `kviz3` (π ∫ (2f)² = 4 · π ∫ f²) je zapisan brez predpostavke o integrabilnosti; za f, pri kateri f²
+ni integrabilna, velja le zaradi Leanovega dogovora, da je integral take funkcije 0 (obe strani sta 0).
 -/
 module
 

@@ -5,7 +5,7 @@ Ni v Leanu: poskus z ravnilom, zgodbi o raketi in roverju, risbi, simulacija; po
 Preveri se 5 (supernova, brez dane funkcije); »prevoj, kjer funkcija ni definirana« za 1/x (pojem
 definicijskega območja; dokazano je le f''(x) = 2/x³ in menjava predznaka); branje abscis 0,4 in 2,6 z
 grafa (dokazani sta natančni ničli (3 ± √5)/2 z mejama); Naloga 2: približka ordinat prevojev 0,2162 in
-−3,7282 (eksponent iracionalnega števila, Mathlib nima dovolj natančnih mej; dokazani sta natančni vrednosti
+−3,7282 (eksponent iracionalnega števila; zahtevno, še ni dokazano; dokazani sta natančni vrednosti
 (6 ± 4√5)e^(−2 ∓ √5)); točkovanje.
 -/
 module
@@ -53,6 +53,12 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x) ∧
     ∀ x ∈ interior (univ : Set ℝ), (0:ℝ) < (fun _ => (2:ℝ)) x :=
   ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
     fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), fun _ _ => two_pos⟩
+
+example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) (-2 * x) x) ∧
+    (∀ x : ℝ, HasDerivAt (fun x : ℝ => -2 * x) ((fun _ => (-2:ℝ)) x) x) ∧
+    ∀ x ∈ interior (univ : Set ℝ), (fun _ => (-2:ℝ)) x < 0 :=
+  ⟨fun x => ((hasDerivAt_pow 2 x).neg).congr_deriv (by norm_num),
+    fun x => ((hasDerivAt_id' x).const_mul (-2)).congr_deriv (by ring), fun _ _ => by norm_num⟩
 
 /-- Razlaga 3 (pomen): graf konveksne funkcije leži nad vsako svojo tangento,
 f(x) + f'(x)(y − x) ≤ f(y). -/
@@ -119,6 +125,12 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x
     (0:ℝ) < (fun _ => (2:ℝ)) 0 :=
   ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
     fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), by norm_num, two_pos⟩
+
+example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -2 * x) x) x) ∧
+    (∀ x : ℝ, HasDerivAt (fun x : ℝ => -2 * x) ((fun _ => (-2:ℝ)) x) x) ∧ (fun x : ℝ => -2 * x) 0 = 0 ∧
+    (fun _ => (-2:ℝ)) 0 < 0 :=
+  ⟨fun x => ((hasDerivAt_pow 2 x).neg).congr_deriv (by norm_num),
+    fun x => ((hasDerivAt_id' x).const_mul (-2)).congr_deriv (by ring), by norm_num, by norm_num⟩
 
 /-! ## Razlaga, 1–3: primeri -/
 

@@ -2,8 +2,9 @@
 vir: content/lessons/MAT-SS-4/limita-in-zveznost-funkcije.md
 sha256: 3de9ce4407b607965e69f5202c1d5536ba47954ae2df786bd728dace7bd75d75
 Ni v Leanu: zvočnik in akustika v uvodu, »Drugače: Z analogijo« (praska, skok tona, piskanje) in
-simulacija; tabela v razlagi, vrstici x = 0,5 in x = 0,1 (Mathlib ima za sin le oceno |sin x − (x − x³/6)| ≤
-|x|⁵/100, ki za šest decimalk pri teh x ni dovolj natančna; vrstici 0,01 in 0,001 sta dokazani);
+simulacija; tabela v razlagi, vrstici x = 0,5 in x = 0,1 (ocena `Real.sin_bound`
+|sin x − (x − x³/6)| ≤ |x|⁴ · 5/96 za šest decimalk pri teh x ni dovolj natančna, natančnejša ocena je
+zahtevna, še ni dokazano; vrstici 0,01 in 0,001 sta dokazani);
 karakterizacija limite z zaporedji (Heine) kot splošna trditev; geometrijski dokaz sin x < x < tan x s
 ploščinami (neenakosti so dokazane z Mathlibom, ne s ploščinami); trditev »√x nima leve limite v 0«
 (v Mathlibu je √x = 0 za x < 0, zato tam leva limita obstaja); trditve »f(a) ne obstaja« (v Leanu je
@@ -93,7 +94,7 @@ noncomputable def g (x : ℝ) : ℝ := if x < 1 then x else x + 1
 
 /-- Razlaga, blok 3: leva limita g v 1 je 1, desna 2, limite v 1 ni; »Pogoste napake«: g(1) = 2. -/
 theorem skok : Tendsto g (𝓝[<] 1) (𝓝 1) ∧ Tendsto g (𝓝[>] 1) (𝓝 2) ∧
-    ¬ ∃ L, Tendsto g (𝓝[≠] 1) (𝓝 L) ∧ g 1 = 2 := by
+    (¬ ∃ L, Tendsto g (𝓝[≠] 1) (𝓝 L)) ∧ g 1 = 2 := by
   have hl : Tendsto g (𝓝[<] 1) (𝓝 1) := by
     have : Tendsto (fun x : ℝ => x) (𝓝[<] 1) (𝓝 1) := tendsto_nhdsWithin_of_tendsto_nhds tendsto_id
     refine this.congr' (eventually_nhdsWithin_of_forall fun x hx => ?_)
@@ -104,8 +105,8 @@ theorem skok : Tendsto g (𝓝[<] 1) (𝓝 1) ∧ Tendsto g (𝓝[>] 1) (𝓝 2)
     norm_num at this
     refine this.congr' (eventually_nhdsWithin_of_forall fun x hx => ?_)
     simp [g, not_lt.mpr (le_of_lt (show 1 < x from hx))]
-  refine ⟨hl, hr, ?_⟩
-  rintro ⟨L, hL, -⟩
+  refine ⟨hl, hr, ?_, by norm_num [g]⟩
+  rintro ⟨L, hL⟩
   have h1 := tendsto_nhds_unique (hL.mono_left (nhdsWithin_mono _ (lt_podmn 1))) hl
   have h2 := tendsto_nhds_unique (hL.mono_left (nhdsWithin_mono _ (gt_podmn 1))) hr
   linarith
@@ -168,6 +169,9 @@ theorem podvojena_razdalja (P r : ℝ) : P / (4 * π * (2 * r) ^ 2) = (P / (4 * 
 /-- Razlaga, blok 7: luknjo pri sin x / x zakrpamo z f(0) = 1; tako dopolnjena funkcija je zvezna v 0. -/
 theorem luknja_zakrpana : ContinuousAt (Function.update (fun x : ℝ => sin x / x) 0 1) 0 :=
   continuousAt_update_same.mpr limita_sinc
+
+/-- Razlaga, blok 8: √x je zvezna na [0, ∞) (v krajišču 0 šteje le desna limita). -/
+theorem sqrt_zvezna : ContinuousOn Real.sqrt (Ici 0) := Real.continuous_sqrt.continuousOn
 
 /-- Razlaga, blok 8, primer (in vrstica `resi: x^2-4=0`): x² − 4 = 0 natanko pri x = ±2;
 f(x) = (x + 1)/(x² − 4) je zvezna, kjer je x² − 4 ≠ 0 (torej na (−∞, −2), (−2, 2), (2, ∞)),

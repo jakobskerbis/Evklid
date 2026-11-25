@@ -6,8 +6,8 @@ analogija s fotografijo in nahrbtnikom ter navigacija (dokazana so le njihova š
 prebivalcev Slovenije (statistični podatek), ustni odgovori kot besedilo (dokazane so formule), splošna formula
 za permutacije s ponavljanjem kot število razvrstitev (Mathlib nima izreka, ki šteje različne razvrstitve
 multimnožice; dokazana sta primera ANA in MAMA s štetjem besed, POPOTNIK pa kot multinomski koeficient), štetje
-v Nalogi 1 in Nalogi 2 d) kot množica števil oz. funkcij (dokazani so računi; Naloga 2 b) in c) sta preverjeni
-tudi s štetjem podmnožic), izbira formule glede na tri vprašanja (postopek).
+v Nalogi 2 d) kot množica funkcij (dokazan je račun; Naloga 1 je preverjena s štetjem štirimestnih števil,
+Naloga 2 b) in c) pa s štetjem podmnožic), izbira formule glede na tri vprašanja (postopek).
 -/
 module
 
@@ -220,8 +220,11 @@ theorem pozabljen_imenovalec : Nat.factorial 7 / Nat.factorial 3 = 840 ∧ Nat.c
 
 /-! ## Za maturo -/
 
-/-- Naloga 1: 5·5·4·3 = 300 štirimestnih števil. -/
-theorem naloga1 : 5 * 5 * 4 * 3 = 300 := by norm_num
+/-- Naloga 1: 5·5·4·3 = 300 štirimestnih števil s števkami 0–5 brez ponavljanja; preverjeno s štetjem vseh
+štirimestnih števil (1000–9999), ki imajo različne števke, vse največ 5. -/
+theorem naloga1 : 5 * 5 * 4 * 3 = 300 ∧
+    #((Icc 1000 9999).filter (fun n => (Nat.digits 10 n).Nodup ∧ ∀ d ∈ Nat.digits 10 n, d ≤ 5)) = 300 := by
+  refine ⟨by norm_num, by decide +kernel⟩
 
 /-- Naloga 2 a): `C(14,3) = 14·13·12/(3·2·1) = 364`. -/
 theorem naloga2_a : #((range 14).powersetCard 3) = Nat.choose 14 3 ∧
