@@ -75,6 +75,8 @@ $$|A \cup B| = |A| + |B| - |A \cap B|.$$
 
 Elemente preseka bi pri vsoti $|A| + |B|$ prešteli dvakrat, zato jih enkrat odštejemo. Če sta množici disjunktni, je $|A \cap B| = 0$ in se moči kar seštejeta. Pri treh množicah je najbolj zanesljivo, da Vennov diagram izpolnjuješ **od sredine navzven**: najprej območje, ki je v vseh treh množicah, nato območja, ki so v natanko dveh, in nazadnje območja, ki so v natanko eni.
 
+V simulaciji spodaj (»Množice in operacije z njimi«) izberi A = soda števila in B = deljiva s 3 (univerzalna množica so števila od $1$ do $20$). Preklapljaj med unijo, presekom, razliko in komplementom ter opazuj, katera območja diagrama se obarvajo. Nato preveri štetje: $|A \cup B| = 10 + 6 - 3 = 13$.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji)

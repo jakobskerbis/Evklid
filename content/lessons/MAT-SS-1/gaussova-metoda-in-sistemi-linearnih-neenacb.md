@@ -71,6 +71,8 @@ točka: 3 | | prazna
 
 Če se intervala ne prekrivata, sistem nima rešitve.
 
+V simulaciji spodaj (»Rešitve neenačb kot intervali«) izberi ∩ in nastavi interval A od $-1$ do $3$ (levo krajišče vključeno, desno ne). Nato drsnik »B od« počasi premikaj v desno in opazuj, pri kateri vrednosti presek postane prazna množica. Zakaj se to zgodi že pri $3$?
+
 **5. Neenačba z dvema neznankama.** Premica $y = 2$ razdeli ravnino na dva dela. Točke z $y > 2$ so nad njo, točke z $y < 2$ pod njo. Vsak del imenujemo **polravnina**, premica je njen **rob**. Splošno: rešitev neenačbe $ax + by < c$ je polravnina, ki jo omejuje premica $ax + by = c$.
 
 Katero polravnino vzamemo, odloči **testna točka**, ki ni na premici, najraje $(0, 0)$. Če ustreza neenačbi, je rešitev polravnina s to točko, sicer druga. Rob rišemo **polno**, če velja $\le$ ali $\ge$ (točke na robu so rešitve), in **črtkano** pri $<$ ali $>$ (niso rešitve).

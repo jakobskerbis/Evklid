@@ -100,6 +100,8 @@ točka: -1 | −1 | prazna
 točka: 3 | 3
 :::
 
+V simulaciji spodaj (»Parabola in njena lega glede na os«) pusti a = 1, b = −1 in c = −2 (ničli $-1$ in $2$) ter preklapljaj znak med »> 0« in »< 0«. Opazuj, da je rešitev enkrat zunaj ničel, $(-\infty, -1) \cup (2, \infty)$, drugič pa med njima, $(-1, 2)$.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): parabola in premica

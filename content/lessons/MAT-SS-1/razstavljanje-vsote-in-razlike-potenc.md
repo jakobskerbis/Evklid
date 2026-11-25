@@ -105,6 +105,8 @@ Pri razliki sodih potenc **najprej uporabi razliko kvadratov**. Razstavimo $x^6 
 
 Prva pot takoj pride do konca, druga skrije dva faktorja v enem.
 
+V simulaciji spodaj (»Množenje izrazov s ploščinami«) nastavi a = 3 in b = −3. Opazuj, kako se pravokotnika $3x$ in $-3x$ izničita, da ostane $(x + 3)(x - 3) = x^2 - 9$: to je razlika kvadratov, s katero začneš pri vsaki razliki sodih potenc.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): razlika kubov

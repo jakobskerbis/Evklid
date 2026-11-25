@@ -56,6 +56,8 @@ Absolutna napaka ima isto enoto kot količina.
 
 *Preizkus v eni vrstici:* v katerem intervalu je točna vrednost, če je $t = (12{,}0 \pm 0{,}2)\,\mathrm{s}$? Rešitev: $[11{,}8;\ 12{,}2]$.
 
+V simulaciji spodaj (»Mestne vrednosti in zaokroževanje«) zaokroži začetno število $3\,405\,127$ na tisočice in nato na desettisočice. Odloča števka desno od izbranega mesta, zato dobiš $3\,405\,000$ in $3\,410\,000$. Izračunaj še absolutni napaki obeh približkov: $127$ in $4873$.
+
 **4. Relativna napaka.** Vrnimo se k telefonu. Absolutna napaka je obakrat $0{,}3\,\mathrm{km}$, a pri koči je to velik delež poti, pri morju pa majhen. Ta delež je **relativna napaka**:
 
 $$\delta x = \frac{\Delta x}{|x|}$$

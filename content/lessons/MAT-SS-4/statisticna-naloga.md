@@ -76,6 +76,8 @@ Povezanost lahko pojasni tretja spremenljivka, na primer velikost vasi ali štev
 
 **4. Zbiranje podatkov.** Vse enote, o katerih nas kaj zanima, so **populacija** (vsi julijski dnevi v kraju, vsi dijaki šole). Navadno izmerimo le del, **vzorec**. Ta mora biti **reprezentativen**: podoben populaciji v vsem, kar bi lahko vplivalo na odgovor. Podatke dobimo z merjenjem (termometer), opazovanjem (štetje cvrkov), anketo (vprašalnik) ali iz obstoječih virov, na primer arhiva vremenske postaje. Anketno vprašanje naj bo jasno in ne sme namigovati odgovora.
 
+V simulaciji spodaj (»Obdelava zbranih podatkov«) nastavi število podatkov na $20$ in nekajkrat klikni »Novi podatki«. Opazuj, kako se povprečje in standardni odklon od vzorca do vzorca spreminjata. Ponovi pri $300$ podatkih: vrednosti se skoraj ne premaknejo, zato večji vzorec da zanesljivejši sklep.
+
 **5. Statistična naloga v šestih korakih.** Empirična preiskava, to je preiskava na podlagi zbranih podatkov, gre takole:
 
 1. **Tema**: kaj te zanima (vreme in zrak v domačem kraju).

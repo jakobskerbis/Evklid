@@ -141,6 +141,8 @@ Ne seka. Ker je $a = 2 > 0$, je parabola odprta navzgor in teme je njena najniž
 
 *Preveri:* kje je teme $f(x) = x^2 - 4x + 1$? ($p = 2$, $q = f(2) = 4 - 8 + 1 = -3$, torej $T(2, -3)$.)
 
+V simulaciji spodaj (»Kvadratna funkcija v temenski obliki«) nastavi p = 2. Opazuj, da se parabola premakne v desno, čeprav v oklepaju piše $x - 2$. Nato spreminjaj q in a: teme $T(p, q)$ se premika navpično, pri negativnem a pa se parabola obrne navzdol.
+
 **6. Ničle.** Ničla je vrednost $x$, pri kateri je $f(x) = 0$; tam graf seka ali se dotika osi $x$. Splošni obrazec sledi v lekciji Kvadratna enačba; za zdaj jih iščemo na dva načina:
 
 - **iz temenske oblike**: rešimo $a(x - p)^2 + q = 0$, torej $(x - p)^2 = -\dfrac{q}{a}$, in korenimo (ne pozabi na $\pm$);

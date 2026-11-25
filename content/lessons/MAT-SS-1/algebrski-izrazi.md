@@ -62,6 +62,8 @@ Razlika je torej vedno $2ab$. Zakaj ravno $2ab$? Kvadrat s stranico $a + b$ (dno
 
 Dobimo dva kvadrata, $a^2$ in $b^2$, ter dva pravokotnika $ab$.
 
+V simulaciji spodaj (»Množenje izrazov in kvadrat dvočlenika«) nastavi drsnika a in b na isto število, na primer $3$: kvadrat $(x + 3)^2$ razpade na kvadrat $x^2$, dva enaka pravokotnika $3x$ in kvadratek $9$. Nato nastavi b = −3 in opazuj, da se pravokotnika $3x$ in $-3x$ (rdeči deli imajo negativno ploščino) izničita, zato ostane $(x + 3)(x - 3) = x^2 - 9$.
+
 Isto da račun: $(a + b)^2 = (a + b)(a + b) = a^2 + ab + ba + b^2$. Ker je $ba = ab$, velja pravilo za **kvadrat dvočlenika**:
 
 $$(a + b)^2 = a^2 + 2ab + b^2$$

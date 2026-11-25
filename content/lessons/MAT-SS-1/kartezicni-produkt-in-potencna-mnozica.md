@@ -76,6 +76,8 @@ točka: 3; 2 | (3, 2) | nad desno
 
 Mešan primer: $\{1, 2, 3\} \times [0, 2]$ so tri navpične daljice, pri $x = 1$, $x = 2$ in $x = 3$, vsaka od $y = 0$ do $y = 2$.
 
+V simulaciji spodaj (»Urejeni pari v koordinatni ravnini«) v načinu »Točka« povleci točko na $(2, 3)$ in nato na $(3, 2)$: dobiš dve različni točki, zato je vrstni red v urejenem paru pomemben. V načinu »Zadeni točko« vadi, da vedno najprej bereš $x$ in šele nato $y$.
+
 **6. Potenčna množica.** Na izletu lahko obiščeš kraje iz $A = \{\text{Piran}, \text{Bled}\}$. Možni načrti so: nobenega kraja, samo Piran, samo Bled, oba. Vsak načrt je podmnožica množice $A$. **Potenčna množica** $\mathcal{P}(A)$ je množica vseh podmnožic množice $A$:
 
 $$\mathcal{P}(A) = \{X \mid X \subseteq A\}$$

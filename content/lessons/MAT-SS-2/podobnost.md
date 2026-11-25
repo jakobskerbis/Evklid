@@ -127,6 +127,8 @@ točka: 8; 2 | B' | pod
 točka: 6; 6 | C' | levo
 :::
 
+V simulaciji spodaj (»Podobnost in središčni razteg«) nastavi k = 2 in nato k = 0,5. Opazuj, da je razmerje stranic $k$, razmerje ploščin pa $4$ oziroma $0{,}25$, torej $k^2$. Kje leži slika, ko nastaviš negativen k?
+
 ## Rešeni primeri
 
 ### Primer 1: koeficient podobnosti in neznane stranice

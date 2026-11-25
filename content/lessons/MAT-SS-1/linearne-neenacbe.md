@@ -44,6 +44,8 @@ $x = -5$ je rešitev, ker $5 > 3$. $x = 0$ ni, ker $0 > 3$ ne drži. Rešitve so
 
 *Hitro preveri:* kaj dobiš iz $-2x < 8$? ($x > -4$, ker deliš z negativnim številom.)
 
+V simulaciji spodaj (»Linearne neenačbe«) pusti b = 1, c = 7 in znak <, drsnik a pa premakni na $-2$. Neenačba $-2x + 1 < 7$ ima rešitev $x > -3$: znak se je pri deljenju z $-2$ obrnil. Z drsnikom »preizkusi x« preveri, da je $x = 0$ rešitev, $x = -5$ pa ne.
+
 **4. Zapis rešitve kot interval.** Množico rešitev zapišemo na številski premici in z intervalom:
 
 | Neenačba | Interval |

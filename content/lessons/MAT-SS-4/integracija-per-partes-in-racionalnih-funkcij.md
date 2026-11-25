@@ -37,6 +37,8 @@ $$\int x\,e^x\,dx = x\,e^x - \int e^x\,dx = x\,e^x - e^x + C$$
 
 Preizkus: $(x\,e^x - e^x)' = e^x + x\,e^x - e^x = x\,e^x$. Pravilno.
 
+V simulaciji spodaj (»Družina primitivnih funkcij«) izberi funkcijo in premikaj drsnik C. Opazuj, da se graf primitivne funkcije le premakne navzgor ali navzdol, naklon v vsaki točki pa ostane enak $f(x)$. Zato vsak rezultat, tudi tisti po metodi per partes, zapišemo s $+ C$.
+
 **4. Kako izbrati $u$.** Za $u$ vzemi del, ki se z odvajanjem poenostavi: polinom (stopnja se zmanjša) ali $\ln x$ (postane $\frac{1}{x}$). Za $v'$ vzemi del, ki ga znaš integrirati in se pri tem ne zaplete: $e^x$, $\sin x$, $\cos x$.
 
 :::premisli

@@ -100,6 +100,8 @@ Krajše oznake: »krožnica« je enotska krožnica, »produkt« skalarni produkt
 
 **6. Preverjanje in ko obtičiš.** V zadnjih desetih minutah preveri rezultate na tri načine: vstavi rešitev v prvotno enačbo, preveri pogoje (koren, logaritem, imenovalec) in oceni smiselnost (čas in dolžina sta pozitivna, verjetnost je med $0$ in $1$). Pri nalogi, kjer ne veš naprej, zapiši podatke, formulo s priloge in nastavek; ena točka je pogosto prav za nastavek. Del b) je velikokrat rešljiv tudi brez dela a).
 
+V simulaciji spodaj (»Zbirka simulacij za maturo«) v izbirniku »simulacija« izberi »Kvadratna funkcija« in nastavi a = 1, p = 2 in q = −1. Preberi ničli $1$ in $3$ ter teme $(2, -1)$: tako na vaji preveriš rezultat, ki si ga izračunal na roke.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): lokvanji, kratka naloga, 3 točke, pola 1

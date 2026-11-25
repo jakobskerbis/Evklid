@@ -2,7 +2,7 @@
 // Uporabljata ga scripts/check-lesson.js in testi.
 import katex from "katex";
 import { napakaIzraza } from "../public/mat/izris.js";
-import { parseLesson, expandFormulaBlocks } from "./textbook.js";
+import { parseLesson, expandFormulaBlocks, simsFor } from "./textbook.js";
 import { drawingErrors, DRAW_RE } from "./risbe.js";
 import { parseAnswerLine } from "../public/preveri-se.js";
 import { getTopic } from "./curriculum.js";
@@ -161,6 +161,13 @@ export function checkLessonSource(src, topicId) {
   if (thinks.length < 2) warn(`v razlagi sta priporočeni 2 vmesni vprašanji »:::premisli« (${thinks.length})`);
   const noWhy = checks.reduce((n, c) => n + (c.type ? 0 : c.options.filter((_, i) => i !== c.correct && !c.optionWhy?.[i]).length), 0);
   if (checks.length && noWhy) warn(`${noWhy} napačnih možnosti v »Preveri se« nima razlage »~ …«`);
+  // §1.9: simulacija pod lekcijo (public/sim/katalog.js ali »demo:« v glavi) dobi vsaj en stavek, kaj naj učenec v njej poskusi.
+  const sims = topicId && getTopic(topicId) ? simsFor(topicId, lesson) : [];
+  if (sims.length && !/simulacij/i.test(body)) {
+    // Simulacija iz »demo:« ima splošen naslov »Interaktivni poskus«; raje imenujemo tisto iz kataloga.
+    const t = (sims.find((d) => d.title !== "Interaktivni poskus") || sims[0]).title;
+    warn(`pod lekcijo je simulacija »${t}«, besedilo pa ne pove, kaj naj učenec v njej naredi (docs/kakovost.md §1.9): dodaj stavek »V simulaciji spodaj (»${t}«) nastavi/poskusi … in opazuj …«`);
+  }
 
   // Kviz (content/lessons/README.md, »Preveri se«): izbira – natanko en »+«, vsaj 3 možnosti, brez ponavljanja;
   // vpiši število – natanko en »= vrednost | toleranca«, »~ vrednost | zakaj«; razvrsti – 3 do 6 vrstic »1.« … po vrsti.
