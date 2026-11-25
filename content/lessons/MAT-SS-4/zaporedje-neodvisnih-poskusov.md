@@ -67,7 +67,7 @@ $$P_n(0) + P_n(1) + \dots + P_n(n) = (q+p)^n = 1^n = 1$$
 
 in Bernoullijeva formula je le en člen binomskega razvoja.
 
-V simulaciji spodaj (»Ponavljanje neodvisnih poskusov«) izberi met kovanca, klikni »Znova« in nato trikrat »1 poskus«; preštej grbe. Serijo nekajkrat ponovi in opazuj, kako pogosto padeta natanko dva grba: na dolgi rok v približno $3$ od $8$ serij, kot napove $P_3(2) = \binom{3}{2} \cdot 0{,}5^2 \cdot 0{,}5 = \frac{3}{8}$.
+V simulaciji spodaj (»Ponavljanje neodvisnih poskusov«) izberi met kovanca, klikni »Znova« in nato trikrat »1 poskus«; po vsakem metu preberi »zadnji izid« in preštej grbe. Serijo ponovi vsaj $16$-krat in si zapisuj, kolikokrat padeta natanko dva grba: pričakuješ približno $6$ takih serij, torej $3$ od $8$, kot napove $P_3(2) = \binom{3}{2} \cdot 0{,}5^2 \cdot 0{,}5 = \frac{3}{8}$.
 
 **5. »Vsaj« in »največ«.** »Vsaj $k$« pomeni $k$ ali več, »največ $k$« pomeni $k$ ali manj. Kadar bi morali sešteti veliko členov, je krajša pot nasprotni dogodek. Nasprotni dogodek dogodka »vsaj en uspeh« je »nobenega uspeha«:
 

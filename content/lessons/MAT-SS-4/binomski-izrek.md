@@ -123,7 +123,7 @@ $$T_{k+1} = \binom{n}{k}a^{n-k}b^k$$
 
 Pravilo sosedov v simbolih je $\binom{n}{k} + \binom{n}{k+1} = \binom{n+1}{k+1}$, simetrija pa $\binom{n}{k} = \binom{n}{n-k}$.
 
-V simulaciji spodaj (»Kombinacije in binomski simbol«) nastavi n = 5 in k = 2 ter izklopi »vrstni red je pomemben«: simulacija našteje vseh $\binom{5}{2} = 10$ izborov. Nato nastavi k = 3 in opazuj, da jih je spet $10$. To je simetrija Pascalovega trikotnika.
+V simulaciji spodaj (»Kombinacije in binomski simbol«) nastavi n = 5 in k = 2 ter izklopi »vrstni red je pomemben«: simulacija našteje vseh $\binom{5}{2} = 10$ izborov. Nato nastavi k = 3 in opazuj, da jih je spet $10$. To je simetrija $\binom{5}{2} = \binom{5}{3}$ v Pascalovem trikotniku: vsak izbor dveh črk hkrati določa tri neizbrane.
 
 **6. Dvočlenik z minusom.** $(a-b)^n$ zapišemo kot $(a+(-b))^n$. Liha potenca števila $-b$ je negativna, soda pozitivna, zato se predznaki izmenjujejo:
 

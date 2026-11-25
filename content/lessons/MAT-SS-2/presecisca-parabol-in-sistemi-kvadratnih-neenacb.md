@@ -100,7 +100,7 @@ točka: -1 | −1 | prazna
 točka: 3 | 3
 :::
 
-V simulaciji spodaj (»Parabola in njena lega glede na os«) pusti a = 1, b = −1 in c = −2 (ničli $-1$ in $2$) ter preklapljaj znak med »> 0« in »< 0«. Opazuj, da je rešitev enkrat zunaj ničel, $(-\infty, -1) \cup (2, \infty)$, drugič pa med njima, $(-1, 2)$.
+V simulaciji spodaj (»Parabola in njena lega glede na os«) nastavi a = 1, b = −2, c = −3 in znak »≤ 0«: rešitev je $[-1, 3]$. Nato nastavi a = −1, b = 4, c = 5 in znak »> 0«: rešitev je $(-1, 5)$. Opazuj, da je presek obeh, $(-1, 3]$, rešitev sistema z zgornje slike.
 
 ## Rešeni primeri
 

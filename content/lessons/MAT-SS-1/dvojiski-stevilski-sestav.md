@@ -15,7 +15,7 @@ Ne. Vesoljska sonda daleč za Neptunom pošilja na Zemljo fotografije, meritve t
 
 **1. Kaj že znaš: desetiški sestav.** Število $307$ pomeni $3$ stotice, $0$ desetic in $7$ enic: $3 \cdot 100 + 0 \cdot 10 + 7 \cdot 1 = 307$. Vsako mesto ima svojo **mestno vrednost**: $1$, $10$, $100$, $1000$ … Vsaka je desetkrat večja od tiste desno od nje. Ko pri štetju porabiš vseh deset števk (po $9$), zapišeš $0$ in na naslednje mesto preneseš $1$.
 
-V simulaciji spodaj (»Mestne vrednosti števke«) s puščicama ▲ in ▼ nastavi število $307$ in preberi razčlenitev $3 \cdot 100 + 7 \cdot 1$. Opazuj, da je vsaka mestna vrednost $10$-krat večja od tiste desno od nje; v dvojiškem sestavu bo le $2$-krat večja.
+V simulaciji spodaj (»Mestne vrednosti števke«) s puščicama ▲ in ▼ nastavi število $307$ in preberi razčlenitev $3 \cdot 100 + 7 \cdot 1$. Opazuj, da člena $0 \cdot 10$ v razčlenitvi ni, ničla v zapisu pa mora ostati: brez nje bi bilo $37$. Enako bo pri dvojiških zapisih, kot je $101$.
 
 **2. Štetje z dvema števkama.** Kaj pa, če imaš samo števki $0$ in $1$? Šteješ po istem pravilu, le da prenašaš že po $1$. Za $0$ in $1$ ni težav. Število $2$ nima svoje števke, zato zapišeš $0$ in preneseš: $10$. Nadaljuj:
 

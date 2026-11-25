@@ -67,7 +67,7 @@ Dokaz potrebuje sinusni izrek, ki ga spoznaš v 3. letniku. Formulo zdaj uporabl
 
 Zdaj lahko odgovorimo še na drugo vprašanje reševalcev. Oddajnik, enako oddaljen od vseh treh točk, stoji v središču očrtane krožnice: $R = \dfrac{5 \cdot 5 \cdot 6}{4 \cdot 12} = \dfrac{150}{48} = 3{,}125$. Seči mora vsaj $3{,}125\,\text{km}$ (približno $3{,}1\,\text{km}$).
 
-V simulaciji spodaj (»Središči očrtanega in včrtanega kroga«) vklopi simetrale stranic in simetrale kotov, nato povleci oglišče $C$ tako, da je trikotnik topokoten. Opazuj, da središče očrtane krožnice pride iz trikotnika, središče včrtane krožnice pa ostane vedno v njem.
+V simulaciji spodaj (»Središči očrtanega in včrtanega kroga«) vklopi simetrale stranic in simetrale kotov, nato povleci oglišče $C$ tako, da je trikotnik topokoten. Opazuj, da središče očrtane krožnice pride iz trikotnika, središče včrtane krožnice (v simulaciji S) pa ostane vedno v njem.
 
 **5. Preizkus na trikotniku $3$, $4$, $5$.** Trikotnik na risbi je pravokoten. Polobseg je $s = 6$, Heron da $S = \sqrt{6 \cdot 3 \cdot 2 \cdot 1} = \sqrt{36} = 6$, kar se ujema s $\dfrac{3 \cdot 4}{2} = 6$. Dalje $r = \dfrac{6}{6} = 1$ (središče $I$ je res v $(1, 1)$) in $R = \dfrac{3 \cdot 4 \cdot 5}{4 \cdot 6} = 2{,}5$. To je ravno $\dfrac{c}{2}$: po Talesovem izreku je hipotenuza premer očrtane krožnice. Formuli se ujemata z vsem, kar že veš.
 

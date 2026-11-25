@@ -57,7 +57,7 @@ $$G_0 \cdot r^n = a \cdot \frac{r^n - 1}{r - 1} \qquad \text{(enačba)}$$
 
 Isto enačbo lahko preračunamo na dan najema: vsak obrok delimo z $r$ tolikokrat, kolikor let je oddaljen od najema, in vsota je $G_0$.
 
-V simulaciji spodaj (»Obrestno obrestovanje skozi leta«) nastavi glavnico $4000$ €, obrestno mero $5\,\%$ in $4$ leta. Brez obrokov bi dolg narasel na $4000 \cdot 1{,}05^4 \approx 4862{,}03$ €: to je vrednost posojila ob koncu četrtega leta, s katero primerjamo vse štiri obroke.
+V simulaciji spodaj (»Obrestno obrestovanje skozi leta«) nastavi glavnico $4000$ €, obrestno mero $5\,\%$ in $4$ leta. Brez obrokov bi dolg narasel na $4000 \cdot 1{,}05^4 \approx 4862{,}03$ €: to je vrednost posojila ob koncu četrtega leta, s katero primerjamo vrednost vseh štirih obrokov ob koncu četrtega leta.
 
 **4. Anuiteta.** Enak obrok, ki ga plačujemo ob koncu vsakega obdobja in pokrije obresti ter del dolga, se imenuje **anuiteta**. Iz enačbe izrazimo $a$:
 

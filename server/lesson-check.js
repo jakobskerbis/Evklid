@@ -163,7 +163,7 @@ export function checkLessonSource(src, topicId) {
   if (checks.length && noWhy) warn(`${noWhy} napačnih možnosti v »Preveri se« nima razlage »~ …«`);
   // §1.9: simulacija pod lekcijo (public/sim/katalog.js ali »demo:« v glavi) dobi vsaj en stavek, kaj naj učenec v njej poskusi.
   const sims = topicId && getTopic(topicId) ? simsFor(topicId, lesson) : [];
-  if (sims.length && !/simulacij/i.test(body)) {
+  if (sims.length && !/simulacij/i.test(bodyLesson)) {
     // Simulacija iz »demo:« ima splošen naslov »Interaktivni poskus«; raje imenujemo tisto iz kataloga.
     const t = (sims.find((d) => d.title !== "Interaktivni poskus") || sims[0]).title;
     warn(`pod lekcijo je simulacija »${t}«, besedilo pa ne pove, kaj naj učenec v njej naredi (docs/kakovost.md §1.9): dodaj stavek »V simulaciji spodaj (»${t}«) nastavi/poskusi … in opazuj …«`);

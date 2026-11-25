@@ -130,8 +130,6 @@ Slika kaže graf pri $a = 2$: stopnica od $(0, 1)$ za $1$ v desno pripelje na vi
 
 **7. Zrcaljenje.** Ker je $\left(\dfrac{1}{a}\right)^x = a^{-x}$, je graf funkcije $y = \left(\dfrac{1}{a}\right)^x$ zrcalna slika grafa $y = a^x$ čez os $y$. Primer iz točke 4: vrednost $2^x$ pri $x = 3$ je enaka vrednosti $\left(\frac{1}{2}\right)^x$ pri $x = -3$.
 
-V simulaciji spodaj (»Eksponentna funkcija«) nastavi a = 2 in nato a = 0,5. Opazuj, da sta grafa zrcalna čez os $y$ in da oba gresta skozi točko $(0, 1)$. Kaj se zgodi z grafom pri a = 1?
-
 **8. Število $e$.** V naravoslovju najpogosteje uporabljamo osnovo $e \approx 2{,}718$, **Eulerjevo število**: z njo opisujemo zvezno rast in razpad (obrestovanje, radioaktivni razpad), spet pa jo srečaš pri naravnem logaritmu. Funkcijo $f(x) = e^x$ imenujemo **naravna eksponentna funkcija**. Ker je $2 < e < 3$, leži njen graf med grafoma $2^x$ in $3^x$. Od kod $e$? Zamisli si banko, ki $1$ € obrestuje s $100\,\%$ na leto, obresti pripiše $n$-krat, vsakič $\frac{100}{n}\,\%$. Po letu imamo $\left(1 + \frac{1}{n}\right)^n$ €: pri $n = 1, 2, 12, 365$ dobimo $2;\ 2{,}25;\ 2{,}613;\ 2{,}7146$. Z večanjem $n$ se vrednosti približujejo številu $e = 2{,}71828\ldots$.
 
 **9. Premiki grafa.** Iz grafa $y = a^x$ dobimo grafe sorodnih funkcij:
@@ -158,6 +156,8 @@ podnapis: p = {p}, q = {q}: točka (0, 1) se premakne v ({p}, {1+q}), vodoravna 
 :::
 
 Slika kaže $y = 2^{x-2} - 2$: točka $(0, 1)$ osnovnega grafa se preseli v $(2, -1)$, asimptota pa z osi $x$ na premico $y = -2$. Ker je asimptota zdaj pod osjo $x$, graf seka os $x$: ničla je pri $x = 3$, saj je $2^{1} - 2 = 0$. V aplikaciji premikaj najprej samo $p$: graf drsi levo in desno, asimptota miruje. Nato samo $q$: asimptota se premika skupaj z grafom. Pri $q \ge 0$ ničla izgine, ker je ves graf nad osjo $x$.
+
+V simulaciji spodaj (»Eksponentna funkcija«) pri a = 2 premakni drsnik q na $-2$. Opazuj, da se vodoravna asimptota premakne na $y = -2$, točka $(0, 1)$ pa v $(0, -1)$. Napovej, kam se ta točka premakne, če nastaviš še p = 1, in preveri.
 
 **10. Primerjanje potenc.** Ker je funkcija pri $a > 1$ strogo naraščajoča, iz $x_1 < x_2$ sledi $a^{x_1} < a^{x_2}$. Pri $0 < a < 1$ je strogo padajoča, zato iz $x_1 < x_2$ sledi $a^{x_1} > a^{x_2}$. Potence z isto osnovo tako primerjamo brez računanja.
 

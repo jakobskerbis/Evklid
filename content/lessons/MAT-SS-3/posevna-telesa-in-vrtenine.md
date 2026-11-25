@@ -79,7 +79,7 @@ Pravokotni trikotnik s katetama $3\,\mathrm{cm}$ in $4\,\mathrm{cm}$ zavrtiš en
 Okoli krajše katete. Os $3$, polmer $4$: $V = \frac{\pi \cdot 16 \cdot 3}{3} = 16\pi$. Os $4$, polmer $3$: $V = \frac{\pi \cdot 9 \cdot 4}{3} = 12\pi$. Polmer je v formuli na kvadrat, višina ne, zato zmaga večji polmer.
 :::
 
-V simulaciji spodaj (»Valj, stožec in krogla«) izberi valj z r = 2 in v = 4, nato stožec z enakima r in v. Primerjaj prostornini (približno $50{,}3$ in $16{,}8$): stožec je natanko trikrat manjši od valja z isto osnovno ploskvijo in višino.
+V simulaciji spodaj (»Valj, stožec in krogla«) izberi valj z r = 2 in v = 4, nato stožec z enakima r in v. Primerjaj prostornini (približno $50{,}3$ in $16{,}8$): stožec ima natanko tretjino prostornine valja z isto osnovno ploskvijo in višino.
 
 ## Rešeni primeri
 

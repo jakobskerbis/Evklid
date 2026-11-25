@@ -62,8 +62,6 @@ Razlika je torej vedno $2ab$. Zakaj ravno $2ab$? Kvadrat s stranico $a + b$ (dno
 
 Dobimo dva kvadrata, $a^2$ in $b^2$, ter dva pravokotnika $ab$.
 
-V simulaciji spodaj (»Množenje izrazov in kvadrat dvočlenika«) nastavi drsnika a in b na isto število, na primer $3$: kvadrat $(x + 3)^2$ razpade na kvadrat $x^2$, dva enaka pravokotnika $3x$ in kvadratek $9$. Nato nastavi b = −3 in opazuj, da se pravokotnika $3x$ in $-3x$ (rdeči deli imajo negativno ploščino) izničita, zato ostane $(x + 3)(x - 3) = x^2 - 9$.
-
 Isto da račun: $(a + b)^2 = (a + b)(a + b) = a^2 + ab + ba + b^2$. Ker je $ba = ab$, velja pravilo za **kvadrat dvočlenika**:
 
 $$(a + b)^2 = a^2 + 2ab + b^2$$
@@ -72,11 +70,15 @@ $$(a - b)^2 = a^2 - 2ab + b^2$$
 
 Z besedami: kvadrat prvega člena, dvakratni zmnožek obeh členov in kvadrat drugega člena. Pri razliki je minus le pri srednjem členu, saj je $(-b)^2 = b^2$. Primera: $(x + 4)^2 = x^2 + 8x + 16$ in $(3x - 2)^2 = (3x)^2 - 2 \cdot 3x \cdot 2 + 2^2 = 9x^2 - 12x + 4$.
 
+V simulaciji spodaj (»Množenje izrazov in kvadrat dvočlenika«) nastavi drsnika a in b na isto število, na primer $3$. Opazuj, da kvadrat $(x + 3)^2$ razpade na kvadrat $x^2$, dva enaka pravokotnika $3x$ in kvadratek $9$, kot napove $(x + 3)^2 = x^2 + 6x + 9$.
+
 **7. Zmnožek vsote in razlike.** Pri $(a + b)(a - b) = a^2 - ab + ab - b^2$ se srednja člena uničita:
 
 $$(a + b)(a - b) = a^2 - b^2.$$
 
 Rezultat je razlika kvadratov. Primer: $(2x + 5)(2x - 5) = 4x^2 - 25$.
+
+V simulaciji nastavi še a = 3 in b = −3: pravokotnika $3x$ in $-3x$ se izničita (rdeči deli imajo negativno ploščino), zato ostane $(x + 3)(x - 3) = x^2 - 9$.
 
 **8. Kub dvočlenika.** Iz kock sladkorja sestavi veliko kocko z robom $3$ kocke. Potrebuješ $3^3 = 27$ kock, ne pa $2^3 + 1^3 = 9$. Rob razdeli na $2 + 1$ in razstavi kocko: dobiš kocko $2 \cdot 2 \cdot 2 = 8$, tri plošče $2 \cdot 2 \cdot 1$ (skupaj $12$), tri palčke $2 \cdot 1 \cdot 1$ (skupaj $6$) in eno samo kocko. Res je $8 + 12 + 6 + 1 = 27$.
 

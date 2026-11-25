@@ -60,7 +60,7 @@ Ali ima zmnožek dveh števil z vsoto $20$ tudi najmanjšo vrednost? Napovej, pr
 Če sta števili poljubni realni števili, ne. Pri $x = 30$ je drugo število $-10$ in zmnožek $-300$; pri večjem $x$ je še manjši, brez meje. Če pa morata biti števili nenegativni, je $x \in [0, 20]$ in najmanjši zmnožek je $0$, v krajiščih $x = 0$ in $x = 20$. Odgovor je odvisen od tega, kateri $x$ so dovoljeni.
 :::
 
-V simulaciji spodaj (»Teme parabole: največja in najmanjša vrednost«) drsnik a premakni z $1$ na $-1$. Teme iz najnižje točke postane najvišja: minimum $q$ se spremeni v maksimum $q$. Drsnika p in q premikata teme, torej mesto in vrednost ekstrema.
+V simulaciji spodaj (»Teme parabole: največja in najmanjša vrednost«) drsnik a premakni z $1$ na $-1$. Teme iz najnižje točke postane najvišja: vrednost v temenu ostane $q$, iz najmanjše pa postane največja. Drsnika p in q premikata teme, torej mesto in vrednost ekstrema.
 
 **4. Pravokotnik z danim obsegom.** Ograda ima obliko pravokotnika z obsegom $40\,\text{m}$. Dolžina in širina skupaj merita polovico obsega, $20\,\text{m}$. Če je ena stranica $x$, je druga $20 - x$, ploščina pa je spet $P(x) = x(20 - x)$. Največja je pri $x = 10$: ograda je kvadrat $10\,\text{m} \times 10\,\text{m}$ s ploščino $100\,\text{m}^2$. Med vsemi pravokotniki z enakim obsegom ima največjo ploščino kvadrat.
 
