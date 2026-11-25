@@ -139,7 +139,9 @@ greben("crista_supracondylaris_medialis", pot(ts_sm, th_sm), 0.3e-3, 2.8e-3, 0.7
 d_meja = alfa - a_meja
 vrat_a = glava_obm * gauss(R * d_meja - 3.0e-3, 2.6e-3) * (1 - cart_m)
 hp_m -= 0.35e-3 * vrat_a
-# fose nad trohleo in capitulumom: vir jih ima; le malo poglobimo (najglobljo točko poiščemo v viru)
+# fose nad trohleo in capitulumom: vir jih ima, a jih glajenje sklepnih ploskev (w_hr) skoraj izbriše; h1s2: poglobimo jih
+# (najglobljo točko poiščemo v viru) – širše in plitvejše: coronoidea 1,6 mm (13 mm), radialis 1,0 mm, olecrani 2,8 mm (17 mm); globlje (4 + 6 mm) predre tanko kost med njima (posnetek h1s1: spredaj
+# nad trohleo jamice skoraj ni bilo)
 dist_k = (t1 > 0.05) & (t1 < 0.16) & (cart1 < 0.1) & (dif3d(cart1, 5.0e-3) > 0.04)  # tik nad hrustancem
 hr_d = (t1 < 0.12) & (hr1 > 0.5)
 ml_hr = mlg[hr_d]
@@ -158,7 +160,7 @@ def najglobje(maska, smer):
 
 
 f_cor = najglobje(troh, spr); f_rad = najglobje(capm, spr); f_ole = najglobje(troh | ((t1 > 0.06) & (t1 < 0.17) & (np.abs(mlg - ml_zleb) < 4e-3)), zad)
-for c_, rr_, h_ in ((f_cor, 8e-3, -0.6e-3), (f_rad, 6e-3, -0.45e-3), (f_ole, 11e-3, -0.6e-3)):
+for c_, rr_, h_ in ((f_cor, 13e-3, -1.6e-3), (f_rad, 9e-3, -1.0e-3), (f_ole, 17e-3, -2.8e-3)):
     if c_ is not None:
         izboklina(c_, rr_, h_, 0.0, 2.0)
 # epikondila: hrapava (pripoji); obliko ima vir
