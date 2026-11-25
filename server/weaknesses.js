@@ -180,8 +180,9 @@ export function topicForGame(lessonTopics = [], year = 8) {
 }
 
 // ---------- Naše pole NPZ/mature: del pole → tema učne poti ----------
-// Pole nimajo oznak tem, zato temo poiščemo lokalno iz besedila naloge in naslovov rešitev (enako iskanje kot
-// za ime iz klepeta). Sprejmemo le jasna ujemanja; del brez teme se ne šteje. Izračun enkrat na polo.
+// Teme delov so označene v content/exam-papers/teme/<id>.json (ourPaperTopicTags). Za del brez oznake (nova pola)
+// temo poiščemo lokalno iz besedila naloge in naslovov rešitev (enako iskanje kot za ime iz klepeta). Sprejmemo le
+// jasna ujemanja; del brez teme se ne šteje. Izračun enkrat na polo.
 const PAPER_LEVEL = {
   NPZ6: { curriculum_level: "6. razred", educational_track: "OSNOVNA_SOLA" },
   NPZ9: { curriculum_level: "9. razred", educational_track: "OSNOVNA_SOLA" },

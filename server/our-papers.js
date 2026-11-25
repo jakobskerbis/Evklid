@@ -146,8 +146,9 @@ export function loadOurPaper(id) {
 }
 
 // Teme delov nalog (content/exam-papers/teme/<id>.json: { paper, parts: { "1-A3b": "MAT-SS-2/…" | null } }; označil
-// Opus po besedilu in rešitvi dela, pregledala dva ločena pregledovalca). Tema je tista, katere vaja bi učencu najbolj
+// Opus po besedilu in rešitvi dela, pregledali trije ločeni pregledovalci). Tema je tista, katere vaja bi učencu najbolj
 // pomagala, če je del rešil narobe; null = noben del učnega načrta ne ustreza (ne ugibaj po besedah). Brez datoteke {}.
+// Nova pola potrebuje svojo datoteko tem (vsak ključ dela natanko enkrat, teme iz poti izpita: test/teme-pol.test.js).
 export function ourPaperTopicTags(id) {
   if (!ourPaperIds().has(String(id))) return {};
   try {

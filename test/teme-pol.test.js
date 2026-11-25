@@ -50,5 +50,8 @@ test("teme pol: paperTopics vzame oznake (null = brez teme), brez datoteke in za
     assert.deepEqual(Object.fromEntries(map), Object.fromEntries(Object.entries(tags).filter(([, t]) => t)), id);
   }
   assert.deepEqual(ourPaperTopicTags("NPZ9-MAT-1999-redni"), {});
+  // Pola brez datoteke tem: ostane ugibanje po besedilu naloge.
+  const brez = paperTopics("NPZ9-MAT-1999-redni", { exam: "NPZ9", subject: "MAT", tasks: [{ n: 1, parts: [{ id: "a", points: 1, text: "Odstotni račun: koliko je 20 odstotkov od 50?" }] }] });
+  assert.equal(brez.get("1a"), "MAT-OS-7/odstotni-racun");
   assert.deepEqual(ourPaperTopicTags("../../package"), {});
 });
