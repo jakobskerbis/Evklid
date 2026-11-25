@@ -2,6 +2,7 @@
 // Strežnik: server/kviz.js. Oba pogleda vprašata strežnik vsakih 1,5 s; čas teče po uri strežnika.
 import { t } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
+import { LOCILO, zdruzi } from "./datum.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const LETTERS = "ABCDEFGHIJ";
@@ -23,7 +24,7 @@ async function call(url, { method = "GET", body, headers = {} } = {}) {
 }
 
 // Naslov okna: »Kviz v živo · 7.a · tema«; imena v <bdi>, da se v RTL ne pomešajo.
-const titleHtml = (...names) => [esc(t("kv.live")), ...names.filter(Boolean).map((n) => `<bdi>${esc(n)}</bdi>`)].join(" · ");
+const titleHtml = (...names) => zdruzi([esc(t("kv.live")), ...names.filter(Boolean).map((n) => `<bdi>${esc(n)}</bdi>`)]);
 
 // Okno čez ves zaslon; zapre se z gumbom ali Esc. Vrne { dlg, body, foot, close }.
 // Fokus gre na naslov (bralnik zaslona ga prebere), ne na gumb za zapiranje.
@@ -148,7 +149,7 @@ export function hostQuiz({ code, key, game, onClose }) {
         ${q.options
           ? `<ol class="kv-opts kv-res">${q.options.map((o, i) => `<li class="${i === q.index ? "ok" : ""}"><span class="kv-l">${LETTERS[i]}</span><span>${o}</span>${i === q.index ? `<span class="kv-ok" role="img" aria-label="${esc(t("kv.correctAnswer"))}">${icon("check")}</span>` : ""}<span class="kv-bar" style="--w:${(c.options[i] / max) * 100}%"></span><b>${c.options[i]}</b></li>`).join("")}</ol>`
           : `<p class="kv-ans">${esc(t("kv.correctAnswer"))}: <b><bdi>${q.answerHtml}</bdi></b></p>`}
-        <p class="kv-sum"><span class="ok">${icon("check")} ${esc(t("task.correct"))}: ${c.right}</span> · <span class="bad">${icon("x")} ${esc(t("task.wrong"))}: ${c.wrong}</span> · ${esc(t("kv.none"))}: ${c.none}</p>
+        <p class="kv-sum"><span class="ok">${icon("check")} ${esc(t("task.correct"))}: ${c.right}</span>${LOCILO}<span class="bad">${icon("x")} ${esc(t("task.wrong"))}: ${c.wrong}</span>${LOCILO}${esc(t("kv.none"))}: ${c.none}</p>
         ${q.solutionHtml ? `<details class="kv-sol"><summary>${esc(t("task.solution"))}</summary>${q.solutionHtml}</details>` : ""}
         ${v.board.length ? `<h3>${esc(t("kv.top"))}</h3>${boardHtml(v.board, 0)}` : ""}`;
     } else {
@@ -230,7 +231,7 @@ export function playQuiz(studentId, gameId, onClose) {
     shown = k;
     const q = v.question;
     let html = "";
-    if (v.state === "lobby") html = `<div class="kv-lobby"><p class="kv-big">${esc(t("kv.wait"))}</p><p class="muted">${esc(v.topic)} · ${esc(t("kv.joined", { n: v.players }))}</p></div>`;
+    if (v.state === "lobby") html = `<div class="kv-lobby"><p class="kv-big">${esc(t("kv.wait"))}</p><p class="muted">${esc(v.topic)}${LOCILO}${esc(t("kv.joined", { n: v.players }))}</p></div>`;
     else if (v.state === "question" && v.answered) html = `${head(v)}<p class="kv-big">${icon("circle-check")} ${esc(t("kv.sent"))}</p>`;
     else if (v.state === "question") {
       html = `${head(v)}<div class="kv-q" dir="auto">${q.html}</div>

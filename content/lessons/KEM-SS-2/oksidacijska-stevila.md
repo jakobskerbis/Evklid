@@ -255,6 +255,18 @@ Na koncu dneva se mora knjiga ujemati: seštevek vseh zapisov je enak skupnemu n
 ~ $-1$ je naboj celega perkloratnega iona, ne klora v njem.
 > Mg $+2$, osem kisikov $-16$: $2 + 2x - 16 = 0$, $2x = 14$, $x = +7$. Enako kot v $\mathrm{ClO_4^-}$, saj gre za isti ion.
 
+? Kolikšno je oksidacijsko število kroma v dikromatnem ionu $\mathrm{Cr_2O_7^{2-}}$?
+= 6 | 0,1
+~ 7 | Pozabil si na naboj iona: vsota oksidacijskih števil je $-2$, ne $0$.
+~ 12 | To je vsota za oba atoma kroma. Vsak ima polovico.
+> $2x + 7 \cdot (-2) = -2$, $2x = 12$, $x = +6$.
+
+? Kolikšno je oksidacijsko število žvepla v tiosulfatnem ionu $\mathrm{S_2O_3^{2-}}$ (povprečje za oba atoma)?
+= 2 | 0,1
+~ 3 | Pozabil si na naboj iona: vsota oksidacijskih števil je $-2$, ne $0$.
+~ 4 | Upoštevati moraš indeks: žveplova atoma sta dva, zato $2x$.
+> $2x + 3 \cdot (-2) = -2$, $2x = 4$, $x = +2$.
+
 :::simboli
 x | iskano oksidacijsko število | | – | v vsakem primeru za drug element
 :::

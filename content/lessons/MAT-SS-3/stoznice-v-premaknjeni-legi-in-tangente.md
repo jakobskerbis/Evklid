@@ -48,6 +48,8 @@ $$\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$$
 
 Kot pri krožnici je v oklepaju minus koordinata središča. Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči. Za $a > b$ sta gorišči $F_{1,2}(x_0 \pm e, y_0)$. Krožnica je poseben primer z $a = b = r$.
 
+V simulaciji spodaj (»Elipsa, hiperbola in parabola«) nastavi elipso z a = 3 in b = 2, kot je črtkana elipsa na sliki, in povleci točko T po njej. Opazuj, da vsota razdalj do gorišč ostane $2a = 6$. Nato nastavi b = 3: gorišči se združita v središču in dobiš krožnico.
+
 :::premisli
 Napovej, kje je središče elipse $\frac{(x + 1)^2}{4} + \frac{(y - 5)^2}{25} = 1$ in na kateri premici ležita njeni gorišči.
 ---

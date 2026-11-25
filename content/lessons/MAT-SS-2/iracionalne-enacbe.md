@@ -81,6 +81,8 @@ Ne izgine. Leva stran je vsota: $(\sqrt{x} + 1)^2 = x + 2\sqrt{x} + 1$. Dvojni z
 
 Oba načina dasta iste rešitve. Razstavljanje pokaže, *zakaj* ima soda potenca dve rešitvi: razlika kvadratov da faktorja $x - 2$ in $x + 2$.
 
+V simulaciji spodaj (»Korenska funkcija in premica«) spreminjaj n od $2$ do $5$ in primerjaj graf $\sqrt[n]{x}$ z grafom $x^n$: grafa sta zrcalna čez premico $y = x$. Opazuj, da pri sodem n koren obstaja le za $x \ge 0$, pri lihem n pa za vsa realna števila. Zato ima enačba $x^3 = -27$ rešitev, enačba $x^2 = -4$ pa ne.
+
 ## Rešeni primeri
 
 ### Primer 1 (lažji): najprej osami koren

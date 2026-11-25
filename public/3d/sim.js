@@ -11,7 +11,7 @@ export function sim3d(el, opts = {}) {
     l.href = CSS;
     document.head.append(l);
   }
-  const p = document.createElement("p");
+  const p = document.createElement("div"); // nalaganje ali kartica z napako (odstavki in gumb)
   p.className = "muted";
   el.append(p);
   // »Preizkusi: …« ali »Razmisli: …« (docs/kakovost.md §3, public/sim/napis-poskusa.js) pod pregledovalnikom kot pri
@@ -29,35 +29,60 @@ export function sim3d(el, opts = {}) {
     el.append(poskusi);
   };
   dodajPoskusi(opts.poskusi);
-  (async () => {
-    const [{ naloziModel }, { odpriModel }, { t }] = await Promise.all([import("./modeli.js"), import("./pregledovalnik.js"), import("/i18n.js")]);
-    p.textContent = t("a3.loading");
-    // Izpad povezave (naloziModel vrže povezava: true): »Ni povezave«, ne »ne obstaja«.
-    let mod = null, brezPovezave = false;
-    try {
-      mod = opts.model ? await naloziModel(opts.model) : null;
-    } catch (e) {
-      if (!e?.povezava) throw e;
-      brezPovezave = true;
-    }
-    if (!el.isConnected) return;
-    if (!mod) {
-      p.textContent = t(brezPovezave ? "a3.noConnection" : "a3.notFound");
-      poskusi?.remove(); // brez modela ni kaj poskusiti
-      return;
-    }
-    p.remove();
-    dodajPoskusi(mod.info?.poskusi);
-    const box = document.createElement("div");
-    el.insertBefore(box, poskusi);
-    odpriModel(box, mod, { zacetek: opts.zacetek || {} });
-  })().catch(async (err) => {
-    console.error("3D simulacija:", err);
-    // Napaka (npr. brez WebGL): sporočilo namesto praznega okvirja (p je ob gradnji že odstranjen).
-    const { t } = await import("/i18n.js").catch(() => ({ t: () => "3D" }));
-    p.textContent = t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError");
-    el.querySelector(".k3-pregled")?.remove();
-    poskusi?.remove();
-    if (el.isConnected) el.append(p);
-  });
+  let box = null;
+  const nalozi = () =>
+    (async () => {
+      // three.js rabi Safari 16.4+: star brskalnik dobi »posodobi« (napake.js) namesto praznega okvirja. Če se napake.js
+      // ne naloži (izpad povezave), preverjanje preskočimo in nalagamo naprej; napako pokaže catch spodaj.
+      const napake = await import("./napake.js").catch(() => null);
+      await napake?.preveriPodporo();
+      const [{ naloziModel }, { odpriModel }, { t }] = await Promise.all([import("./modeli.js"), import("./pregledovalnik.js"), import("/i18n.js")]);
+      p.textContent = t("a3.loading");
+      const mod = opts.model ? await naloziModel(opts.model) : null;
+      if (!el.isConnected) return;
+      if (!mod) {
+        p.textContent = t("a3.notFound");
+        poskusi?.remove(); // brez modela ni kaj poskusiti
+        return;
+      }
+      p.remove();
+      dodajPoskusi(mod.info?.poskusi);
+      box = document.createElement("div");
+      el.insertBefore(box, poskusi);
+      odpriModel(box, mod, { zacetek: opts.zacetek || {} });
+    })().catch(async (err) => {
+      console.error("3D simulacija:", err);
+      // Napaka: sporočilo po vrsti napake (povezava, star brskalnik, pomnilnik …) namesto praznega okvirja; p je ob gradnji
+      // že odstranjen. »Poskusi znova« naloži model še enkrat. i18n in napake.js uvozimo ločeno: brez povezave se
+      // napake.js morda ne naloži, besedilo (i18n.js je navadno že naložen) in gumb pa morata ostati (kot uci-se.js show3d).
+      // pregledovalnik.js napake.js ne uvaža statično, zato se model brez napake.js vseeno naloži (test/3d-sim-napaka.test.js).
+      // Izpad povezave pri modelu (naloziModel vrže povezava: true) gre po isti poti: a3.noConnection in en »Poskusi znova«.
+      const t = await import("/i18n.js").then((m) => m.t, () => () => "3D");
+      const { napakaVsebina } = await import("./napake.js").catch(() => ({}));
+      box?.remove();
+      box = null;
+      poskusi?.remove();
+      poskusi = null;
+      const znova = () => {
+        p.replaceChildren();
+        dodajPoskusi(opts.poskusi);
+        nalozi();
+      };
+      if (napakaVsebina) p.replaceChildren(...napakaVsebina(err, { t, znova, razredGumba: "secondary" }));
+      else {
+        const s = document.createElement("p");
+        s.textContent = t(err?.povezava ? "a3.noConnection" : "a3.loadError");
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "secondary";
+        b.textContent = t("a3.retry");
+        // Neuspel uvoz modula ostane v brskalnikovem seznamu modulov (po specifikaciji; Safari, Firefox, Chromium na CI): nov
+        // import() ga ne prenese znova, zato »Poskusi znova« tedaj osveži stran (kot napake.js pri modul: true).
+        const uvoz = /importing a module script failed|dynamically imported module|module script/i.test(String(err?.message ?? ""));
+        b.addEventListener("click", uvoz ? () => location.reload() : znova, { once: true });
+        p.replaceChildren(s, b);
+      }
+      if (el.isConnected) el.append(p);
+    });
+  nalozi();
 }

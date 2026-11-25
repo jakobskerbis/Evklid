@@ -4,6 +4,7 @@ import { t, applyI18n } from "/i18n.js";
 import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
+import { napakaVsebina, napakaBesedilo, preveriPodporo } from "./napake.js";
 import { vgrajeno, starsu, vprasajInstruktorja } from "./vgrajeno.js";
 import { jsonAliNic } from "/odgovor.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
@@ -651,13 +652,19 @@ async function usmeri() {
   aktivno = null;
   const { id, param } = razberi();
   try {
+    // Atlas, model in mikroskop rabijo three.js (Safari 16.4+): star brskalnik dobi »posodobi« namesto prazne strani.
+    if (id) await preveriPodporo();
     const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : id === "mikroskop" ? await mikroskop(param, moj) : await model(id, param, moj);
     if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
   } catch (err) {
     console.error("3D:", err);
     if (moj !== zaporedje) return;
     const p = mk("div", "k3-napaka");
-    p.append(mk("p", "", t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
+    p.setAttribute("role", "alert");
+    // Vrsta napake (povezava, star brskalnik, pomnilnik, drugo) in »Poskusi znova«: po napaki povezave pot naloži še
+    // enkrat; drugače celo stran, ker brskalnik modul, ki je ob izvajanju vrgel napako, zapomni in ga ne naloži znova.
+    const znova = () => (napakaBesedilo(err).vrsta === "povezava" ? usmeri() : location.reload());
+    p.append(...napakaVsebina(err, { t, znova }));
     const b = mk("a", "a3-pill");
     naZbirko(b);
     b.textContent = t("a3.hubTitle");

@@ -197,7 +197,9 @@ function renderPop() {
   pop.querySelector('[data-act="more"]').addEventListener("click", () => {
     pop.hidden = true;
     D.showView("settings");
-    setTimeout(() => $("#usage")?.closest(".card")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    const usage = $("#usage")?.closest(".card");
+    for (let d = usage?.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true; // skupina v Nastavitvah
+    setTimeout(() => usage?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
   });
   pop.querySelectorAll(".um-budget-form").forEach((f) =>
     f.addEventListener("submit", async (e) => {

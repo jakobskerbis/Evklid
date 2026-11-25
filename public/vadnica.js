@@ -23,6 +23,7 @@ import { partLabel, partKey } from "./our-paper-key.js";
 import { refreshBubble } from "./okna.js";
 import { poSliki } from "./kliki.js";
 import { $, COMP_LEVEL_NAMES, EXTRA_SESSIONS, NODE, api, calcMode, calcSubject, choiceHtml, diffBadge, escapeHtml, examMode, extraSession, fbText, fillInput, isCompTopic, keptPaper, loadConversations, localStorageGet, localStorageSet, markFirstTask, markTopic, mayPlot, meBackHtml, offTabbarViews, openCalcOverlay, openConversation, openLesson, openLocalPaper, ourMod, plotFromText, prepBack, pripraviIzris, refreshXp, regionalExams, renderGoal, renderMath, renderRich, send, setActiveMode, setBack, setTaskFx, showView, siExams, state, studentUpdated, toast, topicCache, topicRich, unlockedHtml, withFormulaSubject, currentView, pathData, pathUnitsFor, prefetchPractice, takePractice, topicEntry, kopija } from "./app.js";
+import { LOCILO } from "./datum.js";
 
 // Tema iz pomnilnika takoj (po sliki tapa); sicer pogled takoj z »Nalagam …« in oba klica hkrati (kliki.js teme).
 let topicSeq = 0;
@@ -74,7 +75,7 @@ async function openTopic(topicId) {
   const canPractice = !!hasPractice?.practice;
   $("#topic-content").innerHTML = `<div class="topic-grid">
     <div class="card topic-head">
-      <span class="eyebrow">${escapeHtml(tp.pathLabel)} · ${escapeHtml(tp.unit)}</span>
+      <span class="eyebrow">${escapeHtml(tp.pathLabel)}${LOCILO}${escapeHtml(tp.unit)}</span>
       <h1>${escapeHtml(tp.name)}</h1>
       <p class="goals">${icon("target")}<span>${escapeHtml(tp.goals)}</span></p>
       ${aheadHint}
@@ -222,7 +223,7 @@ function sessionDoneCard(mode, n, xp = null) {
   const extra = extraSession(mode);
   if (extra?.doneHtml) return extra.doneHtml(n, xp);
   return `<div class="card result celebrate"><div class="result-icon">${icon("trophy")}</div><h2>${SESSION_DONE[mode] || t("common.done")}!</h2>
-    <p>${t("result.firstTry", { correct: n.correct, total: n.total })}${n.xp ? ` · +${n.xp.gained} XP` : ""}</p>
+    <p>${t("result.firstTry", { correct: n.correct, total: n.total })}${n.xp ? `${LOCILO}+${n.xp.gained} XP` : ""}</p>
     <button class="primary big" id="fb-back">${state.backTo === "competition" || state.backTo === "exams" ? prepBack() : t("result.toPath")}</button>${rewardHtml(mode, n, xp)}</div>`;
 }
 // Igra kot nagrada (public/games/reward.js): po dnevnem treningu ali doseženem dnevnem cilju ponudba ene igre
@@ -776,7 +777,7 @@ async function loadCompetition(key = state.compKey) {
         <ol class="path">${u.topics
           .map((tp) => {
             const st = tp.due ? "due" : tp.status;
-            const sub = NODE[st][1] + (tp.practice && tp.status === "learning" ? ` · ${COMP_LEVEL_NAMES[tp.level]}` : "");
+            const sub = NODE[st][1] + (tp.practice && tp.status === "learning" ? `${LOCILO}${COMP_LEVEL_NAMES[tp.level]}` : "");
             return `<li><button class="node ${st}" data-open="${tp.id}"><span class="node-dot">${icon(NODE[st][0])}</span>
               <span class="node-text"><span class="node-name">${escapeHtml(tp.name)}</span><span class="node-sub">${sub}</span></span></button></li>`;
           })
@@ -827,7 +828,7 @@ function readinessHtml(c) {
   const min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   // Raven mature iz matematike (izbrana ob profilu, »4. letnik VR«) se vidi ob imenu izpita (Geminijev pregled 17. 11.).
   const raven = c.exam === "MATURA" && c.subject === "MAT" ? c.raven || null : null;
-  const name = siExamName(c.exam) + (raven ? ` · ${t(raven === "VR" ? "lp.vr" : "lp.or")}` : "");
+  const name = siExamName(c.exam) + (raven ? `${LOCILO}${t(raven === "VR" ? "lp.vr" : "lp.or")}` : "");
   const dateForm = `<div class="er-form" ${date ? "hidden" : ""}>
       <label class="goal-date"><span>${t("ready.date")}</span><input type="date" id="er-date" value="${date}" min="${min}"></label>
       <button type="button" class="primary" data-er-save>${t("common.save")}</button>
@@ -847,7 +848,7 @@ function readinessHtml(c) {
       <div class="er-text"><span class="eyebrow">${t("ready.title")}</span><h2>${escapeHtml(name)}</h2><p class="muted small-note">${t("ready.pctNote")}</p></div>
     </div>
     <div class="er-date">
-      ${date ? `<p class="er-when">${icon("calendar")}<span><b>${escapeHtml(fmtDate(date))}</b> · ${escapeHtml(countdown(date))}</span><button type="button" class="text-btn" data-er-edit>${t("ready.changeDate")}</button></p>` : ""}
+      ${date ? `<p class="er-when">${icon("calendar")}<span><b>${escapeHtml(fmtDate(date))}</b>${LOCILO}${escapeHtml(countdown(date))}</span><button type="button" class="text-btn" data-er-edit>${t("ready.changeDate")}</button></p>` : ""}
       ${dateForm}
     </div>
     <h3 class="er-weak-title">${t("ready.weakTitle")}</h3>
@@ -902,7 +903,7 @@ async function loadExams(key = state.examKey, exam = null) {
       ${c.subjects.length > 1 ? seg(c.subjects.map((x) => [x.key, SUBJECT_NAMES[x.subject] || x.name]), c.key, "data-exam-subject") : ""}
     </div>
     ${si ? readinessHtml(c) : ""}
-    <details class="card exam-about"><summary>${icon("info")}<span><b>${escapeHtml(c.full)}</b> · ${escapeHtml(c.country)}</span></summary><p lang="${c.lang || "en"}">${escapeHtml(c.about)}</p></details>
+    <details class="card exam-about"><summary>${icon("info")}<span><b>${escapeHtml(c.full)}</b>${LOCILO}${escapeHtml(c.country)}</span></summary><p lang="${c.lang || "en"}">${escapeHtml(c.about)}</p></details>
     <div class="card xp-card comp-hero">
       <div class="hero">
         <div class="hero-icon">${icon("target")}</div>
@@ -1294,7 +1295,7 @@ function showContestResult(c, timeUp = false) {
       ${timeUp ? `<p class="muted">${t("comp.timeUp")}</p>` : ""}
       <h2 class="score-line">${t("comp.score", { points: `<span class="count-up" data-to="${Number(c.points) || 0}">0</span>`, max: c.maxPoints })}</h2>
       <div class="score-bar" aria-hidden="true"><div style="--pct:${Math.max(0, Math.min(100, pct))}%"></div></div>
-      <p>${t("comp.summary", { correct: c.correct, total: c.total, minutes: c.minutes })}${c.xp ? ` · +${c.xp.gained} XP` : ""}</p>
+      <p>${t("comp.summary", { correct: c.correct, total: c.total, minutes: c.minutes })}${c.xp ? `${LOCILO}+${c.xp.gained} XP` : ""}</p>
       ${c.scaled ? `<p>${t("exam.scaled", { value: c.scaled.value, min: c.scaled.min, max: c.scaled.max })}</p>` : ""}
       ${c.grade ? `<p>${t("exam.grade", { grade: escapeHtml(c.grade) })}</p>` : ""}
       ${c.wrong && c.items.some((x) => x.earned < 0) ? `<p class="muted">${t("exam.wrongPenalty", { n: c.wrong })}</p>` : ""}

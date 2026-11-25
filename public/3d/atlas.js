@@ -8,6 +8,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
 import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
+import { napakaBesedilo } from "./napake.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
@@ -16,6 +17,7 @@ import { skoziLupino } from "./izbira.js";
 import { ravenProfila, razlaga } from "./raven.js";
 import { barvniNacin, nastaviBarvniNacin, ucnaBarvaTkiva } from "./barve.js";
 import { preparatAtlasa } from "/mikroskop/mapa.js";
+import { LOCILO, zdruzi } from "../datum.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -684,11 +686,12 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         sloj.nalozen = true;
         uporabiRazmik();
         uporabiVidnost();
+        await kit.pripravi?.(); // senčilniki plasti hkrati, preden se nariše (scena.js): stran med tem ne zamrzne
       } catch (err) {
         console.error(`3D atlas: plast ${id}`, err);
-        sloj.napaka = true;
+        sloj.napaka = napakaBesedilo(err).key; // povezava, pomnilnik, star brskalnik … (napake.js)
         sloj.viden = false;
-        sporocilo(t("a3.loadError"));
+        sporocilo(t(sloj.napaka));
       } finally {
         prenosi.delete(id);
         prikaziNapredek();
@@ -1062,7 +1065,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       li.setAttribute("role", "option");
       li.id = `a3-rez-${rezultati.childElementCount}`;
       const b = mk("b", "", r.prikaz);
-      const s = mk("small", "", [r.la, t(`a3.l.${r.sistem}`)].filter(Boolean).join(" · "));
+      const s = mk("small", "", zdruzi([r.la, t(`a3.l.${r.sistem}`)]));
       li.append(b, s);
       li.addEventListener("mousedown", (e) => e.preventDefault());
       li.addEventListener("click", () => izberiIzSeznama(r.id));
@@ -1167,7 +1170,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       row.classList.toggle("nalaga", !!s.nalaganje);
       const st = row.querySelector("small");
       const p = prenosi.get(s.id);
-      st.textContent = s.nalaganje ? (p ? t("a3.loadingMb", { n: mb(p.n), s: mb(p.s) }) : t("a3.loading")) : s.napaka ? t("a3.loadError") : t("a3.structures", { n: strukture.filter((r) => r.sistem === s.id).length });
+      st.textContent = s.nalaganje ? (p ? t("a3.loadingMb", { n: mb(p.n), s: mb(p.s) }) : t("a3.loading")) : s.napaka ? t(typeof s.napaka === "string" ? s.napaka : "a3.loadError") : t("a3.structures", { n: strukture.filter((r) => r.sistem === s.id).length });
     }
   }
   async function preklopiSloj(id, on) {
@@ -1470,7 +1473,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         s.href = v.url;
         s.target = "_blank";
         s.rel = "noopener";
-        l.append(document.createTextNode(" · "), s);
+        l.append(document.createTextNode(LOCILO), s);
       }
       c.append(l);
       box.append(c);
@@ -1770,6 +1773,8 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
     senca.visible = true;
   }
   uporabiVidnost();
+  // Med nalaganjem je bilo telo skrito (uvod): senčilniki začetnih plasti se prevedejo zdaj, pred uvodnim preletom.
+  if (uvod) await kit.pripravi?.();
   if (uvod) {
     let cas = 0;
     const T = 0.9;

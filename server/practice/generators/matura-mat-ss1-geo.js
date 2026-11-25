@@ -4,7 +4,7 @@
 // istih števil, ki jih vidi dijak. Izvirne naloge, ne prepisane maturitetne.
 import { roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { fr, num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens, ap } from "./matura-util.js";
 
 const P = "mat-ss1-matura-";
 const T = (s) => `MAT-SS-1/${s}`;
@@ -19,7 +19,6 @@ const atanDeg = (x) => Math.atan(x) * DEG;
 const nak = (k) => (k >= 0 ? atanDeg(k) : 180 + atanDeg(k));
 const rd = (x, d = 1) => roundHalfUp(x, d);
 const cl = (x) => Math.round(x * 1e9) / 1e9;
-const ap = (x, d) => (Math.abs(rd(x, d) - x) < 1e-9 ? "=" : "\\approx");
 // Kot kot odgovor na desetinko stopinje (napake zaokrožene enako).
 const angA = (phi, mistakes) => num(phi, 1, mistakes.map((m) => ({ ...m, value: rd(m.value, 1) })));
 // Linearna kombinacija: lc([[2, "x"], [-3, "y"]], 6) → "2x - 3y + 6".
