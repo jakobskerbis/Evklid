@@ -71,6 +71,19 @@ shranjevanje šifriranih izvirnikov s prepoznavo vrste po vsebini (`shramba.js`)
 brez vmesnika; `test_plans`, `/test-plan`, `/test-prep` in Urnik so nespremenjeni (selitev v 2b). Test:
 `test/priprava-osnova.test.js`.
 
+### PR 2b (ena priprava, 25. 11. 2026)
+
+`test_plans` je preseljena v `priprave` (stolpci `pot`, `sklopi`, `dogodek_id`, `aktivna`; selitev in izbris tabele v
+`shema.js` ob odprtju baze, v eni transakciji). Načrt testa je **aktivna priprava** (največ ena na profil, delni
+enolični indeks); `server/priprava/aktivna.js` nadomesti SQL v `progress.js` (`testPlan`, `setTestPlan`,
+`clearTestPlan`), zato `/test-plan`, `/test-prep`, Urnik in ustno spraševanje delajo kot prej; načrt ima nov
+`pripravaId`. Pravila: isti test (isti dogodek iz urnika, ista pot z istim datumom ali premaknjen datum še
+prihajajočega testa na isti poti) posodobi isto pripravo, da viri ostanejo pri njem; drug test naredi novo aktivno
+pripravo, prejšnja brez virov se izbriše, z viri ostane neaktivna. Odstranitev načrta izbriše pripravo brez virov,
+pripravo z viri samo deaktivira. Test v urniku sam odpre pripravo z naslovom testa. Novo: tudi načrt testa se
+samodejno izbriše 30 dni po testu (prej je `test_plans` ostal do zamenjave). `/priprave` vrne `aktivna`, `pot`,
+`sklopi`, `dogodek_id`. Test: `test/priprava-nacrt-testa.test.js`.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

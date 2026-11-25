@@ -45,6 +45,15 @@ function imeIz(req) {
   return cleanText(v, IME_MAX) || null;
 }
 
+const sklopiIz = (v) => {
+  try {
+    const a = JSON.parse(v || "[]");
+    return Array.isArray(a) ? a : [];
+  } catch {
+    return [];
+  }
+};
+
 const virVen = (r) => ({
   id: r.id,
   vrsta: r.vrsta,
@@ -62,6 +71,11 @@ const pripravaVen = (r) => ({
   zadnja_uporaba: r.zadnja_uporaba,
   izbris_dne: danIzbrisa(r),
   created_at: r.created_at,
+  // Načrt testa (PR 2b, server/priprava/aktivna.js): aktivna = »Priprava na test« v Vadnici in Urniku.
+  aktivna: !!r.aktivna,
+  pot: r.pot ?? null,
+  sklopi: sklopiIz(r.sklopi),
+  dogodek_id: r.dogodek_id ?? null,
   ...(r.virov !== undefined ? { virov: r.virov } : {}),
 });
 

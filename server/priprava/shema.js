@@ -1,11 +1,14 @@
-// Tabele priprave na test iz zapiskov (docs/priprava.md, PR 2a). Kliče jih server/db.js ob vsakem odprtju baze
-// (CREATE ... IF NOT EXISTS, zato varno na obstoječi bazi). test_plans, /test-plan in /test-prep ostanejo, kot so;
-// selitev pride pozneje.
+// Tabele priprave na test iz zapiskov (docs/priprava.md, PR 2a in 2b). Kliče jih server/db.js ob vsakem odprtju baze
+// (CREATE ... IF NOT EXISTS, zato varno na obstoječi bazi). PR 2b: nekdanja tabela test_plans (en načrt testa na
+// profil) je preseljena v priprave (stolpci pot, sklopi, dogodek_id, aktivna; server/priprava/aktivna.js) in
+// izbrisana; /test-plan in /test-prep ostaneta kot ovoj.
 // - Vse vrstice gredo s profilom (ON DELETE CASCADE iz students) in s pripravo (iz priprave).
 // - naslov in ime datoteke sta šifrirana s seal() (crypto-polje.js SEALED); izvirnik je binarno šifriran
 //   (sealBytes) v ločeni tabeli brez stolpca profila: zato ne gre v izvoz (server/zasebnost.js exportOtherTables
 //   išče tabele po student_id) in se pobriše iz vsake varnostne kopije (server/kopije.js withoutPilotPhotos).
 // - Samodejni izbris (server/priprava/ciscenje.js): 30 dni po datum_testa, brez datuma 30 dni po zadnja_uporaba.
+import { seal } from "../crypto-polje.js";
+
 export function migratePriprava(db) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS priprave (
@@ -36,4 +39,38 @@ export function migratePriprava(db) {
       podatki BLOB NOT NULL
     );
   `);
+  // PR 2b: načrt testa (pot učne poti, izbrani sklopi, test iz urnika) in oznaka aktivne priprave (ena na profil).
+  const cols = db.prepare("PRAGMA table_info(priprave)").all().map((c) => c.name);
+  if (!cols.includes("pot")) db.exec("ALTER TABLE priprave ADD COLUMN pot TEXT"); // ključ učne poti (MAT-SS-4 …)
+  if (!cols.includes("sklopi")) db.exec("ALTER TABLE priprave ADD COLUMN sklopi TEXT"); // JSON indeksov sklopov
+  if (!cols.includes("dogodek_id")) db.exec("ALTER TABLE priprave ADD COLUMN dogodek_id TEXT"); // test iz urnika
+  if (!cols.includes("aktivna")) db.exec("ALTER TABLE priprave ADD COLUMN aktivna INTEGER NOT NULL DEFAULT 0");
+  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_priprave_aktivna ON priprave(student_id) WHERE aktivna = 1");
+  preseliTestPlans(db);
+}
+
+// Vsak načrt iz test_plans postane aktivna priprava (če profil še nima aktivne), nato se test_plans izbriše. Vse v eni
+// transakciji: ob napaki ostane test_plans cel in selitev se ponovi ob naslednjem zagonu.
+function preseliTestPlans(db) {
+  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'test_plans'").get()) return;
+  const imaDogodek = db.prepare("PRAGMA table_info(test_plans)").all().some((c) => c.name === "event_id");
+  const vrstice = db.prepare(`SELECT student_id, path_key, units, test_date, ${imaDogodek ? "event_id" : "NULL AS event_id"}, created_at FROM test_plans`).all();
+  const imaAktivno = db.prepare("SELECT 1 FROM priprave WHERE student_id = ? AND aktivna = 1");
+  const vpis = db.prepare(
+    `INSERT INTO priprave (student_id, naslov, predmet, datum_testa, zadnja_uporaba, created_at, pot, sklopi, dogodek_id, aktivna)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+  );
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    for (const r of vrstice) {
+      if (imaAktivno.get(r.student_id)) continue;
+      const predmet = /^([A-Z]{2,6})-/.exec(String(r.path_key))?.[1] || null;
+      vpis.run(r.student_id, seal("Priprava na test"), predmet, r.test_date, r.created_at, r.created_at, r.path_key, r.units, r.event_id);
+    }
+    db.exec("DROP TABLE test_plans");
+    db.exec("COMMIT");
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
+  }
 }
