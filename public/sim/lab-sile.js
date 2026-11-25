@@ -1,7 +1,7 @@
 // Virtualni laboratorij, »Silomer in uteži«: Hookov zakon (lab-hooke), gostota (lab-gostota), vzgon (lab-vzgon),
 // hidrostatični tlak z manometrom (lab-tlak). Modeli: lab-model-sile.js (brez DOM). Odčitki analognih skal so v povečavi (lupa).
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
 import { HookeBench, GostotaBench, VzgonBench, TlakBench, VZMETI, VZMET, VZORCI, TEKOCINE, VALJ, VALJ_PREREZ, VZOREC_PREREZ, VALJI, SILOMER, MANOMETER, G_SOLA, G_LJ, naklonSkoziIzhodisce, POENOSTAVITVE_SILE } from "./lab-model-sile.js";
 
 const nb = " ";
@@ -74,7 +74,8 @@ const tekCls = (id) => `lab-sil-tek lab-sil-${id}`;
 
 // ================================================================ Hookov zakon: vzmet, uteži in ravnilo
 export function labHooke(el) {
-  const B = new HookeBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new HookeBench({ seed: zap.seed });
   const W = 400, H = 340, Y0 = 34, PX = 500; // ničla ravnila pri Y0, 1 cm = 5 px
   const svg = svgBox(W, H, "lab-bench lab-sil lab-sil-hooke");
   const log = eventLog();
@@ -220,11 +221,20 @@ export function labHooke(el) {
   }
   redraw();
   draw();
+  zap.vezi(table, {
+    get: () => ({ meas, x0 }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      if (d?.x0 && typeof d.x0 === "object") for (const [k, v] of Object.entries(d.x0)) if (k in VZMETI && Number.isFinite(v)) x0[k] = v;
+      redraw(), sync();
+    },
+  });
 }
 
 // ================================================================ gostota: tehtnica in merilni valj
 export function labGostota(el) {
-  const B = new GostotaBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new GostotaBench({ seed: zap.seed });
   const W = 400, H = 300, PX = 12, yB = 270, A = VALJ_PREREZ, rv = Math.sqrt(A / Math.PI) * PX; // 1 cm = 12 px
   const svg = svgBox(W, H, "lab-bench lab-sil lab-sil-gost");
   const log = eventLog();
@@ -438,11 +448,19 @@ export function labGostota(el) {
   balL.set("0.0", "g", "tara");
   vL.set("", "mL", "valj je prazen");
   redraw();
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw(), sync();
+    },
+  });
 }
 
 // ================================================================ vzgon: silomer in valj v tekočini
 export function labVzgon(el) {
-  const B = new VzgonBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new VzgonBench({ seed: zap.seed });
   const W = 400, H = 330, PX = 800, yT = 318; // 1 cm = 8 px; miza pri yT
   const svg = svgBox(W, H, "lab-bench lab-sil lab-sil-vzg");
   const log = eventLog();
@@ -585,12 +603,21 @@ export function labVzgon(el) {
     svg.setAttribute("aria-label", `${VALJI[B.valj].name} visi na silomeru nad čašo s tekočino (${TEKOCINE[B.tek].name}). ${B.globina() > 0 ? `Potopljeno ${fixed(B.globina() * 100, 1)} cm` : "Valj je v zraku"}; silomer kaže ${r.text.replace(".", ",")} N.`);
   }
   draw();
+  zap.vezi(table, {
+    get: () => ({ meas, zrak }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      if (d?.zrak && typeof d.zrak === "object") for (const [k, v] of Object.entries(d.zrak)) if (Number.isFinite(v)) zrak[k] = v;
+      redraw(), sync();
+    },
+  });
 }
 const CASA_W = (A) => 2 * Math.sqrt(A / Math.PI) * 800;
 
 // ================================================================ hidrostatični tlak: sonda in manometer
 export function labTlak(el) {
-  const B = new TlakBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new TlakBench({ seed: zap.seed });
   const W = 400, H = 330, PX = 800, ySurf = 50; // 1 cm = 8 px
   const svg = svgBox(W, H, "lab-bench lab-sil lab-sil-tlak");
   const log = eventLog();
@@ -733,4 +760,11 @@ export function labTlak(el) {
     svg.setAttribute("aria-label", `Sonda v globini ${fixed(B.h * 100, 1)} cm (${TEKOCINE[B.tek].name}), opna gleda ${B.smer === "dol" ? "navzdol" : B.smer === "gor" ? "navzgor" : "vstran"}. Manometer: levi krak ${o.levi} mm, desni ${o.desni} mm.`);
   }
   draw();
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw(), sync();
+    },
+  });
 }

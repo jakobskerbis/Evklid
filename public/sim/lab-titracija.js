@@ -2,7 +2,7 @@
 // Učenec spere in napolni bireto, izpusti zrak iz konice, odpipetira vzorec, izbere indikator, titrira po kapljicah,
 // sam odčita bireto, ponavlja do ujemanja in izračuna koncentracijo. Napake imajo posledice kot v pravem laboratoriju.
 import { h, s, svgBox, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, shramba } from "./lab.js";
 import { flaskLevel } from "./lab-kem.js";
 import { fotoPoskus, risiTitracijo, OKNA_TITRACIJA } from "./foto.js";
 import { TitrBench, VZORCI, INDIKATORJI, BIRETA, PIPETA, colourName, indicatorColor, POENOSTAVITVE_TITRACIJA } from "./lab-model-titracija.js";
@@ -20,7 +20,8 @@ const rgb = (c) => `rgb(${c.join(",")})`;
 const mL = (x, d = 2) => `${fixed(x, d)} mL`;
 
 export function labTitracija(el) {
-  const B = new TitrBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // titracije in krivulja ostanejo ob vrnitvi (lab.js); isto seme: ista neznana koncentracija
+  const B = new TitrBench({ seed: zap.seed });
   const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const W = 400, H = 566;
   const svg = svgBox(W, H, "lab-bench lab-tit");
@@ -304,6 +305,7 @@ export function labTitracija(el) {
     if (last && Math.abs(last[0] - V) < 0.04 && auto) return;
     if (pts.length >= 250) return;
     pts.push([V, p]);
+    zap.shrani();
     last = [V, p];
     redraw();
   }
@@ -558,6 +560,19 @@ export function labTitracija(el) {
     s("text", { x: CX + 12 + 10 * k, y: CY + 18, class: "tick small", "text-anchor": "middle" }, g, "2 cm");
   }
 
+  zap.vezi(table, {
+    get: () => ({ pts, prevPts }),
+    set: (d) => {
+      const ok = (a) => (Array.isArray(a) ? a.filter((q) => Array.isArray(q) && q.length === 2 && q.every(Number.isFinite)) : []);
+      pts = ok(d?.pts);
+      prevPts = ok(d?.prevPts);
+      rows.push(...table.rows.filter((r) => r.id in VZORCI && Number.isFinite(r.V)));
+      if (!rows.length) return;
+      calc.hidden = false;
+      summarize();
+      if (rows.some((r) => !VZORCI[r.id].mocna)) askIndicator();
+    },
+  });
   sync();
   redraw();
   ticker(el, tick, 100);

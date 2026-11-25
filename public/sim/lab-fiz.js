@@ -1,6 +1,6 @@
 // Virtualni laboratorij, fizika. Učenec sam sestavi poskus, meri in vidi posledice napak.
 import { h, s, fmt, svgBox, slider, select, segmented, button, layout, label } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, rez, shramba } from "./lab.js";
 import { fotoPoskus, risiKrog, OKNA_KROG } from "./foto.js";
 import { OhmBench, LOADS, AM_RANGES, VM_RANGES, NAPAJALNIK, UPOR, POENOSTAVITVE, fitOrigin } from "./lab-model.js";
 
@@ -12,7 +12,8 @@ const POS = [["zaporedno", "zaporedno"], ["vzporedno", "vzporedno"], ["brez", "o
 
 // Ohmov zakon: napajalnik, upornik ali žarnica, ampermeter in voltmeter.
 export function labOhm(el, { load = "R100" } = {}) {
-  const B = new OhmBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new OhmBench({ seed: zap.seed });
   B.load = load in LOADS ? load : "R100";
   const svg = svgBox(400, 250, "lab-circuit");
   svg.setAttribute("aria-label", "Električni krog");
@@ -194,6 +195,13 @@ export function labOhm(el, { load = "R100" } = {}) {
 
   const foto = fotoPoskus("krog", svg, el, () => draw(), OKNA_KROG);
   graph.setAxes({ y: [0, YMAX[B.load]] });
+  zap.vezi(table, {
+    get: () => ({ series }),
+    set: (d) => {
+      for (const [id, pts] of Object.entries(d?.series || {})) if (id in LOADS && Array.isArray(pts)) series[id] = pts;
+      Object.keys(series).forEach(maybeAsk);
+    },
+  });
   redrawGraph();
   readMeters();
   draw();

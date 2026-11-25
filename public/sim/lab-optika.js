@@ -1,7 +1,7 @@
 // Virtualni laboratorij, optika: optični disk z laserjem (lab-lom) in optična klop z zbiralno lečo (lab-leca).
 // Modeli: lab-model-optika.js (brez DOM). Optika ne potrebuje ure: risba se nariše ob vsaki spremembi.
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
 import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, mejniKot, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -23,7 +23,8 @@ const RAZREDI = ["a", "b", "c"];
 
 // ================================================================ optični disk: odboj, lom, popolni odboj
 export function labLom(el) {
-  const B = new LomBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new LomBench({ seed: zap.seed });
   const W = 400, H = 400, cx = 200, cy = 200, k = 160 / DISK.Rs; // 1 mm = 1,33 px
   const svg = svgBox(W, H, "lab-bench lab-opt lab-opt-disk");
   const log = eventLog();
@@ -103,6 +104,9 @@ export function labLom(el) {
     }
     if (!S.n && Math.abs(cur.odboj - cur.alfa) <= 0.5) log.push("Odbojni kot je enak vpadnemu (v okviru napake odčitka ±0,5°).", "ok");
     sync();
+    vprasaj();
+  }
+  function vprasaj() {
     if (!asked && [...serije.values()].some((x) => x.smer === "zrak" && x.pts.length >= 4)) {
       asked = true;
       qBox.append(conclusion({
@@ -186,11 +190,20 @@ export function labLom(el) {
   }
   change();
   sync();
+  zap.vezi(table, {
+    get: () => ({ serije: [...serije] }),
+    set: (d) => {
+      for (const [k, x] of Array.isArray(d?.serije) ? d.serije : []) if (typeof k === "string" && x && Array.isArray(x.pts)) serije.set(k, x);
+      sync();
+      vprasaj();
+    },
+  });
 }
 
 // ================================================================ optična klop: zbiralna leča
 export function labLeca(el) {
-  const B = new LecaBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new LecaBench({ seed: zap.seed });
   const W = 400, H = 322, x0 = 12, kx = (W - 2 * x0) / KLOP.L; // tračnica: 1 mm = 0,376 px
   const yA = 70; // optična os na risbi klopi
   const svg = svgBox(W, H, "lab-bench lab-opt lab-opt-klop");
@@ -268,6 +281,9 @@ export function labLeca(el) {
     if (!meritve.has(f)) meritve.set(f, []);
     meritve.get(f).push({ a: r.a, b: r.b });
     sync();
+    vprasaj();
+  }
+  function vprasaj() {
     if (!asked && [...meritve.values()].some((m) => m.length >= 3)) {
       asked = true;
       qBox.append(conclusion({
@@ -379,6 +395,14 @@ export function labLeca(el) {
   }
   draw();
   sync();
+  zap.vezi(table, {
+    get: () => ({ meritve: [...meritve] }),
+    set: (d) => {
+      for (const [f, rows] of Array.isArray(d?.meritve) ? d.meritve : []) if (LECE.includes(+f) && Array.isArray(rows)) meritve.set(+f, rows.filter((x) => x && Number.isFinite(x.a) && Number.isFinite(x.b)));
+      sync();
+      vprasaj();
+    },
+  });
 }
 
 export { N_ZRAK, slika };

@@ -205,10 +205,19 @@ export async function mountSim(id, el, opts = {}) {
   if (typeof fn !== "function") return false;
   el.replaceChildren();
   el.classList.add("demo", `demo-${id}`);
+  // Laboratorij: ključ shranjenih meritev poskusa (lab.js → shramba); isti poskus z drugimi možnostmi ima svoje meritve.
+  const labId = id.startsWith("lab-") ? (opts && Object.keys(opts).length ? `${id}:${JSON.stringify(opts)}` : id) : "";
+  if (labId) el.dataset.labId = labId;
+  else delete el.dataset.labId;
   try {
     fn(el, opts || {});
     // Laboratorij: na telefonu ostane risba vidna med uporabo kontrol (lab.js → pripni, docs/laboratorij.md).
     if (el.classList.contains("lab")) (await import("./lab.js")).pripni(el);
+    // »Začni znova« (obnovljene meritve) in »Ponastavi«: shranjene meritve pozabi in poskus postavi znova.
+    if (el.classList.contains("lab") && labId) {
+      const { pozabiMeritve } = await import("./lab.js");
+      el._labZnova = () => (pozabiMeritve(labId), mountSim(id, el, opts));
+    } else el._labZnova = null;
     focusableTargets(el);
     // Ponastavi: simulacijo postavi znova v začetno stanje (ne pri zbirki, ki ima svoje podsimulacije).
     if (id !== "zbirka" && !opts?.noReset) {
@@ -217,7 +226,7 @@ export async function mountSim(id, el, opts = {}) {
       b.className = "ghost small demo-reset";
       b.textContent = "↺ Ponastavi";
       b.setAttribute("aria-label", "Ponastavi simulacijo na začetek");
-      b.addEventListener("click", () => mountSim(id, el, opts));
+      b.addEventListener("click", () => (el._labZnova && el.dataset.labId === labId ? el._labZnova() : mountSim(id, el, opts)));
       el.append(b);
     }
     // Prikaz na grafu: gumbi za vklop in izklop krivulj, točk, oznak in mreže (public/sim/prikaz.js).

@@ -3,7 +3,7 @@
 // Risbe so v stalnem merilu (merilna črta), oprema v pravih razmerjih; čas teče v realnem času (pospešek časa in posnetek ×0,1
 // sta označena v risbi). Risba se nariše znova ob vsakem koraku ure (10-krat na sekundo) ali sličici poskusa.
 import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba } from "./lab.js";
 import { ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, HALL, TehtnicaBench, MAGNETI, VODNIKI, IndukcijaBench, MAGNET_IND, CEV, SENZOR, GALVANOMETER, G_SOLA, naklonSkoziIzhodisce, POENOSTAVITVE_MAGNETIZEM } from "./lab-model-magnetizem.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -291,7 +291,8 @@ const JED_KRATKO = { zrak: "brez", palica: "palica", zebelj: "žebelj", u: "U-je
 // brez sorazmernosti B ∝ N I, μ0 in nasičenja.
 export function labElektromagnet(el, opts = {}) {
   const OS = opts.raven === "os";
-  const B = new ElektromagnetBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new ElektromagnetBench({ seed: zap.seed });
   B.prikljuceno = false; // učenec krog sestavi sam: krokodilčka sta na začetku odložena na mizi
   const W = 400, H = 320, S = 5, xc = 95, yc = 175, yMiza = 300; // 1 cm = 5 enot
   const Y = (z) => yc - z * 100 * S;
@@ -664,11 +665,19 @@ export function labElektromagnet(el, opts = {}) {
     readouts();
     draw();
   }, 100);
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }
 
 // ================================================================ 2. sila na vodnik: tokovna tehtnica
 export function labSilaVodnik(el) {
-  const B = new TehtnicaBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new TehtnicaBench({ seed: zap.seed });
   const W = 400, H = 300, S = 6, yMiza = 286, xm = 120; // 1 cm = 6 enot
   const svg = svgBox(W, H, "lab-bench lab-mag lab-mag-tt");
   const log = eventLog();
@@ -919,11 +928,19 @@ export function labSilaVodnik(el) {
     readouts();
     draw();
   }, 100);
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }
 
 // ================================================================ 3. elektromagnetna indukcija
 export function labIndukcija(el) {
-  const B = new IndukcijaBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new IndukcijaBench({ seed: zap.seed });
   B.prikljuceno = false; // učenec tuljavo priključi sam (sicer senzor kaže le brum odprtega vhoda)
   const W = 400, H = 330, S = 4.2, yMiza = 312, xt = 58; // 1 cm = 4,2 enote
   const yTop = yMiza - (CEV.L + CEV.pena) * 100 * S; // vrh cevi (cev stoji na blazinici)
@@ -1272,4 +1289,11 @@ export function labIndukcija(el) {
   readouts();
   redraw();
   drawTrace();
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }

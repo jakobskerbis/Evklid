@@ -1,6 +1,6 @@
 // Gradniki virtualnega laboratorija: zaslon merilnika, tabela meritev, graf, vprašanje o sklepu, dnevnik dogodkov.
 // Modeli so v lab-model.js; tu je samo prikaz. Besedila so slovenska kot v ostalih simulacijah učbenika.
-import { h, s, fmt, svgBox, axes, tex } from "./kit.js";
+import { h, s, fmt, svgBox, axes, tex, button } from "./kit.js";
 import SL from "../i18n/sl.js";
 import { icon } from "../icons.js";
 
@@ -57,6 +57,8 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
   // quiet: samodejni zapis (vsakih 30 s) premakne le okvir tabele, ne cele strani, da stran ne skače med delom.
   el.add = (r, { quiet = false } = {}) => (rows.push(r), draw(), quiet ? (el.scrollTop = el.scrollHeight) : el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
   el.clear = () => ((rows.length = 0), draw());
+  // Shranjene vrstice ob ponovnem odprtju (shramba): brez pomikanja strani.
+  el.obnovi = (list) => ((rows.length = 0), rows.push(...list), draw());
   // Besedilo prazne tabele po korakih poskusa: »Še ni meritev. Natoči …« ne sme ostati, ko je voda že v posodi.
   el.setEmpty = (text) => { if (none.textContent !== text) none.textContent = text; };
   el.rows = rows;
@@ -154,20 +156,101 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
 }
 
 // Vprašanje o sklepu: ena pravilna možnost, pri vsaki razlaga.
+// Po prvi izbiri so možnosti zaklenjene (učenec ne more klikati vseh po vrsti in brati vseh razlag); »Poskusi znova«
+// pod razlago jih spet odklene. Zaklenjene ostanejo dosegljive s tipko Tab (aria-disabled, ne disabled), da bralnik prebere izbiro.
 // q = { text, options: [{ t, ok, why }] }
 export function conclusion(q) {
   const why = h("p", { class: "lab-why", "aria-live": "polite", hidden: true });
   const opts = q.options.map((o, i) =>
     h("button", { type: "button", class: "lab-opt", "data-i": i, onclick: (ev) => pick(ev.currentTarget, o) }, h("span", { html: o.t })),
   );
+  const list = h("div", { class: "lab-opts" }, ...opts);
+  const again = button("Poskusi znova", () => reset());
+  again.classList.add("lab-again");
+  again.hidden = true;
   const pick = (b, o) => {
+    if (list.classList.contains("lab-zaklenjeno")) return;
+    list.classList.add("lab-zaklenjeno");
+    for (const x of opts) x.setAttribute("aria-disabled", "true");
     b.classList.add(o.ok ? "ok" : "bad");
     b.setAttribute("aria-pressed", "true");
     why.hidden = false;
     why.className = `lab-why ${o.ok ? "ok" : "bad"}`;
     why.innerHTML = `<b>${o.ok ? "Pravilno." : "Ne čisto."}</b> ${o.why}`;
+    again.hidden = false;
   };
-  return h("section", { class: "lab-q" }, h("h4", {}, "Sklep"), h("p", { class: "lab-q-text", html: q.text }), h("div", { class: "lab-opts" }, ...opts), why);
+  const reset = () => {
+    list.classList.remove("lab-zaklenjeno");
+    for (const x of opts) x.classList.remove("ok", "bad"), x.removeAttribute("aria-pressed"), x.removeAttribute("aria-disabled");
+    why.hidden = true;
+    why.textContent = "";
+    again.hidden = true;
+    opts[0]?.focus();
+  };
+  return h("section", { class: "lab-q" }, h("h4", {}, "Sklep"), h("p", { class: "lab-q-text", html: q.text }), list, why, again);
+}
+
+// Shranjene meritve (profil A, 2026-11-25: tabela in graf sta se ob odhodu ali osvežitvi izgubila). Vsak poskus ima svoj ključ
+// evklid.lab.meritve.<učenec>.<poskus> (poskus: el.dataset.labId, ki ga nastavi sim/index.js mountSim; brez njega se nič ne shrani).
+// Shrani se seme naključnih odstopanj (isti upornik, ista vzmet), vrstice tabele in stanje, ki ga poda poskus (točke grafa …).
+// Uporaba: const zap = shramba(el); new Bench({ seed: zap.seed }); … na koncu zap.vezi(table, { get, set }); po spremembi zap.shrani().
+// »Začni znova« (pri obnovljenih meritvah) in »Ponastavi« meritve pozabita. Shramba brskalnika je lahko zaprta (zasebno okno): try/catch.
+const MER = "evklid.lab.meritve.";
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const lsDel = (k) => { try { localStorage.removeItem(k); } catch {} };
+export const kljucMeritev = (labId) => (labId ? `${MER}${lsGet("studentId") || "0"}.${labId}` : null);
+export const pozabiMeritve = (labId) => { const k = kljucMeritev(labId); if (k) lsDel(k); };
+// JSON bi NaN (npr. »OL« na merilniku) zapisal kot null, ta pa bi bil na grafu točka pri 0: zapišemo ga kot "#NaN".
+const NEKONCNO = { "#NaN": NaN, "#Infinity": Infinity, "#-Infinity": -Infinity };
+export const vJson = (x) => JSON.stringify(x, (k, v) => (typeof v === "number" && !Number.isFinite(v) ? `#${v}` : v));
+export const izJsona = (t) => JSON.parse(t, (k, v) => (typeof v === "string" && v in NEKONCNO ? NEKONCNO[v] : v));
+
+export function shramba(el) {
+  const key = kljucMeritev(el?.dataset?.labId);
+  let data = null;
+  try { data = key ? izJsona(lsGet(key) || "null") : null; } catch {}
+  if (!data || data.v !== 1 || !Array.isArray(data.rows)) data = null;
+  let table = null, get = () => ({}), vezano = false, cakam = false, bar = null;
+  const zap = {
+    data,
+    seed: Number.isInteger(data?.seed) ? data.seed : (Math.random() * 2 ** 31) | 0,
+    obnovljeno: false, // vrstice s prejšnjega obiska so v tabeli (poskus jih ob novem nizu meritev pobriše)
+    shrani() {
+      if (!key || !vezano || cakam) return;
+      cakam = true; // več sprememb v istem kliku (vrstica, nato točke grafa) zapiše enkrat, ko je stanje celo
+      queueMicrotask(() => {
+        cakam = false;
+        let extra = {};
+        try { extra = get() || {}; } catch {}
+        lsSet(key, vJson({ ...extra, v: 1, seed: zap.seed, rows: table?.rows ?? [] }));
+      });
+    },
+    pozabi: () => key && lsDel(key),
+    vezi(t, { get: g, set } = {}) {
+      table = t;
+      if (g) get = g;
+      if (data && data.rows.length) {
+        t.obnovi?.(data.rows);
+        zap.obnovljeno = true;
+        const znova = button("Začni znova", () => {
+          zap.pozabi();
+          if (typeof el._labZnova === "function") return el._labZnova();
+          t.clear();
+          set?.(null);
+        });
+        bar = h("p", { class: "lab-obnova", role: "status" }, h("span", {}, "Meritve s prejšnjega obiska so obnovljene."), znova);
+        t.before?.(bar);
+      }
+      if (data) set?.(data);
+      const add = t.add, clear = t.clear;
+      t.add = (...a) => { const r = add(...a); zap.shrani(); return r; };
+      t.clear = (...a) => { const r = clear(...a); zap.obnovljeno = false; bar?.remove(); zap.shrani(); return r; };
+      vezano = true;
+      return zap;
+    },
+  };
+  return zap;
 }
 
 // Dnevnik dogodkov (kaj se je zgodilo v laboratoriju), najnovejši zgoraj.

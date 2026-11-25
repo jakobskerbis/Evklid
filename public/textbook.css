@@ -1433,3 +1433,12 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-rk-tab .lab-table td:first-child + td, .lab-rk-tab .lab-table th:first-child + th { min-width: 4.5em; }
 /* risba 4 : 3 na računalniku: zapolni levi stolpec (do 500 px) namesto splošnih 460 px */
 @container labtit (min-width: 800px) { .demo.lab .lab-tit-top > .demo-stage :is(.demo-svg.lab-rk, :has(> .demo-svg.lab-rk)) { max-width: none; } }
+
+/* profil A: laboratorij */
+/* Sklep: po prvi izbiri so možnosti zaklenjene, druge so umaknjene (barva besedila, ne prosojnost: kontrast ostane AA). */
+.lab-opts.lab-zaklenjeno .lab-opt { cursor: default; }
+.lab-opts.lab-zaklenjeno .lab-opt:not([aria-pressed="true"]) { color: var(--muted); background: var(--surface); }
+.lab-q .lab-again { margin-top: 8px; min-height: 44px !important; }
+/* Obnovljene meritve s prejšnjega obiska in gumb »Začni znova« nad tabelo. */
+.lab-obnova { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 8px; font-size: 0.9rem; color: var(--muted); }
+.lab-obnova button { min-height: 44px !important; }
