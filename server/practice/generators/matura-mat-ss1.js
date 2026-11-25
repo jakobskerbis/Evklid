@@ -770,7 +770,18 @@ const GENS = [
         const given = [`a = ${md(a, da)}\\ \\mathrm{cm}`, `\\Delta a = ${tx(da)}\\ \\mathrm{cm}`, `b = ${md(b, db)}\\ \\mathrm{cm}`, `\\Delta b = ${tx(db)}\\ \\mathrm{cm}`];
         const base = `Stranici pravokotnika smo izmerili: $a = (${md(a, da)} \\pm ${tx(da)})\\ \\mathrm{cm}$ in $b = (${md(b, db)} \\pm ${tx(db)})\\ \\mathrm{cm}$.`;
         const dS = S * dRel;
-        const steps = `$S = ${md(a, da)} \\cdot ${md(b, db)} = ${tx(S)}\\ \\mathrm{cm^2}$\n$\\delta a = \\frac{${tx(da)}}{${md(a, da)}} \\approx ${tx(roundHalfUp(da / a, 5))}$, $\\delta b = \\frac{${tx(db)}}{${md(b, db)}} \\approx ${tx(roundHalfUp(db / b, 5))}$\n$\\delta S \\approx \\delta a + \\delta b \\approx ${tx(roundHalfUp(dRel, 5))} \\approx ${tx(roundHalfUp(dRel * 100, 1), 1)}\\ \\%$`;
+        // Relativni napaki z dovolj mesti, da vsota izpisanih vrednosti da isti odgovor (odstotek in ΔS) kot natančen račun.
+        let k = 5;
+        let rA, rB;
+        for (; k <= 9; k++) {
+          rA = roundHalfUp(da / a, k);
+          rB = roundHalfUp(db / b, k);
+          const sum = roundHalfUp(rA + rB, k);
+          if (roundHalfUp(sum * 100, 1) === roundHalfUp(dRel * 100, 1) && roundHalfUp(S * sum, 2) === roundHalfUp(dS, 2)) break;
+        }
+        k = Math.min(k, 9);
+        const rS = roundHalfUp(rA + rB, k);
+        const steps = `$S = ${md(a, da)} \\cdot ${md(b, db)} = ${tx(S)}\\ \\mathrm{cm^2}$\n$\\delta a = \\frac{${tx(da)}}{${md(a, da)}} \\approx ${tx(rA)}$, $\\delta b = \\frac{${tx(db)}}{${md(b, db)}} \\approx ${tx(rB)}$\n$\\delta S \\approx \\delta a + \\delta b \\approx ${tx(rA)} + ${tx(rB)} = ${tx(rS)} \\approx ${tx(roundHalfUp(dRel * 100, 1), 1)}\\ \\%$`;
         return askRel
           ? {
               text: `${base} Oceni relativno napako ploščine v odstotkih. Zaokroži na desetinko odstotka.`,
@@ -795,7 +806,7 @@ const GENS = [
               hint: "Najprej oceni relativno napako ploščine, nato jo pomnoži s ploščino.",
               data: { given, find: ["\\Delta S"] },
               formula: ["\\delta(a \\cdot b) \\approx \\delta a + \\delta b", "\\Delta S = S \\cdot \\delta S"],
-              solution: `${steps}\n$\\Delta S \\approx ${tx(S)} \\cdot ${tx(roundHalfUp(dRel, 5))} \\approx ${tx(roundHalfUp(dS, 2), 2)}\\ \\mathrm{cm^2}$ (enako je $b\\,\\Delta a + a\\,\\Delta b$)`,
+              solution: `${steps}\n$\\Delta S \\approx ${tx(S)} \\cdot ${tx(rS)} \\approx ${tx(roundHalfUp(dS, 2), 2)}\\ \\mathrm{cm^2}$ (enako je $b\\,\\Delta a + a\\,\\Delta b$)`,
             };
       }
       if (t === 1) {
@@ -1027,17 +1038,18 @@ const GENS = [
         const k = r.int(1, n - 2);
         const e = n - 1 - k;
         const coef = (plus && e % 2 === 1 ? -1 : 1) * c ** e;
+        const xk = k === 1 ? "x" : `x^{${k}}`; // »koeficient pri x«, ne »x^{1}«
         return {
-          text: `Izraz $${E}$ razstavimo kot $(x ${plus ? "+" : "-"} ${c})(\\ldots)$. Kolikšen je koeficient pri $x^{${k}}$ v drugem faktorju?`,
+          text: `Izraz $${E}$ razstavimo kot $(x ${plus ? "+" : "-"} ${c})(\\ldots)$. Kolikšen je koeficient pri $${xk}$ v drugem faktorju?`,
           answer: num(coef, null, [
             { value: (plus && e % 2 === 0 ? -1 : 1) * c ** e, why: "Pri vsoti potenc se predznaki v drugem faktorju izmenjujejo, začnejo pa s $+$ pri najvišji potenci." },
             { value: (plus && (e + 1) % 2 === 1 ? -1 : 1) * c ** (e + 1), why: `V vsakem členu je vsota eksponentov $${n - 1}$, ne $${n}$.` },
-            { value: (plus && k % 2 === 1 ? -1 : 1) * c ** k, why: `Pri $x^{${k}}$ ima $${c}$ eksponent $${n - 1} - ${k}$.` },
+            { value: (plus && k % 2 === 1 ? -1 : 1) * c ** k, why: `Pri $${xk}$ ima $${c}$ eksponent $${n - 1} - ${k}$.` },
           ]),
-          hint: `V drugem faktorju je člen oblike $x^{${k}} \\cdot ${c}^{j}$, pri čemer je $${k} + j = ${n - 1}$.`,
-          data: { given: [`${E} = (x ${plus ? "+" : "-"} ${c})(\\ldots)`, `k = ${k}`], find: [`\\text{koeficient pri } x^{${k}}`] },
+          hint: `V drugem faktorju je člen oblike $${xk} \\cdot ${c}^{j}$, pri čemer je $${k} + j = ${n - 1}$.`,
+          data: { given: [`${E} = (x ${plus ? "+" : "-"} ${c})(\\ldots)`], find: [`\\text{koeficient pri } ${xk}`] },
           formula: plus ? "a^n + b^n = (a + b)(a^{n-1} - a^{n-2}b + \\ldots + b^{n-1}),\\ n \\text{ lih}" : "a^n - b^n = (a - b)(a^{n-1} + a^{n-2}b + \\ldots + b^{n-1})",
-          solution: `$a = x$, $b = ${c}$, $n = ${n}$\nČlen z $x^{${k}}$: $${plus && e % 2 === 1 ? "-" : ""}x^{${k}} \\cdot ${c}^{${e}}$ (vsota eksponentov je $${n - 1}$${plus ? ", predznak se izmenjuje" : ""})\nKoeficient: $${coef}$`,
+          solution: `$a = x$, $b = ${c}$, $n = ${n}$\nČlen z $${xk}$: $${plus && e % 2 === 1 ? "-" : ""}${xk} \\cdot ${c}^{${e}}$ (vsota eksponentov je $${n - 1}$${plus ? ", predznak se izmenjuje" : ""})\nKoeficient: $${coef}$`,
         };
       }
       if (t === 1) {
@@ -1120,7 +1132,7 @@ const GENS = [
             hint: "Vstavi vrednost parametra in izračunaj koeficient pred $x$. Pazi na njegov predznak.",
             data: { given: [`m = ${M}`], find: ["x"] },
             formula: FN,
-            solution: `Za $m = ${M}$: $${mT(c, form).replace("m", pt(M))} = ${a}$, neenačba je $${a}x ${REL[rel]} ${d}$.\n${a < 0 ? `Delimo z negativnim številom $${a}$, znak se obrne.` : `Delimo s pozitivnim številom $${a}$, znak ostane.`}\n$x ${REL[relR]} ${tt}$`,
+            solution: `Za $m = ${M}$: $${mT(c, form).replace("m", pt(M))} = ${a}$, neenačba je $${lin([a], ["x"])} ${REL[rel]} ${d}$.\n${a < 0 ? `Delimo z negativnim številom $${a}$, znak se obrne.` : `Delimo s pozitivnim številom $${a}$, znak ostane.`}\n$x ${REL[relR]} ${tt}$`,
           };
         }
         if (t === 1) {
@@ -1298,7 +1310,7 @@ const GENS = [
           hint: "Iz druge enačbe izrazi $x$ in ga vstavi v prvo. Dobiš enačbo oblike $Ay = B$ s parametrom.",
           data: { given: [E1, E2], find: ["m"] },
           formula: FE,
-          solution: `Iz druge enačbe: $x = ${q} - my$\nVstavimo v prvo: $m(${q} - my) + ${k * k}y = ${k * q}$, torej $(${k * k} - m^2)y = ${k * q} ${sg(-q)}m$\n$${k * k} - m^2 = 0$ za $m = \\pm ${k}$.\n$m = ${k}$: $0 \\cdot y = 0$, neskončno rešitev. $m = ${-k}$: $0 \\cdot y = ${2 * k * q}$, ni rešitve.\nOdgovor: $m = ${ansV}$`,
+          solution: `Iz druge enačbe: $x = ${q} - my$\nVstavimo v prvo: $m(${q} - my) + ${k * k}y = ${k * q}$, torej $(${k * k} - m^2)y = ${k * q} ${q > 0 ? "-" : "+"} ${lin([Math.abs(q)], ["m"])}$\n$${k * k} - m^2 = 0$ za $m = \\pm ${k}$.\n$m = ${k}$: $0 \\cdot y = 0$, neskončno rešitev. $m = ${-k}$: $0 \\cdot y = ${2 * k * q}$, ni rešitve.\nOdgovor: $m = ${ansV}$`,
         };
       }
       const c = r.int(-3, 5);
@@ -2089,7 +2101,7 @@ const LINEARNE = [
             hint: "Določi definicijsko območje, nato pomnoži s produktom imenovalcev.",
             data: { given: GIV(`\\dfrac{${a}}{${xm(p)}}`, `\\dfrac{${b}}{${xm(q)}}`), find: ["x"] },
             formula: "\\dfrac{a}{b} = \\dfrac{c}{d} \\;\\Rightarrow\\; ad = bc",
-            solution: `Definicijsko območje: $x \\ne ${p}$ in $x \\ne ${q}$.\n$${a}(${xm(q)}) = ${b}(${xm(p)})$\n$${a}x ${sg(-a * q)} = ${b}x ${sg(-b * p)}$\n$${lin([D], ["x"])} = ${N}$\n$x = ${qT(N, D)}$, ki je v definicijskem območju.`,
+            solution: `Definicijsko območje: $x \\ne ${p}$ in $x \\ne ${q}$.\n$${a}(${xm(q)}) = ${b}(${xm(p)})$\n$${lin([a], ["x"])} ${sg(-a * q)} = ${lin([b], ["x"])} ${sg(-b * p)}$\n$${lin([D], ["x"])} = ${N}$\n$x = ${qT(N, D)}$, ki je v definicijskem območju.`,
           };
         }
         // (kx + s)/(x - p) = k + c/(x - q)
@@ -2168,7 +2180,7 @@ const LINEARNE = [
           hint: "Ko ga dohiti, sta prevozila enako pot. Kombi vozi $t$ ur, tovornjak $t + \\Delta t$ ur.",
           data: { given: [`v_1 = ${v1}\\ \\mathrm{km/h}`, `\\Delta t = ${tx(dt)}\\ \\mathrm{h}`, `v_2 = ${v2}\\ \\mathrm{km/h}`], find: [askS ? "s" : "t"] },
           formula: "v_2\\,t = v_1\\,(t + \\Delta t)",
-          solution: `$${v2}t = ${v1}(t + ${tx(dt)})$\n$${v2}t = ${v1}t + ${tx(v1 * dt)}$\n$${v2 - v1}t = ${tx(v1 * dt)}$\n$t = ${tx(tt)}\\ \\mathrm{h}$${askS ? `\n$s = v_2\\,t = ${v2} \\cdot ${tx(tt)} = ${tx(S)}\\ \\mathrm{km}$` : ""}`,
+          solution: `$${v2}t = ${v1}(t + ${tx(dt)})$\n$${v2}t = ${v1}t + ${tx(v1 * dt)}$\n$${lin([v2 - v1], ["t"])} = ${tx(v1 * dt)}$\n$t = ${tx(tt)}\\ \\mathrm{h}$${askS ? `\n$s = v_2\\,t = ${v2} \\cdot ${tx(tt)} = ${tx(S)}\\ \\mathrm{km}$` : ""}`,
         };
       }
       // sprememba cene
@@ -2553,7 +2565,7 @@ const LINEARNE = [
           hint: "Količina je linearna funkcija časa. Iz dveh meritev izračunaj smerni koeficient (ta je negativen) in začetno vrednost.",
           data: { given: [`t_1 = ${t1}\\ \\mathrm{${U[0]}}`, `${H}_1 = ${tx(h1)}\\ \\mathrm{${U[2]}}`, `t_2 = ${t2}\\ \\mathrm{${U[0]}}`, `${H}_2 = ${tx(h2)}\\ \\mathrm{${U[2]}}`], find: [askT ? "t" : `${H}(0)`] },
           formula: [`${H}(t) = kt + n`, `k = \\dfrac{${H}_2 - ${H}_1}{t_2 - t_1}`],
-          solution: `$k = \\dfrac{${tx(h2)} - ${tx(h1)}}{${t2} - ${t1}} = ${tx(-v)}$\n$n = ${H}_1 - k t_1 = ${tx(h1)} + ${tx(v)} \\cdot ${t1} = ${tx(h0)}$\n$${H}(t) = ${tx(-v)}t + ${tx(h0)}$${askT ? `\n$${H}(t) = 0 \\;\\Rightarrow\\; t = \\dfrac{${tx(h0)}}{${tx(v)}} = ${T0}\\ \\mathrm{${U[0]}}$` : `\nNa začetku: $${H}(0) = ${tx(h0)}\\ \\mathrm{${U[2]}}$`}`,
+          solution: `$k = \\dfrac{${tx(h2)} - ${tx(h1)}}{${t2} - ${t1}} = ${tx(-v)}$\n$n = ${H}_1 - k t_1 = ${tx(h1)} + ${tx(v)} \\cdot ${t1} = ${tx(h0)}$\n$${H}(t) = ${lin([-v], ["t"])} + ${tx(h0)}$${askT ? `\n$${H}(t) = 0 \\;\\Rightarrow\\; t = \\dfrac{${tx(h0)}}{${tx(v)}} = ${T0}\\ \\mathrm{${U[0]}}$` : `\nNa začetku: $${H}(0) = ${tx(h0)}\\ \\mathrm{${U[2]}}$`}`,
         };
       }
       if (t === 3) {

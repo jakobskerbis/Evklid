@@ -40,6 +40,18 @@ export function ft(n, d) {
   if (b === 1) return `${a}`;
   return `${a < 0 ? "-" : ""}\\frac{${Math.abs(a)}}{${b}}`;
 }
+// Koliko decimalk (vsaj d) potrebujejo izpisani vmesni rezultati xs, da račun f iz izpisanih (zaokroženih) števil,
+// zaokrožen na dEnd decimalk, da isti rezultat kot f iz natančnih vrednosti (ta je ocenjeni odgovor). Šolsko pravilo:
+// vmesne rezultate pišemo z več mesti in zaokrožimo šele na koncu; sicer dijak, ki sledi rešitvi, pride do druge
+// zadnje števke in dobi »Zaokrožil si v napačno smer« (test/matura-zaokrozevanje.test.js).
+export function decimalke(xs, d, f, dEnd, dMax = 10) {
+  const arr = [].concat(xs);
+  const prav = roundHalfUp(f(...arr), dEnd);
+  for (let k = d; k < dMax; k++) {
+    if (Math.abs(roundHalfUp(f(...arr.map((x) => roundHalfUp(x, k))), dEnd) - prav) < 10 ** -dEnd / 2) return k;
+  }
+  return dMax;
+}
 export const sg = (c) => (c < 0 ? `- ${tx(-c)}` : `+ ${tx(c)}`);
 export const pickAns = (r, correct, wrongs) => ({ type: "choice", ...choicesWhy(r, correct, wrongs) });
 export const name = (r) => r.pick(NAMES);

@@ -4,7 +4,7 @@
 import { g, nOf, verbOf, NAMES } from "../rng.js";
 import { roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { fr, num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens, decimalke } from "./matura-util.js";
 
 const P = "mat-ss4-matura-";
 const T = (s) => `MAT-SS-4/${s}`;
@@ -141,6 +141,7 @@ const GENS = [
           const n = r.int(3, 10);
           const qn = q ** n;
           const a = annuity(G0, q, n);
+          const dq = decimalke(qn, 6, (x) => (G0 * x * (q - 1)) / (x - 1), 2);
           return {
             text: `${nm} najame posojilo ${r.pick(LOANS)} v višini $${G0}$ € pri letni obrestni meri $${pT}$. Vrne ga v $${n}$ enakih letnih obrokih (anuitetah), ki jih plača ob koncu vsakega leta. Kolikšna je anuiteta? Zaokroži na cent.`,
             answer: eur(a, [
@@ -151,7 +152,7 @@ const GENS = [
             hint: "Posojilo in vse anuitete preračunaj na konec zadnjega leta in vrednosti izenači.",
             data: { given: [`G_0 = ${G0}${E}`, `p = ${pT}`, `n = ${n}`], find: ["a"] },
             formula: ["r = 1 + \\dfrac{p}{100}", "a = G_0 \\cdot \\dfrac{r^n (r - 1)}{r^n - 1}"],
-            solution: `${rLine}\n$r^{${n}} ${ap(qn, 6)} ${tx(qn, 6)}$\n$a = ${G0} \\cdot \\dfrac{${tx(qn, 6)} \\cdot ${tx(q - 1)}}{${tx(qn - 1, 6)}}$\n$a \\approx ${tx(a, 2)}$ €`,
+            solution: `${rLine}\n$r^{${n}} ${ap(qn, dq)} ${tx(qn, dq)}$\n$a = ${G0} \\cdot \\dfrac{${tx(qn, dq)} \\cdot ${tx(q - 1)}}{${tx(qn - 1, dq)}}$\n$a \\approx ${tx(a, 2)}$ €`,
           };
         }
         if (t === 1) {
@@ -175,6 +176,7 @@ const GENS = [
         const X = r.int(10, 100) * 100;
         const k = r.int(2, 6);
         const G0v = X / q ** k;
+        const dq = decimalke(q ** k, 6, (x) => X / x, 2);
         return {
           text: `${nm} mora čez ${yrs(k)} vrniti $${X}$ €. Z upnikom se dogovori, da dolg poravna že danes. Koliko mora plačati danes, če upoštevata letno obrestno mero $${pT}$ in obrestno obrestovanje? Zaokroži na cent.`,
           answer: eur(G0v, [
@@ -185,7 +187,7 @@ const GENS = [
           hint: "Današnja vrednost je glavnica, ki v danih letih z obrestmi naraste na dolgovani znesek.",
           data: { given: [`G = ${X}${E}`, `p = ${pT}`, `k = ${k}`], find: ["G_0"] },
           formula: ["r = 1 + \\dfrac{p}{100}", "G_0 = \\dfrac{G}{r^k}"],
-          solution: `${rLine}\n$r^{${k}} ${ap(q ** k, 6)} ${tx(q ** k, 6)}$\n$G_0 = \\dfrac{${X}}{${tx(q ** k, 6)}} \\approx ${tx(G0v, 2)}$ €`,
+          solution: `${rLine}\n$r^{${k}} ${ap(q ** k, dq)} ${tx(q ** k, dq)}$\n$G_0 = \\dfrac{${X}}{${tx(q ** k, dq)}} \\approx ${tx(G0v, 2)}$ €`,
         };
       }
       if (level === 2) {
@@ -199,6 +201,16 @@ const GENS = [
           const grow = G0 * qk;
           const paid = (a * (qk - 1)) / (q - 1);
           const Dk = grow - paid;
+          // Izpisana r^k in vmesna zneska z dovolj mesti, da se D_k iz njih izide na isti cent kot odgovor.
+          let e = 0;
+          let Q, Gs, Ps;
+          for (; e <= 4; e++) {
+            Q = roundHalfUp(qk, 6 + e);
+            Gs = roundHalfUp(G0 * Q, 2 + e);
+            Ps = roundHalfUp((a * (Q - 1)) / (q - 1), 2 + e);
+            if (Math.abs(r2(Gs - Ps) - r2(Dk)) < 0.005) break;
+          }
+          e = Math.min(e, 4);
           return {
             text: `${nm} odplačuje posojilo $${G0}$ € z $${n}$ letnimi anuitetami po $${tx(a, 2)}$ € pri letni obrestni meri $${pT}$. Koliko dolga ostane takoj po plačilu $${k}$. anuitete? Zaokroži na cent.`,
             answer: eur(Dk, [
@@ -209,7 +221,7 @@ const GENS = [
             hint: `Posojilo in že plačane anuitete preračunaj na trenutek po ${k}. plačilu ter ju odštej.`,
             data: { given: [`G_0 = ${G0}${E}`, `p = ${pT}`, `a = ${tx(a, 2)}${E}`, `k = ${k}`], find: [`D_{${k}}`] },
             formula: ["D_k = G_0 r^k - a \\cdot \\dfrac{r^k - 1}{r - 1}"],
-            solution: `${rLine}, $r^{${k}} ${ap(qk, 6)} ${tx(qk, 6)}$\n$D_{${k}} = ${G0} \\cdot ${tx(qk, 6)} - ${tx(a, 2)} \\cdot \\dfrac{${tx(qk - 1, 6)}}{${tx(q - 1)}}$\n$D_{${k}} \\approx ${tx(grow, 2)} - ${tx(paid, 2)}$\n$D_{${k}} \\approx ${tx(Dk, 2)}$ €`,
+            solution: `${rLine}, $r^{${k}} ${ap(qk, 6 + e)} ${tx(Q, 6 + e)}$\n$D_{${k}} = ${G0} \\cdot ${tx(Q, 6 + e)} - ${tx(a, 2)} \\cdot \\dfrac{${tx(Q - 1, 6 + e)}}{${tx(q - 1)}}$\n$D_{${k}} \\approx ${tx(Gs, 2 + e)} - ${tx(Ps, 2 + e)}$\n$D_{${k}} \\approx ${tx(Dk, 2)}$ €`,
           };
         }
         if (t === 1) {
@@ -275,6 +287,7 @@ const GENS = [
         const v1 = X1 * q ** (tt - t1);
         const v2 = X2 / q ** (t2 - tt);
         const Vv = v1 + v2;
+        const dv = decimalke([v1, v2], 4, (x, y) => x + y, 2);
         return {
           text: `${nm} dolguje $${X1}$ € z rokom plačila čez ${yrs(t1)} in $${X2}$ € z rokom čez ${yrs(t2)}. Z upnikom se dogovori, da oba dolga poravna z enim plačilom čez ${yrs(tt)}. Kolikšno je to plačilo pri letni obrestni meri $${pT}$? Zaokroži na cent.`,
           answer: eur(Vv, [
@@ -285,7 +298,7 @@ const GENS = [
           hint: "Izberi trenutek primerjave na dan enkratnega plačila in vsak dolg preračunaj nanj.",
           data: { given: [`G_1 = ${X1}${E}`, `t_1 = ${t1}`, `G_2 = ${X2}${E}`, `t_2 = ${t2}`, `t = ${tt}`, `p = ${pT}`], find: ["X"] },
           formula: ["\\text{naprej: } G \\cdot r^k, \\quad \\text{nazaj: } \\dfrac{G}{r^k}", "r = 1 + \\dfrac{p}{100}"],
-          solution: `${rLine}\nPrvi dolg do plačila naraste: $${X1} \\cdot ${tx(q)}^{${tt - t1}} ${ap(v1, 4)} ${txr(v1, 4)}$ €\nDrugega preračunamo nazaj: $\\dfrac{${X2}}{${tx(q)}^{${t2 - tt}}} ${ap(v2, 4)} ${txr(v2, 4)}$ €\n$X \\approx ${txr(v1, 4)} + ${txr(v2, 4)} ${ap(Vv, 2)} ${tx(Vv, 2)}$ €`,
+          solution: `${rLine}\nPrvi dolg do plačila naraste: $${X1} \\cdot ${tx(q)}^{${tt - t1}} ${ap(v1, dv)} ${txr(v1, dv)}$ €\nDrugega preračunamo nazaj: $\\dfrac{${X2}}{${tx(q)}^{${t2 - tt}}} ${ap(v2, dv)} ${txr(v2, dv)}$ €\n$X \\approx ${txr(v1, dv)} + ${txr(v2, dv)} ${ap(Vv, 2)} ${tx(Vv, 2)}$ €`,
         };
       }
       if (t === 1) {
@@ -294,6 +307,7 @@ const GENS = [
         const t2 = t1 + r.int(1, 3);
         const s = q ** -t1 + q ** -t2;
         const x = G0 / s;
+        const ds = decimalke(s, 6, (y) => G0 / y, 2);
         return {
           text: `${nm} si sposodi $${G0}$ € in dolg poplača z dvema enakima obrokoma: prvim čez ${yrs(t1)} in drugim čez ${yrs(t2)}. Kolikšen je obrok pri letni obrestni meri $${pT}$? Zaokroži na cent.`,
           answer: eur(x, [
@@ -304,7 +318,7 @@ const GENS = [
           hint: "Po načelu ekvivalence glavnic izenači današnjo vrednost posojila z današnjo vrednostjo obeh obrokov.",
           data: { given: [`G_0 = ${G0}${E}`, `t_1 = ${t1}`, `t_2 = ${t2}`, `p = ${pT}`], find: ["x"] },
           formula: ["G_0 = \\dfrac{x}{r^{t_1}} + \\dfrac{x}{r^{t_2}}", "r = 1 + \\dfrac{p}{100}"],
-          solution: `${rLine}\n$${G0} = \\dfrac{x}{${tx(q)}^{${t1}}} + \\dfrac{x}{${tx(q)}^{${t2}}} \\approx x \\cdot ${tx(s, 6)}$\n$x = \\dfrac{${G0}}{${tx(s, 6)}} \\approx ${tx(x, 2)}$ €`,
+          solution: `${rLine}\n$${G0} = \\dfrac{x}{${tx(q)}^{${t1}}} + \\dfrac{x}{${tx(q)}^{${t2}}} \\approx x \\cdot ${tx(s, ds)}$\n$x = \\dfrac{${G0}}{${tx(s, ds)}} \\approx ${tx(x, 2)}$ €`,
         };
       }
       const a = r.int(30, 150) * 10;
@@ -312,6 +326,15 @@ const GENS = [
       const qn = q ** n;
       const future = (a * (qn - 1)) / (q - 1);
       const G0 = future / qn;
+      // Izpisana r^n in končna vrednost anuitet z dovolj mesti, da se G_0 iz njiju izide na isti cent kot odgovor.
+      let e = 0;
+      let Q, F;
+      for (; e <= 4; e++) {
+        Q = roundHalfUp(qn, 6 + e);
+        F = roundHalfUp((a * (Q - 1)) / (q - 1), 2 + e);
+        if (Math.abs(r2(F / Q) - r2(G0)) < 0.005) break;
+      }
+      e = Math.min(e, 4);
       return {
         text: `${nm} lahko ob koncu vsakega leta za odplačilo posojila nameni $${a}$ €. Kolikšno posojilo lahko najame danes, če ga želi odplačati z $${n}$ enakimi letnimi anuitetami pri letni obrestni meri $${pT}$? Zaokroži na cent.`,
         answer: eur(G0, [
@@ -322,7 +345,7 @@ const GENS = [
         hint: "V zvezo med posojilom in anuiteto vstavi znano anuiteto in izrazi posojilo $G_0$.",
         data: { given: [`a = ${a}${E}`, `n = ${n}`, `p = ${pT}`], find: ["G_0"] },
         formula: ["G_0 r^n = a \\cdot \\dfrac{r^n - 1}{r - 1}"],
-        solution: `${rLine}, $r^{${n}} ${ap(qn, 6)} ${tx(qn, 6)}$\nVrednost anuitet ob koncu: $${a} \\cdot \\dfrac{${tx(qn - 1, 6)}}{${tx(q - 1)}} \\approx ${tx(future, 2)}$ €\n$G_0 = \\dfrac{${tx(future, 2)}}{${tx(qn, 6)}} \\approx ${tx(G0, 2)}$ €`,
+        solution: `${rLine}, $r^{${n}} ${ap(qn, 6 + e)} ${tx(Q, 6 + e)}$\nVrednost anuitet ob koncu: $${a} \\cdot \\dfrac{${tx(Q - 1, 6 + e)}}{${tx(q - 1)}} ${ap((a * (Q - 1)) / (q - 1), 2 + e)} ${tx(F, 2 + e)}$ €\n$G_0 = \\dfrac{${tx(F, 2 + e)}}{${tx(Q, 6 + e)}} \\approx ${tx(G0, 2)}$ €`,
       };
     },
   },
@@ -577,10 +600,11 @@ const GENS = [
             expl = `$x^2 + ${k} > 0$ za vse $x$, zato je $\\lvert x^2 + ${k} \\rvert = x^2 + ${k}$ odvedljiva.\nVogal je le v $x = ${b}$.`;
           } else {
             const k = r.int(1, 3);
-            tex = `\\lvert x^3 - ${k * k}x \\rvert`;
+            const cub = `x^3 ${tm(-k * k, "x")}`; // x^3 - x, ne x^3 - 1x
+            tex = `\\lvert ${cub} \\rvert`;
             ans = 3;
             ms = [{ value: 2, why: "Ne pozabi ničle $x = 0$: tudi tam izraz zamenja predznak." }];
-            expl = `$x^3 - ${k * k}x = x(x - ${k})(x + ${k})$ zamenja predznak v $x = -${k}$, $x = 0$ in $x = ${k}$.`;
+            expl = `$${cub} = x(x - ${k})(x + ${k})$ zamenja predznak v $x = -${k}$, $x = 0$ in $x = ${k}$.`;
           }
           return {
             text: `V koliko točkah je funkcija $f(x) = ${tex}$ zvezna, ni pa odvedljiva?`,
@@ -1248,7 +1272,7 @@ const GENS = [
           hint: "Splošni člen je $T_{k+1} = \\binom{n}{k}x^{n-k}c^k$.",
           data: { given: [`p(x) = (x ${sg(c)})^{${n}}`, `j = ${j}`], find: [`\\text{koeficient } T_{${j}}`] },
           formula: "T_{k+1} = \\dbinom{n}{k} a^{n-k} b^k",
-          solution: `$k = ${j} - 1 = ${j - 1}$\n$T_{${j}} = \\dbinom{${n}}{${j - 1}} x^{${n - j + 1}} \\cdot ${pt(c)}^{${j - 1}}$\nKoeficient: $${C(n, j - 1)} \\cdot ${pt(c ** (j - 1))} = ${v}$`,
+          solution: `$k = ${j} - 1 = ${j - 1}$\n$T_{${j}} = \\dbinom{${n}}{${j - 1}} ${n - j + 1 ? xp(n - j + 1) + " " : ""}\\cdot ${pt(c)}^{${j - 1}}$\nKoeficient: $${C(n, j - 1)} \\cdot ${pt(c ** (j - 1))} = ${v}$`,
         };
       }
       // raven 3

@@ -6,7 +6,7 @@
 import { g } from "../rng.js";
 import { gcd, roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { fr, num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
+import { fr, num, frA, ft, sg, pickAns, name, wrapGens, decimalke } from "./matura-util.js";
 
 const P = "mat-ss3-matura-";
 const T = (s) => `MAT-SS-3/${s}`;
@@ -255,6 +255,7 @@ const GENS = [
             ["ADHE", "AH", "H", "D", "AD", b],
           ]);
           const phi = Math.atan(c / pv) * RAD;
+          const dT = decimalke(c / pv, 4, (x) => Math.atan(x) * RAD, 1);
           return {
             text: `Kvader $ABCDEFGH$ (oglišča $E$, $F$, $G$, $H$ ležijo po vrsti nad $A$, $B$, $C$, $D$) ima osnovno ploskev $ABCD$ z robovoma $|AB| = ${cm(a)}$ in $|BC| = ${cm(b)}$ ter višino $|AE| = ${cm(c)}$. Izračunaj kot med diagonalo $${diag}$ stranske ploskve $${face}$ in osnovno ploskvijo $ABCD$. Rezultat v stopinjah zaokroži na desetinko.`,
             answer: num(phi, 1, [
@@ -265,7 +266,7 @@ const GENS = [
             hint: `Poišči pravokotno projekcijo točke $${top}$ na osnovno ploskev in nariši pravokotni trikotnik.`,
             data: { given: [`|AB| = ${cm(a)}`, `|BC| = ${cm(b)}`, `|AE| = ${cm(c)}`], find: ["\\varphi"] },
             formula: "\\tan\\varphi = \\dfrac{v}{p}",
-            solution: `Pravokotna projekcija točke $${top}$ na $ABCD$ je $${bot}$, zato je projekcija diagonale $${diag}$ rob $${projN}$ dolžine $${cm(pv)}$.\nRazdalja krajišča $${top}$ od osnovne ploskve je višina $${cm(c)}$.\n$\\tan\\varphi = \\dfrac{${c}}{${pv}} ${ap(c / pv, 4)} ${txr(c / pv, 4)}$\n$\\varphi ${ap(phi, 1)} ${dg(phi)}$`,
+            solution: `Pravokotna projekcija točke $${top}$ na $ABCD$ je $${bot}$, zato je projekcija diagonale $${diag}$ rob $${projN}$ dolžine $${cm(pv)}$.\nRazdalja krajišča $${top}$ od osnovne ploskve je višina $${cm(c)}$.\n$\\tan\\varphi = \\dfrac{${c}}{${pv}} ${ap(c / pv, dT)} ${txr(c / pv, dT)}$\n$\\varphi ${ap(phi, 1)} ${dg(phi)}$`,
           };
         }
         const ctx = r.pick([
@@ -304,6 +305,8 @@ const GENS = [
           const c = r.int(rng[0], rng[1]);
           const d = Math.hypot(a, b);
           const phi = Math.atan(c / d) * RAD;
+          const dT = decimalke(c / d, 4, (x) => Math.atan(x) * RAD, 1);
+          const dd = decimalke(d, 3, (x) => c / x, dT);
           const U = `\\ \\mathrm{${u}}`;
           return {
             text: `${obj} ima obliko kvadra z dolžino $${a}${U}$, širino $${b}${U}$ in višino $${c}${U}$. Pod kakšnim kotom je telesna diagonala nagnjena proti dnu? Rezultat v stopinjah zaokroži na desetinko.`,
@@ -315,7 +318,7 @@ const GENS = [
             hint: "Kam pade pravokotna projekcija zgornjega krajišča telesne diagonale? Poveži jo s spodnjim krajiščem.",
             data: { given: [`a = ${a}${U}`, `b = ${b}${U}`, `c = ${c}${U}`], find: ["\\varphi"] },
             formula: ["d = \\sqrt{a^2 + b^2}", "\\tan\\varphi = \\dfrac{c}{d}"],
-            solution: `Projekcija telesne diagonale na dno je diagonala dna.\n$d = \\sqrt{${a}^2 + ${b}^2} = \\sqrt{${a * a + b * b}} ${ap(d, 3)} ${txr(d, 3)}${U}$\n$\\tan\\varphi = \\dfrac{${c}}{${txr(d, 3)}} \\approx ${txr(c / d, 4)}$\n$\\varphi \\approx ${dg(phi)}$`,
+            solution: `Projekcija telesne diagonale na dno je diagonala dna.\n$d = \\sqrt{${a}^2 + ${b}^2} = \\sqrt{${a * a + b * b}} ${ap(d, dd)} ${txr(d, dd)}${U}$\n$\\tan\\varphi = \\dfrac{${c}}{${txr(d, dd)}} \\approx ${txr(c / d, dT)}$\n$\\varphi \\approx ${dg(phi)}$`,
           };
         }
         if (t === 1) {
@@ -404,6 +407,9 @@ const GENS = [
         const d = Math.hypot(a, b);
         const c = d * Math.tan(f * DEG);
         const V = a * b * c;
+        // Vmesna rezultata z dovolj mesti, da se veriga izide v isti desetinki kot odgovor.
+        const dc = decimalke(c, 3, (x) => a * b * x, 1);
+        const dd = decimalke(d, 3, (x) => x * Math.tan(f * DEG), dc);
         return {
           text: `Osnovna ploskev kvadra je pravokotnik s stranicama $${cm(a)}$ in $${cm(b)}$. Telesna diagonala kvadra oklepa z osnovno ploskvijo kot $${f}^\\circ$. Izračunaj prostornino kvadra. Zaokroži na desetinko.`,
           answer: num(V, 1, [
@@ -414,7 +420,7 @@ const GENS = [
           hint: "Najprej poišči projekcijo telesne diagonale na osnovno ploskev, nato iz pravokotnega trikotnika višino.",
           data: { given: [`a = ${cm(a)}`, `b = ${cm(b)}`, `\\varphi = ${f}^\\circ`], find: ["V"] },
           formula: ["d = \\sqrt{a^2 + b^2}", "c = d\\tan\\varphi", "V = a\\,b\\,c"],
-          solution: `Projekcija telesne diagonale je diagonala osnovne ploskve: $d = \\sqrt{${a}^2 + ${b}^2} ${ap(d, 3)} ${txr(d, 3)}\\ \\mathrm{cm}$\nVišina leži nasproti kota: $c = d\\tan ${f}^\\circ \\approx ${txr(c, 3)}\\ \\mathrm{cm}$\n$V = ${a} \\cdot ${b} \\cdot ${txr(c, 3)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
+          solution: `Projekcija telesne diagonale je diagonala osnovne ploskve: $d = \\sqrt{${a}^2 + ${b}^2} ${ap(d, dd)} ${txr(d, dd)}\\ \\mathrm{cm}$\nVišina leži nasproti kota: $c = d\\tan ${f}^\\circ \\approx ${txr(c, dc)}\\ \\mathrm{cm}$\n$V = ${a} \\cdot ${b} \\cdot ${txr(c, dc)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
         };
       }
       if (t === 1) {
@@ -428,6 +434,8 @@ const GENS = [
         const projN = `A${foot}`;
         const phi = Math.atan(opp / adj) * RAD;
         const edgeLen = face === "ABFE" ? a : b;
+        const dTan = decimalke(opp / adj, 4, (x) => Math.atan(x) * RAD, 1);
+        const dAdj = decimalke(adj, 3, (x) => opp / x, dTan);
         return {
           text: `Kvader $ABCDEFGH$ (osnovna ploskev $ABCD$, oglišča $E$, $F$, $G$, $H$ po vrsti nad $A$, $B$, $C$, $D$) ima robove $|AB| = ${cm(a)}$, $|BC| = ${cm(b)}$ in $|AE| = ${cm(c)}$. Izračunaj kot med telesno diagonalo $AG$ in stransko ploskvijo $${face}$. Rezultat v stopinjah zaokroži na desetinko.`,
           answer: num(phi, 1, [
@@ -438,7 +446,7 @@ const GENS = [
           hint: `Kateri rob kvadra je pravokoten na ploskev $${face}$ in gre skozi $G$? Tako najdeš projekcijo točke $G$.`,
           data: { given: [`|AB| = ${cm(a)}`, `|BC| = ${cm(b)}`, `|AE| = ${cm(c)}`], find: ["\\varphi"] },
           formula: ["\\tan\\varphi = \\dfrac{v}{p}"],
-          solution: `Rob $${footN}$ je pravokoten na ploskev $${face}$, zato je pravokotna projekcija točke $G$ točka $${foot}$.\nProjekcija diagonale $AG$ je ploskovna diagonala $${projN} ${ap(adj, 3)} ${txr(adj, 3)}\\ \\mathrm{cm}$.\nRazdalja $G$ od ploskve: $${oppN} = ${cm(opp)}$\n$\\tan\\varphi = \\dfrac{${opp}}{${txr(adj, 3)}} \\approx ${txr(opp / adj, 4)}$, $\\varphi \\approx ${dg(phi)}$`,
+          solution: `Rob $${footN}$ je pravokoten na ploskev $${face}$, zato je pravokotna projekcija točke $G$ točka $${foot}$.\nProjekcija diagonale $AG$ je ploskovna diagonala $${projN} ${ap(adj, dAdj)} ${txr(adj, dAdj)}\\ \\mathrm{cm}$.\nRazdalja $G$ od ploskve: $${oppN} = ${cm(opp)}$\n$\\tan\\varphi = \\dfrac{${opp}}{${txr(adj, dAdj)}} \\approx ${txr(opp / adj, dTan)}$, $\\varphi \\approx ${dg(phi)}$`,
         };
       }
       // premice skozi razpolovišča robov
@@ -490,6 +498,7 @@ const GENS = [
           const al = r.pick([30, 35, 40, 45, 50, 55, 60, 65, 70, 75]);
           const v = s * Math.sin(al * DEG);
           const V = O * v;
+          const dv = decimalke(v, 3, (x) => O * x, 1);
           const intro = r.pick([
             "Poševna prizma ima osnovno ploskev s ploščino",
             "Sklad enakih ploščic, ki ga porinemo vstran, ima obliko poševne prizme. Osnovna ploskev ima ploščino",
@@ -505,7 +514,7 @@ const GENS = [
             hint: "Najprej izračunaj višino iz pravokotnega trikotnika, ki ga tvorijo stranski rob, višina in projekcija roba.",
             data: { given: [`O = ${O}\\ \\mathrm{cm^2}`, `s = ${cm(s)}`, `\\alpha = ${al}^\\circ`], find: ["V"] },
             formula: ["v = s\\sin\\alpha", "V = O\\,v"],
-            solution: `Višina: $v = ${s} \\cdot \\sin ${al}^\\circ ${ap(v, 3)} ${txr(v, 3)}\\ \\mathrm{cm}$\n$V = O\\,v = ${O} \\cdot ${txr(v, 3)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
+            solution: `Višina: $v = ${s} \\cdot \\sin ${al}^\\circ ${ap(v, dv)} ${txr(v, dv)}\\ \\mathrm{cm}$\n$V = O\\,v = ${O} \\cdot ${txr(v, dv)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
           };
         }
         if (t === 1) {
@@ -514,6 +523,7 @@ const GENS = [
           const al = r.pick([30, 40, 45, 50, 60, 65, 70, 75, 80]);
           const v = s * Math.sin(al * DEG);
           const V = Math.PI * rr * rr * v;
+          const dv = decimalke(v, 3, (x) => Math.PI * rr * rr * x, 1);
           const intro = r.pick(["Poševni valj ima polmer osnovne ploskve", "Nagnjen stolpič kovancev ima obliko poševnega valja s polmerom osnovne ploskve", "Nagnjen sklad okroglih podstavkov za kozarce ima obliko poševnega valja s polmerom osnovne ploskve"]);
           return {
             text: `${intro} $${cm(rr)}$. Tvorilka je dolga $${cm(s)}$ in z osnovno ploskvijo oklepa kot $${al}^\\circ$. Izračunaj prostornino. Zaokroži na desetinko.`,
@@ -525,7 +535,7 @@ const GENS = [
             hint: "Po Cavalierijevem načelu ima poševni valj enako prostornino kot pokončni valj z enako osnovno ploskvijo in višino.",
             data: { given: [`r = ${cm(rr)}`, `s = ${cm(s)}`, `\\alpha = ${al}^\\circ`], find: ["V"] },
             formula: ["v = s\\sin\\alpha", "V = \\pi r^2 v"],
-            solution: `Višina: $v = ${s} \\cdot \\sin ${al}^\\circ ${ap(v, 3)} ${txr(v, 3)}\\ \\mathrm{cm}$\n$V = \\pi \\cdot ${rr}^2 \\cdot ${txr(v, 3)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
+            solution: `Višina: $v = ${s} \\cdot \\sin ${al}^\\circ ${ap(v, dv)} ${txr(v, dv)}\\ \\mathrm{cm}$\n$V = \\pi \\cdot ${rr}^2 \\cdot ${txr(v, dv)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
           };
         }
         const a = r.int(2, 12);
@@ -558,7 +568,8 @@ const GENS = [
           const shape = kind === 0 ? `kvadrat s stranico $${cm(a)}$` : kind === 1 ? `pravokotnik s stranicama $${cm(a)}$ in $${cm(b)}$` : `enakostranični trikotnik s stranico $${cm(a)}$`;
           const v = s * Math.sin(al * DEG);
           const V = O * v;
-          const Otex = kind === 0 ? `O = ${a}^2 = ${a * a}\\ \\mathrm{cm^2}` : kind === 1 ? `O = ${a} \\cdot ${b} = ${a * b}\\ \\mathrm{cm^2}` : `O = \\dfrac{${a}^2\\sqrt{3}}{4} \\approx ${txr(O, 3)}\\ \\mathrm{cm^2}`;
+          const dk = decimalke([O, v], 3, (x, y) => x * y, 1);
+          const Otex = kind === 0 ? `O = ${a}^2 = ${a * a}\\ \\mathrm{cm^2}` : kind === 1 ? `O = ${a} \\cdot ${b} = ${a * b}\\ \\mathrm{cm^2}` : `O = \\dfrac{${a}^2\\sqrt{3}}{4} \\approx ${txr(O, dk)}\\ \\mathrm{cm^2}`;
           return {
             text: `Osnovna ploskev poševne prizme je ${shape}. Stranski rob je dolg $${cm(s)}$ in z ravnino osnovne ploskve oklepa kot $${al}^\\circ$. Izračunaj prostornino prizme. Zaokroži na desetinko.`,
             answer: num(V, 1, [
@@ -569,7 +580,7 @@ const GENS = [
             hint: "Izračunaj posebej ploščino osnovne ploskve in višino prizme.",
             data: { given: [kind === 1 ? `a = ${cm(a)},\\ b = ${cm(b)}` : `a = ${cm(a)}`, `s = ${cm(s)}`, `\\alpha = ${al}^\\circ`], find: ["V"] },
             formula: ["v = s\\sin\\alpha", "V = O\\,v"],
-            solution: `$${Otex}$\n$v = ${s} \\cdot \\sin ${al}^\\circ \\approx ${txr(v, 3)}\\ \\mathrm{cm}$\n$V = O\\,v \\approx ${txr(O, 3)} \\cdot ${txr(v, 3)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
+            solution: `$${Otex}$\n$v = ${s} \\cdot \\sin ${al}^\\circ \\approx ${txr(v, dk)}\\ \\mathrm{cm}$\n$V = O\\,v \\approx ${txr(O, dk)} \\cdot ${txr(v, dk)} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
           };
         }
         if (t === 1) {
@@ -636,6 +647,7 @@ const GENS = [
         const rr = (a * b) / c;
         if (r.next() < 0.5) {
           const V = (Math.PI * rr * rr * c) / 3;
+          const dr = decimalke(rr, 4, (x) => (Math.PI * x * x * c) / 3, 1);
           return {
             text: `Pravokotni trikotnik s katetama $${cm(a)}$ in $${cm(b)}$ zavrtimo okoli hipotenuze. Izračunaj prostornino nastalega dvojnega stožca. Zaokroži na desetinko.`,
             answer: num(V, 1, [
@@ -646,7 +658,7 @@ const GENS = [
             hint: "Nastaneta dva stožca s skupno osnovno ploskvijo. Njen polmer je višina trikotnika na hipotenuzo.",
             data: { given: [`a = ${cm(a)}`, `b = ${cm(b)}`], find: ["V"] },
             formula: ["c = \\sqrt{a^2 + b^2}", "r = \\dfrac{a\\,b}{c}", "V = \\dfrac{\\pi r^2 v_1}{3} + \\dfrac{\\pi r^2 v_2}{3} = \\dfrac{\\pi r^2 c}{3}"],
-            solution: `Hipotenuza: $c = \\sqrt{${a}^2 + ${b}^2} = ${cm(c)}$\nSkupni polmer je višina na hipotenuzo: $r = \\dfrac{${a} \\cdot ${b}}{${c}} ${ap(rr, 4)} ${txr(rr, 4)}\\ \\mathrm{cm}$\nVišini stožcev se seštejeta v $c$: $V = \\dfrac{\\pi r^2 c}{3} = \\dfrac{\\pi \\cdot ${txr(rr, 4)}^2 \\cdot ${c}}{3} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
+            solution: `Hipotenuza: $c = \\sqrt{${a}^2 + ${b}^2} = ${cm(c)}$\nSkupni polmer je višina na hipotenuzo: $r = \\dfrac{${a} \\cdot ${b}}{${c}} ${ap(rr, dr)} ${txr(rr, dr)}\\ \\mathrm{cm}$\nVišini stožcev se seštejeta v $c$: $V = \\dfrac{\\pi r^2 c}{3} = \\dfrac{\\pi \\cdot ${txr(rr, dr)}^2 \\cdot ${c}}{3} ${ap(V, 1)} ${tx(V, 1)}\\ \\mathrm{cm^3}$`,
           };
         }
         const Pv = Math.PI * rr * (a + b);
@@ -706,6 +718,8 @@ const GENS = [
       const V = roundHalfUp(Math.PI * rr * rr * s * Math.sin(al0 * DEG), 1);
       const sn = V / (Math.PI * rr * rr * s);
       const al = Math.asin(sn) * RAD;
+      const dS = decimalke(sn, 4, (x) => Math.asin(x) * RAD, 1);
+      const dH = decimalke(sn * s, 3, (x) => x / s, dS);
       const nm = name(r);
       return {
         text: `${nm} je ${g(nm, "izmeril", "izmerila")} poševni valj s polmerom osnovne ploskve $${cm(rr)}$ in tvorilko $${cm(s)}$. Prostornina valja je $${tx(V)}\\ \\mathrm{cm^3}$. Pod kakšnim kotom je tvorilka nagnjena proti osnovni ploskvi? Rezultat v stopinjah zaokroži na desetinko.`,
@@ -717,7 +731,7 @@ const GENS = [
         hint: "Iz prostornine najprej izračunaj višino, nato kot iz pravokotnega trikotnika s tvorilko.",
         data: { given: [`r = ${cm(rr)}`, `s = ${cm(s)}`, `V = ${tx(V)}\\ \\mathrm{cm^3}`], find: ["\\alpha"] },
         formula: ["V = \\pi r^2 v", "\\sin\\alpha = \\dfrac{v}{s}"],
-        solution: `Višina: $v = \\dfrac{V}{\\pi r^2} = \\dfrac{${tx(V)}}{\\pi \\cdot ${rr}^2} \\approx ${txr(sn * s, 3)}\\ \\mathrm{cm}$\n$\\sin\\alpha = \\dfrac{v}{s} \\approx \\dfrac{${txr(sn * s, 3)}}{${s}} \\approx ${txr(sn, 4)}$\n$\\alpha \\approx ${dg(al)}$`,
+        solution: `Višina: $v = \\dfrac{V}{\\pi r^2} = \\dfrac{${tx(V)}}{\\pi \\cdot ${rr}^2} \\approx ${txr(sn * s, dH)}\\ \\mathrm{cm}$\n$\\sin\\alpha = \\dfrac{v}{s} \\approx \\dfrac{${txr(sn * s, dH)}}{${s}} \\approx ${txr(sn, dS)}$\n$\\alpha \\approx ${dg(al)}$`,
       };
     },
   },
@@ -1662,7 +1676,7 @@ const GENS = [
         hint: "Zapiši povprečni strošek kot ulomek $\\dfrac{F + c\\,x}{x}$, postavi neenačbo in vse prenesi na eno stran.",
         data: { given: [`F = ${F}\\ \\text{€}`, `c = ${tx(c)}\\ \\text{€}`, `P = ${tx(Pm)}\\ \\text{€}`], find: ["x_{\\min}"] },
         formula: "\\dfrac{F + c\\,x}{x} \\le P",
-        solution: `$\\dfrac{${F} + ${tx(c)}x}{x} \\le ${tx(Pm)}$\n$\\dfrac{${comb([[F, ""], [-(Pm - c), "x"]])}}{x} \\le 0$; ker je $x > 0$, mora biti števec $\\le 0$.\n$x \\ge \\dfrac{${F}}{${tx(Pm - c)}} ${ap(x0, 2)} ${txr(x0, 2)}$\nNajmanjše celo število: $${n}$`,
+        solution: `$\\dfrac{${comb([[F, ""], [c, "x"]])}}{x} \\le ${tx(Pm)}$\n$\\dfrac{${comb([[F, ""], [-(Pm - c), "x"]])}}{x} \\le 0$; ker je $x > 0$, mora biti števec $\\le 0$.\n$x \\ge \\dfrac{${F}}{${tx(Pm - c)}} ${ap(x0, 2)} ${txr(x0, 2)}$\nNajmanjše celo število: $${n}$`,
       };
     },
   },
@@ -1861,6 +1875,7 @@ const TELESA = [
           const v = r.int(3, 15);
           const va = Math.hypot(v, a / 2);
           const Pp = a * a + 2 * a * va;
+          const dva = decimalke(va, 3, (x) => a * a + 2 * a * x, 1);
           return {
             text: `Pravilna štiristrana piramida ima osnovni rob $a = ${uT(a, "cm")}$ in višino $v = ${uT(v, "cm")}$. Izračunaj njeno površino. Zaokroži na desetinko.`,
             answer: num(cl(Pp), 1, [
@@ -1871,7 +1886,7 @@ const TELESA = [
             hint: "Višina piramide, polovica osnovnega roba in višina stranske ploskve tvorijo pravokotni trikotnik.",
             data: { given: [`a = ${uT(a, "cm")}`, `v = ${uT(v, "cm")}`], find: ["P"] },
             formula: ["v_a^2 = v^2 + \\left(\\dfrac{a}{2}\\right)^2", "P = a^2 + 4 \\cdot \\dfrac{a v_a}{2} = a^2 + 2 a v_a"],
-            solution: `$v_a = \\sqrt{${v}^2 + ${a / 2}^2} = \\sqrt{${v * v + (a * a) / 4}} ${rz(va, "cm", 3)}$\n$P = ${a}^2 + 2 \\cdot ${a} \\cdot ${txr(va, 3)} ${rzK(Pp, "cm^2")}$`,
+            solution: `$v_a = \\sqrt{${v}^2 + ${a / 2}^2} = \\sqrt{${v * v + (a * a) / 4}} ${rz(va, "cm", dva)}$\n$P = ${a}^2 + 2 \\cdot ${a} \\cdot ${txr(va, dva)} ${rzK(Pp, "cm^2")}$`,
           };
         }
         if (t === 2) {
@@ -1904,6 +1919,7 @@ const TELESA = [
           const v = r.int(4, 20);
           const O = (six ? 6 : 1) * ((a * a * S3) / 4);
           const V = O * v;
+          const dO = decimalke(O, 3, (x) => x * v, 1);
           return {
             text: `Pravilna ${six ? "šeststrana" : "tristrana"} prizma ima osnovni rob $a = ${uT(a, "cm")}$ in višino $v = ${uT(v, "cm")}$. Izračunaj njeno prostornino. Zaokroži na desetinko.`,
             answer: num(cl(V), 1, [
@@ -1914,13 +1930,14 @@ const TELESA = [
             hint: six ? "Pravilni šestkotnik razdeli na šest enakostraničnih trikotnikov." : "Osnovna ploskev je enakostranični trikotnik.",
             data: { given: [`a = ${uT(a, "cm")}`, `v = ${uT(v, "cm")}`], find: ["V"] },
             formula: six ? ["O = 6 \\cdot \\dfrac{a^2\\sqrt{3}}{4}", "V = O \\cdot v"] : ["O = \\dfrac{a^2\\sqrt{3}}{4}", "V = O \\cdot v"],
-            solution: `$O = ${six ? "6 \\cdot " : ""}\\dfrac{${a}^2\\sqrt{3}}{4} ${rz(O, "cm^2", 3)}$\n$V = ${txr(O, 3)} \\cdot ${v} ${rzK(V, "cm^3")}$`,
+            solution: `$O = ${six ? "6 \\cdot " : ""}\\dfrac{${a}^2\\sqrt{3}}{4} ${rz(O, "cm^2", dO)}$\n$V = ${txr(O, dO)} \\cdot ${v} ${rzK(V, "cm^3")}$`,
           };
         }
         // Krogla: iz prostornine polmer (obratna naloga).
         const rr = r.int(2, 12);
         const V = Math.round((4 / 3) * Math.PI * rr ** 3);
         const rc = Math.cbrt((3 * V) / (4 * Math.PI));
+        const d3 = decimalke((3 * V) / (4 * Math.PI), 3, Math.cbrt, 2);
         return {
           text: `Kovinska krogla ima prostornino $${uT(V, "cm^3")}$. Kolikšen je njen polmer? Zaokroži na stotinko.`,
           answer: num(cl(rc), 2, [
@@ -1931,7 +1948,7 @@ const TELESA = [
           hint: "Iz obrazca za prostornino krogle izrazi $r^3$.",
           data: { given: [`V = ${uT(V, "cm^3")}`], find: ["r"] },
           formula: ["V = \\dfrac{4}{3}\\pi r^3", "r = \\sqrt[3]{\\dfrac{3V}{4\\pi}}"],
-          solution: `$r^3 = \\dfrac{3V}{4\\pi} = \\dfrac{3 \\cdot ${V}}{4\\pi} ${ap((3 * V) / (4 * Math.PI), 3)} ${txr((3 * V) / (4 * Math.PI), 3)}$\n$r = \\sqrt[3]{${txr((3 * V) / (4 * Math.PI), 3)}} ${rzK(rc, "cm", 2)}$`,
+          solution: `$r^3 = \\dfrac{3V}{4\\pi} = \\dfrac{3 \\cdot ${V}}{4\\pi} ${ap((3 * V) / (4 * Math.PI), d3)} ${txr((3 * V) / (4 * Math.PI), d3)}$\n$r = \\sqrt[3]{${txr((3 * V) / (4 * Math.PI), d3)}} ${rzK(rc, "cm", 2)}$`,
         };
       }
       // raven 3
@@ -1981,6 +1998,7 @@ const TELESA = [
         const v = (Lt * 1000) / (Math.PI * rr * rr);
         if (v < 4 || v > 60) return null;
         const Po = Math.PI * rr * rr + 2 * Math.PI * rr * v;
+        const dv = decimalke(v, 3, (x) => Math.PI * rr * rr + 2 * Math.PI * rr * x, 0);
         return {
           text: `Valjasta posoda brez pokrova ima notranji polmer $${uT(rr, "cm")}$ in drži natanko $${uT(Lt, "l")}$. Koliko pločevine potrebujemo zanjo (dno in plašč)? Debelino pločevine zanemari. Zaokroži na cel $\\mathrm{cm^2}$.`,
           answer: num(cl(Po), 0, [
@@ -1991,7 +2009,7 @@ const TELESA = [
           hint: "Najprej pretvori litre v $\\mathrm{cm^3}$ in iz prostornine izračunaj višino. Nato izračunaj dno in plašč.",
           data: { given: [`r = ${uT(rr, "cm")}`, `V = ${uT(Lt, "l")}`], find: ["P"] },
           formula: ["V = \\pi r^2 v", "P = \\pi r^2 + 2\\pi r v"],
-          solution: `$V = ${uT(Lt * 1000, "cm^3")}$\n$v = \\dfrac{V}{\\pi r^2} = \\dfrac{${Lt * 1000}}{\\pi \\cdot ${rr}^2} ${rz(v, "cm", 3)}$\n$P = \\pi \\cdot ${rr}^2 + 2\\pi \\cdot ${rr} \\cdot ${txr(v, 3)} ${rzK(Po, "cm^2", 0)}$`,
+          solution: `$V = ${uT(Lt * 1000, "cm^3")}$\n$v = \\dfrac{V}{\\pi r^2} = \\dfrac{${Lt * 1000}}{\\pi \\cdot ${rr}^2} ${rz(v, "cm", dv)}$\n$P = \\pi \\cdot ${rr}^2 + 2\\pi \\cdot ${rr} \\cdot ${txr(v, dv)} ${rzK(Po, "cm^2", 0)}$`,
         };
       }
       if (t === 2) {
@@ -2035,6 +2053,7 @@ const TELESA = [
         if (v2 <= 1) return null;
         const v = Math.sqrt(v2);
         const V = (a * a * v) / 3;
+        const dv = decimalke(v, 3, (x) => (a * a * x) / 3, 1);
         return {
           text: `Pravilna štiristrana piramida ima osnovni rob $a = ${uT(a, "cm")}$ in stranski rob $s = ${uT(s, "cm")}$. Izračunaj njeno prostornino. Zaokroži na desetinko.`,
           answer: num(cl(V), 1, [
@@ -2045,13 +2064,14 @@ const TELESA = [
           hint: "Višina, polovica diagonale osnovne ploskve in stranski rob tvorijo pravokotni trikotnik.",
           data: { given: [`a = ${uT(a, "cm")}`, `s = ${uT(s, "cm")}`], find: ["V"] },
           formula: ["v^2 = s^2 - \\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2", "V = \\dfrac{a^2 v}{3}"],
-          solution: `$\\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2 = \\dfrac{a^2}{2} = ${tx(cl((a * a) / 2))}$\n$v = \\sqrt{${s}^2 - ${tx(cl((a * a) / 2))}} = \\sqrt{${tx(cl(v2))}} ${rz(v, "cm", 3)}$\n$V = \\dfrac{${a}^2 \\cdot ${txr(v, 3)}}{3} ${rzK(V, "cm^3")}$`,
+          solution: `$\\left(\\dfrac{a\\sqrt{2}}{2}\\right)^2 = \\dfrac{a^2}{2} = ${tx(cl((a * a) / 2))}$\n$v = \\sqrt{${s}^2 - ${tx(cl((a * a) / 2))}} = \\sqrt{${tx(cl(v2))}} ${rz(v, "cm", dv)}$\n$V = \\dfrac{${a}^2 \\cdot ${txr(v, dv)}}{3} ${rzK(V, "cm^3")}$`,
         };
       }
       // Odpadek pri struženju ali masa betonskega stebra.
       if (r.next() < 0.5) {
         const a = r.int(4, 20);
         const W = a ** 3 * (1 - Math.PI / 4);
+        const dVv = decimalke((Math.PI * a ** 3) / 4, 1, (x) => a ** 3 - x, 1);
         return {
           text: `Iz lesene kocke z robom $${uT(a, "cm")}$ izstružimo največji možni valj. Koliko lesa odpade? Zaokroži na desetinko.`,
           answer: num(cl(W), 1, [
@@ -2062,7 +2082,7 @@ const TELESA = [
           hint: "Največji valj ima premer in višino enaka robu kocke.",
           data: { given: [`a = ${uT(a, "cm")}`], find: ["V_{\\text{odpadek}}"] },
           formula: ["V_{\\text{odpadek}} = a^3 - \\pi r^2 v", "r = \\dfrac{a}{2},\\ v = a"],
-          solution: `$r = ${uT(cl(a / 2), "cm")}$, $v = ${uT(a, "cm")}$\n$V_{\\text{valj}} = \\pi \\cdot ${tx(cl(a / 2))}^2 \\cdot ${a} ${rz((Math.PI * a ** 3) / 4, "cm^3")}$\n$V_{\\text{odpadek}} = ${a ** 3} - ${txr((Math.PI * a ** 3) / 4, 1)} ${rzK(W, "cm^3")}$`,
+          solution: `$r = ${uT(cl(a / 2), "cm")}$, $v = ${uT(a, "cm")}$\n$V_{\\text{valj}} = \\pi \\cdot ${tx(cl(a / 2))}^2 \\cdot ${a} ${rz((Math.PI * a ** 3) / 4, "cm^3", dVv)}$\n$V_{\\text{odpadek}} = ${a ** 3} - ${txr((Math.PI * a ** 3) / 4, dVv)} ${rzK(W, "cm^3")}$`,
         };
       }
       const d = r.pick([30, 35, 40, 45, 50, 60]);
@@ -2070,6 +2090,7 @@ const TELESA = [
       const rho = 2400;
       const Vm = Math.PI * (d / 200) ** 2 * h;
       const m = Vm * rho;
+      const dVm = decimalke(Vm, 4, (x) => x * rho, 0);
       return {
         text: `Betonski steber ima obliko valja s premerom $${uT(d, "cm")}$ in višino $${uT(h, "m")}$. Gostota betona je $${rho}\\ \\mathrm{kg/m^3}$. Kolikšna je masa stebra? Zaokroži na cel kilogram.`,
         answer: num(cl(m), 0, [
@@ -2080,7 +2101,7 @@ const TELESA = [
         hint: "Pretvori premer v metre, izračunaj prostornino valja v $\\mathrm{m^3}$ in jo pomnoži z gostoto.",
         data: { given: [`d = ${uT(d, "cm")}`, `v = ${uT(h, "m")}`, `\\rho = ${rho}\\ \\mathrm{kg/m^3}`], find: ["m"] },
         formula: ["V = \\pi r^2 v", "m = \\rho V"],
-        solution: `$r = \\dfrac{d}{2} = ${uT(d / 2, "cm")} = ${uT(d / 200, "m")}$\n$V = \\pi \\cdot ${tx(d / 200)}^2 \\cdot ${tx(h)} ${rz(Vm, "m^3", 4)}$\n$m = ${rho} \\cdot ${txr(Vm, 4)} ${rzK(m, "kg", 0)}$`,
+        solution: `$r = \\dfrac{d}{2} = ${uT(d / 2, "cm")} = ${uT(d / 200, "m")}$\n$V = \\pi \\cdot ${tx(d / 200)}^2 \\cdot ${tx(h)} ${rz(Vm, "m^3", dVm)}$\n$m = ${rho} \\cdot ${txr(Vm, dVm)} ${rzK(m, "kg", 0)}$`,
       };
     },
   },

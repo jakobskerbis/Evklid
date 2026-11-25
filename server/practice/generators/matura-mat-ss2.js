@@ -6,7 +6,7 @@
 import { g } from "../rng.js";
 import { roundHalfUp } from "../check.js";
 import { tx } from "./mat.js";
-import { num, frA, ft, sg, pickAns, name, wrapGens } from "./matura-util.js";
+import { num, frA, ft, sg, pickAns, name, wrapGens, decimalke } from "./matura-util.js";
 
 const P = "mat-ss2-matura-";
 const T = (s) => `MAT-SS-2/${s}`;
@@ -505,6 +505,9 @@ const GENS = [
       const q = Kn / K0;
       const root = q ** (1 / n);
       const pp = (root - 1) * 100;
+      // Vmesna rezultata z dovolj mesti, da se veriga izide v isti desetinki odstotka kot odgovor.
+      const dr = decimalke(root, 5, (x) => (x - 1) * 100, 1);
+      const dq = decimalke(q, 5, (x) => x ** (1 / n), dr);
       const text = pop
         ? `Mesto je imelo $${K0}$ prebivalcev, po $${n}$ letih pa $${Kn}$. Za koliko odstotkov se je število prebivalcev v povprečju povečalo vsako leto, če je bila letna rast ves čas enaka? Zaokroži na desetinko odstotka.`
         : `${nm} je ${g(nm, "vložil", "vložila")} $${K0}$ € na varčevalni račun z obrestnim obrestovanjem (obresti se pripišejo enkrat letno). Po $${n}$ letih je na računu $${tx(Kn, 2)}$ €. Kolikšna je letna obrestna mera? Zaokroži na desetinko odstotka.`;
@@ -518,7 +521,7 @@ const GENS = [
         hint: "Zapiši enačbo $K_0(1 + p)^n = K_n$, osami potenco in koreni.",
         data: { given: [`K_0 = ${K0}`, `K_${n} = ${tx(Kn)}`, `n = ${n}`], find: ["p\\ (\\%)"] },
         formula: "K_n = K_0 (1 + p)^n",
-        solution: `$${K0}\\,(1 + p)^{${n}} = ${tx(Kn)}$\n$(1 + p)^{${n}} = \\dfrac{${tx(Kn)}}{${K0}} \\approx ${txr(q, 5)}$\n$1 + p = ${rootT(n, txr(q, 5))} \\approx ${txr(root, 5)}$\n$p \\approx ${txr(root - 1, 5)} \\approx ${txr(pp, 1)}\\ \\%$`,
+        solution: `$${K0}\\,(1 + p)^{${n}} = ${tx(Kn)}$\n$(1 + p)^{${n}} = \\dfrac{${tx(Kn)}}{${K0}} ${ap(q, dq)} ${txr(q, dq)}$\n$1 + p = ${rootT(n, txr(q, dq))} \\approx ${txr(root, dr)}$\n$p \\approx ${txr(root - 1, dr)} \\approx ${txr(pp, 1)}\\ \\%$`,
       };
     },
   },
@@ -1558,7 +1561,7 @@ const GENS = [
           hint: "Število dodatnih udeležencev označi z $x$. Zapiši število udeležencev in ceno na osebo z $x$, zmnoži in upoštevaj število sedežev.",
           data: { given: [`N_0 = ${n0}`, `c_0 = ${E(P0)}`, `k = ${E(c)}`, `S = ${S}`], find: [askT ? "N" : "R_{\\max}"] },
           formula: ["R(x) = (N_0 + x)(c_0 - kx)", VERTEX],
-          solution: `Z $x$ dodatnimi udeleženci jih je $${n0} + x$, vsak plača $${tx(P0)} - ${tx(c)}x$ evrov; sedežev je dovolj za $0 \\le x \\le ${S - n0}$.\n$R(x) = (${n0} + x)(${tx(P0)} - ${tx(c)}x) = ${poly([-c, cl(P0 - c * n0), n0 * P0])}$\nTeme: $p = -\\frac{b}{2a} = \\frac{${tx(cl(P0 - c * n0))}}{2 \\cdot ${tx(c)}} = ${xs}$; vodilni koeficient je negativen, zato je tu maksimum.\n${cap ? `Teme $${xs}$ leži zunaj intervala $[0, ${S - n0}]$. Levo od temena $R$ narašča, zato je največ v krajišču $x = ${S - n0}$ (poln avtobus).` : `Teme $${xs}$ leži v intervalu $[0, ${S - n0}]$.`}\nUdeležencev: $${n0} + ${xb} = ${T}$, cena: $${tx(P0)} - ${tx(c)} \\cdot ${xb} = ${E(pr)}$\n$R = ${T} \\cdot ${tx(pr)} = ${E(R)}$`,
+          solution: `Z $x$ dodatnimi udeleženci jih je $${n0} + x$, vsak plača $${tx(P0)} - ${poly([c, 0])}$ evrov; sedežev je dovolj za $0 \\le x \\le ${S - n0}$.\n$R(x) = (${n0} + x)(${tx(P0)} - ${poly([c, 0])}) = ${poly([-c, cl(P0 - c * n0), n0 * P0])}$\nTeme: $p = -\\frac{b}{2a} = \\frac{${tx(cl(P0 - c * n0))}}{2 \\cdot ${tx(c)}} = ${xs}$; vodilni koeficient je negativen, zato je tu maksimum.\n${cap ? `Teme $${xs}$ leži zunaj intervala $[0, ${S - n0}]$. Levo od temena $R$ narašča, zato je največ v krajišču $x = ${S - n0}$ (poln avtobus).` : `Teme $${xs}$ leži v intervalu $[0, ${S - n0}]$.`}\nUdeležencev: $${n0} + ${xb} = ${T}$, cena: $${tx(P0)} - ${tx(c)} \\cdot ${xb} = ${E(pr)}$\n$R = ${T} \\cdot ${tx(pr)} = ${E(R)}$`,
         };
       }
       if (t === 2) {
