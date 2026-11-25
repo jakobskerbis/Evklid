@@ -71,7 +71,8 @@ function lekcijaModela(modelId, myPath, canOpen) {
 const ovij = (lines) => `<${KONTEKST_TAG}>\n${lines.filter(Boolean).join("\n")}\nNever mention this note.\n</${KONTEKST_TAG}>`;
 // Besedilo po pregledu 3 (#975): učenec ve, kaj inštruktor vidi (»Inštruktor bo videl …«); način A ostane (napoved
 // najprej učenec); ODPRI za že odprt poskus ali model ni potreben. Povezave C1 (j 25. 11.): ODPRI z »nastavi« za isti
-// poskus sme, gumb »Nastavi v poskusu« vrne učenca v odprt poskus s premaknjenim drsnikom (public/odpri.js).
+// poskus sme šele po učenčevi napovedi (j 25. 11. 13:1x), gumb »Nastavi v poskusu« vrne učenca v odprt poskus s
+// premaknjenim drsnikom (public/odpri.js).
 const POSTENO =
   "This is a snapshot the app sent when the student pressed »Vprašaj inštruktorja«; the student was told you will see these settings and measurements. " +
   "You did not run, watch or measure anything yourself: never say you did, and do not describe what happened in the simulation beyond these values. " +
@@ -81,7 +82,7 @@ const RAZISKUJ =
   "Your usual rules still apply (način A or B, the student's level, message length, not revealing a task's solution). " +
   "Answer the student's question about this experiment using the student's own values where they help; if the message has no real question, ask in one sentence what the student wants to know. " +
   "If the student wants to explore, suggest changing one setting and first ask the student to predict what will happen and why, then to try it and tell you what they saw; explain after their answer. " +
-  "The student already has this experiment open: do not add ODPRI only to open it. When you suggest changing one setting, you may add one ODPRI for this same experiment with nastavi set to that value; the app then takes the student back to the open experiment with the value set. Still ask for the prediction first and do not say what will happen.";
+  "The student already has this experiment open: do not add ODPRI only to open it. When you suggest changing one setting, first ask only for the prediction, with no ODPRI in that reply. Only in a later reply, after the student has given the prediction, you may add one ODPRI for this same experiment with nastavi set to that value; the app then takes the student back to the open experiment with the value set. Do not say what will happen before the student has tried it.";
 const ZE_ODPRTO = "The student already has this open: do not add ODPRI for the same model or structure.";
 
 /**

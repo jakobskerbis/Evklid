@@ -176,7 +176,8 @@ test("povezave C1: opomba poskusa dovoli ODPRI z »nastavi« za isti poskus, nap
   const note = await ucniKontekst({ v: 1, sourceType: "lab", sourceId: "lab-ohm", parameters: [{ ime: "napetost", vrednost: "3", enota: "V" }] });
   assert.match(note, /do not add ODPRI only to open it/);
   assert.match(note, /ODPRI for this same experiment with nastavi/);
-  assert.match(note, /Still ask for the prediction first and do not say what will happen/);
+  assert.match(note, /first ask only for the prediction, with no ODPRI in that reply/);
+  assert.match(note, /Only in a later reply, after the student has given the prediction/);
   const odpri = fs.readFileSync(new URL("../public/odpri.js", import.meta.url), "utf8");
   const app = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(odpri, /x\.kind === "sim" && x\.set && !x\.locked && D\.odprtiPoskus\?\.\(labKljuc\(x\)\) === true/);
