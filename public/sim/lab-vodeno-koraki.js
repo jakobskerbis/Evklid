@@ -96,7 +96,7 @@ export const KORAKI = {
         namig: "Fenolftalein je v kislini brezbarven, v bazi rožnat.",
         zakaj: "Indikator s spremembo barve pokaže končno točko: takrat si dodal ravno toliko NaOH, kolikor je bilo v vzorcu kisline.",
         poudari: ["indikator", "Dodaj 2 kapljici"],
-        done: (c) => c.zadnji(/S propipeto si/, /dodal 2 kapljici indikatorja: fenolftalein/) === 1,
+        done: (c) => pravilnoPipetiral(c.dnevnik) && c.zadnji(/S propipeto si/, /dodal 2 kapljici indikatorja: fenolftalein/) === 1,
       },
       {
         naslov: "Zapiši začetni odčitek",

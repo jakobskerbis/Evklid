@@ -44,12 +44,13 @@ export function lepaVrsta(c) {
   const k = koeficient(r) / 100; // N/cm
   return k > 0 && r.every((x) => Math.abs(podaljsek(x) - ((masa(x) / 1000) * G) / k) <= 0.25);
 }
-// Vpisani rezultat (lab.js → racun, polje »tvoj rezultat [N/m]«) se ujema s k iz meritev mehke vzmeti (toleranca 4 % kot v motorju).
+// Vpisani rezultat (lab.js → racun, polje »tvoj rezultat [N/m]«) se ujema s k iz meritev mehke vzmeti. Natančnost (4 %) preveri
+// že motor (c.racun()); vodilo računa iz zaokrožene tabele, zato ima ohlapnejšo mejo 6 % in preveri le pravi cilj.
 export function pravilenK(c) {
   const izbira = c.par("kaj računaš");
   if (izbira && !/mehka/.test(izbira)) return false;
   const k = koeficient(mehka(c)), v = stevilo(c.par("tvoj rezultat [N/m]"));
-  return Number.isFinite(k) && Number.isFinite(v) && Math.abs(v - k) <= 0.04 * k;
+  return Number.isFinite(k) && Number.isFinite(v) && Math.abs(v - k) <= 0.06 * k;
 }
 
 export default {
@@ -74,14 +75,14 @@ export default {
       done: (c) => /mehka/.test(c.par("vzmet")) && cistZacetni(c.dnevnik) && mehka(c).some((r) => masa(r) === 0),
     },
     {
-      naslov: "Obesi 50 g in umiri vzmet",
+      naslov: "Obesi 50\u00a0g in umiri vzmet",
       kaj: "Klikni utež »50 g«. Vzmet zaniha: pritisni »Umiri vzmet z roko« ali počakaj, da pod odčitkom piše »kazalec miruje«. Nato pritisni »Zapiši meritev«.",
       zakaj: "Med nihanjem se kazalec premika gor in dol, zato odčitek ni zanesljiv. Ko vzmet miruje, je sila vzmeti enaka teži uteži.",
       poudari: ["50", "Umiri vzmet", "Zapiši meritev"],
       done: (c) => mehka(c).some((r) => masa(r) === 50 && podaljsek(r) > 0),
     },
     {
-      naslov: "Izmeri pri 100, 150, 200 in 250 g",
+      naslov: "Izmeri pri 100, 150, 200 in 250\u00a0g",
       kaj: "Obesi še 100, 150, 200 in 250 g. Vsakič umiri vzmet in zapiši meritev.",
       namig: "150 g je 100 g in 50 g, 250 g pa 200 g in 50 g. Točka, ki ni na premici, je bila odčitana, ko je vzmet še nihala ali oko ni bilo v višini kazalca: to maso izmeri znova.",
       zakaj: "Teža uteži F = mg napenja vzmet. Pri petih masah vidiš, ali so točke F(x) na premici skozi izhodišče.",
@@ -100,7 +101,7 @@ export default {
       naslov: "Izračunaj prožnostni koeficient",
       kaj: "Iz naklona premice F(x) izračunaj k mehke vzmeti v N/m. Vpiši ga v polje »tvoj rezultat« pod grafom in pritisni »Preveri moj račun«.",
       namig: "Vzemi točko na premici daleč od izhodišča: k = F/x. Podaljšek pretvori v metre (1 cm = 0,01 m).",
-      zakaj: "k pove, kolikšna sila podaljša vzmet za 1 m. Mehka vzmet ima majhen k, trda velik.",
+      zakaj: "k pove, kolikšna sila je potrebna za vsak meter podaljška. Mehka vzmet ima majhen k, trda velik.",
       poudari: ["tvoj rezultat", "Preveri moj račun"],
       // Pritisnil je »Preveri moj račun« in račun je bil pravilen (»Pokaži rešitev« ne šteje), vpisan pa je k mehke vzmeti.
       done: (c) => c.racun() && pravilenK(c),

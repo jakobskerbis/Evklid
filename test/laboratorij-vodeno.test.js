@@ -76,9 +76,11 @@ test("step checks: a done() reads only what the student did", () => {
   assert.equal(tit[4].done(c({ dnevnik: [MOKRA, PIP, "Nadel si …", PIP] })), true, "drugo pipetiranje pravilno");
   assert.equal(tit[4].done(c({ dnevnik: [PIP.replace("klorovodikova kislina HCl", "ocetna kislina CH₃COOH")] })), false, "napačen vzorec");
   const IND = (x) => `V erlenmajerico si dodal 2 kapljici indikatorja: ${x} (prehod …).`;
-  assert.equal(tit[5].done(c({ zadnji: zadnji([PIP, IND("fenolftalein")]) })), true);
-  assert.equal(tit[5].done(c({ zadnji: zadnji([PIP, IND("metiloranž")]) })), false, "metiloranž");
-  assert.equal(tit[5].done(c({ zadnji: zadnji([IND("fenolftalein"), PIP]) })), false, "indikator pred novim vzorcem");
+  const ti = (dn) => tit[5].done(c({ dnevnik: dn, zadnji: zadnji(dn) }));
+  assert.equal(ti([PIP, IND("fenolftalein")]), true);
+  assert.equal(ti([PIP, IND("metiloranž")]), false, "metiloranž");
+  assert.equal(ti([IND("fenolftalein"), PIP]), false, "indikator pred novim vzorcem");
+  assert.equal(ti([PIP, IND("metiloranž"), MOKRA, PIP, IND("fenolftalein")]), false, "po napačnem indikatorju znova pipetiral z mokro pipeto");
   const ohm = KORAKI["lab-ohm"].koraki;
   const vr = (U, I, p = "100 Ω") => ({ porabnik: p, "U [V]": U, "I [mA]": I, "U/I [Ω]": "100" });
   const pet = ["2,0", "4,0", "6,0", "8,0", "10,0"].map((U) => vr(U, String(stevilo(U) * 10)));
@@ -125,8 +127,12 @@ test("step checks: a done() reads only what the student did", () => {
   assert.equal(pol([NAL(), ON, POL, "Napajalnik je izklopljen."]), false, "napajalnik izklopljen");
   assert.equal(pol([NAL(), ON, POL, PRAZ]), false, "aparat prazen");
   // Preskusa plina štejeta le izid v pravi cevi (goreča trska v kisiku ne dokaže vodika).
-  assert.equal(el[4].done(c({ bilo: (re) => re.test("Trska zagori svetleje: plin podpira gorenje (kisik).") })), false);
-  assert.equal(el[4].done(c({ bilo: (re) => re.test("Plin ob goreči trski poči (pisk): v cevi je vodik.") })), true);
+  assert.equal(el[4].done(c({ dnevnik: [NAL(), "Trska zagori svetleje: plin podpira gorenje (kisik)."] })), false);
+  assert.equal(el[4].done(c({ dnevnik: [NAL(), "Plin ob goreči trski poči (pisk): v cevi je vodik."] })), true);
+  // Dogodek iz prejšnjega polnjenja ne opravi koraka (destilirana voda pomotoma pred korakom 1).
+  const DIST = "Tok je skoraj nič in mehurčkov ni: destilirana voda skoraj nima ionov in ne prevaja.";
+  assert.equal(el[7].done(c({ dnevnik: [NAL("destilirana voda"), DIST, PRAZ, NAL()] })), false, "destilirana iz prejšnjega polnjenja");
+  assert.equal(el[7].done(c({ dnevnik: [NAL(), PRAZ, NAL("destilirana voda"), DIST] })), true);
   }
   {
   // lab-grelnik: nalivanje in tehtanje v pravem vrstnem redu, izklop po 4 min, premešana končna T, ponovitev z novo vodo.
@@ -174,6 +180,8 @@ test("step checks: a done() reads only what the student did", () => {
   assert.equal(lr("1,45"), true);
   assert.equal(lr("1,49"), false, "vrednost iz učbenika");
   assert.equal(lr("1,45", "akril → zrak"), false, "računa drugo serijo");
+  }
+  {
     // lab-newton2: preizkus trenja šteje le najnovejši izid po libeli; a(F) le pri isti skupni masi, a(1/m) le pri isti sili.
     const nw = KORAKI["lab-newton2"].koraki;
     const LIB = "Progo si izravnal z libelo (brez podložke).", TOK = "Preizkus trenja: … Hitrost je skoraj enaka: trenje je izravnano.", TMAL = "Preizkus trenja: … Voziček se ustavlja: podložka je premajhna.";
@@ -207,6 +215,8 @@ test("step checks: a done() reads only what the student did", () => {
     assert.equal(hk[5].done(racun("0,15")), false, "N/cm namesto N/m");
     assert.equal(hk[5].done(racun("15,0", "trda vzmet")), false, "izbran račun za drugo vzmet");
     assert.equal(hk[7].done(c({ zadnji: zadnji(["Brez uteži … trajno raztegnjena, ker si jo obremenil prek meje prožnosti.", "Nova vzmet je na stojalu. Znova zapiši odčitek brez uteži."]) })), true);
+  }
+  {
     // ---- lab-co2: v bučki le 30 mL kisa; skupaj 1 g sode in reakcija se je začela.
     const co2 = KORAKI["lab-co2"].koraki;
     const NAL = (V, x = "kis (5 % ocetna kislina)") => `Z merilnim valjem si v bučko nalil ${V} mL. Tekočina: ${x}.`;
@@ -226,18 +236,25 @@ test("step checks: a done() reads only what the student did", () => {
   {
     // ---- lab-hitrost: marmor šteje le primerljiv poskus s pravočasno štoparico in meritvijo pri 5–65 s.
     const hit = KORAKI["lab-hitrost"].koraki;
-    const KIS = (x, toplo = "") => `Na tehtnici je bučka s 40 mL HCl (${x} mol/L${toplo}).`, MAR = "Dodal si 5,00 g marmorja in vrat zamašil z vato.";
+    const KIS = (x, toplo = "") => `Na tehtnici je bučka s 40 mL HCl (${x} mol/L${toplo}).`, MAR = "Dodal si 5,00 g marmorja (srednji koščki) in vrat zamašil z vato.";
     const mr = (p, t, dm) => ({ poskus: String(p), "t [s]": String(t), "m [g]": "120,00", "Δm [g]": dm });
     const parH = { "zaščitna očala": "da", poskus: "marmor + HCl (masa)", "marmor (caco₃)": "srednji koščki (~6 mm)", "ob dodatku hkrati zaženi štoparico": "da" };
     const hc = (log, vrstice = [], par = {}) => c({ dnevnik: log, vrstice, par: (n) => ({ ...parH, ...par })[n.toLocaleLowerCase("sl")] ?? "" });
     assert.equal(hit[1].done(hc([KIS("0,5"), MAR])), true);
     assert.equal(hit[1].done(hc([KIS("0,5", ", segreta na 40 °C"), MAR])), false, "segreta kislina");
-    assert.equal(hit[1].done(hc([KIS("0,5"), MAR], [], { "marmor (caco₃)": "prah" })), false, "prah namesto srednjih koščkov");
-    assert.equal(hit[1].done(hc([KIS("0,5"), "Dodal si 5,00 g marmorja."])), false, "brez vate");
+    const PRAH = "Dodal si 5,00 g marmorja (prah) in vrat zamašil z vato.";
+    assert.equal(hit[1].done(hc([KIS("0,5"), PRAH])), false, "prah namesto srednjih koščkov");
+    // Oblika in štoparica štejeta ob dodatku: poznejša sprememba izbire poskusa s prahom ne popravi.
+    assert.equal(hit[1].done(hc([KIS("0,5"), PRAH], [], { "marmor (caco₃)": "srednji koščki (~6 mm)" })), false, "izbira po dodatku");
+    const BREZ = "Štoparica še ne teče! Zaženi jo čim prej, sicer bodo časi napačni.";
+    assert.equal(hit[1].done(hc([KIS("0,5"), BREZ, MAR])), false, "štoparica ni tekla od dodatka");
+    assert.equal(hit[1].done(hc([KIS("0,5"), "Dodal si 5,00 g marmorja (srednji koščki)."])), false, "brez vate");
     assert.equal(hit[1].done(hc([KIS("0,5"), MAR, KIS("1"), MAR])), false, "najnovejši poskus je 1 mol/L");
     const POZEN = "Štoparico si zagnal 12 s po začetku reakcije: vsi časi so za toliko prekratki, začetna hitrost bo videti prevelika.";
     assert.equal(hit[2].done(hc([KIS("0,5"), MAR], [mr(1, 0, "0,00"), mr(1, 30, "0,05")])), true);
     assert.equal(hit[2].done(hc([KIS("0,5"), MAR, POZEN], [mr(1, 0, "0,00"), mr(1, 30, "0,05")])), false, "pozno zagnana štoparica");
+    const MG = "Spustil si 3 cm traku (0,030 g) v kislino in zamašil z zamaškom s cevko do brizge.";
+    assert.equal(hit[2].done(hc([KIS("0,5"), MAR, MG, POZEN], [mr(1, 0, "0,00"), mr(1, 30, "0,05")])), true, "pozen zagon pri magneziju ne pokvari marmorja");
     assert.equal(hit[2].done(hc([KIS("0,5"), MAR], [mr(1, 0, "0,00"), mr(1, 90, "0,15")])), false, "ni meritve v prvih 65 s");
     const tri = [KIS("0,5"), MAR, KIS("1"), MAR, KIS("2"), MAR];
     const r3 = [1, 2, 3].flatMap((p) => [mr(p, 0, "0,00"), mr(p, 30, "0,1")]);

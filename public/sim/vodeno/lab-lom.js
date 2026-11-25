@@ -38,7 +38,7 @@ export default {
       naslov: "Vklopi laser, a nikoli ne glej v žarek",
       kaj: "Pri »snov na disku« pusti polvalj iz akrila, pri »smer svetlobe« pusti »iz zraka v snov« in vklopi »laser vklopljen«.",
       namig: "Šolski laser je razreda 2. Žarek nikoli ne usmeri v oči, tudi ne prek zrcala ali bleščeče ploskve.",
-      zakaj: "Že šibek laserski žarek v očesu se zbere v drobno piko na mrežnici in jo lahko poškoduje. Zato laser vedno gleda v disk, ne proti ljudem.",
+      zakaj: "Že šibek laserski žarek v očesu se zbere v drobno piko na mrežnici in jo lahko poškoduje. Zato laser vedno usmeriš v disk, ne proti ljudem.",
       poudari: ["snov na disku", "smer svetlobe", "laser vklopljen"],
       done: (c) => /akril/.test(c.par("snov na disku")) && /iz zraka/.test(c.par("smer svetlobe")) && c.par("laser vklopljen") === "da",
     },
@@ -54,7 +54,7 @@ export default {
       naslov: "Izmeri od 10\u00a0° do 80\u00a0°",
       kaj: "Ponovi pri 20, 30, 40, 50, 60, 70 in 80\u00a0°. Potrebuješ vsaj 6 različnih vpadnih kotov, med njimi vsaj enega od 70\u00a0° naprej.",
       namig: "Če si kdaj meril od ploskve ali z zamaknjenim laserjem, pritisni »Pobriši meritve« in meri znova.",
-      zakaj: "Lomni kot je vedno manjši od vpadnega, a razlika ni stalna: pri velikih kotih je precej večja. Zato potrebuješ meritve čez vse območje.",
+      zakaj: "Pri prehodu iz zraka v akril je lomni kot manjši od vpadnega, a razlika ni stalna: pri velikih kotih je precej večja. Zato potrebuješ meritve čez vse območje.",
       poudari: ["vpadni kot", "Zapiši meritev"],
       done: (c) => {
         const r = lomZrakAkril(c);
@@ -79,7 +79,7 @@ export default {
         const izbira = c.par("kaj računaš");
         if (izbira && !/zrak → akril/.test(izbira)) return false;
         const nazivno = [1.49, 1.5].map((v) => ({ v, kaj: "vrednost iz učbenika" })); // kot UCBENIK_N.pmma v lab-optika.js
-        return c.racun() && !!preveriRacun(c.par("tvoj rezultat"), nAkril(c), { tol: 0.03, nazivno })?.ok;
+        return c.racun() && !!preveriRacun(c.par("tvoj rezultat"), nAkril(c), { tol: 0.045, nazivno })?.ok; // natančnost (3 %) preveri motor, vodilo računa iz zaokrožene tabele
       },
     },
     {

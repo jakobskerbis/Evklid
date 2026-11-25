@@ -2,8 +2,10 @@
 // »Vodeni poskus«, faza 2). Sledi nalogi »Poskusi«: marmor v 0,5, 1 in 2 mol/L HCl (začetna hitrost, red reakcije), nato
 // tiosulfat pri petih koncentracijah in dveh temperaturah, na koncu »Sklep«.
 // Meritev šteje le, če je bila res izvedena prav, kar pove dnevnik motorja:
-// - marmor: »Na tehtnici je bučka s 40 mL HCl (c mol/L[, segreta …])« in »Dodal si m g marmorja[ in vrat zamašil z vato]«
-//   začneta poskus; »Štoparico si zagnal … po začetku reakcije« (pozen zagon) in »Pena je šla čez rob« ga pokvarita.
+// - marmor: »Na tehtnici je bučka s 40 mL HCl (c mol/L[, segreta …])« in »Dodal si m g marmorja (oblika)[ in vrat zamašil
+//   z vato]« začneta poskus; »Štoparica še ne teče!« tik pred dodatkom pomeni, da štoparica ni tekla od dodatka. Oblika in
+//   štoparica se tako berejo ob dodatku, ne iz trenutnih nastavitev. »Štoparico si zagnal … po začetku reakcije« (pozen
+//   zagon) in »Pena je šla čez rob« pokvarita zadnji poskus z marmorjem, a le dokler ni začet poskus z drugo snovjo.
 //   Vrstice tabele imajo stolpec »poskus« (zaporedna številka od zadnjega »Izbriši meritve«, ki ga dnevnik ne zapiše),
 //   zato poskuse iz dnevnika povežemo s tabelo od zadnjega nazaj. Začetna hitrost (graf r₀) potrebuje meritev pri 5–65 s.
 // - tiosulfat: »V bučki je V mL raztopine tiosulfata …[, segreto …]«, »Prilil si 5 mL HCl …«, »Križ je izginil po t s«;
@@ -11,23 +13,28 @@
 import { stevilo, celica } from "../lab-vodeno-pomoc.js";
 
 const KISLINA = /Na tehtnici je bučka s 40 mL HCl \(([\d,]+) mol\/L(, segreta)?/;
-const MARMOR = /Dodal si ([\d,]+) g marmorja( in vrat zamašil z vato)?/;
+const MARMOR = /Dodal si ([\d,]+) g marmorja(?: \(([^)]+)\))?( in vrat zamašil z vato)?/;
+const BREZ_URE = /^Štoparica še ne teče!/;
+const DRUGA_SNOV = /^Spustil si .* traku|^Dodal si katalizator|^V bučki je \d+ mL raztopine tiosulfata|^Prilil si 5 mL HCl/;
 const POKVARJEN = /Štoparico si zagnal .* po začetku reakcije|Pena je šla čez rob bučke/;
 const PRIPRAVA = /V bučki je (\d+) mL raztopine tiosulfata in \d+ mL vode(, segreto)?/;
 const PRILIL = /Prilil si 5 mL HCl in zagnal štoparico/;
 const NAROBE = /Križ je še precej viden|Raztopina je že povsem motna/;
 const IZGINIL = /Križ je izginil po ([\d,]+) s/;
-const SREDNJI = (c) => /^srednji/.test(c.par("marmor (CaCO₃)"));
 
-// Poskusi z marmorjem iz dnevnika, povezani z vrsticami tabele: { c, toplo, m, vata, ok, r0 }.
+// Poskusi z marmorjem iz dnevnika, povezani z vrsticami tabele: { c, toplo, m, oblika, vata, ura, ok, r0 }.
 export function marmorji(c) {
   const runs = [];
-  let kis = null;
+  let kis = null, brezUre = false, aktiven = false;
   for (const t of c.dnevnik) {
     let m;
-    if ((m = t.match(KISLINA))) kis = { c: stevilo(m[1]), toplo: !!m[2] };
-    else if ((m = t.match(MARMOR)) && kis) runs.push({ ...kis, m: stevilo(m[1]), vata: !!m[2], ok: true, r0: false });
-    else if (POKVARJEN.test(t) && runs.length) runs.at(-1).ok = false;
+    if ((m = t.match(KISLINA))) (kis = { c: stevilo(m[1]), toplo: !!m[2] }), (brezUre = false), (aktiven = false);
+    else if (BREZ_URE.test(t)) brezUre = true;
+    else if ((m = t.match(MARMOR)) && kis) {
+      runs.push({ ...kis, m: stevilo(m[1]), oblika: m[2] || "", vata: !!m[3], ura: !brezUre, ok: true, r0: false });
+      (brezUre = false), (aktiven = true);
+    } else if (DRUGA_SNOV.test(t)) (brezUre = false), (aktiven = false);
+    else if (POKVARJEN.test(t) && aktiven) runs.at(-1).ok = false;
   }
   if (!/^marmor/.test(c.par("poskus"))) return runs; // tabela marmorja je skrita
   const p = (r) => stevilo(celica(r, /^poskus/));
@@ -41,8 +48,8 @@ export function marmorji(c) {
   });
   return runs;
 }
-// Primerljiv poskus: srednji koščki 5 g z vato pri sobni temperaturi, štoparica pravočasno, brez prelite pene.
-const primerljiv = (r) => r.ok && r.vata && !r.toplo && Math.abs(r.m - 5) < 0.1;
+// Primerljiv poskus: srednji koščki 5 g z vato pri sobni temperaturi, štoparica od dodatka, brez prelite pene.
+const primerljiv = (r) => r.ok && r.ura && r.vata && !r.toplo && /^srednji/.test(r.oblika) && Math.abs(r.m - 5) < 0.1;
 
 // Meritve tiosulfata iz dnevnika, povezane z vrsticami tabele: { V, toplo, slabo, t, T }.
 export function tiosulfat(c) {
@@ -69,12 +76,12 @@ const dobre = (c) => tiosulfat(c).filter((x) => !x.slabo);
 export default {
   naslov: "Hitrost reakcije: koncentracija in temperatura",
   cilj: "Izmeril boš, kako hitro marmor izgublja maso v kislini različnih koncentracij in kako hitro tiosulfat skali raztopino pri različnih koncentracijah in temperaturah. Iz meritev boš določil red reakcije.",
-  konec: "Pokazal si, da je hitrost obeh reakcij sorazmerna s koncentracijo in da se pri 10\u00a0°C višji temperaturi približno podvoji. Preklopi na »Prosto« in primerjaj marmor v koščkih in v prahu ali razkroj vodikovega peroksida z različnimi katalizatorji.",
+  konec: "Pokazal si, da je hitrost obeh reakcij sorazmerna s koncentracijo, hitrost reakcije tiosulfata pa se pri 10\u00a0°C višji temperaturi približno podvoji. Preklopi na »Prosto« in primerjaj marmor v koščkih in v prahu ali razkroj vodikovega peroksida z različnimi katalizatorji.",
   koraki: [
     {
       naslov: "Nadeni si zaščitna očala",
       kaj: "Vklopi stikalo »zaščitna očala«.",
-      zakaj: "Klorovodikova kislina draži kožo in oči. Pri tiosulfatu nastaja dražljiv SO₂, zato delaš v zračnem prostoru.",
+      zakaj: "Klorovodikova kislina draži kožo in oči. Pri tiosulfatu nastaja dražljiv SO₂, zato delaš v dobro prezračenem prostoru.",
       poudari: ["zaščitna očala"],
       done: (c) => c.par("zaščitna očala") === "da",
     },
@@ -87,7 +94,7 @@ export default {
       // Najnovejši poskus: 0,5 mol/L, srednji koščki 5 g z vato, štoparica zagnana ob dodatku (nastavitve ob dodatku).
       done: (c) => {
         const r = marmorji(c).at(-1);
-        return !!r && r.c === 0.5 && primerljiv(r) && SREDNJI(c) && c.par("ob dodatku hkrati zaženi štoparico") === "da";
+        return !!r && r.c === 0.5 && primerljiv(r);
       },
     },
     {
@@ -106,7 +113,7 @@ export default {
       poudari: ["klorovodikova kislina (40", "Nalij 40 mL", "Dodaj marmor"],
       done: (c) => {
         const cs = new Set(marmorji(c).filter((r) => primerljiv(r) && r.r0).map((r) => r.c));
-        return [0.5, 1, 2].every((x) => cs.has(x)) && SREDNJI(c);
+        return [0.5, 1, 2].every((x) => cs.has(x));
       },
     },
     {
@@ -148,7 +155,7 @@ export default {
     {
       naslov: "Odgovori na vprašanje »Sklep«",
       kaj: "Pod grafom je vprašanje »Sklep«. Izberi odgovor, ki se ujema s tvojimi meritvami.",
-      namig: "Kako se je spremenil čas, ko si raztopino razredčil? Ali je temperatura spremenila tudi končno izgubo mase?",
+      namig: "Kako se je spremenil čas, ko si raztopino razredčil? Ali višja temperatura spremeni tudi končno množino produkta?",
       zakaj: "Hitrost je odvisna od števila uspešnih trkov. Koncentracija, temperatura, površina in katalizator spremenijo hitrost reakcije, ne pa končne množine produkta.",
       pokazi: /o hitrosti (kemijske )?reakcije/,
       done: (c) => c.sklep(/o hitrosti (kemijske )?reakcije/),

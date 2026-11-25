@@ -49,7 +49,7 @@ export default {
     },
     {
       naslov: "Napovej in stresi 1\u00a0g sode",
-      kaj: "Najprej napovej, za koliko gramov se bo zmanjšala masa bučke, ko zreagira 1\u00a0g sode. Nato pri »soda bikarbona« nastavi 1,0\u00a0g in pritisni »Stresi sodo v bučko«. Zamašek s cevko takoj vrneš na bučko.",
+      kaj: "Najprej napovej, za koliko gramov se bo zmanjšala masa bučke, ko zreagira 1\u00a0g sode. Nato pri »soda bikarbona« nastavi 1,0\u00a0g in pritisni »Stresi sodo v bučko«. V pravem laboratoriju bi zamašek s cevko takoj vrnil na bučko, tukaj ostane na njej.",
       namig: "NaHCO₃ + CH₃COOH → CH₃COONa + H₂O + CO₂. Iz 1\u00a0mol sode nastane 1\u00a0mol CO₂. M(NaHCO₃) = 84,01\u00a0g/mol, M(CO₂) = 44,01\u00a0g/mol. Če si stresel več kot 1\u00a0g, pritisni »↺ Ponastavi« in začni znova.",
       zakaj: "Po enačbi da 1\u00a0g sode 0,52\u00a0g CO₂. Ko plin uide iz bučke, tehtnica pokaže manjšo maso.",
       poudari: ["soda bikarbona", "Stresi sodo"],
@@ -81,7 +81,7 @@ export default {
     },
     {
       naslov: "Zakaj je izguba mase manjša od napovedi?",
-      kaj: "Primerjaj zadnji Δm v tabeli s svojo napovedjo in odgovori na drugo vprašanje »Sklep«.",
+      kaj: "Primerjaj zadnji Δm v tabeli s svojo napovedjo (če si dodal več sode, napoved ustrezno povečaj) in odgovori na drugo vprašanje »Sklep«.",
       namig: "Ali ves nastali CO₂ res zapusti bučko? Pomisli na kis in na plin nad njim.",
       zakaj: "Masa se pri reakciji ohranja. Del CO₂ je še raztopljen v kisu, del pa je nad tekočino. CO₂ je težji od zraka, zato je bučka zaradi njega malo težja.",
       pokazi: /izmerjena izguba manjša/,

@@ -59,12 +59,12 @@ export function izkoristekIzMeritev(c) {
   const Us = med.reduce((a, r) => a + U(r), 0) / med.length, Is = med.reduce((a, r) => a + I(r), 0) / med.length;
   return (100 * m * C_VODE * (Math.max(...po.map(T)) - T(zac))) / (Us * Is * tOn);
 }
-const racunPravilen = (c) => c.racun() && !!preveriRacun(c.par("tvoj rezultat [%]"), izkoristekIzMeritev(c), { tol: 0.03, enota: "%" })?.ok;
+const racunPravilen = (c) => c.racun() && !!preveriRacun(c.par("tvoj rezultat [%]"), izkoristekIzMeritev(c), { tol: 0.045, enota: "%" })?.ok; // natančnost (3 %) preveri motor, vodilo računa iz zaokroženega dnevnika
 
 export default {
   naslov: "Grelec: kolikšen je njegov izkoristek?",
   cilj: "Z grelcem 12\u00a0V boš segrel vodo, izmeril delo električnega toka in toploto, ki jo je prejela voda, ter izračunal izkoristek grelca. Nato boš poskus ponovil s pokrovom in z mešanjem.",
-  konec: "Izkoristek grelca si izmeril dvakrat: s pokrovom in z mešanjem je večji, ker manj toplote uide v zrak in ker termometer kaže pravo temperaturo vode. Preklopi na »Prosto« in poskusi s 100\u00a0g vode. V »Prosto« lahko vidiš tudi, kaj se zgodi z grelcem zunaj vode: to naredi samo tukaj, v pravem laboratoriju nikoli.",
+  konec: "Izkoristek grelca si izmeril dvakrat: s pokrovom je večji, ker manj toplote uide skozi gladino in z izhlapevanjem. Preklopi na »Prosto« in poskusi s 100\u00a0g vode. V »Prosto« lahko vidiš tudi, kaj se zgodi z grelcem zunaj vode: to naredi samo tukaj, v pravem laboratoriju nikoli.",
   koraki: [
     {
       naslov: "Natoči 200\u00a0g vode in jo stehtaj",
@@ -88,7 +88,7 @@ export default {
     {
       naslov: "Pospeši čas in spremljaj meritve",
       kaj: "Pri »hitrost časa« izberi ×10. Pusti vklopljeno »zapisuj vsakih 30\u00a0s« in opazuj, kako v tabeli raste temperatura.",
-      namig: "Zapisa napetosti in toka med segrevanjem potrebuješ za delo W = UIt.",
+      namig: "Zapise napetosti in toka med segrevanjem potrebuješ za delo W = UIt.",
       zakaj: "Pri stalni moči grelca temperatura vode raste skoraj enakomerno, zato je graf T(t) skoraj premica.",
       poudari: ["hitrost časa", "zapisuj vsakih 30"],
       done: (c) => /×(10|60)/.test(c.par("hitrost časa")) && c.vrstice.filter(tece).length >= 2,
@@ -96,7 +96,7 @@ export default {
     {
       naslov: "Po 5 minutah izklopi grelec",
       kaj: "Ko štoparica kaže približno 5 minut in se voda segreje za 10 do 20\u00a0°C, pritisni »Izklopi grelec«.",
-      namig: "Če si grelec izklopil prezgodaj, ga vklopi znova: štoparica šteje ves čas segrevanja. Šteje, da je grelec segreval vsaj 4 minute.",
+      namig: "Če si grelec izklopil prezgodaj, ga vklopi znova: štoparica šteje ves čas segrevanja. Korak je opravljen, ko je grelec skupaj segreval vsaj 4 minute.",
       zakaj: "Večja sprememba temperature pomeni manjšo relativno napako. Pri 2\u00a0K bi napaka termometra že precej pokvarila rezultat.",
       poudari: ["Izklopi grelec"],
       done: (c) => izklopljen(c.dnevnik),
@@ -141,7 +141,7 @@ export default {
       naslov: "Izklopi in znova izračunaj izkoristek",
       kaj: "Po približno 5 minutah izklopi grelec, zapiši najvišjo temperaturo in izračunaj nov izkoristek. Vpiši ga v »tvoj rezultat« in pritisni »Preveri moj račun«.",
       namig: "Pokrov in mešanje pusti vklopljena do konca.",
-      zakaj: "S pokrovom in z mešanjem dobiš večji izkoristek. Primerjava dveh poskusov, ki se razlikujeta le v eni stvari, pokaže, kaj vpliva na rezultat.",
+      zakaj: "S pokrovom manj toplote uide skozi gladino in z izhlapevanjem, zato je izkoristek večji. Mešanje vodi toplote ne doda, le termometer kaže povprečno temperaturo. Masa vode, napetost in čas segrevanja so bili enaki, zato lahko izkoristka primerjaš.",
       poudari: ["Izklopi grelec", "Zapiši meritev"],
       done: (c) => izklopljen(c.dnevnik) && c.par("pokrov na čaši") === "da" && racunPravilen(c),
     },

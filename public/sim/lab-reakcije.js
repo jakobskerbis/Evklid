@@ -362,7 +362,7 @@ export function labHitrost(el, opts = {}) {
       S_.ser.get(S_.run).push([0, 0]);
     }
     if (mode === "marmor") {
-      log.push(`Dodal si ${num(r.m, 2)}${nb}g marmorja${b.vata ? " in vrat zamašil z vato" : ""}.`, "ok");
+      log.push(`Dodal si ${num(r.m, 2)}${nb}g marmorja (${MARMOR_OBLIKE[moSel.get()].name.replace(/ \(.*\)$/, "")})${b.vata ? " in vrat zamašil z vato" : ""}.`, "ok");
       if (!b.vata) once("vata", "Brez vate bodo mehurčki CO₂ iz bučke razpršili tudi kapljice kisline: izguba mase bo prevelika.", "warn");
     }
     if (mode === "mg") log.push(`Spustil si ${glSel.get()}${nb}cm traku (${num(r.m, 3)}${nb}g) v kislino in zamašil z zamaškom s cevko do brizge.`, "ok");
