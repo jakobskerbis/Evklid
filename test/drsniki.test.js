@@ -75,4 +75,8 @@ test("navpični drsniki plošč so tanki in brez puščic (aplikacija, 3D svet, 
   }
   // Chromium ne upošteva ::-webkit-scrollbar, če ima element scrollbar-width: plošča učne poti ga zato nima več.
   assert.doesNotMatch(readFileSync(new URL("ui.css", pub), "utf8"), /path-side \{[^}]*scrollbar-width: thin/);
+  // drsne vrstice (drsniki.css): standardni lastnosti samo v Firefoxu, sicer bi Chromium narisal puščici ◄►
+  const drs = readFileSync(new URL("drsniki.css", pub), "utf8");
+  assert.match(drs, /@supports not selector\(::-webkit-scrollbar\) \{\n  :where\(\.drs\) \{ scrollbar-width: thin;/);
+  assert.match(drs, /:where\(\.drs\)::-webkit-scrollbar-button \{ display: none;/);
 });

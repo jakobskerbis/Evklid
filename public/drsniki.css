@@ -2,8 +2,13 @@
    je še kaj, zbledi, pod vrstico pa je tanek drsnik v barvi poudarka. Maska šteje le prosojnost, zato #000.
    Kjer je drsnik namenoma skrit (vrstice čipov in zavihkov), ostane skrit: :where() ima ničelno prednost. */
 :root { --drs-rob: 36px; }
-:where(.drs) { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 60%, transparent) transparent; }
-:where(.drs)::-webkit-scrollbar { height: 6px; }
+/* Chromium ob scrollbar-width/-color ne upošteva ::-webkit-scrollbar in nariše svoj tanek drsnik s puščicama ◄► (pregled
+   PR #1068, 25. 11.): standardni lastnosti sta zato samo za Firefox (nima puščic), Chromium in Safari dobita svoj slog. */
+@supports not selector(::-webkit-scrollbar) {
+  :where(.drs) { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 60%, transparent) transparent; }
+}
+:where(.drs)::-webkit-scrollbar { width: 6px; height: 6px; }
+:where(.drs)::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
 :where(.drs)::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--accent) 60%, transparent); border-radius: 3px; }
 :where(.drs)::-webkit-scrollbar-track { background: transparent; }
 

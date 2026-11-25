@@ -1771,6 +1771,8 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
     senca.visible = true;
   }
   uporabiVidnost();
+  // Med nalaganjem je bilo telo skrito (uvod): senčilniki začetnih plasti se prevedejo zdaj, pred uvodnim preletom.
+  if (uvod) await kit.pripravi?.();
   if (uvod) {
     let cas = 0;
     const T = 0.9;

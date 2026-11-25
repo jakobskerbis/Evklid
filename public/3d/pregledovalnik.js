@@ -1200,10 +1200,13 @@ export function odpriModel(el, mod, opts = {}) {
     kit.narisi();
     // Senčilniki vseh delov se prevedejo hkrati, preden se model prvič nariše (scena.js pripravi): stran ne zamrzne.
     const pripravljen = kit.pripravi ? kit.pripravi() : Promise.resolve();
-    if (nalagal) {
-      nalaganje(1);
-      pripravljen.then(() => !unicen && model === m && nalaganje(null));
-    }
+    if (nalagal) nalaganje(1);
+    // Model brez datoteke (celice): plast »Nalaganje« le, če prevajanje traja dlje (prazen oder brez znaka sicer zmede).
+    const zakasnjeno = nalagal ? null : setTimeout(() => !unicen && model === m && !nalagEl && nalaganje(1), 150);
+    pripravljen.then(() => {
+      clearTimeout(zakasnjeno);
+      if (!unicen && model === m && nalagEl && !nalagEl.classList.contains("napaka")) nalaganje(null);
+    });
     // Del iz naslova (»#organ-srce?del=levi prekat«, gumb inštruktorja public/odpri.js): po id-ju ali imenu.
     if (zacetek.del && !ponastavi) {
       // del (tudi »membrana« → Celična membrana, sinonimi »mitralna zaklopka«) pred skupino (»zaklopke«, »organeli« …;

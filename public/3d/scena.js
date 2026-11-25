@@ -279,6 +279,10 @@ export function ustvariSceno(el, opts = {}) {
     try {
       for (const [o] of skriti) o.material = null;
       p = renderer.compileAsync(scene, camera).catch((err) => console.warn("3D senčilniki:", err));
+    } catch (err) {
+      // compile() teče takoj (pred obljubo): napaka (npr. onBeforeCompile) ne sme za vedno ustaviti risanja
+      console.warn("3D senčilniki:", err);
+      p = Promise.resolve();
     } finally {
       for (const [o, m] of skriti) o.material = m;
       renderer.setRenderTarget(prejCilj);
@@ -548,6 +552,8 @@ export function ustvariSceno(el, opts = {}) {
       velikost(true);
       aoVkljucen = true;
       narisi();
+      // Z okluzijo riše composer v svoj cilj (drugi programi): prevedemo jih hkrati, ne enega za drugim ob izrisu.
+      pripravi();
     } catch (err) {
       console.warn("3D: okluzija ni na voljo", err);
       composer = null;

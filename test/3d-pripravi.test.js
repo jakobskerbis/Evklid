@@ -24,8 +24,12 @@ test("scena: pripravi prevede senčilnike vidnih delov hkrati in izris med tem p
   assert.match(src, /\n    pripravi,\n/, "kit.pripravi");
   const pr = readFileSync(new URL("pregledovalnik.js", pub), "utf8");
   assert.match(pr, /kit\.pripravi \? kit\.pripravi\(\)/);
-  assert.match(pr, /pripravljen\.then\(\(\) => !unicen && model === m && nalaganje\(null\)\)/, "plast nalaganja ostane do konca prevajanja");
-  assert.match(readFileSync(new URL("atlas.js", pub), "utf8"), /await kit\.pripravi\?\.\(\)/);
+  assert.match(pr, /nalagEl && !nalagEl\.classList\.contains\("napaka"\)\) nalaganje\(null\)/, "plast nalaganja ostane do konca prevajanja");
+  assert.match(src, /catch \(err\) \{\n {6}\/\/ compile\(\) teče takoj/, "napaka pri prevajanju ne ustavi risanja");
+  assert.match(src, /aoVkljucen = true;\n {6}narisi\(\);\n.*\n {6}pripravi\(\);/, "programi za cilj okluzije hkrati");
+  const at = readFileSync(new URL("atlas.js", pub), "utf8");
+  assert.match(at, /await kit\.pripravi\?\.\(\); \/\/ senčilniki plasti/);
+  assert.match(at, /if \(uvod\) await kit\.pripravi\?\.\(\);/, "uvod: telo je bilo med nalaganjem skrito");
 });
 
 test("celice: deli z isto vrsto površine si delijo program, številke so enotne spremenljivke", { skip: !THREE }, async () => {
