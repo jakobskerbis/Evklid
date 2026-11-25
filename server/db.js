@@ -8,6 +8,7 @@ import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessLi
 import { privzetiCilj } from "../public/goal-data.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
+import { migratePriprava } from "./priprava/shema.js";
 
 // Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
 export const SKILL_KEEP_DAYS = 365;
@@ -442,6 +443,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       throw err;
     }
   }
+  // Priprava na test iz zapiskov (server/priprava/shema.js, docs/priprava.md): tabele priprave, viri, izvirniki.
+  migratePriprava(db);
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
