@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Topnost
+  - največja masa snovi v $100\,\mathrm{g}$ vode
+  - odvisna od temperature
+  - nasičena: $w = \dfrac{S}{S + 100\,\mathrm{g}}$
+  - napaka: $S = 36\,\mathrm{g}$ ni $w = 36\,\%$
+- Nasičena raztopina
+  - nenasičena še raztaplja
+  - prenasičena: kristalček sproži kristalizacijo
+  - grelna blazinica z natrijevim acetatom
+- Diagram topnosti
+  - točka na krivulji: nasičena
+  - $\mathrm{KNO_3}$ strma krivulja, $\mathrm{NaCl}$ skoraj ravna
+  - ohlajanje: izločijo se kristali
+- Hidratacija
+  - voda obda ione: $\mathrm{Na^+(aq)}$
+  - kisik proti kationu, vodik proti anionu
+  - mrežna proti hidratacijski energiji: $\mathrm{NaOH}$ greje, $\mathrm{NH_4NO_3}$ hladi
+- Pretvorbe z gostoto
+  - $\gamma = w \cdot \rho$ v $\mathrm{g/L}$
+  - $c = \dfrac{\gamma}{M}$
+  - gostoto vstavi v $\mathrm{g/L}$
+- Koncentriranje in mešanje
+  - masa topljenca se ohrani
+  - $w = \dfrac{w_1 m_1 + w_2 m_2}{m_1 + m_2}$
+  - odstotkov ne povprečiš
+- Topnost plinov
+  - toplejša voda: manj kisika
+  - večji tlak plina: več raztopljenega
+  - gazirana pijača, ribnik poleti
