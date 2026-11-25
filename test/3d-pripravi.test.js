@@ -52,3 +52,12 @@ test("celice: deli z isto vrsto površine si delijo program, številke so enotne
   // kopija (izbrani del) ima svoje enotne spremenljivke in isti program
   assert.equal(b.clone().customProgramCacheKey(), b.customProgramCacheKey());
 });
+
+test("organi: številke in barve tkiv so enotne spremenljivke, ključ programa je besedilo senčilnika", () => {
+  const src = readFileSync(new URL("organ.js", pub), "utf8");
+  assert.match(src, /const kljucPrograma = \["org2", gGlava, gLuci, gBarva, gHrap, gNormala, gSenca, gIzhod\]/);
+  assert.match(src, /Object\.assign\(sh\.uniforms, U\);/);
+  assert.match(src, /\+b\.r\.toFixed\(4\), \+b\.g\.toFixed\(4\), \+b\.b\.toFixed\(4\)/, "barve zaokrožene kot prej vec3()");
+  // pokrov reza: barva v ključu samo, kjer je v besedilu senčilnika
+  assert.match(src, /const barvaVBesedilu = vol \? !t\.rezRavna : vr && !presek\.robBarva;/);
+});

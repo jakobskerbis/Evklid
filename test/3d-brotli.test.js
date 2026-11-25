@@ -15,7 +15,13 @@ async function pripravi() {
   const vsebina = Buffer.concat([Buffer.from("glTF"), Buffer.alloc(200_000, 7), Buffer.from("konec")]);
   fs.writeFileSync(path.join(root, "organi-3d", "srce.glb"), vsebina);
   fs.writeFileSync(path.join(mapa, "star-model.br"), "x"); // kopija stare različice: warm jo pobriše
-  const mw = brModeli(root, { mapa });
+  // seznam kot modelList (server/tri-d.js): velikost in različica vsebine
+  let body = null;
+  const osvezi = () => {
+    const raw = fs.readFileSync(path.join(root, "organi-3d", "srce.glb"));
+    body = { datoteke: { "organi-3d/srce.glb": { b: raw.length, v: String(raw.length) } } };
+  };
+  const mw = brModeli({ root, mapa, seznam: () => body, osvezi });
   const app = express();
   app.use("/3d/modeli", mw);
   app.use("/3d/modeli", express.static(root));
@@ -51,6 +57,7 @@ test("GLB: prvič nestisnjen in v vrsti, po stiskanju brotli z isto vsebino, X-F
   assert.equal(r.status, 200);
   assert.equal(r.h["content-encoding"], "br");
   assert.equal(r.h["content-type"], "model/gltf-binary");
+  assert.equal(r.h["content-length"], String(r.body.length));
   assert.equal(Number(r.h["x-file-size"]), vsebina.length);
   assert.ok(r.body.length < vsebina.length / 10);
   assert.deepEqual(zlib.brotliDecompressSync(r.body), vsebina, "brez izgube");
@@ -58,12 +65,13 @@ test("GLB: prvič nestisnjen in v vrsti, po stiskanju brotli z isto vsebino, X-F
   assert.match(r.h.vary, /Accept-Encoding/);
   const brezV = await get(url, { "accept-encoding": "br" });
   assert.equal(brezV.h["cache-control"], "no-cache");
+  assert.ok(r.h.etag, "ETag");
   const ponovno = await get(url, { "accept-encoding": "br", "if-none-match": r.h.etag });
   assert.equal(ponovno.status, 304);
 });
 
-test("GLB: brez br, z Range ali ob spremenjeni datoteki gre nestisnjen; ../ ne uide iz mape", async (t) => {
-  const { root, mw, srv, url, vsebina } = await pripravi();
+test("GLB: brez br ali z Range gre nestisnjen; nova različica se stisne znova; ../ ne uide iz mape", async (t) => {
+  const { root, mapa, mw, srv, url, vsebina } = await pripravi();
   t.after(() => srv.close());
   await mw.warm();
   const gz = await get(url, { "accept-encoding": "gzip" });
@@ -72,13 +80,20 @@ test("GLB: brez br, z Range ali ob spremenjeni datoteki gre nestisnjen; ../ ne u
   const kos = await get(url, { "accept-encoding": "br", range: "bytes=0-3" });
   assert.equal(kos.status, 206);
   assert.equal(kos.h["content-encoding"], undefined);
-  // nova različica datoteke: stara stisnjena se ne pošlje
+  // nova različica datoteke (nov seznam): stara stisnjena se ne pošlje, nova je po stiskanju spet brotli
   const nova = Buffer.concat([vsebina, Buffer.from("nova")]);
   fs.writeFileSync(path.join(root, "organi-3d", "srce.glb"), nova);
-  fs.utimesSync(path.join(root, "organi-3d", "srce.glb"), new Date(), new Date(Date.now() + 5000));
+  await mw.warm();
   const r = await get(url, { "accept-encoding": "br" });
-  assert.equal(r.h["content-encoding"], undefined);
-  assert.deepEqual(r.body, nova);
+  assert.equal(r.h["content-encoding"], "br");
+  assert.deepEqual(zlib.brotliDecompressSync(r.body), nova);
+  // stisnjena datoteka pobrisana: nestisnjena po navadni poti, brez glav stisnjene
+  for (const f of fs.readdirSync(mapa)) fs.rmSync(path.join(mapa, f));
+  const brez = await get(url, { "accept-encoding": "br" });
+  assert.equal(brez.status, 200);
+  assert.equal(brez.h["content-encoding"], undefined);
+  assert.equal(brez.h["x-file-size"], undefined);
+  assert.deepEqual(brez.body, nova);
   const ven = await get(`${url.replace("/organi-3d/srce.glb", "")}/..%2f..%2fetc%2fpasswd.glb`, { "accept-encoding": "br" });
   assert.notEqual(ven.status, 200);
 });

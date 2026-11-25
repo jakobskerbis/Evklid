@@ -4,6 +4,7 @@
 // three.module.js. Tako dobijo vse strani isti modul three, tudi glavna aplikacija (pogon simulacij 3d-<id>).
 // Dekodirnik meshopt za stisnjene modele telesa potrebuje WebAssembly ('wasm-unsafe-eval'), a samo na /3d.
 import fs from "node:fs";
+import express from "express";
 import path from "node:path";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
@@ -22,6 +23,7 @@ export const THREE_URL = "/vendor/three/build/three.module.js";
 // Seznam modelov z velikostjo in kratko zgoščeno vrednostjo vsebine: stran iz velikosti kaže napredek
 // prenosa v MB, vrednost gre v naslov (?v=…), da service worker ob novem izvozu ne vrne stare kopije.
 let listCache = { key: "", body: null };
+const obNovemSeznamu = new Set();
 export function modelList() {
   const files = [];
   const walk = (dir) => {
@@ -58,6 +60,7 @@ export function modelList() {
     datoteke[rel] = { b: st.size, v };
   }
   listCache = { key, body: { datoteke, podrocja, viri, slicice } };
+  for (const f of obNovemSeznamu) f(); // nove različice modelov: stisni jih (brModeli)
   return listCache.body;
 }
 
@@ -117,118 +120,84 @@ function addonsHandler(root) {
   };
 }
 
-// 3D modeli (GLB) in studijsko okolje (HDR) stisnjeni z brotli (j 25. 11. 2026: »Stisni vse kar je smiselno«, »ali se
-// velikost lahko zmanjša brez izgube kvalitete«): brez izgube, brskalnik datoteko sam razširi v isto vsebino. Srce
-// 6,2 → 4,2 MB, telo-hd 30 → ~20 MB (−32 %). Stisnemo enkrat (kakovost 5: skoraj ista velikost kot 11, ~0,3 s in
-// ~20 MB pomnilnika za 7 MB namesto 20 s in 150 MB) in shranimo na disk ob bazi (Render: /var/data, ostane ob objavi),
-// zato pomnilnik strežnika ne raste. Dokler stisnjene ni, gre datoteka nestisnjena (express.static), stiskanje pa se
-// postavi v vrsto (ena naenkrat, v niti zlib). X-File-Size: prava velikost za trak nalaganja (three FileLoader jo bere
-// pred Content-Length, ki je pri stisnjeni datoteki manjši). Različica v naslovu (?v=, server/tri-d.js modelList) je
-// zgoščena vrednost vsebine, zato sme brskalnik tako datoteko hraniti brez vprašanja strežniku.
-const BR_DATOTEKE = /\.(glb|hdr)$/i;
+// 3D modeli (GLB) stisnjeni z brotli (j 25. 11. 2026: »Stisni vse kar je smiselno«, »ali se velikost lahko zmanjša
+// brez izgube kvalitete«): brez izgube, brskalnik datoteko sam razširi v isto vsebino. Vsi modeli 87,7 → 59,1 MB
+// (srce 6,2 → 4,2 MB). Stisnemo enkrat (kakovost 5: skoraj ista velikost kot 11, ~0,3 s in ~20 MB pomnilnika za 7 MB
+// namesto 20 s in 150 MB) in shranimo na disk ob bazi (Render: /var/data, ostane ob objavi), zato pomnilnik strežnika
+// ne raste. Ime stisnjene datoteke je različica vsebine (v iz modelList, ista kot ?v= v naslovu). Obdelava zahteve ne
+// bere diska sama: izbere stisnjeno datoteko iz seznama v pomnilniku in jo pošlje express.static (kot ostale datoteke);
+// dokler stisnjene ni, gre nestisnjena. X-File-Size: prava velikost za trak nalaganja (three FileLoader jo bere pred
+// Content-Length, ki je pri stisnjeni datoteki manjši).
 const brMapa = () =>
   process.env.EVKLID_BR_DIR || (process.env.EVKLID_DB ? path.join(path.dirname(process.env.EVKLID_DB), "br-3d") : path.join(os.tmpdir(), "evklid-br-3d"));
 
-export function brModeli(root = modelsDir, { mapa = brMapa(), kakovost = 5 } = {}) {
-  const vrsta = new Map(); // ključ → { file, cilj }
-  let tece = null; // obljuba delavca, dokler vrsta ni prazna
-  const kljuc = (file, st) => crypto.createHash("sha1").update(`${path.relative(root, file)}:${st.size}:${st.mtimeMs}`).digest("hex").slice(0, 24);
-  const cilj = (k) => path.join(mapa, `${k}.br`);
-  function delaj() {
-    if (!tece) tece = obdelaj().finally(() => (tece = null));
-    return tece;
-  }
-  async function obdelaj() {
-    {
-      while (vrsta.size) {
-        const [k, { file, out }] = vrsta.entries().next().value;
+export function brModeli({ root = modelsDir, mapa = brMapa(), seznam = () => listCache.body, osvezi = modelList, kakovost = 5 } = {}) {
+  const nared = new Set(); // različice (v), ki imajo stisnjeno datoteko na disku
+  const posiljatelj = express.static(mapa, { cacheControl: false, index: false, redirect: false, dotfiles: "ignore" });
+  let tece = null;
+  async function stisni() {
+    const datoteke = (osvezi(), seznam())?.datoteke || {};
+    await fs.promises.mkdir(mapa, { recursive: true });
+    const obstojece = new Set(await fs.promises.readdir(mapa));
+    const zive = new Set();
+    let n = 0;
+    for (const [rel, d] of Object.entries(datoteke)) {
+      const ime = `${d.v}.br`;
+      zive.add(ime);
+      if (!obstojece.has(ime)) {
         try {
-          const raw = await fs.promises.readFile(file);
+          const raw = await fs.promises.readFile(path.join(root, rel));
           const body = await new Promise((res, rej) =>
             zlib.brotliCompress(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: kakovost, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: raw.length } }, (e, o) => (e ? rej(e) : res(o))),
           );
-          await fs.promises.mkdir(mapa, { recursive: true });
-          const tmp = `${out}.${process.pid}.tmp`;
+          const tmp = path.join(mapa, `${ime}.${process.pid}.tmp`);
           await fs.promises.writeFile(tmp, body);
-          await fs.promises.rename(tmp, out);
+          await fs.promises.rename(tmp, path.join(mapa, ime));
         } catch (e) {
-          console.warn(`[evklid] brotli 3D ${path.relative(root, file)}: ${e?.message || e}`);
+          console.warn(`[evklid] brotli 3D ${rel}: ${e?.message || e}`);
+          continue;
         }
-        vrsta.delete(k);
       }
+      nared.add(d.v);
+      n++;
     }
+    // kopije starih različic (in nedokončane .tmp) pobrišemo
+    for (const f of obstojece) if (!zive.has(f)) await fs.promises.rm(path.join(mapa, f), { force: true }).catch(() => {});
+    return n;
   }
-  const postavi = (file, st) => {
-    const k = kljuc(file, st);
-    const out = cilj(k);
-    if (vrsta.has(k) || fs.existsSync(out)) return;
-    vrsta.set(k, { file, out });
-    delaj();
+  // Ena obdelava naenkrat; zahteva med obdelavo počaka nanjo in nato še enkrat preveri seznam.
+  const warm = () => {
+    if (!tece) tece = stisni().finally(() => (tece = null));
+    return tece;
   };
+  obNovemSeznamu.add(() => tece || setImmediate(() => warm().catch(() => {})));
   const middleware = (req, res, next) => {
     if ((req.method !== "GET" && req.method !== "HEAD") || req.headers.range || process.env.EVKLID_COMPRESS === "0") return next();
+    if (pickEncoding(req.headers["accept-encoding"]) !== "br") return next(); // gzip modelov skoraj ne zmanjša
     let rel;
     try {
-      rel = decodeURIComponent(req.path);
+      rel = decodeURIComponent(req.path).replace(/^\/+/, "");
     } catch {
       return next();
     }
-    if (!BR_DATOTEKE.test(rel)) return next();
-    const file = path.join(root, rel);
-    if (!file.startsWith(root + path.sep)) return next(); // ../ ven iz mape
-    let st;
-    try {
-      st = fs.statSync(file);
-    } catch {
-      return next();
-    }
-    if (!st.isFile()) return next();
-    if (pickEncoding(req.headers["accept-encoding"]) !== "br") return next(); // gzip modelov skoraj ne zmanjša
-    const k = kljuc(file, st);
-    let bst;
-    try {
-      bst = fs.statSync(cilj(k));
-    } catch {
-      postavi(file, st);
-      return next(); // še ni stisnjena: tokrat nestisnjena
-    }
-    const etag = `"${k}-br"`;
+    const d = Object.hasOwn(seznam()?.datoteke || {}, rel) ? seznam().datoteke[rel] : null;
+    if (!d || !nared.has(d.v)) return next(); // še ni stisnjena: tokrat nestisnjena
+    const url = req.url;
     res.setHeader("Vary", "Accept-Encoding");
-    res.setHeader("ETag", etag);
     res.setHeader("Cache-Control", req.query?.v ? "public, max-age=31536000, immutable" : "no-cache");
-    if (req.headers["if-none-match"] === etag) return res.status(304).end();
-    res.setHeader("Content-Type", /\.glb$/i.test(rel) ? "model/gltf-binary" : "application/octet-stream");
+    res.setHeader("Content-Type", "model/gltf-binary");
     res.setHeader("Content-Encoding", "br");
-    res.setHeader("Content-Length", bst.size);
-    res.setHeader("X-File-Size", st.size);
-    if (req.method === "HEAD") return res.end();
-    const tok = fs.createReadStream(cilj(k));
-    tok.on("error", () => (res.headersSent ? res.destroy() : next()));
-    tok.pipe(res);
+    res.setHeader("X-File-Size", d.b);
+    req.url = `/${d.v}.br`;
+    posiljatelj(req, res, (err) => {
+      // stisnjene datoteke ni več (pobrisana): nestisnjena po navadni poti
+      req.url = url;
+      for (const h of ["Content-Encoding", "X-File-Size", "Content-Type", "Cache-Control"]) res.removeHeader(h);
+      nared.delete(d.v);
+      next(err);
+    });
   };
-  // Po zagonu: stisni vse modele (ki še niso) in pobriši stisnjene kopije starih različic. Vrne obljubo (število).
-  middleware.warm = async () => {
-    const vse = [];
-    const walk = (dir) => {
-      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-        const p = path.join(dir, e.name);
-        if (e.isDirectory()) walk(p);
-        else if (BR_DATOTEKE.test(e.name)) vse.push(p);
-      }
-    };
-    walk(root);
-    const zive = new Set();
-    for (const f of vse) {
-      const st = fs.statSync(f);
-      zive.add(`${kljuc(f, st)}.br`);
-      postavi(f, st);
-    }
-    await delaj();
-    try {
-      for (const f of fs.readdirSync(mapa)) if (f.endsWith(".br") && !zive.has(f)) fs.rmSync(path.join(mapa, f), { force: true });
-    } catch {}
-    return vse.length;
-  };
+  middleware.warm = warm;
   return middleware;
 }
 
