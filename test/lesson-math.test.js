@@ -233,3 +233,9 @@ test("AUDIT-062: 48 : 6 = 7, 20 % · 60 = 3 in 80 € · 0,75 = 65 € se ujamej
     assert.deepEqual(checkArithmetic(t).mismatches, [], t);
   }
 });
+
+test("AUDIT-062 (pregled): h:mm ni deljenje, »45 € : 3« se preračuna", () => {
+  const R = String.raw;
+  for (const t of [R`$1:30\,\mathrm{h} = 90\,\mathrm{min}$`, R`$8:05 = 8\,\mathrm{h}\,5\,\mathrm{min}$`, R`$45\ € : 3 = 15\ €$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  assert.equal(checkArithmetic(R`$45\ € : 3 = 12\ €$`).mismatches.length, 1);
+});

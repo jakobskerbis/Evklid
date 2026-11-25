@@ -54,14 +54,18 @@ export function normalizeTex(tex, pct = "div", { colon = true } = {}) {
   let s = tex.replace(/\\,/g, "").replace(/\\left|\\right|\\[!;>]|\\quad|\\qquad|\\ |~/g, " ");
   // »\:« je presledek (kot \;), »:« in »\colon« med števili ali oklepaji deljenje
   s = s.replace(/\\:/g, " ");
+  // ura ali trajanje h:mm (»1:30 h«, »8:05«) ni deljenje: dvopičje brez presledkov in dve števki za njim
+  if (/(?<![\d.,])\d{1,2}:\d{2}(?!\d)/.test(s)) return null;
+  // € pred deljenjem (»45 € : 3«), da ga dvopičje najde za številom
+  s = s.replace(/\s*(?:€|\\euro\b|\\EUR\b)/g, " \\EURO ");
   const colons = (s.match(/(?<!\\):|\\colon/g) || []).length;
   if (colons) {
     if (!colon || colons > 1) return null;
-    s = s.replace(/([\d)}])\s*(?:\\colon|:)\s*(?=[\d({]|\\[dt]?frac)/g, "$1 / ");
+    s = s.replace(/([\d)}](?:\s*\\EURO)?)\s*(?:\\colon|:)\s*(?=[\d({]|\\[dt]?frac)/g, "$1 / ");
   }
   const units = [];
   // € (tudi \euro) je enota: 80 € · 0,75 = 60 €
-  s = s.replace(/€|\\euro\b|\\EUR\b/g, () => (units.push("€"), " "));
+  s = s.replace(/\\EURO/g, () => (units.push("€"), " "));
   // Enote: \mathrm{kW}, \text{cm}^2, \Omega, °, ^\circ
   s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (_, u, e) => {
     if (u.trim()) units.push(u.trim() + (e || "").replace(/\s/g, ""));
