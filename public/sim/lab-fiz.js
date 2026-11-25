@@ -230,8 +230,10 @@ export function labOhm(el, { load = "R100" } = {}) {
     get: () => ({ racun: Rr.stanje(), series, napoved: N.stanje() }),
     set: (d) => {
       Rr.obnovi(d?.racun);
-      N.obnovi(d?.napoved);
-      for (const [id, pts] of Object.entries(d?.series || {})) if (id in LOADS && Array.isArray(pts)) series[id] = pts;
+      // pokvarjena točka (ni para končnih števil) bi ustavila redrawGraph zunaj obnove: izpustimo jo
+      const tocka = (q) => Array.isArray(q) && Number.isFinite(q[0]) && Number.isFinite(q[1]);
+      for (const [id, pts] of Object.entries(d?.series || {})) if (id in LOADS && Array.isArray(pts) && pts.some(tocka)) series[id] = pts.filter(tocka).map((q) => [q[0], q[1]]);
+      N.obnovi(d?.napoved); // zadnja: napoved se primerja z obnovljenimi meritvami
       Object.keys(series).forEach(maybeAsk);
     },
   });

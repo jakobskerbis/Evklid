@@ -216,7 +216,7 @@ export async function mountSim(id, el, opts = {}) {
     // »Začni znova« (obnovljene meritve) in »Ponastavi«: shranjene meritve pozabi in poskus postavi znova.
     if (el.classList.contains("lab") && labId) {
       const { pozabiMeritve } = await import("./lab.js");
-      el._labZnova = () => (pozabiMeritve(labId), mountSim(id, el, opts));
+      el._labZnova = () => (pozabiMeritve(labId, el._labKljuc), mountSim(id, el, opts));
     } else el._labZnova = null;
     focusableTargets(el);
     // Ponastavi: simulacijo postavi znova v začetno stanje (ne pri zbirki, ki ima svoje podsimulacije).
