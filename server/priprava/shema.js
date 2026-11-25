@@ -111,6 +111,22 @@ export function migratePriprava(db) {
     );
     CREATE INDEX IF NOT EXISTS idx_priprava_napredek_student ON priprava_napredek(student_id);
   `);
+  // PR 6b: postavke iz zapiskov (zdaj razlaga teme z izvorom), šifrirano; ena na temo in vrsto, z id-ji izsekov, iz katerih
+  // je nastala (sprememba izsekov = zastarela).
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS priprava_postavke (
+      id INTEGER PRIMARY KEY,
+      priprava_id INTEGER NOT NULL REFERENCES priprave(id) ON DELETE CASCADE,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      vrsta TEXT NOT NULL,                       -- razlaga
+      tema_id TEXT NOT NULL,
+      izseki TEXT NOT NULL,                      -- JSON id-jev izsekov
+      vsebina TEXT NOT NULL,                     -- JSON, šifrirano
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE (priprava_id, vrsta, tema_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_priprava_postavke_student ON priprava_postavke(student_id);
+  `);
   preseliTestPlans(db);
 }
 

@@ -193,6 +193,19 @@ ponavljanja in lista, tudi osnovnih tem, pravilne v prvem poskusu). Vmesnik poka
 po dnevih, nikoli kot trend do testa ali napoved ocene (odstotek ni ocena in lahko pade, ko pridejo ponovitve).
 Test: `test/priprava-kviz.test.js`. Razlaga z izvorom (AI) je PR 6b.
 
+### PR 6b (razlaga teme z izvorom, 25. 11. 2026)
+
+`server/priprava/postavke.js`, poti `POST …/priprave/:pid/razlaga` (`{ tema_id, znova? }`) in `GET …?tema_id=`. Način A:
+model (`EVKLID_PRIPRAVA_RAZLAGA_MODEL`, privzeto srednji model) dobi samo izseke te teme (največ 12 in 9000 znakov) v
+oznakah `<izseki>` kot podatek, brez orodij, odgovor samo JSON. Koda obdrži odstavek le, če navaja samo poslane izseke,
+ima dobeseden navedek (vsaj 8 znakov; enoten zapis presledkov, narekovajev in pomišljajev, NFC) iz enega od navedenih
+izsekov in se vse formule izrišejo s KaTeX; drugo šteje v `zavrnjenih`. Brez preverljivega odstavka 422
+(`razlaga_nepreverjena`), nič se ne shrani. Razlaga se shrani šifrirano (`priprava_postavke`, SEALED; kaskadni izbris) z
+id-ji izsekov, iz katerih je nastala; dokler se ti ne spremenijo, se model ne kliče znova (`zastarela` v GET, `znova:
+true` za novo razlago). Strošek: ena stran iz mesečne meje zapiskov (`STRANI`; ob napaki modela se vrne), trda meja AI
+(`usage.guard` z rezervo iz dolžine izsekov), zapis porabe »priprava«; hkrati ena razlaga na profil (409). Odgovor nosi
+oznako AI, vire (izsek, vir, stran) in navedek. Test: `test/priprava-razlaga.test.js` (model nadomeščen).
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

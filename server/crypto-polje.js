@@ -240,6 +240,7 @@ export const SEALED = [
   { table: "priprava_viri", cols: ["ime"] },
   { table: "priprava_izseki", cols: ["naslov", "besedilo", "negotovo"] },
   { table: "priprava_prepisi", cols: ["besedilo"] },
+  { table: "priprava_postavke", cols: ["vsebina"] },
   // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
   // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
   // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
