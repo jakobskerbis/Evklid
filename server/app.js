@@ -924,10 +924,11 @@ export function createApp(store, opts = {}) {
   };
 
   // Gumbi za orodja aplikacije pod odgovorom; zaklep interaktivnih delov kot v učbeniku.
-  const openOf = async (raw, student) => {
+  // prefer: poskus, iz katerega je klepet odprt (povezave C1, server/odpri.js findSim).
+  const openOf = async (raw, student, prefer = "") => {
     if (!/<<\s*(?:ODPRI|GRAF|SKICA)\b/.test(raw || "")) return undefined;
     const canOpen = accounts ? (topicId) => accounts.lessonInteractive(student.id, topicId) : null;
-    const list = await resolveOpen(raw, student.settings, { canOpen });
+    const list = await resolveOpen(raw, student.settings, { canOpen, prefer });
     return list.length ? list : undefined;
   };
   // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
@@ -1872,7 +1873,7 @@ export function createApp(store, opts = {}) {
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
         choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
-        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
+        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student, kontekstNote && req.body?.kontekst?.sourceType === "lab" ? String(req.body.kontekst.sourceId || "") : "") : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();

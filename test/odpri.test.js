@@ -156,3 +156,11 @@ test("resolve: naslov poskusa iz Laboratorija (kot v opombi inštruktorju) najde
   const [os] = await resolveOpen('<<ODPRI poskus="Elektromagnet (OŠ)">>', FIZ9);
   assert.deepEqual([os.id, os.opts], ["lab-elektromagnet", { raven: "os" }]);
 });
+
+test("povezave C1: poskus, iz katerega je klepet odprt, ima prednost (»Ohmov zakon« → lab-ohm)", async () => {
+  const { resolveOpen: r } = await import("../server/odpri.js");
+  const s = { curriculum_level: "9. razred", subject: "FIZ" };
+  const blok = '<<ODPRI poskus="Ohmov zakon" nastavi="napetost=6">>';
+  assert.equal((await r(blok, s, { prefer: "lab-ohm" }))[0].id, "lab-ohm");
+  assert.notEqual((await r('<<ODPRI poskus="prosti pad">>', s, { prefer: "lab-ohm" }))[0]?.id, "lab-ohm", "drug poskus ostane drug");
+});
