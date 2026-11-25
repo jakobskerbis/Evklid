@@ -4622,4 +4622,9 @@ export default {
   "povabi.later": "Ne zdaj",
   "povabi.link": "Povezava za prijatelja",
   "povabi.shareText": "Učim se z Evklidom. Poskusi še ti:",
+  "scan.imgFormat": "Te slike ne morem odpreti, ker brskalnik ne pozna njenega zapisa (npr. HEIC). Shrani jo kot JPG ali PNG ali naredi posnetek zaslona.",
+  "scan.camDenied": "Dostop do kamere je zavrnjen. Dovoli ga v brskalniku (ikona ob spletnem naslovu) in poskusi znova ali izberi sliko.",
+  "scan.camBusy": "Kamero že uporablja druga aplikacija. Zapri jo (npr. videoklic) in poskusi znova.",
+  "scan.camNone": "Na tej napravi ni kamere. Sliko naloge izberi z gumbom »{btn}« ali nalogo vpiši.",
+  "scan.frameKeys": "Puščice premikajo okvir, Shift in puščice spreminjajo njegovo velikost.",
 };
