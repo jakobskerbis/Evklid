@@ -440,10 +440,16 @@ async function toastCovers(p) {
       if (!t || t.hidden || !t.getClientRects().length) return [];
       const r = t.getBoundingClientRect();
       const sel = "main.view:not([hidden]) :is(button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch]), [data-ne-prekrij]";
+      // Šteje samo vidni del: kar je odrinjeno pod glavo, odreže rob pogleda (main.view).
+      const vidni = (el) => {
+        const s = el.getBoundingClientRect();
+        const v = el.closest("main.view")?.getBoundingClientRect();
+        return v ? { left: s.left, right: s.right, top: Math.max(s.top, v.top), bottom: Math.min(s.bottom, v.bottom) } : s;
+      };
       return [...new Set([...document.querySelectorAll(sel)]
         .filter((el) => !el.closest("[hidden], [inert], .in-okno") && el.checkVisibility())
         .filter((el) => {
-          const s = el.getBoundingClientRect();
+          const s = vidni(el);
           return Math.min(r.right, s.right) - Math.max(r.left, s.left) >= 6 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) >= 6;
         })
         .map((el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : ""}`))].slice(0, 4);

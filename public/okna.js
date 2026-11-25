@@ -657,10 +657,13 @@ export function placeToast() {
   const dno = Math.min(a.bottom, st?.offsetParent ? st.getBoundingClientRect().top : Infinity);
   const glave = [...document.querySelectorAll(GLAVE)].map((g) => g.getBoundingClientRect()).filter((r) => r.height > 0 && r.top < window.innerHeight / 2);
   const vrh = Math.max(0, ...glave.map((r) => r.bottom));
+  // Samo vidni del ovire: del simulacije ali odgovora, odrinjen pod glavo, je odrezan z robom pogleda.
+  const pogled = document.querySelector("body > main.view:not([hidden]):not(.in-okno)")?.getBoundingClientRect();
+  const vidni = (o, r) => (pogled && o.closest("main.view") ? { left: r.left, right: r.right, top: Math.max(r.top, pogled.top), bottom: Math.min(r.bottom, pogled.bottom) } : r);
   const ovire = [...document.querySelectorAll(TOAST_OVIRE)]
     .filter((o) => !el.contains(o) && !o.closest("[hidden], [inert]"))
-    .map((o) => o.getBoundingClientRect())
-    .filter((r) => r.width > 0 && r.height > 0 && r.bottom > vrh && r.top < dno);
+    .map((o) => vidni(o, o.getBoundingClientRect()))
+    .filter((r) => r.right > r.left && r.bottom > r.top && r.bottom > vrh && r.top < dno);
   el.style.top = "";
   el.style.bottom = `${Math.max(16, window.innerHeight - dno + 16)}px`;
   const r = el.getBoundingClientRect();
@@ -864,7 +867,14 @@ export function initOkna(opts) {
   document.addEventListener("click", preveriMesto, { capture: true, passive: true });
   // Obvestilo (#toast, pišejo ga app.js, account.js, leagues.js, kalkulator.js): ob prikazu in novem besedilu na prosto mesto.
   const obvestilo = document.getElementById("toast");
-  if (obvestilo) new MutationObserver(() => placeToast()).observe(obvestilo, { attributes: true, attributeFilter: ["hidden", "data-at"], childList: true });
+  // Isto dejanje pogosto še spremeni stran (zapre obrazec, izriše odgovor): mesto preverimo še po 250 in 800 ms.
+  let pozneje = [];
+  if (obvestilo)
+    new MutationObserver(() => {
+      placeToast();
+      pozneje.forEach(clearTimeout);
+      pozneje = [250, 800].map((ms) => setTimeout(placeToast, ms));
+    }).observe(obvestilo, { attributes: true, attributeFilter: ["hidden", "data-at"], childList: true });
   // Uvod, prijava in tekmovalna ura skrijejo mehurček (razredi na <body>).
   new MutationObserver(() => refreshBubble()).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 }
