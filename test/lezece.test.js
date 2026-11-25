@@ -202,6 +202,36 @@ test("ležeč telefon 844 × 390: Evklidova tipkovnica stoji desno, naloga in po
   });
 });
 
+// RTL (arabščina): tipkovnica je desno kot v LTR, zato se tudi zaslon umakne levo (padding-inline-end bi odmaknil levo stran).
+test("ležeč telefon 844 × 390, RTL: polje za odgovor je levo od tipkovnice, ne pod njo", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, L);
+    await p.evaluate(() => (document.documentElement.dir = "rtl"));
+    await p.evaluate(() => window.evklid.showView("path"));
+    await p.click("#xp-card .next-row[data-open]");
+    await p.waitForSelector("#view-topic .topic-head, #view-topic #practice .task");
+    for (let i = 0; i < 8 && !(await p.locator("#answer").isVisible()); i++) {
+      for (const s of ["#pt-practice", "#t-practice", "#ex-next", "#p-skip"])
+        if (await p.locator(s).isVisible()) {
+          await p.click(s, { timeout: 4000 });
+          break;
+        }
+      await p.waitForTimeout(500);
+    }
+    await p.locator("#answer").tap();
+    await p.waitForSelector(".tk:not([hidden])");
+    await p.waitForTimeout(400);
+    const m = await p.evaluate(() => {
+      const tk = document.querySelector(".tk:not([hidden])").getBoundingClientRect();
+      const a = document.querySelector("#answer").getBoundingClientRect();
+      return { tk: Math.round(tk.left), odgovor: Math.round(a.right) };
+    });
+    assert.ok(m.odgovor <= m.tk + 1, `polje za odgovor levo od tipkovnice: ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
 test("iPad 820 × 1180 pokončno: oznake klepeta so cele in izbira načina je tapljiva (UX-102)", opts, async () => {
   await withApp(async (base) => {
     const { ctx, p, errors } = await phone(base, { width: 820, height: 1180 });
