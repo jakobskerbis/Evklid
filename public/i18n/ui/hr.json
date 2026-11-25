@@ -4693,6 +4693,18 @@
   "scan.camBusy": "Kameru već koristi druga aplikacija. Zatvori je (npr. videopoziv) i pokušaj ponovno.",
   "scan.camNone": "Ovaj uređaj nema kameru. Sliku zadatka odaberi gumbom »{btn}« ili upiši zadatak.",
   "scan.frameKeys": "Strelice pomiču okvir, a Shift i strelice mijenjaju njegovu veličinu.",
+  "set.grpLearn": "Učenje",
+  "set.grpLearnSub": "Predmet, cilj, način rješavanja, instruktor, škola",
+  "set.grpTutor": "Instruktor i prijenos podataka",
+  "set.grpSchool": "Škola, razred i ime",
+  "set.grpLook": "Izgled",
+  "set.grpLookSub": "Stil, boje, cijeli zaslon, pomični prozori",
+  "set.grpInput": "Unos i jezik",
+  "set.grpInputSub": "Evklidova tipkovnica i jezik aplikacije",
+  "set.grpProfiles": "Račun i profili",
+  "set.grpProfilesSub": "Račun i profili učenika",
+  "set.grpHelp": "Pomoć",
+  "set.grpHelpSub": "Uvodni obilazak i vodič kroz aplikaciju",
   "path.noCurriculum": "Kurikul tvoje zemlje{country} još nije dostupan, zato koristiš slovenski kurikul, raspoređen po godinama školovanja. Razredi su iz tvog školskog sustava; instruktor ti sve objašnjava na tvom jeziku.",
   "path.noExam": "Priprema za završni ispit ({exam}) još nije dostupna."
 }

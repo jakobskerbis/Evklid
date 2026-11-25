@@ -4659,6 +4659,18 @@
   "scan.camBusy": "A kamerát már egy másik alkalmazás használja. Zárd be (pl. a videohívást), és próbáld újra.",
   "scan.camNone": "Ezen az eszközön nincs kamera. Válassz képet a feladatról a „{btn}” gombbal, vagy írd be.",
   "scan.frameKeys": "A nyilak mozgatják a keretet, a Shift + nyilak a méretét változtatják.",
+  "set.grpLearn": "Tanulás",
+  "set.grpLearnSub": "Tantárgy, cél, megoldási mód, oktató, iskola",
+  "set.grpTutor": "Oktató és adatforgalom",
+  "set.grpSchool": "Iskola, évfolyam és név",
+  "set.grpLook": "Megjelenés",
+  "set.grpLookSub": "Stílus, színek, teljes képernyő, mozgatható ablakok",
+  "set.grpInput": "Bevitel és nyelv",
+  "set.grpInputSub": "Evklid-billentyűzet és az alkalmazás nyelve",
+  "set.grpProfiles": "Fiók és profilok",
+  "set.grpProfilesSub": "Fiók és tanulói profilok",
+  "set.grpHelp": "Súgó",
+  "set.grpHelpSub": "Bemutató és útmutató az alkalmazáshoz",
   "path.noCurriculum": "Az országod tanterve{country} még nem érhető el, ezért a szlovén tantervet használod, iskolai évek szerint rendezve. Az osztályok a saját iskolarendszeredet követik; a tutor mindent elmagyaráz a nyelveden.",
   "path.noExam": "A záróvizsgára ({exam}) való felkészítés még nem érhető el."
 }
