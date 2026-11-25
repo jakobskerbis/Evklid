@@ -173,6 +173,26 @@ premaknejo v danes. Tabela `priprava_nacrti` ni potrebna.
 `pripravljenost`: povprečje ocen preverljivih tem, število obvladanih, preverljivih in nepreverljivih. Test:
 `test/priprava-nacrt.test.js`.
 
+### PR 6a (kviz in napredek, 25. 11. 2026)
+
+Brez AI. `POST …/priprave/:pid/kviz` (`{ dolzina: 6 | 12 | 20, teme? }`): obstoječa seja »list« (`progress.js startList`,
+naloge Vadnice, ki jih preveri koda; namigi, povzetek po temah) s parametrom `priprava`. Ob koncu kviza izkazano znanje
+premakne stanje teme (`listSummary`): »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu) → stopnja višje (nova → učim se,
+stopnja 2), »few« → nova tema »učim se«, »more« pri novi temi nič (ostane nova snov; napačen odgovor ne dvigne
+pripravljenosti), pri obvladani kot doslej ponovitev; obvladanje ostane
+pravilo `checkMastery`. Tako kviz spremeni načrt in pripravljenost. Privzeto najšibkejše teme obsega (obvladane samo,
+če drugih ni), največ `dolzina/2` tem, da ima vsaka vsaj dve nalogi; `teme` mora biti neprazen seznam id-jev iz načrta
+te priprave z nalogami, največ 20 (sicer 400 `kviz_teme`; od izbranih gre v kviz prvih `dolzina/2`); tema brez lastnih
+nalog vzame naloge osnovne teme (ena veščina na osnovno temo). Nedokončan kviz z istim izborom (samodejno ali iste
+teme) in dolžino istega slovenskega dne se nadaljuje; največ 20 novih kvizov na profil v 10 minutah (429
+`kviz_hitro`). Kviz ostane v zgodovini vaje profila tudi po izbrisu priprave (samo id-ji tem, kot vsa vaja).
+`GET …/priprave/:pid/napredek`: pripravljenost (kot načrt), posnetki po dnevih (tabela `priprava_napredek`, en na dan,
+zapiše se ob odprtju načrta ali napredka, do dneva testa; kaskadni izbris; odprtje šteje kot uporaba priprave za
+samodejni izbris) in stanje vsake teme (`nova | ucim | ponovitev | obvladana | zapiski`, vse odgovorjene naloge vaje,
+ponavljanja in lista, tudi osnovnih tem, pravilne v prvem poskusu). Vmesnik pokaže posnetke samo kot izkazano znanje
+po dnevih, nikoli kot trend do testa ali napoved ocene (odstotek ni ocena in lahko pade, ko pridejo ponovitve).
+Test: `test/priprava-kviz.test.js`. Razlaga z izvorom (AI) je PR 6b.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot
