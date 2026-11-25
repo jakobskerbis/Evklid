@@ -115,7 +115,8 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     assert.ok(!overlap(r.pop, r.line), `${vp.width}: okno prekrije formulo ${JSON.stringify(r)}`);
     assert.ok(!overlap(r.pop, r.para), `${vp.width}: okno prekrije odstavek s formulo ${JSON.stringify(r)}`);
     assert.equal(r.sheet, phone, `${vp.width}: spodnji list samo na telefonu`);
-    if (phone) assert.ok(Math.abs(r.pop.bottom - r.h) < 2 && r.line.bottom <= r.pop.top, "list je spodaj, formula nad njim");
+    // Plavajoča kartica: 8 px od dna in od stranskih robov (ni prilepljena kot noga strani), formula nad njo.
+    if (phone) assert.ok(Math.abs(r.pop.bottom - (r.h - 8)) < 2 && r.pop.left >= 7 && r.line.bottom <= r.pop.top, `kartica plava nad dnom, formula nad njo ${JSON.stringify(r)}`);
     if (SHOTS) await p.screenshot({ path: path.join(SHOTS, `okno-${vp.width}.png`) });
 
     // 2) Tap v oknu ne obrne kartice in okna ne zapre.
