@@ -233,6 +233,11 @@ export class GrelnikBench {
   nalij(gram) {
     const m = this.idealno ? gram / 1000 : (gram / 1000) * (1 + clamp(gauss(this.r, 0.01, 2), -0.02, 0.02));
     this.voda = new Voda(POSODE.casa400, { m, T: T_PIPA, Tv: T_SOBA, idealno: this.idealno });
+    // Prave vrednosti za izkoristek (maturitetni poskus, public/sim/matura/lab-grelnik.js): natočena masa, povprečna
+    // temperatura vode tik pred prvim vklopom in najvišja po zadnjem izklopu (le zapis, na fiziko ne vpliva).
+    this.m0 = m;
+    this.T0 = T_PIPA;
+    this.Tvrh = null;
     this.Tel = this.potopljen ? T_PIPA : T_SOBA;
     this.plasti = 0;
     this.th.Tp = null;
@@ -272,6 +277,7 @@ export class GrelnikBench {
   }
   sub(dt) {
     const st = this.state, w = this.voda;
+    if (!this.tekla) this.T0 = w.T;
     if (this.on) this.tekla = true;
     if (this.tekla) this.t += dt;
     if (this.on) (this.tOn += dt), (this.E += st.P * dt);
@@ -292,6 +298,7 @@ export class GrelnikBench {
       }
     }
     w.step(dt, Pw);
+    this.Tvrh = this.on || !this.tekla ? null : Math.max(this.Tvrh ?? -Infinity, w.T);
     if (w.vre) this.once("vre");
     const target = this.mesaj || this.idealno ? 0 : PLASTI.k * Math.max(0, Pw);
     this.plasti += (target - this.plasti) * (1 - Math.exp(-dt / (this.mesaj ? PLASTI.tauMes : PLASTI.tau)));

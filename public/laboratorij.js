@@ -37,6 +37,8 @@ export function initLab(deps) {
       const x = find(openKey);
       if (!x || x.locked) return;
       const mount = box().querySelector(".lab-mount");
+      // Med maturitetnim poskusom inštruktor ne pomaga (gumb je skrit, public/lab.css); po oddaji spet.
+      if (mount?.dataset.matura === "tece") return;
       const kontekst = { v: 1, sourceType: "lab", sourceId: x.key }; // temo izbere strežnik (učenčeva pot)
       import("./sim/lab.js")
         .then((m) => Object.assign(kontekst, m.stanjePoskusa(mount)))
@@ -200,8 +202,9 @@ function renderExperiment() {
   box().querySelector("[data-lab-back]")?.focus({ preventScroll: true });
 }
 
-// Vodeni poskus (public/sim/lab-vodeno.js): pri poskusih s koraki izbira »Vodeno | Prosto«, zapomnjena na napravi.
-// Ob prvem odprtju je izbrano »Vodeno«. Uporaba laboratorija se šteje brez učenca (server/laboratorij.js → lab_uporaba).
+// Vodeni poskus (public/sim/lab-vodeno.js): pri poskusih s koraki izbira »Vodeno | Prosto« (in »Matura«, če ima poskus
+// maturitetno nalogo), zapomnjena na napravi. Ob prvem odprtju je izbrano »Vodeno«; »Matura« se ne zapomni, ker vsak
+// začetek naloge pobriše meritve. Uporaba laboratorija se šteje brez učenca (server/laboratorij.js → lab_uporaba).
 const NACIN = "evklid.lab.nacin";
 const beriNacin = () => {
   try {
@@ -229,7 +232,8 @@ async function zazeni(x, m) {
   stej(x.key, nacin, "odprt");
   vodi(m, x.key, {
     nacin,
-    onNacin: (n) => (shraniNacin(n), stej(x.key, n, "preklop")),
+    onNacin: (n) => (n !== "matura" && shraniNacin(n), stej(x.key, n, "preklop")),
     onKonec: () => stej(x.key, "vodeno", "koncano"),
+    onMatura: (d) => d === "oddano" && stej(x.key, "matura", "oddano"),
   });
 }
