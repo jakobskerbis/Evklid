@@ -5,7 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { pilotMetrics, PRAG } from "../server/pilot-meritve.js";
+import { pilotMetrics, pilotMetricsWeekly, PRAG } from "../server/pilot-meritve.js";
 import { growthReport } from "../server/rast.js";
 import { EUR_PER_USD } from "../server/usage.js";
 import { getTopic } from "../server/curriculum.js";
@@ -239,4 +239,23 @@ test("rast: vrnitev po 14 in 30 dneh (okno 7 dni, profil šteje, ko je okno celo
   const r = growthReport(db, { days: 60, now: NOW });
   assert.deepEqual(r.d14, { eligible: 3, returned: 2, pct: 0.667 });
   assert.deepEqual(r.d30, { eligible: 2, returned: 1, pct: 0.5 });
+});
+
+test("meritve pilota: poročilo skrbnika se izračuna enkrat na teden; odstranitev in ponovna dodaja člana ga ne spremeni", () => {
+  const { db, s, members, isMember } = fixture();
+  const r0 = pilotMetricsWeekly(db, { isMember, now: NOW });
+  assert.equal(r0.cohort, 5);
+  // Skrbnik med tednom odstrani člana (in ga spet doda): poročilo ostane enako, iz razlike se nič ne vidi.
+  for (const id of s) {
+    members.delete(id);
+    assert.deepEqual(pilotMetricsWeekly(db, { isMember, now: NOW + 2 * DAY }), r0, `brez ${id}`);
+    members.add(id);
+  }
+  assert.notDeepEqual(pilotMetrics(db, { isMember: (id) => id !== s[0] && members.has(id), now: NOW }), r0, "brez shranjevanja bi se spremenilo");
+  // Naslednji teden nov izračun; stari tedni se po 8 tednih pobrišejo.
+  members.delete(s[0]);
+  const r1 = pilotMetricsWeekly(db, { isMember, now: NOW + 7 * DAY });
+  assert.notDeepEqual(r1, r0);
+  pilotMetricsWeekly(db, { isMember, now: NOW + 70 * DAY });
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM pilot_meritve_tedni WHERE week = '2026-12-21'").get().n, 0);
 });

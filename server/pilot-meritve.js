@@ -6,8 +6,8 @@
 // - strošek AI na učenca (EUR na 30 dni v pilotu; povprečje in mediana, tudi učenci brez porabe).
 // Kohorta: člani pilota (pilotMember; od N-11 samo polnoletni profili). Da se iz razlike dveh poročil ne da razbrati
 // posameznika (pregled 2 PR #1123):
-// - poročilo je TEDENSKI POSNETEK: šteje samo podatke do ponedeljka 00:00 (UTC) tega tedna, zato se čez teden ne
-//   spreminja in ni dnevnih razlik;
+// - poročilo je TEDENSKI POSNETEK: šteje samo podatke do ponedeljka 00:00 (UTC) tega tedna, izračuna se enkrat na
+//   teden in shrani (pilotMetricsWeekly), zato se čez teden ne spreminja, tudi če se članstvo vmes spremeni;
 // - kohorta so člani v paketih po PRAG (5) po vrsti začetka (block); vrnitev šteje samo pakete upravičenih;
 // - vse vrednosti šele od PRAG učencev naprej, manjša števila kot »< 5«; strošek AI samo, ko AI uporablja vsaj PRAG.
 // Nič novega se ne shrani (razen časa prvega odgovora na nalogo), poročilo vrne samo števila; izvoz in izbris
@@ -76,6 +76,21 @@ function lowerBound(arr, x) {
     else hi = m;
   }
   return lo;
+}
+
+// Poročilo skrbnika: izračun enkrat na teden, shranjen do naslednjega ponedeljka (samo skupna števila, brez osebnih
+// podatkov). Tako odstranitev in ponovna dodaja članov med tednom ne spremeni poročila (pregled 2 PR #1123: iz
+// zaporednih poročil z drugačnim članstvom bi se dali izračunati podatki posameznika). Hrani se zadnjih 8 tednov.
+export function pilotMetricsWeekly(db, opts = {}) {
+  db.exec("CREATE TABLE IF NOT EXISTS pilot_meritve_tedni (week TEXT NOT NULL, min INTEGER NOT NULL, data TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (week, min))");
+  const min = opts.min ?? PRAG;
+  const week = isoDay(weekStart(opts.now ?? Date.now()));
+  const row = db.prepare("SELECT data FROM pilot_meritve_tedni WHERE week = ? AND min = ?").get(week, min);
+  if (row) return JSON.parse(row.data);
+  const m = pilotMetrics(db, { ...opts, min });
+  db.prepare("INSERT OR IGNORE INTO pilot_meritve_tedni (week, min, data) VALUES (?, ?, ?)").run(week, min, JSON.stringify(m));
+  db.prepare("DELETE FROM pilot_meritve_tedni WHERE week < ?").run(isoDay(weekStart(opts.now ?? Date.now()) - 56 * DAY));
+  return m;
 }
 
 export function pilotMetrics(db, { isMember, now = Date.now(), min = PRAG } = {}) {

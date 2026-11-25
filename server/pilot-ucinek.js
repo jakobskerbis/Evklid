@@ -136,6 +136,9 @@ export function wtpState(db, parent, { isMember, now = new Date() }) {
 
 // ---------- skrbnik: vsote brez imen ----------
 // Vsote v paketih: iz prvih ⌊n/velikost⌋·velikost vrstic po vrsti vnosa (nove se pokažejo šele, ko jih je dovolj).
+// Studentov t (dvostranski 95 %) za df prostostnih stopenj; nad 30 se približa 1,96.
+const T95 = [12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 2.16, 2.145, 2.131, 2.12, 2.11, 2.101, 2.093, 2.086, 2.08, 2.074, 2.069, 2.064, 2.06, 2.056, 2.052, 2.048, 2.045, 2.042];
+export const tCrit = (df) => (df < 1 ? Infinity : df <= 30 ? T95[df - 1] : df <= 60 ? 2.0 : 1.96);
 export const block = (rows, size) => rows.slice(0, Math.floor(rows.length / size) * size);
 // Število pod pragom je »< prag« (0 ostane 0), da iz natančnega števila ne sledi, kdo je ravno odgovoril.
 export const shownN = (n, min) => (n > 0 && n < min ? `< ${min}` : n);
@@ -191,14 +194,14 @@ export function impactReport(db, minGroup) {
       }))
     : null;
   const ps = pairs.length ? pairStats(pairs) : { pre: null, post: null, diff: null };
-  // Negotovost: 95-% interval razlike (t ≈ 1,96·SE; pri malo parih je to spodnja meja negotovosti) in razlika kot
+  // Negotovost: 95-% interval razlike (Studentov t za n − 1 prostostnih stopenj) in razlika kot
   // povprečje obeh vrstnih redov (če osip naredi skupini A→B in B→A neenaki, razlika oblik ne vpliva nanjo).
   let ci95 = null;
   if (pairs.length >= 2) {
     const d = pairs.map(diffOf);
     const m = d.reduce((x, y) => x + y, 0) / d.length;
     const sd = Math.sqrt(d.reduce((x, y) => x + (y - m) ** 2, 0) / (d.length - 1));
-    const h = (1.96 * sd) / Math.sqrt(d.length);
+    const h = (tCrit(d.length - 1) * sd) / Math.sqrt(d.length);
     ci95 = [Math.round((m - h) * 1000) / 1000, Math.round((m + h) * 1000) / 1000];
   }
   const orders = Object.values(byOrder);

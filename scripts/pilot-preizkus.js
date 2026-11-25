@@ -16,13 +16,15 @@ export const VERSION = "matura-mat-1";
 // [sklop kataloga, tema z generatorji, raven 1–3, { pick, note }]: `pick` izbere isto vrsto naloge v obeh oblikah
 // (enako število korakov, podobna števila; pregled 3, 25. 11.), `note` doda navodilo za zapis odgovora.
 const den = (t) => Math.abs(t.answer.den ?? 1);
+const coneRV = (t) => [/r = (\d+)/, /v = (\d+)/].map((re) => Number(re.exec(t.text)?.[1] ?? NaN));
 export const BLUEPRINT = [
   // Imenovalec z deliteljem 3 (ni končno decimalno število) in do 12: pri obeh enako dela, decimalni zapis ne pomaga.
   ["4.3.2 Racionalna števila", "MAT-SS-1/racionalna-stevila", 1, { pick: (t) => den(t) % 3 === 0 && den(t) <= 12 }],
   ["4.4 Algebrski izrazi, enačbe in neenačbe", "MAT-SS-1/linearne-enacbe", 2],
   ["4.5 Potence in koreni", "MAT-SS-2/koreni", 2],
-  // Površina stožca (račun s Pitagorovim izrekom in π), ne prepoznavanje lastnosti trikotnika.
-  ["4.7 Geometrijski liki in telesa", "MAT-SS-3/povrsina-in-prostornina-teles", 2, { pick: (t) => /^Stožec .*površino/.test(t.text) }],
+  // Površina stožca (račun s Pitagorovim izrekom in π), ne prepoznavanje lastnosti trikotnika. Stranica ni celo število
+  // (ne pitagorejska trojica), da nobena oblika nima bližnjice.
+  ["4.7 Geometrijski liki in telesa", "MAT-SS-3/povrsina-in-prostornina-teles", 2, { pick: (t) => /^Stožec .*površino/.test(t.text) && !Number.isInteger(Math.hypot(...coneRV(t))) }],
   ["4.8 Vektorji v ravnini in prostoru", "MAT-SS-3/skalarni-produkt", 2],
   ["4.10.1 Linearna funkcija", "MAT-SS-1/linearna-funkcija", 1, { pick: (t) => den(t) === 3, note: "Rezultat zapiši kot okrajšan ulomek." }],
   // Osnovna raven: ničli in presečišče z ordinatno osjo (ekstremalni problem je v katalogu samo višja raven).

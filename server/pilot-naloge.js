@@ -20,7 +20,7 @@ import { schoolAccess } from "./schools.js";
 import { ensureKnowledgeTables } from "./zbirke.js";
 import { audit } from "./dnevnik-dostopov.js";
 import { quizState, wtpState, impactReport, mountPilotImpact, block, shownN } from "./pilot-ucinek.js";
-import { pilotMetrics, PRAG } from "./pilot-meritve.js";
+import { pilotMetricsWeekly, PRAG } from "./pilot-meritve.js";
 
 export const SCAN_CONDITIONS = ["light", "dark", "tilted", "handwritten", "printed", "board", "screen", "crumpled", "many", "notation"];
 // Pet delov aplikacije za preizkus; »exams« (NPZ in matura) ima, kdor ima ta zavihek, drugi »3d«.
@@ -343,7 +343,7 @@ export function pilotTasksReport(db) {
     minGroup: MIN_GROUP,
     // Preizkus znanja in meritve pilota (N-09, N-10): šele od PRAG (5) učencev naprej.
     impact: impactReport(db, PRAG),
-    meritve: pilotMetrics(db, { isMember: (id) => !!pilotMember(db, id) }),
+    meritve: pilotMetricsWeekly(db, { isMember: (id) => !!pilotMember(db, id) }),
     scans,
     features,
     notes: showNotes ? notes : [],

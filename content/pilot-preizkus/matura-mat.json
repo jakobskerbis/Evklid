@@ -539,22 +539,22 @@
         "seed": 102003
       },
       {
-        "text": "Stožec ima polmer osnovne ploskve $r = 3\\ \\mathrm{cm}$ in višino $v = 4\\ \\mathrm{cm}$. Izračunaj njegovo površino. Zaokroži na desetinko.",
+        "text": "Stožec ima polmer osnovne ploskve $r = 2\\ \\mathrm{cm}$ in višino $v = 5\\ \\mathrm{cm}$. Izračunaj njegovo površino. Zaokroži na desetinko.",
         "answer": {
           "type": "number",
-          "value": 75.398223686,
+          "value": 46.402359007,
           "decimals": 1,
           "mistakes": [
             {
-              "value": 65.97344572538566,
+              "value": 43.982297150257104,
               "why": "V obrazec za plašč sodi stranica stožca $s$, ne višina $v$."
             },
             {
-              "value": 47.12388980384689,
+              "value": 33.83598839292811,
               "why": "To je le plašč; prištej še osnovno ploskev."
             },
             {
-              "value": 122.52211349000193,
+              "value": 80.23834740021539,
               "why": "Plašč stožca je $\\pi r s$, ne $2\\pi r s$."
             }
           ],
@@ -562,8 +562,8 @@
         },
         "data": {
           "given": [
-            "r = 3\\ \\mathrm{cm}",
-            "v = 4\\ \\mathrm{cm}"
+            "r = 2\\ \\mathrm{cm}",
+            "v = 5\\ \\mathrm{cm}"
           ],
           "find": [
             "P"
@@ -572,7 +572,7 @@
         "topicId": "MAT-SS-3/povrsina-in-prostornina-teles",
         "level": 2,
         "generator": "mat-ss3-matura-telesa",
-        "seed": 103005
+        "seed": 103039
       },
       {
         "text": "Izračunaj kot med vektorjema $\\vec a = (-2, -2, 0)$ in $\\vec b = (3, 0, -4)$. Rezultat v stopinjah zaokroži na eno decimalko.",
