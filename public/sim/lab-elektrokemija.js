@@ -215,7 +215,15 @@ export function labElektroliza(el) {
   const elSeg = row("elektrodi", seg("elektrodi", [["pt", "platina"], ["grafit", "grafit"]], "pt", (v) => ((B.elektrode = v), log.push(`Elektrodi iz ${v === "pt" ? "platine" : "grafita"}.`, "info"), draw(true))));
   const indT = toggle("v tekočino kani univerzalni indikator", false, (v) => ((B.indikator = v), draw(true)));
   const fillBtn = button("Nalij tekočino skozi srednjo cev", () => fill(), "primary small");
-  const emptyBtn = button("Izprazni in speri aparat", () => (B.izprazni(), (said.bub = said.cl = said.hot = said.dist = said.cc = false), log.push("Aparat je prazen in spran.", "info"), sync(), draw(true)));
+  // Praznjenje izklopi napajalnik (model → izprazni): tudi stikalo in dnevnik to pokažeta (prej je ostalo vklopljeno).
+  const izprazni = () => {
+    const bil = B.vklop;
+    B.izprazni();
+    onT.querySelector("input").checked = false;
+    if (bil) log.push("Napajalnik je izklopljen.", "info");
+    (said.bub = said.cl = said.hot = said.dist = said.cc = false), log.push("Aparat je prazen in spran.", "info"), sync(), draw(true);
+  };
+  const emptyBtn = button("Izprazni in speri aparat", () => izprazni());
   const pipaT = [0, 1].map((i) => toggle(`pipa ${i ? "desno" : "levo"} odprta`, true, (v) => tap(i, v)));
   const polSeg = row("priključitev", seg("priključitev elektrod", [["L-", "levo −, desno +"], ["L+", "levo +, desno −"]], "L-", (v) => ((B.pol = v), log.push(v === "L-" ? "Leva elektroda je na negativnem polu (katoda), desna na pozitivnem (anoda)." : "Leva elektroda je zdaj na pozitivnem polu (anoda), desna na negativnem (katoda).", "info"), draw(true))));
   const amSel = select({ label: "območje ampermetra", options: [["20m", "20 mA"], ["200m", "200 mA"], ["10", "10 A (vtičnica 10A)"]], value: B.amRange, onChange: (v) => ((B.amRange = v), draw(true)) });
