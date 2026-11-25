@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `8b38f33576500cfc52ed880fae49288460d1795e` (24. 11. 2026)
-**Naslednji prosti ID:** AUDIT-068
+**Naslednji prosti ID:** AUDIT-070
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -68,6 +68,8 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-065 | P2 | Inštruktor, varnost | Učenec lahko ponaredi skrito opombo `<preverjen_racun>` | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1018 |
 | AUDIT-066 | P1 | Inštruktor, preverjanje | »Če«, »ali«, »bi«, »?« v vrstici izklopijo preverjanje računa (»Če najprej množimo: 7·8 = 54«) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (revizija inštruktorja), 25. 11. | #1000 |
 | AUDIT-067 | P1 | Kalkulator, vnos | Tipka predloge (xʸ) v prazni reži pokvari zunanjo predlogo: `∫_□^□ □^{(□; 0; 1)}` (j, evklid.app) | V IZVEDBI | `f498a9e` | j, 24. 11. | #1017 |
+| AUDIT-068 | P3 | Kalkulator, enačbe | Gruča s kompleksnim parom: napačna zadnja mesta majhnega imaginarnega dela z »≈« (`((x−9/2)^4+10^(−26))(x^3−3x+1)=0` → Im 2,24542·10⁻⁷, prav 2,23607·10⁻⁷) | PRIPRAVLJENO ZA PONOVNI PREGLED | `f498a9e` | Claude (pregled #979), 25. 11. | #1021 |
+| AUDIT-069 | P2 | Inštruktor, preverjanje | Gol rezultat (»Rezultat: 317«, »= …«) se ne primerja z rešitvijo, ki jo pozna presolve; račun z eno operacijo in »p % od x« se ne rešita (18 od 26 zgrešenih napak pri kratkih odgovorih OŠ) | V IZVEDBI | `f498a9e` | Claude (meritev kratkih odgovorov), 25. 11. | – |
 
 ## Zgodovina statusov
 
