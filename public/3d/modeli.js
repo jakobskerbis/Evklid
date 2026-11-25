@@ -7,33 +7,53 @@ import { jsonAliNic } from "../odgovor.js";
 // Seznam datotek in področij (server/tri-d.js); brez povezave zadnja shranjena kopija (service worker).
 let seznamObljuba = null;
 export function seznamDatotek() {
+  // Neuspeh (npr. minuta izpada med objavo) se ne zapomni: naslednji klic poskusi znova; napaka: true za stran /3d.
   seznamObljuba ||= fetch(new URL("./modeli/seznam.json", import.meta.url).href)
     .then((r) => jsonAliNic(r))
     .catch(() => null)
-    .then((j) => j || { datoteke: {}, podrocja: [] });
+    .then((j) => {
+      if (j) return j;
+      seznamObljuba = null;
+      return { datoteke: {}, podrocja: [], napaka: true };
+    });
   return seznamObljuba;
 }
 
 // Seznam modelov po področjih: vsako področje ima svoj public/3d/modeli/<podrocje>/index.js; manjkajoče preskočimo.
+// Seznam ima lastnost napaka: true, če seznama ali katerega področja ni bilo mogoče naložiti (povezava).
 export async function seznamModelov() {
-  const { podrocja = [] } = await seznamDatotek();
+  const { podrocja = [], napaka = false } = await seznamDatotek();
+  let manjka = napaka;
   const vsi = await Promise.all(
     PODROCJA.filter((p) => podrocja.includes(p)).map(async (p) => {
       try {
         const m = await import(new URL(`./modeli/${p}/index.js`, import.meta.url).href);
         return (Array.isArray(m.default) ? m.default : []).map((x) => ({ ...x, podrocje: x.podrocje || p, url: new URL(`./modeli/${p}/${String(x.pot || `${x.id}.js`).replace(/^\.\//, "")}`, import.meta.url).href }));
       } catch {
+        manjka = true;
         return [];
       }
     }),
   );
-  return vsi.flat();
+  return Object.assign(vsi.flat(), { napaka: manjka });
 }
 
+// Model z id-jem; null, če ga res ni. Če ga ni zaradi povezave (seznam ali datoteka se ni naložila), vrže napako s
+// povezava: true (stran /3d pokaže »Ni povezave« in poskusi znova, ne »Ta 3D prikaz ne obstaja«).
 export async function naloziModel(id) {
-  const x = (await seznamModelov()).find((m) => m.id === id);
-  if (!x) return null;
-  const mod = await import(x.url);
+  const seznam = await seznamModelov();
+  const x = seznam.find((m) => m.id === id);
+  const povezava = () => Object.assign(new Error("povezava"), { povezava: true });
+  if (!x) {
+    if (seznam.napaka) throw povezava();
+    return null;
+  }
+  let mod;
+  try {
+    mod = await import(x.url);
+  } catch {
+    throw povezava();
+  }
   if (!mod?.info || typeof mod.zgradi !== "function") return null;
   return mod;
 }

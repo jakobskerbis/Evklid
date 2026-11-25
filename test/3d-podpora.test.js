@@ -83,6 +83,8 @@ test("podpora.js ima statični blok razreda; stran.js in sim.js ga uvozita pred 
   assert.match(stran, /if \(id\) await preveriPodporo\(\);/);
   const sim = beri(path.join(PUB, "3d", "sim.js"));
   assert.ok(sim.indexOf("preveriPodporo()") > 0 && sim.indexOf("preveriPodporo()") < sim.indexOf('import("./pregledovalnik.js")'), "sim.js: preverjanje pred pregledovalnikom");
+  // brez napake.js (izpad povezave) preverjanje ne ustavi nalaganja (test/3d-sim-napaka.test.js v Chromiumu)
+  assert.match(sim, /const napake = await import\("\.\/napake\.js"\)\.catch\(\(\) => null\);\s*await napake\?\.preveriPodporo\(\);/);
 });
 
 test("preveriPodporo: pred »prestar brskalnik« en ponovni uvoz (kratek izpad povezave)", async () => {

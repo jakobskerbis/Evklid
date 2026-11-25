@@ -607,6 +607,10 @@ export class Store {
       .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, flag === "distress" ? null : e.topic, e.error, e.mode, sealFlag(flag), flag === "distress" ? null : (e.topic_id ?? null), flag === "none" ? null : sealPregled({}));
     return Number(info.lastInsertRowid);
   }
+  // Varnostno okno brez oznake inštruktorja (IN-14): dogodek odgovora postane oznaka stiske, brez teme (kot addEvent).
+  markDistress(eventId) {
+    this.db.prepare("UPDATE events SET flag = ?, topic = NULL, topic_id = NULL, pregled = COALESCE(pregled, ?) WHERE id = ?").run(sealFlag("distress"), sealPregled({}), eventId);
+  }
   // Oznaka je šifrirana (razen »none«); neberljiva šteje kot opozorilo (»unknown«), ne kot navaden odgovor.
   lastEvent(conversationId) {
     const r = this.db.prepare("SELECT * FROM events WHERE conversation_id = ? ORDER BY id DESC LIMIT 1").get(conversationId);

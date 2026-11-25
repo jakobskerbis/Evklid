@@ -159,6 +159,7 @@ export function odpriModel(el, mod, opts = {}) {
   btnPonastavi.addEventListener("click", () => zgradiVse(true));
   const btnTeci = mk("button", "k3-krog");
   btnTeci.type = "button";
+  btnTeci.hidden = true; // pokaže ga dokoncaj, ko ima model korak (sicer ob napaki prazen krog v orodni vrstici)
   btnTeci.addEventListener("click", () => nastaviTek(!tece));
   // Povečava z gumbi (poleg koleščka in prstov): miška brez koleščka, sledilna ploščica, dostopnost.
   const povecava = (f, ikona, kljuc) => {
@@ -1076,6 +1077,9 @@ export function odpriModel(el, mod, opts = {}) {
     nalaganje(0);
     nalagEl.classList.add("napaka");
     nalagEl.setAttribute("role", "alert");
+    // Brez modela ni kaj vrteti: namig »Povleci za vrtenje …« skrijemo.
+    oder.querySelector(".k3-namig")?.remove();
+    oder.classList.remove("k3-namig-viden");
     // Besedilo po vrsti napake (napake.js); »Poskusi znova« zgradi model še enkrat (prizor ostane).
     nalagEl.replaceChildren(
       ...napakaVsebina(err, {

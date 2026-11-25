@@ -48,7 +48,7 @@ import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSk
 import { cleanText, plainTitle, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { ucniKontekst } from "./ucni-kontekst.js";
-import { isHiddenNote } from "./skrite-opombe.js";
+import { isHiddenNote, neutralizeHiddenTags } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
@@ -65,7 +65,7 @@ import { slZasloni } from "./i18n-jedro.js";
 import { startupFiles, moduleDeps } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
-import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pupilGender, IME_OZNAKA } from "./ime-oznaka.js";
+import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pupilGender, IME_OZNAKA, neprimernoIme, NEPRIMERNO_IME } from "./ime-oznaka.js";
 import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
@@ -116,7 +116,7 @@ import { startCloudBackups } from "./kopije-oblak.js";
 import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
 import { createZdravje, razlogiAlarma } from "./zdravje.js";
-import { startStiskaObvestila, mountStiske } from "./stiska-obvestilo.js";
+import { startStiskaObvestila, mountStiske, prejemnikStarsa } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 import { createVrsta } from "./vrsta-ai.js";
 
@@ -835,6 +835,7 @@ export function createApp(store, opts = {}) {
   app.post("/api/students", (req, res) => {
     const name = cleanText(req.body?.name, 40);
     if (!name) return res.status(400).json({ error: "Vpiši ime." });
+    if (neprimernoIme(name)) return res.status(400).json({ error: NEPRIMERNO_IME, code: "ime_neprimerno" }); // #754
     const dup = store.recentDuplicate(name, req.body?.settings);
     if (dup) return res.status(200).json(dup);
     const s = store.createStudent(name, req.body?.settings);
@@ -849,6 +850,7 @@ export function createApp(store, opts = {}) {
     const s = loadStudent(req, res);
     if (!s) return;
     const name = req.body?.name !== undefined ? cleanText(req.body.name, 40) || s.name : undefined;
+    if (name !== undefined && name !== s.name && neprimernoIme(name)) return res.status(400).json({ error: NEPRIMERNO_IME, code: "ime_neprimerno" }); // #754
     if (req.body?.settings) accounts?.pilotBeforeLevelChange(s.id);
     res.json(
       store.updateStudent(s.id, {
@@ -924,10 +926,11 @@ export function createApp(store, opts = {}) {
   };
 
   // Gumbi za orodja aplikacije pod odgovorom; zaklep interaktivnih delov kot v učbeniku.
-  const openOf = async (raw, student) => {
+  // prefer: poskus, iz katerega je klepet odprt (povezave C1, server/odpri.js findSim).
+  const openOf = async (raw, student, prefer = "") => {
     if (!/<<\s*(?:ODPRI|GRAF|SKICA)\b/.test(raw || "")) return undefined;
     const canOpen = accounts ? (topicId) => accounts.lessonInteractive(student.id, topicId) : null;
-    const list = await resolveOpen(raw, student.settings, { canOpen });
+    const list = await resolveOpen(raw, student.settings, { canOpen, prefer });
     return list.length ? list : undefined;
   };
   // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
@@ -1020,7 +1023,8 @@ export function createApp(store, opts = {}) {
 
     // Tapnjen gumb z izbiro nosi ime za prikaz; model dobi izbiro z oznako (server/ime-oznaka.js). text gre k modelu,
     // učenec vidi withName(text).
-    const typed = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_TEXT) : "";
+    // Brez ponarejenih skritih opomb (server/skrite-opombe.js, IN-12).
+    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text).trim().slice(0, MAX_TEXT) : "";
     const text = typed && student.name ? choiceAsToken(typed, lastChoices(conv.id), student.name) : typed;
     const image = req.body?.image;
     // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
@@ -1048,7 +1052,18 @@ export function createApp(store, opts = {}) {
     };
     // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
     // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
-    const nujnoPred = async () => zZaostalim(await nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn, pozna: poznaOkna, casi: opts.varnostCasi }));
+    // Okno ob zavrnitvi (meja, izklopljen klepet) je tudi varnostno okno: oznaka in obvestilo kot v odgovoru (IN-14).
+    const oznaciZavrnitev = (n) => {
+      if (n?.vrsta) {
+        try {
+          stiskaObvestila?.nova(store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: null, subject: null, topic: null, error: 0, mode: null, flag: "distress" }), n.vrsta, student.id);
+        } catch (err) {
+          console.warn(`[evklid] oznaka stiske ni zapisana (${err?.message || err})`);
+        }
+      }
+      return n;
+    };
+    const nujnoPred = async () => oznaciZavrnitev(zZaostalim(await nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn, pozna: poznaOkna, casi: opts.varnostCasi })));
     if (dnevna) {
       const nujno = await nujnoPred();
       return res.status(429).json({ ...dnevna, nujno: nujno || undefined });
@@ -1815,17 +1830,34 @@ export function createApp(store, opts = {}) {
       // Vrsta iz pregleda B, če ga je našel; sicer iz odgovora inštruktorja (samo 112 brez linije za pogovor →
       // zdravje ali nevarnost, sicer stiska; brez vsake številke blažje okno »pogovor«, j 10. 11.; EVKLID_NUJNO_BLAGO=0 ga izklopi).
       const vrstaB = await pocakajNujno();
+      // Vrsta, izpeljana iz besedila inštruktorja (vrstaIzOdgovora), nikoli ni »nasilje«: o takem oknu staršu ne pišemo,
+      // dobi ga samo skrbnik (pregled #1033: zloraba doma, pregled B nič ne najde, odgovor ima 112 in TOM → »stiska«).
+      let samoSkrbniku = false;
       if (meta?.flag === "distress") {
         const okno = nujnoZa(vrstaB || vrstaIzOdgovora(stripMeta(result.text), nujnoStevilke(student.settings)), student.settings);
         // Mesto je že zasedlo pozno okno prejšnjega sporočila druge vrste: okno tega sporočila pride ob naslednjem odgovoru.
         if (nujnoPoslano && zaostalo && oknoVrsta === zaostalo.vrsta && okno?.vrsta && okno.vrsta !== oknoVrsta) poznaOkna.dodaj(student, { vrsta: okno.vrsta });
-        else posljiNujno(okno);
+        else {
+          const prej = nujnoPoslano;
+          posljiNujno(okno);
+          if (!prej && nujnoPoslano && !vrstaB) samoSkrbniku = true;
+        }
       }
       oddajZaostalo(); // pozno okno prejšnjega sporočila pred blažjim oknom tega (server/nujno.js)
       posljiNujno(blagoLokalno);
-      // Oznaka stiske → e-mail skrbniku (brez vsebine in imena, največ en na 10 min). Sinhrono zapiše vrsto, pošta teče
-      // v ozadju; napaka nikoli ne ustavi odgovora učencu.
-      if (meta?.flag === "distress" && eventId) stiskaObvestila?.nova(eventId, nujnoVrsta);
+      // Oznaka stiske → e-mail skrbniku (brez vsebine in imena, največ en na 10 min), pri otroku pod 15 let tudi staršu
+      // (server/stiska-obvestilo.js). Ob vsakem varnostnem oknu tega odgovora (IN-14): oznaka inštruktorja, lokalni
+      // zaznavalnik, pregled B, blažje ali pozno okno. Brez META se zapiše samostojna oznaka. Sinhrono zapiše vrsto,
+      // pošta teče v ozadju; napaka nikoli ne ustavi odgovora učencu.
+      if (meta?.flag === "distress" || nujnoVrsta) {
+        try {
+          if (eventId && meta?.flag !== "distress") store.markDistress(eventId);
+          else if (!eventId) eventId = store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, subject: null, topic: null, error: 0, mode: null, flag: "distress" });
+        } catch (err) {
+          console.warn(`[evklid] oznaka stiske ni zapisana (${err?.message || err})`);
+        }
+        stiskaObvestila?.nova(eventId, nujnoVrsta, samoSkrbniku ? null : student.id);
+      }
       finished = true;
       send("done", {
         ...AI_JSON, // podporni metapodatki: besedilo je ustvarila AI (server/ai-oznaka.js)
@@ -1843,7 +1875,7 @@ export function createApp(store, opts = {}) {
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
         choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
-        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
+        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student, kontekstNote && req.body?.kontekst?.sourceType === "lab" ? String(req.body.kontekst.sourceId || "") : "") : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();
@@ -2361,7 +2393,7 @@ export function createApp(store, opts = {}) {
   mountGraphs(app, store, { loadStudent });
   mountGames(app, store, { loadStudent, progress, avatars, knowledge });
   mountDailyPuzzle(app, store, { loadStudent, leagues, ...(opts.dailyNow ? { now: opts.dailyNow } : {}) }); // dnevna uganka in lestvica po času
-  mountLab(app, { loadStudent, accounts }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku
+  mountLab(app, { loadStudent, accounts, db: store.db, isAdmin: (req) => (accounts ? !!req.parent?.is_admin : isLocalRequest(req)) }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku, štetje uporabe
   mountAvatar(app, avatars, { loadStudent, trendsFile: opts.trendsFile ?? null });
   mountKnowledge(app, knowledge, { loadStudent, avatars });
   mountClassShowcase(app, store.db, { loadStudent, leagues, knowledge }); // vitrina v razredu (opt-in, server/vitrina.js)
@@ -2432,7 +2464,16 @@ export function createApp(store, opts = {}) {
   zdravje = createZdravje(store.db, { dbFile: store.file, scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
   nastaviOpazovalcaAi(zdravje.aiIzid);
   app.locals.zdravje = zdravje;
-  stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn });
+  // Staršem: samo otrok pod 15 let s potrjenim e-naslovom starša (prejemnikStarsa); ime profila in nastavitve za številke.
+  // Starost iz letnice je spodnja meja (leto − letnica − 1): otrok, rojen pred 15 leti, je lahko že 15, zato tu zgornja
+  // meja (leto − letnica), da e-mail nikoli ne gre pri 15+.
+  const starostNajvec = (id) => {
+    const a = accounts?.ageOfStudent(id);
+    const y = store.db.prepare("SELECT birth_year FROM students WHERE id = ?").get(id)?.birth_year;
+    return typeof a === "number" && y ? Math.max(a, new Date().getFullYear() - Number(y)) : a;
+  };
+  const starsi = accounts ? { prejemnik: (id) => prejemnikStarsa({ ageOfStudent: starostNajvec, ownerOf: accounts.ownerOf, getParent: (pid) => (pid ? store.db.prepare("SELECT email, email_verified_at, is_guest, birth_date FROM parents WHERE id = ?").get(pid) : null) }, id), profil: (id) => { const st = store.getStudent(id); return st ? { ime: st.name, settings: st.settings } : null; } } : null;
+  stiskaObvestila = startStiskaObvestila(store.db, { scheduler: opts.scheduler !== false, mailer: accounts?.mailer ?? null, fetchFn: opts.fetchFn, starsi });
   app.use(notFound); // neznana pot: stran v slogu aplikacije namesto »Cannot GET« (server/ni-strani.js)
   return app;
 }
