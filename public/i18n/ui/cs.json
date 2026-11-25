@@ -4500,7 +4500,7 @@
   "pilot.mn.team": "jen pro tým",
   "pilot.n.photosH": "Fotky se souhlasem",
   "pilot.n.members": "Účty v pilotu",
-  "pilot.n.schools": "Žáci škol s pilotní licencí jsou v pilotu automaticky.",
+  "pilot.n.schools": "Žáci škol s pilotní licencí, kterým je alespoň 18 let, jsou v pilotu automaticky (pilot je jen pro zletilé).",
   "pilot.n.email": "E-mail účtu",
   "pilot.n.add": "Přidat do pilotu",
   "pilot.n.remove": "Odebrat",

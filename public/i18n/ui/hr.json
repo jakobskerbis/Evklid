@@ -4601,7 +4601,7 @@
   "pilot.mn.team": "samo za tim",
   "pilot.n.photosH": "Fotografije uz privolu",
   "pilot.n.members": "Računi u pilotu",
-  "pilot.n.schools": "Učenici škola s pilot licencom automatski su u pilotu.",
+  "pilot.n.schools": "Učenici škola s pilot licencom koji imaju najmanje 18 godina automatski su u pilotu (pilot je samo za punoljetne).",
   "pilot.n.email": "E-adresa računa",
   "pilot.n.add": "Dodaj u pilot",
   "pilot.n.remove": "Ukloni",

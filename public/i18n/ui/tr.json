@@ -4436,7 +4436,7 @@
   "pilot.mn.team": "yalnızca ekip için",
   "pilot.n.photosH": "İzinli fotoğraflar",
   "pilot.n.members": "Pilottaki hesaplar",
-  "pilot.n.schools": "Pilot lisanslı okulların öğrencileri otomatik olarak pilottadır.",
+  "pilot.n.schools": "Pilot lisanslı okulların en az 18 yaşındaki öğrencileri otomatik olarak pilottadır (pilot yalnızca reşit olanlar içindir).",
   "pilot.n.email": "Hesabın e-postası",
   "pilot.n.add": "Pilota ekle",
   "pilot.n.remove": "Kaldır",

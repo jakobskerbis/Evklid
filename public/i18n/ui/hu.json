@@ -4566,7 +4566,7 @@
   "pilot.mn.team": "csak a csapatnak",
   "pilot.n.photosH": "Fényképek hozzájárulással",
   "pilot.n.members": "Fiókok a pilotban",
-  "pilot.n.schools": "A pilot licences iskolák tanulói automatikusan a pilotban vannak.",
+  "pilot.n.schools": "A pilot licences iskolák legalább 18 éves tanulói automatikusan a pilotban vannak (a pilot csak nagykorúaknak szól).",
   "pilot.n.email": "A fiók e-mail-címe",
   "pilot.n.add": "Hozzáadás a pilothoz",
   "pilot.n.remove": "Eltávolítás",

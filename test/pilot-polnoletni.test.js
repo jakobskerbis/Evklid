@@ -239,3 +239,74 @@ test("N-11: šola s pilotno licenco: učenec brez znane polnoletnosti ni član; 
     assert.equal(pilotAdult(db, lone), true);
   });
 });
+
+// Pregled #1121: profil »Zame« šteje po imetnikovem datumu samo, če se letnica ujema (gost, ki se je ob prijavi
+// preselil v starševski račun, ali otrok, pomotoma dodan kot »Zame«).
+test("N-11: profil »Zame« z drugo letnico od imetnikove (preseljen gost) šteje po svoji letnici", async () => {
+  await withServer(async ({ client, register, parent, db }) => {
+    const call = client();
+    await register(call, "starsz@primer.si", { birth_date: bornYearsAgo(45) });
+    db.prepare("UPDATE parents SET email_verified_at = datetime('now'), pilot_at = datetime('now') WHERE email = 'starsz@primer.si'").run();
+    const pid = parent("starsz@primer.si").id;
+    const y = new Date().getFullYear();
+    const sid = Number(db.prepare("INSERT INTO students (name, settings, parent_id, birth_year) VALUES ('Gost', '{}', ?, ?)").run(pid, y - 16).lastInsertRowid);
+    db.prepare("INSERT INTO consents (parent_id, student_id, child_birth_year, under_15, version, text, parent_email) VALUES (?, ?, ?, 0, 'v', ?, 'x')").run(pid, sid, y - 16, SELF_CONSENT_TEXT);
+    assert.equal(pilotAdult(db, sid), false, "16-letni gost se ne meri po starševem datumu");
+    assert.equal(pilotMember(db, sid), null);
+    // Ista letnica kot imetnik: imetnikov lasten profil.
+    db.prepare("UPDATE students SET birth_year = ? WHERE id = ?").run(Number(parent("starsz@primer.si").birth_date.slice(0, 4)), sid);
+    assert.equal(pilotMember(db, sid), "account");
+  });
+});
+
+test("N-11: šola s pilotno licenco: polnoleten učenec razreda je član, 16-letni in učenec brez letnice nista", async () => {
+  await withServer(async ({ db }) => {
+    const y = new Date().getFullYear();
+    const school = Number(db.prepare("INSERT INTO schools (name, invite_code) VALUES ('Gimnazija', 'GIMPIL1')").run().lastInsertRowid);
+    db.prepare("INSERT INTO school_licences (school_id, plan, seats, valid_from, valid_until) VALUES (?, 'pilot', 30, '2026-01-01', '2099-01-01')").run(school);
+    const cls = Number(db.prepare("INSERT INTO classes (code, name, kind, school_id) VALUES ('RAZ4A', '4.a', 'class', ?)").run(school).lastInsertRowid);
+    const pupil = (year) => {
+      const id = Number(db.prepare("INSERT INTO students (name, settings, birth_year) VALUES ('U', '{}', ?)").run(year).lastInsertRowid);
+      db.prepare("INSERT INTO class_members (class_id, student_id) VALUES (?, ?)").run(cls, id);
+      return id;
+    };
+    assert.equal(pilotMember(db, pupil(y - 20)), "school");
+    assert.equal(pilotMember(db, pupil(y - 16)), null);
+    assert.equal(pilotMember(db, pupil(null)), null);
+  });
+});
+
+test("N-11: EVKLID_PILOT_VSI v produkciji ne velja (vsi bi bili v pilotu brez preverjanja starosti)", async () => {
+  await withServer(async ({ db }) => {
+    const kid = Number(db.prepare("INSERT INTO students (name, settings, birth_year) VALUES ('K', '{}', ?)").run(new Date().getFullYear() - 12).lastInsertRowid);
+    const prev = [process.env.EVKLID_PILOT_VSI, process.env.NODE_ENV];
+    try {
+      process.env.EVKLID_PILOT_VSI = "1";
+      process.env.NODE_ENV = "test";
+      assert.equal(pilotMember(db, kid), "all", "na lastnem računalniku za preizkus");
+      process.env.NODE_ENV = "production";
+      assert.equal(pilotMember(db, kid), null);
+    } finally {
+      for (const [k, v] of [["EVKLID_PILOT_VSI", prev[0]], ["NODE_ENV", prev[1]]]) v === undefined ? delete process.env[k] : (process.env[k] = v);
+    }
+  });
+});
+
+test("N-11: račun mladoletnega imetnika, ki je bil v pilotu že prej, ob zagonu izstopi (oznaka in fotografije)", async () => {
+  await withServer(async ({ client, register, parent, db, store }) => {
+    await register(client(), "prej@primer.si", { birth_date: bornYearsAgo(17) });
+    await register(client(), "odrasel2@primer.si", { birth_date: bornYearsAgo(30) });
+    // Oba je skrbnik dodal v pilot pred pravilom (pilot_at); umaknjena koda vabila je ločen primer (vabilo-clanstvo).
+    db.prepare("UPDATE parents SET email_verified_at = datetime('now'), pilot_at = datetime('now') WHERE email IN ('prej@primer.si', 'odrasel2@primer.si')").run();
+    const sid = Number(db.prepare("INSERT INTO students (name, settings, parent_id) VALUES ('P', '{}', ?)").run(parent("prej@primer.si").id).lastInsertRowid);
+    const scan = Number(db.prepare("INSERT INTO pilot_scans (student_id, cond, ok) VALUES (?, 'light', 1)").run(sid).lastInsertRowid);
+    db.prepare("INSERT INTO pilot_photos (scan_id, student_id, image, consent) VALUES (?, ?, 'x', '{}')").run(scan, sid);
+    // Ponoven zagon (purgePilotKv ob zagonu in vsakih 30 min).
+    createApp(store, { accounts: true, scheduler: false, log: { error() {}, info() {}, warn() {} } });
+    const p = parent("prej@primer.si");
+    assert.equal(p.pilot_at, null);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM pilot_photos").get().n, 0);
+    assert.ok(db.prepare("SELECT 1 FROM audit_log WHERE parent_id = ? AND action = 'pilot_minor_ended'").get(p.id));
+    assert.ok(parent("odrasel2@primer.si").pilot_at, "polnoleten ostane");
+  });
+});

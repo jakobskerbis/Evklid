@@ -4568,7 +4568,7 @@
   "pilot.mn.team": "team only",
   "pilot.n.photosH": "Photos with consent",
   "pilot.n.members": "Accounts in the pilot",
-  "pilot.n.schools": "Students of schools with a pilot licence are in the pilot automatically.",
+  "pilot.n.schools": "Students of schools with a pilot licence who are at least 18 are in the pilot automatically (the pilot is for adults only).",
   "pilot.n.email": "Account email",
   "pilot.n.add": "Add to pilot",
   "pilot.n.remove": "Remove",

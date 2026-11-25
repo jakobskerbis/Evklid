@@ -4439,7 +4439,7 @@
   "pilot.mn.team": "équipe seulement",
   "pilot.n.photosH": "Photos avec consentement",
   "pilot.n.members": "Comptes dans le pilote",
-  "pilot.n.schools": "Les élèves des écoles avec une licence pilote sont automatiquement dans le pilote.",
+  "pilot.n.schools": "Les élèves d'au moins 18 ans des écoles avec une licence pilote sont automatiquement dans le pilote (le pilote est réservé aux majeurs).",
   "pilot.n.email": "E-mail du compte",
   "pilot.n.add": "Ajouter au pilote",
   "pilot.n.remove": "Retirer",

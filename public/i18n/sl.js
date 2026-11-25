@@ -3705,7 +3705,7 @@ export default {
   "pilot.mn.team": "samo za ekipo",
   "pilot.n.photosH": "Fotografije s soglasjem",
   "pilot.n.members": "Računi v pilotu",
-  "pilot.n.schools": "Učenci šol s pilotno licenco so v pilotu samodejno.",
+  "pilot.n.schools": "Učenci šol s pilotno licenco, stari vsaj 18 let, so v pilotu samodejno (pilot je samo za polnoletne).",
   "pilot.n.email": "E-naslov računa",
   "pilot.n.add": "Dodaj v pilot",
   "pilot.n.remove": "Odstrani",

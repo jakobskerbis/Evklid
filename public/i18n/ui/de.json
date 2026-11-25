@@ -4568,7 +4568,7 @@
   "pilot.mn.team": "nur für das Team",
   "pilot.n.photosH": "Fotos mit Einwilligung",
   "pilot.n.members": "Konten im Pilot",
-  "pilot.n.schools": "Schüler von Schulen mit Pilotlizenz sind automatisch im Pilot.",
+  "pilot.n.schools": "Schüler von Schulen mit Pilotlizenz, die mindestens 18 Jahre alt sind, sind automatisch im Pilot (der Pilot ist nur für Volljährige).",
   "pilot.n.email": "E-Mail des Kontos",
   "pilot.n.add": "Zum Pilot hinzufügen",
   "pilot.n.remove": "Entfernen",

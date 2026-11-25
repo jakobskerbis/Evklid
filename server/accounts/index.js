@@ -15,7 +15,7 @@ import { openReport } from "../reports.js";
 import { unseal, auditSecret, openFlag, UNREADABLE } from "../crypto-polje.js";
 import { createHmac } from "node:crypto";
 import { exportOtherTables } from "../zasebnost.js";
-import { pilotSummary, pilotWtp, endAccountPilot } from "../pilot-naloge.js";
+import { pilotSummary, pilotWtp, endAccountPilot, adultParent } from "../pilot-naloge.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES, pilotLastDay } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
@@ -452,7 +452,22 @@ export function mountAccounts(app, store, opts = {}) {
       n++;
     }
     if (n) log.info?.(`[vabilo] umaknjene kode: ${n} računov ni več v pilotu`);
-    return n;
+    return n + endMinorPilots();
+  }
+  // Pilot samo s polnoletnimi (N-11, pregled #1121): račun z znanim datumom rojstva imetnika, mlajšega od 18 let, ki je
+  // v pilot prišel pred tem pravilom, izstopi kot ob skrbnikovem »Odstrani« (oznaka, meja iz kode, fotografije).
+  // Ob zagonu in vsakih 30 min (purgePilotKv). Vrne število računov.
+  function endMinorPilots() {
+    const rows = db.prepare("SELECT id, birth_date FROM parents WHERE pilot_at IS NOT NULL AND birth_date IS NOT NULL").all().filter((p) => !adultParent(p));
+    for (const r of rows) {
+      inTx(() => {
+        const photos = endAccountPilot(db, r.id);
+        db.prepare("UPDATE parents SET pilot_invite_hash = NULL, pilot_invite_at = NULL WHERE id = ?").run(r.id);
+        audit(db, { parentId: r.id, actor: "system", action: "pilot_minor_ended", ok: false, target: photos ? `photos:${photos}` : null });
+      });
+    }
+    if (rows.length) log.info?.(`[vabilo] ${rows.length} računov mlajših od 18 let ni več v pilotu`);
+    return rows.length;
   }
   try {
     purgePilotKv(); // ob zagonu
@@ -1339,7 +1354,10 @@ export function mountAccounts(app, store, opts = {}) {
     const k = kodaVabila(req);
     if (!k) return null;
     const { invite, code } = k;
-    const veljavna = (invite ? isInviteCode(invite) : signupCodeKind(code) === "invite") && !inviteUsed(db, code) && Date.now() < pilotEndMs();
+    // Mladoletni (datum rojstva v obrazcu, N-11) z vabilom ne obide meje: kode ne more porabiti.
+    const birth = parseBirthDate(req.body?.birth_date);
+    const adult = birth ? ageOn(birth) >= ADULT_AGE : true;
+    const veljavna = adult && (invite ? isInviteCode(invite) : signupCodeKind(code) === "invite") && !inviteUsed(db, code) && Date.now() < pilotEndMs();
     if (!veljavna) return null;
     const hash = inviteHash(code);
     return vabiloMimoMejeThrottle.blocked(hash) ? null : hash;
@@ -1472,8 +1490,10 @@ export function mountAccounts(app, store, opts = {}) {
       audit(db, { req, parentId, action: "pilot_invite_rejected", ok: false });
       return "invalid";
     }
-    // Pilot samo s polnoletnimi (j 2026-11-25, N-11): mlajši od 18 let kode ne shrani (koda ostane neporabljena).
-    if (isMinor(getParent(parentId))) {
+    // Pilot samo s polnoletnimi (j 2026-11-25, N-11): mlajši od 18 let (ali neveljaven datum) kode ne shrani (koda ostane
+    // neporabljena). Brez datuma rojstva koda počaka (claimPilotInvite).
+    const holder = getParent(parentId);
+    if (holder?.birth_date && !adultParent(holder)) {
       audit(db, { req, parentId, action: "pilot_invite_minor", ok: false });
       return "minor";
     }
@@ -1497,8 +1517,8 @@ export function mountAccounts(app, store, opts = {}) {
     if (!inviteHashValid(p.pilot_invite_hash)) return drop("pilot_invite_revoked");
     // Pilot samo s polnoletnimi (N-11): mlajši od 18 let kode ne porabi; brez datuma rojstva (star račun) koda počaka,
     // da imetnik datum vpiše v Računu (ogled stanja jo nato porabi, spodaj).
-    if (isMinor(p)) return drop("pilot_invite_minor");
     if (!p.birth_date) return false;
+    if (!adultParent(p)) return drop("pilot_invite_minor");
     // Poraba kode in oznaka na računu skupaj (#819): brez pol porabljene kode ob napaki vmes.
     const claimed = inTx(() => {
       if (!claimInvite(db, p.pilot_invite_hash, parentId)) return false;
@@ -3094,7 +3114,7 @@ export function mountAccounts(app, store, opts = {}) {
   // --- tedensko poročilo ---
   // Profili »Zame« (učenec 15+ sam): poročilo ga nagovori neposredno, brez nasvetov za starše.
   // Po prvem stavku (»Profil je moj.«), da stara soglasja ostanejo prepoznana tudi po preimenovanju aplikacije v besedilu.
-  const selfPrefix = SELF_CONSENT_TEXT.slice(0, SELF_CONSENT_TEXT.indexOf(".") + 1);
+  const selfPrefix = SELF_CONSENT_PREFIX;
   const selfIds = (parentId) =>
     db.prepare("SELECT student_id FROM consents WHERE parent_id = ? AND substr(text, 1, ?) = ?").all(parentId, selfPrefix.length, selfPrefix).map((r) => r.student_id);
   // Račun ima profile in vsi so »Zame« (soglasje dal učenec sam): zasloni ga nagovorijo kot učenca, ne kot starša.

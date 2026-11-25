@@ -4506,7 +4506,7 @@
   "pilot.mn.team": "tylko dla zespołu",
   "pilot.n.photosH": "Zdjęcia za zgodą",
   "pilot.n.members": "Konta w pilotażu",
-  "pilot.n.schools": "Uczniowie szkół z licencją pilotażową są w pilotażu automatycznie.",
+  "pilot.n.schools": "Uczniowie szkół z licencją pilotażową, którzy mają co najmniej 18 lat, są w pilotażu automatycznie (pilotaż jest tylko dla pełnoletnich).",
   "pilot.n.email": "E-mail konta",
   "pilot.n.add": "Dodaj do pilotażu",
   "pilot.n.remove": "Usuń",

@@ -4410,7 +4410,7 @@
   "pilot.mn.team": "팀 전용",
   "pilot.n.photosH": "동의한 사진",
   "pilot.n.members": "파일럿 계정",
-  "pilot.n.schools": "파일럿 라이선스가 있는 학교 학생은 자동으로 파일럿에 포함돼요.",
+  "pilot.n.schools": "파일럿 라이선스가 있는 학교의 만 18세 이상 학생은 자동으로 파일럿에 포함돼요(파일럿은 성인만 참여할 수 있어요).",
   "pilot.n.email": "계정 이메일",
   "pilot.n.add": "파일럿에 추가",
   "pilot.n.remove": "제거",

@@ -4438,7 +4438,7 @@
   "pilot.mn.team": "vetëm për ekipin",
   "pilot.n.photosH": "Fotografi me pëlqim",
   "pilot.n.members": "Llogaritë në pilot",
-  "pilot.n.schools": "Nxënësit e shkollave me licencë piloti janë automatikisht në pilot.",
+  "pilot.n.schools": "Nxënësit të paktën 18 vjeç të shkollave me licencë piloti janë automatikisht në pilot (piloti është vetëm për të rriturit).",
   "pilot.n.email": "E-maili i llogarisë",
   "pilot.n.add": "Shto në pilot",
   "pilot.n.remove": "Hiq",

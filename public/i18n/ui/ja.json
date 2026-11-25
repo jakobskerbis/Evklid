@@ -4410,7 +4410,7 @@
   "pilot.mn.team": "チームのみ",
   "pilot.n.photosH": "同意のある写真",
   "pilot.n.members": "パイロットのアカウント",
-  "pilot.n.schools": "パイロットライセンスのある学校の生徒は自動的にパイロットに入ります。",
+  "pilot.n.schools": "パイロットライセンスのある学校の18歳以上の生徒は自動的にパイロットに入ります（パイロットは成人のみが対象です）。",
   "pilot.n.email": "アカウントのメール",
   "pilot.n.add": "パイロットに追加",
   "pilot.n.remove": "外す",

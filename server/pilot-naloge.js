@@ -133,13 +133,14 @@ export function migratePilotTasks(db) {
 const hasParents = (db) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get();
 const hasCol = (db, t, c) => db.prepare(`PRAGMA table_info(${t})`).all().some((x) => x.name === c);
 
-// Pilot samo s polnoletnimi (j 2026-11-25, kartica N-11): imetnik računa z znanim datumom rojstva, star vsaj 18 let.
-// Brez datuma rojstva (stari računi) ne vemo, zato ne.
+// Pilot samo s polnoletnimi (j 2026-11-25, kartica N-11): imetnik računa z znanim (veljavnim) datumom rojstva, star
+// vsaj 18 let. Brez datuma rojstva (stari računi) ne vemo, zato ne.
 export const adultParent = (p, now = new Date()) => !!p?.birth_date && ageOn(p.birth_date, now) >= ADULT_AGE;
 
-// Ali je profil zanesljivo polnoleten: lasten profil imetnika (soglasje »Zame«) po imetnikovem datumu rojstva, drug
-// profil (otrok, ki ga je dodal starš, ali profil brez soglasja) samo po letnici, previdno (rojen 31. 12.): v letu
-// 18. rojstnega dne še ne. Brez letnice ne.
+// Ali je profil zanesljivo polnoleten: lasten profil imetnika (soglasje »Zame«) po imetnikovem datumu rojstva, a samo,
+// če se letnica profila ujema z imetnikovo (sicer to ni imetnik: npr. profil gosta, ki se je ob prijavi preselil v
+// starševski račun, ali otrokov profil, pomotoma dodan kot »Zame«, pregled #1121). Vsak drug profil samo po letnici,
+// previdno (rojen 31. 12.): v letu 18. rojstnega dne še ne. Brez letnice ne.
 export function pilotAdult(db, studentId, now = new Date()) {
   try {
     if (!hasCol(db, "students", "birth_year")) return false;
@@ -150,7 +151,7 @@ export function pilotAdult(db, studentId, now = new Date()) {
         .prepare("SELECT 1 FROM consents WHERE student_id = ? AND parent_id = ? AND substr(text, 1, ?) = ? LIMIT 1")
         .get(studentId, s.parent_id, SELF_CONSENT_PREFIX.length, SELF_CONSENT_PREFIX);
       const p = self ? db.prepare("SELECT birth_date FROM parents WHERE id = ?").get(s.parent_id) : null;
-      if (p?.birth_date) return adultParent(p, now);
+      if (p?.birth_date && Number(String(p.birth_date).slice(0, 4)) === s.birth_year) return adultParent(p, now);
     }
     return (minAgeFromYear(s.birth_year, now) ?? -1) >= ADULT_AGE;
   } catch {
@@ -158,10 +159,11 @@ export function pilotAdult(db, studentId, now = new Date()) {
   }
 }
 
-// Ali je profil v pilotu: "all" (EVKLID_PILOT_VSI=1), "account" (skrbnik označil račun), "school" (pilotna šola) ali null.
+// Ali je profil v pilotu: "all" (EVKLID_PILOT_VSI=1, ne v produkciji), "account" (skrbnik označil račun), "school" (pilotna šola) ali null.
 // Mlajši od 18 let (ali brez znane starosti) ni v pilotu, tudi če je račun označen (naloge, preizkus, fotografije, mnenja).
 export function pilotMember(db, studentId) {
-  if (process.env.EVKLID_PILOT_VSI === "1") return "all";
+  // EVKLID_PILOT_VSI=1: vsi profili, samo za preizkus na lastnem računalniku (v produkciji se ne upošteva, pregled #1121).
+  if (process.env.EVKLID_PILOT_VSI === "1" && process.env.NODE_ENV !== "production") return "all";
   let kind = null;
   try {
     if (hasParents(db) && hasCol(db, "parents", "pilot_at")) {
