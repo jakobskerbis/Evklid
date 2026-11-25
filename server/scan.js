@@ -1,5 +1,6 @@
 // Skeniranje nalog (zaslon »Skeniraj«, public/scan/):
-//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought? }] }  prepis s fotografije
+//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought?, unclear? }] }  prepis s fotografije
+//        (nejasen znak je [?] v text/given, unclear = možnosti za vsako oznako v text; public/scan/nejasno.js)
 //   POST /api/students/:id/scan/solve  { text, goal?, given?, sought? } → { solution }       AI rešitev po korakih
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
@@ -172,7 +173,7 @@ export const READ_PROMPT =
   // P3-5: nejasen znak ni ugibanje (public/scan/nejasno.js); učenec ga popravi pred reševanjem.
   "Never guess: if a digit, sign, letter, exponent, index or bracket of the task could really be read two ways (smudged, blurred, cut off at the edge, 1 or 7, + or -, x or a times sign) and nothing in the task itself settles it (the student's working may only confirm a sign or a letter, never a digit), " +
   'write [?] in its place in "text" and \\\\boxed{?} in "tex", and add "unclear": one list per [?], in the order they stand in "text", of what it could be (most likely first, at most 3, each as it would stand in "text", e.g. [["1","7"]]). ' +
-  'An unclear value in "given" is written as [?] there too, not \\\\boxed{?} (no list). Mark only a real doubt: a clearly written character is never [?].\n' +
+  'An unclear value in "given" is written as [?] there too, not \\\\boxed{?} (no list); never put [?] in "sought". Mark only a real doubt: a clearly written character is never [?].\n' +
   "Coordinates of a point and the values in conditions are numbers unless a letter is clearly written.\n" +
   'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
@@ -245,7 +246,8 @@ export function cleanGiven(list) {
 }
 // Iskana količina (»kot, pod katerim graf seka os x«): ni podatek, zato ne v given (j 16. 11. 2026: »to ni podatek«).
 // Ne izklopi lastnega reševalnika ne SymPy (ti gledata le given); AI jo dobi, da ve, kaj iskati.
-export const cleanSought = (v) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
+// Oznaka [?] sodi le v račun in podatke; v opisu iskanega je navaden vprašaj (učenec je tam ne more popraviti).
+export const cleanSought = (v) => (typeof v === "string" ? normalizeUnclear(v).split("[?]").join("?").replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
 
 // Cilj, ki ga je učenec izbral na zaslonu (npr. »Razstavi«): brez njega bi AI izraz morda le poenostavil.
 const GOAL_TEXT = {

@@ -80,6 +80,8 @@ test("cleanProblems: unclear se poravna na oznake v besedilu, brez oznak ga ni",
   assert.equal(b.tex, "x-\\boxed{?}=1", "backspace v tex popravljen");
   assert.deepEqual(b.given, ["a = [?]"]);
   assert.deepEqual(b.unclear, [["2"]]);
+  const c = cleanProblems([{ text: "P=?", sought: "\\text{ploščina lika [?]}" }])[0];
+  assert.equal(c.sought, "\\text{ploščina lika ?}", "v iskanem ni oznake, ki je učenec ne more popraviti");
   assert.equal("unclear" in out[3], false, "P=? nima oznake v računu");
 });
 

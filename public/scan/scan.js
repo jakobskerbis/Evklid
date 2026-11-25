@@ -6,7 +6,7 @@ import { icon, hydrateIcons } from "../icons.js";
 import { t } from "../i18n.js";
 import { jeOs } from "../stopnja.js";
 import { solve, analyze, prep, tex as exprTex, parseTask, izvorOznak, oznakaGrafa } from "./solvecore.js";
-import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
+import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer, hideKeyboard } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
 import { STATUSES } from "./status.js";
@@ -273,6 +273,7 @@ function renderCapture(box) {
       S.goal = h.goal || null;
       S.problems = [];
       S.given = Array.isArray(h.given) ? h.given.filter((g) => typeof g === "string").slice(0, 10) : [];
+      S.unclear = [];
       S.sought = typeof h.sought === "string" ? h.sought.slice(0, 160) : "";
       solveNow();
     }),
@@ -754,7 +755,15 @@ function renderConfirm(box) {
     const html = unclearBlock();
     if (unclearHost.dataset.html === html) return; // ne prepiši polja, v katerega učenec piše
     unclearHost.dataset.html = html;
+    // vpisani znaki v podatkih (še brez ✓) in fokus preživijo zamenjavo obvestila
+    const typed = [...unclearHost.querySelectorAll("[data-given-fill]")].map((el) => [el.dataset.givenFill, el.value, el === document.activeElement]);
     unclearHost.innerHTML = html;
+    for (const [i, v, f] of typed) {
+      const el = unclearHost.querySelector(`[data-given-fill="${i}"]`);
+      if (!el) continue;
+      el.value = v;
+      if (f) el.focus();
+    }
     bindGivenInputs();
   };
   const update = () => {
@@ -813,7 +822,12 @@ function renderConfirm(box) {
       S.given[i] = fillUnclear(S.given[i], 0, v);
       changed = true;
     });
-    if (changed && rerender) render();
+    if (changed && rerender) {
+      // zaslon se izriše na novo: Evklidova tipkovnica ne sme ostati na odstranjenem polju
+      hideKeyboard();
+      render();
+      (box.querySelector("[data-given-fill]") || (hasUnclear(S.text) ? box.querySelector("#scan-input") : box.querySelector('[data-act="solve"]')))?.focus();
+    }
     return changed;
   }
   function bindGivenInputs() {
@@ -871,7 +885,10 @@ function renderConfirm(box) {
     if (hasUnclear(input.value) || S.given.some(hasUnclear)) {
       S.text = input.value;
       S.unclearNeed = true; // sporočilo v obvestilu o branju (ni napaka v zapisu ali računu)
-      if (filled) render(); // pokaže popravljene podatke; sporočilo in fokus v novem zaslonu
+      if (filled) {
+        hideKeyboard();
+        render(); // pokaže popravljene podatke; sporočilo in fokus v novem zaslonu
+      }
       else showUnclear();
       S.unclearNeed = false; // velja do naslednjega vnosa (zaslon ga že kaže)
       const in2 = box.querySelector("#scan-input");
