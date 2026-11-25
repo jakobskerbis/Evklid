@@ -250,6 +250,18 @@ Kislost oksida je odvisna tudi od oksidacijskega števila. Isti element ima lahk
 ~ Aluminij je kovina, ne polkovina. Občutljiv je zaradi amfoterne oksidne plasti.
 > Aluminijev oksid reagira s kislinami ($\mathrm{AlCl_3}$) in z bazami ($\mathrm{Na[Al(OH)_4]}$), zato oboje razjeda posodo.
 
+? V vodi raztopimo $0{,}0050\,\text{mol}$ žveplovega trioksida $\mathrm{SO_3}$ in razredčimo do $1{,}0\,\text{L}$. Nastala žveplova kislina odda oba protona. Kolikšen je pH pri $25\,^\circ\mathrm{C}$?
+= 2,00 | 0,01
+~ 2,30 | Žveplova kislina odda dva protona: $[\mathrm{H_3O^+}] = 2 \cdot 0{,}0050 = 0{,}010\,\text{mol/L}$.
+~ 12,00 | Žveplov trioksid je kisel oksid nekovine, zato je raztopina kisla, pH pod $7$.
+> $\mathrm{SO_3 + H_2O \rightarrow H_2SO_4}$, $[\mathrm{H_3O^+}] = 2 \cdot 0{,}0050\,\text{mol/L} = 0{,}010\,\text{mol/L}$, $\mathrm{pH} = -\log 0{,}010 = 2{,}00$.
+
+? V vodi raztopimo $0{,}15\,\text{g}$ litijevega oksida $\mathrm{Li_2O}$ ($M = 30\,\text{g/mol}$) in razredčimo do $500\,\text{mL}$. Kolikšen je pH pri $25\,^\circ\mathrm{C}$?
+= 12,30 | 0,01
+~ 12,00 | Prostornina je $0{,}500\,\text{L}$, ne $1\,\text{L}$: $[\mathrm{OH^-}] = \dfrac{0{,}010\,\text{mol}}{0{,}500\,\text{L}}$.
+~ 1,70 | To je pOH. pH je $14 - \mathrm{pOH}$.
+> $n(\mathrm{Li_2O}) = 0{,}0050\,\text{mol}$, iz $\mathrm{Li_2O + H_2O \rightarrow 2\,LiOH}$ nastane $0{,}010\,\text{mol}$ $\mathrm{LiOH}$. $[\mathrm{OH^-}] = 0{,}020\,\text{mol/L}$, $\mathrm{pOH} = 1{,}70$, $\mathrm{pH} = 12{,}30$.
+
 :::simboli
 n | množina snovi | n = \dfrac{m}{M} | mol
 m | masa oksida | | g

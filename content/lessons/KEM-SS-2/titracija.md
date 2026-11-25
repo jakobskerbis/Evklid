@@ -256,6 +256,17 @@ V vseh primerih je vprašanje isto kot v delavnici glasbene šole: ne kako kislo
 + $0{,}150\,\mathrm{mol/L}$
 > $n_\mathrm{b} = 0{,}200\,\mathrm{mol/L} \cdot 0{,}0150\,\mathrm{L} = 0{,}00300\,\mathrm{mol}$, $n_\mathrm{k} = \dfrac{0{,}00300\,\mathrm{mol}}{2} = 0{,}00150\,\mathrm{mol}$, $c_\mathrm{k} = \dfrac{0{,}00150\,\mathrm{mol}}{0{,}0100\,\mathrm{L}} = 0{,}150\,\mathrm{mol/L}$.
 
+? Za titracijo $20{,}0\,\mathrm{mL}$ raztopine NaOH porabimo $12{,}5\,\mathrm{mL}$ klorovodikove kisline s koncentracijo $0{,}160\,\mathrm{mol/L}$. Kolikšna je koncentracija NaOH?
+= 0,100 mol/L | 0,001
+~ 0,256 | Prostornini si zamenjal. Množino kisline izračunaj s porabljeno prostornino kisline, $12{,}5\,\mathrm{mL}$.
+~ 0,002 | To je množina NaOH v molih. Deli jo še s prostornino vzorca v litrih.
+> $n(\mathrm{HCl}) = 0{,}160\,\mathrm{mol/L} \cdot 0{,}0125\,\mathrm{L} = 0{,}00200\,\mathrm{mol} = n(\mathrm{NaOH})$, $c = \dfrac{0{,}00200\,\mathrm{mol}}{0{,}0200\,\mathrm{L}} = 0{,}100\,\mathrm{mol/L}$.
+
+? Koliko mililitrov raztopine NaOH s koncentracijo $0{,}100\,\mathrm{mol/L}$ porabimo za titracijo $20{,}0\,\mathrm{mL}$ žveplove kisline s koncentracijo $0{,}0500\,\mathrm{mol/L}$?
+= 20,0 mL | 0,1
+~ 10,0 | Žveplova kislina odda dva protona: za en mol kisline sta potrebna dva mola NaOH.
+> $n(\mathrm{H_2SO_4}) = 0{,}0500\,\mathrm{mol/L} \cdot 0{,}0200\,\mathrm{L} = 0{,}00100\,\mathrm{mol}$, $n(\mathrm{NaOH}) = 2 \cdot 0{,}00100\,\mathrm{mol} = 0{,}00200\,\mathrm{mol}$, $V = \dfrac{0{,}00200\,\mathrm{mol}}{0{,}100\,\mathrm{mol/L}} = 0{,}0200\,\mathrm{L} = 20{,}0\,\mathrm{mL}$.
+
 :::simboli
 n_\mathrm{b} | množina baze | n_\mathrm{b} = c_\mathrm{b} \cdot V_\mathrm{b} | mol
 c_\mathrm{b} | koncentracija baze | | mol/L

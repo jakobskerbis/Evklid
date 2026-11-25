@@ -257,6 +257,17 @@ Primerjava ima mejo: žoga ne spremeni naboja igralca, proton pa vsakemu delcu, 
 ~ Po Brønstedu ioni $\mathrm{OH^-}$ niso potrebni; baza je delec, ki sprejme proton.
 > $\mathrm{HCO_3^-}$ sprejme proton in postane $\mathrm{H_2CO_3}$, zato je baza. Ion je amfoteren, a tu ob močni kislini nastopa kot baza.
 
+? Kolikšen je naboj konjugirane kisline sulfatnega iona $\mathrm{SO_4^{2-}}$?
+= -1 | 0,1
+~ -3 | Konjugirana kislina ima en proton več, zato je njen naboj za $1$ višji, ne nižji.
+~ 0 | Sulfatni ion sprejme le en proton. Nenabito $\mathrm{H_2SO_4}$ bi nastalo šele po drugem protonu.
+> Konjugirana kislina ima en $\mathrm{H^+}$ več: $\mathrm{SO_4^{2-}} + \mathrm{H^+} \to \mathrm{HSO_4^-}$, naboj $-2 + 1 = -1$.
+
+? Karbonatni ion $\mathrm{CO_3^{2-}}$ v Enkeladovem oceanu sprejema protone, dokler ne nastane ogljikova kislina $\mathrm{H_2CO_3}$. Koliko molov protonov lahko sprejme $0{,}10\,\mathrm{mol}$ karbonatnih ionov?
+= 0,20 mol | 0,005
+~ 0,10 | Toliko protonov je potrebnih le do $\mathrm{HCO_3^-}$. Do $\mathrm{H_2CO_3}$ sprejme vsak ion dva protona.
+> $\mathrm{CO_3^{2-}} \to \mathrm{HCO_3^-} \to \mathrm{H_2CO_3}$: vsak ion sprejme $2$ protona, torej $2 \cdot 0{,}10\,\mathrm{mol} = 0{,}20\,\mathrm{mol}$.
+
 :::simboli
 \mathrm{HA} | splošna kislina (donor protona) | | – | odda proton in postane $\mathrm{A^-}$
 \mathrm{A^-} | konjugirana baza kisline HA | | – | en H manj, naboj za 1 nižji

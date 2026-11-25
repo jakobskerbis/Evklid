@@ -244,6 +244,17 @@ Hem si lahko narišeš takole: v sredini ion $\mathrm{Fe^{2+}}$, okoli njega plo
 ~ Ogljik v hladilniku ne gori. Barva se spremeni, ker se spremeni oksidacijsko število železa.
 > Oksidacijsko število železa naraste s $+2$ na $+3$, torej je to oksidacija. Rjav mioglobin z $\mathrm{Fe^{3+}}$ ne veže kisika, meso pa je še vedno užitno, če ni pokvarjeno.
 
+? Sečnina $\mathrm{CO(NH_2)_2}$ je dušikovo gnojilo. Kolikšen je masni delež dušika v njej? ($A_r$: C $12$, O $16$, N $14$, H $1$) Rezultat vpiši v odstotkih na desetinko.
+= 46,7 % | 0,1
+~ 23,3 | V molekuli sečnine sta dva atoma dušika: v števec spada $2 \cdot 14$.
+> $M = 12 + 16 + 2 \cdot (14 + 2 \cdot 1) = 60\,\mathrm{g/mol}$, $w(\mathrm{N}) = \dfrac{2 \cdot 14}{60} = 0{,}467 = 46{,}7\,\%$.
+
+? Tableta vsebuje $500\,\mathrm{mg}$ kalcijevega karbonata $\mathrm{CaCO_3}$ ($M = 100\,\mathrm{g/mol}$). Koliko miligramov kalcija ($M = 40\,\mathrm{g/mol}$) dobi telo iz ene tablete?
+= 200 mg | 1
+~ 1250 | Ulomek si obrnil. Kalcij je le del $\mathrm{CaCO_3}$, zato mora biti njegova masa manjša od $500\,\mathrm{mg}$.
+~ 500 | Tableta vsebuje kalcijev karbonat, ne čistega kalcija. Kalcij je le $40\,\%$ njegove mase.
+> En mol $\mathrm{CaCO_3}$ vsebuje en mol kalcija: $m(\mathrm{Ca}) = 500\,\mathrm{mg} \cdot \dfrac{40}{100} = 200\,\mathrm{mg}$.
+
 :::simboli
 m | masa (snovi ali elementa v njej) | | g | npr. $m(\mathrm{N})$, $m(\mathrm{CaCO_3})$, $m(\mathrm{FeS})$
 w | masni delež | | – | npr. $w(\mathrm{N}) = 0{,}16$ v beljakovinah

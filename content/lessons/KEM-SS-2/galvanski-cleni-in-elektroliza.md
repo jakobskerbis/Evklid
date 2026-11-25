@@ -259,6 +259,18 @@ Elektroni v členu sami od sebe tečejo od leve točke (anoda) proti desni (kato
 ~ Vodo segreva električni grelec. Palica le varuje kotel pred rjo.
 > Kovina z nižjim $E^\circ$ je v členu anoda in se raztaplja. Ko se magnezij porabi, ga zamenjajo, sicer začne rjaveti kotel.
 
+? Galvanski člen sestavimo iz niklja ($E^\circ(\mathrm{Ni^{2+}/Ni}) = -0{,}25\,\mathrm{V}$) in srebra ($E^\circ(\mathrm{Ag^+/Ag}) = +0{,}80\,\mathrm{V}$). Kolikšna je njegova standardna napetost v voltih?
+= 1,05 V | 0,01
+~ 0,55 | Potenciala si seštel. Napetost je razlika $E^\circ_\text{katoda} - E^\circ_\text{anoda} = 0{,}80 - (-0{,}25)$.
+~ 1,85 | Potencial srebra si pomnožil s koeficientom $2$ iz enačbe. Standardnih potencialov ne množimo s koeficienti.
+> Srebro ima višji potencial in je katoda, nikelj je anoda: $E^\circ_\text{člen} = 0{,}80\,\mathrm{V} - (-0{,}25\,\mathrm{V}) = 1{,}05\,\mathrm{V}$.
+
+? Galvanski člen s cinkovo anodo ($E^\circ = -0{,}76\,\mathrm{V}$) ima standardno napetost $1{,}56\,\mathrm{V}$. Kolikšen je standardni potencial katode v voltih?
+= 0,80 V | 0,01
+~ 2,32 | Potenciala si seštel. Iz $E^\circ_\text{člen} = E^\circ_\text{katoda} - E^\circ_\text{anoda}$ sledi $E^\circ_\text{katoda} = 1{,}56 + (-0{,}76)$.
+~ -2,32 | Napetost člena je razlika potencialov, katoda ima višji potencial od anode.
+> $E^\circ_\text{katoda} = E^\circ_\text{člen} + E^\circ_\text{anoda} = 1{,}56\,\mathrm{V} - 0{,}76\,\mathrm{V} = 0{,}80\,\mathrm{V}$. To je srebro.
+
 :::simboli
 E | standardni elektrodni potencial $E^\circ$ (katoda, anoda); z indeksom člen napetost člena | E^\circ_\text{člen} = E^\circ_\text{katoda} - E^\circ_\text{anoda} | V | proti vodikovi elektrodi; Cu: $+0{,}34\,\mathrm{V}$
 U_\text{min} | najmanjša napetost vira pri elektrolizi | | V | napetost obratnega člena
