@@ -1501,3 +1501,8 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-svg .lab-boy-silatxt { fill: var(--text); font-size: 11px; font-weight: 700; }
 /* Grelnik: izračun W, Q in η v vrsticah (lab-toplota.js); na telefonu malo manjša pisava, da vrstica ne drsi. */
 @media (max-width: 480px) { .lab-top-calc .demo-eq { font-size: 1rem; } }
+/* Okvir napovedi, primerjave in računa: kot .lab-q (vprašanje »Sklep«), a ni sklep (vodeni način šteje sklepe po .lab-q). */
+.lab-okvir { margin-top: 14px; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+.lab-okvir h4 { margin: 0 0 4px; }
+.demo.lab .lab-okvir { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
+.lab-okvir.lab-napoved { margin: 0 0 10px; }

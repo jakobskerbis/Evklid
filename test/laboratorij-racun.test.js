@@ -152,6 +152,7 @@ test("student's own calculation in a browser", { timeout: 180000 }, async (t) =>
       kaj: document.querySelector(".lab-racun .lab-q-text").textContent,
     }));
     assert.equal(st.skrito, false);
+    assert.equal(await p.evaluate(() => document.querySelectorAll(".lab-q.lab-racun").length), 0, "račun ni .lab-q (vodeni način šteje sklepe)");
     assert.deepEqual(st.ui, ["–", "–", "–"], "stolpec U/I pri uporniku ne izda upora");
     const sirina = await p.evaluate(() => { const t = document.querySelector(".lab-table"); return [t.scrollWidth, t.closest(".lab-table-wrap").clientWidth]; });
     assert.ok(sirina[0] <= sirina[1], `tabela pri 360 px ne drsi vstran: ${sirina}`);
