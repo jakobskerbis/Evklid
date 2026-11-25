@@ -27,7 +27,7 @@ function zrakIzpuscen(dn, p) {
   return /obe pipi/.test(p.t) ? L && D : L || D;
 }
 
-// Napajalnik res teče: praznjenje ga izklopi (ElektrolizaBench → izprazni), čeprav stikalo ostane vklopljeno.
+// Napajalnik res teče: praznjenje ga izklopi (ElektrolizaBench → izprazni; lab-elektrokemija.js izklopi tudi stikalo).
 const vklopljen = (c) => c.zadnji(VKLOP, IZKLOP, PRAZEN) === 0;
 
 // Veljavne meritve: čas, tok večji od nič (pregorela varovalka kaže 0) in prostornina na katodi.
@@ -104,8 +104,8 @@ export default {
     },
     {
       naslov: "Ali destilirana voda prevaja tok?",
-      kaj: `Izklopi napajalnik in pritisni »Izprazni in speri aparat«. Pri »tekočina« izberi destilirano vodo, odpri obe pipi in jo nalij. Napetost povečaj na približno 10${nb}V in vklopi napajalnik.`,
-      namig: "Če je stikalo »napajalnik vklopljen« po praznjenju še vklopljeno, ga izklopi in znova vklopi.",
+      kaj: `Pritisni »Izprazni in speri aparat« (napajalnik se izklopi). Pri »tekočina« izberi destilirano vodo, odpri obe pipi in jo nalij. Napetost povečaj na približno 10${nb}V in vklopi napajalnik.`,
+      namig: "Destilirana voda je skoraj čista voda brez raztopljenih snovi. Opazuj ampermeter in elektrodi.",
       zakaj: "Destilirana voda skoraj nima ionov, zato skoraj ne prevaja električnega toka. Zato vodi za elektrolizo dodamo elektrolit, na primer žveplovo(VI) kislino.",
       poudari: ["Izprazni in speri", "tekočina", "napetost napajalnika", "napajalnik vklopljen"],
       done: (c) => c.bilo(/destilirana voda skoraj nima ionov/),
