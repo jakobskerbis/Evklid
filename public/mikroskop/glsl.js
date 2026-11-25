@@ -978,6 +978,7 @@ const SEM_SENCENJE = /* glsl */ ` else if (uNacin == 3) {
 // vsakega preparata in (pri programskem izrisu brez GPE) upočasnil tudi svetlobni mikroskop.
 export function fragmentPreparata(koda, { sem = false } = {}) {
   return `#version 300 es
+uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda, 3 SEM (le v programu SEM); tu, da ga vidi tudi preparat
 ${OSNOVE}
 ${koda}
 ${ULTRA}
@@ -985,7 +986,6 @@ ${sem ? SEM : ""}
 uniform vec2 uRes;
 uniform vec2 uCenter;      // središče vidnega polja na stekelcu (µm)
 uniform float uPx;         // µm na slikovno točko
-uniform int uNacin;        // 0 svetlobni mikroskop, 1 TEM, 2 sonda, 3 SEM (le v programu SEM)
 uniform int uSondaZvij;    // sonda: 1 = vrstica tkiva z zvijanjem rezine (svetlobni, SEM), 0 = brez (TEM, kot slika)
 uniform vec2 uSonda[8];    // točke sonde (µm)
 uniform mat3 uBarvila;     // stolpci: OD-vektor (R, G, B) prvega, drugega in tretjega barvila
