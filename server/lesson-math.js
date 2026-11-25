@@ -8,7 +8,7 @@
 // Uporaba: checkArithmetic(bodyMarkdown) → { checked, mismatches: [{ line, tex, left, right, rel }] }
 
 // Tudi namerno napačna razlaga napačne možnosti (»**D** dobimo, če vzamemo, da je 1 bar = 1000 Pa«; AUDIT-058).
-const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|neresnič|protislov|nemogoč|nima rešit|nesmisel|ne drži|✗|dobimo,? če|če vzamemo|če pozabimo|(?<!\p{L})bi (?:dobil|dobili|bilo|bil)(?!\p{L})/iu;
+const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|neresnič|protislov|nemogoč|nima rešit|nesmisel|ne drži|✗|napak[aeio]?(?!\p{L})|dobimo,? če|če vzamemo|merilo|v naravi|na zemljevidu|na karti|v resnici|če pozabimo|(?<!\p{L})bi (?:dobil|dobili|bilo|bil)(?!\p{L})/iu;
 const LOOSE_LINE = /ocen|približ|zaokrož/i; // ocenjevanje: 48² ≈ 50² = 2500
 const SKIP_TEX = /\\(pm|mp|le|ge|leq|geq|neq|ne|lt|gt|in|to|rightarrow|Rightarrow|longrightarrow|iff|implies|infty|ldots|cdots|dots|equiv|sim|propto)\b|[<>≤≥≠→]/;
 const SEP = /(=|\\approx|\\doteq)/;
@@ -75,6 +75,18 @@ const symbolSI = (name, base) => {
   }
   return null;
 };
+// »kgK« (J/(kg\,K) brez presledka): zaporedje znanih enot, najdaljša najprej
+function joinedSI(name, base, depth = 0) {
+  if (depth > 3) return null;
+  for (let i = name.length - 1; i >= 1; i--) {
+    const a = symbolSI(name.slice(0, i), base);
+    if (a === null) continue;
+    const rest = name.slice(i);
+    const b = symbolSI(rest, base) ?? joinedSI(rest, base, depth + 1);
+    if (b !== null) return a * b;
+  }
+  return null;
+}
 const SUP = { "²": 2, "³": 3, "⁻¹": -1, "⁻²": -2, "⁻³": -3 };
 /** Vrednost enote (»km/h«, »g/cm^3«, »J/(kg K)«, »kΩ«) v SI pri osnovah base ali null. */
 export function unitSI(unit, base = UNIT_BASES[0]) {
@@ -91,7 +103,7 @@ export function unitSI(unit, base = UNIT_BASES[0]) {
       expr += m[5];
       continue;
     }
-    const v = symbolSI(m[1], base);
+    const v = symbolSI(m[1], base) ?? joinedSI(m[1], base);
     if (v === null) return null;
     const e = m[2] ?? m[3] ?? (m[4] ? SUP[m[4]] : 1);
     expr += ` (${(v ** Number(e)).toExponential(14).replace(/e([+-]\d+)$/, (x, n) => `*10**(${Number(n)})`)}) `;
@@ -114,6 +126,16 @@ function siValues(x) {
   return out;
 }
 const sameRatio = (p, q) => Math.abs(p / q - 1) < 1e-6;
+function conversionFactorWritten(a, b) {
+  const sa = siValues(a);
+  const sb = siValues(b);
+  if (!sa || !sb) return false;
+  const r = sa[0] / sb[0];
+  if (Math.abs(sa[1] / sb[1] / r - 1) > 1e-6) return false;
+  const lits = [a, b].filter((x) => !x.bare).flatMap((x) => (x.expr.match(/\d+(?:\.\d+)?/g) || []).map(Number)).filter((n) => n > 1);
+  return lits.some((n) => Math.abs(r * n - 1) < 1e-6 || Math.abs(r / n - 1) < 1e-6);
+}
+
 /**
  * Korak med deloma z različnimi enotami (ali brez enote na eni strani), preverjen s pravimi pretvorbami.
  * Vrne null (drži), relativno razliko (ne drži), "skip" (dimenziji se ne ujemata: o tem koda ne sodi) ali
@@ -152,6 +174,8 @@ function unitStep(a, b, relTol, chainUnits) {
 // bilo mogoče prebrati.
 export function normalizeTex(tex, pct = "div", { unitSub = null } = {}) {
   if (tex.length > 300) return null;
+  // »100\ \mu\mathrm{m}«: predpona µ pred enoto
+  tex = tex.replace(/\\mu\s*\\(mathrm|text)\s*\{/g, "\\$1{µ");
   let s = tex.replace(/\\,/g, "").replace(/\\left|\\right|\\[!;:>]|\\quad|\\qquad|\\ |~/g, " ");
   const units = [];
   let unitFail = false;
@@ -315,12 +339,22 @@ function compare(a, b, approx, loose, afterData = false, chainUnits = []) {
     tol = Math.max(tol, halfUlp(x, approx));
     ratioTol = Math.min(0.03, Math.max(ratioTol, halfUlp(x, approx) / Math.max(Math.abs(x.value), 1e-12)));
   }
-  if (diff <= tol + 1e-12) return null;
   const ua = a.units.join();
   const ub = b.units.join();
+  // Različne enote (ali enota le na eni strani): prava pretvorba s predponami (AUDIT-058), razen pri enotah podatkov,
+  // odstotkih in stopinjah. Preveri se tudi, ko sta števili enaki (50 N · 2 cm = 100 J: enote ne ustrezajo).
+  const pctDeg = [a, b].some((x) => x.units.includes("%") || x.units.includes("°"));
+  if (ua !== ub && !pctDeg && !hasDataUnit(a) && !hasDataUnit(b)) {
+    let rel0 = loose ? 0.15 : approx ? 0.02 : 0.01;
+    for (const x of [a, b]) if (x.bare) rel0 = Math.max(rel0, halfUlp(x, approx) / Math.max(Math.abs(x.value), 1e-12));
+    const u0 = unitStep(a, b, rel0, chainUnits);
+    if (u0 === null) return null;
+    // Razlika enot je enaka golemu številu v računu (0,6 cm/min · 60 = 36 cm/h: 60 je min → h): pretvorba, ne napaka.
+    if (typeof u0 === "number" && !conversionFactorWritten(a, b)) return u0;
+  }
+  if (diff <= tol + 1e-12) return null;
   if (a.units.includes("%") !== b.units.includes("%")) return "skip"; // 20 % = 60 €
   if (a.units.includes("°") !== b.units.includes("°")) return "skip"; // 150° = 5π/6
-  // Različne enote (ali enota le na eni strani): prava pretvorba s predponami (AUDIT-058), razen pri enotah podatkov.
   if (ua !== ub && !hasDataUnit(a) && !hasDataUnit(b)) {
     // relativna toleranca po pretvorbi: 1 % (ocene 15 %) ali pol zadnjega mesta zapisanega števila (3142 cm³ ≈ 3,1 L)
     let rel = loose ? 0.15 : 0.01;

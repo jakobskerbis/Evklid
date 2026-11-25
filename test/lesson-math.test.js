@@ -250,3 +250,9 @@ test("AUDIT-058: napaka ×10ⁿ z enotami se ujame, prave pretvorbe ostanejo bre
   ];
   for (const t of right) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
 });
+
+test("AUDIT-058 (pregled): merilo, napaka v razlagi in pretvorbeni faktor niso napaka; napačne enote ob enakih številih so", () => {
+  const R = String.raw;
+  for (const t of [R`$1\ \mathrm{cm} = 500\ \mathrm{m}$ v naravi (merilo $1 : 50\,000$)`, R`Druga napaka je $35\,\mathrm{dag} = 35\,\mathrm{g}$.`, R`$v = 0{,}6\,\mathrm{cm/min} \cdot 60 = 36\,\mathrm{cm/h}$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  for (const t of [R`$W = 50\ \mathrm{N} \cdot 2\ \mathrm{cm} = 100\ \mathrm{J}$`, R`$P = \frac{600\ \mathrm{J}}{2\ \mathrm{min}} = 300\ \mathrm{W}$`, R`$1\ \mathrm{mm} = 100\ \mu\mathrm{m}$`, R`$Q = 4200\ \mathrm{J/(kg\,K)} \cdot 0{,}5\ \mathrm{kg} \cdot 20\ \mathrm{K} = 4{,}2\ \mathrm{kJ}$`]) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+});
