@@ -7,8 +7,11 @@ import express from "express";
 import { seal, unseal } from "../crypto-polje.js";
 import { cleanText } from "../settings.js";
 import { danIzbrisa } from "./ciscenje.js";
-import { uvoziVNiti, NapakaUvoza } from "./uvoz.js";
-import { shraniIzseke, VRSTE } from "./izseki.js";
+import { uvoziVNiti, preberiVir, NapakaUvoza } from "./uvoz.js";
+import { shraniIzseke, razrezi, VRSTE } from "./izseki.js";
+import { readNotePhoto, readReserveUsd, pageLimit, pagesUsed, takePage, givePage, nextMonth } from "../zapiski.js";
+import { nujnoZa } from "../nujno.js";
+import { AI_JSON } from "../ai-oznaka.js";
 import {
   preveriDatoteko, shraniIzvirnik, preberiIzvirnik, lahkoShranim, zVarnimBrisanjem,
   MEJE, MIME, NAJVEC_BAJTOV, NAJVEC_VIROV, NAJVEC_PRIPRAV, NAJVEC_SKUPAJ, NAJVEC_HKRATI, zasedeno, prostorVsi,
@@ -87,6 +90,7 @@ const izsekVen = (r) => ({
   naslov: r.naslov == null ? null : unseal(r.naslov),
   besedilo: unseal(r.besedilo),
   negotovo: r.negotovo == null ? [] : jsonIz(unseal(r.negotovo), []),
+  ...(r.ai ? AI_JSON : {}), // prepis modela (fotografija, skenirana stran)
 });
 const pripravaVen = (r) => ({
   id: r.id,
@@ -108,7 +112,7 @@ const pripravaVen = (r) => ({
  * Poti pod /api/students/:id/priprave. loadStudent iz app.js (404 za neobstoječ profil); lastništvo profila preverijo
  * računi pred potjo. now(): ura (testi).
  */
-export function mountPriprave(app, store, { loadStudent, now = () => Date.now(), log = console }) {
+export function mountPriprave(app, store, { loadStudent, now = () => Date.now(), log = console, usage = null, rightsFor = null, readFn = readNotePhoto }) {
   const db = store.db;
   // Izbris profila (DELETE /api/students/:id, store.deleteStudent) odnese priprave s kaskado; s secure_delete, da
   // šifrirani izvirniki ne ostanejo v prostih straneh baze (izbris računa: server/accounts/izbris.js).
@@ -132,26 +136,61 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       .map(virVen);
   const celotna = (p) => ({ ...pripravaVen(db.prepare("SELECT * FROM priprave WHERE id = ?").get(p.id)), viri: viriOd(p) });
 
-  // Obdelava vira brez AI (PR 3a): besedilo, Word, PowerPoint, PDF z besedilom → izseki. Fotografije in skenirane
-  // strani PDF čakajo na branje (PR 3b). PDF bere ločena nit; hkrati največ OBDELAVE_HKRATI, sicer vir ostane »caka«
-  // in ga odjemalec obdela pozneje (POST …/viri/:vid/obdelaj).
+  // Obdelava vira (PR 3a): besedilo, Word, PowerPoint, PDF z besedilom → izseki. Shranjeni prepisi modela (fotografija,
+  // skenirane strani PDF, PR 3b) se vstavijo na svoje strani, zato ponovna obdelava ne kliče modela. Vir ostane
+  // »branje«, dokler ima neprebrane skenirane strani. Uvoz teče v ločeni niti; hkrati največ OBDELAVE_HKRATI, sicer
+  // vir ostane »caka« in ga odjemalec obdela pozneje (POST …/viri/:vid/obdelaj).
   let obdelujem = 0;
   const OBDELAVE_HKRATI = 2;
   const napakaVira = (vir, koda) => db.prepare("UPDATE priprava_viri SET stanje = 'napaka', napaka = ? WHERE id = ?").run(koda, vir.id);
+  const obstaja = (virId) => !!db.prepare("SELECT 1 FROM priprava_viri WHERE id = ?").get(virId);
+  const prepisiVira = (virId) => db.prepare("SELECT stran, stanje, besedilo FROM priprava_prepisi WHERE vir_id = ? ORDER BY stran").all(virId);
+  const besedilaPrepisov = (rows) => Object.fromEntries(rows.filter((r) => r.stanje === "ok" && r.besedilo).map((r) => [r.stran, unseal(r.besedilo)]));
+  const shraniPrepis = (vir, stran, stanje, besedilo = null) =>
+    db
+      .prepare(
+        `INSERT INTO priprava_prepisi (vir_id, priprava_id, student_id, stran, stanje, besedilo) VALUES (?, ?, ?, ?, ?, ?)
+         ON CONFLICT (vir_id, stran) DO UPDATE SET stanje = excluded.stanje, besedilo = excluded.besedilo, created_at = datetime('now')`,
+      )
+      .run(vir.id, vir.priprava_id, vir.student_id, stran, stanje, besedilo == null ? null : seal(besedilo));
+  // Skenirane strani vira PDF iz opozoril zadnjega uvoza.
+  const skeniraneStrani = (vir) => jsonIz(vir.opozorila, []).find((o) => o?.koda === "uvoz_brez_besedila")?.strani || [];
+
+  // Izseki iz izvirnika in shranjenih prepisov. Fotografija: prepis strani 1. Vrne false, če vira ni več.
+  async function sestavi(vir, buf) {
+    const rows = prepisiVira(vir.id);
+    const prepisi = besedilaPrepisov(rows);
+    const ai = new Set(Object.keys(prepisi).map(Number));
+    if (vir.vrsta === "slika") {
+      const r = rows.find((x) => x.stran === 1);
+      const izseki = prepisi[1] ? razrezi((await preberiVir("besedilo", Buffer.from(prepisi[1], "utf8"))).strani).map((i) => ({ ...i, ai: true })) : [];
+      if (!izseki.length) {
+        if (!r) return obstaja(vir.id);
+        napakaVira(vir, r.stanje === "neucno" ? "branje_neucno" : "branje_prazno");
+        return obstaja(vir.id);
+      }
+      return shraniIzseke(db, { vir, izseki, strani: 1, opozorila: [], stanje: "obdelan", seal });
+    }
+    const r = await uvoziVNiti(vir.vrsta, buf, { prepisi });
+    const prebrane = new Set(rows.map((x) => x.stran));
+    const brez = r.brezBesedila.slice(0, 100);
+    const opozorila = [...r.opozorila, ...(brez.length ? [{ koda: "uvoz_brez_besedila", strani: brez }] : [])];
+    const brezSlike = rows.filter((x) => x.stanje === "sken_ni_slike" || x.stanje === "sken_napaka").map((x) => x.stran);
+    if (brezSlike.length) opozorila.push({ koda: "sken_ni_slike", strani: brezSlike });
+    const stanje = brez.some((n) => !prebrane.has(n)) ? "branje" : "obdelan";
+    return shraniIzseke(db, { vir, izseki: r.izseki.map((i) => ({ ...i, ai: ai.has(i.stran) })), strani: r.strani, opozorila, stanje, seal });
+  }
+
   async function obdelaj(vir, buf) {
     if (vir.vrsta === "slika") {
-      db.prepare("UPDATE priprava_viri SET stanje = 'branje' WHERE id = ?").run(vir.id);
+      if (!prepisiVira(vir.id).length) db.prepare("UPDATE priprava_viri SET stanje = 'branje' WHERE id = ?").run(vir.id);
+      else await sestavi(vir, buf);
       return;
     }
     if (obdelujem >= OBDELAVE_HKRATI) return;
     obdelujem++;
     try {
-      const r = await uvoziVNiti(vir.vrsta, buf);
-      const izseki = r.izseki;
-      const opozorila = [...r.opozorila, ...(r.brezBesedila.length ? [{ koda: "uvoz_brez_besedila", strani: r.brezBesedila.slice(0, 100) }] : [])];
-      // Samo skenirane strani (PDF brez besedila): čaka na branje fotografij.
-      const stanje = !izseki.length && r.brezBesedila.length ? "branje" : "obdelan";
-      shraniIzseke(db, { vir, izseki, strani: r.strani, opozorila, stanje, seal });
+      await sestavi(vir, buf);
     } catch (e) {
       if (!(e instanceof NapakaUvoza)) throw e;
       napakaVira(vir, e.code);
@@ -350,7 +389,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     res.send(buf);
   });
 
-  // Ponovna obdelava vira (vir »caka« ali »napaka«, ali po izboljšanem uvozu). Fotografije: 409 (branje je PR 3b).
+  // Ponovna obdelava vira (vir »caka« ali »napaka«, ali po izboljšanem uvozu). Fotografije: 409 (preberi jih …/preberi).
   app.post("/api/students/:id/priprave/:pid/viri/:vid/obdelaj", async (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -358,7 +397,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!p) return niPriprave(res);
     const v = enVir(s, p, req);
     if (!v) return niVira(res);
-    if (v.vrsta === "slika") return res.status(409).json({ error: "Fotografije prebere branje zapiskov.", code: "priprava_branje" });
+    if (v.vrsta === "slika") return res.status(409).json({ error: "Fotografijo prebere …/preberi.", code: "priprava_branje" });
+    if (berem.has(v.id)) return res.status(409).json({ error: "Vir se že bere.", code: "priprava_zasedeno" });
     if (obdelujem >= OBDELAVE_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Obdelava že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
     const buf = preberiIzvirnik(db, v.id);
     if (!buf) return res.status(404).json({ error: "Izvirnika ni več.", code: "priprava_ni_izvirnika" });
@@ -370,6 +410,169 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     }
     uporabljena(p);
     res.json({ vir: viriOd(p).find((x) => x.id === v.id) || null });
+  });
+
+  // Branje z modelom (PR 3b): fotografija vira ali skenirane strani PDF (največ SKEN_NAENKRAT na zahtevek; slike strani
+  // naredi sken.js v ločeni niti). Isto branje kot »Moji zapiski« (server/zapiski.js readNotePhoto: prepis brez
+  // popravkov, imena → [ime], zavrnitev neučnih fotografij, zastavica stiske), ista mesečna meja strani (STRANI, ena
+  // slika = ena stran) in trda meja AI. Prepisi se shranijo šifrirano (priprava_prepisi), izseki iz njih imajo oznako AI.
+  // Že prebrane strani se ne berejo znova (brez stroška); fotografijo prebere znova ?znova=1, slabši izid (neučno,
+  // prazno) pa ne zamenja dobrega prejšnjega. Stran se ne porabi, če klica ni bilo. Izvirnik ostane šifriran.
+  const berem = new Set();
+  const SKEN_NAENKRAT = 5;
+  const SLIKA_MODEL_B64 = 5 * 1024 * 1024; // meja slike pri modelu (base64)
+  const straniInfo = (s) => {
+    const limit = pageLimit(rightsFor ? rightsFor(s.id) : null, s.settings);
+    const used = pagesUsed(db, s.id);
+    return { used, limit, left: Math.max(0, limit - used), renews: nextMonth() };
+  };
+  // Ena slika: stran iz meje, trda meja AI, klic. Vrne { stanje: ok|neucno|prazno, besedilo } ali { ustavi: meja|ai|mock }.
+  // Zastavica stiske gre v st.nujno takoj po klicu, da jo dobi tudi odgovor ob poznejši napaki.
+  async function preberiSliko(s, b64, mediaType, st) {
+    if (!takePage(db, s.id, pageLimit(rightsFor ? rightsFor(s.id) : null, s.settings))) return { ustavi: "meja" };
+    const hold = usage?.guard ? usage.guard(s.id, readReserveUsd()) : null;
+    if (usage?.guard && !hold) {
+      givePage(db, s.id);
+      return { ustavi: "ai" };
+    }
+    let placano = false;
+    try {
+      const out = await readFn({ imageBase64: b64, mediaType });
+      if (out.mock) {
+        givePage(db, s.id);
+        return { ustavi: "mock" };
+      }
+      if (out.usage) {
+        placano = true;
+        try {
+          usage?.log(s.id, out.model, out.usage, "priprava");
+        } catch {
+          // profil izbrisan med klicem: zapis stroška ne sme zavreči odgovora (stiska)
+        }
+      }
+      if (out.distress && !st.nujno) st.nujno = nujnoZa(out.distress, s.settings);
+      if (out.unrelated) return { stanje: "neucno" };
+      return out.text ? { stanje: "ok", besedilo: out.text } : { stanje: "prazno" };
+    } catch (e) {
+      if (!placano) givePage(db, s.id);
+      throw e;
+    } finally {
+      hold?.release();
+    }
+  }
+
+  // Slike skeniranih strani v ločeni niti. Če nit pade (čas, pomnilnik, poškodovana stran), poskusi strani eno po eno;
+  // stran, ki tudi sama pade, dobi »sken_napaka« in se ne poskuša znova (vir lahko konča obdelavo).
+  async function slikeZaStrani(buf, strani) {
+    try {
+      return (await uvoziVNiti("pdf", buf, { sken: { strani, najvec: strani.length } })).slike;
+    } catch (e) {
+      if (!(e instanceof NapakaUvoza)) throw e;
+      if (strani.length === 1) return [{ stran: strani[0], napaka: "sken_napaka" }];
+      const out = [];
+      for (const n of strani) out.push(...(await slikeZaStrani(buf, [n])));
+      return out;
+    }
+  }
+
+  app.post("/api/students/:id/priprave/:pid/viri/:vid/preberi", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const p = ena(s, req);
+    if (!p) return niPriprave(res);
+    const v = enVir(s, p, req);
+    if (!v) return niVira(res);
+    if (v.vrsta !== "slika" && v.vrsta !== "pdf") return res.status(409).json({ error: "Branje je samo za fotografije in skenirane strani PDF.", code: "priprava_ni_slika" });
+    const vir = () => viriOd(p).find((x) => x.id === v.id) || null;
+    const rows = prepisiVira(v.id);
+    const prej = new Map(rows.map((r) => [r.stran, r.stanje]));
+    const cilji = v.vrsta === "slika" ? (req.query.znova === "1" || !prej.has(1) ? [1] : []) : skeniraneStrani(v).filter((n) => !prej.has(n));
+    // Nič za brati: izseki iz shranjenih prepisov (če jih ni, na primer po napaki), brez klica modela.
+    const sestaviBrez = !cilji.length && v.stanje !== "obdelan" && rows.some((r) => r.stanje === "ok");
+    if (!cilji.length && !sestaviBrez) return res.json({ vir: vir(), pages: straniInfo(s) });
+    if (berem.has(v.id)) return res.status(409).json({ error: "Vir se že bere.", code: "priprava_zasedeno" });
+    const buf = preberiIzvirnik(db, v.id);
+    if (!buf) return res.status(404).json({ error: "Izvirnika ni več.", code: "priprava_ni_izvirnika" });
+    // Ločena nit (skenirane strani PDF, zmanjšanje prevelike fotografije JPEG) šteje v mejo hkratnih obdelav.
+    const nit = v.vrsta === "pdf" || (cilji.length > 0 && v.mime === MIME.jpeg && Math.ceil(buf.length / 3) * 4 > SLIKA_MODEL_B64);
+    if (nit && obdelujem >= OBDELAVE_HKRATI) return res.status(429).set("Retry-After", "5").json({ error: "Obdelava že teče. Poskusi čez nekaj sekund.", code: "priprava_zasedeno" });
+    if (cilji.length) {
+      const blocked = usage?.blockInfo?.(s.id);
+      if (blocked) return res.status(429).json(blocked);
+      if (straniInfo(s).left < 1) return res.status(429).json({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: straniInfo(s) });
+    }
+    berem.add(v.id);
+    if (nit) obdelujem++;
+    const st = { nujno: null };
+    const dodatno = () => (st.nujno ? { nujno: st.nujno } : {});
+    const prebrano = [];
+    try {
+      let ustavi = null;
+      if (cilji.length) {
+        let slike;
+        if (v.vrsta === "slika") {
+          let b64 = buf.toString("base64");
+          let mime = v.mime;
+          if (b64.length > SLIKA_MODEL_B64 && v.mime === MIME.jpeg) {
+            // Prevelika fotografija JPEG se zmanjša (sivine, 1568 točk) v ločeni niti.
+            const r = await uvoziVNiti("slika", buf, { sken: { strani: [1], najvec: 1, jpeg: true } }).catch(() => null);
+            if (r?.slike?.[0]?.png) [b64, mime] = [r.slike[0].png, "image/png"];
+            else if (r?.slike?.[0]?.prazna) b64 = null;
+          }
+          if (b64 && b64.length > SLIKA_MODEL_B64) {
+            if (!prej.has(1)) napakaVira(v, "branje_velika");
+            return res.status(413).json({ error: "Fotografija je prevelika za branje. Fotografiraj znova ali jo zmanjšaj.", code: "priprava_slika_velika", vir: vir() });
+          }
+          slike = [b64 ? { stran: 1, b64, mime } : { stran: 1, prazna: true }];
+        } else {
+          const k = Math.min(SKEN_NAENKRAT, cilji.length, straniInfo(s).left);
+          slike = (await slikeZaStrani(buf, cilji.slice(0, k))).map((x) => (x.png ? { stran: x.stran, b64: x.png, mime: "image/png" } : x));
+        }
+        for (const sl of slike) {
+          if (!obstaja(v.id)) break;
+          // Brez klica modela (in brez strani iz meje): prazna stran, stran brez slike, stran, ki je nit ni prebrala.
+          const brez = sl.prazna ? "prazno" : sl.napaka || (sl.b64.length > SLIKA_MODEL_B64 ? "sken_ni_slike" : null);
+          if (brez) {
+            if (brez !== "prazno" || prej.get(sl.stran) !== "ok") shraniPrepis(v, sl.stran, brez);
+            prebrano.push({ stran: sl.stran, stanje: brez });
+            continue;
+          }
+          const o = await preberiSliko(s, sl.b64, sl.mime, st);
+          if (o.ustavi) {
+            ustavi = o.ustavi;
+            break;
+          }
+          // Ponovno branje: slabši izid ne zamenja dobrega prejšnjega prepisa.
+          if (!obstaja(v.id)) break;
+          if (o.stanje === "ok" || prej.get(sl.stran) !== "ok") shraniPrepis(v, sl.stran, o.stanje, o.besedilo);
+          prebrano.push({ stran: sl.stran, stanje: o.stanje });
+        }
+      }
+      if (!obstaja(v.id)) return res.status(404).json({ error: "Vir ne obstaja.", ...dodatno() });
+      if (!prebrano.length && ustavi) {
+        if (ustavi === "mock") return res.json({ vir: vir(), pages: straniInfo(s), mock: true });
+        if (ustavi === "ai") return res.status(429).json(usage.guardBlock(s.id));
+        return res.status(429).json({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: straniInfo(s) });
+      }
+      if (!(await sestavi(v, buf))) return res.status(404).json({ error: "Vir ne obstaja.", ...dodatno() });
+      uporabljena(p);
+      const ai = prebrano.some((x) => x.stanje === "ok") ? AI_JSON : {};
+      const zdaj = { vir: vir(), pages: straniInfo(s), prebrano, ...(ustavi ? { ustavljeno: ustavi } : {}), ...ai, ...dodatno() };
+      if (v.vrsta === "slika" && prebrano[0]?.stanje === "neucno") return res.status(422).json({ error: "To niso zapiski za šolo.", code: "zapiski_neucno", ...zdaj });
+      res.json(zdaj);
+    } catch (e) {
+      // Vir brez izsekov po napaki ostane »napaka«; shranjeni prepisi ostanejo, zato ponovni poskus ne plača znova.
+      if (v.vrsta === "slika" && obstaja(v.id) && !prepisiVira(v.id).some((r) => r.stanje === "ok")) napakaVira(v, "branje_napaka");
+      log.error?.(`[evklid] branje vira priprave: ${e?.name || "napaka"}`);
+      res.status(e instanceof NapakaUvoza ? 422 : 502).json({
+        error: e instanceof NapakaUvoza ? e.message : "Branje trenutno ne deluje. Poskusi znova.",
+        code: e instanceof NapakaUvoza ? e.code : "priprava_branje_napaka",
+        ...dodatno(),
+      });
+    } finally {
+      berem.delete(v.id);
+      if (nit) obdelujem--;
+    }
   });
 
   // Izseki priprave (vsi viri ali en vir: ?vir=<id>; ?vrsta=<vrsta>), v vrstnem redu virov in zaporedja.
