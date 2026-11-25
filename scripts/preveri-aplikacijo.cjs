@@ -1304,8 +1304,14 @@ async function views(p, label) {
   }
 }
 
+// Nastavitve so v skupinah (<details>, index.html): pred dotikom polja v zaprti skupini jo odpremo.
+const odpriSkupino = (p, sel) =>
+  p.evaluate((sel) => {
+    for (let d = document.querySelector(sel)?.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true;
+  }, sel);
 async function settingsChange(p) {
   await tab(p, "settings");
+  await odpriSkupino(p, '#settings-form select[name="data_mode"]');
   const sel = p.locator('#settings-form select[name="data_mode"]');
   await sel.selectOption("lite");
   await click(p, '#settings-form button[type="submit"]', { wait: 300 });
@@ -1317,6 +1323,35 @@ async function settingsChange(p) {
   if (saved !== "lite") throw new Error(`nastavitev ni shranjena (${saved})`);
   await sel.selectOption("auto");
   await click(p, '#settings-form button[type="submit"]', { wait: 300 });
+}
+
+// Nastavitve na telefonu (j 25. 11. 2026: bile so 8,9 zaslona): skupine, privzeto odprta le Učenje, so skupaj največ
+// NASTAVITVE_ZASLONOV zaslonov; kartica Varnost (stiska, starši) je vidna brez dotika (ni v zaprti skupini).
+const NASTAVITVE_ZASLONOV = 3.5;
+async function nastavitveTelefon(p) {
+  await tab(p, "settings");
+  await p.evaluate(() => document.querySelectorAll("#view-settings details[data-skupina]").forEach((d) => (d.open = d.dataset.skupina === "ucenje")));
+  await settle(p, 300);
+  const r = await p.evaluate(() => {
+    const v = document.querySelector("#view-settings");
+    const s = document.querySelector("#safety-card");
+    const glave = [...v.querySelectorAll(".set-grp > summary")].filter((x) => x.getClientRects().length);
+    return {
+      zasloni: v.scrollHeight / innerHeight,
+      varnost: !!s && s.getClientRects().length > 0 && !s.closest("details") && !!s.textContent.trim(),
+      glave: glave.length,
+      nizke: glave.filter((x) => x.getBoundingClientRect().height < 44).length,
+    };
+  });
+  if (r.zasloni > NASTAVITVE_ZASLONOV) throw new Error(`Nastavitve so dolge ${r.zasloni.toFixed(1)} zaslona (največ ${NASTAVITVE_ZASLONOV})`);
+  if (!r.varnost) throw new Error("kartica Varnost ni vidna brez dotika");
+  if (r.glave < 4 || r.nizke) throw new Error(`glave skupin: ${r.glave}, nižjih od 44 px: ${r.nizke}`);
+  await screen(p, "nastavitve-skupine");
+  // Dotik glave odpre skupino in pokaže njeno vsebino, drugi dotik jo zapre.
+  await click(p, '#view-settings [data-skupina="videz"] > summary', { wait: 200 });
+  await expectVisible(p, "#appearance", "Videz po dotiku glave skupine");
+  await click(p, '#view-settings [data-skupina="videz"] > summary', { wait: 200 });
+  if (await p.locator("#appearance").isVisible()) throw new Error("drugi dotik ne zapre skupine Videz");
 }
 
 async function schedule(p) {
@@ -1565,6 +1600,7 @@ async function desktop(browser, app) {
           if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj v srednji šoli");
           if (await p.locator("#tour").isVisible()) throw new Error("vodič v srednji šoli");
           await tab(p, "settings");
+          await odpriSkupino(p, "#tour-again");
           await click(p, "#tour-again", { wait: 200 });
           await closeTour(p, "esc");
         } else await intro(p, name, opts);
@@ -1736,10 +1772,12 @@ async function phone(browser, app) {
   await step(p, "tel-vodic", async () => {
     await barTab(p, "me", { wait: 200 });
     await click(p, '#view-me [data-go="settings"]', { wait: 300 });
+    await odpriSkupino(p, "#tour-again");
     await click(p, "#tour-again", { wait: 200 });
     await closeTour(p, "vse");
     if ((await currentView(p)) !== "view-path") throw new Error("po vodiču ni odprta Učna pot");
   });
+  await step(p, "tel-nastavitve-skupine", () => nastavitveTelefon(p));
   // Uči se (Učbenik | Laboratorij | 3D svet, j 4. 11.), Inštruktor in četrto mesto: Tekmovanja ali NPZ/Matura.
   const fourth = await p.locator("#competition-tab-m").getAttribute("data-view");
   for (const v of ["uci", "chat", fourth]) {

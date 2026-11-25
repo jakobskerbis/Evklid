@@ -4648,5 +4648,17 @@
   "a3.grp.encimi": "Enzimi",
   "a3.grp.ovoji-virusa": "Strati del virus",
   "a3.grp.rep": "Coda",
-  "a3.grp.gostitelj": "Batterio ospite"
+  "a3.grp.gostitelj": "Batterio ospite",
+  "set.grpLearn": "Apprendimento",
+  "set.grpLearnSub": "Materia, obiettivo, modalità di risoluzione, tutor, scuola",
+  "set.grpTutor": "Tutor e consumo di dati",
+  "set.grpSchool": "Scuola, anno e nome",
+  "set.grpLook": "Aspetto",
+  "set.grpLookSub": "Stile, colori, schermo intero, finestre mobili",
+  "set.grpInput": "Inserimento e lingua",
+  "set.grpInputSub": "Tastiera di Evklid e lingua dell'app",
+  "set.grpProfiles": "Account e profili",
+  "set.grpProfilesSub": "Account e profili degli studenti",
+  "set.grpHelp": "Aiuto",
+  "set.grpHelpSub": "Tour introduttivo e guida all'app"
 }

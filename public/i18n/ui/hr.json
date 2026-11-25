@@ -4679,5 +4679,17 @@
   "a3.grp.encimi": "Enzimi",
   "a3.grp.ovoji-virusa": "Slojevi virusa",
   "a3.grp.rep": "Rep",
-  "a3.grp.gostitelj": "Bakterija domaćin"
+  "a3.grp.gostitelj": "Bakterija domaćin",
+  "set.grpLearn": "Učenje",
+  "set.grpLearnSub": "Predmet, cilj, način rješavanja, instruktor, škola",
+  "set.grpTutor": "Instruktor i prijenos podataka",
+  "set.grpSchool": "Škola, razred i ime",
+  "set.grpLook": "Izgled",
+  "set.grpLookSub": "Stil, boje, cijeli zaslon, pomični prozori",
+  "set.grpInput": "Unos i jezik",
+  "set.grpInputSub": "Evklidova tipkovnica i jezik aplikacije",
+  "set.grpProfiles": "Račun i profili",
+  "set.grpProfilesSub": "Račun i profili učenika",
+  "set.grpHelp": "Pomoć",
+  "set.grpHelpSub": "Uvodni obilazak i vodič kroz aplikaciju"
 }

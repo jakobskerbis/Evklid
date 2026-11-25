@@ -311,8 +311,13 @@
   <main id="view-settings" class="view narrow" hidden>
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 data-i18n="set.title">Nastavitve</h1>
+    <!-- Nastavitve v skupinah (j 25. 11. 2026: na telefonu je bilo 8,9 zaslona): odprta je samo Učenje, ostale se odprejo
+         z dotikom; stanje si naprava zapomni (app.js nastavitveSkupine). Varnost je zunaj skupin in vedno vidna. -->
     <div class="set-cols">
-    <form id="settings-form" class="card form">
+    <div class="set-col">
+    <details class="card set-grp" data-skupina="ucenje" open>
+      <summary class="set-grp-head"><span class="ic"><i data-icon="graduation-cap"></i></span><span class="lr-text"><b data-i18n="set.grpLearn">Učenje</b><small data-i18n="set.grpLearnSub">Predmet, cilj, način reševanja, inštruktor, šola</small></span><i data-icon="chevron-down"></i></summary>
+    <form id="settings-form" class="form">
       <!-- Fakulteta: predmeti iz predmetnika izbrane smeri namesto MAT/FIZ/KEM -->
       <label id="course-row" hidden><span data-i18n="set.subject">Predmet</span>
         <select name="study_course"></select>
@@ -345,6 +350,15 @@
         <label class="radio"><input type="radio" name="solving_mode" value="A"> <span data-i18n="set.modeA">A – vodenje korak za korakom</span></label>
         <label class="radio"><input type="radio" name="solving_mode" value="B"> <span data-i18n="set.modeB">B – celotna rešitev z razlago</span></label>
       </fieldset>
+      <label><span data-i18n="set.weak">Znane šibke točke (ločene z vejico)</span>
+        <input name="manual_weaknesses" placeholder="npr. ulomki, pretvarjanje enot" data-i18n-ph="set.weakPh">
+      </label>
+      <label class="check-row"><input type="checkbox" name="games">
+        <span><b data-i18n="set.hideGames">Skrij igre</b><small class="muted" data-i18n="set.hideGamesNote">Razdelek Igre se skrije. Napredek, kovanci in avatar ostanejo.</small></span>
+      </label>
+      <details class="set-sub" data-skupina="instruktor">
+        <summary class="set-sub-head"><span data-i18n="set.grpTutor">Inštruktor in prenos podatkov</span><i data-icon="chevron-down"></i></summary>
+        <div class="set-sub-body">
       <label><span data-i18n="set.personality">Osebnost / tema razlage</span>
         <input name="personality_setting" maxlength="200" placeholder="npr. strog, šaljiv, primeri iz nogometa" data-i18n-ph="set.personalityPh">
       </label>
@@ -372,13 +386,12 @@
         </select>
         <small class="muted" data-i18n="set.dataNote">Krajši odgovori inštruktorja, manjše fotografije, brez animacij in brez dodatne pisave. Naloge za učno pot se shranijo za vadbo brez povezave.</small>
       </label>
-      <label class="check-row"><input type="checkbox" name="games">
-        <span><b data-i18n="set.hideGames">Skrij igre</b><small class="muted" data-i18n="set.hideGamesNote">Razdelek Igre se skrije. Napredek, kovanci in avatar ostanejo.</small></span>
-      </label>
-      <label><span data-i18n="set.weak">Znane šibke točke (ločene z vejico)</span>
-        <input name="manual_weaknesses" placeholder="npr. ulomki, pretvarjanje enot" data-i18n-ph="set.weakPh">
-      </label>
+        </div>
+      </details>
       <!-- Redko spremenjeno: šola in ime (najpogostejše nastavitve so zgoraj). -->
+      <details class="set-sub" data-skupina="sola">
+        <summary class="set-sub-head"><span data-i18n="set.grpSchool">Šola, letnik in ime</span><i data-icon="chevron-down"></i></summary>
+        <div class="set-sub-body">
       <fieldset class="level-field">
         <legend data-i18n="set.school">Šola in letnik</legend>
         <label class="system-field"><span data-i18n="set.system">Država in šolski sistem</span>
@@ -391,53 +404,47 @@
         <input type="hidden" name="curriculum_level">
       </fieldset>
       <label><span data-i18n="set.name">Ime</span> <input name="name" maxlength="40" required></label>
+        </div>
+      </details>
       <div class="form-actions">
         <button class="primary" type="submit" data-i18n="common.save">Shrani</button>
         <span id="settings-saved" class="muted with-icon" hidden><i data-icon="check"></i><span data-i18n="common.saved">Shranjeno</span></span>
       </div>
     </form>
 
-    <div class="card list-card" id="settings-account" hidden>
-      <button type="button" class="list-row" data-go="account"><span class="ic"><i data-icon="user"></i></span><span class="lr-text"><b data-i18n="nav.account">Račun</b><small data-i18n="me.accountSub">Naročnina in otroci</small></span><i data-icon="chevron-right"></i></button>
-    </div>
-
-    <div id="appearance" class="card appearance"></div>
-    <div id="tipkovnica-card" class="card" hidden></div>
-
-    <div id="fullscreen-card" class="card" hidden></div>
-    <div id="okna-card" class="card okna-card" hidden></div>
-
     <div class="card" id="corner-settings">
       <h2 data-i18n="set.corner">Kotiček zanimanj</h2>
       <p class="muted" id="corner-summary" data-i18n="set.cornerNone">Zanimanja še niso izbrana.</p>
       <button type="button" class="secondary" id="corner-edit"><i data-icon="pencil"></i><span data-i18n="corner.edit">Uredi zanimanja</span></button>
     </div>
+    </details>
+    </div>
 
+    <!-- Stolpca sta stalna (računalnik): skupina, ki se odpre ali zapre, ne skoči v drug stolpec. -->
+    <div class="set-col">
+    <details class="card set-grp" data-skupina="videz">
+      <summary class="set-grp-head"><span class="ic"><i data-icon="palette"></i></span><span class="lr-text"><b data-i18n="set.grpLook">Videz</b><small data-i18n="set.grpLookSub">Slog, barve, celozaslonski način, premična okna</small></span><i data-icon="chevron-down"></i></summary>
+    <div id="appearance" class="card appearance"></div>
+    <div id="fullscreen-card" class="card" hidden></div>
+    <div id="okna-card" class="card okna-card" hidden></div>
+    </details>
+
+    <details class="card set-grp" data-skupina="vnos">
+      <summary class="set-grp-head"><span class="ic"><i data-icon="keyboard"></i></span><span class="lr-text"><b data-i18n="set.grpInput">Vnos in jezik</b><small data-i18n="set.grpInputSub">Evklidova tipkovnica in jezik aplikacije</small></span><i data-icon="chevron-down"></i></summary>
+    <div id="tipkovnica-card" class="card" hidden></div>
     <!-- Jezik se nastavi enkrat, zato je med redkejšimi nastavitvami (j, 2. 11. 2026). -->
     <div id="language-card" class="card"></div>
+    </details>
 
-    <div id="install-settings" hidden></div>
+    <details class="card set-grp" data-skupina="profili">
+      <summary class="set-grp-head"><span class="ic"><i data-icon="users"></i></span><span class="lr-text"><b data-i18n="set.grpProfiles">Račun in profili</b><small data-i18n="set.grpProfilesSub">Račun in profili učencev</small></span><i data-icon="chevron-down"></i></summary>
+    <div class="card list-card" id="settings-account" hidden>
+      <button type="button" class="list-row" data-go="account"><span class="ic"><i data-icon="user"></i></span><span class="lr-text"><b data-i18n="nav.account">Račun</b><small data-i18n="me.accountSub">Naročnina in otroci</small></span><i data-icon="chevron-right"></i></button>
+    </div>
 
     <div class="card" hidden>
       <h2 data-i18n="set.usage">Poraba AI ta mesec</h2>
       <div id="usage"></div>
-    </div>
-
-    <div class="card">
-      <h2 data-i18n="set.help">Pomoč</h2>
-      <p class="muted" data-i18n="set.helpText">Kratek ogled pokaže, kje je kaj v aplikaciji.</p>
-      <div class="actions help-actions">
-        <button id="tour-again" type="button" class="secondary"><i data-icon="circle-help"></i><span data-i18n="set.tourAgain">Ponovi uvodni ogled</span></button>
-        <button id="guide-open" type="button" class="secondary" aria-expanded="false" aria-controls="guide-list"><i data-icon="book-open"></i><span data-i18n="guide.title">Vodič po aplikaciji</span></button>
-      </div>
-      <!-- Vodič po aplikaciji (public/vodic.js): isti seznam kot v aplikaciji (Jaz → Vodič). -->
-      <div id="guide-list" class="list-card guide-list" hidden></div>
-    </div>
-
-    <!-- Varnost ob stiski (j 25. 11. 2026): učenec vnaprej ve, kdo dobi obvestilo (server/stiska-obvestilo.js). -->
-    <div class="card" id="safety-card">
-      <h2 data-i18n="set.safety">Varnost</h2>
-      <p class="muted" data-i18n="set.safetyText">Ko Evklid v pogovoru opazi, da si v stiski ali v nevarnosti, ti takoj pokaže številke za pomoč. Pri učencih, mlajših od 15 let, dobi e-mail tudi starš, ki je odprl račun (brez vsebine pogovora). Če pišeš o nasilju, staršem ne pišemo.</p>
     </div>
 
     <div class="card" id="new-student-card">
@@ -454,6 +461,31 @@
       <!-- Besedilo z imenom profila nastavi fillSettingsForm (app.js). -->
       <p class="muted" id="delete-student-text"></p>
       <button id="delete-student" class="danger" type="button"></button>
+    </div>
+
+    </details>
+
+    <details class="card set-grp" data-skupina="pomoc">
+      <summary class="set-grp-head"><span class="ic"><i data-icon="circle-help"></i></span><span class="lr-text"><b data-i18n="set.grpHelp">Pomoč</b><small data-i18n="set.grpHelpSub">Uvodni ogled in vodič po aplikaciji</small></span><i data-icon="chevron-down"></i></summary>
+    <div id="install-settings" hidden></div>
+
+    <div class="card">
+      <h2 data-i18n="set.help">Pomoč</h2>
+      <p class="muted" data-i18n="set.helpText">Kratek ogled pokaže, kje je kaj v aplikaciji.</p>
+      <div class="actions help-actions">
+        <button id="tour-again" type="button" class="secondary"><i data-icon="circle-help"></i><span data-i18n="set.tourAgain">Ponovi uvodni ogled</span></button>
+        <button id="guide-open" type="button" class="secondary" aria-expanded="false" aria-controls="guide-list"><i data-icon="book-open"></i><span data-i18n="guide.title">Vodič po aplikaciji</span></button>
+      </div>
+      <!-- Vodič po aplikaciji (public/vodic.js): isti seznam kot v aplikaciji (Jaz → Vodič). -->
+      <div id="guide-list" class="list-card guide-list" hidden></div>
+    </div>
+    </details>
+
+    <!-- Varnost ob stiski (j 25. 11. 2026): učenec vnaprej ve, kdo dobi obvestilo (server/stiska-obvestilo.js). -->
+    <div class="card" id="safety-card">
+      <h2 data-i18n="set.safety">Varnost</h2>
+      <p class="muted" data-i18n="set.safetyText">Ko Evklid v pogovoru opazi, da si v stiski ali v nevarnosti, ti takoj pokaže številke za pomoč. Pri učencih, mlajših od 15 let, dobi e-mail tudi starš, ki je odprl račun (brez vsebine pogovora). Če pišeš o nasilju, staršem ne pišemo.</p>
+    </div>
     </div>
     </div>
   </main>

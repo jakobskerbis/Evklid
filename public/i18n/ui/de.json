@@ -4647,5 +4647,17 @@
   "a3.grp.encimi": "Enzyme",
   "a3.grp.ovoji-virusa": "Virushüllen",
   "a3.grp.rep": "Schwanz",
-  "a3.grp.gostitelj": "Wirtsbakterium"
+  "a3.grp.gostitelj": "Wirtsbakterium",
+  "set.grpLearn": "Lernen",
+  "set.grpLearnSub": "Fach, Ziel, Lösungsweg, Tutor, Schule",
+  "set.grpTutor": "Tutor und Datenverbrauch",
+  "set.grpSchool": "Schule, Klasse und Name",
+  "set.grpLook": "Aussehen",
+  "set.grpLookSub": "Stil, Farben, Vollbild, verschiebbare Fenster",
+  "set.grpInput": "Eingabe und Sprache",
+  "set.grpInputSub": "Evklid-Tastatur und App-Sprache",
+  "set.grpProfiles": "Konto und Profile",
+  "set.grpProfilesSub": "Konto und Profile der Lernenden",
+  "set.grpHelp": "Hilfe",
+  "set.grpHelpSub": "Einführung und App-Anleitung"
 }

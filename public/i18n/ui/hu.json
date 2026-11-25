@@ -4645,5 +4645,17 @@
   "a3.grp.encimi": "Enzimek",
   "a3.grp.ovoji-virusa": "A vírus rétegei",
   "a3.grp.rep": "Farok",
-  "a3.grp.gostitelj": "Gazdabaktérium"
+  "a3.grp.gostitelj": "Gazdabaktérium",
+  "set.grpLearn": "Tanulás",
+  "set.grpLearnSub": "Tantárgy, cél, megoldási mód, oktató, iskola",
+  "set.grpTutor": "Oktató és adatforgalom",
+  "set.grpSchool": "Iskola, évfolyam és név",
+  "set.grpLook": "Megjelenés",
+  "set.grpLookSub": "Stílus, színek, teljes képernyő, mozgatható ablakok",
+  "set.grpInput": "Bevitel és nyelv",
+  "set.grpInputSub": "Evklid-billentyűzet és az alkalmazás nyelve",
+  "set.grpProfiles": "Fiók és profilok",
+  "set.grpProfilesSub": "Fiók és tanulói profilok",
+  "set.grpHelp": "Súgó",
+  "set.grpHelpSub": "Bemutató és útmutató az alkalmazáshoz"
 }

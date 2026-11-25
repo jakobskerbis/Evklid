@@ -4647,5 +4647,17 @@
   "a3.grp.encimi": "Enzymes",
   "a3.grp.ovoji-virusa": "Virus layers",
   "a3.grp.rep": "Tail",
-  "a3.grp.gostitelj": "Host bacterium"
+  "a3.grp.gostitelj": "Host bacterium",
+  "set.grpLearn": "Learning",
+  "set.grpLearnSub": "Subject, goal, solving mode, tutor, school",
+  "set.grpTutor": "Tutor and data use",
+  "set.grpSchool": "School, year and name",
+  "set.grpLook": "Appearance",
+  "set.grpLookSub": "Style, colours, full screen, movable windows",
+  "set.grpInput": "Input and language",
+  "set.grpInputSub": "Evklid keyboard and app language",
+  "set.grpProfiles": "Account and profiles",
+  "set.grpProfilesSub": "Account and pupil profiles",
+  "set.grpHelp": "Help",
+  "set.grpHelpSub": "Intro tour and app guide"
 }

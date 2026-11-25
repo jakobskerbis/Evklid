@@ -1382,12 +1382,38 @@ document.querySelectorAll("#view-me [data-go], #settings-account [data-go]").for
 // Klik na kartico s profilom (in »Druga šola ali stopnja …« v glavi Inštruktorja): Nastavitve, na mestu šole in
 // letnika (pod njimi je povezava na Račun). Tam veljajo vsa pravila izbire (stopnja, program, šolski sistem).
 $("#me-head")?.addEventListener("click", () => openSchoolSettings());
+// Nastavitve v skupinah (<details data-skupina>, index.html): odprta je Učenje, druge skupine si naprava zapomni
+// (localStorage evklid.nastavitveSkupine). Pred skokom na polje se odprejo vse skupine nad njim.
+const SKUPINE_KEY = "evklid.nastavitveSkupine";
+function odpriNastavitev(el) {
+  for (let d = el?.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true;
+  return el;
+}
+(() => {
+  let shranjeno = {};
+  try {
+    shranjeno = JSON.parse(localStorageGet(SKUPINE_KEY) || "{}");
+  } catch {}
+  if (!shranjeno || typeof shranjeno !== "object") shranjeno = {};
+  document.querySelectorAll("#view-settings details[data-skupina]").forEach((d) => {
+    if (typeof shranjeno[d.dataset.skupina] === "boolean") d.open = shranjeno[d.dataset.skupina];
+    // Shrani le, kar odpre ali zapre učenec (dotik ali tipka na glavi), ne skoka iz povezave (odpriNastavitev).
+    d.querySelector(":scope > summary").addEventListener("click", () =>
+      setTimeout(() => {
+        shranjeno[d.dataset.skupina] = d.open;
+        localStorageSet(SKUPINE_KEY, JSON.stringify(shranjeno));
+      }),
+    );
+  });
+  // Neveljavno polje v zaprti skupini (npr. prazno ime): skupina se odpre, da brskalnik lahko pokaže napako.
+  $("#settings-form").addEventListener("invalid", (e) => odpriNastavitev(e.target), true);
+})();
 function openSchoolSettings() {
   showView("settings");
-  const el = $("#settings-form .level-field") || $("#settings-form");
+  const el = odpriNastavitev($("#settings-form .level-field")) || $("#settings-form");
   requestAnimationFrame(() => {
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
-    const card = $("#settings-form");
+    const card = $('#settings-form [data-skupina="sola"]') || $("#settings-form");
     card?.classList.remove("flash-target");
     void card?.offsetWidth;
     card?.classList.add("flash-target");
@@ -3179,7 +3205,7 @@ async function fillSettingsForm() {
   if (state.pickUniversity) {
     state.pickUniversity = false;
     levelPicker.set({ ...s, educational_track: "UNIVERZA", study_program: "", curriculum_level: "" });
-    $("#settings-level").scrollIntoView({ block: "center" });
+    odpriNastavitev($("#settings-level")).scrollIntoView({ block: "center" });
   }
 }
 // Jezik aplikacije in inštruktorja: shrani se v profil učenca in na napravo.
@@ -3446,6 +3472,7 @@ $("#goal-modes")?.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-goal-edit], #goal-chip")) {
     showView("settings");
+    odpriNastavitev($("#settings-goal"));
     setTimeout(() => $("#settings-goal")?.closest("fieldset")?.scrollIntoView({ block: "center", behavior: "smooth" }), 60);
     return;
   }

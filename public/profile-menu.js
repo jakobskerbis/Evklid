@@ -145,6 +145,7 @@ function onPick(e) {
     if (D.accountsOn()) return $("#account-tab")?.click();
     D.showView("settings");
     const input = $("#new-student-form input[name=name]");
+    for (let d = input?.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true; // skupina v Nastavitvah
     requestAnimationFrame(() => {
       input?.closest(".card")?.scrollIntoView({ behavior: "smooth", block: "center" });
       input?.focus({ preventScroll: true });

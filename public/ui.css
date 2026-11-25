@@ -948,6 +948,35 @@ body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 /* Nastavitve: največ trije stolpci, na širokem zaslonu na sredini skupaj z naslovom (j, 4. 11. 2026). */
 .set-cols { columns: 400px 3; }
 #view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
+/* Skupine Nastavitev (j 25. 11. 2026: na telefonu je bilo 8,9 zaslona): kartica <details class="card set-grp"> z glavo kot
+   vrstica seznama v »Jaz« (ikona, naslov, podnaslov, puščica); kartice v skupini so njeni deli, ločeni s črto. Podskupine
+   v obrazcu (<details class="set-sub">) so vrstica s puščico. Odpre in zapre se takoj (brez animacije). */
+/* Dva stalna stolpca (Učenje | ostale skupine in Varnost); na ozkem zaslonu eden pod drugim. */
+#view-settings .set-cols { columns: auto; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 20px; }
+.set-col { flex: 1 1 400px; min-width: 0; }
+.set-grp { padding: 0; }
+.set-grp-head:focus-visible, .set-sub-head:focus-visible { outline-offset: -3px; }
+.set-grp > summary, .set-sub > summary { margin: 0; list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
+.set-grp > summary::-webkit-details-marker, .set-sub > summary::-webkit-details-marker { display: none; }
+.set-grp-head { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 10px 16px; border-radius: var(--radius); color: var(--text); }
+.set-grp-head:hover { background: var(--surface-2); }
+.set-grp[open] > .set-grp-head { border-radius: var(--radius) var(--radius) 0 0; }
+.set-grp-head .ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
+.set-grp-head .ic svg.i { width: 22px; height: 22px; }
+.set-grp-head .lr-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.set-grp-head .lr-text b { font-size: 1.05rem; font-weight: 800; }
+.set-grp-head .lr-text small { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
+:is(.set-grp-head, .set-sub-head) > svg.i:last-child { flex: none; color: var(--muted); }
+:is(.set-grp[open] > .set-grp-head, .set-sub[open] > .set-sub-head) > svg.i:last-child { transform: rotate(180deg); }
+#view-settings .set-grp > :not(summary) { margin: 0; padding: 20px; border: 0; border-top: 1px solid var(--border); border-radius: 0; box-shadow: none; background: none; }
+#view-settings .set-grp > .list-card { padding: 6px; }
+@media (max-width: 760px) { #view-settings .set-grp > :not(summary, .list-card) { padding: 16px; } }
+/* Naslov skupine že pove, kaj je v kartici (Videz, Pomoč). */
+.set-grp > #appearance > h2:first-child, .set-grp > .card > h2[data-i18n="set.help"] { display: none; }
+.set-sub { border: 1.5px solid var(--border); border-radius: var(--radius-sm); }
+.set-sub-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 8px 14px; color: var(--text); font-weight: 800; font-size: 0.92rem; border-radius: var(--radius-sm); }
+.set-sub-head:hover { background: var(--surface-2); }
+.set-sub-body { display: flex; flex-direction: column; gap: 14px; padding: 4px 14px 14px; }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
 /* Učna pot: sklopi po vrsticah (1, 2, 3 v prvi vrsti, nato 4, 5, 6), ne po stolpcih (j, 17. 11. 2026); stolpci kot zgoraj
