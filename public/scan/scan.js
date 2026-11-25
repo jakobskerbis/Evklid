@@ -31,6 +31,17 @@ const fresh = () => ({
   shot: null, // zadnja prebrana fotografija (samo v pomnilniku; za pilot se shrani le ob soglasju)
 });
 const S = fresh();
+// slika iz galerije je blob: URL; sprostimo ga, ko sliko zamenjamo ali zapremo (sicer ostane v pomnilniku)
+function setImage(image) {
+  const old = S.image?.url;
+  if (old?.startsWith?.("blob:") && old !== image?.url) URL.revokeObjectURL(old);
+  S.image = image;
+}
+function resetState() {
+  setImage(null);
+  Object.assign(S, fresh());
+  aiSeq++;
+}
 let owner = null; // profil, čigar naloga je v S (drug profil začne na praznem zaslonu)
 let aiSeq = 0; // odgovor AI za prejšnjo nalogo ne prepiše nove
 let aio = null; // public/ai-oznaka/ (AI Act)
@@ -113,8 +124,7 @@ function tr(item) {
 export function showScan({ text = null, goal = null } = {}) {
   if (owner !== sid()) {
     owner = sid();
-    Object.assign(S, fresh());
-    aiSeq++;
+    resetState();
     pilotTask = null; // naloga pilota prejšnjega profila (skupna naprava) ne velja za novega (B4)
     if (stream) stopCamera();
   }
@@ -135,8 +145,7 @@ export function showScan({ text = null, goal = null } = {}) {
 export function startPilotScan(task) {
   pilotTask = task;
   owner = sid();
-  Object.assign(S, fresh());
-  aiSeq++;
+  resetState();
   frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
 }
 
@@ -144,14 +153,14 @@ export function startPilotScan(task) {
 export function startTutorScan(onSend) {
   tutorMode = { onSend };
   owner = sid();
-  Object.assign(S, fresh());
-  aiSeq++;
+  resetState();
   frame = { ...TUTOR_FRAME };
 }
 
 export function scanBack() {
   if (S.mode === "capture") return false;
   S.mode = "capture";
+  setImage(null);
   S.note = null;
   S.quality = null;
   frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
@@ -197,7 +206,7 @@ function renderCapture(box) {
         <video playsinline muted aria-hidden="true"></video>
         <div class="scan-cam-off" hidden>
           <span class="scan-cam-ic">${icon("scan-line")}</span>
-          <p>${esc(coarse() ? t("scan.camOff") : t("scan.desk"))}</p>
+          <p aria-live="polite">${esc(coarse() ? t("scan.camOff") : t("scan.desk"))}</p>
           <button type="button" class="secondary" data-act="cam">${icon("camera")}${esc(t("scan.camOn"))}</button>
         </div>
         ${frameHtml()}
@@ -264,9 +273,20 @@ function renderCapture(box) {
   else showCamOff(true);
 }
 
-function showCamOff(on) {
+// Zakaj kamera ne dela (DOMException.name iz getUserMedia): zavrnjena, zasedena ali je ni; sicer splošno sporočilo.
+export function camErrorKey(err) {
+  const n = err?.name || "";
+  if (["NotAllowedError", "SecurityError", "PermissionDeniedError"].includes(n)) return "scan.camDenied";
+  if (["NotReadableError", "AbortError", "TrackStartError"].includes(n)) return "scan.camBusy";
+  if (["NotFoundError", "OverconstrainedError", "DevicesNotFoundError"].includes(n)) return "scan.camNone";
+  return "scan.camOff";
+}
+
+function showCamOff(on, msgKey = null) {
   const off = $v()?.querySelector(".scan-cam-off");
   if (off) off.hidden = !on;
+  const msg = msgKey && off?.querySelector("p");
+  if (msg) msg.textContent = t(msgKey, { btn: t("scan.gallery") });
   const hint = $v()?.querySelector(".scan-cam > .scan-hint");
   if (hint) hint.hidden = on;
   const video = $v()?.querySelector("video");
@@ -290,8 +310,8 @@ async function startCamera(userAsked) {
     const torch = $v()?.querySelector('[data-act="torch"]');
     if (torch) torch.hidden = !caps.torch;
     startQuality();
-  } catch {
-    showCamOff(true);
+  } catch (err) {
+    showCamOff(true, camErrorKey(err));
     if (userAsked) $v()?.querySelector("[data-shot]")?.click();
   }
 }
@@ -365,7 +385,7 @@ function shoot() {
   const bad = problemOf(measureSource(video, r.sx, r.sy, r.sw, r.sh, 1600));
   const url = cropTo(video, video.videoWidth, video.videoHeight, stage, "cover");
   stopCamera();
-  S.image = { url: snapshot(video), w: video.videoWidth, h: video.videoHeight };
+  setImage({ url: snapshot(video), w: video.videoWidth, h: video.videoHeight });
   // zamegljena ali pretemna slika: ne pošljemo je takoj (branje stane in bi verjetno spodletelo);
   // učenec jo vidi z opozorilom in jo posname znova ali vseeno pritisne »Preberi«
   S.quality = bad === "blur" || bad === "dark" ? bad : null;
@@ -422,12 +442,12 @@ function onPaste(e) {
   loadFile(item.getAsFile());
 }
 
-function loadFile(file) {
+export function loadFile(file) {
   if (!file) return;
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.onload = () => {
-    S.image = { url, w: img.naturalWidth, h: img.naturalHeight };
+    setImage({ url, w: img.naturalWidth, h: img.naturalHeight });
     // slika iz galerije: privzeto označimo skoraj vse, učenec okvir zoži
     frame = { x: 0.04, y: 0.04, w: 0.92, h: 0.92 };
     const w = img.naturalWidth;
@@ -437,7 +457,11 @@ function loadFile(file) {
     S.mode = "crop";
     render();
   };
-  img.onerror = () => D.toast(t("scan.readFail"));
+  // brskalnik slike ne zna odpreti (npr. HEIC v Chromu): to ni »ni naloge«, ponovna fotografija ne pomaga
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    D.toast(t("scan.imgFormat"));
+  };
   img.src = url;
 }
 
@@ -465,6 +489,7 @@ function renderCrop(box) {
   box.querySelector('[data-act="back"]').addEventListener("click", () => {
     S.mode = "capture";
     S.quality = null;
+    setImage(null);
     frame = tutorMode ? { ...TUTOR_FRAME } : { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
     render();
   });
@@ -476,9 +501,16 @@ function renderCrop(box) {
 }
 
 function frameHtml() {
-  return `<div class="scan-frame" role="group" aria-label="${esc(t("scan.frame"))}" style="left:${frame.x * 100}%;top:${frame.y * 100}%;width:${frame.w * 100}%;height:${frame.h * 100}%">
+  return `<div class="scan-frame" role="group" tabindex="0" aria-label="${esc(t("scan.frame"))}" aria-describedby="scan-frame-keys" style="left:${frame.x * 100}%;top:${frame.y * 100}%;width:${frame.w * 100}%;height:${frame.h * 100}%">
     ${["nw", "ne", "sw", "se"].map((c) => `<span class="scan-h ${c}" data-h="${c}"></span>`).join("")}
-  </div>`;
+  </div><span id="scan-frame-keys" class="sr-only">${esc(t("scan.frameKeys"))}</span>`;
+}
+
+// tipkovnica: puščice premaknejo okvir, Shift + puščice spremenijo velikost (desni/spodnji rob), korak 2 %
+export function nudgeFrame(f, dx, dy, resize) {
+  const min = 0.1;
+  if (!resize) return { ...f, x: Math.min(1 - f.w, Math.max(0, f.x + dx)), y: Math.min(1 - f.h, Math.max(0, f.y + dy)) };
+  return { ...f, w: Math.min(1 - f.x, Math.max(min, f.w + dx)), h: Math.min(1 - f.y, Math.max(min, f.h + dy)) };
 }
 
 // vogali okvirja spremenijo velikost, sredina ga premakne (miška, prst, pisalo)
@@ -527,6 +559,13 @@ function bindFrame(stage) {
   const end = () => (drag = null);
   el.addEventListener("pointerup", end);
   el.addEventListener("pointercancel", end);
+  el.addEventListener("keydown", (e) => {
+    const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    frame = nudgeFrame(frame, d[0] * 0.02, d[1] * 0.02, e.shiftKey);
+    apply();
+  });
 }
 
 async function readImage(dataUrl) {

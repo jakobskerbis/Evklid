@@ -4672,5 +4672,10 @@
   "a3.grp.encimi": "Enzimi",
   "a3.grp.ovoji-virusa": "Slojevi virusa",
   "a3.grp.rep": "Rep",
-  "a3.grp.gostitelj": "Bakterija domaćin"
+  "a3.grp.gostitelj": "Bakterija domaćin",
+  "scan.imgFormat": "Ne mogu otvoriti ovu sliku jer preglednik ne podržava njezin format (npr. HEIC). Spremi je kao JPG ili PNG ili napravi snimku zaslona.",
+  "scan.camDenied": "Pristup kameri je odbijen. Dopusti ga u pregledniku (ikona pokraj adrese stranice) i pokušaj ponovno ili odaberi sliku.",
+  "scan.camBusy": "Kameru već koristi druga aplikacija. Zatvori je (npr. videopoziv) i pokušaj ponovno.",
+  "scan.camNone": "Ovaj uređaj nema kameru. Sliku zadatka odaberi gumbom »{btn}« ili upiši zadatak.",
+  "scan.frameKeys": "Strelice pomiču okvir, a Shift i strelice mijenjaju njegovu veličinu."
 }

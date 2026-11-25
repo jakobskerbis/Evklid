@@ -4640,5 +4640,10 @@
   "a3.grp.encimi": "Enzyme",
   "a3.grp.ovoji-virusa": "Virushüllen",
   "a3.grp.rep": "Schwanz",
-  "a3.grp.gostitelj": "Wirtsbakterium"
+  "a3.grp.gostitelj": "Wirtsbakterium",
+  "scan.imgFormat": "Dieses Bild kann ich nicht öffnen, weil der Browser sein Format (z. B. HEIC) nicht kennt. Speichere es als JPG oder PNG oder mach einen Screenshot.",
+  "scan.camDenied": "Der Kamerazugriff ist blockiert. Erlaube ihn im Browser (Symbol neben der Seitenadresse) und versuch es noch einmal, oder wähle ein Bild aus.",
+  "scan.camBusy": "Eine andere App benutzt gerade die Kamera. Schließe sie (z. B. einen Videoanruf) und versuch es noch einmal.",
+  "scan.camNone": "Dieses Gerät hat keine Kamera. Wähle mit „{btn}“ ein Bild der Aufgabe aus oder tippe sie ein.",
+  "scan.frameKeys": "Die Pfeiltasten verschieben den Rahmen, Umschalt + Pfeiltasten ändern seine Größe."
 }

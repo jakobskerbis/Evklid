@@ -4641,5 +4641,10 @@
   "a3.grp.encimi": "Enzimi",
   "a3.grp.ovoji-virusa": "Strati del virus",
   "a3.grp.rep": "Coda",
-  "a3.grp.gostitelj": "Batterio ospite"
+  "a3.grp.gostitelj": "Batterio ospite",
+  "scan.imgFormat": "Non riesco ad aprire questa immagine perché il browser non ne supporta il formato (ad es. HEIC). Salvala come JPG o PNG oppure fai uno screenshot.",
+  "scan.camDenied": "L'accesso alla fotocamera è bloccato. Consentilo nel browser (icona accanto all'indirizzo della pagina) e riprova, oppure scegli un'immagine.",
+  "scan.camBusy": "Un'altra app sta già usando la fotocamera. Chiudila (ad es. una videochiamata) e riprova.",
+  "scan.camNone": "Questo dispositivo non ha una fotocamera. Scegli un'immagine dell'esercizio con «{btn}» oppure scrivilo.",
+  "scan.frameKeys": "Le frecce spostano la cornice, Maiusc + frecce ne cambiano le dimensioni."
 }

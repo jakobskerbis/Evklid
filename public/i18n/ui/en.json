@@ -4640,5 +4640,10 @@
   "a3.grp.encimi": "Enzymes",
   "a3.grp.ovoji-virusa": "Virus layers",
   "a3.grp.rep": "Tail",
-  "a3.grp.gostitelj": "Host bacterium"
+  "a3.grp.gostitelj": "Host bacterium",
+  "scan.imgFormat": "I can't open this picture because the browser doesn't support its format (e.g. HEIC). Save it as JPG or PNG, or take a screenshot.",
+  "scan.camDenied": "Camera access is blocked. Allow it in your browser (icon next to the page address) and try again, or choose a picture.",
+  "scan.camBusy": "Another app is already using the camera. Close it (e.g. a video call) and try again.",
+  "scan.camNone": "This device has no camera. Choose a picture of the problem with “{btn}” or type it in.",
+  "scan.frameKeys": "Arrow keys move the frame; Shift + arrow keys change its size."
 }
