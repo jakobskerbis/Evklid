@@ -44,3 +44,29 @@ export const markUnclear = (text, esc) =>
     .split(NEJASNO)
     .map(esc)
     .join('<mark class="scan-unclear-mark">?</mark>');
+
+// Drugi zapisi iste oznake, ki jih model včasih napiše (LaTeX v podatkih: \boxed{?}, tudi z backspace namesto \b
+// iz neubežanega JSON; »[ ? ]«), postanejo [?], da jih strežnik in zaslon prepoznata.
+export const normalizeUnclear = (s) =>
+  String(s ?? "")
+    .replace(/(?:\\|\x08)b?oxed\s*\{\s*\?\s*\}/g, NEJASNO)
+    .replace(/\[\s+\?\s*\]|\[\s*\?\s+\]/g, NEJASNO);
+
+// Ko učenec oznako popravi s tipkami, ostanejo možnosti ostalih oznak poravnane: oznake pred spremembo in za njo
+// obdržijo svoje možnosti, oznake v spremenjenem delu odpadejo. null, če se ne da ugotoviti (npr. nova oznaka).
+export function keepOptions(oldText, newText, opts) {
+  const a = String(oldText ?? "");
+  const b = String(newText ?? "");
+  if (!Array.isArray(opts) || opts.length !== unclearCount(a)) return null;
+  if (a === b) return opts;
+  let p = 0;
+  while (p < a.length && p < b.length && a[p] === b[p]) p++;
+  let q = 0;
+  while (q < a.length - p && q < b.length - p && a[a.length - 1 - q] === b[b.length - 1 - q]) q++;
+  const keep = [];
+  let at = a.indexOf(NEJASNO);
+  for (let i = 0; at >= 0; i++, at = a.indexOf(NEJASNO, at + NEJASNO.length)) {
+    if (at + NEJASNO.length <= p || at >= a.length - q) keep.push(opts[i]);
+  }
+  return keep.length === unclearCount(b) ? keep : null;
+}

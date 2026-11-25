@@ -177,3 +177,5 @@
 .scan-unclear-mark { display: inline-block; min-width: 1.2em; padding: 0 4px; margin: 0 1px; border-radius: 4px; text-align: center; font-weight: 700; color: var(--text); background: color-mix(in srgb, var(--gold) 45%, var(--surface)); outline: 2px dashed color-mix(in srgb, var(--gold) 80%, var(--text)); }
 .scan-unclear-in { flex: 0 0 auto; width: 6.5em; min-height: 44px; padding: 6px 10px; border-radius: var(--radius-sm); border: 2px dashed color-mix(in srgb, var(--gold) 80%, var(--text)); background: var(--surface); color: var(--text); font: inherit; font-weight: 700; text-align: center; }
 .scan-given-unclear { outline: 2px dashed color-mix(in srgb, var(--gold) 80%, var(--text)); }
+.scan-unclear-n .katex { color: var(--text); font-size: 1.05rem; }
+.scan-unclear-need { margin: 8px 0 0; font-weight: 700; }

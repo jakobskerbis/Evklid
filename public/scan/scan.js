@@ -10,7 +10,7 @@ import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } fro
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
 import { STATUSES } from "./status.js";
-import { unclearCount, hasUnclear, fillUnclear, firstUnclear, markUnclear } from "./nejasno.js";
+import { unclearCount, hasUnclear, fillUnclear, firstUnclear, markUnclear, keepOptions } from "./nejasno.js";
 import { plottableFromText } from "../graph/math.js";
 import { izrisi } from "../mat/izris.js";
 
@@ -30,6 +30,7 @@ const fresh = () => ({
   given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
   sought: "", // iskano (»kot, pod katerim graf seka os x«): ni podatek, zato ne izklopi lastnega reševalnika
   unclear: [], // možnosti za vsak nejasen znak [?] v text (P3-5, public/scan/nejasno.js)
+  unclearNeed: false, // učenec je pritisnil Reši, a so še oznake [?] (sporočilo v obvestilu o branju, ne rdeča napaka)
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
   shot: null, // zadnja prebrana fotografija (samo v pomnilniku; za pilot se shrani le ob soglasju)
 });
@@ -730,7 +731,7 @@ function renderConfirm(box) {
     <div class="card scan-confirm">
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
-      <div class="scan-unclear-host"></div>
+      <div class="scan-unclear-host" aria-live="polite"></div>
       ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item${hasUnclear(g) ? " scan-given-unclear" : ""}">${math(boxUnclear(g))}</span>`).join("")}</p>` : ""}
       ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span>${soughtHtml(S.sought)}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
@@ -738,7 +739,7 @@ function renderConfirm(box) {
         <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
         <button type="button" class="ghost icon-only" data-act="sym" aria-label="${esc(t("scan.symbols"))}" title="${esc(t("scan.symbols"))}" aria-expanded="false">${icon("sigma")}</button>
       </div>
-      <p class="scan-err" hidden></p>
+      <p class="scan-err" role="alert" hidden></p>
       <div class="scan-actions">
         <button type="button" class="secondary" data-act="retake">${icon("camera")}${esc(t("scan.retake"))}</button>
         <button type="button" class="primary" data-act="solve">${icon("check")}${esc(t("scan.solve"))}</button>
@@ -757,6 +758,10 @@ function renderConfirm(box) {
     bindGivenInputs();
   };
   const update = () => {
+    // možnosti ostalih oznak ostanejo poravnane, ko učenec eno popravi s tipkami
+    const kept = keepOptions(S.text, input.value, S.unclear);
+    if (kept) S.unclear = kept;
+    else if (!hasUnclear(input.value)) S.unclear = [];
     S.text = input.value;
     showUnclear();
     const info = analyze(input.value);
@@ -781,20 +786,22 @@ function renderConfirm(box) {
     }
     prev.innerHTML = problemTexOf(input.value);
   };
-  input.addEventListener("input", update);
+  input.addEventListener("input", () => {
+    S.unclearNeed = false;
+    update();
+  });
   // izbira ene od možnosti za nejasen znak: zamenja ta [?], fokus na naslednjega
   unclearHost.addEventListener("click", (e) => {
     const b = e.target.closest("[data-fill]");
     if (!b) return;
     const i = Number(b.dataset.fill);
     input.value = fillUnclear(input.value, i, b.dataset.val);
-    S.unclear.splice(i, 1);
-    update();
+    update(); // keepOptions odstrani možnosti zapolnjene oznake
     const at = firstUnclear(input.value);
     if (at >= 0 && !coarse()) {
       input.focus();
       input.setSelectionRange(at, at + 3);
-    } else unclearHost.querySelector("[data-fill]")?.focus();
+    } else (unclearHost.querySelector("[data-fill], [data-given-fill]") || box.querySelector('[data-act="solve"]'))?.focus();
   });
   // nejasen znak v podatku: učenec vpiše, kaj piše na listu (gumb ✓, Enter ali Reši)
   function fillGiven(rerender = true) {
@@ -863,11 +870,11 @@ function renderConfirm(box) {
     const filled = fillGiven(false);
     if (hasUnclear(input.value) || S.given.some(hasUnclear)) {
       S.text = input.value;
+      S.unclearNeed = true; // sporočilo v obvestilu o branju (ni napaka v zapisu ali računu)
       if (filled) render(); // pokaže popravljene podatke; sporočilo in fokus v novem zaslonu
-      const e2 = box.querySelector(".scan-err");
+      else showUnclear();
+      S.unclearNeed = false; // velja do naslednjega vnosa (zaslon ga že kaže)
       const in2 = box.querySelector("#scan-input");
-      e2.textContent = t("scan.unclearErr");
-      e2.hidden = false;
       const at = firstUnclear(in2.value);
       if (at >= 0) {
         in2.focus();
@@ -904,18 +911,19 @@ function unclearBlock() {
   const rows = opts
     .map((o, i) =>
       o.length
-        ? `<div class="scan-unclear-row"><span class="scan-unclear-n">${esc(t("scan.unclearN", { n: i + 1 }))}</span>${o.map((v) => `<button type="button" class="scan-unclear-opt" data-fill="${i}" data-val="${esc(v)}">${esc(v)}</button>`).join("")}</div>`
+        ? `<div class="scan-unclear-row" role="group" aria-labelledby="scan-unclear-n${i}"><span class="scan-unclear-n" id="scan-unclear-n${i}">${esc(t("scan.unclearN", { n: i + 1 }))}</span>${o.map((v) => `<button type="button" class="scan-unclear-opt" data-fill="${i}" data-val="${esc(v)}">${esc(v)}</button>`).join("")}</div>`
         : "",
     )
     .join("");
   const given = S.given
     .map((g, i) =>
       hasUnclear(g)
-        ? `<div class="scan-unclear-row"><span class="scan-unclear-n">${math(boxUnclear(g))}</span><input type="text" class="scan-unclear-in" data-given-fill="${i}" maxlength="12" aria-label="${esc(t("scan.unclearGiven"))}" placeholder="?" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="scan-unclear-opt" data-given-ok aria-label="${esc(t("scan.unclearGiven"))}">${icon("check")}</button></div>`
+        ? `<div class="scan-unclear-row" role="group" aria-labelledby="scan-unclear-g${i}"><span class="scan-unclear-n" id="scan-unclear-g${i}">${math(boxUnclear(g))}</span><input type="text" class="scan-unclear-in" data-given-fill="${i}" maxlength="12" aria-label="${esc(t("scan.unclearGiven"))}" aria-describedby="scan-unclear-g${i}" placeholder="?" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="scan-unclear-opt" data-given-ok aria-label="${esc(t("scan.unclearApply"))}" title="${esc(t("scan.unclearApply"))}">${icon("check")}</button></div>`
         : "",
     )
     .join("");
-  return `<div class="scan-unclear" role="status">${icon("eye")}<div><p><b>${esc(t("scan.unclearTitle"))}</b> ${esc(t(n ? "scan.unclear" : "scan.unclearGivenOnly"))}</p>${rows}${given}</div></div>`;
+  const msg = n > 1 || (n === 1 && S.given.some(hasUnclear)) ? "scan.unclear" : n === 1 ? "scan.unclearOne" : "scan.unclearGivenOnly";
+  return `<div class="scan-unclear">${icon("eye")}<div><p><b>${esc(t("scan.unclearTitle"))}</b> ${esc(t(msg))}</p>${rows}${given}${S.unclearNeed ? `<p class="scan-unclear-need">${esc(t("scan.unclearErr"))}</p>` : ""}</div></div>`;
 }
 
 // Pilot: ocena branja nad prepisom; fotografija gre na strežnik samo ob kljukici (in samo, kjer jo smemo ponuditi).

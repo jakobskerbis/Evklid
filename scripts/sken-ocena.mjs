@@ -180,35 +180,49 @@ function enakovredno(a, b) {
   return ea.every((x) => eb.some((y) => ena(x, y)));
 }
 
-// Negotovo branje (P3-5): ali se branje z oznakami [?] ujema s pričakovanim, ko oznake nadomestimo. Najprej možnosti
-// modela (unclear), nato poljubni znaki na mestu oznake (1 do 6). Ne ujema se → model je drugje ugibal.
+// Negotovo branje (P3-5). ugibano mora biti strogo (lažno »ni ugibal« je hujše kot lažno »je ugibal«): brez ohlapne
+// primerjave »vsa števila in operacije so nekje« in z velikimi črkami (x in X nista isto).
 const NEJASNO = "[?]";
+const steviloOznak = (t) => String(t ?? "").split(NEJASNO).length - 1;
+const zgostiVel = (t) => brezImena(t).replace(/[\s*·]/g, "").replace(/<=/g, "≤").replace(/>=/g, "≥");
+const racunStrogo = (racun, text) => zgostiVel(racun) === zgostiVel(text) || enakovredno(racun, text);
 const brezRegex = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Ali se branje z oznakami ujema s pričakovanim: najprej možnosti modela (unclear), nato 1 ali 2 poljubna znaka na
+// mestu oznake. zgresene: model je dal možnosti, a prave ni med njimi (učenec dobi same napačne gumbe).
 function ujemaZOznakami(racun, text, unclear) {
-  const k = text.split(NEJASNO).length - 1;
-  if (Array.isArray(unclear) && unclear.length === k && k <= 4 && unclear.every((o) => Array.isArray(o) && o.length)) {
+  const k = steviloOznak(text);
+  const imaMoznosti = Array.isArray(unclear) && unclear.length === k && unclear.every((o) => Array.isArray(o) && o.length);
+  if (imaMoznosti && k <= 4) {
     const deli = text.split(NEJASNO);
     let moznosti = [deli[0]];
     for (let i = 0; i < k; i++) moznosti = moznosti.flatMap((m) => unclear[i].map((o) => m + o + deli[i + 1]));
-    if (moznosti.some((m) => zgostiRacun(racun) === zgostiRacun(m) || enakovredno(racun, m))) return true;
+    if (moznosti.some((m) => racunStrogo(racun, m))) return { ok: true, zgresene: 0 };
   }
-  const vzorec = zgostiRacun(text).split(NEJASNO).map(brezRegex).join(".{1,6}");
-  return new RegExp(`^${vzorec}$`).test(zgostiRacun(racun));
+  const vzorec = zgostiVel(text).split(NEJASNO).map(brezRegex).join(".{1,2}");
+  const ok = new RegExp(`^${vzorec}$`).test(zgostiVel(racun));
+  return { ok, zgresene: ok && imaMoznosti ? 1 : 0 };
 }
 
 // Ena prebrana naloga zaslona Skeniraj ({ text, goal, given, unclear }) proti pričakovani (racun, goal, podatki).
-// oznaceno: koliko znakov je model označil z [?] (v računu in podatkih); ugibano: napačno prebrano, ne da bi bilo
-// označeno (merilo P3-5: 0 ugibanih na naboru).
+// oznaceno: koliko znakov je model označil z [?] (v računu in podatkih); ugibano: napačno prebrano zunaj oznak
+// (merilo P3-5: 0 na naboru). Označeno branje ni »ok«, dokler ga učenec ne popravi.
 export function oceniRacun(n, problem) {
   const o = oceniRacunBrezOznak(n, problem);
   const text = String(problem?.text ?? "");
-  const vGiven = (problem?.given || []).filter((g) => String(g).includes(NEJASNO)).length;
-  const oznaceno = text.split(NEJASNO).length - 1 + (problem?.given || []).reduce((a, g) => a + String(g).split(NEJASNO).length - 1, 0);
-  if (!oznaceno) return { ...o, oznaceno: 0, ugibano: !o.ok };
-  // z oznakami: račun mora ustrezati (oznake nadomeščene), manjkajoči podatki so lahko le označeni
-  const racunOk = n.racun === null || /=\s*\?$/.test(n.racun) ? true : !text.includes(NEJASNO) ? o.enakovredno || o.ok : ujemaZOznakami(n.racun, text, problem?.unclear);
-  const podatkiOk = o.podatki === 1 || vGiven > 0;
-  return { ...o, ok: false, oznaceno, ugibano: !(racunOk && podatkiOk) };
+  const given = Array.isArray(problem?.given) ? problem.given : [];
+  const vText = steviloOznak(text);
+  const vGiven = given.reduce((a, g) => a + steviloOznak(g), 0);
+  const oznaceno = vText + vGiven;
+  // vsak manjkajoči podatek mora pokriti svoja oznaka v podatkih
+  const manjka = n.podatki?.length ? Math.round(n.podatki.length * (1 - o.podatki)) : 0;
+  const podatkiOk = manjka <= vGiven;
+  let racunOk;
+  let zgresene = 0;
+  if (n.racun === null) racunOk = true;
+  else if (/=\s*\?$/.test(n.racun)) racunOk = /=\s*\?$/.test(text.trim());
+  else if (!vText) racunOk = racunStrogo(n.racun, text);
+  else ({ ok: racunOk, zgresene } = ujemaZOznakami(n.racun, text, problem?.unclear));
+  return { ...o, ...(oznaceno ? { ok: false } : {}), oznaceno, ugibano: !(racunOk && podatkiOk), ...(zgresene ? { moznostiZgresene: zgresene } : {}) };
 }
 function oceniRacunBrezOznak(n, problem) {
   const text = String(problem?.text ?? "");

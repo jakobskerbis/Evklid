@@ -8,7 +8,7 @@ import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi, normalizeSet } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
-import { cleanUnclear, unclearCount, hasUnclear } from "../public/scan/nejasno.js";
+import { cleanUnclear, unclearCount, hasUnclear, normalizeUnclear } from "../public/scan/nejasno.js";
 import { casCheck } from "./cas.js";
 import { STATUSES } from "../public/scan/status.js";
 
@@ -170,9 +170,9 @@ export const READ_PROMPT =
   "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a). " +
   "Read every sign and digit with care (x+b and x-b; 1, 4 and 7, which look alike in handwriting). If one is unclear, the student's next lines may help with a sign or a letter, but the task line always wins: never change a written value to match the working. " +
   // P3-5: nejasen znak ni ugibanje (public/scan/nejasno.js); učenec ga popravi pred reševanjem.
-  "Never guess: if a digit, sign, letter, exponent, index or bracket of the task could really be read two ways (smudged, blurred, cut off at the edge, 1 or 7, + or -, x or a times sign) and nothing on the page settles it, " +
-  'write [?] in its place in "text" and \\boxed{?} in "tex", and add "unclear": one list per [?], in the order they stand in "text", of what it could be (most likely first, at most 3, each as it would stand in "text", e.g. [["1","7"]]). ' +
-  'An unclear value in "given" is written as [?] there too (no list). Mark only a real doubt: a clearly written character is never [?].\n' +
+  "Never guess: if a digit, sign, letter, exponent, index or bracket of the task could really be read two ways (smudged, blurred, cut off at the edge, 1 or 7, + or -, x or a times sign) and nothing in the task itself settles it (the student's working may only confirm a sign or a letter, never a digit), " +
+  'write [?] in its place in "text" and \\\\boxed{?} in "tex", and add "unclear": one list per [?], in the order they stand in "text", of what it could be (most likely first, at most 3, each as it would stand in "text", e.g. [["1","7"]]). ' +
+  'An unclear value in "given" is written as [?] there too, not \\\\boxed{?} (no list). Mark only a real doubt: a clearly written character is never [?].\n' +
   "Coordinates of a point and the values in conditions are numbers unless a letter is clearly written.\n" +
   'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
@@ -220,11 +220,12 @@ export function cleanProblems(list) {
     .map((p) => {
       const given = cleanGiven(p.given);
       const sought = cleanSought(p.sought);
-      const text = p.text.trim().slice(0, MAX_TEXT);
+      const text = normalizeUnclear(p.text).trim().slice(0, MAX_TEXT);
       const unclear = cleanUnclear(p.unclear, unclearCount(text));
       return {
         text,
-        tex: typeof p.tex === "string" ? p.tex.trim().slice(0, MAX_TEXT * 2) : "",
+        // »\b« iz neubežanega \boxed v JSON je znak backspace (JSON.parse): popravimo, da se oznaka izriše
+        tex: typeof p.tex === "string" ? p.tex.replace(/\x08oxed/g, "\\boxed").trim().slice(0, MAX_TEXT * 2) : "",
         goal: GOALS.includes(p.goal) ? p.goal : null,
         ...(given.length ? { given } : {}),
         ...(sought ? { sought } : {}),
@@ -240,7 +241,7 @@ export function cleanGiven(list) {
   return (Array.isArray(list) ? list : [])
     .filter((g) => typeof g === "string" && g.trim())
     .slice(0, MAX_GIVEN)
-    .map((g) => g.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
+    .map((g) => normalizeUnclear(g).replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
 }
 // Iskana količina (»kot, pod katerim graf seka os x«): ni podatek, zato ne v given (j 16. 11. 2026: »to ni podatek«).
 // Ne izklopi lastnega reševalnika ne SymPy (ti gledata le given); AI jo dobi, da ve, kaj iskati.
