@@ -184,8 +184,9 @@ export function labOhm(el, { load = "R100" } = {}) {
     partBtn.hidden = !p.burnt;
     partBtn.textContent = L.type === "R" ? "Vzemi nov upornik" : "Vzemi novo žarnico";
     // Fotografski prikaz (foto.js): vezava, območja in odčitki iz modela na izrisanih slojih.
+    // Ampermeter na fotografiji kaže tok šele po napovedi (kot zaslon merilnika, readMeters).
     if (foto.risi((o, meta) => risiKrog(o, meta, { breme: B.load, tip: L.type, nom: L.nom, zgorel: p.burnt, T: p.T, svetlost: L.type === "L" ? B.brightness() : 0, amPos: B.amPos, vmPos: B.vmPos,
-      obmocjeA: B.amRange, obmocjeV: B.vmRange, varovalka: B.fuseOf().blown, cc: B.state.cc, U: Math.max(0, B.state.Usup).toFixed(1), I: last.I ? last.I.text : "", V: last.U ? last.U.text : "", dim: drawSmoke }))) return;
+      obmocjeA: B.amRange, obmocjeV: B.vmRange, varovalka: B.fuseOf().blown, cc: B.state.cc, U: Math.max(0, B.state.Usup).toFixed(1), I: last.I && !N.caka ? last.I.text : "", V: last.U ? last.U.text : "", dim: drawSmoke }))) return;
     const wire = (d) => s("path", { d, class: "lab-wire" }, svg);
     const dot = (x, y) => s("circle", { cx: x, cy: y, r: 3.5, class: "lab-node" }, svg);
     // zanka
