@@ -89,6 +89,23 @@ urniku sam odpre pripravo z naslovom testa. Novo: tudi načrt testa se
 samodejno izbriše 30 dni po testu (prej je načrt v `test_plans` ostal do zamenjave). `/priprave` vrne `aktivna`, `pot`,
 `sklopi`, `dogodek_id`. Test: `test/priprava-nacrt-testa.test.js`.
 
+### PR 3a (uvoz brez AI in izseki, 25. 11. 2026)
+
+PR 3 je razdeljen: 3a uvozi brez AI, 3b doda branje fotografij in skeniranih strani PDF (obstoječe branje zapiskov,
+`server/zapiski.js`, meja `STRANI`, `server/meje-ai.js`). `uvoz.js`: prilepljeno besedilo (naslovi `#`, alineje),
+Word (slogi naslovov, alineje, tabele po vrsticah, formule OMML → LaTeX do globine 12, sicer `[formula] [?]`, prelomi
+strani), PowerPoint (prosojnice v vrstnem redu iz `presentation.xml`, opombe govorca), PDF z besedilom (`pdfjs-dist`
+v ločeni niti, brez JavaScripta in pisav, 80 strani, 20 s; stran z manj kot 20 znaki je skenirana in čaka na 3b).
+ZIP bere sam (meja 20 MB na vnos, 60 MB skupaj, `maxOutputLength`), XML brez razčlenjevalnika; največ 200 000 znakov
+na vir. `izseki.js`: bloki do 1200 znakov z naslovom razdelka, stranjo in zaporedjem; vrsto določi koda (definicija,
+izrek, postopek, formula, primer, naloga, teorija; oštevilčena naloga s točkami je svoj izsek). Negotovo: »x2« ostane
+z `[?]`, kemijska formula z vsaj dvema elementoma brez indeksov se dopolni (H2SO4 → H₂SO₄) z `[?]`, en simbol z
+indeksom (F2, R1) se ne označi, formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki` (besedilo,
+naslov in seznam negotovih mest šifrirani, v `SEALED`, v izvozu odšifrirani, kaskada z virom in pripravo);
+`priprava_viri` ima `stanje` (caka, obdelan, branje, napaka), `strani`, `napaka`, `opozorila`. Vir se obdela ob
+nalaganju (hkrati največ 2 obdelavi, sicer ostane »caka«); poti `POST …/viri/:vid/obdelaj` in
+`GET …/priprave/:pid/izseki[?vir=&vrsta=]`. Strošek AI 0. Test: `test/priprava-uvoz.test.js`.
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

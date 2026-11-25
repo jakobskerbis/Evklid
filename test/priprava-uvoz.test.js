@@ -1,0 +1,368 @@
+// Priprava na test, PR 3a (docs/priprava.md): uvoz brez AI (besedilo, Word, PowerPoint, PDF z besedilom) in izseki z
+// izvorom. Binarne vire naredi test iz besedil v test/fixtures/priprava/, da v repozitoriju ni binarnih datotek.
+// Preveri: vse iz »mora_najti« je v izsekih, negotovo branje je označeno z [?] in ni ugibano, navodila v dokumentu so
+// samo podatek, vse formule se izrišejo s KaTeX, bomba ZIP in poškodovane datoteke ne podrejo strežnika, tuj profil 404.
+import test from "node:test";
+import assert from "node:assert/strict";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import zlib from "node:zlib";
+import { openDb } from "../server/db.js";
+import { createApp } from "../server/app.js";
+import { preberiVir, beriWord, beriPowerpoint, NapakaUvoza, MEJE_UVOZA } from "../server/priprava/uvoz.js";
+import { razrezi, oznaciNegotovo, vrstaIzseka, izrise, NEGOTOVO } from "../server/priprava/izseki.js";
+import { SEALED } from "../server/crypto-polje.js";
+
+process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
+const quiet = { log() {}, info() {}, warn() {}, error() {} };
+const DIR = new URL("./fixtures/priprava/", import.meta.url);
+const PRIC = JSON.parse(fs.readFileSync(new URL("pricakovano.json", DIR), "utf8"));
+const vir = (ime) => fs.readFileSync(new URL(ime, DIR), "utf8");
+
+// ---------- izdelava binarnih virov iz besedila ----------
+
+function zip(vnosi, { metoda = 8 } = {}) {
+  const lok = [];
+  const cen = [];
+  let off = 0;
+  for (const [ime, vsebina] of Object.entries(vnosi)) {
+    const data = Buffer.isBuffer(vsebina) ? vsebina : Buffer.from(vsebina, "utf8");
+    const comp = metoda === 8 ? zlib.deflateRawSync(data) : data;
+    const n = Buffer.from(ime, "utf8");
+    const h = Buffer.alloc(30);
+    h.writeUInt32LE(0x04034b50, 0);
+    h.writeUInt16LE(20, 4);
+    h.writeUInt16LE(0x0800, 6);
+    h.writeUInt16LE(metoda, 8);
+    h.writeUInt32LE(zlib.crc32(data), 14);
+    h.writeUInt32LE(comp.length, 18);
+    h.writeUInt32LE(data.length, 22);
+    h.writeUInt16LE(n.length, 26);
+    lok.push(h, n, comp);
+    const c = Buffer.alloc(46);
+    c.writeUInt32LE(0x02014b50, 0);
+    c.writeUInt16LE(20, 4);
+    c.writeUInt16LE(20, 6);
+    c.writeUInt16LE(0x0800, 8);
+    c.writeUInt16LE(metoda, 10);
+    c.writeUInt32LE(zlib.crc32(data), 16);
+    c.writeUInt32LE(comp.length, 20);
+    c.writeUInt32LE(data.length, 24);
+    c.writeUInt16LE(n.length, 28);
+    c.writeUInt32LE(off, 42);
+    cen.push(c, n);
+    off += 30 + n.length + comp.length;
+  }
+  const cd = Buffer.concat(cen);
+  const e = Buffer.alloc(22);
+  e.writeUInt32LE(0x06054b50, 0);
+  e.writeUInt16LE(cen.length / 2, 8);
+  e.writeUInt16LE(cen.length / 2, 10);
+  e.writeUInt32LE(cd.length, 12);
+  e.writeUInt32LE(off, 16);
+  return Buffer.concat([...lok, cd, e]);
+}
+const xml = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const CT = '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>';
+
+// Markdown → .docx: # naslovi kot slogi Heading, alineje z numPr, vsaka vrstica svoj odstavek, prazne vrstice tudi.
+function docx(md, { omml = "" } = {}) {
+  const p = md.split("\n").map((l) => {
+    const h = /^(#{1,3})\s+(.*)$/.exec(l);
+    if (h) return `<w:p><w:pPr><w:pStyle w:val="Heading${h[1].length}"/></w:pPr><w:r><w:t>${xml(h[2])}</w:t></w:r></w:p>`;
+    const a = /^\s*[-*]\s+(.*)$/.exec(l);
+    if (a) return `<w:p><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr></w:pPr><w:r><w:t xml:space="preserve">${xml(a[1])}</w:t></w:r></w:p>`;
+    return l ? `<w:p><w:r><w:t xml:space="preserve">${xml(l)}</w:t></w:r></w:p>` : "<w:p/>";
+  });
+  const body = `<?xml version="1.0"?><w:document xmlns:w="w" xmlns:m="m"><w:body>${p.join("")}${omml}</w:body></w:document>`;
+  return zip({ "[Content_Types].xml": CT, "_rels/.rels": "<Relationships/>", "word/document.xml": body });
+}
+
+// Markdown → .pptx: vsak »## « začne novo prosojnico (naslov), ostale vrstice so odstavki; prosojnice v obratnem
+// vrstnem redu datotek, da test preveri vrstni red iz presentation.xml.
+function pptx(md, { opombe = null } = {}) {
+  const deli = md.split(/\n(?=## )/);
+  const v = { "[Content_Types].xml": CT, "_rels/.rels": "<Relationships/>" };
+  const ids = [];
+  const rels = [];
+  deli.forEach((d, i) => {
+    const [prva, ...ostalo] = d.split("\n");
+    const n = deli.length - i; // obratno ime datoteke
+    const para = (t) => `<a:p><a:r><a:t>${xml(t)}</a:t></a:r></a:p>`;
+    v[`ppt/slides/slide${n}.xml`] =
+      `<p:sld xmlns:p="p" xmlns:a="a"><p:cSld><p:spTree><p:sp><p:nvSpPr><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr><p:txBody>${para(prva.replace(/^#+\s*/, ""))}</p:txBody></p:sp>` +
+      `<p:sp><p:txBody>${ostalo.filter((x) => x.trim()).map(para).join("")}</p:txBody></p:sp></p:spTree></p:cSld></p:sld>`;
+    if (opombe && i === 0) {
+      v[`ppt/slides/_rels/slide${n}.xml.rels`] = `<Relationships><Relationship Id="rId9" Target="../notesSlides/notesSlide1.xml"/></Relationships>`;
+      v["ppt/notesSlides/notesSlide1.xml"] = `<p:notes xmlns:p="p" xmlns:a="a"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>${xml(opombe)}</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:notes>`;
+    }
+    ids.push(`<p:sldId id="${256 + i}" r:id="rId${i + 2}"/>`);
+    rels.push(`<Relationship Id="rId${i + 2}" Target="slides/slide${n}.xml"/>`);
+  });
+  v["ppt/presentation.xml"] = `<p:presentation xmlns:p="p" xmlns:r="r"><p:sldIdLst>${ids.join("")}</p:sldIdLst></p:presentation>`;
+  v["ppt/_rels/presentation.xml.rels"] = `<Relationships>${rels.join("")}</Relationships>`;
+  return zip(v);
+}
+
+// Besedilo → PDF s standardno pisavo (Helvetica, WinAnsi). Strani: seznam seznamov vrstic; prazna stran = skenirana.
+function pdf(strani) {
+  const esc = (t) => t.replace(/[\\()]/g, (c) => `\\${c}`);
+  const obj = [];
+  const add = (s) => obj.push(s) && obj.length;
+  const font = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
+  const pagesId = obj.length + 1 + strani.length * 2;
+  const kids = [];
+  for (const vrstice of strani) {
+    const tok = `BT /F1 11 Tf 14 TL 50 780 Td ${vrstice.map((v) => `(${esc(v)}) Tj T*`).join(" ")} ET`;
+    const c = add(`<< /Length ${Buffer.byteLength(tok, "latin1")} >>\nstream\n${tok}\nendstream`);
+    kids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${font} 0 R >> >> /Contents ${c} 0 R >>`));
+  }
+  add(`<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(" ")}] /Count ${kids.length} >>`);
+  const cat = add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+  let out = "%PDF-1.4\n";
+  const offs = [];
+  obj.forEach((o, i) => {
+    offs.push(Buffer.byteLength(out, "latin1"));
+    out += `${i + 1} 0 obj\n${o}\nendobj\n`;
+  });
+  const xref = Buffer.byteLength(out, "latin1");
+  out += `xref\n0 ${obj.length + 1}\n0000000000 65535 f \n${offs.map((o) => `${String(o).padStart(10, "0")} 00000 n \n`).join("")}`;
+  out += `trailer\n<< /Size ${obj.length + 1} /Root ${cat} 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+  return Buffer.from(out, "latin1");
+}
+
+const besedila = (izseki) => izseki.map((i) => i.besedilo).join("\n");
+
+// ---------- izseki iz besedila ----------
+
+test("besedilo: vse iz »mora_najti« je v izsekih, vsaka formula se izriše, izvor (stran, zaporedje, naslov) je zapisan", async () => {
+  for (const [ime, p] of Object.entries(PRIC.viri)) {
+    const r = await preberiVir("besedilo", Buffer.from(vir(ime)));
+    const iz = razrezi(r.strani);
+    assert.ok(iz.length > 0, ime);
+    const vse = besedila(iz);
+    for (const m of p.mora_najti) assert.ok(vse.includes(m), `${ime}: manjka ${m}`);
+    iz.forEach((x, i) => {
+      assert.equal(x.zaporedje, i + 1);
+      assert.equal(x.stran, 1);
+      assert.ok(x.besedilo.length <= 1200);
+    });
+    for (const m of vse.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) assert.ok(izrise(m[1] ?? m[2], !!m[1]), `${ime}: ${m[0]}`);
+  }
+  const mat = razrezi((await preberiVir("besedilo", Buffer.from(vir("mat-integrali.md")))).strani);
+  assert.equal(mat.find((x) => x.besedilo.includes("Newton-Leibnizova")).naslov, "Določeni integral");
+  assert.equal(mat.find((x) => x.besedilo.startsWith("Definicija")).vrsta, "definicija");
+  assert.equal(mat.find((x) => x.besedilo.startsWith("Primer")).vrsta, "primer");
+  // »Pravila:« in alineje pod njim so en izsek.
+  assert.ok(mat.some((x) => x.besedilo.startsWith("Pravila:") && x.besedilo.includes("\\ln|x|")));
+});
+
+test("star test: vsaka oštevilčena naloga je svoj izsek vrste naloga, s točkami", async () => {
+  const iz = razrezi((await preberiVir("besedilo", Buffer.from(vir("star-test.md")))).strani);
+  const naloge = iz.filter((x) => x.vrsta === "naloga");
+  assert.equal(naloge.length, PRIC.viri["star-test.md"].naloge);
+  for (const t of PRIC.viri["star-test.md"].mora_najti) assert.ok(naloge.some((n) => n.besedilo.includes(t)), t);
+});
+
+test("negotovo branje: x2 ostane z [?] (brez ugibanja), kemijski indeksi dopolnjeni z [?], formula brez izrisa z [?]", async () => {
+  const mat = razrezi((await preberiVir("besedilo", Buffer.from(vir("mat-integrali.md")))).strani);
+  const odvod = mat.find((x) => x.besedilo.includes("Odvod od"));
+  assert.ok(odvod.besedilo.includes(`x2 ${NEGOTOVO}`), "x2 ostane, kot je zapisan");
+  assert.ok(!/x²|x\^2|x_2|x₂/.test(odvod.besedilo), "brez ugibanja");
+  assert.ok(odvod.negotovo.every((n) => n.vrsta === "zapis" && n.izvirno === "x2" && !n.prepis));
+  // Formule v $…$ niso negotove (x^2 je zapisan jasno).
+  assert.ok(mat.filter((x) => x !== odvod).every((x) => !x.negotovo.length));
+
+  const kem = razrezi((await preberiVir("besedilo", Buffer.from(vir("kem-reakcije.md")))).strani);
+  const vrst = kem.find((x) => x.besedilo.includes("NaOH"));
+  assert.ok(vrst.besedilo.includes(`H₂SO₄ ${NEGOTOVO}`));
+  assert.ok(vrst.besedilo.includes(`Na₂SO₄ ${NEGOTOVO}`));
+  assert.deepEqual(vrst.negotovo.find((n) => n.izvirno === "H2SO4"), { vrsta: "kemija", izvirno: "H2SO4", prepis: "H₂SO₄" });
+  assert.ok(!vrst.besedilo.includes("NaOH [?]"), "NaOH nima indeksov");
+  // Pravilno zapisane kemijske formule v $\mathrm{…}$ ostanejo nedotaknjene.
+  assert.ok(kem.some((x) => x.besedilo.includes("$\\mathrm{SO_4^{2-}}$") && !x.negotovo.length));
+
+  assert.deepEqual(oznaciNegotovo("Velja $\\frac{1}{$ in 2x + 3 = 7, leto 2024, 4. letnik, CO2.").negotovo.map((n) => n.vrsta), ["formula", "kemija"]);
+  // En simbol z indeksom (sila F2, upor R1) ni negotov in se ne spremeni.
+  assert.deepEqual(oznaciNegotovo("Sila F2 deluje na upor R1."), { besedilo: "Sila F2 deluje na upor R1.", negotovo: [] });
+});
+
+test("navodila v dokumentu so samo podatek: izsek ostane besedilo, nič se ne izvede", async () => {
+  const iz = razrezi((await preberiVir("besedilo", Buffer.from(vir("napad.md")))).strani);
+  const napad = iz.find((x) => x.besedilo.includes(PRIC.viri["napad.md"].ne_izvedi));
+  assert.equal(napad.vrsta, "teorija");
+  assert.ok(iz.some((x) => x.besedilo.includes("c^2 = a^2 + b^2")));
+});
+
+test("vrsta izseka", () => {
+  const v = (t) => vrstaIzseka(t);
+  assert.equal(v("Definicija: odvod je limita …"), "definicija");
+  assert.equal(v("Pitagorov izrek: v pravokotnem trikotniku …"), "izrek");
+  assert.equal(v("Primer: kateti merita 3 cm"), "primer");
+  assert.equal(v("Izračunaj ploščino trikotnika."), "naloga");
+  assert.equal(v("$E = \\frac{F}{q}$"), "formula");
+  assert.equal(v("Celica je osnovna enota živih bitij."), "teorija");
+  assert.equal(vrstaIzseka("1. Nariši skico\n2. Zapiši podatke", { alineje: true }), "postopek");
+});
+
+// ---------- Word, PowerPoint, PDF ----------
+
+test("Word: naslovi, alineje, tabela, formula OMML → LaTeX, prelom strani; isti izseki kot iz besedila", async () => {
+  const md = vir("mat-integrali.md");
+  const omml =
+    '<w:p><w:r><w:t xml:space="preserve">Ulomek: </w:t></w:r><m:oMath><m:f><m:num><m:r><m:t>a</m:t></m:r></m:num><m:den><m:sSup><m:e><m:r><m:t>b</m:t></m:r></m:e><m:sup><m:r><m:t>2</m:t></m:r></m:sup></m:sSup></m:den></m:f></m:oMath></w:p>' +
+    '<w:p><w:r><w:br w:type="page"/></w:r></w:p><w:tbl><w:tr><w:tc><w:p><w:r><w:t>Količina</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Enota</w:t></w:r></w:p></w:tc></w:tr><w:tr><w:tc><w:p><w:r><w:t>sila</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>N &amp; kN</w:t></w:r></w:p></w:tc></w:tr></w:tbl>';
+  const r = await preberiVir("word", docx(md, { omml }));
+  const iz = razrezi(r.strani);
+  const vse = besedila(iz);
+  for (const m of PRIC.viri["mat-integrali.md"].mora_najti) assert.ok(vse.includes(m), m);
+  assert.ok(vse.includes("$\\frac{a}{{b}^{2}}$"), vse.slice(-300));
+  assert.ok(izrise("\\frac{a}{{b}^{2}}"));
+  assert.ok(vse.includes("Količina | Enota") && vse.includes("sila | N & kN"));
+  assert.equal(r.strani.length, 2, "prelom strani");
+  assert.equal(iz.find((x) => x.besedilo.includes("Količina")).stran, 2);
+  assert.equal(iz.find((x) => x.besedilo.includes("Newton-Leibnizova")).naslov, "Določeni integral");
+  // Isti izseki kot iz besedila (razen dodanega na koncu).
+  const izBesedila = razrezi((await preberiVir("besedilo", Buffer.from(md))).strani);
+  assert.deepEqual(iz.slice(0, izBesedila.length).map((x) => [x.vrsta, x.besedilo]), izBesedila.map((x) => [x.vrsta, x.besedilo.replace(/^- /gm, "")]));
+});
+
+test("PowerPoint: prosojnice v vrstnem redu predstavitve, naslov prosojnice, opombe govorca", async () => {
+  const md = vir("fiz-elektricno-polje.md");
+  const r = await preberiVir("powerpoint", pptx(md, { opombe: "Učitelj: to bo na testu." }));
+  const iz = razrezi(r.strani);
+  const vse = besedila(iz);
+  for (const m of PRIC.viri["fiz-elektricno-polje.md"].mora_najti) assert.ok(vse.includes(m), m);
+  assert.equal(r.strani[0].vrstice[0].besedilo, md.split("\n")[0].replace(/^#+\s*/, ""), "prva prosojnica je prva v predstavitvi, ne po imenu datoteke");
+  assert.ok(vse.includes("Učitelj: to bo na testu."));
+  assert.deepEqual(r.strani.map((s) => s.stran), r.strani.map((_, i) => i + 1));
+});
+
+test("PDF: besedilo po straneh, skenirana stran označena, poškodovan PDF da napako uvoza", async () => {
+  const a = ["Elektricno polje", "Jakost polja: E = F/q, enota N/C.", "Naboj q = 2 * 10^-6 C."];
+  const b = ["Coulombov zakon: F = k q1 q2 / r^2", "Primer: F = 0,01 N."];
+  const r = await preberiVir("pdf", pdf([a, [], b]));
+  assert.deepEqual(r.brezBesedila, [2]);
+  assert.deepEqual(r.strani.map((s) => s.stran), [1, 3]);
+  assert.deepEqual(r.strani[0].vrstice.map((v) => v.besedilo), a);
+  const iz = razrezi(r.strani);
+  assert.ok(iz.some((x) => x.stran === 3 && x.vrsta === "izrek" && x.besedilo.startsWith("Coulombov zakon")));
+  // q1, q2 sta oznaki (indeksa) zunaj formule: ostaneta z [?].
+  assert.ok(iz.find((x) => x.stran === 3).besedilo.includes(`q1 ${NEGOTOVO}`));
+  await assert.rejects(preberiVir("pdf", Buffer.from("%PDF-1.4\nsmeti brez strani\n%%EOF")), (e) => e instanceof NapakaUvoza && e.code === "uvoz_pdf");
+});
+
+test("ZIP: bomba (velika razširitev) in poškodovan imenik dasta napako uvoza, ne izjeme strežnika", () => {
+  const bomba = zip({ "[Content_Types].xml": CT, "word/document.xml": Buffer.alloc(MEJE_UVOZA.zipVnos + 10, 0x20) });
+  assert.throws(() => beriWord(bomba), (e) => e instanceof NapakaUvoza && e.code === "uvoz_zip_velik");
+  const pokvarjen = Buffer.from(docx("# A\n\nB"));
+  pokvarjen.writeUInt32LE(0, pokvarjen.length - 22 + 16 - 0); // odmik imenika → 0 (lokalna glava namesto imenika)
+  assert.throws(() => beriWord(pokvarjen), (e) => e instanceof NapakaUvoza);
+  assert.throws(() => beriPowerpoint(Buffer.from("PK\u0003\u0004 nič")), (e) => e instanceof NapakaUvoza);
+  // Pregloboka formula OMML (ročno sestavljena): hitro, z oznako [formula] [?] namesto razčlenjevanja.
+  const globoka = "<m:oMath>" + "<m:f><m:num><m:r><m:t>1</m:t></m:r></m:num><m:den>".repeat(400) + "<m:r><m:t>x</m:t></m:r>" + "</m:den></m:f>".repeat(400) + "</m:oMath>";
+  const t0 = Date.now();
+  const iz = razrezi(beriWord(docx("A", { omml: `<w:p>${globoka}</w:p>`.repeat(30) })));
+  assert.ok(Date.now() - t0 < 3000, `${Date.now() - t0} ms`);
+  assert.ok(iz.some((x) => x.besedilo.includes("[formula] [?]") && x.negotovo.some((n) => n.izvirno === "[formula]")));
+});
+
+// ---------- poti ----------
+
+async function withServer(fn) {
+  const store = openDb(":memory:");
+  const app = createApp(store, { accounts: true, scheduler: false, resendKey: "re_x", fetchFn: async () => ({ ok: true, status: 200, json: async () => ({ id: "e" }) }), log: quiet });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const client = () => {
+    const jar = {};
+    return async (p, opts = {}) => {
+      const headers = { cookie: Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; "), ...(opts.raw === undefined ? { "Content-Type": "application/json" } : { "Content-Type": "application/octet-stream" }) };
+      const res = await fetch(base + p, { method: opts.method || "GET", headers, body: opts.raw ?? (opts.body ? JSON.stringify(opts.body) : undefined) });
+      for (const c of res.headers.getSetCookie()) {
+        const [kv] = c.split(";");
+        const i = kv.indexOf("=");
+        jar[kv.slice(0, i)] = kv.slice(i + 1);
+      }
+      const text = await res.text();
+      let body;
+      try {
+        body = JSON.parse(text);
+      } catch {
+        body = text;
+      }
+      return { status: res.status, body };
+    };
+  };
+  const YEAR = new Date().getFullYear();
+  const user = async (email) => {
+    const call = client();
+    const r = await call("/api/auth/register", { method: "POST", body: { email, password: "geslo1234", accept_privacy: true, country: "SI", birth_date: `${YEAR - 40}-01-15` } });
+    assert.equal(r.status, 201, JSON.stringify(r.body));
+    store.db.prepare("UPDATE parents SET email_verified_at = datetime('now') WHERE email = ?").run(email);
+    const s = await call("/api/students", { method: "POST", body: { name: "Maja", birth_year: YEAR - 15, consent: true } });
+    assert.equal(s.status, 201, JSON.stringify(s.body));
+    return { call, sid: s.body.id };
+  };
+  try {
+    await fn({ user, db: store.db });
+  } finally {
+    server.close();
+  }
+}
+
+test("API: nalaganje obdela vir (besedilo, Word, PDF), izseki šifrirani, filtri, ponovna obdelava, tuj profil 404", async () => {
+  assert.ok(SEALED.some((x) => x.table === "priprava_izseki" && ["naslov", "besedilo", "negotovo"].every((c) => x.cols.includes(c))));
+  await withServer(async ({ user, db }) => {
+    const a = await user("a@primer.si");
+    const p = (await a.call(`/api/students/${a.sid}/priprave`, { method: "POST", body: { naslov: "Integrali" } })).body.priprava;
+    assert.ok(p?.id, "priprava");
+    const t = await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", body: { besedilo: vir("mat-integrali.md"), ime: "zvezek" } });
+    assert.equal(t.status, 201, JSON.stringify(t.body));
+    assert.equal(t.body.vir.stanje, "obdelan");
+    assert.ok(t.body.vir.izsekov >= 10);
+    const w = await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", raw: docx(vir("kem-reakcije.md")) });
+    assert.equal(w.status, 201, JSON.stringify(w.body));
+    assert.equal(w.body.vir.vrsta, "word");
+    assert.equal(w.body.vir.stanje, "obdelan");
+    const d = await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", raw: pdf([[], []]) });
+    assert.equal(d.body.vir.stanje, "branje", "samo skenirane strani čakajo na branje fotografij");
+    assert.deepEqual(d.body.vir.opozorila, [{ koda: "uvoz_brez_besedila", strani: [1, 2] }]);
+    const bad = await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri`, { method: "POST", raw: Buffer.from("%PDF-1.4\nsmeti\n%%EOF") });
+    assert.equal(bad.status, 201);
+    assert.deepEqual([bad.body.vir.stanje, bad.body.vir.napaka], ["napaka", "uvoz_pdf"]);
+
+    const vsi = (await a.call(`/api/students/${a.sid}/priprave/${p.id}/izseki`)).body.izseki;
+    assert.ok(vsi.some((x) => x.besedilo.includes("Newton-Leibnizova") && x.naslov === "Določeni integral"));
+    const kem = vsi.find((x) => x.besedilo.includes("NaOH"));
+    assert.equal(kem.vir_id, w.body.vir.id);
+    assert.ok(kem.negotovo.some((n) => n.izvirno === "H2SO4"));
+    // V bazi šifrirano.
+    const raw = db.prepare("SELECT naslov, besedilo, negotovo FROM priprava_izseki WHERE id = ?").get(kem.id);
+    assert.ok(!raw.besedilo.includes("NaOH") && !String(raw.negotovo).includes("H2SO4") && !String(raw.naslov).includes("Kemijske"));
+    const samoW = (await a.call(`/api/students/${a.sid}/priprave/${p.id}/izseki?vir=${w.body.vir.id}`)).body.izseki;
+    assert.ok(samoW.length && samoW.every((x) => x.vir_id === w.body.vir.id));
+    const defs = (await a.call(`/api/students/${a.sid}/priprave/${p.id}/izseki?vrsta=definicija`)).body.izseki;
+    assert.ok(defs.length && defs.every((x) => x.vrsta === "definicija"));
+    assert.equal((await a.call(`/api/students/${a.sid}/priprave/${p.id}/izseki?vrsta=x`)).status, 400);
+    assert.equal((await a.call(`/api/students/${a.sid}/priprave/${p.id}/izseki?vir=abc`)).status, 400);
+
+    // Ponovna obdelava: isto število izsekov, brez podvajanja.
+    const n0 = db.prepare("SELECT COUNT(*) AS n FROM priprava_izseki WHERE vir_id = ?").get(t.body.vir.id).n;
+    const re = await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri/${t.body.vir.id}/obdelaj`, { method: "POST" });
+    assert.equal(re.status, 200);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM priprava_izseki WHERE vir_id = ?").get(t.body.vir.id).n, n0);
+
+    // Tuj profil: 404 za izseke in obdelavo.
+    const b = await user("b@primer.si");
+    assert.equal((await b.call(`/api/students/${a.sid}/priprave/${p.id}/izseki`)).status, 404);
+    assert.equal((await b.call(`/api/students/${b.sid}/priprave/${p.id}/izseki`)).status, 404);
+    assert.equal((await b.call(`/api/students/${b.sid}/priprave/${p.id}/viri/${t.body.vir.id}/obdelaj`, { method: "POST" })).status, 404);
+
+    // Izbris vira odnese njegove izseke; izbris priprave vse.
+    await a.call(`/api/students/${a.sid}/priprave/${p.id}/viri/${w.body.vir.id}`, { method: "DELETE" });
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM priprava_izseki WHERE vir_id = ?").get(w.body.vir.id).n, 0);
+    await a.call(`/api/students/${a.sid}/priprave/${p.id}`, { method: "DELETE" });
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM priprava_izseki").get().n, 0);
+  });
+});

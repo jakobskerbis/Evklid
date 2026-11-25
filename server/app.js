@@ -2406,7 +2406,7 @@ export function createApp(store, opts = {}) {
   mountZapiski(app, store, { loadStudent, usage, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, readFn: opts.zapiskiReadFn, cardsFn: opts.zapiskiCardsFn });
   // Vaja iz testa ali domače naloge (faza 1): veščine nalog → naše naloge iz Vadnice; strani iz iste meje kot zapiski.
   mountVajaIzLista(app, store, { loadStudent, usage, progress, rightsFor: opts.zapiskiRights || accounts?.rightsFor || null, ...(opts.vajaPickFn ? { pickFn: opts.vajaPickFn } : {}) });
-  mountPriprave(app, store, { loadStudent, ...(opts.pripravaNow ? { now: opts.pripravaNow } : {}) }); // priprava na test iz zapiskov (server/priprava/)
+  mountPriprave(app, store, { loadStudent, log: opts.log || console, ...(opts.pripravaNow ? { now: opts.pripravaNow } : {}) }); // priprava na test iz zapiskov (server/priprava/)
 
   // --- poraba AI ---
   // Poraba AI za vse profile: brez računov samo na računalniku, kjer teče strežnik
