@@ -11,6 +11,7 @@ import json
 import re
 import signal
 import sys
+import time
 import random
 
 try:
@@ -198,13 +199,16 @@ def is_zero(expr, syms=None):
         if any(v is False for v in vals):
             return False
         return None if any(v is None for v in vals) else True
+    z = None
     try:
         z = sp.simplify(expr)
-        if z == 0:
+        if _je_nic(z):
             return True
         if z.is_number:
             if not z.atoms(sp.Float) and z.is_zero is not None:
                 return bool(z.is_zero)  # točna števila: SymPy odloči simbolno (npr. 2 − 3 ≠ 0); decimalke ostanejo številske
+            if not z.atoms(sp.Float) and _simbolno_nic(z):
+                return True
             oslabi("numeric")
             v = complex(sp.N(z, 30))
             return abs(v) < 1e-12
@@ -213,12 +217,48 @@ def is_zero(expr, syms=None):
     except Exception:
         pass
     free = sorted(expr.free_symbols, key=str)
-    oslabi("sampled" if free else "numeric")
     r = _sample_zero(expr, free, 0)
+    if r is True and z is not None and not expr.atoms(sp.Float) and _simbolno_nic(z):
+        return True  # točke so rekle 0, simbolni prepis to tudi dokaže
+    oslabi("sampled" if free else "numeric")
     if r is False and free:
         # pravilo, ki velja samo za pozitivne vrednosti (ln(a*b) = ln a + ln b, sqrt(a*b) …): ne vemo
         return None if _sample_zero(expr, free, 1) else False
     return r
+
+
+def _je_nic(z):
+    """0 ali Piecewise, ki je 0 povsod razen v posameznih točkah, kjer izraz ni definiran (nan/zoo pri Eq(x, a))."""
+    if z == 0:
+        return True
+    if isinstance(z, sp.Piecewise):
+        deli = z.args
+        return any(e == 0 for e, _ in deli) and all(e == 0 or (e in (sp.nan, sp.zoo) and isinstance(c, sp.Eq)) for e, c in deli)
+    return False
+
+
+def _koreni_razstavljeni(e):
+    """sqrt(x² + 6x + 9) → sqrt((x + 3)²), da simplify najde |x + 3| (osnova se le razstavi, vrednost ostane ista)."""
+    return e.replace(lambda a: a.is_Pow and not a.exp.is_Integer, lambda a: sp.Pow(sp.factor(a.base), a.exp))
+
+
+def _simbolno_nic(z, meja=1.5):
+    """Dodatni simbolni prepisi (expand_trig, rewrite(exp), razstavljeni koreni), ki jih simplify sam ne najde. Vsak ima svoj časovni
+    rob, da počasen prepis ne pokvari celotnega ukaza; ob izteku vrne False (ostane številska pot)."""
+    for prepis in (sp.expand_trig, lambda e: e.rewrite(sp.exp), _koreni_razstavljeni):
+        ostane = signal.getitimer(signal.ITIMER_REAL)[0]
+        if ostane and ostane < meja + 1.5:
+            return False
+        zacetek = time.monotonic()
+        signal.setitimer(signal.ITIMER_REAL, meja)
+        try:
+            if _je_nic(sp.simplify(prepis(z))):
+                return True
+        except Exception:  # vključno z notranjim Timeout
+            pass
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, max(0.01, ostane - (time.monotonic() - zacetek)) if ostane else 0)
+    return False
 
 
 def _sample_zero(expr, free, lo):

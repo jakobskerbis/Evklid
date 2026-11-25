@@ -22,6 +22,12 @@ test("worker: način preverjanja", { skip: !HAVE && "SymPy ni na voljo" }, async
   assert.equal(await nacin("ineq", ["x^2-1<0", "x", "(-1, 1)"]), "true/symbolic");
   assert.equal(await nacin("units", ["72*km/h", "20*m/s"]), "true/symbolic");
   assert.equal(await nacin("solve", ["x+y=3, x-y=1", "x, y", "x=2, y=1"]), "true/symbolic");
+  // simbolni prepisi, ki jih simplify sam ne najde (pregled PV-03)
+  assert.equal(await nacin("equal", ["tan(x)+cot(x)", "2/sin(2*x)"]), "true/symbolic");
+  assert.equal(await nacin("equal", ["sqrt(x^2+6*x+9)", "abs(x+3)"]), "true/symbolic");
+  assert.equal(await nacin("diff", ["abs(x)", "x", "x/abs(x)"]), "true/symbolic");
+  assert.equal(await nacin("diff", ["ln(abs(x))", "x", "1/x"]), "true/symbolic");
+  assert.equal(await nacin("equal", ["ln(2)/(ln(3)-ln(2))", "log(2)/log(3/2)"]), "true/symbolic");
   // vzorčeno: velik koeficient, napačen za 1, sprejme le preizkus v točkah
   assert.equal(await nacin("equal", ["(x+1000000)^2", "x^2+1999999*x+1000000000000"]), "true/sampled");
   // številsko: toleranca zapisa, decimalke, popolnost periodičnih rešitev le na odseku
@@ -34,9 +40,13 @@ test("worker: način preverjanja", { skip: !HAVE && "SymPy ni na voljo" }, async
   // »ne drži« ostane, kot je bil
   assert.equal((await casCheck("value", ["3/4+1/2", "4/6"])).ok, false);
   assert.equal((await casCheck("solve", ["x^2-5*x+6=0", "x", "2"])).ok, false);
+  assert.equal((await casCheck("equal", ["tan(x)+cot(x)", "3/sin(2*x)"])).ok, false);
+  assert.equal((await casCheck("equal", ["sqrt(x^2+6*x+9)", "abs(x-3)"])).ok, false);
+  // točno število, ki ni 0, a je manjše od 10⁻¹²: prej »enako 0«, zdaj simbolno ne
+  assert.equal(await nacin("equal", ["e^(-60)", "0"]), "false/symbolic");
 });
 
-test("cas.js: odziv brez how (star worker) ostane brez polja", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+test("cas.js: neznan ukaz (ok null) ne dobi polja how", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
   const r = await casCheck("neznan", ["x"]);
   assert.equal(r.ok, null);
   assert.equal("how" in r, false);

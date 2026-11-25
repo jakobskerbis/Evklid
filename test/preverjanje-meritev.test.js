@@ -28,7 +28,7 @@ const IZHODISCE = {
     sibke: ["skoraj-002", "skoraj-006", "skoraj-008", "skoraj-010", "skoraj-026"],
     alarmi: [],
     ujete: 187,
-    potrjena: 171,
+    potrjena: 173,
   },
   // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
   skener: {
@@ -37,7 +37,7 @@ const IZHODISCE = {
     sibke: [],
     alarmi: ["integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022", ...LOKALNO_ALARMI],
     ujete: 178,
-    potrjena: 153,
+    potrjena: 154,
   },
 };
 

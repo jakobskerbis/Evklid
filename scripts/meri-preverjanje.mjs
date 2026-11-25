@@ -45,7 +45,7 @@ export const MOTORJI = {
     async status(p, { casCheck }) {
       const c = await casCheck(p.racun[0], p.racun[1]);
       // PV-03: »izracunano« samo za simbolni dokaz; številski ali vzorčeni »drži« je največ »numericno«
-      if (c.ok === true) return !c.how || c.how === "symbolic" ? "izracunano" : "numericno";
+      if (c.ok === true) return c.how === "symbolic" ? "izracunano" : "numericno";
       return c.ok === false ? "napaka" : "nepreverjeno";
     },
   },

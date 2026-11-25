@@ -14,7 +14,7 @@ SymPy: `docs/preverjanje-s-kodo.md`.
 | Status | Ključ | Kdaj velja |
 | --- | --- | --- |
 | Formalno dokazano | `dokazano` | Lean je dokazal trditev in njeno popolnost (cela množica rešitev). Pogoji iz `docs/lean.md`: izrek je zapisan tako kot v viru (prevod AI preveri neodvisno), predpostavke imajo `example`, ki pokaže, da se dajo izpolniti, aksiomi so samo `propext`, `Classical.choice`, `Quot.sound`. |
-| Računsko preverjeno | `izracunano` | Točna aritmetika, točna algebra (`public/scan/algebra.js`) ali SymPy brez naključnih točk potrdi trditev v celoti. |
+| Računsko preverjeno | `izracunano` | Točna aritmetika, točna algebra (`public/scan/algebra.js`) ali SymPy z `how: "symbolic"` (PV-03) potrdi trditev v celoti. |
 | Numerično preverjeno | `numericno` | Vsaj en del (trditev ali popolnost) je preverjen samo s števili (naključne točke, mreža). Ni dokaz in se nikoli ne zviša sam. |
 | Delno preverjeno | `delno` | Del trditve ali odgovora je preverjen, del ne (npr. vsaka navedena rešitev drži, popolnost ne). |
 | Preverjanje v teku | `v_teku` | Počasnejši motor (Lean) še dela. Začasno; po roku velja najvišji doseženi status (rok uvede PV-14). Oznaka »ni preverjeno z Lean« iz L6 (`docs/lean.md`) je ta status oziroma status, ki ga je trditev dobila brez Leana. |
@@ -62,9 +62,17 @@ Worker (`server/cas/worker.py`) v vsakem odgovoru vrne `how`, najšibkejši nač
   realnost korenov in logaritmov, ki je SymPy ne dokaže, in popolnost periodičnih rešitev samo na [−20, 20];
 - `sampled`: `is_zero` je odločil s preizkusom v naključnih točkah.
 
-`ok` in `why` sta nespremenjena; `server/cas.js` `casCheck` vrne `how`, kadar ga worker pošlje. Pravilo: SymPy »drži«
-je `izracunano` samo pri `how: "symbolic"`, sicer največ `numericno` (meja motorja `sympy` v `trditev.js` ostane
-`exact`, vir pa navede `how` po workerju). Skener (`verifyAiFull`) to že upošteva: SymPy, ki ni simbolno dokazal, da
+`server/cas.js` `casCheck` vrne `how`, kadar ga worker pošlje. Pravilo: SymPy »drži« je `izracunano` samo pri
+`how: "symbolic"`, sicer (tudi brez `how`) največ `numericno`. Meja motorja `sympy` v `trditev.js` ostane `exact`;
+vir v `dokazi` preslika besednjak workerja: `symbolic` → `exact`, `numeric` in `sampled` → `numeric`.
+
+`ok` se spremeni le na robu: točno število, ki ni 0, a je manjše od 10⁻¹², je prej veljalo za 0, zdaj ga SymPy
+odloči simbolno (`equal e^(-60) | 0`: prej `true`, zdaj `false`; `value sqrt(10^40+1) | 10^20`: prej `true`, zdaj
+`null`). Na 5.329 trditvah RACUN iz lekcij se `ok` ni spremenil nikjer. Ker `simplify` sam ne najde vseh identitet,
+`is_zero` pred vzorčenjem poskusi še tri simbolne prepise (`expand_trig`, `rewrite(exp)`, razstavljena osnova
+korena), vsakega z lastnim časovnim robom 1,5 s; Piecewise, ki je 0 povsod razen v točki, kjer izraz ni definiran
+(odvod |x|), šteje kot 0. Tako `tan x + cot x = 2/sin 2x`, `sqrt(x²+6x+9) = |x+3|`, `(|x|)' = x/|x|`,
+`(ln|x|)' = 1/x` in točna rešitev eksponentne enačbe ostanejo `symbolic`. Skener (`verifyAiFull`) to že upošteva: SymPy, ki ni simbolno dokazal, da
 največ »Numerično preverjeno«, razen če je lokalna točna algebra odgovor dokazala. Bloka RACUN (`server/racun.js`,
 profil B) še ne preslikamo v statuse; ko ga, velja isto pravilo.
 
@@ -96,11 +104,11 @@ Izhodišče 25. 11. 2026:
 | Motor | Trditev | Napačno potrjene | Ujete napake | Napačne s šibkim statusom | Lažni alarmi | Pravilne potrjene |
 | --- | --- | --- | --- | --- | --- | --- |
 | sympy (surovo) | 384 | 5 | 187/193 | 0 | 0 | 179/191 (+12 previsoko) |
-| sympy z načinom (PV-03) | 384 | 0 | 187/193 | 5 | 0 | 171/191 |
+| sympy z načinom (PV-03) | 384 | 0 | 187/193 | 5 | 0 | 173/191 |
 | skener | 363 | **4** | 178/182 | 0 | 5 | 153/181 (+1 previsoko) |
 | skener-lokalno | 363 | 0 | 172/182 | 5 | 8 | 101/181 |
 | skener po popravku | 363 | 0 | 178/182 | 0 | 5 | 154/181 |
-| skener s PV-03 | 363 | 0 | 178/182 | 0 | 5 | 153/181 |
+| skener s PV-03 | 363 | 0 | 178/182 | 0 | 5 | 154/181 |
 | skener-lokalno po popravku | 363 | 0 | 173/182 | 4 | 7 | 106/181 |
 
 0 napačno potrjenih na tem naboru pomeni pri 95-odstotnem zaupanju delež pod približno 3/n (n = število napačnih
@@ -131,6 +139,10 @@ Ugotovitve:
   statusov); zmnožek velikih števil v zapisu `1.2193263111263526*10^17` (napaka 9) sprejme, ker `value` računa s
   plavajočo vejico. **PV-03:** vsi ti odgovori imajo `how` ≠ `symbolic`, zato so največ `numericno`; surov SymPy z
   načinom nima nobene napačno potrjene trditve in nobenega previsokega statusa, pet napačnih pa dobi `numericno`.
+- Cena PV-03 v pokritosti: pravilne periodične rešitve (`sin x = 0` → `kπ`, `cos x = 0` → `π/2 + kπ`, 6 trditev)
+  so zdaj `numericno`, ker worker popolnost preveri samo na [−20, 20]. Simbolni dokaz popolnosti ostaja odprt.
+  Identitete, ki jih `simplify` sam ne najde (tan + cot, koren popolnega kvadrata, odvod |x| in ln|x|, točna rešitev
+  eksponentne enačbe), po pregledu ostanejo `izracunano` (trije dodatni simbolni prepisi v `is_zero`).
 
 ## Pravilo za nove dele aplikacije
 
