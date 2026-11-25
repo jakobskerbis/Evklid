@@ -185,6 +185,39 @@ test("negotovo branje: x2 ostane z [?] (brez ugibanja), kemijski indeksi dopolnj
   assert.deepEqual(oznaciNegotovo("Velja $\\frac{1}{$ in 2x + 3 = 7, leto 2024, 4. letnik, CO2.").negotovo.map((n) => n.vrsta), ["formula", "kemija"]);
   // En simbol z indeksom (sila F2, upor R1) ni negotov in se ne spremeni.
   assert.deepEqual(oznaciNegotovo("Sila F2 deluje na upor R1."), { besedilo: "Sila F2 deluje na upor R1.", negotovo: [] });
+  // Koeficient pred zapisom ga ne skrije (3x2 je lahko 3x², 6x ali 3x₂); x2y je enako negotov.
+  assert.equal(oznaciNegotovo("Reši 3x2 + 2x - 1 = 0 in x2y.").besedilo, `Reši 3x2 ${NEGOTOVO} + 2x - 1 = 0 in x2y ${NEGOTOVO}.`);
+});
+
+test("OMML → LaTeX: oklepaji, matrika, sistem, binomski koeficient, limita, naglasi, izotop, posebni znaki", () => {
+  const r = (t) => `<m:r><m:t>${t}</m:t></m:r>`;
+  const e = (...x) => x.map((t) => `<m:e>${t}</m:e>`).join("");
+  const d = (beg, end, x) => `<m:d><m:dPr><m:begChr m:val="${beg}"/><m:endChr m:val="${end}"/></m:dPr>${x}</m:d>`;
+  const f = (x) => {
+    const t = beriWord(docx("", { omml: `<w:p><m:oMath>${x}</m:oMath></w:p>` }))[0].vrstice.find((v) => v.besedilo).besedilo;
+    return t.replace(/^\$|\$$/g, "");
+  };
+  const primeri = [
+    [d("|", "|", e(r("x"))), "\\left| x \\right|"],
+    [d("[", "]", e(r("0,3"))), "\\left[ 0,3 \\right]"],
+    [d("{", "}", e(r("1,2"))), "\\left\\{ 1,2 \\right\\}"],
+    [`<m:d>${e(`<m:m><m:mr>${e(r("1"), r("2"))}</m:mr><m:mr>${e(r("3"), r("4"))}</m:mr></m:m>`)}</m:d>`, "\\left( \\begin{matrix} 1 & 2 \\\\ 3 & 4 \\end{matrix} \\right)"],
+    [d("{", "", e(`<m:eqArr>${e(r("2x+y&amp;=5"), r("x-y&amp;=1"))}</m:eqArr>`)), "\\left\\{ \\begin{array}{l} 2x+y=5 \\\\ x-y=1 \\end{array} \\right."],
+    [`<m:d>${e(`<m:f><m:fPr><m:type m:val="noBar"/></m:fPr><m:num>${r("n")}</m:num><m:den>${r("k")}</m:den></m:f>`)}</m:d>`, "\\left( \\genfrac{}{}{0pt}{}{n}{k} \\right)"],
+    [`<m:func><m:fName><m:limLow>${e(r("lim"))}<m:lim>${r("x→0")}</m:lim></m:limLow></m:fName>${e(r("x"))}</m:func>`, "\\lim_{x\\rightarrow 0} x"],
+    [`<m:func><m:fName><m:sSub>${e(r("log"))}<m:sub>${r("2")}</m:sub></m:sSub></m:fName>${e(r("x"))}</m:func>`, "\\operatorname{log}_{2} x"],
+    [`<m:acc><m:accPr><m:chr m:val="⃗"/></m:accPr>${e(r("v"))}</m:acc>`, "\\vec{v}"],
+    [`<m:bar><m:barPr><m:pos m:val="top"/></m:barPr>${e(r("x"))}</m:bar>`, "\\overline{x}"],
+    [`<m:sPre><m:sub>${r("6")}</m:sub><m:sup>${r("14")}</m:sup>${e(r("C"))}</m:sPre>`, "{}_{6}^{14}{C}"],
+    [`<m:nary><m:naryPr><m:chr m:val="∮"/></m:naryPr><m:sub/><m:sup/>${e(r("E"))}</m:nary>`, "\\oint E"],
+    [r("F=q v×B, p=5%"), "F=q v\\times B, p=5\\%"],
+  ];
+  for (const [x, latex] of primeri) {
+    assert.equal(f(x), latex);
+    assert.ok(izrise(latex), latex);
+  }
+  // Neznan oklepaj ali operator: [?], ne napačna formula.
+  assert.equal(f(`<m:nary><m:naryPr><m:chr m:val="⨁"/></m:naryPr>${e(r("A"))}</m:nary>`), "[formula] [?]");
 });
 
 test("navodila v dokumentu so samo podatek: izsek ostane besedilo, nič se ne izvede", async () => {

@@ -131,9 +131,24 @@ function otroci(xml) {
 }
 const otrok = (xml, tag) => otroci(xml).find((o) => o.tag === tag)?.notranje ?? "";
 class NapakaOmml extends Error {}
-const ZNAKI_LATEX = { "×": "\\cdot ", "·": "\\cdot ", "−": "-", "≤": "\\le ", "≥": "\\ge ", "≠": "\\neq ", "∞": "\\infty ", "π": "\\pi ", "α": "\\alpha ", "β": "\\beta ", "Δ": "\\Delta ", "→": "\\rightarrow ", "∫": "\\int ", "∑": "\\sum " };
+// × ostane \times (vektorski produkt ni skalarni). Posebni znaki LaTeXa se ubežijo: % bi sicer zakril preostanek
+// formule, $ bi končal formulo v izseku, { } bi izginila (množica {1, 2}).
+const ZNAKI_LATEX = { "×": "\\times ", "·": "\\cdot ", "−": "-", "≤": "\\le ", "≥": "\\ge ", "≠": "\\neq ", "∞": "\\infty ", "π": "\\pi ", "α": "\\alpha ", "β": "\\beta ", "Δ": "\\Delta ", "→": "\\rightarrow ", "∫": "\\int ", "∑": "\\sum ", "%": "\\%", "#": "\\#", "&": "\\&", "$": "\\text{\\textdollar}", "{": "\\{", "}": "\\}" };
+// Oklepaji (m:d), operatorji (m:nary) in naglasi (m:acc); neznan znak: [?] namesto napačne formule.
+const OKLEPAJI = { "(": "(", ")": ")", "[": "[", "]": "]", "{": "\\{", "}": "\\}", "|": "|", "‖": "\\|", "⟨": "\\langle", "⟩": "\\rangle", "⌊": "\\lfloor", "⌋": "\\rfloor", "⌈": "\\lceil", "⌉": "\\rceil", "": "." };
+const OPERATORJI = { "∫": "\\int", "∬": "\\iint", "∭": "\\iiint", "∮": "\\oint", "∯": "\\oiint", "∑": "\\sum", "∏": "\\prod", "∐": "\\coprod", "⋃": "\\bigcup", "⋂": "\\bigcap" };
+const NAGLASI = { "\u0302": "\\hat", "\u20d7": "\\vec", "\u0307": "\\dot", "\u0308": "\\ddot", "\u0305": "\\bar", "\u00af": "\\bar", "\u0303": "\\tilde", "\u030c": "\\check", "\u0306": "\\breve", "\u0301": "\\acute", "\u0300": "\\grave" };
 const OMML_GLOBINA = 12;
 const OMML_ZNAKOV = 20_000;
+// Vrednost lastnosti (npr. <m:begChr m:val="["/>) ali privzeta, če je ni (ECMA-376).
+const lastnost = (xml, ime, privzeto) => {
+  const m = new RegExp(`<m:${ime}\\b[^>]*?m:val="([^"]*)"`).exec(xml);
+  return m ? odkodiraj(m[1]) : privzeto;
+};
+const znak = (tabela, c) => {
+  if (!(c in tabela)) throw new NapakaOmml();
+  return tabela[c];
+};
 function omml(xml, g = 0) {
   // Pregloboka ali predolga formula (ročno sestavljena datoteka) se ne razčlenjuje: [?] namesto počasnega branja.
   if (g > OMML_GLOBINA || xml.length > OMML_ZNAKOV) throw new NapakaOmml();
@@ -148,8 +163,39 @@ function omml(xml, g = 0) {
         break;
       }
       case "m:f":
-        s += `\\frac{${om(otrok(n, "m:num"))}}{${om(otrok(n, "m:den"))}}`;
+        // noBar: brez ulomkove črte (binomski koeficient v oklepaju), ni ulomek.
+        s += `${lastnost(otrok(n, "m:fPr"), "type", "bar") === "noBar" ? "\\genfrac{}{}{0pt}{}" : "\\frac"}{${om(otrok(n, "m:num"))}}{${om(otrok(n, "m:den"))}}`;
         break;
+      case "m:sPre":
+        s += `{}_{${om(otrok(n, "m:sub"))}}^{${om(otrok(n, "m:sup"))}}{${om(otrok(n, "m:e"))}}`;
+        break;
+      case "m:m":
+        s += `\\begin{matrix} ${otroci(n).filter((x) => x.tag === "m:mr").map((r) => otroci(r.notranje).filter((x) => x.tag === "m:e").map((x) => om(x.notranje)).join(" & ")).join(" \\\\ ")} \\end{matrix}`;
+        break;
+      case "m:eqArr":
+        // Sistem enačb: vrstica na enačbo (& je v Wordu poravnava, ne znak).
+        s += `\\begin{array}{l} ${otroci(n).filter((x) => x.tag === "m:e").map((x) => om(x.notranje).replace(/\\&/g, "")).join(" \\\\ ")} \\end{array}`;
+        break;
+      case "m:limLow":
+      case "m:limUpp": {
+        const e = om(otrok(n, "m:e"));
+        const lim = om(otrok(n, "m:lim"));
+        if (o.tag === "m:limLow" && /^(lim|max|min|sup|inf)$/.test(e)) s += `\\${e}_{${lim}}`;
+        else s += `\\${o.tag === "m:limLow" ? "underset" : "overset"}{${lim}}{${e}}`;
+        break;
+      }
+      case "m:acc":
+        s += `${znak(NAGLASI, lastnost(otrok(n, "m:accPr"), "chr", "\u0302"))}{${om(otrok(n, "m:e"))}}`;
+        break;
+      case "m:bar":
+        s += `\\${lastnost(otrok(n, "m:barPr"), "pos", "bot") === "top" ? "overline" : "underline"}{${om(otrok(n, "m:e"))}}`;
+        break;
+      case "m:groupChr": {
+        const c = lastnost(otrok(n, "m:groupChrPr"), "chr", "\u23df");
+        if (c !== "\u23df" && c !== "\u23de") throw new NapakaOmml();
+        s += `\\${c === "\u23df" ? "underbrace" : "overbrace"}{${om(otrok(n, "m:e"))}}`;
+        break;
+      }
       case "m:sSup":
         s += `{${om(otrok(n, "m:e"))}}^{${om(otrok(n, "m:sup"))}}`;
         break;
@@ -164,26 +210,31 @@ function omml(xml, g = 0) {
         s += deg ? `\\sqrt[${deg}]{${om(otrok(n, "m:e"))}}` : `\\sqrt{${om(otrok(n, "m:e"))}}`;
         break;
       }
-      case "m:d":
-        s += `\\left(${otroci(n).filter((x) => x.tag === "m:e").map((x) => om(x.notranje)).join(", ")}\\right)`;
+      case "m:d": {
+        // Oklepaji iz m:dPr (|x|, [0, 3], {1, 2} niso okrogli); privzeto ( ) in ločilo |.
+        const pr = otrok(n, "m:dPr");
+        const sep = lastnost(pr, "sepChr", "|");
+        const loc = sep === "|" ? " \\mid " : sep === "," ? ", " : ` ${sep} `;
+        s += `\\left${znak(OKLEPAJI, lastnost(pr, "begChr", "("))} ${otroci(n).filter((x) => x.tag === "m:e").map((x) => om(x.notranje)).join(loc)} \\right${znak(OKLEPAJI, lastnost(pr, "endChr", ")"))}`;
         break;
+      }
       case "m:nary": {
-        const chr = /<m:chr m:val="([^"]*)"/.exec(n)?.[1];
-        const op = chr === "∑" ? "\\sum" : chr === "∏" ? "\\prod" : "\\int";
+        const op = znak(OPERATORJI, lastnost(otrok(n, "m:naryPr"), "chr", "∫"));
         const lo = om(otrok(n, "m:sub"));
         const hi = om(otrok(n, "m:sup"));
         s += `${op}${lo ? `_{${lo}}` : ""}${hi ? `^{${hi}}` : ""} ${om(otrok(n, "m:e"))}`;
         break;
       }
-      case "m:func":
-        s += `\\${om(otrok(n, "m:fName")).replace(/^\\/, "").trim()} ${om(otrok(n, "m:e"))}`;
+      case "m:func": {
+        // Ime funkcije (sin, tg, log z indeksom, lim z mejo): \lim_{…} ostane, sicer \operatorname{ime}.
+        const ime = om(otrok(n, "m:fName")).trim();
+        const g = /^\{?([A-Za-z]+)\}?(.*)$/.exec(ime);
+        s += `${ime.startsWith("\\") ? ime : g ? `\\operatorname{${g[1]}}${g[2]}` : `{${ime}}`} ${om(otrok(n, "m:e"))}`;
         break;
+      }
       case "m:e":
       case "m:oMath":
       case "m:box":
-      case "m:groupChr":
-      case "m:bar":
-      case "m:acc":
         s += om(n);
         break;
       default:

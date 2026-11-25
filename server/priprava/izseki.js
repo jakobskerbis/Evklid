@@ -64,14 +64,15 @@ export function oznaciNegotovo(t) {
       negotovo.push({ vrsta: "formula", izvirno: d.surovo });
       return `${d.surovo} ${NEGOTOVO}`;
     }
-    return d.tekst.replace(/(?<![\p{L}\p{N}_\\])([\p{L}()][\p{L}\p{N}()]*\d[\p{L}\p{N}()]*)(?![\p{L}\p{N}_])/gu, (w) => {
+    // Pred besedo sme biti števka: koeficient (3x2, 2H2O) ne skrije negotovega zapisa.
+    return d.tekst.replace(/(?<![\p{L}_\\])([\p{L}()][\p{L}\p{N}()]*\d[\p{L}\p{N}()]*)(?![\p{L}\p{N}_])/gu, (w) => {
       if (kemijska(w)) {
         const p = vPodpis(w);
         negotovo.push({ vrsta: "kemija", izvirno: w, prepis: p });
         return `${p} ${NEGOTOVO}`;
       }
-      // Ena ali dve črki + številka brez presledka (x2, ab2, x12): lahko potenca, produkt ali indeks.
-      if (/^\p{Ll}{1,2}\d{1,2}$/u.test(w)) {
+      // Ena ali dve črki + številka brez presledka (x2, ab2, x12, x2y): lahko potenca, produkt ali indeks.
+      if (/^(?:\p{Ll}{1,2}\d{1,2})+\p{Ll}{0,2}$/u.test(w)) {
         negotovo.push({ vrsta: "zapis", izvirno: w });
         return `${w} ${NEGOTOVO}`;
       }
@@ -92,7 +93,7 @@ export function vrstaIzseka(t, { alineje = false } = {}) {
   if (/^(primer|zgled|example)\b/.test(z)) return "primer";
   if (/^(\d+\.\s*)?(naloga|vaja)\b/.test(z) || /^\d+[.)]\s*\(\s*\d+\s*točk/.test(z) || /^(izračunaj|reši|določi|poišči|nariši|dokaži|pojasni|razloži|opiši|naštej|primerjaj|koliko|kolikšn)/.test(z) || /\(\s*\d+\s*(točk[ae]?|točki|t\.?)\s*\)/.test(z)) return "naloga";
   if (/^(postopek|koraki|navodilo)\b/.test(z) || (alineje && /^\s*1[.)]/.test(s))) return "postopek";
-  // Pretežno formula: več kot pol znakov v $…$ ali vrstica z = brez glagolov.
+  // Pretežno formula: več kot 60 % znakov v $…$.
   const f = deli(s).filter((d) => d.formula !== undefined).reduce((a, d) => a + d.surovo.length, 0);
   if (f && f / s.length > 0.6) return "formula";
   return "teorija";
