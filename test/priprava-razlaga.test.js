@@ -284,3 +284,53 @@ test("API: vir, izbrisan med klicem modela, ne pusti razlage; stiska v zapiskih 
     store.db.close();
   }
 });
+
+test("preverjanje razlage: rezultati, enote, cele enačbe, matrike, meje integrala, račun ob zanikanju, negotovo branje v drugem izseku", () => {
+  const I = [
+    { id: 1, besedilo: "Determinanta: $A = \\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}$, $\\det A = 1 \\cdot 4 - 2 \\cdot 3 = -2$." },
+    { id: 2, besedilo: "Zaporedje: $a_{n+1} = 2a_n$, $a_1 = 3$, zato je $a_4 = 24$." },
+    { id: 3, besedilo: "Coulombov zakon: $F = k\\,\\frac{q_1 q_2}{r^2}$, $k = 9 \\cdot 10^{9}\\ \\mathrm{N\\,m^2/C^2}$." },
+    { id: 4, besedilo: "Primer: na naboj $q = 2 \\cdot 10^{-6}\\ \\mathrm{C}$ deluje sila $F = 0{,}01\\ \\mathrm{N}$, zato je $E = 5000\\ \\mathrm{N/C}$." },
+    { id: 5, besedilo: "Molska masa vode je $M(\\mathrm{H_2O}) = 18\\ \\mathrm{g/mol}$, zato je v $36\\ \\mathrm{g}$ vode $n = 2\\ \\mathrm{mol}$." },
+    { id: 6, besedilo: "Primer: $\\int_0^2 (3x^2 - 2x)\\,dx = \\left[x^3 - x^2\\right]_0^2 = 8 - 4 = 4$." },
+    { id: 7, besedilo: "Gorenje vodika: $2\\,\\mathrm{H_2} + \\mathrm{O_2} \\rightarrow 2\\,\\mathrm{H_2O}$." },
+    { id: 8, besedilo: "V zvezku piše tudi: H₂O [?] nastane pri nevtralizaciji." },
+    { id: 9, besedilo: "Sistem: $\\begin{cases} x + y = 5 \\\\ x - y = 1 \\end{cases}$ ima rešitev $x = 3$, $y = 2$." },
+  ];
+  const r = (besedilo, viri, navedek) => preveriRazlago({ odstavki: [{ besedilo, viri, navedek }] }, I).odstavki[0];
+  const qd = "Determinanta: $A = \\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}$";
+  const qk = "Coulombov zakon: $F = k\\,\\frac{q_1 q_2}{r^2}$";
+  const qe = "na naboj $q = 2 \\cdot 10^{-6}\\ \\mathrm{C}$ deluje sila";
+  const qm = "Molska masa vode je $M(\\mathrm{H_2O}) = 18\\ \\mathrm{g/mol}$";
+  const qi = "Primer: $\\int_0^2 (3x^2 - 2x)\\,dx = \\left[x^3 - x^2\\right]_0^2 = 8 - 4 = 4$";
+  const qg = "Gorenje vodika: $2\\,\\mathrm{H_2} + \\mathrm{O_2} \\rightarrow 2\\,\\mathrm{H_2O}$";
+  const qs = "Sistem: $\\begin{cases} x + y = 5 \\\\ x - y = 1 \\end{cases}$";
+  for (const [b, v, n] of [
+    ["Determinanta matrike $A = \\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}$ je $\\det A = 1 \\cdot 4 - 2 \\cdot 3 = -2$.", [1], qd],
+    ["Determinanta matrike A je -2.", [1], qd],
+    ["Coulombov zakon: $F = k\\,\\frac{q_1 q_2}{r^2}$, konstanta je 9·10⁹ N m²/C².", [3], qk],
+    ["Na naboj deluje sila 0,01 N, zato je jakost 5000 N/C.", [4], qe],
+    ["Molska masa vode je 18 g/mol, zato je v 36 g vode 2 mol, saj je 36 : 18 = 2.", [5], qm],
+    ["Primer: $\\int_0^2 (3x^2 - 2x)\\,dx$, meji integrala sta 0 in 2, v zgornji meji dobimo 8, rezultat je 4.", [6], qi],
+    ["Gorenje vodika: 2 H₂ + O₂ → 2 H₂O.", [7], qg],
+    ["Sistem $\\begin{cases} x + y = 5 \\\\ x - y = 1 \\end{cases}$ ima rešitev $x = 3$, $y = 2$.", [9], qs],
+  ])
+    assert.ok(r(b, v, n), b);
+  for (const [b, v, n] of [
+    ["Determinanta matrike A je 2.", [1], qd],
+    ["Determinanta matrike A je enaka 4.", [1], qd],
+    ["Determinanta: velja $a_{n+1} = 2$.", [1, 2], qd],
+    ["Coulombov zakon: konstanta k je 10⁹ N m²/C².", [3], qk],
+    ["Coulombov zakon: konstanta k znaša 10^9.", [3], qk],
+    ["Na naboj 10⁻⁶ C deluje sila.", [4], qe],
+    ["Na naboj deluje sila 5000 N, zato je jakost 0,01 N/C.", [4], qe],
+    ["Molska masa vode je 36 g/mol, zato je v 18 g vode 2 mol.", [5], qm],
+    ["Molska masa vode je 2 g/mol.", [5], qm],
+    ["Determinanta: $1 ⋅ 4 - 2 ⋅ 3 = 2$ in 1 ⋅ 4 - 2 ⋅ 3 = 2.", [1], qd],
+    ["Primer: 8 ÷ 4 = 4, kot v integralu $\\int_0^2 (3x^2 - 2x)\\,dx$.", [6], qi],
+    ["Primer ni narobe, saj je 8 - 4 = 3 v integralu $\\int_0^2 (3x^2 - 2x)\\,dx$.", [6], qi],
+  ])
+    assert.ok(!r(b, v, n), b);
+  // Vir števila je med viri: 24 iz zaporedja ni skrit za determinanto.
+  assert.deepEqual(r("Determinanta in zaporedje: $a_4 = 24$, $\\det A = 1 \\cdot 4 - 2 \\cdot 3 = -2$.", [1, 2], qd).viri, [1, 2]);
+});

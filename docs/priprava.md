@@ -203,15 +203,22 @@ besede ali cela formula; enoten zapis presledkov, narekovajev in pomišljajev, N
 enkrat) iz enega od navedenih izsekov, ki je o istem kot odstavek (vsaj polovica njegovih vsebinskih besed, njegova
 formula ali vsa njegova števila so v odstavku); je vsaka njegova formula cela v navedenih izsekih (primerjava po žetonih:
 `500` ni začetek `5000`, `E = 5` ni začetek `E = 5 \cdot 10^3`; meja formule ali vrstice v zapiskih je meja izraza; brez
-besed v formuli, npr. `$Definicija$`); je vsako število, tudi v formulah, v navedenih izsekih (NFKC, nadpisane števke kot
-potenca, predznak in potenca sta del števila: `-2`, `10^-6`; števke zunaj ASCII → odstavek odpade); ne razreši negotovega
-branja `x2 [?]` (zapis `x^2`, `x_2`, `x²`, `H2SO4` brez `[?]` odpade, razen če je zapis tudi v navedenem izseku in odstavek
-ne ponovi vrstice z negotovim branjem); se formule izrišejo s KaTeX (brez nezaprtih `$`, `\(`, `\[`); `codeCheck` ne najde
-računske napake (vsak stavek posebej, računi v besedilu, npr. `8 - 4 = 5` ali `12 : 4 = 4`, se preverijo kot formule).
+besed v formuli, npr. `$Definicija$`; enačba mora v zapiskih končati, `$a_{n+1} = 2$` ni iz `2a_n`); je vsako število,
+tudi v formulah, v navedenih izsekih (NFKC, nadpisane števke kot potenca, predznak in potenca sta del števila: `-2`,
+`10^-6`, `2·10^-6` ni `10^-6`; meje integrala sta dve števili; števke zunaj ASCII → odstavek odpade), rezultat v besedilu
+(za »je«, »znaša«, »=«, …) je rezultat tudi v izseku (»determinanta je 2« ne gre, če je 2 le element matrike), število z
+enoto pa ima v izseku isto enoto (»sila 5000 N« ne gre, če je 5000 N/C jakost); izsek, iz katerega je število, je med viri;
+ne razreši negotovega branja `x2 [?]` (zapis `x^2`, `x_2`, `x²`, `H2SO4` brez `[?]` odpade, če ponovi vrstico z negotovim
+branjem ali če je branje v navedenem izseku, zapisa pa v navedenih izsekih ni); se formule izrišejo s KaTeX (brez
+nezaprtih `$`, `\(`, `\[`); `codeCheck` ne najde računske napake (vsak račun, tudi v besedilu, npr. `8 - 4 = 5`,
+`12 : 4 = 4`, `2 ⋅ 3 = 7`, `2³ = 9`, v svoji vrstici, da ga besede »ne velja«, »narobe« ne izpustijo; napačen primer iz
+zapiskov zato odpade).
 Izhod brez oznak HTML (samo prave oznake; `a<b in b>c` ostane) in povezav; odjemalec ga izriše kot besedilo s KaTeX, ne kot
 HTML. `viri` so samo izseki, ki odstavek res podpirajo (navedek ali formula z vsaj tremi žetoni); `negotovo`, ko podporni
 izsek ima `[?]`, odstavek pa ne. To je
-»podprto z zapiski« (`preverjeno: "zapiski"`), ne »pravilno«: napačna vrstica v zapiskih lahko ostane, če je koda ne
+»podprto z zapiski« (`preverjeno: "zapiski"`), ne »pravilno«. Česar koda ne ujame: števila z besedo (»petsto«),
+zanikanje (»tudi pri živalih« ob navedku »samo pri rastlinah« z istimi besedami), negotovo branje, razrešeno z besedo
+(»x na kvadrat«), rezultat, pripisan drugemu računu istih izsekov. Poleg tega: napačna vrstica v zapiskih lahko ostane, če je koda ne
 preračuna (vmesnik ne sme pisati »pravilno«). Brez preverljivega odstavka 422 (`razlaga_nepreverjena`, s stanjem strani),
 nič se ne shrani. Shramba: šifrirano (`priprava_postavke`, SEALED; kaskadni izbris), z id-ji izsekov in odtisom
 (id-ji, naslovi in besedila); drugačen odtis = `zastarela` (id-ji izsekov se po izbrisu ponovijo), model se ne kliče znova,

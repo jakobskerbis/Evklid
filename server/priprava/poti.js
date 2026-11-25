@@ -814,8 +814,11 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       ...AI_JSON,
     };
   }
+  // Izseki teme iz zemljevida: sinhrono (branje baze brez čakanja), da sta preverjanje odtisa in zapis razlage nedeljiva.
   async function izsekiTeme(s, p, tema) {
-    const z = await zemljevidZa(s, p);
+    return izsekiIzZemljevida(s, p, await zemljevidZa(s, p), tema);
+  }
+  function izsekiIzZemljevida(s, p, z, tema) {
     const t = z.teme.find((x) => x.id === tema);
     if (!t) return null;
     const vrstice = db
@@ -897,9 +900,10 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
           .json(zNujno({ error: "Razlage ni bilo mogoče preveriti z zapiski. Poskusi znova ali dodaj zapiske.", code: "razlaga_nepreverjena", zavrnjenih: r.zavrnjenih, pages: straniInfo(s), ...AI_JSON }));
       const vsebina = seal(JSON.stringify({ nacin: "A", preverjeno: "zapiski", odstavki: r.odstavki, zavrnjenih: r.zavrnjenih }));
       // Izseki so se med klicem modela lahko spremenili (vir izbrisan ali znova obdelan): razlaga iz izbrisanih zapiskov
-      // se ne shrani. Odtis se preveri znova tik pred zapisom; med preverjanjem in zapisom ni čakanja (await), zato ga
-      // izbris ne more prehiteti.
-      const zdaj = await izsekiTeme(s, p, tema);
+      // se ne shrani. Zemljevid se prebere prej (await), izseki, odtis, priprava in zapis pa v enem sinhronem koraku, zato
+      // ga izbris ne more prehiteti.
+      const z = await zemljevidZa(s, p);
+      const zdaj = izsekiIzZemljevida(s, p, z, tema);
       // Priprava še obstaja (in je ista: id-ji se po izbrisu lahko ponovijo).
       if (!db.prepare("SELECT 1 FROM priprave WHERE id = ? AND student_id = ? AND created_at = ?").get(p.id, s.id, p.created_at)) return niPriprave(res);
       if (!zdaj || zdaj.odtis !== t.odtis)
