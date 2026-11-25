@@ -157,6 +157,8 @@ podnapis: p = {p}, q = {q}: točka (0, 1) se premakne v ({p}, {1+q}), vodoravna 
 
 Slika kaže $y = 2^{x-2} - 2$: točka $(0, 1)$ osnovnega grafa se preseli v $(2, -1)$, asimptota pa z osi $x$ na premico $y = -2$. Ker je asimptota zdaj pod osjo $x$, graf seka os $x$: ničla je pri $x = 3$, saj je $2^{1} - 2 = 0$. V aplikaciji premikaj najprej samo $p$: graf drsi levo in desno, asimptota miruje. Nato samo $q$: asimptota se premika skupaj z grafom. Pri $q \ge 0$ ničla izgine, ker je ves graf nad osjo $x$.
 
+V simulaciji spodaj (»Eksponentna funkcija«) pri a = 2 premakni drsnik q na $-2$. Opazuj, da se vodoravna asimptota premakne na $y = -2$, točka $(0, 1)$ pa v $(0, -1)$. Napovej, kam se ta točka premakne, če nastaviš še p = 1, in preveri.
+
 **10. Primerjanje potenc.** Ker je funkcija pri $a > 1$ strogo naraščajoča, iz $x_1 < x_2$ sledi $a^{x_1} < a^{x_2}$. Pri $0 < a < 1$ je strogo padajoča, zato iz $x_1 < x_2$ sledi $a^{x_1} > a^{x_2}$. Potence z isto osnovo tako primerjamo brez računanja.
 
 **11. Potenčna ali eksponentna rast.** Primerjaj potenčno funkcijo $x^2$ in eksponentno $2^x$ pri $x = 1, 2, 3, 4, 5, 10$: $\;1 < 2,\; 4 = 4,\; 9 > 8,\; 16 = 16,\; 25 < 32,\; 100 < 1024$. Za $x > 0$ se grafa sekata v $(2, 4)$ in $(4, 16)$, za $x > 4$ pa je $2^x$ večja. Razlog: korak za $1$ vrednost $2^x$ vedno podvoji, vrednost $x^2$ pa pomnoži le z $\left(\frac{x+1}{x}\right)^2$, kar je pri velikih $x$ blizu $1$. Splošno: pri $a > 1$ funkcija $a^x$ prej ali slej preseže vsako potenco $x^n$, včasih šele pozno: $1{,}1^x$ prehiti $x^{10}$ pri $x \approx 685$.
