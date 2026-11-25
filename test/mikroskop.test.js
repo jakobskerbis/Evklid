@@ -666,7 +666,19 @@ test("mikroskop: brez programa molekul (niti splošnega) se slika in merilo spre
     assert.ok(!resnica.includes(sl["mk.truth.model"]) && !resnica.includes(sl["mk.truth.crystal"]), "namig o ponazoritvi z dogovorjenimi barvami nad sliko brez molekul");
     assert.deepEqual(resnica, [sl["mk.truth.tem"]]);
     // stanje »napaka« ne riše ob vsaki sličici znova (prej ~60 izrisov na sekundo brez konca)
-    await p.waitForTimeout(3000); // polna slika po pasovih se konča
+    // polna slika po pasovih se konča: na CI (programski WebGL, štiri testne datoteke hkrati) traja to več kot nekdanjih
+    // slepih 3 s, zato je test štel še pasove (16–30 sličic v 1 s). Počakamo, da mikroskop 0,5 s ne zahteva nobene sličice;
+    // če riše brez konca (napaka, ki jo test lovi), se to ne zgodi in test pade z istim sporočilom.
+    await pocakaj(
+      () => {
+        const z = (window.__mir ||= { n: -1, t: 0 });
+        if (z.n !== window.__raf) Object.assign(z, { n: window.__raf, t: performance.now() });
+        return performance.now() - z.t >= 500;
+      },
+      null,
+      "slika miruje, a se riše znova (izris po pasovih se ni končal)",
+      60000,
+    );
     const raf0 = await p.evaluate(() => window.__raf);
     await p.waitForTimeout(1000);
     const sliciceNaSekundo = (await p.evaluate(() => window.__raf)) - raf0;
