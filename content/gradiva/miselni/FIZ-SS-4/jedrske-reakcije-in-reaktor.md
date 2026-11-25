@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Reakcija z obstreljevanjem
+  - delec zadene jedro, nastanejo nova jedra
+  - Rutherford: dušik in alfa da kisik in proton
+- Ohranitveni zakoni
+  - ohranita se vsota $A$ in vsota $Z$
+  - neznani delec: $Z$ poiščeš v periodnem sistemu
+  - pazi: ohrani se naboj, ne število protonov
+- Reakcijska energija
+  - $W_\mathrm{r} = \Delta m \, c^2$
+  - $1\,\mathrm{u}$ ustreza $931{,}5\,\mathrm{MeV}$
+  - pazi: mase v u, ne masna števila
+- Razpad alfa in beta
+  - americij-241: $5{,}64\,\mathrm{MeV}$
+  - beta minus: razlika atomskih mas, elektrona ne odštej
+- Odboj jedra
+  - gibalni količini enaki, nasprotni smeri
+  - lažji delec alfa dobi skoraj vso energijo
+- Verižna reakcija
+  - faktor množenja $k = N_2 / N_1$
+  - reaktor $k = 1$, bomba $k > 1$
+  - kritična masa: premalo nevtronov uide
+- Jedrski reaktor
+  - gorivo: obogateni uran, okoli $4\,\%$ urana-235
+  - moderator upočasni, kontrolne palice vpijejo
+  - NEK: primarni krog, uparjalnik, turbina, Sava
