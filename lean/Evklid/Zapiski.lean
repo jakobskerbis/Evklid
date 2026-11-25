@@ -7,31 +7,36 @@ module
 
 public import Mathlib
 
+public section
+
 namespace Evklid.Zapiski
 
 open intervalIntegral
 
-/-- mat-integrali.md: ∫₀³ x² dx = 9 (pravilo za potenco, nato Newton-Leibniz); hkrati star-test.md, naloga 3
-(ploščina pod y = x² na [0, 3] je 9). -/
+/-- mat-integrali.md: ∫₀³ x² dx = 9 (pravilo za potenco, nato Newton-Leibniz). Za star-test.md, nalogo 3
+(ploščina lika) glej še `ploscina_je_integral`. -/
 theorem ploscina_x2 : ∫ x in (0:ℝ)..3, x ^ 2 = 9 := by
   calc ∫ x in (0:ℝ)..3, x ^ 2 = (3 ^ (2 + 1) - 0 ^ (2 + 1)) / (2 + 1) := integral_pow 2
     _ = 9 := by norm_num
 
-/-- mat-integrali.md: ∫₀² (3x² − 2x) dx = [x³ − x²]₀² = 8 − 4 = 4, po korakih. -/
+/-- mat-integrali.md: ∫₀² (3x² − 2x) dx = [x³ − x²]₀² = 8 − 4 = 4, po korakih zapiskov: nedoločeni integral
+F(x) = x³ − x² (F' = 3x² − 2x), nato Newton-Leibniz F(2) − F(0). -/
 theorem primer_doloceni : ∫ x in (0:ℝ)..2, (3 * x ^ 2 - 2 * x) = 4 := by
-  have h1 : IntervalIntegrable (fun x : ℝ => 3 * x ^ 2) MeasureTheory.volume 0 2 :=
-    (continuous_const.mul (continuous_pow 2)).intervalIntegrable 0 2
-  have h2 : IntervalIntegrable (fun x : ℝ => 2 * x) MeasureTheory.volume 0 2 :=
-    (continuous_const.mul continuous_id).intervalIntegrable 0 2
+  have hF : ∀ x ∈ Set.uIcc (0:ℝ) 2, HasDerivAt (fun x : ℝ => x ^ 3 - x ^ 2) (3 * x ^ 2 - 2 * x) x := by
+    intro x _
+    have := ((hasDerivAt_pow 3 x).sub (hasDerivAt_pow 2 x))
+    convert this using 1; push_cast; ring
+  have hi : IntervalIntegrable (fun x : ℝ => 3 * x ^ 2 - 2 * x) MeasureTheory.volume 0 2 :=
+    ((continuous_const.mul (continuous_pow 2)).sub (continuous_const.mul continuous_id)).intervalIntegrable 0 2
   calc ∫ x in (0:ℝ)..2, (3 * x ^ 2 - 2 * x)
-      = (∫ x in (0:ℝ)..2, 3 * x ^ 2) - ∫ x in (0:ℝ)..2, 2 * x := integral_sub h1 h2
-    _ = 3 * (∫ x in (0:ℝ)..2, x ^ 2) - 2 * ∫ x in (0:ℝ)..2, x := by
-        rw [integral_const_mul, integral_const_mul]
-    _ = 3 * ((2 ^ 3 - 0 ^ 3) / 3) - 2 * ((2 ^ 2 - 0 ^ 2) / 2) := by
-        rw [integral_pow, integral_id]; norm_num
-    _ = ((2:ℝ) ^ 3 - 2 ^ 2) - (0 ^ 3 - 0 ^ 2) := by norm_num
+      = ((2:ℝ) ^ 3 - 2 ^ 2) - ((0:ℝ) ^ 3 - 0 ^ 2) := integral_eq_sub_of_hasDerivAt hF hi
     _ = 8 - 4 := by norm_num
     _ = 4 := by norm_num
+
+/-- star-test.md, naloga 3: lik med y = x² in osjo x na [0, 3] leži nad osjo (x² ≥ 0), zato je njegova
+ploščina enaka določenemu integralu ∫₀³ x² dx = 9 (`ploscina_x2`). -/
+theorem ploscina_je_integral : (∀ x ∈ Set.Icc (0:ℝ) 3, 0 ≤ x ^ 2) ∧ ∫ x in (0:ℝ)..3, x ^ 2 = 9 :=
+  ⟨fun x _ => sq_nonneg x, ploscina_x2⟩
 
 /-- mat-integrali.md: det A za A = [[1, 2], [3, 4]] je 1·4 − 2·3 = −2. -/
 theorem determinanta : Matrix.det !![(1:ℤ), 2; 3, 4] = -2 := by
@@ -74,6 +79,9 @@ theorem test_naloga2 (x y : ℝ) : (x + y = 4 ∧ x - y = 2) ↔ (x = 3 ∧ y = 
     constructor <;> linarith
   · rintro ⟨rfl, rfl⟩
     norm_num
+
+/-- kem-reakcije.md: n = m / M; v 36 g vode (M = 18 g/mol) je n = 36 / 18 = 2 mol. -/
+theorem mnozina_vode : (36 : ℝ) / 18 = 2 := by norm_num
 
 /-- napad.md: kateti 3 cm in 4 cm ⇒ hipotenuza 5 cm (c² = a² + b², c > 0). -/
 theorem hipotenuza (c : ℝ) (hc : 0 < c) (h : c ^ 2 = 3 ^ 2 + 4 ^ 2) : c = 5 := by

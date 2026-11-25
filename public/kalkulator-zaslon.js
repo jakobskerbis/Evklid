@@ -218,7 +218,7 @@ function prefetchNext() {
       navigator.serviceWorker?.controller?.postMessage({
         type: "precache",
         urls: [
-          ...(heavy ? ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"] : []),
+          ...(heavy ? ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/3d/napake.js", "/3d/podpora.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"] : []),
           "/uvodni-ogled.js",
           ...(usageAdmin ? ["/poraba-skrbnik.js"] : []),
         ],
