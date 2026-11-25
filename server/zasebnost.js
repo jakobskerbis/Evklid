@@ -6,6 +6,8 @@ import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
 import { pocistiStare } from "./kopije.js";
 import { eraseAccount } from "./accounts/izbris.js";
+import { pocistiPriprave } from "./priprava/ciscenje.js";
+import { presifrirajIzvirnike } from "./priprava/shramba.js";
 
 // Šifrirani stolpci (SEALED) in štetje neberljivih (encryptionStats) sta v crypto-polje.js: rabi ju tudi lahka nit
 // za nočni preizkus kopij (server/kopije-preizkus.js), ki ne sme naložiti tega modula in vsega, kar ta uvaža.
@@ -66,6 +68,7 @@ export function* encryptionSteps(db, batch = 200) {
   const restore = secureDelete(db);
   try {
     yield* sealSteps(db, batch);
+    yield* presifrirajIzvirnike(db); // binarni izvirniki priprave na test (niso v SEALED)
   } finally {
     restore();
   }
@@ -248,6 +251,13 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
     try {
       out.pilotFormer = dropFormerPhotos(db);
     } catch {}
+  }
+  // Priprave na test iz zapiskov z viri in izvirniki: 30 dni po datumu testa, brez datuma 30 dni po zadnji uporabi
+  // (odločitev j 24. 11. 2026, server/priprava/ciscenje.js).
+  try {
+    out.priprave = pocistiPriprave(db, { now });
+  } catch (e) {
+    log.error?.(`[evklid] čiščenje priprav na test: ${e.message}`);
   }
   if (hasTable(db, "parent_sessions")) out.sessions = Number(db.prepare("DELETE FROM parent_sessions WHERE expires_at < ?").run(nowIso).changes);
   if (hasTable(db, "profile_unlocks")) out.unlocks = Number(db.prepare("DELETE FROM profile_unlocks WHERE expires_at < ?").run(now).changes);

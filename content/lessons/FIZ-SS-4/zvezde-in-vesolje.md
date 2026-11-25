@@ -248,6 +248,19 @@ Foton, rojen v jedru, se več deset tisoč let prebija skozi gosto notranjost, s
 ~ To je produkt $k_\mathrm{W} \cdot \lambda_{\max}$. Temperaturo dobiš z deljenjem, $T = k_\mathrm{W}/\lambda_{\max}$.
 > $T = \dfrac{2{,}90\cdot10^{-3}\,\mathrm{m\,K}}{2{,}90\cdot10^{-7}\,\mathrm{m}} = 10\,000\,\mathrm{K}$; zvezda je modro bela.
 
+? Površje zvezde Arktur ima temperaturo okoli $4300\,\mathrm{K}$. Pri kateri valovni dolžini seva najmočneje? Rezultat vpiši v nanometrih, zaokroženo na cele.
+= 674 nm | 2
+~ 1,48·10^6 | Formulo si obrnil: $\lambda_{\max} = \dfrac{k_\mathrm{W}}{T}$.
+~ 6,74·10^-7 | To je valovna dolžina v metrih. Pretvori jo v nanometre: $1\,\mathrm{m} = 10^{9}\,\mathrm{nm}$.
+> $\lambda_{\max} = \dfrac{k_\mathrm{W}}{T} = \dfrac{2{,}90\cdot10^{-3}\,\mathrm{m\,K}}{4300\,\mathrm{K}} \approx 6{,}74\cdot10^{-7}\,\mathrm{m} = 674\,\mathrm{nm}$. Arktur je hladnejši od Sonca, zato je njegov vrh pri daljši valovni dolžini.
+
+? Zvezda ima paralakso $0{,}25''$. Koliko svetlobnih let je oddaljena? (Na desetinko.)
+= 13,0 sv. let | 0,1
+~ 4 | To je razdalja v parsekih. Pretvori jo: $1\,\mathrm{pc} = 3{,}26$ svetlobnega leta.
+~ 0,815 | Paralakso si pomnožil s $3{,}26$. Najprej izračunaj razdaljo $d = 1/p$ v parsekih.
+~ 1,23 | Parseke si delil s $3{,}26$. En parsek je več kot eno svetlobno leto, zato množiš.
+> $d = \dfrac{1}{0{,}25} = 4\,\mathrm{pc}$, to je $4 \cdot 3{,}26 \approx 13{,}0$ svetlobnega leta.
+
 :::simboli
 \lambda_{\max} | valovna dolžina, pri kateri telo seva najmočneje | \lambda_{\max} = \frac{k_\mathrm{W}}{T} | m
 T | temperatura površja | T = \sqrt[4]{\frac{j}{\sigma}} | K | vedno v kelvinih

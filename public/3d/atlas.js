@@ -685,6 +685,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         sloj.nalozen = true;
         uporabiRazmik();
         uporabiVidnost();
+        await kit.pripravi?.(); // senčilniki plasti hkrati, preden se nariše (scena.js): stran med tem ne zamrzne
       } catch (err) {
         console.error(`3D atlas: plast ${id}`, err);
         sloj.napaka = napakaBesedilo(err).key; // povezava, pomnilnik, star brskalnik … (napake.js)
@@ -1771,6 +1772,8 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
     senca.visible = true;
   }
   uporabiVidnost();
+  // Med nalaganjem je bilo telo skrito (uvod): senčilniki začetnih plasti se prevedejo zdaj, pred uvodnim preletom.
+  if (uvod) await kit.pripravi?.();
   if (uvod) {
     let cas = 0;
     const T = 0.9;
