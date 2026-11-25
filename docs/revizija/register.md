@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `3e2a78dbc742b3c2b0f174ed42ac57be4591d212` (25. 11. 2026)
-**Naslednji prosti ID:** AUDIT-080
+**Naslednji prosti ID:** AUDIT-082
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -79,6 +79,8 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-077 | P3 | Infrastruktura, zagon | Neuspel `listen` (zasedena vrata): Express 5 pokliče povratni klic z napako, `server.address()` je null → `TypeError … 'port'` zakrije `EADDRINUSE` (`server/index.js:59–61`). ChatGPT P2 | PRIPRAVLJENO ZA PONOVNI PREGLED | `3e2a78d` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168195931), [Claude](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168697266) | [#1081](https://github.com/jakobskerbis/Evklid/pull/1081) |
 | AUDIT-078 | P3 | Vadnica, enote | `sameUnit` sprejme `37,2 PF` za `pF` (loči le m/M, `check.js:35–49`); število pravilno, napačen le zapis predpone. ChatGPT P1. Seja kalkulatorja | ODOBRENO | `3e2a78d` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168651032), [Claude](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168699608) | – |
 | AUDIT-079 | P3 | Generatorji, testi | `test/generators.test.js` (»vsi generatorji …«) ne preizkusi 6 od 688 generatorjev (`tek-mladi-*`, `maxYear=4`), ker `generateTask` brez razreda izbere drugega; ti so neposredno pokriti v `test/tekmovanja-razred.test.js`, manjkajo le strukturne trditve. Samo test. ChatGPT P2 | ZAKLJUČENO | `3e2a78d` | [ChatGPT](https://github.com/jakobskerbis/Evklid/pull/934#issuecomment-7168657132), Claude | [#1083](https://github.com/jakobskerbis/Evklid/pull/1083) |
+| AUDIT-080 | P2 | Kalkulator, enačbe | Racionalna enačba z luknjo v definicijskem območju: `(x^2-1)/(x-1)=2` → x₁ ≈ 0,99999999, x₂ ≈ 1,00000001 (prav: ni rešitve); `=2,0001` → »ni rešitve« (prav: x = 1,0001). Številsko iskanje (`scisolve.js` `criticalPoints`, `solveOne` 659–660) sprejme točke ob izključeni točki, `isRoot` preveri le majhen |F|. Seja kalkulatorja | POTRJENO | `7a9a820` | ChatGPT (preizkus v brskalniku, dialog z j), Claude 25. 11. | – |
+| AUDIT-081 | P1 | Kalkulator, enačbe | Ničla na robu definicijskega območja izgubljena: `√x = 0`, `√(x−4) = 0`, `√(x²−4) = 0` → »ni rešitve na [−10¹²; 10¹²]«. `isRoot` (`scisolve.js:549`): `Math.max(1, |f(x±10⁻³)|)` je NaN, ko je sosed zunaj območja. Tudi na evklid.app (`51c1c99`). Seja kalkulatorja | POTRJENO | `7a9a820` | Claude (ob AUDIT-080), 25. 11. | – |
 
 ## Zgodovina statusov
 
@@ -134,3 +136,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 25. 11. 2026: AUDIT-079 → ZAKLJUČENO: #1083 združen v `main` (`6dcdc29`, j kartica »Združi«); CI zelen, en pregledovalec. Samo test, aplikacija nespremenjena.
 - 25. 11. 2026: AUDIT-001 ZAKLJUČENO → ODOBRENO: j je ob 19.12 v niti načrtovanja na kartici izbral »Da, odpri in popravi« (zamenja prejšnjo izbiro »Pusti kot je«). Popravek (brez SymPy koren nad 10⁶) prevzame nit »Naredi skener zanesljiv« (P3-2).
 - 25. 11. 2026: AUDIT-075 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED: #1085 združen v `main` (`51c1c99`, j kartica); testi v `test/laboratorij-vodeno.test.js`.
+- 25. 11. 2026: AUDIT-080 (racionalna enačba z luknjo, iz dialoga ChatGPT–j) in AUDIT-081 (√x = 0 brez rešitve, Claude) POTRJENO na `main` `7a9a820` in na evklid.app `51c1c99`; popravek (seja kalkulatorja) čaka na j-jevo odobritev.
