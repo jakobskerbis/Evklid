@@ -176,12 +176,20 @@ premaknejo v danes. Tabela `priprava_nacrti` ni potrebna.
 ### PR 6a (kviz in napredek, 25. 11. 2026)
 
 Brez AI. `POST …/priprave/:pid/kviz` (`{ dolzina: 6 | 12 | 20, teme? }`): obstoječa seja »list« (`progress.js startList`,
-naloge Vadnice, ki jih preveri koda; namigi, povzetek po temah, obvladanje), zato rezultat takoj spremeni načrt.
-Privzeto najšibkejše teme obsega (obvladane samo, če drugih ni), vsaka z vsaj dvema nalogama; `teme` samo iz načrta te
-priprave (sicer 400); tema brez lastnih nalog vzame naloge osnovne teme. `GET …/priprave/:pid/napredek`: pripravljenost
-(kot načrt), posnetki po dnevih (tabela `priprava_napredek`, en na dan, zapiše se ob odprtju načrta ali napredka;
-kaskadni izbris) in stanje vsake teme (`nova | ucim | ponovitev | obvladana | zapiski`, rešene naloge vaje, ponavljanja
-in lista, pravilne v prvem poskusu). Test: `test/priprava-kviz.test.js`. Razlaga z izvorom (AI) je PR 6b.
+naloge Vadnice, ki jih preveri koda; namigi, povzetek po temah) s parametrom `priprava`. Ob koncu kviza izkazano znanje
+premakne stanje teme (`listSummary`): »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu) → stopnja višje (nova → učim se,
+stopnja 2), »few« ali »more« → nova tema »učim se« (»more« pri obvladani temi kot doslej ponovitev); obvladanje ostane
+pravilo `checkMastery`. Tako kviz spremeni načrt in pripravljenost. Privzeto najšibkejše teme obsega (obvladane samo,
+če drugih ni), največ `dolzina/2` tem, da ima vsaka vsaj dve nalogi; `teme` mora biti neprazen seznam id-jev iz načrta
+te priprave z nalogami (sicer 400 `kviz_teme`); tema brez lastnih nalog vzame naloge osnovne teme (ena veščina na
+osnovno temo). Nedokončan isti kviz istega dne se nadaljuje; največ 20 novih kvizov na profil v 10 minutah (429
+`kviz_hitro`). Kviz ostane v zgodovini vaje profila tudi po izbrisu priprave (samo id-ji tem, kot vsa vaja).
+`GET …/priprave/:pid/napredek`: pripravljenost (kot načrt), posnetki po dnevih (tabela `priprava_napredek`, en na dan,
+zapiše se ob odprtju načrta ali napredka, do dneva testa; kaskadni izbris; odprtje šteje kot uporaba priprave za
+samodejni izbris) in stanje vsake teme (`nova | ucim | ponovitev | obvladana | zapiski`, vse odgovorjene naloge vaje,
+ponavljanja in lista, tudi osnovnih tem, pravilne v prvem poskusu). Vmesnik pokaže posnetke samo kot izkazano znanje
+po dnevih, nikoli kot trend do testa ali napoved ocene (odstotek ni ocena in lahko pade, ko pridejo ponovitve).
+Test: `test/priprava-kviz.test.js`. Razlaga z izvorom (AI) je PR 6b.
 
 ## Testni nabor
 

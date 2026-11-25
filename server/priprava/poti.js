@@ -12,6 +12,7 @@ import { shraniIzseke, razrezi, VRSTE } from "./izseki.js";
 import { zemljevid } from "./teme.js";
 import { sestaviNacrt, ocenaTeme } from "./nacrt.js";
 import { STANJE_OCENE, LIST } from "../progress.js";
+import { rateLimiter } from "../vaja-iz-lista.js";
 import { getTopic } from "../curriculum.js";
 import { hasGenerator } from "../practice/index.js";
 import { nowParts } from "../schedule.js";
@@ -687,7 +688,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
   // Napredek priprave (PR 6): pripravljenost po dnevih (posnetek ob vsakem odprtju načrta ali napredka, en na dan) in
   // stanje vsake teme iz izkazanega znanja (rešene naloge vaje, ponavljanja in lista). Koda, brez AI in brez napovedi.
   function zabeleziNapredek(s, p, danes, pr) {
-    if (pr.odstotek === null) return;
+    if (pr.odstotek === null || (p.datum_testa && danes > p.datum_testa)) return;
     db.prepare(
       `INSERT INTO priprava_napredek (priprava_id, student_id, datum, odstotek, obvladanih, preverljivih) VALUES (?, ?, ?, ?, ?, ?)
        ON CONFLICT(priprava_id, datum) DO UPDATE SET odstotek = excluded.odstotek, obvladanih = excluded.obvladanih, preverljivih = excluded.preverljivih`,
@@ -703,7 +704,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const nacrt = sestaviNacrt({ danes, datum: p.datum_testa || null, teme, poskusniTest: false });
     zabeleziNapredek(s, p, danes, nacrt.pripravljenost);
     const naloge = db.prepare(
-      "SELECT COUNT(*) AS n, SUM(first_try_correct = 1) AS ok FROM tasks WHERE student_id = ? AND topic_id = ? AND solved = 1 AND mode IN ('practice','review','list')",
+      "SELECT COUNT(*) AS n, SUM(first_try_correct = 1) AS ok FROM tasks WHERE student_id = ? AND topic_id = ? AND first_try_correct IS NOT NULL AND mode IN ('practice','review','list')",
     );
     const dnevi = db.prepare("SELECT datum, odstotek, obvladanih, preverljivih FROM priprava_napredek WHERE priprava_id = ? AND student_id = ? ORDER BY datum").all(p.id, s.id);
     uporabljena(p);
@@ -722,6 +723,7 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
   // »list« (progress.js startList: namigi, povzetek po temah, obvladanje), zato rezultat takoj spremeni načrt. Teme brez
   // nalog niso v kvizu. Brez AI.
   const temaKviza = (id) => (hasGenerator(id) ? id : (getTopic(id)?.base || []).find((x) => hasGenerator(x)) || null);
+  const kvizHitro = rateLimiter({ max: 20, windowMs: 10 * 60 * 1000 });
   app.post("/api/students/:id/priprave/:pid/kviz", async (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -729,20 +731,35 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     if (!p) return niPriprave(res);
     if (!progress) return res.status(503).json({ error: "Kviz ni na voljo." });
     const body = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
-    const dolzina = typeof body.dolzina === "number" ? body.dolzina : LIST.lengths[0];
+    const dolzina = body.dolzina === undefined ? LIST.lengths[0] : body.dolzina;
     if (!LIST.lengths.includes(dolzina)) return res.status(400).json({ error: "Napačna dolžina kviza.", code: "kviz_dolzina" });
+    const naTemo = Math.floor(dolzina / 2); // največ toliko tem: vsaka vsaj z dvema nalogama
     const { teme } = await temeNacrta(s, p);
     const zKvizom = teme.map((t) => ({ ...t, kviz: temaKviza(t.id) })).filter((t) => t.kviz);
     let izbrane;
-    if (Array.isArray(body.teme)) {
-      const zelene = new Set(body.teme.slice(0, LIST.maxSkills).map(String));
-      izbrane = zKvizom.filter((t) => zelene.has(t.id));
+    if (body.teme !== undefined) {
+      // Izbrane teme: neprazen seznam nizov, vse iz načrta te priprave in z nalogami.
+      const zelene = Array.isArray(body.teme) ? body.teme.slice(0, LIST.maxSkills) : [];
+      const poId = new Map(zKvizom.map((t) => [t.id, t]));
+      if (!zelene.length || !zelene.every((x) => typeof x === "string" && poId.has(x)))
+        return res.status(400).json({ error: "Izberi teme iz načrta te priprave, ki imajo naloge.", code: "kviz_teme" });
+      izbrane = [...new Set(zelene)].map((x) => poId.get(x));
     } else {
-      // Najšibkejše teme (obvladane samo, če drugih ni), vsaka vsaj z dvema nalogama, da povzetek pove kaj.
+      // Najšibkejše teme (obvladane samo, če drugih ni).
       const sibke = zKvizom.filter((t) => t.ocena < 1);
-      izbrane = (sibke.length ? sibke : zKvizom).sort((a, b) => a.ocena - b.ocena || a.red - b.red).slice(0, Math.max(1, Math.floor(dolzina / 2)));
+      izbrane = (sibke.length ? sibke : zKvizom).sort((a, b) => a.ocena - b.ocena || a.red - b.red);
     }
-    const out = izbrane.length ? progress.startList(s.id, izbrane.map((t) => t.kviz), dolzina) : null;
+    // Ena tema na nalogo osnovne teme (dve temi z isto osnovno temo nista dve veščini).
+    const skills = [...new Set(izbrane.map((t) => t.kviz))].slice(0, Math.max(1, naTemo));
+    if (!skills.length) return res.status(400).json({ error: "V tej pripravi ni tem z nalogami za kviz.", code: "kviz_brez_tem" });
+    // Isti nedokončani kviz danes (iste teme in dolžina) se nadaljuje; novih sej ne more biti brez meje.
+    const isti = (x) =>
+      x.params.priprava === p.id && x.plan.length === dolzina && x.created_at.slice(0, 10) === new Date(now()).toISOString().slice(0, 10) &&
+      [...(x.params.skills || [])].sort().join() === [...skills].sort().join();
+    const odprt = progress.openSession(s.id, "list", isti);
+    if (odprt) return res.json(progress.sessionNext(odprt.id));
+    if (!kvizHitro(s.id)) return res.status(429).json({ error: "Preveč kvizov naenkrat. Poskusi čez nekaj minut.", code: "kviz_hitro" });
+    const out = progress.startList(s.id, skills, dolzina, { priprava: p.id });
     if (!out) return res.status(400).json({ error: "V tej pripravi ni tem z nalogami za kviz.", code: "kviz_brez_tem" });
     uporabljena(p);
     res.json(out);

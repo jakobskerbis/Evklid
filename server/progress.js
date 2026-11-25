@@ -834,13 +834,14 @@ export class Progress {
   // skills: id-ji tem z generatorji (veščine, ki jih je učenec potrdil na seznamu). Naloge so samo naše (Vadnica),
   // od lažjih k težjim: prva tretjina stopnja 1, druga 2, zadnja 3; veščine se izmenjujejo. V seji so shranjeni samo
   // id-ji tem (nikoli besedilo izvirnih nalog).
-  startList(studentId, skills, length) {
+  // extra: dodatni parametri seje (priprava na test: { priprava: id }, server/priprava/poti.js kviz).
+  startList(studentId, skills, length, extra = {}) {
     const ids = [...new Set(skills)].filter((id) => getTopic(id) && hasGenerator(id)).slice(0, LIST.maxSkills);
     if (!ids.length || !LIST.lengths.includes(length)) return null;
     // Več veščin kot nalog: v vajo pride toliko (naključnih) veščin, kolikor je nalog; povzetek pozna samo te.
     const order = shuffle(ids).slice(0, length);
     const plan = Array.from({ length }, (_, i) => ({ topic: order[i % order.length], mode: "list", level: 1 + Math.min(2, Math.floor((3 * i) / length)) }));
-    return this.sessionNext(this.createSession(studentId, "list", plan, { skills: order }));
+    return this.sessionNext(this.createSession(studentId, "list", plan, { ...extra, skills: order }));
   }
   // Povzetek po veščinah: »ok« (vsaj 2 nalogi in vsaj 3/4 v prvem poskusu), »more« (pod tem) ali »few« (ena sama
   // pravilna naloga: premalo za oceno). apply (enkrat, ob koncu seje): šibka tema, ki je bila obvladana že pred to
@@ -861,6 +862,13 @@ export class Progress {
           st.status = "learning";
           this.saveState(st);
         }
+      } else if (apply && rows.length && sess.params.priprava && st.status !== "mastered") {
+        // Kviz priprave na test: izkazano znanje premakne stanje teme (načrt in pripravljenost), obvladanje pa ostane
+        // pravilo checkMastery. »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu): stopnja višje (nova → učim se, stopnja 2);
+        // »few« (ena pravilna): nova → učim se.
+        if (status === "ok") Object.assign(st, { status: "learning", level: st.status === "new" ? 2 : Math.min(3, (st.level || 1) + 1) });
+        else if (st.status === "new") st.status = "learning";
+        this.saveState(st);
       }
       return { id, name: localTopic(getTopic(id), lang)?.name || getTopic(id)?.name || id, correct, total: rows.length, status, ok: status === "ok", review: status === "more" && !!before };
     });
