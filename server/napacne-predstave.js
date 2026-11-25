@@ -6,7 +6,7 @@
 // Uporablja isto preverjanje kot Vadnica (checkAnswer in diagnose v server/practice/check.js; datoteka kalkulatorja,
 // tu samo uvoz). Ob dvomu vrne null: modul nikoli ne ugiba, opomba je le za vzorec, ki ga koda zares najde.
 // Brez AI, brez stanja. Profil B odloči, kje ga vklopi (kjer ima pravilen rezultat: RACUN, naloga iz Vadnice).
-import { checkAnswer, parseNumberWithUnit, unitFactor, sameUnit } from "./practice/check.js";
+import { checkAnswer, parseNumberWithUnit, siUnit, sameUnit } from "./practice/check.js";
 
 export const KODE = ["sign", "magnitude", "reciprocal", "factor2", "unit", "generator"];
 const IZ_CHECK = {
@@ -17,16 +17,14 @@ const IZ_CHECK = {
   "chk.factor2Big": ["factor2", { smer: "vec" }],
   "chk.factor2Small": ["factor2", { smer: "manj" }],
 };
-// Pogoste pretvorbe, ki jih učenec izpusti: število je vrednost v drugi enoti.
-const PRETVORBE = [
-  [3.6, "km/h in m/s (faktor 3,6)"],
-  [1 / 3.6, "km/h in m/s (faktor 3,6)"],
-  [60, "minute in sekunde ali ure in minute (faktor 60)"],
-  [1 / 60, "minute in sekunde ali ure in minute (faktor 60)"],
-  [3600, "ure in sekunde (faktor 3600)"],
-  [1 / 3600, "ure in sekunde (faktor 3600)"],
-];
+// Pogoste pretvorbe, ki jih učenec izpusti: število je vrednost v drugi enoti iste količine. Faktor 3,6 samo pri
+// hitrosti, 60 in 3600 samo pri času (pregled 2 in 3: brez enote ali pri drugi količini je to lahko le naključje).
+const PRETVORBE = {
+  "m1/s": [[3.6, "km/h in m/s (faktor 3,6)"], [1 / 3.6, "km/h in m/s (faktor 3,6)"]],
+  s: [[60, "minute in sekunde ali ure in minute (faktor 60)"], [1 / 60, "minute in sekunde ali ure in minute (faktor 60)"], [3600, "ure in sekunde (faktor 3600)"], [1 / 3600, "ure in sekunde (faktor 3600)"]],
+};
 const CAS = { s: 1, min: 60, h: 3600 };
+const TEMP = /^(?:K|°C)$/;
 const MAX_VNOS = 80;
 
 // Pravilen rezultat: število, besedilo z enoto (»12,5 m/s«) ali { value, unit, mistakes, alsoAccept } iz generatorja.
@@ -53,23 +51,31 @@ const ocisti = (s) =>
     .replace(/\s+/g, " ")
     .trim();
 
-// Faktor pretvorbe enote (tudi sestavljene a/b s časom, npr. km/h → m/s) ali null.
-function faktor(od, v) {
-  if (!od || !v) return null;
-  if (sameUnit(od, v)) return 1;
-  const f = unitFactor(od, v);
-  if (f != null) return f;
-  const [a1, b1, ...x1] = od.split("/");
-  const [a2, b2, ...x2] = v.split("/");
-  if (b1 === undefined || b2 === undefined || x1.length || x2.length) return null;
-  const del = (x, y) => (sameUnit(x, y) ? 1 : (unitFactor(x, y) ?? (CAS[x] && CAS[y] ? CAS[x] / CAS[y] : null)));
-  const fa = del(a1.trim(), a2.trim());
-  const fb = del(b1.trim(), b2.trim());
-  return fa != null && fb != null ? fa / fb : null;
+// Enota → { dim, scale } (vrednost v osnovni enoti = vrednost · scale) ali null; tudi čas (min, h), Wh in a/b.
+function enota(u) {
+  const x = String(u || "").trim();
+  if (!x) return null;
+  if (CAS[x]) return { dim: "s", scale: CAS[x] };
+  const si = siUnit(x);
+  if (si) return si.base === "Wh" ? { dim: "J1", scale: si.scale * 3600 } : { dim: si.base === "s" && si.pow === 1 ? "s" : `${si.base}${si.pow}`, scale: si.scale };
+  const deli = x.split("/");
+  if (deli.length !== 2) return null;
+  const [a, b] = deli.map(enota);
+  return a && b ? { dim: `${a.dim}/${b.dim}`, scale: a.scale / b.scale } : null;
+}
+const znana = (u) => !!enota(u) || TEMP.test(String(u || "").trim());
+
+// Vrednost v enoti »od« pretvorjena v enoto »v« ali null (ni ista količina ali neznana enota).
+function pretvori(x, od, v) {
+  if (sameUnit(od, v)) return x;
+  if (TEMP.test(od) && TEMP.test(v)) return od === "K" ? x - 273.15 : x + 273.15;
+  const a = enota(od);
+  const b = enota(v);
+  return a && b && a.dim === b.dim ? (x * a.scale) / b.scale : null;
 }
 
-// Enako do zaokrožitve, ki jo je učenec zapisal (pol zadnjega mesta), ali 0,5 % (kot v Vadnici).
-const blizu = (v, cilj, decimals) => Math.abs(v - cilj) <= Math.max(0.51 * 10 ** -Math.max(decimals, 0), 0.005 * Math.abs(cilj)) + 1e-12;
+// Enako do 1 % (pravilen rezultat v drugi enoti, z učenčevim zaokroževanjem; pri dvomu raje null kot napačna opomba).
+const blizu = (v, cilj, rel = 0.01) => Math.abs(v - cilj) <= rel * Math.abs(cilj) + 1e-12;
 
 const NAVODILO = " Rezultata ne povej; z enim vprašanjem ga usmeri, naj sam preveri ta del.";
 function opomba(koda, params) {
@@ -78,7 +84,7 @@ function opomba(koda, params) {
     sign: "učenčev rezultat ima pravo velikost, a napačen predznak.",
     magnitude: `učenčeve števke so prave, rezultat pa je ${params.times}-krat ${vec} (verjetno pretvorba enot ali decimalna vejica).`,
     reciprocal: "učenec je dobil obratno vrednost (verjetno obrnjena formula ali deljenje v napačnem vrstnem redu).",
-    factor2: `učenčev rezultat je natanko 2-krat ${vec} (verjetno ½ v formuli, premer namesto polmera ali izpuščen kvadrat).`,
+    factor2: `učenčev rezultat je 2-krat ${vec} (verjetno ½ v formuli ali premer namesto polmera).`,
     unit: params.kaj ? `število se ujema z rezultatom v drugi enoti (${params.kaj}); verjetno enote ni pretvoril.` : `enota učenčevega rezultata (${params.ima}) ne ustreza iskani količini (${params.prava}).`,
     generator: `tipična napaka pri tej nalogi: ${params.zakaj}`,
   }[koda];
@@ -94,6 +100,12 @@ export function napacnaPredstava({ pravilno, ucenec } = {}) {
   const ans = spec(pravilno);
   const vnos = ocisti(ucenec);
   if (!ans || !vnos || vnos.length > MAX_VNOS) return null;
+  const p = parseNumberWithUnit(vnos);
+  // Samo število z znano enoto ali brez nje (»6 ali 7« ni rezultat z enoto »ali 7«).
+  if (!p || !Number.isFinite(p.value) || Math.abs(p.value) > 1e15 || (p.unit && !sameUnit(p.unit, ans.unit) && !znana(p.unit))) return null;
+  // Pravilna vrednost v drugi enoti iste količine (72 km/h za 20 m/s, 7200 s za 2 h, 293,15 K za 20 °C).
+  const vEnoti = ans.unit && p.unit ? pretvori(p.value, p.unit, ans.unit) : p.unit && !ans.unit ? null : p.value;
+  if (vEnoti != null && blizu(vEnoti, ans.value)) return null;
   let r;
   try {
     r = checkAnswer(ans, vnos, { convert: true });
@@ -101,24 +113,28 @@ export function napacnaPredstava({ pravilno, ucenec } = {}) {
     return null;
   }
   if (r.kind === "correct") return null;
-  const p = parseNumberWithUnit(vnos);
-  if (!p) return null;
-  // Pravilna vrednost v drugi enoti (72 km/h, ko iščemo m/s): to ni napačna predstava.
-  const f = ans.unit && p.unit ? faktor(p.unit, ans.unit) : null;
-  if (f != null && blizu(p.value * f, ans.value, 12)) return null;
+  const pricakovane = [ans.value, ...(ans.alsoAccept || [])].filter((e) => Number.isFinite(e) && e !== 0);
   if (r.kind === "wrong" && r.mistake) {
-    if (IZ_CHECK[r.mistake.code]) {
-      const [koda, extra] = IZ_CHECK[r.mistake.code];
-      return izid(koda, { ...extra, ...(r.mistake.params?.times ? { times: r.mistake.params.times } : {}) });
+    const [koda, extra] = IZ_CHECK[r.mistake.code] || [];
+    if (koda) {
+      // Vzorec potrdi še enkrat, strožje kot Vadnica (1 %), da opomba ne trdi česa, česar koda ni pokazala.
+      const times = Number(r.mistake.params?.times) || 1;
+      const cilj = (e) => ({ sign: -e, magnitude: extra.smer === "vec" ? e * times : e / times, reciprocal: 1 / e, factor2: extra.smer === "vec" ? 2 * e : e / 2 })[koda];
+      if (vEnoti == null || !pricakovane.some((e) => blizu(vEnoti, cilj(e)))) return null;
+      return izid(koda, { ...extra, ...(koda === "magnitude" ? { times: String(times) } : {}) });
     }
-    if (!r.mistake.code && r.mistake.message) return izid("generator", { zakaj: String(r.mistake.message).slice(0, 200) });
+    // Napaka iz generatorja: brez števk (besedilo lahko vsebuje rezultat, opomba ga ne sme izdati).
+    const zakaj = String(r.mistake.message || "");
+    if (!r.mistake.code && zakaj && !/\d/.test(zakaj)) return izid("generator", { zakaj: zakaj.slice(0, 200) });
+    if (!r.mistake.code) return null;
   }
-  // Nepretvorjena enota: število je rezultat v drugi pogosti enoti (enota zapisana kot prava ali brez nje).
-  if (ans.value && (f === 1 || !p.unit)) {
-    for (const [k, kaj] of PRETVORBE) if (blizu(p.value, ans.value * k, p.decimals)) return izid("unit", { kaj });
-    if (/^(?:K|°C)$/.test(ans.unit) && [273.15, -273.15].some((d) => blizu(p.value, ans.value + d, p.decimals))) return izid("unit", { kaj: "kelvini in stopinje Celzija (273,15)" });
+  // Nepretvorjena enota: število je rezultat v drugi pogosti enoti iste količine (enota zapisana kot prava ali brez nje).
+  const dim = TEMP.test(ans.unit) ? "T" : enota(ans.unit)?.dim;
+  if (dim && p.value !== 0 && (!p.unit || sameUnit(p.unit, ans.unit))) {
+    for (const [k, kaj] of PRETVORBE[dim] || []) if (pricakovane.some((e) => blizu(p.value, e * k))) return izid("unit", { kaj });
+    if (dim === "T" && pricakovane.some((e) => [273.15, -273.15].some((d) => blizu(p.value, e + d, 0.002)))) return izid("unit", { kaj: "kelvini in stopinje Celzija (273,15)" });
   }
-  // Enota druge količine (20 N, ko iščemo m/s).
-  if (r.kind === "unit" && r.code === "chk.unit" && p.unit && f == null) return izid("unit", { ima: p.unit.slice(0, 20), prava: ans.unit.slice(0, 20) });
+  // Enota druge količine (20 N, ko iščemo m/s): obe enoti znani, količini različni.
+  if (p.unit && ans.unit && dim && znana(p.unit) && pretvori(1, p.unit, ans.unit) == null) return izid("unit", { ima: p.unit.slice(0, 20), prava: ans.unit.slice(0, 20) });
   return null;
 }

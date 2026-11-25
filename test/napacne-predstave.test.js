@@ -39,6 +39,21 @@ test("pravilen rezultat, tudi v drugi enoti, ne da opombe", () => {
   assert.equal(np({ value: 0.5, unit: "m" }, "50 cm"), null);
   assert.equal(np("12,5 m/s", "45 km/h"), null);
   assert.equal(np(2.4567, "2,46"), null);
+  // pregled 2 in 3: enostavne enote časa, Wh, kelvini
+  for (const [prav, uc] of [["2 h", "7200 s"], ["1,5 h", "90 min"], ["2 min", "120 s"], ["1 h", "60 min"], ["1 kWh", "3600000 J"], ["300 K", "26,85 °C"], ["20 °C", "293,15 K"]]) assert.equal(np(prav, uc), null, `${prav} = ${uc}`);
+});
+
+test("pregled 2 in 3: brez lažnih opomb", () => {
+  // pretvorbe samo pri hitrosti in času, ne pri številu brez enote ali pri drugi količini
+  for (const [prav, uc] of [[1, "4"], [1, "0"], [2, "7"], [5, "18"], [1, "60"], [3, "180"], [2, "120"], ["10 N", "36 N"], ["5 kg", "18 kg"], ["0,5 min", "0"]]) assert.equal(np(prav, uc), null, `${prav} / ${uc}`);
+  // »2-krat« le, ko je res 2-krat (do 1 %), ne 1,4 → 3
+  assert.equal(np(1.4, "3"), null);
+  assert.equal(np(1.4, "2,8").koda, "factor2");
+  // ni rezultat z enoto
+  assert.equal(np(3, "6 ali 7"), null);
+  assert.equal(np(5, "1e400"), null);
+  // napaka iz generatorja s števko v besedilu ne gre v opombo (lahko je rezultat)
+  assert.equal(np({ value: 4, mistakes: [{ value: -4, why: "Ničli sta $x = 4$ in $x = -4$." }] }, "-4")?.koda ?? null, null);
 });
 
 test("ob dvomu null: neprepoznana napaka, prazen ali predolg vnos, besedilo, neveljaven pravilen rezultat", () => {
