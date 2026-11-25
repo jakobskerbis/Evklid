@@ -4663,5 +4663,17 @@
   "scan.camDenied": "Der Kamerazugriff ist blockiert. Erlaube ihn im Browser (Symbol neben der Seitenadresse) und versuch es noch einmal, oder wähle ein Bild aus.",
   "scan.camBusy": "Eine andere App benutzt gerade die Kamera. Schließe sie (z. B. einen Videoanruf) und versuch es noch einmal.",
   "scan.camNone": "Dieses Gerät hat keine Kamera. Wähle mit „{btn}“ ein Bild der Aufgabe aus oder tippe sie ein.",
-  "scan.frameKeys": "Die Pfeiltasten verschieben den Rahmen, Umschalt + Pfeiltasten ändern seine Größe."
+  "scan.frameKeys": "Die Pfeiltasten verschieben den Rahmen, Umschalt + Pfeiltasten ändern seine Größe.",
+  "set.grpLearn": "Lernen",
+  "set.grpLearnSub": "Fach, Ziel, Lösungsweg, Tutor, Schule",
+  "set.grpTutor": "Tutor und Datenverbrauch",
+  "set.grpSchool": "Schule, Klasse und Name",
+  "set.grpLook": "Aussehen",
+  "set.grpLookSub": "Stil, Farben, Vollbild, verschiebbare Fenster",
+  "set.grpInput": "Eingabe und Sprache",
+  "set.grpInputSub": "Evklid-Tastatur und App-Sprache",
+  "set.grpProfiles": "Konto und Profile",
+  "set.grpProfilesSub": "Konto und Profile der Lernenden",
+  "set.grpHelp": "Hilfe",
+  "set.grpHelpSub": "Einführung und App-Anleitung"
 }

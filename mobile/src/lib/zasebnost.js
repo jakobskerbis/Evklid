@@ -92,7 +92,7 @@ export function preseliStare(storage, slug, parentId, students) {
 // Enak seznam kot public/offline.js (PRIVATE_KEYS, PRIVATE_EXACT; test/mobile-odjava-brisanje.test.js preveri,
 // da se ujemata). Nastavitve videza (jezik, tema, enote …) ostanejo.
 export const spletVzorec = (slug) =>
-  `^${slug}\\.(offline\\.|scan\\.|work\\.|graph\\.|sci\\.|goalSeen\\.|schedule|ours\\.|levelup\\.|zadnji-zaslon$|zadnji-posnetek$)`;
+  `^${slug}\\.(offline\\.|scan\\.|work\\.|graph\\.|sci\\.|goalSeen\\.|schedule|ours\\.|levelup\\.|lab\\.meritve\\.|zadnji-zaslon$|zadnji-posnetek$)`;
 export const spletTocno = (slug) => ["teacherClasses", "studentId", `${slug}_invite_name`, `${slug}_koda`, `${slug}_ref`, `${slug}.vabilo`];
 export const spletJeZasebno = (k, slug) => typeof k === "string" && (new RegExp(spletVzorec(slug)).test(k) || spletTocno(slug).includes(k));
 

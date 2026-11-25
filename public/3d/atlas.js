@@ -17,6 +17,7 @@ import { skoziLupino } from "./izbira.js";
 import { ravenProfila, razlaga } from "./raven.js";
 import { barvniNacin, nastaviBarvniNacin, ucnaBarvaTkiva } from "./barve.js";
 import { preparatAtlasa } from "/mikroskop/mapa.js";
+import { LOCILO, zdruzi } from "../datum.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -1085,7 +1086,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       li.setAttribute("role", "option");
       li.id = `a3-rez-${rezultati.childElementCount}`;
       const b = mk("b", "", r.prikaz);
-      const s = mk("small", "", [r.la, t(`a3.l.${r.sistem}`)].filter(Boolean).join(" · "));
+      const s = mk("small", "", zdruzi([r.la, t(`a3.l.${r.sistem}`)]));
       li.append(b, s);
       li.addEventListener("mousedown", (e) => e.preventDefault());
       li.addEventListener("click", () => izberiIzSeznama(r.id));
@@ -1493,7 +1494,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         s.href = v.url;
         s.target = "_blank";
         s.rel = "noopener";
-        l.append(document.createTextNode(" · "), s);
+        l.append(document.createTextNode(LOCILO), s);
       }
       c.append(l);
       box.append(c);

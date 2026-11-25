@@ -1361,8 +1361,14 @@ async function views(p, label) {
   }
 }
 
+// Nastavitve so v skupinah (<details>, index.html): pred dotikom polja v zaprti skupini jo odpremo.
+const odpriSkupino = (p, sel) =>
+  p.evaluate((sel) => {
+    for (let d = document.querySelector(sel)?.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true;
+  }, sel);
 async function settingsChange(p) {
   await tab(p, "settings");
+  await odpriSkupino(p, '#settings-form select[name="data_mode"]');
   const sel = p.locator('#settings-form select[name="data_mode"]');
   await sel.selectOption("lite");
   await click(p, '#settings-form button[type="submit"]', { wait: 300 });
@@ -1374,6 +1380,35 @@ async function settingsChange(p) {
   if (saved !== "lite") throw new Error(`nastavitev ni shranjena (${saved})`);
   await sel.selectOption("auto");
   await click(p, '#settings-form button[type="submit"]', { wait: 300 });
+}
+
+// Nastavitve na telefonu (j 25. 11. 2026: bile so 8,9 zaslona): skupine, privzeto odprta le Učenje, so skupaj največ
+// NASTAVITVE_ZASLONOV zaslonov; kartica Varnost (stiska, starši) je vidna brez dotika (ni v zaprti skupini).
+const NASTAVITVE_ZASLONOV = 3.5;
+async function nastavitveTelefon(p) {
+  await tab(p, "settings");
+  await p.evaluate(() => document.querySelectorAll("#view-settings details[data-skupina]").forEach((d) => (d.open = d.dataset.skupina === "ucenje")));
+  await settle(p, 300);
+  const r = await p.evaluate(() => {
+    const v = document.querySelector("#view-settings");
+    const s = document.querySelector("#safety-card");
+    const glave = [...v.querySelectorAll(".set-grp > summary")].filter((x) => x.getClientRects().length);
+    return {
+      zasloni: v.scrollHeight / innerHeight,
+      varnost: !!s && s.getClientRects().length > 0 && !s.closest("details") && !!s.textContent.trim(),
+      glave: glave.length,
+      nizke: glave.filter((x) => x.getBoundingClientRect().height < 44).length,
+    };
+  });
+  if (r.zasloni > NASTAVITVE_ZASLONOV) throw new Error(`Nastavitve so dolge ${r.zasloni.toFixed(1)} zaslona (največ ${NASTAVITVE_ZASLONOV})`);
+  if (!r.varnost) throw new Error("kartica Varnost ni vidna brez dotika");
+  if (r.glave < 4 || r.nizke) throw new Error(`glave skupin: ${r.glave}, nižjih od 44 px: ${r.nizke}`);
+  await screen(p, "nastavitve-skupine");
+  // Dotik glave odpre skupino in pokaže njeno vsebino, drugi dotik jo zapre.
+  await click(p, '#view-settings [data-skupina="videz"] > summary', { wait: 200 });
+  await expectVisible(p, "#appearance", "Videz po dotiku glave skupine");
+  await click(p, '#view-settings [data-skupina="videz"] > summary', { wait: 200 });
+  if (await p.locator("#appearance").isVisible()) throw new Error("drugi dotik ne zapre skupine Videz");
 }
 
 async function schedule(p) {
@@ -1622,6 +1657,7 @@ async function desktop(browser, app) {
           if (await p.locator(".iq-wrap").count()) throw new Error("vprašalnik zanimanj v srednji šoli");
           if (await p.locator("#tour").isVisible()) throw new Error("vodič v srednji šoli");
           await tab(p, "settings");
+          await odpriSkupino(p, "#tour-again");
           await click(p, "#tour-again", { wait: 200 });
           await closeTour(p, "esc");
         } else await intro(p, name, opts);
@@ -1793,10 +1829,12 @@ async function phone(browser, app) {
   await step(p, "tel-vodic", async () => {
     await barTab(p, "me", { wait: 200 });
     await click(p, '#view-me [data-go="settings"]', { wait: 300 });
+    await odpriSkupino(p, "#tour-again");
     await click(p, "#tour-again", { wait: 200 });
     await closeTour(p, "vse");
     if ((await currentView(p)) !== "view-path") throw new Error("po vodiču ni odprta Učna pot");
   });
+  await step(p, "tel-nastavitve-skupine", () => nastavitveTelefon(p));
   // Uči se (Učbenik | Laboratorij | 3D svet, j 4. 11.), Inštruktor in četrto mesto: Tekmovanja ali NPZ/Matura.
   const fourth = await p.locator("#competition-tab-m").getAttribute("data-view");
   for (const v of ["uci", "chat", fourth]) {
@@ -2029,6 +2067,7 @@ async function phone(browser, app) {
   await step(p, "tel-okna", () => okna(p, "tel"));
   await step(p, "tel-igre", () => games(p, "tel"));
   await step(p, "tel-skeniraj", () => scan(p, "tel"));
+  await step(p, "tel-dostopnost", () => dostopnostTelefon(p));
   await p.context().close();
 }
 
@@ -2171,6 +2210,52 @@ async function accounts(browser, app) {
     await screen(p, "sole");
   });
   await p.context().close();
+}
+
+// Dostopnost na telefonu (A9): oba menija sta navigacija z aria-current="page" (ne tablist brez zavihkov), napisi
+// spodnje vrstice vsaj 12 px, gumbi za dotik na Učni poti, v Napredku in Nastavitvah vsaj 40 px visoki, ločilo »·« in
+// datum cilja v vrstici cilja se ne prelomita (nedeljiv presledek, public/datum.js zdruzi).
+async function dostopnostTelefon(p) {
+  const nastavi = (s) =>
+    p.evaluate(async (s) => {
+      const id = localStorage.getItem("studentId");
+      const r = await fetch(`/api/students/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ settings: s }) });
+      return r.ok;
+    }, s);
+  const prej = await p.evaluate(async () => (await (await fetch(`/api/students/${localStorage.getItem("studentId")}`)).json()).settings || {});
+  if (!(await nastavi({ goal: "test", goal_date: "2027-05-29", goal_reminder: true }))) throw new Error("cilja z datumom ni bilo mogoče nastaviti");
+  try {
+    await p.goto(p.base + "/");
+    await settle(p, 600);
+    if (await p.locator('.topbar .tabs[role="tablist"]').count()) throw new Error("zgornji meni ima role=tablist brez zavihkov (role=tab)");
+    for (const v of ["path", "progress", "settings"]) {
+      await tab(p, v);
+      await settle(p, 300);
+      if (v === "path") await expectVisible(p, "#view-path .goal-line .gl-edit", "vrstica cilja s »Spremeni«");
+      const r = await p.evaluate(() => {
+        const vis = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== "hidden";
+        const ime = (el) => `${el.nodeName.toLowerCase()}${el.id ? `#${el.id}` : ""}${[...el.classList].map((c) => `.${c}`).join("")} »${(el.textContent || el.getAttribute("aria-label") || "").trim().slice(0, 24)}«`;
+        const tabs = [...document.querySelectorAll("#tabbar .tab")].filter(vis);
+        const cur = tabs.filter((t) => t.getAttribute("aria-current") === "page");
+        const pogled = [...document.querySelectorAll("main.view:not(.in-okno):not([data-posnetek])")].find((x) => !x.hidden);
+        const mali = [...(pogled?.querySelectorAll('button, [role="button"], [role="tab"], [role="switch"], [role="radio"]') || [])]
+          .filter((el) => vis(el) && el.getBoundingClientRect().height < 39.5)
+          .map((el) => `${ime(el)} ${Math.round(el.getBoundingClientRect().height)} px`);
+        const pisava = tabs.map((t) => [t.dataset.view, parseFloat(getComputedStyle(t.querySelector("span") || t).fontSize)]).filter(([, px]) => px < 12);
+        const cilj = pogled?.querySelector(".goal-line .gl-text")?.textContent || "";
+        return { n: tabs.length, cur: cur.map((t) => t.dataset.view), active: tabs.filter((t) => t.classList.contains("active")).map((t) => t.dataset.view), mali, pisava, cilj };
+      });
+      if (!r.n) throw new Error(`${v}: spodnja vrstica ni vidna`);
+      if (r.cur.length !== 1 || r.cur[0] !== r.active[0]) throw new Error(`${v}: aria-current="page" na [${r.cur}], izbran zavihek [${r.active}]`);
+      if (r.pisava.length) throw new Error(`${v}: napis v spodnji vrstici manjši od 12 px: ${r.pisava.map(([k, px]) => `${k} ${px} px`).join(", ")}`);
+      if (r.mali.length) throw new Error(`${v}: gumbi nižji od 40 px: ${r.mali.slice(0, 6).join("; ")}`);
+      if (r.cilj && (/ ·/.test(r.cilj) || /\d\. \d/.test(r.cilj))) throw new Error(`${v}: ločilo »·« ali datum se lahko prelomi: »${r.cilj}«`);
+      if (v === "path" && !r.cilj.includes("2027")) throw new Error(`vrstica cilja brez datuma: »${r.cilj}«`);
+    }
+    await screen(p, "dostopnost-nastavitve");
+  } finally {
+    await nastavi({ goal: prej.goal || "sprotno", goal_date: prej.goal_date || "", goal_reminder: prej.goal_reminder !== false });
+  }
 }
 
 // ---------- tuj jezik (--jezik en …) ----------
