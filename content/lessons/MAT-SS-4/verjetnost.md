@@ -15,8 +15,8 @@ Ugodne in vse izide štejemo s kombinatoriko. Pri jajcih pa se zgodita *dve stva
 
 **1. Dogodki.** **Poskus** je dejanje z naključnim izidom (met kocke). Množica njegovih možnih izidov je **vzorčni prostor**. **Dogodek** je skupina izidov (podmnožica). Pri metu kocke je dogodek $A$: »padlo je sodo število« $= \{2, 4, 6\}$. Dogodek z enim samim izidom, na primer »padla je šestica« $= \{6\}$, je **elementarni dogodek**.
 
-- **Gotov dogodek** se zgodi vedno: $P = 1$.
-- **Nemogoč dogodek** se ne zgodi nikoli: $P = 0$.
+- **Gotov dogodek** $G$ se zgodi vedno: $P(G) = 1$.
+- **Nemogoč dogodek** $N$ se ne zgodi nikoli: $P(N) = 0$.
 - Za vsak dogodek velja $0 \le P(A) \le 1$.
 - **Nasprotni dogodek** $\overline{A}$ se zgodi, kadar se $A$ ne zgodi:
 $$P(\overline{A}) = 1 - P(A).$$
@@ -58,8 +58,8 @@ Ne, verjetnost ne more biti večja od $1$. Dneve, ko je v hladilniku oboje, smo 
 :::
 
 **5. Pogojna verjetnost (višja raven).** Verjetnost dogodka $A$ ob pogoju, da se je $B$ že zgodil (s $P(B) > 0$), je
-$$P(A \mid B) = \frac{P(A \cdot B)}{P(B)}.$$
-Pogoj $B$ »zoži svet« na izide, v katerih se je $B$ zgodil, in med njimi gledamo, kolikšen delež jih je ugodnih za $A$.
+$$P(A/B) = \frac{P(A \cdot B)}{P(B)}.$$
+Na maturi pišemo $P(A/B)$ in beremo »verjetnost $A$ pri pogoju $B$« (poševnica tu ne pomeni deljenja); v drugih knjigah srečaš tudi zapis $P(A \mid B)$, ki pomeni isto. Pogoj $B$ »zoži svet« na izide, v katerih se je $B$ zgodil, in med njimi gledamo, kolikšen delež jih je ugodnih za $A$.
 
 :::premisli
 Prvo jajce iz škatle je bilo celo. Kolikšna je zdaj verjetnost, da je celo tudi drugo? Zakaj ni več $\frac{10}{12}$?
@@ -68,7 +68,7 @@ $\frac{9}{11}$. V škatli je ostalo $11$ jajc, celih je še $9$. Pogoj »prvo je
 :::
 
 **6. Verjetnost produkta (višja raven).** Iz definicije pogojne verjetnosti sledi
-$$P(A \cdot B) = P(B) \cdot P(A \mid B).$$
+$$P(A \cdot B) = P(B) \cdot P(A/B).$$
 Verjetnost, da se zgodita oba dogodka, je verjetnost prvega, pomnožena z verjetnostjo drugega, ko je prvi že nastopil. To je pravilo za računanje po stopnjah (npr. dva izvlečka brez vračanja).
 
 Zdaj lahko odgovorimo na vprašanje z jajci. Pomaga **verjetnostno drevo**: veje so izidi, na vejah so (pogojne) verjetnosti.
@@ -102,7 +102,7 @@ Na zgornji poti pomnožimo: $P = \frac{10}{12} \cdot \frac{9}{11} = \frac{90}{13
 
 Preveri: kolikšna je verjetnost, da sta obe jajci počeni? ($\frac{2}{12} \cdot \frac{1}{11} = \frac{2}{132} = \frac{1}{66}$.)
 
-**7. Neodvisna dogodka (višja raven).** Dogodka $A$ in $B$ sta **neodvisna**, če informacija o enem ne spremeni verjetnosti drugega, torej $P(A \mid B) = P(A)$. Takrat velja
+**7. Neodvisna dogodka (višja raven).** Dogodka $A$ in $B$ sta **neodvisna**, če informacija o enem ne spremeni verjetnosti drugega, torej $P(A/B) = P(A)$. Takrat velja
 $$P(A \cdot B) = P(A) \cdot P(B).$$
 Primer: dva zaporedna meta kovanca. Pri vlečenju brez vračanja dogodka nista neodvisna.
 
@@ -161,15 +161,15 @@ V košari je $5$ rdečih in $3$ zelena jabolka. Za zavitek brez gledanja vzameš
 **Iščemo:** (a) $P(R_1 \cdot R_2)$, (b) verjetnost, da sta jabolki različnih barv
 
 :::formula
-$P(A \cdot B) = P(A) \cdot P(B \mid A)$; za nezdružljiva dogodka $P(A + B) = P(A) + P(B)$
+$P(A \cdot B) = P(A) \cdot P(B/A)$; za nezdružljiva dogodka $P(A + B) = P(A) + P(B)$
 :::
 
 **Rešitev:**
 
 **(a)**
-1. Dogodek $R_1$: prvo je rdeče, $R_2$: drugo je rdeče. Iščemo $P(R_1 \cdot R_2) = P(R_1) \cdot P(R_2 \mid R_1)$.
+1. Dogodek $R_1$: prvo je rdeče, $R_2$: drugo je rdeče. Iščemo $P(R_1 \cdot R_2) = P(R_1) \cdot P(R_2/R_1)$.
 2. $P(R_1) = \dfrac{5}{8}$, ker je $5$ rdečih od $8$.
-3. Če je bilo prvo rdeče, je v košari še $7$ jabolk, od tega $4$ rdeča, zato $P(R_2 \mid R_1) = \dfrac{4}{7}$. Pogojna verjetnost je tu nujna, ker se vsebina košare po prvem jemanju spremeni.
+3. Če je bilo prvo rdeče, je v košari še $7$ jabolk, od tega $4$ rdeča, zato $P(R_2/R_1) = \dfrac{4}{7}$. Pogojna verjetnost je tu nujna, ker se vsebina košare po prvem jemanju spremeni.
 4. $P = \dfrac{5}{8} \cdot \dfrac{4}{7} = \dfrac{20}{56} = \dfrac{5}{14}$.
 
 **(b)**
@@ -184,35 +184,35 @@ Odgovor: obe jabolki sta rdeči z verjetnostjo $\frac{5}{14}$, različnih barv p
 
 Tovarna ima dva stroja. Stroj $A$ izdela $60\,\%$ vseh izdelkov, stroj $B$ pa $40\,\%$. Pri stroju $A$ je $2\,\%$ izdelkov pokvarjenih, pri stroju $B$ pa $5\,\%$. Naključno izberemo en izdelek in je pokvarjen. Kolikšna je verjetnost, da ga je izdelal stroj $A$?
 
-**Podatki:** $P(A) = 0{,}6$, $P(B) = 0{,}4$, $P(N \mid A) = 0{,}02$, $P(N \mid B) = 0{,}05$
-**Iščemo:** $P(A \mid N)$, verjetnost, da je pokvarjen izdelek s stroja $A$
+**Podatki:** $P(A) = 0{,}6$, $P(B) = 0{,}4$, $P(K/A) = 0{,}02$, $P(K/B) = 0{,}05$
+**Iščemo:** $P(A/K)$, verjetnost, da je pokvarjen izdelek s stroja $A$
 
 :::formula
-$P(A \mid N) = \dfrac{P(A \cdot N)}{P(N)}$, $P(A \cdot N) = P(A) \cdot P(N \mid A)$
+$P(A/K) = \dfrac{P(A \cdot K)}{P(K)}$, $P(A \cdot K) = P(A) \cdot P(K/A)$
 :::
 
 **Rešitev:**
 
-1. Označimo: $A$ – izdelek je s stroja $A$, $B$ – s stroja $B$, $N$ – izdelek je pokvarjen. Podano: $P(A) = 0{,}6$, $P(B) = 0{,}4$, $P(N \mid A) = 0{,}02$, $P(N \mid B) = 0{,}05$.
-2. Iščemo $P(A \mid N) = \dfrac{P(A \cdot N)}{P(N)}$.
-3. Števec izračunamo s pravilom za produkt: $P(A \cdot N) = P(A) \cdot P(N \mid A) = 0{,}6 \cdot 0{,}02 = 0{,}012$.
+1. Označimo: $A$ – izdelek je s stroja $A$, $B$ – s stroja $B$, $K$ – izdelek je pokvarjen. Podano: $P(A) = 0{,}6$, $P(B) = 0{,}4$, $P(K/A) = 0{,}02$, $P(K/B) = 0{,}05$.
+2. Iščemo $P(A/K) = \dfrac{P(A \cdot K)}{P(K)}$.
+3. Števec izračunamo s pravilom za produkt: $P(A \cdot K) = P(A) \cdot P(K/A) = 0{,}6 \cdot 0{,}02 = 0{,}012$.
 4. Imenovalec: izdelek je pokvarjen, če je pokvarjen in s stroja $A$, ali pokvarjen in s stroja $B$. To sta nezdružljiva dogodka, zato seštejemo:
-$$P(N) = 0{,}6 \cdot 0{,}02 + 0{,}4 \cdot 0{,}05 = 0{,}012 + 0{,}020 = 0{,}032.$$
+$$P(K) = 0{,}6 \cdot 0{,}02 + 0{,}4 \cdot 0{,}05 = 0{,}012 + 0{,}020 = 0{,}032.$$
 5. Zdaj ti: deli števec z imenovalcem in odgovor zapiši v odstotkih. Je več ali manj kot polovica pokvarjenih izdelkov s stroja $A$?
 
 :::premisli
-Koliko je $P(A \mid N)$?
+Koliko je $P(A/K)$?
 ---
-$P(A \mid N) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}375$, torej $37{,}5\,\%$. To je manj kot polovica: čeprav stroj $A$ izdela več izdelkov, ima manjšo stopnjo napak, zato je med pokvarjenimi redkeje.
+$P(A/K) = \dfrac{0{,}012}{0{,}032} = \dfrac{12}{32} = \dfrac{3}{8} = 0{,}375$, torej $37{,}5\,\%$. To je manj kot polovica: čeprav stroj $A$ izdela več izdelkov, ima manjšo stopnjo napak, zato je med pokvarjenimi redkeje.
 :::
 
 ## Pogoste napake
 
 - **Pozabljen presek pri vsoti.** »Mleko $0{,}7$, jajca $0{,}6$, vsaj eno $1{,}3$.« Izidi, kjer se zgodita oba dogodka, so šteti dvakrat. Pri združljivih dogodkih odštej $P(A \cdot B)$; verjetnost nad $1$ je vedno znak te napake.
-- **Zamenjava $P(A \mid B)$ in $P(B \mid A)$ (višja raven).** »Stroj $A$ ima $2\,\%$ napak, torej je pokvarjen izdelek s stroja $A$ z verjetnostjo $0{,}02$.« To sta različni vprašanji z različnim pogojem. Popravek: najprej zapiši, kaj že veš (pogoj), in ta dogodek daj za navpičnico.
+- **Zamenjava $P(A/B)$ in $P(B/A)$ (višja raven).** »Stroj $A$ ima $2\,\%$ napak, torej je pokvarjen izdelek s stroja $A$ z verjetnostjo $0{,}02$.« To sta različni vprašanji z različnim pogojem. Popravek: najprej zapiši, kaj že veš (pogoj), in ta dogodek postavi za poševnico.
 - **Množenje, kot da sta dogodka neodvisna (višja raven).** »Dve celi jajci: $\frac{10}{12} \cdot \frac{10}{12}$.« Brez vračanja se vsebina škatle po prvem jemanju spremeni. Popravek: drugi faktor je pogojna verjetnost $\frac{9}{11}$; $P(A) \cdot P(B)$ velja le za neodvisna dogodka.
 - **Zamenjava »nezdružljiva« in »neodvisna« (višja raven).** »Ne moreta se zgoditi hkrati, torej se ne motita, torej sta neodvisna.« Ravno obratno: nezdružljiva dogodka (z verjetnostima nad $0$) sta močno odvisna, saj se drugi gotovo ne zgodi, če se zgodi prvi. Popravek: nezdružljivost preveri s $P(A \cdot B) = 0$, neodvisnost s $P(A \cdot B) = P(A) \cdot P(B)$.
-- **Napačen imenovalec pri pogojni verjetnosti (višja raven).** Pri $P(A \mid B)$ učenec deli s številom vseh izidov. Pogoj pa zoži svet na $B$. Popravek: deli s $P(B)$ oziroma s številom izidov v $B$.
+- **Napačen imenovalec pri pogojni verjetnosti (višja raven).** Pri $P(A/B)$ učenec deli s številom vseh izidov. Pogoj pa zoži svet na $B$. Popravek: deli s $P(B)$ oziroma s številom izidov v $B$.
 
 ## Povzetek
 
@@ -235,11 +235,11 @@ $$P(A) + P(B) - P(A \cdot B)$$
 
 **Višja raven:** pogojna verjetnost
 
-$$P(A \mid B) = \frac{P(A \cdot B)}{P(B)}$$
+$$P(A/B) = \frac{P(A \cdot B)}{P(B)}$$
 
 - **Produkt** dogodkov:
 
-$$P(A \cdot B) = P(B) \cdot P(A \mid B)$$
+$$P(A \cdot B) = P(B) \cdot P(A/B)$$
 
 - Pri **neodvisnih** dogodkih je $P(A \cdot B) = P(A) \cdot P(B)$.
 - Pri nalogah s koraki si pomagaj z **drevesom**: verjetnosti vzdolž poti množimo.
@@ -251,8 +251,8 @@ $$P(A \cdot B) = P(B) \cdot P(A \mid B)$$
 - $P(A) = \frac{m}{n}$ (na pamet)
 - $P(\overline{A}) = 1 - P(A)$ (na pamet)
 - $P(A + B) = P(A) + P(B) - P(A \cdot B)$ (na pamet)
-- (višja raven) $P(A \mid B) = \frac{P(A \cdot B)}{P(B)}$ (na pamet)
-- (višja raven) $P(A \cdot B) = P(B) \cdot P(A \mid B)$ (na pamet)
+- (višja raven) $P(A/B) = \frac{P(A \cdot B)}{P(B)}$ (na pamet)
+- (višja raven) $P(A \cdot B) = P(B) \cdot P(A/B)$ (na pamet)
 - (višja raven) neodvisna: $P(A \cdot B) = P(A) \cdot P(B)$ (na pamet)
 
 **Postopek**
@@ -265,13 +265,13 @@ $$P(A \cdot B) = P(B) \cdot P(A \mid B)$$
 **Pazi na**
 - Pri združljivih dogodkih odštej $P(A \cdot B)$; rezultat nad $1$ je napaka.
 - (višja raven) Brez vračanja je drugi faktor pogojna verjetnost: $\frac{10}{12} \cdot \frac{9}{11}$.
-- (višja raven) Pri $P(A \mid B)$ deli s $P(B)$, ne z vsemi izidi.
+- (višja raven) Pri $P(A/B)$ deli s $P(B)$, ne z vsemi izidi.
 
 ## Za maturo
 
 ### Naloga 1: kratka naloga, 3 točke, pola 1 (brez računala)
 
-Hkrati vržemo dve pošteni kocki, rdečo in modro. Izračunaj verjetnost, da je vsota pik na obeh kockah enaka $8$.
+Hkrati vržemo dve pošteni kocki, rdečo in modro. Izračunajte verjetnost, da je vsota pik na obeh kockah enaka $8$.
 
 **Rešitev:**
 
@@ -286,9 +286,9 @@ Hkrati vržemo dve pošteni kocki, rdečo in modro. Izračunaj verjetnost, da je
 
 V vrečki so $4$ rdeče, $3$ modre in $5$ zelenih kroglic. Na slepo hkrati izvlečemo $3$ kroglice.
 
-a) Izračunaj verjetnost, da so vse tri izvlečene kroglice zelene. (2 točki)
-b) Izračunaj verjetnost, da so vse tri izvlečene kroglice različnih barv. (2 točki)
-c) Izračunaj verjetnost, da je med izvlečenimi kroglicami vsaj ena rdeča. (2 točki)
+a) Izračunajte verjetnost, da so vse tri izvlečene kroglice zelene. (2 točki)
+b) Izračunajte verjetnost, da so vse tri izvlečene kroglice različnih barv. (2 točki)
+c) Izračunajte verjetnost, da je med izvlečenimi kroglicami vsaj ena rdeča. (2 točki)
 
 **Rešitev:**
 
@@ -303,26 +303,26 @@ c) Izračunaj verjetnost, da je med izvlečenimi kroglicami vsaj ena rdeča. (2 
 
 ### Naloga 3 (višja raven): strukturirana naloga, 10 točk, pola 1 (brez računala)
 
-V razredu je $30$ dijakov. Šport jih trenira $18$, glasbilo jih igra $12$, $6$ dijakov pa trenira šport in igra glasbilo. Naključno izberemo enega dijaka. Dogodek $S$: izbrani dijak trenira šport. Dogodek $G$: izbrani dijak igra glasbilo.
+V razredu je $30$ dijakov. Šport jih trenira $18$, glasbilo jih igra $12$, $6$ dijakov pa trenira šport in igra glasbilo. Naključno izberemo enega dijaka. Dogodek $S$: izbrani dijak trenira šport. Dogodek $I$: izbrani dijak igra glasbilo.
 
-a) Izračunaj $P(S + G)$ in z besedami opiši dogodek $S + G$. (2 točki)
-b) Izračunaj verjetnost, da izbrani dijak ne trenira športa in ne igra glasbila. (1 točka)
-c) Izbrani dijak igra glasbilo. Izračunaj verjetnost, da trenira tudi šport. (2 točki)
-d) Ali sta dogodka $S$ in $G$ nezdružljiva? Ali sta neodvisna? Oba odgovora utemelji z računom. (3 točke)
-e) Iz razreda naključno izberemo dva različna dijaka. Izračunaj verjetnost, da oba igrata glasbilo. (2 točki)
+a) Izračunajte $P(S + I)$ in z besedami opišite dogodek $S + I$. (2 točki)
+b) Izračunajte verjetnost, da izbrani dijak ne trenira športa in ne igra glasbila. (1 točka)
+c) Izbrani dijak igra glasbilo. Izračunajte verjetnost, da trenira tudi šport. (2 točki)
+d) Ali sta dogodka $S$ in $I$ nezdružljiva? Ali sta neodvisna? Oba odgovora utemeljite z računom. (3 točke)
+e) Iz razreda naključno izberemo dva različna dijaka. Izračunajte verjetnost, da oba igrata glasbilo. (2 točki)
 
 **Rešitev:**
 
-1. a) $P(S) = \frac{18}{30} = \frac{3}{5}$, $P(G) = \frac{12}{30} = \frac{2}{5}$, $P(S \cdot G) = \frac{6}{30} = \frac{1}{5}$.
-2. a) $P(S + G) = \frac{3}{5} + \frac{2}{5} - \frac{1}{5} = \frac{4}{5}$. Dogodek $S + G$: izbrani dijak trenira šport ali igra glasbilo (vsaj eno od obojega).
-3. b) Iskani dogodek je nasprotni dogodek dogodka $S + G$, zato je $P = 1 - \frac{4}{5} = \frac{1}{5}$.
-4. c) $P(S \mid G) = \frac{P(S \cdot G)}{P(G)} = \frac{1/5}{2/5} = \frac{1}{2}$ (med $12$ dijaki, ki igrajo glasbilo, jih $6$ trenira šport).
-5. d) Dogodka nista nezdružljiva, ker je $P(S \cdot G) = \frac{1}{5} \ne 0$: $6$ dijakov trenira šport in igra glasbilo.
-6. d) $P(S) \cdot P(G) = \frac{3}{5} \cdot \frac{2}{5} = \frac{6}{25}$, $P(S \cdot G) = \frac{1}{5} = \frac{5}{25}$. Ker je $P(S \cdot G) \ne P(S) \cdot P(G)$, dogodka nista neodvisna (to kaže tudi $P(S \mid G) = \frac{1}{2} \ne \frac{3}{5} = P(S)$).
+1. a) $P(S) = \frac{18}{30} = \frac{3}{5}$, $P(I) = \frac{12}{30} = \frac{2}{5}$, $P(S \cdot I) = \frac{6}{30} = \frac{1}{5}$.
+2. a) $P(S + I) = \frac{3}{5} + \frac{2}{5} - \frac{1}{5} = \frac{4}{5}$. Dogodek $S + I$: izbrani dijak trenira šport ali igra glasbilo (vsaj eno od obojega).
+3. b) Iskani dogodek je nasprotni dogodek dogodka $S + I$, zato je $P = 1 - \frac{4}{5} = \frac{1}{5}$.
+4. c) $P(S/I) = \frac{P(S \cdot I)}{P(I)} = \frac{1/5}{2/5} = \frac{1}{2}$ (med $12$ dijaki, ki igrajo glasbilo, jih $6$ trenira šport).
+5. d) Dogodka nista nezdružljiva, ker je $P(S \cdot I) = \frac{1}{5} \ne 0$: $6$ dijakov trenira šport in igra glasbilo.
+6. d) $P(S) \cdot P(I) = \frac{3}{5} \cdot \frac{2}{5} = \frac{6}{25}$, $P(S \cdot I) = \frac{1}{5} = \frac{5}{25}$. Ker je $P(S \cdot I) \ne P(S) \cdot P(I)$, dogodka nista neodvisna (to kaže tudi $P(S/I) = \frac{1}{2} \ne \frac{3}{5} = P(S)$).
 7. e) Prvi izbrani igra glasbilo z verjetnostjo $\frac{12}{30}$, drugi ob tem pogoju z verjetnostjo $\frac{11}{29}$: $P = \frac{12}{30} \cdot \frac{11}{29} = \frac{132}{870} = \frac{22}{145}$.
 8. Odgovor: a) $\frac{4}{5}$, b) $\frac{1}{5}$, c) $\frac{1}{2}$, d) dogodka nista nezdružljiva in nista neodvisna, e) $\frac{22}{145}$.
 
-**Točkovanje:** a) 1 točka za formulo $P(S + G) = P(S) + P(G) - P(S \cdot G)$ s pravilnimi podatki, 1 točka za $\frac{4}{5}$ in opis dogodka; b) 1 točka za $\frac{1}{5}$ (nasprotni dogodek); c) 1 točka za pogojno verjetnost $\frac{P(S \cdot G)}{P(G)}$ ali zožitev na $12$ dijakov z glasbilom, 1 točka za $\frac{1}{2}$; d) 1 točka za utemeljitev, da dogodka nista nezdružljiva, 1 točka za primerjavo $P(S \cdot G)$ s $P(S) \cdot P(G)$, 1 točka za sklep, da nista neodvisna; e) 1 točka za zmnožek s pogojno verjetnostjo $\frac{12}{30} \cdot \frac{11}{29}$ ali za $\binom{12}{2} : \binom{30}{2}$, 1 točka za $\frac{22}{145}$.
+**Točkovanje:** a) 1 točka za formulo $P(S + I) = P(S) + P(I) - P(S \cdot I)$ s pravilnimi podatki, 1 točka za $\frac{4}{5}$ in opis dogodka; b) 1 točka za $\frac{1}{5}$ (nasprotni dogodek); c) 1 točka za pogojno verjetnost $\frac{P(S \cdot I)}{P(I)}$ ali zožitev na $12$ dijakov z glasbilom, 1 točka za $\frac{1}{2}$; d) 1 točka za utemeljitev, da dogodka nista nezdružljiva, 1 točka za primerjavo $P(S \cdot I)$ s $P(S) \cdot P(I)$, 1 točka za sklep, da nista neodvisna; e) 1 točka za zmnožek s pogojno verjetnostjo $\frac{12}{30} \cdot \frac{11}{29}$ ali za $\binom{12}{2} : \binom{30}{2}$, 1 točka za $\frac{22}{145}$.
 
 ### Ustno vprašanje 1
 
@@ -354,7 +354,7 @@ Predstavljaj si pravokotnik s ploščino $1$, ki predstavlja vse izide. Dogodek 
 
 - Vsota $A + B$ je ploščina, ki jo pokrivata skupaj. Če se lika prekrivata, prekrito območje pri seštevanju ploščin štejemo dvakrat, zato ga enkrat odštejemo: to je $P(A \cdot B)$.
 - Produkt $A \cdot B$ je ploščina prekritja.
-- (višja raven) Pogojna verjetnost $P(A \mid B)$: ostanemo samo znotraj lika $B$ in vprašamo, kolikšen del lika $B$ prekriva tudi $A$. To je ploščina prekritja, deljena s ploščino $B$.
+- (višja raven) Pogojna verjetnost $P(A/B)$: ostanemo samo znotraj lika $B$ in vprašamo, kolikšen del lika $B$ prekriva tudi $A$. To je ploščina prekritja, deljena s ploščino $B$.
 
 (višja raven) Pri računanju po stopnjah nariši **drevo**. Iz začetka potegni veje za možne izide prvega koraka in nanje napiši verjetnosti. Iz konca vsake veje potegni nove veje s pogojnimi verjetnostmi drugega koraka. Verjetnost cele poti dobiš tako, da verjetnosti na poti zmnožiš.
 
@@ -368,9 +368,9 @@ ker izide v preseku štejemo v $|A|$ in v $|B|$, torej dvakrat. Če vse delimo z
 $$P(A + B) = P(A) + P(B) - P(A \cdot B).$$
 
 **Zakaj je pogojna verjetnost takšna (višja raven)?** Pri klasični verjetnosti ima $B$ $|B|$ izidov. Če vemo, da se je $B$ zgodil, je prostor izidov zožen na $B$, ugodni pa so izidi iz $A \cdot B$. Zato
-$$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(A \cdot B)}{P(B)}.$$
+$$P(A/B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(A \cdot B)}{P(B)}.$$
 
-**Neodvisnost (višja raven).** Dogodka sta neodvisna natanko tedaj, ko je $P(A \mid B) = P(A)$, kar je po definiciji pogojne verjetnosti ekvivalentno $P(A \cdot B) = P(A) \cdot P(B)$. V Primeru 2 je $P(A \cdot B) = \dfrac{1}{3}$, medtem ko je $P(A) \cdot P(B) = \dfrac{1}{4}$. Ker se vrednosti razlikujeta, dogodka »sodo število« in »večje od $3$« nista neodvisna.
+**Neodvisnost (višja raven).** Dogodka sta neodvisna natanko tedaj, ko je $P(A/B) = P(A)$, kar je po definiciji pogojne verjetnosti ekvivalentno $P(A \cdot B) = P(A) \cdot P(B)$. V Primeru 2 je $P(A \cdot B) = \dfrac{1}{3}$, medtem ko je $P(A) \cdot P(B) = \dfrac{1}{4}$. Ker se vrednosti razlikujeta, dogodka »sodo število« in »večje od $3$« nista neodvisna.
 
 ## Preveri se
 
@@ -395,13 +395,13 @@ $$P(A \mid B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(
 ~ 0,0 | Nič bi bilo pri nezdružljivih dogodkih, a takrat bi bila $P(A + B) = 0{,}9$, ne $0{,}6$.
 > Iz $P(A + B) = P(A) + P(B) - P(A \cdot B)$ sledi $P(A \cdot B) = 0{,}5 + 0{,}4 - 0{,}6 = 0{,}3$.
 
-? (višja raven) Za dogodka $A$ in $B$ velja $P(A) = 0{,}6$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}12$. Kolikšna je $P(A \mid B)$?
+? (višja raven) Za dogodka $A$ in $B$ velja $P(A) = 0{,}6$, $P(B) = 0{,}4$ in $P(A \cdot B) = 0{,}12$. Kolikšna je $P(A/B)$?
 - $0{,}2$
-~ To je $P(B \mid A) = \frac{0{,}12}{0{,}6}$: deljeno je z verjetnostjo napačnega dogodka. Pogoj je $B$, zato deli s $P(B)$.
+~ To je $P(B/A) = \frac{0{,}12}{0{,}6}$: deljeno je z verjetnostjo napačnega dogodka. Pogoj je $B$, zato deli s $P(B)$.
 + $0{,}3$
 - $0{,}048$
 ~ To je $0{,}12 \cdot 0{,}4$. Pogojno verjetnost dobiš z deljenjem s $P(B)$, ne z množenjem.
-> $P(A \mid B) = \dfrac{P(A \cdot B)}{P(B)} = \dfrac{0{,}12}{0{,}4} = 0{,}3$.
+> $P(A/B) = \dfrac{P(A \cdot B)}{P(B)} = \dfrac{0{,}12}{0{,}4} = 0{,}3$.
 
 ? (višja raven) Kuharska knjiga ima $20$ receptov:
 
@@ -418,7 +418,7 @@ Naključno izbereš sladek recept. Kolikšna je verjetnost, da je hiter?
 + $0{,}6$
 - $0{,}45$
 ~ To je $\frac{9}{20}$, delež vseh hitrih receptov. Podatek, da je recept sladek, je prezrt.
-> Med $10$ sladkimi recepti je $6$ hitrih, zato $P(\text{hiter} \mid \text{sladek}) = \frac{6}{10} = 0{,}6$.
+> Med $10$ sladkimi recepti je $6$ hitrih, zato $P(\text{hiter}/\text{sladek}) = \frac{6}{10} = 0{,}6$.
 
 ? (višja raven) Iz škatle z $12$ jajci, od katerih sta $2$ počeni, vzameš dve. Zakaj verjetnost, da sta obe celi, ni $\frac{10}{12} \cdot \frac{10}{12}$?
 - ker bi morali verjetnosti sešteti, ne zmnožiti
@@ -446,7 +446,9 @@ A, B | dogodka | | | v primeru s stroji: izdelek je s stroja A oz. B
 \overline{A} | nasprotni dogodek dogodka A | | | zgodi se, kadar se A ne zgodi
 m | število izidov, ugodnih za dogodek A | | |
 n | število vseh enako verjetnih izidov | | |
-N | dogodek, da je izdelek pokvarjen | | |
+K | dogodek, da je izdelek pokvarjen | | |
+G | gotov dogodek | P(G) = 1 | | zgodi se vedno
+N | nemogoč dogodek | P(N) = 0 | | ne zgodi se nikoli
 :::
 
 <<RACUN
