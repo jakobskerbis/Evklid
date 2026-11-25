@@ -646,7 +646,9 @@ export const PATHS = {
       ]],
       ["Nihanje in valovanje", [
         "Nihanje | nihalo na vzmeti, matematično nihalo, energija",
+        "Dušeno in vsiljeno nihanje | dušenje in pojemanje amplitude, energija pri dušenem nihanju, vsiljeno nihanje, lastna frekvenca, resonanca in resonančna krivulja",
         "Valovanje | valovna dolžina, frekvenca, hitrost, interferenca",
+        "Stoječe valovanje | odboj na prostem in vpetem krajišču, zaporedne slike valovanja, stoječe valovanje na struni, lastna nihanja, hitrost valovanja in napetost strune",
         "Zvok | jakost, Dopplerjev pojav",
       ]],
       ["Optika", [
@@ -663,12 +665,14 @@ export const PATHS = {
         "Fotoefekt in foton | energija fotona, izstopno delo",
         "Atom | energijski nivoji, spektri",
         "Jedro in radioaktivnost | razpadi, razpolovni čas, jedrska energija",
+        "Jedrske reakcije in reaktor | jedrske reakcije z obstreljevanjem, ohranitveni zakoni, reakcijska energija iz razlike mas, verižna reakcija, zgradba in delovanje jedrskega reaktorja",
       ]],
       ["Astronomija", [
         "Osončje in gibanje planetov | telesa v Osončju, Keplerjevi zakoni, gravitacija in kroženje planetov",
         "Zvezde in vesolje | izsev, Stefanov in Wienov zakon, temperatura zvezd, fuzija v zvezdah, razdalje v vesolju",
       ]],
       ["Priprava na maturo", [
+        "Meritve, grafi in poročilo | računanje z napakami, graf meritev, premica najboljšega prileganja, linearizacija, laboratorijsko poročilo za maturo",
         "Mešane maturitetne naloge | ponovitev vseh letnikov",
       ]],
     ],
