@@ -2,6 +2,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { fmt, tfmt, decLocilo, decZapis, decBesedilo, decTeX, beriStevilo } from "../public/sim/kit.js";
+import { periodicniTeX } from "../public/sim/mat-stevila.js";
+
+// Prvi preizkus: decLocilo si ločilo zapomni po jeziku, zato tu jeziki, ki jih drugi preizkusi še niso vprašali.
+test("Intl brez jezika (mali ICU): sl in bs ostaneta pri vejici, ne padeta na angleško piko", () => {
+  const prej = Intl.NumberFormat.supportedLocalesOf;
+  Intl.NumberFormat.supportedLocalesOf = (c) => ([].concat(c).includes("en") ? ["en"] : []);
+  try {
+    assert.equal(decLocilo("sl"), ",");
+    assert.equal(decLocilo("bs"), ","); // bs → hr → (sr …), nikoli en
+  } finally {
+    Intl.NumberFormat.supportedLocalesOf = prej;
+  }
+});
 
 test("fmt: vejica v sl, de, hr, it, hu; pika v en; minus »−«", () => {
   assert.equal(fmt(1.5, 2, "sl"), "1,5");
@@ -28,6 +41,24 @@ test("stalnice v formuli in besedilu ter eksponent", () => {
   assert.equal(decBesedilo("0,25 in 1, 2", "en"), "0.25 in 1, 2");
   assert.equal(decBesedilo("109,5°", "sl"), "109,5°");
   assert.equal(decZapis("1.2e-5", "en"), "1.2e−5");
+});
+
+test("pari, množice, naštevanja in indeksi ostanejo (pravilo: točke z vejico in presledkom ali podpičjem)", () => {
+  for (const t of ["A(1,2)", "(1,2)", "f(2,3)", "[1,5]", String.raw`\{1,2\}`, "x_{1,2}", "1,2,3", "1,000,000", "(1, 2)"]) {
+    assert.equal(decTeX(t, "en"), t, t);
+    assert.equal(decBesedilo(t, "en"), t, t);
+  }
+  assert.equal(decTeX("10^{2,5}", "en"), "10^{2.5}");
+  assert.equal(decTeX("(0{,}5x + 1)", "en"), "(0.5x + 1)");
+});
+
+test("periodično decimalno število: 1/3 in 1/6 v sl in en", () => {
+  assert.equal(periodicniTeX(1, 3, "sl"), String.raw`0{,}\overline{3}`);
+  assert.equal(periodicniTeX(1, 6, "sl"), String.raw`0{,}1\overline{6}`);
+  assert.equal(periodicniTeX(1, 3, "en"), String.raw`0.\overline{3}`);
+  assert.equal(periodicniTeX(1, 6, "en"), String.raw`0.1\overline{6}`);
+  assert.equal(periodicniTeX(1, 4, "en"), "0.25");
+  assert.equal(periodicniTeX(4, 2, "en"), "2");
 });
 
 test("jezik vzame iz <html lang>", () => {

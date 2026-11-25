@@ -1,5 +1,5 @@
 // Simulacije: števila, deljivost, ulomki, decimalna števila, odstotki, potence.
-import { h, s, decZapis, decBesedilo, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
+import { h, s, decZapis, decBesedilo, decZnakTeX, svgBox, slider, select, segmented, toggle, button, buttons, controls, readout, stage, layout, tex, texBlock, fmt, tfmt, gcd, lcm, clamp, primeFactors, frac, arrow, label } from "./kit.js";
 
 // Številska premica: vrne { X, g } in nariše oznake.
 function numberLine(svg, { x0, x1, from, to, step, major = step, y = 60, labels = true, fmtL }) {
@@ -418,23 +418,32 @@ export function decimalke(el) {
 }
 
 // ------------------------------------------------------------ periodična decimalna števila
+// Deljenje a : b do periode: cel del, števke pred periodo (pre), perioda (per), zadnji ostanek in vrstice deljenja.
+export function deljenje(a, b) {
+  const whole = Math.floor(a / b);
+  let r = a % b;
+  const seen = new Map(), digits = [], rows = [];
+  while (r && !seen.has(r) && digits.length < 40) {
+    seen.set(r, digits.length);
+    const q = Math.floor((r * 10) / b);
+    rows.push(`<tr><td>${r * 10} : ${b}</td><td>= ${q}</td><td>ostanek ${(r * 10) % b}</td></tr>`);
+    digits.push(q);
+    r = (r * 10) % b;
+  }
+  const start = r ? seen.get(r) : digits.length;
+  return { whole, pre: digits.slice(0, start).join(""), per: digits.slice(start).join(""), r, rows };
+}
+// a/b v TeX s periodo in ločilom jezika: 1/3 → »0{,}\overline{3}« (angleško »0.\overline{3}«), 1/6 → »0{,}1\overline{6}«.
+export function periodicniTeX(a, b, lang) {
+  const { whole, pre, per } = deljenje(a, b);
+  return `${whole}${pre || per ? decZnakTeX(lang) + pre + (per ? `\\overline{${per}}` : "") : ""}`;
+}
 export function periode(el) {
   const out = readout();
   let a = 5, b = 7;
   const draw = () => {
-    const whole = Math.floor(a / b);
-    let r = a % b;
-    const seen = new Map(), digits = [], rows = [];
-    while (r && !seen.has(r) && digits.length < 40) {
-      seen.set(r, digits.length);
-      const q = Math.floor((r * 10) / b);
-      rows.push(`<tr><td>${r * 10} : ${b}</td><td>= ${q}</td><td>ostanek ${(r * 10) % b}</td></tr>`);
-      digits.push(q);
-      r = (r * 10) % b;
-    }
-    const start = r ? seen.get(r) : digits.length;
-    const pre = digits.slice(0, start).join(""), per = digits.slice(start).join("");
-    const t = `\\frac{${a}}{${b}} = ${whole}${digits.length ? "{,}" + pre + (per ? `\\overline{${per}}` : "") : ""}`;
+    const { pre, per, r, rows } = deljenje(a, b);
+    const t = `\\frac{${a}}{${b}} = ${periodicniTeX(a, b)}`;
     const pf = primeFactors(b / gcd(a, b));
     out.innerHTML = texBlock(t) +
       `<p>${r ? `Ostanek ${r} se ponovi, zato se od tu naprej ponavljajo iste števke: perioda ima ${per.length} ${per.length === 1 ? "števko" : per.length === 2 ? "števki" : per.length < 5 ? "števke" : "števk"}.` : "Deljenje se konča (ostanek 0): decimalno število je končno."}</p>

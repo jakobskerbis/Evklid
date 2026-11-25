@@ -10,15 +10,15 @@ import { uiChain } from "../i18n/languages.js";
 export const NS = "http://www.w3.org/2000/svg";
 
 // Decimalno ločilo jezika vmesnika (<html lang>, nastavi ga i18n), kot ga piše Intl (kot public/games/topics.js):
-// sl, de, hr, it, hu, fr, ru … vejica, en (tudi en-GB) pika. Jezik, ki ga Intl ne pozna, po verigi uiChain.
-// Brez dokumenta (Node) slovensko; ob napaki vejica.
+// sl, de, hr, it, hu, fr, ru … vejica, en (tudi en-GB) pika. Če Intl jezika ne pozna (mali ICU, WebView), njegovi
+// nadomestni jeziki brez angleščine in slovenščine (bs → hr); sicer, ali ob napaki, vejica. Brez dokumenta (Node) sl.
 const jezikVmesnika = () => (typeof document !== "undefined" && document.documentElement?.lang) || "sl";
 const locila = new Map();
 export function decLocilo(lang = jezikVmesnika()) {
   if (!locila.has(lang)) {
     let sep = ",";
     try {
-      const tag = [lang, ...uiChain(lang)].find((c) => Intl.NumberFormat.supportedLocalesOf(c).length);
+      const tag = [lang, ...uiChain(lang).filter((c) => c !== "en" && c !== "sl")].find((c) => Intl.NumberFormat.supportedLocalesOf(c).length);
       if (tag) sep = (1.5).toLocaleString(tag).includes(",") ? "," : ".";
     } catch {}
     locila.set(lang, sep);
@@ -27,10 +27,19 @@ export function decLocilo(lang = jezikVmesnika()) {
 }
 // Niz števila s piko (toFixed, odčitek merilnika) za prikaz: ločilo jezika, minus »−«.
 export const decZapis = (t, lang) => String(t).replace(".", decLocilo(lang)).replace(/-/g, "−");
-// Besedilo s števili, zapisanimi s slovensko vejico (»0,25«, »1,70 m«): ločilo jezika. Ne za prozo.
-export const decBesedilo = (t, lang) => (decLocilo(lang) === "." ? String(t).replace(/(\d),(?=\d)/g, "$1.") : t);
+// Pri pikastem ločilu: decimalna vejica (»0,25«, v TeX tudi »9{,}81«) → pika. Ostanejo: naštevanja (»1,2,3«, »1, 2«),
+// tisočice (»1,000,000«), indeksi (»x_{1,2}«) in par v oklepaju (»(1,2)«, »A(1,2)«, »[1,5]«, »\{1,2\}«).
+// Pravilo pisanja: točke in pare pišemo z vejico in presledkom ali s podpičjem (»(4; 3,5)«, skica.js par).
+const OKLEPAJ = /(?:[([]|\\\{)$/, ZAKLEPAJ = /^(?:[)\]]|\\\})/;
+const vPiko = (t, vejica) =>
+  String(t).replace(new RegExp(String.raw`(?<![\d.,]|\d\{,\}|_\{)(\d+)${vejica}(\d+)(?![\d,]|\{,\})`, "g"), (m, a, b, i, s) =>
+    OKLEPAJ.test(s.slice(Math.max(0, i - 2), i)) && ZAKLEPAJ.test(s.slice(i + m.length, i + m.length + 2)) ? m : `${a}.${b}`);
+// Besedilo s števili, zapisanimi s slovensko vejico (»0,25«, »1,70 m«): ločilo jezika. Ne za prozo in TeX.
+export const decBesedilo = (t, lang) => (decLocilo(lang) === "." ? vPiko(t, ",") : t);
 // Formula s stalnicami, zapisanimi z vejico (»9{,}81«, »0,1«): pri pikastem ločilu pika (tex to naredi sam).
-export const decTeX = (t, lang) => (decLocilo(lang) === "." ? decVejica(t).replace(/(\d)\{,\}(?=\d)/g, "$1.") : t);
+export const decTeX = (t, lang) => (decLocilo(lang) === "." ? vPiko(t, String.raw`(?:,|\{,\})`) : t);
+// Decimalni znak v TeX, ki ga sestavimo sami (npr. 0{,}\overline{3}): »{,}« ali ».«.
+export const decZnakTeX = (lang) => (decLocilo(lang) === "." ? "." : "{,}");
 // Število, ki ga vpiše učenec: sprejme vejico ali piko in minus »−«; prazno ali neveljavno → null.
 export function beriStevilo(t) {
   const v = String(t ?? "").trim().replace(",", ".").replace("−", "-");
