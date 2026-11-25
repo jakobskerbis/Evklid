@@ -13,7 +13,7 @@ Učenec (Jaz → Urnik, na računalniku zavihek »Urnik«) vpiše svoje ure v te
 ## Uporaba
 
 - Kartica na Učni poti: »Danes imaš …« (po zadnji uri »Jutri imaš …«), naslednja ura s potjo v aplikaciji ima gumb **Ponovi pred uro** (po uri **Utrdi po uri**): 5 nalog (`progress.startClass`): snov, ki se je učenec zdaj uči, prepletena z nazadnje osvojenimi temami.
-- **Priprava na test se nastavi sama** iz najbližjega testa (v 30 dneh, predmet z učno potjo): sklopi, ki jih je učenec izbral pri testu, sicer zadnja dva začeta sklopa. Ročno nastavljena priprava ima prednost; ko test izbrišeš ali mine, samodejna priprava odpade (`test_plans.event_id`).
+- **Priprava na test se nastavi sama** iz najbližjega testa (v 30 dneh, predmet z učno potjo): sklopi, ki jih je učenec izbral pri testu, sicer zadnja dva začeta sklopa. Ročno nastavljena priprava ima prednost; ko test izbrišeš ali mine, samodejna priprava odpade (`priprave.dogodek_id`, aktivna priprava, `server/priprava/aktivna.js`).
 - **Opomnik**: test danes ali jutri je poudarjen na Učni poti z gumbom »Pripravi se«. Če učenec vklopi »Obvestilo dan pred testom«, dobi še obvestilo naprave ob odprtju aplikacije (prava potisna obvestila pri zaprti aplikaciji pridejo z gostovanjem).
 
 ## Koda

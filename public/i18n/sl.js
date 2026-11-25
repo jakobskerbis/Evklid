@@ -4518,6 +4518,7 @@ export default {
   "open.3d": "3D",
   "open.lesson": "Učbenik",
   "open.game": "Igra",
+  "vr.vaja": "Podobna naloga",
   "open.locked": "zaklenjeno",
   "open.close": "Zapri",
   "open.preset": "Vrednosti je nastavil inštruktor. Spreminjaj jih in opazuj, kaj se zgodi.",

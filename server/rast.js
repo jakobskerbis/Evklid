@@ -286,7 +286,7 @@ export function vedenjeReport(db, { from, today, active, counted = () => true })
     solvedDays += v.filter((d) => r.has(d)).length;
   }
   // Testi v obdobju: datumi iz urnika (dogodki vrst TEST_KINDS, šifrirano, preberemo samo datum in vrsto) in iz
-  // priprave na test (test_plans: en, zadnji test na učenca). Par učenec + datum šteje enkrat.
+  // priprav na test (vsaka priprava z datumom testa, server/priprava/). Par učenec + datum šteje enkrat.
   const pari = new Set();
   if (hasTable(db, "schedules")) {
     for (const { s: id, data } of db.prepare("SELECT student_id AS s, data FROM schedules").all()) {
@@ -299,8 +299,8 @@ export function vedenjeReport(db, { from, today, active, counted = () => true })
       for (const e of events) if (TEST_KINDS.includes(e?.kind) && e.date >= from && e.date <= today) pari.add(`${id}|${e.date}`);
     }
   }
-  if (hasTable(db, "test_plans")) {
-    for (const { s: id, d } of db.prepare("SELECT student_id AS s, test_date AS d FROM test_plans WHERE test_date >= ? AND test_date <= ?").all(from, today))
+  if (hasTable(db, "priprave")) {
+    for (const { s: id, d } of db.prepare("SELECT student_id AS s, datum_testa AS d FROM priprave WHERE datum_testa >= ? AND datum_testa <= ?").all(from, today))
       if (counted(id)) pari.add(`${id}|${d}`);
   }
   let beforeTest = 0;

@@ -151,14 +151,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_sessions ON sessions(student_id, kind, finished);
-    -- Načrt priprave na test (en na učenca)
-    CREATE TABLE IF NOT EXISTS test_plans (
-      student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
-      path_key TEXT NOT NULL,
-      units TEXT NOT NULL,                       -- indeksi sklopov
-      test_date TEXT NOT NULL,                   -- YYYY-MM-DD
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
+    -- Načrt priprave na test: tabela priprave (server/priprava/shema.js; nekdanja test_plans se tam preseli)
     -- Odgovori na naloge, rešene brez povezave (da se ista naloga ne prešteje dvakrat)
     CREATE TABLE IF NOT EXISTS offline_results (
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
@@ -353,9 +346,6 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Kartice iz zapiskov (server/zapiski.js): zapisek (izbris zapiska izbriše tudi kartice) in oznaka preverjeno (1) / nepreverjeno (0).
   if (!cardCols.includes("zapisek_id")) db.exec("ALTER TABLE flashcards ADD COLUMN zapisek_id INTEGER REFERENCES zapiski(id) ON DELETE CASCADE");
   if (!cardCols.includes("checked")) db.exec("ALTER TABLE flashcards ADD COLUMN checked INTEGER");
-  // Priprava na test, ki jo je nastavil test iz urnika (server/schedule.js).
-  const planCols = db.prepare("PRAGMA table_info(test_plans)").all().map((c) => c.name);
-  if (!planCols.includes("event_id")) db.exec("ALTER TABLE test_plans ADD COLUMN event_id TEXT");
   // Starejše baze: events.conversation_id je bil NOT NULL, vaje (brez pogovora) pa zapisujejo NULL.
   const convIdCol = db.prepare("PRAGMA table_info(events)").all().find((c) => c.name === "conversation_id");
   if (convIdCol?.notnull) {

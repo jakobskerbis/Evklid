@@ -5,6 +5,10 @@
 //   <<ODPRI ucbenik="Pitagorov izrek">>                          lekcija v učbeniku
 //   <<ODPRI igra="ulomki">>                                     igra za to snov
 //   <<ODPRI formula="Ohmov zakon">>                              formula iz zbirke formul (prikaz v sporočilu)
+//   <<ODPRI vaja="kvadratna enačba">>                            podobna naloga iz Vadnice (generator, preveri koda;
+//                                                               samo s stikalom EVKLID_VAJA_PO_RAZLAGI, server/vaja-po-razlagi.js)
+//   <<ODPRI kalkulator="znanstveni">>                          kalkulator v načinu (znanstveni, grafični, orodja/enote,
+//                                                               periodni sistem, formule; samo »kalkulator« → zadnji način)
 //   <<GRAF ["y = a*x^2 + c", "a = 1", "c = 0"]>>               premičen graf v sporočilu (vrstica »a = 1« je drsnik)
 //   <<SKICA {"tocke": {...}, "daljice": [...]}>>                 preprosta skica (trikotnik, sile, krožnica)
 // Model ne pozna id-jev: išče z besedami, strežnik izbere najbližje ujemanje (najprej učenčeva pot) ali nič.
@@ -18,10 +22,11 @@ import { rankLessons, terms } from "./lekcija-za-vprasanje.js";
 import { formulaSheet } from "./textbook.js";
 import { stopnja } from "../public/stopnja.js";
 import { SKUPINE, najdiSkupino, delPoImenu } from "../public/3d/skupine.js";
+import { temaZVajo, vajaVklopljena } from "./vaja-po-razlagi.js";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 export const OPEN_MAX = 4; // orodij pod enim sporočilom (prompt dovoli dve; strežnik je strpen)
-const KINDS = { poskus: "sim", sim: "sim", lab: "sim", "3d": "3d", ucbenik: "lesson", "učbenik": "lesson", igra: "game", formula: "formula" };
+const KINDS = { poskus: "sim", sim: "sim", lab: "sim", "3d": "3d", ucbenik: "lesson", "učbenik": "lesson", igra: "game", formula: "formula", vaja: "practice", kalkulator: "calc", racunalo: "calc", "računalo": "calc" };
 
 const OPEN_RE = /<<\s*ODPRI\b([^\n]*?)>>/g;
 const GRAPH_RE = /<<\s*GRAF\b\s*(\[[^\n]*?\])\s*>>/g;
@@ -338,6 +343,13 @@ function findGame(q, settings) {
   return null;
 }
 
+// Podobna naloga iz Vadnice (P1-3): tema z generatorjem nalog; brez stikala ali teme nič (gumba ni).
+function findPractice(q, settings) {
+  if (!vajaVklopljena()) return null;
+  const t = temaZVajo(q, settings || {});
+  return t ? { kind: "practice", id: t.topicId, title: t.title } : null;
+}
+
 // Zbirka formul učenčeve stopnje: vrstice »| Ime | $formula$ |«.
 function findFormula(q, settings) {
   const subj = String(settings?.subject || "").toUpperCase();
@@ -361,6 +373,33 @@ function findFormula(q, settings) {
   return best ? { kind: "formula", title: best.name, tex: best.tex, section: best.section, book: best.book } : null;
 }
 
+// Kalkulator kot cilj (P1-9, del A; j 25. 11. 2026): način iz besed poizvedbe, kot jih piše model. Neznana beseda →
+// ni gumba (nikoli napačen način); samo »kalkulator« ali »računalo« → zadnji način (pri KEM periodni sistem, kot gumb v glavi).
+// Načini kot CALC_MODES v public/app.js; kalkulatorja samega ta modul ne spreminja.
+const CALC_WORDS = [
+  [/^(znanstven|funkcijsk)/, "sci"], // »funkcijski kalkulator« je v slovenščini znanstveni
+  [/^(grafic|graf$|grafa$|grafu$|grafe$|risanj)/, "graph"],
+  [/^(orodj|enot[aeiou]?$|pretvor)/, "tools"],
+  [/^(periodn|pse$|element)/, "pse"],
+  [/^(formul|zbirk)/, "formulas"],
+];
+// Besede brez načina: naprava (kalkulator, računalo v vseh sklonih), predlogi, »sistem« iz »periodni sistem«.
+const CALC_FILLER = new Set(["v", "na", "za", "in", "s", "z", "nacin", "nacinu", "odpri", "tabela", "tabelo", "sistem", "sistemu"]);
+const CALC_DEVICE = /^(kalkulator|racunal)/;
+export function findCalc(q) {
+  const words = fold(q).split(/[^a-z]+/).filter(Boolean);
+  const modes = new Set();
+  for (const w of words) {
+    if (CALC_FILLER.has(w) || CALC_DEVICE.test(w)) continue;
+    const hit = CALC_WORDS.find(([re]) => re.test(w));
+    if (!hit) return null; // neznana beseda: raje brez gumba
+    modes.add(hit[1]);
+  }
+  if (modes.size > 1) return null; // dvoumno (npr. »graf formule«)
+  const [mode = null] = modes;
+  return { kind: "calc", id: mode || "calc", mode };
+}
+
 /**
  * Bloki → gumbi za odjemalca (največ OPEN_MAX, brez podvojenih). canOpen(topicId) pove, ali je interaktivni
  * del teme odklenjen (zaklep kot v učbeniku in Laboratoriju).
@@ -379,6 +418,8 @@ export async function resolveOpen(text, settings, { canOpen = null, prefer = "" 
       else if (b.kind === "lesson") r = findLesson(b.q, settings);
       else if (b.kind === "game") r = findGame(b.q, settings);
       else if (b.kind === "formula") r = findFormula(b.q, settings);
+      else if (b.kind === "practice") r = findPractice(b.q, settings);
+      else if (b.kind === "calc") r = findCalc(b.q);
     } catch (err) {
       console.warn("[evklid] odpri:", err?.message);
     }
