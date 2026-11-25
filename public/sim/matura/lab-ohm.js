@@ -1,8 +1,9 @@
 // Maturitetni poskus: upor upornika iz grafa I(U) (motor lab-fiz.js → labOhm; okvir lab-matura.js).
 // Neznanka je pravi upor upornika z oznako 100 Ω (OhmBench → parts.R100.R pri 20 °C). Seme ga izbere znotraj
 // tolerance ±5 % (lab-model.js → UPOR.tol), zato ima vsaka naloga drug upor. Oznaka 100 Ω je vidna kot na pravem uporniku:
-// kdor vpiše kar 100 Ω, je do 5 % od prave vrednosti (pogosto le 1–3 točke za rezultat), skrbna meritev je na 1 %.
+// kdor vpiše kar 100 Ω, je do 5 % od prave vrednosti in brez ujemajočih se meritev (izMeritev) ne dobi točk za rezultat.
 import { stevilo, celica, kjer, razlicne } from "../lab-vodeno-pomoc.js";
+import { fitOrigin } from "../lab-model.js";
 
 // Popolne meritve upornika 100 Ω: v tabeli sta odčitka obeh merilnikov (ne »OL« ali »–«).
 const polne = (c) => kjer(c, /^porabnik/, /^100\b/).filter((r) => Number.isFinite(stevilo(celica(r, /^U\b/))) && Number.isFinite(stevilo(celica(r, /^I\b/))));
@@ -22,6 +23,12 @@ export default {
   // umeritve obeh merilnikov do ~1 % od prave vrednosti (test/laboratorij-matura.test.js: simulacija na 500 vzorcih).
   tol: 0.01,
   resnica: (B) => B.parts.R100.R,
+  // Iz tabele kot graf pod poskusom: premica I(U) skozi izhodišče (vsaj tri popolne meritve upornika 100 Ω), R = 1/naklon
+  // (tok v mA, zato 1000/naklon v Ω). Napis 100 Ω brez meritev ne prinese točk.
+  izMeritev: (c) => {
+    const pts = polne(c).map((r) => [stevilo(celica(r, /^U\b/)), stevilo(celica(r, /^I\b/))]);
+    return pts.length >= 3 ? 1000 / fitOrigin(pts) : NaN;
+  },
   meritve: [
     { kaj: "Tok si izmeril pri vsaj petih različnih napetostih (upornik 100 Ω)", tock: 1, ok: petNapetosti },
     {

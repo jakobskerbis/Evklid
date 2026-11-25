@@ -24,6 +24,12 @@ export default {
   // (test/matura/lab-hooke.js: simulacija na 500 vzorcih).
   tol: 0.01,
   resnica: (B) => B.kNom.mehka,
+  // Iz tabele kot račun pod grafom: premica F(x) skozi izhodišče iz najnovejše meritve pri vsaki masi mehke vzmeti
+  // (vsaj tri mase), k = Σ F·x / Σ x² (x v cm, zato · 100 v N/m).
+  izMeritev: (c) => {
+    const r = zadnjePoMasi(c);
+    return r.length >= 3 ? koeficient(r) : NaN;
+  },
   meritve: [
     {
       kaj: "Začetni odčitek brez uteži si zapisal z očesom v višini kazalca pri mirni vzmeti",

@@ -1,8 +1,10 @@
 // Igra maturitetnega poskusa lab-hitrost (test/laboratorij-matura.test.js): priprava izbere poskus s tiosulfatom;
-// učenec si nadene očala, pospeši čas, pripravi 50 mL raztopine, prilije kislino in ustavi štoparico,
-// ko križ izgine; to ponovi.
+// učenec si nadene očala, pripravi 50 mL raztopine, prilije kislino in ustavi štoparico, ko križ izgine; dvakrat pri sobni
+// temperaturi in dvakrat v kopeli pri 40 °C. Čas teče hitreje (×20, v kopeli ×5), tik pred izginotjem križa pa ×1,
+// da je ustavljeni čas natančen kot pri učencu (pozna ustavitev za desetinko sekunde).
+// Meritve: obe temperaturi, ista raztopina, ponovljivost na 5 % (odvisna od presoje križa, zato ni določena), pravočasno.
 export default {
-  meritve: [0, 1, 0, 1],
+  meritve: [1, 1, null, 1],
   igra: async () => {
     const seg = async (t) => {
       const b = [...m.querySelectorAll(".seg-btn")].find((x) => !x.closest(".lab-vod-wrap") && txt(x) === t);
@@ -11,15 +13,18 @@ export default {
       await wait(120);
     };
     if (m._labBench.tio == null) throw new Error("motor ne izpostavi tiosulfata");
+    const tio = () => m._labBench.tio;
     await stikalo("zaščitna očala");
-    await seg("×20");
-    // Dve meritvi pri sobni temperaturi z enako raztopino: ista raztopina in pravočasno ustavljeno (2 točki od 4).
-    for (let i = 0; i < 2; i++) {
+    for (const [kopel, hitro] of [[20, "×20"], [20, "×20"], [40, "×5"], [40, "×5"]]) {
+      if (kopel > 20 && !(tio().Tkop > 35)) await drsnik("vodna kopel", kopel);
+      await seg(hitro);
       await gumb("Pripravi 50 mL");
       await gumb("Prilij 5 mL");
-      await dokler(() => m._labBench.tio.kriz != null, 20000);
+      await dokler(() => tio().vidnost() < 0.04 || tio().kriz != null, 30000);
+      await seg("×1");
+      await dokler(() => tio().kriz != null, 30000);
       await gumb("Križa ne vidim več");
     }
-    if ([...m.querySelectorAll(".lab-log li")].filter((x) => /Križ je izginil po/.test(x.textContent)).length !== 2) throw new Error("ni dveh meritev");
+    if ([...m.querySelectorAll(".lab-log li")].filter((x) => /Križ je izginil po/.test(x.textContent)).length < 2) throw new Error("ni meritev");
   },
 };

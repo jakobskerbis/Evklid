@@ -2,8 +2,8 @@
 // Model nima naključne količine, ki bi jo dijak meril namesto g: seme spremeni le merilne okoliščine (zamik elektromagneta
 // 5 ± 1,5 ms, zamik vrat iz navpičnice 2–6 mm, napaka postavitve vrat, gostota zraka). Zato je neznanka težni pospešek
 // modela (G_LJ = 9,806 m/s², Ljubljana; vzgon in upor zraka sta pri jekleni kroglici pod 0,1 %). Prava vrednost je vedno
-// ista: kdor vpiše 9,81 m/s², dobi točke za rezultat brez meritve. Točke za meritve dobi le, kdor res meri.
-import { G_LJ } from "../lab-model-gibanje.js";
+// ista: točke za rezultat dobi le, kdor res meri (izMeritev: g iz njegove tabele), ne kdor vpiše 9,81 m/s² brez meritev.
+import { G_LJ, naklonSkoziIzhodisce } from "../lab-model-gibanje.js";
 import { stevilo, celica, kjer, razlicne } from "../lab-vodeno-pomoc.js";
 
 const kroglica = (c) => kjer(c, /^predmet/, /kroglica/).filter((r) => Number.isFinite(stevilo(celica(r, /^t\b/))));
@@ -39,6 +39,17 @@ export default {
   // vzorcih (test/laboratorij-matura.test.js): največ ~2,5 % od prave vrednosti.
   tol: 0.025,
   resnica: () => G_LJ,
+  // Iz tabele po navodilu naloge: pri vsaki višini povprečni čas kroglice, premica h(t²) skozi izhodišče (vsaj tri višine),
+  // g = 2 · naklon. Vrednost 9,81 m/s² brez meritev ne prinese točk.
+  izMeritev: (c) => {
+    const po = new Map();
+    for (const r of kroglica(c)) if (Number.isFinite(visina(r))) {
+      const k = visina(r).toFixed(2);
+      po.set(k, [...(po.get(k) || []), stevilo(celica(r, /^t\b/))]);
+    }
+    const pts = [...po].map(([h, t]) => [(t.reduce((a, b) => a + b, 0) / t.length) ** 2, Number(h)]);
+    return pts.length >= 3 ? 2 * naklonSkoziIzhodisce(pts) : NaN;
+  },
   meritve: [
     { kaj: "Kroglico si spustil z vsaj petih različnih višin", tock: 1, ok: (c) => razlicne(kroglica(c), /^h\b/, 2).size >= 5 },
     {

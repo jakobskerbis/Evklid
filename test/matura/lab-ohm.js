@@ -33,12 +33,22 @@ test("ohm matura: measurement criteria read the table, the settings and the log"
   assert.equal(ok({})[3], false, "brez meritev ni točke za vezavo");
 });
 
+// Iz meritev: premica I(U) skozi izhodišče iz popolnih meritev upornika 100 Ω (vsaj tri), R = 1000/naklon (tok v mA).
+test("ohm matura: the result from the student's own table", () => {
+  const tri = [vr("2,00", "19,8"), vr("4,00", "39,7"), vr("6,00", "59,4"), vr("5,00", "OL"), vr("3,00", "45,0", "47 Ω")];
+  const k = (2 * 19.8 + 4 * 39.7 + 6 * 59.4) / (4 + 16 + 36);
+  assert.ok(Math.abs(naloga.izMeritev(ctx({ vrstice: tri })) - 1000 / k) < 1e-9);
+  assert.ok(Math.abs(naloga.izMeritev(ctx({ vrstice: tri })) - 101.0) < 0.1);
+  assert.ok(Number.isNaN(naloga.izMeritev(ctx({ vrstice: tri.slice(1) }))), "dve meritvi upornika 100 Ω sta premalo za premico");
+  assert.ok(Number.isNaN(naloga.izMeritev(ctx())));
+});
+
 // Toleranca: skrben dijak (pravilna vezava, območji 200 mA in 20 V, 7 napetosti od 1 do 7 V, vsakič 3 s za odčitek,
 // premica skozi izhodišče) mora biti v 95 % vzorcev znotraj tol. Napako dela le stalna umeritev merilnikov (V do 0,4 %,
 // mA do 0,8 %) in segrevanje upornika (pri 7 V ~0,4 %).
 test("ohm tolerance: a careful student lands within tol in at least 95 % of samples", () => {
   const N = 500;
-  let v = 0;
+  let v = 0, ujema = 0;
   for (let s = 1; s <= N; s++) {
     const B = new OhmBench({ seed: s * 7919 });
     const vrstice = [], pts = [];
@@ -53,9 +63,13 @@ test("ohm tolerance: a careful student lands within tol in at least 95 % of samp
     assert.deepEqual(ok({ vrstice }), [true, true, true, true], "skrben dijak dobi vse točke za meritve");
     const prava = naloga.resnica(B);
     assert.ok(Math.abs(prava / 100 - 1) <= 0.05 + 1e-9, "upor je v toleranci ±5 %");
-    if (Math.abs(1000 / fitOrigin(pts) - prava) / prava <= naloga.tol) v++;
+    const R = 1000 / fitOrigin(pts), mer = naloga.izMeritev(ctx({ vrstice }));
+    if (Math.abs(R - prava) / prava <= naloga.tol) v++;
+    // Rezultat skrbnega dijaka izhaja iz njegovih meritev (lab-matura.js → oceni: do 2·tol od izMeritev).
+    if (Math.abs(R - mer) <= 2 * naloga.tol * mer) ujema++;
   }
   assert.ok(v / N >= 0.95, `le ${v}/${N} znotraj ${naloga.tol * 100} %`);
+  assert.ok(ujema / N >= 0.99, `iz meritev: le ${ujema}/${N} do 2·tol`);
 });
 
 // Igra v brskalniku: šest napetosti od 1,5 do 6,5 V z privzeto vezavo. Vrne pričakovane točke za meritve.
@@ -67,4 +81,24 @@ export default async () => {
     await gumb("Zapiši meritev");
   }
   return 4;
+};
+
+// Napis 100 Ω brez ujemajočih se meritev: upornik, ki se od napisa razlikuje za vsaj 3 % (»↺ Ponastavi« da nov upornik,
+// kot bi učenec vzel drugega iz škatle), izmerjen kot zgoraj. Oddaja »100« ni iz meritev: 0 točk za rezultat.
+export const znano = {
+  vrednost: 100,
+  igra: async () => {
+    for (let k = 0; k < 30 && Math.abs(m._labBench.parts.R100.R / 100 - 1) < 0.03; k++) {
+      m.querySelector(".demo-reset").click();
+      await wait(600);
+      await dokler(() => m.querySelector(".lab-mat .lab-mat-polja") && m._labBench?.parts);
+    }
+    belezi();
+    const volt = () => Number(([...m.querySelectorAll(".lab-lcd")].find((x) => /voltmeter/.test(x.textContent))?.querySelector(".lab-lcd-val")?.textContent || "").replace(",", "."));
+    for (const U of [1.5, 2.5, 3.5, 4.5, 5.5, 6.5]) {
+      await drsnik("napetost napajalnika", U);
+      await dokler(() => Math.abs(volt() - U) < 0.3);
+      await gumb("Zapiši meritev");
+    }
+  },
 };

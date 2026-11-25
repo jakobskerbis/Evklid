@@ -41,11 +41,22 @@ test("free-fall matura: measurement criteria read the table", () => {
   }
 });
 
+// Iz meritev: povprečni čas kroglice pri vsaki višini, premica h(t²) skozi izhodišče (vsaj tri višine), g = 2 · naklon.
+test("free-fall matura: the result from the student's own table", () => {
+  const rows = [vr(0.5, 0.3200), vr(0.5, 0.3220), vr(1, 0.4530), vr(1.5, 0.5540), vr(1.5, 0.5560), vr(1, 0.3, null, "filter")];
+  const pts = [[0.321 ** 2, 0.5], [0.453 ** 2, 1], [0.555 ** 2, 1.5]];
+  const g = (2 * pts.reduce((s, [x, y]) => s + x * y, 0)) / pts.reduce((s, [x]) => s + x * x, 0);
+  assert.ok(Math.abs(naloga.izMeritev({ vrstice: rows }) - g) < 1e-9);
+  assert.ok(Math.abs(g - 9.739) < 0.001, `g = ${g}`);
+  assert.ok(Number.isNaN(naloga.izMeritev({ vrstice: rows.filter((r) => r["h [m]"] !== "1") })), "dve višini sta premalo za premico");
+  assert.ok(Number.isNaN(naloga.izMeritev({ vrstice: [] })));
+});
+
 // Toleranca: skrben dijak (vrata naravnana, kroglica z elektromagnetom, višine 0,2, 0,5, 1,0, 1,5 in 2,0 m, vsaka
 // dvakrat, povprečni čas, premica h(t²) skozi izhodišče) mora biti v 95 % vzorcev znotraj tol in dobi vse točke za meritve.
 test("free-fall tolerance: a careful student lands within tol in at least 95 % of samples", () => {
   const N = 500;
-  let v = 0, najR = 0;
+  let v = 0, najR = 0, ujema = 0;
   for (let s = 1; s <= N; s++) {
     const B = new PadBench({ seed: s * 7919 });
     const vrstice = [], pts = [];
@@ -60,7 +71,11 @@ test("free-fall tolerance: a careful student lands within tol in at least 95 % o
     const g = 2 * naklonSkoziIzhodisce(pts), prava = naloga.resnica(B);
     assert.equal(prava, G_LJ);
     if (Math.abs(g - prava) / prava <= naloga.tol) v++;
+    // Rezultat skrbnega dijaka izhaja iz njegovih meritev (lab-matura.js → oceni: do 2·tol od izMeritev).
+    const mer = naloga.izMeritev({ vrstice });
+    if (Math.abs(g - mer) <= 2 * naloga.tol * mer) ujema++;
   }
+  assert.ok(ujema / N >= 0.99, `iz meritev: le ${ujema}/${N} do 2·tol`);
   assert.ok(najR < SREDINA - 0.01, `razmerje v·t/(2h) pri naravnanih vratih do ${najR}`);
   assert.ok(v / N >= 0.95, `le ${v}/${N} znotraj ${naloga.tol * 100} %`);
 });
@@ -80,4 +95,23 @@ export default async () => {
     if (vrstic() === n) throw new Error("meritev ni zapisana: " + zadnjiDnevnik());
   }
   return 4;
+};
+
+// Učbeniški g = 9,81 m/s² po meritvah le z nizkih vrat (3 do 5 cm): zamik elektromagneta (~5 ms) je tu velik del časa
+// padca, zato je g iz teh meritev za več kot 5 % premajhen. Oddaja »9,81« ni iz meritev: 0 točk za rezultat.
+export const znano = {
+  vrednost: 9.81,
+  igra: async () => {
+    await drsnik("premik vrat naprej–nazaj", -Math.round(m._labBench.zamikVrat * 2000) / 2);
+    for (const cm of [3, 4, 5]) {
+      await drsnik("vrata pod predmetom", cm);
+      await gumb("Spusti");
+      const n = vrstic();
+      for (let k = 0; k < 100 && vrstic() === n; k++) {
+        await wait(200);
+        await gumb("Zapiši meritev");
+      }
+      if (vrstic() === n) throw new Error("meritev ni zapisana: " + zadnjiDnevnik());
+    }
+  },
 };

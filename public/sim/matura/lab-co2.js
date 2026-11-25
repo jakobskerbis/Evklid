@@ -29,6 +29,11 @@ export default {
   tol: 0.08,
   // Po »↺ Ponastavi« med nalogo vzorca ni več: takrat šteje soda, ki jo je učenec stresel sam.
   resnica: (B) => B.vzorec ?? B.sodaAdded,
+  // Iz tabele: izguba mase v zadnji vrstici (Δm je masa CO₂, ki je ušel), m(NaHCO₃) = −Δm · M(NaHCO₃) / M(CO₂).
+  izMeritev: (c) => {
+    const dm = c.vrstice.map((r) => stevilo(celica(r, /^Δm\b/))).filter(Number.isFinite).at(-1);
+    return dm < 0 ? (-dm * M.NaHCO3) / M.CO2 : NaN;
+  },
   meritve: [
     {
       kaj: "Zaščitna očala si nadel, preden si nalil kislino",

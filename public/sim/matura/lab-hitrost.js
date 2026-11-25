@@ -4,6 +4,7 @@
 // Prava vrednost je konstanta modela TIO.Ea = 52 kJ/mol (lab-model-reakcije.js, ocena iz literature), zato je pri vsaki
 // nalogi enaka. Novo seme spremeni le sobno temperaturo (20–24 °C), presojo križa in reakcijski čas.
 import { TIO } from "../lab-model-reakcije.js";
+import { R_PLIN } from "../lab-model.js";
 import { tiosulfat } from "../vodeno/lab-hitrost.js";
 
 const NAROBE = /Križ je še precej viden|Raztopina je že povsem motna/;
@@ -31,6 +32,18 @@ export default {
   // je zaradi presoje križa in reakcijskega časa do ~2,5 % od prave vrednosti (test/laboratorij-matura.test.js, 500 vzorcev).
   tol: 0.03,
   resnica: (Bs) => (Bs?.tio ? TIO.Ea / 1000 : NaN),
+  // Iz tabele in dnevnika: pravočasno ustavljene meritve pri najnižji in najvišji temperaturi (±3 °C, kot ponovljivost),
+  // povprečna časa in temperaturi, Eₐ = R · ln(t₁/t₂) / (1/T₁ − 1/T₂). Temperaturi se morata razlikovati za več kot 6 °C.
+  izMeritev: (c) => {
+    const d = dobre(c).filter((x) => Number.isFinite(x.T) && x.t > 0);
+    if (!d.length) return NaN;
+    const T = d.map((x) => x.T), lo = Math.min(...T), hi = Math.max(...T);
+    if (!(hi - lo > 6)) return NaN;
+    const povp = (g, k) => g.reduce((s, x) => s + x[k], 0) / g.length;
+    const a = d.filter((x) => x.T <= lo + 3), b = d.filter((x) => x.T >= hi - 3);
+    const T1 = povp(a, "T") + 273.15, T2 = povp(b, "T") + 273.15;
+    return (R_PLIN * Math.log(povp(a, "t") / povp(b, "t"))) / (1 / T1 - 1 / T2) / 1000;
+  },
   meritve: [
     {
       kaj: `Meril si pri dveh temperaturah, ki se razlikujeta vsaj za ${DT_MIN} °C`,

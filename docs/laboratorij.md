@@ -478,11 +478,21 @@ and submits a number, a unit and an absolute uncertainty. The program scores it 
 - result, 4 points by relative error to the true value: ≤ tol 4, ≤ 2·tol 3, ≤ 3·tol 2, ≤ 5·tol 1. The true value comes
   from the engine's model (`el._labBench = B` in the engine, `resnica(B)` in the task). `tol` is calibrated: a careful
   student simulated in the model must land within tol in ≥ 95 % of seeds (`test/laboratorij-matura.test.js`);
+- the result counts only if it comes from the student's own data: `izMeritev(c)` computes the same quantity from the
+  table/log by the task's method; a result more than 2·tol away from it (or no usable data) scores 0 for the result, so a
+  known value (g, F, Eₐ, a resistor label) typed without measuring earns nothing. After submitting, the card shows
+  »Iz tvojih meritev« next to the true value. lab-elektroliza reads p and T only from the displays, which `kontekst` does
+  not include, so its `izMeritev` uses the lab's average p and T (≤ 4 % shift, inside the 2·tol window);
 - unit, 1 point (`enote: [[name, factor to the right unit | null], …]`, first is right; mmol/L is converted);
 - uncertainty, 1 point: the true value lies in result ± Δ and Δ ≤ 4·tol of the result.
 During the task `.lab-racun`, `.lab-q` and the task's `skrij` selectors (anything showing a computed result or the true
 value) get `.lab-mat-skrito`; after submitting everything shows again with the points, the true value and the student's
 result. The method (equations, averaging, graph) is not scored: that is the tutor's job in phase 4 (profil B, j's card).
+Tasks (unknown, tol): titracija c(HCl) from the seed (2,5 %), ohm R of the 100 Ω resistor (1 %), prosti-pad g (2,5 %),
+newton2 accelerated mass (2,5 %), hooke k of the soft spring (1 %), lom n of »snov X« drawn 1,42–1,62 from the seed
+(1 %), grelnik efficiency of the student's own run (2 %), co2 mass of a hidden NaHCO₃ sample (8 %), hitrost Eₐ of the
+thiosulfate reaction (3 %), elektroliza F (4,5 %). Each task's simulation and browser play: `test/matura/<key>.js`
+(loaded by `test/laboratorij-matura.test.js`). »↺ Ponastavi« during a task keeps the task running and reruns `priprava`.
 The best score stays on the device (`localStorage` `evklid.lab.matura`); the server only counts submissions
 (`nacin: matura`, `dogodek: oddano`, no points, no student). »Matura« is not remembered as the default mode.
 

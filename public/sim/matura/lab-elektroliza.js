@@ -6,11 +6,17 @@
 // Model upošteva tudi, česar dijak ne: vodik, ki se na začetku raztopi ob elektrodi, in višji tlak plina zaradi višje
 // gladine v bučki. Zato je F skrbnega dijaka ~3–4 % prevelik; toleranca to upošteva.
 import { F } from "../lab-model-elektrokemija.js";
+import { R_PLIN } from "../lab-model.js";
 import { polnilo, zrakIzpuscen, poPolnilu, meritve } from "../vodeno/lab-elektroliza.js";
 
 // Najmanj plina na katodi (mL), da je relativna napaka odčitka majhna.
 export const V_MIN = 20;
 const VAROVALKA = /Varovalka v ampermetru je pregorela/;
+// Zračnega tlaka in temperature tekočine ni v tabeli, dnevniku ali nastavitvah (le na barometru in termometru, ki ju
+// kontekst vodenja ne bere), zato izMeritev vzame srednji vrednosti laboratorija (lab-model-elektrokemija.js →
+// laboratorij: 98,0 ± 1,8 kPa, 22 ± 2 °C) in parni tlak pri 22 °C iz naloge. To spremeni F za največ ~4 %, kar je v
+// dovoljeni razliki 2·tol (9 %).
+export const PT_LAB = { p: 98000, T: 22, pw: 2640 };
 
 export default {
   naslov: "Faradayeva konstanta z elektrolizo vode",
@@ -23,6 +29,15 @@ export default {
   // 3–4,5 % nad pravo vrednostjo (test/laboratorij-matura.test.js: simulacija na 500 vzorcih).
   tol: 0.045,
   resnica: (B) => (B ? F : NaN),
+  // Iz tabele: povprečni tok vseh meritev, čas in prostornina vodika v zadnji vrstici; n(H₂) = (p − p(H₂O)) · V / (R · T),
+  // F = I · t / (2 n). Tlak in temperatura: PT_LAB.
+  izMeritev: (c) => {
+    const v = meritve(c), z = v.at(-1);
+    if (!z || !(z.t > 0) || !(z.Vk > 0)) return NaN;
+    const I = v.reduce((a, r) => a + r.I, 0) / v.length / 1000;
+    const n = ((PT_LAB.p - PT_LAB.pw) * z.Vk * 1e-6) / (R_PLIN * (PT_LAB.T + 273.15));
+    return (I * z.t) / (2 * n);
+  },
   meritve: [
     {
       kaj: "Aparat si napolnil z žveplovo(VI) kislino brez ujetega zraka in pipi zaprl",

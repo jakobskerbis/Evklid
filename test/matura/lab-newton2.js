@@ -29,12 +29,23 @@ test("newton2 matura: measurement criteria read the log and the table", () => {
   assert.equal(ok([LIB, TR_OK], [0, 1, 2, 3, 4].map((n) => vr(320, (10 + 10 * n) * 0.00981, n * 0.3)))[3], false, "največja 0,49 N");
 });
 
+// Iz meritev: premica a(F) z odsekom pri skupni masi z največ različnimi silami (vsaj tri), m = 1/naklon.
+test("newton2 matura: the result from the student's own table", () => {
+  // a = (F − 0,005 N) / 0,335 kg pri 320 g; ena meritev pri drugi masi ne šteje.
+  const rows = [0.1, 0.2, 0.3, 0.4].map((F) => vr(320, F, (F - 0.005) / 0.335));
+  assert.ok(Math.abs(naloga.izMeritev({ vrstice: [...rows, vr(330, 0.5, 2)] }) - 0.335) < 0.002);
+  const pts = rows.map((r) => [Number(r["F [N]"].replace(",", ".")), Number(r["a [m/s²]"].replace(",", "."))]);
+  assert.ok(Math.abs(naloga.izMeritev({ vrstice: rows }) - 1 / premica(pts).a) < 1e-12);
+  assert.ok(Number.isNaN(naloga.izMeritev({ vrstice: [...rows.slice(0, 2), vr(330, 0.3, 0.9), vr(340, 0.4, 1.2)] })), "pri vsaki masi največ dve sili");
+  assert.ok(Number.isNaN(naloga.izMeritev({ vrstice: [] })));
+});
+
 // Toleranca: skrben dijak po libeli izravna trenje (podložka na korak 0,5 mm, kot jo najde s preizkusom), časovnik
 // »od spusta«, elektromagnet, vrata pri 30 in 70 cm, sedem sil (0–6 utežic na obešalu) pri skupni masi 320 g,
 // premica a(F) z odsekom (kot račun pod grafom). Mora biti v 95 % vzorcev znotraj tol.
 test("newton2 tolerance: a careful student lands within tol in at least 95 % of samples", () => {
   const N = 300;
-  let v = 0;
+  let v = 0, ujema = 0;
   for (let s = 1; s <= N; s++) {
     const B = new ProgaBench({ seed: s * 7919, skripec: true });
     B.postaviVrata(0, 0.3), B.postaviVrata(1, 0.7);
@@ -54,8 +65,12 @@ test("newton2 tolerance: a careful student lands within tol in at least 95 % of 
     assert.deepEqual(ok([LIB, TR_OK], vrstice), [true, true, true, true], `seme ${s}: vse točke za meritve`);
     const prava = naloga.resnica(B);
     assert.ok(Math.abs(prava - 0.334) < 0.003, `seme ${s}: prava masa ${prava}`);
-    if (Math.abs(1 / premica(pts).a - prava) / prava <= naloga.tol) v++;
+    const m = 1 / premica(pts).a, mer = naloga.izMeritev({ vrstice });
+    if (Math.abs(m - prava) / prava <= naloga.tol) v++;
+    // Rezultat skrbnega dijaka izhaja iz njegovih meritev (lab-matura.js → oceni: do 2·tol od izMeritev).
+    if (Math.abs(m - mer) <= 2 * naloga.tol * mer) ujema++;
   }
+  assert.ok(ujema / N >= 0.99, `iz meritev: le ${ujema}/${N} do 2·tol`);
   assert.ok(v / N >= 0.95, `le ${v}/${N} znotraj ${naloga.tol * 100} %`);
 });
 

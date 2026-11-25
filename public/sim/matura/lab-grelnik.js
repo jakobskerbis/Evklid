@@ -4,7 +4,7 @@
 // Seme spremeni upor grelca (±5 %), merilnike, termometer in tehtnico; izkoristek sam se s semenom komaj spremeni
 // (pri 200 g, 5 min, brez pokrova 86,6–87,1 %), odvisen je predvsem od postopka (masa, čas, pokrov).
 import { VODA } from "../lab-model-toplota.js";
-import { premesanoZapisal, zadnja, NALIL, TEHTAL, VKLOP, IZKLOP, t, T } from "../vodeno/lab-grelnik.js";
+import { premesanoZapisal, zadnja, izkoristekIzMeritev, NALIL, TEHTAL, VKLOP, IZKLOP, t, T } from "../vodeno/lab-grelnik.js";
 
 // Napačna raba grelca (lab-toplota.js → say, potT, weigh): zunaj vode, delno v zraku, pregret, prek 12 V, pokvarjen.
 const NAROBE = /^Grelec si dvignil iz vode|^Grelec ni v vodi|^Voda ne pokrije vse grelne spirale|^Grelec je segret že na|termična varovalka|^Grelna žica je pregorela|več od nazivnih 12 V|^Voda komaj pokrije grelno spiralo/;
@@ -28,6 +28,10 @@ export default {
   tol: 0.02,
   resnica: (B) => (B.E > 0 ? (100 * B.m0 * VODA.c * ((B.Tvrh ?? B.voda.T) - B.T0)) / B.E : NaN),
   niResnice: "Najprej segrej vodo z grelcem: izkoristek se izračuna iz tvoje meritve.",
+  // Iz tabele in dnevnika kot vodeni račun (vodeno/lab-grelnik.js → izkoristekIzMeritev): m s tehtnice, T₁ pri t = 0,
+  // T₂ najvišja po izklopu, povprečna U in I med segrevanjem, t iz »segreval je … s«; η = m·c·(T₂ − T₁) / (U·I·t).
+  // Na maturi je voda v čaši že od začetka naloge: brez nalivanja šteje dnevnik od začetka (navidezno nalivanje na začetku).
+  izMeritev: (c) => izkoristekIzMeritev({ ...c, dnevnik: ["V čaši je sveža voda (začetek naloge).", ...c.dnevnik] }),
   meritve: [
     {
       kaj: "Vodo si stehtal, preden si vklopil grelec",

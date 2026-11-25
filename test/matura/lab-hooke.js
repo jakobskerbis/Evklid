@@ -34,12 +34,27 @@ test("Hooke matura: measurement criteria read the log and the table", () => {
   assert.deepEqual(ok([], []), [false, false, false, false]);
 });
 
+// Iz meritev: premica F(x) skozi izhodišče iz najnovejše meritve pri vsaki masi mehke vzmeti (vsaj tri mase).
+test("Hooke matura: the result from the student's own table", () => {
+  const t = MATURA["lab-hooke"];
+  const k = (r) => t.izMeritev({ dnevnik: [ZAC], vrstice: r });
+  // Podaljški 3,3, 6,5 in 9,8 cm pri 50, 100 in 150 g: Σ F·x / Σ x² · 100.
+  const tri = [vr(0, 0), vr(50, 3.3), vr(100, 6.5), vr(150, 9.8)];
+  const F = [0.4905, 0.981, 1.4715], x = [3.3, 6.5, 9.8];
+  const prav = (100 * F.reduce((s, f, i) => s + f * x[i], 0)) / x.reduce((s, y) => s + y * y, 0);
+  assert.ok(Math.abs(k(tri) - prav) < 1e-9 && Math.abs(prav - 15.03) < 0.01, `k = ${k(tri)}`);
+  // Ponovljena meritev pri 150 g nadomesti prejšnjo; meritve srednje vzmeti ne štejejo.
+  assert.ok(Math.abs(k([...tri.slice(0, 3), vr(150, 12), vr(150, 9.8), vr(200, 6, "srednja")]) - prav) < 1e-9);
+  assert.ok(Number.isNaN(k(tri.slice(0, 3))), "dve masi sta premalo za premico");
+  assert.ok(Number.isNaN(k([])));
+});
+
 // Skrben dijak: začetni odčitek in vsi odčitki z očesom v višini kazalca pri mirni vzmeti, mase 50–250 g, odčitek na 1 mm,
 // F = m · 9,81 m/s² na 0,01 N. k določi iz naklona premice skozi izhodišče ali kot povprečje F/x po točkah.
 test("Hooke tolerance: a careful student lands within tol in at least 95 % of springs", () => {
   const t = MATURA["lab-hooke"];
   const N = 500;
-  let vNaklon = 0, vPovp = 0;
+  let vNaklon = 0, vPovp = 0, ujema = 0;
   for (let s = 1; s <= N; s++) {
     const B = new HookeBench({ seed: s * 7919 });
     const mirno = () => {
@@ -48,7 +63,7 @@ test("Hooke tolerance: a careful student lands within tol in at least 95 % of sp
     };
     const x0 = B.odcitek(0).value;
     let sxy = 0, sxx = 0;
-    const ki = [];
+    const ki = [], vrstice = [vr(0, 0)];
     for (const [m, ut] of [[50, [3]], [100, [4]], [150, [3, 4]], [200, [5]], [250, [3, 5]]]) {
       for (const i of [...B.obesene]) B.snemi(i);
       for (const i of ut) B.obesi(i);
@@ -57,12 +72,17 @@ test("Hooke tolerance: a careful student lands within tol in at least 95 % of sp
       sxy += x * F;
       sxx += x * x;
       ki.push(F / x);
+      vrstice.push(vr(m, x));
     }
     const prava = t.resnica(B);
     assert.ok(prava >= 14.25 && prava <= 15.75);
     if (Math.abs((sxy / sxx) * 100 - prava) / prava <= t.tol) vNaklon++;
     if (Math.abs((ki.reduce((a, b) => a + b) / ki.length) * 100 - prava) / prava <= t.tol) vPovp++;
+    // Rezultat skrbnega dijaka (naklon ali povprečje F/x) izhaja iz njegovih meritev (lab-matura.js → oceni: do 2·tol).
+    const mer = t.izMeritev({ dnevnik: [ZAC], vrstice });
+    if ([(sxy / sxx) * 100, (ki.reduce((a, b) => a + b) / ki.length) * 100].every((k) => Math.abs(k - mer) <= 2 * t.tol * mer)) ujema++;
   }
+  assert.ok(ujema / N >= 0.99, `iz meritev: le ${ujema}/${N} do 2·tol`);
   assert.ok(vNaklon / N >= 0.95, `naklon: le ${vNaklon}/${N} znotraj ${t.tol * 100} %`);
   assert.ok(vPovp / N >= 0.95, `povprečje: le ${vPovp}/${N} znotraj ${t.tol * 100} %`);
 });

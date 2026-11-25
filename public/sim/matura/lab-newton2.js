@@ -2,8 +2,8 @@
 // Neznanka je masa, ki jo pospešuje sila obešala: voziček, šest utežic in obešalo ter vrtenje koles in škripca
 // (ProgaBench: mVoz + utezi + mObes + Iw + Ip; naklon premice a(F) je 1/m). Seme jo spremeni le malo (tehtanje vozička ±1 g,
 // utežice ±20 mg), zato je skoraj stalna, ~334 g. Vsota nazivnih mas (320 g, vidna v tabeli) je ~4 % premajhna: kdor jo
-// vpiše brez meritve, dobi 3 od 4 točk za rezultat. Pravo vrednost da le naklon grafa.
-import { VOZICEK, SKRIPEC } from "../lab-model-gibanje.js";
+// vpiše brez meritev, ne dobi točk za rezultat (izMeritev), ob skrbnih meritvah (naklon ~340 g) pa je ~6 % od njih, več od 2·tol.
+import { VOZICEK, SKRIPEC, premica } from "../lab-model-gibanje.js";
 import { stevilo, celica } from "../lab-vodeno-pomoc.js";
 import { LIBELA, IZRAVNANO, NI_IZRAVNANO, silPriMasi } from "../vodeno/lab-newton2.js";
 
@@ -15,15 +15,16 @@ function zadnji(dn, ...res) {
   }
   return -1;
 }
-// Sile meritev pri vsaki skupni masi (stolpec m [g]); zapisane so le meritve z vrvico in obema vratoma.
-function silePoMasi(c) {
+// Meritve [F, a] pri vsaki skupni masi (stolpec m [g]); zapisane so le meritve z vrvico in obema vratoma.
+function meritvePoMasi(c) {
   const po = new Map();
   for (const r of c.vrstice) {
-    const m = stevilo(celica(r, /^m\b/)), F = stevilo(celica(r, /^F\b/));
-    if (Number.isFinite(m) && Number.isFinite(F) && Number.isFinite(stevilo(celica(r, /^a\b/)))) po.set(m, [...(po.get(m) || []), F]);
+    const m = stevilo(celica(r, /^m\b/)), F = stevilo(celica(r, /^F\b/)), a = stevilo(celica(r, /^a\b/));
+    if (Number.isFinite(m) && Number.isFinite(F) && Number.isFinite(a)) po.set(m, [...(po.get(m) || []), [F, a]]);
   }
   return [...po.values()];
 }
+const silePoMasi = (c) => meritvePoMasi(c).map((v) => v.map(([F]) => F));
 
 export default {
   naslov: "Masa iz grafa a(F)",
@@ -38,6 +39,13 @@ export default {
   // »vidijo« ~1 % širšo), zato naloga zahteva način od spusta.
   tol: 0.025,
   resnica: (B) => B.mVoz + B.utezi.reduce((a, b) => a + b, 0) + B.mObes + VOZICEK.Iw + SKRIPEC.Ip,
+  // Iz tabele kot račun pod grafom: premica a(F) z odsekom pri skupni masi z največ različnimi silami (vsaj tri), m = 1/naklon.
+  // Vsota nazivnih mas (320 g) brez meritev ne prinese točk.
+  izMeritev: (c) => {
+    const sil = (v) => new Set(v.map(([F]) => F)).size;
+    const pts = meritvePoMasi(c).reduce((a, v) => (sil(v) > sil(a) ? v : a), []);
+    return sil(pts) >= 3 ? 1 / premica(pts).a : NaN;
+  },
   meritve: [
     { kaj: "Progo si izravnal z libelo", tock: 1, ok: (c) => c.dnevnik.some((t) => LIBELA.test(t)) },
     { kaj: "Kotalni upor si izravnal s podložko (preizkus po libeli: »trenje je izravnano«)", tock: 1, ok: (c) => c.dnevnik.some((t) => LIBELA.test(t)) && zadnji(c.dnevnik, LIBELA, IZRAVNANO, NI_IZRAVNANO) === 1 },
