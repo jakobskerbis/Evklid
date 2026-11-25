@@ -260,6 +260,19 @@ test("prediction component and lab-ohm in a browser", { timeout: 120000 }, async
     assert.match(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), /45/);
     await nastavi(p, "topla voda m₁", 120);
     assert.equal(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), "", "druga mešanica: napoved pobrisana");
+    // ko je hladna voda v posodi, njena drsnika ne spremenita mešanice (in ne pobrišeta napovedi); topla voda in ponovno nalivanje jo
+    await p.locator(".lab-napoved input").fill("47");
+    await p.locator(".lab-napoved").getByRole("button", { name: "Zapiši napoved" }).click();
+    await p.getByRole("button", { name: "Natoči hladno vodo", exact: true }).first().click();
+    await nastavi(p, "hladna voda T₂", 15);
+    await nastavi(p, "hladna voda m₂", 70);
+    assert.match(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), /47/, "drsnika hladne vode po nalivanju napovedi ne pobrišeta");
+    await p.getByRole("button", { name: "Natoči hladno vodo", exact: true }).first().click();
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), "", "ponovno nalivanje z drugimi drsniki: druga mešanica");
+    await p.locator(".lab-napoved input").fill("48");
+    await p.locator(".lab-napoved").getByRole("button", { name: "Zapiši napoved" }).click();
+    await nastavi(p, "topla voda T₁", 60);
+    assert.equal(await p.evaluate(() => document.querySelector(".lab-napoved-moja").textContent), "", "topla voda še spremeni mešanico");
     const shranjeno = { v: 1, seed: 3, rows: [], meas: [[], [], []], imena: [null, null, null], vrste: ["kovina", "porcelanP", "termovka"], napoved: { v: 60, t: "60 °C", zaprto: false, k: "0:kovina" } };
     await p.evaluate((d) => localStorage.setItem("evklid.lab.meritve.0.lab-ohlajanje", JSON.stringify(d)), shranjeno);
     await p.evaluate(() => window.mount("lab-ohlajanje"));
