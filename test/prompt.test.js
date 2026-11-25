@@ -293,8 +293,8 @@ test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step
   // +266 znakov (61 734 → 62 000; ~75 žetonov) po pregledu #841; s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
   // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
   // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
-  // Orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026): +788 znakov (66 198 → 66 986; ~210 žetonov), meja +800.
-  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 800, `stalni del ${stat.length} znakov`);
+  // Orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026, s popravki pregleda): +1116 znakov (66 198 → 67 314; ~300 žetonov), meja +1100.
+  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 1100, `stalni del ${stat.length} znakov`);
 });
 
 test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts with another method are one task, grades 1–4 short", () => {
@@ -391,8 +391,8 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Meritev po #836 s pregledom #841: +266 znakov (61 734 → 62 000); s #844 (+15) 62 015, meja +226 (62 030, rezerva 15).
     // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
     // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
-    // Orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026): +788 znakov (66 198 → 66 986; ~210 žetonov), meja +800.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 800, `stalni del ${stat.length} znakov`);
+    // Orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026, s popravki pregleda): +1116 znakov (66 198 → 67 314; ~300 žetonov), meja +1100.
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 1100, `stalni del ${stat.length} znakov`);
   });
 });
 
@@ -419,14 +419,17 @@ test("orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026): oba poziva ju v razd
     assert.ok(sec.length > 1000, file);
     assert.match(sec, /<<ODPRI vaja="kvadratna enačba">>/, file);
     assert.match(sec, /<<ODPRI kalkulator="grafični">>/, file);
-    // Kdaj: po razumljeni razlagi ali rešeni računski nalogi, ne pred rešitvijo v načinu A, ne na poli, enkrat na temo.
+    // Kdaj: po razumljeni razlagi ali rešeni računski nalogi, ne pred rešitvijo v načinu A, ne med nalogami Evklida
+    // (učna pot pred done=1, Vadnica, Priprava na test, pole), enkrat na temo; v načinu B le poleg točke Vaja.
     assert.match(sec, /`vaja`: podobna naloga iz Vadnice/, file);
     assert.match(sec, /Ne v načinu A,? pred/, file);
-    assert.match(sec, /ne med nalogo s pole/, file);
+    assert.match(sec, /ne med nalogami, ki jih je dal Evklid \(učna pot pred `done=1`, Vadnica, Priprava na test, pole\)/, file);
+    assert.match(sec, /V načinu B (`vaja` )?le poleg točke Vaja/, file);
+    assert.match(sec, /v načinu A ne `grafični`/i, file);
     assert.match(sec, /največ enkrat/, file);
     // Načini, ki jih prepozna findCalc (server/odpri.js).
     assert.match(sec, /`kalkulator`:[^\n]*`znanstveni`, `grafični`, `enote`, `periodni sistem` ali `formule`[^\n]*nikoli namesto razlage/, file);
-    assert.match(sec, /po rešeni računski nalogi najraje `vaja`/, file);
+    assert.match(sec, /ko je učenec računsko nalogo rešil, najraje `vaja`/, file);
     assert.match(sec, /Največ dva bloka na odgovor/, file);
     assert.doesNotMatch(dyn, /vaja=|kalkulator=/, file);
   }
