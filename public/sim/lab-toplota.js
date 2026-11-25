@@ -1045,7 +1045,7 @@ export function labBoyle(el) {
       }));
     }
   }
-  const zaslon = () => `${odcitek.text.replace(".", ",")}${odcitek.over ? "" : " kPa"}`;
+  const zaslon = () => `${decZapis(odcitek.text)}${odcitek.over ? "" : " kPa"}`;
   function skupineP(list) {
     const m = new Map();
     for (const r of list) (m.get(r.ime) || m.set(r.ime, []).get(r.ime)).push(r);

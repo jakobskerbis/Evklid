@@ -208,7 +208,7 @@ test("pendulum and Boyle in a browser", { timeout: 240000 }, async (t) => {
   const siroko = (p) => p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 
   await t.test("lab-nihalo on a phone: napoved first, a real stopwatch measurement, g from stored data", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
     const { p, errs } = await odpri(ctx, base, "lab-nihalo");
     assert.equal(await siroko(p), 0, "na telefonu stran ne drsi vstran");
     assert.equal(await p.evaluate(() => document.querySelector(".demo-controls > .lab-napoved")?.dataset.napoved), "nihalo-masa");
@@ -246,7 +246,7 @@ test("pendulum and Boyle in a browser", { timeout: 240000 }, async (t) => {
   });
 
   await t.test("lab-boyle on a phone: numeric napoved, closed valve, 40 → 20 mL comparison, pV from stored data", async () => {
-    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+    const ctx = await browser.newContext({ locale: "sl-SI", viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
     const { p, errs } = await odpri(ctx, base, "lab-boyle");
     assert.equal(await siroko(p), 0, "na telefonu stran ne drsi vstran");
     assert.equal(await p.evaluate(() => document.querySelector(".lab-napoved input").placeholder), "npr. 3");
