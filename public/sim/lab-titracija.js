@@ -19,15 +19,19 @@ const flR = (hh) => (hh <= FL.Hc ? FL.R - ((FL.R - FL.r) * hh) / FL.Hc : FL.r);
 const rgb = (c) => `rgb(${c.join(",")})`;
 const mL = (x, d = 2) => `${fixed(x, d)} mL`;
 
-// Kateri indikator je pri šibki kislini dal pravi rezultat: pri vsakem indikatorju titracija, ki je končala najbližje
-// ekvivalentni točki (over = dodani NaOH − ekvivalentna prostornina). Za napoved; null, dokler nista izmerjena oba.
+// Kateri indikator je pri šibki kislini dal pravi rezultat: pri istem vzorcu (ocetna kislina in kis imata različni
+// koncentraciji) pri vsakem indikatorju titracija, ki je končala najbližje ekvivalentni točki (over = dodani NaOH −
+// ekvivalentna prostornina). Za napoved in sklep; null, dokler noben vzorec ni titriran z obema.
 export function indikatorIzMeritev(rs) {
-  const naj = (ind) => rs.filter((r) => r.indId === ind && Number.isFinite(r.V)).sort((a, b) => Math.abs(a.over) - Math.abs(b.over))[0];
-  const f = naj("fenolftalein"), m = naj("metiloranz");
-  if (!f || !m) return null;
-  const vrednost = Math.abs(f.V - m.V) < 0.2 ? "enako" : Math.abs(f.over) < Math.abs(m.over) ? "fenolftalein" : "metiloranz";
-  const kdo = { enako: "obe titraciji sta enaki", fenolftalein: "ekvivalentni točki je bližje fenolftalein", metiloranz: "ekvivalentni točki je bližje metiloranž" }[vrednost];
-  return { vrednost, besedilo: `s fenolftaleinom ${fixed(f.V, 2)}\u00a0mL, z metiloranžem ${fixed(m.V, 2)}\u00a0mL: ${kdo}` };
+  for (const id of [...new Set(rs.map((r) => r.id))]) {
+    const naj = (ind) => rs.filter((r) => r.id === id && r.indId === ind && Number.isFinite(r.V)).sort((a, b) => Math.abs(a.over) - Math.abs(b.over))[0];
+    const f = naj("fenolftalein"), m = naj("metiloranz");
+    if (!f || !m) continue;
+    const vrednost = Math.abs(f.V - m.V) < 0.2 ? "enako" : Math.abs(f.over) < Math.abs(m.over) ? "fenolftalein" : "metiloranz";
+    const kdo = { enako: "obe titraciji sta enaki", fenolftalein: "ekvivalentni točki je bližje fenolftalein", metiloranz: "ekvivalentni točki je bližje metiloranž" }[vrednost];
+    return { id, vrednost, besedilo: `${VZORCI[id]?.short ?? id}: s fenolftaleinom ${fixed(f.V, 2)}\u00a0mL, z metiloranžem ${fixed(m.V, 2)}\u00a0mL; ${kdo}` };
+  }
+  return null;
 }
 
 export function labTitracija(el) {
@@ -120,7 +124,11 @@ export function labTitracija(el) {
     izmerjeno: () => indikatorIzMeritev(rows.filter((r) => !VZORCI[r.id].mocna)),
   });
   el.querySelector(".demo-controls")?.prepend(N.el);
-  qBox.before(N.primerjava);  const need = () => (B.goggles ? true : (log.push("Natrijev hidroksid je jedek, tudi razredčen škoduje očem; kisline prav tako. Najprej si nadeni zaščitna očala.", "warn"), false));
+  qBox.before(N.primerjava);
+  const namigInd = h("p", { class: "lab-tit-hint", "aria-live": "polite" }); // »Za primerjavo titriraj še z …«, dokler šibka kislina ni titrirana z obema indikatorjema
+  namigInd.hidden = true;
+  qBox.before(namigInd);
+  const need = () => (B.goggles ? true : (log.push("Natrijev hidroksid je jedek, tudi razredčen škoduje očem; kisline prav tako. Najprej si nadeni zaščitna očala.", "warn"), false));
 
   function rinse() {
     if (!need()) return;
@@ -291,8 +299,19 @@ export function labTitracija(el) {
     askIndicator();
     askOvershoot();
   }
+  // Sklep o indikatorju šele, ko je isti šibki vzorec titriran s fenolftaleinom in z metiloranžem; do takrat namig.
   function askIndicator() {
     if (said.has("q1")) return;
+    const sibke = rows.filter((r) => !VZORCI[r.id].mocna);
+    if (!sibke.length) return;
+    if (!indikatorIzMeritev(sibke)) {
+      const z = sibke.at(-1), ima = new Set(sibke.filter((r) => r.id === z.id).map((r) => r.indId));
+      const manjka = [!ima.has("fenolftalein") && "s fenolftaleinom", !ima.has("metiloranz") && "z metiloranžem"].filter(Boolean).join(" in ");
+      namigInd.innerHTML = `Za primerjavo titriraj ${VZORCI[z.id].short} še ${manjka}: tako vidiš, kateri indikator da pravi rezultat.`;
+      namigInd.hidden = false;
+      return;
+    }
+    namigInd.hidden = true;
     said.add("q1");
     qBox.append(conclusion({
       text: "Kateri indikator je primeren za titracijo ocetne kisline z natrijevim hidroksidom in zakaj?",
