@@ -222,3 +222,9 @@ test("AUDIT-061: 305 − 7 = 297 in 1000 − 1 = 990 se ujameta, zaokrožitve in
     assert.deepEqual(checkArithmetic(t).mismatches, [], t);
   }
 });
+
+test("AUDIT-061 (pregled): zaokrožen rezultat z ničlami na koncu ob decimalnem podatku ni napaka", () => {
+  const R = String.raw;
+  for (const t of [R`$0{,}5 \cdot 1500 \cdot 25^2 = 469\,000$`, R`$9{,}81 \cdot 125 = 1230$`, R`$1200 \cdot 1{,}035^5 = 1430$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  for (const t of [R`$2{,}5 \cdot 4 = 10{,}05$`, R`$305 - 7 = 297$`]) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+});

@@ -210,7 +210,10 @@ function compare(a, b, approx, loose, afterData = false) {
   if (!approx && !loose && !(a.bare && b.bare) && exactExpr(a) && exactExpr(b) && a.units.join() === b.units.join()) {
     // pol zadnjega mesta: zapisanega rezultata ali zaokroženega vmesnega števila (20 + 1,5 · 5,71 = 20 + 8,57)
     const dec = Math.max(0, ...[a, b].flatMap((x) => (x.expr.match(/\d+\.\d+/g) || []).map((n) => n.split(".")[1].length)));
-    const t = Math.max(...[a, b].map((x) => (x.bare ? halfUlp(x, false) : 0)), 0.5 * 10 ** -dec * (a.bare && b.bare ? 0 : 1), 1e-9 * scale);
+    // Z decimalnim podatkom je rezultat lahko zaokrožen na desetice ali tisočice (9,81 · 125 = 1230, 0,5 · 1500 · 25² =
+    // 469 000): ničle na koncu golega rezultata takrat štejejo kot zaokrožitev (pregled #1011).
+    const rounded = dec > 0;
+    const t = Math.max(...[a, b].map((x) => (x.bare ? halfUlp(x, rounded) : 0)), 0.5 * 10 ** -dec * (a.bare && b.bare ? 0 : 1), 1e-9 * scale);
     if (diff <= t * (1 + 1e-9) + 1e-12) return null; // 8,565 → 8,57 (zaokroženo navzgor)
     return diff / scale;
   }
