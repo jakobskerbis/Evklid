@@ -16,6 +16,10 @@ test("zaslon za prenos: geslo ali Apple, datoteka v predpomnilnik in meni za del
   assert.match(src, /api\("\/api\/account\/export", \{ method: "POST", body, signal: request\.current\.signal \}\)/);
   assert.match(src, /new File\(Paths\.cache, EXPORT_FILE\)/);
   assert.match(src, /Sharing\.shareAsync\(file\.uri, \{ mimeType: "application\/json"/);
+  // Ostanek kopije (aplikacija ugasnjena med deljenjem) gre ob zagonu in koncu seje (session.tsx).
+  const session = read("mobile/src/lib/session.tsx");
+  assert.match(session, /function clearDevice\(\) \{[\s\S]{0,60}removeExportCopy\(\);/);
+  assert.match(session, /if \(!hasSession\(\)\) clearDevice\(\);\s*else removeExportCopy\(\);/);
   assert.match(src, /err\.status === 403 && err\.body\?\.verify[\s\S]{0,80}mob\.verifyEmail/, "nepotrjen e-naslov: razumljivo sporočilo v jeziku vmesnika");
   assert.match(src, /const denied = err instanceof ApiError && err\.status === 401 && !err\.body\?\.login;/);
   assert.match(src, /body\.apple_identity_token \? "mob\.appleFailed" : "mob\.wrongPassword"/);

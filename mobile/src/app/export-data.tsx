@@ -9,23 +9,16 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import * as Crypto from "expo-crypto";
 import * as Sharing from "expo-sharing";
 import { File, Paths } from "expo-file-system";
-import brand from "../../../brand.json";
 import { api, ApiError, randomString } from "@/lib/api";
-import { useSession } from "@/lib/session";
+import { EXPORT_FILE, removeExportCopy, useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { failure, success } from "@/lib/haptics";
 import { Banner, Body, Button, Card, Field, Screen, Title } from "@/components/ui";
 
-const EXPORT_FILE = `${brand.slug}-podatki.json`;
-// Kopija z osebnimi podatki ne ostane v predpomnilniku: izbrišemo jo ob odprtju zaslona (ostanek po sesutju), ob napaki
-// in ko učenec zaslon zapusti (ne takoj po meniju za deljenje, ker jo aplikacija, ki ji jo je poslal, na Androidu morda
-// še bere).
-const removeCopy = () => {
-  try {
-    const f = new File(Paths.cache, EXPORT_FILE);
-    if (f.exists) f.delete();
-  } catch {}
-};
+// Kopija z osebnimi podatki ne ostane v predpomnilniku: izbrišemo jo ob odprtju zaslona, ob napaki in ko učenec zaslon
+// zapusti (ne takoj po meniju za deljenje, ker jo aplikacija, ki ji jo je poslal, na Androidu morda še bere); ob zagonu
+// aplikacije in koncu seje še session.tsx (če je bila aplikacija med deljenjem ugasnjena).
+const removeCopy = removeExportCopy;
 
 export default function ExportData() {
   const { parent } = useSession();
@@ -136,7 +129,7 @@ export default function ExportData() {
           {Platform.OS === "ios" && noPassword ? (
             <View style={{ gap: 8 }}>
               <Body muted small center>{t("mob.exportAppleHint")}</Body>
-              <Button title={t("mob.confirmApple")} kind="primary" icon={{ ios: "apple.logo", android: "lock" }} disabled={busy} onPress={withApple} />
+              <Button title={t("mob.confirmApple")} kind="primary" icon={{ ios: "apple.logo", android: "lock" }} loading={busy} disabled={busy} onPress={withApple} />
             </View>
           ) : null}
         </>
