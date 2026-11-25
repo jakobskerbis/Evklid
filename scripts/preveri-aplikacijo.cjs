@@ -6,15 +6,22 @@
 // prijavo, Račun in stran za starše. Beleži napake strani in konzole, neuspele zahteve in odgovore
 // ≥ 400, vodoravno drsenje in vidne neprevedene ključe (npr. »nav.path«).
 // Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon|racuni]
+//   [--brskalnik chromium|webkit] [--jezik sl|en|de|it|hu]
 // (--samo: en del, CI jih zažene tri hkrati; računi tečejo samo brez --samo ali z --samo racuni).
-// Izhod 1, če je kaj narobe. Potrebuje Playwright s Chromiumom (require("playwright")).
+// --brskalnik webkit (#11): Safarijev pogon, telefon s profilom iPhone 13 (390×664, dotik); v CI vsako noč
+// (.github/workflows/matrika-nocna.yml), ne ob vsakem PR.
+// --jezik en (#11): namesto slovenskega obhoda (ta išče slovenska besedila) nov profil v tem jeziku in tuji državi
+// (en: Velika Britanija), Učna pot, kazalo učbenika in lekcija na računalniku in telefonu, z vsemi splošnimi
+// preverjanji; na teh zaslonih išče č, š, ž zunaj besedila lekcije (pomešan jezik). Zaenkrat le opozorila
+// (JEZIK_STROGO), ker jih je na main še nekaj; ko jih ni več, naj postane napaka.
+// Izhod 1, če je kaj narobe. Potrebuje Playwright s Chromiumom ali WebKitom (require("playwright")).
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
 const os = require("node:os");
 const net = require("node:net");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
-const { chromium } = require("playwright");
+const playwright = require("playwright");
 const { tinyPdf, SAMPLE } = require("../test/fixtures/tiny-pdf.cjs");
 
 const ROOT = path.join(__dirname, "..");
@@ -26,10 +33,25 @@ const arg = (name) => {
 const SHOTS = arg("--posnetki") ? path.resolve(arg("--posnetki")) : null;
 const ONLY = arg("--samo");
 const ACCOUNTS = !args.includes("--brez-racunov");
+const BRSKALNIK = arg("--brskalnik") || "chromium";
+const WEBKIT = BRSKALNIK === "webkit";
+const JEZIK = arg("--jezik") || "sl";
+// Jezik → nastavitve naprave (navigator.languages, časovni pas): aplikacija iz njih izbere jezik in šolski sistem.
+// Samo živi jeziki brez č, š, ž (public/i18n/languages.js LIVE_UI_LANGUAGES; hrvaščina jih ima, zato je tu ni).
+const NAPRAVA = {
+  sl: { locale: "sl-SI", timezoneId: "Europe/Ljubljana" },
+  en: { locale: "en-GB", timezoneId: "Europe/London" },
+  de: { locale: "de-DE", timezoneId: "Europe/Berlin" },
+  it: { locale: "it-IT", timezoneId: "Europe/Rome" },
+  hu: { locale: "hu-HU", timezoneId: "Europe/Budapest" },
+};
+// Pomešan jezik (č, š, ž zunaj lekcije pri tujem jeziku): true = napaka, false = samo opozorilo (stanje na main 25. 11. 2026).
+const JEZIK_STROGO = false;
 const T0 = Date.now();
 
 const problems = []; // { where, what }
 const notes = [];
+const opozorila = []; // { where, what }: ne podrejo izida (pomešan jezik, dokler JEZIK_STROGO ni true)
 let shotN = 0;
 const problem = (where, what) => {
   const key = `${where}|${what}`;
@@ -142,8 +164,9 @@ async function newPage(browser, phone, label, base) {
     hasTouch: phone,
     isMobile: phone,
     deviceScaleFactor: 1,
-    locale: "sl-SI",
-    timezoneId: "Europe/Ljubljana",
+    // WebKit na telefonu: iPhone 13 (zaslon, dotik, uporabniški niz Safarija); posnetki ostanejo v merilu 1.
+    ...(phone && WEBKIT ? { ...playwright.devices["iPhone 13"], deviceScaleFactor: 1 } : {}),
+    ...NAPRAVA[JEZIK],
     reducedMotion: "reduce",
     serviceWorkers: "block",
   });
@@ -2116,18 +2139,121 @@ async function accounts(browser, app) {
   await p.context().close();
 }
 
+// ---------- tuj jezik (--jezik en …) ----------
+
+// Besedilo lekcije (naslov, razlage, »Razloži drugače«, »Preveri se«) in polja za vnos: tu č, š, ž niso napaka vmesnika.
+// Napisi okoli lekcije (»Cilji:«, poskus ob strani, gumbi) pa so vmesnik in se preverijo.
+const VSEBINA = [".tb-title", ".tb-crumb", ".tb-section > h2", ".tb-section .explanation", ".tb-alt-body", ".tb-checks", ".katex", "math", "input", "textarea", "select"].join(", ");
+// Lastna imena s č, š, ž, ki so prav v vsakem jeziku (cele besede brez ločil); zaenkrat nobeno.
+const LASTNA_IMENA = [];
+// Vidno besedilo (in aria-label, title, placeholder) odprtega pogleda, zgornje in spodnje vrstice s č, š ali ž.
+async function slovenskeCrke(p, izkljuci) {
+  return p.evaluate(
+    ({ izkljuci, imena }) => {
+      const SL = /[čšžČŠŽ]/;
+      const vis = (el) => !!(el.offsetParent || el.getClientRects().length) && getComputedStyle(el).visibility !== "hidden";
+      const skip = (el) => !el || !vis(el) || el.closest("[hidden], script, style, noscript, [aria-hidden=true]") || el.closest(izkljuci);
+      const kje = (el) => {
+        const e = el.closest("[id], [class]") || el;
+        const cls = typeof e.className === "string" && e.className.trim() ? "." + e.className.trim().split(/\s+/).slice(0, 2).join(".") : "";
+        return `${e.nodeName.toLowerCase()}${e.id ? "#" + e.id : ""}${cls}`;
+      };
+      const out = new Set();
+      const add = (el, txt) => {
+        const besede = txt.split(/\s+/).filter((w) => SL.test(w) && !imena.includes(w.replace(/[^\p{L}]/gu, "")));
+        if (besede.length) out.add(`${kje(el)} »${txt.trim().replace(/\s+/g, " ").slice(0, 70)}«`);
+      };
+      const view = [...document.querySelectorAll("main.view:not(.in-okno)")].find((v) => !v.hidden);
+      for (const root of [view, document.querySelector(".topbar"), document.querySelector("#tabbar")].filter(Boolean)) {
+        const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        for (let n; (n = w.nextNode()); ) if (SL.test(n.nodeValue) && !skip(n.parentElement)) add(n.parentElement, n.nodeValue);
+        for (const el of root.querySelectorAll("[aria-label], [title], [placeholder]"))
+          for (const a of ["aria-label", "title", "placeholder"]) if (SL.test(el.getAttribute(a) || "") && !skip(el)) add(el, `[${a}] ${el.getAttribute(a)}`);
+      }
+      return [...out];
+    },
+    { izkljuci, imena: LASTNA_IMENA },
+  );
+}
+async function jezikZaslon(p, ime) {
+  await screen(p, ime);
+  const najdbe = await slovenskeCrke(p, VSEBINA);
+  if (!najdbe.length) return;
+  const where = `${p.label} ${ime}`;
+  const what = `č/š/ž v vmesniku (${najdbe.length}): ${najdbe.slice(0, 15).join(" | ")}${najdbe.length > 15 ? " …" : ""}`;
+  if (JEZIK_STROGO) problem(where, what);
+  else opozorila.push({ where, what });
+}
+// Nov profil v tujem jeziku (država naprave določi šolski sistem), nato Učna pot, učbenik in lekcija.
+// Drugi zagon (telefon) najde obstoječi profil in se odpre na Učni poti.
+async function tujJezik(browser, app, phone) {
+  const p = await newPage(browser, phone, `${phone ? "tel" : "pc"}-${JEZIK}`, app.base);
+  await p.goto(app.base + "/");
+  await settle(p, 500);
+  await step(p, "jezik-uvod", async () => {
+    await p.locator("#onboard-form, #view-path #xp-card .hero").first().waitFor({ state: "visible", timeout: 10000 });
+    if (!(await p.locator("#onboard-form").isVisible())) return;
+    await p.fill('#onboard-form input[name="name"]', "Alex");
+    // Koraki šolskega sistema države (npr. Key Stage 3 → Year 8): možnost z »8«, sicer prva.
+    for (let i = 0; i < 6; i++) {
+      const opts = p.locator("#onboard-form .lp-opt").filter({ visible: true });
+      if (!(await opts.count())) break;
+      const z8 = opts.filter({ hasText: /\b8\b/ });
+      await ((await z8.count()) ? z8 : opts).first().click();
+      await settle(p, 100);
+    }
+    await jezikZaslon(p, "uvod");
+    await click(p, '#onboard-form button[type="submit"]', { wait: 300 });
+  });
+  await step(p, "jezik-pot", async () => {
+    await expectVisible(p, "#view-path #xp-card .hero", "učna pot", 10000);
+    const st = await p.evaluate(async () => {
+      const r = await fetch(`/api/students/${localStorage.getItem("studentId")}`);
+      return { lang: document.documentElement.lang, s: r.ok ? (await r.json()).settings || {} : {} };
+    });
+    if (st.lang !== JEZIK) throw new Error(`stran je v jeziku »${st.lang}« namesto »${JEZIK}«`);
+    if (st.s.language !== JEZIK) throw new Error(`profil ima jezik »${st.s.language}« namesto »${JEZIK}«`);
+    if (!st.s.school_system || st.s.school_system === "SI") throw new Error(`profil iz tuje države ima šolski sistem »${st.s.school_system}«`);
+    notes.push(`${p.label}: šolski sistem ${st.s.school_system}, ${st.s.curriculum_level}`);
+    await jezikZaslon(p, "pot");
+  });
+  await step(p, "jezik-ucbenik", async () => {
+    await tab(p, "textbook");
+    await expectVisible(p, "#view-textbook .tb-head", "učbenik");
+    await jezikZaslon(p, "ucbenik");
+  });
+  await step(p, "jezik-lekcija", async () => {
+    let lesson = p.locator("#tb-body .tb-topic:not(.pending)").first();
+    if (!(await lesson.count())) lesson = p.locator("#tb-body .tb-topic").first();
+    if (!(await lesson.count())) throw new Error("v učbeniku ni nobene teme");
+    await lesson.scrollIntoViewIfNeeded();
+    await lesson.click();
+    await settle(p, 400);
+    await expectVisible(p, "#view-textbook .tb-title", "lekcija");
+    await jezikZaslon(p, "lekcija");
+  });
+  await p.context().close();
+}
+
 (async () => {
   checkAnswer = (await import(pathToFileURL(path.join(ROOT, "server/practice/check.js")))).checkAnswer;
   process.removeAllListeners("warning");
   sqlite = require("node:sqlite");
   KEYS = Object.keys((await import(pathToFileURL(path.join(ROOT, "public/i18n/sl.js")))).default);
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
-  const browser = await chromium.launch();
+  if (!["chromium", "webkit"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium ali webkit (ne »${BRSKALNIK}«)`);
+  if (!NAPRAVA[JEZIK]) throw new Error(`--jezik: ${Object.keys(NAPRAVA).join(", ")} (ne »${JEZIK}«)`);
+  if (JEZIK !== "sl" && ONLY === "racuni") throw new Error("--jezik: računi se preverjajo samo v slovenščini");
+  const browser = await playwright[BRSKALNIK].launch();
   try {
     if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
     const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik
-    if (!ONLY || ONLY === "racunalnik") await desktop(browser, app);
-    if (ONLY === "telefon") {
+    if (JEZIK !== "sl") {
+      if (!ONLY || ONLY === "racunalnik") await tujJezik(browser, app, false);
+      if (!ONLY || ONLY === "telefon") await tujJezik(browser, app, true);
+    }
+    if (JEZIK === "sl" && (!ONLY || ONLY === "racunalnik")) await desktop(browser, app);
+    if (JEZIK === "sl" && ONLY === "telefon") {
       // Samo telefon (CI ga zažene hkrati z računalnikom): prvi profil, ki ga sicer ustvari del »računalnik«.
       const p = await newPage(browser, false, "pc", app.base);
       p.db = app.db;
@@ -2135,8 +2261,8 @@ async function accounts(browser, app) {
       await step(p, "uvod-OS", () => onboard(p, "Ana", ["OSNOVNA_SOLA", "8. razred"]));
       await p.context().close();
     }
-    if (!ONLY || ONLY === "telefon") await phone(browser, app);
-    if (ACCOUNTS && (!ONLY || ONLY === "racuni")) {
+    if (JEZIK === "sl" && (!ONLY || ONLY === "telefon")) await phone(browser, app);
+    if (JEZIK === "sl" && ACCOUNTS && (!ONLY || ONLY === "racuni")) {
       const acc = await startServer({ EVKLID_ACCOUNTS: "1" });
       await accounts(browser, acc);
       const bad = acc.log.join("").split("\n").filter((l) => /napaka|Error|TypeError/.test(l) && !/\[evklid\] 4\d\d /.test(l));
@@ -2149,8 +2275,12 @@ async function accounts(browser, app) {
     stopServers();
   }
   for (const n of notes) console.log(`opomba: ${n}`);
+  for (const { where, what } of opozorila) {
+    console.log(`OPOZORILO ${where}: ${what}`);
+    if (process.env.GITHUB_ACTIONS) console.log(`::warning::${where}: ${what}`);
+  }
   for (const { where, what } of problems) console.log(`NAPAKA ${where}: ${what}`);
-  console.log(`Preverjeno v ${Math.round((Date.now() - T0) / 1000)} s${SHOTS ? `, posnetki: ${shotN} v ${SHOTS}` : ""}. Težav: ${problems.length}.`);
+  console.log(`Preverjeno (${BRSKALNIK}, ${JEZIK}) v ${Math.round((Date.now() - T0) / 1000)} s${SHOTS ? `, posnetki: ${shotN} v ${SHOTS}` : ""}. Težav: ${problems.length}${opozorila.length ? `, opozoril: ${opozorila.length}` : ""}.`);
   process.exit(problems.length ? 1 : 0);
 })().catch((e) => {
   console.error(e);
