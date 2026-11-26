@@ -95,7 +95,7 @@ Intervala za mediane ne navajamo: 7 ponovitev na kombinacijo je premalo za zanes
   - Android 360 (`055-tel-mehurcek-tel`): plavajoči mehurček inštruktorja prekrije konec besedila v kartici Današnji trening (»nova sn…«). Gumba ne prekrije; mehurček se lahko premakne.
   - iPhone SE 375 × 667 (`039-tel-lekcija-korak-tel`): plavajoči gumbi lekcije (←, 2/12, →) in mehurček so nad besedilom lekcije. Besedilo se pomakne izpod njih. Obvestilo »Hvala! Lekcijo bomo preverili« za kratek čas prekrije besedilo.
   - Mac Safari 1440 (`049-pc-tekmovanja-OS`, samo WebKit): tanka vodoravna črta nad kartico Sklop 2 in srednji stolpec je približno 15 px nižje od desnega. V Chromu tega ni. Odprta naloga.
-  - iPhone SE, kalkulator (`042-tel-kalkulator-sci-tel`): tanek navpični drsnik v ozkem zgodovinskem delu. Ni mali drsnik ▲▼; kalkulator ni naš, gre v register AUDIT.
+  - iPhone SE, kalkulator (`042-tel-kalkulator-sci-tel`): tanek navpični drsnik v ozkem zgodovinskem delu. Ni mali drsnik ▲▼. Odpravil ga je #1181 (združen po tej meritvi); ponovni posnetek na main 2275cc2f v WebKitu 375 × 667 ga nima več.
 - To so pogoni brskalnikov v Playwrightu, ne pravi Safari, iPhone, iPad ali Android. Pisav, tipkovnice na zaslonu, vrstice z naslovom in varnih robov (notch) pravih naprav ta meritev ne vidi. Pravi iPad je bil ročno preverjen 25. 11. (nit 3D na iPadu), za to meritev ne.
 - Procesor ni upočasnjen. Na šibkem telefonu so časi daljši, razlika prej/potem pa velja le za ta stroj.
 - Dimni test obišče zaslone, ki jih ima v korakih (brez računov in plačil). Iskanje prekrivanj je samodejno (mehurček inštruktorja, obvestilo) in ne zajame vsakega mogočega prekrivanja.
