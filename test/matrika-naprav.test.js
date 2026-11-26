@@ -46,7 +46,7 @@ test("dimni test: Firefox brez isMobile in brez Chromovih zastavic, WebKit telef
   const s = fs.readFileSync(new URL("../scripts/preveri-aplikacijo.cjs", import.meta.url), "utf8");
   assert.match(s, /--brskalnik/);
   assert.match(s, /\.\.\.\(FIREFOX \? \{\} : \{ isMobile: /, "Firefox ne dobi isMobile (Playwright ga ne podpira)");
-  assert.match(s, /FIREFOX && \(MOBILNO/, "Firefox z --mobilno se ustavi z jasno napako");
+  assert.match(s, /FIREFOX && \(MOBILNO \|\| \(!ZASLON && ONLY !== "racunalnik"\)\)/, "Firefox z --mobilno ali s telefonom brez --zaslon se ustavi z jasno napako");
   // Privzeti telefon na WebKitu je iPhone 13; z --zaslon velja izbrana velikost (iPhone SE, iPad).
   assert.match(s, /phone && WEBKIT && !ZASLON \? \{ \.\.\.playwright\.devices\["iPhone 13"\]/);
 });
@@ -56,10 +56,20 @@ test("hitrost: posrednik doda zakasnitev in deli eno linijo omejene hitrosti", {
   try {
     ({ posrednik } = require("../scripts/hitrost-naprav.cjs"));
   } catch (e) {
-    return t.skip(`scripts/hitrost-naprav.cjs ni mogoče naložiti: ${e.message}`);
+    // Preskok samo, če Playwright ni nameščen; napaka v skripti mora test podreti.
+    if (e.code === "MODULE_NOT_FOUND" && /playwright/.test(e.message)) return t.skip("Playwright ni nameščen");
+    throw e;
   }
   const TELO = Buffer.alloc(50000, 97); // 50 kB
-  const srv = http.createServer((req, res) => res.writeHead(200, { "content-type": "text/plain" }).end(req.url === "/majhno" ? "ok" : TELO));
+  const srv = http.createServer((req, res) => {
+    if (req.url === "/prekinjeno") {
+      res.writeHead(200, { "content-type": "text/plain" });
+      res.write("del");
+      return setTimeout(() => res.socket.destroy(), 50);
+    }
+    if (req.url === "/pocasno") return setTimeout(() => res.writeHead(200).end("ok"), 200);
+    res.writeHead(200, { "content-type": "text/plain" }).end(req.url === "/majhno" ? "ok" : TELO);
+  });
   await new Promise((ok) => srv.listen(0, "127.0.0.1", ok));
   // 100 ms zakasnitve, 250 kB/s: 50 kB = 200 ms prenosa.
   const pos = await posrednik(`http://127.0.0.1:${srv.address().port}`, { rtt: 100, hitrost: 250000 });
@@ -81,4 +91,15 @@ test("hitrost: posrednik doda zakasnitev in deli eno linijo omejene hitrosti", {
   const [a, b] = await Promise.all([cas("/veliko"), cas("/veliko")]);
   assert.equal(a.n + b.n, 2 * TELO.length);
   assert.ok(Date.now() - t0 >= 480, `dva hkratna prenosa: ${Date.now() - t0} ms`);
+  // Zakasnitev se prišteje času strežnika (200 ms strežnik + 100 ms pot), ne prekrije ga.
+  const pc = await cas("/pocasno");
+  assert.ok(pc.ms >= 290, `strežnik 200 ms + zakasnitev 100 ms: ${pc.ms} ms`);
+  // Strežnik prekine odgovor sredi telesa: brskalnik dobi napako, ne čaka v nedogled.
+  const t1 = Date.now();
+  await assert.rejects(fetch(pos.base + "/prekinjeno").then((r) => r.text()));
+  assert.ok(Date.now() - t1 < 5000, `prekinjen prenos: ${Date.now() - t1} ms`);
+  // tiho(): ko ni zahtev v teku, počaka le še mirni čas.
+  const t2 = Date.now();
+  await pos.tiho(200);
+  assert.ok(Date.now() - t2 < 2000);
 });

@@ -20,15 +20,16 @@ const OUT = path.resolve(arg("--mapa") || "matrika-naprav");
 const PREJ = arg("--prej") ? path.resolve(arg("--prej")) : null;
 const PONOVITVE = arg("--ponovitve") || "7";
 
-// id, opis, brskalnik, zaslon, dotik, mobilni pogled. Izbor: najpogostejše naprave učencev (Android in iPhone v dveh
+// id, opis, brskalnik, zaslon, dotik, mobilni pogled (isMobile; iPad tudi, kot v dimnem testu, kjer ga dobi vsaka
+// postavitev »telefon«, in kot Playwrightova naprava iPad). Izbor: najpogostejše naprave učencev (Android in iPhone v dveh
 // velikostih, iPad pokončno in ležeče, Windows s Chromom ali Edgeom, Mac s Safarijem, Firefox na velikem zaslonu).
 const MATRIKA = [
   { id: "android-360", opis: "Android telefon 360 × 740, Chrome", brskalnik: "chromium", w: 360, h: 740, dotik: true, mobilno: true },
   { id: "android-412", opis: "Android telefon 412 × 915, Chrome", brskalnik: "chromium", w: 412, h: 915, dotik: true, mobilno: true },
   { id: "iphone-375", opis: "iPhone SE 375 × 667, Safari", brskalnik: "webkit", w: 375, h: 667, dotik: true, mobilno: true },
   { id: "iphone-390", opis: "iPhone 390 × 844, Safari", brskalnik: "webkit", w: 390, h: 844, dotik: true, mobilno: true },
-  { id: "ipad-820", opis: "iPad 820 × 1180 pokončno, Safari", brskalnik: "webkit", w: 820, h: 1180, dotik: true, mobilno: false },
-  { id: "ipad-1180", opis: "iPad 1180 × 820 ležeče, Safari", brskalnik: "webkit", w: 1180, h: 820, dotik: true, mobilno: false },
+  { id: "ipad-820", opis: "iPad 820 × 1180 pokončno, Safari", brskalnik: "webkit", w: 820, h: 1180, dotik: true, mobilno: true },
+  { id: "ipad-1180", opis: "iPad 1180 × 820 ležeče, Safari", brskalnik: "webkit", w: 1180, h: 820, dotik: true, mobilno: true },
   { id: "windows-1366", opis: "računalnik 1366 × 768, Chrome/Edge", brskalnik: "chromium", w: 1366, h: 768, dotik: false, mobilno: false },
   { id: "mac-1440", opis: "Mac 1440 × 900, Safari", brskalnik: "webkit", w: 1440, h: 900, dotik: false, mobilno: false },
   { id: "firefox-1920", opis: "računalnik 1920 × 1080, Firefox", brskalnik: "firefox", w: 1920, h: 1080, dotik: false, mobilno: false },

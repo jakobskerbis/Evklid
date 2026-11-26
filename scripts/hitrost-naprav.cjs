@@ -73,19 +73,36 @@ async function streznik() {
   throw new Error("preizkusni strežnik se ni zagnal");
 }
 
-// Posrednik s počasnim omrežjem: zakasnitev RTT pred odgovorom, telo po kosih skozi skupno linijo omejene hitrosti.
+// Posrednik s počasnim omrežjem: odgovor strežnika dobi zakasnitev RTT (prišteje se času strežnika, kot v pravem
+// omrežju), telo gre po kosih (največ 16 kB) skozi skupno linijo omejene hitrosti. tiho(ms): počaka, da ni nobene
+// zahteve v teku vsaj ms (npr. preverjanje service workerja v ozadju, N-08b), da ne teče hkrati z naslednjo meritvijo.
+const KOS = 16384;
 async function posrednik(cilj, { rtt = RTT, hitrost = HITROST } = {}) {
   const http = require("node:http");
   const url = new URL(cilj);
   let prosta = 0; // kdaj je linija prosta (ms, Date.now)
+  let vTeku = 0;
+  let zadnja = Date.now();
+  const konecZahteve = () => {
+    vTeku--;
+    zadnja = Date.now();
+  };
   const srv = http.createServer((req, res) => {
-    const zac = Date.now();
+    vTeku++;
+    let koncana = false;
+    const koncaj = () => koncana || ((koncana = true), konecZahteve());
+    res.on("close", () => {
+      koncaj();
+      if (!res.writableFinished) p.destroy(); // brskalnik je prekinil prenos: linija ni več zasedena
+    });
     const p = http.request({ host: url.hostname, port: url.port, path: req.url, method: req.method, headers: { ...req.headers, host: url.host } }, (o) => {
+      const zac = Date.now(); // odgovor strežnika je tu, od tod še pot do brskalnika
       const kosi = [];
       let konec = false;
       let caka = false;
       const poslji = () => {
         caka = false;
+        if (res.destroyed) return;
         if (!res.headersSent) res.writeHead(o.statusCode, o.headers);
         while (kosi.length) {
           const k = kosi.shift();
@@ -94,7 +111,7 @@ async function posrednik(cilj, { rtt = RTT, hitrost = HITROST } = {}) {
           const d = t - Date.now();
           if (d > 1) {
             caka = true;
-            setTimeout(() => (res.write(k), poslji()), d);
+            setTimeout(() => (res.destroyed || res.write(k), poslji()), d);
             return;
           }
           res.write(k);
@@ -102,7 +119,7 @@ async function posrednik(cilj, { rtt = RTT, hitrost = HITROST } = {}) {
         if (konec) res.end();
       };
       o.on("data", (k) => {
-        kosi.push(k);
+        for (let x = 0; x < k.length; x += KOS) kosi.push(k.subarray(x, x + KOS));
         if (!caka) {
           caka = true;
           setTimeout(poslji, Math.max(0, zac + rtt - Date.now()));
@@ -112,16 +129,22 @@ async function posrednik(cilj, { rtt = RTT, hitrost = HITROST } = {}) {
         konec = true;
         if (!caka) setTimeout(poslji, Math.max(0, zac + rtt - Date.now()));
       });
+      o.on("aborted", () => res.destroy());
+      o.on("error", () => res.destroy());
     });
-    p.on("error", () => res.writeHead(502).end());
+    p.on("error", () => (res.headersSent ? res.destroy() : res.writeHead(502).end()));
     req.pipe(p);
   });
-  const port = await freePort();
-  await new Promise((ok) => srv.listen(port, "127.0.0.1", ok));
-  return { base: `http://localhost:${port}`, stop: () => srv.close() };
+  await new Promise((ok) => srv.listen(0, "127.0.0.1", ok));
+  const tiho = async (ms = 500, rok = 30000) => {
+    const meja = Date.now() + rok;
+    while (Date.now() < meja && (vTeku > 0 || Date.now() - zadnja < ms)) await new Promise((r) => setTimeout(r, 50));
+  };
+  return { base: `http://127.0.0.1:${srv.address().port}`, stop: () => srv.close(), tiho };
 }
 
-// V strani: čas (ms od začetka nalaganja) prvega vidnega pogleda in pravega pogleda Učna pot.
+// V strani: čas (ms od začetka nalaganja) prvega vidnega pogleda in pravega pogleda Učna pot. Brez posnetka zadnjega
+// zaslona šteje za prvi pogled že statično ogrodje Učne poti iz index.html (napisi in gumbi načinov).
 const MERILNIK = () => {
   const t = (window.__hitrost = { prva: null, pot: null, uvod: null });
   const vidno = (el) => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== "hidden";
@@ -133,8 +156,8 @@ const MERILNIK = () => {
     if (t.uvod == null && vidno(document.querySelector("#onboard-form"))) t.uvod = zdaj;
     if (t.pot == null || t.prva == null) requestAnimationFrame(preveri);
   };
+  // Samo v sličicah (rAF): stanje, ki se izriše, in brez vsiljene postavitve ob vsaki spremembi DOM.
   requestAnimationFrame(preveri);
-  new MutationObserver(preveri).observe(document, { subtree: true, childList: true, attributes: true });
 };
 
 const mediana = (a) => {
@@ -157,6 +180,11 @@ async function main() {
   const streznikApp = await streznik();
   const pos = await posrednik(streznikApp.base);
   const app = { base: pos.base, stop: () => (pos.stop(), streznikApp.stop()) };
+  // Med meritvama: preverjanje service workerja v ozadju (3 s po odprtju, public/sw.js) in drugi prenosi se končajo.
+  const premor = async (p) => {
+    await p.waitForTimeout(3500);
+    await pos.tiho(500);
+  };
   const browser = await playwright[BRSKALNIK].launch();
   const izid = { brskalnik: BRSKALNIK, razlicica: browser.version(), zaslon: ZASLON, dotik: DOTIK, mobilno: MOBILNO, ponovitve: PONOVITVE, omrezje: { vrsta: OMREZJE, rttMs: RTT, bajtovNaSekundo: HITROST === Infinity ? null : Math.round(HITROST) }, koren: KOREN };
   try {
@@ -181,7 +209,7 @@ async function main() {
     }
     await p.click('#onboard-form button[type="submit"]');
     await p.locator("#view-path #xp-card .hero").waitFor({ timeout: ROK });
-    await p.waitForTimeout(3000); // service worker in predpomnilnik se napolnita
+    await premor(p); // service worker in predpomnilnik se napolnita
     // Ponovni obisk: nov zavihek (prejšnji zaprt), kot ob ponovnem odprtju aplikacije.
     const obisk = { prva: [], pot: [] };
     for (let i = 0; i < PONOVITVE; i++) {
@@ -191,7 +219,7 @@ async function main() {
       const t = await cakaj(p, "pot");
       obisk.prva.push(Math.round(t.prva ?? t.pot));
       obisk.pot.push(Math.round(t.pot));
-      await p.waitForTimeout(1500); // preverjanje v ozadju (N-08b) se konča
+      await premor(p);
     }
     // Osvežitev v istem zavihku.
     const osvezitev = { prva: [], pot: [] };
@@ -200,7 +228,7 @@ async function main() {
       const t = await cakaj(p, "pot");
       osvezitev.prva.push(Math.round(t.prva ?? t.pot));
       osvezitev.pot.push(Math.round(t.pot));
-      await p.waitForTimeout(1500);
+      await premor(p);
     }
     const povzemi = (o) => ({ prvaVsebina: mediana(o.prva), ucnaPot: mediana(o.pot), surovo: o });
     izid.ponovniObisk = povzemi(obisk);

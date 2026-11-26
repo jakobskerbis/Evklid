@@ -682,12 +682,21 @@ async function intro(p, name, { interests = false, tour = "preskoci", away = fal
 async function answerTask(p, db, value) {
   // Čestitka za novo raven po prejšnjem odgovoru (xp-fx.js, z zamikom zvezdic) lahko pride šele zdaj: v Safariju
   // (WebKit) pozneje kot v Chromu. Učenec jo zapre z »Naprej«; brez tega klik na izbiro čaka 30 s (K-12, Mac 1440).
+  const odgovori = async () => {
+    const choice = p.locator("#practice .task .choices .choice");
+    if (await choice.count()) await choice.nth(Number(value)).click({ timeout: 5000 });
+    else {
+      await p.fill("#answer", value, { timeout: 5000 });
+      await p.locator("#practice .answer-row button.primary").click({ timeout: 5000 });
+    }
+  };
   await closeLevelUp(p);
-  const choice = p.locator("#practice .task .choices .choice");
-  if (await choice.count()) await choice.nth(Number(value)).click();
-  else {
-    await p.fill("#answer", value);
-    await p.locator("#practice .answer-row button.primary").click();
+  try {
+    await odgovori();
+  } catch (e) {
+    // Čestitka se je odprla med odgovarjanjem (kot v click()): zapri in odgovori znova.
+    if (!(await closeLevelUp(p))) throw e;
+    await odgovori();
   }
   await p.locator("#feedback .fb:not(.info), #feedback .fb.info:not(:has-text('Preverjam'))").first().waitFor({ timeout: 5000 });
   await settle(p);
@@ -2552,7 +2561,8 @@ async function tujJezik(browser, app, phone) {
   NEIZRISANO = (await import(pathToFileURL(path.join(ROOT, "scripts/popis-formul.js")))).neizrisanoVDom;
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
   if (!["chromium", "webkit", "firefox"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium, webkit ali firefox (ne »${BRSKALNIK}«)`);
-  if (FIREFOX && (MOBILNO || (ONLY === "telefon" && !ZASLON))) throw new Error("--brskalnik firefox: brez mobilnega pogleda (--mobilno, telefon brez --zaslon)");
+  // Firefox v Playwrightu nima mobilnega pogleda: brez --zaslon le del za računalnik (sicer bi telefon tekel brez isMobile).
+  if (FIREFOX && (MOBILNO || (!ZASLON && ONLY !== "racunalnik"))) throw new Error("--brskalnik firefox: brez mobilnega pogleda (--mobilno, telefon brez --zaslon); uporabi --samo racunalnik ali --zaslon");
   if (!NAPRAVA[JEZIK]) throw new Error(`--jezik: ${Object.keys(NAPRAVA).join(", ")} (ne »${JEZIK}«)`);
   if (JEZIK !== "sl" && ONLY === "racuni") throw new Error("--jezik: računi se preverjajo samo v slovenščini");
   // Z --zaslon (scripts/posnetki-naprave.cjs) teče Chromium v slovenščini: sicer polje za datum kaže mm/dd/llll
