@@ -12,7 +12,7 @@ potrditev ali lažni alarm; vse so popravljene in imajo teste:
 **Prehod 3 (rezultati).** Drugi pregledovalec je ponovil popis (številke se ujemajo) in ročno preveril naključni vzorec
 (seme 20261126) 40 potrjenih korakov in 40 potrjenih računov proti besedilu pol: vsi so trditve, ki jih rešitev res
 naredi, in vsi so pravilni; napačno potrjenih 0/80 (95 % interval 0–4,6 %). Preveril je tudi 10 nalog brez statusa in
-10 delnih: statusi so pošteni. Našel je, da je bil status naloge »numerično« prestrog do bralca: 20 od 29 takih nalog
+10 delnih: statusi so pošteni. Našel je, da je status naloge »numerično« obljubljal preveč: 20 od 29 takih nalog
 je imelo končni odgovor s črko ali besedo, ki ga noben račun ne preveri. Popravek: del brez preverjenega končnega
 odgovora je brez statusa. Oznake nalog imajo zdaj tudi sklop (A/B na maturi).
 
