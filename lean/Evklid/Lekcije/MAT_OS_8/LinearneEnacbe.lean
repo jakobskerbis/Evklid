@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-8/linearne-enacbe.md
-sha256: 85029181bf901ab3ccf927267c6feb537316422457b2d6d2c23a094704f95f39
+sha256: 295b982456ca37f0e77e628fa7ce07c3e2abfa5432effec60735433e8d8220c7
 Ni v Leanu: zgodbe (pot do koče, vozovnice, taksi, Mina in dedek) kot modeli: dokazana je enačba, ki jo
 lekcija zapiše, in njena rešitev; tehtnica in simulacija kot slike (da je tehtnica v ravnovesju le pri pravi
 rešitvi, je enolična rešitev ↔); opredelitev linearne enačbe in rešitve ter imena korakov (ekvivalentno

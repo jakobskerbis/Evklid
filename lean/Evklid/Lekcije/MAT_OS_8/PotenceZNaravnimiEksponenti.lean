@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-8/potence-z-naravnimi-eksponenti.md
-sha256: d31c1296968436a0b64052b0b122c23785b5baa64280dfe3f5a1cfc7021603dc
+sha256: 0ea4ad5f1799ae0c1f86dedbe73f13f6dd4e86c9e1c066680ca08b54603af773
 Ni v Leanu: zgodbe (papir do Lune, sonda, verižno sporočilo, zvezde) kot modeli: dokazani so računi in
 enoličnost števila plasti oz. prejemnikov iz začetnega pogoja in podvajanja (potrojevanja); da papirja
 v resnici ne moreš prepogniti več kot nekajkrat, je fizika; »približno« (220 000 km, 440 000 km, 17 min,

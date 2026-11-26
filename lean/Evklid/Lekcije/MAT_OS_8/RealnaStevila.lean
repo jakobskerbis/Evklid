@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-8/realna-stevila.md
-sha256: dcccfff93de75b3345ab3e5c17951907ac6e9721e3126e8d1fa189edb9a631f1
+sha256: 55904af58e9e2f35fe1831158cc01d8206ada25a784ac464016138246deba5f7
 Ni v Leanu: splošna trditev »racionalno ⇔ decimalni zapis je končen ali periodičen« (in »iracionalno ⇔
 neskončen neperiodičen«) – zahtevno, še ni dokazano; dokazano je, da so periodični zapisi 0,333…, 0,121212…
 in 0,142857142857… (1/7) racionalni (zapis kot vrsta Σ p/(10ᴸ)ᵏ⁺¹ = p/(10ᴸ − 1)) in da so √2, √3, √7, π
