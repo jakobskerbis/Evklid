@@ -8,7 +8,7 @@ import { createRequire } from "node:module";
 import * as acorn from "acorn";
 import { createApp } from "../server/app.js";
 import { openDb } from "../server/db.js";
-import { skrciJs, skrciVklopljeno } from "../server/skrci.js";
+import { skrciJs, skrciVklopljeno, skrciVrsta } from "../server/skrci.js";
 
 const require = createRequire(import.meta.url);
 
@@ -30,6 +30,22 @@ test("skrciJs: brez komentarjev, imena ostanejo, koda se razčleni; sw.js in ne-
   assert.ok(/function reloadIfNewer\(/.test(code), "imena funkcij ostanejo (berljive napake)");
   assert.equal(await skrciJs(fs.readFileSync(new URL("../public/sw.js", import.meta.url)), "public/sw.js"), null);
   assert.equal(await skrciJs(Buffer.from("body{}"), "public/style.css"), null);
+});
+
+test("skrciJs: največ dve krčenji hkrati (prvo odprtje po objavi: ~130 modulov naenkrat, esbuild sicer zraste)", async () => {
+  const src = fs.readFileSync(new URL("../public/app.js", import.meta.url));
+  const vse = Array.from({ length: 12 }, (_, i) => skrciJs(src, `public/a${i}.js`));
+  assert.deepEqual(skrciVrsta(), { tece: 2, caka: 10 });
+  let najvec = 0;
+  const merilnik = setInterval(() => (najvec = Math.max(najvec, skrciVrsta().tece)), 1);
+  const izhod = await Promise.all(vse);
+  clearInterval(merilnik);
+  assert.ok(najvec <= 2, `hkrati ${najvec}`);
+  assert.ok(izhod.every((b) => b.equals(izhod[0]) && b.length < src.length * 0.8));
+  assert.deepEqual(skrciVrsta(), { tece: 0, caka: 0 });
+  // napaka razčlenjevanja sprosti mesto
+  await assert.rejects(skrciJs(Buffer.from("const = ;"), "public/x.js"));
+  assert.deepEqual(skrciVrsta(), { tece: 0, caka: 0 });
 });
 
 test("strežnik z vklopom: /app.js skrčen (brotli), oznaka ETag -s; /sw.js in vendor nespremenjena; brez vklopa izvirnik", async () => {
