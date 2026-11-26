@@ -178,19 +178,35 @@ Izhodišče 26. 11. 2026 (po PV-03):
 | skener | 939 | **0** | 467/471 | 0 | 16 | 406/468 |
 | skener-lokalno | 939 | **0** | 462/471 | 4 | 49 | 170/468 |
 
+Po popravku lažnih alarmov skenerja (spodaj):
+
+| Motor | Trditev | Napačno potrjene | Ujete napake | Napačne s šibkim statusom | Lažni alarmi | Pravilne potrjene |
+| --- | --- | --- | --- | --- | --- | --- |
+| skener | 939 | **0** | 467/471 | 0 | **0** | 417/468 |
+| skener-lokalno | 939 | **0** | 462/471 | 4 | 40 | 170/468 |
+
 0 napačno potrjenih na 512 napačnih trditvah pomeni pri 95-odstotnem zaupanju delež pod približno 0,6 % za vrste napak
 v naboru.
 
-Nove ugotovitve (odprte, popravek potrebuje odobritev):
+Popravljeno (lažni alarmi skenerja, `test/scan-lazni-alarmi.test.js`):
 
-- Skener tudi s SymPy: pravilen količnik fakultet (`factorial(14)/factorial(4) = 3632428800`, 11 trditev) dobi
-  »Zaznana napaka«. Vzrok je `prep()` v `public/scan/solvecore.js` (vrstica 51): regex za uvodne besede (»reši«,
-  »factor« …) nima meje besede, zato iz `factorial(14)` nastane `ial(14)`. Isto zadene realen vnos: »Factorise
-  x^2-4« s pravilnim `(x-2)*(x+2)` dobi »Zaznana napaka« (s SymPy in brez). Napačni količniki fakultet so zato
-  »ujeti« le po naključju. Skener sam fakulteto bere kot `n!` (`14!/4!` deluje).
-- Skener brez SymPy: `log(u, a)` z osnovo (20 trditev: 16 enačb in 4 računi), `binomial(n, k)` (9) in odvod
-  `cos(x^n)` (2) dobijo »Zaznana napaka«. Nabor tu uporablja zapis SymPy; skenerjev zapis (`log_3(x-2)`, `nCr(n,k)`)
-  lokalno dobi »Numerično preverjeno«.
+- `prep()` v `public/scan/solvecore.js` je uvodno besedo (»reši«, »factor« …) odrezal brez meje besede, zato je iz
+  `factorial(14)` nastal `ial(14)` in »Factorise x^2-4« je ostal `ise x^2-4`. Zdaj le cela beseda, »factorise« in
+  »factorize« sta ukaza.
+- Določeni integral: meji `∫_0^pi` in `∫_1^10` sta se prebrali kot `p` in `1`. Meja je zdaj v oklepaju, zavitem
+  oklepaju ali cel žeton.
+- Račun z zaokroženim decimalnim rezultatom (1/3 = 0.33, √2 = 1.414): lokalno in s SymPy (`value` namesto `equal`,
+  le za golo decimalno število) je »Numerično preverjeno« v mejah pol zadnjega mesta, ne »Zaznana napaka«.
+- Enačba z odpravljivo vrzeljo ((x² − 1)/(x + 1) = −2): iskanje ničel je točko vrzeli štelo za manjkajočo rešitev.
+  Hkrati je iskanje zgrešilo rešitev tik ob polu, ki leži točno na mreži (1/(x − 1) = 1000 brez rešitve je dobil
+  »Numerično preverjeno«); okoli takih polov so zdaj dodatne točke.
+- Odvod hitro nihajoče funkcije (cos(x⁶)): numerični odvod s petimi točkami in Richardsonovo ekstrapolacijo.
+
+Ostaja:
+
+- Skener brez SymPy: `log(u, a)` z osnovo (20 trditev), `binomial(n, k)` (9) in `factorial(n)` (11) dobijo
+  »Zaznana napaka«, ker jih kalkulatorjev razčlenjevalnik (`public/graph/math.js`, profil B) ne pozna. Skenerjev
+  zapis (`log_3(x-2)`, `nCr(n,k)`, `n!`) lokalno deluje; s SymPy so vse pravilne.
 - Skener: pravilni nedoločeni in določeni integrali dobijo največ »Numerično preverjeno« (lokalno numerično, SymPy pri
   integralu skenerja ni vključen).
 - SymPy: enota `minute` je neznana (`45*minute`, 4 trditve ostanejo nepreverjene; `min` deluje, zato je to bolj

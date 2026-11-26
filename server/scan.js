@@ -128,7 +128,12 @@ async function casScan(text, sol) {
     const claim = groups.length ? groups.map((g) => [...g].map(([n, x]) => `${n}=${casText(x)}`).join(", ")).join("; ") : "none";
     return casCheck("solve", [eqs.join(", "), names.join(", "), claim]);
   }
-  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [casText(prep(text)), casText(prep(sol.value))]);
+  // Račun brez neznank z zaokroženim decimalnim rezultatom: »value« sprejme zaokroženo decimalno število v mejah zapisa (1/3 = 0.33) kot številsko potrditev;
+  // »equal« ga je zavrnil kot napačnega (N-01, skoraj-016/018/022).
+  // Samo za golo decimalno število: pri znanstvenem zapisu (1.2193263111263526*10^17) bi 53-bitni Float v workerju
+  // napačno zadnjo števko spravil v toleranco.
+  const zaokrozeno = sol?.kind === "arith" && /^\s*[+-]?\d*[.,]\d+\s*$/.test(String(sol.value));
+  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck(zaokrozeno ? "value" : "equal", [casText(prep(text)), casText(prep(sol.value))]);
   // Neenačba (P3-3): obstoječa operacija »ineq« primerja množico rešitev s SymPy solveset (worker.py op_ineq).
   // Dvojne neenačbe (1 < x < 5) worker ne razčleni in vrne null (velja verify.js).
   if (sol?.kind === "inequality" && sol.value) return casCheck("ineq", [casText(prep(text)), v, casText(normalizeSet(sol.value))]);

@@ -48,7 +48,8 @@ export function prep(text) {
     .replace(/÷/g, "/")
     .replace(/\s*=\s*\?\s*$/, "")
     .replace(/\s*=\s*$/, "")
-    .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factor)\s*[:.]?\s*/i, "")
+    // cela beseda: »factorial(14)« ni ukaz »factor« + »ial(14)« (N-01, racun2-118)
+    .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factori[sz]e|factor)(?![a-zA-Zčšžćđ])\s*[:.]?\s*/i, "")
     .trim();
   // a/b z dvema celima številoma je ulomek: 3/4·2/5 = (3/4)·(2/5), ne ((3/4)·2)/5.
   // Ne pri znanstvenem zapisu v imenovalcu (»2/1e8« = 2/10⁸, ne (2/1)·10⁸; AUDIT-042).

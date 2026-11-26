@@ -58,10 +58,25 @@ function scanRoots(eqText, v) {
     const x = 50 * Math.pow(2e4, i / 400);
     xs.push(x, -x);
   }
+  // Pol točno na mreži (1/(x − 1) = 1000 pri x = 1): ničla 1,001 leži v istem koraku kot pol in bi ostala skrita.
+  // Okoli vsake osamljene nedefinirane točke mreže (ne na robu območja, npr. √(x − 60)) dodamo točke na razdaljah 10⁻² … 10⁻¹⁰.
+  xs.sort((a, b) => a - b);
+  const fx = xs.map((t) => fin(g(t)));
+  const poli = xs.filter((t, i) => !fx[i] && fx[i - 1] !== false && fx[i + 1] !== false);
+  for (const x of poli) for (let k = 2; k <= 10; k++) xs.push(x - 10 ** -k * Math.max(1, Math.abs(x)), x + 10 ** -k * Math.max(1, Math.abs(x)));
   xs.sort((a, b) => a - b);
   const ys = xs.map(g);
   const roots = [];
+  // Odpravljiva vrzel ((x² − 1)/(x + 1) = −2 pri x = −1): iskanje najde »ničlo« tik ob točki, kjer enačba ni
+  // definirana, L − D pa je okoli nje zvezna in majhna (pri polu bi bila ogromna). Taka točka ni rešitev (N-01, luknja-009).
+  const hole = (r) =>
+    [1, 2, 3, 4, 5, 6, 8, 10, 12].some((k) => {
+      const s = Math.round(r * k) / k;
+      const h = 1e-6 * Math.max(1, Math.abs(s));
+      return Math.abs(r - s) <= 1e-6 * Math.max(1, Math.abs(s)) && !fin(g(s)) && [s - h, s + h].every((t) => fin(g(t)) && Math.abs(g(t)) <= 1e-3);
+    });
   const add = (r) => {
+    if (hole(r)) return;
     if (fin(g(r)) && Math.abs(g(r)) <= tol(r) && !roots.some((q) => Math.abs(q - r) < 1e-6 * Math.max(1, Math.abs(r)))) roots.push(r);
   };
   for (let i = 1; i < xs.length; i++) {
@@ -338,6 +353,13 @@ function check(problemText, ai) {
         const pb = tryPoly(b);
         return pa && pb ? pa.eq(pb) : null;
       });
+      // Zaokroženo decimalno število kot vrednost števila (1/3 → 0.33, √2 → 1.414): drži numerično, če je razlika največ
+      // pol zadnjega mesta. Točna primerjava (ostane, kadar drži: 1.2·0.3 = 0.36) bi ga označila kot napačnega (N-01, skoraj-016/018/022).
+      const tol = kind === "arith" ? decimalTol(ai.value) : 0;
+      if (tol > 1e-12 && ok !== true) {
+        const d = Math.abs(compile(a)({}) - compile(b)({}));
+        if (fin(d)) return { verified: d <= tol, reason: "wrong", evidence: { holds: d <= tol, how: "numeric", complete: "na" } };
+      }
       if (ok !== null) return { verified: ok, reason: "wrong", evidence: { holds: ok, how: "exact", complete: "na" } };
       return { verified: equalNumerically(a, b), reason: "wrong" };
     }
@@ -359,23 +381,27 @@ function check(problemText, ai) {
         return pf && pg ? polyDiff(pf, v).eq(pg) : null;
       });
       if (ok !== null) return { verified: ok, reason: "wrong", evidence: { holds: ok, how: "exact", complete: "na" } };
-      return { verified: compareFns((x) => (f({ [v]: x + 1e-5 }) - f({ [v]: x - 1e-5 })) / 2e-5, (x) => g({ [v]: x })), reason: "wrong" };
+      return { verified: compareFns((x) => odvodV((t) => f({ [v]: t }), x), (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {
-      const m = /∫\s*(?:_\(?([^\s^]+?)\)?\^\(?([^\s]+?)\)?)?\s*(.+?)\s*d([a-z])\s*$/.exec(String(problemText).replace(/\\int/g, "∫"));
+      // Meja je v oklepaju ali zaviti oklepaj, sicer cel žeton do presledka (»∫_0^pi«, »∫_1^10«; leno ujemanje je
+      // prej prebralo meji »p« in »1«, N-01 integral-019/021), brez presledka pa število ali π.
+      const MEJA = String.raw`\([^()]*\)|\{[^{}]*\}|[^\s^(){}]+(?=\^)|[^\s(){}]+(?=\s)|-?\d+(?:[.,]\d+)?|π`;
+      const m = new RegExp(String.raw`∫\s*(?:_(${MEJA})\^(${MEJA}))?\s*(.+?)\s*d([a-z])\s*$`).exec(String(problemText).replace(/\\int/g, "∫"));
       const g = fnOf(ai.value);
       if (!m || !g) return { verified: false, reason: "parse" };
       const f = fnOf(m[3]);
       const x = m[4];
       if (!f) return { verified: false, reason: "parse" };
       if (m[1] !== undefined) {
-        const a = values(m[1])[0];
-        const b = values(m[2])[0];
+        const meja = (t) => values(t.replace(/^[({](.*)[)}]$/, "$1"))[0];
+        const a = meja(m[1]);
+        const b = meja(m[2]);
         const exact = integrate((t) => f({ [x]: t }), a, b);
         const val = g({});
         return { verified: fin(exact) && fin(val) && Math.abs(exact - val) < 1e-6 * Math.max(1, Math.abs(exact)), reason: "wrong" };
       }
-      return { verified: compareFns((t) => f({ [x]: t }), (t) => (g({ [x]: t + 1e-5 }) - g({ [x]: t - 1e-5 })) / 2e-5), reason: "wrong" };
+      return { verified: compareFns((t) => f({ [x]: t }), (t) => odvodV((u) => g({ [x]: u }), t)), reason: "wrong" };
     }
   } catch {
     return { verified: false, reason: "error" };
@@ -501,6 +527,14 @@ function qFromFloatSafe(x) {
   } catch {
     return null;
   }
+}
+
+// Odvod v točki s petimi točkami: pri hitro nihajočih funkcijah (cos(x⁵) pri x = 5,3) je simetrična
+// razlika s tremi točkami netočna za ~10⁻³ in je sprožila lažni alarm (N-01, odvod2-027/043).
+function odvodV(f, x) {
+  const d = (h) => (f(x - 2 * h) - 8 * f(x - h) + 8 * f(x + h) - f(x + 2 * h)) / (12 * h);
+  // Richardsonova ekstrapolacija (napaka ~h⁶): cos(x⁶) pri x = 5,3 niha prehitro tudi za pet točk s h = 10⁻⁵.
+  return (16 * d(5e-6) - d(1e-5)) / 15;
 }
 
 function compareFns(f, g) {
