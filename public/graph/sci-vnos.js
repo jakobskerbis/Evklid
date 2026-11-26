@@ -37,6 +37,11 @@ export function analyzeLive(text, env = {}) {
   // limita(f; x; a), taylor(f; x; a; n), det([[a; b]; [c; d]]): podpičje loči argumente oziroma elemente
   const cmd = parseCommand(text);
   if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env, live: true });
+  // ukaz sredi izraza (2·limita(…)): CAS ga ne izračuna, zapis pa mora biti matematika, ne »l i m i t a(x; x; 0)« (AUDIT-071)
+  if (!cmd && embeddedCmd(text)) {
+    const tex = embeddedTex(String(text), env);
+    if (tex) return { kind: "solve", tex };
+  }
   if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
     const r = withChem(text, evaluate, env);
     // ∫(1/√x; 0; 1): v predogledu isto kot ob Izračunaj (»= 2«, ne »≈ 2«)
@@ -48,7 +53,72 @@ export function analyzeLive(text, env = {}) {
 }
 
 /** TeX besedila po poti predogleda; null, če ga ni mogoče razčleniti. */
+// ukaz CAS (limita, integriraj, det …) ali odvod z redom sredi izraza: zapis brez ukaza bi bil surov
+// (»2·limita(x; x; 0)« → l i m i t a(x; x; 0), »1d/dx(x³;2)« → ((x³; 2))). AUDIT-071
+const EMBED = new RegExp(`(?:d\\/dx|${COMMAND_NAMES.map((n) => n.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")).join("|")})\\s*\\(`, "giu");
+function embeddedTex(text, env) {
+  const parts = [];
+  let out = "";
+  let i = 0;
+  const base = ["86420", "97531", "75319", "64208"].find((h) => !text.includes(h));
+  if (!base) return null;
+  for (const m of text.matchAll(EMBED)) {
+    if (m.index < i) continue;
+    const o = m.index + m[0].length - 1;
+    const c = closeAt(text, o);
+    const end = c < 0 ? text.length : c + 1;
+    // cel vnos je ukaz: to zna liveTex sam
+    if (m.index === 0 && end === text.length) return null;
+    const seg = text.slice(m.index, end);
+    const tex = liveTex(seg, env);
+    if (!tex) return null;
+    out += text.slice(i, m.index) + `(${base}${parts.length})`;
+    parts.push(tex);
+    i = end;
+  }
+  if (!parts.length) return null;
+  out += text.slice(i);
+  let tex = null;
+  try {
+    tex = withChem(out, previewTex, env) || null;
+  } catch {}
+  if (!tex) return null;
+  for (let k = parts.length - 1; k >= 0; k--) {
+    if (!tex.includes(`${base}${k}`)) return null;
+    // za ukazom eksponent ((limita(…))²): oklepaj ostane, da je jasno, kaj je na kvadrat
+    const at = tex.indexOf(`${base}${k}`);
+    const pow = tex[at + base.length + String(k).length] === "^";
+    tex = tex.replace(`${base}${k}`, pow ? `\\left(${parts[k]}\\right)` : `{${parts[k]}}`);
+  }
+  return tex;
+}
+
 export function liveTex(text, env = {}) {
+  const tex = liveTexAll(text, env);
+  // ukaz, ki ga CAS izriše kot ime z argumenti (taylor(sin(x); x; 0; 5)): argumente loči vejica, ne surovo »;«
+  return typeof tex === "string" && /^\\operatorname\{[^}]+\}\\left\(/.test(tex) ? tex.replace(/;\\ /g, ",\\ ") : tex;
+}
+
+function liveTexAll(text, env = {}) {
+  if (embeddedCmd(text)) {
+    const t = embeddedTex(String(text ?? ""), env);
+    if (t) return t;
+  }
+  return liveTexPlain(text, env);
+}
+// ukaz CAS sredi izraza (√(integriraj(x²)) bi bil √(int e g r …)); odvod le z redom (d/dx(x³;2)+1), brez reda ga
+// zapis že zna
+function embeddedCmd(text) {
+  for (const m of String(text ?? "").matchAll(EMBED)) {
+    if (!/^d\/dx/i.test(m[0])) return true;
+    const o = m.index + m[0].length - 1;
+    const c = closeAt(String(text), o);
+    if (/;/.test(String(text).slice(o, c < 0 ? undefined : c))) return true;
+  }
+  return false;
+}
+
+function liveTexPlain(text, env = {}) {
   let r = null;
   try {
     r = analyzeLive(text, env);
@@ -361,11 +431,6 @@ function visualOrder(s, A) {
     }
     return g;
   };
-  const cm = /^\s*([A-Za-zčšž]+)\s*\(/.exec(s);
-  let cmd = null;
-  try {
-    cmd = cm && parseCommand(s);
-  } catch {}
   const out = [];
   let moved = false;
   const walk = (lo, hi) => {
@@ -411,11 +476,20 @@ function visualOrder(s, A) {
           continue;
         }
       }
-      if (i === cm?.index + cm?.[0].search(/\S/) && cmd && (cmd.op === "limit" || cmd.op === "integrate")) {
-        const o = cm.index + cm[0].length - 1;
+      // limita in integriraj: tudi sredi izraza (2·limita(…), AUDIT-071), ne le kot cel vnos
+      const lm = /^(?:limita|limit|integriraj|integrate)\s*\(/i.exec(s.slice(i, hi));
+      let cmd = null;
+      if (lm && !/[A-Za-zčšž]/.test(s[i - 1] || "")) {
+        const cc = closeOf(i + lm[0].length - 1);
+        try {
+          cmd = parseCommand(s.slice(i, cc > 0 ? cc + 1 : hi));
+        } catch {}
+      }
+      if (cmd && (cmd.op === "limit" || cmd.op === "integrate")) {
+        const o = i + lm[0].length - 1;
         const c = closeOf(o);
         const g = c > 0 && c < hi ? slots(o, c) : null;
-        const ne = i + cm[1].length;
+        const ne = i + lm[0].replace(/\s*\($/, "").length;
         // v imenu ukaza ali tik pred oklepajem = začetek prve reže (ime se ne razbije)
         const inName = () => { for (let q = i + 1; q <= o; q++) alias.set(q, o + 1); };
         if (g && cmd.op === "limit" && g.length === 3) {
@@ -1105,4 +1179,177 @@ export function texSpeech(tex, { say, words, greek = {}, parse }) {
     }
   };
   return sp(tree).replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Vstavi besedilo tipke na mesto s (»@« = mesto kazalca po vstavljanju). Odprt oklepaj tipke (»^(«, »√(«, »sin(«) se
+ * zapre pred prvim »;«, »)« ali »]« zunanje predloge za kazalcem: sicer bi požrl njene reže (∫(|;0;1) + xʸ je dalo
+ * ∫(^(;0;1), torej ∫ brez mej in eksponent »(□; 0; 1)«; AUDIT-067). Brez zunanje reže za kazalcem (konec vnosa,
+ * »sin(|x« na vrhu) ostane odprt kot prej: zajame, kar sledi, in complete ga zapre za prikaz.
+ * Vrne { text, pos }.
+ */
+export function insertKey(text, s, ins) {
+  const t = String(text ?? "");
+  s = Math.max(0, Math.min(t.length, s));
+  const at = ins.indexOf("@");
+  let clean = ins.replace("@", "");
+  let open = 0;
+  for (const c of clean) {
+    if (OPENERS.includes(c)) open++;
+    else if (CLOSERS.includes(c) && open > 0) open--;
+  }
+  let rest = t.slice(s);
+  if (open > 0) {
+    // prvo ločilo ali zaklepaj na globini 0 (glede na kazalec): tam se konča reža, v kateri je kazalec
+    let d = 0;
+    let end = -1;
+    for (let j = 0; j < rest.length; j++) {
+      const c = rest[j];
+      if (OPENERS.includes(c)) d++;
+      else if (CLOSERS.includes(c)) {
+        if (d === 0) {
+          end = j;
+          break;
+        }
+        d--;
+      } else if (c === ";" && d === 0) {
+        end = j;
+        break;
+      }
+    }
+    // vsebina do konca reže (brez presledkov na koncu) gre v novi oklepaj, zaklepaji pred ločilom
+    if (end >= 0) {
+      let k = end;
+      while (k > 0 && /\s/.test(rest[k - 1])) k--;
+      rest = rest.slice(0, k) + ")".repeat(open) + rest.slice(k);
+    }
+  }
+  return { text: t.slice(0, s) + clean + rest, pos: s + (at >= 0 ? at : clean.length) };
+}
+
+// tipke predlog in operatorjev, ki potrebujejo režo ali levi operand (številke in črke niso tu)
+const TEMPLATE_KEY = (ins) => /\(/.test(ins) || ["²", "³", "⁻¹", ";", "!", "%", "°", "′", "″"].includes(ins);
+// odprte skupine okoli mesta p: začetek, število »;« v njej, zaprta
+function groupsAt(t, p) {
+  const st = [];
+  for (let i = 0; i < p; i++) {
+    if (OPENERS.includes(t[i])) st.push(i);
+    else if (CLOSERS.includes(t[i])) st.pop();
+  }
+  return st
+    .map((o) => {
+      let d = 0;
+      let sep = 0;
+      let cl = -1;
+      for (let j = o; j < t.length && cl < 0; j++) {
+        const c = t[j];
+        if (OPENERS.includes(c)) d++;
+        else if (CLOSERS.includes(c)) {
+          if (--d === 0) cl = j;
+        } else if (c === ";" && d === 1) sep++;
+      }
+      return `${o}:${sep}:${cl >= 0}`;
+    })
+    .join(",");
+}
+const topSemis = (t) => {
+  let d = 0;
+  let n = 0;
+  for (const c of t) {
+    if (OPENERS.includes(c)) d++;
+    else if (CLOSERS.includes(c)) d--;
+    else if (c === ";" && d === 0) n++;
+  }
+  return n;
+};
+// »;« v zapisu (zunaj \text) je surovo ločilo: predloga ni prepoznana (»(□; 0; 1)« v eksponentu)
+const texSemis = (tex) => (String(tex ?? "").replace(/\\text\{[^}]*\}/g, "").match(/;/g) || []).length;
+
+// največ »;« v predlogi (reže − 1); brez imena (navaden oklepaj, točka, matrika) in seznami niso omejeni
+const SEMIS_MAX = { "∫": 2, "d/dx": 1, integriraj: 1, limita: 2, taylor: 3, reši: 1, resi: 1, nCr: 1, nPr: 1, gcd: Infinity, lcm: Infinity, mod: 1, round: 1, randint: 1, Pol: 1, Rec: 1, root: 1, logb: 1, mean: Infinity, median: Infinity, stdev: Infinity, stdevp: Infinity, min: Infinity, max: Infinity, total: Infinity };
+// ali sme »;« na mestu s: v najbolj notranji skupini, ki jo predloga dovoli (∫ ima 3 reže, sin, √ in xʸ eno)
+function semiAllowed(t, s) {
+  const st = [];
+  for (let i = 0; i < s; i++) {
+    if (OPENERS.includes(t[i])) st.push(i);
+    else if (CLOSERS.includes(t[i])) st.pop();
+  }
+  if (!st.length) return true;
+  const o = st.at(-1);
+  if (t[o] === "[") return true;
+  const name = /(∫|d\/dx|[∑∏]_|\^|[√∛]|[A-Za-zčšžČŠŽ]+)\s*$/u.exec(t.slice(0, o))?.[1];
+  if (!name) return true;
+  const max = SEMIS_MAX[name] ?? 0;
+  const now = Number(groupsAt(t, o + 1).split(",").at(-1).split(":")[1]);
+  return now + 1 <= max;
+}
+
+// mesto za naslednjim »;« najbolj notranje skupine (inner) ali prve zunanje skupine, ki ga ima (outer); −1, če ga ni
+function nextSlot(t, s) {
+  const out = { inner: -1, outer: -1 };
+  const depth = groupsAt(t, s).split(",").filter(Boolean).length; // odprte skupine okoli kazalca
+  let d = 0;
+  let level = 0; // 0 = najbolj notranja skupina, 1+ = zunanje
+  for (let j = s; j < t.length && level < depth; j++) {
+    const c = t[j];
+    if (OPENERS.includes(c)) d++;
+    else if (CLOSERS.includes(c)) {
+      if (d === 0) level++;
+      else d--;
+    } else if (c === ";" && d === 0) {
+      let p = j + 1;
+      while (t[p] === " ") p++;
+      if (level === 0) out.inner = p;
+      else out.outer = p;
+      break;
+    }
+  }
+  return out;
+}
+
+/**
+ * Tipka na mestu s: insertKey in varovalo (kot pri ⌫, AUDIT-034). Tipka predloge (xʸ, √, sin, ∫, ;, x², !, …), po
+ * kateri se zapis ne bi izrisal, bi pokazal surovo ločilo ali bi zunanji predlogi spremenil reže (∫ bi izgubil meje),
+ * se ne zgodi: vrne null (AUDIT-067). Če zapis že prej ni bil čist, varovala ni (ne zaklene vnosa).
+ */
+export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
+  const t = String(text ?? "");
+  s = Math.max(0, Math.min(t.length, s));
+  // zaklepaj: pred (samodejno vstavljenim) enakim zaklepajem kazalec stopi čez njega; zaklepaj, ki bi zaprl že zaprto
+  // skupino (∫(x+1|;;) → ∫(x+1);;) zapre ∫ prezgodaj), se ne zgodi (pregled #1017)
+  if (ins === ")" || ins === "]") {
+    if (t[s] === ins) return { text: t, pos: s + 1 };
+    const g = groupsAt(t, s).split(",").filter(Boolean).at(-1);
+    if (!g || g.endsWith(":true")) return null; // ni odprte skupine ali je že zaprta
+    if (t[Number(g.split(":")[0])] !== (ins === ")" ? "(" : "[")) return null; // ] ne zapre (
+    return keyGuard(t, insertKey(t, s, ins), env, render, check);
+  }
+  // »;« v predlogi: v naslednjo režo, če jo predloga že ima (∫(x|;;) → ∫(x;|;), kot ▶); sicer nova reža, kjer jo
+  // predloga sprejme (d/dx(x³|) → d/dx(x³;|)); iz gnezdene skupine (∫(sin(x|);0;1)) v naslednjo režo zunanje
+  if (ins === ";") {
+    const next = nextSlot(t, s);
+    if (next.inner >= 0) return { text: t, pos: next.inner };
+    if (!semiAllowed(t, s)) return next.outer >= 0 ? { text: t, pos: next.outer } : null;
+  }
+  const r = insertKey(t, s, ins);
+  // števka, črka ali operator: le varovalo izrisa (»0|,5« + x → 0x,5 ni zapis; AUDIT-071), reže se ne preverjajo
+  if (!TEMPLATE_KEY(ins)) return keyGuard(t, r, env, render, check);
+  const g = keyGuard(t, r, env, render, check);
+  if (g && ins !== ";" && (groupsAt(t, s) !== groupsAt(r.text, s) || topSemis(t) !== topSemis(r.text))) return null;
+  return g;
+}
+
+// r, če se zapis po njem izriše brez surovih ločil (in ga je bilo pred njim mogoče izrisati); sicer null
+function keyGuard(t, r, env, render, check) {
+  let b0 = null;
+  let b = null;
+  try {
+    b0 = t.trim() ? entryBase(t, env, render) : null;
+    b = entryBase(r.text, env, render);
+  } catch {}
+  if (t.trim() && !(b0?.ok && !/;;\)|undefined/.test(b0.tex))) return r;
+  if (!b?.ok || /;;\)|undefined/.test(b.tex) || texSemis(b.tex) > texSemis(b0?.tex)) return null;
+  // izris v pravem KaTeX (kalkulator poda check): »(x+1)°^(2)« je dvojni eksponent
+  if (check && !check(caretTex(b, r.pos))) return null;
+  return r;
 }

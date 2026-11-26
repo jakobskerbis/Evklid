@@ -7,7 +7,7 @@ import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralError
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { graphable } from "./v-graf.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK, pressKey, insertKey } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
@@ -262,21 +262,33 @@ export function createScientific(root, opts) {
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
     // izbira, ki zajame le del imenovane predloge, se razširi na celo predlogo (ne ostane »;0;1)«); oklepaj, ki bi
     // ostal brez para, ostane (AUDIT-039)
+    let cur = input.value;
+    let s = input.selectionStart ?? cur.length;
     {
-      const a = input.selectionStart ?? input.value.length;
-      const b = input.selectionEnd ?? a;
-      if (a !== b) {
-        const d = deleteSpan(input.value, a, b);
-        input.value = d.text;
-        input.setSelectionRange(d.pos, d.pos);
+      const b = input.selectionEnd ?? s;
+      if (s !== b) {
+        const d = deleteSpan(cur, s, b);
+        cur = d.text;
+        s = d.pos;
       }
     }
-    const s = input.selectionStart ?? input.value.length;
-    const e = s;
-    const at = ins.indexOf("@");
-    const clean = ins.replace("@", "");
-    input.value = input.value.slice(0, s) + clean + input.value.slice(e);
-    const pos = s + (at >= 0 ? at : clean.length);
+    // odprt oklepaj tipke se zapre pred ločilom zunanje predloge; tipka predloge, ki bi pokvarila zapis ali reže
+    // zunanje predloge (∫(|;0;1) + xʸ), se ne zgodi (AUDIT-067)
+    // varovalo velja za tipke kalkulatorja; besedilo od zunaj (formula iz zbirke, »Uporabi v računu« z grafa) gre noter
+    // kot prej, le odprt oklepaj se zapre pred ločilom
+    const r = o.ext || o.replace ? insertKey(cur, s, ins) : pressKey(cur, s, ins, env(), {
+      check: (tex) => {
+        try {
+          izrisi(tex, { napaka: "vrzi", zaupaj: TRUST });
+          return true;
+        } catch {
+          return false;
+        }
+      },
+    });
+    if (!r) return refused();
+    input.value = r.text;
+    const pos = r.pos;
     input.setSelectionRange(pos, pos);
     recall = -1;
     if (o.replace) fromFormula = namesIn(input.value);
@@ -286,6 +298,19 @@ export function createScientific(root, opts) {
       live.className = "sc-live muted";
       live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
     }
+  }
+  // tipka, ki se tu ne more zgoditi (; v sin(x), x² na začetku meje …): kratek tresljaj vrstice in sporočilo v
+  // aria-live, da ni videti, kot da tipka ne dela (AUDIT-071)
+  function refused() {
+    showEntry();
+    const live = $(".sc-live");
+    live.className = "sc-live muted";
+    live.innerHTML = `<span class="sc-live-hint">${esc(t("sc.keyRefused"))}</span>`;
+    const box = $(".sc-entry");
+    box?.classList.remove("sc-zavrni");
+    void box?.offsetWidth; // ponovni začetek animacije ob ponovljeni tipki
+    box?.classList.add("sc-zavrni");
+    setTimeout(() => box?.classList.remove("sc-zavrni"), 400);
   }
   // ⌫ (zaslonska in strojna tipka) in Delete: ime funkcije, ukaz in predloga gredo kot celota (sci-vnos.js, AUDIT-004)
   function edit(fn) {
@@ -1171,6 +1196,13 @@ export function createScientific(root, opts) {
       insert(e.data);
       return;
     }
+    // oklepaj, zaklepaj in »;« s tipkovnice gredo po poti zaslonskih tipk: ( se zapre pred režo zunanje predloge,
+    // ) stopi čez samodejni zaklepaj, ; gre v naslednjo režo (AUDIT-067)
+    if (e.inputType === "insertText" && /^[()[\];]$/.test(e.data || "")) {
+      e.preventDefault();
+      insert(e.data);
+      return;
+    }
     if (e.inputType === "deleteContentBackward" || e.inputType === "deleteWordBackward") {
       e.preventDefault();
       del();
@@ -1360,7 +1392,7 @@ export function createScientific(root, opts) {
       showPanel(null);
       return true;
     },
-    insert,
+    insert: (text, o = {}) => insert(text, { ...o, ext: true }),
     renderVars, // skupna zgodovina zavihkov: čipi »Nedavno« ob preklopu na Znanstveni
     get state() {
       return st;

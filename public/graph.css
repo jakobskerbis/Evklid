@@ -297,6 +297,10 @@ body.graph-open { overflow: hidden; }
 .sc .katex.tb-zlozena { margin-left: auto; margin-right: 0; }
 /* kazalec in prazen okvirček (sci-vnos.js): barvi iz spremenljivk teme, tudi v temni temi */
 .sc-preview .sc-caret { color: var(--accent); animation: sc-blink 1.1s steps(1) infinite; }
+/* tipka, ki tu ne gre (AUDIT-071): kratek tresljaj, brez gibanja ob prefers-reduced-motion */
+.sc-entry.sc-zavrni { animation: sc-zavrni 0.3s ease-in-out; }
+@keyframes sc-zavrni { 0%, 100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .sc-entry.sc-zavrni { animation: none; outline: 2px solid var(--accent); outline-offset: -2px; } }
 .sc-preview .sc-caret .rule { border-color: currentColor; }
 .sc-preview .sc-hole { color: var(--muted); }
 @keyframes sc-blink { 50% { opacity: 0; } }
