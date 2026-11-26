@@ -60,8 +60,8 @@
     "generator": 633
    },
    "po_vrsti": {
-    "izbirna": 251,
-    "racun": 454,
+    "izbirna": 252,
+    "racun": 453,
     "izraz": 37,
     "opis": 57,
     "graf": 1,
@@ -72,8 +72,8 @@
     "SS-1": 177,
     "SS-2": 213,
     "SS-4": 98,
-    "SS-3": 220,
-    "OS-9": 91,
+    "SS-3": 219,
+    "OS-9": 92,
     "TEK-OS": 42,
     "TEK-SS": 48
    },
@@ -119,8 +119,8 @@
   }
  },
  "sha256": {
-  "razvoj-generatorji.json": "1c4c8a92e212deba8b413c8e23050ddbcd6779b100df429450547cf10c12282e",
+  "razvoj-generatorji.json": "c897f2090229731761de189444838c881853d6539806ff00eef1782348a2fe17",
   "razvoj-uradno (čisto besedilo)": "0a5a030272a8d877dcd5205e442044765d572bcd42466ff1541e1c7516d5c335",
-  "skrito (čisto besedilo)": "89caa113ff27f3ef86f90617b5f947749ae037fb1e642086a51ffdaec2a30ce6"
+  "skrito (čisto besedilo)": "b34e992d64e0ba018746aa2571670d8e8801218e246aad344cf29ba44489db7c"
  }
 }

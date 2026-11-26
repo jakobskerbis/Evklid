@@ -91,7 +91,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (arg("--naloge")) {
     const naloge = primeri.flatMap((p, i) => (v[i].tema ? [1, 2, 3].map((r) => nalogaZaGumb(p, v[i].tema, r)) : []));
     // Reševalec dobi besedilo, možnosti in ime teme, ne odgovora.
-    fs.writeFileSync(arg("--naloge"), JSON.stringify(naloge.map((n) => ({ id: `${n.id}/${n.raven}`, tema: getTopic(n.tema)?.name, besedilo: n.besedilo, moznosti: n.javno.options || null, enota: n.odgovor.unit || null, decimalke: n.odgovor.decimals ?? null })), null, 1));
+    fs.writeFileSync(arg("--naloge"), JSON.stringify(naloge.map((n) => ({ id: `${n.id}/${n.raven}`, tema: getTopic(n.tema)?.name, besedilo: n.besedilo, moznosti: n.javno.options || null, slika: n.javno.figure || null, enota: n.odgovor.unit || null, decimalke: n.odgovor.decimals ?? null })), null, 1));
     fs.writeFileSync(arg("--naloge").replace(/\.json$/, ".kljuc.json"), JSON.stringify(naloge.map((n) => ({ id: `${n.id}/${n.raven}`, tema: n.tema, generator: n.generator, odgovor: n.odgovor })), null, 1));
   }
   if (arg("--json")) fs.writeFileSync(arg("--json"), JSON.stringify(v, null, 1));

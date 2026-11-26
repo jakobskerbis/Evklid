@@ -1328,12 +1328,52 @@ export const MAT_GENERATORS = [
   {
     id: "krog",
     topics: ["MAT-OS-8/obseg-in-ploscina-kroga", "MAT-OS-8/krozni-lok-in-krozni-izsek"],
-    gen(level, r) {
+    gen(level, r, topic) {
+      // Naloga mora biti na temi (meritev K-08): pri obsegu in ploščini kroga ni krožnega loka, pri loku in izseku ni
+      // samo obsega ali ploščine celega kroga.
+      const lok = /krozni-lok/.test(topic || "");
+      const obsegTema = /obseg-in-ploscina-kroga/.test(topic || "");
       const u = r.pick(["cm", "m"]);
       const u2 = `${u}²`;
       const rad = level === 1 ? r.int(2, 15) : r.dec(1.5, 20, 1);
       const piNote = "Uporabi $\\pi \\approx 3{,}14$ ali tipko $\\pi$ na računalu.";
       const rDat = dat("r", tx(rad), u);
+      if (lok && level < 3) {
+        // Ploščina krožnega izseka.
+        const alpha = r.pick([30, 45, 60, 72, 90, 120, 135, 150]);
+        const pi = (Math.PI * rad * rad * alpha) / 360;
+        return {
+          text: `Krožni izsek s središčnim kotom $${alpha}^\\circ$ je del kroga s polmerom $${tx(rad)}\\ \\mathrm{${u}}$. Izračunaj njegovo ploščino. Zaokroži na dve decimalki. ${piNote}`,
+          answer: withMistakes({ type: "number", value: pi, alsoAccept: [(3.14 * rad * rad * alpha) / 360], unit: u2, decimals: 2 }, [
+            [(Math.PI * rad * alpha) / 180, "To je dolžina loka, ne ploščina izseka."],
+            [Math.PI * rad * rad, "To je ploščina celega kroga; izsek je le del, ki pripada kotu α."],
+            [(Math.PI * rad * alpha) / 360, "Polmer moraš kvadrirati: $p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}$."],
+          ]),
+          hint: "Izsek je tak del kroga, kot je kot $\\alpha$ del $360^\\circ$: $p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}$.",
+          data: { given: [`\\alpha = ${alpha}^\\circ`, rDat], find: ["p_i"] },
+          formula: "p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}",
+          solution: `Izsek je $\\dfrac{${alpha}^\\circ}{360^\\circ}$ kroga s ploščino $\\pi r^2$, zato $p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}$.\n${eqs("p_i", `\\dfrac{\\pi \\cdot (${qty(tx(rad), u)})^2 \\cdot ${alpha}^\\circ}{360^\\circ}`, `\\approx ${qty(tx(pi, 2), u2)}`)}`,
+        };
+      }
+      if (level === 3 && obsegTema) {
+        // Iz obsega polmer, nato ploščina (dva koraka).
+        const o = r.int(10, 120);
+        const rr = o / (2 * Math.PI);
+        const pl = Math.PI * rr * rr;
+        const r314 = o / (2 * 3.14);
+        return {
+          text: `Obseg kroga meri $${o}\\ \\mathrm{${u}}$. Izračunaj njegovo ploščino. Zaokroži na dve decimalki. ${piNote}`,
+          answer: withMistakes({ type: "number", value: pl, alsoAccept: [3.14 * r314 * r314], unit: u2, decimals: 2 }, [
+            [Math.PI * (o / Math.PI) ** 2, "Iz obsega dobiš premer $o/\\pi$; polmer je polovica premera."],
+            [Math.PI * o * o, "Najprej iz obsega izračunaj polmer: $r = \\dfrac{o}{2\\pi}$."],
+            [rr, "To je polmer; ploščina je $\\pi r^2$."],
+          ]),
+          hint: "Iz $o = 2\\pi r$ izrazi polmer, nato uporabi $p = \\pi r^2$.",
+          data: { given: [`o = ${qty(o, u)}`], find: ["p"] },
+          formula: ["r = \\dfrac{o}{2\\pi}", "p = \\pi r^2"],
+          solution: `${eqs("r", "\\dfrac{o}{2\\pi}", `\\dfrac{${qty(o, u)}}{2\\pi}`, `\\approx ${qty(tx(rr, 3), u)}`)}\n${eqs("p", "\\pi r^2", `\\approx ${qty(tx(pl, 2), u2)}`)}`,
+        };
+      }
       if (level === 3) {
         const alpha = r.pick([30, 45, 60, 72, 90, 120, 135, 150]);
         const l = (Math.PI * rad * alpha) / 180;
