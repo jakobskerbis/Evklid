@@ -8,7 +8,7 @@
 import { previewTex, analyze, exactIntegral, calculusEnv } from "./scisolve.js";
 import { evaluate, functionDef } from "./scicore.js";
 import { parseCommand, commandInside, COMMAND_NAMES } from "./cas.js";
-import { BUILTINS, intVar } from "./math.js";
+import { BUILTINS, intVar, oneArgFn } from "./math.js";
 import { chemSub } from "./molska.js";
 
 // Barvi kazalca in okvirčka sta v graph.css (.sc-caret, .sc-hole: CSS spremenljivke, tudi temna tema).
@@ -168,11 +168,11 @@ export function complete(text, hole) {
     else if (CLOSERS.includes(c) && stack.length) stack.pop();
   }
   let s = src + stack.reverse().join("");
-  // ∑_(n=1)^(10) brez telesa: telo je okvirček (predloga tipke ∑ in ∏, AUDIT-020); meje so lahko gnezdene
-  const bigOp = (() => {
-    const i = Math.max(s.lastIndexOf("∑"), s.lastIndexOf("∏"));
-    if (i < 0) return -1;
-    let j = i + 1;
+  // ∑_(n=1)^(10) brez telesa: telo je okvirček (predloga tipke ∑ in ∏, AUDIT-020); meje so lahko gnezdene. Tudi v
+  // prazni reži predloge (∫(∑_(n=1)^() ;0;1), nCr(∑_(n=1)^() ;)): za mejama je le še ločilo ali zaklepaj
+  const bigOps = new Set();
+  for (const m of s.matchAll(/[∑∏]/g)) {
+    let j = m.index + 1;
     const group = (open) => {
       if (s[j] !== open[0] || s[j + 1] !== "(") return false;
       let d = 0;
@@ -182,8 +182,8 @@ export function complete(text, hole) {
       }
       return false;
     };
-    return group("_") && group("^") && /^[\s)\]]*$/.test(s.slice(j)) ? j : -1; // indeks za mejama ali −1
-  })();
+    if (group("_") && group("^") && /^\s*(?:[;)\]]|$)/.test(s.slice(j))) bigOps.add(j); // indeks za mejama
+  }
   // ∫( z manj kot dvema »;« (ročno natipkan »∫(«, »∫(x«, »∫(x;0«): pred zaklepajem manjkajoči reži (AUDIT-037)
   const intMissing = new Map();
   {
@@ -218,13 +218,16 @@ export function complete(text, hole) {
       out += hole;
       added += hole.length;
     }
+    if (bigOps.has(i)) {
+      out += ` ${hole}`;
+      added += hole.length + 1;
+    }
     for (let m = intMissing.get(i) || 0; m > 0; m--) {
       out += `;${hole}`;
       added += 1 + hole.length;
     }
     if (i < s.length) out += c;
   }
-  if (bigOp >= 0) out = `${out.slice(0, bigOp + shift[bigOp])} ${hole}${out.slice(bigOp + shift[bigOp])}`;
   return { text: out, at: (p) => Math.max(0, Math.min(src.length, p)) + shift[Math.max(0, Math.min(src.length, p))] };
 }
 
@@ -1367,7 +1370,7 @@ function texSemis(tex) {
 }
 
 // največ »;« v predlogi (reže − 1); brez imena (navaden oklepaj, točka, matrika) in seznami niso omejeni
-const SEMIS_MAX = { "∫": 2, "d/dx": 1, integriraj: 1, integrate: 1, limita: 2, limit: 2, lim: 2, taylor: 3, reši: 1, resi: 1, solve: 1, inverz: 0, inverse: 0, inv: 0, det: 0, nCr: 1, nPr: 1, gcd: Infinity, lcm: Infinity, mod: 1, round: 1, randint: 1, Pol: 1, Rec: 1, root: 1, logb: 1, mean: Infinity, median: Infinity, stdev: Infinity, stdevp: Infinity, min: Infinity, max: Infinity, total: Infinity };
+const SEMIS_MAX = { "∑_": 0, "∏_": 0, "^": 0, "√": 0, "∛": 0, poenostavi: 0, razvij: 0, razstavi: 0, simplify: 0, expand: 0, factor: 0, "∫": 2, "d/dx": 1, integriraj: 1, integrate: 1, limita: 2, limit: 2, lim: 2, taylor: 3, reši: 1, resi: 1, solve: 1, inverz: 0, inverse: 0, inv: 0, det: 0, nCr: 1, nPr: 1, gcd: Infinity, lcm: Infinity, mod: 1, round: 1, randint: 1, Pol: 1, Rec: 1, root: 1, logb: 1, mean: Infinity, median: Infinity, stdev: Infinity, stdevp: Infinity, min: Infinity, max: Infinity, total: Infinity };
 // ali sme »;« na mestu s: v najbolj notranji skupini, ki jo predloga dovoli (∫ ima 3 reže, sin, √ in xʸ eno)
 // najbolj notranja odprta skupina okoli s: { o, name } (name: ime predloge pred oklepajem, »« za [ ali navaden oklepaj)
 function innerGroup(t, s) {
@@ -1381,14 +1384,20 @@ function innerGroup(t, s) {
   if (t[o] === "[") return { o, name: "" };
   return { o, name: /(∫|d\/dx|[∑∏]_|\^|[√∛]|[A-Za-zčšžČŠŽ]+)\s*$/u.exec(t.slice(0, o))?.[1] || "" };
 }
+// 0: ne sme; 1: nova reža predloge s stalnimi režami (zapis brez surovega ločila); 2: prosto ločilo (vrh, [, navaden
+// oklepaj, funkcija poljubno ali več argumentov)
 function semiAllowed(t, s) {
   const g = innerGroup(t, s);
-  if (!g) return true;
+  if (!g) return 2;
   const { o, name } = g;
-  if (!name) return true;
-  const max = SEMIS_MAX[name] ?? 0;
+  if (!name) return 2;
+  // ime, ki ga ni v SEMIS_MAX: funkcija z enim argumentom (sin, ln, abs …) ne sprejme »;«; vse drugo (avg, binom, var,
+  // sort, uporabniška f(2; 3) …) ga sprejme kot na main – števke se nikoli ne zlepijo (avg(126)), napaka arity ostane
+  const lower = Object.keys(SEMIS_MAX).find((k) => k.toLowerCase() === name.toLowerCase());
+  const max = name in SEMIS_MAX ? SEMIS_MAX[name] : lower ? SEMIS_MAX[lower] : oneArgFn(name) || oneArgFn(name.toLowerCase()) ? 0 : Infinity;
+  if (max === Infinity) return 2;
   const now = Number(groupsAt(t, o + 1).split(",").at(-1).split(":")[1]);
-  return now + 1 <= max;
+  return now + 1 <= max ? 1 : 0;
 }
 
 // mesto za naslednjim »;« najbolj notranje skupine (inner) ali prve zunanje skupine, ki ga ima (outer); −1, če ga ni
@@ -1427,6 +1436,9 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
   // skupino (∫(x+1|;;) → ∫(x+1);;) zapre ∫ prezgodaj), se ne zgodi (pregled #1017)
   if (ins === ")" || ins === "]") {
     if (t[s] === ins) return { text: t, pos: s + 1 };
+    // za zadnjo celico matrike (det([[1; 2]; [3; 4|]])): »)« stopi čez »]]« in zaklepaj predloge (nato +1 gre za det)
+    const out = ins === ")" && /^[\s\]]*\]\s*\)/.exec(t.slice(s));
+    if (out) return { text: t, pos: s + out[0].length };
     const g = groupsAt(t, s).split(",").filter(Boolean).at(-1);
     // zaklepaj brez odprtega oklepaja (x+1 nato »)«) gre noter kot na main
     if (!g) return insertKey(t, s, ins);
@@ -1451,13 +1463,15 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
   if (ins === ";") {
     const next = nextSlot(t, s);
     if (next.inner >= 0) return { text: t, pos: next.inner };
-    if (!semiAllowed(t, s)) return next.outer >= 0 ? { text: t, pos: next.outer } : null;
-    // v [ ali navadnem oklepaju (matrika na roko det([[1; 2]; …]), točka (1; 2)) je »;« ločilo, ki ga zapis pokaže:
-    // eno surovo ločilo več je dovoljeno; če se zapis ne izriše, gre kazalec v naslednjo režo zunanje predloge (kot ▶)
-    const g = innerGroup(t, s);
-    if (g && !g.name) {
+    const how = semiAllowed(t, s);
+    if (!how) return next.outer >= 0 ? { text: t, pos: next.outer } : null;
+    // prosto ločilo (matrika na roko det([[1; 2]; …]), točka (1; 2), avg(1; 2), binom(5; 2), f(2; 3) z napako arity
+    // kot na main): zapis ga sme pokazati; če se zapis ne izriše, gre kazalec v naslednjo režo zunanje predloge (kot ▶),
+    // v funkciji več argumentov pa gre »;« noter kot na main – števke se nikoli ne zlepijo (avg(126))
+    if (how === 2) {
       const r = keyGuard(t, insertKey(t, s, ins), env, render, check, 1);
-      return r || (next.outer >= 0 ? { text: t, pos: next.outer } : null);
+      if (r || next.outer >= 0) return r || { text: t, pos: next.outer };
+      return innerGroup(t, s)?.name ? insertKey(t, s, ins) : null; // v funkciji več argumentov kot na main
     }
   }
   const r = insertKey(t, s, ins);

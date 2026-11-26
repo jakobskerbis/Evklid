@@ -307,10 +307,13 @@ export function splitTop(s, seps = ";") {
 // »∫(f, a, b)« (po argSeparators) → »∫_(a)^(b) (f) dx« (zapis, ki ga razume razčlenjevalnik)
 // AUDIT-070: spremenljivka integrala v ∫(f; a; b): x, sicer edina enočrkovna spremenljivka v f (∫(sin(t); 0; x) je po t)
 // (∫(x·t; 0; x): x je v meji, zato je spremenljivka t)
-// Črka za števko je spremenljivka (∫(2t; 0; 1), ∫(3t²; 0; 2)); »d/dx« ni črka d (∫(d/dx(t²); 0; 1) je po t).
+// Črka za števko ali konstanto je spremenljivka (∫(2t; 0; 1), ∫(3t²; 0; 2), ∫(2πt; 0; 1)); »d/dx« ni črka d; konstanti
+// π in τ ter indeks vsote ∑_(n=1)^(5) nista spremenljivki integrala (∫(τ; 0; 1) = 2π, ∫(∑_(n=1)^(5) n; 0; 1) je po x).
 export function intVar(f, names, lims = "") {
   const known = (c) => names && (names.has ? names.has(c) : c in names);
-  const letters = (u) => new Set((u.replace(/d\/dx/g, " ").match(/(?<![A-Za-zα-ωΑ-Ω_])[A-Za-zα-ωΑ-Ω](?![A-Za-zα-ωΑ-Ω_\d(])/g) || []).filter((c) => !"eiπ".includes(c) && !known(c)));
+  const bound = new Set([...String(f).matchAll(/[∑∏]_\(\s*([A-Za-zα-ωΑ-Ω])\s*=/g)].map((m) => m[1]));
+  const letters = (u) =>
+    new Set((u.replace(/d\/dx/g, " ").replace(/[πτ]/g, " ").match(/(?<![A-Za-zα-ωΑ-Ω_])[A-Za-zα-ωΑ-Ω](?![A-Za-zα-ωΑ-Ω_\d(])/g) || []).filter((c) => !"ei".includes(c) && !known(c) && !bound.has(c)));
   const ids = letters(f);
   const inLims = letters(lims);
   const free = [...ids].filter((c) => !inLims.has(c));

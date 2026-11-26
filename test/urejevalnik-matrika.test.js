@@ -205,7 +205,10 @@ const plainSemi = (t, p, k) => {
     else if (")]".includes(t[i])) st.pop();
   }
   const o = st.at(-1);
-  return o !== undefined && (t[o] === "[" || !/[A-Za-zčšž√∛∫^_]\s*$|d\/dx$/.test(t.slice(0, o))) ? 1 : 0;
+  if (o === undefined) return 0;
+  if (t[o] === "[" || !/[A-Za-zčšž√∛∫^_]\s*$|d\/dx$/.test(t.slice(0, o))) return 1;
+  // uporabniška funkcija f(2; 3) (napaka arity kot na main), ne predloga s stalnimi režami
+  return /(?<![A-Za-z])[a-z]$/.test(t.slice(0, o)) ? 1 : 0;
 };
 const KEYS_T = ["²", "^(", "√(", "⁻¹", "sin(", "∫(@;;)", "d/dx(@)", ";", "×10^(", "!", "%", "°", "(", ")", "abs(", "nCr(@;)"];
 const katexOk = (tex) => {
@@ -458,6 +461,42 @@ test("pregled 2/3: zaklepaj se premakne, ; v matriki in točki, d t na koncu, pr
   const seen = [];
   for (let p = 0, k = 0; k < 40 && p < t5.length; k++) seen.push((p = stepCaret(b5, t5, p, 1)));
   assert.ok(seen.includes(14), seen.join(","));
+});
+
+// Pregled 3 (adversarialni, 26. 11. 2026): »;« v funkcijah več argumentov, ki jih SEMIS_MAX ne našteva (prej avg(126)),
+// ∑ in ∏ v prazni reži predloge, ) za zadnjo celico det.
+test("pregled 3: ; v vsaki funkciji več argumentov, ∑ v reži, ) iz matrike", () => {
+  const seq = (t, p, keys, e = env) => {
+    for (const k of keys) {
+      const r = pressKey(t, p, k, e, { check: katexOk });
+      assert.ok(r, `${keys.join(" ")}: tipka »${k}« zavrnjena pri ${t} @${p}`);
+      ({ text: t, pos: p } = r);
+    }
+    return { t, p };
+  };
+  const typed = (s, e) => seq("", 0, [s.slice(0, s.indexOf("(") + 1), ...s.slice(s.indexOf("(") + 1).split("")], e).t;
+  const ef = { ...env, funcs: { f: { param: "x", body: "x²" } } };
+  for (const [s, want] of [["avg(1;2;6)", 3], ["binom(5;2)", 10], ["ncr(5;2)", 10], ["npr(5;2)", 20], ["var(1;2;3)", 1], ["length(1;2)", 2], ["count(1;2)", 2], ["sort(3;1)", null], ["f(2;3)", "arity"]]) {
+    const t = typed(s.slice(0, -1), ef);
+    assert.equal(t, s.slice(0, -1), s);
+    const r = analyze(s, ef);
+    if (want === "arity") assert.equal(r?.error?.code, "arity", s);
+    else if (want !== null) assert.equal(r?.value, want, s);
+  }
+  // funkcija z enim argumentom še vedno ne sprejme »;«
+  assert.equal(pressKey("sin(1)", 5, ";", env, { check: katexOk }), null);
+  assert.equal(pressKey("SIN(1)", 5, ";", env, { check: katexOk }), null);
+  // ∑ in ∏ v prazni reži: vstavita se, naslednje tipke gredo v prave reže
+  assert.deepEqual(seq("", 0, ["∫(@;;)", "∑_(n=1)^(@) ", "3", ";", "0", ";", "1"]), { t: "∫(∑_(n=1)^(3) ;0;1)", p: 18 });
+  assert.equal(seq("∫(;0;1)", 2, ["∏_(n=1)^(@) "]).t, "∫(∏_(n=1)^() ;0;1)");
+  assert.equal(seq("∫(x;;1)", 4, ["∑_(n=1)^(@) "]).t, "∫(x;∑_(n=1)^() ;1)");
+  assert.equal(seq("nCr(;)", 4, ["∑_(n=1)^(@) "]).t, "nCr(∑_(n=1)^() ;)");
+  for (const t of ["∫(∑_(n=1)^(3) ;0;1)", "nCr(∑_(n=1)^() ;)", "2+∑_(n=1)^() "]) {
+    const b = entryBase(t, env);
+    for (let p = 0; p <= t.length; p++) assert.ok(b?.ok && katexOk(caretTex(b, p)), `${t} @${p}`);
+  }
+  // ) za zadnjo celico 2 × 2 det stopi iz predloge
+  assert.equal(seq("", 0, ["det([[@; ]; [; ]])", "1", ";", "2", ";", "3", ";", "4", ")", "+", "1"]).t, "det([[1; 2]; [3; 4]])+1");
 });
 
 test("vnos, zapis in izračun se ujemajo (decimalna vejica, predloge)", () => {

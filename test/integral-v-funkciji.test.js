@@ -76,3 +76,11 @@ test("∫(2t; 0; 1), ∫(3t²; 0; 2), f(x) = ∫(2t+1; 0; x); calcText privzeto 
   assert.match(calcText("∫(2t;0;1)"), /\) dx\)$/);
   assert.match(calcText("∫(2t;0;1)", { freeInt: true }), /\) dt\)$/);
 });
+
+// Pregled 3: konstanti π in τ nista spremenljivki integrala (∫(τ; 0; 1) = 2π, ∫(2πt; 0; 1) = π), indeks vsote tudi ne.
+test("∫(τ; 0; 1), ∫(2πt; 0; 1), ∫(∑_(n=1)^(3) n; 0; 1)", async () => {
+  assert.ok(close(run(["∫(τ;0;1)"])[0].value, 2 * Math.PI));
+  assert.ok(close(run(["∫(2πt;0;1)"])[0].value, Math.PI));
+  assert.ok(close(run(["∫(∑_(n=1)^(3) n;0;1)"])[0].value, 6));
+  assert.ok(close(run(["∫(∑_(n=1)^(3) n·t;0;1)"])[0].value, 3));
+});
