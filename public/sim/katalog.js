@@ -465,6 +465,7 @@ export const SIM_TOPICS = {
   "KEM-SS-1/stehiometrija": [["stehiometrija", "Omejitveni reaktant", { mode: "delci" }], ["stehiometrija", "Mase snovi pri reakciji", { mode: "mase" }], ["lab-co2", "Laboratorij: omejitveni reaktant in izguba mase"]],
   "KEM-SS-1/plini": [["plini", "Plin v posodi: tlak, prostornina, temperatura"], ["lab-boyle", "Laboratorij: Boylov zakon (tlak in prostornina)"]],
   "KEM-SS-1/raztopine": ["raztopina", "Koncentracija raztopine", { mode: "molarna" }],
+  "KEM-SS-1/topnost-in-sestava-raztopin": [["raztopina", "Masni delež raztopine", { mode: "masni" }], ["raztopina", "Množinska koncentracija", { mode: "molarna" }]],
   "KEM-SS-1/urejanje-enacb": ["enacbe", "Urejanje kemijskih enačb"],
   "KEM-SS-1/energija-pri-reakcijah": [["energija-reakcije", "Reakcijska entalpija in aktivacijska energija"], ["lab-energija", "Laboratorij: reakcijska entalpija s kalorimetrom"]],
   // ---------------------------------------------------------------- KEM SŠ 2
@@ -474,6 +475,7 @@ export const SIM_TOPICS = {
   "KEM-SS-2/ph": [["ph", "pH lestvica"], ["lab-ph", "Laboratorij: pH-meter, umerjanje in razredčenje kislin"]],
   "KEM-SS-2/sibke-kisline-in-baze": [["disociacija", "Močne in šibke kisline"], ["lab-titracija", "Laboratorij: titracija ocetne kisline in izbira indikatorja"]],
   "KEM-SS-2/titracija": [["titracija", "Titracijska krivulja", { mode: "ss" }], ["lab-titracija", "Laboratorij: titracija z bireto in indikatorjem"]],
+  "KEM-SS-2/elektroliti-in-ionske-reakcije": [["disociacija", "Močni in šibki elektroliti"], ["ph", "Kisle, bazične in nevtralne raztopine"]],
   "KEM-SS-2/oksidacijska-stevila": ["oksidacijska", "Določanje oksidacijskih števil"],
   "KEM-SS-2/redoks-reakcije": [["reaktivnost", "Redoks: kovina v raztopini soli", { mode: "redoks" }], ["lab-kovine", "Laboratorij: vrsta reaktivnosti kovin"]],
   "KEM-SS-2/galvanski-cleni-in-elektroliza": [["galvanski", "Galvanski člen in elektroliza"], ["lab-galvanski", "Laboratorij: galvanski člen in Nernstova enačba"], ["lab-elektroliza", "Laboratorij: elektroliza v Hofmannovem aparatu"]],
@@ -491,6 +493,8 @@ export const SIM_TOPICS = {
   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine": [["polimer", "Ogljikovi hidrati, lipidi in beljakovine", { sets: ["skrob", "mascoba", "beljakovina"] }], ["3d-molekule", "3D: Glukoza", { zacetek: { molekula: "glukoza" }, poskusi: "Glukoza je v obliki stola. Skrij vodikove atome in poišči, katere skupine –OH so ekvatorialne." }], ["3d-beljakovina", "3D: Beljakovina", { zacetek: { beljakovina: "inzulin" }, poskusi: "Preklopi med trakom in verigo Cα. Kaj pomeni, da ima beljakovina primarno, sekundarno in terciarno zgradbo?" }]],
   "KEM-SS-3/polimeri": ["polimer", "Adicijska in kondenzacijska polimerizacija", { sets: ["polieten", "pvc", "poliester", "beljakovina"] }],
   // ---------------------------------------------------------------- KEM SŠ 4
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine": [["periodni", "Bloki in skupine periodnega sistema", { highlight: "skupine" }], ["oksidacijska", "Oksidacijska števila prehodnih kovin"]],
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju": [["ravnotezje", "Le Chatelierovo načelo pri sintezi amoniaka"], ["galvanski", "Elektroliza"]],
   "KEM-SS-4/splosna-in-anorganska-kemija": ["zbirka", "Zbirka simulacij: splošna kemija", { items: KEM_SPLOSNA }],
   "KEM-SS-4/organska-kemija": ["zbirka", "Zbirka simulacij: organska kemija", { items: KEM_ORG }],
   "KEM-SS-4/kemijsko-racunanje": ["zbirka", "Zbirka simulacij: kemijsko računanje", { items: KEM_RACUN }],

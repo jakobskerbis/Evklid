@@ -281,7 +281,7 @@ d) Valjasti del silosa je do vrha napolnjen z žitom z gostoto $750\,\text{kg/m}
 2. a) $v_2 = r\tan 35^\circ = 2\tan 35^\circ \approx 1{,}4004\,\text{m} \approx 1{,}40\,\text{m}$ in $s = \dfrac{r}{\cos 35^\circ} \approx 2{,}4415\,\text{m} \approx 2{,}44\,\text{m}$.
 3. b) Valj: $V_1 = \pi r^2 v_1 = \pi \cdot 4 \cdot 9 = 36\pi \approx 113{,}097\,\text{m}^3$.
 4. b) Streha: $V_2 = \dfrac{\pi r^2 v_2}{3} \approx \dfrac{\pi \cdot 4 \cdot 1{,}4004}{3} \approx 5{,}866\,\text{m}^3$. Skupaj $V \approx 118{,}963\,\text{m}^3 \approx 119{,}0\,\text{m}^3$.
-5. c) Plašč valja: $2\pi r v_1 = 36\pi \approx 113{,}097\,\text{m}^2$. Plašč stožca: $\pi r s \approx \pi \cdot 2 \cdot 2{,}4415 \approx 15{,}341\,\text{m}^2$.
+5. c) Plašč valja: $2\pi r v_1 = 36\pi \approx 113{,}097\,\text{m}^2$. Plašč stožca: $\pi r s = \pi \cdot 2 \cdot s \approx 15{,}341\,\text{m}^2$.
 6. c) Skupaj $\approx 128{,}44\,\text{m}^2$; pločevine ne sme zmanjkati, zato zaokrožimo navzgor na $129\,\text{m}^2$.
 7. d) Masa žita: $m = 113{,}097\,\text{m}^3 \cdot 750\,\text{kg/m}^3 \approx 84\,823\,\text{kg} \approx 84{,}8\,\text{t}$.
 8. Odgovor: a) streha je visoka približno $1{,}40\,\text{m}$, njena stranica meri $2{,}44\,\text{m}$; b) $V \approx 119{,}0\,\text{m}^3$; c) potrebujemo $129\,\text{m}^2$ pločevine; d) v silosu je približno $84{,}8\,\text{t}$ žita.

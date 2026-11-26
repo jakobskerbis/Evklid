@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-3/povrsina-in-prostornina-teles.md
-sha256: b87459365f54240e7bbf4a68a761a6aaf5fdfbb8376fdd0f79f2396855a83b6c
+sha256: 712b7519c0a3434ad9b22e77938c473e5a22f3c476db51c3b76a80a2697d2724
 Model: formule za površino (P = 2S + S_p, P = S + S_p, plašč valja 2πrv, plašč stožca πrs, krogla 4πr²) so
 vsote ploščin mejnih ploskev in so vzete kot definicije (Mathlib nima površine ploskev v ℝ³ v tej obliki);
 dokazane so njihove algebrske oblike (2πr² + 2πrv = 2πr(r + v), πr² + πrs = πr(r + s), S_p = o·v kot vsota
@@ -19,9 +19,8 @@ podobnost trikotnikov v nalogi 3 b) kot geometrijska trditev (dokazana je enačb
 stranico kot razdalja središča od premice), pri nalogi 3 d) to, da ima poševni stožec na višini h prav tako
 prerez s polmerom 6(8 − h)/8 (zahtevno, še ni dokazano; dokazan je integral presekov pokončnega stožca),
 pri ustnem vprašanju 2 povečanje površine podobnega telesa k²-krat v splošnem (zahtevno, še ni dokazano;
-prostornina k³-krat je dokazana z mero, za kroglo tudi površina), točkovanje. Opomba: v nalogi 2 c) je vmesni izraz
-π·2·2,4415 ≈ 15,3404 (zaokroženo 15,340), lekcija piše 15,341, kar velja za nezaokroženo
-s = 2/cos 35° (dokazano tako).
+prostornina k³-krat je dokazana z mero, za kroglo tudi površina), točkovanje. V nalogi 2 c) je plašč stožca π·2·s ≈ 15,341 z
+nezaokroženim s = 2/cos 35° (dokazano tako).
 Lean: x/0 = 0 in √ negativnega je 0; trditve imajo zato pozitivne podatke.
 -/
 module
