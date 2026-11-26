@@ -1,11 +1,17 @@
 @echo off
 "%SystemRoot%\System32\chcp.com" 65001 >nul
 setlocal EnableExtensions
-rem Delavec Lean za Evklid (docs/lean.md L5, NAVODILA.md). Dvoklik zadostuje. Prvič namesti Node, Git, elan,
-rem Lean in prevedeni Mathlib (okoli 7 GB), nato vsakih 20 s vpraša evklid.app za trditev in jo dokaže z Leanom.
-rem Samo izhodna povezava; okno pusti odprto. Ne zamenjaj te datoteke, dokler okno teče (cmd jo bere sproti).
+rem Delavec Lean za Evklid (docs/lean.md L5, NAVODILA.md). Dvoklik zadostuje (vprasa za skrbniske pravice).
+rem Namestitev: vse v C:\Evklid\lean-delavec (zunaj j-jevega profila), Node, Git, elan, Lean in prevedeni Mathlib
+rem (okoli 7 GB), omejen uporabnik evklid-lean in opravilo v Razporejevalniku opravil, ki delavca zazene ob vklopu
+rem kot ta uporabnik (tudi brez prijave). Lean zato ne more brati j-jevih datotek.
+rem "zazeni.bat delavec" zazene opravilo (kot evklid-lean): samo zanka delavca.
+rem Brez oklepajev okoli ukazov s potmi (pot z ")" bi pokvarila blok): samo goto.
 set "S32=%SystemRoot%\System32"
-cd /d "%~dp0"
+set "PS=%S32%\WindowsPowerShell\v1.0\powershell.exe"
+set "CILJ=C:\Evklid\lean-delavec"
+set "UPORABNIK=evklid-lean"
+set "OPRAVILO=Evklid Lean delavec"
 set "TU=%~dp0"
 set "NODE_RAZL=v24.22.3"
 set "NODE_ZIP=node-v24.22.3-win-x64.zip"
@@ -16,56 +22,116 @@ set "GIT_SHA=c2c955a21fa99889d83f485f24fa5d9a38fffc2d509d4022385510e11c26b250"
 set "ELAN_URL=https://github.com/leanprover/elan/releases/download/v4.4.0/elan-x86_64-pc-windows-msvc.zip"
 set "ELAN_SHA=63f50605424284927799702347e2bdbd99d017b9d80ae083c65ee2189c4caf75"
 set "ORODJA=%TU%orodja"
-title Evklid - delavec Lean
+set "NODE=%ORODJA%\node\node-v24.22.3-win-x64\node.exe"
+set "GIT=%ORODJA%\git\cmd\git.exe"
+rem elan, Lean in predpomnilnik Mathliba v mapi delavca, ne v profilu uporabnika
+set "ELAN_HOME=%ORODJA%\elan-home"
+set "MATHLIB_CACHE_DIR=%ORODJA%\mathlib-cache"
+set "LAKE=%ELAN_HOME%\bin\lake.exe"
+set "PATH=%ORODJA%\git\cmd;%ELAN_HOME%\bin;%PATH%"
+if /i "%~1"=="delavec" goto delavec
+
+rem ================= namestitev (j, dvoklik) =================
+title Evklid - namestitev delavca Lean
+"%S32%\net.exe" session >nul 2>&1
+if errorlevel 1 goto povisaj
+
+rem ---- vedno v C:\Evklid\lean-delavec (ne namizje, ne OneDrive) ----
+if /i "%TU%"=="%CILJ%\" goto na_mestu
+echo  Kopiram delavca v %CILJ% ...
+"%S32%\schtasks.exe" /End /TN "%OPRAVILO%" >nul 2>&1
+"%S32%\robocopy.exe" "%TU%." "%CILJ%" /E /XD orodja delo .lake /XF nastavitve.json stanje.json dnevnik.txt* /NFL /NDL /NJH /NJS /NP >nul
+if errorlevel 8 goto napaka
+call "%CILJ%\zazeni.bat"
+exit /b
+
+:povisaj
+echo  Windows bo vprasal za dovoljenje (skrbnik). Klikni Da.
+set "ZAZENI=%~f0"
+"%PS%" -NoProfile -Command "Start-Process -FilePath $env:ZAZENI -Verb RunAs"
+exit /b
+
+:na_mestu
+cd /d "%CILJ%"
 echo.
-echo  Evklid: delavec Lean (dokazuje matematicne trditve)
-echo  Okno pusti odprto. Prenosnik naj bo na polnilcu. Ustavis ga tako, da zapres okno.
+echo  Evklid: namestitev delavca Lean (dokazuje matematicne trditve)
+echo  Okno pusti odprto. Ne klikaj v okno (to ustavi izpis; ce se je ustavilo, pritisni Esc).
 echo.
+"%S32%\schtasks.exe" /End /TN "%OPRAVILO%" >nul 2>&1
 if not exist "%ORODJA%" mkdir "%ORODJA%"
 
-rem ---- Node (prenosna kopija v orodja\node, ce ni namescen) ----
-set "NODE=%ORODJA%\node\node-v24.22.3-win-x64\node.exe"
+rem ---- Node (prenosna kopija v orodja\node) ----
 if exist "%NODE%" goto imam_node
 echo  Prenasam Node %NODE_RAZL% (okoli 35 MB) ...
 call :prenesi "https://nodejs.org/dist/%NODE_RAZL%/%NODE_ZIP%" "%ORODJA%\%NODE_ZIP%" "%NODE_SHA%" "%ORODJA%\node" || goto napaka
 :imam_node
 
 rem ---- Git (lake z njim prenese Mathlib) ----
-set "GIT=%ORODJA%\git\cmd\git.exe"
 if exist "%GIT%" goto imam_git
 echo  Prenasam Git (okoli 40 MB) ...
 call :prenesi "%GIT_URL%" "%ORODJA%\%GIT_ZIP%" "%GIT_SHA%" "%ORODJA%\git" || goto napaka
 :imam_git
-set "PATH=%ORODJA%\git\cmd;%USERPROFILE%\.elan\bin;%PATH%"
 
 rem ---- elan v4.4.0 in Lean (razlicica iz projekt\lean-toolchain) ----
-if exist "%USERPROFILE%\.elan\bin\lake.exe" goto imam_elan
+if exist "%LAKE%" goto imam_elan
 echo  Namescam elan v4.4.0 ...
 call :prenesi "%ELAN_URL%" "%ORODJA%\elan.zip" "%ELAN_SHA%" "%ORODJA%\elan" || goto napaka
-"%ORODJA%\elan\elan-init.exe" -y --default-toolchain none
+"%ORODJA%\elan\elan-init.exe" -y --default-toolchain none --no-modify-path
 if errorlevel 1 goto napaka
 :imam_elan
 
-rem ---- prevedeni Mathlib (prvic dolgo, okoli 7 GB) ----
-if exist "%TU%projekt\.lake\packages\mathlib\.lake\build\lib\lean\Mathlib.olean" goto imam_mathlib
+rem ---- prevedeni Mathlib: znova, ce se je spremenil lean-toolchain ali lake-manifest.json ----
+copy /b /y "%CILJ%\projekt\lean-toolchain" + "%CILJ%\projekt\lake-manifest.json" "%ORODJA%\mathlib-zdaj.txt" >nul
+if not exist "%CILJ%\projekt\.lake\packages\mathlib\.lake\build\lib\lean\Mathlib.olean" goto prenesi_mathlib
+if not exist "%ORODJA%\mathlib-rev.txt" goto prenesi_mathlib
+"%S32%\fc.exe" /b "%ORODJA%\mathlib-zdaj.txt" "%ORODJA%\mathlib-rev.txt" >nul
+if errorlevel 1 goto prenesi_mathlib
+goto imam_mathlib
+:prenesi_mathlib
 echo  Prenasam prevedeni Mathlib (prvic lahko traja ure; okno pusti odprto) ...
-pushd "%TU%projekt"
-"%USERPROFILE%\.elan\bin\lake.exe" exe cache get
+pushd "%CILJ%\projekt"
+"%LAKE%" exe cache get
 set "RC=%ERRORLEVEL%"
 popd
 if not "%RC%"=="0" goto napaka
+move /y "%ORODJA%\mathlib-zdaj.txt" "%ORODJA%\mathlib-rev.txt" >nul
 :imam_mathlib
 
 rem ---- nastavitve.json z zetonom (prvic) ----
-"%NODE%" "%TU%delavec.mjs" --pripravi
-if not exist "%TU%nastavitve.json" goto napaka
+if not exist "%CILJ%\delo" mkdir "%CILJ%\delo"
+"%NODE%" "%CILJ%\delavec.mjs" --pripravi
+if not exist "%CILJ%\nastavitve.json" goto napaka
 
-rem ---- delavec: ce se kdaj konca, ga po 30 s znova zazenemo ----
+rem ---- uporabnik evklid-lean, pravice map, opravilo ob vklopu ----
+echo  Pripravljam uporabnika %UPORABNIK% in opravilo "%OPRAVILO%" ...
+"%PS%" -NoProfile -ExecutionPolicy Bypass -File "%CILJ%\uporabnik.ps1" -Mapa "%CILJ%" -Ime "%UPORABNIK%" -Opravilo "%OPRAVILO%"
+if errorlevel 1 goto napaka
+rem pokrov zaprt na polnilcu: ne naredi nic (prenosnik ne zaspi)
+"%S32%\powercfg.exe" /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0 >nul 2>&1
+"%S32%\powercfg.exe" /setactive SCHEME_CURRENT >nul 2>&1
+"%S32%\schtasks.exe" /Run /TN "%OPRAVILO%" >nul
+if errorlevel 1 goto napaka
+echo.
+echo  ============================================
+echo   KONCANO. Delavec tece v ozadju kot uporabnik %UPORABNIK%
+echo   (tudi po ponovnem zagonu, brez prijave). To okno lahko zapres.
+echo   Stanje: %CILJ%\delo\stanje.json
+echo   Dnevnik: %CILJ%\delo\dnevnik.txt
+echo  ============================================
+echo.
+pause
+exit /b 0
+
+rem ================= delavec (opravilo, kot evklid-lean) =================
+:delavec
+cd /d "%TU%"
+if not exist "%TU%delo\tmp" mkdir "%TU%delo\tmp"
+set "TEMP=%TU%delo\tmp"
+set "TMP=%TU%delo\tmp"
 :zanka
-echo  Delavec tece. Stanje: stanje.json, dnevnik: dnevnik.txt
-"%NODE%" "%TU%delavec.mjs"
-echo  Delavec se je ustavil; znova cez 30 s ...
-"%S32%\timeout.exe" /t 30 /nobreak >nul
+"%NODE%" "%TU%delavec.mjs" --mapa "%TU%delo"
+rem ce se kdaj konca, ga po 30 s znova zazenemo (ping: timeout.exe v opravilu brez konzole ne dela)
+"%S32%\PING.EXE" -n 31 127.0.0.1 >nul
 goto zanka
 
 rem ---- prenos + SHA-256 + razpakiranje: %1 naslov, %2 datoteka, %3 sha256, %4 mapa ----
@@ -74,19 +140,23 @@ rem ---- prenos + SHA-256 + razpakiranje: %1 naslov, %2 datoteka, %3 sha256, %4 
 if errorlevel 1 exit /b 1
 set "DPOT=%~2"
 set "DSHA=%~3"
-"%S32%\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "if ((Get-FileHash -Algorithm SHA256 -LiteralPath $env:DPOT).Hash -ne $env:DSHA) { exit 1 }"
-if errorlevel 1 (del "%~2" & echo  NAPAKA: prenesena datoteka je pokvarjena ^(SHA-256^), izbrisana. & exit /b 1)
+"%PS%" -NoProfile -ExecutionPolicy Bypass -Command "if ((Get-FileHash -Algorithm SHA256 -LiteralPath $env:DPOT).Hash -ne $env:DSHA) { exit 1 }"
+if errorlevel 1 goto pokvarjeno
 if not exist "%~4" mkdir "%~4"
 "%S32%\tar.exe" -xf "%~2" -C "%~4"
 if errorlevel 1 exit /b 1
 del "%~2"
 exit /b 0
+:pokvarjeno
+del "%~2"
+echo  NAPAKA: prenesena datoteka je pokvarjena (SHA-256), izbrisana.
+exit /b 1
 
 :napaka
 echo.
 echo  ============================================
-echo   NAPAKA. Poslji Claudu datoteko dnevnik.txt
-echo   ali sliko tega okna. Nato znova dvakrat klikni zazeni.bat.
+echo   NAPAKA. Poslji Claudu sliko tega okna.
+echo   Nato znova dvakrat klikni zazeni.bat.
 echo  ============================================
 echo.
 pause

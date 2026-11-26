@@ -78,6 +78,10 @@ export const GATE_FAILS_IP = 20;
 export const GATE_FAILS_ALL = 200;
 const GATE_WINDOW_MS = 15 * 60 * 1000;
 
+// Naslov za omejitve (K-13): s trust proxy req.ip, sicer naslov vtičnice; glav odjemalca ne beremo. Uporablja ga tudi
+// server/lean-vrsta.js.
+export const clientIp = (req) => String((req.app?.get("trust proxy") ? req.ip : null) || req.socket?.remoteAddress || "");
+
 export function passwordGate(password) {
   const expected = Buffer.from(password);
   const token = crypto.createHmac("sha256", password).update(`${BRAND.slug}-gate-v1`).digest("hex");
@@ -92,7 +96,6 @@ export function passwordGate(password) {
   // (X-Forwarded-For, CF-Connecting-IP), ne beremo. Za tunelom cloudflared imajo vsi isti naslov (127.0.0.1), zato je
   // tam omejitev skupna. Skupna meja (vsi naslovi) velja vedno; ob napadu za 15 minut ustavi nove prijave, kdor ima
   // piškotek, ostane prijavljen.
-  const clientIp = (req) => String((req.app?.get("trust proxy") ? req.ip : null) || req.socket?.remoteAddress || "");
   const blocked = (req) => {
     const now = Date.now();
     if (vsi.n >= GATE_FAILS_ALL && vsi.until > now) return true;

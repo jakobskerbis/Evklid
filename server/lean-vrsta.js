@@ -6,13 +6,16 @@ import "./env.js";
 import crypto from "node:crypto";
 import express from "express";
 import { preveriTrditev, IZIDI, TAKTIKE, DOVOLJENI_AKSIOMI, NAJVEC_SPOROCILA } from "../scripts/lean-delavec/trditev.mjs";
+import { izrekDokaza } from "../scripts/lean-delavec/lean.mjs";
 import { VRSTE } from "../public/preverjanje/trditev.js";
+import { clientIp } from "./gate.js";
 
 export const NAJMANJ_ZNAKOV_ZETONA = 32;
 export const PRIVZETO = {
   najemMs: 10 * 60 * 1000, // delavec ima nalogo največ toliko časa, nato gre nazaj v vrsto
   poskusov: 3, // po toliko potečenih najemih naloga dobi »timeout«
-  cakaMs: 24 * 60 * 60 * 1000, // nepobrana naloga po tem dobi »timeout« (prenosnik ugasnjen)
+  cakaMs: 24 * 60 * 60 * 1000, // nepobrana naloga (ali najem, ki je potekel tako davno) po tem dobi »timeout«
+  neuspehMs: 60 * 60 * 1000, // »failed« velja kot dvojnik samo toliko časa (nato se ista trditev preveri znova)
   hraniDni: 7, // končane in stare naloge se izbrišejo
   najvecVVrsti: 500, // več čakajočih nalog → vpis zavrnjen
   utripMs: 3 * 60 * 1000, // delavec je »na voljo«, če se je oglasil v tem času
@@ -71,6 +74,7 @@ const javno = (r) =>
     ...(r.sporocilo ? { sporocilo: r.sporocilo } : {}),
     ...(r.razlicica ? { razlicica: r.razlicica } : {}),
     ...(r.ms != null ? { ms: r.ms } : {}),
+    trditev: r.trditev, // shranjeno besedilo: iz njega (ne iz klicateljevega) dokazIzLean sestavi izrek
   };
 
 /**
@@ -85,6 +89,8 @@ export function createLeanVrsta(db, { now = () => Date.now(), meje = {} } = {}) 
     const t = now();
     db.prepare("DELETE FROM lean_naloge WHERE ustvarjeno < ?").run(t - M.hraniDni * 86400000);
     db.prepare("UPDATE lean_naloge SET stanje = 'timeout', sporocilo = 'delavec ni bil dosegljiv', koncano = ? WHERE stanje = 'queued' AND ustvarjeno < ?").run(t, t - M.cakaMs);
+    // najem, ki je potekel davno (delavec se ni vrnil): sicer bi ostal »leased« do brisanja in vračal dvojnike
+    db.prepare("UPDATE lean_naloge SET stanje = 'timeout', sporocilo = 'delavec ni oddal izida', koncano = ?, najem = NULL WHERE stanje = 'leased' AND najem_do < ?").run(t, t - M.cakaMs);
   }
 
   return {
@@ -93,7 +99,8 @@ export function createLeanVrsta(db, { now = () => Date.now(), meje = {} } = {}) 
     /**
      * Vpis v vrsto: SAMO trditev in vrsta (VRSTE iz public/preverjanje/trditev.js). Tretji argument je napaka:
      * v nalogo ne sme priti nič drugega (podatki učenca ostanejo na strežniku).
-     * Vrne { id } ali { napaka }. Ista trditev in vrsta, ki še ni zavrnjena ali potekla, vrne obstoječo nalogo.
+     * Vrne { id } ali { napaka }. Ista trditev in vrsta v vrsti ali dokazana vrne obstoječo nalogo; »failed« samo
+     * M.neuspehMs (prenosnik je bil morda slabo nastavljen), »rejected« in »timeout« nikoli.
      */
     vpisi(trditev, vrsta, ...odvec) {
       if (odvec.length) throw new Error("lean-vrsta: naloga sme nositi samo trditev in vrsto");
@@ -102,7 +109,9 @@ export function createLeanVrsta(db, { now = () => Date.now(), meje = {} } = {}) 
       if (!f.ok) return { napaka: f.razlog };
       pocisti();
       const h = sha(`${vrsta}\n${f.trditev}`);
-      const obstaja = db.prepare("SELECT id FROM lean_naloge WHERE sha = ? AND stanje IN ('queued','leased','proved','failed') ORDER BY ustvarjeno DESC LIMIT 1").get(h);
+      const obstaja = db
+        .prepare("SELECT id FROM lean_naloge WHERE sha = ? AND (stanje IN ('queued','leased','proved') OR (stanje = 'failed' AND koncano >= ?)) ORDER BY ustvarjeno DESC LIMIT 1")
+        .get(h, now() - M.neuspehMs);
       if (obstaja) return { id: obstaja.id, obstaja: true };
       const vVrsti = db.prepare("SELECT COUNT(*) AS n FROM lean_naloge WHERE stanje IN ('queued','leased')").get().n;
       if (vVrsti >= M.najvecVVrsti) return { napaka: "vrsta je polna" };
@@ -149,6 +158,12 @@ export function createLeanVrsta(db, { now = () => Date.now(), meje = {} } = {}) 
       const r = db.prepare("SELECT stanje, najem, najem_do FROM lean_naloge WHERE id = ?").get(id);
       if (!r) return { napaka: "ni naloge", koda: 404 };
       if (r.stanje !== "leased" || !enakZeton(najem, r.najem)) return { napaka: "najem ni več veljaven", koda: 409 };
+      if (izid === "napaka") {
+        // Delavec ni pripravljen (namestitev): to ni izid trditve. Nazaj v vrsto; po M.poskusov poskusih »timeout«
+        // (ta ni dvojnik, zato se ista trditev pozneje lahko vpiše znova).
+        db.prepare("UPDATE lean_naloge SET stanje = CASE WHEN poskusi >= ? THEN 'timeout' ELSE 'queued' END, koncano = CASE WHEN poskusi >= ? THEN ? ELSE NULL END, sporocilo = ?, najem = NULL, najem_do = NULL WHERE id = ? AND najem = ?").run(M.poskusov, M.poskusov, now(), `delavec ni pripravljen: ${sporocilo ?? ""}`.slice(0, NAJVEC_SPOROCILA), id, najem);
+        return { ok: true };
+      }
       db.prepare("UPDATE lean_naloge SET stanje = ?, taktika = ?, aksiomi = ?, sporocilo = ?, razlicica = ?, ms = ?, koncano = ?, najem = NULL, najem_do = NULL WHERE id = ? AND najem = ?").run(izid, taktika, aksiomi, sporocilo, razlicica, ms, now(), id, najem);
       return { ok: true };
     },
@@ -176,12 +191,18 @@ export function createLeanVrsta(db, { now = () => Date.now(), meje = {} } = {}) 
  * »failed« (taktike niso našle dokaza), »rejected« in »timeout« NISO »ne drži«, zato vrnejo null in status ostane,
  * kot ga dajo drugi motorji (aplikacija pokaže »ni preverjeno z Lean«). Popolnost (cela množica rešitev) pove klicatelj:
  * Lean dokaže samo zapisano trditev; privzeto »unknown«.
+ * Trditev je vedno shranjeno besedilo naloge (n.trditev), nikoli klicateljevo. Trditev s predpostavkami (»→«) je lahko
+ * prazno resnična (∀ x : ℝ, x > 1 → x < 0 → x = 5), zato je popolnost največ »unknown«, razen če klicatelj pove
+ * zadovoljivo: true (dokazan `example`, da se predpostavke dajo izpolniti; docs/preverjanje.md).
+ * dokaz.izrek je natančno besedilo, ki ga je Lean preveril (glava predloge + vrstica izreka), sha256 je iz njega.
  */
-export function dokazIzLean(n, trditev, { complete = "unknown" } = {}) {
-  if (!n || n.stanje !== "proved" || !TAKTIKE.includes(n.taktika) || typeof trditev !== "string") return null;
-  const izrek = `theorem t : ${trditev} := by intros; ${n.taktika}`;
+export function dokazIzLean(n, { complete = "unknown", zadovoljivo = false } = {}) {
+  if (!n || n.stanje !== "proved" || !TAKTIKE.includes(n.taktika) || typeof n.trditev !== "string") return null;
+  const izrek = izrekDokaza(n.trditev, n.taktika);
+  if (!izrek) return null;
+  const popolnost = n.trditev.includes("→") && !zadovoljivo && complete !== false ? "unknown" : complete;
   return {
-    dokazi: [{ motor: "lean", holds: true, how: "formal", complete, ms: n.ms ?? null, razlicica: n.razlicica ?? null }],
+    dokazi: [{ motor: "lean", holds: true, how: "formal", complete: popolnost, ms: n.ms ?? null, razlicica: n.razlicica ?? null }],
     dokaz: { izrek, sha256: sha(izrek) },
   };
 }
@@ -190,6 +211,8 @@ export function dokazIzLean(n, trditev, { complete = "unknown" } = {}) {
  * Poti delavca (pred prijavo računov: delavec ni uporabnik, ima svoj žeton). Brez EVKLID_LEAN_TOKEN: 404.
  *   POST /api/lean/delavec/naloga    → 200 { id, trditev, najem, rokMs } ali 204 (ni nalog)
  *   POST /api/lean/delavec/rezultat  { id, najem, izid, sporocilo, taktika, aksiomi, ms, razlicica } → 200 / 4xx
+ * Najprej žeton: pravilen žeton nikoli ne dobi 429 zaradi napačnih (šteje in zapira samo napačne poskuse, po naslovu
+ * iz gate.js: s trust proxy req.ip, sicer vtičnica; glav odjemalca ne beremo).
  *   POST /api/lean/delavec/utrip     { razlicica, stanje } → 200 { ok, cakajocih }
  */
 export function mountLeanDelavec(app, vrsta, { env = process.env, now = () => Date.now(), log = console } = {}) {
@@ -198,7 +221,6 @@ export function mountLeanDelavec(app, vrsta, { env = process.env, now = () => Da
   const M = vrsta.meje;
   const napacni = new Map(); // ip → časi napačnih žetonov
   let klici = [];
-  const ipOf = (req) => String((req.app.get("trust proxy") ? req.ip : req.headers["cf-connecting-ip"] || req.ip) || req.socket?.remoteAddress || "");
   const json = express.json({ limit: "16kb", strict: true });
   const router = express.Router();
   router.use((req, res, next) => {
@@ -206,11 +228,11 @@ export function mountLeanDelavec(app, vrsta, { env = process.env, now = () => Da
     if (!token() || req.nekanonicnaApi) return res.status(404).json({ error: "Pot ne obstaja." });
     if (req.method !== "POST") return res.status(405).json({ error: "Samo POST." });
     const t = now();
-    const ip = ipOf(req);
-    const moji = (napacni.get(ip) || []).filter((x) => t - x < M.oknoMs);
-    if (moji.length >= M.napacnihNaIp) return res.status(429).json({ error: "Preveč poskusov." });
     const m = String(req.headers.authorization || "").match(/^Bearer (\S+)$/);
     if (!enakZeton(m?.[1], token())) {
+      const ip = clientIp(req);
+      const moji = (napacni.get(ip) || []).filter((x) => t - x < M.oknoMs);
+      if (moji.length >= M.napacnihNaIp) return res.status(429).json({ error: "Preveč poskusov." });
       if (napacni.size > 10000) napacni.clear();
       napacni.set(ip, [...moji, t]);
       return res.status(401).json({ error: "Napačen žeton." });

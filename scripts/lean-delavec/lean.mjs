@@ -2,8 +2,19 @@
 // trditev, ki je prestala filter (trditev.mjs). Vsaka taktika je svoj izrek v svoji vrstici, za njim #print axioms.
 import { TAKTIKE, DOVOLJENI_AKSIOMI, NAJVEC_SPOROCILA, preveriTrditev } from "./trditev.mjs";
 
-const GLAVA = ["import Mathlib", "set_option autoImplicit false", "open Real"];
+export const GLAVA = ["import Mathlib", "set_option autoImplicit false", "open Real"];
 export const ime = (k) => `evklid_t${k + 1}`;
+const vrsticaTaktike = (trditev, k, t) => `theorem ${ime(k)} : ${trditev} := by intros; ${t}`;
+
+/**
+ * Natančno besedilo, ki ga je Lean preveril za dokaz s taktiko (glava + vrstica izreka): iz njega strežnik naredi
+ * dokaz.izrek in sha256, ki ju lahko kdorkoli ponovi (lean.md). null, če taktika ni znana.
+ */
+export function izrekDokaza(trditev, taktika) {
+  const k = TAKTIKE.indexOf(taktika);
+  if (k < 0) return null;
+  return [...GLAVA, vrsticaTaktike(trditev, k, taktika)].join("\n") + "\n";
+}
 // Vrstica (od 1) izreka k in njegovega #print axioms.
 const vrsticaIzreka = (k) => GLAVA.length + 1 + 2 * k;
 
@@ -15,7 +26,7 @@ export function predloga(trditev, taktike = TAKTIKE) {
   const vrstice = [...GLAVA];
   taktike.forEach((t, k) => {
     if (!TAKTIKE.includes(t)) throw new Error(`taktika ${t} ni dovoljena`);
-    vrstice.push(`theorem ${ime(k)} : ${f.trditev} := by intros; ${t}`, `#print axioms ${ime(k)}`);
+    vrstice.push(vrsticaTaktike(f.trditev, k, t), `#print axioms ${ime(k)}`);
   });
   return vrstice.join("\n") + "\n";
 }
@@ -25,7 +36,9 @@ const skrajsaj = (s, n = NAJVEC_SPOROCILA) => (s.length > n ? s.slice(0, n - 1) 
 /**
  * Izid iz izpisa `lean --json` (eno sporočilo na vrstico). Izrek k je dokazan, ko v njegovi vrstici ni napake ne
  * opozorila o sorry in #print axioms našteje samo dovoljene aksiome. Prvi tak izrek zmaga.
- * Vrne { izid: "proved" | "failed", taktika?, aksiomi?, sporocilo }.
+ * Vrne { izid: "proved" | "failed" | "napaka", taktika?, aksiomi?, sporocilo }. »napaka« pomeni pokvarjeno namestitev,
+ * ne trditve: napaka v glavi (npr. manjka ali je zastarel Mathlib) ali nobena vrstica #print axioms ni dala nobenega
+ * sporočila (Lean se sploh ni izvedel). Takrat delavec ne sme poslati »failed« (lean.md).
  */
 export function preberiIzpis(izpis, taktike = TAKTIKE) {
   const sporocila = [];
@@ -39,7 +52,7 @@ export function preberiIzpis(izpis, taktike = TAKTIKE) {
     }
   }
   const vVrstici = (n) => sporocila.filter((m) => m?.pos?.line === n);
-  let prvaNapaka = sporocila.find((m) => m.severity === "error" && m.pos?.line <= GLAVA.length);
+  let prvaNapaka = null;
   for (let k = 0; k < taktike.length; k++) {
     const izrek = vVrstici(vrsticaIzreka(k));
     const napaka = izrek.find((m) => m.severity === "error" || /sorry/i.test(String(m.data)));
@@ -59,6 +72,9 @@ export function preberiIzpis(izpis, taktike = TAKTIKE) {
     if (aksiomi.some((a) => !DOVOLJENI_AKSIOMI.includes(a))) continue;
     return { izid: "proved", taktika: taktike[k], aksiomi, sporocilo: `dokazano s taktiko ${taktike[k]}` };
   }
+  const glava = sporocila.find((m) => m.severity === "error" && m.pos?.line <= GLAVA.length);
+  if (glava) return { izid: "napaka", sporocilo: skrajsaj(`napaka v glavi (namestitev Mathliba?): ${String(glava.data)}`) };
+  if (!taktike.some((_, k) => vVrstici(vrsticaIzreka(k) + 1).length)) return { izid: "napaka", sporocilo: "Lean ni izpisal nobenega izida (namestitev?)" };
   const opis = prvaNapaka ? String(prvaNapaka.data) : "nobena taktika ni dokazala trditve";
   return { izid: "failed", sporocilo: skrajsaj(`nobena taktika ni uspela; prva napaka: ${opis}`) };
 }

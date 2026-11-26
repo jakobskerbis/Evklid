@@ -13,7 +13,8 @@ glas/model/
 
 # delavec Lean na prenosniku (scripts/lean-delavec): žeton, stanje, dnevnik, orodja, Mathlib
 scripts/lean-delavec/nastavitve.json
-scripts/lean-delavec/stanje.json
+scripts/lean-delavec/stanje.json*
+scripts/lean-delavec/delo/
 scripts/lean-delavec/dnevnik.txt*
 scripts/lean-delavec/orodja/
 scripts/lean-delavec/projekt/.lake/

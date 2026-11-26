@@ -95,19 +95,32 @@ iz dokupljenega kredita (obstoječi dokup); prenosnik ugasnjen ali počasen → 
 **Potek.** `vrsta.vpisi(trditev, vrsta)` (samo ta dva argumenta, tretji vrže napako; `vrsta` iz `VRSTE` v
 `public/preverjanje/trditev.js`) → `{ id }`; ista trditev in vrsta vrne obstoječo nalogo. Delavec:
 `POST /api/lean/delavec/naloga` → `{ id, trditev, najem, rokMs }` ali 204; `POST …/rezultat`
-`{ id, najem, izid: proved|failed|rejected|timeout, sporocilo (≤ 2000 znakov), taktika, aksiomi, ms }`;
+`{ id, najem, izid: proved|failed|rejected|timeout|napaka, sporocilo (≤ 2000 znakov), taktika, aksiomi, ms }`;
 `POST …/utrip` (tudi vsak klic `naloga` je utrip; med delom vsako minuto). Najem velja 10 min, potekel gre nazaj v vrsto,
-po 3 poskusih `timeout`; nepobrana naloga po 24 h `timeout` (»delavec ni bil dosegljiv«); naloge se brišejo po 7 dneh.
-Aplikacija bere `vrsta.rezultat(id)` ali `GET /api/lean/naloge/:id` (s prijavo, ko so računi vklopljeni) in iz izida
-dobi dokaz v skupnem zapisu z `dokazIzLean(n, trditev, { complete })` (`docs/preverjanje.md`): samo `proved` je dokaz
-(`motor: "lean"`, `how: "formal"`, popolnost pove klicatelj, privzeto `unknown` → največ »delno«). `failed`, `rejected`
-in `timeout` NISO »ne drži« (taktike le niso našle dokaza): dokaza ni, status ostane, kot ga dajo drugi motorji.
+po 3 poskusih `timeout`; nepobrana naloga (ali najem, potekel pred več kot 24 h) po 24 h `timeout`; naloge se brišejo
+po 7 dneh. Delavčev rok je vedno vsaj 60 s krajši od najema (`rokNaloge`: največ `rokMs − 60 s`, nastavitev `rokS`
+največ 540 s), zato izid ne dobi 409; če ga vseeno (prenosnik je spal), ga delavec zavrže in dela naprej.
+`napaka` ni izid trditve: delavec ni pripravljen (lake manjka, Lean se ne zažene, napaka v glavi predloge, npr.
+zastarel Mathlib, ali nobena vrstica `#print axioms` ni dala sporočila). Strežnik nalogo vrne v vrsto (po 3 poskusih
+`timeout`), delavec počaka (30 s … 5 min). Dvojniki: ista trditev in vrsta v vrsti ali `proved` vrne obstoječo nalogo,
+`failed` samo 1 h (`neuspehMs`), `rejected` in `timeout` nikoli.
+Aplikacija bere `vrsta.rezultat(id)` ali `GET /api/lean/naloge/:id` (s prijavo, ko so računi vklopljeni; izid nosi tudi
+shranjeno `trditev`) in iz izida dobi dokaz v skupnem zapisu z `dokazIzLean(n, { complete, zadovoljivo })`
+(`docs/preverjanje.md`): samo `proved` je dokaz (`motor: "lean"`, `how: "formal"`, popolnost pove klicatelj, privzeto
+`unknown` → največ »delno«). Izrek je vedno iz shranjene trditve naloge (ne iz klicateljevega besedila), `dokaz.izrek`
+je natančno preverjeno besedilo (glava predloge + vrstica `theorem evklid_tK …`, `izrekDokaza` v `lean.mjs`), sha256 je
+iz njega. Trditev s predpostavkami (`→`) je lahko prazno resnična (`∀ x : ℝ, x > 1 → x < 0 → x = 5` dokaže `linarith`),
+zato je popolnost največ `unknown`, dokler klicatelj ne poda `zadovoljivo: true` (dokazan `example`, da se predpostavke
+dajo izpolniti; L6). `failed`, `rejected` in `timeout` NISO »ne drži« (taktike le niso našle dokaza): dokaza ni, status
+ostane, kot ga dajo drugi motorji. L6 mora dodati mejo nalog na učenca in prednost (vrsta ima zdaj samo skupno mejo
+500; `vpisi` ni dostopen po HTTP).
 `/healthz/stanje` → `leanDelavec` (`naVoljo`: utrip v zadnjih 3 min, število nalog po stanju).
 
 **Okolje.** `EVKLID_LEAN_TOKEN`: dolg naključen žeton (najmanj 32 znakov; delavec ga ustvari ob prvem zagonu, j ga
-vpiše na Render). Brez njega (ali krajši) so poti delavca 404. Primerjava v stalnem času (sha256 + `timingSafeEqual`),
-napačni žetoni: 10 na IP v 15 min → 429; vseh klicev delavca največ 120 na minuto; telo največ 16 kB (413), pokvarjen
-JSON 400.
+vpiše na Render). Brez njega (ali krajši) so poti delavca 404. Primerjava v stalnem času (sha256 + `timingSafeEqual`).
+Žeton se preveri najprej: pravilen žeton nikoli ne dobi 429 zaradi napačnih. Napačni žetoni: 10 na naslov v 15 min →
+429; naslov je `clientIp` iz `server/gate.js` (s trust proxy `req.ip`, sicer vtičnica; glave `cf-connecting-ip` ne
+beremo). Vseh klicev delavca največ 120 na minuto; telo največ 16 kB (413), pokvarjen JSON 400.
 
 **Varnost (najpomembnejše).** Lean zna izvajati programe (`#eval`, `run_cmd`, `elab`/`macro`/`syntax`, `initialize`,
 `IO`, `attribute [implemented_by]`, `open … in`, `set_option`, `#exit`). Zato Lean nikoli ne dobi besedila z ukazom:
@@ -119,33 +132,70 @@ JSON 400.
 2. Filter (`scripts/lean-delavec/trditev.mjs`, isti na strežniku ob vpisu in na delavcu pred zagonom) je bel seznam,
    ne seznam prepovedanih besed: ena vrstica do 1000 znakov v obliki NFC; samo znaki z belega seznama (brez `#`, `@`,
    `"`, `'`, `` ` ``, `;`, `$`, `\`, `«»`, `⟨⟩`, nevidnih in podobnih znakov drugih pisav); brez `:=`, `--`, `/-`, `-/`;
-   uravnoteženi oklepaji; imena so samo ena črka s števkami ali indeksi (`x`, `x_1`, `a₁`), besede z belega seznama
+   uravnoteženi oklepaji; `!` takoj za imenom je del imena (kot v Leanu: `x!`, `Nat.foo!` sta imeni in zavrnjena);
+   imena so samo ena črka s števkami ali indeksi (`x`, `x_1`, `a₁`), besede z belega seznama
    (`fun`, `deriv`, `sqrt`, `sin` …) ali imena s predpono `Real.`, `Nat.`, `Int.`, `Rat.`, `Complex.`, `Finset.`, `Set.`,
    `Polynomial.`. Ukaz Lean se vedno začne z znakom (`#`, `@[`, `/--`) ali besedo (`open`, `def`, `elab` …), tudi po
    napaki razčlenjevanja; nobena dovoljena beseda ga ne začne, zato `by`, `show`, `IO`, `Lean.…`, `_root_` ne pridejo
    skozi. Ker so imena kratka ali matematična, trditev ne more nositi imen ali besedila učenca.
-3. Lean teče z rokom (privzeto 240 s, nato `taskkill /T /F` oz. SIGKILL), mejo pomnilnika (`-M`, privzeto 6144 MB),
-   nižjo prioriteto, z očiščenim okoljem (brez žetona) v začasni mapi, ki se nato izbriše; omrežja ne rabi.
+   Pomnilnik: število največ 12 števk, eksponent za `^` je število ≤ 1000, spremenljivka ali oklepaj s samo števili
+   ≤ 1000 in spremenljivkami; nobena potenca potence (`a^b^c`, `(a^b)^c`, `(a^b)²`, `x²²`). GMP pri eni potenci ne
+   pogleda meje `-M` (`(2^16777215)^5000` bi zasedel ~10 GB, preden Lean preveri mejo). `(a^2)^3` je treba zapisati
+   kot `a^(2*3)`.
+   Tipi (zakaj): Lean števila brez tipa privzame v ℕ, kjer je `2 - 3 = 0`, in ima »smetne« vrednosti `x / 0 = 0`,
+   `Real.sqrt (-4) = 0`, `Real.log 0 = 0`. Tako bi bile šolsko napačne trditve (`∀ x, x - 1 < x + 1` nad ℕ,
+   `(2:ℕ) - 3 = 0`) »dokazane«. Zato: vsaka vezava `∀`/`∃`/`fun` ima tip (`∀ x : ℝ, …`, `∀ (x : ℝ) (n : ℕ), …`; ne
+   `∀ x, …`, `∀ x > 0, …`, `∃ x ∈ S, …`), trditev s števili ima vsaj en pripis tipa (`(2 : ℝ)` ali tipizirano
+   spremenljivko), deljenje s številom 0 je zavrnjeno. Ostane: pripisan ℕ (`(2:ℕ) - 3 = 0`), `Real.sqrt` negativnega
+   in `log 0` se dokažejo; L6 prevaja v ℝ ali ℤ in doda predpostavke (`x ≠ 0`, `x ≥ 0`), drug model to preveri.
+3. Lean teče z rokom (privzeto 240 s, največ 540 s in vsaj 60 s pod najemom; nato se ubije celo drevo procesov:
+   Windows `taskkill /T /F`, Linux lastna skupina procesov in `kill(-pid, SIGKILL)`; če proces po 30 s še drži izhod,
+   delavec vseeno nadaljuje), z mejo pomnilnika (`-M`, privzeto 6144 MB; prenosnik ima 16 GB), nižjo prioriteto, z
+   očiščenim okoljem (brez žetona) v začasni mapi, ki se nato izbriše; omrežja ne rabi. `lake` je vedno absolutna pot
+   (iz orodjarne v `projekt/lean-toolchain` v `ELAN_HOME`, sicer `ELAN_HOME/bin`), nikoli golo `lake.exe` (Windows bi ga
+   iskal najprej v trenutni mapi).
 4. Izid je `proved` le, če v vrstici izreka ni napake ne opozorila o `sorry` in `#print axioms` našteje samo
    `propext`, `Classical.choice`, `Quot.sound` (izpis `lean --json`). Strežnik `proved` sprejme le z znano taktiko in
    dovoljenimi aksiomi. Sporočilo gre na strežnik brez poti na disku in uporabniškega imena.
 
-**Preostala tveganja (pošteno).** (a) Na Windows Lean teče kot j-jev uporabnik, ne kot omejen uporabnik (Node tega
-brez dodatnih orodij ne zna; na Linuxu `linuxUid` v `nastavitve.json`). Varovalo je filter: če bi imel luknjo, bi
-lahko trditev zagnala program z j-jevimi pravicami. (b) Mathlib in njegove taktike so koda, ki ji zaupamo (kot pri
+**Omejen uporabnik (odločitev j 26. 11. 2026).** Na Windows ves delavec (Node in Lean) teče kot lokalni standardni
+uporabnik `evklid-lean`, ne kot j: opravilo »Evklid Lean delavec« v Razporejevalniku opravil (ob vklopu, »zaženi, če
+je uporabnik prijavljen ali ne«, brez časovne meje, tudi na bateriji). To je najzanesljivejša pot: `runas /savecred`
+bi shranil geslo, ki ga lahko uporabi vsak j-jev program, Node pa ne zna zagnati otroka kot drug uporabnik.
+`uporabnik.ps1` ob vsaki namestitvi da uporabniku novo naključno geslo, ki ga nihče ne pozna (shrani ga samo
+Razporejevalnik), ga skrije s prijavnega zaslona in ga ne da med skrbnike. Mapa `C:\Evklid\lean-delavec` (zunaj j-jevega
+profila in OneDrive, kratka pot za MAX_PATH) nima podedovanih pravic (C:\ sicer da »Authenticated Users« spreminjanje):
+SYSTEM, skrbniki in j polno, `evklid-lean` samo branje in zagon, pisanje samo v `delo\` (dnevnik, stanje, začasne
+datoteke). Lean zato ne more brati `C:\Users\<j>` (tja ima dostop samo lastnik) in ne more spremeniti delavca, Leana
+ali Mathliba. Bere pa lahko, kar lahko bere vsak uporabnik računalnika (npr. `C:\Program Files`), in `nastavitve.json`
+(žeton, glej (c)). Ustavitev: `ustavi.bat` (konča in izklopi opravilo). Odstranitev: `ustavi.bat`, nato kot skrbnik
+`net user evklid-lean /delete`, `schtasks /Delete /TN "Evklid Lean delavec" /F` in brisanje mape.
+
+**Preostala tveganja (pošteno).** (a) Varovalo pred kodo v trditvi je filter; če bi imel luknjo, bi program tekel kot
+`evklid-lean` (brez j-jevih datotek, glej zgoraj). Na Linuxu `linuxUid` v `nastavitve.json`. Lean ne teče v Job Object
+z mejo pomnilnika (rabi lasten program za Windows, ki ga tu ni mogoče preizkusiti); meje števil in potenc v filtru
+preprečijo eno ogromno potenco, sestavljanje z `fun` (`(fun n : ℕ => n ^ 1000) ((fun m : ℕ => m ^ 1000) 9)`) pa še
+lahko zasede nekaj GB, preden rok Leana ubije; to ustavi prenosnik za največ nekaj minut, ne razkrije podatkov. (b) Mathlib in njegove taktike so koda, ki ji zaupamo (kot pri
 `lake build`); napaka v Mathlibu ali Leanu (npr. elaborator, ki ga sproži dovoljen zapis) bi bila zunaj filtra.
 (c) Kdor ima žeton, lahko pošilja izide (lažen `proved`) ali bere trditve; žeton je samo na Renderju in v
-`nastavitve.json` na prenosniku. (d) Kdor ima dostop do strežnika, lahko v vrsto vpiše karkoli; zato delavec trditev
+`nastavitve.json` na prenosniku (bere ga tudi Lean kot `evklid-lean`). (d) Kdor ima dostop do strežnika, lahko v vrsto vpiše karkoli; zato delavec trditev
 preveri še enkrat. (e) Lean prenese elan, Lean in Mathlib (`lake exe cache get`) z interneta; Node, Git in elan so
-preverjeni s SHA-256 v `zazeni.bat`, Lean in Mathlib preveri elan/lake po svoje. (f) Napačen prevod koraka v Lean
+preverjeni s SHA-256 v `zazeni.bat`, orodjarna Leana in prevedeni Mathlib (`.olean`, ki nosijo tudi kodo za
+`initialize`) pa nimata pripete kontrolne vsote: zaupamo GitHubu in strežniku predpomnilnika Mathliba. (f) Napačen prevod koraka v Lean
 (L6) da pravilen dokaz napačne trditve; zato L6 prevod preveri drug model.
 
-**Namestitev.** `scripts/lean-delavec/zazeni.bat` (dvoklik): Node v24.22.3, MinGit 2.51.0 in elan v4.4.0 (vsi s
-SHA-256), Lean in Mathlib iz `scripts/lean-delavec/projekt/` (iste različice kot `lean/`, test to preveri),
-`lake exe cache get`, žeton v `nastavitve.json`, nato delavec v zanki (če se konča, po 30 s znova). Delavec se nikoli
-ne ustavi sam (napaka → dnevnik, premor 30 s do 5 min), piše `stanje.json` (atomarno) in `dnevnik.txt` (vrtenje pri
-1 MB, 3 stare kopije) in drži Windows budne (`SetThreadExecutionState`, kot `rtx.py` v `docs/3d.md`).
+**Namestitev.** `scripts/lean-delavec/zazeni.bat` (dvoklik, vpraša za skrbnika): se skopira v `C:\Evklid\lean-delavec`
+(`robocopy`, brez `nastavitve.json`, `orodja\`, `delo\`, `.lake\`), Node v24.22.3, MinGit 2.51.0 in elan v4.4.0 (vsi s
+SHA-256; elan, Lean in predpomnilnik Mathliba v `orodja\`, ne v profilu), Lean in Mathlib iz
+`scripts/lean-delavec/projekt/` (iste različice kot `lean/`, test to preveri), `lake exe cache get` znova, kadar se
+`lean-toolchain` ali `lake-manifest.json` razlikujeta od shranjenih v `orodja\mathlib-rev.txt`, žeton v
+`nastavitve.json`, `uporabnik.ps1` (uporabnik, pravice, opravilo), pokrov na polnilcu »ne naredi nič« (`powercfg`),
+zagon opravila. Opravilo zažene `zazeni.bat delavec` (zanka; če se Node konča, po 30 s znova). Delavec se nikoli ne
+ustavi sam (napaka → dnevnik, premor 30 s do 5 min), piše `delo\stanje.json` (atomarno; začasna datoteka se ob napaki
+izbriše) in `delo\dnevnik.txt` (vrtenje pri 1 MB, 3 stare kopije) in drži Windows budne (`SetThreadExecutionState`, kot
+`rtx.py` v `docs/3d.md`). V `zazeni.bat` ni blokov v oklepajih s potmi (`)` v imenu mape bi jih pokvaril).
 
 **Modul.** `server/lean-vrsta.js` je nov: noben obstoječ modul nima vrste za zunanjega delavca z lastnim žetonom
 (`server/cas.js` zaganja SymPy na strežniku, `server/preverjevalniki.js` samo poroča stanje). Testi:
-`test/lean-vrsta.test.js`.
+`test/lean-vrsta.test.js` (tudi zanka delavca z lažnim `lake` in strežnikom: dokaz, napaka zagona, zastarel Mathlib,
+rok ubije drevo procesov, 409, nedosegljiv strežnik, premor).

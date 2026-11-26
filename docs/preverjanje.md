@@ -21,6 +21,8 @@ SymPy: `docs/preverjanje-s-kodo.md`.
 | Zaznana napaka | `napaka` | Preverjanje je pokazalo, da trditev ne drži (protiprimer, manjkajoča ali odvečna rešitev). |
 | Nepreverjeno | `nepreverjeno` | Noben motor trditve ne zna preveriti, ali pa se motorja ne strinjata. |
 
+**Lean dokaže trditev v svojih dogovorih, ne v šolskih** (`docs/lean.md`, L5): števila brez tipa so v ℕ (`2 - 3 = 0`), `x / 0 = 0`, `Real.sqrt (-4) = 0`, `Real.log 0 = 0`. Zato filter delavca zahteva tip pri vsaki vezavi in številih in zavrne deljenje z 0; prevod v Lean (L6) uporablja ℝ ali ℤ in zapiše predpostavke (`x ≠ 0`, `x ≥ 0`). Trditev s predpostavkami (`→`) je »dokazano« šele z dokazom, da se predpostavke dajo izpolniti (sicer največ »delno«).
+
 Pravila:
 
 - **Status ni nikoli močnejši od dokaza.** `statusIzDokazov({ holds, how, complete })` vzame šibkejšega od obeh
