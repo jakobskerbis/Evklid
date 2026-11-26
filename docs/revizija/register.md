@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `3e2a78dbc742b3c2b0f174ed42ac57be4591d212` (25. 11. 2026)
-**Naslednji prosti ID:** AUDIT-096
+**Naslednji prosti ID:** AUDIT-097
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -103,6 +103,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-093 | P3 | Klepet, presolve | presolve ne reši korenskih enačb: `√(x+5) = 4`, `∛(x+5) = 4` vrneta null (brez preverjene rešitve za sodbo). Lastnik: nit »Prevzemi kalkulator« | NOVO | `23ef6c7` | Claude (nit »Prevzemi kalkulator«, iz pregleda pripravljenosti pilota), 26. 11. | – |
 | AUDIT-094 | P2 | Vadnica → inštruktor | Pomoč iz Vadnice: inštruktor ne dobi rezultata generatorja, prvi namig prezre učenčeve korake, napaka se šteje dvakrat, pomoč pred odgovorom ni označena »s pomočjo«. Lastnik: nit »Izboljšaj okolico AI inštruktorja« (j odobril po navedbi niti) | NOVO | `2275cc2` | Claude (nit pregleda pripravljenosti pilota, artefakt Sj5uu8iU8QjgvAppkho4fA), 26. 11. | – |
 | AUDIT-095 | P2 | Pilot, poročilo | Poročilo pilota nima povabljenih, odpadlih in zagotovila »brez pomoči«. Lastnik: nit pilota (j odobril po navedbi niti) | NOVO | `2275cc2` | Claude (nit pregleda pripravljenosti pilota, artefakt Sj5uu8iU8QjgvAppkho4fA), 26. 11. | – |
+| AUDIT-096 | P3 | Kalkulator, iPhone SE (WebKit) | Na iPhonu SE (WebKit, 375 × 667) je v zgodovini znanstvenega kalkulatorja viden tanek navpični drsnik (~120 px); posnetek `/mnt/project-files/evklid/ux-hitrost/k12/kalkulator-iphone-se.png`, matrika naprav K-12 na `main` `613278d`, pred #1181 (`87b705e`: `.sc-history` dobi `scrollbar-width: none` in `::-webkit-scrollbar {display: none}`, kot AUDIT-083). Verjetno že popravljeno; potrdi nov posnetek WebKit na trenutnem `main` (naročen pri niti UX). Lastnik: nit »Prevzemi kalkulator« | PRIPRAVLJENO ZA PONOVNI PREGLED | `613278d` | Claude (nit »Prevzemi kalkulator«, vir nit »Izboljšaj UX in hitrost« K-12), 26. 11. | [#1181](https://github.com/jakobskerbis/Evklid/pull/1181) |
 
 ## Zgodovina statusov
 
@@ -174,3 +175,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 26. 11. 2026: #1178 (AUDIT-080, AUDIT-081) združen v `main` `335ca0b` na j-jevo kartico; status ostane PRIPRAVLJENO do preizkusa na evklid.app (081 še potrditev ChatGPT).
 - 26. 11. 2026: AUDIT-080 PRIPRAVLJENO → ZAKLJUČENO (#1178 na evklid.app `23ef6c7`, test z oznako); AUDIT-081 ostane PRIPRAVLJENO do potrditve ChatGPT (P1), na evklid.app pravilen.
 - 26. 11. 2026: združeni na j-jeve kartice: 058 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1179); 061 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1179); 062 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1179); 084 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1180); 082 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (#1181); 083 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (#1181); 086 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (#1181); 087 NOVO → PRIPRAVLJENO ZA PONOVNI PREGLED (#1182); 088 NOVO → PRIPRAVLJENO ZA PONOVNI PREGLED (#1182). Novi AUDIT-090–095 (pregled pripravljenosti pilota in nit »Prevzemi kalkulator«), NOVO; Claude jih še ni neodvisno ponovil.
+- 26. 11. 2026: AUDIT-096 (P3, drsnik v zgodovini na iPhonu SE, WebKit) PRIPRAVLJENO ZA PONOVNI PREGLED: verjetno odpravljen s #1181; ZAKLJUČENO po novem posnetku WebKit na trenutnem `main`.
