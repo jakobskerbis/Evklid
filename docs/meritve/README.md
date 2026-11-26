@@ -6,7 +6,8 @@ Uspešen CI ni sam po sebi dokaz matematične ali pedagoške pravilnosti; samode
 nikoli ne predstavlja kot strokovni pregled človeka.
 
 Ime datoteke: `docs/meritve/<tema>-<LLLL-MM-DD>.md`, surovi izid poleg nje v `.json` z istim imenom. Meritev, ki
-primerja »prej« in »potem«, ima obe številki v istem poročilu in z isto skripto na istem stroju.
+primerja »prej« in »potem«, ima obe številki v istem poročilu in z isto skripto na istem stroju. Pravila veljajo za
+nova poročila; starejša (npr. `obremenitev-2026-11-14-prej.md` in `-potem.md`) ostanejo, kot so.
 
 ## Predloga
 
@@ -45,13 +46,17 @@ Klicev API: <n>, cena: <$> (mesečna meja za plačljive meritve: 60 $, j 26. 11.
 
 ## Pravila
 
-1. **n in interval.** Delež vedno z n; pri n < 30 ali deležu 0 % / 100 % še 95-% interval (Wilson ali »pravilo treh«:
-   0 napak na n primerih pomeni največ ~3/n z 95-% gotovostjo).
+1. **n in interval.** Delež vedno z n in 95-% intervalom; navedi metodo (privzeto Wilson). Pri 0 napakah je zgornja
+   meja enostranska: po Wilsonu ~3,84/(n + 3,84), po »pravilu treh« ~3/n. n je število primerov, na katerih se napaka
+   sploh lahko zgodi: pri »napačno potrjenih« je to število napačnih trditev v naboru, ne vseh primerov
+   (`docs/preverjanje.md`). Meja velja samo za vrste napak, ki jih nabor vsebuje.
 2. **Neodvisnost.** Pričakovani izid je določen pred zagonom in ga ni napisal sistem, ki ga merimo. Inštruktor ne sme
-   biti vir referenčnih odgovorov. Ocenjevalec model je naveden kot model, ne kot strokovnjak.
-3. **Nepreverjeno je del rezultata.** Pri preverjanju matematike se poleg »napačno potrjenih« vedno poroča delež
-   statusa »Nepreverjeno« (glavna metrika: 0 napačno potrjenih).
+   biti vir referenčnih odgovorov. Model kot ocenjevalec je naveden kot model, ne kot strokovnjak. Nabor brez
+   referenčnih odgovorov (npr. del zlatega nabora »brez reference«) je tako tudi označen.
+3. **Nepreverjeno je del rezultata.** Pri preverjanju matematike je glavna metrika število napačno potrjenih trditev
+   (cilj 0); poleg nje se vedno poroča delež statusov »Nepreverjeno« in »V teku«.
 4. **Brez izbiranja.** Poročilo zajame vse primere nabora; izločeni primeri so našteti z razlogom.
 5. **Ponovljivost.** Ukaz in commit zadoščata, da kdorkoli ponovi meritev; naključni del ima seme.
-6. **Nadzorna plošča.** Glavno številko vpiše nit, ki je merila, v zbirko `data/kakovost/meritve` nadzorne plošče
-   (polja `vrednost`, `cilj`, `n`, `metoda`, `vir` = pot do poročila, `smer`, `datum`).
+6. **Nadzorna plošča.** Glavno številko vpiše nit, ki je merila, na nadzorno ploščo »Evklid: kakovost do 9,5«
+   (artefakt na claude.ai, ne mapa v repozitoriju; zbirka `meritve` s polji `vrednost`, `cilj`, `n`, `metoda`,
+   `vir` = pot do poročila, `smer`, `datum`).
