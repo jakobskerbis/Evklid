@@ -179,10 +179,11 @@ async function main() {
     if (!/^[0-9a-f]{7,40}$/.test(vnos)) throw new Error("Vrnitev zavrnjena: vrni_na mora biti SHA commita (7–40 znakov 0-9a-f).");
     const VRNI_NA = (await gh(`commits/${vnos}`).catch(() => null))?.sha || "";
     const mainSha = (await gh("commits/main")).sha;
+    if (!SHA40.test(String(mainSha || ""))) throw new Error("Vrnitev zavrnjena: SHA veje main ni bilo mogoče prebrati.");
     let primerjava = null;
     if (SHA40.test(VRNI_NA)) primerjava = await gh(`compare/${VRNI_NA}...${mainSha}`).catch(() => null);
     const p = preveriVrnitev({ sha: VRNI_NA, primerjava, testi: SHA40.test(VRNI_NA) ? await testiZa(VRNI_NA) : null, brezTestov: BREZ_TESTOV === "1" });
-    if (!p.ok) throw new Error(`Vrnitev zavrnjena: ${p.zakaj}`);
+    if (!p.ok || !SHA40.test(VRNI_NA)) throw new Error(`Vrnitev zavrnjena: ${p.zakaj}`);
     const hook = new URL(HOOK);
     hook.searchParams.set("ref", VRNI_NA);
     // Brez ref bi Render objavil vrh veje (pokvarjeno različico), zato tu ni rezerve brez ref.
