@@ -29,11 +29,13 @@ open scoped Congruent
 
 variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P] [NormedAddTorsor V P]
 
-/-- Pomožno: kvadrat razdalje v ℂ iz koordinat. -/
+/-- Pomožno: kvadrat razdalje v ℂ iz koordinat.
+pomozno – orodje: kvadrat razdalje v ℂ -/
 theorem dist_c_sq (z w : ℂ) : dist z w ^ 2 = (z.re - w.re) ^ 2 + (z.im - w.im) ^ 2 := by
   rw [Complex.dist_eq_re_im, Real.sq_sqrt (by positivity)]
 
-/-- Pomožno: razdalja v ℂ iz koordinat. -/
+/-- Pomožno: razdalja v ℂ iz koordinat.
+pomozno – orodje: razdalja v ℂ -/
 theorem dist_c {z w : ℂ} {d : ℝ} (hd : 0 ≤ d) (h : (z.re - w.re) ^ 2 + (z.im - w.im) ^ 2 = d ^ 2) :
     dist z w = d := by
   rw [Complex.dist_eq_re_im, h, Real.sqrt_sq hd]
@@ -42,7 +44,8 @@ theorem dist_c {z w : ℂ} {d : ℝ} (hd : 0 ≤ d) (h : (z.re - w.re) ^ 2 + (z.
 example : (0 : ℝ) ≤ 3 ∧ ((3 : ℂ).re - (0 : ℂ).re) ^ 2 + ((3 : ℂ).im - (0 : ℂ).im) ^ 2 = 3 ^ 2 := by
   constructor <;> simp
 
-/-- Pomožno: √(k²) = k za k ≥ 0. -/
+/-- Pomožno: √(k²) = k za k ≥ 0.
+pomozno – orodje: √(k²) = k -/
 theorem sqrt_kv {k : ℝ} (hk : 0 ≤ k) : √(k ^ 2) = k := Real.sqrt_sq hk
 
 /-- Predpostavka trditve `sqrt_kv` se da izpolniti (k = 3). -/
@@ -50,7 +53,9 @@ example : (0 : ℝ) ≤ 3 := by norm_num
 
 /-! ## 3. Osnovne konstrukcije kotov -/
 
-/-- Razlaga 3, Naloga 1, Ustno vprašanje 2: kot enakostraničnega trikotnika VPQ (|VP| = |VQ| = |PQ|) meri π/3 (60°). -/
+/-- Razlaga 3, Naloga 1, Ustno vprašanje 2: kot enakostraničnega trikotnika VPQ (|VP| = |VQ| = |PQ|) meri π/3 (60°).
+trditev: MAT-SS-1/nacrtovalne-naloge#kot60
+besedilo: »Trikotnik $VPQ$ je enakostraničen, zato $\angle PVQ = 60^\circ$.« -/
 theorem kot60 {Vv Pp Q : P} (hP : Pp ≠ Vv) (h1 : dist Vv Pp = dist Vv Q) (h2 : dist Pp Q = dist Pp Vv) :
     ∠ Pp Vv Q = π / 3 := by
   have e1 := EuclideanGeometry.angle_eq_angle_of_dist_eq h1
@@ -70,7 +75,9 @@ example : (2 : ℂ) ≠ 0 ∧ dist (0 : ℂ) 2 = dist (0 : ℂ) ⟨1, √3⟩ �
   exact ⟨two_ne_zero, e1.trans e2.symm, e3.trans e4.symm⟩
 
 /-- Razlaga 3, Ustno vprašanje 2 (simetrala kota): če je |VP| = |VQ| in |PT| = |QT|, sta trikotnika VPT in VQT
-skladna (SSS), zato ∠PVT = ∠QVT; če VT leži v kotu (∠PVQ = ∠PVT + ∠TVQ), je ∠PVT = ∠PVQ/2. -/
+skladna (SSS), zato ∠PVT = ∠QVT; če VT leži v kotu (∠PVQ = ∠PVT + ∠TVQ), je ∠PVT = ∠PVQ/2.
+trditev: MAT-SS-1/nacrtovalne-naloge#simetrala-kota
+besedilo: »Trikotnika $VPT$ in $VQT$ sta skladna po izreku SSS, zato poltrak $VT$ razpolovi kot« -/
 theorem simetrala_kota {Vv Pp Q T : P} (h1 : dist Vv Pp = dist Vv Q) (h2 : dist Pp T = dist Q T)
     (h : ∠ Pp Vv Q = ∠ Pp Vv T + ∠ T Vv Q) : ∠ Pp Vv T = ∠ Q Vv T ∧ ∠ Pp Vv T = ∠ Pp Vv Q / 2 := by
   have hc := side_side_side h1 h2 (rfl : dist T Vv = dist T Vv)
@@ -78,7 +85,8 @@ theorem simetrala_kota {Vv Pp Q T : P} (h1 : dist Vv Pp = dist Vv Q) (h2 : dist 
   refine ⟨e, ?_⟩
   rw [h, EuclideanGeometry.angle_comm T Vv Q, ← e]; ring
 
-/-- Pomožno: kota med 1 in 1 + i ter med 1 + i in i v ℂ sta π/4. -/
+/-- Pomožno: kota med 1 in 1 + i ter med 1 + i in i v ℂ sta π/4.
+pomozno – orodje: kota π/4 v ℂ -/
 theorem kota_pi4 : InnerProductGeometry.angle (1 : ℂ) (1 + Complex.I) = π / 4 ∧
     InnerProductGeometry.angle (1 + Complex.I) Complex.I = π / 4 := by
   have hn1 : ‖(1 : ℂ) + Complex.I‖ = √2 := by
@@ -101,27 +109,33 @@ example : dist (0 : ℂ) 1 = dist (0 : ℂ) Complex.I ∧ dist (1 : ℂ) (1 + Co
     ring
 
 /-- Razlaga 3, premisli 1, Naloga 1 in `RACUN`: 60/2 = 30, 30/2 = 15, 90/2 = 45, 60 + 60 = 120;
-75 = 60 + 15 = 45 + 30 = 90 − 15; 105 = 60 + 45 = 90 + 15 = 120 − 15. -/
+75 = 60 + 15 = 45 + 30 = 90 − 15; 105 = 60 + 45 = 90 + 15 = 120 − 15.
+trditev: MAT-SS-1/nacrtovalne-naloge#koti
+besedilo: »Na primer $75^\circ = 60^\circ + 15^\circ$: načrtaj $60^\circ$, ob njegovem kraku pa še $15^\circ$ (polovica od $30^\circ$). Gre tudi $45^\circ + 30^\circ$ ali $90^\circ - 15^\circ$.« -/
 theorem koti : (60 : ℝ) / 2 = 30 ∧ (30 : ℝ) / 2 = 15 ∧ (90 : ℝ) / 2 = 45 ∧ (60 : ℝ) + 60 = 120 ∧
     (75 : ℝ) = 60 + 15 ∧ (75 : ℝ) = 45 + 30 ∧ (75 : ℝ) = 90 - 15 ∧ (60 : ℝ) + 45 = 105 ∧ (105 : ℝ) = 90 + 15 ∧
     (105 : ℝ) = 120 - 15 := by norm_num
 
 /-! ## 4., 5. Lega oglišča in diskusija -/
 
-/-- Razlaga 4: središče očrtane krožnice (enako oddaljeno od A in B) leži na simetrali AB. -/
+/-- Razlaga 4: središče očrtane krožnice (enako oddaljeno od A in B) leži na simetrali AB.
+trditev: MAT-SS-1/nacrtovalne-naloge#sredisce-na-simetrali
+besedilo: »ki ima središče na simetrali $AB$« -/
 theorem sredisce_na_simetrali {A B O : P} (h : dist O A = dist O B) : O ∈ AffineSubspace.perpBisector A B :=
   AffineSubspace.mem_perpBisector_iff_dist_eq.mpr h
 
 /-- Predpostavka trditve `sredisce_na_simetrali` se da izpolniti (O = 0, A = 1, B = −1 v ℂ). -/
 example : dist (0 : ℂ) 1 = dist (0 : ℂ) (-1) := by simp
 
-/-- Pomožno: kvadrat razdalje točke t(k + si) na kraku od B = c je (t − ck)² + (cs)² (pri k² + s² = 1). -/
+/-- Pomožno: kvadrat razdalje točke t(k + si) na kraku od B = c je (t − ck)² + (cs)² (pri k² + s² = 1).
+pomozno – orodje: razdalja točke na kraku od B -/
 theorem krak_razdalja (c k s t : ℝ) (h : k ^ 2 + s ^ 2 = 1) :
     dist ((t : ℂ) * ⟨k, s⟩) c ^ 2 = (t - c * k) ^ 2 + (c * s) ^ 2 := by
   rw [dist_c_sq]; simp; linear_combination (t ^ 2 - c ^ 2) * h
 
 /-- Razlaga 5: nožišče pravokotnice iz B na krak je D = ck(k + si), |BD| = d = cs in BD ⊥ AD; pri α = 30°
-(s = 1/2) je d = c/2. -/
+(s = 1/2) je d = c/2.
+pomozno – orodje za diskusijo (splošni d = c·sin α); lekcija pove le primer 30° z d = c/2 = 3 cm -/
 theorem nozisce (c k s : ℝ) (hc : 0 < c) (hs : 0 < s) (h : k ^ 2 + s ^ 2 = 1) :
     dist (((c * k : ℝ) : ℂ) * ⟨k, s⟩) c = c * s ∧
       inner ℝ ((((c * k : ℝ) : ℂ) * ⟨k, s⟩) - 0) ((c : ℂ) - ((c * k : ℝ) : ℂ) * ⟨k, s⟩) = 0 := by
@@ -131,7 +145,8 @@ theorem nozisce (c k s : ℝ) (hc : 0 < c) (hs : 0 < s) (h : k ^ 2 + s ^ 2 = 1) 
     exact (sq_eq_sq₀ dist_nonneg (by positivity)).mp this
   · simp [Complex.inner]; linear_combination (-(c ^ 2 * k ^ 2)) * h
 
-/-- Predpostavke trditev o kraku se dajo izpolniti: 30° (k = √3/2, s = 1/2) in 45° (k = s = √2/2). -/
+/-- Predpostavke trditev o kraku se dajo izpolniti: 30° (k = √3/2, s = 1/2) in 45° (k = s = √2/2).
+pomozno – orodje: vrednosti sin/cos za 30° in 45° (priča izpolnljivosti) -/
 theorem kot30_45 : (√3 / 2 : ℝ) ^ 2 + (1 / 2) ^ 2 = 1 ∧ (√2 / 2 : ℝ) ^ 2 + (√2 / 2) ^ 2 = 1 ∧
     Real.cos (π / 6) = √3 / 2 ∧ Real.sin (π / 6) = 1 / 2 ∧ Real.cos (π / 4) = √2 / 2 ∧ Real.sin (π / 4) = √2 / 2 := by
   have h3 : (√3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
@@ -146,7 +161,9 @@ example : (0 : ℝ) < 6 ∧ (0 : ℝ) < 1 / 2 ∧ (√3 / 2 : ℝ) ^ 2 + (1 / 2)
 
 /-- Razlaga 5 in Povzetek (diskusija za dve stranici in kot, ki ni med njima): legi C na kraku (t = |AC| > 0) z
 |BC| = a. Za d = cs: a < d — ni rešitve; a = d — ena (t = ck, C = D); d < a < c — dve različni,
-t = ck ∓ √(a² − d²); a ≥ c — ena, t = ck + √(a² − d²) (druga »rešitev« ni na kraku, pri a = c je točka A). -/
+t = ck ∓ √(a² − d²); a ≥ c — ena, t = ck + √(a² − d²) (druga »rešitev« ni na kraku, pri a = c je točka A).
+trditev: MAT-SS-1/nacrtovalne-naloge#diskusija
+besedilo: »Dve stranici in kot nasproti krajše dasta $0$, $1$ ali $2$ rešitvi.« -/
 theorem diskusija (c k s a : ℝ) (hc : 0 < c) (hk : 0 < k) (hs : 0 < s) (h : k ^ 2 + s ^ 2 = 1) (ha : 0 < a) :
     let S := {t : ℝ | 0 < t ∧ dist ((t : ℂ) * ⟨k, s⟩) c = a}
     (a < c * s → S = ∅) ∧ (a = c * s → S = {c * k}) ∧
@@ -224,7 +241,9 @@ theorem diskusija (c k s a : ℝ) (hc : 0 < c) (hk : 0 < k) (hs : 0 < s) (h : k 
 example : (0 : ℝ) < 6 ∧ (0 : ℝ) < √3 / 2 ∧ (0 : ℝ) < 1 / 2 ∧ (√3 / 2 : ℝ) ^ 2 + (1 / 2) ^ 2 = 1 ∧ (0 : ℝ) < 4 :=
   ⟨by norm_num, by positivity, by norm_num, kot30_45.1, by norm_num⟩
 
-/-- Premisli 3: pri a = d je C = D in kot pri C je pravi (⟪A − C, B − C⟫ = 0). -/
+/-- Premisli 3: pri a = d je C = D in kot pri C je pravi (⟪A − C, B − C⟫ = 0).
+trditev: MAT-SS-1/nacrtovalne-naloge#dotik-pravi-kot
+besedilo: »Zato je $C = D$ in kot pri $C$ je pravi« -/
 theorem dotik_pravi_kot (c k s : ℝ) (h : k ^ 2 + s ^ 2 = 1) :
     inner ℝ (0 - ((c * k : ℝ) : ℂ) * ⟨k, s⟩) ((c : ℂ) - ((c * k : ℝ) : ℂ) * ⟨k, s⟩) = 0 := by
   simp [Complex.inner]; linear_combination (c ^ 2 * k ^ 2) * h
@@ -232,7 +251,8 @@ theorem dotik_pravi_kot (c k s : ℝ) (h : k ^ 2 + s ^ 2 = 1) :
 /-- Razlaga 5 in Povzetek (SSS, Kot zgodba): krožnici k(A, b) in k(B, a) (A = 0, B = c > 0) se sekata v točkah z
 Re z = x = (b² + c² − a²)/(2c) in (Im z)² = b² − x²; pri tem 4c²(b² − x²) = (a² − (b − c)²)((b + c)² − a²), zato sta
 presečišči dve natanko pri |a − b| < c < a + b (pozitivni faktorji), eno pri enakosti, nobenega sicer. Dokazana sta
-ta ↔ in razcep (`krozjici_faktor`); samo štetje presečišč ni izrek (zahtevno, še ni dokazano). -/
+ta ↔ in razcep (`krozjici_faktor`); samo štetje presečišč ni izrek (zahtevno, še ni dokazano).
+pomozno – koordinatna oblika presečišč; lekcijska trditev o številu presečišč (SSS) po docstringu še ni dokazana -/
 theorem krozjici (a b c : ℝ) (hc : 0 < c) (z : ℂ) :
     (dist z 0 = b ∧ dist z c = a ∧ 0 ≤ a ∧ 0 ≤ b) ↔
       (z.re = (b ^ 2 + c ^ 2 - a ^ 2) / (2 * c) ∧ z.im ^ 2 = b ^ 2 - ((b ^ 2 + c ^ 2 - a ^ 2) / (2 * c)) ^ 2 ∧
@@ -253,7 +273,8 @@ theorem krozjici (a b c : ℝ) (hc : 0 < c) (z : ℂ) :
       rw [e2, show (z.re - c) ^ 2 + z.im ^ 2 = z.re ^ 2 + z.im ^ 2 - 2 * c * z.re + c ^ 2 by ring, him, hre]
       field_simp; ring
 
-/-- Pomožno k `krozjici`: 4c²(b² − x²) = (a² − (b − c)²)((b + c)² − a²) za x = (b² + c² − a²)/(2c). -/
+/-- Pomožno k `krozjici`: 4c²(b² − x²) = (a² − (b − c)²)((b + c)² − a²) za x = (b² + c² − a²)/(2c).
+pomozno – orodje k krozjici (razcep) -/
 theorem krozjici_faktor (a b c : ℝ) (hc : 0 < c) :
     4 * c ^ 2 * (b ^ 2 - ((b ^ 2 + c ^ 2 - a ^ 2) / (2 * c)) ^ 2) = (a ^ 2 - (b - c) ^ 2) * ((b + c) ^ 2 - a ^ 2) := by
   field_simp; ring
@@ -262,7 +283,9 @@ theorem krozjici_faktor (a b c : ℝ) (hc : 0 < c) :
 example : (0 : ℝ) < 70 := by norm_num
 
 /-- Razlaga 5 in Povzetek (KSK): kraka kotov α pri A = 0 in β pri B = c (0 < α, β < π) se nad AB sekata
-(t, u > 0 s t·e^{iα} = c + u·e^{i(π − β)}) natanko tedaj, ko je α + β < π (180°). -/
+(t, u > 0 s t·e^{iα} = c + u·e^{i(π − β)}) natanko tedaj, ko je α + β < π (180°).
+trditev: MAT-SS-1/nacrtovalne-naloge#ksk-pogoj
+besedilo: »Pri KSK mora biti $\alpha + \beta < 180^\circ$.« -/
 theorem ksk_pogoj (c α β : ℝ) (hc : 0 < c) (hα : 0 < α) (hα' : α < π) (hβ : 0 < β) (hβ' : β < π) :
     (∃ t u : ℝ, 0 < t ∧ 0 < u ∧ t * Real.sin α = u * Real.sin β ∧ t * Real.cos α + u * Real.cos β = c) ↔
       α + β < π := by
@@ -295,7 +318,8 @@ example : (0 : ℝ) < 5 ∧ (0 : ℝ) < 40 * π / 180 ∧ 40 * π / 180 < π ∧
 
 /-- Razlaga 5 (SKS ima natanko eno rešitev): obstoj (C = 0, B = a, A = b·e^{iγ} v ℂ ima |CB| = a, |CA| = b; da je
 kot pri C res γ za 0 ≤ γ ≤ π, je `sks_kot`), enoličnost do skladnosti (dva trikotnika z istima stranicama in kotom
-med njima sta skladna). -/
+med njima sta skladna).
+pomozno – izrek dokaže enoličnost (skladnost) in razdalji v modelu, kot γ pa sks_kot; stavek »natanko eno rešitev« trdi oboje -/
 theorem sks (a b γ : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) {A B C A₁ B₁ C₁ : P} (h : ∠ A C B = ∠ A₁ C₁ B₁)
     (h1 : dist A C = dist A₁ C₁) (h2 : dist C B = dist C₁ B₁) :
     (dist (0 : ℂ) a = a ∧ dist (0 : ℂ) (b * Complex.exp (γ * Complex.I)) = b) ∧ (![A, C, B] ≅ ![A₁, C₁, B₁]) := by
@@ -308,7 +332,8 @@ theorem sks (a b γ : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) {A B C A₁ B₁ C₁ :
 example : (0 : ℝ) ≤ 5 ∧ (0 : ℝ) ≤ 4 := by norm_num
 
 /-- Razlaga 5 (SKS, obstoj s kotom): za a, b > 0 in 0 ≤ γ ≤ π (0° do 180°) ima trikotnik C = 0, B = a,
-A = b·e^{iγ} pri C res kot ∠BCA = γ (stranici |CB| = a, |CA| = b sta v `sks`). -/
+A = b·e^{iγ} pri C res kot ∠BCA = γ (stranici |CB| = a, |CA| = b sta v `sks`).
+pomozno – dopolnilo k sks: v koordinatnem modelu je kot pri C res γ -/
 theorem sks_kot (a b γ : ℝ) (ha : 0 < a) (hb : 0 < b) (h0 : 0 ≤ γ) (hπ : γ ≤ π) :
     ∠ (a : ℂ) 0 (b * Complex.exp (γ * Complex.I)) = γ := by
   simp only [EuclideanGeometry.angle, vsub_eq_sub, sub_zero]
@@ -328,7 +353,9 @@ example : (0 : ℝ) < 5 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) ≤ π / 3 ∧ π / 3 �
 /-! ## Rešeni primeri -/
 
 /-- Uvod in `RACUN` (Nika: c = 6, 30°, a = 4): d = 3 < 4 < 6, dve legi |AC| = √27 ∓ √7 ≈ 2,55 in 7,84
-(≈ 2,6 km in 7,8 km); √27 = 6·√3/2, √7 = √(4² − 3²). -/
+(≈ 2,6 km in 7,8 km); √27 = 6·√3/2, √7 = √(4² − 3²).
+trditev: MAT-SS-1/nacrtovalne-naloge#nika
+besedilo: »Koča je lahko približno 2,6 km ali 7,8 km od vasi.« -/
 theorem nika : 6 * (1 / 2 : ℝ) = 3 ∧ (6 : ℝ) * (√3 / 2) = √27 ∧ √((4 : ℝ) ^ 2 - (6 * (1 / 2)) ^ 2) = √7 ∧
     |√27 - √7 - 255 / 100| < 5 / 1000 ∧ |√27 - √7 - 26 / 10| < 5 / 100 ∧ |√27 + √7 - 784 / 100| < 5 / 1000 ∧
     |√27 + √7 - 78 / 10| < 5 / 100 := by
@@ -341,7 +368,9 @@ theorem nika : 6 * (1 / 2 : ℝ) = 3 ∧ (6 : ℝ) * (√3 / 2) = √27 ∧ √(
   all_goals rw [abs_lt]; constructor <;> linarith
 
 /-- Primer 1 (SKS, C = 0, B = 5, A = 4·(1/2 + (√3/2)i) = 2 + 2√3·i): višina 4√3/2 = 2√3 ≈ 3,46, 5 − 2 = 3,
-c = √(3² + (2√3)²) = √21 ≈ 4,58 ≈ 4,6. -/
+c = √(3² + (2√3)²) = √21 ≈ 4,58 ≈ 4,6.
+trditev: MAT-SS-1/nacrtovalne-naloge#primer1
+besedilo: »Nožišče je 2 cm od $C$, višina je $\frac{4\sqrt{3}}{2} = 2\sqrt{3} \approx 3{,}46\,\mathrm{cm}$. Do $B$ ostane $5 - 2 = 3\,\mathrm{cm}$, zato je $c = \sqrt{3^2 + (2\sqrt{3})^2} = \sqrt{21} \approx 4{,}58\,\mathrm{cm}$.« -/
 theorem primer1 : dist (⟨2, 2 * √3⟩ : ℂ) 5 = √21 ∧ dist (0 : ℂ) ⟨2, 2 * √3⟩ = 4 ∧ 4 * √3 / 2 = 2 * √3 ∧
     |2 * √3 - 346 / 100| < 5 / 1000 ∧ (5 : ℝ) - 2 = 3 ∧ √((3 : ℝ) ^ 2 + (2 * √3) ^ 2) = √21 ∧
     |√(21 : ℝ) - 458 / 100| < 5 / 1000 ∧ |√(21 : ℝ) - 46 / 10| < 5 / 100 := by
@@ -358,7 +387,8 @@ theorem primer1 : dist (⟨2, 2 * √3⟩ : ℂ) 5 = √21 ∧ dist (0 : ℂ) �
   · rw [abs_lt]; constructor <;> linarith
   · rw [abs_lt]; constructor <;> linarith
 
-/-- Primer 1 (kot pri C je 60°): ∠BCA za B = 5, A = 2 + 2√3·i je π/3. -/
+/-- Primer 1 (kot pri C je 60°): ∠BCA za B = 5, A = 2 + 2√3·i je π/3.
+pomozno – preverja, da ima koordinatni model Primera 1 pri C kot 60° (podatek naloge) -/
 theorem primer1_kot : ∠ (5 : ℂ) 0 ⟨2, 2 * √3⟩ = π / 3 := by
   have h3 : (√3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   simp only [EuclideanGeometry.angle, vsub_eq_sub, sub_zero]
@@ -372,7 +402,9 @@ theorem primer1_kot : ∠ (5 : ℂ) 0 ⟨2, 2 * √3⟩ = π / 3 := by
   rw [show (2 : ℝ) * 5 / (5 * 4) = Real.cos (π / 3) by rw [Real.cos_pi_div_three]; norm_num,
     Real.arccos_cos (by positivity) (by linarith [pi_pos])]
 
-/-- Primer 2: c = 7, v_c = 4, α = 45°: krak {t(1 + i), t > 0} seka vzporednico Im z = 4 v eni sami točki C(4, 4). -/
+/-- Primer 2: c = 7, v_c = 4, α = 45°: krak {t(1 + i), t > 0} seka vzporednico Im z = 4 v eni sami točki C(4, 4).
+trditev: MAT-SS-1/nacrtovalne-naloge#primer2
+besedilo: »Diskusija: krak kota $45^\circ$ ni vzporeden s $p$, zato ga seka v eni točki.« -/
 theorem primer2 (z : ℂ) : (z.im = 4 ∧ ∃ t : ℝ, 0 < t ∧ z = t * (1 + Complex.I)) ↔ z = ⟨4, 4⟩ := by
   constructor
   · rintro ⟨h1, t, ht, rfl⟩
@@ -383,7 +415,9 @@ theorem primer2 (z : ℂ) : (z.im = 4 ∧ ∃ t : ℝ, 0 < t ∧ z = t * (1 + Co
 
 /-- Primer 3 in `RACUN`: c = 10, 30°, a = 8: d = 10/2 = 5 < 8 < 10 (dve rešitvi); |AD| = √(10² − 5²) = √75 ≈ 8,66,
 |DC| = √(8² − 5²) = √39 ≈ 6,24, |AC₁| = √75 − √39 ≈ 2,42 (≈ 2,4), |AC₂| = √75 + √39 ≈ 14,91 (≈ 14,9),
-|C₁C₂| = 2√39 ≈ 12,49 (≈ 12,5); dotik pri a = d = 5; ck = 10·√3/2 = √75. -/
+|C₁C₂| = 2√39 ≈ 12,49 (≈ 12,5); dotik pri a = d = 5; ck = 10·√3/2 = √75.
+trditev: MAT-SS-1/nacrtovalne-naloge#primer3
+besedilo: »Račun za preizkus: $|AD| = \sqrt{10^2 - 5^2} = \sqrt{75} \approx 8{,}66\,\mathrm{km}$ in $|DC_1| = |DC_2| = \sqrt{8^2 - 5^2} = \sqrt{39} \approx 6{,}24\,\mathrm{km}$. 5. Od pristanišča: $|AC_1| = \sqrt{75} - \sqrt{39} \approx 2{,}42\,\mathrm{km}$ in $|AC_2| = \sqrt{75} + \sqrt{39} \approx 14{,}91\,\mathrm{km}$. V dosegu je pot $|C_1C_2| = 2\sqrt{39} \approx 12{,}49\,\mathrm{km}$.« -/
 theorem primer3 : (10 : ℝ) / 2 = 5 ∧ (10 : ℝ) * (1 / 2) = 5 ∧ (5 : ℝ) < 8 ∧ (8 : ℝ) < 10 ∧
     √((10 : ℝ) ^ 2 - 5 ^ 2) = √75 ∧ (10 : ℝ) * (√3 / 2) = √75 ∧ √((8 : ℝ) ^ 2 - 5 ^ 2) = √39 ∧
     |√(75 : ℝ) - 866 / 100| < 5 / 1000 ∧ |√(39 : ℝ) - 624 / 100| < 5 / 1000 ∧
@@ -400,7 +434,9 @@ theorem primer3 : (10 : ℝ) / 2 = 5 ∧ (10 : ℝ) * (1 / 2) = 5 ∧ (5 : ℝ) 
   all_goals rw [abs_lt]; constructor <;> linarith
 
 /-- Primer 4 (premisli) in `RACUN`: trikotnik ABC s stranicami 5, 3, 7 obstaja (5 − 3 < 7 < 5 + 3);
-cos β = (5² + 3² − 7²)/(2·5·3) = −0,5, zato β = 120° (2π/3) in α = 180° − β = 60° (sosednja kota paralelograma). -/
+cos β = (5² + 3² − 7²)/(2·5·3) = −0,5, zato β = 120° (2π/3) in α = 180° − β = 60° (sosednja kota paralelograma).
+trditev: MAT-SS-1/nacrtovalne-naloge#primer4
+besedilo: »Če izmeriš, dobiš $\alpha = 60^\circ$ in $\beta = 120^\circ$.« -/
 theorem primer4 {A B C : P} (h1 : dist A B = 5) (h2 : dist B C = 3) (h3 : dist A C = 7) :
     ((5 : ℝ) - 3 < 7 ∧ (7 : ℝ) < 5 + 3) ∧ ((5 : ℝ) ^ 2 + 3 ^ 2 - 7 ^ 2) / (2 * 5 * 3) = -1 / 2 ∧
       ∠ A B C = 2 * π / 3 ∧ π - ∠ A B C = π / 3 := by
@@ -422,7 +458,8 @@ example : dist (0 : ℂ) 5 = 5 ∧ dist (5 : ℂ) ⟨13 / 2, 3 * √3 / 2⟩ = 3
 /-! ## Za maturo -/
 
 /-- Naloga 2 a), c) (diskusija v modelu A = −3, B = 3, M = 0): točke z Im z = v (vzporednica) in |z| = t (krožnica
-k(M, t)) za t, v > 0: pri t > v sta dve, z = ±√(t² − v²) + vi; pri t = v ena (z = vi, enakokraki); pri t < v nobene. Tu je dokazan ↔; štetje je `naloga2_stevilo`. -/
+k(M, t)) za t, v > 0: pri t > v sta dve, z = ±√(t² − v²) + vi; pri t = v ena (z = vi, enakokraki); pri t < v nobene. Tu je dokazan ↔; štetje je `naloga2_stevilo`.
+pomozno – koordinatna oblika presečišč; štetje (trditev lekcije) navaja naloga2-stevilo -/
 theorem naloga2_diskusija (t v : ℝ) (ht : 0 < t) (z : ℂ) :
     (z.im = v ∧ ‖z‖ = t) ↔ (z.im = v ∧ z.re ^ 2 = t ^ 2 - v ^ 2) := by
   have hn : ‖z‖ ^ 2 = z.re ^ 2 + z.im ^ 2 := by rw [Complex.sq_norm, Complex.normSq_apply]; ring
@@ -436,7 +473,9 @@ theorem naloga2_diskusija (t v : ℝ) (ht : 0 < t) (z : ℂ) :
 example : (0 : ℝ) < 5 := by norm_num
 
 /-- Naloga 2 c) (štetje): pri t > v sta točki dve (±√(t² − v²) + vi, različni), pri t = v je ena (vi, in trikotnik
-ABC z A = −3, B = 3, C = vi je enakokrak, |CA| = |CB|), pri t < v ni nobene (v > 0). -/
+ABC z A = −3, B = 3, C = vi je enakokrak, |CA| = |CB|), pri t < v ni nobene (v > 0).
+trditev: MAT-SS-1/nacrtovalne-naloge#naloga2-stevilo
+besedilo: »pri $t_c = v_c$ se krožnica premice $p$ dotakne nad točko $M$, trikotnik je enakokrak (ena rešitev); pri $t_c < v_c$ krožnica premice $p$ ne doseže in rešitve ni.« -/
 theorem naloga2_stevilo (t v : ℝ) (ht : 0 < t) (hv : 0 < v) :
     (v < t → {z : ℂ | z.im = v ∧ ‖z‖ = t} = {⟨√(t ^ 2 - v ^ 2), v⟩, ⟨-√(t ^ 2 - v ^ 2), v⟩} ∧
       (⟨√(t ^ 2 - v ^ 2), v⟩ : ℂ) ≠ ⟨-√(t ^ 2 - v ^ 2), v⟩) ∧
@@ -478,7 +517,9 @@ example : (0 : ℝ) < 5 ∧ (0 : ℝ) < 3 ∧ (3 : ℝ) < 5 := by norm_num
 
 /-- Naloga 2 c), d) in `RACUN`: t = 5, v = 3: C₁,₂ = ±4 + 3i (|MN| = √(5² − 3²) = 4); trikotnika ABC₁ in ABC₂ sta
 skladna (zrcaljenje čez simetralo AB, SSS); za C = 4 + 3i (bliže B): |BN| = 4 − 3 = 1, |AN| = 3 + 4 = 7,
-a = √(1² + 3²) = √10, b = √(7² + 3²) = √58. -/
+a = √(1² + 3²) = √10, b = √(7² + 3²) = √58.
+trditev: MAT-SS-1/nacrtovalne-naloge#naloga2
+besedilo: »c) naloga ima eno rešitev (trikotnika $ABC_1$ in $ABC_2$ sta skladna); d) $a = \sqrt{10}\,\mathrm{cm}$, $b = \sqrt{58}\,\mathrm{cm}$.« -/
 theorem naloga2 :
     ((⟨4, 3⟩ : ℂ).im = 3 ∧ ‖(⟨4, 3⟩ : ℂ)‖ = 5) ∧ ((⟨-4, 3⟩ : ℂ).im = 3 ∧ ‖(⟨-4, 3⟩ : ℂ)‖ = 5) ∧
     √((5 : ℝ) ^ 2 - 3 ^ 2) = 4 ∧ (![(-3 : ℂ), 3, ⟨4, 3⟩] ≅ ![(3 : ℂ), -3, ⟨-4, 3⟩]) ∧ (4 : ℝ) - 3 = 1 ∧
@@ -502,7 +543,9 @@ theorem naloga2 :
 
 /-- Naloga 3 b), c), d) in `RACUN`: c = 8, 45°: d = 8·√2/2 = 4√2 = √(8²/2) = √32; 2d² = 64; diskusija: a < 4√2
 nič, a = 4√2 ena, 4√2 < a < 8 dve, a ≥ 8 ena (`diskusija`); a = 2√10: √32 < √40 < 8, |DC| = √(40 − 32) = √8 =
-2√2, |AC₁| = 4√2 − 2√2 = 2√2, |AC₂| = 4√2 + 2√2 = 6√2; preizkus C₁ = (2, 2): √((8 − 2)² + 2²) = 2√10. -/
+2√2, |AC₁| = 4√2 − 2√2 = 2√2, |AC₂| = 4√2 + 2√2 = 6√2; preizkus C₁ = (2, 2): √((8 − 2)² + 2²) = 2√10.
+trditev: MAT-SS-1/nacrtovalne-naloge#naloga3
+besedilo: »Velja $4\sqrt{2} = \sqrt{32} < 2\sqrt{10} = \sqrt{40} < \sqrt{64} = 8$, zato sta legi dve. V pravokotnem trikotniku $BDC$ je $|DC| = \sqrt{a^2 - d^2} = \sqrt{40 - 32}\,\mathrm{cm} = \sqrt{8}\,\mathrm{cm} = 2\sqrt{2}\,\mathrm{cm}$. 8. d) Točki ležita na kraku na obeh straneh točke $D$, $|AD| = 4\sqrt{2}\,\mathrm{cm}$: $|AC_1| = 4\sqrt{2}\,\mathrm{cm} - 2\sqrt{2}\,\mathrm{cm} = 2\sqrt{2}\,\mathrm{cm}$ in $|AC_2| = 4\sqrt{2}\,\mathrm{cm} + 2\sqrt{2}\,\mathrm{cm} = 6\sqrt{2}\,\mathrm{cm}$.« -/
 theorem naloga3 : (8 : ℝ) * (√2 / 2) = 4 * √2 ∧ √((8 : ℝ) ^ 2 / 2) = 4 * √2 ∧ 2 * (4 * √2) ^ 2 = (8 : ℝ) ^ 2 ∧
     (4 * √2 : ℝ) = √32 ∧ (2 * √10 : ℝ) = √40 ∧ √(32 : ℝ) < √40 ∧ √(40 : ℝ) < 8 ∧
     √((2 * √10) ^ 2 - 32) = 2 * √2 ∧ 4 * √2 - 2 * √2 = 2 * √2 ∧ 4 * √2 + 2 * √2 = 6 * √2 ∧
@@ -524,24 +567,32 @@ theorem naloga3 : (8 : ℝ) * (√2 / 2) = 4 * √2 ∧ √((8 : ℝ) ^ 2 / 2) =
 /-! ## Drugače in Preveri se -/
 
 /-- Kot zgodba (Tine): hrast in skala 70 korakov narazen, polmera 50 in 40: 50 − 40 < 70 < 50 + 40, faktorja
-(a² − (b − c)²)((b + c)² − a²) > 0 (dve presečišči); pri 90 = 50 + 40 je faktor 0 (dotik), pri 100 negativen. -/
+(a² − (b − c)²)((b + c)² − a²) > 0 (dve presečišči); pri 90 = 50 + 40 je faktor 0 (dotik), pri 100 negativen.
+trditev: MAT-SS-1/nacrtovalne-naloge#zgodba
+besedilo: »Ker je $50 - 40 < 70 < 50 + 40$« -/
 theorem zgodba : ((50 : ℝ) - 40 < 70 ∧ (70 : ℝ) < 50 + 40) ∧
     0 < ((40 : ℝ) ^ 2 - (50 - 70) ^ 2) * ((50 + 70) ^ 2 - 40 ^ 2) ∧
     ((40 : ℝ) ^ 2 - (50 - 90) ^ 2) * ((50 + 90) ^ 2 - 40 ^ 2) = 0 ∧
     ((40 : ℝ) ^ 2 - (50 - 100) ^ 2) * ((50 + 100) ^ 2 - 40 ^ 2) < 0 := by norm_num
 
 /-- Korak za korakom (trapez a = 9, c = 4, b = 4, d = 3): |AE| = 9 − 4 = 5; 4 − 3 < 5 < 4 + 3; 3² + 4² = 25 = 5²
-(pravi kot pri D); ploščina 3·4/2 = 6, v = 2·6/5 = 2,4. -/
+(pravi kot pri D); ploščina 3·4/2 = 6, v = 2·6/5 = 2,4.
+trditev: MAT-SS-1/nacrtovalne-naloge#korak-za-korakom
+besedilo: »Iz ploščine: $\frac{3 \cdot 4}{2} = 6$ in $v = \frac{2 \cdot 6}{5} = 2{,}4\,\mathrm{cm}$.« -/
 theorem korak_za_korakom : (9 : ℝ) - 4 = 5 ∧ ((4 : ℝ) - 3 < 5 ∧ (5 : ℝ) < 4 + 3) ∧ (3 : ℝ) ^ 2 + 4 ^ 2 = 25 ∧
     (25 : ℝ) = 5 ^ 2 ∧ (3 : ℝ) * 4 / 2 = 6 ∧ (2 : ℝ) * 6 / 5 = 24 / 10 := by norm_num
 
 /-- Preveri se 1: c = 8, a = 6, 30°: d = 8/2 = 4 < 6 < 8, dve rešitvi; drugi nabori: 4 − 3 < 5 < 4 + 3,
-40 + 70 < 180; nabor c = 6, v_c = 2, α = 60° je `kviz1_visina`. -/
+40 + 70 < 180; nabor c = 6, v_c = 2, α = 60° je `kviz1_visina`.
+trditev: MAT-SS-1/nacrtovalne-naloge#kviz1
+besedilo: »Razdalja $B$ od kraka je $4\,\mathrm{cm}$; ker je $4 < 6 < 8$, sta rešitvi dve.« -/
 theorem kviz1 : (8 : ℝ) * (1 / 2) = 4 ∧ (4 : ℝ) < 6 ∧ (6 : ℝ) < 8 ∧ ((4 : ℝ) - 3 < 5 ∧ (5 : ℝ) < 4 + 3) ∧
     (40 : ℝ) + 70 < 180 := by norm_num
 
 /-- Preveri se 1 (nabor c = 6, v_c = 2, α = 60°): krak {t(½ + (√3/2)i), t > 0} seka vzporednico Im z = 2 v eni sami
-točki C = 2/√3 + 2i, zato je trikotnik en sam (na eni strani AB; zrcalni je skladen). -/
+točki C = 2/√3 + 2i, zato je trikotnik en sam (na eni strani AB; zrcalni je skladen).
+trditev: MAT-SS-1/nacrtovalne-naloge#kviz1-visina
+besedilo: »Višina ni stranica, a vseeno zadošča: $C$ je presečišče kraka in vzporednice na razdalji $v_c$, torej ena točka.« -/
 theorem kviz1_visina (z : ℂ) :
     (z.im = 2 ∧ ∃ t : ℝ, 0 < t ∧ z = t * ⟨1 / 2, √3 / 2⟩) ↔ z = ⟨2 / √3, 2⟩ := by
   have h3 : (√3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
@@ -556,12 +607,16 @@ theorem kviz1_visina (z : ℂ) :
     refine ⟨rfl, 4 / √3, by positivity, ?_⟩
     apply Complex.ext <;> simp <;> field_simp <;> nlinarith [h3]
 
-/-- Preveri se 2 in `RACUN`: 9 − 4 < c < 9 + 4, največje celo število je 12 = 9 + 4 − 1 (13 ne, enakost). -/
+/-- Preveri se 2 in `RACUN`: 9 − 4 < c < 9 + 4, največje celo število je 12 = 9 + 4 − 1 (13 ne, enakost).
+trditev: MAT-SS-1/nacrtovalne-naloge#kviz2
+besedilo: »Veljati mora $9 - 4 < c < 9 + 4$, torej $5 < c < 13$. Največje celo število je $12$.« -/
 theorem kviz2 : (9 - 4 < 12 ∧ 12 < 9 + 4) ∧ (∀ n : ℕ, 9 - 4 < n → n < 9 + 4 → n ≤ 12) ∧ 9 + 4 - 1 = 12 ∧
     ¬ (13 < 9 + 4) := by
   refine ⟨by norm_num, fun n _ h => by omega, by norm_num, by norm_num⟩
 
-/-- Preveri se 4: c = 8, 30°, a = 3: d = 4 > 3, krožnica kraka ne doseže, rešitev ni (`diskusija`, prvi primer). -/
+/-- Preveri se 4: c = 8, 30°, a = 3: d = 4 > 3, krožnica kraka ne doseže, rešitev ni (`diskusija`, prvi primer).
+trditev: MAT-SS-1/nacrtovalne-naloge#kviz4
+besedilo: »Ker je $3 < 4$, krožnica kraka ne doseže, kot kaže risba. Rešitve ni.« -/
 theorem kviz4 : {t : ℝ | 0 < t ∧ dist ((t : ℂ) * ⟨√3 / 2, 1 / 2⟩) (8 : ℝ) = 3} = ∅ :=
   ((diskusija 8 (√3 / 2) (1 / 2) 3 (by norm_num) (by positivity) (by norm_num) kot30_45.1 (by norm_num)).1
     (by norm_num))
