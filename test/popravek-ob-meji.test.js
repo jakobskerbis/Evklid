@@ -487,6 +487,9 @@ test("pregled A (b984798b3): golo število z vrednostjo naloge brez sodbe; sprem
   // ura in tisočice v učenčevem računu: ponovni odgovor kot main, ob meji brez opombe
   none(await run({ answers: ["Koliko je ura po 30 minutah?", "Da!"], n: 2, msgs: ["Ura je 8.45. Koliko je ura čez 30 minut?", "je 8.45 + 0.30 = 9.15?"] }));
   none(await run({ answers: ["Najprej seštej.", "Da!"], n: 2, msgs: ["Koliko je tisoč plus ena?", "je 1,000 + 1 = 1,001?"] }));
+  // učenčevo sporočilo z nalogo jo je spremenilo (pregled A, c3b53ee53)
+  none(await run({ answers: ["Kaj dobiš za x?", "Odlično!"], n: 2, msgs: [R`Reši enačbo $2x + 3 = 11$. Oprosti, mislil sem trinajst.`, "x = 5"] }));
+  none(await run({ answers: ["Kaj dobiš za x?", "Odlično!"], n: 2, msgs: [R`V knjigi piše trinajst, ne enajst: $2x + 3 = 11$.`, "x = 5"] }));
   // primer ChatGPT ostane
   has(await run({ answers: ["Kaj dobiš za x?", "Da, pravilno!"], n: 2, msgs: [T, "x = 5"] }), R`*(Opomba: $x = 5$ ni rešitev enačbe $2x + 3 = 11$ (rešitev: $x = 4$). Preveri še sam.)*`);
 });

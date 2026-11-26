@@ -986,3 +986,32 @@ test("pregled A (b984798b3): opomba o vrednosti le pri nalogi, enem navadnem vpr
   for (const q of ["x = 5", "x = 5?", "mislim x = 5", "Torej x = 5."]) assert.equal(at("Kaj dobiš za x?", q, "Da, pravilno!", 2), true, q);
   assert.equal(at("Kaj narediš najprej?", "x = 5", "Da, pravilno!", 2), true);
 });
+
+test("pregled A (c3b53ee53): učenčevo sporočilo z nalogo jo je spremenilo, opombe o koraku ni", () => {
+  const E = R`Reši enačbo $2x + 3 = 11$.`;
+  const at = (taskMsg, q, a) => {
+    const pre = presolve(taskMsg, { first: true, narrow: false });
+    const v = stepVerdict(q, { pre, prevTutor: "Kaj dobiš za x?", seen: taskMsg + "\nKaj dobiš za x?", turns: 2 });
+    return !!v && verdictNoteSafe(a, v, { prevTutor: "Kaj dobiš za x?", taskMsg, pre });
+  };
+  for (const m of [
+    R`Reši enačbo $2x + 3 = 11$. Oprosti, mislil sem trinajst.`,
+    R`Reši enačbo $2x + 3 = 11$. Ups, na desni je trinajst.`,
+    R`Reši enačbo $2x + 3 = 11$ (v knjigi je desno trinajst).`,
+    R`Solve $2x + 3 = 11$. Sorry, I meant thirteen.`,
+    R`Pri desni strani trinajst reši $2x + 3 = 11$.`,
+    R`V knjigi piše trinajst, ne enajst: $2x + 3 = 11$.`,
+    R`Desni strani prištej dva. Reši $2x + 3 = 11$.`,
+    R`Moja enačba je drugačna od $2x + 3 = 11$.`,
+    R`Reši enačbo $2x + 3 = 11$, kjer je desna stran v resnici 13.`,
+    R`Reši enačbo $2x + 3 = 11$ 13`,
+    R`Reši enačbo $2x + 3 = 11$.` + "\n\nPS: desno je trinajst",
+    R`Reši enačbo $2x + 3 = 11$ za $x$, a z desno stranjo trinajst.`,
+  ]) {
+    assert.equal(at(m, "x = 5", "Odlično!"), false, m);
+    assert.equal(at(m, "x = 5?", "Da, pravilno!"), false, m);
+  }
+  // primer ChatGPT: naloga brez spremembe
+  assert.equal(at(E, "x = 5", "Da, pravilno!"), true);
+  assert.equal(at(R`Reši enačbo $2x + 3 = 11$ za $x$.`, "x = 5?", "Da, pravilno!"), true);
+});

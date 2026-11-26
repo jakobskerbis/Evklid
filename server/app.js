@@ -1512,6 +1512,7 @@ export function createApp(store, opts = {}) {
       // sodi koda le proti nalogi, o kateri pogovor zdaj teče.
       // Če je učenec po tej nalogi poslal še eno, ki je reševalnik ne zna (»Kaj pa 3x = 15?«), koda ne sodi.
       let firstPre = null;
+      let taskMsg = "";
       if (claimAsked) {
         // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
         const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text) && !isImagePlaceholder(x.text)) } : m);
@@ -1521,6 +1522,7 @@ export function createApp(store, opts = {}) {
           firstPre = presolve(earlier[i], { first: i === 0, narrow: false });
           at = i;
         }
+        if (firstPre) taskMsg = earlier[at];
         if (firstPre && earlier.slice(at + 1).some(looksLikeTask)) firstPre = null;
       }
       // Sodba kode (server/sodba-koraka.js): računi v sporočilu, enačba proti nalogi ali inštruktorjevi zadnji enačbi,
@@ -1643,7 +1645,7 @@ export function createApp(store, opts = {}) {
           // Ponovni odgovor samo, če je zanj prostor pod mejo. Sicer ostane prvi odgovor, ob sodbi kode s konkretno
           // opombo (»$x = 5$ ni rešitev enačbe …«), ki je resnična tudi, če je verdictIgnored odgovor prebral narobe.
           if (reason && !hold.take(mainReserve)) {
-            if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict, { prevTutor: prevTutorText })) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
+            if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict, { prevTutor: prevTutorText, taskMsg, pre: firstPre })) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
           } else if (reason) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter({ language: jezik });
@@ -1687,7 +1689,7 @@ export function createApp(store, opts = {}) {
           console.warn(`[evklid] pregled sodbe ni uspel: ${e?.message || e}`);
           // Ponovni odgovor ni uspel: učenec vidi prvi odgovor (ne delnega ponovnega), ob sodbi kode z opombo.
           if (firstHeld) held.splice(0, held.length, ...firstHeld);
-          if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict, { prevTutor: prevTutorText })) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
+          if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict, { prevTutor: prevTutorText, taskMsg, pre: firstPre })) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
         }
       }
       phase(false); // preverjanje sodbe je končano: napis »Preverjam odgovor …« izgine

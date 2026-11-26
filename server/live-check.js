@@ -606,7 +606,7 @@ function withoutMathTail(s) {
   return s.slice(0, i);
 }
 const TASK_CHANGE = /(?<!\p{L})(?:kaj pa|kaj če|če je|če bi|namesto|vzemi|vzemimo|zamenj\p{L}*|spremen\p{L}*|recimo|denimo|potem pa|nato pa|pa še|what if|instead|suppose)(?!\p{L})/iu;
-function taskModified(question, pre) {
+export function taskModified(question, pre) {
   if ((pre?.problems || []).length !== 1) return true;
   const q = String(question || "");
   if (TASK_CHANGE.test(q) || (q.match(/=/g) || []).length > 1) return true;

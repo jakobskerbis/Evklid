@@ -11,7 +11,7 @@
 // skrito ugotovitvijo (brez modela za pregled). Ob dvomu koda ne sodi: raje brez sodbe kot napačna sodba.
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
 import { parse, compile, calcText, joinThousands, digitGap } from "../public/graph/math.js";
-import { NOTE_TAG, claimNote, hasExercise, solverValues, noSolution, wordProblemResult } from "./live-check.js";
+import { NOTE_TAG, claimNote, hasExercise, solverValues, noSolution, wordProblemResult, taskModified } from "./live-check.js";
 import { plainToTex, AMBIGUOUS_NUM, NOTE_AMBIGUOUS_NUM, OTHER_SYSTEM, noteLine } from "./besedilo-trditev.js";
 
 // Vrstica inštruktorja, ki navaja učenčevo (morda napačno) enačbo ali kandidata: ni enačba, ki se rešuje.
@@ -683,7 +683,7 @@ const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(Strin
  * pravilna zavrnitev in opomba bi le razkrila rešitev (pregled A, 7f565d941). Vprašanje-predlog in zavrnjen pravilen
  * korak že zahtevata izrecen začetek.
  */
-export function verdictNoteSafe(answer, verdict, { prevTutor = "" } = {}) {
+export function verdictNoteSafe(answer, verdict, { prevTutor = "", taskMsg, pre } = {}) {
   if (!verdict || verdict.quiet || !verdictIgnored(answer, verdict)) return false;
   // Opomba le, ko je prejšnji inštruktorjev odgovor navadno vprašanje (»Kaj dobiš za x?«, »Koliko je x?«): brez
   // števke, števila z besedo (tudi »trojka«, »desetica«, »tretji«), zapisa $…$ in brez velelnika ali hipoteze
@@ -699,6 +699,9 @@ export function verdictNoteSafe(answer, verdict, { prevTutor = "" } = {}) {
   // navadno inštruktorjevo vprašanje (en stavek, največ šest besed, brez števil, zapisa, velelnika ali pogoja) in
   // trditev; učenčevo sporočilo je le trditev.
   if (!verdict.explicit) {
+    // Učenčevo sporočilo z nalogo jo je spremenilo (»Oprosti, mislil sem trinajst.«, »V knjigi piše trinajst, ne
+    // enajst: …«): učenčev korak je morda pravilen za njegovo enačbo, zato brez opombe (pregled A, c3b53ee53).
+    if (taskMsg !== undefined && taskModified(taskMsg, pre)) return false;
     if (verdict.turns != null && verdict.turns > 2) return false;
     if (verdict.bareClaim === false) return false;
     if (prev && (/\d|\$/.test(prev) || NUMBER_WORD.test(prev) || TUTOR_MOVE.test(prev) || /[.!?;]\s+\S/.test(prev) || prev.split(/\s+/).length > 6)) return false;
