@@ -36,7 +36,10 @@ commands below and the checklist of their lens.
 - when touched: `node scripts/preveri-generatorje.js` (0 errors), `node scripts/kakovost-nalog.js <prefix>`,
   `node scripts/preveri-simulacije.cjs`, `node scripts/gumbi-na-dotik.cjs [ids]` (sims: no clickable element
   redrawn every frame, or taps on iPad/iPhone do nothing; `gumbi-na-dotik-aplikacija.cjs` for app-wide screens), `node scripts/check-lesson.js -q <files>`,
-  `node scripts/preveri-formule.cjs` (sims, `public/sirina.js` or KaTeX output: no formula may scroll at 360 px)
+  `node scripts/preveri-formule.cjs` (sims, `public/sirina.js` or KaTeX output: no formula may scroll at 360 px),
+  `node --test test/mat-zapis.test.js` (lessons, formula sheets, gradiva, exam papers, generators, `public/i18n/sl.js`
+  or the KaTeX pipeline: no unrendered maths; known content hits in `test/fiksno/mat-zapis-izhodisce.json` may only
+  shrink, `node scripts/popis-formul.js --odstrani-popravljene`; never add a key, fix the text)
 
 **Code scope rule (j, 2026-11-19, external review point 42):** a PR that adds a new module (a new `.js` file in
 `server/` or a new client module in `public/`) says in its body which existing module it replaces or merges into,
