@@ -226,15 +226,16 @@ const slotTopics = (i) => [...new Set([QUIZ.slots[i].topic, ...QUIZ_FORMS.map((f
 // (sosednja tema, npr. uporaba odvoda pri mestu »odvod«, ne šteje).
 export function practicedTopics(db, sid, from, to) {
   const out = new Set();
-  const q = (sql) => {
+  const q = (sql, args = [sid, from, to]) => {
     try {
-      for (const r of db.prepare(sql).all(sid, from, to)) out.add(r.t);
+      for (const r of db.prepare(sql).all(...args)) out.add(r.t);
     } catch {}
   };
   q("SELECT DISTINCT topic_id AS t FROM tasks WHERE student_id = ? AND mode IN ('practice', 'review', 'list') AND answered_at >= ? AND answered_at < ?");
   q("SELECT DISTINCT topic_id AS t FROM events WHERE student_id = ? AND topic_id IS NOT NULL AND created_at >= ? AND created_at < ?");
   // Pole mature in NPZ, poskusne pole, »Preveri se« v lekcijah, kviz, kartice, igre, ustno (po dnevih, UTC).
-  q("SELECT DISTINCT topic_id AS t FROM skill_results WHERE student_id = ? AND topic_id IS NOT NULL AND day >= substr(?, 1, 10) AND day <= substr(?, 1, 10)");
+  // Vmesni dnevi v celoti; na mejnih dnevih (konec prvega, začetek drugega preizkusa) samo po last_at (pregled 3).
+  q("SELECT DISTINCT topic_id AS t FROM skill_results WHERE student_id = ? AND topic_id IS NOT NULL AND ((day > substr(?, 1, 10) AND day < substr(?, 1, 10)) OR (last_at >= ? AND last_at < ?))", [sid, from, to, from, to]);
   return out;
 }
 
@@ -338,11 +339,19 @@ export function impactReport(db, minGroup, { invited = null, now = new Date() } 
     const v = [...xs].sort((x, y) => x - y);
     return v.length ? Math.round((v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2) * 10) / 10 : null;
   };
-  const concept = solo.length
-    ? { candidates: solo.length, gapDays: median(gaps), all: outcome(cnt.all), practiced: outcome(cnt.practiced), notPracticed: outcome(cnt.notPracticed) }
-    : null;
+  // Če je ena od podskupin skrita in ni prazna, skrijemo tudi drugo: sicer bi skupaj − druga dala skrito skupino
+  // (pregled 3, PR #1188). Prazna skupina (0 kandidatov) ne pove ničesar, zato druga ostane vidna.
+  let practiced = outcome(cnt.practiced);
+  let notPracticed = outcome(cnt.notPracticed);
+  if ((practiced.hidden && cnt.practiced[2].size) || (notPracticed.hidden && cnt.notPracticed[2].size)) {
+    practiced = { hidden: true, candidates: practiced.hidden ? practiced.candidates : `≥ ${minGroup}` };
+    notPracticed = { hidden: true, candidates: notPracticed.hidden ? notPracticed.candidates : `≥ ${minGroup}` };
+  }
+  const concept = solo.length ? { candidates: solo.length, gapDays: median(gaps), all: outcome(cnt.all), practiced, notPracticed } : null;
   // Potek: začeli (prvi preizkus odprt), končali prvega, oba, odpadli (drugega niso končali ODPAD_DAYS dni po odprtju) in
-  // tisti, ki še lahko končajo. Vsa števila pod pragom kot »< prag«.
+  // tisti, ki še lahko končajo. Začeli, odpadli in še čakajo samo v korakih po minGroup (»10+«), da razlika dveh poročil
+  // ne pove, kdo je odpadel ali odprl preizkus (pregled 3, PR #1188); pod pragom »< prag«.
+  const stepN = (n) => (n === 0 ? 0 : n < minGroup ? `< ${minGroup}` : `${Math.floor(n / minGroup) * minGroup}+`);
   const started = db.prepare("SELECT COUNT(*) AS n FROM pilot_quiz WHERE phase = 'pre' AND form IS NOT NULL").get().n;
   const postDone = new Set(rows.filter((r) => r.phase === "post").map((r) => r.student_id));
   let dropped = 0;
@@ -352,6 +361,7 @@ export function impactReport(db, minGroup, { invited = null, now = new Date() } 
     if (now >= addDays(r.finished_at, QUIZ_GAP_DAYS + ODPAD_DAYS)) dropped++;
     else waiting++;
   }
+  const blocked = QUIZ_FORMS.flatMap((f) => pairBlocks[f]);
   const orders = Object.values(byOrder);
   const diffBalanced = orders.every(Boolean) ? Math.round(((orders[0].diff + orders[1].diff) / 2) * 1000) / 1000 : null;
   // Natančno je samo skupno število; štetja po skupinah so samo znotraj paketov.
@@ -372,16 +382,17 @@ export function impactReport(db, minGroup, { invited = null, now = new Date() } 
     byOrder,
     slots,
     invited: invited == null ? null : shownN(invited, minGroup),
-    started: shownN(started, minGroup),
-    dropped: shownN(dropped, minGroup),
-    waiting: shownN(waiting, minGroup),
+    started: stepN(started),
+    dropped: stepN(dropped),
+    waiting: stepN(waiting),
     dropDays: ODPAD_DAYS,
-    // Pari, kjer je bil drugi preizkus s pomočjo (niso v glavnem izidu); pod pragom »< prag«.
-    helped: shownN(pairAll.filter((r) => helped(postBy.get(r.student_id))).length, minGroup),
-    helpedAuto: shownN(pairAll.filter((r) => postBy.get(r.student_id).aided === 1).length, minGroup),
-    helpedSelf: shownN(pairAll.filter((r) => postBy.get(r.student_id).help === "yes").length, minGroup),
+    // Pari v ZAPRTIH paketih, kjer je bil drugi preizkus s pomočjo (niso v glavnem izidu). Šteje se samo v paketih, da se
+    // število spremeni le s celim paketom (pregled 3, PR #1188); pod pragom »< prag«.
+    helped: shownN(blocked.filter((r) => helped(postBy.get(r.student_id))).length, minGroup),
+    helpedAuto: shownN(blocked.filter((r) => postBy.get(r.student_id).aided === 1).length, minGroup),
+    helpedSelf: shownN(blocked.filter((r) => postBy.get(r.student_id).help === "yes").length, minGroup),
     // Pari, kjer je bil s pomočjo PRVI preizkus (ostanejo v izidu; nižji imenovalec »napačno prvič«).
-    helpedPre: shownN(pairAll.filter(helped).length, minGroup),
+    helpedPre: shownN(blocked.filter(helped).length, minGroup),
     concept,
     allSkip: QUIZ_FORMS.reduce((n, f) => n + preBlocks[f].filter(allSkip).length + pairBlocks[f].filter((r) => !allSkip(r) && allSkip(postBy.get(r.student_id))).length, 0),
   };

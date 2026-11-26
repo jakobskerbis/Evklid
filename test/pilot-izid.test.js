@@ -141,7 +141,12 @@ test("vadena mesta: vadnica (ne uvrstitev), inštruktor in vaja drugje med preiz
   db.prepare("INSERT INTO events (student_id, topic_id, created_at) VALUES (?, ?, '2026-11-06 12:00:00')").run(sid, QUIZ.slots[4].topic);
   db.prepare("INSERT INTO skill_results (student_id, day, source, key, topic_id, n) VALUES (?, '2026-11-08', 'paper', 'k', ?, 3)").run(sid, QUIZ.slots[10].topic);
   db.prepare("INSERT INTO skill_results (student_id, day, source, key, topic_id, n) VALUES (?, '2026-11-20', 'paper', 'k2', ?, 3)").run(sid, QUIZ.slots[11].topic); // po začetku drugega
-  assert.deepEqual(practicedSlots(db, sid, "2026-11-01 10:00:00", "2026-11-16 10:00:00"), [0, 4, 10]);
+  // Mejna dneva po času (pregled 3): na dan prvega preizkusa PRED koncem ne šteje, na dan drugega pred začetkom šteje, po začetku ne.
+  const sr = (day, key, slot, at) => db.prepare("INSERT INTO skill_results (student_id, day, source, key, topic_id, n, last_at) VALUES (?, ?, 'kviz', ?, ?, 1, ?)").run(sid, day, key, QUIZ.slots[slot].topic, at);
+  sr("2026-11-01", "m1", 5, "2026-11-01 09:30:00");
+  sr("2026-11-16", "m2", 6, "2026-11-16 09:00:00");
+  sr("2026-11-16", "m3", 7, "2026-11-16 11:00:00");
+  assert.deepEqual(practicedSlots(db, sid, "2026-11-01 10:00:00", "2026-11-16 10:00:00"), [0, 4, 6, 10]);
 });
 
 test("Wilsonov interval", () => {
@@ -180,10 +185,9 @@ test("poročilo: potek pilota, izločeni s pomočjo, glavni izid po konceptu iz 
   for (let i = 13; i < 18; i++) row(ids[i], "pre", "B", [0], "2026-11-20 09:00:00", `2026-11-20 11:00:0${i - 13}`);
 
   const q = impactReport(db, PRAG, { invited: 20, now }).quiz;
-  assert.deepEqual([q.invited, q.started, q.nPre, q.nPaired, q.dropped, q.waiting, q.dropDays], [20, 18, 17, 7, 5, 5, ODPAD_DAYS]);
-  assert.equal(q.helped, "< 5", "izločenih 2, pod pragom");
-  assert.equal(q.helpedAuto, "< 5");
-  assert.equal(q.helpedPre, "< 5");
+  assert.deepEqual([q.invited, q.started, q.nPre, q.nPaired, q.dropped, q.waiting, q.dropDays], [20, "15+", 17, 7, "5+", "5+", ODPAD_DAYS]);
+  // Pomoč pri 5 in 6 je zunaj zaprtega paketa parov (0–4), zato se še ne šteje (štetja samo v paketih, pregled 3).
+  assert.deepEqual([q.helped, q.helpedAuto, q.helpedSelf, q.helpedPre], [0, 0, 0, 0]);
   // 5 parov brez pomoči tvori en paket: 9 napačnih na kandidata (mesta 3–11), pravilno drugič mesta 3–5.
   const c = q.concept;
   assert.equal(c.candidates, 5);
@@ -196,7 +200,7 @@ test("poročilo: potek pilota, izločeni s pomočjo, glavni izid po konceptu iz 
   const early = impactReport(db, PRAG, { invited: 3, now: new Date("2026-11-21T00:00:00Z") }).quiz;
   assert.equal(early.invited, "< 5");
   assert.equal(early.dropped, 0);
-  assert.equal(early.waiting, 10);
+  assert.equal(early.waiting, "10+", "začeli, odpadli in čakajo samo v korakih po 5");
   assert.equal(impactReport(db, PRAG, { now }).quiz.invited, null, "brez podatka o povabljenih");
 });
 
@@ -210,7 +214,9 @@ test("zasebnost: skupina »vadil« z manj kot 5 kandidati je skrita; delež šel
   }
   let q = impactReport(db, PRAG, { now }).quiz;
   assert.deepEqual(q.concept.practiced, { hidden: true, candidates: "< 5" }, "en kandidat: skupina skrita");
-  assert.deepEqual(q.concept.notPracticed.candidates, 5);
+  // Skrita je tudi druga podskupina, sicer bi »skupaj − ni vadil« dalo enega človeka (pregled 3).
+  assert.deepEqual(q.concept.notPracticed, { hidden: true, candidates: "≥ 5" });
+  assert.equal(q.concept.all.candidates, 5);
   const before = JSON.stringify(q.concept);
   // Kandidat izbriše pogovor (dogodki) ali kasneje vadi: zapis ob koncu se ne spremeni, poročilo ostane enako.
   db.prepare("INSERT INTO events (student_id, topic_id, created_at) VALUES (?, ?, '2026-11-10 12:00:00')").run(ids[1], QUIZ.slots[6].topic);
@@ -233,6 +239,25 @@ test("zasebnost: skupina »vadil« z manj kot 5 kandidati je skrita; delež šel
   assert.deepEqual(small, { candidates: 5, n: 5, improved: 5, share: null, ci95: null });
 });
 
+test("zasebnost: štetja pomoči samo v zaprtih paketih (razlika dveh poročil ne razkrije enega človeka)", () => {
+  const { db, ids, row } = fixture();
+  const now = new Date("2026-11-26T12:00:00Z");
+  const pair = (i) => {
+    row(ids[i], "pre", "A", [0], "2026-11-01 09:00:00", `2026-11-01 10:00:${String(i).padStart(2, "0")}`);
+    row(ids[i], "post", "B", [0, 1], "2026-11-16 10:00:00", `2026-11-16 10:30:${String(i).padStart(2, "0")}`, { help: "yes" });
+  };
+  for (let i = 0; i < 5; i++) pair(i);
+  assert.equal(impactReport(db, PRAG, { now }).quiz.helpedSelf, 5);
+  for (let i = 5; i < 9; i++) {
+    pair(i);
+    const q = impactReport(db, PRAG, { now }).quiz;
+    assert.equal(q.nPaired, i + 1);
+    assert.equal(q.helpedSelf, 5, "nov par s pomočjo se pokaže šele s celim paketom");
+  }
+  pair(9);
+  assert.equal(impactReport(db, PRAG, { now }).quiz.helpedSelf, 10);
+});
+
 test("poročilo skrbnika in jutranji povzetek pokažeta potek in izid po konceptu", () => {
   process.env.EVKLID_PILOT_VSI = "1";
   try {
@@ -244,7 +269,7 @@ test("poročilo skrbnika in jutranji povzetek pokažeta potek in izid po koncept
     const r = pilotTasksReport(db);
     assert.equal(r.impact.quiz.invited, 30, "povabljeni = člani pilota");
     const md = pilotTasksMarkdown(r);
-    assert.match(md, /potek: povabljeni 30, začeli prvi preizkus 5, končali prvega 5, končali oba 5, odpadli 0 \(drugega niso končali v 7 dneh po odprtju\), še lahko končajo 0/);
+    assert.match(md, /potek: povabljeni 30, začeli prvi preizkus 5\+, končali prvega 5, končali oba 5, odpadli 0 \(drugega niso končali v 7 dneh po odprtju\), še lahko končajo 0/);
     assert.match(md, /Glavni izid: .*kandidatov: 5, mediana časa med preizkusoma: 15 dni\./);
     assert.match(md, /Izločeni, ker so imeli pri drugem preizkusu pomoč: 0/);
     assert.match(md, /\| vmes vadil v Evklidu \| 0 \| premalo kandidatov \|/);
