@@ -549,9 +549,99 @@ function farPoints(f, R, perDecade = 200) {
 const isRoot = (f, x) => {
   const y = f(x);
   if (typeof y !== "number" || !Number.isFinite(y)) return false;
-  const s = Math.max(1, Math.abs(f(x + 1e-3)), Math.abs(f(x - 1e-3)));
+  // AUDIT-081: sosed zunaj definicijskega območja (√x pri x = 0) je NaN in ne šteje; prej je bil Math.max(…, NaN)
+  // NaN in ničla na robu območja (√x = 0, √(x − 4) = 0) se je izgubila
+  const s = Math.max(1, ...[f(x + 1e-3), f(x - 1e-3)].filter((t) => typeof t === "number" && Number.isFinite(t)).map(Math.abs));
   return Math.abs(y) < 1e-7 * s;
 };
+
+// ---------- luknje v definicijskem območju (AUDIT-080) ----------
+// (x² − 1)/(x − 1) = 2 je pri x = 1 nedefinirana, drugje pa velja x − 1 = 0: pravilno je »ni rešitve«. Številsko iskanje
+// je prej sprejelo točke tik ob luknji (0,99999999 in 1,00000001), kjer je |F| majhen, in zgrešilo rešitev tik ob njej
+// ((x² − 1)/(x − 1) = 2,0001 → x = 1,0001), ker je luknja in rešitev v istem koraku mreže.
+const HOLE_D = 1e-6; // relativna razdalja od luknje, kjer je F še dovolj natančen (krajšanje x − 1)
+const fin = (y) => typeof y === "number" && Number.isFinite(y);
+// verižni ulomek z ohlapnejšo mejo kot toFraction (bisekcija se ob luknji ustavi do ~10⁻⁸ stran)
+function nearFraction(v, tol, maxQ = 1000) {
+  const x = Math.abs(v);
+  let [h0, h1, k0, k1] = [0, 1, 1, 0];
+  let r = x;
+  for (let i = 0; i < 20; i++) {
+    const a = Math.floor(r);
+    [h0, h1] = [h1, a * h1 + h0];
+    [k0, k1] = [k1, a * k1 + k0];
+    if (k1 > maxQ) return null;
+    if (Math.abs(h1 / k1 - x) <= tol * Math.max(1, x)) return (v < 0 ? -1 : 1) * (h1 / k1);
+    const f = r - a;
+    if (f < 1e-15) break;
+    r = 1 / f;
+  }
+  return null;
+}
+/** Osamljena točka c blizu b, kjer F ni definirana, levo in desno od nje pa je (luknja ali pol); sicer null. */
+function holeAt(F, b) {
+  const tol = HOLE_D;
+  const cands = [];
+  const q = nearFraction(b, tol);
+  if (q !== null) cands.push(q);
+  const q2 = b !== 0 ? nearFraction(b * b, tol) : null;
+  if (q2 !== null && q2 > 0) cands.push(Math.sign(b) * Math.sqrt(q2));
+  const qp = nearFraction(b / Math.PI, tol, 24);
+  if (qp !== null) cands.push(qp * Math.PI);
+  for (const c of cands) {
+    if (Math.abs(c - b) > tol * Math.max(1, Math.abs(c)) || fin(F(c))) continue;
+    const d = HOLE_D * Math.max(1, Math.abs(c));
+    if (fin(F(c - d)) && fin(F(c + d))) return c;
+  }
+  return null;
+}
+/**
+ * Rešitve ob luknji c: v okolici do w (korak mreže) z obeh strani; tik ob luknji (bližje od HOLE_D) le, če premica
+ * skozi F(c − d) in F(c + d) seka os merljivo stran od c (sicer je ničla zvezne razširitve prav v luknji: ni rešitve).
+ */
+function rootsNearHole(F, c, w) {
+  const m = Math.max(1, Math.abs(c));
+  const d = HOLE_D * m;
+  const out = [];
+  // rob okna (c ± d) z majhnim |F| ni rešitev: sin(x)/x = 1 ima pri 0 luknjo, F(10⁻⁶) ≈ −10⁻¹³
+  for (const [lo, hi] of [[c - w, c - d], [c + d, c + w]]) for (const x of criticalPoints(F, lo, hi, 400)) if (Math.abs(x - c) > 2 * d && isRoot(F, x)) out.push(x);
+  const yl = F(c - d);
+  const yr = F(c + d);
+  if (fin(yl) && fin(yr) && yl !== yr && Math.sign(yl) !== Math.sign(yr)) {
+    const x = c - d - (yl * 2 * d) / (yr - yl);
+    if (Math.abs(x - c) <= 2 * d && Math.abs(x - c) > 1e-8 * m && isRoot(F, x)) out.push(x);
+  }
+  return out;
+}
+/**
+ * Rešitev blizu luknje c je zanesljiva le, če je F tam »gladek«: naklon na dveh merilih se ujema. Ob luknji se pri
+ * krajšanju izgubijo mesta ((1 − cos x)/x² pri x ≈ 10⁻⁴ je šum), zato bi sicer šum dal desetine lažnih rešitev.
+ */
+function smoothRoot(F, x, c) {
+  const e = Math.max(Math.abs(x - c) / 2, 1e-12 * Math.max(1, Math.abs(x)));
+  const slope = (h) => (F(x + h) - F(x - h)) / (2 * h);
+  const s1 = slope(e);
+  const s2 = slope(e / 4);
+  return fin(s1) && fin(s2) && s1 !== 0 && Math.sign(s1) === Math.sign(s2) && Math.abs(s1 - s2) <= 0.1 * Math.abs(s1);
+}
+/** Izloči kandidate v luknjah in doda rešitve tik ob njih (AUDIT-080). */
+function withoutHoles(F, cands, w) {
+  const holes = [];
+  for (const b of cands) {
+    const c = holeAt(F, b);
+    if (c !== null && !holes.some((h) => near(h, c, 1e-12))) holes.push(c);
+  }
+  if (!holes.length) return cands.filter((x) => isRoot(F, x));
+  const inHole = (x) => holes.some((c) => Math.abs(x - c) <= HOLE_D * Math.max(1, Math.abs(c)));
+  // v okolici luknje (do w) ostanejo le rešitve, kjer F ni šum
+  const nearHole = (x) => holes.find((c) => Math.abs(x - c) <= w);
+  const ok = (x) => {
+    const c = nearHole(x);
+    return c === undefined || smoothRoot(F, x, c);
+  };
+  const roots = [...cands.filter((x) => !inHole(x) && isRoot(F, x)), ...holes.flatMap((c) => rootsNearHole(F, c, w))].filter(ok);
+  return roots.filter((x, i) => roots.findIndex((y) => near(x, y, 1e-12)) === i).sort((a, b) => a - b);
+}
 
 const isPeriodic = (F, P) =>
   [0.31, 1.7, -2.9, 4.4, 11.3].every((x) => {
@@ -628,7 +718,10 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
     if (cerr.some((e) => e > 0)) out.cerr = cerr.map((e) => (Number.isFinite(e) ? e : -1));
     return out;
   }
-  const poly = polyCoeffs(F);
+  let poly = polyCoeffs(F);
+  // F je polinom razen v luknji, ki je vzorci ne zadenejo ((x² − 2)/(x − √2) = 2√2, (4x² − 1)/(2x − 1) = 2):
+  // ničla polinoma v luknji ni rešitev, zato gre taka enačba po številski poti, ki luknje upošteva (AUDIT-080)
+  if (poly && poly.length > 1 && polyRoots(poly).some(([re, im]) => Math.abs(im) < 1e-7 * Math.max(1, Math.abs(re)) && holeAt(F, re) !== null)) poly = null;
   if (poly) {
     const d = poly.length - 1;
     if (d === 0) return poly[0] === 0 ? { kind: "solve", v, all: true, roots: [] } : { kind: "solve", v, none: true, roots: [] };
@@ -657,11 +750,13 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
   }
   const R = unit === "rad" ? RANGE : 10 * RANGE;
   const near0 = criticalPoints(F, -R, R);
-  let roots = near0.filter((x) => isRoot(F, x));
+  const step = (2 * R) / SAMPLES;
+  let roots = withoutHoles(F, near0, 2 * step);
   if (roots.length > 12) roots = roots.filter((x) => Math.abs(x) <= 20).slice(0, 12);
   // zunaj ±R iščemo samo, kjer funkcija blizu 0 ne niha (sin x = x/1000 ima stotine rešitev: ostane, kot je bilo)
   else if (near0.length <= 12) {
-    const all = [...roots, ...farPoints(F, R).filter((x) => isRoot(F, x))];
+    const fp = farPoints(F, R);
+    const all = [...roots, ...withoutHoles(F, fp, Math.max(step, ...fp.map((x) => Math.abs(x) * 0.012)))];
     // največ 12, najbližje 0, nato po vrsti
     roots = all.sort((a, b) => Math.abs(a) - Math.abs(b)).slice(0, 12).sort((a, b) => a - b);
   }
