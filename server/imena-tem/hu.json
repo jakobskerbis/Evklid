@@ -281,6 +281,7 @@
   "KEM-SS-1/stehiometrija": "Sztöchiometria",
   "KEM-SS-1/plini": "Gázok",
   "KEM-SS-1/raztopine": "Oldatok",
+  "KEM-SS-1/topnost-in-sestava-raztopin": "Oldhatóság és az oldatok összetétele",
   "KEM-SS-1/urejanje-enacb": "Egyenletrendezés",
   "KEM-SS-1/energija-pri-reakcijah": "Termokémia",
   "KEM-SS-2/hitrost-reakcij": "Reakciósebesség",
@@ -289,6 +290,7 @@
   "KEM-SS-2/ph": "pH",
   "KEM-SS-2/sibke-kisline-in-baze": "Gyenge savak és bázisok",
   "KEM-SS-2/titracija": "Titrálás",
+  "KEM-SS-2/elektroliti-in-ionske-reakcije": "Elektrolitok és ionreakciók",
   "KEM-SS-2/oksidacijska-stevila": "Oxidációs számok",
   "KEM-SS-2/redoks-reakcije": "Redoxireakciók",
   "KEM-SS-2/galvanski-cleni-in-elektroliza": "Galvánelemek és elektrolízis",
@@ -304,6 +306,8 @@
   "KEM-SS-3/organske-reakcije": "Szerves kémiai reakciók",
   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine": "Szénhidrátok, lipidek, fehérjék",
   "KEM-SS-3/polimeri": "Polimerek",
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine": "Átmenetifémek és koordinációs vegyületek",
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju": "Szervetlen anyagok az iparban és a környezetben",
   "KEM-SS-4/splosna-in-anorganska-kemija": "Általános és szervetlen kémia",
   "KEM-SS-4/organska-kemija": "Szerves kémia",
   "KEM-SS-4/kemijsko-racunanje": "Kémiai számítások"
@@ -388,6 +392,7 @@
   "Hitrost in ravnotežje": "Reakciósebesség és egyensúly",
   "Kisline in baze": "Savak és bázisok",
   "Redoks in elektrokemija": "Redoxireakciók és elektrokémia",
-  "Organska kemija": "Szerves kémia"
+  "Organska kemija": "Szerves kémia",
+  "Anorganska kemija": "Szervetlen kémia"
  }
 }
