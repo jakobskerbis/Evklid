@@ -116,7 +116,7 @@ UNITS = {
     "T": U.tesla, "mT": U.tesla / 1000, "Wb": U.weber, "H": U.henry, "mH": U.henry / 1000,
     "Hz": U.hertz, "kHz": 1000 * U.hertz, "MHz": 10**6 * U.hertz, "GHz": 10**9 * U.hertz,
     "K": U.kelvin, "mol": U.mole, "mmol": U.mole / 1000, "L": U.liter, "l": U.liter, "mL": U.milliliter, "ml": U.milliliter, "dL": U.liter / 10,
-    "rad": sp.Integer(1), "Bq": U.becquerel, "Gy": U.gray, "Sv": U.gray, "cd": U.candela, "lm": U.candela, "lx": U.candela / U.meter**2,
+    "rad": sp.Integer(1), "percent": U.percent, "Bq": U.becquerel, "Gy": U.gray, "Sv": U.gray, "cd": U.candela, "lm": U.candela, "lx": U.candela / U.meter**2,
     "ly": U.lightyear, "au": U.astronomical_unit, "AU": U.astronomical_unit,
 }
 
@@ -1222,7 +1222,94 @@ def op_korak(prej, potem, var="", obmocje=""):
     return False, "nova " + ("enačba" if enacbe else "relacija") + " ni enakovredna: " + "; ".join(deli), {"vrsta": "napaka"}
 
 
-OPS = {"korak": op_korak, "solve": op_solve, "equal": op_equal, "diff": op_diff, "int": op_int, "limit": op_limit, "value": op_value, "ineq": op_ineq, "units": op_units}
+
+# ---------------------------------------------------------------------------
+# PV-07: dimenzijska analiza (docs/preverjanje.md, »Enote in zaokroževanje«).
+#   noter: {"op": "dim", "args": [del1, del2, …]}: deli ene enačbe, v katerih so količine že zamenjane z enotami
+#          (»U_0 = N B S ω« s podatki → »V«, »1 * T * cm^2 * (2*pi*(1/min))«).
+#   ven:   ok true, kadar imajo vsi deli enako dimenzijo; false, kadar se dimenziji razlikujeta ali se seštevajo
+#          količine različnih dimenzij ali je argument sin/cos/exp z dimenzijo; null pri neznanem imenu.
+# Logaritem sme imeti argument z dimenzijo (pH = −log c pomeni c / (1 mol/L)); rezultat je brez dimenzije.
+
+class DimNapaka(Exception):
+    pass
+
+
+_BREZ_DIM = (sp.sin, sp.cos, sp.tan, sp.cot, sp.sec, sp.csc, sp.asin, sp.acos, sp.atan, sp.acot, sp.exp,
+             sp.sinh, sp.cosh, sp.tanh)
+
+
+def _dim(e):
+    """Dimenzija izraza kot {osnovna dimenzija: eksponent} (prazno = brez dimenzije)."""
+    from sympy.physics.units.systems.si import SI
+    if e.is_number:
+        return {}
+    if isinstance(e, U.Quantity):
+        d = SI.get_dimension_system().get_dimensional_dependencies(SI.get_quantity_dimension(e))
+        return {str(k.args[0]): v for k, v in d.items() if v != 0}
+    if isinstance(e, sp.Symbol):
+        raise Unsure(f"neznano ime {e}")
+    if isinstance(e, sp.Mul):
+        out = {}
+        for f in e.args:
+            for k, v in _dim(f).items():
+                out[k] = out.get(k, 0) + v
+        return {k: v for k, v in out.items() if v != 0}
+    if isinstance(e, sp.Pow):
+        if _dim(e.exp):
+            raise DimNapaka("eksponent ima dimenzijo")
+        if not e.exp.is_number:
+            raise Unsure("eksponent ni število")
+        return {k: v * e.exp for k, v in _dim(e.base).items()}
+    if isinstance(e, sp.Add):
+        dims = [_dim(t) for t in e.args]
+        for d in dims[1:]:
+            if d != dims[0]:
+                # število brez enote ob količini (T = t + 273, 30(t + 1), 0,1 · (600 + x)): enota števila je v
+                # besedilu naloge, ne v zapisu; tega ne štejemo za napako, le za nepreverjeno
+                if any(t.is_number for t in e.args):
+                    raise Unsure("število brez enote ob količini z enoto")
+                raise DimNapaka(f"seštevanje {_dim_niz(dims[0])} in {_dim_niz(d)}")
+        return dims[0]
+    if isinstance(e, sp.log):
+        _dim(e.args[0])
+        return {}
+    if isinstance(e, _BREZ_DIM):
+        if _dim(e.args[0]):
+            raise DimNapaka(f"argument {e.func.__name__} ima dimenzijo {_dim_niz(_dim(e.args[0]))}")
+        return {}
+    if isinstance(e, sp.Abs):
+        return _dim(e.args[0])
+    raise Unsure(f"dimenzije {e.func.__name__} ne znam določiti")
+
+
+_ENOTE_DIM = {"mass": "kg", "length": "m", "time": "s", "current": "A", "temperature": "K",
+              "amount_of_substance": "mol", "luminous_intensity": "cd"}
+
+
+def _dim_niz(d):
+    if not d:
+        return "brez enote"
+    return "·".join(f"{_ENOTE_DIM.get(k, k)}" + ("" if v == 1 else f"^{v}") for k, v in sorted(d.items()))
+
+
+def op_dim(*deli):
+    if len(deli) < 2:
+        raise Unsure("premalo delov")
+    dims = []
+    for d in deli:
+        try:
+            dims.append(_dim(parse(d, units=True)))
+        except DimNapaka as ex:
+            return False, str(ex)
+    for d in dims[1:]:
+        if d != dims[0]:
+            if any(parse(x, units=True).is_number for x in deli):
+                raise Unsure("del enačbe je število brez enote")
+            return False, f"dimenziji se ne ujemata: {_dim_niz(dims[0])} in {_dim_niz(d)}"
+    return True, ""
+
+OPS = {"korak": op_korak, "solve": op_solve, "equal": op_equal, "diff": op_diff, "int": op_int, "limit": op_limit, "value": op_value, "ineq": op_ineq, "units": op_units, "dim": op_dim}
 
 
 DECIMALKA = re.compile(r"(?<![\w.])(?:\d+\.\d+(?:[eE][+-]?\d+)?|\d+[eE][+-]?\d+)(?![\w.])")

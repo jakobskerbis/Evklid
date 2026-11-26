@@ -125,6 +125,28 @@ korak (parameter) in štiri lažne alarme zunaj nabora (`log(·, osnova)`); ti i
 testi. Test `test/cas-korak.test.js` zahteva oboje. Ukaz še ni
 priključen nikamor v aplikacijo; uporaba (skener, rešitve generatorjev) je naslednji korak načrta.
 
+## Enote in zaokroževanje (PV-07)
+
+`node scripts/enote-generatorjev.mjs [--semena 5] [--predpona dod-fiz] [--json p.json] [--porocilo p.md] [--dodatek f.md]
+[--strogo]` (brez modela AI, s SymPy okoli 5 s za 5 semen) preveri v generatorjih nalog z enotami dve stvari:
+
+- **enote**: vsaka formula naloge (`t.formula`) mora biti dimenzijsko pravilna, ko količine nadomestimo z enotami iz
+  podatkov (`t.data.given`), iskano količino pa z enoto odgovora. Novi ukaz SymPy `dim` (`server/cas/worker.py`)
+  izračuna dimenzijo vsakega dela enačbe; napaka je različna dimenzija, seštevanje količin različnih dimenzij ali
+  argument sin/cos/exp z dimenzijo. Pretvorbe brez količin ($1\ \mathrm{km} = 1000\ \mathrm{m}$) preveri ukaz `units`
+  tudi po vrednosti. Vmesna količina dobi enoto iz svoje definicije ($\omega = 2\pi\nu$); taka formula je
+  definicija, ne preverjanje, in ostane brez statusa. Brez statusa ostanejo tudi: število brez enote ob količini
+  ($T = t + 273$), relativna atomska masa (dogovor $M = M_r \cdot \mathrm{g/mol}$), konstanta ravnotežja brez enote,
+  formule z besedilom ali absolutno vrednostjo in količine, ki jih podatki ne naštejejo. Privzete konstante so le $g$,
+  $N_A$, $k_B$, $\varepsilon_0$, $\mu_0$ (R, h, G, c so v nalogah pogosto upor, višina, nukleotid, koncentracija);
+- **zaokroževanje**: število decimalk, ki ga zahteva besedilo (zadnje navodilo »Zaokroži na …«), mora biti enako
+  decimalkam odgovora, po katerih se ocenjuje.
+
+Nabor z znano resnico `test/fixtures/preverjanje/enote-v1.json` (40 parov formul in 10 parov pretvorb, sestavil isti
+avtor): ujetih 50/50, lažnih alarmov 0/50. Izhodišče `docs/meritve/enote-2026-11-26.md` (5 semen, 421 generatorjev z
+enotami): preverjenih je 1.405 od 5.323 formul (26 %; fizika 38 %), napaka v 3 generatorjih (dve formuli s številom
+brez enote, ena izkustvena formula iz besedila naloge), zaokroževanje skladno pri 3.145 od 3.146 nalog z zahtevo.
+
 ## Meritev (PV-02, N-01)
 
 Prvi referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (384 trditev, 191 pravilnih; od N-01 začetek nabora v2) ustvari
