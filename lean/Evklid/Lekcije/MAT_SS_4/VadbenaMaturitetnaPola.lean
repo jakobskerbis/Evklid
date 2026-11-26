@@ -154,6 +154,11 @@ theorem razlaga_log (x : ℝ) (hx : 1 < x) :
 /-- Predpostavka trditve `razlaga_log` se da izpolniti (`x = 10`). -/
 example : (1:ℝ) < 10 := by norm_num
 
+/-- Predpostavke trditve `razlaga_log` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) < 10 := by norm_num
+  razlaga_log (hx := w)
+
 /-- Razlaga 5 (ključna beseda »deljiv«, izrek o ostanku): polinom `p` je deljiv z `x − a` natanko tedaj,
 ko je `p(a) = 0`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#izrek-o-ostanku
@@ -785,6 +790,11 @@ theorem naloga14_a (x : ℝ) (hx : x ≠ 0) :
 /-- Predpostavka trditve `naloga14_a` se da izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `naloga14_a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  naloga14_a (hx := w)
+
 /-- Naloga 14 b)–d): `12 − 3k = 0` ⇔ `k = 4`, člen `C(6, 4)·16 = 15·16 = 240`; `12 − 3k = 3` ⇔ `k = 3`,
 koeficient `C(6, 3)·(−8) = 20·(−8) = −160`; vsota koeficientov `(1 − 2)⁶ = 1`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga14-bcd
@@ -1299,6 +1309,11 @@ theorem naloga25 (S a v : ℝ) (ha : a ≠ 0) : (2234.606:ℝ) / 100 = 22.34606 
 
 /-- Predpostavka trditve `naloga25` se da izpolniti. -/
 example : (74.05:ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `naloga25` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (74.05:ℝ) ≠ 0 := by norm_num
+  naloga25 (ha := w)
 
 /-- Naloga 25 simbolno (z `cos 58°`, `sin 58°`): a) kosinusni izrek `a² = 62² + 85² − 2·62·85·cos 58°` za
 `a = √(…)`, izraz pod korenom je pozitiven; b) `b = 62 < a` (ker je `cos 58° = sin 32° < 32° < 85/124`), zato je
@@ -1828,6 +1843,11 @@ theorem ustno1 (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 
 /-- Predpostavke trditve `ustno1` se dajo izpolniti (`a = 2`). -/
 example : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 := by norm_num
+
+/-- Predpostavke trditve `ustno1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 := by norm_num
+  ustno1 (ha := w.1) (ha1 := w.2)
 
 /-- Ustno vprašanje 2 v splošni obliki: za polinoma `P`, `Q` je pri manjši stopnji števca
 `P(x)/Q(x) → 0` (asimptota `y = 0`), pri enakih stopnjah `P(x)/Q(x) → a/b` (vodilna koeficienta), pri večji

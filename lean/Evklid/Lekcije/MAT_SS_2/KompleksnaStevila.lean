@@ -174,6 +174,11 @@ theorem abs_lastnosti (z w : ℂ) (_hw : w ≠ 0) : z * conj z = (normSq z : ℂ
 /-- Predpostavke trditve `abs_lastnosti` se dajo izpolniti. -/
 example : (1 : ℂ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `abs_lastnosti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℂ) ≠ 0 := one_ne_zero
+  abs_lastnosti (_hw := w)
+
 /-- Premisli: |3 + 4i| = 5, |3| + |4i| = 3 + 4 = 7, zato |3 + 4i| ≠ |3| + |4i|.
 trditev: MAT-SS-2/kompleksna-stevila#premisli-abs
 besedilo: »$|3| + |4i| = 3 + 4 = 7$, $|3 + 4i| = 5$.« -/
@@ -202,6 +207,12 @@ theorem deljenje (a b c d : ℝ) (h : (c:ℂ) + d * I ≠ 0) :
 example : ((1:ℝ):ℂ) + ((2:ℝ):ℂ) * I ≠ 0 := by
   intro h; have := congrArg Complex.re h; simp at this
 
+/-- Predpostavke trditve `deljenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((1:ℝ):ℂ) + ((2:ℝ):ℂ) * I ≠ 0 := by
+    intro h; have := congrArg Complex.re h; simp at this
+  deljenje (h := w)
+
 /-- Razlaga 7 (obratna vrednost): 1/(a + bi) = (a − bi)/(a² + b²) za z ≠ 0.
 trditev: MAT-SS-2/kompleksna-stevila#obratna
 besedilo: »$$\frac{1}{a + bi} = \frac{a - bi}{a^2 + b^2}$$« -/
@@ -211,6 +222,12 @@ theorem obratna (a b : ℝ) (h : (a:ℂ) + b * I ≠ 0) : 1 / ((a:ℂ) + b * I) 
 /-- Predpostavke trditve `obratna` se dajo izpolniti. -/
 example : ((3:ℝ):ℂ) + ((4:ℝ):ℂ) * I ≠ 0 := by
   intro h; have := congrArg Complex.re h; simp at this
+
+/-- Predpostavke trditve `obratna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((3:ℝ):ℂ) + ((4:ℝ):ℂ) * I ≠ 0 := by
+    intro h; have := congrArg Complex.re h; simp at this
+  obratna (h := w)
 
 /-- Razlaga 7: 1/(3 + 4i) = (3 − 4i)/25 = 3/25 − 4/25 i; preizkus (3 + 4i)(3 − 4i) = 9 + 16 = 25; 1/i = −i
 (i · (−i) = −i² = 1); 1/(3 + 4i) ≠ 1/3 + 1/4 i.
@@ -282,6 +299,11 @@ theorem kvadratna_splosno (p q : ℝ) (hD : p ^ 2 - 4 * q < 0) (x : ℂ) :
 /-- Predpostavke trditve `kvadratna_splosno` se dajo izpolniti. -/
 example : (0:ℝ) ^ 2 - 4 * 1 < 0 := by norm_num
 
+/-- Predpostavke trditve `kvadratna_splosno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ^ 2 - 4 * 1 < 0 := by norm_num
+  kvadratna_splosno (hD := w)
+
 /-- Razlaga 8 in Povzetek (splošno, a ≠ 0): kvadratna enačba ax² + bx + c = 0 z realnimi koeficienti in
 D = b² − 4ac < 0 ima v C natanko dve rešitvi (−b ± i√(4ac − b²))/(2a), ki sta konjugirani.
 trditev: MAT-SS-2/kompleksna-stevila#kvadratna-splosno-a
@@ -303,6 +325,11 @@ theorem kvadratna_splosno_a (a b c : ℝ) (ha : a ≠ 0) (hD : b ^ 2 - 4 * a * c
 /-- Predpostavke trditve `kvadratna_splosno_a` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 ∧ (0:ℝ) ^ 2 - 4 * 1 * 1 < 0 := by norm_num
 
+/-- Predpostavke trditve `kvadratna_splosno_a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ (0:ℝ) ^ 2 - 4 * 1 * 1 < 0 := by norm_num
+  kvadratna_splosno_a (ha := w.1) (hD := w.2)
+
 /-- Ustno vprašanje 3: v C ima vsaka kvadratna enačba az² + bz + c = 0 z a ≠ 0 rešitev (tudi s kompleksnimi
 koeficienti), ker je v C vsako število kvadrat (diskriminanta ima koren).
 trditev: MAT-SS-2/kompleksna-stevila#vsaka-kvadratna
@@ -313,6 +340,11 @@ theorem vsaka_kvadratna (a b c : ℂ) (ha : a ≠ 0) : ∃ x : ℂ, a * x ^ 2 + 
 
 /-- Predpostavke trditve `vsaka_kvadratna` se dajo izpolniti. -/
 example : (1 : ℂ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `vsaka_kvadratna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℂ) ≠ 0 := one_ne_zero
+  vsaka_kvadratna (ha := w)
 
 /-- Razlaga 8: kvadratna enačba ax² + bx + c = 0 z realnimi koeficienti (a ≠ 0) nima realne rešitve natanko
 tedaj, ko je D = b² − 4ac < 0 (posebej x² + px + q: natanko tedaj, ko je p² − 4q < 0).
@@ -333,6 +365,11 @@ theorem brez_realne (a b c : ℝ) (ha : a ≠ 0) : (¬ ∃ x : ℝ, a * x ^ 2 + 
 
 /-- Predpostavke trditve `brez_realne` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `brez_realne` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  brez_realne (ha := w)
 
 /-- Razlaga 8: x² + px + q = 0 nima realne rešitve natanko tedaj, ko je p² − 4q < 0.
 trditev: MAT-SS-2/kompleksna-stevila#brez-realne-pq
@@ -665,6 +702,12 @@ theorem preveri8 (p q : ℝ) (h : (2 + 5 * I : ℂ) ^ 2 + p * (2 + 5 * I) + q = 
 /-- Predpostavke trditve `preveri8` se dajo izpolniti. -/
 example : (2 + 5 * I : ℂ) ^ 2 + ((-4:ℝ):ℂ) * (2 + 5 * I) + ((29:ℝ):ℂ) = 0 := by
   push_cast; linear_combination (25 : ℂ) * I_sq
+
+/-- Predpostavke trditve `preveri8` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 + 5 * I : ℂ) ^ 2 + ((-4:ℝ):ℂ) * (2 + 5 * I) + ((29:ℝ):ℂ) = 0 := by
+    push_cast; linear_combination (25 : ℂ) * I_sq
+  preveri8 (h := w)
 
 /-- RACUN (vse vrstice): i²³ = −i; 1/(2 − i) = 2/5 + i/5; (−4)² − 4 · 1 · 13 = −36;
 (x − 2 − 3i)(x − 2 + 3i) = x² − 4x + 13; (4 + √−36)/2 = 2 + 3i (√−36 = 6i, zapisano kot (4 + 6i)/2);

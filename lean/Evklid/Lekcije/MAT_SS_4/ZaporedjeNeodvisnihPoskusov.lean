@@ -118,6 +118,11 @@ theorem vsaj_dva (n : ℕ) (hn : 1 ≤ n) (p : ℝ) :
 /-- Predpostavka trditve `vsaj_dva` se da izpolniti. -/
 example : 1 ≤ 4 := by norm_num
 
+/-- Predpostavke trditve `vsaj_dva` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ 4 := by norm_num
+  vsaj_dva (hn := w)
+
 /-- Razlaga 5, »Premisli«: pri 0 ≤ q < 1 gre 1 − qⁿ proti 1, ko n raste.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#vsaj-en-limita
 besedilo: »Raste proti $1$. Ker je $0 < q < 1$, postaja $q^n$ vse manjši, $1 - q^n$ pa se približuje $1$. Z dovolj poskusi skoraj gotovo vsaj enkrat uspeš.« -/
@@ -129,6 +134,11 @@ theorem vsaj_en_limita (q : ℝ) (h0 : 0 ≤ q) (h1 : q < 1) :
 example : (0 : ℝ) ≤ 0.7 ∧ (0.7 : ℝ) < 1 := by norm_num
 
 /-! ## Rešeni primeri -/
+
+/-- Predpostavke trditve `vsaj_en_limita` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 0.7 ∧ (0.7 : ℝ) < 1 := by norm_num
+  vsaj_en_limita (h0 := w.1) (h1 := w.2)
 
 /-- Primer 1: en potek ZZZN ima 0,9³·0,1 = 0,0729, `C(4,3) = 4`, P₄(3) = 4·0,0729 = 0,2916 ≈ 0,29.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#primer1
@@ -332,6 +342,13 @@ theorem kviz2 (q : ℝ) (h : q ^ 5 = 0.03) : q ^ 10 = 0.0009 := by
 example : ∃ q : ℝ, q ^ 5 = 0.03 :=
   ⟨(0.03 : ℝ) ^ ((1 : ℝ) / 5), by
     rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num⟩
+
+/-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ q : ℝ, q ^ 5 = 0.03 :=
+    ⟨(0.03 : ℝ) ^ ((1 : ℝ) / 5), by
+      rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num⟩
+  kviz2 (h := w.choose_spec)
 
 /-- Preveri se 3: Rokova napaka je korak (3): 0,7⁴ = 0,2401, 0,3·0,7³ = 0,1029 (en potek), 1 − 0,2401 − 0,1029 =
 0,657; pravilno P₄(1) = 4·0,1029 = 0,4116 in 1 − 0,2401 − 0,4116 = 0,3483.

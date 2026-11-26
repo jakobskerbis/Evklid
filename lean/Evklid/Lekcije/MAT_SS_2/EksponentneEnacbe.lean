@@ -70,6 +70,11 @@ theorem enacenje (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (u v : ℝ) : a ^ u = a 
 /-- Predpostavke trditve `enacenje` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
 
+/-- Predpostavke trditve `enacenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  enacenje (ha := w.1) (ha1 := w.2)
+
 /-- Pomožno: (t − r)(t − s) = 0 ⟺ t = r ali t = s.
 pomozno -/
 theorem kvadratna (t r s : ℝ) : (t - r) * (t - s) = 0 ↔ t = r ∨ t = s := by
@@ -127,6 +132,11 @@ theorem brez_resitve (a c : ℝ) (ha : 0 < a) (hc : c ≤ 0) : ¬ ∃ x : ℝ, a
 
 /-- Predpostavke trditve `brez_resitve` se dajo izpolniti (a = 2, c = −4). -/
 example : (0 : ℝ) < 2 ∧ (-4 : ℝ) ≤ 0 := by norm_num
+
+/-- Predpostavke trditve `brez_resitve` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (-4 : ℝ) ≤ 0 := by norm_num
+  brez_resitve (ha := w.1) (hc := w.2)
 
 /-- Razlaga 4: primeri 2ˣ = −4, 3ˣ = 0, 3ˣ = −9, 3ˣ = −3 brez rešitve.
 trditev: MAT-SS-2/eksponentne-enacbe#brez-resitve-primeri
@@ -223,6 +233,11 @@ theorem enaka_eksponenta (a b u : ℝ) (ha : 0 < a) (hb : 0 < b) (hab : a ≠ b)
 /-- Predpostavke trditve `enaka_eksponenta` se dajo izpolniti (a = 2, b = 5, u = 0). -/
 example : (0 : ℝ) < 2 ∧ (0 : ℝ) < 5 ∧ (2 : ℝ) ≠ 5 ∧ (2 : ℝ) ^ (0 : ℝ) = (5 : ℝ) ^ (0 : ℝ) := by norm_num
 
+/-- Predpostavke trditve `enaka_eksponenta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (0 : ℝ) < 5 ∧ (2 : ℝ) ≠ 5 ∧ (2 : ℝ) ^ (0 : ℝ) = (5 : ℝ) ^ (0 : ℝ) := by norm_num
+  enaka_eksponenta (ha := w.1) (hb := w.2.1) (hab := w.2.2.1) (h := w.2.2.2)
+
 /-- Razlaga 8: 2^(x−3) = 5^(x−3) ⟺ x = 3.
 trditev: MAT-SS-2/eksponentne-enacbe#dva-pet
 besedilo: »Tako je rešitev enačbe $2^{x-3} = 5^{x-3}$ število $x = 3$.« -/
@@ -258,6 +273,11 @@ theorem obstoj (a c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hc : 0 < c) :
 
 /-- Predpostavke trditve `obstoj` se dajo izpolniti (a = 2, c = 5). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+
+/-- Predpostavke trditve `obstoj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+  obstoj (ha := w.1) (ha1 := w.2.1) (hc := w.2.2)
 
 /-- Razlaga 10: 2ˣ = 5 ima rešitev, in vsaka rešitev leži med 2,25 in 2,35 (≈ 2,3).
 trditev: MAT-SS-2/eksponentne-enacbe#dva-pet-resitev
@@ -733,6 +753,11 @@ theorem zakaj_izenaciti (a u v : ℝ) (ha : 0 < a) (h : u < v) :
 
 /-- Predpostavke trditve `zakaj_izenaciti` se dajo izpolniti (a = 2, u = 0, v = 1). -/
 example : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
+
+/-- Predpostavke trditve `zakaj_izenaciti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
+  zakaj_izenaciti (ha := w.1) (h := w.2)
 
 /-- Drugače, bolj natančno: 2ˣ + 2^(−x) = 5/2 ⟺ t + 1/t = 5/2 (t = 2ˣ) ⟺ 2t² − 5t + 2 = 0 (pomnožimo z
 2t > 0) ⟺ t = 2 ali t = 1/2 ⟺ x = 1 ali x = −1.

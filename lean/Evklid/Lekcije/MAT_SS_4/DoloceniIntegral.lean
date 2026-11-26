@@ -39,6 +39,12 @@ example : ContinuousOn (fun x : ℝ => 2 * x) (Set.uIcc 0 1) ∧
     ∀ x ∈ Set.uIcc (0:ℝ) 1, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x :=
   ⟨by fun_prop, fun x _ => by simpa using hasDerivAt_pow 2 x⟩
 
+/-- Predpostavke trditve `newton_leibniz` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ContinuousOn (fun x : ℝ => 2 * x) (Set.uIcc 0 1) ∧ ∀ x ∈ Set.uIcc (0:ℝ) 1, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x :=
+    ⟨by fun_prop, fun x _ => by simpa using hasDerivAt_pow 2 x⟩
+  newton_leibniz (hf := w.1) (hF := w.2)
+
 /-- Pomožna oblika Newton-Leibnizove formule za funkcije, zvezne na vsej realni osi.
 pomozno -/
 theorem nl (f F : ℝ → ℝ) (a b : ℝ) (hF : ∀ x, HasDerivAt F (f x) x) (hf : Continuous f) :
@@ -59,6 +65,11 @@ theorem ploscinska_funkcija (f : ℝ → ℝ) (hf : Continuous f) (a x : ℝ) :
 
 /-- Predpostavka trditve `ploscinska_funkcija` se da izpolniti (f = x²). -/
 example : Continuous (fun x : ℝ => x ^ 2) := by fun_prop
+
+/-- Predpostavke trditve `ploscinska_funkcija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Continuous (fun x : ℝ => x ^ 2) := by fun_prop
+  ploscinska_funkcija (hf := w)
 
 /-- Razlaga, blok 4, in ustno vprašanje 2: konstanta C se v razliki izniči,
 (F(b) + C) − (F(a) + C) = F(b) − F(a).
@@ -117,6 +128,16 @@ theorem zgornja_formula (n : ℕ) (hn : n ≠ 0) :
 /-- Predpostavka trditev `spodnja_formula` in `zgornja_formula` se da izpolniti (n = 4). -/
 example : (4 : ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `zgornja_formula` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4 : ℕ) ≠ 0 := by norm_num
+  zgornja_formula (hn := w)
+
+/-- Predpostavke trditve `spodnja_formula` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4 : ℕ) ≠ 0 := by norm_num
+  spodnja_formula (hn := w)
+
 /-- Razlaga, blok 2, tabela: pri n = 4 sta vsoti 0,21875 in 0,46875.
 trditev: MAT-SS-4/doloceni-integral#tabela-4
 besedilo: »| $4$ | $0{,}21875$ | $0{,}46875$ |« -/
@@ -146,6 +167,11 @@ theorem razlika_vsot (n : ℕ) (hn : n ≠ 0) : zgornja n - spodnja n = 1 / n :=
 /-- Predpostavka trditve `razlika_vsot` se da izpolniti (n = 1000). -/
 example : (1000 : ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `razlika_vsot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1000 : ℕ) ≠ 0 := by norm_num
+  razlika_vsot (hn := w)
+
 /-- Prvi »Premisli«: pri n = 1000 je razlika 0,001.
 trditev: MAT-SS-4/doloceni-integral#razlika-1000
 besedilo: »$0{,}001$.« -/
@@ -165,6 +191,11 @@ theorem vsoti_okoli_tretjine (n : ℕ) (hn : n ≠ 0) : spodnja n < 1 / 3 ∧ 1 
 
 /-- Predpostavka trditve `vsoti_okoli_tretjine` se da izpolniti (n = 1). -/
 example : (1 : ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `vsoti_okoli_tretjine` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℕ) ≠ 0 := by norm_num
+  vsoti_okoli_tretjine (hn := w)
 
 /-- Razlaga, blok 2: obe vsoti se stiskata k istemu številu 1/3.
 trditev: MAT-SS-4/doloceni-integral#vsoti-limita
@@ -247,6 +278,11 @@ theorem aditivnost (f : ℝ → ℝ) (hf : Continuous f) (a b c : ℝ) :
 /-- Predpostavka trditve `aditivnost` se da izpolniti (f = x²). -/
 example : Continuous (fun x : ℝ => x ^ 2) := by fun_prop
 
+/-- Predpostavke trditve `aditivnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Continuous (fun x : ℝ => x ^ 2) := by fun_prop
+  aditivnost (hf := w)
+
 /-- Razlaga, blok 6: (F(b) − F(a)) + (F(c) − F(b)) = F(c) − F(a).
 trditev: MAT-SS-4/doloceni-integral#aditivnost-f
 besedilo: »$\bigl(F(b) - F(a)\bigr) + \bigl(F(c) - F(b)\bigr) = F(c) - F(a)$« -/
@@ -262,6 +298,11 @@ theorem linearnost (f g : ℝ → ℝ) (hf : Continuous f) (hg : Continuous g) (
 
 /-- Predpostavke trditve `linearnost` se dajo izpolniti (f = x, g = x²). -/
 example : Continuous (fun x : ℝ => x) ∧ Continuous (fun x : ℝ => x ^ 2) := ⟨by fun_prop, by fun_prop⟩
+
+/-- Predpostavke trditve `linearnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Continuous (fun x : ℝ => x) ∧ Continuous (fun x : ℝ => x ^ 2) := ⟨by fun_prop, by fun_prop⟩
+  linearnost (hf := w.1) (hg := w.2)
 
 /-- Pomožna trditev za primere k predpostavkam: ∫ₐᵇ (px + q) dx = p(b² − a²)/2 + q(b − a).
 pomozno -/
@@ -287,6 +328,14 @@ example : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..2, f x = 3 ∧
   refine ⟨fun x => -1 / 15 * x + 47 / 30, by fun_prop, ?_, ?_⟩ <;>
   · beta_reduce; rw [linearna]; norm_num
 
+/-- Predpostavke trditve `zgled_aditivnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..2, f x = 3 ∧ ∫ x in (0:ℝ)..5, f x = 7 := by
+    -- f(x) = p x + q: ∫₀² = 2p + 2q = 3, ∫₀⁵ = 25p/2 + 5q = 7 ⇒ p = −1/15, q = 47/30
+    refine ⟨fun x => -1 / 15 * x + 47 / 30, by fun_prop, ?_, ?_⟩ <;>
+    · beta_reduce; rw [linearna]; norm_num
+  zgled_aditivnost (hf := w.choose_spec.1) (h2 := w.choose_spec.2.1) (h5 := w.choose_spec.2.2)
+
 /-- Razlaga, blok 7, in »Pogoste napake«: če je g ≥ f na [a, b], je ∫ₐᵇ (g − f) ≥ 0, obratna razlika
 (spodnja minus zgornja) pa da ∫ₐᵇ (f − g) = −∫ₐᵇ (g − f) ≤ 0.
 trditev: MAT-SS-4/doloceni-integral#med-krivuljama
@@ -302,6 +351,12 @@ theorem med_krivuljama (f g : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (h : ∀ 
 /-- Predpostavke trditve `med_krivuljama` se dajo izpolniti (f = x + 2, g = 4 − x² na [−2, 1]). -/
 example : (-2 : ℝ) ≤ 1 ∧ ∀ x ∈ Set.Icc (-2:ℝ) 1, x + 2 ≤ 4 - x ^ 2 :=
   ⟨by norm_num, fun x hx => by nlinarith [hx.1, hx.2]⟩
+
+/-- Predpostavke trditve `med_krivuljama` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-2 : ℝ) ≤ 1 ∧ ∀ x ∈ Set.Icc (-2:ℝ) 1, x + 2 ≤ 4 - x ^ 2 :=
+    ⟨by norm_num, fun x hx => by nlinarith [hx.1, hx.2]⟩
+  med_krivuljama (hab := w.1) (h := w.2)
 
 /-- Primer 1, korak 1: F(t) = 2t² − t³/6 ima odvod 4t − 0,5t².
 trditev: MAT-SS-4/doloceni-integral#primer1-f
@@ -445,6 +500,14 @@ example : ∃ f : ℝ → ℝ, ContinuousOn f (Set.Icc 0 6) ∧ ∫ x in (0:ℝ)
   refine ⟨fun x => -2 / 3 * x + 11 / 3, by fun_prop, ?_, ?_⟩ <;>
   · beta_reduce; rw [linearna]; norm_num
 
+/-- Predpostavke trditve `primer3ab` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ f : ℝ → ℝ, ContinuousOn f (Set.Icc 0 6) ∧ ∫ x in (0:ℝ)..6, f x = 10 ∧ ∫ x in (2:ℝ)..6, f x = 4 := by
+    -- ∫₀⁶ = 18p + 6q = 10, ∫₂⁶ = 16p + 4q = 4 ⇒ p = −2/3, q = 11/3
+    refine ⟨fun x => -2 / 3 * x + 11 / 3, by fun_prop, ?_, ?_⟩ <;>
+    · beta_reduce; rw [linearna]; norm_num
+  primer3ab (hf := w.choose_spec.1) (h06 := w.choose_spec.2.1) (h26 := w.choose_spec.2.2)
+
 /-- Primer 3 c): ∫₋₁² |x| dx = ∫₋₁⁰ (−x) dx + ∫₀² x dx = 1/2 + 2 = 5/2.
 trditev: MAT-SS-4/doloceni-integral#primer3c
 besedilo: »c) $\int_{-1}^{0} (-x)\,dx = -\frac{x^2}{2}\Big|_{-1}^{0} = 0 + \frac{1}{2} = \frac{1}{2}$ in $\int_0^2 x\,dx = \frac{x^2}{2}\Big|_0^2 = 2$.« -/
@@ -539,6 +602,11 @@ theorem stozec (r h : ℝ) (hh : 0 < h) : π * ∫ x in (0:ℝ)..h, (r * x / h) 
 
 /-- Predpostavka trditve `stozec` se da izpolniti (h = 30). -/
 example : (0 : ℝ) < 30 := by norm_num
+
+/-- Predpostavke trditve `stozec` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 30 := by norm_num
+  stozec (hh := w)
 
 /-- Pogoste napake, »F(0) je vedno 0«: za F(x) = −cos x je F(0) = −1, za F(x) = eˣ je F(0) = 1.
 trditev: MAT-SS-4/doloceni-integral#f0-ni-0
@@ -709,6 +777,11 @@ theorem matura3c (c : ℝ) (hc : 4 < c) :
 /-- Predpostavka trditve `matura3c` se da izpolniti (c = 8). -/
 example : (4 : ℝ) < 8 := by norm_num
 
+/-- Predpostavke trditve `matura3c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4 : ℝ) < 8 := by norm_num
+  matura3c (hc := w)
+
 /-- Matura, naloga 3 d) (in vrstica `integral: 2*12/sqrt(x)`): p = ∫₄¹⁶ (f − (−f)) dx =
 48√x |₄¹⁶ = 48(4 − 2) = 96.
 trditev: MAT-SS-4/doloceni-integral#matura3d
@@ -803,3 +876,11 @@ example : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..4, f x = 10 �
   · beta_reduce; rw [linearna]; norm_num
 
 end Evklid.Lekcije.MAT_SS_4.DoloceniIntegral
+/-- Predpostavke trditve `kviz6` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..4, f x = 10 ∧ ∫ x in (0:ℝ)..1, f x = 3 := by
+    -- ∫₀⁴ = 8p + 4q = 10, ∫₀¹ = p/2 + q = 3 ⇒ p = −1/3, q = 19/6
+    refine ⟨fun x => -1 / 3 * x + 19 / 6, by fun_prop, ?_, ?_⟩ <;>
+    · beta_reduce; rw [linearna]; norm_num
+  kviz6 (hf := w.choose_spec.1) (h4 := w.choose_spec.2.1) (h1 := w.choose_spec.2.2)
+

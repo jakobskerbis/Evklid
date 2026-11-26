@@ -42,6 +42,18 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) 
     (∀ x ∈ interior (univ : Set ℝ), (0:ℝ) < (fun _ => (1:ℝ)) x) :=
   ⟨fun x => hasDerivAt_id' x, convex_univ, fun _ _ => one_pos⟩
 
+/-- Predpostavke trditve `pada` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) ∧ Convex ℝ (univ : Set ℝ) ∧ (∀ x ∈ interior (univ : Set ℝ), (0:ℝ) < (fun _ => (1:ℝ)) x) :=
+    ⟨fun x => hasDerivAt_id' x, convex_univ, fun _ _ => one_pos⟩
+  pada (hd := w.1) (hD := w.2.1) (hn := w.2.2)
+
+/-- Predpostavke trditve `narasca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) ∧ Convex ℝ (univ : Set ℝ) ∧ (∀ x ∈ interior (univ : Set ℝ), (0:ℝ) < (fun _ => (1:ℝ)) x) :=
+    ⟨fun x => hasDerivAt_id' x, convex_univ, fun _ _ => one_pos⟩
+  narasca (hd := w.1) (hD := w.2.1) (hp := w.2.2)
+
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x) ((fun _ => (-1:ℝ)) x) x) ∧ Convex ℝ (univ : Set ℝ) ∧
     (∀ x ∈ interior (univ : Set ℝ), (fun _ => (-1:ℝ)) x < 0) :=
   ⟨fun x => (hasDerivAt_id' x).neg, convex_univ, fun _ _ => by norm_num⟩
@@ -71,6 +83,20 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x
     (∀ x ∈ Ioo (-1:ℝ) 0, (fun x => 2 * x) x ≤ 0) ∧ (∀ x ∈ Ioo (0:ℝ) 1, 0 ≤ (fun x => 2 * x) x) :=
   ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num), by norm_num, by norm_num,
     fun x hx => by simp only; linarith [hx.2], fun x hx => by simp only; linarith [hx.1]⟩
+
+/-- Predpostavke trditve `lokalni_minimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧ (∀ x ∈ Ioo (-1:ℝ) 0, (fun x => 2 * x) x ≤ 0) ∧ (∀ x ∈ Ioo (0:ℝ) 1, 0 ≤ (fun x => 2 * x) x) :=
+    ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num), by norm_num, by norm_num,
+      fun x hx => by simp only; linarith [hx.2], fun x hx => by simp only; linarith [hx.1]⟩
+  lokalni_minimum (hd := w.1) (hab := w.2.1) (hbc := w.2.2.1) (h₀ := w.2.2.2.1) (h₁ := w.2.2.2.2)
+
+/-- Predpostavke trditve `lokalni_maksimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧ (∀ x ∈ Ioo (-1:ℝ) 0, (fun x => 2 * x) x ≤ 0) ∧ (∀ x ∈ Ioo (0:ℝ) 1, 0 ≤ (fun x => 2 * x) x) :=
+    ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num), by norm_num, by norm_num,
+      fun x hx => by simp only; linarith [hx.2], fun x hx => by simp only; linarith [hx.1]⟩
+  lokalni_maksimum (hd := w.1) (hab := w.2.1) (hbc := w.2.2.1) (h₀ := w.2.2.2.1) (h₁ := w.2.2.2.2)
 
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -(2 * x)) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧
     (∀ x ∈ Ioo (-1:ℝ) 0, 0 ≤ (fun x => -(2 * x)) x) ∧ (∀ x ∈ Ioo (0:ℝ) 1, (fun x => -(2 * x)) x ≤ 0) :=
@@ -138,6 +164,11 @@ theorem normala (k : ℝ) (hk : k ≠ 0) : k * (-1 / k) = -1 := by field_simp
 /-- Predpostavke trditve `normala` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `normala` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  normala (hk := w)
+
 /-- Normala (Razlaga, Ponovitev): pri k = f'(a) ≠ 0 premica y = f(a) − (x − a)/f'(a) gre skozi (a, f(a)),
 ima smerni koeficient −1/k in je pravokotna na tangento y = f(a) + k(x − a) (skalarni produkt
 smernih vektorjev (1, k) in (1, −1/k) je 0).
@@ -150,6 +181,11 @@ theorem normala_enacba (fa k a : ℝ) (hk : k ≠ 0) :
 
 /-- Predpostavke trditve `normala_enacba` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `normala_enacba` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  normala_enacba (hk := w)
 
 /-- Normala pri f'(a) = 0: tangenta y = f(a) je vodoravna (smer (1, 0)), navpična premica x = a skozi
 (a, f(a)) (smer (0, 1)) je nanjo pravokotna.
@@ -324,6 +360,11 @@ theorem primer4_stacionarna (x : ℝ) (hx : x ∈ Ioo (0:ℝ) 15) :
 /-- Predpostavke trditve `primer4_stacionarna` se dajo izpolniti. -/
 example : (5:ℝ) ∈ Ioo (0:ℝ) 15 := by norm_num
 
+/-- Predpostavke trditve `primer4_stacionarna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (5:ℝ) ∈ Ioo (0:ℝ) 15 := by norm_num
+  primer4_stacionarna (hx := w)
+
 /-- Primer 4, Premisli: V'(4) > 0, V'(6) < 0, torej maksimum; V(5) = 5 · 20² = 2000 cm³ (2 litra), največja
 prostornina na (0, 15).
 trditev: MAT-SS-4/uporaba-odvoda#primer4-maksimum
@@ -447,6 +488,11 @@ theorem matura3a (r h : ℝ) (hr : 0 < r) :
 /-- Predpostavke trditve `matura3a` se dajo izpolniti. -/
 example : (0:ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `matura3a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  matura3a (hr := w)
+
 /-- Naloga 3 b): C'(r) = 1,2πr − 1,2/r² (r > 0).
 trditev: MAT-SS-4/uporaba-odvoda#matura3b-odvod
 besedilo: »a) Vstavimo $h$: $0{,}3 \cdot 2\pi r \cdot \dfrac{2}{\pi r^2} = \dfrac{1{,}2}{r}$, torej $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$.« -/
@@ -458,6 +504,11 @@ theorem matura3b_odvod (r : ℝ) (hr : 0 < r) :
 
 /-- Predpostavke trditve `matura3b_odvod` se dajo izpolniti. -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `matura3b_odvod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  matura3b_odvod (hr := w)
 
 /-- Naloga 3 b): C'(r) = 0 ⇔ 1,2πr³ = 1,2 ⇔ r³ = 1/π (r > 0).
 trditev: MAT-SS-4/uporaba-odvoda#matura3b-stacionarna
@@ -475,6 +526,11 @@ theorem matura3b_stacionarna (r : ℝ) (hr : 0 < r) :
 
 /-- Predpostavke trditve `matura3b_stacionarna` se dajo izpolniti. -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `matura3b_stacionarna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  matura3b_stacionarna (hr := w)
 
 /-- Naloga 3 b): r₀ = ∛(1/π) obstaja (r₀ > 0, πr₀³ = 1).
 trditev: MAT-SS-4/uporaba-odvoda#matura3b-r0
@@ -519,6 +575,11 @@ theorem matura3b_minimum (r₀ : ℝ) (h0 : 0 < r₀) (hπ : π * r₀ ^ 3 = 1) 
 /-- Predpostavke trditve `matura3b_minimum` so izpolnljive (r₀ = ∛(1/π)). Trditev: `matura3_stevila`. -/
 example : ∃ r₀ : ℝ, 0 < r₀ ∧ π * r₀ ^ 3 = 1 := ⟨_, matura3b_r0⟩
 
+/-- Predpostavke trditve `matura3b_minimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ r₀ : ℝ, 0 < r₀ ∧ π * r₀ ^ 3 = 1 := ⟨_, matura3b_r0⟩
+  matura3b_minimum (h0 := w.choose_spec.1) (hπ := w.choose_spec.2)
+
 /-- Naloga 3 b), c): r₀ ≐ 0,68278 dm (na milimeter 0,683 dm ≐ 6,8 cm); višina h = 2/(πr₀²) = 2r₀ ≐ 1,3656 dm
 (13,7 cm); stroški 0,6πr₀² ≐ 0,8788, 1,2/r₀ ≐ 1,7575, C(r₀) ≐ 2,6363 ≐ 2,64 €.
 trditev: MAT-SS-4/uporaba-odvoda#matura3-stevila
@@ -552,6 +613,11 @@ theorem matura3_stevila (r₀ : ℝ) (h0 : 0 < r₀) (hπ : π * r₀ ^ 3 = 1) :
     · rw [lt_div_iff₀ h0]; nlinarith
     · rw [div_lt_iff₀ h0]; nlinarith
 
+/-- Predpostavke trditve `matura3_stevila` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ r₀ : ℝ, 0 < r₀ ∧ π * r₀ ^ 3 = 1 := ⟨_, matura3b_r0⟩
+  matura3_stevila (h0 := w.choose_spec.1) (hπ := w.choose_spec.2)
+
 /-- Naloga 3 c): pri πr³ = 1 je h = 2/(πr²) = 2r³/r² = 2r, višina je enaka premeru dna.
 trditev: MAT-SS-4/uporaba-odvoda#matura3c-premer
 besedilo: »c) Če je $\pi r^3 = 1$, je $h = \dfrac{2}{\pi r^2} = \dfrac{2r^3}{r^2} = 2r$: višina je enaka premeru dna.« -/
@@ -566,6 +632,11 @@ theorem matura3c_premer (r : ℝ) (hr : 0 < r) (hπ : π * r ^ 3 = 1) :
 example : ∃ r : ℝ, 0 < r ∧ π * r ^ 3 = 1 := ⟨_, matura3b_r0⟩
 
 /-! ## Preveri se -/
+
+/-- Predpostavke trditve `matura3c_premer` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ r : ℝ, 0 < r ∧ π * r ^ 3 = 1 := ⟨_, matura3b_r0⟩
+  matura3c_premer (hr := w.choose_spec.1) (hπ := w.choose_spec.2)
 
 /-- Preveri se 2: pri f(x) = x² so smerni koeficienti tangent v −1, 0, 2 enaki −2, 0, 4 (vrstni red
 −1, 0, 2).

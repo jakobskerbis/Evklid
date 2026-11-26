@@ -55,6 +55,11 @@ theorem izrek_o_deljenju (p q : ℝ[X]) (hq : q ≠ 0) :
 /-- Predpostavke trditve `izrek_o_deljenju` se dajo izpolniti (`q = 1`). -/
 example : (1 : ℝ[X]) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `izrek_o_deljenju` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ[X]) ≠ 0 := one_ne_zero
+  izrek_o_deljenju (hq := w)
+
 /-- Blok 4 in Ustno vprašanje 3: količnik pri deljenju z `x − a` ima stopnjo za ena manjšo.
 trditev: MAT-SS-3/polinomi#stopnja-kolicnika
 besedilo: »ko je $p$ deljiv z $x - a$.** Vsaka najdena ničla torej odcepi faktor $x - a$ in polinom zniža za eno stopnjo.« -/
@@ -89,6 +94,11 @@ theorem cela_nicla_deli_prosti_clen (p : ℤ[X]) (a : ℤ) (h : p.eval a = 0) : 
 /-- Predpostavke trditve `cela_nicla_deli_prosti_clen` se dajo izpolniti (`t³ − 6t² + 11t − 6` ima ničlo 1). -/
 example : (X ^ 3 - 6 * X ^ 2 + 11 * X - 6 : ℤ[X]).eval 1 = 0 := by norm_num
 
+/-- Predpostavke trditve `cela_nicla_deli_prosti_clen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (X ^ 3 - 6 * X ^ 2 + 11 * X - 6 : ℤ[X]).eval 1 = 0 := by norm_num
+  cela_nicla_deli_prosti_clen (h := w)
+
 /-- Blok 6 in Povzetek: polinom stopnje `n` ima največ `n` ničel (štetih s stopnjo, `roots` je večkratna
 množica), torej tudi največ `n` različnih.
 trditev: MAT-SS-3/polinomi#najvec-n-nicel
@@ -107,6 +117,12 @@ theorem osnovni_izrek_algebre (f : ℂ[X]) (hf : 1 ≤ f.natDegree) : ∃ z : �
 /-- Predpostavke trditve `osnovni_izrek_algebre` se dajo izpolniti (`x² + 1` ima stopnjo 2). -/
 example : 1 ≤ (X ^ 2 + 1 : ℂ[X]).natDegree := by
   rw [show (X ^ 2 + 1 : ℂ[X]) = X ^ 2 + C 1 by simp, natDegree_X_pow_add_C]; norm_num
+
+/-- Predpostavke trditve `osnovni_izrek_algebre` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (X ^ 2 + 1 : ℂ[X]).natDegree := by
+    rw [show (X ^ 2 + 1 : ℂ[X]) = X ^ 2 + C 1 by simp, natDegree_X_pow_add_C]; norm_num
+  osnovni_izrek_algebre (hf := w)
 
 /-- Blok 7, posledici 1 in 2: polinom stopnje `n` ima natanko `n` kompleksnih ničel (štetih s stopnjo) in
 `p(x) = aₙ(x − z₁)⋯(x − zₙ)`.
@@ -139,6 +155,11 @@ theorem konjugirana_nicla (p : ℝ[X]) (z : ℂ) (h : aeval z p = 0) :
 /-- Predpostavke trditve `konjugirana_nicla` se dajo izpolniti (`i` je ničla `x² + 1`). -/
 example : aeval Complex.I (X ^ 2 + 1 : ℝ[X]) = 0 := by simp
 
+/-- Predpostavke trditve `konjugirana_nicla` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : aeval Complex.I (X ^ 2 + 1 : ℝ[X]) = 0 := by simp
+  konjugirana_nicla (h := w)
+
 /-- Blok 7, posledica 3 (drugi del): `z` in `z̄` sta ničli z enako stopnjo.
 trditev: MAT-SS-3/polinomi#konjugirana-stopnja
 besedilo: »Konjugirani pari.** Če ima polinom realne koeficiente in je $z$ njegova ničla, je ničla tudi $\bar{z}$, in to z enako stopnjo.« -/
@@ -164,6 +185,13 @@ example : aeval (3 - 2 * Complex.I) (X ^ 2 - 6 * X + 13 : ℝ[X]) = 0 := by
   simp only [map_add, map_sub, map_mul, map_pow, aeval_X, map_ofNat]
   linear_combination (4 : ℂ) * Complex.I_sq
 
+/-- Predpostavke trditve `hitri_test_konjugirana` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : aeval (3 - 2 * Complex.I) (X ^ 2 - 6 * X + 13 : ℝ[X]) = 0 := by
+    simp only [map_add, map_sub, map_mul, map_pow, aeval_X, map_ofNat]
+    linear_combination (4 : ℂ) * Complex.I_sq
+  hitri_test_konjugirana (h := w)
+
 /-- Blok 7, posledica 4: za nerealno ničlo `z = u + wi` (`w ≠ 0`) je `(x − z)(x − z̄) = x² − 2ux + u² + w²`,
 kvadratni polinom z realnimi koeficienti in negativno diskriminanto `(2u)² − 4(u² + w²) = −4w²`.
 trditev: MAT-SS-3/polinomi#konjugirani-par
@@ -178,6 +206,11 @@ theorem konjugirani_par (u w : ℝ) (hw : w ≠ 0) (x : ℂ) :
 /-- Predpostavke trditve `konjugirani_par` se dajo izpolniti (`u = 1`, `w = 1`, `x = 0`). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `konjugirani_par` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  konjugirani_par (hw := w)
+
 /-- Blok 7, posledica 4 (realni razcep): vsak nerazcepen polinom z realnimi koeficienti ima stopnjo največ 2.
 (Dokazana je le ta meja; sam razcep na linearne in kvadratne faktorje tu ni posebej zapisan.)
 trditev: MAT-SS-3/polinomi#nerazcepni-realni
@@ -188,6 +221,11 @@ theorem nerazcepni_realni (p : ℝ[X]) (hp : Irreducible p) : p.natDegree ≤ 2 
 /-- Predpostavke trditve `nerazcepni_realni` se dajo izpolniti (`x` je nerazcepen). -/
 example : Irreducible (X : ℝ[X]) := irreducible_X
 
+/-- Predpostavke trditve `nerazcepni_realni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Irreducible (X : ℝ[X]) := irreducible_X
+  nerazcepni_realni (hp := w)
+
 /-- Blok 7, posledica 5: polinom lihe stopnje z realnimi koeficienti ima vsaj eno realno ničlo.
 trditev: MAT-SS-3/polinomi#liha-stopnja
 besedilo: »Polinom lihe stopnje z realnimi koeficienti ima torej vsaj eno realno ničlo.« -/
@@ -196,6 +234,11 @@ theorem liha_stopnja (p : ℝ[X]) (hp : Odd p.natDegree) : ∃ x : ℝ, p.eval x
 
 /-- Predpostavke trditve `liha_stopnja` se dajo izpolniti (`x` ima stopnjo 1). -/
 example : Odd (X : ℝ[X]).natDegree := by rw [natDegree_X]; exact odd_one
+
+/-- Predpostavke trditve `liha_stopnja` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd (X : ℝ[X]).natDegree := by rw [natDegree_X]; exact odd_one
+  liha_stopnja (hp := w)
 
 /-- Bolj natančno, racionalne ničle: če ima polinom s celimi koeficienti ničlo `m/s` (okrajšan ulomek,
 `s ≠ 0`), potem `m` deli `a₀` in `s` deli `aₙ`.
@@ -223,6 +266,12 @@ theorem racionalne_nicle (p : ℤ[X]) (m s : ℤ) (hms : IsCoprime m s) (hs : s 
 /-- Predpostavke trditve `racionalne_nicle` se dajo izpolniti (`2x − 1` ima ničlo `1/2`). -/
 example : IsCoprime (1 : ℤ) 2 ∧ (2 : ℤ) ≠ 0 ∧ aeval (((1 : ℤ) : ℚ) / ((2 : ℤ) : ℚ)) (C 2 * X - 1 : ℤ[X]) = 0 :=
   ⟨isCoprime_one_left, by norm_num, by rw [map_sub, map_mul, aeval_C, aeval_X, map_one]; norm_num⟩
+
+/-- Predpostavke trditve `racionalne_nicle` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : IsCoprime (1 : ℤ) 2 ∧ (2 : ℤ) ≠ 0 ∧ aeval (((1 : ℤ) : ℚ) / ((2 : ℤ) : ℚ)) (C 2 * X - 1 : ℤ[X]) = 0 :=
+    ⟨isCoprime_one_left, by norm_num, by rw [map_sub, map_mul, aeval_C, aeval_X, map_one]; norm_num⟩
+  racionalne_nicle (hms := w.1) (hs := w.2.1) (h := w.2.2)
 
 /-- Bolj natančno: pri `aₙ = 1` je vsaka racionalna ničla celo število (imenovalec deli 1).
 trditev: MAT-SS-3/polinomi#racionalne-nicle-monic
@@ -287,6 +336,11 @@ theorem linearna (k n : ℝ) (hk : k ≠ 0) :
 /-- Predpostavke trditve `linearna` se dajo izpolniti (`k = 1`). -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `linearna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  linearna (hk := w)
+
 /-- Blok 1: kvadratna funkcija `ax² + bx + c` (`a ≠ 0`) je polinom stopnje 2 z vodilnim koeficientom `a` in
 prostim členom `c`; ima največ dve ničli.
 trditev: MAT-SS-3/polinomi#kvadratna
@@ -301,6 +355,11 @@ theorem kvadratna (a b c : ℝ) (ha : a ≠ 0) :
 /-- Predpostavke trditve `kvadratna` se dajo izpolniti (`a = 1`). -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `kvadratna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  kvadratna (ha := w)
+
 /-- Blok 1: konstantna funkcija `p(x) = a₀`, `a₀ ≠ 0`, je polinom stopnje 0 in nima ničel.
 trditev: MAT-SS-3/polinomi#konstantna
 besedilo: »Konstantna funkcija $p(x) = a_0$ z $a_0 \ne 0$ je polinom stopnje $0$.« -/
@@ -309,6 +368,11 @@ theorem konstantna (a₀ : ℝ) (h : a₀ ≠ 0) : (C a₀).natDegree = 0 ∧ �
 
 /-- Predpostavke trditve `konstantna` se dajo izpolniti (`a₀ = 1`). -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `konstantna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  konstantna (h := w)
 
 /-- Blok 2, hitri test: `t = 4` ni ničla `f`, ker `f(4) = 64 − 96 + 44 − 6 = 6`.
 trditev: MAT-SS-3/polinomi#hitri-test-f4
@@ -597,6 +661,11 @@ theorem primer3_odgovor (t : ℝ) (h0 : 0 ≤ t) (_h6 : t ≤ 6) :
 /-- Predpostavke trditve `primer3_odgovor` se dajo izpolniti (`t = 3`). -/
 example : (0:ℝ) ≤ 3 ∧ (3:ℝ) ≤ 6 := by norm_num
 
+/-- Predpostavke trditve `primer3_odgovor` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 3 ∧ (3:ℝ) ≤ 6 := by norm_num
+  primer3_odgovor (h0 := w.1) (_h6 := w.2)
+
 /-- Primer 4: Horner z `a = −2` na `2, 1, −8, 1`: `2·(−2) + 1 = −3`, `−3·(−2) − 8 = −2`, `−2·(−2) + 1 = 5`;
 preizkus `p(−2) = −16 + 4 + 16 + 1 = 5`.
 trditev: MAT-SS-3/polinomi#primer4-koraki
@@ -689,6 +758,17 @@ example : (X ^ 3 - 4 * X ^ 2 + 6 * X - 4 : ℝ[X]).Monic ∧ (X ^ 3 - 4 * X ^ 2 
     linear_combination (Complex.I - 1) * Complex.I_sq
 
 /-! ## Pogoste napake -/
+
+/-- Predpostavke trditve `primer5_enolicnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (X ^ 3 - 4 * X ^ 2 + 6 * X - 4 : ℝ[X]).Monic ∧ (X ^ 3 - 4 * X ^ 2 + 6 * X - 4 : ℝ[X]).natDegree = 3 ∧ aeval (2 : ℂ) (X ^ 3 - 4 * X ^ 2 + 6 * X - 4 : ℝ[X]) = 0 ∧ aeval (1 + Complex.I) (X ^ 3 - 4 * X ^ 2 + 6 * X - 4 : ℝ[X]) = 0 := by
+    have e : (X ^ 3 - 4 * X ^ 2 + 6 * X - 4 : ℝ[X]) = X ^ 3 - C 4 * X ^ 2 + C 6 * X - C 4 := by
+      simp only [map_ofNat]
+    refine ⟨by monicity!, by compute_degree!, ?_, ?_⟩
+    · rw [e]; simp; norm_num
+    · rw [e]; simp
+      linear_combination (Complex.I - 1) * Complex.I_sq
+  primer5_enolicnost (hm := w.1) (hd := w.2.1) (h2 := w.2.2.1) (hi := w.2.2.2)
 
 /-- Pogoste napake (manjkajoča potenca): koeficienti `2x³ − 5x + 3` od najvišje potence so 2, 0, −5, 3.
 trditev: MAT-SS-3/polinomi#napaka-manjkajoca-potenca
@@ -897,6 +977,11 @@ theorem matura3b (x : ℝ) (_h0 : 0 < x) (h5 : x < 5) :
 /-- Predpostavke trditve `matura3b` se dajo izpolniti (`x = 2`). -/
 example : (0:ℝ) < 2 ∧ (2:ℝ) < 5 := by norm_num
 
+/-- Predpostavke trditve `matura3b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 2 ∧ (2:ℝ) < 5 := by norm_num
+  matura3b (_h0 := w.1) (h5 := w.2)
+
 /-- Naloga 3 c): `V(x) − 144 = 4(x − 2)²(x − 9)`; za `0 < x < 5` je `V(x) ≤ 144`, enakost le pri `x = 2`, torej
 je 144 cm³ največja prostornina.
 trditev: MAT-SS-3/polinomi#matura3c
@@ -929,6 +1014,12 @@ theorem ustno3_razlicne (p : ℝ[X]) (hp : p ≠ 0) (Z : Finset ℝ) (hZ : ∀ z
 example : (X : ℝ[X]) ≠ 0 ∧ ∀ z ∈ ({0} : Finset ℝ), (X : ℝ[X]).eval z = 0 :=
   ⟨X_ne_zero, by simp⟩
 
+/-- Predpostavke trditve `ustno3_razlicne` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (X : ℝ[X]) ≠ 0 ∧ ∀ z ∈ ({0} : Finset ℝ), (X : ℝ[X]).eval z = 0 :=
+    ⟨X_ne_zero, by simp⟩
+  ustno3_razlicne (hp := w.1) (hZ := w.2)
+
 /-- Ustno vprašanje 3: če je `p(x) = (x − a)k(x)` in je `b ≠ a` ničla, je `b` ničla količnika.
 trditev: MAT-SS-3/polinomi#ustno3-kolicnik
 besedilo: »Vsaka druga ničla $b \ne a$ je ničla količnika, saj iz $(b - a)\,k(b) = 0$ in $b - a \ne 0$ sledi $k(b) = 0$.« -/
@@ -939,6 +1030,11 @@ theorem ustno3_kolicnik (a b kb : ℝ) (hab : b ≠ a) (h : (b - a) * kb = 0) : 
 
 /-- Predpostavke trditve `ustno3_kolicnik` se dajo izpolniti (`a = 0`, `b = 1`, `k(b) = 0`). -/
 example : (1:ℝ) ≠ 0 ∧ ((1:ℝ) - 0) * 0 = 0 := by norm_num
+
+/-- Predpostavke trditve `ustno3_kolicnik` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ ((1:ℝ) - 0) * 0 = 0 := by norm_num
+  ustno3_kolicnik (hab := w.1) (h := w.2)
 
 /-- Na sliki: predznaki `f(t) = (t − 1)(t − 2)(t − 3)` po intervalih so −, +, −, +.
 trditev: MAT-SS-3/polinomi#na-sliki
@@ -1077,6 +1173,18 @@ example : ((X ^ 2 - C 2 * X + C 5) * (X ^ 2 + C 9) : ℝ[X]).natDegree = 4 ∧
 
 /-! ## `<<RACUN` (vrstice, ki niso že zgoraj) -/
 
+/-- Predpostavke trditve `kviz7` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((X ^ 2 - C 2 * X + C 5) * (X ^ 2 + C 9) : ℝ[X]).natDegree = 4 ∧ aeval (1 + 2 * Complex.I) ((X ^ 2 - C 2 * X + C 5) * (X ^ 2 + C 9) : ℝ[X]) = 0 ∧ aeval (-3 * Complex.I) ((X ^ 2 - C 2 * X + C 5) * (X ^ 2 + C 9) : ℝ[X]) = 0 := by
+    refine ⟨by compute_degree!, ?_, ?_⟩
+    · simp
+      left
+      linear_combination (4 : ℂ) * Complex.I_sq
+    · simp
+      right
+      linear_combination (9 : ℂ) * Complex.I_sq
+  kviz7 (hd := w.1) (h1 := w.2.1) (h2 := w.2.2)
+
 /-- `<<RACUN`: `resi: 4m + 12 = 0 → m = −3`; `vrednost: 2³ − 3·2² − 4·2 + 12 = 0`;
 `vrednost: 2·3³ − 3·3² − 11·3 + 6 = 0`; `vrednost: 2³ − 4·2² + 6·2 − 4 = 0`.
 trditev: MAT-SS-3/polinomi#racun-vrednosti
@@ -1110,6 +1218,21 @@ theorem racun_kolicnik_3 (x : ℝ) (h2 : x ≠ 2) :
 /-- Predpostavke trditev `racun_kolicnik_1`, `_2`, `_3` se dajo izpolniti (`x = 0`).
 Trditve: `racun_kolicnik_1`, `racun_kolicnik_2` in `racun_kolicnik_3`. -/
 example : (0:ℝ) ≠ 2 ∧ (0:ℝ) ≠ 3 := by norm_num
+
+/-- Predpostavke trditve `racun_kolicnik_3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≠ 2 ∧ (0:ℝ) ≠ 3 := by norm_num
+  racun_kolicnik_3 (h2 := w.1)
+
+/-- Predpostavke trditve `racun_kolicnik_2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≠ 2 ∧ (0:ℝ) ≠ 3 := by norm_num
+  racun_kolicnik_2 (h3 := w.2)
+
+/-- Predpostavke trditve `racun_kolicnik_1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≠ 2 ∧ (0:ℝ) ≠ 3 := by norm_num
+  racun_kolicnik_1 (h2 := w.1)
 
 /-- `<<RACUN`: `enako: 2x³ − 3x² − 11x + 6 = (x² − 1)(2x − 3) − 9x + 3`.
 trditev: MAT-SS-3/polinomi#racun-deljenje-kvadratni

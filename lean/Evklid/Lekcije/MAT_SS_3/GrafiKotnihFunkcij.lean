@@ -313,6 +313,16 @@ theorem splosna_kosinus (A b c d : ℝ) (hA : A ≠ 0) (hb : b ≠ 0) :
 /-- Pogoji izrekov `splosna_sinus`, `splosna_kosinus` in `osnovna_splosna` se dajo izpolniti (A = b = 1). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `splosna_kosinus` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  splosna_kosinus (hA := w) (hb := w)
+
+/-- Predpostavke trditve `splosna_sinus` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  splosna_sinus (hA := w) (hb := w)
+
 /-- Razlaga 3, Povzetek in Ustno vprašanje 1: tan(bx) (b ≠ 0) ima osnovno periodo π/|b|; pri b = 1 je to π.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#tangens-perioda
 besedilo: »$\tan(bx)$ ima osnovno periodo $\frac{\pi}{|b|}$.« -/
@@ -322,6 +332,11 @@ theorem tangens_perioda (b : ℝ) (hb : b ≠ 0) : OsnovnaPerioda (fun x => tan 
 
 /-- Pogoj izreka `tangens_perioda` se da izpolniti (b = 1). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `tangens_perioda` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  tangens_perioda (hb := w)
 
 /-- Razlaga 2 in Ustno vprašanje 1: sin in cos imata osnovno periodo 2π, tan pa π; 4π je tudi perioda
 sinusa, a ni osnovna (2π < 4π).
@@ -372,6 +387,12 @@ theorem min_sin (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 2 * π) : sin x = -1 ↔ x 
 /-- Pogoja izreka `min_sin` se dajo izpolniti (x = 3π/2). -/
 example : (0 : ℝ) ≤ 3 * π / 2 ∧ 3 * π / 2 ≤ 2 * π := by
   have := pi_pos; constructor <;> linarith
+
+/-- Predpostavke trditve `min_sin` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 3 * π / 2 ∧ 3 * π / 2 ≤ 2 * π := by
+    have := pi_pos; constructor <;> linarith
+  min_sin (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 3 (tabela ničel in skrajnih vrednosti, Povzetek): sin x = 0 ⇔ x = kπ, cos x = 0 ⇔ x = π/2 + kπ,
 sin x = 1 ⇔ x = π/2 + 2kπ, cos x = 1 ⇔ x = 2kπ, sin x = −1 ⇔ x = 3π/2 + 2kπ, cos x = −1 ⇔ x = π + 2kπ.
@@ -540,6 +561,11 @@ theorem izpostavi (b p x : ℝ) (hb : b ≠ 0) : sin (b * x - p) = sin (b * (x -
 /-- Pogoj izreka `izpostavi` se da izpolniti (b = 2). -/
 example : (2 : ℝ) ≠ 0 := two_ne_zero
 
+/-- Predpostavke trditve `izpostavi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) ≠ 0 := two_ne_zero
+  izpostavi (hb := w)
+
 /-- Razlaga 8 (simulacija): pri b = 2, c = π/4 je perioda π in val se začne pri x = π/4 (vrednost d).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#simulacija-8
 besedilo: »V simulaciji spodaj (»Graf A sin(b(x − c)) + d«) spreminjaj vse štiri hkrati. Nastavi $b = 2$ in $c = \frac{\pi}{4}$: kolikšna je perioda in kje se začne val? *Odgovor:* perioda je $\pi$, val se začne pri $x = \frac{\pi}{4}$.« -/
@@ -551,6 +577,11 @@ theorem simulacija_8 (A d : ℝ) (hA : A ≠ 0) :
 
 /-- Pogoj izreka `simulacija_8` se da izpolniti (A = 1). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `simulacija_8` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  simulacija_8 (hA := w)
 
 /-- Pomožna trditev: zaloga vrednosti kot množica: range f = [d − |A|, d + |A|] za f(x) = A sin(b(x − c)) + d
 oziroma A cos(b(x − c)) + d.
@@ -792,6 +823,11 @@ example : (0 : ℝ) ∈ Icc 0 π := ⟨le_rfl, pi_pos.le⟩
 
 /-! ## Pogoste napake -/
 
+/-- Predpostavke trditve `matura2_nicle` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ∈ Icc 0 π := ⟨le_rfl, pi_pos.le⟩
+  matura2_nicle (hx := w)
+
 /-- Pogoste napake: pri 3 sin x − 1 je amplituda 3 (največja vrednost 2 ni amplituda; zaloga [−4, 2]); zaloga
 4 cos x + 1 je [−3, 5], ne [−4, 4]; amplituda −2 sin x je |−2| = 2.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#pogoste
@@ -837,6 +873,11 @@ theorem matura1 (A b d : ℝ) (hA : 0 < A) (hb : 0 < b) :
 
 /-- Pogoja izreka `matura1` se dajo izpolniti (A = b = 3). -/
 example : (0 : ℝ) < 3 := by norm_num
+
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 3 := by norm_num
+  matura1 (hA := w) (hb := w)
 
 /-- Naloga 1, RACUN: (5 + (−1))/2 = 2, (5 − (−1))/2 = 3 in 2π/b = 2π/3 ⇔ b = 3 (za vsak realni b).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#matura1-racun
@@ -1052,6 +1093,11 @@ theorem ustno2 (b T : ℝ) (hb : b ≠ 0) :
 example : (1 : ℝ) ≠ 0 := one_ne_zero
 
 /-! ## Drugače -/
+
+/-- Predpostavke trditve `ustno2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  ustno2 (hb := w)
 
 /-- Drugače, na sliki: val f(x) = 2 sin(2(x − π/4)) + 1 ima pri π/4, π/2, 3π/4, π, 5π/4 višine 1, 3, 1, −1, 1
 (razmik četrtine periode π/4); kosinus začne v vrhu: cos 0 = 1, cos(π/2) = 0, cos π = −1, cos(3π/2) = 0,

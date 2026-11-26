@@ -65,6 +65,11 @@ theorem tocka_je_kot (x y : ℝ) (h : x ^ 2 + y ^ 2 = 1) : ∃ α : ℝ, cos α 
 /-- Predpostavka izreka `tocka_je_kot` se da izpolniti (točka (0, 1)). -/
 example : (0:ℝ) ^ 2 + 1 ^ 2 = 1 := by norm_num
 
+/-- Predpostavke trditve `tocka_je_kot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ^ 2 + 1 ^ 2 = 1 := by norm_num
+  tocka_je_kot (h := w)
+
 /-- Razlaga 2 in Ustno vprašanje 1: za ostri kot pravokotnega trikotnika (pravi kot pri p₂) je
 cos = priležna/hipotenuza in sin = nasprotna/hipotenuza, torej se nova definicija ujema s staro.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#trikotnik
@@ -82,6 +87,14 @@ example : EuclideanGeometry.angle (1:ℂ) 0 Complex.I = π / 2 ∧ (1:ℂ) ≠ 0
   refine ⟨?_, one_ne_zero, Complex.I_ne_zero⟩
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
   simp [Complex.inner]
+
+/-- Predpostavke trditve `trikotnik` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : EuclideanGeometry.angle (1:ℂ) 0 Complex.I = π / 2 ∧ (1:ℂ) ≠ 0 ∧ Complex.I ≠ 0 := by
+    refine ⟨?_, one_ne_zero, Complex.I_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  trikotnik (h := w.1) (hn := w.2.1) (_hn' := w.2.2)
 
 /-- Razlaga 3 (posebni koti): cos 0° = 1, sin 0° = 0; cos 90° = 0, sin 90° = 1; cos 180° = −1, sin 180° = 0;
 cos 270° = 0, sin 270° = −1 (pri 90° in 270° je x = 0, zato tangens tam ni definiran).
@@ -120,6 +133,11 @@ theorem kvadrant2 (α : ℝ) (h0 : π / 2 < α) (h1 : α < π) : 0 < sin α ∧ 
 /-- Predpostavki trditve `kvadrant2` se dajo izpolniti (α = 3π/4). -/
 example : π / 2 < 3 * π / 4 ∧ 3 * π / 4 < π := ⟨by linarith [pi_pos], by linarith [pi_pos]⟩
 
+/-- Predpostavke trditve `kvadrant2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : π / 2 < 3 * π / 4 ∧ 3 * π / 4 < π := ⟨by linarith [pi_pos], by linarith [pi_pos]⟩
+  kvadrant2 (h0 := w.1) (h1 := w.2)
+
 /-- Razlaga 4, III. kvadrant: sin < 0, cos < 0, tan > 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kvadrant3
 besedilo: »| kvadrant | $\sin$ | $\cos$ | $\tan$ |« -/
@@ -132,6 +150,11 @@ theorem kvadrant3 (α : ℝ) (h0 : π < α) (h1 : α < 3 * π / 2) : sin α < 0 
 
 /-- Predpostavki trditve `kvadrant3` se dajo izpolniti (α = 5π/4). -/
 example : π < 5 * π / 4 ∧ 5 * π / 4 < 3 * π / 2 := ⟨by linarith [pi_pos], by linarith [pi_pos]⟩
+
+/-- Predpostavke trditve `kvadrant3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : π < 5 * π / 4 ∧ 5 * π / 4 < 3 * π / 2 := ⟨by linarith [pi_pos], by linarith [pi_pos]⟩
+  kvadrant3 (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 4, IV. kvadrant: sin < 0, cos > 0, tan < 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kvadrant4
@@ -300,6 +323,14 @@ example : sin (π - arcsin (3 / 5)) = 3 / 5 ∧ π / 2 < π - arcsin (3 / 5) ∧
   exact ⟨by rw [sin_pi_sub, sin_arcsin (by norm_num) (by norm_num)], by linarith, by linarith⟩
 
 /-! ## Pogoste napake -/
+
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : sin (π - arcsin (3 / 5)) = 3 / 5 ∧ π / 2 < π - arcsin (3 / 5) ∧ π - arcsin (3 / 5) < π := by
+    have h1 : 0 < arcsin (3 / 5 : ℝ) := arcsin_pos.mpr (by norm_num)
+    have h2 : arcsin (3 / 5 : ℝ) < π / 2 := arcsin_lt_pi_div_two.mpr (by norm_num)
+    exact ⟨by rw [sin_pi_sub, sin_arcsin (by norm_num) (by norm_num)], by linarith, by linarith⟩
+  primer4 (hs := w.1) (h0 := w.2.1) (h1 := w.2.2)
 
 /-- Pogoste napake in Preveri se 2: cos 120° = −1/2 = −0,5, ne cos 60° = 1/2.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#cos120

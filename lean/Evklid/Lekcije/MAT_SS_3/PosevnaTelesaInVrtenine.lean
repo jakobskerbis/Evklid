@@ -198,6 +198,12 @@ theorem cavalieri (A₁ A₂ : ℝ → ℝ) (v : ℝ) (hv : 0 ≤ v) (h : ∀ x 
 example : (0:ℝ) ≤ 1 ∧ ∀ x ∈ Set.Icc (0:ℝ) 1, (fun _ => (1:ℝ)) x = (fun _ => (1:ℝ)) x :=
   ⟨zero_le_one, fun _ _ => rfl⟩
 
+/-- Predpostavke trditve `cavalieri` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 ∧ ∀ x ∈ Set.Icc (0:ℝ) 1, (fun _ => (1:ℝ)) x = (fun _ => (1:ℝ)) x :=
+    ⟨zero_le_one, fun _ _ => rfl⟩
+  cavalieri (hv := w.1) (h := w.2)
+
 /-- Razlaga 2, Povzetek: prerezi poševne (in pokončne) prizme ali valja so skladni z osnovno ploskvijo
 (A(h) = O), zato V = ∫₀ᵛ O dh = O·v.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#prizma-v
@@ -226,6 +232,11 @@ theorem piramida_V (O v : ℝ) (hv : 0 < v) : ∫ h in (0:ℝ)..v, O * ((v - h) 
 /-- Predpostavke trditve `piramida_V` se dajo izpolniti (v = 1). -/
 example : (0:ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `piramida_V` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  piramida_V (hv := w)
+
 /-- Razlaga 1 (tabela), premisli: kup 16 palačink debeline 0,5 cm ima višino 8 cm in ploščino π·10² = 100π;
 prerezi pokončnega, nagnjenega in cik-cak kupa imajo isto ploščino 100π na vsaki višini, zato vsi
 ∫₀⁸ 100π = 800π, ne glede na dolžino stranskega roba.
@@ -240,6 +251,11 @@ theorem palacinke (A : ℝ → ℝ) (hA : ∀ x ∈ Set.Icc (0:ℝ) 8, A x = 100
 example : ∀ x ∈ Set.Icc (0:ℝ) 8, (fun _ => 100 * π) x = 100 * π := fun _ _ => rfl
 
 /-! ## Razlaga 3: višina ni stranski rob -/
+
+/-- Predpostavke trditve `palacinke` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∀ x ∈ Set.Icc (0:ℝ) 8, (fun _ => 100 * π) x = 100 * π := fun _ _ => rfl
+  palacinke (hA := w)
 
 /-- Razlaga 3, Povzetek, Ponovitev: stranski rob XK z nožiščem N (pravi kot pri N) in kotom α = ∠ N X K
 med robom in osnovno ploskvijo: višina v = KN = s·sin α ≤ s.
@@ -262,6 +278,16 @@ example : ∠ (!₂[(0:ℝ), 1] : EuclideanSpace ℝ (Fin 2)) !₂[0, 0] !₂[1,
   · intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
   · intro h; have := congrFun (congrArg (⇑) h) 1; simp at this
 
+/-- Predpostavke trditve `visina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ (!₂[(0:ℝ), 1] : EuclideanSpace ℝ (Fin 2)) !₂[0, 0] !₂[1, 0] = π / 2 ∧ (!₂[(1:ℝ), 0] : EuclideanSpace ℝ (Fin 2)) ≠ !₂[0, 0] ∧ (!₂[(0:ℝ), 1] : EuclideanSpace ℝ (Fin 2)) ≠ !₂[0, 0] := by
+    refine ⟨?_, ?_, ?_⟩
+    · rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+      simp [EuclideanSpace.inner_eq_star_dotProduct, Fin.sum_univ_two, dotProduct]
+    · intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
+    · intro h; have := congrFun (congrArg (⇑) h) 1; simp at this
+  visina (h := w.1) (_hX := w.2.1) (_hK := w.2.2)
+
 /-- Preveri se (2): pri enaki višini v in kotu 0 < α < 90° je stranski rob s = v/sin α daljši od v.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#rob-daljsi
 besedilo: »Stranska roba nista enaka: pri enaki višini je rob poševne prizme daljši, $s = \frac{v}{\sin\alpha}$.« -/
@@ -274,6 +300,11 @@ theorem rob_daljsi (v α : ℝ) (hv : 0 < v) (h0 : 0 < α) (h1 : α < π / 2) : 
 
 /-- Predpostavke trditve `rob_daljsi` se dajo izpolniti (v = 5, α = π/6). -/
 example : (0:ℝ) < 5 ∧ (0:ℝ) < π / 6 ∧ π / 6 < π / 2 := ⟨by norm_num, by positivity, by linarith [pi_pos]⟩
+
+/-- Predpostavke trditve `rob_daljsi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 5 ∧ (0:ℝ) < π / 6 ∧ π / 6 < π / 2 := ⟨by norm_num, by positivity, by linarith [pi_pos]⟩
+  rob_daljsi (hv := w.1) (h0 := w.2.1) (h1 := w.2.2)
 
 /-- Ustno vprašanje 3 (ena stranska ploskev): če je stranska ploskev nagnjena proti osnovni za kot β, je
 višina prizme v = h·sin β ≤ h (h višina paralelograma na rob e), zato e·v ≤ e·h; enakost pri sin β = 1.
@@ -292,6 +323,11 @@ theorem stranska_ploskev (e h β : ℝ) (he : 0 < e) (hh : 0 < h) :
 example : (0:ℝ) < 1 := one_pos
 
 /-! ## Razlaga 4: vrtenine (računi) -/
+
+/-- Predpostavke trditve `stranska_ploskev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  stranska_ploskev (he := w) (hh := w)
 
 /-- Razlaga 4, premisli: trikotnik 3, 4 okoli krajše katete (os 3, polmer 4) da π·16·3/3 = 16π, okoli
 daljše (os 4, polmer 3) π·9·4/3 = 12π; 16π > 12π.
@@ -320,6 +356,11 @@ theorem polmer_dvojnega (a b c r : ℝ) (hc : 0 < c) : a * b / 2 = c * r / 2 ↔
 
 /-- Predpostavke trditve `polmer_dvojnega` se dajo izpolniti (c = 10). -/
 example : (0:ℝ) < 10 := by norm_num
+
+/-- Predpostavke trditve `polmer_dvojnega` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 10 := by norm_num
+  polmer_dvojnega (hc := w)
 
 /-- Primer 3 (korak 4), naloga 2 c): dvojni stožec – prostornini stožcev z višinama c₁ in c₂ (c₁ + c₂ = c)
 seštejemo in izpostavimo πr²/3: πr²c₁/3 + πr²c₂/3 = πr²c/3.
@@ -450,6 +491,11 @@ theorem kateta_6 (r : ℝ) (hr : 0 < r) :
 
 /-- Predpostavke trditve `kateta_6` se dajo izpolniti (r = 6). -/
 example : (0:ℝ) < 6 := by norm_num
+
+/-- Predpostavke trditve `kateta_6` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  kateta_6 (hr := w)
 
 /-- Preveri se (5): kateti 6, 8: okoli hipotenuze 76,8π, okoli katete 8: π·36·8/3 = 96π, okoli katete 6:
 π·64·6/3 = 128π; 76,8π < 96π < 128π.

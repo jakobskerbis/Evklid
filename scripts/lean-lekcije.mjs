@@ -176,19 +176,53 @@ export function deklaracije(txt) {
       binderji: binderji(glava),
     });
   }
+  // koda deklaracije (brez komentarjev) do naslednje deklaracije: primer izpolnljivosti mora izrek uporabiti
+  out.forEach((d, i) => {
+    const n = out[i + 1];
+    d.koda = mask.slice(d.start, n ? (n.doc ? n.doc.start : n.start) : mask.length);
+  });
   return out;
 }
+
+/** Ali ima sklep izreka predpostavko: »→« na ničti globini za začetnimi »∀ …,« (npr. ∀ x, 0 < x → …). */
+export function implikacija(izjava) {
+  let s = String(izjava).trim();
+  for (;;) {
+    const m = /^∀\s/.exec(s);
+    if (!m) break;
+    let d = 0;
+    let k = 1;
+    for (; k < s.length; k++) {
+      if (ODPRI.includes(s[k])) d++;
+      else if (ZAPRI.includes(s[k])) d--;
+      else if (d === 0 && s[k] === ",") break;
+    }
+    if (k >= s.length) break;
+    s = s.slice(k + 1).trim();
+  }
+  let d = 0;
+  for (const ch of s) {
+    if (ODPRI.includes(ch)) d++;
+    else if (ZAPRI.includes(ch)) d--;
+    else if (d === 0 && ch === "→") return true;
+  }
+  return false;
+}
+
+const uporabi = (koda, ime) =>
+  new RegExp(`(?<![\\p{L}\\p{N}_.'])${ime.replace(/[.*+?^${}()|[\]\\]/g, (c) => `\\${c}`)}(?![\\p{L}\\p{N}_'])`, "u").test(koda);
 
 /** Oznake PV-09 v docstringu izreka. */
 export function oznake(docText = "") {
   const vrstice = docText.split("\n").map((v) => v.trim().replace(/\s*$/, ""));
-  const o = { trditev: null, besedilo: null, pomozno: false, izpolnljivoRocno: null };
+  const o = { trditev: null, besedilo: null, pomozno: false, izpolnljivoRocno: null, kratko: null };
   for (const v of vrstice) {
     let m;
     if ((m = /^trditev: (\S+)$/.exec(v))) o.trditev = m[1];
     else if ((m = /^besedilo: »(.*)«$/.exec(v))) o.besedilo = m[1];
     else if (/^pomozno(\b.*)?$/.test(v)) o.pomozno = true;
     else if ((m = /^izpolnljivo: ročno\s*[–-]\s*(\S.*)$/.exec(v))) o.izpolnljivoRocno = m[1];
+    else if ((m = /^besedilo-kratko: (\S.*)$/.exec(v))) o.kratko = m[1];
   }
   return o;
 }
@@ -224,6 +258,20 @@ export function vidnoBesedilo(md) {
   return out.join("\n");
 }
 
+/** Glave tabel v lekciji (prva vrstica tabele in njene celice), normalizirane: niso trditev. */
+export function glaveTabel(md) {
+  const out = new Set();
+  const v = vidnoBesedilo(md).split("\n");
+  for (let i = 0; i + 1 < v.length; i++) {
+    if (/^\s*\|/.test(v[i]) && /^\s*\|[\s|:-]+\|?\s*$/.test(v[i + 1]) && !/^\s*\|/.test(v[i - 1] || "")) {
+      out.add(normaliziraj(v[i]));
+      for (const c of v[i].split("|").map((x) => normaliziraj(x)).filter(Boolean)) out.add(c);
+      out.add(normaliziraj(v[i].replace(/^\s*\|\s*|\s*\|\s*$/g, "")));
+    }
+  }
+  return out;
+}
+
 /** Ali je izsek dobesedno v vidnem besedilu lekcije (po normalizaciji presledkov). */
 export function izsekVLekciji(izsek, md) {
   const n = normaliziraj(izsek);
@@ -238,26 +286,32 @@ export function izsekVLekciji(izsek, md) {
  */
 export function preveriDatoteko(rel, txt, md, vir, sha) {
   const napake = [];
+  const opozorila = [];
   const trditve = [];
   const lekcija = vir.replace(/^content\/lessons\//, "").replace(/\.md$/, "");
   const vidno = md == null ? null : normaliziraj(vidnoBesedilo(md));
+  const glave = md == null ? new Set() : glaveTabel(md);
   const decl = deklaracije(txt);
-  const izreki = new Set(decl.filter((d) => d.vrsta === "theorem").map((d) => d.ime));
+  const izreki = decl.filter((d) => d.vrsta === "theorem");
+  // Primer izpolnljivosti izreka T: `example` (ali izrek T_izpolnljivo) brez lastnih predpostavk, katerega koda T uporabi,
+  // npr. »example := koren_pot (n := 2) (a := 4) (by norm_num) (by norm_num)«. Lean tako preveri, da konkretne
+  // vrednosti izpolnijo vse predpostavke hkrati.
   const izpolnjeni = new Set();
   for (const d of decl) {
-    if (d.vrsta === "theorem" && d.ime.endsWith("_izpolnljivo")) izpolnjeni.add(d.ime.slice(0, -"_izpolnljivo".length));
-    // primer (ali izrek), čigar docstring pove »izpoln…« in imenuje `izrek`; vrstica »besedilo:« je citat lekcije
-    const doc = (d.doc?.text || "").split("\n").filter((v) => !/^\s*besedilo:/.test(v)).join("\n");
-    if (!/izpoln/i.test(doc)) continue;
-    for (const m of doc.matchAll(/`([^`\s]+)`/g)) if (izreki.has(m[1]) && m[1] !== d.ime) izpolnjeni.add(m[1]);
+    const prica = d.vrsta === "example" || d.ime.endsWith("_izpolnljivo");
+    if (!prica || d.binderji.some(jePredpostavka)) continue;
+    for (const t of izreki) if (t !== d && uporabi(d.koda, t.ime)) izpolnjeni.add(t.ime);
   }
   const ids = new Map();
-  for (const d of decl) {
-    if (d.vrsta !== "theorem" || d.ime.endsWith("_izpolnljivo")) continue;
+  const citati = new Map();
+  for (const d of izreki) {
+    if (d.ime.endsWith("_izpolnljivo")) continue;
     const kje = `${rel}:${d.vrstica} ${d.ime}`;
     const o = oznake(d.doc?.text);
     if (o.pomozno) {
       if (o.trditev || o.besedilo) napake.push(`${kje}: »pomozno« in »trditev:« hkrati`);
+      const prvi = (d.doc?.text || "").split("\n").filter((v) => !/^\s*pomozno\b/.test(v)).join(" ");
+      if (/\b(primer|primeru|primera|naloga|nalogi|naloge)\b/i.test(prvi)) opozorila.push(`${kje}: »pomozno«, docstring pa omenja primer ali nalogo (je to trditev lekcije?)`);
       continue;
     }
     if (!o.trditev || o.besedilo == null) {
@@ -269,28 +323,37 @@ export function preveriDatoteko(rel, txt, md, vir, sha) {
     }
     if (ids.has(o.trditev)) napake.push(`${kje}: id ${o.trditev} je že pri ${ids.get(o.trditev)}`);
     ids.set(o.trditev, d.ime);
-    if (!normaliziraj(o.besedilo)) napake.push(`${kje}: prazno »besedilo«`);
-    else if (vidno != null && !vidno.includes(normaliziraj(o.besedilo))) {
+    const b = normaliziraj(o.besedilo);
+    if (!b) napake.push(`${kje}: prazno »besedilo«`);
+    else if (vidno != null && !vidno.includes(b)) {
       napake.push(`${kje}: besedilo »${o.besedilo.slice(0, 60)}…« ni v vidnem besedilu ${vir}`);
+    } else {
+      if (b.length < 15 && !o.kratko) napake.push(`${kje}: besedilo »${b}« je krajše od 15 znakov (daljši citat ali »besedilo-kratko: <razlog>«)`);
+      if (glave.has(b) || glave.has(normaliziraj(b.replace(/^\|\s*|\s*\|$/g, "")))) napake.push(`${kje}: besedilo »${b.slice(0, 60)}« je glava tabele, ne trditev (citiraj vrstico izreka)`);
+      citati.set(b, [...(citati.get(b) || []), d.ime]);
     }
     const predpostavke = d.binderji.filter(jePredpostavka);
-    if (predpostavke.length && !izpolnjeni.has(d.ime) && !o.izpolnljivoRocno) {
-      napake.push(`${kje}: predpostavke ${predpostavke.map((b) => b.imena.join(" ") || b.tip).join(", ")} brez primera izpolnljivosti (docs/lean.md, »Lekcije (L2)«)`);
+    const sklep = implikacija(d.izjava);
+    if ((predpostavke.length || sklep) && !izpolnjeni.has(d.ime) && !o.izpolnljivoRocno) {
+      const kaj = [...predpostavke.map((b) => b.imena.join(" ") || b.tip), ...(sklep ? ["»→« v sklepu"] : [])].join(", ");
+      napake.push(`${kje}: predpostavke ${kaj} brez primera izpolnljivosti, ki izrek uporabi (docs/lean.md, »Lekcije (L2)«)`);
     }
     trditve.push({
       id: o.trditev,
       izrek: d.polnoIme,
       sha256: sha,
       vir,
-      besedilo: normaliziraj(o.besedilo),
-      ...(predpostavke.length ? { izpolnljivo: o.izpolnljivoRocno ? "ročno" : "primer" } : {}),
+      besedilo: b,
+      ...(predpostavke.length || sklep ? { izpolnljivo: o.izpolnljivoRocno ? "ročno" : "primer" } : {}),
     });
   }
-  return { napake, trditve };
+  for (const [b, imena] of citati) if (imena.length > 2) opozorila.push(`${rel}: isti citat »${b.slice(0, 50)}…« ima ${imena.length} izrekov (${imena.join(", ")})`);
+  return { napake, opozorila, trditve };
 }
 
 export function preveri({ dir = DIR, root = ROOT } = {}) {
   const napake = [];
+  const opozorila = [];
   const pokrite = new Set();
   const trditve = [];
   for (const f of walk(dir)) {
@@ -311,6 +374,7 @@ export function preveri({ dir = DIR, root = ROOT } = {}) {
     pokrite.add(vir);
     const r = preveriDatoteko(rel, celo, md && md.toString("utf8"), vir, sha);
     napake.push(...r.napake);
+    opozorila.push(...r.opozorila);
     trditve.push(...r.trditve);
   }
   const lessons = path.join(root, "content", "lessons");
@@ -319,7 +383,7 @@ export function preveri({ dir = DIR, root = ROOT } = {}) {
     .flatMap((d) => fs.readdirSync(path.join(lessons, d)).filter((f) => f.endsWith(".md")).map((f) => `content/lessons/${d}/${f}`));
   const pokriteMat = vseMat.filter((v) => pokrite.has(v)).length;
   trditve.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  return { napake, pokrite: [...pokrite].sort(), pokriteMat, vseMat: vseMat.length, trditve };
+  return { napake, opozorila, pokrite: [...pokrite].sort(), pokriteMat, vseMat: vseMat.length, trditve };
 }
 
 /** Vsebina lean/trditve.json: kazalo { id, izrek, sha256, vir, besedilo } za zapis trditve (dokaz: { izrek, sha256 }). */
@@ -337,6 +401,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const rocno = r.trditve.filter((t) => t.izpolnljivo === "ročno").length;
     console.log(`Lean dokazi lekcij matematike OŠ/SŠ: ${r.pokriteMat} od ${r.vseMat}; trditev z id: ${r.trditve.length} (izpolnljivo ročno: ${rocno}).`);
     for (const n of r.napake) console.log(`✗ ${n}`);
+    for (const n of r.opozorila) console.log(`⚠ ${n}`);
   }
-  process.exit(r.napake.length ? 1 : 0);
+  process.exitCode = r.napake.length ? 1 : 0;
 }

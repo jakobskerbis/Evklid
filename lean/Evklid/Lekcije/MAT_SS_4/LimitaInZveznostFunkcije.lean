@@ -189,6 +189,11 @@ theorem jakost (P : ℝ) (hP : 0 < P) :
 /-- Predpostavka trditve `jakost` se da izpolniti (P = 1). -/
 example : (0 : ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `jakost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := one_pos
+  jakost (hP := w)
+
 /-- Razlaga, blok 6, »Premisli«: pri podvojeni razdalji je jakost četrtina, P/(4π(2r)²) = I/4.
 trditev: MAT-SS-4/limita-in-zveznost-funkcije#podvojena-razdalja
 besedilo: »Jakost se zmanjša na četrtino. Razdalja je v imenovalcu na kvadrat: $(2r)^2 = 4r^2$, zato je nova jakost $\dfrac{P}{4\pi \cdot 4r^2} = \dfrac{I}{4}$.« -/
@@ -248,6 +253,11 @@ theorem krajsanje_clenov (x : ℝ) (hx : x ≠ 3) : (x ^ 2 - 9) / (x - 3) ≠ x 
 
 /-- Predpostavka trditve `krajsanje_clenov` se da izpolniti (x = 0). -/
 example : (0 : ℝ) ≠ 3 := by norm_num
+
+/-- Predpostavke trditve `krajsanje_clenov` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≠ 3 := by norm_num
+  krajsanje_clenov (hx := w)
 
 /-- Primer 2: (3x² − 5x)/(6x² + 1) = (3 − 5/x)/(6 + 1/x²) za x ≠ 0 in
 lim_{x→∞} (3x² − 5x)/(6x² + 1) = 3/6 = 0,5.
@@ -469,6 +479,11 @@ theorem matura2_okrajsano (x : ℝ) (h1 : x - 2 ≠ 0) (h2 : x + 1 ≠ 0) :
 /-- Predpostavke trditve `matura2_okrajsano` se dajo izpolniti (x = 0). -/
 example : (0:ℝ) - 2 ≠ 0 ∧ (0:ℝ) + 1 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `matura2_okrajsano` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) - 2 ≠ 0 ∧ (0:ℝ) + 1 ≠ 0 := by norm_num
+  matura2_okrajsano (h1 := w.1) (h2 := w.2)
+
 /-- Matura, naloga 2 b) (in vrstica `limita ... | 2 | 8/3`): lim_{x→2} f(x) = 2 · 4/3 = 8/3 (luknja).
 trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura2b
 besedilo: »b) $\lim\limits_{x \to 2} f(x) = \dfrac{2 \cdot 4}{3} = \dfrac{8}{3}$. Limita obstaja, vrednost $f(2)$ pa ne, zato ima $f$ pri $x = 2$ luknjo; zakrpamo jo z dodatkom $f(2) = \frac{8}{3}$.« -/
@@ -687,6 +702,12 @@ theorem sendvic (x : ℝ) (h0 : 0 < |x|) (h1 : |x| < π / 2) : cos x < sin x / x
 /-- Predpostavke trditve `sendvic` se dajo izpolniti (x = 1). -/
 example : (0:ℝ) < |1| ∧ |(1:ℝ)| < π / 2 := by
   rw [abs_one]; exact ⟨one_pos, by linarith [pi_gt_three]⟩
+
+/-- Predpostavke trditve `sendvic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < |1| ∧ |(1:ℝ)| < π / 2 := by
+    rw [abs_one]; exact ⟨one_pos, by linarith [pi_gt_three]⟩
+  sendvic (h0 := w.1) (h1 := w.2)
 
 /-- Drugače, bolj natančno: |2x + 1 − 7| = 2|x − 3| in z δ = ε/2 je lim_{x→3} (2x + 1) = 7 po
 definiciji ε-δ.

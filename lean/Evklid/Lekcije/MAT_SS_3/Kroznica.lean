@@ -316,6 +316,11 @@ theorem tangenta_v_tocki (p q r x₀ y₀ : ℝ) (hT : (x₀ - p) ^ 2 + (y₀ - 
 /-- Predpostavka `tangenta_v_tocki` se da izpolniti (T(4, 2) na (x − 1)² + (y + 2)² = 25). -/
 example : ((4 : ℝ) - 1) ^ 2 + (2 - -2) ^ 2 = 5 ^ 2 := by norm_num
 
+/-- Predpostavke trditve `tangenta_v_tocki` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((4 : ℝ) - 1) ^ 2 + (2 - -2) ^ 2 = 5 ^ 2 := by norm_num
+  tangenta_v_tocki (hT := w)
+
 /-- Ustno vprašanje 3: tangenta v T je od središča oddaljena natanko r (r > 0).
 trditev: MAT-SS-3/kroznica#tangenta-razdalja
 besedilo: »ki je od središča oddaljena natanko $r$,« -/

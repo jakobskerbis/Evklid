@@ -344,6 +344,11 @@ theorem AB_BC_sekata (a : ℝ) (ha : 0 < a) :
 /-- Predpostavke trditve `AB_BC_sekata` se dajo izpolniti (a = 1). -/
 example : (0:ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `AB_BC_sekata` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  AB_BC_sekata (ha := w)
+
 /-- Razlaga 2: AB in HG sta vzporedni: nimata skupne točke, ležita v isti ravnini (y = z) in imata isto
 smer (G − H = B − A).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#ab-hg-vzporedni
@@ -384,6 +389,16 @@ example : (0:ℝ) < 6 := by norm_num
 
 /-! ## Razlaga 3: premica in ravnina, dve ravnini -/
 
+/-- Predpostavke trditve `AB_CG_pravokotni_mimobezni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  AB_CG_pravokotni_mimobezni (ha := w)
+
+/-- Predpostavke trditve `AB_HG_vzporedni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  AB_HG_vzporedni (ha := w)
+
 /-- Razlaga 3: AB leži v ABCD; AE seka ABCD samo v A; EF z ABCD nima skupne točke (vzporedna);
 ABCD in EFGH (z = a) nimata skupne točke; ABCD in BCGF (x = a) se sekata v premici BC.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#razlaga3
@@ -422,6 +437,11 @@ theorem razlaga3 (a : ℝ) (ha : 0 < a) :
 
 /-! ## Razlaga 4: pravokotnost premice na ravnino -/
 
+/-- Predpostavke trditve `razlaga3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  razlaga3 (ha := w)
+
 /-- Razlaga 4 (kriterij): če je n pravokoten na dve (sekajoči se) smeri u, v ravnine, je pravokoten
 na vsako linearno kombinacijo su + tv.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#kriterij
@@ -440,6 +460,12 @@ theorem kriterij_obratno {V : Type*} [NormedAddCommGroup V] [InnerProductSpace �
 /-- Predpostavka trditve `kriterij_obratno` se da izpolniti (n = (0,0,1), u = (1,0,0), v = (0,1,0)). -/
 example : ∀ s t : ℝ, inner ℝ (T 0 0 1) (s • T 1 0 0 + t • T 0 1 0) = 0 := by
   intro s t; simp [inner_k]
+
+/-- Predpostavke trditve `kriterij_obratno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∀ s t : ℝ, inner ℝ (T 0 0 1) (s • T 1 0 0 + t • T 0 1 0) = 0 := by
+    intro s t; simp [inner_k]
+  kriterij_obratno (h := w)
 
 /-- Razlaga 4: AE ⊥ AB in AE ⊥ AD, zato je AE pravokoten na vsak vektor ploskve ABCD (vsak vektor z
 z = 0), tudi na diagonalo BD.
@@ -462,6 +488,11 @@ theorem AE_BD_mimobezni (a : ℝ) (ha : 0 < a) :
     mimobezni (premica (A a a a) (E a a a)) (premica (B a a a) (D a a a)) ∧
     inner ℝ (E a a a - A a a a) (D a a a - B a a a) = 0 :=
   ⟨mimobezni_of_det _ _ _ _ (by simp [det3, A, B, D, E, ha.ne']), by simp [inner_k, A, B, D, E]⟩
+
+/-- Predpostavke trditve `AE_BD_mimobezni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  AE_BD_mimobezni (ha := w)
 
 /-- Razlaga 4: ravnina ABFE (y = 0) vsebuje AE, ki je pravokoten na ABCD, zato je ABFE ⊥ ABCD.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#abfe-pravokotna
@@ -487,6 +518,11 @@ theorem AF_ena_ni_dovolj (a : ℝ) (ha : 0 < a) :
   · rw [mem_osnovna]; simp [F]; exact ha.ne'
   · simp [inner_k, A, B, F]; exact ha.ne'
 
+/-- Predpostavke trditve `AF_ena_ni_dovolj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  AF_ena_ni_dovolj (ha := w)
+
 /-- Razlaga 4, premisli; Ustno vprašanje 2: AF je proti tlom nagnjena za 45°: v trikotniku ABF je pravi
 kot pri B (B je projekcija F), ∠ F A B = π/4.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#af-45
@@ -507,6 +543,11 @@ theorem AF_45 (a : ℝ) (ha : 0 < a) :
     · intro h; have := congrFun (congrArg (⇑) h) 0; simp [A, B] at this; exact ha.ne this
 
 /-! ## Razlaga 5: pravokotna projekcija in kot med premico in ravnino -/
+
+/-- Predpostavke trditve `AF_45` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  AF_45 (ha := w)
 
 /-- Kvadrat razdalje po koordinatah.
 pomozno -/
@@ -542,6 +583,12 @@ theorem nozisce_z (x y z : ℝ) : nozisce (T x y z) (T x y 0) (T 0 0 1) 0 := by
 /-- Predpostavki trditve `nozisce_enolicno` se dajo izpolniti (N = N' = (1, 2, 0) za X = (1, 2, 3)). -/
 example : nozisce (T 1 2 3) (T 1 2 0) (T 0 0 1) 0 ∧ nozisce (T 1 2 3) (T 1 2 0) (T 0 0 1) 0 :=
   ⟨nozisce_z 1 2 3, nozisce_z 1 2 3⟩
+
+/-- Predpostavke trditve `nozisce_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : nozisce (T 1 2 3) (T 1 2 0) (T 0 0 1) 0 ∧ nozisce (T 1 2 3) (T 1 2 0) (T 0 0 1) 0 :=
+    ⟨nozisce_z 1 2 3, nozisce_z 1 2 3⟩
+  nozisce_enolicno (h := w.1) (h' := w.2)
 
 /-- Projekcija na ravnino y = 0 (ABFE): nožišče točke (x, y, z) je (x, 0, z).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#nozisce-y
@@ -637,6 +684,16 @@ example : ∠ (T 4 0 3) (T 4 0 0) (T 0 0 0) = π / 2 ∧ T 4 0 3 ≠ T 4 0 0 ∧
   · intro h; have := congrFun (congrArg (⇑) h) 2; simp at this
   · intro h; have := congrFun (congrArg (⇑) h) 0; norm_num at this
 
+/-- Predpostavke trditve `pravokotni_trikotnik` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ (T 4 0 3) (T 4 0 0) (T 0 0 0) = π / 2 ∧ T 4 0 3 ≠ T 4 0 0 ∧ T 0 0 0 ≠ T 4 0 0 := by
+    refine ⟨?_, ?_, ?_⟩
+    · rw [EuclideanGeometry.angle, ← inner_eq_zero_iff_angle_eq_pi_div_two]
+      simp [vsub_eq_sub, T_sub, inner_k]
+    · intro h; have := congrFun (congrArg (⇑) h) 2; simp at this
+    · intro h; have := congrFun (congrArg (⇑) h) 0; norm_num at this
+  pravokotni_trikotnik (h := w.1) (hK := w.2.1) (_hX := w.2.2)
+
 /-- Predpostavke trditve `kot_s_projekcijo_najmanjsi` se dajo izpolniti (p = (1,0,0), q = (0,0,1),
 u = (0,1,0)). Trditev: `kriterij` (prvi dve enakosti: n = (0,0,1), u = (1,0,0), v = (0,1,0)). -/
 example : inner ℝ (T 0 0 1) (T 1 0 0) = 0 ∧ inner ℝ (T 0 0 1) (T 0 1 0) = 0 ∧
@@ -644,6 +701,14 @@ example : inner ℝ (T 0 0 1) (T 1 0 0) = 0 ∧ inner ℝ (T 0 0 1) (T 0 1 0) = 
   refine ⟨by simp [inner_k], by simp [inner_k], ?_, ?_⟩
   · intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
   · intro h; have := congrFun (congrArg (⇑) h) 1; simp at this
+
+/-- Predpostavke trditve `kot_s_projekcijo_najmanjsi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : inner ℝ (T 0 0 1) (T 1 0 0) = 0 ∧ inner ℝ (T 0 0 1) (T 0 1 0) = 0 ∧ T 1 0 0 ≠ 0 ∧ T 0 1 0 ≠ 0 := by
+    refine ⟨by simp [inner_k], by simp [inner_k], ?_, ?_⟩
+    · intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
+    · intro h; have := congrFun (congrArg (⇑) h) 1; simp at this
+  kot_s_projekcijo_najmanjsi (hqp := w.1) (hqu := w.2.1) (hp := w.2.2.1) (hu := w.2.2.2)
 
 /-- Preveri se (2): projekcija p(φ) = l cos φ se pri dviganju (φ od 0° do 90°) strogo krajša, pri 0°
 je enaka l, v navpični legi je 0 (točka); nikoli ni daljša od l.
@@ -661,6 +726,11 @@ theorem projekcija_se_krajsa (l : ℝ) (hl : 0 < l) :
 example : (0:ℝ) < 1 := one_pos
 
 /-! ## Kot med telesno diagonalo kvadra in osnovno ploskvijo -/
+
+/-- Predpostavke trditve `projekcija_se_krajsa` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  projekcija_se_krajsa (hl := w)
 
 /-- Telesna diagonala kvadra a × b × c: pravi kot pri C, AC = √(a² + b²), AG = √(a² + b² + c²) in
 φ = ∠ C A G = arctan(c / √(a² + b²)).
@@ -682,6 +752,11 @@ theorem kot_kvader (a b c : ℝ) (ha : 0 < a) (hc : 0 < c) :
 /-- Predpostavke trditve `kot_kvader` se dajo izpolniti (a = b = c = 1). -/
 example : (0:ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `kot_kvader` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  kot_kvader (ha := w) (hc := w)
+
 /-- Razlaga 5 (premisli), Povzetek, Ustno vprašanje 3, Primer 2 (korak 6): pri kocki z robom a je
 projekcija AG diagonala AC = a√2 in tan φ = a/(a√2) = 1/√2; kot je za vsak rob enak arctan(1/√2).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#kocka-kot
@@ -698,6 +773,11 @@ theorem kocka_kot (a : ℝ) (ha : 0 < a) :
 /-- Predpostavke trditve `kocka_kot` se dajo izpolniti (a = 1). -/
 example : (0:ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `kocka_kot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  kocka_kot (ha := w)
+
 /-- Razlaga 5, premisli: AF je bolj strma od AG (tan 45° = 1 > 1/√2, torej ∠ B A F > ∠ C A G).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#af-bolj-strma
 besedilo: »Diagonala $AF$. Obe se dvigneta za $a$, projekcija $AF$ je rob $AB$ dolžine $a$, projekcija $AG$ pa daljša diagonala $AC = a\sqrt{2}$. Pri $AF$ je $\tan\varphi = 1$, torej $45^\circ$; pri $AG$ je kot manjši, okoli $35^\circ$ (Primer 2).« -/
@@ -707,6 +787,11 @@ theorem AF_bolj_strma (a : ℝ) (ha : 0 < a) :
   apply arctan_strictMono
   rw [div_lt_one (by positivity)]
   exact (sqrt2_meje).1.trans' (by norm_num)
+
+/-- Predpostavke trditve `AF_bolj_strma` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  AF_bolj_strma (ha := w)
 
 /-- Primer 2 (a = 6): C je projekcija G, pravi kot pri C, d = 6√2 ≈ 8,49,
 tan φ = 6/(6√2) = 1/√2 ≈ 0,707, φ ≈ 35,26°; D = √(72 + 36) = 6√3 ≈ 10,39, sin φ = 6/(6√3) ≈ 0,577.
@@ -827,6 +912,18 @@ example : ∠ (T (8 * √3) 0 (-8)) (T (8 * √3) 0 0) (T 0 0 0) = π / 2 ∧
     exact Real.sqrt_sq (by norm_num)
   · rw [dist_T]; norm_num
 
+/-- Predpostavke trditve `primer3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ (T (8 * √3) 0 (-8)) (T (8 * √3) 0 0) (T 0 0 0) = π / 2 ∧ dist (T (8 * √3) 0 (-8)) (T 0 0 0) = 16 ∧ dist (T (8 * √3) 0 (-8)) (T (8 * √3) 0 0) = 8 := by
+    refine ⟨?_, ?_, ?_⟩
+    · rw [EuclideanGeometry.angle, ← inner_eq_zero_iff_angle_eq_pi_div_two]
+      simp [vsub_eq_sub, T_sub, inner_k]
+    · rw [dist_T]; rw [show (8 * √3 - 0) ^ 2 + (0 - 0) ^ 2 + (-8 - 0) ^ 2 = (16:ℝ) ^ 2 by
+        ring_nf; rw [Real.sq_sqrt (by norm_num)]; norm_num]
+      exact Real.sqrt_sq (by norm_num)
+    · rw [dist_T]; norm_num
+  primer3 (h := w.1) (hl := w.2.1) (hv := w.2.2)
+
 /-- Primer 4: kvader 3 × 4 × c (c > 0): d = √(9 + 16) = 5 in kot 60° med telesno diagonalo in osnovno
 ploskvijo velja natanko tedaj, ko je c = d·tan 60° = 5√3 ≈ 8,66 cm.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#primer4
@@ -850,6 +947,11 @@ theorem primer4 (c : ℝ) (hc : 0 < c) :
 
 /-- Predpostavke trditve `primer4` se dajo izpolniti (c = 5√3). -/
 example : (0:ℝ) < 5 * √3 := by positivity
+
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 5 * √3 := by positivity
+  primer4 (hc := w)
 
 /-- RAČUN: 5·tan 60° ≈ 8,66 (premisli v primeru 4).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#racun-5tan60
@@ -880,6 +982,11 @@ theorem primer1a (a : ℝ) (ha : 0 < a) :
     simp [E, H, B, C] at e2; exact ha.ne' e2
   · intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
 
+/-- Predpostavke trditve `primer1a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  primer1a (ha := w)
+
 /-- Primer 1 (b): EH in CG sta pravokotni mimobežnici (CG ∥ DH, DH ⊥ EH).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#primer1b
 besedilo: »sta pravokotni mimobežnici.« -/
@@ -891,6 +998,11 @@ theorem primer1b (a : ℝ) (ha : 0 < a) :
     by simp [inner_k, H, E, G, C]⟩
   simp [det3, E, H, C, G, ha.ne']
 
+/-- Predpostavke trditve `primer1b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  primer1b (ha := w)
+
 /-- Primer 1 (c): vse točke EG so za a nad ABCD, EG ravnine ne doseže (vzporedna z ravnino).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#primer1c
 besedilo: »(c) Vse točke $EG$ so za rob $a$ nad ploskvijo $ABCD$, zato $EG$ ravnine $ABCD$ ne doseže: premica je vzporedna z ravnino.« -/
@@ -900,6 +1012,11 @@ theorem primer1c (a : ℝ) (ha : 0 < a) :
     rintro X ⟨t, rfl⟩; simp [E, G]
   refine ⟨h, Set.disjoint_left.2 fun X hX hO => ?_⟩
   rw [mem_osnovna, h X hX] at hO; exact ha.ne' hO
+
+/-- Predpostavke trditve `primer1c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  primer1c (ha := w)
 
 /-- Primer 1 (d): ploskvi ABFE (y = 0) in DCGH (y = a) sta vzporedni ravnini (brez skupne točke).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#primer1d
@@ -917,6 +1034,11 @@ theorem primer1d (a : ℝ) (ha : 0 < a) :
   rw [h1] at h2; exact ha.ne h2
 
 /-! ## Pogoste napake -/
+
+/-- Predpostavke trditve `primer1d` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  primer1d (ha := w)
 
 /-- Pogoste napake (3), Pazi na: kdor vzame za projekcijo rob AB, dobi tan φ = 1, torej 45°, kar ni pravi
 kot arctan(1/√2).
@@ -990,6 +1112,11 @@ example : (0:ℝ) < 1 := one_pos
 
 /-! ## Razlaga 6: množice točk v prostoru (višja raven) -/
 
+/-- Predpostavke trditve `simetralna_AC` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  simetralna_AC (ha := w)
+
 /-- Razlaga 6 (višja raven), Pogoste napake (5): točke, enako oddaljene od P in Q, so natanko točke
 simetralne ravnine: X − razpolovišče je pravokoten na PQ (Mathlib `AffineSubspace.perpBisector`).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#simetralna-ravnina
@@ -1009,6 +1136,11 @@ theorem AB_DH_mimobezni (a : ℝ) (ha : 0 < a) :
   mimobezni_of_det _ _ _ _ (by simp [det3, A, B, D, H, ha.ne'])
 
 /-! ## Za maturo, naloga 1: pravilna štiristrana piramida (osnovni rob 6, stranski rob 6) -/
+
+/-- Predpostavke trditve `AB_DH_mimobezni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 := by norm_num
+  AB_DH_mimobezni (ha := w)
 
 /-- Naloga 1: osnova (0,0,0), (6,0,0), (6,6,0), (0,6,0), središče S = (3,3,0), vrh V = (3,3,h) nad S,
 stranski rob VA = 6. Projekcija V je S, projekcija stranskega roba je polovica diagonale:

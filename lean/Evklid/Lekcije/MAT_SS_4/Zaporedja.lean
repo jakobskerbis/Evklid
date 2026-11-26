@@ -44,6 +44,12 @@ theorem lim_pravila (a b : ℕ → ℝ) (A B : ℝ) (ha : Tendsto a atTop (𝓝 
 example : Tendsto (fun _ : ℕ => (0:ℝ)) atTop (𝓝 0) ∧ Tendsto (fun _ : ℕ => (1:ℝ)) atTop (𝓝 1) :=
   ⟨tendsto_const_nhds, tendsto_const_nhds⟩
 
+/-- Predpostavke trditve `lim_pravila` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Tendsto (fun _ : ℕ => (0:ℝ)) atTop (𝓝 0) ∧ Tendsto (fun _ : ℕ => (1:ℝ)) atTop (𝓝 1) :=
+    ⟨tendsto_const_nhds, tendsto_const_nhds⟩
+  lim_pravila (ha := w.1) (hb := w.2)
+
 /-- Pomožno: če sta zaporedji enaki za vse n ≥ 1, imata isto limito.
 pomozno -/
 theorem lim_od_1 {f g : ℕ → ℝ} {L : ℝ} (h : ∀ n, 1 ≤ n → f n = g n) (hg : Tendsto g atTop (𝓝 L)) :
@@ -75,6 +81,12 @@ theorem pohod (a : ℕ → ℝ) (h1 : a 1 = 8) (h : ∀ n, 1 ≤ n → a (n + 1)
 /-- Predpostavke trditve `pohod` se dajo izpolniti. -/
 example : ∃ a : ℕ → ℝ, a 1 = 8 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n / 2 :=
   ⟨fun n => 16 * (1 / 2) ^ n, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
+
+/-- Predpostavke trditve `pohod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, a 1 = 8 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n / 2 :=
+    ⟨fun n => 16 * (1 / 2) ^ n, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
+  pohod (h1 := w.choose_spec.1) (h := w.choose_spec.2)
 
 /-- Uvod, primer 2: povprečna hitrost vₙ = 200n/(2n + 1): v₁ ≈ 67, v₂ = 80, v₃ ≈ 86, v₄ ≈ 89
 (vse zaokrožene na celo), vₙ < 100 za vsak n in vₙ narašča.
@@ -121,6 +133,11 @@ theorem narasca (n : ℕ) (hn : 1 ≤ n) :
 (n = 1). -/
 example : 1 ≤ (1:ℕ) := le_rfl
 
+/-- Predpostavke trditve `narasca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (1:ℕ) := le_rfl
+  narasca (hn := w)
+
 /-- Razlaga 4: za zaporedje s pozitivnimi členi je aₙ₊₁ > aₙ natanko tedaj, ko je aₙ₊₁/aₙ > 1.
 trditev: MAT-SS-4/zaporedja#kolicnik
 besedilo: »Pri zaporedju s samimi pozitivnimi členi lahko namesto razlike pogledamo količnik $\dfrac{a_{n+1}}{a_n}$ in ga primerjamo z $1$.« -/
@@ -129,6 +146,11 @@ theorem kolicnik (x y : ℝ) (hx : 0 < x) : x < y ↔ 1 < y / x := by
 
 /-- Predpostavka trditve `kolicnik` se da izpolniti (x = 1). -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `kolicnik` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  kolicnik (hx := w)
 
 /-- Razlaga 5 in »Premisli«: 1 ≤ 2 − 1/n < 2 za vsak n ≥ 1; noben člen ni enak 2.
 trditev: MAT-SS-4/zaporedja#omejeno
@@ -139,6 +161,11 @@ theorem omejeno (n : ℕ) (hn : 1 ≤ n) :
   have h1 : 1 / (n : ℝ) ≤ 1 := by rw [div_le_one (by linarith)]; exact h
   have h2 : 0 < 1 / (n : ℝ) := by positivity
   exact ⟨by linarith, by linarith, by linarith⟩
+
+/-- Predpostavke trditve `omejeno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (1:ℕ) := le_rfl
+  omejeno (hn := w)
 
 /-- Razlaga 6: okolica s polmerom ε: |x − L| < ε ⇔ x ∈ (L − ε, L + ε).
 trditev: MAT-SS-4/zaporedja#okolica
@@ -158,6 +185,11 @@ theorem pas_01 (n : ℕ) (hn : 1 ≤ n) : |(2 - 1 / (n : ℝ)) - 2| < 0.1 ↔ 10
     exact_mod_cast this
   · intro h'; have : (10 : ℝ) < n := by exact_mod_cast h'
     linarith
+
+/-- Predpostavke trditve `pas_01` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (1:ℕ) := le_rfl
+  pas_01 (hn := w)
 
 /-- Razlaga 7, »Premisli«: zunaj okolice 2 s polmerom 0,01 je natanko 100 členov: a₁, …, a₁₀₀
 (a₁₀₀ = 1,99 je na robu).
@@ -261,6 +293,12 @@ theorem limita_enolicna (a : ℕ → ℝ) (L₁ L₂ : ℝ) (h₁ : Tendsto a at
 
 /-! ## Rešeni primeri -/
 
+/-- Predpostavke trditve `limita_enolicna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Tendsto (fun _ : ℕ => (0:ℝ)) atTop (𝓝 0) ∧ Tendsto (fun _ : ℕ => (1:ℝ)) atTop (𝓝 1) :=
+    ⟨tendsto_const_nhds, tendsto_const_nhds⟩
+  limita_enolicna (h₁ := w.1) (h₂ := w.2)
+
 /-- Primer 1: aₙ = (n + 2)/(2n): a₁ = 3/2, a₂ = 1, a₃ = 5/6, a₄ = 3/4; aₙ = n/(2n) + 2/(2n) = 1/2 + 1/n;
 aₙ₊₁ − aₙ = 1/(n + 1) − 1/n = −1/(n(n + 1)) < 0, zato strogo pada (n ≥ 1).
 trditev: MAT-SS-4/zaporedja#primer1
@@ -278,6 +316,11 @@ theorem primer1 (n : ℕ) (hn : 1 ≤ n) :
   · field_simp
   · field_simp; ring
   · rw [sub_neg, div_lt_div_iff₀ (by positivity) (by positivity)]; nlinarith
+
+/-- Predpostavke trditve `primer1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (1:ℕ) := le_rfl
+  primer1 (hn := w)
 
 /-- Primer 2: vₙ = 100n/(n + 1/2) = 200n/(2n + 1) = 200/(2 + 1/n) (n ≥ 1); lim vₙ = 200/(2 + 0) = 100.
 trditev: MAT-SS-4/zaporedja#primer2-limita
@@ -381,6 +424,14 @@ example : ∃ (a : ℕ → ℝ) (L : ℝ), (∀ n, 1 ≤ n → a (n + 1) = a n /
     (primer3 (fun n => 200 - 200 * (1 / 2) ^ n) (by norm_num)
       (fun n _ => by simp only [pow_succ]; ring)).2.2.2.2⟩
 
+/-- Predpostavke trditve `primer3_sklep` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ (a : ℕ → ℝ) (L : ℝ), (∀ n, 1 ≤ n → a (n + 1) = a n / 2 + 100) ∧ Tendsto a atTop (𝓝 L) :=
+    ⟨fun n => 200 - 200 * (1 / 2) ^ n, 200, fun n _ => by simp only [pow_succ]; ring,
+      (primer3 (fun n => 200 - 200 * (1 / 2) ^ n) (by norm_num)
+        (fun n _ => by simp only [pow_succ]; ring)).2.2.2.2⟩
+  primer3_sklep (h := w.choose_spec.choose_spec.1) (hL := w.choose_spec.choose_spec.2)
+
 /-- Primer 4: (2n² − n)/(n² + 3) = (2 − 1/n)/(1 + 3/n²) (n ≥ 1) in limita je (2 − 0)/(1 + 0) = 2.
 trditev: MAT-SS-4/zaporedja#primer4
 besedilo: »$a_n = \dfrac{2 - \frac{1}{n}}{1 + \frac{3}{n^2}}$« -/
@@ -416,6 +467,11 @@ theorem napaka_blizje (n : ℕ) (hn : 1 ≤ n) :
   rw [abs_of_pos (by linarith), abs_of_pos (by linarith)]
   have : 1 / ((n : ℝ) + 1) < 1 / n := one_div_lt_one_div_of_lt h (by linarith)
   linarith
+
+/-- Predpostavke trditve `napaka_blizje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (1:ℕ) := le_rfl
+  napaka_blizje (hn := w)
 
 /-- Pogoste napake 2: 1/n ima limito 0, ki ni noben člen (n ≥ 1); konstantno zaporedje 5 ima limito 5.
 trditev: MAT-SS-4/zaporedja#napaka-dosezena
@@ -486,6 +542,12 @@ theorem matura1 (a : ℕ → ℤ) (h1 : a 1 = 3) (h : ∀ n, 1 ≤ n → a (n + 
 /-- Predpostavke trditve `matura1` se dajo izpolniti. -/
 example : ∃ a : ℕ → ℤ, a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) = 2 * a n - 1 :=
   ⟨fun n => 2 ^ n + 1, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
+
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℤ, a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) = 2 * a n - 1 :=
+    ⟨fun n => 2 ^ n + 1, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
+  matura1 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
 
 /-- Naloga 2 a)–b): aₙ = (2n + 5)/(n + 1): a₁ = 7/2, a₂ = 9/3 = 3, a₃ = 11/4;
 aₙ = (2(n + 1) + 3)/(n + 1) = 2 + 3/(n + 1); aₙ₊₁ − aₙ = 3/(n + 2) − 3/(n + 1)
@@ -568,6 +630,12 @@ example : ∃ a : ℕ → ℝ, a 1 = 1 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n + 
   ⟨fun n => 2 * n - 1, by norm_num, fun n _ => by push_cast; ring⟩
 
 /-! ## Drugače -/
+
+/-- Predpostavke trditve `ustno3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, a 1 = 1 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n + 2 :=
+    ⟨fun n => 2 * n - 1, by norm_num, fun n _ => by push_cast; ring⟩
+  ustno3 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
 
 /-- Z analogijo: pri 1/n in L = 0 za ε = 0,1 zadošča n₀ = 10, za ε = 0,001 pa n₀ = 1000.
 trditev: MAT-SS-4/zaporedja#sodnik-1n

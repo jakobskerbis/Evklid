@@ -73,6 +73,11 @@ theorem S_formula (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
 /-- Predpostavke trditev `S_formula`, `negativna` in `napaka_delne` se dajo izpolniti (q = 1/2, n = 1). -/
 example : (1 / 2 : ℝ) ≠ 1 ∧ |(1 / 2 : ℝ)| < 1 ∧ 1 ≤ (1:ℕ) := by norm_num [abs_of_pos]
 
+/-- Predpostavke trditve `S_formula` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 / 2 : ℝ) ≠ 1 ∧ |(1 / 2 : ℝ)| < 1 ∧ 1 ≤ (1:ℕ) := by norm_num [abs_of_pos]
+  S_formula (hq := w.1)
+
 /-- Od primera k formuli: pri |q| < 1 in n ≥ 1 sta števec qⁿ − 1 in imenovalec q − 1 negativna.
 trditev: MAT-SS-4/geometrijska-vrsta#negativna
 besedilo: »Od primera k formuli.** Za delno vsoto geometrijskega zaporedja že imaš formulo $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$. Pri $|q| < 1$ sta števec in imenovalec negativna, zato oba pomnožimo z $-1$:« -/
@@ -80,6 +85,11 @@ theorem negativna (q : ℝ) (hq : |q| < 1) (n : ℕ) (hn : 1 ≤ n) : q ^ n - 1 
   have h1 : |q ^ n| < 1 := by
     rw [abs_pow]; exact pow_lt_one₀ (abs_nonneg q) hq (by omega)
   exact ⟨by linarith [le_abs_self (q ^ n)], by linarith [le_abs_self q]⟩
+
+/-- Predpostavke trditve `negativna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 / 2 : ℝ) ≠ 1 ∧ |(1 / 2 : ℝ)| < 1 ∧ 1 ≤ (1:ℕ) := by norm_num [abs_of_pos]
+  negativna (hq := w.2.1) (hn := w.2.2)
 
 /-- Od primera k formuli: pri |q| < 1 gre qⁿ proti 0.
 trditev: MAT-SS-4/geometrijska-vrsta#pot-nic
@@ -115,6 +125,11 @@ theorem razlika_clen (a₁ q : ℝ) (hq : 1 ≤ |q|) (n : ℕ) :
 /-- Predpostavka trditve `razlika_clen` se da izpolniti (q = 1). -/
 example : 1 ≤ |(1:ℝ)| := by norm_num
 
+/-- Predpostavke trditve `razlika_clen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ |(1:ℝ)| := by norm_num
+  razlika_clen (hq := w)
+
 /-- Vrsta konvergira natanko tedaj, ko je |q| < 1 (pri a₁ ≠ 0). Smer ⇒ je dokaz iz »Bolj natančno«:
 če Sₙ → S, gredo členi a₁qⁿ = Sₙ₊₁ − Sₙ proti 0, pri |q| ≥ 1 pa je |a₁qⁿ| ≥ |a₁| > 0.
 trditev: MAT-SS-4/geometrijska-vrsta#konvergira-iff
@@ -141,6 +156,21 @@ theorem konvergira_iff (a₁ q : ℝ) (ha : a₁ ≠ 0) :
 /-- Predpostavka a₁ ≠ 0 trditve `konvergira_iff` se da izpolniti (npr. a₁ = 1, q = 1/2).
 Trditve: `pot_nic`, `vsota` in `qn_dokaz` (|q| < 1). -/
 example : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
+
+/-- Predpostavke trditve `konvergira_iff` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
+  konvergira_iff (ha := w.choose_spec.choose_spec.1)
+
+/-- Predpostavke trditve `vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
+  vsota (hq := w.choose_spec.choose_spec.2)
+
+/-- Predpostavke trditve `pot_nic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
+  pot_nic (hq := w.choose_spec.choose_spec.2)
 
 /-- Kdaj vrsta divergira: q = 1: 5 + 5 + … ima Sₙ = 5n; q > 1: 1 + 2 + 4 + … ima Sₙ = 2ⁿ − 1 ≥ n;
 q = −1: 1 − 1 + 1 − … ima delne vsote 1, 0, 1, 0.
@@ -288,6 +318,11 @@ theorem qn_dokaz (q : ℝ) (hq : |q| < 1) :
   · linarith
   · exact h
 
+/-- Predpostavke trditve `qn_dokaz` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
+  qn_dokaz (hq := w.choose_spec.choose_spec.2)
+
 /-- Bolj natančno: napaka delne vsote S − Sₙ = a₁qⁿ/(1 − q) (q ≠ 1); pri Ahilu po petih odsekih
 100·0,1⁵/0,9 ≈ 0,0011 m.
 trditev: MAT-SS-4/geometrijska-vrsta#napaka-delne
@@ -299,6 +334,11 @@ theorem napaka_delne (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
   rw [(S_formula a₁ q hq n).1, (S_formula a₁ q hq n).2]
   have : 1 - q ≠ 0 := sub_ne_zero.mpr (Ne.symm hq)
   field_simp; ring
+
+/-- Predpostavke trditve `napaka_delne` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 / 2 : ℝ) ≠ 1 ∧ |(1 / 2 : ℝ)| < 1 ∧ 1 ≤ (1:ℕ) := by norm_num [abs_of_pos]
+  napaka_delne (hq := w.1)
 
 /-- Bolj natančno (iz `napaka_delne`): pri −1 < q < 0 in a₁ ≠ 0 delne vsote skačejo okoli vsote: napaki
 S − Sₙ = a₁qⁿ/(1 − q) in S − Sₙ₊₁ imata vedno nasprotna predznaka.
@@ -317,6 +357,11 @@ theorem skace_okoli (a₁ q : ℝ) (ha : a₁ ≠ 0) (hq1 : -1 < q) (hq : q < 0)
 
 /-- Predpostavke trditve `skace_okoli` se dajo izpolniti (a₁ = 12, q = −1/2 kot v Primeru 2). -/
 example : (12 : ℝ) ≠ 0 ∧ (-1 : ℝ) < -1 / 2 ∧ (-1 / 2 : ℝ) < 0 := by norm_num
+
+/-- Predpostavke trditve `skace_okoli` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (12 : ℝ) ≠ 0 ∧ (-1 : ℝ) < -1 / 2 ∧ (-1 / 2 : ℝ) < 0 := by norm_num
+  skace_okoli (ha := w.1) (hq1 := w.2.1) (hq := w.2.2)
 
 /-- Bolj natančno, trivialni primer: pri a₁ = 0 je vsota 0 za vsak q.
 trditev: MAT-SS-4/geometrijska-vrsta#trivialni
@@ -383,6 +428,11 @@ theorem matura2c (x : ℝ) (hx : x ∈ Set.Ioo 1 3) :
 /-- Predpostavka trditve `matura2c` se da izpolniti (x = 2). -/
 example : (2:ℝ) ∈ Set.Ioo 1 3 := by norm_num
 
+/-- Predpostavke trditve `matura2c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ∈ Set.Ioo 1 3 := by norm_num
+  matura2c (hx := w)
+
 /-- Naloga 2 c), RAČUN: 3/(3 − x) = 4 ⇔ x = 9/4 (za x ≠ 3).
 trditev: MAT-SS-4/geometrijska-vrsta#matura2c-resi
 besedilo: »Iz enačbe $\dfrac{3}{3 - x} = 4$ sledi $3 - x = \dfrac{3}{4}$ in $x = \dfrac{9}{4}$.« -/
@@ -392,6 +442,11 @@ theorem matura2c_resi (x : ℝ) (hx : x ≠ 3) : 3 / (3 - x) = 4 ↔ x = 9 / 4 :
 
 /-- Predpostavka trditve `matura2c_resi` se da izpolniti (x = 0). -/
 example : (0:ℝ) ≠ 3 := by norm_num
+
+/-- Predpostavke trditve `matura2c_resi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≠ 3 := by norm_num
+  matura2c_resi (hx := w)
 
 /-- Naloga 2 d): 3/(3 − x) = 1 ⇔ x = 0 (x ≠ 3), 0 ∉ (1, 3), pri x = 0 je q = −2 in vrsta divergira;
 za 1 < x < 3 je 3/(3 − x) > 3/2. Torej ni x, za katerega bi vrsta konvergirala z vsoto 1.

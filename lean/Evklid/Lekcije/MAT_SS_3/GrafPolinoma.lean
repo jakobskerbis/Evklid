@@ -78,6 +78,11 @@ theorem stopnja_nicle (s : ℝ[X]) (c : ℝ) (k : ℕ) (hs : s.eval c ≠ 0) :
 /-- Predpostavke trditve `stopnja_nicle` se dajo izpolniti (`s = 1`). -/
 example : (1 : ℝ[X]).eval 0 ≠ 0 := by simp
 
+/-- Predpostavke trditve `stopnja_nicle` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ[X]).eval 0 ≠ 0 := by simp
+  stopnja_nicle (hs := w)
+
 /-- Razlaga 3, obrat (Primer 3, Naloga 3 a): če `p(x) = (x − c)ᵏ s(x)` (`s(c) ≠ 0`) blizu `c` levo in desno od
 `c` nima nasprotnih predznakov (graf se osi le dotakne), je stopnja ničle `k` soda.
 trditev: MAT-SS-3/graf-polinoma#dotik-soda-stopnja
@@ -105,6 +110,14 @@ example : (1 : ℝ[X]).eval 0 ≠ 0 ∧ ∃ δ > (0:ℝ), ∀ x y : ℝ, 0 - δ 
   simp only [eval_one, mul_one, sub_zero]
   exact mul_pos (by nlinarith) (by nlinarith)
 
+/-- Predpostavke trditve `dotik_soda_stopnja` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ[X]).eval 0 ≠ 0 ∧ ∃ δ > (0:ℝ), ∀ x y : ℝ, 0 - δ < x → x < 0 → 0 < y → y < 0 + δ → 0 < ((x - 0) ^ 2 * (1 : ℝ[X]).eval x) * ((y - 0) ^ 2 * (1 : ℝ[X]).eval y) := by
+    refine ⟨by simp, 1, one_pos, fun x y _ hx hy _ => ?_⟩
+    simp only [eval_one, mul_one, sub_zero]
+    exact mul_pos (by nlinarith) (by nlinarith)
+  dotik_soda_stopnja (hs := w.1) (h := w.2)
+
 /-- Pomožna trditev: produkt `(x − x₁)^k₁ (x − x₂)^k₂ ⋯` je moničen polinom stopnje `k₁ + k₂ + ⋯`.
 pomozno -/
 theorem razcep_monicen (l : List (ℝ × ℕ)) :
@@ -131,6 +144,11 @@ theorem stopnja_iz_razcepa (a : ℝ) (ha : a ≠ 0) (l : List (ℝ × ℕ)) :
 
 /-- Predpostavke trditve `stopnja_iz_razcepa` se dajo izpolniti (`a = 1`). -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `stopnja_iz_razcepa` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  stopnja_iz_razcepa (ha := w)
 
 /-- Pomožna trditev: obnašanje levega kraka `p` je obnašanje desnega kraka `p(−x)`.
 pomozno -/
@@ -178,6 +196,11 @@ theorem kraka (p : ℝ[X]) (hn : 0 < p.natDegree) :
 /-- Predpostavke trditve `kraka` se dajo izpolniti (`x` ima stopnjo 1). -/
 example : 0 < (X : ℝ[X]).natDegree := by simp
 
+/-- Predpostavke trditve `kraka` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 0 < (X : ℝ[X]).natDegree := by simp
+  kraka (hn := w)
+
 /-- Razlaga 5 in Bolj natančno: za zelo velike `|x|` je `p(x) ≈ aₙ xⁿ` (asimptotska enakovrednost na obeh
 koncih: količnik gre proti 1).
 trditev: MAT-SS-3/graf-polinoma#vodilni-clen-prevlada
@@ -205,6 +228,11 @@ theorem dolocen_s_tockami (n : ℕ) (f g : ℝ[X]) (s : Finset ℝ) (hs : s.card
 example : ({0} : Finset ℝ).card = 0 + 1 ∧ (0 : ℝ[X]).natDegree ≤ 0 ∧ (0 : ℝ[X]).natDegree ≤ 0 ∧
     ∀ x ∈ ({0} : Finset ℝ), (0 : ℝ[X]).eval x = (0 : ℝ[X]).eval x := by simp
 
+/-- Predpostavke trditve `dolocen_s_tockami` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ({0} : Finset ℝ).card = 0 + 1 ∧ (0 : ℝ[X]).natDegree ≤ 0 ∧ (0 : ℝ[X]).natDegree ≤ 0 ∧ ∀ x ∈ ({0} : Finset ℝ), (0 : ℝ[X]).eval x = (0 : ℝ[X]).eval x := by simp
+  dolocen_s_tockami (hs := w.1) (hf := w.2.1) (hg := w.2.2.1) (h := w.2.2.2)
+
 /-- Razlaga 8: za `n + 1` različnih točk in poljubne vrednosti obstaja polinom stopnje največ `n`, ki ima v
 teh točkah dane vrednosti (Lagrangeev interpolacijski polinom).
 trditev: MAT-SS-3/graf-polinoma#obstaja-skozi-tocke
@@ -220,6 +248,11 @@ theorem obstaja_skozi_tocke (n : ℕ) (s : Finset ℝ) (hs : s.card = n + 1) (v 
 
 /-- Predpostavke trditve `obstaja_skozi_tocke` se dajo izpolniti (`n = 0`, `s = {0}`). -/
 example : ({0} : Finset ℝ).card = 0 + 1 := by simp
+
+/-- Predpostavke trditve `obstaja_skozi_tocke` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ({0} : Finset ℝ).card = 0 + 1 := by simp
+  obstaja_skozi_tocke (hs := w)
 
 /-- Preveri se 6: s štirimi meritvami polinoma četrte stopnje ne določimo enolično: za vsak polinom stopnje 4
 in vsake štiri točke obstaja drug polinom stopnje 4 z enakimi vrednostmi v teh točkah.
@@ -255,6 +288,11 @@ theorem stiri_ne_zadoscajo (p : ℝ[X]) (hp : p.natDegree = 4) (t₁ t₂ t₃ t
 /-- Predpostavke trditve `stiri_ne_zadoscajo` se dajo izpolniti (`x⁴` ima stopnjo 4). -/
 example : (X ^ 4 : ℝ[X]).natDegree = 4 := natDegree_X_pow 4
 
+/-- Predpostavke trditve `stiri_ne_zadoscajo` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (X ^ 4 : ℝ[X]).natDegree = 4 := natDegree_X_pow 4
+  stiri_ne_zadoscajo (hp := w)
+
 /-- Bolj natančno: polinom lihe stopnje ima vsaj eno realno ničlo.
 trditev: MAT-SS-3/graf-polinoma#liha-stopnja
 besedilo: »Še dve dejstvi.** Polinom lihe stopnje ima vedno vsaj eno realno ničlo,« -/
@@ -263,6 +301,11 @@ theorem liha_stopnja (p : ℝ[X]) (hp : Odd p.natDegree) : ∃ x : ℝ, p.eval x
 
 /-- Predpostavke trditve `liha_stopnja` se dajo izpolniti (`x` ima stopnjo 1). -/
 example : Odd (X : ℝ[X]).natDegree := by rw [natDegree_X]; exact odd_one
+
+/-- Predpostavke trditve `liha_stopnja` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd (X : ℝ[X]).natDegree := by rw [natDegree_X]; exact odd_one
+  liha_stopnja (hp := w)
 
 /-- Pomožna trditev: kvadrat neničelnega števila je pozitiven.
 pomozno -/
@@ -553,6 +596,16 @@ example : (C (-0.5) * ((X - C (-1)) * (X - C 2) ^ 2 * (X - C 4)) : ℝ[X]) ≠ 0
   · exact (dvd_mul_of_dvd_left (dvd_mul_left _ _) _).mul_left _
   · exact (dvd_mul_left _ _).mul_left _
 
+/-- Predpostavke trditve `primer3_polinom` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (C (-0.5) * ((X - C (-1)) * (X - C 2) ^ 2 * (X - C 4)) : ℝ[X]) ≠ 0 ∧ X - C (-1) ∣ (C (-0.5) * ((X - C (-1)) * (X - C 2) ^ 2 * (X - C 4)) : ℝ[X]) ∧ (X - C 2) ^ 2 ∣ (C (-0.5) * ((X - C (-1)) * (X - C 2) ^ 2 * (X - C 4)) : ℝ[X]) ∧ X - C 4 ∣ (C (-0.5) * ((X - C (-1)) * (X - C 2) ^ 2 * (X - C 4)) : ℝ[X]) := by
+    refine ⟨mul_ne_zero (by norm_num) (mul_ne_zero (mul_ne_zero (X_sub_C_ne_zero _)
+      (pow_ne_zero _ (X_sub_C_ne_zero _))) (X_sub_C_ne_zero _)), ?_, ?_, ?_⟩
+    · exact (dvd_mul_of_dvd_left (dvd_mul_right _ _) _).mul_left _
+    · exact (dvd_mul_of_dvd_left (dvd_mul_left _ _) _).mul_left _
+    · exact (dvd_mul_left _ _).mul_left _
+  primer3_polinom (hp := w.1) (h1 := w.2.1) (h2 := w.2.2.1) (h4 := w.2.2.2)
+
 /-- Primer 3, premisli: `p(x) = −0,5 (x + 1)(x − 2)²(x − 4)` ima stopnjo 4 in vodilni koeficient −0,5, zato
 gresta oba kraka v `−∞`.
 trditev: MAT-SS-3/graf-polinoma#primer3-kraka
@@ -616,6 +669,12 @@ example : (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).natDegree ≤ 3 ∧
     (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 0 = 0 ∧ (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 1 = 25 ∧
     (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 2 = 32 ∧ (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 3 = 27 := by
   refine ⟨by compute_degree!, by simp, by simp; norm_num, by simp; norm_num, by simp; norm_num⟩
+
+/-- Predpostavke trditve `primer4_enolicnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).natDegree ≤ 3 ∧ (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 0 = 0 ∧ (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 1 = 25 ∧ (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 2 = 32 ∧ (X ^ 3 - 12 * X ^ 2 + 36 * X : ℝ[X]).eval 3 = 27 := by
+    refine ⟨by compute_degree!, by simp, by simp; norm_num, by simp; norm_num, by simp; norm_num⟩
+  primer4_enolicnost (hf := w.1) (h0 := w.2.1) (h1 := w.2.2.1) (h2 := w.2.2.2.1) (h3 := w.2.2.2.2)
 
 /-- Primer 4, koraka 6 in 7: `C(t) = 0` natanko pri `t = 0` in `t = 6` (6 je ničla stopnje 2); na `(0, 6)` je
 `C > 0`, za `t > 6` bi koncentracija spet rasla.
@@ -819,6 +878,14 @@ example : (C (1 / 2) * (X * (X - C 8) ^ 2) : ℝ[X]).natDegree = 3 ∧
   refine ⟨?_, (dvd_mul_right _ _).mul_left _, (dvd_mul_left _ _).mul_left _, by simp; norm_num⟩
   rw [natDegree_C_mul (by norm_num), natDegree_mul X_ne_zero (pow_ne_zero _ (X_sub_C_ne_zero _)),
     natDegree_pow, natDegree_X_sub_C, natDegree_X]
+
+/-- Predpostavke trditve `matura3a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (C (1 / 2) * (X * (X - C 8) ^ 2) : ℝ[X]).natDegree = 3 ∧ X ∣ (C (1 / 2) * (X * (X - C 8) ^ 2) : ℝ[X]) ∧ (X - C 8) ^ 2 ∣ (C (1 / 2) * (X * (X - C 8) ^ 2) : ℝ[X]) ∧ (C (1 / 2) * (X * (X - C 8) ^ 2) : ℝ[X]).eval 2 = 36 := by
+    refine ⟨?_, (dvd_mul_right _ _).mul_left _, (dvd_mul_left _ _).mul_left _, by simp; norm_num⟩
+    rw [natDegree_C_mul (by norm_num), natDegree_mul X_ne_zero (pow_ne_zero _ (X_sub_C_ne_zero _)),
+      natDegree_pow, natDegree_X_sub_C, natDegree_X]
+  matura3a (hd := w.1) (h0 := w.2.1) (h8 := w.2.2.1) (h2 := w.2.2.2)
 
 /-- Naloga 3 b), c) (in `<<RACUN`): `v(5) = ½·5·9 = 22,5`; `v(4) = ½·4·16 = 32`; `v(d) = 32` je enakovredno
 `d³ − 16d² + 64d − 64 = 0`; Horner s 4: 1, −12, 16, 0; `d(d − 8)² − 64 = (d − 4)(d² − 12d + 16)`.

@@ -43,6 +43,11 @@ theorem d_log_sub (a x : ℝ) (h : x - a ≠ 0) : HasDerivAt (fun x => log |x - 
 /-- Predpostavka trditve `d_log_sub` se da izpolniti (a = 1, x = 2). -/
 example : (2 : ℝ) - 1 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `d_log_sub` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) - 1 ≠ 0 := by norm_num
+  d_log_sub (h := w)
+
 /-- Pomožna: (ln|x + b|)' = 1/(x + b) za x ≠ −b.
 pomozno -/
 theorem d_log_add (b x : ℝ) (h : x + b ≠ 0) : HasDerivAt (fun x => log |x + b|) (1 / (x + b)) x := by
@@ -96,6 +101,11 @@ theorem produkt (u v : ℝ → ℝ) (u' v' x : ℝ) (hu : HasDerivAt u u' x) (hv
 /-- Predpostavke trditve `produkt` se dajo izpolniti (u = id, v = exp). -/
 example : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt exp (exp 0) 0 := ⟨hasDerivAt_id' 0, hasDerivAt_exp 0⟩
 
+/-- Predpostavke trditve `produkt` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt exp (exp 0) 0 := ⟨hasDerivAt_id' 0, hasDerivAt_exp 0⟩
+  produkt (hu := w.1) (hv := w.2)
+
 /-- Razlaga, točka 2, in ustno vprašanje 1 (nedoločena oblika per partes): če je G primitivna
 funkcija za u'v, je uv − G primitivna funkcija za uv', tj. ∫ u v' dx = u v − ∫ u' v dx.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#per-partes
@@ -109,6 +119,12 @@ theorem per_partes (u v u' v' G : ℝ → ℝ) (x : ℝ) (hu : HasDerivAt u (u' 
 example : HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) 0) 0 ∧ HasDerivAt exp (exp 0) 0 ∧
     HasDerivAt exp ((fun _ => (1:ℝ)) 0 * exp 0) 0 :=
   ⟨hasDerivAt_id' 0, hasDerivAt_exp 0, by simpa using hasDerivAt_exp 0⟩
+
+/-- Predpostavke trditve `per_partes` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) 0) 0 ∧ HasDerivAt exp (exp 0) 0 ∧ HasDerivAt exp ((fun _ => (1:ℝ)) 0 * exp 0) 0 :=
+    ⟨hasDerivAt_id' 0, hasDerivAt_exp 0, by simpa using hasDerivAt_exp 0⟩
+  per_partes (hu := w.1) (hv := w.2.1) (hG := w.2.2)
 
 /-- Razlaga, točka 2 (določena oblika per partes): za zvezno odvedljivi u, v na [a, b] je
 ∫ₐᵇ u v' dx = u(b)v(b) − u(a)v(a) − ∫ₐᵇ u' v dx.
@@ -124,6 +140,12 @@ theorem per_partes_dolocen (u v u' v' : ℝ → ℝ) (a b : ℝ) (hu : ∀ x, Ha
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) ∧
     (∀ x : ℝ, HasDerivAt exp (exp x) x) ∧ Continuous (fun _ : ℝ => (1:ℝ)) ∧ Continuous exp :=
   ⟨fun x => hasDerivAt_id' x, hasDerivAt_exp, continuous_const, continuous_exp⟩
+
+/-- Predpostavke trditve `per_partes_dolocen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) ∧ (∀ x : ℝ, HasDerivAt exp (exp x) x) ∧ Continuous (fun _ : ℝ => (1:ℝ)) ∧ Continuous exp :=
+    ⟨fun x => hasDerivAt_id' x, hasDerivAt_exp, continuous_const, continuous_exp⟩
+  per_partes_dolocen (hu := w.1) (hv := w.2.1) (hu' := w.2.2.1) (hv' := w.2.2.2)
 
 /-- Razlaga, točka 3 (in vrstici `integral`/`odvod` za x eˣ, povzetek): ∫ x eˣ dx = x eˣ − eˣ + C
 = (x − 1)eˣ + C; preizkus (x eˣ − eˣ)' = eˣ + x eˣ − eˣ = x eˣ.
@@ -148,6 +170,13 @@ example (x : ℝ) : HasDerivAt (fun x => (x ^ 2 - 2 * x + 2) * exp x / 2) (x ^ 2
   ((((hasDerivAt_pow 2 x).sub ((hasDerivAt_id' x).const_mul (2:ℝ))).add_const 2).mul
     (hasDerivAt_exp x) |>.div_const 2).congr_deriv (by odv)
 
+/-- Predpostavke trditve `obratna_izbira` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example (x : ℝ) :=
+  have w : HasDerivAt (fun x => (x ^ 2 - 2 * x + 2) * exp x / 2) (x ^ 2 / 2 * exp x) x :=
+    ((((hasDerivAt_pow 2 x).sub ((hasDerivAt_id' x).const_mul (2:ℝ))).add_const 2).mul
+      (hasDerivAt_exp x) |>.div_const 2).congr_deriv (by odv)
+  obratna_izbira (hG := w)
+
 /-- Razlaga, točka 5, in ustno vprašanje 3 (in vrstici za ln x): za x > 0 je
 ∫ ln x dx = x ln x − ∫ x · (1/x) dx = x ln x − x + C.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#integral-ln
@@ -162,6 +191,11 @@ theorem integral_ln (C x : ℝ) (hx : 0 < x) :
 /-- Predpostavka trditve `integral_ln` se da izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `integral_ln` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := one_pos
+  integral_ln (hx := w)
+
 /-- Razlaga, točka 7 (in vrstica `odvod: ln(x^2-1)`): za x² ≠ 1 je (ln|x² − 1|)' = 2x/(x² − 1).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#d-ln-x2-1
 besedilo: »Odvod desne strani je $\frac{2x}{x^2 - 1}$, ne $\frac{1}{x^2 - 1}$.« -/
@@ -172,6 +206,11 @@ theorem d_ln_x2_1 (x : ℝ) (hx : x ^ 2 - 1 ≠ 0) :
 
 /-- Predpostavka trditve `d_ln_x2_1` se da izpolniti (x = 2). -/
 example : (2 : ℝ) ^ 2 - 1 ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `d_ln_x2_1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) ^ 2 - 1 ≠ 0 := by norm_num
+  d_ln_x2_1 (hx := w)
 
 /-- Razlaga, točka 7, in »Pogoste napake«: ln|x² − 1| ni primitivna funkcija za 1/(x² − 1)
 (pri x = 2 je odvod 4/3, ne 1/3).
@@ -206,6 +245,11 @@ theorem razcep_x2_1 (x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 1 ≠ 0) :
 /-- Predpostavke trditve `razcep_x2_1` se dajo izpolniti (x = 2). -/
 example : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `razcep_x2_1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
+  razcep_x2_1 (h1 := w.1) (h2 := w.2)
+
 /-- Razlaga, točka 7 (in vrstica `odvod`): ∫ dx/(x² − 1) = ½ ln|x − 1| − ½ ln|x + 1| + C (x ≠ ±1).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#integral-x2-1
 besedilo: »$x^2 - 1 = (x - 1)(x + 1)$« -/
@@ -217,6 +261,11 @@ theorem integral_x2_1 (C x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 1 ≠ 0) :
 
 /-- Predpostavke trditve `integral_x2_1` se dajo izpolniti (x = 2). -/
 example : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `integral_x2_1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
+  integral_x2_1 (h1 := w.1) (h2 := w.2)
 
 /-- Razlaga, točka 7, tabela: (k ln|x − a|)' = k/(x − a) in (−ln|a − x|)' = 1/(a − x) za x ≠ a.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#tabela-ulomkov
@@ -230,6 +279,11 @@ theorem tabela_ulomkov (k a x : ℝ) (h : x - a ≠ 0) :
 
 /-- Predpostavka trditve `tabela_ulomkov` se da izpolniti (a = 1, x = 2). -/
 example : (2 : ℝ) - 1 ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `tabela_ulomkov` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) - 1 ≠ 0 := by norm_num
+  tabela_ulomkov (h := w)
 
 /-- Razlaga, točka 8, »Premisli«: nobena izbira A, B ne da A/(x − 1) + B/(x + 1) = (x² + 1)/(x² − 1)
 za vse x ≠ ±1.
@@ -257,6 +311,11 @@ theorem deljenje (x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 1 ≠ 0) :
 /-- Predpostavke trditve `deljenje` se dajo izpolniti (x = 2). -/
 example : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `deljenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
+  deljenje (h1 := w.1) (h2 := w.2)
+
 /-- Razlaga, točka 8 (in vrstica `odvod: x+ln(x-1)-ln(x+1)`):
 ∫ (x² + 1)/(x² − 1) dx = x + ln|x − 1| − ln|x + 1| + C za x ≠ ±1.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#integral-deljenje
@@ -270,6 +329,11 @@ theorem integral_deljenje (C x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 1 ≠ 0) :
 
 /-- Predpostavke trditve `integral_deljenje` se dajo izpolniti (x = 2). -/
 example : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `integral_deljenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) - 1 ≠ 0 ∧ (2 : ℝ) + 1 ≠ 0 := by norm_num
+  integral_deljenje (h1 := w.1) (h2 := w.2)
 
 /-- Primer 1 (in vrstici za x sin x): u = x, v = −cos x; ∫ x sin x dx = −x cos x + ∫ cos x dx =
 −x cos x + sin x + C; preizkus (−x cos x + sin x)' = −cos x + x sin x + cos x = x sin x.
@@ -321,6 +385,11 @@ theorem primer2_ulomki (x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 2 ≠ 0) :
 /-- Predpostavke trditve `primer2_ulomki` se dajo izpolniti (x = 3). -/
 example : (3 : ℝ) - 1 ≠ 0 ∧ (3 : ℝ) + 2 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `primer2_ulomki` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3 : ℝ) - 1 ≠ 0 ∧ (3 : ℝ) + 2 ≠ 0 := by norm_num
+  primer2_ulomki (h1 := w.1) (h2 := w.2)
+
 /-- Primer 2, odgovor (in vrstica `odvod`): ∫ (x + 5)/(x² + x − 2) dx = 2 ln|x − 1| − ln|x + 2| + C.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer2
 besedilo: »Odgovor: $\int \frac{x + 5}{x^2 + x - 2}\,dx = 2\ln\lvert x - 1\rvert - \ln\lvert x + 2\rvert + C$.« -/
@@ -332,6 +401,11 @@ theorem primer2 (C x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 2 ≠ 0) :
 
 /-- Predpostavke trditve `primer2` se dajo izpolniti (x = 3). -/
 example : (3 : ℝ) - 1 ≠ 0 ∧ (3 : ℝ) + 2 ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `primer2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3 : ℝ) - 1 ≠ 0 ∧ (3 : ℝ) + 2 ≠ 0 := by norm_num
+  primer2 (h1 := w.1) (h2 := w.2)
 
 /-- Primer 3, koraka 1–2 (in vrstica `enako: 1/(1-s^2)`): 1 − s² = (1 − s)(1 + s); 1 = A(1 + s) + B(1 − s)
 za vsak s natanko pri A = B = 1/2; 1/(1 − s²) = (1/2)/(1 − s) + (1/2)/(1 + s) za s ≠ ±1.
@@ -359,6 +433,11 @@ theorem primer3_zdruzi (s : ℝ) (h1 : 1 - s ≠ 0) (h2 : 1 + s ≠ 0) :
 
 /-- Predpostavke trditve `primer3_zdruzi` se dajo izpolniti (s = 0). -/
 example : (1 : ℝ) - 0 ≠ 0 ∧ (1 : ℝ) + 0 ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `primer3_zdruzi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) - 0 ≠ 0 ∧ (1 : ℝ) + 0 ≠ 0 := by norm_num
+  primer3_zdruzi (h1 := w.1) (h2 := w.2)
 
 /-- Primer 3, korak 3 (in vrstica `odvod: (1/2)*ln((1+s)/(1-s))`): F(s) = ½ ln|(1 + s)/(1 − s)| + C
 je primitivna funkcija za 1/(1 − s²) (s ≠ ±1).
@@ -427,6 +506,12 @@ example : (∀ s ∈ Set.Ioo (-1:ℝ) 1,
     (1 / 2 * log |(1 + 0) / (1 - 0)| + 0 : ℝ) = 0 :=
   ⟨fun s hs => primer3_F 0 s (by linarith [hs.2]) (by linarith [hs.1]), by simp⟩
 
+/-- Predpostavke trditve `primer3_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ s ∈ Set.Ioo (-1:ℝ) 1, HasDerivAt (fun s => 1 / 2 * log |(1 + s) / (1 - s)| + 0) (1 / (1 - s ^ 2)) s) ∧ (1 / 2 * log |(1 + 0) / (1 - 0)| + 0 : ℝ) = 0 :=
+    ⟨fun s hs => primer3_F 0 s (by linarith [hs.2]) (by linarith [hs.1]), by simp⟩
+  primer3_enolicno (hF := w.1) (h0 := w.2)
+
 /-- Primer 3, korak 7 (in vrstica `vrednost: 10*46*pi/180`): 46° = 46π/180 ≈ 0,8029 rad, lok
 10 · 46π/180 ≈ 8,03 cm.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer3-lok
@@ -469,6 +554,11 @@ theorem napaka_1_minus_x (C x : ℝ) (h : 1 - x ≠ 0) :
 /-- Predpostavka trditve `napaka_1_minus_x` se da izpolniti (x = 0). -/
 example : (1 : ℝ) - 0 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `napaka_1_minus_x` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) - 0 ≠ 0 := by norm_num
+  napaka_1_minus_x (h := w)
+
 /-- Matura, naloga 1 a) (in vrstici `integral`/`odvod`): ∫ (2x + 1)eˣ dx = (2x + 1)eˣ − 2eˣ + C =
 (2x − 1)eˣ + C; preizkus 2eˣ + (2x − 1)eˣ = (2x + 1)eˣ.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#matura1a
@@ -495,6 +585,11 @@ theorem matura1b (C x : ℝ) (hx : 0 < x) :
 
 /-- Predpostavka trditve `matura1b` se da izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `matura1b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := one_pos
+  matura1b (hx := w)
 
 /-- Matura, naloga 2 a): x² − 2x − 3 = (x − 3)(x + 1) in imenovalec je 0 natanko pri x = −1 ali x = 3,
 zato D_f = ℝ ∖ {−1, 3}.
@@ -527,6 +622,11 @@ theorem matura2a_deljenje (x : ℝ) (h : x ^ 2 - 2 * x - 3 ≠ 0) :
 /-- Predpostavka trditve `matura2a_deljenje` se da izpolniti (x = 4). -/
 example : (4 : ℝ) ^ 2 - 2 * 4 - 3 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `matura2a_deljenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4 : ℝ) ^ 2 - 2 * 4 - 3 ≠ 0 := by norm_num
+  matura2a_deljenje (h := w)
+
 /-- Matura, naloga 2 b), koraka 3–4: 3x − 1 = A(x + 1) + B(x − 3) za vsak x natanko pri A = 2, B = 1
 (pri x = 3: 8 = 4A, pri x = −1: −4 = −4B).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#matura2b-ab
@@ -549,6 +649,11 @@ theorem matura2b (x : ℝ) (h1 : x - 3 ≠ 0) (h2 : x + 1 ≠ 0) :
 /-- Predpostavke trditve `matura2b` se dajo izpolniti (x = 4). -/
 example : (4 : ℝ) - 3 ≠ 0 ∧ (4 : ℝ) + 1 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `matura2b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4 : ℝ) - 3 ≠ 0 ∧ (4 : ℝ) + 1 ≠ 0 := by norm_num
+  matura2b (h1 := w.1) (h2 := w.2)
+
 /-- Matura, naloga 2 c) (in vrstica `integral`): ∫ f dx = x + 2 ln|x − 3| + ln|x + 1| + C na D_f.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#matura2c
 besedilo: »d) Na intervalu $(3, \infty)$ sta $x - 3$ in $x + 1$ pozitivna, zato je $G(x) = x + 2\ln(x - 3) + \ln(x + 1) + C$.« -/
@@ -562,6 +667,11 @@ theorem matura2c (C x : ℝ) (h1 : x - 3 ≠ 0) (h2 : x + 1 ≠ 0) :
 
 /-- Predpostavke trditve `matura2c` se dajo izpolniti (x = 4). -/
 example : (4 : ℝ) - 3 ≠ 0 ∧ (4 : ℝ) + 1 ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `matura2c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4 : ℝ) - 3 ≠ 0 ∧ (4 : ℝ) + 1 ≠ 0 := by norm_num
+  matura2c (h1 := w.1) (h2 := w.2)
 
 /-- Matura, naloga 2 d) (in vrstica `vrednost`): na (3, ∞) je G(x) = x + 2 ln(x − 3) + ln(x + 1) − ln 5
 primitivna funkcija za f; G(4) = 4 + 2 ln 1 + ln 5 + C = 4 + ln 5 + C, iz G(4) = 4 sledi C = −ln 5.
@@ -599,6 +709,12 @@ example : (∀ x ∈ Set.Ioi (3:ℝ), HasDerivAt (fun x => x + 2 * log (x - 3) +
       ((x ^ 2 + x - 4) / (x ^ 2 - 2 * x - 3)) x) ∧
     (4:ℝ) + 2 * log (4 - 3) + log (4 + 1) - log 5 = 4 :=
   ⟨fun x hx => matura2d.1 x hx, matura2d.2.2.2⟩
+
+/-- Predpostavke trditve `matura2d_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x ∈ Set.Ioi (3:ℝ), HasDerivAt (fun x => x + 2 * log (x - 3) + log (x + 1) - log 5) ((x ^ 2 + x - 4) / (x ^ 2 - 2 * x - 3)) x) ∧ (4:ℝ) + 2 * log (4 - 3) + log (4 + 1) - log 5 = 4 :=
+    ⟨fun x hx => matura2d.1 x hx, matura2d.2.2.2⟩
+  matura2d_enolicno (hG := w.1) (h4 := w.2)
 
 /-- Ustno vprašanje 2 (in vrstici `enako`/`integral`): 1 = A(x + 1) + Bx za vsak x natanko pri A = 1,
 B = −1; 1/(x(x + 1)) = 1/x − 1/(x + 1) in ∫ dx/(x(x + 1)) = ln|x| − ln|x + 1| + C.

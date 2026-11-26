@@ -237,6 +237,11 @@ theorem najmanjsa_najvecja (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : C
 /-- Predpostavke trditve `najmanjsa_najvecja` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 1 ∧ ContinuousOn (fun x : ℝ => x) (Icc 0 1) := ⟨by norm_num, continuousOn_id⟩
 
+/-- Predpostavke trditve `najmanjsa_najvecja` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 ∧ ContinuousOn (fun x : ℝ => x) (Icc 0 1) := ⟨by norm_num, continuousOn_id⟩
+  najmanjsa_najvecja (hab := w.1) (hf := w.2)
+
 /-- Razlaga 4 in ustno vprašanje 2: `f(x) = x` je na odprtem intervalu `(0, 1)` zvezna, a največje
 vrednosti nima.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#odprt-brez-maksimuma
@@ -330,6 +335,11 @@ theorem bisekcija_nicla (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : Cont
 example : (1:ℝ) ≤ 2 ∧ ContinuousOn (fun x : ℝ => x ^ 3 + x - 3) (Icc 1 2) ∧
     ((1:ℝ) ^ 3 + 1 - 3) * (2 ^ 3 + 2 - 3) ≤ 0 := ⟨by norm_num, by fun_prop, by norm_num⟩
 
+/-- Predpostavke trditve `bisekcija_nicla` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≤ 2 ∧ ContinuousOn (fun x : ℝ => x ^ 3 + x - 3) (Icc 1 2) ∧ ((1:ℝ) ^ 3 + 1 - 3) * (2 ^ 3 + 2 - 3) ≤ 0 := ⟨by norm_num, by fun_prop, by norm_num⟩
+  bisekcija_nicla (hab := w.1) (hf := w.2.1) (h := w.2.2)
+
 /-- Razlaga 5, premisli: na intervalu dolžine 1 je interval krajši od `0,001` natanko po vsaj `10`
 korakih (`2⁹ = 512` je premalo, `2¹⁰ = 1024` zadošča).
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#premisli-tisocinka
@@ -409,6 +419,15 @@ example : (1:ℝ) ≠ 0 ∧ ∀ x ∈ ({-1, 0, 1} : Finset ℝ), 1 * x ^ 3 + 0 *
   simp only [Finset.mem_insert, Finset.mem_singleton] at hx
   rcases hx with rfl | rfl | rfl <;> norm_num
 
+/-- Predpostavke trditve `kubicni_najvec_tri` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ ∀ x ∈ ({-1, 0, 1} : Finset ℝ), 1 * x ^ 3 + 0 * x ^ 2 + (-1) * x + 0 = 0 := by
+    refine ⟨by norm_num, ?_⟩
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl | rfl <;> norm_num
+  kubicni_najvec_tri (ha := w.1) (hs := w.2)
+
 /-- Primer 1, korak 5: `f` na `[0, 2]` doseže najmanjšo vrednost `m ≤ −1` in največjo `M ≥ 3`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer1-min-max
 besedilo: »Funkcija doseže najmanjšo vrednost $m \le -1$ in največjo $M \ge 3$. Zavzame vse vrednosti od $-1$ do $3$, na primer tudi $2$.« -/
@@ -436,6 +455,11 @@ theorem primer1_vmesne (y : ℝ) (hy : y ∈ Icc (-1:ℝ) 3) : ∃ c ∈ Icc (0:
 
 /-- Predpostavka trditve `primer1_vmesne` se da izpolniti (`y = 2`). -/
 example : (2:ℝ) ∈ Icc (-1:ℝ) 3 := ⟨by norm_num, by norm_num⟩
+
+/-- Predpostavke trditve `primer1_vmesne` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ∈ Icc (-1:ℝ) 3 := ⟨by norm_num, by norm_num⟩
+  primer1_vmesne (hy := w)
 
 /-- Pogoste napake (»natanko ena ničla«): funkcija iz primera 1 ima `f(−2) = −1` in `f(2) = 3`, na
 `[−2, 2]` pa tri ničle — na `(−2, −1)`, `(0, 1)` in `(1, 2)` — in drugih ničel nima.
@@ -981,6 +1005,11 @@ example : ContinuousOn (fun x : ℝ => (7 * x - 13) / 3) (Icc 1 4) ∧
 
 /-- Funkcija z grafa v Preveri se 2: `x − 3` za `x < 2`, `x` za `x ≥ 2`. -/
 noncomputable def skok (x : ℝ) : ℝ := if x < 2 then x - 3 else x
+
+/-- Predpostavke trditve `kviz1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ContinuousOn (fun x : ℝ => (7 * x - 13) / 3) (Icc 1 4) ∧ (7 * (1:ℝ) - 13) / 3 = -2 ∧ (7 * (4:ℝ) - 13) / 3 = 5 := ⟨by fun_prop, by norm_num, by norm_num⟩
+  kviz1 (hf := w.1) (h1 := w.2.1) (h4 := w.2.2)
 
 /-- Preveri se 2: `f(0) = −3`, `f(4) = 4`, `f(2) = 2`, `f(3) = 3`; na `[0, 4]` ni ničle in `f` ni zvezna.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#kviz2-ni-nicle

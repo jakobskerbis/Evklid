@@ -56,6 +56,12 @@ Trditve: `aritm_splosni`, `aritm_narasca`, `aritm_pada`, `aritm_konst`, `aritm_v
 example (a₁ d : ℝ) : ∃ a : ℕ → ℝ, a 1 = a₁ ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = d :=
   ⟨fun n => a₁ + ((n : ℝ) - 1) * d, by simp, fun n _ => by push_cast; ring⟩
 
+/-- Predpostavke trditve `aritm_splosni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example (a₁ d : ℝ) :=
+  have w : ∃ a : ℕ → ℝ, a 1 = a₁ ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = d :=
+    ⟨fun n => a₁ + ((n : ℝ) - 1) * d, by simp, fun n _ => by push_cast; ring⟩
+  aritm_splosni (h := w.choose_spec.2)
+
 /-- Razlaga 3: pri d > 0 je aritmetično zaporedje strogo naraščajoče (aₘ < aₙ za 1 ≤ m < n).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#aritm-narasca
 besedilo: »Če je $d > 0$, je zaporedje strogo naraščajoče, če je $d < 0$, strogo padajoče, pri $d = 0$ pa konstantno.« -/
@@ -101,6 +107,12 @@ theorem premisli_a10 (a : ℕ → ℝ) (h1 : a 1 = 3) (h : ∀ n, 1 ≤ n → a 
 example : ∃ a : ℕ → ℝ, a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 4 :=
   ⟨fun n => 3 + ((n : ℝ) - 1) * 4, by norm_num, fun n _ => by push_cast; ring⟩
 
+/-- Predpostavke trditve `premisli_a10` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 4 :=
+    ⟨fun n => 3 + ((n : ℝ) - 1) * 4, by norm_num, fun n _ => by push_cast; ring⟩
+  premisli_a10 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+
 /-- Razlaga 4: Gauss, 1 + 2 + … + 100 = 100·101/2 = 5050; vsak par k + (101 − k) (k = 1, …, 100) da 101.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#gauss
 besedilo: »$\dfrac{100 \cdot 101}{2} = 5050$« -/
@@ -120,6 +132,12 @@ theorem aritm_vsota' (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 
   | succ n ih =>
     rw [sum_range_succ, ih, aritm_splosni a d h (n + 1) (by omega)]
     push_cast; ring
+
+/-- Predpostavke trditve `aritm_vsota'` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example (a₁ d : ℝ) :=
+  have w : ∃ a : ℕ → ℝ, a 1 = a₁ ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = d :=
+    ⟨fun n => a₁ + ((n : ℝ) - 1) * d, by simp, fun n _ => by push_cast; ring⟩
+  aritm_vsota' (h := w.choose_spec.2)
 
 /-- Razlaga 4 (Gaussova formula): Sₙ = n/2·(a₁ + aₙ) za vsak n ≥ 1.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#aritm-vsota
@@ -147,6 +165,12 @@ example : ∃ a : ℕ → ℝ, a 1 = 1 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 
   ⟨fun n => n, by simp, fun n _ => by push_cast; ring⟩
 
 /-! ## Razlaga, 5–6: geometrijsko zaporedje -/
+
+/-- Predpostavke trditve `tilen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, a 1 = 1 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 1 :=
+    ⟨fun n => n, by simp, fun n _ => by push_cast; ring⟩
+  tilen (h1 := w.choose_spec.1) (h := w.choose_spec.2)
 
 /-- Razlaga 5: splošni člen geometrijskega zaporedja. Če so členi neničelni in aₙ₊₁/aₙ = q za vsak
 n ≥ 1, je aₙ = a₁·qⁿ⁻¹ za vsak n ≥ 1.
@@ -270,6 +294,11 @@ theorem geom_prehiti (a₁ q b₁ d : ℝ) (ha : 0 < a₁) (hq : 1 < q) :
 /-- Predpostavki trditve `geom_prehiti` se dajo izpolniti (a₁ = 1, q = 2). -/
 example : (0:ℝ) < 1 ∧ (1:ℝ) < 2 := by norm_num
 
+/-- Predpostavke trditve `geom_prehiti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 ∧ (1:ℝ) < 2 := by norm_num
+  geom_prehiti (ha := w.1) (hq := w.2)
+
 /-- Razlaga 6 (izpeljava): za Sₙ = a₁ + a₁q + … + a₁qⁿ⁻¹ je Sₙ − q·Sₙ = a₁ − a₁qⁿ.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#geom-odstej
 besedilo: »$S_n = a_1 + a_1 q + \ldots + a_1 q^{n-1}$« -/
@@ -357,6 +386,12 @@ theorem primer1 (a : ℕ → ℝ) (h1 : a 1 = 5) (h : ∀ n, 1 ≤ n → a (n + 
 example : ∃ a : ℕ → ℝ, a 1 = 5 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 3 :=
   ⟨fun n => 5 + ((n : ℝ) - 1) * 3, by norm_num, fun n _ => by push_cast; ring⟩
 
+/-- Predpostavke trditve `primer1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, a 1 = 5 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 3 :=
+    ⟨fun n => 5 + ((n : ℝ) - 1) * 3, by norm_num, fun n _ => by push_cast; ring⟩
+  primer1 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+
 /-- Primer 2: a₁ = 3, q = 2 ⇒ a₈ = 3·2⁷ = 3·128 = 384 in S₈ = 3·(2⁸ − 1)/(2 − 1) = 3·255 = 765;
 preizkus: vsota je manjša od dvakratnika zadnjega člena (765 < 768).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#primer2
@@ -380,6 +415,15 @@ example : ∃ a : ℕ → ℝ, (∀ n, 1 ≤ n → a n ≠ 0) ∧ a 1 = 3 ∧ �
   simp only [show k + 1 + 1 - 1 = k + 1 by omega, Nat.add_sub_cancel, pow_succ]
   field_simp
 
+/-- Predpostavke trditve `primer2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, (∀ n, 1 ≤ n → a n ≠ 0) ∧ a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) / a n = 2 := by
+    refine ⟨fun n => 3 * 2 ^ (n - 1), fun n _ => by positivity, by norm_num, fun n hn => ?_⟩
+    obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+    simp only [show k + 1 + 1 - 1 = k + 1 by omega, Nat.add_sub_cancel, pow_succ]
+    field_simp
+  primer2 (h0 := w.choose_spec.1) (h1 := w.choose_spec.2.1) (h := w.choose_spec.2.2)
+
 /-- Razlaga 6, primer 2, preizkus: pri q = 2 je vsak člen večji od vsote vseh prejšnjih
 (2ⁿ > 1 + 2 + … + 2ⁿ⁻¹).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#q2-vecji-od-vsote
@@ -392,6 +436,11 @@ theorem q2_vecji_od_vsote (a₁ : ℝ) (ha : 0 < a₁) (n : ℕ) :
 
 /-- Predpostavka trditve `q2_vecji_od_vsote` se da izpolniti (a₁ = 1). -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `q2_vecji_od_vsote` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  q2_vecji_od_vsote (ha := w)
 
 /-- Primer 3, koraka 2–5: 740 = n/2·(36 + 2(n − 1)) = n(n + 17); kvadratna enačba
 n² + 17n − 740 = 0 ima (v ℝ) natanko rešitvi 20 in −37; D = 17² + 4·740 = 289 + 2960 = 3249 = 57².
@@ -434,6 +483,12 @@ theorem primer3 (a : ℕ → ℝ) (h1 : a 1 = 18) (h : ∀ n, 1 ≤ n → a (n +
 /-- Predpostavke trditve `primer3` se dajo izpolniti. -/
 example : ∃ a : ℕ → ℝ, a 1 = 18 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 2 :=
   ⟨fun n => 18 + ((n : ℝ) - 1) * 2, by norm_num, fun n _ => by push_cast; ring⟩
+
+/-- Predpostavke trditve `primer3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, a 1 = 18 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 2 :=
+    ⟨fun n => 18 + ((n : ℝ) - 1) * 2, by norm_num, fun n _ => by push_cast; ring⟩
+  primer3 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
 
 /-- Primer 4, korak 1: razlike 2, 6, 12, 20, 30 so 4, 6, 8, 10; količniki 3, 2, 5/3 (≈ 1,67)
 niso enaki.
@@ -525,6 +580,16 @@ example : ∃ (a : ℕ → ℝ) (q : ℝ), (∀ n, 1 ≤ n → a n ≠ 0) ∧ (�
 
 /-! ## Pogoste napake -/
 
+/-- Predpostavke trditve `primer5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ (a : ℕ → ℝ) (q : ℝ), (∀ n, 1 ≤ n → a n ≠ 0) ∧ (∀ n, 1 ≤ n → a (n + 1) / a n = q) ∧ a 2 = 6 ∧ a 5 = 48 := by
+    refine ⟨fun n => 3 * 2 ^ (n - 1), 2, fun n _ => by positivity, fun n hn => ?_, by norm_num,
+      by norm_num⟩
+    obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+    simp only [show k + 1 + 1 - 1 = k + 1 by omega, Nat.add_sub_cancel, pow_succ]
+    field_simp
+  primer5 (h0 := w.choose_spec.choose_spec.1) (h := w.choose_spec.choose_spec.2.1) (h2 := w.choose_spec.choose_spec.2.2.1) (h5 := w.choose_spec.choose_spec.2.2.2)
+
 /-- Pogoste napake 1: prava formula pri n = 1 da a₁: a₁ + 0·d = a₁ in a₁·q⁰ = a₁.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#napaka-n1
 besedilo: »Preveri pri $n = 1$: prava formula mora dati $a_1$, saj je $a_1 + 0 \cdot d = a_1$ in $a_1 \cdot q^0 = a_1$.« -/
@@ -615,6 +680,11 @@ theorem linearna_eksponentna (a₁ d q : ℝ) (n : ℕ) (hq : q ≠ 0) (hn : 1 �
 /-- Predpostavki trditve `linearna_eksponentna` se dajo izpolniti (q = 2, n = 1). -/
 example : (2:ℝ) ≠ 0 ∧ 1 ≤ (1:ℕ) := by norm_num
 
+/-- Predpostavke trditve `linearna_eksponentna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 ∧ 1 ≤ (1:ℕ) := by norm_num
+  linearna_eksponentna (hq := w.1) (hn := w.2)
+
 /-- Bolj natančno: indukcijski dokaz formule za vsoto (q ≠ 1): pri n = 1 je a₁(q − 1)/(q − 1) = a₁,
 in a₁(qⁿ − 1)/(q − 1) + a₁qⁿ = a₁(qⁿ⁺¹ − 1)/(q − 1).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#geom-indukcija
@@ -629,6 +699,11 @@ theorem geom_indukcija (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
 
 /-- Predpostavka trditve `geom_indukcija` se da izpolniti (q = 2). -/
 example : (2:ℝ) ≠ 1 := by norm_num
+
+/-- Predpostavke trditve `geom_indukcija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 1 := by norm_num
+  geom_indukcija (hq := w)
 
 /-- Ustno vprašanje 3: (a + d)² = a(a + 2d) ⇔ d² = 0 ⇔ d = 0 (enako-vrstica RAČUN: (a+d)² − a(a+2d) = d²).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#ustno3-enacba
@@ -667,6 +742,12 @@ example : ∃ a : ℕ → ℝ, (∀ n, 1 ≤ n → a (n + 1) - a n = 0) ∧ (∀
 
 /-! ## Za maturo -/
 
+/-- Predpostavke trditve `ustno3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, (∀ n, 1 ≤ n → a (n + 1) - a n = 0) ∧ (∀ n, 1 ≤ n → a n ≠ 0) ∧ ∀ n, 1 ≤ n → a (n + 1) / a n = 1 :=
+    ⟨fun _ => 5, fun _ _ => by norm_num, fun _ _ => by norm_num, fun _ _ => by norm_num⟩
+  ustno3 (ha := w.choose_spec.1) (h0 := w.choose_spec.2.1) (hg := w.choose_spec.2.2)
+
 /-- Naloga 1: a₁ = 7, a₁₀ = 43 ⇒ 9d = 36, d = 4; vstavljena števila 11, 15, …, 39;
 S₁₀ = 10/2·(7 + 43) = 5·50 = 250.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#matura1
@@ -691,6 +772,12 @@ theorem matura1 (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) - 
 /-- Predpostavke trditve `matura1` se dajo izpolniti. -/
 example : ∃ (a : ℕ → ℝ) (d : ℝ), (∀ n, 1 ≤ n → a (n + 1) - a n = d) ∧ a 1 = 7 ∧ a 10 = 43 :=
   ⟨fun n => 7 + ((n : ℝ) - 1) * 4, 4, fun n _ => by push_cast; ring, by norm_num, by norm_num⟩
+
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ (a : ℕ → ℝ) (d : ℝ), (∀ n, 1 ≤ n → a (n + 1) - a n = d) ∧ a 1 = 7 ∧ a 10 = 43 :=
+    ⟨fun n => 7 + ((n : ℝ) - 1) * 4, 4, fun n _ => by push_cast; ring, by norm_num, by norm_num⟩
+  matura1 (h := w.choose_spec.choose_spec.1) (h1 := w.choose_spec.choose_spec.2.1) (h10 := w.choose_spec.choose_spec.2.2)
 
 /-- Naloga 2 a): a₆ = 120·1,08⁵ = 176,319… ≈ 176,3 (RAČUN: 120·1,08⁵).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#matura2a
@@ -726,6 +813,11 @@ theorem matura2c (n : ℕ) (hn : 1 ≤ n) :
 example : 1 ≤ (1:ℕ) := le_rfl
 
 set_option exponentiation.threshold 2000 in
+/-- Predpostavke trditve `matura2c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (1:ℕ) := le_rfl
+  matura2c (hn := w)
+
 /-- Naloga 2 c): 1,08ⁿ⁻¹ > 25/12 ⇔ 120·1,08ⁿ⁻¹ > 250, in log(25/12)/log 1,08 ≈ 9,54
 (9,535 < … < 9,545). Primerjava potenc 1,08¹⁹⁰⁷ < (25/12)²⁰⁰ potrebuje višji prag za računanje
 potenc (`exponentiation.threshold`).
@@ -778,6 +870,12 @@ theorem kviz2 (a : ℕ → ℝ) (h1 : a 1 = 4) (h : ∀ n, 1 ≤ n → a (n + 1)
 /-- Predpostavke trditve `kviz2` se dajo izpolniti. -/
 example : ∃ a : ℕ → ℝ, a 1 = 4 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 3 :=
   ⟨fun n => 4 + ((n : ℝ) - 1) * 3, by norm_num, fun n _ => by push_cast; ring⟩
+
+/-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℝ, a 1 = 4 ∧ ∀ n, 1 ≤ n → a (n + 1) - a n = 3 :=
+    ⟨fun n => 4 + ((n : ℝ) - 1) * 3, by norm_num, fun n _ => by push_cast; ring⟩
+  kviz2 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
 
 /-- Preveri se 4: a₁ = 1; aritmetično z d = 10 ima S₈ = 8/2·(1 + 71) = 288 in a₈ = 71, geometrijsko
 s q = 2 ima S₈ = (2⁸ − 1)/(2 − 1) = 255 in a₈ = 128; pri 9 členih je 369 < 511.

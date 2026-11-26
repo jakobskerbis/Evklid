@@ -65,6 +65,11 @@ example : (0 : ℝ) ≤ 16 ∧ (0 : ℝ) ≤ 2 ∧ (4 : ℕ) ≠ 0 := by norm_nu
 
 /-! ## Razlaga 1: lestev potenc -/
 
+/-- Predpostavke trditve `koren_enolicen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 16 ∧ (0 : ℝ) ≤ 2 ∧ (4 : ℕ) ≠ 0 := by norm_num
+  koren_enolicen (ha := w.1) (hb := w.2.1) (hn := w.2.2)
+
 /-- Pomožno: ∜16 = 2.
 pomozno -/
 theorem k16_4 : (16 : ℝ) ^ (1 / 4 : ℝ) = 2 := by
@@ -116,6 +121,11 @@ example : (2 : ℝ) ≠ 0 := by norm_num
 
 /-! ## Razlaga 3: a^(1/2) = √a -/
 
+/-- Predpostavke trditve `pravila_cela` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) ≠ 0 := by norm_num
+  pravila_cela (ha := w)
+
 /-- Razlaga 3: (a^(1/2))² = a^(1/2·2) = a¹ = a, zato je a^(1/2) = √a (a ≥ 0).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#polovica
 besedilo: »$$\left(a^{\frac{1}{2}}\right)^2 = a^{\frac{1}{2} \cdot 2} = a^1 = a.$$« -/
@@ -128,6 +138,11 @@ theorem polovica (a : ℝ) (ha : 0 ≤ a) :
 /-- Predpostavke trditve `polovica` se dajo izpolniti (a = 9). -/
 example : (0 : ℝ) ≤ 9 := by norm_num
 
+/-- Predpostavke trditve `polovica` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 9 := by norm_num
+  polovica (ha := w)
+
 /-- Razlaga 3: (a^(1/n))ⁿ = a za a ≥ 0, n ≥ 1.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#n-ti-koren
 besedilo: »Enako velja za $n$-ti koren: ker mora biti $\left(a^{\frac{1}{n}}\right)^n = a$, je $a^{\frac{1}{n}} = \sqrt[n]{a}$.« -/
@@ -138,6 +153,11 @@ theorem n_ti_koren (a : ℝ) (ha : 0 ≤ a) (n : ℕ) (hn : n ≠ 0) : (a ^ ((1 
 example : (0 : ℝ) ≤ 8 ∧ (3 : ℕ) ≠ 0 := by norm_num
 
 /-! ## Razlaga 4: definicija -/
+
+/-- Predpostavke trditve `n_ti_koren` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 8 ∧ (3 : ℕ) ≠ 0 := by norm_num
+  n_ti_koren (ha := w.1) (hn := w.2)
 
 /-- Razlaga 4 (definicija): za a > 0, celo m in naravno n je a^(m/n) = ⁿ√(aᵐ) = (ⁿ√a)ᵐ
 (ⁿ√ zapisan kot ^(1/n)); velja za vsak n ≥ 1, ne le n ≥ 2.
@@ -152,6 +172,11 @@ theorem definicija (a : ℝ) (ha : 0 < a) (m : ℤ) (n : ℕ) (hn : n ≠ 0) :
 
 /-- Predpostavke trditve `definicija` se dajo izpolniti (a = 8, n = 3). -/
 example : (0 : ℝ) < 8 ∧ (3 : ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `definicija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 8 ∧ (3 : ℕ) ≠ 0 := by norm_num
+  definicija (ha := w.1) (hn := w.2)
 
 /-- Pomožno: ∛8 = 2.
 pomozno -/
@@ -175,6 +200,11 @@ theorem nic_osnova (r : ℝ) (hr : 0 < r) : (0 : ℝ) ^ r = 0 := Real.zero_rpow 
 /-- Predpostavke trditve `nic_osnova` se dajo izpolniti (r = 2/3). -/
 example : (0 : ℝ) < 2 / 3 := by norm_num
 
+/-- Predpostavke trditve `nic_osnova` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 / 3 := by norm_num
+  nic_osnova (hr := w)
+
 /-- Razlaga 4, premisli: 0,25^(1/2) = √0,25 = 0,5, kar je več od 0,25 (0,5·0,5 = 0,25 < 0,5).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#cetrtina
 besedilo: »Večje: $0{,}25^{\frac{1}{2}} = \sqrt{0{,}25} = 0{,}5$. Pri osnovi med $0$ in $1$ koren število poveča, ker je $0{,}5 \cdot 0{,}5 = 0{,}25$ manj od $0{,}5$.« -/
@@ -193,6 +223,11 @@ theorem negativni (a : ℝ) (ha : 0 < a) (r : ℝ) : a ^ (-r) = 1 / a ^ r := by
 
 /-- Predpostavke trditve `negativni` se dajo izpolniti (a = 25). -/
 example : (0 : ℝ) < 25 := by norm_num
+
+/-- Predpostavke trditve `negativni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 25 := by norm_num
+  negativni (ha := w)
 
 /-- Razlaga 5: 25^(−1/2) = 1/√25 = 1/5.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#petindvajset
@@ -250,6 +285,11 @@ theorem pravila (a b r s : ℝ) (ha : 0 < a) (hb : 0 < b) :
 /-- Predpostavke trditve `pravila` se dajo izpolniti (a = 8, b = 27). -/
 example : (0 : ℝ) < 8 ∧ (0 : ℝ) < 27 := by norm_num
 
+/-- Predpostavke trditve `pravila` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 8 ∧ (0 : ℝ) < 27 := by norm_num
+  pravila (ha := w.1) (hb := w.2)
+
 /-- Pomožno: ∛27 = 3.
 pomozno -/
 theorem k27_3 : (27 : ℝ) ^ (1 / 3 : ℝ) = 3 := by
@@ -282,6 +322,11 @@ example : (0 : ℝ) < 2 ∧ (0 : ℝ) ≤ 9 := by norm_num
 
 /-! ## Razlaga 8: koreni kot potence -/
 
+/-- Predpostavke trditve `pravila_primeri` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (0 : ℝ) ≤ 9 := by norm_num
+  pravila_primeri (ha := w.1) (hx := w.2)
+
 /-- Razlaga 8: ᵐ√(ⁿ√a) = (a^(1/n))^(1/m) = a^(1/(mn)) = ᵐⁿ√a (a ≥ 0, m, n ≥ 1).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#koren-korena
 besedilo: »$\sqrt[m]{\sqrt[n]{a}} = \left(a^{\frac{1}{n}}\right)^{\frac{1}{m}} = a^{\frac{1}{mn}} = \sqrt[mn]{a}$« -/
@@ -292,6 +337,11 @@ theorem koren_korena (a : ℝ) (ha : 0 ≤ a) (m n : ℕ) (hm : m ≠ 0) (hn : n
 
 /-- Predpostavke trditve `koren_korena` se dajo izpolniti (a = 64, m = 2, n = 3). -/
 example : (0 : ℝ) ≤ 64 ∧ (2 : ℕ) ≠ 0 ∧ (3 : ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `koren_korena` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 64 ∧ (2 : ℕ) ≠ 0 ∧ (3 : ℕ) ≠ 0 := by norm_num
+  koren_korena (ha := w.1) (hm := w.2.1) (hn := w.2.2)
 
 /-- Razlaga 8: √a·∛a = a^(1/2 + 1/3) = a^(5/6) = ⁶√(a⁵) (a > 0).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#razlicne-stopnje
@@ -309,6 +359,11 @@ theorem razlicne_stopnje (a : ℝ) (ha : 0 < a) :
 example : (0 : ℝ) < 2 := by norm_num
 
 /-! ## Primer 1 -/
+
+/-- Predpostavke trditve `razlicne_stopnje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  razlicne_stopnje (ha := w)
 
 /-- Primer 1 a): 27^(2/3) = (∛27)² = 3² = 9.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer1a
@@ -368,6 +423,11 @@ theorem primer2 (a : ℝ) (ha : 0 < a) :
 
 /-- Predpostavke trditve `primer2` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
+
+/-- Predpostavke trditve `primer2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  primer2 (ha := w)
 
 /-- Primer 2, preverjanje za a = 2: √2 ≈ 1,4142, ∛4 = 2^(2/3) ≈ 1,5874, ∜8 = 2^(3/4) ≈ 1,6818,
 1,4142·1,5874/1,6818 ≈ 1,3348 in 2^(5/12) ≈ 1,3348.
@@ -446,6 +506,11 @@ theorem primer4 (x y : ℝ) (hx : 0 < x) (hy : 0 < y) :
 /-- Predpostavke trditve `primer4` se dajo izpolniti (x = 4, y = 8). -/
 example : (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
 
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+  primer4 (hx := w.1) (hy := w.2)
+
 /-- Primer 4, premisli: pri x = 4, y = 8 je 4·√4/8 = 4·2/8 = 1, zato ima prvotni izraz vrednost 1.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer4-vrednost
 besedilo: »Podatki:** izraz $\left(\dfrac{x^{\frac{3}{4}} \cdot y^{-\frac{1}{2}}}{x^{-\frac{1}{4}} \cdot y^{\frac{1}{6}}}\right)^{\frac{3}{2}}$, pogoj $x, y > 0$, vrednosti $x = 4$, $y = 8$« -/
@@ -511,6 +576,11 @@ theorem napaka_zamenjava (a : ℝ) (ha : 0 ≤ a) :
 
 /-- Predpostavke trditve `napaka_zamenjava` se dajo izpolniti (a = 8). -/
 example : (0 : ℝ) ≤ 8 := by norm_num
+
+/-- Predpostavke trditve `napaka_zamenjava` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 8 := by norm_num
+  napaka_zamenjava (ha := w)
 
 /-- Pogoste napake 4: a^(1/2) + a^(1/3) = a^(5/6) ne velja: za a = 64 je 8 + 4 = 12, 64^(5/6) pa 32.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#napaka-vsota
@@ -619,6 +689,11 @@ theorem matura2b (M : ℝ) (hM : 0 < M) : 240 * M ^ (-1 / 4 : ℝ) = 50 ↔ M = 
 /-- Predpostavke trditve `matura2b` se dajo izpolniti (M = 530,8416). -/
 example : (0 : ℝ) < 530.8416 := by norm_num
 
+/-- Predpostavke trditve `matura2b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 530.8416 := by norm_num
+  matura2b (hM := w)
+
 /-- Za maturo, naloga 2 b) in RAČUN: (240/50)⁴ = 530,8416, kar je zaokroženo 531.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#racun-masa
 besedilo: »b) Potenciramo s $4$: $M = 4{,}8^4 = 530{,}8416$, torej približno $531\,\mathrm{kg}$.« -/
@@ -637,6 +712,11 @@ theorem matura2c (M : ℝ) (hM : 0 < M) :
 
 /-- Predpostavke trditve `matura2c` se dajo izpolniti (M = 4). -/
 example : (0 : ℝ) < 4 := by norm_num
+
+/-- Predpostavke trditve `matura2c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 4 := by norm_num
+  matura2c (hM := w)
 
 /-- Za maturo, naloga 2 c) in RAČUN: 10^(−1/4) ≈ 0,56234, 1 − 10^(−1/4) ≈ 0,43766 ≈ 43,8 %.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#racun-razmerje
@@ -704,6 +784,11 @@ theorem slika_primerjava (x r s : ℝ) (hrs : r < s) :
 
 /-- Predpostavke trditve `slika_primerjava` se dajo izpolniti (x = 1/4 ali x = 4, r = 1/2, s = 3/2). -/
 example : (1 / 2 : ℝ) < 3 / 2 ∧ (1 : ℝ) < 4 ∧ (0 : ℝ) < 1 / 4 ∧ (1 / 4 : ℝ) < 1 := by norm_num
+
+/-- Predpostavke trditve `slika_primerjava` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 / 2 : ℝ) < 3 / 2 ∧ (1 : ℝ) < 4 ∧ (0 : ℝ) < 1 / 4 ∧ (1 / 4 : ℝ) < 1 := by norm_num
+  slika_primerjava (hrs := w.1)
 
 /-- Drugače, na sliki: pri eksponentu med 0 in 1 graf raste vedno počasneje (strogo konkavna funkcija
 na [0, ∞)), pri eksponentu nad 1 pa vedno hitreje (strogo konveksna).
@@ -784,6 +869,11 @@ theorem korak_koreni (x : ℝ) (hx : 0 < x) :
 /-- Predpostavke trditve `korak_koreni` se dajo izpolniti (x = 64). -/
 example : (0 : ℝ) < 64 := by norm_num
 
+/-- Predpostavke trditve `korak_koreni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 64 := by norm_num
+  korak_koreni (hx := w)
+
 /-- Drugače, korak za korakom (preverjanje za x = 64): ∛64 = 4, ⁶√64 = 2, 4·2 = 8 in √64 = 8.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#korak64
 besedilo: »Preverjanje za $x = 64$: $\sqrt[3]{64} \cdot \sqrt[6]{64} = 4 \cdot 2 = 8$ in $\sqrt{64} = 8$.« -/
@@ -814,6 +904,11 @@ theorem dobra_definicija (a b : ℝ) (m : ℤ) (n k : ℕ) (hb : 0 ≤ b) (hn : 
 
 /-- Predpostavke trditve `dobra_definicija` se dajo izpolniti (a = 8, b = 4, m = 2, n = 3, k = 2). -/
 example : (0 : ℝ) ≤ 4 ∧ (3 : ℕ) ≠ 0 ∧ (4 : ℝ) ^ 3 = (8 : ℝ) ^ (2 : ℤ) ∧ (2 : ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `dobra_definicija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 4 ∧ (3 : ℕ) ≠ 0 ∧ (4 : ℝ) ^ 3 = (8 : ℝ) ^ (2 : ℤ) ∧ (2 : ℕ) ≠ 0 := by norm_num
+  dobra_definicija (hb := w.1) (hn := w.2.1) (h := w.2.2.1) (hk := w.2.2.2)
 
 /-- Drugače, bolj natančno (iracionalni eksponenti): 2^1,4 < 2^1,41 < 2^1,414 < 2^1,5 (potence
 naraščajo in so manjše od 2^1,5).
@@ -853,6 +948,11 @@ theorem kviz1 (a : ℝ) (ha : 0 < a) :
 
 /-- Predpostavke trditve `kviz1` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
+
+/-- Predpostavke trditve `kviz1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  kviz1 (ha := w)
 
 /-- Preveri se 2: 64^(2/3) = (∛64)² = 4² = 16; napačni odgovori: 64·2/3 ≈ 42,7, √64 = 8,
 64^(3/2) = 512.
@@ -901,6 +1001,11 @@ theorem kviz3_enako (a r : ℝ) (ha : 0 < a) : a ^ (-r) = a ^ r ↔ a = 1 ∨ r 
 /-- Predpostavke trditve `kviz3_enako` se dajo izpolniti (a = 4). -/
 example : (0 : ℝ) < 4 := by norm_num
 
+/-- Predpostavke trditve `kviz3_enako` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 4 := by norm_num
+  kviz3_enako (ha := w)
+
 /-- Preveri se 4: √a·∜a = a^(1/2 + 1/4) = a^(3/4) (a > 0), ne a^(1/8); za a = 16 je √16·∜16 = 4·2 = 8,
 16^(1/8) = √2 pa ni 8.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kviz4
@@ -919,6 +1024,11 @@ theorem kviz4 (a : ℝ) (ha : 0 < a) :
 
 /-- Predpostavke trditve `kviz4` se dajo izpolniti (a = 16). -/
 example : (0 : ℝ) < 16 := by norm_num
+
+/-- Predpostavke trditve `kviz4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 16 := by norm_num
+  kviz4 (ha := w)
 
 /-- Preveri se 5: 162·50/3600 = 8100/3600 = 2,25 in 2,25^(1/2) = √2,25 = 1,5 m²; napačni odgovori:
 2,25/2 ≈ 1,1 in 2,25² ≈ 5,1.

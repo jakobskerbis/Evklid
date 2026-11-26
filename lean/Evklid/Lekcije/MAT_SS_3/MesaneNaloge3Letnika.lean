@@ -341,6 +341,11 @@ theorem diskriminanta (a b c : ℝ) (ha : a ≠ 0) :
 /-- Predpostavka trditve `diskriminanta` se da izpolniti (a = 2). -/
 example : (2:ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `diskriminanta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 := by norm_num
+  diskriminanta (ha := w)
+
 /-- Razlaga, tabela: n = 2: D = 48, dve rešitvi x = −1 ± √3 (seka); n = 4: D = 0, ena rešitev x = −2
 (dotika se, točka (−2, 2)); n = 6: D = −80, nobene (mimo). RAČUN: 4·4² − 8(4² − 8) = 0, 64 − 4·2² = 48,
 64 − 4·6² = −80, 2x² + 8x + 8 = 0 ⇔ x = −2.
@@ -398,6 +403,14 @@ example : P2 1 0 ≠ 0 ∧ P2 0 1 ≠ 0 := by
   · intro h; have := congrFun (congrArg (⇑) h) 0; simp [P2] at this
   · intro h; have := congrFun (congrArg (⇑) h) 1; simp [P2] at this
 
+/-- Predpostavke trditve `kot_vektorjev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : P2 1 0 ≠ 0 ∧ P2 0 1 ≠ 0 := by
+    constructor
+    · intro h; have := congrFun (congrArg (⇑) h) 0; simp [P2] at this
+    · intro h; have := congrFun (congrArg (⇑) h) 1; simp [P2] at this
+  kot_vektorjev (_ha := w.1) (_hb := w.2)
+
 /-- Seznam orodij (ploščina): za trikotnik s stranicama u = (a, b), v = (c, d) iz istega oglišča je
 ½|u||v| sin γ = ½|ad − bc| (ploščina z determinanto).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#ploscina-sin
@@ -422,6 +435,11 @@ theorem celostevilske_nicle (p : Polynomial ℤ) (a : ℤ) (h : p.IsRoot a) : a 
 /-- Predpostavka trditve `celostevilske_nicle` se da izpolniti (p = x − 2, a = 2). -/
 example : (Polynomial.X - Polynomial.C (2 : ℤ)).IsRoot 2 := by simp
 
+/-- Predpostavke trditve `celostevilske_nicle` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (Polynomial.X - Polynomial.C (2 : ℤ)).IsRoot 2 := by simp
+  celostevilske_nicle (h := w)
+
 /-- Ustno vprašanje 2 (višja raven): premica y = kx + n in krožnica x² + y² = r² (r ≥ 0): enačba
 (1 + k²)x² + 2knx + n² − r² = 0 ima diskriminanto 4(r²(1 + k²) − n²), zato je D = 0 (tangenta) natanko
 tedaj, ko je razdalja |n|/√(1 + k²) središča od premice enaka polmeru r.
@@ -445,6 +463,11 @@ theorem tangenta (k n r : ℝ) (hr : 0 ≤ r) :
 
 /-- Predpostavka trditve `tangenta` se da izpolniti (r = 1). -/
 example : (0:ℝ) ≤ 1 := zero_le_one
+
+/-- Predpostavke trditve `tangenta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 := zero_le_one
+  tangenta (hr := w)
 
 /-- Ustno vprašanje 3: a je ničla polinoma p natanko tedaj, ko je p = (x − a)·q, kjer je q količnik
 deljenja z x − a (izrek o ničli, Mathlib).
@@ -629,6 +652,36 @@ example : ∃ t : Affine.Triangle ℝ R2, dist (t.points 0) (t.points 2) = 6 ∧
   · simp; rw [d1]
   · simp; rw [hk']; ring
 
+/-- Predpostavke trditve `naloga1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ t : Affine.Triangle ℝ R2, dist (t.points 0) (t.points 2) = 6 ∧ ∠ (t.points 0) (t.points 1) (t.points 2) = 30 * π / 180 := by
+    have h3 : 0 < √3 := by positivity
+    have hr : ∠ (P2 0 6) (P2 0 0) (P2 (6 * √3) 0) = π / 2 := by
+      rw [EuclideanGeometry.angle, ← inner_eq_zero_iff_angle_eq_pi_div_two]
+      simp [vsub_eq_sub, P2_sub, inner_P2]
+    have hne : P2 (6 * √3) 0 ≠ P2 0 0 := by
+      intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
+    have d1 : dist (P2 0 6) (P2 0 0) = 6 := by
+      rw [dist_eq_norm, P2_sub, norm_P2]; norm_num
+    have d2 : dist (P2 (6 * √3) 0) (P2 0 0) = 6 * √3 := by
+      rw [dist_eq_norm, P2_sub, norm_P2]; simp
+    have hk : ∠ (P2 0 0) (P2 (6 * √3) 0) (P2 0 6) = π / 6 := by
+      rw [angle_eq_arctan_of_angle_eq_pi_div_two hr hne, d1, d2,
+        show (6 : ℝ) / (6 * √3) = (√3)⁻¹ by field_simp, arctan_inv_sqrt_three]
+    have hk' : ∠ (P2 0 6) (P2 (6 * √3) 0) (P2 0 0) = π / 6 := by rw [EuclideanGeometry.angle_comm]; exact hk
+    have hind : AffineIndependent ℝ ![P2 0 6, P2 (6 * √3) 0, P2 0 0] := by
+      rw [affineIndependent_iff_not_collinear_set, collinear_iff_eq_or_eq_or_angle_eq_zero_or_angle_eq_pi]
+      push Not
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · intro h; have := congrFun (congrArg (⇑) h) 1; simp at this
+      · intro h; exact hne h.symm |>.elim
+      · rw [hk']; positivity
+      · rw [hk']; intro h; linarith [pi_pos]
+    refine ⟨⟨_, hind⟩, ?_, ?_⟩
+    · simp; rw [d1]
+    · simp; rw [hk']; ring
+  naloga1 (ha := w.choose_spec.1) (hα := w.choose_spec.2)
+
 /-- Naloga 2 a), RAČUN: p(x) = 2x³ − x² − 2x + 1 = x²(2x − 1) − (2x − 1) = (2x − 1)(x² − 1)
 = (2x − 1)(x − 1)(x + 1); ničle so natanko −1, 1/2, 1.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#naloga2a
@@ -739,8 +792,18 @@ theorem naloga2c (x : ℝ) (hx0 : 0 ≤ x) (hx : x < 2 * π) :
 /-- Predpostavke trditve `naloga2c` se dajo izpolniti (x = 0). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
+/-- Predpostavke trditve `naloga2c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+  naloga2c (hx0 := w.1) (hx := w.2)
+
 /-- Predpostavke trditve `cos_eq_na_intervalu` se dajo izpolniti (x = y = 0). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π ∧ (0:ℝ) ≤ π := ⟨le_rfl, by positivity, pi_pos.le⟩
+
+/-- Predpostavke trditve `cos_eq_na_intervalu` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π ∧ (0:ℝ) ≤ π := ⟨le_rfl, by positivity, pi_pos.le⟩
+  cos_eq_na_intervalu (hx0 := w.1) (hx := w.2.1) (hy0 := w.2.2) (hy := w.2.2)
 
 /-- Naloga 3 (a = 6, s = 8): polovica diagonale 6√2/2 = 3√2 ≈ 4,24; v = √(64 − 18) = √46 ≈ 6,78;
 V = 36√46/3 = 12√46 ≈ 81,39. (Kot φ = arccos(3√2/8) je v `naloga3b`.)

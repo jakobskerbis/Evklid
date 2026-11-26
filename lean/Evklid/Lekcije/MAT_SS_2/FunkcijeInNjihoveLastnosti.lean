@@ -181,6 +181,12 @@ theorem inverz_bij {α β : Type*} {f : α → β} {g : β → α} {A : Set α} 
 example : BijOn (fun x : ℝ => x) univ univ ∧ InvOn (fun x : ℝ => x) (fun x : ℝ => x) univ univ :=
   ⟨bijOn_id univ, ⟨fun _ _ => rfl, fun _ _ => rfl⟩⟩
 
+/-- Predpostavke trditve `inverz_bij` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : BijOn (fun x : ℝ => x) univ univ ∧ InvOn (fun x : ℝ => x) (fun x : ℝ => x) univ univ :=
+    ⟨bijOn_id univ, ⟨fun _ _ => rfl, fun _ _ => rfl⟩⟩
+  inverz_bij (hf := w.1) (hinv := w.2)
+
 /-- Premisli: na R x² nima inverzne (4 = f(2) = f(−2)); na [0, ∞) je inverzna √x.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#premisli-kvadrat
 besedilo: »Na $\mathbb{R}$ vrednost $4$ dobiš iz $2$ in iz $-2$, zato $f^{-1}(4)$ ni enolično. Na $[0, \infty)$ funkcija narašča in je injektivna. Inverzna je $\sqrt{x}$, saj je koren po definiciji nenegativen.« -/
@@ -209,6 +215,11 @@ theorem izrazanje (s t v m M n c V : ℝ) (ht : t ≠ 0) (hv : v ≠ 0) (hM : M 
 /-- Predpostavke trditve `izrazanje` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `izrazanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  izrazanje (ht := w) (hv := w) (hM := w) (hV := w) (hc := w)
+
 /-- Izražanje: E_k = mv²/2 ⇔ v = √(2E_k/m) (m > 0, E_k ≥ 0, v ≥ 0: vzamemo pozitivni koren).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#izrazanje-v
 besedilo: »Kinetična energija $E_k = \dfrac{mv^2}{2}$: pomnožimo z $2$, delimo z $m$ in korenimo, $v = \sqrt{\dfrac{2E_k}{m}}$. Vzamemo le pozitivni koren, ker je $v$ tu velikost hitrosti.« -/
@@ -219,6 +230,11 @@ theorem izrazanje_v (E m v : ℝ) (hm : 0 < m) (hE : 0 ≤ E) (hv : 0 ≤ v) : E
 
 /-- Predpostavke trditve `izrazanje_v` se dajo izpolniti. -/
 example : (0:ℝ) < 8 ∧ (0:ℝ) ≤ 100 ∧ (0:ℝ) ≤ 5 := by norm_num
+
+/-- Predpostavke trditve `izrazanje_v` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 8 ∧ (0:ℝ) ≤ 100 ∧ (0:ℝ) ≤ 5 := by norm_num
+  izrazanje_v (hm := w.1) (hE := w.2.1) (hv := w.2.2)
 
 /-- Izražanje: l = l₀ + αl₀ΔT = l₀(1 + αΔT), zato l₀ = l/(1 + αΔT) (1 + αΔT ≠ 0).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#izrazanje-l0
@@ -233,6 +249,11 @@ theorem izrazanje_l0 (l l0 α ΔT : ℝ) (h : 1 + α * ΔT ≠ 0) :
 example : (1:ℝ) + 1.2e-5 * 50 ≠ 0 := by norm_num
 
 /-! ## Rešeni primeri -/
+
+/-- Predpostavke trditve `izrazanje_l0` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) + 1.2e-5 * 50 ≠ 0 := by norm_num
+  izrazanje_l0 (h := w)
 
 /-- Primer 1: f(x) = √(x + 4) − 2; D_f: x + 4 ≥ 0 ⇔ x ≥ −4; ničla: √(x + 4) = 2, x + 4 = 4, x = 0
 (preizkus f(0) = √4 − 2 = 0); najmanjša vrednost f(−4) = 0 − 2 = −2, Z_f = [−2, ∞).
@@ -315,6 +336,11 @@ theorem primer5 (R R1 R2 : ℝ) (hR : 0 < R) (hR1 : 0 < R1) (hR2 : 0 < R2) :
 example : (0:ℝ) < 4 ∧ (0:ℝ) < 12 ∧ (0:ℝ) < 6 ∧ (1:ℝ) / 4 = 1 / 12 + 1 / 6 := by norm_num
 
 /-! ## Pogoste napake -/
+
+/-- Predpostavke trditve `primer5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 ∧ (0:ℝ) < 12 ∧ (0:ℝ) < 6 ∧ (1:ℝ) / 4 = 1 / 12 + 1 / 6 := by norm_num
+  primer5 (hR := w.1) (hR1 := w.2.1) (hR2 := w.2.2.1)
 
 /-- Pogoste napake: f⁻¹(x) ni 1/f(x) (npr. pri x = 200: (200 − 100)/50 = 2, 1/(50 · 200 + 100) ≠ 2); iz
 1/R₂ = 1/R − 1/R₁ ne sledi R₂ = R − R₁ (pri R = 4, R₁ = 12 bi bilo −8 < 0, pravilno 6).
@@ -441,6 +467,11 @@ theorem preveri5 (T : ℝ → ℝ) (h : StrictAnti T) : Injective T := h.injecti
 /-- Predpostavke trditve `preveri5` se dajo izpolniti. -/
 example : StrictAnti (fun t : ℝ => 100 - t) := fun a b h => by simp only; linarith
 
+/-- Predpostavke trditve `preveri5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : StrictAnti (fun t : ℝ => 100 - t) := fun a b h => by simp only; linarith
+  preveri5 (h := w)
+
 /-- Preveri se, 6: x² + 1 ni injektivna (f(−1) = f(1) = 2) ne surjektivna (0 < 1 ni vrednost); |x| ni injektivna
 (|−3| = |3|) ne surjektivna (−1); x³ + 1 je bijektivna (x = ∛(y − 1)); konstanta 5 ni injektivna ne surjektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#preveri6
@@ -513,3 +544,8 @@ theorem racun (R R1 l a d x : ℝ) (hR : R ≠ 0) (hR1 : R1 ≠ 0) (hRR : R1 - R
 example : (1:ℝ) ≠ 0 ∧ (2:ℝ) ≠ 0 ∧ (2:ℝ) - 1 ≠ 0 ∧ (1:ℝ) + 0 * 0 ≠ 0 := by norm_num
 
 end Evklid.Lekcije.MAT_SS_2.FunkcijeInNjihoveLastnosti
+/-- Predpostavke trditve `racun` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ (2:ℝ) ≠ 0 ∧ (2:ℝ) - 1 ≠ 0 ∧ (1:ℝ) + 0 * 0 ≠ 0 := by norm_num
+  racun (hR := w.1) (hR1 := w.2.1) (hRR := w.2.2.1) (had := w.2.2.2)
+

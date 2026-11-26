@@ -90,9 +90,27 @@ example : (fun n : ℕ => 1 ≤ n) 1 ∧
     ∀ n, 1 ≤ n → (∀ k, 1 ≤ k → k ≤ n → (fun n : ℕ => 1 ≤ n) k) → (fun n : ℕ => 1 ≤ n) (n + 1) :=
   ⟨le_rfl, fun n _ _ => by show 1 ≤ n + 1; omega⟩
 
+/-- Predpostavke trditve `krepka` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (fun n : ℕ => 1 ≤ n) 1 ∧ ∀ n, 1 ≤ n → (∀ k, 1 ≤ k → k ≤ n → (fun n : ℕ => 1 ≤ n) k) → (fun n : ℕ => 1 ≤ n) (n + 1) :=
+    ⟨le_rfl, fun n _ _ => by show 1 ≤ n + 1; omega⟩
+  krepka (h0 := w.1) (hk := w.2)
+
 /-- Primeri za načela (predpostavke so izpolnljive): P(n) := 1 ≤ n. Trditve: `nacelo` in `nacelo_n0` (n₀ = 1). -/
 example : (fun n : ℕ => 1 ≤ n) 1 ∧ ∀ n, 1 ≤ n → (fun n : ℕ => 1 ≤ n) n → (fun n : ℕ => 1 ≤ n) (n + 1) :=
   ⟨le_rfl, fun n _ h => by simp only at h ⊢; omega⟩
+
+/-- Predpostavke trditve `nacelo_n0` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (fun n : ℕ => 1 ≤ n) 1 ∧ ∀ n, 1 ≤ n → (fun n : ℕ => 1 ≤ n) n → (fun n : ℕ => 1 ≤ n) (n + 1) :=
+    ⟨le_rfl, fun n _ h => by simp only at h ⊢; omega⟩
+  nacelo_n0 (h0 := w.1) (hk := w.2)
+
+/-- Predpostavke trditve `nacelo` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (fun n : ℕ => 1 ≤ n) 1 ∧ ∀ n, 1 ≤ n → (fun n : ℕ => 1 ≤ n) n → (fun n : ℕ => 1 ≤ n) (n + 1) :=
+    ⟨le_rfl, fun n _ h => by simp only at h ⊢; omega⟩
+  nacelo (h1 := w.1) (hk := w.2)
 
 /-- Razlaga, »Premisli« in pogoste napake: za »2n + 1 je deljivo z 2« korak velja (2n + 1 deljivo z 2 ⇒
 2(n + 1) + 1 = (2n + 1) + 2 deljivo z 2), baza ne (3 ni sodo), trditev ne velja za noben n.
@@ -226,6 +244,12 @@ example : ∃ H : ℕ → ℤ, H 1 = 1 ∧ ∀ n, 1 ≤ n → H (n + 1) = 2 * H 
 
 /-! ## Pogoste napake -/
 
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ H : ℕ → ℤ, H 1 = 1 ∧ ∀ n, 1 ≤ n → H (n + 1) = 2 * H n + 1 :=
+    ⟨fun n => 2 ^ n - 1, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
+  primer4 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+
 /-- Pogoste napake 1: n² + n + 41 je praštevilo za vse n od 1 do 39, pri n = 40 pa 1681 = 41².
 trditev: MAT-SS-4/matematicna-indukcija#euler
 besedilo: »»Preveril sem dovolj primerov.«** Izraz $n^2 + n + 41$ da praštevilo za vse $n$ od $1$ do $39$, pri $n = 40$ pa $1681 = 41^2$.« -/
@@ -286,6 +310,14 @@ example : ∃ a : ℕ → ℤ, a 1 = 2 ∧ ∀ n, 1 ≤ n → a (n + 1) = 3 * a 
 /-- Naloga 2: Sₙ = 1/(1·2) + … + 1/(n(n + 1)). -/
 noncomputable def S (n : ℕ) : ℝ := ∑ k ∈ range n, 1 / (((k : ℝ) + 1) * (k + 2))
 
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ a : ℕ → ℤ, a 1 = 2 ∧ ∀ n, 1 ≤ n → a (n + 1) = 3 * a n - 2 := by
+    refine ⟨fun n => 3 ^ (n - 1) + 1, by norm_num, fun n hn => ?_⟩
+    obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+    simp only [show k + 1 + 1 - 1 = k + 1 by omega, Nat.add_sub_cancel, pow_succ]; ring
+  matura1 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+
 /-- Naloga 2 a): S₁ = 1/2, S₂ = 1/2 + 1/6 = 2/3, S₃ = 2/3 + 1/12 = 3/4.
 trditev: MAT-SS-4/matematicna-indukcija#matura2a
 besedilo: »a) $S_1 = \dfrac{1}{2}$, $S_2 = \dfrac{1}{2} + \dfrac{1}{6} = \dfrac{2}{3}$, $S_3 = \dfrac{2}{3} + \dfrac{1}{12} = \dfrac{3}{4}$.« -/
@@ -342,6 +374,11 @@ theorem matura2c_deljenje (n : ℕ) (hn : 1 ≤ n) : (n : ℝ) / (n + 1) = 1 / (
 /-- Predpostavka trditve `matura2c_deljenje` se da izpolniti (n = 1). -/
 example : 1 ≤ (1:ℕ) := le_rfl
 
+/-- Predpostavke trditve `matura2c_deljenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 ≤ (1:ℕ) := le_rfl
+  matura2c_deljenje (hn := w)
+
 /-- Naloga 2 d): T₁ = 1/3 = 1/(1 + 2), T₂ = 1/3 + 1/8 = 11/24, domneva Tₙ = n/(n + 2) pa da
 T₂ = 2/(2 + 2) = 1/2 = 12/24 ≠ 11/24, torej je n = 2 protiprimer.
 trditev: MAT-SS-4/matematicna-indukcija#matura2d
@@ -395,6 +432,17 @@ example : ∃ P : ℕ → Prop, P 5 ∧ ∀ n, 3 ≤ n → P n → P (n + 1) :=
       · subst h4; left; norm_num
       · right; omega
     · left; exact primer3 (n + 1) (by omega)⟩
+
+/-- Predpostavke trditve `kviz3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ P : ℕ → Prop, P 5 ∧ ∀ n, 3 ≤ n → P n → P (n + 1) :=
+    ⟨fun n => n ^ 2 < 2 ^ n ∨ n < 5, Or.inl (by norm_num), fun n hn h => by
+      rcases Nat.lt_or_ge n 5 with h' | h'
+      · by_cases h4 : n = 4
+        · subst h4; left; norm_num
+        · right; omega
+      · left; exact primer3 (n + 1) (by omega)⟩
+  kviz3 (h5 := w.choose_spec.1) (hk := w.choose_spec.2)
 
 /-- Preveri se 4: za napačno trditev 1 + … + n = (n² + n + 2)/2 je korak pravilen (obe strani sta
 (n² + 3n + 4)/2), baza pa ne (pri n = 1 je leva stran 1, desna 2).

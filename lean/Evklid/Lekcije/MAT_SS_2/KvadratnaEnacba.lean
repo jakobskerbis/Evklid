@@ -759,6 +759,14 @@ example : ∀ x : ℝ, x ^ 2 - 7 * x + 3 =
   intro x
   linear_combination (1 / 4) * hs
 
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∀ x : ℝ, x ^ 2 - 7 * x + 3 = (x - (7 + Real.sqrt 37) / 2) * (x - (7 - Real.sqrt 37) / 2) := by
+    have hs : Real.sqrt 37 ^ 2 = 37 := Real.sq_sqrt (by norm_num)
+    intro x
+    linear_combination (1 / 4) * hs
+  primer4 (h := w)
+
 /-- Primer 4, D = 49 − 12 = 37 > 0 in premisli (približki): x₁ = (7 + √37)/2 ≈ 6,54, x₂ ≈ 0,46,
 x₁² ≈ 42,79, x₂² ≈ 0,21.
 trditev: MAT-SS-2/kvadratna-enacba#primer4-priblizki
@@ -883,6 +891,11 @@ theorem matura2b_enolicnost (c : ℝ) (h : (2 : ℝ) ^ 2 - 6 * 2 + c = 0) :
 
 /-- Predpostavka `matura2b_enolicnost` se da izpolniti (c = 8). -/
 example : (2 : ℝ) ^ 2 - 6 * 2 + 8 = 0 := by norm_num
+
+/-- Predpostavke trditve `matura2b_enolicnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) ^ 2 - 6 * 2 + 8 = 0 := by norm_num
+  matura2b_enolicnost (h := w)
 
 /-- Za maturo, naloga 2 c): pri c = 13 je D = 36 − 52 = −16 < 0, √(−D) = 4, rešitvi (6 ± 4i)/2 = 3 ± 2i;
 z² − 6z + 13 = 0 ⇔ z = 3 ± 2i.

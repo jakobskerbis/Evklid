@@ -80,6 +80,11 @@ theorem produkt_variacije (n k : ℕ) (hn : n ≠ 0) (hk : k ≤ n) :
 /-- Predpostavke trditve `produkt_variacije` se dajo izpolniti (`n = 365`, `k = 23`). -/
 example : (365:ℕ) ≠ 0 ∧ 23 ≤ 365 := by norm_num
 
+/-- Predpostavke trditve `produkt_variacije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (365:ℕ) ≠ 0 ∧ 23 ≤ 365 := by norm_num
+  produkt_variacije (hn := w.1) (hk := w.2)
+
 /-- Ponovitev: `Vₙᵏ = n!/(n − k)!` za `k ≤ n`.
 trditev: MAT-SS-4/mesane-maturitetne-naloge#variacije
 besedilo: »$V_n^k = \frac{n!}{(n-k)!}$« -/
@@ -88,6 +93,11 @@ theorem variacije (n k : ℕ) (hk : k ≤ n) : n.descFactorial k = n.factorial /
 
 /-- Predpostavka trditve `variacije` se da izpolniti. -/
 example : 2 ≤ 10 := by norm_num
+
+/-- Predpostavke trditve `variacije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 2 ≤ 10 := by norm_num
+  variacije (hk := w)
 
 /-- Razlaga: produkt `23` ulomkov je približno `0,493`, zato je `P(vsaj dva isti dan) ≈ 1 − 0,493 = 0,507`;
 parov je `C(23, 2) = 253`.
@@ -161,6 +171,12 @@ theorem neodvisna {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabi
 example : IsProbabilityMeasure (Measure.dirac true : Measure Bool) ∧ MeasurableSet (Set.univ : Set Bool) :=
   ⟨inferInstance, MeasurableSet.univ⟩
 
+/-- Predpostavke trditve `neodvisna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : IsProbabilityMeasure (Measure.dirac true : Measure Bool) ∧ MeasurableSet (Set.univ : Set Bool) :=
+    ⟨inferInstance, MeasurableSet.univ⟩
+  neodvisna (hA := w.1) (hB := w.2)
+
 /-- Ustno vprašanje 1: dva meta kovanca, verjetnost dveh grbov je `1/2 · 1/2 = 1/4`.
 trditev: MAT-SS-4/mesane-maturitetne-naloge#kovanec
 besedilo: »Primer sta dva meta kovanca: verjetnost, da obakrat pade grb, je $\frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$.« -/
@@ -225,6 +241,11 @@ theorem kvadratna_formula (a b c : ℝ) (ha : a ≠ 0) :
 
 /-- Predpostavka trditve `kvadratna_formula` se da izpolniti (`a = 5` iz primera 2). -/
 example : (5:ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `kvadratna_formula` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (5:ℝ) ≠ 0 := by norm_num
+  kvadratna_formula (ha := w)
 
 /-- Primer 2, koraki 4 in 5: `−5t² + 10t + 1 = 0` ⇔ `5t² − 10t − 1 = 0` ⇔ `t = (10 ± √120)/10`,
 diskriminanta `D = 100 + 20 = 120`.
@@ -328,6 +349,11 @@ theorem geometrijska_vsota (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
 
 /-- Predpostavka trditve `geometrijska_vsota` se da izpolniti (`q = 1,05`). -/
 example : (1.05:ℝ) ≠ 1 := by norm_num
+
+/-- Predpostavke trditve `geometrijska_vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1.05:ℝ) ≠ 1 := by norm_num
+  geometrijska_vsota (hq := w)
 
 /-- Primer 4, korak 2 in pogoste napake: `a₆ = 2000·1,05⁵ ≈ 2553` (eksponent `n − 1 = 5`, ne `6`).
 trditev: MAT-SS-4/mesane-maturitetne-naloge#primer4-clen
@@ -552,6 +578,13 @@ example : (0:ℝ) ∈ Set.Ioo (-1) 1 ∧ IsMaxOn (fun x : ℝ => -x ^ 2) (Set.Ic
   refine ⟨⟨by norm_num, by norm_num⟩, fun x _ => by simp; positivity, ?_⟩
   exact (hasDerivAt_pow 2 (0:ℝ)).neg.congr_deriv (by norm_num)
 
+/-- Predpostavke trditve `notranji_maksimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ∈ Set.Ioo (-1) 1 ∧ IsMaxOn (fun x : ℝ => -x ^ 2) (Set.Icc (-1) 1) 0 ∧ HasDerivAt (fun x : ℝ => -x ^ 2) 0 0 := by
+    refine ⟨⟨by norm_num, by norm_num⟩, fun x _ => by simp; positivity, ?_⟩
+    exact (hasDerivAt_pow 2 (0:ℝ)).neg.congr_deriv (by norm_num)
+  notranji_maksimum (hc := w.1) (hmax := w.2.1) (hf := w.2.2)
+
 /-- Ustno vprašanje 2, obstoj: zvezna funkcija na `[a, b]` doseže največjo vrednost v neki točki `c`;
 ta je krajišče `a` ali `b` ali pa notranja točka, kjer je (če je `f` tam odvedljiva) `f'(c) = 0`.
 trditev: MAT-SS-4/mesane-maturitetne-naloge#maksimum-na-intervalu
@@ -572,6 +605,12 @@ example : (-1:ℝ) ≤ 1 ∧ ContinuousOn (fun x : ℝ => -x ^ 2) (Set.Icc (-1) 
   ⟨by norm_num, by fun_prop⟩
 
 /-! ## Preveri se -/
+
+/-- Predpostavke trditve `maksimum_na_intervalu` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1:ℝ) ≤ 1 ∧ ContinuousOn (fun x : ℝ => -x ^ 2) (Set.Icc (-1) 1) :=
+    ⟨by norm_num, by fun_prop⟩
+  maksimum_na_intervalu (hab := w.1) (hf := w.2)
 
 /-- Preveri se 1: naklon tangente na tir `h(t) = −5t² + 10t + 1` v `t = 1` je `h'(1) = 0`.
 trditev: MAT-SS-4/mesane-maturitetne-naloge#kviz1

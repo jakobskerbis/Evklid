@@ -273,6 +273,11 @@ theorem sin_splosna (a x : ℝ) (h1 : -1 ≤ a) (h2 : a ≤ 1) :
 /-- Predpostavke trditve `sin_splosna` se dajo izpolniti (`a = 0`). -/
 example : (-1:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 1 := by norm_num
 
+/-- Predpostavke trditve `sin_splosna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 1 := by norm_num
+  sin_splosna (h1 := w.1) (h2 := w.2)
+
 /-- Razlaga 4: za `−1 ≤ a ≤ 1`, `x₁ = arccos a`, je `cos x = a` natanko tedaj, ko `x = ±x₁ + k·360°`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#cos-splosna
 besedilo: »Za $\cos x = a$, $-1 \le a \le 1$, $x_1 = \arccos a$:« -/
@@ -290,6 +295,11 @@ theorem cos_splosna (a x : ℝ) (h1 : -1 ≤ a) (h2 : a ≤ 1) :
 
 /-- Predpostavke trditve `cos_splosna` se dajo izpolniti (`a = 0`). -/
 example : (-1:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 1 := by norm_num
+
+/-- Predpostavke trditve `cos_splosna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 1 := by norm_num
+  cos_splosna (h1 := w.1) (h2 := w.2)
 
 /-- Razlaga 4: za vsak `a`, `x₁ = arctan a`, je `tan x = a` (kjer je tangens definiran, `cos x ≠ 0`) natanko
 tedaj, ko `x = x₁ + k·180°`. (V Leanu je `tan x = sin x / cos x` in `x/0 = 0`, zato pogoj `cos x ≠ 0`.)
@@ -326,6 +336,11 @@ theorem brez_resitev (a x : ℝ) (ha : 1 < |a|) : Real.sin x ≠ a ∧ Real.cos 
 example : (1:ℝ) < |1.2| := by norm_num [abs_of_pos]
 
 /-! ## Krožne funkcije (Razlaga 3, Povzetek) -/
+
+/-- Predpostavke trditve `brez_resitev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) < |1.2| := by norm_num [abs_of_pos]
+  brez_resitev (ha := w)
 
 /-- Razlaga 3: `arcsin a ∈ [−90°, 90°]`, `arccos a ∈ [0°, 180°]`, `arctan a ∈ (−90°, 90°)`; za `|a| ≤ 1` je
 `sin (arcsin a) = a` in `cos (arccos a) = a`, za vsak `a` pa `tan (arctan a) = a`.
@@ -491,6 +506,11 @@ theorem telefon (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 120) :
 /-- Predpostavke trditve `telefon` se dajo izpolniti (`t = 5`). -/
 example : (0:ℝ) ≤ 5 ∧ (5:ℝ) < 120 := by norm_num
 
+/-- Predpostavke trditve `telefon` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 5 ∧ (5:ℝ) < 120 := by norm_num
+  telefon (h0 := w.1) (h1 := w.2)
+
 /-- Pomožna trditev: na `[0°, 360°)` je `cos x = 0` natanko pri 90° in 270°.
 pomozno -/
 theorem cos_nic (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) : Real.cos x = 0 ↔ x = π / 2 ∨ x = 3 * π / 2 := by
@@ -548,6 +568,11 @@ theorem sin_ena (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) : Real.sin x = 1 ↔ 
 
 /-- Predpostavke trditve `sin_ena` se dajo izpolniti (`x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+
+/-- Predpostavke trditve `sin_ena` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+  sin_ena (h0 := w.1) (h1 := w.2)
 
 /-- Primer 1: `cos x = −1/2` natanko pri `x = ±120° + k·360°`; na `[0°, 360°)` sta rešitvi 120° in
 `−120° + 360° = 240°`.
@@ -613,6 +638,11 @@ theorem primer3 (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 0.02) :
 /-- Predpostavke trditve `primer3` se dajo izpolniti (`t = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 0.02 := by norm_num
 
+/-- Predpostavke trditve `primer3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 0.02 := by norm_num
+  primer3 (h0 := w.1) (h1 := w.2)
+
 /-- Primer 3, korak 3: iz `y = π/6 + 2kπ` ali `5π/6 + 2kπ` in `y = 100πt` sledi `t = 1/600 + k/50` ali
 `t = 1/120 + k/50`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#primer3-t
@@ -644,6 +674,11 @@ theorem primer4 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
 
 /-- Predpostavke trditve `primer4` se dajo izpolniti (`x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+  primer4 (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 6 in Primer 6, korak 1: vsota v produkt `sin α + sin β = 2 sin((α + β)/2) cos((α − β)/2)`, zato
 `sin 3x + sin x = 2 sin 2x cos x`.
@@ -703,6 +738,11 @@ theorem primer6 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
 /-! ## Numerične vrednosti krožnih funkcij -/
+
+/-- Predpostavke trditve `primer6` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+  primer6 (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 3, Primer 5 (in `<<RACUN`): `arccos 0,3 ≈ 72,54° ≈ 1,266`, `arccos(−0,3) ≈ 107,46°`, preverba
 `180° − 72,54° = 107,46°`.
@@ -1161,6 +1201,11 @@ theorem matura3b (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
 /-- Predpostavke trditve `matura3b` se dajo izpolniti (`x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
+/-- Predpostavke trditve `matura3b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+  matura3b (h0 := w.1) (h1 := w.2)
+
 /-- Naloga 3 c), korak 9 (in `<<RACUN`): `2z² − z − 1 = (2z + 1)(z − 1) = 0` natanko pri `z = 1` ali
 `z = −1/2`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#matura3c-z
@@ -1230,6 +1275,11 @@ theorem matura3c (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 4 * π) :
 
 /-- Predpostavke trditve `matura3c` se dajo izpolniti (`x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 4 * π := ⟨le_rfl, by positivity⟩
+
+/-- Predpostavke trditve `matura3c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 4 * π := ⟨le_rfl, by positivity⟩
+  matura3c (h0 := w.1) (h1 := w.2)
 
 /-- `<<RACUN`: splošna rešitev `cos 3x + cos x = cos 2x` je `x = π/4 + kπ`, `3π/4 + kπ`, `π/3 + 2kπ` ali
 `−π/3 + 2kπ`.
@@ -1392,6 +1442,11 @@ theorem kviz1 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 4 * π) :
 /-- Predpostavke trditve `kviz1` se dajo izpolniti (`x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 4 * π := ⟨le_rfl, by positivity⟩
 
+/-- Predpostavke trditve `kviz1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 4 * π := ⟨le_rfl, by positivity⟩
+  kviz1 (h0 := w.1) (h1 := w.2)
+
 /-- Preveri se 4: splošno rešitev `x = ±60° + k·360°` ima `cos x = 1/2`; pri `−60°` je sinus negativen
 (`sin x = √3/2` ne velja), `tan(−60°) = −√3 ≠ √3`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#kviz4
@@ -1445,6 +1500,11 @@ theorem kviz5 (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 24) :
 
 /-- Predpostavke trditve `kviz5` se dajo izpolniti (`t = 7`). -/
 example : (0:ℝ) ≤ 7 ∧ (7:ℝ) < 24 := by norm_num
+
+/-- Predpostavke trditve `kviz5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 7 ∧ (7:ℝ) < 24 := by norm_num
+  kviz5 (h0 := w.1) (h1 := w.2)
 
 /-- Preveri se 7: `tan x = −1` ima splošno rešitev `x = −45° + k·180°`; najmanjša pozitivna je 135°
 (`−45°` ni pozitivna, `315°` ni najmanjša, `tan 45° = 1`).

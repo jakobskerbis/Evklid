@@ -143,6 +143,12 @@ theorem dolzina_povecanje (k : ℝ) (a : R3) (ha : a ≠ 0) :
 example : (!₂[1, 0, 0] : R3) ≠ 0 := by
   intro h; have := congrArg (fun v : R3 => v 0) h; simp at this
 
+/-- Predpostavke trditve `dolzina_povecanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[1, 0, 0] : R3) ≠ 0 := by
+    intro h; have := congrArg (fun v : R3 => v 0) h; simp at this
+  dolzina_povecanje (ha := w)
+
 /-- Premisli 2, Pogoste napake, Preveri se 3: |−2a⃗| = 2|a⃗| (ne −2|a⃗|, ki je za a⃗ ≠ 0⃗ negativno);
 −2a⃗ je obrnjen (kaže kot −a⃗).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#minus-dva
@@ -156,6 +162,12 @@ theorem minus_dva (a : R3) (ha : a ≠ 0) :
 /-- Predpostavka `minus_dva` se da izpolniti (a⃗ = (1, 0, 0)). -/
 example : (!₂[1, 0, 0] : R3) ≠ 0 := by
   intro h; have := congrArg (fun v : R3 => v 0) h; simp at this
+
+/-- Predpostavke trditve `minus_dva` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[1, 0, 0] : R3) ≠ 0 := by
+    intro h; have := congrArg (fun v : R3 => v 0) h; simp at this
+  minus_dva (ha := w)
 
 /-- Povzetek in Bolj natančno (trikotniška neenakost, Premisli 1): |a⃗ + b⃗| ≤ |a⃗| + |b⃗|, enakost natanko
 tedaj, ko sta vektorja enako usmerjena (SameRay).
@@ -188,6 +200,12 @@ theorem kolinearna (a b : R3) (ha : a ≠ 0) : ¬ LinearIndependent ℝ ![a, b] 
 /-- Predpostavka `kolinearna` se da izpolniti (a⃗ = (2, −2, −3) iz Naloge 1). -/
 example : (!₂[2, -2, -3] : R3) ≠ 0 := by
   intro h; have := congrArg (fun v : R3 => v 0) h; simp at this
+
+/-- Predpostavke trditve `kolinearna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[2, -2, -3] : R3) ≠ 0 := by
+    intro h; have := congrArg (fun v : R3 => v 0) h; simp at this
+  kolinearna (ha := w)
 
 /-- Ustno vprašanje 1: če a⃗, b⃗ nista kolinearna, so a⃗, b⃗, c⃗ koplanarni (linearno odvisni) natanko tedaj, ko je
 c⃗ = k a⃗ + m b⃗.
@@ -227,6 +245,17 @@ example : LinearIndependent ℝ ![(!₂[2, 2, 1] : R3), !₂[-2, 1, 2]] := by
   simp at h0 h1
   constructor <;> linarith
 
+/-- Predpostavke trditve `koplanarni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[2, 2, 1] : R3), !₂[-2, 1, 2]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    have h0 := congrArg (fun v : R3 => v 0) h
+    have h1 := congrArg (fun v : R3 => v 1) h
+    simp at h0 h1
+    constructor <;> linarith
+  koplanarni (hab := w)
+
 /-- Razlaga (baza): n linearno neodvisnih vektorjev v ℝⁿ (za n = 2 nekolinearna v ravnini, za n = 3
 nekoplanarni v prostoru) tvori bazo: vsak vektor je na en sam način linearna kombinacija ∑ gᵢ·wᵢ.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#razvoj-po-bazi
@@ -252,6 +281,17 @@ example : LinearIndependent ℝ ![(!₂[1, 1] : R2), !₂[1, -1]] := by
   have h1 := congrArg (fun v : R2 => v 1) h
   simp at h0 h1
   constructor <;> linarith
+
+/-- Predpostavke trditve `razvoj_po_bazi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[1, 1] : R2), !₂[1, -1]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    have h0 := congrArg (fun v : R2 => v 0) h
+    have h1 := congrArg (fun v : R2 => v 1) h
+    simp at h0 h1
+    constructor <;> linarith
+  razvoj_po_bazi (h := w)
 
 /-- Bolj natančno (standardna baza): a⃗ = a_x i⃗ + a_y j⃗ + a_z k⃗ z i⃗ = (1, 0, 0), j⃗ = (0, 1, 0), k⃗ = (0, 0, 1).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#standardna-baza
@@ -357,6 +397,12 @@ example : ‖(!₂[5, 0] : R2)‖ = 5 := by
   rw [dolzina2, show (5:ℝ) ^ 2 + 0 ^ 2 = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
 /-! ## Razlaga: številski primeri -/
+
+/-- Predpostavke trditve `kviz_sile` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ‖(!₂[5, 0] : R2)‖ = 5 := by
+    rw [dolzina2, show (5:ℝ) ^ 2 + 0 ^ 2 = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  kviz_sile (h₁ := w) (h₂ := w)
 
 /-- Razlaga, prvi primer (podaji): (12, 5) + (3, 4) = (15, 9); dolžini √(12² + 5²) = 13 in √(3² + 4²) = 5,
 skupaj 18; razdalja od izhodišča √(15² + 9²) = √306 ≈ 17,5 < 18 (dolžini se ne seštejeta).

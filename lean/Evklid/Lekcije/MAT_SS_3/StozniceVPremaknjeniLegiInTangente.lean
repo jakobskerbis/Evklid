@@ -61,6 +61,11 @@ theorem kroznica_poseben_primer (x₀ y₀ r x y : ℝ) (hr : r ≠ 0) :
 /-- Predpostavka `kroznica_poseben_primer` se da izpolniti (r = 3). -/
 example : (3:ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `kroznica_poseben_primer` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℝ) ≠ 0 := by norm_num
+  kroznica_poseben_primer (hr := w)
+
 /-- Razlaga 1 (gorišči) v središčni legi: za 0 < b ≤ a in e = √(a² − b²) leži točka (u, v) na elipsi
 u²/a² + v²/b² = 1 natanko tedaj, ko je vsota razdalj do (−e, 0) in (e, 0) enaka 2a.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisci-elipse-sredisce
@@ -126,6 +131,21 @@ theorem gorisci_elipse_navpicno (x₀ y₀ a b x y : ℝ) (ha : 0 < a) (hb : 0 <
 izpolniti (a = 3, b = 2 oziroma a = 2, b = 3). -/
 example : (0:ℝ) < 3 ∧ (0:ℝ) < 2 ∧ (2:ℝ) ≤ 3 := by norm_num
 
+/-- Predpostavke trditve `gorisci_elipse_navpicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 2 ∧ (2:ℝ) ≤ 3 := by norm_num
+  gorisci_elipse_navpicno (ha := w.1) (hb := w.2.1) (hab := w.2.2)
+
+/-- Predpostavke trditve `gorisci_elipse` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 2 ∧ (2:ℝ) ≤ 3 := by norm_num
+  gorisci_elipse (ha := w.1) (hb := w.2.1) (hab := w.2.2)
+
+/-- Predpostavke trditve `gorisci_elipse_sredisce` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 2 ∧ (2:ℝ) ≤ 3 := by norm_num
+  gorisci_elipse_sredisce (ha := w.1) (hb := w.2.1) (hab := w.2.2)
+
 /-- Razlaga 3 in Povzetek: hiperbola (x − x₀)²/a² − (y − y₀)²/b² = 1 (a, b > 0) ima gorišči (x₀ ∓ e, y₀),
 e = √(a² + b²): absolutna razlika razdalj vsake njene točke do gorišč je 2a.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisci-hiperbole
@@ -160,6 +180,12 @@ theorem gorisci_hiperbole (x₀ y₀ a b x y : ℝ) (ha : 0 < a) (hb : 0 < b)
 /-- Predpostavke `gorisci_hiperbole` se dajo izpolniti (točka (6, −1) na hiperboli iz Razlage 3). -/
 example : (0:ℝ) < 4 ∧ (0:ℝ) < 3 ∧ ((6:ℝ) - 2) ^ 2 / 4 ^ 2 - ((-1:ℝ) - (-1)) ^ 2 / 3 ^ 2 = 1 := by
   norm_num
+
+/-- Predpostavke trditve `gorisci_hiperbole` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 ∧ (0:ℝ) < 3 ∧ ((6:ℝ) - 2) ^ 2 / 4 ^ 2 - ((-1:ℝ) - (-1)) ^ 2 / 3 ^ 2 = 1 := by
+    norm_num
+  gorisci_hiperbole (ha := w.1) (hb := w.2.1) (h := w.2.2)
 
 /-- Razlaga 3 in Povzetek (obrat `gorisci_hiperbole`): točka z absolutno razliko razdalj 2a do gorišč
 (x₀ ∓ e, y₀), e = √(a² + b²), leži na hiperboli (x − x₀)²/a² − (y − y₀)²/b² = 1 (a, b > 0); skupaj z
@@ -203,6 +229,11 @@ theorem gorisce_vodnica_parabole (x₀ y₀ p x y : ℝ) (h : (y - y₀) ^ 2 = 2
 /-- Predpostavka `gorisce_vodnica_parabole` se da izpolniti (teme (3, 2), p = 4, točka (5, 6)). -/
 example : ((6:ℝ) - 2) ^ 2 = 2 * 4 * (5 - 3) := by norm_num
 
+/-- Predpostavke trditve `gorisce_vodnica_parabole` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((6:ℝ) - 2) ^ 2 = 2 * 4 * (5 - 3) := by norm_num
+  gorisce_vodnica_parabole (h := w)
+
 /-- Razlaga 3 in Povzetek: asimptoti y − y₀ = ±(b/a)(x − x₀) gresta skozi središče in hiperbole ne sekata.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#asimptoti
 besedilo: »Asimptoti gresta skozi središče: $y - y_0 = \pm\frac{b}{a}(x - x_0)$. Gorišči sta $(x_0 \pm e, y_0)$ z $e = \sqrt{a^2 + b^2}$.« -/
@@ -215,6 +246,11 @@ theorem asimptoti (x₀ y₀ a b : ℝ) (hb : b ≠ 0) :
 
 /-- Predpostavka `asimptoti` se da izpolniti (b = 3). -/
 example : (3:ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `asimptoti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℝ) ≠ 0 := by norm_num
+  asimptoti (hb := w)
 
 /-- Razlaga 3: desna zgornja veja hiperbole x²/a² − y²/b² = 1 (y = (b/a)√(x² − a²), x ≥ a) leži pod
 asimptoto y = (b/a)x in se ji približuje: razlika je pozitivna in največ ab/x.
@@ -236,6 +272,11 @@ theorem priblizevanje_asimptoti (a b x : ℝ) (ha : 0 < a) (hb : 0 < b) (hx : a 
 
 /-- Predpostavke `priblizevanje_asimptoti` se dajo izpolniti (a = 4, b = 3, x = 6). -/
 example : (0:ℝ) < 4 ∧ (0:ℝ) < 3 ∧ (4:ℝ) ≤ 6 := by norm_num
+
+/-- Predpostavke trditve `priblizevanje_asimptoti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 ∧ (0:ℝ) < 3 ∧ (4:ℝ) ≤ 6 := by norm_num
+  priblizevanje_asimptoti (ha := w.1) (hb := w.2.1) (hx := w.2.2)
 
 /-- Razlaga 3: asimptota kot limita: razlika med asimptoto y = (b/a)x in desno zgornjo vejo gre proti 0
 za x → ∞ (iz ocene `priblizevanje_asimptoti` ≤ ab/x); po simetriji enako za spodnjo desno vejo in asimptoto
@@ -304,6 +345,16 @@ example : (0:ℝ) < 5 ∧ (0:ℝ) < 3 := by norm_num
 
 /-! ## Tangenta v točki stožnice (Razlaga 6) -/
 
+/-- Predpostavke trditve `raztezek_premaknjene` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 5 ∧ (0:ℝ) < 3 := by norm_num
+  raztezek_premaknjene (ha := w.1) (hb := w.2)
+
+/-- Predpostavke trditve `raztezek_kroznice` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 5 ∧ (0:ℝ) < 3 := by norm_num
+  raztezek_kroznice (ha := w.1) (hb := w.2)
+
 /-- Razlaga 6: za točko T₁(x₁, y₁) elipse je premica (x₁ − x₀)(x − x₀)/a² + (y₁ − y₀)(y − y₀)/b² = 1
 tangenta: T₁ leži na njej, vzdolž nje (x = x₁ − t(y₁ − y₀)/b², y = y₁ + t(x₁ − x₀)/a²) je leva stran enačbe
 elipse minus 1 enaka c·t² (dvojna ničla pri t = 0), in T₁ je njena edina skupna točka z elipso.
@@ -331,6 +382,12 @@ theorem tangenta_elipse (x₀ y₀ a b x₁ y₁ : ℝ) (ha : a ≠ 0) (hb : b �
 b = 2). -/
 example : (3:ℝ) ≠ 0 ∧ (2:ℝ) ≠ 0 ∧ ((3.8:ℝ) - 2) ^ 2 / 3 ^ 2 + ((-1.4:ℝ) - (-3)) ^ 2 / 2 ^ 2 = 1 := by
   norm_num
+
+/-- Predpostavke trditve `tangenta_elipse` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℝ) ≠ 0 ∧ (2:ℝ) ≠ 0 ∧ ((3.8:ℝ) - 2) ^ 2 / 3 ^ 2 + ((-1.4:ℝ) - (-3)) ^ 2 / 2 ^ 2 = 1 := by
+    norm_num
+  tangenta_elipse (ha := w.1) (hb := w.2.1) (h₁ := w.2.2)
 
 /-- Razlaga 6: pri hiperboli je med ulomkoma minus: T₁ leži na premici
 (x₁ − x₀)(x − x₀)/a² − (y₁ − y₀)(y − y₀)/b² = 1 in vzdolž nje (x = x₁ + t(y₁ − y₀)/b², y = y₁ + t(x₁ − x₀)/a²)
@@ -375,6 +432,13 @@ example : (1:ℝ) ≠ 0 ∧ √(8:ℝ) ≠ 0 ∧ ((1:ℝ) - (-2)) ^ 2 / 1 ^ 2 - 
   refine ⟨one_ne_zero, by positivity, ?_⟩
   rw [Real.sq_sqrt (by norm_num)]; norm_num
 
+/-- Predpostavke trditve `tangenta_hiperbole` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ √(8:ℝ) ≠ 0 ∧ ((1:ℝ) - (-2)) ^ 2 / 1 ^ 2 - ((9:ℝ) - 1) ^ 2 / √8 ^ 2 = 1 := by
+    refine ⟨one_ne_zero, by positivity, ?_⟩
+    rw [Real.sq_sqrt (by norm_num)]; norm_num
+  tangenta_hiperbole (h₁ := w.2.2)
+
 /-- Razlaga 6: pri paraboli (y − y₀)² = 2p(x − x₀) je tangenta v T₁ premica
 (y₁ − y₀)(y − y₀) = p((x − x₀) + (x₁ − x₀)): T₁ leži na njej, vzdolž nje (x = x₁ + t(y₁ − y₀), y = y₁ + tp)
 je (y − y₀)² − 2p(x − x₀) = p²t² (dvojna ničla), in za p ≠ 0 je T₁ edina skupna točka.
@@ -396,6 +460,11 @@ theorem tangenta_parabole (x₀ y₀ p x₁ y₁ : ℝ) (h₁ : (y₁ - y₀) ^ 
 
 /-- Predpostavke `tangenta_parabole` se dajo izpolniti (Primer 2: T₁(5, 6), teme (3, 2), p = 4). -/
 example : ((6:ℝ) - 2) ^ 2 = 2 * 4 * (5 - 3) ∧ (4:ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `tangenta_parabole` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((6:ℝ) - 2) ^ 2 = 2 * 4 * (5 - 3) ∧ (4:ℝ) ≠ 0 := by norm_num
+  tangenta_parabole (h₁ := w.1)
 
 /-- Razlaga 6: stožnice s središčem oziroma temenom v izhodišču: tangenta elipse x₁x/a² + y₁y/b² = 1,
 hiperbole x₁x/a² − y₁y/b² = 1 in parabole y² = 2px premica y₁y = p(x + x₁) gredo skozi T₁, in T₁ je njihova
@@ -426,6 +495,11 @@ example : (5:ℝ) ≠ 0 ∧ (3:ℝ) ≠ 0 ∧ (5:ℝ) ^ 2 / 5 ^ 2 + (0:ℝ) ^ 2 
 
 /-! ## Lega premice in diskriminanta (Razlaga 5 in 7) -/
 
+/-- Predpostavke trditve `tangente_v_izhodiscu` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (5:ℝ) ≠ 0 ∧ (3:ℝ) ≠ 0 ∧ (5:ℝ) ^ 2 / 5 ^ 2 + (0:ℝ) ^ 2 / 3 ^ 2 = 1 ∧ (2:ℝ) ^ 2 = 2 * 2 * 1 := by norm_num
+  tangente_v_izhodiscu (ha := w.1) (hb := w.2.1)
+
 /-- Razlaga 7: kvadratna enačba Ax² + Bx + C = 0 (A ≠ 0) z D = B² − 4AC: pri D < 0 nima rešitve
 (mimobežnica), pri D = 0 ima eno samo (dvojno) rešitev −B/(2A) (tangenta), pri D > 0 dve različni (sekanta).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#lega-po-diskriminanti
@@ -445,6 +519,11 @@ theorem lega_po_diskriminanti (A B C : ℝ) (hA : A ≠ 0) :
 
 /-- Predpostavka `lega_po_diskriminanti` se da izpolniti (A = 1). -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `lega_po_diskriminanti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  lega_po_diskriminanti (hA := w)
 
 /-- Razlaga 7: premica y = kx + n ima z elipso x²/a² + y²/b² = 1 natanko eno skupno točko (kvadratna enačba
 za x ima dvojno rešitev, D = 0) natanko tedaj, ko je a²k² + b² = n².
@@ -493,6 +572,20 @@ example : (1:ℝ) ≠ 0 ∧ √(8:ℝ) ≠ 0 ∧ (1:ℝ) ^ 2 * 3 ^ 2 ≠ √8 ^ 
   refine ⟨one_ne_zero, by positivity, ?_⟩
   rw [Real.sq_sqrt (by norm_num)]; norm_num
 
+/-- Predpostavke trditve `pogoj_tangentnosti_hiperbole` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ √(8:ℝ) ≠ 0 ∧ (1:ℝ) ^ 2 * 3 ^ 2 ≠ √8 ^ 2 := by
+    refine ⟨one_ne_zero, by positivity, ?_⟩
+    rw [Real.sq_sqrt (by norm_num)]; norm_num
+  pogoj_tangentnosti_hiperbole (ha := w.1) (hb := w.2.1) (hk := w.2.2)
+
+/-- Predpostavke trditve `pogoj_tangentnosti_elipse` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ √(8:ℝ) ≠ 0 ∧ (1:ℝ) ^ 2 * 3 ^ 2 ≠ √8 ^ 2 := by
+    refine ⟨one_ne_zero, by positivity, ?_⟩
+    rw [Real.sq_sqrt (by norm_num)]; norm_num
+  pogoj_tangentnosti_elipse (ha := w.1) (hb := w.2.1)
+
 /-- Razlaga 7: pri paraboli y² = 2px (p ≠ 0) in premici y = kx + n, ki ni vzporedna osi (k ≠ 0), ima
 kvadratna enačba dvojno rešitev natanko tedaj, ko je p = 2kn.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#pogoj-tangentnosti-parabole
@@ -513,6 +606,11 @@ theorem pogoj_tangentnosti_parabole (p k n : ℝ) (hp : p ≠ 0) (hk : k ≠ 0) 
 
 /-- Predpostavke `pogoj_tangentnosti_parabole` se dajo izpolniti (p = 2, k = 1). -/
 example : (2:ℝ) ≠ 0 ∧ (1:ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `pogoj_tangentnosti_parabole` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 ∧ (1:ℝ) ≠ 0 := by norm_num
+  pogoj_tangentnosti_parabole (hp := w.1) (hk := w.2)
 
 /-- Razlaga 5 in 7, Premisli 2, Ustno vprašanje 3: premica y = (b/a)x + n (n ≠ 0), vzporedna asimptoti
 hiperbole x²/a² − y²/b² = 1, da linearno enačbo (člena z x² se odštejeta) in ima s hiperbolo natanko eno
@@ -549,6 +647,16 @@ theorem vzporednica_primer (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
 /-- Predpostavke `vzporednica_asimptoti` in `vzporednica_primer` se dajo izpolniti (a = 4, b = 3, n = 1). -/
 example : (0:ℝ) < 4 ∧ (0:ℝ) < 3 ∧ (1:ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `vzporednica_primer` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 ∧ (0:ℝ) < 3 ∧ (1:ℝ) ≠ 0 := by norm_num
+  vzporednica_primer (ha := w.1) (hb := w.2.1)
+
+/-- Predpostavke trditve `vzporednica_asimptoti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 ∧ (0:ℝ) < 3 ∧ (1:ℝ) ≠ 0 := by norm_num
+  vzporednica_asimptoti (ha := w.1) (hb := w.2.1) (hn := w.2.2)
+
 /-- Razlaga 5: premica y = c, vzporedna osi parabole (y − y₀)² = 2p(x − x₀) (p ≠ 0), da linearno enačbo in
 eno samo presečišče.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#vzporednica-osi
@@ -558,6 +666,11 @@ theorem vzporednica_osi (x₀ y₀ p c : ℝ) (hp : p ≠ 0) : ∃! x : ℝ, (c 
 
 /-- Predpostavka `vzporednica_osi` se da izpolniti (p = 4). -/
 example : (4:ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `vzporednica_osi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4:ℝ) ≠ 0 := by norm_num
+  vzporednica_osi (hp := w)
 
 /-- Pomožna trditev: x² + Bx + C = 0 z B = −(r + s), C = rs ima natanko rešitvi r in s.
 pomozno -/
@@ -771,6 +884,11 @@ theorem primer2_gorisce (x y : ℝ) (h : (y - 2) ^ 2 = 8 * (x - 3)) :
 
 /-- Predpostavka `primer2_gorisce` se da izpolniti (T₁(5, 6)). -/
 example : ((6:ℝ) - 2) ^ 2 = 8 * (5 - 3) := by norm_num
+
+/-- Predpostavke trditve `primer2_gorisce` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((6:ℝ) - 2) ^ 2 = 8 * (5 - 3) := by norm_num
+  primer2_gorisce (h := w)
 
 /-- Primer 2, korak 3: iz (6 − 2)² = 8(x₁ − 3) oziroma 16 = 8(x₁ − 3) sledi x₁ = 5 (edina rešitev).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#primer2-t1
@@ -1078,6 +1196,11 @@ theorem naloga3ab (x y : ℝ) (h : (x + 2) ^ 2 - (y - 1) ^ 2 / 8 = 1) :
 /-- Predpostavka `naloga3ab` se da izpolniti (T₁(1, 9)). -/
 example : ((1:ℝ) + 2) ^ 2 - ((9:ℝ) - 1) ^ 2 / 8 = 1 := by norm_num
 
+/-- Predpostavke trditve `naloga3ab` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ((1:ℝ) + 2) ^ 2 - ((9:ℝ) - 1) ^ 2 / 8 = 1 := by norm_num
+  naloga3ab (h := w)
+
 /-- Naloga 3 c): 8·(1 + 2)² − (y₁ − 1)² = 8 ↔ (y₁ − 1)² = 64 ↔ y₁ = −7 ∨ y₁ = 9; z y₁ > 1 ostane y₁ = 9,
 T₁(1, 9). Tangenta 3(x + 2) − 8(y − 1)/8 = 1 ↔ 3x + 6 − y + 1 = 1 ↔ y = 3x + 6.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga3c
@@ -1280,6 +1403,11 @@ theorem desna_stran_elipse (x₀ y₀ A B c : ℝ) (hA : 0 < A) (hB : 0 < B) :
 
 /-- Predpostavke `desna_stran_elipse` se dajo izpolniti (A = 4, B = 9). -/
 example : (0:ℝ) < 4 ∧ (0:ℝ) < 9 := by norm_num
+
+/-- Predpostavke trditve `desna_stran_elipse` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 ∧ (0:ℝ) < 9 := by norm_num
+  desna_stran_elipse (hA := w.1) (hB := w.2)
 
 /-- Preveri se, vprašanje 2 (napačni odgovor 2,83): √(25 + 9) − 3 = √34 − 3 ≈ 2,83.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kviz2-napacni

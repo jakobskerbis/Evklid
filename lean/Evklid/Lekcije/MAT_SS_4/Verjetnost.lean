@@ -40,6 +40,11 @@ theorem gotov_nemogoc {α : Type*} (Ω A : Finset α) (hΩ : Ω.Nonempty) (hA : 
 /-- Predpostavke trditve `gotov_nemogoc` se dajo izpolniti. -/
 example : (Icc 1 6 : Finset ℕ).Nonempty ∧ ({2, 4, 6} : Finset ℕ) ⊆ Icc 1 6 := by decide
 
+/-- Predpostavke trditve `gotov_nemogoc` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (Icc 1 6 : Finset ℕ).Nonempty ∧ ({2, 4, 6} : Finset ℕ) ⊆ Icc 1 6 := by decide
+  gotov_nemogoc (hΩ := w.1) (hA := w.2)
+
 /-- Razlaga 1: nasprotni dogodek: P(Ā) = 1 − P(A).
 trditev: MAT-SS-4/verjetnost#nasprotni
 besedilo: »$$P(\overline{A}) = 1 - P(A).$$« -/
@@ -52,6 +57,11 @@ theorem nasprotni {α : Type*} [DecidableEq α] (Ω A : Finset α) (hΩ : Ω.Non
 
 /-- Predpostavke trditve `nasprotni` se dajo izpolniti. -/
 example : (Icc 1 6 : Finset ℕ).Nonempty ∧ ({2, 4, 6} : Finset ℕ) ⊆ Icc 1 6 := by decide
+
+/-- Predpostavke trditve `nasprotni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (Icc 1 6 : Finset ℕ).Nonempty ∧ ({2, 4, 6} : Finset ℕ) ⊆ Icc 1 6 := by decide
+  nasprotni (hΩ := w.1) (hA := w.2)
 
 /-- Razlaga 1: poskus z n izidi ima 2ⁿ dogodkov (podmnožic).
 trditev: MAT-SS-4/verjetnost#stevilo-dogodkov
@@ -121,6 +131,11 @@ theorem vsota_nezdruzljivih {α : Type*} [DecidableEq α] (Ω A B : Finset α) (
 /-- Predpostavka trditve `vsota_nezdruzljivih` se da izpolniti (»padla je 1« in »padla je 2«). -/
 example : Disjoint ({1} : Finset ℕ) {2} := by decide
 
+/-- Predpostavke trditve `vsota_nezdruzljivih` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Disjoint ({1} : Finset ℕ) {2} := by decide
+  vsota_nezdruzljivih (h := w)
+
 /-- Razlaga 3, »Preveri«: »padlo je sodo« {2, 4, 6} in »padla je 6« {6} nista nezdružljiva, saj je
 {2, 4, 6} · {6} = {6} neprazen (šestica je soda).
 trditev: MAT-SS-4/verjetnost#sodo-sest-zdruzljiva
@@ -137,6 +152,11 @@ theorem vsota_mera {Ω : Type*} [MeasurableSpace Ω] (μ : MeasureTheory.Measure
 
 /-- Predpostavka trditve `vsota_mera` se da izpolniti. -/
 example : MeasurableSet (Set.univ : Set ℝ) := MeasurableSet.univ
+
+/-- Predpostavke trditve `vsota_mera` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : MeasurableSet (Set.univ : Set ℝ) := MeasurableSet.univ
+  vsota_mera (hB := w)
 
 /-- Razlaga 1 (splošna verjetnostna mera): P(Ā) = 1 − P(A).
 trditev: MAT-SS-4/verjetnost#nasprotni-mera
@@ -166,6 +186,12 @@ example : (range 10).Nonempty ∧ range 7 ⊆ range 10 ∧ Ico 4 10 ⊆ range 10
 
 /-! ## Razlaga 5–7: pogojna verjetnost, produkt, neodvisnost -/
 
+/-- Predpostavke trditve `mleko_jajca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (range 10).Nonempty ∧ range 7 ⊆ range 10 ∧ Ico 4 10 ⊆ range 10 ∧ P (range 10) (range 7) = 0.7 ∧ P (range 10) (Ico 4 10) = 0.6 := by
+    refine ⟨by decide, by decide, by decide, ?_, ?_⟩ <;> unfold P <;> simp <;> norm_num
+  mleko_jajca (hΩ := w.1) (hA := w.2.1) (hB := w.2.2.1) (pA := w.2.2.2.1) (pB := w.2.2.2.2)
+
 /-- Bolj natančno: pri klasični verjetnosti P(A/B) = |A·B|/|B| = (|A·B|/n)/(|B|/n).
 trditev: MAT-SS-4/verjetnost#pogojna-stetje
 besedilo: »$$P(A/B) = \frac{|A \cdot B|}{|B|} = \frac{|A \cdot B|/n}{|B|/n} = \frac{P(A \cdot B)}{P(B)}.$$« -/
@@ -176,6 +202,11 @@ theorem pogojna_stetje {α : Type*} [DecidableEq α] (Ω A B : Finset α) (hΩ :
 
 /-- Predpostavka trditve `pogojna_stetje` se da izpolniti. -/
 example : (Icc 1 6 : Finset ℕ).Nonempty := by decide
+
+/-- Predpostavke trditve `pogojna_stetje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (Icc 1 6 : Finset ℕ).Nonempty := by decide
+  pogojna_stetje (hΩ := w)
 
 /-- Razlaga 6: verjetnost produkta P(A·B) = P(B)·P(A/B) (P(B) > 0).
 trditev: MAT-SS-4/verjetnost#verjetnost-produkta
@@ -188,6 +219,12 @@ theorem verjetnost_produkta {α : Type*} [DecidableEq α] (Ω A B : Finset α) (
 example : 0 < P (Icc 1 6) {4, 5, 6} := by
   unfold P; rw [show #({4, 5, 6} : Finset ℕ) = 3 by decide, show #(Icc 1 6 : Finset ℕ) = 6 by decide]; norm_num
 
+/-- Predpostavke trditve `verjetnost_produkta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 0 < P (Icc 1 6) {4, 5, 6} := by
+    unfold P; rw [show #({4, 5, 6} : Finset ℕ) = 3 by decide, show #(Icc 1 6 : Finset ℕ) = 6 by decide]; norm_num
+  verjetnost_produkta (hB := w)
+
 /-- Razlaga 7 in Bolj natančno: P(A/B) = P(A) natanko tedaj, ko P(A·B) = P(A)·P(B) (P(B) > 0).
 trditev: MAT-SS-4/verjetnost#neodvisnost
 besedilo: »Neodvisnost (višja raven).** Dogodka sta neodvisna natanko tedaj, ko je $P(A/B) = P(A)$, kar je po definiciji pogojne verjetnosti ekvivalentno $P(A \cdot B) = P(A) \cdot P(B)$.« -/
@@ -198,6 +235,12 @@ theorem neodvisnost {α : Type*} [DecidableEq α] (Ω A B : Finset α) (hB : 0 <
 /-- Predpostavka trditve `neodvisnost` se da izpolniti. -/
 example : 0 < P (Icc 1 6) {4, 5, 6} := by
   unfold P; rw [show #({4, 5, 6} : Finset ℕ) = 3 by decide, show #(Icc 1 6 : Finset ℕ) = 6 by decide]; norm_num
+
+/-- Predpostavke trditve `neodvisnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 0 < P (Icc 1 6) {4, 5, 6} := by
+    unfold P; rw [show #({4, 5, 6} : Finset ℕ) = 3 by decide, show #(Icc 1 6 : Finset ℕ) = 6 by decide]; norm_num
+  neodvisnost (hB := w)
 
 /-- Razlaga 7 in Ustno vprašanje 3: pri dveh metih kovanca (izidi Fin 2 × Fin 2, 0 = grb) sta »v prvem metu
 pade grb« in »v drugem metu pade grb« neodvisna: P(A·B) = 1/4 = 1/2 · 1/2 = P(A)·P(B), torej P(A/B) = P(A).
@@ -236,6 +279,12 @@ theorem nezdruzljiva_nista_neodvisna {α : Type*} [DecidableEq α] (Ω A B : Fin
 example : Disjoint ({1} : Finset ℕ) {2} ∧ 0 < P (Icc 1 6) {1} ∧ 0 < P (Icc 1 6) {2} := by
   refine ⟨by decide, ?_, ?_⟩ <;> unfold P <;> simp
 
+/-- Predpostavke trditve `nezdruzljiva_nista_neodvisna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Disjoint ({1} : Finset ℕ) {2} ∧ 0 < P (Icc 1 6) {1} ∧ 0 < P (Icc 1 6) {2} := by
+    refine ⟨by decide, ?_, ?_⟩ <;> unfold P <;> simp
+  nezdruzljiva_nista_neodvisna (h := w.1) (hA := w.2.1) (hB := w.2.2)
+
 /-- Razlaga 5 in 6 (splošna verjetnostna mera): μ[A | B]·μ(B) = μ(B ∩ A) in μ[A | B] = μ(B)⁻¹·μ(B ∩ A).
 trditev: MAT-SS-4/verjetnost#pogojna-mera
 besedilo: »$$P(A/B) = \frac{P(A \cdot B)}{P(B)}.$$« -/
@@ -246,6 +295,11 @@ theorem pogojna_mera {Ω : Type*} [MeasurableSpace Ω] (μ : MeasureTheory.Measu
 
 /-- Predpostavka trditve `pogojna_mera` se da izpolniti. -/
 example : MeasurableSet (Set.univ : Set ℝ) := MeasurableSet.univ
+
+/-- Predpostavke trditve `pogojna_mera` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : MeasurableSet (Set.univ : Set ℝ) := MeasurableSet.univ
+  pogojna_mera (hB := w)
 
 /-- Razlaga 7 (splošna verjetnostna mera): A in B sta neodvisna natanko tedaj, ko μ(A ∩ B) = μ(A)·μ(B).
 trditev: MAT-SS-4/verjetnost#neodvisnost-mera
@@ -263,6 +317,11 @@ example : MeasureTheory.IsProbabilityMeasure (MeasureTheory.Measure.dirac (0 : �
 
 /-- Pari različnih jajc (urejeno), jajci 0 in 1 sta počeni. -/
 def jajca : Finset (Fin 12 × Fin 12) := univ.filter (fun p => p.1 ≠ p.2)
+
+/-- Predpostavke trditve `neodvisnost_mera` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : MeasureTheory.IsProbabilityMeasure (MeasureTheory.Measure.dirac (0 : ℝ)) ∧ MeasurableSet (Set.univ : Set ℝ) := ⟨inferInstance, MeasurableSet.univ⟩
+  neodvisnost_mera (hA := w.1) (hB := w.2)
 
 /-- Razlaga 6 (drevo): 132 urejenih parov; obe celi 90, prvo celo 110, drugo celo 110, obe počeni 2; torej
 P(obe celi) = 90/132 = 15/22, P(drugo celo / prvo celo) = 9/11 ≠ 10/12 = P(drugo celo), P(obe počeni) = 1/66.
@@ -398,6 +457,12 @@ example : Disjoint ({0} : Finset ℕ) {1} ∧ ({0} : Finset ℕ) ∪ {1} = range
     0 < P (range 2) {0} ∧ 0 < P (range 2) {1} := by
   refine ⟨by decide, by decide, by decide, ?_, ?_⟩ <;> unfold P <;> simp
 
+/-- Predpostavke trditve `popolna_verjetnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Disjoint ({0} : Finset ℕ) {1} ∧ ({0} : Finset ℕ) ∪ {1} = range 2 ∧ ({0} : Finset ℕ) ⊆ range 2 ∧ 0 < P (range 2) {0} ∧ 0 < P (range 2) {1} := by
+    refine ⟨by decide, by decide, by decide, ?_, ?_⟩ <;> unfold P <;> simp
+  popolna_verjetnost (hAB := w.1) (hU := w.2.1) (hK := w.2.2.1) (hA := w.2.2.2.1) (hB := w.2.2.2.2)
+
 /-- Primer 4: P(A·K) = 0,6·0,02 = 0,012; P(K) = 0,6·0,02 + 0,4·0,05 = 0,012 + 0,020 = 0,032;
 P(A/K) = 0,012/0,032 = 12/32 = 3/8 = 0,375 (37,5 %, manj kot polovica).
 trditev: MAT-SS-4/verjetnost#primer4
@@ -486,6 +551,11 @@ theorem naloga3 {α : Type*} [DecidableEq α] (Ω S I : Finset α) (hS : S ⊆ �
 example : range 18 ⊆ range 30 ∧ Ico 12 24 ⊆ range 30 ∧ #(range 30) = 30 ∧ #(range 18) = 18 ∧
     #(Ico 12 24) = 12 ∧ #(range 18 ∩ Ico 12 24) = 6 := by decide
 
+/-- Predpostavke trditve `naloga3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : range 18 ⊆ range 30 ∧ Ico 12 24 ⊆ range 30 ∧ #(range 30) = 30 ∧ #(range 18) = 18 ∧ #(Ico 12 24) = 12 ∧ #(range 18 ∩ Ico 12 24) = 6 := by decide
+  naloga3 (hS := w.1) (hI := w.2.1) (h30 := w.2.2.1) (h18 := w.2.2.2.1) (h12 := w.2.2.2.2.1) (h6 := w.2.2.2.2.2)
+
 /-- Naloga 3 e): 12/30·11/29 = 132/870 = 22/145, tudi `C(12,2)/C(30,2) = 22/145`.
 trditev: MAT-SS-4/verjetnost#naloga3-e
 besedilo: »$P = \frac{12}{30} \cdot \frac{11}{29} = \frac{132}{870} = \frac{22}{145}$« -/
@@ -538,6 +608,15 @@ example : P (range 10) (range 5) = 0.5 ∧ P (range 10) (Ico 2 6) = 0.4 ∧
   · simp; norm_num
   · simp; norm_num
   · rw [show #(range 5 ∪ Ico 2 6) = 6 by decide]; simp; norm_num
+
+/-- Predpostavke trditve `kviz3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : P (range 10) (range 5) = 0.5 ∧ P (range 10) (Ico 2 6) = 0.4 ∧ P (range 10) (range 5 ∪ Ico 2 6) = 0.6 := by
+    refine ⟨?_, ?_, ?_⟩ <;> unfold P
+    · simp; norm_num
+    · simp; norm_num
+    · rw [show #(range 5 ∪ Ico 2 6) = 6 by decide]; simp; norm_num
+  kviz3 (pA := w.1) (pB := w.2.1) (pU := w.2.2)
 
 /-- Preveri se 4: P(A) = 0,6, P(B) = 0,4, P(A·B) = 0,12 ⇒ P(A/B) = 0,12/0,4 = 0,3 (ne 0,12/0,6 = 0,2,
 ne 0,12·0,4 = 0,048).

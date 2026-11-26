@@ -111,6 +111,11 @@ theorem tocke_na_premici (A B C : V) (hAB : A ≠ B) :
 /-- Predpostavka `tocke_na_premici` se da izpolniti (A(1, 2) ≠ B(4, 4) iz Primera 1). -/
 example : (!₂[1, 2] : R2) ≠ !₂[4, 4] := by rw [Ne, v2_eq]; norm_num
 
+/-- Predpostavke trditve `tocke_na_premici` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[1, 2] : R2) ≠ !₂[4, 4] := by rw [Ne, v2_eq]; norm_num
+  tocke_na_premici (hAB := w)
+
 /-- Razlaga 4 in Povzetek (višja raven): n vektorjev je linearno odvisnih natanko tedaj, ko njihova
 ogrinjača ni n-razsežna (dva sta odvisna ⇔ ležita na eni premici skozi O, razsežnost ≤ 1, torej sta
 kolinearna; trije ⇔ ležijo v eni ravnini, razsežnost ≤ 2, torej so koplanarni).
@@ -185,6 +190,17 @@ example : LinearIndependent ℝ ![(!₂[1, 0, 2] : R3), !₂[2, 1, -1]] := by
     rw [h]; ext i; fin_cases i <;> rfl
   rw [v3_eq] at h'; constructor <;> linarith [h'.1, h'.2.1]
 
+/-- Predpostavke trditve `koplanarni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[1, 0, 2] : R3), !₂[2, 1, -1]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    rw [v3_smul, v3_smul, v3_add] at h
+    have h' : (!₂[s * 1 + t * 2, s * 0 + t * 1, s * 2 + t * -1] : R3) = !₂[0, 0, 0] := by
+      rw [h]; ext i; fin_cases i <;> rfl
+    rw [v3_eq] at h'; constructor <;> linarith [h'.1, h'.2.1]
+  koplanarni (hab := w)
+
 /-- Razlaga 3 in 4: v ravnini so trije (in štirje) vektorji vedno odvisni (vsi so koplanarni), v prostoru so
 štirje vedno odvisni.
 trditev: MAT-SS-3/vektorji-v-geometriji#vedno-odvisni
@@ -252,6 +268,11 @@ theorem delilno_razmerje (A B D : V) (m n : ℝ) (hmn : m + n ≠ 0) :
 /-- Predpostavka `delilno_razmerje` se da izpolniti (m = 1, n = 2 iz Primera 2). -/
 example : (1:ℝ) + 2 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `delilno_razmerje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) + 2 ≠ 0 := by norm_num
+  delilno_razmerje (hmn := w)
+
 /-- Razlaga 5: razpolovišče (m = n) ima r⃗_S = (r⃗_A + r⃗_B)/2; razdalji v normiranem prostoru sta
 |AD| = m/(m + n)|AB| in |DB| = n/(m + n)|AB|, zato je D bližje A (|AD| < |DB|) natanko pri m < n (r⃗_A ima
 večjo utež n).
@@ -278,6 +299,12 @@ theorem razpolovisce_in_blizina {W : Type*} [NormedAddCommGroup W] [NormedSpace 
 /-- Predpostavke `razpolovisce_in_blizina` se dajo izpolniti (m = 1, n = 2, A(1, 1) ≠ B(7, 4)). -/
 example : (0:ℝ) < 1 ∧ (0:ℝ) < 2 ∧ (!₂[1, 1] : R2) ≠ !₂[7, 4] := by
   refine ⟨by norm_num, by norm_num, ?_⟩; rw [Ne, v2_eq]; norm_num
+
+/-- Predpostavke trditve `razpolovisce_in_blizina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 ∧ (0:ℝ) < 2 ∧ (!₂[1, 1] : R2) ≠ !₂[7, 4] := by
+    refine ⟨by norm_num, by norm_num, ?_⟩; rw [Ne, v2_eq]; norm_num
+  razpolovisce_in_blizina (hm := w.1) (hn := w.2.1) (hAB := w.2.2)
 
 /-- Razlaga 6 in Ustno vprašanje 3 (težišče, višja raven): s S = (A + B)/2 je T = (C + 2S)/3 = (A + B + C)/3;
 T leži na vseh treh težiščnicah in vsako deli v razmerju 2 : 1 (1·(T − X) = 2·(S_X − T) za vsako oglišče X in
@@ -316,6 +343,16 @@ example : LinearIndependent ℝ ![(!₂[1, 0] : R2), !₂[0, 1]] := by
   rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
 
 /-! ## Razlaga: primeri na mreži -/
+
+/-- Predpostavke trditve `diagonali_paralelograma` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[1, 0] : R2), !₂[0, 1]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    rw [v2_smul, v2_smul, v2_add] at h
+    have h' : (!₂[s * 1 + t * 0, s * 0 + t * 1] : R2) = !₂[0, 0] := by rw [h]; ext i; fin_cases i <;> rfl
+    rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
+  diagonali_paralelograma (h := w)
 
 /-- Razlaga 1: OP⃗ = 2·(2, 1) + 1·(1, 2) = (5, 4) (pot čez (2, 1) in (4, 2)).
 trditev: MAT-SS-3/vektorji-v-geometriji#linearna-kombinacija-mreza
@@ -367,6 +404,12 @@ theorem vzporedni_ne_ista (A B C D : R2) (hA : A = !₂[0, 0]) (hB : B = !₂[1,
 /-- Predpostavke `vzporedni_ne_ista` se dajo izpolniti. -/
 example : ∃ A B C D : R2, A = !₂[0, 0] ∧ B = !₂[1, 0] ∧ C = !₂[0, 1] ∧ D = !₂[1, 1] :=
   ⟨_, _, _, _, rfl, rfl, rfl, rfl⟩
+
+/-- Predpostavke trditve `vzporedni_ne_ista` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ A B C D : R2, A = !₂[0, 0] ∧ B = !₂[1, 0] ∧ C = !₂[0, 1] ∧ D = !₂[1, 1] :=
+    ⟨_, _, _, _, rfl, rfl, rfl, rfl⟩
+  vzporedni_ne_ista (hA := w.choose_spec.choose_spec.choose_spec.choose_spec.1) (hB := w.choose_spec.choose_spec.choose_spec.choose_spec.2.1) (hC := w.choose_spec.choose_spec.choose_spec.choose_spec.2.2.1) (hD := w.choose_spec.choose_spec.choose_spec.choose_spec.2.2.2)
 
 /-- Razlaga 4: 2·(2, 1) + 1·(−4, −2) = (0, 0), zato sta (2, 1) in (−4, −2) linearno odvisna.
 trditev: MAT-SS-3/vektorji-v-geometriji#primer-odvisna
@@ -453,6 +496,16 @@ example : LinearIndependent ℝ ![(!₂[6, 0] : R2), !₂[3, 3]] := by
   have h' : (!₂[s * 6 + t * 3, s * 0 + t * 3] : R2) = !₂[0, 0] := by rw [h]; ext i; fin_cases i <;> rfl
   rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
 
+/-- Predpostavke trditve `primer3_koeficienta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[6, 0] : R2), !₂[3, 3]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    rw [v2_smul, v2_smul, v2_add] at h
+    have h' : (!₂[s * 6 + t * 3, s * 0 + t * 3] : R2) = !₂[0, 0] := by rw [h]; ext i; fin_cases i <;> rfl
+    rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
+  primer3_koeficienta (h := w)
+
 /-- Primer 3, odgovor: P = A + (3/4)AE⃗ = B + (1/4)BD⃗ je edina skupna točka premic AE in BD; BP : PD = 1 : 3
 (3·BP⃗ = 1·PD⃗) in AP : PE = 3 : 1 (1·AP⃗ = 3·PE⃗).
 trditev: MAT-SS-3/vektorji-v-geometriji#primer3
@@ -483,6 +536,17 @@ example : LinearIndependent ℝ ![(!₂[6, 0] : R2) - !₂[0, 0], !₂[3, 3] - !
   have h' : (!₂[s * (6 - 0) + t * (3 - 0), s * (0 - 0) + t * (3 - 0)] : R2) = !₂[0, 0] := by
     rw [h]; ext i; fin_cases i <;> rfl
   rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
+
+/-- Predpostavke trditve `primer3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[6, 0] : R2) - !₂[0, 0], !₂[3, 3] - !₂[0, 0]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    rw [v2_sub, v2_sub, v2_smul, v2_smul, v2_add] at h
+    have h' : (!₂[s * (6 - 0) + t * (3 - 0), s * (0 - 0) + t * (3 - 0)] : R2) = !₂[0, 0] := by
+      rw [h]; ext i; fin_cases i <;> rfl
+    rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
+  primer3 (h := w)
 
 /-- Primer 3, slika: A(0, 0), B(6, 0), D(3, 3) da E = (7, 1) in P = (5,25; 0,75).
 trditev: MAT-SS-3/vektorji-v-geometriji#primer3-slika
@@ -630,6 +694,17 @@ example : LinearIndependent ℝ ![(!₂[10, 5] : R2) - !₂[0, 0], !₂[5, 10] -
     rw [h]; ext i; fin_cases i <;> rfl
   rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
 
+/-- Predpostavke trditve `naloga3c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[10, 5] : R2) - !₂[0, 0], !₂[5, 10] - !₂[0, 0]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    rw [v2_sub, v2_sub, v2_smul, v2_smul, v2_add] at h
+    have h' : (!₂[s * (10 - 0) + t * (5 - 0), s * (5 - 0) + t * (10 - 0)] : R2) = !₂[0, 0] := by
+      rw [h]; ext i; fin_cases i <;> rfl
+    rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
+  naloga3c (h := w)
+
 /-- Naloga 3 d): AQ⃗ = (1/5)(10, 5) + (2/5)(5, 10) = (2, 1) + (2, 4) = (4, 5), torej Q(4, 5); T = ((0 + 10 + 5)/3,
 (0 + 5 + 10)/3) = (5, 5) ≠ Q, Q ni težišče.
 trditev: MAT-SS-3/vektorji-v-geometriji#naloga3d
@@ -665,6 +740,17 @@ example : LinearIndependent ℝ ![(!₂[1, 0, 0] : R3), !₂[0, 1, 0]] := by
   rw [v3_eq] at h'; constructor <;> linarith [h'.1, h'.2.1]
 
 /-! ## Preveri se -/
+
+/-- Predpostavke trditve `ustno1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[1, 0, 0] : R3), !₂[0, 1, 0]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    rw [v3_smul, v3_smul, v3_add] at h
+    have h' : (!₂[s * 1 + t * 0, s * 0 + t * 1, s * 0 + t * 0] : R3) = !₂[0, 0, 0] := by
+      rw [h]; ext i; fin_cases i <;> rfl
+    rw [v3_eq] at h'; constructor <;> linarith [h'.1, h'.2.1]
+  ustno1 (h := w)
 
 /-- Preveri se 1: vzhod (1, 0) in severovzhod (1, 1) sta neodvisna (le ničelna kombinacija da 0⃗), čeprav nista
 pravokotna (glej `napake`); (1, 0) in (3, 0) sta kolinearna in zato odvisna.

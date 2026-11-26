@@ -127,6 +127,12 @@ theorem pravokotno_na_ravnino (n u v : V) (hu : inner ℝ n u = 0) (hv : inner �
 example : inner ℝ (!₂[0, 0, 1] : R3) !₂[1, 0, 0] = 0 ∧ inner ℝ (!₂[0, 0, 1] : R3) !₂[0, 1, 0] = 0 := by
   rw [skalarni3, skalarni3]; norm_num
 
+/-- Predpostavke trditve `pravokotno_na_ravnino` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : inner ℝ (!₂[0, 0, 1] : R3) !₂[1, 0, 0] = 0 ∧ inner ℝ (!₂[0, 0, 1] : R3) !₂[0, 1, 0] = 0 := by
+    rw [skalarni3, skalarni3]; norm_num
+  pravokotno_na_ravnino (hu := w.1) (hv := w.2)
+
 /-- Razlaga (kosinusni izrek, Ustno vprašanje 2): |a⃗ − b⃗|² = a⃗·a⃗ − 2a⃗·b⃗ + b⃗·b⃗ = |a⃗|² + |b⃗|² − 2|a⃗||b⃗|cos γ;
 pri γ = π/2 ostane Pitagorov izrek.
 trditev: MAT-SS-3/skalarni-produkt#kosinusni-izrek
@@ -176,9 +182,22 @@ example : (!₂[2, 2] : R2) ≠ 0 ∧ inner ℝ (!₂[2, 2] : R2) !₂[-3, 0] < 
   refine ⟨fun h => ?_, by rw [skalarni2]; norm_num⟩
   have := congrArg (fun v : R2 => v 0) h; simp at this
 
+/-- Predpostavke trditve `projekcija_nazaj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[2, 2] : R2) ≠ 0 ∧ inner ℝ (!₂[2, 2] : R2) !₂[-3, 0] < 0 := by
+    refine ⟨fun h => ?_, by rw [skalarni2]; norm_num⟩
+    have := congrArg (fun v : R2 => v 0) h; simp at this
+  projekcija_nazaj (ha := w.1) (h := w.2)
+
 /-- Predpostavka `projekcija` se da izpolniti (a⃗ = (4, 2)). -/
 example : (!₂[4, 2] : R2) ≠ 0 := by
   intro h; have := congrArg (fun v : R2 => v 0) h; simp at this
+
+/-- Predpostavke trditve `projekcija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[4, 2] : R2) ≠ 0 := by
+    intro h; have := congrArg (fun v : R2 => v 0) h; simp at this
+  projekcija (ha := w)
 
 /-- Razlaga (projekcija daljice): pri ostrem kotu φ (φ ≤ π/2) je dolžina projekcije |b⃗|cos φ.
 trditev: MAT-SS-3/skalarni-produkt#projekcija-daljice
@@ -195,6 +214,14 @@ example : (!₂[4, 2] : R2) ≠ 0 ∧ angle (!₂[4, 2] : R2) !₂[1, 3] ≤ π 
   · have := congrArg (fun v : R2 => v 0) h; simp at this
   · exact ((predznak _ _).2.1.1 (by rw [skalarni2]; norm_num)).le
 
+/-- Predpostavke trditve `projekcija_daljice` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[4, 2] : R2) ≠ 0 ∧ angle (!₂[4, 2] : R2) !₂[1, 3] ≤ π / 2 := by
+    refine ⟨fun h => ?_, ?_⟩
+    · have := congrArg (fun v : R2 => v 0) h; simp at this
+    · exact ((predznak _ _).2.1.1 (by rw [skalarni2]; norm_num)).le
+  projekcija_daljice (ha := w.1) (hφ := w.2)
+
 /-- Premisli 3 in Preveri se 3: pri k > 0 je a⃗·(k b⃗) = k(a⃗·b⃗) (trikrat daljši b⃗ potroji produkt), kot pa ostane
 enak.
 trditev: MAT-SS-3/skalarni-produkt#raztezanje
@@ -205,6 +232,11 @@ theorem raztezanje (a b : V) (k : ℝ) (hk : 0 < k) :
 
 /-- Predpostavka `raztezanje` se da izpolniti (k = 3 oziroma k = 2). -/
 example : (0:ℝ) < 3 ∧ (0:ℝ) < 2 := by norm_num
+
+/-- Predpostavke trditve `raztezanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 2 := by norm_num
+  raztezanje (hk := w.1)
 
 /-- Pogoste napake (kot iz napačnih vektorjev): angle(AB⃗, BC⃗) = π − angle(BA⃗, BC⃗) = 180° − β.
 trditev: MAT-SS-3/skalarni-produkt#napacen-kot
@@ -258,6 +290,22 @@ example : (!₂[1, 0] : R2) ≠ 0 ∧ (!₂[-Real.sqrt 3, 1] : R2) ≠ 0 ∧
     rw [skalarni2, n1, n2, show (1 * -Real.sqrt 3 + 0 * 1) / (1 * 2) = Real.cos (5 * π / 6) by
       rw [show 5 * π / 6 = π - π / 6 by ring, Real.cos_pi_sub, Real.cos_pi_div_six]; ring]
     exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+
+/-- Predpostavke trditve `premisli_150` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[1, 0] : R2) ≠ 0 ∧ (!₂[-Real.sqrt 3, 1] : R2) ≠ 0 ∧ angle (!₂[1, 0] : R2) !₂[-Real.sqrt 3, 1] = 5 * π / 6 := by
+    have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    have n1 : ‖(!₂[1, 0] : R2)‖ = 1 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
+    have n2 : ‖(!₂[-Real.sqrt 3, 1] : R2)‖ = 2 := by
+      rw [dolzina2]; exact koren_kvadrata (by norm_num) (by rw [neg_sq, h3]; norm_num)
+    refine ⟨fun h => ?_, fun h => ?_, ?_⟩
+    · have := congrArg (fun v : R2 => v 0) h; simp at this
+    · have := congrArg (fun v : R2 => v 1) h; simp at this
+    · unfold angle
+      rw [skalarni2, n1, n2, show (1 * -Real.sqrt 3 + 0 * 1) / (1 * 2) = Real.cos (5 * π / 6) by
+        rw [show 5 * π / 6 = π - π / 6 by ring, Real.cos_pi_sub, Real.cos_pi_div_six]; ring]
+      exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+  premisli_150 (ha := w.1) (hb := w.2.1) (h := w.2.2)
 
 /-- Razlaga (zakaj po komponentah): enotska vektorja i⃗ = (1, 0), j⃗ = (0, 1): i⃗·i⃗ = j⃗·j⃗ = 1, i⃗·j⃗ = 0.
 trditev: MAT-SS-3/skalarni-produkt#enotska
@@ -317,6 +365,20 @@ example : ‖(!₂[4, 0] : R2)‖ = 4 ∧ ‖(!₂[5 / 2, 5 * Real.sqrt 3 / 2] :
   rw [skalarni2, n1, n2, show (4 * (5 / 2) + 0 * (5 * Real.sqrt 3 / 2)) / (4 * 5) = Real.cos (π / 3) by
     rw [Real.cos_pi_div_three]; norm_num]
   exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+
+/-- Predpostavke trditve `primer1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ‖(!₂[4, 0] : R2)‖ = 4 ∧ ‖(!₂[5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 ∧ angle (!₂[4, 0] : R2) !₂[5 / 2, 5 * Real.sqrt 3 / 2] = π / 3 := by
+    have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    have n1 : ‖(!₂[4, 0] : R2)‖ = 4 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
+    have n2 : ‖(!₂[5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 := by
+      rw [dolzina2]; exact koren_kvadrata (by norm_num) (by linear_combination (25 / 4) * h3)
+    refine ⟨n1, n2, ?_⟩
+    unfold angle
+    rw [skalarni2, n1, n2, show (4 * (5 / 2) + 0 * (5 * Real.sqrt 3 / 2)) / (4 * 5) = Real.cos (π / 3) by
+      rw [Real.cos_pi_div_three]; norm_num]
+    exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+  primer1 (ha := w.1) (hb := w.2.1) (h := w.2.2)
 
 /-- Primer 2: (3, 4)·(5, −12) = 15 − 48 = −33 < 0 (top kot); |a⃗| = √(9 + 16) = 5, |b⃗| = √(25 + 144) = 13;
 cos φ = −33/65 ≈ −0,508.
@@ -401,6 +463,20 @@ example : ‖(!₂[3, 0] : R2)‖ = 3 ∧ ‖(!₂[-5 / 2, 5 * Real.sqrt 3 / 2] 
   rw [skalarni2, n1, n2, show (3 * (-5 / 2) + 0 * (5 * Real.sqrt 3 / 2)) / (3 * 5) = Real.cos (2 * π / 3) by
     rw [show 2 * π / 3 = π - π / 3 by ring, Real.cos_pi_sub, Real.cos_pi_div_three]; norm_num]
   exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+
+/-- Predpostavke trditve `primer5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ‖(!₂[3, 0] : R2)‖ = 3 ∧ ‖(!₂[-5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 ∧ angle (!₂[3, 0] : R2) !₂[-5 / 2, 5 * Real.sqrt 3 / 2] = 2 * π / 3 := by
+    have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    have n1 : ‖(!₂[3, 0] : R2)‖ = 3 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
+    have n2 : ‖(!₂[-5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 := by
+      rw [dolzina2]; exact koren_kvadrata (by norm_num) (by linear_combination (25 / 4) * h3)
+    refine ⟨n1, n2, ?_⟩
+    unfold angle
+    rw [skalarni2, n1, n2, show (3 * (-5 / 2) + 0 * (5 * Real.sqrt 3 / 2)) / (3 * 5) = Real.cos (2 * π / 3) by
+      rw [show 2 * π / 3 = π - π / 3 by ring, Real.cos_pi_sub, Real.cos_pi_div_three]; norm_num]
+    exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+  primer5 (ha := w.1) (hb := w.2.1) (h := w.2.2)
 
 /-- Primer 6: a⃗·F⃗ = 4·20 + 3·90 = 350 > 0, |a⃗|² = 25, |a⃗| = 5; F⃗_a = (350/25)(4, 3) = 14·(4, 3) = (56, 42), dolžina
 350/5 = 70 = √(56² + 42²); F⃗_⊥ = (20 − 56, 90 − 42) = (−36, 48), dolžina 60; 4·(−36) + 3·48 = 0;
@@ -579,6 +655,11 @@ theorem kviz2 (L : ℝ) (hL : 0 < L) :
 
 /-- Predpostavka `kviz2` se da izpolniti (L = 1). -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  kviz2 (hL := w)
 
 /-- Preveri se 4: (2, −1, 3)·(1, 4, 2) = 2 − 4 + 6 = 4 (napačno 12 = 2 + 4 + 6, če izpustimo predznak).
 trditev: MAT-SS-3/skalarni-produkt#kviz4

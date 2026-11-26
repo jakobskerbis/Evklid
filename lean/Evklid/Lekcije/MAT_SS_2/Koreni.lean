@@ -42,6 +42,11 @@ theorem koren_nenegativen {n : ℕ} {a : ℝ} (ha : 0 ≤ a) : 0 ≤ koren n a :
 /-- Predpostavka trditve `koren_nenegativen` se da izpolniti (a = 4). -/
 example : (0:ℝ) ≤ 4 := by norm_num
 
+/-- Predpostavke trditve `koren_nenegativen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 4 := by norm_num
+  koren_nenegativen (ha := w)
+
 /-- Razlaga 2: za a ≥ 0 in n ≥ 1 je (ⁿ√a)ⁿ = a.
 trditev: MAT-SS-2/koreni#koren-pot
 besedilo: »$a \ge 0$« -/
@@ -51,6 +56,11 @@ theorem koren_pot {n : ℕ} (hn : n ≠ 0) {a : ℝ} (ha : 0 ≤ a) : koren n a 
 /-- Predpostavki trditve `koren_pot` se dajo izpolniti (n = 2, a = 4). -/
 example : (2:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 4 := by norm_num
 
+/-- Predpostavke trditve `koren_pot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 4 := by norm_num
+  koren_pot (hn := w.1) (ha := w.2)
+
 /-- Razlaga 2: če je b ≥ 0 in bⁿ = a, je ⁿ√a = b.
 trditev: MAT-SS-2/koreni#koren-eq
 besedilo: »$b^n = a$« -/
@@ -59,6 +69,11 @@ theorem koren_eq {n : ℕ} (hn : n ≠ 0) {a b : ℝ} (hb : 0 ≤ b) (h : b ^ n 
 
 /-- Predpostavke trditve `koren_eq` se dajo izpolniti (n = 2, a = 4, b = 2). -/
 example : (2:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 2 ∧ (2:ℝ) ^ 2 = 4 := by norm_num
+
+/-- Predpostavke trditve `koren_eq` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 2 ∧ (2:ℝ) ^ 2 = 4 := by norm_num
+  koren_eq (hn := w.1) (hb := w.2.1) (h := w.2.2)
 
 /-- Razlaga 2: pri lihem n je (ⁿ√a)ⁿ = a za vsak realni a, tudi negativen.
 trditev: MAT-SS-2/koreni#koren-lih-pot
@@ -73,6 +88,11 @@ theorem koren_lih_pot {n : ℕ} (hn : Odd n) (a : ℝ) : koren n a ^ n = a := by
 /-- Predpostavka trditve `koren_lih_pot` se da izpolniti (n = 3). -/
 example : Odd 3 := ⟨1, rfl⟩
 
+/-- Predpostavke trditve `koren_lih_pot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 3 := ⟨1, rfl⟩
+  koren_lih_pot (hn := w)
+
 /-- Razlaga 2 in Ustno vprašanje 1: pri lihem n je ⁿ√a edino realno število b z bⁿ = a.
 trditev: MAT-SS-2/koreni#koren-lih
 besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
@@ -84,6 +104,11 @@ theorem koren_lih {n : ℕ} (hn : Odd n) (a b : ℝ) : b ^ n = a ↔ b = koren n
 /-- Predpostavka trditve `koren_lih` se da izpolniti (n = 3). -/
 example : Odd 3 := ⟨1, rfl⟩
 
+/-- Predpostavke trditve `koren_lih` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 3 := ⟨1, rfl⟩
+  koren_lih (hn := w)
+
 /-- Razlaga 2: pri sodem n in a ≥ 0 je ⁿ√a edino nenegativno število b z bⁿ = a.
 trditev: MAT-SS-2/koreni#koren-sod
 besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
@@ -94,6 +119,11 @@ theorem koren_sod {n : ℕ} (hn0 : n ≠ 0) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 �
 /-- Predpostavke trditve `koren_sod` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 16 ∧ (0:ℝ) ≤ 2 ∧ (4:ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `koren_sod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 16 ∧ (0:ℝ) ≤ 2 ∧ (4:ℕ) ≠ 0 := by norm_num
+  koren_sod (hn0 := w.2.2) (ha := w.1) (hb := w.2.1)
+
 /-- Razlaga 2: pri sodem n negativno število ni n-ta potenca nobenega realnega števila.
 trditev: MAT-SS-2/koreni#sod-negativen
 besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$,« -/
@@ -102,6 +132,11 @@ theorem sod_negativen {n : ℕ} (hn : Even n) {a : ℝ} (ha : a < 0) (b : ℝ) :
 
 /-- Predpostavke trditve `sod_negativen` se dajo izpolniti. -/
 example : Even 2 ∧ (-4 : ℝ) < 0 := ⟨even_two, by norm_num⟩
+
+/-- Predpostavke trditve `sod_negativen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 ∧ (-4 : ℝ) < 0 := ⟨even_two, by norm_num⟩
+  sod_negativen (hn := w.1) (ha := w.2)
 
 /-- Ustno vprašanje 1: pri sodem n in a > 0 ima xⁿ = a natanko rešitvi ±ⁿ√a.
 trditev: MAT-SS-2/koreni#enacba-sod-poz
@@ -122,6 +157,11 @@ theorem enacba_sod_poz {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) {a : ℝ} (ha : 0
 /-- Predpostavke trditve `enacba_sod_poz` se dajo izpolniti. -/
 example : Even 2 ∧ (2:ℕ) ≠ 0 ∧ (0:ℝ) < 9 := ⟨even_two, by norm_num, by norm_num⟩
 
+/-- Predpostavke trditve `enacba_sod_poz` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 ∧ (2:ℕ) ≠ 0 ∧ (0:ℝ) < 9 := ⟨even_two, by norm_num, by norm_num⟩
+  enacba_sod_poz (hn := w.1) (hn0 := w.2.1) (ha := w.2.2)
+
 /-- Ustno vprašanje 1: pri sodem n in a = 0 ima xⁿ = 0 le rešitev 0.
 trditev: MAT-SS-2/koreni#enacba-sod-nic
 besedilo: »Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$, če je $a > 0$, eno rešitev $0$, če je $a = 0$, in nobene realne rešitve, če je $a < 0$.« -/
@@ -129,6 +169,11 @@ theorem enacba_sod_nic {n : ℕ} (hn0 : n ≠ 0) (x : ℝ) : x ^ n = 0 ↔ x = 0
 
 /-- Predpostavke trditve `enacba_sod_nic` se dajo izpolniti. -/
 example : (2:ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `enacba_sod_nic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℕ) ≠ 0 := by norm_num
+  enacba_sod_nic (hn0 := w)
 
 /-- Ustno vprašanje 1: pri sodem n in a < 0 enačba xⁿ = a nima realne rešitve.
 trditev: MAT-SS-2/koreni#enacba-sod-neg
@@ -139,6 +184,11 @@ theorem enacba_sod_neg {n : ℕ} (hn : Even n) {a : ℝ} (ha : a < 0) : ¬ ∃ x
 /-- Predpostavki trditve `enacba_sod_neg` se dajo izpolniti (n = 2, a = −4). -/
 example : Even 2 ∧ (-4:ℝ) < 0 := ⟨even_two, by norm_num⟩
 
+/-- Predpostavke trditve `enacba_sod_neg` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 ∧ (-4:ℝ) < 0 := ⟨even_two, by norm_num⟩
+  enacba_sod_neg (hn := w.1) (ha := w.2)
+
 /-- Ustno vprašanje 1: pri lihem n ima xⁿ = a natanko eno realno rešitev x = ⁿ√a.
 trditev: MAT-SS-2/koreni#enacba-lih
 besedilo: »Enačba $x^n = a$ ima pri lihem $n$ natanko eno realno rešitev $x = \sqrt[n]{a}$.« -/
@@ -148,6 +198,11 @@ theorem enacba_lih {n : ℕ} (hn : Odd n) (a : ℝ) : ∃! x : ℝ, x ^ n = a :=
 /-- Predpostavke trditve `enacba_lih` se dajo izpolniti. -/
 example : Odd 3 := ⟨1, rfl⟩
 
+/-- Predpostavke trditve `enacba_lih` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 3 := ⟨1, rfl⟩
+  enacba_lih (hn := w)
+
 /-- Kvadratni koren je koren z eksponentom 2: za a ≥ 0 je ²√a = √a.
 trditev: MAT-SS-2/koreni#koren-dva
 besedilo: »Kvadratni koren.** Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število,« -/
@@ -156,6 +211,11 @@ theorem koren_dva {a : ℝ} (ha : 0 ≤ a) : koren 2 a = √a :=
 
 /-- Predpostavke trditve `koren_dva` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 2 := by norm_num
+
+/-- Predpostavke trditve `koren_dva` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 2 := by norm_num
+  koren_dva (ha := w)
 
 /-- Ocena korena: če je 0 ≤ lo, loⁿ < a < hiⁿ, je lo < ⁿ√a < hi.
 trditev: MAT-SS-2/koreni#koren-med
@@ -169,6 +229,11 @@ theorem koren_med {n : ℕ} (hn : n ≠ 0) {a lo hi : ℝ} (ha : 0 ≤ a) (hhi :
 /-- Predpostavke trditve `koren_med` se dajo izpolniti. -/
 example : (3:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 50 ∧ (0:ℝ) ≤ 4 ∧ (3:ℝ) ^ 3 < 50 ∧ (50:ℝ) < 4 ^ 3 := by norm_num
 
+/-- Predpostavke trditve `koren_med` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 50 ∧ (0:ℝ) ≤ 4 ∧ (3:ℝ) ^ 3 < 50 ∧ (50:ℝ) < 4 ^ 3 := by norm_num
+  koren_med (hn := w.1) (ha := w.2.1) (hhi := w.2.2.1) (h1 := w.2.2.2.1) (h2 := w.2.2.2.2)
+
 /-- Ocena kvadratnega korena: 0 ≤ lo, lo² < x < hi², 0 < hi ⇒ lo < √x < hi.
 trditev: MAT-SS-2/koreni#koren2-med
 besedilo: »Kvadratni koren.** Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število,« -/
@@ -178,6 +243,11 @@ theorem koren2_med {x lo hi : ℝ} (hlo : 0 ≤ lo) (hhi : 0 < hi) (h1 : lo ^ 2 
 
 /-- Predpostavke trditve `koren2_med` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 4 ∧ (0:ℝ) < 5 ∧ (4:ℝ) ^ 2 < 20 ∧ (20:ℝ) < 5 ^ 2 := by norm_num
+
+/-- Predpostavke trditve `koren2_med` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 4 ∧ (0:ℝ) < 5 ∧ (4:ℝ) ^ 2 < 20 ∧ (20:ℝ) < 5 ^ 2 := by norm_num
+  koren2_med (hlo := w.1) (hhi := w.2.1) (h1 := w.2.2.1) (h2 := w.2.2.2)
 
 /-- Pomožna trditev (orodje za dokaze v tej datoteki).
 pomozno -/
@@ -226,6 +296,11 @@ theorem kvadrat_korena {a : ℝ} (ha : 0 ≤ a) : √a ^ 2 = a := Real.sq_sqrt h
 
 /-- Predpostavke trditve `kvadrat_korena` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 5 := by norm_num
+
+/-- Predpostavke trditve `kvadrat_korena` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 5 := by norm_num
+  kvadrat_korena (ha := w)
 
 /-- Razlaga 1 in Bolj natančno: √(x²) = |x| za vsak realni x.
 trditev: MAT-SS-2/koreni#koren-kvadrata
@@ -325,6 +400,11 @@ theorem koren_produkta {a b : ℝ} (ha : 0 ≤ a) (_hb : 0 ≤ b) : √(a * b) =
 /-- Predpostavke trditve `koren_produkta` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 3 ∧ (0:ℝ) ≤ 12 := by norm_num
 
+/-- Predpostavke trditve `koren_produkta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 3 ∧ (0:ℝ) ≤ 12 := by norm_num
+  koren_produkta (ha := w.1) (_hb := w.2)
+
 /-- Bolj natančno: dokaz pravila za produkt po korakih: (√a√b)² = √a² · √b² = ab in √a√b ≥ 0, zato je to √(ab).
 trditev: MAT-SS-2/koreni#koren-produkta-dokaz
 besedilo: »$\left(\sqrt{a}\sqrt{b}\right)^2 = \sqrt{a}^2 \cdot \sqrt{b}^2 = ab$« -/
@@ -335,6 +415,11 @@ theorem koren_produkta_dokaz {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
 
 /-- Predpostavke trditve `koren_produkta_dokaz` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 2 ∧ (0:ℝ) ≤ 3 := by norm_num
+
+/-- Predpostavke trditve `koren_produkta_dokaz` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 2 ∧ (0:ℝ) ≤ 3 := by norm_num
+  koren_produkta_dokaz (ha := w.1) (hb := w.2)
 
 /-- Pravila: primer √3 · √12 = √36 = 6.
 trditev: MAT-SS-2/koreni#primer-3-12
@@ -349,6 +434,11 @@ theorem koren_kolicnika {a b : ℝ} (_ha : 0 ≤ a) (hb : 0 < b) : √(a / b) = 
 
 /-- Predpostavke trditve `koren_kolicnika` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 25 ∧ (0:ℝ) < 4 := by norm_num
+
+/-- Predpostavke trditve `koren_kolicnika` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 25 ∧ (0:ℝ) < 4 := by norm_num
+  koren_kolicnika (_ha := w.1) (hb := w.2)
 
 /-- Pravila: primer √(25/4) = 5/2.
 trditev: MAT-SS-2/koreni#primer-25-4
@@ -365,6 +455,11 @@ theorem koren_n_produkta (n : ℕ) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
 
 /-- Predpostavke trditve `koren_n_produkta` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 2 ∧ (0:ℝ) ≤ 4 := by norm_num
+
+/-- Predpostavke trditve `koren_n_produkta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 2 ∧ (0:ℝ) ≤ 4 := by norm_num
+  koren_n_produkta (ha := w.1) (hb := w.2)
 
 /-- Pravila in premisli k racionalizaciji: ∛2 · ∛4 = ∛8 = 2.
 trditev: MAT-SS-2/koreni#primer-kub-2-4
@@ -385,6 +480,11 @@ theorem koren_korena (m n : ℕ) {a : ℝ} (ha : 0 ≤ a) : koren m (koren n a) 
 
 /-- Predpostavke trditve `koren_korena` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 16 := by norm_num
+
+/-- Predpostavke trditve `koren_korena` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 16 := by norm_num
+  koren_korena (ha := w)
 
 /-- Pravila: primer √(√16) = ∜16 = 2.
 trditev: MAT-SS-2/koreni#primer-16
@@ -465,6 +565,11 @@ theorem delno_korenjenje {a b : ℝ} (ha : 0 ≤ a) (_hb : 0 ≤ b) : √(a ^ 2 
 /-- Predpostavke trditve `delno_korenjenje` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 6 ∧ (0:ℝ) ≤ 2 := by norm_num
 
+/-- Predpostavke trditve `delno_korenjenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 6 ∧ (0:ℝ) ≤ 2 := by norm_num
+  delno_korenjenje (ha := w.1) (_hb := w.2)
+
 /-- Razlaga 5 in Pogoste napake: √72 = √(36 · 2) = 6√2; tudi √72 = 2√18 drži.
 trditev: MAT-SS-2/koreni#koren72
 besedilo: »Delno korenjenje do polovice.** $\sqrt{72} = 2\sqrt{18}$ drži, a ni končna oblika, ker je v $18$ še popolni kvadrat $9$. Izvleči moraš *največji* popolni kvadrat: $72 = 36 \cdot 2$, zato je $\sqrt{72} = 6\sqrt{2}$.« -/
@@ -487,6 +592,11 @@ theorem delno_18a3 {a : ℝ} (ha : 0 ≤ a) : √(18 * a ^ 3) = √(9 * a ^ 2 * 
 
 /-- Predpostavke trditve `delno_18a3` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 1 := by norm_num
+
+/-- Predpostavke trditve `delno_18a3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 := by norm_num
+  delno_18a3 (ha := w)
 
 /-- Razlaga 5 in Korak za korakom: ∛54 = ∛(27 · 2) = 3∛2 ≈ 3,78.
 trditev: MAT-SS-2/koreni#kub54
@@ -518,6 +628,11 @@ theorem racionalizacija (a : ℝ) {b : ℝ} (hb : 0 < b) :
 /-- Predpostavke trditve `racionalizacija` se dajo izpolniti. -/
 example : (0:ℝ) < 3 := by norm_num
 
+/-- Predpostavke trditve `racionalizacija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 := by norm_num
+  racionalizacija (hb := w)
+
 /-- Razlaga 6 (konjugirani izraz): (√a + √b)(√a − √b) = a − b za a, b ≥ 0; Bolj natančno:
 (u − v)(u + v) = u² − v².
 trditev: MAT-SS-2/koreni#konjugirani
@@ -527,6 +642,11 @@ theorem konjugirani {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) : (√a + √b) * 
 
 /-- Predpostavke trditve `konjugirani` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 7 ∧ (0:ℝ) ≤ 2 := by norm_num
+
+/-- Predpostavke trditve `konjugirani` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 7 ∧ (0:ℝ) ≤ 2 := by norm_num
+  konjugirani (ha := w.1) (hb := w.2)
 
 /-- Pomožna trditev (orodje za dokaze v tej datoteki).
 pomozno -/
@@ -543,6 +663,11 @@ theorem racionalizacija_razlike {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hab :
 
 /-- Predpostavke trditve `racionalizacija_razlike` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 5 ∧ (0:ℝ) ≤ 2 ∧ (5:ℝ) ≠ 2 := by norm_num
+
+/-- Predpostavke trditve `racionalizacija_razlike` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 5 ∧ (0:ℝ) ≤ 2 ∧ (5:ℝ) ≠ 2 := by norm_num
+  racionalizacija_razlike (ha := w.1) (hb := w.2.1) (hab := w.2.2)
 
 /-- Razlaga 6: 3/(2 + √3) = 3(2 − √3)/(4 − 3) = 6 − 3√3; preverjanje 3/3,732 ≈ 0,804 in 6 − 5,196 = 0,804
 (6 − 3√3 ≈ 0,804).
@@ -595,6 +720,11 @@ theorem iracionalen (n : ℕ) (h : ¬ IsSquare n) : Irrational (√(n:ℝ)) := i
 /-- Predpostavke trditve `iracionalen` se dajo izpolniti. -/
 example : ¬ IsSquare (2:ℕ) := Nat.prime_two.not_isSquare
 
+/-- Predpostavke trditve `iracionalen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ¬ IsSquare (2:ℕ) := Nat.prime_two.not_isSquare
+  iracionalen (h := w)
+
 /-- Razlaga 7, Ustno vprašanje 3, Bolj natančno: √2, √3, √5 in √13 so iracionalni.
 trditev: MAT-SS-2/koreni#iracionalni
 besedilo: »Konstrukcija kvadratnih korenov.** Kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen: $\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$, $\sqrt{13}$ (dokaz je podoben kot za $\sqrt{2}$ v razdelku »Bolj natančno«).« -/
@@ -612,6 +742,11 @@ theorem decimalke_ne_koncajo {x : ℝ} (hx : Irrational x) (m : ℤ) (k : ℕ) :
 
 /-- Predpostavke trditve `decimalke_ne_koncajo` se dajo izpolniti. -/
 example : Irrational √(2:ℝ) := irrational_sqrt_two
+
+/-- Predpostavke trditve `decimalke_ne_koncajo` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Irrational √(2:ℝ) := irrational_sqrt_two
+  decimalke_ne_koncajo (hx := w)
 
 /-- Razlaga 7: decimalke √2, √3, √5 in √13 se nikoli ne končajo.
 trditev: MAT-SS-2/koreni#decimalke-korenov
@@ -635,6 +770,11 @@ theorem dokaz_koraki (p q : ℤ) (h : p ^ 2 = 2 * q ^ 2) : Even p ∧ Even q := 
 /-- Predpostavke trditve `dokaz_koraki` se dajo izpolniti. -/
 example : (0:ℤ) ^ 2 = 2 * 0 ^ 2 := by norm_num
 
+/-- Predpostavke trditve `dokaz_koraki` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℤ) ^ 2 = 2 * 0 ^ 2 := by norm_num
+  dokaz_koraki (h := w)
+
 /-- Razlaga 7 (koren kot hipotenuza): kateti 1 in 1 dasta √2, 1 in 2 dasta √5, 2 in 3 dasta √13.
 trditev: MAT-SS-2/koreni#hipotenuze
 besedilo: »Koren kot hipotenuza.** Kateti $p$ in $q$ dasta hipotenuzo $\sqrt{p^2 + q^2}$. Kateti $1$ in $1$ dasta $\sqrt{2}$, kateti $1$ in $2$ dasta $\sqrt{5}$, kateti $2$ in $3$ dasta $\sqrt{13}$.« -/
@@ -649,6 +789,11 @@ theorem spirala (n : ℝ) (hn : 0 ≤ n) : √(√n ^ 2 + 1 ^ 2) = √(n + 1) :=
 
 /-- Predpostavke trditve `spirala` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 1 := by norm_num
+
+/-- Predpostavke trditve `spirala` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 := by norm_num
+  spirala (hn := w)
 
 /-- Pomožna trditev (orodje za dokaze v tej datoteki).
 pomozno -/
@@ -700,6 +845,11 @@ theorem potenca_1_n {n : ℕ} {a : ℝ} (ha : 0 ≤ a) : a ^ ((1:ℝ) / n) = kor
 
 /-- Predpostavke trditve `potenca_1_n` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 200 := by norm_num
+
+/-- Predpostavke trditve `potenca_1_n` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 200 := by norm_num
+  potenca_1_n (ha := w)
 
 /-- Razlaga 8 in Primer 6 b): ∛(−20) = −∛20 ≈ −2,714.
 trditev: MAT-SS-2/koreni#kub-m20
@@ -1094,6 +1244,11 @@ theorem preveri6 (n : ℝ) (hn : 0 ≤ n) : (√((1:ℝ) ^ 2 + 4 ^ 2) = √n ↔
 
 /-- Predpostavke trditve `preveri6` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 17 := by norm_num
+
+/-- Predpostavke trditve `preveri6` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 17 := by norm_num
+  preveri6 (hn := w)
 
 /-- Preveri se, 7: ⁵√300 ≈ 3,129 ≈ 3,13; preverjanje 3,129⁵ ≈ 300 (RACUN: ≈ 299,94); 3⁵ = 243 < 300 < 1024 = 4⁵;
 napačni odgovori 300 : 5 = 60 in √300 ≈ 17,32.

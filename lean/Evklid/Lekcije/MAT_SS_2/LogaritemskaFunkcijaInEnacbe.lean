@@ -155,6 +155,11 @@ example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 := by norm_num
 
 /-! ## Razlaga 3 in 4: definicija in lastnosti -/
 
+/-- Predpostavke trditve `obratni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 := by norm_num
+  obratni (ha := w.1) (ha1 := w.2.1) (hx := w.2.2)
+
 /-- Razlaga 3 (Povzetek): zaloga vrednosti logₐ na (0, ∞) je ℝ: za vsak y obstaja x > 0 z logₐ x = y.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#zaloga
 besedilo: »Njena **zaloga vrednosti** je $Z_f = \mathbb{R}$:« -/
@@ -163,6 +168,11 @@ theorem zaloga (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (y : ℝ) : ∃ x : ℝ, 0
 
 /-- Predpostavke trditve `zaloga` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+
+/-- Predpostavke trditve `zaloga` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  zaloga (ha := w.1) (ha1 := w.2)
 
 /-- Razlaga 4: logₐ za a > 1 na (0, ∞) strogo narašča; edina ničla je x = 1, graf gre skozi (a, 1);
 logₐ x < 0 ⟺ x ∈ (0, 1), logₐ x > 0 ⟺ x ∈ (1, ∞).
@@ -183,6 +193,11 @@ theorem lastnosti_vecja (a : ℝ) (ha : 1 < a) :
 /-- Predpostavke trditve `lastnosti_vecja` se dajo izpolniti (a = 2). -/
 example : (1 : ℝ) < 2 := by norm_num
 
+/-- Predpostavke trditve `lastnosti_vecja` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  lastnosti_vecja (ha := w)
+
 /-- Razlaga 4: log_(1/a) x = −logₐ x (a > 0, a ≠ 1, x > 0), zato sta grafa simetrična glede na os x;
 iz aʸ = x sledi (1/a)^(−y) = x.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#simetrija
@@ -195,6 +210,11 @@ theorem simetrija (a x y : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hx : 0 < x) :
 
 /-- Predpostavke trditve `simetrija` se dajo izpolniti (a = 2, x = 8). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 8 := by norm_num
+
+/-- Predpostavke trditve `simetrija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 8 := by norm_num
+  simetrija (ha := w.1) (ha1 := w.2.1) (hx := w.2.2)
 
 /-- Razlaga 4 in ustno vprašanje 2: za 0 < a < 1 logₐ na (0, ∞) strogo pada, edina ničla je x = 1,
 graf gre skozi (a, 1); logₐ x > 0 ⟺ x ∈ (0, 1), logₐ x < 0 ⟺ x ∈ (1, ∞).
@@ -221,6 +241,11 @@ theorem lastnosti_manjsa (a : ℝ) (h0 : 0 < a) (h1 : a < 1) :
 /-- Predpostavke trditve `lastnosti_manjsa` se dajo izpolniti (a = 1/2). -/
 example : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `lastnosti_manjsa` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  lastnosti_manjsa (h0 := w.1) (h1 := w.2)
+
 /-- Razlaga 4 (navpična asimptota in neomejenost): pri a > 1 je za vsak M logₐ x < M na (0, a^M), graf pa
 ni navzgor omejen; log₂ x = 10 natanko pri x = 1024.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#asimptota
@@ -240,6 +265,11 @@ theorem asimptota (a : ℝ) (ha : 1 < a) :
 /-- Predpostavke trditve `asimptota` se dajo izpolniti (a = 2). -/
 example : (1 : ℝ) < 2 := by norm_num
 
+/-- Predpostavke trditve `asimptota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  asimptota (ha := w)
+
 /-- Razlaga 4 (tabela, 0 < a < 1): tudi tu je os y navpična asimptota: za vsak M je logₐ x > M na
 (0, a^M); graf ni navzdol omejen.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#asimptota-manjsa
@@ -256,6 +286,11 @@ theorem asimptota_manjsa (a : ℝ) (h0 : 0 < a) (h1 : a < 1) :
 
 /-- Predpostavke trditve `asimptota_manjsa` se dajo izpolniti (a = 1/2). -/
 example : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+
+/-- Predpostavke trditve `asimptota_manjsa` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  asimptota_manjsa (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 4: pri a > 1 logₐ x (tudi za x > 1) narašča vse počasneje: logₐ je strogo konkavna na
 (0, ∞) (in zato tudi na (1, ∞)).
@@ -280,6 +315,11 @@ example : (1 : ℝ) < 2 := by norm_num
 
 /-! ## Razlaga 5: premiki in raztegi -/
 
+/-- Predpostavke trditve `vse_pocasneje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  vse_pocasneje (ha := w)
+
 /-- Razlaga 5: g(x) = logₐ(x − p) + q: pogoj x − p > 0 ⟺ x > p (asimptota x = p, D = (p, ∞)); točka (1, 0)
 preide v (1 + p, q) (a > 0, a ≠ 1).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#premik
@@ -292,6 +332,11 @@ theorem premik (a p q x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 
 /-- Predpostavke trditve `premik` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+
+/-- Predpostavke trditve `premik` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  premik (ha := w.1) (ha1 := w.2)
 
 /-- Razlaga 5, premisli: log₂(x + 3) = log₂(x − (−3)), asimptota x = −3, točka (1, 0) preide v (−2, 0):
 log₂(−2 + 3) = log₂ 1 = 0.
@@ -317,6 +362,11 @@ theorem raztegi (a c x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 /-- Predpostavke trditve `raztegi` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
 
+/-- Predpostavke trditve `raztegi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  raztegi (ha := w.1) (ha1 := w.2)
+
 /-- Razlaga 5 in Povzetek: logₐ(kx) = logₐ k + logₐ x (k, x > 0); log₂(4x) = 2 + log₂ x; ničla
 logₐ(kx) je x = 1/k (a > 0, a ≠ 1): edina pozitivna rešitev logₐ(kx) = 0.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#skrcitev
@@ -334,6 +384,11 @@ theorem skrcitev (a k x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hk : 0 < k) (hx : 0
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 1 := by norm_num
 
 /-! ## Razlaga 6–8 -/
+
+/-- Predpostavke trditve `skrcitev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 1 := by norm_num
+  skrcitev (ha := w.1) (ha1 := w.2.1) (hk := w.2.2.1) (hx := w.2.2.2)
 
 /-- Razlaga 6: 6 − 2x > 0 ⟺ x < 3; x² − x − 6 = (x − 3)(x + 2) > 0 ⟺ x < −2 ali x > 3.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#definicijsko
@@ -361,6 +416,11 @@ theorem tipi (a A B c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hA : 0 < A) (hB : 0 <
 
 /-- Predpostavke trditve `tipi` se dajo izpolniti (a = 2, A = 4, B = 8). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+
+/-- Predpostavke trditve `tipi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+  tipi (ha := w.1) (ha1 := w.2.1) (hA := w.2.2.1) (hB := w.2.2.2)
 
 /-- Razlaga 8: pri x = −7 sta x + 3 = −4 in x − 1 = −8 negativna, produkt (−4)(−8) = 32 pa pozitiven.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#razsiritev
@@ -396,6 +456,11 @@ theorem log_x_pot (x : ℝ) (hx : 0 < x) : Real.logb 2 x < x ∧ x < (2 : ℝ) ^
 /-- Predpostavke trditve `log_x_pot` se dajo izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `log_x_pot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := by norm_num
+  log_x_pot (hx := w)
+
 /-- Razlaga 9, tabela: log₂ 1, 2, 4, 8, 16 = 0, 1, 2, 3, 4 in 2¹, 2², 2⁴, 2⁸, 2¹⁶ = 2, 4, 16, 256, 65536;
 2^(x+1) = 2·2ˣ, log₂(2x) = 1 + log₂ x (x > 0).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#rast-tabela
@@ -412,6 +477,11 @@ theorem rast_tabela (x : ℝ) (hx : 0 < x) :
 example : (0 : ℝ) < 1 := by norm_num
 
 set_option exponentiation.threshold 1100 in
+/-- Predpostavke trditve `rast_tabela` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := by norm_num
+  rast_tabela (hx := w)
+
 /-- Razlaga 9 in RAČUN: 2ˣ = 1000 ⟺ x = log₂ 1000 ≈ 9,97; log₂ x = 1000 ⟺ x = 2¹⁰⁰⁰ (x > 0), ki ima 302
 števki (10³⁰¹ ≤ 2¹⁰⁰⁰ < 10³⁰²); 1000·log 2 ≈ 301,03; pri x = 2²⁰ je log₂ x = 20, √x = 1024.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#rast-stevila
@@ -464,6 +534,11 @@ theorem asimptotika (a : ℝ) (ha : 1 < a) (n : ℕ) :
 example : (1 : ℝ) < 2 := by norm_num
 
 /-! ## Primer 1 -/
+
+/-- Predpostavke trditve `asimptotika` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  asimptotika (ha := w)
 
 /-- Primer 1: f(x) = log₃(x − 2) + 1: pogoj x − 2 > 0 ⟺ x > 2; za x > 2 je f(x) = 0 ⟺ log₃(x − 2) = −1
 ⟺ x − 2 = 3⁻¹ = 1/3 ⟺ x = 7/3; x = 0 ni v D (0 − 2 < 0); f(3) = log₃ 1 + 1 = 1, f(5) = log₃ 3 + 1 = 2,
@@ -561,6 +636,11 @@ example : (0 : ℝ) < 659.3 := by norm_num
 
 /-! ## Primer 4 -/
 
+/-- Predpostavke trditve `primer3b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 659.3 := by norm_num
+  primer3b (hν := w)
+
 /-- Primer 4: za x > 0 je log x³ = 3 log x in (log x)² − log x³ + 2 = 0 ⟺ t² − 3t + 2 = 0 (t = log x)
 ⟺ (t − 1)(t − 2) = 0 ⟺ log x = 1 ali log x = 2 ⟺ x = 10 ali x = 100.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer4
@@ -581,6 +661,11 @@ theorem primer4 (x : ℝ) (hx : 0 < x) :
 
 /-- Predpostavke trditve `primer4` se dajo izpolniti (x = 10). -/
 example : (0 : ℝ) < 10 := by norm_num
+
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 10 := by norm_num
+  primer4 (hx := w)
 
 /-- Primer 4, preizkus: 1² − log 1000 + 2 = 1 − 3 + 2 = 0 in 2² − log 10⁶ + 2 = 4 − 6 + 2 = 0.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer4-preizkus
@@ -755,6 +840,12 @@ example : (-1 : ℝ) < 2 ^ (10 / 3 : ℝ) - 1 := by
 
 /-! ## Ustna vprašanja in Drugače -/
 
+/-- Predpostavke trditve `matura3e` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1 : ℝ) < 2 ^ (10 / 3 : ℝ) - 1 := by
+    linarith [Real.rpow_pos_of_pos (show (0 : ℝ) < 2 by norm_num) (10 / 3 : ℝ)]
+  matura3e (hx := w)
+
 /-- Ustno vprašanje 1: točka (0, 1) grafa aˣ preide v (1, 0), (1, a) v (a, 1) (a⁰ = 1, logₐ 1 = 0,
 a¹ = a, logₐ a = 1).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#ustno1
@@ -766,6 +857,11 @@ theorem ustno1 (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 
 /-- Predpostavke trditve `ustno1` se dajo izpolniti (a = 3). -/
 example : (0 : ℝ) < 3 ∧ (3 : ℝ) ≠ 1 := by norm_num
+
+/-- Predpostavke trditve `ustno1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 3 ∧ (3 : ℝ) ≠ 1 := by norm_num
+  ustno1 (ha := w.1) (ha1 := w.2)
 
 /-- Ustno vprašanje 3: log₂ x + log₂(x − 2) = 3 s pogojema x > 0, x − 2 > 0 ⟺ x = 4; x(x − 2) = 8
 ⟺ x = 4 ali x = −2 (−2 je odvečna rešitev).
@@ -822,6 +918,11 @@ theorem ugibanje (x : ℝ) (hx : 0 < x) :
 /-- Predpostavke trditve `ugibanje` se dajo izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `ugibanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := by norm_num
+  ugibanje (hx := w)
+
 /-- Drugače, bolj natančno: za a > 0, a ≠ 1 vsakemu y > 0 pripada natanko en x z aˣ = y (x = logₐ y);
 iz logₐ A = logₐ B (A, B > 0) sledi A = B.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#dobro-definirana
@@ -837,6 +938,11 @@ theorem dobro_definirana (a y : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hy : 0 < y) :
 
 /-- Predpostavke trditve `dobro_definirana` se dajo izpolniti (a = 2, y = 5). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+
+/-- Predpostavke trditve `dobro_definirana` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+  dobro_definirana (ha := w.1) (ha1 := w.2.1) (hy := w.2.2)
 
 /-- Drugače, bolj natančno: log x² = 2 log |x| (x ≠ 0); log x² = 2 ⟺ x = 10 ali x = −10 (x ≠ 0);
 2 log x = 2 ⟺ x = 10 (x > 0).
@@ -929,6 +1035,11 @@ theorem kviz5 (ν : ℝ) (hν : 0 < ν) : 12 * Real.logb 2 (ν / 440) = -12 ↔ 
 /-- Predpostavke trditve `kviz5` se dajo izpolniti (ν = 220). -/
 example : (0 : ℝ) < 220 := by norm_num
 
+/-- Predpostavke trditve `kviz5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 220 := by norm_num
+  kviz5 (hν := w)
+
 /-- Preveri se 6: c·log₃ 9 = 2c = −4 ⟺ c = −2.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#kviz6
 besedilo: »$g(9) = c \log_3 9 = 2c = -4$, zato je $c = -2$: graf $\log_3 x$ je raztegnjen s faktorjem $2$ in prezrcaljen čez os $x$.« -/
@@ -954,3 +1065,8 @@ theorem racun_osnove (x : ℝ) (hx : 0 < x) :
 example : (0 : ℝ) < 1 := by norm_num
 
 end Evklid.Lekcije.MAT_SS_2.LogaritemskaFunkcijaInEnacbe
+/-- Predpostavke trditve `racun_osnove` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := by norm_num
+  racun_osnove (hx := w)
+

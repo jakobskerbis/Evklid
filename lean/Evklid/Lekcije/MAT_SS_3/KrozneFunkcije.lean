@@ -267,6 +267,11 @@ theorem simulacija (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
 /-- Pogoja izreka `simulacija` se dajo izpolniti (x = 0). -/
 example : (0 : ℝ) ≤ 0 ∧ (0 : ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
+/-- Predpostavke trditve `simulacija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 0 ∧ (0 : ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
+  simulacija (h0 := w.1) (h1 := w.2)
+
 /-- Razlaga 3: arcsin(1/2) = π/6, ker je sin(π/6) = 1/2 in π/6 ∈ [−π/2, π/2].
 trditev: MAT-SS-3/krozne-funkcije#arcsin-pol
 besedilo: »3. Arkus sinus.** $\arcsin x$ je tisti kot $y$ z intervala $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, za katerega je $\sin y = x$. Primer: $\arcsin\frac12 = \frac{\pi}{6}$, ker je $\sin\frac{\pi}{6} = \frac12$ in $\frac{\pi}{6}$ leži v intervalu.« -/
@@ -336,6 +341,11 @@ theorem ustno2 (x : ℝ) (h0 : -1 ≤ x) (h1 : x ≤ 1) : arccos (-x) = π - arc
 
 /-- Pogoja izreka `ustno2` se dajo izpolniti (x = 0). -/
 example : (-1 : ℝ) ≤ 0 ∧ (0 : ℝ) ≤ 1 := by norm_num
+
+/-- Predpostavke trditve `ustno2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1 : ℝ) ≤ 0 ∧ (0 : ℝ) ≤ 1 := by norm_num
+  ustno2 (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 5, 6 in Povzetek (arkus tangens): D = ℝ, Z = (−π/2, π/2), tan(arctan x) = x, arctan y je edini kot
 z (−π/2, π/2) s tangensom tan y, narašča, je lih; arctan 1 = π/4, arctan(−√3) = −π/3.
@@ -412,6 +422,16 @@ theorem resitve_cos (a x : ℝ) (h0 : -1 ≤ a) (h1 : a ≤ 1) :
 
 /-- Pogoja izrekov `resitve_sin` in `resitve_cos` se dajo izpolniti (a = 0). -/
 example : (-1 : ℝ) ≤ 0 ∧ (0 : ℝ) ≤ 1 := by norm_num
+
+/-- Predpostavke trditve `resitve_cos` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1 : ℝ) ≤ 0 ∧ (0 : ℝ) ≤ 1 := by norm_num
+  resitve_cos (h0 := w.1) (h1 := w.2)
+
+/-- Predpostavke trditve `resitve_sin` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1 : ℝ) ≤ 0 ∧ (0 : ℝ) ≤ 1 := by norm_num
+  resitve_sin (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 8: rešitve tan x = a (kjer tangens obstaja, cos x ≠ 0) so natanko x = arctan a + kπ.
 trditev: MAT-SS-3/krozne-funkcije#resitve-tan
@@ -512,6 +532,11 @@ theorem primer3_enacba (A t : ℝ) (hA : A ≠ 0) :
 /-- Pogoj izreka `primer3_enacba` se da izpolniti (A = 1). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `primer3_enacba` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  primer3_enacba (hA := w)
+
 /-- Primer 3: v prvem nihaju (0 < t ≤ 1/250 s = 4 ms) membrana doseže odmik A/2 natanko ob t₁ = 1/3000 s
 ≈ 0,333 ms (prva četrtina nihaja) in t₂ = 1/600 s ≈ 1,67 ms (druga četrtina).
 trditev: MAT-SS-3/krozne-funkcije#primer3
@@ -544,6 +569,11 @@ theorem primer3 (t : ℝ) (h0 : 0 < t) (h1 : t ≤ 1 / 250) :
 
 /-- Pogoja izreka `primer3` se dajo izpolniti (t = 1/3000). -/
 example : (0 : ℝ) < 1 / 3000 ∧ (1 / 3000 : ℝ) ≤ 1 / 250 := by norm_num
+
+/-- Predpostavke trditve `primer3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 3000 ∧ (1 / 3000 : ℝ) ≤ 1 / 250 := by norm_num
+  primer3 (h0 := w.1) (h1 := w.2)
 
 /-- Primer 3, korak 4 (smer gibanja): sin(500πt) na [0, 1/1000] narašča (signal gre navzgor skozi A/2 pri
 t₁ = 1/3000), na [1/1000, 1/500] pa pada (signal gre navzdol skozi A/2 pri t₂ = 1/600).

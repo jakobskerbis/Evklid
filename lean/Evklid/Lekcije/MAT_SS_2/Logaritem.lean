@@ -158,6 +158,11 @@ theorem definicija (a b x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hb : 0 < b) :
 /-- Predpostavke trditve `definicija` se dajo izpolniti (a = 2, b = 32). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 32 := by norm_num
 
+/-- Predpostavke trditve `definicija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 32 := by norm_num
+  definicija (ha := w.1) (ha1 := w.2.1) (hb := w.2.2)
+
 /-- Razlaga 1: log₂ 32 = 5 (2⁵ = 32) in log₃(1/9) = −2 (3⁻² = 1/9).
 trditev: MAT-SS-2/logaritem#definicija-primera
 besedilo: »Na primer $\log_2 32 = 5$, ker je $2^5 = 32$, in $\log_3 \dfrac{1}{9} = -2$, ker je $3^{-2} = \dfrac{1}{9}$.« -/
@@ -202,6 +207,11 @@ theorem osnovne_zveze (a b x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hb : 0 < b) :
 
 /-- Predpostavke trditve `osnovne_zveze` se dajo izpolniti (a = 2, b = 5). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+
+/-- Predpostavke trditve `osnovne_zveze` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+  osnovne_zveze (ha := w.1) (ha1 := w.2.1) (hb := w.2.2)
 
 /-- Razlaga 4: log 1000 = 3, log 1 = 0, log 0,01 = −2; naravni logaritem je log z osnovo e:
 log_e b = ln b, ln e = 1.
@@ -253,6 +263,11 @@ theorem pravila (a x y n : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hx : 0 < x) (hy : 
 /-- Predpostavke trditve `pravila` se dajo izpolniti (a = 2, x = 4, y = 8). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
 
+/-- Predpostavke trditve `pravila` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+  pravila (ha := w.1) (ha1 := w.2.1) (hx := w.2.2.1) (hy := w.2.2.2)
+
 /-- Razlaga 5 in ustno vprašanje 2 (dokaz pravila za produkt): če je u = logₐ x in v = logₐ y, je
 x = aᵘ, y = aᵛ, xy = a^(u+v) in logₐ(xy) = u + v.
 trditev: MAT-SS-2/logaritem#dokaz-produkta
@@ -269,6 +284,11 @@ theorem dokaz_produkta (a x y : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hx : 0 < x) (
 
 /-- Predpostavke trditve `dokaz_produkta` se dajo izpolniti (a = 2, x = 4, y = 8). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+
+/-- Predpostavke trditve `dokaz_produkta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+  dokaz_produkta (ha := w.1) (ha1 := w.2.1) (hx := w.2.2.1) (hy := w.2.2.2)
 
 /-- Razlaga 5, primeri: log₂(4·8) = 2 + 3 = 5, log 50 − log 5 = log 10 = 1, log₃ 9⁵ = 5·2 = 10,
 log₂ √8 = 3/2.
@@ -339,6 +359,11 @@ theorem prehod (a b c : ℝ) (hc : 0 < c) (hc1 : c ≠ 1) (ha : 0 < a) (ha1 : a 
 /-- Predpostavke trditve `prehod` se dajo izpolniti (c = 10, a = 2, b = 5). -/
 example : (0 : ℝ) < 10 ∧ (10 : ℝ) ≠ 1 ∧ (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
 
+/-- Predpostavke trditve `prehod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 10 ∧ (10 : ℝ) ≠ 1 ∧ (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+  prehod (hc := w.1) (hc1 := w.2.1) (ha := w.2.2.1) (ha1 := w.2.2.2.1) (hb := w.2.2.2.2)
+
 /-- Razlaga 6 (izpeljava): iz x = logₐ b sledi aˣ = b in x·log_c a = log_c b (a, b, c > 0, a ≠ 1).
 trditev: MAT-SS-2/logaritem#prehod-izpeljava
 besedilo: »Izpeljava: naj bo $x = \log_a b$, torej $a^x = b$. Obe strani logaritmiramo z osnovo $c$ in uporabimo pravilo za potenco: $x \cdot \log_c a = \log_c b$. Delimo z $\log_c a$ (ki ni $0$, ker je $a \ne 1$) in dobimo formulo.« -/
@@ -351,6 +376,11 @@ theorem prehod_izpeljava (a b c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hb : 0 < b)
 
 /-- Predpostavke trditve `prehod_izpeljava` se dajo izpolniti (a = 2, b = 5, c = 10). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+
+/-- Predpostavke trditve `prehod_izpeljava` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+  prehod_izpeljava (ha := w.1) (ha1 := w.2.1) (hb := w.2.2)
 
 /-- Razlaga 6: log₂ 5 = log 5 / log 2 ≈ 0,69897/0,30103 ≈ 2,3219 (in ≈ 2,32 tedna; 2,32·7 ≈ 16 dni);
 preizkus 2^2,3219 ≈ 5,000.
@@ -397,6 +427,11 @@ example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 8 ∧ (8 : ℝ) ≠ 
 
 /-! ## Razlaga 7: naravni logaritem -/
 
+/-- Predpostavke trditve `obratna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 8 ∧ (8 : ℝ) ≠ 1 := by norm_num
+  obratna (ha := w.1) (ha1 := w.2.1) (hb := w.2.2.1) (hb1 := w.2.2.2)
+
 /-- Razlaga 7: ln 1 = 0, ln e = 1, ln eˣ = x, e^(ln b) = b (b > 0); ln e⁵ = 5, ln(1/e²) = −2, e^(ln 7) = 7.
 trditev: MAT-SS-2/logaritem#naravni
 besedilo: »Na primer $\ln \mathrm{e}^5 = 5$, $\;\ln \dfrac{1}{\mathrm{e}^2} = -2$ in $\mathrm{e}^{\ln 7} = 7$.« -/
@@ -410,6 +445,11 @@ theorem naravni (x b : ℝ) (hb : 0 < b) :
 
 /-- Predpostavke trditve `naravni` se dajo izpolniti (b = 7). -/
 example : (0 : ℝ) < 7 := by norm_num
+
+/-- Predpostavke trditve `naravni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 7 := by norm_num
+  naravni (hb := w)
 
 /-- Razlaga 7: eˣ = 20 ⟺ x = ln 20 ≈ 3,00; 3ˣ = 20 ⟺ x·ln 3 = ln 20 ⟺ x = ln 20/ln 3 ≈ 2,73.
 trditev: MAT-SS-2/logaritem#naravni-enacbi
@@ -480,6 +520,11 @@ theorem model (A B x k : ℝ) (hx : 0 < x) (hk : 0 < k) :
 example : (0 : ℝ) < 1 ∧ (0 : ℝ) < 10 := by norm_num
 
 /-! ## Primer 1 -/
+
+/-- Predpostavke trditve `model` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 ∧ (0 : ℝ) < 10 := by norm_num
+  model (hx := w.1) (hk := w.2)
 
 /-- Primer 1: a) 32 = 2⁵ ⟹ log₂ 32 = 5; b) 1/9 = 3⁻² ⟹ log₃(1/9) = −2; c) 4ˣ = 8 ⟺ 2^(2x) = 2³ ⟺ 2x = 3
 ⟺ x = 3/2, torej log₄ 8 = 3/2 (preizkus 4^(3/2) = (√4)³ = 2³ = 8); d) 0,001 = 1/1000 = 10⁻³ ⟹ log 0,001 = −3.
@@ -774,6 +819,11 @@ example : (0 : ℝ) < 10 ∧ (10 : ℝ) ≠ 1 := by norm_num
 
 /-! ## Za maturo -/
 
+/-- Predpostavke trditve `napake` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 10 ∧ (10 : ℝ) ≠ 1 := by norm_num
+  napake (ha := w.1) (ha1 := w.2)
+
 /-- Za maturo, naloga 1 in RAČUN: log₂ 24 + log₂(2/3) = log₂(24·2/3) = log₂ 16 = 4, √5 = 5^(1/2),
 log₅ √5 = 1/2, vrednost 4 − 1/2 = 7/2.
 trditev: MAT-SS-2/logaritem#matura1
@@ -834,6 +884,11 @@ theorem matura2abd (I : ℝ) (hI : 0 < I) :
 /-- Predpostavke trditve `matura2abd` se dajo izpolniti (I = 10⁻⁶). -/
 example : (0 : ℝ) < 10 ^ (-6 : ℝ) := Real.rpow_pos_of_pos (by norm_num) _
 
+/-- Predpostavke trditve `matura2abd` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 10 ^ (-6 : ℝ) := Real.rpow_pos_of_pos (by norm_num) _
+  matura2abd (hI := w)
+
 /-- Za maturo, naloga 2 c): za I > 0 je 10 log(I/I₀) = 85 ⟺ log(I/I₀) = 8,5 ⟺ I/I₀ = 10^8,5
 ⟺ I = 10⁻¹²·10^8,5 = 10^(−3,5) ≈ 3,162·10⁻⁴ ≈ 3,16·10⁻⁴ W/m².
 trditev: MAT-SS-2/logaritem#matura2c
@@ -855,6 +910,11 @@ theorem matura2c (I : ℝ) (hI : 0 < I) :
 
 /-- Predpostavke trditve `matura2c` se dajo izpolniti (I = 10^(−3,5)). -/
 example : (0 : ℝ) < 10 ^ (-3.5 : ℝ) := Real.rpow_pos_of_pos (by norm_num) _
+
+/-- Predpostavke trditve `matura2c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 10 ^ (-3.5 : ℝ) := Real.rpow_pos_of_pos (by norm_num) _
+  matura2c (hI := w)
 
 /-- Za maturo, naloga 3 a)–c) in RAČUN (r = log₂ 3): log₂ 18 = 1 + 2r, log₂(9/16) = 2r − 4, log₃ 2 = 1/r,
 log₂ 12 = 2 + r, log₁₈ 12 = (2 + r)/(1 + 2r), log₈ √27 = (3/2·r)/3 = r/2.
@@ -957,6 +1017,11 @@ theorem vsakdanje (I : ℝ) (hI : 0 < I) :
 /-- Predpostavke trditve `vsakdanje` se dajo izpolniti (I = 1). -/
 example : (0 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `vsakdanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := by norm_num
+  vsakdanje (hI := w)
+
 /-- Drugače, korak za korakom: za x, y, z > 0 je logₐ(x³√y/z²) = logₐ(x³√y) − logₐ z²
 = logₐ x³ + logₐ √y − logₐ z² = 3 logₐ x + (1/2) logₐ y − 2 logₐ z.
 trditev: MAT-SS-2/logaritem#razcleni
@@ -975,6 +1040,11 @@ theorem razcleni (a x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) :
 
 /-- Predpostavke trditve `razcleni` se dajo izpolniti (x = y = z = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
+
+/-- Predpostavke trditve `razcleni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  razcleni (hx := w) (hy := w) (hz := w)
 
 /-- Drugače, korak za korakom: log₃ 20 = log 20/log 3, log 20 ≈ 1,30103, log 3 ≈ 0,47712,
 1,30103/0,47712 ≈ 2,7268; 3² = 9 < 20 < 27 = 3³, zato 2 < log₃ 20 < 3; ln 20 ≈ 2,99573, ln 3 ≈ 1,09861,
@@ -1028,6 +1098,11 @@ theorem dobro_definiran (a b : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hb : 0 < b) :
 /-- Predpostavke trditve `dobro_definiran` se dajo izpolniti (a = 2, b = 5). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
 
+/-- Predpostavke trditve `dobro_definiran` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+  dobro_definiran (ha := w.1) (ha1 := w.2.1) (hb := w.2.2)
+
 /-- Drugače, bolj natančno: dokaz pravila za potenco (u = logₐ x, x = aᵘ, xⁿ = a^(nu), logₐ xⁿ = nu) in
 kvocient kot x·y⁻¹: logₐ(x/y) = logₐ(x·y⁻¹) = logₐ x − logₐ y.
 trditev: MAT-SS-2/logaritem#dokaz-potence
@@ -1042,6 +1117,11 @@ theorem dokaz_potence (a x y n : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hx : 0 < x) 
 
 /-- Predpostavke trditve `dokaz_potence` se dajo izpolniti (a = 2, x = 4, y = 8). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+
+/-- Predpostavke trditve `dokaz_potence` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 8 := by norm_num
+  dokaz_potence (ha := w.1) (ha1 := w.2.1) (hx := w.2.2.1) (hy := w.2.2.2)
 
 /-- Drugače, bolj natančno: logₐ b = 1/log_b a; log_(aᵏ) b = (1/k)·logₐ b (a > 0, a ≠ 1, k ≠ 0);
 log₄ 8 = (1/2)·log₂ 8 = 3/2; logₐ b = (1/log_c a)·log_c b.
@@ -1072,6 +1152,11 @@ example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 8 ∧ (8 : ℝ) ≠ 
 
 /-! ## Preveri se -/
 
+/-- Predpostavke trditve `posledice` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 8 ∧ (8 : ℝ) ≠ 1 ∧ (2 : ℝ) ≠ 0 ∧ (0 : ℝ) < 10 ∧ (10 : ℝ) ≠ 1 := by norm_num
+  posledice (ha := w.1) (ha1 := w.2.1) (hb := w.2.2.1) (hb1 := w.2.2.2.1) (hk := w.2.2.2.2.1) (hc := w.2.2.2.2.2.1) (hc1 := w.2.2.2.2.2.2)
+
 /-- Preveri se 1: log(xy) = log x + log y (x, y > 0); protiprimeri: log 20 ≠ log 10 + log 10,
 log 100/log 10 = 2 ≠ log 10 = 1, (log 1000)² = 9 ≠ 2 log 1000 = 6.
 trditev: MAT-SS-2/logaritem#kviz1
@@ -1091,6 +1176,11 @@ theorem kviz1 (x y : ℝ) (hx : 0 < x) (hy : 0 < y) :
 
 /-- Predpostavke trditve `kviz1` se dajo izpolniti (x = y = 10). -/
 example : (0 : ℝ) < 10 := by norm_num
+
+/-- Predpostavke trditve `kviz1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 10 := by norm_num
+  kviz1 (hx := w) (hy := w)
 
 /-- Preveri se 2: log₂ 12 − log₂ 3 = log₂(12/3) = log₂ 4 = 2 (ne log₂ 9 in ne log₂ 36).
 trditev: MAT-SS-2/logaritem#kviz2
@@ -1161,6 +1251,14 @@ example : ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ 0 < c₂ ∧ -Real.logb 10 c₁ = 4.
   ⟨10 ^ (-4.6 : ℝ), 10 ^ (-5.6 : ℝ), Real.rpow_pos_of_pos (by norm_num) _,
     Real.rpow_pos_of_pos (by norm_num) _, by rw [log_pot 10 _ (by norm_num) (by norm_num)]; norm_num,
     by rw [log_pot 10 _ (by norm_num) (by norm_num)]; norm_num⟩
+
+/-- Predpostavke trditve `kviz5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ 0 < c₂ ∧ -Real.logb 10 c₁ = 4.6 ∧ -Real.logb 10 c₂ = 5.6 :=
+    ⟨10 ^ (-4.6 : ℝ), 10 ^ (-5.6 : ℝ), Real.rpow_pos_of_pos (by norm_num) _,
+      Real.rpow_pos_of_pos (by norm_num) _, by rw [log_pot 10 _ (by norm_num) (by norm_num)]; norm_num,
+      by rw [log_pot 10 _ (by norm_num) (by norm_num)]; norm_num⟩
+  kviz5 (h1 := w.choose_spec.choose_spec.1) (h2 := w.choose_spec.choose_spec.2.1) (p1 := w.choose_spec.choose_spec.2.2.1) (p2 := w.choose_spec.choose_spec.2.2.2)
 
 /-- Preveri se 6: ln e⁴ + e^(ln 3) − ln 1 = 4 + 3 − 0 = 7.
 trditev: MAT-SS-2/logaritem#kviz6

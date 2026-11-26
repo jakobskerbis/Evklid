@@ -249,6 +249,12 @@ theorem trije_podobni {A B C D : P} (hD : Sbtw ℝ A D B) (hCD : ∠ A D C = π 
     · rw [dist_comm C B, dist_comm B D]; linarith [k2]
     · rw [dist_comm D C, dist_comm D A, dist_comm C B]; linarith [k3]
 
+/-- Predpostavke trditve `trije_podobni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ A B C D : ℂ, Sbtw ℝ A D B ∧ ∠ A D C = π / 2 ∧ ∠ A C B = π / 2 :=
+    ⟨0, 25, 16 + 12 * Complex.I, 16, primer_risba⟩
+  trije_podobni (hD := w.choose_spec.choose_spec.choose_spec.choose_spec.1) (hCD := w.choose_spec.choose_spec.choose_spec.choose_spec.2.1) (hC := w.choose_spec.choose_spec.choose_spec.choose_spec.2.2)
+
 /-- Razlaga 7 (risba) in Preveri se 1: 15² = 25·9, 20² = 25·16 in 12² = 9·16.
 trditev: MAT-SS-2/podobnost#risba
 besedilo: »Na risbi zgoraj: $15^2 = 25 \cdot 9$, $20^2 = 25 \cdot 16$ in $12^2 = 9 \cdot 16$.« -/
@@ -266,6 +272,11 @@ theorem premisli2 (a b c ca cb v : ℝ) (hv : 0 ≤ v) (hca : 0 ≤ ca) (ha : 0 
 example : (0:ℝ) ≤ 1 / 2 ∧ (0:ℝ) ≤ 1 ∧ (1 / 2 : ℝ) = 1 / 2 ∧ (1 / 2 : ℝ) ^ 2 = 1 / 2 * (1 / 2) ∧
     (1:ℝ) ^ 2 = 2 * (1 / 2) := by norm_num
 
+/-- Predpostavke trditve `premisli2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 / 2 ∧ (0:ℝ) ≤ 1 ∧ (1 / 2 : ℝ) = 1 / 2 ∧ (1 / 2 : ℝ) ^ 2 = 1 / 2 * (1 / 2) ∧ (1:ℝ) ^ 2 = 2 * (1 / 2) := by norm_num
+  premisli2 (hv := w.1) (hca := w.2.1) (ha := w.1) (hb := w.1) (he := w.2.2.1) (h1 := w.2.2.2.1) (h2 := w.2.2.2.2) (h3 := w.2.2.2.1)
+
 /-- Razlaga 7, Premisli 2: v enakokrakem pravokotnem trikotniku (|CA| = |CB|, pravi kot pri C) sta kota ob
 hipotenuzi enaka (kota ob osnovnici enakokrakega trikotnika) in skupaj merita π − π/2, zato je vsak π/4 = 45°.
 trditev: MAT-SS-2/podobnost#premisli2-koti
@@ -282,6 +293,12 @@ example : (1:ℂ) ≠ 0 ∧ dist (0:ℂ) 1 = dist (0:ℂ) Complex.I ∧ ∠ (1:�
   ⟨one_ne_zero, by simp [dist_eq_norm], primer_pravi_kot⟩
 
 /-! ## Središčni razteg -/
+
+/-- Predpostavke trditve `premisli2_koti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℂ) ≠ 0 ∧ dist (0:ℂ) 1 = dist (0:ℂ) Complex.I ∧ ∠ (1:ℂ) 0 Complex.I = π / 2 :=
+    ⟨one_ne_zero, by simp [dist_eq_norm], primer_pravi_kot⟩
+  premisli2_koti (hA := w.1) (hd := w.2.1) (hC := w.2.2)
 
 /-- Razlaga 8 in Povzetek: središčni razteg s središčem S in koeficientom k: |ST'| = |k|·|ST|, daljica se preslika
 v |k|-krat daljšo (|A'B'| = |k|·|AB|) in je z njo vzporedna (A'B'→ = k·AB→), S se preslika vase, ST'→ = k·ST→ (pri k > 0 na poltraku ST, pri k < 0 na
@@ -317,6 +334,11 @@ theorem razteg_podobnost (S A B C : P) (k : ℝ) (hk : k ≠ 0) :
 
 /-- Predpostavka `razteg_podobnost` se da izpolniti (k = 2). -/
 example : (2:ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `razteg_podobnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 := by norm_num
+  razteg_podobnost (hk := w)
 
 /-- Razlaga 8 (slika): pri središču v izhodišču se A(2, 1), B(4, 1), C(3, 3) pri k = 2 preslikajo v (4, 2), (8, 2),
 (6, 6), pri k = −1/2 pa v (−1; −0,5), (−2; −0,5), (−1,5; −1,5).
@@ -491,6 +513,11 @@ theorem kviz3 (k : ℝ) (hk : 0 < k) : k ^ 2 = 9 ↔ k = 3 := by
 
 /-- Predpostavka `kviz3` se da izpolniti (k = 3). -/
 example : (0:ℝ) < 3 := by norm_num
+
+/-- Predpostavke trditve `kviz3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 := by norm_num
+  kviz3 (hk := w)
 
 /-- Preveri se 4: 1 cm na sliki pomeni 3500/3,5 = 1000 km, krater 0,2·1000 = 200 km (napaka 0,2·3500 = 700).
 trditev: MAT-SS-2/podobnost#kviz4

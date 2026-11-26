@@ -57,6 +57,11 @@ theorem narasca (a : ℝ) (ha : 1 < a) : StrictMono fun x : ℝ => a ^ x :=
 /-- Predpostavke trditve `narasca` se dajo izpolniti (a = 2). -/
 example : (1 : ℝ) < 2 := by norm_num
 
+/-- Predpostavke trditve `narasca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  narasca (ha := w)
+
 /-- Razlaga 5: pri 0 < a < 1 je aˣ strogo padajoča.
 trditev: MAT-SS-2/eksponentna-funkcija#pada
 besedilo: »| $x > 0$ | $a^x > 1$ | $0 < a^x < 1$ |« -/
@@ -65,6 +70,11 @@ theorem pada (a : ℝ) (h0 : 0 < a) (h1 : a < 1) : StrictAnti fun x : ℝ => a ^
 
 /-- Predpostavke trditve `pada` se dajo izpolniti (a = 1/2). -/
 example : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+
+/-- Predpostavke trditve `pada` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  pada (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 5 (injektivnost): za a > 0, a ≠ 1 je aᵘ = aᵛ natanko tedaj, ko je u = v.
 trditev: MAT-SS-2/eksponentna-funkcija#injektivna
@@ -80,6 +90,11 @@ theorem injektivna (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (u v : ℝ) : a ^ u = 
 /-- Predpostavke trditve `injektivna` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
 
+/-- Predpostavke trditve `injektivna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  injektivna (ha := w.1) (ha1 := w.2)
+
 /-- Razlaga 5: za a > 0, a ≠ 1 je zaloga vrednosti aˣ (definirane za vsak realen x) interval (0, ∞):
 vse vrednosti so pozitivne (ničel ni) in vsaka pozitivna vrednost je dosežena.
 trditev: MAT-SS-2/eksponentna-funkcija#zaloga
@@ -93,6 +108,11 @@ theorem zaloga (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 
 /-- Predpostavke trditve `zaloga` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+
+/-- Predpostavke trditve `zaloga` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  zaloga (ha := w.1) (ha1 := w.2)
 
 /-- Razlaga 5: graf gre skozi (0, 1) in (1, a); ničel ni; funkcija je navzdol omejena z 0, navzgor pa
 ni omejena (vsako mejo M preseže).
@@ -110,6 +130,11 @@ theorem lastnosti (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 /-- Predpostavke trditve `lastnosti` se dajo izpolniti (a = 3). -/
 example : (0 : ℝ) < 3 ∧ (3 : ℝ) ≠ 1 := by norm_num
 
+/-- Predpostavke trditve `lastnosti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 3 ∧ (3 : ℝ) ≠ 1 := by norm_num
+  lastnosti (ha := w.1) (ha1 := w.2)
+
 /-- Razlaga 5 (tabela): pri a > 1 in x > 0 je aˣ > 1, pri 0 < a < 1 in x > 0 je 0 < aˣ < 1.
 trditev: MAT-SS-2/eksponentna-funkcija#nad-pod-ena
 besedilo: »| $x > 0$ | $a^x > 1$ | $0 < a^x < 1$ |« -/
@@ -120,6 +145,11 @@ theorem nad_pod_ena (a x : ℝ) (hx : 0 < x) :
 
 /-- Predpostavke trditve `nad_pod_ena` se dajo izpolniti (x = 1, a = 2 ali a = 1/2). -/
 example : (0 : ℝ) < 1 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+
+/-- Predpostavke trditve `nad_pod_ena` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  nad_pod_ena (hx := w.1)
 
 /-- Razlaga 5 (asimptota y = 0): pri a > 1 so vrednosti levo od neke meje poljubno blizu 0 (asimptota
 na levi), pri 0 < a < 1 pa desno od neke meje (asimptota na desni); 0 ni dosežena (`lastnosti`).
@@ -141,6 +171,11 @@ theorem asimptota (a : ℝ) (ε : ℝ) (hε : 0 < ε) :
 /-- Predpostavke trditve `asimptota` se dajo izpolniti (ε = 1/100, a = 2 ali a = 1/2). -/
 example : (0 : ℝ) < 1 / 100 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `asimptota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 100 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  asimptota (hε := w.1)
+
 /-- Razlaga 5: korak za 1 v desno vrednost pomnoži z a: a^(x+1) = aˣ·a (a > 0); primerjava: 2ˣ pri
 x = 0, 1, 2, 3 da 1, 2, 4, 8, 2x + 1 pa 1, 3, 5, 7 (vsakič +2).
 trditev: MAT-SS-2/eksponentna-funkcija#korak
@@ -155,6 +190,11 @@ theorem korak (a x : ℝ) (ha : 0 < a) :
 example : (0 : ℝ) < 2 := by norm_num
 
 /-! ## Razlaga 1: oktave -/
+
+/-- Predpostavke trditve `korak` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  korak (ha := w)
 
 /-- Razlaga 1, tabela: 440·2ˣ pri x = −2, −1, 0, 1, 2 da 110, 220, 440, 880, 1760; 2^(1/2) = √2.
 trditev: MAT-SS-2/eksponentna-funkcija#oktave
@@ -211,6 +251,11 @@ theorem pod_premico (n : ℝ) (h0 : 0 < n) (h12 : n < 12) :
 
 /-- Predpostavke trditve `pod_premico` se dajo izpolniti (n = 6). -/
 example : (0 : ℝ) < 6 ∧ (6 : ℝ) < 12 := by norm_num
+
+/-- Predpostavke trditve `pod_premico` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 6 ∧ (6 : ℝ) < 12 := by norm_num
+  pod_premico (h0 := w.1) (h12 := w.2)
 
 /-- Razlaga 1, premisli: 10 oktav pod a¹ je 440·2^(−10) = 440/1024 ≈ 0,43 Hz > 0.
 trditev: MAT-SS-2/eksponentna-funkcija#deset-oktav
@@ -298,6 +343,11 @@ theorem zrcaljenje (a x : ℝ) (ha : 0 < a) : (1 / a) ^ x = a ^ (-x) := by
 
 /-- Predpostavke trditve `zrcaljenje` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
+
+/-- Predpostavke trditve `zrcaljenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  zrcaljenje (ha := w)
 
 /-- Razlaga 7: 2³ = (1/2)^(−3) = 8.
 trditev: MAT-SS-2/eksponentna-funkcija#zrcaljenje-primer
@@ -391,6 +441,11 @@ theorem premiki (a p q c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hc : 0 < c) :
 /-- Predpostavke trditve `premiki` se dajo izpolniti (a = 2, p = 2, q = −2, c = 3). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 3 := by norm_num
 
+/-- Predpostavke trditve `premiki` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 3 := by norm_num
+  premiki (ha := w.1) (ha1 := w.2.1) (hc := w.2.2)
+
 /-- Razlaga 9, slika y = 2^(x−2) − 2: točka (0, 1) gre v (2, −1); edina ničla je x = 3 (2¹ − 2 = 0);
 pri q ≥ 0 je 2^(x−p) + q > 0, zato ničle ni.
 trditev: MAT-SS-2/eksponentna-funkcija#premik-primer
@@ -430,6 +485,11 @@ example : (0 : ℝ) < 1 := by norm_num
 
 /-! ## Razlaga 11: potenčna ali eksponentna rast -/
 
+/-- Predpostavke trditve `primerjanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := by norm_num
+  primerjanje (h := w)
+
 /-- Razlaga 11: x² proti 2ˣ pri x = 1, 2, 3, 4, 5, 10: 1 < 2, 4 = 4, 9 > 8, 16 = 16, 25 < 32,
 100 < 1024; grafa se sekata v (2, 4) in (4, 16).
 trditev: MAT-SS-2/eksponentna-funkcija#potencna-eksponentna
@@ -454,6 +514,11 @@ theorem dve_na_n (n : ℕ) (hn : 5 ≤ n) : n ^ 2 < 2 ^ n := by
 
 /-- Predpostavke trditve `dve_na_n` se dajo izpolniti (n = 5). -/
 example : 5 ≤ 5 := le_rfl
+
+/-- Predpostavke trditve `dve_na_n` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 5 ≤ 5 := le_rfl
+  dve_na_n (hn := w)
 
 /-- Razlaga 11: korak za 1 vrednost 2ˣ podvoji (2^(x+1)/2ˣ = 2), x² pa pomnoži z ((x+1)/x)² (x ≠ 0;
 v Leanu velja zapis tudi pri x = 0, ker je x/0 = 0).
@@ -542,6 +607,11 @@ theorem prehiti_vsako (a : ℝ) (ha : 1 < a) (n : ℕ) :
 example : (1 : ℝ) < 1.1 := by norm_num
 
 set_option exponentiation.threshold 700 in
+/-- Predpostavke trditve `prehiti_vsako` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 1.1 := by norm_num
+  prehiti_vsako (ha := w)
+
 /-- Razlaga 11 in RAČUN: 1,1⁶⁸⁵/685¹⁰ ≈ 0,993 < 1 in 1,1⁶⁸⁶/686¹⁰ ≈ 1,077 > 1.
 trditev: MAT-SS-2/eksponentna-funkcija#prehiti
 besedilo: »$1{,}1^x$ prehiti $x^{10}$ pri $x \approx 685$.« -/
@@ -772,6 +842,11 @@ theorem matura1 (a c : ℝ) (ha : 0 < a) (hc : 0 < c) :
 /-- Predpostavke trditve `matura1` se dajo izpolniti (a = 1/2, c = 6). -/
 example : (0 : ℝ) < 1 / 2 ∧ (0 : ℝ) < 6 := by norm_num
 
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 ∧ (0 : ℝ) < 6 := by norm_num
+  matura1 (ha := w.1) (hc := w.2)
+
 /-- Za maturo, naloga 1 in RAČUN: 3/12 = 1/4, 3/(1/2) = 6, 6·(1/2)^(−1) = 12; f(x) = 6·(1/2)ˣ pada.
 trditev: MAT-SS-2/eksponentna-funkcija#matura1-racun
 besedilo: »Ker je $a > 0$, je $a = \dfrac{1}{2}$. Iz $c \cdot \dfrac{1}{2} = 3$ sledi $c = 6$. Preizkus: $6 \cdot \left(\dfrac{1}{2}\right)^{-1} = 6 \cdot 2 = 12$.« -/
@@ -900,6 +975,11 @@ theorem matura3e (x : ℝ) (hx : 1 < x) : (2 : ℝ) ^ (x - 1) + 1 < Real.exp (x 
 /-- Predpostavke trditve `matura3e` se dajo izpolniti (x = 2). -/
 example : (1 : ℝ) < 2 := by norm_num
 
+/-- Predpostavke trditve `matura3e` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  matura3e (hx := w)
+
 /-- RAČUN: 2^(3/2 − 1) + 1 ≈ 2,414 in (1 + 1/2)² = 2,25.
 trditev: MAT-SS-2/eksponentna-funkcija#racun-sqrt
 besedilo: »Po letu imamo $\left(1 + \frac{1}{n}\right)^n$ €: pri $n = 1, 2, 12, 365$ dobimo $2;\ 2{,}25;\ 2{,}613;\ 2{,}7146$.« -/
@@ -936,6 +1016,11 @@ theorem dokaz_monotonosti (a x₁ x₂ : ℝ) (ha : 0 < a) (h : x₁ < x₂) :
 /-- Predpostavke trditve `dokaz_monotonosti` se dajo izpolniti (a = 2, x₁ = 0, x₂ = 1). -/
 example : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `dokaz_monotonosti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
+  dokaz_monotonosti (ha := w.1) (h := w.2)
+
 /-- Bolj natančno (iracionalni eksponenti): 2^1,4 < 2^1,41 < 2^1,414 < 2^1,5.
 trditev: MAT-SS-2/eksponentna-funkcija#iracionalni
 besedilo: »$2^{1{,}41}$,« -/
@@ -965,6 +1050,11 @@ theorem produkt (a u v : ℝ) (ha : 0 < a) : a ^ (u + v) = a ^ u * a ^ v := Real
 
 /-- Predpostavke trditve `produkt` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
+
+/-- Predpostavke trditve `produkt` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  produkt (ha := w)
 
 /-- Drugače, z analogijo: 0,1·2¹⁰ = 0,1·1024 = 102,4 mm > 100 mm; linearno 0,1 + 10·0,1 = 1,1 mm;
 polovica pozitivnega kosa je še vedno pozitivna ((1/2)ˣ > 0).
@@ -1024,6 +1114,11 @@ theorem kviz4 (a : ℝ) (ha : 0 < a) : (∀ x : ℝ, 0 < a ^ x) ∧ (1 : ℝ) - 
 
 /-- Predpostavke trditve `kviz4` se dajo izpolniti (a = 1/2). -/
 example : (0 : ℝ) < 1 / 2 := by norm_num
+
+/-- Predpostavke trditve `kviz4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 := by norm_num
+  kviz4 (ha := w)
 
 /-- Preveri se 5: 3^(x−2) ima vrednost 1 pri x = 2 (premik za 2 v desno); 3ˣ > 0; f(x) = 3^(x−2) − 1
 ima zalogo vrednosti (−1, ∞).

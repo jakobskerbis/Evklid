@@ -225,6 +225,11 @@ theorem sinusni_izrek_2R (t : Affine.Triangle ℝ P) {i₁ i₂ i₃ : Fin 3} (h
 /-- Predpostavke trditve `sinusni_izrek_2R` se dajo izpolniti (indeksi 0, 1, 2 so različni). -/
 example : (0 : Fin 3) ≠ 1 ∧ (0 : Fin 3) ≠ 2 ∧ (1 : Fin 3) ≠ 2 := by decide
 
+/-- Predpostavke trditve `sinusni_izrek_2R` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : Fin 3) ≠ 1 ∧ (0 : Fin 3) ≠ 2 ∧ (1 : Fin 3) ≠ 2 := by decide
+  sinusni_izrek_2R (h₁₂ := w.1) (h₁₃ := w.2.1) (h₂₃ := w.2.2)
+
 /-- Postopek in Primer 2: vsota notranjih kotov trikotnika je `180° = π` (tretji kot iz `180°`).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#vsota-kotov
 besedilo: »Tretji kot izračunaj iz vsote kotov $180^\circ$.« -/
@@ -304,6 +309,17 @@ example : Real.sin (∠ tC tA tB) ≠ 0 ∧ Real.sin (∠ tA tB tC) ≠ 0 ∧ tB
   · intro hBA; apply h; rw [hBA]; simp [collinear_pair]
   · simp [EuclideanSpace.dist_eq, tA, tB, tC, Fin.sum_univ_two]
 
+/-- Predpostavke trditve `vsota_kotov` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Real.sin (∠ tC tA tB) ≠ 0 ∧ Real.sin (∠ tA tB tC) ≠ 0 ∧ tB ≠ tA ∧ ¬Collinear ℝ ({tA, tB, tC} : Set (EuclideanSpace ℝ (Fin 2))) ∧ dist tA tB < dist tA tC ∧ ∠ tC tA tB = π / 2 := by
+    have h := t_nekolinearen
+    have hp : ∠ tC tA tB = π / 2 := by rw [EuclideanGeometry.angle_comm]; exact t_pravi
+    refine ⟨?_, sin_ne_zero_of_not_collinear h, ?_, h, ?_, hp⟩
+    · rw [hp, Real.sin_pi_div_two]; exact one_ne_zero
+    · intro hBA; apply h; rw [hBA]; simp [collinear_pair]
+    · simp [EuclideanSpace.dist_eq, tA, tB, tC, Fin.sum_univ_two]
+  vsota_kotov (h := w.1)
+
 /-- Razlaga (višina): iz `b sin α = a sin β` po deljenju s `sin α sin β` sledi `a / sin α = b / sin β`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#visina-sklep
 besedilo: »Ko obe strani deliš s $\sin\alpha\sin\beta$, dobiš $\dfrac{a}{\sin\alpha} = \dfrac{b}{\sin\beta}$.« -/
@@ -313,6 +329,11 @@ theorem visina_sklep (a b sα sβ : ℝ) (hα : sα ≠ 0) (hβ : sβ ≠ 0) (h 
 
 /-- Predpostavke trditve `visina_sklep` se dajo izpolniti (`a = b = 1`, `sα = sβ = 1`). -/
 example : (1:ℝ) ≠ 0 ∧ (1:ℝ) * 1 = 1 * 1 := by norm_num
+
+/-- Predpostavke trditve `visina_sklep` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ (1:ℝ) * 1 = 1 * 1 := by norm_num
+  visina_sklep (hα := w.1) (hβ := w.1) (h := w.2)
 
 /-- Razlaga, Ponovitev in Pogoste napake: `sin(180° − x) = sin x`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#sin-suplement
@@ -340,6 +361,11 @@ theorem dve_resitvi_sinus (x₀ x : ℝ) (h0 : 0 ≤ x₀) (h1 : x₀ ≤ π / 2
 
 /-- Predpostavke trditve `dve_resitvi_sinus` se dajo izpolniti (`x₀ = 0`, `x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π / 2 ∧ (0:ℝ) ≤ π := ⟨le_rfl, by positivity, Real.pi_pos.le⟩
+
+/-- Predpostavke trditve `dve_resitvi_sinus` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π / 2 ∧ (0:ℝ) ≤ π := ⟨le_rfl, by positivity, Real.pi_pos.le⟩
+  dve_resitvi_sinus (h0 := w.1) (h1 := w.2.1) (hx0 := w.2.2) (hx1 := w.2.2)
 
 /-- Razlaga (premisli) in Povzetek: med 0° in 180° ima vsak kot drugačen kosinus, zato da kosinus en sam kot.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kosinus-en-kot
@@ -373,6 +399,11 @@ theorem primerjava (a b c cγ : ℝ) (ha : 0 < a) (hb : 0 < b) (h : c ^ 2 = a ^ 
 /-- Predpostavke trditve `primerjava` se dajo izpolniti (`a = 3`, `b = 4`, `c = 5`, `cos γ = 0`). -/
 example : (0:ℝ) < 3 ∧ (0:ℝ) < 4 ∧ (5:ℝ) ^ 2 = 3 ^ 2 + 4 ^ 2 - 2 * 3 * 4 * 0 := by norm_num
 
+/-- Predpostavke trditve `primerjava` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 4 ∧ (5:ℝ) ^ 2 = 3 ^ 2 + 4 ^ 2 - 2 * 3 * 4 * 0 := by norm_num
+  primerjava (ha := w.1) (hb := w.2.1) (h := w.2.2)
+
 /-- Razlaga, tabela: za kot `γ ∈ [0°, 180°]` je `cos γ > 0` natanko pri ostrem, `= 0` pri pravem, `< 0` pri
 topem kotu.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kosinus-vrsta-kota
@@ -400,6 +431,11 @@ theorem kosinus_vrsta_kota (γ : ℝ) (h0 : 0 ≤ γ) (h1 : γ ≤ π) :
 /-- Predpostavke trditve `kosinus_vrsta_kota` se dajo izpolniti (`γ = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π := ⟨le_rfl, Real.pi_pos.le⟩
 
+/-- Predpostavke trditve `kosinus_vrsta_kota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π := ⟨le_rfl, Real.pi_pos.le⟩
+  kosinus_vrsta_kota (h0 := w.1) (h1 := w.2)
+
 /-- Razlaga in Ponovitev: iz `c² = a² + b² − 2ab cos γ` (`a, b ≠ 0`) sledi `cos γ = (a² + b² − c²)/(2ab)`;
 z zamenjavo črk velja tudi `a² = b² + c² − 2bc cos α`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kosinus-iz-stranic
@@ -410,6 +446,11 @@ theorem kosinus_iz_stranic (a b c cγ : ℝ) (ha : a ≠ 0) (hb : b ≠ 0)
 
 /-- Predpostavke trditve `kosinus_iz_stranic` se dajo izpolniti (`a = 3`, `b = 4`, `c = 5`, `cos γ = 0`). -/
 example : (3:ℝ) ≠ 0 ∧ (4:ℝ) ≠ 0 ∧ (5:ℝ) ^ 2 = 3 ^ 2 + 4 ^ 2 - 2 * 3 * 4 * 0 := by norm_num
+
+/-- Predpostavke trditve `kosinus_iz_stranic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℝ) ≠ 0 ∧ (4:ℝ) ≠ 0 ∧ (5:ℝ) ^ 2 = 3 ^ 2 + 4 ^ 2 - 2 * 3 * 4 * 0 := by norm_num
+  kosinus_iz_stranic (ha := w.1) (hb := w.2.1) (h := w.2.2)
 
 /-- Razlaga in Povzetek: pri `γ = 90°` kosinusni izrek preide v Pitagorov izrek.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#pitagora
@@ -430,6 +471,12 @@ theorem vecji_kot_vecji_sinus (α β : ℝ) (h0 : 0 < α) (hαβ : α < β) (hs 
 /-- Predpostavke trditve `vecji_kot_vecji_sinus` se dajo izpolniti (`α = π/6`, `β = π/3`). -/
 example : (0:ℝ) < π / 6 ∧ π / 6 < π / 3 ∧ π / 6 + π / 3 < π := by
   refine ⟨by positivity, by linarith [Real.pi_pos], by linarith [Real.pi_pos]⟩
+
+/-- Predpostavke trditve `vecji_kot_vecji_sinus` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < π / 6 ∧ π / 6 < π / 3 ∧ π / 6 + π / 3 < π := by
+    refine ⟨by positivity, by linarith [Real.pi_pos], by linarith [Real.pi_pos]⟩
+  vecji_kot_vecji_sinus (h0 := w.1) (hαβ := w.2.1) (hs := w.2.2)
 
 /-- Razlaga (šestilo) in Z analogijo: pri stalnih `a, b > 0` je `c² = a² + b² − 2ab cos γ` strogo naraščajoč v
 `γ ∈ [0°, 180°]`: bolj odprto šestilo, bolj oddaljeni konici.
@@ -677,6 +724,11 @@ theorem primer3_kalkulator (x : ℝ) (h1 : π / 2 ≤ x) (h2 : x ≤ 3 * π / 2)
 /-- Predpostavke trditve `primer3_kalkulator` se dajo izpolniti (`x = π`). -/
 example : π / 2 ≤ π ∧ π ≤ 3 * π / 2 := by constructor <;> linarith [Real.pi_pos]
 
+/-- Predpostavke trditve `primer3_kalkulator` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : π / 2 ≤ π ∧ π ≤ 3 * π / 2 := by constructor <;> linarith [Real.pi_pos]
+  primer3_kalkulator (h1 := w.1) (h2 := w.2)
+
 /-- Primer 3, opomba (za dejanski `λ` iz računa): kalkulator iz `sin λ` vrne kot `≈ 85,1°`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#primer3-kalkulator-lambda
 besedilo: »Če bi s sinusom računal kot $\lambda$, bi kalkulator vrnil $85{,}1^\circ$.« -/
@@ -742,6 +794,11 @@ theorem napaka_koren (c : ℝ) (hc : 0 ≤ c) (h : c ^ 2 = 39) : c = Real.sqrt 3
 /-- Predpostavke trditve `napaka_koren` se dajo izpolniti (`c = √39`). -/
 example : 0 ≤ Real.sqrt 39 ∧ Real.sqrt 39 ^ 2 = 39 := ⟨Real.sqrt_nonneg _, Real.sq_sqrt (by norm_num)⟩
 
+/-- Predpostavke trditve `napaka_koren` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 0 ≤ Real.sqrt 39 ∧ Real.sqrt 39 ^ 2 = 39 := ⟨Real.sqrt_nonneg _, Real.sq_sqrt (by norm_num)⟩
+  napaka_koren (hc := w.1) (h := w.2)
+
 /-- Pogoste napake (vrstni red računanja): `(a² + b² − 2ab)·cos γ` v splošnem ni `a² + b² − 2ab cos γ` (npr.
 `a = 3`, `b = 4`, `γ = 60°`: `1·0,5 = 0,5`, pravilno pa `25 − 12 = 13`).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#napaka-vrstni-red
@@ -771,6 +828,13 @@ example : (0:ℝ) ≤ 120 * π / 180 ∧ 120 * π / 180 ≤ π ∧
     (7:ℝ) ^ 2 = 3 ^ 2 + 5 ^ 2 - 2 * 3 * 5 * Real.cos (120 * π / 180) := by
   refine ⟨by positivity, by nlinarith [Real.pi_pos], ?_⟩
   rw [cos_120_60.1]; norm_num
+
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 120 * π / 180 ∧ 120 * π / 180 ≤ π ∧ (7:ℝ) ^ 2 = 3 ^ 2 + 5 ^ 2 - 2 * 3 * 5 * Real.cos (120 * π / 180) := by
+    refine ⟨by positivity, by nlinarith [Real.pi_pos], ?_⟩
+    rw [cos_120_60.1]; norm_num
+  matura1 (h0 := w.1) (h1 := w.2.1) (h := w.2.2)
 
 /-- `<<RACUN`: `arccos(−1/2)·180/π = 120`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#arccos-minus-pol
@@ -873,6 +937,11 @@ theorem kviz2 (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
 
 /-- Predpostavke trditve `kviz2` se dajo izpolniti (`a = b = 1`). -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  kviz2 (ha := w) (hb := w)
 
 /-- Preveri se 3 (in `<<RACUN`): `a = 5`, `b = 7`, `γ = 60°`: `c² = 25 + 49 − 2·5·7·0,5 = 39`,
 `c = √39 ≈ 6,24 cm`; napačni `√74 ≈ 8,60` (Pitagora), `√109 ≈ 10,44` (popravek prištet).

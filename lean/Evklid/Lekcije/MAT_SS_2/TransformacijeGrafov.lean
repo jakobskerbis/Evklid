@@ -132,6 +132,11 @@ theorem skrcitev (f : ℝ → ℝ) (k : ℝ) (hk : k ≠ 0) :
 /-- Predpostavka izreka `skrcitev` se da izpolniti (k = 2). -/
 example : (2:ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `skrcitev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 := by norm_num
+  skrcitev (hk := w)
+
 /-- Razlaga »Zakaj v desno?«: (x − 2)² pri x = 3 da 1² = 1, isto kot x² pri x = 1; pri p = 2 je g(x) = f(x − 2)
 pri x enak f pri x − 2.
 trditev: MAT-SS-2/transformacije-grafov#zakaj-desno
@@ -156,6 +161,11 @@ theorem teme_parabole (a p q : ℝ) (ha : 0 < a) :
 
 /-- Predpostavka izreka `teme_parabole` se da izpolniti (a = 1). -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `teme_parabole` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  teme_parabole (ha := w)
 
 /-- Razlaga, Premisli 1: (x + 3)² − 1 = (x − (−3))² + (−1), teme (−3, −1) (p = −3: 3 v levo, 1 navzdol);
 preizkus pri x = −3: 0² − 1 = −1.

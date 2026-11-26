@@ -80,6 +80,11 @@ theorem olje_kvocient (h : ℝ) (hh : h ≠ 0) :
 /-- Predpostavke trditve `olje_kvocient` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `olje_kvocient` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  olje_kvocient (hh := w)
+
 /-- Razlaga 1: limita diferenčnih količnikov je 12, torej se olje ob t = 4 segreva s 12 °C/min
 (več od povprečja 10).
 trditev: MAT-SS-4/odvod#olje-odvod-4
@@ -149,6 +154,11 @@ theorem potenca_cela (n : ℤ) (x : ℝ) (hx : x ≠ 0) :
 /-- Predpostavke trditve `potenca_cela` se dajo izpolniti. -/
 example : (2:ℝ) ≠ 0 := two_ne_zero
 
+/-- Predpostavke trditve `potenca_cela` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 := two_ne_zero
+  potenca_cela (hx := w)
+
 /-- Razlaga 3, pravilo za potenco (realni, tudi racionalni eksponent) za x > 0.
 trditev: MAT-SS-4/odvod#potenca-realna
 besedilo: »Velja tudi za negativne in racionalne eksponente, na primer $\left(\frac{1}{x}\right)' = (x^{-1})' = -\frac{1}{x^2}$.« -/
@@ -158,6 +168,11 @@ theorem potenca_realna (p x : ℝ) (hx : 0 < x) :
 
 /-- Predpostavke trditve `potenca_realna` se dajo izpolniti. -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `potenca_realna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  potenca_realna (hx := w)
 
 /-- Razlaga 3: (1/x)' = (x⁻¹)' = −1/x² za x ≠ 0.
 trditev: MAT-SS-4/odvod#odvod-ena-skozi-x
@@ -170,6 +185,11 @@ theorem odvod_ena_skozi_x (x : ℝ) (hx : x ≠ 0) :
 
 /-- Predpostavka x ≠ 0 je izpolnljiva. Trditev: `odvod_ena_skozi_x`. -/
 example : ∃ x : ℝ, x ≠ 0 := ⟨1, one_ne_zero⟩
+
+/-- Predpostavke trditve `odvod_ena_skozi_x` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ x : ℝ, x ≠ 0 := ⟨1, one_ne_zero⟩
+  odvod_ena_skozi_x (hx := w.choose_spec)
 
 /-- Razlaga 3: x' = 1 in odvod konstante je 0.
 trditev: MAT-SS-4/odvod#odvod-x-in-konstante
@@ -189,6 +209,11 @@ theorem odvod_konstanta_krat {f : ℝ → ℝ} {f' x : ℝ} (c : ℝ) (hf : HasD
 /-- Predpostavka je izpolnljiva (f = x). Trditev: `odvod_konstanta_krat`. -/
 example : HasDerivAt (fun x : ℝ => x) 1 0 := hasDerivAt_id' 0
 
+/-- Predpostavke trditve `odvod_konstanta_krat` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 := hasDerivAt_id' 0
+  odvod_konstanta_krat (hf := w)
+
 /-- Razlaga 5: (f + g)' = f' + g'.
 trditev: MAT-SS-4/odvod#odvod-vsote
 besedilo: »$$(c \cdot f)' = c \cdot f' \qquad (f + g)' = f' + g'$$« -/
@@ -198,6 +223,12 @@ theorem odvod_vsote {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x)
 /-- Predpostavke trditve `odvod_vsote` se dajo izpolniti. -/
 example : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
   ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
+
+/-- Predpostavke trditve `odvod_vsote` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
+    ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
+  odvod_vsote (hf := w.1) (hg := w.2)
 
 /-- Razlaga 5: T'(t) = 0 + 20 − 2t = 20 − 2t.
 trditev: MAT-SS-4/odvod#olje-odvod
@@ -234,6 +265,12 @@ theorem odvod_produkta {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f'
 example : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
   ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
 
+/-- Predpostavke trditve `odvod_produkta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
+    ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
+  odvod_produkta (hf := w.1) (hg := w.2)
+
 /-- Razlaga 6: (f/g)' = (f' · g − f · g')/g² (za g(x) ≠ 0).
 trditev: MAT-SS-4/odvod#odvod-kvocienta
 besedilo: »$$\left(\frac{f}{g}\right)' = \frac{f' \cdot g - f \cdot g'}{g^2}$$« -/
@@ -244,6 +281,12 @@ theorem odvod_kvocienta {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f
 /-- Predpostavke trditve `odvod_kvocienta` se dajo izpolniti. -/
 example : HasDerivAt (fun x : ℝ => x) 1 1 ∧ HasDerivAt (fun x : ℝ => x) 1 1 ∧ (fun x : ℝ => x) 1 ≠ 0 :=
   ⟨hasDerivAt_id' 1, hasDerivAt_id' 1, one_ne_zero⟩
+
+/-- Predpostavke trditve `odvod_kvocienta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 1 ∧ HasDerivAt (fun x : ℝ => x) 1 1 ∧ (fun x : ℝ => x) 1 ≠ 0 :=
+    ⟨hasDerivAt_id' 1, hasDerivAt_id' 1, one_ne_zero⟩
+  odvod_kvocienta (hf := w.1) (hg := w.2.1) (hx := w.2.2)
 
 /-- Razlaga 6: verižno pravilo (f(g(x)))' = f'(g(x)) · g'(x).
 trditev: MAT-SS-4/odvod#verizno-pravilo
@@ -256,6 +299,12 @@ example : HasDerivAt (fun x : ℝ => x) 1 ((fun x : ℝ => x) 0) ∧ HasDerivAt 
   ⟨hasDerivAt_id' _, hasDerivAt_id' 0⟩
 
 /-! ## Razlaga, 7: odvodi elementarnih funkcij -/
+
+/-- Predpostavke trditve `verizno_pravilo` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 ((fun x : ℝ => x) 0) ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
+    ⟨hasDerivAt_id' _, hasDerivAt_id' 0⟩
+  verizno_pravilo (hf := w.1) (hg := w.2)
 
 /-- Razlaga 7, tabela: (sin x)' = cos x, (cos x)' = −sin x, (eˣ)' = eˣ.
 trditev: MAT-SS-4/odvod#elementarni-odvodi
@@ -274,6 +323,11 @@ theorem odvod_ln (x : ℝ) (hx : 0 < x) : HasDerivAt log (1 / x) x := by
 example : (0:ℝ) < 1 := one_pos
 
 /-! ## Razlaga, 8: pravila iz definicije (višja raven) -/
+
+/-- Predpostavke trditve `odvod_ln` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  odvod_ln (hx := w)
 
 /-- Razlaga 8: diferenčni količnik vsote razpade na vsoto diferenčnih količnikov.
 trditev: MAT-SS-4/odvod#vsota-kvocient
@@ -310,6 +364,11 @@ theorem odvedljiva_zvezna {g : ℝ → ℝ} {a g' : ℝ} (hg : HasDerivAt g g' a
 /-- Predpostavke trditve `odvedljiva_zvezna` se dajo izpolniti. -/
 example : HasDerivAt (fun x : ℝ => x) 1 0 := hasDerivAt_id' 0
 
+/-- Predpostavke trditve `odvedljiva_zvezna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 := hasDerivAt_id' 0
+  odvedljiva_zvezna (hg := w)
+
 /-- Razlaga 8 in Ustno vprašanje 3: pravilo za vsoto, izpeljano iz definicije (limita vsote je vsota
 limit).
 trditev: MAT-SS-4/odvod#vsota-iz-definicije
@@ -322,6 +381,12 @@ theorem vsota_iz_definicije {f g : ℝ → ℝ} {a f' g' : ℝ} (hf : HasDerivAt
 /-- Predpostavke trditve `vsota_iz_definicije` se dajo izpolniti. -/
 example : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
   ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
+
+/-- Predpostavke trditve `vsota_iz_definicije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
+    ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
+  vsota_iz_definicije (hf := w.1) (hg := w.2)
 
 /-- Razlaga 8: pravilo za produkt, izpeljano iz definicije: (fg)'(a) = f'(a) g(a) + f(a) g'(a).
 trditev: MAT-SS-4/odvod#produkt-iz-definicije
@@ -336,6 +401,12 @@ theorem produkt_iz_definicije {f g : ℝ → ℝ} {a f' g' : ℝ} (hf : HasDeriv
 example : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
   ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
 
+/-- Predpostavke trditve `produkt_iz_definicije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 ∧ HasDerivAt (fun x : ℝ => x) 1 0 :=
+    ⟨hasDerivAt_id' 0, hasDerivAt_id' 0⟩
+  produkt_iz_definicije (hf := w.1) (hg := w.2)
+
 /-- Razlaga 8: pravilo za konstantni faktor je poseben primer (g = c, g' = 0).
 trditev: MAT-SS-4/odvod#konstanta-poseben-primer
 besedilo: »Pravilo za konstantni faktor je poseben primer: pri $g = c$ je $g' = 0$.« -/
@@ -348,6 +419,11 @@ example : HasDerivAt (fun x : ℝ => x) 1 0 := hasDerivAt_id' 0
 
 /-! ## Razlaga, 9: novi odvodi iz pravil (višja raven) -/
 
+/-- Predpostavke trditve `konstanta_poseben_primer` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x) 1 0 := hasDerivAt_id' 0
+  konstanta_poseben_primer (hf := w)
+
 /-- Razlaga 9: po pravilu za kvocient z u = 1, v = x je (1/x)' = (0 · x − 1 · 1)/x² = −1/x² (x ≠ 0).
 trditev: MAT-SS-4/odvod#ena-skozi-x-kvocient
 besedilo: »Po pravilu za kvocient z $u = 1$ in $v = x$: $\left(\frac{1}{x}\right)' = \frac{0 \cdot x - 1 \cdot 1}{x^2} = -\frac{1}{x^2}$.« -/
@@ -358,6 +434,11 @@ theorem ena_skozi_x_kvocient (x : ℝ) (hx : x ≠ 0) :
 
 /-- Predpostavke trditve `ena_skozi_x_kvocient` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `ena_skozi_x_kvocient` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  ena_skozi_x_kvocient (hx := w)
 
 /-- Razlaga 9: (tan x)' = (cos x · cos x − sin x · (−sin x))/cos² x = 1/cos² x za cos x ≠ 0.
 trditev: MAT-SS-4/odvod#odvod-tangensa
@@ -373,6 +454,11 @@ theorem odvod_tangensa (x : ℝ) (hx : cos x ≠ 0) :
 
 /-- Predpostavke trditve `odvod_tangensa` se dajo izpolniti. -/
 example : cos (0:ℝ) ≠ 0 := by simp
+
+/-- Predpostavke trditve `odvod_tangensa` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (0:ℝ) ≠ 0 := by simp
+  odvod_tangensa (hx := w)
 
 /-- Razlaga 9: 2ˣ = e^(x ln 2) in (2ˣ)' = e^(x ln 2) · ln 2 = 2ˣ ln 2; enako (aˣ)' = aˣ ln a za a > 0.
 trditev: MAT-SS-4/odvod#odvod-eksponentne
@@ -390,6 +476,11 @@ theorem odvod_eksponentne (a : ℝ) (ha : 0 < a) (x : ℝ) :
 
 /-- Predpostavke trditve `odvod_eksponentne` se dajo izpolniti. -/
 example : (0:ℝ) < 2 := two_pos
+
+/-- Predpostavke trditve `odvod_eksponentne` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 2 := two_pos
+  odvod_eksponentne (ha := w)
 
 /-- Razlaga 9: (2ˣ)' = 2ˣ ln 2.
 trditev: MAT-SS-4/odvod#odvod-dva-na-x
@@ -422,6 +513,11 @@ theorem primer1_kvocient (h : ℝ) (hh : h ≠ 0) :
 /-- Predpostavka h ≠ 0 je izpolnljiva. Trditev: `primer1_kvocient`. -/
 example : ∃ h : ℝ, h ≠ 0 := ⟨1, one_ne_zero⟩
 
+/-- Predpostavke trditve `primer1_kvocient` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ h : ℝ, h ≠ 0 := ⟨1, one_ne_zero⟩
+  primer1_kvocient (hh := w.choose_spec)
+
 /-- Primer 1, korak 4 in 6: limita je 5, torej f'(1) = 5 (smerni koeficient tangente v (1, 4)).
 trditev: MAT-SS-4/odvod#primer1-odvod
 besedilo: »Odgovor: $f'(1) = 5$; tangenta na graf v točki $(1, 4)$ ima smerni koeficient $5$.« -/
@@ -453,6 +549,11 @@ theorem primer2_odvod (x : ℝ) (hx : x ≠ 3) :
 
 /-- Predpostavke trditve `primer2_odvod` se dajo izpolniti. -/
 example : (4:ℝ) ≠ 3 := by norm_num
+
+/-- Predpostavke trditve `primer2_odvod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4:ℝ) ≠ 3 := by norm_num
+  primer2_odvod (hx := w)
 
 /-- Primer 2, korak 4: f'(4) = −7/1² = −7.
 trditev: MAT-SS-4/odvod#primer2-v-4
@@ -551,6 +652,11 @@ theorem primer4_odvod (x : ℝ) (hx : sin x ≠ 0) :
 /-- Predpostavke trditve `primer4_odvod` se dajo izpolniti. -/
 example : sin (π / 2) ≠ 0 := by simp
 
+/-- Predpostavke trditve `primer4_odvod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : sin (π / 2) ≠ 0 := by simp
+  primer4_odvod (hx := w)
+
 /-- Primer 4, korak 4: sin(π/4) = √2/2, sin²(π/4) = 1/2, k = −1/(1/2) = −2.
 trditev: MAT-SS-4/odvod#primer4-tocka
 besedilo: »V $x_0 = \frac{\pi}{4}$ je $\sin\frac{\pi}{4} = \frac{\sqrt{2}}{2}$ in $\sin^2\frac{\pi}{4} = \frac{1}{2}$, zato je $k = -\dfrac{1}{1/2} = -2$.« -/
@@ -646,6 +752,11 @@ theorem matura2b_kvocient (h : ℝ) (hh : h ≠ 0) (h2 : 2 + h ≠ 0) :
 /-- Predpostavki sta izpolnljivi (h = 1). Trditev: `matura2b_kvocient`. -/
 example : (1:ℝ) ≠ 0 ∧ (2:ℝ) + 1 ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `matura2b_kvocient` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ (2:ℝ) + 1 ≠ 0 := by norm_num
+  matura2b_kvocient (hh := w.1) (h2 := w.2)
+
 /-- Naloga 2 b): f'(2) = lim −2/(2 + h) = −1.
 trditev: MAT-SS-4/odvod#matura2b-odvod
 besedilo: »$f'(2) = \lim\limits_{h \to 0} \dfrac{-2}{2 + h} = -1$« -/
@@ -668,6 +779,11 @@ theorem matura2_odvod_splosno (x : ℝ) (hx : x ≠ 0) : HasDerivAt (fun x : ℝ
 
 /-- Predpostavke trditve `matura2_odvod_splosno` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `matura2_odvod_splosno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  matura2_odvod_splosno (hx := w)
 
 /-- Naloga 2 c): f(2) = 2, tangenta y = 2 − 1 · (x − 2) = −x + 4, sekanta y = 4 − (x − 1) = −x + 5;
 smerna koeficienta sta enaka (−1), premici pa različni, torej vzporedni.
@@ -694,6 +810,11 @@ theorem matura3a_kvocient (x h : ℝ) (hx : 0 < x) (hh : h ≠ 0) (hxh : 0 ≤ x
 /-- Predpostavke so izpolnljive (x = 4, h = 1). Trditev: `matura3a_kvocient`. -/
 example : (0:ℝ) < 4 ∧ (1:ℝ) ≠ 0 ∧ (0:ℝ) ≤ 4 + 1 := by norm_num
 
+/-- Predpostavke trditve `matura3a_kvocient` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 ∧ (1:ℝ) ≠ 0 ∧ (0:ℝ) ≤ 4 + 1 := by norm_num
+  matura3a_kvocient (hx := w.1) (hh := w.2.1) (hxh := w.2.2)
+
 /-- Naloga 3 a), korak 2: limita je 1/(2√x), torej (√x)' = 1/(2√x) za x > 0.
 trditev: MAT-SS-4/odvod#matura3a-odvod
 besedilo: »da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$.« -/
@@ -712,6 +833,11 @@ theorem matura3a_odvod (x : ℝ) (hx : 0 < x) : HasDerivAt (fun x => √x) (1 / 
 
 /-- Predpostavke trditve `matura3a_odvod` se dajo izpolniti. -/
 example : (0:ℝ) < 4 := by norm_num
+
+/-- Predpostavke trditve `matura3a_odvod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 4 := by norm_num
+  matura3a_odvod (hx := w)
 
 /-- Naloga 3 a) (RACUN): pri x = 4 je ((4 + h) − 4)/(h(√(4 + h) + 2)) = 1/(√(4 + h) + 2) za h ≠ 0, h ≥ −4,
 in limita (√(4 + h) − √4)/h je 1/4.
@@ -746,6 +872,11 @@ theorem matura3b (x : ℝ) (hx : cos x ≠ -1) :
 
 /-- Predpostavke trditve `matura3b` se dajo izpolniti. -/
 example : cos (0:ℝ) ≠ -1 := by simp; norm_num
+
+/-- Predpostavke trditve `matura3b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (0:ℝ) ≠ -1 := by simp; norm_num
+  matura3b (hx := w)
 
 /-- Naloga 3 c): (√(x² + 9))' = 1/(2√(x² + 9)) · 2x = x/√(x² + 9) in f'(4) = 4/√(16 + 9) = 4/5.
 trditev: MAT-SS-4/odvod#matura3c
@@ -788,6 +919,11 @@ theorem matura3d (x : ℝ) (hx : x ∈ Ioo (-(π / 2)) (π / 2)) :
 
 /-- Predpostavka je izpolnljiva (x = π/3 leži v (−π/2, π/2)). Trditev: `matura3d`. -/
 example : π / 3 ∈ Ioo (-(π / 2)) (π / 2) := ⟨by linarith [pi_pos], by linarith [pi_pos]⟩
+
+/-- Predpostavke trditve `matura3d` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : π / 3 ∈ Ioo (-(π / 2)) (π / 2) := ⟨by linarith [pi_pos], by linarith [pi_pos]⟩
+  matura3d (hx := w)
 
 /-- Naloga 3 d): v x = ±π/3 ima tangenta na tan smerni koeficient 4, točki sta (π/3, √3) in
 (−π/3, −√3).
@@ -878,3 +1014,8 @@ theorem kviz7 (x : ℝ) (hx : cos x ≠ 0) :
 example : cos (0:ℝ) ≠ 0 := by simp
 
 end Evklid.Lekcije.MAT_SS_4.Odvod
+/-- Predpostavke trditve `kviz7` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (0:ℝ) ≠ 0 := by simp
+  kviz7 (hx := w)
+

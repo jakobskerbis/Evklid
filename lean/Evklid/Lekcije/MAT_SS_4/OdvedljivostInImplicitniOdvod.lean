@@ -150,6 +150,11 @@ theorem odvedljiva_je_zvezna {f : ℝ → ℝ} {a f' : ℝ} (hf : HasDerivAt f f
 /-- Predpostavka je izpolnljiva (f = x²). Trditev: `odvedljiva_je_zvezna`. -/
 example : HasDerivAt (fun x : ℝ => x ^ 2) 2 1 := kvadrat_v_1
 
+/-- Predpostavke trditve `odvedljiva_je_zvezna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x ^ 2) 2 1 := kvadrat_v_1
+  odvedljiva_je_zvezna (hf := w)
+
 /-- Razlaga 3 (višja raven): obrat ne velja, |x| je v 0 zvezna, odvedljiva pa ne.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#obrat-ne-velja
 besedilo: »(višja raven) Obrat ne velja: $|x|$ je v $0$ zvezna, odvedljiva pa ne.« -/
@@ -174,6 +179,19 @@ example : ¬ ContinuousAt (fun x : ℝ => if x ≤ 0 then (0:ℝ) else 1) 0 := b
   have := tendsto_nhds_unique h1 h2
   simp at this
 
+/-- Predpostavke trditve `nezvezna_ni_odvedljiva` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ¬ ContinuousAt (fun x : ℝ => if x ≤ 0 then (0:ℝ) else 1) 0 := by
+    intro hc
+    have h1 := hc.tendsto.mono_left (nhdsWithin_le_nhds (s := Ioi 0))
+    have h2 : Tendsto (fun x : ℝ => if x ≤ 0 then (0:ℝ) else 1) (𝓝[>] 0) (𝓝 1) := by
+      refine tendsto_const_nhds.congr' ?_
+      filter_upwards [self_mem_nhdsWithin] with x hx
+      simp [not_le.mpr (show (0:ℝ) < x from hx)]
+    have := tendsto_nhds_unique h1 h2
+    simp at this
+  nezvezna_ni_odvedljiva (h := w)
+
 /-- Razlaga 3 in Preveri se 4: funkcija, odvedljiva v vsaki točki intervala, je na njem zvezna.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#odvedljiva-na-intervalu
 besedilo: »(višja raven) Izrek velja v vsaki točki posebej, zato tudi na intervalu: funkcija, ki je odvedljiva v vsaki točki intervala, je na tem intervalu zvezna.« -/
@@ -182,6 +200,11 @@ theorem odvedljiva_na_intervalu {f : ℝ → ℝ} {s : Set ℝ} (h : Differentia
 
 /-- Predpostavka je izpolnljiva (x² na (0, 5)). Trditev: `odvedljiva_na_intervalu`. -/
 example : DifferentiableOn ℝ (fun x : ℝ => x ^ 2) (Ioo 0 5) := by fun_prop
+
+/-- Predpostavke trditve `odvedljiva_na_intervalu` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : DifferentiableOn ℝ (fun x : ℝ => x ^ 2) (Ioo 0 5) := by fun_prop
+  odvedljiva_na_intervalu (h := w)
 
 /-- Razlaga 3: x³ − 2x je odvedljiva na ℝ, zato zvezna na ℝ.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer-x3-2x
@@ -236,6 +259,11 @@ theorem zgornji_lok (x : ℝ) (hx : x ^ 2 < 25) :
 
 /-- Predpostavke trditve `zgornji_lok` se dajo izpolniti (x = 3). -/
 example : (3:ℝ) ^ 2 < 25 := by norm_num
+
+/-- Predpostavke trditve `zgornji_lok` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℝ) ^ 2 < 25 := by norm_num
+  zgornji_lok (hx := w)
 
 /-- Razlaga 4: predpostavke trditve `krog_implicitno` so izpolnljive: zgornji lok y = √(25 − x²) blizu
 x = 3, y(3) = 4, y'(3) = −3/4.

@@ -35,6 +35,13 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 3) (3 * x ^ 2) x) ∧
   ⟨fun x => (hasDerivAt_pow 3 x).congr_deriv (by norm_num),
     fun x => ((hasDerivAt_pow 2 x).const_mul 3).congr_deriv (by push_cast; ring)⟩
 
+/-- Predpostavke trditve `drugi_odvod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 3) (3 * x ^ 2) x) ∧ ∀ x : ℝ, HasDerivAt (fun x : ℝ => 3 * x ^ 2) (6 * x) x :=
+    ⟨fun x => (hasDerivAt_pow 3 x).congr_deriv (by norm_num),
+      fun x => ((hasDerivAt_pow 2 x).const_mul 3).congr_deriv (by push_cast; ring)⟩
+  drugi_odvod (h₁ := w.1) (h₂ := w.2)
+
 /-- Razlaga 3: f'' > 0 na (notranjosti) intervala ⇒ f je tam konveksna.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#konveksna
 besedilo: »$f''(x) > 0$ na intervalu: $f$ je tam konveksna;« -/
@@ -142,6 +149,20 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x
   ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
     fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), by norm_num, two_pos⟩
 
+/-- Predpostavke trditve `test_maksimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x) ∧ (∀ x : ℝ, HasDerivAt (fun x : ℝ => 2 * x) ((fun _ => (2:ℝ)) x) x) ∧ (fun x : ℝ => 2 * x) 0 = 0 ∧ (0:ℝ) < (fun _ => (2:ℝ)) 0 :=
+    ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
+      fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), by norm_num, two_pos⟩
+  test_maksimum (h₁ := w.1) (h₂ := w.2.1) (ha := w.2.2.1) (hn := w.2.2.2)
+
+/-- Predpostavke trditve `test_minimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x) ∧ (∀ x : ℝ, HasDerivAt (fun x : ℝ => 2 * x) ((fun _ => (2:ℝ)) x) x) ∧ (fun x : ℝ => 2 * x) 0 = 0 ∧ (0:ℝ) < (fun _ => (2:ℝ)) 0 :=
+    ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
+      fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), by norm_num, two_pos⟩
+  test_minimum (h₁ := w.1) (h₂ := w.2.1) (ha := w.2.2.1) (hp := w.2.2.2)
+
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -2 * x) x) x) ∧
     (∀ x : ℝ, HasDerivAt (fun x : ℝ => -2 * x) ((fun _ => (-2:ℝ)) x) x) ∧ (fun x : ℝ => -2 * x) 0 = 0 ∧
     (fun _ => (-2:ℝ)) 0 < 0 :=
@@ -189,6 +210,11 @@ theorem ln_konkavna (x : ℝ) (hx : 0 < x) :
 example : (0:ℝ) < 1 := one_pos
 
 /-! ## Razlaga, 4: prevoj na grafu x³ − 3x -/
+
+/-- Predpostavke trditve `ln_konkavna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  ln_konkavna (hx := w)
 
 /-- Razlaga 4: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#f-d1
@@ -516,6 +542,11 @@ theorem ena_skozi_x (x : ℝ) (hx : x ≠ 0) :
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
 /-! ## Za maturo -/
+
+/-- Predpostavke trditve `ena_skozi_x` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  ena_skozi_x (hx := w)
 
 /-- Naloga 1: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#m1-d1

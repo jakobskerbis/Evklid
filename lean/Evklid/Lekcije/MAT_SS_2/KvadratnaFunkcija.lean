@@ -556,6 +556,11 @@ meritvijo: f(20) = −0,25·36 + 20 = 11. -/
 example : (-0.25 : ℝ) ≠ 0 ∧ -0.25 * ((12 : ℝ) - 14) ^ 2 + 20 = 19 ∧ -0.25 * ((16 : ℝ) - 14) ^ 2 + 20 = 19 ∧
     -0.25 * ((8 : ℝ) - 14) ^ 2 + 20 = 11 := by norm_num
 
+/-- Predpostavke trditve `primer3_enolicnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-0.25 : ℝ) ≠ 0 ∧ -0.25 * ((12 : ℝ) - 14) ^ 2 + 20 = 19 ∧ -0.25 * ((16 : ℝ) - 14) ^ 2 + 20 = 19 ∧ -0.25 * ((8 : ℝ) - 14) ^ 2 + 20 = 11 := by norm_num
+  primer3_enolicnost (ha := w.1) (h12 := w.2.1) (h16 := w.2.2.1) (h8 := w.2.2.2)
+
 /-- Primer 3, koraki 2–4: 4a + q = 19 in 36a + q = 11 ⇒ −32a = 8, a = −0,25, q = 19 − 4·(−0,25) = 20;
 f(20) = −0,25·36 + 20 = 11.
 trditev: MAT-SS-2/kvadratna-funkcija#primer3-racun

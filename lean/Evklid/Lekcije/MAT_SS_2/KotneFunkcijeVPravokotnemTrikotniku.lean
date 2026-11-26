@@ -275,6 +275,14 @@ example : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 ∧ Complex.I ≠ 0
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
   simp [Complex.inner]
 
+/-- Predpostavke trditve `definicije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 ∧ Complex.I ≠ 0 := by
+    refine ⟨?_, one_ne_zero, Complex.I_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  definicije (h := w.1) (hA := w.2.1) (hB := w.2.2)
+
 /-- Povzetek »Iz stranice in kota« in Ponovitev: a = c·sin α, b = c·cos α, a = b·tan α.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#iz-stranice-in-kota
 besedilo: »$$a = c \sin \alpha, \quad b = c \cos \alpha$$« -/
@@ -292,6 +300,14 @@ example : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 := by
   refine ⟨?_, one_ne_zero⟩
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
   simp [Complex.inner]
+
+/-- Predpostavke trditve `iz_stranice_in_kota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 := by
+    refine ⟨?_, one_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  iz_stranice_in_kota (h := w.1) (hA := w.2)
 
 /-- Ustno vprašanje 1, Drugače: Bolj natančno in Preveri se 3: vrednost je odvisna le od kota: dva pravokotna
 trikotnika z enakim ostrim kotom imata enako razmerje nasprotne katete in hipotenuze; pri podobnih trikotnikih
@@ -368,6 +384,13 @@ example : (3 * Complex.I : ℂ) -ᵥ (0:ℂ) = -((-3 * Complex.I : ℂ) -ᵥ (0:
     dist (-5:ℂ) (-3 * Complex.I) = dist (-5:ℂ) (3 * Complex.I) := by
   refine ⟨by simp, ?_⟩
   rw [razd _ _ (-5) 3 (by push_cast; ring), razd _ _ (-5) (-3) (by push_cast; ring)]; norm_num
+
+/-- Predpostavke trditve `romb_pravi_kot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3 * Complex.I : ℂ) -ᵥ (0:ℂ) = -((-3 * Complex.I : ℂ) -ᵥ (0:ℂ)) ∧ dist (-5:ℂ) (-3 * Complex.I) = dist (-5:ℂ) (3 * Complex.I) := by
+    refine ⟨by simp, ?_⟩
+    rw [razd _ _ (-5) 3 (by push_cast; ring), razd _ _ (-5) (-3) (by push_cast; ring)]; norm_num
+  romb_pravi_kot (hM := w.1) (h := w.2)
 
 /-- Razlaga 2, Preizkus: v trikotniku C = 0, A = 4, B = 3i (v ℂ) s pravim kotom pri C je a = |BC| = 3, b = |AC| = 4,
 c = |AB| = 5 (3² + 4² = 5²), zato je po `definicije` cos α = cos ∠CAB = b/c = 4/5. Drugače: Na sliki: pri c = 1 je
@@ -727,6 +750,11 @@ theorem kviz6 (c : ℝ) (hc : 0 < c) : (sin (π / 6) = 7 / c ↔ c = 14) ∧ 7 *
 example : (0:ℝ) < 14 := by norm_num
 
 /-! ## Drugače -/
+
+/-- Predpostavke trditve `kviz6` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 14 := by norm_num
+  kviz6 (hc := w)
 
 /-- Drugače: Korak za korakom: kvadrat s stranico 1 ima diagonalo √(1 + 1) = √2, sin 45° = 1/√2 = √2/2 ≈ 0,7071;
 enakostranični trikotnik s stranico 2 ima višino √(4 − 1) = √3, cos 30° = √3/2 ≈ 0,8660, tan 30° = 1/√3 = √3/3 ≈

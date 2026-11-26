@@ -201,6 +201,16 @@ theorem tangens_razlike (α β : ℝ) (ha : cos α ≠ 0) (hb : cos β ≠ 0) (h
 /-- Pogoji izrekov `tangens_vsote` in `tangens_razlike` se dajo izpolniti (α = β = 0). -/
 example : cos (0:ℝ) ≠ 0 ∧ cos ((0:ℝ) + 0) ≠ 0 ∧ cos ((0:ℝ) - 0) ≠ 0 := by simp
 
+/-- Predpostavke trditve `tangens_razlike` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (0:ℝ) ≠ 0 ∧ cos ((0:ℝ) + 0) ≠ 0 ∧ cos ((0:ℝ) - 0) ≠ 0 := by simp
+  tangens_razlike (ha := w.1) (hb := w.2.1) (h := w.2.2)
+
+/-- Predpostavke trditve `tangens_vsote` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (0:ℝ) ≠ 0 ∧ cos ((0:ℝ) + 0) ≠ 0 ∧ cos ((0:ℝ) - 0) ≠ 0 := by simp
+  tangens_vsote (ha := w.1) (hb := w.2.1) (h := w.2.2)
+
 /-- Razlaga 5 in Ustno vprašanje 2: sin 2α = sin α cos α + cos α sin α = 2 sin α cos α.
 trditev: MAT-SS-3/adicijski-izreki#sinus-dvojnega
 besedilo: »$\sin 2\alpha = \sin\alpha\cos\alpha + \cos\alpha\sin\alpha = 2\sin\alpha\cos\alpha$« -/
@@ -231,6 +241,11 @@ theorem tangens_dvojnega (α : ℝ) (ha : cos α ≠ 0) (h : cos (2 * α) ≠ 0)
 /-- Pogoja izreka `tangens_dvojnega` se dajo izpolniti (α = 0). -/
 example : cos (0:ℝ) ≠ 0 ∧ cos (2 * (0:ℝ)) ≠ 0 := by simp
 
+/-- Predpostavke trditve `tangens_dvojnega` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (0:ℝ) ≠ 0 ∧ cos (2 * (0:ℝ)) ≠ 0 := by simp
+  tangens_dvojnega (ha := w.1) (h := w.2)
+
 /-- Razlaga 5, Premisli, Pogoste napake in Preveri se 4: za ostri kot (0 < α < 90°) je sin 2α < 2 sin α,
 ker je 0 < cos α < 1.
 trditev: MAT-SS-3/adicijski-izreki#dvojni-manjsi
@@ -244,6 +259,11 @@ theorem dvojni_manjsi (α : ℝ) (h0 : 0 < α) (h1 : α < π / 2) : sin (2 * α)
 
 /-- Pogoji izreka `dvojni_manjsi` se dajo izpolniti (α = 30°). -/
 example : (0:ℝ) < π / 6 ∧ π / 6 < π / 2 := ⟨by positivity, by linarith [pi_pos]⟩
+
+/-- Predpostavke trditve `dvojni_manjsi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < π / 6 ∧ π / 6 < π / 2 := ⟨by positivity, by linarith [pi_pos]⟩
+  dvojni_manjsi (h0 := w.1) (h1 := w.2)
 
 /-- Razlaga 5, Premisli: sin 2α = 2 sin α velja natanko tedaj, ko je sin α = 0 ali cos α = 1
 (iz 2 sin α cos α = 2 sin α sledi sin α (cos α − 1) = 0).
@@ -388,6 +408,14 @@ example : sin (π - arcsin (3 / 5)) = 3 / 5 ∧ π / 2 < π - arcsin (3 / 5) ∧
   have h2 : arcsin (3 / 5 : ℝ) < π / 2 := arcsin_lt_pi_div_two.mpr (by norm_num)
   refine ⟨by rw [sin_pi_sub, sin_arcsin (by norm_num) (by norm_num)], by linarith, by linarith⟩
 
+/-- Predpostavke trditve `primer2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : sin (π - arcsin (3 / 5)) = 3 / 5 ∧ π / 2 < π - arcsin (3 / 5) ∧ π - arcsin (3 / 5) < π := by
+    have h1 : 0 < arcsin (3 / 5 : ℝ) := arcsin_pos.mpr (by norm_num)
+    have h2 : arcsin (3 / 5 : ℝ) < π / 2 := arcsin_lt_pi_div_two.mpr (by norm_num)
+    refine ⟨by rw [sin_pi_sub, sin_arcsin (by norm_num) (by norm_num)], by linarith, by linarith⟩
+  primer2 (hs := w.1) (h1 := w.2.1) (h2 := w.2.2)
+
 /-- Pogoste napake (predznak pri korenjenju) k Primeru 2: s cos α = +4/5 bi dobili 2·3/5·4/5 = 24/25 = 0,96,
 kar ni pravi sin 2α = −0,96.
 trditev: MAT-SS-3/adicijski-izreki#primer2-napaka
@@ -434,6 +462,14 @@ example : 12 * cos (arcsin (0.6 : ℝ)) = 9.6 ∧ 12 * sin (arcsin (0.6 : ℝ)) 
     show (1 - 0.6 ^ 2 : ℝ) = 0.8 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   norm_num
 
+/-- Predpostavke trditve `primer3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 12 * cos (arcsin (0.6 : ℝ)) = 9.6 ∧ 12 * sin (arcsin (0.6 : ℝ)) = 7.2 := by
+    rw [cos_arcsin, sin_arcsin (by norm_num) (by norm_num),
+      show (1 - 0.6 ^ 2 : ℝ) = 0.8 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    norm_num
+  primer3 (hc := w.1) (hs := w.2)
+
 /-- Primer 4: za 1 + cos 2α ≠ 0 je sin 2α/(1 + cos 2α) = 2 sin α cos α/(2 cos²α) = sin α/cos α = tan α
 (v imenovalcu 1 + cos 2α = 1 + 2cos²α − 1 = 2cos²α).
 trditev: MAT-SS-3/adicijski-izreki#primer4
@@ -451,6 +487,11 @@ theorem primer4 (α : ℝ) (h : 1 + cos (2 * α) ≠ 0) : sin (2 * α) / (1 + co
 
 /-- Pogoj izreka `primer4` se da izpolniti (α = 0). -/
 example : 1 + cos (2 * (0:ℝ)) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 1 + cos (2 * (0:ℝ)) ≠ 0 := by norm_num
+  primer4 (h := w)
 
 /-- Primer 4, preizkus z α = 30°: sin 60°/(1 + cos 60°) = (√3/2)/(3/2) = √3/3 = tan 30° ≈ 0,577; tudi
 0,866/1,5 ≈ 0,577.
@@ -491,6 +532,15 @@ example : cos (π + arccos (7 / 25)) = -7 / 25 ∧ π < π + arccos (7 / 25) ∧
   have h2 : arccos (7 / 25 : ℝ) < π / 2 := arccos_lt_pi_div_two.mpr (by norm_num)
   refine ⟨?_, by linarith, by linarith⟩
   rw [cos_add, cos_pi, sin_pi, cos_arccos (by norm_num) (by norm_num)]; ring
+
+/-- Predpostavke trditve `primer5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (π + arccos (7 / 25)) = -7 / 25 ∧ π < π + arccos (7 / 25) ∧ π + arccos (7 / 25) < 3 * π / 2 := by
+    have h1 : 0 < arccos (7 / 25 : ℝ) := arccos_pos.mpr (by norm_num)
+    have h2 : arccos (7 / 25 : ℝ) < π / 2 := arccos_lt_pi_div_two.mpr (by norm_num)
+    refine ⟨?_, by linarith, by linarith⟩
+    rw [cos_add, cos_pi, sin_pi, cos_arccos (by norm_num) (by norm_num)]; ring
+  primer5 (hc := w.1) (h1 := w.2.1) (h2 := w.2.2)
 
 /-- Blok RACUN (k Primeru 5): sin(π − arctan(4/3)) = 0,8, cos(π − arctan(4/3)) = −0,6 in
 cos(2(π − arctan(4/3))) = −0,28.
@@ -628,6 +678,13 @@ example : 0 < arccos (7 / 25 : ℝ) ∧ arccos (7 / 25 : ℝ) < π / 2 ∧ 0 < a
   ⟨arccos_pos.mpr (by norm_num), arccos_lt_pi_div_two.mpr (by norm_num), arctan_pos.mpr (by norm_num),
     arctan_lt_pi_div_two _, cos_arccos (by norm_num) (by norm_num), tan_arctan _⟩
 
+/-- Predpostavke trditve `matura2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 0 < arccos (7 / 25 : ℝ) ∧ arccos (7 / 25 : ℝ) < π / 2 ∧ 0 < arctan (4 / 3 : ℝ) ∧ arctan (4 / 3 : ℝ) < π / 2 ∧ cos (arccos (7 / 25 : ℝ)) = 7 / 25 ∧ tan (arctan (4 / 3 : ℝ)) = 4 / 3 :=
+    ⟨arccos_pos.mpr (by norm_num), arccos_lt_pi_div_two.mpr (by norm_num), arctan_pos.mpr (by norm_num),
+      arctan_lt_pi_div_two _, cos_arccos (by norm_num) (by norm_num), tan_arctan _⟩
+  matura2 (ha0 := w.1) (ha1 := w.2.1) (hb0 := w.2.2.1) (hb1 := w.2.2.2.1) (hc := w.2.2.2.2.1) (ht := w.2.2.2.2.2)
+
 /-- Blok RACUN k Nalogi 2: sin(arccos(7/25)) = 24/25, cos(arctan(4/3)) = 3/5, sin(arctan(4/3)) = 4/5,
 sin(arccos(7/25) + arctan(4/3)) = 4/5, cos(…) = −3/5, sin(2 arctan(4/3)) = 24/25, cos(2 arctan(4/3)) = −7/25
 in (arccos(7/25) + 2 arctan(4/3))·180/π = 180.
@@ -706,6 +763,11 @@ theorem matura3b (α : ℝ) (h0 : 0 ≤ α) (h1 : α ≤ π) :
 
 /-- Predpostavki trditve `matura3b` se dajo izpolniti (α = 0). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π := ⟨le_rfl, pi_pos.le⟩
+
+/-- Predpostavke trditve `matura3b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π := ⟨le_rfl, pi_pos.le⟩
+  matura3b (h0 := w.1) (h1 := w.2)
 
 /-- Naloga 3 c): sin²22,5° = (1 − cos 45°)/2 = (1 − √2/2)/2 = (2 − √2)/4, sin 22,5° = √(2 − √2)/2 (prvi
 kvadrant), E(22,5°) = 2 cos 45° sin 22,5° = 2·√2/2·√(2 − √2)/2 = √(2(2 − √2))/2 = √(4 − 2√2)/2.
@@ -813,6 +875,14 @@ example : sin (arcsin (0.6 : ℝ)) = 0.6 ∧ cos (arcsin (0.6 : ℝ)) = 0.8 := b
   rw [cos_arcsin, sin_arcsin (by norm_num) (by norm_num),
     show (1 - 0.6 ^ 2 : ℝ) = 0.8 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   norm_num
+
+/-- Predpostavke trditve `preveri2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : sin (arcsin (0.6 : ℝ)) = 0.6 ∧ cos (arcsin (0.6 : ℝ)) = 0.8 := by
+    rw [cos_arcsin, sin_arcsin (by norm_num) (by norm_num),
+      show (1 - 0.6 ^ 2 : ℝ) = 0.8 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    norm_num
+  preveri2 (hs := w.1) (hc := w.2)
 
 /-- Preveri se 5: točka (10; 0) se zavrti za 45° in 30°, zato je y = 10 sin 75° = 10·(√6 + √2)/4 ≈ 9,66 cm;
 napačna odgovora: 10(sin 45° + sin 30°) ≈ 12,07 > 10 (več od razdalje od središča) in

@@ -94,6 +94,11 @@ theorem simetrija (n k : ℕ) (hk : k ≤ n) : Nat.choose n k = Nat.choose n (n 
 /-- Predpostavka trditve `simetrija` se da izpolniti. -/
 example : (2 : ℕ) ≤ 5 := by norm_num
 
+/-- Predpostavke trditve `simetrija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℕ) ≤ 5 := by norm_num
+  simetrija (hk := w)
+
 /-- Razlaga 2, vsota vrstice: `C(n,0) + … + C(n,n) = 2ⁿ`.
 trditev: MAT-SS-4/binomski-izrek#vsota-vrstice
 besedilo: »Vsota vrstice** $n$ je $2^n$, saj ima vsak od $n$ korakov dve možnosti: $1 + 6 + 15 + 20 + 15 + 6 + 1 = 64 = 2^6$.« -/
@@ -159,6 +164,11 @@ theorem vsota_eksponentov (n k : ℕ) (hk : k ∈ range (n + 1)) : (n - k) + k =
 /-- Predpostavka trditve `vsota_eksponentov` se da izpolniti. -/
 example : (2 : ℕ) ∈ range (5 + 1) := by decide
 
+/-- Predpostavke trditve `vsota_eksponentov` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℕ) ∈ range (5 + 1) := by decide
+  vsota_eksponentov (hk := w)
+
 /-- Razlaga 5 (in Povzetek): binomski simbol je `C(n,k) = n!/(k!·(n−k)!)` za `k ≤ n` (deljenje je točno).
 trditev: MAT-SS-4/binomski-izrek#binomski-simbol
 besedilo: »Binomski simbol** $\binom{n}{k}$ (beri »$n$ nad $k$«) je število kombinacij $C_n^k = \frac{n!}{k!\,(n-k)!}$ iz kombinatorike in hkrati $k$-to število v vrstici $n$ (štejemo od $0$):« -/
@@ -170,6 +180,11 @@ theorem binomski_simbol (n k : ℕ) (hk : k ≤ n) :
 
 /-- Predpostavka trditve `binomski_simbol` se da izpolniti. -/
 example : (2 : ℕ) ≤ 5 := by norm_num
+
+/-- Predpostavke trditve `binomski_simbol` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℕ) ≤ 5 := by norm_num
+  binomski_simbol (hk := w)
 
 /-- Razlaga 5: binomski simbol `C(n,k)` je število izborov k elementov izmed n (kombinacij).
 trditev: MAT-SS-4/binomski-izrek#binomski-simbol-steje
@@ -263,6 +278,11 @@ theorem primer3_splosni (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 6) :
 /-- Predpostavke trditve `primer3_splosni` se dajo izpolniti. -/
 example : (1 : ℝ) ≠ 0 ∧ (4 : ℕ) ≤ 6 := by norm_num
 
+/-- Predpostavke trditve `primer3_splosni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 ∧ (4 : ℕ) ≤ 6 := by norm_num
+  primer3_splosni (hx := w.1) (hk := w.2)
+
 /-- Primer 3, korak 2 in 4: eksponent 12 − 3k je 0 natanko pri k = 4 in 3 natanko pri k = 3.
 trditev: MAT-SS-4/binomski-izrek#primer3-eksponent
 besedilo: »Člen brez $x$ ima eksponent $0$: $12 - 3k = 0$, torej $k = 4$.« -/
@@ -288,6 +308,11 @@ theorem primer3_razvoj (x : ℝ) (hx : x ≠ 0) :
 
 /-- Predpostavka trditve `primer3_razvoj` se da izpolniti. -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `primer3_razvoj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  primer3_razvoj (hx := w)
 
 /-- Primer 4: koeficient pri x³ v (2x−1)⁵: k = 2 (5 − k = 3), `C(5,2)·2³·(−1)² = 10·8·1 = 80`; (2x)³ = 8x³.
 trditev: MAT-SS-4/binomski-izrek#primer4
@@ -445,6 +470,11 @@ theorem kviz2 (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 9) :
 /-- Predpostavke trditve `kviz2` se dajo izpolniti. -/
 example : (1 : ℝ) ≠ 0 ∧ (3 : ℕ) ≤ 9 := by norm_num
 
+/-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 ∧ (3 : ℕ) ≤ 9 := by norm_num
+  kviz2 (hx := w.1) (hk := w.2)
+
 /-- Preveri se 3: (a−b)⁶ = a⁶ − 6a⁵b + 15a⁴b² − 20a³b³ + 15a²b⁴ − 6ab⁵ + b⁶ (predznaki se izmenjujejo).
 trditev: MAT-SS-4/binomski-izrek#kviz3
 besedilo: »$(a-b)^6 = a^6 - 6a^5b + 15a^4b^2 - 20a^3b^3 + 15a^2b^4 - 6ab^5 + b^6$: predznaki se izmenjujejo.« -/
@@ -476,6 +506,11 @@ theorem kviz5 (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 6) :
 /-- Predpostavke trditve `kviz5` se dajo izpolniti. -/
 example : (1 : ℝ) ≠ 0 ∧ (3 : ℕ) ≤ 6 := by norm_num
 
+/-- Predpostavke trditve `kviz5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 ∧ (3 : ℕ) ≤ 6 := by norm_num
+  kviz5 (hx := w.1) (hk := w.2)
+
 /-- Preveri se 5: celoten razvoj (2x − 1/x)⁶ = 64x⁶ − 192x⁴ + 240x² − 160 + 60/x² − 12/x⁴ + 1/x⁶ (x ≠ 0).
 trditev: MAT-SS-4/binomski-izrek#kviz5-razvoj
 besedilo: »Izračunaj člen brez $x$ v razvoju $\left(2x - \frac{1}{x}\right)^6$.« -/
@@ -486,6 +521,11 @@ theorem kviz5_razvoj (x : ℝ) (hx : x ≠ 0) :
 
 /-- Predpostavka trditve `kviz5_razvoj` se da izpolniti. -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
+
+/-- Predpostavke trditve `kviz5_razvoj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  kviz5_razvoj (hx := w)
 
 /-- RAČUN: `10·2³·(−1)² = 80`, `10·3² = 90`, `20·2³·(−1)³ = −160`, `6·5/2 = 15`.
 trditev: MAT-SS-4/binomski-izrek#racun

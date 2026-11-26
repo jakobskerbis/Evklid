@@ -48,6 +48,11 @@ theorem koren_eq {n : ℕ} (hn : n ≠ 0) {a b : ℝ} (hb : 0 ≤ b) (h : b ^ n 
 /-- Predpostavke trditve `koren_eq` se dajo izpolniti. -/
 example : (2:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 2 ∧ (2:ℝ) ^ 2 = 4 := by norm_num
 
+/-- Predpostavke trditve `koren_eq` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 2 ∧ (2:ℝ) ^ 2 = 4 := by norm_num
+  koren_eq (hn := w.1) (hb := w.2.1) (h := w.2.2)
+
 /-- Pomožna trditev (orodje za dokaze v tej datoteki).
 pomozno -/
 theorem koren_lih_pot {n : ℕ} (hn : Odd n) (a : ℝ) : koren n a ^ n = a := by
@@ -70,6 +75,11 @@ theorem koren_lih {n : ℕ} (hn : Odd n) (a b : ℝ) : b ^ n = a ↔ b = koren n
 /-- Predpostavka trditve `koren_lih` se da izpolniti (n = 3). -/
 example : Odd 3 := ⟨1, rfl⟩
 
+/-- Predpostavke trditve `koren_lih` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 3 := ⟨1, rfl⟩
+  koren_lih (hn := w)
+
 /-- Razlaga 7, Povzetek (tabela) in Ustno vprašanje 3: pri sodem n in a > 0 ima xⁿ = a natanko rešitvi ±ⁿ√a.
 trditev: MAT-SS-2/iracionalne-enacbe#enacba-sod-poz
 besedilo: »Pri sodem $n$ in $a > 0$ sta rešitvi dve,« -/
@@ -89,6 +99,11 @@ theorem enacba_sod_poz {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) {a : ℝ} (ha : 0
 /-- Predpostavke trditve `enacba_sod_poz` se dajo izpolniti. -/
 example : Even 4 ∧ (4:ℕ) ≠ 0 ∧ (0:ℝ) < 16 := ⟨⟨2, rfl⟩, by norm_num, by norm_num⟩
 
+/-- Predpostavke trditve `enacba_sod_poz` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 4 ∧ (4:ℕ) ≠ 0 ∧ (0:ℝ) < 16 := ⟨⟨2, rfl⟩, by norm_num, by norm_num⟩
+  enacba_sod_poz (hn := w.1) (hn0 := w.2.1) (ha := w.2.2)
+
 /-- Razlaga 7, Povzetek (tabela): pri sodem n in a < 0 realne rešitve ni.
 trditev: MAT-SS-2/iracionalne-enacbe#enacba-sod-neg
 besedilo: »Pri sodem $n$ in $a < 0$ realne rešitve ni.« -/
@@ -98,6 +113,11 @@ theorem enacba_sod_neg {n : ℕ} (hn : Even n) {a : ℝ} (ha : a < 0) : ¬ ∃ x
 /-- Predpostavke trditve `enacba_sod_neg` se dajo izpolniti. -/
 example : Even 2 ∧ (-4:ℝ) < 0 := ⟨even_two, by norm_num⟩
 
+/-- Predpostavke trditve `enacba_sod_neg` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 ∧ (-4:ℝ) < 0 := ⟨even_two, by norm_num⟩
+  enacba_sod_neg (hn := w.1) (ha := w.2)
+
 /-- Ustno vprašanje 3: pri a = 0 ima xⁿ = 0 le rešitev x = 0.
 trditev: MAT-SS-2/iracionalne-enacbe#enacba-nic
 besedilo: »pri $a = 0$ le rešitev $x = 0$,« -/
@@ -105,6 +125,11 @@ theorem enacba_nic {n : ℕ} (hn0 : n ≠ 0) (x : ℝ) : x ^ n = 0 ↔ x = 0 := 
 
 /-- Predpostavke trditve `enacba_nic` se dajo izpolniti. -/
 example : (4:ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `enacba_nic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (4:ℕ) ≠ 0 := by norm_num
+  enacba_nic (hn0 := w)
 
 /-- Razlaga 1 in 5, Bolj natančno: za A ≥ 0 je √A = B natanko tedaj, ko A = B² in B ≥ 0.
 trditev: MAT-SS-2/iracionalne-enacbe#kor-eq
@@ -116,6 +141,11 @@ theorem kor_eq {A B : ℝ} (hA : 0 ≤ A) : √A = B ↔ A = B ^ 2 ∧ 0 ≤ B :
 
 /-- Predpostavke trditve `kor_eq` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 9 := by norm_num
+
+/-- Predpostavke trditve `kor_eq` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 9 := by norm_num
+  kor_eq (hA := w)
 
 /-- Bolj natančno: enačba √A = B (s pogojem, da koren obstaja) je ekvivalentna sistemu »A = B² in B ≥ 0«;
 pogoj A ≥ 0 je tedaj že izpolnjen.
@@ -203,6 +233,11 @@ theorem kvadriranje_obe_krivulji {A B : ℝ} (hA : 0 ≤ A) : A = B ^ 2 ↔ √A
 /-- Predpostavke trditve `kvadriranje_obe_krivulji` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 4 := by norm_num
 
+/-- Predpostavke trditve `kvadriranje_obe_krivulji` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 4 := by norm_num
+  kvadriranje_obe_krivulji (hA := w)
+
 /-- Razlaga 3: črtkana krivulja y = −√(x + 6) seka premico y = x v (−2, −2): −√(x + 6) = x ⇔ x = −2.
 trditev: MAT-SS-2/iracionalne-enacbe#navidezna-krivulja
 besedilo: »Kaj vidimo na grafu.** Levo stran enačbe preberemo kot funkcijo $y = \sqrt{x + 6}$, desno kot premico $y = x$.« -/
@@ -249,6 +284,11 @@ theorem premisli_osamitev (x : ℝ) (hx : 0 ≤ x) : (√x + 1) ^ 2 = x + 2 * �
 example : (0:ℝ) ≤ 4 := by norm_num
 
 /-! ## Razlaga 7: enačbe xⁿ = a -/
+
+/-- Predpostavke trditve `premisli_osamitev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 4 := by norm_num
+  premisli_osamitev (hx := w)
 
 /-- Razlaga 7: x³ = 8 da x = ∛8 = 2; x³ = −27 da x = −3.
 trditev: MAT-SS-2/iracionalne-enacbe#razlaga7-lih
@@ -371,6 +411,11 @@ theorem mosteller {h S : ℝ} (hh : 0 < h) (hS : 0 < S) (m : ℝ) :
 /-- Predpostavke trditve `mosteller` se dajo izpolniti. -/
 example : (0:ℝ) < 180 ∧ (0:ℝ) < 1.8 := by norm_num
 
+/-- Predpostavke trditve `mosteller` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 180 ∧ (0:ℝ) < 1.8 := by norm_num
+  mosteller (hh := w.1) (hS := w.2)
+
 /-- Primer 3 a): √(180 m/3600) = 1,8 ⇔ m = 64,8; koraki 180 m/3600 = 1,8², m/20 = 3,24, m = 20 · 3,24 = 64,8;
 preizkus 180 · 64,8/3600 = 3,24 in √3,24 = 1,8.
 trditev: MAT-SS-2/iracionalne-enacbe#primer3a
@@ -426,6 +471,11 @@ theorem dvojni_zmnozek (x : ℝ) (h1 : 0 ≤ x + 1) (h4 : 0 ≤ x + 4) :
 
 /-- Predpostavke trditve `dvojni_zmnozek` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 0 + 1 ∧ (0:ℝ) ≤ 0 + 4 := by norm_num
+
+/-- Predpostavke trditve `dvojni_zmnozek` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 0 + 1 ∧ (0:ℝ) ≤ 0 + 4 := by norm_num
+  dvojni_zmnozek (h1 := w.1) (h4 := w.2)
 
 /-- Pogoste napake: pri √(x + 1) + 2 = x je pravilni prvi korak osamitev √(x + 1) = x − 2.
 trditev: MAT-SS-2/iracionalne-enacbe#osamitev
@@ -552,6 +602,11 @@ theorem ustno1 {A B : ℝ} (hA : 0 ≤ A) : (√A = B → A = B ^ 2) ∧ (-√A 
 
 /-- Predpostavke trditve `ustno1` se dajo izpolniti. -/
 example : (0:ℝ) ≤ 1 := by norm_num
+
+/-- Predpostavke trditve `ustno1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 := by norm_num
+  ustno1 (hA := w)
 
 /-- Ustno vprašanje 2: √(2x + 1) = −x − 1 nima rešitve; kvadriranje da 2x + 1 = x² + 2x + 1, x² = 0, kandidat 0,
 ki ga preizkus izloči (√1 = 1 ≠ −1); pogoj korena 2x + 1 ≥ 0 je x ≥ −1/2, pogoj desne strani −x − 1 ≥ 0 je

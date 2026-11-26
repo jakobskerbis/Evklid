@@ -80,6 +80,11 @@ theorem vsota_odklonov (N : ℕ) (hN : N ≠ 0) (x : Fin N → ℝ) :
 /-- Predpostavka trditve `vsota_odklonov` se da izpolniti (N = 5). -/
 example : (5 : ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `vsota_odklonov` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (5 : ℕ) ≠ 0 := by norm_num
+  vsota_odklonov (hN := w)
+
 /-- Razlaga 2 in ustno vprašanje 3: varianca je nenegativna (vsota kvadratov, deljena z N), σ = √σ² ≥ 0
 in σ² = (√σ²)², torej koren vrne varianco.
 trditev: MAT-SS-4/statistika#varianca-nenegativna
@@ -126,6 +131,11 @@ theorem f_je_gauss (μ σ : ℝ) (hσ : 0 < σ) :
 `f_maksimum`) se da izpolniti (σ = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
 
+/-- Predpostavke trditve `f_je_gauss` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  f_je_gauss (hσ := w)
+
 /-- Pomožno: pri σ > 0 je varianca σ² različna od 0.
 pomozno -/
 theorem var_ne_zero (σ : ℝ) (hσ : 0 < σ) : (σ ^ 2).toNNReal ≠ 0 := by
@@ -144,11 +154,21 @@ besedilo: »ploščina pod celo krivuljo pa je $1$.« -/
 theorem f_ploscina (μ σ : ℝ) (hσ : 0 < σ) : ∫ x, f μ σ x = 1 := by
   rw [f_je_gauss μ σ hσ]; exact integral_gaussianPDFReal_eq_one μ (var_ne_zero σ hσ)
 
+/-- Predpostavke trditve `f_ploscina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  f_ploscina (hσ := w)
+
 /-- Preveri se 1: krivulja leži povsod nad osjo x (f > 0), zato je v μ ± 3σ ne seka.
 trditev: MAT-SS-4/statistika#f-pozitivna
 besedilo: »Zunaj $\mu \pm 3\sigma$ je le še $0{,}3\,\%$ ploščine, a krivulja osi $x$ nikoli ne doseže, saj je $e^{\ldots} > 0$.« -/
 theorem f_pozitivna (μ σ x : ℝ) (hσ : 0 < σ) : 0 < f μ σ x := by
   unfold f; positivity
+
+/-- Predpostavke trditve `f_pozitivna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  f_pozitivna (hσ := w)
 
 /-- Razlaga 5: krivulja je simetrična glede na x = μ: f(μ + t) = f(μ − t).
 trditev: MAT-SS-4/statistika#f-simetricna
@@ -169,6 +189,11 @@ theorem f_maksimum (μ σ x : ℝ) (hσ : 0 < σ) : f μ σ x ≤ f μ σ μ ∧
     rw [neg_div]; linarith
   · simp [f]
 
+/-- Predpostavke trditve `f_maksimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  f_maksimum (hσ := w)
+
 /-- Razlaga 5: večji σ da nižjo krivuljo: za 0 < σ₁ < σ₂ je f_σ₂(μ) < f_σ₁(μ).
 trditev: MAT-SS-4/statistika#f-nizja
 besedilo: »Večji $\sigma$ pomeni širšo krivuljo, a tudi nižjo.« -/
@@ -180,6 +205,11 @@ theorem f_nizja (μ σ₁ σ₂ : ℝ) (h1 : 0 < σ₁) (h12 : σ₁ < σ₂) : 
 
 /-- Predpostavke trditve `f_nizja` se dajo izpolniti (σ₁ = 1, σ₂ = 3). -/
 example : (0 : ℝ) < 1 ∧ (1 : ℝ) < 3 := by norm_num
+
+/-- Predpostavke trditve `f_nizja` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 ∧ (1 : ℝ) < 3 := by norm_num
+  f_nizja (h1 := w.1) (h12 := w.2)
 
 /-- Razlaga 5: večji σ da širšo krivuljo: za 0 < σ₁ < σ₂ je dovolj daleč od μ (|x − μ| > R)
 f_σ₂(x) > f_σ₁(x), repa krivulje s σ₂ sta višja.
@@ -223,6 +253,11 @@ noncomputable def φ (x : ℝ) : ℝ := f 0 1 x
 
 /-- Razlaga 6: Φ(z) je ploščina pod standardno krivuljo od 0 do z. -/
 noncomputable def Φ (z : ℝ) : ℝ := ∫ x in (0 : ℝ)..z, φ x
+
+/-- Predpostavke trditve `f_sirsa` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 ∧ (1 : ℝ) < 3 := by norm_num
+  f_sirsa (h1 := w.1) (h12 := w.2)
 
 /-- Pomožno: standardna gostota je soda, φ(−x) = φ(x).
 pomozno -/
@@ -291,6 +326,11 @@ theorem z_vrednost (μ σ k : ℝ) (hσ : σ ≠ 0) : ((μ + k * σ) - μ) / σ 
 
 /-- Predpostavka trditve `z_vrednost` se da izpolniti. -/
 example : (2 : ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `z_vrednost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) ≠ 0 := by norm_num
+  z_vrednost (hσ := w)
 
 /-- Drugače: Na sliki: 2,3 + 13,6 + 34,1 = 50 (polovica); 2·34,1 = 68,2 ≈ 68; 2(34,1 + 13,6) = 95,4 ≈ 95.
 trditev: MAT-SS-4/statistika#pasovi

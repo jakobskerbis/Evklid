@@ -66,6 +66,11 @@ theorem primitivna_plus_C (F f : ℝ → ℝ) (C x : ℝ) (h : HasDerivAt F (f x
 /-- Predpostavka trditve `primitivna_plus_C` se da izpolniti (F = x², f = 2x). -/
 example : HasDerivAt (fun x : ℝ => x ^ 2) (2 * 1) 1 := tabela_x2 1
 
+/-- Predpostavke trditve `primitivna_plus_C` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt (fun x : ℝ => x ^ 2) (2 * 1) 1 := tabela_x2 1
+  primitivna_plus_C (h := w)
+
 /-- Ustno vprašanje 1: dve primitivni funkciji iste funkcije se na (odprtem) intervalu razlikujeta
 le za konstanto.
 trditev: MAT-SS-4/nedoloceni-integral#primitivni-razlika-konstanta
@@ -84,6 +89,12 @@ theorem primitivni_razlika_konstanta (F G f : ℝ → ℝ) (a b : ℝ)
 example : (∀ x ∈ Set.Ioo (0:ℝ) 1, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x) ∧
     (∀ x ∈ Set.Ioo (0:ℝ) 1, HasDerivAt (fun x : ℝ => x ^ 2 + 5) (2 * x) x) :=
   ⟨fun x _ => tabela_x2 x, fun x _ => (x2_plus_5_minus_3 x).1⟩
+
+/-- Predpostavke trditve `primitivni_razlika_konstanta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x ∈ Set.Ioo (0:ℝ) 1, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x) ∧ (∀ x ∈ Set.Ioo (0:ℝ) 1, HasDerivAt (fun x : ℝ => x ^ 2 + 5) (2 * x) x) :=
+    ⟨fun x _ => tabela_x2 x, fun x _ => (x2_plus_5_minus_3 x).1⟩
+  primitivni_razlika_konstanta (hF := w.1) (hG := w.2)
 
 /-- Uvod (fade-in): z −40 dB in 8 dB na sekundo je glasnost po 5 sekundah 0 dB.
 trditev: MAT-SS-4/nedoloceni-integral#fade-in
@@ -140,6 +151,11 @@ theorem bobnar_enolicno (N : ℝ → ℝ) (hN : ∀ t, HasDerivAt N (60 + 12 * t
 example : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 60 * t + 6 * t ^ 2 + 0) (60 + 12 * t) t) ∧
     ((60:ℝ) * 0 + 6 * 0 ^ 2 + 0 = 0) := ⟨bobnar_odvod 0, by norm_num⟩
 
+/-- Predpostavke trditve `bobnar_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 60 * t + 6 * t ^ 2 + 0) (60 + 12 * t) t) ∧ ((60:ℝ) * 0 + 6 * 0 ^ 2 + 0 = 0) := ⟨bobnar_odvod 0, by norm_num⟩
+  bobnar_enolicno (hN := w.1) (h0 := w.2)
+
 /-- Osnovni integrali, potenca: za naravni n je odvod x^(n+1)/(n+1) enak xⁿ.
 trditev: MAT-SS-4/nedoloceni-integral#potenca-nat
 besedilo: »$$\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$$« -/
@@ -164,6 +180,11 @@ theorem potenca_cela (n : ℤ) (hn : n ≠ -1) (x : ℝ) (hx : x ≠ 0) :
 /-- Predpostavke trditve `potenca_cela` se dajo izpolniti (n = −2, x = 1). -/
 example : (-2 : ℤ) ≠ -1 ∧ (1 : ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `potenca_cela` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-2 : ℤ) ≠ -1 ∧ (1 : ℝ) ≠ 0 := by norm_num
+  potenca_cela (hn := w.1) (hx := w.2)
+
 /-- Osnovni integrali, formula ∫ xⁿ dx = x^(n+1)/(n+1) + C za realni eksponent n ≠ −1 in x > 0
 (uporabljeno pri √x = x^(1/2) v primeru 2).
 trditev: MAT-SS-4/nedoloceni-integral#potenca-realna
@@ -177,6 +198,11 @@ theorem potenca_realna (n : ℝ) (hn : n ≠ -1) (C x : ℝ) (hx : 0 < x) :
 
 /-- Predpostavke trditve `potenca_realna` se dajo izpolniti (n = 1/2, x = 1). -/
 example : (1 / 2 : ℝ) ≠ -1 ∧ (0 : ℝ) < 1 := by norm_num
+
+/-- Predpostavke trditve `potenca_realna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 / 2 : ℝ) ≠ -1 ∧ (0 : ℝ) < 1 := by norm_num
+  potenca_realna (hn := w.1) (hx := w.2)
 
 /-- Premisli »Zakaj pravilo za potence ne velja za n = −1?«: pri n = −1 je imenovalec n + 1 = 0.
 trditev: MAT-SS-4/nedoloceni-integral#n-minus-1
@@ -192,6 +218,11 @@ theorem integral_1_x (C x : ℝ) (hx : x ≠ 0) : HasDerivAt (fun x : ℝ => log
 /-- Predpostavka trditve `integral_1_x` se da izpolniti (x = 1). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `integral_1_x` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  integral_1_x (hx := w)
+
 /-- Razlaga: za x < 0 je po verižnem pravilu (ln(−x))' = 1/(−x) · (−1) = 1/x.
 trditev: MAT-SS-4/nedoloceni-integral#ln-minus-x
 besedilo: »Absolutna vrednost poskrbi še za $x < 0$: tam je po verižnem pravilu $\bigl(\ln(-x)\bigr)' = \frac{1}{-x} \cdot (-1) = \frac{1}{x}$.« -/
@@ -204,6 +235,11 @@ theorem ln_minus_x (x : ℝ) (hx : x < 0) :
 
 /-- Predpostavka trditve `ln_minus_x` se da izpolniti (x = −1). -/
 example : (-1 : ℝ) < 0 := by norm_num
+
+/-- Predpostavke trditve `ln_minus_x` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1 : ℝ) < 0 := by norm_num
+  ln_minus_x (hx := w)
 
 /-- Osnovni integrali: ∫ eˣ dx = eˣ + C.
 trditev: MAT-SS-4/nedoloceni-integral#integral-exp
@@ -235,6 +271,11 @@ theorem linearnost (F G f g : ℝ → ℝ) (a b x : ℝ) (hF : HasDerivAt F (f x
 /-- Predpostavke trditve `linearnost` se dajo izpolniti (F = sin, G = exp). -/
 example : HasDerivAt sin (cos 0) 0 ∧ HasDerivAt exp (exp 0) 0 := ⟨hasDerivAt_sin 0, hasDerivAt_exp 0⟩
 
+/-- Predpostavke trditve `linearnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt sin (cos 0) 0 ∧ HasDerivAt exp (exp 0) 0 := ⟨hasDerivAt_sin 0, hasDerivAt_exp 0⟩
+  linearnost (hF := w.1) (hG := w.2)
+
 /-- Razlaga, uvedba nove spremenljivke: odvod (x² + 1)⁴ je 4(x² + 1)³ · 2x.
 trditev: MAT-SS-4/nedoloceni-integral#veriga-primer
 besedilo: »Uvedba nove spremenljivke (višja raven).** Odvajaj $(x^2 + 1)^4$ po verižnem pravilu: dobiš $4(x^2 + 1)^3 \cdot 2x$.« -/
@@ -255,6 +296,11 @@ theorem nova_spremenljivka (F f g g' : ℝ → ℝ) (x : ℝ) (hF : HasDerivAt F
 example : HasDerivAt sin (cos ((fun x : ℝ => x ^ 2) 1)) ((fun x : ℝ => x ^ 2) 1) ∧
     HasDerivAt (fun x : ℝ => x ^ 2) (2 * 1) 1 := ⟨hasDerivAt_sin _, tabela_x2 1⟩
 
+/-- Predpostavke trditve `nova_spremenljivka` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : HasDerivAt sin (cos ((fun x : ℝ => x ^ 2) 1)) ((fun x : ℝ => x ^ 2) 1) ∧ HasDerivAt (fun x : ℝ => x ^ 2) (2 * 1) 1 := ⟨hasDerivAt_sin _, tabela_x2 1⟩
+  nova_spremenljivka (hF := w.1) (hg := w.2)
+
 /-- Razlaga: ∫ cos(kx) dx = sin(kx)/k + C za k ≠ 0 (odvod sin(kx) je k cos(kx)).
 trditev: MAT-SS-4/nedoloceni-integral#integral-cos-kx
 besedilo: »Najpogostejši primer je linearna notranja funkcija. Pri $u = kx$ je $du = k\,dx$, zato na primer $\int \cos(kx)\,dx = \dfrac{\sin(kx)}{k} + C$. Preverba: odvod $\sin(kx)$ je $k\cos(kx)$, deljenje s $k$ ta faktor odstrani.« -/
@@ -265,6 +311,11 @@ theorem integral_cos_kx (k C x : ℝ) (hk : k ≠ 0) :
 
 /-- Predpostavka trditve `integral_cos_kx` se da izpolniti (k = 2). -/
 example : (2 : ℝ) ≠ 0 := two_ne_zero
+
+/-- Predpostavke trditve `integral_cos_kx` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2 : ℝ) ≠ 0 := two_ne_zero
+  integral_cos_kx (hk := w)
 
 /-- Primer 1, koraki 1–3: 6 · x³/3 = 2x³, −4 · x²/2 = −2x², člen 5 da 5x.
 trditev: MAT-SS-4/nedoloceni-integral#primer1-koraki
@@ -293,6 +344,11 @@ theorem primer2_korak2 (x : ℝ) (hx : 0 < x) :
 /-- Predpostavka trditve `primer2_korak2` se da izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `primer2_korak2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := one_pos
+  primer2_korak2 (hx := w)
+
 /-- Primer 2, korak 5 (preverba): (8/3) · (3/2) x^(1/2) = 4√x.
 trditev: MAT-SS-4/nedoloceni-integral#primer2-preverba
 besedilo: »Preverba: $\left(\dfrac{8}{3}x^{3/2}\right)' = \dfrac{8}{3} \cdot \dfrac{3}{2}\,x^{1/2} = 4\sqrt{x}$ ✓, $(3\cos x)' = -3\sin x$ ✓.« -/
@@ -316,6 +372,11 @@ theorem primer2 (C x : ℝ) (hx : 0 < x) :
 
 /-- Predpostavka trditve `primer2` se da izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `primer2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := one_pos
+  primer2 (hx := w)
 
 /-- Primer 3, koraki 1–4: y(t) = 2 sin(3t) + C ima odvod 6 cos(3t) (z u = 3t, du = 3 dt).
 trditev: MAT-SS-4/nedoloceni-integral#primer3-odvod
@@ -346,6 +407,11 @@ theorem primer3_enolicno (y : ℝ → ℝ) (hy : ∀ t, HasDerivAt y (6 * cos (3
 /-- Predpostavke trditve `primer3_enolicno` se dajo izpolniti (y(t) = 2 sin(3t)). -/
 example : (∀ t : ℝ, HasDerivAt (fun t => 2 * sin (3 * t) + 0) (6 * cos (3 * t)) t) ∧
     (2 * sin (3 * 0) + 0 : ℝ) = 0 := ⟨primer3_odvod 0, by simp⟩
+
+/-- Predpostavke trditve `primer3_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ t : ℝ, HasDerivAt (fun t => 2 * sin (3 * t) + 0) (6 * cos (3 * t)) t) ∧ (2 * sin (3 * 0) + 0 : ℝ) = 0 := ⟨primer3_odvod 0, by simp⟩
+  primer3_enolicno (hy := w.1) (h0 := w.2)
 
 /-- Primer 3, korak 6: y(π/6) = 2 sin(π/2) = 2.
 trditev: MAT-SS-4/nedoloceni-integral#primer3-vrednost
@@ -441,6 +507,11 @@ theorem matura1 (C x : ℝ) (hx : x ≠ 0) :
 /-- Predpostavka trditve `matura1` se da izpolniti (x = 1). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  matura1 (hx := w)
+
 /-- Matura, naloga 2 a): x³ − 3x² + C je primitivna funkcija za 3x² − 6x.
 trditev: MAT-SS-4/nedoloceni-integral#matura2-primitivna
 besedilo: »a) Funkcija $f$ je primitivna funkcija za $f'$: $f(x) = \int (3x^2 - 6x)\,dx = x^3 - 3x^2 + C$.« -/
@@ -473,6 +544,11 @@ theorem matura2_f (f : ℝ → ℝ) (hf : ∀ x, HasDerivAt f (3 * x ^ 2 - 6 * x
 /-- Predpostavke trditve `matura2_f` se dajo izpolniti (f(x) = x³ − 3x² + 4). -/
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 3 - 3 * x ^ 2 + 4) (3 * x ^ 2 - 6 * x) x) ∧
     ((1:ℝ) ^ 3 - 3 * 1 ^ 2 + 4 = 2) := ⟨fun x => matura2_primitivna 4 x, by norm_num⟩
+
+/-- Predpostavke trditve `matura2_f` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 3 - 3 * x ^ 2 + 4) (3 * x ^ 2 - 6 * x) x) ∧ ((1:ℝ) ^ 3 - 3 * 1 ^ 2 + 4 = 2) := ⟨fun x => matura2_primitivna 4 x, by norm_num⟩
+  matura2_f (hf := w.1) (h1 := w.2)
 
 /-- Matura, naloga 2 b), korak 3: f(−1) = −1 − 3 + 4 = 0.
 trditev: MAT-SS-4/nedoloceni-integral#matura2-f-minus1
@@ -604,6 +680,12 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => 1 / 3 * (x ^ 2 + 9) * √(x ^
     (x * √(x ^ 2 + 9)) x) ∧ (1 / 3 * ((0:ℝ) ^ 2 + 9) * √((0:ℝ) ^ 2 + 9) + -9 = 0) :=
   ⟨matura3a (-9), by rw [matura3b_F0]; norm_num⟩
 
+/-- Predpostavke trditve `matura3b_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => 1 / 3 * (x ^ 2 + 9) * √(x ^ 2 + 9) + -9) (x * √(x ^ 2 + 9)) x) ∧ (1 / 3 * ((0:ℝ) ^ 2 + 9) * √((0:ℝ) ^ 2 + 9) + -9 = 0) :=
+    ⟨matura3a (-9), by rw [matura3b_F0]; norm_num⟩
+  matura3b_enolicno (hF := w.1) (h0 := w.2)
+
 /-- Matura, naloga 3 c) (in vrstica `integral: sin(x)^2*cos(x)`): ∫ sin²x cos x dx = sin³x/3 + C.
 trditev: MAT-SS-4/nedoloceni-integral#matura3c
 besedilo: »c) Uvedemo $u = \sin x$, $du = \cos x\,dx$: $\int u^2\,du = \dfrac{u^3}{3} + C = \dfrac{\sin^3 x}{3} + C$.« -/
@@ -674,6 +756,11 @@ theorem kviz4 (C x : ℝ) (hx : x ≠ 0) :
 /-- Predpostavka trditve `kviz4` se da izpolniti (x = 1). -/
 example : (1 : ℝ) ≠ 0 := one_ne_zero
 
+/-- Predpostavke trditve `kviz4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) ≠ 0 := one_ne_zero
+  kviz4 (hx := w)
+
 /-- Preveri se, vprašanje 5: N(t) = 80t + 10t² + C ima odvod 80 + 20t, iz N(0) = 0 je C = 0 in
 N(3) = 240 + 90 = 330 udarcev.
 trditev: MAT-SS-4/nedoloceni-integral#kviz5
@@ -700,3 +787,8 @@ example : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 80 * t + 10 * t ^ 2 + 0) (80 
     ((80:ℝ) * 0 + 10 * 0 ^ 2 + 0 = 0) := ⟨kviz5.1 0, by norm_num⟩
 
 end Evklid.Lekcije.MAT_SS_4.NedoloceniIntegral
+/-- Predpostavke trditve `kviz5_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 80 * t + 10 * t ^ 2 + 0) (80 + 20 * t) t) ∧ ((80:ℝ) * 0 + 10 * 0 ^ 2 + 0 = 0) := ⟨kviz5.1 0, by norm_num⟩
+  kviz5_enolicno (hN := w.1) (h0 := w.2)
+

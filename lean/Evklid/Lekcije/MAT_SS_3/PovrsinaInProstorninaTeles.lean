@@ -212,6 +212,11 @@ example : (0:ℝ) < 3 ∧ (0:ℝ) < 4 := by norm_num
 
 /-! ## Razlaga 2–6: formule -/
 
+/-- Predpostavke trditve `kot_trikotnik` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 4 := by norm_num
+  kot_trikotnik (hp := w.1) (hv := w.2)
+
 /-- Razlaga 2: plašč pokončne prizme so pravokotniki z osnovnicami eᵢ in višino v, zato
 S_p = Σ eᵢ·v = o·v (o = Σ eᵢ obseg osnovne ploskve).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#plasc-prizme
@@ -257,6 +262,11 @@ theorem prostornina_krogle (x : EuclideanSpace ℝ (Fin 3)) (r : ℝ) (hr : 0 �
 /-- Predpostavke trditve `prostornina_krogle` se dajo izpolniti (r = 1). -/
 example : (0:ℝ) ≤ 1 := zero_le_one
 
+/-- Predpostavke trditve `prostornina_krogle` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 := zero_le_one
+  prostornina_krogle (hr := w)
+
 /-- Razlaga 6, Razlaga 7 (tabela): krogla zavzame 2/3 valja s polmerom r in višino 2r.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#krogla-v-valju
 besedilo: »Postavimo jo v valj, ki se je ravno dotika (polmer $r$, višina $2r$): krogla zavzame natanko $\frac{2}{3}$ njegove prostornine.« -/
@@ -266,6 +276,11 @@ theorem krogla_v_valju (r : ℝ) (hr : 0 < r) : (4 * π * r ^ 3 / 3) / (π * r ^
 
 /-- Predpostavke trditve `krogla_v_valju` se dajo izpolniti (r = 1). -/
 example : (0:ℝ) < 1 := one_pos
+
+/-- Predpostavke trditve `krogla_v_valju` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  krogla_v_valju (hr := w)
 
 /-- Razlaga 6 (premisli), Iz vsakdanjega življenja (žoga): pri dvakratnem premeru se prostornina poveča
 osemkrat (2³ = 8; 8·4 g = 32 g), površina štirikrat (2² = 4).
@@ -294,6 +309,11 @@ theorem podobno_telo_prostornina (K : Set (EuclideanSpace ℝ (Fin 3))) (k : ℝ
 
 /-- Predpostavka trditve `podobno_telo_prostornina` se da izpolniti (k = 2). -/
 example : (0:ℝ) ≤ 2 := by norm_num
+
+/-- Predpostavke trditve `podobno_telo_prostornina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 2 := by norm_num
+  podobno_telo_prostornina (hk := w)
 
 /-- Razlaga 7, Na sliki, Preveri se (2): stožec je zložen iz plasti – presek na višini h je krog s polmerom
 r(v − h)/v; vsota (integral) ploščin presekov je πr²v/3, tretjina valja πr²·v.
@@ -344,6 +364,16 @@ theorem kocka_tretjina (a : ℝ) : a ^ 3 / 3 = a ^ 2 * a / 3 := by ring
 /-- Predpostavke trditev `stozec_plasti` in `piramida_plasti` se dajo izpolniti (v = 1). -/
 example : (0:ℝ) < 1 := one_pos
 
+/-- Predpostavke trditve `piramida_plasti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  piramida_plasti (hv := w)
+
+/-- Predpostavke trditve `stozec_plasti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  stozec_plasti (hv := w)
+
 /-- Bolj natančno (višja raven): presek polkrogle na višini h je krog s polmerom √(r² − h²), ploščina
 π(r² − h²) = πr² − πh² (kolobar valja brez stožca); ∫₀ʳ = πr²·r − πr²·r/3 = 2πr³/3, krogla 4πr³/3.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#polkrogla
@@ -369,6 +399,11 @@ example : (0:ℝ) ≤ 1 := zero_le_one
 
 /-! ## Razlaga 8: koti v telesih -/
 
+/-- Predpostavke trditve `polkrogla` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1 := zero_le_one
+  polkrogla (hr := w)
+
 /-- Razlaga 8: pri pravilni štiristrani piramidi tan α = v/(a/2) = 2v/a, tan φ = v/(a√2/2) = 2v/(a√2);
 ker je a√2/2 > a/2, je stranski rob položnejši od stranske ploskve: φ < α.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#rob-polozenejsi
@@ -392,6 +427,11 @@ theorem rob_piramide (a v : ℝ) :
 /-- Predpostavke trditve `rob_polozenejsi` se dajo izpolniti (a = 8, v = 4√3). -/
 example : (0:ℝ) < 8 ∧ (0:ℝ) < 4 * √3 := ⟨by norm_num, by positivity⟩
 
+/-- Predpostavke trditve `rob_polozenejsi` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 8 ∧ (0:ℝ) < 4 * √3 := ⟨by norm_num, by positivity⟩
+  rob_polozenejsi (ha := w.1) (hv := w.2)
+
 /-- Razlaga 8 (stožec): za α = arctan(v/r) velja cos α = r/s, tan α = v/r (s = √(r² + v²)); polovični kot
 ob vrhu je arctan(r/v) = 90° − α, zato kot ob vrhu osnega preseka meri 180° − 2α.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#stozec-koti
@@ -408,6 +448,11 @@ theorem stozec_koti (r v : ℝ) (hr : 0 < r) (hv : 0 < v) :
 example : (0:ℝ) < 3 ∧ (0:ℝ) < 4 := by norm_num
 
 /-! ## Rešeni primeri -/
+
+/-- Predpostavke trditve `stozec_koti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 4 := by norm_num
+  stozec_koti (hr := w.1) (hv := w.2)
 
 /-- Primer 1: S = 6² = 36, V = 36·4/3 = 48, v_s = √(4² + 3²) = √25 = 5, stranska ploskev 6·5/2 = 15,
 S_p = 4·15 = 60, P = 36 + 60 = 96.
@@ -513,6 +558,11 @@ theorem pozabljena_osnovna (r v : ℝ) (hr : 0 < r) :
 
 /-- Predpostavke trditve `pozabljena_osnovna` se dajo izpolniti (r = 3). -/
 example : (0:ℝ) < 3 := by norm_num
+
+/-- Predpostavke trditve `pozabljena_osnovna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 := by norm_num
+  pozabljena_osnovna (hr := w)
 
 /-- Pogoste napake: brez 1/3 dobiš π·9·4 = 36π (valj), stožec ima 12π; plašč s v namesto s: πrv ≠ πrs
 (3·4 ≠ 3·5); premer 4 namesto polmera 2 da (4/2)³ = 8-krat preveč; r = 6: r³ = 216, ne r² = 36.
@@ -633,6 +683,11 @@ theorem naloga3b (ρ : ℝ) (h8 : ρ < 8) :
 
 /-- Predpostavka trditve `naloga3b` se da izpolniti (ρ = 3). -/
 example : (3:ℝ) < 8 := by norm_num
+
+/-- Predpostavke trditve `naloga3b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℝ) < 8 := by norm_num
+  naloga3b (h8 := w)
 
 /-- Naloga 3 c): V_k = 4π·27/3 = 36π, delež 36π/(96π) = 3/8 = 37,5 %.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga3c

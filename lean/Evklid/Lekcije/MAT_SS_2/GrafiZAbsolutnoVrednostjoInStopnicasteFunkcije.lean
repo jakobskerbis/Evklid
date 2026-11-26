@@ -429,6 +429,11 @@ theorem naloga2_c (s : ℝ) (h0 : 0 < s) (h1 : s ≤ 40) :
 /-- Predpostavke `naloga2_c` se dajo izpolniti (s = 10). -/
 example : (0:ℝ) < 10 ∧ (10:ℝ) ≤ 40 := by norm_num
 
+/-- Predpostavke trditve `naloga2_c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 10 ∧ (10:ℝ) ≤ 40 := by norm_num
+  naloga2_c (h0 := w.1) (h1 := w.2)
+
 /-- Naloga 3 a) (in blok RACUN): f(x) = |x + 1| − |x − 3| po primerih: za x < −1 je (−x − 1) − (−x + 3) = −4, za
 −1 ≤ x < 3 je (x + 1) − (−x + 3) = 2x − 2, za x ≥ 3 je (x + 1) − (x − 3) = 4.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga3-a

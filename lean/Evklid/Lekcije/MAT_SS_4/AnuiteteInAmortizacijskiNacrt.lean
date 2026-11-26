@@ -63,6 +63,13 @@ example : ∃ D : ℕ → ℝ, D 0 = 4000 ∧ ∀ k, D (k + 1) = D k * 1.05 - 11
   ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i, by simp,
     fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
 
+/-- Predpostavke trditve `dolg_vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ D : ℕ → ℝ, D 0 = 4000 ∧ ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
+    ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i, by simp,
+      fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
+  dolg_vsota (h0 := w.choose_spec.1) (h := w.choose_spec.2)
+
 /-- Razlaga 2 (in Povzetek, Primer 4): Dₙ = G₀rⁿ − a(rⁿ − 1)/(r − 1) za r ≠ 1.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#dolg
 besedilo: »$$D_n = G_0 r^n - a \cdot \frac{r^n - 1}{r - 1}$$« -/
@@ -84,6 +91,11 @@ theorem naprej_nazaj (G r : ℝ) (k : ℕ) (hr : r ≠ 0) : G * r ^ k / r ^ k = 
 /-- Predpostavka trditve `naprej_nazaj` se da izpolniti. -/
 example : (1.05 : ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `naprej_nazaj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1.05 : ℝ) ≠ 0 := by norm_num
+  naprej_nazaj (hr := w)
+
 /-- Razlaga 3–4: pri r > 1 in n ≥ 1 je posojilo odplačano (G₀rⁿ − a(rⁿ − 1)/(r − 1) = 0) natanko tedaj,
 ko je G₀rⁿ = a(rⁿ − 1)/(r − 1) (enačba), in natanko tedaj, ko je a = G₀·rⁿ(r − 1)/(rⁿ − 1).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#anuiteta
@@ -101,6 +113,11 @@ theorem anuiteta (G₀ r a : ℝ) (n : ℕ) (hr : 1 < r) (hn : n ≠ 0) :
 /-- Predpostavke trditve `anuiteta` se dajo izpolniti (r = 1,05, n = 4). -/
 example : (1 : ℝ) < 1.05 ∧ (4 : ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `anuiteta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 1.05 ∧ (4 : ℕ) ≠ 0 := by norm_num
+  anuiteta (hr := w.1) (hn := w.2)
+
 /-- Razlaga 3 in Primer 3: enačba na dan najema: G₀rⁿ = a(rⁿ − 1)/(r − 1) ⟺ G₀ = a(rⁿ − 1)/(rⁿ(r − 1)).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#dan-najema
 besedilo: »Ekvivalenca glavnic na dan najema: $G_0 = a \cdot \dfrac{r^n - 1}{r^n (r - 1)}$« -/
@@ -114,6 +131,11 @@ theorem dan_najema (G₀ r a : ℝ) (n : ℕ) (hr : 1 < r) :
 
 /-- Predpostavka trditve `dan_najema` se da izpolniti (r = 1,06). -/
 example : (1 : ℝ) < 1.06 := by norm_num
+
+/-- Predpostavke trditve `dan_najema` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 1.06 := by norm_num
+  dan_najema (hr := w)
 
 /-- Razlaga 3: vsak obrok delimo z r tolikokrat, kolikor let je oddaljen od najema:
 a/r + a/r² + … + a/rⁿ = a(rⁿ − 1)/(rⁿ(r − 1)), kar je G₀ iz trditve `dan_najema`.
@@ -132,6 +154,11 @@ theorem vsota_nazaj (r a : ℝ) (hr : 1 < r) (n : ℕ) :
 
 /-- Predpostavka trditve `vsota_nazaj` se da izpolniti. -/
 example : (1 : ℝ) < 1.1 := by norm_num
+
+/-- Predpostavke trditve `vsota_nazaj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 1.1 := by norm_num
+  vsota_nazaj (hr := w)
 
 /-- Razlaga 3: brez obrokov bi dolg narasel na 4000·1,05⁴ = 4862,025 ≈ 4862,03 €.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#brez-obrokov
@@ -172,6 +199,13 @@ example : ∃ D : ℕ → ℝ, ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
   ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i,
     fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
 
+/-- Predpostavke trditve `razdolznina_geometrijska` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ D : ℕ → ℝ, ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
+    ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i,
+      fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
+  razdolznina_geometrijska (h := w.choose_spec)
+
 /-- Razlaga 5: vsota razdolžnin (Dₖ − Dₖ₊₁) v n letih je D₀ − Dₙ; ko je Dₙ = 0, je to ravno posojilo.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#vsota-razdolznin
 besedilo: »Vsota razdolžnin je ravno posojilo:« -/
@@ -186,6 +220,11 @@ theorem vsota_razdolznin (D : ℕ → ℝ) (n : ℕ) (hn : D n = 0) :
 
 /-- Predpostavke trditve `vsota_razdolznin` se dajo izpolniti (D₀ = 1, D₁ = 0, n = 1). -/
 example : ∃ D : ℕ → ℝ, D 1 = 0 := ⟨fun k => 1 - k, by norm_num⟩
+
+/-- Predpostavke trditve `vsota_razdolznin` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ D : ℕ → ℝ, D 1 = 0 := ⟨fun k => 1 - k, by norm_num⟩
+  vsota_razdolznin (hn := w.choose_spec)
 
 /-- Razlaga 5: zadnja razdolžnina je enaka ostanku pred zadnjim letom: iz 0 = Dₙ₋₁ − Rₙ sledi Rₙ = Dₙ₋₁.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#zadnja-razdolznina
@@ -227,6 +266,13 @@ example : (1.05 : ℝ) ≠ 1 ∧ ∃ S : ℕ → ℝ, S 0 = 0 ∧ ∀ k, S (k + 
     fun k => by simp only [geom_sum_succ]; ring⟩
 
 /-! ## Primer 1: anuiteta za ogled mrka -/
+
+/-- Predpostavke trditve `varcevanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1.05 : ℝ) ≠ 1 ∧ ∃ S : ℕ → ℝ, S 0 = 0 ∧ ∀ k, S (k + 1) = S k * 1.05 + 100 :=
+    ⟨by norm_num, fun k => 100 * ∑ i ∈ range k, (1.05 : ℝ) ^ i, by simp,
+      fun k => by simp only [geom_sum_succ]; ring⟩
+  varcevanje (hr := w.1) (h0 := w.2.1) (h := w.2.2)
 
 /-- Primer 1: r = 1 + 4/100 = 1,04; 1,04³ = 1,124864; a = 2700·1,124864·0,04/0,124864 ≈ 972,94;
 3·972,94 = 2918,82.

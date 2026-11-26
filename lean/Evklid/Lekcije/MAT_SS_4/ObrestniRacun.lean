@@ -62,6 +62,11 @@ theorem odstotek_iz_deleza (C d p : ℝ) (hC : C ≠ 0) : d = C * p / 100 ↔ p 
 /-- Predpostavke trditve `odstotek_iz_deleza` se dajo izpolniti (C = 240). -/
 example : (240 : ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `odstotek_iz_deleza` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (240 : ℝ) ≠ 0 := by norm_num
+  odstotek_iz_deleza (hC := w)
+
 /-- Razlaga 1: iz d = C·p/100 sledi C = 100·d/p (p ≠ 0).
 trditev: MAT-SS-4/obrestni-racun#osnova-iz-deleza
 besedilo: »$C = \frac{100 \cdot d}{p}$« -/
@@ -72,6 +77,11 @@ theorem osnova_iz_deleza (C d p : ℝ) (hp : p ≠ 0) : d = C * p / 100 ↔ C = 
 
 /-- Predpostavke trditve `osnova_iz_deleza` se dajo izpolniti (p = 22). -/
 example : (22 : ℝ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `osnova_iz_deleza` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (22 : ℝ) ≠ 0 := by norm_num
+  osnova_iz_deleza (hp := w)
 
 /-- Razlaga 1: 18 od 240 gostov: relativni delež 18/240 = 0,075 = 7,5 % (tudi 100·18/240 = 7,5).
 trditev: MAT-SS-4/obrestni-racun#vegetarijanci
@@ -139,6 +149,12 @@ theorem navadno_stanje (G : ℕ → ℝ) (p : ℝ) (h : ∀ k, G (k + 1) = G k +
 example : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k + G 0 * 5 / 100 :=
   ⟨fun k => 1000 + 50 * k, fun k => by push_cast; ring⟩
 
+/-- Predpostavke trditve `navadno_stanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k + G 0 * 5 / 100 :=
+    ⟨fun k => 1000 + 50 * k, fun k => by push_cast; ring⟩
+  navadno_stanje (h := w.choose_spec)
+
 /-- Razlaga 3: stanja navadnega obrestovanja tvorijo aritmetično zaporedje z diferenco o = G₀·p/100.
 trditev: MAT-SS-4/obrestni-racun#navadno-aritmeticno
 besedilo: »Po $n$ letih je $G_n = G_0 + n \cdot \frac{G_0 \cdot p}{100} = G_0 \left(1 + \frac{n \cdot p}{100}\right)$, stanja pa tvorijo aritmetično zaporedje z diferenco $o$.« -/
@@ -171,6 +187,12 @@ theorem obrestno_stanje (G : ℕ → ℝ) (r : ℝ) (h : ∀ k, G (k + 1) = G k 
 /-- Predpostavke trditve `obrestno_stanje` se dajo izpolniti (Gₖ = 1000·1,05ᵏ). -/
 example : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k * 1.05 :=
   ⟨fun k => 1000 * 1.05 ^ k, fun k => by simp only [pow_succ, mul_assoc]⟩
+
+/-- Predpostavke trditve `obrestno_stanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k * 1.05 :=
+    ⟨fun k => 1000 * 1.05 ^ k, fun k => by simp only [pow_succ, mul_assoc]⟩
+  obrestno_stanje (h := w.choose_spec)
 
 /-- Razlaga 4: povečanje za p % je množenje z r: G + G·p/100 = G·(1 + p/100).
 trditev: MAT-SS-4/obrestni-racun#obrestno-korak
@@ -274,6 +296,11 @@ theorem nazaj (G₀ Gn r : ℝ) (n : ℕ) (hr : r ≠ 0) : Gn = G₀ * r ^ n ↔
 /-- Predpostavke trditve `nazaj` se dajo izpolniti (r = 1,04). -/
 example : (1.04 : ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `nazaj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1.04 : ℝ) ≠ 0 := by norm_num
+  nazaj (hr := w)
+
 /-- Razlaga 6, hitri preizkus: 1081,60 : 1,04² = 1000 €.
 trditev: MAT-SS-4/obrestni-racun#nazaj-1081
 besedilo: »Hitri preizkus:* koliko vložiti danes, da bo čez $2$ leti pri $4\,\%$ obrestno na računu $1081{,}60\,\text{€}$? *(Odgovor: $1081{,}60 : 1{,}04^2 = 1000\,\text{€}$.)« -/
@@ -298,6 +325,11 @@ theorem konformni_faktor (p : ℝ) (m : ℕ) (hp : -100 ≤ p) (hm : m ≠ 0) :
 
 /-- Predpostavke trditve `konformni_faktor` se dajo izpolniti (p = 6, m = 12). -/
 example : (-100 : ℝ) ≤ 6 ∧ (12 : ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `konformni_faktor` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-100 : ℝ) ≤ 6 ∧ (12 : ℕ) ≠ 0 := by norm_num
+  konformni_faktor (hp := w.1) (hm := w.2)
 
 /-- Razlaga 7: r₁₂ = ¹²√1,06 ≈ 1,004868, torej p_k ≈ 0,487 %.
 trditev: MAT-SS-4/obrestni-racun#konformna-6
@@ -338,6 +370,11 @@ theorem konformna_n_let (G₀ r : ℝ) (m n : ℕ) (hr : 0 ≤ r) (hm : m ≠ 0)
 /-- Predpostavke trditve `konformna_n_let` se dajo izpolniti (r = 1,06, m = 12). -/
 example : (0 : ℝ) ≤ 1.06 ∧ (12 : ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `konformna_n_let` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 1.06 ∧ (12 : ℕ) ≠ 0 := by norm_num
+  konformna_n_let (hr := w.1) (hm := w.2)
+
 /-- Razlaga 7, z računalom: brez oklepaja računalo izračuna 1,06¹ : 12 ≈ 0,088.
 trditev: MAT-SS-4/obrestni-racun#brez-oklepaja
 besedilo: »Z računalom:* $\sqrt[12]{1{,}06}$ vtipkaš s tipko $\sqrt[x]{y}$ ali kot $1{,}06$ ^ $(1 : 12)$, z oklepajem. Brez njega računalo izračuna $1{,}06^1 : 12 \approx 0{,}088$.« -/
@@ -359,6 +396,11 @@ theorem bernoulli (x : ℝ) (hx : 0 ≤ x) (n : ℕ) : 1 + n * x ≤ (1 + x) ^ n
 /-- Predpostavke trditve `bernoulli` se dajo izpolniti (x = 0,05). -/
 example : (0 : ℝ) ≤ 0.05 := by norm_num
 
+/-- Predpostavke trditve `bernoulli` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≤ 0.05 := by norm_num
+  bernoulli (hx := w)
+
 /-- Bolj natančno: za x > 0 in n ≥ 2 je neenakost stroga: (1 + x)ⁿ > 1 + nx.
 trditev: MAT-SS-4/obrestni-racun#bernoulli-strogo
 besedilo: »Bernoullijeva neenakost z $\frac{x}{m}$ namesto $x$ da $\left(1 + \frac{x}{m}\right)^m \ge 1 + x$, za $m \ge 2$ strogo.« -/
@@ -376,6 +418,11 @@ theorem bernoulli_strogo (x : ℝ) (hx : 0 < x) (n : ℕ) (hn : 2 ≤ n) : 1 + n
 /-- Predpostavke trditve `bernoulli_strogo` se dajo izpolniti (x = 0,05, n = 2). -/
 example : (0 : ℝ) < 0.05 ∧ 2 ≤ 2 := by norm_num
 
+/-- Predpostavke trditve `bernoulli_strogo` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 0.05 ∧ 2 ≤ 2 := by norm_num
+  bernoulli_strogo (hx := w.1) (hn := w.2)
+
 /-- Ustno vprašanje 3: pri G₀ > 0, p > 0 in n ≥ 2 je G₀·rⁿ > G₀(1 + n·p/100), r = 1 + p/100.
 trditev: MAT-SS-4/obrestni-racun#obrestno-vecje
 besedilo: »Zato velja $G_0 \cdot r^n > G_0 \left(1 + \frac{n \cdot p}{100}\right)$ za vsak $n \ge 2$.« -/
@@ -388,6 +435,11 @@ theorem obrestno_vecje (G₀ p : ℝ) (hG : 0 < G₀) (hp : 0 < p) (n : ℕ) (hn
 /-- Predpostavke trditve `obrestno_vecje` se dajo izpolniti (G₀ = 1000, p = 5, n = 2). -/
 example : (0 : ℝ) < 1000 ∧ (0 : ℝ) < 5 ∧ 2 ≤ 2 := by norm_num
 
+/-- Predpostavke trditve `obrestno_vecje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1000 ∧ (0 : ℝ) < 5 ∧ 2 ≤ 2 := by norm_num
+  obrestno_vecje (hG := w.1) (hp := w.2.1) (hn := w.2.2)
+
 /-- Bolj natančno: relativna mera da v letu več: (1 + x/m)ᵐ > 1 + x za x > 0, m ≥ 2.
 trditev: MAT-SS-4/obrestni-racun#relativna-vec
 besedilo: »Zakaj relativna mera da več.** Pri relativni meri je letni faktor $\left(1 + \frac{x}{m}\right)^m$.« -/
@@ -399,6 +451,11 @@ theorem relativna_vec (x : ℝ) (hx : 0 < x) (m : ℕ) (hm : 2 ≤ m) : 1 + x < 
 
 /-- Predpostavke trditve `relativna_vec` se dajo izpolniti (x = 0,06, m = 12). -/
 example : (0 : ℝ) < 0.06 ∧ 2 ≤ 12 := by norm_num
+
+/-- Predpostavke trditve `relativna_vec` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 0.06 ∧ 2 ≤ 12 := by norm_num
+  relativna_vec (hx := w.1) (hm := w.2)
 
 /-- Bolj natančno: konformna mera je manjša od relativne: ᵐ√(1 + x) < 1 + x/m za x > 0, m ≥ 2.
 trditev: MAT-SS-4/obrestni-racun#konformna-manjsa
@@ -415,6 +472,11 @@ theorem konformna_manjsa (x : ℝ) (hx : 0 < x) (m : ℕ) (hm : 2 ≤ m) :
 
 /-- Predpostavke trditve `konformna_manjsa` se dajo izpolniti (x = 0,06, m = 12). -/
 example : (0 : ℝ) < 0.06 ∧ 2 ≤ 12 := by norm_num
+
+/-- Predpostavke trditve `konformna_manjsa` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 0.06 ∧ 2 ≤ 12 := by norm_num
+  konformna_manjsa (hx := w.1) (hm := w.2)
 
 /-- Bolj natančno: efektivna obrestna mera pri 6 % in mesečnem pripisu: 100(1,005¹² − 1) ≈ 6,17 %.
 trditev: MAT-SS-4/obrestni-racun#efektivna-6

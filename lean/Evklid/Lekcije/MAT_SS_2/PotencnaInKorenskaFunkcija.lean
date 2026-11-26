@@ -77,6 +77,11 @@ theorem koren_lih {n : ℕ} (hn : Odd n) (a b : ℝ) : b ^ n = a ↔ b = koren n
 /-- Predpostavka trditve `koren_lih` se da izpolniti (n = 3). -/
 example : Odd 3 := ⟨1, rfl⟩
 
+/-- Predpostavke trditve `koren_lih` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 3 := ⟨1, rfl⟩
+  koren_lih (hn := w)
+
 /-- Pomožna trditev (orodje za dokaze v tej datoteki).
 pomozno -/
 theorem koren_med {n : ℕ} (hn : n ≠ 0) {a lo hi : ℝ} (ha : 0 ≤ a) (hhi : 0 ≤ hi)
@@ -119,6 +124,11 @@ theorem n_ena_nic (x : ℝ) (_hx : x ≠ 0) : x ^ (1:ℤ) = x ∧ x ^ (0:ℤ) = 
 /-- Predpostavke trditve `n_ena_nic` se dajo izpolniti. -/
 example : (2:ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `n_ena_nic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 := by norm_num
+  n_ena_nic (_hx := w)
+
 /-- Najprej opazuj (tabela): vrednosti x², x³, x⁴ pri x = −2, −1, 0, 1, 2.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#tabela
 besedilo: »Dobiš točke grafa $y = \sqrt[3]{x}$: $(-8, -2)$, $(-1, -1)$, $(0, 0)$, $(1, 1)$, $(8, 2)$.« -/
@@ -136,6 +146,11 @@ theorem sod_eksponent {n : ℕ} (hn : Even n) (x : ℝ) : (-x) ^ n = x ^ n ∧ 0
 /-- Predpostavke trditve `sod_eksponent` se dajo izpolniti. -/
 example : Even 2 := even_two
 
+/-- Predpostavke trditve `sod_eksponent` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 := even_two
+  sod_eksponent (hn := w)
+
 /-- Pravilo za sode eksponente: Z_f = [0, ∞) (n sod, n ≥ 2).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#sod-zaloga
 besedilo: »Pravilo za sode eksponente.** Pri sodem $n \ge 2$ je $(-x)^n = x^n$,« -/
@@ -147,6 +162,11 @@ theorem sod_zaloga {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) : Set.range (fun x : 
 /-- Predpostavke trditve `sod_zaloga` se dajo izpolniti. -/
 example : Even 4 ∧ (4:ℕ) ≠ 0 := ⟨⟨2, rfl⟩, by norm_num⟩
 
+/-- Predpostavke trditve `sod_zaloga` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 4 ∧ (4:ℕ) ≠ 0 := ⟨⟨2, rfl⟩, by norm_num⟩
+  sod_zaloga (hn := w.1) (hn0 := w.2)
+
 /-- Pravilo za sode eksponente: graf gre skozi (−1, 1), (0, 0), (1, 1).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#sod-tocke
 besedilo: »Graf gre skozi točke $(-1, 1)$, $(0, 0)$ in $(1, 1)$.« -/
@@ -155,6 +175,11 @@ theorem sod_tocke {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) : (-1:ℝ) ^ n = 1 ∧
 
 /-- Predpostavki trditve `sod_tocke` se dajo izpolniti (n = 4). -/
 example : Even 4 ∧ (4:ℕ) ≠ 0 := ⟨⟨2, rfl⟩, by norm_num⟩
+
+/-- Predpostavke trditve `sod_tocke` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 4 ∧ (4:ℕ) ≠ 0 := ⟨⟨2, rfl⟩, by norm_num⟩
+  sod_tocke (hn := w.1) (hn0 := w.2)
 
 /-- Pravilo za sode eksponente: na [0, ∞) narašča, na (−∞, 0] pada.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#sod-monotonost
@@ -168,6 +193,11 @@ theorem sod_monotonost {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) :
 
 /-- Predpostavki trditve `sod_monotonost` se dajo izpolniti (n = 4). -/
 example : Even 4 ∧ (4:ℕ) ≠ 0 := ⟨⟨2, rfl⟩, by norm_num⟩
+
+/-- Predpostavke trditve `sod_monotonost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 4 ∧ (4:ℕ) ≠ 0 := ⟨⟨2, rfl⟩, by norm_num⟩
+  sod_monotonost (hn := w.1) (hn0 := w.2)
 
 /-- Pravilo za lihe eksponente: (−x)ⁿ = −xⁿ (liha funkcija), povsod narašča, Z_f = R, skozi (−1, −1),
 (0, 0), (1, 1).
@@ -183,6 +213,11 @@ theorem lih_eksponent {n : ℕ} (hn : Odd n) :
 /-- Predpostavke trditve `lih_eksponent` se dajo izpolniti. -/
 example : Odd 3 := ⟨1, rfl⟩
 
+/-- Predpostavke trditve `lih_eksponent` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 3 := ⟨1, rfl⟩
+  lih_eksponent (hn := w)
+
 /-- Premisli in Povzetek (splošno): večji eksponent – na (−1, 1) bolj sploščen graf, zunaj strmejši:
 za 0 < |x| < 1 in m < n je |xⁿ| < |xᵐ|, za |x| > 1 je |xᵐ| < |xⁿ|.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#splosceni-graf
@@ -194,6 +229,11 @@ theorem splosceni_graf {m n : ℕ} (hmn : m < n) (x : ℝ) :
 
 /-- Predpostavke trditve `splosceni_graf` se dajo izpolniti. -/
 example : (2:ℕ) < 4 ∧ (0:ℝ) < |0.5| ∧ |(0.5:ℝ)| < 1 ∧ (1:ℝ) < |3| := by norm_num [abs_of_pos]
+
+/-- Predpostavke trditve `splosceni_graf` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℕ) < 4 ∧ (0:ℝ) < |0.5| ∧ |(0.5:ℝ)| < 1 ∧ (1:ℝ) < |3| := by norm_num [abs_of_pos]
+  splosceni_graf (hmn := w.1)
 
 /-- Premisli: 0,5² = 0,25 > 0,5⁴ = 0,0625, 3² = 9 < 81 = 3⁴; splošno je za 0 < |x| < 1 x⁴ < x², za |x| > 1
 x⁴ > x²; grafa se sekata v x ∈ {−1, 0, 1}.
@@ -241,6 +281,11 @@ theorem negativni_D {n : ℕ} (hn : n ≠ 0) (x : ℝ) : x ^ n ≠ 0 ↔ x ≠ 0
 /-- Predpostavke trditve `negativni_D` se dajo izpolniti. -/
 example : (1:ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `negativni_D` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℕ) ≠ 0 := by norm_num
+  negativni_D (hn := w)
+
 /-- Negativni eksponent: ko gre x proti ±∞, gre x^(−n) proti 0 (asimptota y = 0).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-v-neskoncnosti
 besedilo: »Negativni eksponent.** Za $n > 0$ je« -/
@@ -255,6 +300,11 @@ theorem negativni_v_neskoncnosti {n : ℕ} (hn : n ≠ 0) :
 
 /-- Predpostavke trditve `negativni_v_neskoncnosti` se dajo izpolniti. -/
 example : (2:ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `negativni_v_neskoncnosti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℕ) ≠ 0 := by norm_num
+  negativni_v_neskoncnosti (hn := w)
 
 /-- Negativni eksponent: ko gre x z desne proti 0, x^(−n) raste čez vse meje (asimptota x = 0).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-pri-nic
@@ -271,6 +321,11 @@ theorem negativni_pri_nic {n : ℕ} (hn : n ≠ 0) : Tendsto (fun x : ℝ => x ^
 
 /-- Predpostavke trditve `negativni_pri_nic` se dajo izpolniti. -/
 example : (1:ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `negativni_pri_nic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℕ) ≠ 0 := by norm_num
+  negativni_pri_nic (hn := w)
 
 /-- Negativni eksponent, lihi n: ko gre x z leve proti 0, gre x^(−n) proti −∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-lih-z-leve
@@ -289,6 +344,11 @@ theorem negativni_lih_z_leve {n : ℕ} (hn : Odd n) : Tendsto (fun x : ℝ => x 
 /-- Predpostavke trditve `negativni_lih_z_leve` se dajo izpolniti. -/
 example : Odd 1 := ⟨0, rfl⟩
 
+/-- Predpostavke trditve `negativni_lih_z_leve` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 1 := ⟨0, rfl⟩
+  negativni_lih_z_leve (hn := w)
+
 /-- Negativni eksponent, sodi n: ko gre x z leve proti 0, gre x^(−n) proti +∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-sod-z-leve
 besedilo: »Ko se $x$ oddaljuje od $0$, gre vrednost proti $0$.« -/
@@ -305,6 +365,11 @@ theorem negativni_sod_z_leve {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) :
 
 /-- Predpostavke trditve `negativni_sod_z_leve` se dajo izpolniti. -/
 example : Even 2 ∧ (2:ℕ) ≠ 0 := ⟨even_two, by norm_num⟩
+
+/-- Predpostavke trditve `negativni_sod_z_leve` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 ∧ (2:ℕ) ≠ 0 := ⟨even_two, by norm_num⟩
+  negativni_sod_z_leve (hn := w.1) (hn0 := w.2)
 
 /-- Negativni eksponent, zaloga vrednosti: pri sodem n (n ≥ 2) je Z = (0, ∞), pri lihem n je Z = R \ {0}
 (D = R \ {0}).
@@ -336,6 +401,11 @@ theorem negativni_zaloga {n : ℕ} (hn0 : n ≠ 0) :
 /-- Predpostavke trditve `negativni_zaloga` se dajo izpolniti. -/
 example : (3:ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `negativni_zaloga` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℕ) ≠ 0 := by norm_num
+  negativni_zaloga (hn0 := w)
+
 /-- Negativni eksponent, sodi n (x⁻², x⁻⁴, …): soda funkcija, veji nad osjo x, skozi (−1, 1) in (1, 1).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-sod
 besedilo: »$x^{-2}$, $x^{-4}$, … so sode funkcije; obe veji ležita nad osjo $x$ in gresta skozi $(-1, 1)$ in $(1, 1)$.« -/
@@ -348,6 +418,11 @@ theorem negativni_sod {n : ℕ} (hn : Even n) :
 
 /-- Predpostavke trditve `negativni_sod` se dajo izpolniti. -/
 example : Even 2 := even_two
+
+/-- Predpostavke trditve `negativni_sod` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 := even_two
+  negativni_sod (hn := w)
 
 /-- Negativni eksponent, lihi n (x⁻¹, x⁻³, …): liha funkcija, veji v 1. in 3. kvadrantu, skozi (1, 1) in
 (−1, −1).
@@ -365,6 +440,11 @@ theorem negativni_lih {n : ℕ} (hn : Odd n) :
 example : Odd 1 := ⟨0, rfl⟩
 
 /-! ## Korenska funkcija kot inverzna -/
+
+/-- Predpostavke trditve `negativni_lih` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 1 := ⟨0, rfl⟩
+  negativni_lih (hn := w)
 
 /-- Korenska funkcija kot inverzna: x³ je injektivna na R, ∛x je njena inverzna funkcija na R
 (∛(x³) = x in (∛x)³ = x); ∛(−8) = −2, ker je (−2)³ = −8.
@@ -402,6 +482,11 @@ theorem splosno_inverz (n : ℕ) (hn0 : n ≠ 0) :
 /-- Predpostavke trditve `splosno_inverz` se dajo izpolniti. -/
 example : (3:ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `splosno_inverz` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℕ) ≠ 0 := by norm_num
+  splosno_inverz (hn0 := w)
+
 /-- Ustno vprašanje 2: pri sodem n funkcija xⁿ ni injektivna, ker je (−1)ⁿ = 1ⁿ in −1 ≠ 1.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#sod-ni-injektivna
 besedilo: »Pri sodem $n$ je $(-x)^n = x^n$, zato funkcija ni injektivna.« -/
@@ -411,6 +496,11 @@ theorem sod_ni_injektivna {n : ℕ} (hn : Even n) : (-1:ℝ) ^ n = 1 ^ n ∧ ¬ 
 
 /-- Predpostavke trditve `sod_ni_injektivna` se dajo izpolniti. -/
 example : Even 2 := even_two
+
+/-- Predpostavke trditve `sod_ni_injektivna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Even 2 := even_two
+  sod_ni_injektivna (hn := w)
 
 /-- Slika v besedah: točka (2, 8) na grafu x³ preide v (8, 2) na grafu ∛x.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#zrcalna-tocka
@@ -440,6 +530,11 @@ theorem premik_tocka (a p q : ℝ) {n : ℕ} (hn : n ≠ 0) : a * (p - p) ^ n + 
 /-- Predpostavke trditve `premik_tocka` se dajo izpolniti. -/
 example : (3:ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `premik_tocka` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℕ) ≠ 0 := by norm_num
+  premik_tocka (hn := w)
+
 /-- Transformacije, negativni eksponent: pri y = a(x − p)^(−n) + q (a ≠ 0) je D = R \ {p} (imenovalec
 (x − p)ⁿ je nič le pri x = p), vrednosti q funkcija ne doseže.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#premik-asimptota
@@ -453,6 +548,11 @@ theorem premik_asimptota {a p q : ℝ} (ha : a ≠ 0) {n : ℕ} (hn : n ≠ 0) (
 /-- Predpostavke trditve `premik_asimptota` se dajo izpolniti. -/
 example : (2:ℝ) ≠ 0 ∧ (1:ℕ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `premik_asimptota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (2:ℝ) ≠ 0 ∧ (1:ℕ) ≠ 0 := by norm_num
+  premik_asimptota (ha := w.1) (hn := w.2)
+
 /-- Transformacije: pri lihem n je (p, q) središče simetrije grafa y = a(x − p)ⁿ + q: točki pri x = p + t in
 x = p − t sta simetrični glede na (p, q), f(p + t) + f(p − t) = 2q.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#premik-sredisce
@@ -465,6 +565,11 @@ theorem premik_sredisce {n : ℕ} (hn : Odd n) (a p q t : ℝ) :
 example : Odd 3 := ⟨1, rfl⟩
 
 /-! ## Potenčna odvisnost in modeliranje -/
+
+/-- Predpostavke trditve `premik_sredisce` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Odd 3 := ⟨1, rfl⟩
+  premik_sredisce (hn := w)
 
 /-- Potenčna odvisnost: c(2x)ⁿ = 2ⁿ · c · xⁿ; pri V = a³ dvakrat daljši rob da 8-krat večjo prostornino;
 pri y = c x⁻² se y zmanjša na četrtino.
@@ -496,6 +601,11 @@ theorem skozi_izhodisce (n : ℕ) (hn : n ≠ 0) : (0:ℝ) ^ n = 0 ∧
 
 /-- Predpostavke trditve `skozi_izhodisce` se dajo izpolniti. -/
 example : (1:ℕ) ≠ 0 := by norm_num
+
+/-- Predpostavke trditve `skozi_izhodisce` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℕ) ≠ 0 := by norm_num
+  skozi_izhodisce (hn := w)
 
 /-- Modeliranje, korak 1: iz 2ⁿ = 4 sledi n = 2 (n celo število).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#eksponent-iz-podvojitve
@@ -822,6 +932,11 @@ example : (0:ℝ) ≤ 1.5 ∧ (0:ℝ) ≤ 0.5625 := by norm_num
 
 /-! ## Drugače -/
 
+/-- Predpostavke trditve `matura2d` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 1.5 ∧ (0:ℝ) ≤ 0.5625 := by norm_num
+  matura2d (hT := w.1) (hl := w.2)
+
 /-- Korak za korakom: zamenjani stolpci tabele x³ dajo točke grafa ∛x: (−8, −2), (−1, −1), (0, 0), (1, 1), (8, 2);
 iz tabele x² za x ≥ 0 točke grafa √x: (0, 0), (1, 1), (4, 2), (9, 3).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#korak-tocke
@@ -893,6 +1008,11 @@ theorem preveri6 (c : ℝ) (n : ℤ) (h1 : c * 1 ^ n = 3) (h2 : c * 2 ^ n = 24) 
 
 /-- Predpostavke trditve `preveri6` se dajo izpolniti. -/
 example : (3:ℝ) * 1 ^ (3:ℤ) = 3 ∧ (3:ℝ) * 2 ^ (3:ℤ) = 24 := by norm_num
+
+/-- Predpostavke trditve `preveri6` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3:ℝ) * 1 ^ (3:ℤ) = 3 ∧ (3:ℝ) * 2 ^ (3:ℤ) = 24 := by norm_num
+  preveri6 (h1 := w.1) (h2 := w.2)
 
 /-- Preveri se, 7: središče (2, 1), f(x) = (x − 2)³ + 1; f(4) = 2³ + 1 = 9; graf skozi (1, 0) in (3, 2);
 napačni odgovori (4 + 2)³ + 1 = 217, (4 − 1)³ + 2 = 29, (4 − 2)³ − 1 = 7.

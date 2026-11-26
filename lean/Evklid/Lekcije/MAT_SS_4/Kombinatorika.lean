@@ -90,6 +90,11 @@ theorem variacije (n k : ℕ) (hk : k ≤ n) :
 /-- Predpostavka trditve `variacije` se da izpolniti. -/
 example : (3 : ℕ) ≤ 7 := by norm_num
 
+/-- Predpostavke trditve `variacije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3 : ℕ) ≤ 7 := by norm_num
+  variacije (hk := w)
+
 /-- Razlaga 3: 7 krajev, 3 dnevi: 7·6·5 = 210 načrtov.
 trditev: MAT-SS-4/kombinatorika#sedem-tri
 besedilo: »skupaj $7 \cdot 6 \cdot 5 = 210$ načrtov.« -/
@@ -115,6 +120,11 @@ theorem kombinacije (n k : ℕ) (hk : k ≤ n) :
 /-- Predpostavka trditve `kombinacije` se da izpolniti. -/
 example : (3 : ℕ) ≤ 7 := by norm_num
 
+/-- Predpostavke trditve `kombinacije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3 : ℕ) ≤ 7 := by norm_num
+  kombinacije (hk := w)
+
 /-- Razlaga 4, Povzetek, Ustno vprašanje 2, analogija: `V_n^k = k!·C(n,k)`, torej `C(n,k) = V_n^k / k!`.
 trditev: MAT-SS-4/kombinatorika#variacije-kombinacije
 besedilo: »$V_n^k = k! \cdot C_n^k$« -/
@@ -138,6 +148,11 @@ theorem simetrija (n k : ℕ) (hk : k ≤ n) : Nat.choose n k = Nat.choose n (n 
 /-- Predpostavka trditve `simetrija` se da izpolniti. -/
 example : (3 : ℕ) ≤ 7 := by norm_num
 
+/-- Predpostavke trditve `simetrija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3 : ℕ) ≤ 7 := by norm_num
+  simetrija (hk := w)
+
 /-- Razlaga 4, »Premisli«: `C(7,3) = C(7,4) = 35`.
 trditev: MAT-SS-4/kombinatorika#sedem-tri-stiri
 besedilo: »$\binom{7}{3}$ ali $\binom{7}{4}$?« -/
@@ -158,6 +173,11 @@ theorem pravilo_vsote {α : Type*} [DecidableEq α] (A B : Finset α) (h : Disjo
 
 /-- Predpostavka trditve `pravilo_vsote` se da izpolniti. -/
 example : Disjoint (range 4) ((range 7) \ (range 4)) := disjoint_sdiff
+
+/-- Predpostavke trditve `pravilo_vsote` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Disjoint (range 4) ((range 7) \ (range 4)) := disjoint_sdiff
+  pravilo_vsote (h := w)
 
 /-- Razlaga 6: gore (4) ali morje (3): 4 + 3 = 7 izletov, ne 4·3.
 trditev: MAT-SS-4/kombinatorika#izleti

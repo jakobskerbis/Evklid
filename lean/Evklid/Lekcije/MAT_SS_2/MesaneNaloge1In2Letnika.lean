@@ -288,6 +288,11 @@ theorem pada_vse_pocasneje (t₁ t₂ h : ℝ) (ht : t₁ < t₂) (hh : 0 < h) :
 /-- Predpostavke `pada_vse_pocasneje` se dajo izpolniti (t₁ = 0, t₂ = 6, h = 6). -/
 example : (0:ℝ) < 6 ∧ (0:ℝ) < 6 := by norm_num
 
+/-- Predpostavke trditve `pada_vse_pocasneje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 6 ∧ (0:ℝ) < 6 := by norm_num
+  pada_vse_pocasneje (ht := w.1) (hh := w.2)
+
 /-- Razlaga: 80·(1/2)^(t/6) = 10 ⟺ (1/2)^(t/6) = 1/8 = (1/2)³ ⟺ t/6 = 3 ⟺ t = 18; za t > 18 je koncentracija
 pod mejo 10 (naslednji odmerek po 18 urah).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#razpolovitev
@@ -345,6 +350,11 @@ theorem premisli2 (x : ℝ) (hx : 0 < x + 1) : Real.logb 2 (x + 1) = 3 ↔ x = 7
 /-- Predpostavka `premisli2` se da izpolniti (x = 7). -/
 example : (0:ℝ) < 7 + 1 := by norm_num
 
+/-- Predpostavke trditve `premisli2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 7 + 1 := by norm_num
+  premisli2 (hx := w)
+
 /-- Preglednica (»največ / najmanj: teme −b/(2a)«): za a ≠ 0 je ax² + bx + c = a(x + b/(2a))² + c − b²/(4a), zato
 je teme pri x = −b/(2a).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#teme
@@ -357,6 +367,11 @@ theorem teme (a b c x : ℝ) (ha : a ≠ 0) :
 example : (1:ℝ) ≠ 0 := one_ne_zero
 
 /-! ## Rešeni primeri -/
+
+/-- Predpostavke trditve `teme` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 := one_ne_zero
+  teme (ha := w)
 
 /-- Primer 1 (in blok RACUN): 8 = 2³, √2 = 2^(1/2), ∛4 = 4^(1/3) = 2^(2/3), 3 + 1/2 − 2/3 = 17/6, torej
 8√2/∛4 = 2^(17/6) in log₂(8√2/∛4) = 17/6.
@@ -600,6 +615,11 @@ example : (0:ℝ) ≤ 4 ∧ (2:ℕ) ≠ 0 := by norm_num
 
 /-! ## Za maturo -/
 
+/-- Predpostavke trditve `povzetek` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ≤ 4 ∧ (2:ℕ) ≠ 0 := by norm_num
+  povzetek (ha := w.1) (_hn := w.2)
+
 /-- Naloga 1: f(x) = log₃(x + 1) − 2 je log₃ x, premaknjen za 1 v levo in 2 navzdol; definiran je za x + 1 > 0,
 torej x > −1 (asimptota x = −1); ničla: log₃(x + 1) = 2 ⟺ x + 1 = 3² = 9 ⟺ x = 8; f(0) = log₃ 1 − 2 = −2.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga1
@@ -792,6 +812,11 @@ theorem ustno1 (a x y r : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hx : 0 < x) (hy : 0
 /-- Predpostavke `ustno1` se dajo izpolniti (a = 2, x = y = 1). -/
 example : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 ∧ (0:ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `ustno1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 ∧ (0:ℝ) < 1 := by norm_num
+  ustno1 (ha := w.1) (ha1 := w.2.1) (hx := w.2.2) (hy := w.1)
+
 /-- Ustno vprašanje 2: za a > 0, a ≠ 1 ima a^x zalogo vrednosti (0, ∞), za a > 1 strogo narašča, za 0 < a < 1
 strogo pada, gre skozi (0, 1); inverzna funkcija je log_a (log_a(a^x) = x, a^(log_a y) = y za y > 0), zato
 (x, y) leži na grafu a^x natanko tedaj, ko (y, x) leži na grafu log_a (simetrija glede na y = x).
@@ -818,6 +843,11 @@ theorem ustno2 (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 example : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 := by norm_num
 
 open Filter Topology in
+/-- Predpostavke trditve `ustno2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 := by norm_num
+  ustno2 (ha := w.1) (ha1 := w.2)
+
 /-- Ustno vprašanje 2 (vodoravna asimptota os x): za a > 1 gre a^x proti 0, ko gre x proti −∞, za 0 < a < 1
 pa, ko gre x proti +∞.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#ustno2-asimptota
@@ -828,6 +858,11 @@ theorem ustno2_asimptota (a : ℝ) (h0 : 0 < a) :
 
 /-- Predpostavka `ustno2_asimptota` se da izpolniti (a = 2). -/
 example : (0:ℝ) < 2 := by norm_num
+
+/-- Predpostavke trditve `ustno2_asimptota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 2 := by norm_num
+  ustno2_asimptota (h0 := w)
 
 /-- Ustno vprašanje 3: v pravokotnem trikotniku (pravi kot pri C) je sin ∠CAB = |BC|/|AB|; zato imata trikotnika
 z istim ostrim kotom enako razmerje nasprotne katete in hipotenuze.
