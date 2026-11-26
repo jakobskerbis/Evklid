@@ -102,7 +102,8 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax(), skrci 
     if (running && running.mtime === st.mtimeMs) return running.promise;
     const raw = fs.readFileSync(file);
     const krci = skrci && prefix === "/";
-    const etag = `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}-${enc}${krci ? "-s" : ""}"`;
+    // Skrčena vsebina je odvisna tudi od načina krčenja (skrci.oznaka, različica esbuild): ta je v zgoščeni vrednosti.
+    const etag = `"${crypto.createHash("sha1").update(raw).update(krci ? String(skrci.oznaka || "") : "").digest("base64url").slice(0, 20)}-${enc}${krci ? "-s" : ""}"`;
     const promise = (krci ? skrci(raw, file).then((b) => b || raw, () => raw) : Promise.resolve(raw))
       .then((buf) => encode(buf, enc))
       .then((body) => {

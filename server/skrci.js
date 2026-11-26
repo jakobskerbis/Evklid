@@ -5,6 +5,8 @@
 // strežnik vstavi različico); licenčni komentarji ostanejo (legalComments: "inline").
 // Vklop: na produkciji (jeProdukcija) in v dimnem testu (scripts/preveri-aplikacijo.cjs), izklop EVKLID_SKRCI=0.
 // Neuspeh (napaka razčlenjevanja) ne ustavi ničesar: datoteka gre nespremenjena.
+import fs from "node:fs";
+import { createRequire } from "node:module";
 import { jeProdukcija } from "./crypto-polje.js";
 
 export const skrciVklopljeno = (env = process.env) => env.EVKLID_SKRCI === "1" || (env.EVKLID_SKRCI !== "0" && jeProdukcija(env));
@@ -26,6 +28,16 @@ const vrni = () => {
 };
 export const skrciVrsta = () => ({ tece, caka: caka.length }); // testi
 
+// Oznaka načina krčenja (različica esbuild): del ETag (server/compress.js) in različice datotek (server/app.js), da
+// nova različica esbuild ali vklop/izklop ne pusti brskalniku in service workerju starih skrčenih kopij (304).
+export const skrciOznaka = (() => {
+  try {
+    return `esbuild-${JSON.parse(fs.readFileSync(createRequire(import.meta.url).resolve("esbuild/package.json"), "utf8")).version}`;
+  } catch {
+    return "esbuild-?";
+  }
+})();
+
 // Vrne skrčeno vsebino (Buffer) ali null, če datoteke ne krčimo.
 export async function skrciJs(buf, file) {
   if (!file.endsWith(".js") || IZPUSTI.test(file)) return null;
@@ -44,3 +56,4 @@ export async function skrciJs(buf, file) {
     vrni();
   }
 }
+skrciJs.oznaka = skrciOznaka;

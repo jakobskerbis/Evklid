@@ -8,7 +8,10 @@ import { createRequire } from "node:module";
 import * as acorn from "acorn";
 import { createApp } from "../server/app.js";
 import { openDb } from "../server/db.js";
+import os from "node:os";
+import path from "node:path";
 import { skrciJs, skrciVklopljeno, skrciVrsta } from "../server/skrci.js";
+import { compressedStatic } from "../server/compress.js";
 
 const require = createRequire(import.meta.url);
 
@@ -53,7 +56,7 @@ test("strežnik z vklopom: /app.js skrčen (brotli), oznaka ETag -s; /sw.js in v
     const r = await fetch(base + p, { headers: { "accept-encoding": "br" } });
     const buf = Buffer.from(await r.arrayBuffer());
     // fetch v Node sam razpakira; glava pove, ali je bil odgovor stisnjen
-    return { buf, etag: r.headers.get("etag") || "", enc: r.headers.get("content-encoding") };
+    return { buf, etag: r.headers.get("etag") || "", enc: r.headers.get("content-encoding"), app: r.headers.get("x-evklid-app") };
   };
   const zagon = async (skrci) => {
     const prej = process.env.EVKLID_SKRCI;
@@ -69,8 +72,10 @@ test("strežnik z vklopom: /app.js skrčen (brotli), oznaka ETag -s; /sw.js in v
   };
   const src = fs.readFileSync(new URL("../public/app.js", import.meta.url));
   const z = await zagon(true);
+  let zApp;
   try {
     const a = await get(z.base, "/app.js");
+    zApp = a.app;
     assert.ok(a.buf.length < src.length * 0.8, `skrčen app.js (${a.buf.length} / ${src.length})`);
     assert.match(a.etag, /-br-s"$/);
     const sw = await get(z.base, "/sw.js");
@@ -84,9 +89,40 @@ test("strežnik z vklopom: /app.js skrčen (brotli), oznaka ETag -s; /sw.js in v
   try {
     const a = await get(n.base, "/app.js");
     assert.equal(a.buf.length, src.length, "brez vklopa izvirnik");
+    // Vklop/izklop brez nove gradnje (iste datoteke, isti commit): nova različica datotek, sicer service worker
+    // (public/sw.js appFile, kopija iste različice brez omrežja) še naprej streže skrčene kopije.
+    assert.ok(zApp && a.app && zApp !== a.app, `različica datotek ${zApp} / ${a.app}`);
   } finally {
     n.close();
   }
+});
+
+test("compressedStatic s krčenjem: ETag iz načina krčenja, 304, napaka krčenja pošlje izvirnik", async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "skrci-"));
+  const src = `// komentar\nexport const a = ${JSON.stringify("x".repeat(2000))};\n`;
+  fs.writeFileSync(path.join(dir, "m.js"), src);
+  fs.writeFileSync(path.join(dir, "slab.js"), "const = ;\n".repeat(200));
+  const klic = async (mw, url, headers = {}) => {
+    const res = { headers: {}, status: 200, body: null, setHeader(k, v) { this.headers[k.toLowerCase()] = v; }, end(b) { this.body = b ?? null; return this; } };
+    res.status = function (c) { this.code = c; return this; };
+    let naprej = false;
+    await mw({ method: "GET", path: url, headers: { "accept-encoding": "br", ...headers } }, res, () => (naprej = true));
+    return { naprej, code: res.code || 200, etag: res.headers.etag, body: res.body && zlib.brotliDecompressSync(res.body).toString() };
+  };
+  const krci = (oznaka) => Object.assign((buf, f) => skrciJs(buf, f), { oznaka });
+  const a = compressedStatic([["/", dir]], { skrci: krci("esbuild-1") });
+  const b = compressedStatic([["/", dir]], { skrci: krci("esbuild-2") });
+  const brez = compressedStatic([["/", dir]]);
+  const ra = await klic(a, "/m.js");
+  assert.ok(!ra.body.includes("komentar") && ra.body.length < src.length, "skrčeno");
+  assert.match(ra.etag, /-br-s"$/);
+  assert.notEqual((await klic(b, "/m.js")).etag, ra.etag, "nova različica esbuild: nova oznaka (brskalnik ne obdrži stare skrčene kopije)");
+  assert.notEqual((await klic(brez, "/m.js")).etag, ra.etag);
+  assert.equal((await klic(a, "/m.js", { "if-none-match": ra.etag })).code, 304);
+  const slab = await klic(a, "/slab.js");
+  assert.equal(slab.code, 200);
+  assert.equal(slab.body, fs.readFileSync(path.join(dir, "slab.js"), "utf8"), "napaka krčenja: izvirnik");
+  fs.rmSync(dir, { recursive: true, force: true });
 });
 
 let chromium = null;
