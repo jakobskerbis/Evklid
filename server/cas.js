@@ -112,8 +112,14 @@ function start() {
           waiting.delete(msg.id);
           clearTimeout(w.timer);
           zahteve.zapored = 0;
-          // how (PV-03): symbolic | numeric | sampled; samo, kadar ga worker pošlje
-          w.resolve({ ok: msg.ok, why: msg.why || "", ...(typeof msg.how === "string" ? { how: msg.how } : {}) });
+          // how (PV-03): symbolic | numeric | sampled; vrsta (PV-06, ukaz korak): ekvivalenca | posledica | izguba | napaka;
+          // samo, kadar ju worker pošlje
+          w.resolve({
+            ok: msg.ok,
+            why: msg.why || "",
+            ...(typeof msg.how === "string" ? { how: msg.how } : {}),
+            ...(typeof msg.vrsta === "string" ? { vrsta: msg.vrsta } : {}),
+          });
         }
       }
     });
@@ -126,9 +132,10 @@ function start() {
 }
 
 /**
- * Ena trditev: op ∈ solve | equal | diff | int | limit | value | ineq | units, args = deli ločeni z »|«.
- * @returns {Promise<{ok: boolean|null, why: string, how?: "symbolic"|"numeric"|"sampled"}>} ok null = koda ne zna
- *   preveriti (ni napaka); how = najšibkejši način, ki ga je worker uporabil (docs/preverjanje.md, PV-03).
+ * Ena trditev: op ∈ solve | equal | diff | int | limit | value | ineq | units | korak, args = deli ločeni z »|«.
+ * @returns {Promise<{ok: boolean|null, why: string, how?: "symbolic"|"numeric"|"sampled", vrsta?: string}>} ok null =
+ *   koda ne zna preveriti (ni napaka); how = najšibkejši način, ki ga je worker uporabil (docs/preverjanje.md, PV-03);
+ *   vrsta = vrsta prehoda pri ukazu korak (PV-06).
  */
 // Zahteve gredo v proces po vrsti: rok vsake teče šele, ko je poslana (sicer bi čakajoče v vrsti, npr. kartice
 // iz zapiskov s Promise.all, potekle in ubile proces sredi dela).

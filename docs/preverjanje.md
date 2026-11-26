@@ -84,6 +84,47 @@ korena), vsakega z lastnim časovnim robom 1,5 s; Piecewise, ki je 0 povsod raze
 največ »Numerično preverjeno«, razen če je lokalna točna algebra odgovor dokazala. Bloka RACUN (`server/racun.js`,
 profil B) še ne preslikamo v statuse; ko ga, velja isto pravilo.
 
+## Preverjevalnik korakov (PV-06)
+
+Ukaz `korak` v workerju presodi en prehod reševanja: `casCheck("korak", [prej, potem, neznanka, območje])`.
+`prej` in `potem` sta enačbi, neenačbi (tudi dvojna, `-2<x<2`), več delov, povezanih z »ali« (`x-1=0 ali x+2=0`,
+tudi `x=2, x=3`), ali izraza brez relacije. Neznanka je lahko prazna, kadar ima zapis eno samo spremenljivko;
+območje (`x>0`, `[0, 2*pi)`) omeji primerjavo. Odgovor ima poleg `ok`, `why` in `how` še `vrsta`:
+
+| `vrsta` | `ok` | Pomen |
+| --- | --- | --- |
+| `ekvivalenca` | true | Enaka množica realnih rešitev; pri izrazih enaka vrednost povsod, kjer je prvotni izraz definiran (`why` pove pogoj, npr. »velja za x ≠ 0« pri x²/x → x). |
+| `posledica` | true | Nova enačba ima vse rešitve in še tuje (kvadriranje, združevanje logaritmov): veljaven vmesni korak, `why` našteje tuje rešitve, ki jih mora preizkus zavreči. Samo pri enačbah. |
+| `izguba` | false | Manjkajo rešitve ali del območja: deljenje z izrazom, ki je lahko 0 (`why` ga imenuje), ln(x²) → 2 ln x. |
+| `napaka` | false | Drugačna množica rešitev ali drugačna vrednost izraza (s protiprimerom); tudi končni odgovor `x = …` s tujo rešitvijo (manjka preizkus) in neenačba z odvečnim delom. |
+
+Kako: definicijsko območje (imenovalci ≠ 0, argument logaritma > 0, pod sodim korenom ≥ 0, tan/cot) se prebere iz
+zapisa, preden ga SymPy okrajša (`parse(..., evaluate=False)`), zato `x²/x = 0 → x = 0` ni enakovreden korak.
+Množici rešitev da `solveset` na realni osi (rešitve, ki niso v območju, izločimo); pri periodičnih rešitvah brez
+omejenega območja primerjamo [−20, 20] in `how` je `numeric`. Korak, ki obe strani pomnoži s številom (tudi s
+parametri), je enakovreden simbolno brez reševanja. Izraza primerja `is_zero`, nato 80 naključnih točk: točka, kjer
+je prvotni izraz realen, novi pa ne, je `izguba`; različni vrednosti sta `napaka`. Dvočrkovno ime je v koraku
+produkt (`2ab` = 2·a·b). Vejica med argumenti `log(x-2,2)`, `root(8,3)` … je ločilo, ne decimalna vejica (to velja
+za vse ukaze; prej je bil `log(x-2,2)` prebran kot `ln(x - 2.2)`).
+
+Česar ne zna, vrne `ok: null`: sistem, veriga enačb, korak iz izraza v enačbo; enačba ali neenačba s parametrom
+(`a·x = a → x = 1`: `solveset` predpostavi a ≠ 0), razen koraka, ki obe strani pomnoži s številom; periodične
+rešitve z dolgo ali neznano periodo (okno [−20, 20] mora pokriti vsaj štiri periode, sicer bi `sin(πx/30) = 0 → x = 0`
+prešel); lihi koren spremenljivke (`x^(1/3) = −2`: SymPy vzame kompleksni glavni koren). Znana meja: osamljene točke,
+kjer izraz s kotnimi funkcijami ni definiran (sin x → tan x · cos x), ostanejo nepreverjene; zoženje na intervalu
+(ln(x²) → 2 ln x) ujame vzorčenje.
+
+Meritev: `node scripts/meri-korake.mjs` na `test/fixtures/preverjanje/koraki-v1.json` (50 znanih napačnih prehodov,
+tipične napake učencev, in 200 pravilnih: 121 ročnih in 79 vzorčnih s stalnimi koeficienti; nabor je sestavil
+isti avtor kot ukaz). 26. 11. 2026: ujetih 50/50 (95-% interval 92,9 %–100 %), lažni alarmi 0/200 (0 %–1,9 %),
+brez sodbe 0/250, simbolni dokaz pri 234/250 sodbah. Neodvisni slepi nabor `koraki-slepi-v1.json` (40 napačnih,
+80 pravilnih) je sestavil ločen agent AI (ne človek) iz opisa vmesnika, preden je videl kodo: ujetih 39/40
+(87,1 %–99,6 %), potrjenih napačnih 0/40 (0 %–8,8 %), lažni alarmi 0/80 (0 %–4,6 %), brez sodbe en napačni
+(a·x = a → x = 1) in en pravilni (s parametrom). Pred popravki po pregledu je slepi nabor našel en potrjen napačen
+korak (parameter) in štiri lažne alarme zunaj nabora (`log(·, osnova)`); ti in ugotovitve pregleda kode so zdaj
+testi. Test `test/cas-korak.test.js` zahteva oboje. Ukaz še ni
+priključen nikamor v aplikacijo; uporaba (skener, rešitve generatorjev) je naslednji korak načrta.
+
 ## Meritev (PV-02, N-01)
 
 Prvi referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (384 trditev, 191 pravilnih; od N-01 začetek nabora v2) ustvari

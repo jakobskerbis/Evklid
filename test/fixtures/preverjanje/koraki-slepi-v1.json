@@ -1,0 +1,795 @@
+{
+ "opis": "PV-06, slepi nabor: 40 napačnih in 80 pravilnih korakov. Sestavil ločen agent AI (ne človek) iz opisa vmesnika, preden je videl kodo ukaza ali nabor koraki-v1. Meri, ali ukaz ne potrdi napačnega koraka in ne sproži lažnega alarma; ok = null je dovoljen.",
+ "napacni": [
+  {
+   "id": "W01",
+   "prej": "2x+3=7",
+   "potem": "2x=10",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W02",
+   "prej": "3(x-2)=9",
+   "potem": "3x-2=9",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W03",
+   "prej": "log(x,1/2)>1",
+   "potem": "x>1/2",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W04",
+   "prej": "x^3=x",
+   "potem": "x^2=1",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W05",
+   "prej": "-3x>6",
+   "potem": "x>-2",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W06",
+   "prej": "x^2=9",
+   "potem": "x=3",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W07",
+   "prej": "x^2-5x+6=0",
+   "potem": "x=2 ali x=-3",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W08",
+   "prej": "x^2=4x",
+   "potem": "x=4",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W09",
+   "prej": "(x-1)^2=x-1",
+   "potem": "x-1=1",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W10",
+   "prej": "x^2-4=0",
+   "potem": "(x-2)^2=0",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W11",
+   "prej": "x^2+6x+5=0",
+   "potem": "(x+3)^2=14",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W12",
+   "prej": "1/x+1/2=1",
+   "potem": "2+x=1",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W13",
+   "prej": "x/(x-2)=3",
+   "potem": "x=3x-2",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W14",
+   "prej": "sqrt(x+3)=x-3",
+   "potem": "x+3=x^2-9",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W15",
+   "prej": "sqrt(x)=-2",
+   "potem": "x=4",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W16",
+   "prej": "sqrt(2x-1)=3",
+   "potem": "2x-1=3",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W17",
+   "prej": "2^(x+1)=8",
+   "potem": "x+1=4",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W18",
+   "prej": "3^(2x)=27",
+   "potem": "2x=9",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W19",
+   "prej": "2^x+2^x=16",
+   "potem": "4^x=16",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W20",
+   "prej": "log(x,2)+log(x-2,2)=3",
+   "potem": "log(2x-2,2)=3",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W21",
+   "prej": "log(x^2)=2",
+   "potem": "2*log(x)=2",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W22",
+   "prej": "ln(x)=2",
+   "potem": "x=2e",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W23",
+   "prej": "log(x,3)=2",
+   "potem": "x=6",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W24",
+   "prej": "abs(x-2)=5",
+   "potem": "x-2=5",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W25",
+   "prej": "abs(x+1)=3",
+   "potem": "x=2 ali x=-2",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W26",
+   "prej": "abs(x)<3",
+   "potem": "x<3",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W27",
+   "prej": "abs(x-1)>2",
+   "potem": "-1<x<3",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W28",
+   "prej": "x^2<4",
+   "potem": "x<2",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W29",
+   "prej": "x^2>9",
+   "potem": "x>3",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W30",
+   "prej": "(x-1)(x+2)<=0",
+   "potem": "x<=1",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W31",
+   "prej": "1/x>2",
+   "potem": "1>2x",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W32",
+   "prej": "2x-3>=5",
+   "potem": "x>4",
+   "pravilen": false,
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W33",
+   "prej": "sin(x)=1/2",
+   "potem": "x=pi/6",
+   "pravilen": false,
+   "obmocje": "[0, 2*pi)",
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W34",
+   "prej": "tan(x)=1",
+   "potem": "x=pi/3",
+   "pravilen": false,
+   "obmocje": "[0, pi)",
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W35",
+   "prej": "2*sin(x)^2=1",
+   "potem": "sin(x)=sqrt(2)/2",
+   "pravilen": false,
+   "obmocje": "[0, 2*pi)",
+   "pricakovana_vrsta": "izguba"
+  },
+  {
+   "id": "W36",
+   "prej": "(x^2-9)/(x-3)",
+   "potem": "x-3",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W37",
+   "prej": "(a+b)^2",
+   "potem": "a^2+b^2",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W38",
+   "prej": "sin(2x)",
+   "potem": "2sin(x)",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W39",
+   "prej": "1/(x+1)+1/(x-1)",
+   "potem": "2/(2x)",
+   "pravilen": false,
+   "pricakovana_vrsta": "napaka"
+  },
+  {
+   "id": "W40",
+   "prej": "a*x=a",
+   "potem": "x=1",
+   "pravilen": false,
+   "neznanka": "x",
+   "pricakovana_vrsta": "izguba"
+  }
+ ],
+ "pravilni": [
+  {
+   "id": "C01",
+   "prej": "2x+3=7",
+   "potem": "2x=4",
+   "pravilen": true
+  },
+  {
+   "id": "C02",
+   "prej": "2x=4",
+   "potem": "x=2",
+   "pravilen": true
+  },
+  {
+   "id": "C03",
+   "prej": "3(x-2)=9",
+   "potem": "x-2=3",
+   "pravilen": true
+  },
+  {
+   "id": "C04",
+   "prej": "x/2+1=5",
+   "potem": "x+2=10",
+   "pravilen": true
+  },
+  {
+   "id": "C05",
+   "prej": "-3x>6",
+   "potem": "x<-2",
+   "pravilen": true
+  },
+  {
+   "id": "C06",
+   "prej": "x^2=9",
+   "potem": "x=3 ali x=-3",
+   "pravilen": true
+  },
+  {
+   "id": "C07",
+   "prej": "x^2-5x+6=0",
+   "potem": "(x-2)(x-3)=0",
+   "pravilen": true
+  },
+  {
+   "id": "C08",
+   "prej": "(x-2)(x-3)=0",
+   "potem": "x=2, x=3",
+   "pravilen": true
+  },
+  {
+   "id": "C09",
+   "prej": "x^2=4x",
+   "potem": "x(x-4)=0",
+   "pravilen": true
+  },
+  {
+   "id": "C10",
+   "prej": "x^2-4x=0",
+   "potem": "x=0 ali x=4",
+   "pravilen": true
+  },
+  {
+   "id": "C11",
+   "prej": "x^2+6x+5=0",
+   "potem": "(x+3)^2=4",
+   "pravilen": true
+  },
+  {
+   "id": "C12",
+   "prej": "(x+3)^2=4",
+   "potem": "x+3=2 ali x+3=-2",
+   "pravilen": true
+  },
+  {
+   "id": "C13",
+   "prej": "1/x+1/2=1",
+   "potem": "2+x=2x",
+   "pravilen": true
+  },
+  {
+   "id": "C14",
+   "prej": "x/(x-2)=3",
+   "potem": "x=3(x-2)",
+   "pravilen": true
+  },
+  {
+   "id": "C15",
+   "prej": "(x^2-1)/(x-1)=2",
+   "potem": "x+1=2",
+   "pravilen": true,
+   "vrsta": "posledica"
+  },
+  {
+   "id": "C16",
+   "prej": "(x^2-1)/(x-1)=3",
+   "potem": "x+1=3",
+   "pravilen": true
+  },
+  {
+   "id": "C17",
+   "prej": "sqrt(x+3)=x-3",
+   "potem": "x+3=(x-3)^2",
+   "pravilen": true,
+   "vrsta": "posledica"
+  },
+  {
+   "id": "C18",
+   "prej": "sqrt(x+3)=x-3",
+   "potem": "x+3=x^2-6x+9",
+   "pravilen": true,
+   "vrsta": "posledica"
+  },
+  {
+   "id": "C19",
+   "prej": "x^2-7x+6=0",
+   "potem": "x=1 ali x=6",
+   "pravilen": true
+  },
+  {
+   "id": "C20",
+   "prej": "sqrt(2x-1)=3",
+   "potem": "2x-1=9",
+   "pravilen": true
+  },
+  {
+   "id": "C21",
+   "prej": "2^(x+1)=8",
+   "potem": "x+1=3",
+   "pravilen": true
+  },
+  {
+   "id": "C22",
+   "prej": "3^(2x)=27",
+   "potem": "2x=3",
+   "pravilen": true
+  },
+  {
+   "id": "C23",
+   "prej": "2^x+2^x=16",
+   "potem": "2^(x+1)=16",
+   "pravilen": true
+  },
+  {
+   "id": "C24",
+   "prej": "4^x-3*2^x+2=0",
+   "potem": "(2^x-1)(2^x-2)=0",
+   "pravilen": true
+  },
+  {
+   "id": "C25",
+   "prej": "(2^x-1)(2^x-2)=0",
+   "potem": "x=0 ali x=1",
+   "pravilen": true
+  },
+  {
+   "id": "C26",
+   "prej": "e^(2x)=5",
+   "potem": "x=ln(5)/2",
+   "pravilen": true
+  },
+  {
+   "id": "C27",
+   "prej": "log(x,2)+log(x-2,2)=3",
+   "potem": "log(x*(x-2),2)=3",
+   "pravilen": true,
+   "vrsta": "posledica"
+  },
+  {
+   "id": "C28",
+   "prej": "log(x,2)+log(x-2,2)=3",
+   "potem": "log(x*(x-2),2)=3",
+   "pravilen": true,
+   "obmocje": "x>2"
+  },
+  {
+   "id": "C29",
+   "prej": "log(x,2)+log(x-2,2)=3",
+   "potem": "x^2-2x=8",
+   "pravilen": true,
+   "vrsta": "posledica"
+  },
+  {
+   "id": "C30",
+   "prej": "ln(x)=2",
+   "potem": "x=e^2",
+   "pravilen": true
+  },
+  {
+   "id": "C31",
+   "prej": "log(x,3)=2",
+   "potem": "x=9",
+   "pravilen": true
+  },
+  {
+   "id": "C32",
+   "prej": "log(x^2)=2",
+   "potem": "2*log(abs(x))=2",
+   "pravilen": true
+  },
+  {
+   "id": "C33",
+   "prej": "log(x^2)=2",
+   "potem": "2*log(x)=2",
+   "pravilen": true,
+   "obmocje": "x>0"
+  },
+  {
+   "id": "C34",
+   "prej": "log(x+1,10)-log(x,10)=1",
+   "potem": "log((x+1)/x,10)=1",
+   "pravilen": true
+  },
+  {
+   "id": "C35",
+   "prej": "log(x+1,10)-log(x,10)=1",
+   "potem": "x+1=10x",
+   "pravilen": true
+  },
+  {
+   "id": "C36",
+   "prej": "abs(x-2)=5",
+   "potem": "x-2=5 ali x-2=-5",
+   "pravilen": true
+  },
+  {
+   "id": "C37",
+   "prej": "abs(x-2)=5",
+   "potem": "x=7 ali x=-3",
+   "pravilen": true
+  },
+  {
+   "id": "C38",
+   "prej": "abs(x)<3",
+   "potem": "-3<x<3",
+   "pravilen": true
+  },
+  {
+   "id": "C39",
+   "prej": "abs(x-1)>2",
+   "potem": "x<-1 ali x>3",
+   "pravilen": true
+  },
+  {
+   "id": "C40",
+   "prej": "abs(x-1)<=2",
+   "potem": "-1<=x<=3",
+   "pravilen": true
+  },
+  {
+   "id": "C41",
+   "prej": "abs(2x+1)=x+5",
+   "potem": "2x+1=x+5 ali 2x+1=-(x+5)",
+   "pravilen": true
+  },
+  {
+   "id": "C42",
+   "prej": "abs(2x+1)=x-5",
+   "potem": "2x+1=x-5 ali 2x+1=-(x-5)",
+   "pravilen": true,
+   "vrsta": "posledica"
+  },
+  {
+   "id": "C43",
+   "prej": "x^2<4",
+   "potem": "-2<x<2",
+   "pravilen": true
+  },
+  {
+   "id": "C44",
+   "prej": "x^2>=9",
+   "potem": "x<=-3 ali x>=3",
+   "pravilen": true
+  },
+  {
+   "id": "C45",
+   "prej": "(x-1)(x+2)<=0",
+   "potem": "-2<=x<=1",
+   "pravilen": true
+  },
+  {
+   "id": "C46",
+   "prej": "1/x>2",
+   "potem": "0<x<1/2",
+   "pravilen": true
+  },
+  {
+   "id": "C47",
+   "prej": "2x-3>=5",
+   "potem": "x>=4",
+   "pravilen": true
+  },
+  {
+   "id": "C48",
+   "prej": "x^2-2x+1>0",
+   "potem": "x<1 ali x>1",
+   "pravilen": true
+  },
+  {
+   "id": "C49",
+   "prej": "(x-3)/(x+1)<=0",
+   "potem": "-1<x<=3",
+   "pravilen": true
+  },
+  {
+   "id": "C50",
+   "prej": "sin(x)=1/2",
+   "potem": "x=pi/6 ali x=5*pi/6",
+   "pravilen": true,
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "C51",
+   "prej": "cos(x)=0",
+   "potem": "x=pi/2 ali x=3*pi/2",
+   "pravilen": true,
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "C52",
+   "prej": "tan(x)=1",
+   "potem": "x=pi/4",
+   "pravilen": true,
+   "obmocje": "[0, pi)"
+  },
+  {
+   "id": "C53",
+   "prej": "2*sin(x)^2=1",
+   "potem": "sin(x)=sqrt(2)/2 ali sin(x)=-sqrt(2)/2",
+   "pravilen": true,
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "C54",
+   "prej": "sin(x)^2+cos(x)=1",
+   "potem": "1-cos(x)^2+cos(x)=1",
+   "pravilen": true,
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "C55",
+   "prej": "sin(2x)=sin(x)",
+   "potem": "sin(x)(2cos(x)-1)=0",
+   "pravilen": true,
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "C56",
+   "prej": "sin(x)=cos(x)",
+   "potem": "x=pi/4",
+   "pravilen": true,
+   "obmocje": "[0, pi)"
+  },
+  {
+   "id": "C57",
+   "prej": "sin(x)=cos(x)",
+   "potem": "tan(x)=1",
+   "pravilen": true,
+   "obmocje": "(-pi/2, pi/2)"
+  },
+  {
+   "id": "C58",
+   "prej": "sin(x)=0",
+   "potem": "x=0 ali x=pi",
+   "pravilen": true,
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "C59",
+   "prej": "x^2=4",
+   "potem": "x=2",
+   "pravilen": true,
+   "obmocje": "x>0"
+  },
+  {
+   "id": "C60",
+   "prej": "sqrt(x^2)",
+   "potem": "x",
+   "pravilen": true,
+   "obmocje": "x>=0"
+  },
+  {
+   "id": "C61",
+   "prej": "sqrt(x^2)",
+   "potem": "abs(x)",
+   "pravilen": true
+  },
+  {
+   "id": "C62",
+   "prej": "abs(x-3)=2x",
+   "potem": "x-3=2x",
+   "pravilen": true,
+   "obmocje": "x>=3"
+  },
+  {
+   "id": "C63",
+   "prej": "(x^2-9)/(x-3)",
+   "potem": "x+3",
+   "pravilen": true
+  },
+  {
+   "id": "C64",
+   "prej": "a^3*a^4",
+   "potem": "a^7",
+   "pravilen": true
+  },
+  {
+   "id": "C65",
+   "prej": "(a+b)^2",
+   "potem": "a^2+2ab+b^2",
+   "pravilen": true
+  },
+  {
+   "id": "C66",
+   "prej": "ln(x^3)",
+   "potem": "3ln(x)",
+   "pravilen": true
+  },
+  {
+   "id": "C67",
+   "prej": "ln(x^2)",
+   "potem": "2ln(abs(x))",
+   "pravilen": true
+  },
+  {
+   "id": "C68",
+   "prej": "sin(2x)",
+   "potem": "2sin(x)cos(x)",
+   "pravilen": true
+  },
+  {
+   "id": "C69",
+   "prej": "cos(x)^2-sin(x)^2",
+   "potem": "cos(2x)",
+   "pravilen": true
+  },
+  {
+   "id": "C70",
+   "prej": "1/(x+1)+1/(x-1)",
+   "potem": "2x/(x^2-1)",
+   "pravilen": true
+  },
+  {
+   "id": "C71",
+   "prej": "(x^2+2x)/x",
+   "potem": "x+2",
+   "pravilen": true
+  },
+  {
+   "id": "C72",
+   "prej": "log(8x,2)",
+   "potem": "3+log(x,2)",
+   "pravilen": true
+  },
+  {
+   "id": "C73",
+   "prej": "e^(ln(x))",
+   "potem": "x",
+   "pravilen": true
+  },
+  {
+   "id": "C74",
+   "prej": "tan(x)*cos(x)",
+   "potem": "sin(x)",
+   "pravilen": true
+  },
+  {
+   "id": "C75",
+   "prej": "a*x+b=c",
+   "potem": "a*x=c-b",
+   "pravilen": true,
+   "neznanka": "x"
+  },
+  {
+   "id": "C76",
+   "prej": "x^2-2a*x+a^2=0",
+   "potem": "(x-a)^2=0",
+   "pravilen": true,
+   "neznanka": "x"
+  },
+  {
+   "id": "C77",
+   "prej": "x^2-(a+1)x+a=0",
+   "potem": "x=1 ali x=a",
+   "pravilen": true,
+   "neznanka": "x"
+  },
+  {
+   "id": "C78",
+   "prej": "a*x=a",
+   "potem": "a*(x-1)=0",
+   "pravilen": true,
+   "neznanka": "x"
+  },
+  {
+   "id": "C79",
+   "prej": "abs(x)=x",
+   "potem": "x>=0",
+   "pravilen": true
+  },
+  {
+   "id": "C80",
+   "prej": "sqrt(x)<3",
+   "potem": "0<=x<9",
+   "pravilen": true
+  }
+ ]
+}
