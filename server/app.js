@@ -1573,9 +1573,13 @@ export function createApp(store, opts = {}) {
       // Odgovor, odrezan na meji izhoda (P1-2, j 26. 11. 2026, server/odrezan-odgovor.js): največ en klic brez razmisleka
       // nadaljuje odgovor po istem toku (filter, zadržani deli pri sodbi), preden ga kdorkoli bere naprej (META, sodba,
       // preverjanje, kartice, predpomnilnik, zgodovina). Rezerva prvega klica se prej zmanjša na njegov strošek.
-      if (!cached && first.stopReason === "max_tokens") {
+      // Po nadaljevanju ostane v rezervaciji strošek obeh klicev (spodaj ga zamenja zapis porabe). Z orodji (nastavitve iz
+      // klepeta) brez nadaljevanja: zgodovina nadaljevanja krogov orodij nima, učenec dobi opombo.
+      const contCost = (m, u) => costUsd(m || answerModelOf(mode, deep), u || {});
+      const contLost = (e) => e?.usage && (extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno"));
+      if (!cached && first.stopReason === "max_tokens" && !settingsTools.state.used) {
         hold.settle(Math.max(0, hold.held - costUsd(first.model || answerModelOf(mode, deep), first.usage || {})));
-        first = await continueCut(first, { streamFn, args: firstArgs, hold, reserveUsd: contReserve, onLost: (e) => e?.usage && (extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno")) });
+        first = await continueCut(first, { streamFn, args: firstArgs, hold, reserveUsd: contReserve, costOf: contCost, onLost: contLost });
       }
       if (!cached && first.timing) {
         logCasi(store.db, {
@@ -1643,10 +1647,10 @@ export function createApp(store, opts = {}) {
             };
             let r2 = await streamFn(r2Args);
             // Tudi ponovni odgovor, odrezan na meji izhoda, dobi en klic nadaljevanja (P1-2).
-            r2 = await continueCut(r2, { streamFn, args: r2Args, hold, reserveUsd: contReserve, onLost: (e) => e?.usage && (extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno")) });
+            if (!settingsTools.state.used) r2 = await continueCut(r2, { streamFn, args: r2Args, hold, reserveUsd: contReserve, costOf: contCost, onLost: contLost });
             if (controller.signal.aborted) throw Object.assign(new Error("aborted"), { usage: r2.usage, model: r2.model });
             extraCost += usage.log(student.id, r2.model || answerModelOf(mode, deep), r2.usage, "popravek");
-            hold.settle(mainReserve);
+            hold.settle(mainReserve + (r2.contCostUsd || 0)); // rezerva ponovnega odgovora in strošek nadaljevanja sta zapisana
             result = r2;
             rest = again2.end().rest;
           }

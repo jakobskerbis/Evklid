@@ -285,7 +285,7 @@
   "chat.ctxLab": "Der Tutor sieht die Einstellungen des Versuchs (noch keine Messwerte in der Tabelle).",
   "chat.ctxLabRows": "Der Tutor sieht die Einstellungen des Versuchs und die Messwerte aus der Tabelle ({n}).",
   "chat.ctx3d": "Der Tutor sieht das gewählte Modell und den gewählten Teil.",
-  "chat.cutNote": "Die Antwort war zu lang und wurde abgeschnitten. Schreib „weiter“, dann mache ich sie fertig.",
+  "chat.cutNote": "Die Antwort war zu lang und wurde abgeschnitten. Schreib „weiter“, dann schreibe ich sie zu Ende.",
   "chat.list": "Gespräche",
   "chat.photoPreview": "Fotovorschau",
   "chat.removeImage": "Bild entfernen",
