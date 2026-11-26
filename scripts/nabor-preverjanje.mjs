@@ -1,5 +1,5 @@
-// Referenčni nabor v1 za merjenje preverjanja (PV-02, docs/preverjanje.md). Ustvari
-// test/fixtures/preverjanje/nabor-v1.json: ~330 trditev z znano resnico, polovica pravilnih, polovica namerno
+// Referenčna nabora za merjenje preverjanja (PV-02, N-01, docs/preverjanje.md). Ustvari
+// test/fixtures/preverjanje/nabor-v1.json (384 trditev) in nabor-v2.json (v1 + nove družine, 1020 trditev). V1: polovica pravilnih, polovica namerno
 // napačnih (manjkajoča ali odvečna rešitev, predznak, luknja v definicijskem območju, tuja rešitev po kvadriranju,
 // zaprt namesto odprtega intervala, pozabljen obrat neenačbe, verižno pravilo, zavajajoč zapis, velika števila …).
 //

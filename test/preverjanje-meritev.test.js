@@ -13,7 +13,9 @@ const HAVE = await casAvailable();
 after(() => casStop());
 
 const ids = (pred, od, do_, korak = 1) => Array.from({ length: Math.floor((do_ - od) / korak) + 1 }, (_, i) => `${pred}-${String(od + i * korak).padStart(3, "0")}`);
-// N-01, skener tudi s SymPy: pravilen zmnožek fakultet (factorial(14)/factorial(4)) dobi »Zaznana napaka«.
+// N-01, skener tudi s SymPy: pravilen količnik fakultet (factorial(14)/factorial(4)) dobi »Zaznana napaka«, ker prep() v
+// public/scan/solvecore.js odreže »factor« iz »factorial«. Pragovi (ujete, potrjena) so točno izmerjeni: ob počasnem
+// SymPy (rok 9 s, zdaj ~100 ms na trditev) bi test padel, kar je namerno.
 const FAKULTETE = [118, 122, 126, 130, 134, 138, 142, 146, 150, 152, 156].map((n) => `racun2-${n}`);
 // Brez SymPy: log(u, a) z osnovo, binomial(n, k) in odvod cos(x^n) lokalni preverjevalnik oceni narobe (N-01).
 const LOG_OSNOVA = [1, 3, 5, 7, 11, 13, 15, 17, 21, 23, 25, 27, 31, 33, 35, 37].map((n) => `log-${String(n).padStart(3, "0")}`);
