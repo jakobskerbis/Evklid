@@ -38,6 +38,33 @@ function values(expr) {
   return [...new Set(out)];
 }
 
+/**
+ * Periodične rešitve (»π/3 + 2kπ«): ničle L − D na [−20, 20], ki jih ne zajame nobena navedena družina a + b·k
+ * (k celo; rešitev brez k je družina z b = 0). Vrne seznam manjkajočih ničel ([] = na oknu nič ne manjka) ali null,
+ * če rešitve ni mogoče prebrati kot družino, linearno v k (npr. »±π/3 + 2kπ, k ∈ ℤ«). Okno je isto kot pri SymPy
+ * (worker.py solve_one): prazen seznam ni dokaz popolnosti za vse k, zato pravilen odgovor ostane »delno«.
+ */
+function manjkajoceDruzine(problemText, v, solutions) {
+  const druzine = [];
+  for (const s of solutions) {
+    const f = fnOf(stevilo(String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "")));
+    if (!f) return null;
+    const [f0, f1, f2] = [0, 1, 2].map((k) => f({ k }));
+    if (![f0, f1, f2].every(fin) || Math.abs(f2 - 2 * f1 + f0) > 1e-9 * Math.max(1, Math.abs(f0), Math.abs(f2))) return null;
+    druzine.push({ a: f0, b: f1 - f0 });
+  }
+  const pokrita = (r) =>
+    druzine.some(({ a, b }) => {
+      const tol = 1e-6 * Math.max(1, Math.abs(r));
+      if (Math.abs(b) < 1e-12) return Math.abs(a - r) < tol;
+      const k = (r - a) / b;
+      return Math.abs(k - Math.round(k)) * Math.abs(b) < tol;
+    });
+  return scanRoots(problemText, v)
+    .filter((r) => Math.abs(r) <= 20 && !pokrita(r))
+    .sort((x, y) => Math.abs(x) - Math.abs(y) || x - y); // najbližje 0 najprej (−π/3 pred 5π/3)
+}
+
 // Ničle L − D (za rešitve, ki jih AI morda ni našel): gosta mreža na [−50, 50], redkejša (geometrijska) do ±10⁶,
 // predznak se zamenja → bisekcija; dotikalne ničle (|L − D| ima lokalni minimum ≈ 0, npr. |x − 1,1| = 0) → zlati rez.
 function scanRoots(eqText, v) {
@@ -431,7 +458,8 @@ function check(problemText, ai) {
       if (!isEquation(problemText)) return { verified: false, reason: "kind" };
       // »x = 2« ali »x_1 = 2« → »2«
       const sols = (ai.solutions || []).flatMap((s) => values(String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "")));
-      const periodic = (ai.solutions || []).some((s) => /\bk\b/.test(s));
+      // »2kπ« (k ob števki) je periodična rešitev kot »2*k*pi«; isti vzorec kot periodicClaim v server/scan.js
+      const periodic = (ai.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(s));
       // Polinomska enačba: točen preizkus in Sturmov izrek (popolnost na vsej realni osi, ne le do ±10⁶; AUDIT-001).
       // Veriga a = b = c: rešitve so skupne ničle vseh parov, torej ničle njihovega največjega skupnega delitelja.
       const ast = parse(prep(problemText));
@@ -478,8 +506,14 @@ function check(problemText, ai) {
         const missing = scanRoots(problemText, v).filter((r) => !sols.some((s, i) => Math.abs(s - r) < Math.max(1e-5 * Math.max(1, Math.abs(r)), tolOf(i) * 1.0001)));
         if (missing.length) return { verified: false, reason: "missing", missing };
       }
-      // Pri periodičnih rešitvah (k) popolnosti numerično ne preverimo: manjkajoča družina ali »2+0·k«
-      // namesto dveh rešitev bi sicer veljala za preverjeno (AUDIT-001).
+      // Periodične rešitve (k): manjkajoča veja (cos x = 1/2 le z π/3 + 2kπ, brez −π/3 + 2kπ) ali predolga perioda je
+      // napaka »manjka« s seznamom ničel, ki jih nobena družina ne zajame (revizija 26. 11.: prej »delno preverjeno«).
+      if (periodic) {
+        const manjka = manjkajoceDruzine(problemText, v, ai.solutions || []);
+        if (manjka && manjka.length) return { verified: false, reason: "missing", missing: manjka };
+      }
+      // Sicer pri periodičnih rešitvah popolnosti numerično ne preverimo (le okno [−20, 20]): manjkajoča družina ali
+      // »2+0·k« namesto dveh rešitev bi sicer veljala za preverjeno (AUDIT-001).
       // Brez periodičnih rešitev je popolnost preverjena numerično (iskanje ničel do ±10⁶); verige a = b = c
       // iskanje ne zajame, zato je tam popolnost nepreverjena.
       return periodic || ast.terms.length > 2 ? { verified: true, partial: true } : { verified: true };
