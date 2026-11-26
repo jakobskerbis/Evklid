@@ -44,3 +44,8 @@ import Evklid.Lekcije.MAT_SS_3.GrafPolinoma
 import Evklid.Lekcije.MAT_SS_3.Polinomi
 import Evklid.Lekcije.MAT_SS_3.SinusniInKosinusniIzrek
 import Evklid.Lekcije.MAT_SS_3.TrigonometrijskeEnacbe
+import Evklid.Lekcije.MAT_SS_2.Koreni
+import Evklid.Lekcije.MAT_SS_2.IracionalneEnacbe
+import Evklid.Lekcije.MAT_SS_2.PotencnaInKorenskaFunkcija
+import Evklid.Lekcije.MAT_SS_2.KompleksnaStevila
+import Evklid.Lekcije.MAT_SS_2.FunkcijeInNjihoveLastnosti
