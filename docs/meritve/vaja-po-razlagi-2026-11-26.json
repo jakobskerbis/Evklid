@@ -1,0 +1,3939 @@
+{
+ "meritev": "gumb Podobna naloga (K-08)",
+ "datum": "2026-11-26",
+ "commit_main": "c71794b9c2547cbd13f838501ada995ed6676f3f",
+ "ukaz": "node scripts/meri-vaja-po-razlagi.mjs --json <izid> --naloge <naloge>",
+ "ocenjevalec_nalog": "Claude Fable (model), en ocenjevalec",
+ "izidi": {
+  "gumbov": 52,
+  "napacna_tema": {
+   "k": 0,
+   "n": 52
+  },
+  "nizji_razred": {
+   "k": 1,
+   "n": 52
+  },
+  "pokritost": {
+   "k": 51,
+   "n": 159
+  },
+  "naloga_ni_na_temi": {
+   "k": 9,
+   "n": 156,
+   "ids": [
+    "V005/2",
+    "V060/1",
+    "V093/1",
+    "V093/2",
+    "V093/3",
+    "V096/1",
+    "V096/2",
+    "V096/3",
+    "V099/2"
+   ]
+  },
+  "odgovor_napacen_ali_dvoumen": {
+   "k": 2,
+   "n": 156,
+   "ids": [
+    "V097/3",
+    "V173/2"
+   ]
+  }
+ },
+ "vrstice": [
+  {
+   "id": "V001",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "ime",
+   "poizvedba": "deljivost",
+   "sprejemljive": [
+    "MAT-OS-6/deljivost"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-6/deljivost",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1425808890,
+     "generator": "deljivost",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1626380441,
+     "generator": "deljivost",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1426207536,
+     "generator": "deljivost",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V002",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "ime",
+   "poizvedba": "sklepni račun",
+   "sprejemljive": [
+    "MAT-OS-6/sklepni-racun"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-6/sklepni-racun",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 111244409,
+     "generator": "premo-sorazmerje",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 426364747,
+     "generator": "premo-sorazmerje",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 267891305,
+     "generator": "premo-sorazmerje",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V003",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "ime",
+   "poizvedba": "simetrija",
+   "sprejemljive": [
+    "MAT-OS-6/simetrija"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-6/simetrija",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 787417116,
+     "generator": "dod-mat-os-simetrija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1921136568,
+     "generator": "dod-mat-os-simetrija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1109320597,
+     "generator": "dod-mat-os-simetrija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V004",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "ime",
+   "poizvedba": "odstotni račun",
+   "sprejemljive": [
+    "MAT-OS-7/odstotni-racun"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-7/odstotni-racun",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1580428370,
+     "generator": "odstotki",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1622162588,
+     "generator": "odstotki",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1693552988,
+     "generator": "odstotki",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V005",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "ime",
+   "poizvedba": "seštevanje ulomkov",
+   "sprejemljive": [
+    "MAT-OS-7/sestevanje-in-odstevanje-ulomkov"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-7/sestevanje-in-odstevanje-ulomkov",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1287387392,
+     "generator": "ulomki-racunanje",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 99402835,
+     "generator": "ulomki-racunanje",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je množenje ulomkov, tema pa seštevanje in odštevanje."
+    },
+    {
+     "raven": 3,
+     "seme": 1732662481,
+     "generator": "ulomki-racunanje",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V006",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "Pitagorov izrek",
+   "sprejemljive": [
+    "MAT-OS-8/pitagorov-izrek",
+    "MAT-OS-8/uporaba-pitagorovega-izreka"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-8/pitagorov-izrek",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 946221426,
+     "generator": "pitagora",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 471264154,
+     "generator": "pitagora",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1988318498,
+     "generator": "pitagora",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V007",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "razstavljanje izrazov",
+   "sprejemljive": [
+    "MAT-OS-8/razstavljanje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V008",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "obseg in ploščina kroga",
+   "sprejemljive": [
+    "MAT-OS-8/obseg-in-ploscina-kroga"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-8/obseg-in-ploscina-kroga",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 486612939,
+     "generator": "krog",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Izračunano s tipko π; s π≈3,14 se rezultat na 2 decimalki razlikuje (besedilo dopušča oboje). (3,14: 530,66)"
+    },
+    {
+     "raven": 2,
+     "seme": 1109380552,
+     "generator": "krog",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Izračunano s tipko π; s π≈3,14 se rezultat na 2 decimalki razlikuje (besedilo dopušča oboje). (3,14: 111,16)"
+    },
+    {
+     "raven": 3,
+     "seme": 544831223,
+     "generator": "krog",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Izračunano s tipko π; s π≈3,14 se rezultat na 2 decimalki razlikuje (besedilo dopušča oboje). (3,14: 22,61)"
+    }
+   ]
+  },
+  {
+   "id": "V009",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "linearna funkcija",
+   "sprejemljive": [
+    "MAT-OS-9/linearna-funkcija",
+    "MAT-OS-9/graf-linearne-funkcije"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-9/linearna-funkcija",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1804863838,
+     "generator": "linearna-funkcija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1496490369,
+     "generator": "linearna-funkcija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": false,
+     "opomba": "Naloga se sklicuje na sliko grafa, ki je v besedilu ni; brez slike ni rešljiva."
+    },
+    {
+     "raven": 3,
+     "seme": 785047458,
+     "generator": "linearna-funkcija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V010",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "Talesov izrek",
+   "sprejemljive": [
+    "MAT-OS-9/talesov-izrek"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-9/talesov-izrek",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1184804264,
+     "generator": "podobnost",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Naloga o podobnih trikotnikih (razmerje podobnosti); s Talesovim izrekom povezana le posredno."
+    },
+    {
+     "raven": 2,
+     "seme": 670056164,
+     "generator": "podobnost",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Naloga o podobnih trikotnikih (razmerje podobnosti); s Talesovim izrekom povezana le posredno."
+    },
+    {
+     "raven": 3,
+     "seme": 398460404,
+     "generator": "podobnost",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V011",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "valj",
+   "sprejemljive": [
+    "MAT-OS-9/valj"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-9/valj",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 453184877,
+     "generator": "telesa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Izračunano s tipko π; s π≈3,14 se rezultat na 2 decimalki razlikuje (besedilo dopušča oboje). (3,14: 200,96)"
+    },
+    {
+     "raven": 2,
+     "seme": 1180306591,
+     "generator": "telesa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Izračunano s tipko π; s π≈3,14 se rezultat na 2 decimalki razlikuje (besedilo dopušča oboje). (3,14: 247,50). Konzerva s polmerom 2,3 m je nerealna."
+    },
+    {
+     "raven": 3,
+     "seme": 1912994489,
+     "generator": "telesa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "S π≈3,14 dobimo 9,90."
+    }
+   ]
+  },
+  {
+   "id": "V012",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "sistemi linearnih enačb",
+   "sprejemljive": [
+    "MAT-SS-1/sistemi-linearnih-enacb",
+    "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-1/sistemi-linearnih-enacb",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1607410563,
+     "generator": "dod-mat-ss12-sistemi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1073127307,
+     "generator": "dod-mat-ss12-sistemi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1020211927,
+     "generator": "dod-mat-ss12-sistemi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V013",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "Heronova formula",
+   "sprejemljive": [
+    "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1988017681,
+     "generator": "mat-ss1-matura-heronova-formula",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1506440821,
+     "generator": "mat-ss1-matura-heronova-formula",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Natančno 3,125 (meja zaokroževanja)."
+    },
+    {
+     "raven": 3,
+     "seme": 1055231398,
+     "generator": "mat-ss1-matura-heronova-formula",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V014",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "dvojiški sestav",
+   "sprejemljive": [
+    "MAT-SS-1/dvojiski-stevilski-sestav"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-1/dvojiski-stevilski-sestav",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 654522969,
+     "generator": "mat-ss1-matura-dvojiski-sestav",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 304037457,
+     "generator": "mat-ss1-matura-dvojiski-sestav",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 2054550910,
+     "generator": "mat-ss1-matura-dvojiski-sestav",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V015",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "ime",
+   "poizvedba": "kvadratna enačba",
+   "sprejemljive": [
+    "MAT-SS-2/kvadratna-enacba"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-2/kvadratna-enacba",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1886996708,
+     "generator": "dod-mat-ss12-kvadratna-enacba",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1879216685,
+     "generator": "dod-mat-ss12-kvadratna-enacba",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 647463454,
+     "generator": "dod-mat-ss12-kvadratna-enacba",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V016",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "ime",
+   "poizvedba": "logaritem",
+   "sprejemljive": [
+    "MAT-SS-2/logaritem"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-2/logaritem",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1162771920,
+     "generator": "dod-mat-ss12-logaritem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 759709363,
+     "generator": "dod-mat-ss12-logaritem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 998055855,
+     "generator": "dod-mat-ss12-logaritem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V017",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "ime",
+   "poizvedba": "kompleksna števila",
+   "sprejemljive": [
+    "MAT-SS-2/kompleksna-stevila"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-2/kompleksna-stevila",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 686630032,
+     "generator": "dod-mat-ss12-kompleksna",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 26202103,
+     "generator": "dod-mat-ss12-kompleksna",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1428466255,
+     "generator": "dod-mat-ss12-kompleksna",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V018",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "ime",
+   "poizvedba": "adicijski izreki",
+   "sprejemljive": [
+    "MAT-SS-3/adicijski-izreki"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-3/adicijski-izreki",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1345604052,
+     "generator": "dod-mat-ss34-adicijski-izreki",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 447017148,
+     "generator": "dod-mat-ss34-adicijski-preoblikovanje",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1068857882,
+     "generator": "dod-mat-ss34-adicijski-izreki",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V019",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "ime",
+   "poizvedba": "skalarni produkt",
+   "sprejemljive": [
+    "MAT-SS-3/skalarni-produkt"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-3/skalarni-produkt",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1612631283,
+     "generator": "dod-mat-ss34-skalarni-produkt",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1830937237,
+     "generator": "dod-mat-ss34-skalarni-produkt",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1213161744,
+     "generator": "dod-mat-ss34-skalarni-produkt",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Dolžina projekcije je 1,96; skalarna (predznačena) projekcija bi bila −1,96."
+    }
+   ]
+  },
+  {
+   "id": "V020",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "ime",
+   "poizvedba": "binomski izrek",
+   "sprejemljive": [
+    "MAT-SS-4/binomski-izrek"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-4/binomski-izrek",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1599320474,
+     "generator": "mat-ss4-matura-binomski-izrek",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1017045216,
+     "generator": "mat-ss4-matura-binomski-izrek",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 731579083,
+     "generator": "mat-ss4-matura-binomski-izrek",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V021",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "ime",
+   "poizvedba": "obrestni račun",
+   "sprejemljive": [
+    "MAT-SS-4/obrestni-racun"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-4/obrestni-racun",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1165008369,
+     "generator": "dod-mat-ss34-obrestni-racun",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1277988717,
+     "generator": "dod-mat-ss34-obrestni-racun",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 945438357,
+     "generator": "dod-mat-ss34-obrestni-racun",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V022",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "ime",
+   "poizvedba": "določeni integral",
+   "sprejemljive": [
+    "MAT-SS-4/doloceni-integral"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-SS-4/doloceni-integral",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1883245192,
+     "generator": "dod-mat-ss34-doloceni-integral",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 33096014,
+     "generator": "dod-mat-ss34-doloceni-integral",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1223240757,
+     "generator": "dod-mat-ss34-doloceni-integral",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V023",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "seštevanje in deljenje decimalk",
+   "sprejemljive": [
+    "MAT-OS-6/racunanje-z-decimalnimi-stevili"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V024",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "površina in prostornina kvadra",
+   "sprejemljive": [
+    "MAT-OS-6/kocka-in-kvader"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V025",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "izračun popusta in podražitve",
+   "sprejemljive": [
+    "MAT-OS-7/odstotni-racun"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V026",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "povprečje podatkov",
+   "sprejemljive": [
+    "MAT-OS-7/aritmeticna-sredina"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V027",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "risanje trikotnika s šestilom",
+   "sprejemljive": [
+    "MAT-OS-7/konstrukcije-trikotnikov"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V028",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "računanje z negativnimi števili",
+   "sprejemljive": [
+    "MAT-OS-8/racunanje-s-celimi-stevili"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V029",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "zapis zelo velikih števil s potencami",
+   "sprejemljive": [
+    "MAT-OS-8/zapis-z-desetiskimi-potencami"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V030",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "reševanje enačb z eno neznanko",
+   "sprejemljive": [
+    "MAT-OS-8/linearne-enacbe"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V031",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "notranji koti mnogokotnika",
+   "sprejemljive": [
+    "MAT-OS-8/veckotniki"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V032",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "reševanje enačb z ulomki",
+   "sprejemljive": [
+    "MAT-OS-9/linearne-enacbe-z-ulomki"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V033",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "izračun verjetnosti dogodka",
+   "sprejemljive": [
+    "MAT-OS-9/verjetnost"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V034",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "anketa in obdelava rezultatov",
+   "sprejemljive": [
+    "MAT-OS-9/statisticna-raziskava"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V035",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "zrcaljenje, vrtež in vzporedni premik",
+   "sprejemljive": [
+    "MAT-SS-1/togi-premiki"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V036",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "ničle in teme parabole",
+   "sprejemljive": [
+    "MAT-SS-2/kvadratna-funkcija"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V037",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "enačbe s koreni",
+   "sprejemljive": [
+    "MAT-SS-2/iracionalne-enacbe"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V038",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "enačbe s sinusom in kosinusom",
+   "sprejemljive": [
+    "MAT-SS-3/trigonometrijske-enacbe"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V039",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "mesečno odplačevanje kredita",
+   "sprejemljive": [
+    "MAT-SS-4/anuitete-in-amortizacijski-nacrt"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V040",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "iskanje ekstremov funkcije",
+   "sprejemljive": [
+    "MAT-SS-4/uporaba-odvoda"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V041",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "podtema",
+   "poizvedba": "pravila deljivosti s 3",
+   "sprejemljive": [
+    "MAT-OS-6/deljivost"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V042",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "podtema",
+   "poizvedba": "Vennov diagram",
+   "sprejemljive": [
+    "MAT-OS-6/mnozice-in-diagrami"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V043",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "podtema",
+   "poizvedba": "razcep na prafaktorje",
+   "sprejemljive": [
+    "MAT-OS-7/prastevila-in-razcep"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V044",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "podtema",
+   "poizvedba": "sokota in sovršna kota",
+   "sprejemljive": [
+    "MAT-OS-7/vrste-kotov-in-pari-kotov"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V045",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "podtema",
+   "poizvedba": "višinska točka trikotnika",
+   "sprejemljive": [
+    "MAT-OS-7/znacilne-tocke-trikotnika"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V046",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "podtema",
+   "poizvedba": "kvadrat binoma",
+   "sprejemljive": [
+    "MAT-OS-8/mnozenje-izrazov"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V047",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "podtema",
+   "poizvedba": "diagonala kvadrata",
+   "sprejemljive": [
+    "MAT-OS-8/pitagorov-izrek",
+    "MAT-OS-8/uporaba-pitagorovega-izreka"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V048",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "podtema",
+   "poizvedba": "iracionalna števila",
+   "sprejemljive": [
+    "MAT-OS-8/realna-stevila"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V049",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "podtema",
+   "poizvedba": "plašč stožca",
+   "sprejemljive": [
+    "MAT-OS-9/stozec"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V050",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "podtema",
+   "poizvedba": "razmerje podobnosti",
+   "sprejemljive": [
+    "MAT-OS-9/podobni-trikotniki"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V051",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "podtema",
+   "poizvedba": "prostornina piramide",
+   "sprejemljive": [
+    "MAT-OS-9/piramida"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V052",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "resničnostna tabela",
+   "sprejemljive": [
+    "MAT-SS-1/osnove-logike"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V053",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "diskriminanta",
+   "sprejemljive": [
+    "MAT-SS-2/kvadratna-enacba",
+    "MAT-SS-2/kvadratna-funkcija"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V054",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Vietovo pravilo",
+   "sprejemljive": [
+    "MAT-SS-2/kvadratna-enacba"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V055",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Hornerjev algoritem",
+   "sprejemljive": [
+    "MAT-SS-3/polinomi"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V056",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "asimptote racionalne funkcije",
+   "sprejemljive": [
+    "MAT-SS-3/racionalne-funkcije"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V057",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "integracija po delih",
+   "sprejemljive": [
+    "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V058",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Bernoullijeva formula",
+   "sprejemljive": [
+    "MAT-SS-4/zaporedje-neodvisnih-poskusov"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V059",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "smerni koeficient premice",
+   "sprejemljive": [
+    "MAT-OS-9/linearna-funkcija",
+    "MAT-OS-9/graf-linearne-funkcije",
+    "MAT-OS-9/premica-v-ravnini"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V060",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "kvadrat in kvadratni koren",
+   "sprejemljive": [
+    "MAT-OS-8/kvadrat-stevila",
+    "MAT-OS-8/kvadratni-koren"
+   ],
+   "izid": "pravilno",
+   "tema": "MAT-OS-8/kvadratni-koren",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 560998898,
+     "generator": "kvadratni-koren",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Mejno: naloga je kvadriranje, ne korenjenje (predznanje za temo)."
+    },
+    {
+     "raven": 2,
+     "seme": 1061778269,
+     "generator": "kvadratni-koren",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 2041528892,
+     "generator": "kvadratni-koren",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V061",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "sorazmerje",
+   "sprejemljive": [
+    "MAT-OS-7/premo-sorazmerje",
+    "MAT-OS-7/obratno-sorazmerje",
+    "MAT-OS-7/razmerje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V062",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "ploščina likov",
+   "sprejemljive": [
+    "MAT-OS-7/obseg-in-ploscina-trikotnika",
+    "MAT-OS-7/obseg-in-ploscina-stirikotnikov"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V063",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "prostornina teles",
+   "sprejemljive": [
+    "MAT-OS-9/prizma",
+    "MAT-OS-9/valj",
+    "MAT-OS-9/piramida",
+    "MAT-OS-9/stozec",
+    "MAT-OS-9/krogla"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V064",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "razstavljanje",
+   "sprejemljive": [
+    "MAT-SS-1/razstavljanje-izrazov",
+    "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V065",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "eksponentne in logaritemske enačbe",
+   "sprejemljive": [
+    "MAT-SS-2/eksponentne-enacbe",
+    "MAT-SS-2/logaritemska-funkcija-in-enacbe"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V066",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "parabola",
+   "sprejemljive": [
+    "MAT-SS-3/elipsa-hiperbola-parabola",
+    "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V067",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "kotne funkcije",
+   "sprejemljive": [
+    "MAT-SS-3/kotne-funkcije-poljubnega-kota",
+    "MAT-SS-3/grafi-kotnih-funkcij"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V068",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "integral",
+   "sprejemljive": [
+    "MAT-SS-4/nedoloceni-integral",
+    "MAT-SS-4/doloceni-integral",
+    "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V069",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "verjetnost in kombinatorika",
+   "sprejemljive": [
+    "MAT-SS-4/kombinatorika",
+    "MAT-SS-4/verjetnost"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V070",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "enačbe in neenačbe",
+   "sprejemljive": [
+    "MAT-OS-6/preproste-enacbe",
+    "MAT-OS-6/preproste-neenacbe"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V071",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "splosno",
+   "poizvedba": "števila",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V072",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "splosno",
+   "poizvedba": "ulomki",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V073",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "enačbe",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V074",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "splosno",
+   "poizvedba": "geometrija",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V075",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "izrazi",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V076",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "funkcije",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V077",
+   "predmet": "MAT",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "priprava na maturo",
+   "sprejemljive": [
+    "MAT-SS-4/mesane-maturitetne-naloge",
+    "MAT-SS-4/vadbena-maturitetna-pola"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V078",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "splosno",
+   "poizvedba": "računanje",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V079",
+   "predmet": "MAT",
+   "razred": "OŠ 8. razred",
+   "vrsta": "drug_predmet",
+   "poizvedba": "Ohmov zakon",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V080",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "valovanje",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V081",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "molska masa",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V082",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "drug_predmet",
+   "poizvedba": "fotosinteza",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V083",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "razpolovni čas",
+   "sprejemljive": [
+    "MAT-SS-2/eksponentna-funkcija",
+    "MAT-SS-2/eksponentne-enacbe"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V084",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "gostota snovi",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V085",
+   "predmet": "MAT",
+   "razred": "OŠ 6. razred",
+   "vrsta": "drug_razred",
+   "poizvedba": "Pitagorov izrek",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V086",
+   "predmet": "MAT",
+   "razred": "OŠ 9. razred",
+   "vrsta": "drug_razred",
+   "poizvedba": "kvadratna enačba",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V087",
+   "predmet": "MAT",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "drug_razred",
+   "poizvedba": "odvod",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V088",
+   "predmet": "MAT",
+   "razred": "OŠ 7. razred",
+   "vrsta": "drug_razred",
+   "poizvedba": "linearna funkcija",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V089",
+   "predmet": "MAT",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "drug_razred",
+   "poizvedba": "podobni trikotniki",
+   "sprejemljive": [
+    "MAT-SS-2/podobnost"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V090",
+   "predmet": "MAT",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "drug_razred",
+   "poizvedba": "logaritem",
+   "sprejemljive": [],
+   "izid": "tema nizjega razreda",
+   "tema": "MAT-SS-2/logaritem",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 392719187,
+     "generator": "dod-mat-ss12-logaritem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 259957752,
+     "generator": "dod-mat-ss12-logaritem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1087548646,
+     "generator": "dod-mat-ss12-logaritem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V091",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "lom svetlobe",
+   "sprejemljive": [
+    "FIZ-OS-8/lom-svetlobe"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-OS-8/lom-svetlobe",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1114938527,
+     "generator": "dod-os-lom-svetlobe",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 889376114,
+     "generator": "dod-os-lom-svetlobe",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1867012935,
+     "generator": "dod-os-lom-svetlobe",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V092",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "vzgon",
+   "sprejemljive": [
+    "FIZ-OS-8/vzgon"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-OS-8/vzgon",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1426540455,
+     "generator": "dod-os-vzgon",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1950125657,
+     "generator": "dod-os-vzgon",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1851524641,
+     "generator": "dod-os-vzgon",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V093",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "prosti pad",
+   "sprejemljive": [
+    "FIZ-OS-9/prosti-pad"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-OS-9/prosti-pad",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 2140518567,
+     "generator": "pospesek",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+    },
+    {
+     "raven": 2,
+     "seme": 1885588908,
+     "generator": "pospesek",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met). Pospešek vlaka 5,7 m/s² je nerealen."
+    },
+    {
+     "raven": 3,
+     "seme": 133615261,
+     "generator": "pospesek",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met). Natančno 68,75 (meja zaokroževanja)."
+    }
+   ]
+  },
+  {
+   "id": "V094",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "Ohmov zakon",
+   "sprejemljive": [
+    "FIZ-OS-9/upor-in-ohmov-zakon"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-OS-9/upor-in-ohmov-zakon",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 2098633906,
+     "generator": "ohm",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 144996288,
+     "generator": "ohm",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 98630411,
+     "generator": "ohm",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V095",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "gibalna količina",
+   "sprejemljive": [
+    "FIZ-SS-1/gibalna-kolicina"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-SS-1/gibalna-kolicina",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 310591793,
+     "generator": "dod-fiz-ss-gibalna-kolicina",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Natančno 9,045 (meja zaokroževanja; 9,04 ali 9,05)."
+    },
+    {
+     "raven": 2,
+     "seme": 481828120,
+     "generator": "dod-fiz-ss-gibalna-kolicina",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1053370508,
+     "generator": "dod-fiz-ss-gibalna-kolicina",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V096",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "navpični met",
+   "sprejemljive": [
+    "FIZ-SS-1/prosti-pad-in-navpicni-met"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-SS-1/prosti-pad-in-navpicni-met",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 515063725,
+     "generator": "pospesek",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+    },
+    {
+     "raven": 2,
+     "seme": 1738404308,
+     "generator": "pospesek",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+    },
+    {
+     "raven": 3,
+     "seme": 753072400,
+     "generator": "pospesek",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+    }
+   ]
+  },
+  {
+   "id": "V097",
+   "predmet": "FIZ",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "ime",
+   "poizvedba": "plinska enačba",
+   "sprejemljive": [
+    "FIZ-SS-2/plinska-enacba"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-SS-2/plinska-enacba",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1704296966,
+     "generator": "dod-fiz-ss-plinska-enacba",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Natančno 362,5 (meja zaokroževanja)."
+    },
+    {
+     "raven": 2,
+     "seme": 1103345522,
+     "generator": "dod-fiz-ss-plinska-enacba",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 622693019,
+     "generator": "dod-fiz-ss-plinska-enacba",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Z T=262,15 K: 1,291; z T=262 K: 1,292."
+    }
+   ]
+  },
+  {
+   "id": "V098",
+   "predmet": "FIZ",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "ime",
+   "poizvedba": "Coulombov zakon",
+   "sprejemljive": [
+    "FIZ-SS-2/elektricni-naboj-in-coulombov-zakon"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-SS-2/elektricni-naboj-in-coulombov-zakon",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1887901241,
+     "generator": "dod-fiz-ss-coulomb",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 2051457831,
+     "generator": "dod-fiz-ss-coulomb",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Natančno 4,125 (meja zaokroževanja)."
+    },
+    {
+     "raven": 3,
+     "seme": 157560667,
+     "generator": "dod-fiz-ss-coulomb",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V099",
+   "predmet": "FIZ",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "ime",
+   "poizvedba": "stoječe valovanje",
+   "sprejemljive": [
+    "FIZ-SS-3/stojece-valovanje"
+   ],
+   "izid": "pravilno",
+   "tema": "FIZ-SS-3/stojece-valovanje",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 215024668,
+     "generator": "dod-fiz-ss-stojece-struna",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1638260734,
+     "generator": "dod-fiz-ss-stojece-pojmi",
+     "samopreverba": "correct",
+     "na_temi": false,
+     "jasna": true,
+     "opomba": "Naloga je o potujočem valovanju, ne o stoječem."
+    },
+    {
+     "raven": 3,
+     "seme": 257779897,
+     "generator": "dod-fiz-ss-stojece-struna",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V100",
+   "predmet": "FIZ",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "ime",
+   "poizvedba": "fotoefekt",
+   "sprejemljive": [
+    "FIZ-SS-4/fotoefekt-in-foton"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V101",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "gibanje s stalno hitrostjo",
+   "sprejemljive": [
+    "FIZ-OS-8/enakomerno-gibanje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V102",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "slika v ravnem zrcalu",
+   "sprejemljive": [
+    "FIZ-OS-8/odboj-svetlobe"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V103",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "segrevanje vode",
+   "sprejemljive": [
+    "FIZ-OS-9/toplota"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V104",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "poraba elektrike v gospodinjstvu",
+   "sprejemljive": [
+    "FIZ-OS-9/elektricno-delo-in-moc"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V105",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "gibanje s stalnim pospeškom",
+   "sprejemljive": [
+    "FIZ-SS-1/enakomerno-pospeseno-gibanje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V106",
+   "predmet": "FIZ",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "gibanje po krožnici",
+   "sprejemljive": [
+    "FIZ-SS-2/enakomerno-krozenje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V107",
+   "predmet": "FIZ",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "slika pri zbiralni leči",
+   "sprejemljive": [
+    "FIZ-SS-3/geometrijska-optika"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V108",
+   "predmet": "FIZ",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "razpad jeder",
+   "sprejemljive": [
+    "FIZ-SS-4/jedro-in-radioaktivnost"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V109",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "podtema",
+   "poizvedba": "Arhimedov zakon",
+   "sprejemljive": [
+    "FIZ-OS-8/vzgon"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V110",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "podtema",
+   "poizvedba": "hidrostatični tlak",
+   "sprejemljive": [
+    "FIZ-OS-8/tlak"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V111",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "podtema",
+   "poizvedba": "izkoristek motorja",
+   "sprejemljive": [
+    "FIZ-OS-9/moc-in-izkoristek"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V112",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "podtema",
+   "poizvedba": "zaporedna vezava upornikov",
+   "sprejemljive": [
+    "FIZ-OS-9/elektricni-krog",
+    "FIZ-OS-9/upor-in-ohmov-zakon"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V113",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Hookov zakon",
+   "sprejemljive": [
+    "FIZ-SS-1/proznost"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V114",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "navor",
+   "sprejemljive": [
+    "FIZ-SS-1/navor-in-ravnovesje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V115",
+   "predmet": "FIZ",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Lorentzova sila",
+   "sprejemljive": [
+    "FIZ-SS-3/magnetna-sila"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V116",
+   "predmet": "FIZ",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Dopplerjev pojav",
+   "sprejemljive": [
+    "FIZ-SS-3/zvok",
+    "FIZ-SS-3/valovanje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V117",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "toplota in temperatura",
+   "sprejemljive": [
+    "FIZ-OS-9/temperatura-in-notranja-energija",
+    "FIZ-OS-9/toplota"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V118",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "sile na klancu",
+   "sprejemljive": [
+    "FIZ-SS-1/sile",
+    "FIZ-SS-1/trenje",
+    "FIZ-SS-1/newtonovi-zakoni"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V119",
+   "predmet": "FIZ",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "električni naboj in polje",
+   "sprejemljive": [
+    "FIZ-SS-2/elektricni-naboj-in-coulombov-zakon",
+    "FIZ-SS-2/elektricno-polje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V120",
+   "predmet": "FIZ",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "resonanca",
+   "sprejemljive": [
+    "FIZ-SS-3/duseno-in-vsiljeno-nihanje",
+    "FIZ-SS-3/izmenicni-tok-in-nihajni-krog"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V121",
+   "predmet": "FIZ",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "jedrska energija",
+   "sprejemljive": [
+    "FIZ-SS-4/jedrske-reakcije-in-reaktor",
+    "FIZ-SS-4/jedro-in-radioaktivnost"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V122",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "splosno",
+   "poizvedba": "sile",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V123",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "splosno",
+   "poizvedba": "elektrika",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V124",
+   "predmet": "FIZ",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "toplota",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V125",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "gibanje",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V126",
+   "predmet": "FIZ",
+   "razred": "OŠ 9. razred",
+   "vrsta": "drug_predmet",
+   "poizvedba": "kemijska reakcija",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V127",
+   "predmet": "FIZ",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "molska masa",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V128",
+   "predmet": "FIZ",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "odvod funkcije",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V129",
+   "predmet": "FIZ",
+   "razred": "OŠ 8. razred",
+   "vrsta": "drug_razred",
+   "poizvedba": "Ohmov zakon",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V130",
+   "predmet": "FIZ",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "drug_razred",
+   "poizvedba": "lom svetlobe",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V131",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "ionska vez",
+   "sprejemljive": [
+    "KEM-OS-8/ionska-vez"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-OS-8/ionska-vez",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 884943179,
+     "generator": "dod-os-ionska-vez",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1309703362,
+     "generator": "dod-os-ionska-vez",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1061973689,
+     "generator": "dod-os-ionska-vez",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V132",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "urejanje kemijskih enačb",
+   "sprejemljive": [
+    "KEM-OS-8/urejanje-kemijskih-enacb"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-OS-8/urejanje-kemijskih-enacb",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 342938432,
+     "generator": "urejanje-enacb",
+     "samopreverba": null,
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1437511244,
+     "generator": "urejanje-enacb",
+     "samopreverba": null,
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 2014282775,
+     "generator": "urejanje-enacb",
+     "samopreverba": null,
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V133",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "pH lestvica",
+   "sprejemljive": [
+    "KEM-OS-8/ph-lestvica"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-OS-8/ph-lestvica",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 418086267,
+     "generator": "ph",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 2103417018,
+     "generator": "ph",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1857658720,
+     "generator": "ph",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V134",
+   "predmet": "KEM",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "množina snovi",
+   "sprejemljive": [
+    "KEM-OS-9/mnozina-snovi",
+    "KEM-OS-9/racunanje-z-mnozino-snovi"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-OS-9/mnozina-snovi",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 728627952,
+     "generator": "molska-masa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 2068262792,
+     "generator": "molska-masa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1919114663,
+     "generator": "molska-masa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V135",
+   "predmet": "KEM",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "alkoholi",
+   "sprejemljive": [
+    "KEM-OS-9/alkoholi"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-OS-9/alkoholi",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 667879023,
+     "generator": "dod-os-alkoholi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 2072530634,
+     "generator": "dod-os-alkoholi",
+     "samopreverba": null,
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 615785418,
+     "generator": "dod-os-alkoholi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V136",
+   "predmet": "KEM",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "stehiometrija",
+   "sprejemljive": [
+    "KEM-SS-1/stehiometrija"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-SS-1/stehiometrija",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1083815463,
+     "generator": "molska-masa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1500482337,
+     "generator": "molska-masa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 245874708,
+     "generator": "molska-masa",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V137",
+   "predmet": "KEM",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "ime",
+   "poizvedba": "koordinacijske spojine",
+   "sprejemljive": [
+    "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 416046867,
+     "generator": "dod-kem-ss-4-prehodni-elementi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1127257491,
+     "generator": "dod-kem-ss-4-prehodni-elementi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 2085712504,
+     "generator": "dod-kem-ss-4-prehodni-elementi",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Obarjata se le 2 zunanja kloridna iona."
+    }
+   ]
+  },
+  {
+   "id": "V138",
+   "predmet": "KEM",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "ime",
+   "poizvedba": "redoks reakcije",
+   "sprejemljive": [
+    "KEM-SS-2/redoks-reakcije"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-SS-2/redoks-reakcije",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1023399422,
+     "generator": "dod-kem-ss-redoks-reakcije",
+     "samopreverba": null,
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1406729625,
+     "generator": "dod-kem-ss-redoks-reakcije",
+     "samopreverba": null,
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 924305260,
+     "generator": "dod-kem-ss-redoks-reakcije",
+     "samopreverba": null,
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V139",
+   "predmet": "KEM",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "ime",
+   "poizvedba": "izomerija",
+   "sprejemljive": [
+    "KEM-SS-3/izomerija"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-SS-3/izomerija",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 36064051,
+     "generator": "dod-kem-ss-izomerija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 674752228,
+     "generator": "dod-kem-ss-izomerija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1720689808,
+     "generator": "dod-kem-ss-izomerija",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V140",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "sestavljanje formul iz ionov",
+   "sprejemljive": [
+    "KEM-OS-8/formule-spojin"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V141",
+   "predmet": "KEM",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "priprava raztopine",
+   "sprejemljive": [
+    "KEM-OS-9/raztopine"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V142",
+   "predmet": "KEM",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "ogljikovodiki z dvojno vezjo",
+   "sprejemljive": [
+    "KEM-OS-9/alkani-alkeni-alkini"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V143",
+   "predmet": "KEM",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "privlačne sile med molekulami",
+   "sprejemljive": [
+    "KEM-SS-1/medmolekulske-sile"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V144",
+   "predmet": "KEM",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "dejavniki hitrosti reakcije",
+   "sprejemljive": [
+    "KEM-SS-2/hitrost-reakcij"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V145",
+   "predmet": "KEM",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "elektrokemijski členi",
+   "sprejemljive": [
+    "KEM-SS-2/galvanski-cleni-in-elektroliza"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V146",
+   "predmet": "KEM",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "aldehidi in ketoni",
+   "sprejemljive": [
+    "KEM-SS-3/karbonilne-spojine"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V147",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "podtema",
+   "poizvedba": "valenčni elektroni",
+   "sprejemljive": [
+    "KEM-OS-8/razporeditev-elektronov"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V148",
+   "predmet": "KEM",
+   "razred": "OŠ 9. razred",
+   "vrsta": "podtema",
+   "poizvedba": "molska masa",
+   "sprejemljive": [
+    "KEM-OS-9/mnozina-snovi",
+    "KEM-OS-9/racunanje-z-mnozino-snovi"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V149",
+   "predmet": "KEM",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Avogadrovo število",
+   "sprejemljive": [
+    "KEM-SS-1/mnozina-snovi"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V150",
+   "predmet": "KEM",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "molska prostornina plina",
+   "sprejemljive": [
+    "KEM-SS-1/plini"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V151",
+   "predmet": "KEM",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Le Chatelierjevo načelo",
+   "sprejemljive": [
+    "KEM-SS-2/kemijsko-ravnotezje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V152",
+   "predmet": "KEM",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "konstanta kisline",
+   "sprejemljive": [
+    "KEM-SS-2/sibke-kisline-in-baze"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V153",
+   "predmet": "KEM",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "esterifikacija",
+   "sprejemljive": [
+    "KEM-SS-3/karboksilne-kisline-in-derivati"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V154",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "kisline, baze in soli",
+   "sprejemljive": [
+    "KEM-OS-8/kisline-in-baze",
+    "KEM-OS-8/nevtralizacija-in-soli"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-OS-8/kisline-in-baze",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1761705086,
+     "generator": "ph",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1376677155,
+     "generator": "ph",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1010479688,
+     "generator": "ph",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V155",
+   "predmet": "KEM",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "raztopine in topnost",
+   "sprejemljive": [
+    "KEM-SS-1/raztopine",
+    "KEM-SS-1/topnost-in-sestava-raztopin"
+   ],
+   "izid": "pravilno",
+   "tema": "KEM-SS-1/topnost-in-sestava-raztopin",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 440964867,
+     "generator": "dod-kem-ss-1-topnost-raztopin",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 486737085,
+     "generator": "dod-kem-ss-1-topnost-raztopin",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 917558892,
+     "generator": "dod-kem-ss-1-topnost-raztopin",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V156",
+   "predmet": "KEM",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "pH šibkih kislin",
+   "sprejemljive": [
+    "KEM-SS-2/ph",
+    "KEM-SS-2/sibke-kisline-in-baze"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V157",
+   "predmet": "KEM",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "kovine",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V158",
+   "predmet": "KEM",
+   "razred": "OŠ 9. razred",
+   "vrsta": "splosno",
+   "poizvedba": "spojine",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V159",
+   "predmet": "KEM",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "reakcije",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V160",
+   "predmet": "KEM",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "organska kemija",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V161",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "splosno",
+   "poizvedba": "elementi",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V162",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "drug_predmet",
+   "poizvedba": "električni tok",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V163",
+   "predmet": "KEM",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "celično dihanje",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V164",
+   "predmet": "KEM",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "zgradba beljakovin",
+   "sprejemljive": [
+    "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V165",
+   "predmet": "KEM",
+   "razred": "OŠ 8. razred",
+   "vrsta": "drug_razred",
+   "poizvedba": "alkani",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V166",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "celični organeli",
+   "sprejemljive": [
+    "BIO-OS-8/celicni-organeli"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-OS-8/celicni-organeli",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 553606542,
+     "generator": "bio-os-8-celicni-organeli",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 120070323,
+     "generator": "bio-os-8-celicni-organeli",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 260212623,
+     "generator": "bio-os-8-celicni-organeli",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Uvodni stavek »Kateri del celice opravlja to nalogo?« se ne ujema z navodilom; vseeno razumljivo."
+    }
+   ]
+  },
+  {
+   "id": "V167",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "ime",
+   "poizvedba": "dihala",
+   "sprejemljive": [
+    "BIO-OS-8/dihala"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-OS-8/dihala",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 484298896,
+     "generator": "bio-os-8-dihala",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 2124979830,
+     "generator": "bio-os-8-dihala",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 351839027,
+     "generator": "bio-os-8-dihala",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Čiščenje zraka v sapniku je del dihalne poti, ne izmenjava plinov; edina možnost, ki ni celično dihanje."
+    }
+   ]
+  },
+  {
+   "id": "V168",
+   "predmet": "BIO",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "naravni izbor",
+   "sprejemljive": [
+    "BIO-OS-9/naravni-izbor"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-OS-9/naravni-izbor",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 235698548,
+     "generator": "bio-os-9-naravni-izbor",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1421084883,
+     "generator": "bio-os-9-naravni-izbor",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1469273756,
+     "generator": "bio-os-9-naravni-izbor",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Ščinkavci so hkrati klasičen primer naravnega izbora; izolacija je odgovor po izločanju."
+    }
+   ]
+  },
+  {
+   "id": "V169",
+   "predmet": "BIO",
+   "razred": "OŠ 9. razred",
+   "vrsta": "ime",
+   "poizvedba": "dedovanje lastnosti",
+   "sprejemljive": [
+    "BIO-OS-9/dedovanje-lastnosti"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-OS-9/dedovanje-lastnosti",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1568626400,
+     "generator": "bio-os-9-dedovanje-lastnosti",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 79696085,
+     "generator": "bio-os-9-dedovanje-lastnosti",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 1514654721,
+     "generator": "bio-krizanje-os",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V170",
+   "predmet": "BIO",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "fotosinteza",
+   "sprejemljive": [
+    "BIO-SS-1/fotosinteza"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-SS-1/fotosinteza",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 474707080,
+     "generator": "bio-ss-1-fotosinteza",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 1460582114,
+     "generator": "bio-ss-1-fotosinteza",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Besedilo je enako kot V170/1 (dvojnik)."
+    },
+    {
+     "raven": 3,
+     "seme": 1954001968,
+     "generator": "bio-ss-1-fotosinteza",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V171",
+   "predmet": "BIO",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "ime",
+   "poizvedba": "Mendlovo dedovanje",
+   "sprejemljive": [
+    "BIO-SS-1/mendlovo-dedovanje"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-SS-1/mendlovo-dedovanje",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 1006908704,
+     "generator": "bio-ss-1-mendlovo-dedovanje",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 453921089,
+     "generator": "bio-krizanje-ss",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 603460833,
+     "generator": "bio-krizanje-ss",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V172",
+   "predmet": "BIO",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "ime",
+   "poizvedba": "glive",
+   "sprejemljive": [
+    "BIO-SS-2/glive"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-SS-2/glive",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 120696509,
+     "generator": "bio-ss-2-glive",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 912195285,
+     "generator": "bio-ss-2-glive",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 2000950896,
+     "generator": "bio-ss-2-glive",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V173",
+   "predmet": "BIO",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "ime",
+   "poizvedba": "imunski sistem",
+   "sprejemljive": [
+    "BIO-SS-3/imunski-sistem"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-SS-3/imunski-sistem",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 634807339,
+     "generator": "bio-ss-3-imunski-sistem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true,
+     "opomba": "Nisem povsem prepričan: serum je pasivna imunizacija, a protitelesa so tudi specifična obramba."
+    },
+    {
+     "raven": 2,
+     "seme": 1944305978,
+     "generator": "bio-ss-3-imunski-sistem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": false,
+     "opomba": "Solna kislina je kemična pregrada, ki jo mnogi učbeniki štejejo tudi k nespecifični obrambi; pravilni sta lahko možnosti 0 in 1."
+    },
+    {
+     "raven": 3,
+     "seme": 1258052046,
+     "generator": "bio-ss-3-imunski-sistem",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V174",
+   "predmet": "BIO",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "ime",
+   "poizvedba": "populacijska genetika",
+   "sprejemljive": [
+    "BIO-SS-4/populacijska-genetika"
+   ],
+   "izid": "pravilno",
+   "tema": "BIO-SS-4/populacijska-genetika",
+   "naloge": [
+    {
+     "raven": 1,
+     "seme": 376955430,
+     "generator": "bio-hardy-weinberg",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 2,
+     "seme": 28618461,
+     "generator": "bio-hardy-weinberg",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    },
+    {
+     "raven": 3,
+     "seme": 422632148,
+     "generator": "bio-hardy-weinberg",
+     "samopreverba": "correct",
+     "na_temi": true,
+     "jasna": true
+    }
+   ]
+  },
+  {
+   "id": "V175",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "srce in žile",
+   "sprejemljive": [
+    "BIO-OS-8/kri-in-krvozilje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V176",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "delovanje ledvic",
+   "sprejemljive": [
+    "BIO-OS-8/izlocala"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V177",
+   "predmet": "BIO",
+   "razred": "OŠ 9. razred",
+   "vrsta": "parafraza",
+   "poizvedba": "razvrščanje organizmov v skupine",
+   "sprejemljive": [
+    "BIO-OS-9/sistematika"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V178",
+   "predmet": "BIO",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "prepis in prevod",
+   "sprejemljive": [
+    "BIO-SS-1/od-dna-do-beljakovine"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V179",
+   "predmet": "BIO",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "kako rastline prevajajo vodo",
+   "sprejemljive": [
+    "BIO-SS-2/prehrana-in-transport-pri-rastlinah"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V180",
+   "predmet": "BIO",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "prenos živčnega impulza",
+   "sprejemljive": [
+    "BIO-SS-3/zivcna-celica-in-sinapsa"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V181",
+   "predmet": "BIO",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "parafraza",
+   "poizvedba": "uravnavanje notranjega okolja",
+   "sprejemljive": [
+    "BIO-SS-4/homeostaza"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V182",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "podtema",
+   "poizvedba": "mitoza",
+   "sprejemljive": [
+    "BIO-OS-8/celicna-delitev"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V183",
+   "predmet": "BIO",
+   "razred": "OŠ 9. razred",
+   "vrsta": "podtema",
+   "poizvedba": "Punnettov kvadrat",
+   "sprejemljive": [
+    "BIO-OS-9/dedovanje-lastnosti",
+    "BIO-OS-9/dedovanje-pri-cloveku"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V184",
+   "predmet": "BIO",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "mejoza",
+   "sprejemljive": [
+    "BIO-SS-1/mejoza-in-spolno-razmnozevanje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V185",
+   "predmet": "BIO",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Krebsov cikel",
+   "sprejemljive": [
+    "BIO-SS-1/celicno-dihanje-in-vrenje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V186",
+   "predmet": "BIO",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "Hardy-Weinbergovo ravnovesje",
+   "sprejemljive": [
+    "BIO-SS-4/populacijska-genetika"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V187",
+   "predmet": "BIO",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "prehranjevalna veriga",
+   "sprejemljive": [
+    "BIO-SS-3/pretok-energije-in-krozenje-snovi"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V188",
+   "predmet": "BIO",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "podtema",
+   "poizvedba": "fotoperiodizem",
+   "sprejemljive": [
+    "BIO-SS-2/odzivi-rastlin-na-okolje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V189",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "dvoumno",
+   "poizvedba": "živčevje in čutila",
+   "sprejemljive": [
+    "BIO-OS-8/zivcevje-in-hormoni",
+    "BIO-OS-8/cutila"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V190",
+   "predmet": "BIO",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "geni in dedovanje",
+   "sprejemljive": [
+    "BIO-SS-1/geni-aleli-in-mutacije",
+    "BIO-SS-1/mendlovo-dedovanje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V191",
+   "predmet": "BIO",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "kri in dihanje",
+   "sprejemljive": [
+    "BIO-SS-2/kri-in-obtocila",
+    "BIO-SS-2/dihanje"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V192",
+   "predmet": "BIO",
+   "razred": "SŠ 3. letnik",
+   "vrsta": "dvoumno",
+   "poizvedba": "koža in čutila",
+   "sprejemljive": [
+    "BIO-SS-3/koza-in-krovne-strukture",
+    "BIO-SS-3/cutila"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V193",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "splosno",
+   "poizvedba": "celica",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V194",
+   "predmet": "BIO",
+   "razred": "OŠ 9. razred",
+   "vrsta": "splosno",
+   "poizvedba": "živa bitja",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V195",
+   "predmet": "BIO",
+   "razred": "SŠ 2. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "rastline",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V196",
+   "predmet": "BIO",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "splosno",
+   "poizvedba": "genetika",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V197",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "drug_predmet",
+   "poizvedba": "kemijske vezi",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V198",
+   "predmet": "BIO",
+   "razred": "SŠ 1. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "Newtonovi zakoni",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V199",
+   "predmet": "BIO",
+   "razred": "SŠ 4. letnik",
+   "vrsta": "drug_predmet",
+   "poizvedba": "standardni odklon",
+   "sprejemljive": [
+    "BIO-SS-4/statistika-v-biologiji"
+   ],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  },
+  {
+   "id": "V200",
+   "predmet": "BIO",
+   "razred": "OŠ 8. razred",
+   "vrsta": "drug_razred",
+   "poizvedba": "Mendlovo dedovanje",
+   "sprejemljive": [],
+   "izid": "brez gumba",
+   "tema": null,
+   "naloge": []
+  }
+ ]
+}
