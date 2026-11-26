@@ -103,3 +103,11 @@ test("pregled prevzema: meja porabe, sodbo je zavrnil le model za pregled → br
   }
   assert.fail("pregled sodbe z modelom ni stekel");
 });
+
+// Pregled prevzema 2 (AUDIT-059): vprašanje-predlog, o katerem koda ne sodi, je kot na main vprašanje: brez plačanega
+// pregleda sodbe.
+test("pregled prevzema 2 (AUDIT-059): »je 7 · 8 = 54?« brez sodbe kode ne gre v pregled sodbe", async () => {
+  const msgs = ["Izračunaj $7 \\cdot 8 + 2$.", "je 7 · 8 = 54?"];
+  const r = await run({ answers: ["Koliko je $7 \\cdot 8$?", "Da, tako je."], n: null, msgs, review: "NAPAKA: 7 · 8 = 56" });
+  assert.ok(!r.calls.includes("review"), String(r.calls));
+});

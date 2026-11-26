@@ -382,7 +382,9 @@ function otherEquation(pre, prevTutor) {
 // Odgovor se začne s potrditvijo (prvi stavek): »Prav!«, »Dobro, zdaj …«, »Ana, odlično.«
 const POSITIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:prav|pravilno|točno|tako je|res je|drži|dobro|lepo|odlično|super|bravo|krasno|izvrstno|natanko|seveda|da|ja|okej|ok|perfektno|imaš prav|prav imaš|correct|right|yes|exactly|good|great|nice|well done)(?!\p{L})/iu;
 // Znak, da odgovor opozori na napako ali učenca usmeri k ponovnemu premisleku.
-const ERROR_MARK = /(?<!\p{L})(?:napak\p{L}*|narobe|napačn\p{L}*|ni (?:čisto |povsem |še |ravno |res )?(?:prav|pravilno|pravilen|res|tako|točno|enako)|ne drži|ne velja|ne ujema|ne more|zmot\p{L}*|spodrsl\p{L}*|zalomil\p{L}*|pazi|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|skoraj|ampak|vendar|toda|hmm?|wrong|mistake|not quite|almost|check)(?!\p{L})|≠/iu;
+// Zavrnitev tudi z izračunanim preizkusom (»$2 \cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.«), pregled prevzema 2: sicer bi
+// ob meji porabe učenec dobil napačno opozorilo »Ta ocena tvojega koraka morda ni pravilna«.
+const ERROR_MARK = /(?<!\p{L})(?:napak\p{L}*|narobe|napačn\p{L}*|ni (?:čisto |povsem |še |ravno |res )?(?:prav|pravilno|pravilen|res|tako|točno|enako)|ne drži|ne velja|ne ujema|ne more|zmot\p{L}*|spodrsl\p{L}*|zalomil\p{L}*|pazi|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|skoraj|ampak|vendar|toda|hmm?|wrong|mistake|not quite|almost|check|kar ni|ni \d[\d.,]*|poskusi (?:znova|ponovno|še enkrat|še)|try again)(?!\p{L})|≠|\\neq?(?![a-zA-Z])/iu;
 const SOFT_MARK = /(?<!\p{L})(?:pazi\p{L}*|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|check\p{L}*)(?!\p{L})/giu;
 const NEGATIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:ne(?=\s*[,.!:—–])|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|točno)|narobe|napačno|napaka|ne drži|skoraj|hmm?|not quite|wrong|no(?=\s*[,.!:—–]))/iu;
 const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(String(s || "").trim())?.[0] || "");

@@ -64,3 +64,16 @@ test("pregled prevzema: bloki META/RACUN/KARTICA/IZBIRE/CHOICES/ODPRI/GRAF/SKICA
   for (const t of ["<Način dela je dober>", "<Čas je>", "a << b in 3 >> 2", "<Meta-analiza>", "<METAL>"]) assert.equal(neutralizeHiddenTags(t), t, t);
   assert.equal(neutralizeHiddenTags("<preverjen_račun>x"), "‹preverjen_racun›x", "»č« v »račun« ostane ujet");
 });
+
+test("pregled prevzema 2 (AUDIT-065): bloki v linearnem času, »<<МЕТА« in »<<RACUNč«", () => {
+  const ms = (t) => {
+    const s = performance.now();
+    neutralizeHiddenTags(t);
+    return performance.now() - s;
+  };
+  const L = 50000;
+  for (const t of ["<<META ".repeat(L / 7), "<META ".repeat(L / 6), "<<META" + "> ".repeat(L / 2), "<<M" + "​".repeat(L) + "x", "<IZBIRE " + "> ".repeat(L / 2), "<<META x>> ".repeat(L / 11)]) assert.ok(ms(t) < 300, t.slice(0, 12));
+  assert.equal(neutralizeHiddenTags("<<МЕТА x>>"), "‹‹МЕТА x››");
+  assert.equal(neutralizeHiddenTags("<<RACUNč x>>"), "‹‹RACUNč x››", "meta.js ga z \\b prebere kot RACUN");
+  assert.equal(neutralizeHiddenTags("<METAL>"), "<METAL>");
+});

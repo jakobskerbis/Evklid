@@ -129,7 +129,7 @@ async function checkOne(c) {
 const BUDGET_MS = () => Number(process.env.EVKLID_RACUN_BUDGET_MS) || 20_000;
 
 export async function checkClaims(claims, { max = MAX_CLAIMS, budgetMs = BUDGET_MS() } = {}) {
-  const out = { checked: 0, failed: [], unsure: [] };
+  const out = { checked: 0, failed: [], unsure: [], confirmed: [] };
   const t0 = Date.now();
   for (const c of claims.slice(0, max)) {
     let r;
@@ -138,7 +138,10 @@ export async function checkClaims(claims, { max = MAX_CLAIMS, budgetMs = BUDGET_
     } catch (e) {
       r = { ok: null, why: String(e?.message || e) };
     }
-    if (r.ok === true) out.checked++;
+    if (r.ok === true) {
+      out.checked++;
+      out.confirmed.push(c);
+    }
     else if (r.ok === false) {
       out.checked++;
       out.failed.push({ line: c.line, why: r.why });
@@ -230,7 +233,9 @@ export async function checkAnswerClaims(text) {
   const claims = parseClaims(text);
   if (!claims.length) return { checked: 0, issue: null, failed: [], unsure: [], claims: 0 };
   const r = await checkClaims(claims);
-  return { ...r, issue: claimIssue(r) || (r.failed.length ? null : visibleIssue(text, claims)), claims: claims.length };
+  // Vidno besedilo le proti blokom, ki jih je SymPy res potrdil (pregled prevzema 2): nepreverjen blok ali blok z le
+  // enim od dveh korenov ni »točno preverjena rešitev«; brez SymPy ni primerjave.
+  return { ...r, issue: claimIssue(r) || (r.failed.length ? null : visibleIssue(text, r.confirmed || [])), claims: claims.length };
 }
 
 // Števec (kv »racun_statistika«): { "2026-11-11": { odgovori, z_blokom, potrjene, napake, nepreverjene } },

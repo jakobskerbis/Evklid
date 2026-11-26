@@ -34,17 +34,20 @@ const ime = (m) => {
 // ali gumbe. Kot pri oznakah tudi s presledki ali nevidnimi znaki med oklepaji in črkami (»< <RACUN«, »<​<RACUN«,
 // »<<​META«), polnoširinsko (»＜＜RACUN«), z &lt; ali cirilskimi dvojniki. Z enim »<« (meta.js tako bere IZBIRE,
 // CHOICES in META) le velike črke, da »<Meta-analiza>« ali »a < b« v navadnem besedilu ostane.
+// Cirilske velike črke, ki jih ni med malimi dvojniki zgoraj (»<<МЕТА«).
+const VELIKI_DVOJNIKI = { M: "М", T: "Т", B: "В", H: "Н" };
 const crka = (c, male) => {
   const vse = male ? [c, c.toLowerCase()] : [c];
-  return `[${vse.map((x) => x + String.fromCodePoint(x.codePointAt(0) + 0xfee0)).join("")}${(DVOJNIKI[c.toLowerCase()] || "").toUpperCase()}${male ? DVOJNIKI[c.toLowerCase()] || "" : ""}${c === "C" ? (male ? "Čč" : "Č") : ""}]`;
+  return `[${vse.map((x) => x + String.fromCodePoint(x.codePointAt(0) + 0xfee0)).join("")}${(DVOJNIKI[c.toLowerCase()] || "").toUpperCase()}${VELIKI_DVOJNIKI[c] || ""}${male ? DVOJNIKI[c.toLowerCase()] || "" : ""}${c === "C" ? (male ? "Čč" : "Č") : ""}]`;
 };
 const blokIme = (n, male) => [...n].map((c) => crka(c, male)).join(`${IGN}*`);
 const S = `[\\s${IGN}]*`;
 const BLOKI = (imena, male = false) => imena.map((n) => blokIme(n, male)).join("|");
-const KONEC = `(?![\\p{L}\\p{N}_\\uFF3F])`;
+// Kot »\b« v meta.js: »<<RACUNč« meta.js prebere kot blok RACUN, zato šteje le črka ASCII, števka ali »_« za imenom.
+const KONEC = `(?![A-Za-z0-9_])`;
 // »<<IME … >>« (do prvega »>>«) in »<IME … >« ali »<IME … >>« (IZBIRE, CHOICES, META)
-const BLOK2 = new RegExp(`${ODPRI}${S}${ODPRI}${S}(${BLOKI(["META", "KARTICA", "RACUN", "IZBIRE", "CHOICES", "ODPRI", "GRAF", "SKICA"], true)})${KONEC}(?:([\\s\\S]*?)${ZAPRI}${S}${ZAPRI})?`, "gu");
-const BLOK1 = new RegExp(`${ODPRI}${S}(${BLOKI(["META", "IZBIRE", "CHOICES"])})${KONEC}(?:([\\s\\S]*?)${ZAPRI}(?:${S}${ZAPRI})?)?`, "gu");
+const BLOK2 = new RegExp(`${ODPRI}${S}${ODPRI}${S}(${BLOKI(["META", "KARTICA", "RACUN", "IZBIRE", "CHOICES", "ODPRI", "GRAF", "SKICA"], true)})${KONEC}(?:([\\s\\S]{0,1000}?)${ZAPRI}${S}${ZAPRI})?`, "gu");
+const BLOK1 = new RegExp(`${ODPRI}${S}(${BLOKI(["META", "IZBIRE", "CHOICES"])})${KONEC}(?:([\\s\\S]{0,1000}?)${ZAPRI}(?:${S}${ZAPRI})?)?`, "gu");
 const cisto = (t) => t.replace(new RegExp(IGN, "gu"), "").normalize("NFKC");
 export const neutralizeHiddenTags = (text) =>
   typeof text === "string"

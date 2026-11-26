@@ -367,3 +367,20 @@ test("pregled prevzema: pogoj, poskus, učenčev zapis, ≐ in izbran koren niso
     assert.ok(visibleIssue(t, parseClaims(t)), t);
   }
 });
+
+// Pregled prevzema 2 (AUDIT-064): premica, os ali asimptota ni rešitev; brez potrditve SymPy ni primerjave vidnega besedila.
+test("pregled prevzema 2 (AUDIT-064): asimptota in os simetrije, le potrjeni bloki", async () => {
+  const { visibleIssue, checkAnswerClaims } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  for (const t of [R`Ničla: $x = -1$. Navpična asimptota: $x = 1$, vodoravna: $y = 1$.` + block("resi: (x+1)/(x-1)=0 | x | -1"), R`Os simetrije je premica $x = 2$, ničli sta $x_1 = 1$ in $x_2 = 3$.` + block("resi: x^2-4*x+3=0 | x | 1, 3"), R`Pol funkcije je pri $x = 1$, ničla je $x = -1$.` + block("resi: (x+1)/(x-1)=0 | x | -1")]) {
+    assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  }
+  const wrong = R`Ničla je $x = 1$.` + block("resi: (x+1)/(x-1)=0 | x | -1");
+  assert.ok(visibleIssue(wrong, parseClaims(wrong)), "napačna ničla ostane ujeta");
+  // nepotrjen ali napačen blok: brez »the answer text states …« (s SymPy ga ujame preverba bloka sama)
+  for (const t of [R`$2x = 8$, torej $x = 4$.` + block("resi: 2*x+3=11 | x | 5"), R`Rešitvi sta $x_1 = 2$ in $x_2 = 3$.` + block("resi: x^2-5*x+6=0 | x | 2")]) {
+    const r = await checkAnswerClaims(t);
+    assert.doesNotMatch(r.issue || "", /answer text states/, t);
+  }
+});

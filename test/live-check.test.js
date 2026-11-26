@@ -1310,3 +1310,64 @@ test("pregled prevzema (5): »če«, poskus in pogosta zmota niso trditev; »Če
   for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
   for (const [q, a] of [[AR, R`Če najprej množimo: $7 \cdot 8 = 54$, potem prištejemo 2.`], [EQ, R`Če od obeh strani odštejemo 3: $2x = 8$. Torej $x = 5$.`], [EQ, R`Vstavimo $x = 1$: leva stran je $5$. Rešitev je $x = 5$.`]]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
 });
+
+// Pregled prevzema 2 (26. 11.): časovne meje (ReDoS) in lažni alarmi, ki jih main ni imel.
+test("pregled prevzema 2 (A, B, D): isClaim, gol rezultat in dolgi odgovori v linearnem času", async () => {
+  const { isClaim } = await import("../server/live-check.js");
+  const { visibleIssue, parseClaims } = await import("../server/racun.js");
+  const R = String.raw;
+  const ms = (f) => {
+    const s = performance.now();
+    f();
+    return performance.now() - s;
+  };
+  // A (AUDIT-059): prej > 30 s
+  for (const t of ["x = 5" + " ne".repeat(18) + " y?", "x = 5" + " ne".repeat(400) + " y?", "1" + " ".repeat(100) + "x?", "(" + "1 ".repeat(50) + "= 5 x?", "5" + " m".repeat(50) + " x?"]) {
+    assert.ok(ms(() => isClaim(t)) < 100, t.slice(0, 30));
+  }
+  for (const t of ["x = 5?", "je 7 · 8 = 54?", "mogoče 12?", "x = 4, ne?", "a je 5 m/s?"]) assert.equal(isClaim(t), true, t);
+  for (const t of ["Kaj dobim, če je x = 5?", "Kaj pa 3x = 15?"]) assert.equal(isClaim(t), false, t);
+  // B (AUDIT-069): prej 34 s oziroma > 20 s
+  const q = R`Izračunaj $7 \cdot 8$.`;
+  for (const a of ["Rezultat: 56" + " ".repeat(140) + "!x", "Rezultat: 56" + " ".repeat(20000) + "!x", "1" + " ".repeat(250) + "x", "**Rezultat:** " + "1 ".repeat(5000) + "x"]) {
+    assert.ok(ms(() => codeFindings(a, presolve(q), q)) < 300, a.slice(0, 20));
+  }
+  // D (AUDIT-066, AUDIT-064): ena dolga vrstica s tisoč zapisi, prej kvadratno (40 kB visibleIssue 12 s)
+  const line = R`Velja $7 \cdot 8 = 56$, zato je $x = 4$. `.repeat(1000);
+  const eq = "Reši $2x + 3 = 11$.";
+  assert.ok(ms(() => codeFindings(line, presolve(eq), eq)) < 1500);
+  const t40 = line + "\n<<RACUN\nresi: 2*x+3=11 | x | 4\n>>";
+  const claims = parseClaims(t40);
+  assert.ok(ms(() => visibleIssue(t40, claims)) < 300);
+});
+
+test("pregled prevzema 2 (AUDIT-063): opomnik pravila, druga funkcija, pogosta napaka in relacija za odvodom", () => {
+  const R = String.raw;
+  const none = [
+    ["Odvajaj $f(x) = \\sin(2x)$.", R`Spomni se pravila: za $y = \sin x$ je $y' = \cos x$.` + "\nKaj se spremeni, ko je v sinusu $2x$ namesto $x$?"],
+    ["Odvajaj $f(x) = x^2 + \\sin x$.", R`Odvajamo vsak člen posebej. Spomni se, $y = x^2$ ima $y' = 2x$ – to je prvi del.`],
+    ["Odvajaj $f(x) = x^2 + \\sin x$.", R`Za $y = x^2$ velja $y' = 2x$.`],
+    ["Odvajaj $f(x) = \\sin(2x)$.", R`Pogosta napaka: $f'(x) = \cos(2x)$ – pozabimo na odvod notranje funkcije.` + "\n" + R`Pravilno: $f'(x) = 2\cos(2x)$.`],
+    ["Odvajaj $f(x) = x^3 + 1$.", R`$f'(x) = 3x^2 \geq 0$`],
+    ["Odvajaj $f(x) = x^3 + 1$.", R`$f'(x) = 3x^2 \ge 0$`],
+    ["Odvajaj $f(x) = x^3 + 1$.", R`$f'(x) = 3x^2 > 0$ za $x \neq 0$`],
+    ["Odvajaj $f(x) = x^3 + 1$.", R`$f'(x) = 3x^2 \neq 0$`],
+    ["Odvajaj $f(x) = x^3 + 1$.", R`$f'(x) = 3x^2 \Rightarrow f'(1) = 3$`],
+  ];
+  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  for (const [q, a] of [["Odvajaj $f(x) = x^2 e^x$.", R`Produktno pravilo: $f'(x) = 2x e^x$.`], ["Odvajaj $h(x) = \\sin(2x)$.", R`Zunanja je sinus, notranja $2x$, torej $h'(x) = \cos(2x)$.`], ["Odvajaj $x^3$.", R`$y = x^3$, zato $y' = 2x$.`]]) {
+    assert.ok(codeFindings(a, presolve(q), q).issue, a);
+  }
+});
+
+test("pregled prevzema 2 (AUDIT-066, AUDIT-069): vprašanje s »če« pred računom, »Npr.«, mešano število", () => {
+  const R = String.raw;
+  assert.equal(codeFindings(R`Kaj dobiš, če pozabiš na oklepaj? $2 + 3 \cdot 4 = 20$.`, null, "").issue, null);
+  assert.ok(codeFindings(R`Ali veš, zakaj? Velja $2 + 3 \cdot 4 = 20$.`, null, "").issue, "vprašanje brez »če« ostane ločeno");
+  const eq = "Reši enačbo $4x + 2 = 18$.";
+  assert.equal(codeFindings(R`Pomagaj si z obratnimi operacijami. Npr. pri $x + 3 = 5$ odšteješ 3 in dobiš $x = 2$. Kaj narediš pri svoji enačbi najprej?`, presolve(eq), eq).issue, null);
+  assert.ok(codeFindings(R`Npr. pri $x + 3 = 5$ odšteješ 3. Rešitev je $x = 2$.`, presolve(eq), eq).issue, "stavek za primerom je trditev");
+  const fr = R`Izračunaj $\frac{10}{3}$.`;
+  assert.equal(codeFindings("Odgovor: 3 1/3", presolve(fr), fr).issue, null);
+  assert.ok(codeFindings("Odgovor: 3 2/3", presolve(fr), fr).issue);
+});

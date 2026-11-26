@@ -254,3 +254,11 @@ test("AUDIT-059 (pregled): prava vprašanja z vrednostjo niso trditve", () => {
   for (const t of ["x=5 ?", "x = -3?", "x = 1/2?", "x = 0,5?", "morda 12?", "12 cm?", "-3?", "3,5?", "7·8=56, prav?", "Ali je rezultat 56?", "torej 56?", "x = 4, ne?", "x je 4?", "Je x = 4?", "y = 7?", "a = 3 cm?", "v = 20 m/s?", "F = 6 N?", "potem 8?", "rezultat je 8?", "x1 = 2?", "x = 2 ali x = 3?", "2x = 8?"]) assert.equal(isClaim(t, ""), true, t);
   for (const t of ["Koliko je x, če je y = 3?", "Kaj je 2 + 2 = ?", "Kako rešim x^2 = 9?", "Kaj pomeni a = 5 v nalogi?", "Kaj dobim, če je x = 5?", "Kdaj velja a = b?", "Lahko narediš še eno z x = 2?", "A mi lahko daš nalogo 5?", "Kaj je naloga 12?", "Koliko je 15 % od 80?", "Kaj, če je g = 10?", "Ali lahko vzamem g = 10 m/s²?", "Kateri je naslednji korak pri 2x = 8?", "Kaj pomeni f(x) = 2x?"]) assert.equal(isClaim(t, ""), false, t);
 });
+
+// Pregled prevzema 2 (AUDIT-060): inštruktor, ki napačen korak zavrne z izračunanim preizkusom, sodbe ni prezrl.
+test("pregled prevzema 2 (AUDIT-060): »…, kar ni 11. Poskusi znova.« in »\\neq« sta zavrnitev", async () => {
+  const { verdictIgnored } = await import("../server/sodba-koraka.js");
+  const R = String.raw;
+  for (const a of [R`Vstavi $x = 5$: $2 \cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.`, R`Preveri: $2 \cdot 5 + 3 = 13 \neq 11$.`, "Vstavi: dobiš 13, ni 11. Poskusi še enkrat."]) assert.equal(verdictIgnored(a, { wrong: true }), false, a);
+  for (const a of ["Da, pravilno!", "Bravo, x = 5 je prav.", "Pravilno, to ni bilo težko."]) assert.equal(verdictIgnored(a, { wrong: true }), true, a);
+});

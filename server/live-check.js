@@ -195,21 +195,51 @@ export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne dr
 // (»zmota«, »napaka«), pogojniku (»bi dobil«, »would«) in poskusu. Kemijske preverbe še naprej uporabljajo širši SKIP_LINE.
 export const ARITH_SKIP_LINE = /napačn|napak|zmot|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|preizkus|predpostav|recimo|denimo|tvoj|na listu|pri tebi|✗|(?<!\p{L})(bi|would|wrong|incorrect|mistake|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|rekel|rekla|imaš|imas|poglej|extraneous|reject)(?!\p{L})/iu;
 // Le za vrednosti neznanke (ne za račune) in le v tem stavku: vstavljena ali izbrana vrednost je poskus, ne rešitev
-// (»Vstavimo $x = 1$: …«, »Če vzamemo $x = 5$ …«), pregled prevzema 26. 11.
-const VALUE_SKIP = /(?<!\p{L})(vstavi\p{L}*|vstavlj\p{L}*|vzam\p{L}*|vzemi\p{L}*|izber\p{L}*|izbira\p{L}*|primer\p{L}*|substitut\p{L}*|plug\p{L}*|try|trying)(?!\p{L})/iu;
-// Pogoj tik pred zapisom: »Za $x = 3$ je leva stran 9«, »pri $x = 2$«, »ko je $x = 0$«.
-const COND_BEFORE = /(?:^|[\s(,:;])(?:za|pri|ko(?:\s+je)?|če(?:\s+je)?|kadar(?:\s+je)?|for|if|when|at)\s*$/iu;
+// (»Vstavimo $x = 1$: …«, »Če vzamemo $x = 5$ …«), primer (»Npr. pri $x + 3 = 5$ … dobiš $x = 2$«), pregled prevzema.
+const VALUE_SKIP = /(?<!\p{L})(vstavi\p{L}*|vstavlj\p{L}*|vzam\p{L}*|vzemi\p{L}*|izber\p{L}*|izbira\p{L}*|primer\p{L}*|npr|denimo|substitut\p{L}*|plug\p{L}*|try|trying|e\.g)(?!\p{L})/iu;
+// Premica, os ali asimptota v delu stavka tik pred zapisom: »Navpična asimptota: $x = 1$«, »Os simetrije je premica
+// $x = 2$« (vrednost ni rešitev enačbe; pregled prevzema 2).
+const LINE_WORD = /asimptot|premic|simetrij|navpičn|vodoravn|asymptot|(?<!\p{L})(os|osi|osjo|pol|pola|polu|polom|axis|line)(?!\p{L})/iu;
+// Pogoj tik pred zapisom: »Za $x = 3$ je leva stran 9«, »pri $x = 2$«, »ko je $x = 0$« (le zadnjih nekaj znakov: linearno).
+const COND_BEFORE = /[\s(,:;](?:za|pri|ko(?:\s+je)?|če(?:\s+je)?|kadar(?:\s+je)?|for|if|when|at)$/iu;
+function condBefore(l, idx) {
+  const t = l.slice(Math.max(0, idx - 40), idx).trimEnd();
+  return COND_BEFORE.test((idx <= 40 ? " " : "") + t.slice(-14));
+}
 const maskMath = (line) => String(line).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, (m) => "$" + "x".repeat(m.length - 2) + "$");
+// Krajšave s piko ne končajo stavka (»Npr. pri $x + 3 = 5$ …«).
+const ABBR = /(?<!\p{L})(?:npr|tj|oz|itd|ipd|prim|str|št|op|e\.g|i\.e)\.$/iu;
+// Ena vrstica se prebere enkrat (pregled prevzema 2: prej so se skrivanje zapisov in meje stavkov računali za vsak zapis
+// posebej, 40 kB odgovora je trajalo sekunde): skrita vrstica, konci stavkov in preskok vrstice.
+let lineCache = { line: null };
+function lineInfo(l) {
+  if (lineCache.line === l) return lineCache;
+  const masked = maskMath(l);
+  const ends = [];
+  for (const m of masked.matchAll(/[.!?](?=\s|$)/g)) if (!(m[0] === "." && ABBR.test(masked.slice(Math.max(0, m.index - 5), m.index + 1)))) ends.push(m.index);
+  lineCache = { line: l, masked, ends, skipLine: ARITH_SKIP_LINE.test(l), skipWide: SKIP_LINE.test(l) };
+  return lineCache;
+}
+// Prvi konec stavka na mestu idx ali za njim (bisekcija) → indeks v ends ali ends.length.
+function endAt(ends, idx) {
+  let lo = 0;
+  let hi = ends.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (ends[mid] < idx) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
 // Stavek, v katerem je mesto idx: zapisi se pred iskanjem meje skrijejo, da decimalna pika ali »?« v zapisu ne konča
-// stavka. → { text, at } (at = mesto zapisa v stavku)
+// stavka. → { text, at, prev } (at = mesto zapisa v stavku, prev = prejšnji stavek v vrstici)
 function sentenceAt(line, idx) {
-  const masked = maskMath(line);
-  let start = 0;
-  for (const m of masked.slice(0, idx).matchAll(/[.!?](?=\s)/g)) start = m.index + 1;
-  const rest = masked.slice(idx);
-  const e = rest.search(/[.!?](?=\s|$)/);
-  const end = e < 0 ? masked.length : idx + e + 1;
-  return { text: masked.slice(start, end), at: idx - start };
+  const { masked, ends } = lineInfo(String(line));
+  const k = endAt(ends, idx);
+  const start = k > 0 ? ends[k - 1] + 1 : 0;
+  const end = k < ends.length ? ends[k] + 1 : masked.length;
+  const prevStart = k > 1 ? ends[k - 2] + 1 : 0;
+  return { text: masked.slice(start, end), at: idx - start, prev: k > 0 ? masked.slice(prevStart, start) : "" };
 }
 // Stavek, ki se konča z »?«, je vprašanje: računi in vrednosti v njem niso trditve (»Če je $x = 3$, kaj dobiš?«,
 // »Ali je $x = 3$ rešitev?«). Velja le za ta stavek, ne za celo vrstico (»Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.«).
@@ -224,17 +254,22 @@ export function inQuestion(line, idx) {
  *  - zapis pred »če« v istem stavku (»… = 70 dobiš, če najprej sešteješ«), v pogoju »če …« do vejice ali dvopičja
  *    (»Če vzamemo $x = 5$, …«) ali za pogojem z drugo osebo (»Če pozabiš na oklepaj, dobiš …«: učenčev namišljen
  *    korak). Za pogojem v prvi osebi množine (»Če najprej množimo: $7 \cdot 8 = 54$«) zapis JE trditev;
+ *  - zapis na začetku stavka tik za vprašanjem s »če« (»Kaj dobiš, če pozabiš na oklepaj? $2 + 3 \cdot 4 = 20$.«);
  *  - mesta zapisa ni mogoče najti: odloči širši SKIP_LINE (kot na main).
- * value: vrednost neznanke (»$x = 5$«), kjer šteje še pogoj tik pred zapisom in poskus v stavku (VALUE_SKIP).
+ * value: vrednost neznanke (»$x = 5$«), kjer šteje še pogoj tik pred zapisom, poskus ali primer v stavku (VALUE_SKIP)
+ * ter premica, os ali asimptota tik pred zapisom (LINE_WORD).
  */
 export function notClaimAt(line, idx, { value = false } = {}) {
   const l = String(line || "");
-  if (ARITH_SKIP_LINE.test(l)) return true;
-  if (!(idx >= 0)) return SKIP_LINE.test(l);
-  if (value && COND_BEFORE.test(l.slice(0, idx))) return true;
-  const { text, at } = sentenceAt(l, idx);
+  const info = lineInfo(l);
+  if (info.skipLine) return true;
+  if (!(idx >= 0)) return info.skipWide;
+  if (value && condBefore(l, idx)) return true;
+  const { text, at, prev } = sentenceAt(l, idx);
   if (value && VALUE_SKIP.test(text)) return true;
+  if (value && LINE_WORD.test(text.slice(0, at).split(/[,;]/).at(-1))) return true;
   if (/\?\s*$/.test(text) || /(?<!\p{L})(ali|or)(?!\p{L})/iu.test(text)) return true;
+  if (!text.slice(0, at).replace(/[\s$]/g, "") && /\?\s*$/.test(prev) && /(?<!\p{L})(če|if)(?!\p{L})/iu.test(prev)) return true;
   for (const m of text.matchAll(/(?<!\p{L})(če|if)(?!\p{L})/giu)) {
     if (at < m.index) return true;
     const stop = text.slice(m.index).search(/[,:;–—]/);
@@ -341,7 +376,10 @@ const derivLhs = (names) => {
   const prime = String.raw`\s*(?:'|\^\{?\\prime\}?|′)(?!\s*(?:'|\^|′))`;
   return new RegExp(String.raw`^(?:${n}${prime}\s*\(\s*x\s*\)|y${prime}|\\frac\s*\{\s*d\s*${n}?\s*\}\s*\{\s*dx\s*\}(?:\s*\\left)?\s*\(?.*)$`); // le prvi odvod (f'' je drugi)
 };
-const DERIV_SKIP_LINE = /primer|example|npr\.|notranj|zunanj|inner|outer|pomožn|auxiliary/iu;
+// Primer, opomnik pravila (»Spomni se pravila: za $y = \sin x$ je $y' = \cos x$«) in pogosta napaka niso odgovor
+// (pregled prevzema 2). Beseda »pravilo« sama ne (»Produktno pravilo: $f'(x) = …$« je odgovor).
+// Notranja/zunanja funkcija ni več razlog za preskok: pomožne »g'(x)« izloči ime, »za $y = x^2$« pa definicija druge funkcije.
+const DERIV_SKIP_LINE = /primer|example|npr\.|spomni|remember|recall|napak|zmot|(?<!\p{L})(?:mistake|error)/iu;
 const derivFn = (tex) => {
   try {
     const f = compile(parse(calcText(prep(texToText(String(tex).replace(/\\(?:mathrm|operatorname|text)\s*\{\s*e\s*\}/g, "e"))), { comma: false })));
@@ -356,17 +394,40 @@ const derivFn = (tex) => {
 // Pogoj ali opomba za izrazom odvoda ni del izraza.
 const cutCondition = (x) =>
   x
-    .replace(/\s*(?:\\q?quad|\\text\s*\{(?!\s*e\s*\})|\\mbox|\\[;:]|,\s*\\[,;:! ]|\\in(?![a-zA-Z])|\\forall|\\mathbb|\s(?:za|for)\s).*$/s, "")
+    .replace(/\s*(?:\\q?quad|\\text\s*\{(?!\s*e\s*\})|\\mbox|\\[;:]|,\s*\\[,;:! ]|\\in(?![a-zA-Z])|\\forall|\\mathbb|\\(?:geq|ge|leq|le|neq|ne|gt|lt|Rightarrow|rightarrow|implies|to)(?![a-zA-Z])|[<>≤≥≠⇒→]|\s(?:za|for)\s).*$/s, "")
     .trim()
     .replace(/[.,;]$/, "")
     .trim();
 function derivativeIssue(answer, p) {
   const want = derivFn(String(p.answerTex || p.answer).split("=").at(-1));
   if (!want) return null;
-  const lhs = derivLhs([p.fname || "f", "y"]);
+  const names = [p.fname || "f", "y"];
+  const lhs = derivLhs(names);
+  // Vrstica, ki z istim imenom definira drugo funkcijo kot naloga (»$y = x^2$ ima $y' = 2x$« pri nalogi x² + sin x), ne
+  // govori o odvodu naloge.
+  const task = derivFn(String(p.problemTex || "").split("=").at(-1));
+  const defRe = new RegExp(String.raw`^\s*(?:[${[...new Set(names)].join("")}]\s*\(\s*x\s*\)|y)\s*$`);
+  const xs = [0.37, 1.3, 2.1, -0.8, 3.7];
+  const same = (f, g) => {
+    if (!f || !g) return null;
+    let n = 0;
+    for (const x of xs) {
+      const a = f(x);
+      const b = g(x);
+      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+      n++;
+      if (Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return "diff";
+    }
+    return n ? "match" : null;
+  };
+  const otherDef = (line) =>
+    [...line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)].some((m) => {
+      const parts = (m[1] ?? m[2]).split("=");
+      return parts.length === 2 && defRe.test(parts[0]) && same(task, derivFn(cutCondition(parts[1].trim()))) !== "match";
+    });
   const found = [];
   for (const line of String(answer).split("\n")) {
-    if (SKIP_LINE.test(line) || DERIV_SKIP_LINE.test(line)) continue;
+    if (SKIP_LINE.test(line) || DERIV_SKIP_LINE.test(line) || otherDef(line)) continue;
     for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
       const tex = m[1] ?? m[2];
       if (/\\approx|≈|\\pm|±/.test(tex)) continue;
@@ -378,21 +439,8 @@ function derivativeIssue(answer, p) {
     }
   }
   if (!found.length) return null;
-  const xs = [0.37, 1.3, 2.1, -0.8, 3.7];
   // Vrednost enaka odvodu v vseh točkah: »match«; v kateri točki drugačna: »diff«; ni mogoče prebrati: null.
-  const judge = (rhs) => {
-    const got = derivFn(rhs);
-    if (!got) return null;
-    let n = 0;
-    for (const x of xs) {
-      const a = want(x);
-      const b = got(x);
-      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
-      n++;
-      if (Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return "diff";
-    }
-    return n ? "match" : null;
-  };
+  const judge = (rhs) => same(want, derivFn(rhs));
   if (found.some((f) => f.rhs.map(judge).includes("match"))) return { checked: 1, issue: null };
   const last = found.at(-1);
   if (last.rhs.map(judge).some((v) => v === null)) return { checked: 0, issue: null };
@@ -405,29 +453,44 @@ function derivativeIssue(answer, p) {
 // Pregled prevzema (26. 11.): le kadar je vprašanje samo ta račun (p.whole: »Izračunaj $…$«, »Koliko je …?«), ne pri
 // besedilni nalogi, kjer je račun le del (»Koliko je $\frac{3}{4}$ od 200?«, »Zaokroži $\frac{17}{3}$ …«), in le zadnja
 // vrstica z rezultatom, za katero ni več števil (vmesni »Rezultat:« po korakih ali preizkus za njim: brez sodbe).
-const RESULT_LINE = /(?:^|\n)\s*[*_]*(?:rezultat|odgovor|rešitev|result|answer)[*_]*\s*(?:je|is)?\s*[:=]?\s*[*_]*\s*\$?\s*(?:[a-zA-Z]\s*=\s*)?([-−+]?\d[\d\s.,]*(?:\/\d+)?)\s*\$?[*_]*(?:\s*[\p{L}%€°]{0,6}\.?)?\s*[*_]*\s*(?=\n|$)/giu;
-const BARE_ANSWER = /^\s*[*_]*\s*\$?\s*([-−+]?\d[\d\s.,]*(?:\/\d+)?)\s*\$?\s*[*_]*\s*[.!]?\s*$/u;
+// Brez polinomskega vračanja (pregled prevzema 2: »Rezultat: 56« + 140 presledkov + »!x« je trajalo 34 s): presledki se
+// najprej strnejo v enega, vrstica z rezultatom se išče po vrsticah (največ 160 znakov), gol odgovor le do 80 znakov.
+const RESULT_LINE = /^[*_]*(?:rezultat|odgovor|rešitev|result|answer)[*_]* ?(?:(?:je|is) ?)?(?:[:=] ?)?[*_]* ?\$? ?(?:[a-zA-Z] ?= ?)?([-−+]?\d[\d .,]*?(?:\/\d+)?) ?\$?[*_]*(?: ?[\p{L}%€°]{1,6}\.?)? ?[*_]*$/iu;
+const BARE_ANSWER = /^[*_]* ?\$? ?([-−+]?\d[\d .,]*?(?:\/\d+)?) ?\$? ?[*_]* ?[.!]?$/u;
 function finalResult(a) {
-  const all = [...a.matchAll(RESULT_LINE)];
-  const m = all.at(-1);
-  return m && !/\d/.test(a.slice(m.index + m[0].length)) ? m : null;
+  const lines = a.split("\n");
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const l = lines[i].trim();
+    if (!l) continue;
+    const m = l.length <= 160 ? RESULT_LINE.exec(l) : null;
+    if (m) return m;
+    if (/\d/.test(l)) return null; // za zadnjo vrstico z rezultatom so še števila (preizkus, nov korak): brez sodbe
+  }
+  return null;
+}
+// »3 1/3« je mešano število (10/3), ne 31/3; »1 000« so tisočice.
+function resultValue(t) {
+  const mixed = /^([-−+]?)(\d+) (\d+)\/(\d+)$/.exec(t);
+  if (mixed) return { x: (mixed[1] && mixed[1] !== "+" ? -1 : 1) * (Number(mixed[2]) + Number(mixed[3]) / Number(mixed[4])), raw: t };
+  const raw = joinThousands(t).replace(/\s+/g, "").replace(/[.,]$/, "");
+  if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(raw)) return null; // »1.000«: tisočice ali decimalke?
+  const x = num(raw);
+  return x === null ? null : { x, raw };
 }
 function bareResultIssue(answer, p) {
   if (!p.whole) return null;
-  const a = String(answer || "");
+  const a = String(answer || "").replace(/[^\S\n]+/g, " ").replace(/ ?\n[\s]*/g, "\n").trim();
   // ves odgovor je en sam zapis »$… = 317$«: zadnji del je rezultat
-  const only = /^\s*(?:[*_]*(?:rezultat|odgovor|rešitev)[*_:\s]*)?\$([^$\n]+)\$\s*[.!]?\s*$/iu.exec(a);
-  const tail = only && !/\\approx|≈/.test(only[1]) ? /=\s*([-−+]?\d[\d\s.,{}\\]*)\s*(?:\\[,;:! ]\s*)?(?:\\(?:mathrm|text)\s*\{[^{}]*\}|€|\\%)?\s*$/.exec(only[1]) : null;
-  const m = BARE_ANSWER.exec(a) || finalResult(a) || (tail && [tail[0], tail[1].replace(/\{,\}/g, ",").replace(/\\,|\\ |[{}\\]/g, "")]);
+  const only = a.length <= 300 ? /^(?:[*_]*(?:rezultat|odgovor|rešitev)[*_: ]*)?\$([^$\n]+)\$ ?[.!]?$/iu.exec(a) : null;
+  const tail = only && !/\\approx|≈/.test(only[1]) ? /= ?([-−+]?\d[\d .,{}\\]*?) ?(?:\\[,;:! ] ?)?(?:\\(?:mathrm|text) ?\{[^{}]*\}|€|\\%)? ?$/.exec(only[1]) : null;
+  const m = (a.length <= 80 && BARE_ANSWER.exec(a)) || finalResult(a) || (tail && [tail[0], tail[1].replace(/\{,\}/g, ",").replace(/\\,|\\ |[{}\\]/g, "")]);
   if (!m) return null;
-  const raw = joinThousands(m[1].trim()).replace(/\s+/g, "").replace(/[.,]$/, "");
-  if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(raw)) return null; // »1.000«: tisočice ali decimalke?
-  const x = num(raw);
+  const v = resultValue(m[1].trim());
   const y = num(texToText(String(p.answerTex)));
-  if (x === null || y === null) return null;
-  const dec = /[.,](\d+)$/.exec(raw)?.[1].length ?? 0;
+  if (!v || y === null) return null;
+  const dec = /[.,](\d+)$/.exec(v.raw)?.[1].length ?? 0;
   const tol = Math.max(0.5 * 10 ** -dec * (dec ? 1 : 0), 1e-9 * Math.max(1, Math.abs(y)));
-  if (Math.abs(x - y) <= tol * (1 + 1e-9)) return { checked: 1, issue: null };
+  if (Math.abs(v.x - y) <= tol * (1 + 1e-9)) return { checked: 1, issue: null };
   return { checked: 1, issue: `the stated result ${m[1].trim()} is wrong: $${p.problemTex} = ${p.answerTex}$` };
 }
 
@@ -1121,11 +1184,16 @@ export function noteReviewSkip(db, stopnja, reason) {
 
 // Učenčevo sporočilo je rezultat ali trditev, o kateri bo inštruktor sodil: število, enačba, zapis
 // z »=«, ali odgovor (ne vprašanje) na inštruktorjevo vprašanje.
-const CQ_NUM = String.raw`[-−+]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?(?:\s*(?:[A-Za-zµΩ]{1,4}(?:\/[A-Za-z]{1,3})?[²³]?))?`;
-const CQ_LHS = String.raw`(?:[a-zA-Z](?:_?\{?\d\}?)?|\d+[a-zA-Z]|[\d(][\d.,\s+\-−*·×:/()^]*)`;
+// Brez dvoumnih zaporednih \s* v ponovljeni skupini (pregled prevzema 2: »x = 5« + 18 × » ne« + » y?« je trajalo > 30 s):
+// enota ne sme biti beseda repa (»ne«, »ali« …), med deli je vejica ali presledek (ne oboje kot dva \s*), rep največ 3-krat,
+// sporočilo največ CQ_MAX znakov.
+const CQ_TAIL_WORD = String.raw`(?:ali|ne|prav|kajne|a ne|res|right)(?![\p{L}])`;
+const CQ_NUM = String.raw`[-−+]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?(?:\s*(?!${CQ_TAIL_WORD})[A-Za-zµΩ]{1,4}(?:\/[A-Za-z]{1,3})?[²³]?(?![\p{L}]))?`;
+const CQ_LHS = String.raw`(?:[a-zA-Z](?:_?\{?\d\}?)?|\d+[a-zA-Z]|[\d(][\d.,+\-−*·×:/()^ ]{0,60}?)`;
 const CQ_VAL = String.raw`(?:${CQ_LHS}\s*(?:=|je)\s*${CQ_NUM}|${CQ_NUM})`;
+const CQ_MAX = 120;
 const CLAIM_QUESTION = new RegExp(
-  String.raw`^\s*(?:(?:a|ali)\s+)?(?:je\s+)?(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)?\s*${CQ_VAL}(?:\s*,?\s*(?:ali|ne|prav|kajne|a ne|res|right)\s*(?:${CQ_VAL})?)*\s*\?+\s*$`,
+  String.raw`^(?:(?:a|ali)\s+)?(?:je\s+)?(?:(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)\s*)?${CQ_VAL}(?:(?:\s*,\s*|\s+)${CQ_TAIL_WORD}(?:\s*${CQ_VAL})?){0,3}\s*\?+$`,
   "iu",
 );
 export function isClaim(text, prevTutor = "") {
@@ -1134,7 +1202,7 @@ export function isClaim(text, prevTutor = "") {
   // Vprašanje ni trditev, razen če je VSE sporočilo predlog vrednosti ali rezultata (»x = 5?«, »je 7 · 8 = 54?«,
   // »mogoče 12?«, »x = 4, ne?«): tak negotov odgovor je trditev, o kateri inštruktor sodi (AUDIT-059). Vprašanje z
   // drugimi besedami (»Kaj dobim, če je x = 5?«, »Lahko narediš še eno z x = 2?«, »Kaj pa 3x = 15?«) ostane vprašanje.
-  if (/\?\s*$/.test(t)) return CLAIM_QUESTION.test(t);
+  if (/\?\s*$/.test(t)) return t.length <= CQ_MAX && CLAIM_QUESTION.test(t.replace(/\s+/g, " "));
   if (/\d|=/.test(t)) return true;
   return /\?\s*$/.test(String(prevTutor || "").trim()) && /\p{L}{2,}/u.test(t);
 }

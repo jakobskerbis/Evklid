@@ -1501,12 +1501,12 @@ export function createApp(store, opts = {}) {
       const textOf = (m) => (Array.isArray(m.content) ? m.content : [{ text: m.content }]).map((b) => b.text || "").join("\n");
       const prevTutor = fullHistory.filter((m) => m.role === "assistant").at(-1);
       const prevTutorText = prevTutor ? stripMeta(textOf(prevTutor)) : "";
-      const claim = !pre && liveCheckOn() && !cached && !image && !win && !hinted && !isFirst && isClaim(text, prevTutorText);
+      const claimAsked = !pre && liveCheckOn() && !cached && !image && !win && !hinted && !isFirst && isClaim(text, prevTutorText);
       // Naloga je zadnja, ki jo je reševalnik rešil (prvo sporočilo ali poznejša »Reši …«): učenčev rezultat
       // sodi koda le proti nalogi, o kateri pogovor zdaj teče.
       // Če je učenec po tej nalogi poslal še eno, ki je reševalnik ne zna (»Kaj pa 3x = 15?«), koda ne sodi.
       let firstPre = null;
-      if (claim) {
+      if (claimAsked) {
         // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
         const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text) && !isImagePlaceholder(x.text)) } : m);
         const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
@@ -1519,7 +1519,10 @@ export function createApp(store, opts = {}) {
       }
       // Sodba kode (server/sodba-koraka.js): računi v sporočilu, enačba proti nalogi ali inštruktorjevi zadnji enačbi,
       // končna vrednost. { wrong, finding, note } ali null, ko koda ne more soditi (tedaj sodbo pregleda model).
-      const codeVerdict = claim ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText }) : null;
+      const codeVerdict = claimAsked ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText }) : null;
+      // Vprašanje-predlog (»x = 5?«, »je 7 · 8 = 54?«, AUDIT-059) je trditev le, ko o njem sodi koda; sicer kot na main
+      // (vprašanje): brez plačanega pregleda sodbe in brez zadrževanja odgovora (pregled prevzema 2).
+      const claim = claimAsked && (!/\?\s*$/.test(text) || !!codeVerdict);
       const notes = [pre?.note, codeVerdict?.note].filter(Boolean).join("\n");
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
       // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
@@ -1759,7 +1762,7 @@ export function createApp(store, opts = {}) {
             if (!controller.signal.aborted) console.warn(`[evklid] popravek ni uspel: ${e?.message || e}`);
           }
         }
-        // Koda je napako dokazala, popravka z modelom pa ni (meja porabe, izklopljen, napaka klica): popravek brez modela,
+        // Koda je napako dokazala, popravka z modelom pa ni (meja porabe, napaka klica; ob izklopljenem popravku nič): popravek brez modela,
         // da učenec napake ne dobi brez opozorila (AUDIT-060). Model, ki je odgovoril »OK«, je napako zavrnil: ostane brez.
         if (issue && !fix && !fixTried && liveFixOn() && !controller.signal.aborted && !/^a reviewer reported/.test(issue)) {
           fix = codeFixBlock(issue, student.settings.language || "sl");
