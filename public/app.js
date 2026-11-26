@@ -2704,7 +2704,9 @@ const input = $("#input");
 function autoGrow(stick, again) {
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-  const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
+  // Ležeč telefon (UX PR 2): dolgo vprašanje (npr. iz 3D sveta ali poskusa) ne vzame sporočil, polje največ tri vrstice.
+  const lezece = matchMedia("(orientation: landscape) and (max-height: 500px)").matches;
+  const max = lezece ? 72 : Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
   input.style.maxHeight = `${max}px`;
   input.style.height = "auto";
   // Formule (ulomek, koren …) se izrišejo kar v polju (public/predogled-vnosa.js): višina po izrisu, ne po surovem zapisu.

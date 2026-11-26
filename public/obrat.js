@@ -9,9 +9,13 @@ const NA_DNU = 8; // px: »na dnu« (app.js za nova sporočila uporablja 80 px, 
 // Drsni deli z najnovejšim spodaj (klepet): ko gre vsebina cela na zaslon (ne drsi), so tudi »na dnu«.
 const DNO_NAJPREJ = "#messages";
 
+// Zgornji rob vidnega dela: pri dokumentu (scrollingElement) je to vrh okna, ne vrh strani (pravokotnik <html> je pri
+// drsenju nad oknom, zato bi bil sidro vedno prvi element strani, ne viden).
+const vrhV = (sc) => (sc === document.scrollingElement ? 0 : sc.getBoundingClientRect().top);
+
 // Element na vrhu vidnega dela: med otroki prvi, ki sega pod zgornji rob; v visok vsebnik se spustimo.
 function sidroV(sc) {
-  const vrh = sc.getBoundingClientRect().top;
+  const vrh = vrhV(sc);
   let el = sc;
   for (let globina = 0; globina < 12; globina++) {
     let nasel = null;
@@ -35,7 +39,7 @@ function zapomni(sc) {
   const dno = sc.scrollHeight - sc.clientHeight - sc.scrollTop <= NA_DNU && (sc.scrollTop > 0 || sc.matches(DNO_NAJPREJ));
   const sidro = dno || sc.scrollTop <= 0 ? null : sidroV(sc);
   sledeni.delete(sc); // na konec: pri več kot 12 odpade najdlje nedrsani, ne prvi sledeni
-  sledeni.set(sc, { dno, sidro, odmik: sidro ? sidro.getBoundingClientRect().top - sc.getBoundingClientRect().top : 0 });
+  sledeni.set(sc, { dno, sidro, odmik: sidro ? sidro.getBoundingClientRect().top - vrhV(sc) : 0 });
   if (sledeni.size > 12) sledeni.delete(sledeni.keys().next().value); // samo nedavni drsni deli
 }
 
@@ -43,7 +47,7 @@ function obnovi() {
   for (const [sc, s] of sledeni) {
     if (!sc.isConnected || !sc.clientHeight) continue;
     if (s.dno) sc.scrollTop = sc.scrollHeight;
-    else if (s.sidro?.isConnected && s.sidro.getClientRects().length) sc.scrollTop += s.sidro.getBoundingClientRect().top - sc.getBoundingClientRect().top - s.odmik;
+    else if (s.sidro?.isConnected && s.sidro.getClientRects().length) sc.scrollTop += s.sidro.getBoundingClientRect().top - vrhV(sc) - s.odmik;
   }
 }
 

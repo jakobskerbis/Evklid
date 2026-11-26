@@ -116,9 +116,16 @@
   .chat-head h1 { flex: 1 1 0; min-width: 48px; }
   .chat-head #chat-state { order: 0; flex: none; flex-wrap: nowrap; margin-inline: 0; padding: 0; }
 }
+/* Med pisanjem z Evklidovo tipkovnico desno (tipkovnica.css) je klepet širok le 280–370 px: oznake pogovora bi bile
+   odrezane (»Matematika · Voden«) ali bi glava imela tri vrstice (640 × 360: 130 px od 360), orodja pa bi zdrsnila pod
+   tipkovnico (844 × 390: kalkulator na 374–418 px, tipkovnica od 371 px). Zato se med pisanjem skrijejo oznake in
+   stranska dejanja (seznam pogovorov, prijava napake, predlog funkcije); ostanejo Nazaj, naslov, oznaka AI, skeniranje
+   in kalkulator. ⌄ zapre tipkovnico in vse se vrne. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
+  body.tk-open .chat-head { flex-wrap: nowrap; }
+  body.tk-open .chat-head :is(#chat-state, #toggle-sidebar, #chat-bug, #chat-idea) { display: none; }
+}
 @media (orientation: landscape) and (max-height: 500px) {
-  /* Dolgo vprašanje (npr. iz 3D sveta ali poskusa) ne vzame sporočil: polje največ tri vrstice, nato drsi samo. */
-  #view-chat .composer textarea { max-height: 72px; }
   #view-chat .chat > .bug-box { flex: none; max-height: 30dvh; overflow-y: auto; overscroll-behavior: contain; grid-template-columns: minmax(0, 1fr) auto; }
   /* Gumba Pošlji in Prekliči desno ob polju (ne pod njim), da je obrazec na 360 px visokem zaslonu viden cel. */
   #view-chat .chat > .bug-box > :is(p, .rep-err) { grid-column: 1 / -1; }

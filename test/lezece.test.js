@@ -258,6 +258,42 @@ test("ležeč telefon 844 × 390: okno z dolgim vnosom ni pod tipkovnico", opts,
   });
 });
 
+// Med pisanjem je klepet ležeče ozek (tipkovnica desno): glava ostane ena vrstica in orodja niso pod tipkovnico
+// (prej 844/740: oznake odrezane »Matematika · Voden«, gumbi pod tipkami; 640 × 360: glava tri vrstice, 130 px).
+for (const v of [L, { width: 740, height: 360 }, { width: 640, height: 360 }]) {
+  test(`ležeč telefon ${v.width} × ${v.height}: med pisanjem je glava klepeta ena vrstica, orodja levo od tipkovnice`, opts, async () => {
+    await withApp(async (base) => {
+      const { ctx, p, errors } = await phone(base, v);
+      await p.locator("#input").tap();
+      await p.waitForSelector(".tk:not([hidden])");
+      await p.waitForTimeout(300);
+      const m = await p.evaluate(() => {
+        const tk = document.querySelector(".tk:not([hidden])").getBoundingClientRect();
+        const glava = document.querySelector("#view-chat .chat-head");
+        const gumbi = [...glava.querySelectorAll("button")].filter((b) => b.checkVisibility()).map((b) => {
+          const r = b.getBoundingClientRect();
+          const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+          return { id: b.id || b.className, desno: Math.round(r.right), tapljiv: !!top && (b === top || b.contains(top)) };
+        });
+        return { tk: Math.round(tk.left), glava: Math.round(glava.getBoundingClientRect().height), gumbi };
+      });
+      assert.ok(m.glava <= 60, `glava v eni vrstici (${m.glava} px)`);
+      for (const g of m.gumbi) assert.ok(g.desno <= m.tk + 1 && g.tapljiv, `gumb glave ni pod tipkovnico: ${JSON.stringify(g)} (tipkovnica od ${m.tk} px)`);
+      // Dolgo vprašanje ne vzame sporočil: polje za pisanje je visoko največ tri vrstice (72 px).
+      await p.evaluate(() => {
+        const i = document.querySelector("#input");
+        i.value = "vrstica\n".repeat(12);
+        i.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+      await p.waitForTimeout(200);
+      const h = await p.evaluate(() => Math.round(document.querySelector("#input").getBoundingClientRect().height));
+      assert.ok(h <= 72, `polje za pisanje največ 72 px (${h} px)`);
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    });
+  });
+}
+
 // Najnižji ležeč telefon (640 × 360): plošča je višja od zaslona; s flex-end je bil zgornji del (čipi) odrezan in nedosegljiv.
 test("ležeč telefon 640 × 360: vse plasti tipkovnice so cele na zaslonu", opts, async () => {
   await withApp(async (base) => {

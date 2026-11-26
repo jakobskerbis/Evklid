@@ -148,6 +148,8 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
   body.tk-open .razpri { left: calc((100vw - min(480px, 56vw)) / 2); width: min(640px, calc(100vw - min(480px, 56vw) - 24px)); }
   /* Med pisanjem zgornja vrstica (števci, profil) ne vzame 56 px nalogi; ⌄ zapre tipkovnico in vrstica se vrne. */
   body.tk-open > .topbar { display: none; }
+  /* Prekrivna okna (graf, okno, tabla) segajo le do tipkovnice, ne pod njo (spodnji odmik je tu 0). */
+  body.tk-open :is(.graph-overlay, .overlay, .corner-board) { right: min(480px, 56vw); }
   /* Črke (ABC): nižje tipke, da so vse štiri vrste vidne brez drsenja. */
   .tk.tk-abc { --tk-dvig: 8px; }
   .tk-rows[data-layer="abc"] { gap: 6px; min-height: 0; }
