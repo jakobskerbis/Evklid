@@ -148,26 +148,7 @@ function faktorZapisa(u) {
 export function podatkiNaloge(given = []) {
   const out = [];
   for (const g of [].concat(given || [])) {
-    let s = String(g ?? "")
-      .replace(/−/g, "-")
-      .replace(/\{,\}/g, ".")
-      .replace(/(\d)(?:\\[,;: ]|\s)(\d{3})(?![\d.])/g, "$1$2")
-      .replace(/\\(?:text|mathrm|textrm|mbox|operatorname)\s*\{([^{}]*)\}/g, " $1 ")
-      .replace(/\\(?:d|t)?frac\s*\{\s*(-?\d+(?:\.\d+)?)\s*\}\s*\{\s*(\d+(?:\.\d+)?)\s*\}/g, (_, a, b) => ` ${Number(a) / Number(b)} `)
-      .replace(/(\d)\s*(?:\\cdot|\\times|·|×|\*)\s*10\s*\^\s*\{?\s*([+-]?\d+)\s*\}?/g, "$1e$2")
-      .replace(/(?<![\d.])10\s*\^\s*\{?\s*([+-]?\d+)\s*\}?/g, "1e$1")
-      .replace(/\^\s*\{?\s*\\circ\s*\}?|\\circ|\\degree/g, "°")
-      .replace(/_\s*\{[^{}]*\}|_\s*[A-Za-z0-9]+/g, " ")
-      .replace(/\^\s*\{\s*([-+]?\d)\s*\}|\^\s*([-+]?\d)/g, (_, a, b) => `^p${(a ?? b).replace("+", "")}`)
-      .replace(/\s+\^p/g, "^p")
-      .replace(/\\Omega/g, "Ω")
-      .replace(/\\mu\s*/g, "µ")
-      .replace(/\\%/g, "%")
-      .replace(/\\cdot/g, "·")
-      .replace(/\\[,;:! ]|~|\\q?quad/g, " ")
-      .replace(/[{}]/g, " ");
-    // decimalna vejica 1,5 (brez oklepajev: »T(1,4)« je točka, ne 1,4)
-    if (!/[([]/.test(s)) s = s.replace(/(\d),(\d)/g, "$1.$2");
+    const s = zapisPodatka(g);
     const ms = [...s.matchAll(/(?<![\w.\-^])-?\d+(?:\.\d+)?(?:e[+-]?\d+)?(?![\d.])/g)];
     ms.forEach((m, i) => {
       const n = Number(m[0]);
@@ -191,6 +172,47 @@ export function podatkiNaloge(given = []) {
   }
   return out;
 }
+
+// Podatek (LaTeX) v preprost zapis: \mathrm{kg} → kg, 1{,}5 → 1.5, 2\cdot10^{-3} → 2e-3, indeksi odstranjeni.
+function zapisPodatka(g) {
+  const s = String(g ?? "")
+    .replace(/−/g, "-")
+    .replace(/\{,\}/g, ".")
+    .replace(/(\d)(?:\\[,;: ]|\s)(\d{3})(?![\d.])/g, "$1$2")
+    .replace(/\\(?:text|mathrm|textrm|mbox|operatorname)\s*\{([^{}]*)\}/g, " $1 ")
+    .replace(/\\(?:d|t)?frac\s*\{\s*(-?\d+(?:\.\d+)?)\s*\}\s*\{\s*(\d+(?:\.\d+)?)\s*\}/g, (_, a, b) => ` ${Number(a) / Number(b)} `)
+    .replace(/(\d)\s*(?:\\cdot|\\times|·|×|\*)\s*10\s*\^\s*\{?\s*([+-]?\d+)\s*\}?/g, "$1e$2")
+    .replace(/(?<![\d.])10\s*\^\s*\{?\s*([+-]?\d+)\s*\}?/g, "1e$1")
+    .replace(/\^\s*\{?\s*\\circ\s*\}?|\\circ|\\degree/g, "°")
+    .replace(/_\s*\{[^{}]*\}|_\s*[A-Za-z0-9]+/g, " ")
+    .replace(/\^\s*\{\s*([-+]?\d)\s*\}|\^\s*([-+]?\d)/g, (_, a, b) => `^p${(a ?? b).replace("+", "")}`)
+    .replace(/\s+\^p/g, "^p")
+    .replace(/\\Omega/g, "Ω")
+    .replace(/\\mu\s*/g, "µ")
+    .replace(/\\%/g, "%")
+    .replace(/\\cdot/g, "·")
+    .replace(/\\[,;:! ]|~|\\q?quad/g, " ")
+    .replace(/[{}]/g, " ");
+  // decimalna vejica 1,5 (brez oklepajev: »T(1,4)« je točka, ne 1,4)
+  return /[([]/.test(s) ? s : s.replace(/(\d),(\d)/g, "$1.$2");
+}
+
+// Podatek, ki je formula ali enačba (f(x) = a·2^x, y = kx + 2, 2x + y = 5, f(1) = 5): koda ne preveri, ali jo AI
+// upošteva, zato naloga ostane nepreverjena. Podatek je le »ime = število enota« (AB = 12 cm, T_1 = 20 °C) ali besedilo.
+export function jeFormula(g) {
+  // več podatkov v enem zapisu: »a = 3 cm, b = 4 cm«
+  return zapisPodatka(g).split(/[,;]\s*(?=[A-Za-z\\α-ωΑ-Ω])/).some(jeFormulaDel);
+}
+function jeFormulaDel(t) {
+  const s = t.replace(/\\(?:text|mathrm|textrm|mbox|operatorname)(?![A-Za-z])/g, " "); // \mathrm{s^{-1}} ostane brez oklepajev
+  if (!s.includes("=")) return false;
+  const deli = s.split("=");
+  if (deli.length !== 2 || !/^[\sA-Za-z\\α-ωΑ-ΩµΔ]*[A-Za-zα-ωΑ-Ω]\s*$/.test(deli[0])) return true;
+  const m = /^\s*-?\d+(?:\.\d+)?(?:e[+-]?\d+)?\s*(.*?)\s*$/.exec(deli[1]);
+  if (!m) return true;
+  return !(m[1] === "" || /^(?:°|%|‰)/.test(m[1]) || faktorZapisa(m[1]));
+}
+
 export const stevilaPodatkov = (given) => podatkiNaloge(given).map((p) => p.n);
 
 // Enoten sistem enot: vsak podatek z znano enoto je v rešitvi zapisan v svoji enoti (cm, km, min) ali v osnovni enoti SI.
@@ -406,7 +428,7 @@ function resi(A0, b0) {
 }
 
 // Druga rešitev formule z iskano količino (ostale vrednosti ostanejo): na [−2|q|, 2|q|] iščemo ničle L − D.
-// Pri pozitivnem odgovoru štejejo le pozitivne druge ničle (negativna dolžina ali čas ni kandidat); pri negativnem vse.
+// Druga ničla formul v [−2|q|, 2|q|] (več kot 5 % stran); zrcalna −q pri pozitivnem odgovoru ne šteje (c² = a² + b²).
 function drugaResitev(equations, env, iskana, nacin) {
   const q = env[iskana];
   if (!q) return false;
@@ -432,7 +454,9 @@ function drugaResitev(equations, env, iskana, nacin) {
         }
         const r = py === 0 ? px : (lo + hi) / 2;
         const drugje = Math.abs(r - q) > 0.05 * Math.abs(q); // ista rešitev v okviru zaokrožitve (29,43 proti 29,4) ni druga
-        if (drugje && Math.abs(g(r)) <= 1e-6 * skala && (q < 0 || r > 0)) return true;
+        // zrcalna rešitev kvadrata (c = −5 pri c² = 25, t = −8) ni druga; vsaka druga, tudi negativna, je (x = −4 ob x = 2)
+        const zrcalna = q > 0 && Math.abs(r + q) <= 0.05 * Math.abs(q);
+        if (drugje && !zrcalna && Math.abs(g(r)) <= 1e-6 * skala) return true;
       }
       px = x;
       py = y;
@@ -453,6 +477,7 @@ export function preveriPodatke(text, given, sol) {
   const iskana = iskanaKolicina(text);
   if (!iskana) return nic("not a quantity");
   if ([].concat(given || []).some((g) => POGOJ.test(String(g)))) return nic("condition");
+  if ([].concat(given || []).some(jeFormula)) return nic("formula in data");
   const c = preberiCheck(sol?.racun);
   if (!c.values) return nic(c.why);
   const { values, equations } = c;
