@@ -386,7 +386,7 @@ function neizracunljivo(t, { identiteta = false, resitev = false } = {}) {
   const s = prep(String(t));
   if (NEZNANE.test(s) || /(?<![A-Za-z_])[CV]\s*\(/.test(s)) return true;
   // Decimalna vejica v oklepaju (»arcsin(0,5)«, »(2,5+1)·2«, »sin²(0,5)«, »log(0,5)«): ni jasno, ali je to 0,5 ali
-  // dva argumenta (točka). Lokalno bi »arcsin(0,5)« = 30° razglasili za napačno (AUDIT-102). Kombinatorika ima vedno
+  // dva argumenta (točka). Lokalno bi »arcsin(0,5)« = 30° razglasili za napačno (AUDIT-101). Kombinatorika ima vedno
   // cela števila; funkcija z enim argumentom pa dveh ne sprejme, tudi s presledkom (»arcsin(0, 5)«).
   // Gleda prvotni zapis: prep iz »log(0,5)« naredi »logb(0, 5)«.
   const z = String(t);
@@ -526,7 +526,7 @@ function check(problemText, ai) {
           if (val === undefined) return { verified: false, reason: "parse" };
           vals.set(m[1], val);
         }
-        // rešitev brez vseh imen (»(2,1)«, »x=2« pri dveh neznankah) ni dokaz napake (pregled AUDIT-102)
+        // rešitev brez vseh imen (»(2,1)«, »x=2« pri dveh neznankah) ni dokaz napake (pregled AUDIT-101)
         const neznanke = new Set(parts.join(" ").match(/(?<![A-Za-z_])[a-df-hj-zA-DF-HJ-Z](?![A-Za-z_(])/g) || []);
         if ([...neznanke].some((x) => !vals.has(x))) return { verified: false, reason: "parse" };
         const env = Object.fromEntries(vals);
