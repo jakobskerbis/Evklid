@@ -115,8 +115,21 @@ function zaprtIzraz(s) {
   return veljavnoObmocje(e, []) ? e : null;
 }
 
+/** Ali izraz vsebuje potenco z eksponentom 0 in osnovo, ki ni zanesljivo različna od 0. */
+function nicelnaPotenca(e) {
+  if (!e) return false;
+  if (e.t === "pow" && e.n === 0) {
+    if (!zaprt(e.a)) return true;
+    const c = konstanta(e.a);
+    const v = c ? null : vrednost(e.a, {});
+    if (c ? c.isZero() : v == null || jeNic(v)) return true;
+  }
+  return nicelnaPotenca(e.a) || nicelnaPotenca(e.b);
+}
+
 /** Ali so imenovalci in koreni zaprtih delov izraza definirani; nezaprte doda v seznam pogojev. */
 function veljavnoObmocje(e, pogoji) {
+  if (nicelnaPotenca(e)) return false; // x⁰ in 0⁰ (v Leanu = 1, v šoli nedefinirano pri osnovi 0)
   const o = obmocje(e);
   for (const d of o.imenovalci) {
     if (zaprt(d)) {

@@ -10,7 +10,7 @@ merilu je imenovalec, interval je Wilsonov 95-%.
 | Prevedene trditve (v obsegu prevoda) / vse | 564/1020 | 55,3 | 52,2–58,3 |
 | Dokazane / prevedene pravilne točne | 273/275 | 99,3 | 97,4–99,8 |
 | Napačno dokazane / prevedene napačne | 0/282 | 0,0 | 0,0–1,3 |
-| Neskladni prevodi / prevedene | 0/564 | 0,0 | 0,0–0,7 |
+| Zavrnjeni s primerjavo skladnosti / prevedene | 0/564 | 0,0 | 0,0–0,7 |
 | Tuji aksiomi / prevedene | 0/564 | 0,0 | 0,0–0,7 |
 
 Zaokroženi odgovori (»najvec« pod »dokazano«, npr. 0,414 za 1 − √2) se prevedejo točno in ostanejo nedokazani: 0 od 7 dokazanih.
@@ -50,7 +50,7 @@ Zunaj obsega prevoda (ostanejo pri SymPy):
 
 ## Napačni prevodi (lean-formalizacije-v1.json)
 
-Nabor je napisal ločen model AI brez branja kode primerjave (ne človek).
+Nabor je napisal ločen model AI brez branja kode primerjave (ne človek). Primerjava je bila popravljena ob tem naboru, zato je delež zaznanih merjen na učnem naboru; zaznavanje Leanovih posebnosti (x/0 = 0, majhne razlike) preverjajo še testi v test/lean-prevod.test.js.
 
 | Merilo | k/n | % | 95 % interval |
 |---|---|---|---|
@@ -117,13 +117,13 @@ Zavrnjeni pravilni prevodi (lažni alarm, prevod ostane brez dokaza):
 
 ## Bloki RACUN v lekcijah
 
-Resnica ni označena; SymPy je te trditve že preveril (PV-04). Lean dokaže samo resnične trditve.
+Resnica ni označena; SymPy je te trditve že preveril (PV-04). Lean dokaže le izreke, ki držijo; da izrek pove isto kot trditev, preverja primerjava skladnosti (točna algebra, pogoji za vsak imenovalec in koren).
 
 | Merilo | k/n | % | 95 % interval |
 |---|---|---|---|
 | Prevedene / vse trditve RACUN | 4504/5629 | 80,0 | 78,9–81,0 |
 | Dokazane / prevedene | 3811/4504 | 84,6 | 83,5–85,6 |
-| Neskladni prevodi / prevedene | 0/4504 | 0,0 | 0,0–0,1 |
+| Zavrnjeni s primerjavo skladnosti / prevedene | 0/4504 | 0,0 | 0,0–0,1 |
 
 Nedokazane prevedene trditve lekcij (prvih 30):
 

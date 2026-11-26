@@ -23,7 +23,10 @@ import { skladnost } from "../server/preverjanje/lean-obratno.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DOVOLJENI = new Set(["propext", "Classical.choice", "Quot.sound"]);
-const PREPOVEDANO = /\b(sorry|admit|axiom|native_decide|implemented_by|extern|unsafe|ofReduceBool|skipKernelTC|import|set_option)\b|#/;
+// Poleg goljufij (sorry, aksiomi) še ukazi: vrstica, ki ni taktika, konča blok »by« in postane ukaz datoteke
+// (npr. »instance : LE ℝ := ⟨fun _ _ => True⟩« bi spremenila pomen vseh naslednjih izrekov).
+const PREPOVEDANO =
+  /\b(sorry|admit|axiom|axioms|native_decide|implemented_by|extern|unsafe|ofReduceBool|skipKernelTC|import|set_option|instance|notation|infix|infixl|infixr|prefix|postfix|macro|macro_rules|syntax|elab|elab_rules|declare_syntax_cat|attribute|open|local|scoped|namespace|section|end|variable|universe|def|theorem|lemma|example|abbrev|structure|class|inductive|opaque|initialize|builtin_initialize|run_cmd|run_tac|run_elab|deriving|mutual|export|noncomputable|private|protected|partial|simproc|omit|include)\b|#|@\[|«|»/;
 const FORMALIZACIJE = join(ROOT, "test/fixtures/preverjanje/lean-formalizacije-v1.json");
 
 export function wilson(k, n, z = 1.96) {
@@ -204,7 +207,7 @@ function porocilo({ nabor, lekcije, formalizacije, poSkupinah }) {
     vrsticaMerila("Prevedene trditve (v obsegu prevoda) / vse", s.prevedene, s.vse),
     vrsticaMerila("Dokazane / prevedene pravilne točne", s.dokazanePravilne, s.pravilne),
     vrsticaMerila("Napačno dokazane / prevedene napačne", s.napacnoDokazane.length, s.napacne),
-    vrsticaMerila("Neskladni prevodi / prevedene", s.neskladni, s.prevedene),
+    vrsticaMerila("Zavrnjeni s primerjavo skladnosti / prevedene", s.neskladni, s.prevedene),
     vrsticaMerila("Tuji aksiomi / prevedene", s.tujiAksiomi.length, s.prevedene),
     "",
     `Zaokroženi odgovori (»najvec« pod »dokazano«, npr. 0,414 za 1 − √2) se prevedejo točno in ostanejo nedokazani: ${s.dokazanePriblizne} od ${s.priblizne} dokazanih.`,
@@ -229,7 +232,7 @@ function porocilo({ nabor, lekcije, formalizacije, poSkupinah }) {
     v.push(
       "## Napačni prevodi (lean-formalizacije-v1.json)",
       "",
-      "Nabor je napisal ločen model AI brez branja kode primerjave (ne človek).",
+      "Nabor je napisal ločen model AI brez branja kode primerjave (ne človek). Primerjava je bila popravljena ob tem naboru, zato je delež zaznanih merjen na učnem naboru; zaznavanje Leanovih posebnosti (x/0 = 0, majhne razlike) preverjajo še testi v test/lean-prevod.test.js.",
       "",
       "| Merilo | k/n | % | 95 % interval |",
       "|---|---|---|---|",
@@ -250,13 +253,13 @@ function porocilo({ nabor, lekcije, formalizacije, poSkupinah }) {
     v.push(
       "## Bloki RACUN v lekcijah",
       "",
-      "Resnica ni označena; SymPy je te trditve že preveril (PV-04). Lean dokaže samo resnične trditve.",
+      "Resnica ni označena; SymPy je te trditve že preveril (PV-04). Lean dokaže le izreke, ki držijo; da izrek pove isto kot trditev, preverja primerjava skladnosti (točna algebra, pogoji za vsak imenovalec in koren).",
       "",
       "| Merilo | k/n | % | 95 % interval |",
       "|---|---|---|---|",
       vrsticaMerila("Prevedene / vse trditve RACUN", l.prevedene, l.vse),
       vrsticaMerila("Dokazane / prevedene", l.dokazane, l.prevedene),
-      vrsticaMerila("Neskladni prevodi / prevedene", l.neskladni, l.prevedene),
+      vrsticaMerila("Zavrnjeni s primerjavo skladnosti / prevedene", l.neskladni, l.prevedene),
       "",
     );
     if (l.nedokazane.length) v.push("Nedokazane prevedene trditve lekcij (prvih 30):", "", ...l.nedokazane.slice(0, 30).map((p) => `- ${p.id}: \`${p.racun}\``), "");

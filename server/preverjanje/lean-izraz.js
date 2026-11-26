@@ -215,6 +215,7 @@ export function razcleni(s) {
   try {
     const e = expr();
     if (p !== tk.length) return null;
+    if (velikost(e) > 20000) return null; // ugnezdene potence ((10^12)^12)^12 … bi računale predolgo
     return e;
   } catch {
     return null;
@@ -222,6 +223,25 @@ export function razcleni(s) {
 }
 
 // ---------- lastnosti dreves ----------
+/** Zgornja meja velikosti točnega izračuna v bitih (število ≈ svoji dolžini, spremenljivka 64, potenca pomnoži). */
+export function velikost(e) {
+  if (!e) return 0;
+  switch (e.t) {
+    case "num":
+      return e.v.n.toString(2).length + e.v.d.toString(2).length;
+    case "var":
+      return 64;
+    case "neg":
+    case "abs":
+    case "sqrt":
+      return velikost(e.a) + 1;
+    case "pow":
+      return Math.max(1, Math.abs(e.n)) * velikost(e.a) + 1;
+    default:
+      return velikost(e.a) + velikost(e.b) + 1;
+  }
+}
+
 export function spremenljivke(e, out = new Set()) {
   if (!e) return out;
   if (e.t === "var") out.add(e.n);
@@ -252,7 +272,7 @@ export function konstanta(e) {
         }
         case "pow": {
           const a = r(x.a);
-          if (a.isZero() && x.n < 0) throw 0;
+          if (a.isZero() && x.n <= 0) throw 0; // 0⁰ ni definirano
           return a.pow(x.n);
         }
         case "abs": {

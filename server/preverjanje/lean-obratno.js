@@ -8,8 +8,11 @@
 //   identiteta:  ∀ x y : ℝ, P₁ → P₂ → A = B              (Pᵢ pogoji območja)
 //   enačba …:    ∀ x : ℝ, (P₁ ∧ … ∧ A = B) ↔ (x = a ∨ x = b)  ali  … ↔ False  ali  ¬ (…)
 //   neenačba:    ∀ x : ℝ, (… ∧ A < B) ↔ ((a < x ∧ x ≤ b) ∨ x < c)
-// Pomen se primerja z vrednostmi v naključnih racionalnih točkah (lean-izraz.js, 80 mest), ne z besedilom.
-import { Q, qIzDecimalnega, vrednost, enakaVrednost, jeNic, predznak, tocke, spremenljivke, zaprt } from "./lean-izraz.js";
+// Pomen se primerja točno (lean-algebra.js: racionalne funkcije s koeficienti v Q(√…)), ne z besedilom in ne z
+// vzorčenjem; kjer točen zapis ni mogoč (koren ali |…| s spremenljivko), mora biti zapis enak. Ker je v Leanu x/0 = 0
+// in √(−1) = 0, mora vsak imenovalec in vsak koren s spremenljivko v izreku varovati pogoj (pokritost).
+import { Q, qIzDecimalnega, spremenljivke, obmocje, velikost } from "./lean-izraz.js";
+import { racFunkcija, jeNicelna, enakiFunkciji, konstantna, sorazmerni, kanon, zaprtPredznak } from "./lean-algebra.js";
 import { oblikaIzRacuna } from "./lean-prevod.js";
 
 const NAJVEC_ZNAKOV = 4000;
@@ -329,6 +332,7 @@ function preveriTipe(e) {
   if (e.a && !["sqrt", "abs", "neg", "pow"].includes(e.t)) preveriTipe(e.a);
 }
 function relacijaVR(r) {
+  if (velikost(r.a) + velikost(r.b) > 20000) throw new Error("izraz prevelik (ugnezdene potence)");
   if (!imaRealenList(r.a) && !imaRealenList(r.b)) throw new Error("relacija brez realnega tipa (naravna števila?)");
   preveriTipe(r.a);
   preveriTipe(r.b);
@@ -373,76 +377,109 @@ export function obratno(izrek, imena) {
 
 // ---------- primerjava pomena ----------
 const razlika = (a) => ({ t: "sub", a: a.a, b: a.b });
+const NIC = { t: "num", v: new Q(0n) };
 
-/**
- * Ali sta izraza enaka funkcija (konst = false) ali enaka do konstantnega faktorja c ≠ 0 (konst = true; pri
- * neenačbah c > 0). Vrednosti v vsaj 6 točkah, kjer sta oba definirana.
- */
-function enakaDoFaktorja(e1, e2, imena, seme, { faktor = false, pozitiven = false } = {}) {
-  let razmerje = null;
-  let veljavnih = 0;
-  let nenicelnih = 0;
-  for (const t of tocke(imena, seme, 48)) {
-    const a = vrednost(e1, t);
-    const b = vrednost(e2, t);
-    if (a == null || b == null) continue;
-    veljavnih++;
-    if (!faktor) {
-      if (!enakaVrednost(a, b)) return false;
-      continue;
-    }
-    if (jeNic(b) || jeNic(a)) {
-      if (!(jeNic(a) && jeNic(b))) return false;
-      continue;
-    }
-    nenicelnih++;
-    if (pozitiven && predznak(a) !== predznak(b)) return false;
-    if (!razmerje) razmerje = [a, b];
-    else if (!enakaVrednost(a * razmerje[1], b * razmerje[0])) return false; // a/b = a₀/b₀
-  }
-  return veljavnih >= 6;
+/** Isti izraz: enak zapis ali točno ista racionalna funkcija (kjer sta definirana). */
+function enakIzraz(a, b, imena) {
+  if (kanon(a) === kanon(b)) return true;
+  const f = racFunkcija(a, imena);
+  const g = racFunkcija(b, imena);
+  return !!(f && g && enakiFunkciji(f, g));
 }
 
-/** Atom izvirnika in atom prevoda pomenita isto (relacija, isti del do faktorja). */
-/** Katere funkcije (|…|, √ s spremenljivko) nastopijo v izrazu: pri teh vzorčenje ni dokaz enakosti. */
-function funkcije(e, out = new Set()) {
-  if (!e) return out;
-  if ((e.t === "abs" || e.t === "sqrt") && spremenljivke(e.a).size) out.add(e.t);
-  funkcije(e.a, out);
-  funkcije(e.b, out);
-  return out;
-}
-const isteFunkcije = (x, y) => [...funkcije(razlika(x))].sort().join() === [...funkcije(razlika(y))].sort().join();
-
-function istiAtom(x, y, imena, seme) {
+/** Atom izvirnika in atom prevoda pomenita isto: isti strani ali razlika strani do konstantnega faktorja. */
+function istiAtom(x, y, imena) {
   if (x.op !== y.op) return false;
-  if (!isteFunkcije(x, y)) return false;
-  const d1 = razlika(x);
-  const d2 = razlika(y);
-  // konstanten izraz (npr. 2 = 3): stran za stranjo
-  const konst = imena.every((v) => !spremenljivke(d1).has(v)) || imena.every((v) => !spremenljivke(d2).has(v));
-  if (konst) return enakaDoFaktorja(x.a, y.a, imena, seme) && enakaDoFaktorja(x.b, y.b, imena, seme);
-  if (!enakaDoFaktorja(d1, d2, imena, seme, { faktor: true, pozitiven: x.op === "<" || x.op === "≤" })) return false;
-  // ničelna razlika povsod (npr. x = x): tudi strani morata ustrezati
-  return !enakaDoFaktorja(d1, { t: "num", v: new Q(0n) }, imena, seme) || (enakaDoFaktorja(x.a, y.a, imena, seme) && enakaDoFaktorja(x.b, y.b, imena, seme));
+  const simetricna = x.op === "=" || x.op === "≠";
+  if (enakIzraz(x.a, y.a, imena) && enakIzraz(x.b, y.b, imena)) return true;
+  if (simetricna && enakIzraz(x.a, y.b, imena) && enakIzraz(x.b, y.a, imena)) return true;
+  const d1 = racFunkcija(razlika(x), imena);
+  const d2 = racFunkcija(razlika(y), imena);
+  // konstantna ali ničelna razlika (2 = 3, x = x): le stran za stranjo (zgoraj)
+  if (!d1 || !d2 || jeNicelna(d1) || jeNicelna(d2) || konstantna(d1) || konstantna(d2)) return false;
+  return sorazmerni(d1, d2, { pozitiven: !simetricna });
 }
 
 /** Bijekcija med seznamoma atomov. */
-function istiAtomi(xs, ys, imena, seme) {
+function istiAtomi(xs, ys, imena) {
   if (xs.length !== ys.length) return false;
   const vzeti = new Set();
   for (const x of xs) {
-    const j = ys.findIndex((y, i) => !vzeti.has(i) && istiAtom(x, y, imena, seme));
+    const j = ys.findIndex((y, i) => !vzeti.has(i) && istiAtom(x, y, imena));
     if (j < 0) return false;
     vzeti.add(j);
   }
   return true;
 }
 
-/** Konstanta: zaprt izraz brez spremenljivk; vrednost z 80 mesti. */
-const konstVred = (e) => (spremenljivke(e).size ? null : vrednost(e, {}));
+// ---------- pokritost: v Leanu je x/0 = 0, √(negativno) = 0 in x⁰ = 1 ----------
+const jeNicZapis = (e) => kanon(e) === "0";
+/** Ali pogoj g (a ≠ b, a < b, a ≤ b) zagotavlja, da je imenovalec ≠ 0 (vrsta "im") oziroma argument korena ≥ 0 ("kor"). */
+function pokriva(g, e, vrsta, imena) {
+  if (vrsta === "im") {
+    if (g.op !== "≠" && g.op !== "<") return false;
+    if ((jeNicZapis(g.b) && kanon(g.a) === kanon(e)) || (jeNicZapis(g.a) && kanon(g.b) === kanon(e))) return true;
+    const f = racFunkcija(razlika(g), imena);
+    const h = racFunkcija(e, imena);
+    return !!(f && h && !konstantna(h) && sorazmerni(f, h));
+  }
+  if (g.op !== "≤" && g.op !== "<") return false;
+  if (jeNicZapis(g.a) && kanon(g.b) === kanon(e)) return true;
+  const f = racFunkcija({ t: "sub", a: g.b, b: g.a }, imena);
+  const h = racFunkcija(e, imena);
+  return !!(f && h && !konstantna(h) && sorazmerni(f, h, { pozitiven: true }));
+}
+/** Imenovalci (tudi osnove negativnih potenc), argumenti korenov in osnove potenc z eksponentom 0 v atomu. */
+function postavke(atom) {
+  const o = obmocje(atom.a);
+  obmocje(atom.b, o);
+  const nicelne = [];
+  const isci = (e) => {
+    if (!e) return;
+    if (e.t === "pow" && e.n === 0) nicelne.push(e.a);
+    isci(e.a);
+    isci(e.b);
+  };
+  isci(atom.a);
+  isci(atom.b);
+  return [...o.imenovalci.map((e) => ({ e, vrsta: "im" })), ...o.koreni.map((e) => ({ e, vrsta: "kor" })), ...nicelne.map((e) => ({ e, vrsta: "nic" }))];
+}
+/**
+ * Vsak imenovalec in koren s spremenljivko mora varovati pogoj, ki ga ne varuje sam (brez krožnosti); zaprti
+ * imenovalci morajo biti zanesljivo ≠ 0, zaprti koreni ≥ 0, osnova potence z eksponentom 0 pa zaprta in ≠ 0.
+ * varuhi: atomi, ki smejo varovati (konjunkti leve strani ali predpostavke); ostali: atomi, ki ne smejo.
+ */
+function pokritost(varuhi, ostali, imena) {
+  const ok = (atom, zaupani) =>
+    postavke(atom).every(({ e, vrsta }) => {
+      if (!spremenljivke(e).size) {
+        const z = zaprtPredznak(e);
+        return vrsta === "kor" ? z === 0 || z === 1 : z === 1 || z === -1;
+      }
+      if (vrsta === "nic") return false;
+      return zaupani.some((g) => g !== atom && pokriva(g, e, vrsta, imena));
+    });
+  const zaupani = [];
+  for (let spremembe = true; spremembe; ) {
+    spremembe = false;
+    for (const g of varuhi)
+      if (!zaupani.includes(g) && ok(g, zaupani)) {
+        zaupani.push(g);
+        spremembe = true;
+      }
+  }
+  return varuhi.every((g) => zaupani.includes(g)) && ostali.every((a) => ok(a, zaupani));
+}
 
-/** Rešitve kot množica vrednosti spremenljivke (enačbe in sistemi): [{ x: vred, … }]. */
+/** Zaprt izraz kot točna konstanta (racionalna funkcija brez spremenljivk) ali napaka. */
+function konstantaTocno(e) {
+  if (spremenljivke(e).size) throw new Error("rešitev ni število");
+  const f = racFunkcija(e, []);
+  if (!f) throw new Error("vrednost ni točno izračunljiva");
+  return f;
+}
+
+/** Rešitve kot množica točnih vrednosti spremenljivk (enačbe in sistemi): [{ x: konstanta, … }]. */
 function resitveKotVrednosti(desno, imena) {
   return desno.map((d) => {
     const m = {};
@@ -454,14 +491,13 @@ function resitveKotVrednosti(desno, imena) {
       else if (a.b.t === "var" && !spremenljivke(a.a).size) (v = a.b.n), (c = a.a);
       else throw new Error("rešitev ni oblike x = število");
       if (m[v] != null || !imena.includes(v)) throw new Error("rešitev dvakrat ali tuja spremenljivka");
-      m[v] = konstVred(c);
-      if (m[v] == null) throw new Error("rešitev ni definirana");
+      m[v] = konstantaTocno(c);
     }
     return m;
   });
 }
 function istaMnozicaVrednosti(r1, r2, imena) {
-  const enak = (a, b) => imena.every((v) => a[v] != null && b[v] != null && enakaVrednost(a[v], b[v]));
+  const enak = (a, b) => imena.every((v) => a[v] != null && b[v] != null && enakiFunkciji(a[v], b[v]));
   const brez = (r) => r.filter((a, i) => !r.slice(0, i).some((b) => enak(a, b)));
   const a = brez(r1);
   const b = brez(r2);
@@ -477,14 +513,12 @@ function intervalIzMej(d, x) {
     if (a.op !== "<" && a.op !== "≤") throw new Error("interval z enačajem");
     if (a.b.t === "var" && a.b.n === x && !spremenljivke(a.a).size) {
       if (iv.lo != null) throw new Error("dve spodnji meji");
-      iv.lo = konstVred(a.a);
+      iv.lo = konstantaTocno(a.a);
       iv.loZaprt = a.op === "≤";
-      if (iv.lo == null) throw new Error("meja ni definirana");
     } else if (a.a.t === "var" && a.a.n === x && !spremenljivke(a.b).size) {
       if (iv.hi != null) throw new Error("dve zgornji meji");
-      iv.hi = konstVred(a.b);
+      iv.hi = konstantaTocno(a.b);
       iv.hiZaprt = a.op === "≤";
-      if (iv.hi == null) throw new Error("meja ni definirana");
     } else throw new Error("meja ni oblike a < x ali x < b");
   }
   return iv;
@@ -495,8 +529,8 @@ function istiIntervali(d1, d2, x) {
   const enak = (p, q) =>
     p.loZaprt === q.loZaprt &&
     p.hiZaprt === q.hiZaprt &&
-    (p.lo == null ? q.lo == null : q.lo != null && enakaVrednost(p.lo, q.lo)) &&
-    (p.hi == null ? q.hi == null : q.hi != null && enakaVrednost(p.hi, q.hi));
+    (p.lo == null ? q.lo == null : q.lo != null && enakiFunkciji(p.lo, q.lo)) &&
+    (p.hi == null ? q.hi == null : q.hi != null && enakiFunkciji(p.hi, q.hi));
   return a.length === b.length && a.every((p) => b.some((q) => enak(p, q))) && b.every((q) => a.some((p) => enak(p, q)));
 }
 
@@ -514,7 +548,6 @@ export function skladnost(racun, izrek) {
     return { skladno: false, razlog: `izrek ni prepoznan: ${e.message}` };
   }
   const imena = o.spremenljivke;
-  const seme = `${JSON.stringify(racun)}|${izrek}`;
   const vars = [...l.spremenljivke].sort();
   if (vars.join(",") !== [...imena].sort().join(",")) return { skladno: false, razlog: "spremenljivke se ne ujemajo" };
   try {
@@ -523,19 +556,22 @@ export function skladnost(racun, izrek) {
       const [x] = o.glavni;
       const [y] = l.levo;
       if (y.op !== "=") return { skladno: false, razlog: "račun ni enakost" };
-      const ok = (enakaDoFaktorja(x.a, y.a, [], seme) && enakaDoFaktorja(x.b, y.b, [], seme)) || (enakaDoFaktorja(x.a, y.b, [], seme) && enakaDoFaktorja(x.b, y.a, [], seme));
+      if (!pokritost([], [y], [])) return { skladno: false, razlog: "nedefiniran del (deljenje z 0, koren negativnega števila, 0⁰)" };
+      const ok = (enakIzraz(x.a, y.a, []) && enakIzraz(x.b, y.b, [])) || (enakIzraz(x.a, y.b, []) && enakIzraz(x.b, y.a, []));
       return ok ? { skladno: true } : { skladno: false, razlog: "strani računa se ne ujemata" };
     }
     if (o.vrsta === "identiteta") {
       if (l.oblika !== "imp" || l.levo.length !== 1 || l.levo[0].op !== "=") return { skladno: false, razlog: "identiteta ni ∀ … → A = B" };
-      if (!istiAtomi(o.obmocje, l.hipoteze, imena, seme)) return { skladno: false, razlog: "pogoji območja se ne ujemajo" };
+      if (!istiAtomi(o.obmocje, l.hipoteze, imena)) return { skladno: false, razlog: "pogoji območja se ne ujemajo" };
+      if (!pokritost(l.hipoteze, l.levo, imena)) return { skladno: false, razlog: "imenovalec ali koren brez pogoja (v Leanu je x/0 = 0)" };
       const [x] = o.glavni;
       const [y] = l.levo;
-      const ok = (enakaDoFaktorja(x.a, y.a, imena, seme) && enakaDoFaktorja(x.b, y.b, imena, seme)) || (enakaDoFaktorja(x.a, y.b, imena, seme) && enakaDoFaktorja(x.b, y.a, imena, seme));
+      const ok = (enakIzraz(x.a, y.a, imena) && enakIzraz(x.b, y.b, imena)) || (enakIzraz(x.a, y.b, imena) && enakIzraz(x.b, y.a, imena));
       return ok ? { skladno: true } : { skladno: false, razlog: "strani identitete se ne ujemata" };
     }
     if (l.oblika !== "iff") return { skladno: false, razlog: "enačba ali neenačba ni ekvivalenca (↔)" };
-    if (!istiAtomi([...o.obmocje, ...o.glavni], l.levo, imena, seme)) return { skladno: false, razlog: "pogoji ali relacija se ne ujemajo" };
+    if (!istiAtomi([...o.obmocje, ...o.glavni], l.levo, imena)) return { skladno: false, razlog: "pogoji ali relacija se ne ujemajo" };
+    if (!pokritost(l.levo, l.desno.flat(), imena)) return { skladno: false, razlog: "imenovalec ali koren brez pogoja (v Leanu je x/0 = 0)" };
     if (o.vrsta === "neenacba") return istiIntervali(o.resitve, l.desno, imena[0]) ? { skladno: true } : { skladno: false, razlog: "množica rešitev se ne ujema" };
     const ok = istaMnozicaVrednosti(resitveKotVrednosti(o.resitve, imena), resitveKotVrednosti(l.desno, imena), imena);
     return ok ? { skladno: true } : { skladno: false, razlog: "množica rešitev se ne ujema" };

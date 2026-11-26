@@ -156,3 +156,44 @@ test("oblika: sistem zahteva vse spremenljivke", () => {
   assert.equal(oblikaIzRacuna(["solve", ["x+y=2, x-y=0", "x, y", "x=1, y=1"]]).vrsta, "sistem");
   assert.ok(new Q(6n, 8n).eq(new Q(3n, 4n)));
 });
+
+// Pregled (model AI, 26. 11. 2026): luknje, ki jih vzorčenje ni videlo.
+test("skladnost: Leanov x/0 = 0 ne sme skriti točke (imenovalec brez pogoja je neskladen)", () => {
+  const ne = (r, i) => assert.equal(skladnost(r, i).skladno, false, i);
+  ne(["solve", ["x^2=1", "x", "1"]], "∀ x : ℝ, (x ^ 2 * ((x + 1) / (x + 1)) = 1) ↔ (x = 1)");
+  ne(["solve", ["x^2=1", "x", "1"]], "∀ x : ℝ, (x ^ 2 * ((x + 1) * (x + 1) ^ (-1 : ℤ)) = 1) ↔ (x = 1)");
+  ne(["ineq", ["x^2<=1", "x", "(-1, 1)"]], "∀ x : ℝ, (x ^ 2 + 2 * (1 - (x ^ 2 - 1) / (x ^ 2 - 1)) ≤ 1) ↔ (-1 < x ∧ x < 1)");
+  ne(["solve", ["sqrt(x)=2", "x", "4"]], "∀ x : ℝ, (Real.sqrt x = 2) ↔ (x = 4)");
+  // pogoj z lastnim nevarovanim imenovalcem ne varuje (x²/x je v Leanu pri x = 0 enako 0)
+  ne(["solve", ["1/x=2", "x", "1/2"]], "∀ x : ℝ, (x ^ 2 / x ≠ 0 ∧ 1 / x = (2:ℝ)) ↔ (x = 1/2)");
+  ne(["value", ["1", "1"]], "((1 : ℝ) / (2 - 2)) = 0 + 1");
+  // enakovreden zapis pogoja je skladen
+  assert.equal(skladnost(["solve", ["1/x=2", "x", "1/2"]], "∀ x : ℝ, ((x + 0) * 1 ≠ 0 ∧ 1 / x = (2:ℝ)) ↔ (x = 1/2)").skladno, true);
+  assert.equal(skladnost(["solve", ["sqrt(x)=2", "x", "4"]], "∀ x : ℝ, ((0:ℝ) ≤ x ∧ Real.sqrt x = 2) ↔ (x = 4)").skladno, true);
+});
+
+test("skladnost: primerjava je točna (brez tolerance)", () => {
+  const ne = (r, i) => assert.equal(skladnost(r, i).skladno, false, i);
+  const majhno = "0.1^12*0.1^12*0.1^12*0.1^12";
+  ne(["value", ["1", `1+${majhno}`]], "(1 : ℝ) = 1");
+  ne(["equal", ["x", `x+${majhno}`]], "∀ x : ℝ, x = x");
+  ne(["solve", [`x=1+${majhno}`, "x", "1"]], "∀ x : ℝ, x = 1 ↔ x = 1");
+  const d = "1.41421356237309504880168872420969807856967187537694807317667973799";
+  ne(["solve", ["x^2=2", "x", `${d}, -${d}`]], "∀ x : ℝ, (x ^ 2 = (2:ℝ)) ↔ (x = Real.sqrt 2 ∨ x = -Real.sqrt 2)");
+  // točno enaki koreni v drugem zapisu: √8 = 2√2
+  assert.equal(skladnost(["solve", ["x^2=8", "x", "2*sqrt(2), -sqrt(8)"]], "∀ x : ℝ, (x ^ 2 = (8:ℝ)) ↔ (x = 2 * Real.sqrt 2 ∨ x = -(2 * Real.sqrt 2))").skladno, true);
+});
+
+test("skladnost: ugnezdene potence ne ustavijo strežnika, x⁰ in 0⁰ nista v obsegu", () => {
+  const t = Date.now();
+  assert.equal(skladnost(["value", ["(((((((10)^12)^12)^12)^12)^12)^12)^12", "1"]], "(1 : ℝ) = 1").skladno, false);
+  assert.equal(skladnost(["value", ["1", "1"]], "(((((((((10:ℝ)^64)^64)^64)^64)^64)^64)^64)) = 1").skladno, false);
+  assert.ok(Date.now() - t < 2000);
+  assert.equal(prevedi(["equal", ["x^0", "1"]]).ok, false);
+  assert.equal(prevedi(["value", ["0^0", "1"]]).ok, false);
+});
+
+test("datoteka Lean: dokaz ne sme vsebovati ukazov (instance, notation …)", () => {
+  for (const d of ["norm_num\ninstance (priority := high) evilLE : LE ℝ := ⟨fun _ _ => True⟩", "norm_num\nnotation \"x\" => 1", "norm_num\nattribute [simp] foo", "norm_num\nopen Real in trivial"])
+    assert.throws(() => datotekaLean([{ id: "a", izrek: "∀ x : ℝ, x ^ 2 ≤ -1", dokazi: [d] }]), /prepovedana/);
+});

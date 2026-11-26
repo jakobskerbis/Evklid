@@ -247,20 +247,26 @@ Prevajalnik (`server/preverjanje/lean-prevod.js`, `lean-izraz.js`):
   √A = B (kvadriranje, tuje rešitve imajo B < 0), sistem z `linarith`, računi z `norm_num` in prepisom korenov,
   identitete z `ring` in `field_simp`.
 
-Skladnost (`server/preverjanje/lean-obratno.js`) ne zaupa prevajalniku: izrek prebere nazaj z ozkim razčlenjevalnikom,
-ki pozna le zgornji del jezika Lean (kvantifikator `∀` nad ℝ, ↔, ∧, ∨, ¬, relacije, aritmetika, `Real.sqrt`, |…|);
-vse drugo (∃, →, `:=`, `sorry`, ℕ, ℤ, ℚ razen v eksponentu, eksponent nad 64) je neskladno. Vsaka relacija mora imeti
-realen list. Atome primerja s trditvijo pomensko: razlika obeh strani mora biti do konstantnega faktorja (pri neenačbi
-pozitivnega) enaka v 48 racionalnih točkah na več merilih (1, 1/1000, 10⁶), računano točno na 80 mest; obe strani
-morata imeti iste funkcije (abs, koren). Pogoji in glavni atomi morajo biti v bijekciji, množica rešitev se primerja
-točno, intervali po krajiščih in zaprtosti. `leanDokaz` vrne `holds: true, how: "formal"` le, če je izrek skladen,
-dokazan in stoji samo na `propext`, `Classical.choice` in `Quot.sound`. Vsako neskladje ustavi status pri »Računsko
-preverjeno« (načrt §3.5).
+Skladnost (`server/preverjanje/lean-obratno.js`, `lean-algebra.js`) ne zaupa prevajalniku: izrek prebere nazaj z ozkim
+razčlenjevalnikom, ki pozna le zgornji del jezika Lean (kvantifikator `∀` nad ℝ, ↔, ∧, ∨, ¬, relacije, aritmetika,
+`Real.sqrt`, |…|, pri identiteti še → za pogoje območja); vse drugo (∃, → zunaj predpostavk identitete, `:=`, `sorry`,
+ℕ, ℤ, ℚ razen v eksponentu, eksponent nad 64, prevelike ugnezdene potence) je neskladno. Vsaka relacija mora imeti
+realen list. Pomen primerja točno, brez vzorčenja in brez tolerance: izraza sta racionalni funkciji s koeficienti v
+Q(√2, √3, …), razlika strani atoma mora biti enaka do konstantnega faktorja (pri neenačbi pozitivnega), rešitve in
+krajišča intervalov so točna števila (√8 = 2√2). Kjer točen zapis ni mogoč (koren ali |…| izraza s spremenljivko), mora
+biti zapis enak. Ker je v Leanu x/0 = 0, √(−1) = 0 in x⁰ = 1, mora vsak imenovalec in koren s spremenljivko v izreku
+varovati pogoj (`d ≠ 0`, `0 ≤ r`), ki ga ne varuje sam; zaprti imenovalci morajo biti zanesljivo različni od 0, zaprti
+koreni nenegativni, potenca z eksponentom 0 pa ima zaprto osnovo, različno od 0. Pogoji in glavni atomi morajo biti v
+bijekciji s trditvijo. `leanDokaz` vrne `holds: true, how: "formal"` le, če je izrek skladen, dokazan in stoji samo na
+`propext`, `Classical.choice` in `Quot.sound`. Vsako neskladje ustavi status pri »Računsko preverjeno« (načrt §3.5).
+Dokaz ne sme vsebovati ukazov (`instance`, `notation`, `attribute`, `open` …), ker bi vrstica, ki ni taktika, postala
+ukaz datoteke in spremenila pomen naslednjih izrekov.
 
 Napačne formalizacije meri `test/fixtures/preverjanje/lean-formalizacije-v1.json` (188 parov trditev in izrek, sestavil
 drug model AI brez dostopa do kode preverjanja: 75 zvestih, 113 nezvestih: ℕ namesto ℝ, implikacija namesto
 ekvivalence, manjkajoča ali odvečna rešitev, manjkajoči pogoj imenovalca, odvečna predpostavka, ∃, `sorry`, |x − 2000|
-namesto x − 2000 …).
+namesto x − 2000 …). Primerjava je bila popravljena ob tem naboru, zato je 113/113 merjeno na učnem naboru; posebnosti
+Leana (x/0 = 0, razlike pod 10⁻⁴⁰, ukazi v dokazu), ki jih je našel pregled, preverjajo še testi.
 
 Izhodišče `docs/meritve/lean-prevod-2026-11-26.md`:
 
@@ -269,17 +275,17 @@ Izhodišče `docs/meritve/lean-prevod-2026-11-26.md`:
 | nabor v2: prevedene (v obsegu) / vse | 564/1.020 | 52,2–58,3 % |
 | nabor v2: dokazane / prevedene pravilne točne | 273/275 | 97,4–99,8 % |
 | nabor v2: napačno dokazane / prevedene napačne | **0/282** | 0,0–1,3 % |
-| nabor v2: neskladni prevodi, tuji aksiomi | 0/564, 0/564 | 0,0–0,7 % |
+| nabor v2: zavrnjeni s primerjavo skladnosti, tuji aksiomi | 0/564, 0/564 | 0,0–0,7 % |
 | napačne formalizacije: zaznane | **113/113** | 96,7–100 % |
 | zveste formalizacije: sprejete | 72/75 | |
 | lekcije: prevedene / trditve RACUN | 4.504/5.629 | |
 | lekcije: dokazane / prevedene | 3.811/4.504 | |
-| lekcije: neskladni prevodi, tuji aksiomi | 0, 0 | |
+| lekcije: zavrnjeni s primerjavo skladnosti, tuji aksiomi | 0, 0 | |
 
 Pravilen zaokrožen odgovor (meja `najvec` pod »dokazano«) se prevede točno in ostane nedokazan (0/7), zato ni štet med
 točnimi. Nedokazana pravilna v naboru sta dva odgovora v enakovredni obliki (npr. 2√2 in −√8 kot rešitvi x² = 8);
-zavrnjene zveste formalizacije so izrek nad ℚ, koren kot potenca 1/2 in pogoj x(x + 1) ≠ 0 namesto dveh pogojev
-(zavrnitev je varna smer: status ostane nižji). `--strogo` (in GitHub) pade ob napačno dokazani trditvi, neskladnem
+zavrnjene zveste formalizacije so izrek nad ℚ, koren kot potenca 1/2 in dva pogoja x ≠ 0, x + 1 ≠ 0 brez pogoja
+x(x + 1) ≠ 0 za imenovalec x(x + 1) (zavrnitev je varna smer: status ostane nižji). `--strogo` (in GitHub) pade ob napačno dokazani trditvi, neskladnem
 prevodu, tujem aksiomu, zdrsnjeni napačni formalizaciji ali manj kot 95 % dokazanih točnih pravilnih trditev.
 
 Ostaja: zaprte priče izpolnljivosti iz `docs/lean.md` (L5, člen brez spremenljivk v praznem kontekstu) so ločen korak,
