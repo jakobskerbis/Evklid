@@ -379,3 +379,26 @@ for (const w of [900, 960]) {
     });
   });
 }
+
+// Modalno okno (<dialog>: ustno spraševanje, kviz) vzame tipkovnico vase (tipkovnica.js). Ležeče je bilo okno na sredini
+// zaslona, tipkovnica desno pa je prekrila njegovo desno polovico (polje in gumb »Začni« do pol pod tipkami).
+test("ležeč telefon 844 × 390: okno ustnega spraševanja je levo od tipkovnice", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, L);
+    await p.click("#view-chat .chat-head [data-ustno]");
+    await p.waitForSelector("dialog[open] .us-body input[name=q]");
+    await p.locator("dialog[open] input[name=q]").tap();
+    await p.waitForSelector("dialog[open] > .tk:not([hidden])");
+    await p.waitForTimeout(300);
+    const m = await p.evaluate(() => {
+      const tk = document.querySelector("dialog[open] > .tk").getBoundingClientRect();
+      const okno = document.querySelector("dialog[open]").getBoundingClientRect();
+      const polje = document.querySelector("dialog[open] input[name=q]").getBoundingClientRect();
+      const top = document.elementFromPoint(polje.right - 6, polje.top + polje.height / 2);
+      return { tk: Math.round(tk.left), okno: [Math.round(okno.left), Math.round(okno.right)], polje: Math.round(polje.right), tapljivo: top?.name === "q" };
+    });
+    assert.ok(m.okno[0] >= 0 && m.okno[1] <= m.tk + 1 && m.tapljivo, `okno levo od tipkovnice, polje tapljivo do desnega roba: ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
