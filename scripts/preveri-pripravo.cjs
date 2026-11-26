@@ -140,7 +140,7 @@ async function naprava(brskalnik, n) {
     if (siroko > 1) tezave.push(`${ime}: vodoravno drsenje (${siroko} px)`);
     const kljuci = await p.evaluate(() => (document.querySelector("#topic-content")?.innerText.match(/\bpr\.[a-zA-Z.]+/g) || []).slice(0, 5));
     if (kljuci.length) tezave.push(`${ime}: neprevedeni ključi ${kljuci.join(", ")}`);
-    if (MAPA) await p.screenshot({ path: path.join(MAPA, `${n.ime}-${TEMA}-${ime}.png`), fullPage: false });
+    if (MAPA) await p.screenshot({ path: path.join(MAPA, `${n.ime}-${TEMA}-${ime}.png`), fullPage: true });
   };
   const klik = async (sel, opis) => {
     dejanja.push(opis);

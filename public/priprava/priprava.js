@@ -13,7 +13,7 @@ import { icon } from "../icons.js";
 import { dateText } from "../datum.js";
 import { stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, opomba } from "../nujno.js";
 import SL from "./sl.js";
-import { esc, besediloZFormulami, oznaciNegotovo, dniMed, negotovihPoViru, RAZRED_STANJA, naslednjaEnota } from "./izris.js";
+import { esc, besediloZFormulami, oznaciNegotovo, dniMed, negotovihPoViru, RAZRED_STANJA, naslednjaEnota, danesLokalno, fokusTeme } from "./izris.js";
 
 let D = null; // odvisnosti iz app.js (odpri)
 let dicts = [SL];
@@ -174,7 +174,9 @@ async function korakTest(n = nov()) {
     return napakaZaslona(err, n, () => korakTest());
   }
   const plan = P.plan;
-  const danes = new Date().toISOString().slice(0, 10);
+  // Obstoječ test (zobnik na »Danes«): nastavitve brez korakov; nov test: korak 1 od 3.
+  const uredi = !!plan && plan.daysLeft >= 0;
+  const danes = danesLokalno();
   const izbrani = new Set(plan?.path === p.key ? plan.units : []);
   const enote = p.units
     .map((u, i) =>
@@ -184,7 +186,7 @@ async function korakTest(n = nov()) {
     )
     .join("");
   const el = izrisi(
-    `${glava({ naslov: t("pr.newTitle"), pod: `${t("pr.step", { n: 1 })} · ${t("pr.step1")}`, nazaj: !!plan && plan.daysLeft >= 0 })}${koraki(1)}
+    `${uredi ? glava({ naslov: t("pr.settings"), nazaj: true }) : glava({ naslov: t("pr.newTitle"), pod: `${t("pr.step", { n: 1 })} · ${t("pr.step1")}`, nazaj: false }) + koraki(1)}
     <form class="pr-form" id="pr-test" novalidate>
       <div class="pr-uvod"><h2>${esc(t("pr.which"))}</h2><p class="muted">${esc(t("pr.whichSub"))}</p><p class="muted pr-pot">${esc(p.label || "")}</p></div>
       <ul class="card pr-seznam">${enote}</ul>
@@ -262,7 +264,7 @@ async function korakZapiski(n = nov(), { uvod = true, sporocilo = "" } = {}) {
 }
 
 function virVrstica(v) {
-  const ime = v.ime || t(v.vrsta === "slika" ? "pr.srcPhoto" : v.vrsta === "besedilo" ? "pr.srcText" : "pr.srcText");
+  const ime = virNaziv(v);
   const stanje =
     v.stanje === "obdelan"
       ? `<span class="pr-stanje ok">${esc(t("pr.srcDone"))}</span>`
@@ -272,15 +274,15 @@ function virVrstica(v) {
   const meta = [v.strani ? t("pr.srcPages", { n: v.strani }) : "", t("pr.srcCuts", { n: v.izsekov || 0 })].filter(Boolean).join(" · ");
   const neg = P.negotovo?.get(v.id) || 0;
   const skeni = v.stanje === "branje" && v.vrsta === "pdf";
-  return `<li class="card pr-vir" data-vir="${v.id}">
+  return `<li class="card pr-vir" data-vir="${esc(v.id)}">
       <div class="pr-vir-vrh"><span class="pr-vir-ime" dir="auto">${esc(ime)}</span>${stanje}</div>
       <div class="muted pr-vir-meta">${esc(meta)}</div>
       ${v.stanje === "branje" ? `<div class="pr-tek" aria-hidden="true"><span></span></div>` : ""}
       ${skeni ? `<p class="muted pr-mala">${esc(t("pr.srcScanLeft"))}</p>` : ""}
       ${v.stanje === "napaka" ? `<p class="pr-opozorilo ne"><span>${esc(t(`pr.err.${v.napaka}`) !== `pr.err.${v.napaka}` ? t(`pr.err.${v.napaka}`) : t("pr.err.other"))}</span></p>` : ""}
       ${neg ? `<p class="pr-opozorilo"><span>${oznaciNegotovo(esc(t("pr.srcUnsure", { n: neg })))}</span></p>` : ""}
-      <div class="pr-vir-dej">${v.stanje === "napaka" && v.vrsta !== "slika" ? `<button type="button" class="text-btn" data-pr-znova-vir="${v.id}">${esc(t("pr.retry"))}</button>` : ""}
-      <button type="button" class="text-btn pr-brisi" data-pr-brisi="${v.id}">${icon("trash-2")} ${esc(t("pr.srcDelete"))}</button></div>
+      <div class="pr-vir-dej">${v.stanje === "napaka" && v.vrsta !== "slika" ? `<button type="button" class="text-btn" data-pr-znova-vir="${esc(v.id)}">${esc(t("pr.retry"))}</button>` : ""}${(v.stanje === "caka" || v.stanje === "branje") && ustavljeni.has(v.id) ? `<button type="button" class="text-btn" data-pr-nadaljuj-vir="${esc(v.id)}">${esc(t("pr.retry"))}</button>` : ""}
+      <button type="button" class="text-btn pr-brisi" data-pr-brisi="${esc(v.id)}">${icon("trash-2")} ${esc(t("pr.srcDelete"))}</button></div>
     </li>`;
 }
 
@@ -291,8 +293,8 @@ function izrisiZapiske(n, { uvod, sporocilo = "" }) {
     `${uvod ? glava({ naslov: t("pr.newTitle"), pod: `${t("pr.step", { n: 2 })} · ${t("pr.step2")}`, nazaj: true }) + koraki(2) : glava({ naslov: t("pr.myNotes"), pod: P.plan?.unitTitles?.join(", ") || "", nazaj: true })}
     <div class="pr-uvod"><h2>${esc(t("pr.addTitle"))}</h2><p class="muted">${oznaciNegotovo(esc(t("pr.addSub")))}</p></div>
     <div class="pr-dodaj">
-      <label class="pr-dodaj-gumb"><input type="file" accept="image/*" capture="environment" multiple data-pr-foto hidden>${icon("camera")}<span>${esc(t("pr.photo"))}</span></label>
-      <label class="pr-dodaj-gumb"><input type="file" accept="${SPREJME_DATOTEKE}" multiple data-pr-datoteka hidden>${icon("file-text")}<span>${esc(t("pr.file"))}</span><small>${esc(t("pr.fileTypes"))}</small></label>
+      <label class="pr-dodaj-gumb"><input type="file" class="pr-skrit" accept="image/*" capture="environment" multiple data-pr-foto>${icon("camera")}<span>${esc(t("pr.photo"))}</span></label>
+      <label class="pr-dodaj-gumb"><input type="file" class="pr-skrit" accept="${SPREJME_DATOTEKE}" multiple data-pr-datoteka>${icon("file-text")}<span>${esc(t("pr.file"))}</span><small>${esc(t("pr.fileTypes"))}</small></label>
       <button type="button" class="pr-dodaj-gumb" data-pr-prilepi aria-expanded="false">${icon("text")}<span>${esc(t("pr.paste"))}</span></button>
     </div>
     <form class="card pr-prilepi" hidden data-pr-prilepi-obrazec><textarea rows="6" maxlength="100000" placeholder="${esc(t("pr.pastePh"))}" aria-label="${esc(t("pr.paste"))}"></textarea>
@@ -313,16 +315,19 @@ function izrisiZapiske(n, { uvod, sporocilo = "" }) {
   el.querySelector("[data-pr-naprej]").addEventListener("click", () => korakTeme(undefined, { uvod }));
   el.querySelector("[data-pr-brez]")?.addEventListener("click", () => korakTeme(undefined, { uvod }));
   const err = el.querySelector(".pr-err");
+  // Napaka pri nalaganju (prevelika datoteka, napačna vrsta, meja) ostane vidna tudi po novem izrisu seznama.
   const dodaj = async (files) => {
+    let sporocilo = "";
+    err.textContent = "";
     for (const f of files) {
-      err.textContent = "";
       try {
         await poslji(f);
       } catch (x) {
-        err.textContent = napaka(x);
+        sporocilo = napaka(x);
+        err.textContent = sporocilo;
       }
     }
-    if (velja(n)) korakZapiski(nov(), { uvod });
+    if (velja(n)) korakZapiski(nov(), { uvod, sporocilo });
   };
   el.querySelector("[data-pr-foto]").addEventListener("change", (e) => dodaj([...e.target.files]));
   el.querySelector("[data-pr-datoteka]").addEventListener("change", (e) => dodaj([...e.target.files]));
@@ -362,6 +367,13 @@ function izrisiZapiske(n, { uvod, sporocilo = "" }) {
       }
     }),
   );
+  el.querySelectorAll("[data-pr-nadaljuj-vir]").forEach((b) =>
+    b.addEventListener("click", () => {
+      b.disabled = true;
+      ustavljeni.delete(Number(b.dataset.prNadaljujVir));
+      korakZapiski(nov(), { uvod });
+    }),
+  );
   el.querySelectorAll("[data-pr-znova-vir]").forEach((b) =>
     b.addEventListener("click", async () => {
       b.disabled = true;
@@ -376,12 +388,20 @@ function izrisiZapiske(n, { uvod, sporocilo = "" }) {
 }
 
 // Datoteka kot telo zahteve (api() pošilja JSON): vrsta po vsebini na strežniku, ime v glavi.
-async function poslji(file) {
+async function poslji(file, poskus = 0) {
   const res = await fetch(pot("/viri"), {
     method: "POST",
     headers: { "Content-Type": file.type || "application/octet-stream", "X-Ime-Datoteke": encodeURIComponent(file.name || "") },
     body: file,
   });
+  // Prejšnje nalaganje se na strežniku še zapira (več datotek naenkrat): kratek premor in nov poskus.
+  if (res.status === 429 && poskus < 3) {
+    const b = await res.clone().json().catch(() => ({}));
+    if (b.code === "priprava_zasedeno") {
+      await new Promise((ok) => setTimeout(ok, 1500));
+      return poslji(file, poskus + 1);
+    }
+  }
   sprememba();
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -391,26 +411,42 @@ async function poslji(file) {
 }
 
 // Obdelava virov po vrsti: »caka« → obdelaj (uvoz brez AI), »branje« → preberi (fotografija, skenirane strani; stran iz
-// meje). Po vsakem viru zaslon pokaže novo stanje. Ustavi se ob meji strani ali preizkusnem načinu (brez zanke).
+// meje). Po obdelavi zaslon pokaže novo stanje. Vir, ki se ni premaknil (meja strani, preizkusni način, zapora AI,
+// napaka), gre med ustavljene: ne bere se znova, dokler učenec ne pritisne »Poskusi znova« (brez zanke zahtevkov).
+// Vir, dodan med obdelavo, se obdela takoj za njo.
+const ustavljeni = new Set();
+let znova = false;
+const zasedeno = (x) => (x?.status === 429 || x?.status === 409) && x.body?.code === "priprava_zasedeno";
 async function obdelajVire(n, { uvod }) {
-  if (obdelava) return;
-  const odprti = (P.priprava?.viri || []).filter((v) => v.stanje === "caka" || v.stanje === "branje");
+  if (obdelava) {
+    znova = true;
+    return;
+  }
+  const odprti = (P.priprava?.viri || []).filter((v) => (v.stanje === "caka" || v.stanje === "branje") && !ustavljeni.has(v.id));
   if (!odprti.length) return;
+  znova = false;
+  let sporocilo = "";
   obdelava = (async () => {
-    let sporocilo = "";
     for (const v of odprti) {
-      if (!velja(n)) return;
+      if (!naZapiskih()) return;
+      let premik = false;
       for (let poskus = 0; poskus < 6; poskus++) {
         try {
           const r = await D.api(pot(`/viri/${v.id}/${v.stanje === "caka" ? "obdelaj" : "preberi"}`), { method: "POST" });
           if (r?.mock) sporocilo = t("pr.err.mock");
           if (r?.pages) P.strani = r.pages;
           if (r?.ustavljeno === "meja") sporocilo = t("pr.err.zapiski_strani");
+          const stanje = r?.vir?.stanje;
+          if (stanje && stanje !== v.stanje) premik = true;
           // Skeniran PDF: največ 5 strani na zahtevek; nadaljuje, dokler ima neprebrane strani in branje napreduje.
-          if (r?.vir?.stanje === "branje" && v.vrsta === "pdf" && r.prebrano?.length && !r.ustavljeno) continue;
+          if (stanje === "branje" && v.vrsta === "pdf" && r.prebrano?.length && !r.ustavljeno) {
+            premik = true;
+            continue;
+          }
+          if (stanje === "branje" || stanje === "caka") premik = false;
           break;
         } catch (x) {
-          if (x?.status === 429 && x.body?.code === "priprava_zasedeno") {
+          if (zasedeno(x) && poskus < 5) {
             await new Promise((ok) => setTimeout(ok, 5000));
             continue;
           }
@@ -418,11 +454,16 @@ async function obdelajVire(n, { uvod }) {
           break;
         }
       }
+      if (!premik) ustavljeni.add(v.id);
       if (sporocilo) break;
     }
-    if (velja(n)) korakZapiski(nov(), { uvod, sporocilo });
-  })().finally(() => (obdelava = null));
+  })().finally(() => {
+    obdelava = null;
+    // Zaslon zapiskov (ta ali novejši) pokaže novo stanje; ta izris sproži obdelavo virov, dodanih medtem.
+    if (naZapiskih() && (velja(n) || znova)) korakZapiski(nov(), { uvod: P.zaslon === "uvod-zapiski", sporocilo });
+  });
 }
+const naZapiskih = () => (P.zaslon === "uvod-zapiski" || P.zaslon === "zapiski") && !!box();
 
 // ---------- korak 3: teme testa ----------
 async function korakTeme(n = nov(), { uvod = false } = {}) {
@@ -451,7 +492,7 @@ async function korakTeme(n = nov(), { uvod = false } = {}) {
     z.samoVZapiskih?.length ? t("pr.unmatched", { n: z.samoVZapiskih.length }) : "",
     z.delno ? t("pr.partial", { n: z.pregledanih }) : "",
   ].filter(Boolean);
-  const danes = new Date().toISOString().slice(0, 10);
+  const danes = danesLokalno();
   const el = izrisi(
     `${uvod ? glava({ naslov: t("pr.newTitle"), pod: `${t("pr.step", { n: 3 })} · ${t("pr.step3")}`, nazaj: true }) + koraki(3) : glava({ naslov: t("pr.topicsCard"), nazaj: true })}
     <div class="pr-uvod"><h2>${esc(t("pr.topicsTitle"))}</h2><p class="muted">${esc(z.obseg ? `${P.plan?.unitTitles?.join(", ") || ""}${P.plan?.unitTitles?.length ? ". " : ""}${t("pr.topicsSub")}` : t("pr.topicsSubNoScope"))}</p></div>
@@ -471,11 +512,20 @@ async function korakTeme(n = nov(), { uvod = false } = {}) {
   const err = el.querySelector(".pr-err");
   el.querySelector("[data-pr-nazaj]").addEventListener("click", () => (uvod ? korakZapiski(undefined, { uvod: true }) : domov()));
   el.querySelector("[data-pr-domov]")?.addEventListener("click", () => domov());
-  el.querySelector("[data-pr-kviz]")?.addEventListener("click", () => zacniKviz(err));
+  el.querySelector("[data-pr-kviz]")?.addEventListener("click", (e) => zacniKviz(err, e.currentTarget));
   // Odstranjena tema (ni na testu) gre takoj na strežnik: obseg, načrt in kviz jo izpustijo.
-  el.querySelectorAll("[data-pr-tema]").forEach((c) =>
+  // Shranjevanje po eno: med shranjevanjem so vse kljukice zaklenjene (hitra zaporedna klika se ne prehitita).
+  // Vsaj ena tema ostane na testu (strežnik bi sicer vzel celoten obseg, vmesnik pa bi kazal »ni na testu«).
+  const kljukice = [...el.querySelectorAll("[data-pr-tema]")];
+  kljukice.forEach((c) =>
     c.addEventListener("change", async () => {
-      c.disabled = true;
+      if (!c.checked && !kljukice.some((x) => x.checked)) {
+        c.checked = true;
+        err.textContent = t("pr.keepOne");
+        return;
+      }
+      err.textContent = "";
+      kljukice.forEach((x) => (x.disabled = true));
       if (c.checked) izkljucene.delete(c.dataset.prTema);
       else izkljucene.add(c.dataset.prTema);
       try {
@@ -488,9 +538,11 @@ async function korakTeme(n = nov(), { uvod = false } = {}) {
         small.className = !c.checked ? "muted" : tm?.izsekov ? "pr-ok" : "muted";
       } catch (x) {
         c.checked = !c.checked;
+        if (c.checked) izkljucene.delete(c.dataset.prTema);
+        else izkljucene.add(c.dataset.prTema);
         err.textContent = napaka(x);
       }
-      c.disabled = false;
+      kljukice.forEach((x) => (x.disabled = false));
     }),
   );
   // Nov datum gre skozi načrt testa (isti test se posodobi, urnik in viri ostanejo).
@@ -518,25 +570,32 @@ function kvizSeja() {
     back: "path",
     doneHtml: kvizKonec,
     wire: kvizPovezi,
-    errorText: (err) => napaka(err),
+    // Obseg brez tem z nalogami: kviza ni, načrt pa je (zapiski) → domov.
+    errorText: (err) => {
+      if (err?.body?.code !== "kviz_brez_tem") return napaka(err);
+      setTimeout(() => domov());
+      return t("pr.noQuizTopics");
+    },
   });
 }
-async function zacniKviz(err) {
+// Ali ima obseg teme z nalogami, odloči strežnik (400 kviz_brez_tem): takrat ni kviza, načrt pa je (zapiski).
+async function zacniKviz(err, gumb = null) {
+  if (gumb?.disabled) return;
+  if (gumb) {
+    gumb.disabled = true;
+    gumb.setAttribute("aria-busy", "true");
+  }
   kvizSeja();
   lsSet(LS(P.pid), "1");
   try {
-    // Teme brez nalog: kviza ni, načrt pa je (zapiski).
-    const nacrt = await D.api(pot("/nacrt"));
-    P.nacrt = nacrt;
-    if (!nacrt.dnevi.some((d) => d.naloge.some((x) => x.tema?.vaja))) {
-      D.toast(t("pr.noQuizTopics"));
-      return domov();
-    }
+    await D.startSession("priprava-kviz", { dolzina: 6 }); // napake prikaže seja (errorText)
   } catch (x) {
     if (err) err.textContent = napaka(x);
-    return;
   }
-  D.startSession("priprava-kviz", { dolzina: 6 });
+  if (gumb?.isConnected) {
+    gumb.disabled = false;
+    gumb.removeAttribute("aria-busy");
+  }
 }
 const OZNAKA_KVIZA = { ok: "ok", few: "delno", more: "ne" };
 function kvizKonec(n) {
@@ -554,13 +613,13 @@ async function kvizPovezi(el) {
   const slot = el.querySelector("[data-pr-nacrt-po]");
   if (!slot) return;
   try {
-    const nacrt = await D.api(pot("/nacrt"));
-    P.nacrt = nacrt;
-    const fokus = [...new Set(nacrt.dnevi.flatMap((d) => d.naloge).filter((x) => x.tema && x.vrsta !== "ponovitev").map((x) => x.tema.ime))].slice(0, 3);
+    const [nacrt, napredek] = await Promise.all([D.api(pot("/nacrt")), D.api(pot("/napredek")).catch(() => null)]);
+    Object.assign(P, { nacrt, napredek });
+    const fokus = fokusTeme(nacrt, napredek?.teme);
     const dni = nacrt.dnevi.slice(0, 7);
     slot.innerHTML = `<section class="pr-nacrt-kartica"><h3>${esc(nacrt.datum ? t("pr.planTitleDate", { date: datum(nacrt.datum, { weekday: "short", day: "numeric", month: "numeric" }) }) : t("pr.planTitle"))}</h3>
       ${fokus.length ? `<p>${esc(t("pr.planFocus", { list: fokus.join(", ") }))}</p>` : ""}
-      ${nacrt.dnevi.some((d) => d.naloge.some((x) => x.vrsta === "poskusni_test")) ? `<p>${esc(t("pr.planMock"))}</p>` : ""}
+      ${nacrt.dnevi.some((d) => d.naloge.some((x) => x.vrsta === "poskusni_test") && d.datum !== nacrt.danes) ? `<p>${esc(t("pr.planMock"))}</p>` : ""}
       <ol class="pr-trak">${dni.map((d) => `<li class="${d.naloge.some((x) => x.vrsta === "poskusni_test") ? "test" : d.naloge.length ? "on" : ""}"><span>${esc(datum(d.datum, { weekday: "short" }))}</span></li>`).join("")}</ol></section>`;
   } catch {
     slot.innerHTML = "";
@@ -613,6 +672,8 @@ function izrisiDomov(n) {
     const s = x.stanje === "zapiski" ? "zapiski" : x.nalog ? x.stanje : x.stanje === "nova" ? "brez" : x.stanje;
     return `<li><button type="button" class="pr-tema-v" data-pr-tema-odpri="${esc(x.id)}"><span dir="auto">${esc(x.ime)}</span><span class="pr-chip ${s === "brez" ? "siv" : RAZRED_STANJA[x.stanje] || "siv"}">${esc(t(`pr.s.${s}`))}</span>${icon("chevron-right")}</button></li>`;
   });
+  // Brez ene rešene naloge ni odstotka (tudi če ga strežnik izračuna iz ročnih oznak).
+  const resenih = (napredek?.teme || []).reduce((a, x) => a + (x.nalog || 0), 0);
   const viri = priprava.viri.length;
   const izsekov = priprava.viri.reduce((a, v) => a + (v.izsekov || 0), 0);
   const el = izrisi(
@@ -625,11 +686,12 @@ function izrisiDomov(n) {
       <section class="pr-junak pr-a">
         <div class="pr-junak-vrh"><b>${esc(kdaj)}</b><span>${esc(datum(priprava.datum_testa, { weekday: "short", day: "numeric", month: "numeric" }))}</span></div>
         ${
-          pr.odstotek === null
+          pr.odstotek === null || !resenih
             ? `<p>${esc(t("pr.readyNone"))}</p>`
             : `<div class="pr-odstotek"><b>${pr.odstotek} %</b><span>${esc(t("pr.ready"))}</span></div>
-        <div class="pr-trak-napredka" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pr.odstotek}" aria-label="${esc(t("pr.ready"))}"><span style="width:${pr.odstotek}%"></span></div>
-        <p>${esc(t("pr.readyText", { a: pr.obvladanih, b: pr.preverljivih }))}</p>`
+        <div class="pr-trak-napredka" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pr.odstotek}" aria-label="${esc(t("pr.readyAria"))}"><span style="width:${pr.odstotek}%"></span></div>
+        <p>${esc(t("pr.readyText", { a: pr.obvladanih, b: pr.preverljivih }))} ${esc(t("pr.readyPartial"))}</p>
+        <p class="pr-mala">${esc(t("pr.readyNoGrade"))}</p>`
         }
       </section>
       <section class="pr-dnevi-o pr-c">
@@ -646,7 +708,7 @@ function izrisiDomov(n) {
       <section class="card pr-danes pr-b">
         <h2 class="pr-h2">${esc(t("pr.todayTitle"))}</h2>
         ${danes.length ? `<ul class="pr-enote">${danes.map((u, i) => enotaHtml(u, i, nacrt)).join("")}</ul>` : `<p class="muted">${esc(t("pr.todayEmpty"))}</p>`}
-        ${naprej ? `<button type="button" class="primary big pr-naprej" data-pr-enota="${naprejI}">${esc(t("pr.continue", { what: `${t(`pr.u.${naprej.vrsta}`).toLowerCase()}${naprej.tema ? ` ${naprej.tema.ime}` : ""}` }))}</button>` : ""}
+        ${naprej ? `<button type="button" class="primary big pr-naprej" data-pr-enota="${naprejI}">${esc(t("pr.continue", { what: `${t(`pr.u.${naprej.vrsta}`)}${naprej.tema ? ` · ${naprej.tema.ime}` : ""}` }))}</button>` : ""}
       </section>
     </div><div class="pr-st pr-st-r">
       <section class="card pr-teme-k pr-d">
@@ -673,7 +735,7 @@ function izrisiDomov(n) {
 async function odpriEnoto(u) {
   if (!u) return;
   if (u.vrsta === "poskusni_test") return D.startSession("test-prep");
-  if (u.vrsta === "zapiski") return tema(u.tema.id);
+  if (u.vrsta === "zapiski") return tema(u.tema.id, P.napredek?.teme?.find((x) => x.id === u.tema.id) ?? { stanje: "zapiski", ime: u.tema.ime });
   await vadi(u.tema.id, u.vrsta === "nova");
 }
 async function vadi(id, uvod = false) {
@@ -700,19 +762,20 @@ async function tema(id, info = null, n = nov()) {
   izrisiTemo(n, tm, r, info);
 }
 
+const virNaziv = (v) => v.ime || t(v.vrsta === "slika" ? "pr.srcPhoto" : v.vrsta === "besedilo" ? "pr.srcText" : "pr.file");
 function virIme(vid) {
   const v = (P.priprava?.viri || []).find((x) => x.id === vid);
-  return v ? v.ime || t(v.vrsta === "slika" ? "pr.srcPhoto" : "pr.srcText") : "";
+  return v ? virNaziv(v) : "";
 }
 function odstavekHtml(o, i) {
   const viri = (o.viri || []).filter((v) => v.vir_id);
   return `<article class="card pr-odstavek">
       <p class="pr-besedilo" dir="auto">${besediloZFormulami(o.besedilo, formula)}</p>
-      ${o.navedek ? `<blockquote class="pr-navedek" dir="auto">»${oznaciNegotovo(esc(o.navedek))}«</blockquote>` : ""}
+      ${o.navedek ? `<blockquote class="pr-navedek" dir="auto">»${besediloZFormulami(o.navedek, formula)}«</blockquote>` : ""}
       ${o.negotovo ? `<p class="pr-opozorilo" role="note">${icon("info")} <span>${oznaciNegotovo(esc(t("pr.unsureNote")))}</span></p>` : ""}
       ${viri
         .map(
-          (v) => `<div class="pr-vir-izsek"><button type="button" class="text-btn pr-vir-gumb" data-pr-izsek="${v.id}" data-pr-vir="${v.vir_id}" aria-expanded="false">${icon("file-text")} <span dir="auto">${esc(
+          (v) => `<div class="pr-vir-izsek"><button type="button" class="text-btn pr-vir-gumb" data-pr-izsek="${esc(v.id)}" data-pr-vir="${esc(v.vir_id)}" aria-expanded="false">${icon("file-text")} <span dir="auto">${esc(
             v.stran ? t("pr.source", { name: virIme(v.vir_id), n: v.stran }) : t("pr.sourceNoPage", { name: virIme(v.vir_id) }),
           )}</span></button><div class="pr-izsek" hidden data-pr-izsek-besedilo="${i}-${v.id}"></div></div>`,
         )
@@ -798,7 +861,7 @@ function izrisiTemo(n, tm, r, info, sporocilo = "") {
       try {
         if (!izseki.has(vid)) izseki.set(vid, (await D.api(pot(`/izseki?vir=${encodeURIComponent(vid)}`))).izseki);
         const iz = izseki.get(vid).find((x) => String(x.id) === b.dataset.prIzsek);
-        box2.innerHTML = iz ? `<p class="pr-izvirnik" dir="auto">${oznaciNegotovo(esc(iz.besedilo))}</p>` : "";
+        box2.innerHTML = iz ? `<p class="pr-izvirnik" dir="auto">${besediloZFormulami(iz.besedilo, formula)}</p>` : "";
         box2.hidden = !iz;
         b.setAttribute("aria-expanded", String(!!iz));
       } catch (x) {

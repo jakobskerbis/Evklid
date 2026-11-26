@@ -9,7 +9,7 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { LIVE_UI_LANGUAGES } from "../public/i18n/languages.js";
 import SL from "../public/priprava/sl.js";
-import { besediloZFormulami, oznaciNegotovo, negotovihPoViru, naslednjaEnota, dniMed, esc } from "../public/priprava/izris.js";
+import { besediloZFormulami, oznaciNegotovo, negotovihPoViru, naslednjaEnota, dniMed, esc, danesLokalno, fokusTeme } from "../public/priprava/izris.js";
 
 process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
 
@@ -28,6 +28,19 @@ test("izris: besedilo iz zapiskov ostane, kot je (brez Markdowna in HTML), [?] j
   // Neuspel izris: izvirnik.
   assert.equal(besediloZFormulami("$x$", () => { throw new Error("x"); }), "$x$");
   assert.equal(oznaciNegotovo(esc("<[?]>")), '&lt;<mark class="pr-neg">[?]</mark>&gt;');
+  // Izpostavljena formula $$…$$: brez odvečnih dolarjev (pregled 26. 11.).
+  assert.equal(besediloZFormulami("a $$x^2$$ b", fake), 'a <span class="pr-f"><k>x^2</k></span> b');
+});
+
+test("izris: današnji datum po uri naprave, teme za kartico načrta najprej najšibkejše", () => {
+  // 0.30 po lokalnem času je že novi dan (prej UTC: v Sloveniji do 1.00/2.00 še včerajšnji).
+  assert.equal(danesLokalno(new Date(2026, 11, 3, 0, 30)), "2026-12-03");
+  const u = (id, vrsta = "vaja") => ({ tema: { id, ime: id.toUpperCase() }, vrsta });
+  const nacrt = { dnevi: [{ naloge: [u("a", "nova"), u("b"), u("a")] }, { naloge: [u("c"), u("d", "ponovitev"), u("e")] }] };
+  const teme = [{ id: "a", stanje: "obvladana" }, { id: "c", stanje: "nova" }, { id: "e", stanje: "ucim" }];
+  assert.deepEqual(fokusTeme(nacrt, teme), ["C", "B", "E"]);
+  assert.deepEqual(fokusTeme(nacrt), ["A", "B", "C"]);
+  assert.deepEqual(fokusTeme(null), []);
 });
 
 test("izris: negotova mesta po virih, dnevi do testa, naslednja enota", () => {
@@ -84,7 +97,7 @@ async function streznik() {
 }
 
 test("obseg: odstranjena tema ni v obsegu, pokritosti, načrtu in kvizu; vrne se s praznim seznamom; vseh ni mogoče odstraniti", async () => {
-  const { req, s, pid, konec } = await streznik();
+  const { store, req, s, pid, konec } = await streznik();
   const P = `/api/students/${s.id}/priprave/${pid}`;
   try {
     const prej = (await req("GET", `${P}/teme`)).body;
@@ -108,6 +121,14 @@ test("obseg: odstranjena tema ni v obsegu, pokritosti, načrtu in kvizu; vrne se
     assert.deepEqual(n.nalogDanes, {});
     const k = (await req("POST", `${P}/kviz`, { dolzina: 6, teme: [ven] })).body;
     assert.equal(k.code, "kviz_teme"); // odstranjene teme ni v načrtu, zato je kviz ne sme izbrati
+    // Samodejni kviz (brez izbranih tem) odstranjene teme ne izbere.
+    assert.equal((await req("POST", `${P}/kviz`, { dolzina: 6 })).status, 200);
+    const sess = store.db.prepare("SELECT plan FROM sessions WHERE student_id = ? ORDER BY rowid DESC LIMIT 1").get(s.id);
+    assert.ok(!JSON.parse(sess.plan).some((x) => x.topic === ven), "odstranjena tema v kvizu");
+    // Tuja priprava: drug učenec ne more spremeniti obsega (404, nič se ne shrani).
+    const tuj = (await req("POST", "/api/students", { name: "Tuja" })).body;
+    assert.equal((await req("PUT", `/api/students/${tuj.id}/priprave/${pid}`, { izkljucene: [] })).status, 404);
+    assert.deepEqual((await req("GET", P)).body.priprava.izkljucene, [ven]);
     const napredek = (await req("GET", `${P}/napredek`)).body;
     assert.ok(!napredek.teme.some((t) => t.id === ven));
     // Vse teme odstranjene: obseg ostane cel (test brez tem ni test), izkljucene je prazen.

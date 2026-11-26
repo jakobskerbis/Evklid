@@ -264,7 +264,18 @@ telefon 360, 390, 430; iPad 820 in 1366×1024 ležeče; računalnik 1280, 1440, 
 - brez napak strani in konzole, brez odgovorov ≥ 400 (razen pričakovane razlage v preizkusnem načinu), brez
   vodoravnega drsenja, brez neprevedenih ključev `pr.`; posnetek vsakega zaslona.
 Test: `test/priprava-vmesnik.test.js` (izris dobesedno z `[?]`, pomožne funkcije, prevodi živih jezikov z enakimi
-spremenljivkami, izključene teme prek API, len modul in barve).
+spremenljivkami, izključene teme prek API in v samodejnem kvizu, tuja priprava 404, len modul in barve) in
+`test/priprava-vmesnik-brskalnik.test.js` (Playwright: vir, ki ga ni mogoče prebrati, sproži en zahtevek in ne zanke;
+napaka nalaganja ostane vidna; vhoda za datoteke s tipkovnico; vsaj ena tema ostane na testu).
+
+Po pregledih (26. 11.): vir, ki se ni premaknil (meja strani, preizkusni način, zapora AI, napaka), gre med ustavljene
+in se ne bere znova, dokler učenec ne pritisne »Poskusi znova« (prej do ~60 zahtevkov na sekundo); vir, dodan med
+obdelavo, se obdela takoj za njo; kljukice obsega se shranjujejo po eno; dvojni klik ne začne dveh kvizov (ali kviz
+sploh je, odloči strežnik, `kviz_brez_tem`); enota »Preberi zapiske« iz »Danes« ima »Prebral sem«; navedek in izvirni
+izsek izrišeta formule (formula z `[?]` ostane izvirnik); odstotek pripravljenosti se pokaže šele po prvi rešeni nalogi,
+z opombo, da ni ocena; datum po uri naprave.
+Znana vrzel: poskusni test (`/test-prep`, `progress.startTest`) jemlje naloge iz sklopov načrta in še ne izpusti
+odstranjenih tem.
 
 ## Testni nabor
 
