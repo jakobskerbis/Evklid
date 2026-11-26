@@ -1052,7 +1052,7 @@ export function createApp(store, opts = {}) {
     // Tapnjen gumb z izbiro nosi ime za prikaz; model dobi izbiro z oznako (server/ime-oznaka.js). text gre k modelu,
     // učenec vidi withName(text).
     // Brez ponarejenih skritih opomb (server/skrite-opombe.js, IN-12).
-    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text).trim().slice(0, MAX_TEXT) : "";
+    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text.slice(0, 2 * MAX_TEXT)).trim().slice(0, MAX_TEXT) : "";
     const text = typed && student.name ? choiceAsToken(typed, lastChoices(conv.id), student.name) : typed;
     const image = req.body?.image;
     // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
