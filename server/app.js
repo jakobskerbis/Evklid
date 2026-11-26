@@ -53,6 +53,7 @@ import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
+import { oznakeLekcije, oznakePole, stanjeZaStare } from "./oznake-vsebine.js";
 import { mountPoskusnaPola, simHistory } from "./poskusna-pola.js";
 import { mountAccounts } from "./accounts/index.js";
 import { emailList } from "./accounts/pilot-meja.js";
@@ -92,7 +93,7 @@ import { mountPriprave } from "./priprava/poti.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { landingPage } from "./pristajalna-takoj.js";
-import { zacetniPodatki } from "./zacetni-podatki.js";
+import { zacetniPodatki, zacetniPodatkiKlic } from "./zacetni-podatki.js";
 import { potTakoj } from "./pot-takoj.js";
 // Moduli drugih zaslonov, ki jih app.js naloži po prvem izrisu (public/app.js lenModul): stisnemo jih ob zagonu kot igre.
 // Tudi knjižnice za izris formul (public/rich.js naloziKnjiznice) in moduli Učbenika, oznak formul, preverjanja, cel slovar (i18n.js) in tipkovnica.
@@ -454,6 +455,8 @@ export function createApp(store, opts = {}) {
   // Prijavljen učenec dobi začetne podatke Učne poti v strani (server/zacetni-podatki.js), brez verige klicev API po
   // zagonu app.js. EVKLID_ZACETNI_PODATKI=0 jih izklopi (primerjava hitrosti).
   const seja = accounts && process.env.EVKLID_ZACETNI_PODATKI !== "0" ? zacetniPodatki(app) : null;
+  // Isti podatki v enem klicu za stran iz service workerja (ponovni obisk, public/zacetek.js); brez njih 404 kot prej.
+  if (seja) app.get("/api/zacetni-podatki", zacetniPodatkiKlic(app));
   // Učna pot v prvem odgovoru strani (server/pot-takoj.js); EVKLID_POT_STREZNIK=0: okostje kot prej (izklop, primerjava).
   const pot = seja && process.env.EVKLID_POT_STREZNIK !== "0" ? potTakoj({ publicDir }) : null;
   app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing, seja, pot })); // =0: brez seznama (primerjava)
@@ -936,6 +939,22 @@ export function createApp(store, opts = {}) {
     const list = await resolveOpen(raw, student.settings, { canOpen, prefer });
     return list.length ? list : undefined;
   };
+  // Lekcija iz učbenika za prvo vprašanje (lessonForQuestion) kot viden gumb pod odgovorom (P1-9, del B; j 25. 11. 2026),
+  // ne le skrita opomba. Odgovor nosi skrit zapis (lessonRecord, kot actionNote), zato gumb ostane ob ponovnem odprtju;
+  // zapis doda le aplikacija (blok za odgovorom modela), ne pri zavrnitvi, popravku ali opozorilu (flag ni none).
+  const lessonRecord = (l) =>
+    `<orodje>App record, not shown to the student: under this reply the app showed a link to the textbook lesson »${l.name}« (${l.id}). Never mention or repeat this record.</orodje>`;
+  const LESSON_RECORD_RE = /^<orodje>App record, not shown to the student: under this reply the app showed a link to the textbook lesson »[^»«]*« \(([\w./-]+)\)/;
+  const lessonOpenOf = (content) => {
+    for (const b of Array.isArray(content) ? content.slice(1) : []) {
+      const id = b?.type === "text" && LESSON_RECORD_RE.exec(b.text || "")?.[1];
+      const name = id && getTopic(id)?.name;
+      if (name) return { kind: "lesson", id, title: name };
+    }
+    return null;
+  };
+  // Gumb lekcije za seznamom orodij iz blokov modela, brez podvajanja (isti id kot findLesson v server/odpri.js).
+  const withLesson = (list, item) => (!item || list?.some((o) => o.kind === "lesson" && o.id === item.id) ? list : [...(list || []), item]);
   // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
   const choicesOf = (raw, name = "") => {
     const c = parseChoices(raw).map((x) => withName(x, name));
@@ -982,7 +1001,7 @@ export function createApp(store, opts = {}) {
     const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && lastOk && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
     const owner = store.getStudent(c.student_id);
     const opens = new Map();
-    if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
+    if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, withLesson(await openOf(rawOf(m), owner).catch(() => undefined), lessonOpenOf(m.api_content)));
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
@@ -1778,6 +1797,10 @@ export function createApp(store, opts = {}) {
       if (!display) display = "…";
       const opomba = actionNote(settingsTools.state.done);
       if (opomba) content = [...content, { type: "text", text: opomba }];
+      // Gumb lekcije iz učbenika (P1-9, del B): pogoj kot za gumbe orodij v »done«.
+      const toolsOk = result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none");
+      const lessonOpen = toolsOk && lesson ? { kind: "lesson", id: lesson.id, title: lesson.name } : null;
+      if (lessonOpen) content = [...content, { type: "text", text: lessonRecord(lesson) }];
 
       // Prikaz s pravim imenom, zgodovina za API (content) z oznako (server/ime-oznaka.js).
       display = withName(display, student.name);
@@ -1878,7 +1901,7 @@ export function createApp(store, opts = {}) {
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
         choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
-        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student, kontekstNote && req.body?.kontekst?.sourceType === "lab" ? String(req.body.kontekst.sourceId || "") : "") : undefined,
+        open: toolsOk ? withLesson(await openOf(result.text, student, kontekstNote && req.body?.kontekst?.sourceType === "lab" ? String(req.body.kontekst.sourceId || "") : ""), lessonOpen) : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();
@@ -1992,7 +2015,9 @@ export function createApp(store, opts = {}) {
     const view = viewForClient(lessonView(String(req.query.id || "")), legacyClient(req));
     res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
-    res.json({ ...view, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
+    const labels = view.lesson ? oznakeLekcije(view.id) : null; // poštene oznake (N-03); staro stanje nikoli močnejše (stari odjemalci)
+    if (view.lesson) view.lesson = { ...view.lesson, status: stanjeZaStare(view.lesson.status, labels) };
+    res.json({ ...view, labels, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
   });
   // Lekcija za učenca. Interaktivni del (poskusi, simulacije, sprotno preverjanje)
   // je v plačljivem paketu in preizkusu; besedilo je za vse (tudi kot PDF).
@@ -2003,6 +2028,8 @@ export function createApp(store, opts = {}) {
     const view = viewForClient(lessonView(String(req.query.id || "")), legacyClient(req));
     res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
+    if (view.lesson) view.labels = oznakeLekcije(view.id); // poštene oznake (N-03, server/oznake-vsebine.js)
+    if (view.lesson) view.lesson = { ...view.lesson, status: stanjeZaStare(view.lesson.status, view.labels) }; // stari odjemalci
     const interactive = !accounts || accounts.lessonInteractive(s.id, view.id);
     // Nova tema z nalogami: na začetku lekcije povabilo na test predznanja.
     const st = progress.state(s.id, view.id);
@@ -2206,7 +2233,7 @@ export function createApp(store, opts = {}) {
     const paper = loadOurPaper(req.params.id);
     if (!paper) return res.status(404).json({ error: "Te pole še ni." });
     res.set("Cache-Control", "public, max-age=3600");
-    res.json(paper);
+    res.json({ ...paper, labels: oznakePole(req.params.id) });
   });
   app.post("/api/students/:id/competition-training", (req, res) => {
     const s = loadStudent(req, res);

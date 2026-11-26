@@ -285,6 +285,7 @@
   "KEM-SS-1/stehiometrija": "Stehiometrija",
   "KEM-SS-1/plini": "Plinovi",
   "KEM-SS-1/raztopine": "Otopine",
+  "KEM-SS-1/topnost-in-sestava-raztopin": "Topljivost i sastav otopina",
   "KEM-SS-1/urejanje-enacb": "Izjednačavanje jednadžbi",
   "KEM-SS-1/energija-pri-reakcijah": "Energetske promjene u kemijskim reakcijama",
   "KEM-SS-2/hitrost-reakcij": "Brzina kemijske reakcije",
@@ -293,6 +294,7 @@
   "KEM-SS-2/ph": "pH",
   "KEM-SS-2/sibke-kisline-in-baze": "Slabe kiseline i baze",
   "KEM-SS-2/titracija": "Titracija",
+  "KEM-SS-2/elektroliti-in-ionske-reakcije": "Elektroliti i ionske reakcije",
   "KEM-SS-2/oksidacijska-stevila": "Oksidacijski brojevi",
   "KEM-SS-2/redoks-reakcije": "Redoks-reakcije",
   "KEM-SS-2/galvanski-cleni-in-elektroliza": "Galvanski članci i elektroliza",
@@ -308,6 +310,8 @@
   "KEM-SS-3/organske-reakcije": "Organske reakcije",
   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine": "Ugljikohidrati, lipidi, proteini",
   "KEM-SS-3/polimeri": "Polimeri",
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine": "Prijelazni elementi i koordinacijski spojevi",
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju": "Anorganske tvari u industriji i okolišu",
   "KEM-SS-4/splosna-in-anorganska-kemija": "Opća i anorganska kemija",
   "KEM-SS-4/organska-kemija": "Organska kemija",
   "KEM-SS-4/kemijsko-racunanje": "Kemijsko računanje"
@@ -392,6 +396,7 @@
   "Hitrost in ravnotežje": "Brzina reakcije i kemijska ravnoteža",
   "Kisline in baze": "Kiseline i baze",
   "Redoks in elektrokemija": "Redoks-reakcije i elektrokemija",
-  "Organska kemija": "Organska kemija"
+  "Organska kemija": "Organska kemija",
+  "Anorganska kemija": "Anorganska kemija"
  }
 }

@@ -92,6 +92,7 @@ export const EN_UNITS = {
   "Kisline in baze": "Acids and bases",
   "Redoks in elektrokemija": "Redox and electrochemistry",
   "Organska kemija": "Organic chemistry",
+  "Anorganska kemija": "Inorganic chemistry",
   "Fizika in okolje": "Physics and the environment",
   Funkcije: "Functions",
   Astronomija: "Astronomy",
@@ -374,6 +375,7 @@ export const EN = {
   "KEM-SS-1/stehiometrija": "Stoichiometry | calculations from equations, limiting reactant",
   "KEM-SS-1/plini": "Gases | molar volume, ideal gas equation",
   "KEM-SS-1/raztopine": "Solutions | mass fraction, molar concentration, dilution",
+  "KEM-SS-1/topnost-in-sestava-raztopin": "Solubility and composition of solutions | solubility curves, saturated solutions, converting between mass fraction, molar and mass concentration, mixing solutions, solubility of gases",
   "KEM-SS-1/urejanje-enacb": "Balancing equations | types of reactions",
   "KEM-SS-1/energija-pri-reakcijah": "Energetics | enthalpy, exothermic and endothermic reactions",
   // KEM-SS-2
@@ -383,6 +385,7 @@ export const EN = {
   "KEM-SS-2/ph": "pH | pH of strong acids and bases",
   "KEM-SS-2/sibke-kisline-in-baze": "Weak acids and bases | acid dissociation constant, buffers",
   "KEM-SS-2/titracija": "Titration | neutralisation, calculations",
+  "KEM-SS-2/elektroliti-in-ionske-reakcije": "Electrolytes and ionic reactions | electrolytes and conductivity, solubility rules, ionic equations, precipitates, gases and water, hydrolysis of salt ions",
   "KEM-SS-2/oksidacijska-stevila": "Oxidation numbers | assigning oxidation states",
   "KEM-SS-2/redoks-reakcije": "Redox reactions | balancing with half-equations",
   "KEM-SS-2/galvanski-cleni-in-elektroliza": "Electrochemical cells and electrolysis | standard electrode potentials",
@@ -396,6 +399,8 @@ export const EN = {
   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine": "Carbohydrates, lipids, proteins | structure and properties",
   "KEM-SS-3/polimeri": "Polymers | addition and condensation polymerisation",
   // KEM-SS-4
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine": "Transition elements and coordination compounds | position and properties of transition metals, multiple oxidation states, colours, central ion, ligands, coordination number, naming complexes",
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju": "Inorganic substances in industry and the environment | aluminium, chlor-alkali electrolysis, sulfuric, nitric and phosphoric acid, ammonia, fertilisers, silicon, glass, cement, pollution",
   "KEM-SS-4/splosna-in-anorganska-kemija": "General and inorganic chemistry | revision",
   "KEM-SS-4/organska-kemija": "Organic chemistry | revision",
   "KEM-SS-4/kemijsko-racunanje": "Chemical calculations | mixed calculation problems",

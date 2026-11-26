@@ -285,6 +285,7 @@
   "KEM-SS-1/stehiometrija": "Stechiometria",
   "KEM-SS-1/plini": "Gas",
   "KEM-SS-1/raztopine": "Soluzioni",
+  "KEM-SS-1/topnost-in-sestava-raztopin": "Solubilità e composizione delle soluzioni",
   "KEM-SS-1/urejanje-enacb": "Bilanciamento delle equazioni",
   "KEM-SS-1/energija-pri-reakcijah": "Termochimica",
   "KEM-SS-2/hitrost-reakcij": "Velocità di reazione",
@@ -293,6 +294,7 @@
   "KEM-SS-2/ph": "pH",
   "KEM-SS-2/sibke-kisline-in-baze": "Acidi e basi deboli",
   "KEM-SS-2/titracija": "Titolazione",
+  "KEM-SS-2/elektroliti-in-ionske-reakcije": "Elettroliti e reazioni ioniche",
   "KEM-SS-2/oksidacijska-stevila": "Numeri di ossidazione",
   "KEM-SS-2/redoks-reakcije": "Reazioni redox",
   "KEM-SS-2/galvanski-cleni-in-elektroliza": "Pile ed elettrolisi",
@@ -308,6 +310,8 @@
   "KEM-SS-3/organske-reakcije": "Reazioni organiche",
   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine": "Carboidrati, lipidi, proteine",
   "KEM-SS-3/polimeri": "Polimeri",
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine": "Elementi di transizione e composti di coordinazione",
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju": "Sostanze inorganiche nell'industria e nell'ambiente",
   "KEM-SS-4/splosna-in-anorganska-kemija": "Chimica generale e inorganica",
   "KEM-SS-4/organska-kemija": "Chimica organica",
   "KEM-SS-4/kemijsko-racunanje": "Calcoli chimici"
@@ -392,6 +396,7 @@
   "Hitrost in ravnotežje": "Velocità di reazione ed equilibrio",
   "Kisline in baze": "Acidi e basi",
   "Redoks in elektrokemija": "Redox ed elettrochimica",
-  "Organska kemija": "Chimica organica"
+  "Organska kemija": "Chimica organica",
+  "Anorganska kemija": "Chimica inorganica"
  }
 }

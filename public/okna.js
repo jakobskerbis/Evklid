@@ -489,7 +489,7 @@ function bubbleEl() {
       p.moved = true;
       clearTimeout(p.timer);
       bubble.classList.add("dragging");
-      bubble.classList.remove("scrolling"); // ob vlečenju takoj neprosojen
+      bubble.classList.remove("scrolling", "jezicek"); // ob vlečenju takoj neprosojen in okrogel
       hidePreview();
       drop.hidden = false;
     }
@@ -565,6 +565,14 @@ const CONTROLS = "body > main.view:not([hidden]):not(.in-okno) :is(input:not([ty
 // da ne prekrije njihovih gumbov (»Kaj še ne deluje«, X).
 const BANNERS = "#test-notice:not([hidden]), #mock-banner:not([hidden])";
 const HINT = "body > main.view:not([hidden]):not(.in-okno) .sc-empty :is(p, button)";
+// Površine, ki jih plavajoči elementi ne prekrijejo nikoli, kjerkoli na zaslonu (iskanje učbenika, PSE, simulacije …):
+// oznaka data-ne-prekrij (docs/NACRT-UX-UI.md §4, UX PR 1). Mehurček se jim izogne kot oknom in KEEP_CLEAR.
+const NE_PREKRIJ = "[data-ne-prekrij]";
+// Jeziček: mehurček, stisnjen ob rob zaslona (24 px: WCAG 2.5.8). Kadar okrogel mehurček ne najde mesta brez polj in
+// gumbov ali je zaslon nizek (ležeč telefon), se umakne na rob, kjer ne prekrije vsebine (UX-022, UX-104, UX-101).
+const JEZICEK = 24;
+const NIZEK = 500;
+const vidno = (el) => !!el.offsetParent || getComputedStyle(el).position === "fixed";
 // Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno) ne KEEP_CLEAR: najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
 function placeBubble() {
@@ -579,25 +587,28 @@ function placeBubble() {
   const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
   if (st && st.offsetParent) hi = Math.max(lo, Math.min(hi, a.bottom - st.offsetHeight - size));
   const y0 = Math.min(Math.max(Math.round((bstate.y ?? 0.72) * window.innerHeight - size / 2), lo), hi);
-  const xOf = (side) => (side === "left" ? 12 : window.innerWidth - size - 12);
+  // w: širina mehurčka (okrogel 12 px od roba, jeziček tik ob robu).
+  const xOf = (side, w = size) => (side === "left" ? (w === size ? 12 : 0) : window.innerWidth - w - (w === size ? 12 : 0));
   const clear = [...document.querySelectorAll(KEEP_CLEAR)].filter((el) => el.offsetParent);
-  const rects = [...wins.values()].map((w) => w.el).concat(clear).map((el) => el.getBoundingClientRect());
-  const hit = (r, x, y) => x < r.right + 4 && x + size > r.left - 4 && y < r.bottom + 4 && y + size > r.top - 4;
+  const ne = [...document.querySelectorAll(NE_PREKRIJ)].filter((el) => !el.closest("[hidden], .in-okno") && vidno(el));
+  const rects = [...wins.values()].map((w) => w.el).concat(clear, ne).map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0);
+  const hit = (r, x, y, w = size) => x < r.right + 4 && x + w > r.left - 4 && y < r.bottom + 4 && y + size > r.top - 4;
   const near = (r) => r.width > 0 && r.bottom > lo && r.top < hi + size && ["left", "right"].some((sd) => xOf(sd) < r.right + 4 && xOf(sd) + size > r.left - 4);
-  const controls = [...document.querySelectorAll(CONTROLS)].map((el) => el.getBoundingClientRect()).filter(near);
-  const find = (avoid) => {
+  const allControls = [...document.querySelectorAll(CONTROLS)].map((el) => el.getBoundingClientRect());
+  const controls = allControls.filter(near);
+  const find = (avoid, w = size) => {
     for (const side of [pref, pref === "left" ? "right" : "left"]) {
-      const x = xOf(side);
+      const x = xOf(side, w);
       for (let d = 0; d <= hi - lo; d += 16) {
-        if (y0 - d >= lo && !avoid.some((r) => hit(r, x, y0 - d))) return { side, y: y0 - d };
-        if (y0 + d <= hi && !avoid.some((r) => hit(r, x, y0 + d))) return { side, y: y0 + d };
+        if (y0 - d >= lo && !avoid.some((r) => hit(r, x, y0 - d, w))) return { side, y: y0 - d };
+        if (y0 + d <= hi && !avoid.some((r) => hit(r, x, y0 + d, w))) return { side, y: y0 + d };
       }
     }
     return null;
   };
   // Trenutno mesto je prosto (tudi polj): mehurček ostane, ne skače ob vsakem drsenju.
   const cur = { side: bubble.dataset.side, y: parseFloat(bubble.style.top) };
-  const keep = controls.length && cur.side === pref && cur.y >= lo && cur.y <= hi && !rects.concat(controls).some((r) => hit(r, xOf(pref), cur.y));
+  const keep = controls.length && !bubble.classList.contains("jezicek") && cur.side === pref && cur.y >= lo && cur.y <= hi && !rects.concat(controls).some((r) => hit(r, xOf(pref), cur.y));
   const prost = keep ? cur : controls.length ? find(rects.concat(controls)) : null;
   let spot = prost || find(rects);
   // Navodilo in zgledi praznega kalkulatorja (»Vpiši račun …«, »Preizkusi:«) ostanejo vidni: če jih edino prosto mesto prekrije, se mehurček umakne.
@@ -605,11 +616,21 @@ function placeBubble() {
   const hintCovered = !prost && !!spot && hint.some((r) => hit(r, xOf(spot.side), spot.y));
   // Kalkulator na ležečem telefonu (nizek zaslon) ali brez prostega mesta ob njegovih tipkah: mehurček se skrije, dokler
   // se to ne spremeni (obrat, drug način ali pogled; j 14. 11. 2026). Inštruktor ostane v spodnji vrstici.
-  const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < 500;
+  const lowLandscape = window.innerWidth > window.innerHeight && window.innerHeight < NIZEK;
   // V kalkulatorju se skrije tudi, kadar bi prekril navodilo praznega kalkulatorja (telefon, 24. 11. 2026).
-  const away = clear.length > 0 && (!spot || lowLandscape || hintCovered);
+  let away = clear.length > 0 && (!spot || lowLandscape || hintCovered);
+  // Brez prostega mesta (prekril bi polje ali gumb) ali na nizkem zaslonu: jeziček ob robu, kjer ni ničesar za klik.
+  // Če ga ni mogoče postaviti niti tako, se mehurček skrije (inštruktor ostane v zavihkih).
+  const covers = !!spot && !prost && controls.some((r) => hit(r, xOf(spot.side), spot.y));
+  let jez = null;
+  if (!away && (window.innerHeight < NIZEK || !spot || covers)) {
+    jez = find(rects.concat(allControls.filter((r) => r.width > 0)), JEZICEK);
+    if (!jez) away = true;
+  }
   bubble.classList.toggle("umaknjen", away);
+  bubble.classList.toggle("jezicek", !!jez);
   if (away) return;
+  if (jez) spot = jez;
   // Ni prostega mesta: mehurček ne gre na tipke kalkulatorja, raje na drugo okno.
   if (!spot) {
     const calc = wins.get("graph")?.el.getBoundingClientRect();
@@ -617,9 +638,100 @@ function placeBubble() {
     spot = { side: onCalc(pref) ? (pref === "left" ? "right" : "left") : pref, y: y0 };
   }
   bubble.dataset.side = spot.side;
-  bubble.style.left = `${xOf(spot.side)}px`;
+  bubble.style.left = `${xOf(spot.side, jez ? JEZICEK : size)}px`;
   bubble.style.top = `${spot.y}px`;
 }
+
+// ---------- obvestila (#toast) ----------
+// Obvestilo stoji nad spodnjo vrstico, krogi lekcije in varnim območjem. Če bi tam prekrilo polje, gumb ali površino
+// data-ne-prekrij (npr. vrstico za pisanje, odgovor naloge, simulacijo), gre višje, na prvo mesto brez njih, do glave
+// pogleda; če takega mesta ni, tja, kjer prekrije najmanj (UX-105). Tapi gredo skozenj (pointer-events: none, style.css).
+// Vrstica za pisanje in vrstica odgovora štejeta v celoti (ne le polje v njej), da obvestilo ne sede na njun rob.
+// Okna in spodnji list so pod obvestilom (--z-okno < --z-obvestilo): tudi njihova polja in gumbi so ovire (klepet v oknu ob
+// učbeniku, na telefonu klepet v listu, ki ga odpre mehurček).
+const OKNA_KONTROLE = ".okno:not([hidden]) :is(input:not([type=hidden]), select, textarea, button, a[href], [role=button], [role=switch], .composer-row, .answer-row)";
+const TOAST_OVIRE = `${CONTROLS}, ${OKNA_KONTROLE}, ${NE_PREKRIJ}, body > main.view:not([hidden]):not(.in-okno) :is(.composer-row, .answer-row), #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
+const GLAVE = "body > :is(.topbar, #mock-banner, #test-notice):not([hidden]), body > main.view:not([hidden]):not(.in-okno) :is(.chat-head, .topic-top)";
+let toastProst = false; // obvestilo je od prikaza (opazovalec v initOkna) že imelo prosto mesto
+let toastOd = 0; // čas prikaza ali novega besedila (performance.now)
+let toastDejanje = false; // učenec je od prikaza obvestila kliknil ali pisal (initOkna preveriMesto)
+// Isto dejanje, ki pokaže obvestilo, pogosto takoj zamenja stanje (pogled, list, obrazec; app.js hideOldToast šteje 500 ms):
+// tako obvestilo ne izgine, ker mu je novo stanje vzelo prosto mesto, ampak velja, kot da se je pokazalo že v njem (pregled 3).
+// Novo dejanje (klik ali vnos po prikazu) ali več kot 700 ms: staro obvestilo se umakne kot prej.
+const ISTO_DEJANJE = 700;
+export function placeToast() {
+  const el = $("#toast");
+  if (!el || el.hidden) return;
+  const a = area();
+  const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
+  // Odprta Evklidova tipkovnica (.tk, nad obvestilom) prekrije spodnji del zaslona: obvestilo gre nad njo (pregled 3).
+  // Ležeče (UX PR 2) je tipkovnica desno čez vso višino: takrat ne omeji spodnjega roba, obvestilo je levo od nje (tipkovnica.css).
+  const tk = document.body.classList.contains("tk-open") ? document.querySelector("body > .tk:not([hidden])")?.getBoundingClientRect() : null;
+  const dno = Math.min(a.bottom, st?.offsetParent ? st.getBoundingClientRect().top : Infinity, tk && tk.left <= 1 ? tk.top : Infinity);
+  const glave = [...document.querySelectorAll(GLAVE)].map((g) => g.getBoundingClientRect()).filter((r) => r.height > 0 && r.top < window.innerHeight / 2);
+  const vrh = Math.max(0, ...glave.map((r) => r.bottom));
+  // Samo vidni del ovire: del simulacije ali odgovora, odrinjen pod glavo, je odrezan z robom pogleda.
+  const pogled = document.querySelector("body > main.view:not([hidden]):not(.in-okno)")?.getBoundingClientRect();
+  // V oknu ga odreže okno.
+  const vidni = (o, r) => {
+    const v = o.closest(".okno")?.getBoundingClientRect() ?? (o.closest("main.view") ? pogled : null);
+    return v ? { left: r.left, right: r.right, top: Math.max(r.top, v.top), bottom: Math.min(r.bottom, v.bottom) } : r;
+  };
+  const ovire = [...document.querySelectorAll(TOAST_OVIRE)]
+    .filter((o) => !el.contains(o) && !o.closest("[hidden], [inert]"))
+    .map((o) => vidni(o, o.getBoundingClientRect()))
+    .filter((r) => r.right > r.left && r.bottom > r.top && r.bottom > vrh && r.top < dno);
+  el.style.top = "";
+  // Brez spodnje vrstice ostane nad varnim območjem (domača črta na iPhonu), kot v style.css.
+  const odDna = window.innerHeight - dno;
+  el.style.bottom = odDna > 1 ? `${odDna + 16}px` : "calc(16px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))";
+  // Mesto v mirovanju: brez premika animacije prikaza (style.css @keyframes rise), sicer bi bilo prvo mesto zamaknjeno in bi
+  // obvestilo med dvigom zdrsnilo čez vrstico za pisanje, ob naslednjem preverjanju pa poskočilo (pregled 3).
+  const rr = el.getBoundingClientRect();
+  let dy = 0;
+  try {
+    dy = new DOMMatrixReadOnly(getComputedStyle(el).transform).f || 0;
+  } catch {}
+  const r = { left: rr.left, right: rr.right, top: rr.top - dy };
+  const h = rr.height;
+  // 4 px razmika do vsake ovire, da obvestilo ne sede tik na rob vrstice za pisanje.
+  const pokrije = (y) => ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom + 4) - Math.max(y, o.top - 4) > 0).length;
+  let best = { y: r.top, n: pokrije(r.top) };
+  const mesta = [r.top];
+  for (let y = r.top - 4; best.n && y >= vrh + 8; y -= 4) {
+    mesta.push(y);
+    const n = pokrije(y);
+    if (n < best.n) best = { y, n };
+  }
+  // Ni prostega mesta (npr. simulacija čez ves zaslon ali ležeč klepet z odprtim obrazcem): tja, kjer dejansko prekrije
+  // najmanj kontrolnikov (vsaj 6 × 6 px, kot dimni test); ob izenačenju čez glavo, ki ni del naloge. Tapi gredo skozi.
+  if (best.n) {
+    const vsi = [...document.querySelectorAll(TOAST_OVIRE)]
+      .filter((o) => !el.contains(o) && !o.closest("[hidden], [inert]"))
+      .map((o) => vidni(o, o.getBoundingClientRect()))
+      .filter((o) => o.right > o.left && o.bottom > o.top);
+    const prava = (y) => vsi.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) >= 6 && Math.min(y + h, o.bottom) - Math.max(y, o.top) >= 6).length;
+    const glava = Math.max(8, Math.min(vrh, window.innerHeight) - h - 8);
+    best = { y: glava, n: prava(glava) };
+    for (const y of mesta) {
+      const n = prava(y);
+      if (n < best.n) best = { y, n };
+    }
+    // Obvestilo, ki je imelo prosto mesto, nato pa mu je novo stanje vzelo vsakega (npr. list kalkulatorja čez ves zaslon),
+    // se skrije prej, namesto da bi prekrivalo gumbe novega stanja (dimni test 25. 11.: PSE v listu). Obvestilo, ki se pokaže
+    // že v takem stanju, ostane ves čas na mestu z najmanj prekrivanji (pregled 2: sicer bi bilo vidno le sekundo).
+    if (best.n && toastProst && (toastDejanje || performance.now() - toastOd > ISTO_DEJANJE)) {
+      el.hidden = true;
+      return;
+    }
+  }
+  if (!best.n) toastProst = true;
+  else toastProst = false; // prosto mesto je izgubilo isto dejanje: obvestilo ostane ves čas na mestu z najmanj prekrivanji
+  if (best.y === r.top) return;
+  el.style.bottom = "auto";
+  el.style.top = `${Math.round(best.y)}px`;
+}
+
 function hidePreview() {
   clearTimeout(previewTimer);
   if (bubble) bubble.querySelector(".cb-preview").hidden = true;
@@ -640,6 +752,7 @@ function openChat() {
 /** Pokaže ali skrije mehurček glede na stanje klepeta (kliče app.js ob spremembi pogleda in pogovora). */
 export function refreshBubble() {
   if (!ctx) return;
+  requestAnimationFrame(placeToast); // obvestilo, ki ostane ob menjavi pogleda, na prosto mesto novega pogleda
   // Zavihek je za ta profil skrit (npr. NPZ in matura po menjavi profila): njegovo okno se zapre.
   for (const name of [...wins.keys()]) if (!canFloat(name)) closeWindow(name);
   const info = ctx.chatInfo();
@@ -780,6 +893,7 @@ export function initOkna(opts) {
     raf = requestAnimationFrame(() => {
       for (const w of wins.values()) if (!w.el.classList.contains("okno-sheet")) place(w, layout.geo[w.name] || defaultGeo());
       if (bubble && !bubble.hidden) placeBubble();
+      placeToast();
     });
   });
   window.addEventListener("evklid:stepper", () => bubble && !bubble.hidden && placeBubble());
@@ -789,6 +903,50 @@ export function initOkna(opts) {
     const el = document.getElementById(id);
     if (el) pasovi.observe(el, { attributes: true, attributeFilter: ["hidden"] });
   }
+  // Vsebina pod mehurčkom se spremeni po vnosu ali kliku (zadetki iskanja, razprt odgovor): mesto preverimo znova,
+  // ko se izriše (sicer je mehurček ostal na novih gumbih, dimni test 25. 11.: iskanje v učbeniku na iPadu).
+  let poVnosu = 0;
+  const preveriMesto = () => {
+    toastDejanje = true;
+    clearTimeout(poVnosu);
+    poVnosu = setTimeout(() => {
+      if (bubble && !bubble.hidden && !bubble.classList.contains("dragging")) placeBubble();
+      placeToast();
+    }, 450);
+  };
+  document.addEventListener("input", preveriMesto, { capture: true, passive: true });
+  document.addEventListener("click", preveriMesto, { capture: true, passive: true });
+  // Zadetki pridejo s strežnika pozneje kot 450 ms po vnosu (iskanje v učbeniku na iPadu, dimni test 25. 11.): nova vsebina
+  // v odprtem pogledu sproži isto preverjanje 120 ms po zadnji spremembi (med pretakanjem odgovora se ne kliče vsakič),
+  // da mehurček ne obstane vidno na novih zadetkih (dimni test 25. 11.: posnetek 500 ms po vnosu).
+  let poVsebini = 0;
+  // Ure in števci (dnevna igra 200 ms, preverjanje 250 ms) menjajo le besedilo: to ne premakne gumbov, zato ne šteje.
+  const pomembna = (m) =>
+    !m.target.closest?.("#chat-bubble, #toast, .tk") &&
+    [...m.addedNodes, ...m.removedNodes].some((n) => n.nodeType === 1);
+  new MutationObserver((zapisi) => {
+    if (!zapisi.some(pomembna)) return;
+    clearTimeout(poVsebini);
+    poVsebini = setTimeout(() => {
+      if (bubble && !bubble.hidden && !bubble.classList.contains("dragging")) placeBubble();
+      placeToast();
+    }, 120);
+  }).observe(document.body, { childList: true, subtree: true });
+  // Obvestilo (#toast, pišejo ga app.js, account.js, leagues.js, kalkulator.js): ob prikazu in novem besedilu na prosto mesto.
+  const obvestilo = document.getElementById("toast");
+  // Isto dejanje pogosto še spremeni stran (zapre obrazec, izriše odgovor, odpre list): dokler je obvestilo vidno (nekaj
+  // sekund), mesto preverimo vsakih 200 ms: tudi po drsenju (obrazec za otroka) in spremembah velikosti ali sloga, ki ne
+  // sprožijo nobenega dogodka (dimni test 25. 11.). Med drsenjem ne računamo v vsakem okvirju (pregled 2: zatikanje).
+  let straza = 0;
+  if (obvestilo)
+    new MutationObserver(() => {
+      toastProst = false;
+      toastOd = performance.now();
+      toastDejanje = false;
+      placeToast();
+      clearInterval(straza);
+      straza = obvestilo.hidden ? 0 : setInterval(() => (obvestilo.hidden ? (clearInterval(straza), (straza = 0)) : placeToast()), 200);
+    }).observe(obvestilo, { attributes: true, attributeFilter: ["hidden", "data-at"], childList: true });
   // Uvod, prijava in tekmovalna ura skrijejo mehurček (razredi na <body>).
   new MutationObserver(() => refreshBubble()).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 }

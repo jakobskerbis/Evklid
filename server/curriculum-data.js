@@ -693,6 +693,7 @@ export const PATHS = {
         "Stehiometrija | računanje iz kemijskih enačb, prebitni reaktant",
         "Plini | molska prostornina, plinska enačba",
         "Raztopine | masni delež, množinska koncentracija, redčenje",
+        "Topnost in sestava raztopin | topnost in diagram topnosti, nasičena raztopina, pretvorbe med masnim deležem, množinsko in masno koncentracijo, mešanje raztopin, topnost plinov",
       ]],
       ["Kemijske reakcije", [
         "Urejanje enačb | vrste reakcij",
@@ -712,6 +713,7 @@ export const PATHS = {
         "pH | računanje pH močnih kislin in baz",
         "Šibke kisline in baze | konstanta kislosti, pufri",
         "Titracija | nevtralizacija, računanje",
+        "Elektroliti in ionske reakcije | elektroliti in prevodnost, pravila topnosti, ionski zapis enačb, nastanek oborine, plina in vode, protoliza ionov soli",
       ]],
       ["Redoks in elektrokemija", [
         "Oksidacijska števila | določanje",
@@ -746,6 +748,10 @@ export const PATHS = {
   "KEM-SS-4": {
     label: "Kemija, 4. letnik",
     units: [
+      ["Anorganska kemija", [
+        "Prehodni elementi in koordinacijske spojine | lega in lastnosti prehodnih kovin, več oksidacijskih števil, barve, centralni ion, ligandi, koordinacijsko število, imena kompleksov",
+        "Anorganske snovi v industriji in okolju | aluminij, kloralkalna elektroliza, žveplova, dušikova in fosforjeva kislina, amoniak, gnojila, silicij, steklo, cement, onesnaževanje",
+      ]],
       ["Priprava na maturo", [
         "Splošna in anorganska kemija | ponovitev",
         "Organska kemija | ponovitev",
