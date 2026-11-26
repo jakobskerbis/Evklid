@@ -1945,15 +1945,9 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ ok: true });
   });
 
-  // Država za ceno: Cloudflare (CF-IPCountry), sicer država, shranjena ob registraciji, sicer Slovenija. Naročnina
-  // ostane v valuti, v kateri je sklenjena.
-  // K-13 (26. 11. 2026): glavo CF-IPCountry in državo ob registraciji lahko pošlje kdorkoli (evklid.app je pri Cloudflare
-  // samo DNS, zahteve ne gredo skozi Cloudflare). Regijske cene zato veljajo samo, ko je vir zanesljiv:
-  // EVKLID_ZAUPAJ_CF=1 nastavi, kdor ima strežnik res za posrednikom Cloudflare (in izvor sprejema samo od njega).
-  // Brez tega je cenik za vse v evrih (slovenske cene).
-  const cfZaupanja = env.EVKLID_ZAUPAJ_CF === "1";
+  // Država za ceno: Cloudflare (CF-IPCountry, npr. tunel ali gostovanje za Cloudflare), sicer
+  // država, shranjena ob registraciji, sicer Slovenija. Naročnina ostane v valuti, v kateri je sklenjena.
   const countryOf = (req, p) => {
-    if (!cfZaupanja) return "SI";
     const cf = String(req.headers["cf-ipcountry"] || "").toUpperCase();
     return /^[A-Z]{2}$/.test(cf) && cf !== "XX" && cf !== "T1" ? cf : p?.country || "SI";
   };

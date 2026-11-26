@@ -24,8 +24,9 @@ function sifriraneTabele() {
       const okno = src.slice(Math.max(0, m.index - 600), m.index);
       const pred = okno.slice(okno.lastIndexOf(";") + 1); // samo isti stavek
       const sql = [...pred.matchAll(/\b(?:INSERT(?:\s+OR\s+\w+)?\s+INTO\s+(\w+)|UPDATE\s+(\w+)\s+SET)\b/g)].at(-1);
-      if (!sql) continue;
-      const t = sql[1] || sql[2];
+      // Posredni zapis v kv prek pomočnika (npr. usage.kvSet(KLJUC, sealJson(...))).
+      const t = sql ? sql[1] || sql[2] : /\bkvSet\([^;]*$/.test(pred) ? "kv" : null;
+      if (!t) continue;
       if (!najdene.has(t)) najdene.set(t, new Set());
       najdene.get(t).add(path.relative(koren, f));
     }
@@ -51,7 +52,7 @@ test("šifrirani ključi v kv so v SEALED_KV in jih zajame vrstica kv v SEALED",
   for (const k of SEALED_KV) assert.ok(kv.where.includes(`'${k}'`), k);
   // Vse datoteke, ki v kv pišejo seal(...), so pregledane zgoraj (nova šifrirana vrednost v kv = nov ključ v SEALED_KV).
   const pisci = [...(sifriraneTabele().get("kv") || [])].sort();
-  assert.deepEqual(pisci, ["stiska-obvestilo.js"], `nova datoteka piše šifrirano v kv: ${pisci.join(", ")}; dodaj ključ v SEALED_KV`);
+  assert.deepEqual(pisci, ["nujno.js", "stiska-obvestilo.js"], `nova datoteka piše šifrirano v kv: ${pisci.join(", ")}; dodaj ključ v SEALED_KV`);
 });
 
 const zKljucem = (key, fn, old = "") => {

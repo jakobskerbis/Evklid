@@ -75,11 +75,17 @@ function upgradeBox(acc) {
   const up = acc.upgrade;
   if (!up?.options?.length || acc.parent.minor) return "";
   if (acc.parent.birth_missing) return `<div class="plan-upgrade"><p class="muted">${esc(t("birth.payMissing"))}</p></div>`;
-  // K-13: nadgradnja takoj bremeni kartico, zato iste potrditve kot ob nakupu in geslo računa.
-  return `<form class="plan-upgrade" id="upgrade-form"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
-    ${consentFields()}
-    ${acc.parent.has_password === false ? "" : `<label>${esc(t("guest.loginPassword"))} <input name="password" type="password" maxlength="200" autocomplete="current-password" required></label>`}
-    <div class="form-actions">${up.options.map((o) => `<button type="submit" class="secondary" name="plan" value="${esc(o.key)}" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></form>`;
+  // K-13: nadgradnja takoj bremeni kartico. Najprej izbira stopnje, nato iste potrditve kot ob nakupu in geslo računa
+  // (kot #plan-form: novalidate, napaka v .form-error). Račun brez gesla (Apple): ob oddaji povezava za nastavitev gesla.
+  const per = (o) => t(o.interval === "year" ? "mob.perYear" : "mob.perMonth");
+  return `<form class="form plan-upgrade" id="plan-upgrade-form" novalidate><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
+    <div class="plans">${up.options.map((o) => `<label class="plan"><input type="radio" name="plan" value="${esc(o.key)}" data-label="${esc(`${t("up.btn", { name: planName(o) })} · ${money(o.amount, o.currency)} ${per(o)}`)}"> <span><b>${esc(t("up.btn", { name: planName(o) }))}</b> · ${money(o.amount, o.currency)} ${esc(per(o))}</span></label>`).join("")}</div>
+    <div class="plan-upgrade-rest" hidden>
+      <p class="form-error" role="alert" hidden></p>
+      ${consentFields()}
+      ${acc.parent.has_password === false ? "" : `<label>${esc(t("lock.accountPw"))} <input name="password" type="password" maxlength="200" autocomplete="current-password"></label>`}
+      <div class="form-actions"><button class="primary" type="submit"></button></div>
+    </div></form>`;
 }
 
 function plansPicker(acc) {
@@ -997,21 +1003,29 @@ async function renderAccount() {
     }
   });
   // Nadgradnja: Stripe zaračuna razliko za preostanek obdobja, višja stopnja je odprta takoj.
-  $("#upgrade-form")?.addEventListener("submit", async (e) => {
+  $("#plan-upgrade-form")?.addEventListener("change", (e) => {
+    if (e.target.name !== "plan") return;
+    const f = e.currentTarget;
+    $(".plan-upgrade-rest", f).hidden = false;
+    $("button[type=submit]", f).textContent = e.target.dataset.label;
+  });
+  $("#plan-upgrade-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target;
-    const b = e.submitter?.dataset.upgrade ? e.submitter : null;
-    if (!b) return;
+    const plan = f.querySelector("input[name=plan]:checked")?.value;
+    if (!plan) return; // gumb za oddajo je viden šele po izbiri stopnje
+    if (await noPassword("nadgradnjo paketa")) return;
     if (!consentsOk(f)) return showError(f, new Error(consentMessage(f, "payp.consentMissing")));
-    b.disabled = true;
+    const btn = $("button[type=submit]", f);
+    btn.disabled = true;
     try {
-      await api("/api/billing/upgrade", { method: "POST", body: { plan: b.dataset.upgrade, password: f.password?.value || "", ...consentBody() } });
+      await api("/api/billing/upgrade", { method: "POST", body: { plan, password: f.password?.value || "", ...consentBody() } });
       toast(t("up.done"));
       await onReadyCb?.({ keepView: true });
       renderAccount();
     } catch (err) {
-      b.disabled = false;
-      showError(f, err);
+      btn.disabled = false;
+      showError(f, err.data?.password ? new Error(t("lock.wrong")) : err);
     }
   });
   // Nepotrjen e-naslov (#747): zaslon »Potrdi e-naslov« (Pošlji znova, Sem potrdil(a), Nazaj na učenje).

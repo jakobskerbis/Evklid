@@ -88,9 +88,16 @@ export function passwordGate(password) {
     const b = Buffer.from(String(value ?? ""));
     return b.length === expected.length && crypto.timingSafeEqual(b, expected);
   };
-  // Kot server/vabila.js: s trust proxy req.ip, sicer glava Cloudflare (tunel do domačega računalnika), nato vtičnica.
-  // Prvi vnos X-Forwarded-For pošlje odjemalec sam, zato ga ne beremo (K-13).
-  const clientIp = (req) => String((req.app?.get("trust proxy") ? req.ip : req.headers["cf-connecting-ip"]) || req.socket?.remoteAddress || "");
+  // Naslov za omejitev (K-13): s trust proxy req.ip, sicer vtičnica; glava CF-Connecting-IP samo od lokalnega cloudflared.
+  // Prvi vnos X-Forwarded-For pošlje odjemalec sam, zato ga ne beremo. Skupna meja (vsi naslovi) velja vedno; ob napadu
+  // za 15 minut ustavi tudi nove prijave, kdor ima piškotek, ostane prijavljen.
+  const loopback = (a) => a === "127.0.0.1" || a === "::1" || a === "::ffff:127.0.0.1";
+  const clientIp = (req) => {
+    if (req.app?.get("trust proxy")) return String(req.ip || req.socket?.remoteAddress || "");
+    const sock = String(req.socket?.remoteAddress || "");
+    // Glava Cloudflare samo, ko zahteva pride od cloudflared na istem računalniku (tunel).
+    return String((loopback(sock) && req.headers["cf-connecting-ip"]) || sock);
+  };
   const blocked = (req) => {
     const now = Date.now();
     if (vsi.n >= GATE_FAILS_ALL && vsi.until > now) return true;
@@ -105,6 +112,7 @@ export function passwordGate(password) {
     const f = fails.get(ip);
     if (!f || f.until < now) {
       if (fails.size > 10000) for (const [k, v] of fails) if (v.until < now) fails.delete(k);
+      if (fails.size > 10000) fails.clear(); // trda meja pomnilnika; skupna meja še vedno velja
       fails.set(ip, { n: 1, until: now + GATE_WINDOW_MS });
     } else f.n++;
   };
@@ -151,12 +159,13 @@ export function passwordGate(password) {
       const url = new URL(req.originalUrl, "http://x");
       url.searchParams.delete("geslo");
       const clean = url.pathname + url.search;
-      if (!blocked(req) && matches(req.query.geslo)) {
+      req.originalUrl = clean;
+      if (blocked(req)) return showLogin(req, res, 429, "Preveč napačnih poskusov. Poskusi čez 15 minut.");
+      if (matches(req.query.geslo)) {
         setCookie(req, res);
         return res.redirect(303, clean);
       }
       fail(req);
-      req.originalUrl = clean;
       return showLogin(req, res, 401, "Geslo v povezavi ne velja. Vpiši ga.");
     }
     if (PUBLIC.some((re) => re.test(req.path))) return next();
