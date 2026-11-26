@@ -213,3 +213,18 @@ test("lesson-math: bajt in bit (meritev SŠ 18. 11.: lažen popravek »2 MB ni 1
   ];
   for (const t of bad) assert.equal(one(t).mismatches.length, 1, t);
 });
+
+// AUDIT-061: točna števila brez »≈« se primerjajo točno (pol zadnjega mesta), ne z 1 % operandov.
+test("AUDIT-061: 305 − 7 = 297 in 1000 − 1 = 990 se ujameta, zaokrožitve in π ostanejo", () => {
+  const R = String.raw;
+  for (const t of [R`$100 - 1 = 98$`, R`$305 - 7 = 297$`, R`$1000 - 1 = 990$`, R`$250 + 250 - 3 = 499$`, R`$2{,}5 \cdot 4 = 10{,}05$`]) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+  for (const t of [R`$305 - 7 = 298$`, R`$\pi \cdot 10 = 31{,}4$`, R`$39{,}9 - 39{,}8 = 0{,}1$`, R`$\frac{10}{3} = 3{,}33$`, R`$1{,}2 \cdot 10^{3} = 1200$`, R`$2^{-1} = 0{,}5$`, R`$20 + 1{,}5 \cdot 5{,}71 = 20 + 8{,}57$`, R`$0 = 8$`]) {
+    assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  }
+});
+
+test("AUDIT-061 (pregled): zaokrožen rezultat z ničlami na koncu ob decimalnem podatku ni napaka", () => {
+  const R = String.raw;
+  for (const t of [R`$0{,}5 \cdot 1500 \cdot 25^2 = 469\,000$`, R`$9{,}81 \cdot 125 = 1230$`, R`$1200 \cdot 1{,}035^5 = 1430$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  for (const t of [R`$2{,}5 \cdot 4 = 10{,}05$`, R`$305 - 7 = 297$`]) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+});

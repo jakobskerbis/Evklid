@@ -185,6 +185,11 @@ export function evaluate(expr) {
 // Polovica zadnjega izpisanega mesta: 6,5 → 0,05; 1,602·10⁻¹⁹ → 0,0005·10⁻¹⁹; pri »≈« tudi 4 600 000 → 50 000.
 const halfUlp = (x, approx) => 0.5 * (approx && x.trailingZeros && x.ulp === 1 ? 10 ** x.trailingZeros : x.ulp);
 
+// Izraz brez deljenja, korenov in π (le števila, + − · in cele potence): njegova vrednost je točna.
+// Števila z največ 4 veljavnimi mesti: večja (41 135) so pogosto zaokrožen vmesni rezultat (2 · 41 135 = 82 271).
+const sig = (n) => n.replace(".", "").replace(/^0+/, "").replace(/0+$/, "").length;
+const exactExpr = (x) => !/[/a-z]/.test(x.expr) && !/\*\*\s*\(?\s*-/.test(x.expr) && (x.expr.match(/\d+(?:\.\d+)?/g) || []).every((n) => sig(n) <= 4);
+
 // Primerja dva izračunana dela. Vrne null (ujema se), "skip" (pretvorba, ustreznica, izjava) ali relativno razliko.
 function compare(a, b, approx, loose, afterData = false) {
   const diff = Math.abs(a.value - b.value);
@@ -198,6 +203,19 @@ function compare(a, b, approx, loose, afterData = false) {
     if (!x.bare) continue;
     tol = Math.max(tol, halfUlp(x, approx));
     ratioTol = Math.min(0.03, Math.max(ratioTol, halfUlp(x, approx) / Math.max(Math.abs(x.value), 1e-12)));
+  }
+  // Točna števila (cela in končne decimalke, le + − · in potence, brez »≈«, ocen in deljenja): rezultat je točen, zato
+  // velja le pol zadnjega zapisanega mesta (AUDIT-061). Prej je 1 % operandov spustil 305 − 7 = 297 in 1000 − 1 = 990.
+  // Dve goli števili (»0 = 8« ni res) ostaneta izjava kot prej.
+  if (!approx && !loose && !(a.bare && b.bare) && exactExpr(a) && exactExpr(b) && a.units.join() === b.units.join()) {
+    // pol zadnjega mesta: zapisanega rezultata ali zaokroženega vmesnega števila (20 + 1,5 · 5,71 = 20 + 8,57)
+    const dec = Math.max(0, ...[a, b].flatMap((x) => (x.expr.match(/\d+\.\d+/g) || []).map((n) => n.split(".")[1].length)));
+    // Z decimalnim podatkom je rezultat lahko zaokrožen na desetice ali tisočice (9,81 · 125 = 1230, 0,5 · 1500 · 25² =
+    // 469 000): ničle na koncu golega rezultata takrat štejejo kot zaokrožitev (pregled #1011).
+    const rounded = dec > 0;
+    const t = Math.max(...[a, b].map((x) => (x.bare ? halfUlp(x, rounded) : 0)), 0.5 * 10 ** -dec * (a.bare && b.bare ? 0 : 1), 1e-9 * scale);
+    if (diff <= t * (1 + 1e-9) + 1e-12) return null; // 8,565 → 8,57 (zaokroženo navzgor)
+    return diff / scale;
   }
   if (diff <= tol + 1e-12) return null;
   if (a.bare && b.bare) return "skip"; // 1 eV = 1,602·10⁻¹⁹ J, 10 m = 1000 cm, »0 = 4«
