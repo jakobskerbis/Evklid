@@ -156,6 +156,42 @@ lažni alarm preračuna (`\text{…}` kot enota, AUDIT-087). Drugi model AI je r
 generatorjev brez zaznane napake: 0/30 zgrešenih napak (95 % interval 0–11 %); 3/30 imajo zaokroženo vrednost za »=«
 (PV-07).
 
+## Status nalog na polah (PV-11)
+
+`node scripts/status-pol.mjs [--pola NPZ9-MAT] [--json p.json] [--porocilo p.md] [--dodatek f.md] [--strogo]` (brez
+modela AI, s SymPy nekaj minut) da status vsaki nalogi naših pol mature, poklicne mature in NPZ (`content/exam-papers`,
+31 datotek z 41 izpitnimi polami). Za vsak del naloge vzame odgovor, točkovnik, vse poti rešitve in pravilno izbiro
+(`mistake` in napačne izbire so namerno napačne in niso trditve) ter preveri dve vrsti trditev:
+
+- **račun**: formula z relacijo, kot v popisu PV-04;
+- **korak**: v poteh rešitve isti izbor kot pri generatorjih (PV-10) in še verige v besedilu: kosi ene formule, ločeni z
+  »⇒«, ter zaporedni formuli, med katerima je le veznik »torej«, »sledi«, »zato«, »od tod«, »dobimo« (»oziroma« ni
+  veznik, pogosto pomeni »po vrsti«). »In« veže le enačbi sredi izpeljave (»…, torej $5x^2 = 180$ in $x^2 = 36$«); na
+  začetku je seznam ali sistem (»enačbe $A$, $B$ in $C$«), pri neenačbah hkratni pogoji. Sklep po pogojih, povezanih z
+  »in«, ni korak, ker ne sledi le iz zadnjega pogoja. Zaporedni enačbi ali neenačbi z isto neznanko, povezani z »ali«,
+  sta ena trditev.
+
+Korak, katerega prva formula nima realne rešitve (x² + 6x + 34 = 0, tudi v obliki »ali« in pri neenačbi), je brez
+statusa: iz prazne množice sledi vsaka formula, zato bi ga ukaz potrdil ne glede na drugo stran (velja tudi za
+generatorje, `vrstaKoraka`). Par, kjer sta obe formuli brez rešitve, ni korak in ni štet. Protislovje, ki preide v
+identiteto, ostane korak in ga ukaz označi za napako. Posledica (korak, ki doda rešitev, npr. kvadriranje) šteje za
+pravilen korak.
+
+Status naloge je najšibkejši člen. Vsako število v končnem odgovoru dela mora biti rezultat (desna stran zadnje
+relacije) katere od preverjenih trditev dela, sicer dobi del trditev »odgovor« brez statusa. Odgovor z izbirno črko, z
+opisom zunaj formul (več kot dve besedi ali besedilo pred formulo) ali brez števila ni preverjen, tudi če so vmesni
+računi pravilni; števila v indeksih, eksponentih in `\mathrm{}` (C₆H₁₂) ne štejejo. Zato »numerično« pomeni, da je
+preverjen tudi odgovor vsakega dela.
+
+Zaznavanje napak meri skript sam: vsak potrjen korak pokvari dvakrat (zadnje celo število v drugi formuli koraka in
+posebej v prvi + 1, `mutiraj`) in prešteje ujete in napačno potrjene; `--strogo` pade, če je katera vstavljena napaka
+potrjena ali SymPy ni odgovoril. Izhodišče `docs/meritve/pole-2026-11-26.md`: od 626 nalog jih ima 2 status
+numerično, 398 delno, 0 napako in 226 nobenega (besedilne rešitve, biologija, izbire); SymPy je potrdil 160 od 162
+korakov, 2 imata izgubljeno posamezno rešitev v kontekstu; vstavljenih napak 320/320 ujetih, 0 potrjenih. Poročilo ima
+vrstico za vsako nalogo (oznaka: pola, sklop, številka). Dva neodvisna pregledovalca (modela AI, ne človek) sta ročno
+preverila 152 parov korakov iz besedila in vzorec 40 potrjenih korakov in 40 potrjenih računov: 0/80 napačno
+potrjenih (95 % interval 0–4,6 %).
+
 ## Enote in zaokroževanje (PV-07)
 
 `node scripts/enote-generatorjev.mjs [--semena 5] [--predpona dod-fiz] [--json p.json] [--porocilo p.md] [--dodatek f.md]
