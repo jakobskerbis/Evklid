@@ -114,9 +114,11 @@ test("naša pola: izbira z dotikom, rešitve samo na koncu, samodejna ocena izbi
   assert.deepEqual(
     (await page.evaluate(() => window.oddano)).sort((a, b) => a.key.localeCompare(b.key)),
     [
-      { key: "1a", ok: true },
+      { key: "1a", ok: true, sel: [2] },
+      { key: "1b", ok: false },
       { key: "1c", ok: true },
     ],
+    "ob koncu vsi deli; izbirni z izbiro (strežnik jo oceni sam)",
   );
   assert.deepEqual(await page.evaluate(() => window.shranjeno), { "1a": true, "1c": true, _izb: { "1a": [2], "1b": [0, 1] }, _konec: true });
 
@@ -136,6 +138,12 @@ test("naša pola: izbira z dotikom, rešitve samo na koncu, samodejna ocena izbi
   await page.evaluate(() => window.odpri());
   assert.equal(await page.locator(".op .op-sol").count(), 3);
   assert.equal(await page.isChecked('[data-op="1c"] [data-op-got]'), true);
+  await page.evaluate(() => window.zapri());
+  // Stara oznaka pri izbirnem delu brez izbire: ostane kljukica (točke se ujemajo, učenec jo lahko odznači).
+  await page.evaluate(() => (window.shranjeno = { "1a": true }));
+  await page.evaluate(() => window.odpri());
+  assert.equal(await page.isChecked('[data-op="1a"] [data-op-got]'), true);
+  assert.equal(await page.locator('[data-op="1a"] .op-izid').count(), 0);
   await page.evaluate(() => window.zapri());
 
   // Poskusni izpit: izbira med pisanjem, ob oceni ima izbirni del z enim odgovorom točke že vpisane.

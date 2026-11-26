@@ -128,8 +128,8 @@ export function closeOurPaper() {
 // paper: JSON pole; title: oznaka (»Naša pola v slogu NPZ 9 – Matematika, 2026«); rich(md) → HTML;
 // onTutor(task, part): vprašaj inštruktorja; score: { get() → { "1a": true, _izb: { "1b": [2] }, _konec: true }, set(obj) }
 // (shrani napravo; ključi delov = »Imam prav«, _izb = izbrani odgovori, _konec = rešitve so odprte);
-// onChecked([{ key, ok }]): ob zaprtju (ali »Reši znova«) deli, ki jih je učenec preveril: izbirni z odgovorom ob
-// koncu in deli z (od)označenim »Imam prav« (za šibke točke; ok = prav). focus: indeks naloge v paper.tasks, pri
+// onChecked([{ key, ok, sel? }]): ob zaprtju (ali »Reši znova«) deli, ki jih je učenec preveril (za šibke točke;
+// ok = prav): ob koncu vsi deli razen izbirnih brez odgovora; izbirni z enim pravilnim pošlje še izbiro (sel). focus: indeks naloge v paper.tasks, pri
 // kateri se pola odpre (klepet, naloga-pole.js).
 // Rešitve so samo na koncu (j, 26. 11. 2026): med reševanjem jih ni, »Preveri rešitve« pod zadnjo nalogo odpre vse
 // hkrati, izbirne dele z enim pravilnim odgovorom oceni sam, pri drugih učenec označi »Imam prav«.
@@ -166,7 +166,8 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
   const partHtml = (tk, p) => {
     const id = label(tk, p);
     const choice = p.format === "choice" && p.choices;
-    const oceni = konec ? (samodejno(p) ? izid(p, id) : `<label class="op-got"><input type="checkbox" data-op-got ${got[id] ? "checked" : ""}><span>${esc(t("pp.oursGot"))}</span></label>`) : "";
+    // Stara shranjena pola: izbirni del z »Imam prav« brez izbire ostane s kljukico (da jo učenec lahko odznači).
+    const oceni = konec ? (samodejno(p) && (izb[id]?.length || !got[id]) ? izid(p, id) : `<label class="op-got"><input type="checkbox" data-op-got ${got[id] ? "checked" : ""}><span>${esc(t("pp.oursGot"))}</span></label>`) : "";
     const tutor = onTutor ? `<button type="button" class="secondary small" data-op-tutor>${icon("message-circle")}<span>${esc(t("pp.oursTutor"))}</span></button>` : "";
     return `<li class="op-part" data-op="${esc(id)}">
       ${r.question(tk, p, choice ? { sel: izb[id], konec } : null)}
@@ -205,7 +206,8 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
     el.querySelector("[data-op-close]")?.focus();
   };
   const oddaj = () => {
-    if (touched.size && onChecked) onChecked([...touched].map((key) => ({ key, ok: !!got[key] })));
+    const po = new Map(all.map((x) => [x.id, x.p]));
+    if (touched.size && onChecked) onChecked([...touched].map((key) => (samodejno(po.get(key)) && izb[key]?.length ? { key, ok: !!got[key], sel: izb[key] } : { key, ok: !!got[key] })));
     touched.clear();
   };
   const find = (node) => {
@@ -232,12 +234,15 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
     }
     if (e.target.closest("[data-op-finish]")) {
       konec = true;
-      for (const x of izbirni)
+      // Šibke točke: kot prej odprta rešitev so zdaj odprte vse; neoznačen del je napaka le, če učenec polo res
+      // ocenjuje (strežnik: vsaj en »Imam prav« ali izbirni odgovor). Izbirni del brez odgovora ne šteje.
+      for (const x of all) {
         if (samodejno(x.p)) {
           if (pravilno(x.p, izb[x.id])) got[x.id] = true;
           else delete got[x.id];
           if (izb[x.id]?.length) touched.add(x.id);
-        }
+        } else touched.add(x.id);
+      }
       save();
       return rerender();
     }

@@ -294,7 +294,8 @@ export function mountSkillChecks(app, store, { loadStudent }) {
     if (counted) recordSkill(db, s.id, { source: "lesson", topicId, n: 1, wrong: ok ? 0 : 1 });
     res.json({ counted });
   });
-  // Naša pola: deli, pri katerih je učenec odprl rešitev ali označil »Imam prav« (ok = označeno). Vsak del enkrat.
+  // Naša pola: deli, ki jih je učenec ob koncu preveril (ok = »Imam prav«). Izbirni del z enim pravilnim odgovorom pride
+  // z izbiro (sel: [indeks]); strežnik ga oceni sam in šteje vedno (pravi odgovor, ne le branje). Vsak del enkrat.
   app.post("/api/students/:id/paper-check", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -302,17 +303,21 @@ export function mountSkillChecks(app, store, { loadStudent }) {
     const paper = /^[A-Za-z0-9-]{3,80}$/.test(id) ? loadOurPaper(id) : null;
     if (!paper) return res.status(404).json({ error: "Pola ne obstaja." });
     const parts = Array.isArray(req.body?.parts) ? req.body.parts.slice(0, 120) : [];
-    const keys = new Set(paper.tasks.flatMap((tk) => tk.parts.map((p) => partKey(tk, p))));
+    const byKey = new Map(paper.tasks.flatMap((tk) => tk.parts.map((p) => [partKey(tk, p), p])));
+    // Izbira pri izbirnem delu z enim pravilnim odgovorom: true/false (oceni strežnik), sicer null.
+    const izbira = (p, sel) =>
+      p?.format === "choice" && Array.isArray(p.correct) && p.correct.length === 1 && Array.isArray(sel) && sel.length === 1 && Number.isInteger(sel[0]) ? sel[0] === p.correct[0] : null;
     const topics = paperTopics(id, paper);
     // Odprta rešitev brez »Imam prav« je napaka le, če je učenec v tem odpiranju označil vsaj en del
     // (torej pole res rešuje in si šteje točke); kdor le bere rešitve, nima napak.
-    const grading = parts.some((p) => p?.ok === true);
+    const grading = parts.some((p) => p?.ok === true || izbira(byKey.get(String(p?.key || "")), p?.sel) !== null);
     const perTopic = new Map();
     let counted = 0;
     for (const part of parts) {
       const key = String(part?.key || "");
-      const ok = part?.ok === true;
-      if (!keys.has(key) || (!ok && !grading)) continue;
+      const auto = izbira(byKey.get(key), part?.sel);
+      const ok = auto ?? part?.ok === true;
+      if (!byKey.has(key) || (!ok && !grading)) continue;
       const topicId = topics.get(key);
       if (!topicId || (perTopic.get(topicId) || 0) >= PAPER_MAX || !firstTime(db, s.id, `P|${id}|${key}`)) continue;
       perTopic.set(topicId, (perTopic.get(topicId) || 0) + 1);

@@ -777,7 +777,7 @@
   "pp.oursMistake": "Common mistake:",
   "pp.oursScore": "{got} / {max} pts",
   "pp.oursPola": "Paper {n}",
-  "pp.oursAboutDone": "The solutions are open. Multiple-choice tasks are marked automatically; for the others, compare your solution and tick »I got it right«.",
+  "pp.oursAboutDone": "The solutions are open. Multiple-choice tasks with one correct answer are marked automatically; for the others, compare your solution and tick »I got it right«.",
   "pp.oursPickOne": "Choose one answer",
   "pp.oursPickMany": "Choose your answers",
   "pp.oursRight": "correct answer",

@@ -1233,7 +1233,7 @@ export default {
   "pp.oursMistake": "Pogosta napaka:",
   "pp.oursScore": "{got} / {max} t.",
   "pp.oursPola": "{n}. izpitna pola",
-  "pp.oursAboutDone": "Rešitve so odprte. Izbirne naloge so ocenjene same, pri drugih primerjaj svojo rešitev in označi »Imam prav«.",
+  "pp.oursAboutDone": "Rešitve so odprte. Izbirne naloge z enim pravilnim odgovorom so ocenjene same, pri drugih primerjaj svojo rešitev in označi »Imam prav«.",
   "pp.oursPickOne": "Izberi en odgovor",
   "pp.oursPickMany": "Izberi odgovore",
   "pp.oursRight": "pravilen odgovor",

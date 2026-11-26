@@ -777,7 +777,7 @@
   "pp.oursMistake": "Häufiger Fehler:",
   "pp.oursScore": "{got} / {max} P.",
   "pp.oursPola": "Prüfungsteil {n}",
-  "pp.oursAboutDone": "Die Lösungen sind offen. Auswahlaufgaben werden automatisch bewertet; bei den anderen vergleiche deine Lösung und hake »Richtig gelöst« an.",
+  "pp.oursAboutDone": "Die Lösungen sind offen. Auswahlaufgaben mit einer richtigen Antwort werden automatisch bewertet; bei den anderen vergleiche deine Lösung und hake »Richtig gelöst« an.",
   "pp.oursPickOne": "Wähle eine Antwort",
   "pp.oursPickMany": "Wähle deine Antworten",
   "pp.oursRight": "richtige Antwort",

@@ -777,7 +777,7 @@
   "pp.oursMistake": "Gyakori hiba:",
   "pp.oursScore": "{got} / {max} p",
   "pp.oursPola": "{n}. feladatlap",
-  "pp.oursAboutDone": "A megoldások nyitva vannak. A feleletválasztós feladatokat a program pontozza; a többinél hasonlítsd össze a megoldásodat, és jelöld be: »Jól oldottam meg«.",
+  "pp.oursAboutDone": "A megoldások nyitva vannak. Az egy helyes válaszos feleletválasztós feladatokat a program pontozza; a többinél hasonlítsd össze a megoldásodat, és jelöld be: »Jól oldottam meg«.",
   "pp.oursPickOne": "Válassz egy választ",
   "pp.oursPickMany": "Válaszd ki a válaszokat",
   "pp.oursRight": "helyes válasz",

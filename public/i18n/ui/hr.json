@@ -783,7 +783,7 @@
   "pp.oursMistake": "Česta pogreška:",
   "pp.oursScore": "{got} / {max} b.",
   "pp.oursPola": "{n}. ispitna knjižica",
-  "pp.oursAboutDone": "Rješenja su otvorena. Zadatci višestrukog izbora ocijenjeni su sami, kod ostalih usporedi svoje rješenje i označi »Imam točno«.",
+  "pp.oursAboutDone": "Rješenja su otvorena. Zadatci višestrukog izbora s jednim točnim odgovorom ocijenjeni su sami, kod ostalih usporedi svoje rješenje i označi »Imam točno«.",
   "pp.oursPickOne": "Odaberi jedan odgovor",
   "pp.oursPickMany": "Odaberi odgovore",
   "pp.oursRight": "točan odgovor",

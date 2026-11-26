@@ -777,7 +777,7 @@
   "pp.oursMistake": "Errore comune:",
   "pp.oursScore": "{got} / {max} pt",
   "pp.oursPola": "Prova {n}",
-  "pp.oursAboutDone": "Le soluzioni sono aperte. Gli esercizi a scelta multipla sono valutati da soli; per gli altri confronta la tua soluzione e segna »Ho fatto giusto«.",
+  "pp.oursAboutDone": "Le soluzioni sono aperte. Gli esercizi a scelta multipla con una sola risposta giusta sono valutati da soli; per gli altri confronta la tua soluzione e segna »Ho fatto giusto«.",
   "pp.oursPickOne": "Scegli una risposta",
   "pp.oursPickMany": "Scegli le risposte",
   "pp.oursRight": "risposta corretta",
