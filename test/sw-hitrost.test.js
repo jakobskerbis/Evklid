@@ -34,10 +34,11 @@ function loadSw(app, net = {}) {
     },
   };
   const calls = [];
-  const fetchFn = async (r) => {
+  const fetchFn = async (r, init) => {
     const url = key(r);
     calls.push(url);
-    if (net.hang) return new Promise(() => {});
+    // omrežje ne odgovori; kot pravi fetch se zahteva s signalom ob abort() konča z napako
+    if (net.hang) return new Promise((_, no) => init?.signal?.addEventListener("abort", () => no(new Error("abort"))));
     const headers = { "content-type": "text/plain" };
     // strežnik pošlje različico datotek na vsakem odgovoru zunaj API (server/app.js)
     if (net.served && !new URL(url).pathname.startsWith("/api/")) headers["X-Evklid-App"] = net.served;
@@ -56,12 +57,14 @@ function loadSw(app, net = {}) {
   const src = fs
     .readFileSync(new URL("../public/sw.js", import.meta.url), "utf8")
     .replace('const APP = "";', `const APP = "${app}";`)
-    .replace(/const ENTRY_PREVERI = \d+;/, `const ENTRY_PREVERI = ${net.preveri ?? 20};`);
+    .replace(/const ENTRY_PREVERI = \d+;/, `const ENTRY_PREVERI = ${net.preveri ?? 20};`)
+    .replace(/const ENTRY_ROK = \d+;/, `const ENTRY_ROK = ${net.rok ?? 200};`);
   vm.runInNewContext(src, { self, caches, fetch: fetchFn, Response, Headers, URL, setTimeout, clearTimeout, Promise, JSON, Error, AbortController });
+  const waits = []; // e.waitUntil(...) iz dogodkov fetch (preverjanje vstopne strani v ozadju)
   // ids: { clientId, resultingClientId } (stran, ki zahteva / stran, ki bo nastala z navigacijo)
   const get = async (path, mode = "no-cors", ids = {}) => {
     let p = null;
-    for (const f of listeners.fetch) f({ request: { method: "GET", url: new URL(path, ORIGIN).href, mode }, respondWith: (x) => (p = x), waitUntil() {}, ...ids });
+    for (const f of listeners.fetch) f({ request: { method: "GET", url: new URL(path, ORIGIN).href, mode }, respondWith: (x) => (p = x), waitUntil: (x) => void waits.push(x), ...ids });
     return p ? (await p).text() : null; // null: SW se ne vmeša (brskalnik gre sam na omrežje)
   };
   const message = (data, source) => {
@@ -69,7 +72,7 @@ function loadSw(app, net = {}) {
     for (const f of listeners.message) f({ data, source, ports: [], waitUntil: (x) => waits.push(x) });
     return Promise.all(waits);
   };
-  return { get, message, calls, caches, cacheFor, updates, open };
+  return { get, message, calls, caches, cacheFor, updates, open, waits };
 }
 
 test("datoteka aplikacije iste različice: takoj iz predpomnilnika, brez omrežja", async () => {
@@ -209,6 +212,17 @@ test("vstopna stran (N-08b): prijava z geslom (401) pobriše kopijo, naslednje o
   sw.calls.length = 0;
   await sw.get("/", "navigate");
   assert.deepEqual(sw.calls, [`${ORIGIN}/`], "naslednje odprtje: omrežje");
+});
+
+// Preverjanje v ozadju drži service worker zaseden (e.waitUntil): nov service worker se aktivira šele, ko se konča. Brez
+// roka bi zataknjena povezava (telefon med omrežji) to zadržala za nedoločen čas.
+test("vstopna stran (N-08b): preverjanje v ozadju ima rok, zataknjeno omrežje ga ne drži odprtega", async () => {
+  const sw = loadSw("abc", { hang: true, preveri: 0, rok: 100 });
+  await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  assert.equal(sw.waits.length, 1);
+  const konec = await Promise.race([Promise.all(sw.waits).then(() => "konec"), new Promise((r) => setTimeout(r, 1000, "visi"))]);
+  assert.equal(konec, "konec", "waitUntil se konča po roku");
 });
 
 test("vstopna stran (N-08b): kopija druge različice ni takojšnja (čaka omrežje do 1 s)", async () => {

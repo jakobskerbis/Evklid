@@ -60,6 +60,9 @@ const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-cont
 // zastarelo) vstopna stran čaka omrežje največ 1 s (entry), nato shranjeno kopijo.
 const TIMEOUT = { entry: 1000, static: 4000, api: 7000 };
 const ENTRY_PREVERI = 3000;
+// Rok preverjanja v ozadju: dokler teče, je service worker zaseden (e.waitUntil) in nov service worker ga čaka; brez roka
+// bi ga zataknjena povezava (telefon med omrežji, tunel brez odgovora) zadržala za nedoločen čas.
+const ENTRY_ROK = 15000;
 // Strežnik je objavil novo različico datotek (vstopna stran z drugačno X-Evklid-App): stare kopije niso več sveže.
 let outdated = false;
 // Odprte strani in različica, ki jo izvajajo (clientId → APP strani; sporočilo »page-app«). Ob ponovnem zagonu
@@ -301,6 +304,7 @@ async function entryPage(req, onPage, waitUntil) {
 async function revalidateEntry(cache) {
   await new Promise((r) => setTimeout(r, ENTRY_PREVERI));
   const ctl = new AbortController();
+  const rok = setTimeout(() => ctl.abort(), ENTRY_ROK);
   try {
     const res = await fetch(new URL(ENTRY, self.location.origin).href, { credentials: "same-origin", headers: { Accept: "text/html" }, signal: ctl.signal });
     if (tunnelDown(res)) return ctl.abort();
@@ -315,7 +319,10 @@ async function revalidateEntry(cache) {
     }
     if (!res.ok || res.type !== "basic" || privateRes(res)) return ctl.abort();
     await put(cache, ENTRY, res);
-  } catch {}
+  } catch {
+  } finally {
+    clearTimeout(rok);
+  }
 }
 
 // Nov poskus uvoza po napaki (?r=, public/app.js, games/subjects/index.js) je ista datoteka: shranimo in iščemo jo
