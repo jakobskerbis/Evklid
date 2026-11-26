@@ -23,7 +23,7 @@ const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
 const pretestTier = (known) => (known >= 3 ? "višja" : known === 2 ? "srednja" : "osnovna");
 
 // Naloge z enim poskusom in brez namigov (preizkusi, tekmovanja, test predznanja).
-const ONE_SHOT = ["placement", "contest", "pretest"];
+export const ONE_SHOT = ["placement", "contest", "pretest"];
 
 export const RULES = {
   levelUpStreak: 3, // 3 pravilni zapored -> težje

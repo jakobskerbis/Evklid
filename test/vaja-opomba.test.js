@@ -48,8 +48,8 @@ test("primer naloge: x⁶ = −64, pravilno 0, napaka 2 je v seznamu", () => {
 });
 
 test("diagnoza: tipična napaka iz seznama generatorja, pravilen odgovor brez napake", () => {
-  assert.deepEqual(diagnoza(POTENCA, "2"), { pravilno: false, napaka: "Pomisli, ali je soda potenca lahko negativna." });
-  assert.deepEqual(diagnoza(POTENCA, "0"), { pravilno: true, napaka: null });
+  assert.deepEqual(diagnoza(POTENCA, "2"), { pravilno: false, zaokrozitev: false, napaka: "Pomisli, ali je soda potenca lahko negativna." });
+  assert.deepEqual(diagnoza(POTENCA, "0"), { pravilno: true, zaokrozitev: false, napaka: null });
   assert.equal(diagnoza(POTENCA, "5").napaka, null, "neznana napaka: koda ne ugiba");
   assert.equal(diagnoza(POTENCA, null).pravilno, null);
   // Razlaga, ki izda rezultat, se ne uporabi.
@@ -149,5 +149,30 @@ test("koraki brez prepoznane napake: prvi odgovor da model, ki ima opombo z rezu
     await call(`/api/conversations/${h.conversation.id}/messages`, { method: "POST", body: { text: h.text } });
     assert.equal(seen.length, 1, "model, ne koda");
     assert.match(textOf(seen[0].messages.at(-1).content), /is correct: 0\./);
+  });
+});
+
+test("napačno zaokrožen pravilen rezultat ni »correct« in ni računska napaka", () => {
+  const t = { text: "x", answer: { type: "number", value: 49.05, unit: "m/s", decimals: 1 } };
+  const d = diagnoza(t, "49,0 m/s");
+  assert.equal(d.pravilno, false);
+  assert.equal(d.zaokrozitev, true);
+  assert.equal(d.napaka, null);
+  assert.match(vajaOpomba({ payload: t, last_answer: "49,0 m/s" }), /correct value but rounded wrongly/);
+  // Razlaga z LaTeX zapisom rezultata (12{,}5, \frac) se ne uporabi.
+  const izda = { text: "x", answer: { type: "number", value: 12.5, mistakes: [{ value: 7, why: "Pravilno je $12{,}5$." }] } };
+  assert.equal(diagnoza(izda, "7").napaka, null);
+  const ulomek = { text: "x", answer: { type: "fraction", num: 3, den: 4, mistakes: [{ value: 0.5, why: "Rezultat je $\\frac{3}{4}$." }] } };
+  assert.equal(diagnoza(ulomek, "1/2").napaka, null);
+});
+
+test("preizkus ali tekmovanje: dokler naloga ni oddana, ni pomoči in ni opombe", async () => {
+  await withServer(async ({ call, store }) => {
+    const s = (await call("/api/students", { method: "POST", body: { name: "Eva", settings: { subject: "MAT", educational_track: "SREDNJA_SOLA", curriculum_level: "2" } } })).body;
+    const id = store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, mode) VALUES (?, ?, 1, ?, 'pretest')").run(s.id, TEMA, JSON.stringify(POTENCA)).lastInsertRowid;
+    const r = await call(`/api/students/${s.id}/tasks/${id}/help`, { method: "POST", body: { kind: "explain" } });
+    assert.equal(r.status, 400);
+    assert.equal(vajaOpomba({ payload: POTENCA, mode: "contest", solved: 0, attempts: 0 }), null);
+    assert.ok(vajaOpomba({ payload: POTENCA, mode: "contest", solved: 0, attempts: 1, last_answer: "2" }), "po oddaji je pomoč na voljo");
   });
 });

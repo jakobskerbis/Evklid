@@ -6,6 +6,10 @@
 import { NOTE_TAG } from "./live-check.js";
 import { checkAnswer, fmt } from "./practice/check.js";
 import * as MATH from "../public/graph/math.js";
+import { ONE_SHOT } from "./progress.js";
+
+// Naloga z enim poskusom (preizkus, tekmovanje, test predznanja), ki še ni oddana: brez pomoči in brez rezultata.
+export const oddajaOdprta = (task) => !!task && ONE_SHOT.includes(task.mode) && !task.solved && !(task.attempts >= 1);
 
 const MAX_SOLUTION = 1500;
 
@@ -27,8 +31,13 @@ export function rezultatNaloge(answer) {
 
 // Razlaga tipične napake ne sme izdati rezultata (npr. »Pravilno je 12.«): taka razlaga se ne uporabi.
 function izdaRezultat(text, answer) {
-  const t = String(text);
-  if (answer.type === "choice") return answer.options?.[answer.index] != null && t.includes(String(answer.options[answer.index]));
+  // LaTeX in tipografija: 12{,}5 → 12,5; \frac{a}{b} → a/b; − → -.
+  const t = String(text)
+    .replace(/\{,\}/g, ",")
+    .replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, "$1/$2")
+    .replace(/[−–]/g, "-")
+    .replace(/\$/g, "");
+  if (answer.type === "choice") return answer.options?.[answer.index] != null && String(text).includes(String(answer.options[answer.index]));
   const vals = answer.type === "number" ? [answer.value, ...(answer.alsoAccept || [])] : answer.type === "fraction" ? [answer.num / answer.den] : answer.type === "coefficients" ? [] : [];
   const zapisi = vals.filter(Number.isFinite).flatMap((v) => [fmt(v, answer.decimals ?? null), String(v)]);
   if (answer.type === "fraction") zapisi.push(`${answer.num}/${answer.den}`);
@@ -39,16 +48,18 @@ function izdaRezultat(text, answer) {
 // Učenčev zadnji odgovor proti nalogi: { pravilno, napaka } (napaka = razlaga tipične napake ali null).
 export function diagnoza(payload, lastAnswer) {
   const answer = payload?.answer;
-  if (!answer || lastAnswer == null || String(lastAnswer).trim() === "") return { pravilno: null, napaka: null };
+  if (!answer || lastAnswer == null || String(lastAnswer).trim() === "") return { pravilno: null, zaokrozitev: false, napaka: null };
   let res;
   try {
     res = checkAnswer(answer, String(lastAnswer), { convert: true, text: payload.text, find: payload.data?.find, math: MATH });
   } catch {
-    return { pravilno: null, napaka: null };
+    return { pravilno: null, zaokrozitev: false, napaka: null };
   }
-  const pravilno = res.kind === "correct" || res.kind === "rounding";
+  // Napačno zaokrožen pravilen rezultat Vadnica šteje kot napačen poskus: ni »pravilno«, a tudi ni računska napaka.
+  const zaokrozitev = res.kind === "rounding";
+  const pravilno = res.kind === "correct";
   const why = res.mistake?.message;
-  return { pravilno, napaka: !pravilno && why && !izdaRezultat(why, answer) ? String(why).trim() : null };
+  return { pravilno, zaokrozitev, napaka: !pravilno && !zaokrozitev && why && !izdaRezultat(why, answer) ? String(why).trim() : null };
 }
 
 // Učenčev odgovor, kot ga je videl: pri izbiri besedilo izbrane možnosti, ne indeks.
@@ -66,13 +77,13 @@ const besediloZgleda = (s) => (Array.isArray(s) ? s.join("\n") : typeof s === "s
 export function vajaOpomba(task) {
   const payload = task?.payload;
   const rezultat = rezultatNaloge(payload?.answer);
-  if (!rezultat) return null;
+  if (!rezultat || oddajaOdprta(task)) return null;
   const lines = [`<${NOTE_TAG}>`, `This task is from the app's practice section. Its result was computed by the task generator and is correct: ${rezultat}.`];
   const zgled = besediloZgleda(payload.solution);
   if (zgled) lines.push(`A verified worked solution (one correct method):\n${zgled}`);
   if (task.last_answer != null && String(task.last_answer).trim() !== "") {
     const d = diagnoza(payload, task.last_answer);
-    const ocena = d.pravilno === true ? "correct" : d.pravilno === false ? "wrong" : "not checked";
+    const ocena = d.zaokrozitev ? "the correct value but rounded wrongly (the practice section counted it as wrong)" : d.pravilno === true ? "correct" : d.pravilno === false ? "wrong" : "not checked";
     lines.push(`The student's last answer in the practice section: ${odgovorZaOpombo(payload.answer, task.last_answer)}, which is ${ocena}.${d.napaka ? ` It matches a typical mistake for this task (likely cause; check it against the student's steps): ${d.napaka}` : ""}`);
   }
   lines.push(

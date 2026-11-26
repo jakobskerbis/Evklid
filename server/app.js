@@ -18,7 +18,7 @@ import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID,
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
-import { vajaOpomba } from "./vaja-opomba.js";
+import { vajaOpomba, oddajaOdprta } from "./vaja-opomba.js";
 import { Progress, RULES } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
 import { mountClassShowcase } from "./vitrina.js";
@@ -1475,7 +1475,7 @@ export function createApp(store, opts = {}) {
         if (mestoAi.cakal) send("phase", { phase: "answer" });
       }
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
-      const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
+      const pre = liveCheckOn() && !cached && !image && !win && !hinted && !vajaNote ? presolve(text, { first: isFirst }) : null;
       // Zgodovina z zdaj shranjenim sporočilom, isto kot ponovno branje iz baze: med branjem zgoraj in tem mestom ni
       // nobenega await (vmes ne more pisati nobena druga zahteva), pogovor pa je tudi zaseden (busy). +1: slika
       // trenutnega sporočila ostane vedno.
@@ -2391,6 +2391,8 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     const t = progress.getTask(intParam(req.params.taskId));
     if (!t || t.student_id !== s.id) return res.status(404).json({ error: "Naloga ne obstaja." });
+    // Preizkus, tekmovanje, test predznanja: dokler naloga ni oddana, ni pomoči (kot pri namigih, progress.hint).
+    if (oddajaOdprta(t)) return res.status(400).json({ error: "Pri tej nalogi je pomoč na voljo, ko jo oddaš." });
     const conv = store.createConversation(s.id, { pathTopic: t.topic_id, title: `Naloga: ${getTopic(t.topic_id)?.name ?? "vadnica"}` });
     // kind: brez = pomoč ob napačnem odgovoru; »explain« = razlaga naloge; »review« = pregled rezultata in postopka.
     const kind = ["explain", "review"].includes(req.body?.kind) ? req.body.kind : null;
