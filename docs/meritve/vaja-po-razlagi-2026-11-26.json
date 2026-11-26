@@ -1,47 +1,98 @@
 {
  "meritev": "gumb Podobna naloga (K-08)",
  "datum": "2026-11-26",
- "commit_main": "c71794b9c2547cbd13f838501ada995ed6676f3f",
- "ukaz": "node scripts/meri-vaja-po-razlagi.mjs --json <izid> --naloge <naloge>",
- "ocenjevalec_nalog": "Claude Fable (model), en ocenjevalec",
+ "ukaz": "node scripts/meri-vaja-po-razlagi.mjs --json <izid.json> --naloge <naloge.json>",
+ "prej_commit": "c71794b9c2547cbd13f838501ada995ed6676f3f",
+ "node": "v22.23.5",
+ "ocenjevalec_nalog": "Claude Fable (model), en ocenjevalec; odstopanja preveril Claude (avtor PR), ne človek",
  "izidi": {
-  "gumbov": 52,
-  "napacna_tema": {
-   "k": 0,
-   "n": 52
+  "potem": {
+   "gumbov": 52,
+   "gumbi_s_tezavo": {
+    "k": 0,
+    "n": 52
+   },
+   "napacna_tema": {
+    "k": 0,
+    "n": 52
+   },
+   "nizji_razred": {
+    "k": 1,
+    "n": 52,
+    "ids": [
+     "V090"
+    ]
+   },
+   "brez_sprejemljive_z_gumbom": {
+    "k": 1,
+    "n": 41
+   },
+   "pokritost": {
+    "k": 51,
+    "n": 159
+   },
+   "naloge_s_tezavo": {
+    "k": 0,
+    "n": 156
+   }
   },
-  "nizji_razred": {
-   "k": 1,
-   "n": 52
-  },
-  "pokritost": {
-   "k": 51,
-   "n": 159
-  },
-  "naloga_ni_na_temi": {
-   "k": 9,
-   "n": 156,
-   "ids": [
-    "V005/2",
-    "V060/1",
-    "V093/1",
-    "V093/2",
-    "V093/3",
-    "V096/1",
-    "V096/2",
-    "V096/3",
-    "V099/2"
-   ]
-  },
-  "odgovor_napacen_ali_dvoumen": {
-   "k": 2,
-   "n": 156,
-   "ids": [
-    "V097/3",
-    "V173/2"
-   ]
+  "prej": {
+   "gumbov": 56,
+   "gumbi_s_tezavo": {
+    "k": 9,
+    "n": 56
+   },
+   "napacna_tema": {
+    "k": 1,
+    "n": 56,
+    "ids": [
+     "V123"
+    ]
+   },
+   "nizji_razred": {
+    "k": 3,
+    "n": 56,
+    "ids": [
+     "V090",
+     "V130",
+     "V157"
+    ]
+   },
+   "brez_sprejemljive_z_gumbom": {
+    "k": 4,
+    "n": 41
+   },
+   "pokritost": {
+    "k": 52,
+    "n": 159
+   },
+   "naloge_s_tezavo": {
+    "k": 13,
+    "n": 168,
+    "ids": [
+     "V005/2",
+     "V008/3",
+     "V060/1",
+     "V093/1",
+     "V093/2",
+     "V093/3",
+     "V096/1",
+     "V096/2",
+     "V096/3",
+     "V097/3",
+     "V099/2",
+     "V157/2",
+     "V173/2"
+    ]
+   }
   }
  },
+ "dvomljivo": [
+  "V173/1",
+  "V136/1",
+  "V136/2",
+  "V136/3"
+ ],
  "vrstice": [
   {
    "id": "V001",
@@ -220,9 +271,9 @@
      "seme": 99402835,
      "generator": "ulomki-racunanje",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je množenje ulomkov, tema pa seštevanje in odštevanje."
+     "opomba": "24/40 − 35/40 = −11/40 (= −0,275); rezultat je negativen."
     },
     {
      "raven": 3,
@@ -322,8 +373,8 @@
      "generator": "krog",
      "samopreverba": "correct",
      "na_temi": true,
-     "jasna": true,
-     "opomba": "Izračunano s tipko π; s π≈3,14 se rezultat na 2 decimalki razlikuje (besedilo dopušča oboje). (3,14: 22,61)"
+     "jasna": false,
+     "opomba": "S tipko π: S = o²/(4π) = 346,6394… ≈ 346,64. S π≈3,14 pride 346,82 – besedilo dopušča oboje, zato sta pravilna dva različna rezultata na 2 decimalki (preverjanje mora sprejeti oba)."
     }
    ]
   },
@@ -354,8 +405,8 @@
      "generator": "linearna-funkcija",
      "samopreverba": "correct",
      "na_temi": true,
-     "jasna": false,
-     "opomba": "Naloga se sklicuje na sliko grafa, ki je v besedilu ni; brez slike ni rešljiva."
+     "jasna": true,
+     "opomba": "n = −5, odčitano iz opisa slike (k = −3, n = −5); jasnost je odvisna od tega, ali je presečišče z osjo y na izrisanem grafu vidno."
     },
     {
      "raven": 3,
@@ -1372,9 +1423,9 @@
      "seme": 560998898,
      "generator": "kvadratni-koren",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Mejno: naloga je kvadriranje, ne korenjenje (predznanje za temo)."
+     "opomba": "20^2 = 400."
     },
     {
      "raven": 2,
@@ -1885,27 +1936,27 @@
      "seme": 2140518567,
      "generator": "pospesek",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+     "opomba": "v = g·t = 49,05 natanko; zaokroženo na eno decimalko je 49,1 (meja zaokroževanja – 49,0 bi bilo napačno; pozor na plavajočo vejico)."
     },
     {
      "raven": 2,
      "seme": 1885588908,
      "generator": "pospesek",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met). Pospešek vlaka 5,7 m/s² je nerealen."
+     "opomba": "h = g·t²/2 = 25,94745."
     },
     {
      "raven": 3,
      "seme": 133615261,
      "generator": "pospesek",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met). Natančno 68,75 (meja zaokroževanja)."
+     "opomba": "t = √(2h/g) = 2,5542."
     }
    ]
   },
@@ -2003,27 +2054,27 @@
      "seme": 515063725,
      "generator": "pospesek",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+     "opomba": "v = g·t = 29,43."
     },
     {
      "raven": 2,
      "seme": 1738404308,
      "generator": "pospesek",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+     "opomba": "h = g·t²/2 = 25,94745."
     },
     {
      "raven": 3,
      "seme": 753072400,
      "generator": "pospesek",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je splošno enakomerno pospešeno gibanje (ne prosti pad / navpični met)."
+     "opomba": "h = v²/(2g) = 13,0479."
     }
    ]
   },
@@ -2046,7 +2097,7 @@
      "samopreverba": "correct",
      "na_temi": true,
      "jasna": true,
-     "opomba": "Natančno 362,5 (meja zaokroževanja)."
+     "opomba": "V2 = V1·T2/T1 = 2,0643 (Gay-Lussacov zakon, poseben primer plinske enačbe)."
     },
     {
      "raven": 2,
@@ -2054,7 +2105,8 @@
      "generator": "dod-fiz-ss-plinska-enacba",
      "samopreverba": "correct",
      "na_temi": true,
-     "jasna": true
+     "jasna": true,
+     "opomba": "n = pV/(RT) = 34e5 Pa * 9e-3 m^3 / (8,31 * 284,15 K) = 30600 / 2361,2865 = 12,9590 mol -> 13,0. Uporabljen T = t + 273,15 K; s T = 284 K dobimo 12,966 -> prav tako 13,0."
     },
     {
      "raven": 3,
@@ -2062,8 +2114,8 @@
      "generator": "dod-fiz-ss-plinska-enacba",
      "samopreverba": "correct",
      "na_temi": true,
-     "jasna": true,
-     "opomba": "Z T=262,15 K: 1,291; z T=262 K: 1,292."
+     "jasna": false,
+     "opomba": "ρ = pM/(RT) = 1,15397 s T = t + 273,15 = 269,15 K → 1,154. S T = t + 273 (269 K, v šoli običajno) pride 1,15461 → 1,155. Na tri decimalke je rezultat odvisen od pretvorbe, ki je besedilo ne predpiše."
     }
    ]
   },
@@ -2131,9 +2183,9 @@
      "seme": 1638260734,
      "generator": "dod-fiz-ss-stojece-pojmi",
      "samopreverba": "correct",
-     "na_temi": false,
+     "na_temi": true,
      "jasna": true,
-     "opomba": "Naloga je o potujočem valovanju, ne o stoječem."
+     "opomba": "f ∝ √F, torej 2·327 = 654 Hz."
     },
     {
      "raven": 3,
@@ -3555,8 +3607,8 @@
      "generator": "bio-ss-3-imunski-sistem",
      "samopreverba": "correct",
      "na_temi": true,
-     "jasna": false,
-     "opomba": "Solna kislina je kemična pregrada, ki jo mnogi učbeniki štejejo tudi k nespecifični obrambi; pravilni sta lahko možnosti 0 in 1."
+     "jasna": true,
+     "opomba": "Želodčna kislina je kemična pregrada, prva obrambna linija."
     },
     {
      "raven": 3,

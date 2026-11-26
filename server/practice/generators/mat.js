@@ -1043,10 +1043,12 @@ export const MAT_GENERATORS = [
   {
     id: "kvadratni-koren",
     topics: ["MAT-OS-8/kvadratni-koren", "MAT-OS-8/kvadrat-stevila", "MAT-OS-8/realna-stevila"],
-    gen(level, r) {
+    gen(level, r, topic) {
       if (level === 1) {
         const n = r.int(2, 20);
-        const sq = r.next() < 0.5;
+        // Na temi (meritev K-08): pri kvadratnem korenu koren, pri kvadratu števila kvadrat, sicer oboje.
+        const u = r.next();
+        const sq = /kvadrat-stevila/.test(topic || "") ? true : /kvadratni-koren/.test(topic || "") ? false : u < 0.5;
         return {
           text: sq ? `Izračunaj: $${n}^2$` : `Izračunaj: $\\sqrt{${n * n}}$`,
           answer: withMistakes({ type: "number", value: sq ? n * n : n }, sq ? [[2 * n, "Kvadrat ni podvojitev: število pomnoži samo s sabo."]] : [[(n * n) / 2, "Koren ni polovica števila: iščeš število, ki pomnoženo samo s sabo da to število."]]),

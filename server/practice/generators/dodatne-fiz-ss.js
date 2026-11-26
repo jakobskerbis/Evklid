@@ -1410,7 +1410,7 @@ export const DODATNE_FIZ_SS = [
         const V = r.int(2, 50);
         const t = r.int(-10, 40);
         const nn = (p * 1e5 * V * 1e-3) / (R_GAS * KT(t));
-        const what = r.pick(["jeklenki", "posodi", "balonu za potapljanje", "rezervoarju"]);
+        const what = r.pick(["jeklenki", "posodi", "potapljaški jeklenki", "zaprti posodi"]); // »v njej«: samo ženski spol
         return T(
           `V ${what} s prostornino $${V}\\ \\mathrm{L}$ je plin pri tlaku $${p}\\ \\mathrm{bar}$ in temperaturi $${t}\\ ^\\circ\\mathrm{C}$. Koliko molov plina je v njej? ($R = 8{,}31\\ \\mathrm{J/(mol\\,K)}$, $1\\ \\mathrm{bar} = 10^5\\ \\mathrm{Pa}$) Zaokroži na eno decimalko.`,
           num(nn, "mol", 1, [M(t !== 0 ? (p * 1e5 * V * 1e-3) / (R_GAS * t) : NaN, "Temperaturo pretvori v kelvine."), M((p * V) / (R_GAS * KT(t)), "Tlak pretvori v pascale in prostornino v kubične metre.")]),
