@@ -1,8 +1,10 @@
 # Status generatorjev nalog (PV-10), 2026-11-26
 
-- Commit: `3227dd5930bf19a47ad51a6c6c7fe107165ef0f7`; ukaz: `node scripts/status-generatorjev.mjs --semena 5 --strogo --json docs/meritve/generatorji-2026-11-26.json --porocilo docs/meritve/generatorji-2026-11-26.md --dodatek docs/meritve/generatorji-2026-11-26-pregled.md`; brez modela AI; SymPy prek server/cas.js (ukaz korak, PV-06)
+- Commit: `2a124c4f4c579d7fe04c1cff78d024ff5aad6baa`; ukaz: `node scripts/status-generatorjev.mjs --semena 5 --strogo --json docs/meritve/generatorji-2026-11-26.json --porocilo docs/meritve/generatorji-2026-11-26.md --dodatek docs/meritve/generatorji-2026-11-26-pregled.md`; brez modela AI; SymPy prek server/cas.js (ukaz korak, PV-06)
 - Vzorec: vsak generator, ravni 1–3, semena 1–5 (prva tema generatorja). Imenovalec deležev so generatorji (704).
-- Status generatorja je najšibkejši člen vseh trditev v vzorcu (statusOdgovora). Generator s statusom nižjim od
+- Status generatorja je najšibkejši člen trditev »račun« in »korak« v vzorcu (statusOdgovora); »odgovor« v status
+  ne šteje (skladnost prikaza). Rešitev pokaže odgovor pri vseh številskih nalogah: 332/704 (47,2 %; 95-% interval 43,5 %–50,9 %) generatorjev.
+- Generator s statusom nižjim od
   »napaka« ni napačen; trditev brez statusa ni napačna, le noben program je ne preveri.
 
 ## Generatorji po statusu
@@ -11,18 +13,18 @@
 | --- | --- |
 | dokazano | 0/704 (0,0 %; 95-% interval 0,0 %–0,5 %) |
 | izracunano | 0/704 (0,0 %; 95-% interval 0,0 %–0,5 %) |
-| numericno | 5/704 (0,7 %; 95-% interval 0,3 %–1,7 %) |
-| delno | 509/704 (72,3 %; 95-% interval 68,9 %–75,5 %) |
+| numericno | 12/704 (1,7 %; 95-% interval 1,0 %–3,0 %) |
+| delno | 454/704 (64,5 %; 95-% interval 60,9 %–67,9 %) |
 | napaka | 3/704 (0,4 %; 95-% interval 0,1 %–1,2 %) |
-| nepreverjeno | 187/704 (26,6 %; 95-% interval 23,4 %–29,9 %) |
+| nepreverjeno | 235/704 (33,4 %; 95-% interval 30,0 %–36,9 %) |
 
 ## Trditve po viru
 
 | Vir | Trditev | izracunano | numericno | delno | napaka | nepreverjeno |
 | --- | --- | --- | --- | --- | --- | --- |
 | racun | 16.948 | 0 | 1.825 | 5.435 | 7 | 9.681 |
-| korak | 328 | 307 | 0 | 0 | 0 | 21 |
-| odgovor | 6.690 | 0 | 5.564 | 0 | 0 | 1.126 |
+| korak | 305 | 301 | 0 | 0 | 0 | 4 |
+| odgovor | 6.690 | 0 | 5.563 | 0 | 0 | 1.127 |
 
 ## Zaznane napake
 
@@ -36,7 +38,8 @@
 
 ## Koraki z izgubljeno rešitvijo
 
-Pravilni le, če izgubljeno rešitev izloči kontekst naloge (dolžina, koncentracija, celo število). Brez statusa.
+Izgubljene posamezne rešitve (a² = 289 → a = 17): pravilno le, če jih izloči kontekst naloge (dolžina,
+koncentracija, celo število). Brez statusa. Izgubljen interval ali zoženo območje je napaka (zgoraj).
 
 - `exk-equilibrium` (raven 3, seme 1): `\dfrac{x^2}{(2 - x)^2} = 25 → \dfrac{x}{2 - x} = 5` (izgubljena rešitev x = 5/2)
 - `exk-equilibrium` (raven 3, seme 2): `\dfrac{x^2}{(1.5 - x)^2} = 9 → \dfrac{x}{1.5 - x} = 3` (izgubljena rešitev x = 2.25000000000000)
@@ -61,10 +64,44 @@ in kodi generatorja.
 Koraki z izgubljeno rešitvijo (`exk-equilibrium`, raven 3: $\frac{x^2}{(2-x)^2} = 25 \to \frac{x}{2-x} = 5$) so
 pravilni v kontekstu naloge (koncentracija je med 0 in začetno vrednostjo), zato so brez statusa in ne napaka.
 
+## Neodvisni vzorec zgrešenih napak
+
+Drugi pregledovalec (model AI, ne človek) je iz 701 generatorjev s statusom numerično, delno ali nepreverjeno z
+naključnim semenom 20261126 izbral 30 generatorjev in za vsakega ročno preračunal nalogi ravni 2 in 3 (seme 1),
+skupaj 60 nalog: račune, algebro, predznake, kote linearnega programa, stehiometrijo, pH, topnost in biološka štetja.
+
+- Napake, ki spremenijo matematiko: **0/30** (95 % Wilsonov interval 0–11 %). Generatorji s pravo napako, ki jih
+  popis spregleda, so torej verjetno redki, a vzorec je majhen.
+- Zaokrožena vrednost, zapisana z »=« namesto »≈«: **3/30** (3–26 %): `tek-fiz-kirchhoff` ($U = 3{,}7895$ V, točno
+  3,78947…), `tek-fiz-energija-izkoristek` ($A = 5690$ J, točno 5689,8), `tek-kem-ph` ($[\mathrm{H^+}] = 9{,}397
+  \cdot 10^{-4}$). Popis jih ne zazna, ker preračun dopušča zaokroževanje na prikazane decimalke. To je slog zapisa,
+  ne napačen rezultat; strožje pravilo (»=« le za točne vrednosti) je stvar PV-07 (zaokroževanje).
+- Polovica vzorca (okoli 15 generatorjev) nima nobene trditve, ki bi jo popis preveril (izbirni odgovori, besedilo).
+  Tam pokritosti ni, ne glede na status.
+- Manjše opombe brez vpliva na rezultat: `0,1^{3}` brez `{,}` v `bio-ss-3-pretok-energije-in-krozenje-snovi`;
+  `uni-raztopine` in `uni-energijske-bilance` dasta pri ravni 2 in 3 isto nalogo.
+
+## Pregled kode (model AI, ne človek) in popravki
+
+- Dve zaporedni identiteti (razširjena kvadrata dveh podnalog) sta šli skozi ukaz korak kot »enakovredni« (obe
+  množici ℝ; dve napačni identiteti obe ∅). Popravek: identiteta ob enačbi in par dveh »enačb« brez rešitve nista
+  korak (`niKorak`); identitete preveri »račun«.
+- Izgubljen interval (2x > 4 → x > 3) je bil brez statusa kot izgubljena posamezna rešitev. Popravek: brez statusa
+  ostane le izgubljena končna množica točk, izgubljen interval ali zoženo območje je napaka.
+- Vrstice, ki se začnejo z »=« (nadaljevanje računa), in imaginarna enota i niso več deli korakov; prej je 17 takih
+  parov ostalo brez statusa kot »veriga relacij«.
+- Ujemanje odgovora je imelo pas po decimalkah zapisa (z = 2 je »potrdil« odgovor 2,28). Zdaj šteje pas decimalk
+  odgovora.
+- »odgovor« je skladnost prikaza, ne preračun, zato ne šteje več v status generatorja; poročilo ga navede posebej.
+- `\log` brez osnove (v šoli desetiški, v workerju naravni), mešano število `2\frac{1}{2}` in `x^{2}3` se ne
+  prevedejo več v korak.
+
 ## Omejitve
 
 - Vzorec semen, ne vse naloge: generator brez napake v vzorcu lahko pri drugem semenu da napako.
 - »korak« preveri le zaporedni (ne)enačbi z isto eno neznanko v sosednjih vrsticah, ki ju zna prevesti iz TeX;
-  besedni koraki, sistemi in koraki s parametri ostanejo brez statusa.
+  besedni koraki, sistemi in koraki s parametri ostanejo brez statusa. Identiteta ob enačbi (razširjen kvadrat)
+  ni korak. Korak »posledica« (kvadriranje, tuja rešitev) je izračunan kot račun; ali rešitev potem izloči tujo
+  rešitev, preveri le končni »x = …« v isti verigi.
 - »odgovor« pove le, ali rešitev pripelje do odgovora naloge (končna vrednost katere od relacij); to je skladnost
   prikaza, ne neodvisen preračun, in brez ujemanja ni napaka (rešitev lahko odgovor pove z besedo).

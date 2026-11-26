@@ -136,20 +136,25 @@ ravni 1–3 s semeni 1…N (prva tema generatorja) in v vsaki rešitvi preveri t
   »ali«), prevedeni iz TeX brez izgube (`\pm`, indeksi, besedilo, funkcije f(5) ostanejo zunaj), gredo skozi ukaz
   SymPy `korak` (PV-06). Formule v vrstici, povezane z »ali«, in zaporedni kandidati `x = 9`, `x = -3` so ena trditev;
   rešena oblika ni začetek koraka (za njo pridejo kandidati, preizkus ali pogoji); celoštevilski `n`, `k` izpustimo.
-  Korak z izgubljeno rešitvijo (a² = 289 → a = 17 pri dolžini) je brez statusa in naštet v poročilu: pravilen je, če
-  rešitev izloči kontekst, ki ga ukaz ne vidi;
-- **odgovor**: ali je odgovor naloge (zaokrožen na decimalke odgovora) končna vrednost katere od relacij v rešitvi.
-  To je skladnost prikaza, ne neodvisen preračun; brez ujemanja trditev ostane brez statusa, ne napaka.
+  Identiteta ob enačbi (razširjen kvadrat) in par dveh »enačb« brez rešitve nista korak (sicer bi ∅ = ∅ potrdil dve
+  napačni identiteti). Korak z izgubljeno posamezno rešitvijo (a² = 289 → a = 17 pri dolžini) je brez statusa in
+  naštet v poročilu: pravilen je, če rešitev izloči kontekst, ki ga ukaz ne vidi; izgubljen interval je napaka;
+- **odgovor**: ali je odgovor naloge (v pasu decimalk odgovora) končna vrednost katere od relacij v rešitvi. To je
+  skladnost prikaza, ne neodvisen preračun: brez ujemanja trditev ostane brez statusa, ne napaka, in v status
+  generatorja ne šteje (poročilo ga navede posebej).
 
-Status generatorja je najšibkejši člen (`statusOdgovora`) vseh trditev v vzorcu. Neodvisnega preračuna odgovora iz
-podatkov in obrazca s SymPy ni: obrazci generatorjev so zapisani za učenca (besedilo, mešane enote), ne za stroj.
+Status generatorja je najšibkejši člen (`statusOdgovora`) trditev »račun« in »korak« v vzorcu. Neodvisnega preračuna
+odgovora iz podatkov in obrazca s SymPy ni: obrazci generatorjev so zapisani za učenca (besedilo, mešane enote), ne za
+stroj.
 
-Izhodišče `docs/meritve/generatorji-2026-11-26.md` (5 semen): od 704 generatorjev jih ima 5 status numerično, 509
-delno, 3 napako, 187 nobenega (večinoma izbirni odgovori in besedilne rešitve). SymPy je potrdil 307 od 328 korakov
-simbolno, 21 jih ima izgubljeno rešitev v kontekstu, nobeden ni napačen. Vseh 7 zaznanih napak je pregledal model AI
-(ne človek): dve sta pravi napaki zapisa (`dod-fiz-ss-plinska-enacba`: tlak, zaokrožen na eno decimalko, ne da
-zapisanega rezultata; `exk-mole`: levi strani manjka ×10²³), popravljeni v ločenem PR; tretja je lažni alarm
-preračuna (`\text{…}` kot enota, AUDIT-087).
+Izhodišče `docs/meritve/generatorji-2026-11-26.md` (5 semen): od 704 generatorjev jih ima 12 status numerično, 454
+delno, 3 napako, 235 nobenega (večinoma izbirni odgovori in besedilne rešitve). SymPy je potrdil 301 od 305 korakov
+simbolno, 4 imajo izgubljeno posamezno rešitev v kontekstu (koncentracija), nobeden ni napačen. Vseh 7 zaznanih napak
+je pregledal model AI (ne človek): dve sta pravi napaki zapisa (`dod-fiz-ss-plinska-enacba`: tlak, zaokrožen na eno
+decimalko, ne da zapisanega rezultata; `exk-mole`: levi strani manjka ×10²³), popravljeni v ločenem PR; tretja je
+lažni alarm preračuna (`\text{…}` kot enota, AUDIT-087). Drugi model AI je ročno preračunal 60 nalog 30 naključnih
+generatorjev brez zaznane napake: 0/30 zgrešenih napak (95 % interval 0–11 %); 3/30 imajo zaokroženo vrednost za »=«
+(PV-07).
 
 ## Meritev (PV-02, N-01)
 

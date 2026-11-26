@@ -4,8 +4,9 @@
 //   račun     formula z relacijo v rešitvi: server/lesson-math.js in lesson-identity.js (kot popis PV-04)
 //   korak     zaporedni enačbi ali neenačbi z isto eno neznanko (2x + 3 = 7 → 2x = 4): ukaz SymPy »korak« (PV-06)
 //   odgovor   odgovor naloge (zaokrožen na decimalke odgovora) je končna vrednost katere od relacij v rešitvi;
-//             če ga v rešitvi ni, trditev ostane brez statusa (rešitev lahko pove le pot, ne pa napake)
-// Status generatorja je najšibkejši člen vseh njegovih trditev (statusOdgovora): ena napaka → napaka; vse
+//             če ga v rešitvi ni, trditev ostane brez statusa (rešitev lahko pove le pot, ne pa napake). To je
+//             skladnost prikaza, ne preračun: v status generatorja ne šteje, poročilo ga navede posebej.
+// Status generatorja je najšibkejši člen trditev »račun« in »korak« (statusOdgovora): ena napaka → napaka; vse
 // izračunane → izracunano; vse vsaj numerične → numericno; nekaj preverjenih → delno; nič → nepreverjeno.
 // Skripta ne kliče modela AI. Štetje vzorca (semena 1…N), interval je pri deležih generatorjev.
 //
@@ -48,17 +49,18 @@ export function vZapisZaKorak(tex) {
   for (let i = 0; i < 3; i++) for (const [re, z] of TEX) s = s.replace(re, z);
   s = s.trim().replace(/[.,;:]$/, "");
   // ostanki TeX (\pm, \text, \mathrm, \in …), indeksi, absolutne vrednosti, besede, funkcije f(5): ne prevajamo
-  const brez = s.replace(/\b(?:sqrt|cbrt|ln|sin|cos|tan|log)\(/g, "(").replace(/\bpi\b/g, "");
-  if (/[\\_|$%°€]|\b[a-zA-Z]{2,}\b|[a-zA-Z]\s*\(/.test(brez)) return null;
+  const brez = s.replace(/\b(?:sqrt|cbrt|ln|sin|cos|tan)\(/g, "(").replace(/\bpi\b/g, "");
+  // \log brez osnove je v šoli desetiški, v workerju naravni; mešano število 2\frac{1}{2} in x^{2}3 sta dvoumna
+  if (/[\\_|$%°€]|\b[a-zA-Z]{2,}\b|[a-zA-Z]\s*\(/.test(brez) || /\d\s*\(\(\d+\)\/\(\d+\)\)/.test(s) || /\)\s*\d/.test(s)) return null;
   if (!/^[0-9a-zA-Z+\-*/^().=<>, ]+$/.test(s)) return null;
   return s;
 }
 
 const REL_K = /<=|>=|=|<|>/g;
-/** Neznanke zapisa: posamezne črke, ki niso konstante ali deli imen funkcij. */
+/** Neznanke zapisa: posamezne črke, ki niso konstante (e, imaginarna enota i) ali deli imen funkcij. */
 export function neznanke(s) {
   const brez = s.replace(/\b(?:sqrt|cbrt|ln|sin|cos|tan|log|pi)\b/g, " ");
-  return [...new Set(brez.match(/(?<![A-Za-z])[a-zA-Z](?![A-Za-z])/g) || [])].filter((c) => c !== "e");
+  return [...new Set(brez.match(/(?<![A-Za-z])[a-zA-Z](?![A-Za-z])/g) || [])].filter((c) => c !== "e" && c !== "i");
 }
 
 // Rešena oblika »x = 3« ali »x ≥ 4«: neznanka sama na eni strani, število na drugi.
@@ -83,7 +85,7 @@ export function koraki(resitev) {
     const deli = fs.map((tex) => {
       const z = vZapisZaKorak(tex);
       const rel = z ? z.match(REL_K) || [] : [];
-      return z && rel.length === 1 ? { zapis: z, vrsta: rel[0] === "=" ? "enacba" : "neenacba", x: neznanke(z), vrstica: v, tex } : null;
+      return z && rel.length === 1 && !/^\s*[<>=]/.test(z) ? { zapis: z, vrsta: rel[0] === "=" ? "enacba" : "neenacba", x: neznanke(z), vrstica: v, tex } : null;
     });
     if (/\$\s*ali\s*\$/.test(l)) {
       // »$x + 4 \le -6$ ali $x + 4 \ge 6$«: ena trditev
@@ -140,8 +142,9 @@ export function statusOdgovoraNaloge(t) {
   for (let i = fs.length - 1; i >= 0; i--) {
     const z = zadnjeStevilo(`$${fs[i]}$`);
     if (!z) continue;
+    // tolerančni pas so decimalke odgovora (če jih naloga določa), sicer decimalke zapisa: z = 2 ne potrdi 2,28
     const d = a.decimals ?? z.decimalk;
-    const tol = 0.5 * 10 ** -Math.min(d, z.decimalk) + 1e-9 * Math.max(1, Math.abs(a.value));
+    const tol = 0.5 * 10 ** -d + 1e-9 * Math.max(1, Math.abs(a.value));
     if (Math.abs(z.vrednost - roundHalfUp(a.value, d)) <= tol || Math.abs(z.vrednost - a.value) <= tol) return { status: "numericno", tex: z.tex };
   }
   return null;
@@ -149,17 +152,38 @@ export function statusOdgovoraNaloge(t) {
 
 // Korak z izgubljeno rešitvijo (a² = 289 → a = 17 pri dolžini, x > 0 pri koncentraciji) je pravilen, če rešitev
 // izloči kontekst naloge, ki ga ukaz ne vidi: brez statusa, a naštet v poročilu. Napaka je le drugačna množica.
-const casStatus = (r) => {
+// Izgubljen interval (2x > 4 → x > 3) ali zoženo območje je napaka: tega kontekst navadno ne opraviči.
+export const casStatus = (r) => {
   if (r.ok === true) return r.how === "symbolic" ? "izracunano" : "numericno";
-  if (r.ok === false) return r.vrsta === "izguba" ? "nepreverjeno" : "napaka";
+  if (r.ok === false) return r.vrsta === "izguba" && /^izgubljena rešitev /.test(r.why || "") ? "nepreverjeno" : "napaka";
   return "nepreverjeno";
 };
+
+// Identiteta (x + 6)² = x² + 12x + 36 ni enačba, ki jo rešujemo: identiteta ob enačbi ni korak (identitete preveri
+// že »račun«, lesson-identity). Dve zaporedni »enačbi« brez rešitve (dve napačni identiteti) bi bili za ukaz korak
+// enakovredni (∅ = ∅): tak par tudi ni korak, da napačni računi ne dobijo potrditve.
+async function mnozica(cas, zapis, x) {
+  if (/ ali |<|>/.test(zapis)) return null;
+  const [a, b] = zapis.split("=");
+  for (const [trditev, ime] of [["all", "R"], ["none", "prazna"]]) {
+    const r = await cas.casCheck("solve", [`${a} = ${b}`, x, trditev]);
+    if (r.ok === true) return ime;
+  }
+  return null;
+}
+export async function niKorak(cas, k) {
+  const a = await mnozica(cas, k.prej, k.neznanka);
+  if (a === "R") return true;
+  const b = await mnozica(cas, k.potem, k.neznanka);
+  return b === "R" || (a === "prazna" && b === "prazna");
+}
 
 /** Trditve ene naloge: [{ vir: racun|korak|odgovor, tex, status, why? }]. */
 export async function trditveNaloge(t, { cas = null } = {}) {
   const out = trditveIzBesedila(t.solution).map((x) => ({ vir: "racun", tex: x.tex, status: x.status }));
   if (cas) {
     for (const k of koraki(t.solution)) {
+      if (await niKorak(cas, k)) continue;
       const r = await cas.casCheck("korak", [k.prej, k.potem, k.neznanka, ""]);
       out.push({ vir: "korak", tex: k.tex.slice(0, 160), status: casStatus(r), why: r.why || "", vrsta: r.vrsta || null });
     }
@@ -195,7 +219,9 @@ export async function popisGeneratorjev({ semena = 3, predpona = "", cas = null 
     const naloge = nalogeGeneratorja(g, semena);
     for (const t of naloge)
       for (const x of await trditveNaloge(t, { cas })) trditve.push({ ...x, raven: t.level, seme: t.seed });
-    gen.push({ id: g.id, nalog: naloge.length, trditev: trditve.length, status: statusOdgovora(trditve.map((x) => x.status)), trditve });
+    // »odgovor« je skladnost prikaza, ne preračun: ne šteje v status generatorja, poročamo ga posebej
+    const preverjene = trditve.filter((x) => x.vir !== "odgovor").map((x) => x.status);
+    gen.push({ id: g.id, nalog: naloge.length, trditev: trditve.length, status: statusOdgovora(preverjene), trditve });
   }
   return gen;
 }
@@ -215,7 +241,12 @@ export function povzemi(gen) {
     const t = trd.filter((x) => x.vir === v);
     poViru[v] = Object.fromEntries([["vse", t.length], ...STATUSI.map((s) => [s, t.filter((x) => x.status === s).length])]);
   }
-  return { generatorjev: gen.length, poStatusu, poViru };
+  // generatorji, pri katerih vsaka naloga v rešitvi pokaže svoj odgovor (vsaj ena številska naloga)
+  const odgovorSkladen = gen.filter((g) => {
+    const o = g.trditve.filter((x) => x.vir === "odgovor");
+    return o.length && o.every((x) => x.status === "numericno");
+  }).length;
+  return { generatorjev: gen.length, poStatusu, poViru, odgovorSkladen };
 }
 
 export function porocilo(gen, { datum, commit, semena, ukaz = "", dodatek = "" }) {
@@ -225,7 +256,9 @@ export function porocilo(gen, { datum, commit, semena, ukaz = "", dodatek = "" }
   v.push(`# Status generatorjev nalog (PV-10), ${datum}`, "");
   v.push(`- Commit: \`${commit}\`; ukaz: \`${ukaz}\`; brez modela AI; SymPy prek server/cas.js (ukaz korak, PV-06)`);
   v.push(`- Vzorec: vsak generator, ravni 1–3, semena 1–${semena} (prva tema generatorja). Imenovalec deležev so generatorji (${n}).`);
-  v.push("- Status generatorja je najšibkejši člen vseh trditev v vzorcu (statusOdgovora). Generator s statusom nižjim od");
+  v.push("- Status generatorja je najšibkejši člen trditev »račun« in »korak« v vzorcu (statusOdgovora); »odgovor« v status");
+  v.push(`  ne šteje (skladnost prikaza). Rešitev pokaže odgovor pri vseh številskih nalogah: ${ki(p.odgovorSkladen, n)} generatorjev.`);
+  v.push("- Generator s statusom nižjim od");
   v.push("  »napaka« ni napačen; trditev brez statusa ni napačna, le noben program je ne preveri.", "");
   v.push("## Generatorji po statusu", "");
   v.push("| Status | Generatorjev |", "| --- | --- |");
@@ -238,15 +271,18 @@ export function porocilo(gen, { datum, commit, semena, ukaz = "", dodatek = "" }
   if (!nap.length) v.push("Nobene.");
   for (const x of nap) v.push(`- \`${x.g}\` (raven ${x.raven}, seme ${x.seme}, ${x.vir}): \`${x.tex.replace(/`/g, "'")}\`${x.why ? ` (${x.why})` : ""}`);
   v.push("", "## Koraki z izgubljeno rešitvijo", "");
-  v.push("Pravilni le, če izgubljeno rešitev izloči kontekst naloge (dolžina, koncentracija, celo število). Brez statusa.", "");
-  const izg = gen.flatMap((g) => g.trditve.filter((x) => x.vrsta === "izguba").map((x) => ({ g: g.id, ...x })));
+  v.push("Izgubljene posamezne rešitve (a² = 289 → a = 17): pravilno le, če jih izloči kontekst naloge (dolžina,");
+  v.push("koncentracija, celo število). Brez statusa. Izgubljen interval ali zoženo območje je napaka (zgoraj).", "");
+  const izg = gen.flatMap((g) => g.trditve.filter((x) => x.vrsta === "izguba" && x.status !== "napaka").map((x) => ({ g: g.id, ...x })));
   if (!izg.length) v.push("Nobenega.");
   for (const x of izg) v.push(`- \`${x.g}\` (raven ${x.raven}, seme ${x.seme}): \`${x.tex.replace(/`/g, "'")}\` (${x.why})`);
   if (dodatek) v.push("", dodatek.trim());
   v.push("", "## Omejitve", "");
   v.push("- Vzorec semen, ne vse naloge: generator brez napake v vzorcu lahko pri drugem semenu da napako.");
   v.push("- »korak« preveri le zaporedni (ne)enačbi z isto eno neznanko v sosednjih vrsticah, ki ju zna prevesti iz TeX;");
-  v.push("  besedni koraki, sistemi in koraki s parametri ostanejo brez statusa.");
+  v.push("  besedni koraki, sistemi in koraki s parametri ostanejo brez statusa. Identiteta ob enačbi (razširjen kvadrat)");
+  v.push("  ni korak. Korak »posledica« (kvadriranje, tuja rešitev) je izračunan kot račun; ali rešitev potem izloči tujo");
+  v.push("  rešitev, preveri le končni »x = …« v isti verigi.");
   v.push("- »odgovor« pove le, ali rešitev pripelje do odgovora naloge (končna vrednost katere od relacij); to je skladnost");
   v.push("  prikaza, ne neodvisen preračun, in brez ujemanja ni napaka (rešitev lahko odgovor pove z besedo).");
   v.push("");

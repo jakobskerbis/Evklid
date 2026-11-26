@@ -1,7 +1,7 @@
 // PV-10 (docs/preverjanje.md, »Status generatorjev«): status vsakega generatorja iz računov, korakov in odgovora.
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
-import { vZapisZaKorak, koraki, statusOdgovoraNaloge, popisGeneratorjev, povzemi, porocilo } from "../scripts/status-generatorjev.mjs";
+import { vZapisZaKorak, koraki, statusOdgovoraNaloge, popisGeneratorjev, povzemi, porocilo, niKorak, casStatus } from "../scripts/status-generatorjev.mjs";
 import * as cas from "../server/cas.js";
 
 const HAVE = await cas.casAvailable();
@@ -16,6 +16,33 @@ test("TeX v zapis za korak: le brez izgube", () => {
   assert.equal(vZapisZaKorak("F(2) = -4"), null);
   assert.equal(vZapisZaKorak("|x - 1| = 2"), null);
   assert.equal(vZapisZaKorak("n = 5\\ \\text{mol}"), null);
+  // pregled: \log brez osnove (desetiški v šoli, naravni v workerju), mešano število, x^{2}3
+  assert.equal(vZapisZaKorak("\\log(x) = 2"), null);
+  assert.equal(vZapisZaKorak("2\\frac{1}{2} = x"), null);
+  assert.equal(vZapisZaKorak("x^{2}3 = 1"), null);
+  assert.equal(vZapisZaKorak("2\\frac{x}{3} = 4"), "2((x)/(3)) = 4");
+});
+
+test("pregled: nadaljevanje »= …« ni korak, i ni neznanka", () => {
+  assert.deepEqual(koraki("$(x + 1)^2$\n$= x^2 + 2x + 1$\n$= 5$"), []);
+  assert.deepEqual(koraki("$z = 3 + 4i$\n$z = 5i$"), []);
+});
+
+test("pregled: izgubljen interval je napaka, izgubljena posamezna rešitev brez statusa", () => {
+  assert.equal(casStatus({ ok: false, vrsta: "izguba", why: "manjka del rešitve x ∈ (2, 3]" }), "napaka");
+  assert.equal(casStatus({ ok: false, vrsta: "izguba", why: "izgubljena rešitev a = -17" }), "nepreverjeno");
+  assert.equal(casStatus({ ok: false, vrsta: "napaka", why: "" }), "napaka");
+});
+
+test("pregled: identiteti zapored ali identiteta ob enačbi nista korak", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  const k = (prej, potem, neznanka = "x") => niKorak(cas, { prej, potem, neznanka });
+  assert.equal(await k("(x + 6)^2 = x^2 + 12x + 36", "(4x + 1)(x + 3) = 4x^2 + 13x + 3"), true);
+  // dve napačni identiteti: ∅ = ∅ ne sme dobiti potrditve
+  assert.equal(await k("(x + 6)^2 = x^2 + 12x + 35", "(4x + 1)(x + 3) = 4x^2 + 13x + 2"), true);
+  assert.equal(await k("(a + 4)^2 - a^2 = 8a + 16", "8a + 16 = 176", "a"), true);
+  assert.equal(await k("2x + 3 = 7", "2x = 4"), false);
+  // pravi korak v protislovje ostane korak (ukaz ga označi za napako)
+  assert.equal(await k("x + 1 = 2", "x + 1 = x + 2"), false);
 });
 
 test("koraki: čiste vrstice, »ali« kot ena trditev, kandidati in pogoji niso koraki", () => {
@@ -43,6 +70,8 @@ test("odgovor: ujemanje s končno vrednostjo katere od relacij, sicer brez statu
   assert.equal(t("$p = 1{,}6 \\cdot 10^{7}\\ \\mathrm{Pa}$", 1.6e7).status, "numericno");
   // odgovor ni v rešitvi: ni napaka, le brez statusa
   assert.equal(t("$x_1 = 2$, $x_2 = 3$", 5), null);
+  // pregled: pas so decimalke odgovora, ne zapisa (z = 2 ne potrdi 2,28)
+  assert.equal(t("$z = \\dfrac{508 - 500}{4} = 2$", 2.28, 2), null);
 });
 
 test("popis generatorjev: vsak generator dobi status, poročilo ima vse statuse", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
