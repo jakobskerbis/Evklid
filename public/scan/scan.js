@@ -730,14 +730,17 @@ function renderConfirm(box) {
     ${S.note ? `<p class="scan-note card">${icon("info")}<span>${esc(S.note)}</span></p>` : ""}
     ${multi ? `<p class="scan-label">${esc(t("scan.pick"))}</p><div class="scan-picks">${S.problems.map((p, i) => `<button type="button" class="scan-pick${p.text === S.text ? " on" : ""}" data-pick="${i}" aria-pressed="${p.text === S.text}">${math(p.tex || p.text)}</button>`).join("")}</div>` : ""}
     <div class="card scan-confirm">
-      ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
+      ${S.problems.length ? `<p class="scan-label scan-read-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
       <div class="scan-unclear-host" aria-live="polite"></div>
       ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item${hasUnclear(g) ? " scan-given-unclear" : ""}">${math(boxUnclear(g))}</span>`).join("")}</p>` : ""}
       ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span>${soughtHtml(S.sought)}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
-        <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
+        <div class="scan-input-wrap">
+          <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
+          <div class="scan-input-izris" aria-hidden="true"></div>
+        </div>
         <button type="button" class="ghost icon-only" data-act="sym" aria-label="${esc(t("scan.symbols"))}" title="${esc(t("scan.symbols"))}" aria-expanded="false">${icon("sigma")}</button>
       </div>
       <p class="scan-err" role="alert" hidden></p>
@@ -766,7 +769,17 @@ function renderConfirm(box) {
     }
     bindGivenInputs();
   };
+  // Polje pokaže nalogo kot formulo (j 26. 11.: surov zapis »2*x^2-[?]*x-5=0« ni za učenca); zapis za tipke se pokaže
+  // šele, ko učenec tapne v polje (CSS :focus-within). Brez izrisa (napol napisano, napaka) ostane besedilo.
+  const wrap = box.querySelector(".scan-input-wrap");
+  const fieldIzris = wrap.querySelector(".scan-input-izris");
+  const showField = () => {
+    const html = input.value.trim() ? inputFormulaHtml(input.value) : "";
+    fieldIzris.innerHTML = html;
+    wrap.classList.toggle("ima-izris", !!html);
+  };
   const update = () => {
+    showField();
     // možnosti ostalih oznak ostanejo poravnane, ko učenec eno popravi s tipkami
     const kept = keepOptions(S.text, input.value, S.unclear);
     if (kept) S.unclear = kept;
@@ -806,11 +819,8 @@ function renderConfirm(box) {
     const i = Number(b.dataset.fill);
     input.value = fillUnclear(input.value, i, b.dataset.val);
     update(); // keepOptions odstrani možnosti zapolnjene oznake
-    const at = firstUnclear(input.value);
-    if (at >= 0 && !coarse()) {
-      input.focus();
-      input.setSelectionRange(at, at + 3);
-    } else (unclearHost.querySelector("[data-fill], [data-given-fill]") || box.querySelector('[data-act="solve"]'))?.focus();
+    // fokus na naslednjo izbiro (ne v polje: tam bi se namesto formule pokazal surov zapis)
+    (unclearHost.querySelector("[data-fill], [data-given-fill]") || box.querySelector('[data-act="solve"]'))?.focus();
   });
   // nejasen znak v podatku: učenec vpiše, kaj piše na listu (gumb ✓, Enter ali Reši)
   function fillGiven(rerender = true) {
@@ -826,7 +836,7 @@ function renderConfirm(box) {
       // zaslon se izriše na novo: Evklidova tipkovnica ne sme ostati na odstranjenem polju
       hideKeyboard();
       render();
-      (box.querySelector("[data-given-fill]") || (hasUnclear(S.text) ? box.querySelector("#scan-input") : box.querySelector('[data-act="solve"]')))?.focus();
+      (box.querySelector("[data-fill], [data-given-fill]") || box.querySelector('[data-act="solve"]'))?.focus();
     }
     return changed;
   }
@@ -891,12 +901,15 @@ function renderConfirm(box) {
       }
       else showUnclear();
       S.unclearNeed = false; // velja do naslednjega vnosa (zaslon ga že kaže)
+      // na prvo izbiro; brez možnosti v polje z izbrano oznako
       const in2 = box.querySelector("#scan-input");
       const at = firstUnclear(in2.value);
-      if (at >= 0) {
+      const choice = box.querySelector("[data-fill], [data-given-fill]");
+      if (choice) choice.focus();
+      else if (at >= 0) {
         in2.focus();
         in2.setSelectionRange(at, at + 3);
-      } else box.querySelector("[data-given-fill]")?.focus();
+      }
       return;
     }
     const info = analyze(input.value);
@@ -911,16 +924,27 @@ function renderConfirm(box) {
   };
   box.querySelector('[data-act="solve"]').addEventListener("click", go);
   if (!S.problems.length && !coarse()) input.focus();
-  else if (hasUnclear(S.text) && !coarse()) {
-    const at = firstUnclear(S.text);
-    input.focus();
-    input.setSelectionRange(at, at + 3);
-  }
 }
 
 // Negotovo branje (P3-5): obvestilo o branju je ločeno od napake zapisa (scan-err) in od statusov rešitve; ob vsakem
 // nejasnem znaku po vrsti možnosti, ki jih je predlagal model (samo, dokler se število oznak ujema z njimi).
 const boxUnclear = (g) => String(g).split("[?]").join("\\boxed{?}");
+// Izris naloge v polju za vnos: z oznakami [?] modelov LaTeX (nespremenjen prepis) ali besedilo z označenimi mesti,
+// sicer formula iz razčlenjenega zapisa; "" pomeni, da ostane surov zapis (ga ne razumemo).
+function inputFormulaHtml(text) {
+  if (hasUnclear(text)) {
+    const read = S.problems.find((p) => p.text === text && /\\boxed\{\?\}/.test(p.tex || ""));
+    return read ? math(read.tex) : `<span class="scan-unclear-text">${markUnclear(text, esc)}</span>`;
+  }
+  try {
+    const info = analyze(text);
+    if (info.type === "error" || info.type === "empty") return "";
+    if (info.type === "system") return math(info.parts.map((p) => exprTex(parseTask(p))).join(";\\quad "));
+    return math(exprTex(parseTask(text)));
+  } catch {
+    return "";
+  }
+}
 function unclearBlock() {
   const n = unclearCount(S.text);
   if (!n && !S.given.some(hasUnclear)) return "";

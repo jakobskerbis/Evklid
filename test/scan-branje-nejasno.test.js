@@ -150,6 +150,11 @@ test("zaslon Skeniraj: oznake se pokažejo, Reši je zaprt, dokler je [?]; besed
   assert.match(src, /class="scan-unclear-host" aria-live="polite"/);
   assert.match(src, /S\.unclearNeed \? `<p class="scan-unclear-need">/, "sporočilo o [?] je v obvestilu o branju, ne rdeča napaka");
   assert.match(src, /keepOptions\(S\.text, input\.value, S\.unclear\)/);
+  // j 26. 11.: polje kaže nalogo kot formulo, surov zapis le med urejanjem
+  assert.match(src, /<div class="scan-input-izris" aria-hidden="true"><\/div>/);
+  assert.match(src, /wrap\.classList\.toggle\("ima-izris", !!html\)/);
+  const css = fs.readFileSync(new URL("../public/scan.css", import.meta.url), "utf8");
+  assert.match(css, /\.scan-input-wrap\.ima-izris:focus-within \.scan-input-izris \{ display: none; \}/);
   for (const k of ["scan.unclearTitle", "scan.unclear", "scan.unclearOne", "scan.unclearApply", "scan.unclearGivenOnly", "scan.unclearN", "scan.unclearErr", "scan.unclearGiven"]) {
     assert.ok(SL[k], k);
     for (const lang of ["en", "de", "hr", "it", "hu"]) {

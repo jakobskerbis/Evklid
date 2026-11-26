@@ -179,3 +179,15 @@
 .scan-given-unclear { outline: 2px dashed color-mix(in srgb, var(--gold) 80%, var(--text)); }
 .scan-unclear-n .katex { color: var(--text); font-size: 1.05rem; }
 .scan-unclear-need { margin: 8px 0 0; font-weight: 700; }
+
+/* Naloga v polju kot formula (j 26. 11.); surov zapis za tipke se pokaže ob tapu v polje (fokus). */
+.scan-input-wrap { position: relative; flex: 1; min-width: 0; display: flex; }
+.scan-input-wrap input { flex: 1; }
+.scan-input-izris { position: absolute; inset: 2px 12px; display: none; align-items: center; overflow: hidden; white-space: nowrap; pointer-events: none; color: var(--text); font-size: 1.1rem; }
+.scan-input-izris .katex { font-size: 1.15em; }
+.scan-input-wrap.ima-izris .scan-input-izris { display: flex; }
+.scan-input-wrap.ima-izris input { color: transparent; caret-color: var(--text); }
+.scan-input-wrap.ima-izris:focus-within .scan-input-izris { display: none; }
+.scan-input-wrap.ima-izris:focus-within input { color: var(--text); }
+/* Ko polje samo kaže formulo, je »Prebral sem« nad njim podvojen; ob urejanju (surov zapis) se spet pokaže. */
+.scan-confirm:has(.scan-input-wrap.ima-izris:not(:focus-within)) :is(.scan-read-label, .scan-preview) { display: none; }
