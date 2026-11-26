@@ -1182,6 +1182,7 @@
   "sc.memory": "Saved",
   "sc.recent": "Recent",
   "sc.insert": "Insert into calculation",
+  "sc.removeRecent": "Remove from Recent: {v}",
   "sc.pressSolve": "Press = to solve",
   "sc.fmHint": "Replace the known letters with numbers, leave the unknown and press =.",
   "sc.fmRad": "The calculator is now in RAD mode (angles in radians).",

@@ -1095,7 +1095,9 @@ function bindPilotRate(box) {
 function solveNow() {
   const complex = !jeOs(D.getStudent()?.settings) || /SŠ|faks/i.test(D.getStudent()?.settings?.curriculum_level || "");
   // naloga s podatki (»določi a, b, c, če gre graf skozi T(7,2) …«): lastni reševalnik podatkov ne pozna, reši jo AI
-  let r = S.given.length ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
+  // samo iskana neznanka (»P=?«, »f(x)=?«) brez podatkov: lastni reševalnik bi iz nje naredil izraz (»fx«), zato AI
+  const samoNeznanka = /=\s*\?\s*$/.test(S.text);
+  let r = S.given.length || samoNeznanka ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
   // izraz z iskanim, ki ni poenostavitev (»teme«): lastni reševalnik bi ga le poenostavil, zato AI
   if (soughtNeedsAi(r, { sought: S.sought, goal: S.goal })) r = { ok: false, goals: r.goals || [] };
   S.result = r.ok ? r : null;

@@ -87,7 +87,7 @@ button.sch-lesson:hover { border-color: var(--accent) !important; }
 .sch-card-empty { flex-direction: row; align-items: center; padding: 6px; gap: 4px; }
 .sch-card-empty .list-row { flex: 1; min-width: 0; }
 .sch-card-x { color: var(--muted); }
-button.sch-card-head { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 !important; min-height: 32px; background: none !important; border: 0 !important; box-shadow: none !important; color: var(--muted); }
+button.sch-card-head { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 !important; min-height: 40px; background: none !important; border: 0 !important; box-shadow: none !important; color: var(--muted); }
 .sch-chips { flex-wrap: wrap; }
 .sch-chip { border: 1.5px solid var(--border); border-radius: 999px; padding: 6px 12px; font-size: 0.9rem; white-space: nowrap; background: var(--surface); }
 .sch-chip b { font-variant-numeric: tabular-nums; color: var(--muted); margin-right: 2px; }
@@ -147,4 +147,3 @@ button.sch-lesson { justify-content: flex-start; }
 .stage-exams .se-when { flex: none; color: var(--muted); font-weight: 600; font-size: 0.9rem; }
 .stage-note { margin: 0; font-size: 0.92rem; }
 .stage-exams-box > button.secondary { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 40px !important; }
-.stage-exams-box > button.sch-card-head { min-height: 40px; }

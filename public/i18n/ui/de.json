@@ -1182,6 +1182,7 @@
   "sc.memory": "Gespeichert",
   "sc.recent": "Zuletzt",
   "sc.insert": "In die Rechnung einfügen",
+  "sc.removeRecent": "Aus »Zuletzt« entfernen: {v}",
   "sc.pressSolve": "Drücke = zum Lösen",
   "sc.fmHint": "Ersetze die bekannten Buchstaben durch Zahlen, lass die Unbekannte stehen und drücke =.",
   "sc.fmRad": "Der Rechner ist jetzt im Modus RAD (Winkel im Bogenmaß).",

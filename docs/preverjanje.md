@@ -100,7 +100,7 @@ odgovor ima mejo `najvec: "numericno"`.
 Dogovora: rešitve so realne (kompleksni rešitvi pri realni enačbi sta napaka); identiteta, kot je
 `(x^2-4)/(x-2) = x+2`, šteje kot pravilna poenostavitev (izključeno točko preverja skupina »luknja«).
 
-`node scripts/meri-preverjanje.mjs [--json pot] [--nabor pot]` (privzeto nabor v2) izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
+`node scripts/meri-preverjanje.mjs [--json pot] [--porocilo pot.md] [--prej pot.json] [--nabor pot]` (privzeto nabor v2) izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
 (`verifyAiFull`, kot ga vidi učenec) in `skener-lokalno` (isto brez SymPy). Razredi: napačno potrjena, previsok
 status, lažni alarm, napačna s šibkim statusom (učenec vidi »delno« ali »numerično«), izjema, ujeta napaka, potrjena,
 šibkejši status, nepreverjena. `test/preverjanje-meritev.test.js` (CI ima SymPy prek `npm ci`, postinstall) pade ob
@@ -165,7 +165,8 @@ zaporedja in kombinatorika. Ponovljene trditve generator izpusti (zato ima kakš
 družin imajo `resnica`; generator se ustavi, če je napačen odgovor enak resnici ali pravilen različen od nje.
 
 Pričakovano oceno vseh 636 novih trditev so pred prvim zagonom preverjevalnikov določili trije neodvisni pregledovalci
-na slepo (premešan seznam brez oznak, brez kode Evklida in brez SymPy, le ročno in s celimi števili). Ujemanje s
+na slepo (ločeni agenti AI, ne človeški strokovnjaki; premešan seznam brez oznak, brez kode Evklida in brez SymPy,
+le ročno in s celimi števili). Ujemanje s
 konstrukcijo: 633 od 636. Razhajanja: `racun2-062` je pregledovalčeva napaka (5/5 + 5/5 = 2, odgovor 10/10 = 1 je
 napačen); `racun2-084` in `racun2-108` sta bili napaki nabora (zapis `-2^n` je −(2ⁿ), mišljeno je (−2)ⁿ), popravljeni
 z oklepajem.
@@ -178,19 +179,42 @@ Izhodišče 26. 11. 2026 (po PV-03):
 | skener | 939 | **0** | 467/471 | 0 | 16 | 406/468 |
 | skener-lokalno | 939 | **0** | 462/471 | 4 | 49 | 170/468 |
 
+Po popravku lažnih alarmov skenerja (spodaj):
+
+| Motor | Trditev | Napačno potrjene | Ujete napake | Napačne s šibkim statusom | Lažni alarmi | Pravilne potrjene |
+| --- | --- | --- | --- | --- | --- | --- |
+| skener | 939 | **0** | 467/471 | 0 | **0** | 417/468 |
+| skener-lokalno | 939 | **0** | 462/471 | 4 | 40 | 170/468 |
+
 0 napačno potrjenih na 512 napačnih trditvah pomeni pri 95-odstotnem zaupanju delež pod približno 0,6 % za vrste napak
 v naboru.
 
-Nove ugotovitve (odprte, popravek potrebuje odobritev):
+Popravljeno (lažni alarmi skenerja, `test/scan-lazni-alarmi.test.js`):
 
-- Skener tudi s SymPy: pravilen količnik fakultet (`factorial(14)/factorial(4) = 3632428800`, 11 trditev) dobi
-  »Zaznana napaka«. Vzrok je `prep()` v `public/scan/solvecore.js` (vrstica 51): regex za uvodne besede (»reši«,
-  »factor« …) nima meje besede, zato iz `factorial(14)` nastane `ial(14)`. Isto zadene realen vnos: »Factorise
-  x^2-4« s pravilnim `(x-2)*(x+2)` dobi »Zaznana napaka« (s SymPy in brez). Napačni količniki fakultet so zato
-  »ujeti« le po naključju. Skener sam fakulteto bere kot `n!` (`14!/4!` deluje).
-- Skener brez SymPy: `log(u, a)` z osnovo (20 trditev: 16 enačb in 4 računi), `binomial(n, k)` (9) in odvod
-  `cos(x^n)` (2) dobijo »Zaznana napaka«. Nabor tu uporablja zapis SymPy; skenerjev zapis (`log_3(x-2)`, `nCr(n,k)`)
-  lokalno dobi »Numerično preverjeno«.
+- `prep()` v `public/scan/solvecore.js` je uvodno besedo (»reši«, »factor« …) odrezal brez meje besede, zato je iz
+  `factorial(14)` nastal `ial(14)` in »Factorise x^2-4« je ostal `ise x^2-4`. Zdaj le cela beseda, »factorise« in
+  »factorize« sta ukaza.
+- Določeni integral: meji `∫_0^pi` in `∫_1^10` sta se prebrali kot `p` in `1`. Meja je zdaj v oklepaju, zavitem
+  oklepaju ali cel žeton.
+- Račun z zaokroženim decimalnim rezultatom (1/3 = 0.33, √2 = 1.414): lokalno in s SymPy (`value` namesto `equal`)
+  je »Numerično preverjeno« v mejah pol zadnjega mesta, ne »Zaznana napaka«. Le pri golem decimalnem številu z vsaj
+  dvema števkama, točni vrednosti brez kratkega decimalnega zapisa (1/2 + 1/4 = »0.8« ostane napaka) in toleranci, ki
+  jo plavajoča vejica in relativna rezerva workerja ne prekrijeta (15240740602.07 ostane napaka;
+  `verify.js zaokrozenRacun`).
+- Enačba z odpravljivo vrzeljo ((x² − 1)/(x + 1) = −2): iskanje ničel je točko vrzeli štelo za manjkajočo rešitev.
+  Hkrati je iskanje zgrešilo rešitev tik ob polu, ki leži točno na mreži (1/(x − 1) = 1000 brez rešitve je dobil
+  »Numerično preverjeno«); okoli takih polov so zdaj dodatne točke.
+- Odvod hitro nihajoče funkcije (cos(x⁶)): numerični odvod s petimi točkami in Richardsonovo ekstrapolacijo.
+
+Ostaja:
+
+- SymPy `equal` bere decimalke kot 53-bitna števila, zato pravilen velik decimalni rezultat (12345678.9 · 1234.5 =
+  15240740602.05) dobi »Zaznana napaka« (s SymPy; lokalno »Preverjeno«). Bilo je že prej; popravek v workerju
+  (decimalke kot ulomki, kot `_z_ulomki`) je naslednji korak.
+
+- Skener brez SymPy: `log(u, a)` z osnovo (20 trditev), `binomial(n, k)` (9) in `factorial(n)` (11) dobijo
+  »Zaznana napaka«, ker jih kalkulatorjev razčlenjevalnik (`public/graph/math.js`, profil B) ne pozna. Skenerjev
+  zapis (`log_3(x-2)`, `nCr(n,k)`, `n!`) lokalno deluje; s SymPy so vse pravilne.
 - Skener: pravilni nedoločeni in določeni integrali dobijo največ »Numerično preverjeno« (lokalno numerično, SymPy pri
   integralu skenerja ni vključen).
 - SymPy: enota `minute` je neznana (`45*minute`, 4 trditve ostanejo nepreverjene; `min` deluje, zato je to bolj
@@ -198,6 +222,83 @@ Nove ugotovitve (odprte, popravek potrebuje odobritev):
   (`0.025*m^2`, `0.5*kg`) so `numericno`.
 - Generator: `binomial(10,3)` brez presledka worker prebere kot `binomial(10.3)` (decimalna vejica), zato nabor piše
   `binomial(10, 3)`.
+
+## Dnevna meritev (PV-05)
+
+`.github/workflows/meritev-preverjanja.yml` vsak dan ob 3.41 UTC (in ročno) na `main` požene meritev z SymPy in
+`--strogo`, brez modela AI in brez stroška. Poročilo po predlogi `docs/meritve/README.md` (povzetek zagona in artefakt
+»meritev-preverjanja«, 90 dni) ima za vsak motor merila kot k/n z imenovalcem in Wilsonovim 95-% intervalom:
+
+| Merilo | Imenovalec | Cilj |
+| --- | --- | --- |
+| napačno potrjene (»izračunano« ali »dokazano«) | napačne trditve | 0 |
+| status nad upravičenim | trditve z mejo `najvec` | 0 |
+| napačne s šibkim statusom (»numerično«, »delno«) | napačne trditve | čim manj |
+| zaznane napake | napačne trditve | čim več |
+| lažni alarmi | pravilne trditve | 0 |
+| pravilne potrjene (»izračunano« ali »dokazano«) | pravilne trditve | čim več |
+| pravilne s šibkim statusom (»numerično«, »delno«) | pravilne trditve | čim manj |
+| nepreverjene (in »v teku«) | trditve, ki jih motor oceni | čim manj |
+| pokritost: dokončna ocena (pravilna potrjena ali napaka zaznana) | trditve, ki jih motor oceni | čim več |
+| izjeme preverjevalnika | trditve, ki jih motor oceni | 0 |
+
+Poleg tega poročilo prešteje trditve, ki imajo obliko za motor (štetje celote, ne vzorec, brez intervala: lastnost
+nabora, ne motorja), in zahteve SymPy brez odgovora. Pokritost trditev po delih aplikacije meri PV-04. Intervali
+predpostavljajo neodvisne trditve; ker trditve nastanejo v družinah predlog, ki pogosto uspejo ali padejo skupaj, so
+preozki (poročilo to navede pod omejitvami). Stolpec »Prej« je zadnja meritev v repozitoriju
+(`docs/meritve/preverjanje-<datum>.json`, le na istih trditvah: sha256 trditev brez opisa); slabše merilo je opozorilo
+v povzetku zagona. Rdeč zagon in zadeva »Dnevna meritev preverjanja ne gre skozi« (odpre, dopolni, ob zelenem zapre):
+napačno potrjena trditev, status nad upravičenim, izjema, motor, ki ni tekel (npr. SymPy ni nameščen), ali vsaj ena
+zahteva SymPy brez odgovora (rok, sesutje; `casIzpadi()` v `server/cas.js`), ker bi statusi tiho padli na lokalno
+preverjanje (preizkus: SymPy, ki se sesuje sredi meritve, da skenerju 40 lažnih alarmov in zelen zagon brez tega
+pravila). Ob spremembi trditev nabora nova meritev v `docs/meritve` (test `test/preverjanje-porocilo.test.js` pade
+brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
+
+## Popis pokritosti (PV-04)
+
+`node scripts/popis-pokritosti.mjs [--json p.json] [--porocilo p.md] [--brez-sympy] [--strogo] [--dodatek f.md]`
+(skripta ne kliče modela AI; z SymPy okoli 40 s, brez njega 6 s) za vsako od 19 mest iz načrta PV pove, ali trditve
+tam dobijo status. Za vnaprej znano vsebino (razlaga lekcij, »Preveri se«, rešeni primeri, bloki RACUN, pole z
+rešitvami in točkovniki, rešitve generatorjev na ravneh 1–3 s semenom 1, tekmovalne naloge, fakultetne lekcije)
+zašteje formule z relacijo in status, ki ga dajo obstoječi preverjevalniki, uporabljeni na vsaki formuli posebej:
+preračun `server/lesson-math.js` (numerično, delno, napaka), preizkus identitet z naključnimi števili
+`server/lesson-identity.js` (le potrditev: numerično), za RACUN SymPy z načinom ali kemijski preizkus. Ostale so
+nepreverjene. Namerno napačne trditve (»Pogoste napake«, napačne možnosti in njihova pojasnila ~ v »Preveri se«,
+`mistake` in napačne izbire na polah) in vprašanja (?) so izločeni in našteti posebej. Stolpec »Preverjanje danes«
+pove, kaj od tega preračuna CI ob vsaki spremembi (koraki rešitev generatorjev in računi v »Preveri se«
+ne) in kaj preverijo mesta, kjer trditve nastanejo ob uporabi (inštruktor, kalkulatorji, skener …). Štetje
+celote, ne vzorec, zato brez intervala. `--strogo` vrne napako, če SymPy ni tekel ali ni odgovoril na zahtevo.
+
+Izhodišče `docs/meritve/pokritost-2026-11-26.md`: v vsebini, ki jo učenec vidi, je 11.615 od 85.362 formul z relacijo
+(13,6 %) v celoti preračunanih, 10.221 (12,0 %) delno, 63.517 (74,4 %) brez statusa; razlaga lekcij 16,2 %, fakultetne
+lekcije 8,3 % v celoti. Strojni bloki RACUN, ki ponovijo rezultate lekcij, so ločeni: 5.623 od 5.626. Vseh 9 zaznanih
+»napak« je pregledal model AI (ne človek): nobena ni napačen rezultat (napačen preračun lesson-math, AUDIT-087;
+zapisi, ki jih preračun ne pozna; trije nenatančni zapisi v naših generatorjih, popravek v ločenem PR #1160). Višji
+delež je boljši; formula brez statusa ni napačna, le noben program je ne preveri.
+
+## Odpoved preverjevalnikov (K-04)
+
+Ob izpadu preverjevalnika status nobene trditve ne sme biti višji, kot ga dovoljujejo preostali dokazi.
+`test/odpoved-preverjevalnikov.test.js` to preveri na vseh 939 trditvah nabora v2, ki jih zna skener:
+
+| Izpad | Kako ga test povzroči | Pričakovano |
+| --- | --- | --- |
+| SymPy izklopljen | `EVKLID_CAS=0` | status vsake trditve enak kot brez SymPy (skener-lokalno) |
+| SymPy manjka | `EVKLID_PYTHON` kaže na neobstoječ program | isto |
+| SymPy se sesuje | lažni worker ob vsaki zahtevi konča (`test/fixtures/odpoved/sesutje.sh`) | isto |
+| SymPy se zatika | lažni worker ne odgovori, rok 25 ms (`rok.sh`) | isto |
+| SymPy izpisuje nesmisel | ne JSON in napačen id (`smeti.sh`) | isto |
+| Lean | ni mape z dokazi, dokaz zastarel ali brez izrekov | nobena lekcija ni »Formalno dokazano« |
+| Model | reševanje vrne 529; ponovitev pade po prvem poskusu | brez rešitve ni statusa; status prvega poskusa ostane izid kode |
+
+V vseh izpadih SymPy je napačno potrjenih 0 in nobena trditev ni »dokazano«. Kontrola: lažni worker, ki vse potrdi
+(`lazniv.sh`), spremeni status več kot 100 trditvam, zato primerjava res meri. (Pokvarjen, a delujoč SymPy, ki vse
+potrdi, ni izpad: pred njim varujeta testi workerja in točna lokalna algebra, ki ima pri ovržbi prednost.)
+
+`/healthz/stanje` → `preverjevalniki` pove, kateri ne dela (`nedelujejo`: `sympy`, `lean`, `model`). SymPy ne dela,
+ko je izklopljen, zagon ni uspel ali je bilo vsaj 3 zahteve zapored brez odgovora (`neuspesnih`, `razlog`: rok ali
+sesutje); ena prepočasna naloga ni izpad. Lean ne teče na strežniku: »ne dela« pomeni, da ni nobenega dokaza lekcije.
+Straža (`scripts/straza.mjs`) ostaja pri `cas.deluje`.
 
 ## Pravilo za nove dele aplikacije
 

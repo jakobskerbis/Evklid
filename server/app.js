@@ -63,6 +63,7 @@ import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competi
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic, examRaven } from "./exams.js";
 import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
+import { skrciJs, skrciVklopljeno, skrciOznaka } from "./skrci.js";
 import { slZasloni } from "./i18n-jedro.js";
 import { startupFiles, moduleDeps } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
@@ -101,7 +102,7 @@ import { potTakoj } from "./pot-takoj.js";
 const ZASLONI_POZNEJE = ["vendor/katex/katex.min.js", "vendor/marked/lib/marked.umd.js", "vendor/dompurify/purify.min.js", "formula-info.js", "sirina.js", "textbook.js", "vadnica.js", "kalkulator-zaslon.js", "schedule.js", "racun.js", "flashcards.js", "odpri.js", "laboratorij.js", "corner.js", "pilot-naloge.js", "chat-settings.js", "prijave.js", "i18n-zasloni.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "our-paper.js", "practice/check.js", "graph/math.js", "i18n.js", "tipkovnica.js", "tipkovnica-data.js"];
 // Leni moduli, ki jih odjemalec naloži z vsemi odvisnostmi hkrati (/lene-odvisnosti.js, public/kliki.js vzporedno;
 // app.js lenModul ob prvem nalaganju): brez tega brskalnik odkriva uvoze raven za ravnijo.
-const LENI_MODULI = ["graph/sci.js", "graph/calc.js", "graph/tools.js", "games/index.js", "textbook.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "vadnica.js", "kalkulator-zaslon.js", "schedule.js", "racun.js", "flashcards.js", "laboratorij.js", "corner.js"];
+const LENI_MODULI = ["graph/sci.js", "graph/calc.js", "graph/tools.js", "games/index.js", "textbook.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "vadnica.js", "kalkulator-zaslon.js", "schedule.js", "racun.js", "flashcards.js", "laboratorij.js", "corner.js", "priprava/priprava.js"];
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
@@ -121,6 +122,7 @@ import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
 import { createZdravje, razlogiAlarma } from "./zdravje.js";
 import { casStanje } from "./cas.js";
+import { stanjePreverjevalnikov } from "./preverjevalniki.js";
 import { startStiskaObvestila, mountStiske, prejemnikStarsa } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 import { createVrsta } from "./vrsta-ai.js";
@@ -331,13 +333,13 @@ export function createApp(store, opts = {}) {
   // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
   const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
   app.locals.pomnilnik = pomnilnik;
-  const stanje = () => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai: zdravje?.ai() ?? null, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null, cas: casStanje() });
+  const stanje = (cas = casStanje(), ai = zdravje?.ai() ?? null) => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null, cas, preverjevalniki: stanjePreverjevalnikov({ cas, ai }) });
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
     res.json(stanje());
   });
   // Javni alarm za drugi monitor UptimeRobot (server/zdravje.js razlogiAlarma): 200 »ok« ali 503 s kratkimi kodami
-  // (baza, ai, posta, kopije, disk, pomnilnik, zagon) brez podrobnosti; podrobnosti so v /healthz/stanje.
+  // (baza, ai, posta, kopije, disk, pomnilnik, zagon, varnost) brez podrobnosti; podrobnosti so v /healthz/stanje.
   app.get("/healthz/alarm", (_req, res) => {
     res.set("Cache-Control", "no-store");
     let bazaOk = true;
@@ -414,7 +416,9 @@ export function createApp(store, opts = {}) {
   // Service worker z različico knjižnic v imenu predpomnilnika (glej server/razlicica.js).
   // in z različico datotek aplikacije (APP): kopije iste različice se odprejo takoj, brez omrežja.
   // Različica datotek se ponovno izračuna, ko se public/ spremeni (domači strežnik po posodobitvi, razvoj).
-  const filesVersion = liveStaticVersion(publicDir); // tudi v vstopni strani, glavi X-Evklid-App in /healthz/stanje
+  // Skrčene datoteke JS (server/skrci.js) so del različice: vklop ali izklop brez nove gradnje da novo različico.
+  const skrci = process.env.EVKLID_COMPRESS !== "0" && skrciVklopljeno();
+  const filesVersion = liveStaticVersion(publicDir, undefined, skrci ? `skrci:${skrciOznaka}` : ""); // tudi v vstopni strani, glavi X-Evklid-App in /healthz/stanje
   const vendor = vendorVersion();
   let sw = { app: null, src: "" };
   const swSource = () => {
@@ -555,7 +559,7 @@ export function createApp(store, opts = {}) {
       // Iz server/practice samo check.js (kot spodaj brez stiskanja), ne cela mapa s kodo strežnika (točka 1.7).
       ["/practice/check.js", path.join(here, "practice", "check.js")],
       ["/", publicDir],
-    ]);
+    ], { skrci: skrci ? skrciJs : null });
     app.use(statics);
     // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
     // Paketi nalog iger (games/subjects/*.js) se v brskalniku naložijo z import() po predmetih, zato jih naštejemo posebej.

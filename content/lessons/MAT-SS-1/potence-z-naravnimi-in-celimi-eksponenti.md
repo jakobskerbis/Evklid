@@ -356,7 +356,7 @@ Najpogostejša past je četrti korak: odštevanje negativnega eksponenta je pri�
 + $(-2)^3 < -2^2 < 2^{-3} < 2^0$
 > $(-2)^3 = -8$, $-2^2 = -4$, $2^{-3} = \dfrac{1}{8}$ in $2^0 = 1$.
 
-? Turnir na izpadanje z $2^n$ igralci ima $n$ krogov. Kaj se zgodi s številom igralcev, če turnir podaljšamo za en krog, da je igralcev $2^{n+1}$?
+? Turnir na izpadanje z $2^n$ igralci ($n \ge 2$) ima $n$ krogov. Kaj se zgodi s številom igralcev, če turnir podaljšamo za en krog, da je igralcev $2^{n+1}$?
 - Poveča se za $1$.
 ~ Za $1$ se poveča eksponent, ne vrednost: $2^{n+1}$ ni $2^n + 1$.
 + Podvoji se.

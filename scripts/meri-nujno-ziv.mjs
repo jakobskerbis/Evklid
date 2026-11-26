@@ -41,12 +41,12 @@ export function zMejo(meja, klic = klicApi) {
     if (stanje.porabljeno + stanje.rezervirano + NA_KLIC_NAJVEC > meja) stanje.ustavljeno = true;
     return stanje.ustavljeno;
   };
-  const create = async (body) => {
+  const create = async (body, ms) => {
     // Varovalka: primer se začne samo po ustavi(); sem pride le, če bi ponovitev po 429/529 presegla mejo.
     if (ustavi()) throw Object.assign(new Error("meja stroška"), { name: "MejaStroska" });
     stanje.rezervirano += NA_KLIC_NAJVEC;
     try {
-      const out = await klic(body);
+      const out = await klic(body, ms);
       stanje.porabljeno += out?.usage ? costUsd(out.model || body.model, out.usage) : NA_KLIC_NAJVEC;
       return out;
     } catch (err) {
@@ -139,6 +139,7 @@ export function zapis({ primeri, izidi, stanje, meja, koncano }) {
       stop: s.stop,
       napake: ids(s.napake),
       ponovitev: s.ponovitev,
+      povezava: s.povezava,
       mediana_ms: s.mediana,
       p95_ms: s.p95,
       usd: s.usd,

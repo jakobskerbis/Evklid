@@ -94,9 +94,21 @@ function izidi() {
 function dodajIzid({ text, src }) {
   text = String(text ?? "").trim();
   if (!NUM_TEXT.test(text)) return;
-  const l = [{ text, src }, ...izidi().filter((x) => !(x.text === text && x.src === src))].slice(0, 12);
+  shraniIzide([{ text, src }, ...izidi().filter((x) => !(x.text === text && x.src === src))].slice(0, 12));
+}
+function shraniIzide(l) {
   try {
     localStorage.setItem(izidiKey(), JSON.stringify(l));
+  } catch {}
+}
+// × na čipu »Nedavno«: odstrani samo ta izid (isto besedilo in isti zavihek, kot ga dodajIzid ne podvoji)
+function odstraniIzid({ text, src }) {
+  shraniIzide(izidi().filter((x) => !(x.text === text && x.src === src)));
+}
+// koš Znanstvenega počisti tudi skupno zgodovino (čipi »Nedavno«, ponudba v meniju »Dodaj« Grafičnega)
+function pocistiIzide() {
+  try {
+    localStorage.removeItem(izidiKey());
   } catch {}
 }
 async function insertIntoCalc(text, o) {
@@ -126,6 +138,8 @@ function calcTool(mode) {
         sharedGraph: () => graphShown?.shared() || null,
         recent: izidi,
         addRecent: dodajIzid,
+        removeRecent: odstraniIzid,
+        clearRecent: pocistiIzide,
         // »Pretvori enote«: zavihek Orodja, pretvornik z vrednostjo izida
         convert: async (v) => (await setCalcMode("tools"))?.units?.(v),
         // »Pokaži na grafu«: rezultat z orodji grafičnega kalkulatorja, doda se trenutnemu grafu (graph/v-graf.js)
