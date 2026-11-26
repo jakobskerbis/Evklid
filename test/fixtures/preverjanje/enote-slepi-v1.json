@@ -1,0 +1,2111 @@
+{
+ "opis": "Slepi nabor je sestavil AI model (Claude Opus 5.5) zgolj iz opisa vmesnika preverjalnika, brez vpogleda v njegovo implementacijo ali v avtorjev nabor; napačne naloge so dimenzijsko napačne tipične napake učencev ali avtorjev.",
+ "naloge": [
+  {
+   "id": "s001",
+   "opis": "Naboj, ki steče v času t",
+   "resnica": "pravilna",
+   "given": [
+    "I = 2\\ \\mathrm{A}",
+    "t = 60\\ \\mathrm{s}"
+   ],
+   "find": [
+    "e"
+   ],
+   "unit": "C",
+   "formula": "e = I t"
+  },
+  {
+   "id": "s002",
+   "opis": "Koncentracija iz mase: pozabljena prostornina",
+   "resnica": "napacna",
+   "given": [
+    "m = 5{,}85\\ \\mathrm{g}",
+    "M = 58{,}5\\ \\mathrm{g/mol}",
+    "V = 0{,}5\\ \\mathrm{L}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "c = \\dfrac{m}{M}"
+  },
+  {
+   "id": "s003",
+   "opis": "Tlak: sila krat ploščina",
+   "resnica": "napacna",
+   "given": [
+    "F = 500\\ \\mathrm{N}",
+    "S = 0{,}25\\ \\mathrm{m^2}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = F \\cdot S"
+  },
+  {
+   "id": "s004",
+   "opis": "Pretvorba dm³ v L",
+   "resnica": "pravilna",
+   "given": [
+    "n = 0{,}2\\ \\mathrm{mol}",
+    "V = 2\\ \\mathrm{dm^3}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "2\\ \\mathrm{dm^3} = 2\\ \\mathrm{L}"
+  },
+  {
+   "id": "s005",
+   "opis": "Ubežna hitrost",
+   "resnica": "pravilna",
+   "given": [
+    "G = 6{,}67\\cdot 10^{-11}\\ \\mathrm{N\\,m^2/kg^2}",
+    "M = 6\\cdot 10^{24}\\ \\mathrm{kg}",
+    "r = 6{,}4\\cdot 10^{6}\\ \\mathrm{m}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\sqrt{\\dfrac{2 G M}{r}}"
+  },
+  {
+   "id": "s006",
+   "opis": "Pretvorba ur v sekunde",
+   "resnica": "pravilna",
+   "given": [
+    "P = 60\\ \\mathrm{W}",
+    "t = 3\\ \\mathrm{h}"
+   ],
+   "find": [
+    "W"
+   ],
+   "unit": "J",
+   "formula": "3\\ \\mathrm{h} = 10\\,800\\ \\mathrm{s}"
+  },
+  {
+   "id": "s007",
+   "opis": "Coulombov zakon: manjka kvadrat razdalje",
+   "resnica": "napacna",
+   "given": [
+    "k = 9\\cdot 10^{9}\\ \\mathrm{N\\,m^2/C^2}",
+    "e_1 = 2\\cdot 10^{-6}\\ \\mathrm{C}",
+    "e_2 = 3\\cdot 10^{-6}\\ \\mathrm{C}",
+    "r = 0{,}1\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = k \\dfrac{e_1 e_2}{r}"
+  },
+  {
+   "id": "s008",
+   "opis": "Pretvorba ton v kg: faktor 100",
+   "resnica": "napacna",
+   "given": [
+    "m = 4\\ \\mathrm{t}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "F_g"
+   ],
+   "unit": "N",
+   "formula": "4\\ \\mathrm{t} = 400\\ \\mathrm{kg}"
+  },
+  {
+   "id": "s009",
+   "opis": "Ubežna hitrost: radij v števcu",
+   "resnica": "napacna",
+   "given": [
+    "G = 6{,}67\\cdot 10^{-11}\\ \\mathrm{N\\,m^2/kg^2}",
+    "M = 6\\cdot 10^{24}\\ \\mathrm{kg}",
+    "r = 6{,}4\\cdot 10^{6}\\ \\mathrm{m}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\sqrt{2 G M r}"
+  },
+  {
+   "id": "s010",
+   "opis": "Koncentracija iz mase topljenca",
+   "resnica": "pravilna",
+   "given": [
+    "m = 5{,}85\\ \\mathrm{g}",
+    "M = 58{,}5\\ \\mathrm{g/mol}",
+    "V = 0{,}5\\ \\mathrm{L}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "c = \\dfrac{m}{M \\cdot V}"
+  },
+  {
+   "id": "s011",
+   "opis": "Inducirana napetost na premikajočem se vodniku",
+   "resnica": "pravilna",
+   "given": [
+    "B = 0{,}5\\ \\mathrm{T}",
+    "l = 0{,}3\\ \\mathrm{m}",
+    "v = 4\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "U_i"
+   ],
+   "unit": "V",
+   "formula": "U_i = B l v"
+  },
+  {
+   "id": "s012",
+   "opis": "Množina snovi: masa krat molska masa",
+   "resnica": "napacna",
+   "given": [
+    "m = 11{,}7\\ \\mathrm{g}",
+    "M = 58{,}5\\ \\mathrm{g/mol}"
+   ],
+   "find": [
+    "n"
+   ],
+   "unit": "mol",
+   "formula": "n = m M"
+  },
+  {
+   "id": "s013",
+   "opis": "Kinetična energija: manjka kvadrat hitrosti",
+   "resnica": "napacna",
+   "given": [
+    "m = 0{,}5\\ \\mathrm{kg}",
+    "v = 8\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "W_k"
+   ],
+   "unit": "J",
+   "formula": "W_k = \\dfrac{1}{2} m v"
+  },
+  {
+   "id": "s014",
+   "opis": "Naboj na kondenzatorju",
+   "resnica": "pravilna",
+   "given": [
+    "C = 2\\cdot 10^{-6}\\ \\mathrm{F}",
+    "U = 12\\ \\mathrm{V}"
+   ],
+   "find": [
+    "e"
+   ],
+   "unit": "C",
+   "formula": "e = C U"
+  },
+  {
+   "id": "s015",
+   "opis": "Hitrost valovanja: valovna dolžina deljena s frekvenco",
+   "resnica": "napacna",
+   "given": [
+    "\\lambda = 0{,}68\\ \\mathrm{m}",
+    "\\nu = 500\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "m/s",
+   "formula": "c = \\dfrac{\\lambda}{\\nu}"
+  },
+  {
+   "id": "s016",
+   "opis": "Moč grelnika: upor v števcu",
+   "resnica": "napacna",
+   "given": [
+    "U = 230\\ \\mathrm{V}",
+    "R = 50\\ \\Omega"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = U^{2} R"
+  },
+  {
+   "id": "s017",
+   "opis": "Pot pri enakomerno pospešenem gibanju",
+   "resnica": "pravilna",
+   "given": [
+    "v_0 = 2\\ \\mathrm{m/s}",
+    "a = 3\\ \\mathrm{m/s^2}",
+    "t = 4\\ \\mathrm{s}"
+   ],
+   "find": [
+    "s"
+   ],
+   "unit": "m",
+   "formula": "s = v_0 t + \\frac{1}{2} a t^{2}"
+  },
+  {
+   "id": "s018",
+   "opis": "Potencialna energija",
+   "resnica": "pravilna",
+   "given": [
+    "m = 3\\ \\mathrm{kg}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}",
+    "h = 12\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_p"
+   ],
+   "unit": "J",
+   "formula": "W_p = m g h"
+  },
+  {
+   "id": "s019",
+   "opis": "Pretvorba nm v m",
+   "resnica": "pravilna",
+   "given": [
+    "h = 6{,}63\\cdot 10^{-34}\\ \\mathrm{J\\,s}",
+    "c_0 = 3\\cdot 10^{8}\\ \\mathrm{m/s}",
+    "\\lambda = 500\\ \\mathrm{nm}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "500\\ \\mathrm{nm} = 5\\cdot 10^{-7}\\ \\mathrm{m}"
+  },
+  {
+   "id": "s020",
+   "opis": "Moč pri stalni hitrosti: sila deljena s hitrostjo",
+   "resnica": "napacna",
+   "given": [
+    "F = 800\\ \\mathrm{N}",
+    "v = 25\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\dfrac{F}{v}"
+  },
+  {
+   "id": "s021",
+   "opis": "Skupni čas: postanek in hoja",
+   "resnica": "pravilna",
+   "given": [
+    "t_1 = 300\\ \\mathrm{s}",
+    "s = 900\\ \\mathrm{m}",
+    "v = 3\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "t"
+   ],
+   "unit": "s",
+   "formula": "t = t_1 + \\dfrac{s}{v}"
+  },
+  {
+   "id": "s022",
+   "opis": "Porabljena energija: pozabljen čas (moč namesto energije)",
+   "resnica": "napacna",
+   "given": [
+    "U = 230\\ \\mathrm{V}",
+    "I = 2\\ \\mathrm{A}",
+    "t = 3\\ \\mathrm{h}"
+   ],
+   "find": [
+    "W"
+   ],
+   "unit": "kWh",
+   "formula": "W = U \\cdot I"
+  },
+  {
+   "id": "s023",
+   "opis": "Gay-Lussacov zakon pri stalnem tlaku",
+   "resnica": "pravilna",
+   "given": [
+    "V_1 = 2\\ \\mathrm{L}",
+    "T_1 = 300\\ \\mathrm{K}",
+    "T_2 = 450\\ \\mathrm{K}"
+   ],
+   "find": [
+    "V_2"
+   ],
+   "unit": "L",
+   "formula": "\\dfrac{V_1}{T_1} = \\dfrac{V_2}{T_2}"
+  },
+  {
+   "id": "s024",
+   "opis": "Gravitacijski zakon: manjka kvadrat razdalje",
+   "resnica": "napacna",
+   "given": [
+    "G = 6{,}67\\cdot 10^{-11}\\ \\mathrm{N\\,m^2/kg^2}",
+    "m_1 = 6\\cdot 10^{24}\\ \\mathrm{kg}",
+    "m_2 = 1000\\ \\mathrm{kg}",
+    "r = 7\\cdot 10^{6}\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = G \\frac{m_1 m_2}{r}"
+  },
+  {
+   "id": "s025",
+   "opis": "Pretvorba g/cm³ v kg/m³: vrednost prepisana",
+   "resnica": "napacna",
+   "given": [
+    "\\rho = 2{,}7\\ \\mathrm{g/cm^3}",
+    "V = 0{,}1\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "kg",
+   "formula": "2{,}7\\ \\mathrm{g/cm^3} = 2{,}7\\ \\mathrm{kg/m^3}"
+  },
+  {
+   "id": "s026",
+   "opis": "Stehiometrija: pozabljena molska masa produkta",
+   "resnica": "napacna",
+   "given": [
+    "m_1 = 10\\ \\mathrm{g}",
+    "M_1 = 40\\ \\mathrm{g/mol}",
+    "M_2 = 18\\ \\mathrm{g/mol}",
+    "\\nu_1 = 2",
+    "\\nu_2 = 1"
+   ],
+   "find": [
+    "m_2"
+   ],
+   "unit": "g",
+   "formula": "m_2 = \\dfrac{\\nu_2}{\\nu_1} \\cdot \\dfrac{m_1}{M_1}"
+  },
+  {
+   "id": "s027",
+   "opis": "Moč grelnika iz napetosti in upora",
+   "resnica": "pravilna",
+   "given": [
+    "U = 230\\ \\mathrm{V}",
+    "R = 50\\ \\Omega"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\frac{U^{2}}{R}"
+  },
+  {
+   "id": "s028",
+   "opis": "Energija fotona: valovna dolžina v števcu",
+   "resnica": "napacna",
+   "given": [
+    "h = 6{,}63\\cdot 10^{-34}\\ \\mathrm{J\\,s}",
+    "c_0 = 3\\cdot 10^{8}\\ \\mathrm{m/s}",
+    "\\lambda = 600\\ \\mathrm{nm}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "E = h c_0 \\lambda"
+  },
+  {
+   "id": "s029",
+   "opis": "Hidrostatični tlak",
+   "resnica": "pravilna",
+   "given": [
+    "\\rho = 1000\\ \\mathrm{kg/m^3}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}",
+    "h = 5\\ \\mathrm{m}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\rho g h"
+  },
+  {
+   "id": "s030",
+   "opis": "Energija iz masnega defekta",
+   "resnica": "pravilna",
+   "given": [
+    "\\Delta m = 3\\cdot 10^{-29}\\ \\mathrm{kg}",
+    "c_0 = 3\\cdot 10^{8}\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "E = \\Delta m \\, c_0^{2}"
+  },
+  {
+   "id": "s031",
+   "opis": "Povečava slike pri leči",
+   "resnica": "pravilna",
+   "given": [
+    "y = 2\\ \\mathrm{cm}",
+    "a = 30\\ \\mathrm{cm}",
+    "b = 15\\ \\mathrm{cm}"
+   ],
+   "find": [
+    "y'"
+   ],
+   "unit": "cm",
+   "formula": "\\frac{y'}{y} = \\frac{b}{a}"
+  },
+  {
+   "id": "s032",
+   "opis": "Enačba leče: pozabljena obratna vrednost goriščne razdalje",
+   "resnica": "napacna",
+   "given": [
+    "a = 30\\ \\mathrm{cm}",
+    "b = 15\\ \\mathrm{cm}"
+   ],
+   "find": [
+    "f"
+   ],
+   "unit": "cm",
+   "formula": "f = \\frac{1}{a} + \\frac{1}{b}"
+  },
+  {
+   "id": "s033",
+   "opis": "Kinetična energija iz gibalne količine: manjka kvadrat",
+   "resnica": "napacna",
+   "given": [
+    "G = 12\\ \\mathrm{kg\\,m/s}",
+    "m = 3\\ \\mathrm{kg}"
+   ],
+   "find": [
+    "W_k"
+   ],
+   "unit": "J",
+   "formula": "W_k = \\dfrac{G}{2 m}"
+  },
+  {
+   "id": "s034",
+   "opis": "Kinetična energija",
+   "resnica": "pravilna",
+   "given": [
+    "m = 0{,}5\\ \\mathrm{kg}",
+    "v = 8\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "W_k"
+   ],
+   "unit": "J",
+   "formula": "W_k = \\dfrac{1}{2} m v^{2}"
+  },
+  {
+   "id": "s035",
+   "opis": "Prožnostna energija: manjka kvadrat raztezka",
+   "resnica": "napacna",
+   "given": [
+    "k = 200\\ \\mathrm{N/m}",
+    "x = 0{,}05\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_{pr}"
+   ],
+   "unit": "J",
+   "formula": "W_{pr} = \\frac{1}{2} k x"
+  },
+  {
+   "id": "s036",
+   "opis": "Skupni čas: čas prištet poti",
+   "resnica": "napacna",
+   "given": [
+    "t_1 = 300\\ \\mathrm{s}",
+    "s = 900\\ \\mathrm{m}",
+    "v = 3\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "t"
+   ],
+   "unit": "s",
+   "formula": "t = t_1 + s"
+  },
+  {
+   "id": "s037",
+   "opis": "Razpad: preostala masa po razpolovnih časih",
+   "resnica": "pravilna",
+   "given": [
+    "m_0 = 80\\ \\mathrm{g}",
+    "t = 24\\ \\mathrm{h}",
+    "t_{1/2} = 8\\ \\mathrm{h}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "g",
+   "formula": "m = m_0 \\cdot 2^{-t/t_{1/2}}"
+  },
+  {
+   "id": "s038",
+   "opis": "Valovna dolžina zvoka: produkt namesto kvocienta",
+   "resnica": "napacna",
+   "given": [
+    "v = 340\\ \\mathrm{m/s}",
+    "\\nu = 440\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "\\lambda"
+   ],
+   "unit": "m",
+   "formula": "\\lambda = v \\nu"
+  },
+  {
+   "id": "s039",
+   "opis": "Množinska koncentracija: množina krat prostornina",
+   "resnica": "napacna",
+   "given": [
+    "n = 0{,}1\\ \\mathrm{mol}",
+    "V = 250\\ \\mathrm{mL}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "c = n V"
+  },
+  {
+   "id": "s040",
+   "opis": "Neprožni trk: v imenovalcu produkt mas",
+   "resnica": "napacna",
+   "given": [
+    "m_1 = 2\\ \\mathrm{kg}",
+    "v_1 = 3\\ \\mathrm{m/s}",
+    "m_2 = 1\\ \\mathrm{kg}",
+    "v_2 = 0\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{m_1 v_1 + m_2 v_2}{m_1 m_2}"
+  },
+  {
+   "id": "s041",
+   "opis": "Plinska enačba: manjka temperatura",
+   "resnica": "napacna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "R = 8{,}31\\ \\mathrm{J/(mol\\,K)}",
+    "T = 300\\ \\mathrm{K}",
+    "V = 0{,}05\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p V = n R"
+  },
+  {
+   "id": "s042",
+   "opis": "Električna moč",
+   "resnica": "pravilna",
+   "given": [
+    "U = 230\\ \\mathrm{V}",
+    "I = 4\\ \\mathrm{A}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = U I"
+  },
+  {
+   "id": "s043",
+   "opis": "Pospešek iz spremembe hitrosti",
+   "resnica": "pravilna",
+   "given": [
+    "v_0 = 4\\ \\mathrm{m/s}",
+    "v = 10\\ \\mathrm{m/s}",
+    "t = 3\\ \\mathrm{s}"
+   ],
+   "find": [
+    "a"
+   ],
+   "unit": "m/s²",
+   "formula": "a = \\frac{v - v_0}{t}"
+  },
+  {
+   "id": "s044",
+   "opis": "Tlak iz sile in ploščine",
+   "resnica": "pravilna",
+   "given": [
+    "F = 500\\ \\mathrm{N}",
+    "S = 0{,}25\\ \\mathrm{m^2}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\dfrac{F}{S}"
+  },
+  {
+   "id": "s045",
+   "opis": "Zmes iste tekočine: končna temperatura",
+   "resnica": "pravilna",
+   "given": [
+    "m_1 = 2\\ \\mathrm{kg}",
+    "t_1 = 20\\ ^\\circ\\mathrm{C}",
+    "m_2 = 3\\ \\mathrm{kg}",
+    "t_2 = 80\\ ^\\circ\\mathrm{C}"
+   ],
+   "find": [
+    "t"
+   ],
+   "unit": "°C",
+   "formula": "t = \\dfrac{m_1 t_1 + m_2 t_2}{m_1 + m_2}"
+  },
+  {
+   "id": "s046",
+   "opis": "Razpadni zakon z razpadno konstanto",
+   "resnica": "pravilna",
+   "given": [
+    "m_0 = 50\\ \\mathrm{g}",
+    "\\lambda = 0{,}02\\ \\mathrm{s^{-1}}",
+    "t = 30\\ \\mathrm{s}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "g",
+   "formula": "m = m_0 \\exp(-\\lambda t)"
+  },
+  {
+   "id": "s047",
+   "opis": "Upor žice: zamenjana dolžina in presek",
+   "resnica": "napacna",
+   "given": [
+    "\\zeta = 1{,}7\\cdot 10^{-8}\\ \\Omega\\,\\mathrm{m}",
+    "l = 20\\ \\mathrm{m}",
+    "S = 1\\ \\mathrm{mm^2}"
+   ],
+   "find": [
+    "R"
+   ],
+   "unit": "Ω",
+   "formula": "R = \\dfrac{\\zeta S}{l}"
+  },
+  {
+   "id": "s048",
+   "opis": "Gostota magnetnega polja ob ravnem vodniku",
+   "resnica": "pravilna",
+   "given": [
+    "\\mu_0 = 1{,}26\\cdot 10^{-6}\\ \\mathrm{T\\,m/A}",
+    "I = 10\\ \\mathrm{A}",
+    "r = 0{,}05\\ \\mathrm{m}"
+   ],
+   "find": [
+    "B"
+   ],
+   "unit": "T",
+   "formula": "B = \\dfrac{\\mu_0 I}{2 \\pi r}"
+  },
+  {
+   "id": "s049",
+   "opis": "Hitrost: obrnjen ulomek (čas skozi pot)",
+   "resnica": "napacna",
+   "given": [
+    "s = 120\\ \\mathrm{m}",
+    "t = 10\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{t}{s}"
+  },
+  {
+   "id": "s050",
+   "opis": "Pretvorba km v m: faktor 100",
+   "resnica": "napacna",
+   "given": [
+    "s = 2{,}5\\ \\mathrm{km}",
+    "t = 500\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "2{,}5\\ \\mathrm{km} = 250\\ \\mathrm{m}"
+  },
+  {
+   "id": "s051",
+   "opis": "Pretvorba cm² v m²: faktor za dolžino namesto za ploščino",
+   "resnica": "napacna",
+   "given": [
+    "F = 10\\ \\mathrm{N}",
+    "S = 5\\ \\mathrm{cm^2}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "5\\ \\mathrm{cm^2} = 5\\cdot 10^{-2}\\ \\mathrm{m^2}"
+  },
+  {
+   "id": "s052",
+   "opis": "Pretvorba kWh v J",
+   "resnica": "pravilna",
+   "given": [
+    "W = 1\\ \\mathrm{kWh}"
+   ],
+   "find": [
+    "W"
+   ],
+   "unit": "J",
+   "formula": "1\\ \\mathrm{kWh} = 3{,}6\\cdot 10^{6}\\ \\mathrm{J}"
+  },
+  {
+   "id": "s053",
+   "opis": "Pretvorba mmol/L v µmol/L: deljeno namesto pomnoženo",
+   "resnica": "napacna",
+   "given": [
+    "c = 3\\ \\mathrm{mmol/L}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "µmol/L",
+   "formula": "3\\ \\mathrm{mmol/L} = 0{,}003\\ \\mu\\mathrm{mol/L}"
+  },
+  {
+   "id": "s054",
+   "opis": "Magnetna sila na gibajoč se naboj",
+   "resnica": "pravilna",
+   "given": [
+    "e = 1{,}6\\cdot 10^{-19}\\ \\mathrm{C}",
+    "v = 2\\cdot 10^{6}\\ \\mathrm{m/s}",
+    "B = 0{,}1\\ \\mathrm{T}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = e v B"
+  },
+  {
+   "id": "s055",
+   "opis": "Polje ob ravnem vodniku: manjka razdalja",
+   "resnica": "napacna",
+   "given": [
+    "\\mu_0 = 1{,}26\\cdot 10^{-6}\\ \\mathrm{T\\,m/A}",
+    "I = 10\\ \\mathrm{A}",
+    "r = 0{,}05\\ \\mathrm{m}"
+   ],
+   "find": [
+    "B"
+   ],
+   "unit": "T",
+   "formula": "B = \\dfrac{\\mu_0 I}{2 \\pi}"
+  },
+  {
+   "id": "s056",
+   "opis": "Pretvorba dm³ v L: zamenjano z m³",
+   "resnica": "napacna",
+   "given": [
+    "n = 0{,}2\\ \\mathrm{mol}",
+    "V = 2\\ \\mathrm{dm^3}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "2\\ \\mathrm{dm^3} = 2000\\ \\mathrm{L}"
+  },
+  {
+   "id": "s057",
+   "opis": "Naboj na kondenzatorju: kapaciteta deljena z napetostjo",
+   "resnica": "napacna",
+   "given": [
+    "C = 2\\cdot 10^{-6}\\ \\mathrm{F}",
+    "U = 12\\ \\mathrm{V}"
+   ],
+   "find": [
+    "e"
+   ],
+   "unit": "C",
+   "formula": "e = \\dfrac{C}{U}"
+  },
+  {
+   "id": "s058",
+   "opis": "Pretvorba cm² v m²",
+   "resnica": "pravilna",
+   "given": [
+    "F = 10\\ \\mathrm{N}",
+    "S = 5\\ \\mathrm{cm^2}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "5\\ \\mathrm{cm^2} = 5\\cdot 10^{-4}\\ \\mathrm{m^2}"
+  },
+  {
+   "id": "s059",
+   "opis": "Hitrost valovanja",
+   "resnica": "pravilna",
+   "given": [
+    "\\lambda = 0{,}68\\ \\mathrm{m}",
+    "\\nu = 500\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "m/s",
+   "formula": "c = \\lambda \\nu"
+  },
+  {
+   "id": "s060",
+   "opis": "Pretvorba bar v Pa",
+   "resnica": "pravilna",
+   "given": [
+    "p = 1\\ \\mathrm{bar}",
+    "S = 0{,}01\\ \\mathrm{m^2}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "1\\ \\mathrm{bar} = 10^{5}\\ \\mathrm{Pa}"
+  },
+  {
+   "id": "s061",
+   "opis": "Gostota",
+   "resnica": "pravilna",
+   "given": [
+    "m = 540\\ \\mathrm{g}",
+    "V = 200\\ \\mathrm{cm^3}"
+   ],
+   "find": [
+    "\\rho"
+   ],
+   "unit": "kg/m³",
+   "formula": "\\rho = \\frac{m}{V}"
+  },
+  {
+   "id": "s062",
+   "opis": "Radialni pospešek: manjka kvadrat hitrosti",
+   "resnica": "napacna",
+   "given": [
+    "v = 12\\ \\mathrm{m/s}",
+    "r = 40\\ \\mathrm{m}"
+   ],
+   "find": [
+    "a_r"
+   ],
+   "unit": "m/s²",
+   "formula": "a_r = \\frac{v}{r}"
+  },
+  {
+   "id": "s063",
+   "opis": "Obhodni čas satelita (3. Keplerjev zakon)",
+   "resnica": "pravilna",
+   "given": [
+    "G = 6{,}67\\cdot 10^{-11}\\ \\mathrm{N\\,m^2/kg^2}",
+    "M = 6\\cdot 10^{24}\\ \\mathrm{kg}",
+    "r = 6{,}4\\cdot 10^{6}\\ \\mathrm{m}"
+   ],
+   "find": [
+    "T"
+   ],
+   "unit": "s",
+   "formula": "T = 2 \\pi \\sqrt{\\dfrac{r^{3}}{G M}}"
+  },
+  {
+   "id": "s064",
+   "opis": "Zakon pri stalnem tlaku: pozabljeno deljenje s T_1",
+   "resnica": "napacna",
+   "given": [
+    "V_1 = 2\\ \\mathrm{L}",
+    "T_1 = 300\\ \\mathrm{K}",
+    "T_2 = 450\\ \\mathrm{K}"
+   ],
+   "find": [
+    "V_2"
+   ],
+   "unit": "L",
+   "formula": "V_2 = V_1 T_2"
+  },
+  {
+   "id": "s065",
+   "opis": "Coulombov zakon",
+   "resnica": "pravilna",
+   "given": [
+    "k = 9\\cdot 10^{9}\\ \\mathrm{N\\,m^2/C^2}",
+    "e_1 = 2\\cdot 10^{-6}\\ \\mathrm{C}",
+    "e_2 = 3\\cdot 10^{-6}\\ \\mathrm{C}",
+    "r = 0{,}1\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = k \\dfrac{e_1 e_2}{r^{2}}"
+  },
+  {
+   "id": "s066",
+   "opis": "Inducirana napetost: manjka dolžina vodnika",
+   "resnica": "napacna",
+   "given": [
+    "B = 0{,}5\\ \\mathrm{T}",
+    "l = 0{,}3\\ \\mathrm{m}",
+    "v = 4\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "U_i"
+   ],
+   "unit": "V",
+   "formula": "U_i = B v"
+  },
+  {
+   "id": "s067",
+   "opis": "Pretvorba nm v m: nano zamenjan z mikro",
+   "resnica": "napacna",
+   "given": [
+    "h = 6{,}63\\cdot 10^{-34}\\ \\mathrm{J\\,s}",
+    "c_0 = 3\\cdot 10^{8}\\ \\mathrm{m/s}",
+    "\\lambda = 500\\ \\mathrm{nm}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "500\\ \\mathrm{nm} = 5\\cdot 10^{-4}\\ \\mathrm{m}"
+  },
+  {
+   "id": "s068",
+   "opis": "Transformator: razmerje napetosti in ovojev",
+   "resnica": "pravilna",
+   "given": [
+    "U_1 = 230\\ \\mathrm{V}",
+    "N_1 = 1000",
+    "N_2 = 50"
+   ],
+   "find": [
+    "U_2"
+   ],
+   "unit": "V",
+   "formula": "\\frac{U_1}{U_2} = \\frac{N_1}{N_2}"
+  },
+  {
+   "id": "s069",
+   "opis": "Množina snovi iz mase",
+   "resnica": "pravilna",
+   "given": [
+    "m = 11{,}7\\ \\mathrm{g}",
+    "M = 58{,}5\\ \\mathrm{g/mol}"
+   ],
+   "find": [
+    "n"
+   ],
+   "unit": "mol",
+   "formula": "n = \\dfrac{m}{M}"
+  },
+  {
+   "id": "s070",
+   "opis": "Pretvorba km/h v m/s",
+   "resnica": "pravilna",
+   "given": [
+    "v = 72\\ \\mathrm{km/h}",
+    "t = 10\\ \\mathrm{s}"
+   ],
+   "find": [
+    "s"
+   ],
+   "unit": "m",
+   "formula": "72\\ \\mathrm{km/h} = 20\\ \\mathrm{m/s}"
+  },
+  {
+   "id": "s071",
+   "opis": "Gravitacijski zakon",
+   "resnica": "pravilna",
+   "given": [
+    "G = 6{,}67\\cdot 10^{-11}\\ \\mathrm{N\\,m^2/kg^2}",
+    "m_1 = 6\\cdot 10^{24}\\ \\mathrm{kg}",
+    "m_2 = 1000\\ \\mathrm{kg}",
+    "r = 7\\cdot 10^{6}\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = G \\frac{m_1 m_2}{r^{2}}"
+  },
+  {
+   "id": "s072",
+   "opis": "Pretvorba MPa v Pa: M zamenjan s k",
+   "resnica": "napacna",
+   "given": [
+    "p = 2\\ \\mathrm{MPa}",
+    "S = 0{,}01\\ \\mathrm{m^2}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "2\\ \\mathrm{MPa} = 2000\\ \\mathrm{Pa}"
+  },
+  {
+   "id": "s073",
+   "opis": "Jakost električnega polja",
+   "resnica": "pravilna",
+   "given": [
+    "F = 0{,}02\\ \\mathrm{N}",
+    "e = 4\\cdot 10^{-6}\\ \\mathrm{C}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "N/C",
+   "formula": "E = \\frac{F}{e}"
+  },
+  {
+   "id": "s074",
+   "opis": "Naboj: tok deljen s časom",
+   "resnica": "napacna",
+   "given": [
+    "I = 2\\ \\mathrm{A}",
+    "t = 60\\ \\mathrm{s}"
+   ],
+   "find": [
+    "e"
+   ],
+   "unit": "C",
+   "formula": "e = \\dfrac{I}{t}"
+  },
+  {
+   "id": "s075",
+   "opis": "Sunek sile in sprememba gibalne količine",
+   "resnica": "pravilna",
+   "given": [
+    "m = 0{,}4\\ \\mathrm{kg}",
+    "\\Delta v = 15\\ \\mathrm{m/s}",
+    "\\Delta t = 0{,}02\\ \\mathrm{s}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F \\Delta t = m \\Delta v"
+  },
+  {
+   "id": "s076",
+   "opis": "Pretvorba km v m",
+   "resnica": "pravilna",
+   "given": [
+    "s = 2{,}5\\ \\mathrm{km}",
+    "t = 500\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "2{,}5\\ \\mathrm{km} = 2500\\ \\mathrm{m}"
+  },
+  {
+   "id": "s077",
+   "opis": "Pretvorba ton v kg",
+   "resnica": "pravilna",
+   "given": [
+    "m = 4\\ \\mathrm{t}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "F_g"
+   ],
+   "unit": "N",
+   "formula": "4\\ \\mathrm{t} = 4000\\ \\mathrm{kg}"
+  },
+  {
+   "id": "s078",
+   "opis": "Čas segrevanja z grelnikom",
+   "resnica": "pravilna",
+   "given": [
+    "P = 2000\\ \\mathrm{W}",
+    "m = 1{,}5\\ \\mathrm{kg}",
+    "c = 4200\\ \\mathrm{J/(kg\\,K)}",
+    "\\Delta T = 80\\ \\mathrm{K}"
+   ],
+   "find": [
+    "t"
+   ],
+   "unit": "s",
+   "formula": "P t = m c \\Delta T"
+  },
+  {
+   "id": "s079",
+   "opis": "Pretvorba g/cm³ v kg/m³",
+   "resnica": "pravilna",
+   "given": [
+    "\\rho = 2{,}7\\ \\mathrm{g/cm^3}",
+    "V = 0{,}1\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "kg",
+   "formula": "2{,}7\\ \\mathrm{g/cm^3} = 2700\\ \\mathrm{kg/m^3}"
+  },
+  {
+   "id": "s080",
+   "opis": "Gibalna količina avtomobila",
+   "resnica": "pravilna",
+   "given": [
+    "m = 1200\\ \\mathrm{kg}",
+    "v = 15\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "G"
+   ],
+   "unit": "kg m/s",
+   "formula": "G = m v"
+  },
+  {
+   "id": "s081",
+   "opis": "Delo: sila deljena s potjo",
+   "resnica": "napacna",
+   "given": [
+    "F = 50\\ \\mathrm{N}",
+    "s = 4\\ \\mathrm{m}"
+   ],
+   "find": [
+    "A"
+   ],
+   "unit": "J",
+   "formula": "A = \\frac{F}{s}"
+  },
+  {
+   "id": "s082",
+   "opis": "Drugi Newtonov zakon: deljenje namesto množenja",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "a = 3\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = \\dfrac{m}{a}"
+  },
+  {
+   "id": "s083",
+   "opis": "Talilna toplota: specifična toplota deljena z maso",
+   "resnica": "napacna",
+   "given": [
+    "m = 0{,}5\\ \\mathrm{kg}",
+    "q_t = 336\\,000\\ \\mathrm{J/kg}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = \\dfrac{q_t}{m}"
+  },
+  {
+   "id": "s084",
+   "opis": "Gostota plina: manjka temperatura",
+   "resnica": "napacna",
+   "given": [
+    "p = 101\\,300\\ \\mathrm{Pa}",
+    "M = 0{,}029\\ \\mathrm{kg/mol}",
+    "R = 8{,}31\\ \\mathrm{J/(mol\\,K)}",
+    "T = 293\\ \\mathrm{K}"
+   ],
+   "find": [
+    "\\rho"
+   ],
+   "unit": "kg/m³",
+   "formula": "\\rho = \\frac{p M}{R}"
+  },
+  {
+   "id": "s085",
+   "opis": "Povprečna hitrost iz poti in časa",
+   "resnica": "pravilna",
+   "given": [
+    "s = 120\\ \\mathrm{m}",
+    "t = 10\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{s}{t}"
+  },
+  {
+   "id": "s086",
+   "opis": "Jakost električnega polja: sila krat naboj",
+   "resnica": "napacna",
+   "given": [
+    "F = 0{,}02\\ \\mathrm{N}",
+    "e = 4\\cdot 10^{-6}\\ \\mathrm{C}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "N/C",
+   "formula": "E = F e"
+  },
+  {
+   "id": "s087",
+   "opis": "Pretvorba ur v sekunde: samo enkrat krat 60",
+   "resnica": "napacna",
+   "given": [
+    "P = 60\\ \\mathrm{W}",
+    "t = 3\\ \\mathrm{h}"
+   ],
+   "find": [
+    "W"
+   ],
+   "unit": "J",
+   "formula": "3\\ \\mathrm{h} = 180\\ \\mathrm{s}"
+  },
+  {
+   "id": "s088",
+   "opis": "Neprožni trk: skupna hitrost",
+   "resnica": "pravilna",
+   "given": [
+    "m_1 = 2\\ \\mathrm{kg}",
+    "v_1 = 3\\ \\mathrm{m/s}",
+    "m_2 = 1\\ \\mathrm{kg}",
+    "v_2 = 0\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{m_1 v_1 + m_2 v_2}{m_1 + m_2}"
+  },
+  {
+   "id": "s089",
+   "opis": "Množinska koncentracija",
+   "resnica": "pravilna",
+   "given": [
+    "n = 0{,}1\\ \\mathrm{mol}",
+    "V = 250\\ \\mathrm{mL}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "c = \\frac{n}{V}"
+  },
+  {
+   "id": "s090",
+   "opis": "Pretvorba kWh v J: pozabljene ure",
+   "resnica": "napacna",
+   "given": [
+    "W = 1\\ \\mathrm{kWh}"
+   ],
+   "find": [
+    "W"
+   ],
+   "unit": "J",
+   "formula": "1\\ \\mathrm{kWh} = 1000\\ \\mathrm{J}"
+  },
+  {
+   "id": "s091",
+   "opis": "Razpadni zakon: čas deljen z razpadno konstanto v eksponentu",
+   "resnica": "napacna",
+   "given": [
+    "m_0 = 50\\ \\mathrm{g}",
+    "\\lambda = 0{,}02\\ \\mathrm{s^{-1}}",
+    "t = 30\\ \\mathrm{s}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "g",
+   "formula": "m = m_0 \\exp\\left(-\\frac{t}{\\lambda}\\right)"
+  },
+  {
+   "id": "s092",
+   "opis": "Magnetna sila na naboj: manjka hitrost",
+   "resnica": "napacna",
+   "given": [
+    "e = 1{,}6\\cdot 10^{-19}\\ \\mathrm{C}",
+    "v = 2\\cdot 10^{6}\\ \\mathrm{m/s}",
+    "B = 0{,}1\\ \\mathrm{T}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = e B"
+  },
+  {
+   "id": "s093",
+   "opis": "Boylov zakon",
+   "resnica": "pravilna",
+   "given": [
+    "p_1 = 100\\ \\mathrm{kPa}",
+    "V_1 = 6\\ \\mathrm{L}",
+    "p_2 = 300\\ \\mathrm{kPa}"
+   ],
+   "find": [
+    "V_2"
+   ],
+   "unit": "L",
+   "formula": "p_1 V_1 = p_2 V_2"
+  },
+  {
+   "id": "s094",
+   "opis": "Sila vzgona: manjka g",
+   "resnica": "napacna",
+   "given": [
+    "\\rho_v = 1000\\ \\mathrm{kg/m^3}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}",
+    "V = 0{,}002\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "F_{vzg}"
+   ],
+   "unit": "N",
+   "formula": "F_{vzg} = \\rho_v V"
+  },
+  {
+   "id": "s095",
+   "opis": "Gostota: prostornina deljena z maso",
+   "resnica": "napacna",
+   "given": [
+    "m = 540\\ \\mathrm{g}",
+    "V = 200\\ \\mathrm{cm^3}"
+   ],
+   "find": [
+    "\\rho"
+   ],
+   "unit": "kg/m³",
+   "formula": "\\rho = \\frac{V}{m}"
+  },
+  {
+   "id": "s096",
+   "opis": "Elektroliza: masa izločene kovine",
+   "resnica": "pravilna",
+   "given": [
+    "M = 63{,}5\\ \\mathrm{g/mol}",
+    "I = 2\\ \\mathrm{A}",
+    "t = 3600\\ \\mathrm{s}",
+    "z = 2",
+    "F = 96\\,500\\ \\mathrm{C/mol}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "g",
+   "formula": "m = \\dfrac{M I t}{z F}"
+  },
+  {
+   "id": "s097",
+   "opis": "Linearni raztezek: manjka začetna dolžina",
+   "resnica": "napacna",
+   "given": [
+    "\\alpha = 1{,}2\\cdot 10^{-5}\\ \\mathrm{K^{-1}}",
+    "l = 50\\ \\mathrm{m}",
+    "\\Delta T = 40\\ \\mathrm{K}"
+   ],
+   "find": [
+    "\\Delta l"
+   ],
+   "unit": "mm",
+   "formula": "\\Delta l = \\alpha \\Delta T"
+  },
+  {
+   "id": "s098",
+   "opis": "Potencialna energija: manjka g",
+   "resnica": "napacna",
+   "given": [
+    "m = 3\\ \\mathrm{kg}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}",
+    "h = 12\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_p"
+   ],
+   "unit": "J",
+   "formula": "W_p = m h"
+  },
+  {
+   "id": "s099",
+   "opis": "Ohmov zakon",
+   "resnica": "pravilna",
+   "given": [
+    "I = 0{,}5\\ \\mathrm{A}",
+    "R = 24\\ \\Omega"
+   ],
+   "find": [
+    "U"
+   ],
+   "unit": "V",
+   "formula": "U = I R"
+  },
+  {
+   "id": "s100",
+   "opis": "Redčenje: pozabljeno deljenje s končno prostornino",
+   "resnica": "napacna",
+   "given": [
+    "c_1 = 2\\ \\mathrm{mol/L}",
+    "V_1 = 50\\ \\mathrm{mL}",
+    "V_2 = 500\\ \\mathrm{mL}"
+   ],
+   "find": [
+    "c_2"
+   ],
+   "unit": "mol/L",
+   "formula": "c_2 = c_1 V_1"
+  },
+  {
+   "id": "s101",
+   "opis": "Nihajni čas matematičnega nihala",
+   "resnica": "pravilna",
+   "given": [
+    "l = 1{,}2\\ \\mathrm{m}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "t_0"
+   ],
+   "unit": "s",
+   "formula": "t_0 = 2\\pi \\sqrt{\\frac{l}{g}}"
+  },
+  {
+   "id": "s102",
+   "opis": "Talilna toplota ledu",
+   "resnica": "pravilna",
+   "given": [
+    "m = 0{,}5\\ \\mathrm{kg}",
+    "q_t = 336\\,000\\ \\mathrm{J/kg}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = m q_t"
+  },
+  {
+   "id": "s103",
+   "opis": "Enačba leče",
+   "resnica": "pravilna",
+   "given": [
+    "f = 10\\ \\mathrm{cm}",
+    "a = 30\\ \\mathrm{cm}"
+   ],
+   "find": [
+    "b"
+   ],
+   "unit": "cm",
+   "formula": "\\frac{1}{f} = \\frac{1}{a} + \\frac{1}{b}"
+  },
+  {
+   "id": "s104",
+   "opis": "Stehiometrija: masa produkta",
+   "resnica": "pravilna",
+   "given": [
+    "m_1 = 10\\ \\mathrm{g}",
+    "M_1 = 40\\ \\mathrm{g/mol}",
+    "M_2 = 18\\ \\mathrm{g/mol}",
+    "\\nu_1 = 2",
+    "\\nu_2 = 1"
+   ],
+   "find": [
+    "m_2"
+   ],
+   "unit": "g",
+   "formula": "m_2 = \\dfrac{\\nu_2}{\\nu_1} \\cdot \\dfrac{m_1}{M_1} \\cdot M_2"
+  },
+  {
+   "id": "s105",
+   "opis": "Toplota za segrevanje vode",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "c = 4200\\ \\mathrm{J/(kg\\,K)}",
+    "\\Delta T = 30\\ \\mathrm{K}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = m c \\Delta T"
+  },
+  {
+   "id": "s106",
+   "opis": "Končna hitrost brez časa",
+   "resnica": "pravilna",
+   "given": [
+    "v_0 = 5\\ \\mathrm{m/s}",
+    "a = 2\\ \\mathrm{m/s^2}",
+    "s = 24\\ \\mathrm{m}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\sqrt{v_0^{2} + 2 a s}"
+  },
+  {
+   "id": "s107",
+   "opis": "Magnetna sila na vodnik",
+   "resnica": "pravilna",
+   "given": [
+    "I = 5\\ \\mathrm{A}",
+    "l = 0{,}2\\ \\mathrm{m}",
+    "B = 0{,}4\\ \\mathrm{T}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = I l B"
+  },
+  {
+   "id": "s108",
+   "opis": "Gostota plina iz plinske enačbe",
+   "resnica": "pravilna",
+   "given": [
+    "p = 101\\,300\\ \\mathrm{Pa}",
+    "M = 0{,}029\\ \\mathrm{kg/mol}",
+    "R = 8{,}31\\ \\mathrm{J/(mol\\,K)}",
+    "T = 293\\ \\mathrm{K}"
+   ],
+   "find": [
+    "\\rho"
+   ],
+   "unit": "kg/m³",
+   "formula": "\\rho = \\frac{p M}{R T}"
+  },
+  {
+   "id": "s109",
+   "opis": "Drugi Newtonov zakon",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "a = 3\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = m \\cdot a"
+  },
+  {
+   "id": "s110",
+   "opis": "Upor žice",
+   "resnica": "pravilna",
+   "given": [
+    "\\zeta = 1{,}7\\cdot 10^{-8}\\ \\Omega\\,\\mathrm{m}",
+    "l = 20\\ \\mathrm{m}",
+    "S = 1\\ \\mathrm{mm^2}"
+   ],
+   "find": [
+    "R"
+   ],
+   "unit": "Ω",
+   "formula": "R = \\dfrac{\\zeta l}{S}"
+  },
+  {
+   "id": "s111",
+   "opis": "Energija fotona iz valovne dolžine",
+   "resnica": "pravilna",
+   "given": [
+    "h = 6{,}63\\cdot 10^{-34}\\ \\mathrm{J\\,s}",
+    "c_0 = 3\\cdot 10^{8}\\ \\mathrm{m/s}",
+    "\\lambda = 600\\ \\mathrm{nm}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "E = \\dfrac{h c_0}{\\lambda}"
+  },
+  {
+   "id": "s112",
+   "opis": "Pretvorba mmol/L v µmol/L",
+   "resnica": "pravilna",
+   "given": [
+    "c = 3\\ \\mathrm{mmol/L}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "µmol/L",
+   "formula": "3\\ \\mathrm{mmol/L} = 3000\\ \\mu\\mathrm{mol/L}"
+  },
+  {
+   "id": "s113",
+   "opis": "Elektroliza: manjka Faradayeva konstanta",
+   "resnica": "napacna",
+   "given": [
+    "M = 63{,}5\\ \\mathrm{g/mol}",
+    "I = 2\\ \\mathrm{A}",
+    "t = 3600\\ \\mathrm{s}",
+    "z = 2",
+    "F = 96\\,500\\ \\mathrm{C/mol}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "g",
+   "formula": "m = \\dfrac{M I t}{z}"
+  },
+  {
+   "id": "s114",
+   "opis": "Plinska enačba",
+   "resnica": "pravilna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "R = 8{,}31\\ \\mathrm{J/(mol\\,K)}",
+    "T = 300\\ \\mathrm{K}",
+    "V = 0{,}05\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p V = n R T"
+  },
+  {
+   "id": "s115",
+   "opis": "Gibalna količina: masa deljena s hitrostjo",
+   "resnica": "napacna",
+   "given": [
+    "m = 1200\\ \\mathrm{kg}",
+    "v = 15\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "G"
+   ],
+   "unit": "kg m/s",
+   "formula": "G = \\frac{m}{v}"
+  },
+  {
+   "id": "s116",
+   "opis": "Hitrost svetlobe v snovi",
+   "resnica": "pravilna",
+   "given": [
+    "c_0 = 3\\cdot 10^{8}\\ \\mathrm{m/s}",
+    "n = 1{,}5"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "m/s",
+   "formula": "c = \\dfrac{c_0}{n}"
+  },
+  {
+   "id": "s117",
+   "opis": "Radialni pospešek pri kroženju",
+   "resnica": "pravilna",
+   "given": [
+    "v = 12\\ \\mathrm{m/s}",
+    "r = 40\\ \\mathrm{m}"
+   ],
+   "find": [
+    "a_r"
+   ],
+   "unit": "m/s²",
+   "formula": "a_r = \\frac{v^{2}}{r}"
+  },
+  {
+   "id": "s118",
+   "opis": "Čas segrevanja: manjka sprememba temperature",
+   "resnica": "napacna",
+   "given": [
+    "P = 2000\\ \\mathrm{W}",
+    "m = 1{,}5\\ \\mathrm{kg}",
+    "c = 4200\\ \\mathrm{J/(kg\\,K)}",
+    "\\Delta T = 80\\ \\mathrm{K}"
+   ],
+   "find": [
+    "t"
+   ],
+   "unit": "s",
+   "formula": "P t = m c"
+  },
+  {
+   "id": "s119",
+   "opis": "Toplota za segrevanje: manjka sprememba temperature",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "c = 4200\\ \\mathrm{J/(kg\\,K)}",
+    "\\Delta T = 30\\ \\mathrm{K}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = m c"
+  },
+  {
+   "id": "s120",
+   "opis": "Obhodni čas satelita: napačna potenca radija",
+   "resnica": "napacna",
+   "given": [
+    "G = 6{,}67\\cdot 10^{-11}\\ \\mathrm{N\\,m^2/kg^2}",
+    "M = 6\\cdot 10^{24}\\ \\mathrm{kg}",
+    "r = 6{,}4\\cdot 10^{6}\\ \\mathrm{m}"
+   ],
+   "find": [
+    "T"
+   ],
+   "unit": "s",
+   "formula": "T = 2 \\pi \\sqrt{\\dfrac{r^{2}}{G M}}"
+  },
+  {
+   "id": "s121",
+   "opis": "Vzporedna vezava uporov",
+   "resnica": "pravilna",
+   "given": [
+    "R_1 = 6\\ \\Omega",
+    "R_2 = 3\\ \\Omega"
+   ],
+   "find": [
+    "R"
+   ],
+   "unit": "Ω",
+   "formula": "R = \\dfrac{R_1 R_2}{R_1 + R_2}"
+  },
+  {
+   "id": "s122",
+   "opis": "Nihajni čas nihala: obrnjen ulomek pod korenom",
+   "resnica": "napacna",
+   "given": [
+    "l = 1{,}2\\ \\mathrm{m}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "t_0"
+   ],
+   "unit": "s",
+   "formula": "t_0 = 2\\pi \\sqrt{\\frac{g}{l}}"
+  },
+  {
+   "id": "s123",
+   "opis": "Pospešek: produkt namesto kvocienta",
+   "resnica": "napacna",
+   "given": [
+    "v_0 = 4\\ \\mathrm{m/s}",
+    "v = 10\\ \\mathrm{m/s}",
+    "t = 3\\ \\mathrm{s}"
+   ],
+   "find": [
+    "a"
+   ],
+   "unit": "m/s²",
+   "formula": "a = (v - v_0) \\cdot t"
+  },
+  {
+   "id": "s124",
+   "opis": "Prožnostna energija vzmeti",
+   "resnica": "pravilna",
+   "given": [
+    "k = 200\\ \\mathrm{N/m}",
+    "x = 0{,}05\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_{pr}"
+   ],
+   "unit": "J",
+   "formula": "W_{pr} = \\frac{1}{2} k x^{2}"
+  },
+  {
+   "id": "s125",
+   "opis": "Vzporedna vezava: pozabljena obratna vrednost",
+   "resnica": "napacna",
+   "given": [
+    "R_1 = 6\\ \\Omega",
+    "R_2 = 3\\ \\Omega"
+   ],
+   "find": [
+    "R"
+   ],
+   "unit": "Ω",
+   "formula": "R = \\frac{1}{R_1} + \\frac{1}{R_2}"
+  },
+  {
+   "id": "s126",
+   "opis": "Pretvorba km/h v m/s: množenje s 3,6 namesto deljenja",
+   "resnica": "napacna",
+   "given": [
+    "v = 90\\ \\mathrm{km/h}",
+    "t = 10\\ \\mathrm{s}"
+   ],
+   "find": [
+    "s"
+   ],
+   "unit": "m",
+   "formula": "90\\ \\mathrm{km/h} = 324\\ \\mathrm{m/s}"
+  },
+  {
+   "id": "s127",
+   "opis": "Pretvorba mL v L: deljeno s 100",
+   "resnica": "napacna",
+   "given": [
+    "n = 0{,}1\\ \\mathrm{mol}",
+    "V = 250\\ \\mathrm{mL}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "250\\ \\mathrm{mL} = 2{,}5\\ \\mathrm{L}"
+  },
+  {
+   "id": "s128",
+   "opis": "Skupni tlak pod gladino: manjka g pri hidrostatičnem delu",
+   "resnica": "napacna",
+   "given": [
+    "\\rho = 1000\\ \\mathrm{kg/m^3}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}",
+    "h = 5\\ \\mathrm{m}",
+    "p_0 = 101\\ \\mathrm{kPa}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = p_0 + \\rho h"
+  },
+  {
+   "id": "s129",
+   "opis": "Hidrostatični tlak: manjka g",
+   "resnica": "napacna",
+   "given": [
+    "\\rho = 1000\\ \\mathrm{kg/m^3}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}",
+    "h = 5\\ \\mathrm{m}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\rho h"
+  },
+  {
+   "id": "s130",
+   "opis": "Zmes: pozabljeno deljenje z vsoto mas",
+   "resnica": "napacna",
+   "given": [
+    "m_1 = 2\\ \\mathrm{kg}",
+    "t_1 = 20\\ ^\\circ\\mathrm{C}",
+    "m_2 = 3\\ \\mathrm{kg}",
+    "t_2 = 80\\ ^\\circ\\mathrm{C}"
+   ],
+   "find": [
+    "t"
+   ],
+   "unit": "°C",
+   "formula": "t = m_1 t_1 + m_2 t_2"
+  },
+  {
+   "id": "s131",
+   "opis": "Ohmov zakon: tok deljen z uporom",
+   "resnica": "napacna",
+   "given": [
+    "I = 0{,}5\\ \\mathrm{A}",
+    "R = 24\\ \\Omega"
+   ],
+   "find": [
+    "U"
+   ],
+   "unit": "V",
+   "formula": "U = \\frac{I}{R}"
+  },
+  {
+   "id": "s132",
+   "opis": "Porabljena električna energija v kWh",
+   "resnica": "pravilna",
+   "given": [
+    "U = 230\\ \\mathrm{V}",
+    "I = 2\\ \\mathrm{A}",
+    "t = 3\\ \\mathrm{h}"
+   ],
+   "find": [
+    "W"
+   ],
+   "unit": "kWh",
+   "formula": "W = U I t"
+  },
+  {
+   "id": "s133",
+   "opis": "Pretvorba mL v L",
+   "resnica": "pravilna",
+   "given": [
+    "n = 0{,}1\\ \\mathrm{mol}",
+    "V = 250\\ \\mathrm{mL}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "250\\ \\mathrm{mL} = 0{,}25\\ \\mathrm{L}"
+  },
+  {
+   "id": "s134",
+   "opis": "Obodna hitrost: kotna hitrost deljena z radijem",
+   "resnica": "napacna",
+   "given": [
+    "\\omega = 3\\ \\mathrm{s^{-1}}",
+    "r = 0{,}5\\ \\mathrm{m}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{\\omega}{r}"
+  },
+  {
+   "id": "s135",
+   "opis": "Električna moč: napetost deljena s tokom",
+   "resnica": "napacna",
+   "given": [
+    "U = 230\\ \\mathrm{V}",
+    "I = 4\\ \\mathrm{A}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\dfrac{U}{I}"
+  },
+  {
+   "id": "s136",
+   "opis": "Linearni temperaturni raztezek",
+   "resnica": "pravilna",
+   "given": [
+    "\\alpha = 1{,}2\\cdot 10^{-5}\\ \\mathrm{K^{-1}}",
+    "l = 50\\ \\mathrm{m}",
+    "\\Delta T = 40\\ \\mathrm{K}"
+   ],
+   "find": [
+    "\\Delta l"
+   ],
+   "unit": "mm",
+   "formula": "\\Delta l = \\alpha l \\Delta T"
+  },
+  {
+   "id": "s137",
+   "opis": "Končna hitrost brez časa: manjka pot",
+   "resnica": "napacna",
+   "given": [
+    "v_0 = 5\\ \\mathrm{m/s}",
+    "a = 2\\ \\mathrm{m/s^2}",
+    "s = 24\\ \\mathrm{m}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\sqrt{v_0^{2} + 2 a}"
+  },
+  {
+   "id": "s138",
+   "opis": "Redčenje raztopine",
+   "resnica": "pravilna",
+   "given": [
+    "c_1 = 2\\ \\mathrm{mol/L}",
+    "V_1 = 50\\ \\mathrm{mL}",
+    "V_2 = 500\\ \\mathrm{mL}"
+   ],
+   "find": [
+    "c_2"
+   ],
+   "unit": "mol/L",
+   "formula": "c_1 V_1 = c_2 V_2"
+  },
+  {
+   "id": "s139",
+   "opis": "Povprečna sila: manjka čas trka",
+   "resnica": "napacna",
+   "given": [
+    "m = 0{,}4\\ \\mathrm{kg}",
+    "\\Delta v = 15\\ \\mathrm{m/s}",
+    "\\Delta t = 0{,}02\\ \\mathrm{s}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = m \\Delta v"
+  },
+  {
+   "id": "s140",
+   "opis": "Pot pri pospešenem gibanju: pri v_0 manjka čas",
+   "resnica": "napacna",
+   "given": [
+    "v_0 = 2\\ \\mathrm{m/s}",
+    "a = 3\\ \\mathrm{m/s^2}",
+    "t = 4\\ \\mathrm{s}"
+   ],
+   "find": [
+    "s"
+   ],
+   "unit": "m",
+   "formula": "s = v_0 + \\dfrac{1}{2} a t^{2}"
+  },
+  {
+   "id": "s141",
+   "opis": "Sila vzgona",
+   "resnica": "pravilna",
+   "given": [
+    "\\rho_v = 1000\\ \\mathrm{kg/m^3}",
+    "g = 9{,}81\\ \\mathrm{m/s^2}",
+    "V = 0{,}002\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "F_{vzg}"
+   ],
+   "unit": "N",
+   "formula": "F_{vzg} = \\rho_v g V"
+  },
+  {
+   "id": "s142",
+   "opis": "Moč iz dela in časa",
+   "resnica": "pravilna",
+   "given": [
+    "A = 600\\ \\mathrm{J}",
+    "t = 20\\ \\mathrm{s}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\frac{A}{t}"
+  },
+  {
+   "id": "s143",
+   "opis": "Magnetna sila na vodnik: manjka dolžina",
+   "resnica": "napacna",
+   "given": [
+    "I = 5\\ \\mathrm{A}",
+    "l = 0{,}2\\ \\mathrm{m}",
+    "B = 0{,}4\\ \\mathrm{T}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = I B"
+  },
+  {
+   "id": "s144",
+   "opis": "Energija iz masnega defekta: manjka kvadrat svetlobne hitrosti",
+   "resnica": "napacna",
+   "given": [
+    "\\Delta m = 3\\cdot 10^{-29}\\ \\mathrm{kg}",
+    "c_0 = 3\\cdot 10^{8}\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "E = \\Delta m \\, c_0"
+  }
+ ]
+}

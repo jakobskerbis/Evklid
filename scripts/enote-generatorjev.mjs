@@ -71,6 +71,7 @@ export function enotaVZapis(u) {
 // Formule: TeX → zapis za worker, količine kot oznake §i§.
 const GRSKE = "alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta iota kappa lambda mu nu xi rho varrho sigma tau upsilon phi varphi chi psi omega Gamma Delta Theta Lambda Xi Pi Sigma Phi Psi Omega".split(" ");
 const FUNKCIJE = { sin: "sin", cos: "cos", tan: "tan", tg: "tan", cot: "cot", ctg: "cot", ln: "ln", log: "log10", lg: "log10", exp: "exp" };
+const FUNKCIJE_ZAPIS = new Set(Object.values(FUNKCIJE));
 
 /** Vsebina zavitih oklepajev od položaja i (s[i] === "{"): [vsebina, položaj za »}«] ali null. */
 function skupina(s, i) {
@@ -198,7 +199,7 @@ export function formulaVZapis(tex) {
       continue;
     }
     if ((m = r.match(/^[+\-*/:()]/))) {
-      if (m[0] === "(") push("(", true);
+      if (m[0] === "(") push("(", !FUNKCIJE_ZAPIS.has(out[out.length - 1])); // sin(…) ni sin·(…)
       else out.push(m[0] === ":" ? "/" : m[0]);
       i += 1;
       continue;
@@ -265,6 +266,13 @@ export function formuleNaloge(t) {
   return [].concat(t.formula || []).flatMap((f) => String(f).split(/\\(?:Rightarrow|Leftrightarrow|implies|iff)|⇒/));
 }
 
+/** Zapis podatka brez vrednosti: »0*(m/s)« → »(m/s)«, »6.67*10^(-11)*(N*m^2/kg^2)« → »(N*m^2/kg^2)«, »40« → »1«. */
+export function brezVrednosti(z) {
+  if (!/[A-Za-z]/.test(z)) return "1";
+  const e = z.replace(/^[\d.*^()\-]+\*(?=[A-Za-z(])/, "");
+  return /^[\d.*^()\-]+$/.test(e) ? "1" : e;
+}
+
 /** Podatki naloge → Map(ime količine → zapis enote). Podatek brez enote je brez dimenzije. */
 export function enotePodatkov(t) {
   const enote = new Map();
@@ -274,7 +282,7 @@ export function enotePodatkov(t) {
     const l = formulaVZapis(lev);
     const d = formulaVZapis(desno.join("="));
     if (!l || !d || l.deli.length !== 1 || l.deli[0] !== "§0§" || d.kolicine.length || d.deli.length !== 1) continue;
-    enote.set(l.kolicine[0], d.deli[0]);
+    enote.set(l.kolicine[0], brezVrednosti(d.deli[0]));
   }
   const iskane = (t.data?.find || []).map((f) => formulaVZapis(f)).filter((f) => f && f.deli[0] === "§0§");
   const eo = enotaVZapis(t.answer?.unit);
@@ -285,6 +293,7 @@ export function enotePodatkov(t) {
 // Fizikalne konstante, kadar jih podatki ne naštejejo in jih ne definira nobena formula naloge. R, h, G, c so v
 // nalogah pogosto upor, višina, nukleotid, koncentracija: zanje ne ugibamo.
 const KONSTANTE = { g: "m/s^2", N_A: "1/mol", k_B: "J/K", "\\varepsilon_0": "F/m", "\\mu_0": "H/m" };
+const PRASTEVILA = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97];
 
 /**
  * Enote vseh količin v formulah naloge: podatki, iskana količina, konstante, definicije (ω = 2πν) in različice z
@@ -300,6 +309,7 @@ export function enoteNaloge(t) {
   const definirane = new Set(formule.flatMap((f) => (f.z ? f.z.deli.filter((d) => /^§\d+§$/.test(d)).map((d) => f.z.kolicine[Number(d.slice(1, -1))]) : [])));
   const celzij = (t.data?.given || []).some((p) => /\\circ\s*\\?(?:mathrm\{)?C|°C/.test(p));
   const izpeljane = new Set();
+  const definicije = new Set(); // enota iz formule naloge (ω = 2πν), ne iz podatkov
   const dodaj = (ime) => {
     if (enote.has(ime)) return true;
     if (ime === "T" && celzij) return enote.set("T", "K"), izpeljane.add("T"), true;
@@ -320,7 +330,9 @@ export function enoteNaloge(t) {
     if (/_/.test(ime) && sorodni.length && sorodni.every((e) => e === sorodni[0]) && /[A-Za-z]/.test(sorodni[0])) return enote.set(ime, sorodni[0]), izpeljane.add(ime), true;
     return false;
   };
-  const zamenjaj = (zapis, kol) => zapis.replace(/§(\d+)§/g, (_, k) => `(${enote.get(kol[Number(k)])})`);
+  // vsaka količina dobi svoj iracionalni faktor: m_1 + v − v_0 se ne sme odšteti v m_1 (pregled PV-07)
+  const faktor = (ime) => `sqrt(${PRASTEVILA[[...enote.keys()].indexOf(ime) % PRASTEVILA.length]})`;
+  const zamenjaj = (zapis, kol) => zapis.replace(/§(\d+)§/g, (_, k) => `(${faktor(kol[Number(k)])}*(${enote.get(kol[Number(k)])}))`);
   for (let krog = 0; krog < 6; krog++) {
     let novo = false;
     for (const f of formule) {
@@ -335,6 +347,7 @@ export function enoteNaloge(t) {
       if (!drug) continue;
       enote.set(neznane[0], zamenjaj(drug, f.z.kolicine));
       izpeljane.add(neznane[0]);
+      definicije.add(neznane[0]);
       f.definira = neznane[0];
       novo = true;
     }
@@ -347,9 +360,10 @@ export function enoteNaloge(t) {
       if (!f.z) return { tex: f.tex, deli: null, razlog: "formule ne znam prevesti" };
       // formula, iz katere je enota vmesne količine, se z njo ujema po konstrukciji: ni preverjanje
       if (f.definira) return { tex: f.tex, deli: null, razlog: `definicija enote za ${f.definira}` };
+      const izDef = f.z.kolicine.filter((k) => definicije.has(k));
       const manjka = f.z.kolicine.filter((k) => !enote.has(k));
       if (manjka.length) return { tex: f.tex, deli: null, razlog: `brez enote: ${manjka.join(", ")}` };
-      return { tex: f.tex, deli: f.z.deli.map((d) => zamenjaj(d, f.z.kolicine)), brezKolicin: !f.z.kolicine.length, kolicine: f.z.kolicine };
+      return { tex: f.tex, deli: f.z.deli.map((d) => zamenjaj(d, f.z.kolicine)), brezKolicin: !f.z.kolicine.length, kolicine: f.z.kolicine, izDef };
     }),
   };
 }
@@ -361,26 +375,29 @@ const BESEDE = { eno: 1, ena: 1, eni: 1, dve: 2, dva: 2, dvema: 2, tri: 3, trema
 /** Decimalke, ki jih zahteva besedilo (»Zaokroži na dve decimalki«, »na celo število«, »Round to 2 decimal places«) ali null. */
 export function decimalkeBesedila(besedilo) {
   // velja zadnje navodilo (»povprečje zaokroži na dve decimalki … Zaokroži na eno decimalko.«)
-  const deli = String(besedilo || "")
+  const s = String(besedilo || "")
     .replace(/\$[^$]*\$/g, " ")
-    .toLowerCase()
-    .split(/(?=zaokro[žz]|round)/);
-  for (let k = deli.length - 1; k >= 0; k--) {
-    const d = decimalkeNavodila(deli[k]);
-    if (d != null) return d;
-  }
-  return null;
+    .toLowerCase();
+  let zadnje = null;
+  for (const [re, vrednost] of NAVODILA)
+    for (const m of s.matchAll(re)) {
+      const d = vrednost(m);
+      if (d != null && (!zadnje || m.index >= zadnje.i)) zadnje = { i: m.index, d };
+    }
+  return zadnje ? zadnje.d : null;
 }
 
-function decimalkeNavodila(s) {
-  let m;
-  if ((m = s.match(/zaokro[žz]\w*\s+(?:rezultat\s+|odgovor\s+)?na\s+(\d+|[a-zšč]+)\s+(?:decimal|mest)/))) return m[1] in BESEDE ? BESEDE[m[1]] : /^\d+$/.test(m[1]) ? Number(m[1]) : null;
-  if (/zaokro[žz]\w*\s+(?:rezultat\s+|odgovor\s+)?na\s+(?:celo|cela|celi|celih|cele)\b/.test(s)) return 0;
-  if ((m = s.match(/zaokro[žz]\w*\s+(?:rezultat\s+|odgovor\s+)?na\s+(desetink|stotink|tisočink)/))) return { desetink: 1, stotink: 2, tisočink: 3 }[m[1]];
-  if ((m = s.match(/round\w*(?:\s+\w+){0,3}?\s+to\s+(\d+|one|two|three|four|five)\s+decimal/))) return m[1] in BESEDE ? BESEDE[m[1]] : Number(m[1]);
-  if (/round\w*(?:\s+\w+){0,3}?\s+to\s+the\s+nearest\s+(?:whole|integer)/.test(s)) return 0;
-  return null;
-}
+const stevilo = (x) => (x in BESEDE ? BESEDE[x] : /^\d+$/.test(x) ? Number(x) : null);
+const ZAOKROZI = String.raw`zaokro[žz]\w*(?:\s+(?:rezultat|odgovor|ga|jo|ju|jih|vrednost|število))?\s+`;
+// pregled PV-07: tudi »na dve decimalki« brez »zaokroži«, »na cente«, »na cel mililiter«, »zaokroži ga na«,
+// »to 2 decimal places« brez »round« in »nearest tenth«; »na centimeter« ostane brez statusa (odvisno od enote)
+const NAVODILA = [
+  [/(?:^|[^a-zšžč])na\s+(\d+|[a-zšč]+)\s+(?:decimal|mest)/g, (m) => stevilo(m[1])],
+  [new RegExp(ZAOKROZI + String.raw`na\s+(?:celo|cela|celi|celih|cele|cel)\b`, "g"), () => 0],
+  [new RegExp(ZAOKROZI + String.raw`na\s+(desetink|stotink|tisočink|cent(?:e|ov)?\b)`, "g"), (m) => ({ desetink: 1, stotink: 2, tisočink: 3 })[m[1]] ?? 2],
+  [/\bto\s+(\d+|one|two|three|four|five)\s+decimal/g, (m) => stevilo(m[1])],
+  [/\bnearest\s+(whole|integer|tenth|hundredth|thousandth|cent)\b/g, (m) => ({ whole: 0, integer: 0, tenth: 1, hundredth: 2, thousandth: 3, cent: 2 })[m[1]]],
+];
 
 // ---------------------------------------------------------------------------------------------------------------
 // Trditve ene naloge in popis.
@@ -399,6 +416,10 @@ export async function trditveNaloge(t, { cas }) {
     }
     if (f.deli.length < 2) continue; // izraz brez enačaja (4 + 3 + 2 + 1) ni trditev o enotah
     let r;
+    if (f.brezKolicin && /°\s*C|\\circ\s*\\?(?:mathrm\{)?C/.test(f.tex)) {
+      out.push({ vir: "enote", tex: f.tex, status: "nepreverjeno", why: "pretvorba °C ni množenje (prištejemo 273,15)" });
+      continue;
+    }
     if (f.brezKolicin) {
       // pretvorba enot (1 cm = 10 mm): vrednost in dimenzija, zaporedni deli
       r = { ok: true, how: "symbolic" };
@@ -413,6 +434,11 @@ export async function trditveNaloge(t, { cas }) {
     if (status === "napaka" && f.kolicine?.some((k) => /^[AM]_r/.test(k))) {
       status = "nepreverjeno";
       r.why = `dogovor M = M_r · g/mol (${r.why})`;
+    }
+    // enota vmesne količine je iz definicije, ki je ne preverimo: potrditev velja le, če je definicija pravilna
+    if ((status === "izracunano" || status === "numericno") && f.izDef?.length) {
+      status = "delno";
+      r.why = `enota ${f.izDef.join(", ")} iz definicije v nalogi`;
     }
     out.push({ vir: "enote", tex: f.tex, status, why: r.why || "", zapis: f.deli.join(" = ").slice(0, 200) });
   }
@@ -477,6 +503,8 @@ export async function popis({ semena = 3, predpona = "", cas }) {
 // ---------------------------------------------------------------------------------------------------------------
 // Nabor z znano resnico (test/fixtures/preverjanje/enote-v1.json): ujete napačne, lažni alarmi, napačno potrjene.
 export const NABOR_ENOTE = fileURLToPath(new URL("../test/fixtures/preverjanje/enote-v1.json", import.meta.url));
+// slepi nabor: sestavil drug model AI le iz opisa vmesnika, brez vpogleda v preverjevalnik (72 pravilnih, 72 napačnih)
+export const NABOR_ENOTE_SLEPI = fileURLToPath(new URL("../test/fixtures/preverjanje/enote-slepi-v1.json", import.meta.url));
 
 export async function izmeriNabor(pot, { cas }) {
   const { naloge } = JSON.parse(readFileSync(pot, "utf8"));
@@ -516,7 +544,7 @@ export function povzemi(gen) {
   return { generatorjev: gen.length, enote: po("enote"), zaokrozevanje: po("zaokrozevanje"), genEnote: gs("enote"), genZaokrozevanje: gs("zaokrozevanje") };
 }
 
-export function porocilo(gen, { datum, commit, semena, ukaz = "", dodatek = "", nabor = null }) {
+export function porocilo(gen, { datum, commit, semena, ukaz = "", dodatek = "", nabor = null, slepi = null }) {
   const p = povzemi(gen);
   const n = p.generatorjev;
   const v = [];
@@ -529,7 +557,15 @@ export function porocilo(gen, { datum, commit, semena, ukaz = "", dodatek = "", 
     v.push("## Nabor z znano resnico (`test/fixtures/preverjanje/enote-v1.json`)", "");
     v.push(`- Ujete napačne formule: ${ki(nabor.ujete, nabor.napacnih)}; napačno potrjene: ${ki(nabor.napacnoPotrjene, nabor.napacnih)}.`);
     v.push(`- Lažni alarmi na pravilnih: ${ki(nabor.lazniAlarmi, nabor.pravilnih)}; potrjene pravilne: ${ki(nabor.potrjenePravilne, nabor.pravilnih)}.`);
-    v.push("- Nabor je sestavil isti avtor kot preverjevalnik (40 parov formul in 10 parov pretvorb); slepi nabor je v pregledu.", "");
+    v.push("- Nabor je sestavil isti avtor kot preverjevalnik (40 parov formul in 10 parov pretvorb).", "");
+  }
+  if (slepi) {
+    v.push("## Slepi nabor (`test/fixtures/preverjanje/enote-slepi-v1.json`)", "");
+    v.push(`- Ujete napačne formule: ${ki(slepi.ujete, slepi.napacnih)}; napačno potrjene: ${ki(slepi.napacnoPotrjene, slepi.napacnih)}.`);
+    v.push(`- Lažni alarmi na pravilnih: ${ki(slepi.lazniAlarmi, slepi.pravilnih)}; potrjene pravilne: ${ki(slepi.potrjenePravilne, slepi.pravilnih)}.`);
+    v.push("- Sestavil ga je drug model AI le iz opisa vmesnika, brez vpogleda v preverjevalnik. Prva meritev (pred popravki");
+    v.push("  pregleda): ujete 69/72, napačno potrjene 0/72, lažni alarmi 0/72. Popravki pregleda (`\\exp`, brezdimenzijske formule)");
+    v.push("  so nastali po tej meritvi, zato zgornje številke niso več povsem slepe.", "");
   }
   v.push("## Formule (trditve »enote«)", "");
   const e = p.enote;
@@ -584,6 +620,8 @@ async function main(argv) {
   console.log(JSON.stringify(p));
   const { izidi: _izidi, ...nabor } = await izmeriNabor(NABOR_ENOTE, { cas });
   console.log("Nabor:", JSON.stringify(nabor));
+  const { izidi: _izidiS, ...slepi } = await izmeriNabor(NABOR_ENOTE_SLEPI, { cas });
+  console.log("Slepi nabor:", JSON.stringify(slepi));
   const j = opt("--json");
   if (j) writeFileSync(j, JSON.stringify({ povzetek: p, generatorji: gen.map((g) => ({ ...g, trditve: g.trditve.filter((x) => x.status === "napaka") })) }) + "\n");
   const r = opt("--porocilo");
@@ -593,7 +631,7 @@ async function main(argv) {
       commit = execSync("git rev-parse HEAD").toString().trim();
     } catch {}
     const dodatek = opt("--dodatek") ? readFileSync(opt("--dodatek"), "utf8") : "";
-    writeFileSync(r, porocilo(gen, { datum: new Date().toISOString().slice(0, 10), commit, semena, ukaz: `node scripts/enote-generatorjev.mjs ${argv.join(" ")}`, dodatek, nabor }));
+    writeFileSync(r, porocilo(gen, { datum: new Date().toISOString().slice(0, 10), commit, semena, ukaz: `node scripts/enote-generatorjev.mjs ${argv.join(" ")}`, dodatek, nabor, slepi }));
   }
   let koda = 0;
   if (argv.includes("--strogo")) {
@@ -601,7 +639,7 @@ async function main(argv) {
       console.error("SymPy ni odgovoril na vse zahteve:", JSON.stringify(cas.casIzpadi()));
       koda = 1;
     }
-    if (nabor.napacnoPotrjene || nabor.lazniAlarmi) {
+    if (nabor.napacnoPotrjene || nabor.lazniAlarmi || slepi.napacnoPotrjene || slepi.lazniAlarmi) {
       console.error("Nabor: napačno potrjene ali lažni alarmi");
       koda = 1;
     }

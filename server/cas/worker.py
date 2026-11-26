@@ -820,6 +820,8 @@ def parse_set(text, x):
 def op_units(expr, claimed):
     """Fizikalni račun z enotami: »3.2*kg * 9.81*m/s^2 | 31.4*N«."""
     e, c = parse(expr, units=True), parse(claimed, units=True)
+    # odstotek je število (convert_to ga pusti kot enoto in bi 50 % ≠ 0,5)
+    e, c = e.subs(U.percent, sp.Rational(1, 100)), c.subs(U.percent, sp.Rational(1, 100))
     base = [U.meter, U.kilogram, U.second, U.ampere, U.kelvin, U.mole, U.candela]
     eb, cb = U.convert_to(e, base), U.convert_to(c, base)
     ratio = sp.simplify(eb / cb)
@@ -1260,7 +1262,8 @@ def _dim(e):
             raise DimNapaka("eksponent ima dimenzijo")
         if not e.exp.is_number:
             raise Unsure("eksponent ni število")
-        return {k: v * e.exp for k, v in _dim(e.base).items()}
+        x = sp.nsimplify(e.exp, rational=True) if e.exp.is_Float else e.exp
+        return {k: v * x for k, v in _dim(e.base).items()}
     if isinstance(e, sp.Add):
         dims = [_dim(t) for t in e.args]
         for d in dims[1:]:
@@ -1307,6 +1310,9 @@ def op_dim(*deli):
             if any(parse(x, units=True).is_number for x in deli):
                 raise Unsure("del enačbe je število brez enote")
             return False, f"dimenziji se ne ujemata: {_dim_niz(dims[0])} in {_dim_niz(d)}"
+    if not any(dims):
+        # α + β + γ = 90° ali d = p · G: dimenzija ne pove ničesar o pravilnosti
+        raise Unsure("vsi deli so brez dimenzije")
     return True, ""
 
 OPS = {"korak": op_korak, "solve": op_solve, "equal": op_equal, "diff": op_diff, "int": op_int, "limit": op_limit, "value": op_value, "ineq": op_ineq, "units": op_units, "dim": op_dim}

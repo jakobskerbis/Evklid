@@ -1,7 +1,7 @@
 // PV-07 (docs/preverjanje.md, »Enote in zaokroževanje«): dimenzije formul v generatorjih in decimalke iz besedila.
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
-import { enotaVZapis, formulaVZapis, enoteNaloge, decimalkeBesedila, trditveNaloge, izmeriNabor, NABOR_ENOTE, popis } from "../scripts/enote-generatorjev.mjs";
+import { enotaVZapis, formulaVZapis, enoteNaloge, decimalkeBesedila, trditveNaloge, izmeriNabor, NABOR_ENOTE, NABOR_ENOTE_SLEPI, popis, brezVrednosti } from "../scripts/enote-generatorjev.mjs";
 import * as cas from "../server/cas.js";
 
 const HAVE = await cas.casAvailable();
@@ -45,6 +45,42 @@ test("zaokroževanje: velja zadnje navodilo v besedilu", () => {
   assert.equal(decimalkeBesedila("Zaokroži na celo število."), 0);
   assert.equal(decimalkeBesedila("Round your answer to 2 decimal places."), 2);
   assert.equal(decimalkeBesedila("Izračunaj ploščino."), null);
+  // pregled PV-07: navodila brez »zaokroži« in druge oblike
+  assert.equal(decimalkeBesedila("Zaokroži na cente."), 2);
+  assert.equal(decimalkeBesedila("Rezultat zapiši na dve decimalki natančno."), 2);
+  assert.equal(decimalkeBesedila("Zaokroži na cel mililiter."), 0);
+  assert.equal(decimalkeBesedila("Zaokroži ga na eno decimalko."), 1);
+  assert.equal(decimalkeBesedila("Give the answer to 3 decimal places."), 3);
+  assert.equal(decimalkeBesedila("Around 5 people. Round to the nearest tenth."), 1);
+  assert.equal(decimalkeBesedila("Zaokroži na centimeter."), null); // odvisno od enote odgovora
+});
+
+test("pregled PV-07: brez dimenzije ni potrditve, vrednost ne gre v formulo, definicija je pogojna", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  const T = (given, find, unit, formula) => ({ data: { given, find }, formula: [formula], answer: { type: "number", unit } });
+  const st = async (t) => (await trditveNaloge(t, { cas })).filter((x) => x.vir === "enote").map((x) => x.status);
+  // koti in odstotki: formula brez dimenzije ne dobi potrditve
+  assert.deepEqual(await st(T(["\\alpha = 30^\\circ", "\\beta = 60^\\circ"], ["\\gamma"], "°", "\\alpha+\\beta+\\gamma = 90^\\circ")), ["nepreverjeno"]);
+  assert.deepEqual(await st(T(["p = 20\\ \\%", "G = 50\\ \\%"], ["d"], "%", "d = p\\cdot G")), ["nepreverjeno"]);
+  // v_0 = 0 ne izbriše člena
+  const v0 = ["v_0 = 0\\ \\mathrm{m/s}", "a = 2\\ \\mathrm{m/s^2}", "t = 3\\ \\mathrm{s}"];
+  assert.deepEqual(await st(T(v0, ["s"], "m", "s = v_0 t^2 + \\frac{a t^2}{2}")), ["napaka"]);
+  assert.deepEqual(await st(T(v0, ["s"], "m", "s = v_0 t + \\frac{a t^2}{2}")), ["izracunano"]);
+  // enota iz definicije: potrditev le delna
+  assert.deepEqual(await st(T(["m = 2\\ \\mathrm{kg}", "a = 3\\ \\mathrm{m/s^2}", "s = 4\\ \\mathrm{m}"], ["W"], "J", "F = m a \\Rightarrow W = F s")), ["nepreverjeno", "delno"]);
+  // decimalni eksponent, °C, sin in exp z argumentom z enoto
+  assert.deepEqual(await st(T(["g = 9{,}81\\ \\mathrm{m/s^2}", "h = 5\\ \\mathrm{m}"], ["v"], "m/s", "v=(2gh)^{0{,}5}")), ["izracunano"]);
+  assert.deepEqual(await st(T([], ["T"], "K", "20\\,^\\circ\\mathrm{C} = 293\\ \\mathrm{K}")), ["nepreverjeno"]);
+  const u = ["\\omega = 2\\ \\mathrm{s^{-1}}", "t = 3\\ \\mathrm{s}", "U_0 = 5\\ \\mathrm{V}"];
+  assert.deepEqual(await st(T(u, ["U"], "V", "U = U_0 \\sin(t)")), ["napaka"]);
+  assert.deepEqual(await st(T(u, ["U"], "V", "U = U_0 \\sin(\\omega t)")), ["izracunano"]);
+  assert.deepEqual(brezVrednosti("6.67*10^(-11)*(N*m^2/kg^2)"), "(N*m^2/kg^2)");
+  assert.deepEqual(brezVrednosti("40"), "1");
+});
+
+test("pregled PV-07: odstotek v ukazu units (tudi tutorjeve trditve »enote:«)", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  assert.equal((await cas.casCheck("units", ["50*percent", "0.5"])).ok, true);
+  assert.equal((await cas.casCheck("units", ["50*percent", "0.4"])).ok, false);
+  assert.equal((await cas.casCheck("dim", ["m^0.5", "sqrt(m)"])).ok, true);
 });
 
 test("worker dim: enake dimenzije, seštevanje različnih, argument sinusa, število brez enote", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
@@ -53,7 +89,8 @@ test("worker dim: enake dimenzije, seštevanje različnih, argument sinusa, šte
   assert.equal((await d("kg", "bar*L/((J/(mol*K))*K)")).ok, false);
   assert.equal((await d("m", "m + s")).ok, false);
   assert.equal((await d("1", "sin(m)")).ok, false);
-  assert.equal((await d("1", "-log(mol/L)")).ok, true); // pH = −log c
+  assert.equal((await d("1", "-log(mol/L)")).ok, null); // pH = −log c: dovoljeno, a brez dimenzije ni potrditve
+  assert.equal((await d("mol/L", "-log(mol/L)")).ok, false);
   assert.equal((await d("K", "K + 273")).ok, null); // število brez enote ob količini: brez statusa
   assert.equal((await d("m", "x")).ok, null);
 });
@@ -63,7 +100,16 @@ test("nabor enote-v1: vse napačne ujete, nič lažnih alarmov", { skip: !HAVE &
   assert.equal(r.napacnoPotrjene, 0);
   assert.equal(r.lazniAlarmi, 0);
   assert.equal(r.ujete, r.napacnih);
-  assert.equal(r.potrjenePravilne, r.pravilnih);
+  // e37-pra (kot v stopinjah) je brez dimenzije: brez statusa
+  assert.equal(r.potrjenePravilne, r.pravilnih - 1);
+});
+
+test("slepi nabor enote: nič napačno potrjenih, nič lažnih alarmov", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  const r = await izmeriNabor(NABOR_ENOTE_SLEPI, { cas });
+  assert.equal(r.napacnih, 72);
+  assert.equal(r.napacnoPotrjene, 0);
+  assert.equal(r.lazniAlarmi, 0);
+  assert.ok(r.ujete >= 70, `ujete ${r.ujete}`);
 });
 
 test("trditve naloge: napačna formula je napaka, zahteva po decimalkah se ujema z odgovorom", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
