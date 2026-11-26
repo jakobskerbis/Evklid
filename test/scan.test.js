@@ -289,9 +289,8 @@ test("casText: zapis za SymPy (log desetiški, log_b, √, implicitno množenje 
 
 test("AUDIT-001: without SymPy an unproven complete solution set is not »verified«", async () => {
   const partial = [
-    ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2+0*k"] }],
     ["x^2=1; y=0", { kind: "system", solutions: ["x=1; y=0"] }],
-    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi"] }],
+    ["sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi", "x=5*pi/6+2*k*pi"] }],
     ["x^2+y^2=25; x+y=7", { kind: "system", solutions: ["x=3; y=4"] }],
     ["x^2=1; y^2=1", { kind: "system", solutions: ["x=1; y=1", "x=-1; y=-1"] }],
   ];
@@ -309,6 +308,9 @@ test("AUDIT-001: without SymPy an unproven complete solution set is not »verifi
   // Napačna ali manjkajoča rešitev ostane »wrong« / »missing« (inštruktor jo popravi), ne »unknown«.
   assert.equal((await verifyAiFull("x^2=1; y=0", { kind: "system", solutions: ["x=2; y=0"] }, { cas: false })).reason, "wrong");
   assert.equal((await verifyAiFull("x^2-1=0", { kind: "equation", variable: "x", solutions: [] }, { cas: false })).reason, "missing");
+  // »2 + 0·k« namesto dveh rešitev in ena sama veja periodične rešitve: manjkajoča ničla je najdena (revizija 26. 11.)
+  assert.equal((await verifyAiFull("x^2=4", { kind: "equation", variable: "x", solutions: ["x=2+0*k"] }, { cas: false })).reason, "missing");
+  assert.equal((await verifyAiFull("sin(x)=1/2", { kind: "equation", variable: "x", solutions: ["x=pi/6+2*k*pi"] }, { cas: false })).reason, "missing");
   // Polinomske enačbe dokaže točna algebra (Sturm) tudi brez SymPy; numerična potrditev je le »numeric«.
   for (const [t, sol, status] of [
     ["x^2=4", { kind: "equation", variable: "x", solutions: ["x=2", "x=-2"] }, "verified"],

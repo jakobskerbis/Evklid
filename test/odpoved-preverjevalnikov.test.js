@@ -56,7 +56,8 @@ test("izhodišče brez SymPy: nič napačno potrjenih ali previsokih, znane šib
   const razred = (r) => vsi.filter((p) => razvrsti(p, lokalno.get(p.id)) === r).map((p) => p.id);
   assert.deepEqual(razred("napacno_potrjena"), []);
   assert.deepEqual(razred("previsok_status"), []);
-  assert.deepEqual(razred("napacna_sibko"), ["periodicna-004", "periodicna-006", "periodicna-010", "druge-017"]);
+  // Nepopolne periodične rešitve (prej periodicna-004, -006, -010, druge-017 »delno«) so od 26. 11. ujete kot »manjka«.
+  assert.deepEqual(razred("napacna_sibko"), []);
   assert.ok(![...lokalno.values()].includes("dokazano"));
 });
 

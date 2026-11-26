@@ -371,6 +371,20 @@ export function cleanSolution(s) {
 // (j, 25. 11. 2026: »Naj preverjanje avtomatsko poskusi znova brez obremenjevanja učenca«).
 export const SOLVE_ATTEMPTS = 3;
 
+/** Manjkajoča ničla za povratno informacijo: »-1.0472 (= -pi/3)«, kadar je racionalen večkratnik π (periodične veje). */
+export function kotPi(m) {
+  const s = m.toFixed(4);
+  if (Math.abs(m) < 1e-9) return s;
+  for (let q = 1; q <= 12; q++) {
+    const p = Math.round((m * q) / Math.PI);
+    if (p && Math.abs(m - (p * Math.PI) / q) < 1e-9 * Math.max(1, Math.abs(m))) {
+      const st = Math.abs(p) === 1 ? "pi" : `${Math.abs(p)}*pi`;
+      return `${s} (= ${p < 0 ? "-" : ""}${st}${q > 1 ? `/${q}` : ""})`;
+    }
+  }
+  return s;
+}
+
 // Kaj je bilo narobe s poskusom (za naslednji poziv AI): navedeni odgovor in izid preverjanja.
 export function retryFeedback(sol, check, { cut = false } = {}) {
   if (cut) return "your answer was cut off because it was too long: give fewer, shorter steps and only one method";
@@ -384,7 +398,7 @@ export function retryFeedback(sol, check, { cut = false } = {}) {
       ? `recomputing your "check": ${check.note}`
     : check.reason === "missing"
       ? miss.length
-        ? `x ≈ ${miss.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation`
+        ? `x ≈ ${miss.slice(0, 6).map(kotPi).join(", ")} also satisfies the equation`
         : "a solution is missing"
       : "substituting your result back does not give the original";
   return `${said}; ${why}`.slice(0, 600); // dolžina omejena: rezerva poti računa z ~400 bajti na poskus

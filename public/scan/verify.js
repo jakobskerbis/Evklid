@@ -38,9 +38,97 @@ function values(expr) {
   return [...new Set(out)];
 }
 
+const brezSpremenljivke = (s) => String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "");
+const K_MEJA = 400;
+const OKNO_MAX = 2000;
+/**
+ * Navedene rešitve kot družine x(k), k celo (»π/3 + 2kπ«, »(−1)^k·π/6 + kπ«; rešitev brez k je konstantna družina):
+ * [{ vrednosti: x(k) za k ∈ [−400, 400], tol }] ali null, če katere ni mogoče prebrati. tol je pol zadnjega mesta
+ * zaokrožene decimalke (1.585), kot pri neperiodičnih rešitvah.
+ */
+function druzineResitev(solutions) {
+  const out = [];
+  for (const s of solutions) {
+    const raw = brezSpremenljivke(s);
+    const f = fnOf(stevilo(raw));
+    if (!f) return null;
+    const vrednosti = [];
+    for (let k = -K_MEJA; k <= K_MEJA; k++) {
+      const x = f({ k });
+      if (fin(x)) vrednosti.push(x);
+    }
+    if (!vrednosti.length) return null;
+    // linearna družina a + b·k: k izračunamo neposredno (kπ/100 ima na [−20, 20] več kot 800 vrednosti)
+    const [f0, f1, f2] = [0, 1, 2].map((k) => f({ k }));
+    const linearna = [f0, f1, f2].every(fin) && Math.abs(f2 - 2 * f1 + f0) <= 1e-9 * Math.max(1, Math.abs(f0), Math.abs(f2));
+    out.push({ f, vrednosti, linearna: linearna && Math.abs(f1 - f0) > 1e-12 ? { a: f0, b: f1 - f0 } : null, tol: decimalTol(raw) || 0, konst: vrednosti.every((x) => Math.abs(x - vrednosti[0]) < 1e-12 * Math.max(1, Math.abs(x))) });
+  }
+  return out;
+}
+
+/** Imenovalci enačbe (deli z »/«) kot funkcije: ničla L − D, kjer je imenovalec 0, je vrzel, ne rešitev. */
+function imenovalci(problemText) {
+  const out = [];
+  const isci = (n) => {
+    if (!n || typeof n !== "object") return;
+    if (n.k === "/" && n.b) {
+      try {
+        out.push(compile(n.b));
+      } catch {
+        /* neprevedljiv imenovalec: ne izločamo */
+      }
+    }
+    for (const c of Object.values(n)) {
+      if (Array.isArray(c)) c.forEach(isci);
+      else if (c && typeof c === "object") isci(c);
+    }
+  };
+  try {
+    isci(parse(prep(problemText)));
+  } catch {
+    /* brez imenovalcev */
+  }
+  return out;
+}
+
+/**
+ * Periodične rešitve: ničle L − D na oknu, ki jih ne zajame nobena navedena družina. Okno je vsaj [−20, 20] (kot
+ * SymPy, worker.py solve_one) in zajame vsaj dve periodi najdaljše družine (gosta mreža scanRoots se razširi), največ ±2000.
+ * Vrne seznam manjkajočih ničel, najbližje 0 najprej ([] = na oknu nič ne manjka: ni dokaz za vse k, zato pravilen
+ * odgovor ostane »delno«).
+ */
+function manjkajoceDruzine(problemText, v, druzine) {
+  let okno = 20;
+  for (const d of druzine) {
+    const sredina = d.vrednosti[K_MEJA] ?? d.vrednosti[0];
+    const korak = d.vrednosti.length > K_MEJA + 1 ? Math.abs(d.vrednosti[K_MEJA + 1] - sredina) : 0;
+    if (fin(korak) && fin(sredina)) okno = Math.max(okno, 2 * korak + Math.abs(sredina));
+  }
+  okno = Math.min(okno, OKNO_MAX); // perioda daljša od ~1000: preverimo vsaj ±2000 (manj ničel, nikoli lažni alarm)
+  const ims = imenovalci(problemText);
+  const vrzel = (r) => ims.some((d) => {
+    const y = d({ [v]: r });
+    return fin(y) && Math.abs(y) < 1e-6 * Math.max(1, Math.abs(r)); // ničla je najdena na ~10⁻⁸
+  });
+  const pokrita = (r) => druzine.some(({ f, vrednosti, linearna, tol }) => {
+    const meja = Math.max(1e-6 * Math.max(1, Math.abs(r)), tol * 1.0001);
+    if (linearna) {
+      const k = Math.round((r - linearna.a) / linearna.b);
+      return Math.abs(f({ k }) - r) <= meja;
+    }
+    return vrednosti.some((x) => Math.abs(x - r) <= meja);
+  });
+  const nicle = scanRoots(problemText, v, Math.max(50, okno)).filter((r) => Math.abs(r) <= okno);
+  const manjka = nicle.filter((r) => !vrzel(r) && !pokrita(r));
+  // Manjkajoče ničle, ki se kopičijo (sin(1/x) = 0 pri x → 0, k zunaj [−400, 400]): popolnosti ne moremo oceniti,
+  // ostane »delno«. Ena pokrita soseda (cos x = 0,9999999: ±0,00045) ni kopičenje.
+  if (manjka.some((r) => manjka.some((q) => q !== r && Math.abs(q - r) < 1e-3))) return [];
+  return manjka.sort((x, y) => Math.abs(x) - Math.abs(y) || x - y); // najbližje 0 najprej (−π/3 pred 5π/3)
+}
+
 // Ničle L − D (za rešitve, ki jih AI morda ni našel): gosta mreža na [−50, 50], redkejša (geometrijska) do ±10⁶,
 // predznak se zamenja → bisekcija; dotikalne ničle (|L − D| ima lokalni minimum ≈ 0, npr. |x − 1,1| = 0) → zlati rez.
-function scanRoots(eqText, v) {
+function scanRoots(eqText, v, meja = 50) {
   let ast;
   try {
     ast = parse(prep(eqText));
@@ -53,9 +141,11 @@ function scanRoots(eqText, v) {
   const g = (x) => L({ [v]: x }) - R({ [v]: x });
   const tol = (x) => 1e-9 * Math.max(1, Math.abs(L({ [v]: x })), Math.abs(R({ [v]: x })));
   const xs = [];
-  for (let i = 0; i <= 4000; i++) xs.push(-50 + i / 40);
+  // gosta mreža s korakom 1/40 (pri širšem oknu periodičnih družin največ 80 000 točk)
+  const n = Math.min(80000, Math.ceil(80 * meja));
+  for (let i = 0; i <= n; i++) xs.push(-meja + (2 * meja * i) / n);
   for (let i = 1; i <= 400; i++) {
-    const x = 50 * Math.pow(2e4, i / 400);
+    const x = meja * Math.pow(1e6 / meja, i / 400);
     xs.push(x, -x);
   }
   // Pol točno na mreži (1/(x − 1) = 1000 pri x = 1): ničla 1,001 leži v istem koraku kot pol in bi ostala skrita.
@@ -450,7 +540,10 @@ function check(problemText, ai) {
       if (!isEquation(problemText)) return { verified: false, reason: "kind" };
       // »x = 2« ali »x_1 = 2« → »2«
       const sols = (ai.solutions || []).flatMap((s) => values(String(s).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "")));
-      const periodic = (ai.solutions || []).some((s) => /\bk\b/.test(s));
+      // »2kπ« (k ob števki) je periodična rešitev kot »2*k*pi«; isti vzorec kot periodicClaim v server/scan.js. Zapis s k,
+      // ki ne da periode (»30 + 0k«), gre po neperiodični poti (iskanje do ±10⁶ in Sturm).
+      const druzine = (ai.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(s)) ? druzineResitev(ai.solutions) : null;
+      const periodic = (ai.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(s)) && !(druzine && druzine.every((d) => d.konst));
       // Polinomska enačba: točen preizkus in Sturmov izrek (popolnost na vsej realni osi, ne le do ±10⁶; AUDIT-001).
       // Veriga a = b = c: rešitve so skupne ničle vseh parov, torej ničle njihovega največjega skupnega delitelja.
       const ast = parse(prep(problemText));
@@ -497,8 +590,14 @@ function check(problemText, ai) {
         const missing = scanRoots(problemText, v).filter((r) => !sols.some((s, i) => Math.abs(s - r) < Math.max(1e-5 * Math.max(1, Math.abs(r)), tolOf(i) * 1.0001)));
         if (missing.length) return { verified: false, reason: "missing", missing };
       }
-      // Pri periodičnih rešitvah (k) popolnosti numerično ne preverimo: manjkajoča družina ali »2+0·k«
-      // namesto dveh rešitev bi sicer veljala za preverjeno (AUDIT-001).
+      // Periodične rešitve (k): manjkajoča veja (cos x = 1/2 le z π/3 + 2kπ, brez −π/3 + 2kπ) ali predolga perioda je
+      // napaka »manjka« s seznamom ničel, ki jih nobena družina ne zajame (revizija 26. 11.: prej »delno preverjeno«).
+      if (periodic) {
+        const manjka = druzine ? manjkajoceDruzine(problemText, v, druzine) : [];
+        if (manjka.length) return { verified: false, reason: "missing", missing: manjka };
+      }
+      // Sicer pri periodičnih rešitvah popolnosti numerično ne preverimo (le okno [−20, 20]): manjkajoča družina ali
+      // »2+0·k« namesto dveh rešitev bi sicer veljala za preverjeno (AUDIT-001).
       // Brez periodičnih rešitev je popolnost preverjena numerično (iskanje ničel do ±10⁶); verige a = b = c
       // iskanje ne zajame, zato je tam popolnost nepreverjena.
       return periodic || ast.terms.length > 2 ? { verified: true, partial: true } : { verified: true };

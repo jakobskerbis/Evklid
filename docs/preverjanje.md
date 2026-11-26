@@ -349,7 +349,12 @@ Ugotovitve:
   `sqrt(2) ≈ 1.414`) dobi »Zaznana napaka«, ker skener račun pošlje v `equal` (točno), ne v `value`.
 - Odprto, skener brez SymPy: luknja brez rešitev (`(x^2-1)/(x-1)=2`) dobi »Zaznana napaka«; štirje napačni
   odgovori dobijo šibek pozitiven status: trije periodični in napačna periodična rešitev s predolgo periodo
-  »Delno preverjeno«.
+  »Delno preverjeno«. **Popravljeno (zunanja revizija 26. 11.):** vsaka navedena rešitev se prebere kot družina
+  x(k) (k celo); ničla L − D na oknu (vsaj [−20, 20], vsaj dve periodi, največ ±2000), ki je nobena družina ne zajame
+  (cos x = 1/2 le s π/3 + 2kπ: manjka −π/3), je napaka »manjka« s seznamom ničel. Meje: perioda nad ~2000, dve ničli
+  v istem koraku mreže (1/40) in ničle, ki se kopičijo (sin(1/x) = 0), ostanejo »Delno preverjeno«. Ponovni poskus AI dobi manjkajočo vejo zapisano kot večkratnik π
+  (`x ≈ -1.0472 (= -pi/3)`). Popolne periodične rešitve ostanejo »Delno preverjeno« (okno ni dokaz za vse k), zapis,
+  ki ni družina, linearna v k (»±π/3 + 2kπ, k ∈ ℤ«), pa kot prej (`test/scan-periodicne.test.js`).
 - Surov SymPy: zaokrožene decimalke sprejme s toleranco (`decimals_tol`) in vrne `ok: true` (12 previsokih
   statusov); zmnožek velikih števil v zapisu `1.2193263111263526*10^17` (napaka 9) sprejme, ker `value` računa s
   plavajočo vejico. **PV-03:** vsi ti odgovori imajo `how` ≠ `symbolic`, zato so največ `numericno`; surov SymPy z
