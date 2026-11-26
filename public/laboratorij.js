@@ -239,7 +239,7 @@ async function zazeni(x, m) {
       })
       .catch(() => {});
   });
-  if (!(await mountSim(x.id, m, x.opts))) return;
+  if (!(await mountSim(x.id, m, x.opts, x.title))) return;
   const { imaVodeno, vodi } = await import("./sim/lab-vodeno.js");
   if (!m.isConnected) return;
   if (!imaVodeno(x.key)) return stej(x.key, "brez", "odprt");
