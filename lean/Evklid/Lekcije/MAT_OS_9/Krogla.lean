@@ -38,7 +38,9 @@ open Real
 /-! ## Razlaga 1: kaj je krogla -/
 
 /-- Razlaga 1: krogla s središčem S in polmerom r so vse točke, ki so od S oddaljene največ r; kroglina
-ploskev so točke na razdalji natanko r in je (za r > 0) meja krogle. -/
+ploskev so točke na razdalji natanko r in je (za r > 0) meja krogle.
+trditev: MAT-OS-9/krogla#krogla-in-ploskev
+besedilo: »**Krogla** s središčem $S$ in **polmerom** $r$ je telo iz vseh točk prostora, ki so od $S$ oddaljene največ $r$. Krogla je torej polna, kot zrno toče. Njena meja je **kroglina ploskev** (sfera): vse njene točke so od $S$ oddaljene natanko $r$.« -/
 theorem krogla_in_ploskev (S : EuclideanSpace ℝ (Fin 3)) (r : ℝ) (hr : 0 < r) :
     (∀ p, p ∈ Metric.closedBall S r ↔ dist p S ≤ r) ∧ (∀ p, p ∈ Metric.sphere S r ↔ dist p S = r) ∧
     frontier (Metric.closedBall S r) = Metric.sphere S r :=
@@ -48,7 +50,9 @@ theorem krogla_in_ploskev (S : EuclideanSpace ℝ (Fin 3)) (r : ℝ) (hr : 0 < r
 example : (0:ℝ) < 1 := one_pos
 
 /-- Razlaga 1, Povzetek: premer je d = 2r: nobeni dve točki krogle nista oddaljeni več kot 2r, dve
-nasprotni točki pa sta oddaljeni natanko 2r. -/
+nasprotni točki pa sta oddaljeni natanko 2r.
+trditev: MAT-OS-9/krogla#premer
+besedilo: »Premer je dvakrat daljši od polmera: $d = 2r$.« -/
 theorem premer (S : EuclideanSpace ℝ (Fin 3)) (r : ℝ) (hr : 0 ≤ r) :
     Metric.diam (Metric.closedBall S r) ≤ 2 * r ∧
     ∃ p ∈ Metric.closedBall S r, ∃ q ∈ Metric.closedBall S r, dist p q = 2 * r := by
@@ -67,14 +71,18 @@ example : (0:ℝ) ≤ 1 := zero_le_one
 /-! ## Razlaga 2: krogla ob valju (tabela) -/
 
 /-- Razlaga 2 (tabela): valj s polmerom r in višino 2r ima osnovni ploskvi 2πr², plašč 2πr·2r = 4πr²,
-površino 2πr² + 4πr² = 6πr² in prostornino πr²·2r = 2πr³; kroglina ploskev 4πr² je enaka plašču. -/
+površino 2πr² + 4πr² = 6πr² in prostornino πr²·2r = 2πr³; kroglina ploskev 4πr² je enaka plašču.
+trditev: MAT-OS-9/krogla#tabela
+besedilo: »| plašč / kroglina ploskev | $4\pi r^2$ | $4\pi r^2$ |« -/
 theorem tabela (r : ℝ) :
     2 * (π * r ^ 2) = 2 * π * r ^ 2 ∧ 2 * π * r * (2 * r) = 4 * π * r ^ 2 ∧
     2 * π * r ^ 2 + 2 * π * r * (2 * r) = 6 * π * r ^ 2 ∧ π * r ^ 2 * (2 * r) = 2 * π * r ^ 3 :=
   ⟨by ring, by ring, by ring, by ring⟩
 
 /-- Razlaga 2 (premisli): površina krogle 4πr² je manjša od površine valja 6πr² (r > 0); krogla zapolni več
-kot polovico valja (2/3 > 1/2); v osnem preseku krog pokrije π/4 ≈ 79 % kvadrata, kar je več od 2/3. -/
+kot polovico valja (2/3 > 1/2); v osnem preseku krog pokrije π/4 ≈ 79 % kvadrata, kar je več od 2/3.
+trditev: MAT-OS-9/krogla#premisli-valj
+besedilo: »Površina krogle je manjša, saj je krogla v valju in ne seže v njegove »vogale«. Prostornine zapolni več kot polovico: že v osnem preseku krog pokrije približno $79\,\%$ kvadrata« -/
 theorem premisli_valj (r : ℝ) (hr : 0 < r) :
     4 * π * r ^ 2 < 6 * π * r ^ 2 ∧ (1:ℝ) / 2 < 2 / 3 ∧
     (π * r ^ 2) / ((2 * r) ^ 2) = π / 4 ∧ |π / 4 - 0.79| < 0.005 ∧ (2:ℝ) / 3 < π / 4 := by
@@ -89,12 +97,15 @@ example : (0:ℝ) < 1 := one_pos
 /-! ## Razlaga 3 in 4: površina in prostornina -/
 
 /-- Razlaga 3: površina 4πr² je štirikratnik ploščine največjega kroga πr² in je enaka plašču valja
-2πr·2r. -/
+2πr·2r.
+trditev: MAT-OS-9/krogla#povrsina-stirje-krogi
+besedilo: »Površina: $P = 4\pi r^2$ (štirikratnik ploščine največjega kroga; enako kot plašč valja s polmerom $r$ in višino $2r$).« -/
 theorem povrsina_stirje_krogi (r : ℝ) : 4 * π * r ^ 2 = 4 * (π * r ^ 2) ∧
     4 * π * r ^ 2 = 2 * π * r * (2 * r) := ⟨by ring, by ring⟩
 
 /-- Razlaga 3, Na sliki (krogla iz piramid): mera enotske kroglinine ploskve (Mathlibova `toSphere`,
-definirana s stožci iz središča) je 3 · (prostornina enotske krogle) = 4π = 4π·1². -/
+definirana s stožci iz središča) je 3 · (prostornina enotske krogle) = 4π = 4π·1².
+pomozno – lekcija trdi P = 4πr² za vsak r (Razlaga 3), izrek pa mero ploskve dokaže le za r = 1 -/
 theorem povrsina_enotske :
     (MeasureTheory.volume : MeasureTheory.Measure (EuclideanSpace ℝ (Fin 3))).toSphere.real Set.univ
       = 4 * π * 1 ^ 2 := by
@@ -103,7 +114,9 @@ theorem povrsina_enotske :
     ENNReal.toReal_pow, ENNReal.toReal_ofReal zero_le_one, ENNReal.toReal_ofReal (by positivity)]
   push_cast; ring
 
-/-- Razlaga 4: prostornina krogle s polmerom r ≥ 0 je V = 4/3·π·r³ (Lebesgueova mera v ℝ³). -/
+/-- Razlaga 4: prostornina krogle s polmerom r ≥ 0 je V = 4/3·π·r³ (Lebesgueova mera v ℝ³).
+trditev: MAT-OS-9/krogla#prostornina-krogle
+besedilo: »Prostornina: $V = \dfrac{4}{3}\pi r^3$« -/
 theorem prostornina_krogle (S : EuclideanSpace ℝ (Fin 3)) (r : ℝ) (hr : 0 ≤ r) :
     (MeasureTheory.volume (Metric.closedBall S r)).toReal = 4 / 3 * π * r ^ 3 := by
   rw [EuclideanSpace.volume_closedBall_fin_three, ENNReal.toReal_mul, ENNReal.toReal_pow,
@@ -114,7 +127,9 @@ theorem prostornina_krogle (S : EuclideanSpace ℝ (Fin 3)) (r : ℝ) (hr : 0 �
 example : (0:ℝ) ≤ 1 := zero_le_one
 
 /-- Razlaga 4, Povzetek: krogla zapolni 2/3 valja s polmerom r in višino 2r; stožec iz istega valja ima
-1/3·πr²·2r = 2/3·πr³; valj, krogla in stožec so v razmerju 3 : 2 : 1. -/
+1/3·πr²·2r = 2/3·πr³; valj, krogla in stožec so v razmerju 3 : 2 : 1.
+trditev: MAT-OS-9/krogla#valj-krogla-stozec
+besedilo: »njegova prostornina je $\frac{1}{3}\pi r^2 \cdot 2r = \frac{2}{3}\pi r^3$. Valj, krogla in stožec z istim polmerom in višino $2r$ imajo prostornine v razmerju $3 : 2 : 1$.« -/
 theorem valj_krogla_stozec (r : ℝ) (hr : 0 < r) :
     (4 / 3 * π * r ^ 3) / (π * r ^ 2 * (2 * r)) = 2 / 3 ∧
     1 / 3 * π * r ^ 2 * (2 * r) = 2 / 3 * π * r ^ 3 ∧
@@ -126,7 +141,8 @@ theorem valj_krogla_stozec (r : ℝ) (hr : 0 < r) :
 example : (0:ℝ) < 1 := one_pos
 
 /-- Razlaga 5 in »3D: prerez z ravnino«: vodoravna ravnina z = h (|h| ≤ r) seka kroglo s središčem v
-izhodišču v krog s polmerom √(r² − h²); ta je največji (r² − h² = r²) natanko pri h = 0. -/
+izhodišču v krog s polmerom √(r² − h²); ta je največji (r² − h² = r²) natanko pri h = 0.
+pomozno – lekcija trdi za vsako ravnino; izrek le za vodoravne ravnine z = h skozi kroglo s središčem v izhodišču -/
 theorem prerez (r h : ℝ) (hh : |h| ≤ r) :
     (∀ x y : ℝ, x ^ 2 + y ^ 2 + h ^ 2 ≤ r ^ 2 ↔ x ^ 2 + y ^ 2 ≤ √(r ^ 2 - h ^ 2) ^ 2) ∧
     r ^ 2 - h ^ 2 ≤ r ^ 2 ∧ (r ^ 2 - h ^ 2 = r ^ 2 ↔ h = 0) := by
@@ -140,20 +156,26 @@ example : |(0:ℝ)| ≤ 1 := by norm_num
 /-! ## Razlaga 5: kvadrat in kub -/
 
 /-- Razlaga 5: (2r)² = 4r², (2r)³ = 8r³: pri dvakratnem polmeru je površina 4-krat, prostornina 8-krat
-večja; 1 dm³ = 10³ cm³ = 1000 cm³ = 1 l. -/
+večja; 1 dm³ = 10³ cm³ = 1000 cm³ = 1 l.
+trditev: MAT-OS-9/krogla#dvakratni-polmer
+besedilo: »Ko polmer podvojiš, je $(2r)^2 = 4r^2$ in $(2r)^3 = 8r^3$: površina je štirikrat, prostornina pa osemkrat večja.« -/
 theorem dvakratni_polmer (r : ℝ) :
     (2 * r) ^ 2 = 4 * r ^ 2 ∧ (2 * r) ^ 3 = 8 * r ^ 3 ∧
     4 * π * (2 * r) ^ 2 = 4 * (4 * π * r ^ 2) ∧ 4 / 3 * π * (2 * r) ^ 3 = 8 * (4 / 3 * π * r ^ 3) ∧
     (10:ℝ) ^ 3 = 1000 := ⟨by ring, by ring, by ring, by ring, by norm_num⟩
 
 /-- Razlaga 5 (premisli o toči): zrno s premerom 4 cm ima polmer 4-krat večji od zrna s premerom 1 cm,
-zato je ledu 4³ = 64-krat več, površina pa 4² = 16-krat večja. -/
+zato je ledu 4³ = 64-krat več, površina pa 4² = 16-krat večja.
+trditev: MAT-OS-9/krogla#toca-64
+besedilo: »Polmer je $4$-krat večji, zato je ledu $4^3 = 64$-krat več, površina pa je $4^2 = 16$-krat večja.« -/
 theorem toca_64 :
     (4:ℝ) / 2 = 4 * (1 / 2) ∧ 4 / 3 * π * (4 / 2) ^ 3 = 64 * (4 / 3 * π * (1 / 2) ^ 3) ∧
     4 * π * (4 / 2) ^ 2 = 16 * (4 * π * (1 / 2) ^ 2) ∧ (4:ℝ) ^ 3 = 64 ∧ (4:ℝ) ^ 2 = 16 :=
   ⟨by norm_num, by ring, by ring, by norm_num, by norm_num⟩
 
-/-- Razlaga 6, korak 4: π ≈ 3,14159. -/
+/-- Razlaga 6, korak 4: π ≈ 3,14159.
+trditev: MAT-OS-9/krogla#pi-priblizek
+besedilo: »$\pi \approx 3{,}14159$« -/
 theorem pi_priblizek : |π - 3.14159| < 0.000005 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
   rw [abs_lt]; constructor <;> linarith
@@ -161,11 +183,14 @@ theorem pi_priblizek : |π - 3.14159| < 0.000005 := by
 /-! ## Razlaga 7: obratna naloga -/
 
 /-- Razlaga 7, Pogoste napake (zadnja): kubični koren iz 216 je 6 (6·6·6 = 216): r³ = 216 velja natanko za
-r = 6. -/
+r = 6.
+trditev: MAT-OS-9/krogla#kubicni-koren
+besedilo: »Kubični koren iz $216$ je število, ki na tretjo potenco da $216$: to je $6$, ker je $6 \cdot 6 \cdot 6 = 216$.« -/
 theorem kubicni_koren (r : ℝ) : (6:ℝ) * 6 * 6 = 216 ∧ (r ^ 3 = 216 ↔ r = 6) :=
   ⟨by norm_num, ⟨fun h => by nlinarith [sq_nonneg (r - 6), sq_nonneg (r + 3)], by rintro rfl; norm_num⟩⟩
 
-/-- Pogoste napake (zadnja): za polmer r > 0 velja r² = 25 natanko pri r = 5 (ne r = 25); √216 ≠ 6. -/
+/-- Pogoste napake (zadnja): za polmer r > 0 velja r² = 25 natanko pri r = 5 (ne r = 25); √216 ≠ 6.
+pomozno – lekcija pove splošno pravilo o odpravi kvadrata in kuba; izrek le r² = 25 ⇔ r = 5 (r > 0) in √216 ≠ 6, česar lekcija ne izreče -/
 theorem kvadratni_koren (r : ℝ) (hr : 0 < r) : (r ^ 2 = 25 ↔ r = 5) ∧ √(216:ℝ) ≠ 6 := by
   refine ⟨⟨fun h => by nlinarith [sq_nonneg (r - 5)], by rintro rfl; norm_num⟩, ?_⟩
   intro h
@@ -178,7 +203,9 @@ example : (0:ℝ) < 5 := by norm_num
 /-! ## Rešeni primeri -/
 
 /-- Primer 1: r = 6 cm: P = 4π·6² = 4π·36 = 144π ≈ 452,39 cm²; V = 4/3·π·6³ = 4/3·π·216 = 288π ≈ 904,78 cm³,
-pri čemer 6³ = 6·6·6 = 216 in 4/3·216 = 4·72 = 288. -/
+pri čemer 6³ = 6·6·6 = 216 in 4/3·216 = 4·72 = 288.
+trditev: MAT-OS-9/krogla#primer1
+besedilo: »Odgovor: površina krogle je $144\pi\,\text{cm}^2 \approx 452{,}39\,\text{cm}^2$, prostornina $288\pi\,\text{cm}^3 \approx 904{,}78\,\text{cm}^3$.« -/
 theorem primer1 :
     4 * π * 6 ^ 2 = 144 * π ∧ |144 * π - 452.39| < 0.005 ∧
     4 / 3 * π * 6 ^ 3 = 288 * π ∧ |288 * π - 904.78| < 0.005 ∧
@@ -193,7 +220,9 @@ theorem primer1 :
   · rw [abs_lt]; constructor <;> linarith
 
 /-- Primer 1, korak 6 (smiselnost): kocka z robom 12 = 2·6 ima prostornino 12³ = 1728 cm³; krogla ima manj,
-približno 52 % kocke, kar je nekaj več kot polovica. -/
+približno 52 % kocke, kar je nekaj več kot polovica.
+trditev: MAT-OS-9/krogla#primer1-smiselnost
+besedilo: »ima prostornino $12^3 = 1728\,\text{cm}^3$. Krogla ima manj, $904{,}78\,\text{cm}^3$, kar je nekaj več kot polovica kocke (približno $52\,\%$).« -/
 theorem primer1_smiselnost :
     (2:ℝ) * 6 = 12 ∧ (12:ℝ) ^ 3 = 1728 ∧ 288 * π < 1728 ∧ 1728 / 2 < 288 * π ∧
     |288 * π / 1728 - 0.52| < 0.005 := by
@@ -202,7 +231,9 @@ theorem primer1_smiselnost :
   rw [abs_lt]; constructor <;> linarith
 
 /-- Primer 2: d = 22: r = 22 : 2 = 11; P = 4π·11² = 4π·121 = 484π ≈ 1520,53 cm² (≈ 1520,5);
-11³ = 1331, V = 4/3·π·1331 = 5324/3·π ≈ 5575,28 cm³ ≈ 5,58 dm³ (≈ 5,6 l). -/
+11³ = 1331, V = 4/3·π·1331 = 5324/3·π ≈ 5575,28 cm³ ≈ 5,58 dm³ (≈ 5,6 l).
+trditev: MAT-OS-9/krogla#primer2
+besedilo: »Za prevleko potrebujemo približno $1520{,}5\,\text{cm}^2$ materiala, v žogo gre približno $5{,}6\,\text{l}$ zraka.« -/
 theorem primer2 :
     (22:ℝ) / 2 = 11 ∧
     4 * π * 11 ^ 2 = 484 * π ∧ |484 * π - 1520.53| < 0.005 ∧ |484 * π - 1520.5| < 0.05 ∧
@@ -215,13 +246,17 @@ theorem primer2 :
   all_goals rw [abs_lt]; constructor <;> linarith
 
 /-- Pogoste napake (prva), Primer 2 korak 1: kdor vstavi premer 22 namesto polmera 11, dobi
-(2·11)³ = 2³·11³ = 8-krat preveliko prostornino; v splošnem (d)³ = (2r)³ = 8r³. -/
+(2·11)³ = 2³·11³ = 8-krat preveliko prostornino; v splošnem (d)³ = (2r)³ = 8r³.
+trditev: MAT-OS-9/krogla#premer-namesto-polmera
+besedilo: »Ker je v prostornini $r^3$, dobiš $2^3 = 8$-krat preveliko prostornino.« -/
 theorem premer_namesto_polmera (r : ℝ) :
     4 / 3 * π * 22 ^ 3 = 8 * (4 / 3 * π * 11 ^ 3) ∧ 4 / 3 * π * (2 * r) ^ 3 = 2 ^ 3 * (4 / 3 * π * r ^ 3) ∧
     (2:ℝ) ^ 3 = 8 := ⟨by ring, by ring, by norm_num⟩
 
 /-- Primer 3: za polmer r > 0 je 4πr² = 100π natanko tedaj, ko r² = 100π/(4π) = 25, torej r = √25 = 5;
-nato V = 4/3·π·5³ = 4/3·π·125 = 500/3·π ≈ 523,60 cm³; preizkus 4π·5² = 4π·25 = 100π. -/
+nato V = 4/3·π·5³ = 4/3·π·125 = 500/3·π ≈ 523,60 cm³; preizkus 4π·5² = 4π·25 = 100π.
+trditev: MAT-OS-9/krogla#primer3
+besedilo: »Odgovor: polmer krogle je $5\,\text{cm}$, prostornina pa $\frac{500}{3}\pi\,\text{cm}^3 \approx 523{,}60\,\text{cm}^3$.« -/
 theorem primer3 (r : ℝ) (hr : 0 < r) :
     (4 * π * r ^ 2 = 100 * π ↔ r = 5) ∧ 100 * π / (4 * π) = 25 ∧ √(25:ℝ) = 5 ∧
     4 / 3 * π * 5 ^ 3 = 500 / 3 * π ∧ |500 / 3 * π - 523.60| < 0.005 ∧ 4 * π * 5 ^ 2 = 100 * π := by
@@ -242,7 +277,9 @@ theorem primer3 (r : ℝ) (hr : 0 < r) :
 example : (0:ℝ) < 5 := by norm_num
 
 /-- Primer 4 (toča): d = 4: r = 4 : 2 = 2, 2³ = 8, V = 4/3·π·8 = 32/3·π ≈ 33,51 cm³; 1000 : 33,51 ≈ 29,8 in
-tudi točno 1000 : V ≈ 29,8; 29 zrn je premalo, 30 zrn je dovolj za liter (»približno 30 zrn«). -/
+tudi točno 1000 : V ≈ 29,8; 29 zrn je premalo, 30 zrn je dovolj za liter (»približno 30 zrn«).
+trditev: MAT-OS-9/krogla#primer4
+besedilo: »$V = \frac{32}{3}\pi\,\text{cm}^3 \approx 33{,}51\,\text{cm}^3$. Število zrn: $1000 : 33{,}51 \approx 29{,}8$, torej približno $30$ zrn toče s premerom $4\,\text{cm}$ da liter ledu.« -/
 theorem primer4 :
     (4:ℝ) / 2 = 2 ∧ (2:ℝ) ^ 3 = 8 ∧ 4 / 3 * π * 2 ^ 3 = 4 / 3 * π * 8 ∧ 4 / 3 * π * 8 = 32 / 3 * π ∧
     |32 / 3 * π - 33.51| < 0.005 ∧ |(1000 : ℝ) / 33.51 - 29.8| < 0.05 ∧
@@ -260,7 +297,9 @@ theorem primer4 :
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake (tretja): brez deljenja s 3 je 4πr³ trikrat prevelika prostornina in večja celo od valja
-2πr³ okoli krogle (r > 0); prava prostornina 4/3·πr³ je manjša od valja. -/
+2πr³ okoli krogle (r > 0); prava prostornina 4/3·πr³ je manjša od valja.
+trditev: MAT-OS-9/krogla#pozabljeno-deljenje
+besedilo: »brez deljenja s $3$ je prostornina $3$-krat prevelika (večja celo od valja okoli krogle, ki ima $2\pi r^3$).« -/
 theorem pozabljeno_deljenje (r : ℝ) (hr : 0 < r) :
     4 * π * r ^ 3 = 3 * (4 / 3 * π * r ^ 3) ∧ 2 * π * r ^ 3 < 4 * π * r ^ 3 ∧
     4 / 3 * π * r ^ 3 < 2 * π * r ^ 3 := by
@@ -271,17 +310,23 @@ theorem pozabljeno_deljenje (r : ℝ) (hr : 0 < r) :
 example : (0:ℝ) < 1 := one_pos
 
 /-- Razlaga, Pogoste napake (četrta), Povzetek, Korak za korakom: polmer k-krat večji ⇒ površina k²-krat,
-prostornina k³-krat večja. -/
+prostornina k³-krat večja.
+trditev: MAT-OS-9/krogla#k-krat
+besedilo: »Polmer $k$-krat večji: površina $k^2$-krat, prostornina $k^3$-krat večja.« -/
 theorem k_krat (k r : ℝ) :
     4 * π * (k * r) ^ 2 = k ^ 2 * (4 * π * r ^ 2) ∧
     4 / 3 * π * (k * r) ^ 3 = k ^ 3 * (4 / 3 * π * r ^ 3) := ⟨by ring, by ring⟩
 
 /-! ## Na sliki in Iz vsakdanjega življenja -/
 
-/-- Na sliki (krogla iz piramid): 1/3 · 4πr² · r = 4/3·πr³. -/
+/-- Na sliki (krogla iz piramid): 1/3 · 4πr² · r = 4/3·πr³.
+trditev: MAT-OS-9/krogla#piramide
+besedilo: »$$V = \frac{1}{3} \cdot 4\pi r^2 \cdot r = \frac{4}{3}\pi r^3.$$« -/
 theorem piramide (r : ℝ) : 1 / 3 * (4 * π * r ^ 2) * r = 4 / 3 * π * r ^ 3 := by ring
 
-/-- Iz vsakdanjega življenja (konzerva): r = 3: valj π·3²·6 = 54π, krogla 4/3·π·27 = 36π, 36π/54π = 2/3. -/
+/-- Iz vsakdanjega življenja (konzerva): r = 3: valj π·3²·6 = 54π, krogla 4/3·π·27 = 36π, 36π/54π = 2/3.
+trditev: MAT-OS-9/krogla#konzerva
+besedilo: »Račun za $r = 3\,\text{cm}$: valj ima $V = \pi \cdot 3^2 \cdot 6 = 54\pi\,\text{cm}^3$, krogla $V = \frac{4}{3}\pi \cdot 27 = 36\pi\,\text{cm}^3$, in res $\dfrac{36\pi}{54\pi} = \dfrac{2}{3}$.« -/
 theorem konzerva :
     π * 3 ^ 2 * 6 = 54 * π ∧ 4 / 3 * π * 27 = 36 * π ∧ (4:ℝ) / 3 * π * 3 ^ 3 = 4 / 3 * π * 27 ∧
     (36 * π) / (54 * π) = 2 / 3 := by
@@ -289,7 +334,9 @@ theorem konzerva :
   refine ⟨by ring, by ring, by norm_num, by field_simp; ring⟩
 
 /-- Iz vsakdanjega življenja (dežne kapljice): kapljica s 100-krat manjšim premerom ima
-100³ = 1 000 000-krat manjšo prostornino: V(d) = 100³ · V(d/100). -/
+100³ = 1 000 000-krat manjšo prostornino: V(d) = 100³ · V(d/100).
+trditev: MAT-OS-9/krogla#kapljice
+besedilo: »Kapljica s stokrat manjšim premerom ima $100^3 = 1\,000\,000$-krat manjšo prostornino« -/
 theorem kapljice (d : ℝ) :
     (100:ℝ) ^ 3 = 1000000 ∧ 4 / 3 * π * (d / 2) ^ 3 = 100 ^ 3 * (4 / 3 * π * (d / 100 / 2) ^ 3) :=
   ⟨by norm_num, by ring⟩
@@ -297,7 +344,9 @@ theorem kapljice (d : ℝ) :
 /-! ## Korak za korakom s številkami (tabela) -/
 
 /-- Korak za korakom: r = 1: 4π ≈ 12,57, 4/3·π ≈ 4,19; r = 2: 16π ≈ 50,27, 32/3·π ≈ 33,51; r = 4:
-64π ≈ 201,06, 256/3·π ≈ 268,08; pri 1 → 2 se površina poveča 4-krat, prostornina 8-krat. -/
+64π ≈ 201,06, 256/3·π ≈ 268,08; pri 1 → 2 se površina poveča 4-krat, prostornina 8-krat.
+trditev: MAT-OS-9/krogla#tabela-stevilke
+besedilo: »Opazuj: ko polmer podvojimo ($1 \to 2$), se površina poveča $4$-krat ($4\pi \to 16\pi$), prostornina pa $8$-krat ($\frac{4}{3}\pi \to \frac{32}{3}\pi$).« -/
 theorem tabela_stevilke :
     4 * π * 1 ^ 2 = 4 * π ∧ 4 / 3 * π * 1 ^ 3 = 4 / 3 * π ∧
     4 * π * 2 ^ 2 = 16 * π ∧ 4 / 3 * π * 2 ^ 3 = 32 / 3 * π ∧
@@ -313,7 +362,9 @@ theorem tabela_stevilke :
 
 /-- Bolj natančno: presek polkrogle na višini h (|h| ≤ r) je krog s polmerom √(r² − h²) in ploščino
 π(r² − h²) = πr² − πh² (enako kot kolobar valja brez stožca); integral presekov od 0 do r je
-πr²·r − 1/3·πr²·r = πr³ − 1/3·πr³ = 2/3·πr³; cela krogla je 2 · 2/3·πr³ = 4/3·πr³. -/
+πr²·r − 1/3·πr²·r = πr³ − 1/3·πr³ = 2/3·πr³; cela krogla je 2 · 2/3·πr³ = 4/3·πr³.
+trditev: MAT-OS-9/krogla#polkrogla
+besedilo: »$$V_{\text{polkrogle}} = \pi r^3 - \frac{1}{3}\pi r^3 = \frac{2}{3}\pi r^3.$$ Cela krogla je dvakratnik: $V = 2 \cdot \frac{2}{3}\pi r^3 = \frac{4}{3}\pi r^3$.« -/
 theorem polkrogla (r : ℝ) (hr : 0 ≤ r) :
     (∀ h, |h| ≤ r → π * √(r ^ 2 - h ^ 2) ^ 2 = π * (r ^ 2 - h ^ 2)) ∧
     (∀ h : ℝ, π * r ^ 2 - π * h ^ 2 = π * (r ^ 2 - h ^ 2)) ∧
@@ -337,7 +388,9 @@ example : (0:ℝ) ≤ 1 ∧ |(0:ℝ)| ≤ 1 := by norm_num
 /-! ## Preveri se -/
 
 /-- Preveri se (1): r = 3: P = 4π·3² = 36π, V = 4/3·π·3³ = 4/3·π·27 = 36π; napačni: 4π·27 = 108π (brez
-deljenja s 3), 4π·3 = 12π (brez kvadrata), r = 6: 144π in 288π. -/
+deljenja s 3), 4π·3 = 12π (brez kvadrata), r = 6: 144π in 288π.
+trditev: MAT-OS-9/krogla#preveri1
+besedilo: »$P = 4\pi \cdot 3^2 = 36\pi\,\text{cm}^2$ in $V = \frac{4}{3}\pi \cdot 3^3 = \frac{4}{3}\pi \cdot 27 = 36\pi\,\text{cm}^3$.« -/
 theorem preveri1 :
     4 * π * 3 ^ 2 = 36 * π ∧ 4 / 3 * π * 3 ^ 3 = 4 / 3 * π * 27 ∧ 4 / 3 * π * 27 = 36 * π ∧
     4 * π * 27 = 108 * π ∧ 4 * π * 3 = 12 * π ∧ 4 * π * 6 ^ 2 = 144 * π ∧ 4 / 3 * π * 6 ^ 3 = 288 * π := by
@@ -345,7 +398,9 @@ theorem preveri1 :
 
 /-- Preveri se (2): d = 2, r = 1: s π ≈ 3 je 4/3·3·1³ = 4, točno 4/3·π ≈ 4,19; napačni: r = 2 da
 4/3·π·8 ≈ 34 (8-krat več), 4πr² ≈ 12,6 ≈ 13 je površina, kocka 2·2·2 = 8, krogla zapolni nekaj več kot
-polovico kocke. -/
+polovico kocke.
+trditev: MAT-OS-9/krogla#preveri2
+besedilo: »Polmer je $1\,\text{cm}$. Z $\pi \approx 3$: $V \approx \frac{4}{3} \cdot 3 \cdot 1^3 = 4\,\text{cm}^3$. Natančneje $\frac{4}{3}\pi\,\text{cm}^3 \approx 4{,}19\,\text{cm}^3$.« -/
 theorem preveri2 :
     (2:ℝ) / 2 = 1 ∧ (4:ℝ) / 3 * 3 * 1 ^ 3 = 4 ∧ |4 / 3 * π * 1 ^ 3 - 4.19| < 0.005 ∧
     |4 / 3 * π * 2 ^ 3 - 34| < 0.5 ∧ 4 / 3 * π * 2 ^ 3 = 8 * (4 / 3 * π * 1 ^ 3) ∧
@@ -356,7 +411,9 @@ theorem preveri2 :
   all_goals rw [abs_lt]; constructor <;> linarith
 
 /-- Preveri se (3): pri dvakratnem polmeru (r > 0) je razmerje prostornin 2³ = 8, površin 2² = 4 (faktor 4/3
-in π se pokrajšata); pri trikratnem 3² = 9 in 3³ = 27 ≠ 2·9 = 18. -/
+in π se pokrajšata); pri trikratnem 3² = 9 in 3³ = 27 ≠ 2·9 = 18.
+trditev: MAT-OS-9/krogla#preveri3
+besedilo: »Faktor povečave polmera se v površini kvadrira, v prostornini pa kubira.« -/
 theorem preveri3 (r : ℝ) (hr : 0 < r) :
     (4 / 3 * π * (2 * r) ^ 3) / (4 / 3 * π * r ^ 3) = 2 ^ 3 ∧
     (4 * π * (2 * r) ^ 2) / (4 * π * r ^ 2) = 2 ^ 2 ∧ (2:ℝ) ^ 3 = 8 ∧ (2:ℝ) ^ 2 = 4 ∧
@@ -369,7 +426,9 @@ theorem preveri3 (r : ℝ) (hr : 0 < r) :
 example : (0:ℝ) < 1 := one_pos
 
 /-- Preveri se (4): 4/3·π·r³ = 288π natanko tedaj, ko r³ = 288·3/4 = 216, torej natanko pri r = 6;
-preizkus 4/3·π·216 = 288π; napačni: √216 ≈ 14,7, 288·4/3 = 384 in ∛384 ≈ 7,3. -/
+preizkus 4/3·π·216 = 288π; napačni: √216 ≈ 14,7, 288·4/3 = 384 in ∛384 ≈ 7,3.
+trditev: MAT-OS-9/krogla#preveri4
+besedilo: »$\frac{4}{3}\pi r^3 = 288\pi$, zato $r^3 = 288 \cdot \frac{3}{4} = 216$ in $r = 6\,\text{cm}$, ker $6^3 = 216$. Preizkus: $\frac{4}{3}\pi \cdot 216 = 288\pi$.« -/
 theorem preveri4 (r : ℝ) :
     (4 / 3 * π * r ^ 3 = 288 * π ↔ r = 6) ∧ (288:ℝ) * (3 / 4) = 216 ∧ 4 / 3 * π * 216 = 288 * π ∧
     |√(216 : ℝ) - 14.7| < 0.05 ∧ (288:ℝ) * (4 / 3) = 384 ∧ |(384 : ℝ) ^ ((1 : ℝ) / 3) - 7.3| < 0.05 := by
@@ -393,7 +452,9 @@ theorem preveri4 (r : ℝ) :
       norm_num at this; linarith
 
 /-- Preveri se (5): pri polmeru Zemlje R = 3,7·ρ (ρ polmer Lune) je razmerje prostornin 3,7³ ≈ 50,7
-(≈ 50 Lun); napačni: 3,7² ≈ 13,7 (≈ 14, razmerje površin), 3·3,7 = 11,1 (≈ 11). -/
+(≈ 50 Lun); napačni: 3,7² ≈ 13,7 (≈ 14, razmerje površin), 3·3,7 = 11,1 (≈ 11).
+trditev: MAT-OS-9/krogla#preveri5
+besedilo: »Obe telesi sta približno krogli, zato je razmerje prostornin $3{,}7^3 \approx 50{,}7$. V Zemljo bi po prostornini šlo okoli $50$ Lun.« -/
 theorem preveri5 (ρ : ℝ) (hρ : 0 < ρ) :
     (4 / 3 * π * (3.7 * ρ) ^ 3) / (4 / 3 * π * ρ ^ 3) = 3.7 ^ 3 ∧ |(3.7 : ℝ) ^ 3 - 50.7| < 0.05 ∧
     |(3.7 : ℝ) ^ 3 - 50| < 1 ∧ |(3.7 : ℝ) ^ 2 - 13.7| < 0.05 ∧ |(3.7 : ℝ) ^ 2 - 14| < 0.5 ∧
