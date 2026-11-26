@@ -675,7 +675,8 @@ test("pregled A (4cf3be1fb): opomba ob prezrti sodbi ne po inštruktorjevi hipot
   // primer ChatGPT: inštruktor brez druge enačbe ali le z enačbo naloge → opomba ostane
   assert.equal(at("Kaj narediš najprej?", "x = 5", "Da, pravilno!"), true);
   assert.equal(at("Kaj dobiš za x?", "x = 5", "Da, pravilno!"), true);
-  assert.equal(at(R`Reši $2x + 3 = 11$. Kaj dobiš za $x$?`, "x = 5", "Da, pravilno!"), true);
+  assert.equal(at(R`Reši $2x + 3 = 11$. Kaj dobiš za $x$?`, "x = 5", "Da, pravilno!"), false); // zapis: le navadno vprašanje (f3d3893c3)
+  assert.equal(at(R`Kaj dobiš za $x$?`, "x = 5", "Da, pravilno!"), true);
 });
 
 test("pregled A (4cf3be1fb): beseda za formulo, spremenjena naloga in hipoteza v linearnem času", () => {
@@ -690,7 +691,7 @@ test("pregled A (4cf3be1fb): beseda za formulo, spremenjena naloga in hipoteza v
   for (const s of [" ".repeat(60000) + "1", " ".repeat(30000) + "~" + " ".repeat(30000) + "1"]) {
     assert.ok(ms(() => codeFindings(R`Torej $7 \cdot 8 = 54$` + s, null, "")) < 300, "beseda za formulo");
   }
-  for (const q of ["$".repeat(60000), "$a".repeat(30000), "a".repeat(60000) + "=", "$1$ ".repeat(15000), "tri ".repeat(15000), "3" + " x".repeat(30000) + ",", "3" + " ".repeat(60000) + "x"]) {
+  for (const q of ["$".repeat(60000), "$a".repeat(30000), "a".repeat(60000) + "=", "$1$ ".repeat(15000), "tri ".repeat(15000), "3" + " x".repeat(30000) + ",", "3" + " ".repeat(60000) + "x", " x +".repeat(15000) + "3", "Reši" + " ".repeat(60000) + "x 3"]) {
     assert.ok(ms(() => codeFindings(R`Rešitev je $x = 5$.`, pre, T + q)) < 300, q.slice(0, 10));
     assert.ok(ms(() => verdictNoteSafe("Da, pravilno!", v, { prevTutor: q, pre })) < 300, q.slice(0, 10));
   }
@@ -724,17 +725,39 @@ test("pregled A (bd0af5dac): opomba ob prezrti sodbi le brez tujega števila v p
     return !!v && verdictNoteSafe(a, v, { prevTutor: prev, pre });
   };
   for (const prev of A_STEP_FOREIGN) assert.equal(at(prev, "x = 5", "Odlično!"), false, prev);
-  // primer ChatGPT: navadno vprašanje ali namig brez tujih števil → opomba ostane
-  for (const prev of ["Kaj dobiš za x?", "Koliko je x? Namig: odštej 3.", "Kaj dobiš, če odšteješ 3 in deliš z 2?", "Kaj dobiš, če obe strani deliš z dva?", "Kaj narediš najprej?"]) {
+  // primer ChatGPT: navadno vprašanje ali učenec takoj za nalogo → opomba ostane
+  for (const prev of ["Kaj dobiš za x?", "Koliko je x?", R`Koliko je $x$?`, "Kaj narediš najprej?", ""]) {
     assert.equal(at(prev, "x = 5", "Odlično!"), true, prev);
   }
   assert.equal(at("Kaj dobiš za x?", "x = 5?", "Da, pravilno!"), true);
-  // števila izraza, ki ga sodba presoja, niso tuja (naloga brez »presolve«: »Izračunaj $7 \\cdot 8$.«)
+  // števke, števila z besedo, zapis, velelnik ali hipoteza (pregled A, f3d3893c3): brez opombe, tudi pri številih naloge
+  for (const prev of A_STEP_MOVE) assert.equal(at(prev, "x = 5", "Odlično!"), false, prev);
   const P = presolve(R`Izračunaj $7 \cdot 8$.`, { first: true, narrow: false });
   const v = stepVerdict("mogoče 54?", { pre: P, prevTutor: R`Koliko je $7 \cdot 8$?` });
-  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: R`Koliko je $7 \cdot 8$?`, pre: P }), true);
-  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: R`Koliko je $7 \cdot 9$?`, pre: P }), false);
+  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: R`Koliko je $7 \cdot 8$?` }), false);
+  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: "Kaj dobiš?" }), true);
 });
+export const A_STEP_MOVE = [
+  "Naj bo desna stran 3. Koliko je x?",
+  "Zmanjšaj desno stran za 2. Koliko je x?",
+  "Desno stran zmanjšaj za dve. Kaj dobiš za x?",
+  "Zamenjaj 3 in 11. Koliko je x?",
+  "Zamenjaj tri in enajst. Koliko je x?",
+  "Odstrani trojko. Koliko je x?",
+  "Brez +3: koliko je x?",
+  "Kaj dobiš, ko 11 deliš z 2?",
+  "Pri desni strani 3 bi bil x enak?",
+  R`Pri $2x = 11$ koliko je x?`,
+  "Koliko je x? Namig: odštej 3.",
+  "Kaj dobiš, če obe strani deliš z dva?",
+  "Kaj dobiš, če od obeh strani odšteješ trojko?",
+  "Naj bo desna strana večja. Koliko je x?",
+  "Kaj pa, če bi bila desna stran večja?",
+  "Vzemimo lažjo enačbo. Koliko je x?",
+  "Desno stran povečaj. Koliko je x?",
+  "Kaj dobiš brez desetice?",
+  "What if the right side were larger?",
+];
 
 // B: opomba proti nalogi le, ko je v sporočilu samo stavek z nalogo.
 export const A_TASK_EXTRA = [
@@ -794,5 +817,34 @@ test("pregled A (bd0af5dac): zaokroženo deljenje in pretvorba enot brez opombe,
   // drugačna napaka ostane z opombo
   for (const a of [R`Odgovor: $25 : 5 = 4$.`, R`Odgovor: $25 : 6 = 6$.`, R`Rezultat: $3 \cdot 500 = 1600$.`, R`Torej $7 \cdot 8 = 54$.`]) {
     assert.ok(codeFindings(a, null, "").fact?.wrong, a);
+  }
+});
+
+// Pregled A (f3d3893c3): pred zapisom naloge le glagol naloge (»Reši enačbo«, »Izračunaj«, »Odvajaj«, »Koliko je« …).
+export const A_TASK_LEAD = [
+  [R`V knjigi piše trinajst, ne enajst: $2x + 3 = 11$.`, R`Za trinajst je rešitev $x = 5$.`],
+  [R`Pri desni strani trinajst reši $2x + 3 = 11$.`, R`Rešitev je $x = 5$.`],
+  [R`Z desno stranjo trinajst: $2x + 3 = 11$.`, R`Rešitev je $x = 5$.`],
+  [R`Moja enačba je drugačna od $2x + 3 = 11$.`, R`Rešitev je $x = 5$.`],
+  [R`Desni strani prištej dva. Reši $2x + 3 = 11$.`, R`Rešitev je torej $x = 5$.`],
+  ["V knjigi piše trinajst: reši 2x + 3 = 11.", R`Rešitev je $x = 5$.`],
+  [R`Namesto x^3 vzemi kvadrat: odvajaj $f(x) = x^3$.`, R`Odvod je torej $f'(x) = 2x$.`],
+  [R`Pri sedem krat devet: izračunaj $7 \cdot 8$.`, "**63**"],
+];
+test("pregled A (f3d3893c3): sprememba pred zapisom naloge izklopi opombo", () => {
+  for (const [q, a] of A_TASK_LEAD) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.ok(!f.issue || !f.fact || f.soft, `${q} → ${a}`);
+  }
+  for (const [q, a] of [
+    [R`Reši enačbo $2x + 3 = 11$!!`, R`Rešitev je $x = 5$.`],
+    [R`Reši enačbo $2x + 3 = 11$ za $x$.`, R`Rešitev je $x = 5$.`],
+    [R`Prosim, reši enačbo: $2x + 3 = 11$`, R`Rešitev je $x = 5$.`],
+    ["Reši x + 3 = 5.", R`Rešitev je $x = 3$.`],
+    [R`Solve the equation $2x + 3 = 11$.`, R`The solution is $x = 5$.`],
+    [R`$2x + 3 = 11$`, R`Rešitev je $x = 5$.`],
+  ]) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.ok(f.issue && f.fact && !f.soft, `${q} → ${a}`);
   }
 });

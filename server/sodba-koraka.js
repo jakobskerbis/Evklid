@@ -386,29 +386,27 @@ export function stepVerdict(text, opts = {}) {
   if (said && !vals.length) vals.push({ v: null, x: num(said) });
   return v ? { ...v, asked: true, vals } : v;
 }
-// Števila z besedo (sl, en), z običajnimi skloni; vsako ujemanje šteje (»ena« v »Še ena:« je tuje število).
-const NUMBER_WORDS = new Map();
-[
-  [0, "nič ničla nula zero"],
-  [1, "ena en eno ene eni enega enemu enim enkrat one once"],
-  [2, "dva dve dveh dvema dvakrat two twice"],
-  [3, "tri treh trem tremi trikrat three"],
-  [4, "štiri štirih štirim štirimi four"],
-  [5, "pet petih petim petimi five"],
-  [6, "šest šestih šestim six"],
-  [7, "sedem sedmih sedmim seven"],
-  [8, "osem osmih osmim eight"],
-  [9, "devet devetih devetim nine"],
-  [10, "deset desetih desetim ten"],
-  [11, "enajst eleven"], [12, "dvanajst twelve"], [13, "trinajst thirteen"], [14, "štirinajst fourteen"],
-  [15, "petnajst fifteen"], [16, "šestnajst sixteen"], [17, "sedemnajst seventeen"], [18, "osemnajst eighteen"],
-  [19, "devetnajst nineteen"], [20, "dvajset twenty"], [30, "trideset thirty"], [40, "štirideset forty"],
-  [50, "petdeset fifty"], [60, "šestdeset sixty"], [70, "sedemdeset seventy"], [80, "osemdeset eighty"],
-  [90, "devetdeset ninety"], [100, "sto hundred"], [1000, "tisoč thousand"],
-  [0.5, "pol polovica half"],
-].forEach(([v, ws]) => ws.split(" ").forEach((w) => NUMBER_WORDS.set(w, v)));
-const NUMBER_WORD = new RegExp(`(?<!\\p{L})(?:${[...NUMBER_WORDS.keys()].sort((a, b) => b.length - a.length).join("|")})(?!\\p{L})`, "giu");
-const TUTOR_HYPO = /(?<!\p{L})(?:če bi|kaj pa|kaj če|vzemimo|recimo|denimo|namesto|predpostavimo|what if|suppose|instead)(?!\p{L})/iu;
+// Števila z besedo (sl, en) z običajnimi skloni, vrstilnimi in samostalniškimi oblikami (»trojka«, »desetica«).
+const NUMBER_WORD = new RegExp(
+  `(?<!\\p{L})(?:${[
+    "nič", "ničl\\p{L}*", "nul\\p{L}*",
+    "en", "ena", "eno", "ene", "eni", "enega", "enemu", "enim", "enkrat", "enic\\p{L}*", "enk\\p{L}*", "enojk\\p{L}*",
+    "dva", "dve", "dveh", "dvema", "dvakrat", "dvoj\\p{L}*", "dvak\\p{L}*",
+    "tri", "treh", "trem", "tremi", "trikrat", "troj\\p{L}*", "tretj\\p{L}*",
+    "štiri", "štirih", "štirim", "štirimi", "štiric\\p{L}*", "štirik\\p{L}*", "štirk\\p{L}*", "četrt\\p{L}*",
+    "pet", "petih", "petim", "petimi", "peti", "peta", "peto", "petega", "petem", "petic\\p{L}*", "petk\\p{L}*",
+    "šest", "šest[aeiou]\\p{L}*", "šestic\\p{L}*", "šestk\\p{L}*",
+    "sedem", "sedm\\p{L}*", "osem", "osm\\p{L}*", "devet\\p{L}*", "deset\\p{L}*",
+    "\\p{L}+najst\\p{L}*", "\\p{L}+deset\\p{L}*", "dvajset\\p{L}*", "sto", "stot\\p{L}*", "tisoč\\p{L}*", "milijon\\p{L}*",
+    "pol", "polovic\\p{L}*", "prv\\p{L}*", "drug[aeiou]?", "drug(?:ega|emu|em|im|ih|ima|imi)", "dvojn\\p{L}*",
+    "zero", "one", "once", "two", "twice", "three", "thrice", "four", "five", "six", "seven", "eight", "nine", "ten",
+    "eleven", "twelve", "\\p{L}+teen", "\\p{L}+ty", "hundred\\p{L}*", "thousand\\p{L}*", "half", "halve\\p{L}*",
+    "double\\p{L}*", "triple\\p{L}*", "first", "second", "third", "fourth", "fifth",
+  ].join("|")})(?!\\p{L})`,
+  "iu",
+);
+// Velelnik ali hipoteza v inštruktorjevem odgovoru: drugačna naloga ali vmesni korak.
+const TUTOR_MOVE = /(?<!\p{L})(?:naj|zamenja\p{L}*|odstran\p{L}*|zmanjša\p{L}*|poveča\p{L}*|del[ie]\p{L}*|razdeli\p{L}*|odšte\p{L}*|odvzem\p{L}*|prište\p{L}*|sešte\p{L}*|dodaj\p{L}*|pomnož\p{L}*|množ\p{L}*|vzem\p{L}*|brez|spremen\p{L}*|recimo|denimo|namesto|vstav\p{L}*|predpostav\p{L}*|kvadrir\p{L}*|koren\p{L}*|premakni\p{L}*|prenes\p{L}*|obrni\p{L}*|izpostav\p{L}*|pokrajš\p{L}*|okraj\p{L}*|če bi|kaj pa|kaj če|ko bi|pri|let|suppose|instead|what if|replace\p{L}*|remove\p{L}*|add\p{L}*|subtract\p{L}*|multipl\p{L}*|divide\p{L}*|without|take|plug\p{L}*|substitut\p{L}*)(?!\p{L})/iu;
 // Vmesni korak v inštruktorjevem vprašanju (»Najprej …«, »Nato …«, »prvi korak«).
 const SUBSTEP = /(?<!\p{L})(?:najprej|nato|potem|zdaj|sedaj|prv\p{L}*|drug\p{L}*|tretj\p{L}*|naslednj\p{L}*|korak\p{L}*|vmesn\p{L}*|first|then|next|step)(?!\p{L})/iu;
 // Števila, ki jih učenec v pogovoru že vidi (»$7 \\cdot 8$« → 7, 8).
@@ -609,23 +607,16 @@ const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(Strin
  * pravilna zavrnitev in opomba bi le razkrila rešitev (pregled A, 7f565d941). Vprašanje-predlog in zavrnjen pravilen
  * korak že zahtevata izrecen začetek.
  */
-export function verdictNoteSafe(answer, verdict, { prevTutor = "", pre = null } = {}) {
+export function verdictNoteSafe(answer, verdict, { prevTutor = "" } = {}) {
   if (!verdict || !verdictIgnored(answer, verdict)) return false;
-  // Opomba le, ko prejšnji inštruktorjev odgovor nima števila (s števkami ali z besedo: »trinajst«, »pet«) zunaj
-  // števil naloge, ne druge enačbe in ne hipoteze (pregleda A, 4cf3be1fb in bd0af5dac: »Naj bo desna stran 13.«,
-  // »Lažja: x plus tri je pet.«). Sodba proti nalogi je kot na main, vidne opombe pa ne.
-  const prev = String(prevTutor || "");
-  if (TUTOR_HYPO.test(prev)) return false;
-  const nums = (t) => (String(t || "").match(/\d+(?:[.,]\d+)?/g) || []).join(" ");
-  const tasks = (pre?.problems || []).map((p) => nums(p.problemTex || p.problem));
-  // znana števila: naloga in izraz, ki ga sodba presoja (»$7 \\cdot 8$« pri »mogoče 54?«), ne njegov rezultat
-  const judged = verdict.fact?.eq || String(verdict.fact?.right || "").split(/=|\\approx/)[0];
-  const known = new Set(`${tasks.join(" ")} ${nums(judged)}`.split(" ").filter(Boolean).map((n) => Number(n.replace(",", "."))));
-  for (const n of prev.match(/\d+(?:[.,]\d+)?/g) || []) if (!known.has(Number(n.replace(",", ".")))) return false;
-  for (const w of prev.matchAll(NUMBER_WORD)) if (!known.has(NUMBER_WORDS.get(w[0].toLowerCase()))) return false;
-  for (const m of prev.matchAll(/([^\n=.,;:?!]{0,40})=([^\n=.;:?!]{0,40})/g)) {
-    if (!tasks.includes(nums(m[1] + "=" + m[2]))) return false;
-  }
+  // Opomba le, ko je prejšnji inštruktorjev odgovor navadno vprašanje (»Kaj dobiš za x?«, »Koliko je x?«): brez
+  // števke, števila z besedo (tudi »trojka«, »desetica«, »tretji«), zapisa $…$ in brez velelnika ali hipoteze
+  // (»Naj bo desna stran 3.«, »Zamenjaj 3 in 11.«, »Odstrani trojko.«, »Namig: odštej 3.«). Inštruktor je morda
+  // zastavil drugo nalogo ali vmesni korak; sodba in ponovni odgovor ostaneta kot na main, vidne opombe pa ni
+  // (pregledi A, 4cf3be1fb, bd0af5dac in f3d3893c3).
+  // ena sama črka v »$…$« (»Koliko je $x$?«) je navadno besedilo, ne zapis
+  const prev = String(prevTutor || "").replace(/\$\s*[a-zA-Z]\s*\$/g, " x ");
+  if (prev.trim() && (/\d|\$/.test(prev) || NUMBER_WORD.test(prev) || TUTOR_MOVE.test(prev))) return false;
   if (verdict.asked || !verdict.wrong) return true;
   const head = firstSentence(answer);
   return POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, "")) && !NEGATIVE_OPEN.test(head);

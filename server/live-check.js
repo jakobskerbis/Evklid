@@ -583,7 +583,20 @@ function calcNote(answer, lines, m, { hard = true } = {}) {
 // gol rezultat, odvod) le, ko je v sporočilu samo stavek z nalogo: za zapisom naloge nič razen ločil (»Oprosti, mislil
 // sem trinajst.«, », oziroma kvadrat«, »(v knjigi je desno trinajst)« ne), ena enačba in nobenega števila zunaj zapisa.
 // Sicer brez opombe; ugotovitev gre v popravek kot na main.
-const ONLY_PUNCT = /^[\s.!?:;,)\]]*$/;
+const ONLY_PUNCT = /^[\s.!?:;,)\]]*(?:(?:prosim|please)[\s.!?]*)?$/iu;
+// Pred zapisom naloge le glagol naloge (pregled A, f3d3893c3: »V knjigi piše trinajst, ne enajst: $2x + 3 = 11$.«,
+// »Desni strani prištej dva. Reši …« ne).
+const TASK_LEAD = /^[\s,:;.!]*(?:(?:prosim|please)[\s,:]*)?(?:(?:reši(?:te)?|izračunaj(?:te)?|odvajaj(?:te)?|poenostavi(?:te)?|določi(?:te)?|poišči(?:te)?|koliko\s+je|solve|calculate|compute|differentiate|simplify|find|what\s+is|what's)(?:\s+(?:prosim|please|enačbo|enačba|nalogo|funkcijo|izraz|sistem|odvod|the|equation|expression|function|derivative|of|za\s+\p{L}|for\s+\p{L}))*)?[\s,:;.]*$/iu;
+// začetek zapisa brez »$« (»Reši x + 3 = 5«: »x + « je del zapisa): odreže presledke, operatorje in posamične črke
+function withoutMathTail(s) {
+  let i = s.length;
+  while (i > 0) {
+    const c = s[i - 1];
+    if (/[\s\-+*/^()=·×:{}\[\]]/.test(c) || (/\p{L}/u.test(c) && !(i > 1 && /\p{L}/u.test(s[i - 2])))) i--;
+    else break;
+  }
+  return s.slice(0, i);
+}
 const TASK_CHANGE = /(?<!\p{L})(?:kaj pa|kaj če|če je|če bi|namesto|vzemi|vzemimo|zamenj\p{L}*|spremen\p{L}*|recimo|denimo|potem pa|nato pa|pa še|what if|instead|suppose)(?!\p{L})/iu;
 function taskModified(question, pre) {
   if ((pre?.problems || []).length !== 1) return true;
@@ -593,11 +606,14 @@ function taskModified(question, pre) {
   const segs = all.filter((m) => /[\d=]/.test(m[0]));
   if (segs.length > 1) return true;
   if (all.length) {
+    if (!TASK_LEAD.test(q.slice(0, all[0].index))) return true;
     const last = all.at(-1);
     return /\d/.test(q.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " ")) || !ONLY_PUNCT.test(q.slice(last.index + last[0].length));
   }
   // brez »$«: za zadnjo števko (zapis naloge) le ločila
   if (!q.trim()) return false; // klicatelj ni podal sporočila (le pre)
+  const first = q.search(/\d/);
+  if (first >= 0 && !TASK_LEAD.test(withoutMathTail(q.slice(0, first)))) return true;
   const tail = q.match(/\d[^\d]*$/);
   return !tail || !ONLY_PUNCT.test(tail[0].slice(1).replace(/^(?:\s*(?:\p{L}(?!\p{L})|[-+*/^()=·×:{}\[\]]))*/u, ""));
 }

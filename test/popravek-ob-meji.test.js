@@ -181,15 +181,22 @@ test("AUDIT-059: »je 7 · 8 = 54?« pri nalogi 7 · 8 + 2 in »Da, tako je.« �
   const T = R`Izračunaj $7 \cdot 8 + 2$.`;
   const note = R`*(Opomba: $7 \cdot 8 = 54$ ne drži, ker je $7 \cdot 8 = 56$. Preveri še sam.)*`;
   for (const q of ["je 7 · 8 = 54?", "7 · 8 = 54, ne?", "54?"]) {
-    const cap = await run({ answers: [R`Koliko je $7 \cdot 8$?`, "Da, tako je."], n: 2, msgs: [T, q] });
-    assert.equal(cap.calls.filter((c) => c === "chat").length, 2, q);
-    has(cap, note);
+    // ob meji opomba le po navadnem vprašanju (pregled A, f3d3893c3); po »Koliko je $7 \cdot 8$?« le ponovni odgovor
+    // (golo »54?« po navadnem vprašanju ni vezano na $7 \cdot 8$: brez sodbe, kot prej)
+    const plain = q !== "54?";
+    if (plain) {
+      const cap = await run({ answers: ["Kaj dobiš najprej?", "Da, tako je."], n: 2, msgs: [T, q] });
+      assert.equal(cap.calls.filter((c) => c === "chat").length, 2, q);
+      has(cap, note);
+    }
+    const capQ = await run({ answers: [R`Koliko je $7 \cdot 8$?`, "Da, tako je."], n: 2, msgs: [T, q] });
+    assert.equal(capQ.calls.filter((c) => c === "chat").length, 2, q);
+    none(capQ);
     const free = await run({ answers: [R`Koliko je $7 \cdot 8$?`, "Da, tako je.", R`Ne čisto: $7 \cdot 8 = 56$.`], n: null, msgs: [T, q] });
     assert.equal(free.calls.filter((c) => c === "chat").length, 3, `${q}: en ponovni odgovor`);
     assert.match(free.display, /^Ne čisto/);
     none(free);
-    const failed = await run({ answers: [R`Koliko je $7 \cdot 8$?`, "Da, tako je."], n: null, chatFail: 3, msgs: [T, q] });
-    has(failed, note);
+    if (plain) has(await run({ answers: ["Kaj dobiš najprej?", "Da, tako je."], n: null, chatFail: 3, msgs: [T, q] }), note);
   }
 });
 
@@ -424,7 +431,7 @@ test("pregled A (bd0af5dac): tuje število pri inštruktorju, dodatek za nalogo 
     none(await run({ ...c, answers: [...c.answers], n: 2 }));
     none(await run({ ...c, answers: [...c.answers], n: null, chatFail: 3 }));
   }
-  const kept = await run({ answers: ["Kaj dobiš za x? Namig: odštej 3.", "Da, pravilno!"], n: 2, msgs: [R`Reši enačbo $2x + 3 = 11$.`, "x = 5"] });
+  const kept = await run({ answers: ["Kaj dobiš za x?", "Da, pravilno!"], n: 2, msgs: [R`Reši enačbo $2x + 3 = 11$.`, "x = 5"] });
   has(kept, R`*(Opomba: $x = 5$ ni rešitev enačbe $2x + 3 = 11$ (rešitev: $x = 4$). Preveri še sam.)*`);
 });
 
@@ -447,7 +454,8 @@ test("pregled A (4cf3be1fb): spremenjena naloga, beseda za formulo in hipoteza i
     none(await run({ ...c, answers: [...c.answers], n: 2 }));
     none(await run({ ...c, answers: [...c.answers], n: null, chatFail: 3 }));
   }
-  // inštruktor ponovi le nalogo: opomba ostane (primer ChatGPT)
-  const kept = await run({ answers: [R`Reši $2x + 3 = 11$. Kaj dobiš za $x$?`, "Da, pravilno!"], n: 2, msgs: ["Reši 2x + 3 = 11", "x = 5"] });
+  // navadno vprašanje: opomba ostane (primer ChatGPT); z zapisom v vprašanju ne (pregled A, f3d3893c3)
+  none(await run({ answers: [R`Reši $2x + 3 = 11$. Kaj dobiš za $x$?`, "Da, pravilno!"], n: 2, msgs: ["Reši 2x + 3 = 11", "x = 5"] }));
+  const kept = await run({ answers: [R`Kaj dobiš za $x$?`, "Da, pravilno!"], n: 2, msgs: ["Reši 2x + 3 = 11", "x = 5"] });
   has(kept, R`*(Opomba: $x = 5$ ni rešitev enačbe $2x + 3 = 11$ (rešitev: $x = 4$). Preveri še sam.)*`);
 });
