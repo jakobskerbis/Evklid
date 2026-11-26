@@ -79,13 +79,13 @@ def _rank(m):
     return sp.Integer(sp.Matrix(m).rank())
 
 
-def _logb(x, b=None):
+def _logb(x, b=None, **_):
     return sp.log(x) if b is None else sp.log(x, b)
 
 
 FUNCS = {
     "sqrt": sp.sqrt, "root": sp.root, "cbrt": sp.cbrt, "exp": sp.exp, "ln": sp.log, "log": _logb,
-    "lg": lambda x: sp.log(x, 10), "log10": lambda x: sp.log(x, 10), "log2": lambda x: sp.log(x, 2),
+    "lg": lambda x, **_: sp.log(x, 10), "log10": lambda x, **_: sp.log(x, 10), "log2": lambda x, **_: sp.log(x, 2),
     "sin": sp.sin, "cos": sp.cos, "tan": sp.tan, "cot": sp.cot, "sec": sp.sec, "csc": sp.csc,
     "asin": sp.asin, "acos": sp.acos, "atan": sp.atan, "acot": sp.acot, "arcsin": sp.asin, "arccos": sp.acos,
     "arctan": sp.atan, "arccot": sp.acot, "atan2": sp.atan2,
@@ -97,7 +97,7 @@ FUNCS = {
     "summation": sp.summation, "Sum": sp.summation, "product": sp.product,
     "Integral": lambda *a: sp.integrate(*a), "integrate": sp.integrate, "diff": sp.diff, "limit": sp.limit,
     "Rational": sp.Rational, "mod": sp.Mod, "Mod": sp.Mod, "max": sp.Max, "min": sp.Min, "Max": sp.Max, "Min": sp.Min,
-    "deg": lambda x: x * sp.pi / 180,
+    "deg": lambda x, **_: x * sp.pi / 180,
 }
 CONSTS = {"pi": sp.pi, "e": sp.E, "E": sp.E, "i": sp.I, "I": sp.I, "oo": sp.oo, "inf": sp.oo, "infty": sp.oo}
 GREEK = "alpha beta gamma delta epsilon zeta eta theta iota kappa lamda mu nu xi omicron rho sigma tau upsilon phi chi psi omega".split()
@@ -124,6 +124,29 @@ IDENT = re.compile(r"[A-Za-z][A-Za-z0-9]*")
 BAD = re.compile(r"__|['\"\\`;]|\.(?!\d)|(?<!\d)\.|\blambda\b|\bimport\b")
 
 
+DVA_ARG = re.compile(r"(?<![A-Za-z])(?:log|root|atan2|binomial|gcd|lcm|mod|Mod|max|min|Max|Min|Rational)\s*\(")
+
+
+def _decimalna_vejica(s):
+    """1,5 → 1.5, kadar v besedilu ni drugih vejic. Vejica, ki loči argumenta funkcije z dvema argumentoma
+    (log(x-2,2), root(8,3)), ostane ločilo (pregled PV-06: log(x-2,2) je bil prej ln(x - 2.2))."""
+    zasc = set()
+    for m in DVA_ARG.finditer(s):
+        globina = 0
+        for i in range(m.end() - 1, len(s)):
+            if s[i] in "([{":
+                globina += 1
+            elif s[i] in ")]}":
+                globina -= 1
+                if globina == 0:
+                    break
+            elif s[i] == "," and globina == 1:
+                zasc.add(i)
+    t = "".join("\0" if i in zasc else c for i, c in enumerate(s))
+    t = re.sub(r"(?<=\d),(?=\d)", ".", t) if "," not in re.sub(r"(?<=\d),(?=\d)", "", t) else t
+    return t.replace("\0", ",")
+
+
 def clean(text):
     s = str(text).strip()
     s = (
@@ -132,8 +155,7 @@ def clean(text):
         .replace("≤", "<=").replace("≥", ">=").replace("≠", "!=").replace("%", "*(1/100)")
     )
     s = re.sub(r"^\s*(?:≈|~|\\approx)\s*", "", s)
-    s = re.sub(r"(?<=\d),(?=\d)", ".", s) if "," not in re.sub(r"(?<=\d),(?=\d)", "", s) else s
-    return s
+    return _decimalna_vejica(s)
 
 
 def parse(text, variables=None, units=False, evaluate=True):
@@ -419,7 +441,7 @@ def _solutions(e, x, domain):
         raise
     except Exception:
         s = None
-    if (s is None or isinstance(s, sp.ConditionSet)) and e.has(sp.log):
+    if (s is None or s.has(sp.ConditionSet)) and e.has(sp.log):
         # log(x, 2) = log(x)/log(2): pomnožimo s konstantnimi logaritmi (rešitve ostanejo iste)
         base = sp.Mul(*[a for a in e.atoms(sp.log) if a.args[0].is_number and a.args[0] != 1])
         try:
@@ -847,7 +869,8 @@ def _deli_koraka(text):
     """»x-1=0 ali x+2=0« → [("=", "x-1", "0"), ("=", "x+2", "0")]; izraz brez relacije → [(None, izraz, None)];
     dvojna neenačba »-2<x<2« → [("&", [("<", "-2", "x"), ("<", "x", "2")], None)]."""
     out = []
-    for p in KALI.split(_crke(clean(text))):
+    for p in KALI.split(clean(text)):
+        p = _crke(p)
         if not p.strip():
             continue
         kosi = split_top(p)
@@ -857,6 +880,8 @@ def _deli_koraka(text):
             t = KREL.split(k)
             if len(t) == 1:
                 out.append((None, t[0], None))
+            elif len(t) == 3 and t[1] == "=" and re.fullmatch(r"\s*[A-Za-z]\w*\s*", t[0]) and len(split_top(t[2])) > 1:
+                out += [("=", t[0], v) for v in split_top(t[2])]  # »x = 2, -2«
             elif len(t) == 3 and t[1] != "!=" and t[0].strip() and t[2].strip():
                 out.append((t[1], t[0], t[2]))
             elif len(t) == 5 and t[1] in KRELS and t[3] in KRELS and all(t[i].strip() for i in (0, 2, 4)):
@@ -872,14 +897,17 @@ def _pogoji(text, names):
     """Pogoji definicijskega območja iz neokrajšanega zapisa (seznam relacij SymPy)."""
     try:
         u = parse(text, names, evaluate=False)
-    except Timeout:
+    except (Timeout, Unsure):
         raise
     except Exception:
-        return []
+        raise Unsure("definicijskega območja ne znam prebrati")
     pog = []
     for a in sp.preorder_traversal(u):
         if isinstance(a, sp.Pow) and a.args[1].is_number:
             b, ex = a.args[0], sp.simplify(a.args[1])
+            if ex.is_Rational and not ex.is_integer and ex.q % 2 == 1 and b.free_symbols:
+                # x^(1/3): SymPy vzame glavni (kompleksni) koren negativnega števila, šola realnega; ne sodimo
+                raise Unsure("lihi koren spremenljivke")
             if ex.is_negative:
                 pog.append(sp.Ne(b, 0))
             if ex.is_Rational and not ex.is_integer and ex.q % 2 == 0:
@@ -892,6 +920,8 @@ def _pogoji(text, names):
             pog.append(sp.Ne(sp.cos(a.args[0]), 0))
         elif isinstance(a, (sp.cot, sp.csc)):
             pog.append(sp.Ne(sp.sin(a.args[0]), 0))
+        elif isinstance(a, (sp.asin, sp.acos)):
+            pog += [sp.Ge(a.args[0], -1), sp.Le(a.args[0], 1)]
     return [p for p in pog if p not in (sp.true,) and getattr(p, "free_symbols", None)]
 
 
@@ -901,9 +931,11 @@ def _drzi(pog, pt):
         v = pog.subs(pt)
         if v in (sp.true, sp.false):
             return bool(v)
+        if v.free_symbols:
+            raise Unsure("pogoj s parametrom")
         a, b = v.lhs, v.rhs
         av, bv = complex(sp.N(a, 30)), complex(sp.N(b, 30))
-    except Timeout:
+    except (Timeout, Unsure):
         raise
     except Exception:
         return False
@@ -922,7 +954,8 @@ def _obmocje_pogojev(pog, x):
         if p.free_symbols - {x}:
             raise Unsure("območje s parametri")
         s = sp.solveset(p, x, sp.S.Reals)
-        if isinstance(s, sp.ConditionSet):
+        if s.has(sp.ConditionSet) or p.has(sp.sin, sp.cos, sp.tan, sp.cot, sp.sec, sp.csc):
+            # periodični pogoj: solveset vrne le eno periodo ([0, 2π)), zato ga ne uporabimo kot množice
             raise Unsure("definicijskega območja ne znam izračunati")
         dom = sp.Intersection(dom, s)
     return dom
@@ -949,12 +982,21 @@ def _mnozica_dela(rel, a_txt, b_txt, x, names, D):
         e = a - b
         resi = lambda dom: sp.solveset(ner, x, dom)
     s = resi(D)
-    if s is not None and not isinstance(s, sp.ConditionSet) and not _lepa(s):
+    if s is not None and not s.has(sp.ConditionSet) and not _lepa(s):
         if D.is_subset(KOBMOCJE) is not True:
+            try:
+                per = sp.periodicity(e, x)
+            except Timeout:
+                raise
+            except Exception:
+                per = None
+            if per is None or not per.is_number or float(per) > 10:
+                # dolga perioda (sin(πx/30)): okno [−20, 20] bi videlo premalo rešitev
+                raise Unsure("periodične rešitve z dolgo ali neznano periodo")
             oslabi("numeric")  # periodične rešitve primerjamo le na [−20, 20]
             D = sp.Intersection(D, KOBMOCJE)
         s = resi(D)
-    if s is None or isinstance(s, sp.ConditionSet) or not _lepa(s):
+    if s is None or s.has(sp.ConditionSet) or not _lepa(s):
         raise Unsure("reševalnik ne najde vseh rešitev")
     if s.is_FiniteSet:
         return sp.FiniteSet(*[f for f in s if satisfies(e, {x: f}) is not False and _real_ok(e, x, f) and all(_drzi(p, {x: f}) for p in pog)])
@@ -989,7 +1031,8 @@ def _razlika(A, B):
     for z in (m, o):
         if isinstance(z, sp.Complement) or not _lepa(z) and z != sp.S.EmptySet:
             raise Unsure("množic rešitev ne znam primerjati")
-    return ([] if m == sp.S.EmptySet else m), ([] if o == sp.S.EmptySet else o)
+    kot_seznam = lambda z: [] if z == sp.S.EmptySet else (list(z) if z.is_FiniteSet else z)
+    return kot_seznam(m), kot_seznam(o)
 
 
 def _mn(s):
@@ -1007,6 +1050,10 @@ def _mn(s):
 
 def _niz(v, x):
     if isinstance(v, list):
+        try:
+            v = sorted(v, key=lambda t: float(sp.N(t)))
+        except Exception:
+            pass
         vec = len(v) > 4
         return ", ".join(f"{x} = {sp.sstr(t)}" for t in v[:4]) + (f" … (skupaj {len(v)} na [−20, 20])" if vec else "")
     return f"{x} ∈ {_mn(v)}"
@@ -1085,14 +1132,22 @@ def _korak_izraz(a_txt, b_txt, x, names, D):
         oslabi("sampled")
     why = ""
     if len(free) == 1 and free[0] == x:
+        # območja s kotnimi funkcijami ne znamo izračunati kot množice (ena perioda): osamljene točke tedaj
+        # ostanejo nepreverjene, zoženje na intervalu pa že ujame vzorčenje zgoraj
         try:
             DA = sp.Intersection(_obmocje_pogojev(_pogoji(a_txt, names), x), D)
             DB = sp.Intersection(_obmocje_pogojev(_pogoji(b_txt, names), x), D)
+        except Unsure:
+            DA = DB = None
+        if DA is not None:
+            zozeno = sp.simplify(sp.Complement(DA, DB))
+            if zozeno != sp.S.EmptySet:
+                if zozeno.is_FiniteSet:
+                    return False, f"novi izraz ni definiran pri {_niz(list(zozeno), x)}, prvotni je", {"vrsta": "izguba"}
+                raise Unsure("spremembe definicijskega območja ne znam opisati")
             if sp.simplify(sp.Complement(DB, DA)) != sp.S.EmptySet:
                 izven = sp.Complement(D, DA)
                 why = f"velja za {x} ≠ " + ", ".join(sp.sstr(t) for t in izven) if izven.is_FiniteSet else f"velja za {x} ∈ {_mn(sp.simplify(DA))}"
-        except Unsure:
-            pass
     return True, why, {"vrsta": "ekvivalenca"}
 
 
@@ -1130,6 +1185,11 @@ def op_korak(prej, potem, var="", obmocje=""):
                 return False, "znak neenakosti se obrne le pri množenju ali deljenju z negativnim številom", {"vrsta": "napaka"}
     if x is None:
         raise Unsure("navedi neznanko (zapis ima več spremenljivk)")
+    for rel, a, b in d1 + d2:
+        for r_, u, v in (a if rel == "&" else [(rel, a, b)]):
+            if (parse(u, names).free_symbols | parse(v, names).free_symbols) - {x}:
+                # solveset reši »a·x = a« kot x = 1 (predpostavi a ≠ 0): brez razbitja na primere ne sodimo
+                raise Unsure("korak s parametrom ne znam preveriti (razen množenja obeh strani s številom)")
     S1, S2 = _mnozica(d1, x, names, D), _mnozica(d2, x, names, D)
     manjka, odvec = _razlika(S1, S2)
     if not manjka and not odvec:
@@ -1147,7 +1207,7 @@ def op_korak(prej, potem, var="", obmocje=""):
                 e1 = parse(d1[0][1], names) - parse(d1[0][2], names)
                 e2 = parse(d2[0][1], names) - parse(d2[0][2], names)
                 k = sp.factor(sp.cancel(sp.together(e1 / e2)))
-                if x in k.free_symbols and k.is_rational_function(x) and all(is_zero(k.subs(x, m)) is True for m in manjka):
+                if x in k.free_symbols and k.is_polynomial(x) and all(is_zero(k.subs(x, m)) is True for m in manjka):
                     why += f" (kot deljenje z {sp.sstr(k)}, ki je pri {_niz(manjka, x)} enako 0)"
             except Timeout:
                 raise
@@ -1170,7 +1230,7 @@ DECIMALKA = re.compile(r"(?<![\w.])(?:\d+\.\d+(?:[eE][+-]?\d+)?|\d+[eE][+-]?\d+)
 
 def _vejica(s):
     """Decimalna vejica kot v clean(): 1,5 → 1.5, kadar v besedilu ni drugih vejic."""
-    return re.sub(r"(?<=\d),(?=\d)", ".", s) if "," not in re.sub(r"(?<=\d),(?=\d)", "", s) else s
+    return _decimalna_vejica(s)
 
 
 def _z_ulomki(op, args):

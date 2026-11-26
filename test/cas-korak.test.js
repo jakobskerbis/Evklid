@@ -72,6 +72,43 @@ test("korak: izrazi in parametri", { skip }, async () => {
   assert.equal((await korak("x=1", "x+1")).ok, null);
 });
 
+// Ugotovitve pregleda PV-06 (dva ločena agenta AI): nobena ne sme več dati ok true na napačnem koraku.
+test("korak: parametri, log z osnovo, dolga perioda, lihi koren, zoženo območje", { skip }, async () => {
+  const ok = async (...a) => (await korak(...a)).ok;
+  // parameter v imenovalcu ali kot delitelj: solveset predpostavi splošen primer, zato brez sodbe
+  assert.equal(await ok("x/(a+1)=2", "x-5=0", "x"), null);
+  assert.equal(await ok("a*x=a", "x=1", "x"), null);
+  assert.equal(await ok("v=s/t", "s=v*t", "s"), null);
+  // vejica med argumenti log(·, ·) ni decimalna; tudi v drugih ukazih
+  assert.equal(await ok("log(x-2,2)=3", "x-2=8"), true);
+  assert.equal(await ok("log(x+1,2)<3", "-1<x<7"), true);
+  assert.equal((await casCheck("value", ["log(8,2)", "3"])).ok, true);
+  // log v zapisu ne izbriše pogojev območja
+  assert.equal(await ok("log(2)*x^2/x=0", "x=0"), false);
+  // logaritem z osnovo: Complement(ConditionSet) gre še skozi logcombine
+  assert.equal(await ok("log(x+1,10)-log(x,10)=1", "x+1=10x"), true);
+  // dolga perioda: okno [−20, 20] ne zadošča
+  assert.equal(await ok("sin(pi*x/30)=0", "x=0"), null);
+  assert.equal(await ok("cos(x/10)=0", "x=5pi ali x=-5pi"), null);
+  // x^(1/3) negativnega števila: SymPy vzame glavni koren, šola realnega
+  assert.equal(await ok("x^(1/3)=-2", "x=-8"), null);
+  // izraz z ožjim območjem je izguba
+  const r = await korak("x+1", "(x^2-1)/(x-1)");
+  assert.deepEqual([r.ok, r.vrsta], [false, "izguba"]);
+  // »or« in »x = 2, -2«
+  assert.equal(await ok("x=1 or x=2", "x=2 ali x=1"), true);
+  assert.equal(await ok("x^2=4", "x=2,-2"), true);
+});
+
+test("korak: slepi nabor (0 potrjenih napačnih, 0 lažnih alarmov)", { skip, timeout: 300_000 }, async () => {
+  const nabor = JSON.parse(readFileSync(new URL("./fixtures/preverjanje/koraki-slepi-v1.json", import.meta.url), "utf8"));
+  const izid = await izmeriKorake(nabor);
+  assert.deepEqual(
+    neuspehiKorakov(izid).map((r) => `${r.id} ${r.prej} → ${r.potem}: ${r.ok}/${r.vrsta}`),
+    [],
+  );
+});
+
 test("korak: nabor koraki-v1 (50 napačnih ujetih, 0 lažnih alarmov na 200 pravilnih)", { skip, timeout: 300_000 }, async () => {
   const nabor = JSON.parse(readFileSync(NABOR_KORAKI, "utf8"));
   assert.equal(nabor.napacni.length, 50);
